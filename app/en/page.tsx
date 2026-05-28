@@ -1,19 +1,41 @@
 export default function Home() {
   return (
     <main className="min-h-screen bg-black text-white">
-      <section className="relative h-screen overflow-hidden">
-        <video
-          className="absolute inset-0 h-full w-full object-cover opacity-60"
-          autoPlay
-          muted
-          loop
-          playsInline
-          src="/videos/japan-hero.mp4"
-        />
+  <section className="relative h-screen overflow-hidden">
+    <div className="absolute inset-0">
+      <video
+        className="hero-video hero-video-0 absolute inset-0 h-full w-full object-cover"
+        autoPlay
+        muted
+        loop
+        playsInline
+        src="/videos/japan-hero.mp4"
+      />
 
-        <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/30 to-black" />
+      <video
+        className="hero-video hero-video-1 absolute inset-0 h-full w-full object-cover"
+        autoPlay
+        muted
+        loop
+        playsInline
+        src="/videos/tokyo-station.mp4"
+      />
 
-        <nav className="relative z-10 flex items-center justify-between px-8 py-8 md:px-16">
+      <video
+        className="hero-video hero-video-2 absolute inset-0 h-full w-full object-cover"
+        autoPlay
+        muted
+        loop
+        playsInline
+        src="/videos/higashiyama.mp4"
+      />
+    </div>
+
+
+
+    <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/30 to-black" />
+
+    <nav className="relative z-10 flex items-center justify-between px-8 py-8 md:px-16">
           <div className="text-xl tracking-[0.45em]">ALPINEA</div>
           <div className="hidden gap-8 text-xs uppercase tracking-[0.25em] text-white/70 md:flex">
             <a
