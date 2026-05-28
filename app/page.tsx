@@ -1,4 +1,24 @@
+"use client";
+
+import { useEffect, useState } from "react";
+
 export default function Home() {
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => {
+      setScrolled(window.scrollY > 50);
+    };
+
+    window.addEventListener("scroll", onScroll);
+
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+    };
+  }, []);
+
+
+
   return (
     <main className="min-h-screen bg-black text-white">
   <section className="relative h-screen overflow-hidden">
@@ -35,19 +55,25 @@ export default function Home() {
 
     <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/30 to-black" />
 
-    <nav className="relative z-10 flex items-center justify-between px-8 py-8 md:px-16">
-          <div className="text-xl tracking-[0.45em]">ALPINEA</div>
-          <div className="hidden gap-8 text-xs uppercase tracking-[0.25em] text-white/70 md:flex">
-            <a
-  href="/en"
-  className="transition hover:text-white/60"
+   <nav
+  className={`fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-8 py-5 md:px-16 transition-all duration-700 ${
+    scrolled
+      ? "bg-black/10 backdrop-blur-2xl"
+      : "bg-transparent"
+  }`}
 >
-  ENGLISH
-</a>
-            <a href="#concierge">Entrar em Contato</a>
-           
-          </div>
-        </nav>
+  <div className="text-xl tracking-[0.45em]">ALPINEA</div>
+
+  <div className="hidden gap-8 text-xs uppercase tracking-[0.25em] text-white/70 md:flex">
+    <a href="/" className="transition hover:text-white">
+      English
+    </a>
+
+    <a href="#concierge" className="transition hover:text-white">
+      Entrar em Contato
+    </a>
+  </div>
+</nav>
 
         <div className="relative z-10 flex h-[75vh] flex-col items-center justify-center px-6 text-center">
           <p className="mb-6 text-xs uppercase tracking-[0.5em] text-white/60">
