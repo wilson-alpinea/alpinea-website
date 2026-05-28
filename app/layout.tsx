@@ -14,6 +14,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://www.alpinea.io"),
+
   title: "Alpinea — Japão sob medida",
   description:
     "Experiências privadas, alta gastronomia, concierge e curadoria de luxo no Japão.",
@@ -34,6 +36,14 @@ export const metadata: Metadata = {
     "Turismo de luxo Japão",
     "Roteiro de luxo Japão",
   ],
+
+  alternates: {
+    canonical: "https://www.alpinea.io",
+    languages: {
+      "pt-BR": "https://www.alpinea.io",
+      en: "https://www.alpinea.io/en",
+    },
+  },
 
   openGraph: {
     title: "Alpinea — Japão sob medida",

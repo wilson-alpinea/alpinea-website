@@ -17,26 +17,26 @@ export default function Home() {
           <div className="text-xl tracking-[0.45em]">ALPINEA</div>
           <div className="hidden gap-8 text-xs uppercase tracking-[0.25em] text-white/70 md:flex">
             <a
-  href="/en"
+  href="/"
   className="transition hover:text-white/60"
 >
-  ENGLISH
+  PORTUGUESE
 </a>
-            <a href="#concierge">Entrar em Contato</a>
+            <a href="#concierge">Contact</a>
            
           </div>
         </nav>
 
         <div className="relative z-10 flex h-[75vh] flex-col items-center justify-center px-6 text-center">
           <p className="mb-6 text-xs uppercase tracking-[0.5em] text-white/60">
-            Japão Sob Medida
+            Bespoke Japan
           </p>
 
           <h1 className="text-6xl font-light leading-[1.05] tracking-tight text-white md:text-8xl">
-  O Japão, vivido com
+  Experience Japan with
   <br />
  <span className="bg-gradient-to-r from-[#E94332] via-[#D96A2E] to-[#C9A03A] bg-clip-text text-transparent animate-luxury-gradient bg-[length:180%_180%]">
-  exclusividade.
+  exclusivity.
   </span>
 </h1>
 
@@ -50,7 +50,7 @@ export default function Home() {
             href="#contact"
             className="mt-12 border border-white/30 px-8 py-4 text-xs uppercase tracking-[0.3em] text-white transition hover:bg-white hover:text-black"
           >
-            Solicitar Atendimento
+            Request Concierge
           </a>
         </div>
       </section>
@@ -58,7 +58,7 @@ export default function Home() {
 <section id="experiences" className="relative overflow-hidden px-6 py-32 md:px-16">
   <div className="mx-auto max-w-7xl">
     <p className="mb-8 text-xs uppercase tracking-[0.45em] text-white/40">
-      EXPERIÊNCIAS PERSONALIZADAS
+      CURATED EXPERIENCES
     </p>
 
     <h2 className="max-w-6xl text-5xl font-light leading-tight tracking-tight md:text-7xl">
@@ -72,7 +72,7 @@ export default function Home() {
         <div className="relative aspect-square overflow-hidden rounded-[2rem] bg-black">
           <img
             src="/images/sugita.png"
-            alt="Alta Gastronomia"
+            alt="Fine Dining"
             className="h-full w-full object-cover transition duration-700 group-hover:scale-[1.04]"
             style={{ objectPosition: "center center" }}
           />
@@ -83,7 +83,7 @@ export default function Home() {
           {/* Título */}
           <div className="absolute bottom-0 left-0 z-10 p-8">
             <h3 className="text-2xl font-light tracking-tight text-white md:text-3xl">
-              Alta Gastronomia
+              Fine Dining
             </h3>
           </div>
         </div>
@@ -94,7 +94,7 @@ export default function Home() {
         <div className="relative aspect-square overflow-hidden rounded-[2rem] bg-black">
           <img
             src="/images/rolex.png"
-            alt="Artigos de Luxo"
+            alt="Luxury Goods"
             className="h-full w-full object-cover transition duration-700 group-hover:scale-[1.04]"
             style={{ objectPosition: "center center" }}
           />
@@ -105,18 +105,18 @@ export default function Home() {
           {/* Título */}
           <div className="absolute bottom-0 left-0 z-10 p-8">
             <h3 className="text-2xl font-light tracking-tight text-white md:text-3xl">
-              Artigos de Luxo
+              Luxury Goods
             </h3>
           </div>
         </div>
       </a>
 
-      {/* EXPERIÊNCIAS */}
+      {/* EXPERIENCES */}
       <a href="#japan-experiences" className="group block">
         <div className="relative aspect-square overflow-hidden rounded-[2rem] bg-black">
           <img
             src="/images/fuji.JPG"
-            alt="Experiências"
+            alt="Experiences"
             className="h-full w-full object-cover transition duration-700 group-hover:scale-[1.04]"
             style={{ objectPosition: "center center" }}
           />
@@ -127,7 +127,7 @@ export default function Home() {
           {/* Título */}
           <div className="absolute bottom-0 left-0 z-10 p-8">
             <h3 className="text-2xl font-light tracking-tight text-white md:text-3xl">
-              Experiências
+              Experiences
             </h3>
           </div>
         </div>
@@ -146,7 +146,7 @@ export default function Home() {
     {/* TEXTO */}
     <div>
       <p className="mb-6 text-xs uppercase tracking-[0.4em] text-white/40">
-        Alta Gastronomia
+        Fine Dining
       </p>
 
       <h2 className="max-w-3xl text-4xl font-light leading-tight md:text-6xl">
@@ -180,7 +180,7 @@ export default function Home() {
 
         <img
           src="/images/fine-dining-stack.png"
-          alt="Alta Gastronomia Japão"
+          alt="Fine Dining Japão"
           className="w-full rounded-[28px] object-cover"
         />
 
@@ -219,7 +219,7 @@ export default function Home() {
     {/* TEXTO */}
     <div>
       <p className="mb-6 text-xs uppercase tracking-[0.4em] text-white/40">
-        Artigos de Luxo
+        Luxury Goods
       </p>
 
       <h2 className="max-w-3xl text-4xl font-light leading-tight md:text-6xl">
@@ -291,7 +291,7 @@ export default function Home() {
 
   <div className="relative z-10 mx-auto max-w-6xl">
     <p className="mb-6 text-center text-xs uppercase tracking-[0.4em] text-white/40">
-      EXPERIÊNCIAS
+      EXPERIENCES
     </p>
 
     <h2 className="mx-auto max-w-5xl text-center text-4xl font-light leading-tight md:text-7xl">
@@ -418,11 +418,11 @@ export default function Home() {
 >
   <div className="mx-auto max-w-4xl text-center">
     <p className="mb-6 text-xs uppercase tracking-[0.4em] text-black/40">
-      Contato
+      Contact
     </p>
 
     <h2 className="text-4xl font-light leading-tight md:text-6xl">
-      Comece sua jornada no Japão.
+      Begin your journey through Japan.
     </h2>
 
     <p className="mx-auto mt-6 max-w-xl text-black/60">
@@ -437,7 +437,7 @@ export default function Home() {
         href="mailto:wilson@alpinea.io"
         className="inline-block border border-black px-8 py-4 text-xs uppercase tracking-[0.3em] transition hover:bg-black hover:text-white"
       >
-        Entrar em Contato
+        Contact
       </a>
 
       {/* WHATSAPP */}
@@ -500,7 +500,7 @@ export default function Home() {
         href="mailto:wilson@alpinea.io"
         className="transition hover:text-white"
       >
-        Contato
+        Contact
       </a>
     </div>
   </div>
