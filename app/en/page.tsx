@@ -41,9 +41,7 @@ export default function Home() {
 </h1>
 
           <p className="mt-8 max-w-2xl text-base font-light leading-8 text-white/70 md:text-lg">
-            Viagens privadas, gastronomia de excelência, acesso cultural e
-            planejamento impecável para clientes que esperam vivenciar o Japão
-            com absoluta fluidez.
+            Private journeys, exceptional dining, cultural access and seamless planning for travelers seeking the finest side of Japan.
           </p>
 
           <a
@@ -62,7 +60,7 @@ export default function Home() {
     </p>
 
     <h2 className="max-w-6xl text-5xl font-light leading-tight tracking-tight md:text-7xl">
-      O melhor do Japão, desenhado ao redor do seu estilo.
+      The finest side of Japan, designed around your lifestyle.
     </h2>
 
     <div className="mt-24 grid gap-8 md:grid-cols-3">
@@ -150,26 +148,23 @@ export default function Home() {
       </p>
 
       <h2 className="max-w-3xl text-4xl font-light leading-tight md:text-6xl">
-        Reservas quase impossíveis nos melhores restaurantes do Japão
+        Reservations that are nearly impossible at the best restaurants in Japan.
       </h2>
 
       <div className="mt-12 max-w-2xl space-y-8 text-white/65">
         <p className="text-lg font-light leading-9">
-          Nos principais restaurantes do Japão, reservas são extremamente
-          limitadas e disputadas com meses — ou até anos — de antecedência.
+          In Japan's top restaurants, reservations are extremely limited and sought after months — or even years — in advance.
         </p>
 
         <p className="text-lg font-light leading-9">
-          A Alpinea viabiliza acesso a casas estreladas pelo Guia Michelin,
-          referências no Tabelog e endereços quase impossíveis de reservar
-          por conta própria, sempre com curadoria privada e atenção absoluta
-          aos detalhes.
+         Alpinea provides access to Michelin-starred restaurants,
+listed in the Tabelog, and addresses that are almost impossible to book
+independently, always with private curation and absolute attention
+to detail.
         </p>
 
         <p className="text-lg font-light leading-9">
-          Mais do que uma reserva, proporcionamos experiências gastronômicas
-          exclusivas, construídas através de relacionamento, repertório e
-          profundo entendimento da cena culinária japonesa.
+    More than just a reservation, we provide exclusive gastronomic experiences, built through relationships, expertise, and a deep understanding of the Japanese culinary scene.
         </p>
       </div>
     </div>
@@ -223,27 +218,21 @@ export default function Home() {
       </p>
 
       <h2 className="max-w-3xl text-4xl font-light leading-tight md:text-6xl">
-        Acesso aos itens mais desejados do Japão
+        Access to Japan's most sought-after items.
       </h2>
 
       <div className="mt-12 max-w-2xl space-y-8 text-white/65">
         <p className="text-lg font-light leading-9">
-          O Japão abriga algumas das boutiques, relojoarias e lojas de tecnologia
-          mais exclusivas do mundo — muitas vezes com edições limitadas,
-          disponibilidade extremamente reduzida e atendimento reservado apenas
-          para clientes selecionados.
+          Japan is home to some of the world's most exclusive boutiques, watchmakers, and technology stores
+often featuring limited editions, extremely limited availability, and service reserved only for select clients.
         </p>
 
         <p className="text-lg font-light leading-9">
-          A Alpinea auxilia na curadoria e acesso a artigos de luxo, câmeras,
-          relógios, equuipamentos de pesca, itens colecionáveis e produtos difíceis de encontrar,
-          sempre com acompanhamento personalizado e discrição absoluta.
+         Alpinea assists in curating and providing access to luxury items, cameras, watches, fishing equipment, collectibles, and hard-to-find products, always with personalized support and absolute discretion.
         </p>
 
         <p className="text-lg font-light leading-9">
-          Mais do que compras, proporcionamos experiências privadas em boutiques,
-          atendimento dedicado e acesso a peças que raramente chegam ao mercado
-          internacional com preços competitivos.
+          More than just shopping, we provide private boutique experiences, dedicated service and access to pieces that rarely reach the international market at competitive prices.
         </p>
       </div>
     </div>
@@ -295,13 +284,11 @@ export default function Home() {
     </p>
 
     <h2 className="mx-auto max-w-5xl text-center text-4xl font-light leading-tight md:text-7xl">
-      O Japão além dos cartões-postais.
+      Japan beyond the postcards.
     </h2>
 
     <p className="mx-auto mt-8 max-w-3xl text-center text-lg leading-8 text-white/60">
-      A Alpinea transforma o Japão em uma jornada desenhada ao redor dos seus
-      interesses — combinando os principais pontos turísticos do país com acesso,
-      conforto, logística impecável e acompanhamento personalizado.
+      Alpinea transforms Japan into a journey designed around your interests — combining the country's main tourist attractions with access, comfort, impeccable logistics, and personalized support.
     </p>
 
     <div className="mt-20 grid gap-6 md:grid-cols-3">
@@ -316,9 +303,9 @@ export default function Home() {
         </div>
 
         <div className="mt-5 px-2">
-          <h3 className="text-lg font-light">Tecnologia & Modernidade</h3>
+          <h3 className="text-lg font-light">Technology & Modernity</h3>
           <p className="mt-2 text-sm leading-7 text-white/55">
-            Exploração do Japão contemporâneo através de arquitetura, tecnologia, bairros icônicos e experiências urbanas cuidadosamente selecionadas.
+            Exploring contemporary Japan through architecture, technology, iconic neighborhoods, and carefully curated urban experiences.
           </p>
         </div>
       </div>
@@ -337,9 +324,9 @@ export default function Home() {
         </div>
 
         <div className="mt-5 px-2">
-          <h3 className="text-lg font-light">Belezas Naturais & Históricas</h3>
+          <h3 className="text-lg font-light">Natural & Historical Beauties</h3>
           <p className="mt-2 text-sm leading-7 text-white/55">
-            Templos históricos como Kiyomizu-dera & Senso-ji, Beleza naturais como Monte Fuji, Niseko e Okinawa.
+            Historic temples like Kiyomizu-dera and Senso-ji, natural beauties like Mount Fuji, Niseko, and Okinawa.
           </p>
         </div>
       </div>
@@ -362,11 +349,11 @@ export default function Home() {
 
   <div className="mt-5 px-2">
     <h3 className="text-lg font-light">
-      Cultura & Entretenimento Premium
+      Premium Culture & Entertainment
     </h3>
 
     <p className="mt-2 text-sm leading-7 text-white/55">
-      Museus, instalações artísticas, parques temáticos e experiências imersivas cuidadosamente selecionadas para revelar o lado mais contemporâneo e sensorial do Japão.
+      Museums, art installations, theme parks, and immersive experiences carefully selected to reveal the most contemporary and sensory side of Japan.
     </p>
   </div>
 </div>
@@ -396,18 +383,17 @@ export default function Home() {
   {/* Content */}
   <div className="relative z-10 mx-auto max-w-5xl text-center">
     <p className="mb-8 text-xs uppercase tracking-[0.45em] text-white/55">
-      Sua Experiência Alpinea
+      Your Alpinea Experience
     </p>
 
     <h2 className="text-5xl font-light leading-[1.1] tracking-tight md:text-7xl">
-      Faça o Japão parecer
+      Make the Japan
       <br />
-      exclusivamente seu.
+      exclusively yours.
     </h2>
 
     <p className="mx-auto mt-10 max-w-3xl text-lg leading-relaxed text-white/70">
-      Pensado para viajantes que não procuram pacotes turísticos,
-      mas acesso, repertório, precisão e execução impecável.
+     Designed for travelers who are not looking for package tours, but access, repertoire, precision, and flawless execution.
     </p>
   </div>
 </section>
@@ -426,8 +412,7 @@ export default function Home() {
     </h2>
 
     <p className="mx-auto mt-6 max-w-xl text-black/60">
-      Compartilhe suas datas, preferências e estilo de viagem.
-      A Alpinea cuidará do restante.
+     Share your dates, preferences, and travel style. Alpinea will take care of the rest.
     </p>
 
     <div className="mt-12 flex flex-col items-center justify-center gap-4 sm:flex-row">
@@ -467,7 +452,7 @@ export default function Home() {
 
       <div className="max-w-md space-y-3">
         <p className="text-sm leading-relaxed text-white/50">
-          Curadoria privada de experiências, gastronomia e lifestyle no Japão.
+          Private curation of experiences, gastronomy, and lifestyle in Japan.
         </p>
 
         <p className="text-xs text-white/30">
