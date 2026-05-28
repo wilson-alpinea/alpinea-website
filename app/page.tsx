@@ -449,24 +449,30 @@ export default function Home() {
   </div>
 </section>
 
-<footer className="border-t border-white/10 px-6 py-10 md:px-16">
-  <div className="mx-auto flex max-w-[1600px] flex-col items-center justify-between gap-6 md:flex-row">
+<footer className="border-t border-white/10 bg-black px-6 py-16 text-white md:px-16">
+  <div className="mx-auto flex max-w-7xl flex-col gap-12 md:flex-row md:items-end md:justify-between">
     
-    {/* Texto */}
-    <div className="text-center md:text-left">
-      <p className="text-sm tracking-[0.18em] text-white/35 uppercase">
-        Alpinea
-      </p>
+    {/* LEFT */}
+    <div className="space-y-6">
+      <div>
+        <p className="text-xs uppercase tracking-[0.45em] text-white/80">
+          Alpinea
+        </p>
+      </div>
 
-      <p className="mt-3 text-sm text-white/45">
-        2026 Alpinea Agencias de Viagens LTDA — 
-        CNPJ 66.491.067/0001-84
-      </p>
+      <div className="max-w-md space-y-3">
+        <p className="text-sm leading-relaxed text-white/50">
+          Curadoria privada de experiências, gastronomia e lifestyle no Japão.
+        </p>
+
+        <p className="text-xs text-white/30">
+          © 2026 Alpinea Agências de Viagens LTDA — CNPJ 66.491.067/0001-84
+        </p>
+      </div>
     </div>
 
-    {/* Redes sociais */}
-    <div className="flex items-center gap-6 text-sm text-white/60">
-      
+    {/* RIGHT */}
+    <div className="flex items-center gap-8 text-xs uppercase tracking-[0.25em] text-white/40">
       <a
         href="https://www.instagram.com/alpinea.private"
         target="_blank"
@@ -485,6 +491,12 @@ export default function Home() {
         YouTube
       </a>
 
+      <a
+        href="mailto:wilson@alpinea.io"
+        className="transition hover:text-white"
+      >
+        Contato
+      </a>
     </div>
   </div>
 </footer>
