@@ -65,7 +65,7 @@ export default function Home() {
   <div className="text-xl tracking-[0.45em]">ALPINEA</div>
 
   <div className="hidden gap-8 text-xs uppercase tracking-[0.25em] text-white/70 md:flex">
-    <a href="/" className="transition hover:text-white">
+    <a href="/en" className="transition hover:text-white">
       English
     </a>
 
