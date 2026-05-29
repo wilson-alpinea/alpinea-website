@@ -86,7 +86,7 @@ export default function Home() {
 
         <div className="relative z-10 flex h-[75vh] flex-col items-center justify-center px-6 text-center">
           <p className="mb-6 text-xs uppercase tracking-[0.5em] text-white/60">
-            Japão Sob Medida
+            Acesso, Execução e Curadoria do Japão
           </p>
 
           <h1 className="text-6xl font-light leading-[1.05] tracking-tight text-white md:text-8xl">
