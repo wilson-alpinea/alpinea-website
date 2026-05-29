@@ -51,7 +51,7 @@ export default function Home() {
   />
 
   <video
-    className="hero-video hero-video-3 absolute inset-0 h-full w-full object-cover"
+    className="hero-video hero-video-3 absolute inset-0 min-h-full min-w-full object-cover"
     autoPlay
     muted
     loop
