@@ -39,12 +39,9 @@ body {
   }
 }
 
-.animate-luxury-gradient {
-  animation: luxury-gradient 8s ease-in-out infinite;
-}
 .hero-video {
   opacity: 0;
-  animation: heroFade 18s infinite;
+  animation: heroFade 24s infinite;
 }
 
 .hero-video-0 {
@@ -57,6 +54,32 @@ body {
 
 .hero-video-2 {
   animation-delay: 12s;
+}
+
+.hero-video-3 {
+  animation-delay: 18s;
+}
+
+@keyframes heroFade {
+  0% {
+    opacity: 0;
+  }
+
+  6% {
+    opacity: 0.6;
+  }
+
+  22% {
+    opacity: 0.6;
+  }
+
+  28% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 0;
+  }
 }
 
 @keyframes heroFade {

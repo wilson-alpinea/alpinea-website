@@ -23,33 +23,42 @@ export default function Home() {
     <main className="min-h-screen bg-black text-white">
   <section className="relative h-screen overflow-hidden">
     <div className="absolute inset-0">
-      <video
-        className="hero-video hero-video-0 absolute inset-0 h-full w-full object-cover"
-        autoPlay
-        muted
-        loop
-        playsInline
-        src="/videos/japan-hero.mp4"
-      />
+  <video
+    className="hero-video hero-video-0 absolute inset-0 h-full w-full object-cover"
+    autoPlay
+    muted
+    loop
+    playsInline
+    src="/videos/japan-hero.mp4"
+  />
 
-      <video
-        className="hero-video hero-video-1 absolute inset-0 h-full w-full object-cover"
-        autoPlay
-        muted
-        loop
-        playsInline
-        src="/videos/tokyo-station.mp4"
-      />
+  <video
+    className="hero-video hero-video-1 absolute inset-0 h-full w-full object-cover"
+    autoPlay
+    muted
+    loop
+    playsInline
+    src="/videos/tokyo-station.mp4"
+  />
 
-      <video
-        className="hero-video hero-video-2 absolute inset-0 h-full w-full object-cover"
-        autoPlay
-        muted
-        loop
-        playsInline
-        src="/videos/higashiyama.mp4"
-      />
-    </div>
+  <video
+    className="hero-video hero-video-2 absolute inset-0 h-full w-full object-cover"
+    autoPlay
+    muted
+    loop
+    playsInline
+    src="/videos/higashiyama.mp4"
+  />
+
+  <video
+    className="hero-video hero-video-3 absolute inset-0 h-full w-full object-cover"
+    autoPlay
+    muted
+    loop
+    playsInline
+    src="/videos/okinawa.mp4"
+  />
+</div>
 
 
 
