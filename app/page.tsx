@@ -290,9 +290,8 @@ export default function Home() {
       <div className="mt-12 max-w-xl space-y-8 text-lg font-light leading-10 text-white/75">
 
         <p>
-          Com raízes familiares em Shizuoka e Hiroshima, durante mais de uma década visitando o Japão, vivendo sua cultura e
-          desenvolvendo fluência no idioma, a Alpinea construiu uma rede de
-          relacionamentos baseada em presença contínua e respeito mútuo.
+          Com raízes familiares em Shizuoka e Hiroshima e mais de uma década de presença constante no país, a Alpinea desenvolveu uma compreensão única da cultura japonesa, combinando fluência no idioma, experiência local e relacionamentos construídos ao longo do tempo.
+
         </p>
 
         <p>

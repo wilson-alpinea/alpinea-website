@@ -286,10 +286,7 @@ to detail.
       <div className="mt-12 max-w-xl space-y-8 text-lg font-light leading-10 text-white/75">
 
         <p>
-          With family roots from Shizuoka and Hiroshima, for more than a decade visiting Japan, immersing ourselves in its
-          culture and developing fluency in the language, Alpinea has built a
-          network of relationships founded on continuous presence, mutual
-          respect and genuine understanding of the destination.
+          With family roots in Shizuoka and Hiroshima and over a decade of continuous presence in the country, Alpinea has cultivated a deep understanding of Japanese culture, combining language fluency, local insight and relationships developed through years of firsthand experience.
         </p>
 
         <p>
