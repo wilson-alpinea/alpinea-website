@@ -268,6 +268,76 @@ export default function Home() {
   </div>
 </section>
 
+{/* RELACIONAMENTOS */}
+
+<section className="bg-black px-8 py-32 md:px-16">
+  <div className="mx-auto grid max-w-7xl gap-20 lg:grid-cols-2 lg:items-start">
+
+    {/* TEXTO */}
+    <div>
+      <p className="mb-8 text-xs uppercase tracking-[0.35em] text-white/40">
+        Relacionamentos construídos ao longo de mais de uma década
+      </p>
+
+      <h2 className="text-5xl font-light leading-[1.05] tracking-tight text-white md:text-7xl">
+        O acesso
+        <br />
+        começa muito antes
+        <br />
+        da reserva.
+      </h2>
+
+      <div className="mt-12 max-w-xl space-y-8 text-lg font-light leading-10 text-white/75">
+
+        <p>
+          Durante mais de uma década visitando o Japão, vivendo sua cultura e
+          desenvolvendo fluência no idioma, a Alpinea construiu uma rede de
+          relacionamentos baseada em presença contínua e respeito mútuo.
+        </p>
+
+        <p>
+          Nossa curadoria abrange desde alguns dos mais renomados endereços
+          reconhecidos pelo Guia Michelin, Tabelog Awards e Asia&apos;s 50 Best
+          Restaurants até restaurantes discretos e pouco conhecidos do público
+          internacional, permitindo recomendar não apenas os restaurantes mais
+          premiados do Japão, mas também experiências raramente encontradas em
+          guias ou rankings internacionais.
+        </p>
+
+        <div className="pt-4">
+          <p className="mb-4 text-xs uppercase tracking-[0.35em] text-white/40">
+            Alguns dos restaurantes visitados ao longo dos anos
+          </p>
+
+          <p className="text-lg leading-10 text-white">
+            Harutaka · Sushi Arai · Mizutani · Sawada · Tokami ·
+            Sushidokoro Amano · Shunsuke · Ishiyama · Sushi Sho ·
+            Nanaido · Mikawa Zezankyo · Fukamachi · Kan
+          </p>
+        </div>
+
+        <p>
+          Porque no Japão, os melhores acessos raramente são construídos através
+          de plataformas ou intermediários. São construídos através de confiança
+          adquirida ao longo de anos.
+        </p>
+
+      </div>
+    </div>
+
+    {/* IMAGEM */}
+    <div className="flex justify-center lg:justify-end">
+      <img
+        src="/images/restaurant-cards.png"
+        alt="Relacionamentos construídos ao longo de anos na gastronomia japonesa"
+        className="w-full max-w-md object-contain"
+      />
+    </div>
+
+  </div>
+</section>
+
+
 <section
   id="luxury-goods"
   className="border-y border-white/10 px-6 py-28 md:px-16"

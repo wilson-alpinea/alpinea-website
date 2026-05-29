@@ -263,6 +263,84 @@ to detail.
   </div>
 </section>
 
+
+{/* RELATIONSHIPS */}
+
+<section className="bg-black px-8 py-32 md:px-16">
+  <div className="mx-auto grid max-w-7xl gap-20 lg:grid-cols-2 lg:items-start">
+
+    {/* TEXT */}
+    <div>
+      <p className="mb-8 text-xs uppercase tracking-[0.35em] text-white/40">
+        Relationships built over more than a decade
+      </p>
+
+      <h2 className="text-5xl font-light leading-[1.05] tracking-tight text-white md:text-7xl">
+        Access
+        <br />
+        begins long before
+        <br />
+        the reservation.
+      </h2>
+
+      <div className="mt-12 max-w-xl space-y-8 text-lg font-light leading-10 text-white/75">
+
+        <p>
+          Over more than a decade visiting Japan, immersing ourselves in its
+          culture and developing fluency in the language, Alpinea has built a
+          network of relationships founded on continuous presence, mutual
+          respect and genuine understanding of the destination.
+        </p>
+
+        <p>
+          Our curation spans from some of Japan's most celebrated dining
+          destinations — recognized by the Michelin Guide, Tabelog Awards and
+          Asia's 50 Best Restaurants — to discreet establishments rarely known
+          outside Japan, allowing us to recommend not only the country's most
+          acclaimed restaurants, but also experiences seldom found in guides,
+          rankings or international publications.
+        </p>
+
+        <p>
+          We return to Japan year after year, following the evolution of its
+          culinary landscape firsthand and revisiting the same restaurants over
+          time to better understand their philosophies, their chefs and the
+          pursuit of excellence that defines them.
+        </p>
+
+        <div className="pt-4">
+          <p className="mb-4 text-xs uppercase tracking-[0.35em] text-white/40">
+            Restaurants visited throughout the years
+          </p>
+
+          <p className="text-lg leading-10 text-white">
+            Harutaka · Sushi Arai · Mizutani · Sawada · Tokami ·
+            Sushidokoro Amano · Shunsuke · Ishiyama · Sushi Sho ·
+            Nanaido · Mikawa Zezankyo · Fukamachi
+          </p>
+        </div>
+
+        <p>
+          In Japan, meaningful access is rarely built through platforms or
+          intermediaries. It is built through trust — earned over years of
+          presence, consistency and respect.
+        </p>
+
+      </div>
+    </div>
+
+    {/* IMAGE */}
+    <div className="flex justify-center lg:justify-end">
+      <img
+        src="/images/restaurant-cards.png"
+        alt="Relationships built over years within Japan's culinary scene"
+        className="w-full max-w-md object-contain"
+      />
+    </div>
+
+  </div>
+</section>
+
 <section
   id="luxury-goods"
   className="border-y border-white/10 px-6 py-28 md:px-16"
