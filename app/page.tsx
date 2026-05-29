@@ -290,7 +290,7 @@ export default function Home() {
       <div className="mt-12 max-w-xl space-y-8 text-lg font-light leading-10 text-white/75">
 
         <p>
-          Durante mais de uma década visitando o Japão, vivendo sua cultura e
+          Com raízes familiares em Shizuoka e Hiroshima, durante mais de uma década visitando o Japão, vivendo sua cultura e
           desenvolvendo fluência no idioma, a Alpinea construiu uma rede de
           relacionamentos baseada em presença contínua e respeito mútuo.
         </p>
