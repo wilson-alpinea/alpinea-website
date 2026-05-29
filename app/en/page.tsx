@@ -316,7 +316,7 @@ to detail.
           <p className="text-lg leading-10 text-white">
             Harutaka · Sushi Arai · Mizutani · Sawada · Tokami ·
             Sushidokoro Amano · Shunsuke · Ishiyama · Sushi Sho ·
-            Nanaido · Mikawa Zezankyo · Fukamachi
+            Nanaido · Mikawa Zezankyo · Fukamachi · Ao
           </p>
         </div>
 

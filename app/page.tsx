@@ -312,7 +312,7 @@ export default function Home() {
           <p className="text-lg leading-10 text-white">
             Harutaka · Sushi Arai · Mizutani · Sawada · Tokami ·
             Sushidokoro Amano · Shunsuke · Ishiyama · Sushi Sho ·
-            Nanaido · Mikawa Zezankyo · Fukamachi · Kan
+            Nanaido · Mikawa Zezankyo · Fukamachi · Ao
           </p>
         </div>
 
