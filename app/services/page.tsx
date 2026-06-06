@@ -2,11 +2,17 @@ export default function ServicesPage() {
   return (
     <main className="min-h-screen bg-black text-white">
       <header className="fixed left-0 right-0 top-0 z-50 flex items-center justify-between bg-black/10 px-8 py-5 backdrop-blur-2xl md:px-16">
-        <a href="/" className="text-xl tracking-[0.45em]">ALPINEA</a>
+        <a href="/" className="text-xl tracking-[0.45em]">
+          ALPINEA
+        </a>
 
         <nav className="hidden gap-8 text-xs uppercase tracking-[0.25em] text-white/70 md:flex">
-          <a href="/" className="transition hover:text-white">Início</a>
-          <a href="#contact" className="transition hover:text-white">Contato</a>
+          <a href="/" className="transition hover:text-white">
+            Início
+          </a>
+          <a href="#contact" className="transition hover:text-white">
+            Contato
+          </a>
         </nav>
       </header>
 
@@ -30,65 +36,61 @@ export default function ServicesPage() {
         </div>
       </section>
 
-<ServiceSection
-  label="Planejamento"
-  title="Alpinea Design"
-  description="Para viajantes que desejam conduzir a própria viagem com uma base estratégica, elegante e bem construída."
-  items={[
-    "Criação ou revisão de roteiro personalizado",
-  ]}
-  optionals={[
-    "Emissão de passagens aéreas",
-    "JR Pass",
-    "Emissão de ingressos para Tokyo Disneyland, Universal Studios Japan e teamLab",
-    "Seguro viagem",
-  ]}
-  exclusions={[
-    "Reservas de restaurantes",
-    "Reservas de hotéis",
-    "Emissão de passagens",
-    "Acompanhamento durante a viagem",
-  ]}
-/>
+      <ServiceSection
+        label="Planejamento"
+        title="Alpinea Design"
+        description="Para viajantes que desejam conduzir a própria viagem com uma base estratégica, elegante e bem construída."
+        items={["Criação ou revisão de roteiro personalizado"]}
+        optionals={[
+          "Emissão de passagens aéreas",
+          "JR Pass",
+          "Emissão de ingressos para Tokyo Disneyland, Universal Studios Japan e teamLab",
+          "Seguro viagem",
+        ]}
+        exclusions={[
+          "Reservas de restaurantes",
+          "Reservas de hotéis",
+          "Acompanhamento durante a viagem",
+        ]}
+      />
 
-<ServiceSection
-  label="Execução"
-  title="Alpinea Executive"
-  description="Para clientes que desejam planejamento completo, reservas, logística e organização antes da chegada ao Japão."
-  items={[
-    "Criação de roteiro personalizado",
-    "Emissão de passagens aéreas",
-    "Reserva de hotéis",
-    "Organização de transporte privado",
-    "Curadoria gastronômica",
-    "Solicitação e gestão de reservas em restaurantes",
-    "Planejamento de compras",
-    "Recomendações de experiências e atrações",
-    "Coordenação logística da viagem",
-    "Concierge para suporte remoto durante a estadia",
-  ]}
-/>
+      <ServiceSection
+        label="Execução"
+        title="Alpinea Executive"
+        description="Para clientes que desejam planejamento completo, reservas, logística e organização antes da chegada ao Japão."
+        items={[
+          "Criação de roteiro personalizado",
+          "Emissão de passagens aéreas",
+          "Reserva de hotéis",
+          "Organização de transporte privado",
+          "Curadoria gastronômica",
+          "Solicitação e gestão de reservas em restaurantes",
+          "Planejamento de compras",
+          "Recomendações de experiências e atrações",
+          "Coordenação logística da viagem",
+          "Concierge para suporte remoto durante a estadia",
+        ]}
+      />
 
-<ServiceSection
-  label="Acompanhamento Presencial"
-  title="Alpinea Private"
-  description="Para clientes que desejam uma experiência com suporte local, acompanhamento presencial e execução dedicada no Japão."
-  items={[
-    "Criação de roteiro personalizado",
-    "Emissão de passagens aéreas",
-    "Reserva de hotéis",
-    "Organização de transporte privado",
-    "Curadoria gastronômica",
-    "Solicitação e gestão de reservas em restaurantes",
-    "Planejamento de compras",
-    "Acompanhamento presencial em restaurantes",
-    "Acompanhamento presencial para compras",
-    "Acompanhamento presencial em atrações turísticas",
-    "Coordenação local com fornecedores",
-    "Concierge com suporte prioritário durante a viagem",
-  ]}
-/>
-      
+      <ServiceSection
+        label="Acompanhamento Presencial"
+        title="Alpinea Private"
+        description="Para clientes que desejam uma experiência com suporte local, acompanhamento presencial e execução dedicada no Japão."
+        items={[
+          "Criação de roteiro personalizado",
+          "Emissão de passagens aéreas",
+          "Reserva de hotéis",
+          "Organização de transporte privado",
+          "Curadoria gastronômica",
+          "Solicitação e gestão de reservas em restaurantes",
+          "Planejamento de compras",
+          "Acompanhamento presencial em restaurantes",
+          "Acompanhamento presencial para compras",
+          "Acompanhamento presencial em atrações turísticas",
+          "Coordenação local com fornecedores",
+          "Concierge com suporte prioritário durante a viagem",
+        ]}
+      />
 
       <section id="contact" className="bg-white px-8 py-28 text-black md:px-16">
         <div className="mx-auto max-w-4xl text-center">
@@ -170,6 +172,20 @@ function ServiceSection({
               <p key={item}>{item}</p>
             ))}
           </div>
+
+          {optionals && optionals.length > 0 && (
+            <div className="mt-12">
+              <p className="mb-6 text-xs uppercase tracking-[0.35em] text-white/40">
+                Opcionais
+              </p>
+
+              <div className="space-y-5 text-lg font-light leading-9 text-white/65">
+                {optionals.map((item) => (
+                  <p key={item}>{item}</p>
+                ))}
+              </div>
+            </div>
+          )}
 
           {exclusions && (
             <div className="mt-12">
