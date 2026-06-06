@@ -99,6 +99,158 @@ export default function ServicesPage() {
         ]}
       />
 
+
+{/* COMPARATIVO */}
+
+<section className="border-t border-white/10 bg-black px-8 py-32 md:px-16">
+  <div className="mx-auto max-w-7xl">
+
+    <p className="mb-8 text-xs uppercase tracking-[0.35em] text-white/40">
+      Comparativo de Serviços
+    </p>
+
+    <h2 className="max-w-4xl text-5xl font-light leading-[1.05] tracking-tight text-white md:text-7xl">
+      O que muda entre
+      <br />
+      cada formato.
+    </h2>
+
+    <p className="mt-10 max-w-3xl text-lg font-light leading-9 text-white/65">
+      Todos os formatos compartilham a mesma curadoria, conhecimento de destino
+      e acesso à rede de fornecedores da Alpinea. A diferença está no nível de
+      execução e presença ao longo da jornada.
+    </p>
+
+    <div className="mt-20 overflow-x-auto">
+      <table className="w-full min-w-[900px] border-collapse text-left">
+        <thead>
+          <tr className="border-b border-white/10">
+            <th className="py-6 text-xs uppercase tracking-[0.35em] text-white/30">
+              Serviço
+            </th>
+
+            <th className="py-6 text-center text-xs uppercase tracking-[0.35em] text-white">
+              Design
+            </th>
+
+            <th className="py-6 text-center text-xs uppercase tracking-[0.35em] text-white">
+              Executive
+            </th>
+
+            <th className="py-6 text-center text-xs uppercase tracking-[0.35em] text-white">
+              Private
+            </th>
+          </tr>
+        </thead>
+
+        <tbody className="text-white/80">
+
+          <tr className="border-b border-white/10">
+            <td className="py-5">Criação ou revisão de roteiro</td>
+            <td className="text-center">✓</td>
+            <td className="text-center">✓</td>
+            <td className="text-center">✓</td>
+          </tr>
+
+          <tr className="border-b border-white/10">
+            <td className="py-5">Emissão de passagens aéreas</td>
+            <td className="text-center text-white/60">Opcional</td>
+            <td className="text-center">✓</td>
+            <td className="text-center">✓</td>
+          </tr>
+
+          <tr className="border-b border-white/10">
+            <td className="py-5">Reserva de hotéis</td>
+            <td className="text-center text-white/25">—</td>
+            <td className="text-center">✓</td>
+            <td className="text-center">✓</td>
+          </tr>
+
+          <tr className="border-b border-white/10">
+            <td className="py-5">Organização de transporte privado</td>
+            <td className="text-center text-white/25">—</td>
+            <td className="text-center">✓</td>
+            <td className="text-center">✓</td>
+          </tr>
+
+          <tr className="border-b border-white/10">
+            <td className="py-5">Curadoria gastronômica</td>
+            <td className="text-center text-white/60">Sugestões</td>
+            <td className="text-center">✓</td>
+            <td className="text-center">✓</td>
+          </tr>
+
+          <tr className="border-b border-white/10">
+            <td className="py-5">Reservas em restaurantes</td>
+            <td className="text-center text-white/25">—</td>
+            <td className="text-center">✓</td>
+            <td className="text-center">✓</td>
+          </tr>
+
+          <tr className="border-b border-white/10">
+            <td className="py-5">Planejamento de compras</td>
+            <td className="text-center text-white/60">Sugestões</td>
+            <td className="text-center">✓</td>
+            <td className="text-center">✓</td>
+          </tr>
+
+          <tr className="border-b border-white/10">
+            <td className="py-5">JR Pass</td>
+            <td className="text-center text-white/60">Opcional</td>
+            <td className="text-center">✓</td>
+            <td className="text-center">✓</td>
+          </tr>
+
+          <tr className="border-b border-white/10">
+            <td className="py-5">Ingressos e atrações</td>
+            <td className="text-center text-white/60">Opcional</td>
+            <td className="text-center">✓</td>
+            <td className="text-center">✓</td>
+          </tr>
+
+          <tr className="border-b border-white/10">
+            <td className="py-5">Seguro viagem</td>
+            <td className="text-center text-white/60">Opcional</td>
+            <td className="text-center">✓</td>
+            <td className="text-center">✓</td>
+          </tr>
+
+          <tr className="border-b border-white/10">
+            <td className="py-5">Concierge remoto durante a viagem</td>
+            <td className="text-center text-white/25">—</td>
+            <td className="text-center">✓</td>
+            <td className="text-center">✓</td>
+          </tr>
+
+          <tr className="border-b border-white/10">
+            <td className="py-5">Acompanhamento em restaurantes</td>
+            <td className="text-center text-white/25">—</td>
+            <td className="text-center text-white/25">—</td>
+            <td className="text-center">✓</td>
+          </tr>
+
+          <tr className="border-b border-white/10">
+            <td className="py-5">Acompanhamento para compras</td>
+            <td className="text-center text-white/25">—</td>
+            <td className="text-center text-white/25">—</td>
+            <td className="text-center">✓</td>
+          </tr>
+
+          <tr>
+            <td className="py-5">Acompanhamento em atrações turísticas</td>
+            <td className="text-center text-white/25">—</td>
+            <td className="text-center text-white/25">—</td>
+            <td className="text-center">✓</td>
+          </tr>
+
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+</section>
+
+
       <section id="contact" className="bg-white px-8 py-28 text-black md:px-16">
         <div className="mx-auto max-w-4xl text-center">
           <p className="mb-6 text-xs uppercase tracking-[0.35em] text-black/40">
