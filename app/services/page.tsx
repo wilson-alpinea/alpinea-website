@@ -39,18 +39,20 @@ export default function ServicesPage() {
       <ServiceSection
         label="Planejamento"
         title="Alpinea Design"
-        description="Para viajantes que desejam conduzir a própria viagem com uma base estratégica, elegante e bem construída."
+        description="Para viajantes que desejam conduzir a própria viagem, mas não abrem mão da assessoria especializada da Alpinea."
         items={["Criação ou revisão de roteiro personalizado"]}
         optionals={[
           "Emissão de passagens aéreas",
           "JR Pass",
           "Emissão de ingressos para Tokyo Disneyland, Universal Studios Japan e teamLab",
           "Seguro viagem",
+          "Guia turístico",
+          "Transporte privado bate e volta para Kawaguchiko(Monte Fuji)",
         ]}
         exclusions={[
           "Reservas de restaurantes",
           "Reservas de hotéis",
-          "Acompanhamento durante a viagem",
+          "Acompanhamento presencial durante a viagem",
         ]}
       />
 
@@ -69,6 +71,11 @@ export default function ServicesPage() {
           "Recomendações de experiências e atrações",
           "Coordenação logística da viagem",
           "Concierge para suporte remoto durante a estadia",
+]}
+  exclusions={[
+    "Acompanhamento presencial em restaurantes, compras e atrações turisticas",
+  
+  
         ]}
       />
 
