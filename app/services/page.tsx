@@ -43,11 +43,11 @@ export default function ServicesPage() {
         items={["Criação ou revisão de roteiro personalizado"]}
         optionals={[
           "Emissão de passagens aéreas",
-          "JR Pass",
           "Emissão de ingressos para Tokyo Disneyland, Universal Studios Japan e teamLab",
+          "JR Pass",
           "Seguro viagem",
           "Guia turístico",
-          "Transporte privado bate e volta para Kawaguchiko(Monte Fuji)",
+          "Transporte privado para bate e volta para Kawaguchiko(Monte Fuji)",
         ]}
         exclusions={[
           "Reservas de restaurantes",
