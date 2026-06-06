@@ -30,61 +30,65 @@ export default function ServicesPage() {
         </div>
       </section>
 
-      <ServiceSection
-        label="Planejamento"
-        title="Alpinea Design"
-        description="Para viajantes que desejam conduzir a própria viagem com uma base estratégica, elegante e bem construída."
-        items={[
-          "Criação ou revisão de roteiro personalizado",
+<ServiceSection
+  label="Planejamento"
+  title="Alpinea Design"
+  description="Para viajantes que desejam conduzir a própria viagem com uma base estratégica, elegante e bem construída."
+  items={[
+    "Criação ou revisão de roteiro personalizado",
+  ]}
+  optionals={[
+    "Emissão de passagens aéreas",
+    "JR Pass",
+    "Emissão de ingressos para Tokyo Disneyland, Universal Studios Japan e teamLab",
+    "Seguro viagem",
+  ]}
+  exclusions={[
+    "Reservas de restaurantes",
+    "Reservas de hotéis",
+    "Emissão de passagens",
+    "Acompanhamento durante a viagem",
+  ]}
+/>
 
-          
-        ]}
-        exclusions={[
-          "Reservas de restaurantes",
-          "Reservas de hotéis",
-          "Emissão de passagens",
-          "Acompanhamento durante a viagem",
-          
-        ]}
-      />
+<ServiceSection
+  label="Execução"
+  title="Alpinea Executive"
+  description="Para clientes que desejam planejamento completo, reservas, logística e organização antes da chegada ao Japão."
+  items={[
+    "Criação de roteiro personalizado",
+    "Emissão de passagens aéreas",
+    "Reserva de hotéis",
+    "Organização de transporte privado",
+    "Curadoria gastronômica",
+    "Solicitação e gestão de reservas em restaurantes",
+    "Planejamento de compras",
+    "Recomendações de experiências e atrações",
+    "Coordenação logística da viagem",
+    "Concierge para suporte remoto durante a estadia",
+  ]}
+/>
 
-      <ServiceSection
-        label="Execução"
-        title="Alpinea Executive"
-        description="Para clientes que desejam planejamento completo, reservas, logística e organização antes da chegada ao Japão."
-        items={[
-          "Criação de roteiro personalizado",
-          "Emissão de passagens aéreas",
-          "Reserva de hotéis",
-          "Organização de transporte privado",
-          "Curadoria gastronômica",
-          "Solicitação e gestão de reservas em restaurantes",
-          "Planejamento de compras",
-          "Recomendações de experiências e atrações",
-          "Coordenação logística da viagem",
-          "Concierge para suporte remoto durante a estadia",
-        ]}
-      />
-
-      <ServiceSection
-        label="Acompanhamento Presencial"
-        title="Alpinea Private"
-        description="Para clientes que desejam uma experiência com suporte local, acompanhamento presencial e execução dedicada no Japão."
-        items={[
-          "Criação de roteiro personalizado",
-          "Emissão de passagens aéreas",
-          "Reserva de hotéis",
-          "Organização de transporte privado",
-          "Curadoria gastronômica",
-          "Solicitação e gestão de reservas em restaurantes",
-          "Planejamento de compras",
-          "Acompanhamento presencial em restaurantes",
-          "Acompanhamento presencial para compras",
-          "Acompanhamento presencial em atrações turísticas",
-          "Coordenação local com fornecedores",
-          "Concierge com suporte prioritário durante a viagem",
-        ]}
-      />
+<ServiceSection
+  label="Acompanhamento Presencial"
+  title="Alpinea Private"
+  description="Para clientes que desejam uma experiência com suporte local, acompanhamento presencial e execução dedicada no Japão."
+  items={[
+    "Criação de roteiro personalizado",
+    "Emissão de passagens aéreas",
+    "Reserva de hotéis",
+    "Organização de transporte privado",
+    "Curadoria gastronômica",
+    "Solicitação e gestão de reservas em restaurantes",
+    "Planejamento de compras",
+    "Acompanhamento presencial em restaurantes",
+    "Acompanhamento presencial para compras",
+    "Acompanhamento presencial em atrações turísticas",
+    "Coordenação local com fornecedores",
+    "Concierge com suporte prioritário durante a viagem",
+  ]}
+/>
+      
 
       <section id="contact" className="bg-white px-8 py-28 text-black md:px-16">
         <div className="mx-auto max-w-4xl text-center">
@@ -129,12 +133,14 @@ function ServiceSection({
   title,
   description,
   items,
+  optionals,
   exclusions,
 }: {
   label: string;
   title: string;
   description: string;
   items: string[];
+  optionals?: string[];
   exclusions?: string[];
 }) {
   return (
