@@ -39,20 +39,18 @@ export default function ServicesPage() {
       <ServiceSection
         label="Planejamento"
         title="Alpinea Design"
-        description="Para viajantes que desejam conduzir a própria viagem, mas não abrem mão da assessoria especializada da Alpinea."
+        description="Para viajantes que desejam conduzir a própria viagem com uma base estratégica, elegante e bem construída."
         items={["Criação ou revisão de roteiro personalizado"]}
         optionals={[
           "Emissão de passagens aéreas",
-          "Emissão de ingressos para Tokyo Disneyland, Universal Studios Japan e teamLab",
           "JR Pass",
+          "Emissão de ingressos para Tokyo Disneyland, Universal Studios Japan e teamLab",
           "Seguro viagem",
-          "Guia turístico",
-          "Transporte privado para bate e volta para Kawaguchiko(Monte Fuji)",
         ]}
         exclusions={[
           "Reservas de restaurantes",
           "Reservas de hotéis",
-          "Acompanhamento presencial durante a viagem",
+          "Acompanhamento durante a viagem",
         ]}
       />
 
@@ -71,11 +69,11 @@ export default function ServicesPage() {
           "Recomendações de experiências e atrações",
           "Coordenação logística da viagem",
           "Concierge para suporte remoto durante a estadia",
-]}
-  exclusions={[
-    "Acompanhamento presencial em restaurantes, compras e atrações turisticas",
-  
-  
+        ]}
+        exclusions={[
+          "Acompanhamento presencial em restaurantes",
+          "Acompanhamento presencial para compras",
+          "Acompanhamento presencial em atrações turísticas",
         ]}
       />
 
@@ -83,6 +81,7 @@ export default function ServicesPage() {
         label="Acompanhamento Presencial"
         title="Alpinea Private"
         description="Para clientes que desejam uma experiência com suporte local, acompanhamento presencial e execução dedicada no Japão."
+        featured
         items={[
           "Criação de roteiro personalizado",
           "Emissão de passagens aéreas",
@@ -99,157 +98,88 @@ export default function ServicesPage() {
         ]}
       />
 
+      <section className="border-t border-white/10 bg-black px-8 py-32 md:px-16">
+        <div className="mx-auto max-w-7xl">
+          <p className="mb-8 text-xs uppercase tracking-[0.35em] text-white/40">
+            Comparativo de Serviços
+          </p>
 
-{/* COMPARATIVO */}
+          <h2 className="max-w-4xl text-5xl font-light leading-[1.05] tracking-tight text-white md:text-7xl">
+            O que muda entre
+            <br />
+            cada formato.
+          </h2>
 
-<section className="border-t border-white/10 bg-black px-8 py-32 md:px-16">
-  <div className="mx-auto max-w-7xl">
+          <p className="mt-10 max-w-3xl text-lg font-light leading-9 text-white/65">
+            Todos os formatos compartilham a mesma curadoria, conhecimento de
+            destino e acesso à rede de fornecedores da Alpinea. A diferença está
+            no nível de execução e presença ao longo da jornada.
+          </p>
 
-    <p className="mb-8 text-xs uppercase tracking-[0.35em] text-white/40">
-      Comparativo de Serviços
-    </p>
+          <div className="mt-20 overflow-x-auto">
+            <table className="w-full min-w-[900px] border-collapse text-left">
+              <thead>
+                <tr className="border-b border-white/10">
+                  <th className="py-6 text-xs uppercase tracking-[0.35em] text-white/30">
+                    Serviço
+                  </th>
+                  <th className="py-6 text-center text-xs uppercase tracking-[0.35em] text-white">
+                    Design
+                  </th>
+                  <th className="py-6 text-center text-xs uppercase tracking-[0.35em] text-white">
+                    Executive
+                  </th>
+                  <th className="py-6 text-center text-xs uppercase tracking-[0.35em] text-white">
+                    Private
+                  </th>
+                </tr>
+              </thead>
 
-    <h2 className="max-w-4xl text-5xl font-light leading-[1.05] tracking-tight text-white md:text-7xl">
-      O que muda entre
-      <br />
-      cada formato.
-    </h2>
-
-    <p className="mt-10 max-w-3xl text-lg font-light leading-9 text-white/65">
-      Todos os formatos compartilham a mesma curadoria, conhecimento de destino
-      e acesso à rede de fornecedores da Alpinea. A diferença está no nível de
-      execução e presença ao longo da jornada.
-    </p>
-
-    <div className="mt-20 overflow-x-auto">
-      <table className="w-full min-w-[900px] border-collapse text-left">
-        <thead>
-          <tr className="border-b border-white/10">
-            <th className="py-6 text-xs uppercase tracking-[0.35em] text-white/30">
-              Serviço
-            </th>
-
-            <th className="py-6 text-center text-xs uppercase tracking-[0.35em] text-white">
-              Design
-            </th>
-
-            <th className="py-6 text-center text-xs uppercase tracking-[0.35em] text-white">
-              Executive
-            </th>
-
-            <th className="py-6 text-center text-xs uppercase tracking-[0.35em] text-white">
-              Private
-            </th>
-          </tr>
-        </thead>
-
-        <tbody className="text-white/80">
-
-          <tr className="border-b border-white/10">
-            <td className="py-5">Criação ou revisão de roteiro</td>
-            <td className="text-center">✓</td>
-            <td className="text-center">✓</td>
-            <td className="text-center">✓</td>
-          </tr>
-
-          <tr className="border-b border-white/10">
-            <td className="py-5">Emissão de passagens aéreas</td>
-            <td className="text-center text-white/60">Opcional</td>
-            <td className="text-center">✓</td>
-            <td className="text-center">✓</td>
-          </tr>
-
-          <tr className="border-b border-white/10">
-            <td className="py-5">Reserva de hotéis</td>
-            <td className="text-center text-white/25">—</td>
-            <td className="text-center">✓</td>
-            <td className="text-center">✓</td>
-          </tr>
-
-          <tr className="border-b border-white/10">
-            <td className="py-5">Organização de transporte privado</td>
-            <td className="text-center text-white/25">—</td>
-            <td className="text-center">✓</td>
-            <td className="text-center">✓</td>
-          </tr>
-
-          <tr className="border-b border-white/10">
-            <td className="py-5">Curadoria gastronômica</td>
-            <td className="text-center text-white/60">Sugestões</td>
-            <td className="text-center">✓</td>
-            <td className="text-center">✓</td>
-          </tr>
-
-          <tr className="border-b border-white/10">
-            <td className="py-5">Reservas em restaurantes</td>
-            <td className="text-center text-white/25">—</td>
-            <td className="text-center">✓</td>
-            <td className="text-center">✓</td>
-          </tr>
-
-          <tr className="border-b border-white/10">
-            <td className="py-5">Planejamento de compras</td>
-            <td className="text-center text-white/60">Sugestões</td>
-            <td className="text-center">✓</td>
-            <td className="text-center">✓</td>
-          </tr>
-
-          <tr className="border-b border-white/10">
-            <td className="py-5">JR Pass</td>
-            <td className="text-center text-white/60">Opcional</td>
-            <td className="text-center">✓</td>
-            <td className="text-center">✓</td>
-          </tr>
-
-          <tr className="border-b border-white/10">
-            <td className="py-5">Ingressos e atrações</td>
-            <td className="text-center text-white/60">Opcional</td>
-            <td className="text-center">✓</td>
-            <td className="text-center">✓</td>
-          </tr>
-
-          <tr className="border-b border-white/10">
-            <td className="py-5">Seguro viagem</td>
-            <td className="text-center text-white/60">Opcional</td>
-            <td className="text-center">✓</td>
-            <td className="text-center">✓</td>
-          </tr>
-
-          <tr className="border-b border-white/10">
-            <td className="py-5">Concierge remoto durante a viagem</td>
-            <td className="text-center text-white/25">—</td>
-            <td className="text-center">✓</td>
-            <td className="text-center">✓</td>
-          </tr>
-
-          <tr className="border-b border-white/10">
-            <td className="py-5">Acompanhamento em restaurantes</td>
-            <td className="text-center text-white/25">—</td>
-            <td className="text-center text-white/25">—</td>
-            <td className="text-center">✓</td>
-          </tr>
-
-          <tr className="border-b border-white/10">
-            <td className="py-5">Acompanhamento para compras</td>
-            <td className="text-center text-white/25">—</td>
-            <td className="text-center text-white/25">—</td>
-            <td className="text-center">✓</td>
-          </tr>
-
-          <tr>
-            <td className="py-5">Acompanhamento em atrações turísticas</td>
-            <td className="text-center text-white/25">—</td>
-            <td className="text-center text-white/25">—</td>
-            <td className="text-center">✓</td>
-          </tr>
-
-        </tbody>
-      </table>
-    </div>
-
-  </div>
-</section>
-
+              <tbody className="text-white/80">
+                {[
+                  ["Criação ou revisão de roteiro", "✓", "✓", "✓"],
+                  ["Emissão de passagens aéreas", "Opcional", "✓", "✓"],
+                  ["Reserva de hotéis", "—", "✓", "✓"],
+                  ["Organização de transporte privado", "—", "✓", "✓"],
+                  ["Curadoria gastronômica", "Sugestões", "✓", "✓"],
+                  ["Reservas em restaurantes", "—", "✓", "✓"],
+                  ["Planejamento de compras", "Sugestões", "✓", "✓"],
+                  ["JR Pass", "Opcional", "✓", "✓"],
+                  ["Ingressos e atrações", "Opcional", "✓", "✓"],
+                  ["Seguro viagem", "Opcional", "✓", "✓"],
+                  ["Concierge remoto durante a viagem", "—", "✓", "✓"],
+                  ["Acompanhamento em restaurantes", "—", "—", "✓"],
+                  ["Acompanhamento para compras", "—", "—", "✓"],
+                  ["Acompanhamento em atrações turísticas", "—", "—", "✓"],
+                ].map(([service, design, executive, privateTier]) => (
+                  <tr key={service} className="border-b border-white/10">
+                    <td className="py-5">{service}</td>
+                    <td
+                      className={`text-center ${
+                        design === "—"
+                          ? "text-white/25"
+                          : design === "Opcional" || design === "Sugestões"
+                            ? "text-white/60"
+                            : "text-white"
+                      }`}
+                    >
+                      {design}
+                    </td>
+                    <td
+                      className={`text-center ${
+                        executive === "—" ? "text-white/25" : "text-white"
+                      }`}
+                    >
+                      {executive}
+                    </td>
+                    <td className="text-center text-white">{privateTier}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
 
       <section id="contact" className="bg-white px-8 py-28 text-black md:px-16">
         <div className="mx-auto max-w-4xl text-center">
@@ -296,6 +226,7 @@ function ServiceSection({
   items,
   optionals,
   exclusions,
+  featured = false,
 }: {
   label: string;
   title: string;
@@ -303,9 +234,14 @@ function ServiceSection({
   items: string[];
   optionals?: string[];
   exclusions?: string[];
+  featured?: boolean;
 }) {
   return (
-    <section className="border-t border-white/10 bg-black px-8 py-32 md:px-16">
+    <section
+      className={`border-t border-white/10 px-8 py-32 md:px-16 ${
+        featured ? "bg-white/[0.025]" : "bg-black"
+      }`}
+    >
       <div className="mx-auto grid max-w-7xl gap-20 lg:grid-cols-2 lg:items-start">
         <div>
           <p className="mb-8 text-xs uppercase tracking-[0.35em] text-white/40">
@@ -346,10 +282,10 @@ function ServiceSection({
             </div>
           )}
 
-          {exclusions && (
+          {exclusions && exclusions.length > 0 && (
             <div className="mt-12">
               <p className="mb-6 text-xs uppercase tracking-[0.35em] text-white/35">
-                Não inclui
+                Disponível apenas em modalidades superiores
               </p>
 
               <div className="space-y-4 text-base leading-8 text-white/45">
