@@ -36,19 +36,15 @@ export default function ServicesPage() {
         description="Para viajantes que desejam conduzir a própria viagem com uma base estratégica, elegante e bem construída."
         items={[
           "Criação ou revisão de roteiro personalizado",
-          "Distribuição por cidades, bairros e dias",
-          "Recomendações de atrações conforme perfil",
-          "Sugestões selecionadas de restaurantes",
-          "Sugestões de compras e experiências",
-          "Orientação logística entre cidades, hotéis e aeroportos",
-          "PDF editorial",
-          "Planilha operacional",
+
+          
         ]}
         exclusions={[
           "Reservas de restaurantes",
           "Reservas de hotéis",
           "Emissão de passagens",
           "Acompanhamento durante a viagem",
+          
         ]}
       />
 
@@ -66,7 +62,7 @@ export default function ServicesPage() {
           "Planejamento de compras",
           "Recomendações de experiências e atrações",
           "Coordenação logística da viagem",
-          "Suporte remoto durante a estadia",
+          "Concierge para suporte remoto durante a estadia",
         ]}
       />
 
@@ -86,7 +82,7 @@ export default function ServicesPage() {
           "Acompanhamento presencial para compras",
           "Acompanhamento presencial em atrações turísticas",
           "Coordenação local com fornecedores",
-          "Suporte prioritário durante a viagem",
+          "Concierge com suporte prioritário durante a viagem",
         ]}
       />
 
