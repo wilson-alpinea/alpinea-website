@@ -61,7 +61,7 @@ export default function PreviewPage() {
 
       <section className="border-t border-white/10 px-8 py-32 md:px-16">
         <div className="mx-auto max-w-7xl">
-          <div className="mb-16 border border-white/10 bg-white/[0.035] px-8 py-8 md:px-10">
+          <div className="border border-white/10 bg-white/[0.035] px-8 py-8 md:px-10">
             <p className="mb-5 text-xs uppercase tracking-[0.45em] text-white/45">
               Dia 1
             </p>
@@ -75,132 +75,150 @@ export default function PreviewPage() {
               Oshiage, com visita à Tokyo Skytree e exploração do complexo Tokyo
               Solamachi.
             </p>
-          </div>
 
-          <div className="grid gap-20 lg:grid-cols-2 lg:items-start">
-            <div className="space-y-16">
-              <div>
-                <p className="mb-6 text-xs uppercase tracking-[0.35em] text-white/40">
-                  Manhã
-                </p>
+            <div className="mt-10 border-t border-white/10 pt-10">
+              <div className="grid gap-6 text-lg font-light leading-8 text-white/70 md:grid-cols-[220px_1fr]">
+                <p className="text-white/50">Hotel:</p>
+                <p className="text-white">Grand Hyatt Tokyo</p>
 
-                <div className="space-y-5 text-lg font-light leading-9 text-white/70">
-                  <p>
-                    <span className="text-white">Local:</span> Aeroporto
-                    Internacional de Narita — Terminal 3
-                  </p>
+                <p className="text-white/50">Endereço:</p>
+                <p>6 Chome-10-3 Roppongi, Minato City, Tokyo 106-0032, Japão</p>
 
-                  <p>
-                    Instruções gerais de chegada, imigração, retirada de bagagem,
-                    deslocamento até o hotel e ajuste inicial ao fuso horário.
-                  </p>
-                </div>
-              </div>
+                <p className="text-white/50">Código da Reserva:</p>
+                <p>H7K9Q2</p>
 
-              <div className="h-px w-full bg-white/10" />
-
-              <div>
-                <p className="mb-6 text-xs uppercase tracking-[0.35em] text-white/40">
-                  Tarde
-                </p>
-
-                <div className="space-y-8 text-lg font-light leading-9 text-white/70">
-                  <p>
-                    <span className="text-white">Local:</span> Oshiage, Tokyo
-                  </p>
-
-                  <div>
-                    <p className="mb-4 text-xs uppercase tracking-[0.35em] text-white/40">
-                      Acesso ferroviário
-                    </p>
-
-                    <Image
-                      src="/images/oshiage-lines.png"
-                      alt="Linhas ferroviárias disponíveis na estação Oshiage"
-                      width={640}
-                      height={260}
-                      className="w-full max-w-sm rounded-lg object-contain"
-                    />
-
-                    <p className="mt-4 text-sm leading-7 text-white/45">
-                      Oshiage Station é atendida pelas linhas Tobu Skytree Line,
-                      Keisei Oshiage Line, Toei Asakusa Line e Tokyo Metro
-                      Hanzomon Line.
-                    </p>
-                  </div>
-
-                  <p>
-                    <span className="text-white">Atração turística:</span> Tokyo
-                    Skytree
-                  </p>
-
-                  <InfoBlock title="Horário de funcionamento" text="10:00 às 22:00" />
-
-                  <div>
-                    <p className="text-white">Ingressos</p>
-                    <div className="mt-2 space-y-2">
-                      <p>1. Visita ao 350º andar — Tembo Deck</p>
-                      <p>2. Visita ao 350º e 450º andar</p>
-                      <p>3. Ingresso separado para a Tembo Galleria</p>
-                    </div>
-                  </div>
-
-                  <div>
-                    <p className="text-white">Preço estimado</p>
-                    <div className="mt-2 space-y-2">
-                      <p>Tembo Deck: a partir de ¥1.800 por pessoa</p>
-                      <p>Tembo Deck + Tembo Galleria: a partir de ¥3.000</p>
-                      <p>Tembo Galleria avulsa: ¥1.400 por pessoa</p>
-                      <p>Crianças entre 6 e 14 anos pagam meia entrada.</p>
-                    </div>
-                  </div>
-
-                  <InfoBlock
-                    title="Horário recomendado"
-                    text="Chegada ao complexo Tokyo Solamachi às 17:00. Subida na torre por volta das 18:15 para acompanhar o pôr do sol."
-                  />
-
-                  <InfoBlock
-                    title="Tempo estimado de visita"
-                    text="Entre 1 e 2 horas após a subida ao observatório."
-                  />
-                </div>
+                <p className="text-white/50">Horário de Check-In:</p>
+                <p>15:00</p>
               </div>
             </div>
+          </div>
+        </div>
+      </section>
 
-            <div className="lg:sticky lg:top-28">
-              <Image
-                src="/images/skytree.jpg"
-                alt="Tokyo Skytree ao entardecer"
-                width={1200}
-                height={1800}
-                priority
-                className="h-[720px] w-full rounded-xl object-cover"
-              />
+      <section className="border-t border-white/10 bg-white/[0.02] px-8 py-32 md:px-16">
+        <div className="mx-auto max-w-7xl">
+          <p className="mb-8 text-xs uppercase tracking-[0.35em] text-white/40">
+            Manhã
+          </p>
 
-              <p className="mt-4 text-xs uppercase tracking-[0.35em] text-white/35">
-                Tokyo Skytree · Oshiage · Tokyo
+          <div className="max-w-4xl space-y-8 text-lg font-light leading-9 text-white/70">
+            <p>
+              <span className="text-white">Local:</span> Aeroporto Internacional
+              de Narita — Terminal 3
+            </p>
+
+            <p>
+              Instruções gerais de chegada, imigração, retirada de bagagem,
+              restaurantes sugeridos no aeroporto, ações obrigatórias antes de
+              sair do aeroporto, comentários gerais e guia de deslocamento até o
+              hotel.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section className="border-t border-white/10 px-8 py-32 md:px-16">
+        <div className="mx-auto grid max-w-7xl gap-20 lg:grid-cols-2 lg:items-start">
+          <div>
+            <p className="mb-8 text-xs uppercase tracking-[0.35em] text-white/40">
+              Tarde
+            </p>
+
+            <div className="space-y-8 text-lg font-light leading-9 text-white/70">
+              <p>
+                <span className="text-white">Local:</span> Oshiage, Tokyo
               </p>
 
-              <div className="mt-12">
+              <div>
                 <p className="mb-4 text-xs uppercase tracking-[0.35em] text-white/40">
-                  Mapa do Complexo Tokyo Solamachi
+                  Acesso ferroviário
                 </p>
 
                 <Image
-                  src="/images/solamachi-floor1.png"
-                  alt="Mapa do primeiro andar do Tokyo Solamachi"
-                  width={1200}
-                  height={900}
-                  className="w-full rounded-xl object-contain"
+                  src="/images/oshiage-lines.png"
+                  alt="Linhas ferroviárias disponíveis na estação Oshiage"
+                  width={640}
+                  height={260}
+                  className="w-full max-w-sm rounded-lg object-contain"
                 />
 
                 <p className="mt-4 text-sm leading-7 text-white/45">
-                  Visão geral do primeiro andar do complexo Tokyo Solamachi,
-                  incluindo acessos à estação Oshiage, áreas comerciais,
-                  serviços, cafés, restaurantes e principais pontos de circulação.
+                  Oshiage Station é atendida pelas linhas Tobu Skytree Line,
+                  Keisei Oshiage Line, Toei Asakusa Line e Tokyo Metro Hanzomon
+                  Line.
                 </p>
               </div>
+
+              <p>
+                <span className="text-white">Atração turística:</span> Tokyo
+                Skytree
+              </p>
+
+              <InfoBlock title="Horário de funcionamento" text="10:00 às 22:00" />
+
+              <div>
+                <p className="text-white">Ingressos</p>
+                <div className="mt-2 space-y-2">
+                  <p>1. Visita ao 350º andar — Tembo Deck</p>
+                  <p>2. Visita ao 350º e 450º andar</p>
+                  <p>3. Ingresso separado para a Tembo Galleria</p>
+                </div>
+              </div>
+
+              <div>
+                <p className="text-white">Preço estimado</p>
+                <div className="mt-2 space-y-2">
+                  <p>Tembo Deck: a partir de ¥1.800 por pessoa</p>
+                  <p>Tembo Deck + Tembo Galleria: a partir de ¥3.000</p>
+                  <p>Tembo Galleria avulsa: ¥1.400 por pessoa</p>
+                  <p>Crianças entre 6 e 14 anos pagam meia entrada.</p>
+                </div>
+              </div>
+
+              <InfoBlock
+                title="Horário recomendado"
+                text="Chegada ao complexo Tokyo Solamachi às 17:00. Subida na torre por volta das 18:15 para acompanhar o pôr do sol."
+              />
+
+              <InfoBlock
+                title="Tempo estimado de visita"
+                text="Entre 1 e 2 horas após a subida ao observatório."
+              />
+            </div>
+          </div>
+
+          <div className="lg:sticky lg:top-28">
+            <Image
+              src="/images/skytree.jpg"
+              alt="Tokyo Skytree ao entardecer"
+              width={1200}
+              height={1800}
+              priority
+              className="h-[720px] w-full rounded-xl object-cover"
+            />
+
+            <p className="mt-4 text-xs uppercase tracking-[0.35em] text-white/35">
+              Tokyo Skytree · Oshiage · Tokyo
+            </p>
+
+            <div className="mt-12">
+              <p className="mb-4 text-xs uppercase tracking-[0.35em] text-white/40">
+                Mapa do Complexo Tokyo Solamachi
+              </p>
+
+              <Image
+                src="/images/solamachi-floor1.png"
+                alt="Mapa do primeiro andar do Tokyo Solamachi"
+                width={1200}
+                height={900}
+                className="w-full rounded-xl object-contain"
+              />
+
+              <p className="mt-4 text-sm leading-7 text-white/45">
+                Visão geral do primeiro andar do complexo Tokyo Solamachi,
+                incluindo acessos à estação Oshiage, áreas comerciais, serviços,
+                cafés, restaurantes e principais pontos de circulação.
+              </p>
             </div>
           </div>
         </div>
