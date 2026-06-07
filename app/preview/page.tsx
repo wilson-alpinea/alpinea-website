@@ -2,12 +2,20 @@ export default function PreviewPage() {
   return (
     <main className="min-h-screen bg-black text-white">
       <header className="fixed left-0 right-0 top-0 z-50 flex items-center justify-between bg-black/10 px-8 py-5 backdrop-blur-2xl md:px-16">
-        <a href="/" className="text-xl tracking-[0.45em]">ALPINEA</a>
+        <a href="/" className="text-xl tracking-[0.45em]">
+          ALPINEA
+        </a>
 
         <nav className="hidden gap-8 text-xs uppercase tracking-[0.25em] text-white/70 md:flex">
-          <a href="/" className="transition hover:text-white">Início</a>
-          <a href="/services" className="transition hover:text-white">Serviços</a>
-          <a href="#contact" className="transition hover:text-white">Contato</a>
+          <a href="/" className="transition hover:text-white">
+            Início
+          </a>
+          <a href="/services" className="transition hover:text-white">
+            Serviços
+          </a>
+          <a href="#contact" className="transition hover:text-white">
+            Contato
+          </a>
         </nav>
       </header>
 
@@ -31,7 +39,7 @@ export default function PreviewPage() {
         </div>
       </section>
 
-      <section className="border-t border-white/10 px-8 py-24 md:px-16">
+      <section className="border-t border-white/10 bg-white/[0.025] px-8 py-24 md:px-16">
         <div className="mx-auto max-w-5xl space-y-10 text-lg font-light leading-9 text-white/70">
           <PreviewItem title="Perfil do viajante" text="Casal sem filhos" />
           <PreviewItem title="Cidades sugeridas" text="Tokyo, Osaka e Kyoto" />
@@ -170,45 +178,62 @@ export default function PreviewPage() {
       </section>
 
       <section className="border-t border-white/10 px-8 py-32 md:px-16">
-        <div className="mx-auto max-w-7xl">
-          <p className="mb-8 text-xs uppercase tracking-[0.35em] text-white/40">
-            Restaurantes sugeridos
-          </p>
+        <div className="mx-auto grid max-w-7xl gap-20 lg:grid-cols-2 lg:items-start">
+          <div>
+            <p className="mb-8 text-xs uppercase tracking-[0.35em] text-white/40">
+              Restaurantes sugeridos
+            </p>
 
-          <div className="max-w-4xl">
             <p className="text-lg font-light leading-9 text-white/70">
               A Tokyo Skytree está integrada ao shopping Tokyo Solamachi, que
               reúne diversas opções de restaurantes, praça de alimentação e um
               mercado no subsolo com alternativas para takeout.
             </p>
+
+            <div className="mt-16 space-y-14">
+              <RestaurantBlock
+                name="Hitsumabushi Bincho Tokyo Solamachi"
+                description="Restaurante especializado em enguia, com destaque para o hitsumabushi, prato típico da província de Aichi."
+                location="6º andar do Tokyo Solamachi"
+                price="Aproximadamente ¥6.000 por pessoa"
+                hours="11:00–21:00"
+              />
+
+              <RestaurantBlock
+                name="Kaiten Sushi Toriton"
+                description="Restaurante de sushi de esteira, conhecido por boa relação entre praticidade, qualidade e variedade."
+                location="6º andar do Tokyo Solamachi"
+                price="Aproximadamente ¥6.000 por pessoa"
+                hours="11:00–22:00, último pedido às 21:30"
+              />
+            </div>
+
+            <p className="mt-12 text-sm leading-8 text-white/45">
+              O complexo conta com inúmeros outros restaurantes e opções para
+              takeout no Food Marché, localizado no subsolo do shopping.
+            </p>
           </div>
 
-          <div className="mt-16 grid gap-16 lg:grid-cols-2">
-            <RestaurantBlock
-              name="Hitsumabushi Bincho Tokyo Solamachi"
-              description="Restaurante especializado em enguia, com destaque para o hitsumabushi, prato típico da província de Aichi."
-              location="6º andar do Tokyo Solamachi"
-              price="Aproximadamente ¥6.000 por pessoa"
-              hours="11:00–21:00"
+          <div className="lg:sticky lg:top-28">
+            <p className="mb-6 text-xs uppercase tracking-[0.35em] text-white/40">
+              Mapa — Solamachi Dining
+            </p>
+
+            <img
+              src="/images/solamachi-dining-map.png"
+              alt="Mapa dos restaurantes do Tokyo Solamachi"
+              className="w-full object-contain"
             />
 
-            <RestaurantBlock
-              name="Kaiten Sushi Toriton"
-              description="Restaurante de sushi de esteira, conhecido por boa relação entre praticidade, qualidade e variedade."
-              location="6º andar do Tokyo Solamachi"
-              price="Aproximadamente ¥6.000 por pessoa"
-              hours="11:00–22:00, último pedido às 21:30"
-            />
+            <p className="mt-5 text-sm leading-7 text-white/45">
+              Referência dos restaurantes localizados entre o 6º e 7º andar do
+              Tokyo Solamachi.
+            </p>
           </div>
-
-          <p className="mt-12 max-w-4xl text-sm leading-8 text-white/45">
-            O complexo conta com inúmeros outros restaurantes e opções para
-            takeout no Food Marché, localizado no subsolo do shopping.
-          </p>
         </div>
       </section>
 
-      <section className="border-t border-white/10 px-8 py-32 md:px-16">
+            <section className="border-t border-white/10 px-8 py-32 md:px-16">
         <div className="mx-auto max-w-7xl">
           <p className="mb-8 text-xs uppercase tracking-[0.35em] text-white/40">
             Lojas & Compras
@@ -281,6 +306,24 @@ export default function PreviewPage() {
             Compartilhe suas datas, preferências e estilo de viagem. A Alpinea
             estrutura o roteiro a partir do seu perfil.
           </p>
+
+          <div className="mt-12 flex flex-col items-center justify-center gap-4 sm:flex-row">
+            <a
+              href="mailto:wilson@alpinea.io"
+              className="border border-black px-8 py-4 text-xs uppercase tracking-[0.3em] transition hover:bg-black hover:text-white"
+            >
+              Entrar em Contato
+            </a>
+
+            <a
+              href="https://wa.me/5511996691818"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="border border-black/20 px-8 py-4 text-xs uppercase tracking-[0.3em] text-black/70 transition hover:border-black hover:text-black"
+            >
+              WhatsApp Concierge
+            </a>
+          </div>
         </div>
       </section>
     </main>
