@@ -1,3 +1,11 @@
+import Image from "next/image";
+
+export const metadata = {
+  title: "Alpinea | Roteiros Personalizados para o Japão",
+  description:
+    "Roteiros personalizados para viajantes que buscam profundidade, conforto e experiências exclusivas no Japão.",
+};
+
 export default function PreviewPage() {
   return (
     <main className="min-h-screen bg-black text-white">
@@ -22,7 +30,7 @@ export default function PreviewPage() {
       <section className="px-8 pb-20 pt-40 md:px-16 md:pt-48">
         <div className="mx-auto max-w-7xl">
           <p className="mb-8 text-xs uppercase tracking-[0.35em] text-white/40">
-            Amostra de Roteiro
+            Exemplo de Curadoria Alpinea
           </p>
 
           <h1 className="max-w-5xl text-5xl font-light leading-[1.05] tracking-tight md:text-7xl">
@@ -53,12 +61,24 @@ export default function PreviewPage() {
 
       <section className="border-t border-white/10 px-8 py-32 md:px-16">
         <div className="mx-auto max-w-7xl">
-          <p className="mb-10 text-xs uppercase tracking-[0.35em] text-white/40">
-            Dia 1 — Tokyo
-          </p>
+          <div className="mb-16 border border-white/10 bg-white/[0.035] px-8 py-8 md:px-10">
+            <p className="mb-5 text-xs uppercase tracking-[0.45em] text-white/45">
+              Dia 1
+            </p>
+
+            <h2 className="text-4xl font-light tracking-tight text-white md:text-6xl">
+              Tokyo
+            </h2>
+
+            <p className="mt-6 max-w-3xl text-lg font-light leading-9 text-white/60">
+              Chegada ao Japão, acomodação inicial e primeira experiência em
+              Oshiage, com visita à Tokyo Skytree e exploração do complexo Tokyo
+              Solamachi.
+            </p>
+          </div>
 
           <div className="grid gap-20 lg:grid-cols-2 lg:items-start">
-            <div className="space-y-20">
+            <div className="space-y-16">
               <div>
                 <p className="mb-6 text-xs uppercase tracking-[0.35em] text-white/40">
                   Manhã
@@ -77,6 +97,8 @@ export default function PreviewPage() {
                 </div>
               </div>
 
+              <div className="h-px w-full bg-white/10" />
+
               <div>
                 <p className="mb-6 text-xs uppercase tracking-[0.35em] text-white/40">
                   Tarde
@@ -92,10 +114,12 @@ export default function PreviewPage() {
                       Acesso ferroviário
                     </p>
 
-                    <img
+                    <Image
                       src="/images/oshiage-lines.png"
                       alt="Linhas ferroviárias disponíveis na estação Oshiage"
-                      className="w-full max-w-sm"
+                      width={640}
+                      height={260}
+                      className="w-full max-w-sm rounded-lg object-contain"
                     />
 
                     <p className="mt-4 text-sm leading-7 text-white/45">
@@ -145,10 +169,13 @@ export default function PreviewPage() {
             </div>
 
             <div className="lg:sticky lg:top-28">
-              <img
+              <Image
                 src="/images/skytree.jpg"
                 alt="Tokyo Skytree ao entardecer"
-                className="h-[720px] w-full object-cover"
+                width={1200}
+                height={1800}
+                priority
+                className="h-[720px] w-full rounded-xl object-cover"
               />
 
               <p className="mt-4 text-xs uppercase tracking-[0.35em] text-white/35">
@@ -160,10 +187,12 @@ export default function PreviewPage() {
                   Mapa do Complexo Tokyo Solamachi
                 </p>
 
-                <img
+                <Image
                   src="/images/solamachi-floor1.png"
                   alt="Mapa do primeiro andar do Tokyo Solamachi"
-                  className="w-full object-contain"
+                  width={1200}
+                  height={900}
+                  className="w-full rounded-xl object-contain"
                 />
 
                 <p className="mt-4 text-sm leading-7 text-white/45">
@@ -219,10 +248,12 @@ export default function PreviewPage() {
               Mapa — Solamachi Dining
             </p>
 
-            <img
+            <Image
               src="/images/solamachi-dining-map.png"
               alt="Mapa dos restaurantes do Tokyo Solamachi"
-              className="w-full object-contain"
+              width={1200}
+              height={900}
+              className="w-full rounded-xl object-contain"
             />
 
             <p className="mt-5 text-sm leading-7 text-white/45">
@@ -233,7 +264,7 @@ export default function PreviewPage() {
         </div>
       </section>
 
-            <section className="border-t border-white/10 px-8 py-32 md:px-16">
+      <section className="border-t border-white/10 px-8 py-32 md:px-16">
         <div className="mx-auto max-w-7xl">
           <p className="mb-8 text-xs uppercase tracking-[0.35em] text-white/40">
             Lojas & Compras
@@ -299,7 +330,7 @@ export default function PreviewPage() {
           </p>
 
           <h2 className="text-4xl font-light leading-tight md:text-6xl">
-            Transforme uma amostra em uma jornada completa.
+            Uma viagem excepcional começa com uma curadoria excepcional.
           </h2>
 
           <p className="mx-auto mt-8 max-w-2xl text-lg leading-9 text-black/60">
