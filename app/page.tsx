@@ -76,7 +76,7 @@ export default function Home() {
   </a>
 
   <nav className="hidden gap-8 text-xs uppercase tracking-[0.25em] text-white/70 md:flex">
-    <a href="/" className="transition text-white">
+    <a href="/" className="transition hover:text-white">
       Início
     </a>
 
@@ -85,7 +85,7 @@ export default function Home() {
     </a>
 
     <a href="/preview" className="transition hover:text-white">
-      Preview
+      Roteiro
     </a>
 
     <a href="#contact" className="transition hover:text-white">

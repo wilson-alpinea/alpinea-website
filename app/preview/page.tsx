@@ -9,7 +9,7 @@ export const metadata = {
 export default function PreviewPage() {
   return (
     <main className="min-h-screen bg-black text-white">
-      <header className="fixed left-0 right-0 top-0 z-50 flex items-center justify-between bg-black/10 px-8 py-5 backdrop-blur-2xl md:px-16">
+    <header className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between bg-black/10 px-8 py-5 backdrop-blur-2xl md:px-16">
         <a href="/" className="text-xl tracking-[0.45em]">
           ALPINEA
         </a>

@@ -1,23 +1,30 @@
 export default function ServicesPage() {
   return (
     <main className="min-h-screen bg-black text-white">
-      <header className="fixed left-0 right-0 top-0 z-50 flex items-center justify-between bg-black/10 px-8 py-5 backdrop-blur-2xl md:px-16">
-        <a href="/" className="text-xl tracking-[0.45em]">
-          ALPINEA
-        </a>
+<header className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between bg-black/10 px-8 py-5 backdrop-blur-2xl md:px-16">
 
-        <nav className="hidden gap-8 text-xs uppercase tracking-[0.25em] text-white/70 md:flex">
-          <a href="/" className="transition hover:text-white">
-            Início
-          </a>
-          <a href="/services" className="transition hover:text-white">
-            Serviços
-          </a>
-          <a href="#contact" className="transition hover:text-white">
-            Contato
-          </a>
-        </nav>
-      </header>
+  <a href="/" className="text-xl tracking-[0.45em]">
+    ALPINEA
+  </a>
+
+  <nav className="hidden gap-8 text-xs uppercase tracking-[0.25em] text-white/70 md:flex">
+    <a href="/" className="transition hover:text-white">
+      Início
+    </a>
+
+    <a href="/services" className="transition hover:text-white">
+      Serviços
+    </a>
+
+    <a href="/preview" className="transition hover:text-white">
+      Roteiro
+    </a>
+
+    <a href="#contact" className="transition hover:text-white">
+      Contato
+    </a>
+  </nav>
+</header>
 
       <section className="px-8 pb-20 pt-40 md:px-16 md:pt-48">
         <div className="mx-auto max-w-7xl">
