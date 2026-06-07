@@ -77,18 +77,36 @@ export default function PreviewPage() {
             </p>
 
             <div className="mt-10 border-t border-white/10 pt-10">
-              <div className="grid gap-6 text-lg font-light leading-8 text-white/70 md:grid-cols-[220px_1fr]">
-                <p className="text-white/50">Hotel:</p>
-                <p className="text-white">Grand Hyatt Tokyo</p>
+              <p className="mb-8 text-xs uppercase tracking-[0.35em] text-white/40">
+                Hospedagem
+              </p>
 
-                <p className="text-white/50">Endereço:</p>
-                <p>6 Chome-10-3 Roppongi, Minato City, Tokyo 106-0032, Japão</p>
+              <div className="grid gap-10 lg:grid-cols-[1.1fr_1fr]">
+                <div>
+                  <p className="text-3xl font-light text-white md:text-4xl">
+                    Grand Hyatt Tokyo
+                  </p>
 
-                <p className="text-white/50">Código da Reserva:</p>
-                <p>H7K9Q2</p>
+                  <p className="mt-5 max-w-2xl text-lg font-light leading-8 text-white/60">
+                    6 Chome-10-3 Roppongi, Minato City, Tokyo 106-0032, Japão
+                  </p>
+                </div>
 
-                <p className="text-white/50">Horário de Check-In:</p>
-                <p>15:00</p>
+                <div className="grid gap-6 text-base leading-7 text-white/60 sm:grid-cols-2">
+                  <div>
+                    <p className="mb-2 text-xs uppercase tracking-[0.3em] text-white/35">
+                      Check-In
+                    </p>
+                    <p className="text-lg text-white">15:00</p>
+                  </div>
+
+                  <div>
+                    <p className="mb-2 text-xs uppercase tracking-[0.3em] text-white/35">
+                      Código da Reserva
+                    </p>
+                    <p className="text-sm text-white/45">H7K9Q2</p>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
