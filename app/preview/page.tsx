@@ -56,6 +56,7 @@ export default function PreviewPage() {
             text="Bastante tempo livre, com uma atração turística no período da manhã e uma à tarde. Noites livres para descanso, compras ou experiências espontâneas."
           />
           <PreviewItem title="Estilo de curadoria" text="Alpinea Design" />
+          <PreviewItem title="Duração da viagem" text="15 Dias" />
         </div>
       </section>
 
@@ -81,7 +82,17 @@ export default function PreviewPage() {
                 Hospedagem
               </p>
 
-              <div className="grid gap-10 lg:grid-cols-[1.1fr_1fr]">
+              <div className="grid gap-10 lg:grid-cols-[0.9fr_1.1fr_1fr] lg:items-center">
+                <div>
+                  <Image
+                    src="/images/grandhyattlogo.png"
+                    alt="Grand Hyatt Tokyo"
+                    width={520}
+                    height={260}
+                    className="w-full max-w-xs object-contain"
+                  />
+                </div>
+
                 <div>
                   <p className="text-3xl font-light text-white md:text-4xl">
                     Grand Hyatt Tokyo
@@ -92,7 +103,7 @@ export default function PreviewPage() {
                   </p>
                 </div>
 
-                <div className="grid gap-6 text-base leading-7 text-white/60 sm:grid-cols-2">
+                <div className="grid gap-6 text-base leading-7 text-white/60 sm:grid-cols-2 lg:grid-cols-1">
                   <div>
                     <p className="mb-2 text-xs uppercase tracking-[0.3em] text-white/35">
                       Check-In
@@ -201,6 +212,11 @@ export default function PreviewPage() {
               <InfoBlock
                 title="Tempo estimado de visita"
                 text="Entre 1 e 2 horas após a subida ao observatório."
+              />
+
+              <InfoBlock
+                title="Comentários"
+                text="Eu normalmente compro o ingresso para o 350º andar, não vejo grande diferença entre os andares, não acho que vale a pena o restaurante e nem a galeria que ficam no topo da torre. As opções de comida na base são melhores, o complexo tem uma quantidade gigante de lojas. Recomendo passar nas lojas depois de subir para não precisar carregar peso. Todos os restaurantes costumam ter filas, se programe para chegar pelo menos 30 minutos antes do horário desejado para comer. Se não estiver com muita fome, a praça de alimentação tem ótimas opções para lanches como o Gindaco, que faz o típico bolinho de polvo frito, Takoyaki, da região de Kansai."
               />
             </div>
           </div>
