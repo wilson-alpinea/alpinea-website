@@ -10,6 +10,9 @@ export default function ServicesPage() {
           <a href="/" className="transition hover:text-white">
             Início
           </a>
+          <a href="/services" className="transition hover:text-white">
+            Serviços
+          </a>
           <a href="#contact" className="transition hover:text-white">
             Contato
           </a>
@@ -97,6 +100,31 @@ export default function ServicesPage() {
           "Concierge com suporte prioritário durante a viagem",
         ]}
       />
+
+      <section className="border-t border-white/10 bg-white/[0.025] px-8 py-32 md:px-16">
+        <div className="mx-auto max-w-5xl text-center">
+          <p className="mb-8 text-xs uppercase tracking-[0.35em] text-white/40">
+            Preview de Roteiro
+          </p>
+
+          <h2 className="text-4xl font-light leading-tight md:text-6xl">
+            Veja um exemplo real de curadoria Alpinea.
+          </h2>
+
+          <p className="mx-auto mt-8 max-w-2xl text-lg font-light leading-9 text-white/60">
+            Explore uma prévia de como estruturamos hotéis, logística,
+            restaurantes, atrações, mapas internos, compras e recomendações
+            práticas para uma jornada no Japão.
+          </p>
+
+          <a
+            href="/preview"
+            className="mt-12 inline-block border border-white px-8 py-4 text-xs uppercase tracking-[0.3em] transition hover:bg-white hover:text-black"
+          >
+            Abrir Preview
+          </a>
+        </div>
+      </section>
 
       <section className="border-t border-white/10 bg-black px-8 py-32 md:px-16">
         <div className="mx-auto max-w-7xl">
@@ -239,42 +267,51 @@ function ServiceSection({
   return (
     <section
       className={`border-t border-white/10 px-8 py-32 md:px-16 ${
-        featured ? "bg-white/[0.025]" : "bg-black"
+        featured ? "bg-white/[0.035]" : "bg-black"
       }`}
     >
-      <div className="mx-auto grid max-w-7xl gap-20 lg:grid-cols-2 lg:items-start">
+      <div className="mx-auto grid max-w-7xl gap-16 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
         <div>
           <p className="mb-8 text-xs uppercase tracking-[0.35em] text-white/40">
             {label}
           </p>
 
-          <h2 className="text-5xl font-light leading-[1.05] tracking-tight text-white md:text-7xl">
+          <h2 className="text-5xl font-light leading-tight tracking-tight md:text-7xl">
             {title}
           </h2>
 
-          <p className="mt-10 max-w-xl text-lg font-light leading-9 text-white/65">
+          <p className="mt-8 max-w-2xl text-lg font-light leading-9 text-white/65">
             {description}
           </p>
+
+          <a
+            href="/preview"
+            className="mt-8 inline-flex text-xs uppercase tracking-[0.25em] text-white/50 transition hover:text-white"
+          >
+            Exemplo de Roteiro →
+          </a>
         </div>
 
-        <div>
-          <p className="mb-8 text-xs uppercase tracking-[0.35em] text-white/40">
-            Serviços
-          </p>
+        <div className="space-y-12">
+          <div>
+            <p className="mb-6 text-xs uppercase tracking-[0.35em] text-white/40">
+              Inclui
+            </p>
 
-          <div className="space-y-5 text-lg font-light leading-9 text-white/75">
-            {items.map((item) => (
-              <p key={item}>{item}</p>
-            ))}
+            <div className="space-y-5 text-lg font-light leading-8 text-white/70">
+              {items.map((item) => (
+                <p key={item}>{item}</p>
+              ))}
+            </div>
           </div>
 
-          {optionals && optionals.length > 0 && (
-            <div className="mt-12">
+          {optionals && (
+            <div className="border-t border-white/10 pt-10">
               <p className="mb-6 text-xs uppercase tracking-[0.35em] text-white/40">
                 Opcionais
               </p>
 
-              <div className="space-y-5 text-lg font-light leading-9 text-white/65">
+              <div className="space-y-5 text-lg font-light leading-8 text-white/60">
                 {optionals.map((item) => (
                   <p key={item}>{item}</p>
                 ))}
@@ -282,13 +319,13 @@ function ServiceSection({
             </div>
           )}
 
-          {exclusions && exclusions.length > 0 && (
-            <div className="mt-12">
-              <p className="mb-6 text-xs uppercase tracking-[0.35em] text-white/35">
-                Disponível apenas em modalidades superiores
+          {exclusions && (
+            <div className="border-t border-white/10 pt-10">
+              <p className="mb-6 text-xs uppercase tracking-[0.35em] text-white/40">
+                Não inclui
               </p>
 
-              <div className="space-y-4 text-base leading-8 text-white/45">
+              <div className="space-y-5 text-lg font-light leading-8 text-white/45">
                 {exclusions.map((item) => (
                   <p key={item}>{item}</p>
                 ))}
