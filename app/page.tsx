@@ -100,7 +100,7 @@ export default function Home() {
           </p>
 
           <h1 className="text-6xl font-light leading-[1.05] tracking-tight text-white md:text-8xl">
-  O Japão, vivido com
+  Viva o Japão com
   <br />
  <span className="bg-gradient-to-r from-[#E94332] via-[#D96A2E] to-[#C9A03A] bg-clip-text text-transparent animate-luxury-gradient bg-[length:180%_180%]">
   exclusividade.
