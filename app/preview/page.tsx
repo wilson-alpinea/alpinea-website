@@ -39,7 +39,6 @@ export default function PreviewPage() {
           sizes="100vw"
           className="object-cover opacity-55"
         />
-
         <div className="absolute inset-0 bg-black/35" />
         <div className="absolute inset-0 bg-gradient-to-b from-black/55 via-black/20 to-black" />
 
@@ -98,15 +97,13 @@ export default function PreviewPage() {
               </p>
 
               <div className="grid gap-10 lg:grid-cols-[0.9fr_1.1fr_1fr] lg:items-center">
-                <div>
-                  <Image
-                    src="/images/grandhyattlogo.png"
-                    alt="Grand Hyatt Tokyo"
-                    width={520}
-                    height={260}
-                    className="w-full max-w-xs object-contain"
-                  />
-                </div>
+                <Image
+                  src="/images/grandhyattlogo.png"
+                  alt="Grand Hyatt Tokyo"
+                  width={520}
+                  height={260}
+                  className="w-full max-w-xs object-contain"
+                />
 
                 <div>
                   <p className="text-3xl font-light text-white md:text-4xl">
@@ -179,21 +176,21 @@ export default function PreviewPage() {
                 Acesso à Estação
               </p>
 
-              <div className="space-y-8">
+              <Image
+                src="/images/oshiage-lines.png"
+                alt="Linhas ferroviárias disponíveis na estação Oshiage"
+                width={640}
+                height={260}
+                className="w-full max-w-sm rounded-lg object-contain"
+              />
 
- <Image
-  src="/images/oshiage-lines.png"
-  alt="Linhas ferroviárias disponíveis na estação Oshiage"
-  width={640}
-  height={260}
-  className="w-full max-w-sm rounded-lg object-contain"
-/>
+              <p className="mt-4 text-sm leading-7 text-white/45">
+                Oshiage Station é atendida pelas linhas Tobu Skytree Line,
+                Keisei Oshiage Line, Toei Asakusa Line e Tokyo Metro Hanzomon
+                Line.
+              </p>
 
-<p className="mt-4 text-sm leading-7 text-white/45">
-  Oshiage Station é atendida pelas linhas Tobu Skytree Line,
-  Keisei Oshiage Line, Toei Asakusa Line e Tokyo Metro Hanzomon Line.
-</p>
-
+              <div className="mt-10 space-y-8">
                 <div>
                   <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/35">
                     Nome da Estação
@@ -252,7 +249,7 @@ export default function PreviewPage() {
                 Recomendação Alpinea
               </p>
 
-              <p>
+              <p className="max-w-[32rem]">
                 A partir do Grand Hyatt Tokyo, a diferença de tempo entre metrô e
                 carro/táxi é irrelevante. O táxi proporciona maior comodidade,
                 mas a diferença de preço é grande. Em caso de chuva ou vento
@@ -262,13 +259,37 @@ export default function PreviewPage() {
               </p>
             </div>
 
-          
-
-            <div className="border-t border-white/10 pt-10">
-              <p>
-                <span className="text-white">Atração turística:</span> Tokyo
-                Skytree
+            <div className="border-t border-white/10 pt-12">
+              <p className="mb-6 text-xs uppercase tracking-[0.35em] text-white/40">
+                Atração
               </p>
+
+              <h3 className="text-3xl font-light text-white md:text-4xl">
+                Tokyo Skytree
+              </h3>
+
+              <div className="mt-8 grid gap-8 sm:grid-cols-3">
+                <div>
+                  <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/35">
+                    Melhor horário
+                  </p>
+                  <p className="text-white">16:30–18:30</p>
+                </div>
+
+                <div>
+                  <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/35">
+                    Tempo estimado
+                  </p>
+                  <p className="text-white">1–2 horas</p>
+                </div>
+
+                <div>
+                  <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/35">
+                    Reserva
+                  </p>
+                  <p className="text-white">Recomendada</p>
+                </div>
+              </div>
             </div>
 
             <InfoBlock title="Horário de funcionamento" text="10:00 às 22:00" />
@@ -382,11 +403,6 @@ export default function PreviewPage() {
                 hours="11:00–22:00, último pedido às 21:30"
               />
             </div>
-
-            <p className="mt-12 text-sm leading-8 text-white/45">
-              O complexo conta com inúmeros outros restaurantes e opções para
-              takeout no Food Marché, localizado no subsolo do shopping.
-            </p>
           </div>
 
           <div className="lg:sticky lg:top-28">
@@ -408,71 +424,7 @@ export default function PreviewPage() {
                 className="w-full cursor-zoom-in rounded-xl object-contain transition hover:opacity-85"
               />
             </a>
-
-            <p className="mt-5 text-sm leading-7 text-white/45">
-              Referência dos restaurantes localizados entre o 6º e 7º andar do
-              Tokyo Solamachi.
-            </p>
           </div>
-        </div>
-      </section>
-
-      <section className="border-t border-white/10 px-8 py-32 md:px-16">
-        <div className="mx-auto max-w-7xl">
-          <p className="mb-8 text-xs uppercase tracking-[0.35em] text-white/40">
-            Lojas & Compras
-          </p>
-
-          <div className="max-w-4xl space-y-8 text-lg font-light leading-9 text-white/70">
-            <p>
-              O complexo Tokyo Solamachi conta com dezenas de lojas dos mais
-              diferentes temas, desde souvenirs tradicionais, hashis e doces
-              japoneses até lojas oficiais de entretenimento, anime e cultura
-              pop.
-            </p>
-
-            <p>
-              Entre as opções estão lojas vinculadas à Toei Animation, Studio
-              Ghibli, Pokémon Center Skytree Town e outras marcas populares no
-              Japão.
-            </p>
-          </div>
-
-          <div className="mt-16 grid gap-8 md:grid-cols-2">
-            <ShopBlock
-              name="Pokémon Center Skytree Town"
-              floor="4º andar"
-              hours="10:00–21:00"
-              description="Loja oficial Pokémon com produtos exclusivos, pelúcias, cartas, acessórios e itens temáticos da franquia."
-            />
-
-            <ShopBlock
-              name="Donguri Republic"
-              floor="2º andar"
-              hours="10:00–21:00"
-              description="Loja oficial Studio Ghibli com produtos inspirados em Meu Vizinho Totoro, A Viagem de Chihiro, O Castelo Animado e outros clássicos."
-            />
-
-            <ShopBlock
-              name="Tree Village"
-              floor="4º andar"
-              hours="09:00–21:00"
-              description="Loja temática com produtos oficiais de diversas franquias de entretenimento japonês, incluindo séries de anime, personagens e colaborações sazonais."
-            />
-
-            <ShopBlock
-              name="Souvenir & Lifestyle Shops"
-              floor="Diversos andares"
-              hours="10:00–21:00"
-              description="Seleção ampla de souvenirs japoneses, hashis, utensílios domésticos, doces regionais e presentes para levar ao retorno da viagem."
-            />
-          </div>
-
-          <p className="mt-12 max-w-4xl text-sm leading-8 text-white/45">
-            Recomendação Alpinea: para visitantes interessados em cultura pop
-            japonesa, reserve ao menos 1 hora adicional após a visita ao
-            observatório para explorar as lojas temáticas do complexo.
-          </p>
         </div>
       </section>
 
@@ -568,34 +520,6 @@ function RestaurantBlock({
         <p>
           <span className="text-white/80">Horário:</span> {hours}
         </p>
-      </div>
-    </div>
-  );
-}
-
-function ShopBlock({
-  name,
-  floor,
-  hours,
-  description,
-}: {
-  name: string;
-  floor: string;
-  hours: string;
-  description: string;
-}) {
-  return (
-    <div className="border border-white/10 p-8">
-      <h3 className="text-2xl font-light text-white">{name}</h3>
-
-      <div className="mt-6 space-y-3 text-base leading-8 text-white/60">
-        <p>
-          <span className="text-white/80">Localização:</span> {floor}
-        </p>
-        <p>
-          <span className="text-white/80">Horário:</span> {hours}
-        </p>
-        <p>{description}</p>
       </div>
     </div>
   );
