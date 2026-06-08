@@ -18,15 +18,12 @@ export default function PreviewPage() {
           <a href="/" className="transition hover:text-white">
             Início
           </a>
-
           <a href="/services" className="transition hover:text-white">
             Serviços
           </a>
-
           <a href="/preview" className="transition text-white">
             Roteiro
           </a>
-
           <a href="/preview#contact" className="transition hover:text-white">
             Contato
           </a>
@@ -166,142 +163,153 @@ export default function PreviewPage() {
 
       <section className="border-t border-white/10 px-8 py-32 md:px-16">
         <div className="mx-auto grid max-w-7xl gap-20 lg:grid-cols-2 lg:items-start">
-          <div>
-            <p className="mb-8 text-xs uppercase tracking-[0.35em] text-white/40">
-              Tarde
-            </p>
+          <div className="space-y-12 text-lg font-light leading-9 text-white/70">
+            <div>
+              <p className="mb-8 text-xs uppercase tracking-[0.35em] text-white/40">
+                Tarde
+              </p>
 
-            <div className="space-y-8 text-lg font-light leading-9 text-white/70">
               <p>
                 <span className="text-white">Local:</span> Oshiage, Tokyo
               </p>
+            </div>
 
-              <div className="border-t border-white/10 pt-10">
-                <p className="mb-6 text-xs uppercase tracking-[0.35em] text-white/40">
-                  Acesso
-                </p>
+            <div className="border-t border-white/10 pt-10">
+              <p className="mb-6 text-xs uppercase tracking-[0.35em] text-white/40">
+                Acesso à Estação
+              </p>
 
-                       <div className="mt-16 border-t border-white/10 pt-10">
-                <p className="mb-4 text-xs uppercase tracking-[0.35em] text-white/40">
-                  Acesso ferroviário
-                </p>
+              <div className="space-y-8">
+                <div>
+                  <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/35">
+                    Nome da Estação
+                  </p>
+                  <p className="text-white">
+                    Oshiage Station 押上駅〈スカイツリー前〉
+                  </p>
+                </div>
 
-                <Image
-                  src="/images/oshiage-lines.png"
-                  alt="Linhas ferroviárias disponíveis na estação Oshiage"
-                  width={640}
-                  height={260}
-                  className="w-full max-w-sm rounded-lg object-contain"
-                />
+                <div>
+                  <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/35">
+                    Saída Recomendada
+                  </p>
 
-                <p className="mt-4 text-sm leading-7 text-white/45">
-                  Oshiage Station é atendida pelas linhas Tobu Skytree Line,
-                  Keisei Oshiage Line, Toei Asakusa Line e Tokyo Metro Hanzomon
-                  Line.
-                </p>
-              </div>
+                  <p>
+                    A2 ou B3 para superfície. Em dias de chuva, recomendamos
+                    utilizar a conexão subterrânea direta com o Tokyo Solamachi.
+                  </p>
 
-                <div className="space-y-8 text-white/80">
-                  <div>
-                    <p className="mb-2 text-sm uppercase tracking-[0.25em] text-white/40">
-                      Nome da Estação
-                    </p>
-                    <p className="text-lg">
-                      Oshiage Station 押上駅〈スカイツリー前〉
-                    </p>
-                  </div>
+                  <p className="mt-4 text-white">
+                    連絡通路直結 Solamachi B3F
+                  </p>
 
-                  <div>
-                    <p className="mb-2 text-sm uppercase tracking-[0.25em] text-white/40">
-                      Saída Recomendada
-                    </p>
-
-                    <p className="leading-8">
-                      A2 ou B3 para superfície. Em dias de chuva recomendamos
-                      utilizar a conexão subterrânea direta com o Tokyo
-                      Solamachi. Após as catracas, procure pela sinalização:
-                    </p>
-
-                    <p className="mt-4 text-lg tracking-wide text-white">
-                      連絡通路直結 Solamachi B3F
-                    </p>
-
-                    <p className="mt-4 leading-8">
-                      Caso encontre dificuldades, qualquer funcionário do metrô
-                      poderá indicar a direção correta.
-                    </p>
-                  </div>
-
-                  <div className="grid gap-8 md:grid-cols-2">
-                    <div>
-                      <p className="mb-2 text-sm uppercase tracking-[0.25em] text-white/40">
-                        Duração de Metrô
-                      </p>
-                      <p className="text-lg">Aproximadamente 40 minutos</p>
-                    </div>
-
-                    <div>
-                      <p className="mb-2 text-sm uppercase tracking-[0.25em] text-white/40">
-                        Duração de Carro / Táxi
-                      </p>
-                      <p className="text-lg">Aproximadamente 35 minutos</p>
-                    </div>
-                  </div>
-
-                  <div>
-                    <p className="mb-4 text-sm uppercase tracking-[0.25em] text-white/40">
-                      Recomendação Alpinea
-                    </p>
-
-                    <p className="leading-8">
-                      A partir do Grand Hyatt Tokyo, a diferença de tempo entre
-                      metrô e carro/táxi é irrelevante, o taxi proporciona maior comodidade, mas a diferença de preço é grande entre metrô e taxi, caso esteja chovendo forte ou ventando, recomendo substituir por outra atração, pois embora seja um local fechado devido a altura o observatório pode balançar mais que o normal.
-                    </p>
-                  </div>
+                  <p className="mt-4">
+                    Caso encontre dificuldades, qualquer funcionário do metrô
+                    poderá indicar a direção correta.
+                  </p>
                 </div>
               </div>
+            </div>
 
+            <div className="border-t border-white/10 pt-10">
+              <p className="mb-6 text-xs uppercase tracking-[0.35em] text-white/40">
+                Tempo de Deslocamento
+              </p>
+
+              <div className="grid gap-8 sm:grid-cols-2">
+                <div>
+                  <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/35">
+                    Metrô
+                  </p>
+                  <p className="text-white">Aproximadamente 40 minutos</p>
+                </div>
+
+                <div>
+                  <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/35">
+                    Carro / Táxi
+                  </p>
+                  <p className="text-white">Aproximadamente 35 minutos</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="border-t border-white/10 pt-10">
+              <p className="mb-6 text-xs uppercase tracking-[0.35em] text-white/40">
+                Recomendação Alpinea
+              </p>
+
+              <p>
+                A partir do Grand Hyatt Tokyo, a diferença de tempo entre metrô e
+                carro/táxi é irrelevante. O táxi proporciona maior comodidade,
+                mas a diferença de preço é grande. Em caso de chuva ou vento
+                forte, recomendamos substituir por outra atração, pois, embora
+                seja um local fechado, devido à altura, o observatório pode
+                balançar mais que o normal.
+              </p>
+            </div>
+
+            <div className="border-t border-white/10 pt-10">
+              <p className="mb-6 text-xs uppercase tracking-[0.35em] text-white/40">
+                Acesso Ferroviário
+              </p>
+
+              <Image
+                src="/images/oshiage-lines.png"
+                alt="Linhas ferroviárias disponíveis na estação Oshiage"
+                width={640}
+                height={260}
+                className="w-full max-w-sm rounded-lg object-contain"
+              />
+
+              <p className="mt-4 text-sm leading-7 text-white/45">
+                Oshiage Station é atendida pelas linhas Tobu Skytree Line,
+                Keisei Oshiage Line, Toei Asakusa Line e Tokyo Metro Hanzomon
+                Line.
+              </p>
+            </div>
+
+            <div className="border-t border-white/10 pt-10">
               <p>
                 <span className="text-white">Atração turística:</span> Tokyo
                 Skytree
               </p>
-
-              <InfoBlock title="Horário de funcionamento" text="10:00 às 22:00" />
-
-              <div>
-                <p className="text-white">Ingressos</p>
-                <div className="mt-2 space-y-2">
-                  <p>1. Visita ao 350º andar — Tembo Deck</p>
-                  <p>2. Visita ao 350º e 450º andar</p>
-                  <p>3. Ingresso separado para a Tembo Galleria</p>
-                </div>
-              </div>
-
-              <div>
-                <p className="text-white">Preço estimado</p>
-                <div className="mt-2 space-y-2">
-                  <p>Tembo Deck: a partir de ¥1.800 por pessoa</p>
-                  <p>Tembo Deck + Tembo Galleria: a partir de ¥3.000</p>
-                  <p>Tembo Galleria avulsa: ¥1.400 por pessoa</p>
-                  <p>Crianças entre 6 e 14 anos pagam meia entrada.</p>
-                </div>
-              </div>
-
-              <InfoBlock
-                title="Horário recomendado"
-                text="Chegada ao complexo Tokyo Solamachi às 17:00. Subida na torre por volta das 18:15 para acompanhar o pôr do sol."
-              />
-
-              <InfoBlock
-                title="Tempo estimado de visita"
-                text="Entre 1 e 2 horas após a subida ao observatório."
-              />
-
-              <InfoBlock
-                title="Comentários"
-                text="Eu normalmente compro o ingresso para o 350º andar, não vejo grande diferença entre os andares, não acho que vale a pena o restaurante e nem a galeria que ficam no topo da torre. As opções de comida na base são melhores, o complexo tem uma quantidade gigante de lojas. Recomendo passar nas lojas depois de subir para não precisar carregar peso. Todos os restaurantes costumam ter filas, se programe para chegar pelo menos 30 minutos antes do horário desejado para comer. Se não estiver com muita fome, a praça de alimentação tem ótimas opções para lanches como o Gindaco, que faz o típico bolinho de polvo frito, Takoyaki, da região de Kansai."
-              />
             </div>
+
+            <InfoBlock title="Horário de funcionamento" text="10:00 às 22:00" />
+
+            <div>
+              <p className="text-white">Ingressos</p>
+              <div className="mt-2 space-y-2">
+                <p>1. Visita ao 350º andar — Tembo Deck</p>
+                <p>2. Visita ao 350º e 450º andar</p>
+                <p>3. Ingresso separado para a Tembo Galleria</p>
+              </div>
+            </div>
+
+            <div>
+              <p className="text-white">Preço estimado</p>
+              <div className="mt-2 space-y-2">
+                <p>Tembo Deck: a partir de ¥1.800 por pessoa</p>
+                <p>Tembo Deck + Tembo Galleria: a partir de ¥3.000</p>
+                <p>Tembo Galleria avulsa: ¥1.400 por pessoa</p>
+                <p>Crianças entre 6 e 14 anos pagam meia entrada.</p>
+              </div>
+            </div>
+
+            <InfoBlock
+              title="Horário recomendado"
+              text="Chegada ao complexo Tokyo Solamachi às 17:00. Subida na torre por volta das 18:15 para acompanhar o pôr do sol."
+            />
+
+            <InfoBlock
+              title="Tempo estimado de visita"
+              text="Entre 1 e 2 horas após a subida ao observatório."
+            />
+
+            <InfoBlock
+              title="Comentários"
+              text="Eu normalmente compro o ingresso para o 350º andar, não vejo grande diferença entre os andares, não acho que vale a pena o restaurante e nem a galeria que ficam no topo da torre. As opções de comida na base são melhores, o complexo tem uma quantidade gigante de lojas. Recomendo passar nas lojas depois de subir para não precisar carregar peso. Todos os restaurantes costumam ter filas, se programe para chegar pelo menos 30 minutos antes do horário desejado para comer. Se não estiver com muita fome, a praça de alimentação tem ótimas opções para lanches como o Gindaco, que faz o típico bolinho de polvo frito, Takoyaki, da região de Kansai."
+            />
           </div>
 
           <div className="lg:sticky lg:top-28">
