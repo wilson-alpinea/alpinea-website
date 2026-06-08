@@ -181,6 +181,26 @@ export default function PreviewPage() {
                   Acesso
                 </p>
 
+                       <div className="mt-16 border-t border-white/10 pt-10">
+                <p className="mb-4 text-xs uppercase tracking-[0.35em] text-white/40">
+                  Acesso ferroviário
+                </p>
+
+                <Image
+                  src="/images/oshiage-lines.png"
+                  alt="Linhas ferroviárias disponíveis na estação Oshiage"
+                  width={640}
+                  height={260}
+                  className="w-full max-w-sm rounded-lg object-contain"
+                />
+
+                <p className="mt-4 text-sm leading-7 text-white/45">
+                  Oshiage Station é atendida pelas linhas Tobu Skytree Line,
+                  Keisei Oshiage Line, Toei Asakusa Line e Tokyo Metro Hanzomon
+                  Line.
+                </p>
+              </div>
+
                 <div className="space-y-8 text-white/80">
                   <div>
                     <p className="mb-2 text-sm uppercase tracking-[0.25em] text-white/40">
@@ -239,26 +259,6 @@ export default function PreviewPage() {
                     </p>
                   </div>
                 </div>
-              </div>
-
-              <div className="mt-16 border-t border-white/10 pt-10">
-                <p className="mb-4 text-xs uppercase tracking-[0.35em] text-white/40">
-                  Acesso ferroviário
-                </p>
-
-                <Image
-                  src="/images/oshiage-lines.png"
-                  alt="Linhas ferroviárias disponíveis na estação Oshiage"
-                  width={640}
-                  height={260}
-                  className="w-full max-w-sm rounded-lg object-contain"
-                />
-
-                <p className="mt-4 text-sm leading-7 text-white/45">
-                  Oshiage Station é atendida pelas linhas Tobu Skytree Line,
-                  Keisei Oshiage Line, Toei Asakusa Line e Tokyo Metro Hanzomon
-                  Line.
-                </p>
               </div>
 
               <p>
