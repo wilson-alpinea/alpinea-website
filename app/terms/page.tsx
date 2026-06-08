@@ -196,7 +196,7 @@ const content = [
       "Compartilhamento: quando estritamente necessário à execução dos serviços, dados poderão ser compartilhados com fornecedores envolvidos na viagem (hotéis, restaurantes, guias), os quais atuam como operadores ou controladores independentes sujeitos às suas próprias políticas de privacidade.",
       "Retenção: os dados serão mantidos pelo prazo necessário à execução dos serviços e, após o encerramento, pelo prazo de 5 (cinco) anos para cumprimento de obrigações legais e contratuais, salvo obrigação legal de retenção por prazo distinto.",
       "Direitos do titular: o cliente pode, a qualquer momento, solicitar confirmação de tratamento, acesso aos dados, correção, anonimização, bloqueio, eliminação, portabilidade, informação sobre compartilhamento, revogação de consentimento e oposição ao tratamento. Solicitações devem ser direcionadas ao e-mail wilson@alpinea.io, com resposta em até 15 dias úteis.",
-      "Encarregado de dados (DPO): Wilson Braz, contato: wilson@alpinea.io.",
+      "Encarregado de dados (DPO): Wilson Kageyama, contato: wilson@alpinea.io.",
     ],
   },
   {
@@ -248,14 +248,7 @@ export default function LegalPage() {
       </header>
 
       <section className="relative overflow-hidden px-6 pt-40 pb-28 md:px-16">
-        <div className="absolute inset-0">
-          <img
-            src="/images/fuji-bg.jpg"
-            alt="Japão"
-            className="h-full w-full object-cover opacity-20"
-          />
-          <div className="absolute inset-0 bg-black/80" />
-        </div>
+        <div className="absolute inset-0 bg-black" />
 
         <div className="relative z-10 mx-auto max-w-6xl">
           <p className="mb-8 text-xs uppercase tracking-[0.45em] text-white/50">
@@ -316,23 +309,23 @@ export default function LegalPage() {
 
       <section
         id="contact"
-        className="border-t border-white/10 bg-black px-8 py-32 md:px-16"
+        className="border-t border-black/10 bg-white px-8 py-32 text-black md:px-16"
       >
         <div className="mx-auto max-w-4xl text-center">
-          <p className="mb-6 text-xs uppercase tracking-[0.45em] text-white/40">
+          <p className="mb-6 text-xs uppercase tracking-[0.45em] text-black/40">
             Contato
           </p>
           <h2 className="text-4xl font-light leading-tight md:text-6xl">
             Precisa de ajuda?
           </h2>
-          <p className="mx-auto mt-8 max-w-2xl text-lg leading-8 text-white/60">
+          <p className="mx-auto mt-8 max-w-2xl text-lg leading-8 text-black/60">
             Nossa equipe terá prazer em esclarecer dúvidas sobre contratação,
             reservas, suporte ou serviços da Alpinea.
           </p>
           <div className="mt-12 flex flex-col items-center justify-center gap-4 sm:flex-row">
             <a
               href="mailto:wilson@alpinea.io"
-              className="border border-white/20 px-8 py-4 text-xs uppercase tracking-[0.3em] transition hover:bg-white hover:text-black"
+              className="border border-black px-8 py-4 text-xs uppercase tracking-[0.3em] transition hover:bg-black hover:text-white"
             >
               Entrar em Contato
             </a>
@@ -340,7 +333,7 @@ export default function LegalPage() {
               href="https://wa.me/5511996691818"
               target="_blank"
               rel="noopener noreferrer"
-              className="border border-white/10 px-8 py-4 text-xs uppercase tracking-[0.3em] text-white/70 transition hover:bg-white hover:text-black"
+              className="border border-black/20 px-8 py-4 text-xs uppercase tracking-[0.3em] text-black/70 transition hover:border-black hover:text-black"
             >
               WhatsApp
             </a>
@@ -348,23 +341,22 @@ export default function LegalPage() {
         </div>
       </section>
 
-      <footer className="border-t border-white/10 px-8 py-16 md:px-16">
+      <footer className="border-t border-white/10 bg-black px-8 py-16 text-white md:px-16">
         <div className="mx-auto flex max-w-7xl flex-col items-start justify-between gap-12 md:flex-row md:items-end">
-          <div>
+          <div className="space-y-6">
             <p className="text-xs uppercase tracking-[0.45em] text-white/80">
-              ALPINEA
+              Alpinea
             </p>
-            <p className="mt-5 max-w-md text-sm leading-relaxed text-white/45">
-              Curadoria privada de experiências, gastronomia e lifestyle no Japão.
-            </p>
-            <p className="mt-6 text-xs text-white/25">
-              © 2026 Alpinea Agências de Viagens LTDA
-            </p>
+            <div className="max-w-md space-y-3">
+              <p className="text-sm leading-relaxed text-white/50">
+                Curadoria privada de experiências, gastronomia e lifestyle no Japão.
+              </p>
+              <p className="text-xs text-white/30">
+                © 2026 Alpinea Agências de Viagens LTDA — CNPJ 66.491.067/0001-84
+              </p>
+            </div>
           </div>
-          <div className="flex flex-wrap gap-8 text-xs uppercase tracking-[0.25em] text-white/40">
-            <a href="/" className="transition hover:text-white">Início</a>
-            <a href="/services" className="transition hover:text-white">Serviços</a>
-            <a href="/preview" className="transition hover:text-white">Roteiro</a>
+          <div className="flex items-center gap-8 text-xs uppercase tracking-[0.25em] text-white/40">
             <a
               href="https://www.instagram.com/alpinea.private"
               target="_blank"
