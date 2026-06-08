@@ -5,21 +5,22 @@ import { useEffect, useState } from "react";
 const sections = [
   ["sobre", "01", "Sobre a Alpinea"],
   ["escopo", "02", "Escopo dos serviços"],
-  ["journey", "03", "Alpinea Journey"],
-  ["private", "04", "Alpinea Private"],
-  ["reservas", "05", "Reservas"],
-  ["restaurantes", "06", "Restaurantes"],
-  ["hospedagem", "07", "Hospedagem"],
-  ["passagens", "08", "Passagens aéreas"],
-  ["experiencias", "09", "Experiências"],
-  ["concierge", "10", "Concierge"],
-  ["viajante", "11", "Responsabilidades do viajante"],
-  ["alteracoes", "12", "Alterações"],
-  ["cancelamentos", "13", "Cancelamentos"],
-  ["responsabilidade", "14", "Limitação de responsabilidade"],
-  ["dados", "15", "Proteção de dados"],
-  ["propriedade", "16", "Propriedade intelectual"],
-  ["foro", "17", "Lei aplicável e foro"],
+  ["design", "03", "Alpinea Design"],
+  ["executive", "04", "Alpinea Executive"],
+  ["private", "05", "Alpinea Private"],
+  ["reservas", "06", "Reservas"],
+  ["restaurantes", "07", "Restaurantes"],
+  ["hospedagem", "08", "Hospedagem"],
+  ["passagens", "09", "Passagens aéreas"],
+  ["experiencias", "10", "Experiências"],
+  ["concierge", "11", "Concierge"],
+  ["viajante", "12", "Responsabilidades do viajante"],
+  ["alteracoes", "13", "Alterações"],
+  ["cancelamentos", "14", "Cancelamentos"],
+  ["responsabilidade", "15", "Limitação de responsabilidade"],
+  ["dados", "16", "Proteção de dados"],
+  ["propriedade", "17", "Propriedade intelectual"],
+  ["foro", "18", "Lei aplicável e foro"],
 ];
 
 const content = [
@@ -45,28 +46,40 @@ const content = [
     ],
   },
   {
-    id: "journey",
+    id: "design",
     number: "03",
-    title: "Alpinea Journey",
+    title: "Alpinea Design",
     paragraphs: [
-      "O Alpinea Journey é um serviço de consultoria e planejamento personalizado de viagem ao Japão. O serviço pode incluir entrevista inicial, levantamento de preferências, definição de cidades, organização de fluxo da viagem, sugestões de hospedagem, recomendações gastronômicas, atrações, experiências, compras, deslocamentos e construção de roteiro digital.",
-      "A Alpinea utiliza seu melhor conhecimento profissional para desenvolver cada roteiro, considerando o perfil do cliente, orçamento estimado, datas, ritmo de viagem, interesses e restrições informadas.",
-      "O roteiro representa uma recomendação especializada e não uma garantia absoluta de disponibilidade, funcionamento, confirmação, preço ou acesso a qualquer serviço terceiro mencionado no material entregue.",
+      "O Alpinea Design é um serviço de consultoria e planejamento personalizado de viagem ao Japão, voltado para viajantes que desejam conduzir a própria jornada com uma base estratégica, elegante e bem construída.",
+      "O serviço inclui a criação ou revisão de roteiro personalizado, podendo abranger entrevista inicial, levantamento de preferências, definição de cidades, organização do fluxo da viagem, sugestões de hospedagem, recomendações gastronômicas, atrações, experiências, compras e deslocamentos. Serviços opcionais como emissão de passagens aéreas, JR Pass, ingressos e seguro viagem poderão ser incluídos mediante contratação específica.",
+      "O Alpinea Design não inclui reservas de restaurantes, reservas de hotéis ou acompanhamento durante a viagem, salvo contratação expressa de serviços adicionais.",
+      "A Alpinea utiliza seu melhor conhecimento profissional para desenvolver cada roteiro, considerando o perfil do cliente, orçamento estimado, datas, ritmo de viagem, interesses e restrições informadas. O roteiro representa uma recomendação especializada e não uma garantia absoluta de disponibilidade, funcionamento, confirmação, preço ou acesso a qualquer serviço terceiro mencionado no material entregue.",
+    ],
+  },
+  {
+    id: "executive",
+    number: "04",
+    title: "Alpinea Executive",
+    paragraphs: [
+      "O Alpinea Executive é um serviço de planejamento completo, reservas, logística e organização para clientes que desejam chegar ao Japão com toda a estrutura da viagem preparada e confirmada.",
+      "O serviço inclui criação de roteiro personalizado, emissão de passagens aéreas, reserva de hotéis, organização de transporte privado, curadoria gastronômica, solicitação e gestão de reservas em restaurantes, planejamento de compras, recomendações de experiências e atrações, coordenação logística e concierge para suporte remoto durante a estadia.",
+      "O Alpinea Executive não inclui acompanhamento presencial em restaurantes, em compras ou em atrações turísticas, serviços disponíveis exclusivamente no plano Alpinea Private.",
+      "O Alpinea Executive não substitui assistência médica, jurídica, policial, consular, securitária, psicológica, financeira ou emergencial.",
     ],
   },
   {
     id: "private",
-    number: "04",
+    number: "05",
     title: "Alpinea Private",
     paragraphs: [
-      "O Alpinea Private é um serviço de suporte ampliado e concierge personalizado, destinado a clientes que desejam maior nível de acompanhamento, prioridade operacional e apoio durante etapas específicas da viagem.",
-      "Dependendo do plano contratado, poderá incluir atendimento prioritário, suporte remoto durante a viagem, auxílio em reservas, ajustes pontuais de itinerário, suporte para compras, experiências, restaurantes e recomendações adicionais.",
+      "O Alpinea Private é um serviço de suporte ampliado com acompanhamento presencial e execução dedicada no Japão, destinado a clientes que desejam o mais alto nível de presença, prioridade operacional e curadoria ao longo de toda a jornada.",
+      "O serviço inclui, além de todos os itens do Alpinea Executive, acompanhamento presencial em restaurantes, acompanhamento presencial para compras, acompanhamento presencial em atrações turísticas, coordenação local com fornecedores e concierge com suporte prioritário durante a viagem.",
       "O Alpinea Private não substitui assistência médica, jurídica, policial, consular, securitária, psicológica, financeira ou emergencial.",
     ],
   },
   {
     id: "reservas",
-    number: "05",
+    number: "06",
     title: "Reservas e fornecedores terceiros",
     paragraphs: [
       "A Alpinea poderá auxiliar na solicitação, organização ou acompanhamento de reservas junto a restaurantes, hotéis, experiências, atrações, guias, transportes privados e outros fornecedores.",
@@ -76,7 +89,7 @@ const content = [
   },
   {
     id: "restaurantes",
-    number: "06",
+    number: "07",
     title: "Reservas de restaurantes",
     paragraphs: [
       "A Alpinea poderá auxiliar na solicitação de reservas em restaurantes no Japão, incluindo restaurantes de alta demanda, casas premiadas, restaurantes com poucos assentos, balcões de sushi, restaurantes de kaiseki, omakase, tempura, wagyu, ryotei, izakayas selecionados e demais experiências gastronômicas.",
@@ -86,7 +99,7 @@ const content = [
   },
   {
     id: "hospedagem",
-    number: "07",
+    number: "08",
     title: "Hospedagem",
     paragraphs: [
       "A Alpinea poderá recomendar hotéis, ryokans, resorts, hotéis boutique, propriedades de luxo, hospedagens tradicionais e acomodações alinhadas ao perfil da viagem.",
@@ -96,7 +109,7 @@ const content = [
   },
   {
     id: "passagens",
-    number: "08",
+    number: "09",
     title: "Passagens aéreas",
     paragraphs: [
       "A Alpinea poderá auxiliar na análise, recomendação ou seleção de voos e itinerários aéreos, quando esse apoio estiver incluído no escopo contratado.",
@@ -106,7 +119,7 @@ const content = [
   },
   {
     id: "experiencias",
-    number: "09",
+    number: "10",
     title: "Experiências, atrações e atividades",
     paragraphs: [
       "A Alpinea poderá recomendar museus, templos, jardins, tours, experiências culturais, eventos, atrações, parques temáticos, compras, visitas privadas, guias e atividades diversas.",
@@ -116,7 +129,7 @@ const content = [
   },
   {
     id: "concierge",
-    number: "10",
+    number: "11",
     title: "Concierge e suporte durante a viagem",
     paragraphs: [
       "O suporte durante a viagem estará disponível apenas quando contratado e conforme os canais, horários e condições definidos na proposta comercial. Salvo disposição expressa em contrário na proposta, o atendimento ocorre em dias úteis, das 9h às 20h (horário de Brasília), com prazo de resposta de até 4 horas dentro desse período.",
@@ -126,7 +139,7 @@ const content = [
   },
   {
     id: "viajante",
-    number: "11",
+    number: "12",
     title: "Responsabilidades do viajante",
     paragraphs: [
       "O viajante é responsável por possuir passaporte válido, vistos quando aplicáveis, documentação sanitária quando aplicável, meios de pagamento adequados, cartões internacionais e reservas confirmadas.",
@@ -137,7 +150,7 @@ const content = [
   },
   {
     id: "alteracoes",
-    number: "12",
+    number: "13",
     title: "Alterações de roteiro",
     paragraphs: [
       "Solicitações de alteração realizadas após o início da execução do projeto ou após a entrega do roteiro poderão gerar cobrança adicional, que será previamente comunicada e aprovada pelo cliente antes de qualquer cobrança.",
@@ -147,7 +160,7 @@ const content = [
   },
   {
     id: "cancelamentos",
-    number: "13",
+    number: "14",
     title: "Cancelamentos e reembolsos",
     paragraphs: [
       "Os serviços da Alpinea possuem natureza consultiva, intelectual, personalizada e operacional. Em razão do investimento de tempo e recursos dedicados desde o início da execução, aplicam-se as seguintes condições de reembolso dos honorários da Alpinea:",
@@ -161,7 +174,7 @@ const content = [
   },
   {
     id: "responsabilidade",
-    number: "14",
+    number: "15",
     title: "Limitação de responsabilidade",
     paragraphs: [
       "A Alpinea atua como consultoria, curadora e facilitadora de experiências e responde pela qualidade dos serviços intelectuais e consultivos por ela diretamente prestados, nos termos da legislação brasileira aplicável.",
@@ -173,7 +186,7 @@ const content = [
   },
   {
     id: "dados",
-    number: "15",
+    number: "16",
     title: "Proteção de dados e LGPD",
     paragraphs: [
       "A Alpinea, na qualidade de controladora de dados, coleta e trata dados pessoais dos clientes em conformidade com a Lei Geral de Proteção de Dados Pessoais (LGPD), Lei nº 13.709/2018.",
@@ -183,12 +196,12 @@ const content = [
       "Compartilhamento: quando estritamente necessário à execução dos serviços, dados poderão ser compartilhados com fornecedores envolvidos na viagem (hotéis, restaurantes, guias), os quais atuam como operadores ou controladores independentes sujeitos às suas próprias políticas de privacidade.",
       "Retenção: os dados serão mantidos pelo prazo necessário à execução dos serviços e, após o encerramento, pelo prazo de 5 (cinco) anos para cumprimento de obrigações legais e contratuais, salvo obrigação legal de retenção por prazo distinto.",
       "Direitos do titular: o cliente pode, a qualquer momento, solicitar confirmação de tratamento, acesso aos dados, correção, anonimização, bloqueio, eliminação, portabilidade, informação sobre compartilhamento, revogação de consentimento e oposição ao tratamento. Solicitações devem ser direcionadas ao e-mail wilson@alpinea.io, com resposta em até 15 dias úteis.",
-      "Encarregado de dados (DPO): Wilson Kageyama, contato: wilson@alpinea.io.",
+      "Encarregado de dados (DPO): Wilson Braz, contato: wilson@alpinea.io.",
     ],
   },
   {
     id: "propriedade",
-    number: "16",
+    number: "17",
     title: "Propriedade intelectual",
     paragraphs: [
       "Todos os materiais produzidos pela Alpinea são protegidos pela legislação de direitos autorais e propriedade intelectual.",
@@ -197,7 +210,7 @@ const content = [
   },
   {
     id: "foro",
-    number: "17",
+    number: "18",
     title: "Lei aplicável e foro",
     paragraphs: [
       "Estes Termos e Condições são regidos pelas leis da República Federativa do Brasil.",
