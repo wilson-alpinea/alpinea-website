@@ -39,8 +39,9 @@ const content = [
     title: "Escopo dos serviços",
     paragraphs: [
       "O escopo exato dos serviços será sempre definido pela proposta comercial aceita pelo cliente. Dependendo do plano contratado, os serviços da Alpinea poderão incluir planejamento personalizado, construção de roteiro digital, curadoria de hotéis, curadoria gastronômica, recomendações culturais, recomendações de compras, planejamento logístico, suporte pré-embarque, concierge remoto e assistência para reservas.",
+      "Para fins destes Termos e Condições, considera-se iniciada a execução do serviço na ocorrência do primeiro dos seguintes eventos: (a) realização da entrevista ou sessão inicial de briefing com o cliente; (b) envio de qualquer material, análise ou recomendação personalizada pela Alpinea; ou (c) início de gestão de reservas junto a fornecedores em nome do cliente. O pagamento integral ou parcial não configura, por si só, início de execução.",
       "A Alpinea não atua como operadora direta de companhias aéreas, hotéis, restaurantes, atrações, transportadoras, guias, seguradoras, autoridades migratórias ou demais fornecedores terceiros.",
-      "Serviços não expressamente incluídos na proposta comercial não serão considerados parte do escopo contratado e poderão ser objeto de cobrança adicional.",
+      "Serviços adicionais não expressamente incluídos na proposta comercial somente poderão ser cobrados mediante aprovação prévia e escrita do cliente, com indicação do valor correspondente.",
     ],
   },
   {
@@ -72,7 +73,8 @@ const content = [
       "A confirmação de qualquer reserva depende exclusivamente do respectivo fornecedor. A Alpinea não garante disponibilidade, confirmação, upgrade, benefício, assento específico, mesa específica, balcão, sala privativa, categoria de quarto ou qualquer condição que dependa de decisão de terceiros.",
       "Fornecedores poderão exigir dados pessoais, cartão de crédito, pagamento antecipado, depósito, garantia, política de cancelamento, taxa de no-show, horário de chegada, código de vestimenta ou outras regras próprias.",
     ],
-  },  {
+  },
+  {
     id: "restaurantes",
     number: "06",
     title: "Reservas de restaurantes",
@@ -117,9 +119,9 @@ const content = [
     number: "10",
     title: "Concierge e suporte durante a viagem",
     paragraphs: [
-      "O suporte durante a viagem estará disponível apenas quando contratado e conforme os canais, horários, prazos e condições definidos na proposta comercial.",
+      "O suporte durante a viagem estará disponível apenas quando contratado e conforme os canais, horários e condições definidos na proposta comercial. Salvo disposição expressa em contrário na proposta, o atendimento ocorre em dias úteis, das 9h às 20h (horário de Brasília), com prazo de resposta de até 4 horas dentro desse período.",
       "O concierge remoto poderá auxiliar com orientações gerais, ajustes pontuais, dúvidas sobre deslocamento, recomendações, comunicação com fornecedores e apoio em situações ordinárias de viagem.",
-      "O serviço não constitui atendimento de emergência 24 horas.",
+      "O serviço não constitui atendimento de emergência 24 horas. Situações de emergência médica, policial ou consular devem ser direcionadas aos serviços locais competentes e, quando aplicável, à central de assistência do seguro viagem contratado pelo cliente.",
     ],
   },
   {
@@ -127,7 +129,8 @@ const content = [
     number: "11",
     title: "Responsabilidades do viajante",
     paragraphs: [
-      "O viajante é responsável por possuir passaporte válido, vistos quando aplicáveis, seguro viagem quando desejado ou exigido, documentação sanitária quando aplicável, meios de pagamento adequados, cartões internacionais, reservas confirmadas e condições pessoais compatíveis com a viagem.",
+      "O viajante é responsável por possuir passaporte válido, vistos quando aplicáveis, documentação sanitária quando aplicável, meios de pagamento adequados, cartões internacionais e reservas confirmadas.",
+      "A contratação de seguro viagem com cobertura médica, de cancelamento e de bagagem é fortemente recomendada pela Alpinea para todas as viagens ao Japão. A Alpinea não se responsabiliza por quaisquer danos, prejuízos ou despesas que poderiam ter sido cobertos por seguro viagem adequado e não contratado pelo cliente.",
       "Também é responsabilidade do viajante cumprir as leis do Japão, do Brasil e de qualquer país de conexão ou trânsito.",
       "A Alpinea não responde por recusa de embarque, recusa migratória, deportação, perda de documentos, perda de conexão, atraso do cliente ou descumprimento de regras locais.",
     ],
@@ -137,7 +140,7 @@ const content = [
     number: "12",
     title: "Alterações de roteiro",
     paragraphs: [
-      "Solicitações de alteração realizadas após o início da execução do projeto ou após a entrega do roteiro poderão gerar cobrança adicional.",
+      "Solicitações de alteração realizadas após o início da execução do projeto ou após a entrega do roteiro poderão gerar cobrança adicional, que será previamente comunicada e aprovada pelo cliente antes de qualquer cobrança.",
       "Alterações solicitadas pelo cliente poderão impactar reservas, disponibilidade, preços, logística e viabilidade geral do roteiro.",
       "A Alpinea reserva-se o direito de recusar alterações incompatíveis com o escopo contratado.",
     ],
@@ -147,9 +150,13 @@ const content = [
     number: "13",
     title: "Cancelamentos e reembolsos",
     paragraphs: [
-      "Os serviços da Alpinea possuem natureza consultiva, intelectual, personalizada e operacional.",
-      "Após o início da execução do trabalho, parte ou a totalidade dos valores pagos poderá tornar-se não reembolsável.",
-      "Reservas realizadas junto a terceiros estarão sujeitas às políticas específicas de cada fornecedor.",
+      "Os serviços da Alpinea possuem natureza consultiva, intelectual, personalizada e operacional. Em razão do investimento de tempo e recursos dedicados desde o início da execução, aplicam-se as seguintes condições de reembolso dos honorários da Alpinea:",
+      "Cancelamento antes do início da execução (conforme definido na Seção 02): reembolso integral dos valores pagos à Alpinea, deduzidas eventuais taxas bancárias ou de processamento de pagamento.",
+      "Cancelamento após o início da execução e antes da entrega do roteiro ou material principal: reembolso de 50% dos valores pagos à Alpinea.",
+      "Cancelamento após a entrega do roteiro ou material principal: os valores pagos à Alpinea são não reembolsáveis, em razão da execução integral do serviço contratado.",
+      "Cancelamento durante a viagem (planos com concierge ativo): não há reembolso dos honorários da Alpinea pelo período não utilizado.",
+      "Os valores eventualmente antecipados pelo cliente para pagamento de fornecedores terceiros (hotéis, restaurantes, experiências, etc.) estão sujeitos exclusivamente às políticas de cancelamento de cada fornecedor, sobre as quais a Alpinea não tem ingerência. A Alpinea envidará seus melhores esforços para obter reembolso junto aos fornecedores, sem garantia de resultado.",
+      "Nenhuma das condições acima afasta os direitos do consumidor previstos no Código de Defesa do Consumidor (Lei nº 8.078/1990), em especial o direito de arrependimento previsto no art. 49, quando aplicável.",
     ],
   },
   {
@@ -157,9 +164,11 @@ const content = [
     number: "14",
     title: "Limitação de responsabilidade",
     paragraphs: [
-      "A Alpinea atua como consultoria, curadora e facilitadora de experiências.",
-      "A Alpinea não será responsável por atrasos, cancelamentos, greves, condições climáticas, desastres naturais, pandemias, mudanças governamentais ou falhas operacionais de terceiros.",
-      "Nada nestes Termos e Condições exclui direitos obrigatórios previstos na legislação brasileira aplicável ao consumidor.",
+      "A Alpinea atua como consultoria, curadora e facilitadora de experiências e responde pela qualidade dos serviços intelectuais e consultivos por ela diretamente prestados, nos termos da legislação brasileira aplicável.",
+      "A Alpinea não será responsável por danos decorrentes de atos ou omissões de fornecedores terceiros (hotéis, restaurantes, companhias aéreas, guias, transportadoras, entre outros), incluindo atrasos, cancelamentos, falhas operacionais, greves, condições climáticas, desastres naturais, pandemias, atos de autoridade governamental ou quaisquer eventos fora do controle razoável da Alpinea (caso fortuito ou força maior).",
+      "A responsabilidade da Alpinea por danos diretos decorrentes de falha comprovada na prestação de seus próprios serviços fica limitada ao valor dos honorários efetivamente pagos pelo cliente à Alpinea no âmbito da contratação específica em que ocorreu o dano.",
+      "A Alpinea não responde por lucros cessantes, danos indiretos, danos morais decorrentes de falhas de terceiros, ou qualquer dano que não guarde relação direta de causalidade com a execução defeituosa dos serviços próprios da Alpinea.",
+      "Nada nestes Termos e Condições exclui ou limita direitos irrenunciáveis do consumidor previstos no Código de Defesa do Consumidor (Lei nº 8.078/1990) e demais normas imperativas da legislação brasileira.",
     ],
   },
   {
@@ -167,9 +176,14 @@ const content = [
     number: "15",
     title: "Proteção de dados e LGPD",
     paragraphs: [
-      "A Alpinea poderá coletar e tratar dados pessoais necessários à execução dos serviços contratados.",
-      "Os dados serão tratados em conformidade com a Lei Geral de Proteção de Dados, Lei nº 13.709/2018.",
-      "Quando necessário para execução dos serviços, determinados dados poderão ser compartilhados com fornecedores envolvidos na viagem.",
+      "A Alpinea, na qualidade de controladora de dados, coleta e trata dados pessoais dos clientes em conformidade com a Lei Geral de Proteção de Dados Pessoais (LGPD), Lei nº 13.709/2018.",
+      "Dados coletados: nome completo, CPF ou passaporte, data de nascimento, endereço de e-mail, número de telefone, preferências de viagem, restrições alimentares e de saúde relevantes para o planejamento, dados de passaporte e documentação de viagem, e dados de pagamento (processados por plataformas certificadas).",
+      "Base legal: o tratamento é realizado primariamente com fundamento na execução do contrato (art. 7º, V, LGPD). Quando aplicável, o tratamento de dados sensíveis (como restrições de saúde) será realizado mediante consentimento expresso do titular (art. 11, I, LGPD).",
+      "Finalidades: prestação dos serviços contratados, comunicação sobre a viagem, cumprimento de obrigações legais e, com consentimento, envio de comunicações comerciais relacionadas aos serviços da Alpinea.",
+      "Compartilhamento: quando estritamente necessário à execução dos serviços, dados poderão ser compartilhados com fornecedores envolvidos na viagem (hotéis, restaurantes, guias), os quais atuam como operadores ou controladores independentes sujeitos às suas próprias políticas de privacidade.",
+      "Retenção: os dados serão mantidos pelo prazo necessário à execução dos serviços e, após o encerramento, pelo prazo de 5 (cinco) anos para cumprimento de obrigações legais e contratuais, salvo obrigação legal de retenção por prazo distinto.",
+      "Direitos do titular: o cliente pode, a qualquer momento, solicitar confirmação de tratamento, acesso aos dados, correção, anonimização, bloqueio, eliminação, portabilidade, informação sobre compartilhamento, revogação de consentimento e oposição ao tratamento. Solicitações devem ser direcionadas ao e-mail wilson@alpinea.io, com resposta em até 15 dias úteis.",
+      "Encarregado de dados (DPO): Wilson Kageyama, contato: wilson@alpinea.io.",
     ],
   },
   {
@@ -187,7 +201,7 @@ const content = [
     title: "Lei aplicável e foro",
     paragraphs: [
       "Estes Termos e Condições são regidos pelas leis da República Federativa do Brasil.",
-      "Fica eleito o foro da Comarca de São Paulo/SP para dirimir eventuais controvérsias relacionadas à contratação dos serviços da Alpinea.",
+      "Fica eleito o foro da Comarca de São Paulo/SP para dirimir eventuais controvérsias relacionadas à contratação dos serviços da Alpinea, sem prejuízo do direito do consumidor de eleger o foro de seu domicílio, nos termos do Código de Defesa do Consumidor.",
     ],
   },
 ];
@@ -197,9 +211,7 @@ export default function LegalPage() {
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 50);
-
     window.addEventListener("scroll", onScroll);
-
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
@@ -207,9 +219,7 @@ export default function LegalPage() {
     <main className="min-h-screen bg-black text-white">
       <header
         className={`fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-8 py-5 md:px-16 transition-all duration-700 ${
-          scrolled
-            ? "bg-black/10 backdrop-blur-2xl"
-            : "bg-transparent"
+          scrolled ? "bg-black/10 backdrop-blur-2xl" : "bg-transparent"
         }`}
       >
         <a href="/" className="text-xl tracking-[0.45em]">
@@ -217,21 +227,10 @@ export default function LegalPage() {
         </a>
 
         <nav className="hidden gap-8 text-xs uppercase tracking-[0.25em] text-white/70 md:flex">
-          <a href="/" className="transition hover:text-white">
-            Início
-          </a>
-
-          <a href="/services" className="transition hover:text-white">
-            Serviços
-          </a>
-
-          <a href="/preview" className="transition hover:text-white">
-            Roteiro
-          </a>
-
-          <a href="#contact" className="transition hover:text-white">
-            Contato
-          </a>
+          <a href="/" className="transition hover:text-white">Início</a>
+          <a href="/services" className="transition hover:text-white">Serviços</a>
+          <a href="/preview" className="transition hover:text-white">Roteiro</a>
+          <a href="#contact" className="transition hover:text-white">Contato</a>
         </nav>
       </header>
 
@@ -242,7 +241,6 @@ export default function LegalPage() {
             alt="Japão"
             className="h-full w-full object-cover opacity-20"
           />
-
           <div className="absolute inset-0 bg-black/80" />
         </div>
 
@@ -250,20 +248,20 @@ export default function LegalPage() {
           <p className="mb-8 text-xs uppercase tracking-[0.45em] text-white/50">
             ALPINEA
           </p>
-
           <h1 className="max-w-5xl text-5xl font-light leading-tight md:text-7xl">
             Termos e
             <br />
             Condições de Serviço
           </h1>
-
           <div className="mt-12 border-l border-white/20 pl-6">
             <p className="text-sm text-white/45">
               Última atualização: Junho de 2026
             </p>
           </div>
         </div>
-      </section>      <section className="bg-black px-6 py-28 text-white md:px-16">
+      </section>
+
+      <section className="bg-black px-6 py-28 text-white md:px-16">
         <div className="mx-auto grid max-w-7xl gap-16 lg:grid-cols-[280px_1fr]">
           <aside className="hidden lg:block">
             <div className="sticky top-28 space-y-4 border-r border-white/10 pr-10">
@@ -289,11 +287,9 @@ export default function LegalPage() {
                 <p className="mb-5 text-xs uppercase tracking-[0.35em] text-white/40">
                   {section.number}
                 </p>
-
                 <h2 className="text-4xl font-light leading-tight text-white md:text-5xl">
                   {section.title}
                 </h2>
-
                 <div className="mt-8 space-y-6 text-lg leading-9 text-white/75">
                   {section.paragraphs.map((paragraph, index) => (
                     <p key={index}>{paragraph}</p>
@@ -305,8 +301,6 @@ export default function LegalPage() {
         </div>
       </section>
 
-      {/* CONTATO */}
-
       <section
         id="contact"
         className="border-t border-white/10 bg-black px-8 py-32 md:px-16"
@@ -315,16 +309,13 @@ export default function LegalPage() {
           <p className="mb-6 text-xs uppercase tracking-[0.45em] text-white/40">
             Contato
           </p>
-
           <h2 className="text-4xl font-light leading-tight md:text-6xl">
             Precisa de ajuda?
           </h2>
-
           <p className="mx-auto mt-8 max-w-2xl text-lg leading-8 text-white/60">
             Nossa equipe terá prazer em esclarecer dúvidas sobre contratação,
             reservas, suporte ou serviços da Alpinea.
           </p>
-
           <div className="mt-12 flex flex-col items-center justify-center gap-4 sm:flex-row">
             <a
               href="mailto:wilson@alpinea.io"
@@ -332,7 +323,6 @@ export default function LegalPage() {
             >
               Entrar em Contato
             </a>
-
             <a
               href="https://wa.me/5511996691818"
               target="_blank"
@@ -345,47 +335,23 @@ export default function LegalPage() {
         </div>
       </section>
 
-      {/* FOOTER IGUAL HOME */}
-
       <footer className="border-t border-white/10 px-8 py-16 md:px-16">
         <div className="mx-auto flex max-w-7xl flex-col items-start justify-between gap-12 md:flex-row md:items-end">
           <div>
             <p className="text-xs uppercase tracking-[0.45em] text-white/80">
               ALPINEA
             </p>
-
             <p className="mt-5 max-w-md text-sm leading-relaxed text-white/45">
-              Curadoria privada de experiências, gastronomia e lifestyle no
-              Japão.
+              Curadoria privada de experiências, gastronomia e lifestyle no Japão.
             </p>
-
             <p className="mt-6 text-xs text-white/25">
               © 2026 Alpinea Agências de Viagens LTDA
             </p>
           </div>
-
           <div className="flex flex-wrap gap-8 text-xs uppercase tracking-[0.25em] text-white/40">
-            <a
-              href="/"
-              className="transition hover:text-white"
-            >
-              Início
-            </a>
-
-            <a
-              href="/services"
-              className="transition hover:text-white"
-            >
-              Serviços
-            </a>
-
-            <a
-              href="/preview"
-              className="transition hover:text-white"
-            >
-              Roteiro
-            </a>
-
+            <a href="/" className="transition hover:text-white">Início</a>
+            <a href="/services" className="transition hover:text-white">Serviços</a>
+            <a href="/preview" className="transition hover:text-white">Roteiro</a>
             <a
               href="https://www.instagram.com/alpinea.private"
               target="_blank"
@@ -394,7 +360,6 @@ export default function LegalPage() {
             >
               Instagram
             </a>
-
             <a
               href="https://www.youtube.com/@alpinea.private"
               target="_blank"
@@ -403,11 +368,7 @@ export default function LegalPage() {
             >
               YouTube
             </a>
-
-            <a
-              href="mailto:wilson@alpinea.io"
-              className="transition hover:text-white"
-            >
+            <a href="mailto:wilson@alpinea.io" className="transition hover:text-white">
               Contato
             </a>
           </div>
