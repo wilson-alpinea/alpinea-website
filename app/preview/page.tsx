@@ -27,8 +27,18 @@ export default function PreviewPage() {
         </nav>
       </header>
 
-      <section className="px-8 pb-20 pt-40 md:px-16 md:pt-48">
-        <div className="mx-auto max-w-7xl">
+  <section className="relative overflow-hidden px-8 pb-28 pt-40 md:px-16 md:pt-48">
+  <img
+    src="/images/ginzanonsen.jpg"
+    alt="Ginzan Onsen"
+    className="absolute inset-0 h-full w-full object-cover opacity-55"
+  />
+
+  <div className="absolute inset-0 bg-black/35" />
+
+  <div className="absolute inset-0 bg-gradient-to-b from-black/55 via-black/20 to-black" />
+
+  <div className="relative z-10 mx-auto max-w-7xl">
           <p className="mb-8 text-xs uppercase tracking-[0.35em] text-white/40">
             Exemplo de Curadoria Alpinea
           </p>
