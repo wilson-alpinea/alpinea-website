@@ -40,11 +40,11 @@ export default function PreviewPage() {
 
   <div className="relative z-10 mx-auto max-w-7xl">
           <p className="mb-8 text-xs uppercase tracking-[0.35em] text-white/40">
-            Exemplo de Curadoria Alpinea
+            Roteiro Alpinea
           </p>
 
           <h1 className="max-w-5xl text-5xl font-light leading-[1.05] tracking-tight md:text-7xl">
-            Um exemplo reduzido
+            Um exemplo real
             <br />
             de uma jornada Alpinea.
           </h1>
