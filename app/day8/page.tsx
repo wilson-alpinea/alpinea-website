@@ -24,15 +24,15 @@ export default function Day8Page() {
       {/* Hero */}
       <section className="relative min-h-[720px] overflow-hidden px-8 pb-28 pt-40 md:px-16 md:pt-48">
         <Image
-          src="/images/usj-main.png"
-          alt="Universal Studios Japan"
+          src="/images/ginzan-onsen.png"
+          alt="Ginzan Onsen"
           fill
           priority
           sizes="100vw"
-          className="object-cover opacity-60"
+          className="object-cover opacity-55"
         />
         <div className="absolute inset-0 bg-black/40" />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/20 to-black" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/75 via-black/30 to-black" />
 
         <div className="relative z-10 mx-auto max-w-7xl">
           <p className="mb-8 text-xs uppercase tracking-[0.35em] text-white/40">
@@ -44,9 +44,9 @@ export default function Day8Page() {
             Universal Studios Japan
           </h1>
           <p className="mt-10 max-w-2xl text-lg font-light leading-9 text-white/65">
-            Um dia inteiro no maior parque temático do Japão, com curadoria de
-            atrações, estratégia de fila, recomendações gastronômicas dentro do
-            parque e jantar reservado num dos melhores omakase de Osaka.
+            Um dia inteiro no Universal Studios Japan, com motorista privado,
+            estratégia de entrada, curadoria das atrações, pausas leves dentro
+            do parque e jantar omakase reservado em Osaka.
           </p>
         </div>
       </section>
@@ -59,7 +59,7 @@ export default function Day8Page() {
           <PreviewItem title="Estilo de curadoria" text="Alpinea Private" />
           <PreviewItem
             title="Dinâmica do dia"
-            text="Parque temático do horário de abertura às 16:00, seguido de jantar omakase com reserva confirmada."
+            text="Motorista privado porta a porta, parque do horário de abertura às 16:00, descanso no hotel e jantar omakase com reserva confirmada."
           />
         </div>
       </section>
@@ -79,14 +79,16 @@ export default function Day8Page() {
 
             <div className="mt-10 border-t border-white/10 pt-10">
               <p className="mb-8 text-xs uppercase tracking-[0.35em] text-white/40">Hospedagem</p>
-              <div className="grid gap-10 lg:grid-cols-[0.9fr_1.1fr_1fr] lg:items-center">
+              <div className="grid gap-10 lg:grid-cols-[0.8fr_1.25fr_0.95fr] lg:items-center">
+                <div className="flex min-h-40 items-center justify-center border border-white/10 bg-white px-8 py-10">
                 <Image
-                  src="/images/fourseasons-osaka-logo.png"
+                  src="/images/Four-Seasons-Logo.png"
                   alt="Four Seasons Osaka"
                   width={520}
                   height={260}
-                  className="w-full max-w-xs object-contain"
+                  className="mx-auto h-auto w-full max-w-[260px] object-contain"
                 />
+                </div>
                 <div>
                   <p className="text-3xl font-light text-white md:text-4xl">Four Seasons Osaka</p>
                   <p className="mt-5 max-w-2xl text-lg font-light leading-8 text-white/60">
@@ -118,12 +120,11 @@ export default function Day8Page() {
               <span className="text-white">Local:</span> Universal Studios Japan — Sakurajima, Konohana-ku, Osaka
             </p>
             <p>
-              Saída do Four Seasons Osaka com antecedência suficiente para
-              chegar ao parque no horário de abertura. O deslocamento até a
-              estação Sakurajima leva entre 30 e 40 minutos via metrô e JR Loop
-              Line. A Alpinea coordenará o transporte privado de ida ao parque,
-              garantindo chegada pontual sem preocupação com conexões ou
-              validação de passes.
+              Motorista privado coordenado pela Alpinea busca a família na porta
+              do Four Seasons Osaka e conduz diretamente até o Universal Studios
+              Japan. A experiência é porta a porta, sem conexão por metrô, sem
+              validação de passes e sem necessidade de caminhar com crianças ou
+              compras entre estações.
             </p>
           </div>
         </div>
@@ -142,16 +143,16 @@ export default function Day8Page() {
               <p className="mb-6 text-xs uppercase tracking-[0.35em] text-white/40">Acesso ao Parque</p>
               <div className="space-y-8">
                 <div>
-                  <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/35">Estação</p>
-                  <p className="text-white">Sakurajima Station 桜島駅 — JR Yumesaki Line</p>
+                  <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/35">Motorista privado</p>
+                  <p className="text-white">Busca na porta do Four Seasons Osaka e desembarque próximo à entrada principal do USJ.</p>
                 </div>
                 <div>
                   <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/35">Partida do Hotel</p>
-                  <p>Recomendamos saída do Four Seasons às <span className="text-white">08:00</span> para chegar ao parque às <span className="text-white">08:45</span>, quinze minutos antes da abertura.</p>
+                  <p>Recomendamos saída às <span className="text-white">08:00</span> para chegada ao parque por volta de <span className="text-white">08:40–08:45</span>, antes da abertura.</p>
                 </div>
                 <div>
-                  <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/35">Transporte</p>
-                  <p>Transporte privado de ida coordenado pela Alpinea. Retorno ao hotel: Uber ou táxi — fila de táxi disponível na saída principal.</p>
+                  <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/35">Retorno</p>
+                  <p>Motorista privado aguarda em ponto combinado para retorno ao Four Seasons Osaka às <span className="text-white">16:00</span>.</p>
                 </div>
               </div>
             </div>
@@ -160,12 +161,12 @@ export default function Day8Page() {
               <p className="mb-6 text-xs uppercase tracking-[0.35em] text-white/40">Tempo de Deslocamento</p>
               <div className="grid gap-8 sm:grid-cols-2">
                 <div>
-                  <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/35">Transporte Privado</p>
+                  <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/35">Hotel → USJ</p>
                   <p className="text-white">Aproximadamente 35 minutos</p>
                 </div>
                 <div>
-                  <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/35">Metrô + JR</p>
-                  <p className="text-white">Aproximadamente 40–50 minutos</p>
+                  <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/35">USJ → Hotel</p>
+                  <p className="text-white">Aproximadamente 35–45 minutos</p>
                 </div>
               </div>
             </div>
@@ -240,7 +241,7 @@ export default function Day8Page() {
               width={1200}
               height={1800}
               priority
-              className="h-[720px] w-full rounded-xl object-cover"
+              className="max-h-[760px] w-full rounded-2xl border border-white/10 bg-white/[0.03] object-contain p-4"
             />
             <p className="mt-4 text-xs uppercase tracking-[0.35em] text-white/35">
               Universal Studios Japan · Sakurajima · Osaka
@@ -255,7 +256,7 @@ export default function Day8Page() {
                   alt="Mapa do Universal Studios Japan"
                   width={1200}
                   height={900}
-                  className="w-full cursor-zoom-in rounded-xl object-contain transition hover:opacity-85"
+                  className="max-h-[520px] w-full cursor-zoom-in rounded-2xl border border-white/10 bg-white/[0.03] object-contain p-4 transition hover:opacity-85"
                 />
               </a>
               <p className="mt-4 text-sm leading-7 text-white/45">
@@ -380,7 +381,7 @@ export default function Day8Page() {
                 <p className="mb-6 text-xs uppercase tracking-[0.35em] text-white/40">Deslocamento Hotel → Amano</p>
                 <div className="grid gap-8 sm:grid-cols-2">
                   <div>
-                    <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/35">Táxi / Uber</p>
+                    <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/35">Motorista privado</p>
                     <p className="text-white">Aproximadamente 15–20 minutos</p>
                   </div>
                   <div>
@@ -416,7 +417,7 @@ export default function Day8Page() {
                 <div className="space-y-8 text-base leading-8 text-white/65">
                   <div className="flex items-start gap-6">
                     <span className="mt-1 shrink-0 text-xs uppercase tracking-[0.25em] text-white/30 w-14">08:00</span>
-                    <p>Saída do Four Seasons Osaka em transporte privado</p>
+                    <p>Motorista privado busca no Four Seasons Osaka</p>
                   </div>
                   <div className="flex items-start gap-6 border-t border-white/[0.07] pt-6">
                     <span className="mt-1 shrink-0 text-xs uppercase tracking-[0.25em] text-white/30 w-14">09:00</span>
@@ -436,11 +437,11 @@ export default function Day8Page() {
                   </div>
                   <div className="flex items-start gap-6 border-t border-white/[0.07] pt-6">
                     <span className="mt-1 shrink-0 text-xs uppercase tracking-[0.25em] text-white/30 w-14">16:00</span>
-                    <p>Saída do parque — retorno ao hotel</p>
+                    <p>Motorista privado — retorno ao hotel</p>
                   </div>
                   <div className="flex items-start gap-6 border-t border-white/[0.07] pt-6">
                     <span className="mt-1 shrink-0 text-xs uppercase tracking-[0.25em] text-white/30 w-14">18:30</span>
-                    <p>Saída para jantar</p>
+                    <p>Motorista privado para jantar</p>
                   </div>
                   <div className="flex items-start gap-6 border-t border-white/[0.07] pt-6">
                     <span className="mt-1 shrink-0 text-xs uppercase tracking-[0.25em] text-white/30 w-14">19:00</span>
@@ -448,7 +449,7 @@ export default function Day8Page() {
                   </div>
                   <div className="flex items-start gap-6 border-t border-white/[0.07] pt-6">
                     <span className="mt-1 shrink-0 text-xs uppercase tracking-[0.25em] text-white/30 w-14">21:00</span>
-                    <p>Retorno ao Four Seasons Osaka</p>
+                    <p>Motorista privado — retorno ao Four Seasons Osaka</p>
                   </div>
                 </div>
               </div>
