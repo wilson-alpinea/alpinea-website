@@ -33,7 +33,6 @@ export default function ServicesPage() {
     className="absolute inset-0 h-full w-full object-cover opacity-35"
   />
 
-  <div className="absolute inset-0 bg-black/60" />
   <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/55 to-black" />
 
   <div className="relative z-10 mx-auto max-w-7xl">
@@ -117,30 +116,7 @@ export default function ServicesPage() {
         ]}
       />
 
-      <section className="border-t border-white/10 bg-white/[0.025] px-8 py-32 md:px-16">
-        <div className="mx-auto max-w-5xl text-center">
-          <p className="mb-8 text-xs uppercase tracking-[0.35em] text-white/40">
-            Preview de Roteiro
-          </p>
-
-          <h2 className="text-4xl font-light leading-tight md:text-6xl">
-            Veja um exemplo real de curadoria Alpinea.
-          </h2>
-
-          <p className="mx-auto mt-8 max-w-2xl text-lg font-light leading-9 text-white/60">
-            Explore uma prévia de como estruturamos hotéis, logística,
-            restaurantes, atrações, mapas internos, compras e recomendações
-            práticas para uma jornada no Japão.
-          </p>
-
-          <a
-            href="/preview"
-            className="mt-12 inline-block border border-white px-8 py-4 text-xs uppercase tracking-[0.3em] transition hover:bg-white hover:text-black"
-          >
-            Abrir Preview
-          </a>
-        </div>
-      </section>
+ 
 
       <section className="border-t border-white/10 bg-black px-8 py-32 md:px-16">
         <div className="mx-auto max-w-7xl">
@@ -224,6 +200,31 @@ export default function ServicesPage() {
           </div>
         </div>
       </section>
+
+<section className="border-t border-b border-white/10 bg-[#080706] px-8 py-32 md:px-16">
+  <div className="mx-auto max-w-5xl text-center">
+    <p className="mb-8 text-xs uppercase tracking-[0.35em] text-[#C9A03A]/70">
+      Roteiro Alpinea
+    </p>
+
+    <h2 className="text-4xl font-light leading-tight text-white md:text-6xl">
+      Veja um exemplo real de curadoria Alpinea.
+    </h2>
+
+    <p className="mx-auto mt-8 max-w-2xl text-lg font-light leading-9 text-white/65">
+      Explore uma prévia de como estruturamos hotéis, logística,
+      restaurantes, atrações, mapas internos, compras e recomendações
+      práticas para uma jornada no Japão.
+    </p>
+
+    <a
+      href="/preview"
+      className="mt-12 inline-block border border-[#C9A03A]/60 px-8 py-4 text-xs uppercase tracking-[0.3em] text-[#C9A03A] transition hover:bg-[#C9A03A] hover:text-black"
+    >
+      Explorar Roteiro
+    </a>
+  </div>
+</section>
 
       <section id="contact" className="bg-white px-8 py-28 text-black md:px-16">
         <div className="mx-auto max-w-4xl text-center">
