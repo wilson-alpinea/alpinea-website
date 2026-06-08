@@ -590,16 +590,14 @@ export default function Home() {
   </div>
 </section>
 
-<footer className="border-t border-white/10 bg-black px-6 py-16 text-white md:px-16">
-  <div className="mx-auto flex max-w-7xl flex-col gap-12 md:flex-row md:items-end md:justify-between">
-    
-    {/* LEFT */}
+ <footer className="border-t border-white/10 bg-black px-8 py-16 text-white md:px-16">
+  <div className="mx-auto flex max-w-7xl flex-col justify-between gap-12 md:flex-row md:items-end">
+
+    {/* Coluna esquerda */}
     <div className="space-y-6">
-      <div>
-        <p className="text-xs uppercase tracking-[0.45em] text-white/80">
-          Alpinea
-        </p>
-      </div>
+      <p className="text-xs uppercase tracking-[0.45em] text-white/80">
+        Alpinea
+      </p>
 
       <div className="max-w-md space-y-3">
         <p className="text-sm leading-relaxed text-white/50">
@@ -609,10 +607,28 @@ export default function Home() {
         <p className="text-xs text-white/30">
           © 2026 Alpinea Agências de Viagens LTDA — CNPJ 66.491.067/0001-84
         </p>
+
+        <div className="flex flex-wrap items-center gap-3 text-xs text-white/25">
+          <a
+            href="/legal"
+            className="transition hover:text-white/60"
+          >
+            Termos e Condições
+          </a>
+
+          <span>·</span>
+
+          <a
+            href="/privacy"
+            className="transition hover:text-white/60"
+          >
+            Política de Privacidade
+          </a>
+        </div>
       </div>
     </div>
 
-    {/* RIGHT */}
+    {/* Coluna direita */}
     <div className="flex items-center gap-8 text-xs uppercase tracking-[0.25em] text-white/40">
       <a
         href="https://www.instagram.com/alpinea.private"
@@ -639,6 +655,7 @@ export default function Home() {
         Contato
       </a>
     </div>
+
   </div>
 </footer>
 
