@@ -139,7 +139,7 @@ export default function ServicesPage() {
                   ["JR Pass", "Opcional", "✓", "✓"],
                   ["Ingressos e atrações", "Opcional", "✓", "✓"],
                   ["Seguro viagem", "Opcional", "✓", "✓"],
-                  ["Concierge remoto durante a viagem", "—", "✓", "✓"],
+                  ["Concierge remoto durante a viagem", "Opcional", "✓", "✓"],
                   ["Acompanhamento em restaurantes", "—", "—", "✓"],
                   ["Acompanhamento para compras", "—", "—", "✓"],
                   ["Acompanhamento em atrações turísticas", "—", "—", "✓"],
