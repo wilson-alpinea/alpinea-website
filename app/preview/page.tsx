@@ -177,6 +177,83 @@ export default function PreviewPage() {
               </p>
 
               <div>
+
+<div className="mt-12 border-t border-white/10 pt-10">
+  <p className="mb-6 text-xs uppercase tracking-[0.35em] text-white/40">
+    Acesso
+  </p>
+
+  <div className="space-y-8 text-white/80">
+    <div>
+      <p className="mb-2 text-sm uppercase tracking-[0.25em] text-white/40">
+        Nome da Estação
+      </p>
+
+      <p className="text-lg">
+        Oshiage Station 押上駅〈スカイツリー前〉
+      </p>
+    </div>
+
+    <div>
+      <p className="mb-2 text-sm uppercase tracking-[0.25em] text-white/40">
+        Saída Recomendada
+      </p>
+
+      <p className="leading-8">
+        A2 ou B3 para superfície. Em dias de chuva recomendamos utilizar a
+        conexão subterrânea direta com o Tokyo Solamachi. Após as catracas,
+        procure pela sinalização:
+      </p>
+
+      <p className="mt-4 text-lg tracking-wide text-white">
+        連絡通路直結 Solamachi B3F
+      </p>
+
+      <p className="mt-4 leading-8">
+        Caso encontre dificuldades, qualquer funcionário do metrô poderá indicar
+        a direção correta.
+      </p>
+    </div>
+
+    <div className="grid gap-8 md:grid-cols-2">
+      <div>
+        <p className="mb-2 text-sm uppercase tracking-[0.25em] text-white/40">
+          Duração de Metrô
+        </p>
+
+        <p className="text-lg">
+          Aproximadamente 40 minutos
+        </p>
+      </div>
+
+      <div>
+        <p className="mb-2 text-sm uppercase tracking-[0.25em] text-white/40">
+          Duração de Carro / Táxi
+        </p>
+
+        <p className="text-lg">
+          Aproximadamente 35 minutos
+        </p>
+      </div>
+    </div>
+
+    <div>
+      <p className="mb-4 text-sm uppercase tracking-[0.25em] text-white/40">
+        Recomendação Alpinea
+      </p>
+
+      <p className="leading-8">
+        A partir do Grand Hyatt Tokyo, a diferença de tempo entre metrô e
+        carro/táxi é pequena. A principal vantagem do táxi é a comodidade,
+        especialmente para quem estiver carregando compras ou bagagens. Para a
+        maioria dos viajantes, o metrô oferece excelente custo-benefício e uma
+        experiência bastante simples de navegação.
+      </p>
+    </div>
+  </div>
+</div>
+
+
                 <p className="mb-4 text-xs uppercase tracking-[0.35em] text-white/40">
                   Acesso ferroviário
                 </p>
