@@ -22,38 +22,39 @@ export default function Day8Page() {
       </header>
 
       {/* Hero */}
-      <section className="relative min-h-[720px] overflow-hidden border-b border-white/10">
-        <Image
-          src="/images/ginzan-onsen.jpg"
-          alt="Alpinea Preview"
-          fill
-          priority
-          sizes="100vw"
-          className="object-cover"
-        />
-        <div className="absolute inset-0 bg-black/65" />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/50 to-black" />
+    <section className="relative min-h-[720px] overflow-hidden border-b border-white/10">
+  <Image
+    src="/images/ginzan-onsen.jpg"
+    alt="Alpinea Preview"
+    fill
+    priority
+    sizes="100vw"
+    className="object-cover"
+  />
 
-        <div className="relative z-10 mx-auto flex min-h-[720px] max-w-7xl items-center px-8 md:px-16">
-          <div className="max-w-4xl">
-            <p className="mb-10 text-xs uppercase tracking-[0.45em] text-white/45">
-              Roteiro Alpinea · Dia 8
-            </p>
+  <div className="absolute inset-0 bg-black/65" />
+  <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/50 to-black" />
 
-            <h1 className="text-5xl font-light leading-[1.05] tracking-tight md:text-7xl">
-              Osaka
-              <br />
-              Universal Studios Japan
-            </h1>
+  <div className="relative z-10 mx-auto flex min-h-[720px] max-w-7xl items-center px-8 md:px-16">
+    <div className="max-w-4xl">
+      <p className="mb-10 text-xs uppercase tracking-[0.45em] text-white/45">
+        ROTEIRO ALPINEA
+      </p>
 
-            <p className="mt-10 max-w-2xl text-xl font-light leading-10 text-white/65">
-              Transporte privativo, estratégia de entrada, atrações prioritárias,
-              alimentação dentro do parque e jantar omakase reservado para o
-              encerramento do dia.
-            </p>
-          </div>
-        </div>
-      </section>
+      <h1 className="text-5xl font-light leading-[1.05] tracking-tight md:text-7xl">
+        Um exemplo real
+        <br />
+        de uma jornada Alpinea.
+      </h1>
+
+      <p className="mt-10 max-w-2xl text-xl font-light leading-10 text-white/65">
+        Uma prévia simplificada da forma como estruturamos roteiros:
+        contexto, ritmo, logística, atrações, horários recomendados,
+        restaurantes e oportunidades de compras.
+      </p>
+    </div>
+  </div>
+</section>
 
       {/* Perfil */}
       <section className="border-t border-white/10 bg-white/[0.025] px-8 py-24 md:px-16">
