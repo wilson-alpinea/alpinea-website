@@ -22,32 +22,36 @@ export default function Day8Page() {
       </header>
 
       {/* Hero */}
-      <section className="relative min-h-[720px] overflow-hidden px-8 pb-28 pt-40 md:px-16 md:pt-48">
+      <section className="relative min-h-[720px] overflow-hidden border-b border-white/10">
         <Image
-          src="/images/ginzan-onsen.png"
-          alt="Ginzan Onsen"
+          src="/images/ginzan-onsen.jpg"
+          alt="Alpinea Preview"
           fill
           priority
           sizes="100vw"
-          className="object-cover opacity-55"
+          className="object-cover"
         />
-        <div className="absolute inset-0 bg-black/40" />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/75 via-black/30 to-black" />
+        <div className="absolute inset-0 bg-black/65" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/50 to-black" />
 
-        <div className="relative z-10 mx-auto max-w-7xl">
-          <p className="mb-8 text-xs uppercase tracking-[0.35em] text-white/40">
-            Roteiro Alpinea · Dia 8
-          </p>
-          <h1 className="max-w-5xl text-5xl font-light leading-[1.05] tracking-tight md:text-7xl">
-            Osaka
-            <br />
-            Universal Studios Japan
-          </h1>
-          <p className="mt-10 max-w-2xl text-lg font-light leading-9 text-white/65">
-            Um dia inteiro no Universal Studios Japan, com motorista privado,
-            estratégia de entrada, curadoria das atrações, pausas leves dentro
-            do parque e jantar omakase reservado em Osaka.
-          </p>
+        <div className="relative z-10 mx-auto flex min-h-[720px] max-w-7xl items-center px-8 md:px-16">
+          <div className="max-w-4xl">
+            <p className="mb-10 text-xs uppercase tracking-[0.45em] text-white/45">
+              Roteiro Alpinea · Dia 8
+            </p>
+
+            <h1 className="text-5xl font-light leading-[1.05] tracking-tight md:text-7xl">
+              Osaka
+              <br />
+              Universal Studios Japan
+            </h1>
+
+            <p className="mt-10 max-w-2xl text-xl font-light leading-10 text-white/65">
+              Transporte privativo, estratégia de entrada, atrações prioritárias,
+              alimentação dentro do parque e jantar omakase reservado para o
+              encerramento do dia.
+            </p>
+          </div>
         </div>
       </section>
 
@@ -210,7 +214,7 @@ export default function Day8Page() {
               <p className="text-white">Roteiro sugerido dentro do parque</p>
               <div className="mt-4 space-y-4">
                 <p><span className="text-white/80">09:00 –</span> Entrada. Seguir direto para Super Nintendo World — fila menor logo na abertura.</p>
-                <p><span className="text-white/80">10:30 –</span> Wizarding World of Harry Potter. Pbutterbeer e Hogsmeade Village antes do movimento.</p>
+                <p><span className="text-white/80">10:30 –</span> Wizarding World of Harry Potter. Butterbeer e Hogsmeade Village antes do movimento.</p>
                 <p><span className="text-white/80">12:00 –</span> Almoço. Três Vassouras (Harry Potter) ou Three Broomsticks — comida aceitável, atmosfera ótima.</p>
                 <p><span className="text-white/80">13:00 –</span> Jurassic Park: The Flying Dinosaur — atração mais disputada do parque.</p>
                 <p><span className="text-white/80">14:00 –</span> Minion Park e Despicable Me Minion Mayhem.</p>
