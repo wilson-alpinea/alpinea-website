@@ -256,13 +256,20 @@ export default function PreviewPage() {
                 Mapa do Complexo Tokyo Solamachi
               </p>
 
-              <Image
-                src="/images/solamachi-floor1.png"
-                alt="Mapa do primeiro andar do Tokyo Solamachi"
-                width={1200}
-                height={900}
-                className="w-full rounded-xl object-contain"
-              />
+              <a
+  href="/images/solamachi-floor1.png"
+  target="_blank"
+  rel="noopener noreferrer"
+  className="block"
+>
+  <Image
+    src="/images/solamachi-floor1.png"
+    alt="Mapa do primeiro andar do Tokyo Solamachi"
+    width={1200}
+    height={900}
+    className="w-full cursor-zoom-in rounded-xl object-contain transition hover:opacity-85"
+  />
+</a>
 
               <p className="mt-4 text-sm leading-7 text-white/45">
                 Visão geral do primeiro andar do complexo Tokyo Solamachi,
@@ -316,13 +323,20 @@ export default function PreviewPage() {
               Mapa — Solamachi Dining
             </p>
 
-            <Image
-              src="/images/solamachi-dining-map.png"
-              alt="Mapa dos restaurantes do Tokyo Solamachi"
-              width={1200}
-              height={900}
-              className="w-full rounded-xl object-contain"
-            />
+            <a
+  href="/images/solamachi-dining-map.png"
+  target="_blank"
+  rel="noopener noreferrer"
+  className="block"
+>
+  <Image
+    src="/images/solamachi-dining-map.png"
+    alt="Mapa dos restaurantes do Tokyo Solamachi"
+    width={1200}
+    height={900}
+    className="w-full cursor-zoom-in rounded-xl object-contain transition hover:opacity-85"
+  />
+</a>
 
             <p className="mt-5 text-sm leading-7 text-white/45">
               Referência dos restaurantes localizados entre o 6º e 7º andar do
