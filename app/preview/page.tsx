@@ -9,61 +9,61 @@ export const metadata = {
 export default function PreviewPage() {
   return (
     <main className="min-h-screen bg-black text-white">
-    <header className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between bg-black/10 px-8 py-5 backdrop-blur-2xl md:px-16">
-          <a href="/" className="text-xl tracking-[0.45em]">
-    ALPINEA
-  </a>
+      <header className="fixed left-0 right-0 top-0 z-50 flex items-center justify-between bg-black/10 px-8 py-5 backdrop-blur-2xl md:px-16">
+        <a href="/" className="text-xl tracking-[0.45em]">
+          ALPINEA
+        </a>
 
-  <nav className="hidden gap-8 text-xs uppercase tracking-[0.25em] text-white/70 md:flex">
-    <a href="/" className="transition hover:text-white">
-      Início
-    </a>
+        <nav className="hidden gap-8 text-xs uppercase tracking-[0.25em] text-white/70 md:flex">
+          <a href="/" className="transition hover:text-white">
+            Início
+          </a>
 
-    <a href="/services" className="transition hover:text-white">
-      Serviços
-    </a>
+          <a href="/services" className="transition hover:text-white">
+            Serviços
+          </a>
 
-    <a href="/preview" className="transition hover:text-white">
-      Roteiro
-    </a>
+          <a href="/preview" className="transition text-white">
+            Roteiro
+          </a>
 
-    <a href="#contact" className="transition hover:text-white">
-      Contato
-    </a>
-  </nav>
-</header>
+          <a href="/preview#contact" className="transition hover:text-white">
+            Contato
+          </a>
+        </nav>
+      </header>
 
-<section className="relative min-h-[720px] overflow-hidden px-8 pb-28 pt-40 md:px-16 md:pt-48">
-  <Image
-    src="/images/ginzanonsen.jpg"
-    alt="Ginzan Onsen"
-    fill
-    priority
-    sizes="100vw"
-    className="object-cover opacity-55"
-  />
+      <section className="relative min-h-[720px] overflow-hidden px-8 pb-28 pt-40 md:px-16 md:pt-48">
+        <Image
+          src="/images/ginzanonsen.jpg"
+          alt="Ginzan Onsen"
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover opacity-55"
+        />
 
-  <div className="absolute inset-0 bg-black/35" />
-  <div className="absolute inset-0 bg-gradient-to-b from-black/55 via-black/20 to-black" />
+        <div className="absolute inset-0 bg-black/35" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/55 via-black/20 to-black" />
 
-  <div className="relative z-10 mx-auto max-w-7xl">
-    <p className="mb-8 text-xs uppercase tracking-[0.35em] text-white/40">
-      Roteiro Alpinea
-    </p>
+        <div className="relative z-10 mx-auto max-w-7xl">
+          <p className="mb-8 text-xs uppercase tracking-[0.35em] text-white/40">
+            Roteiro Alpinea
+          </p>
 
-    <h1 className="max-w-5xl text-5xl font-light leading-[1.05] tracking-tight md:text-7xl">
-      Um exemplo real
-      <br />
-      de uma jornada Alpinea.
-    </h1>
+          <h1 className="max-w-5xl text-5xl font-light leading-[1.05] tracking-tight md:text-7xl">
+            Um exemplo real
+            <br />
+            de uma jornada Alpinea.
+          </h1>
 
-    <p className="mt-10 max-w-2xl text-lg font-light leading-9 text-white/65">
-      Uma prévia simplificada da forma como estruturamos roteiros: contexto,
-      ritmo, logística, atrações, horários recomendados, restaurantes e
-      oportunidades de compras.
-    </p>
-  </div>
-</section>
+          <p className="mt-10 max-w-2xl text-lg font-light leading-9 text-white/65">
+            Uma prévia simplificada da forma como estruturamos roteiros:
+            contexto, ritmo, logística, atrações, horários recomendados,
+            restaurantes e oportunidades de compras.
+          </p>
+        </div>
+      </section>
 
       <section className="border-t border-white/10 bg-white/[0.025] px-8 py-24 md:px-16">
         <div className="mx-auto max-w-5xl space-y-10 text-lg font-light leading-9 text-white/70">
@@ -176,84 +176,72 @@ export default function PreviewPage() {
                 <span className="text-white">Local:</span> Oshiage, Tokyo
               </p>
 
-              <div>
+              <div className="border-t border-white/10 pt-10">
+                <p className="mb-6 text-xs uppercase tracking-[0.35em] text-white/40">
+                  Acesso
+                </p>
 
-<div className="mt-12 border-t border-white/10 pt-10">
-  <p className="mb-6 text-xs uppercase tracking-[0.35em] text-white/40">
-    Acesso
-  </p>
+                <div className="space-y-8 text-white/80">
+                  <div>
+                    <p className="mb-2 text-sm uppercase tracking-[0.25em] text-white/40">
+                      Nome da Estação
+                    </p>
+                    <p className="text-lg">
+                      Oshiage Station 押上駅〈スカイツリー前〉
+                    </p>
+                  </div>
 
-  <div className="space-y-8 text-white/80">
-    <div>
-      <p className="mb-2 text-sm uppercase tracking-[0.25em] text-white/40">
-        Nome da Estação
-      </p>
+                  <div>
+                    <p className="mb-2 text-sm uppercase tracking-[0.25em] text-white/40">
+                      Saída Recomendada
+                    </p>
 
-      <p className="text-lg">
-        Oshiage Station 押上駅〈スカイツリー前〉
-      </p>
-    </div>
+                    <p className="leading-8">
+                      A2 ou B3 para superfície. Em dias de chuva recomendamos
+                      utilizar a conexão subterrânea direta com o Tokyo
+                      Solamachi. Após as catracas, procure pela sinalização:
+                    </p>
 
-    <div>
-      <p className="mb-2 text-sm uppercase tracking-[0.25em] text-white/40">
-        Saída Recomendada
-      </p>
+                    <p className="mt-4 text-lg tracking-wide text-white">
+                      連絡通路直結 Solamachi B3F
+                    </p>
 
-      <p className="leading-8">
-        A2 ou B3 para superfície. Em dias de chuva recomendamos utilizar a
-        conexão subterrânea direta com o Tokyo Solamachi. Após as catracas,
-        procure pela sinalização:
-      </p>
+                    <p className="mt-4 leading-8">
+                      Caso encontre dificuldades, qualquer funcionário do metrô
+                      poderá indicar a direção correta.
+                    </p>
+                  </div>
 
-      <p className="mt-4 text-lg tracking-wide text-white">
-        連絡通路直結 Solamachi B3F
-      </p>
+                  <div className="grid gap-8 md:grid-cols-2">
+                    <div>
+                      <p className="mb-2 text-sm uppercase tracking-[0.25em] text-white/40">
+                        Duração de Metrô
+                      </p>
+                      <p className="text-lg">Aproximadamente 40 minutos</p>
+                    </div>
 
-      <p className="mt-4 leading-8">
-        Caso encontre dificuldades, qualquer funcionário do metrô poderá indicar
-        a direção correta.
-      </p>
-    </div>
+                    <div>
+                      <p className="mb-2 text-sm uppercase tracking-[0.25em] text-white/40">
+                        Duração de Carro / Táxi
+                      </p>
+                      <p className="text-lg">Aproximadamente 35 minutos</p>
+                    </div>
+                  </div>
 
-    <div className="grid gap-8 md:grid-cols-2">
-      <div>
-        <p className="mb-2 text-sm uppercase tracking-[0.25em] text-white/40">
-          Duração de Metrô
-        </p>
+                  <div>
+                    <p className="mb-4 text-sm uppercase tracking-[0.25em] text-white/40">
+                      Recomendação Alpinea
+                    </p>
 
-        <p className="text-lg">
-          Aproximadamente 40 minutos
-        </p>
-      </div>
+                    <p className="leading-8">
+                      A partir do Grand Hyatt Tokyo, a diferença de tempo entre
+                      metrô e carro/táxi é irrelevante, o taxi proporciona maior comodidade, mas a diferença de preço é grande entre metrô e taxi, caso esteja chovendo forte ou ventando, recomendo substituir por outra atração, pois embora seja um local fechado devido a altura o observatório pode balançar mais que o normal.
+                    </p>
+                  </div>
+                </div>
+              </div>
 
-      <div>
-        <p className="mb-2 text-sm uppercase tracking-[0.25em] text-white/40">
-          Duração de Carro / Táxi
-        </p>
-
-        <p className="text-lg">
-          Aproximadamente 35 minutos
-        </p>
-      </div>
-    </div>
-
-    <div>
-      <p className="mb-4 text-sm uppercase tracking-[0.25em] text-white/40">
-        Recomendação Alpinea
-      </p>
-
-      <p className="leading-8">
-        A partir do Grand Hyatt Tokyo, a diferença de tempo entre metrô e
-        carro/táxi é pequena. A principal vantagem do táxi é a comodidade,
-        especialmente para quem estiver carregando compras ou bagagens. Para a
-        maioria dos viajantes, o metrô oferece excelente custo-benefício e uma
-        experiência bastante simples de navegação.
-      </p>
-    </div>
-  </div>
-</div>
-
-
+              <div className="mt-16 border-t border-white/10 pt-10">
                 <p className="mb-4 text-xs uppercase tracking-[0.35em] text-white/40">
                   Acesso ferroviário
                 </p>
@@ -336,19 +324,19 @@ export default function PreviewPage() {
               </p>
 
               <a
-  href="/images/solamachi-floor1.png"
-  target="_blank"
-  rel="noopener noreferrer"
-  className="block"
->
-  <Image
-    src="/images/solamachi-floor1.png"
-    alt="Mapa do primeiro andar do Tokyo Solamachi"
-    width={1200}
-    height={900}
-    className="w-full cursor-zoom-in rounded-xl object-contain transition hover:opacity-85"
-  />
-</a>
+                href="/images/solamachi-floor1.png"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block"
+              >
+                <Image
+                  src="/images/solamachi-floor1.png"
+                  alt="Mapa do primeiro andar do Tokyo Solamachi"
+                  width={1200}
+                  height={900}
+                  className="w-full cursor-zoom-in rounded-xl object-contain transition hover:opacity-85"
+                />
+              </a>
 
               <p className="mt-4 text-sm leading-7 text-white/45">
                 Visão geral do primeiro andar do complexo Tokyo Solamachi,
@@ -403,19 +391,19 @@ export default function PreviewPage() {
             </p>
 
             <a
-  href="/images/solamachi-dining-map.png"
-  target="_blank"
-  rel="noopener noreferrer"
-  className="block"
->
-  <Image
-    src="/images/solamachi-dining-map.png"
-    alt="Mapa dos restaurantes do Tokyo Solamachi"
-    width={1200}
-    height={900}
-    className="w-full cursor-zoom-in rounded-xl object-contain transition hover:opacity-85"
-  />
-</a>
+              href="/images/solamachi-dining-map.png"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="block"
+            >
+              <Image
+                src="/images/solamachi-dining-map.png"
+                alt="Mapa dos restaurantes do Tokyo Solamachi"
+                width={1200}
+                height={900}
+                className="w-full cursor-zoom-in rounded-xl object-contain transition hover:opacity-85"
+              />
+            </a>
 
             <p className="mt-5 text-sm leading-7 text-white/45">
               Referência dos restaurantes localizados entre o 6º e 7º andar do
@@ -484,7 +472,10 @@ export default function PreviewPage() {
         </div>
       </section>
 
-      <section id="contact" className="bg-white px-8 py-28 text-black md:px-16">
+      <section
+        id="contact"
+        className="scroll-mt-32 bg-white px-8 py-28 text-black md:px-16"
+      >
         <div className="mx-auto max-w-4xl text-center">
           <p className="mb-6 text-xs uppercase tracking-[0.35em] text-black/40">
             Próximo passo
