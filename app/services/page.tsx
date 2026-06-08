@@ -132,7 +132,7 @@ export default function ServicesPage() {
                   ["Criação ou revisão de roteiro", "✓", "✓", "✓"],
                   ["Emissão de passagens aéreas", "Opcional", "✓", "✓"],
                   ["Reserva de hotéis", "—", "✓", "✓"],
-                  ["Organização de transporte privado", "—", "✓", "✓"],
+                  ["Organização de transporte privado", "Opcional", "✓", "✓"],
                   ["Curadoria gastronômica", "Sugestões", "✓", "✓"],
                   ["Reservas em restaurantes", "—", "✓", "✓"],
                   ["Planejamento de compras", "Sugestões", "✓", "✓"],
