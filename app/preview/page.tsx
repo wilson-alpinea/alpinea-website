@@ -33,35 +33,37 @@ export default function PreviewPage() {
   </nav>
 </header>
 
-  <section className="relative overflow-hidden px-8 pb-28 pt-40 md:px-16 md:pt-48">
-  <img
+<section className="relative min-h-[720px] overflow-hidden px-8 pb-28 pt-40 md:px-16 md:pt-48">
+  <Image
     src="/images/ginzanonsen.jpg"
     alt="Ginzan Onsen"
-    className="absolute inset-0 h-full w-full object-cover opacity-55"
+    fill
+    priority
+    sizes="100vw"
+    className="object-cover opacity-55"
   />
 
   <div className="absolute inset-0 bg-black/35" />
-
   <div className="absolute inset-0 bg-gradient-to-b from-black/55 via-black/20 to-black" />
 
   <div className="relative z-10 mx-auto max-w-7xl">
-          <p className="mb-8 text-xs uppercase tracking-[0.35em] text-white/40">
-            Roteiro Alpinea
-          </p>
+    <p className="mb-8 text-xs uppercase tracking-[0.35em] text-white/40">
+      Roteiro Alpinea
+    </p>
 
-          <h1 className="max-w-5xl text-5xl font-light leading-[1.05] tracking-tight md:text-7xl">
-            Um exemplo real
-            <br />
-            de uma jornada Alpinea.
-          </h1>
+    <h1 className="max-w-5xl text-5xl font-light leading-[1.05] tracking-tight md:text-7xl">
+      Um exemplo real
+      <br />
+      de uma jornada Alpinea.
+    </h1>
 
-          <p className="mt-10 max-w-2xl text-lg font-light leading-9 text-white/65">
-            Uma prévia simplificada da forma como estruturamos roteiros:
-            contexto, ritmo, logística, atrações, horários recomendados,
-            restaurantes e oportunidades de compras.
-          </p>
-        </div>
-      </section>
+    <p className="mt-10 max-w-2xl text-lg font-light leading-9 text-white/65">
+      Uma prévia simplificada da forma como estruturamos roteiros: contexto,
+      ritmo, logística, atrações, horários recomendados, restaurantes e
+      oportunidades de compras.
+    </p>
+  </div>
+</section>
 
       <section className="border-t border-white/10 bg-white/[0.025] px-8 py-24 md:px-16">
         <div className="mx-auto max-w-5xl space-y-10 text-lg font-light leading-9 text-white/70">
