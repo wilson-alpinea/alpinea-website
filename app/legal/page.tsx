@@ -196,7 +196,7 @@ const content = [
       "Compartilhamento: quando estritamente necessário à execução dos serviços, dados poderão ser compartilhados com fornecedores envolvidos na viagem (hotéis, restaurantes, guias), os quais atuam como operadores ou controladores independentes sujeitos às suas próprias políticas de privacidade.",
       "Retenção: os dados serão mantidos pelo prazo necessário à execução dos serviços e, após o encerramento, pelo prazo de 5 (cinco) anos para cumprimento de obrigações legais e contratuais, salvo obrigação legal de retenção por prazo distinto.",
       "Direitos do titular: o cliente pode, a qualquer momento, solicitar confirmação de tratamento, acesso aos dados, correção, anonimização, bloqueio, eliminação, portabilidade, informação sobre compartilhamento, revogação de consentimento e oposição ao tratamento. Solicitações devem ser direcionadas ao e-mail wilson@alpinea.io, com resposta em até 15 dias úteis.",
-      "Encarregado de dados (DPO): Wilson Kageyama, contato: wilson@alpinea.io.",
+      "Encarregado de dados (DPO): Wilson Braz, contato: wilson@alpinea.io.",
     ],
   },
   {

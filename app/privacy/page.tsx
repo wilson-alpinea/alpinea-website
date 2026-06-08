@@ -175,7 +175,7 @@ const content = [
     title: "Contato e DPO",
     paragraphs: [
       "Para dúvidas, solicitações ou reclamações relacionadas ao tratamento de dados pessoais pela Alpinea, o titular poderá contatar:",
-      "Encarregado de Proteção de Dados (DPO): Wilson Kageyama — wilson@alpinea.io",
+      "Encarregado de Proteção de Dados (DPO): Wilson Braz — wilson@alpinea.io",
       "O titular também poderá apresentar reclamação diretamente à Autoridade Nacional de Proteção de Dados (ANPD), por meio dos canais oficiais disponíveis em gov.br/anpd.",
     ],
   },
