@@ -79,7 +79,7 @@ export default function Day8Page() {
             <div className="mt-10 border-t border-white/10 pt-10">
               <p className="mb-8 text-xs uppercase tracking-[0.35em] text-white/40">Hospedagem</p>
               <div className="grid gap-10 lg:grid-cols-[0.8fr_1.25fr_0.95fr] lg:items-center">
-                <div className="flex min-h-40 items-center justify-center border border-white/10 px-8 py-10">
+                <div className="flex min-h-40 items-center justify-center px-8 py-10">
                   <Image
                     src="/images/amankyoto.png"
                     alt="Aman Kyoto"
@@ -105,6 +105,81 @@ export default function Day8Page() {
                   </div>
                 </div>
               </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── CAFÉ DA MANHÃ — THE LIVING PAVILION ── */}
+      <section className="border-t border-white/10 px-8 py-32 md:px-16">
+        <div className="mx-auto max-w-7xl">
+          <div className="grid gap-20 lg:grid-cols-2 lg:items-start">
+            {/* Coluna esquerda — detalhes */}
+            <div className="space-y-12 text-lg font-light leading-9 text-white/70">
+              <div>
+                <p className="mb-8 text-xs uppercase tracking-[0.35em] text-white/40">Manhã · Café da Manhã</p>
+                <h3 className="text-3xl font-light text-white md:text-4xl">The Living Pavilion by Aman</h3>
+              </div>
+
+              <p className="max-w-xl">
+                O dia começa no restaurante do próprio Aman Kyoto, com café da manhã servido num salão de lareira central e portas de vidro que se abrem para o jardim florestal. O Chef de Confeitaria Matsuo prepara os pastéis frescos diariamente — croissants, pães artesanais e doces sazonais que chegam à mesa ainda quentes.
+              </p>
+
+              <div className="border-t border-white/10 pt-10">
+                <div className="grid gap-8 sm:grid-cols-2">
+                  <div>
+                    <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/35">Horário</p>
+                    <p className="text-white">07:00 às 11:30</p>
+                  </div>
+                  <div>
+                    <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/35">Último acesso</p>
+                    <p className="text-white">11:00</p>
+                  </div>
+                  <div>
+                    <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/35">Opções disponíveis</p>
+                    <p className="text-white">Japonesa · Ocidental</p>
+                  </div>
+                  <div>
+                    <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/35">Horário sugerido</p>
+                    <p className="text-white">07:30 – 08:15</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="border-t border-white/10 pt-10 space-y-8">
+                <InfoBlock
+                  title="Café da manhã japonês"
+                  text="A opção japonesa inclui miso soup, tsukemono (conservas da estação), arroz, peixe grelhado e proteínas variadas — café da manhã de longevidade, como os japoneses chamam. Servido com chá verde da região."
+                />
+                <InfoBlock
+                  title="Pastéis frescos"
+                  text="O Chef Matsuo, confeiteiro com carreira iniciada em Osaka em 1984, prepara diariamente croissants folhados, pães rústicos e doces de inspiração japonesa e francesa. Uma das melhores mesas de confeitaria disponíveis num hotel de Kyoto."
+                />
+              </div>
+            </div>
+
+            {/* Coluna direita — duas fotos empilhadas */}
+            <div className="lg:sticky lg:top-28 space-y-6">
+              <Image
+                src="/images/amancafe.jpg"
+                alt="Café da manhã — The Living Pavilion by Aman Kyoto"
+                width={900}
+                height={760}
+                priority
+                className="w-full rounded-2xl border border-white/10 object-cover"
+                style={{ maxHeight: "460px", objectFit: "cover" }}
+              />
+              <Image
+                src="/images/amancafe2.jpg"
+                alt="Sobremesa de melão — The Living Pavilion by Aman Kyoto"
+                width={900}
+                height={760}
+                className="w-full rounded-2xl border border-white/10 object-cover"
+                style={{ maxHeight: "460px", objectFit: "cover" }}
+              />
+              <p className="text-xs uppercase tracking-[0.35em] text-white/35">
+                The Living Pavilion by Aman · Aman Kyoto
+              </p>
             </div>
           </div>
         </div>
