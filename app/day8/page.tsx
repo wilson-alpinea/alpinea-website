@@ -1,9 +1,9 @@
 import Image from "next/image";
 
 export const metadata = {
-  title: "Alpinea | Dia 8 — Osaka · Universal Studios Japan",
+  title: "Alpinea | Dia 8 — Kyoto",
   description:
-    "Dia 8 do roteiro Alpinea Private: Universal Studios Japan e jantar omakase no restaurante Amano.",
+    "Dia 8 do roteiro Alpinea Private: Kinkaku-ji, almoço no Niku Kappou Miyata e Gion Matsuri.",
 };
 
 export default function Day8Page() {
@@ -22,49 +22,45 @@ export default function Day8Page() {
       </header>
 
       {/* Hero */}
-    <section className="relative min-h-[720px] overflow-hidden border-b border-white/10">
-  <Image
-    src="/images/ginzan-onsen.jpg"
-    alt="Alpinea Preview"
-    fill
-    priority
-    sizes="100vw"
-    className="object-cover"
-  />
-
-  <div className="absolute inset-0 bg-black/65" />
-  <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/50 to-black" />
-
-  <div className="relative z-10 mx-auto flex min-h-[720px] max-w-7xl items-center px-8 md:px-16">
-    <div className="max-w-4xl">
-      <p className="mb-10 text-xs uppercase tracking-[0.45em] text-white/45">
-        ROTEIRO ALPINEA
-      </p>
-
-      <h1 className="text-5xl font-light leading-[1.05] tracking-tight md:text-7xl">
-        Um exemplo real
-        <br />
-        de uma jornada Alpinea.
-      </h1>
-
-      <p className="mt-10 max-w-2xl text-xl font-light leading-10 text-white/65">
-        Uma prévia simplificada da forma como estruturamos roteiros:
-        contexto, ritmo, logística, atrações, horários recomendados,
-        restaurantes e oportunidades de compras.
-      </p>
-    </div>
-  </div>
-</section>
+      <section className="relative min-h-[720px] overflow-hidden border-b border-white/10">
+        <Image
+          src="/images/ginzan-onsen.jpg"
+          alt="Alpinea Preview"
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover"
+        />
+        <div className="absolute inset-0 bg-black/65" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/50 to-black" />
+        <div className="relative z-10 mx-auto flex min-h-[720px] max-w-7xl items-center px-8 md:px-16">
+          <div className="max-w-4xl">
+            <p className="mb-10 text-xs uppercase tracking-[0.45em] text-white/45">
+              ROTEIRO ALPINEA
+            </p>
+            <h1 className="text-5xl font-light leading-[1.05] tracking-tight md:text-7xl">
+              Um exemplo real
+              <br />
+              de uma jornada Alpinea.
+            </h1>
+            <p className="mt-10 max-w-2xl text-xl font-light leading-10 text-white/65">
+              Uma prévia simplificada da forma como estruturamos roteiros:
+              contexto, ritmo, logística, atrações, horários recomendados,
+              restaurantes e oportunidades de compras.
+            </p>
+          </div>
+        </div>
+      </section>
 
       {/* Perfil */}
       <section className="border-t border-white/10 bg-white/[0.025] px-8 py-24 md:px-16">
         <div className="mx-auto max-w-5xl space-y-10 text-lg font-light leading-9 text-white/70">
           <PreviewItem title="Perfil do viajante" text="Casal com 2 filhos maiores de 12 anos" />
-          <PreviewItem title="Cidade" text="Osaka" />
+          <PreviewItem title="Cidade" text="Kyoto" />
           <PreviewItem title="Estilo de curadoria" text="Alpinea Private" />
           <PreviewItem
             title="Dinâmica do dia"
-            text="Motorista privado porta a porta, parque do horário de abertura às 16:00, descanso no hotel e jantar omakase com reserva confirmada."
+            text="Motorista privado porta a porta, visita ao Templo do Pavilhão de Ouro pela manhã, Almoço num restaurante menu degustação de wagyu e a noite ir ao festival de Gion."
           />
         </div>
       </section>
@@ -74,40 +70,38 @@ export default function Day8Page() {
         <div className="mx-auto max-w-7xl">
           <div className="border border-white/10 bg-white/[0.035] px-8 py-8 md:px-10">
             <p className="mb-5 text-xs uppercase tracking-[0.45em] text-white/45">Dia 8</p>
-            <h2 className="text-4xl font-light tracking-tight text-white md:text-6xl">Osaka</h2>
+            <h2 className="text-4xl font-light tracking-tight text-white md:text-6xl">Kyoto</h2>
             <p className="mt-6 max-w-3xl text-lg font-light leading-9 text-white/60">
-              Dia dedicado ao Universal Studios Japan, com entrada no horário de
-              abertura para maximizar a experiência nas principais atrações antes
-              do aumento de filas. Saída do parque às 16:00 para descanso no hotel
-              antes do jantar.
+              Pela manhã visita ao Templo do Pavilhão de Ouro (Kinkaku-ji), almoço no Niku Kappou Miyata (Menu Degustação de Wagyu) e a tarde/noite ir até o Gion Matsuri — Saki Matsuri.
             </p>
 
+            {/* Hospedagem */}
             <div className="mt-10 border-t border-white/10 pt-10">
               <p className="mb-8 text-xs uppercase tracking-[0.35em] text-white/40">Hospedagem</p>
               <div className="grid gap-10 lg:grid-cols-[0.8fr_1.25fr_0.95fr] lg:items-center">
                 <div className="flex min-h-40 items-center justify-center border border-white/10 bg-white px-8 py-10">
-                <Image
-                  src="/images/Four-Seasons-Logo.png"
-                  alt="Four Seasons Osaka"
-                  width={520}
-                  height={260}
-                  className="mx-auto h-auto w-full max-w-[260px] object-contain"
-                />
+                  <Image
+                    src="/images/amankyoto.png"
+                    alt="Aman Kyoto"
+                    width={520}
+                    height={260}
+                    className="mx-auto h-auto w-full max-w-[260px] object-contain"
+                  />
                 </div>
                 <div>
-                  <p className="text-3xl font-light text-white md:text-4xl">Four Seasons Osaka</p>
+                  <p className="text-3xl font-light text-white md:text-4xl">Aman Kyoto</p>
                   <p className="mt-5 max-w-2xl text-lg font-light leading-8 text-white/60">
-                    2-1-1 Dojimahama, Kita-ku, Osaka 530-0004, Japão
+                    1 Okitayama Washimine-cho, Kita Ward, Kyoto, 603-8458, Japão
                   </p>
                 </div>
                 <div className="grid gap-6 text-base leading-7 text-white/60 sm:grid-cols-2 lg:grid-cols-1">
                   <div>
                     <p className="mb-2 text-xs uppercase tracking-[0.3em] text-white/35">Noite</p>
-                    <p className="text-lg text-white">8ª de 10</p>
+                    <p className="text-lg text-white">Primeiro dia em Kyoto</p>
                   </div>
                   <div>
                     <p className="mb-2 text-xs uppercase tracking-[0.3em] text-white/35">Código da Reserva</p>
-                    <p className="text-sm text-white/45">FS-OSK-4821</p>
+                    <p className="text-sm text-white/45">FS-KYT-4821</p>
                   </div>
                 </div>
               </div>
@@ -116,252 +110,187 @@ export default function Day8Page() {
         </div>
       </section>
 
-      {/* Manhã — Deslocamento */}
+      {/* ── TRANSPORTE PRIVADO ── */}
       <section className="border-t border-white/10 bg-white/[0.02] px-8 py-32 md:px-16">
         <div className="mx-auto max-w-7xl">
-          <p className="mb-8 text-xs uppercase tracking-[0.35em] text-white/40">Manhã</p>
-          <div className="max-w-4xl space-y-8 text-lg font-light leading-9 text-white/70">
-            <p>
-              <span className="text-white">Local:</span> Universal Studios Japan — Sakurajima, Konohana-ku, Osaka
-            </p>
-            <p>
-              Motorista privado coordenado pela Alpinea busca a família na porta
-              do Four Seasons Osaka e conduz diretamente até o Universal Studios
-              Japan. A experiência é porta a porta, sem conexão por metrô, sem
-              validação de passes e sem necessidade de caminhar com crianças ou
-              compras entre estações.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* Tarde — Atração Principal */}
-      <section className="border-t border-white/10 px-8 py-32 md:px-16">
-        <div className="mx-auto grid max-w-7xl gap-20 lg:grid-cols-2 lg:items-start">
-          <div className="space-y-12 text-lg font-light leading-9 text-white/70">
-            <div>
-              <p className="mb-8 text-xs uppercase tracking-[0.35em] text-white/40">Manhã · Tarde</p>
-              <p><span className="text-white">Local:</span> Universal Studios Japan · Osaka</p>
-            </div>
-
-            <div className="border-t border-white/10 pt-10">
-              <p className="mb-6 text-xs uppercase tracking-[0.35em] text-white/40">Acesso ao Parque</p>
-              <div className="space-y-8">
-                <div>
-                  <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/35">Motorista privado</p>
-                  <p className="text-white">Busca na porta do Four Seasons Osaka e desembarque próximo à entrada principal do USJ.</p>
-                </div>
-                <div>
-                  <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/35">Partida do Hotel</p>
-                  <p>Recomendamos saída às <span className="text-white">08:00</span> para chegada ao parque por volta de <span className="text-white">08:40–08:45</span>, antes da abertura.</p>
-                </div>
-                <div>
-                  <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/35">Retorno</p>
-                  <p>Motorista privado aguarda em ponto combinado para retorno ao Four Seasons Osaka às <span className="text-white">16:00</span>.</p>
-                </div>
-              </div>
-            </div>
-
-            <div className="border-t border-white/10 pt-10">
-              <p className="mb-6 text-xs uppercase tracking-[0.35em] text-white/40">Tempo de Deslocamento</p>
-              <div className="grid gap-8 sm:grid-cols-2">
-                <div>
-                  <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/35">Hotel → USJ</p>
-                  <p className="text-white">Aproximadamente 35 minutos</p>
-                </div>
-                <div>
-                  <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/35">USJ → Hotel</p>
-                  <p className="text-white">Aproximadamente 35–45 minutos</p>
-                </div>
-              </div>
-            </div>
-
-            <div className="border-t border-white/10 pt-10">
-              <p className="mb-6 text-xs uppercase tracking-[0.35em] text-white/40">Recomendação Alpinea</p>
-              <p className="max-w-[32rem]">
-                Chegada antes da abertura faz diferença significativa no USJ.
-                As primeiras duas horas são as menos congestionadas do dia —
-                ideal para cobrir Super Nintendo World e Harry Potter logo cedo,
-                antes que as filas se formem. Com 4 pessoas e crianças acima de
-                12 anos, todas as atrações estão disponíveis. O Express Pass
-                não é obrigatório se a estratégia de entrada for seguida, mas
-                pode ser adicionado para Super Nintendo World mediante solicitação
-                prévia à Alpinea.
-              </p>
-            </div>
-
-            <div className="border-t border-white/10 pt-12">
-              <p className="mb-6 text-xs uppercase tracking-[0.35em] text-white/40">Atração</p>
-              <h3 className="text-3xl font-light text-white md:text-4xl">Universal Studios Japan</h3>
-              <div className="mt-8 grid gap-8 sm:grid-cols-3">
-                <div>
-                  <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/35">Abertura</p>
-                  <p className="text-white">09:00</p>
-                </div>
-                <div>
-                  <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/35">Saída prevista</p>
-                  <p className="text-white">16:00</p>
-                </div>
-                <div>
-                  <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/35">Ingresso</p>
-                  <p className="text-white">Confirmado</p>
-                </div>
-              </div>
-            </div>
-
-            <InfoBlock title="Horário de funcionamento" text="09:00 às 21:00 (horário de verão pode variar)" />
-
-            <div>
-              <p className="text-white">Roteiro sugerido dentro do parque</p>
-              <div className="mt-4 space-y-4">
-                <p><span className="text-white/80">09:00 –</span> Entrada. Seguir direto para Super Nintendo World — fila menor logo na abertura.</p>
-                <p><span className="text-white/80">10:30 –</span> Wizarding World of Harry Potter. Butterbeer e Hogsmeade Village antes do movimento.</p>
-                <p><span className="text-white/80">12:00 –</span> Almoço. Três Vassouras (Harry Potter) ou Three Broomsticks — comida aceitável, atmosfera ótima.</p>
-                <p><span className="text-white/80">13:00 –</span> Jurassic Park: The Flying Dinosaur — atração mais disputada do parque.</p>
-                <p><span className="text-white/80">14:00 –</span> Minion Park e Despicable Me Minion Mayhem.</p>
-                <p><span className="text-white/80">15:00 –</span> Exploração livre. Lojas, Amity Village, Jaws.</p>
-                <p><span className="text-white/80">16:00 –</span> Saída do parque e retorno ao Four Seasons.</p>
-              </div>
-            </div>
-
-            <InfoBlock
-              title="Sobre o Super Nintendo World"
-              text="A área temática mais imersiva do parque e provavelmente do mundo. Requer ingresso específico de acesso à área (área pass) que é emitido por QR code no app do USJ — limitado por janelas de tempo. A Alpinea orientará sobre o procedimento de emissão antes do dia da visita. Com chegada na abertura, a chance de conseguir o primeiro horário disponível é alta."
-            />
-            <InfoBlock
-              title="Sobre o Harry Potter"
-              text="Hogsmeade Village é a área mais fotogênica do parque. A atração principal — Harry Potter and the Forbidden Journey — é um simulador em movimento que pode causar enjoo leve. Para quem prefere algo mais suave, Flight of the Hippogriff é uma montanha-russa exterior mais tranquila."
-            />
-            <InfoBlock
-              title="Compras"
-              text="Super Nintendo World tem loja exclusiva com produtos não disponíveis fora do parque, incluindo itens de Mario, Yoshi e Donkey Kong. Harry Potter tem loja dedicada a varitas, mantos e itens temáticos. Recomendamos comprar na saída para não carregar peso durante o dia."
-            />
-          </div>
-
-          {/* Coluna direita sticky */}
-          <div className="lg:sticky lg:top-28">
-            <Image
-              src="/images/usj-main.png"
-              alt="Universal Studios Japan"
-              width={1200}
-              height={1800}
-              priority
-              className="max-h-[760px] w-full rounded-2xl border border-white/10 bg-white/[0.03] object-contain p-4"
-            />
-            <p className="mt-4 text-xs uppercase tracking-[0.35em] text-white/35">
-              Universal Studios Japan · Sakurajima · Osaka
-            </p>
-            <div className="mt-12">
-              <p className="mb-4 text-xs uppercase tracking-[0.35em] text-white/40">
-                Mapa do Parque
-              </p>
-              <a href="/images/usjmap.png" target="_blank" rel="noopener noreferrer" className="block">
-                <Image
-                  src="/images/usjmap.png"
-                  alt="Mapa do Universal Studios Japan"
-                  width={1200}
-                  height={900}
-                  className="max-h-[520px] w-full cursor-zoom-in rounded-2xl border border-white/10 bg-white/[0.03] object-contain p-4 transition hover:opacity-85"
-                />
-              </a>
-              <p className="mt-4 text-sm leading-7 text-white/45">
-                Mapa completo do Universal Studios Japan com todas as áreas
-                temáticas: Super Nintendo World, Wizarding World of Harry Potter,
-                Jurassic Park, Minion Park, Hollywood, New York, Amity Village e
-                Water World.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Restaurantes no parque */}
-      <section className="border-t border-white/10 px-8 py-32 md:px-16">
-        <div className="mx-auto grid max-w-7xl gap-20 lg:grid-cols-2 lg:items-start">
-          <div>
-            <p className="mb-8 text-xs uppercase tracking-[0.35em] text-white/40">
-              Alimentação no parque
-            </p>
-            <p className="text-lg font-light leading-9 text-white/70">
-              O USJ oferece uma quantidade extensa de opções de alimentação
-              dentro das áreas temáticas. As melhores experiências gastronômicas
-              do parque ficam em Harry Potter e no Nintendo World — onde os
-              alimentos têm identidade visual e sabores únicos.
-            </p>
-            <div className="mt-16 space-y-14">
-              <RestaurantBlock
-                name="Three Broomsticks"
-                description="Restaurante principal da área de Harry Potter, com pratos de inspiração britânica servidos num salão com atmosfera do universo da saga. A Butterbeer — cerveja de manteiga não alcoólica — é obrigatória."
-                location="Wizarding World of Harry Potter"
-                price="Aproximadamente ¥1.500–¥2.500 por pessoa"
-                hours="A partir da abertura do parque"
-              />
-              <RestaurantBlock
-                name="Toadstool Café"
-                description="Restaurante temático do Super Nintendo World com pratos inspirados em cogumelos, Koopa Troopa e outros elementos do universo Mario. Ambiente extremamente imersivo — os pratos têm apresentação cuidadosa e estética de jogo."
-                location="Super Nintendo World"
-                price="Aproximadamente ¥2.000–¥3.500 por pessoa"
-                hours="A partir da abertura do parque · sujeito a fila de espera"
-              />
-            </div>
-          </div>
-
-          <div className="lg:sticky lg:top-28 space-y-12">
-            <div>
-              <p className="mb-6 text-xs uppercase tracking-[0.35em] text-white/40">
-                Nota sobre alimentação
-              </p>
-              <p className="text-lg font-light leading-9 text-white/60">
-                O Toadstool Café costuma ter fila de 30 a 60 minutos nos
-                horários de pico. Recomendamos chegar antes das 11:30 para
-                garantir mesa sem longa espera. A experiência gastronômica do
-                parque é parte da imersão — vale incluir no roteiro como
-                atração em si, não apenas como pausa para almoço.
-              </p>
-            </div>
-            <div className="border-t border-white/10 pt-12">
-              <p className="mb-4 text-xs uppercase tracking-[0.35em] text-white/40">Aviso Alpinea</p>
-              <p className="text-lg font-light leading-9 text-white/60">
-                Dada a reserva de jantar às 19:00 num omakase, recomendamos
-                refeições leves no parque — priorize petiscos e snacks temáticos
-                em vez de refeições completas no almoço. Chegar com apetite para
-                o Amano é essencial para aproveitar a experiência completa.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Jantar — Omakase Amano */}
-      <section className="border-t border-white/10 bg-white/[0.02] px-8 py-32 md:px-16">
-        <div className="mx-auto max-w-7xl">
-          <div className="grid gap-20 lg:grid-cols-2 lg:items-start">
+          <div className="grid gap-20 lg:grid-cols-2 lg:items-center">
+            {/* Coluna esquerda — detalhes */}
             <div className="space-y-12 text-lg font-light leading-9 text-white/70">
               <div>
-                <p className="mb-8 text-xs uppercase tracking-[0.35em] text-white/40">Noite</p>
-                <h3 className="text-3xl font-light text-white md:text-4xl">Jantar Omakase</h3>
+                <p className="mb-8 text-xs uppercase tracking-[0.35em] text-white/40">Transporte Privado</p>
+                <h3 className="text-3xl font-light text-white md:text-4xl">Motorista Dedicado</h3>
+              </div>
+
+              <p className="max-w-xl">
+                Toda a logística do dia é coordenada pela Alpinea com motorista privado exclusivo para a família. O veículo aguarda na porta do hotel em todos os deslocamentos — sem espera, sem aplicativo, sem imprevisto.
+              </p>
+
+              <div className="border-t border-white/10 pt-10">
+                <p className="mb-8 text-xs uppercase tracking-[0.35em] text-white/40">Dados do Veículo</p>
+                <div className="grid gap-8 sm:grid-cols-2">
+                  <div>
+                    <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/35">Modelo</p>
+                    <p className="text-white">Toyota Alphard 2025</p>
+                  </div>
+                  <div>
+                    <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/35">Cor</p>
+                    <p className="text-white">Preto Ônix</p>
+                  </div>
+                  <div>
+                    <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/35">Placa</p>
+                    <p className="text-white">京都 300 · す 4817</p>
+                  </div>
+                  <div>
+                    <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/35">Motorista</p>
+                    <p className="text-white">Tanaka Hiroshi</p>
+                  </div>
+                  <div>
+                    <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/35">Contato direto</p>
+                    <p className="text-white/60">+81 75-xxx-xxxx</p>
+                  </div>
+                  <div>
+                    <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/35">Idiomas</p>
+                    <p className="text-white/60">Japonês · Inglês básico</p>
+                  </div>
+                </div>
               </div>
 
               <div className="border-t border-white/10 pt-10">
-                <h4 className="text-2xl font-light text-white">Restaurante Amano</h4>
-                <p className="mt-4 max-w-xl">
-                  Sushi omakase de alto nível em Osaka, com balcão dedicado e
-                  menu inteiramente definido pelo chef. A experiência combina
-                  técnica apurada de Edomae com ingredientes sazonais de
-                  primeira linha — uma das mais consistentes da cidade fora
-                  dos estabelecimentos com estrela Michelin.
+                <p className="mb-6 text-xs uppercase tracking-[0.35em] text-white/40">Nota Alpinea</p>
+                <p className="max-w-xl text-white/60">
+                  O Sr. Tanaka é parceiro da Alpinea há mais de seis anos e conhece os melhores acessos e horários para cada ponto do roteiro. Em caso de necessidade, o concierge Alpinea está disponível como intermediário durante todo o dia.
                 </p>
               </div>
+            </div>
+
+            {/* Coluna direita — imagem do carro */}
+            <div className="lg:sticky lg:top-28">
+              <Image
+                src="/images/limo.png"
+                alt="Toyota Alphard 2025 — Transporte Privado Alpinea"
+                width={1320}
+                height={880}
+                priority
+                className="w-full object-contain"
+              />
+              <p className="mt-4 text-xs uppercase tracking-[0.35em] text-white/35">
+                Toyota Alphard 2025 · Preto Ônix · Placa 京都 300 す 4817
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── KINKAKU-JI — MANHÃ ── */}
+      <section className="border-t border-white/10 px-8 py-32 md:px-16">
+        <div className="mx-auto max-w-7xl">
+          <div className="grid gap-20 lg:grid-cols-2 lg:items-start">
+            {/* Coluna esquerda — detalhes da atração */}
+            <div className="space-y-12 text-lg font-light leading-9 text-white/70">
+              <div>
+                <p className="mb-8 text-xs uppercase tracking-[0.35em] text-white/40">Manhã · Atração</p>
+                <h3 className="text-3xl font-light text-white md:text-4xl">Kinkaku-ji</h3>
+                <p className="mt-3 text-base uppercase tracking-[0.2em] text-white/35">Templo do Pavilhão de Ouro</p>
+              </div>
+
+              <p className="max-w-xl">
+                Um dos monumentos mais icônicos do Japão e Patrimônio Mundial da UNESCO. O pavilhão de três andares, revestido por folhas de ouro puro, reflete-se sobre o lago Kyōkochi num dos mais fotogênicos cenários do país.
+              </p>
+
+              <div className="border-t border-white/10 pt-10">
+                <div className="grid gap-8 sm:grid-cols-3">
+                  <div>
+                    <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/35">Chegada sugerida</p>
+                    <p className="text-white">09:00</p>
+                  </div>
+                  <div>
+                    <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/35">Tempo estimado</p>
+                    <p className="text-white">1h – 1h30</p>
+                  </div>
+                  <div>
+                    <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/35">Ingresso</p>
+                    <p className="text-white">¥500 / pessoa</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="border-t border-white/10 pt-10">
+                <p className="mb-6 text-xs uppercase tracking-[0.35em] text-white/40">Horário de Funcionamento</p>
+                <p>09:00 às 17:00 · Todos os dias</p>
+              </div>
+
+              <div className="border-t border-white/10 pt-10 space-y-8">
+                <InfoBlock
+                  title="Por que chegar às 09:00"
+                  text="Os ônibus turísticos chegam em volume a partir das 09:30. Nos primeiros 30 minutos há movimento reduzido — é quando a luz da manhã ainda está baixa e o reflexo do pavilhão sobre o lago é mais nítido. Uma diferença visível nas fotos e na experiência geral."
+                />
+                <InfoBlock
+                  title="Percurso dentro do templo"
+                  text="O circuito segue um caminho fixo em torno do lago, com o pavilhão sempre à vista. O jardim é do período Muromachi (século XIV) e inclui pedras, pinheiros e ilhotas cuidadosamente posicionados. A saída leva à loja de amuletos (omamori) — vale parar."
+                />
+                <InfoBlock
+                  title="Acesso pela Alpinea"
+                  text="O assessor acompanha a família desde a chegada, adquire os ingressos na bilheteria e conduz até a entrada do percurso. Não há filas para compra de ingresso com o assessor na frente."
+                />
+              </div>
+            </div>
+
+            {/* Coluna direita sticky — foto do templo */}
+            <div className="lg:sticky lg:top-28">
+              <Image
+                src="/images/kinka.jpeg"
+                alt="Kinkaku-ji — Templo do Pavilhão de Ouro, Kyoto"
+                width={900}
+                height={1200}
+                priority
+                className="w-full rounded-2xl border border-white/10 object-cover"
+                style={{ maxHeight: "780px", objectPosition: "center" }}
+              />
+              <p className="mt-4 text-xs uppercase tracking-[0.35em] text-white/35">
+                Kinkaku-ji · Kita Ward · Kyoto
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Manhã — Deslocamento (texto curto de transição) */}
+      <section className="border-t border-white/10 bg-white/[0.02] px-8 py-20 md:px-16">
+        <div className="mx-auto max-w-7xl">
+          <p className="mb-8 text-xs uppercase tracking-[0.35em] text-white/40">Deslocamento</p>
+          <div className="max-w-4xl space-y-6 text-lg font-light leading-9 text-white/70">
+            <p>
+              Após o Kinkaku-ji, o motorista Tanaka aguarda no ponto de desembarque designado. Trajeto até o restaurante é de aproximadamente <span className="text-white">15–20 minutos</span> — tempo suficiente para descanso antes do almoço.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* ── ALMOÇO — NIKU KAPPOU MIYATA ── */}
+      <section className="border-t border-white/10 px-8 py-32 md:px-16">
+        <div className="mx-auto max-w-7xl">
+          <div className="grid gap-20 lg:grid-cols-2 lg:items-start">
+            {/* Coluna esquerda — detalhes */}
+            <div className="space-y-12 text-lg font-light leading-9 text-white/70">
+              <div>
+                <p className="mb-8 text-xs uppercase tracking-[0.35em] text-white/40">Almoço · Menu Degustação</p>
+                <h3 className="text-3xl font-light text-white md:text-4xl">Niku Kappou Miyata</h3>
+                <p className="mt-3 text-base uppercase tracking-[0.2em] text-white/35">肉割烹 宮田</p>
+              </div>
+
+              <p className="max-w-xl">
+                Um dos almoços mais memoráveis disponíveis em Kyoto: menu degustação inteiramente dedicado à carne wagyu, estruturado no formato kappou — preparação à vista, ritmo calibrado, cortes apresentados um a um pelo chef. A experiência combina a tradição da cozinha kaiseki com a exuberância do wagyu de Kobe e Omi.
+              </p>
 
               <div className="border-t border-white/10 pt-10">
                 <div className="grid gap-8 sm:grid-cols-2">
                   <div>
                     <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/35">Horário da Reserva</p>
-                    <p className="text-white text-xl">19:00</p>
+                    <p className="text-white text-xl">12:00</p>
                   </div>
                   <div>
                     <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/35">Formato</p>
-                    <p className="text-white">Omakase · Balcão</p>
+                    <p className="text-white">Menu Degustação · Kappou</p>
                   </div>
                   <div>
                     <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/35">Reserva</p>
@@ -369,108 +298,197 @@ export default function Day8Page() {
                   </div>
                   <div>
                     <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/35">Código</p>
-                    <p className="text-sm text-white/45">AMN-OSK-0812</p>
+                    <p className="text-sm text-white/45">NKM-KYT-0712</p>
                   </div>
                   <div>
                     <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/35">Preço estimado</p>
-                    <p className="text-white">¥25.000–¥35.000 por pessoa</p>
+                    <p className="text-white">¥18.000–¥28.000 por pessoa</p>
                   </div>
                   <div>
                     <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/35">Duração estimada</p>
-                    <p className="text-white">Aproximadamente 2 horas</p>
+                    <p className="text-white">Aproximadamente 1h30–2h</p>
                   </div>
                 </div>
+              </div>
+
+              <div className="border-t border-white/10 pt-10 space-y-8">
+                <InfoBlock
+                  title="O que esperar no menu"
+                  text="O chef apresenta cortes variados de wagyu — filé, costela, língua e peças especiais — cada um preparado de forma distinta: grelhado na brasa, cozido em caldo dashi ou servido quase cru sobre arroz. A caixa de madeira com os cortes do dia é apresentada à mesa antes do início do menu."
+                />
+                <InfoBlock
+                  title="Sobre o wagyu"
+                  text="O restaurante trabalha principalmente com wagyu de Omi (Shiga) e Kobe (Hyogo), com certificação de origem. O marmoreio dos cortes varia ao longo do menu — do mais delicado ao mais intenso — criando uma progressão intencional de sabor."
+                />
+                <InfoBlock
+                  title="Para os filhos"
+                  text="Com mais de 12 anos, toda a experiência é acessível. Se houver qualquer restrição alimentar ou aversão, comunicar à Alpinea com antecedência para adaptação junto ao chef."
+                />
+              </div>
+            </div>
+
+            {/* Coluna direita sticky — foto dos cortes */}
+            <div className="lg:sticky lg:top-28">
+              <Image
+                src="/images/niku.png"
+                alt="Menu Degustação de Wagyu — Niku Kappou Miyata"
+                width={900}
+                height={760}
+                priority
+                className="w-full rounded-2xl border border-white/10 object-cover"
+                style={{ maxHeight: "680px", objectPosition: "center" }}
+              />
+              <p className="mt-4 text-xs uppercase tracking-[0.35em] text-white/35">
+                Niku Kappou Miyata · Menu Degustação de Wagyu · Kyoto
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── GION MATSURI — NOITE ── */}
+      <section className="border-t border-white/10 bg-white/[0.02] px-8 py-32 md:px-16">
+        <div className="mx-auto max-w-7xl">
+          <div className="grid gap-20 lg:grid-cols-2 lg:items-start">
+            {/* Coluna esquerda — detalhes */}
+            <div className="space-y-12 text-lg font-light leading-9 text-white/70">
+              <div>
+                <p className="mb-8 text-xs uppercase tracking-[0.35em] text-white/40">Tarde · Noite · Festival</p>
+                <h3 className="text-3xl font-light text-white md:text-4xl">Gion Matsuri</h3>
+                <p className="mt-3 text-base uppercase tracking-[0.2em] text-white/35">祇園祭 · Saki Matsuri · 10 de Julho</p>
+              </div>
+
+              <p className="max-w-xl">
+                Um dos maiores e mais antigos festivais do Japão, realizado anualmente em julho no coração de Kyoto. O Saki Matsuri, que ocorre na primeira quinzena do mês, é o período em que as carroças (yamaboko) são exibidas iluminadas nas ruas — um espetáculo visual de rara beleza.
+              </p>
+
+              <div className="border-t border-white/10 pt-10">
+                <div className="grid gap-8 sm:grid-cols-2">
+                  <div>
+                    <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/35">Data</p>
+                    <p className="text-white">10 de Julho</p>
+                  </div>
+                  <div>
+                    <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/35">Período</p>
+                    <p className="text-white">Saki Matsuri</p>
+                  </div>
+                  <div>
+                    <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/35">Chegada sugerida</p>
+                    <p className="text-white">18:30 – 19:00</p>
+                  </div>
+                  <div>
+                    <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/35">Ingresso</p>
+                    <p className="text-white">Acesso livre</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="border-t border-white/10 pt-10 space-y-8">
+                <InfoBlock
+                  title="O que é o Saki Matsuri"
+                  text="A primeira fase do Gion Matsuri, anterior à grande procissão (Yamaboko Junko), inclui a montagem e exposição das carroças cerimoniais nas ruas centrais de Kyoto. À noite, as lanternas de papel iluminam as estruturas de madeira — cada yamaboko com séculos de história e tapeçarias originárias da Europa e Ásia."
+                />
+                <InfoBlock
+                  title="Comidas de rua (yatai)"
+                  text="As ruas ao redor de Shijo-Kawaramachi e Gion ficam tomadas por barracas de festival. Takoyaki, yakitori, kakigori (gelo raspado), taiyaki, karaage — a atmosfera é de festa popular autêntica. Uma experiência completamente diferente dos restaurantes do roteiro, e igualmente memorável."
+                />
+                <InfoBlock
+                  title="Ritmo da visita"
+                  text="Não há um roteiro rígido para o Matsuri — a ideia é caminhar, parar nas barracas, observar as carroças iluminadas de perto e absorver a atmosfera. O assessor Alpinea acompanha e orienta os melhores ângulos e pontos de concentração para crianças e adultos."
+                />
+                <InfoBlock
+                  title="Logística"
+                  text="O motorista Tanaka aguarda em ponto combinado nos arredores do festival. A região central fica fechada para veículos durante o período noturno — o acesso à área é sempre a pé a partir de um ponto próximo designado pela Alpinea."
+                />
               </div>
 
               <div className="border-t border-white/10 pt-10">
-                <p className="mb-6 text-xs uppercase tracking-[0.35em] text-white/40">Deslocamento Hotel → Amano</p>
-                <div className="grid gap-8 sm:grid-cols-2">
-                  <div>
-                    <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/35">Motorista privado</p>
-                    <p className="text-white">Aproximadamente 15–20 minutos</p>
-                  </div>
-                  <div>
-                    <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/35">Saída sugerida</p>
-                    <p className="text-white">18:30 do Four Seasons</p>
-                  </div>
-                </div>
-              </div>
-
-              <InfoBlock
-                title="O que esperar"
-                text="Num omakase de balcão, o chef serve cada peça individualmente, explicando o peixe, a origem e a técnica. A interação é parte da experiência — não há cardápio fixo; o chef adapta o menu ao que há de melhor disponível naquele dia. Recomendamos perguntar sobre cada peixe: os chefs no Japão apreciam clientes curiosos."
-              />
-              <InfoBlock
-                title="Código de vestimenta"
-                text="Smart casual. O ambiente é íntimo e refinado — evitar bermudas ou roupas muito informais depois de um dia no parque. O hotel disponibiliza amenidades para que a família possa se trocar confortavelmente antes do jantar."
-              />
-              <InfoBlock
-                title="Política de cancelamento"
-                text="Reserva confirmada com cartão de crédito. Cancelamentos com menos de 48 horas de antecedência estão sujeitos a cobrança integral do menu. Em caso de imprevisto, comunicar imediatamente à Alpinea para gestão junto ao restaurante."
-              />
-              <InfoBlock
-                title="Sobre omakase com crianças maiores"
-                text="Com filhos acima de 12 anos, a experiência omakase é plenamente acessível. O único ponto de atenção são restrições alimentares: se houver aversão a algum peixe específico, comunicar à Alpinea com antecedência para que o chef seja informado. Não é necessário comer tudo — mas a abertura para experimentar o que o chef prepara enriquece muito a experiência."
-              />
-            </div>
-
-            <div className="lg:sticky lg:top-28 space-y-10">
-              <div className="border border-white/10 bg-white/[0.03] p-10">
-                <p className="mb-6 text-xs uppercase tracking-[0.35em] text-white/40">
-                  Resumo do Dia 8
-                </p>
-                <div className="space-y-8 text-base leading-8 text-white/65">
-                  <div className="flex items-start gap-6">
-                    <span className="mt-1 shrink-0 text-xs uppercase tracking-[0.25em] text-white/30 w-14">08:00</span>
-                    <p>Motorista privado busca no Four Seasons Osaka</p>
-                  </div>
-                  <div className="flex items-start gap-6 border-t border-white/[0.07] pt-6">
-                    <span className="mt-1 shrink-0 text-xs uppercase tracking-[0.25em] text-white/30 w-14">09:00</span>
-                    <p>Entrada no USJ — Super Nintendo World (prioridade)</p>
-                  </div>
-                  <div className="flex items-start gap-6 border-t border-white/[0.07] pt-6">
-                    <span className="mt-1 shrink-0 text-xs uppercase tracking-[0.25em] text-white/30 w-14">10:30</span>
-                    <p>Wizarding World of Harry Potter</p>
-                  </div>
-                  <div className="flex items-start gap-6 border-t border-white/[0.07] pt-6">
-                    <span className="mt-1 shrink-0 text-xs uppercase tracking-[0.25em] text-white/30 w-14">12:00</span>
-                    <p>Almoço leve no parque — Toadstool Café ou Three Broomsticks</p>
-                  </div>
-                  <div className="flex items-start gap-6 border-t border-white/[0.07] pt-6">
-                    <span className="mt-1 shrink-0 text-xs uppercase tracking-[0.25em] text-white/30 w-14">13:00</span>
-                    <p>Jurassic Park · Minion Park · Exploração livre</p>
-                  </div>
-                  <div className="flex items-start gap-6 border-t border-white/[0.07] pt-6">
-                    <span className="mt-1 shrink-0 text-xs uppercase tracking-[0.25em] text-white/30 w-14">16:00</span>
-                    <p>Motorista privado — retorno ao hotel</p>
-                  </div>
-                  <div className="flex items-start gap-6 border-t border-white/[0.07] pt-6">
-                    <span className="mt-1 shrink-0 text-xs uppercase tracking-[0.25em] text-white/30 w-14">18:30</span>
-                    <p>Motorista privado para jantar</p>
-                  </div>
-                  <div className="flex items-start gap-6 border-t border-white/[0.07] pt-6">
-                    <span className="mt-1 shrink-0 text-xs uppercase tracking-[0.25em] text-white/30 w-14">19:00</span>
-                    <p className="text-white">Omakase · Restaurante Amano · Reserva confirmada</p>
-                  </div>
-                  <div className="flex items-start gap-6 border-t border-white/[0.07] pt-6">
-                    <span className="mt-1 shrink-0 text-xs uppercase tracking-[0.25em] text-white/30 w-14">21:00</span>
-                    <p>Motorista privado — retorno ao Four Seasons Osaka</p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="border border-white/10 bg-white/[0.03] p-10">
-                <p className="mb-6 text-xs uppercase tracking-[0.35em] text-white/40">
-                  Alpinea Private · Suporte no dia
-                </p>
-                <p className="text-base leading-8 text-white/60">
-                  No plano Alpinea Private, um representante da Alpinea estará
-                  presente no parque para acompanhamento presencial, orientação
-                  de filas e coordenação com o guia local. Suporte de concierge
-                  disponível das 09:00 às 21:00 pelo canal de atendimento dedicado.
-                </p>
+                <p className="mb-6 text-xs uppercase tracking-[0.35em] text-white/40">Retorno ao hotel</p>
+                <p>Motorista privado busca a família por volta das <span className="text-white">21:30 – 22:00</span> no ponto combinado. Tempo de trajeto ao Aman Kyoto: aproximadamente <span className="text-white">20 minutos</span>.</p>
               </div>
             </div>
+
+            {/* Coluna direita sticky — foto do festival */}
+            <div className="lg:sticky lg:top-28">
+              <Image
+                src="/images/gionmatsuri2.png"
+                alt="Gion Matsuri — Saki Matsuri, Kyoto"
+                width={760}
+                height={1140}
+                priority
+                className="w-full rounded-2xl border border-white/10 object-cover"
+                style={{ maxHeight: "820px", objectPosition: "center top" }}
+              />
+              <p className="mt-4 text-xs uppercase tracking-[0.35em] text-white/35">
+                Gion Matsuri · Saki Matsuri · Shijo · Kyoto · Julho
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Resumo do Dia */}
+      <section className="border-t border-white/10 px-8 py-32 md:px-16">
+        <div className="mx-auto max-w-7xl">
+          <div className="grid gap-20 lg:grid-cols-2 lg:items-start">
+            <div className="space-y-12 text-lg font-light leading-9 text-white/70">
+              <div>
+                <p className="mb-8 text-xs uppercase tracking-[0.35em] text-white/40">Noite</p>
+                <h3 className="text-3xl font-light text-white md:text-4xl">Encerramento do Dia</h3>
+              </div>
+              <p className="max-w-xl">
+                Após o festival, retorno ao Aman Kyoto com motorista privado. Um dia de contrastes — a serenidade dourada do Kinkaku-ji pela manhã, a excelência da gastronomia kappou ao meio-dia, e o calor popular do festival mais antigo do Japão à noite.
+              </p>
+            </div>
+
+            <div className="border border-white/10 bg-white/[0.03] p-10">
+              <p className="mb-6 text-xs uppercase tracking-[0.35em] text-white/40">
+                Resumo do Dia 8
+              </p>
+              <div className="space-y-8 text-base leading-8 text-white/65">
+                <div className="flex items-start gap-6">
+                  <span className="mt-1 shrink-0 text-xs uppercase tracking-[0.25em] text-white/30 w-14">08:30</span>
+                  <p>Motorista Tanaka busca no Aman Kyoto · Toyota Alphard Preto</p>
+                </div>
+                <div className="flex items-start gap-6 border-t border-white/[0.07] pt-6">
+                  <span className="mt-1 shrink-0 text-xs uppercase tracking-[0.25em] text-white/30 w-14">09:00</span>
+                  <p>Kinkaku-ji · Entrada com assessor · Percurso pelo jardim</p>
+                </div>
+                <div className="flex items-start gap-6 border-t border-white/[0.07] pt-6">
+                  <span className="mt-1 shrink-0 text-xs uppercase tracking-[0.25em] text-white/30 w-14">10:30</span>
+                  <p>Retorno ao veículo · Deslocamento para o restaurante</p>
+                </div>
+                <div className="flex items-start gap-6 border-t border-white/[0.07] pt-6">
+                  <span className="mt-1 shrink-0 text-xs uppercase tracking-[0.25em] text-white/30 w-14">12:00</span>
+                  <p className="text-white">Almoço · Niku Kappou Miyata · Menu Degustação de Wagyu</p>
+                </div>
+                <div className="flex items-start gap-6 border-t border-white/[0.07] pt-6">
+                  <span className="mt-1 shrink-0 text-xs uppercase tracking-[0.25em] text-white/30 w-14">14:00</span>
+                  <p>Retorno ao Aman Kyoto · Descanso</p>
+                </div>
+                <div className="flex items-start gap-6 border-t border-white/[0.07] pt-6">
+                  <span className="mt-1 shrink-0 text-xs uppercase tracking-[0.25em] text-white/30 w-14">18:30</span>
+                  <p>Motorista privado para o Gion Matsuri</p>
+                </div>
+                <div className="flex items-start gap-6 border-t border-white/[0.07] pt-6">
+                  <span className="mt-1 shrink-0 text-xs uppercase tracking-[0.25em] text-white/30 w-14">19:00</span>
+                  <p className="text-white">Gion Matsuri · Saki Matsuri · Yatai · Yamaboko iluminadas</p>
+                </div>
+                <div className="flex items-start gap-6 border-t border-white/[0.07] pt-6">
+                  <span className="mt-1 shrink-0 text-xs uppercase tracking-[0.25em] text-white/30 w-14">21:30</span>
+                  <p>Motorista privado — retorno ao Aman Kyoto</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-16 border border-white/10 bg-white/[0.03] p-10">
+            <p className="mb-6 text-xs uppercase tracking-[0.35em] text-white/40">
+              Alpinea Private · Suporte no dia
+            </p>
+            <p className="text-base leading-8 text-white/60">
+              No plano Alpinea Private, um representante da Alpinea estará presente em todos os deslocamentos e atrações, coordenando logística, compra de ingressos, orientação local e comunicação com os estabelecimentos. Suporte de concierge disponível das 08:00 às 22:00 pelo canal de atendimento dedicado.
+            </p>
           </div>
         </div>
       </section>
@@ -553,32 +571,6 @@ function InfoBlock({ title, text }: { title: string; text: string }) {
     <div>
       <p className="text-white">{title}</p>
       <p className="mt-2">{text}</p>
-    </div>
-  );
-}
-
-function RestaurantBlock({
-  name,
-  description,
-  location,
-  price,
-  hours,
-}: {
-  name: string;
-  description: string;
-  location: string;
-  price: string;
-  hours: string;
-}) {
-  return (
-    <div className="border-t border-white/10 pt-8">
-      <h3 className="text-2xl font-light text-white">{name}</h3>
-      <p className="mt-4 text-lg font-light leading-9 text-white/65">{description}</p>
-      <div className="mt-6 space-y-3 text-base leading-8 text-white/55">
-        <p><span className="text-white/80">Local:</span> {location}</p>
-        <p><span className="text-white/80">Preço:</span> {price}</p>
-        <p><span className="text-white/80">Horário:</span> {hours}</p>
-      </div>
     </div>
   );
 }

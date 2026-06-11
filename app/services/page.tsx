@@ -27,14 +27,12 @@ export default function ServicesPage() {
             Serviços Alpinea
           </p>
           <h1 className="max-w-5xl text-5xl font-light leading-[1.05] tracking-tight md:text-7xl">
-            Três formas de
+            Três opções de serviços
             <br />
-            vivenciar o Japão.
+            Uma mesma curadoria Alpinea.
           </h1>
           <p className="mt-10 max-w-2xl text-lg font-light leading-9 text-white/65">
-            Do planejamento estratégico à execução presencial, cada nível de
-            serviço foi criado para diferentes perfis de viajantes — mantendo a
-            mesma curadoria, discrição e precisão da Alpinea.
+            Escolha entre orientação estratégica, planejamento completo ou execução presencial no Japão — sempre com curadoria profunda, discrição e precisão operacional.
           </p>
         </div>
       </section>
