@@ -110,6 +110,60 @@ export default function Day8Page() {
         </div>
       </section>
 
+      {/* ── RESUMO DO DIA ── */}
+      <section className="border-t border-white/10 bg-white/[0.02] px-8 py-16 md:px-16">
+        <div className="mx-auto max-w-7xl">
+          <div className="border border-white/10 bg-white/[0.03] p-10">
+            <p className="mb-6 text-xs uppercase tracking-[0.35em] text-white/40">Resumo do Dia 8</p>
+            <div className="space-y-6 text-base leading-8 text-white/65">
+              <div className="flex items-start gap-6">
+                <span className="mt-1 shrink-0 text-xs uppercase tracking-[0.25em] text-white/30 w-14">07:30</span>
+                <p className="text-white">Café da manhã · The Living Pavilion by Aman</p>
+              </div>
+              <div className="flex items-start gap-6 border-t border-white/[0.07] pt-5">
+                <span className="mt-1 shrink-0 text-xs uppercase tracking-[0.25em] text-white/30 w-14">08:30</span>
+                <p>Motorista Tanaka busca no Aman Kyoto · Toyota Alphard Preto</p>
+              </div>
+              <div className="flex items-start gap-6 border-t border-white/[0.07] pt-5">
+                <span className="mt-1 shrink-0 text-xs uppercase tracking-[0.25em] text-white/30 w-14">09:00</span>
+                <p>Kinkaku-ji · Entrada com assessor · Percurso pelo jardim</p>
+              </div>
+              <div className="flex items-start gap-6 border-t border-white/[0.07] pt-5">
+                <span className="mt-1 shrink-0 text-xs uppercase tracking-[0.25em] text-white/30 w-14">10:30</span>
+                <p>Retorno ao veículo · Deslocamento para o restaurante</p>
+              </div>
+              <div className="flex items-start gap-6 border-t border-white/[0.07] pt-5">
+                <span className="mt-1 shrink-0 text-xs uppercase tracking-[0.25em] text-white/30 w-14">12:00</span>
+                <p className="text-white">Almoço · Niku Kappou Miyata · Menu Degustação de Wagyu</p>
+              </div>
+              <div className="flex items-start gap-6 border-t border-white/[0.07] pt-5">
+                <span className="mt-1 shrink-0 text-xs uppercase tracking-[0.25em] text-white/30 w-14">14:00</span>
+                <p>Retorno ao Aman Kyoto · Descanso</p>
+              </div>
+              <div className="flex items-start gap-6 border-t border-white/[0.07] pt-5">
+                <span className="mt-1 shrink-0 text-xs uppercase tracking-[0.25em] text-white/30 w-14">18:30</span>
+                <p>Motorista privado para o Gion Matsuri</p>
+              </div>
+              <div className="flex items-start gap-6 border-t border-white/[0.07] pt-5">
+                <span className="mt-1 shrink-0 text-xs uppercase tracking-[0.25em] text-white/30 w-14">19:00</span>
+                <p className="text-white">Gion Matsuri · Saki Matsuri · Yatai · Yamaboko iluminadas</p>
+              </div>
+              <div className="flex items-start gap-6 border-t border-white/[0.07] pt-5">
+                <span className="mt-1 shrink-0 text-xs uppercase tracking-[0.25em] text-white/30 w-14">21:30</span>
+                <p>Motorista privado — retorno ao Aman Kyoto</p>
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-6 border border-white/10 bg-white/[0.03] p-10">
+            <p className="mb-4 text-xs uppercase tracking-[0.35em] text-white/40">Alpinea Private · Suporte no dia</p>
+            <p className="text-base leading-8 text-white/60">
+              No plano Alpinea Private, um representante da Alpinea estará presente em todos os deslocamentos e atrações, coordenando logística, compra de ingressos, orientação local e comunicação com os estabelecimentos. Suporte de concierge disponível das 08:00 às 22:00 pelo canal de atendimento dedicado.
+            </p>
+          </div>
+        </div>
+      </section>
+
       {/* ── CAFÉ DA MANHÃ — THE LIVING PAVILION ── */}
       <section className="border-t border-white/10 px-8 py-32 md:px-16">
         <div className="mx-auto max-w-7xl">
@@ -151,14 +205,10 @@ export default function Day8Page() {
                   title="Café da manhã japonês"
                   text="A opção japonesa inclui miso soup, tsukemono (conservas da estação), arroz, peixe grelhado e proteínas variadas — café da manhã de longevidade, como os japoneses chamam. Servido com chá verde da região."
                 />
-                <InfoBlock
-                  title="Pastéis frescos"
-                  text="O Chef Matsuo, confeiteiro com carreira iniciada em Osaka em 1984, prepara diariamente croissants folhados, pães rústicos e doces de inspiração japonesa e francesa. Uma das melhores mesas de confeitaria disponíveis num hotel de Kyoto."
-                />
               </div>
             </div>
 
-            {/* Coluna direita — duas fotos empilhadas */}
+            {/* Coluna direita — duas fotos + menu */}
             <div className="lg:sticky lg:top-28 space-y-6">
               <Image
                 src="/images/amancafe.jpg"
@@ -180,6 +230,66 @@ export default function Day8Page() {
               <p className="text-xs uppercase tracking-[0.35em] text-white/35">
                 The Living Pavilion by Aman · Aman Kyoto
               </p>
+
+              {/* Menu do café da manhã */}
+              <div className="border border-white/10 bg-white/[0.03] p-8 space-y-8 text-sm leading-7 text-white/60">
+                <p className="text-xs uppercase tracking-[0.35em] text-white/40">Breakfast Menu</p>
+
+                <div className="space-y-2">
+                  <p className="text-xs uppercase tracking-[0.25em] text-white/35">Juice & Yoghurt</p>
+                  <p>Seasonal Fruit Juice · Detox Green Smoothie · Detox Red Smoothie</p>
+                  <p>Yoghurt — Plain, Granola or Chia Seed</p>
+                </div>
+
+                <div className="border-t border-white/[0.07] pt-6 space-y-2">
+                  <p className="text-xs uppercase tracking-[0.25em] text-white/35">Starter</p>
+                  <p>Kamigamo Vegetable Leaf Salad, Yuzu Dressing</p>
+                  <p>Seasonal Soup · Assorted Seasonal Fruits · Melon · Half Papaya</p>
+                </div>
+
+                <div className="border-t border-white/[0.07] pt-6 space-y-2">
+                  <p className="text-xs uppercase tracking-[0.25em] text-white/35">Bread & Cereal</p>
+                  <p>Toast — White, Grains Brown or Gluten Free Rice Bread</p>
+                  <p>Croissant · Bomboloni · Granola</p>
+                  <p className="text-white/40">with Whole Milk, Non-Fat Milk, Soya, Almond or Oat Milk</p>
+                </div>
+
+                <div className="border-t border-white/[0.07] pt-6 space-y-2">
+                  <p className="text-xs uppercase tracking-[0.25em] text-white/35">Main Dish — Egg Style</p>
+                  <p>2 Eggs Any Style — Boiled, Poached, Fried, Omelet or Scrambled</p>
+                  <p>Avocado Toast with Poached Egg</p>
+                  <p>Ham Egg Benedict · Florentine Egg Benedict · Salmon Egg Benedict</p>
+                  <p>Smoked Atsumi Salmon and Scrambled Egg</p>
+                  <p>Scrambled Tofu · Oatmeal with Banana and Kamigamo Pure Honey</p>
+                </div>
+
+                <div className="border-t border-white/[0.07] pt-6 space-y-2">
+                  <p className="text-xs uppercase tracking-[0.25em] text-white/35">Side Dishes (Choice of Two)</p>
+                  <p>Bacon · Pork Sausage · Chicken Sausage · Sautéed Mushroom · Spinach · Smoked Salmon</p>
+                </div>
+
+                <div className="border-t border-white/[0.07] pt-6 space-y-2">
+                  <p className="text-xs uppercase tracking-[0.25em] text-white/35">From Our Pastries</p>
+                  <p>Aman Kyoto French Toast — Caramelized Banana, Berry Compote</p>
+                  <p>Pancake — Seasonal Fresh Fruit, Kamigamo Pure Honey</p>
+                  <p>Bircher Muesli — Setoka Mandarin, Berries, Almond</p>
+                  <p>Acai Smoothie Bowl — Banana, Papaya, Berries, Rice Flour Granola</p>
+                </div>
+
+                <div className="border-t border-white/[0.07] pt-6 space-y-2">
+                  <p className="text-xs uppercase tracking-[0.25em] text-white/35">Japanese</p>
+                  <p>Steamed in Hot Pot Rice · Kyoto Soya Milk Porridge</p>
+                  <p>Japanese Grilled Fish · Savory Egg Custard</p>
+                  <p>Assorted Kyoto Pickles · Miso Soup</p>
+                </div>
+
+                <div className="border-t border-white/[0.07] pt-6 space-y-2">
+                  <p className="text-xs uppercase tracking-[0.25em] text-white/35">Coffee & Tea</p>
+                  <p>Aman Kyoto Original Organic Coffee — American, Espresso, Cappuccino, Café Latte</p>
+                  <p>Shogyoku-en Japanese Tea — Green Tea or Roasted Tea · Black Tea</p>
+                  <p>Herbal Infusion — Chamomile, Mint, Rose Hip, Rooibos</p>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -488,72 +598,6 @@ export default function Day8Page() {
                 Gion Matsuri · Saki Matsuri · Shijo · Kyoto · Julho
               </p>
             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Resumo do Dia */}
-      <section className="border-t border-white/10 px-8 py-32 md:px-16">
-        <div className="mx-auto max-w-7xl">
-          <div className="grid gap-20 lg:grid-cols-2 lg:items-start">
-            <div className="space-y-12 text-lg font-light leading-9 text-white/70">
-              <div>
-                <p className="mb-8 text-xs uppercase tracking-[0.35em] text-white/40">Noite</p>
-                <h3 className="text-3xl font-light text-white md:text-4xl">Encerramento do Dia</h3>
-              </div>
-              <p className="max-w-xl">
-                Após o festival, retorno ao Aman Kyoto com motorista privado. Um dia de contrastes — a serenidade dourada do Kinkaku-ji pela manhã, a excelência da gastronomia kappou ao meio-dia, e o calor popular do festival mais antigo do Japão à noite.
-              </p>
-            </div>
-
-            <div className="border border-white/10 bg-white/[0.03] p-10">
-              <p className="mb-6 text-xs uppercase tracking-[0.35em] text-white/40">
-                Resumo do Dia 8
-              </p>
-              <div className="space-y-8 text-base leading-8 text-white/65">
-                <div className="flex items-start gap-6">
-                  <span className="mt-1 shrink-0 text-xs uppercase tracking-[0.25em] text-white/30 w-14">08:30</span>
-                  <p>Motorista Tanaka busca no Aman Kyoto · Toyota Alphard Preto</p>
-                </div>
-                <div className="flex items-start gap-6 border-t border-white/[0.07] pt-6">
-                  <span className="mt-1 shrink-0 text-xs uppercase tracking-[0.25em] text-white/30 w-14">09:00</span>
-                  <p>Kinkaku-ji · Entrada com assessor · Percurso pelo jardim</p>
-                </div>
-                <div className="flex items-start gap-6 border-t border-white/[0.07] pt-6">
-                  <span className="mt-1 shrink-0 text-xs uppercase tracking-[0.25em] text-white/30 w-14">10:30</span>
-                  <p>Retorno ao veículo · Deslocamento para o restaurante</p>
-                </div>
-                <div className="flex items-start gap-6 border-t border-white/[0.07] pt-6">
-                  <span className="mt-1 shrink-0 text-xs uppercase tracking-[0.25em] text-white/30 w-14">12:00</span>
-                  <p className="text-white">Almoço · Niku Kappou Miyata · Menu Degustação de Wagyu</p>
-                </div>
-                <div className="flex items-start gap-6 border-t border-white/[0.07] pt-6">
-                  <span className="mt-1 shrink-0 text-xs uppercase tracking-[0.25em] text-white/30 w-14">14:00</span>
-                  <p>Retorno ao Aman Kyoto · Descanso</p>
-                </div>
-                <div className="flex items-start gap-6 border-t border-white/[0.07] pt-6">
-                  <span className="mt-1 shrink-0 text-xs uppercase tracking-[0.25em] text-white/30 w-14">18:30</span>
-                  <p>Motorista privado para o Gion Matsuri</p>
-                </div>
-                <div className="flex items-start gap-6 border-t border-white/[0.07] pt-6">
-                  <span className="mt-1 shrink-0 text-xs uppercase tracking-[0.25em] text-white/30 w-14">19:00</span>
-                  <p className="text-white">Gion Matsuri · Saki Matsuri · Yatai · Yamaboko iluminadas</p>
-                </div>
-                <div className="flex items-start gap-6 border-t border-white/[0.07] pt-6">
-                  <span className="mt-1 shrink-0 text-xs uppercase tracking-[0.25em] text-white/30 w-14">21:30</span>
-                  <p>Motorista privado — retorno ao Aman Kyoto</p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="mt-16 border border-white/10 bg-white/[0.03] p-10">
-            <p className="mb-6 text-xs uppercase tracking-[0.35em] text-white/40">
-              Alpinea Private · Suporte no dia
-            </p>
-            <p className="text-base leading-8 text-white/60">
-              No plano Alpinea Private, um representante da Alpinea estará presente em todos os deslocamentos e atrações, coordenando logística, compra de ingressos, orientação local e comunicação com os estabelecimentos. Suporte de concierge disponível das 08:00 às 22:00 pelo canal de atendimento dedicado.
-            </p>
           </div>
         </div>
       </section>
