@@ -79,7 +79,7 @@ export default function Day8Page() {
             <div className="mt-10 border-t border-white/10 pt-10">
               <p className="mb-8 text-xs uppercase tracking-[0.35em] text-white/40">Hospedagem</p>
               <div className="grid gap-10 lg:grid-cols-[0.8fr_1.25fr_0.95fr] lg:items-center">
-                <div className="flex min-h-40 items-center justify-center border border-white/10 bg-white px-8 py-10">
+                <div className="flex min-h-40 items-center justify-center border border-white/10 px-8 py-10">
                   <Image
                     src="/images/amankyoto.png"
                     alt="Aman Kyoto"
@@ -155,12 +155,6 @@ export default function Day8Page() {
                 </div>
               </div>
 
-              <div className="border-t border-white/10 pt-10">
-                <p className="mb-6 text-xs uppercase tracking-[0.35em] text-white/40">Nota Alpinea</p>
-                <p className="max-w-xl text-white/60">
-                  O Sr. Tanaka é parceiro da Alpinea há mais de seis anos e conhece os melhores acessos e horários para cada ponto do roteiro. Em caso de necessidade, o concierge Alpinea está disponível como intermediário durante todo o dia.
-                </p>
-              </div>
             </div>
 
             {/* Coluna direita — imagem do carro */}
@@ -235,20 +229,35 @@ export default function Day8Page() {
               </div>
             </div>
 
-            {/* Coluna direita sticky — foto do templo */}
-            <div className="lg:sticky lg:top-28">
-              <Image
-                src="/images/kinka.jpeg"
-                alt="Kinkaku-ji — Templo do Pavilhão de Ouro, Kyoto"
-                width={900}
-                height={1200}
-                priority
-                className="w-full rounded-2xl border border-white/10 object-cover"
-                style={{ maxHeight: "780px", objectPosition: "center" }}
-              />
-              <p className="mt-4 text-xs uppercase tracking-[0.35em] text-white/35">
-                Kinkaku-ji · Kita Ward · Kyoto
-              </p>
+            {/* Coluna direita sticky — foto do templo + mapa */}
+            <div className="lg:sticky lg:top-28 space-y-10">
+              <div>
+                <Image
+                  src="/images/kinka.jpeg"
+                  alt="Kinkaku-ji — Templo do Pavilhão de Ouro, Kyoto"
+                  width={900}
+                  height={1200}
+                  priority
+                  className="w-full rounded-2xl border border-white/10 object-cover"
+                  style={{ maxHeight: "780px", objectPosition: "center" }}
+                />
+                <p className="mt-4 text-xs uppercase tracking-[0.35em] text-white/35">
+                  Kinkaku-ji · Kita Ward · Kyoto
+                </p>
+              </div>
+              <div>
+                <p className="mb-4 text-xs uppercase tracking-[0.35em] text-white/40">Mapa do Templo</p>
+                <Image
+                  src="/images/kinkamap.jpg"
+                  alt="Mapa do Kinkaku-ji"
+                  width={1200}
+                  height={800}
+                  className="w-full rounded-2xl border border-white/10 object-contain bg-white/[0.03] p-2"
+                />
+                <p className="mt-3 text-sm leading-7 text-white/45">
+                  Mapa completo do complexo Kinkaku-ji com todas as áreas: Pavilhão de Ouro (Shariden Kinkaku), jardim Muromachi, lago Kyōkochi, casa de chá Sekkatei e portão principal Somon.
+                </p>
+              </div>
             </div>
           </div>
         </div>
@@ -301,29 +310,10 @@ export default function Day8Page() {
                     <p className="text-sm text-white/45">NKM-KYT-0712</p>
                   </div>
                   <div>
-                    <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/35">Preço estimado</p>
-                    <p className="text-white">¥18.000–¥28.000 por pessoa</p>
-                  </div>
-                  <div>
                     <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/35">Duração estimada</p>
                     <p className="text-white">Aproximadamente 1h30–2h</p>
                   </div>
                 </div>
-              </div>
-
-              <div className="border-t border-white/10 pt-10 space-y-8">
-                <InfoBlock
-                  title="O que esperar no menu"
-                  text="O chef apresenta cortes variados de wagyu — filé, costela, língua e peças especiais — cada um preparado de forma distinta: grelhado na brasa, cozido em caldo dashi ou servido quase cru sobre arroz. A caixa de madeira com os cortes do dia é apresentada à mesa antes do início do menu."
-                />
-                <InfoBlock
-                  title="Sobre o wagyu"
-                  text="O restaurante trabalha principalmente com wagyu de Omi (Shiga) e Kobe (Hyogo), com certificação de origem. O marmoreio dos cortes varia ao longo do menu — do mais delicado ao mais intenso — criando uma progressão intencional de sabor."
-                />
-                <InfoBlock
-                  title="Para os filhos"
-                  text="Com mais de 12 anos, toda a experiência é acessível. Se houver qualquer restrição alimentar ou aversão, comunicar à Alpinea com antecedência para adaptação junto ao chef."
-                />
               </div>
             </div>
 
