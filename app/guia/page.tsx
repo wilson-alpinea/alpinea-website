@@ -38,7 +38,7 @@ export default function GuiaFacasPage() {
             Assessoria de Compras · Alpinea Private
           </p>
           <h1 className="max-w-4xl text-5xl font-light leading-[1.05] tracking-tight md:text-7xl">
-            Facas de Cozinha
+            Assessoria de Compras
           </h1>
           <p className="mt-10 max-w-2xl text-lg font-light leading-9 text-white/60">
             Curadoria dedicada para identificar, selecionar e adquirir facas de cozinha profissionais junto aos fabricantes certos — em Tokyo, Kyoto e Sakai.
@@ -67,9 +67,9 @@ export default function GuiaFacasPage() {
               <div className="border-t border-white/10 pt-8">
                 <p className="mb-5 text-xs uppercase tracking-[0.25em] text-white/30">Objetivo da assessoria</p>
                 <div className="space-y-3 text-sm leading-7 text-white/55">
-                  <p>— Adquirir três facas de uso profissional distinto</p>
-                  <p>— Afiar uma faca artesanal em uso no restaurante</p>
-                  <p>— Acesso direto às lojas dos fabricantes, sem intermediários</p>
+                  <p>1. Adquirir três facas de uso profissional distinto</p>
+                  <p>2. Afiar uma faca artesanal em uso no restaurante</p>
+                  <p>3. Acesso direto às lojas dos fabricantes, sem intermediários</p>
                 </div>
               </div>
             </div>
@@ -88,34 +88,6 @@ export default function GuiaFacasPage() {
               <p className="mt-6 text-sm font-light leading-8 text-white/45">
                 Com base em 12 anos de relações com os principais chefs dos restaurantes líderes no Japão — sushi, contemporâneo e kaiseki — identificamos três fabricantes com disponibilidade imediata e presença confirmada nos melhores estabelecimentos do país.
               </p>
-
-              {/* Fabricantes */}
-              <div className="mt-12 space-y-8">
-                <div className="border-t border-white/10 pt-8">
-                  <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">Fabricante 01</p>
-                  <div className="flex items-center gap-4">
-                    <Image src="/images/masamoto-logo.png" alt="Masamoto" width={120} height={48} className="h-10 w-auto object-contain opacity-80" />
-                    <span className="text-white/25 text-sm">正本</span>
-                  </div>
-                  <p className="mt-3 text-sm leading-7 text-white/50">Tokyo · Fundada em 1866</p>
-                </div>
-                <div className="border-t border-white/10 pt-8">
-                  <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">Fabricante 02</p>
-                  <div className="flex items-center gap-4">
-                    <Image src="/images/aritsugu-logo.png" alt="Aritsugu" width={120} height={48} className="h-10 w-auto object-contain opacity-80" />
-                    <span className="text-white/25 text-sm">有次</span>
-                  </div>
-                  <p className="mt-3 text-sm leading-7 text-white/50">Kyoto · Fundada em 1560</p>
-                </div>
-                <div className="border-t border-white/10 pt-8">
-                  <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">Fabricante 03</p>
-                  <div className="flex items-center gap-4">
-                    <Image src="/images/kikumori-logo.png" alt="Kikumori" width={120} height={48} className="h-10 w-auto object-contain opacity-80" />
-                    <span className="text-white/25 text-sm">菊守</span>
-                  </div>
-                  <p className="mt-3 text-sm leading-7 text-white/50">Sakai · Tradição de forja</p>
-                </div>
-              </div>
             </div>
 
             {/* Direita — facas */}
@@ -139,9 +111,7 @@ export default function GuiaFacasPage() {
                     height={420}
                     className="w-full object-contain drop-shadow-2xl"
                   />
-                  <p className="mt-3 text-xs uppercase tracking-[0.25em] text-white/25 text-center">
-                    Gyuto · 牛刀 · Masamoto · 正本
-                  </p>
+
                 </div>
               </div>
 
@@ -162,9 +132,7 @@ export default function GuiaFacasPage() {
                     height={420}
                     className="w-full object-contain drop-shadow-2xl"
                   />
-                  <p className="mt-3 text-xs uppercase tracking-[0.25em] text-white/25 text-center">
-                    Yanagiba · 柳刃 · Aritsugu · 有次
-                  </p>
+
                 </div>
               </div>
 
@@ -185,9 +153,7 @@ export default function GuiaFacasPage() {
                     height={420}
                     className="w-full object-contain drop-shadow-2xl"
                   />
-                  <p className="mt-3 text-xs uppercase tracking-[0.25em] text-white/25 text-center">
-                    Deba · 出刃 · Kikumori · 菊守
-                  </p>
+
                 </div>
               </div>
             </div>
@@ -220,6 +186,42 @@ export default function GuiaFacasPage() {
         <div className="mx-auto max-w-7xl">
           <p className="mb-12 text-xs uppercase tracking-[0.35em] text-white/35">Roteiro de Compras</p>
 
+          {/* Fotos dos fabricantes */}
+          <div className="mb-16 grid grid-cols-3 gap-6">
+            <div className="aspect-square flex items-center justify-center overflow-hidden rounded-2xl border border-white/10 bg-white/[0.03] p-8">
+              <Image
+                src="/images/masamoto-logo.png"
+                alt="Gravação Masamoto na lâmina"
+                width={420}
+                height={420}
+                className="h-full w-full object-cover rounded-xl"
+              />
+            </div>
+            <div className="aspect-square flex items-center justify-center overflow-hidden rounded-2xl border border-white/10 bg-white/[0.03] p-8">
+              <Image
+                src="/images/aritsugu-logo.png"
+                alt="Gravação Aritsugu na lâmina"
+                width={420}
+                height={420}
+                className="h-full w-full object-cover rounded-xl"
+              />
+            </div>
+            <div className="aspect-square flex items-center justify-center overflow-hidden rounded-2xl border border-white/10 bg-white/[0.03] p-8">
+              <Image
+                src="/images/kikumori-logo.png"
+                alt="Gravação Kikumori na lâmina"
+                width={420}
+                height={420}
+                className="h-full w-full object-cover rounded-xl"
+              />
+            </div>
+          </div>
+          <div className="mb-16 grid grid-cols-3 gap-6 text-center">
+            <p className="text-xs uppercase tracking-[0.25em] text-white/25">Masamoto · 正本</p>
+            <p className="text-xs uppercase tracking-[0.25em] text-white/25">Aritsugu · 有次</p>
+            <p className="text-xs uppercase tracking-[0.25em] text-white/25">Kikumori · 菊守</p>
+          </div>
+
           <div className="space-y-0">
             {/* Dia 1 */}
             <div className="grid gap-10 border-t border-white/10 py-10 lg:grid-cols-[180px_1fr] lg:items-start">
@@ -229,14 +231,12 @@ export default function GuiaFacasPage() {
               </div>
               <div className="grid gap-6 sm:grid-cols-[1fr_auto]">
                 <div>
-                  <p className="text-white font-light text-lg">
-                    Masamoto <span className="text-white/35 text-sm ml-2">正本</span>
-                  </p>
+                  <p className="text-white font-light text-lg">Masamoto</p>
                   <p className="mt-2 text-sm leading-7 text-white/55">
                     Visita à loja principal da Masamoto em Tokyo. Seleção e aquisição da Gyuto. Entrega da faca artesanal para afiação — retirada programada para o dia 14.
                   </p>
                   <div className="mt-5 inline-flex items-center gap-3 border border-white/10 px-5 py-2 text-xs uppercase tracking-[0.25em] text-white/35">
-                    <span>Gyuto · 牛刀</span>
+                    <span>Gyuto</span>
                     <span className="text-white/15">·</span>
                     <span>Afiação entregue</span>
                   </div>
@@ -251,14 +251,12 @@ export default function GuiaFacasPage() {
                 <p className="mt-1 text-sm text-white/50">Kyoto</p>
               </div>
               <div>
-                <p className="text-white font-light text-lg">
-                  Aritsugu <span className="text-white/35 text-sm ml-2">有次</span>
-                </p>
+                <p className="text-white font-light text-lg">Aritsugu</p>
                 <p className="mt-2 text-sm leading-7 text-white/55">
                   Visita à loja histórica da Aritsugu no Mercado Nishiki, em Kyoto. Fundada em 1560, é referência absoluta em facas para cozinha japonesa tradicional. Seleção e aquisição da Yanagiba.
                 </p>
                 <div className="mt-5 inline-flex items-center gap-3 border border-white/10 px-5 py-2 text-xs uppercase tracking-[0.25em] text-white/35">
-                  <span>Yanagiba · 柳刃</span>
+                  <span>Yanagiba</span>
                 </div>
               </div>
             </div>
@@ -270,14 +268,12 @@ export default function GuiaFacasPage() {
                 <p className="mt-1 text-sm text-white/50">Sakai</p>
               </div>
               <div>
-                <p className="text-white font-light text-lg">
-                  Kikumori <span className="text-white/35 text-sm ml-2">菊守</span>
-                </p>
+                <p className="text-white font-light text-lg">Kikumori</p>
                 <p className="mt-2 text-sm leading-7 text-white/55">
                   Visita à Kikumori em Sakai — cidade historicamente conhecida como o centro da fabricação de facas profissionais no Japão, responsável por mais de 90% das facas usadas por chefs profissionais no país. Seleção e aquisição da Deba.
                 </p>
                 <div className="mt-5 inline-flex items-center gap-3 border border-white/10 px-5 py-2 text-xs uppercase tracking-[0.25em] text-white/35">
-                  <span>Deba · 出刃</span>
+                  <span>Deba</span>
                 </div>
               </div>
             </div>
@@ -294,48 +290,9 @@ export default function GuiaFacasPage() {
                   Retirada da faca artesanal após afiação completa pelo artesão. Inspeção do fio junto ao cliente antes do retorno ao Brasil.
                 </p>
                 <div className="mt-5 inline-flex items-center gap-3 border border-white/10 px-5 py-2 text-xs uppercase tracking-[0.25em] text-white/35">
-                  <span>Afiação retirada · 正本</span>
+                  <span>Afiação retirada</span>
                 </div>
               </div>
-            </div>
-          </div>
-
-          {/* Logos dos fabricantes */}
-          <div className="mt-16 border-t border-white/10 pt-14">
-            <p className="mb-10 text-xs uppercase tracking-[0.35em] text-white/30">Fabricantes</p>
-            <div className="grid grid-cols-3 gap-6">
-              <div className="aspect-square flex items-center justify-center overflow-hidden rounded-2xl border border-white/10 bg-white/[0.03] p-8">
-                <Image
-                  src="/images/masamoto-logo.png"
-                  alt="Gravação Masamoto na lâmina"
-                  width={420}
-                  height={420}
-                  className="h-full w-full object-cover rounded-xl"
-                />
-              </div>
-              <div className="aspect-square flex items-center justify-center overflow-hidden rounded-2xl border border-white/10 bg-white/[0.03] p-8">
-                <Image
-                  src="/images/aritsugu-logo.png"
-                  alt="Gravação Aritsugu na lâmina"
-                  width={420}
-                  height={420}
-                  className="h-full w-full object-cover rounded-xl"
-                />
-              </div>
-              <div className="aspect-square flex items-center justify-center overflow-hidden rounded-2xl border border-white/10 bg-white/[0.03] p-8">
-                <Image
-                  src="/images/kikumori-logo.png"
-                  alt="Gravação Kikumori na lâmina"
-                  width={420}
-                  height={420}
-                  className="h-full w-full object-cover rounded-xl"
-                />
-              </div>
-            </div>
-            <div className="mt-4 grid grid-cols-3 gap-6 text-center">
-              <p className="text-xs uppercase tracking-[0.25em] text-white/25">Masamoto · 正本</p>
-              <p className="text-xs uppercase tracking-[0.25em] text-white/25">Aritsugu · 有次</p>
-              <p className="text-xs uppercase tracking-[0.25em] text-white/25">Kikumori · 菊守</p>
             </div>
           </div>
         </div>
