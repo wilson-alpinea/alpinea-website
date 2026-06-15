@@ -3,7 +3,7 @@ import Image from "next/image";
 export const metadata = {
   title: "Alpinea | Dia 8 — Kyoto",
   description:
-    "Dia 8 do roteiro Alpinea Private: Kinkaku-ji, almoço no Niku Kappou Miyata e Gion Matsuri.",
+    "Dia 8 do roteiro Alpinea Private: Kinkaku-ji, almoço no Niku Kappou Miyata e Yoiyama do Gion Matsuri.",
 };
 
 export default function Day8Page() {
@@ -22,46 +22,43 @@ export default function Day8Page() {
       </header>
 
       {/* Hero */}
-      <section className="relative min-h-[720px] overflow-hidden border-b border-white/10">
+      <section className="relative min-h-[720px] overflow-hidden px-8 pb-28 pt-40 md:px-16 md:pt-48">
         <Image
           src="/images/ginzan-onsen.jpg"
-          alt="Alpinea Preview"
+          alt="Alpinea — Dia 8 Kyoto"
           fill
           priority
           sizes="100vw"
-          className="object-cover"
+          className="object-cover opacity-55"
         />
-        <div className="absolute inset-0 bg-black/65" />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/50 to-black" />
-        <div className="relative z-10 mx-auto flex min-h-[720px] max-w-7xl items-center px-8 md:px-16">
-          <div className="max-w-4xl">
-            <p className="mb-10 text-xs uppercase tracking-[0.45em] text-white/45">
-              ROTEIRO ALPINEA
-            </p>
-            <h1 className="text-5xl font-light leading-[1.05] tracking-tight md:text-7xl">
-              Um exemplo real
-              <br />
-              de uma jornada Alpinea.
-            </h1>
-            <p className="mt-10 max-w-2xl text-xl font-light leading-10 text-white/65">
-              Uma prévia simplificada da forma como estruturamos roteiros:
-              contexto, ritmo, logística, atrações, horários recomendados,
-              restaurantes e oportunidades de compras.
-            </p>
-          </div>
+        <div className="absolute inset-0 bg-black/35" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/55 via-black/20 to-black" />
+
+        <div className="relative z-10 mx-auto max-w-7xl">
+          <p className="mb-8 text-xs uppercase tracking-[0.35em] text-white/40">
+            Roteiro Alpinea Private
+          </p>
+          <h1 className="max-w-5xl text-5xl font-light leading-[1.05] tracking-tight md:text-7xl">
+            Um exemplo real
+            <br />
+            de uma jornada Alpinea.
+          </h1>
+          <p className="mt-10 max-w-2xl text-lg font-light leading-9 text-white/65">
+            Uma prévia da forma como estruturamos roteiros: contexto, ritmo,
+            logística e experiências cuidadosamente selecionadas.
+          </p>
         </div>
       </section>
 
       {/* Perfil */}
       <section className="border-t border-white/10 bg-white/[0.025] px-8 py-24 md:px-16">
-        <div className="mx-auto max-w-5xl space-y-10 text-lg font-light leading-9 text-white/70">
-          <PreviewItem title="Perfil do viajante" text="Casal com 2 filhos maiores de 12 anos" />
-          <PreviewItem title="Cidade" text="Kyoto" />
-          <PreviewItem title="Estilo de curadoria" text="Alpinea Private" />
-          <PreviewItem
-            title="Dinâmica do dia"
-            text="Motorista privado porta a porta, visita ao Templo do Pavilhão de Ouro pela manhã, Almoço num restaurante menu degustação de wagyu e a noite ir ao festival de Gion."
-          />
+        <div className="mx-auto max-w-5xl">
+          <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4 text-sm font-light leading-8 text-white/70">
+            <PreviewItem title="Perfil" text="Casal com 2 filhos" />
+            <PreviewItem title="Cidade" text="Kyoto" />
+            <PreviewItem title="Curadoria" text="Alpinea Private" />
+            <PreviewItem title="Dinâmica" text="Motorista privado · Atração matinal · Almoço degustação · Festival noturno" />
+          </div>
         </div>
       </section>
 
@@ -72,7 +69,8 @@ export default function Day8Page() {
             <p className="mb-5 text-xs uppercase tracking-[0.45em] text-white/45">Dia 8</p>
             <h2 className="text-4xl font-light tracking-tight text-white md:text-6xl">Kyoto</h2>
             <p className="mt-6 max-w-3xl text-lg font-light leading-9 text-white/60">
-              Pela manhã visita ao Templo do Pavilhão de Ouro (Kinkaku-ji), almoço no Niku Kappou Miyata (Menu Degustação de Wagyu) e a tarde/noite ir até o Gion Matsuri — Saki Matsuri.
+              Kinkaku-ji ao amanhecer, menu degustação de wagyu no Niku Kappou Miyata
+              e Yoiyama do Gion Matsuri à noite.
             </p>
 
             {/* Hospedagem */}
@@ -90,18 +88,18 @@ export default function Day8Page() {
                 </div>
                 <div>
                   <p className="text-3xl font-light text-white md:text-4xl">Aman Kyoto</p>
-                  <p className="mt-5 max-w-2xl text-lg font-light leading-8 text-white/60">
-                    1 Okitayama Washimine-cho, Kita Ward, Kyoto, 603-8458, Japão
+                  <p className="mt-5 max-w-2xl text-base font-light leading-8 text-white/50">
+                    1 Okitayama Washimine-cho, Kita Ward, Kyoto
                   </p>
                 </div>
-                <div className="grid gap-6 text-base leading-7 text-white/60 sm:grid-cols-2 lg:grid-cols-1">
+                <div className="grid gap-6 text-sm leading-7 text-white/50 lg:grid-cols-1">
                   <div>
-                    <p className="mb-2 text-xs uppercase tracking-[0.3em] text-white/35">Noite</p>
-                    <p className="text-lg text-white">Primeiro dia em Kyoto</p>
+                    <p className="mb-2 text-xs uppercase tracking-[0.3em] text-white/30">Noite</p>
+                    <p className="text-white/80">Primeiro dia em Kyoto</p>
                   </div>
                   <div>
-                    <p className="mb-2 text-xs uppercase tracking-[0.3em] text-white/35">Código da Reserva</p>
-                    <p className="text-sm text-white/45">FS-KYT-4821</p>
+                    <p className="mb-2 text-xs uppercase tracking-[0.3em] text-white/30">Reserva</p>
+                    <p className="text-white/80">Confirmada · Alpinea Private</p>
                   </div>
                 </div>
               </div>
@@ -115,50 +113,50 @@ export default function Day8Page() {
         <div className="mx-auto max-w-7xl">
           <div className="border border-white/10 bg-white/[0.03] p-10">
             <p className="mb-6 text-xs uppercase tracking-[0.35em] text-white/40">Resumo do Dia 8</p>
-            <div className="space-y-6 text-base leading-8 text-white/65">
+            <div className="space-y-6 text-sm leading-8 text-white/55">
               <div className="flex items-start gap-6">
-                <span className="mt-1 shrink-0 text-xs uppercase tracking-[0.25em] text-white/30 w-14">07:30</span>
-                <p className="text-white">Café da manhã · The Living Pavilion by Aman</p>
+                <span className="mt-0.5 shrink-0 text-xs tracking-[0.2em] text-white/25 w-12">07:30</span>
+                <p className="text-white/80">Café da manhã · The Living Pavilion by Aman</p>
               </div>
-              <div className="flex items-start gap-6 border-t border-white/[0.07] pt-5">
-                <span className="mt-1 shrink-0 text-xs uppercase tracking-[0.25em] text-white/30 w-14">08:30</span>
-                <p>Motorista Tanaka busca no Aman Kyoto · Toyota Alphard Preto</p>
+              <div className="flex items-start gap-6 border-t border-white/[0.06] pt-5">
+                <span className="mt-0.5 shrink-0 text-xs tracking-[0.2em] text-white/25 w-12">08:30</span>
+                <p>Motorista Tanaka · Toyota Alphard · Saída do Aman Kyoto</p>
               </div>
-              <div className="flex items-start gap-6 border-t border-white/[0.07] pt-5">
-                <span className="mt-1 shrink-0 text-xs uppercase tracking-[0.25em] text-white/30 w-14">09:00</span>
-                <p>Kinkaku-ji · Entrada com assessor · Percurso pelo jardim</p>
+              <div className="flex items-start gap-6 border-t border-white/[0.06] pt-5">
+                <span className="mt-0.5 shrink-0 text-xs tracking-[0.2em] text-white/25 w-12">09:00</span>
+                <p>Kinkaku-ji · Percurso pelo jardim com assessor</p>
               </div>
-              <div className="flex items-start gap-6 border-t border-white/[0.07] pt-5">
-                <span className="mt-1 shrink-0 text-xs uppercase tracking-[0.25em] text-white/30 w-14">10:30</span>
+              <div className="flex items-start gap-6 border-t border-white/[0.06] pt-5">
+                <span className="mt-0.5 shrink-0 text-xs tracking-[0.2em] text-white/25 w-12">10:30</span>
                 <p>Retorno ao veículo · Deslocamento para o restaurante</p>
               </div>
-              <div className="flex items-start gap-6 border-t border-white/[0.07] pt-5">
-                <span className="mt-1 shrink-0 text-xs uppercase tracking-[0.25em] text-white/30 w-14">12:00</span>
-                <p className="text-white">Almoço · Niku Kappou Miyata · Menu Degustação de Wagyu</p>
+              <div className="flex items-start gap-6 border-t border-white/[0.06] pt-5">
+                <span className="mt-0.5 shrink-0 text-xs tracking-[0.2em] text-white/25 w-12">12:00</span>
+                <p className="text-white/80">Almoço · Niku Kappou Miyata · Menu Degustação de Wagyu</p>
               </div>
-              <div className="flex items-start gap-6 border-t border-white/[0.07] pt-5">
-                <span className="mt-1 shrink-0 text-xs uppercase tracking-[0.25em] text-white/30 w-14">14:00</span>
+              <div className="flex items-start gap-6 border-t border-white/[0.06] pt-5">
+                <span className="mt-0.5 shrink-0 text-xs tracking-[0.2em] text-white/25 w-12">14:00</span>
                 <p>Retorno ao Aman Kyoto · Descanso</p>
               </div>
-              <div className="flex items-start gap-6 border-t border-white/[0.07] pt-5">
-                <span className="mt-1 shrink-0 text-xs uppercase tracking-[0.25em] text-white/30 w-14">18:30</span>
-                <p>Motorista privado para o Gion Matsuri</p>
+              <div className="flex items-start gap-6 border-t border-white/[0.06] pt-5">
+                <span className="mt-0.5 shrink-0 text-xs tracking-[0.2em] text-white/25 w-12">17:00</span>
+                <p>Motorista privado · Deslocamento para o Gion Matsuri</p>
               </div>
-              <div className="flex items-start gap-6 border-t border-white/[0.07] pt-5">
-                <span className="mt-1 shrink-0 text-xs uppercase tracking-[0.25em] text-white/30 w-14">19:00</span>
-                <p className="text-white">Gion Matsuri · Saki Matsuri · Yatai · Yamaboko iluminadas</p>
+              <div className="flex items-start gap-6 border-t border-white/[0.06] pt-5">
+                <span className="mt-0.5 shrink-0 text-xs tracking-[0.2em] text-white/25 w-12">17:30</span>
+                <p className="text-white/80">Yoiyama · Sakimatsuri · Niwatori-Hoko · Ayasaka-Hoko · Funahoko</p>
               </div>
-              <div className="flex items-start gap-6 border-t border-white/[0.07] pt-5">
-                <span className="mt-1 shrink-0 text-xs uppercase tracking-[0.25em] text-white/30 w-14">21:30</span>
-                <p>Motorista privado — retorno ao Aman Kyoto</p>
+              <div className="flex items-start gap-6 border-t border-white/[0.06] pt-5">
+                <span className="mt-0.5 shrink-0 text-xs tracking-[0.2em] text-white/25 w-12">21:30</span>
+                <p>Motorista privado · Retorno ao Aman Kyoto</p>
               </div>
             </div>
           </div>
 
           <div className="mt-6 border border-white/10 bg-white/[0.03] p-10">
-            <p className="mb-4 text-xs uppercase tracking-[0.35em] text-white/40">Alpinea Private · Suporte no dia</p>
-            <p className="text-base leading-8 text-white/60">
-              No plano Alpinea Private, um representante da Alpinea estará presente em todos os deslocamentos e atrações, coordenando logística, compra de ingressos, orientação local e comunicação com os estabelecimentos. Suporte de concierge disponível das 08:00 às 22:00 pelo canal de atendimento dedicado.
+            <p className="mb-3 text-xs uppercase tracking-[0.35em] text-white/30">Alpinea Private · Suporte no dia</p>
+            <p className="text-sm leading-8 text-white/50">
+              Um representante da Alpinea coordena cada etapa do dia — logística, acessos e comunicação com os estabelecimentos. Disponível das 08:00 às 22:00 pelo canal dedicado.
             </p>
           </div>
         </div>
@@ -168,8 +166,7 @@ export default function Day8Page() {
       <section className="border-t border-white/10 px-8 py-32 md:px-16">
         <div className="mx-auto max-w-7xl">
           <div className="grid gap-20 lg:grid-cols-2 lg:items-start">
-            {/* Coluna esquerda — detalhes */}
-            <div className="space-y-12 text-lg font-light leading-9 text-white/70">
+            <div className="space-y-12 text-base font-light leading-9 text-white/65">
               <div>
                 <p className="mb-8 text-xs uppercase tracking-[0.35em] text-white/40">Manhã · Café da Manhã</p>
                 <h3 className="text-3xl font-light text-white md:text-4xl">The Living Pavilion by Aman</h3>
@@ -178,38 +175,31 @@ export default function Day8Page() {
               <div className="border-t border-white/10 pt-10">
                 <div className="grid gap-8 sm:grid-cols-2">
                   <div>
-                    <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/35">Horário</p>
-                    <p className="text-white">07:00 às 11:30</p>
+                    <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">Horário</p>
+                    <p className="text-white/85">07:00 às 11:30</p>
                   </div>
                   <div>
-                    <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/35">Último acesso</p>
-                    <p className="text-white">11:00</p>
+                    <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">Opções</p>
+                    <p className="text-white/85">Japonesa · Ocidental</p>
                   </div>
                   <div>
-                    <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/35">Opções disponíveis</p>
-                    <p className="text-white">Japonesa · Ocidental</p>
-                  </div>
-                  <div>
-                    <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/35">Horário sugerido</p>
-                    <p className="text-white">07:30 – 08:15</p>
+                    <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">Horário sugerido</p>
+                    <p className="text-white/85">07:30 – 08:15</p>
                   </div>
                 </div>
               </div>
 
-              <div className="border-t border-white/10 pt-10 space-y-8">
-                <div>
-                  <p className="text-white">Comentários</p>
-                  <p className="mt-2">
-                    O café da manhã pode ser realizado no próprio hotel no restaurante The Living Pavilion by Aman, o restaurante conta com opções tanto ocidentais quanto orientais, caso seja sua primeira vez, importante ressaltar que os japoneses encaram o café da manhã como uma refeição igual o almoço, ou seja, você vai encontrar até peixe grelhado com arroz para comer, como iremos no menu degustação de wagyu no almoço, recomendo realizar uma refeição mais leve.
-                  </p>
-                  <p className="mt-6">
-                    O restaurante conta com boas opções de sobremesa, durante a nossa visita ao pavilhão de ouro (Kinkaku-ji) existem lojas dentro do complexo que vendem sorvetes de macha caso tenha interesse de experimentar.
-                  </p>
-                </div>
+              <div className="border-t border-white/10 pt-10 space-y-5">
+                <p className="text-xs uppercase tracking-[0.35em] text-white/30">Nota</p>
+                <p>
+                  O café da manhã japonês inclui desde miso soup e tsukemono até peixe grelhado com arroz — uma refeição completa, como os japoneses encaram essa hora do dia. Como o almoço será o menu degustação de wagyu, recomendamos uma escolha mais leve pela manhã.
+                </p>
+                <p>
+                  O complexo do Kinkaku-ji possui lojas com sorvete de matcha ao longo do percurso, caso queiram uma pausa durante a visita.
+                </p>
               </div>
             </div>
 
-            {/* Coluna direita — duas fotos + menu como imagem clicável */}
             <div className="lg:sticky lg:top-28 space-y-6">
               <Image
                 src="/images/amancafe.jpg"
@@ -222,19 +212,18 @@ export default function Day8Page() {
               />
               <Image
                 src="/images/amancafe2.jpg"
-                alt="Sobremesa de melão — The Living Pavilion by Aman Kyoto"
+                alt="The Living Pavilion by Aman Kyoto"
                 width={900}
                 height={760}
                 className="w-full rounded-2xl border border-white/10 object-cover"
-                style={{ maxHeight: "460px", objectFit: "cover" }}
+                style={{ maxHeight: "400px", objectFit: "cover" }}
               />
-              <p className="text-xs uppercase tracking-[0.35em] text-white/35">
+              <p className="text-xs uppercase tracking-[0.35em] text-white/30">
                 The Living Pavilion by Aman · Aman Kyoto
               </p>
 
-              {/* Menu como imagem clicável com zoom */}
               <div>
-                <p className="mb-4 text-xs uppercase tracking-[0.35em] text-white/40">Breakfast Menu</p>
+                <p className="mb-4 text-xs uppercase tracking-[0.35em] text-white/30">Breakfast Menu</p>
                 <a href="/images/aman-breakfast.png" target="_blank" rel="noopener noreferrer" className="block">
                   <Image
                     src="/images/aman-breakfast.png"
@@ -244,8 +233,8 @@ export default function Day8Page() {
                     className="w-full cursor-zoom-in rounded-2xl border border-white/10 object-contain bg-white/[0.03] transition hover:opacity-85"
                   />
                 </a>
-                <p className="mt-3 text-sm leading-7 text-white/45">
-                  Menu completo do café da manhã do The Living Pavilion by Aman Kyoto — clique para ampliar.
+                <p className="mt-3 text-xs leading-6 text-white/30">
+                  Menu completo · Clique para ampliar.
                 </p>
               </div>
             </div>
@@ -257,52 +246,40 @@ export default function Day8Page() {
       <section className="border-t border-white/10 bg-white/[0.02] px-8 py-32 md:px-16">
         <div className="mx-auto max-w-7xl">
           <div className="grid gap-20 lg:grid-cols-2 lg:items-center">
-            {/* Coluna esquerda — detalhes */}
-            <div className="space-y-12 text-lg font-light leading-9 text-white/70">
+            <div className="space-y-12 text-base font-light leading-9 text-white/65">
               <div>
                 <p className="mb-8 text-xs uppercase tracking-[0.35em] text-white/40">Transporte Privado</p>
                 <h3 className="text-3xl font-light text-white md:text-4xl">Motorista Dedicado</h3>
               </div>
 
               <p className="max-w-xl">
-                Toda a logística do dia é coordenada pela Alpinea com motorista privado exclusivo para a família. O veículo aguarda na porta do hotel em todos os deslocamentos — sem espera, sem aplicativo, sem imprevisto.
+                Toda a logística do dia é coordenada pela Alpinea com motorista exclusivo para a família. O veículo aguarda na saída do hotel em cada deslocamento.
               </p>
 
               <div className="border-t border-white/10 pt-10">
-                <p className="mb-8 text-xs uppercase tracking-[0.35em] text-white/40">Dados do Veículo</p>
                 <div className="grid gap-8 sm:grid-cols-2">
                   <div>
-                    <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/35">Modelo</p>
-                    <p className="text-white">Toyota Alphard 2025</p>
+                    <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">Veículo</p>
+                    <p className="text-white/85">Toyota Alphard 2025 · Preto Ônix</p>
                   </div>
                   <div>
-                    <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/35">Cor</p>
-                    <p className="text-white">Preto Ônix</p>
+                    <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">Motorista</p>
+                    <p className="text-white/85">Tanaka Hiroshi</p>
                   </div>
                   <div>
-                    <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/35">Placa</p>
-                    <p className="text-white">京都 300 · す 4817</p>
+                    <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">Placa</p>
+                    <p className="text-white/60 text-sm">京都 300 · す 4817</p>
                   </div>
                   <div>
-                    <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/35">Motorista</p>
-                    <p className="text-white">Tanaka Hiroshi</p>
-                  </div>
-                  <div>
-                    <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/35">Contato direto</p>
-                    <p className="text-white/60">+81 75-xxx-xxxx</p>
-                  </div>
-                  <div>
-                    <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/35">Idiomas</p>
-                    <p className="text-white/60">Japonês · Inglês básico</p>
+                    <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">Idiomas</p>
+                    <p className="text-white/60 text-sm">Japonês · Inglês básico</p>
                   </div>
                 </div>
               </div>
-
             </div>
 
             {/* Coluna direita — nameplate + exterior + interior */}
             <div className="lg:sticky lg:top-28 space-y-6">
-              {/* Nameplate acima */}
               <Image
                 src="/images/asphard-nameplate.png"
                 alt="Toyota Alphard — Nameplate"
@@ -310,8 +287,6 @@ export default function Day8Page() {
                 height={440}
                 className="w-full object-contain"
               />
-
-              {/* Exterior */}
               <Image
                 src="/images/limo.png"
                 alt="Toyota Alphard 2025 — Transporte Privado Alpinea"
@@ -320,8 +295,6 @@ export default function Day8Page() {
                 priority
                 className="w-full object-contain"
               />
-
-              {/* Interior */}
               <Image
                 src="/images/asphard-interior.png"
                 alt="Toyota Alphard 2025 — Interior"
@@ -329,9 +302,8 @@ export default function Day8Page() {
                 height={880}
                 className="w-full rounded-2xl border border-white/10 object-cover"
               />
-
-              <p className="text-xs uppercase tracking-[0.35em] text-white/35">
-                Toyota Alphard 2025 · Preto Ônix · Placa 京都 300 す 4817
+              <p className="text-xs uppercase tracking-[0.35em] text-white/30">
+                Toyota Alphard 2025 · Preto Ônix
               </p>
             </div>
           </div>
@@ -342,57 +314,46 @@ export default function Day8Page() {
       <section className="border-t border-white/10 px-8 py-32 md:px-16">
         <div className="mx-auto max-w-7xl">
           <div className="grid gap-20 lg:grid-cols-2 lg:items-start">
-            {/* Coluna esquerda — detalhes da atração */}
-            <div className="space-y-12 text-lg font-light leading-9 text-white/70">
+            <div className="space-y-12 text-base font-light leading-9 text-white/65">
               <div>
                 <p className="mb-8 text-xs uppercase tracking-[0.35em] text-white/40">Manhã · Atração</p>
                 <h3 className="text-3xl font-light text-white md:text-4xl">Kinkaku-ji</h3>
-                <p className="mt-3 text-base uppercase tracking-[0.2em] text-white/35">Templo do Pavilhão de Ouro</p>
+                <p className="mt-3 text-sm uppercase tracking-[0.2em] text-white/30">Templo do Pavilhão de Ouro</p>
               </div>
 
               <p className="max-w-xl">
-                Um dos monumentos mais icônicos do Japão e Patrimônio Mundial da UNESCO. O pavilhão de três andares, revestido por folhas de ouro puro, reflete-se sobre o lago Kyōkochi num dos mais fotogênicos cenários do país.
+                Patrimônio Mundial da UNESCO. O pavilhão de três andares, revestido por folhas de ouro puro, reflete-se sobre o lago Kyōkochi num dos cenários mais fotografados do Japão.
               </p>
 
               <div className="border-t border-white/10 pt-10">
                 <div className="grid gap-8 sm:grid-cols-3">
                   <div>
-                    <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/35">Chegada sugerida</p>
-                    <p className="text-white">09:00</p>
+                    <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">Chegada</p>
+                    <p className="text-white/85">09:00</p>
                   </div>
                   <div>
-                    <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/35">Tempo estimado</p>
-                    <p className="text-white">1h – 1h30</p>
+                    <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">Duração</p>
+                    <p className="text-white/85">1h – 1h30</p>
                   </div>
                   <div>
-                    <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/35">Ingresso</p>
-                    <p className="text-white">¥500 / pessoa</p>
+                    <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">Ingresso</p>
+                    <p className="text-white/85">¥500 / pessoa</p>
                   </div>
                 </div>
               </div>
 
-              <div className="border-t border-white/10 pt-10">
-                <p className="mb-6 text-xs uppercase tracking-[0.35em] text-white/40">Horário de Funcionamento</p>
-                <p>09:00 às 17:00 · Todos os dias</p>
-              </div>
-
               <div className="border-t border-white/10 pt-10 space-y-8">
                 <InfoBlock
-                  title="Por que chegar às 09:00"
-                  text="Os ônibus turísticos chegam em volume a partir das 09:30. Nos primeiros 30 minutos há movimento reduzido — é quando a luz da manhã ainda está baixa e o reflexo do pavilhão sobre o lago é mais nítido. Uma diferença visível nas fotos e na experiência geral."
+                  title="Por que às 09:00"
+                  text="Os ônibus turísticos chegam a partir das 09:30. Os primeiros trinta minutos têm movimento reduzido — a luz da manhã está mais baixa e o reflexo do pavilhão sobre o lago, mais nítido."
                 />
                 <InfoBlock
-                  title="Percurso dentro do templo"
-                  text="O circuito segue um caminho fixo em torno do lago, com o pavilhão sempre à vista. O jardim é do período Muromachi (século XIV) e inclui pedras, pinheiros e ilhotas cuidadosamente posicionados. A saída leva à loja de amuletos (omamori) — vale parar."
-                />
-                <InfoBlock
-                  title="Acesso pela Alpinea"
-                  text="O assessor acompanha a família desde a chegada, adquire os ingressos na bilheteria e conduz até a entrada do percurso. Não há filas para compra de ingresso com o assessor na frente."
+                  title="O percurso"
+                  text="O circuito segue um caminho fixo em torno do lago, com o pavilhão sempre à vista. O jardim é do período Muromachi e inclui pedras, pinheiros e ilhotas posicionados com precisão centenária. A saída passa pela loja de amuletos (omamori)."
                 />
               </div>
             </div>
 
-            {/* Coluna direita sticky — foto do templo + mapa */}
             <div className="lg:sticky lg:top-28 space-y-10">
               <div>
                 <Image
@@ -404,12 +365,12 @@ export default function Day8Page() {
                   className="w-full rounded-2xl border border-white/10 object-cover"
                   style={{ maxHeight: "780px", objectPosition: "center" }}
                 />
-                <p className="mt-4 text-xs uppercase tracking-[0.35em] text-white/35">
+                <p className="mt-4 text-xs uppercase tracking-[0.35em] text-white/30">
                   Kinkaku-ji · Kita Ward · Kyoto
                 </p>
               </div>
               <div>
-                <p className="mb-4 text-xs uppercase tracking-[0.35em] text-white/40">Mapa do Templo</p>
+                <p className="mb-4 text-xs uppercase tracking-[0.35em] text-white/30">Mapa do Templo</p>
                 <a href="/images/kinkamap.jpg" target="_blank" rel="noopener noreferrer" className="block">
                   <Image
                     src="/images/kinkamap.jpg"
@@ -419,73 +380,58 @@ export default function Day8Page() {
                     className="w-full cursor-zoom-in rounded-2xl border border-white/10 object-contain bg-white/[0.03] p-2 transition hover:opacity-85"
                   />
                 </a>
-                <p className="mt-3 text-sm leading-7 text-white/45">
-                  Mapa completo do complexo Kinkaku-ji com todas as áreas: Pavilhão de Ouro (Shariden Kinkaku), jardim Muromachi, lago Kyōkochi, casa de chá Sekkatei e portão principal Somon.
+                <p className="mt-3 text-xs leading-6 text-white/30">
+                  Complexo completo — Pavilhão de Ouro, jardim Muromachi, lago Kyōkochi, casa de chá Sekkatei. Clique para ampliar.
                 </p>
               </div>
             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Manhã — Deslocamento (texto curto de transição) */}
-      <section className="border-t border-white/10 bg-white/[0.02] px-8 py-20 md:px-16">
-        <div className="mx-auto max-w-7xl">
-          <p className="mb-8 text-xs uppercase tracking-[0.35em] text-white/40">Deslocamento</p>
-          <div className="max-w-4xl space-y-6 text-lg font-light leading-9 text-white/70">
-            <p>
-              Após o Kinkaku-ji, o motorista Tanaka aguarda no ponto de desembarque designado. Trajeto até o restaurante é de aproximadamente <span className="text-white">15–20 minutos</span> — tempo suficiente para descanso antes do almoço.
-            </p>
           </div>
         </div>
       </section>
 
       {/* ── ALMOÇO — NIKU KAPPOU MIYATA ── */}
-      <section className="border-t border-white/10 px-8 py-32 md:px-16">
+      <section className="border-t border-white/10 bg-white/[0.02] px-8 py-32 md:px-16">
         <div className="mx-auto max-w-7xl">
           <div className="grid gap-20 lg:grid-cols-2 lg:items-start">
-            {/* Coluna esquerda — detalhes */}
-            <div className="space-y-12 text-lg font-light leading-9 text-white/70">
+            <div className="space-y-12 text-base font-light leading-9 text-white/65">
               <div>
                 <p className="mb-8 text-xs uppercase tracking-[0.35em] text-white/40">Almoço · Menu Degustação</p>
                 <h3 className="text-3xl font-light text-white md:text-4xl">Niku Kappou Miyata</h3>
-                <p className="mt-3 text-base uppercase tracking-[0.2em] text-white/35">肉割烹 宮田</p>
+                <p className="mt-3 text-sm uppercase tracking-[0.2em] text-white/30">肉割烹 宮田</p>
               </div>
 
               <div className="border-t border-white/10 pt-10">
                 <div className="grid gap-8 sm:grid-cols-2">
                   <div>
-                    <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/35">Horário da Reserva</p>
-                    <p className="text-white text-xl">12:00</p>
+                    <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">Horário</p>
+                    <p className="text-white/85 text-lg">12:00</p>
                   </div>
                   <div>
-                    <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/35">Formato</p>
-                    <p className="text-white">Menu Degustação · Kappou</p>
+                    <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">Formato</p>
+                    <p className="text-white/85">Menu Degustação · Kappou</p>
                   </div>
                   <div>
-                    <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/35">Reserva</p>
-                    <p className="text-white">Confirmada · Alpinea Private</p>
+                    <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">Reserva</p>
+                    <p className="text-white/85">Confirmada · Alpinea Private</p>
                   </div>
                   <div>
-                    <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/35">Código</p>
-                    <p className="text-sm text-white/45">NKM-KYT-0712</p>
-                  </div>
-                  <div>
-                    <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/35">Duração estimada</p>
-                    <p className="text-white">Aproximadamente 1h30–2h</p>
+                    <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">Duração estimada</p>
+                    <p className="text-white/85">1h30 – 2h</p>
                   </div>
                 </div>
               </div>
 
-              <div className="border-t border-white/10 pt-10 space-y-4">
-                <p className="text-white">Comentários</p>
+              <div className="border-t border-white/10 pt-10 space-y-5">
+                <p className="text-xs uppercase tracking-[0.35em] text-white/30">Nota</p>
                 <p>
-                  Um dos poucos restaurantes de menu degustação de wagyu no Japão, o chef raramente interage com os clientes preferindo se concentrar no preparo dos pratos, alguns clientes gostam de pedir um whisky japonês como The Chita ou The Yamazaki da Suntory para acompanhar, os pratos na sua grande maioria são porções pequenas, o último prato é um wagyu em pedaços com arroz japonês cozido no próprio calor do arroz, a porção é grande e serve para que o cliente esteja satisfeito ao final da refeição, nossa próxima refeição será somente no jantar durante o festival, então aqui recomendo comer até ficar satisfeito.
+                  Um dos poucos restaurantes de menu degustação de wagyu no Japão. O chef raramente interage com os clientes, preferindo se concentrar no preparo — cada corte apresentado em silêncio, no ritmo do kappou. Alguns optam por um whisky japonês para acompanhar: The Chita ou The Yamazaki da Suntory funcionam bem.
+                </p>
+                <p>
+                  Os pratos são em sua maioria porções pequenas. O último prato — wagyu com arroz japonês cozido no próprio vapor — é generoso e encerra a refeição com satisfação. Como a próxima refeição será somente durante o festival, vale aproveitar.
                 </p>
               </div>
             </div>
 
-            {/* Coluna direita sticky — foto dos cortes */}
             <div className="lg:sticky lg:top-28 space-y-6">
               <Image
                 src="/images/niku.png"
@@ -494,7 +440,7 @@ export default function Day8Page() {
                 height={760}
                 priority
                 className="w-full rounded-2xl border border-white/10 object-cover"
-                style={{ maxHeight: "680px", objectPosition: "center" }}
+                style={{ maxHeight: "600px", objectPosition: "center" }}
               />
               <Image
                 src="/images/nikufood.jpeg"
@@ -502,86 +448,94 @@ export default function Day8Page() {
                 width={900}
                 height={760}
                 className="w-full rounded-2xl border border-white/10 object-cover"
-                style={{ maxHeight: "500px", objectFit: "cover", objectPosition: "center" }}
+                style={{ maxHeight: "480px", objectFit: "cover", objectPosition: "center" }}
               />
-              <p className="text-xs uppercase tracking-[0.35em] text-white/35">
-                Niku Kappou Miyata · Menu Degustação de Wagyu · Kyoto
+              <p className="text-xs uppercase tracking-[0.35em] text-white/30">
+                Niku Kappou Miyata · Kyoto
               </p>
             </div>
           </div>
         </div>
       </section>
 
+      {/* ── RESPIRO — CTA INTERMEDIÁRIO ── */}
+      <section className="border-t border-white/10 px-8 py-28 md:px-16">
+        <div className="mx-auto max-w-3xl text-center">
+          <p className="text-2xl font-light leading-relaxed text-white/50 md:text-3xl">
+            Cada detalhe deste dia foi definido antes de você chegar.
+          </p>
+          <div className="mt-12 flex flex-col items-center justify-center gap-4 sm:flex-row">
+            <a
+              href="#contact"
+              className="border border-white/20 px-8 py-4 text-xs uppercase tracking-[0.3em] text-white/60 transition hover:border-white hover:text-white"
+            >
+              Iniciar um Roteiro
+            </a>
+          </div>
+        </div>
+      </section>
+
       {/* ── YOIYAMA, SAKIMATSURI — GION MATSURI ── */}
-      <section className="border-t border-white/10 bg-white/[0.02] px-8 py-32 md:px-16">
+      <section id="matsuri" className="border-t border-white/10 bg-white/[0.02] px-8 py-32 md:px-16">
         <div className="mx-auto max-w-7xl">
           <div className="grid gap-20 lg:grid-cols-2 lg:items-start">
-            {/* Coluna esquerda — detalhes */}
-            <div className="space-y-12 text-lg font-light leading-9 text-white/70">
+            <div className="space-y-12 text-base font-light leading-9 text-white/65">
               <div>
                 <p className="mb-8 text-xs uppercase tracking-[0.35em] text-white/40">Tarde · Noite · Festival</p>
                 <h3 className="text-3xl font-light text-white md:text-4xl">Yoiyama, Sakimatsuri</h3>
-                <p className="mt-3 text-base uppercase tracking-[0.2em] text-white/35">祇園祭 · Gion Matsuri</p>
+                <p className="mt-3 text-sm uppercase tracking-[0.2em] text-white/30">祇園祭 · Gion Matsuri</p>
               </div>
 
               <div className="border-t border-white/10 pt-10">
                 <div className="grid gap-8 sm:grid-cols-2">
                   <div>
-                    <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/35">Data</p>
-                    <p className="text-white">10 de Julho</p>
+                    <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">Data</p>
+                    <p className="text-white/85">10 de Julho</p>
                   </div>
                   <div>
-                    <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/35">Período</p>
-                    <p className="text-white">Saki Matsuri</p>
+                    <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">Período</p>
+                    <p className="text-white/85">Sakimatsuri · Yoiyama</p>
                   </div>
                   <div>
-                    <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/35">Chegada sugerida</p>
-                    <p className="text-white">17:00</p>
+                    <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">Saída do hotel</p>
+                    <p className="text-white/85">17:00</p>
                   </div>
                   <div>
-                    <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/35">Ingresso</p>
-                    <p className="text-white">Acesso livre</p>
+                    <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">Ingresso</p>
+                    <p className="text-white/85">Acesso livre</p>
                   </div>
                 </div>
               </div>
 
               <div className="border-t border-white/10 pt-10 space-y-8">
                 <InfoBlock
-                  title="Visão Geral do Festival"
-                  text="O Gion Matsuri, é o maior festival do Japão e dura quase 1 mês desde o momento de preparação o festival é dividido em três etapas Sakimatsuri, Yamahoko Junko e Atomatsuri que basicamente significa respectivamente pré-desfile, desfile e pós-desfile, na minha opinião o ápice do festival não é o dia do desfile em si, mas o dia anterior ao desfile na qual os Hoko (Decorações em forma de lanternas e carros alegóricos) espalhados por todos os quarteirões na frente do templo Yasaka, esse dia é chamado Yoiyama, e é onde iremos essa noite."
+                  title="O festival"
+                  text="O Gion Matsuri dura quase um mês e se divide em três etapas: Sakimatsuri, Yamahoko Junko e Atomatsuri — respectivamente pré-desfile, desfile e pós-desfile. O ápice não é o dia do desfile em si, mas a véspera, quando os Hoko — estruturas de madeira com lanternas e tapeçarias seculares — são expostos iluminados nos quarteirões ao redor do templo Yasaka. Esse momento se chama Yoiyama."
                 />
                 <InfoBlock
-                  title="Programação"
-                  text="Sairemos do hotel as 17:00 e iremos até a rua mais próxima do complexo e seguiremos a pé até o primeiro Hoko, chamado Niwatori-Hoko, depois seguiremos para o Ayasaka-Hoko e por último iremos ao Funahoko, cada um dos Hokos está localizado em quarteirões diferentes e devido ao alto número de pessoas iremos nos deslocar devagar fazendo paradas para comer nas barracas que servem comida de rua."
-                />
-                <InfoBlock
-                  title="Circuito opcional"
-                  text="Caso queiram podemos visitar também Iwatoyama após o circuito dos hokos, os demais hokos são muito parecidos com esses e estão espalhados ao longo dos quarteirões, estamos visitando a noite, pois esse é o horário que as lanternas ficam acessas."
+                  title="O percurso"
+                  text="Partimos do hotel às 17:00 e seguimos a pé pelo Niwatori-Hoko, Ayasaka-Hoko e Funahoko — cada um em um quarteirão diferente. O deslocamento é lento, com paradas nas barracas de comida de rua ao longo do caminho. O Iwatoyama pode ser incluído ao final, caso haja interesse."
                 />
                 <InfoBlock
                   title="Logística"
-                  text="O motorista Tanaka aguarda em ponto combinado nos arredores do festival. A região central fica fechada para veículos durante o período noturno — o acesso à área é sempre a pé a partir de um ponto próximo designado pela Alpinea."
+                  text="O motorista Tanaka aguarda em ponto fixo nas proximidades. A região central é fechada para veículos no período noturno — o acesso à área do festival é sempre a pé a partir de um ponto designado pela Alpinea."
                 />
               </div>
 
               <div className="border-t border-white/10 pt-10">
-                <p className="mb-6 text-xs uppercase tracking-[0.35em] text-white/40">Retorno ao hotel</p>
-                <p>Motorista privado busca a família por volta das <span className="text-white">21:30 – 22:00</span> no ponto combinado. Tempo de trajeto ao Aman Kyoto: aproximadamente <span className="text-white">20 minutos</span>.</p>
+                <p className="mb-3 text-xs uppercase tracking-[0.35em] text-white/30">Retorno</p>
+                <p>Motorista privado busca a família por volta das <span className="text-white/85">21:30 – 22:00</span>. Trajeto até o Aman Kyoto: aproximadamente <span className="text-white/85">20 minutos</span>.</p>
               </div>
             </div>
 
-            {/* Coluna direita sticky — logo + foto do festival + mapa com zoom */}
             <div className="lg:sticky lg:top-28 space-y-6">
-              {/* Logo do festival */}
               <Image
                 src="/images/logomatsuri.png"
-                alt="Gion Matsuri — Logo"
+                alt="Gion Matsuri"
                 width={760}
                 height={400}
                 className="w-full object-contain"
               />
-
-              {/* Foto do festival */}
               <Image
                 src="/images/gionmatsuri2.png"
                 alt="Gion Matsuri — Yoiyama, Sakimatsuri, Kyoto"
@@ -591,13 +545,11 @@ export default function Day8Page() {
                 className="w-full rounded-2xl border border-white/10 object-cover"
                 style={{ maxHeight: "820px", objectPosition: "center top" }}
               />
-              <p className="text-xs uppercase tracking-[0.35em] text-white/35">
-                Gion Matsuri · Yoiyama · Sakimatsuri · Shijo · Kyoto · Julho
+              <p className="text-xs uppercase tracking-[0.35em] text-white/30">
+                Gion Matsuri · Yoiyama · Shijo · Kyoto
               </p>
-
-              {/* Mapa da procissão com zoom */}
               <div>
-                <p className="mb-4 text-xs uppercase tracking-[0.35em] text-white/40">Rota da Procissão Yamahoko</p>
+                <p className="mb-4 text-xs uppercase tracking-[0.35em] text-white/30">Rota da Procissão Yamahoko</p>
                 <a href="/images/masturiroute.png" target="_blank" rel="noopener noreferrer" className="block">
                   <Image
                     src="/images/masturiroute.png"
@@ -607,8 +559,8 @@ export default function Day8Page() {
                     className="w-full cursor-zoom-in rounded-2xl border border-white/10 object-contain bg-white/[0.03] p-2 transition hover:opacity-85"
                   />
                 </a>
-                <p className="mt-3 text-sm leading-7 text-white/45">
-                  Mapa histórico das rotas da procissão Yamahoko Float — Gion Matsuri · Clique para ampliar.
+                <p className="mt-3 text-xs leading-6 text-white/30">
+                  Histórico das rotas do Yamahoko Float · Clique para ampliar.
                 </p>
               </div>
             </div>
@@ -622,15 +574,14 @@ export default function Day8Page() {
         className="scroll-mt-32 bg-white px-8 py-28 text-black md:px-16"
       >
         <div className="mx-auto max-w-4xl text-center">
-          <p className="mb-6 text-xs uppercase tracking-[0.35em] text-black/40">
+          <p className="mb-6 text-xs uppercase tracking-[0.35em] text-black/35">
             Próximo passo
           </p>
           <h2 className="text-4xl font-light leading-tight md:text-6xl">
             Uma viagem excepcional começa com uma curadoria excepcional.
           </h2>
-          <p className="mx-auto mt-8 max-w-2xl text-lg leading-9 text-black/60">
-            Compartilhe suas datas, preferências e estilo de viagem. A Alpinea
-            estrutura o roteiro a partir do seu perfil.
+          <p className="mx-auto mt-8 max-w-xl text-base leading-9 text-black/50">
+            Compartilhe suas datas e perfil de viagem. A Alpinea estrutura o roteiro a partir daí.
           </p>
           <div className="mt-12 flex flex-col items-center justify-center gap-4 sm:flex-row">
             <a
@@ -643,7 +594,7 @@ export default function Day8Page() {
               href="https://wa.me/5511996691818"
               target="_blank"
               rel="noopener noreferrer"
-              className="border border-black/20 px-8 py-4 text-xs uppercase tracking-[0.3em] text-black/70 transition hover:border-black hover:text-black"
+              className="border border-black/15 px-8 py-4 text-xs uppercase tracking-[0.3em] text-black/50 transition hover:border-black hover:text-black"
             >
               WhatsApp Concierge
             </a>
@@ -654,22 +605,22 @@ export default function Day8Page() {
       <footer className="border-t border-white/10 bg-black px-8 py-16 text-white md:px-16">
         <div className="mx-auto flex max-w-7xl flex-col justify-between gap-12 md:flex-row md:items-end">
           <div className="space-y-6">
-            <p className="text-xs uppercase tracking-[0.45em] text-white/80">Alpinea</p>
+            <p className="text-xs uppercase tracking-[0.45em] text-white/70">Alpinea</p>
             <div className="max-w-md space-y-3">
-              <p className="text-sm leading-relaxed text-white/50">
+              <p className="text-sm leading-relaxed text-white/40">
                 Curadoria privada de experiências, gastronomia e lifestyle no Japão.
               </p>
-              <p className="text-xs text-white/30">
+              <p className="text-xs text-white/25">
                 © 2026 Alpinea Agências de Viagens LTDA — CNPJ 66.491.067/0001-84
               </p>
-              <div className="flex flex-wrap items-center gap-3 text-xs text-white/25">
-                <a href="/legal" className="transition hover:text-white/60">Termos e Condições</a>
+              <div className="flex flex-wrap items-center gap-3 text-xs text-white/20">
+                <a href="/legal" className="transition hover:text-white/50">Termos e Condições</a>
                 <span>·</span>
-                <a href="/privacy" className="transition hover:text-white/60">Política de Privacidade</a>
+                <a href="/privacy" className="transition hover:text-white/50">Política de Privacidade</a>
               </div>
             </div>
           </div>
-          <div className="flex items-center gap-8 text-xs uppercase tracking-[0.25em] text-white/40">
+          <div className="flex items-center gap-8 text-xs uppercase tracking-[0.25em] text-white/35">
             <a href="https://www.instagram.com/alpinea.private" target="_blank" rel="noopener noreferrer" className="transition hover:text-white">Instagram</a>
             <a href="https://www.youtube.com/@alpinea.private" target="_blank" rel="noopener noreferrer" className="transition hover:text-white">YouTube</a>
             <a href="mailto:wilson@alpinea.io" className="transition hover:text-white">Contato</a>
@@ -683,8 +634,8 @@ export default function Day8Page() {
 function PreviewItem({ title, text }: { title: string; text: string }) {
   return (
     <div>
-      <p className="mb-3 text-xs uppercase tracking-[0.35em] text-white/40">{title}</p>
-      <p>{text}</p>
+      <p className="mb-3 text-xs uppercase tracking-[0.35em] text-white/30">{title}</p>
+      <p className="text-sm leading-7">{text}</p>
     </div>
   );
 }
@@ -692,7 +643,7 @@ function PreviewItem({ title, text }: { title: string; text: string }) {
 function InfoBlock({ title, text }: { title: string; text: string }) {
   return (
     <div>
-      <p className="text-white">{title}</p>
+      <p className="text-white/85">{title}</p>
       <p className="mt-2">{text}</p>
     </div>
   );

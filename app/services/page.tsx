@@ -41,6 +41,8 @@ export default function ServicesPage() {
         label="Planejamento"
         title="Alpinea Design"
         description="Para viajantes que desejam conduzir a própria viagem com uma base estratégica, elegante e bem construída."
+        roteiroLabel="Exemplo de Roteiro Alpinea Design"
+        roteiroHref="/preview"
         items={["Criação ou revisão de roteiro personalizado"]}
         optionals={[
           "Emissão de passagens aéreas",
@@ -83,6 +85,8 @@ export default function ServicesPage() {
         title="Alpinea Private"
         description="Para clientes que desejam uma experiência com suporte local, acompanhamento presencial e execução dedicada no Japão."
         featured
+        roteiroLabel="Exemplo de Roteiro Alpinea Private"
+        roteiroHref="/day8"
         items={[
           "Criação de roteiro personalizado",
           "Emissão de passagens aéreas",
@@ -159,7 +163,7 @@ export default function ServicesPage() {
         </div>
       </section>
 
-      {/* ROTEIRO — dourado substituído por cinza */}
+      {/* ROTEIRO */}
       <section className="border-t border-b border-white/10 bg-[#080706] px-8 py-32 md:px-16">
         <div className="mx-auto max-w-5xl text-center">
           <p className="mb-8 text-xs uppercase tracking-[0.35em] text-white/40">
@@ -214,73 +218,32 @@ export default function ServicesPage() {
       </section>
 
       <footer className="border-t border-white/10 bg-black px-8 py-16 text-white md:px-16">
-  <div className="mx-auto flex max-w-7xl flex-col justify-between gap-12 md:flex-row md:items-end">
-
-    {/* Coluna esquerda */}
-    <div className="space-y-6">
-      <p className="text-xs uppercase tracking-[0.45em] text-white/80">
-        Alpinea
-      </p>
-
-      <div className="max-w-md space-y-3">
-        <p className="text-sm leading-relaxed text-white/50">
-          Curadoria privada de experiências, gastronomia e lifestyle no Japão.
-        </p>
-
-        <p className="text-xs text-white/30">
-          © 2026 Alpinea Agências de Viagens LTDA — CNPJ 66.491.067/0001-84
-        </p>
-
-        <div className="flex flex-wrap items-center gap-3 text-xs text-white/25">
-          <a
-            href="/legal"
-            className="transition hover:text-white/60"
-          >
-            Termos e Condições
-          </a>
-
-          <span>·</span>
-
-          <a
-            href="/privacy"
-            className="transition hover:text-white/60"
-          >
-            Política de Privacidade
-          </a>
+        <div className="mx-auto flex max-w-7xl flex-col justify-between gap-12 md:flex-row md:items-end">
+          <div className="space-y-6">
+            <p className="text-xs uppercase tracking-[0.45em] text-white/80">
+              Alpinea
+            </p>
+            <div className="max-w-md space-y-3">
+              <p className="text-sm leading-relaxed text-white/50">
+                Curadoria privada de experiências, gastronomia e lifestyle no Japão.
+              </p>
+              <p className="text-xs text-white/30">
+                © 2026 Alpinea Agências de Viagens LTDA — CNPJ 66.491.067/0001-84
+              </p>
+              <div className="flex flex-wrap items-center gap-3 text-xs text-white/25">
+                <a href="/legal" className="transition hover:text-white/60">Termos e Condições</a>
+                <span>·</span>
+                <a href="/privacy" className="transition hover:text-white/60">Política de Privacidade</a>
+              </div>
+            </div>
+          </div>
+          <div className="flex items-center gap-8 text-xs uppercase tracking-[0.25em] text-white/40">
+            <a href="https://www.instagram.com/alpinea.private" target="_blank" rel="noopener noreferrer" className="transition hover:text-white">Instagram</a>
+            <a href="https://www.youtube.com/@alpinea.private" target="_blank" rel="noopener noreferrer" className="transition hover:text-white">YouTube</a>
+            <a href="mailto:wilson@alpinea.io" className="transition hover:text-white">Contato</a>
+          </div>
         </div>
-      </div>
-    </div>
-
-    {/* Coluna direita */}
-    <div className="flex items-center gap-8 text-xs uppercase tracking-[0.25em] text-white/40">
-      <a
-        href="https://www.instagram.com/alpinea.private"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="transition hover:text-white"
-      >
-        Instagram
-      </a>
-
-      <a
-        href="https://www.youtube.com/@alpinea.private"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="transition hover:text-white"
-      >
-        YouTube
-      </a>
-
-      <a
-        href="mailto:wilson@alpinea.io"
-        className="transition hover:text-white"
-      >
-        Contato
-      </a>
-    </div>
-
-  </div>
-</footer>
+      </footer>
     </main>
   );
 }
@@ -293,6 +256,8 @@ function ServiceSection({
   optionals,
   exclusions,
   featured = false,
+  roteiroLabel,
+  roteiroHref,
 }: {
   label: string;
   title: string;
@@ -301,6 +266,8 @@ function ServiceSection({
   optionals?: string[];
   exclusions?: string[];
   featured?: boolean;
+  roteiroLabel?: string;
+  roteiroHref?: string;
 }) {
   return (
     <section
@@ -319,12 +286,14 @@ function ServiceSection({
           <p className="mt-8 max-w-2xl text-lg font-light leading-9 text-white/65">
             {description}
           </p>
-          <a
-            href="/preview"
-            className="mt-8 inline-flex text-xs uppercase tracking-[0.25em] text-white/50 transition hover:text-white"
-          >
-            Exemplo de Roteiro →
-          </a>
+          {roteiroLabel && roteiroHref && (
+            <a
+              href={roteiroHref}
+              className="mt-8 inline-flex text-xs uppercase tracking-[0.25em] text-white/50 transition hover:text-white"
+            >
+              {roteiroLabel} →
+            </a>
+          )}
         </div>
 
         <div className="space-y-12">
