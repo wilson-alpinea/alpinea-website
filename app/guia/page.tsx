@@ -41,7 +41,7 @@ export default function GuiaFacasPage() {
             Assessoria de Compras
           </h1>
           <p className="mt-10 max-w-2xl text-lg font-light leading-9 text-white/60">
-            Curadoria dedicada para identificar, selecionar e adquirir facas de cozinha profissionais junto aos fabricantes certos — em Tokyo, Kyoto e Sakai.
+            Curadoria dedicada para identificar, selecionar e adquirir produtos no Japão desde itens especializados a produtos de altíssimo valor.
           </p>
         </div>
       </section>
@@ -88,6 +88,19 @@ export default function GuiaFacasPage() {
               <p className="mt-6 text-sm font-light leading-8 text-white/45">
                 Com base em 12 anos de relações com os principais chefs dos restaurantes líderes no Japão — sushi, contemporâneo e kaiseki — identificamos três fabricantes com disponibilidade imediata e presença confirmada nos melhores estabelecimentos do país.
               </p>
+
+              <div className="mt-10 border-t border-white/10 pt-10">
+                <p className="mb-4 text-xs uppercase tracking-[0.35em] text-white/35">Afiação</p>
+                <h3 className="text-xl font-light text-white">Faca artesanal</h3>
+                <div className="mt-4 space-y-4 text-sm font-light leading-8 text-white/50">
+                  <p>
+                    A faca artesanal em uso no restaurante do cliente será entregue no primeiro dia de viagem ao afiador da Masamoto em Tokyo — um dos poucos artesãos que ainda pratica a afiação manual tradicional com pedras d'água de diferentes granulometrias.
+                  </p>
+                  <p>
+                    O prazo necessário para afiação pelo artesão é de <span className="text-white/80">14 dias</span>. A faca será retirada no último dia de viagem, antes do retorno ao Brasil.
+                  </p>
+                </div>
+              </div>
             </div>
 
             {/* Direita — facas */}
@@ -161,25 +174,6 @@ export default function GuiaFacasPage() {
         </div>
       </section>
 
-      {/* Afiação */}
-      <section className="border-t border-white/10 px-8 py-20 md:px-16">
-        <div className="mx-auto max-w-7xl">
-          <div className="grid gap-10 lg:grid-cols-[1fr_1.6fr]">
-            <div>
-              <p className="mb-4 text-xs uppercase tracking-[0.35em] text-white/35">Afiação</p>
-              <h2 className="text-2xl font-light text-white">Faca artesanal</h2>
-            </div>
-            <div className="space-y-4 text-sm font-light leading-8 text-white/55">
-              <p>
-                A faca artesanal em uso no restaurante do cliente será entregue no primeiro dia de viagem ao afiador da Masamoto em Tokyo — um dos poucos artesãos que ainda pratica a afiação manual tradicional com pedras d'água de diferentes granulometrias.
-              </p>
-              <p>
-                O prazo necessário para afiação pelo artesão é de <span className="text-white/80">14 dias</span>. A faca será retirada no último dia de viagem, antes do retorno ao Brasil.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
 
       {/* Roteiro */}
       <section className="border-t border-white/10 bg-white/[0.02] px-8 py-28 md:px-16">
@@ -217,9 +211,18 @@ export default function GuiaFacasPage() {
             </div>
           </div>
           <div className="mb-16 grid grid-cols-3 gap-6 text-center">
-            <p className="text-xs uppercase tracking-[0.25em] text-white/25">Masamoto · 正本</p>
-            <p className="text-xs uppercase tracking-[0.25em] text-white/25">Aritsugu · 有次</p>
-            <p className="text-xs uppercase tracking-[0.25em] text-white/25">Kikumori · 菊守</p>
+            <div>
+              <p className="text-2xl font-light text-white/60">正本</p>
+              <p className="mt-2 text-xs uppercase tracking-[0.25em] text-white/25">Masamoto</p>
+            </div>
+            <div>
+              <p className="text-2xl font-light text-white/60">有次</p>
+              <p className="mt-2 text-xs uppercase tracking-[0.25em] text-white/25">Aritsugu</p>
+            </div>
+            <div>
+              <p className="text-2xl font-light text-white/60">菊守</p>
+              <p className="mt-2 text-xs uppercase tracking-[0.25em] text-white/25">Kikumori</p>
+            </div>
           </div>
 
           <div className="space-y-0">
@@ -326,7 +329,7 @@ export default function GuiaFacasPage() {
                 <tbody className="text-sm font-light leading-9 text-white/65">
                   <tr className="border-b border-white/[0.07]">
                     <td className="py-5">
-                      Gyuto · 牛刀
+                      Gyuto
                       <span className="block text-xs text-white/30">240mm · Hagane</span>
                     </td>
                     <td className="py-5 text-white/40">Masamoto</td>
@@ -335,7 +338,7 @@ export default function GuiaFacasPage() {
                   </tr>
                   <tr className="border-b border-white/[0.07]">
                     <td className="py-5">
-                      Yanagiba · 柳刃
+                      Yanagiba
                       <span className="block text-xs text-white/30">270mm · Shirogami</span>
                     </td>
                     <td className="py-5 text-white/40">Aritsugu</td>
@@ -344,7 +347,7 @@ export default function GuiaFacasPage() {
                   </tr>
                   <tr className="border-b border-white/[0.07]">
                     <td className="py-5">
-                      Deba · 出刃
+                      Deba
                       <span className="block text-xs text-white/30">180mm · Hagane</span>
                     </td>
                     <td className="py-5 text-white/40">Kikumori</td>
