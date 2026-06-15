@@ -41,7 +41,7 @@ export default function GuiaFacasPage() {
             Assessoria de Compras
           </h1>
           <p className="mt-10 max-w-2xl text-lg font-light leading-9 text-white/60">
-            Curadoria dedicada para identificar, selecionar e adquirir produtos no Japão desde itens especializados a produtos de altíssimo valor.
+            Curadoria dedicada para identificar, selecionar e adquirir produtos no Japão — desde itens especializados a peças de altíssimo valor e acesso restrito.
           </p>
         </div>
       </section>
@@ -49,27 +49,79 @@ export default function GuiaFacasPage() {
       {/* Divisor */}
       <div className="border-t border-white/10" />
 
-      {/* Briefing */}
+      {/* O Problema — novo bloco, substitui o Briefing genérico */}
       <section className="px-8 py-28 md:px-16">
         <div className="mx-auto max-w-7xl">
           <div className="grid gap-20 lg:grid-cols-[1fr_1.6fr]">
             <div>
-              <p className="mb-6 text-xs uppercase tracking-[0.35em] text-white/35">Briefing do Cliente</p>
-              <h2 className="text-3xl font-light text-white md:text-4xl">Contexto</h2>
+              <p className="mb-6 text-xs uppercase tracking-[0.35em] text-white/35">O Mercado</p>
+              <h2 className="text-3xl font-light text-white md:text-4xl">Por que é difícil comprar bem no Japão</h2>
+            </div>
+            <div className="space-y-0">
+              {/* Stat 1 */}
+              <div className="border-t border-white/10 py-10 grid gap-6 sm:grid-cols-[120px_1fr] items-start">
+                <p className="text-5xl font-light text-white/20 tabular-nums leading-none pt-1">+1.000</p>
+                <div>
+                  <p className="text-white font-light text-base leading-7">fabricantes de facas no Japão</p>
+                  <p className="mt-3 text-sm leading-7 text-white/50">
+                    O mercado japonês de cutelaria é um dos mais fragmentados do mundo. A grande maioria produz para o mercado doméstico de consumo, para exportação de massa ou para o circuito turístico — onde a aparência da tradição substitui a tradição real.
+                  </p>
+                </div>
+              </div>
+
+              {/* Stat 2 */}
+              <div className="border-t border-white/10 py-10 grid gap-6 sm:grid-cols-[120px_1fr] items-start">
+                <p className="text-5xl font-light text-white/20 tabular-nums leading-none pt-1">~30</p>
+                <div>
+                  <p className="text-white font-light text-base leading-7">fabricantes de elite com acesso real</p>
+                  <p className="mt-3 text-sm leading-7 text-white/50">
+                    Menos de 3% do mercado opera no nível de aço, forja e acabamento que os melhores chefs do Japão utilizam. Identificá-los exige anos de relação direta com cozinhas de referência — restaurantes com três estrelas Michelin que testam, descartam e recomendam esses instrumentos no dia a dia.
+                  </p>
+                </div>
+              </div>
+
+              {/* Stat 3 */}
+              <div className="border-t border-white/10 py-10 grid gap-6 sm:grid-cols-[120px_1fr] items-start">
+                <p className="text-5xl font-light text-white/20 tabular-nums leading-none pt-1">2 anos</p>
+                <div>
+                  <p className="text-white font-light text-base leading-7">fila de espera nos artesãos mais procurados</p>
+                  <p className="mt-3 text-sm leading-7 text-white/50">
+                    Artesãos como Futaba Shokai operam com fila de encomenda superior a dois anos. Acesso direto e compra imediata — para quem ainda não tem relacionamento estabelecido com o fabricante — é simplesmente impossível sem intermediação qualificada.
+                  </p>
+                </div>
+              </div>
+
+              <div className="border-t border-white/10 pt-10">
+                <p className="text-sm leading-7 text-white/35 italic">
+                  A assessoria Alpinea existe para eliminar esse atrito — e para garantir que o cliente chegue à loja certa, com o artesão certo, no momento em que o instrumento está disponível.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Briefing do cliente */}
+      <section className="border-t border-white/10 bg-white/[0.02] px-8 py-28 md:px-16">
+        <div className="mx-auto max-w-7xl">
+          <div className="grid gap-20 lg:grid-cols-[1fr_1.6fr]">
+            <div>
+              <p className="mb-6 text-xs uppercase tracking-[0.35em] text-white/35">Caso Executado</p>
+              <h2 className="text-3xl font-light text-white md:text-4xl">Perfil do cliente</h2>
             </div>
             <div className="space-y-6 text-base font-light leading-9 text-white/60">
               <p>
-                Chef de cozinha japonesa radicado no Brasil com mais de uma década de ofício. Conhece os instrumentos, domina as técnicas — mas o mercado japonês de facas é opaco para quem chega de fora.
+                Colecionador e praticante de cozinha japonesa com mais de uma década de ofício. Conhece os instrumentos, domina as técnicas — mas chegou ao limite do que o mercado brasileiro e as plataformas de importação conseguem oferecer.
               </p>
               <p>
-                A alta densidade de marcas de qualidade inferior em pontos turísticos e o volume de propaganda direcionada a estrangeiros tornam a compra direta um risco real. O cliente decidiu não comprar sem orientação especializada.
+                Diante da densidade de marcas de segunda linha em pontos turísticos e do volume de propaganda direcionada a estrangeiros, o cliente optou por não comprar sem orientação especializada — e sem garantia de acesso direto ao fabricante.
               </p>
               <div className="border-t border-white/10 pt-8">
-                <p className="mb-5 text-xs uppercase tracking-[0.25em] text-white/30">Objetivo da assessoria</p>
+                <p className="mb-5 text-xs uppercase tracking-[0.25em] text-white/30">Escopo da assessoria</p>
                 <div className="space-y-3 text-sm leading-7 text-white/55">
-                  <p>1. Adquirir três facas de uso profissional distinto</p>
-                  <p>2. Afiar uma faca artesanal em uso no restaurante</p>
-                  <p>3. Acesso direto às lojas dos fabricantes, sem intermediários</p>
+                  <p>1. Adquirir três facas de uso profissional distinto, com acesso direto aos fabricantes</p>
+                  <p>2. Afiar uma faca artesanal em uso, com artesão selecionado pela Alpinea</p>
+                  <p>3. Garantir disponibilidade imediata — sem filas, sem intermediários comerciais</p>
                 </div>
               </div>
             </div>
@@ -78,7 +130,7 @@ export default function GuiaFacasPage() {
       </section>
 
       {/* Execução */}
-      <section className="border-t border-white/10 bg-white/[0.02] px-8 py-28 md:px-16">
+      <section className="border-t border-white/10 px-8 py-28 md:px-16">
         <div className="mx-auto max-w-7xl">
           <div className="grid gap-20 lg:grid-cols-[1fr_1.6fr]">
             {/* Esquerda */}
@@ -86,7 +138,10 @@ export default function GuiaFacasPage() {
               <p className="mb-6 text-xs uppercase tracking-[0.35em] text-white/35">Execução</p>
               <h2 className="text-3xl font-light text-white md:text-4xl">Seleção</h2>
               <p className="mt-6 text-sm font-light leading-8 text-white/45">
-                Com base em 12 anos de relações com os principais chefs dos restaurantes líderes no Japão — sushi, contemporâneo e kaiseki — identificamos três fabricantes com disponibilidade imediata e presença confirmada nos melhores estabelecimentos do país.
+                Com base em 12 anos de relação direta com os chefs dos restaurantes líderes no Japão — sushi, contemporâneo e kaiseki — identificamos três fabricantes com disponibilidade imediata de peças e presença confirmada nas melhores cozinhas do país.
+              </p>
+              <p className="mt-4 text-sm font-light leading-8 text-white/35">
+                Nenhum dos três vende para distribuidores. O acesso é feito por relação pessoal com os artesãos.
               </p>
 
               <div className="mt-10 border-t border-white/10 pt-10">
@@ -94,7 +149,7 @@ export default function GuiaFacasPage() {
                 <h3 className="text-xl font-light text-white">Faca artesanal</h3>
                 <div className="mt-4 space-y-4 text-sm font-light leading-8 text-white/50">
                   <p>
-                    A faca artesanal em uso no restaurante do cliente será entregue no primeiro dia de viagem ao afiador da Masamoto em Tokyo — um dos poucos artesãos que ainda pratica a afiação manual tradicional com pedras d'água de diferentes granulometrias.
+                    A faca artesanal em uso no ateliê do cliente será entregue no primeiro dia de viagem ao afiador da Masamoto em Tokyo — um dos poucos artesãos que ainda pratica a afiação manual tradicional com pedras d'água de diferentes granulometrias.
                   </p>
                   <p>
                     O prazo necessário para afiação pelo artesão é de <span className="text-white/80">14 dias</span>. A faca será retirada no último dia de viagem, antes do retorno ao Brasil.
@@ -124,7 +179,6 @@ export default function GuiaFacasPage() {
                     height={420}
                     className="w-full object-contain drop-shadow-2xl"
                   />
-
                 </div>
               </div>
 
@@ -145,7 +199,6 @@ export default function GuiaFacasPage() {
                     height={420}
                     className="w-full object-contain drop-shadow-2xl"
                   />
-
                 </div>
               </div>
 
@@ -166,7 +219,6 @@ export default function GuiaFacasPage() {
                     height={420}
                     className="w-full object-contain drop-shadow-2xl"
                   />
-
                 </div>
               </div>
             </div>
@@ -174,13 +226,12 @@ export default function GuiaFacasPage() {
         </div>
       </section>
 
-
       {/* Roteiro */}
       <section className="border-t border-white/10 bg-white/[0.02] px-8 py-28 md:px-16">
         <div className="mx-auto max-w-7xl">
           <p className="mb-12 text-xs uppercase tracking-[0.35em] text-white/35">Roteiro de Compras</p>
 
-          {/* Fotos dos fabricantes */}
+          {/* Logos dos fabricantes */}
           <div className="mb-16 grid grid-cols-3 gap-6">
             <div className="aspect-square flex items-center justify-center overflow-hidden rounded-2xl border border-white/10 bg-white/[0.03] p-8">
               <Image
@@ -236,7 +287,7 @@ export default function GuiaFacasPage() {
                 <div>
                   <p className="text-white font-light text-lg">Masamoto</p>
                   <p className="mt-2 text-sm leading-7 text-white/55">
-                    Visita à loja principal da Masamoto em Tokyo. Seleção e aquisição da Gyuto. Entrega da faca artesanal para afiação — retirada programada para o dia 14.
+                    Visita à loja principal da Masamoto em Tokyo. Seleção e aquisição da Gyuto. Entrega da faca artesanal para afiação ao artesão da casa — retirada programada para o dia 14.
                   </p>
                   <div className="mt-5 inline-flex items-center gap-3 border border-white/10 px-5 py-2 text-xs uppercase tracking-[0.25em] text-white/35">
                     <span>Gyuto</span>
@@ -256,7 +307,7 @@ export default function GuiaFacasPage() {
               <div>
                 <p className="text-white font-light text-lg">Aritsugu</p>
                 <p className="mt-2 text-sm leading-7 text-white/55">
-                  Visita à loja histórica da Aritsugu no Mercado Nishiki, em Kyoto. Fundada em 1560, é referência absoluta em facas para cozinha japonesa tradicional. Seleção e aquisição da Yanagiba.
+                  Visita à loja histórica da Aritsugu no Mercado Nishiki. Fundada em 1560 para fornecer instrumentos à corte imperial, a casa permanece sob a mesma família há mais de quatro séculos. Seleção e aquisição da Yanagiba com acompanhamento direto do artesão na escolha do aço.
                 </p>
                 <div className="mt-5 inline-flex items-center gap-3 border border-white/10 px-5 py-2 text-xs uppercase tracking-[0.25em] text-white/35">
                   <span>Yanagiba</span>
@@ -273,7 +324,7 @@ export default function GuiaFacasPage() {
               <div>
                 <p className="text-white font-light text-lg">Kikumori</p>
                 <p className="mt-2 text-sm leading-7 text-white/55">
-                  Visita à Kikumori em Sakai — cidade historicamente conhecida como o centro da fabricação de facas profissionais no Japão, responsável por mais de 90% das facas usadas por chefs profissionais no país. Seleção e aquisição da Deba.
+                  Visita à Kikumori em Sakai — origem de mais de 90% das facas utilizadas por chefs profissionais no Japão. A casa não opera canais de venda para o público externo; o acesso é feito exclusivamente por meio de relação direta com os artesãos. Seleção e aquisição da Deba.
                 </p>
                 <div className="mt-5 inline-flex items-center gap-3 border border-white/10 px-5 py-2 text-xs uppercase tracking-[0.25em] text-white/35">
                   <span>Deba</span>
@@ -290,7 +341,7 @@ export default function GuiaFacasPage() {
               <div>
                 <p className="text-white font-light text-lg">Masamoto · Retirada</p>
                 <p className="mt-2 text-sm leading-7 text-white/55">
-                  Retirada da faca artesanal após afiação completa pelo artesão. Inspeção do fio junto ao cliente antes do retorno ao Brasil.
+                  Retirada da faca artesanal após afiação completa. Inspeção do fio junto ao artesão antes do retorno ao Brasil.
                 </p>
                 <div className="mt-5 inline-flex items-center gap-3 border border-white/10 px-5 py-2 text-xs uppercase tracking-[0.25em] text-white/35">
                   <span>Afiação retirada</span>
@@ -309,7 +360,7 @@ export default function GuiaFacasPage() {
               <p className="mb-6 text-xs uppercase tracking-[0.35em] text-white/35">Investimento</p>
               <h2 className="text-3xl font-light text-white md:text-4xl">Projeção</h2>
               <p className="mt-6 text-sm font-light leading-8 text-white/40">
-                Valores estimados para modelos de entrada profissional de cada fabricante. Modelos com aço superior (Shirogami Nº1, Aogami Super) ou acabamentos especiais têm preços significativamente mais elevados.
+                Valores estimados para modelos de entrada profissional de cada fabricante. Peças com aço superior (Shirogami Nº1, Aogami Super) ou acabamentos especiais têm preços significativamente mais elevados e disponibilidade ainda mais restrita.
               </p>
               <p className="mt-4 text-xs leading-6 text-white/25">
                 Câmbio de referência: ¥1 = R$ 0,037 · Jun/2026
