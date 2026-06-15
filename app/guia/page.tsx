@@ -1,0 +1,485 @@
+import Image from "next/image";
+
+export const metadata = {
+  title: "Alpinea | Assessoria de Compras — Facas de Cozinha",
+  description:
+    "Curadoria Alpinea para aquisição de facas de cozinha profissionais no Japão: Masamoto, Aritsugu e Kikumori.",
+};
+
+export default function GuiaFacasPage() {
+  return (
+    <main className="min-h-screen bg-black text-white">
+      <header className="fixed left-0 right-0 top-0 z-50 flex items-center justify-between bg-black/10 px-8 py-5 backdrop-blur-2xl md:px-16">
+        <a href="/" className="text-xl tracking-[0.45em]">
+          ALPINEA
+        </a>
+        <nav className="hidden gap-8 text-xs uppercase tracking-[0.25em] text-white/70 md:flex">
+          <a href="/" className="transition hover:text-white">Início</a>
+          <a href="/services" className="transition hover:text-white">Serviços</a>
+          <a href="/preview" className="transition hover:text-white">Roteiro</a>
+          <a href="#contact" className="transition hover:text-white">Contato</a>
+        </nav>
+      </header>
+
+      {/* Hero */}
+      <section className="relative min-h-[640px] overflow-hidden px-8 pb-28 pt-40 md:px-16 md:pt-52">
+        <div className="absolute inset-0 bg-gradient-to-b from-black via-black/90 to-black" />
+        <div className="relative z-10 mx-auto max-w-7xl">
+          <p className="mb-8 text-xs uppercase tracking-[0.45em] text-white/40">
+            Assessoria de Compras · Alpinea Private
+          </p>
+          <h1 className="max-w-4xl text-5xl font-light leading-[1.05] tracking-tight md:text-7xl">
+            Facas de Cozinha
+            <br />
+            <span className="text-white/40">包丁</span>
+          </h1>
+          <p className="mt-10 max-w-2xl text-lg font-light leading-9 text-white/60">
+            Curadoria dedicada para identificar, selecionar e adquirir facas de cozinha profissionais junto aos fabricantes certos — em Tokyo, Kyoto e Sakai.
+          </p>
+        </div>
+      </section>
+
+      {/* Divisor */}
+      <div className="border-t border-white/10" />
+
+      {/* Briefing */}
+      <section className="px-8 py-28 md:px-16">
+        <div className="mx-auto max-w-7xl">
+          <div className="grid gap-20 lg:grid-cols-[1fr_1.6fr]">
+            <div>
+              <p className="mb-6 text-xs uppercase tracking-[0.35em] text-white/35">Briefing do Cliente</p>
+              <h2 className="text-3xl font-light text-white md:text-4xl">Contexto</h2>
+            </div>
+            <div className="space-y-6 text-base font-light leading-9 text-white/60">
+              <p>
+                Chef de cozinha japonesa radicado no Brasil com mais de uma década de ofício. Conhece os instrumentos, domina as técnicas — mas o mercado japonês de facas é opaco para quem chega de fora.
+              </p>
+              <p>
+                A alta densidade de marcas de qualidade inferior em pontos turísticos e o volume de propaganda direcionada a estrangeiros tornam a compra direta um risco real. O cliente decidiu não comprar sem orientação especializada.
+              </p>
+              <div className="border-t border-white/10 pt-8">
+                <p className="mb-5 text-xs uppercase tracking-[0.25em] text-white/30">Objetivo da assessoria</p>
+                <div className="space-y-3 text-sm leading-7 text-white/55">
+                  <p>— Adquirir três facas de uso profissional distinto</p>
+                  <p>— Afiar uma faca artesanal em uso no restaurante</p>
+                  <p>— Acesso direto às lojas dos fabricantes, sem intermediários</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Execução */}
+      <section className="border-t border-white/10 bg-white/[0.02] px-8 py-28 md:px-16">
+        <div className="mx-auto max-w-7xl">
+          <div className="grid gap-20 lg:grid-cols-[1fr_1.6fr]">
+            {/* Esquerda */}
+            <div>
+              <p className="mb-6 text-xs uppercase tracking-[0.35em] text-white/35">Execução</p>
+              <h2 className="text-3xl font-light text-white md:text-4xl">Seleção</h2>
+              <p className="mt-6 text-sm font-light leading-8 text-white/45">
+                Com base em 12 anos de relações com os principais chefs dos restaurantes líderes no Japão — sushi, contemporâneo e kaiseki — identificamos três fabricantes com disponibilidade imediata e presença confirmada nos melhores estabelecimentos do país.
+              </p>
+
+              {/* Fabricantes */}
+              <div className="mt-12 space-y-8">
+                <div className="border-t border-white/10 pt-8">
+                  <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">Fabricante 01</p>
+                  <div className="flex items-center gap-4">
+                    <Image src="/images/masamoto-logo.png" alt="Masamoto" width={120} height={48} className="h-10 w-auto object-contain opacity-80" />
+                    <span className="text-white/25 text-sm">正本</span>
+                  </div>
+                  <p className="mt-3 text-sm leading-7 text-white/50">Tokyo · Fundada em 1866</p>
+                </div>
+                <div className="border-t border-white/10 pt-8">
+                  <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">Fabricante 02</p>
+                  <div className="flex items-center gap-4">
+                    <Image src="/images/aritsugu-logo.png" alt="Aritsugu" width={120} height={48} className="h-10 w-auto object-contain opacity-80" />
+                    <span className="text-white/25 text-sm">有次</span>
+                  </div>
+                  <p className="mt-3 text-sm leading-7 text-white/50">Kyoto · Fundada em 1560</p>
+                </div>
+                <div className="border-t border-white/10 pt-8">
+                  <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">Fabricante 03</p>
+                  <div className="flex items-center gap-4">
+                    <Image src="/images/kikumori-logo.png" alt="Kikumori" width={120} height={48} className="h-10 w-auto object-contain opacity-80" />
+                    <span className="text-white/25 text-sm">菊守</span>
+                  </div>
+                  <p className="mt-3 text-sm leading-7 text-white/50">Sakai · Tradição de forja</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Direita — facas */}
+            <div className="space-y-0">
+              <p className="mb-10 text-xs uppercase tracking-[0.35em] text-white/35">Seleção recomendada</p>
+
+              {/* Gyuto */}
+              <div className="border-t border-white/10 py-10 grid gap-8 sm:grid-cols-[1fr_1.2fr] items-center">
+                <div>
+                  <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">Uso geral</p>
+                  <h3 className="text-2xl font-light text-white">Gyuto <span className="text-white/30 text-base ml-2">牛刀</span></h3>
+                  <p className="mt-2 text-xs uppercase tracking-[0.2em] text-white/40">Masamoto · 正本</p>
+                  <p className="mt-4 text-sm leading-7 text-white/55">
+                    Faca versátil de uso cotidiano. Adaptada da tradição francesa pelo Japão, executa cortes precisos em carnes, vegetais e peixes com a mesma eficiência.
+                  </p>
+                </div>
+                <div className="relative">
+                  <Image
+                    src="/images/gyuto-nobg.png"
+                    alt="Gyuto — Masamoto"
+                    width={700}
+                    height={420}
+                    className="w-full object-contain drop-shadow-2xl"
+                  />
+                  <p className="mt-3 text-xs uppercase tracking-[0.25em] text-white/25 text-center">
+                    Gyuto · 牛刀 · Masamoto · 正本
+                  </p>
+                </div>
+              </div>
+
+              {/* Yanagiba */}
+              <div className="border-t border-white/10 py-10 grid gap-8 sm:grid-cols-[1fr_1.2fr] items-center">
+                <div>
+                  <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">Corte de peixe</p>
+                  <h3 className="text-2xl font-light text-white">Yanagiba <span className="text-white/30 text-base ml-2">柳刃</span></h3>
+                  <p className="mt-2 text-xs uppercase tracking-[0.2em] text-white/40">Aritsugu · 有次</p>
+                  <p className="mt-4 text-sm leading-7 text-white/55">
+                    Lâmina longa e fina para corte de sashimi. Projetada para movimento único — do calcanhar à ponta — com mínima fricção e máxima precisão no corte.
+                  </p>
+                </div>
+                <div className="relative">
+                  <Image
+                    src="/images/yanagiba-nobg.png"
+                    alt="Yanagiba — Aritsugu"
+                    width={700}
+                    height={420}
+                    className="w-full object-contain drop-shadow-2xl"
+                  />
+                  <p className="mt-3 text-xs uppercase tracking-[0.25em] text-white/25 text-center">
+                    Yanagiba · 柳刃 · Aritsugu · 有次
+                  </p>
+                </div>
+              </div>
+
+              {/* Deba */}
+              <div className="border-t border-white/10 py-10 grid gap-8 sm:grid-cols-[1fr_1.2fr] items-center">
+                <div>
+                  <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">Trabalho pesado</p>
+                  <h3 className="text-2xl font-light text-white">Deba <span className="text-white/30 text-base ml-2">出刃</span></h3>
+                  <p className="mt-2 text-xs uppercase tracking-[0.2em] text-white/40">Kikumori Sakai · 菊守</p>
+                  <p className="mt-4 text-sm leading-7 text-white/55">
+                    Faca robusta para desossagem de peixes inteiros. Espessura da espinha permite extrair partes com corte único sem comprometer o fio.
+                  </p>
+                </div>
+                <div className="relative">
+                  <Image
+                    src="/images/deba-nobg.png"
+                    alt="Deba — Kikumori"
+                    width={700}
+                    height={420}
+                    className="w-full object-contain drop-shadow-2xl"
+                  />
+                  <p className="mt-3 text-xs uppercase tracking-[0.25em] text-white/25 text-center">
+                    Deba · 出刃 · Kikumori · 菊守
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Afiação */}
+      <section className="border-t border-white/10 px-8 py-20 md:px-16">
+        <div className="mx-auto max-w-7xl">
+          <div className="grid gap-10 lg:grid-cols-[1fr_1.6fr]">
+            <div>
+              <p className="mb-4 text-xs uppercase tracking-[0.35em] text-white/35">Afiação</p>
+              <h2 className="text-2xl font-light text-white">Faca artesanal</h2>
+            </div>
+            <div className="space-y-4 text-sm font-light leading-8 text-white/55">
+              <p>
+                A faca artesanal em uso no restaurante do cliente será entregue no primeiro dia de viagem ao afiador da Masamoto em Tokyo — um dos poucos artesãos que ainda pratica a afiação manual tradicional com pedras d'água de diferentes granulometrias.
+              </p>
+              <p>
+                O prazo necessário para afiação pelo artesão é de <span className="text-white/80">14 dias</span>. A faca será retirada no último dia de viagem, antes do retorno ao Brasil.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Roteiro */}
+      <section className="border-t border-white/10 bg-white/[0.02] px-8 py-28 md:px-16">
+        <div className="mx-auto max-w-7xl">
+          <p className="mb-12 text-xs uppercase tracking-[0.35em] text-white/35">Roteiro de Compras</p>
+
+          <div className="space-y-0">
+            {/* Dia 1 */}
+            <div className="grid gap-10 border-t border-white/10 py-10 lg:grid-cols-[180px_1fr] lg:items-start">
+              <div>
+                <p className="text-xs uppercase tracking-[0.2em] text-white/25">Dia 1</p>
+                <p className="mt-1 text-sm text-white/50">Tokyo</p>
+              </div>
+              <div className="grid gap-6 sm:grid-cols-[1fr_auto]">
+                <div>
+                  <p className="text-white font-light text-lg">
+                    Masamoto <span className="text-white/35 text-sm ml-2">正本</span>
+                  </p>
+                  <p className="mt-2 text-sm leading-7 text-white/55">
+                    Visita à loja principal da Masamoto em Tokyo. Seleção e aquisição da Gyuto. Entrega da faca artesanal para afiação — retirada programada para o dia 14.
+                  </p>
+                  <div className="mt-5 inline-flex items-center gap-3 border border-white/10 px-5 py-2 text-xs uppercase tracking-[0.25em] text-white/35">
+                    <span>Gyuto · 牛刀</span>
+                    <span className="text-white/15">·</span>
+                    <span>Afiação entregue</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Dia 8 */}
+            <div className="grid gap-10 border-t border-white/10 py-10 lg:grid-cols-[180px_1fr] lg:items-start">
+              <div>
+                <p className="text-xs uppercase tracking-[0.2em] text-white/25">Dia 8</p>
+                <p className="mt-1 text-sm text-white/50">Kyoto</p>
+              </div>
+              <div>
+                <p className="text-white font-light text-lg">
+                  Aritsugu <span className="text-white/35 text-sm ml-2">有次</span>
+                </p>
+                <p className="mt-2 text-sm leading-7 text-white/55">
+                  Visita à loja histórica da Aritsugu no Mercado Nishiki, em Kyoto. Fundada em 1560, é referência absoluta em facas para cozinha japonesa tradicional. Seleção e aquisição da Yanagiba.
+                </p>
+                <div className="mt-5 inline-flex items-center gap-3 border border-white/10 px-5 py-2 text-xs uppercase tracking-[0.25em] text-white/35">
+                  <span>Yanagiba · 柳刃</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Dia 10 */}
+            <div className="grid gap-10 border-t border-white/10 py-10 lg:grid-cols-[180px_1fr] lg:items-start">
+              <div>
+                <p className="text-xs uppercase tracking-[0.2em] text-white/25">Dia 10</p>
+                <p className="mt-1 text-sm text-white/50">Sakai</p>
+              </div>
+              <div>
+                <p className="text-white font-light text-lg">
+                  Kikumori <span className="text-white/35 text-sm ml-2">菊守</span>
+                </p>
+                <p className="mt-2 text-sm leading-7 text-white/55">
+                  Visita à Kikumori em Sakai — cidade historicamente conhecida como o centro da fabricação de facas profissionais no Japão, responsável por mais de 90% das facas usadas por chefs profissionais no país. Seleção e aquisição da Deba.
+                </p>
+                <div className="mt-5 inline-flex items-center gap-3 border border-white/10 px-5 py-2 text-xs uppercase tracking-[0.25em] text-white/35">
+                  <span>Deba · 出刃</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Dia 14 */}
+            <div className="grid gap-10 border-t border-white/10 py-10 lg:grid-cols-[180px_1fr] lg:items-start">
+              <div>
+                <p className="text-xs uppercase tracking-[0.2em] text-white/25">Dia 14</p>
+                <p className="mt-1 text-sm text-white/50">Tokyo</p>
+              </div>
+              <div>
+                <p className="text-white font-light text-lg">Masamoto · Retirada</p>
+                <p className="mt-2 text-sm leading-7 text-white/55">
+                  Retirada da faca artesanal após afiação completa pelo artesão. Inspeção do fio junto ao cliente antes do retorno ao Brasil.
+                </p>
+                <div className="mt-5 inline-flex items-center gap-3 border border-white/10 px-5 py-2 text-xs uppercase tracking-[0.25em] text-white/35">
+                  <span>Afiação retirada · 正本</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Logos dos fabricantes */}
+          <div className="mt-16 border-t border-white/10 pt-14">
+            <p className="mb-10 text-xs uppercase tracking-[0.35em] text-white/30">Fabricantes</p>
+            <div className="grid grid-cols-3 gap-6">
+              <div className="aspect-square flex items-center justify-center overflow-hidden rounded-2xl border border-white/10 bg-white/[0.03] p-8">
+                <Image
+                  src="/images/masamoto-logo.png"
+                  alt="Gravação Masamoto na lâmina"
+                  width={420}
+                  height={420}
+                  className="h-full w-full object-cover rounded-xl"
+                />
+              </div>
+              <div className="aspect-square flex items-center justify-center overflow-hidden rounded-2xl border border-white/10 bg-white/[0.03] p-8">
+                <Image
+                  src="/images/aritsugu-logo.png"
+                  alt="Gravação Aritsugu na lâmina"
+                  width={420}
+                  height={420}
+                  className="h-full w-full object-cover rounded-xl"
+                />
+              </div>
+              <div className="aspect-square flex items-center justify-center overflow-hidden rounded-2xl border border-white/10 bg-white/[0.03] p-8">
+                <Image
+                  src="/images/kikumori-logo.png"
+                  alt="Gravação Kikumori na lâmina"
+                  width={420}
+                  height={420}
+                  className="h-full w-full object-cover rounded-xl"
+                />
+              </div>
+            </div>
+            <div className="mt-4 grid grid-cols-3 gap-6 text-center">
+              <p className="text-xs uppercase tracking-[0.25em] text-white/25">Masamoto · 正本</p>
+              <p className="text-xs uppercase tracking-[0.25em] text-white/25">Aritsugu · 有次</p>
+              <p className="text-xs uppercase tracking-[0.25em] text-white/25">Kikumori · 菊守</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Investimento */}
+      <section className="border-t border-white/10 px-8 py-28 md:px-16">
+        <div className="mx-auto max-w-7xl">
+          <div className="grid gap-20 lg:grid-cols-[1fr_1.6fr]">
+            <div>
+              <p className="mb-6 text-xs uppercase tracking-[0.35em] text-white/35">Investimento</p>
+              <h2 className="text-3xl font-light text-white md:text-4xl">Projeção</h2>
+              <p className="mt-6 text-sm font-light leading-8 text-white/40">
+                Valores estimados para modelos de entrada profissional de cada fabricante. Modelos com aço superior (Shirogami Nº1, Aogami Super) ou acabamentos especiais têm preços significativamente mais elevados.
+              </p>
+              <p className="mt-4 text-xs leading-6 text-white/25">
+                Câmbio de referência: ¥1 = R$ 0,037 · Jun/2026
+              </p>
+            </div>
+
+            <div>
+              <table className="w-full border-collapse text-left">
+                <thead>
+                  <tr className="border-b border-white/10">
+                    <th className="pb-5 text-xs uppercase tracking-[0.3em] text-white/30 font-normal">Faca</th>
+                    <th className="pb-5 text-xs uppercase tracking-[0.3em] text-white/30 font-normal">Fabricante</th>
+                    <th className="pb-5 text-right text-xs uppercase tracking-[0.3em] text-white/30 font-normal">Ienes</th>
+                    <th className="pb-5 text-right text-xs uppercase tracking-[0.3em] text-white/30 font-normal">Reais</th>
+                  </tr>
+                </thead>
+                <tbody className="text-sm font-light leading-9 text-white/65">
+                  <tr className="border-b border-white/[0.07]">
+                    <td className="py-5">
+                      Gyuto · 牛刀
+                      <span className="block text-xs text-white/30">240mm · Hagane</span>
+                    </td>
+                    <td className="py-5 text-white/40">Masamoto</td>
+                    <td className="py-5 text-right text-white">¥ 35.000 – 55.000</td>
+                    <td className="py-5 text-right text-white">R$ 1.295 – 2.035</td>
+                  </tr>
+                  <tr className="border-b border-white/[0.07]">
+                    <td className="py-5">
+                      Yanagiba · 柳刃
+                      <span className="block text-xs text-white/30">270mm · Shirogami</span>
+                    </td>
+                    <td className="py-5 text-white/40">Aritsugu</td>
+                    <td className="py-5 text-right text-white">¥ 45.000 – 80.000</td>
+                    <td className="py-5 text-right text-white">R$ 1.665 – 2.960</td>
+                  </tr>
+                  <tr className="border-b border-white/[0.07]">
+                    <td className="py-5">
+                      Deba · 出刃
+                      <span className="block text-xs text-white/30">180mm · Hagane</span>
+                    </td>
+                    <td className="py-5 text-white/40">Kikumori</td>
+                    <td className="py-5 text-right text-white">¥ 30.000 – 50.000</td>
+                    <td className="py-5 text-right text-white">R$ 1.110 – 1.850</td>
+                  </tr>
+                  <tr className="border-b border-white/[0.07]">
+                    <td className="py-5">
+                      Afiação artesanal
+                      <span className="block text-xs text-white/30">Pedra d'água · 14 dias</span>
+                    </td>
+                    <td className="py-5 text-white/40">Masamoto</td>
+                    <td className="py-5 text-right text-white">¥ 8.000 – 15.000</td>
+                    <td className="py-5 text-right text-white">R$ 296 – 555</td>
+                  </tr>
+                  <tr>
+                    <td className="pt-8 pb-4 text-white/80" colSpan={2}>
+                      Total estimado
+                      <span className="block text-xs text-white/30 mt-1">Sem honorários Alpinea</span>
+                    </td>
+                    <td className="pt-8 pb-4 text-right text-white font-light">¥ 118.000 – 200.000</td>
+                    <td className="pt-8 pb-4 text-right text-white font-light">R$ 4.366 – 7.400</td>
+                  </tr>
+                </tbody>
+              </table>
+
+              <div className="mt-10 border border-white/10 bg-white/[0.025] p-8">
+                <p className="mb-3 text-xs uppercase tracking-[0.3em] text-white/30">Nota sobre imposto de importação</p>
+                <p className="text-sm leading-7 text-white/50">
+                  Facas de cozinha para uso profissional estão sujeitas à tributação na entrada no Brasil. A Alpinea orienta o cliente sobre a melhor forma de documentação e declaração antes do retorno. Valores de impostos não estão incluídos na projeção acima.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* CTA */}
+      <section
+        id="contact"
+        className="scroll-mt-32 border-t border-white/10 bg-white px-8 py-28 text-black md:px-16"
+      >
+        <div className="mx-auto max-w-4xl text-center">
+          <p className="mb-6 text-xs uppercase tracking-[0.35em] text-black/35">
+            Próximo passo
+          </p>
+          <h2 className="text-4xl font-light leading-tight md:text-6xl">
+            Pronto para iniciar a assessoria?
+          </h2>
+          <p className="mx-auto mt-8 max-w-xl text-base leading-9 text-black/50">
+            Entre em contato para alinhar datas, escopo de viagem e detalhes da seleção.
+          </p>
+          <div className="mt-12 flex flex-col items-center justify-center gap-4 sm:flex-row">
+            <a
+              href="mailto:wilson@alpinea.io"
+              className="border border-black px-8 py-4 text-xs uppercase tracking-[0.3em] transition hover:bg-black hover:text-white"
+            >
+              Entrar em Contato
+            </a>
+            <a
+              href="https://wa.me/5511996691818"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="border border-black/15 px-8 py-4 text-xs uppercase tracking-[0.3em] text-black/50 transition hover:border-black hover:text-black"
+            >
+              WhatsApp Concierge
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <footer className="border-t border-white/10 bg-black px-8 py-16 text-white md:px-16">
+        <div className="mx-auto flex max-w-7xl flex-col justify-between gap-12 md:flex-row md:items-end">
+          <div className="space-y-6">
+            <p className="text-xs uppercase tracking-[0.45em] text-white/70">Alpinea</p>
+            <div className="max-w-md space-y-3">
+              <p className="text-sm leading-relaxed text-white/40">
+                Curadoria privada de experiências, gastronomia e lifestyle no Japão.
+              </p>
+              <p className="text-xs text-white/25">
+                © 2026 Alpinea Agências de Viagens LTDA — CNPJ 66.491.067/0001-84
+              </p>
+              <div className="flex flex-wrap items-center gap-3 text-xs text-white/20">
+                <a href="/legal" className="transition hover:text-white/50">Termos e Condições</a>
+                <span>·</span>
+                <a href="/privacy" className="transition hover:text-white/50">Política de Privacidade</a>
+              </div>
+            </div>
+          </div>
+          <div className="flex items-center gap-8 text-xs uppercase tracking-[0.25em] text-white/35">
+            <a href="https://www.instagram.com/alpinea.private" target="_blank" rel="noopener noreferrer" className="transition hover:text-white">Instagram</a>
+            <a href="https://www.youtube.com/@alpinea.private" target="_blank" rel="noopener noreferrer" className="transition hover:text-white">YouTube</a>
+            <a href="mailto:wilson@alpinea.io" className="transition hover:text-white">Contato</a>
+          </div>
+        </div>
+      </footer>
+    </main>
+  );
+}
