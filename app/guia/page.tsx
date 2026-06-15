@@ -23,15 +23,22 @@ export default function GuiaFacasPage() {
 
       {/* Hero */}
       <section className="relative min-h-[640px] overflow-hidden px-8 pb-28 pt-40 md:px-16 md:pt-52">
-        <div className="absolute inset-0 bg-gradient-to-b from-black via-black/90 to-black" />
+        <div className="absolute inset-0">
+          <Image
+            src="/images/blacksmith.png"
+            alt="Artesão forjando faca japonesa"
+            fill
+            className="object-cover object-center"
+            priority
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/70 to-black" />
+        </div>
         <div className="relative z-10 mx-auto max-w-7xl">
           <p className="mb-8 text-xs uppercase tracking-[0.45em] text-white/40">
             Assessoria de Compras · Alpinea Private
           </p>
           <h1 className="max-w-4xl text-5xl font-light leading-[1.05] tracking-tight md:text-7xl">
             Facas de Cozinha
-            <br />
-            <span className="text-white/40">包丁</span>
           </h1>
           <p className="mt-10 max-w-2xl text-lg font-light leading-9 text-white/60">
             Curadoria dedicada para identificar, selecionar e adquirir facas de cozinha profissionais junto aos fabricantes certos — em Tokyo, Kyoto e Sakai.
@@ -120,14 +127,13 @@ export default function GuiaFacasPage() {
                 <div>
                   <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">Uso geral</p>
                   <h3 className="text-2xl font-light text-white">Gyuto <span className="text-white/30 text-base ml-2">牛刀</span></h3>
-                  <p className="mt-2 text-xs uppercase tracking-[0.2em] text-white/40">Masamoto · 正本</p>
                   <p className="mt-4 text-sm leading-7 text-white/55">
                     Faca versátil de uso cotidiano. Adaptada da tradição francesa pelo Japão, executa cortes precisos em carnes, vegetais e peixes com a mesma eficiência.
                   </p>
                 </div>
                 <div className="relative">
                   <Image
-                    src="/images/gyuto-nobg.png"
+                    src="/images/gyuto.png"
                     alt="Gyuto — Masamoto"
                     width={700}
                     height={420}
@@ -144,14 +150,13 @@ export default function GuiaFacasPage() {
                 <div>
                   <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">Corte de peixe</p>
                   <h3 className="text-2xl font-light text-white">Yanagiba <span className="text-white/30 text-base ml-2">柳刃</span></h3>
-                  <p className="mt-2 text-xs uppercase tracking-[0.2em] text-white/40">Aritsugu · 有次</p>
                   <p className="mt-4 text-sm leading-7 text-white/55">
                     Lâmina longa e fina para corte de sashimi. Projetada para movimento único — do calcanhar à ponta — com mínima fricção e máxima precisão no corte.
                   </p>
                 </div>
                 <div className="relative">
                   <Image
-                    src="/images/yanagiba-nobg.png"
+                    src="/images/yanagiba.png"
                     alt="Yanagiba — Aritsugu"
                     width={700}
                     height={420}
@@ -168,14 +173,13 @@ export default function GuiaFacasPage() {
                 <div>
                   <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">Trabalho pesado</p>
                   <h3 className="text-2xl font-light text-white">Deba <span className="text-white/30 text-base ml-2">出刃</span></h3>
-                  <p className="mt-2 text-xs uppercase tracking-[0.2em] text-white/40">Kikumori Sakai · 菊守</p>
                   <p className="mt-4 text-sm leading-7 text-white/55">
                     Faca robusta para desossagem de peixes inteiros. Espessura da espinha permite extrair partes com corte único sem comprometer o fio.
                   </p>
                 </div>
                 <div className="relative">
                   <Image
-                    src="/images/deba-nobg.png"
+                    src="/images/deba.png"
                     alt="Deba — Kikumori"
                     width={700}
                     height={420}
