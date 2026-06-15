@@ -439,6 +439,68 @@ export default function GuiaFacasPage() {
         </div>
       </section>
 
+      {/* Conclusão */}
+      <section className="border-t border-white/10 px-8 py-28 md:px-16">
+        <div className="mx-auto max-w-7xl">
+          <div className="grid gap-16 lg:grid-cols-[1fr_420px] lg:items-start">
+
+            {/* Texto */}
+            <div>
+              <p className="mb-6 text-xs uppercase tracking-[0.35em] text-white/35">Resultado</p>
+              <h2 className="text-3xl font-light text-white md:text-4xl">O que não estava no roteiro</h2>
+
+              <div className="mt-10 space-y-6 text-base font-light leading-9 text-white/60">
+                <p>
+                  A visita à Kikumori em Sakai foi planejada para a aquisição de uma única Deba. O cliente chegou à oficina sem expectativa além do escopo original.
+                </p>
+                <p>
+                  No ateliê, o artesão apresentou uma linha recém-lançada de acabamento espelhado — o <span className="text-white/90">Choyo</span> — ainda sem distribuição fora do Japão e não documentada em nenhum canal internacional. O polimento é executado manualmente em múltiplas etapas, resultando em uma superfície que reflete como aço cirúrgico, mantendo o núcleo de Aogami Super intacto.
+                </p>
+                <p>
+                  O cliente, ao ver e segurar as peças pela primeira vez, decidiu ampliar a compra no ato.
+                </p>
+              </div>
+
+              <div className="mt-12 grid grid-cols-3 gap-px border border-white/10">
+                <div className="bg-white/[0.03] px-6 py-8">
+                  <p className="text-2xl font-light text-white">1</p>
+                  <p className="mt-2 text-xs uppercase tracking-[0.2em] text-white/30">faca planejada</p>
+                </div>
+                <div className="bg-white/[0.03] px-6 py-8">
+                  <p className="text-2xl font-light text-white">3</p>
+                  <p className="mt-2 text-xs uppercase tracking-[0.2em] text-white/30">facas adquiridas</p>
+                </div>
+                <div className="bg-white/[0.03] px-6 py-8">
+                  <p className="text-2xl font-light text-white">Choyo</p>
+                  <p className="mt-2 text-xs uppercase tracking-[0.2em] text-white/30">acabamento inédito</p>
+                </div>
+              </div>
+
+              <p className="mt-10 text-sm leading-7 text-white/35 italic">
+                Esse tipo de descoberta — um lançamento ainda sem nome fora do Japão, acessado no dia em que está disponível — é o que diferencia uma visita guiada de uma compra por conta própria.
+              </p>
+            </div>
+
+            {/* Foto do cliente */}
+            <div className="lg:sticky lg:top-32">
+              <div className="overflow-hidden rounded-2xl">
+                <Image
+                  src="/images/kikufinal.jpeg"
+                  alt="Três facas Kikumori Choyo adquiridas pelo cliente em Sakai"
+                  width={840}
+                  height={1120}
+                  className="w-full object-cover"
+                />
+              </div>
+              <p className="mt-4 text-xs leading-6 text-white/25 text-center">
+                As três peças Kikumori · Acabamento Choyo · Sakai, Osaka
+              </p>
+            </div>
+
+          </div>
+        </div>
+      </section>
+
       {/* CTA */}
       <section
         id="contact"
