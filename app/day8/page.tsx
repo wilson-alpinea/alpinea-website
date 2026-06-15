@@ -175,10 +175,6 @@ export default function Day8Page() {
                 <h3 className="text-3xl font-light text-white md:text-4xl">The Living Pavilion by Aman</h3>
               </div>
 
-              <p className="max-w-xl">
-                O dia começa no restaurante do próprio Aman Kyoto, com café da manhã servido num salão de lareira central e portas de vidro que se abrem para o jardim florestal. O Chef de Confeitaria Matsuo prepara os pastéis frescos diariamente — croissants, pães artesanais e doces sazonais que chegam à mesa ainda quentes.
-              </p>
-
               <div className="border-t border-white/10 pt-10">
                 <div className="grid gap-8 sm:grid-cols-2">
                   <div>
@@ -201,14 +197,19 @@ export default function Day8Page() {
               </div>
 
               <div className="border-t border-white/10 pt-10 space-y-8">
-                <InfoBlock
-                  title="Café da manhã japonês"
-                  text="A opção japonesa inclui miso soup, tsukemono (conservas da estação), arroz, peixe grelhado e proteínas variadas — café da manhã de longevidade, como os japoneses chamam. Servido com chá verde da região."
-                />
+                <div>
+                  <p className="text-white">Comentários</p>
+                  <p className="mt-2">
+                    O café da manhã pode ser realizado no próprio hotel no restaurante The Living Pavilion by Aman, o restaurante conta com opções tanto ocidentais quanto orientais, caso seja sua primeira vez, importante ressaltar que os japoneses encaram o café da manhã como uma refeição igual o almoço, ou seja, você vai encontrar até peixe grelhado com arroz para comer, como iremos no menu degustação de wagyu no almoço, recomendo realizar uma refeição mais leve.
+                  </p>
+                  <p className="mt-6">
+                    O restaurante conta com boas opções de sobremesa, durante a nossa visita ao pavilhão de ouro (Kinkaku-ji) existem lojas dentro do complexo que vendem sorvetes de macha caso tenha interesse de experimentar.
+                  </p>
+                </div>
               </div>
             </div>
 
-            {/* Coluna direita — duas fotos + menu */}
+            {/* Coluna direita — duas fotos + menu como imagem clicável */}
             <div className="lg:sticky lg:top-28 space-y-6">
               <Image
                 src="/images/amancafe.jpg"
@@ -231,64 +232,21 @@ export default function Day8Page() {
                 The Living Pavilion by Aman · Aman Kyoto
               </p>
 
-              {/* Menu do café da manhã */}
-              <div className="border border-white/10 bg-white/[0.03] p-8 space-y-8 text-sm leading-7 text-white/60">
-                <p className="text-xs uppercase tracking-[0.35em] text-white/40">Breakfast Menu</p>
-
-                <div className="space-y-2">
-                  <p className="text-xs uppercase tracking-[0.25em] text-white/35">Juice & Yoghurt</p>
-                  <p>Seasonal Fruit Juice · Detox Green Smoothie · Detox Red Smoothie</p>
-                  <p>Yoghurt — Plain, Granola or Chia Seed</p>
-                </div>
-
-                <div className="border-t border-white/[0.07] pt-6 space-y-2">
-                  <p className="text-xs uppercase tracking-[0.25em] text-white/35">Starter</p>
-                  <p>Kamigamo Vegetable Leaf Salad, Yuzu Dressing</p>
-                  <p>Seasonal Soup · Assorted Seasonal Fruits · Melon · Half Papaya</p>
-                </div>
-
-                <div className="border-t border-white/[0.07] pt-6 space-y-2">
-                  <p className="text-xs uppercase tracking-[0.25em] text-white/35">Bread & Cereal</p>
-                  <p>Toast — White, Grains Brown or Gluten Free Rice Bread</p>
-                  <p>Croissant · Bomboloni · Granola</p>
-                  <p className="text-white/40">with Whole Milk, Non-Fat Milk, Soya, Almond or Oat Milk</p>
-                </div>
-
-                <div className="border-t border-white/[0.07] pt-6 space-y-2">
-                  <p className="text-xs uppercase tracking-[0.25em] text-white/35">Main Dish — Egg Style</p>
-                  <p>2 Eggs Any Style — Boiled, Poached, Fried, Omelet or Scrambled</p>
-                  <p>Avocado Toast with Poached Egg</p>
-                  <p>Ham Egg Benedict · Florentine Egg Benedict · Salmon Egg Benedict</p>
-                  <p>Smoked Atsumi Salmon and Scrambled Egg</p>
-                  <p>Scrambled Tofu · Oatmeal with Banana and Kamigamo Pure Honey</p>
-                </div>
-
-                <div className="border-t border-white/[0.07] pt-6 space-y-2">
-                  <p className="text-xs uppercase tracking-[0.25em] text-white/35">Side Dishes (Choice of Two)</p>
-                  <p>Bacon · Pork Sausage · Chicken Sausage · Sautéed Mushroom · Spinach · Smoked Salmon</p>
-                </div>
-
-                <div className="border-t border-white/[0.07] pt-6 space-y-2">
-                  <p className="text-xs uppercase tracking-[0.25em] text-white/35">From Our Pastries</p>
-                  <p>Aman Kyoto French Toast — Caramelized Banana, Berry Compote</p>
-                  <p>Pancake — Seasonal Fresh Fruit, Kamigamo Pure Honey</p>
-                  <p>Bircher Muesli — Setoka Mandarin, Berries, Almond</p>
-                  <p>Acai Smoothie Bowl — Banana, Papaya, Berries, Rice Flour Granola</p>
-                </div>
-
-                <div className="border-t border-white/[0.07] pt-6 space-y-2">
-                  <p className="text-xs uppercase tracking-[0.25em] text-white/35">Japanese</p>
-                  <p>Steamed in Hot Pot Rice · Kyoto Soya Milk Porridge</p>
-                  <p>Japanese Grilled Fish · Savory Egg Custard</p>
-                  <p>Assorted Kyoto Pickles · Miso Soup</p>
-                </div>
-
-                <div className="border-t border-white/[0.07] pt-6 space-y-2">
-                  <p className="text-xs uppercase tracking-[0.25em] text-white/35">Coffee & Tea</p>
-                  <p>Aman Kyoto Original Organic Coffee — American, Espresso, Cappuccino, Café Latte</p>
-                  <p>Shogyoku-en Japanese Tea — Green Tea or Roasted Tea · Black Tea</p>
-                  <p>Herbal Infusion — Chamomile, Mint, Rose Hip, Rooibos</p>
-                </div>
+              {/* Menu como imagem clicável com zoom */}
+              <div>
+                <p className="mb-4 text-xs uppercase tracking-[0.35em] text-white/40">Breakfast Menu</p>
+                <a href="/images/aman-breakfast.png" target="_blank" rel="noopener noreferrer" className="block">
+                  <Image
+                    src="/images/aman-breakfast.png"
+                    alt="Breakfast Menu — The Living Pavilion by Aman Kyoto"
+                    width={900}
+                    height={1200}
+                    className="w-full cursor-zoom-in rounded-2xl border border-white/10 object-contain bg-white/[0.03] transition hover:opacity-85"
+                  />
+                </a>
+                <p className="mt-3 text-sm leading-7 text-white/45">
+                  Menu completo do café da manhã do The Living Pavilion by Aman Kyoto — clique para ampliar.
+                </p>
               </div>
             </div>
           </div>
@@ -342,8 +300,18 @@ export default function Day8Page() {
 
             </div>
 
-            {/* Coluna direita — imagem do carro */}
-            <div className="lg:sticky lg:top-28">
+            {/* Coluna direita — nameplate + exterior + interior */}
+            <div className="lg:sticky lg:top-28 space-y-6">
+              {/* Nameplate acima */}
+              <Image
+                src="/images/asphard-nameplate.png"
+                alt="Toyota Alphard — Nameplate"
+                width={1320}
+                height={440}
+                className="w-full object-contain"
+              />
+
+              {/* Exterior */}
               <Image
                 src="/images/limo.png"
                 alt="Toyota Alphard 2025 — Transporte Privado Alpinea"
@@ -352,7 +320,17 @@ export default function Day8Page() {
                 priority
                 className="w-full object-contain"
               />
-              <p className="mt-4 text-xs uppercase tracking-[0.35em] text-white/35">
+
+              {/* Interior */}
+              <Image
+                src="/images/asphard-interior.png"
+                alt="Toyota Alphard 2025 — Interior"
+                width={1320}
+                height={880}
+                className="w-full rounded-2xl border border-white/10 object-cover"
+              />
+
+              <p className="text-xs uppercase tracking-[0.35em] text-white/35">
                 Toyota Alphard 2025 · Preto Ônix · Placa 京都 300 す 4817
               </p>
             </div>
@@ -432,13 +410,15 @@ export default function Day8Page() {
               </div>
               <div>
                 <p className="mb-4 text-xs uppercase tracking-[0.35em] text-white/40">Mapa do Templo</p>
-                <Image
-                  src="/images/kinkamap.jpg"
-                  alt="Mapa do Kinkaku-ji"
-                  width={1200}
-                  height={800}
-                  className="w-full rounded-2xl border border-white/10 object-contain bg-white/[0.03] p-2"
-                />
+                <a href="/images/kinkamap.jpg" target="_blank" rel="noopener noreferrer" className="block">
+                  <Image
+                    src="/images/kinkamap.jpg"
+                    alt="Mapa do Kinkaku-ji"
+                    width={1200}
+                    height={800}
+                    className="w-full cursor-zoom-in rounded-2xl border border-white/10 object-contain bg-white/[0.03] p-2 transition hover:opacity-85"
+                  />
+                </a>
                 <p className="mt-3 text-sm leading-7 text-white/45">
                   Mapa completo do complexo Kinkaku-ji com todas as áreas: Pavilhão de Ouro (Shariden Kinkaku), jardim Muromachi, lago Kyōkochi, casa de chá Sekkatei e portão principal Somon.
                 </p>
