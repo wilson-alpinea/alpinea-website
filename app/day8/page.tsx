@@ -452,10 +452,6 @@ export default function Day8Page() {
                 <p className="mt-3 text-base uppercase tracking-[0.2em] text-white/35">肉割烹 宮田</p>
               </div>
 
-              <p className="max-w-xl">
-                Um dos almoços mais memoráveis disponíveis em Kyoto: menu degustação inteiramente dedicado à carne wagyu, estruturado no formato kappou — preparação à vista, ritmo calibrado, cortes apresentados um a um pelo chef. A experiência combina a tradição da cozinha kaiseki com a exuberância do wagyu de Kobe e Omi.
-              </p>
-
               <div className="border-t border-white/10 pt-10">
                 <div className="grid gap-8 sm:grid-cols-2">
                   <div>
@@ -480,10 +476,17 @@ export default function Day8Page() {
                   </div>
                 </div>
               </div>
+
+              <div className="border-t border-white/10 pt-10 space-y-4">
+                <p className="text-white">Comentários</p>
+                <p>
+                  Um dos poucos restaurantes de menu degustação de wagyu no Japão, o chef raramente interage com os clientes preferindo se concentrar no preparo dos pratos, alguns clientes gostam de pedir um whisky japonês como The Chita ou The Yamazaki da Suntory para acompanhar, os pratos na sua grande maioria são porções pequenas, o último prato é um wagyu em pedaços com arroz japonês cozido no próprio calor do arroz, a porção é grande e serve para que o cliente esteja satisfeito ao final da refeição, nossa próxima refeição será somente no jantar durante o festival, então aqui recomendo comer até ficar satisfeito.
+                </p>
+              </div>
             </div>
 
             {/* Coluna direita sticky — foto dos cortes */}
-            <div className="lg:sticky lg:top-28">
+            <div className="lg:sticky lg:top-28 space-y-6">
               <Image
                 src="/images/niku.png"
                 alt="Menu Degustação de Wagyu — Niku Kappou Miyata"
@@ -493,7 +496,15 @@ export default function Day8Page() {
                 className="w-full rounded-2xl border border-white/10 object-cover"
                 style={{ maxHeight: "680px", objectPosition: "center" }}
               />
-              <p className="mt-4 text-xs uppercase tracking-[0.35em] text-white/35">
+              <Image
+                src="/images/nikufood.jpeg"
+                alt="Prato do Menu Degustação — Niku Kappou Miyata"
+                width={900}
+                height={760}
+                className="w-full rounded-2xl border border-white/10 object-cover"
+                style={{ maxHeight: "500px", objectFit: "cover", objectPosition: "center" }}
+              />
+              <p className="text-xs uppercase tracking-[0.35em] text-white/35">
                 Niku Kappou Miyata · Menu Degustação de Wagyu · Kyoto
               </p>
             </div>
@@ -501,7 +512,7 @@ export default function Day8Page() {
         </div>
       </section>
 
-      {/* ── GION MATSURI — NOITE ── */}
+      {/* ── YOIYAMA, SAKIMATSURI — GION MATSURI ── */}
       <section className="border-t border-white/10 bg-white/[0.02] px-8 py-32 md:px-16">
         <div className="mx-auto max-w-7xl">
           <div className="grid gap-20 lg:grid-cols-2 lg:items-start">
@@ -509,13 +520,9 @@ export default function Day8Page() {
             <div className="space-y-12 text-lg font-light leading-9 text-white/70">
               <div>
                 <p className="mb-8 text-xs uppercase tracking-[0.35em] text-white/40">Tarde · Noite · Festival</p>
-                <h3 className="text-3xl font-light text-white md:text-4xl">Gion Matsuri</h3>
-                <p className="mt-3 text-base uppercase tracking-[0.2em] text-white/35">祇園祭 · Saki Matsuri · 10 de Julho</p>
+                <h3 className="text-3xl font-light text-white md:text-4xl">Yoiyama, Sakimatsuri</h3>
+                <p className="mt-3 text-base uppercase tracking-[0.2em] text-white/35">祇園祭 · Gion Matsuri</p>
               </div>
-
-              <p className="max-w-xl">
-                Um dos maiores e mais antigos festivais do Japão, realizado anualmente em julho no coração de Kyoto. O Saki Matsuri, que ocorre na primeira quinzena do mês, é o período em que as carroças (yamaboko) são exibidas iluminadas nas ruas — um espetáculo visual de rara beleza.
-              </p>
 
               <div className="border-t border-white/10 pt-10">
                 <div className="grid gap-8 sm:grid-cols-2">
@@ -529,7 +536,7 @@ export default function Day8Page() {
                   </div>
                   <div>
                     <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/35">Chegada sugerida</p>
-                    <p className="text-white">18:30 – 19:00</p>
+                    <p className="text-white">17:00</p>
                   </div>
                   <div>
                     <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/35">Ingresso</p>
@@ -540,16 +547,16 @@ export default function Day8Page() {
 
               <div className="border-t border-white/10 pt-10 space-y-8">
                 <InfoBlock
-                  title="O que é o Saki Matsuri"
-                  text="A primeira fase do Gion Matsuri, anterior à grande procissão (Yamaboko Junko), inclui a montagem e exposição das carroças cerimoniais nas ruas centrais de Kyoto. À noite, as lanternas de papel iluminam as estruturas de madeira — cada yamaboko com séculos de história e tapeçarias originárias da Europa e Ásia."
+                  title="Visão Geral do Festival"
+                  text="O Gion Matsuri, é o maior festival do Japão e dura quase 1 mês desde o momento de preparação o festival é dividido em três etapas Sakimatsuri, Yamahoko Junko e Atomatsuri que basicamente significa respectivamente pré-desfile, desfile e pós-desfile, na minha opinião o ápice do festival não é o dia do desfile em si, mas o dia anterior ao desfile na qual os Hoko (Decorações em forma de lanternas e carros alegóricos) espalhados por todos os quarteirões na frente do templo Yasaka, esse dia é chamado Yoiyama, e é onde iremos essa noite."
                 />
                 <InfoBlock
-                  title="Comidas de rua (yatai)"
-                  text="As ruas ao redor de Shijo-Kawaramachi e Gion ficam tomadas por barracas de festival. Takoyaki, yakitori, kakigori (gelo raspado), taiyaki, karaage — a atmosfera é de festa popular autêntica. Uma experiência completamente diferente dos restaurantes do roteiro, e igualmente memorável."
+                  title="Programação"
+                  text="Sairemos do hotel as 17:00 e iremos até a rua mais próxima do complexo e seguiremos a pé até o primeiro Hoko, chamado Niwatori-Hoko, depois seguiremos para o Ayasaka-Hoko e por último iremos ao Funahoko, cada um dos Hokos está localizado em quarteirões diferentes e devido ao alto número de pessoas iremos nos deslocar devagar fazendo paradas para comer nas barracas que servem comida de rua."
                 />
                 <InfoBlock
-                  title="Ritmo da visita"
-                  text="Não há um roteiro rígido para o Matsuri — a ideia é caminhar, parar nas barracas, observar as carroças iluminadas de perto e absorver a atmosfera. O assessor Alpinea acompanha e orienta os melhores ângulos e pontos de concentração para crianças e adultos."
+                  title="Circuito opcional"
+                  text="Caso queiram podemos visitar também Iwatoyama após o circuito dos hokos, os demais hokos são muito parecidos com esses e estão espalhados ao longo dos quarteirões, estamos visitando a noite, pois esse é o horário que as lanternas ficam acessas."
                 />
                 <InfoBlock
                   title="Logística"
@@ -563,20 +570,47 @@ export default function Day8Page() {
               </div>
             </div>
 
-            {/* Coluna direita sticky — foto do festival */}
-            <div className="lg:sticky lg:top-28">
+            {/* Coluna direita sticky — logo + foto do festival + mapa com zoom */}
+            <div className="lg:sticky lg:top-28 space-y-6">
+              {/* Logo do festival */}
+              <Image
+                src="/images/logomatsuri.png"
+                alt="Gion Matsuri — Logo"
+                width={760}
+                height={400}
+                className="w-full object-contain"
+              />
+
+              {/* Foto do festival */}
               <Image
                 src="/images/gionmatsuri2.png"
-                alt="Gion Matsuri — Saki Matsuri, Kyoto"
+                alt="Gion Matsuri — Yoiyama, Sakimatsuri, Kyoto"
                 width={760}
                 height={1140}
                 priority
                 className="w-full rounded-2xl border border-white/10 object-cover"
                 style={{ maxHeight: "820px", objectPosition: "center top" }}
               />
-              <p className="mt-4 text-xs uppercase tracking-[0.35em] text-white/35">
-                Gion Matsuri · Saki Matsuri · Shijo · Kyoto · Julho
+              <p className="text-xs uppercase tracking-[0.35em] text-white/35">
+                Gion Matsuri · Yoiyama · Sakimatsuri · Shijo · Kyoto · Julho
               </p>
+
+              {/* Mapa da procissão com zoom */}
+              <div>
+                <p className="mb-4 text-xs uppercase tracking-[0.35em] text-white/40">Rota da Procissão Yamahoko</p>
+                <a href="/images/masturiroute.png" target="_blank" rel="noopener noreferrer" className="block">
+                  <Image
+                    src="/images/masturiroute.png"
+                    alt="Mapa da rota da procissão Yamahoko — Gion Matsuri"
+                    width={800}
+                    height={1100}
+                    className="w-full cursor-zoom-in rounded-2xl border border-white/10 object-contain bg-white/[0.03] p-2 transition hover:opacity-85"
+                  />
+                </a>
+                <p className="mt-3 text-sm leading-7 text-white/45">
+                  Mapa histórico das rotas da procissão Yamahoko Float — Gion Matsuri · Clique para ampliar.
+                </p>
+              </div>
             </div>
           </div>
         </div>
