@@ -59,8 +59,8 @@ export default function GuiaFacasPage() {
             </div>
             <div className="space-y-0">
               {/* Stat 1 */}
-              <div className="border-t border-white/10 py-10 grid gap-6 sm:grid-cols-[120px_1fr] items-start">
-                <p className="text-5xl font-light text-white/20 tabular-nums leading-none pt-1">+1.000</p>
+              <div className="border-t border-white/10 py-10 grid gap-8 sm:grid-cols-[160px_1fr] items-start">
+                <p className="text-4xl font-light text-white/20 tabular-nums leading-none pt-1">+1.000</p>
                 <div>
                   <p className="text-white font-light text-base leading-7">fabricantes de facas no Japão</p>
                   <p className="mt-3 text-sm leading-7 text-white/50">
@@ -70,8 +70,8 @@ export default function GuiaFacasPage() {
               </div>
 
               {/* Stat 2 */}
-              <div className="border-t border-white/10 py-10 grid gap-6 sm:grid-cols-[120px_1fr] items-start">
-                <p className="text-5xl font-light text-white/20 tabular-nums leading-none pt-1">~30</p>
+              <div className="border-t border-white/10 py-10 grid gap-8 sm:grid-cols-[160px_1fr] items-start">
+                <p className="text-4xl font-light text-white/20 tabular-nums leading-none pt-1">~30</p>
                 <div>
                   <p className="text-white font-light text-base leading-7">fabricantes de elite com acesso real</p>
                   <p className="mt-3 text-sm leading-7 text-white/50">
@@ -81,8 +81,11 @@ export default function GuiaFacasPage() {
               </div>
 
               {/* Stat 3 */}
-              <div className="border-t border-white/10 py-10 grid gap-6 sm:grid-cols-[120px_1fr] items-start">
-                <p className="text-5xl font-light text-white/20 tabular-nums leading-none pt-1">2 anos</p>
+              <div className="border-t border-white/10 py-10 grid gap-8 sm:grid-cols-[160px_1fr] items-start">
+                <div className="leading-none pt-1">
+                  <p className="text-4xl font-light text-white/20 tabular-nums leading-none">2</p>
+                  <p className="text-sm uppercase tracking-[0.2em] text-white/20 mt-1">anos</p>
+                </div>
                 <div>
                   <p className="text-white font-light text-base leading-7">fila de espera nos artesãos mais procurados</p>
                   <p className="mt-3 text-sm leading-7 text-white/50">
