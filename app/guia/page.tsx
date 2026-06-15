@@ -53,9 +53,21 @@ export default function GuiaFacasPage() {
       <section className="px-8 py-28 md:px-16">
         <div className="mx-auto max-w-7xl">
           <div className="grid gap-20 lg:grid-cols-[1fr_1.6fr]">
-            <div>
-              <p className="mb-6 text-xs uppercase tracking-[0.35em] text-white/35">O Mercado</p>
-              <h2 className="text-3xl font-light text-white md:text-4xl">Por que é difícil comprar bem no Japão</h2>
+            <div className="flex flex-col gap-10">
+              <div>
+                <p className="mb-6 text-xs uppercase tracking-[0.35em] text-white/35">O Mercado</p>
+                <h2 className="text-3xl font-light text-white md:text-4xl">Por que é difícil comprar bem no Japão</h2>
+              </div>
+              <div className="overflow-hidden rounded-2xl">
+                <video
+                  src="/videos/kiku-graving.mp4"
+                  autoPlay
+                  muted
+                  loop
+                  playsInline
+                  className="w-full object-cover"
+                />
+              </div>
             </div>
             <div className="space-y-0">
               {/* Stat 1 */}
