@@ -1,12 +1,12 @@
 import Image from "next/image";
 
 export const metadata = {
-  title: "Alpinea | Assessoria de Compras — Facas de Cozinha",
+  title: "Alpinea | Curadoria e Reserva de Restaurantes",
   description:
-    "Curadoria Alpinea para aquisição de facas de cozinha profissionais no Japão: Masamoto, Aritsugu e Kikumori.",
+    "Curadoria Alpinea para acesso e reserva nos melhores restaurantes do Japão — sushi, kaiseki, tempurá e contemporâneo.",
 };
 
-export default function GuiaFacasPage() {
+export default function GastroPage() {
   return (
     <main className="min-h-screen bg-black text-white">
       <header className="fixed left-0 right-0 top-0 z-50 flex items-center justify-between bg-black/10 px-8 py-5 backdrop-blur-2xl md:px-16">
@@ -25,8 +25,8 @@ export default function GuiaFacasPage() {
       <section className="relative min-h-[640px] overflow-hidden px-8 pb-28 pt-40 md:px-16 md:pt-52">
         <div className="absolute inset-0">
           <Image
-            src="/images/blacksmith.png"
-            alt="Artesão forjando faca japonesa"
+            src="/gastro/gastro-hero.png"
+            alt="Entrada de restaurante japonês de referência com noren marrom"
             fill
             className="object-cover object-center"
             priority
@@ -35,13 +35,13 @@ export default function GuiaFacasPage() {
         </div>
         <div className="relative z-10 mx-auto max-w-7xl">
           <p className="mb-8 text-xs uppercase tracking-[0.45em] text-white/40">
-            Assessoria de Compras · Alpinea Private
+            Gastronomia · Alpinea Private
           </p>
           <h1 className="max-w-4xl text-5xl font-light leading-[1.05] tracking-tight md:text-7xl">
-            Assessoria de Compras
+            Curadoria e Reserva de Restaurantes
           </h1>
           <p className="mt-10 max-w-2xl text-lg font-light leading-9 text-white/60">
-            Curadoria dedicada para identificar, selecionar e adquirir produtos no Japão — desde itens especializados a peças de altíssimo valor e acesso restrito.
+            Nos principais restaurantes do Japão, reservas são extremamente limitadas e disputadas com meses — ou até anos — de antecedência.
           </p>
         </div>
       </section>
@@ -49,66 +49,66 @@ export default function GuiaFacasPage() {
       {/* Divisor */}
       <div className="border-t border-white/10" />
 
-      {/* O Problema — novo bloco, substitui o Briefing genérico */}
+      {/* O Mercado */}
       <section className="px-8 py-28 md:px-16">
         <div className="mx-auto max-w-7xl">
           <div className="grid gap-20 lg:grid-cols-[1fr_1.6fr]">
             <div className="flex flex-col gap-10">
               <div>
-                <p className="mb-6 text-xs uppercase tracking-[0.35em] text-white/35">O Mercado</p>
-                <h2 className="text-3xl font-light text-white md:text-4xl">Por que é difícil comprar bem no Japão</h2>
-              </div>
-              <div className="overflow-hidden rounded-2xl">
-                <video
-                  src="/videos/kiku-graving.mp4"
-                  autoPlay
-                  muted
-                  loop
-                  playsInline
-                  className="w-full object-cover"
-                />
+                <p className="mb-6 text-xs uppercase tracking-[0.35em] text-white/35">O Acesso</p>
+                <h2 className="text-3xl font-light text-white md:text-4xl">Por que é difícil reservar bem no Japão</h2>
               </div>
             </div>
             <div className="space-y-0">
+              {/* Bloco principal */}
+              <div className="border-t border-white/10 pt-10 pb-6">
+                <p className="text-base font-light leading-9 text-white/60">
+                  A Alpinea viabiliza acesso a casas estreladas pelo Guia Michelin, referências no Tabelog e endereços quase impossíveis de reservar por conta própria, sempre com curadoria privada e atenção absoluta aos detalhes.
+                </p>
+                <p className="mt-6 text-base font-light leading-9 text-white/60">
+                  Mais do que uma reserva, proporcionamos experiências gastronômicas exclusivas, construídas através de relacionamento, repertório e profundo entendimento da cena culinária japonesa.
+                </p>
+              </div>
+
               {/* Stat 1 */}
-              <div className="border-t border-white/10 py-10 grid gap-8 sm:grid-cols-[160px_1fr] items-start">
-                <p className="text-4xl font-light text-white/20 tabular-nums leading-none pt-1">+1.000</p>
-                <div>
-                  <p className="text-white font-light text-base leading-7">fabricantes de facas no Japão</p>
-                  <p className="mt-3 text-sm leading-7 text-white/50">
-                    O mercado japonês de cutelaria é um dos mais fragmentados do mundo. A grande maioria produz para o mercado doméstico de consumo, para exportação de massa ou para o circuito turístico — onde a aparência da tradição substitui a tradição real.
-                  </p>
-                </div>
-              </div>
-
-              {/* Stat 2 */}
-              <div className="border-t border-white/10 py-10 grid gap-8 sm:grid-cols-[160px_1fr] items-start">
-                <p className="text-4xl font-light text-white/20 tabular-nums leading-none pt-1">~30</p>
-                <div>
-                  <p className="text-white font-light text-base leading-7">fabricantes de elite com acesso real</p>
-                  <p className="mt-3 text-sm leading-7 text-white/50">
-                    Menos de 3% do mercado opera no nível de aço, forja e acabamento que os melhores chefs do Japão utilizam. Identificá-los exige anos de relação direta com cozinhas de referência — restaurantes com três estrelas Michelin que testam, descartam e recomendam esses instrumentos no dia a dia.
-                  </p>
-                </div>
-              </div>
-
-              {/* Stat 3 */}
               <div className="border-t border-white/10 py-10 grid gap-8 sm:grid-cols-[160px_1fr] items-start">
                 <div className="leading-none pt-1">
                   <p className="text-4xl font-light text-white/20 tabular-nums leading-none">2</p>
                   <p className="text-sm uppercase tracking-[0.2em] text-white/20 mt-1">anos</p>
                 </div>
                 <div>
-                  <p className="text-white font-light text-base leading-7">fila de espera nos artesãos mais procurados</p>
+                  <p className="text-white font-light text-base leading-7">de espera nos endereços mais disputados</p>
                   <p className="mt-3 text-sm leading-7 text-white/50">
-                    Artesãos como Futaba Shokai operam com fila de encomenda superior a dois anos. Acesso direto e compra imediata — para quem ainda não tem relacionamento estabelecido com o fabricante — é simplesmente impossível sem intermediação qualificada.
+                    Casas como Sushi Saito e Sukiyabashi Jiro operam com lista de espera que ultrapassa dois anos. O acesso sem intermediação qualificada é, na prática, impossível para quem não tem relação direta com o chef ou com a casa.
+                  </p>
+                </div>
+              </div>
+
+              {/* Stat 2 */}
+              <div className="border-t border-white/10 py-10 grid gap-8 sm:grid-cols-[160px_1fr] items-start">
+                <p className="text-4xl font-light text-white/20 tabular-nums leading-none pt-1">日本語</p>
+                <div>
+                  <p className="text-white font-light text-base leading-7">barreira de idioma e cultura</p>
+                  <p className="mt-3 text-sm leading-7 text-white/50">
+                    A maioria dos restaurantes de referência no Japão não opera em inglês — nem nos sistemas de reserva, nem nos menus, nem nas interações com o chef. A fluência em japonês e o entendimento cultural são pré-requisitos reais para a experiência funcionar no nível esperado.
+                  </p>
+                </div>
+              </div>
+
+              {/* Stat 3 */}
+              <div className="border-t border-white/10 py-10 grid gap-8 sm:grid-cols-[160px_1fr] items-start">
+                <p className="text-4xl font-light text-white/20 tabular-nums leading-none pt-1">~30</p>
+                <div>
+                  <p className="text-white font-light text-base leading-7">restaurantes de referência absoluta no Japão</p>
+                  <p className="mt-3 text-sm leading-7 text-white/50">
+                    Em um país com dezenas de milhares de estabelecimentos, identificar os 30 endereços que operam no nível mais alto — e saber qual deles faz sentido para cada perfil de cliente — exige anos de visitas, relações e repertório acumulado.
                   </p>
                 </div>
               </div>
 
               <div className="border-t border-white/10 pt-10">
                 <p className="text-sm leading-7 text-white/35 italic">
-                  A assessoria Alpinea existe para eliminar esse atrito — e para garantir que o cliente chegue à loja certa, com o artesão certo, no momento em que o instrumento está disponível.
+                  A curadoria Alpinea existe para eliminar esse atrito — e para garantir que o cliente sente na mesa certa, no momento certo, sem deixar nada ao acaso.
                 </p>
               </div>
             </div>
@@ -116,7 +116,7 @@ export default function GuiaFacasPage() {
         </div>
       </section>
 
-      {/* Briefing do cliente */}
+      {/* Perfil do Cliente */}
       <section className="border-t border-white/10 bg-white/[0.02] px-8 py-28 md:px-16">
         <div className="mx-auto max-w-7xl">
           <div className="grid gap-20 lg:grid-cols-[1fr_1.6fr]">
@@ -126,17 +126,20 @@ export default function GuiaFacasPage() {
             </div>
             <div className="space-y-6 text-base font-light leading-9 text-white/60">
               <p>
-                Colecionador e praticante de cozinha japonesa com mais de uma década de ofício. Conhece os instrumentos, domina as técnicas — mas chegou ao limite do que o mercado brasileiro e as plataformas de importação conseguem oferecer.
+                Entusiasta de gastronomia com trajetória consolidada nas melhores mesas do mundo. Já percorreu a França e a Espanha em profundidade — com passagem por casas como Asador Etxebarri e Arpège — e realizou uma primeira viagem ao Japão por conta própria.
               </p>
               <p>
-                Diante da densidade de marcas de segunda linha em pontos turísticos e do volume de propaganda direcionada a estrangeiros, o cliente optou por não comprar sem orientação especializada — e sem garantia de acesso direto ao fabricante.
+                Dessa experiência, voltou com um gosto amargo: a dificuldade de traçar paralelos entre os restaurantes de referência japoneses e o universo que já conhecia, somada à limitação do concierge do hotel em realizar mais de duas reservas em casas de elite, resultou em uma jornada aquém do que o destino pode oferecer.
+              </p>
+              <p>
+                Dessa vez, o cliente nos procurou com um objetivo claro: realizar uma jornada gastronômica de 7 dias para conhecer o que há de melhor no Japão, com foco central em restaurantes de sushi.
               </p>
               <div className="border-t border-white/10 pt-8">
-                <p className="mb-5 text-xs uppercase tracking-[0.25em] text-white/30">Escopo da assessoria</p>
+                <p className="mb-5 text-xs uppercase tracking-[0.25em] text-white/30">Escopo da curadoria</p>
                 <div className="space-y-3 text-sm leading-7 text-white/55">
-                  <p>1. Adquirir três facas de uso profissional distinto, com acesso direto aos fabricantes</p>
-                  <p>2. Afiar uma faca artesanal em uso, com artesão selecionado pela Alpinea</p>
-                  <p>3. Garantir disponibilidade imediata — sem filas, sem intermediários comerciais</p>
+                  <p>1. Selecionar e reservar 7 restaurantes ao longo de 7 dias em Tokyo e Kyoto</p>
+                  <p>2. Garantir acesso a casas fora do alcance de reservas convencionais</p>
+                  <p>3. Prover acompanhamento logístico completo, incluindo transporte porta a porta</p>
                 </div>
               </div>
             </div>
@@ -144,7 +147,7 @@ export default function GuiaFacasPage() {
         </div>
       </section>
 
-      {/* Execução */}
+      {/* Execução — Seleção */}
       <section className="border-t border-white/10 px-8 py-28 md:px-16">
         <div className="mx-auto max-w-7xl">
           <div className="grid gap-20 lg:grid-cols-[1fr_1.6fr]">
@@ -153,88 +156,93 @@ export default function GuiaFacasPage() {
               <p className="mb-6 text-xs uppercase tracking-[0.35em] text-white/35">Execução</p>
               <h2 className="text-3xl font-light text-white md:text-4xl">Seleção</h2>
               <p className="mt-6 text-sm font-light leading-8 text-white/45">
-                Com base em 12 anos de relação direta com os chefs dos restaurantes líderes no Japão — sushi, contemporâneo e kaiseki — identificamos três fabricantes com disponibilidade imediata de peças e presença confirmada nas melhores cozinhas do país.
-              </p>
-              <p className="mt-4 text-sm font-light leading-8 text-white/35">
-                Nenhum dos três vende para distribuidores. O acesso é feito por relação pessoal com os artesãos.
+                Com 7 dias disponíveis, a curadoria foi estruturada para cobrir as principais expressões da alta gastronomia japonesa, sem repetição de categoria e com progressão intencional de ritmo ao longo da semana.
               </p>
 
               <div className="mt-10 border-t border-white/10 pt-10">
-                <p className="mb-4 text-xs uppercase tracking-[0.35em] text-white/35">Afiação</p>
-                <h3 className="text-xl font-light text-white">Faca artesanal</h3>
-                <div className="mt-4 space-y-4 text-sm font-light leading-8 text-white/50">
-                  <p>
-                    A faca artesanal em uso no ateliê do cliente será entregue no primeiro dia de viagem ao afiador da Masamoto em Tokyo — um dos poucos artesãos que ainda pratica a afiação manual tradicional com pedras d'água de diferentes granulometrias.
-                  </p>
-                  <p>
-                    O prazo necessário para afiação pelo artesão é de <span className="text-white/80">14 dias</span>. A faca será retirada no último dia de viagem, antes do retorno ao Brasil.
-                  </p>
+                <div className="space-y-5 text-sm font-light leading-8 text-white/50">
+                  <div className="grid grid-cols-[80px_1fr] gap-4">
+                    <span className="text-white/25 tabular-nums">3</span>
+                    <span>restaurantes de sushi</span>
+                  </div>
+                  <div className="grid grid-cols-[80px_1fr] gap-4">
+                    <span className="text-white/25 tabular-nums">1</span>
+                    <span>restaurante de tempurá</span>
+                  </div>
+                  <div className="grid grid-cols-[80px_1fr] gap-4">
+                    <span className="text-white/25 tabular-nums">1</span>
+                    <span>restaurante contemporâneo</span>
+                  </div>
+                  <div className="grid grid-cols-[80px_1fr] gap-4">
+                    <span className="text-white/25 tabular-nums">1</span>
+                    <span>restaurante kaiseki</span>
+                  </div>
+                  <div className="grid grid-cols-[80px_1fr] gap-4">
+                    <span className="text-white/25 tabular-nums">1</span>
+                    <span>restaurante de wagyu</span>
+                  </div>
                 </div>
               </div>
             </div>
 
-            {/* Direita — facas */}
+            {/* Direita — categorias */}
             <div className="space-y-0">
-              <p className="mb-10 text-xs uppercase tracking-[0.35em] text-white/35">Seleção recomendada</p>
+              <p className="mb-10 text-xs uppercase tracking-[0.35em] text-white/35">Contexto da escolha</p>
 
-              {/* Gyuto */}
-              <div className="border-t border-white/10 py-10 grid gap-8 sm:grid-cols-[1fr_1.2fr] items-center">
-                <div>
-                  <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">Uso geral</p>
-                  <h3 className="text-2xl font-light text-white">Gyuto <span className="text-white/30 text-base ml-2">牛刀</span></h3>
-                  <p className="mt-4 text-sm leading-7 text-white/55">
-                    Faca versátil de uso cotidiano. Adaptada da tradição francesa pelo Japão, executa cortes precisos em carnes, vegetais e peixes com a mesma eficiência.
+              {/* Sushi */}
+              <div className="border-t border-white/10 py-10">
+                <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">Sushi</p>
+                <h3 className="text-2xl font-light text-white mb-4">Duas escolas, três perspectivas</h3>
+                <p className="text-sm leading-7 text-white/55">
+                  O sushi contemporâneo no Japão é dominado por duas linhagens principais: a escola de Jiro Ono (Sukiyabashi Jiro) e a escola de Keiji Nakazawa (Sushi Sho). A curadoria contemplou um representante de cada escola, com um terceiro restaurante representando a nova geração de líderes do cenário.
+                </p>
+                <div className="mt-6 space-y-4 text-sm leading-7 text-white/50">
+                  <p>
+                    <span className="text-white/80">Harutaka</span> — 3 estrelas Michelin. O representante de maior prestígio da escola Jiro Ono no Japão hoje, frequentemente apontado entre os 5 melhores restaurantes de sushi do país.
                   </p>
-                </div>
-                <div className="relative">
-                  <Image
-                    src="/images/gyuto.png"
-                    alt="Gyuto — Masamoto"
-                    width={700}
-                    height={420}
-                    className="w-full object-contain drop-shadow-2xl"
-                  />
+                  <p>
+                    <span className="text-white/80">Sushi Sho Masa</span> — Masakatsu Oka, discípulo mais antigo em atividade de Keiji Nakazawa. O chef tornou-se referência após Keiji partir para os Estados Unidos, onde abriu o restaurante de sushi mais rápido a conquistar 3 estrelas Michelin na história americana.
+                  </p>
+                  <p>
+                    <span className="text-white/80">Sushi Arai</span> — Frequentemente entre os 5 melhores do Japão, representa a nova geração ao lado de nomes como Sugita, Saito e Amamoto.
+                  </p>
                 </div>
               </div>
 
-              {/* Yanagiba */}
-              <div className="border-t border-white/10 py-10 grid gap-8 sm:grid-cols-[1fr_1.2fr] items-center">
-                <div>
-                  <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">Corte de peixe</p>
-                  <h3 className="text-2xl font-light text-white">Yanagiba <span className="text-white/30 text-base ml-2">柳刃</span></h3>
-                  <p className="mt-4 text-sm leading-7 text-white/55">
-                    Lâmina longa e fina para corte de sashimi. Projetada para movimento único — do calcanhar à ponta — com mínima fricção e máxima precisão no corte.
-                  </p>
-                </div>
-                <div className="relative">
-                  <Image
-                    src="/images/yanagiba.png"
-                    alt="Yanagiba — Aritsugu"
-                    width={700}
-                    height={420}
-                    className="w-full object-contain drop-shadow-2xl"
-                  />
-                </div>
+              {/* Tempurá */}
+              <div className="border-t border-white/10 py-10">
+                <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">Tempurá</p>
+                <h3 className="text-2xl font-light text-white mb-4">Mikawa Zezankyo</h3>
+                <p className="text-sm leading-7 text-white/55">
+                  Liderado pelo chef Tetsuya Saotome, uma das lendas vivas do tempurá com mais de 60 anos de experiência. Um dos últimos shokunins que executa cada peça com o rigor e a precisão acumulados ao longo de décadas de ofício.
+                </p>
               </div>
 
-              {/* Deba */}
-              <div className="border-t border-white/10 py-10 grid gap-8 sm:grid-cols-[1fr_1.2fr] items-center">
-                <div>
-                  <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">Trabalho pesado</p>
-                  <h3 className="text-2xl font-light text-white">Deba <span className="text-white/30 text-base ml-2">出刃</span></h3>
-                  <p className="mt-4 text-sm leading-7 text-white/55">
-                    Faca robusta para desossagem de peixes inteiros. Espessura da espinha permite extrair partes com corte único sem comprometer o fio.
-                  </p>
-                </div>
-                <div className="relative">
-                  <Image
-                    src="/images/deba.png"
-                    alt="Deba — Kikumori"
-                    width={700}
-                    height={420}
-                    className="w-full object-contain drop-shadow-2xl"
-                  />
-                </div>
+              {/* Wagyu */}
+              <div className="border-t border-white/10 py-10">
+                <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">Wagyu</p>
+                <h3 className="text-2xl font-light text-white mb-4">Niku Kappou Miyata</h3>
+                <p className="text-sm leading-7 text-white/55">
+                  Um dos poucos menus-degustação de wagyu no Japão com amplitude real — da apresentação em formato de sushi com caviar negro até o wagyusando. Uma jornada completa pela carne mais valorizada do mundo em suas formas mais refinadas.
+                </p>
+              </div>
+
+              {/* Kaiseki */}
+              <div className="border-t border-white/10 py-10">
+                <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">Kaiseki</p>
+                <h3 className="text-2xl font-light text-white mb-4">Ogata · Kyoto</h3>
+                <p className="text-sm leading-7 text-white/55">
+                  Um dos líderes do kaiseki contemporâneo, o Ogata prima pela qualidade extrema das matérias-primas — cogumelo matsutake de primeira categoria, king crab — com apresentações que encontram o equilíbrio entre a tradição japonesa e a leitura do paladar ocidental. A escolha intencional: kaiseki clássicos seguem uma linha que ocidentais frequentemente têm dificuldade de acompanhar em profundidade.
+                </p>
+              </div>
+
+              {/* Contemporâneo */}
+              <div className="border-t border-white/10 py-10">
+                <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">Contemporâneo</p>
+                <h3 className="text-2xl font-light text-white mb-4">Sazenka · Tokyo</h3>
+                <p className="text-sm leading-7 text-white/55">
+                  Inspirado na culinária chinesa, o Sazenka traz releituras de clássicos utilizando técnica de preparo de alto nível, apresentação de fine dining e ingredientes da cozinha japonesa de elite. Uma fusão construída com repertório, não com experimentação — e uma das escolhas mais surpreendentes da semana para o perfil do cliente.
+                </p>
               </div>
             </div>
           </div>
@@ -244,271 +252,261 @@ export default function GuiaFacasPage() {
       {/* Roteiro */}
       <section className="border-t border-white/10 bg-white/[0.02] px-8 py-28 md:px-16">
         <div className="mx-auto max-w-7xl">
-          <p className="mb-12 text-xs uppercase tracking-[0.35em] text-white/35">Roteiro de Compras</p>
+          <p className="mb-12 text-xs uppercase tracking-[0.35em] text-white/35">Roteiro de Visitas</p>
 
-          {/* Logos dos fabricantes */}
-          <div className="mb-16 grid grid-cols-3 gap-6">
-            <div className="aspect-square flex items-center justify-center overflow-hidden rounded-2xl border border-white/10 bg-white/[0.03] p-8">
-              <Image
-                src="/images/masamoto-logo.png"
-                alt="Gravação Masamoto na lâmina"
-                width={420}
-                height={420}
-                className="h-full w-full object-cover rounded-xl"
-              />
-            </div>
-            <div className="aspect-square flex items-center justify-center overflow-hidden rounded-2xl border border-white/10 bg-white/[0.03] p-8">
-              <Image
-                src="/images/aritsugu-logo.png"
-                alt="Gravação Aritsugu na lâmina"
-                width={420}
-                height={420}
-                className="h-full w-full object-cover rounded-xl"
-              />
-            </div>
-            <div className="aspect-square flex items-center justify-center overflow-hidden rounded-2xl border border-white/10 bg-white/[0.03] p-8">
-              <Image
-                src="/images/kikumori-logo.png"
-                alt="Gravação Kikumori na lâmina"
-                width={420}
-                height={420}
-                className="h-full w-full object-cover rounded-xl"
-              />
-            </div>
-          </div>
-          <div className="mb-16 grid grid-cols-3 gap-6 text-center">
-            <div>
-              <p className="text-2xl font-light text-white/60">正本</p>
-              <p className="mt-2 text-xs uppercase tracking-[0.25em] text-white/25">Masamoto</p>
-            </div>
-            <div>
-              <p className="text-2xl font-light text-white/60">有次</p>
-              <p className="mt-2 text-xs uppercase tracking-[0.25em] text-white/25">Aritsugu</p>
-            </div>
-            <div>
-              <p className="text-2xl font-light text-white/60">菊守</p>
-              <p className="mt-2 text-xs uppercase tracking-[0.25em] text-white/25">Kikumori</p>
-            </div>
-          </div>
-
-          <div className="space-y-0">
-            {/* Dia 1 */}
-            <div className="grid gap-10 border-t border-white/10 py-10 lg:grid-cols-[180px_1fr] lg:items-start">
-              <div>
-                <p className="text-xs uppercase tracking-[0.2em] text-white/25">Dia 1</p>
-                <p className="mt-1 text-sm text-white/50">Tokyo</p>
+          {/* Grid de imagens dos restaurantes */}
+          <div className="mb-16 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4">
+            <div className="flex flex-col gap-3">
+              <div className="aspect-square overflow-hidden rounded-2xl border border-white/10">
+                <Image
+                  src="/gastro/harutaka.png"
+                  alt="Harutaka — sushi nigiri de otoro"
+                  width={420}
+                  height={420}
+                  className="h-full w-full object-cover"
+                />
               </div>
-              <div className="grid gap-6 sm:grid-cols-[1fr_auto]">
+              <div>
+                <p className="text-sm font-light text-white">Harutaka</p>
+                <p className="text-xs uppercase tracking-[0.2em] text-white/30">Sushi · Tokyo</p>
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-3">
+              <div className="aspect-square overflow-hidden rounded-2xl border border-white/10">
+                <Image
+                  src="/gastro/zezankyo.jpeg"
+                  alt="Mikawa Zezankyo — camarão tempurá"
+                  width={420}
+                  height={420}
+                  className="h-full w-full object-cover"
+                />
+              </div>
+              <div>
+                <p className="text-sm font-light text-white">Mikawa Zezankyo</p>
+                <p className="text-xs uppercase tracking-[0.2em] text-white/30">Tempurá · Tokyo</p>
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-3">
+              <div className="aspect-square overflow-hidden rounded-2xl border border-white/10">
+                <Image
+                  src="/gastro/sazenka.png"
+                  alt="Sazenka — culinária contemporânea sino-japonesa"
+                  width={420}
+                  height={420}
+                  className="h-full w-full object-cover"
+                />
+              </div>
+              <div>
+                <p className="text-sm font-light text-white">Sazenka</p>
+                <p className="text-xs uppercase tracking-[0.2em] text-white/30">Contemporâneo · Tokyo</p>
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-3">
+              <div className="aspect-square overflow-hidden rounded-2xl border border-white/10">
+                <Image
+                  src="/gastro/sushi-sho.png"
+                  alt="Sushi Sho Masa — nigiri"
+                  width={420}
+                  height={420}
+                  className="h-full w-full object-cover"
+                />
+              </div>
+              <div>
+                <p className="text-sm font-light text-white">Sushi Sho Masa</p>
+                <p className="text-xs uppercase tracking-[0.2em] text-white/30">Sushi · Tokyo</p>
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-3">
+              <div className="aspect-square overflow-hidden rounded-2xl border border-white/10">
+                <Image
+                  src="/gastro/nikufood.jpeg"
+                  alt="Niku Kappou Miyata — wagyu com caviar"
+                  width={420}
+                  height={420}
+                  className="h-full w-full object-cover"
+                />
+              </div>
+              <div>
+                <p className="text-sm font-light text-white">Niku Kappou Miyata</p>
+                <p className="text-xs uppercase tracking-[0.2em] text-white/30">Wagyu · Tokyo</p>
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-3">
+              <div className="aspect-square overflow-hidden rounded-2xl border border-white/10">
+                <Image
+                  src="/gastro/ogata.png"
+                  alt="Ogata — matsutake premium kaiseki"
+                  width={420}
+                  height={420}
+                  className="h-full w-full object-cover"
+                />
+              </div>
+              <div>
+                <p className="text-sm font-light text-white">Ogata</p>
+                <p className="text-xs uppercase tracking-[0.2em] text-white/30">Kaiseki · Kyoto</p>
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-3">
+              <div className="aspect-square overflow-hidden rounded-2xl border border-white/10">
+                <Image
+                  src="/gastro/sushi-arai.png"
+                  alt="Sushi Arai — kohada"
+                  width={420}
+                  height={420}
+                  className="h-full w-full object-cover"
+                />
+              </div>
+              <div>
+                <p className="text-sm font-light text-white">Sushi Arai</p>
+                <p className="text-xs uppercase tracking-[0.2em] text-white/30">Sushi · Tokyo</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Dias */}
+          <div className="space-y-0">
+            {[
+              {
+                dia: "Dia 1",
+                cidade: "Tokyo",
+                restaurante: "Harutaka",
+                descricao:
+                  "Abertura da semana no restaurante de maior prestígio da escola Jiro Ono no Japão hoje. Com 3 estrelas Michelin, o Harutaka define o padrão de referência para os dias seguintes.",
+                tag: "Sushi · 3 estrelas Michelin",
+              },
+              {
+                dia: "Dia 2",
+                cidade: "Tokyo",
+                restaurante: "Mikawa Zezankyo",
+                descricao:
+                  "Almoço ou jantar com o chef Tetsuya Saotome, um dos últimos shokunins do tempurá com mais de 60 anos de ofício. Uma pausa deliberada no ritmo do sushi — e uma das experiências mais técnicas da semana.",
+                tag: "Tempurá · Lenda viva",
+              },
+              {
+                dia: "Dia 3",
+                cidade: "Tokyo",
+                restaurante: "Sazenka",
+                descricao:
+                  "O contemporâneo sino-japonês do Sazenka oferece o contraponto mais surpreendente da semana: técnica de alto nível com referências que o cliente reconhece da grande cozinha europeia, reapresentadas com ingredientes de elite japoneses.",
+                tag: "Contemporâneo · 2 estrelas Michelin",
+              },
+              {
+                dia: "Dia 4",
+                cidade: "Tokyo",
+                restaurante: "Sushi Sho Masa",
+                descricao:
+                  "A escola Nakazawa em sua expressão mais pura disponível no Japão. Com Keiji radicado nos Estados Unidos, Masakatsu Oka é o principal guardião vivo desta linhagem em Tokyo.",
+                tag: "Sushi · Escola Nakazawa",
+              },
+              {
+                dia: "Dia 5",
+                cidade: "Tokyo",
+                restaurante: "Niku Kappou Miyata",
+                descricao:
+                  "Menu-degustação de wagyu com amplitude incomum — do sushi de wagyu com caviar negro ao wagyusando. Um dos poucos formatos que percorre toda a expressão da carne mais valorizada do mundo em uma única refeição.",
+                tag: "Wagyu · Menu degustação",
+              },
+              {
+                dia: "Dia 6",
+                cidade: "Kyoto",
+                restaurante: "Ogata",
+                descricao:
+                  "Chegada a Kyoto. Primeiro jantar na capital do kaiseki: o Ogata apresenta matérias-primas de nível absoluto — matsutake de primeira categoria, king crab — com uma linguagem de apresentação acessível ao paladar ocidental. A escolha intencional para quem não cresceu com a tradição kaiseki.",
+                tag: "Kaiseki · Kyoto",
+              },
+              {
+                dia: "Dia 7",
+                cidade: "Tokyo",
+                restaurante: "Sushi Arai",
+                descricao:
+                  "Retorno a Tokyo para o encerramento da semana. O Sushi Arai representa a nova geração — ao lado de Sugita, Saito e Amamoto — e oferece um fechamento que olha para o futuro do sushi japonês, com frequência entre os 5 melhores do país.",
+                tag: "Sushi · Nova geração",
+              },
+            ].map((item) => (
+              <div
+                key={item.dia}
+                className="grid gap-10 border-t border-white/10 py-10 lg:grid-cols-[180px_1fr] lg:items-start"
+              >
                 <div>
-                  <p className="text-white font-light text-lg">Masamoto</p>
+                  <p className="text-xs uppercase tracking-[0.2em] text-white/25">{item.dia}</p>
+                  <p className="mt-1 text-sm text-white/50">{item.cidade}</p>
+                </div>
+                <div className="grid gap-6 sm:grid-cols-[1fr_auto]">
+                  <div>
+                    <p className="text-white font-light text-lg">{item.restaurante}</p>
+                    <p className="mt-2 text-sm leading-7 text-white/55">{item.descricao}</p>
+                    <div className="mt-5 inline-flex items-center gap-3 border border-white/10 px-5 py-2 text-xs uppercase tracking-[0.25em] text-white/35">
+                      <span>{item.tag}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+
+            {/* Logística */}
+            <div className="border-t border-white/10 pt-10 pb-2">
+              <div className="grid gap-10 lg:grid-cols-[180px_1fr]">
+                <div>
+                  <p className="text-xs uppercase tracking-[0.2em] text-white/25">Logística</p>
+                  <p className="mt-1 text-sm text-white/50">Todos os dias</p>
+                </div>
+                <div>
+                  <p className="text-white font-light text-lg">Transporte porta a porta</p>
                   <p className="mt-2 text-sm leading-7 text-white/55">
-                    Visita à loja principal da Masamoto em Tokyo. Seleção e aquisição da Gyuto. Entrega da faca artesanal para afiação ao artesão da casa — retirada programada para o dia 14.
+                    No Japão, a maioria dos restaurantes de referência não tem endereço convencional — ficam em galerias de vários andares, em ruas sem nome, em sub-andares de edifícios comerciais. Nosso motorista particular busca o cliente na porta do hotel e deixa na entrada exata do restaurante em todos os dias da jornada.
                   </p>
                   <div className="mt-5 inline-flex items-center gap-3 border border-white/10 px-5 py-2 text-xs uppercase tracking-[0.25em] text-white/35">
-                    <span>Gyuto</span>
-                    <span className="text-white/15">·</span>
-                    <span>Afiação entregue</span>
+                    <span>Motorista particular incluído</span>
                   </div>
                 </div>
               </div>
             </div>
-
-            {/* Dia 8 */}
-            <div className="grid gap-10 border-t border-white/10 py-10 lg:grid-cols-[180px_1fr] lg:items-start">
-              <div>
-                <p className="text-xs uppercase tracking-[0.2em] text-white/25">Dia 8</p>
-                <p className="mt-1 text-sm text-white/50">Kyoto</p>
-              </div>
-              <div>
-                <p className="text-white font-light text-lg">Aritsugu</p>
-                <p className="mt-2 text-sm leading-7 text-white/55">
-                  Visita à loja histórica da Aritsugu no Mercado Nishiki. Fundada em 1560 para fornecer instrumentos à corte imperial, a casa permanece sob a mesma família há mais de quatro séculos. Seleção e aquisição da Yanagiba com acompanhamento direto do artesão na escolha do aço.
-                </p>
-                <div className="mt-5 inline-flex items-center gap-3 border border-white/10 px-5 py-2 text-xs uppercase tracking-[0.25em] text-white/35">
-                  <span>Yanagiba</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Dia 10 */}
-            <div className="grid gap-10 border-t border-white/10 py-10 lg:grid-cols-[180px_1fr] lg:items-start">
-              <div>
-                <p className="text-xs uppercase tracking-[0.2em] text-white/25">Dia 10</p>
-                <p className="mt-1 text-sm text-white/50">Sakai</p>
-              </div>
-              <div>
-                <p className="text-white font-light text-lg">Kikumori</p>
-                <p className="mt-2 text-sm leading-7 text-white/55">
-                  Visita à Kikumori em Sakai — origem de mais de 90% das facas utilizadas por chefs profissionais no Japão. A casa não opera canais de venda para o público externo; o acesso é feito exclusivamente por meio de relação direta com os artesãos. Seleção e aquisição da Deba.
-                </p>
-                <div className="mt-5 inline-flex items-center gap-3 border border-white/10 px-5 py-2 text-xs uppercase tracking-[0.25em] text-white/35">
-                  <span>Deba</span>
-                </div>
-              </div>
-            </div>
-
-            {/* Dia 14 */}
-            <div className="grid gap-10 border-t border-white/10 py-10 lg:grid-cols-[180px_1fr] lg:items-start">
-              <div>
-                <p className="text-xs uppercase tracking-[0.2em] text-white/25">Dia 14</p>
-                <p className="mt-1 text-sm text-white/50">Tokyo</p>
-              </div>
-              <div>
-                <p className="text-white font-light text-lg">Masamoto · Retirada</p>
-                <p className="mt-2 text-sm leading-7 text-white/55">
-                  Retirada da faca artesanal após afiação completa. Inspeção do fio junto ao artesão antes do retorno ao Brasil.
-                </p>
-                <div className="mt-5 inline-flex items-center gap-3 border border-white/10 px-5 py-2 text-xs uppercase tracking-[0.25em] text-white/35">
-                  <span>Afiação retirada</span>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
       </section>
 
-      {/* Investimento */}
+      {/* Divisão geográfica */}
       <section className="border-t border-white/10 px-8 py-28 md:px-16">
         <div className="mx-auto max-w-7xl">
           <div className="grid gap-20 lg:grid-cols-[1fr_1.6fr]">
             <div>
-              <p className="mb-6 text-xs uppercase tracking-[0.35em] text-white/35">Investimento</p>
-              <h2 className="text-3xl font-light text-white md:text-4xl">Projeção</h2>
+              <p className="mb-6 text-xs uppercase tracking-[0.35em] text-white/35">Distribuição</p>
+              <h2 className="text-3xl font-light text-white md:text-4xl">5 dias em Tokyo, 2 em Kyoto</h2>
               <p className="mt-6 text-sm font-light leading-8 text-white/40">
-                Valores estimados para modelos de entrada profissional de cada fabricante. Peças com aço superior (Shirogami Nº1, Aogami Super) ou acabamentos especiais têm preços significativamente mais elevados e disponibilidade ainda mais restrita.
-              </p>
-              <p className="mt-4 text-xs leading-6 text-white/25">
-                Câmbio de referência: ¥1 = R$ 0,037 · Jun/2026
+                A concentração em Tokyo reflete onde estão os restaurantes de sushi, tempurá e wagyu de maior referência. Kyoto responde pelo kaiseki — o formato que mais exige imersão no contexto da cidade para ser plenamente compreendido.
               </p>
             </div>
 
-            <div>
-              <table className="w-full border-collapse text-left">
-                <thead>
-                  <tr className="border-b border-white/10">
-                    <th className="pb-5 text-xs uppercase tracking-[0.3em] text-white/30 font-normal">Faca</th>
-                    <th className="pb-5 text-xs uppercase tracking-[0.3em] text-white/30 font-normal">Fabricante</th>
-                    <th className="pb-5 text-right text-xs uppercase tracking-[0.3em] text-white/30 font-normal">Ienes</th>
-                    <th className="pb-5 text-right text-xs uppercase tracking-[0.3em] text-white/30 font-normal">Reais</th>
-                  </tr>
-                </thead>
-                <tbody className="text-sm font-light leading-9 text-white/65">
-                  <tr className="border-b border-white/[0.07]">
-                    <td className="py-5">
-                      Gyuto
-                      <span className="block text-xs text-white/30">240mm · Hagane</span>
-                    </td>
-                    <td className="py-5 text-white/40">Masamoto</td>
-                    <td className="py-5 text-right text-white">¥ 35.000 – 55.000</td>
-                    <td className="py-5 text-right text-white">R$ 1.295 – 2.035</td>
-                  </tr>
-                  <tr className="border-b border-white/[0.07]">
-                    <td className="py-5">
-                      Yanagiba
-                      <span className="block text-xs text-white/30">270mm · Shirogami</span>
-                    </td>
-                    <td className="py-5 text-white/40">Aritsugu</td>
-                    <td className="py-5 text-right text-white">¥ 45.000 – 80.000</td>
-                    <td className="py-5 text-right text-white">R$ 1.665 – 2.960</td>
-                  </tr>
-                  <tr className="border-b border-white/[0.07]">
-                    <td className="py-5">
-                      Deba
-                      <span className="block text-xs text-white/30">180mm · Hagane</span>
-                    </td>
-                    <td className="py-5 text-white/40">Kikumori</td>
-                    <td className="py-5 text-right text-white">¥ 30.000 – 50.000</td>
-                    <td className="py-5 text-right text-white">R$ 1.110 – 1.850</td>
-                  </tr>
-                  <tr className="border-b border-white/[0.07]">
-                    <td className="py-5">
-                      Afiação artesanal
-                      <span className="block text-xs text-white/30">Pedra d'água · 14 dias</span>
-                    </td>
-                    <td className="py-5 text-white/40">Masamoto</td>
-                    <td className="py-5 text-right text-white">¥ 8.000 – 15.000</td>
-                    <td className="py-5 text-right text-white">R$ 296 – 555</td>
-                  </tr>
-                  <tr>
-                    <td className="pt-8 pb-4 text-white/80" colSpan={2}>
-                      Total estimado
-                      <span className="block text-xs text-white/30 mt-1">Sem honorários Alpinea</span>
-                    </td>
-                    <td className="pt-8 pb-4 text-right text-white font-light">¥ 118.000 – 200.000</td>
-                    <td className="pt-8 pb-4 text-right text-white font-light">R$ 4.366 – 7.400</td>
-                  </tr>
-                </tbody>
-              </table>
-
-              <div className="mt-10 border border-white/10 bg-white/[0.025] p-8">
-                <p className="mb-3 text-xs uppercase tracking-[0.3em] text-white/30">Nota sobre imposto de importação</p>
-                <p className="text-sm leading-7 text-white/50">
-                  Facas de cozinha para uso profissional estão sujeitas à tributação na entrada no Brasil. A Alpinea orienta o cliente sobre a melhor forma de documentação e declaração antes do retorno. Valores de impostos não estão incluídos na projeção acima.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Conclusão */}
-      <section className="border-t border-white/10 px-8 py-28 md:px-16">
-        <div className="mx-auto max-w-7xl">
-          <div className="grid gap-16 lg:grid-cols-[1fr_420px] lg:items-start">
-
-            {/* Texto */}
-            <div>
-              <p className="mb-6 text-xs uppercase tracking-[0.35em] text-white/35">Resultado</p>
-              <h2 className="text-3xl font-light text-white md:text-4xl">O que não estava no roteiro</h2>
-
-              <div className="mt-10 space-y-6 text-base font-light leading-9 text-white/60">
-                <p>
-                  A visita à Kikumori em Sakai foi planejada para a aquisição de uma única Deba. O cliente chegou à oficina sem expectativa além do escopo original.
-                </p>
-                <p>
-                  No ateliê, o artesão apresentou uma linha recém-lançada de acabamento espelhado — o <span className="text-white/90">Choyo</span> — ainda sem distribuição fora do Japão e não documentada em nenhum canal internacional. O polimento é executado manualmente em múltiplas etapas, resultando em uma superfície que reflete como aço cirúrgico, mantendo o núcleo de Aogami Super intacto.
-                </p>
-                <p>
-                  O cliente, ao ver e segurar as peças pela primeira vez, decidiu ampliar a compra no ato.
-                </p>
-              </div>
-
-              <div className="mt-12 grid grid-cols-3 gap-px border border-white/10">
-                <div className="bg-white/[0.03] px-6 py-8">
-                  <p className="text-2xl font-light text-white">1</p>
-                  <p className="mt-2 text-xs uppercase tracking-[0.2em] text-white/30">faca planejada</p>
-                </div>
-                <div className="bg-white/[0.03] px-6 py-8">
-                  <p className="text-2xl font-light text-white">3</p>
-                  <p className="mt-2 text-xs uppercase tracking-[0.2em] text-white/30">facas adquiridas</p>
-                </div>
-                <div className="bg-white/[0.03] px-6 py-8">
-                  <p className="text-2xl font-light text-white">Choyo</p>
-                  <p className="mt-2 text-xs uppercase tracking-[0.2em] text-white/30">acabamento inédito</p>
+            <div className="space-y-0">
+              <div className="border-t border-white/10 py-10 grid gap-6 sm:grid-cols-[120px_1fr] items-start">
+                <p className="text-xs uppercase tracking-[0.2em] text-white/25 pt-1">Tokyo</p>
+                <div className="space-y-2 text-sm leading-7 text-white/55">
+                  <p>Harutaka · Sushi</p>
+                  <p>Mikawa Zezankyo · Tempurá</p>
+                  <p>Sazenka · Contemporâneo</p>
+                  <p>Sushi Sho Masa · Sushi</p>
+                  <p>Niku Kappou Miyata · Wagyu</p>
+                  <p>Sushi Arai · Sushi</p>
                 </div>
               </div>
-
-              <p className="mt-10 text-sm leading-7 text-white/35 italic">
-                Esse tipo de descoberta — um lançamento ainda sem nome fora do Japão, acessado no dia em que está disponível — é o que diferencia uma visita guiada de uma compra por conta própria.
-              </p>
-            </div>
-
-            {/* Foto do cliente */}
-            <div className="lg:sticky lg:top-32">
-              <div className="overflow-hidden rounded-2xl">
-                <Image
-                  src="/images/kikufinal.jpeg"
-                  alt="Três facas Kikumori Choyo adquiridas pelo cliente em Sakai"
-                  width={840}
-                  height={1120}
-                  className="w-full object-cover"
-                />
+              <div className="border-t border-white/10 py-10 grid gap-6 sm:grid-cols-[120px_1fr] items-start">
+                <p className="text-xs uppercase tracking-[0.2em] text-white/25 pt-1">Kyoto</p>
+                <div className="space-y-2 text-sm leading-7 text-white/55">
+                  <p>Ogata · Kaiseki</p>
+                </div>
               </div>
-              <p className="mt-4 text-xs leading-6 text-white/25 text-center">
-                As três peças Kikumori · Acabamento Choyo · Sakai, Osaka
-              </p>
+              <div className="border-t border-white/10 pt-10">
+                <p className="text-sm leading-7 text-white/35 italic">
+                  O deslocamento Tokyo–Kyoto é feito de Shinkansen, com duração de aproximadamente 2h15. A Alpinea coordena o traslado e as reservas de hospedagem em ambas as cidades.
+                </p>
+              </div>
             </div>
-
           </div>
         </div>
       </section>
@@ -523,10 +521,10 @@ export default function GuiaFacasPage() {
             Próximo passo
           </p>
           <h2 className="text-4xl font-light leading-tight md:text-6xl">
-            Pronto para iniciar a assessoria?
+            Pronto para iniciar a curadoria?
           </h2>
           <p className="mx-auto mt-8 max-w-xl text-base leading-9 text-black/50">
-            Entre em contato para alinhar datas, escopo de viagem e detalhes da seleção.
+            Entre em contato para alinhar datas, perfil gastronômico e detalhes da jornada.
           </p>
           <div className="mt-12 flex flex-col items-center justify-center gap-4 sm:flex-row">
             <a
