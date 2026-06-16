@@ -70,39 +70,47 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <section className="border-b border-white/10 px-8 py-24 md:px-16">
+      {/* ── Estrutura Alpinea — redesigned for ultra-luxury audience ── */}
+      <section className="px-8 py-32 md:px-16">
         <div className="mx-auto max-w-7xl">
-          <p className="mb-12 text-xs uppercase tracking-[0.45em] text-white/40">
+          <p className="mb-20 text-xs uppercase tracking-[0.45em] text-white/30">
             Estrutura Alpinea
           </p>
 
-          <div className="grid gap-0 border-y border-white/10 md:grid-cols-4">
+          <div className="grid gap-20 md:grid-cols-2 md:gap-x-24 md:gap-y-20">
             {[
               {
-                title: "+12 anos",
-                text: "Vivência contínua no Japão, entre gastronomia, hotéis, cultura, logística e relações locais.",
+                stat: "+12",
+                unit: "anos",
+                text: "Vivência contínua no Japão — gastronomia, hotéis, cultura e relações locais construídas ao longo de uma década.",
               },
               {
-                title: "Idioma japonês",
-                text: "Comunicação direta com restaurantes, artesãos, hotéis e fornecedores locais.",
+                stat: "日本語",
+                unit: "fluente",
+                text: "Comunicação direta com restaurantes, artesãos e fornecedores. Sem intermediários, sem ruído.",
               },
               {
-                title: "Brasil–Japão",
-                text: "Experiência especializada em uma das rotas internacionais mais relevantes para o cliente brasileiro.",
+                stat: "BR",
+                unit: "→ JP",
+                text: "Experiência especializada numa das rotas internacionais mais relevantes para o cliente brasileiro de alto padrão.",
               },
               {
-                title: "Brasil · Japão",
-                text: "Estrutura empresarial nos dois países, com operação desenhada para o mercado de luxo.",
+                stat: "2",
+                unit: "países",
+                text: "Estrutura empresarial no Brasil e no Japão, com operação desenhada para o mercado de luxo.",
               },
             ].map((item) => (
-              <div
-                key={item.title}
-                className="border-white/10 py-10 md:border-r md:px-10 last:md:border-r-0"
-              >
-                <h3 className="text-2xl font-light tracking-tight text-white md:text-3xl">
-                  {item.title}
-                </h3>
-                <p className="mt-6 max-w-[280px] text-sm font-light leading-7 text-white/55">
+              <div key={item.stat} className="group">
+                <div className="flex items-baseline gap-3 mb-6">
+                  <span className="text-5xl font-light tracking-tight text-white md:text-6xl">
+                    {item.stat}
+                  </span>
+                  <span className="text-xs uppercase tracking-[0.35em] text-white/35">
+                    {item.unit}
+                  </span>
+                </div>
+                <div className="h-px w-12 bg-white/20 mb-6 transition-all duration-500 group-hover:w-24 group-hover:bg-white/40" />
+                <p className="text-sm font-light leading-7 text-white/50 max-w-xs">
                   {item.text}
                 </p>
               </div>
@@ -163,6 +171,7 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* ── Execução — screenshots with zoom, no outer border ── */}
       <section id="execucao" className="border-b border-white/10 px-8 py-28 md:px-16">
         <div className="mx-auto max-w-7xl">
           <div className="mb-16 max-w-4xl">
@@ -185,19 +194,19 @@ export default function LandingPage() {
               ["/images/ss-restaurantes.png", "Reservas gastronômicas"],
               ["/images/ss-rcompras.png", "Assessoria de compras"],
             ].map(([src, title]) => (
-              <div
-                key={title}
-                className="overflow-hidden rounded-[28px] border border-white/10 bg-white/[0.03] p-3"
-              >
+              <div key={title} className="group">
+                {/* No outer card border — just the image with rounded corners + zoom */}
                 <div className="relative aspect-[4/5] overflow-hidden rounded-[22px] bg-white/5">
                   <img
                     src={src}
                     alt={title}
-                    className="h-full w-full object-cover object-top"
+                    className="h-full w-full object-cover object-top transition-transform duration-700 ease-out group-hover:scale-105"
                   />
+                  {/* subtle vignette on hover */}
+                  <div className="absolute inset-0 bg-black/0 transition-colors duration-500 group-hover:bg-black/10 rounded-[22px]" />
                 </div>
 
-                <p className="mt-5 px-2 pb-2 text-xs uppercase tracking-[0.35em] text-white/45">
+                <p className="mt-5 text-xs uppercase tracking-[0.35em] text-white/45">
                   {title}
                 </p>
               </div>
@@ -206,49 +215,77 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* ── Presença digital — vertical layout with both feeds ── */}
       <section className="border-b border-white/10 px-8 py-28 md:px-16">
-        <div className="mx-auto grid max-w-7xl gap-16 md:grid-cols-[0.9fr_1.1fr] md:items-center">
-          <div>
-            <p className="mb-6 text-xs uppercase tracking-[0.45em] text-white/45">
-              Presença digital
-            </p>
+        <div className="mx-auto max-w-7xl">
+          <div className="mb-16 md:grid md:grid-cols-[0.9fr_1.1fr] md:gap-16 md:items-start">
+            <div className="mb-12 md:mb-0 md:sticky md:top-24">
+              <p className="mb-6 text-xs uppercase tracking-[0.45em] text-white/45">
+                Presença digital
+              </p>
 
-            <h2 className="text-4xl font-light leading-tight md:text-6xl">
-              Conheça mais sobre destinos, hotéis, restaurantes e atrações.
-            </h2>
+              <h2 className="text-4xl font-light leading-tight md:text-6xl">
+                Conheça mais sobre destinos, hotéis, restaurantes e atrações.
+              </h2>
 
-            <p className="mt-8 text-lg font-light leading-9 text-white/68">
-              Acompanhe a Alpinea no Instagram e YouTube para ver uma leitura real do Japão: gastronomia, bairros, hotéis, experiências e bastidores de curadoria.
-            </p>
+              <p className="mt-8 text-lg font-light leading-9 text-white/68">
+                Acompanhe a Alpinea no Instagram e YouTube para ver uma leitura real do Japão: gastronomia, bairros, hotéis, experiências e bastidores de curadoria.
+              </p>
 
-            <div className="mt-10 flex flex-wrap gap-4">
-              <a
-                href="https://www.instagram.com/alpinea.private"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="border border-white/20 px-6 py-4 text-xs uppercase tracking-[0.3em] text-white/75 transition hover:border-white hover:text-white"
-              >
-                Instagram
-              </a>
+              <div className="mt-10 flex flex-wrap gap-4">
+                <a
+                  href="https://www.instagram.com/alpinea.private"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="border border-white/20 px-6 py-4 text-xs uppercase tracking-[0.3em] text-white/75 transition hover:border-white hover:text-white"
+                >
+                  Instagram
+                </a>
 
-              <a
-                href="https://www.youtube.com/@alpinea.private"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="border border-white/20 px-6 py-4 text-xs uppercase tracking-[0.3em] text-white/75 transition hover:border-white hover:text-white"
-              >
-                YouTube
-              </a>
+                <a
+                  href="https://www.youtube.com/@alpinea.private"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="border border-white/20 px-6 py-4 text-xs uppercase tracking-[0.3em] text-white/75 transition hover:border-white hover:text-white"
+                >
+                  YouTube
+                </a>
+              </div>
             </div>
-          </div>
 
-          <div className="overflow-hidden rounded-[28px] border border-white/10 bg-white/[0.03] p-3">
-            <div className="relative aspect-[4/3] overflow-hidden rounded-[22px] bg-white/5">
-              <img
-                src="/images/youtube-feed.png"
-                alt="Feed do YouTube Alpinea Private"
-                className="h-full w-full object-cover object-top"
-              />
+            {/* Vertical stack: YouTube then Instagram */}
+            <div className="flex flex-col gap-6">
+              {/* YouTube feed */}
+              <div>
+                <p className="mb-3 text-xs uppercase tracking-[0.35em] text-white/30">
+                  YouTube
+                </p>
+                <div className="overflow-hidden rounded-[22px] bg-white/5">
+                  <div className="relative aspect-[4/3] overflow-hidden rounded-[22px]">
+                    <img
+                      src="/images/youtube-feed.png"
+                      alt="Feed do YouTube Alpinea Private"
+                      className="h-full w-full object-cover object-top"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              {/* Instagram feed */}
+              <div>
+                <p className="mb-3 text-xs uppercase tracking-[0.35em] text-white/30">
+                  Instagram
+                </p>
+                <div className="overflow-hidden rounded-[22px] bg-white/5">
+                  <div className="relative aspect-[4/3] overflow-hidden rounded-[22px]">
+                    <img
+                      src="/images/ss-ig.png"
+                      alt="Feed do Instagram Alpinea Private"
+                      className="h-full w-full object-cover object-top"
+                    />
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
