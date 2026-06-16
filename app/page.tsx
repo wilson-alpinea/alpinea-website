@@ -84,6 +84,14 @@ export default function Home() {
       Serviços
     </a>
 
+    <a href="/gastro" className="transition hover:text-white">
+      Restaurantes
+    </a>
+
+    <a href="/guia" className="transition hover:text-white">
+      Compras
+    </a>
+
     <a href="/preview" className="transition hover:text-white">
       Roteiro
     </a>
@@ -583,7 +591,7 @@ export default function Home() {
         rel="noopener noreferrer"
         className="inline-block border border-black/20 px-8 py-4 text-xs uppercase tracking-[0.3em] transition hover:bg-black hover:text-white"
       >
-        WhatsApp Concierge
+        Contato por WhatsApp
       </a>
 
     </div>
