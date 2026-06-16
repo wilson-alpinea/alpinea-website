@@ -287,7 +287,7 @@ export default function GastroPage() {
             <div className="flex flex-col gap-3">
               <div className="aspect-square overflow-hidden rounded-2xl border border-white/10">
                 <Image
-                  src="/images/zezankyo.jpeg"
+                  src="/images/zezankyo.png"
                   alt="Mikawa Zezankyo — camarão tempurá"
                   width={420}
                   height={420}
