@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
 
 export default function LandingPage() {
   const [scrolled, setScrolled] = useState(false);
@@ -107,6 +108,7 @@ export default function LandingPage() {
           className="fixed inset-0 z-[100] flex items-center justify-center bg-black/92 p-6 backdrop-blur-sm cursor-zoom-out"
           onClick={() => setLightbox(null)}
         >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={lightbox}
             alt="Visualização ampliada"
@@ -457,10 +459,11 @@ export default function LandingPage() {
             ].map((item) => (
               <div key={item.name} className="group relative overflow-hidden bg-black">
                 <div className="relative aspect-[4/3] overflow-hidden">
-                  <img
+                  <Image
                     src={item.img}
                     alt={item.name}
-                    className="h-full w-full object-cover opacity-60 transition-all duration-700 group-hover:opacity-80 group-hover:scale-105"
+                    fill
+                    className="object-cover opacity-60 transition-all duration-700 group-hover:opacity-80 group-hover:scale-105"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
                 </div>
@@ -536,86 +539,87 @@ export default function LandingPage() {
             </p>
           </div>
 
-          {/* 3 tiers — clean text, no escape links */}
-          <div className="mb-2 grid gap-px bg-white/[0.06] md:grid-cols-3">
-            {[
-              {
-                label: "Planejamento",
-                name: "Alpinea Design",
-                desc: "Roteiro personalizado e curadoria de destino. O cliente conduz a viagem com uma base Alpinea.",
-                highlight: false,
-              },
-              {
-                label: "Execução completa",
-                name: "Alpinea Executive",
-                desc: "Roteiro, hotéis, reservas de restaurantes, logística e concierge remoto durante a estadia.",
-                highlight: false,
-              },
-              {
-                label: "Acompanhamento presencial",
-                name: "Alpinea Private",
-                desc: "Tudo do Executive mais presença local dedicada em restaurantes, compras e atrações no Japão.",
-                highlight: true,
-              },
-            ].map((t) => (
-              <div
-                key={t.name}
-                className={`px-8 py-10 ${t.highlight ? "bg-white/[0.045]" : "bg-black"}`}
+          {/* 3 tiers — horizontal rule layout, no cards, no links */}
+          <div className="border-t border-white/10">
+            <div className="grid md:grid-cols-3">
+              {[
+                {
+                  label: "Planejamento",
+                  name: "Alpinea Design",
+                  desc: "Roteiro personalizado e curadoria de destino. O cliente conduz a viagem com uma base Alpinea.",
+                },
+                {
+                  label: "Execução completa",
+                  name: "Alpinea Executive",
+                  desc: "Roteiro, hotéis, reservas de restaurantes, logística e concierge remoto durante a estadia.",
+                },
+                {
+                  label: "Acompanhamento presencial",
+                  name: "Alpinea Private",
+                  desc: "Tudo do Executive mais presença local dedicada em restaurantes, compras e atrações no Japão.",
+                },
+              ].map((t, i) => (
+                <div
+                  key={t.name}
+                  className={`py-10 pr-10 ${i > 0 ? "md:border-l md:border-white/10 md:pl-10 md:pr-0" : ""}`}
+                >
+                  <p className="mb-4 text-xs uppercase tracking-[0.4em] text-white/30">{t.label}</p>
+                  <h3 className="mb-4 text-xl font-light text-white">{t.name}</h3>
+                  <p className="text-sm font-light leading-7 text-white/45">{t.desc}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="border-t border-white/10 pt-1">
+            <div className="flex items-center justify-between py-5">
+              <p className="text-xs uppercase tracking-[0.45em] text-white/20">
+                Detalhes e comparativo completo
+              </p>
+              <a
+                href="/services"
+                className="text-xs uppercase tracking-[0.3em] text-white/25 transition hover:text-white/60"
               >
-                <p className="mb-3 text-xs uppercase tracking-[0.4em] text-white/35">{t.label}</p>
-                <h3 className={`mb-5 text-2xl font-light ${t.highlight ? "text-[#D96A2E]" : "text-white"}`}>
-                  {t.name}
-                </h3>
-                <p className="text-sm font-light leading-7 text-white/50">{t.desc}</p>
-              </div>
-            ))}
+                Ver serviços →
+              </a>
+            </div>
           </div>
 
-          {/* Subtle separator between tiers and screenshots */}
-          <div className="mb-16 flex items-center gap-4 pt-2">
-            <div className="h-px flex-1 bg-white/[0.06]" />
-            <a
-              href="/services"
-              className="text-xs uppercase tracking-[0.3em] text-white/25 transition hover:text-white/60"
-            >
-              Comparar formatos →
-            </a>
-            <div className="h-px flex-1 bg-white/[0.06]" />
-          </div>
+          {/* Hard visual break before screenshots */}
+          <div className="mt-20 border-t border-white/10 pt-16">
+            <p className="mb-10 text-xs uppercase tracking-[0.45em] text-white/30">
+              Exemplos do produto
+            </p>
 
-          {/* Screenshots label */}
-          <p className="mb-8 text-xs uppercase tracking-[0.45em] text-white/30">
-            Exemplos do produto
-          </p>
-
-          {/* Screenshots */}
-          <div className="grid gap-6 md:grid-cols-3">
-            {[
-              ["/images/ss-roteiro.png", "Roteiro privado"],
-              ["/images/ss-restaurantes.png", "Reservas gastronômicas"],
-              ["/images/ss-rcompras.png", "Assessoria de compras"],
-            ].map(([src, title]) => (
-              <div key={title} className="group cursor-zoom-in" onClick={() => setLightbox(src)}>
-                <div className="relative aspect-[4/5] overflow-hidden rounded-[22px] bg-white/5">
-                  <img
-                    src={src}
-                    alt={title}
-                    className="h-full w-full object-cover object-top transition-transform duration-700 ease-out group-hover:scale-105"
-                  />
-                  <div className="absolute inset-0 flex items-center justify-center bg-black/0 transition-colors duration-300 group-hover:bg-black/20 rounded-[22px]">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-black/60 opacity-0 backdrop-blur-sm transition-opacity duration-300 group-hover:opacity-100">
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.5">
-                        <circle cx="11" cy="11" r="8" />
-                        <line x1="21" y1="21" x2="16.65" y2="16.65" />
-                        <line x1="11" y1="8" x2="11" y2="14" />
-                        <line x1="8" y1="11" x2="14" y2="11" />
-                      </svg>
+            <div className="grid gap-6 md:grid-cols-3">
+              {[
+                ["/images/ss-roteiro.png", "Roteiro privado"],
+                ["/images/ss-restaurantes.png", "Reservas gastronômicas"],
+                ["/images/ss-rcompras.png", "Assessoria de compras"],
+              ].map(([src, title]) => (
+                <div key={title} className="group cursor-zoom-in" onClick={() => setLightbox(src)}>
+                  <div className="relative aspect-[4/5] overflow-hidden rounded-[22px] bg-white/5">
+                    <Image
+                      src={src}
+                      alt={title}
+                      fill
+                      className="object-cover object-top transition-transform duration-700 ease-out group-hover:scale-105"
+                    />
+                    <div className="absolute inset-0 flex items-center justify-center bg-black/0 transition-colors duration-300 group-hover:bg-black/20 rounded-[22px]">
+                      <div className="flex h-10 w-10 items-center justify-center rounded-full bg-black/60 opacity-0 backdrop-blur-sm transition-opacity duration-300 group-hover:opacity-100">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.5">
+                          <circle cx="11" cy="11" r="8" />
+                          <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                          <line x1="11" y1="8" x2="11" y2="14" />
+                          <line x1="8" y1="11" x2="14" y2="11" />
+                        </svg>
+                      </div>
                     </div>
                   </div>
+                  <p className="mt-5 text-xs uppercase tracking-[0.35em] text-white/45">{title}</p>
                 </div>
-                <p className="mt-5 text-xs uppercase tracking-[0.35em] text-white/45">{title}</p>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </div>
       </section>
@@ -662,12 +666,12 @@ export default function LandingPage() {
             <div className="flex flex-col gap-6">
               <div className="overflow-hidden rounded-[22px] bg-white/5">
                 <div className="relative aspect-[4/3] overflow-hidden rounded-[22px]">
-                  <img src="/images/youtube-feed.png" alt="Feed do YouTube Alpinea Private" className="h-full w-full object-cover object-top" />
+                  <Image src="/images/youtube-feed.png" alt="Feed do YouTube Alpinea Private" fill className="object-cover object-top" />
                 </div>
               </div>
               <div className="overflow-hidden rounded-[22px] bg-white/5">
                 <div className="relative aspect-[9/16] overflow-hidden rounded-[22px]">
-                  <img src="/images/ss-ig.png" alt="Feed do Instagram Alpinea Private" className="h-full w-full object-cover object-top" />
+                  <Image src="/images/ss-ig.png" alt="Feed do Instagram Alpinea Private" fill className="object-cover object-top" />
                 </div>
               </div>
             </div>
