@@ -448,12 +448,12 @@ export default function LandingPage() {
 
           <div className="grid gap-px bg-white/[0.06] md:grid-cols-3">
             {[
-              { category: "Gastronomia · Tokyo", name: "Fukamachi", note: "Tempura omakase. Sem reservas externas. Lista de espera via relação direta.", img: "/images/gastro-hero.jpg" },
-              { category: "Gastronomia · Tokyo", name: "Shunsuke", note: "Kaiseki contemporâneo. Não aceita reservas internacionais por plataformas.", img: "/images/zezankyo.jpg" },
-              { category: "Gastronomia · Tokyo", name: "Sushi Arai", note: "Sushi omakase de alto nível. Acesso apenas via indicação pessoal.", img: "/images/sushi-arai.jpg" },
-              { category: "Hospedagem · Tokyo", name: "Aman Tokyo", note: "Curadoria de acomodação e experiências exclusivas para hóspedes.", img: "/images/amankyoto.jpg" },
-              { category: "Gastronomia · Osaka", name: "Niku Kappou Miyata", note: "Wagyu kappo de altíssimo nível. Reserva somente via contato direto em japonês.", img: "/images/nikufood.jpg" },
-              { category: "Gastronomia · Tokyo", name: "Ao", note: "Cozinha japonesa contemporânea. Uma das experiências mais difíceis de acessar em Tokyo.", img: "/images/ao.jpg" },
+              { category: "Gastronomia · Tokyo", name: "Fukamachi", note: "Tempura omakase. Sem reservas externas. Lista de espera via relação direta.", img: "/images/gastro-hero.png" },
+              { category: "Gastronomia · Tokyo", name: "Shunsuke", note: "Kaiseki contemporâneo. Não aceita reservas internacionais por plataformas.", img: "/images/zezankyo.png" },
+              { category: "Gastronomia · Tokyo", name: "Sushi Arai", note: "Sushi omakase de alto nível. Acesso apenas via indicação pessoal.", img: "/images/sushi-arai.png" },
+              { category: "Hospedagem · Tokyo", name: "Aman Tokyo", note: "Curadoria de acomodação e experiências exclusivas para hóspedes.", img: "/images/amankyoto.png" },
+              { category: "Gastronomia · Osaka", name: "Niku Kappou Miyata", note: "Wagyu kappo de altíssimo nível. Reserva somente via contato direto em japonês.", img: "/images/nikufood.jpeg" },
+              { category: "Gastronomia · Tokyo", name: "Ao", note: "Cozinha japonesa contemporânea. Uma das experiências mais difíceis de acessar em Tokyo.", img: "/images/ao.png" },
             ].map((item) => (
               <div key={item.name} className="group relative overflow-hidden bg-black">
                 <div className="relative aspect-[4/3] overflow-hidden">
