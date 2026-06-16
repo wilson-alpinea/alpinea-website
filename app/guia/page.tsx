@@ -21,93 +21,98 @@ export default function GuiaFacasPage() {
         </nav>
       </header>
 
-      {/* Hero */}
-      <section className="relative min-h-[640px] overflow-hidden px-8 pb-28 pt-40 md:px-16 md:pt-52">
-        <div className="absolute inset-0">
-          <Image
-            src="/images/blacksmith.png"
-            alt="Artesão forjando faca japonesa"
-            fill
-            className="object-cover object-center"
-            priority
-          />
-          <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/70 to-black" />
-        </div>
-        <div className="relative z-10 mx-auto max-w-7xl">
-          <p className="mb-8 text-xs uppercase tracking-[0.45em] text-white/40">
-            Assessoria de Compras · Alpinea Private
-          </p>
-          <h1 className="max-w-4xl text-5xl font-light leading-[1.05] tracking-tight md:text-7xl">
-            Assessoria de Compras
-          </h1>
-          <p className="mt-10 max-w-2xl text-lg font-light leading-9 text-white/60">
-            Curadoria dedicada para identificar, selecionar e adquirir produtos no Japão — desde itens especializados a peças de altíssimo valor e acesso restrito.
-          </p>
+      {/* Hero — grid layout igual /gastro */}
+      <section className="pt-28 md:pt-36 px-8 md:px-16 pb-0">
+        <div className="mx-auto max-w-7xl">
+          <div className="grid gap-6 lg:grid-cols-[1fr_1fr] lg:items-end">
+            {/* Esquerda — texto */}
+            <div className="pb-16 lg:pb-24">
+              <p className="mb-8 text-xs uppercase tracking-[0.45em] text-white/40">
+                Assessoria de Compras · Alpinea Private
+              </p>
+              <h1 className="text-5xl font-light leading-[1.05] tracking-tight md:text-6xl lg:text-7xl">
+                Curadoria<br />de Aquisição
+              </h1>
+              <p className="mt-10 max-w-md text-base font-light leading-9 text-white/55">
+                Identificar, selecionar e adquirir produtos no Japão — desde itens especializados a peças de altíssimo valor e acesso restrito.
+              </p>
+            </div>
+            {/* Direita — imagem */}
+            <div className="relative h-[480px] overflow-hidden rounded-t-2xl lg:h-[600px]">
+              <Image
+                src="/images/blacksmith.png"
+                alt="Artesão forjando faca japonesa"
+                fill
+                className="object-cover object-center"
+                priority
+              />
+            </div>
+          </div>
         </div>
       </section>
 
-      {/* Divisor */}
-      <div className="border-t border-white/10" />
+      {/* O Mercado — vídeo grande à esquerda, stats à direita, igual /gastro */}
+      <section className="mt-0">
+        <div className="grid lg:grid-cols-2 lg:min-h-[700px]">
+          {/* Esquerda — vídeo em tela cheia */}
+          <div className="relative min-h-[400px] overflow-hidden lg:min-h-full">
+            <video
+              src="/videos/kiku-graving.mp4"
+              autoPlay
+              muted
+              loop
+              playsInline
+              className="absolute inset-0 h-full w-full object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent to-black/20" />
+          </div>
 
-      {/* O Problema — novo bloco, substitui o Briefing genérico */}
-      <section className="px-8 py-28 md:px-16">
-        <div className="mx-auto max-w-7xl">
-          <div className="grid gap-20 lg:grid-cols-[1fr_1.6fr]">
-            <div className="flex flex-col gap-10">
-              <div>
-                <p className="mb-6 text-xs uppercase tracking-[0.35em] text-white/35">O Mercado</p>
-                <h2 className="text-3xl font-light text-white md:text-4xl">Por que é difícil comprar bem no Japão</h2>
-              </div>
-              <div className="overflow-hidden rounded-2xl">
-                <video
-                  src="/videos/kiku-graving.mp4"
-                  autoPlay
-                  muted
-                  loop
-                  playsInline
-                  className="w-full object-cover"
-                />
-              </div>
-            </div>
-            <div className="space-y-0">
+          {/* Direita — label, título, stats */}
+          <div className="flex flex-col justify-center bg-black px-8 py-20 md:px-14">
+            <p className="mb-6 text-xs uppercase tracking-[0.35em] text-white/35">O Mercado</p>
+            <h2 className="text-3xl font-light text-white leading-snug md:text-4xl">
+              Comprar bem no Japão<br />é um ofício à parte.
+            </h2>
+
+            <div className="mt-12 space-y-0">
               {/* Stat 1 */}
-              <div className="border-t border-white/10 py-10 grid gap-8 sm:grid-cols-[160px_1fr] items-start">
-                <p className="text-4xl font-light text-white/20 tabular-nums leading-none pt-1">+1.000</p>
+              <div className="border-t border-white/10 py-8 grid gap-6 grid-cols-[100px_1fr] items-start">
+                <p className="text-3xl font-light text-white/20 tabular-nums leading-none pt-0.5">+1.000</p>
                 <div>
-                  <p className="text-white font-light text-base leading-7">fabricantes de facas no Japão</p>
-                  <p className="mt-3 text-sm leading-7 text-white/50">
-                    O mercado japonês de cutelaria é um dos mais fragmentados do mundo. A grande maioria produz para o mercado doméstico de consumo, para exportação de massa ou para o circuito turístico — onde a aparência da tradição substitui a tradição real.
+                  <p className="text-white font-light text-sm leading-6">fabricantes de facas no Japão</p>
+                  <p className="mt-2 text-xs leading-6 text-white/45">
+                    A grande maioria produz para o mercado de consumo ou para o circuito turístico — onde a aparência da tradição substitui a tradição real.
                   </p>
                 </div>
               </div>
 
               {/* Stat 2 */}
-              <div className="border-t border-white/10 py-10 grid gap-8 sm:grid-cols-[160px_1fr] items-start">
-                <p className="text-4xl font-light text-white/20 tabular-nums leading-none pt-1">~30</p>
+              <div className="border-t border-white/10 py-8 grid gap-6 grid-cols-[100px_1fr] items-start">
+                <p className="text-3xl font-light text-white/20 tabular-nums leading-none pt-0.5">~30</p>
                 <div>
-                  <p className="text-white font-light text-base leading-7">fabricantes de elite com acesso real</p>
-                  <p className="mt-3 text-sm leading-7 text-white/50">
-                    Menos de 3% do mercado opera no nível de aço, forja e acabamento que os melhores chefs do Japão utilizam. Identificá-los exige anos de relação direta com cozinhas de referência — restaurantes com três estrelas Michelin que testam, descartam e recomendam esses instrumentos no dia a dia.
+                  <p className="text-white font-light text-sm leading-6">fabricantes de elite com acesso real</p>
+                  <p className="mt-2 text-xs leading-6 text-white/45">
+                    Menos de 3% opera no nível de aço, forja e acabamento que os melhores chefs do Japão utilizam. Identificá-los exige anos de relação direta com cozinhas de referência.
                   </p>
                 </div>
               </div>
 
               {/* Stat 3 */}
-              <div className="border-t border-white/10 py-10 grid gap-8 sm:grid-cols-[160px_1fr] items-start">
-                <div className="leading-none pt-1">
-                  <p className="text-4xl font-light text-white/20 tabular-nums leading-none">2</p>
-                  <p className="text-sm uppercase tracking-[0.2em] text-white/20 mt-1">anos</p>
+              <div className="border-t border-white/10 py-8 grid gap-6 grid-cols-[100px_1fr] items-start">
+                <div className="leading-none pt-0.5">
+                  <p className="text-3xl font-light text-white/20 tabular-nums leading-none">2</p>
+                  <p className="text-xs uppercase tracking-[0.2em] text-white/20 mt-1">anos</p>
                 </div>
                 <div>
-                  <p className="text-white font-light text-base leading-7">fila de espera nos artesãos mais procurados</p>
-                  <p className="mt-3 text-sm leading-7 text-white/50">
-                    Artesãos como Futaba Shokai operam com fila de encomenda superior a dois anos. Acesso direto e compra imediata — para quem ainda não tem relacionamento estabelecido com o fabricante — é simplesmente impossível sem intermediação qualificada.
+                  <p className="text-white font-light text-sm leading-6">fila nos artesãos mais procurados</p>
+                  <p className="mt-2 text-xs leading-6 text-white/45">
+                    Artesãos como Futaba Shokai operam com fila superior a dois anos. Acesso direto sem intermediação qualificada é simplesmente impossível.
                   </p>
                 </div>
               </div>
 
-              <div className="border-t border-white/10 pt-10">
-                <p className="text-sm leading-7 text-white/35 italic">
+              <div className="border-t border-white/10 pt-8">
+                <p className="text-xs leading-6 text-white/30 italic">
                   A assessoria Alpinea existe para eliminar esse atrito — e para garantir que o cliente chegue à loja certa, com o artesão certo, no momento em que o instrumento está disponível.
                 </p>
               </div>
