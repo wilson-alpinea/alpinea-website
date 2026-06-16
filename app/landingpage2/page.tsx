@@ -10,9 +10,9 @@ export default function LandingPage() {
   const [formData, setFormData] = useState({
     nome: "",
     email: "",
-    whatsapp: "",
     datas: "",
     pessoas: "",
+    pep: "",
     cidades: "",
     perfil: "",
     orcamento: "",
@@ -46,31 +46,57 @@ export default function LandingPage() {
     return () => { document.body.style.overflow = ""; };
   }, [formOpen, lightbox]);
 
+  const openForm = () => {
+    setFormStep(1);
+    setFormSent(false);
+    setFormOpen(true);
+  };
+
   const handleSubmit = () => {
-    // Compose WhatsApp message
+    const pepLabel = formData.pep === "sim"
+      ? "Sim — pessoa politicamente exposta"
+      : formData.pep === "nao"
+      ? "Não"
+      : "Não informado";
+
     const msg = [
       `*Novo contato via alpinea.io*`,
       ``,
       `*Nome:* ${formData.nome}`,
       `*Email:* ${formData.email}`,
-      `*WhatsApp:* ${formData.whatsapp}`,
       `*Datas:* ${formData.datas}`,
-      `*Pessoas:* ${formData.pessoas}`,
+      `*Viajantes:* ${formData.pessoas}`,
+      `*PEP:* ${pepLabel}`,
       `*Cidades:* ${formData.cidades}`,
-      `*Perfil de viagem:* ${formData.perfil}`,
+      `*Estilo de viagem:* ${formData.perfil}`,
       `*Orçamento estimado:* ${formData.orcamento}`,
       `*Observações:* ${formData.observacoes || "—"}`,
     ].join("\n");
+
     const encoded = encodeURIComponent(msg);
     window.open(`https://wa.me/5511996691818?text=${encoded}`, "_blank");
     setFormSent(true);
   };
 
+  // Select styling: dark bg, white text, correct option colors
   const inputClass =
-    "w-full bg-white/5 border border-white/10 px-5 py-4 text-sm font-light text-white placeholder-white/30 focus:outline-none focus:border-white/30 transition";
+    "w-full bg-[#1a1a18] border border-white/12 px-5 py-4 text-sm font-light text-white placeholder-white/30 focus:outline-none focus:border-white/35 transition rounded-none";
 
   const selectClass =
-    "w-full bg-white/5 border border-white/10 px-5 py-4 text-sm font-light text-white focus:outline-none focus:border-white/30 transition appearance-none";
+    "w-full bg-[#1a1a18] border border-white/12 px-5 py-4 text-sm font-light text-white focus:outline-none focus:border-white/35 transition appearance-none cursor-pointer rounded-none";
+
+  const StepBar = () => (
+    <div className="flex gap-2 mb-10">
+      {[1, 2, 3].map((s) => (
+        <div
+          key={s}
+          className={`h-px flex-1 transition-all duration-500 ${
+            s <= formStep ? "bg-white/55" : "bg-white/12"
+          }`}
+        />
+      ))}
+    </div>
+  );
 
   return (
     <main className="min-h-screen bg-black text-white">
@@ -87,10 +113,10 @@ export default function LandingPage() {
             className="max-h-[92vh] max-w-[92vw] rounded-xl object-contain shadow-2xl"
           />
           <button
-            className="absolute right-6 top-6 text-white/50 transition hover:text-white"
+            className="absolute right-6 top-6 text-white/40 transition hover:text-white"
             onClick={() => setLightbox(null)}
           >
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
               <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
             </svg>
           </button>
@@ -100,13 +126,12 @@ export default function LandingPage() {
       {/* ── Contact Form Modal ── */}
       {formOpen && (
         <div
-          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/85 p-4 backdrop-blur-sm"
-          onClick={(e) => { if (e.target === e.currentTarget) setFormOpen(false); }}
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/88 p-4 backdrop-blur-sm"
+          onClick={(e) => { if (e.target === e.currentTarget) { setFormOpen(false); setFormSent(false); setFormStep(1); } }}
         >
-          <div className="relative w-full max-w-xl max-h-[90vh] overflow-y-auto bg-[#0d0d0d] border border-white/10">
-            {/* Close */}
+          <div className="relative w-full max-w-lg max-h-[90vh] overflow-y-auto bg-[#0f0f0e] border border-white/10">
             <button
-              className="absolute right-5 top-5 text-white/40 transition hover:text-white z-10"
+              className="absolute right-5 top-5 text-white/35 transition hover:text-white z-10"
               onClick={() => { setFormOpen(false); setFormSent(false); setFormStep(1); }}
             >
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
@@ -114,9 +139,9 @@ export default function LandingPage() {
               </svg>
             </button>
 
-            <div className="px-8 py-10">
+            <div className="px-8 py-10 pr-12">
               {formSent ? (
-                <div className="text-center py-8">
+                <div className="py-8">
                   <p className="text-xs uppercase tracking-[0.45em] text-white/40 mb-6">Enviado</p>
                   <h3 className="text-3xl font-light text-white mb-6">Recebemos sua solicitação.</h3>
                   <p className="text-sm font-light leading-7 text-white/55">
@@ -132,22 +157,12 @@ export default function LandingPage() {
                     Conte-nos sobre sua viagem.
                   </h3>
 
-                  {/* Step indicator */}
-                  <div className="flex gap-2 mb-10">
-                    {[1, 2, 3].map((s) => (
-                      <div
-                        key={s}
-                        className={`h-px flex-1 transition-all duration-500 ${
-                          s <= formStep ? "bg-white/60" : "bg-white/15"
-                        }`}
-                      />
-                    ))}
-                  </div>
+                  <StepBar />
 
-                  {/* Step 1 — Contato */}
+                  {/* ── Step 1 — Identificação ── */}
                   {formStep === 1 && (
-                    <div className="space-y-4">
-                      <p className="text-xs uppercase tracking-[0.35em] text-white/35 mb-6">
+                    <div className="space-y-3">
+                      <p className="text-xs uppercase tracking-[0.35em] text-white/30 mb-6">
                         Etapa 1 de 3 — Identificação
                       </p>
                       <input
@@ -163,62 +178,95 @@ export default function LandingPage() {
                         value={formData.email}
                         onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                       />
-                      <input
-                        className={inputClass}
-                        placeholder="WhatsApp (com DDD)"
-                        value={formData.whatsapp}
-                        onChange={(e) => setFormData({ ...formData, whatsapp: e.target.value })}
-                      />
                       <button
                         onClick={() => setFormStep(2)}
                         disabled={!formData.nome || !formData.email}
-                        className="mt-4 w-full border border-white/30 py-4 text-xs uppercase tracking-[0.35em] text-white transition hover:bg-white hover:text-black disabled:opacity-30 disabled:cursor-not-allowed"
+                        className="mt-4 w-full border border-white/25 py-4 text-xs uppercase tracking-[0.35em] text-white transition hover:bg-white hover:text-black disabled:opacity-25 disabled:cursor-not-allowed"
                       >
                         Continuar
                       </button>
                     </div>
                   )}
 
-                  {/* Step 2 — Viagem */}
+                  {/* ── Step 2 — Detalhes da viagem ── */}
                   {formStep === 2 && (
-                    <div className="space-y-4">
-                      <p className="text-xs uppercase tracking-[0.35em] text-white/35 mb-6">
+                    <div className="space-y-3">
+                      <p className="text-xs uppercase tracking-[0.35em] text-white/30 mb-6">
                         Etapa 2 de 3 — Detalhes da viagem
                       </p>
+
                       <input
                         className={inputClass}
                         placeholder="Datas previstas (ex: 10 a 25 de outubro de 2025)"
                         value={formData.datas}
                         onChange={(e) => setFormData({ ...formData, datas: e.target.value })}
                       />
-                      <select
-                        className={selectClass}
-                        value={formData.pessoas}
-                        onChange={(e) => setFormData({ ...formData, pessoas: e.target.value })}
-                      >
-                        <option value="" disabled>Número de viajantes</option>
-                        <option>1 pessoa</option>
-                        <option>2 pessoas</option>
-                        <option>3 a 4 pessoas</option>
-                        <option>5 ou mais pessoas</option>
-                      </select>
+
+                      <div className="relative">
+                        <select
+                          className={selectClass}
+                          value={formData.pessoas}
+                          onChange={(e) => setFormData({ ...formData, pessoas: e.target.value })}
+                          style={{ colorScheme: "dark" }}
+                        >
+                          <option value="" disabled style={{ background: "#1a1a18", color: "#fff" }}>
+                            Número de viajantes
+                          </option>
+                          {["1 pessoa", "2 pessoas", "3 a 4 pessoas", "5 ou mais pessoas"].map((o) => (
+                            <option key={o} value={o} style={{ background: "#1a1a18", color: "#fff" }}>{o}</option>
+                          ))}
+                        </select>
+                        <div className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-white/40">
+                          <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" strokeWidth="1.5">
+                            <polyline points="2,4 6,8 10,4" />
+                          </svg>
+                        </div>
+                      </div>
+
                       <input
                         className={inputClass}
                         placeholder="Cidades de interesse (ex: Tokyo, Kyoto, Osaka)"
                         value={formData.cidades}
                         onChange={(e) => setFormData({ ...formData, cidades: e.target.value })}
                       />
+
+                      {/* PEP field */}
+                      <div>
+                        <p className="text-xs uppercase tracking-[0.3em] text-white/30 mb-2 mt-1">
+                          Pessoa politicamente exposta (PEP)?
+                        </p>
+                        <div className="flex gap-3">
+                          {[
+                            { value: "nao", label: "Não" },
+                            { value: "sim", label: "Sim" },
+                            { value: "prefiro", label: "Prefiro não informar" },
+                          ].map((opt) => (
+                            <button
+                              key={opt.value}
+                              onClick={() => setFormData({ ...formData, pep: opt.value })}
+                              className={`flex-1 py-3 text-xs uppercase tracking-[0.25em] border transition ${
+                                formData.pep === opt.value
+                                  ? "border-white/50 text-white bg-white/8"
+                                  : "border-white/12 text-white/40 hover:border-white/25 hover:text-white/70"
+                              }`}
+                            >
+                              {opt.label}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+
                       <div className="flex gap-3 mt-4">
                         <button
                           onClick={() => setFormStep(1)}
-                          className="flex-1 border border-white/15 py-4 text-xs uppercase tracking-[0.35em] text-white/50 transition hover:border-white/30 hover:text-white"
+                          className="flex-1 border border-white/12 py-4 text-xs uppercase tracking-[0.35em] text-white/40 transition hover:border-white/25 hover:text-white/70"
                         >
                           Voltar
                         </button>
                         <button
                           onClick={() => setFormStep(3)}
                           disabled={!formData.datas || !formData.pessoas}
-                          className="flex-1 border border-white/30 py-4 text-xs uppercase tracking-[0.35em] text-white transition hover:bg-white hover:text-black disabled:opacity-30 disabled:cursor-not-allowed"
+                          className="flex-1 border border-white/25 py-4 text-xs uppercase tracking-[0.35em] text-white transition hover:bg-white hover:text-black disabled:opacity-25 disabled:cursor-not-allowed"
                         >
                           Continuar
                         </button>
@@ -226,54 +274,88 @@ export default function LandingPage() {
                     </div>
                   )}
 
-                  {/* Step 3 — Perfil */}
+                  {/* ── Step 3 — Perfil ── */}
                   {formStep === 3 && (
-                    <div className="space-y-4">
-                      <p className="text-xs uppercase tracking-[0.35em] text-white/35 mb-6">
+                    <div className="space-y-3">
+                      <p className="text-xs uppercase tracking-[0.35em] text-white/30 mb-6">
                         Etapa 3 de 3 — Perfil e preferências
                       </p>
-                      <select
-                        className={selectClass}
-                        value={formData.perfil}
-                        onChange={(e) => setFormData({ ...formData, perfil: e.target.value })}
-                      >
-                        <option value="" disabled>Estilo de viagem</option>
-                        <option>Gastronomia e cultura</option>
-                        <option>Compras e artesanato</option>
-                        <option>Natureza e contemplação</option>
-                        <option>Experiência completa (misto)</option>
-                        <option>Ainda não sei — quero orientação</option>
-                      </select>
-                      <select
-                        className={selectClass}
-                        value={formData.orcamento}
-                        onChange={(e) => setFormData({ ...formData, orcamento: e.target.value })}
-                      >
-                        <option value="" disabled>Orçamento estimado (por pessoa, sem passagem)</option>
-                        <option>USD 5.000 – 10.000</option>
-                        <option>USD 10.000 – 20.000</option>
-                        <option>USD 20.000 – 40.000</option>
-                        <option>Acima de USD 40.000</option>
-                        <option>Prefiro não informar</option>
-                      </select>
+
+                      {/* Estilo de viagem — buttons instead of select */}
+                      <div>
+                        <p className="text-xs uppercase tracking-[0.3em] text-white/30 mb-2">
+                          Estilo de viagem
+                        </p>
+                        <div className="grid grid-cols-2 gap-2">
+                          {[
+                            "Gastronomia e cultura",
+                            "Compras e artesanato",
+                            "Natureza e contemplação",
+                            "Experiência completa",
+                            "Quero orientação",
+                          ].map((opt) => (
+                            <button
+                              key={opt}
+                              onClick={() => setFormData({ ...formData, perfil: opt })}
+                              className={`py-3 px-4 text-xs uppercase tracking-[0.2em] border text-left transition ${
+                                formData.perfil === opt
+                                  ? "border-white/50 text-white bg-white/8"
+                                  : "border-white/12 text-white/40 hover:border-white/25 hover:text-white/70"
+                              }`}
+                            >
+                              {opt}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+
+                      {/* Orçamento — buttons */}
+                      <div>
+                        <p className="text-xs uppercase tracking-[0.3em] text-white/30 mb-2 mt-2">
+                          Orçamento estimado (por pessoa, sem passagem)
+                        </p>
+                        <div className="grid grid-cols-2 gap-2">
+                          {[
+                            "USD 5.000 – 10.000",
+                            "USD 10.000 – 20.000",
+                            "USD 20.000 – 40.000",
+                            "Acima de USD 40.000",
+                            "Prefiro não informar",
+                          ].map((opt) => (
+                            <button
+                              key={opt}
+                              onClick={() => setFormData({ ...formData, orcamento: opt })}
+                              className={`py-3 px-4 text-xs uppercase tracking-[0.2em] border text-left transition ${
+                                formData.orcamento === opt
+                                  ? "border-white/50 text-white bg-white/8"
+                                  : "border-white/12 text-white/40 hover:border-white/25 hover:text-white/70"
+                              }`}
+                            >
+                              {opt}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+
                       <textarea
-                        className={`${inputClass} resize-none`}
-                        rows={3}
+                        className={`${inputClass} resize-none mt-2`}
+                        rows={2}
                         placeholder="Algo importante que devemos saber? (opcional)"
                         value={formData.observacoes}
                         onChange={(e) => setFormData({ ...formData, observacoes: e.target.value })}
                       />
+
                       <div className="flex gap-3 mt-4">
                         <button
                           onClick={() => setFormStep(2)}
-                          className="flex-1 border border-white/15 py-4 text-xs uppercase tracking-[0.35em] text-white/50 transition hover:border-white/30 hover:text-white"
+                          className="flex-1 border border-white/12 py-4 text-xs uppercase tracking-[0.35em] text-white/40 transition hover:border-white/25 hover:text-white/70"
                         >
                           Voltar
                         </button>
                         <button
                           onClick={handleSubmit}
                           disabled={!formData.perfil || !formData.orcamento}
-                          className="flex-1 border border-white/30 py-4 text-xs uppercase tracking-[0.35em] text-white transition hover:bg-white hover:text-black disabled:opacity-30 disabled:cursor-not-allowed"
+                          className="flex-1 border border-white/25 py-4 text-xs uppercase tracking-[0.35em] text-white transition hover:bg-white hover:text-black disabled:opacity-25 disabled:cursor-not-allowed"
                         >
                           Enviar
                         </button>
@@ -296,7 +378,6 @@ export default function LandingPage() {
         />
         <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/35 to-black" />
 
-        {/* Header — logo only, no nav */}
         <header
           className={`fixed left-0 right-0 top-0 z-50 flex items-center justify-between px-8 py-5 transition-all duration-700 md:px-16 ${
             scrolled ? "bg-black/20 backdrop-blur-2xl" : "bg-transparent"
@@ -320,7 +401,7 @@ export default function LandingPage() {
             Restaurantes impossíveis de encontrar, artesãos sem presença internacional, hotéis escolhidos pela experiência — não pelo nome.
           </p>
           <button
-            onClick={() => setFormOpen(true)}
+            onClick={openForm}
             className="mt-10 border border-white/30 px-8 py-4 text-xs uppercase tracking-[0.3em] text-white transition hover:bg-white hover:text-black"
           >
             Solicitar Atendimento
@@ -367,42 +448,12 @@ export default function LandingPage() {
 
           <div className="grid gap-px bg-white/[0.06] md:grid-cols-3">
             {[
-              {
-                category: "Gastronomia · Tokyo",
-                name: "Fukamachi",
-                note: "Tempura omakase. Sem reservas externas. Lista de espera via relação direta.",
-                img: "/images/gastro-hero.jpg",
-              },
-              {
-                category: "Gastronomia · Tokyo",
-                name: "Shunsuke",
-                note: "Kaiseki contemporâneo. Não aceita reservas internacionais por plataformas.",
-                img: "/images/zezankyo.jpg",
-              },
-              {
-                category: "Gastronomia · Tokyo",
-                name: "Sushi Arai",
-                note: "Sushi omakase de alto nível. Acesso apenas via indicação pessoal.",
-                img: "/images/sushi-arai.jpg",
-              },
-              {
-                category: "Hospedagem · Tokyo",
-                name: "Aman Tokyo",
-                note: "Curadoria de acomodação e experiências exclusivas para hóspedes.",
-                img: "/images/amankyoto.jpg",
-              },
-              {
-                category: "Gastronomia · Osaka",
-                name: "Niku Kappou Miyata",
-                note: "Wagyu kappo de altíssimo nível. Reserva somente via contato direto em japonês.",
-                img: "/images/nikufood.jpg",
-              },
-              {
-                category: "Gastronomia · Tokyo",
-                name: "Ao",
-                note: "Cozinha japonesa contemporânea. Uma das experiências mais difíceis de acessar em Tokyo.",
-                img: "/images/ao.jpg",
-              },
+              { category: "Gastronomia · Tokyo", name: "Fukamachi", note: "Tempura omakase. Sem reservas externas. Lista de espera via relação direta.", img: "/images/gastro-hero.jpg" },
+              { category: "Gastronomia · Tokyo", name: "Shunsuke", note: "Kaiseki contemporâneo. Não aceita reservas internacionais por plataformas.", img: "/images/zezankyo.jpg" },
+              { category: "Gastronomia · Tokyo", name: "Sushi Arai", note: "Sushi omakase de alto nível. Acesso apenas via indicação pessoal.", img: "/images/sushi-arai.jpg" },
+              { category: "Hospedagem · Tokyo", name: "Aman Tokyo", note: "Curadoria de acomodação e experiências exclusivas para hóspedes.", img: "/images/amankyoto.jpg" },
+              { category: "Gastronomia · Osaka", name: "Niku Kappou Miyata", note: "Wagyu kappo de altíssimo nível. Reserva somente via contato direto em japonês.", img: "/images/nikufood.jpg" },
+              { category: "Gastronomia · Tokyo", name: "Ao", note: "Cozinha japonesa contemporânea. Uma das experiências mais difíceis de acessar em Tokyo.", img: "/images/ao.jpg" },
             ].map((item) => (
               <div key={item.name} className="group relative overflow-hidden bg-black">
                 <div className="relative aspect-[4/3] overflow-hidden">
@@ -436,20 +487,14 @@ export default function LandingPage() {
             </h2>
           </div>
           <div className="space-y-10 text-lg font-light leading-9 text-white/68">
-            <p>
-              Os restaurantes que definem o topo da gastronomia japonesa não operam por plataformas, não respondem em inglês e não reservam para desconhecidos — nem mesmo para concierge de hotéis. Somente via relação pessoal.
-            </p>
-            <p>
-              Os melhores artesãos e produtos de cada categoria não fazem propaganda. Encontrá-los exige presença, idioma e anos de relação construída.
-            </p>
-            <p>
-              Encontrar o hotel certo para cada perfil exige mais que conhecer nomes famosos. Exige vivência real em cada propriedade.
-            </p>
+            <p>Os restaurantes que definem o topo da gastronomia japonesa não operam por plataformas, não respondem em inglês e não reservam para desconhecidos — nem mesmo para concierge de hotéis. Somente via relação pessoal.</p>
+            <p>Os melhores artesãos e produtos de cada categoria não fazem propaganda. Encontrá-los exige presença, idioma e anos de relação construída.</p>
+            <p>Encontrar o hotel certo para cada perfil exige mais que conhecer nomes famosos. Exige vivência real em cada propriedade.</p>
           </div>
         </div>
       </section>
 
-      {/* ── 5. CTA INTERMEDIÁRIO — dark gray bg ── */}
+      {/* ── 5. CTA INTERMEDIÁRIO ── */}
       <section className="border-b border-white/10 bg-[#111110] px-8 py-20 md:px-16">
         <div className="mx-auto max-w-7xl flex flex-col gap-8 md:flex-row md:items-center md:justify-between">
           <div>
@@ -460,15 +505,14 @@ export default function LandingPage() {
           </div>
           <div className="flex flex-wrap gap-4 shrink-0">
             <button
-              onClick={() => setFormOpen(true)}
+              onClick={openForm}
               className="border border-white/30 px-8 py-4 text-xs uppercase tracking-[0.3em] text-white transition hover:bg-white hover:text-black"
             >
               Entrar em contato
             </button>
             <a
               href="https://wa.me/5511996691818"
-              target="_blank"
-              rel="noopener noreferrer"
+              target="_blank" rel="noopener noreferrer"
               className="border border-white/10 px-8 py-4 text-xs uppercase tracking-[0.3em] text-white/55 transition hover:border-white/30 hover:text-white"
             >
               WhatsApp
@@ -477,9 +521,11 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ── 6. O PRODUTO — 3 níveis + screenshots ── */}
+      {/* ── 6. O PRODUTO ── */}
       <section id="execucao" className="border-b border-white/10 px-8 py-28 md:px-16">
         <div className="mx-auto max-w-7xl">
+
+          {/* Header */}
           <div className="mb-16 max-w-4xl">
             <p className="mb-6 text-xs uppercase tracking-[0.45em] text-white/45">O produto</p>
             <h2 className="text-4xl font-light leading-tight md:text-6xl">
@@ -490,42 +536,57 @@ export default function LandingPage() {
             </p>
           </div>
 
-          {/* 3 tiers summary */}
-          <div className="mb-16 grid gap-px bg-white/[0.06] md:grid-cols-3">
+          {/* 3 tiers — clean text, no escape links */}
+          <div className="mb-2 grid gap-px bg-white/[0.06] md:grid-cols-3">
             {[
               {
-                tier: "Design",
-                label: "Orientação estratégica",
+                label: "Planejamento",
+                name: "Alpinea Design",
                 desc: "Roteiro personalizado e curadoria de destino. O cliente conduz a viagem com uma base Alpinea.",
+                highlight: false,
               },
               {
-                tier: "Executive",
-                label: "Planejamento completo",
+                label: "Execução completa",
+                name: "Alpinea Executive",
                 desc: "Roteiro, hotéis, reservas de restaurantes, logística e concierge remoto durante a estadia.",
+                highlight: false,
               },
               {
-                tier: "Private",
                 label: "Acompanhamento presencial",
-                desc: "Tudo do Executive mais presença local em restaurantes, compras e atrações. Execução dedicada no Japão.",
+                name: "Alpinea Private",
+                desc: "Tudo do Executive mais presença local dedicada em restaurantes, compras e atrações no Japão.",
                 highlight: true,
               },
             ].map((t) => (
               <div
-                key={t.tier}
-                className={`px-8 py-10 ${t.highlight ? "bg-white/[0.04]" : "bg-black"}`}
+                key={t.name}
+                className={`px-8 py-10 ${t.highlight ? "bg-white/[0.045]" : "bg-black"}`}
               >
-                <p className="mb-2 text-xs uppercase tracking-[0.45em] text-white/35">{t.label}</p>
-                <h3 className="mb-5 text-2xl font-light text-white">Alpinea {t.tier}</h3>
+                <p className="mb-3 text-xs uppercase tracking-[0.4em] text-white/35">{t.label}</p>
+                <h3 className={`mb-5 text-2xl font-light ${t.highlight ? "text-[#D96A2E]" : "text-white"}`}>
+                  {t.name}
+                </h3>
                 <p className="text-sm font-light leading-7 text-white/50">{t.desc}</p>
-                <a
-                  href="/services"
-                  className="mt-8 inline-block text-xs uppercase tracking-[0.3em] text-white/35 transition hover:text-white"
-                >
-                  Ver detalhes →
-                </a>
               </div>
             ))}
           </div>
+
+          {/* Subtle separator between tiers and screenshots */}
+          <div className="mb-16 flex items-center gap-4 pt-2">
+            <div className="h-px flex-1 bg-white/[0.06]" />
+            <a
+              href="/services"
+              className="text-xs uppercase tracking-[0.3em] text-white/25 transition hover:text-white/60"
+            >
+              Comparar formatos →
+            </a>
+            <div className="h-px flex-1 bg-white/[0.06]" />
+          </div>
+
+          {/* Screenshots label */}
+          <p className="mb-8 text-xs uppercase tracking-[0.45em] text-white/30">
+            Exemplos do produto
+          </p>
 
           {/* Screenshots */}
           <div className="grid gap-6 md:grid-cols-3">
@@ -569,12 +630,8 @@ export default function LandingPage() {
             </h2>
           </div>
           <div className="space-y-8 text-lg font-light leading-9 text-white/68">
-            <p>
-              A Alpinea desenha jornadas privadas no Japão com curadoria de hotéis, restaurantes, logística, compras, experiências e acompanhamento presencial quando necessário.
-            </p>
-            <p>
-              Cada detalhe é pensado para reduzir ruído, antecipar problemas e transformar a viagem em uma experiência fluida, precisa e profundamente personalizada.
-            </p>
+            <p>A Alpinea desenha jornadas privadas no Japão com curadoria de hotéis, restaurantes, logística, compras, experiências e acompanhamento presencial quando necessário.</p>
+            <p>Cada detalhe é pensado para reduzir ruído, antecipar problemas e transformar a viagem em uma experiência fluida, precisa e profundamente personalizada.</p>
           </div>
         </div>
       </section>
@@ -592,18 +649,12 @@ export default function LandingPage() {
                 Acompanhe a Alpinea no Instagram e YouTube para ver uma leitura real do Japão: gastronomia, bairros, hotéis, experiências e bastidores de curadoria.
               </p>
               <div className="mt-10 flex flex-wrap gap-4">
-                <a
-                  href="https://www.instagram.com/alpinea.private"
-                  target="_blank" rel="noopener noreferrer"
-                  className="border border-white/20 px-6 py-4 text-xs uppercase tracking-[0.3em] text-white/75 transition hover:border-white hover:text-white"
-                >
+                <a href="https://www.instagram.com/alpinea.private" target="_blank" rel="noopener noreferrer"
+                  className="border border-white/20 px-6 py-4 text-xs uppercase tracking-[0.3em] text-white/75 transition hover:border-white hover:text-white">
                   Instagram
                 </a>
-                <a
-                  href="https://www.youtube.com/@alpinea.private"
-                  target="_blank" rel="noopener noreferrer"
-                  className="border border-white/20 px-6 py-4 text-xs uppercase tracking-[0.3em] text-white/75 transition hover:border-white hover:text-white"
-                >
+                <a href="https://www.youtube.com/@alpinea.private" target="_blank" rel="noopener noreferrer"
+                  className="border border-white/20 px-6 py-4 text-xs uppercase tracking-[0.3em] text-white/75 transition hover:border-white hover:text-white">
                   YouTube
                 </a>
               </div>
@@ -636,7 +687,7 @@ export default function LandingPage() {
           </p>
           <div className="mt-12 flex flex-col justify-center gap-4 md:flex-row">
             <button
-              onClick={() => setFormOpen(true)}
+              onClick={openForm}
               className="border border-black px-10 py-5 text-xs uppercase tracking-[0.35em] transition hover:bg-black hover:text-white"
             >
               Entrar em contato
@@ -671,7 +722,6 @@ export default function LandingPage() {
               </div>
             </div>
           </div>
-          {/* Nav links moved to footer */}
           <div className="flex flex-wrap items-center gap-8 text-xs uppercase tracking-[0.25em] text-white/40">
             <a href="/" className="transition hover:text-white">Início</a>
             <a href="/services" className="transition hover:text-white">Serviços</a>
