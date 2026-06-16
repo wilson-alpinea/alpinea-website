@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 
 export default function LandingPage() {
   const [scrolled, setScrolled] = useState(false);
+  const [lightbox, setLightbox] = useState<string | null>(null);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 50);
@@ -11,8 +12,41 @@ export default function LandingPage() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setLightbox(null);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
+
   return (
     <main className="min-h-screen bg-black text-white">
+
+      {/* ── Lightbox overlay ── */}
+      {lightbox && (
+        <div
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/92 p-6 backdrop-blur-sm cursor-zoom-out"
+          onClick={() => setLightbox(null)}
+        >
+          <img
+            src={lightbox}
+            alt="Visualização ampliada"
+            className="max-h-[92vh] max-w-[92vw] rounded-xl object-contain shadow-2xl"
+          />
+          <button
+            className="absolute right-6 top-6 text-white/50 transition hover:text-white"
+            onClick={() => setLightbox(null)}
+            aria-label="Fechar"
+          >
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+              <line x1="18" y1="6" x2="6" y2="18" />
+              <line x1="6" y1="6" x2="18" y2="18" />
+            </svg>
+          </button>
+        </div>
+      )}
+
       <section className="relative h-[50vh] min-h-[520px] overflow-hidden">
         <video
           className="absolute inset-0 h-full w-full object-cover"
@@ -70,47 +104,40 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ── Estrutura Alpinea — redesigned for ultra-luxury audience ── */}
-      <section className="px-8 py-32 md:px-16">
+      {/* ── Estrutura Alpinea — original 4-col grid layout ── */}
+      <section className="border-b border-white/10 px-8 py-24 md:px-16">
         <div className="mx-auto max-w-7xl">
-          <p className="mb-20 text-xs uppercase tracking-[0.45em] text-white/30">
+          <p className="mb-12 text-xs uppercase tracking-[0.45em] text-white/40">
             Estrutura Alpinea
           </p>
 
-          <div className="grid gap-20 md:grid-cols-2 md:gap-x-24 md:gap-y-20">
+          <div className="grid gap-0 border-y border-white/10 md:grid-cols-4">
             {[
               {
-                stat: "+12",
-                unit: "anos",
-                text: "Vivência contínua no Japão — gastronomia, hotéis, cultura e relações locais construídas ao longo de uma década.",
+                title: "+12 anos",
+                text: "Vivência contínua no Japão, entre gastronomia, hotéis, cultura, logística e relações locais.",
               },
               {
-                stat: "日本語",
-                unit: "fluente",
-                text: "Comunicação direta com restaurantes, artesãos e fornecedores. Sem intermediários, sem ruído.",
+                title: "Idioma japonês",
+                text: "Comunicação direta com restaurantes, artesãos, hotéis e fornecedores locais.",
               },
               {
-                stat: "BR",
-                unit: "→ JP",
-                text: "Experiência especializada numa das rotas internacionais mais relevantes para o cliente brasileiro de alto padrão.",
+                title: "Brasil–Japão",
+                text: "Experiência especializada em uma das rotas internacionais mais relevantes para o cliente brasileiro.",
               },
               {
-                stat: "2",
-                unit: "países",
-                text: "Estrutura empresarial no Brasil e no Japão, com operação desenhada para o mercado de luxo.",
+                title: "Brasil · Japão",
+                text: "Estrutura empresarial nos dois países, com operação desenhada para o mercado de luxo.",
               },
             ].map((item) => (
-              <div key={item.stat} className="group">
-                <div className="flex items-baseline gap-3 mb-6">
-                  <span className="text-5xl font-light tracking-tight text-white md:text-6xl">
-                    {item.stat}
-                  </span>
-                  <span className="text-xs uppercase tracking-[0.35em] text-white/35">
-                    {item.unit}
-                  </span>
-                </div>
-                <div className="h-px w-12 bg-white/20 mb-6 transition-all duration-500 group-hover:w-24 group-hover:bg-white/40" />
-                <p className="text-sm font-light leading-7 text-white/50 max-w-xs">
+              <div
+                key={item.title}
+                className="border-white/10 py-10 md:border-r md:px-10 last:md:border-r-0"
+              >
+                <h3 className="text-2xl font-light tracking-tight text-white md:text-3xl">
+                  {item.title}
+                </h3>
+                <p className="mt-6 max-w-[280px] text-sm font-light leading-7 text-white/55">
                   {item.text}
                 </p>
               </div>
@@ -171,7 +198,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ── Execução — screenshots with zoom, no outer border ── */}
+      {/* ── Execução — screenshots with zoom lightbox, no outer border ── */}
       <section id="execucao" className="border-b border-white/10 px-8 py-28 md:px-16">
         <div className="mx-auto max-w-7xl">
           <div className="mb-16 max-w-4xl">
@@ -194,16 +221,28 @@ export default function LandingPage() {
               ["/images/ss-restaurantes.png", "Reservas gastronômicas"],
               ["/images/ss-rcompras.png", "Assessoria de compras"],
             ].map(([src, title]) => (
-              <div key={title} className="group">
-                {/* No outer card border — just the image with rounded corners + zoom */}
+              <div
+                key={title}
+                className="group cursor-zoom-in"
+                onClick={() => setLightbox(src)}
+              >
                 <div className="relative aspect-[4/5] overflow-hidden rounded-[22px] bg-white/5">
                   <img
                     src={src}
                     alt={title}
                     className="h-full w-full object-cover object-top transition-transform duration-700 ease-out group-hover:scale-105"
                   />
-                  {/* subtle vignette on hover */}
-                  <div className="absolute inset-0 bg-black/0 transition-colors duration-500 group-hover:bg-black/10 rounded-[22px]" />
+                  {/* zoom icon overlay */}
+                  <div className="absolute inset-0 flex items-center justify-center bg-black/0 transition-colors duration-300 group-hover:bg-black/20 rounded-[22px]">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-black/60 opacity-0 backdrop-blur-sm transition-opacity duration-300 group-hover:opacity-100">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.5">
+                        <circle cx="11" cy="11" r="8" />
+                        <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                        <line x1="11" y1="8" x2="11" y2="14" />
+                        <line x1="8" y1="11" x2="14" y2="11" />
+                      </svg>
+                    </div>
+                  </div>
                 </div>
 
                 <p className="mt-5 text-xs uppercase tracking-[0.35em] text-white/45">
@@ -215,10 +254,10 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ── Presença digital — vertical layout with both feeds ── */}
+      {/* ── Presença digital — vertical stack, no channel labels ── */}
       <section className="border-b border-white/10 px-8 py-28 md:px-16">
         <div className="mx-auto max-w-7xl">
-          <div className="mb-16 md:grid md:grid-cols-[0.9fr_1.1fr] md:gap-16 md:items-start">
+          <div className="md:grid md:grid-cols-[0.9fr_1.1fr] md:gap-16 md:items-start">
             <div className="mb-12 md:mb-0 md:sticky md:top-24">
               <p className="mb-6 text-xs uppercase tracking-[0.45em] text-white/45">
                 Presença digital
@@ -253,37 +292,25 @@ export default function LandingPage() {
               </div>
             </div>
 
-            {/* Vertical stack: YouTube then Instagram */}
+            {/* Vertical stack: YouTube (landscape) then Instagram (portrait) */}
             <div className="flex flex-col gap-6">
-              {/* YouTube feed */}
-              <div>
-                <p className="mb-3 text-xs uppercase tracking-[0.35em] text-white/30">
-                  YouTube
-                </p>
-                <div className="overflow-hidden rounded-[22px] bg-white/5">
-                  <div className="relative aspect-[4/3] overflow-hidden rounded-[22px]">
-                    <img
-                      src="/images/youtube-feed.png"
-                      alt="Feed do YouTube Alpinea Private"
-                      className="h-full w-full object-cover object-top"
-                    />
-                  </div>
+              <div className="overflow-hidden rounded-[22px] bg-white/5">
+                <div className="relative aspect-[4/3] overflow-hidden rounded-[22px]">
+                  <img
+                    src="/images/youtube-feed.png"
+                    alt="Feed do YouTube Alpinea Private"
+                    className="h-full w-full object-cover object-top"
+                  />
                 </div>
               </div>
 
-              {/* Instagram feed */}
-              <div>
-                <p className="mb-3 text-xs uppercase tracking-[0.35em] text-white/30">
-                  Instagram
-                </p>
-                <div className="overflow-hidden rounded-[22px] bg-white/5">
-                  <div className="relative aspect-[4/3] overflow-hidden rounded-[22px]">
-                    <img
-                      src="/images/ss-ig.png"
-                      alt="Feed do Instagram Alpinea Private"
-                      className="h-full w-full object-cover object-top"
-                    />
-                  </div>
+              <div className="overflow-hidden rounded-[22px] bg-white/5">
+                <div className="relative aspect-[9/16] overflow-hidden rounded-[22px]">
+                  <img
+                    src="/images/ss-ig.png"
+                    alt="Feed do Instagram Alpinea Private"
+                    className="h-full w-full object-cover object-top"
+                  />
                 </div>
               </div>
             </div>
