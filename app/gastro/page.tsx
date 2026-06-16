@@ -50,78 +50,54 @@ export default function GastroPage() {
       <div className="border-t border-white/10" />
 
       {/* O Mercado */}
-      <section className="px-8 py-28 md:px-16">
+      <section className="overflow-hidden">
         <div className="mx-auto max-w-7xl">
-          <div className="grid gap-20 lg:grid-cols-[1fr_1.6fr]">
-            <div className="flex flex-col gap-10">
-              <div>
-                <p className="mb-6 text-xs uppercase tracking-[0.35em] text-white/35">O Acesso</p>
-                <h2 className="text-3xl font-light text-white md:text-4xl">Por que é difícil reservar bem no Japão</h2>
-              </div>
-              <div className="overflow-hidden rounded-2xl">
-                <Image
-                  src="/images/saotome.png"
-                  alt="Chef Tetsuya Saotome — Mikawa Zezankyo"
-                  width={600}
-                  height={800}
-                  className="w-full object-cover"
-                />
-              </div>
-              <p className="text-xs leading-6 text-white/25">
-                Chef Tetsuya Saotome · Mikawa Zezankyo · mais de 60 anos de ofício
+          <div className="grid gap-0 lg:grid-cols-2">
+            {/* Esquerda — imagem Saotome ocupa a altura toda */}
+            <div className="relative min-h-[560px] overflow-hidden lg:min-h-full">
+              <Image
+                src="/images/saotome.png"
+                alt="Chef Tetsuya Saotome — Mikawa Zezankyo"
+                fill
+                className="object-cover object-center"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+              <p className="absolute bottom-8 left-8 text-xs leading-6 text-white/30">
+                Tetsuya Saotome · Mikawa Zezankyo · 60 anos de ofício
               </p>
             </div>
-            <div className="space-y-0">
-              {/* Bloco principal */}
-              <div className="border-t border-white/10 pt-10 pb-6">
-                <p className="text-base font-light leading-9 text-white/60">
-                  A Alpinea viabiliza acesso a casas estreladas pelo Guia Michelin, referências no Tabelog e endereços quase impossíveis de reservar por conta própria, sempre com curadoria privada e atenção absoluta aos detalhes.
+
+            {/* Direita — texto editorial */}
+            <div className="flex flex-col justify-center gap-12 px-12 py-20 lg:px-16">
+              <div>
+                <p className="mb-8 text-xs uppercase tracking-[0.45em] text-white/25">O Acesso</p>
+                <h2 className="text-4xl font-light leading-[1.1] text-white md:text-5xl">
+                  Reservar no Japão<br />é um ofício à parte.
+                </h2>
+              </div>
+
+              <div className="space-y-8 border-t border-white/10 pt-10">
+                <p className="text-base font-light leading-9 text-white/55">
+                  Os restaurantes que definem o topo da gastronomia japonesa não operam por plataformas, não respondem em inglês e não reservam para desconhecidos. O acesso é construído ao longo de anos — de visitas, de relações, de presença.
                 </p>
-                <p className="mt-6 text-base font-light leading-9 text-white/60">
-                  Mais do que uma reserva, proporcionamos experiências gastronômicas exclusivas, construídas através de relacionamento, repertório e profundo entendimento da cena culinária japonesa.
+                <p className="text-base font-light leading-9 text-white/55">
+                  A Alpinea viabiliza esse acesso. Não como intermediário, mas como interlocutor permanente de uma rede que levou mais de uma década para ser construída.
                 </p>
               </div>
 
-              {/* Stat 1 */}
-              <div className="border-t border-white/10 py-10 grid gap-8 sm:grid-cols-[160px_1fr] items-start">
-                <div className="leading-none pt-1">
-                  <p className="text-4xl font-light text-white/20 tabular-nums leading-none">2</p>
-                  <p className="text-sm uppercase tracking-[0.2em] text-white/20 mt-1">anos</p>
+              <div className="space-y-0 border-t border-white/10 pt-10">
+                <div className="flex items-baseline gap-6 py-5 border-b border-white/[0.06]">
+                  <span className="text-xs uppercase tracking-[0.3em] text-white/20 w-28 shrink-0">Reserva</span>
+                  <span className="text-sm font-light text-white/50">Casas que não aceitam solicitações externas</span>
                 </div>
-                <div>
-                  <p className="text-white font-light text-base leading-7">de espera nos endereços mais disputados</p>
-                  <p className="mt-3 text-sm leading-7 text-white/50">
-                    Casas como Sushi Saito e Sukiyabashi Jiro operam com lista de espera que ultrapassa dois anos. O acesso sem intermediação qualificada é, na prática, impossível para quem não tem relação direta com o chef ou com a casa.
-                  </p>
+                <div className="flex items-baseline gap-6 py-5 border-b border-white/[0.06]">
+                  <span className="text-xs uppercase tracking-[0.3em] text-white/20 w-28 shrink-0">Idioma</span>
+                  <span className="text-sm font-light text-white/50">Fluência em japonês em todas as interações</span>
                 </div>
-              </div>
-
-              {/* Stat 2 */}
-              <div className="border-t border-white/10 py-10 grid gap-8 sm:grid-cols-[160px_1fr] items-start">
-                <p className="text-4xl font-light text-white/20 tabular-nums leading-none pt-1">日本語</p>
-                <div>
-                  <p className="text-white font-light text-base leading-7">barreira de idioma e cultura</p>
-                  <p className="mt-3 text-sm leading-7 text-white/50">
-                    A maioria dos restaurantes de referência no Japão não opera em inglês — nem nos sistemas de reserva, nem nos menus, nem nas interações com o chef. A fluência em japonês e o entendimento cultural são pré-requisitos reais para a experiência funcionar no nível esperado.
-                  </p>
+                <div className="flex items-baseline gap-6 py-5">
+                  <span className="text-xs uppercase tracking-[0.3em] text-white/20 w-28 shrink-0">Curadoria</span>
+                  <span className="text-sm font-light text-white/50">Seleção baseada em repertório real, não rankings</span>
                 </div>
-              </div>
-
-              {/* Stat 3 */}
-              <div className="border-t border-white/10 py-10 grid gap-8 sm:grid-cols-[160px_1fr] items-start">
-                <p className="text-4xl font-light text-white/20 tabular-nums leading-none pt-1">~30</p>
-                <div>
-                  <p className="text-white font-light text-base leading-7">restaurantes de referência absoluta no Japão</p>
-                  <p className="mt-3 text-sm leading-7 text-white/50">
-                    Em um país com dezenas de milhares de estabelecimentos, identificar os 30 endereços que operam no nível mais alto — e saber qual deles faz sentido para cada perfil de cliente — exige anos de visitas, relações e repertório acumulado.
-                  </p>
-                </div>
-              </div>
-
-              <div className="border-t border-white/10 pt-10">
-                <p className="text-sm leading-7 text-white/35 italic">
-                  A curadoria Alpinea existe para eliminar esse atrito — e para garantir que o cliente sente na mesa certa, no momento certo, sem deixar nada ao acaso.
-                </p>
               </div>
             </div>
           </div>
@@ -132,9 +108,23 @@ export default function GastroPage() {
       <section className="border-t border-white/10 bg-white/[0.02] px-8 py-28 md:px-16">
         <div className="mx-auto max-w-7xl">
           <div className="grid gap-20 lg:grid-cols-[1fr_1.6fr]">
-            <div>
-              <p className="mb-6 text-xs uppercase tracking-[0.35em] text-white/35">Caso Executado</p>
-              <h2 className="text-3xl font-light text-white md:text-4xl">Perfil do cliente</h2>
+            <div className="flex flex-col gap-10">
+              <div>
+                <p className="mb-6 text-xs uppercase tracking-[0.35em] text-white/35">Caso Executado</p>
+                <h2 className="text-3xl font-light text-white md:text-4xl">Perfil do cliente</h2>
+              </div>
+              <div className="overflow-hidden rounded-2xl">
+                <Image
+                  src="/images/etxebarri.png"
+                  alt="Asador Etxebarri — txuleta grelhada no carvão"
+                  width={600}
+                  height={600}
+                  className="w-full object-cover"
+                />
+              </div>
+              <p className="text-xs leading-6 text-white/25">
+                Asador Etxebarri · Atxondo, Bilbao · referência do cliente antes do Japão
+              </p>
             </div>
             <div className="space-y-6 text-base font-light leading-9 text-white/60">
               <p>
