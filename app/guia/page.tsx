@@ -25,7 +25,7 @@ export default function GastroPage() {
       <section className="relative min-h-[640px] overflow-hidden px-8 pb-28 pt-40 md:px-16 md:pt-52">
         <div className="absolute inset-0">
           <Image
-            src="/gastro/gastro-hero.png"
+            src="/images/gastro-hero.png"
             alt="Entrada de restaurante japonês de referência com noren marrom"
             fill
             className="object-cover object-center"
@@ -58,6 +58,18 @@ export default function GastroPage() {
                 <p className="mb-6 text-xs uppercase tracking-[0.35em] text-white/35">O Acesso</p>
                 <h2 className="text-3xl font-light text-white md:text-4xl">Por que é difícil reservar bem no Japão</h2>
               </div>
+              <div className="overflow-hidden rounded-2xl">
+                <Image
+                  src="/images/saotome.png"
+                  alt="Chef Tetsuya Saotome — Mikawa Zezankyo"
+                  width={600}
+                  height={800}
+                  className="w-full object-cover"
+                />
+              </div>
+              <p className="text-xs leading-6 text-white/25">
+                Chef Tetsuya Saotome · Mikawa Zezankyo · mais de 60 anos de ofício
+              </p>
             </div>
             <div className="space-y-0">
               {/* Bloco principal */}
@@ -192,7 +204,7 @@ export default function GastroPage() {
               {/* Sushi */}
               <div className="border-t border-white/10 py-10">
                 <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">Sushi</p>
-                <h3 className="text-2xl font-light text-white mb-4">Duas escolas, três perspectivas</h3>
+                <h3 className="text-2xl font-light text-white mb-4">3 escolas diferentes</h3>
                 <p className="text-sm leading-7 text-white/55">
                   O sushi contemporâneo no Japão é dominado por duas linhagens principais: a escola de Jiro Ono (Sukiyabashi Jiro) e a escola de Keiji Nakazawa (Sushi Sho). A curadoria contemplou um representante de cada escola, com um terceiro restaurante representando a nova geração de líderes do cenário.
                 </p>
@@ -259,7 +271,7 @@ export default function GastroPage() {
             <div className="flex flex-col gap-3">
               <div className="aspect-square overflow-hidden rounded-2xl border border-white/10">
                 <Image
-                  src="/gastro/harutaka.png"
+                  src="/images/harutaka.png"
                   alt="Harutaka — sushi nigiri de otoro"
                   width={420}
                   height={420}
@@ -275,7 +287,7 @@ export default function GastroPage() {
             <div className="flex flex-col gap-3">
               <div className="aspect-square overflow-hidden rounded-2xl border border-white/10">
                 <Image
-                  src="/gastro/zezankyo.jpeg"
+                  src="/images/zezankyo.jpeg"
                   alt="Mikawa Zezankyo — camarão tempurá"
                   width={420}
                   height={420}
@@ -291,7 +303,7 @@ export default function GastroPage() {
             <div className="flex flex-col gap-3">
               <div className="aspect-square overflow-hidden rounded-2xl border border-white/10">
                 <Image
-                  src="/gastro/sazenka.png"
+                  src="/images/sazenka.png"
                   alt="Sazenka — culinária contemporânea sino-japonesa"
                   width={420}
                   height={420}
@@ -307,7 +319,7 @@ export default function GastroPage() {
             <div className="flex flex-col gap-3">
               <div className="aspect-square overflow-hidden rounded-2xl border border-white/10">
                 <Image
-                  src="/gastro/sushi-sho.png"
+                  src="/images/sushi-sho.png"
                   alt="Sushi Sho Masa — nigiri"
                   width={420}
                   height={420}
@@ -323,7 +335,7 @@ export default function GastroPage() {
             <div className="flex flex-col gap-3">
               <div className="aspect-square overflow-hidden rounded-2xl border border-white/10">
                 <Image
-                  src="/gastro/nikufood.jpeg"
+                  src="/images/nikufood.jpeg"
                   alt="Niku Kappou Miyata — wagyu com caviar"
                   width={420}
                   height={420}
@@ -332,14 +344,14 @@ export default function GastroPage() {
               </div>
               <div>
                 <p className="text-sm font-light text-white">Niku Kappou Miyata</p>
-                <p className="text-xs uppercase tracking-[0.2em] text-white/30">Wagyu · Tokyo</p>
+                <p className="text-xs uppercase tracking-[0.2em] text-white/30">Wagyu · Kyoto</p>
               </div>
             </div>
 
             <div className="flex flex-col gap-3">
               <div className="aspect-square overflow-hidden rounded-2xl border border-white/10">
                 <Image
-                  src="/gastro/ogata.png"
+                  src="/images/ogata.png"
                   alt="Ogata — matsutake premium kaiseki"
                   width={420}
                   height={420}
@@ -355,7 +367,7 @@ export default function GastroPage() {
             <div className="flex flex-col gap-3">
               <div className="aspect-square overflow-hidden rounded-2xl border border-white/10">
                 <Image
-                  src="/gastro/sushi-arai.png"
+                  src="/images/sushi-arai.png"
                   alt="Sushi Arai — kohada"
                   width={420}
                   height={420}
@@ -406,7 +418,7 @@ export default function GastroPage() {
               },
               {
                 dia: "Dia 5",
-                cidade: "Tokyo",
+                cidade: "Kyoto",
                 restaurante: "Niku Kappou Miyata",
                 descricao:
                   "Menu-degustação de wagyu com amplitude incomum — do sushi de wagyu com caviar negro ao wagyusando. Um dos poucos formatos que percorre toda a expressão da carne mais valorizada do mundo em uma única refeição.",
@@ -491,7 +503,6 @@ export default function GastroPage() {
                   <p>Mikawa Zezankyo · Tempurá</p>
                   <p>Sazenka · Contemporâneo</p>
                   <p>Sushi Sho Masa · Sushi</p>
-                  <p>Niku Kappou Miyata · Wagyu</p>
                   <p>Sushi Arai · Sushi</p>
                 </div>
               </div>
@@ -499,6 +510,7 @@ export default function GastroPage() {
                 <p className="text-xs uppercase tracking-[0.2em] text-white/25 pt-1">Kyoto</p>
                 <div className="space-y-2 text-sm leading-7 text-white/55">
                   <p>Ogata · Kaiseki</p>
+                  <p>Niku Kappou Miyata · Wagyu</p>
                 </div>
               </div>
               <div className="border-t border-white/10 pt-10">
