@@ -232,7 +232,7 @@ export default function GastroPage() {
               {/* Kaiseki */}
               <div className="border-t border-white/10 py-10">
                 <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">Kaiseki</p>
-                <h3 className="text-2xl font-light text-white mb-4">Ogata · Kyoto</h3>
+                <h3 className="text-2xl font-light text-white mb-4">Ogata</h3>
                 <p className="text-sm leading-7 text-white/55">
                   Um dos líderes do kaiseki contemporâneo, o Ogata prima pela qualidade extrema das matérias-primas — cogumelo matsutake de primeira categoria, king crab — com apresentações que encontram o equilíbrio entre a tradição japonesa e a leitura do paladar ocidental. A escolha intencional: kaiseki clássicos seguem uma linha que ocidentais frequentemente têm dificuldade de acompanhar em profundidade.
                 </p>
@@ -241,7 +241,7 @@ export default function GastroPage() {
               {/* Contemporâneo */}
               <div className="border-t border-white/10 py-10">
                 <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">Contemporâneo</p>
-                <h3 className="text-2xl font-light text-white mb-4">Sazenka · Tokyo</h3>
+                <h3 className="text-2xl font-light text-white mb-4">Sazenka</h3>
                 <p className="text-sm leading-7 text-white/55">
                   Inspirado na culinária chinesa, o Sazenka traz releituras de clássicos utilizando técnica de preparo de alto nível, apresentação de fine dining e ingredientes da cozinha japonesa de elite. Uma fusão construída com repertório, não com experimentação — e uma das escolhas mais surpreendentes da semana para o perfil do cliente.
                 </p>

@@ -21,40 +21,40 @@ export default function GuiaFacasPage() {
         </nav>
       </header>
 
-      {/* Hero — grid layout igual /gastro */}
-      <section className="pt-28 md:pt-36 px-8 md:px-16 pb-0">
-        <div className="mx-auto max-w-7xl">
-          <div className="grid gap-6 lg:grid-cols-[1fr_1fr] lg:items-end">
-            {/* Esquerda — texto */}
-            <div className="pb-16 lg:pb-24">
-              <p className="mb-8 text-xs uppercase tracking-[0.45em] text-white/40">
-                Assessoria de Compras · Alpinea Private
-              </p>
-              <h1 className="text-5xl font-light leading-[1.05] tracking-tight md:text-6xl lg:text-7xl">
-                Curadoria<br />de Aquisição
-              </h1>
-              <p className="mt-10 max-w-md text-base font-light leading-9 text-white/55">
-                Identificar, selecionar e adquirir produtos no Japão — desde itens especializados a peças de altíssimo valor e acesso restrito.
-              </p>
-            </div>
-            {/* Direita — imagem */}
-            <div className="relative h-[480px] overflow-hidden rounded-t-2xl lg:h-[600px]">
-              <Image
-                src="/images/blacksmith.png"
-                alt="Artesão forjando faca japonesa"
-                fill
-                className="object-cover object-center"
-                priority
-              />
-            </div>
+      {/* Hero — fullscreen com imagem de fundo, igual /gastro */}
+      <section className="relative min-h-screen flex flex-col justify-end pb-20 md:pb-28">
+        {/* Imagem de fundo */}
+        <div className="absolute inset-0">
+          <Image
+            src="/images/blacksmith.png"
+            alt="Artesão forjando faca japonesa"
+            fill
+            className="object-cover object-center"
+            priority
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-black/20" />
+        </div>
+
+        {/* Conteúdo sobreposto */}
+        <div className="relative px-8 md:px-16">
+          <div className="mx-auto max-w-7xl">
+            <p className="mb-6 text-xs uppercase tracking-[0.45em] text-white/40">
+              Assessoria de Compras · Alpinea Private
+            </p>
+            <h1 className="text-5xl font-light leading-[1.05] tracking-tight md:text-6xl lg:text-7xl">
+              Curadoria<br />de Aquisição
+            </h1>
+            <p className="mt-8 max-w-lg text-base font-light leading-8 text-white/55">
+              Produtos de elite no Japão — identificados, selecionados e adquiridos com acesso direto aos artesãos.
+            </p>
           </div>
         </div>
       </section>
 
-      {/* O Mercado — vídeo grande à esquerda, stats à direita, igual /gastro */}
+      {/* O Mercado — vídeo grande à esquerda, stats à direita */}
       <section className="mt-0">
         <div className="grid lg:grid-cols-2 lg:min-h-[700px]">
-          {/* Esquerda — vídeo em tela cheia */}
+          {/* Esquerda — vídeo */}
           <div className="relative min-h-[400px] overflow-hidden lg:min-h-full">
             <video
               src="/videos/kiku-graving.mp4"
@@ -75,7 +75,6 @@ export default function GuiaFacasPage() {
             </h2>
 
             <div className="mt-12 space-y-0">
-              {/* Stat 1 */}
               <div className="border-t border-white/10 py-8 grid gap-6 grid-cols-[100px_1fr] items-start">
                 <p className="text-3xl font-light text-white/20 tabular-nums leading-none pt-0.5">+1.000</p>
                 <div>
@@ -86,7 +85,6 @@ export default function GuiaFacasPage() {
                 </div>
               </div>
 
-              {/* Stat 2 */}
               <div className="border-t border-white/10 py-8 grid gap-6 grid-cols-[100px_1fr] items-start">
                 <p className="text-3xl font-light text-white/20 tabular-nums leading-none pt-0.5">~30</p>
                 <div>
@@ -97,7 +95,6 @@ export default function GuiaFacasPage() {
                 </div>
               </div>
 
-              {/* Stat 3 */}
               <div className="border-t border-white/10 py-8 grid gap-6 grid-cols-[100px_1fr] items-start">
                 <div className="leading-none pt-0.5">
                   <p className="text-3xl font-light text-white/20 tabular-nums leading-none">2</p>
@@ -153,7 +150,6 @@ export default function GuiaFacasPage() {
       <section className="border-t border-white/10 px-8 py-28 md:px-16">
         <div className="mx-auto max-w-7xl">
           <div className="grid gap-20 lg:grid-cols-[1fr_1.6fr]">
-            {/* Esquerda */}
             <div>
               <p className="mb-6 text-xs uppercase tracking-[0.35em] text-white/35">Execução</p>
               <h2 className="text-3xl font-light text-white md:text-4xl">Seleção</h2>
@@ -182,7 +178,6 @@ export default function GuiaFacasPage() {
             <div className="space-y-0">
               <p className="mb-10 text-xs uppercase tracking-[0.35em] text-white/35">Seleção recomendada</p>
 
-              {/* Gyuto */}
               <div className="border-t border-white/10 py-10 grid gap-8 sm:grid-cols-[1fr_1.2fr] items-center">
                 <div>
                   <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">Uso geral</p>
@@ -202,7 +197,6 @@ export default function GuiaFacasPage() {
                 </div>
               </div>
 
-              {/* Yanagiba */}
               <div className="border-t border-white/10 py-10 grid gap-8 sm:grid-cols-[1fr_1.2fr] items-center">
                 <div>
                   <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">Corte de peixe</p>
@@ -222,7 +216,6 @@ export default function GuiaFacasPage() {
                 </div>
               </div>
 
-              {/* Deba */}
               <div className="border-t border-white/10 py-10 grid gap-8 sm:grid-cols-[1fr_1.2fr] items-center">
                 <div>
                   <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">Trabalho pesado</p>
@@ -251,7 +244,6 @@ export default function GuiaFacasPage() {
         <div className="mx-auto max-w-7xl">
           <p className="mb-12 text-xs uppercase tracking-[0.35em] text-white/35">Roteiro de Compras</p>
 
-          {/* Logos dos fabricantes */}
           <div className="mb-16 grid grid-cols-3 gap-6">
             <div className="aspect-square flex items-center justify-center overflow-hidden rounded-2xl border border-white/10 bg-white/[0.03] p-8">
               <Image
@@ -297,7 +289,6 @@ export default function GuiaFacasPage() {
           </div>
 
           <div className="space-y-0">
-            {/* Dia 1 */}
             <div className="grid gap-10 border-t border-white/10 py-10 lg:grid-cols-[180px_1fr] lg:items-start">
               <div>
                 <p className="text-xs uppercase tracking-[0.2em] text-white/25">Dia 1</p>
@@ -318,7 +309,6 @@ export default function GuiaFacasPage() {
               </div>
             </div>
 
-            {/* Dia 8 */}
             <div className="grid gap-10 border-t border-white/10 py-10 lg:grid-cols-[180px_1fr] lg:items-start">
               <div>
                 <p className="text-xs uppercase tracking-[0.2em] text-white/25">Dia 8</p>
@@ -335,7 +325,6 @@ export default function GuiaFacasPage() {
               </div>
             </div>
 
-            {/* Dia 10 */}
             <div className="grid gap-10 border-t border-white/10 py-10 lg:grid-cols-[180px_1fr] lg:items-start">
               <div>
                 <p className="text-xs uppercase tracking-[0.2em] text-white/25">Dia 10</p>
@@ -352,7 +341,6 @@ export default function GuiaFacasPage() {
               </div>
             </div>
 
-            {/* Dia 14 */}
             <div className="grid gap-10 border-t border-white/10 py-10 lg:grid-cols-[180px_1fr] lg:items-start">
               <div>
                 <p className="text-xs uppercase tracking-[0.2em] text-white/25">Dia 14</p>
@@ -460,8 +448,6 @@ export default function GuiaFacasPage() {
       <section className="border-t border-white/10 px-8 py-28 md:px-16">
         <div className="mx-auto max-w-7xl">
           <div className="grid gap-16 lg:grid-cols-[1fr_420px] lg:items-start">
-
-            {/* Texto */}
             <div>
               <p className="mb-6 text-xs uppercase tracking-[0.35em] text-white/35">Resultado</p>
               <h2 className="text-3xl font-light text-white md:text-4xl">O que não estava no roteiro</h2>
@@ -498,7 +484,6 @@ export default function GuiaFacasPage() {
               </p>
             </div>
 
-            {/* Foto do cliente */}
             <div className="lg:sticky lg:top-32">
               <div className="overflow-hidden rounded-2xl">
                 <Image
@@ -513,7 +498,6 @@ export default function GuiaFacasPage() {
                 As três peças Kikumori · Acabamento Choyo · Sakai, Osaka
               </p>
             </div>
-
           </div>
         </div>
       </section>
