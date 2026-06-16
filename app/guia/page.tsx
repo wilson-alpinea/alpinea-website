@@ -21,9 +21,8 @@ export default function GuiaFacasPage() {
         </nav>
       </header>
 
-      {/* Hero — fullscreen com imagem de fundo, igual /gastro */}
-      <section className="relative min-h-screen flex flex-col justify-end pb-20 md:pb-28">
-        {/* Imagem de fundo */}
+      {/* Hero — igual /gastro: seção com altura fixa, imagem de fundo, texto sobre */}
+      <section className="relative min-h-[85vh] flex flex-col justify-end px-8 pb-16 md:px-16 md:pb-24">
         <div className="absolute inset-0">
           <Image
             src="/images/blacksmith.png"
@@ -32,22 +31,19 @@ export default function GuiaFacasPage() {
             className="object-cover object-center"
             priority
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-black/20" />
+          <div className="absolute inset-0 bg-black/55" />
         </div>
 
-        {/* Conteúdo sobreposto */}
-        <div className="relative px-8 md:px-16">
-          <div className="mx-auto max-w-7xl">
-            <p className="mb-6 text-xs uppercase tracking-[0.45em] text-white/40">
-              Assessoria de Compras · Alpinea Private
-            </p>
-            <h1 className="text-5xl font-light leading-[1.05] tracking-tight md:text-6xl lg:text-7xl">
-              Curadoria<br />de Aquisição
-            </h1>
-            <p className="mt-8 max-w-lg text-base font-light leading-8 text-white/55">
-              Produtos de elite no Japão — identificados, selecionados e adquiridos com acesso direto aos artesãos.
-            </p>
-          </div>
+        <div className="relative mx-auto w-full max-w-7xl">
+          <p className="mb-6 text-xs uppercase tracking-[0.45em] text-white/40">
+            Assessoria de Compras · Alpinea Private
+          </p>
+          <h1 className="text-5xl font-light leading-[1.05] tracking-tight md:text-6xl lg:text-7xl">
+            Assessoria de Compras
+          </h1>
+          <p className="mt-8 max-w-xl text-base font-light leading-8 text-white/55">
+            Produtos de elite no Japão — identificados, selecionados e adquiridos com acesso direto aos artesãos.
+          </p>
         </div>
       </section>
 
@@ -75,44 +71,25 @@ export default function GuiaFacasPage() {
             </h2>
 
             <div className="mt-12 space-y-0">
-              <div className="border-t border-white/10 py-8 grid gap-6 grid-cols-[100px_1fr] items-start">
-                <p className="text-3xl font-light text-white/20 tabular-nums leading-none pt-0.5">+1.000</p>
-                <div>
-                  <p className="text-white font-light text-sm leading-6">fabricantes de facas no Japão</p>
-                  <p className="mt-2 text-xs leading-6 text-white/45">
-                    A grande maioria produz para o mercado de consumo ou para o circuito turístico — onde a aparência da tradição substitui a tradição real.
-                  </p>
-                </div>
+              <div className="border-t border-white/10 py-7 grid gap-6 grid-cols-[100px_1fr] items-center">
+                <p className="text-3xl font-light text-white/20 tabular-nums leading-none">+1.000</p>
+                <p className="text-white font-light text-sm leading-6">fabricantes de facas no Japão</p>
               </div>
 
-              <div className="border-t border-white/10 py-8 grid gap-6 grid-cols-[100px_1fr] items-start">
-                <p className="text-3xl font-light text-white/20 tabular-nums leading-none pt-0.5">~30</p>
-                <div>
-                  <p className="text-white font-light text-sm leading-6">fabricantes de elite com acesso real</p>
-                  <p className="mt-2 text-xs leading-6 text-white/45">
-                    Menos de 3% opera no nível de aço, forja e acabamento que os melhores chefs do Japão utilizam. Identificá-los exige anos de relação direta com cozinhas de referência.
-                  </p>
-                </div>
+              <div className="border-t border-white/10 py-7 grid gap-6 grid-cols-[100px_1fr] items-center">
+                <p className="text-3xl font-light text-white/20 tabular-nums leading-none">~30</p>
+                <p className="text-white font-light text-sm leading-6">fabricantes de elite com acesso real</p>
               </div>
 
-              <div className="border-t border-white/10 py-8 grid gap-6 grid-cols-[100px_1fr] items-start">
-                <div className="leading-none pt-0.5">
+              <div className="border-t border-white/10 py-7 grid gap-6 grid-cols-[100px_1fr] items-center">
+                <div className="leading-none">
                   <p className="text-3xl font-light text-white/20 tabular-nums leading-none">2</p>
                   <p className="text-xs uppercase tracking-[0.2em] text-white/20 mt-1">anos</p>
                 </div>
-                <div>
-                  <p className="text-white font-light text-sm leading-6">fila nos artesãos mais procurados</p>
-                  <p className="mt-2 text-xs leading-6 text-white/45">
-                    Artesãos como Futaba Shokai operam com fila superior a dois anos. Acesso direto sem intermediação qualificada é simplesmente impossível.
-                  </p>
-                </div>
+                <p className="text-white font-light text-sm leading-6">fila nos artesãos mais procurados</p>
               </div>
 
-              <div className="border-t border-white/10 pt-8">
-                <p className="text-xs leading-6 text-white/30 italic">
-                  A assessoria Alpinea existe para eliminar esse atrito — e para garantir que o cliente chegue à loja certa, com o artesão certo, no momento em que o instrumento está disponível.
-                </p>
-              </div>
+              <div className="border-t border-white/10" />
             </div>
           </div>
         </div>
