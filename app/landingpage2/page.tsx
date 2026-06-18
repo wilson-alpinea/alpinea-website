@@ -103,13 +103,14 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* Estrutura Alpinea — sem separadores, sem repetição */}
       <section className="border-b border-white/10 px-8 py-24 md:px-16">
         <div className="mx-auto max-w-7xl">
-          <p className="mb-12 text-xs uppercase tracking-[0.45em] text-white/40">
+          <p className="mb-16 text-xs uppercase tracking-[0.45em] text-white/40">
             Estrutura Alpinea
           </p>
 
-          <div className="grid border-y border-white/10 md:grid-cols-4">
+          <div className="grid gap-12 md:grid-cols-4">
             {[
               {
                 title: "+12 anos",
@@ -124,14 +125,11 @@ export default function LandingPage() {
                 text: "Experiência especializada em uma das rotas internacionais mais relevantes para o cliente brasileiro.",
               },
               {
-                title: "Brasil · Japão",
-                text: "Estrutura empresarial nos dois países, com operação desenhada para o mercado de luxo.",
+                title: "Entidade legal nos dois países",
+                text: "Constituída no Brasil e no Japão, com operação desenhada para o mercado de luxo.",
               },
             ].map((item) => (
-              <div
-                key={item.title}
-                className="border-white/10 py-10 md:border-r md:px-10 last:md:border-r-0"
-              >
+              <div key={item.title}>
                 <h3 className="text-2xl font-light tracking-tight text-white md:text-3xl">
                   {item.title}
                 </h3>
@@ -241,6 +239,7 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* Execução — screenshots desvinculados dos tiers */}
       <section className="border-b border-white/10 px-8 py-28 md:px-16">
         <div className="mx-auto max-w-7xl">
           <div className="mb-20 max-w-5xl">
@@ -256,6 +255,10 @@ export default function LandingPage() {
               Do planejamento à presença local, a Alpinea organiza os detalhes que determinam a qualidade real de uma viagem de alto padrão no Japão.
             </p>
           </div>
+
+          <p className="mb-10 text-xs uppercase tracking-[0.45em] text-white/30">
+            O que o cliente recebe
+          </p>
 
           <div className="grid gap-6 md:grid-cols-3">
             {[
@@ -287,7 +290,7 @@ export default function LandingPage() {
                 </div>
 
                 <p className="mt-8 text-xs uppercase tracking-[0.35em] text-white/40">
-                  Produto Alpinea
+                  Entregável Alpinea
                 </p>
 
                 <h3 className="mt-3 text-2xl font-light text-white">
