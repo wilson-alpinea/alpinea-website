@@ -142,9 +142,9 @@ export default function LandingPage() {
         >
           <a href="/">
             <img
-              src="/images/ALPINEA-LOGO.png"
+              src="/images/ALPINEA-LOGO-transparent.png"
               alt="Alpinea"
-              className="h-7 w-auto object-contain"
+              className="h-8 w-auto object-contain"
             />
           </a>
         </header>
