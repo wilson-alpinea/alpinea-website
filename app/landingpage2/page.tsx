@@ -100,6 +100,7 @@ export default function LandingPage() {
 
         <div className="absolute inset-0 bg-gradient-to-b from-black/75 via-black/35 to-black" />
 
+        {/* Header sem links de navegação */}
         <header
           className={`fixed left-0 right-0 top-0 z-50 flex items-center justify-between px-8 py-5 transition-all duration-700 md:px-16 ${
             scrolled ? "bg-black/20 backdrop-blur-2xl" : "bg-transparent"
@@ -108,15 +109,6 @@ export default function LandingPage() {
           <a href="/" className="text-xl tracking-[0.45em]">
             ALPINEA
           </a>
-
-          <nav className="hidden gap-8 text-xs uppercase tracking-[0.25em] text-white/70 md:flex">
-            <a href="/" className="transition hover:text-white">Início</a>
-            <a href="/services" className="transition hover:text-white">Serviços</a>
-            <a href="/gastro" className="transition hover:text-white">Restaurantes</a>
-            <a href="/guia" className="transition hover:text-white">Compras</a>
-            <a href="/preview" className="transition hover:text-white">Roteiro</a>
-            <a href="#contact" className="transition hover:text-white">Contato</a>
-          </nav>
         </header>
 
         <div className="relative z-10 flex h-full flex-col items-center justify-center px-6 pt-20 text-center">
@@ -145,41 +137,49 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ESTRUTURA ALPINEA */}
+      {/* POR QUE ESCOLHER A ALPINEA */}
       <section className="border-b border-white/10 px-8 py-24 md:px-16">
         <div className="mx-auto max-w-7xl">
           <p className="mb-16 text-xs uppercase tracking-[0.45em] text-white/40">
-            Estrutura Alpinea
+            Por que escolher a Alpinea
           </p>
 
           <div className="grid gap-12 md:grid-cols-4">
-            {[
-              {
-                title: "+12 anos",
-                text: "Vivência contínua no Japão, entre gastronomia, hotéis, cultura, logística e relações locais.",
-              },
-              {
-                title: "Japonês fluente",
-                text: "Comunicação direta com restaurantes, artesãos, hotéis e fornecedores locais.",
-              },
-              {
-                title: "Brasil–Japão",
-                text: "Experiência especializada em uma das rotas internacionais mais relevantes para o cliente brasileiro.",
-              },
-              {
-                title: "Entidade legal nos dois países",
-                text: "Constituída no Brasil e no Japão, com operação desenhada para o mercado de luxo.",
-              },
-            ].map((item) => (
-              <div key={item.title}>
-                <h3 className="text-2xl font-light tracking-tight text-white md:text-3xl">
-                  {item.title}
-                </h3>
-                <p className="mt-6 max-w-[280px] text-sm font-light leading-7 text-white/55">
-                  {item.text}
-                </p>
-              </div>
-            ))}
+            <div>
+              <h3 className="text-2xl font-light tracking-tight text-white md:text-3xl">
+                +12 anos
+              </h3>
+              <p className="mt-6 max-w-[280px] text-sm font-light leading-7 text-white/55">
+                Vivência contínua no Japão, entre gastronomia, hotéis, cultura, logística e relações locais.
+              </p>
+            </div>
+
+            <div>
+              <h3 className="text-2xl font-light tracking-tight text-white md:text-3xl">
+                Além do idioma
+              </h3>
+              <p className="mt-6 max-w-[280px] text-sm font-light leading-7 text-white/55">
+                Fluência aliada ao conhecimento dos universos mais exclusivos do Japão.
+              </p>
+            </div>
+
+            <div>
+              <h3 className="text-2xl font-light tracking-tight text-white md:text-3xl">
+                Referência na conexão Brasil–Japão
+              </h3>
+              <p className="mt-6 max-w-[280px] text-sm font-light leading-7 text-white/55">
+                Entre os 3 maiores emissores de passagens aéreas dessa rota no mundo, unimos conhecimento operacional à curadoria de experiências privadas.
+              </p>
+            </div>
+
+            <div>
+              <h3 className="text-2xl font-light tracking-tight text-white md:text-3xl">
+                Presença real no Japão
+              </h3>
+              <p className="mt-6 max-w-[280px] text-sm font-light leading-7 text-white/55">
+                Operação própria no Japão. Nossa operação local permite uma execução direta, sem intermediários, com maior controle, flexibilidade e acesso aos melhores parceiros do país.
+              </p>
+            </div>
           </div>
         </div>
       </section>
@@ -232,7 +232,6 @@ export default function LandingPage() {
             </p>
           </div>
 
-          {/* Grid sem divisórias verticais cinza */}
           <div className="mt-20 grid gap-x-0 gap-y-0 border-t border-white/10 md:grid-cols-3">
             {accessCards.map((item) => (
               <div
