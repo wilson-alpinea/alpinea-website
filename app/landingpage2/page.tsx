@@ -237,7 +237,7 @@ export default function LandingPage() {
 
           <div className="space-y-10 text-lg font-light leading-9 text-white/68">
             <p>
-              Os restaurantes que definem o topo da gastronomia japonesa não operam por plataformas, não respondem em inglês e não reservam para desconhecidos, nem mesmo para concierge de hotéis, somente via relação pessoal.
+              Os grandes nomes da gastronomia japonesa não estão disponíveis em plataformas. Muitos não aceitam reservas em inglês e alguns só recebem clientes apresentados por relações construídas ao longo de anos.
             </p>
 
             <p>
@@ -245,7 +245,7 @@ export default function LandingPage() {
             </p>
 
             <p>
-              Encontrar os melhores hotéis para cada perfil exige mais que conhecer nomes e marcas famosas, exige vivência real.
+              Encontrar o hotel ideal exige mais do que reconhecer nomes famosos. Exige entender bairros, atmosferas e o estilo de viagem de cada cliente.
             </p>
           </div>
         </div>
