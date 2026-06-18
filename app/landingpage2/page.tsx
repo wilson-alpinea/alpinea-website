@@ -182,6 +182,31 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* ROTEIRO SOB MEDIDA */}
+      <section className="border-b border-white/10 px-8 py-28 md:px-16">
+        <div className="mx-auto grid max-w-7xl gap-16 md:grid-cols-2">
+          <div>
+            <p className="mb-6 text-xs uppercase tracking-[0.45em] text-white/45">
+              Roteiro sob medida
+            </p>
+
+            <h2 className="text-4xl font-light leading-tight md:text-6xl">
+              Um roteiro que vai além de uma lista genérica de lugares.
+            </h2>
+          </div>
+
+          <div className="space-y-8 text-lg font-light leading-9 text-white/68">
+            <p>
+              A Alpinea desenha jornadas privadas no Japão com curadoria de hotéis, restaurantes, logística, compras, experiências e acompanhamento presencial quando necessário.
+            </p>
+
+            <p>
+              Cada detalhe é pensado para reduzir ruído, antecipar problemas e transformar a viagem em uma experiência fluida, precisa e profundamente personalizada.
+            </p>
+          </div>
+        </div>
+      </section>
+
       {/* POR QUE ESCOLHER A ALPINEA */}
       <section className="border-b border-white/10 px-8 py-24 md:px-16">
         <div className="mx-auto max-w-7xl">
@@ -281,31 +306,6 @@ export default function LandingPage() {
           <p className="mt-16 max-w-xl text-base font-light leading-8 text-white/50">
             Não operamos por plataformas. Cada reserva, cada acesso, cada experiência acima vem de uma relação construída ao longo de anos.
           </p>
-        </div>
-      </section>
-
-      {/* ROTEIRO SOB MEDIDA */}
-      <section className="border-b border-white/10 px-8 py-28 md:px-16">
-        <div className="mx-auto grid max-w-7xl gap-16 md:grid-cols-2">
-          <div>
-            <p className="mb-6 text-xs uppercase tracking-[0.45em] text-white/45">
-              Roteiro sob medida
-            </p>
-
-            <h2 className="text-4xl font-light leading-tight md:text-6xl">
-              Um roteiro que vai além de uma lista genérica de lugares.
-            </h2>
-          </div>
-
-          <div className="space-y-8 text-lg font-light leading-9 text-white/68">
-            <p>
-              A Alpinea desenha jornadas privadas no Japão com curadoria de hotéis, restaurantes, logística, compras, experiências e acompanhamento presencial quando necessário.
-            </p>
-
-            <p>
-              Cada detalhe é pensado para reduzir ruído, antecipar problemas e transformar a viagem em uma experiência fluida, precisa e profundamente personalizada.
-            </p>
-          </div>
         </div>
       </section>
 
