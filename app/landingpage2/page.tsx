@@ -35,7 +35,7 @@ export default function LandingPage() {
     {
       title: "Niku Kappou Miyata",
       category: "Gastronomia · Osaka",
-      image: "/images/nikufood.png",
+      image: "/images/nikufood.jpeg",
     },
     {
       title: "Ao",
@@ -44,8 +44,50 @@ export default function LandingPage() {
     },
   ];
 
+  const tiers = [
+    {
+      label: "Orientação Estratégica",
+      title: "Alpinea Design",
+      description:
+        "Para viajantes que desejam conduzir a própria viagem com uma base estratégica, elegante e bem construída.",
+      highlights: [
+        "Roteiro personalizado",
+        "Curadoria de destino",
+        "Opcionais: passagens, JR Pass, ingressos",
+      ],
+      note: "Sem reservas de restaurantes ou hotéis",
+    },
+    {
+      label: "Planejamento Completo",
+      title: "Alpinea Executive",
+      description:
+        "Para clientes que desejam planejamento completo, reservas, logística e organização antes da chegada ao Japão.",
+      highlights: [
+        "Roteiro + hotéis + passagens",
+        "Reservas gastronômicas",
+        "Concierge remoto durante a viagem",
+      ],
+      note: "Sem acompanhamento presencial",
+      featured: false,
+    },
+    {
+      label: "Acompanhamento Presencial",
+      title: "Alpinea Private",
+      description:
+        "Para clientes que desejam execução dedicada no Japão, com presença local em restaurantes, compras e atrações.",
+      highlights: [
+        "Tudo do Executive",
+        "Acompanhamento presencial em restaurantes",
+        "Acompanhamento presencial para compras e atrações",
+      ],
+      note: "Máxima presença local",
+      featured: true,
+    },
+  ];
+
   return (
     <main className="min-h-screen bg-black text-white">
+      {/* HERO */}
       <section className="relative h-[50vh] min-h-[520px] overflow-hidden">
         <video
           className="absolute inset-0 h-full w-full object-cover"
@@ -103,7 +145,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Estrutura Alpinea — sem separadores, sem repetição */}
+      {/* ESTRUTURA ALPINEA */}
       <section className="border-b border-white/10 px-8 py-24 md:px-16">
         <div className="mx-auto max-w-7xl">
           <p className="mb-16 text-xs uppercase tracking-[0.45em] text-white/40">
@@ -142,6 +184,7 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* DIFERENCIAIS */}
       <section className="border-b border-white/10 px-8 py-28 md:px-16">
         <div className="mx-auto grid max-w-7xl gap-16 md:grid-cols-[0.8fr_1.2fr]">
           <div>
@@ -170,6 +213,7 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* ACESSO REAL */}
       <section className="border-b border-white/10 px-8 py-28 md:px-16">
         <div className="mx-auto max-w-7xl">
           <div className="grid gap-16 md:grid-cols-[0.9fr_1.1fr] md:items-end">
@@ -188,11 +232,12 @@ export default function LandingPage() {
             </p>
           </div>
 
-          <div className="mt-20 grid border-t border-white/10 md:grid-cols-3">
+          {/* Grid sem divisórias verticais cinza */}
+          <div className="mt-20 grid gap-x-0 gap-y-0 border-t border-white/10 md:grid-cols-3">
             {accessCards.map((item) => (
               <div
                 key={item.title}
-                className="border-b border-white/10 py-10 md:border-r md:px-8 md:last:border-r-0"
+                className="border-b border-white/10 py-10 md:px-8"
               >
                 <div className="relative aspect-[4/3] overflow-hidden rounded-[22px] bg-white/5">
                   <img
@@ -215,6 +260,7 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* ROTEIRO SOB MEDIDA */}
       <section className="border-b border-white/10 px-8 py-28 md:px-16">
         <div className="mx-auto grid max-w-7xl gap-16 md:grid-cols-2">
           <div>
@@ -239,7 +285,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* Execução — screenshots desvinculados dos tiers */}
+      {/* EXECUÇÃO — entregáveis */}
       <section className="border-b border-white/10 px-8 py-28 md:px-16">
         <div className="mx-auto max-w-7xl">
           <div className="mb-20 max-w-5xl">
@@ -306,6 +352,70 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* SERVIÇOS — 3 tiers compactos */}
+      <section className="border-b border-white/10 px-8 py-28 md:px-16">
+        <div className="mx-auto max-w-7xl">
+          <div className="mb-20 grid gap-16 md:grid-cols-[0.8fr_1.2fr] md:items-end">
+            <div>
+              <p className="mb-6 text-xs uppercase tracking-[0.45em] text-white/45">
+                Formatos de serviço
+              </p>
+
+              <h2 className="text-4xl font-light leading-tight md:text-6xl">
+                Três níveis de presença. Uma mesma curadoria.
+              </h2>
+            </div>
+
+            <p className="max-w-xl text-base font-light leading-8 text-white/60 md:text-lg">
+              O nível de execução e acompanhamento varia conforme o formato escolhido. O padrão de curadoria, o conhecimento de destino e o acesso à rede local são os mesmos em todos.
+            </p>
+          </div>
+
+          <div className="grid gap-px bg-white/10 md:grid-cols-3">
+            {tiers.map((tier) => (
+              <div
+                key={tier.title}
+                className={`flex flex-col px-10 py-12 ${
+                  tier.featured ? "bg-white/[0.06]" : "bg-black"
+                }`}
+              >
+                <p className="mb-4 text-xs uppercase tracking-[0.4em] text-white/40">
+                  {tier.label}
+                </p>
+
+                <h3 className="text-2xl font-light text-white">
+                  {tier.title}
+                </h3>
+
+                <p className="mt-5 text-sm font-light leading-7 text-white/55">
+                  {tier.description}
+                </p>
+
+                <div className="mt-10 flex-1 space-y-3 border-t border-white/10 pt-10">
+                  {tier.highlights.map((h) => (
+                    <p key={h} className="text-sm font-light leading-6 text-white/70">
+                      {h}
+                    </p>
+                  ))}
+                </div>
+
+                <p className="mt-8 text-xs text-white/30">{tier.note}</p>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-12 text-right">
+            <a
+              href="/services"
+              className="text-xs uppercase tracking-[0.35em] text-white/40 transition hover:text-white"
+            >
+              Ver comparativo completo →
+            </a>
+          </div>
+        </div>
+      </section>
+
+      {/* PRESENÇA DIGITAL */}
       <section className="border-b border-white/10 px-8 py-28 md:px-16">
         <div className="mx-auto grid max-w-7xl gap-16 md:grid-cols-[0.9fr_1.1fr] md:items-start">
           <div className="md:sticky md:top-24">
@@ -362,6 +472,7 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* CONTATO */}
       <section id="contact" className="bg-white px-8 py-28 text-black md:px-16">
         <div className="mx-auto max-w-4xl text-center">
           <p className="mb-6 text-xs uppercase tracking-[0.45em] text-black/45">
@@ -396,6 +507,7 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* FOOTER */}
       <footer className="border-t border-white/10 bg-black px-8 py-16 text-white md:px-16">
         <div className="mx-auto flex max-w-7xl flex-col justify-between gap-12 md:flex-row md:items-end">
           <div className="space-y-6">
