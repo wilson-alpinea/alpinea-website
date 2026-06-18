@@ -60,25 +60,28 @@ export default function LandingPage() {
       category: "Gastronomia · Tokyo",
       image: "/images/sushi-arai.png",
       position: "object-center",
+      scale: "scale-110",
     },
     {
       title: "The Peninsula Tokyo",
       category: "Hospedagem · Tokyo",
       image: "/images/aman-tokyo.png",
       position: "object-center",
+      scale: "scale-110",
     },
     {
       title: "Niku Kappou Miyata",
       category: "Gastronomia · Osaka",
       image: "/images/nikufood.jpeg",
       position: "object-center",
-      scale: "scale-75",
+      scale: "scale-[1.6]",
     },
     {
       title: "Ao",
       category: "Gastronomia · Tokyo",
       image: "/images/ao.png",
       position: "object-center",
+      scale: "scale-110",
     },
   ];
 
@@ -187,11 +190,11 @@ export default function LandingPage() {
         <div className="mx-auto grid max-w-7xl gap-16 md:grid-cols-2">
           <div>
             <p className="mb-6 text-xs uppercase tracking-[0.45em] text-white/45">
-              Roteiro sob medida
+              A Jornada Alpinea
             </p>
 
             <h2 className="text-4xl font-light leading-tight md:text-6xl">
-              Um roteiro que vai além de uma lista genérica de lugares.
+              Uma curadoria muito além de uma lista genérica de lugares.
             </h2>
           </div>
 
@@ -254,39 +257,36 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* DIFERENCIAIS */}
-      <section className="border-b border-white/10 px-8 py-28 md:px-16">
-        <div className="mx-auto grid max-w-7xl gap-16 md:grid-cols-[0.8fr_1.2fr]">
-          <div>
-            <p className="mb-6 text-xs uppercase tracking-[0.45em] text-white/45">
-              Nossos diferenciais
-            </p>
-
-            <h2 className="text-4xl font-light leading-tight md:text-6xl">
-              Acesso, profundidade e execução no mercado de luxo japonês.
-            </h2>
-          </div>
-
-          <div className="space-y-10 text-lg font-light leading-9 text-white/68">
-            <p>
-              Os grandes nomes da gastronomia japonesa não estão disponíveis em plataformas. Muitos não aceitam reservas em inglês e alguns só recebem clientes apresentados por relações construídas ao longo de anos.
-            </p>
-
-            <p>
-              Os melhores produtos de cada categoria não fazem propaganda.
-            </p>
-
-            <p>
-              Encontrar o hotel ideal exige mais do que reconhecer nomes famosos. Exige entender bairros, atmosferas e o estilo de viagem de cada cliente.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* ACESSO REAL */}
-      <section className="border-b border-white/10 px-8 py-28 md:px-16">
+      {/* DIFERENCIAIS + ACESSO REAL — unified */}
+      <section className="border-b border-white/10 px-8 pt-28 pb-20 md:px-16">
         <div className="mx-auto max-w-7xl">
-          <div className="mt-20 grid gap-x-8 gap-y-12 md:grid-cols-3">
+
+          {/* Texto diferenciais */}
+          <div className="grid gap-16 md:grid-cols-[0.8fr_1.2fr] mb-20">
+            <div>
+              <p className="mb-6 text-xs uppercase tracking-[0.45em] text-white/45">
+                Nossos diferenciais
+              </p>
+              <h2 className="text-4xl font-light leading-tight md:text-6xl">
+                Acesso, profundidade e execução no mercado de luxo japonês.
+              </h2>
+            </div>
+
+            <div className="space-y-10 text-lg font-light leading-9 text-white/68">
+              <p>
+                Os grandes nomes da gastronomia japonesa não estão disponíveis em plataformas. Muitos não aceitam reservas em inglês e alguns só recebem clientes apresentados por relações construídas ao longo de anos.
+              </p>
+              <p>
+                Os melhores produtos de cada categoria não fazem propaganda.
+              </p>
+              <p>
+                Encontrar o hotel ideal exige mais do que reconhecer nomes famosos. Exige entender bairros, atmosferas e o estilo de viagem de cada cliente.
+              </p>
+            </div>
+          </div>
+
+          {/* Fotos */}
+          <div className="grid gap-x-8 gap-y-12 md:grid-cols-3">
             {accessCards.map((item) => (
               <div key={item.title}>
                 <div className="relative aspect-[4/3] overflow-hidden rounded-[22px] bg-white/5">
@@ -303,7 +303,7 @@ export default function LandingPage() {
             ))}
           </div>
 
-          <p className="mt-16 max-w-xl text-base font-light leading-8 text-white/50">
+          <p className="mt-14 max-w-xl text-base font-light leading-8 text-white/50">
             Não operamos por plataformas. Cada reserva, cada acesso, cada experiência acima vem de uma relação construída ao longo de anos.
           </p>
         </div>
