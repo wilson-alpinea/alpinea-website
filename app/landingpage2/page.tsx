@@ -47,31 +47,38 @@ export default function LandingPage() {
       title: "Fukamachi",
       category: "Gastronomia · Tokyo",
       image: "/images/zezankyo.png",
+      position: "object-center",
     },
     {
       title: "Shunsuke",
       category: "Gastronomia · Tokyo",
       image: "/images/sushi-sho.png",
+      position: "object-center",
     },
     {
       title: "Sushi Arai",
       category: "Gastronomia · Tokyo",
       image: "/images/sushi-arai.png",
+      position: "object-center",
     },
     {
-      title: "Aman Tokyo",
+      title: "The Peninsula Tokyo",
       category: "Hospedagem · Tokyo",
       image: "/images/aman-tokyo.png",
+      position: "object-center",
     },
     {
       title: "Niku Kappou Miyata",
       category: "Gastronomia · Osaka",
       image: "/images/nikufood.jpeg",
+      position: "object-center",
+      scale: "scale-75",
     },
     {
       title: "Ao",
       category: "Gastronomia · Tokyo",
       image: "/images/ao.png",
+      position: "object-center",
     },
   ];
 
@@ -254,46 +261,26 @@ export default function LandingPage() {
       {/* ACESSO REAL */}
       <section className="border-b border-white/10 px-8 py-28 md:px-16">
         <div className="mx-auto max-w-7xl">
-          <div className="grid gap-16 md:grid-cols-[0.9fr_1.1fr] md:items-end">
-            <div>
-              <p className="mb-6 text-xs uppercase tracking-[0.45em] text-white/45">
-                Acesso real
-              </p>
-
-              <h2 className="text-4xl font-light leading-tight md:text-6xl">
-                Lugares que exigem relação pessoal para existir.
-              </h2>
-            </div>
-
-            <p className="max-w-xl text-base font-light leading-8 text-white/60 md:text-lg">
-              Não operamos por plataformas. Cada reserva, cada acesso, cada experiência abaixo vem de uma relação construída ao longo de anos.
-            </p>
-          </div>
-
-          <div className="mt-20 grid gap-x-0 gap-y-0 border-t border-white/10 md:grid-cols-3">
+          <div className="mt-20 grid gap-x-8 gap-y-12 md:grid-cols-3">
             {accessCards.map((item) => (
-              <div
-                key={item.title}
-                className="border-b border-white/10 py-10 md:px-8"
-              >
+              <div key={item.title}>
                 <div className="relative aspect-[4/3] overflow-hidden rounded-[22px] bg-white/5">
                   <img
                     src={item.image}
                     alt={item.title}
-                    className="h-full w-full object-cover"
+                    className={`h-full w-full object-cover ${item.position} ${"scale" in item ? (item as any).scale : ""}`}
                   />
                 </div>
-
-                <p className="mt-8 text-xs uppercase tracking-[0.35em] text-white/40">
-                  {item.category}
-                </p>
-
-                <h3 className="mt-3 text-2xl font-light text-white">
+                <h3 className="mt-5 text-xl font-light text-white">
                   {item.title}
                 </h3>
               </div>
             ))}
           </div>
+
+          <p className="mt-16 max-w-xl text-base font-light leading-8 text-white/50">
+            Não operamos por plataformas. Cada reserva, cada acesso, cada experiência acima vem de uma relação construída ao longo de anos.
+          </p>
         </div>
       </section>
 
