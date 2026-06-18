@@ -2,8 +2,39 @@
 
 import { useEffect, useState } from "react";
 
+// Lightbox component
+function Lightbox({ src, alt, onClose }: { src: string; alt: string; onClose: () => void }) {
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [onClose]);
+
+  return (
+    <div
+      className="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 p-4 md:p-12"
+      onClick={onClose}
+    >
+      <button
+        onClick={onClose}
+        className="absolute right-6 top-6 text-white/60 hover:text-white text-3xl leading-none"
+        aria-label="Fechar"
+      >
+        ×
+      </button>
+      <img
+        src={src}
+        alt={alt}
+        className="max-h-full max-w-full rounded-[16px] object-contain shadow-2xl"
+        onClick={(e) => e.stopPropagation()}
+      />
+    </div>
+  );
+}
+
 export default function LandingPage() {
   const [scrolled, setScrolled] = useState(false);
+  const [lightbox, setLightbox] = useState<{ src: string; alt: string } | null>(null);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 50);
@@ -87,6 +118,9 @@ export default function LandingPage() {
 
   return (
     <main className="min-h-screen bg-black text-white">
+      {lightbox && (
+        <Lightbox src={lightbox.src} alt={lightbox.alt} onClose={() => setLightbox(null)} />
+      )}
       {/* HERO */}
       <section className="relative h-[50vh] min-h-[520px] overflow-hidden">
         <video
@@ -106,8 +140,12 @@ export default function LandingPage() {
             scrolled ? "bg-black/20 backdrop-blur-2xl" : "bg-transparent"
           }`}
         >
-          <a href="/" className="text-xl tracking-[0.45em]">
-            ALPINEA
+          <a href="/">
+            <img
+              src="/images/ALPINEA-LOGO.png"
+              alt="Alpinea"
+              className="h-7 w-auto object-contain"
+            />
           </a>
         </header>
 
@@ -150,7 +188,7 @@ export default function LandingPage() {
                 +12 anos
               </h3>
               <p className="mt-6 max-w-[280px] text-sm font-light leading-7 text-white/55">
-                Vivência contínua no Japão, entre gastronomia, hotéis, cultura, logística e relações locais.
+                Mais de uma década de vivência no Japão, entre gastronomia, hotelaria, cultura, logística e relações locais.
               </p>
             </div>
 
@@ -159,7 +197,7 @@ export default function LandingPage() {
                 Além do idioma
               </h3>
               <p className="mt-6 max-w-[280px] text-sm font-light leading-7 text-white/55">
-                Fluência aliada ao conhecimento dos universos mais exclusivos do Japão.
+                A fluência no idioma combinada ao conhecimento dos principais nomes da gastronomia, artesanato e hotelaria japonesa.
               </p>
             </div>
 
@@ -177,7 +215,7 @@ export default function LandingPage() {
                 Presença real no Japão
               </h3>
               <p className="mt-6 max-w-[280px] text-sm font-light leading-7 text-white/55">
-                Operação própria no Japão. Nossa operação local permite uma execução direta, sem intermediários, com maior controle, flexibilidade e acesso aos melhores parceiros do país.
+                Nossa operação própria no Japão permite um atendimento sem intermediários, com maior flexibilidade, controle e proximidade dos melhores parceiros locais.
               </p>
             </div>
           </div>
@@ -324,13 +362,27 @@ export default function LandingPage() {
               },
             ].map((item) => (
               <div key={item.title} className="group">
-                <div className="overflow-hidden rounded-[26px] bg-white/[0.04]">
+                <div
+                  className="overflow-hidden rounded-[26px] bg-white/[0.04] cursor-zoom-in relative"
+                  onClick={() => setLightbox({ src: item.image, alt: item.title })}
+                >
                   <div className="relative aspect-[4/5] overflow-hidden rounded-[26px]">
                     <img
                       src={item.image}
                       alt={item.title}
                       className="h-full w-full object-cover object-top transition duration-700 group-hover:scale-[1.03]"
                     />
+                    {/* Zoom overlay */}
+                    <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition duration-300 bg-black/30">
+                      <div className="rounded-full bg-black/60 p-3 backdrop-blur-sm">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                          <circle cx="11" cy="11" r="8"/>
+                          <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                          <line x1="11" y1="8" x2="11" y2="14"/>
+                          <line x1="8" y1="11" x2="14" y2="11"/>
+                        </svg>
+                      </div>
+                    </div>
                   </div>
                 </div>
 
@@ -403,14 +455,7 @@ export default function LandingPage() {
             ))}
           </div>
 
-          <div className="mt-12 text-right">
-            <a
-              href="/services"
-              className="text-xs uppercase tracking-[0.35em] text-white/40 transition hover:text-white"
-            >
-              Ver comparativo completo →
-            </a>
-          </div>
+
         </div>
       </section>
 
