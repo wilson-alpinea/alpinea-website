@@ -668,16 +668,18 @@ export default function LandingPage() {
               </h2>
             </div>
 
-            <p className="max-w-xl text-base font-light leading-8 text-white/60 md:text-lg">
-              O nível de execução e acompanhamento varia conforme o formato escolhido. O padrão de curadoria, o conhecimento de destino e o acesso à rede local são os mesmos em todos.
-            </p>
+            <div>
+              <p className="max-w-xl text-base font-light leading-8 text-white/60 md:text-lg">
+                O nível de execução e acompanhamento varia conforme o formato escolhido. O padrão de curadoria, o conhecimento de destino e o acesso à rede local são os mesmos em todos.
+              </p>
+
+              <p className="mt-6 max-w-xl text-base font-light text-white/75 md:text-lg">
+                Para manter o padrão de atendimento, a Alpinea aceita um número limitado de novos clientes por temporada.
+              </p>
+            </div>
           </div>
 
-          <p className="mb-8 border-t border-white/10 pt-6 text-base font-light text-white/75 md:text-lg">
-            Para manter o padrão de atendimento, a Alpinea aceita um número limitado de novos clientes por temporada.
-          </p>
-
-          <div className="grid gap-px bg-white/10 md:grid-cols-3">
+          <div className="grid gap-8 md:grid-cols-3">
             {tiers.map((tier) => (
               <div
                 key={tier.title}
