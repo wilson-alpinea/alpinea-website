@@ -468,7 +468,7 @@ export default function LandingPage() {
 
           <div className="grid gap-12 md:grid-cols-4">
             <div>
-              <h3 className="text-2xl font-light tracking-tight text-white md:text-3xl">
+              <h3 className={`${display.className} text-2xl font-medium tracking-tight text-white md:text-3xl`}>
                 +12 anos
               </h3>
               <p className="mt-6 max-w-[280px] text-sm font-light leading-7 text-white/55">
@@ -477,7 +477,7 @@ export default function LandingPage() {
             </div>
 
             <div>
-              <h3 className="text-2xl font-light tracking-tight text-white md:text-3xl">
+              <h3 className={`${display.className} text-2xl font-medium tracking-tight text-white md:text-3xl`}>
                 Além do idioma
               </h3>
               <p className="mt-6 max-w-[280px] text-sm font-light leading-7 text-white/55">
@@ -486,7 +486,7 @@ export default function LandingPage() {
             </div>
 
             <div>
-              <h3 className="text-2xl font-light tracking-tight text-white md:text-3xl">
+              <h3 className={`${display.className} text-2xl font-medium tracking-tight text-white md:text-3xl`}>
                 Referência na conexão Brasil–Japão
               </h3>
               <p className="mt-6 max-w-[280px] text-sm font-light leading-7 text-white/55">
@@ -495,7 +495,7 @@ export default function LandingPage() {
             </div>
 
             <div>
-              <h3 className="text-2xl font-light tracking-tight text-white md:text-3xl">
+              <h3 className={`${display.className} text-2xl font-medium tracking-tight text-white md:text-3xl`}>
                 Presença real no Japão
               </h3>
               <p className="mt-6 max-w-[280px] text-sm font-light leading-7 text-white/55">
