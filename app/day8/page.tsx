@@ -1,4 +1,12 @@
 import Image from "next/image";
+import { Bodoni_Moda } from "next/font/google";
+import { ContactCTA } from "../components/ContactCTA";
+
+// Mesma fonte de destaque usada nas demais páginas do site.
+const display = Bodoni_Moda({
+  subsets: ["latin"],
+  weight: ["400", "500", "600"],
+});
 
 export const metadata = {
   title: "Alpinea | Dia 8 — Kyoto",
@@ -10,12 +18,18 @@ export default function Day8Page() {
   return (
     <main className="min-h-screen bg-black text-white">
       <header className="fixed left-0 right-0 top-0 z-50 flex items-center justify-between bg-black/10 px-8 py-5 backdrop-blur-2xl md:px-16">
-        <a href="/" className="text-xl tracking-[0.45em]">
-          ALPINEA
+        <a href="/">
+          <img
+            src="/images/ALPINEA-LOGO-transparent.png"
+            alt="Alpinea"
+            className="h-8 w-auto object-contain"
+          />
         </a>
         <nav className="hidden gap-8 text-xs uppercase tracking-[0.25em] text-white/70 md:flex">
           <a href="/" className="transition hover:text-white">Início</a>
           <a href="/services" className="transition hover:text-white">Serviços</a>
+          <a href="/gastro" className="transition hover:text-white">Restaurantes</a>
+          <a href="/guia" className="transition hover:text-white">Compras</a>
           <a href="/preview" className="transition text-white">Roteiro</a>
           <a href="#contact" className="transition hover:text-white">Contato</a>
         </nav>
@@ -38,7 +52,7 @@ export default function Day8Page() {
           <p className="mb-8 text-xs uppercase tracking-[0.35em] text-white/40">
             Roteiro Alpinea Private
           </p>
-          <h1 className="max-w-5xl text-5xl font-light leading-[1.05] tracking-tight md:text-7xl">
+          <h1 className={`${display.className} max-w-5xl text-5xl font-medium leading-[1.05] tracking-tight md:text-7xl`}>
             Um exemplo real
             <br />
             de uma jornada Alpinea.
@@ -67,7 +81,7 @@ export default function Day8Page() {
         <div className="mx-auto max-w-7xl">
           <div className="border border-white/10 bg-white/[0.035] px-8 py-8 md:px-10">
             <p className="mb-5 text-xs uppercase tracking-[0.45em] text-white/45">Dia 8</p>
-            <h2 className="text-4xl font-light tracking-tight text-white md:text-6xl">Kyoto</h2>
+            <h2 className={`${display.className} text-4xl font-medium tracking-tight text-white md:text-6xl`}>Kyoto</h2>
             <p className="mt-6 max-w-3xl text-lg font-light leading-9 text-white/60">
               Kinkaku-ji ao amanhecer, menu degustação de wagyu no Niku Kappou Miyata
               e Yoiyama do Gion Matsuri à noite.
@@ -87,7 +101,7 @@ export default function Day8Page() {
                   />
                 </div>
                 <div>
-                  <p className="text-3xl font-light text-white md:text-4xl">Aman Kyoto</p>
+                  <p className={`${display.className} text-3xl font-medium text-white md:text-4xl`}>Aman Kyoto</p>
                   <p className="mt-5 max-w-2xl text-base font-light leading-8 text-white/50">
                     1 Okitayama Washimine-cho, Kita Ward, Kyoto
                   </p>
@@ -169,7 +183,7 @@ export default function Day8Page() {
             <div className="space-y-12 text-base font-light leading-9 text-white/65">
               <div>
                 <p className="mb-8 text-xs uppercase tracking-[0.35em] text-white/40">Manhã · Café da Manhã</p>
-                <h3 className="text-3xl font-light text-white md:text-4xl">The Living Pavilion by Aman</h3>
+                <h3 className={`${display.className} text-3xl font-medium text-white md:text-4xl`}>The Living Pavilion by Aman</h3>
               </div>
 
               <div className="border-t border-white/10 pt-10">
@@ -249,7 +263,7 @@ export default function Day8Page() {
             <div className="space-y-12 text-base font-light leading-9 text-white/65">
               <div>
                 <p className="mb-8 text-xs uppercase tracking-[0.35em] text-white/40">Transporte Privado</p>
-                <h3 className="text-3xl font-light text-white md:text-4xl">Motorista Dedicado</h3>
+                <h3 className={`${display.className} text-3xl font-medium text-white md:text-4xl`}>Motorista Dedicado</h3>
               </div>
 
               <p className="max-w-xl">
@@ -317,7 +331,7 @@ export default function Day8Page() {
             <div className="space-y-12 text-base font-light leading-9 text-white/65">
               <div>
                 <p className="mb-8 text-xs uppercase tracking-[0.35em] text-white/40">Manhã · Atração</p>
-                <h3 className="text-3xl font-light text-white md:text-4xl">Kinkaku-ji</h3>
+                <h3 className={`${display.className} text-3xl font-medium text-white md:text-4xl`}>Kinkaku-ji</h3>
                 <p className="mt-3 text-sm uppercase tracking-[0.2em] text-white/30">Templo do Pavilhão de Ouro</p>
               </div>
 
@@ -396,7 +410,7 @@ export default function Day8Page() {
             <div className="space-y-12 text-base font-light leading-9 text-white/65">
               <div>
                 <p className="mb-8 text-xs uppercase tracking-[0.35em] text-white/40">Almoço · Menu Degustação</p>
-                <h3 className="text-3xl font-light text-white md:text-4xl">Niku Kappou Miyata</h3>
+                <h3 className={`${display.className} text-3xl font-medium text-white md:text-4xl`}>Niku Kappou Miyata</h3>
                 <p className="mt-3 text-sm uppercase tracking-[0.2em] text-white/30">肉割烹 宮田</p>
               </div>
 
@@ -461,7 +475,7 @@ export default function Day8Page() {
       {/* ── RESPIRO — CTA INTERMEDIÁRIO ── */}
       <section className="border-t border-white/10 px-8 py-28 md:px-16">
         <div className="mx-auto max-w-3xl text-center">
-          <p className="text-2xl font-light leading-relaxed text-white/50 md:text-3xl">
+          <p className={`${display.className} text-2xl font-medium leading-relaxed text-white/60 md:text-3xl`}>
             Cada detalhe deste dia foi definido antes de você chegar.
           </p>
           <div className="mt-12 flex flex-col items-center justify-center gap-4 sm:flex-row">
@@ -482,7 +496,7 @@ export default function Day8Page() {
             <div className="space-y-12 text-base font-light leading-9 text-white/65">
               <div>
                 <p className="mb-8 text-xs uppercase tracking-[0.35em] text-white/40">Tarde · Noite · Festival</p>
-                <h3 className="text-3xl font-light text-white md:text-4xl">Yoiyama, Sakimatsuri</h3>
+                <h3 className={`${display.className} text-3xl font-medium text-white md:text-4xl`}>Yoiyama, Sakimatsuri</h3>
                 <p className="mt-3 text-sm uppercase tracking-[0.2em] text-white/30">祇園祭 · Gion Matsuri</p>
               </div>
 
@@ -577,35 +591,24 @@ export default function Day8Page() {
           <p className="mb-6 text-xs uppercase tracking-[0.35em] text-black/35">
             Próximo passo
           </p>
-          <h2 className="text-4xl font-light leading-tight md:text-6xl">
+          <h2 className={`${display.className} text-4xl font-medium leading-tight md:text-6xl`}>
             Uma viagem excepcional começa com uma curadoria excepcional.
           </h2>
           <p className="mx-auto mt-8 max-w-xl text-base leading-9 text-black/50">
             Compartilhe suas datas e perfil de viagem. A Alpinea estrutura o roteiro a partir daí.
           </p>
-          <div className="mt-12 flex flex-col items-center justify-center gap-4 sm:flex-row">
-            <a
-              href="mailto:wilson@alpinea.io"
-              className="border border-black px-8 py-4 text-xs uppercase tracking-[0.3em] transition hover:bg-black hover:text-white"
-            >
-              Entrar em Contato
-            </a>
-            <a
-              href="https://wa.me/5511996691818"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="border border-black/15 px-8 py-4 text-xs uppercase tracking-[0.3em] text-black/50 transition hover:border-black hover:text-black"
-            >
-              WhatsApp Concierge
-            </a>
-          </div>
+          <ContactCTA />
         </div>
       </section>
 
       <footer className="border-t border-white/10 bg-black px-8 py-16 text-white md:px-16">
         <div className="mx-auto flex max-w-7xl flex-col justify-between gap-12 md:flex-row md:items-end">
           <div className="space-y-6">
-            <p className="text-xs uppercase tracking-[0.45em] text-white/70">Alpinea</p>
+            <img
+              src="/images/ALPINEA-LOGO-transparent.png"
+              alt="Alpinea"
+              className="h-7 w-auto object-contain"
+            />
             <div className="max-w-md space-y-3">
               <p className="text-sm leading-relaxed text-white/40">
                 Curadoria privada de experiências, gastronomia e lifestyle no Japão.

@@ -1,6 +1,14 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { Bodoni_Moda } from "next/font/google";
+import { ContactCTA } from "../components/ContactCTA";
+
+// Mesma fonte de destaque usada nas demais páginas do site.
+const display = Bodoni_Moda({
+  subsets: ["latin"],
+  weight: ["400", "500", "600"],
+});
 
 const sections = [
   ["introducao", "01", "Introdução"],
@@ -197,13 +205,19 @@ export default function PrivacyPage() {
           scrolled ? "bg-black/10 backdrop-blur-2xl" : "bg-transparent"
         }`}
       >
-        <a href="/" className="text-xl tracking-[0.45em]">
-          ALPINEA
+        <a href="/">
+          <img
+            src="/images/ALPINEA-LOGO-transparent.png"
+            alt="Alpinea"
+            className="h-8 w-auto object-contain"
+          />
         </a>
 
         <nav className="hidden gap-8 text-xs uppercase tracking-[0.25em] text-white/70 md:flex">
           <a href="/" className="transition hover:text-white">Início</a>
           <a href="/services" className="transition hover:text-white">Serviços</a>
+          <a href="/gastro" className="transition hover:text-white">Restaurantes</a>
+          <a href="/guia" className="transition hover:text-white">Compras</a>
           <a href="/preview" className="transition hover:text-white">Roteiro</a>
           <a href="#contact" className="transition hover:text-white">Contato</a>
         </nav>
@@ -216,7 +230,7 @@ export default function PrivacyPage() {
           <p className="mb-8 text-xs uppercase tracking-[0.45em] text-white/50">
             ALPINEA
           </p>
-          <h1 className="max-w-5xl text-5xl font-light leading-tight md:text-7xl">
+          <h1 className={`${display.className} max-w-5xl text-5xl font-medium leading-tight md:text-7xl`}>
             Política de
             <br />
             Privacidade
@@ -255,7 +269,7 @@ export default function PrivacyPage() {
                 <p className="mb-5 text-xs uppercase tracking-[0.35em] text-white/40">
                   {section.number}
                 </p>
-                <h2 className="text-4xl font-light leading-tight text-white md:text-5xl">
+                <h2 className={`${display.className} text-4xl font-medium leading-tight text-white md:text-5xl`}>
                   {section.title}
                 </h2>
                 <div className="mt-8 space-y-6 text-lg leading-9 text-white/75">
@@ -277,99 +291,87 @@ export default function PrivacyPage() {
           <p className="mb-6 text-xs uppercase tracking-[0.45em] text-black/40">
             Contato
           </p>
-          <h2 className="text-4xl font-light leading-tight md:text-6xl">
+          <h2 className={`${display.className} text-4xl font-medium leading-tight md:text-6xl`}>
             Precisa de ajuda?
           </h2>
           <p className="mx-auto mt-8 max-w-2xl text-lg leading-8 text-black/60">
             Para dúvidas sobre privacidade, exercício de direitos LGPD ou
             qualquer questão relacionada ao tratamento de seus dados pessoais.
           </p>
-          <div className="mt-12 flex flex-col items-center justify-center gap-4 sm:flex-row">
-            <a
-              href="mailto:wilson@alpinea.io"
-              className="border border-black px-8 py-4 text-xs uppercase tracking-[0.3em] transition hover:bg-black hover:text-white"
-            >
-              Entrar em Contato
-            </a>
-            <a
-              href="https://wa.me/5511996691818"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="border border-black/20 px-8 py-4 text-xs uppercase tracking-[0.3em] text-black/70 transition hover:border-black hover:text-black"
-            >
-              WhatsApp
-            </a>
-          </div>
+          <ContactCTA />
         </div>
       </section>
- <footer className="border-t border-white/10 bg-black px-8 py-16 text-white md:px-16">
-  <div className="mx-auto flex max-w-7xl flex-col justify-between gap-12 md:flex-row md:items-end">
 
-    {/* Coluna esquerda */}
-    <div className="space-y-6">
-      <p className="text-xs uppercase tracking-[0.45em] text-white/80">
-        Alpinea
-      </p>
+      <footer className="border-t border-white/10 bg-black px-8 py-16 text-white md:px-16">
+        <div className="mx-auto flex max-w-7xl flex-col justify-between gap-12 md:flex-row md:items-end">
 
-      <div className="max-w-md space-y-3">
-        <p className="text-sm leading-relaxed text-white/50">
-          Curadoria privada de experiências, gastronomia e lifestyle no Japão.
-        </p>
+          {/* Coluna esquerda */}
+          <div className="space-y-6">
+            <img
+              src="/images/ALPINEA-LOGO-transparent.png"
+              alt="Alpinea"
+              className="h-7 w-auto object-contain"
+            />
 
-        <p className="text-xs text-white/30">
-          © 2026 Alpinea Agências de Viagens LTDA — CNPJ 66.491.067/0001-84
-        </p>
+            <div className="max-w-md space-y-3">
+              <p className="text-sm leading-relaxed text-white/50">
+                Curadoria privada de experiências, gastronomia e lifestyle no Japão.
+              </p>
 
-        <div className="flex flex-wrap items-center gap-3 text-xs text-white/25">
-          <a
-            href="/legal"
-            className="transition hover:text-white/60"
-          >
-            Termos e Condições
-          </a>
+              <p className="text-xs text-white/30">
+                © 2026 Alpinea Agências de Viagens LTDA — CNPJ 66.491.067/0001-84
+              </p>
 
-          <span>·</span>
+              <div className="flex flex-wrap items-center gap-3 text-xs text-white/25">
+                <a
+                  href="/legal"
+                  className="transition hover:text-white/60"
+                >
+                  Termos e Condições
+                </a>
 
-          <a
-            href="/privacy"
-            className="transition hover:text-white/60"
-          >
-            Política de Privacidade
-          </a>
+                <span>·</span>
+
+                <a
+                  href="/privacy"
+                  className="transition hover:text-white/60"
+                >
+                  Política de Privacidade
+                </a>
+              </div>
+            </div>
+          </div>
+
+          {/* Coluna direita */}
+          <div className="flex items-center gap-8 text-xs uppercase tracking-[0.25em] text-white/40">
+            <a
+              href="https://www.instagram.com/alpinea.private"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="transition hover:text-white"
+            >
+              Instagram
+            </a>
+
+            <a
+              href="https://www.youtube.com/@alpinea.private"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="transition hover:text-white"
+            >
+              YouTube
+            </a>
+
+            <a
+              href="mailto:wilson@alpinea.io"
+              className="transition hover:text-white"
+            >
+              Contato
+            </a>
+          </div>
+
         </div>
-      </div>
-    </div>
-
-    {/* Coluna direita */}
-    <div className="flex items-center gap-8 text-xs uppercase tracking-[0.25em] text-white/40">
-      <a
-        href="https://www.instagram.com/alpinea.private"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="transition hover:text-white"
-      >
-        Instagram
-      </a>
-
-      <a
-        href="https://www.youtube.com/@alpinea.private"
-        target="_blank"
-        rel="noopener noreferrer"
-        className="transition hover:text-white"
-      >
-        YouTube
-      </a>
-
-      <a
-        href="mailto:wilson@alpinea.io"
-        className="transition hover:text-white"
-      >
-        Contato
-      </a>
-    </div>
-
-  </div>
-</footer>
+      </footer>
     </main>
   );
 }
