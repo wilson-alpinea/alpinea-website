@@ -28,6 +28,8 @@ export default function GastroPage() {
         <nav className="hidden gap-8 text-xs uppercase tracking-[0.25em] text-white/70 md:flex">
           <a href="/" className="transition hover:text-white">Início</a>
           <a href="/services" className="transition hover:text-white">Serviços</a>
+          <a href="/gastro" className="transition hover:text-white">Restaurantes</a>
+          <a href="/guia" className="transition hover:text-white">Compras</a>
           <a href="/preview" className="transition hover:text-white">Roteiro</a>
           <a href="#contact" className="transition hover:text-white">Contato</a>
         </nav>
@@ -123,7 +125,7 @@ export default function GastroPage() {
             <div className="flex flex-col gap-10">
               <div>
                 <p className="mb-6 text-xs uppercase tracking-[0.35em] text-white/35">Caso Executado</p>
-                <h2 className="text-3xl font-light text-white md:text-4xl">Perfil do cliente</h2>
+                <h2 className={`${display.className} text-3xl font-medium text-white md:text-4xl`}>Perfil do cliente</h2>
               </div>
               <div className="overflow-hidden rounded-2xl">
                 <Image
@@ -168,7 +170,7 @@ export default function GastroPage() {
             {/* Esquerda */}
             <div>
               <p className="mb-6 text-xs uppercase tracking-[0.35em] text-white/35">Execução</p>
-              <h2 className="text-3xl font-light text-white md:text-4xl">Seleção</h2>
+              <h2 className={`${display.className} text-3xl font-medium text-white md:text-4xl`}>Seleção</h2>
               <p className="mt-6 text-sm font-light leading-8 text-white/45">
                 Com 7 dias disponíveis, a curadoria foi estruturada para cobrir as principais expressões da alta gastronomia japonesa, sem repetição de categoria e com progressão intencional de ritmo ao longo da semana.
               </p>
@@ -206,7 +208,7 @@ export default function GastroPage() {
               {/* Sushi */}
               <div className="border-t border-white/10 py-10">
                 <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">Sushi</p>
-                <h3 className="text-2xl font-light text-white mb-4">3 escolas diferentes</h3>
+                <h3 className={`${display.className} text-2xl font-medium text-white mb-4`}>3 escolas diferentes</h3>
                 <p className="text-sm leading-7 text-white/55">
                   O sushi contemporâneo no Japão é dominado por duas linhagens principais: a escola de Jiro Ono (Sukiyabashi Jiro) e a escola de Keiji Nakazawa (Sushi Sho). A curadoria contemplou um representante de cada escola, com um terceiro restaurante representando a nova geração de líderes do cenário.
                 </p>
@@ -226,7 +228,7 @@ export default function GastroPage() {
               {/* Tempurá */}
               <div className="border-t border-white/10 py-10">
                 <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">Tempurá</p>
-                <h3 className="text-2xl font-light text-white mb-4">Mikawa Zezankyo</h3>
+                <h3 className={`${display.className} text-2xl font-medium text-white mb-4`}>Mikawa Zezankyo</h3>
                 <p className="text-sm leading-7 text-white/55">
                   Liderado pelo chef Tetsuya Saotome, uma das lendas vivas do tempurá com mais de 60 anos de experiência. Um dos últimos shokunins que executa cada peça com o rigor e a precisão acumulados ao longo de décadas de ofício.
                 </p>
@@ -235,7 +237,7 @@ export default function GastroPage() {
               {/* Wagyu */}
               <div className="border-t border-white/10 py-10">
                 <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">Wagyu</p>
-                <h3 className="text-2xl font-light text-white mb-4">Niku Kappou Miyata</h3>
+                <h3 className={`${display.className} text-2xl font-medium text-white mb-4`}>Niku Kappou Miyata</h3>
                 <p className="text-sm leading-7 text-white/55">
                   Um dos poucos menus-degustação de wagyu no Japão com amplitude real — da apresentação em formato de sushi com caviar negro até o wagyusando. Uma jornada completa pela carne mais valorizada do mundo em suas formas mais refinadas.
                 </p>
@@ -244,7 +246,7 @@ export default function GastroPage() {
               {/* Kaiseki */}
               <div className="border-t border-white/10 py-10">
                 <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">Kaiseki</p>
-                <h3 className="text-2xl font-light text-white mb-4">Ogata</h3>
+                <h3 className={`${display.className} text-2xl font-medium text-white mb-4`}>Ogata</h3>
                 <p className="text-sm leading-7 text-white/55">
                   Um dos líderes do kaiseki contemporâneo, o Ogata prima pela qualidade extrema das matérias-primas — cogumelo matsutake de primeira categoria, king crab — com apresentações que encontram o equilíbrio entre a tradição japonesa e a leitura do paladar ocidental. A escolha intencional: kaiseki clássicos seguem uma linha que ocidentais frequentemente têm dificuldade de acompanhar em profundidade.
                 </p>
@@ -253,7 +255,7 @@ export default function GastroPage() {
               {/* Contemporâneo */}
               <div className="border-t border-white/10 py-10">
                 <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">Contemporâneo</p>
-                <h3 className="text-2xl font-light text-white mb-4">Sazenka</h3>
+                <h3 className={`${display.className} text-2xl font-medium text-white mb-4`}>Sazenka</h3>
                 <p className="text-sm leading-7 text-white/55">
                   Inspirado na culinária chinesa, o Sazenka traz releituras de clássicos utilizando técnica de preparo de alto nível, apresentação de fine dining e ingredientes da cozinha japonesa de elite. Uma fusão construída com repertório, não com experimentação — e uma das escolhas mais surpreendentes da semana para o perfil do cliente.
                 </p>
@@ -393,7 +395,7 @@ export default function GastroPage() {
           <div className="grid gap-20 lg:grid-cols-[1fr_1.6fr]">
             <div>
               <p className="mb-6 text-xs uppercase tracking-[0.35em] text-white/35">Distribuição</p>
-              <h2 className="text-3xl font-light text-white md:text-4xl">5 dias em Tokyo, 2 em Kyoto</h2>
+              <h2 className={`${display.className} text-3xl font-medium text-white md:text-4xl`}>5 dias em Tokyo, 2 em Kyoto</h2>
               <p className="mt-6 text-sm font-light leading-8 text-white/40">
                 A concentração em Tokyo reflete onde estão os restaurantes de sushi, tempurá e wagyu de maior referência. Kyoto responde pelo kaiseki — o formato que mais exige imersão no contexto da cidade para ser plenamente compreendido.
               </p>

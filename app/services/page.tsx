@@ -270,6 +270,8 @@ export default function ServicesPage() {
         <nav className="hidden gap-8 text-xs uppercase tracking-[0.25em] text-white/70 md:flex">
           <a href="/" className="transition hover:text-white">Início</a>
           <a href="/services" className="transition hover:text-white">Serviços</a>
+          <a href="/gastro" className="transition hover:text-white">Restaurantes</a>
+          <a href="/guia" className="transition hover:text-white">Compras</a>
           <a href="/preview" className="transition hover:text-white">Roteiro</a>
           <a href="#contact" className="transition hover:text-white">Contato</a>
         </nav>
