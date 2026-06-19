@@ -61,54 +61,6 @@ export default function GuiaFacasPage() {
         </div>
       </section>
 
-      {/* O Mercado — vídeo grande à esquerda, stats à direita */}
-      <section className="mt-0">
-        <div className="grid lg:grid-cols-2 lg:min-h-[700px]">
-          {/* Esquerda — vídeo */}
-          <div className="relative min-h-[400px] overflow-hidden lg:min-h-full">
-            <video
-              src="/videos/kiku-graving.mp4"
-              autoPlay
-              muted
-              loop
-              playsInline
-              className="absolute inset-0 h-full w-full object-cover"
-            />
-            <div className="absolute inset-0 bg-gradient-to-r from-transparent to-black/20" />
-          </div>
-
-          {/* Direita — label, título, stats */}
-          <div className="flex flex-col justify-center bg-black px-8 py-20 md:px-14">
-            <p className="mb-6 text-xs uppercase tracking-[0.35em] text-white/35">O Mercado</p>
-            <h2 className={`${display.className} text-3xl font-medium text-white leading-snug md:text-4xl`}>
-              Comprar bem no Japão<br />é um ofício à parte.
-            </h2>
-
-            <div className="mt-12 space-y-0">
-              <div className="border-t border-white/10 py-7 grid gap-6 grid-cols-[100px_1fr] items-center">
-                <p className="text-3xl font-light text-white/20 tabular-nums leading-none">+1.000</p>
-                <p className="text-white font-light text-sm leading-6">fabricantes de facas no Japão</p>
-              </div>
-
-              <div className="border-t border-white/10 py-7 grid gap-6 grid-cols-[100px_1fr] items-center">
-                <p className="text-3xl font-light text-white/20 tabular-nums leading-none">~30</p>
-                <p className="text-white font-light text-sm leading-6">fabricantes de elite com acesso real</p>
-              </div>
-
-              <div className="border-t border-white/10 py-7 grid gap-6 grid-cols-[100px_1fr] items-center">
-                <div className="leading-none">
-                  <p className="text-3xl font-light text-white/20 tabular-nums leading-none">2</p>
-                  <p className="text-xs uppercase tracking-[0.2em] text-white/20 mt-1">anos</p>
-                </div>
-                <p className="text-white font-light text-sm leading-6">fila nos artesãos mais procurados</p>
-              </div>
-
-              <div className="border-t border-white/10" />
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* Categorias de Assessoria */}
       <section className="border-t border-white/10 px-8 py-28 md:px-16">
         <div className="mx-auto max-w-7xl">
@@ -178,7 +130,7 @@ export default function GuiaFacasPage() {
               },
             ].map((item) => (
               <article key={item.title} className="group">
-                <div className="relative flex aspect-square items-center justify-center overflow-hidden bg-white/[0.015] p-8">
+                <div className="relative flex aspect-square items-center justify-center overflow-hidden p-8">
                   <Image
                     src={item.image}
                     alt={item.alt}
@@ -208,6 +160,9 @@ export default function GuiaFacasPage() {
             <div>
               <p className="mb-6 text-xs uppercase tracking-[0.35em] text-white/35">Caso Executado</p>
               <h2 className={`${display.className} text-3xl font-medium text-white md:text-4xl`}>Perfil do cliente</h2>
+              <p className="mt-6 text-sm font-light leading-8 text-white/45">
+                Comprar bem no Japão é um ofício à parte: entre mais de 1.000 fabricantes de facas no país, apenas cerca de 30 têm acesso real a clientes externos — e a fila nos artesãos mais procurados chega a 2 anos.
+              </p>
             </div>
             <div className="space-y-6 text-base font-light leading-9 text-white/60">
               <p>
