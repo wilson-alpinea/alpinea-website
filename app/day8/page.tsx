@@ -556,7 +556,7 @@ export default function Day8Page() {
               <div className="border-t border-white/10 pt-6">
                 <p className="mb-4 text-xs uppercase tracking-[0.35em] text-white/30">Petiscos de rua · Yoiyama</p>
                 <Image
-                  src="/images/snacks.png"
+                  src="/images/snacks.webp"
                   alt="Petiscos tradicionais vendidos durante o Yoiyama"
                   width={500}
                   height={1600}
