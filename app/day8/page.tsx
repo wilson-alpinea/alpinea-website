@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { Bodoni_Moda } from "next/font/google";
 import { ContactCTA } from "../components/ContactCTA";
+import { ZoomImage } from "../components/ZoomImage";
 
 // Mesma fonte de destaque usada nas demais páginas do site.
 const display = Bodoni_Moda({
@@ -178,8 +179,8 @@ export default function Day8Page() {
 
       {/* ── CAFÉ DA MANHÃ — THE LIVING PAVILION ── */}
       <section className="border-t border-white/10 px-8 py-32 md:px-16">
-        <div className="mx-auto max-w-7xl">
-          <div className="max-w-3xl space-y-12 text-base font-light leading-9 text-white/65">
+        <div className="mx-auto max-w-5xl text-center">
+          <div className="mx-auto max-w-3xl space-y-12 text-base font-light leading-9 text-white/65">
             <div>
               <p className="mb-8 text-xs uppercase tracking-[0.35em] text-white/40">Manhã · Café da Manhã</p>
               <h3 className={`${display.className} text-3xl font-medium text-white md:text-4xl`}>The Living Pavilion by Aman</h3>
@@ -215,7 +216,7 @@ export default function Day8Page() {
 
           {/* Galeria horizontal — fotos + menu lado a lado */}
           <div className="mt-16 grid grid-cols-3 gap-6">
-            <div className="aspect-[3/4] overflow-hidden rounded-2xl border border-white/10">
+            <div className="aspect-[3/4] overflow-hidden rounded-2xl">
               <Image
                 src="/images/amancafe.jpg"
                 alt="Café da manhã — The Living Pavilion by Aman Kyoto"
@@ -225,7 +226,7 @@ export default function Day8Page() {
                 className="h-full w-full object-cover"
               />
             </div>
-            <div className="aspect-[3/4] overflow-hidden rounded-2xl border border-white/10">
+            <div className="aspect-[3/4] overflow-hidden rounded-2xl">
               <Image
                 src="/images/amancafe2.jpg"
                 alt="The Living Pavilion by Aman Kyoto"
@@ -234,20 +235,14 @@ export default function Day8Page() {
                 className="h-full w-full object-cover"
               />
             </div>
-            <a
-              href="/images/aman-breakfast.png"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="group aspect-[3/4] overflow-hidden rounded-2xl border border-white/10 bg-white/[0.03]"
-            >
-              <Image
-                src="/images/aman-breakfast.png"
-                alt="Breakfast Menu — The Living Pavilion by Aman Kyoto"
-                width={600}
-                height={800}
-                className="h-full w-full object-contain p-3 transition group-hover:opacity-85"
-              />
-            </a>
+            <ZoomImage
+              src="/images/aman-breakfast.png"
+              alt="Breakfast Menu — The Living Pavilion by Aman Kyoto"
+              width={600}
+              height={800}
+              className="aspect-[3/4] overflow-hidden rounded-2xl bg-white/[0.03]"
+              imgClassName="h-full w-full object-contain p-3"
+            />
           </div>
           <p className="mt-4 text-xs uppercase tracking-[0.35em] text-white/30">
             The Living Pavilion by Aman · Aman Kyoto · Clique no menu para ampliar
@@ -257,66 +252,71 @@ export default function Day8Page() {
 
       {/* ── TRANSPORTE PRIVADO ── */}
       <section className="border-t border-white/10 bg-white/[0.02] px-8 py-32 md:px-16">
-        <div className="mx-auto max-w-7xl">
-          <div className="grid gap-20 lg:grid-cols-2 lg:items-start">
-            <div className="space-y-12 text-base font-light leading-9 text-white/65">
+        <div className="mx-auto max-w-3xl space-y-12 text-center text-base font-light leading-9 text-white/65">
+          <div>
+            <p className="mb-8 text-xs uppercase tracking-[0.35em] text-white/40">Transporte Privado</p>
+            <h3 className={`${display.className} text-3xl font-medium text-white md:text-4xl`}>Motorista Dedicado</h3>
+          </div>
+
+          <p className="mx-auto max-w-xl">
+            Toda a logística do dia é coordenada pela Alpinea com motorista exclusivo para a família. O veículo aguarda na saída do hotel em cada deslocamento.
+          </p>
+
+          <div className="border-t border-white/10 pt-10 space-y-5">
+            <p className="text-xs uppercase tracking-[0.35em] text-white/30">Encontro com a família</p>
+            <p className="mx-auto max-w-xl">
+              O Aman Kyoto não possui um lobby convencional. Tanaka aguardará a família no Kurumayose (車寄せ) — a área de embarque e desembarque do hotel — às 08:30.
+            </p>
+          </div>
+
+          <div className="border-t border-white/10 pt-10">
+            <div className="mx-auto grid max-w-xl gap-8 text-left sm:grid-cols-2">
               <div>
-                <p className="mb-8 text-xs uppercase tracking-[0.35em] text-white/40">Transporte Privado</p>
-                <h3 className={`${display.className} text-3xl font-medium text-white md:text-4xl`}>Motorista Dedicado</h3>
+                <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">Categoria do veículo</p>
+                <p className="text-white/85">Van Luxo</p>
+                <p className="mt-1 text-sm text-white/45">Toyota Alphard, Lexus LM ou similar</p>
               </div>
-
-              <p className="max-w-xl">
-                Toda a logística do dia é coordenada pela Alpinea com motorista exclusivo para a família. O veículo aguarda na saída do hotel em cada deslocamento.
-              </p>
-
-              <div className="border-t border-white/10 pt-10 space-y-5">
-                <p className="text-xs uppercase tracking-[0.35em] text-white/30">Encontro com a família</p>
-                <p>
-                  O Aman Kyoto não possui um lobby convencional. Tanaka aguardará a família no Kurumayose (車寄せ) — a área de embarque e desembarque do hotel — no horário combinado.
-                </p>
+              <div>
+                <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">Categoria alternativa</p>
+                <p className="text-white/85">Sedan Luxo</p>
+                <p className="mt-1 text-sm text-white/45">Toyota Century, Lexus LS ou similar</p>
               </div>
-
-              <div className="border-t border-white/10 pt-10">
-                <div className="grid gap-8 sm:grid-cols-2">
-                  <div>
-                    <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">Categoria do veículo</p>
-                    <p className="text-white/85">Van Luxo</p>
-                    <p className="mt-1 text-sm text-white/45">Toyota Alphard, Lexus LM ou similar</p>
-                  </div>
-                  <div>
-                    <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">Categoria alternativa</p>
-                    <p className="text-white/85">Sedan Luxo</p>
-                    <p className="mt-1 text-sm text-white/45">Toyota Century, Lexus LS ou similar</p>
-                  </div>
-                  <div>
-                    <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">Motorista</p>
-                    <p className="text-white/85">Tanaka Hiroshi <span className="text-white/40">田中 浩</span></p>
-                  </div>
-                  <div>
-                    <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">Idiomas</p>
-                    <p className="text-white/60 text-sm">Japonês · Inglês básico</p>
-                  </div>
-                </div>
+              <div>
+                <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">Motorista</p>
+                <p className="text-white/85">Tanaka Hiroshi <span className="text-white/40">田中 浩</span></p>
               </div>
-            </div>
-
-            {/* Coluna direita — foto do motorista */}
-            <div className="lg:sticky lg:top-28 space-y-6">
-              <div className="max-w-[280px] overflow-hidden rounded-2xl border border-white/10">
-                <Image
-                  src="/images/tanakamotorista.png"
-                  alt="Tanaka Hiroshi — Motorista Alpinea"
-                  width={480}
-                  height={640}
-                  priority
-                  className="w-full object-cover"
-                />
+              <div>
+                <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">Idiomas</p>
+                <p className="text-white/60 text-sm">Japonês · Inglês básico</p>
               </div>
-              <p className="text-xs uppercase tracking-[0.35em] text-white/30">
-                Tanaka Hiroshi · 田中 浩 · Motorista Alpinea
-              </p>
             </div>
           </div>
+        </div>
+
+        {/* Fotos — Tanaka + Lexus LM, centralizadas */}
+        <div className="mx-auto mt-16 max-w-[280px] space-y-6">
+          <div className="overflow-hidden rounded-2xl">
+            <Image
+              src="/images/tanakamotorista.png"
+              alt="Tanaka Hiroshi — Motorista Alpinea"
+              width={480}
+              height={640}
+              priority
+              className="w-full object-cover"
+            />
+          </div>
+          <div className="overflow-hidden rounded-2xl">
+            <Image
+              src="/images/lexuslm.png"
+              alt="Lexus LM — categoria Van Luxo"
+              width={480}
+              height={320}
+              className="w-full object-cover"
+            />
+          </div>
+          <p className="text-center text-xs uppercase tracking-[0.35em] text-white/30">
+            Tanaka Hiroshi · 田中 浩 · Motorista Alpinea
+          </p>
         </div>
       </section>
 
@@ -401,8 +401,8 @@ export default function Day8Page() {
 
       {/* ── ALMOÇO — NIKU KAPPOU MIYATA ── */}
       <section className="border-t border-white/10 bg-white/[0.02] px-8 py-32 md:px-16">
-        <div className="mx-auto max-w-7xl">
-          <div className="max-w-3xl space-y-12 text-base font-light leading-9 text-white/65">
+        <div className="mx-auto max-w-5xl text-center">
+          <div className="mx-auto max-w-3xl space-y-12 text-base font-light leading-9 text-white/65">
             <div>
               <p className="mb-8 text-xs uppercase tracking-[0.35em] text-white/40">Almoço · Menu Degustação</p>
               <h3 className={`${display.className} text-3xl font-medium text-white md:text-4xl`}>Niku Kappou Miyata</h3>
@@ -442,7 +442,7 @@ export default function Day8Page() {
           </div>
 
           {/* Galeria horizontal — fotos numa linha abaixo do texto */}
-          <div className="mt-16 grid max-w-3xl grid-cols-2 gap-6">
+          <div className="mx-auto mt-16 grid max-w-3xl grid-cols-2 gap-6">
             <div className="aspect-[4/3] overflow-hidden rounded-2xl border border-white/10">
               <Image
                 src="/images/niku.png"
@@ -463,7 +463,7 @@ export default function Day8Page() {
               />
             </div>
           </div>
-          <p className="mt-4 max-w-3xl text-xs uppercase tracking-[0.35em] text-white/30">
+          <p className="mx-auto mt-4 max-w-3xl text-xs uppercase tracking-[0.35em] text-white/30">
             Niku Kappou Miyata · Kyoto
           </p>
         </div>
@@ -552,6 +552,23 @@ export default function Day8Page() {
               <p className="text-xs uppercase tracking-[0.35em] text-white/30">
                 Yoiyama · Gion Matsuri · Shijo · Kyoto
               </p>
+
+              <div className="border-t border-white/10 pt-6">
+                <p className="mb-4 text-xs uppercase tracking-[0.35em] text-white/30">Petiscos de rua · Yoiyama</p>
+                <Image
+                  src="/images/snacks.png"
+                  alt="Petiscos tradicionais vendidos durante o Yoiyama"
+                  width={500}
+                  height={1600}
+                  className="w-full rounded-2xl object-contain"
+                />
+                <div className="mt-4 space-y-1 text-xs text-white/40">
+                  <p>Dondon Yaki — senbei (bolacha de arroz)</p>
+                  <p>Uma Sen — senbei sabor milho grelhado</p>
+                  <p>Puku Puku Tai — taiyaki sabor morango</p>
+                  <p>Takoyaki</p>
+                </div>
+              </div>
             </div>
           </div>
         </div>
