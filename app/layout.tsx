@@ -16,9 +16,9 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   metadataBase: new URL("https://www.alpinea.io"),
 
-  title: "Alpinea — Japão sob medida",
+  title: "Alpinea — Viagens Privadas e Concierge no Japão",
   description:
-    "Experiências privadas, alta gastronomia, concierge e curadoria de luxo no Japão.",
+    "Restaurantes quase impossíveis de reservar, especialistas em compras raramente acessíveis ao público e experiências para quem deseja viver o máximo do Japão.",
 
   keywords: [
     "Japão de luxo",
@@ -46,17 +46,16 @@ export const metadata: Metadata = {
   },
 
   openGraph: {
-    title: "Alpinea — Japão sob medida",
-    description:
-      "Experiências privadas, gastronomia de excelência e curadoria exclusiva no Japão.",
+    title: "Alpinea",
+    description: "Viagens Privadas e Concierge no Japão",
     url: "https://www.alpinea.io",
     siteName: "Alpinea",
     images: [
       {
-        url: "/images/og-cover.jpg",
+        url: "/images/og-logo.png", // Apontando para o seu logo novo na pasta public/images/
         width: 1200,
         height: 630,
-        alt: "Alpinea — Japão sob medida",
+        alt: "Alpinea — Viagens Privadas e Concierge no Japão",
       },
     ],
     locale: "pt_BR",
@@ -65,9 +64,9 @@ export const metadata: Metadata = {
 
   twitter: {
     card: "summary_large_image",
-    title: "Alpinea — Japão sob medida",
-    description: "Experiências privadas e curadoria de luxo no Japão.",
-    images: ["/images/og-cover.jpg"],
+    title: "Alpinea — Viagens Privadas e Concierge no Japão",
+    description: "Viagens Privadas e Concierge no Japão",
+    images: ["/images/og-logo.png"],
   },
 
   icons: {
