@@ -62,7 +62,7 @@ export default function LandingPage() {
     {
       title: "The Peninsula Tokyo",
       category: "Hospedagem · Tokyo",
-      image: "/images/aman-tokyo.png",
+      image: "/images/peninsula3.jpg",
       position: "object-center",
     },
     {
@@ -100,9 +100,8 @@ export default function LandingPage() {
       highlights: [
         "Roteiro personalizado",
         "Curadoria de destino",
-        "Opcionais: passagens, JR Pass, ingressos",
+        "Opcionais: passagens, JR Pass, ingressos, Reservas de restaurantes ou hotéis",
       ],
-      note: "Sem reservas de restaurantes ou hotéis",
     },
     {
       label: "Planejamento Completo",
