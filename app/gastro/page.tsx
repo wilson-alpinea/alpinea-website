@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { Bodoni_Moda } from "next/font/google";
-import { ContactCTA } from "@/components/ContactCTA";
+import { ContactCTA } from "../components/ContactCTA";
 
 // Mesma fonte de destaque usada nas demais páginas do site.
 const display = Bodoni_Moda({
