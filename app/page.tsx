@@ -747,13 +747,10 @@ export default function Home() {
 <div>
   <div className="relative overflow-hidden rounded-[28px]">
     
-    <video
-      src="/videos/moriart.mp4"
+    <img
+      src="/images/samurai.png"
+      alt="Samurai em armadura tradicional japonesa"
       className="h-[520px] w-full object-cover"
-      autoPlay
-      muted
-      loop
-      playsInline
     />
 
     {/* Fade para preto */}
