@@ -1,6 +1,14 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { Bodoni_Moda } from "next/font/google";
+
+// Mesma fonte de destaque usada na landing page e na página de Serviços —
+// mantém a identidade visual consistente entre as páginas do site.
+const display = Bodoni_Moda({
+  subsets: ["latin"],
+  weight: ["400", "500", "600"],
+});
 
 export default function Home() {
   const [scrolled, setScrolled] = useState(false);
@@ -71,8 +79,12 @@ export default function Home() {
       : "bg-transparent"
   }`}
 >
-  <a href="/" className="text-xl tracking-[0.45em]">
-    ALPINEA
+  <a href="/">
+    <img
+      src="/images/ALPINEA-LOGO-transparent.png"
+      alt="Alpinea"
+      className="h-8 w-auto object-contain"
+    />
   </a>
 
   <nav className="hidden gap-8 text-xs uppercase tracking-[0.25em] text-white/70 md:flex">
@@ -107,7 +119,7 @@ export default function Home() {
             Acesso, Execução e Curadoria do Japão
           </p>
 
-          <h1 className="text-6xl font-light leading-[1.05] tracking-tight text-white md:text-8xl">
+          <h1 className={`${display.className} text-6xl font-medium leading-[1.05] tracking-tight text-white md:text-8xl`}>
   Viva o Japão com
   <br />
  <span className="bg-gradient-to-r from-[#E94332] via-[#D96A2E] to-[#C9A03A] bg-clip-text text-transparent animate-luxury-gradient bg-[length:180%_180%]">
@@ -136,7 +148,7 @@ export default function Home() {
       EXPERIÊNCIAS PERSONALIZADAS
     </p>
 
-    <h2 className="max-w-6xl text-5xl font-light leading-tight tracking-tight md:text-7xl">
+    <h2 className={`${display.className} max-w-6xl text-5xl font-medium leading-tight tracking-tight md:text-7xl`}>
       O melhor do Japão, desenhado ao redor do seu estilo.
     </h2>
 
@@ -224,7 +236,7 @@ export default function Home() {
         Alta Gastronomia
       </p>
 
-      <h2 className="max-w-3xl text-4xl font-light leading-tight md:text-6xl">
+      <h2 className={`${display.className} max-w-3xl text-4xl font-medium leading-tight md:text-6xl`}>
         Reservas quase impossíveis nos melhores restaurantes do Japão
       </h2>
 
@@ -297,7 +309,7 @@ export default function Home() {
         Relacionamentos construídos ao longo de mais de uma década
       </p>
 
-      <h2 className="text-5xl font-light leading-[1.05] tracking-tight text-white md:text-7xl">
+      <h2 className={`${display.className} text-5xl font-medium leading-[1.05] tracking-tight text-white md:text-7xl`}>
         O acesso
         <br />
         começa muito antes
@@ -366,7 +378,7 @@ export default function Home() {
         Artigos de Luxo
       </p>
 
-      <h2 className="max-w-3xl text-4xl font-light leading-tight md:text-6xl">
+      <h2 className={`${display.className} max-w-3xl text-4xl font-medium leading-tight md:text-6xl`}>
         Acesso aos itens mais desejados do Japão
       </h2>
 
@@ -438,7 +450,7 @@ export default function Home() {
       EXPERIÊNCIAS
     </p>
 
-    <h2 className="mx-auto max-w-5xl text-center text-4xl font-light leading-tight md:text-7xl">
+    <h2 className={`${display.className} mx-auto max-w-5xl text-center text-4xl font-medium leading-tight md:text-7xl`}>
       O Japão além dos cartões-postais.
     </h2>
 
@@ -543,7 +555,7 @@ export default function Home() {
       Sua Experiência Alpinea
     </p>
 
-    <h2 className="text-5xl font-light leading-[1.1] tracking-tight md:text-7xl">
+    <h2 className={`${display.className} text-5xl font-medium leading-[1.1] tracking-tight md:text-7xl`}>
       Faça o Japão parecer
       <br />
       exclusivamente seu.
@@ -565,7 +577,7 @@ export default function Home() {
       Contato
     </p>
 
-    <h2 className="text-4xl font-light leading-tight md:text-6xl">
+    <h2 className={`${display.className} text-4xl font-medium leading-tight md:text-6xl`}>
       Comece sua jornada no Japão.
     </h2>
 
@@ -603,9 +615,11 @@ export default function Home() {
 
     {/* Coluna esquerda */}
     <div className="space-y-6">
-      <p className="text-xs uppercase tracking-[0.45em] text-white/80">
-        Alpinea
-      </p>
+      <img
+        src="/images/ALPINEA-LOGO-transparent.png"
+        alt="Alpinea"
+        className="h-7 w-auto object-contain"
+      />
 
       <div className="max-w-md space-y-3">
         <p className="text-sm leading-relaxed text-white/50">
@@ -670,3 +684,4 @@ export default function Home() {
     </main>
   );
 }
+
