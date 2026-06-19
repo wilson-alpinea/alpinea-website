@@ -336,38 +336,21 @@ export default function LandingPage() {
     {
       label: "Orientação Estratégica",
       title: "Alpinea Design",
-      description:
-        "Para viajantes que desejam conduzir a própria viagem com uma base estratégica, elegante e bem construída.",
-      highlights: [
-        "Roteiro personalizado",
-        "Curadoria de destino",
-        "Opcionais: passagens, JR Pass, ingressos, Reservas de restaurantes ou hotéis",
-      ],
+      intro: "Para quem deseja conduzir a própria viagem com uma base cuidadosamente desenhada.",
+      details: "Curadoria de destino, roteiro privado e recomendações estratégicas.",
     },
     {
       label: "Planejamento Completo",
       title: "Alpinea Executive",
-      description:
-        "Para clientes que desejam planejamento completo, reservas, logística e organização antes da chegada ao Japão.",
-      highlights: [
-        "Roteiro + hotéis + passagens",
-        "Reservas gastronômicas",
-        "Concierge remoto durante a viagem",
-      ],
-      note: "Sem acompanhamento presencial",
+      intro: "Para quem deseja uma viagem organizada antes da chegada ao Japão.",
+      details: "Planejamento completo, hotéis, passagens, reservas gastronômicas e concierge remoto.",
       featured: false,
     },
     {
       label: "Acompanhamento Presencial",
       title: "Alpinea Private",
-      description:
-        "Para clientes que desejam execução dedicada no Japão, com presença local em restaurantes, compras e atrações.",
-      highlights: [
-        "Tudo do Executive",
-        "Acompanhamento presencial em restaurantes",
-        "Acompanhamento presencial para compras e atrações",
-      ],
-      note: "Máxima presença local",
+      intro: "Para quem deseja presença local e execução dedicada no Japão.",
+      details: "Inclui o Executive, com acompanhamento presencial em restaurantes, compras e experiências.",
       featured: true,
     },
   ];
@@ -517,7 +500,7 @@ export default function LandingPage() {
                 Nossos diferenciais
               </p>
               <h2 className={`${display.className} text-4xl font-medium leading-tight md:text-6xl`}>
-                Acesso, profundidade e execução no mercado de luxo japonês.
+                Planejamos e executamos viagens privadas no Japão: hotéis, restaurantes, compras, logística, experiências e acompanhamento local quando necessário.
               </h2>
             </div>
 
@@ -647,11 +630,11 @@ export default function LandingPage() {
           </p>
 
           <h2 className={`${display.className} text-3xl font-medium leading-tight md:text-5xl`}>
-            Já sabe que essa é a viagem que você quer viver?
+            Comece sua jornada privada no Japão.
           </h2>
 
           <p className="mx-auto mt-6 max-w-xl text-sm leading-7 text-black/55 md:text-base">
-            Não é preciso esperar até o fim da página — comece a conversa agora e a Alpinea cuida do restante.
+            Compartilhe suas datas, preferências e estilo de viagem. A Alpinea desenha o caminho.
           </p>
 
           <div className="mt-9 flex flex-col justify-center gap-4 md:flex-row">
@@ -660,7 +643,7 @@ export default function LandingPage() {
               onClick={() => setContactChannel("email")}
               className="border border-black px-8 py-4 text-xs uppercase tracking-[0.35em] transition hover:bg-black hover:text-white"
             >
-              Entrar em Contato por E-mail
+              Falar por e-mail
             </button>
 
             <button
@@ -668,7 +651,7 @@ export default function LandingPage() {
               onClick={() => setContactChannel("whatsapp")}
               className="border border-black/20 px-8 py-4 text-xs uppercase tracking-[0.35em] transition hover:border-black hover:bg-black hover:text-white"
             >
-              Contato por WhatsApp
+              WhatsApp
             </button>
           </div>
         </div>
@@ -693,6 +676,10 @@ export default function LandingPage() {
             </p>
           </div>
 
+          <p className="mb-8 border-t border-white/10 pt-6 text-sm font-light text-white/40">
+            Para manter o padrão de atendimento, a Alpinea aceita um número limitado de novos clientes por temporada.
+          </p>
+
           <div className="grid gap-px bg-white/10 md:grid-cols-3">
             {tiers.map((tier) => (
               <div
@@ -709,19 +696,13 @@ export default function LandingPage() {
                   {tier.title}
                 </h3>
 
-                <p className="mt-5 text-sm font-light leading-7 text-white/55">
-                  {tier.description}
+                <p className="mt-6 text-base font-light leading-7 text-white/75">
+                  {tier.intro}
                 </p>
 
-                <div className="mt-10 flex-1 space-y-3 border-t border-white/10 pt-10">
-                  {tier.highlights.map((h) => (
-                    <p key={h} className="text-sm font-light leading-6 text-white/70">
-                      {h}
-                    </p>
-                  ))}
-                </div>
-
-                <p className="mt-8 text-xs text-white/30">{tier.note}</p>
+                <p className="mt-4 text-sm font-light leading-7 text-white/50">
+                  {tier.details}
+                </p>
               </div>
             ))}
           </div>
@@ -802,13 +783,17 @@ export default function LandingPage() {
             Compartilhe suas datas, preferências e estilo de viagem. A Alpinea cuidará do restante.
           </p>
 
-          <div className="mt-12 flex flex-col justify-center gap-4 md:flex-row">
+          <p className="mt-6 text-sm font-light text-black/40">
+            Agenda limitada para o segundo semestre de 2026.
+          </p>
+
+          <div className="mt-10 flex flex-col justify-center gap-4 md:flex-row">
             <button
               type="button"
               onClick={() => setContactChannel("email")}
               className="border border-black px-10 py-5 text-xs uppercase tracking-[0.35em] transition hover:bg-black hover:text-white"
             >
-              Entrar em Contato por E-mail
+              Falar por e-mail
             </button>
 
             <button
@@ -816,7 +801,7 @@ export default function LandingPage() {
               onClick={() => setContactChannel("whatsapp")}
               className="border border-black/20 px-10 py-5 text-xs uppercase tracking-[0.35em] transition hover:border-black hover:bg-black hover:text-white"
             >
-              Contato por WhatsApp
+              WhatsApp
             </button>
           </div>
         </div>
