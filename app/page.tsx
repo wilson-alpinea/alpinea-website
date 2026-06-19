@@ -759,11 +759,11 @@ export default function Home() {
 
   <div className="mt-5 px-2">
     <h3 className="text-lg font-light">
-      Cultura & Entretenimento Premium
+      Patrimônio & Cultura Japonesa
     </h3>
 
     <p className="mt-2 text-sm leading-7 text-white/55">
-      Museus, instalações artísticas, parques temáticos e experiências imersivas cuidadosamente selecionadas para revelar o lado mais contemporâneo e sensorial do Japão.
+      Museus, instalações artísticas, festivais, parques temáticos e experiências imersivas cuidadosamente selecionadas para revelar o lado mais contemporâneo e sensorial do Japão.
     </p>
   </div>
 </div>
