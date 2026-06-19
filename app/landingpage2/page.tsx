@@ -1,6 +1,16 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { Bodoni_Moda } from "next/font/google";
+
+// Display serif for large headline moments — pairs with the ALPINEA logotype.
+// If it's not quite the match you're after, two easy swaps:
+//   import { Playfair_Display as Bodoni_Moda } from "next/font/google";
+//   import { Cormorant as Bodoni_Moda } from "next/font/google";
+const display = Bodoni_Moda({
+  subsets: ["latin"],
+  weight: ["400", "500", "600"],
+});
 
 // Lightbox component
 function Lightbox({ src, alt, onClose }: { src: string; alt: string; onClose: () => void }) {
@@ -44,44 +54,40 @@ export default function LandingPage() {
 
   const accessCards = [
     {
-      title: "Fukamachi",
-      category: "Gastronomia · Tokyo",
-      image: "/images/zezankyo.png",
-      position: "object-center",
-    },
-    {
-      title: "Shunsuke",
-      category: "Gastronomia · Tokyo",
-      image: "/images/sushi-sho.png",
-      position: "object-center",
-    },
-    {
       title: "Sushi Arai",
       category: "Gastronomia · Tokyo",
-      image: "/images/sushi-arai.png",
+      image: "/images/arai2.png",
       position: "object-center",
-      scale: "scale-110",
     },
     {
       title: "The Peninsula Tokyo",
       category: "Hospedagem · Tokyo",
       image: "/images/aman-tokyo.png",
       position: "object-center",
-      scale: "scale-110",
     },
     {
       title: "Niku Kappou Miyata",
       category: "Gastronomia · Osaka",
       image: "/images/nikufood.jpeg",
       position: "object-center",
-      scale: "scale-[1.6]",
+    },
+    {
+      title: "Sazenka",
+      category: "Gastronomia · Tokyo",
+      image: "/images/sazenka2.png",
+      position: "object-center",
     },
     {
       title: "Ao",
       category: "Gastronomia · Tokyo",
-      image: "/images/ao.png",
+      image: "/images/ao2.png",
       position: "object-center",
-      scale: "scale-110",
+    },
+    {
+      title: "Fukamachi",
+      category: "Gastronomia · Tokyo",
+      image: "/images/fukamachi2.png",
+      position: "object-center",
     },
   ];
 
@@ -164,7 +170,7 @@ export default function LandingPage() {
             Viagens privadas e concierge no Japão
           </p>
 
-          <h1 className="max-w-5xl text-5xl font-light leading-[1.05] tracking-tight md:text-7xl">
+          <h1 className={`${display.className} max-w-5xl text-5xl font-medium leading-[1.05] tracking-tight md:text-7xl`}>
             Viva o Japão com
             <br />
             <span className="bg-gradient-to-r from-[#E94332] via-[#D96A2E] to-[#C9A03A] bg-clip-text text-transparent">
@@ -193,7 +199,7 @@ export default function LandingPage() {
               A Jornada Alpinea
             </p>
 
-            <h2 className="text-4xl font-light leading-tight md:text-6xl">
+            <h2 className={`${display.className} text-4xl font-medium leading-tight md:text-6xl`}>
               Uma curadoria muito além de uma lista genérica de lugares.
             </h2>
           </div>
@@ -267,7 +273,7 @@ export default function LandingPage() {
               <p className="mb-6 text-xs uppercase tracking-[0.45em] text-white/45">
                 Nossos diferenciais
               </p>
-              <h2 className="text-4xl font-light leading-tight md:text-6xl">
+              <h2 className={`${display.className} text-4xl font-medium leading-tight md:text-6xl`}>
                 Acesso, profundidade e execução no mercado de luxo japonês.
               </h2>
             </div>
@@ -293,7 +299,7 @@ export default function LandingPage() {
                   <img
                     src={item.image}
                     alt={item.title}
-                    className={`h-full w-full object-cover ${item.position} ${"scale" in item ? (item as any).scale : ""}`}
+                    className={`h-full w-full object-cover ${item.position}`}
                   />
                 </div>
                 <h3 className="mt-5 text-xl font-light text-white">
@@ -317,7 +323,7 @@ export default function LandingPage() {
               Execução
             </p>
 
-            <h2 className="text-4xl font-light leading-tight md:text-6xl">
+            <h2 className={`${display.className} text-4xl font-medium leading-tight md:text-6xl`}>
               Uma operação desenhada para transformar intenção em viagem executada.
             </h2>
 
@@ -390,6 +396,41 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* CONTATO INTERMEDIÁRIO — para quem já decidiu sem precisar rolar até o fim */}
+      <section className="bg-white px-8 py-20 text-black md:px-16">
+        <div className="mx-auto max-w-3xl text-center">
+          <p className="mb-5 text-xs uppercase tracking-[0.45em] text-black/40">
+            Fale com a Alpinea
+          </p>
+
+          <h2 className={`${display.className} text-3xl font-medium leading-tight md:text-5xl`}>
+            Já sabe que essa é a viagem que você quer viver?
+          </h2>
+
+          <p className="mx-auto mt-6 max-w-xl text-sm leading-7 text-black/55 md:text-base">
+            Não é preciso esperar até o fim da página — comece a conversa agora e a Alpinea cuida do restante.
+          </p>
+
+          <div className="mt-9 flex flex-col justify-center gap-4 md:flex-row">
+            <a
+              href="mailto:wilson@alpinea.io"
+              className="border border-black px-8 py-4 text-xs uppercase tracking-[0.35em] transition hover:bg-black hover:text-white"
+            >
+              Entrar em contato
+            </a>
+
+            <a
+              href="https://wa.me/5511996691818"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="border border-black/20 px-8 py-4 text-xs uppercase tracking-[0.35em] transition hover:border-black hover:bg-black hover:text-white"
+            >
+              Contato por WhatsApp
+            </a>
+          </div>
+        </div>
+      </section>
+
       {/* SERVIÇOS — 3 tiers compactos */}
       <section className="border-b border-white/10 px-8 py-28 md:px-16">
         <div className="mx-auto max-w-7xl">
@@ -399,7 +440,7 @@ export default function LandingPage() {
                 Formatos de serviço
               </p>
 
-              <h2 className="text-4xl font-light leading-tight md:text-6xl">
+              <h2 className={`${display.className} text-4xl font-medium leading-tight md:text-6xl`}>
                 Três níveis de presença. Uma mesma curadoria.
               </h2>
             </div>
@@ -454,7 +495,7 @@ export default function LandingPage() {
               Presença digital
             </p>
 
-            <h2 className="text-4xl font-light leading-tight md:text-6xl">
+            <h2 className={`${display.className} text-4xl font-medium leading-tight md:text-6xl`}>
               Conheça mais sobre destinos, hotéis, restaurantes e atrações.
             </h2>
 
@@ -510,7 +551,7 @@ export default function LandingPage() {
             Contato
           </p>
 
-          <h2 className="text-4xl font-light leading-tight md:text-6xl">
+          <h2 className={`${display.className} text-4xl font-medium leading-tight md:text-6xl`}>
             Comece sua jornada no Japão.
           </h2>
 
