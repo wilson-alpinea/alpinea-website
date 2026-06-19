@@ -1,6 +1,14 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { Bodoni_Moda } from "next/font/google";
+import { ContactCTA } from "@/components/ContactCTA";
+
+// Mesma fonte de destaque usada nas demais páginas do site.
+const display = Bodoni_Moda({
+  subsets: ["latin"],
+  weight: ["400", "500", "600"],
+});
 
 const sections = [
   ["sobre", "01", "Sobre a Alpinea"],
@@ -235,8 +243,12 @@ export default function LegalPage() {
           scrolled ? "bg-black/10 backdrop-blur-2xl" : "bg-transparent"
         }`}
       >
-        <a href="/" className="text-xl tracking-[0.45em]">
-          ALPINEA
+        <a href="/">
+          <img
+            src="/images/ALPINEA-LOGO-transparent.png"
+            alt="Alpinea"
+            className="h-8 w-auto object-contain"
+          />
         </a>
 
         <nav className="hidden gap-8 text-xs uppercase tracking-[0.25em] text-white/70 md:flex">
@@ -254,7 +266,7 @@ export default function LegalPage() {
           <p className="mb-8 text-xs uppercase tracking-[0.45em] text-white/50">
             ALPINEA
           </p>
-          <h1 className="max-w-5xl text-5xl font-light leading-tight md:text-7xl">
+          <h1 className={`${display.className} max-w-5xl text-5xl font-medium leading-tight md:text-7xl`}>
             Termos e
             <br />
             Condições de Serviço
@@ -293,7 +305,7 @@ export default function LegalPage() {
                 <p className="mb-5 text-xs uppercase tracking-[0.35em] text-white/40">
                   {section.number}
                 </p>
-                <h2 className="text-4xl font-light leading-tight text-white md:text-5xl">
+                <h2 className={`${display.className} text-4xl font-medium leading-tight text-white md:text-5xl`}>
                   {section.title}
                 </h2>
                 <div className="mt-8 space-y-6 text-lg leading-9 text-white/75">
@@ -315,29 +327,14 @@ export default function LegalPage() {
           <p className="mb-6 text-xs uppercase tracking-[0.45em] text-black/40">
             Contato
           </p>
-          <h2 className="text-4xl font-light leading-tight md:text-6xl">
+          <h2 className={`${display.className} text-4xl font-medium leading-tight md:text-6xl`}>
             Precisa de ajuda?
           </h2>
           <p className="mx-auto mt-8 max-w-2xl text-lg leading-8 text-black/60">
             Nossa equipe terá prazer em esclarecer dúvidas sobre contratação,
             reservas, suporte ou serviços da Alpinea.
           </p>
-          <div className="mt-12 flex flex-col items-center justify-center gap-4 sm:flex-row">
-            <a
-              href="mailto:wilson@alpinea.io"
-              className="border border-black px-8 py-4 text-xs uppercase tracking-[0.3em] transition hover:bg-black hover:text-white"
-            >
-              Entrar em Contato
-            </a>
-            <a
-              href="https://wa.me/5511996691818"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="border border-black/20 px-8 py-4 text-xs uppercase tracking-[0.3em] text-black/70 transition hover:border-black hover:text-black"
-            >
-              WhatsApp
-            </a>
-          </div>
+          <ContactCTA />
         </div>
       </section>
 
@@ -346,9 +343,11 @@ export default function LegalPage() {
 
     {/* Coluna esquerda */}
     <div className="space-y-6">
-      <p className="text-xs uppercase tracking-[0.45em] text-white/80">
-        Alpinea
-      </p>
+      <img
+        src="/images/ALPINEA-LOGO-transparent.png"
+        alt="Alpinea"
+        className="h-7 w-auto object-contain"
+      />
 
       <div className="max-w-md space-y-3">
         <p className="text-sm leading-relaxed text-white/50">
