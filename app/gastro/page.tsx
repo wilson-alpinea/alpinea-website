@@ -1,4 +1,12 @@
 import Image from "next/image";
+import { Bodoni_Moda } from "next/font/google";
+import { ContactCTA } from "@/components/ContactCTA";
+
+// Mesma fonte de destaque usada nas demais páginas do site.
+const display = Bodoni_Moda({
+  subsets: ["latin"],
+  weight: ["400", "500", "600"],
+});
 
 export const metadata = {
   title: "Alpinea | Curadoria e Reserva de Restaurantes",
@@ -10,8 +18,12 @@ export default function GastroPage() {
   return (
     <main className="min-h-screen bg-black text-white">
       <header className="fixed left-0 right-0 top-0 z-50 flex items-center justify-between bg-black/10 px-8 py-5 backdrop-blur-2xl md:px-16">
-        <a href="/" className="text-xl tracking-[0.45em]">
-          ALPINEA
+        <a href="/">
+          <img
+            src="/images/ALPINEA-LOGO-transparent.png"
+            alt="Alpinea"
+            className="h-8 w-auto object-contain"
+          />
         </a>
         <nav className="hidden gap-8 text-xs uppercase tracking-[0.25em] text-white/70 md:flex">
           <a href="/" className="transition hover:text-white">Início</a>
@@ -37,7 +49,7 @@ export default function GastroPage() {
           <p className="mb-8 text-xs uppercase tracking-[0.45em] text-white/40">
             Gastronomia · Alpinea Private
           </p>
-          <h1 className="max-w-4xl text-5xl font-light leading-[1.05] tracking-tight md:text-7xl">
+          <h1 className={`${display.className} max-w-4xl text-5xl font-medium leading-[1.05] tracking-tight md:text-7xl`}>
             Curadoria e Reserva de Restaurantes
           </h1>
           <p className="mt-10 max-w-2xl text-lg font-light leading-9 text-white/60">
@@ -71,7 +83,7 @@ export default function GastroPage() {
             <div className="flex flex-col justify-center gap-12 px-12 py-20 lg:px-16">
               <div>
                 <p className="mb-8 text-xs uppercase tracking-[0.45em] text-white/25">O Acesso</p>
-                <h2 className="text-4xl font-light leading-[1.1] text-white md:text-5xl">
+                <h2 className={`${display.className} text-4xl font-medium leading-[1.1] text-white md:text-5xl`}>
                   Reservar no Japão<br />é um ofício à parte.
                 </h2>
               </div>
@@ -424,35 +436,24 @@ export default function GastroPage() {
           <p className="mb-6 text-xs uppercase tracking-[0.35em] text-black/35">
             Próximo passo
           </p>
-          <h2 className="text-4xl font-light leading-tight md:text-6xl">
+          <h2 className={`${display.className} text-4xl font-medium leading-tight md:text-6xl`}>
             Pronto para iniciar a curadoria?
           </h2>
           <p className="mx-auto mt-8 max-w-xl text-base leading-9 text-black/50">
             Entre em contato para alinhar datas, perfil gastronômico e detalhes da jornada.
           </p>
-          <div className="mt-12 flex flex-col items-center justify-center gap-4 sm:flex-row">
-            <a
-              href="mailto:wilson@alpinea.io"
-              className="border border-black px-8 py-4 text-xs uppercase tracking-[0.3em] transition hover:bg-black hover:text-white"
-            >
-              Entrar em Contato
-            </a>
-            <a
-              href="https://wa.me/5511996691818"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="border border-black/15 px-8 py-4 text-xs uppercase tracking-[0.3em] text-black/50 transition hover:border-black hover:text-black"
-            >
-              WhatsApp Concierge
-            </a>
-          </div>
+          <ContactCTA />
         </div>
       </section>
 
       <footer className="border-t border-white/10 bg-black px-8 py-16 text-white md:px-16">
         <div className="mx-auto flex max-w-7xl flex-col justify-between gap-12 md:flex-row md:items-end">
           <div className="space-y-6">
-            <p className="text-xs uppercase tracking-[0.45em] text-white/70">Alpinea</p>
+            <img
+              src="/images/ALPINEA-LOGO-transparent.png"
+              alt="Alpinea"
+              className="h-7 w-auto object-contain"
+            />
             <div className="max-w-md space-y-3">
               <p className="text-sm leading-relaxed text-white/40">
                 Curadoria privada de experiências, gastronomia e lifestyle no Japão.
