@@ -1,4 +1,12 @@
 import Image from "next/image";
+import { Bodoni_Moda } from "next/font/google";
+import { ContactCTA } from "../components/ContactCTA";
+
+// Mesma fonte de destaque usada nas demais páginas do site.
+const display = Bodoni_Moda({
+  subsets: ["latin"],
+  weight: ["400", "500", "600"],
+});
 
 export const metadata = {
   title: "Alpinea | Assessoria de Compras — Facas de Cozinha",
@@ -10,19 +18,25 @@ export default function GuiaFacasPage() {
   return (
     <main className="min-h-screen bg-black text-white">
       <header className="fixed left-0 right-0 top-0 z-50 flex items-center justify-between bg-black/10 px-8 py-5 backdrop-blur-2xl md:px-16">
-        <a href="/" className="text-xl tracking-[0.45em]">
-          ALPINEA
+        <a href="/">
+          <img
+            src="/images/ALPINEA-LOGO-transparent.png"
+            alt="Alpinea"
+            className="h-8 w-auto object-contain"
+          />
         </a>
         <nav className="hidden gap-8 text-xs uppercase tracking-[0.25em] text-white/70 md:flex">
           <a href="/" className="transition hover:text-white">Início</a>
           <a href="/services" className="transition hover:text-white">Serviços</a>
+          <a href="/gastro" className="transition hover:text-white">Restaurantes</a>
+          <a href="/guia" className="transition hover:text-white">Compras</a>
           <a href="/preview" className="transition hover:text-white">Roteiro</a>
           <a href="#contact" className="transition hover:text-white">Contato</a>
         </nav>
       </header>
 
-      {/* Hero — igual /gastro: seção com altura fixa, imagem de fundo, texto sobre */}
-      <section className="relative min-h-[85vh] flex flex-col justify-end px-8 pb-16 md:px-16 md:pb-24">
+      {/* Hero — mesmo tamanho/estrutura do hero de /gastro */}
+      <section className="relative min-h-[640px] overflow-hidden px-8 pb-28 pt-40 md:px-16 md:pt-52">
         <div className="absolute inset-0">
           <Image
             src="/images/blacksmith.png"
@@ -31,17 +45,17 @@ export default function GuiaFacasPage() {
             className="object-cover object-center"
             priority
           />
-          <div className="absolute inset-0 bg-black/55" />
+          <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/70 to-black" />
         </div>
 
-        <div className="relative mx-auto w-full max-w-7xl">
+        <div className="relative z-10 mx-auto max-w-7xl">
           <p className="mb-6 text-xs uppercase tracking-[0.45em] text-white/40">
             Assessoria de Compras · Alpinea Private
           </p>
-          <h1 className="text-5xl font-light leading-[1.05] tracking-tight md:text-6xl lg:text-7xl">
+          <h1 className={`${display.className} max-w-4xl text-5xl font-medium leading-[1.05] tracking-tight md:text-6xl lg:text-7xl`}>
             Assessoria de Compras
           </h1>
-          <p className="mt-8 max-w-xl text-base font-light leading-8 text-white/55">
+          <p className="mt-10 max-w-2xl text-lg font-light leading-9 text-white/60">
             Produtos de elite no Japão — identificados, selecionados e adquiridos com acesso direto aos artesãos.
           </p>
         </div>
@@ -66,7 +80,7 @@ export default function GuiaFacasPage() {
           {/* Direita — label, título, stats */}
           <div className="flex flex-col justify-center bg-black px-8 py-20 md:px-14">
             <p className="mb-6 text-xs uppercase tracking-[0.35em] text-white/35">O Mercado</p>
-            <h2 className="text-3xl font-light text-white leading-snug md:text-4xl">
+            <h2 className={`${display.className} text-3xl font-medium text-white leading-snug md:text-4xl`}>
               Comprar bem no Japão<br />é um ofício à parte.
             </h2>
 
@@ -101,7 +115,7 @@ export default function GuiaFacasPage() {
           <div className="grid gap-20 lg:grid-cols-[1fr_1.6fr]">
             <div>
               <p className="mb-6 text-xs uppercase tracking-[0.35em] text-white/35">Caso Executado</p>
-              <h2 className="text-3xl font-light text-white md:text-4xl">Perfil do cliente</h2>
+              <h2 className={`${display.className} text-3xl font-medium text-white md:text-4xl`}>Perfil do cliente</h2>
             </div>
             <div className="space-y-6 text-base font-light leading-9 text-white/60">
               <p>
@@ -129,7 +143,7 @@ export default function GuiaFacasPage() {
           <div className="grid gap-20 lg:grid-cols-[1fr_1.6fr]">
             <div>
               <p className="mb-6 text-xs uppercase tracking-[0.35em] text-white/35">Execução</p>
-              <h2 className="text-3xl font-light text-white md:text-4xl">Seleção</h2>
+              <h2 className={`${display.className} text-3xl font-medium text-white md:text-4xl`}>Seleção</h2>
               <p className="mt-6 text-sm font-light leading-8 text-white/45">
                 Com base em 12 anos de relação direta com os chefs dos restaurantes líderes no Japão — sushi, contemporâneo e kaiseki — identificamos três fabricantes com disponibilidade imediata de peças e presença confirmada nas melhores cozinhas do país.
               </p>
@@ -139,7 +153,7 @@ export default function GuiaFacasPage() {
 
               <div className="mt-10 border-t border-white/10 pt-10">
                 <p className="mb-4 text-xs uppercase tracking-[0.35em] text-white/35">Afiação</p>
-                <h3 className="text-xl font-light text-white">Faca artesanal</h3>
+                <h3 className={`${display.className} text-xl font-medium text-white`}>Faca artesanal</h3>
                 <div className="mt-4 space-y-4 text-sm font-light leading-8 text-white/50">
                   <p>
                     A faca artesanal em uso no ateliê do cliente será entregue no primeiro dia de viagem ao afiador da Masamoto em Tokyo — um dos poucos artesãos que ainda pratica a afiação manual tradicional com pedras d'água de diferentes granulometrias.
@@ -158,7 +172,7 @@ export default function GuiaFacasPage() {
               <div className="border-t border-white/10 py-10 grid gap-8 sm:grid-cols-[1fr_1.2fr] items-center">
                 <div>
                   <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">Uso geral</p>
-                  <h3 className="text-2xl font-light text-white">Gyuto <span className="text-white/30 text-base ml-2">牛刀</span></h3>
+                  <h3 className={`${display.className} text-2xl font-medium text-white`}>Gyuto <span className="text-white/30 text-base ml-2">牛刀</span></h3>
                   <p className="mt-4 text-sm leading-7 text-white/55">
                     Faca versátil de uso cotidiano. Adaptada da tradição francesa pelo Japão, executa cortes precisos em carnes, vegetais e peixes com a mesma eficiência.
                   </p>
@@ -177,7 +191,7 @@ export default function GuiaFacasPage() {
               <div className="border-t border-white/10 py-10 grid gap-8 sm:grid-cols-[1fr_1.2fr] items-center">
                 <div>
                   <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">Corte de peixe</p>
-                  <h3 className="text-2xl font-light text-white">Yanagiba <span className="text-white/30 text-base ml-2">柳刃</span></h3>
+                  <h3 className={`${display.className} text-2xl font-medium text-white`}>Yanagiba <span className="text-white/30 text-base ml-2">柳刃</span></h3>
                   <p className="mt-4 text-sm leading-7 text-white/55">
                     Lâmina longa e fina para corte de sashimi. Projetada para movimento único — do calcanhar à ponta — com mínima fricção e máxima precisão no corte.
                   </p>
@@ -196,7 +210,7 @@ export default function GuiaFacasPage() {
               <div className="border-t border-white/10 py-10 grid gap-8 sm:grid-cols-[1fr_1.2fr] items-center">
                 <div>
                   <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">Trabalho pesado</p>
-                  <h3 className="text-2xl font-light text-white">Deba <span className="text-white/30 text-base ml-2">出刃</span></h3>
+                  <h3 className={`${display.className} text-2xl font-medium text-white`}>Deba <span className="text-white/30 text-base ml-2">出刃</span></h3>
                   <p className="mt-4 text-sm leading-7 text-white/55">
                     Faca robusta para desossagem de peixes inteiros. Espessura da espinha permite extrair partes com corte único sem comprometer o fio.
                   </p>
@@ -343,7 +357,7 @@ export default function GuiaFacasPage() {
           <div className="grid gap-20 lg:grid-cols-[1fr_1.6fr]">
             <div>
               <p className="mb-6 text-xs uppercase tracking-[0.35em] text-white/35">Investimento</p>
-              <h2 className="text-3xl font-light text-white md:text-4xl">Projeção</h2>
+              <h2 className={`${display.className} text-3xl font-medium text-white md:text-4xl`}>Projeção</h2>
               <p className="mt-6 text-sm font-light leading-8 text-white/40">
                 Valores estimados para modelos de entrada profissional de cada fabricante. Peças com aço superior (Shirogami Nº1, Aogami Super) ou acabamentos especiais têm preços significativamente mais elevados e disponibilidade ainda mais restrita.
               </p>
@@ -427,7 +441,7 @@ export default function GuiaFacasPage() {
           <div className="grid gap-16 lg:grid-cols-[1fr_420px] lg:items-start">
             <div>
               <p className="mb-6 text-xs uppercase tracking-[0.35em] text-white/35">Resultado</p>
-              <h2 className="text-3xl font-light text-white md:text-4xl">O que não estava no roteiro</h2>
+              <h2 className={`${display.className} text-3xl font-medium text-white md:text-4xl`}>O que não estava no roteiro</h2>
 
               <div className="mt-10 space-y-6 text-base font-light leading-9 text-white/60">
                 <p>
@@ -488,35 +502,24 @@ export default function GuiaFacasPage() {
           <p className="mb-6 text-xs uppercase tracking-[0.35em] text-black/35">
             Próximo passo
           </p>
-          <h2 className="text-4xl font-light leading-tight md:text-6xl">
+          <h2 className={`${display.className} text-4xl font-medium leading-tight md:text-6xl`}>
             Pronto para iniciar a assessoria?
           </h2>
           <p className="mx-auto mt-8 max-w-xl text-base leading-9 text-black/50">
             Entre em contato para alinhar datas, escopo de viagem e detalhes da seleção.
           </p>
-          <div className="mt-12 flex flex-col items-center justify-center gap-4 sm:flex-row">
-            <a
-              href="mailto:wilson@alpinea.io"
-              className="border border-black px-8 py-4 text-xs uppercase tracking-[0.3em] transition hover:bg-black hover:text-white"
-            >
-              Entrar em Contato
-            </a>
-            <a
-              href="https://wa.me/5511996691818"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="border border-black/15 px-8 py-4 text-xs uppercase tracking-[0.3em] text-black/50 transition hover:border-black hover:text-black"
-            >
-              WhatsApp Concierge
-            </a>
-          </div>
+          <ContactCTA />
         </div>
       </section>
 
       <footer className="border-t border-white/10 bg-black px-8 py-16 text-white md:px-16">
         <div className="mx-auto flex max-w-7xl flex-col justify-between gap-12 md:flex-row md:items-end">
           <div className="space-y-6">
-            <p className="text-xs uppercase tracking-[0.45em] text-white/70">Alpinea</p>
+            <img
+              src="/images/ALPINEA-LOGO-transparent.png"
+              alt="Alpinea"
+              className="h-7 w-auto object-contain"
+            />
             <div className="max-w-md space-y-3">
               <p className="text-sm leading-relaxed text-white/40">
                 Curadoria privada de experiências, gastronomia e lifestyle no Japão.
