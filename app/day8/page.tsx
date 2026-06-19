@@ -1,7 +1,6 @@
 import Image from "next/image";
 import { Bodoni_Moda } from "next/font/google";
 import { ContactCTA } from "../components/ContactCTA";
-import { ZoomImage } from "../components/ZoomImage";
 
 // Mesma fonte de destaque usada nas demais páginas do site.
 const display = Bodoni_Moda({
@@ -10,12 +9,12 @@ const display = Bodoni_Moda({
 });
 
 export const metadata = {
-  title: "Alpinea | Dia 8 — Kyoto",
+  title: "Alpinea | Assessoria de Compras — Facas de Cozinha",
   description:
-    "Dia 8 do roteiro Alpinea Private: Kinkaku-ji, almoço no Niku Kappou Miyata e Yoiyama do Gion Matsuri.",
+    "Curadoria Alpinea para aquisição de facas de cozinha profissionais no Japão: Masamoto, Aritsugu e Kikumori.",
 };
 
-export default function Day8Page() {
+export default function GuiaFacasPage() {
   return (
     <main className="min-h-screen bg-black text-white">
       <header className="fixed left-0 right-0 top-0 z-50 flex items-center justify-between bg-black/10 px-8 py-5 backdrop-blur-2xl md:px-16">
@@ -31,367 +30,496 @@ export default function Day8Page() {
           <a href="/services" className="transition hover:text-white">Serviços</a>
           <a href="/gastro" className="transition hover:text-white">Restaurantes</a>
           <a href="/guia" className="transition hover:text-white">Compras</a>
-          <a href="/preview" className="transition text-white">Roteiro</a>
+          <a href="/preview" className="transition hover:text-white">Roteiro</a>
           <a href="#contact" className="transition hover:text-white">Contato</a>
         </nav>
       </header>
 
-      {/* Hero */}
-      <section className="relative min-h-[720px] overflow-hidden px-8 pb-28 pt-40 md:px-16 md:pt-48">
-        <Image
-          src="/images/newhero.png"
-          alt="Alpinea — Dia 8 Kyoto"
-          fill
-          priority
-          sizes="100vw"
-          className="object-cover opacity-55"
-        />
-        <div className="absolute inset-0 bg-black/35" />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/55 via-black/20 to-black" />
+      {/* Hero — mesmo tamanho/estrutura do hero de /gastro */}
+      <section className="relative min-h-[640px] overflow-hidden px-8 pb-28 pt-40 md:px-16 md:pt-52">
+        <div className="absolute inset-0">
+          <Image
+            src="/images/blacksmith.png"
+            alt="Artesão forjando faca japonesa"
+            fill
+            className="object-cover object-center"
+            priority
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/70 to-black" />
+        </div>
 
         <div className="relative z-10 mx-auto max-w-7xl">
-          <p className="mb-8 text-xs uppercase tracking-[0.35em] text-white/40">
-            Roteiro Alpinea Private
+          <p className="mb-6 text-xs uppercase tracking-[0.45em] text-white/40">
+            Assessoria de Compras · Alpinea Private
           </p>
-          <h1 className={`${display.className} max-w-5xl text-5xl font-medium leading-[1.05] tracking-tight md:text-7xl`}>
-            Um exemplo real
-            <br />
-            de uma jornada Alpinea.
+          <h1 className={`${display.className} max-w-4xl text-5xl font-medium leading-[1.05] tracking-tight md:text-6xl lg:text-7xl`}>
+            Assessoria de Compras
           </h1>
-          <p className="mt-10 max-w-2xl text-lg font-light leading-9 text-white/65">
-            Uma prévia da forma como estruturamos roteiros: contexto, ritmo,
-            logística e experiências cuidadosamente selecionadas.
+          <p className="mt-10 max-w-2xl text-lg font-light leading-9 text-white/60">
+            Produtos de elite no Japão — identificados, selecionados e adquiridos com acesso direto aos artesãos.
           </p>
         </div>
       </section>
 
-      {/* Perfil */}
-      <section className="border-t border-white/10 bg-white/[0.025] px-8 py-24 md:px-16">
-        <div className="mx-auto max-w-5xl">
-          <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4 text-sm font-light leading-8 text-white/70">
-            <PreviewItem title="Perfil" text="Casal com 2 filhos" />
-            <PreviewItem title="Cidade" text="Kyoto" />
-            <PreviewItem title="Curadoria" text="Alpinea Private" />
-            <PreviewItem title="Dinâmica" text="Motorista privado · Atração matinal · Almoço degustação · Festival noturno" />
+      {/* O Mercado — vídeo grande à esquerda, stats à direita */}
+      <section className="mt-0">
+        <div className="grid lg:grid-cols-2 lg:min-h-[700px]">
+          {/* Esquerda — vídeo */}
+          <div className="relative min-h-[400px] overflow-hidden lg:min-h-full">
+            <video
+              src="/videos/kiku-graving.mp4"
+              autoPlay
+              muted
+              loop
+              playsInline
+              className="absolute inset-0 h-full w-full object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent to-black/20" />
+          </div>
+
+          {/* Direita — label, título, stats */}
+          <div className="flex flex-col justify-center bg-black px-8 py-20 md:px-14">
+            <p className="mb-6 text-xs uppercase tracking-[0.35em] text-white/35">O Mercado</p>
+            <h2 className={`${display.className} text-3xl font-medium text-white leading-snug md:text-4xl`}>
+              Comprar bem no Japão<br />é um ofício à parte.
+            </h2>
+
+            <div className="mt-12 space-y-0">
+              <div className="border-t border-white/10 py-7 grid gap-6 grid-cols-[100px_1fr] items-center">
+                <p className="text-3xl font-light text-white/20 tabular-nums leading-none">+1.000</p>
+                <p className="text-white font-light text-sm leading-6">fabricantes de facas no Japão</p>
+              </div>
+
+              <div className="border-t border-white/10 py-7 grid gap-6 grid-cols-[100px_1fr] items-center">
+                <p className="text-3xl font-light text-white/20 tabular-nums leading-none">~30</p>
+                <p className="text-white font-light text-sm leading-6">fabricantes de elite com acesso real</p>
+              </div>
+
+              <div className="border-t border-white/10 py-7 grid gap-6 grid-cols-[100px_1fr] items-center">
+                <div className="leading-none">
+                  <p className="text-3xl font-light text-white/20 tabular-nums leading-none">2</p>
+                  <p className="text-xs uppercase tracking-[0.2em] text-white/20 mt-1">anos</p>
+                </div>
+                <p className="text-white font-light text-sm leading-6">fila nos artesãos mais procurados</p>
+              </div>
+
+              <div className="border-t border-white/10" />
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Card do Dia */}
-      <section className="border-t border-white/10 px-8 py-32 md:px-16">
+      {/* Categorias de Assessoria */}
+      <section className="border-t border-white/10 px-8 py-28 md:px-16">
         <div className="mx-auto max-w-7xl">
-          <div className="border border-white/10 bg-white/[0.035] px-8 py-8 md:px-10">
-            <p className="mb-5 text-xs uppercase tracking-[0.45em] text-white/45">Dia 8</p>
-            <h2 className={`${display.className} text-4xl font-medium tracking-tight text-white md:text-6xl`}>Kyoto</h2>
-            <p className="mt-6 max-w-3xl text-lg font-light leading-9 text-white/60">
-              Kinkaku-ji ao amanhecer, menu degustação de wagyu no Niku Kappou Miyata
-              e Yoiyama do Gion Matsuri à noite.
+          <div className="mb-20 max-w-3xl">
+            <p className="mb-6 text-xs uppercase tracking-[0.35em] text-white/35">
+              Categorias de Assessoria
             </p>
+            <h2 className={`${display.className} text-4xl font-medium leading-tight text-white md:text-6xl`}>
+              Objetos extraordinários.
+              <br />
+              Acesso a mundos reservados.
+            </h2>
+            <p className="mt-8 max-w-2xl text-sm font-light leading-8 text-white/45">
+              Da alta relojoaria aos ateliers de artesãos centenários, a Alpinea conecta clientes aos objetos mais desejados do Japão através de conhecimento, relacionamento e curadoria privada.
+            </p>
+          </div>
 
-            {/* Hospedagem */}
-            <div className="mt-10 border-t border-white/10 pt-10">
-              <p className="mb-8 text-xs uppercase tracking-[0.35em] text-white/40">Hospedagem</p>
-              <div className="grid gap-10 lg:grid-cols-[0.8fr_1.25fr_0.95fr] lg:items-center">
-                <div className="flex min-h-40 items-center justify-center px-8 py-10">
+          <div className="grid gap-x-8 gap-y-16 sm:grid-cols-2 lg:grid-cols-4">
+            {[
+              {
+                title: "Facas artesanais",
+                subtitle: "Shokunins e cutelaria de elite",
+                image: "/images/nenohi.png",
+                alt: "Faca artesanal japonesa",
+              },
+              {
+                title: "Alta relojoaria",
+                subtitle: "Peças raras e mercado especializado",
+                image: "/images/fpjourne.png",
+                alt: "Relógio de alta relojoaria",
+              },
+              {
+                title: "Fotografia profissional",
+                subtitle: "Câmeras, lentes e equipamentos de referência",
+                image: "/images/nikon2.png",
+                alt: "Câmera profissional japonesa",
+              },
+              {
+                title: "Golfe de elite",
+                subtitle: "Tacos forjados e fitting personalizado",
+                image: "/images/golf.png",
+                alt: "Tacos de golfe premium",
+              },
+              {
+                title: "Pesca de precisão",
+                subtitle: "Equipamentos de alta performance",
+                image: "/images/shimano-stella.png",
+                alt: "Molinete de pesca de alta precisão",
+              },
+              {
+                title: "Whisky japonês raro",
+                subtitle: "Rótulos disputados e edições limitadas",
+                image: "/images/yamazaki.png",
+                alt: "Whisky japonês raro",
+              },
+              {
+                title: "Canetas artesanais",
+                subtitle: "Obras produzidas por mestres japoneses",
+                image: "/images/namiki.png",
+                alt: "Caneta-tinteiro artesanal japonesa",
+              },
+              {
+                title: "Cerâmica tradicional",
+                subtitle: "Peças de mestres ceramistas",
+                image: "/images/bizen.png",
+                alt: "Cerâmica tradicional japonesa",
+              },
+            ].map((item) => (
+              <article key={item.title} className="group">
+                <div className="relative flex aspect-square items-center justify-center overflow-hidden bg-white/[0.015] p-8">
                   <Image
-                    src="/images/amankyoto.png"
-                    alt="Aman Kyoto"
-                    width={520}
-                    height={260}
-                    className="mx-auto h-auto w-full max-w-[260px] object-contain"
+                    src={item.image}
+                    alt={item.alt}
+                    width={700}
+                    height={700}
+                    className="h-full w-full object-contain opacity-90 transition duration-500 group-hover:scale-[1.03] group-hover:opacity-100"
                   />
                 </div>
-                <div>
-                  <p className={`${display.className} text-3xl font-medium text-white md:text-4xl`}>Aman Kyoto</p>
-                  <p className="mt-5 max-w-2xl text-base font-light leading-8 text-white/50">
-                    1 Okitayama Washimine-cho, Kita Ward, Kyoto
+                <div className="mt-6">
+                  <h3 className={`${display.className} text-2xl font-medium leading-tight text-white`}>
+                    {item.title}
+                  </h3>
+                  <p className="mt-3 text-xs uppercase tracking-[0.22em] text-white/35">
+                    {item.subtitle}
                   </p>
                 </div>
-                <div className="grid gap-6 text-sm leading-7 text-white/50 lg:grid-cols-1">
-                  <div>
-                    <p className="mb-2 text-xs uppercase tracking-[0.3em] text-white/30">Noite</p>
-                    <p className="text-white/80">Primeiro dia em Kyoto</p>
-                  </div>
-                  <div>
-                    <p className="mb-2 text-xs uppercase tracking-[0.3em] text-white/30">Reserva</p>
-                    <p className="text-white/80">Confirmada · Alpinea Private</p>
-                  </div>
-                </div>
-              </div>
-            </div>
+              </article>
+            ))}
           </div>
         </div>
       </section>
 
-      {/* ── RESUMO DO DIA ── */}
-      <section className="border-t border-white/10 bg-white/[0.02] px-8 py-16 md:px-16">
+      {/* Briefing do cliente */}
+      <section className="border-t border-white/10 bg-white/[0.02] px-8 py-28 md:px-16">
         <div className="mx-auto max-w-7xl">
-          <div className="border border-white/10 bg-white/[0.03] p-10">
-            <p className="mb-6 text-xs uppercase tracking-[0.35em] text-white/40">Resumo do Dia 8</p>
-            <div className="space-y-6 text-sm leading-8 text-white/55">
-              <div className="flex items-start gap-6">
-                <span className="mt-0.5 shrink-0 text-xs tracking-[0.2em] text-white/25 w-12">07:30</span>
-                <p className="text-white/80">Café da manhã · The Living Pavilion by Aman</p>
-              </div>
-              <div className="flex items-start gap-6 border-t border-white/[0.06] pt-5">
-                <span className="mt-0.5 shrink-0 text-xs tracking-[0.2em] text-white/25 w-12">08:30</span>
-                <p>Motorista Tanaka · Van Luxo · Saída do Aman Kyoto</p>
-              </div>
-              <div className="flex items-start gap-6 border-t border-white/[0.06] pt-5">
-                <span className="mt-0.5 shrink-0 text-xs tracking-[0.2em] text-white/25 w-12">09:00</span>
-                <p>Kinkaku-ji · Percurso pelo jardim com assessor</p>
-              </div>
-              <div className="flex items-start gap-6 border-t border-white/[0.06] pt-5">
-                <span className="mt-0.5 shrink-0 text-xs tracking-[0.2em] text-white/25 w-12">10:30</span>
-                <p>Retorno ao veículo · Deslocamento para o restaurante</p>
-              </div>
-              <div className="flex items-start gap-6 border-t border-white/[0.06] pt-5">
-                <span className="mt-0.5 shrink-0 text-xs tracking-[0.2em] text-white/25 w-12">12:00</span>
-                <p className="text-white/80">Almoço · Niku Kappou Miyata · Menu Degustação de Wagyu</p>
-              </div>
-              <div className="flex items-start gap-6 border-t border-white/[0.06] pt-5">
-                <span className="mt-0.5 shrink-0 text-xs tracking-[0.2em] text-white/25 w-12">14:00</span>
-                <p>Retorno ao Aman Kyoto · Descanso</p>
-              </div>
-              <div className="flex items-start gap-6 border-t border-white/[0.06] pt-5">
-                <span className="mt-0.5 shrink-0 text-xs tracking-[0.2em] text-white/25 w-12">17:00</span>
-                <p>Motorista privado · Deslocamento para o Gion Matsuri</p>
-              </div>
-              <div className="flex items-start gap-6 border-t border-white/[0.06] pt-5">
-                <span className="mt-0.5 shrink-0 text-xs tracking-[0.2em] text-white/25 w-12">17:30</span>
-                <p className="text-white/80">Yoiyama · Sakimatsuri · Niwatori-Hoko · Ayasaka-Hoko · Funahoko</p>
-              </div>
-              <div className="flex items-start gap-6 border-t border-white/[0.06] pt-5">
-                <span className="mt-0.5 shrink-0 text-xs tracking-[0.2em] text-white/25 w-12">21:30</span>
-                <p>Motorista privado · Retorno ao Aman Kyoto</p>
-              </div>
-            </div>
-          </div>
-
-          <div className="mt-6 border border-white/10 bg-white/[0.03] p-10">
-            <p className="mb-3 text-xs uppercase tracking-[0.35em] text-white/30">Alpinea Private · Suporte no dia</p>
-            <p className="text-sm leading-8 text-white/50">
-              Um representante da Alpinea coordena cada etapa do dia — logística, acessos e comunicação com os estabelecimentos. Disponível das 08:00 às 22:00 pelo canal dedicado.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* ── CAFÉ DA MANHÃ — THE LIVING PAVILION ── */}
-      <section className="border-t border-white/10 px-8 py-32 md:px-16">
-        <div className="mx-auto max-w-5xl text-center">
-          <div className="mx-auto max-w-3xl space-y-12 text-base font-light leading-9 text-white/65">
+          <div className="grid gap-20 lg:grid-cols-[1fr_1.6fr]">
             <div>
-              <p className="mb-8 text-xs uppercase tracking-[0.35em] text-white/40">Manhã · Café da Manhã</p>
-              <h3 className={`${display.className} text-3xl font-medium text-white md:text-4xl`}>The Living Pavilion by Aman</h3>
+              <p className="mb-6 text-xs uppercase tracking-[0.35em] text-white/35">Caso Executado</p>
+              <h2 className={`${display.className} text-3xl font-medium text-white md:text-4xl`}>Perfil do cliente</h2>
             </div>
-
-            <div className="border-t border-white/10 pt-10">
-              <div className="grid gap-8 sm:grid-cols-2">
-                <div>
-                  <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">Horário</p>
-                  <p className="text-white/85">07:00 às 11:30</p>
-                </div>
-                <div>
-                  <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">Opções</p>
-                  <p className="text-white/85">Japonesa · Ocidental</p>
-                </div>
-                <div>
-                  <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">Horário sugerido</p>
-                  <p className="text-white/85">07:30 – 08:15</p>
+            <div className="space-y-6 text-base font-light leading-9 text-white/60">
+              <p>
+                Colecionador e praticante de cozinha japonesa com mais de uma década de ofício. Conhece os instrumentos, domina as técnicas — mas chegou ao limite do que o mercado brasileiro e as plataformas de importação conseguem oferecer.
+              </p>
+              <p>
+                Diante da densidade de marcas de segunda linha em pontos turísticos e do volume de propaganda direcionada a estrangeiros, o cliente optou por não comprar sem orientação especializada — e sem garantia de acesso direto ao fabricante.
+              </p>
+              <div className="border-t border-white/10 pt-8">
+                <p className="mb-5 text-xs uppercase tracking-[0.25em] text-white/30">Escopo da assessoria</p>
+                <div className="space-y-3 text-sm leading-7 text-white/55">
+                  <p>1. Adquirir três facas de uso profissional distinto, com acesso direto aos fabricantes</p>
+                  <p>2. Afiar uma faca artesanal em uso, com artesão selecionado pela Alpinea</p>
+                  <p>3. Garantir disponibilidade imediata — sem filas, sem intermediários comerciais</p>
                 </div>
               </div>
             </div>
-
-            <div className="border-t border-white/10 pt-10 space-y-5">
-              <p className="text-xs uppercase tracking-[0.35em] text-white/30">Nota</p>
-              <p>
-                O café da manhã japonês inclui desde miso soup e tsukemono até peixe grelhado com arroz — uma refeição completa, como os japoneses encaram essa hora do dia. Como o almoço será o menu degustação de wagyu, recomendamos uma escolha mais leve pela manhã.
-              </p>
-              <p>
-                O complexo do Kinkaku-ji possui lojas com sorvete de matcha ao longo do percurso, caso queiram uma pausa durante a visita.
-              </p>
-            </div>
           </div>
-
-          {/* Galeria horizontal — fotos + menu lado a lado */}
-          <div className="mt-16 grid grid-cols-3 gap-6">
-            <div className="aspect-[3/4] overflow-hidden rounded-2xl">
-              <Image
-                src="/images/amancafe.jpg"
-                alt="Café da manhã — The Living Pavilion by Aman Kyoto"
-                width={600}
-                height={800}
-                priority
-                className="h-full w-full object-cover"
-              />
-            </div>
-            <div className="aspect-[3/4] overflow-hidden rounded-2xl">
-              <Image
-                src="/images/amancafe2.jpg"
-                alt="The Living Pavilion by Aman Kyoto"
-                width={600}
-                height={800}
-                className="h-full w-full object-cover"
-              />
-            </div>
-            <ZoomImage
-              src="/images/aman-breakfast.png"
-              alt="Breakfast Menu — The Living Pavilion by Aman Kyoto"
-              width={600}
-              height={800}
-              className="aspect-[3/4] overflow-hidden rounded-2xl bg-white/[0.03]"
-              imgClassName="h-full w-full object-contain p-3"
-            />
-          </div>
-          <p className="mt-4 text-xs uppercase tracking-[0.35em] text-white/30">
-            The Living Pavilion by Aman · Aman Kyoto · Clique no menu para ampliar
-          </p>
         </div>
       </section>
 
-      {/* ── TRANSPORTE PRIVADO ── */}
-      <section className="border-t border-white/10 bg-white/[0.02] px-8 py-32 md:px-16">
-        <div className="mx-auto max-w-3xl space-y-12 text-center text-base font-light leading-9 text-white/65">
-          <div>
-            <p className="mb-8 text-xs uppercase tracking-[0.35em] text-white/40">Transporte Privado</p>
-            <h3 className={`${display.className} text-3xl font-medium text-white md:text-4xl`}>Motorista Dedicado</h3>
-          </div>
-
-          <p className="mx-auto max-w-xl">
-            Toda a logística do dia é coordenada pela Alpinea com motorista exclusivo para a família. O veículo aguarda na saída do hotel em cada deslocamento.
-          </p>
-
-          <div className="border-t border-white/10 pt-10 space-y-5">
-            <p className="text-xs uppercase tracking-[0.35em] text-white/30">Encontro com a família</p>
-            <p className="mx-auto max-w-xl">
-              O Aman Kyoto não possui um lobby convencional. Tanaka aguardará a família no Kurumayose (車寄せ) — a área de embarque e desembarque do hotel — às 08:30.
-            </p>
-          </div>
-
-          <div className="border-t border-white/10 pt-10">
-            <div className="mx-auto grid max-w-xl gap-8 text-left sm:grid-cols-2">
-              <div>
-                <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">Categoria do veículo</p>
-                <p className="text-white/85">Van Luxo</p>
-                <p className="mt-1 text-sm text-white/45">Toyota Alphard, Lexus LM ou similar</p>
-              </div>
-              <div>
-                <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">Categoria alternativa</p>
-                <p className="text-white/85">Sedan Luxo</p>
-                <p className="mt-1 text-sm text-white/45">Toyota Century, Lexus LS ou similar</p>
-              </div>
-              <div>
-                <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">Motorista</p>
-                <p className="text-white/85">Tanaka Hiroshi <span className="text-white/40">田中 浩</span></p>
-              </div>
-              <div>
-                <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">Idiomas</p>
-                <p className="text-white/60 text-sm">Japonês · Inglês básico</p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Fotos — Tanaka + Lexus LM, centralizadas */}
-        <div className="mx-auto mt-16 max-w-[280px] space-y-6">
-          <div className="overflow-hidden rounded-2xl">
-            <Image
-              src="/images/tanakamotorista.png"
-              alt="Tanaka Hiroshi — Motorista Alpinea"
-              width={480}
-              height={640}
-              priority
-              className="w-full object-cover"
-            />
-          </div>
-          <div className="overflow-hidden rounded-2xl">
-            <Image
-              src="/images/lexuslm.png"
-              alt="Lexus LM — categoria Van Luxo"
-              width={480}
-              height={320}
-              className="w-full object-cover"
-            />
-          </div>
-          <p className="text-center text-xs uppercase tracking-[0.35em] text-white/30">
-            Tanaka Hiroshi · 田中 浩 · Motorista Alpinea
-          </p>
-        </div>
-      </section>
-
-      {/* ── KINKAKU-JI — MANHÃ ── */}
-      <section className="border-t border-white/10 px-8 py-32 md:px-16">
+      {/* Execução */}
+      <section className="border-t border-white/10 px-8 py-28 md:px-16">
         <div className="mx-auto max-w-7xl">
-          <div className="grid gap-20 lg:grid-cols-2 lg:items-start">
-            <div className="space-y-12 text-base font-light leading-9 text-white/65">
-              <div>
-                <p className="mb-8 text-xs uppercase tracking-[0.35em] text-white/40">Manhã · Atração</p>
-                <h3 className={`${display.className} text-3xl font-medium text-white md:text-4xl`}>Kinkaku-ji</h3>
-                <p className="mt-3 text-sm uppercase tracking-[0.2em] text-white/30">Templo do Pavilhão de Ouro</p>
-              </div>
-
-              <p className="max-w-xl">
-                Patrimônio Mundial da UNESCO. O pavilhão de três andares, revestido por folhas de ouro puro, reflete-se sobre o lago Kyōkochi num dos cenários mais fotografados do Japão.
+          <div className="grid gap-20 lg:grid-cols-[1fr_1.6fr]">
+            <div>
+              <p className="mb-6 text-xs uppercase tracking-[0.35em] text-white/35">Execução</p>
+              <h2 className={`${display.className} text-3xl font-medium text-white md:text-4xl`}>Seleção</h2>
+              <p className="mt-6 text-sm font-light leading-8 text-white/45">
+                Com base em 12 anos de relação direta com os chefs dos restaurantes líderes no Japão — sushi, contemporâneo e kaiseki — identificamos três fabricantes com disponibilidade imediata de peças e presença confirmada nas melhores cozinhas do país.
+              </p>
+              <p className="mt-4 text-sm font-light leading-8 text-white/35">
+                Nenhum dos três vende para distribuidores. O acesso é feito por relação pessoal com os artesãos.
               </p>
 
-              <div className="border-t border-white/10 pt-10">
-                <div className="grid gap-8 sm:grid-cols-3">
-                  <div>
-                    <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">Chegada</p>
-                    <p className="text-white/85">09:00</p>
-                  </div>
-                  <div>
-                    <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">Duração</p>
-                    <p className="text-white/85">1h – 1h30</p>
-                  </div>
-                  <div>
-                    <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">Ingresso</p>
-                    <p className="text-white/85">¥500 / pessoa</p>
-                  </div>
+              <div className="mt-10 border-t border-white/10 pt-10">
+                <p className="mb-4 text-xs uppercase tracking-[0.35em] text-white/35">Afiação</p>
+                <h3 className={`${display.className} text-xl font-medium text-white`}>Faca artesanal</h3>
+                <div className="mt-4 space-y-4 text-sm font-light leading-8 text-white/50">
+                  <p>
+                    A faca artesanal em uso no ateliê do cliente será entregue no primeiro dia de viagem ao afiador da Masamoto em Tokyo — um dos poucos artesãos que ainda pratica a afiação manual tradicional com pedras d'água de diferentes granulometrias.
+                  </p>
+                  <p>
+                    O prazo necessário para afiação pelo artesão é de <span className="text-white/80">14 dias</span>. A faca será retirada no último dia de viagem, antes do retorno ao Brasil.
+                  </p>
                 </div>
-              </div>
-
-              <div className="border-t border-white/10 pt-10 space-y-8">
-                <InfoBlock
-                  title="Por que às 09:00"
-                  text="Os ônibus turísticos chegam a partir das 09:30. Os primeiros trinta minutos têm movimento reduzido — a luz da manhã está mais baixa e o reflexo do pavilhão sobre o lago, mais nítido."
-                />
-                <InfoBlock
-                  title="O percurso"
-                  text="O circuito segue um caminho fixo em torno do lago, com o pavilhão sempre à vista. O jardim é do período Muromachi e inclui pedras, pinheiros e ilhotas posicionados com precisão centenária. A saída passa pela loja de amuletos (omamori)."
-                />
               </div>
             </div>
 
-            <div className="lg:sticky lg:top-28 space-y-10">
-              <div>
-                <Image
-                  src="/images/kinka.jpeg"
-                  alt="Kinkaku-ji — Templo do Pavilhão de Ouro, Kyoto"
-                  width={900}
-                  height={1200}
-                  priority
-                  className="w-full rounded-2xl border border-white/10 object-cover"
-                  style={{ maxHeight: "780px", objectPosition: "center" }}
-                />
-                <p className="mt-4 text-xs uppercase tracking-[0.35em] text-white/30">
-                  Kinkaku-ji · Kita Ward · Kyoto
-                </p>
-              </div>
-              <div>
-                <p className="mb-4 text-xs uppercase tracking-[0.35em] text-white/30">Mapa do Templo</p>
-                <a href="/images/kinkamap.jpg" target="_blank" rel="noopener noreferrer" className="block">
+            {/* Direita — facas */}
+            <div className="space-y-0">
+              <p className="mb-10 text-xs uppercase tracking-[0.35em] text-white/35">Seleção recomendada</p>
+
+              <div className="border-t border-white/10 py-10 grid gap-8 sm:grid-cols-[1fr_1.2fr] items-center">
+                <div>
+                  <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">Uso geral</p>
+                  <h3 className={`${display.className} text-2xl font-medium text-white`}>Gyuto <span className="text-white/30 text-base ml-2">牛刀</span></h3>
+                  <p className="mt-4 text-sm leading-7 text-white/55">
+                    Faca versátil de uso cotidiano. Adaptada da tradição francesa pelo Japão, executa cortes precisos em carnes, vegetais e peixes com a mesma eficiência.
+                  </p>
+                </div>
+                <div className="relative">
                   <Image
-                    src="/images/kinkamap.jpg"
-                    alt="Mapa do Kinkaku-ji"
-                    width={1200}
-                    height={800}
-                    className="w-full cursor-zoom-in rounded-2xl border border-white/10 object-contain bg-white/[0.03] p-2 transition hover:opacity-85"
+                    src="/images/gyuto.png"
+                    alt="Gyuto — Masamoto"
+                    width={700}
+                    height={420}
+                    className="w-full object-contain drop-shadow-2xl"
                   />
-                </a>
-                <p className="mt-3 text-xs leading-6 text-white/30">
-                  Complexo completo — Pavilhão de Ouro, jardim Muromachi, lago Kyōkochi, casa de chá Sekkatei. Clique para ampliar.
+                </div>
+              </div>
+
+              <div className="border-t border-white/10 py-10 grid gap-8 sm:grid-cols-[1fr_1.2fr] items-center">
+                <div>
+                  <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">Corte de peixe</p>
+                  <h3 className={`${display.className} text-2xl font-medium text-white`}>Yanagiba <span className="text-white/30 text-base ml-2">柳刃</span></h3>
+                  <p className="mt-4 text-sm leading-7 text-white/55">
+                    Lâmina longa e fina para corte de sashimi. Projetada para movimento único — do calcanhar à ponta — com mínima fricção e máxima precisão no corte.
+                  </p>
+                </div>
+                <div className="relative">
+                  <Image
+                    src="/images/yanagiba.png"
+                    alt="Yanagiba — Aritsugu"
+                    width={700}
+                    height={420}
+                    className="w-full object-contain drop-shadow-2xl"
+                  />
+                </div>
+              </div>
+
+              <div className="border-t border-white/10 py-10 grid gap-8 sm:grid-cols-[1fr_1.2fr] items-center">
+                <div>
+                  <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">Trabalho pesado</p>
+                  <h3 className={`${display.className} text-2xl font-medium text-white`}>Deba <span className="text-white/30 text-base ml-2">出刃</span></h3>
+                  <p className="mt-4 text-sm leading-7 text-white/55">
+                    Faca robusta para desossagem de peixes inteiros. Espessura da espinha permite extrair partes com corte único sem comprometer o fio.
+                  </p>
+                </div>
+                <div className="relative">
+                  <Image
+                    src="/images/deba.png"
+                    alt="Deba — Kikumori"
+                    width={700}
+                    height={420}
+                    className="w-full object-contain drop-shadow-2xl"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Roteiro */}
+      <section className="border-t border-white/10 bg-white/[0.02] px-8 py-28 md:px-16">
+        <div className="mx-auto max-w-7xl">
+          <p className="mb-12 text-xs uppercase tracking-[0.35em] text-white/35">Roteiro de Compras</p>
+
+          <div className="mb-16 grid grid-cols-3 gap-6">
+            <div className="aspect-square flex items-center justify-center overflow-hidden rounded-2xl border border-white/10 bg-white/[0.03] p-8">
+              <Image
+                src="/images/masamoto-logo.png"
+                alt="Gravação Masamoto na lâmina"
+                width={420}
+                height={420}
+                className="h-full w-full object-cover rounded-xl"
+              />
+            </div>
+            <div className="aspect-square flex items-center justify-center overflow-hidden rounded-2xl border border-white/10 bg-white/[0.03] p-8">
+              <Image
+                src="/images/aritsugu-logo.png"
+                alt="Gravação Aritsugu na lâmina"
+                width={420}
+                height={420}
+                className="h-full w-full object-cover rounded-xl"
+              />
+            </div>
+            <div className="aspect-square flex items-center justify-center overflow-hidden rounded-2xl border border-white/10 bg-white/[0.03] p-8">
+              <Image
+                src="/images/kikumori-logo.png"
+                alt="Gravação Kikumori na lâmina"
+                width={420}
+                height={420}
+                className="h-full w-full object-cover rounded-xl"
+              />
+            </div>
+          </div>
+          <div className="mb-16 grid grid-cols-3 gap-6 text-center">
+            <div>
+              <p className="text-2xl font-light text-white/60">正本</p>
+              <p className="mt-2 text-xs uppercase tracking-[0.25em] text-white/25">Masamoto</p>
+            </div>
+            <div>
+              <p className="text-2xl font-light text-white/60">有次</p>
+              <p className="mt-2 text-xs uppercase tracking-[0.25em] text-white/25">Aritsugu</p>
+            </div>
+            <div>
+              <p className="text-2xl font-light text-white/60">菊守</p>
+              <p className="mt-2 text-xs uppercase tracking-[0.25em] text-white/25">Kikumori</p>
+            </div>
+          </div>
+
+          <div className="space-y-0">
+            <div className="grid gap-10 border-t border-white/10 py-10 lg:grid-cols-[180px_1fr] lg:items-start">
+              <div>
+                <p className="text-xs uppercase tracking-[0.2em] text-white/25">Dia 1</p>
+                <p className="mt-1 text-sm text-white/50">Tokyo</p>
+              </div>
+              <div className="grid gap-6 sm:grid-cols-[1fr_auto]">
+                <div>
+                  <p className="text-white font-light text-lg">Masamoto</p>
+                  <p className="mt-2 text-sm leading-7 text-white/55">
+                    Visita à loja principal da Masamoto em Tokyo. Seleção e aquisição da Gyuto. Entrega da faca artesanal para afiação ao artesão da casa — retirada programada para o dia 14.
+                  </p>
+                  <div className="mt-5 inline-flex items-center gap-3 border border-white/10 px-5 py-2 text-xs uppercase tracking-[0.25em] text-white/35">
+                    <span>Gyuto</span>
+                    <span className="text-white/15">·</span>
+                    <span>Afiação entregue</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="grid gap-10 border-t border-white/10 py-10 lg:grid-cols-[180px_1fr] lg:items-start">
+              <div>
+                <p className="text-xs uppercase tracking-[0.2em] text-white/25">Dia 8</p>
+                <p className="mt-1 text-sm text-white/50">Kyoto</p>
+              </div>
+              <div>
+                <p className="text-white font-light text-lg">Aritsugu</p>
+                <p className="mt-2 text-sm leading-7 text-white/55">
+                  Visita à loja histórica da Aritsugu no Mercado Nishiki. Fundada em 1560 para fornecer instrumentos à corte imperial, a casa permanece sob a mesma família há mais de quatro séculos. Seleção e aquisição da Yanagiba com acompanhamento direto do artesão na escolha do aço.
+                </p>
+                <div className="mt-5 inline-flex items-center gap-3 border border-white/10 px-5 py-2 text-xs uppercase tracking-[0.25em] text-white/35">
+                  <span>Yanagiba</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="grid gap-10 border-t border-white/10 py-10 lg:grid-cols-[180px_1fr] lg:items-start">
+              <div>
+                <p className="text-xs uppercase tracking-[0.2em] text-white/25">Dia 10</p>
+                <p className="mt-1 text-sm text-white/50">Sakai</p>
+              </div>
+              <div>
+                <p className="text-white font-light text-lg">Kikumori</p>
+                <p className="mt-2 text-sm leading-7 text-white/55">
+                  Visita à Kikumori em Sakai — origem de mais de 90% das facas utilizadas por chefs profissionais no Japão. A casa não opera canais de venda para o público externo; o acesso é feito exclusivamente por meio de relação direta com os artesãos. Seleção e aquisição da Deba.
+                </p>
+                <div className="mt-5 inline-flex items-center gap-3 border border-white/10 px-5 py-2 text-xs uppercase tracking-[0.25em] text-white/35">
+                  <span>Deba</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="grid gap-10 border-t border-white/10 py-10 lg:grid-cols-[180px_1fr] lg:items-start">
+              <div>
+                <p className="text-xs uppercase tracking-[0.2em] text-white/25">Dia 14</p>
+                <p className="mt-1 text-sm text-white/50">Tokyo</p>
+              </div>
+              <div>
+                <p className="text-white font-light text-lg">Masamoto · Retirada</p>
+                <p className="mt-2 text-sm leading-7 text-white/55">
+                  Retirada da faca artesanal após afiação completa. Inspeção do fio junto ao artesão antes do retorno ao Brasil.
+                </p>
+                <div className="mt-5 inline-flex items-center gap-3 border border-white/10 px-5 py-2 text-xs uppercase tracking-[0.25em] text-white/35">
+                  <span>Afiação retirada</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Investimento */}
+      <section className="border-t border-white/10 px-8 py-28 md:px-16">
+        <div className="mx-auto max-w-7xl">
+          <div className="grid gap-20 lg:grid-cols-[1fr_1.6fr]">
+            <div>
+              <p className="mb-6 text-xs uppercase tracking-[0.35em] text-white/35">Investimento</p>
+              <h2 className={`${display.className} text-3xl font-medium text-white md:text-4xl`}>Projeção</h2>
+              <p className="mt-6 text-sm font-light leading-8 text-white/40">
+                Valores estimados para modelos de entrada profissional de cada fabricante. Peças com aço superior (Shirogami Nº1, Aogami Super) ou acabamentos especiais têm preços significativamente mais elevados e disponibilidade ainda mais restrita.
+              </p>
+              <p className="mt-4 text-xs leading-6 text-white/25">
+                Câmbio de referência: ¥1 = R$ 0,037 · Jun/2026
+              </p>
+            </div>
+
+            <div>
+              <table className="w-full border-collapse text-left">
+                <thead>
+                  <tr className="border-b border-white/10">
+                    <th className="pb-5 text-xs uppercase tracking-[0.3em] text-white/30 font-normal">Faca</th>
+                    <th className="pb-5 text-xs uppercase tracking-[0.3em] text-white/30 font-normal">Fabricante</th>
+                    <th className="pb-5 text-right text-xs uppercase tracking-[0.3em] text-white/30 font-normal">Ienes</th>
+                    <th className="pb-5 text-right text-xs uppercase tracking-[0.3em] text-white/30 font-normal">Reais</th>
+                  </tr>
+                </thead>
+                <tbody className="text-sm font-light leading-9 text-white/65">
+                  <tr className="border-b border-white/[0.07]">
+                    <td className="py-5">
+                      Gyuto
+                      <span className="block text-xs text-white/30">240mm · Hagane</span>
+                    </td>
+                    <td className="py-5 text-white/40">Masamoto</td>
+                    <td className="py-5 text-right text-white">¥ 35.000 – 55.000</td>
+                    <td className="py-5 text-right text-white">R$ 1.295 – 2.035</td>
+                  </tr>
+                  <tr className="border-b border-white/[0.07]">
+                    <td className="py-5">
+                      Yanagiba
+                      <span className="block text-xs text-white/30">270mm · Shirogami</span>
+                    </td>
+                    <td className="py-5 text-white/40">Aritsugu</td>
+                    <td className="py-5 text-right text-white">¥ 45.000 – 80.000</td>
+                    <td className="py-5 text-right text-white">R$ 1.665 – 2.960</td>
+                  </tr>
+                  <tr className="border-b border-white/[0.07]">
+                    <td className="py-5">
+                      Deba
+                      <span className="block text-xs text-white/30">180mm · Hagane</span>
+                    </td>
+                    <td className="py-5 text-white/40">Kikumori</td>
+                    <td className="py-5 text-right text-white">¥ 30.000 – 50.000</td>
+                    <td className="py-5 text-right text-white">R$ 1.110 – 1.850</td>
+                  </tr>
+                  <tr className="border-b border-white/[0.07]">
+                    <td className="py-5">
+                      Afiação artesanal
+                      <span className="block text-xs text-white/30">Pedra d'água · 14 dias</span>
+                    </td>
+                    <td className="py-5 text-white/40">Masamoto</td>
+                    <td className="py-5 text-right text-white">¥ 8.000 – 15.000</td>
+                    <td className="py-5 text-right text-white">R$ 296 – 555</td>
+                  </tr>
+                  <tr>
+                    <td className="pt-8 pb-4 text-white/80" colSpan={2}>
+                      Total estimado
+                      <span className="block text-xs text-white/30 mt-1">Sem honorários Alpinea</span>
+                    </td>
+                    <td className="pt-8 pb-4 text-right text-white font-light">¥ 118.000 – 200.000</td>
+                    <td className="pt-8 pb-4 text-right text-white font-light">R$ 4.366 – 7.400</td>
+                  </tr>
+                </tbody>
+              </table>
+
+              <div className="mt-10 border border-white/10 bg-white/[0.025] p-8">
+                <p className="mb-3 text-xs uppercase tracking-[0.3em] text-white/30">Nota sobre imposto de importação</p>
+                <p className="text-sm leading-7 text-white/50">
+                  Facas de cozinha para uso profissional estão sujeitas à tributação na entrada no Brasil. A Alpinea orienta o cliente sobre a melhor forma de documentação e declaração antes do retorno. Valores de impostos não estão incluídos na projeção acima.
                 </p>
               </div>
             </div>
@@ -399,176 +527,59 @@ export default function Day8Page() {
         </div>
       </section>
 
-      {/* ── ALMOÇO — NIKU KAPPOU MIYATA ── */}
-      <section className="border-t border-white/10 bg-white/[0.02] px-8 py-32 md:px-16">
-        <div className="mx-auto max-w-5xl text-center">
-          <div className="mx-auto max-w-3xl space-y-12 text-base font-light leading-9 text-white/65">
-            <div>
-              <p className="mb-8 text-xs uppercase tracking-[0.35em] text-white/40">Almoço · Menu Degustação</p>
-              <h3 className={`${display.className} text-3xl font-medium text-white md:text-4xl`}>Niku Kappou Miyata</h3>
-              <p className="mt-3 text-sm uppercase tracking-[0.2em] text-white/30">肉割烹 宮田</p>
-            </div>
-
-            <div className="border-t border-white/10 pt-10">
-              <div className="grid gap-8 sm:grid-cols-2">
-                <div>
-                  <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">Horário</p>
-                  <p className="text-white/85 text-lg">12:00</p>
-                </div>
-                <div>
-                  <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">Formato</p>
-                  <p className="text-white/85">Menu Degustação · Kappou</p>
-                </div>
-                <div>
-                  <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">Reserva</p>
-                  <p className="text-white/85">Confirmada · Alpinea Private</p>
-                </div>
-                <div>
-                  <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">Duração estimada</p>
-                  <p className="text-white/85">1h30 – 2h</p>
-                </div>
-              </div>
-            </div>
-
-            <div className="border-t border-white/10 pt-10 space-y-5">
-              <p className="text-xs uppercase tracking-[0.35em] text-white/30">Nota</p>
-              <p>
-                Um dos poucos restaurantes de menu degustação de wagyu no Japão. O chef raramente interage com os clientes, preferindo se concentrar no preparo — cada corte apresentado em silêncio, no ritmo do kappou. Alguns optam por um whisky japonês para acompanhar: The Chita ou The Yamazaki da Suntory funcionam bem.
-              </p>
-              <p>
-                Os pratos são em sua maioria porções pequenas. O último prato — wagyu com arroz japonês cozido no próprio vapor — é generoso e encerra a refeição com satisfação. Como a próxima refeição será somente durante o festival, vale aproveitar.
-              </p>
-            </div>
-          </div>
-
-          {/* Galeria horizontal — fotos numa linha abaixo do texto */}
-          <div className="mx-auto mt-16 grid max-w-3xl grid-cols-2 gap-6">
-            <div className="aspect-[4/3] overflow-hidden rounded-2xl border border-white/10">
-              <Image
-                src="/images/niku.png"
-                alt="Menu Degustação de Wagyu — Niku Kappou Miyata"
-                width={700}
-                height={520}
-                priority
-                className="h-full w-full object-cover"
-              />
-            </div>
-            <div className="aspect-[4/3] overflow-hidden rounded-2xl border border-white/10">
-              <Image
-                src="/images/nikufood.jpeg"
-                alt="Prato do Menu Degustação — Niku Kappou Miyata"
-                width={700}
-                height={520}
-                className="h-full w-full object-cover"
-              />
-            </div>
-          </div>
-          <p className="mx-auto mt-4 max-w-3xl text-xs uppercase tracking-[0.35em] text-white/30">
-            Niku Kappou Miyata · Kyoto
-          </p>
-        </div>
-      </section>
-
-      {/* ── YOIYAMA, SAKIMATSURI — GION MATSURI ── */}
-      <section id="matsuri" className="border-t border-white/10 bg-white/[0.02] px-8 py-32 md:px-16">
+      {/* Conclusão */}
+      <section className="border-t border-white/10 px-8 py-28 md:px-16">
         <div className="mx-auto max-w-7xl">
-          <div className="grid gap-20 lg:grid-cols-2 lg:items-start">
-            <div className="space-y-12 text-base font-light leading-9 text-white/65">
-              <div>
-                <p className="mb-8 text-xs uppercase tracking-[0.35em] text-white/40">Tarde · Noite · Festival</p>
-                <h3 className={`${display.className} text-3xl font-medium text-white md:text-4xl`}>Yoiyama, Sakimatsuri</h3>
-                <p className="mt-3 text-sm uppercase tracking-[0.2em] text-white/30">祇園祭 · Gion Matsuri</p>
+          <div className="grid gap-16 lg:grid-cols-[1fr_420px] lg:items-start">
+            <div>
+              <p className="mb-6 text-xs uppercase tracking-[0.35em] text-white/35">Resultado</p>
+              <h2 className={`${display.className} text-3xl font-medium text-white md:text-4xl`}>O que não estava no roteiro</h2>
+
+              <div className="mt-10 space-y-6 text-base font-light leading-9 text-white/60">
+                <p>
+                  A visita à Kikumori em Sakai foi planejada para a aquisição de uma única Deba. O cliente chegou à oficina sem expectativa além do escopo original.
+                </p>
+                <p>
+                  No ateliê, o artesão apresentou uma linha recém-lançada de acabamento espelhado — o <span className="text-white/90">Choyo</span> — ainda sem distribuição fora do Japão e não documentada em nenhum canal internacional. O polimento é executado manualmente em múltiplas etapas, resultando em uma superfície que reflete como aço cirúrgico, mantendo o núcleo de Aogami Super intacto.
+                </p>
+                <p>
+                  O cliente, ao ver e segurar as peças pela primeira vez, decidiu ampliar a compra no ato.
+                </p>
               </div>
 
-              <div className="border-t border-white/10 pt-10">
-                <div className="grid gap-8 sm:grid-cols-2">
-                  <div>
-                    <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">Data</p>
-                    <p className="text-white/85">10 de Julho</p>
-                  </div>
-                  <div>
-                    <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">Período</p>
-                    <p className="text-white/85">Sakimatsuri · Yoiyama</p>
-                  </div>
-                  <div>
-                    <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">Saída do hotel</p>
-                    <p className="text-white/85">17:00</p>
-                  </div>
-                  <div>
-                    <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">Ingresso</p>
-                    <p className="text-white/85">Acesso livre</p>
-                  </div>
+              <div className="mt-12 grid grid-cols-3 gap-px border border-white/10">
+                <div className="bg-white/[0.03] px-6 py-8">
+                  <p className="text-2xl font-light text-white">1</p>
+                  <p className="mt-2 text-xs uppercase tracking-[0.2em] text-white/30">faca planejada</p>
+                </div>
+                <div className="bg-white/[0.03] px-6 py-8">
+                  <p className="text-2xl font-light text-white">3</p>
+                  <p className="mt-2 text-xs uppercase tracking-[0.2em] text-white/30">facas adquiridas</p>
+                </div>
+                <div className="bg-white/[0.03] px-6 py-8">
+                  <p className="text-2xl font-light text-white">Choyo</p>
+                  <p className="mt-2 text-xs uppercase tracking-[0.2em] text-white/30">acabamento inédito</p>
                 </div>
               </div>
 
-              <div className="border-t border-white/10 pt-10 space-y-8">
-                <div>
-                  <p className={`${display.className} text-2xl font-medium text-white md:text-3xl`}>O Festival</p>
-                  <p className="mt-3">
-                    O Gion Matsuri dura quase um mês e se divide em três etapas: Sakimatsuri, Yamahoko Junko e Atomatsuri — respectivamente pré-desfile, desfile e pós-desfile. O ápice não é o dia do desfile em si, mas a véspera, quando os Hoko — estruturas de madeira com lanternas e tapeçarias seculares — são expostos iluminados nos quarteirões ao redor do templo Yasaka. Esse momento se chama Yoiyama.
-                  </p>
-                </div>
-                <div>
-                  <p className={`${display.className} text-2xl font-medium text-white md:text-3xl`}>O Percurso</p>
-                  <p className="mt-3">
-                    Partimos do hotel às 17:00 e seguimos a pé pelo Niwatori-Hoko, Ayasaka-Hoko e Funahoko — cada um em um quarteirão diferente. O deslocamento é lento, com paradas nas barracas de comida de rua ao longo do caminho. O Iwatoyama pode ser incluído ao final, caso haja interesse.
-                  </p>
-                </div>
-                <div>
-                  <p className={`${display.className} text-2xl font-medium text-white md:text-3xl`}>Logística</p>
-                  <p className="mt-3">
-                    O motorista Tanaka aguarda em ponto fixo nas proximidades. A região central é fechada para veículos no período noturno — o acesso à área do festival é sempre a pé a partir de um ponto designado pela Alpinea.
-                  </p>
-                </div>
-              </div>
-
-              <div className="border-t border-white/10 pt-10">
-                <a
-                  href="/images/masturiroute.png"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-sm uppercase tracking-[0.25em] text-white/45 underline underline-offset-4 transition hover:text-white"
-                >
-                  Ver mapa da rota da procissão Yamahoko →
-                </a>
-              </div>
-
-              <div className="border-t border-white/10 pt-10">
-                <p className="mb-3 text-xs uppercase tracking-[0.35em] text-white/30">Retorno</p>
-                <p>Motorista privado busca a família por volta das <span className="text-white/85">21:30 – 22:00</span>. Trajeto até o Aman Kyoto: aproximadamente <span className="text-white/85">20 minutos</span>.</p>
-              </div>
+              <p className="mt-10 text-sm leading-7 text-white/35 italic">
+                Esse tipo de descoberta — um lançamento ainda sem nome fora do Japão, acessado no dia em que está disponível — é o que diferencia uma visita guiada de uma compra por conta própria.
+              </p>
             </div>
 
-            <div className="lg:sticky lg:top-28 space-y-6">
-              <Image
-                src="/images/maiko.png"
-                alt="Maiko durante o Yoiyama, Gion Matsuri, Kyoto"
-                width={760}
-                height={1140}
-                priority
-                className="w-full rounded-2xl border border-white/10 object-cover"
-                style={{ maxHeight: "820px", objectPosition: "center top" }}
-              />
-              <p className="text-xs uppercase tracking-[0.35em] text-white/30">
-                Yoiyama · Gion Matsuri · Shijo · Kyoto
-              </p>
-
-              <div className="border-t border-white/10 pt-6">
-                <p className="mb-4 text-xs uppercase tracking-[0.35em] text-white/30">Petiscos de rua · Yoiyama</p>
+            <div className="lg:sticky lg:top-32">
+              <div className="overflow-hidden rounded-2xl">
                 <Image
-                  src="/images/snacks.webp"
-                  alt="Petiscos tradicionais vendidos durante o Yoiyama"
-                  width={500}
-                  height={1600}
-                  className="w-full rounded-2xl object-contain"
+                  src="/images/kikufinal.jpeg"
+                  alt="Três facas Kikumori Choyo adquiridas pelo cliente em Sakai"
+                  width={840}
+                  height={1120}
+                  className="w-full object-cover"
                 />
-                <div className="mt-4 space-y-1 text-xs text-white/40">
-                  <p>Dondon Yaki — senbei (bolacha de arroz)</p>
-                  <p>Uma Sen — senbei sabor milho grelhado</p>
-                  <p>Puku Puku Tai — taiyaki sabor morango</p>
-                  <p>Takoyaki</p>
-                </div>
               </div>
+              <p className="mt-4 text-xs leading-6 text-white/25 text-center">
+                As três peças Kikumori · Acabamento Choyo · Sakai, Osaka
+              </p>
             </div>
           </div>
         </div>
@@ -577,17 +588,17 @@ export default function Day8Page() {
       {/* CTA */}
       <section
         id="contact"
-        className="scroll-mt-32 bg-white px-8 py-28 text-black md:px-16"
+        className="scroll-mt-32 border-t border-white/10 bg-white px-8 py-28 text-black md:px-16"
       >
         <div className="mx-auto max-w-4xl text-center">
           <p className="mb-6 text-xs uppercase tracking-[0.35em] text-black/35">
             Próximo passo
           </p>
           <h2 className={`${display.className} text-4xl font-medium leading-tight md:text-6xl`}>
-            Uma viagem excepcional começa com uma curadoria excepcional.
+            Pronto para iniciar a assessoria?
           </h2>
           <p className="mx-auto mt-8 max-w-xl text-base leading-9 text-black/50">
-            Compartilhe suas datas e perfil de viagem. A Alpinea estrutura o roteiro a partir daí.
+            Entre em contato para alinhar datas, escopo de viagem e detalhes da seleção.
           </p>
           <ContactCTA />
         </div>
@@ -623,23 +634,5 @@ export default function Day8Page() {
         </div>
       </footer>
     </main>
-  );
-}
-
-function PreviewItem({ title, text }: { title: string; text: string }) {
-  return (
-    <div>
-      <p className="mb-3 text-xs uppercase tracking-[0.35em] text-white/30">{title}</p>
-      <p className="text-sm leading-7">{text}</p>
-    </div>
-  );
-}
-
-function InfoBlock({ title, text }: { title: string; text: string }) {
-  return (
-    <div>
-      <p className="text-white/85">{title}</p>
-      <p className="mt-2">{text}</p>
-    </div>
   );
 }
