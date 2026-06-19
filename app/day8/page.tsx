@@ -38,7 +38,7 @@ export default function Day8Page() {
       {/* Hero */}
       <section className="relative min-h-[720px] overflow-hidden px-8 pb-28 pt-40 md:px-16 md:pt-48">
         <Image
-          src="/images/ginzan-onsen.jpg"
+          src="/images/newhero.png"
           alt="Alpinea — Dia 8 Kyoto"
           fill
           priority
@@ -134,7 +134,7 @@ export default function Day8Page() {
               </div>
               <div className="flex items-start gap-6 border-t border-white/[0.06] pt-5">
                 <span className="mt-0.5 shrink-0 text-xs tracking-[0.2em] text-white/25 w-12">08:30</span>
-                <p>Motorista Tanaka · Toyota Alphard · Saída do Aman Kyoto</p>
+                <p>Motorista Tanaka · Van Luxo · Saída do Aman Kyoto</p>
               </div>
               <div className="flex items-start gap-6 border-t border-white/[0.06] pt-5">
                 <span className="mt-0.5 shrink-0 text-xs tracking-[0.2em] text-white/25 w-12">09:00</span>
@@ -179,87 +179,86 @@ export default function Day8Page() {
       {/* ── CAFÉ DA MANHÃ — THE LIVING PAVILION ── */}
       <section className="border-t border-white/10 px-8 py-32 md:px-16">
         <div className="mx-auto max-w-7xl">
-          <div className="grid gap-20 lg:grid-cols-2 lg:items-start">
-            <div className="space-y-12 text-base font-light leading-9 text-white/65">
-              <div>
-                <p className="mb-8 text-xs uppercase tracking-[0.35em] text-white/40">Manhã · Café da Manhã</p>
-                <h3 className={`${display.className} text-3xl font-medium text-white md:text-4xl`}>The Living Pavilion by Aman</h3>
-              </div>
+          <div className="max-w-3xl space-y-12 text-base font-light leading-9 text-white/65">
+            <div>
+              <p className="mb-8 text-xs uppercase tracking-[0.35em] text-white/40">Manhã · Café da Manhã</p>
+              <h3 className={`${display.className} text-3xl font-medium text-white md:text-4xl`}>The Living Pavilion by Aman</h3>
+            </div>
 
-              <div className="border-t border-white/10 pt-10">
-                <div className="grid gap-8 sm:grid-cols-2">
-                  <div>
-                    <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">Horário</p>
-                    <p className="text-white/85">07:00 às 11:30</p>
-                  </div>
-                  <div>
-                    <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">Opções</p>
-                    <p className="text-white/85">Japonesa · Ocidental</p>
-                  </div>
-                  <div>
-                    <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">Horário sugerido</p>
-                    <p className="text-white/85">07:30 – 08:15</p>
-                  </div>
+            <div className="border-t border-white/10 pt-10">
+              <div className="grid gap-8 sm:grid-cols-2">
+                <div>
+                  <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">Horário</p>
+                  <p className="text-white/85">07:00 às 11:30</p>
                 </div>
-              </div>
-
-              <div className="border-t border-white/10 pt-10 space-y-5">
-                <p className="text-xs uppercase tracking-[0.35em] text-white/30">Nota</p>
-                <p>
-                  O café da manhã japonês inclui desde miso soup e tsukemono até peixe grelhado com arroz — uma refeição completa, como os japoneses encaram essa hora do dia. Como o almoço será o menu degustação de wagyu, recomendamos uma escolha mais leve pela manhã.
-                </p>
-                <p>
-                  O complexo do Kinkaku-ji possui lojas com sorvete de matcha ao longo do percurso, caso queiram uma pausa durante a visita.
-                </p>
+                <div>
+                  <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">Opções</p>
+                  <p className="text-white/85">Japonesa · Ocidental</p>
+                </div>
+                <div>
+                  <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">Horário sugerido</p>
+                  <p className="text-white/85">07:30 – 08:15</p>
+                </div>
               </div>
             </div>
 
-            <div className="lg:sticky lg:top-28 space-y-6">
+            <div className="border-t border-white/10 pt-10 space-y-5">
+              <p className="text-xs uppercase tracking-[0.35em] text-white/30">Nota</p>
+              <p>
+                O café da manhã japonês inclui desde miso soup e tsukemono até peixe grelhado com arroz — uma refeição completa, como os japoneses encaram essa hora do dia. Como o almoço será o menu degustação de wagyu, recomendamos uma escolha mais leve pela manhã.
+              </p>
+              <p>
+                O complexo do Kinkaku-ji possui lojas com sorvete de matcha ao longo do percurso, caso queiram uma pausa durante a visita.
+              </p>
+            </div>
+          </div>
+
+          {/* Galeria horizontal — fotos + menu lado a lado */}
+          <div className="mt-16 grid grid-cols-3 gap-6">
+            <div className="aspect-[3/4] overflow-hidden rounded-2xl border border-white/10">
               <Image
                 src="/images/amancafe.jpg"
                 alt="Café da manhã — The Living Pavilion by Aman Kyoto"
-                width={900}
-                height={760}
+                width={600}
+                height={800}
                 priority
-                className="w-full rounded-2xl border border-white/10 object-cover"
-                style={{ maxHeight: "460px", objectFit: "cover" }}
+                className="h-full w-full object-cover"
               />
+            </div>
+            <div className="aspect-[3/4] overflow-hidden rounded-2xl border border-white/10">
               <Image
                 src="/images/amancafe2.jpg"
                 alt="The Living Pavilion by Aman Kyoto"
-                width={900}
-                height={760}
-                className="w-full rounded-2xl border border-white/10 object-cover"
-                style={{ maxHeight: "400px", objectFit: "cover" }}
+                width={600}
+                height={800}
+                className="h-full w-full object-cover"
               />
-              <p className="text-xs uppercase tracking-[0.35em] text-white/30">
-                The Living Pavilion by Aman · Aman Kyoto
-              </p>
-
-              <div>
-                <p className="mb-4 text-xs uppercase tracking-[0.35em] text-white/30">Breakfast Menu</p>
-                <a href="/images/aman-breakfast.png" target="_blank" rel="noopener noreferrer" className="block">
-                  <Image
-                    src="/images/aman-breakfast.png"
-                    alt="Breakfast Menu — The Living Pavilion by Aman Kyoto"
-                    width={900}
-                    height={1200}
-                    className="w-full cursor-zoom-in rounded-2xl border border-white/10 object-contain bg-white/[0.03] transition hover:opacity-85"
-                  />
-                </a>
-                <p className="mt-3 text-xs leading-6 text-white/30">
-                  Menu completo · Clique para ampliar.
-                </p>
-              </div>
             </div>
+            <a
+              href="/images/aman-breakfast.png"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group aspect-[3/4] overflow-hidden rounded-2xl border border-white/10 bg-white/[0.03]"
+            >
+              <Image
+                src="/images/aman-breakfast.png"
+                alt="Breakfast Menu — The Living Pavilion by Aman Kyoto"
+                width={600}
+                height={800}
+                className="h-full w-full object-contain p-3 transition group-hover:opacity-85"
+              />
+            </a>
           </div>
+          <p className="mt-4 text-xs uppercase tracking-[0.35em] text-white/30">
+            The Living Pavilion by Aman · Aman Kyoto · Clique no menu para ampliar
+          </p>
         </div>
       </section>
 
       {/* ── TRANSPORTE PRIVADO ── */}
       <section className="border-t border-white/10 bg-white/[0.02] px-8 py-32 md:px-16">
         <div className="mx-auto max-w-7xl">
-          <div className="grid gap-20 lg:grid-cols-2 lg:items-center">
+          <div className="grid gap-20 lg:grid-cols-2 lg:items-start">
             <div className="space-y-12 text-base font-light leading-9 text-white/65">
               <div>
                 <p className="mb-8 text-xs uppercase tracking-[0.35em] text-white/40">Transporte Privado</p>
@@ -270,19 +269,28 @@ export default function Day8Page() {
                 Toda a logística do dia é coordenada pela Alpinea com motorista exclusivo para a família. O veículo aguarda na saída do hotel em cada deslocamento.
               </p>
 
+              <div className="border-t border-white/10 pt-10 space-y-5">
+                <p className="text-xs uppercase tracking-[0.35em] text-white/30">Encontro com a família</p>
+                <p>
+                  O Aman Kyoto não possui um lobby convencional. Tanaka aguardará a família no Kurumayose (車寄せ) — a área de embarque e desembarque do hotel — no horário combinado.
+                </p>
+              </div>
+
               <div className="border-t border-white/10 pt-10">
                 <div className="grid gap-8 sm:grid-cols-2">
                   <div>
-                    <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">Veículo</p>
-                    <p className="text-white/85">Toyota Alphard 2025 · Preto Ônix</p>
+                    <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">Categoria do veículo</p>
+                    <p className="text-white/85">Van Luxo</p>
+                    <p className="mt-1 text-sm text-white/45">Toyota Alphard, Lexus LM ou similar</p>
+                  </div>
+                  <div>
+                    <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">Categoria alternativa</p>
+                    <p className="text-white/85">Sedan Luxo</p>
+                    <p className="mt-1 text-sm text-white/45">Toyota Century, Lexus LS ou similar</p>
                   </div>
                   <div>
                     <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">Motorista</p>
-                    <p className="text-white/85">Tanaka Hiroshi</p>
-                  </div>
-                  <div>
-                    <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">Placa</p>
-                    <p className="text-white/60 text-sm">京都 300 · す 4817</p>
+                    <p className="text-white/85">Tanaka Hiroshi <span className="text-white/40">田中 浩</span></p>
                   </div>
                   <div>
                     <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">Idiomas</p>
@@ -292,32 +300,20 @@ export default function Day8Page() {
               </div>
             </div>
 
-            {/* Coluna direita — nameplate + exterior + interior */}
+            {/* Coluna direita — foto do motorista */}
             <div className="lg:sticky lg:top-28 space-y-6">
-              <Image
-                src="/images/asphard-nameplate.png"
-                alt="Toyota Alphard — Nameplate"
-                width={1320}
-                height={440}
-                className="w-full object-contain"
-              />
-              <Image
-                src="/images/limo.png"
-                alt="Toyota Alphard 2025 — Transporte Privado Alpinea"
-                width={1320}
-                height={880}
-                priority
-                className="w-full object-contain"
-              />
-              <Image
-                src="/images/asphard-interior.png"
-                alt="Toyota Alphard 2025 — Interior"
-                width={1320}
-                height={880}
-                className="w-full rounded-2xl border border-white/10 object-cover"
-              />
+              <div className="max-w-[280px] overflow-hidden rounded-2xl border border-white/10">
+                <Image
+                  src="/images/tanakamotorista.png"
+                  alt="Tanaka Hiroshi — Motorista Alpinea"
+                  width={480}
+                  height={640}
+                  priority
+                  className="w-full object-cover"
+                />
+              </div>
               <p className="text-xs uppercase tracking-[0.35em] text-white/30">
-                Toyota Alphard 2025 · Preto Ônix
+                Tanaka Hiroshi · 田中 浩 · Motorista Alpinea
               </p>
             </div>
           </div>
@@ -406,86 +402,70 @@ export default function Day8Page() {
       {/* ── ALMOÇO — NIKU KAPPOU MIYATA ── */}
       <section className="border-t border-white/10 bg-white/[0.02] px-8 py-32 md:px-16">
         <div className="mx-auto max-w-7xl">
-          <div className="grid gap-20 lg:grid-cols-2 lg:items-start">
-            <div className="space-y-12 text-base font-light leading-9 text-white/65">
-              <div>
-                <p className="mb-8 text-xs uppercase tracking-[0.35em] text-white/40">Almoço · Menu Degustação</p>
-                <h3 className={`${display.className} text-3xl font-medium text-white md:text-4xl`}>Niku Kappou Miyata</h3>
-                <p className="mt-3 text-sm uppercase tracking-[0.2em] text-white/30">肉割烹 宮田</p>
-              </div>
+          <div className="max-w-3xl space-y-12 text-base font-light leading-9 text-white/65">
+            <div>
+              <p className="mb-8 text-xs uppercase tracking-[0.35em] text-white/40">Almoço · Menu Degustação</p>
+              <h3 className={`${display.className} text-3xl font-medium text-white md:text-4xl`}>Niku Kappou Miyata</h3>
+              <p className="mt-3 text-sm uppercase tracking-[0.2em] text-white/30">肉割烹 宮田</p>
+            </div>
 
-              <div className="border-t border-white/10 pt-10">
-                <div className="grid gap-8 sm:grid-cols-2">
-                  <div>
-                    <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">Horário</p>
-                    <p className="text-white/85 text-lg">12:00</p>
-                  </div>
-                  <div>
-                    <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">Formato</p>
-                    <p className="text-white/85">Menu Degustação · Kappou</p>
-                  </div>
-                  <div>
-                    <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">Reserva</p>
-                    <p className="text-white/85">Confirmada · Alpinea Private</p>
-                  </div>
-                  <div>
-                    <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">Duração estimada</p>
-                    <p className="text-white/85">1h30 – 2h</p>
-                  </div>
+            <div className="border-t border-white/10 pt-10">
+              <div className="grid gap-8 sm:grid-cols-2">
+                <div>
+                  <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">Horário</p>
+                  <p className="text-white/85 text-lg">12:00</p>
                 </div>
-              </div>
-
-              <div className="border-t border-white/10 pt-10 space-y-5">
-                <p className="text-xs uppercase tracking-[0.35em] text-white/30">Nota</p>
-                <p>
-                  Um dos poucos restaurantes de menu degustação de wagyu no Japão. O chef raramente interage com os clientes, preferindo se concentrar no preparo — cada corte apresentado em silêncio, no ritmo do kappou. Alguns optam por um whisky japonês para acompanhar: The Chita ou The Yamazaki da Suntory funcionam bem.
-                </p>
-                <p>
-                  Os pratos são em sua maioria porções pequenas. O último prato — wagyu com arroz japonês cozido no próprio vapor — é generoso e encerra a refeição com satisfação. Como a próxima refeição será somente durante o festival, vale aproveitar.
-                </p>
+                <div>
+                  <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">Formato</p>
+                  <p className="text-white/85">Menu Degustação · Kappou</p>
+                </div>
+                <div>
+                  <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">Reserva</p>
+                  <p className="text-white/85">Confirmada · Alpinea Private</p>
+                </div>
+                <div>
+                  <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">Duração estimada</p>
+                  <p className="text-white/85">1h30 – 2h</p>
+                </div>
               </div>
             </div>
 
-            <div className="lg:sticky lg:top-28 space-y-6">
-              <Image
-                src="/images/niku.png"
-                alt="Menu Degustação de Wagyu — Niku Kappou Miyata"
-                width={900}
-                height={760}
-                priority
-                className="w-full rounded-2xl border border-white/10 object-cover"
-                style={{ maxHeight: "600px", objectPosition: "center" }}
-              />
-              <Image
-                src="/images/nikufood.jpeg"
-                alt="Prato do Menu Degustação — Niku Kappou Miyata"
-                width={900}
-                height={760}
-                className="w-full rounded-2xl border border-white/10 object-cover"
-                style={{ maxHeight: "480px", objectFit: "cover", objectPosition: "center" }}
-              />
-              <p className="text-xs uppercase tracking-[0.35em] text-white/30">
-                Niku Kappou Miyata · Kyoto
+            <div className="border-t border-white/10 pt-10 space-y-5">
+              <p className="text-xs uppercase tracking-[0.35em] text-white/30">Nota</p>
+              <p>
+                Um dos poucos restaurantes de menu degustação de wagyu no Japão. O chef raramente interage com os clientes, preferindo se concentrar no preparo — cada corte apresentado em silêncio, no ritmo do kappou. Alguns optam por um whisky japonês para acompanhar: The Chita ou The Yamazaki da Suntory funcionam bem.
+              </p>
+              <p>
+                Os pratos são em sua maioria porções pequenas. O último prato — wagyu com arroz japonês cozido no próprio vapor — é generoso e encerra a refeição com satisfação. Como a próxima refeição será somente durante o festival, vale aproveitar.
               </p>
             </div>
           </div>
-        </div>
-      </section>
 
-      {/* ── RESPIRO — CTA INTERMEDIÁRIO ── */}
-      <section className="border-t border-white/10 px-8 py-28 md:px-16">
-        <div className="mx-auto max-w-3xl text-center">
-          <p className={`${display.className} text-2xl font-medium leading-relaxed text-white/60 md:text-3xl`}>
-            Cada detalhe deste dia foi definido antes de você chegar.
-          </p>
-          <div className="mt-12 flex flex-col items-center justify-center gap-4 sm:flex-row">
-            <a
-              href="#contact"
-              className="border border-white/20 px-8 py-4 text-xs uppercase tracking-[0.3em] text-white/60 transition hover:border-white hover:text-white"
-            >
-              Iniciar um Roteiro
-            </a>
+          {/* Galeria horizontal — fotos numa linha abaixo do texto */}
+          <div className="mt-16 grid max-w-3xl grid-cols-2 gap-6">
+            <div className="aspect-[4/3] overflow-hidden rounded-2xl border border-white/10">
+              <Image
+                src="/images/niku.png"
+                alt="Menu Degustação de Wagyu — Niku Kappou Miyata"
+                width={700}
+                height={520}
+                priority
+                className="h-full w-full object-cover"
+              />
+            </div>
+            <div className="aspect-[4/3] overflow-hidden rounded-2xl border border-white/10">
+              <Image
+                src="/images/nikufood.jpeg"
+                alt="Prato do Menu Degustação — Niku Kappou Miyata"
+                width={700}
+                height={520}
+                className="h-full w-full object-cover"
+              />
+            </div>
           </div>
+          <p className="mt-4 max-w-3xl text-xs uppercase tracking-[0.35em] text-white/30">
+            Niku Kappou Miyata · Kyoto
+          </p>
         </div>
       </section>
 
@@ -522,18 +502,35 @@ export default function Day8Page() {
               </div>
 
               <div className="border-t border-white/10 pt-10 space-y-8">
-                <InfoBlock
-                  title="O festival"
-                  text="O Gion Matsuri dura quase um mês e se divide em três etapas: Sakimatsuri, Yamahoko Junko e Atomatsuri — respectivamente pré-desfile, desfile e pós-desfile. O ápice não é o dia do desfile em si, mas a véspera, quando os Hoko — estruturas de madeira com lanternas e tapeçarias seculares — são expostos iluminados nos quarteirões ao redor do templo Yasaka. Esse momento se chama Yoiyama."
-                />
-                <InfoBlock
-                  title="O percurso"
-                  text="Partimos do hotel às 17:00 e seguimos a pé pelo Niwatori-Hoko, Ayasaka-Hoko e Funahoko — cada um em um quarteirão diferente. O deslocamento é lento, com paradas nas barracas de comida de rua ao longo do caminho. O Iwatoyama pode ser incluído ao final, caso haja interesse."
-                />
-                <InfoBlock
-                  title="Logística"
-                  text="O motorista Tanaka aguarda em ponto fixo nas proximidades. A região central é fechada para veículos no período noturno — o acesso à área do festival é sempre a pé a partir de um ponto designado pela Alpinea."
-                />
+                <div>
+                  <p className={`${display.className} text-2xl font-medium text-white md:text-3xl`}>O Festival</p>
+                  <p className="mt-3">
+                    O Gion Matsuri dura quase um mês e se divide em três etapas: Sakimatsuri, Yamahoko Junko e Atomatsuri — respectivamente pré-desfile, desfile e pós-desfile. O ápice não é o dia do desfile em si, mas a véspera, quando os Hoko — estruturas de madeira com lanternas e tapeçarias seculares — são expostos iluminados nos quarteirões ao redor do templo Yasaka. Esse momento se chama Yoiyama.
+                  </p>
+                </div>
+                <div>
+                  <p className={`${display.className} text-2xl font-medium text-white md:text-3xl`}>O Percurso</p>
+                  <p className="mt-3">
+                    Partimos do hotel às 17:00 e seguimos a pé pelo Niwatori-Hoko, Ayasaka-Hoko e Funahoko — cada um em um quarteirão diferente. O deslocamento é lento, com paradas nas barracas de comida de rua ao longo do caminho. O Iwatoyama pode ser incluído ao final, caso haja interesse.
+                  </p>
+                </div>
+                <div>
+                  <p className={`${display.className} text-2xl font-medium text-white md:text-3xl`}>Logística</p>
+                  <p className="mt-3">
+                    O motorista Tanaka aguarda em ponto fixo nas proximidades. A região central é fechada para veículos no período noturno — o acesso à área do festival é sempre a pé a partir de um ponto designado pela Alpinea.
+                  </p>
+                </div>
+              </div>
+
+              <div className="border-t border-white/10 pt-10">
+                <a
+                  href="/images/masturiroute.png"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sm uppercase tracking-[0.25em] text-white/45 underline underline-offset-4 transition hover:text-white"
+                >
+                  Ver mapa da rota da procissão Yamahoko →
+                </a>
               </div>
 
               <div className="border-t border-white/10 pt-10">
@@ -544,15 +541,8 @@ export default function Day8Page() {
 
             <div className="lg:sticky lg:top-28 space-y-6">
               <Image
-                src="/images/logomatsuri.png"
-                alt="Gion Matsuri"
-                width={760}
-                height={400}
-                className="w-full object-contain"
-              />
-              <Image
-                src="/images/gionmatsuri2.png"
-                alt="Gion Matsuri — Yoiyama, Sakimatsuri, Kyoto"
+                src="/images/maiko.png"
+                alt="Maiko durante o Yoiyama, Gion Matsuri, Kyoto"
                 width={760}
                 height={1140}
                 priority
@@ -560,23 +550,8 @@ export default function Day8Page() {
                 style={{ maxHeight: "820px", objectPosition: "center top" }}
               />
               <p className="text-xs uppercase tracking-[0.35em] text-white/30">
-                Gion Matsuri · Yoiyama · Shijo · Kyoto
+                Yoiyama · Gion Matsuri · Shijo · Kyoto
               </p>
-              <div>
-                <p className="mb-4 text-xs uppercase tracking-[0.35em] text-white/30">Rota da Procissão Yamahoko</p>
-                <a href="/images/masturiroute.png" target="_blank" rel="noopener noreferrer" className="block">
-                  <Image
-                    src="/images/masturiroute.png"
-                    alt="Mapa da rota da procissão Yamahoko — Gion Matsuri"
-                    width={800}
-                    height={1100}
-                    className="w-full cursor-zoom-in rounded-2xl border border-white/10 object-contain bg-white/[0.03] p-2 transition hover:opacity-85"
-                  />
-                </a>
-                <p className="mt-3 text-xs leading-6 text-white/30">
-                  Histórico das rotas do Yamahoko Float · Clique para ampliar.
-                </p>
-              </div>
             </div>
           </div>
         </div>
