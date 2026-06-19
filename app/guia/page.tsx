@@ -109,6 +109,93 @@ export default function GuiaFacasPage() {
         </div>
       </section>
 
+      {/* Categorias de Assessoria */}
+      <section className="border-t border-white/10 px-8 py-28 md:px-16">
+        <div className="mx-auto max-w-7xl">
+          <div className="grid gap-16 lg:grid-cols-[1fr_1.6fr]">
+            <div>
+              <p className="mb-6 text-xs uppercase tracking-[0.35em] text-white/35">Categorias de Assessoria</p>
+              <h2 className={`${display.className} text-3xl font-medium text-white md:text-4xl`}>
+                Muito além das facas.
+              </h2>
+              <p className="mt-6 text-sm font-light leading-8 text-white/45">
+                A assessoria de compras da Alpinea cobre qualquer categoria em que o Japão concentre os melhores fabricantes do mundo — e em que o acesso direto ao artesão ou à loja certa separe uma peça genérica de uma peça de referência.
+              </p>
+              <p className="mt-4 text-sm font-light leading-8 text-white/35">
+                A seguir, dez exemplos do que costumamos buscar para nossos clientes. O caso a seguir detalha um deles — facas de cozinha —, mas a curadoria se estende a qualquer item da lista.
+              </p>
+            </div>
+
+            <div className="space-y-0">
+              {[
+                {
+                  n: "01",
+                  title: "Facas de cozinha artesanais",
+                  desc: "Masamoto, Aritsugu, Kikumori — acesso direto aos fabricantes, sem intermediários comerciais.",
+                },
+                {
+                  n: "02",
+                  title: "Equipamentos fotográficos profissionais",
+                  desc: "Câmeras e lentes raras, descontinuadas ou de produção limitada, incluindo lojas especializadas de Tóquio como Nakano Broadway e Shinjuku.",
+                },
+                {
+                  n: "03",
+                  title: "Relógios de luxo no mercado paralelo",
+                  desc: "Rolex, Patek Philippe, Richard Mille — o Japão é um dos mercados mais competitivos do mundo para aquisição, com rede própria de revendedores de confiança.",
+                },
+                {
+                  n: "04",
+                  title: "Equipamentos de pesca de alta precisão",
+                  desc: "Molinetes e varas Shimano e Daiwa de linha topo, incluindo peças artesanais sob encomenda.",
+                },
+                {
+                  n: "05",
+                  title: "Whisky japonês raro",
+                  desc: "Edições limitadas e garrafas de destilarias independentes, com forte valorização entre colecionadores.",
+                },
+                {
+                  n: "06",
+                  title: "Canetas-tinteiro artesanais",
+                  desc: "Nakaya, Sailor King of Pen — peças produzidas por um único artesão, em escala limitada.",
+                },
+                {
+                  n: "07",
+                  title: "Equipamentos de áudio de alta fidelidade",
+                  desc: "Amplificadores valvulados, toca-discos e fones de ouvido — tradição japonesa de audiophile boutique.",
+                },
+                {
+                  n: "08",
+                  title: "Tacos de golfe forjados sob encomenda",
+                  desc: "Clubmakers japoneses com fitting personalizado e ferro forjado tradicional.",
+                },
+                {
+                  n: "09",
+                  title: "Ferramentas de carpintaria tradicionais",
+                  desc: "Formões e serras forjados por mestres artesãos, usados por marceneiros e colecionadores no mundo todo.",
+                },
+                {
+                  n: "10",
+                  title: "Cerâmica de mestres ceramistas",
+                  desc: "Peças de Hagi, Bizen e Raku, com valor de coleção e uso tradicional na cerimônia do chá.",
+                },
+              ].map((item) => (
+                <div
+                  key={item.n}
+                  className="border-t border-white/10 py-6 grid gap-6 grid-cols-[60px_1fr] items-start"
+                >
+                  <p className="text-xs uppercase tracking-[0.2em] text-white/25 pt-1">{item.n}</p>
+                  <div>
+                    <p className="text-white font-light text-base">{item.title}</p>
+                    <p className="mt-1 text-sm leading-6 text-white/50">{item.desc}</p>
+                  </div>
+                </div>
+              ))}
+              <div className="border-t border-white/10" />
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Briefing do cliente */}
       <section className="border-t border-white/10 bg-white/[0.02] px-8 py-28 md:px-16">
         <div className="mx-auto max-w-7xl">
