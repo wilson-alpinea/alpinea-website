@@ -336,20 +336,17 @@ export default function LandingPage() {
     {
       label: "Orientação Estratégica",
       title: "Alpinea Design",
-      intro: "Para quem deseja conduzir a própria viagem com uma base cuidadosamente desenhada.",
       details: "Curadoria de destino, roteiro privado e recomendações estratégicas.",
     },
     {
       label: "Planejamento Completo",
       title: "Alpinea Executive",
-      intro: "Para quem deseja uma viagem organizada antes da chegada ao Japão.",
       details: "Planejamento completo, hotéis, passagens, reservas gastronômicas e concierge remoto.",
       featured: false,
     },
     {
       label: "Acompanhamento Presencial",
       title: "Alpinea Private",
-      intro: "Para quem deseja presença local e execução dedicada no Japão.",
       details: "Inclui o Executive, com acompanhamento presencial em restaurantes, compras e experiências.",
       featured: true,
     },
@@ -432,7 +429,7 @@ export default function LandingPage() {
 
           <div className="space-y-8 text-lg font-light leading-9 text-white/68">
             <p>
-              A Alpinea desenha jornadas privadas no Japão com curadoria de hotéis, restaurantes, logística, compras, experiências e acompanhamento presencial quando necessário.
+              Planejamos e executamos viagens privadas no Japão: hotéis, restaurantes, compras, logística, experiências e acompanhamento local quando necessário.
             </p>
 
             <p>
@@ -500,7 +497,7 @@ export default function LandingPage() {
                 Nossos diferenciais
               </p>
               <h2 className={`${display.className} text-4xl font-medium leading-tight md:text-6xl`}>
-                Planejamos e executamos viagens privadas no Japão: hotéis, restaurantes, compras, logística, experiências e acompanhamento local quando necessário.
+                Acesso, profundidade e execução no mercado de luxo japonês.
               </h2>
             </div>
 
@@ -676,7 +673,7 @@ export default function LandingPage() {
             </p>
           </div>
 
-          <p className="mb-8 border-t border-white/10 pt-6 text-sm font-light text-white/40">
+          <p className="mb-8 border-t border-white/10 pt-6 text-base font-light text-white/75 md:text-lg">
             Para manter o padrão de atendimento, a Alpinea aceita um número limitado de novos clientes por temporada.
           </p>
 
@@ -696,11 +693,7 @@ export default function LandingPage() {
                   {tier.title}
                 </h3>
 
-                <p className="mt-6 text-base font-light leading-7 text-white/75">
-                  {tier.intro}
-                </p>
-
-                <p className="mt-4 text-sm font-light leading-7 text-white/50">
+                <p className="mt-6 text-sm font-light leading-7 text-white/55">
                   {tier.details}
                 </p>
               </div>
