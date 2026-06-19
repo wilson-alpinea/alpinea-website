@@ -1,9 +1,22 @@
+import { Bodoni_Moda } from "next/font/google";
+
+// Mesma fonte de destaque usada na landing page e na home — mantém a
+// identidade visual consistente entre as páginas do site.
+const display = Bodoni_Moda({
+  subsets: ["latin"],
+  weight: ["400", "500", "600"],
+});
+
 export default function ServicesPage() {
   return (
     <main className="min-h-screen bg-black text-white">
       <header className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between bg-black/10 px-8 py-5 backdrop-blur-2xl md:px-16">
-        <a href="/" className="text-xl tracking-[0.45em]">
-          ALPINEA
+        <a href="/">
+          <img
+            src="/images/ALPINEA-LOGO-transparent.png"
+            alt="Alpinea"
+            className="h-8 w-auto object-contain"
+          />
         </a>
 
         <nav className="hidden gap-8 text-xs uppercase tracking-[0.25em] text-white/70 md:flex">
@@ -26,7 +39,7 @@ export default function ServicesPage() {
           <p className="mb-8 text-xs uppercase tracking-[0.35em] text-white/40">
             Serviços Alpinea
           </p>
-          <h1 className="max-w-5xl text-5xl font-light leading-[1.05] tracking-tight md:text-7xl">
+          <h1 className={`${display.className} max-w-5xl text-5xl font-medium leading-[1.05] tracking-tight md:text-7xl`}>
             Três opções de serviços
             <br />
             Uma mesma curadoria Alpinea.
@@ -108,7 +121,7 @@ export default function ServicesPage() {
           <p className="mb-8 text-xs uppercase tracking-[0.35em] text-white/40">
             Comparativo de Serviços
           </p>
-          <h2 className="max-w-4xl text-5xl font-light leading-[1.05] tracking-tight text-white md:text-7xl">
+          <h2 className={`${display.className} max-w-4xl text-5xl font-medium leading-[1.05] tracking-tight text-white md:text-7xl`}>
             O que muda entre
             <br />
             cada formato.
@@ -169,7 +182,7 @@ export default function ServicesPage() {
           <p className="mb-8 text-xs uppercase tracking-[0.35em] text-white/40">
             Roteiro Alpinea
           </p>
-          <h2 className="text-4xl font-light leading-tight text-white md:text-6xl">
+          <h2 className={`${display.className} text-4xl font-medium leading-tight text-white md:text-6xl`}>
             Veja um exemplo real de curadoria Alpinea.
           </h2>
           <p className="mx-auto mt-8 max-w-2xl text-lg font-light leading-9 text-white/65">
@@ -191,7 +204,7 @@ export default function ServicesPage() {
           <p className="mb-6 text-xs uppercase tracking-[0.35em] text-black/40">
             Avaliação Inicial
           </p>
-          <h2 className="text-4xl font-light leading-tight md:text-6xl">
+          <h2 className={`${display.className} text-4xl font-medium leading-tight md:text-6xl`}>
             Cada viagem exige um nível diferente de presença.
           </h2>
           <p className="mx-auto mt-8 max-w-2xl text-lg leading-9 text-black/60">
@@ -220,9 +233,11 @@ export default function ServicesPage() {
       <footer className="border-t border-white/10 bg-black px-8 py-16 text-white md:px-16">
         <div className="mx-auto flex max-w-7xl flex-col justify-between gap-12 md:flex-row md:items-end">
           <div className="space-y-6">
-            <p className="text-xs uppercase tracking-[0.45em] text-white/80">
-              Alpinea
-            </p>
+            <img
+              src="/images/ALPINEA-LOGO-transparent.png"
+              alt="Alpinea"
+              className="h-7 w-auto object-contain"
+            />
             <div className="max-w-md space-y-3">
               <p className="text-sm leading-relaxed text-white/50">
                 Curadoria privada de experiências, gastronomia e lifestyle no Japão.
@@ -280,7 +295,7 @@ function ServiceSection({
           <p className="mb-8 text-xs uppercase tracking-[0.35em] text-white/40">
             {label}
           </p>
-          <h2 className="text-5xl font-light leading-tight tracking-tight md:text-7xl">
+          <h2 className={`${display.className} text-5xl font-medium leading-tight tracking-tight md:text-7xl`}>
             {title}
           </h2>
           <p className="mt-8 max-w-2xl text-lg font-light leading-9 text-white/65">
