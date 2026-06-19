@@ -759,11 +759,11 @@ export default function Home() {
 
   <div className="mt-5 px-2">
     <h3 className="text-lg font-light">
-      Patrimônio & Cultura Japonesa
+      Cultura & Entretenimento Premium
     </h3>
 
     <p className="mt-2 text-sm leading-7 text-white/55">
-      Museus, instalações artísticas, festivais, parques temáticos e experiências imersivas cuidadosamente selecionadas para revelar o lado mais contemporâneo e sensorial do Japão.
+      Museus, instalações artísticas, parques temáticos e experiências imersivas cuidadosamente selecionadas para revelar o lado mais contemporâneo e sensorial do Japão.
     </p>
   </div>
 </div>
@@ -806,6 +806,10 @@ export default function Home() {
       Pensado para viajantes que não procuram pacotes turísticos,
       mas acesso, repertório, precisão e execução impecável.
     </p>
+
+    <p className="mx-auto mt-8 max-w-2xl text-sm font-light text-white/40">
+      Para manter o padrão de atendimento, a Alpinea aceita um número limitado de novos clientes por temporada.
+    </p>
   </div>
 </section>
 
@@ -827,7 +831,11 @@ export default function Home() {
       A Alpinea cuidará do restante.
     </p>
 
-    <div className="mt-12 flex flex-col items-center justify-center gap-4 sm:flex-row">
+    <p className="mt-6 text-sm font-light text-black/40">
+      Agenda limitada para o segundo semestre de 2026.
+    </p>
+
+    <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
       
       {/* EMAIL */}
       <button
@@ -925,4 +933,3 @@ export default function Home() {
     </main>
   );
 }
-
