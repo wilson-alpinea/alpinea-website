@@ -824,11 +824,13 @@ export default function LandingPage() {
 
       {/* FOOTER */}
       <footer className="border-t border-white/10 bg-black px-8 py-16 text-white md:px-16">
-        <div className="mx-auto flex max-w-7xl flex-col justify-between gap-12 md:flex-row md:items-end">
+        <div className="mx-auto flex max-w-7xl flex-col justify-between gap-12 md:flex-row md:items-start">
           <div className="space-y-6">
-            <p className="text-xs uppercase tracking-[0.45em] text-white/80">
-              Alpinea
-            </p>
+            <img
+              src="/images/ALPINEA-LOGO-transparent.png"
+              alt="Alpinea"
+              className="h-7 w-auto object-contain"
+            />
 
             <div className="max-w-md space-y-3">
               <p className="text-sm leading-relaxed text-white/50">
@@ -853,12 +855,31 @@ export default function LandingPage() {
             </div>
           </div>
 
-          <a
-            href="mailto:wilson@alpinea.io"
-            className="text-xs uppercase tracking-[0.35em] text-white/40 transition hover:text-white"
-          >
-            Contato
-          </a>
+          <nav className="flex flex-col gap-3 text-xs uppercase tracking-[0.25em] text-white/40">
+            <a href="/" className="transition hover:text-white">
+              Início
+            </a>
+
+            <a href="/services" className="transition hover:text-white">
+              Serviços
+            </a>
+
+            <a href="/gastro" className="transition hover:text-white">
+              Restaurantes
+            </a>
+
+            <a href="/guia" className="transition hover:text-white">
+              Compras
+            </a>
+
+            <a href="/preview" className="transition hover:text-white">
+              Roteiro
+            </a>
+
+            <a href="#contact" className="transition hover:text-white">
+              Contato
+            </a>
+          </nav>
         </div>
       </footer>
     </main>
