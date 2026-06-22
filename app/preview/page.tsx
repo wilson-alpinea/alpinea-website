@@ -99,62 +99,44 @@ export default function PreviewPage() {
       </section>
 
       {/* ── MEU DASHBOARD DE VIAGEM ── */}
-      <section className="border-t border-white/10">
-        <div className="relative h-[75vh] min-h-[560px] max-h-[720px] w-full overflow-hidden">
-          <Image
-            src="/images/maldives.jpg"
-            alt="Vista para o mar"
-            fill
-            priority
-            sizes="100vw"
-            className="object-cover"
+      <section className="border-t border-white/10 bg-white/[0.02] px-8 py-24 md:px-16">
+        <div className="mx-auto max-w-7xl">
+          <p className="mb-5 text-center text-xs uppercase tracking-[0.35em] text-white/40">Visão Geral</p>
+          <h3 className={`${display.className} mb-16 text-center text-3xl font-medium text-white md:text-4xl`}>Meu Dashboard de Viagem</h3>
+
+          <TripDashboard
+            days={[
+              { day: 1, date: "1 Out", city: "Tokyo", href: "#dia-1" },
+              { day: 2, date: "2 Out", city: "Tokyo" },
+              { day: 3, date: "3 Out", city: "Tokyo" },
+              { day: 4, date: "4 Out", city: "Tokyo" },
+              { day: 5, date: "5 Out", city: "Tokyo" },
+              { day: 6, date: "6 Out", city: "Tokyo" },
+              { day: 7, date: "7 Out", city: "Tokyo" },
+              { day: 8, date: "8 Out", city: "Osaka" },
+              { day: 9, date: "9 Out", city: "Osaka" },
+              { day: 10, date: "10 Out", city: "Osaka" },
+              { day: 11, date: "11 Out", city: "Osaka" },
+              { day: 12, date: "12 Out", city: "Kyoto" },
+              { day: 13, date: "13 Out", city: "Kyoto" },
+              { day: 14, date: "14 Out", city: "Kyoto" },
+              { day: 15, date: "15 Out", city: "Tokyo" },
+            ]}
+            guides={[
+              { label: "Restaurantes" },
+              { label: "Hotéis" },
+              { label: "Compras" },
+            ]}
+            annexes={[
+              { label: "Aeroporto Chegada Narita NRT" },
+              { label: "Aeroporto Partida Narita NRT" },
+              { label: "Instruções Conexão em Doha DOH" },
+              { label: "Dinheiro e Pagamentos" },
+              { label: "Apps e Conectividade" },
+              { label: "Trem Bala (Shinkansen)" },
+              { label: "Logística de Malas" },
+            ]}
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/55 to-transparent" />
-
-          <div className="absolute inset-x-0 bottom-0 px-8 pb-14 text-center md:px-16 md:pb-16">
-            <div className="mx-auto max-w-3xl">
-              <p className="mb-5 text-xs uppercase tracking-[0.35em] text-white/40">Visão Geral</p>
-              <h3 className={`${display.className} text-3xl font-medium text-white md:text-4xl`}>Meu Dashboard de Viagem</h3>
-            </div>
-          </div>
-        </div>
-
-        <div className="px-8 py-24 md:px-16">
-          <div className="mx-auto max-w-7xl">
-            <TripDashboard
-              days={[
-                { day: 1, date: "1 Out", city: "Tokyo", href: "#dia-1" },
-                { day: 2, date: "2 Out", city: "Tokyo" },
-                { day: 3, date: "3 Out", city: "Tokyo" },
-                { day: 4, date: "4 Out", city: "Tokyo" },
-                { day: 5, date: "5 Out", city: "Tokyo" },
-                { day: 6, date: "6 Out", city: "Tokyo" },
-                { day: 7, date: "7 Out", city: "Tokyo" },
-                { day: 8, date: "8 Out", city: "Osaka" },
-                { day: 9, date: "9 Out", city: "Osaka" },
-                { day: 10, date: "10 Out", city: "Osaka" },
-                { day: 11, date: "11 Out", city: "Osaka" },
-                { day: 12, date: "12 Out", city: "Kyoto" },
-                { day: 13, date: "13 Out", city: "Kyoto" },
-                { day: 14, date: "14 Out", city: "Kyoto" },
-                { day: 15, date: "15 Out", city: "Tokyo" },
-              ]}
-              guides={[
-                { label: "Restaurantes" },
-                { label: "Hotéis" },
-                { label: "Compras" },
-              ]}
-              annexes={[
-                { label: "Aeroporto Chegada Narita NRT" },
-                { label: "Aeroporto Partida Narita NRT" },
-                { label: "Instruções Conexão em Doha DOH" },
-                { label: "Dinheiro e Pagamentos" },
-                { label: "Apps e Conectividade" },
-                { label: "Trem Bala (Shinkansen)" },
-                { label: "Logística de Malas" },
-              ]}
-            />
-          </div>
         </div>
       </section>
 
@@ -273,7 +255,7 @@ export default function PreviewPage() {
         </div>
       </section>
 
-      <section className="border-t border-white/10 px-8 py-32 md:px-16">
+      <section className="border-t border-white/10 px-8 py-14 md:px-16 md:py-16">
         <div className="mx-auto max-w-7xl">
           <p className={`${display.className} mb-8 text-3xl font-medium text-white md:text-4xl`}>Tarde</p>
           <p className="max-w-4xl text-lg font-light leading-9 text-white/70">
