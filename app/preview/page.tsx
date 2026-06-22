@@ -128,21 +128,12 @@ export default function PreviewPage() {
               Este roteiro foi desenhado para ser seguido com autonomia. Se preferir um canal de apoio durante a viagem — para dúvidas, imprevistos ou ajustes de última hora — o concierge remoto pode ser adicionado ao seu pacote.
             </p>
           </div>
-
-          <div className="mt-10 text-center">
-            <a
-              href="#contact"
-              className="text-xs uppercase tracking-[0.3em] text-white/40 underline underline-offset-4 transition hover:text-white"
-            >
-              Quer um roteiro assim para a sua viagem? Fale com a Alpinea →
-            </a>
-          </div>
         </div>
       </section>
 
       <section className="border-t border-white/10 bg-white/[0.02] px-8 py-32 md:px-16">
         <div className="mx-auto max-w-7xl">
-          <p className="mb-8 text-xs uppercase tracking-[0.35em] text-white/40">Manhã</p>
+          <p className={`${display.className} mb-8 text-3xl font-medium text-white md:text-4xl`}>Manhã</p>
           <div className="max-w-4xl space-y-8 text-lg font-light leading-9 text-white/70">
             <p>
               <span className="text-white">Local:</span> Aeroporto Internacional de Narita — Terminal 3
@@ -153,6 +144,15 @@ export default function PreviewPage() {
               sair do aeroporto, comentários gerais e guia de deslocamento até o hotel.
             </p>
           </div>
+        </div>
+      </section>
+
+      <section className="border-t border-white/10 px-8 py-32 md:px-16">
+        <div className="mx-auto max-w-7xl">
+          <p className={`${display.className} mb-8 text-3xl font-medium text-white md:text-4xl`}>Tarde</p>
+          <p className="max-w-4xl text-lg font-light leading-9 text-white/70">
+            <span className="text-white">Local:</span> Oshiage, Tokyo
+          </p>
         </div>
       </section>
 
@@ -185,17 +185,8 @@ export default function PreviewPage() {
             <div className="pt-2 space-y-5">
               <p className="text-xs uppercase tracking-[0.35em] text-white/30">Cartão IC recomendado</p>
               <p className="mx-auto max-w-xl">
-                O Welcome Suica (ou o Suica comum, direto no Apple Wallet / Google Wallet) cobre praticamente todo trem, metrô e ônibus do país — basta aproximar o celular ou o cartão físico na entrada e saída de cada estação, sem precisar comprar passagem a cada trajeto.
+                O Welcome Suica cobre praticamente todo trem, metrô e ônibus do país — basta aproximar o celular ou o cartão físico na entrada e saída de cada estação, sem precisar comprar passagem a cada trajeto.
               </p>
-              <div className="mx-auto max-w-[180px] overflow-hidden rounded-2xl border border-white/10">
-                <Image
-                  src="/images/suica_square_logo.png"
-                  alt="Cartão Suica"
-                  width={360}
-                  height={360}
-                  className="w-full object-contain"
-                />
-              </div>
             </div>
 
             <div className="border-t border-white/10 pt-10">
@@ -268,83 +259,85 @@ export default function PreviewPage() {
         </div>
       </section>
 
-      <section className="border-t border-white/10 px-8 py-32 md:px-16">
-        <div className="mx-auto grid max-w-7xl gap-20 lg:grid-cols-2 lg:items-start">
-          <div className="space-y-12 text-lg font-light leading-9 text-white/70">
-            <div>
-              <p className={`${display.className} mb-8 text-3xl font-medium text-white md:text-4xl`}>Tarde</p>
-              <p><span className="text-white">Local:</span> Oshiage, Tokyo</p>
-            </div>
+      {/* ── ATRAÇÃO — TOKYO SKYTREE ── */}
+      <section className="border-t border-white/10">
+        <div className="relative h-[75vh] min-h-[560px] max-h-[720px] w-full overflow-hidden">
+          <Image
+            src="/images/skytree3.jpg"
+            alt="Tokyo Skytree"
+            fill
+            priority
+            sizes="100vw"
+            className="object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/55 to-transparent" />
 
-            <div className="border-t border-white/10 pt-12">
-              <p className="mb-6 text-xs uppercase tracking-[0.35em] text-white/40">Atração</p>
+          <div className="absolute inset-x-0 bottom-0 px-8 pb-14 text-center md:px-16 md:pb-16">
+            <div className="mx-auto max-w-3xl">
+              <p className="mb-5 text-xs uppercase tracking-[0.35em] text-white/40">Atração</p>
               <h3 className={`${display.className} text-3xl font-medium text-white md:text-4xl`}>Tokyo Skytree</h3>
-              <div className="mt-8 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
-                <div>
-                  <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/35">Melhor horário</p>
-                  <p className="text-white">16:30–18:30</p>
-                </div>
-                <div>
-                  <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/35">Tempo estimado</p>
-                  <p className="text-white">1–2 horas</p>
-                </div>
-                <div>
-                  <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/35">Reserva</p>
-                  <p className="text-white">Recomendada</p>
-                </div>
-                <div>
-                  <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/35">Horário de funcionamento</p>
-                  <p className="text-white">10:00 às 22:00</p>
-                </div>
-              </div>
             </div>
-
-            <div>
-              <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/35">Ingressos</p>
-              <div className="mt-2 space-y-2">
-                <p>1. Visita ao 350º andar — Tembo Deck</p>
-                <p>2. Visita ao 350º e 450º andar</p>
-                <p>3. Ingresso separado para a Tembo Galleria</p>
-              </div>
-            </div>
-
-            <div>
-              <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/35">Preço estimado</p>
-              <div className="mt-2 space-y-2">
-                <p>Tembo Deck: a partir de ¥1.800 por pessoa</p>
-                <p>Tembo Deck + Tembo Galleria: a partir de ¥3.000</p>
-                <p>Tembo Galleria avulsa: ¥1.400 por pessoa</p>
-                <p>Crianças entre 6 e 14 anos pagam meia entrada.</p>
-              </div>
-            </div>
-
-            <InfoBlock
-              title="Horário recomendado"
-              text="Chegada ao complexo Tokyo Solamachi às 17:00. Subida na torre por volta das 18:15 para acompanhar o pôr do sol."
-            />
-            <InfoBlock
-              title="Tempo estimado de visita"
-              text="Entre 1 e 2 horas após a subida ao observatório."
-            />
-            <InfoBlock
-              title="Comentários"
-              text="Eu normalmente compro o ingresso para o 350º andar, não vejo grande diferença entre os andares, não acho que vale a pena o restaurante e nem a galeria que ficam no topo da torre. As opções de comida na base são melhores, o complexo tem uma quantidade gigante de lojas. Recomendo passar nas lojas depois de subir para não precisar carregar peso. Todos os restaurantes costumam ter filas, se programe para chegar pelo menos 30 minutos antes do horário desejado para comer. Se não estiver com muita fome, a praça de alimentação tem ótimas opções para lanches como o Gindaco, que faz o típico bolinho de polvo frito, Takoyaki, da região de Kansai."
-            />
           </div>
+        </div>
 
-          <div className="lg:sticky lg:top-28">
-            <Image
-              src="/images/skytree.jpg"
-              alt="Tokyo Skytree ao entardecer"
-              width={1200}
-              height={1800}
-              priority
-              className="h-[720px] w-full rounded-xl object-cover"
-            />
-            <p className="mt-4 text-xs uppercase tracking-[0.35em] text-white/35">
-              Tokyo Skytree · Oshiage · Tokyo
-            </p>
-            <div className="mt-12">
+        <div className="px-8 py-32 md:px-16">
+          <div className="mx-auto grid max-w-7xl gap-20 lg:grid-cols-2 lg:items-start">
+            <div className="space-y-12 text-lg font-light leading-9 text-white/70">
+              <div>
+                <div className="grid gap-8 sm:grid-cols-2">
+                  <div>
+                    <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/35">Melhor horário</p>
+                    <p className="text-white">16:30–18:30</p>
+                  </div>
+                  <div>
+                    <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/35">Tempo estimado</p>
+                    <p className="text-white">1–2 horas</p>
+                  </div>
+                  <div>
+                    <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/35">Reserva</p>
+                    <p className="text-white">Recomendada</p>
+                  </div>
+                  <div>
+                    <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/35">Horário de funcionamento</p>
+                    <p className="text-white">10:00 às 22:00</p>
+                  </div>
+                </div>
+              </div>
+
+              <div>
+                <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/35">Ingressos</p>
+                <div className="mt-2 space-y-2">
+                  <p>1. Visita ao 350º andar — Tembo Deck</p>
+                  <p>2. Visita ao 350º e 450º andar</p>
+                  <p>3. Ingresso separado para a Tembo Galleria</p>
+                </div>
+              </div>
+
+              <div>
+                <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/35">Preço estimado</p>
+                <div className="mt-2 space-y-2">
+                  <p>Tembo Deck: a partir de ¥1.800 por pessoa</p>
+                  <p>Tembo Deck + Tembo Galleria: a partir de ¥3.000</p>
+                  <p>Tembo Galleria avulsa: ¥1.400 por pessoa</p>
+                  <p>Crianças entre 6 e 14 anos pagam meia entrada.</p>
+                </div>
+              </div>
+
+              <InfoBlock
+                title="Horário recomendado"
+                text="Chegada ao complexo Tokyo Solamachi às 17:00. Subida na torre por volta das 18:15 para acompanhar o pôr do sol."
+              />
+              <InfoBlock
+                title="Tempo estimado de visita"
+                text="Entre 1 e 2 horas após a subida ao observatório."
+              />
+              <InfoBlock
+                title="Comentários"
+                text="Eu normalmente compro o ingresso para o 350º andar, não vejo grande diferença entre os andares, não acho que vale a pena o restaurante e nem a galeria que ficam no topo da torre. As opções de comida na base são melhores, o complexo tem uma quantidade gigante de lojas. Recomendo passar nas lojas depois de subir para não precisar carregar peso. Todos os restaurantes costumam ter filas, se programe para chegar pelo menos 30 minutos antes do horário desejado para comer. Se não estiver com muita fome, a praça de alimentação tem ótimas opções para lanches como o Gindaco, que faz o típico bolinho de polvo frito, Takoyaki, da região de Kansai."
+              />
+            </div>
+
+            <div className="lg:sticky lg:top-28">
               <p className="mb-4 text-xs uppercase tracking-[0.35em] text-white/40">
                 Mapa do Complexo Tokyo Solamachi
               </p>
@@ -370,9 +363,9 @@ export default function PreviewPage() {
       <section className="border-t border-white/10 px-8 py-32 md:px-16">
         <div className="mx-auto grid max-w-7xl gap-20 lg:grid-cols-2 lg:items-start">
           <div>
-            <p className="mb-8 text-xs uppercase tracking-[0.35em] text-white/40">
-              Restaurantes sugeridos
-            </p>
+            <h3 className={`${display.className} mb-8 text-3xl font-medium text-white md:text-4xl`}>
+              Jantar
+            </h3>
             <p className="text-lg font-light leading-9 text-white/70">
               A Tokyo Skytree está integrada ao shopping Tokyo Solamachi, que
               reúne diversas opções de restaurantes, praça de alimentação e um
