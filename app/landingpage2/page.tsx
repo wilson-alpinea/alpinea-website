@@ -616,6 +616,43 @@ export default function LandingPage() {
               </div>
             ))}
           </div>
+
+          {/* Dashboard da viagem — produto digital */}
+          <div className="mt-24 grid gap-16 border-t border-white/10 pt-20 md:grid-cols-2 md:items-center">
+            <div>
+              <p className="mb-6 text-xs uppercase tracking-[0.45em] text-white/30">
+                Acesso digital
+              </p>
+
+              <h3 className={`${display.className} text-3xl font-medium leading-tight text-white md:text-4xl`}>
+                Sua viagem, organizada num só painel — acessível do celular, em qualquer lugar.
+              </h3>
+
+              <p className="mt-6 max-w-lg text-base font-light leading-8 text-white/65">
+                Cada roteiro Alpinea inclui acesso a uma versão digital resumida do planejamento: roteiro diário, guias complementares e anexos especiais reunidos num dashboard simples de consultar durante a viagem — sem precisar abrir PDF ou planilha nenhuma.
+              </p>
+
+              <a
+                href="/preview"
+                className="mt-8 inline-block border border-white/20 px-6 py-4 text-xs uppercase tracking-[0.3em] text-white/75 transition hover:border-white hover:text-white"
+              >
+                Ver exemplo de roteiro
+              </a>
+            </div>
+
+            <div className="flex justify-center">
+              <div className="relative w-[260px] rounded-[40px] border border-white/15 bg-black p-3 shadow-2xl">
+                <div className="absolute left-1/2 top-3 z-10 h-5 w-24 -translate-x-1/2 rounded-full bg-black" />
+                <div className="relative aspect-[9/19.5] w-full overflow-hidden rounded-[28px] border border-white/10">
+                  <img
+                    src="/images/dashmobile.jpg"
+                    alt="Dashboard de viagem Alpinea, acessado pelo celular"
+                    className="absolute inset-0 h-full w-full object-cover object-top"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 

@@ -29,6 +29,7 @@ const CITY_BORDER: Record<string, string> = {
   Tokyo: "rgba(255,255,255,0.16)",
   Osaka: "rgba(196,148,110,0.45)",
   Kyoto: "rgba(118,150,168,0.45)",
+  Nara: "rgba(150,172,120,0.45)",
 };
 
 function Cell({

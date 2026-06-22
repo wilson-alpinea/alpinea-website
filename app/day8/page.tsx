@@ -73,18 +73,25 @@ export default function Day8Page() {
             Briefing
           </p>
 
+          <div className="mb-12 max-w-3xl">
+            <p className="mb-3 text-xs uppercase tracking-[0.35em] text-white/30">Ritmo da viagem</p>
+            <p className="text-base font-light leading-9 text-white/65">
+              Motorista privado em todos os deslocamentos, com ao menos uma atração imersiva e uma experiência gastronômica marcante por dia. Reservas, acessos e logística cuidados do início ao fim pela Alpinea.
+            </p>
+          </div>
+
           <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4 text-sm font-light leading-8 text-white/70">
-            <PreviewItem title="Perfil" text="Casal com 2 filhos" />
-            <PreviewItem title="Cidade" text="Kyoto" />
-            <PreviewItem title="Curadoria" text="Alpinea Private" />
-            <PreviewItem title="Dinâmica" text="Motorista privado · Atração matinal · Almoço degustação · Festival noturno" />
+            <PreviewItem title="Perfil do viajante" text="Casal com 2 filhos" />
+            <PreviewItem title="Cidades sugeridas" text="Tokyo, Kyoto, Nara e Osaka" />
+            <PreviewItem title="Estilo de curadoria" text="Alpinea Private" />
+            <PreviewItem title="Duração da viagem" text="15 Dias" />
           </div>
 
           <div className="mt-12 border-t border-white/10 pt-10">
             <p className="mb-6 text-xs uppercase tracking-[0.35em] text-white/30">A Curadoria em Números</p>
             <div className="flex flex-wrap items-baseline gap-x-10 gap-y-5">
-              <StatItem value="—" label="dias" />
-              <StatItem value="—" label="cidades" />
+              <StatItem value="15" label="dias" />
+              <StatItem value="4" label="cidades" />
               <StatItem value="—" label="atrações" />
               <StatItem value="—" label="restaurantes recomendados" />
               <StatItem value="—" label="guias complementares" />
@@ -101,14 +108,21 @@ export default function Day8Page() {
 
           <TripDashboard
             days={[
-              { day: 1, date: "—", city: "—" },
-              { day: 2, date: "—", city: "—" },
-              { day: 3, date: "—", city: "—" },
-              { day: 4, date: "—", city: "—" },
-              { day: 5, date: "—", city: "—" },
-              { day: 6, date: "—", city: "—" },
-              { day: 7, date: "—", city: "—" },
-              { day: 8, date: "—", city: "Kyoto", href: "#dia-8" },
+              { day: 1, date: "15 Mai", city: "Tokyo" },
+              { day: 2, date: "16 Mai", city: "Tokyo" },
+              { day: 3, date: "17 Mai", city: "Tokyo" },
+              { day: 4, date: "18 Mai", city: "Tokyo" },
+              { day: 5, date: "19 Mai", city: "Tokyo" },
+              { day: 6, date: "20 Mai", city: "Tokyo" },
+              { day: 7, date: "21 Mai", city: "Kyoto" },
+              { day: 8, date: "22 Mai", city: "Kyoto", href: "#dia-8" },
+              { day: 9, date: "23 Mai", city: "Kyoto" },
+              { day: 10, date: "24 Mai", city: "Nara" },
+              { day: 11, date: "25 Mai", city: "Osaka" },
+              { day: 12, date: "26 Mai", city: "Osaka" },
+              { day: 13, date: "27 Mai", city: "Tokyo" },
+              { day: 14, date: "28 Mai", city: "Tokyo" },
+              { day: 15, date: "29 Mai", city: "Tokyo" },
             ]}
             guides={[
               { label: "Restaurantes" },
