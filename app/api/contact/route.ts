@@ -1,16 +1,40 @@
 import { NextResponse } from "next/server";
 
+export const runtime = "nodejs";
+
+function escapeHtml(value: unknown) {
+  return String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
 export async function POST(req: Request) {
   try {
-    const {
-      name,
-      email,
-      phone,
-      dates,
-      travelers,
-      budget,
-      message,
-    } = await req.json();
+    const apiKey = process.env.RESEND_API_KEY;
+
+    if (!apiKey) {
+      console.error("RESEND_API_KEY não configurada no Vercel.");
+      return NextResponse.json(
+        {
+          error:
+            "Serviço de e-mail não configurado. Escreva para wilson@alpinea.io.",
+        },
+        { status: 500 }
+      );
+    }
+
+    const body = await req.json();
+
+    const name = String(body.name || "").trim();
+    const email = String(body.email || "").trim();
+    const phone = String(body.phone || "").trim();
+    const dates = String(body.dates || "").trim();
+    const travelers = String(body.travelers || "").trim();
+    const budget = String(body.budget || "").trim();
+    const message = String(body.message || "").trim();
 
     if (!name || !email) {
       return NextResponse.json(
@@ -31,48 +55,59 @@ Faixa de investimento: ${budget || "Não informado"}
 
 Como imagina essa viagem:
 ${message || "Não informado"}
-`;
+`.trim();
+
+    const htmlBody = `
+      <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #111;">
+        <h2>Novo contato pelo site Alpinea</h2>
+        <p><strong>Nome:</strong> ${escapeHtml(name)}</p>
+        <p><strong>E-mail:</strong> ${escapeHtml(email)}</p>
+        <p><strong>Telefone:</strong> ${escapeHtml(phone || "Não informado")}</p>
+        <p><strong>Datas previstas:</strong> ${escapeHtml(dates || "Não informado")}</p>
+        <p><strong>Número de viajantes:</strong> ${escapeHtml(travelers || "Não informado")}</p>
+        <p><strong>Faixa de investimento:</strong> ${escapeHtml(budget || "Não informado")}</p>
+        <p><strong>Como imagina essa viagem:</strong></p>
+        <p>${escapeHtml(message || "Não informado").replace(/\n/g, "<br />")}</p>
+      </div>
+    `.trim();
 
     const resendResponse = await fetch("https://api.resend.com/emails", {
       method: "POST",
       headers: {
-        Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
+        Authorization: `Bearer ${apiKey}`,
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
         from: "Alpinea <contato@alpinea.io>",
         to: ["wilson@alpinea.io"],
-        replyTo: email,
+        reply_to: email,
         subject: `Novo contato Alpinea — ${name}`,
         text: textBody,
+        html: htmlBody,
       }),
     });
 
     if (!resendResponse.ok) {
       const errorText = await resendResponse.text();
-
       console.error("Erro Resend:", errorText);
 
       return NextResponse.json(
         {
           error:
-            "Não foi possível enviar sua mensagem. Tente novamente ou escreva para wilson@alpinea.io",
+            "Não foi possível enviar sua mensagem. Tente novamente ou escreva para wilson@alpinea.io.",
         },
         { status: 500 }
       );
     }
 
-    return NextResponse.json(
-      { success: true },
-      { status: 200 }
-    );
+    return NextResponse.json({ success: true }, { status: 200 });
   } catch (error) {
     console.error("Erro no formulário:", error);
 
     return NextResponse.json(
       {
         error:
-          "Erro interno do servidor. Entre em contato por wilson@alpinea.io",
+          "Erro interno do servidor. Entre em contato por wilson@alpinea.io.",
       },
       { status: 500 }
     );
