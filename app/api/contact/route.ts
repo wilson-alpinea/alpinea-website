@@ -1,80 +1,80 @@
-// app/api/contact/route.ts
-//
-// Envia os dados do formulário de contato para wilson@alpinea.io via Resend.
-//
-// SETUP NECESSÁRIO (uma vez só):
-// 1. Crie uma conta gratuita em https://resend.com
-// 2. Verifique o domínio alpinea.io em Resend > Domains (eles te dão alguns
-//    registros DNS — TXT/MX/CNAME — para adicionar onde seu domínio é
-//    gerenciado). Sem isso, só é possível enviar para o seu próprio e-mail
-//    de teste, não para wilson@alpinea.io vindo de um endereço @alpinea.io.
-// 3. Gere uma API Key em Resend > API Keys.
-// 4. No Vercel, vá em Project Settings > Environment Variables e adicione:
-//      RESEND_API_KEY = sua_chave_aqui
-// 5. Re-deploy o projeto (ou o próprio push já aciona).
-//
-// O endereço em "from" abaixo precisa estar no domínio verificado.
-// Pode trocar "contato@alpinea.io" por outro endereço @alpinea.io se preferir.
+import { NextResponse } from "next/server";
 
 export async function POST(req: Request) {
   try {
-    const body = await req.json();
-    const { name, email, phone, dates, travelers, budget, message } = body || {};
+    const {
+      name,
+      email,
+      phone,
+      dates,
+      travelers,
+      budget,
+      message,
+    } = await req.json();
 
     if (!name || !email) {
-      return new Response(
-        JSON.stringify({ error: "Nome e e-mail são obrigatórios." }),
+      return NextResponse.json(
+        { error: "Nome e e-mail são obrigatórios." },
         { status: 400 }
       );
     }
 
-    const apiKey = process.env.RESEND_API_KEY;
-    if (!apiKey) {
-      console.error("RESEND_API_KEY não configurada.");
-      return new Response(
-        JSON.stringify({ error: "Envio de e-mail não configurado no servidor." }),
-        { status: 500 }
-      );
-    }
+    const textBody = `
+Novo contato pelo site Alpinea
 
-    const textBody = [
-      `Nome: ${name}`,
-      `E-mail: ${email}`,
-      `Telefone: ${phone || "não informado"}`,
-      `Datas previstas: ${dates || "não informado"}`,
-      `Viajantes: ${travelers || "não informado"}`,
-      `Faixa de investimento: ${budget || "não informado"}`,
-      "",
-      "Mensagem:",
-      message || "(sem mensagem)",
-    ].join("\n");
+Nome: ${name}
+E-mail: ${email}
+Telefone: ${phone || "Não informado"}
+Datas previstas: ${dates || "Não informado"}
+Número de viajantes: ${travelers || "Não informado"}
+Faixa de investimento: ${budget || "Não informado"}
 
-    const resendRes = await fetch("https://api.resend.com/emails", {
+Como imagina essa viagem:
+${message || "Não informado"}
+`;
+
+    const resendResponse = await fetch("https://api.resend.com/emails", {
       method: "POST",
       headers: {
-        Authorization: `Bearer ${apiKey}`,
+        Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        from: "Alpinea Website <contato@alpinea.io>",
+        from: "Alpinea <contato@alpinea.io>",
         to: ["wilson@alpinea.io"],
-        reply_to: email,
-        subject: `Novo contato pelo site — ${name}`,
+        replyTo: email,
+        subject: `Novo contato Alpinea — ${name}`,
         text: textBody,
       }),
     });
 
-    if (!resendRes.ok) {
-      const errText = await resendRes.text();
-      console.error("Erro do Resend:", errText);
-      return new Response(JSON.stringify({ error: "Falha ao enviar e-mail." }), {
-        status: 502,
-      });
+    if (!resendResponse.ok) {
+      const errorText = await resendResponse.text();
+
+      console.error("Erro Resend:", errorText);
+
+      return NextResponse.json(
+        {
+          error:
+            "Não foi possível enviar sua mensagem. Tente novamente ou escreva para wilson@alpinea.io",
+        },
+        { status: 500 }
+      );
     }
 
-    return new Response(JSON.stringify({ ok: true }), { status: 200 });
-  } catch (err) {
-    console.error("Erro no /api/contact:", err);
-    return new Response(JSON.stringify({ error: "Erro inesperado." }), { status: 500 });
+    return NextResponse.json(
+      { success: true },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error("Erro no formulário:", error);
+
+    return NextResponse.json(
+      {
+        error:
+          "Erro interno do servidor. Entre em contato por wilson@alpinea.io",
+      },
+      { status: 500 }
+    );
   }
 }
