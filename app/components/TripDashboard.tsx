@@ -168,6 +168,7 @@ export function TripDashboard({
 }) {
   return (
     <div>
+      <p className="mb-6 text-center text-xs uppercase tracking-[0.35em] text-white/40">Cidades</p>
       <TripFlow days={days} />
 
       <div className="space-y-12">

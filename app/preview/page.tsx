@@ -102,8 +102,8 @@ export default function PreviewPage() {
       <section className="border-t border-white/10">
         <div className="relative h-[75vh] min-h-[560px] max-h-[720px] w-full overflow-hidden">
           <Image
-            src="/images/tokyo.jpg"
-            alt="Tokyo — skyline com o Monte Fuji"
+            src="/images/maldives.jpg"
+            alt="Vista para o mar"
             fill
             priority
             sizes="100vw"
@@ -119,7 +119,7 @@ export default function PreviewPage() {
           </div>
         </div>
 
-        <div className="bg-white/[0.02] px-8 py-24 md:px-16">
+        <div className="px-8 py-24 md:px-16">
           <div className="mx-auto max-w-7xl">
             <TripDashboard
               days={[
