@@ -68,6 +68,10 @@ export default function PreviewPage() {
 
       <section className="border-t border-white/10 bg-white/[0.025] px-8 py-24 md:px-16">
         <div className="mx-auto max-w-5xl">
+          <p className={`${display.className} mb-12 text-center text-2xl font-medium text-white md:text-3xl`}>
+            Briefing
+          </p>
+
           <div className="mb-12 max-w-3xl">
             <p className="mb-3 text-xs uppercase tracking-[0.35em] text-white/30">Ritmo da viagem</p>
             <p className="text-base font-light leading-9 text-white/65">
@@ -81,12 +85,15 @@ export default function PreviewPage() {
             <PreviewItem title="Duração da viagem" text="15 Dias" />
           </div>
 
-          <div className="mt-12 flex flex-wrap items-baseline gap-x-10 gap-y-5 border-t border-white/10 pt-10">
-            <StatItem value="15" label="dias" />
-            <StatItem value="3" label="cidades" />
-            <StatItem value="27" label="atrações" />
-            <StatItem value="12" label="restaurantes recomendados" />
-            <StatItem value="8" label="guias complementares" />
+          <div className="mt-12 border-t border-white/10 pt-10">
+            <p className="mb-6 text-xs uppercase tracking-[0.35em] text-white/30">A Curadoria em Números</p>
+            <div className="flex flex-wrap items-baseline gap-x-10 gap-y-5">
+              <StatItem value="15" label="dias" />
+              <StatItem value="3" label="cidades" />
+              <StatItem value="27" label="atrações" />
+              <StatItem value="12" label="restaurantes recomendados" />
+              <StatItem value="8" label="guias complementares" />
+            </div>
           </div>
         </div>
       </section>
@@ -139,10 +146,35 @@ export default function PreviewPage() {
               Chegada ao Japão, acomodação inicial e primeira experiência em
               Oshiage, com visita à Tokyo Skytree e exploração do complexo Tokyo Solamachi.
             </p>
+          </div>
+        </div>
+      </section>
 
-            <div className="mt-10 border-t border-white/10 pt-10">
-              <p className="mb-8 text-xs uppercase tracking-[0.35em] text-white/40">Hospedagem</p>
-              <div className="grid gap-10 lg:grid-cols-[0.9fr_1.1fr_1fr] lg:items-center">
+      {/* ── HOSPEDAGEM — GRAND HYATT TOKYO ── */}
+      <section className="border-t border-white/10">
+        <div className="relative h-[75vh] min-h-[560px] max-h-[720px] w-full overflow-hidden">
+          <Image
+            src="/images/grandhyatt.png"
+            alt="Grand Hyatt Tokyo — piscina e spa"
+            fill
+            priority
+            sizes="100vw"
+            className="object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/55 to-transparent" />
+
+          <div className="absolute inset-x-0 bottom-0 px-8 pb-14 text-center md:px-16 md:pb-16">
+            <div className="mx-auto max-w-3xl">
+              <p className="mb-5 text-xs uppercase tracking-[0.35em] text-white/40">Hospedagem</p>
+              <h3 className={`${display.className} text-3xl font-medium text-white md:text-4xl`}>Grand Hyatt Tokyo</h3>
+            </div>
+          </div>
+        </div>
+
+        <div className="px-8 py-24 md:px-16">
+          <div className="mx-auto max-w-5xl">
+            <div className="grid gap-10 lg:grid-cols-[1.1fr_1fr] lg:items-center">
+              <div>
                 <Image
                   src="/images/grandhyattlogo.png"
                   alt="Grand Hyatt Tokyo"
@@ -150,27 +182,28 @@ export default function PreviewPage() {
                   height={260}
                   className="w-full max-w-xs object-contain"
                 />
+                <p className="mt-5 max-w-2xl text-lg font-light leading-8 text-white/60">
+                  6 Chome-10-3 Roppongi, Minato City, Tokyo 106-0032, Japão
+                </p>
+              </div>
+              <div className="grid gap-6 text-base leading-7 text-white/60 sm:grid-cols-2">
                 <div>
-                  <p className={`${display.className} text-3xl font-medium text-white md:text-4xl`}>Grand Hyatt Tokyo</p>
-                  <p className="mt-5 max-w-2xl text-lg font-light leading-8 text-white/60">
-                    6 Chome-10-3 Roppongi, Minato City, Tokyo 106-0032, Japão
-                  </p>
+                  <p className="mb-2 text-xs uppercase tracking-[0.3em] text-white/35">Check-In</p>
+                  <p className="text-lg text-white">15:00</p>
                 </div>
-                <div className="grid gap-6 text-base leading-7 text-white/60 sm:grid-cols-2 lg:grid-cols-1">
-                  <div>
-                    <p className="mb-2 text-xs uppercase tracking-[0.3em] text-white/35">Check-In</p>
-                    <p className="text-lg text-white">15:00</p>
-                  </div>
-                  <div>
-                    <p className="mb-2 text-xs uppercase tracking-[0.3em] text-white/35">Reserva</p>
-                    <p className="text-lg text-white">Confirmada</p>
-                  </div>
+                <div>
+                  <p className="mb-2 text-xs uppercase tracking-[0.3em] text-white/35">Reserva</p>
+                  <p className="text-lg text-white">Confirmada</p>
                 </div>
               </div>
             </div>
           </div>
+        </div>
+      </section>
 
-          <div className="mt-6 border border-white/10 bg-white/[0.03] p-10">
+      <section className="border-t border-white/10 px-8 py-32 md:px-16">
+        <div className="mx-auto max-w-7xl">
+          <div className="border border-white/10 bg-white/[0.03] p-10">
             <p className="mb-3 text-xs uppercase tracking-[0.35em] text-white/30">Alpinea Design · Concierge remoto (opcional)</p>
             <p className="text-sm leading-8 text-white/50">
               Este roteiro foi desenhado para ser seguido com autonomia. Se preferir um canal de apoio durante a viagem — para dúvidas, imprevistos ou ajustes de última hora — o concierge remoto pode ser adicionado ao seu pacote.

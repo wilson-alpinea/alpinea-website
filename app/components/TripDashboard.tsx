@@ -36,12 +36,26 @@ function Cell({
   subtitle,
   href,
   borderColor,
+  highlighted = false,
 }: {
   title: string;
   subtitle?: string;
   href?: string;
   borderColor?: string;
+  highlighted?: boolean;
 }) {
+  if (highlighted) {
+    return (
+      <a
+        href={href}
+        className="block rounded-lg bg-white px-4 py-3 transition hover:bg-white/90"
+      >
+        <p className="text-sm font-semibold text-black">{title}</p>
+        {subtitle && <p className="mt-1 text-xs text-black/60">{subtitle}</p>}
+      </a>
+    );
+  }
+
   const inner = (
     <>
       <p className="text-sm font-medium text-white">{title}</p>
@@ -98,46 +112,47 @@ function computeStops(days: DayCell[]) {
 
 function TripFlow({ days }: { days: DayCell[] }) {
   const stops = computeStops(days);
-  const maxDays = Math.max(...stops.map((s) => s.days));
-  const maxSize = 72;
-  const minSize = 30;
+  const circleSize = 56;
+  const arrowWidth = 28;
 
   return (
-    <div className="mb-12 flex flex-wrap items-start justify-center gap-y-6">
-      {stops.map((stop, i) => {
-        const size = Math.round(minSize + (stop.days / maxDays) * (maxSize - minSize));
-        return (
+    <div className="mb-12 flex flex-col items-center">
+      {/* Linha dos círculos e setas — todos do mesmo tamanho, setas centralizadas */}
+      <div className="flex items-center justify-center">
+        {stops.map((stop, i) => (
           <div key={i} className="flex items-center">
-            <div className="flex w-24 flex-col items-center gap-3">
-              <div className="flex shrink-0 items-center justify-center" style={{ height: maxSize }}>
-                <div
-                  className="rounded-full border"
-                  style={{
-                    width: size,
-                    height: size,
-                    borderColor: CITY_BORDER[stop.city] ?? "rgba(255,255,255,0.3)",
-                  }}
-                />
-              </div>
-              <div className="text-center">
-                <p className="text-xs uppercase tracking-[0.2em] text-white/70">{stop.city}</p>
-                <p className="text-[11px] text-white/35">
-                  {stop.days} {stop.days === 1 ? "dia" : "dias"}
-                </p>
-              </div>
-            </div>
-
+            <div
+              className="shrink-0 rounded-full border"
+              style={{
+                width: circleSize,
+                height: circleSize,
+                borderColor: CITY_BORDER[stop.city] ?? "rgba(255,255,255,0.3)",
+              }}
+            />
             {i < stops.length - 1 && (
-              <div className="flex shrink-0 items-center justify-center" style={{ height: maxSize, width: 28 }}>
-                <svg width="28" height="10" viewBox="0 0 28 10" fill="none">
-                  <line x1="0" y1="5" x2="20" y2="5" stroke="rgba(255,255,255,0.3)" strokeWidth="1.5" />
-                  <path d="M18 1 L26 5 L18 9" stroke="rgba(255,255,255,0.3)" strokeWidth="1.5" fill="none" />
-                </svg>
-              </div>
+              <svg width={arrowWidth} height="10" viewBox="0 0 28 10" fill="none" className="mx-1 shrink-0">
+                <line x1="0" y1="5" x2="20" y2="5" stroke="rgba(255,255,255,0.3)" strokeWidth="1.5" />
+                <path d="M18 1 L26 5 L18 9" stroke="rgba(255,255,255,0.3)" strokeWidth="1.5" fill="none" />
+              </svg>
             )}
           </div>
-        );
-      })}
+        ))}
+      </div>
+
+      {/* Linha das legendas — mesma largura dos círculos, alinhada por baixo deles */}
+      <div className="mt-3 flex items-start justify-center">
+        {stops.map((stop, i) => (
+          <div key={i} className="flex items-center">
+            <div className="text-center" style={{ width: circleSize }}>
+              <p className="text-xs uppercase tracking-[0.2em] text-white/70">{stop.city}</p>
+              <p className="text-[11px] text-white/35">
+                {stop.days} {stop.days === 1 ? "dia" : "dias"}
+              </p>
+            </div>
+            {i < stops.length - 1 && <div className="mx-1 shrink-0" style={{ width: arrowWidth }} />}
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
@@ -153,7 +168,7 @@ export function TripDashboard({
 }) {
   return (
     <div>
-      <p className={`${display.className} mb-8 text-2xl font-medium text-white md:text-3xl`}>
+      <p className={`${display.className} mb-8 text-center text-2xl font-medium text-white md:text-3xl`}>
         Meu Dashboard de Viagem
       </p>
 
@@ -162,7 +177,7 @@ export function TripDashboard({
       <div className="space-y-12">
         <div>
           <p className="mb-2 text-xs uppercase tracking-[0.35em] text-white/40">Roteiro Diário</p>
-          <p className="mb-6 text-xs text-white/30">
+          <p className="mb-6 text-sm text-white">
             Nesta amostra, apenas o Dia 1 está disponível para visualização.
           </p>
           <div className="grid grid-cols-3 gap-3 sm:grid-cols-5">
@@ -173,6 +188,7 @@ export function TripDashboard({
                 subtitle={`${d.date} · ${d.city}`}
                 href={d.href}
                 borderColor={CITY_BORDER[d.city]}
+                highlighted={!!d.href}
               />
             ))}
           </div>
