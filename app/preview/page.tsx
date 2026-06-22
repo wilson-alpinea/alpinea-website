@@ -174,7 +174,7 @@ export default function PreviewPage() {
                   </div>
                   <div>
                     <p className="mb-2 text-xs uppercase tracking-[0.3em] text-white/35">Reserva</p>
-                    <p className="text-lg text-white">Confirmada · Alpinea Design</p>
+                    <p className="text-lg text-white">Confirmada</p>
                   </div>
                 </div>
               </div>
@@ -182,9 +182,9 @@ export default function PreviewPage() {
           </div>
 
           <div className="mt-6 border border-white/10 bg-white/[0.03] p-10">
-            <p className="mb-3 text-xs uppercase tracking-[0.35em] text-white/30">Alpinea Design · Suporte remoto</p>
+            <p className="mb-3 text-xs uppercase tracking-[0.35em] text-white/30">Alpinea Design · Concierge remoto (opcional)</p>
             <p className="text-sm leading-8 text-white/50">
-              Mesmo sem motorista ou guia presencial, você não está por conta própria: um representante da Alpinea acompanha a viagem remotamente, disponível para dúvidas, imprevistos e ajustes de roteiro ao longo do dia.
+              Este roteiro foi desenhado para ser seguido com autonomia. Se preferir um canal de apoio durante a viagem — para dúvidas, imprevistos ou ajustes de última hora — o concierge remoto pode ser adicionado ao seu pacote.
             </p>
           </div>
 
@@ -384,7 +384,7 @@ export default function PreviewPage() {
                 location="6º andar do Tokyo Solamachi"
                 price="Aproximadamente ¥6.000 por pessoa"
                 hours="11:00–21:00"
-                photo="/images/hitsumabushi-bincho.jpg"
+                photo="/images/hitsumabushi.png"
               />
               <RestaurantBlock
                 name="Kaiten Sushi Toriton"
@@ -392,7 +392,7 @@ export default function PreviewPage() {
                 location="6º andar do Tokyo Solamachi"
                 price="Aproximadamente ¥6.000 por pessoa"
                 hours="11:00–22:00, último pedido às 21:30"
-                photo="/images/kaiten-sushi-toriton.jpg"
+                photo="/images/toriton.png"
               />
             </div>
           </div>
