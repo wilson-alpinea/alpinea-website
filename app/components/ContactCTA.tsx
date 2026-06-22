@@ -260,7 +260,7 @@ export function ContactCTA({
         <button
           type="button"
           onClick={() => setContactChannel("email")}
-          className="border border-black px-8 py-4 text-xs uppercase tracking-[0.3em] transition hover:bg-black hover:text-white"
+          className="bg-black px-8 py-4 text-xs uppercase tracking-[0.3em] text-white transition hover:bg-black/85"
         >
           Falar por e-mail
         </button>

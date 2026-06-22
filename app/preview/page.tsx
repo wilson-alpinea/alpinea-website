@@ -66,15 +66,78 @@ export default function PreviewPage() {
       </section>
 
       <section className="border-t border-white/10 bg-white/[0.025] px-8 py-24 md:px-16">
-        <div className="mx-auto max-w-5xl space-y-10 text-lg font-light leading-9 text-white/70">
-          <PreviewItem title="Perfil do viajante" text="Casal sem filhos" />
-          <PreviewItem title="Cidades sugeridas" text="Tokyo, Osaka e Kyoto" />
-          <PreviewItem
-            title="Ritmo da viagem"
-            text="Bastante tempo livre, com uma atração turística no período da manhã e uma à tarde. Noites livres para descanso, compras ou experiências espontâneas."
+        <div className="mx-auto max-w-5xl">
+          <div className="mb-12 max-w-3xl">
+            <p className="mb-3 text-xs uppercase tracking-[0.35em] text-white/30">Ritmo da viagem</p>
+            <p className="text-base font-light leading-9 text-white/65">
+              Bastante tempo livre, com uma atração turística no período da manhã e uma à tarde. Noites livres para descanso, compras ou experiências espontâneas.
+            </p>
+          </div>
+          <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4 text-sm font-light leading-8 text-white/70">
+            <PreviewItem title="Perfil do viajante" text="Casal sem filhos" />
+            <PreviewItem title="Cidades sugeridas" text="Tokyo, Osaka e Kyoto" />
+            <PreviewItem title="Estilo de curadoria" text="Alpinea Design" />
+            <PreviewItem title="Duração da viagem" text="15 Dias" />
+          </div>
+        </div>
+      </section>
+
+      {/* ── MOBILIDADE — TRENS E METRÔ ── */}
+      <section className="border-t border-white/10">
+        <div className="relative h-[75vh] min-h-[560px] max-h-[720px] w-full overflow-hidden">
+          <Image
+            src="/images/nex-train.jpg"
+            alt="Narita Express (N'EX) — JR East"
+            fill
+            priority
+            sizes="100vw"
+            className="object-cover"
           />
-          <PreviewItem title="Estilo de curadoria" text="Alpinea Design" />
-          <PreviewItem title="Duração da viagem" text="15 Dias" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/55 to-transparent" />
+
+          <div className="absolute inset-x-0 bottom-0 px-8 pb-14 text-center md:px-16 md:pb-16">
+            <div className="mx-auto max-w-3xl">
+              <p className="mb-5 text-xs uppercase tracking-[0.35em] text-white/40">Mobilidade</p>
+              <h3 className={`${display.className} text-3xl font-medium text-white md:text-4xl`}>Trens e Metrô</h3>
+              <p className="mx-auto mt-5 max-w-xl text-base font-light leading-9 text-white/65">
+                No Alpinea Design, o deslocamento é por conta própria — e o Japão torna isso simples. A malha de trens e metrô é pontual, extensa e fácil de navegar com os recursos certos.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div className="px-8 py-24 md:px-16">
+          <div className="mx-auto max-w-3xl space-y-12 text-center text-base font-light leading-9 text-white/65">
+            <div className="pt-2 space-y-5">
+              <p className="text-xs uppercase tracking-[0.35em] text-white/30">Cartão IC recomendado</p>
+              <p className="mx-auto max-w-xl">
+                O Welcome Suica (ou o Suica comum, direto no Apple Wallet / Google Wallet) cobre praticamente todo trem, metrô e ônibus do país — basta aproximar o celular ou o cartão físico na entrada e saída de cada estação, sem precisar comprar passagem a cada trajeto.
+              </p>
+            </div>
+
+            <div className="border-t border-white/10 pt-10">
+              <div className="mx-auto grid max-w-xl gap-8 text-left sm:grid-cols-2">
+                <div>
+                  <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">App de navegação</p>
+                  <p className="text-white/85">Google Maps</p>
+                  <p className="mt-1 text-sm text-white/45">Rotas, horários e plataforma de embarque em tempo real</p>
+                </div>
+                <div>
+                  <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">App alternativo</p>
+                  <p className="text-white/85">Japan Transit Planner</p>
+                  <p className="mt-1 text-sm text-white/45">Da Navitime, mais detalhado em conexões complexas</p>
+                </div>
+                <div>
+                  <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">Linhas principais em Tokyo</p>
+                  <p className="text-white/85">JR Yamanote · Tokyo Metro · Toei</p>
+                </div>
+                <div>
+                  <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">Horário de pico</p>
+                  <p className="text-white/60 text-sm">Evitar 07:30–09:00 e 17:30–19:30, dias de semana</p>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -110,12 +173,28 @@ export default function PreviewPage() {
                     <p className="text-lg text-white">15:00</p>
                   </div>
                   <div>
-                    <p className="mb-2 text-xs uppercase tracking-[0.3em] text-white/35">Código da Reserva</p>
-                    <p className="text-sm text-white/45">H7K9Q2</p>
+                    <p className="mb-2 text-xs uppercase tracking-[0.3em] text-white/35">Reserva</p>
+                    <p className="text-lg text-white">Confirmada · Alpinea Design</p>
                   </div>
                 </div>
               </div>
             </div>
+          </div>
+
+          <div className="mt-6 border border-white/10 bg-white/[0.03] p-10">
+            <p className="mb-3 text-xs uppercase tracking-[0.35em] text-white/30">Alpinea Design · Suporte remoto</p>
+            <p className="text-sm leading-8 text-white/50">
+              Mesmo sem motorista ou guia presencial, você não está por conta própria: um representante da Alpinea acompanha a viagem remotamente, disponível para dúvidas, imprevistos e ajustes de roteiro ao longo do dia.
+            </p>
+          </div>
+
+          <div className="mt-10 text-center">
+            <a
+              href="#contact"
+              className="text-xs uppercase tracking-[0.3em] text-white/40 underline underline-offset-4 transition hover:text-white"
+            >
+              Quer um roteiro assim para a sua viagem? Fale com a Alpinea →
+            </a>
           </div>
         </div>
       </section>
@@ -199,7 +278,7 @@ export default function PreviewPage() {
             <div className="border-t border-white/10 pt-12">
               <p className="mb-6 text-xs uppercase tracking-[0.35em] text-white/40">Atração</p>
               <h3 className={`${display.className} text-3xl font-medium text-white md:text-4xl`}>Tokyo Skytree</h3>
-              <div className="mt-8 grid gap-8 sm:grid-cols-3">
+              <div className="mt-8 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
                 <div>
                   <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/35">Melhor horário</p>
                   <p className="text-white">16:30–18:30</p>
@@ -212,13 +291,15 @@ export default function PreviewPage() {
                   <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/35">Reserva</p>
                   <p className="text-white">Recomendada</p>
                 </div>
+                <div>
+                  <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/35">Horário de funcionamento</p>
+                  <p className="text-white">10:00 às 22:00</p>
+                </div>
               </div>
             </div>
 
-            <InfoBlock title="Horário de funcionamento" text="10:00 às 22:00" />
-
             <div>
-              <p className="text-white">Ingressos</p>
+              <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/35">Ingressos</p>
               <div className="mt-2 space-y-2">
                 <p>1. Visita ao 350º andar — Tembo Deck</p>
                 <p>2. Visita ao 350º e 450º andar</p>
@@ -227,7 +308,7 @@ export default function PreviewPage() {
             </div>
 
             <div>
-              <p className="text-white">Preço estimado</p>
+              <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/35">Preço estimado</p>
               <div className="mt-2 space-y-2">
                 <p>Tembo Deck: a partir de ¥1.800 por pessoa</p>
                 <p>Tembo Deck + Tembo Galleria: a partir de ¥3.000</p>
@@ -272,7 +353,7 @@ export default function PreviewPage() {
                   alt="Mapa do primeiro andar do Tokyo Solamachi"
                   width={1200}
                   height={900}
-                  className="w-full cursor-zoom-in rounded-xl object-contain transition hover:opacity-85"
+                  className="w-full cursor-zoom-in rounded-xl border border-white/10 bg-white/[0.03] object-contain p-2 transition hover:opacity-85"
                 />
               </a>
               <p className="mt-4 text-sm leading-7 text-white/45">
@@ -303,6 +384,7 @@ export default function PreviewPage() {
                 location="6º andar do Tokyo Solamachi"
                 price="Aproximadamente ¥6.000 por pessoa"
                 hours="11:00–21:00"
+                photo="/images/hitsumabushi-bincho.jpg"
               />
               <RestaurantBlock
                 name="Kaiten Sushi Toriton"
@@ -310,6 +392,7 @@ export default function PreviewPage() {
                 location="6º andar do Tokyo Solamachi"
                 price="Aproximadamente ¥6.000 por pessoa"
                 hours="11:00–22:00, último pedido às 21:30"
+                photo="/images/kaiten-sushi-toriton.jpg"
               />
             </div>
           </div>
@@ -324,7 +407,7 @@ export default function PreviewPage() {
                 alt="Mapa dos restaurantes do Tokyo Solamachi"
                 width={1200}
                 height={900}
-                className="w-full cursor-zoom-in rounded-xl object-contain transition hover:opacity-85"
+                className="w-full cursor-zoom-in rounded-xl border border-white/10 bg-white/[0.03] object-contain p-2 transition hover:opacity-85"
               />
             </a>
           </div>
@@ -435,9 +518,9 @@ function PreviewItem({ title, text }: { title: string; text: string }) {
 
 function InfoBlock({ title, text }: { title: string; text: string }) {
   return (
-    <div>
-      <p className="text-white">{title}</p>
-      <p className="mt-2">{text}</p>
+    <div className="border-t border-white/10 pt-10">
+      <p className={`${display.className} text-2xl font-medium text-white md:text-3xl`}>{title}</p>
+      <p className="mt-3">{text}</p>
     </div>
   );
 }
@@ -448,15 +531,28 @@ function RestaurantBlock({
   location,
   price,
   hours,
+  photo,
 }: {
   name: string;
   description: string;
   location: string;
   price: string;
   hours: string;
+  photo?: string;
 }) {
   return (
     <div className="border-t border-white/10 pt-8">
+      {photo && (
+        <div className="mb-6 aspect-[4/3] overflow-hidden rounded-2xl border border-white/10">
+          <Image
+            src={photo}
+            alt={name}
+            width={700}
+            height={520}
+            className="h-full w-full object-cover"
+          />
+        </div>
+      )}
       <h3 className={`${display.className} text-2xl font-medium text-white`}>{name}</h3>
       <p className="mt-4 text-lg font-light leading-9 text-white/65">{description}</p>
       <div className="mt-6 space-y-3 text-base leading-8 text-white/55">
