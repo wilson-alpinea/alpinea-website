@@ -640,7 +640,7 @@ export default function LandingPage() {
                   <img
                     src="/images/dashmobile.jpg"
                     alt="Dashboard de viagem Alpinea, acessado pelo celular"
-                    className="absolute inset-0 h-full w-full object-cover object-top"
+                    className="absolute left-0 top-0 h-auto w-full"
                   />
                 </div>
               </div>
