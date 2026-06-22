@@ -634,14 +634,34 @@ export default function LandingPage() {
             </div>
 
             <div className="flex justify-center">
-              <div className="relative w-[260px] rounded-[44px] border border-white/15 bg-black p-4 shadow-2xl">
+              <div
+                className="group relative w-[260px] cursor-zoom-in rounded-[44px] border border-white/15 bg-black p-4 shadow-2xl"
+                onClick={() =>
+                  setLightbox({
+                    src: "/images/dashmobile.jpg",
+                    alt: "Dashboard de viagem Alpinea, acessado pelo celular",
+                  })
+                }
+              >
                 <div className="absolute left-1/2 top-6 z-10 h-5 w-24 -translate-x-1/2 rounded-full bg-black" />
                 <div className="relative aspect-[1320/2257] w-full overflow-hidden rounded-[30px] bg-black">
                   <img
                     src="/images/dashmobile.jpg"
                     alt="Dashboard de viagem Alpinea, acessado pelo celular"
-                    className="absolute left-0 top-0 h-auto w-full"
+                    className="absolute left-0 top-0 h-auto w-full transition duration-700 group-hover:scale-[1.03]"
                   />
+
+                  {/* Zoom overlay */}
+                  <div className="absolute inset-0 flex items-center justify-center bg-black/30 opacity-0 transition duration-300 group-hover:opacity-100">
+                    <div className="rounded-full bg-black/60 p-3 backdrop-blur-sm">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                        <circle cx="11" cy="11" r="8" />
+                        <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                        <line x1="11" y1="8" x2="11" y2="14" />
+                        <line x1="8" y1="11" x2="14" y2="11" />
+                      </svg>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
