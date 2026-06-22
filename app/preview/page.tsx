@@ -80,6 +80,14 @@ export default function PreviewPage() {
             <PreviewItem title="Estilo de curadoria" text="Alpinea Design" />
             <PreviewItem title="Duração da viagem" text="15 Dias" />
           </div>
+
+          <div className="mt-12 flex flex-wrap items-baseline gap-x-10 gap-y-5 border-t border-white/10 pt-10">
+            <StatItem value="15" label="dias" />
+            <StatItem value="3" label="cidades" />
+            <StatItem value="27" label="atrações" />
+            <StatItem value="12" label="restaurantes recomendados" />
+            <StatItem value="8" label="guias complementares" />
+          </div>
         </div>
       </section>
 
@@ -88,27 +96,35 @@ export default function PreviewPage() {
         <div className="mx-auto max-w-7xl">
           <TripDashboard
             days={[
-              { day: 1, date: "—", city: "Tokyo", href: "#dia-1" },
-              { day: 2, date: "—", city: "Tokyo" },
-              { day: 3, date: "—", city: "Tokyo" },
-              { day: 4, date: "—", city: "Tokyo" },
-              { day: 5, date: "—", city: "Tokyo" },
-              { day: 6, date: "—", city: "Tokyo" },
-              { day: 7, date: "—", city: "Tokyo" },
-              { day: 8, date: "—", city: "Osaka" },
-              { day: 9, date: "—", city: "Osaka" },
-              { day: 10, date: "—", city: "Osaka" },
-              { day: 11, date: "—", city: "Osaka" },
-              { day: 12, date: "—", city: "Kyoto" },
-              { day: 13, date: "—", city: "Kyoto" },
-              { day: 14, date: "—", city: "Kyoto" },
-              { day: 15, date: "—", city: "Tokyo" },
+              { day: 1, date: "1 Out", city: "Tokyo", href: "#dia-1" },
+              { day: 2, date: "2 Out", city: "Tokyo" },
+              { day: 3, date: "3 Out", city: "Tokyo" },
+              { day: 4, date: "4 Out", city: "Tokyo" },
+              { day: 5, date: "5 Out", city: "Tokyo" },
+              { day: 6, date: "6 Out", city: "Tokyo" },
+              { day: 7, date: "7 Out", city: "Tokyo" },
+              { day: 8, date: "8 Out", city: "Osaka" },
+              { day: 9, date: "9 Out", city: "Osaka" },
+              { day: 10, date: "10 Out", city: "Osaka" },
+              { day: 11, date: "11 Out", city: "Osaka" },
+              { day: 12, date: "12 Out", city: "Kyoto" },
+              { day: 13, date: "13 Out", city: "Kyoto" },
+              { day: 14, date: "14 Out", city: "Kyoto" },
+              { day: 15, date: "15 Out", city: "Tokyo" },
             ]}
-            guides={[{ label: "Restaurantes" }]}
+            guides={[
+              { label: "Restaurantes" },
+              { label: "Hotéis" },
+              { label: "Compras" },
+            ]}
             annexes={[
-              { label: "Aeroporto" },
+              { label: "Aeroporto Chegada Narita NRT" },
+              { label: "Aeroporto Partida Narita NRT" },
+              { label: "Instruções Conexão em Doha DOH" },
+              { label: "Dinheiro e Pagamentos" },
+              { label: "Apps e Conectividade" },
+              { label: "Trem Bala (Shinkansen)" },
               { label: "Logística de Malas" },
-              { label: "Pré-Viagem" },
             ]}
           />
         </div>
@@ -538,6 +554,15 @@ function PreviewItem({ title, text }: { title: string; text: string }) {
     <div>
       <p className="mb-3 text-xs uppercase tracking-[0.35em] text-white/40">{title}</p>
       <p>{text}</p>
+    </div>
+  );
+}
+
+function StatItem({ value, label }: { value: string; label: string }) {
+  return (
+    <div className="flex items-baseline gap-2">
+      <span className={`${display.className} text-2xl font-medium text-white`}>{value}</span>
+      <span className="text-xs uppercase tracking-[0.2em] text-white/40">{label}</span>
     </div>
   );
 }
