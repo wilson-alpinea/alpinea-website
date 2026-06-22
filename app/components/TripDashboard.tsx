@@ -174,7 +174,7 @@ export function TripDashboard({
       <div className="space-y-12">
         <div>
           <p className="mb-2 text-xs uppercase tracking-[0.35em] text-white/40">Roteiro Diário</p>
-          <p className="mb-6 text-sm text-white">
+          <p className="mb-6 inline-block rounded-full border border-white/25 px-4 py-1.5 text-xs uppercase tracking-[0.25em] text-white/70">
             Nesta amostra, apenas o Dia 1 está disponível para visualização.
           </p>
           <div className="grid grid-cols-3 gap-3 sm:grid-cols-5">

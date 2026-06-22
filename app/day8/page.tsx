@@ -2,6 +2,7 @@ import Image from "next/image";
 import { Bodoni_Moda } from "next/font/google";
 import { ContactCTA } from "../components/ContactCTA";
 import { ZoomImage } from "../components/ZoomImage";
+import { TripDashboard } from "../components/TripDashboard";
 
 // Mesma fonte de destaque usada nas demais páginas do site.
 const display = Bodoni_Moda({
@@ -65,20 +66,69 @@ export default function Day8Page() {
         </div>
       </section>
 
-      {/* Perfil */}
+      {/* Briefing */}
       <section className="border-t border-white/10 bg-white/[0.025] px-8 py-24 md:px-16">
         <div className="mx-auto max-w-5xl">
+          <p className={`${display.className} mb-12 text-center text-2xl font-medium text-white md:text-3xl`}>
+            Briefing
+          </p>
+
           <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-4 text-sm font-light leading-8 text-white/70">
             <PreviewItem title="Perfil" text="Casal com 2 filhos" />
             <PreviewItem title="Cidade" text="Kyoto" />
             <PreviewItem title="Curadoria" text="Alpinea Private" />
             <PreviewItem title="Dinâmica" text="Motorista privado · Atração matinal · Almoço degustação · Festival noturno" />
           </div>
+
+          <div className="mt-12 border-t border-white/10 pt-10">
+            <p className="mb-6 text-xs uppercase tracking-[0.35em] text-white/30">A Curadoria em Números</p>
+            <div className="flex flex-wrap items-baseline gap-x-10 gap-y-5">
+              <StatItem value="—" label="dias" />
+              <StatItem value="—" label="cidades" />
+              <StatItem value="—" label="atrações" />
+              <StatItem value="—" label="restaurantes recomendados" />
+              <StatItem value="—" label="guias complementares" />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── MEU DASHBOARD DE VIAGEM ── */}
+      <section className="border-t border-white/10 bg-white/[0.02] px-8 py-24 md:px-16">
+        <div className="mx-auto max-w-7xl">
+          <p className="mb-5 text-center text-xs uppercase tracking-[0.35em] text-white/40">Visão Geral</p>
+          <h3 className={`${display.className} mb-16 text-center text-3xl font-medium text-white md:text-4xl`}>Meu Dashboard de Viagem</h3>
+
+          <TripDashboard
+            days={[
+              { day: 1, date: "—", city: "—" },
+              { day: 2, date: "—", city: "—" },
+              { day: 3, date: "—", city: "—" },
+              { day: 4, date: "—", city: "—" },
+              { day: 5, date: "—", city: "—" },
+              { day: 6, date: "—", city: "—" },
+              { day: 7, date: "—", city: "—" },
+              { day: 8, date: "—", city: "Kyoto", href: "#dia-8" },
+            ]}
+            guides={[
+              { label: "Restaurantes" },
+              { label: "Hotéis" },
+              { label: "Compras" },
+            ]}
+            annexes={[
+              { label: "Aeroporto Chegada Narita NRT" },
+              { label: "Aeroporto Partida Narita NRT" },
+              { label: "Dinheiro e Pagamentos" },
+              { label: "Apps e Conectividade" },
+              { label: "Trem Bala (Shinkansen)" },
+              { label: "Logística de Malas" },
+            ]}
+          />
         </div>
       </section>
 
       {/* Card do Dia */}
-      <section className="border-t border-white/10 px-8 py-32 md:px-16">
+      <section id="dia-8" className="border-t border-white/10 px-8 py-32 md:px-16">
         <div className="mx-auto max-w-7xl">
           <div className="border border-white/10 bg-white/[0.035] px-8 py-8 md:px-10">
             <p className="mb-5 text-xs uppercase tracking-[0.45em] text-white/45">Dia 8</p>
@@ -640,6 +690,15 @@ function PreviewItem({ title, text }: { title: string; text: string }) {
     <div>
       <p className="mb-3 text-xs uppercase tracking-[0.35em] text-white/30">{title}</p>
       <p className="text-sm leading-7">{text}</p>
+    </div>
+  );
+}
+
+function StatItem({ value, label }: { value: string; label: string }) {
+  return (
+    <div className="flex items-baseline gap-2">
+      <span className={`${display.className} text-2xl font-medium text-white`}>{value}</span>
+      <span className="text-xs uppercase tracking-[0.2em] text-white/40">{label}</span>
     </div>
   );
 }

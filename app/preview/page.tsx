@@ -468,7 +468,7 @@ export default function PreviewPage() {
         </div>
       </section>
 
-      <section className="border-t border-white/10 px-8 py-32 md:px-16">
+      <section className="px-8 py-32 md:px-16">
         <div className="mx-auto grid max-w-7xl gap-20 lg:grid-cols-2 lg:items-start">
           <div>
             <h3 className={`${display.className} mb-8 text-3xl font-medium text-white md:text-4xl`}>
