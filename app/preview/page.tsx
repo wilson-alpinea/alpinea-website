@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { Bodoni_Moda } from "next/font/google";
 import { ContactCTA } from "../components/ContactCTA";
+import { TripDashboard } from "../components/TripDashboard";
 
 // Mesma fonte de destaque usada nas demais páginas do site.
 const display = Bodoni_Moda({
@@ -82,7 +83,38 @@ export default function PreviewPage() {
         </div>
       </section>
 
-      <section className="border-t border-white/10 px-8 py-32 md:px-16">
+      {/* ── MEU DASHBOARD DE VIAGEM ── */}
+      <section className="border-t border-white/10 bg-white/[0.02] px-8 py-32 md:px-16">
+        <div className="mx-auto max-w-7xl">
+          <TripDashboard
+            days={[
+              { day: 1, date: "—", city: "Tokyo", href: "#dia-1" },
+              { day: 2, date: "—", city: "Tokyo" },
+              { day: 3, date: "—", city: "Tokyo" },
+              { day: 4, date: "—", city: "Tokyo" },
+              { day: 5, date: "—", city: "Tokyo" },
+              { day: 6, date: "—", city: "Tokyo" },
+              { day: 7, date: "—", city: "Tokyo" },
+              { day: 8, date: "—", city: "Osaka" },
+              { day: 9, date: "—", city: "Osaka" },
+              { day: 10, date: "—", city: "Osaka" },
+              { day: 11, date: "—", city: "Osaka" },
+              { day: 12, date: "—", city: "Kyoto" },
+              { day: 13, date: "—", city: "Kyoto" },
+              { day: 14, date: "—", city: "Kyoto" },
+              { day: 15, date: "—", city: "Tokyo" },
+            ]}
+            guides={[{ label: "Restaurantes" }]}
+            annexes={[
+              { label: "Aeroporto" },
+              { label: "Logística de Malas" },
+              { label: "Pré-Viagem" },
+            ]}
+          />
+        </div>
+      </section>
+
+      <section id="dia-1" className="border-t border-white/10 px-8 py-32 md:px-16">
         <div className="mx-auto max-w-7xl">
           <div className="border border-white/10 bg-white/[0.035] px-8 py-8 md:px-10">
             <p className="mb-5 text-xs uppercase tracking-[0.45em] text-white/45">Dia 1</p>
