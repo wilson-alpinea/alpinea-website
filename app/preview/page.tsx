@@ -82,65 +82,6 @@ export default function PreviewPage() {
         </div>
       </section>
 
-      {/* ── MOBILIDADE — TRENS E METRÔ ── */}
-      <section className="border-t border-white/10">
-        <div className="relative h-[75vh] min-h-[560px] max-h-[720px] w-full overflow-hidden">
-          <Image
-            src="/images/nex-train.jpg"
-            alt="Narita Express (N'EX) — JR East"
-            fill
-            priority
-            sizes="100vw"
-            className="object-cover"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/55 to-transparent" />
-
-          <div className="absolute inset-x-0 bottom-0 px-8 pb-14 text-center md:px-16 md:pb-16">
-            <div className="mx-auto max-w-3xl">
-              <p className="mb-5 text-xs uppercase tracking-[0.35em] text-white/40">Mobilidade</p>
-              <h3 className={`${display.className} text-3xl font-medium text-white md:text-4xl`}>Trens e Metrô</h3>
-              <p className="mx-auto mt-5 max-w-xl text-base font-light leading-9 text-white/65">
-                No Alpinea Design, o deslocamento é por conta própria — e o Japão torna isso simples. A malha de trens e metrô é pontual, extensa e fácil de navegar com os recursos certos.
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <div className="px-8 py-24 md:px-16">
-          <div className="mx-auto max-w-3xl space-y-12 text-center text-base font-light leading-9 text-white/65">
-            <div className="pt-2 space-y-5">
-              <p className="text-xs uppercase tracking-[0.35em] text-white/30">Cartão IC recomendado</p>
-              <p className="mx-auto max-w-xl">
-                O Welcome Suica (ou o Suica comum, direto no Apple Wallet / Google Wallet) cobre praticamente todo trem, metrô e ônibus do país — basta aproximar o celular ou o cartão físico na entrada e saída de cada estação, sem precisar comprar passagem a cada trajeto.
-              </p>
-            </div>
-
-            <div className="border-t border-white/10 pt-10">
-              <div className="mx-auto grid max-w-xl gap-8 text-left sm:grid-cols-2">
-                <div>
-                  <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">App de navegação</p>
-                  <p className="text-white/85">Google Maps</p>
-                  <p className="mt-1 text-sm text-white/45">Rotas, horários e plataforma de embarque em tempo real</p>
-                </div>
-                <div>
-                  <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">App alternativo</p>
-                  <p className="text-white/85">Japan Transit Planner</p>
-                  <p className="mt-1 text-sm text-white/45">Da Navitime, mais detalhado em conexões complexas</p>
-                </div>
-                <div>
-                  <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">Linhas principais em Tokyo</p>
-                  <p className="text-white/85">JR Yamanote · Tokyo Metro · Toei</p>
-                </div>
-                <div>
-                  <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">Horário de pico</p>
-                  <p className="text-white/60 text-sm">Evitar 07:30–09:00 e 17:30–19:30, dias de semana</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
       <section className="border-t border-white/10 px-8 py-32 md:px-16">
         <div className="mx-auto max-w-7xl">
           <div className="border border-white/10 bg-white/[0.035] px-8 py-8 md:px-10">
@@ -215,64 +156,124 @@ export default function PreviewPage() {
         </div>
       </section>
 
-      <section className="border-t border-white/10 px-8 py-32 md:px-16">
-        <div className="mx-auto grid max-w-7xl gap-20 lg:grid-cols-2 lg:items-start">
-          <div className="space-y-12 text-lg font-light leading-9 text-white/70">
-            <div>
-              <p className="mb-8 text-xs uppercase tracking-[0.35em] text-white/40">Tarde</p>
-              <p><span className="text-white">Local:</span> Oshiage, Tokyo</p>
+      {/* ── MOBILIDADE — TRENS E METRÔ ── */}
+      <section className="border-t border-white/10">
+        <div className="relative h-[75vh] min-h-[560px] max-h-[720px] w-full overflow-hidden">
+          <Image
+            src="/images/Nex_train.jpg"
+            alt="Narita Express (N'EX) — JR East"
+            fill
+            priority
+            sizes="100vw"
+            className="object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/55 to-transparent" />
+
+          <div className="absolute inset-x-0 bottom-0 px-8 pb-14 text-center md:px-16 md:pb-16">
+            <div className="mx-auto max-w-3xl">
+              <p className="mb-5 text-xs uppercase tracking-[0.35em] text-white/40">Mobilidade</p>
+              <h3 className={`${display.className} text-3xl font-medium text-white md:text-4xl`}>Trens e Metrô</h3>
+              <p className="mx-auto mt-5 max-w-xl text-base font-light leading-9 text-white/65">
+                No Alpinea Design, o deslocamento é por conta própria — e o Japão torna isso simples. A malha de trens e metrô é pontual, extensa e fácil de navegar com os recursos certos.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div className="px-8 py-24 md:px-16">
+          <div className="mx-auto max-w-3xl space-y-12 text-center text-base font-light leading-9 text-white/65">
+            <div className="pt-2 space-y-5">
+              <p className="text-xs uppercase tracking-[0.35em] text-white/30">Cartão IC recomendado</p>
+              <p className="mx-auto max-w-xl">
+                O Welcome Suica (ou o Suica comum, direto no Apple Wallet / Google Wallet) cobre praticamente todo trem, metrô e ônibus do país — basta aproximar o celular ou o cartão físico na entrada e saída de cada estação, sem precisar comprar passagem a cada trajeto.
+              </p>
+              <div className="mx-auto max-w-[180px] overflow-hidden rounded-2xl border border-white/10">
+                <Image
+                  src="/images/suica_square_logo.png"
+                  alt="Cartão Suica"
+                  width={360}
+                  height={360}
+                  className="w-full object-contain"
+                />
+              </div>
             </div>
 
             <div className="border-t border-white/10 pt-10">
-              <p className="mb-6 text-xs uppercase tracking-[0.35em] text-white/40">Acesso à Estação</p>
-              <Image
-                src="/images/oshiage-lines.png"
-                alt="Linhas ferroviárias disponíveis na estação Oshiage"
-                width={640}
-                height={260}
-                className="w-full max-w-sm rounded-lg object-contain"
-              />
-              <p className="mt-4 text-sm leading-7 text-white/45">
-                Oshiage Station é atendida pelas linhas Tobu Skytree Line,
-                Keisei Oshiage Line, Toei Asakusa Line e Tokyo Metro Hanzomon Line.
-              </p>
-              <div className="mt-10 space-y-8">
+              <div className="mx-auto grid max-w-xl gap-8 text-left sm:grid-cols-2">
                 <div>
-                  <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/35">Nome da Estação</p>
-                  <p className="text-white">Oshiage Station 押上駅〈スカイツリー前〉</p>
+                  <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">App de navegação</p>
+                  <p className="text-white/85">Google Maps</p>
+                  <p className="mt-1 text-sm text-white/45">Rotas, horários e plataforma de embarque em tempo real</p>
                 </div>
                 <div>
-                  <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/35">Saída Recomendada</p>
-                  <p>A2 ou B3 para superfície. Em dias de chuva, recomendamos utilizar a conexão subterrânea direta com o Tokyo Solamachi.</p>
-                  <p className="mt-4 text-white">連絡通路直結 Solamachi B3F</p>
-                  <p className="mt-4">Caso encontre dificuldades, qualquer funcionário do metrô poderá indicar a direção correta.</p>
+                  <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">Horário de pico</p>
+                  <p className="text-white/60 text-sm">Evitar 07:30–09:00 e 17:30–19:30, dias de semana</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="border-t border-white/10 pt-10 text-left">
+              <p className="mb-6 text-center text-xs uppercase tracking-[0.35em] text-white/30">Acesso à Estação · Oshiage</p>
+              <div className="mx-auto max-w-xl">
+                <Image
+                  src="/images/oshiage-lines.png"
+                  alt="Linhas ferroviárias disponíveis na estação Oshiage"
+                  width={640}
+                  height={260}
+                  className="mx-auto w-full max-w-sm rounded-lg object-contain"
+                />
+                <p className="mt-4 text-center text-sm leading-7 text-white/45">
+                  Oshiage Station é atendida pelas linhas Tobu Skytree Line,
+                  Keisei Oshiage Line, Toei Asakusa Line e Tokyo Metro Hanzomon Line.
+                </p>
+                <div className="mt-10 space-y-8">
+                  <div>
+                    <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">Nome da Estação</p>
+                    <p className="text-white">Oshiage Station 押上駅〈スカイツリー前〉</p>
+                  </div>
+                  <div>
+                    <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">Saída Recomendada</p>
+                    <p>A2 ou B3 para superfície. Em dias de chuva, recomendamos utilizar a conexão subterrânea direta com o Tokyo Solamachi.</p>
+                    <p className="mt-4 text-white">連絡通路直結 Solamachi B3F</p>
+                    <p className="mt-4">Caso encontre dificuldades, qualquer funcionário do metrô poderá indicar a direção correta.</p>
+                  </div>
                 </div>
               </div>
             </div>
 
             <div className="border-t border-white/10 pt-10">
-              <p className="mb-6 text-xs uppercase tracking-[0.35em] text-white/40">Tempo de Deslocamento</p>
-              <div className="grid gap-8 sm:grid-cols-2">
+              <div className="mx-auto grid max-w-xl gap-8 text-left sm:grid-cols-2">
                 <div>
-                  <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/35">Metrô</p>
+                  <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">Tempo de deslocamento · Metrô</p>
                   <p className="text-white">Aproximadamente 40 minutos</p>
                 </div>
                 <div>
-                  <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/35">Carro / Táxi</p>
+                  <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">Tempo de deslocamento · Carro / Táxi</p>
                   <p className="text-white">Aproximadamente 35 minutos</p>
                 </div>
               </div>
             </div>
 
-            <div className="border-t border-white/10 pt-10">
-              <p className="mb-6 text-xs uppercase tracking-[0.35em] text-white/40">Recomendação Alpinea</p>
-              <p className="max-w-[32rem]">
+            <div className="border-t border-white/10 pt-10 text-left">
+              <p className="mb-6 text-center text-xs uppercase tracking-[0.35em] text-white/30">Recomendação Alpinea</p>
+              <p className="mx-auto max-w-xl text-center">
                 A partir do Grand Hyatt Tokyo, a diferença de tempo entre metrô e
                 carro/táxi é irrelevante. O táxi proporciona maior comodidade,
                 mas a diferença de preço é grande. Em caso de chuva ou vento
                 forte, recomendamos substituir por outra atração, pois, embora
                 seja um local fechado, devido à altura, o observatório pode balançar mais que o normal.
               </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="border-t border-white/10 px-8 py-32 md:px-16">
+        <div className="mx-auto grid max-w-7xl gap-20 lg:grid-cols-2 lg:items-start">
+          <div className="space-y-12 text-lg font-light leading-9 text-white/70">
+            <div>
+              <p className={`${display.className} mb-8 text-3xl font-medium text-white md:text-4xl`}>Tarde</p>
+              <p><span className="text-white">Local:</span> Oshiage, Tokyo</p>
             </div>
 
             <div className="border-t border-white/10 pt-12">
@@ -384,7 +385,7 @@ export default function PreviewPage() {
                 location="6º andar do Tokyo Solamachi"
                 price="Aproximadamente ¥6.000 por pessoa"
                 hours="11:00–21:00"
-                photo="/images/hitsumabushi.png"
+                photo="/images/Hitsumabushi.png"
               />
               <RestaurantBlock
                 name="Kaiten Sushi Toriton"
@@ -392,7 +393,7 @@ export default function PreviewPage() {
                 location="6º andar do Tokyo Solamachi"
                 price="Aproximadamente ¥6.000 por pessoa"
                 hours="11:00–22:00, último pedido às 21:30"
-                photo="/images/toriton.png"
+                photo="/images/Toriton.png"
               />
             </div>
           </div>
