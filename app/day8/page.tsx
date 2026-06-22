@@ -251,72 +251,78 @@ export default function Day8Page() {
       </section>
 
       {/* ── TRANSPORTE PRIVADO ── */}
-      <section className="border-t border-white/10 bg-white/[0.02] px-8 py-32 md:px-16">
-        <div className="mx-auto max-w-3xl space-y-12 text-center text-base font-light leading-9 text-white/65">
-          <div>
-            <p className="mb-8 text-xs uppercase tracking-[0.35em] text-white/40">Transporte Privado</p>
-            <h3 className={`${display.className} text-3xl font-medium text-white md:text-4xl`}>Motorista Dedicado</h3>
-          </div>
+      <section className="border-t border-white/10 bg-white/[0.02]">
+        {/* Banner full-bleed — Lexus LM */}
+        <div className="relative h-[60vh] min-h-[420px] max-h-[620px] w-full overflow-hidden">
+          <Image
+            src="/images/lexuslm.png"
+            alt="Lexus LM — categoria Van Luxo"
+            fill
+            priority
+            sizes="100vw"
+            className="object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/35 to-transparent" />
+        </div>
 
-          <p className="mx-auto max-w-xl">
-            Toda a logística do dia é coordenada pela Alpinea com motorista exclusivo para a família. O veículo aguarda na saída do hotel em cada deslocamento.
-          </p>
+        <div className="px-8 py-32 md:px-16">
+          <div className="mx-auto max-w-3xl space-y-12 text-center text-base font-light leading-9 text-white/65">
+            <div>
+              <p className="mb-8 text-xs uppercase tracking-[0.35em] text-white/40">Transporte Privado</p>
+              <h3 className={`${display.className} text-3xl font-medium text-white md:text-4xl`}>Motorista Dedicado</h3>
+            </div>
 
-          <div className="border-t border-white/10 pt-10 space-y-5">
-            <p className="text-xs uppercase tracking-[0.35em] text-white/30">Encontro com a família</p>
             <p className="mx-auto max-w-xl">
-              O Aman Kyoto não possui um lobby convencional. Tanaka aguardará a família no Kurumayose (車寄せ) — a área de embarque e desembarque do hotel — às 08:30.
+              Toda a logística do dia é coordenada pela Alpinea com motorista exclusivo para a família. O veículo aguarda na saída do hotel em cada deslocamento.
             </p>
-          </div>
 
-          <div className="border-t border-white/10 pt-10">
-            <div className="mx-auto grid max-w-xl gap-8 text-left sm:grid-cols-2">
-              <div>
-                <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">Categoria do veículo</p>
-                <p className="text-white/85">Van Luxo</p>
-                <p className="mt-1 text-sm text-white/45">Toyota Alphard, Lexus LM ou similar</p>
-              </div>
-              <div>
-                <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">Categoria alternativa</p>
-                <p className="text-white/85">Sedan Luxo</p>
-                <p className="mt-1 text-sm text-white/45">Toyota Century, Lexus LS ou similar</p>
-              </div>
-              <div>
-                <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">Motorista</p>
-                <p className="text-white/85">Tanaka Hiroshi <span className="text-white/40">田中 浩</span></p>
-              </div>
-              <div>
-                <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">Idiomas</p>
-                <p className="text-white/60 text-sm">Japonês · Inglês básico</p>
+            <div className="border-t border-white/10 pt-10 space-y-5">
+              <p className="text-xs uppercase tracking-[0.35em] text-white/30">Encontro com a família</p>
+              <p className="mx-auto max-w-xl">
+                O Aman Kyoto não possui um lobby convencional. Tanaka aguardará a família no Kurumayose (車寄せ) — a área de embarque e desembarque do hotel — às 08:30.
+              </p>
+            </div>
+
+            <div className="border-t border-white/10 pt-10">
+              <div className="mx-auto grid max-w-xl gap-8 text-left sm:grid-cols-2">
+                <div>
+                  <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">Categoria do veículo</p>
+                  <p className="text-white/85">Van Luxo</p>
+                  <p className="mt-1 text-sm text-white/45">Toyota Alphard, Lexus LM ou similar</p>
+                </div>
+                <div>
+                  <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">Categoria alternativa</p>
+                  <p className="text-white/85">Sedan Luxo</p>
+                  <p className="mt-1 text-sm text-white/45">Toyota Century, Lexus LS ou similar</p>
+                </div>
+                <div>
+                  <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">Motorista</p>
+                  <p className="text-white/85">Tanaka Hiroshi <span className="text-white/40">田中 浩</span></p>
+                </div>
+                <div>
+                  <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">Idiomas</p>
+                  <p className="text-white/60 text-sm">Japonês · Inglês básico</p>
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
-        {/* Fotos — Tanaka + Lexus LM, centralizadas */}
-        <div className="mx-auto mt-16 max-w-[280px] space-y-6">
-          <div className="overflow-hidden rounded-2xl">
-            <Image
-              src="/images/tanakamotorista.png"
-              alt="Tanaka Hiroshi — Motorista Alpinea"
-              width={480}
-              height={640}
-              priority
-              className="w-full object-cover"
-            />
+          {/* Foto — Tanaka, centralizada */}
+          <div className="mx-auto mt-16 max-w-[280px]">
+            <div className="overflow-hidden rounded-2xl">
+              <Image
+                src="/images/tanakamotorista.png"
+                alt="Tanaka Hiroshi — Motorista Alpinea"
+                width={480}
+                height={640}
+                priority
+                className="w-full object-cover"
+              />
+            </div>
+            <p className="mt-6 text-center text-xs uppercase tracking-[0.35em] text-white/30">
+              Tanaka Hiroshi · 田中 浩 · Motorista Alpinea
+            </p>
           </div>
-          <div className="overflow-hidden rounded-2xl">
-            <Image
-              src="/images/lexuslm.png"
-              alt="Lexus LM — categoria Van Luxo"
-              width={480}
-              height={320}
-              className="w-full object-cover"
-            />
-          </div>
-          <p className="text-center text-xs uppercase tracking-[0.35em] text-white/30">
-            Tanaka Hiroshi · 田中 浩 · Motorista Alpinea
-          </p>
         </div>
       </section>
 
@@ -520,6 +526,18 @@ export default function Day8Page() {
                     O motorista Tanaka aguarda em ponto fixo nas proximidades. A região central é fechada para veículos no período noturno — o acesso à área do festival é sempre a pé a partir de um ponto designado pela Alpinea.
                   </p>
                 </div>
+                <div>
+                  <p className={`${display.className} text-2xl font-medium text-white md:text-3xl`}>Jantar</p>
+                  <p className="mt-3">
+                    Ao longo do trajeto, barracas tradicionais oferecem petiscos de rua — uma forma leve de comer entre uma parada e outra, sem comprometer o ritmo da caminhada.
+                  </p>
+                  <div className="mt-4 space-y-1 text-sm text-white/50">
+                    <p>Dondon Yaki — senbei (bolacha de arroz)</p>
+                    <p>Uma Sen — senbei sabor milho grelhado</p>
+                    <p>Puku Puku Tai — taiyaki sabor morango</p>
+                    <p>Takoyaki</p>
+                  </div>
+                </div>
               </div>
 
               <div className="border-t border-white/10 pt-10">
@@ -534,8 +552,8 @@ export default function Day8Page() {
               </div>
 
               <div className="border-t border-white/10 pt-10">
-                <p className="mb-3 text-xs uppercase tracking-[0.35em] text-white/30">Retorno</p>
-                <p>Motorista privado busca a família por volta das <span className="text-white/85">21:30 – 22:00</span>. Trajeto até o Aman Kyoto: aproximadamente <span className="text-white/85">20 minutos</span>.</p>
+                <p className={`${display.className} text-2xl font-medium text-white md:text-3xl`}>Retorno</p>
+                <p className="mt-3">Motorista privado busca a família por volta das <span className="text-white/85">21:30 – 22:00</span>. Trajeto até o Aman Kyoto: aproximadamente <span className="text-white/85">20 minutos</span>.</p>
               </div>
             </div>
 
@@ -549,26 +567,13 @@ export default function Day8Page() {
                 className="w-full rounded-2xl border border-white/10 object-cover"
                 style={{ maxHeight: "820px", objectPosition: "center top" }}
               />
-              <p className="text-xs uppercase tracking-[0.35em] text-white/30">
-                Yoiyama · Gion Matsuri · Shijo · Kyoto
-              </p>
-
-              <div className="border-t border-white/10 pt-6">
-                <p className="mb-4 text-xs uppercase tracking-[0.35em] text-white/30">Petiscos de rua · Yoiyama</p>
-                <Image
-                  src="/images/snacks.webp"
-                  alt="Petiscos tradicionais vendidos durante o Yoiyama"
-                  width={500}
-                  height={1600}
-                  className="w-full rounded-2xl object-contain"
-                />
-                <div className="mt-4 space-y-1 text-xs text-white/40">
-                  <p>Dondon Yaki — senbei (bolacha de arroz)</p>
-                  <p>Uma Sen — senbei sabor milho grelhado</p>
-                  <p>Puku Puku Tai — taiyaki sabor morango</p>
-                  <p>Takoyaki</p>
-                </div>
-              </div>
+              <Image
+                src="/images/snacks.webp"
+                alt="Petiscos tradicionais vendidos durante o Yoiyama"
+                width={500}
+                height={1600}
+                className="w-full rounded-2xl object-contain"
+              />
             </div>
           </div>
         </div>
