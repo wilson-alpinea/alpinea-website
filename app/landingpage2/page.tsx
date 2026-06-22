@@ -636,7 +636,7 @@ export default function LandingPage() {
             <div className="flex justify-center">
               <div className="relative w-[260px] rounded-[44px] border border-white/15 bg-black p-4 shadow-2xl">
                 <div className="absolute left-1/2 top-6 z-10 h-5 w-24 -translate-x-1/2 rounded-full bg-black" />
-                <div className="relative aspect-[9/19.5] w-full overflow-hidden rounded-[30px] bg-black">
+                <div className="relative aspect-[1320/2257] w-full overflow-hidden rounded-[30px] bg-black">
                   <img
                     src="/images/dashmobile.jpg"
                     alt="Dashboard de viagem Alpinea, acessado pelo celular"
