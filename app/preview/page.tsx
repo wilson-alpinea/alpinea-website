@@ -99,41 +99,62 @@ export default function PreviewPage() {
       </section>
 
       {/* ── MEU DASHBOARD DE VIAGEM ── */}
-      <section className="border-t border-white/10 bg-white/[0.02] px-8 py-32 md:px-16">
-        <div className="mx-auto max-w-7xl">
-          <TripDashboard
-            days={[
-              { day: 1, date: "1 Out", city: "Tokyo", href: "#dia-1" },
-              { day: 2, date: "2 Out", city: "Tokyo" },
-              { day: 3, date: "3 Out", city: "Tokyo" },
-              { day: 4, date: "4 Out", city: "Tokyo" },
-              { day: 5, date: "5 Out", city: "Tokyo" },
-              { day: 6, date: "6 Out", city: "Tokyo" },
-              { day: 7, date: "7 Out", city: "Tokyo" },
-              { day: 8, date: "8 Out", city: "Osaka" },
-              { day: 9, date: "9 Out", city: "Osaka" },
-              { day: 10, date: "10 Out", city: "Osaka" },
-              { day: 11, date: "11 Out", city: "Osaka" },
-              { day: 12, date: "12 Out", city: "Kyoto" },
-              { day: 13, date: "13 Out", city: "Kyoto" },
-              { day: 14, date: "14 Out", city: "Kyoto" },
-              { day: 15, date: "15 Out", city: "Tokyo" },
-            ]}
-            guides={[
-              { label: "Restaurantes" },
-              { label: "Hotéis" },
-              { label: "Compras" },
-            ]}
-            annexes={[
-              { label: "Aeroporto Chegada Narita NRT" },
-              { label: "Aeroporto Partida Narita NRT" },
-              { label: "Instruções Conexão em Doha DOH" },
-              { label: "Dinheiro e Pagamentos" },
-              { label: "Apps e Conectividade" },
-              { label: "Trem Bala (Shinkansen)" },
-              { label: "Logística de Malas" },
-            ]}
+      <section className="border-t border-white/10">
+        <div className="relative h-[75vh] min-h-[560px] max-h-[720px] w-full overflow-hidden">
+          <Image
+            src="/images/tokyo.jpg"
+            alt="Tokyo — skyline com o Monte Fuji"
+            fill
+            priority
+            sizes="100vw"
+            className="object-cover"
           />
+          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/55 to-transparent" />
+
+          <div className="absolute inset-x-0 bottom-0 px-8 pb-14 text-center md:px-16 md:pb-16">
+            <div className="mx-auto max-w-3xl">
+              <p className="mb-5 text-xs uppercase tracking-[0.35em] text-white/40">Visão Geral</p>
+              <h3 className={`${display.className} text-3xl font-medium text-white md:text-4xl`}>Meu Dashboard de Viagem</h3>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-white/[0.02] px-8 py-24 md:px-16">
+          <div className="mx-auto max-w-7xl">
+            <TripDashboard
+              days={[
+                { day: 1, date: "1 Out", city: "Tokyo", href: "#dia-1" },
+                { day: 2, date: "2 Out", city: "Tokyo" },
+                { day: 3, date: "3 Out", city: "Tokyo" },
+                { day: 4, date: "4 Out", city: "Tokyo" },
+                { day: 5, date: "5 Out", city: "Tokyo" },
+                { day: 6, date: "6 Out", city: "Tokyo" },
+                { day: 7, date: "7 Out", city: "Tokyo" },
+                { day: 8, date: "8 Out", city: "Osaka" },
+                { day: 9, date: "9 Out", city: "Osaka" },
+                { day: 10, date: "10 Out", city: "Osaka" },
+                { day: 11, date: "11 Out", city: "Osaka" },
+                { day: 12, date: "12 Out", city: "Kyoto" },
+                { day: 13, date: "13 Out", city: "Kyoto" },
+                { day: 14, date: "14 Out", city: "Kyoto" },
+                { day: 15, date: "15 Out", city: "Tokyo" },
+              ]}
+              guides={[
+                { label: "Restaurantes" },
+                { label: "Hotéis" },
+                { label: "Compras" },
+              ]}
+              annexes={[
+                { label: "Aeroporto Chegada Narita NRT" },
+                { label: "Aeroporto Partida Narita NRT" },
+                { label: "Instruções Conexão em Doha DOH" },
+                { label: "Dinheiro e Pagamentos" },
+                { label: "Apps e Conectividade" },
+                { label: "Trem Bala (Shinkansen)" },
+                { label: "Logística de Malas" },
+              ]}
+            />
+          </div>
         </div>
       </section>
 
@@ -146,6 +167,40 @@ export default function PreviewPage() {
               Chegada ao Japão, acomodação inicial e primeira experiência em
               Oshiage, com visita à Tokyo Skytree e exploração do complexo Tokyo Solamachi.
             </p>
+          </div>
+
+          <div className="mt-6 border border-white/10 bg-white/[0.03] p-10">
+            <p className="mb-6 text-xs uppercase tracking-[0.35em] text-white/40">Resumo do Dia 1</p>
+            <div className="space-y-6 text-sm leading-8 text-white/55">
+              <div className="flex items-start gap-6">
+                <span className="mt-0.5 shrink-0 text-xs tracking-[0.2em] text-white/25 w-12">10:30</span>
+                <p className="text-white/80">Chegada · Aeroporto Internacional de Narita — Terminal 3</p>
+              </div>
+              <div className="flex items-start gap-6 border-t border-white/[0.06] pt-5">
+                <span className="mt-0.5 shrink-0 text-xs tracking-[0.2em] text-white/25 w-12">11:30</span>
+                <p>Imigração, retirada de bagagem e deslocamento até o hotel</p>
+              </div>
+              <div className="flex items-start gap-6 border-t border-white/[0.06] pt-5">
+                <span className="mt-0.5 shrink-0 text-xs tracking-[0.2em] text-white/25 w-12">15:00</span>
+                <p className="text-white/80">Check-in · Grand Hyatt Tokyo</p>
+              </div>
+              <div className="flex items-start gap-6 border-t border-white/[0.06] pt-5">
+                <span className="mt-0.5 shrink-0 text-xs tracking-[0.2em] text-white/25 w-12">16:00</span>
+                <p>Saída do hotel rumo a Oshiage</p>
+              </div>
+              <div className="flex items-start gap-6 border-t border-white/[0.06] pt-5">
+                <span className="mt-0.5 shrink-0 text-xs tracking-[0.2em] text-white/25 w-12">16:30</span>
+                <p className="text-white/80">Tokyo Skytree · Subida ao observatório para o pôr do sol</p>
+              </div>
+              <div className="flex items-start gap-6 border-t border-white/[0.06] pt-5">
+                <span className="mt-0.5 shrink-0 text-xs tracking-[0.2em] text-white/25 w-12">18:30</span>
+                <p>Exploração do Tokyo Solamachi · lojas e gastronomia</p>
+              </div>
+              <div className="flex items-start gap-6 border-t border-white/[0.06] pt-5">
+                <span className="mt-0.5 shrink-0 text-xs tracking-[0.2em] text-white/25 w-12">20:00</span>
+                <p>Retorno ao hotel · noite livre</p>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -173,20 +228,18 @@ export default function PreviewPage() {
 
         <div className="px-8 py-24 md:px-16">
           <div className="mx-auto max-w-5xl">
-            <div className="grid gap-10 lg:grid-cols-[1.1fr_1fr] lg:items-center">
-              <div>
-                <Image
-                  src="/images/grandhyattlogo.png"
-                  alt="Grand Hyatt Tokyo"
-                  width={520}
-                  height={260}
-                  className="w-full max-w-xs object-contain"
-                />
-                <p className="mt-5 max-w-2xl text-lg font-light leading-8 text-white/60">
-                  6 Chome-10-3 Roppongi, Minato City, Tokyo 106-0032, Japão
-                </p>
-              </div>
-              <div className="grid gap-6 text-base leading-7 text-white/60 sm:grid-cols-2">
+            <div className="grid gap-10 lg:grid-cols-[0.8fr_1.1fr_1fr] lg:items-center">
+              <Image
+                src="/images/grandhyattlogo.png"
+                alt="Grand Hyatt Tokyo"
+                width={520}
+                height={260}
+                className="mx-auto w-full max-w-[200px] object-contain"
+              />
+              <p className="text-lg font-light leading-8 text-white/60">
+                6 Chome-10-3 Roppongi, Minato City, Tokyo 106-0032, Japão
+              </p>
+              <div className="grid gap-6 text-base leading-7 text-white/60 sm:grid-cols-2 lg:grid-cols-1">
                 <div>
                   <p className="mb-2 text-xs uppercase tracking-[0.3em] text-white/35">Check-In</p>
                   <p className="text-lg text-white">15:00</p>
@@ -201,20 +254,12 @@ export default function PreviewPage() {
         </div>
       </section>
 
-      <section className="border-t border-white/10 px-8 py-32 md:px-16">
-        <div className="mx-auto max-w-7xl">
-          <div className="border border-white/10 bg-white/[0.03] p-10">
-            <p className="mb-3 text-xs uppercase tracking-[0.35em] text-white/30">Alpinea Design · Concierge remoto (opcional)</p>
-            <p className="text-sm leading-8 text-white/50">
-              Este roteiro foi desenhado para ser seguido com autonomia. Se preferir um canal de apoio durante a viagem — para dúvidas, imprevistos ou ajustes de última hora — o concierge remoto pode ser adicionado ao seu pacote.
-            </p>
-          </div>
-        </div>
-      </section>
-
       <section className="border-t border-white/10 bg-white/[0.02] px-8 py-32 md:px-16">
         <div className="mx-auto max-w-7xl">
-          <p className={`${display.className} mb-8 text-3xl font-medium text-white md:text-4xl`}>Manhã</p>
+          <p className={`${display.className} mb-6 text-3xl font-medium text-white md:text-4xl`}>Manhã</p>
+          <p className="mb-8 inline-block rounded-full border border-white/25 px-4 py-1.5 text-xs uppercase tracking-[0.25em] text-white/70">
+            Não disponível na amostra de roteiro
+          </p>
           <div className="max-w-4xl space-y-8 text-lg font-light leading-9 text-white/70">
             <p>
               <span className="text-white">Local:</span> Aeroporto Internacional de Narita — Terminal 3

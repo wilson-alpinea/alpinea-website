@@ -168,10 +168,6 @@ export function TripDashboard({
 }) {
   return (
     <div>
-      <p className={`${display.className} mb-8 text-center text-2xl font-medium text-white md:text-3xl`}>
-        Meu Dashboard de Viagem
-      </p>
-
       <TripFlow days={days} />
 
       <div className="space-y-12">
