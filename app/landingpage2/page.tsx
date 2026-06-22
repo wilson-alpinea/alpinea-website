@@ -638,7 +638,7 @@ export default function LandingPage() {
             <button
               type="button"
               onClick={() => setContactChannel("email")}
-              className="border border-black px-8 py-4 text-xs uppercase tracking-[0.35em] transition hover:bg-black hover:text-white"
+              className="bg-black px-8 py-4 text-xs uppercase tracking-[0.35em] text-white transition hover:bg-black/85"
             >
               Falar por e-mail
             </button>
@@ -646,7 +646,7 @@ export default function LandingPage() {
             <button
               type="button"
               onClick={() => setContactChannel("whatsapp")}
-              className="border border-black/20 px-8 py-4 text-xs uppercase tracking-[0.35em] transition hover:border-black hover:bg-black hover:text-white"
+              className="border border-black/20 px-8 py-4 text-xs uppercase tracking-[0.35em] text-black/70 transition hover:border-black hover:text-black"
             >
               WhatsApp
             </button>
@@ -786,7 +786,7 @@ export default function LandingPage() {
             <button
               type="button"
               onClick={() => setContactChannel("email")}
-              className="border border-black px-10 py-5 text-xs uppercase tracking-[0.35em] transition hover:bg-black hover:text-white"
+              className="bg-black px-10 py-5 text-xs uppercase tracking-[0.35em] text-white transition hover:bg-black/85"
             >
               Falar por e-mail
             </button>
@@ -794,7 +794,7 @@ export default function LandingPage() {
             <button
               type="button"
               onClick={() => setContactChannel("whatsapp")}
-              className="border border-black/20 px-10 py-5 text-xs uppercase tracking-[0.35em] transition hover:border-black hover:bg-black hover:text-white"
+              className="border border-black/20 px-10 py-5 text-xs uppercase tracking-[0.35em] text-black/70 transition hover:border-black hover:text-black"
             >
               WhatsApp
             </button>
