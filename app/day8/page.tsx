@@ -251,9 +251,9 @@ export default function Day8Page() {
       </section>
 
       {/* ── TRANSPORTE PRIVADO ── */}
-      <section className="border-t border-white/10 bg-white/[0.02]">
-        {/* Banner full-bleed — Lexus LM */}
-        <div className="relative h-[60vh] min-h-[420px] max-h-[620px] w-full overflow-hidden">
+      <section className="border-t border-white/10">
+        {/* Banner full-bleed — Lexus LM, com texto sobreposto ao rodapé */}
+        <div className="relative h-[75vh] min-h-[560px] max-h-[720px] w-full overflow-hidden">
           <Image
             src="/images/lexuslm.png"
             alt="Lexus LM — categoria Van Luxo"
@@ -262,21 +262,22 @@ export default function Day8Page() {
             sizes="100vw"
             className="object-cover"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/35 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/55 to-transparent" />
+
+          <div className="absolute inset-x-0 bottom-0 px-8 pb-14 text-center md:px-16 md:pb-16">
+            <div className="mx-auto max-w-3xl">
+              <p className="mb-5 text-xs uppercase tracking-[0.35em] text-white/40">Transporte Privado</p>
+              <h3 className={`${display.className} text-3xl font-medium text-white md:text-4xl`}>Motorista Dedicado</h3>
+              <p className="mx-auto mt-5 max-w-xl text-base font-light leading-9 text-white/65">
+                Toda a logística do dia é coordenada pela Alpinea com motorista exclusivo para a família. O veículo aguarda na saída do hotel em cada deslocamento.
+              </p>
+            </div>
+          </div>
         </div>
 
-        <div className="px-8 py-32 md:px-16">
+        <div className="px-8 py-24 md:px-16">
           <div className="mx-auto max-w-3xl space-y-12 text-center text-base font-light leading-9 text-white/65">
-            <div>
-              <p className="mb-8 text-xs uppercase tracking-[0.35em] text-white/40">Transporte Privado</p>
-              <h3 className={`${display.className} text-3xl font-medium text-white md:text-4xl`}>Motorista Dedicado</h3>
-            </div>
-
-            <p className="mx-auto max-w-xl">
-              Toda a logística do dia é coordenada pela Alpinea com motorista exclusivo para a família. O veículo aguarda na saída do hotel em cada deslocamento.
-            </p>
-
-            <div className="border-t border-white/10 pt-10 space-y-5">
+            <div className="pt-2 space-y-5">
               <p className="text-xs uppercase tracking-[0.35em] text-white/30">Encontro com a família</p>
               <p className="mx-auto max-w-xl">
                 O Aman Kyoto não possui um lobby convencional. Tanaka aguardará a família no Kurumayose (車寄せ) — a área de embarque e desembarque do hotel — às 08:30.
@@ -529,14 +530,8 @@ export default function Day8Page() {
                 <div>
                   <p className={`${display.className} text-2xl font-medium text-white md:text-3xl`}>Jantar</p>
                   <p className="mt-3">
-                    Ao longo do trajeto, barracas tradicionais oferecem petiscos de rua — uma forma leve de comer entre uma parada e outra, sem comprometer o ritmo da caminhada.
+                    Ao longo do trajeto, barracas tradicionais transformam a caminhada num jantar leve e itinerante: dondon yaki (senbei de arroz), uma sen (senbei de milho grelhado), puku puku tai (taiyaki de morango) e takoyaki, sem comprometer o ritmo entre uma parada e outra.
                   </p>
-                  <div className="mt-4 space-y-1 text-sm text-white/50">
-                    <p>Dondon Yaki — senbei (bolacha de arroz)</p>
-                    <p>Uma Sen — senbei sabor milho grelhado</p>
-                    <p>Puku Puku Tai — taiyaki sabor morango</p>
-                    <p>Takoyaki</p>
-                  </div>
                 </div>
               </div>
 
