@@ -174,6 +174,15 @@ export default function Day8Page() {
               Um representante da Alpinea coordena cada etapa do dia — logística, acessos e comunicação com os estabelecimentos. Disponível das 08:00 às 22:00 pelo canal dedicado.
             </p>
           </div>
+
+          <div className="mt-10 text-center">
+            <a
+              href="#contact"
+              className="text-xs uppercase tracking-[0.3em] text-white/40 underline underline-offset-4 transition hover:text-white"
+            >
+              Quer um roteiro assim para a sua família? Fale com a Alpinea →
+            </a>
+          </div>
         </div>
       </section>
 
@@ -187,7 +196,7 @@ export default function Day8Page() {
             </div>
 
             <div className="border-t border-white/10 pt-10">
-              <div className="grid gap-8 sm:grid-cols-2">
+              <div className="grid gap-8 sm:grid-cols-3">
                 <div>
                   <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">Horário</p>
                   <p className="text-white/85">07:00 às 11:30</p>
@@ -240,8 +249,8 @@ export default function Day8Page() {
               alt="Breakfast Menu — The Living Pavilion by Aman Kyoto"
               width={600}
               height={800}
-              className="aspect-[3/4] overflow-hidden rounded-2xl bg-white/[0.03]"
-              imgClassName="h-full w-full object-contain p-3"
+              className="aspect-[3/4] overflow-hidden rounded-2xl"
+              imgClassName="h-full w-full object-contain"
             />
           </div>
           <p className="mt-4 text-xs uppercase tracking-[0.35em] text-white/30">
@@ -638,8 +647,8 @@ function PreviewItem({ title, text }: { title: string; text: string }) {
 function InfoBlock({ title, text }: { title: string; text: string }) {
   return (
     <div>
-      <p className="text-white/85">{title}</p>
-      <p className="mt-2">{text}</p>
+      <p className={`${display.className} text-2xl font-medium text-white md:text-3xl`}>{title}</p>
+      <p className="mt-3">{text}</p>
     </div>
   );
 }
