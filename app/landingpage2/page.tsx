@@ -16,7 +16,6 @@ const display = Bodoni_Moda({
 declare global {
   interface Window {
     gtag?: (...args: unknown[]) => void;
-    dataLayer?: unknown[];
   }
 }
 
