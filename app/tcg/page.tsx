@@ -27,11 +27,11 @@ const schedule = [
   {
     time: "13:00",
     duration: "1h30",
-    title: "RAGE Lámen",
-    eyebrow: "Shoyu ramen · Bib Gourmand Michelin",
-    text: "Pausa para um dos shoyu ramen mais respeitados de Tóquio: o RAGE Lámen (麺尊 RAGE), reconhecido com o Bib Gourmand do Guia Michelin por oito anos consecutivos. O destaque é o caldo de shoyu profundo preparado com frango Shamo, servido com chashu fatiado, ovo ajitama, menma e ervas frescas — uma recarga consistente antes da segunda metade do dia de card hunting.",
-    image: "/images/rage.png",
-    alt: "Tigela de ramen do RAGE Lámen",
+    title: "Pausa para almoço",
+    eyebrow: "Ritmo confortável · tempo livre",
+    text: "Intervalo em Akihabara para manter o ritmo do dia sem pressa, com tempo livre para escolher entre as opções da região. A pausa também permite revisar prioridades antes das vitrines mais relevantes da tarde.",
+    image: "/images/akihabara.png",
+    alt: "Akihabara à noite",
   },
   {
     time: "14:30",
@@ -57,6 +57,39 @@ const brands = [
   { name: "Pokémon", logo: "/images/pokemontcglogo.png" },
   { name: "Yu-Gi-Oh!", logo: "/images/yugiohtcglogo.png" },
   { name: "One Piece", logo: "/images/onepiecelogo.webp" },
+];
+
+const ramenSpots = [
+  {
+    name: "Hachigo",
+    city: "Tóquio · Ginza",
+    legend: "Bib Gourmand Michelin, por um ex-chef de hotel de luxo",
+    image: "/images/hachigo.webp",
+  },
+  {
+    name: "RAGE",
+    city: "Tóquio · Nishi-Ogikubo",
+    legend: "Bib Gourmand Michelin por 8 anos consecutivos",
+    image: "/images/rage.webp",
+  },
+  {
+    name: "Mugi to Mensuke",
+    city: "Osaka · Nakatsu",
+    legend: "Eleito o ramen mais disputado de Osaka",
+    image: "/images/mugitomensuke.webp",
+  },
+  {
+    name: "Break Beats",
+    city: "Tóquio · Yutenji",
+    legend: "Criado por um ex-DJ, caldo cristalino premiado",
+    image: "/images/breakbeats.webp",
+  },
+  {
+    name: "King Seimen",
+    city: "Tóquio · Oji",
+    legend: "Wontons gigantes e macarrão artesanal",
+    image: "/images/kingseimen.webp",
+  },
 ];
 
 function PreviewItem({ title, text }: { title: string; text: string }) {
@@ -100,29 +133,31 @@ export default function TcgSpecialTourPage() {
       </header>
 
       {/* HERO */}
-      <section className="relative h-[34vw] min-h-[300px] max-h-[560px] w-full overflow-hidden">
-        <Image
-          src="/images/herotcg.png"
-          alt="Cartas raras de Pokémon, Yu-Gi-Oh! e One Piece Card Game"
-          fill
-          priority
-          sizes="100vw"
-          className="object-cover"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/55 to-transparent" />
+      <section className="relative bg-black pt-20">
+        <div className="relative h-[34vw] min-h-[280px] max-h-[540px] w-full overflow-hidden">
+          <Image
+            src="/images/herotcg.png"
+            alt="Cartas raras de Pokémon, Yu-Gi-Oh! e One Piece Card Game"
+            fill
+            priority
+            sizes="100vw"
+            className="object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/55 to-transparent" />
 
-        <div className="absolute inset-x-0 bottom-0 px-8 pb-10 text-center md:px-16 md:pb-14">
-          <div className="mx-auto max-w-3xl">
-            <p className="mb-4 text-xs uppercase tracking-[0.35em] text-white/45">
-              Pacotes Especiais · Alpinea Special Tour
-            </p>
-            <h1 className={`${display.className} text-2xl font-medium tracking-tight text-white sm:text-3xl md:text-5xl`}>
-              Trading Card Game Tour
-            </h1>
-            <p className="mx-auto mt-4 max-w-xl text-sm font-light leading-7 text-white/65 md:text-base md:leading-8">
-              Seja Pokémon, Yu-Gi-Oh! ou One Piece — acompanhamos você nas lojas com os melhores acervos
-              para singles, PSA/Graded Cards e acessórios.
-            </p>
+          <div className="absolute inset-x-0 bottom-0 px-8 pb-10 text-center md:px-16 md:pb-14">
+            <div className="mx-auto max-w-3xl">
+              <p className="mb-4 text-xs uppercase tracking-[0.35em] text-white/45">
+                Pacotes Especiais · Alpinea Special Tour
+              </p>
+              <h1 className={`${display.className} text-2xl font-medium tracking-tight text-white sm:text-3xl md:text-5xl`}>
+                Trading Card Game Tour
+              </h1>
+              <p className="mx-auto mt-4 max-w-xl text-sm font-light leading-7 text-white/65 md:text-base md:leading-8">
+                Seja Pokémon, Yu-Gi-Oh! ou One Piece — acompanhamos você nas lojas com os melhores acervos
+                para singles, PSA/Graded Cards e acessórios.
+              </p>
+            </div>
           </div>
         </div>
       </section>
@@ -321,6 +356,39 @@ export default function TcgSpecialTourPage() {
                   <div className="absolute inset-0 bg-gradient-to-t from-black/35 via-transparent to-transparent" />
                 </div>
               </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* RAMEN TOUR */}
+      <section className="border-t border-white/10 bg-black px-8 py-28 md:px-16">
+        <div className="mx-auto max-w-7xl">
+          <p className="mb-5 text-xs uppercase tracking-[0.35em] text-white/30">Edição Especial · Alpinea</p>
+          <h2 className={`${display.className} max-w-3xl text-4xl font-medium leading-tight text-white md:text-6xl`}>
+            Ramen Tour — 5 Ramens de Elite
+          </h2>
+          <p className="mt-7 max-w-2xl text-base font-light leading-9 text-white/62">
+            Uma seleção de cinco bowls fora da curva, entre Tóquio e Osaka — todos reconhecidos pelo
+            Guia Michelin e parte do roteiro de quem já viaja com a Alpinea para o card hunting.
+          </p>
+
+          <div className="mt-16 grid grid-cols-2 gap-x-6 gap-y-14 sm:grid-cols-3 lg:grid-cols-5">
+            {ramenSpots.map((spot) => (
+              <div key={spot.name} className="text-center">
+                <div className="relative mx-auto aspect-square w-full max-w-[220px]">
+                  <Image
+                    src={spot.image}
+                    alt={`Ramen do ${spot.name}`}
+                    fill
+                    sizes="(min-width: 1024px) 18vw, 45vw"
+                    className="object-contain"
+                  />
+                </div>
+                <p className={`${display.className} mt-6 text-lg font-medium text-white`}>{spot.name}</p>
+                <p className="mt-1 text-xs uppercase tracking-[0.2em] text-white/35">{spot.city}</p>
+                <p className="mt-3 text-sm font-light leading-6 text-white/55">{spot.legend}</p>
+              </div>
             ))}
           </div>
         </div>
