@@ -10,6 +10,29 @@ const display = Bodoni_Moda({
   weight: ["400", "500", "600"],
 });
 
+
+declare global {
+  interface Window {
+    gtag?: (...args: unknown[]) => void;
+  }
+}
+
+const GOOGLE_ADS_CONVERSION_ID = "AW-18262525346/fruBCIiVsMMcEKKLoIRE";
+
+function trackLeadConversion(formName: string) {
+  if (typeof window === "undefined") return;
+
+  window.gtag?.("event", "generate_lead", {
+    form_name: formName,
+  });
+
+  window.gtag?.("event", "conversion", {
+    send_to: GOOGLE_ADS_CONVERSION_ID,
+    value: 1.0,
+    currency: "BRL",
+  });
+}
+
 // Formulário único de contato — idêntico ao usado na landing page (page.tsx),
 // pra manter a mesma experiência de qualificação de lead em todas as páginas.
 // E-mail: envia via /api/contact (precisa de RESEND_API_KEY configurada).
@@ -60,6 +83,7 @@ function ContactModal({
       ].filter(Boolean);
       const text = encodeURIComponent(lines.join("\n"));
       window.open(`https://wa.me/5511996691818?text=${text}`, "_blank");
+      trackLeadConversion("alpinea_homepage_whatsapp");
       setStatus("success");
       return;
     }
@@ -72,6 +96,7 @@ function ContactModal({
         body: JSON.stringify(payload),
       });
       if (!res.ok) throw new Error("request failed");
+      trackLeadConversion("alpinea_homepage_contact");
       setStatus("success");
     } catch {
       setStatus("error");
