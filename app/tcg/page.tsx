@@ -59,6 +59,13 @@ const brands = [
   { name: "One Piece", logo: "/images/onepiecelogo.webp" },
 ];
 
+const products = [
+  { name: "Singles", image: "/images/OkoThiefOfCrowns__25446.jpg" },
+  { name: "Graded", image: "/images/graded.jpg" },
+  { name: "Booster Pack", image: "/images/booster.webp" },
+  { name: "Sealed Box", image: "/images/sealedbox.webp" },
+];
+
 const ramenSpots = [
   {
     name: "Hachigo",
@@ -181,6 +188,33 @@ export default function TcgSpecialTourPage() {
                   />
                 </div>
                 <p className={`${display.className} mt-7 text-xl font-medium text-white`}>{brand.name}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* PRODUTOS ATENDIDOS */}
+      <section className="bg-black px-8 py-24 md:px-16">
+        <div className="mx-auto max-w-6xl">
+          <p className="mb-5 text-xs uppercase tracking-[0.35em] text-white/30">Produtos Atendidos</p>
+          <h2 className={`${display.className} max-w-3xl text-3xl font-medium leading-tight text-white md:text-5xl`}>
+            De singles a sealed box, cobertura completa.
+          </h2>
+
+          <div className="mt-16 grid grid-cols-2 gap-8 sm:grid-cols-4">
+            {products.map((product) => (
+              <div key={product.name} className="text-center">
+                <div className="relative mx-auto h-48 w-full max-w-[180px]">
+                  <Image
+                    src={product.image}
+                    alt={product.name}
+                    fill
+                    sizes="180px"
+                    className="object-contain"
+                  />
+                </div>
+                <p className={`${display.className} mt-7 text-xl font-medium text-white`}>{product.name}</p>
               </div>
             ))}
           </div>
