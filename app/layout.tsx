@@ -1,4 +1,5 @@
 import { GoogleAnalytics } from "@next/third-parties/google";
+import Script from "next/script";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
@@ -86,6 +87,21 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col">
         {children}
+
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=AW-18262525346"
+          strategy="afterInteractive"
+        />
+        <Script id="google-ads-tag" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){window.dataLayer.push(arguments);}
+            window.gtag = window.gtag || gtag;
+            gtag('js', new Date());
+            gtag('config', 'AW-18262525346');
+          `}
+        </Script>
+
         <GoogleAnalytics gaId="G-GHTZEC0JPS" />
       </body>
     </html>
