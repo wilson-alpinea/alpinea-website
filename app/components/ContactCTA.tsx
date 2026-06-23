@@ -8,9 +8,6 @@ declare global {
   }
 }
 
-// Formulário único de contato — usado em todas as páginas do site.
-// E-mail: envia via /api/contact (precisa de RESEND_API_KEY configurada).
-// WhatsApp: monta a mensagem e abre o wa.me já preenchido.
 function ContactModal({
   channel,
   onClose,
@@ -22,7 +19,9 @@ function ContactModal({
   const [errorMsg, setErrorMsg] = useState("");
 
   useEffect(() => {
-    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [onClose]);
@@ -43,7 +42,11 @@ function ContactModal({
       email: String(data.get("email") || "").trim(),
       phone: String(data.get("phone") || "").trim(),
       dates: String(data.get("dates") || "").trim(),
+      firstJapan: String(data.get("firstJapan") || "").trim(),
       travelers: String(data.get("travelers") || "").trim(),
+      tripType: String(data.get("tripType") || "").trim(),
+      travelStyle: String(data.get("travelStyle") || "").trim(),
+      source: String(data.get("source") || "").trim(),
       message: String(data.get("message") || "").trim(),
     };
 
@@ -58,9 +61,14 @@ function ContactModal({
         `Olá! Meu nome é ${payload.name}.`,
         payload.phone && `Telefone: ${payload.phone}`,
         payload.dates && `Datas previstas: ${payload.dates}`,
-        payload.travelers && `Viajantes: ${payload.travelers}`,
-        payload.message && `Sobre a viagem: ${payload.message}`,
+        payload.firstJapan && `Primeira viagem ao Japão: ${payload.firstJapan}`,
+        payload.travelers && `Quem irá viajar: ${payload.travelers}`,
+        payload.tripType && `Tipo de viagem: ${payload.tripType}`,
+        payload.travelStyle && `Como costuma viajar: ${payload.travelStyle}`,
+        payload.source && `Como conheceu a Alpinea: ${payload.source}`,
+        payload.message && `Interesses específicos: ${payload.message}`,
       ].filter(Boolean);
+
       const text = encodeURIComponent(lines.join("\n"));
 
       window.gtag?.("event", "whatsapp_click", {
@@ -73,12 +81,14 @@ function ContactModal({
     }
 
     setStatus("loading");
+
     try {
       const res = await fetch("/api/contact", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       });
+
       if (!res.ok) throw new Error("request failed");
 
       window.gtag?.("event", "generate_lead", {
@@ -141,9 +151,11 @@ function ContactModal({
             <p className="mb-3 text-xs uppercase tracking-[0.45em] text-black/40">
               Fale com a Alpinea
             </p>
+
             <h3 className="text-2xl font-medium leading-tight md:text-3xl">
               {channel === "email" ? "Vamos conversar por e-mail." : "Vamos conversar por WhatsApp."}
             </h3>
+
             <p className="mt-3 text-sm leading-6 text-black/55">
               Conte um pouco sobre a viagem. Nenhum campo abaixo é obrigatório além do nome
               {channel === "email" ? " e do e-mail" : ""}.
@@ -204,7 +216,22 @@ function ContactModal({
               <div className="grid gap-5 md:grid-cols-2">
                 <label className="block">
                   <span className="mb-2 block text-xs uppercase tracking-[0.25em] text-black/40">
-                    Viajantes (opcional)
+                    Primeira viagem ao Japão? (opcional)
+                  </span>
+                  <select
+                    name="firstJapan"
+                    defaultValue=""
+                    className="w-full border-b border-black/20 bg-transparent py-2 text-sm outline-none focus:border-black"
+                  >
+                    <option value=""></option>
+                    <option value="Sim">Sim</option>
+                    <option value="Não">Não</option>
+                  </select>
+                </label>
+
+                <label className="block">
+                  <span className="mb-2 block text-xs uppercase tracking-[0.25em] text-black/40">
+                    Quem irá viajar? (opcional)
                   </span>
                   <select
                     name="travelers"
@@ -212,23 +239,84 @@ function ContactModal({
                     className="w-full border-b border-black/20 bg-transparent py-2 text-sm outline-none focus:border-black"
                   >
                     <option value=""></option>
-                    <option value="1">1</option>
-                    <option value="2">2</option>
-                    <option value="3-4">3–4</option>
-                    <option value="5+">5+</option>
+                    <option value="Sozinho(a)">Sozinho(a)</option>
+                    <option value="Casal">Casal</option>
+                    <option value="Família">Família</option>
+                    <option value="Família com crianças">Família com crianças</option>
+                    <option value="Amigos">Amigos</option>
+                    <option value="Grupo privado">Grupo privado</option>
                   </select>
                 </label>
 
+                <label className="block">
+                  <span className="mb-2 block text-xs uppercase tracking-[0.25em] text-black/40">
+                    Tipo de viagem (opcional)
+                  </span>
+                  <select
+                    name="tripType"
+                    defaultValue=""
+                    className="w-full border-b border-black/20 bg-transparent py-2 text-sm outline-none focus:border-black"
+                  >
+                    <option value=""></option>
+                    <option value="Gastronomia e restaurantes">Gastronomia e restaurantes</option>
+                    <option value="Compras e artigos de luxo">Compras e artigos de luxo</option>
+                    <option value="Lua de mel">Lua de mel</option>
+                    <option value="Família">Família</option>
+                    <option value="Cultura tradicional">Cultura tradicional</option>
+                    <option value="Japão contemporâneo">Japão contemporâneo</option>
+                    <option value="Eventos especiais">Eventos especiais</option>
+                    <option value="Viagem multigeracional">Viagem multigeracional</option>
+                    <option value="Ainda estou explorando possibilidades">Ainda estou explorando possibilidades</option>
+                  </select>
+                </label>
+
+                <label className="block">
+                  <span className="mb-2 block text-xs uppercase tracking-[0.25em] text-black/40">
+                    Como costuma viajar? (opcional)
+                  </span>
+                  <select
+                    name="travelStyle"
+                    defaultValue=""
+                    className="w-full border-b border-black/20 bg-transparent py-2 text-sm outline-none focus:border-black"
+                  >
+                    <option value=""></option>
+                    <option value="Organizo tudo por conta própria">Organizo tudo por conta própria</option>
+                    <option value="Costumo utilizar agências de viagem">Costumo utilizar agências de viagem</option>
+                    <option value="Já utilizei serviços de concierge ou planejamento personalizado">
+                      Já utilizei serviços de concierge ou planejamento personalizado
+                    </option>
+                  </select>
+                </label>
+
+                <label className="block md:col-span-2">
+                  <span className="mb-2 block text-xs uppercase tracking-[0.25em] text-black/40">
+                    Como conheceu a Alpinea? (opcional)
+                  </span>
+                  <select
+                    name="source"
+                    defaultValue=""
+                    className="w-full border-b border-black/20 bg-transparent py-2 text-sm outline-none focus:border-black"
+                  >
+                    <option value=""></option>
+                    <option value="Google">Google</option>
+                    <option value="Instagram">Instagram</option>
+                    <option value="YouTube">YouTube</option>
+                    <option value="Indicação">Indicação</option>
+                    <option value="Cliente anterior">Cliente anterior</option>
+                    <option value="Imprensa">Imprensa</option>
+                    <option value="Outro">Outro</option>
+                  </select>
+                </label>
               </div>
 
               <label className="block">
                 <span className="mb-2 block text-xs uppercase tracking-[0.25em] text-black/40">
-                  Como você imagina essa viagem (opcional)
+                  Existe algum hotel, restaurante, experiência ou artigo que gostaria de incluir? (opcional)
                 </span>
                 <textarea
                   name="message"
-                  rows={3}
-                  placeholder="Gastronomia, compras, hospedagem, momentos especiais..."
+                  rows={4}
+                  placeholder="Ex.: Aman Kyoto, Sushi Arai, relógios, facas artesanais, transporte privado..."
                   className="w-full border-b border-black/20 bg-transparent py-2 text-sm outline-none placeholder:text-black/30 focus:border-black"
                 />
               </label>
@@ -254,9 +342,6 @@ function ContactModal({
   );
 }
 
-// Componente público — solte <ContactCTA /> em qualquer página (mesmo
-// Server Components, como páginas com `export const metadata`) sem
-// precisar transformar a página inteira em Client Component.
 export function ContactCTA({
   className = "mt-12 flex flex-col items-center justify-center gap-4 sm:flex-row",
 }: {
@@ -269,6 +354,7 @@ export function ContactCTA({
       {contactChannel && (
         <ContactModal channel={contactChannel} onClose={() => setContactChannel(null)} />
       )}
+
       <div className={className}>
         <button
           type="button"
@@ -277,6 +363,7 @@ export function ContactCTA({
         >
           Falar por e-mail
         </button>
+
         <button
           type="button"
           onClick={() => setContactChannel("whatsapp")}
