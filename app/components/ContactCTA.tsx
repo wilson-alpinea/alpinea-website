@@ -2,6 +2,12 @@
 
 import { useEffect, useState, type FormEvent } from "react";
 
+declare global {
+  interface Window {
+    gtag?: (...args: unknown[]) => void;
+  }
+}
+
 // Formulário único de contato — usado em todas as páginas do site.
 // E-mail: envia via /api/contact (precisa de RESEND_API_KEY configurada).
 // WhatsApp: monta a mensagem e abre o wa.me já preenchido.
@@ -21,6 +27,13 @@ function ContactModal({
     return () => window.removeEventListener("keydown", onKey);
   }, [onClose]);
 
+  useEffect(() => {
+    window.gtag?.("event", "form_start", {
+      form_name: "alpinea_contact",
+      contact_channel: channel,
+    });
+  }, [channel]);
+
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const data = new FormData(e.currentTarget);
@@ -31,7 +44,6 @@ function ContactModal({
       phone: String(data.get("phone") || "").trim(),
       dates: String(data.get("dates") || "").trim(),
       travelers: String(data.get("travelers") || "").trim(),
-      budget: String(data.get("budget") || "").trim(),
       message: String(data.get("message") || "").trim(),
     };
 
@@ -50,6 +62,11 @@ function ContactModal({
         payload.message && `Sobre a viagem: ${payload.message}`,
       ].filter(Boolean);
       const text = encodeURIComponent(lines.join("\n"));
+
+      window.gtag?.("event", "whatsapp_click", {
+        form_name: "alpinea_contact",
+      });
+
       window.open(`https://wa.me/5511996691818?text=${text}`, "_blank");
       setStatus("success");
       return;
@@ -63,6 +80,18 @@ function ContactModal({
         body: JSON.stringify(payload),
       });
       if (!res.ok) throw new Error("request failed");
+
+      window.gtag?.("event", "generate_lead", {
+        form_name: "alpinea_contact",
+        contact_channel: "email",
+      });
+
+      window.gtag?.("event", "conversion", {
+        send_to: "AW-18262525346/fruBCIiVsMMcEKKLoIRE",
+        value: 1.0,
+        currency: "BRL",
+      });
+
       setStatus("success");
     } catch {
       setStatus("error");
@@ -190,22 +219,6 @@ function ContactModal({
                   </select>
                 </label>
 
-                <label className="block">
-                  <span className="mb-2 block text-xs uppercase tracking-[0.25em] text-black/40">
-                    Faixa de investimento (opcional)
-                  </span>
-                  <select
-                    name="budget"
-                    defaultValue=""
-                    className="w-full border-b border-black/20 bg-transparent py-2 text-sm outline-none focus:border-black"
-                  >
-                    <option value=""></option>
-                    <option value="Até R$50k">Até R$50k</option>
-                    <option value="R$50k–150k">R$50k–150k</option>
-                    <option value="R$150k+">R$150k+</option>
-                    <option value="Prefiro não informar">Prefiro não informar</option>
-                  </select>
-                </label>
               </div>
 
               <label className="block">
