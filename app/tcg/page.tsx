@@ -25,15 +25,6 @@ const schedule = [
     alt: "Hareruya 2 em Akihabara",
   },
   {
-    time: "13:00",
-    duration: "1h30",
-    title: "Pausa para almoço",
-    eyebrow: "Ritmo confortável · tempo livre",
-    text: "Intervalo em Akihabara para manter o ritmo do dia sem pressa, com tempo livre para escolher entre as opções da região. A pausa também permite revisar prioridades antes das vitrines mais relevantes da tarde.",
-    image: "/images/akihabara.png",
-    alt: "Akihabara à noite",
-  },
-  {
     time: "14:30",
     duration: "2h30",
     title: "Valuable Card Tokyo",
@@ -60,7 +51,7 @@ const brands = [
 ];
 
 const products = [
-  { name: "Singles", image: "/images/OkoThiefOfCrowns__25446.jpg" },
+  { name: "Singles", image: "/images/OkoThiefOfCrowns__25446.webp" },
   { name: "Graded", image: "/images/graded.jpg" },
   { name: "Booster Pack", image: "/images/booster.webp" },
   { name: "Sealed Box", image: "/images/sealedbox.webp" },
@@ -170,7 +161,7 @@ export default function TcgSpecialTourPage() {
       </section>
 
       {/* MARCAS ATENDIDAS */}
-      <section className="bg-black px-8 py-24 md:px-16">
+      <section className="bg-black px-8 pb-12 pt-10 md:px-16">
         <div className="mx-auto max-w-6xl">
           <p className="mb-5 text-xs uppercase tracking-[0.35em] text-white/30">TCGs Atendidos</p>
           <h2 className={`${display.className} max-w-3xl text-3xl font-medium leading-tight text-white md:text-5xl`}>
@@ -195,7 +186,7 @@ export default function TcgSpecialTourPage() {
       </section>
 
       {/* PRODUTOS ATENDIDOS */}
-      <section className="bg-black px-8 py-24 md:px-16">
+      <section className="bg-black px-8 pb-24 pt-10 md:px-16">
         <div className="mx-auto max-w-6xl">
           <p className="mb-5 text-xs uppercase tracking-[0.35em] text-white/30">Produtos Atendidos</p>
           <h2 className={`${display.className} max-w-3xl text-3xl font-medium leading-tight text-white md:text-5xl`}>

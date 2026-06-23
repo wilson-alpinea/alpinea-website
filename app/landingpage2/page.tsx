@@ -475,10 +475,10 @@ export default function LandingPage() {
 
             <div>
               <h3 className={`${display.className} text-2xl font-medium tracking-tight text-white md:text-3xl`}>
-                Além do idioma
+                Exclusividade de Serviços
               </h3>
               <p className="mt-6 max-w-[280px] text-sm font-light leading-7 text-white/55">
-                A fluência no idioma combinada ao conhecimento dos principais nomes da gastronomia, artesanato e hotelaria japonesa.
+                Somos a única empresa que oferece ao público brasileiro curadoria de elite para gastronomia e consumo, incluso fluência no idioma para elevar as experiências.
               </p>
             </div>
 
@@ -519,6 +519,9 @@ export default function LandingPage() {
             </div>
 
             <div className="space-y-10 text-lg font-light leading-9 text-white/68">
+              <p>
+                O acesso no Japão não é baseado somente em desejo e vontade de frequentar. Mais do que isso, são necessários anos de relacionamento com esses estabelecimentos.
+              </p>
               <p>
                 Os grandes nomes da gastronomia japonesa não estão disponíveis em plataformas. Muitos não aceitam reservas em inglês e alguns só recebem clientes apresentados por relações construídas ao longo de anos.
               </p>
@@ -568,7 +571,7 @@ export default function LandingPage() {
             </h2>
 
             <p className="mt-8 max-w-3xl text-lg font-light leading-9 text-white/68">
-              Do planejamento à presença local, a Alpinea organiza os detalhes que determinam a qualidade real de uma viagem de alto padrão no Japão.
+              Do planejamento ao acompanhamento presencial, a Alpinea organiza os detalhes que determinam a qualidade real de uma viagem de alto padrão no Japão.
             </p>
           </div>
 
@@ -595,8 +598,20 @@ export default function LandingPage() {
               },
             ].map((item) => (
               <div key={item.title} className="group">
+                <p className="text-xs uppercase tracking-[0.35em] text-white/40">
+                  Entregável Alpinea
+                </p>
+
+                <h3 className="mt-3 text-2xl font-light text-white">
+                  {item.title}
+                </h3>
+
+                <p className="mt-5 text-sm font-light leading-7 text-white/55">
+                  {item.text}
+                </p>
+
                 <div
-                  className="overflow-hidden rounded-[26px] bg-white/[0.04] cursor-zoom-in relative"
+                  className="mt-8 overflow-hidden rounded-[26px] bg-white/[0.04] cursor-zoom-in relative"
                   onClick={() => setLightbox({ src: item.image, alt: item.title })}
                 >
                   <div className="relative aspect-[4/5] overflow-hidden rounded-[26px]">
@@ -618,18 +633,6 @@ export default function LandingPage() {
                     </div>
                   </div>
                 </div>
-
-                <p className="mt-8 text-xs uppercase tracking-[0.35em] text-white/40">
-                  Entregável Alpinea
-                </p>
-
-                <h3 className="mt-3 text-2xl font-light text-white">
-                  {item.title}
-                </h3>
-
-                <p className="mt-5 text-sm font-light leading-7 text-white/55">
-                  {item.text}
-                </p>
               </div>
             ))}
           </div>
