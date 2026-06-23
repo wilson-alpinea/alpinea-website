@@ -51,10 +51,10 @@ const brands = [
 ];
 
 const products = [
-  { name: "Singles", image: "/images/OkoThiefOfCrowns__25446.webp" },
+  { name: "Singles", image: "/images/OkoThiefOfCrowns__25446.png" },
   { name: "Graded", image: "/images/graded.jpg" },
-  { name: "Booster Pack", image: "/images/booster.webp" },
-  { name: "Sealed Box", image: "/images/sealedbox.webp" },
+  { name: "Booster Pack", image: "/images/booster.png" },
+  { name: "Sealed Box", image: "/images/sealedbox.png" },
 ];
 
 const ramenSpots = [
@@ -62,31 +62,31 @@ const ramenSpots = [
     name: "Hachigo",
     city: "Tóquio · Ginza",
     legend: "Bib Gourmand Michelin, por um ex-chef de hotel de luxo",
-    image: "/images/hachigo.webp",
+    image: "/images/hachigo.png",
   },
   {
     name: "RAGE",
     city: "Tóquio · Nishi-Ogikubo",
     legend: "Bib Gourmand Michelin por 8 anos consecutivos",
-    image: "/images/rage.webp",
+    image: "/images/rage.png",
   },
   {
     name: "Mugi to Mensuke",
     city: "Osaka · Nakatsu",
     legend: "Eleito o ramen mais disputado de Osaka",
-    image: "/images/mugitomensuke.webp",
+    image: "/images/mugitomensuke.png",
   },
   {
     name: "Break Beats",
     city: "Tóquio · Yutenji",
     legend: "Criado por um ex-DJ, caldo cristalino premiado",
-    image: "/images/breakbeats.webp",
+    image: "/images/breakbeats.png",
   },
   {
     name: "King Seimen",
     city: "Tóquio · Oji",
     legend: "Wontons gigantes e macarrão artesanal",
-    image: "/images/kingseimen.webp",
+    image: "/images/kingseimen.png",
   },
 ];
 
