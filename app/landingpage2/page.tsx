@@ -1,8 +1,8 @@
 "use client";
 
-import Script from "next/script";
 import { useEffect, useState, type FormEvent } from "react";
 import { Bodoni_Moda } from "next/font/google";
+import Script from "next/script";
 
 // Display serif for large headline moments — pairs with the ALPINEA logotype.
 // If it's not quite the match you're after, two easy swaps:
@@ -15,25 +15,9 @@ const display = Bodoni_Moda({
 
 declare global {
   interface Window {
-    dataLayer?: unknown[];
     gtag?: (...args: unknown[]) => void;
+    dataLayer?: unknown[];
   }
-}
-
-const GOOGLE_ADS_ID = "AW-18262525346";
-
-// IMPORTANTE: substitua INSIRA_O_LABEL_AQUI pelo label da conversão criado no Google Ads.
-// O formato correto fica assim: AW-18262525346/AbCdEfGhIjKlMnOpQr
-const GOOGLE_ADS_CONVERSION_SEND_TO = "AW-18262525346/INSIRA_O_LABEL_AQUI";
-
-function trackLeadConversion(channel: "email" | "whatsapp") {
-  if (typeof window === "undefined" || !window.gtag) return;
-
-  window.gtag("event", "conversion", {
-    send_to: GOOGLE_ADS_CONVERSION_SEND_TO,
-    event_category: "lead",
-    event_label: channel,
-  });
 }
 
 // Lightbox component
@@ -116,7 +100,6 @@ function ContactModal({
       ].filter(Boolean);
       const text = encodeURIComponent(lines.join("\n"));
       window.open(`https://wa.me/5511996691818?text=${text}`, "_blank");
-      trackLeadConversion("whatsapp");
       setStatus("success");
       return;
     }
@@ -129,7 +112,14 @@ function ContactModal({
         body: JSON.stringify(payload),
       });
       if (!res.ok) throw new Error("request failed");
-      trackLeadConversion("email");
+
+      // Google Ads conversion: dispara apenas após o envio bem-sucedido do formulário.
+      window.gtag?.("event", "conversion", {
+        send_to: "AW-18262525346/fruBCIiVsMMcEKKLoIRE",
+        value: 1.0,
+        currency: "BRL",
+      });
+
       setStatus("success");
     } catch {
       setStatus("error");
@@ -381,7 +371,7 @@ export default function LandingPage() {
   return (
     <main className="min-h-screen bg-black text-white">
       <Script
-        src={`https://www.googletagmanager.com/gtag/js?id=${GOOGLE_ADS_ID}`}
+        src="https://www.googletagmanager.com/gtag/js?id=AW-18262525346"
         strategy="afterInteractive"
       />
       <Script id="google-ads-gtag" strategy="afterInteractive">
@@ -389,9 +379,10 @@ export default function LandingPage() {
           window.dataLayer = window.dataLayer || [];
           function gtag(){dataLayer.push(arguments);}
           gtag('js', new Date());
-          gtag('config', '${GOOGLE_ADS_ID}');
+          gtag('config', 'AW-18262525346');
         `}
       </Script>
+
       {lightbox && (
         <Lightbox src={lightbox.src} alt={lightbox.alt} onClose={() => setLightbox(null)} />
       )}
