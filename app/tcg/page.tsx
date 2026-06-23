@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { Bodoni_Moda } from "next/font/google";
 import { ContactCTA } from "../components/ContactCTA";
+import { TripDashboard } from "../components/TripDashboard";
 
 const display = Bodoni_Moda({
   subsets: ["latin"],
@@ -12,23 +13,6 @@ export const metadata = {
   description:
     "Pacote especial Alpinea para colecionadores de Trading Card Games no Japão, com card hunting em Tokyo e Osaka.",
 };
-
-const days = [
-  { day: "Dia 1", date: "1 Nov", city: "Tokyo", area: "Akihabara", active: true },
-  { day: "Dia 2", date: "2 Nov", city: "Tokyo", area: "Akihabara" },
-  { day: "Dia 3", date: "3 Nov", city: "Tokyo", area: "Ikebukuro" },
-  { day: "Dia 4", date: "4 Nov", city: "Tokyo", area: "Ikebukuro" },
-  { day: "Dia 5", date: "5 Nov", city: "Tokyo", area: "Nakano Broadway" },
-  { day: "Dia 6", date: "6 Nov", city: "Osaka", area: "Nipponbashi" },
-  { day: "Dia 7", date: "7 Nov", city: "Osaka", area: "Nipponbashi" },
-];
-
-const districts = [
-  { city: "Tokyo", area: "Akihabara", days: "2 dias" },
-  { city: "Tokyo", area: "Ikebukuro", days: "2 dias" },
-  { city: "Tokyo", area: "Nakano Broadway", days: "1 dia" },
-  { city: "Osaka", area: "Nipponbashi", days: "2 dias" },
-];
 
 const schedule = [
   {
@@ -116,32 +100,30 @@ export default function TcgSpecialTourPage() {
       </header>
 
       {/* HERO */}
-      <section className="relative overflow-hidden bg-black">
-        <div className="relative aspect-[1251/440] w-full">
-          <Image
-            src="/images/herotcg.png"
-            alt="Cartas raras de Pokémon, Yu-Gi-Oh! e One Piece Card Game"
-            fill
-            priority
-            sizes="100vw"
-            className="object-cover"
-          />
-          <div className="absolute inset-0 bg-[linear-gradient(to_bottom,transparent_58%,rgba(0,0,0,0.6)_85%,#000_100%)]" />
-        </div>
+      <section className="relative h-[34vw] min-h-[300px] max-h-[560px] w-full overflow-hidden">
+        <Image
+          src="/images/herotcg.png"
+          alt="Cartas raras de Pokémon, Yu-Gi-Oh! e One Piece Card Game"
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover"
+        />
+        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/55 to-transparent" />
 
-        <div className="px-8 pb-24 pt-14 text-center md:px-16 md:pt-20">
-          <p className="mb-6 text-xs uppercase tracking-[0.45em] text-white/45">
-            Pacotes Especiais · Alpinea Special Tour
-          </p>
-          <h1 className={`${display.className} text-5xl font-medium leading-[1.05] tracking-tight text-white md:text-7xl`}>
-            Trading Card Game
-            <br />
-            Tour
-          </h1>
-          <p className="mx-auto mt-7 max-w-2xl text-base font-light leading-8 text-white/65">
-            Seja Pokémon, Yu-Gi-Oh! ou One Piece — acompanhamos você nas lojas com os melhores acervos
-            para singles, PSA/Graded Cards e acessórios.
-          </p>
+        <div className="absolute inset-x-0 bottom-0 px-8 pb-10 text-center md:px-16 md:pb-14">
+          <div className="mx-auto max-w-3xl">
+            <p className="mb-4 text-xs uppercase tracking-[0.35em] text-white/45">
+              Pacotes Especiais · Alpinea Special Tour
+            </p>
+            <h1 className={`${display.className} text-2xl font-medium tracking-tight text-white sm:text-3xl md:text-5xl`}>
+              Trading Card Game Tour
+            </h1>
+            <p className="mx-auto mt-4 max-w-xl text-sm font-light leading-7 text-white/65 md:text-base md:leading-8">
+              Seja Pokémon, Yu-Gi-Oh! ou One Piece — acompanhamos você nas lojas com os melhores acervos
+              para singles, PSA/Graded Cards e acessórios.
+            </p>
+          </div>
         </div>
       </section>
 
@@ -213,59 +195,17 @@ export default function TcgSpecialTourPage() {
             Meu Dashboard de Viagem
           </h2>
 
-          <div className="mx-auto max-w-5xl">
-            <p className="mb-8 text-center text-xs uppercase tracking-[0.35em] text-white/35">Cidades</p>
-            <div className="grid gap-5 md:grid-cols-4">
-              {districts.map((item, index) => (
-                <div key={`${item.city}-${item.area}`} className="relative border-t border-white/15 pt-6">
-                  {index > 0 && <span className="absolute -left-4 top-6 hidden text-white/20 md:block">→</span>}
-                  <p className="text-xs uppercase tracking-[0.35em] text-white/45">{item.city}</p>
-                  <p className="mt-3 min-h-[44px] text-sm uppercase tracking-[0.22em] text-white">
-                    {item.area}
-                  </p>
-                  <p className="mt-2 text-xs text-white/35">{item.days}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="mt-20">
-            <p className="mb-6 text-xs uppercase tracking-[0.35em] text-white/40">Roteiro diário</p>
-            <div className="mb-8 inline-flex rounded-full border border-white/20 px-5 py-2 text-[11px] uppercase tracking-[0.28em] text-white/75">
-              Nesta amostra, apenas o Dia 1 está disponível para visualização.
-            </div>
-            <div className="grid gap-3 md:grid-cols-4 lg:grid-cols-7">
-              {days.map((item) => (
-                <a
-                  key={item.day}
-                  href={item.active ? "#dia-1" : undefined}
-                  className={`min-h-[116px] border px-5 py-5 transition ${
-                    item.active
-                      ? "border-white bg-white text-black"
-                      : "border-white/10 bg-white/[0.02] text-white/35 hover:border-white/25 hover:text-white/60"
-                  }`}
-                >
-                  <p className="text-sm font-medium">{item.day}</p>
-                  <p className="mt-3 text-xs leading-6">
-                    {item.date} · {item.city}
-                    <br />
-                    {item.area}
-                  </p>
-                </a>
-              ))}
-            </div>
-          </div>
-
-          <div className="mx-auto mt-16 grid max-w-5xl gap-6 text-sm font-light leading-8 text-white/60 md:grid-cols-2">
-            <div className="border-t border-white/10 pt-7">
-              <p className="mb-3 text-xs uppercase tracking-[0.3em] text-white/30">Distribuição</p>
-              <p>5 dias em Tokyo e 2 dias em Osaka, com início da viagem em 01 de novembro.</p>
-            </div>
-            <div className="border-t border-white/10 pt-7">
-              <p className="mb-3 text-xs uppercase tracking-[0.3em] text-white/30">Bairros-chave</p>
-              <p>2 dias em Akihabara, 2 em Ikebukuro, 1 em Nakano Broadway e 2 em Nipponbashi.</p>
-            </div>
-          </div>
+          <TripDashboard
+            days={[
+              { day: 1, date: "1 Nov", city: "Tokyo", href: "#dia-1" },
+              { day: 2, date: "2 Nov", city: "Tokyo" },
+              { day: 3, date: "3 Nov", city: "Tokyo" },
+              { day: 4, date: "4 Nov", city: "Tokyo" },
+              { day: 5, date: "5 Nov", city: "Tokyo" },
+              { day: 6, date: "6 Nov", city: "Osaka" },
+              { day: 7, date: "7 Nov", city: "Osaka" },
+            ]}
+          />
         </div>
       </section>
 
