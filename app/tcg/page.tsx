@@ -128,14 +128,14 @@ export default function TcgSpecialTourPage() {
       </header>
 
       {/* HERO */}
-      <section className="relative min-h-[720px] overflow-hidden px-8 pb-28 pt-40 md:px-16 md:pt-48">
+      <section className="relative min-h-[620px] overflow-hidden px-8 pb-28 pt-40 md:px-16 md:pt-48">
         <Image
           src="/images/herotcg.png"
           alt="Cartas raras de Pokémon, Yu-Gi-Oh! e One Piece Card Game"
           fill
           priority
           sizes="100vw"
-          className="object-cover opacity-70"
+          className="object-contain opacity-70"
         />
         <div className="absolute inset-0 bg-black/45" />
         <div className="absolute inset-0 bg-gradient-to-b from-black/65 via-black/20 to-black" />
@@ -153,6 +153,36 @@ export default function TcgSpecialTourPage() {
             Seja Pokémon, Yu-Gi-Oh! ou One Piece — acompanhamos você nas lojas com os melhores acervos
             para singles, PSA/Graded Cards e acessórios.
           </p>
+        </div>
+      </section>
+
+      {/* MARCAS ATENDIDAS */}
+      <section className="border-t border-white/10 bg-black px-8 py-24 md:px-16">
+        <div className="mx-auto max-w-6xl">
+          <p className="mb-5 text-xs uppercase tracking-[0.35em] text-white/30">TCGs Atendidos</p>
+          <h2 className={`${display.className} max-w-3xl text-3xl font-medium leading-tight text-white md:text-5xl`}>
+            Profundidade em cada universo de cartas.
+          </h2>
+          <p className="mt-6 max-w-2xl text-base font-light leading-8 text-white/65">
+            Conhecemos as lojas certas, os horários de reposição e os vendedores de confiança para cada
+            uma das principais franquias de Trading Card Games no Japão.
+          </p>
+
+          <div className="mt-16 grid gap-8 sm:grid-cols-3">
+            {brands.map((brand) => (
+              <div key={brand.name}>
+                <div className="flex h-40 items-center justify-center px-6">
+                  <img
+                    src={brand.logo}
+                    alt={brand.name}
+                    className="max-h-20 w-auto object-contain"
+                  />
+                </div>
+                <p className={`${display.className} mt-7 text-xl font-medium text-white`}>{brand.name}</p>
+                <p className="mt-2 text-xs uppercase tracking-[0.25em] text-white/40">{brand.tagline}</p>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
@@ -187,36 +217,6 @@ export default function TcgSpecialTourPage() {
               <StatItem value="18+" label="lojas especializadas" />
               <StatItem value="45h" label="de card hunting" />
             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* MARCAS ATENDIDAS */}
-      <section className="border-t border-white/10 bg-black px-8 py-24 md:px-16">
-        <div className="mx-auto max-w-6xl">
-          <p className="mb-5 text-xs uppercase tracking-[0.35em] text-white/30">TCGs Atendidos</p>
-          <h2 className={`${display.className} max-w-3xl text-3xl font-medium leading-tight text-white md:text-5xl`}>
-            Profundidade em cada universo de cartas.
-          </h2>
-          <p className="mt-6 max-w-2xl text-base font-light leading-8 text-white/65">
-            Conhecemos as lojas certas, os horários de reposição e os vendedores de confiança para cada
-            uma das principais franquias de Trading Card Games no Japão.
-          </p>
-
-          <div className="mt-16 grid gap-8 sm:grid-cols-3">
-            {brands.map((brand) => (
-              <div key={brand.name} className="border-t border-white/10 pt-8">
-                <div className="flex h-40 items-center justify-center bg-white px-8">
-                  <img
-                    src={brand.logo}
-                    alt={brand.name}
-                    className="max-h-20 w-auto object-contain"
-                  />
-                </div>
-                <p className={`${display.className} mt-7 text-xl font-medium text-white`}>{brand.name}</p>
-                <p className="mt-2 text-xs uppercase tracking-[0.25em] text-white/40">{brand.tagline}</p>
-              </div>
-            ))}
           </div>
         </div>
       </section>
