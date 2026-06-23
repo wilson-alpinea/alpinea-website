@@ -3,6 +3,12 @@
 import { useEffect, useState, type FormEvent } from "react";
 import { Bodoni_Moda } from "next/font/google";
 
+declare global {
+  interface Window {
+    gtag?: (...args: unknown[]) => void;
+  }
+}
+
 // Display serif for large headline moments — pairs with the ALPINEA logotype.
 // If it's not quite the match you're after, two easy swaps:
 //   import { Playfair_Display as Bodoni_Moda } from "next/font/google";
@@ -105,8 +111,14 @@ function ContactModal({
       });
       if (!res.ok) throw new Error("request failed");
 
+      window.gtag?.("event", "generate_lead", {
+        form_name: "alpinea_contact",
+      });
+
       window.gtag?.("event", "conversion", {
-        send_to: "AW-18262525346/2LDgCJmU9cMcEKKLoIRE",
+        send_to: "AW-18262525346/fruBCIiVsMMcEKKLoIRE",
+        value: 1.0,
+        currency: "BRL",
       });
 
       setStatus("success");
