@@ -70,21 +70,9 @@ const schedule = [
 ];
 
 const brands = [
-  {
-    name: "Pokémon",
-    logo: "/images/pokemontcglogo.png",
-    tagline: "Sealed boxes · singles · graded cards",
-  },
-  {
-    name: "Yu-Gi-Oh!",
-    logo: "/images/yugiohtcglogo.png",
-    tagline: "Structure decks · singles · promos raras",
-  },
-  {
-    name: "One Piece",
-    logo: "/images/onepiecelogo.webp",
-    tagline: "Boosters · leaders · cartas de torneio",
-  },
+  { name: "Pokémon", logo: "/images/pokemontcglogo.png" },
+  { name: "Yu-Gi-Oh!", logo: "/images/yugiohtcglogo.png" },
+  { name: "One Piece", logo: "/images/onepiecelogo.webp" },
 ];
 
 function PreviewItem({ title, text }: { title: string; text: string }) {
@@ -128,31 +116,33 @@ export default function TcgSpecialTourPage() {
       </header>
 
       {/* HERO */}
-      <section className="relative min-h-[620px] overflow-hidden px-8 pb-28 pt-40 md:px-16 md:pt-48">
+      <section className="relative min-h-[640px] overflow-hidden">
         <Image
           src="/images/herotcg.png"
           alt="Cartas raras de Pokémon, Yu-Gi-Oh! e One Piece Card Game"
           fill
           priority
           sizes="100vw"
-          className="object-contain opacity-70"
+          className="object-contain opacity-80"
         />
-        <div className="absolute inset-0 bg-black/45" />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/65 via-black/20 to-black" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/15 to-black" />
+        <div className="absolute inset-0 bg-gradient-to-r from-black/30 via-transparent to-black/25" />
 
-        <div className="relative z-10 mx-auto max-w-7xl">
-          <p className="mb-8 text-xs uppercase tracking-[0.35em] text-white/45">
-            Pacotes Especiais · Alpinea Special Tour
-          </p>
-          <h1 className={`${display.className} max-w-5xl text-5xl font-medium leading-[1.05] tracking-tight md:text-7xl`}>
-            Trading Card Game
-            <br />
-            Tour
-          </h1>
-          <p className="mt-10 max-w-3xl text-lg font-light leading-9 text-white/70">
-            Seja Pokémon, Yu-Gi-Oh! ou One Piece — acompanhamos você nas lojas com os melhores acervos
-            para singles, PSA/Graded Cards e acessórios.
-          </p>
+        <div className="relative z-10 flex min-h-[640px] items-end justify-center px-8 pb-20 text-center md:px-16">
+          <div>
+            <p className="mb-6 text-xs uppercase tracking-[0.45em] text-white/45">
+              Pacotes Especiais · Alpinea Special Tour
+            </p>
+            <h1 className={`${display.className} text-5xl font-medium leading-[1.05] tracking-tight text-white md:text-7xl`}>
+              Trading Card Game
+              <br />
+              Tour
+            </h1>
+            <p className="mx-auto mt-7 max-w-2xl text-base font-light leading-8 text-white/65">
+              Seja Pokémon, Yu-Gi-Oh! ou One Piece — acompanhamos você nas lojas com os melhores acervos
+              para singles, PSA/Graded Cards e acessórios.
+            </p>
+          </div>
         </div>
       </section>
 
@@ -163,14 +153,10 @@ export default function TcgSpecialTourPage() {
           <h2 className={`${display.className} max-w-3xl text-3xl font-medium leading-tight text-white md:text-5xl`}>
             Profundidade em cada universo de cartas.
           </h2>
-          <p className="mt-6 max-w-2xl text-base font-light leading-8 text-white/65">
-            Conhecemos as lojas certas, os horários de reposição e os vendedores de confiança para cada
-            uma das principais franquias de Trading Card Games no Japão.
-          </p>
 
           <div className="mt-16 grid gap-8 sm:grid-cols-3">
             {brands.map((brand) => (
-              <div key={brand.name}>
+              <div key={brand.name} className="text-center">
                 <div className="flex h-40 items-center justify-center px-6">
                   <img
                     src={brand.logo}
@@ -179,7 +165,6 @@ export default function TcgSpecialTourPage() {
                   />
                 </div>
                 <p className={`${display.className} mt-7 text-xl font-medium text-white`}>{brand.name}</p>
-                <p className="mt-2 text-xs uppercase tracking-[0.25em] text-white/40">{brand.tagline}</p>
               </div>
             ))}
           </div>
@@ -392,23 +377,29 @@ export default function TcgSpecialTourPage() {
         </div>
       </section>
 
-      <section className="border-t border-white/10 px-8 py-28 text-center md:px-16">
-        <div className="mx-auto max-w-3xl">
-          <p className="mb-6 text-xs uppercase tracking-[0.35em] text-white/35">Alpinea Special Tour</p>
-          <h3 className={`${display.className} text-3xl font-medium text-white md:text-5xl`}>
+      <section
+        id="contact"
+        className="scroll-mt-32 bg-white px-8 py-28 text-black md:px-16"
+      >
+        <div className="mx-auto max-w-3xl text-center">
+          <p className="mb-6 text-xs uppercase tracking-[0.35em] text-black/40">
+            Alpinea Special Tour
+          </p>
+          <h2 className={`${display.className} text-3xl font-medium leading-tight text-black md:text-5xl`}>
             Uma viagem para colecionar melhor.
-          </h3>
-          <p className="mx-auto mt-8 max-w-2xl text-base font-light leading-9 text-white/60">
+          </h2>
+          <p className="mx-auto mt-8 max-w-2xl text-base leading-9 text-black/60">
             A Alpinea organiza o ritmo, as prioridades e a logística para que cada dia seja dedicado ao que
             realmente importa: encontrar cartas, comparar oportunidades e comprar com segurança.
           </p>
+          <ContactCTA />
         </div>
       </section>
 
-      <ContactCTA />
-
       <footer className="border-t border-white/10 bg-black px-8 py-16 text-white md:px-16">
-        <div className="mx-auto flex max-w-7xl flex-col justify-between gap-12 md:flex-row md:items-start">
+        <div className="mx-auto flex max-w-7xl flex-col justify-between gap-12 md:flex-row md:items-end">
+
+          {/* Coluna esquerda */}
           <div className="space-y-6">
             <img
               src="/images/ALPINEA-LOGO-transparent.png"
@@ -437,14 +428,34 @@ export default function TcgSpecialTourPage() {
             </div>
           </div>
 
-          <nav className="flex flex-col gap-3 text-xs uppercase tracking-[0.25em] text-white/40">
-            <a href="/" className="transition hover:text-white">Início</a>
-            <a href="/services" className="transition hover:text-white">Serviços</a>
-            <a href="/gastro" className="transition hover:text-white">Restaurantes</a>
-            <a href="/guia" className="transition hover:text-white">Compras</a>
-            <a href="/preview" className="transition hover:text-white">Roteiro</a>
-            <a href="#contact" className="transition hover:text-white">Contato</a>
-          </nav>
+          {/* Coluna direita */}
+          <div className="flex items-center gap-8 text-xs uppercase tracking-[0.25em] text-white/40">
+            <a
+              href="https://www.instagram.com/alpinea.private"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="transition hover:text-white"
+            >
+              Instagram
+            </a>
+
+            <a
+              href="https://www.youtube.com/@alpinea.private"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="transition hover:text-white"
+            >
+              YouTube
+            </a>
+
+            <a
+              href="mailto:wilson@alpinea.io"
+              className="transition hover:text-white"
+            >
+              Contato
+            </a>
+          </div>
+
         </div>
       </footer>
     </main>
