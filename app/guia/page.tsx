@@ -111,10 +111,10 @@ export default function GuiaFacasPage() {
                 alt: "Molinete de pesca de alta precisão",
               },
               {
-                title: "Whisky japonês raro",
-                subtitle: "Rótulos disputados e edições limitadas",
-                image: "/images/yamazaki.png",
-                alt: "Whisky japonês raro",
+                title: "Trading Card Game",
+                subtitle: "PSA10, cartas raras e colecionáveis",
+                image: "/images/charizard.jpg",
+                alt: "Carta rara de trading card game em grau PSA10",
               },
               {
                 title: "Canetas artesanais",
