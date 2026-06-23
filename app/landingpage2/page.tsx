@@ -2,7 +2,6 @@
 
 import { useEffect, useState, type FormEvent } from "react";
 import { Bodoni_Moda } from "next/font/google";
-import Script from "next/script";
 
 // Display serif for large headline moments — pairs with the ALPINEA logotype.
 // If it's not quite the match you're after, two easy swaps:
@@ -12,12 +11,6 @@ const display = Bodoni_Moda({
   subsets: ["latin"],
   weight: ["400", "500", "600"],
 });
-
-declare global {
-  interface Window {
-    gtag?: (...args: unknown[]) => void;
-  }
-}
 
 // Lightbox component
 function Lightbox({ src, alt, onClose }: { src: string; alt: string; onClose: () => void }) {
@@ -112,11 +105,8 @@ function ContactModal({
       });
       if (!res.ok) throw new Error("request failed");
 
-      // Google Ads conversion: dispara apenas após o envio bem-sucedido do formulário.
       window.gtag?.("event", "conversion", {
-        send_to: "AW-18262525346/fruBCIiVsMMcEKKLoIRE",
-        value: 1.0,
-        currency: "BRL",
+        send_to: "AW-18262525346/2LDgCJmU9cMcEKKLoIRE",
       });
 
       setStatus("success");
@@ -369,19 +359,6 @@ export default function LandingPage() {
 
   return (
     <main className="min-h-screen bg-black text-white">
-      <Script
-        src="https://www.googletagmanager.com/gtag/js?id=AW-18262525346"
-        strategy="afterInteractive"
-      />
-      <Script id="google-ads-gtag" strategy="afterInteractive">
-        {`
-          window.dataLayer = window.dataLayer || [];
-          function gtag(){dataLayer.push(arguments);}
-          gtag('js', new Date());
-          gtag('config', 'AW-18262525346');
-        `}
-      </Script>
-
       {lightbox && (
         <Lightbox src={lightbox.src} alt={lightbox.alt} onClose={() => setLightbox(null)} />
       )}
