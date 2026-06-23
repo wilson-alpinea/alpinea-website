@@ -205,6 +205,16 @@ export default function TcgSpecialTourPage() {
               { day: 6, date: "6 Nov", city: "Osaka" },
               { day: 7, date: "7 Nov", city: "Osaka" },
             ]}
+            guides={[
+              { label: "Lojas Especializadas" },
+              { label: "Avaliação (PSA/Graded)" },
+              { label: "Cuidados e Transporte" },
+            ]}
+            annexes={[
+              { label: "Dinheiro e Pagamentos" },
+              { label: "Apps e Conectividade" },
+              { label: "Transporte entre Bairros" },
+            ]}
           />
         </div>
       </section>
