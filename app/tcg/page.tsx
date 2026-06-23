@@ -43,11 +43,11 @@ const schedule = [
   {
     time: "13:00",
     duration: "1h30",
-    title: "Pausa para almoço",
-    eyebrow: "Ritmo confortável · revisão de prioridades",
-    text: "Intervalo em Akihabara para manter o ritmo do dia sem pressa. A pausa permite revisar preços, priorizar cartas de maior interesse e decidir com mais clareza antes das vitrines mais relevantes da tarde.",
-    image: "/images/akihabara.png",
-    alt: "Akihabara à noite",
+    title: "RAGE Lámen",
+    eyebrow: "Shoyu ramen · Bib Gourmand Michelin",
+    text: "Pausa para um dos shoyu ramen mais respeitados de Tóquio: o RAGE Lámen (麺尊 RAGE), reconhecido com o Bib Gourmand do Guia Michelin por oito anos consecutivos. O destaque é o caldo de shoyu profundo preparado com frango Shamo, servido com chashu fatiado, ovo ajitama, menma e ervas frescas — uma recarga consistente antes da segunda metade do dia de card hunting.",
+    image: "/images/rage.png",
+    alt: "Tigela de ramen do RAGE Lámen",
   },
   {
     time: "14:30",
@@ -116,38 +116,37 @@ export default function TcgSpecialTourPage() {
       </header>
 
       {/* HERO */}
-      <section className="relative min-h-[640px] overflow-hidden">
-        <Image
-          src="/images/herotcg.png"
-          alt="Cartas raras de Pokémon, Yu-Gi-Oh! e One Piece Card Game"
-          fill
-          priority
-          sizes="100vw"
-          className="object-contain opacity-80"
-        />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/15 to-black" />
-        <div className="absolute inset-0 bg-gradient-to-r from-black/30 via-transparent to-black/25" />
+      <section className="relative overflow-hidden bg-black">
+        <div className="relative aspect-[1251/440] w-full">
+          <Image
+            src="/images/herotcg.png"
+            alt="Cartas raras de Pokémon, Yu-Gi-Oh! e One Piece Card Game"
+            fill
+            priority
+            sizes="100vw"
+            className="object-cover"
+          />
+          <div className="absolute inset-0 bg-[linear-gradient(to_bottom,transparent_58%,rgba(0,0,0,0.6)_85%,#000_100%)]" />
+        </div>
 
-        <div className="relative z-10 flex min-h-[640px] items-end justify-center px-8 pb-20 text-center md:px-16">
-          <div>
-            <p className="mb-6 text-xs uppercase tracking-[0.45em] text-white/45">
-              Pacotes Especiais · Alpinea Special Tour
-            </p>
-            <h1 className={`${display.className} text-5xl font-medium leading-[1.05] tracking-tight text-white md:text-7xl`}>
-              Trading Card Game
-              <br />
-              Tour
-            </h1>
-            <p className="mx-auto mt-7 max-w-2xl text-base font-light leading-8 text-white/65">
-              Seja Pokémon, Yu-Gi-Oh! ou One Piece — acompanhamos você nas lojas com os melhores acervos
-              para singles, PSA/Graded Cards e acessórios.
-            </p>
-          </div>
+        <div className="px-8 pb-24 pt-14 text-center md:px-16 md:pt-20">
+          <p className="mb-6 text-xs uppercase tracking-[0.45em] text-white/45">
+            Pacotes Especiais · Alpinea Special Tour
+          </p>
+          <h1 className={`${display.className} text-5xl font-medium leading-[1.05] tracking-tight text-white md:text-7xl`}>
+            Trading Card Game
+            <br />
+            Tour
+          </h1>
+          <p className="mx-auto mt-7 max-w-2xl text-base font-light leading-8 text-white/65">
+            Seja Pokémon, Yu-Gi-Oh! ou One Piece — acompanhamos você nas lojas com os melhores acervos
+            para singles, PSA/Graded Cards e acessórios.
+          </p>
         </div>
       </section>
 
       {/* MARCAS ATENDIDAS */}
-      <section className="border-t border-white/10 bg-black px-8 py-24 md:px-16">
+      <section className="bg-black px-8 py-24 md:px-16">
         <div className="mx-auto max-w-6xl">
           <p className="mb-5 text-xs uppercase tracking-[0.35em] text-white/30">TCGs Atendidos</p>
           <h2 className={`${display.className} max-w-3xl text-3xl font-medium leading-tight text-white md:text-5xl`}>
