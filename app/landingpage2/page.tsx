@@ -1,5 +1,6 @@
 "use client";
 
+import Script from "next/script";
 import { useEffect, useState, type FormEvent } from "react";
 import { Bodoni_Moda } from "next/font/google";
 
@@ -11,6 +12,29 @@ const display = Bodoni_Moda({
   subsets: ["latin"],
   weight: ["400", "500", "600"],
 });
+
+declare global {
+  interface Window {
+    dataLayer?: unknown[];
+    gtag?: (...args: unknown[]) => void;
+  }
+}
+
+const GOOGLE_ADS_ID = "AW-18262525346";
+
+// IMPORTANTE: substitua INSIRA_O_LABEL_AQUI pelo label da conversão criado no Google Ads.
+// O formato correto fica assim: AW-18262525346/AbCdEfGhIjKlMnOpQr
+const GOOGLE_ADS_CONVERSION_SEND_TO = "AW-18262525346/INSIRA_O_LABEL_AQUI";
+
+function trackLeadConversion(channel: "email" | "whatsapp") {
+  if (typeof window === "undefined" || !window.gtag) return;
+
+  window.gtag("event", "conversion", {
+    send_to: GOOGLE_ADS_CONVERSION_SEND_TO,
+    event_category: "lead",
+    event_label: channel,
+  });
+}
 
 // Lightbox component
 function Lightbox({ src, alt, onClose }: { src: string; alt: string; onClose: () => void }) {
@@ -92,6 +116,7 @@ function ContactModal({
       ].filter(Boolean);
       const text = encodeURIComponent(lines.join("\n"));
       window.open(`https://wa.me/5511996691818?text=${text}`, "_blank");
+      trackLeadConversion("whatsapp");
       setStatus("success");
       return;
     }
@@ -104,6 +129,7 @@ function ContactModal({
         body: JSON.stringify(payload),
       });
       if (!res.ok) throw new Error("request failed");
+      trackLeadConversion("email");
       setStatus("success");
     } catch {
       setStatus("error");
@@ -354,6 +380,18 @@ export default function LandingPage() {
 
   return (
     <main className="min-h-screen bg-black text-white">
+      <Script
+        src={`https://www.googletagmanager.com/gtag/js?id=${GOOGLE_ADS_ID}`}
+        strategy="afterInteractive"
+      />
+      <Script id="google-ads-gtag" strategy="afterInteractive">
+        {`
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+          gtag('config', '${GOOGLE_ADS_ID}');
+        `}
+      </Script>
       {lightbox && (
         <Lightbox src={lightbox.src} alt={lightbox.alt} onClose={() => setLightbox(null)} />
       )}
