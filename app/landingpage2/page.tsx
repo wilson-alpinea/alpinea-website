@@ -179,7 +179,7 @@ export default function LandingPage() {
       </section>
 
       {/* ROTEIRO SOB MEDIDA */}
-      <section className="border-b border-white/10 px-8 py-16 md:px-16 md:py-28">
+      <section className="border-b border-white/10 px-8 py-10 md:px-16 md:py-28">
         <div className="mx-auto grid max-w-7xl gap-10 md:grid-cols-2 md:gap-16">
           <div>
             <p className="mb-6 text-xs uppercase tracking-[0.3em] text-white/45 md:tracking-[0.45em]">
@@ -204,14 +204,14 @@ export default function LandingPage() {
       </section>
 
       {/* POR QUE ESCOLHER A ALPINEA */}
-      <section className="border-b border-white/10 px-8 py-14 md:px-16 md:py-24">
+      <section className="border-b border-white/10 px-8 py-10 md:px-16 md:py-24">
         <div className="mx-auto max-w-7xl">
-          <p className="mb-10 text-xs uppercase tracking-[0.3em] text-white/40 md:mb-16 md:tracking-[0.45em]">
+          <p className="mb-8 text-xs uppercase tracking-[0.3em] text-white/40 md:mb-16 md:tracking-[0.45em]">
             Por que escolher a Alpinea
           </p>
 
-          <div className="grid gap-10 md:grid-cols-4 md:gap-12">
-            <div>
+          <div className="-mx-8 flex gap-6 overflow-x-auto px-8 pb-2 snap-x snap-mandatory [&::-webkit-scrollbar]:hidden md:mx-0 md:grid md:grid-cols-4 md:gap-12 md:overflow-visible md:px-0 md:pb-0">
+            <div className="w-[72vw] flex-shrink-0 snap-start md:w-auto md:flex-shrink">
               <h3 className={`${display.className} text-2xl font-medium tracking-tight text-white md:text-3xl`}>
                 +12 anos
               </h3>
@@ -220,7 +220,7 @@ export default function LandingPage() {
               </p>
             </div>
 
-            <div>
+            <div className="w-[72vw] flex-shrink-0 snap-start md:w-auto md:flex-shrink">
               <h3 className={`${display.className} text-2xl font-medium tracking-tight text-white md:text-3xl`}>
                 Exclusividade de Serviços
               </h3>
@@ -229,7 +229,7 @@ export default function LandingPage() {
               </p>
             </div>
 
-            <div>
+            <div className="w-[72vw] flex-shrink-0 snap-start md:w-auto md:flex-shrink">
               <h3 className={`${display.className} text-2xl font-medium tracking-tight text-white md:text-3xl`}>
                 Referência na conexão Brasil–Japão
               </h3>
@@ -238,7 +238,7 @@ export default function LandingPage() {
               </p>
             </div>
 
-            <div>
+            <div className="w-[72vw] flex-shrink-0 snap-start md:w-auto md:flex-shrink">
               <h3 className={`${display.className} text-2xl font-medium tracking-tight text-white md:text-3xl`}>
                 Presença real no Japão
               </h3>
@@ -251,11 +251,11 @@ export default function LandingPage() {
       </section>
 
       {/* DIFERENCIAIS + ACESSO REAL — unified */}
-      <section className="border-b border-white/10 px-8 pt-16 pb-12 md:px-16 md:pt-28 md:pb-20">
+      <section className="border-b border-white/10 px-8 pt-10 pb-8 md:px-16 md:pt-28 md:pb-20">
         <div className="mx-auto max-w-7xl">
 
           {/* Texto diferenciais */}
-          <div className="mb-12 grid gap-10 md:mb-20 md:grid-cols-[0.8fr_1.2fr] md:gap-16">
+          <div className="mb-8 grid gap-10 md:mb-20 md:grid-cols-[0.8fr_1.2fr] md:gap-16">
             <div>
               <p className="mb-6 text-xs uppercase tracking-[0.3em] text-white/45 md:tracking-[0.45em]">
                 Nossos diferenciais
@@ -282,9 +282,9 @@ export default function LandingPage() {
           </div>
 
           {/* Fotos — 2 colunas no mobile para encurtar o scroll, 3 no desktop */}
-          <div className="grid grid-cols-2 gap-x-4 gap-y-6 md:grid-cols-3 md:gap-x-8 md:gap-y-12">
+          <div className="-mx-8 flex gap-4 overflow-x-auto px-8 pb-2 snap-x snap-mandatory [&::-webkit-scrollbar]:hidden md:mx-0 md:grid md:grid-cols-3 md:gap-x-8 md:gap-y-12 md:overflow-visible md:px-0 md:pb-0">
             {accessCards.map((item) => (
-              <div key={item.title}>
+              <div key={item.title} className="w-[46vw] flex-shrink-0 snap-start md:w-auto md:flex-shrink">
                 <div className="relative aspect-[4/3] overflow-hidden rounded-[16px] bg-white/5 md:rounded-[22px]">
                   <Image
                     src={item.image}
@@ -308,9 +308,9 @@ export default function LandingPage() {
       </section>
 
       {/* EXECUÇÃO — entregáveis */}
-      <section className="border-b border-white/10 px-8 py-16 md:px-16 md:py-28">
+      <section className="border-b border-white/10 px-8 py-10 md:px-16 md:py-28">
         <div className="mx-auto max-w-7xl">
-          <div className="mb-12 max-w-5xl md:mb-20">
+          <div className="mb-8 max-w-5xl md:mb-20">
             <p className="mb-6 text-xs uppercase tracking-[0.3em] text-white/45 md:tracking-[0.45em]">
               Execução
             </p>
@@ -328,7 +328,7 @@ export default function LandingPage() {
             O que o cliente recebe
           </p>
 
-          <div className="grid gap-10 md:grid-cols-3 md:gap-6">
+          <div className="-mx-8 flex gap-6 overflow-x-auto px-8 pb-2 snap-x snap-mandatory [&::-webkit-scrollbar]:hidden md:mx-0 md:grid md:grid-cols-3 md:gap-6 md:overflow-visible md:px-0 md:pb-0">
             {[
               {
                 title: "Roteiro privado",
@@ -346,7 +346,7 @@ export default function LandingPage() {
                 image: "/images/ss-rcompras.png",
               },
             ].map((item) => (
-              <div key={item.title} className="group">
+              <div key={item.title} className="group w-[80vw] flex-shrink-0 snap-start md:w-auto md:flex-shrink">
                 <p className="text-xs uppercase tracking-[0.35em] text-white/40">
                   Entregável Alpinea
                 </p>
@@ -368,7 +368,7 @@ export default function LandingPage() {
                       src={item.image}
                       alt={item.title}
                       fill
-                      sizes="(max-width: 768px) 100vw, 33vw"
+                      sizes="(max-width: 768px) 80vw, 33vw"
                       className="object-cover object-top transition duration-700 group-hover:scale-[1.03]"
                     />
                     {/* Zoom overlay */}
@@ -389,7 +389,7 @@ export default function LandingPage() {
           </div>
 
           {/* Dashboard da viagem — produto digital */}
-          <div className="mt-16 grid gap-10 border-t border-white/10 pt-12 md:mt-24 md:grid-cols-2 md:items-center md:gap-16 md:pt-20">
+          <div className="mt-10 grid gap-10 border-t border-white/10 pt-10 md:mt-24 md:grid-cols-2 md:items-center md:gap-16 md:pt-20">
             <div>
               <p className="mb-6 text-xs uppercase tracking-[0.3em] text-white/30 md:tracking-[0.45em]">
                 Acesso digital
@@ -442,8 +442,8 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* CONTATO INTERMEDIÁRIO — para quem já decidiu sem precisar rolar até o fim */}
-      <section className="bg-white px-8 py-14 text-black md:px-16 md:py-20">
+      {/* CONTATO INTERMEDIÁRIO — para quem já decidiu sem precisar rolar até o fim. Escondido no mobile: a barra fixa de CTA já cobre essa função, e duplicar custa uma tela cheia de scroll. */}
+      <section className="hidden bg-white px-8 py-14 text-black md:block md:px-16 md:py-20">
         <div className="mx-auto max-w-3xl text-center">
           <p className="mb-5 text-xs uppercase tracking-[0.3em] text-black/40 md:tracking-[0.45em]">
             Fale com a Alpinea
@@ -462,9 +462,9 @@ export default function LandingPage() {
       </section>
 
       {/* SERVIÇOS — 3 tiers compactos */}
-      <section className="border-b border-white/10 px-8 py-16 md:px-16 md:py-28">
+      <section className="border-b border-white/10 px-8 py-10 md:px-16 md:py-28">
         <div className="mx-auto max-w-7xl">
-          <div className="mb-12 grid gap-10 md:mb-20 md:grid-cols-[0.8fr_1.2fr] md:items-end md:gap-16">
+          <div className="mb-8 grid gap-10 md:mb-20 md:grid-cols-[0.8fr_1.2fr] md:items-end md:gap-16">
             <div>
               <p className="mb-6 text-xs uppercase tracking-[0.3em] text-white/45 md:tracking-[0.45em]">
                 Formatos de serviço
@@ -486,11 +486,11 @@ export default function LandingPage() {
             </div>
           </div>
 
-          <div className="grid gap-6 md:grid-cols-3 md:gap-8">
+          <div className="-mx-8 flex gap-6 overflow-x-auto px-8 pb-2 snap-x snap-mandatory [&::-webkit-scrollbar]:hidden md:mx-0 md:grid md:grid-cols-3 md:gap-8 md:overflow-visible md:px-0 md:pb-0">
             {tiers.map((tier) => (
               <div
                 key={tier.title}
-                className={`flex flex-col px-6 py-8 md:px-10 md:py-12 ${
+                className={`flex w-[78vw] flex-shrink-0 snap-start flex-col px-6 py-8 md:w-auto md:flex-shrink md:px-10 md:py-12 ${
                   tier.featured ? "bg-white/[0.06]" : "bg-black"
                 }`}
               >
@@ -514,7 +514,7 @@ export default function LandingPage() {
       </section>
 
       {/* PRESENÇA DIGITAL */}
-      <section className="border-b border-white/10 px-8 py-16 md:px-16 md:py-28">
+      <section className="border-b border-white/10 px-8 py-10 md:px-16 md:py-28">
         <div className="mx-auto grid max-w-7xl gap-10 md:grid-cols-[0.9fr_1.1fr] md:items-start md:gap-16">
           <div className="md:sticky md:top-24">
             <p className="mb-6 text-xs uppercase tracking-[0.3em] text-white/45 md:tracking-[0.45em]">
@@ -550,7 +550,7 @@ export default function LandingPage() {
             </div>
           </div>
 
-          <div className="flex flex-col gap-6">
+          <div className="hidden flex-col gap-6 md:flex">
             <div className="overflow-hidden rounded-[24px] bg-white/5">
               <Image
                 src="/images/youtube-feed.png"
