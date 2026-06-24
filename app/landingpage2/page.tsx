@@ -153,15 +153,10 @@ export default function LandingPage() {
         </header>
 
         <div className="relative z-10 flex h-full flex-col items-center justify-center px-6 pt-20 text-center">
-          <p className="mb-6 text-xs uppercase tracking-[0.3em] text-white/60 md:tracking-[0.5em]">
-            Viagens privadas e concierge no Japão
-          </p>
-
-          <h1 className={`${display.className} max-w-5xl text-5xl font-medium leading-[1.05] tracking-tight md:text-7xl`}>
-            Viva o Japão com
-            <br />
+          <h1 className={`${display.className} max-w-4xl text-4xl font-medium leading-[1.1] tracking-tight md:text-6xl`}>
+            Viagens privadas e concierge{" "}
             <span className="bg-gradient-to-r from-[#E94332] via-[#D96A2E] to-[#C9A03A] bg-clip-text text-transparent">
-              exclusividade.
+              no Japão.
             </span>
           </h1>
 
@@ -175,141 +170,6 @@ export default function LandingPage() {
           >
             Solicitar atendimento
           </a>
-        </div>
-      </section>
-
-      {/* ROTEIRO SOB MEDIDA — escondido no mobile: a mensagem já está coberta pelo subtítulo do hero, e manter os 2 textos custava uma tela cheia de scroll */}
-      <section className="hidden border-b border-white/10 px-8 py-10 md:block md:px-16 md:py-28">
-        <div className="mx-auto grid max-w-7xl gap-10 md:grid-cols-2 md:gap-16">
-          <div>
-            <p className="mb-6 text-xs uppercase tracking-[0.3em] text-white/45 md:tracking-[0.45em]">
-              A Jornada Alpinea
-            </p>
-
-            <h2 className={`${display.className} text-4xl font-medium leading-tight md:text-6xl`}>
-              Uma curadoria muito além de uma lista genérica de lugares.
-            </h2>
-          </div>
-
-          <div className="space-y-8 text-lg font-light leading-9 text-white/68">
-            <p>
-              Planejamos e executamos viagens privadas no Japão: hotéis, restaurantes, compras, logística, experiências e acompanhamento local quando necessário.
-            </p>
-
-            <p>
-              Cada detalhe é pensado para reduzir ruído, antecipar problemas e transformar a viagem em uma experiência fluida, precisa e profundamente personalizada.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* POR QUE ESCOLHER A ALPINEA */}
-      <section className="border-b border-white/10 px-8 py-8 md:px-16 md:py-24">
-        <div className="mx-auto max-w-7xl">
-          <p className="mb-6 text-xs uppercase tracking-[0.3em] text-white/40 md:mb-16 md:tracking-[0.45em]">
-            Por que escolher a Alpinea
-          </p>
-
-          <div className="-mx-8 flex gap-6 overflow-x-auto px-8 pb-2 snap-x snap-mandatory [&::-webkit-scrollbar]:hidden md:mx-0 md:grid md:grid-cols-4 md:gap-12 md:overflow-visible md:px-0 md:pb-0">
-            <div className="w-[72vw] flex-shrink-0 snap-start md:w-auto md:flex-shrink">
-              <h3 className={`${display.className} text-2xl font-medium tracking-tight text-white md:text-3xl`}>
-                +12 anos
-              </h3>
-              <p className="mt-6 max-w-[280px] text-sm font-light leading-7 text-white/55">
-                Mais de uma década de vivência no Japão, entre gastronomia, hotelaria, cultura, logística e relações locais.
-              </p>
-            </div>
-
-            <div className="w-[72vw] flex-shrink-0 snap-start md:w-auto md:flex-shrink">
-              <h3 className={`${display.className} text-2xl font-medium tracking-tight text-white md:text-3xl`}>
-                Exclusividade de Serviços
-              </h3>
-              <p className="mt-6 max-w-[280px] text-sm font-light leading-7 text-white/55">
-                Somos a única empresa que oferece ao público brasileiro curadoria de elite para gastronomia e consumo, incluso fluência no idioma para elevar as experiências.
-              </p>
-            </div>
-
-            <div className="w-[72vw] flex-shrink-0 snap-start md:w-auto md:flex-shrink">
-              <h3 className={`${display.className} text-2xl font-medium tracking-tight text-white md:text-3xl`}>
-                Referência na conexão Brasil–Japão
-              </h3>
-              <p className="mt-6 max-w-[280px] text-sm font-light leading-7 text-white/55">
-                Entre os 3 maiores emissores de passagens aéreas dessa rota no mundo, unimos conhecimento operacional à curadoria de experiências privadas.
-              </p>
-            </div>
-
-            <div className="w-[72vw] flex-shrink-0 snap-start md:w-auto md:flex-shrink">
-              <h3 className={`${display.className} text-2xl font-medium tracking-tight text-white md:text-3xl`}>
-                Presença real no Japão
-              </h3>
-              <p className="mt-6 max-w-[280px] text-sm font-light leading-7 text-white/55">
-                Nossa operação própria no Japão permite um atendimento sem intermediários, com maior flexibilidade, controle e proximidade dos melhores parceiros locais.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* DIFERENCIAIS + ACESSO REAL — unified */}
-      <section className="border-b border-white/10 px-8 pt-8 pb-6 md:px-16 md:pt-28 md:pb-20">
-        <div className="mx-auto max-w-7xl">
-
-          {/* Texto diferenciais */}
-          <div className="mb-6 grid gap-10 md:mb-20 md:grid-cols-[0.8fr_1.2fr] md:gap-16">
-            <div>
-              <p className="mb-6 text-xs uppercase tracking-[0.3em] text-white/45 md:tracking-[0.45em]">
-                Nossos diferenciais
-              </p>
-              <h2 className={`${display.className} text-4xl font-medium leading-tight md:text-6xl`}>
-                Acesso, profundidade e execução no mercado de luxo japonês.
-              </h2>
-            </div>
-
-            {/* Versão curta — só mobile */}
-            <p className="text-base font-light leading-8 text-white/68 md:hidden">
-              O acesso no Japão exige anos de relacionamento: os grandes nomes da gastronomia não estão em plataformas, e os melhores produtos não fazem propaganda.
-            </p>
-
-            {/* Versão completa — só desktop */}
-            <div className="hidden space-y-10 text-lg font-light leading-9 text-white/68 md:block">
-              <p>
-                O acesso no Japão não é baseado somente em desejo e vontade de frequentar. Mais do que isso, são necessários anos de relacionamento com esses estabelecimentos.
-              </p>
-              <p>
-                Os grandes nomes da gastronomia japonesa não estão disponíveis em plataformas. Muitos não aceitam reservas em inglês e alguns só recebem clientes apresentados por relações construídas ao longo de anos.
-              </p>
-              <p>
-                Os melhores produtos de cada categoria não fazem propaganda.
-              </p>
-              <p>
-                Encontrar o hotel ideal exige mais do que reconhecer nomes famosos. Exige entender bairros, atmosferas e o estilo de viagem de cada cliente.
-              </p>
-            </div>
-          </div>
-
-          {/* Fotos — carrossel no mobile, grid no desktop */}
-          <div className="-mx-8 flex gap-4 overflow-x-auto px-8 pb-2 snap-x snap-mandatory [&::-webkit-scrollbar]:hidden md:mx-0 md:grid md:grid-cols-3 md:gap-x-8 md:gap-y-12 md:overflow-visible md:px-0 md:pb-0">
-            {accessCards.map((item) => (
-              <div key={item.title} className="w-[46vw] flex-shrink-0 snap-start md:w-auto md:flex-shrink">
-                <div className="relative aspect-[4/3] overflow-hidden rounded-[16px] bg-white/5 md:rounded-[22px]">
-                  <Image
-                    src={item.image}
-                    alt={item.title}
-                    fill
-                    sizes="(max-width: 768px) 50vw, 33vw"
-                    className={`object-cover ${item.position}`}
-                  />
-                </div>
-                <h3 className="mt-3 text-sm font-light text-white md:mt-5 md:text-xl">
-                  {item.title}
-                </h3>
-              </div>
-            ))}
-          </div>
-
-          <p className="mt-6 hidden max-w-xl text-sm font-light leading-7 text-white/50 md:mt-14 md:block md:text-base md:leading-8">
-            Não operamos por plataformas. Cada reserva, cada acesso, cada experiência acima vem de uma relação construída ao longo de anos.
-          </p>
         </div>
       </section>
 
@@ -445,6 +305,141 @@ export default function LandingPage() {
               </div>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* ROTEIRO SOB MEDIDA — escondido no mobile: a mensagem já está coberta pelo subtítulo do hero, e manter os 2 textos custava uma tela cheia de scroll */}
+      <section className="hidden border-b border-white/10 px-8 py-10 md:block md:px-16 md:py-28">
+        <div className="mx-auto grid max-w-7xl gap-10 md:grid-cols-2 md:gap-16">
+          <div>
+            <p className="mb-6 text-xs uppercase tracking-[0.3em] text-white/45 md:tracking-[0.45em]">
+              A Jornada Alpinea
+            </p>
+
+            <h2 className={`${display.className} text-4xl font-medium leading-tight md:text-6xl`}>
+              Uma curadoria muito além de uma lista genérica de lugares.
+            </h2>
+          </div>
+
+          <div className="space-y-8 text-lg font-light leading-9 text-white/68">
+            <p>
+              Planejamos e executamos viagens privadas no Japão: hotéis, restaurantes, compras, logística, experiências e acompanhamento local quando necessário.
+            </p>
+
+            <p>
+              Cada detalhe é pensado para reduzir ruído, antecipar problemas e transformar a viagem em uma experiência fluida, precisa e profundamente personalizada.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* POR QUE ESCOLHER A ALPINEA */}
+      <section className="border-b border-white/10 px-8 py-8 md:px-16 md:py-24">
+        <div className="mx-auto max-w-7xl">
+          <p className="mb-6 text-xs uppercase tracking-[0.3em] text-white/40 md:mb-16 md:tracking-[0.45em]">
+            Por que escolher a Alpinea
+          </p>
+
+          <div className="-mx-8 flex gap-6 overflow-x-auto px-8 pb-2 snap-x snap-mandatory [&::-webkit-scrollbar]:hidden md:mx-0 md:grid md:grid-cols-4 md:gap-12 md:overflow-visible md:px-0 md:pb-0">
+            <div className="w-[72vw] flex-shrink-0 snap-start md:w-auto md:flex-shrink">
+              <h3 className={`${display.className} text-2xl font-medium tracking-tight text-white md:text-3xl`}>
+                +12 anos
+              </h3>
+              <p className="mt-6 max-w-[280px] text-sm font-light leading-7 text-white/55">
+                Mais de uma década de vivência no Japão, entre gastronomia, hotelaria, cultura, logística e relações locais.
+              </p>
+            </div>
+
+            <div className="w-[72vw] flex-shrink-0 snap-start md:w-auto md:flex-shrink">
+              <h3 className={`${display.className} text-2xl font-medium tracking-tight text-white md:text-3xl`}>
+                Exclusividade de Serviços
+              </h3>
+              <p className="mt-6 max-w-[280px] text-sm font-light leading-7 text-white/55">
+                Somos a única empresa que oferece ao público brasileiro curadoria de elite para gastronomia e consumo, incluso fluência no idioma para elevar as experiências.
+              </p>
+            </div>
+
+            <div className="w-[72vw] flex-shrink-0 snap-start md:w-auto md:flex-shrink">
+              <h3 className={`${display.className} text-2xl font-medium tracking-tight text-white md:text-3xl`}>
+                Referência na conexão Brasil–Japão
+              </h3>
+              <p className="mt-6 max-w-[280px] text-sm font-light leading-7 text-white/55">
+                Entre os 3 maiores emissores de passagens aéreas dessa rota no mundo, unimos conhecimento operacional à curadoria de experiências privadas.
+              </p>
+            </div>
+
+            <div className="w-[72vw] flex-shrink-0 snap-start md:w-auto md:flex-shrink">
+              <h3 className={`${display.className} text-2xl font-medium tracking-tight text-white md:text-3xl`}>
+                Presença real no Japão
+              </h3>
+              <p className="mt-6 max-w-[280px] text-sm font-light leading-7 text-white/55">
+                Nossa operação própria no Japão permite um atendimento sem intermediários, com maior flexibilidade, controle e proximidade dos melhores parceiros locais.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* DIFERENCIAIS + ACESSO REAL — unified */}
+      <section className="border-b border-white/10 px-8 pt-8 pb-6 md:px-16 md:pt-28 md:pb-20">
+        <div className="mx-auto max-w-7xl">
+
+          {/* Texto diferenciais */}
+          <div className="mb-6 grid gap-10 md:mb-20 md:grid-cols-[0.8fr_1.2fr] md:gap-16">
+            <div>
+              <p className="mb-6 text-xs uppercase tracking-[0.3em] text-white/45 md:tracking-[0.45em]">
+                Nossos diferenciais
+              </p>
+              <h2 className={`${display.className} text-4xl font-medium leading-tight md:text-6xl`}>
+                Acesso, profundidade e execução no mercado de luxo japonês.
+              </h2>
+            </div>
+
+            {/* Versão curta — só mobile */}
+            <p className="text-base font-light leading-8 text-white/68 md:hidden">
+              O acesso no Japão exige anos de relacionamento: os grandes nomes da gastronomia não estão em plataformas, e os melhores produtos não fazem propaganda.
+            </p>
+
+            {/* Versão completa — só desktop */}
+            <div className="hidden space-y-10 text-lg font-light leading-9 text-white/68 md:block">
+              <p>
+                O acesso no Japão não é baseado somente em desejo e vontade de frequentar. Mais do que isso, são necessários anos de relacionamento com esses estabelecimentos.
+              </p>
+              <p>
+                Os grandes nomes da gastronomia japonesa não estão disponíveis em plataformas. Muitos não aceitam reservas em inglês e alguns só recebem clientes apresentados por relações construídas ao longo de anos.
+              </p>
+              <p>
+                Os melhores produtos de cada categoria não fazem propaganda.
+              </p>
+              <p>
+                Encontrar o hotel ideal exige mais do que reconhecer nomes famosos. Exige entender bairros, atmosferas e o estilo de viagem de cada cliente.
+              </p>
+            </div>
+          </div>
+
+          {/* Fotos — carrossel no mobile, grid no desktop */}
+          <div className="-mx-8 flex gap-4 overflow-x-auto px-8 pb-2 snap-x snap-mandatory [&::-webkit-scrollbar]:hidden md:mx-0 md:grid md:grid-cols-3 md:gap-x-8 md:gap-y-12 md:overflow-visible md:px-0 md:pb-0">
+            {accessCards.map((item) => (
+              <div key={item.title} className="w-[46vw] flex-shrink-0 snap-start md:w-auto md:flex-shrink">
+                <div className="relative aspect-[4/3] overflow-hidden rounded-[16px] bg-white/5 md:rounded-[22px]">
+                  <Image
+                    src={item.image}
+                    alt={item.title}
+                    fill
+                    sizes="(max-width: 768px) 50vw, 33vw"
+                    className={`object-cover ${item.position}`}
+                  />
+                </div>
+                <h3 className="mt-3 text-sm font-light text-white md:mt-5 md:text-xl">
+                  {item.title}
+                </h3>
+              </div>
+            ))}
+          </div>
+
+          <p className="mt-6 hidden max-w-xl text-sm font-light leading-7 text-white/50 md:mt-14 md:block md:text-base md:leading-8">
+            Não operamos por plataformas. Cada reserva, cada acesso, cada experiência acima vem de uma relação construída ao longo de anos.
+          </p>
         </div>
       </section>
 
