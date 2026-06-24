@@ -178,7 +178,7 @@ export default function ServicesPage() {
                   ["Reserva de hotéis", "—", "✓", "✓"],
                   ["Organização de transporte privado", "Opcional", "✓", "✓"],
                   ["Curadoria gastronômica", "Sugestões", "✓", "✓"],
-                  ["Reservas em restaurantes", "—", "✓", "✓"],
+                  ["Reservas em restaurantes", "Opcional", "✓", "✓"],
                   ["Planejamento de compras", "Sugestões", "✓", "✓"],
                   ["JR Pass", "Opcional", "✓", "✓"],
                   ["Ingressos e atrações", "Opcional", "✓", "✓"],
