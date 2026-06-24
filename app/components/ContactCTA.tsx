@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState, type FormEvent } from "react";
+import { createPortal } from "react-dom";
 
 declare global {
   interface Window {
@@ -17,6 +18,11 @@ function ContactModal({
 }) {
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [errorMsg, setErrorMsg] = useState("");
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -109,7 +115,9 @@ function ContactModal({
     }
   }
 
-  return (
+  if (!mounted) return null;
+
+  return createPortal(
     <div
       className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 p-4 md:p-8"
       onClick={onClose}
@@ -338,7 +346,8 @@ function ContactModal({
           </>
         )}
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
 
