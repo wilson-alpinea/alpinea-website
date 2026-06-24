@@ -156,7 +156,7 @@ export default function LandingPage() {
           <h1 className={`${display.className} max-w-4xl text-4xl font-medium leading-[1.1] tracking-tight md:text-6xl`}>
             Viagens privadas e concierge{" "}
             <span className="bg-gradient-to-r from-[#E94332] via-[#D96A2E] to-[#C9A03A] bg-clip-text text-transparent">
-              no Japão.
+              de luxo no Japão.
             </span>
           </h1>
 
@@ -188,6 +188,17 @@ export default function LandingPage() {
             <p className="mt-8 hidden max-w-3xl text-lg font-light leading-9 text-white/68 md:block">
               Do planejamento ao acompanhamento presencial, a Alpinea organiza os detalhes que determinam a qualidade real de uma viagem de alto padrão no Japão.
             </p>
+          </div>
+
+          {/* Foto de impacto — quebra a sequência de screenshots de produto com uma imagem real de experiência, antes de entrar na prova prática */}
+          <div className="relative mb-10 aspect-[4/3] overflow-hidden rounded-[20px] md:mb-16 md:aspect-[21/9]">
+            <Image
+              src="/images/peninsula3.jpg"
+              alt="Hospedagem de luxo no Japão"
+              fill
+              sizes="100vw"
+              className="object-cover"
+            />
           </div>
 
           <p className="mb-6 text-xs uppercase tracking-[0.3em] text-white/30 md:mb-10 md:tracking-[0.45em]">
