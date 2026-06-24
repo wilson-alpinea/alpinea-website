@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import { Bodoni_Moda } from "next/font/google";
 import { ContactCTA } from "../components/ContactCTA";
 
@@ -119,7 +120,7 @@ export default function LandingPage() {
   ];
 
   return (
-    <main className="min-h-screen bg-black text-white">
+    <main className="min-h-screen scroll-smooth bg-black text-white">
       {lightbox && (
         <Lightbox src={lightbox.src} alt={lightbox.alt} onClose={() => setLightbox(null)} />
       )}
@@ -152,7 +153,7 @@ export default function LandingPage() {
         </header>
 
         <div className="relative z-10 flex h-full flex-col items-center justify-center px-6 pt-20 text-center">
-          <p className="mb-6 text-xs uppercase tracking-[0.5em] text-white/60">
+          <p className="mb-6 text-xs uppercase tracking-[0.3em] text-white/60 md:tracking-[0.5em]">
             Viagens privadas e concierge no Japão
           </p>
 
@@ -178,10 +179,10 @@ export default function LandingPage() {
       </section>
 
       {/* ROTEIRO SOB MEDIDA */}
-      <section className="border-b border-white/10 px-8 py-28 md:px-16">
-        <div className="mx-auto grid max-w-7xl gap-16 md:grid-cols-2">
+      <section className="border-b border-white/10 px-8 py-16 md:px-16 md:py-28">
+        <div className="mx-auto grid max-w-7xl gap-10 md:grid-cols-2 md:gap-16">
           <div>
-            <p className="mb-6 text-xs uppercase tracking-[0.45em] text-white/45">
+            <p className="mb-6 text-xs uppercase tracking-[0.3em] text-white/45 md:tracking-[0.45em]">
               A Jornada Alpinea
             </p>
 
@@ -203,13 +204,13 @@ export default function LandingPage() {
       </section>
 
       {/* POR QUE ESCOLHER A ALPINEA */}
-      <section className="border-b border-white/10 px-8 py-24 md:px-16">
+      <section className="border-b border-white/10 px-8 py-14 md:px-16 md:py-24">
         <div className="mx-auto max-w-7xl">
-          <p className="mb-16 text-xs uppercase tracking-[0.45em] text-white/40">
+          <p className="mb-10 text-xs uppercase tracking-[0.3em] text-white/40 md:mb-16 md:tracking-[0.45em]">
             Por que escolher a Alpinea
           </p>
 
-          <div className="grid gap-12 md:grid-cols-4">
+          <div className="grid gap-10 md:grid-cols-4 md:gap-12">
             <div>
               <h3 className={`${display.className} text-2xl font-medium tracking-tight text-white md:text-3xl`}>
                 +12 anos
@@ -250,13 +251,13 @@ export default function LandingPage() {
       </section>
 
       {/* DIFERENCIAIS + ACESSO REAL — unified */}
-      <section className="border-b border-white/10 px-8 pt-28 pb-20 md:px-16">
+      <section className="border-b border-white/10 px-8 pt-16 pb-12 md:px-16 md:pt-28 md:pb-20">
         <div className="mx-auto max-w-7xl">
 
           {/* Texto diferenciais */}
-          <div className="grid gap-16 md:grid-cols-[0.8fr_1.2fr] mb-20">
+          <div className="mb-12 grid gap-10 md:mb-20 md:grid-cols-[0.8fr_1.2fr] md:gap-16">
             <div>
-              <p className="mb-6 text-xs uppercase tracking-[0.45em] text-white/45">
+              <p className="mb-6 text-xs uppercase tracking-[0.3em] text-white/45 md:tracking-[0.45em]">
                 Nossos diferenciais
               </p>
               <h2 className={`${display.className} text-4xl font-medium leading-tight md:text-6xl`}>
@@ -264,7 +265,7 @@ export default function LandingPage() {
               </h2>
             </div>
 
-            <div className="space-y-10 text-lg font-light leading-9 text-white/68">
+            <div className="space-y-6 text-base font-light leading-8 text-white/68 md:space-y-10 md:text-lg md:leading-9">
               <p>
                 O acesso no Japão não é baseado somente em desejo e vontade de frequentar. Mais do que isso, são necessários anos de relacionamento com esses estabelecimentos.
               </p>
@@ -280,35 +281,37 @@ export default function LandingPage() {
             </div>
           </div>
 
-          {/* Fotos */}
-          <div className="grid gap-x-8 gap-y-12 md:grid-cols-3">
+          {/* Fotos — 2 colunas no mobile para encurtar o scroll, 3 no desktop */}
+          <div className="grid grid-cols-2 gap-x-4 gap-y-6 md:grid-cols-3 md:gap-x-8 md:gap-y-12">
             {accessCards.map((item) => (
               <div key={item.title}>
-                <div className="relative aspect-[4/3] overflow-hidden rounded-[22px] bg-white/5">
-                  <img
+                <div className="relative aspect-[4/3] overflow-hidden rounded-[16px] bg-white/5 md:rounded-[22px]">
+                  <Image
                     src={item.image}
                     alt={item.title}
-                    className={`h-full w-full object-cover ${item.position}`}
+                    fill
+                    sizes="(max-width: 768px) 50vw, 33vw"
+                    className={`object-cover ${item.position}`}
                   />
                 </div>
-                <h3 className="mt-5 text-xl font-light text-white">
+                <h3 className="mt-3 text-sm font-light text-white md:mt-5 md:text-xl">
                   {item.title}
                 </h3>
               </div>
             ))}
           </div>
 
-          <p className="mt-14 max-w-xl text-base font-light leading-8 text-white/50">
+          <p className="mt-8 max-w-xl text-sm font-light leading-7 text-white/50 md:mt-14 md:text-base md:leading-8">
             Não operamos por plataformas. Cada reserva, cada acesso, cada experiência acima vem de uma relação construída ao longo de anos.
           </p>
         </div>
       </section>
 
       {/* EXECUÇÃO — entregáveis */}
-      <section className="border-b border-white/10 px-8 py-28 md:px-16">
+      <section className="border-b border-white/10 px-8 py-16 md:px-16 md:py-28">
         <div className="mx-auto max-w-7xl">
-          <div className="mb-20 max-w-5xl">
-            <p className="mb-6 text-xs uppercase tracking-[0.45em] text-white/45">
+          <div className="mb-12 max-w-5xl md:mb-20">
+            <p className="mb-6 text-xs uppercase tracking-[0.3em] text-white/45 md:tracking-[0.45em]">
               Execução
             </p>
 
@@ -321,11 +324,11 @@ export default function LandingPage() {
             </p>
           </div>
 
-          <p className="mb-10 text-xs uppercase tracking-[0.45em] text-white/30">
+          <p className="mb-8 text-xs uppercase tracking-[0.3em] text-white/30 md:mb-10 md:tracking-[0.45em]">
             O que o cliente recebe
           </p>
 
-          <div className="grid gap-6 md:grid-cols-3">
+          <div className="grid gap-10 md:grid-cols-3 md:gap-6">
             {[
               {
                 title: "Roteiro privado",
@@ -357,14 +360,16 @@ export default function LandingPage() {
                 </p>
 
                 <div
-                  className="mt-8 overflow-hidden rounded-[26px] bg-white/[0.04] cursor-zoom-in relative"
+                  className="mt-6 overflow-hidden rounded-[26px] bg-white/[0.04] cursor-zoom-in relative md:mt-8"
                   onClick={() => setLightbox({ src: item.image, alt: item.title })}
                 >
                   <div className="relative aspect-[4/5] overflow-hidden rounded-[26px]">
-                    <img
+                    <Image
                       src={item.image}
                       alt={item.title}
-                      className="h-full w-full object-cover object-top transition duration-700 group-hover:scale-[1.03]"
+                      fill
+                      sizes="(max-width: 768px) 100vw, 33vw"
+                      className="object-cover object-top transition duration-700 group-hover:scale-[1.03]"
                     />
                     {/* Zoom overlay */}
                     <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition duration-300 bg-black/30">
@@ -384,9 +389,9 @@ export default function LandingPage() {
           </div>
 
           {/* Dashboard da viagem — produto digital */}
-          <div className="mt-24 grid gap-16 border-t border-white/10 pt-20 md:grid-cols-2 md:items-center">
+          <div className="mt-16 grid gap-10 border-t border-white/10 pt-12 md:mt-24 md:grid-cols-2 md:items-center md:gap-16 md:pt-20">
             <div>
-              <p className="mb-6 text-xs uppercase tracking-[0.45em] text-white/30">
+              <p className="mb-6 text-xs uppercase tracking-[0.3em] text-white/30 md:tracking-[0.45em]">
                 Acesso digital
               </p>
 
@@ -411,10 +416,12 @@ export default function LandingPage() {
               >
                 <div className="absolute left-1/2 top-6 z-10 h-5 w-24 -translate-x-1/2 rounded-full bg-black" />
                 <div className="relative aspect-[1320/2257] w-full overflow-hidden rounded-[30px] bg-black">
-                  <img
+                  <Image
                     src="/images/dashmobile.jpg"
                     alt="Dashboard de viagem Alpinea, acessado pelo celular"
-                    className="absolute left-0 top-0 h-auto w-full transition duration-700 group-hover:scale-[1.03]"
+                    fill
+                    sizes="260px"
+                    className="object-cover transition duration-700 group-hover:scale-[1.03]"
                   />
 
                   {/* Zoom overlay */}
@@ -436,9 +443,9 @@ export default function LandingPage() {
       </section>
 
       {/* CONTATO INTERMEDIÁRIO — para quem já decidiu sem precisar rolar até o fim */}
-      <section className="bg-white px-8 py-20 text-black md:px-16">
+      <section className="bg-white px-8 py-14 text-black md:px-16 md:py-20">
         <div className="mx-auto max-w-3xl text-center">
-          <p className="mb-5 text-xs uppercase tracking-[0.45em] text-black/40">
+          <p className="mb-5 text-xs uppercase tracking-[0.3em] text-black/40 md:tracking-[0.45em]">
             Fale com a Alpinea
           </p>
 
@@ -455,11 +462,11 @@ export default function LandingPage() {
       </section>
 
       {/* SERVIÇOS — 3 tiers compactos */}
-      <section className="border-b border-white/10 px-8 py-28 md:px-16">
+      <section className="border-b border-white/10 px-8 py-16 md:px-16 md:py-28">
         <div className="mx-auto max-w-7xl">
-          <div className="mb-20 grid gap-16 md:grid-cols-[0.8fr_1.2fr] md:items-end">
+          <div className="mb-12 grid gap-10 md:mb-20 md:grid-cols-[0.8fr_1.2fr] md:items-end md:gap-16">
             <div>
-              <p className="mb-6 text-xs uppercase tracking-[0.45em] text-white/45">
+              <p className="mb-6 text-xs uppercase tracking-[0.3em] text-white/45 md:tracking-[0.45em]">
                 Formatos de serviço
               </p>
 
@@ -479,11 +486,11 @@ export default function LandingPage() {
             </div>
           </div>
 
-          <div className="grid gap-8 md:grid-cols-3">
+          <div className="grid gap-6 md:grid-cols-3 md:gap-8">
             {tiers.map((tier) => (
               <div
                 key={tier.title}
-                className={`flex flex-col px-10 py-12 ${
+                className={`flex flex-col px-6 py-8 md:px-10 md:py-12 ${
                   tier.featured ? "bg-white/[0.06]" : "bg-black"
                 }`}
               >
@@ -507,10 +514,10 @@ export default function LandingPage() {
       </section>
 
       {/* PRESENÇA DIGITAL */}
-      <section className="border-b border-white/10 px-8 py-28 md:px-16">
-        <div className="mx-auto grid max-w-7xl gap-16 md:grid-cols-[0.9fr_1.1fr] md:items-start">
+      <section className="border-b border-white/10 px-8 py-16 md:px-16 md:py-28">
+        <div className="mx-auto grid max-w-7xl gap-10 md:grid-cols-[0.9fr_1.1fr] md:items-start md:gap-16">
           <div className="md:sticky md:top-24">
-            <p className="mb-6 text-xs uppercase tracking-[0.45em] text-white/45">
+            <p className="mb-6 text-xs uppercase tracking-[0.3em] text-white/45 md:tracking-[0.45em]">
               Presença digital
             </p>
 
@@ -549,6 +556,8 @@ export default function LandingPage() {
                 src="/images/youtube-feed.png"
                 alt="Feed do YouTube Alpinea Private"
                 className="w-full object-cover object-top"
+                loading="lazy"
+                decoding="async"
               />
             </div>
 
@@ -557,6 +566,8 @@ export default function LandingPage() {
                 src="/images/ss-ig.png"
                 alt="Feed do Instagram Alpinea Private"
                 className="w-full object-cover object-top"
+                loading="lazy"
+                decoding="async"
               />
             </div>
           </div>
@@ -564,9 +575,9 @@ export default function LandingPage() {
       </section>
 
       {/* CONTATO */}
-      <section id="contact" className="bg-white px-8 py-28 text-black md:px-16">
+      <section id="contact" className="bg-white px-8 py-20 text-black md:px-16 md:py-28">
         <div className="mx-auto max-w-4xl text-center">
-          <p className="mb-6 text-xs uppercase tracking-[0.45em] text-black/45">
+          <p className="mb-6 text-xs uppercase tracking-[0.3em] text-black/45 md:tracking-[0.45em]">
             Contato
           </p>
 
@@ -587,7 +598,7 @@ export default function LandingPage() {
       </section>
 
       {/* FOOTER */}
-      <footer className="border-t border-white/10 bg-black px-8 py-16 text-white md:px-16">
+      <footer className="border-t border-white/10 bg-black px-8 pb-28 pt-16 text-white md:px-16 md:pb-16">
         <div className="mx-auto flex max-w-7xl flex-col justify-between gap-12 md:flex-row md:items-start">
           <div className="space-y-6">
             <img
@@ -646,6 +657,19 @@ export default function LandingPage() {
           </nav>
         </div>
       </footer>
+
+      {/* CTA FIXO MOBILE — mantém a conversão sempre a 1 toque, mesmo após rolar 10+ seções */}
+      <div
+        className="fixed inset-x-0 bottom-0 z-40 border-t border-white/10 bg-black/95 px-6 pt-3 backdrop-blur-xl md:hidden"
+        style={{ paddingBottom: "calc(0.75rem + env(safe-area-inset-bottom))" }}
+      >
+        <a
+          href="#contact"
+          className="block w-full border border-white/30 py-3 text-center text-xs uppercase tracking-[0.3em] text-white transition active:bg-white active:text-black"
+        >
+          Solicitar atendimento
+        </a>
+      </div>
     </main>
   );
 }
