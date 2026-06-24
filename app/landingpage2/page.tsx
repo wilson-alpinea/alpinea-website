@@ -125,7 +125,7 @@ export default function LandingPage() {
         <Lightbox src={lightbox.src} alt={lightbox.alt} onClose={() => setLightbox(null)} />
       )}
       {/* HERO */}
-      <section className="relative h-[50vh] min-h-[520px] overflow-hidden">
+      <section className="relative h-[50svh] min-h-[520px] overflow-hidden md:h-[50vh]">
         <video
           className="absolute inset-0 h-full w-full object-cover"
           src="/videos/higashiyama.mp4"
@@ -552,22 +552,24 @@ export default function LandingPage() {
 
           <div className="flex flex-col gap-6">
             <div className="overflow-hidden rounded-[24px] bg-white/5">
-              <img
+              <Image
                 src="/images/youtube-feed.png"
                 alt="Feed do YouTube Alpinea Private"
-                className="w-full object-cover object-top"
-                loading="lazy"
-                decoding="async"
+                width={1332}
+                height={1181}
+                sizes="(max-width: 768px) 100vw, 50vw"
+                className="h-auto w-full object-cover object-top"
               />
             </div>
 
             <div className="overflow-hidden rounded-[24px] bg-white/5">
-              <img
+              <Image
                 src="/images/ss-ig.png"
                 alt="Feed do Instagram Alpinea Private"
-                className="w-full object-cover object-top"
-                loading="lazy"
-                decoding="async"
+                width={956}
+                height={1646}
+                sizes="(max-width: 768px) 100vw, 50vw"
+                className="h-auto w-full object-cover object-top"
               />
             </div>
           </div>
@@ -658,17 +660,18 @@ export default function LandingPage() {
         </div>
       </footer>
 
-      {/* CTA FIXO MOBILE — mantém a conversão sempre a 1 toque, mesmo após rolar 10+ seções */}
+      {/* CTA FIXO MOBILE — abre o formulário direto, sem rolar/redirecionar */}
       <div
         className="fixed inset-x-0 bottom-0 z-40 border-t border-white/10 bg-black/95 px-6 pt-3 backdrop-blur-xl md:hidden"
         style={{ paddingBottom: "calc(0.75rem + env(safe-area-inset-bottom))" }}
       >
-        <a
-          href="#contact"
-          className="block w-full border border-white/30 py-3 text-center text-xs uppercase tracking-[0.3em] text-white transition active:bg-white active:text-black"
-        >
-          Solicitar atendimento
-        </a>
+        <ContactCTA
+          mode="single"
+          channel="email"
+          label="Solicitar atendimento"
+          className="block w-full"
+          buttonClassName="block w-full border border-white/30 py-3 text-center text-xs uppercase tracking-[0.3em] text-white transition active:bg-white active:text-black"
+        />
       </div>
     </main>
   );

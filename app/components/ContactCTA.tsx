@@ -344,10 +344,45 @@ function ContactModal({
 
 export function ContactCTA({
   className = "mt-12 flex flex-col items-center justify-center gap-4 sm:flex-row",
+  mode = "buttons",
+  channel = "email",
+  label = "Falar por e-mail",
+  buttonClassName,
 }: {
   className?: string;
+  /** "buttons" (padrão) renderiza os 2 CTAs de sempre. "single" renderiza 1 botão que já abre o modal direto. */
+  mode?: "buttons" | "single";
+  /** Canal usado quando mode="single". */
+  channel?: "email" | "whatsapp";
+  /** Texto do botão quando mode="single". */
+  label?: string;
+  /** Classe do próprio botão quando mode="single" (sobrescreve o estilo padrão). */
+  buttonClassName?: string;
 }) {
   const [contactChannel, setContactChannel] = useState<"email" | "whatsapp" | null>(null);
+
+  if (mode === "single") {
+    return (
+      <>
+        {contactChannel && (
+          <ContactModal channel={contactChannel} onClose={() => setContactChannel(null)} />
+        )}
+
+        <div className={className}>
+          <button
+            type="button"
+            onClick={() => setContactChannel(channel)}
+            className={
+              buttonClassName ??
+              "bg-black px-8 py-4 text-xs uppercase tracking-[0.3em] text-white transition hover:bg-black/85"
+            }
+          >
+            {label}
+          </button>
+        </div>
+      </>
+    );
+  }
 
   return (
     <>
