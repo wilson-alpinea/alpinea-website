@@ -125,7 +125,7 @@ export default function LandingPage() {
         <Lightbox src={lightbox.src} alt={lightbox.alt} onClose={() => setLightbox(null)} />
       )}
       {/* HERO */}
-      <section className="relative h-[50svh] min-h-[520px] overflow-hidden md:h-[50vh]">
+      <section className="relative h-[50svh] min-h-[460px] overflow-hidden md:h-[50vh] md:min-h-[520px]">
         <video
           className="absolute inset-0 h-full w-full object-cover"
           src="/videos/higashiyama.mp4"
@@ -178,8 +178,8 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ROTEIRO SOB MEDIDA */}
-      <section className="border-b border-white/10 px-8 py-10 md:px-16 md:py-28">
+      {/* ROTEIRO SOB MEDIDA — escondido no mobile: a mensagem já está coberta pelo subtítulo do hero, e manter os 2 textos custava uma tela cheia de scroll */}
+      <section className="hidden border-b border-white/10 px-8 py-10 md:block md:px-16 md:py-28">
         <div className="mx-auto grid max-w-7xl gap-10 md:grid-cols-2 md:gap-16">
           <div>
             <p className="mb-6 text-xs uppercase tracking-[0.3em] text-white/45 md:tracking-[0.45em]">
@@ -204,9 +204,9 @@ export default function LandingPage() {
       </section>
 
       {/* POR QUE ESCOLHER A ALPINEA */}
-      <section className="border-b border-white/10 px-8 py-10 md:px-16 md:py-24">
+      <section className="border-b border-white/10 px-8 py-8 md:px-16 md:py-24">
         <div className="mx-auto max-w-7xl">
-          <p className="mb-8 text-xs uppercase tracking-[0.3em] text-white/40 md:mb-16 md:tracking-[0.45em]">
+          <p className="mb-6 text-xs uppercase tracking-[0.3em] text-white/40 md:mb-16 md:tracking-[0.45em]">
             Por que escolher a Alpinea
           </p>
 
@@ -251,11 +251,11 @@ export default function LandingPage() {
       </section>
 
       {/* DIFERENCIAIS + ACESSO REAL — unified */}
-      <section className="border-b border-white/10 px-8 pt-10 pb-8 md:px-16 md:pt-28 md:pb-20">
+      <section className="border-b border-white/10 px-8 pt-8 pb-6 md:px-16 md:pt-28 md:pb-20">
         <div className="mx-auto max-w-7xl">
 
           {/* Texto diferenciais */}
-          <div className="mb-8 grid gap-10 md:mb-20 md:grid-cols-[0.8fr_1.2fr] md:gap-16">
+          <div className="mb-6 grid gap-10 md:mb-20 md:grid-cols-[0.8fr_1.2fr] md:gap-16">
             <div>
               <p className="mb-6 text-xs uppercase tracking-[0.3em] text-white/45 md:tracking-[0.45em]">
                 Nossos diferenciais
@@ -265,7 +265,13 @@ export default function LandingPage() {
               </h2>
             </div>
 
-            <div className="space-y-6 text-base font-light leading-8 text-white/68 md:space-y-10 md:text-lg md:leading-9">
+            {/* Versão curta — só mobile */}
+            <p className="text-base font-light leading-8 text-white/68 md:hidden">
+              O acesso no Japão exige anos de relacionamento: os grandes nomes da gastronomia não estão em plataformas, e os melhores produtos não fazem propaganda.
+            </p>
+
+            {/* Versão completa — só desktop */}
+            <div className="hidden space-y-10 text-lg font-light leading-9 text-white/68 md:block">
               <p>
                 O acesso no Japão não é baseado somente em desejo e vontade de frequentar. Mais do que isso, são necessários anos de relacionamento com esses estabelecimentos.
               </p>
@@ -281,7 +287,7 @@ export default function LandingPage() {
             </div>
           </div>
 
-          {/* Fotos — 2 colunas no mobile para encurtar o scroll, 3 no desktop */}
+          {/* Fotos — carrossel no mobile, grid no desktop */}
           <div className="-mx-8 flex gap-4 overflow-x-auto px-8 pb-2 snap-x snap-mandatory [&::-webkit-scrollbar]:hidden md:mx-0 md:grid md:grid-cols-3 md:gap-x-8 md:gap-y-12 md:overflow-visible md:px-0 md:pb-0">
             {accessCards.map((item) => (
               <div key={item.title} className="w-[46vw] flex-shrink-0 snap-start md:w-auto md:flex-shrink">
@@ -301,16 +307,16 @@ export default function LandingPage() {
             ))}
           </div>
 
-          <p className="mt-8 max-w-xl text-sm font-light leading-7 text-white/50 md:mt-14 md:text-base md:leading-8">
+          <p className="mt-6 hidden max-w-xl text-sm font-light leading-7 text-white/50 md:mt-14 md:block md:text-base md:leading-8">
             Não operamos por plataformas. Cada reserva, cada acesso, cada experiência acima vem de uma relação construída ao longo de anos.
           </p>
         </div>
       </section>
 
       {/* EXECUÇÃO — entregáveis */}
-      <section className="border-b border-white/10 px-8 py-10 md:px-16 md:py-28">
+      <section className="border-b border-white/10 px-8 py-8 md:px-16 md:py-28">
         <div className="mx-auto max-w-7xl">
-          <div className="mb-8 max-w-5xl md:mb-20">
+          <div className="mb-6 max-w-5xl md:mb-20">
             <p className="mb-6 text-xs uppercase tracking-[0.3em] text-white/45 md:tracking-[0.45em]">
               Execução
             </p>
@@ -319,12 +325,12 @@ export default function LandingPage() {
               Uma operação desenhada para transformar intenção em viagem executada.
             </h2>
 
-            <p className="mt-8 max-w-3xl text-lg font-light leading-9 text-white/68">
+            <p className="mt-8 hidden max-w-3xl text-lg font-light leading-9 text-white/68 md:block">
               Do planejamento ao acompanhamento presencial, a Alpinea organiza os detalhes que determinam a qualidade real de uma viagem de alto padrão no Japão.
             </p>
           </div>
 
-          <p className="mb-8 text-xs uppercase tracking-[0.3em] text-white/30 md:mb-10 md:tracking-[0.45em]">
+          <p className="mb-6 text-xs uppercase tracking-[0.3em] text-white/30 md:mb-10 md:tracking-[0.45em]">
             O que o cliente recebe
           </p>
 
@@ -363,7 +369,7 @@ export default function LandingPage() {
                   className="mt-6 overflow-hidden rounded-[26px] bg-white/[0.04] cursor-zoom-in relative md:mt-8"
                   onClick={() => setLightbox({ src: item.image, alt: item.title })}
                 >
-                  <div className="relative aspect-[4/5] overflow-hidden rounded-[26px]">
+                  <div className="relative aspect-[4/3] overflow-hidden rounded-[26px] md:aspect-[4/5]">
                     <Image
                       src={item.image}
                       alt={item.title}
@@ -388,8 +394,8 @@ export default function LandingPage() {
             ))}
           </div>
 
-          {/* Dashboard da viagem — produto digital */}
-          <div className="mt-10 grid gap-10 border-t border-white/10 pt-10 md:mt-24 md:grid-cols-2 md:items-center md:gap-16 md:pt-20">
+          {/* Dashboard da viagem — produto digital. Escondido no mobile: complemento visual bonito mas não essencial pra gerar lead, custava uma tela cheia. */}
+          <div className="hidden gap-10 border-t border-white/10 pt-10 md:mt-24 md:grid md:grid-cols-2 md:items-center md:gap-16 md:pt-20">
             <div>
               <p className="mb-6 text-xs uppercase tracking-[0.3em] text-white/30 md:tracking-[0.45em]">
                 Acesso digital
@@ -462,9 +468,9 @@ export default function LandingPage() {
       </section>
 
       {/* SERVIÇOS — 3 tiers compactos */}
-      <section className="border-b border-white/10 px-8 py-10 md:px-16 md:py-28">
+      <section className="border-b border-white/10 px-8 py-8 md:px-16 md:py-28">
         <div className="mx-auto max-w-7xl">
-          <div className="mb-8 grid gap-10 md:mb-20 md:grid-cols-[0.8fr_1.2fr] md:items-end md:gap-16">
+          <div className="mb-6 grid gap-10 md:mb-20 md:grid-cols-[0.8fr_1.2fr] md:items-end md:gap-16">
             <div>
               <p className="mb-6 text-xs uppercase tracking-[0.3em] text-white/45 md:tracking-[0.45em]">
                 Formatos de serviço
@@ -480,7 +486,7 @@ export default function LandingPage() {
                 O nível de execução e acompanhamento varia conforme o formato escolhido. O padrão de curadoria, o conhecimento de destino e o acesso à rede local são os mesmos em todos.
               </p>
 
-              <p className="mt-6 max-w-xl text-base font-light text-white/75 md:text-lg">
+              <p className="mt-6 hidden max-w-xl text-base font-light text-white/75 md:block md:text-lg">
                 Para manter o padrão de atendimento, a Alpinea aceita um número limitado de novos clientes por temporada.
               </p>
             </div>
@@ -513,8 +519,8 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* PRESENÇA DIGITAL */}
-      <section className="border-b border-white/10 px-8 py-10 md:px-16 md:py-28">
+      {/* PRESENÇA DIGITAL — escondida no mobile: links de Instagram/YouTube movidos pro rodapé para não perder o acesso, mas sem custar uma tela inteira */}
+      <section className="hidden border-b border-white/10 px-8 py-10 md:block md:px-16 md:py-28">
         <div className="mx-auto grid max-w-7xl gap-10 md:grid-cols-[0.9fr_1.1fr] md:items-start md:gap-16">
           <div className="md:sticky md:top-24">
             <p className="mb-6 text-xs uppercase tracking-[0.3em] text-white/45 md:tracking-[0.45em]">
@@ -577,7 +583,7 @@ export default function LandingPage() {
       </section>
 
       {/* CONTATO */}
-      <section id="contact" className="bg-white px-8 py-20 text-black md:px-16 md:py-28">
+      <section id="contact" className="bg-white px-8 py-14 text-black md:px-16 md:py-28">
         <div className="mx-auto max-w-4xl text-center">
           <p className="mb-6 text-xs uppercase tracking-[0.3em] text-black/45 md:tracking-[0.45em]">
             Contato
@@ -587,22 +593,22 @@ export default function LandingPage() {
             Comece sua jornada no Japão.
           </h2>
 
-          <p className="mx-auto mt-8 max-w-2xl text-base leading-8 text-black/60 md:text-lg">
+          <p className="mx-auto mt-6 max-w-2xl text-base leading-8 text-black/60 md:mt-8 md:text-lg">
             Compartilhe suas datas, preferências e estilo de viagem. A Alpinea cuidará do restante.
           </p>
 
-          <p className="mt-6 text-sm font-light text-black/40">
+          <p className="mt-4 text-sm font-light text-black/40 md:mt-6">
             Agenda limitada para o segundo semestre de 2026.
           </p>
 
-          <ContactCTA className="mt-10 flex flex-col justify-center gap-4 md:flex-row" />
+          <ContactCTA className="mt-8 flex flex-col justify-center gap-4 md:mt-10 md:flex-row" />
         </div>
       </section>
 
       {/* FOOTER */}
-      <footer className="border-t border-white/10 bg-black px-8 pb-28 pt-16 text-white md:px-16 md:pb-16">
-        <div className="mx-auto flex max-w-7xl flex-col justify-between gap-12 md:flex-row md:items-start">
-          <div className="space-y-6">
+      <footer className="border-t border-white/10 bg-black px-8 pb-24 pt-12 text-white md:px-16 md:pb-16 md:pt-16">
+        <div className="mx-auto flex max-w-7xl flex-col justify-between gap-8 md:flex-row md:items-start md:gap-12">
+          <div className="space-y-4 md:space-y-6">
             <img
               src="/images/ALPINEA-LOGO-transparent.png"
               alt="Alpinea"
@@ -655,6 +661,24 @@ export default function LandingPage() {
 
             <a href="#contact" className="transition hover:text-white">
               Contato
+            </a>
+
+            <a
+              href="https://www.instagram.com/alpinea.private"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="transition hover:text-white md:hidden"
+            >
+              Instagram
+            </a>
+
+            <a
+              href="https://www.youtube.com/@alpinea.private"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="transition hover:text-white md:hidden"
+            >
+              YouTube
             </a>
           </nav>
         </div>
