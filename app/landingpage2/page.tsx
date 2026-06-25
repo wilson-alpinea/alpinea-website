@@ -222,13 +222,13 @@ export default function LandingPage() {
           </div>
 
           {/* Foto de impacto — quebra a sequência de screenshots de produto com uma imagem real de experiência, antes de entrar na prova prática */}
-          <div className="relative mb-10 aspect-[4/3] overflow-hidden rounded-[20px] md:mb-16 md:aspect-[21/9]">
+          <div className="relative mb-10 aspect-[4/3] overflow-hidden rounded-[20px] md:mb-16 md:aspect-[16/9]">
             <Image
               src="/images/peninsula3.jpg"
               alt="Hospedagem de luxo no Japão"
               fill
               sizes="100vw"
-              className="object-cover"
+              className="object-cover object-center"
             />
           </div>
 
