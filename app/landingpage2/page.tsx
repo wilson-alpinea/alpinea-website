@@ -36,13 +36,76 @@ function CarouselNextArrow({ targetRef }: { targetRef: RefObject<HTMLDivElement 
         type="button"
         onClick={scrollNext}
         aria-label="Ver mais"
-        className="absolute right-3 top-1/2 z-20 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full bg-white/15 backdrop-blur-sm transition active:bg-white/30 md:hidden"
+        className="absolute bottom-4 right-3 z-20 flex h-9 w-9 items-center justify-center rounded-full bg-white/15 backdrop-blur-sm transition active:bg-white/30 md:hidden"
       >
         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <polyline points="9 18 15 12 9 6" />
         </svg>
       </button>
     </>
+  );
+}
+
+// Rastreia qual card está mais visível no carrossel, comparando a posição de scroll
+// com a posição de cada filho — funciona mesmo com cards de larguras diferentes.
+function useActiveSlide(targetRef: RefObject<HTMLDivElement | null>) {
+  const [active, setActive] = useState(0);
+
+  useEffect(() => {
+    const el = targetRef.current;
+    if (!el) return;
+
+    const onScroll = () => {
+      const children = Array.from(el.children) as HTMLElement[];
+      let closest = 0;
+      let minDist = Infinity;
+      children.forEach((child, i) => {
+        const dist = Math.abs(child.offsetLeft - el.scrollLeft);
+        if (dist < minDist) {
+          minDist = dist;
+          closest = i;
+        }
+      });
+      setActive(closest);
+    };
+
+    onScroll();
+    el.addEventListener("scroll", onScroll, { passive: true });
+    return () => el.removeEventListener("scroll", onScroll);
+  }, [targetRef]);
+
+  return active;
+}
+
+// Bolinhas indicativas embaixo dos carrosséis horizontais — só no mobile (md:hidden),
+// já que no desktop o conteúdo é grid e mostra tudo de uma vez, sem precisar de indicador.
+function CarouselDots({ targetRef, count }: { targetRef: RefObject<HTMLDivElement | null>; count: number }) {
+  const active = useActiveSlide(targetRef);
+
+  const goTo = (i: number) => {
+    const el = targetRef.current;
+    if (!el) return;
+    const child = el.children[i] as HTMLElement | undefined;
+    if (!child) return;
+    el.scrollTo({ left: child.offsetLeft, behavior: "smooth" });
+  };
+
+  return (
+    <div className="mt-5 flex items-center justify-center gap-2 md:hidden">
+      {Array.from({ length: count }).map((_, i) => (
+        <button
+          key={i}
+          type="button"
+          aria-label={`Ir para item ${i + 1}`}
+          onClick={() => goTo(i)}
+          className={`h-1.5 rounded-full transition-all duration-300 ${
+            i === active
+              ? "w-6 bg-gradient-to-r from-[#E94332] via-[#D96A2E] to-[#C9A03A]"
+              : "w-1.5 bg-white/25"
+          }`}
+        />
+      ))}
+    </div>
   );
 }
 
@@ -166,7 +229,7 @@ export default function LandingPage() {
           playsInline
         />
 
-        <div className="absolute inset-0 bg-gradient-to-b from-black/75 via-black/35 to-black" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/60 to-black" />
 
         {/* Header sem links de navegação */}
         <header
@@ -208,10 +271,6 @@ export default function LandingPage() {
       <section className="border-b border-white/10 px-8 py-8 md:px-16 md:py-28">
         <div className="mx-auto max-w-7xl">
           <div className="mb-6 max-w-5xl md:mb-20">
-            <p className="mb-6 text-xs uppercase tracking-[0.3em] text-white/45 md:tracking-[0.45em]">
-              Execução
-            </p>
-
             <h2 className={`${display.className} text-4xl font-medium leading-tight md:text-6xl`}>
               Uma operação desenhada para transformar intenção em viagem executada.
             </h2>
@@ -283,8 +342,8 @@ export default function LandingPage() {
                       sizes="(max-width: 768px) 80vw, 33vw"
                       className="object-cover object-top transition duration-700 group-hover:scale-[1.03]"
                     />
-                    {/* Zoom overlay */}
-                    <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition duration-300 bg-black/30">
+                    {/* Zoom overlay — efeito hover, só faz sentido no desktop (mouse) */}
+                    <div className="absolute inset-0 hidden items-center justify-center opacity-0 transition duration-300 group-hover:opacity-100 bg-black/30 md:flex">
                       <div className="rounded-full bg-black/60 p-3 backdrop-blur-sm">
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
                           <circle cx="11" cy="11" r="8"/>
@@ -294,6 +353,16 @@ export default function LandingPage() {
                         </svg>
                       </div>
                     </div>
+
+                    {/* Badge de zoom sempre visível no mobile — touch não dispara :hover, então o indicador precisa estar sempre lá */}
+                    <div className="absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-full bg-black/55 backdrop-blur-sm md:hidden">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                        <circle cx="11" cy="11" r="8"/>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                        <line x1="11" y1="8" x2="11" y2="14"/>
+                        <line x1="8" y1="11" x2="14" y2="11"/>
+                      </svg>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -301,6 +370,7 @@ export default function LandingPage() {
             </div>
             <CarouselNextArrow targetRef={deliverablesScrollRef} />
           </div>
+          <CarouselDots targetRef={deliverablesScrollRef} count={3} />
 
           {/* Dashboard da viagem — produto digital. Escondido no mobile: complemento visual bonito mas não essencial pra gerar lead, custava uma tela cheia. */}
           <div className="hidden gap-10 border-t border-white/10 pt-10 md:mt-24 md:grid md:grid-cols-2 md:items-center md:gap-16 md:pt-20">
@@ -431,6 +501,7 @@ export default function LandingPage() {
             </div>
             <CarouselNextArrow targetRef={statsScrollRef} />
           </div>
+          <CarouselDots targetRef={statsScrollRef} count={4} />
         </div>
       </section>
 
@@ -496,6 +567,7 @@ export default function LandingPage() {
             </div>
             <CarouselNextArrow targetRef={photosScrollRef} />
           </div>
+          <CarouselDots targetRef={photosScrollRef} count={accessCards.length} />
 
           <p className="mt-6 hidden max-w-xl text-sm font-light leading-7 text-white/50 md:mt-14 md:block md:text-base md:leading-8">
             Não operamos por plataformas. Cada reserva, cada acesso, cada experiência acima vem de uma relação construída ao longo de anos.
@@ -575,7 +647,7 @@ export default function LandingPage() {
             </div>
             <CarouselNextArrow targetRef={tiersScrollRef} />
           </div>
-
+          <CarouselDots targetRef={tiersScrollRef} count={tiers.length} />
 
         </div>
       </section>
