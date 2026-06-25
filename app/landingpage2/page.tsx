@@ -22,7 +22,7 @@ const display = Bodoni_Moda({
 
 // Seta de "ver mais" para os carrosséis horizontais do mobile — some no desktop (md:hidden),
 // já que lá o conteúdo é grid e não rola. Inclui fade lateral pra reforçar que há mais conteúdo.
-function CarouselNextArrow({ targetRef }: { targetRef: RefObject<HTMLDivElement> }) {
+function CarouselNextArrow({ targetRef }: { targetRef: RefObject<HTMLDivElement | null> }) {
   const scrollNext = () => {
     const el = targetRef.current;
     if (!el) return;
