@@ -32,8 +32,11 @@ export async function POST(req: Request) {
     const email = String(body.email || "").trim();
     const phone = String(body.phone || "").trim();
     const dates = String(body.dates || "").trim();
+    const firstJapan = String(body.firstJapan || "").trim();
     const travelers = String(body.travelers || "").trim();
-    const budget = String(body.budget || "").trim();
+    const tripType = String(body.tripType || "").trim();
+    const travelStyle = String(body.travelStyle || "").trim();
+    const source = String(body.source || "").trim();
     const message = String(body.message || "").trim();
 
     if (!name || !email) {
@@ -50,8 +53,11 @@ Nome: ${name}
 E-mail: ${email}
 Telefone: ${phone || "Não informado"}
 Datas previstas: ${dates || "Não informado"}
-Número de viajantes: ${travelers || "Não informado"}
-Faixa de investimento: ${budget || "Não informado"}
+Primeira viagem ao Japão: ${firstJapan || "Não informado"}
+Quem irá viajar: ${travelers || "Não informado"}
+Tipo de viagem: ${tripType || "Não informado"}
+Como costuma viajar: ${travelStyle || "Não informado"}
+Como conheceu a Alpinea: ${source || "Não informado"}
 
 Como imagina essa viagem:
 ${message || "Não informado"}
@@ -64,8 +70,11 @@ ${message || "Não informado"}
         <p><strong>E-mail:</strong> ${escapeHtml(email)}</p>
         <p><strong>Telefone:</strong> ${escapeHtml(phone || "Não informado")}</p>
         <p><strong>Datas previstas:</strong> ${escapeHtml(dates || "Não informado")}</p>
-        <p><strong>Número de viajantes:</strong> ${escapeHtml(travelers || "Não informado")}</p>
-        <p><strong>Faixa de investimento:</strong> ${escapeHtml(budget || "Não informado")}</p>
+        <p><strong>Primeira viagem ao Japão:</strong> ${escapeHtml(firstJapan || "Não informado")}</p>
+        <p><strong>Quem irá viajar:</strong> ${escapeHtml(travelers || "Não informado")}</p>
+        <p><strong>Tipo de viagem:</strong> ${escapeHtml(tripType || "Não informado")}</p>
+        <p><strong>Como costuma viajar:</strong> ${escapeHtml(travelStyle || "Não informado")}</p>
+        <p><strong>Como conheceu a Alpinea:</strong> ${escapeHtml(source || "Não informado")}</p>
         <p><strong>Como imagina essa viagem:</strong></p>
         <p>${escapeHtml(message || "Não informado").replace(/\n/g, "<br />")}</p>
       </div>

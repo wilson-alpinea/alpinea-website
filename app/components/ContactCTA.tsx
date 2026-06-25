@@ -81,6 +81,19 @@ function ContactModal({
         form_name: "alpinea_contact",
       });
 
+      // Mesmo evento de lead/conversão do fluxo de e-mail — sem isso, contatos
+      // via WhatsApp nunca apareciam como conversão no Google Ads.
+      window.gtag?.("event", "generate_lead", {
+        form_name: "alpinea_contact",
+        contact_channel: "whatsapp",
+      });
+
+      window.gtag?.("event", "conversion", {
+        send_to: "AW-18262525346/fruBCIiVsMMcEKKLoIRE",
+        value: 1.0,
+        currency: "BRL",
+      });
+
       window.open(`https://wa.me/5511996691818?text=${text}`, "_blank");
       setStatus("success");
       return;
