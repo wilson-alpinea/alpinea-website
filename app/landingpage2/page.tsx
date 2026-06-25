@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState, type RefObject } from "react";
 import Image from "next/image";
 import { Bodoni_Moda } from "next/font/google";
 import { ContactCTA } from "../components/ContactCTA";
@@ -19,6 +19,32 @@ const display = Bodoni_Moda({
   subsets: ["latin"],
   weight: ["400", "500", "600"],
 });
+
+// Seta de "ver mais" para os carrosséis horizontais do mobile — some no desktop (md:hidden),
+// já que lá o conteúdo é grid e não rola. Inclui fade lateral pra reforçar que há mais conteúdo.
+function CarouselNextArrow({ targetRef }: { targetRef: RefObject<HTMLDivElement> }) {
+  const scrollNext = () => {
+    const el = targetRef.current;
+    if (!el) return;
+    el.scrollBy({ left: el.clientWidth * 0.85, behavior: "smooth" });
+  };
+
+  return (
+    <>
+      <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-14 bg-gradient-to-l from-black to-transparent md:hidden" />
+      <button
+        type="button"
+        onClick={scrollNext}
+        aria-label="Ver mais"
+        className="absolute right-3 top-1/2 z-20 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full bg-white/15 backdrop-blur-sm transition active:bg-white/30 md:hidden"
+      >
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <polyline points="9 18 15 12 9 6" />
+        </svg>
+      </button>
+    </>
+  );
+}
 
 // Lightbox component
 function Lightbox({ src, alt, onClose }: { src: string; alt: string; onClose: () => void }) {
@@ -53,6 +79,11 @@ function Lightbox({ src, alt, onClose }: { src: string; alt: string; onClose: ()
 export default function LandingPage() {
   const [scrolled, setScrolled] = useState(false);
   const [lightbox, setLightbox] = useState<{ src: string; alt: string } | null>(null);
+
+  const statsScrollRef = useRef<HTMLDivElement>(null);
+  const photosScrollRef = useRef<HTMLDivElement>(null);
+  const deliverablesScrollRef = useRef<HTMLDivElement>(null);
+  const tiersScrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 50);
@@ -205,7 +236,11 @@ export default function LandingPage() {
             O que o cliente recebe
           </p>
 
-          <div className="-mx-8 flex gap-6 overflow-x-auto px-8 pb-2 snap-x snap-mandatory [&::-webkit-scrollbar]:hidden md:mx-0 md:grid md:grid-cols-3 md:gap-6 md:overflow-visible md:px-0 md:pb-0">
+          <div className="relative -mx-8 md:mx-0">
+            <div
+              ref={deliverablesScrollRef}
+              className="flex gap-6 overflow-x-auto px-8 pb-2 snap-x snap-mandatory scroll-pl-8 [&::-webkit-scrollbar]:hidden md:grid md:grid-cols-3 md:gap-6 md:overflow-visible md:px-0 md:pb-0"
+            >
             {[
               {
                 title: "Roteiro privado",
@@ -223,7 +258,7 @@ export default function LandingPage() {
                 image: "/images/ss-rcompras.png",
               },
             ].map((item) => (
-              <div key={item.title} className="group w-[80vw] flex-shrink-0 snap-start md:w-auto md:flex-shrink">
+              <div key={item.title} className="group w-[80vw] flex-shrink-0 snap-start [scroll-snap-stop:always] md:w-auto md:flex-shrink">
                 <p className="text-xs uppercase tracking-[0.35em] text-white/40">
                   Entregável Alpinea
                 </p>
@@ -263,6 +298,8 @@ export default function LandingPage() {
                 </div>
               </div>
             ))}
+            </div>
+            <CarouselNextArrow targetRef={deliverablesScrollRef} />
           </div>
 
           {/* Dashboard da viagem — produto digital. Escondido no mobile: complemento visual bonito mas não essencial pra gerar lead, custava uma tela cheia. */}
@@ -351,8 +388,12 @@ export default function LandingPage() {
             Por que escolher a Alpinea
           </p>
 
-          <div className="-mx-8 flex gap-6 overflow-x-auto px-8 pb-2 snap-x snap-mandatory [&::-webkit-scrollbar]:hidden md:mx-0 md:grid md:grid-cols-4 md:gap-12 md:overflow-visible md:px-0 md:pb-0">
-            <div className="w-[72vw] flex-shrink-0 snap-start md:w-auto md:flex-shrink">
+          <div className="relative -mx-8 md:mx-0">
+            <div
+              ref={statsScrollRef}
+              className="flex gap-6 overflow-x-auto px-8 pb-2 snap-x snap-mandatory scroll-pl-8 [&::-webkit-scrollbar]:hidden md:grid md:grid-cols-4 md:gap-12 md:overflow-visible md:px-0 md:pb-0"
+            >
+            <div className="w-[72vw] flex-shrink-0 snap-start [scroll-snap-stop:always] md:w-auto md:flex-shrink">
               <h3 className={`${display.className} text-2xl font-medium tracking-tight text-white md:text-3xl`}>
                 +12 anos
               </h3>
@@ -361,7 +402,7 @@ export default function LandingPage() {
               </p>
             </div>
 
-            <div className="w-[72vw] flex-shrink-0 snap-start md:w-auto md:flex-shrink">
+            <div className="w-[72vw] flex-shrink-0 snap-start [scroll-snap-stop:always] md:w-auto md:flex-shrink">
               <h3 className={`${display.className} text-2xl font-medium tracking-tight text-white md:text-3xl`}>
                 Exclusividade de Serviços
               </h3>
@@ -370,7 +411,7 @@ export default function LandingPage() {
               </p>
             </div>
 
-            <div className="w-[72vw] flex-shrink-0 snap-start md:w-auto md:flex-shrink">
+            <div className="w-[72vw] flex-shrink-0 snap-start [scroll-snap-stop:always] md:w-auto md:flex-shrink">
               <h3 className={`${display.className} text-2xl font-medium tracking-tight text-white md:text-3xl`}>
                 Referência na conexão Brasil–Japão
               </h3>
@@ -379,7 +420,7 @@ export default function LandingPage() {
               </p>
             </div>
 
-            <div className="w-[72vw] flex-shrink-0 snap-start md:w-auto md:flex-shrink">
+            <div className="w-[72vw] flex-shrink-0 snap-start [scroll-snap-stop:always] md:w-auto md:flex-shrink">
               <h3 className={`${display.className} text-2xl font-medium tracking-tight text-white md:text-3xl`}>
                 Presença real no Japão
               </h3>
@@ -387,6 +428,8 @@ export default function LandingPage() {
                 Nossa operação própria no Japão permite um atendimento sem intermediários, com maior flexibilidade, controle e proximidade dos melhores parceiros locais.
               </p>
             </div>
+            </div>
+            <CarouselNextArrow targetRef={statsScrollRef} />
           </div>
         </div>
       </section>
@@ -429,9 +472,13 @@ export default function LandingPage() {
           </div>
 
           {/* Fotos — carrossel no mobile, grid no desktop */}
-          <div className="-mx-8 flex gap-4 overflow-x-auto px-8 pb-2 snap-x snap-mandatory [&::-webkit-scrollbar]:hidden md:mx-0 md:grid md:grid-cols-3 md:gap-x-8 md:gap-y-12 md:overflow-visible md:px-0 md:pb-0">
+          <div className="relative -mx-8 md:mx-0">
+            <div
+              ref={photosScrollRef}
+              className="flex gap-4 overflow-x-auto px-8 pb-2 snap-x snap-mandatory scroll-pl-8 [&::-webkit-scrollbar]:hidden md:grid md:grid-cols-3 md:gap-x-8 md:gap-y-12 md:overflow-visible md:px-0 md:pb-0"
+            >
             {accessCards.map((item) => (
-              <div key={item.title} className="w-[46vw] flex-shrink-0 snap-start md:w-auto md:flex-shrink">
+              <div key={item.title} className="w-[46vw] flex-shrink-0 snap-start [scroll-snap-stop:always] md:w-auto md:flex-shrink">
                 <div className="relative aspect-[4/3] overflow-hidden rounded-[16px] bg-white/5 md:rounded-[22px]">
                   <Image
                     src={item.image}
@@ -446,6 +493,8 @@ export default function LandingPage() {
                 </h3>
               </div>
             ))}
+            </div>
+            <CarouselNextArrow targetRef={photosScrollRef} />
           </div>
 
           <p className="mt-6 hidden max-w-xl text-sm font-light leading-7 text-white/50 md:mt-14 md:block md:text-base md:leading-8">
@@ -498,11 +547,15 @@ export default function LandingPage() {
             </div>
           </div>
 
-          <div className="-mx-8 flex gap-6 overflow-x-auto px-8 pb-2 snap-x snap-mandatory [&::-webkit-scrollbar]:hidden md:mx-0 md:grid md:grid-cols-3 md:gap-8 md:overflow-visible md:px-0 md:pb-0">
+          <div className="relative -mx-8 md:mx-0">
+            <div
+              ref={tiersScrollRef}
+              className="flex gap-6 overflow-x-auto px-8 pb-2 snap-x snap-mandatory scroll-pl-8 [&::-webkit-scrollbar]:hidden md:grid md:grid-cols-3 md:gap-8 md:overflow-visible md:px-0 md:pb-0"
+            >
             {tiers.map((tier) => (
               <div
                 key={tier.title}
-                className={`flex w-[78vw] flex-shrink-0 snap-start flex-col px-6 py-8 md:w-auto md:flex-shrink md:px-10 md:py-12 ${
+                className={`flex w-[78vw] flex-shrink-0 snap-start [scroll-snap-stop:always] flex-col px-6 py-8 md:w-auto md:flex-shrink md:px-10 md:py-12 ${
                   tier.featured ? "bg-white/[0.06]" : "bg-black"
                 }`}
               >
@@ -519,6 +572,8 @@ export default function LandingPage() {
                 </p>
               </div>
             ))}
+            </div>
+            <CarouselNextArrow targetRef={tiersScrollRef} />
           </div>
 
 
