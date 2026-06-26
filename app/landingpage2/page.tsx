@@ -447,31 +447,6 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ROTEIRO SOB MEDIDA — escondido no mobile: a mensagem já está coberta pelo subtítulo do hero, e manter os 2 textos custava uma tela cheia de scroll */}
-      <section className="hidden border-b border-white/10 px-8 py-10 md:block md:px-16 md:py-28">
-        <div className="mx-auto grid max-w-7xl gap-10 md:grid-cols-2 md:gap-16">
-          <div>
-            <p className="mb-6 text-xs uppercase tracking-[0.3em] text-white/45 md:tracking-[0.45em]">
-              A Jornada Alpinea
-            </p>
-
-            <h2 className={`${display.className} text-4xl font-medium leading-tight md:text-6xl`}>
-              Uma curadoria muito além de uma lista genérica de lugares.
-            </h2>
-          </div>
-
-          <div className="space-y-8 text-lg font-light leading-9 text-white/68">
-            <p>
-              Planejamos e executamos viagens privadas no Japão: hotéis, restaurantes, compras, logística, experiências e acompanhamento local quando necessário.
-            </p>
-
-            <p>
-              Cada detalhe é pensado para reduzir ruído, antecipar problemas e transformar a viagem em uma experiência fluida, precisa e profundamente personalizada.
-            </p>
-          </div>
-        </div>
-      </section>
-
       {/* POR QUE ESCOLHER A ALPINEA */}
       <section className="border-b border-white/10 px-8 py-8 md:px-16 md:py-24">
         <div className="mx-auto max-w-7xl">
@@ -593,25 +568,6 @@ export default function LandingPage() {
           <p className="mt-6 hidden max-w-xl text-sm font-light leading-7 text-white/50 md:mt-14 md:block md:text-base md:leading-8">
             Não operamos por plataformas. Cada reserva, cada acesso, cada experiência acima vem de uma relação construída ao longo de anos.
           </p>
-        </div>
-      </section>
-
-      {/* CONTATO INTERMEDIÁRIO — para quem já decidiu sem precisar rolar até o fim. Escondido no mobile: a barra fixa de CTA já cobre essa função, e duplicar custa uma tela cheia de scroll. */}
-      <section className="hidden bg-white px-8 py-14 text-black md:block md:px-16 md:py-20">
-        <div className="mx-auto max-w-3xl text-center">
-          <p className="mb-5 text-xs uppercase tracking-[0.3em] text-black/40 md:tracking-[0.45em]">
-            Fale com a Alpinea
-          </p>
-
-          <h2 className={`${display.className} text-3xl font-medium leading-tight md:text-5xl`}>
-            Comece sua jornada privada no Japão.
-          </h2>
-
-          <p className="mx-auto mt-6 max-w-xl text-sm leading-7 text-black/55 md:text-base">
-            Compartilhe suas datas, preferências e estilo de viagem. A Alpinea desenha o caminho.
-          </p>
-
-          <ContactCTA className="mt-9 flex flex-col justify-center gap-4 md:flex-row" />
         </div>
       </section>
 
