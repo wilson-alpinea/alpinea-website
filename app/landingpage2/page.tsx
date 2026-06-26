@@ -653,18 +653,38 @@ export default function LandingPage() {
               ref={tiersScrollRef}
               className="flex gap-6 overflow-x-auto px-8 pb-2 snap-x snap-mandatory scroll-pl-8 [&::-webkit-scrollbar]:hidden md:grid md:grid-cols-3 md:gap-8 md:overflow-visible md:px-0 md:pb-0"
             >
-            {tiers.map((tier) => (
+            {tiers.map((tier, i) => (
               <div
                 key={tier.title}
-                className={`flex w-[78vw] flex-shrink-0 snap-start [scroll-snap-stop:always] flex-col px-6 py-8 md:w-auto md:flex-shrink md:px-10 md:py-12 ${
-                  tier.featured ? "bg-white/[0.06]" : "bg-black"
+                className={`relative flex w-[78vw] flex-shrink-0 snap-start [scroll-snap-stop:always] flex-col rounded-[20px] border px-6 py-8 md:w-auto md:flex-shrink md:px-10 md:py-12 ${
+                  tier.featured
+                    ? "border-white/15 bg-white/[0.06] md:-translate-y-3"
+                    : "border-white/10 bg-black"
                 }`}
               >
+                {tier.featured && (
+                  <span className="absolute -top-3 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full bg-gradient-to-r from-[#E94332] via-[#D96A2E] to-[#C9A03A] px-4 py-1 text-[10px] font-medium uppercase tracking-[0.25em] text-black">
+                    Mais completo
+                  </span>
+                )}
+
+                <div
+                  className={`mb-6 h-[2px] w-10 rounded-full ${
+                    tier.featured
+                      ? "bg-gradient-to-r from-[#E94332] via-[#D96A2E] to-[#C9A03A]"
+                      : "bg-white/20"
+                  }`}
+                />
+
                 <p className="mb-4 text-xs uppercase tracking-[0.4em] text-white/40">
                   {tier.label}
                 </p>
 
-                <h3 className="text-2xl font-light text-white">
+                <h3
+                  className={`font-light text-white ${
+                    i === 0 ? "text-2xl" : i === 1 ? "text-2xl md:text-3xl" : "text-2xl md:text-4xl"
+                  }`}
+                >
                   {tier.title}
                 </h3>
 
@@ -725,17 +745,6 @@ export default function LandingPage() {
                 alt="Feed do YouTube Alpinea Private"
                 width={1332}
                 height={1181}
-                sizes="(max-width: 768px) 100vw, 50vw"
-                className="h-auto w-full object-cover object-top"
-              />
-            </div>
-
-            <div className="overflow-hidden rounded-[24px] bg-white/5">
-              <Image
-                src="/images/ss-ig.png"
-                alt="Feed do Instagram Alpinea Private"
-                width={956}
-                height={1646}
                 sizes="(max-width: 768px) 100vw, 50vw"
                 className="h-auto w-full object-cover object-top"
               />
