@@ -651,7 +651,7 @@ export default function LandingPage() {
           <div className="relative -mx-8 md:mx-0">
             <div
               ref={tiersScrollRef}
-              className="flex gap-6 overflow-x-auto px-8 pb-2 snap-x snap-mandatory scroll-pl-8 [&::-webkit-scrollbar]:hidden md:grid md:grid-cols-3 md:gap-8 md:overflow-visible md:px-0 md:pb-0"
+              className="flex gap-6 overflow-x-auto px-8 pt-4 pb-2 snap-x snap-mandatory scroll-pl-8 [&::-webkit-scrollbar]:hidden md:grid md:grid-cols-3 md:gap-8 md:overflow-visible md:px-0 md:pt-0 md:pb-0"
             >
             {tiers.map((tier, i) => (
               <div
