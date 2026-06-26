@@ -246,7 +246,7 @@ export default function LandingPage() {
           </a>
         </header>
 
-        <div className="relative z-10 flex h-full flex-col items-center justify-center px-6 pt-20 text-center">
+        <div className="relative z-10 flex h-full flex-col items-center justify-center px-6 pt-20 text-center md:justify-end md:pb-28">
           <h1 className={`${display.className} max-w-4xl text-4xl font-medium leading-[1.1] tracking-tight md:text-6xl`}>
             Viagens privadas e concierge{" "}
             <span className="bg-gradient-to-r from-[#E94332] via-[#D96A2E] to-[#C9A03A] bg-clip-text text-transparent">
@@ -265,10 +265,30 @@ export default function LandingPage() {
             Solicitar atendimento
           </a>
         </div>
+
+        {/* Indicador de scroll — só no desktop; no mobile a tela já é curta o suficiente para não precisar do indicador */}
+        <a
+          href="#overview"
+          aria-label="Rolar para o conteúdo"
+          className="absolute inset-x-0 bottom-6 z-10 hidden justify-center md:flex"
+        >
+          <svg
+            className="h-6 w-6 animate-bounce text-white/55 transition hover:text-white/90"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <polyline points="6 9 12 15 18 9" />
+          </svg>
+        </a>
       </section>
 
       {/* EXECUÇÃO — entregáveis */}
-      <section className="border-b border-white/10 px-8 py-8 md:px-16 md:py-28">
+      <section id="overview" className="border-b border-white/10 px-8 py-8 md:px-16 md:py-28">
         <div className="mx-auto max-w-7xl">
           <div className="mb-6 max-w-5xl md:mb-20">
             <h2 className={`${display.className} text-4xl font-medium leading-tight md:text-6xl`}>
