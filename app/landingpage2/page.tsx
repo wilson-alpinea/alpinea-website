@@ -643,7 +643,7 @@ export default function LandingPage() {
                 O nível de execução e acompanhamento varia conforme o formato escolhido. O padrão de curadoria, o conhecimento de destino e o acesso à rede local são os mesmos em todos.
               </p>
 
-              <p className="mt-6 hidden max-w-xl text-base font-light text-white/75 md:block md:text-lg">
+              <p className="mt-6 hidden max-w-xl rounded-full border border-white/20 px-6 py-3 text-center text-xs uppercase tracking-[0.25em] text-white/70 md:block md:tracking-[0.3em]">
                 Para manter o padrão de atendimento, a Alpinea aceita um número limitado de novos clientes por temporada.
               </p>
             </div>
@@ -658,9 +658,7 @@ export default function LandingPage() {
               <div
                 key={tier.title}
                 className={`relative flex w-[78vw] flex-shrink-0 snap-start [scroll-snap-stop:always] flex-col rounded-[20px] border px-6 py-8 md:w-auto md:flex-shrink md:px-10 md:py-12 ${
-                  tier.featured
-                    ? "border-white/10 bg-white/90"
-                    : tier.highlighted
+                  tier.highlighted
                     ? "border-white/15 bg-white/[0.06]"
                     : "border-white/10 bg-black"
                 }`}
@@ -671,27 +669,15 @@ export default function LandingPage() {
                   </span>
                 )}
 
-                <p
-                  className={`mb-4 text-xs uppercase tracking-[0.4em] ${
-                    tier.featured ? "text-black/40" : "text-white/40"
-                  }`}
-                >
+                <p className="mb-4 text-xs uppercase tracking-[0.4em] text-white/40">
                   {tier.label}
                 </p>
 
-                <h3
-                  className={`text-2xl font-light md:text-3xl ${
-                    tier.featured ? "text-black" : "text-white"
-                  }`}
-                >
+                <h3 className="text-2xl font-light text-white md:text-3xl">
                   {tier.title}
                 </h3>
 
-                <p
-                  className={`mt-6 text-sm font-light leading-7 ${
-                    tier.featured ? "text-black/55" : "text-white/55"
-                  }`}
-                >
+                <p className="mt-6 text-sm font-light leading-7 text-white/55">
                   {tier.details}
                 </p>
               </div>
