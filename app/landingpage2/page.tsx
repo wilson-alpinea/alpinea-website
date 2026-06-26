@@ -617,19 +617,28 @@ export default function LandingPage() {
       {/* SERVIÇOS — 3 tiers compactos */}
       <section className="border-b border-white/10 px-8 py-8 md:px-16 md:py-28">
         <div className="mx-auto max-w-7xl">
-          <div className="mb-6 grid gap-10 md:mb-20 md:grid-cols-[0.8fr_1.2fr] md:items-end md:gap-16">
+          <div className="mb-6 grid gap-10 md:mb-20 md:grid-cols-[1.05fr_0.95fr] md:items-center md:gap-16">
+            {/* Foto — só no desktop, preenche o espaço vazio ao lado do texto */}
+            <div className="relative hidden aspect-[4/5] overflow-hidden rounded-[20px] md:block">
+              <Image
+                src="/images/services-snow.jpg"
+                alt="Esqui de luxo com vista para o Monte Yotei, em Niseko"
+                fill
+                sizes="(max-width: 768px) 0px, 50vw"
+                className="object-cover object-center"
+              />
+            </div>
+
             <div>
               <p className="mb-6 text-xs uppercase tracking-[0.3em] text-white/45 md:tracking-[0.45em]">
                 Formatos de serviço
               </p>
 
-              <h2 className={`${display.className} text-4xl font-medium leading-tight md:text-6xl`}>
+              <h2 className={`${display.className} text-4xl font-medium leading-tight md:text-5xl`}>
                 Três níveis de presença. Uma mesma curadoria.
               </h2>
-            </div>
 
-            <div>
-              <p className="max-w-xl text-base font-light leading-8 text-white/60 md:text-lg">
+              <p className="mt-6 max-w-xl text-base font-light leading-8 text-white/60 md:text-lg">
                 O nível de execução e acompanhamento varia conforme o formato escolhido. O padrão de curadoria, o conhecimento de destino e o acesso à rede local são os mesmos em todos.
               </p>
 
