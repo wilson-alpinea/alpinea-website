@@ -199,46 +199,18 @@ export default function LandingPage() {
     {
       title: "Privacidade",
       text: "Hotéis discretos, ryokans privados e mesas reservadas sem badalação — a lua de mel vivida a dois, sem holofotes.",
-      icon: (
-        <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="white" strokeOpacity="0.75" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-          <rect x="5" y="11" width="14" height="9" rx="2" />
-          <path d="M8 11V7a4 4 0 0 1 8 0v4" />
-        </svg>
-      ),
     },
     {
       title: "Segurança",
       text: "Um dos países mais seguros do mundo: ruas tranquilas a qualquer hora e transporte impecável, em qualquer cidade do roteiro.",
-      icon: (
-        <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="white" strokeOpacity="0.75" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M12 3l7 3v6c0 5-3.5 8-7 9-3.5-1-7-4-7-9V6l7-3z" />
-          <path d="M9 12l2 2 4-4" />
-        </svg>
-      ),
     },
     {
       title: "Gastronomia",
       text: "Tóquio reúne mais estrelas Michelin do que qualquer outra cidade do mundo — acesso a mesas que não aceitam reservas em inglês.",
-      icon: (
-        <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="white" strokeOpacity="0.75" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M4 12h16a8 8 0 0 1-16 0z" />
-          <path d="M12 8V4" />
-          <line x1="9" y1="2" x2="7" y2="8" />
-          <line x1="13" y1="2" x2="15" y2="8" />
-        </svg>
-      ),
     },
     {
       title: "Paz",
       text: "Templos centenários, jardins zen e estações que transformam a paisagem — cenário raro para desacelerar juntos.",
-      icon: (
-        <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="white" strokeOpacity="0.75" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-          <line x1="3" y1="6" x2="21" y2="6" />
-          <line x1="5" y1="10" x2="19" y2="10" />
-          <line x1="6.5" y1="6" x2="6.5" y2="20" />
-          <line x1="17.5" y1="6" x2="17.5" y2="20" />
-        </svg>
-      ),
     },
   ];
 
@@ -316,18 +288,11 @@ export default function LandingPage() {
 
         <div className="relative z-10 flex h-full flex-col items-center justify-center px-6 pt-20 text-center md:justify-end md:pb-28">
           <h1 className={`${display.className} max-w-4xl text-4xl font-medium leading-[1.1] tracking-tight md:text-6xl`}>
-            Lua de mel no Japão, personalizada exclusivamente para ser{" "}
+            O começo da próxima história de vocês merece{" "}
             <span className="bg-gradient-to-r from-[#E94332] via-[#D96A2E] to-[#C9A03A] bg-clip-text text-transparent">
-              lembrada para sempre.
+              mais do que um roteiro.
             </span>
           </h1>
-
-          <a
-            href="#contact"
-            className="mt-10 hidden border border-white/30 px-8 py-4 text-xs uppercase tracking-[0.3em] text-white transition hover:bg-white hover:text-black md:block"
-          >
-            Solicitar atendimento
-          </a>
         </div>
 
         {/* Indicador de scroll — agora em todas as telas */}
@@ -378,11 +343,7 @@ export default function LandingPage() {
                 key={item.title}
                 className="w-[72vw] flex-shrink-0 snap-start [scroll-snap-stop:always] rounded-[20px] border border-white/10 bg-white/[0.03] px-6 py-8 md:w-auto md:flex-shrink"
               >
-                <div className="flex h-12 w-12 items-center justify-center rounded-full border border-white/10 bg-white/[0.04]">
-                  {item.icon}
-                </div>
-
-                <h3 className="mt-6 text-xl font-light text-white md:text-2xl">
+                <h3 className="text-xl font-light text-white md:text-2xl">
                   {item.title}
                 </h3>
 
