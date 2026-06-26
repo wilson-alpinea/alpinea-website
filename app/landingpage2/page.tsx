@@ -289,7 +289,7 @@ export default function LandingPage() {
         <div className="mx-auto max-w-7xl">
           <div className="mb-6 max-w-5xl md:mb-20">
             <h2 className={`${display.className} text-4xl font-medium leading-tight md:text-6xl`}>
-              Única agência de luxo especialista em Japão.
+              Única agência brasileira 100% focada em viagens de luxo para o Japão.
             </h2>
 
             <p className="mt-8 hidden max-w-3xl text-lg font-light leading-9 text-white/68 md:block">
