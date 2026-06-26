@@ -658,7 +658,7 @@ export default function LandingPage() {
                 key={tier.title}
                 className={`relative flex w-[78vw] flex-shrink-0 snap-start [scroll-snap-stop:always] flex-col rounded-[20px] border px-6 py-8 md:w-auto md:flex-shrink md:px-10 md:py-12 ${
                   tier.featured
-                    ? "border-white/15 bg-white/[0.06] md:-translate-y-3"
+                    ? "border-white/15 bg-white/[0.06]"
                     : "border-white/10 bg-black"
                 }`}
               >
@@ -667,14 +667,6 @@ export default function LandingPage() {
                     Mais completo
                   </span>
                 )}
-
-                <div
-                  className={`mb-6 h-[2px] w-10 rounded-full ${
-                    tier.featured
-                      ? "bg-gradient-to-r from-[#E94332] via-[#D96A2E] to-[#C9A03A]"
-                      : "bg-white/20"
-                  }`}
-                />
 
                 <p className="mb-4 text-xs uppercase tracking-[0.4em] text-white/40">
                   {tier.label}
