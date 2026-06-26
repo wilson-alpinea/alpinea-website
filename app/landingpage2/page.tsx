@@ -219,7 +219,7 @@ export default function LandingPage() {
         <Lightbox src={lightbox.src} alt={lightbox.alt} onClose={() => setLightbox(null)} />
       )}
       {/* HERO */}
-      <section className="relative h-[50svh] min-h-[460px] overflow-hidden md:h-[50vh] md:min-h-[520px]">
+      <section className="relative h-[50svh] min-h-[460px] overflow-hidden md:h-[max(50vh,28vw)] md:max-h-[900px] md:min-h-[520px]">
         <video
           className="absolute inset-0 h-full w-full object-cover"
           src="/videos/higashiyama.mp4"
