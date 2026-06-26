@@ -198,6 +198,7 @@ export default function LandingPage() {
       label: "Orientação Estratégica",
       title: "Roteiro Personalizado",
       details: "Curadoria de destino, roteiro privado e recomendações estratégicas.",
+      highlighted: true,
     },
     {
       label: "Planejamento Completo",
@@ -653,11 +654,13 @@ export default function LandingPage() {
               ref={tiersScrollRef}
               className="flex gap-6 overflow-x-auto px-8 pt-4 pb-2 snap-x snap-mandatory scroll-pl-8 [&::-webkit-scrollbar]:hidden md:grid md:grid-cols-3 md:gap-8 md:overflow-visible md:px-0 md:pt-0 md:pb-0"
             >
-            {tiers.map((tier, i) => (
+            {tiers.map((tier) => (
               <div
                 key={tier.title}
                 className={`relative flex w-[78vw] flex-shrink-0 snap-start [scroll-snap-stop:always] flex-col rounded-[20px] border px-6 py-8 md:w-auto md:flex-shrink md:px-10 md:py-12 ${
                   tier.featured
+                    ? "border-white/10 bg-white/90"
+                    : tier.highlighted
                     ? "border-white/15 bg-white/[0.06]"
                     : "border-white/10 bg-black"
                 }`}
@@ -668,19 +671,27 @@ export default function LandingPage() {
                   </span>
                 )}
 
-                <p className="mb-4 text-xs uppercase tracking-[0.4em] text-white/40">
+                <p
+                  className={`mb-4 text-xs uppercase tracking-[0.4em] ${
+                    tier.featured ? "text-black/40" : "text-white/40"
+                  }`}
+                >
                   {tier.label}
                 </p>
 
                 <h3
-                  className={`font-light text-white ${
-                    i === 0 ? "text-2xl" : i === 1 ? "text-2xl md:text-3xl" : "text-2xl md:text-4xl"
+                  className={`text-2xl font-light md:text-3xl ${
+                    tier.featured ? "text-black" : "text-white"
                   }`}
                 >
                   {tier.title}
                 </h3>
 
-                <p className="mt-6 text-sm font-light leading-7 text-white/55">
+                <p
+                  className={`mt-6 text-sm font-light leading-7 ${
+                    tier.featured ? "text-black/55" : "text-white/55"
+                  }`}
+                >
                   {tier.details}
                 </p>
               </div>
