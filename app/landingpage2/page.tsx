@@ -196,7 +196,7 @@ export default function LandingPage() {
   const tiers = [
     {
       label: "Orientação Estratégica",
-      title: "Alpinea Design",
+      title: "Roteiro Personalizado",
       details: "Curadoria de destino, roteiro privado e recomendações estratégicas.",
     },
     {
@@ -260,7 +260,7 @@ export default function LandingPage() {
 
           <a
             href="#contact"
-            className="mt-10 border border-white/30 px-8 py-4 text-xs uppercase tracking-[0.3em] text-white transition hover:bg-white hover:text-black"
+            className="mt-10 hidden border border-white/30 px-8 py-4 text-xs uppercase tracking-[0.3em] text-white transition hover:bg-white hover:text-black md:block"
           >
             Solicitar atendimento
           </a>
