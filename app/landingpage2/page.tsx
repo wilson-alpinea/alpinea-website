@@ -263,11 +263,11 @@ export default function LandingPage() {
           </a>
         </div>
 
-        {/* Indicador de scroll — só no desktop; no mobile a tela já é curta o suficiente para não precisar do indicador */}
+        {/* Indicador de scroll — agora em todas as telas */}
         <a
           href="#overview"
           aria-label="Rolar para o conteúdo"
-          className="absolute inset-x-0 bottom-6 z-10 hidden justify-center md:flex"
+          className="absolute inset-x-0 bottom-6 z-10 flex justify-center"
         >
           <svg
             className="h-6 w-6 animate-bounce text-white/55 transition hover:text-white/90"
@@ -288,7 +288,7 @@ export default function LandingPage() {
       <section id="overview" className="border-b border-white/10 px-8 py-8 md:px-16 md:py-28">
         <div className="mx-auto max-w-7xl">
           <div className="mb-6 max-w-5xl md:mb-20">
-            <h2 className={`${display.className} text-4xl font-medium leading-tight md:text-6xl`}>
+            <h2 className={`${display.className} text-3xl font-medium leading-tight md:text-6xl`}>
               Única agência brasileira 100% focada em viagens de luxo para o Japão.
             </h2>
 
