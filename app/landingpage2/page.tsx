@@ -249,15 +249,11 @@ export default function LandingPage() {
 
         <div className="relative z-10 flex h-full flex-col items-center justify-center px-6 pt-20 text-center md:justify-end md:pb-28">
           <h1 className={`${display.className} max-w-4xl text-4xl font-medium leading-[1.1] tracking-tight md:text-6xl`}>
-            Viagens privadas e concierge{" "}
+            Viagens privadas e{" "}
             <span className="bg-gradient-to-r from-[#E94332] via-[#D96A2E] to-[#C9A03A] bg-clip-text text-transparent">
-              de luxo no Japão.
+              concierge de luxo no Japão.
             </span>
           </h1>
-
-          <p className="mt-8 max-w-3xl text-base font-light leading-8 text-white/72 md:text-lg">
-            Restaurantes quase impossíveis de reservar, especialistas em compras raramente acessíveis ao público e experiências para quem deseja viver o máximo do Japão.
-          </p>
 
           <a
             href="#contact"
@@ -293,7 +289,7 @@ export default function LandingPage() {
         <div className="mx-auto max-w-7xl">
           <div className="mb-6 max-w-5xl md:mb-20">
             <h2 className={`${display.className} text-4xl font-medium leading-tight md:text-6xl`}>
-              Uma operação desenhada para transformar intenção em viagem executada.
+              Única agência de luxo especialista em Japão.
             </h2>
 
             <p className="mt-8 hidden max-w-3xl text-lg font-light leading-9 text-white/68 md:block">
