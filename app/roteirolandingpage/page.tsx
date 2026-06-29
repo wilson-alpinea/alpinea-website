@@ -60,7 +60,7 @@ export default function RoteirosAdsPage() {
       <section className="relative min-h-[560px] overflow-hidden bg-black md:min-h-[820px]">
         <div className="absolute inset-0 mx-auto max-w-[1800px]">
           <Image
-            src="/images/ozegahara.png"
+            src="/images/ozenuma.jpeg"
             alt="Parque Nacional de Ozegahara"
             fill
             priority
@@ -146,6 +146,14 @@ export default function RoteirosAdsPage() {
         <div className="mx-auto max-w-3xl overflow-hidden rounded-2xl border border-white/10 bg-black/60 p-6 text-center sm:rounded-[2rem] sm:p-10">
           <p className="text-xs uppercase tracking-[0.35em] text-white/40">Dia 1</p>
           <h3 className={`${display.className} mt-2 text-2xl font-medium tracking-tight text-white md:text-3xl`}>Tokyo</h3>
+          <div className="mt-5 flex items-center justify-center gap-2" aria-label="Dia 1 de 7">
+            {Array.from({ length: 7 }).map((_, index) => (
+              <span
+                key={index}
+                className={`h-1.5 w-1.5 rounded-full ${index === 0 ? "bg-white" : "bg-white/20"}`}
+              />
+            ))}
+          </div>
           <p className="mx-auto mt-4 max-w-xl text-sm font-light leading-7 text-white/55">
             Chegada ao Japão, acomodação inicial e primeira experiência em
             Oshiage, com visita à Tokyo Skytree e exploração do complexo Tokyo Solamachi.
@@ -293,23 +301,26 @@ export default function RoteirosAdsPage() {
 
         <div className="px-8 py-24 md:px-16">
           <div className="mx-auto max-w-3xl space-y-12 text-center text-base font-light leading-9 text-white/65">
-            <div className="pt-2 space-y-5">
-              <p className="text-xs uppercase tracking-[0.35em] text-white/30">Cartão IC recomendado</p>
-              <p className="mx-auto max-w-xl">
-                O Welcome Suica cobre praticamente todo trem, metrô e ônibus do país — basta aproximar o celular ou o cartão físico na entrada e saída de cada estação, sem precisar comprar passagem a cada trajeto.
-              </p>
-            </div>
+            <div className="mx-auto max-w-xl rounded-2xl border border-white/10 bg-black/60 p-6 text-left sm:rounded-[2rem] sm:p-10">
+              <p className="mb-8 text-xs uppercase tracking-[0.25em] text-white/30">Recomendação Alpinea</p>
 
-            <div className="border-t border-white/10 pt-10">
-              <div className="mx-auto grid max-w-xl gap-8 text-left sm:grid-cols-2">
+              <div className="space-y-8">
                 <div>
+                  <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">Cartão IC recomendado</p>
+                  <p>
+                    O Suica IC Card cobre praticamente todo trem, metrô e ônibus do país — basta aproximar o celular ou o cartão físico na entrada e saída de cada estação, sem precisar comprar passagem a cada trajeto.
+                  </p>
+                </div>
+
+                <div className="border-t border-white/10 pt-8">
                   <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">App de navegação</p>
                   <p className="text-white/85">Google Maps</p>
-                  <p className="mt-1 text-sm text-white/45">Rotas, horários e plataforma de embarque em tempo real</p>
+                  <p className="mt-1 text-sm leading-7 text-white/45">Rotas, horários e plataforma de embarque em tempo real</p>
                 </div>
-                <div>
+
+                <div className="border-t border-white/10 pt-8">
                   <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">Horário de pico</p>
-                  <p className="text-white/60 text-sm">Evitar 07:30–09:00 e 17:30–19:30, dias de semana</p>
+                  <p>Evitar 07:30–09:00 e 17:30–19:30, dias de semana</p>
                 </div>
               </div>
             </div>
@@ -615,14 +626,10 @@ function DashboardPreview() {
     { day: 7, date: "7 Out", city: "Tokyo" },
   ];
 
-  const guides = [
+  const specialRoutes = [
     {
       title: "Restaurantes",
       image: "/images/sugita.png",
-    },
-    {
-      title: "Hotéis",
-      image: "/images/amanroom.png",
     },
     {
       title: "Compras",
@@ -630,14 +637,12 @@ function DashboardPreview() {
     },
   ];
 
-  const annexes = [
-    "Aeroporto Chegada Narita NRT",
-    "Aeroporto Partida Narita NRT",
-    "Instruções Conexão em Doha DOH",
-    "Dinheiro e Pagamentos",
-    "Apps e Conectividade",
+  const guides = [
+    "Aeroportos",
+    "Câmbio",
+    "Logística",
     "Trem Bala (Shinkansen)",
-    "Logística de Malas",
+    "Parques de Diversão (Disney & USJ)",
   ];
 
   return (
@@ -696,18 +701,24 @@ function DashboardPreview() {
       </div>
 
       <div className="mt-16">
-        <p className="mb-7 text-xs uppercase tracking-[0.35em] text-white/35">Guias</p>
-        <div className="grid max-w-[560px] gap-5 sm:grid-cols-3">
-          {guides.map((guide) => (
+        <p className="mb-3 text-xs uppercase tracking-[0.35em] text-white/35">Roteiros Especiais</p>
+        <p className="mb-7 inline-block rounded-full border border-white/20 px-4 py-1.5 text-xs uppercase tracking-[0.25em] text-white/75">
+          Contratação à parte
+        </p>
+        <div className="grid max-w-[360px] gap-5 sm:grid-cols-2">
+          {specialRoutes.map((guide) => (
             <GuideCard key={guide.title} {...guide} />
           ))}
         </div>
       </div>
 
       <div className="mt-16">
-        <p className="mb-7 text-xs uppercase tracking-[0.35em] text-white/35">Anexos especiais</p>
+        <p className="mb-3 text-xs uppercase tracking-[0.35em] text-white/35">Guias</p>
+        <p className="mb-7 inline-block rounded-full border border-white/20 px-4 py-1.5 text-xs uppercase tracking-[0.25em] text-white/75">
+          Incluso na contratação de qualquer roteiro
+        </p>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
-          {annexes.map((label) => (
+          {guides.map((label) => (
             <div
               key={label}
               className="rounded-xl border border-white/10 bg-white/[0.02] px-5 py-4 text-sm leading-6 text-white/55"
