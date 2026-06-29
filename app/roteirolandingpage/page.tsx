@@ -17,7 +17,7 @@ export const metadata = {
 
 export default function RoteirosAdsPage() {
   return (
-    <main className="min-h-screen bg-black text-white">
+    <main className="min-h-screen bg-black pb-20 text-white md:pb-0">
       {/* ── HEADER MINIMALISTA — sem menu, foco total em conversão ── */}
       <header className="fixed left-0 right-0 top-0 z-50 flex items-center justify-between bg-black/10 px-8 py-5 backdrop-blur-2xl md:px-16">
         <a href="/">
@@ -35,6 +35,27 @@ export default function RoteirosAdsPage() {
           Falar com a Alpinea
         </a>
       </header>
+
+      {/* ── CTA FIXO MOBILE — mesmo padrão usado na landingpage2 ── */}
+      <div
+        className="fixed inset-x-0 bottom-0 z-40 flex items-center gap-3 border-t border-white/10 bg-black/95 px-4 pt-3 backdrop-blur-xl md:hidden"
+        style={{ paddingBottom: "max(0.75rem, env(safe-area-inset-bottom))" }}
+      >
+        <ContactCTA
+          mode="single"
+          channel="whatsapp"
+          label="WhatsApp"
+          className="flex-1"
+          buttonClassName="block w-full border border-white/25 px-4 py-3 text-center text-xs uppercase tracking-[0.25em] text-white/80 transition hover:border-white/60"
+        />
+        <ContactCTA
+          mode="single"
+          channel="email"
+          label="Falar com a Alpinea"
+          className="flex-1"
+          buttonClassName="block w-full bg-white px-4 py-3 text-center text-xs uppercase tracking-[0.25em] text-black transition hover:bg-white/90"
+        />
+      </div>
 
       {/* ── SEÇÃO 1 — HERO ── */}
       <section className="relative min-h-[560px] overflow-hidden bg-black md:min-h-[820px]">
@@ -75,11 +96,8 @@ export default function RoteirosAdsPage() {
       <section className="bg-black px-8 py-20 md:px-16 md:py-24">
         <div className="mx-auto max-w-4xl text-center">
           <h2 className={`${display.className} text-3xl font-medium leading-snug text-white md:text-4xl`}>
-            Independente da duração da sua viagem, temos a curadoria
-            perfeita para você,{" "}
-            <span className="bg-gradient-to-r from-[#1b6f93] via-[#2f9cc4] to-[#7fd4ec] bg-clip-text text-transparent">
-              confira nosso exemplo abaixo.
-            </span>
+            Receba um roteiro 100% sob medida para o seu perfil e estilo de
+            viagem. Veja abaixo como funciona nossa plataforma digital.
           </h2>
         </div>
       </section>
@@ -137,7 +155,7 @@ export default function RoteirosAdsPage() {
             </div>
             <div>
               <p className="text-sm font-medium tracking-[0.15em] text-white">15:00</p>
-              <p className="mt-1 text-sm text-white/55">Check-in · The Peninsula Tokyo</p>
+              <p className="mt-1 text-sm text-white/55">Check-in · Grand Hyatt Tokyo</p>
             </div>
             <div>
               <p className="text-sm font-medium tracking-[0.15em] text-white">16:00</p>
@@ -145,7 +163,12 @@ export default function RoteirosAdsPage() {
             </div>
             <div>
               <p className="text-sm font-medium tracking-[0.15em] text-white">16:30</p>
-              <p className="mt-1 text-sm text-white/55">Tokyo Skytree · Subida ao observatório para o pôr do sol</p>
+              <p className="mt-1 flex flex-wrap items-center justify-center gap-2 text-sm text-white/55">
+                <span>Tokyo Skytree · Subida ao observatório para o pôr do sol</span>
+                <span className="inline-block rounded-full border border-white/25 px-4 py-1.5 text-xs uppercase tracking-[0.25em] text-white/70">
+                  Atração Principal
+                </span>
+              </p>
             </div>
             <div>
               <p className="text-sm font-medium tracking-[0.15em] text-white">18:30</p>
@@ -326,9 +349,9 @@ export default function RoteirosAdsPage() {
               </div>
             </div>
 
-            <div className="border-t border-white/10 pt-10 text-left">
-              <p className="mb-6 text-center text-xs uppercase tracking-[0.35em] text-white/30">Recomendação Alpinea</p>
-              <p className="mx-auto max-w-xl text-center">
+            <div className="mx-auto max-w-xl rounded-2xl border border-white/10 bg-black/60 p-6 text-left sm:rounded-[2rem] sm:p-10">
+              <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">Recomendação Alpinea</p>
+              <p>
                 A partir do Grand Hyatt Tokyo, a diferença de tempo entre metrô e
                 carro/táxi é irrelevante. O táxi proporciona maior comodidade,
                 mas a diferença de preço é grande. Em caso de chuva ou vento
@@ -412,10 +435,12 @@ export default function RoteirosAdsPage() {
                 title="Tempo estimado de visita"
                 text="Entre 1 e 2 horas após a subida ao observatório."
               />
-              <InfoBlock
-                title="Comentários"
-                text="Eu normalmente compro o ingresso para o 350º andar, não vejo grande diferença entre os andares, não acho que vale a pena o restaurante e nem a galeria que ficam no topo da torre. As opções de comida na base são melhores, o complexo tem uma quantidade gigante de lojas. Recomendo passar nas lojas depois de subir para não precisar carregar peso. Todos os restaurantes costumam ter filas, se programe para chegar pelo menos 30 minutos antes do horário desejado para comer. Se não estiver com muita fome, a praça de alimentação tem ótimas opções para lanches como o Gindaco, que faz o típico bolinho de polvo frito, Takoyaki, da região de Kansai."
-              />
+              <div className="rounded-2xl border border-white/10 bg-black/60 p-6 sm:rounded-[2rem] sm:p-10">
+                <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">Recomendação Alpinea</p>
+                <p>
+                  Eu normalmente compro o ingresso para o 350º andar, não vejo grande diferença entre os andares, não acho que vale a pena o restaurante e nem a galeria que ficam no topo da torre. As opções de comida na base são melhores, o complexo tem uma quantidade gigante de lojas. Recomendo passar nas lojas depois de subir para não precisar carregar peso. Todos os restaurantes costumam ter filas, se programe para chegar pelo menos 30 minutos antes do horário desejado para comer. Se não estiver com muita fome, a praça de alimentação tem ótimas opções para lanches como o Gindaco, que faz o típico bolinho de polvo frito, Takoyaki, da região de Kansai.
+                </p>
+              </div>
             </div>
 
             <div className="lg:sticky lg:top-28">
@@ -442,52 +467,58 @@ export default function RoteirosAdsPage() {
       </section>
 
       <section className="px-8 py-32 md:px-16">
-        <div className="mx-auto grid max-w-7xl gap-20 lg:grid-cols-2 lg:items-start">
-          <div>
-            <h3 className={`${display.className} mb-8 text-3xl font-medium text-white md:text-4xl`}>
+        <div className="mx-auto max-w-7xl">
+          <p className="mb-12 text-center">
+            <span className="inline-block rounded-full border border-white/25 px-4 py-1.5 text-xs uppercase tracking-[0.25em] text-white/70">
               Jantar
-            </h3>
-            <p className="text-lg font-light leading-9 text-white/70">
-              A Tokyo Skytree está integrada ao shopping Tokyo Solamachi, que
-              reúne diversas opções de restaurantes, praça de alimentação e um
-              mercado no subsolo com alternativas para takeout.
-            </p>
-            <div className="mt-16 space-y-14">
-              <RestaurantBlock
-                name="Hitsumabushi Bincho Tokyo Solamachi"
-                description="Restaurante especializado em enguia, com destaque para o hitsumabushi, prato típico da província de Aichi."
-                location="6º andar do Tokyo Solamachi"
-                price="Aproximadamente ¥6.000 por pessoa"
-                hours="11:00–21:00"
-                photo="/images/Hitsumabushi.png"
-              />
-              <RestaurantBlock
-                name="Kaiten Sushi Toriton"
-                description="Restaurante de sushi de esteira, conhecido por boa relação entre praticidade, qualidade e variedade."
-                location="6º andar do Tokyo Solamachi"
-                price="Aproximadamente ¥6.000 por pessoa"
-                hours="11:00–22:00, último pedido às 21:30"
-                photo="/images/Toriton.png"
-              />
-            </div>
-          </div>
+            </span>
+          </p>
 
-          <div className="lg:sticky lg:top-28">
-            <p className="mb-6 text-xs uppercase tracking-[0.35em] text-white/40">
-              Mapa — Solamachi Dining
-            </p>
-            <a href="/images/solamachi-dining-map.png" target="_blank" rel="noopener noreferrer" className="block">
-              <Image
-                src="/images/solamachi-dining-map.png"
-                alt="Mapa dos restaurantes do Tokyo Solamachi"
-                width={1200}
-                height={900}
-                className="w-full cursor-zoom-in rounded-xl border border-white/10 bg-white/[0.03] object-contain p-2 transition hover:opacity-85"
-              />
-            </a>
+          <div className="grid gap-20 lg:grid-cols-2 lg:items-start">
+            <div>
+              <p className="text-lg font-light leading-9 text-white/70">
+                A Tokyo Skytree está integrada ao shopping Tokyo Solamachi, que
+                reúne diversas opções de restaurantes, praça de alimentação e um
+                mercado no subsolo com alternativas para takeout.
+              </p>
+              <div className="mt-16 space-y-14">
+                <RestaurantBlock
+                  name="Hitsumabushi Bincho Tokyo Solamachi"
+                  description="Restaurante especializado em enguia, com destaque para o hitsumabushi, prato típico da província de Aichi."
+                  location="6º andar do Tokyo Solamachi"
+                  price="Aproximadamente ¥6.000 por pessoa"
+                  hours="11:00–21:00"
+                  photo="/images/Hitsumabushi.png"
+                />
+                <RestaurantBlock
+                  name="Kaiten Sushi Toriton"
+                  description="Restaurante de sushi de esteira, conhecido por boa relação entre praticidade, qualidade e variedade."
+                  location="6º andar do Tokyo Solamachi"
+                  price="Aproximadamente ¥6.000 por pessoa"
+                  hours="11:00–22:00, último pedido às 21:30"
+                  photo="/images/Toriton.png"
+                />
+              </div>
+            </div>
+
+            <div className="lg:sticky lg:top-28">
+              <p className="mb-6 text-xs uppercase tracking-[0.35em] text-white/40">
+                Mapa — Solamachi Dining
+              </p>
+              <a href="/images/solamachi-dining-map.png" target="_blank" rel="noopener noreferrer" className="block">
+                <Image
+                  src="/images/solamachi-dining-map.png"
+                  alt="Mapa dos restaurantes do Tokyo Solamachi"
+                  width={1200}
+                  height={900}
+                  className="w-full cursor-zoom-in rounded-xl border border-white/10 bg-white/[0.03] object-contain p-2 transition hover:opacity-85"
+                />
+              </a>
+            </div>
           </div>
         </div>
       </section>
+
 
       {/* ── CONTATO ── */}
       <section
@@ -712,8 +743,8 @@ function GuideCard({
 function InfoBlock({ title, text }: { title: string; text: string }) {
   return (
     <div className="border-t border-white/10 pt-10">
-      <p className={`${display.className} text-2xl font-medium text-white md:text-3xl`}>{title}</p>
-      <p className="mt-3">{text}</p>
+      <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">{title}</p>
+      <p>{text}</p>
     </div>
   );
 }
