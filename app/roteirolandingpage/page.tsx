@@ -46,15 +46,18 @@ export default function RoteirosAdsPage() {
           sizes="100vw"
           className="object-cover"
         />
-        <div className="absolute inset-0 bg-black/30" />
-        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/55 to-transparent" />
+        <div
+          className="absolute inset-0"
+          style={{
+            background:
+              "linear-gradient(to top, #000 0%, rgba(0,0,0,0.75) 18%, rgba(0,0,0,0.25) 38%, transparent 55%)",
+          }}
+        />
 
-        <div className="absolute inset-x-0 bottom-0 px-8 pb-16 text-center md:px-16 md:pb-20">
+        <div className="absolute inset-x-0 bottom-0 px-8 pb-8 text-center md:px-16 md:pb-10">
           <div className="mx-auto max-w-2xl">
             <h1 className={`${display.className} text-4xl font-medium leading-[1.15] tracking-tight md:text-5xl`}>
-              Viagens privadas e
-              <br />
-              concierge de luxo
+              Viagens privadas e concierge de luxo
             </h1>
             <p className="mx-auto mt-6 max-w-xl text-base font-light leading-8 text-white/65 md:text-lg">
               Confira abaixo alguns dos nossos exemplos de roteiros
@@ -65,7 +68,7 @@ export default function RoteirosAdsPage() {
       </section>
 
       {/* ── SEÇÃO 2 — OVERVIEW DOS TIPOS DE ROTEIRO ── */}
-      <section className="border-t border-white/10 bg-white/[0.025] px-8 py-24 md:px-16">
+      <section className="bg-white/[0.025] px-8 py-24 md:px-16">
         <div className="mx-auto max-w-4xl text-center">
           <h2 className={`${display.className} text-3xl font-medium leading-snug text-white md:text-4xl`}>
             Somos a{" "}

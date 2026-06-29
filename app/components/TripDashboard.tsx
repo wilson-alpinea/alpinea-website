@@ -167,7 +167,7 @@ function TripFlow({ days, hotels }: { days: DayCell[]; hotels?: HotelInfo[] }) {
                       <img
                         src={hotel.logo}
                         alt={hotel.name}
-                        className="mx-auto mt-2 h-4 w-auto object-contain opacity-70 brightness-0 invert"
+                        className="mx-auto mt-2 h-5 w-auto object-contain opacity-70 brightness-0 invert"
                       />
                     )}
                   </div>
