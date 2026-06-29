@@ -60,7 +60,7 @@ export default function RoteirosAdsPage() {
       <section className="relative min-h-[560px] overflow-hidden bg-black md:min-h-[820px]">
         <div className="absolute inset-0 mx-auto max-w-[1800px]">
           <Image
-            src="/images/ozenuma.jpeg"
+            src="/images/ozegahara.png"
             alt="Parque Nacional de Ozegahara"
             fill
             priority
@@ -68,7 +68,7 @@ export default function RoteirosAdsPage() {
             className="object-cover"
           />
 
-          <div className="absolute right-6 top-24 z-10 rounded-full border border-white/20 bg-black/15 px-4 py-2 text-[10px] uppercase tracking-[0.22em] text-white/75 backdrop-blur-md md:right-12 md:top-28 md:text-[11px]">
+          <div className="absolute right-6 top-24 z-10 rounded-full border border-white/15 bg-black px-4 py-2 text-[10px] uppercase tracking-[0.22em] text-white shadow-[0_12px_40px_rgba(0,0,0,0.35)] md:right-12 md:top-28 md:text-[11px]">
             Parque Nacional de Ozegahara
           </div>
 
@@ -103,7 +103,7 @@ export default function RoteirosAdsPage() {
       <section className="bg-black px-8 py-20 md:px-16 md:py-24">
         <div className="mx-auto max-w-4xl text-center">
           <h2 className={`${display.className} text-3xl font-medium leading-snug text-white md:text-4xl`}>
-            Receba um roteiro 100% sob medida para o seu perfil e estilo de
+            Receba um roteiro 100% personalizado para o seu perfil e estilo de
             viagem. Veja abaixo como funciona nossa plataforma digital.
           </h2>
         </div>
@@ -125,16 +125,24 @@ export default function RoteirosAdsPage() {
             </p>
           </div>
 
-          <div className="relative">
-            {/* Glow ambiente atrás do "tablet" — azul petróleo, suave e fora de foco */}
+          <div className="relative isolate">
+            {/* Glow ambiente atrás do dashboard — azul profundo, inspirado no efeito do Gemini */}
             <div
               aria-hidden
-              className="pointer-events-none absolute -inset-x-16 -inset-y-24 -z-10 overflow-hidden blur-3xl"
-            >
-              <div className="absolute -left-10 top-0 h-80 w-80 rounded-full" style={{ backgroundColor: "rgba(20,105,145,0.35)" }} />
-              <div className="absolute left-1/3 top-6 h-72 w-72 rounded-full" style={{ backgroundColor: "rgba(8,32,45,0.55)" }} />
-              <div className="absolute bottom-0 right-0 h-72 w-72 rounded-full" style={{ backgroundColor: "rgba(20,105,145,0.25)" }} />
-            </div>
+              className="pointer-events-none absolute left-1/2 top-1/2 -z-10 h-[720px] w-[920px] -translate-x-1/2 -translate-y-1/2 rounded-full opacity-70 blur-3xl"
+              style={{
+                background:
+                  "radial-gradient(circle, rgba(22,58,121,0.34) 0%, rgba(10,30,70,0.22) 38%, rgba(0,0,0,0) 72%)",
+              }}
+            />
+            <div
+              aria-hidden
+              className="pointer-events-none absolute left-1/2 top-[58%] -z-10 h-[520px] w-[680px] -translate-x-1/2 rounded-full opacity-50 blur-3xl"
+              style={{
+                background:
+                  "radial-gradient(circle, rgba(42,110,150,0.18) 0%, rgba(9,18,45,0.24) 42%, rgba(0,0,0,0) 76%)",
+              }}
+            />
 
             <DashboardPreview />
           </div>
@@ -293,7 +301,7 @@ export default function RoteirosAdsPage() {
               <p className="mb-5 text-xs uppercase tracking-[0.35em] text-white/40">Mobilidade</p>
               <h3 className={`${display.className} text-3xl font-medium text-white md:text-4xl`}>Trens e Metrô</h3>
               <p className="mx-auto mt-5 max-w-xl text-base font-light leading-9 text-white/65">
-                No Alpinea Design, o deslocamento é por conta própria — e o Japão torna isso simples. A malha de trens e metrô é pontual, extensa e fácil de navegar com os recursos certos.
+                Nesse exemplo, o deslocamento é por conta própria — e o Japão torna isso simples. A malha de trens e metrô é pontual, extensa e fácil de navegar com os recursos certos.
               </p>
             </div>
           </div>
@@ -325,7 +333,7 @@ export default function RoteirosAdsPage() {
               </div>
             </div>
 
-            <div className="border-t border-white/10 pt-10 text-left">
+            <div className="pt-10 text-left">
               <p className="mb-6 text-center text-xs uppercase tracking-[0.35em] text-white/30">Acesso à Estação · Oshiage</p>
               <div className="mx-auto max-w-xl">
                 <Image
@@ -487,7 +495,7 @@ export default function RoteirosAdsPage() {
       <section className="px-8 py-32 md:px-16">
         <div className="mx-auto max-w-7xl">
           <p className="mb-12 text-center">
-            <span className="inline-block rounded-full border border-white/25 px-4 py-1.5 text-xs uppercase tracking-[0.25em] text-white/70">
+            <span className="inline-block rounded-full border border-white/25 px-7 py-2.5 text-sm uppercase tracking-[0.28em] text-white/80">
               Jantar
             </span>
           </p>
@@ -721,7 +729,7 @@ function DashboardPreview() {
           {guides.map((label) => (
             <div
               key={label}
-              className="rounded-xl border border-white/10 bg-white/[0.02] px-5 py-4 text-sm leading-6 text-white/55"
+              className="flex min-h-[104px] items-center justify-center rounded-xl border border-white/10 bg-white/[0.02] px-5 py-4 text-center text-sm leading-6 text-white/55"
             >
               {label}
             </div>
@@ -796,15 +804,15 @@ function RestaurantBlock({
         </div>
       )}
 
-      <h3 className={`${display.className} text-xl font-medium leading-tight text-white md:text-2xl`}>
+      <h3 className={`${display.className} text-lg font-medium leading-snug text-white md:text-xl`}>
         {name}
       </h3>
 
-      <p className="mt-3 max-w-xl text-base font-light leading-8 text-white/62">
+      <p className="mt-3 max-w-xl text-[15px] font-light leading-8 text-white/60">
         {description}
       </p>
 
-      <div className="mt-7 grid gap-6 border-t border-white/10 pt-7 sm:grid-cols-3">
+      <div className="mt-6 grid gap-6 border-t border-white/10 pt-6 sm:grid-cols-3">
         <div>
           <p className="mb-2 text-[10px] uppercase tracking-[0.26em] text-white/30">Local</p>
           <p className="text-sm leading-7 text-white/58">{location}</p>
