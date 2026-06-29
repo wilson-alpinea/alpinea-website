@@ -40,7 +40,7 @@ export default function RoteirosAdsPage() {
       <section className="relative min-h-[760px] overflow-hidden bg-black">
         <div className="absolute inset-0 mx-auto max-w-[1800px]">
           <HeroVideo
-            src="/images/onsenanimated.mp4"
+            src="/videos/onsenanimated.mp4"
             poster="/images/onsenkonanso.jpg"
             className="absolute inset-0 h-full w-full object-cover"
           />
@@ -56,11 +56,11 @@ export default function RoteirosAdsPage() {
         <div className="absolute inset-x-0 bottom-0 px-8 pb-8 text-center md:px-16 md:pb-10">
           <div className="mx-auto max-w-2xl">
             <h1 className={`${display.className} text-4xl font-medium leading-[1.15] tracking-tight md:text-5xl`}>
-              Viagens privadas e concierge de luxo
+              Roteiros personalizados para o Japão, planejados do zero para cada viajante.
             </h1>
             <p className="mx-auto mt-6 max-w-xl text-base font-light leading-8 text-white/65 md:text-lg">
-              Confira abaixo alguns dos nossos exemplos de roteiros
-              personalizados para o Japão.
+              Confira abaixo alguns exemplos reais que já preparamos para
+              nossos viajantes.
             </p>
           </div>
         </div>
@@ -70,7 +70,8 @@ export default function RoteirosAdsPage() {
       <section className="bg-black px-8 py-24 md:px-16">
         <div className="mx-auto max-w-4xl text-center">
           <h2 className={`${display.className} text-3xl font-medium leading-snug text-white md:text-4xl`}>
-            Roteiros personalizados para sua viagem, independente da duração.
+            Roteiros personalizados para sua viagem, independente da duração
+            da sua viagem, temos a curadoria perfeita para você.
           </h2>
 
           <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
