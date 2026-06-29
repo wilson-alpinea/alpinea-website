@@ -579,17 +579,14 @@ function DashboardPreview() {
   const guides = [
     {
       title: "Restaurantes",
-      description: "Curadoria gastronômica, reservas e recomendações conforme o perfil da viagem.",
       image: "/images/sugita.png",
     },
     {
       title: "Hotéis",
-      description: "Seleção de hospedagens em localizações estratégicas, com estilo e conforto alinhados ao roteiro.",
       image: "/images/amanroom.png",
     },
     {
       title: "Compras",
-      description: "Apoio em boutiques, artigos japoneses, relógios, câmeras e categorias especializadas.",
       image: "/images/greubel.png",
     },
   ];
@@ -687,26 +684,23 @@ function DashboardPreview() {
 
 function GuideCard({
   title,
-  description,
   image,
 }: {
   title: string;
-  description: string;
   image: string;
 }) {
   return (
-    <article className="group relative aspect-[4/3] overflow-hidden rounded-3xl border border-white/10 bg-white/[0.03]">
+    <article className="group relative aspect-square overflow-hidden rounded-[2rem] bg-black">
       <Image
         src={image}
         alt={title}
         fill
         sizes="(max-width: 1024px) 100vw, 33vw"
-        className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+        className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.04]"
       />
-      <div className="absolute inset-0 bg-gradient-to-t from-black via-black/35 to-transparent" />
-      <div className="absolute inset-x-0 bottom-0 p-6 md:p-7">
-        <h3 className="text-2xl font-medium text-white md:text-3xl">{title}</h3>
-        <p className="mt-3 max-w-sm text-sm leading-6 text-white/65">{description}</p>
+      <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-black via-black/70 to-transparent" />
+      <div className="absolute bottom-0 left-0 z-10 p-8">
+        <h3 className="text-2xl font-light tracking-tight text-white md:text-3xl">{title}</h3>
       </div>
     </article>
   );
