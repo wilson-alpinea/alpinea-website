@@ -1,7 +1,6 @@
 import Image from "next/image";
 import { Bodoni_Moda } from "next/font/google";
 import { ContactCTA } from "../components/ContactCTA";
-import { HeroVideo } from "../components/HeroVideo";
 
 // Mesma fonte de destaque usada nas demais páginas do site.
 const display = Bodoni_Moda({
@@ -60,16 +59,24 @@ export default function RoteirosAdsPage() {
       {/* ── SEÇÃO 1 — HERO ── */}
       <section className="relative min-h-[560px] overflow-hidden bg-black md:min-h-[820px]">
         <div className="absolute inset-0 mx-auto max-w-[1800px]">
-          <HeroVideo
-            src="/videos/kamikochi.mp4"
-            poster="/images/onsenkonanso.jpg"
-            className="absolute inset-0 h-full w-full object-cover"
+          <Image
+            src="/images/ozegahara.png"
+            alt="Parque Nacional de Ozegahara"
+            fill
+            priority
+            sizes="100vw"
+            className="object-cover"
           />
+
+          <div className="absolute right-6 top-24 z-10 rounded-full border border-white/20 bg-black/15 px-4 py-2 text-[10px] uppercase tracking-[0.22em] text-white/75 backdrop-blur-md md:right-12 md:top-28 md:text-[11px]">
+            Parque Nacional de Ozegahara
+          </div>
+
           <div
             className="absolute inset-0"
             style={{
               background:
-                "linear-gradient(to top, #000 0%, rgba(0,0,0,0.88) 16%, rgba(0,0,0,0.58) 32%, rgba(0,0,0,0.18) 52%, transparent 72%)",
+                "linear-gradient(to top, #000 0%, rgba(0,0,0,0.92) 14%, rgba(0,0,0,0.68) 32%, rgba(0,0,0,0.22) 58%, rgba(0,0,0,0.06) 100%)",
             }}
           />
         </div>
@@ -767,7 +774,7 @@ function RestaurantBlock({
   return (
     <div className="border-t border-white/10 pt-8">
       {photo && (
-        <div className="mb-6 aspect-[4/3] overflow-hidden rounded-2xl border border-white/10">
+        <div className="mb-5 aspect-[4/3] overflow-hidden rounded-2xl border border-white/10 bg-white/[0.02]">
           <Image
             src={photo}
             alt={name}
@@ -777,12 +784,28 @@ function RestaurantBlock({
           />
         </div>
       )}
-      <h3 className={`${display.className} text-2xl font-medium text-white`}>{name}</h3>
-      <p className="mt-4 text-lg font-light leading-9 text-white/65">{description}</p>
-      <div className="mt-6 space-y-3 text-base leading-8 text-white/55">
-        <p><span className="text-white/80">Local:</span> {location}</p>
-        <p><span className="text-white/80">Preço:</span> {price}</p>
-        <p><span className="text-white/80">Horário:</span> {hours}</p>
+
+      <h3 className={`${display.className} text-xl font-medium leading-tight text-white md:text-2xl`}>
+        {name}
+      </h3>
+
+      <p className="mt-3 max-w-xl text-base font-light leading-8 text-white/62">
+        {description}
+      </p>
+
+      <div className="mt-7 grid gap-6 border-t border-white/10 pt-7 sm:grid-cols-3">
+        <div>
+          <p className="mb-2 text-[10px] uppercase tracking-[0.26em] text-white/30">Local</p>
+          <p className="text-sm leading-7 text-white/58">{location}</p>
+        </div>
+        <div>
+          <p className="mb-2 text-[10px] uppercase tracking-[0.26em] text-white/30">Preço</p>
+          <p className="text-sm leading-7 text-white/58">{price}</p>
+        </div>
+        <div>
+          <p className="mb-2 text-[10px] uppercase tracking-[0.26em] text-white/30">Horário</p>
+          <p className="text-sm leading-7 text-white/58">{hours}</p>
+        </div>
       </div>
     </div>
   );
