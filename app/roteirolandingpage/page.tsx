@@ -53,15 +53,11 @@ export default function RoteirosAdsPage() {
           />
         </div>
 
-        <div className="absolute inset-x-0 bottom-0 px-8 pb-8 text-center md:px-16 md:pb-10">
+        <div className="absolute inset-x-0 bottom-[34%] px-8 text-center md:px-16">
           <div className="mx-auto max-w-2xl">
             <h1 className={`${display.className} text-4xl font-medium leading-[1.15] tracking-tight md:text-5xl`}>
-              Roteiros personalizados para o Japão, planejados do zero para cada viajante.
+              Roteiros personalizados para o Japão
             </h1>
-            <p className="mx-auto mt-6 max-w-xl text-base font-light leading-8 text-white/65 md:text-lg">
-              Confira abaixo alguns exemplos reais que já preparamos para
-              nossos viajantes.
-            </p>
           </div>
         </div>
       </section>
@@ -70,8 +66,8 @@ export default function RoteirosAdsPage() {
       <section className="bg-black px-8 py-24 md:px-16">
         <div className="mx-auto max-w-4xl text-center">
           <h2 className={`${display.className} text-3xl font-medium leading-snug text-white md:text-4xl`}>
-            Roteiros personalizados para sua viagem, independente da duração
-            da sua viagem, temos a curadoria perfeita para você.
+            Independente da duração da sua viagem, temos a curadoria
+            perfeita para você, confira nosso exemplo abaixo.
           </h2>
 
           <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
@@ -99,8 +95,7 @@ export default function RoteirosAdsPage() {
             </h2>
             <p className="text-lg font-light leading-9 text-white/65">
               Roteiro num formato moderno e digital, para você acessar a
-              informação que precisa rapidamente. Abaixo você confere um
-              exemplo do nosso painel e uma pequena amostra de um roteiro real.
+              informação que precisa rapidamente.
             </p>
           </div>
 
