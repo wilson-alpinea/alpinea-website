@@ -128,6 +128,7 @@ function TripFlow({ days }: { days: DayCell[] }) {
                 width: circleSize,
                 height: circleSize,
                 borderColor: CITY_BORDER[stop.city] ?? "rgba(255,255,255,0.3)",
+                backgroundColor: CITY_BORDER[stop.city] ?? "rgba(255,255,255,0.3)",
               }}
             />
             {i < stops.length - 1 && (
@@ -168,7 +169,7 @@ export function TripDashboard({
   annexes: LinkCell[];
 }) {
   return (
-    <div>
+    <div className="overflow-hidden rounded-2xl border border-white/10 bg-black/60 p-5 sm:rounded-[2rem] sm:p-10">
       <p className="mb-6 text-center text-xs uppercase tracking-[0.35em] text-white/40">Cidades</p>
       <TripFlow days={days} />
 
