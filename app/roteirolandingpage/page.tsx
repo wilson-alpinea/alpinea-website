@@ -37,7 +37,7 @@ export default function RoteirosAdsPage() {
       </header>
 
       {/* ── SEÇÃO 1 — HERO ── */}
-      <section className="relative min-h-[480px] overflow-hidden bg-black md:min-h-[760px]">
+      <section className="relative min-h-[560px] overflow-hidden bg-black md:min-h-[820px]">
         <div className="absolute inset-0 mx-auto max-w-[1800px]">
           <HeroVideo
             src="/videos/kamikochi.mp4"
@@ -48,32 +48,33 @@ export default function RoteirosAdsPage() {
             className="absolute inset-0"
             style={{
               background:
-                "linear-gradient(to top, #000 0%, rgba(0,0,0,0.75) 18%, rgba(0,0,0,0.25) 38%, transparent 55%)",
+                "linear-gradient(to top, #000 0%, rgba(0,0,0,0.88) 16%, rgba(0,0,0,0.58) 32%, rgba(0,0,0,0.18) 52%, transparent 72%)",
             }}
           />
         </div>
 
-      </section>
-
-      {/* ── SEÇÃO 2 — OVERVIEW DOS TIPOS DE ROTEIRO ── */}
-      <section className="bg-black px-8 py-24 md:px-16">
-        <div className="mx-auto max-w-4xl text-center">
-          <h1 className={`${display.className} mb-10 text-3xl font-medium text-white md:text-4xl`}>
+        <div className="absolute inset-x-0 bottom-16 z-10 px-8 text-center md:bottom-24 md:px-16">
+          <h1 className={`${display.className} mx-auto max-w-4xl text-3xl font-medium leading-tight text-white md:text-5xl`}>
             Roteiros personalizados para o Japão
           </h1>
 
-          <div className="flex flex-wrap items-center justify-center gap-4">
+          <div className="mx-auto mt-8 flex max-w-4xl flex-wrap items-center justify-center gap-3 md:mt-10 md:gap-4">
             {["7 dias", "10 dias", "12 dias", "15 dias", "20+ dias"].map((d) => (
               <span
                 key={d}
-                className="cursor-default rounded-full border border-white/25 px-6 py-3 text-sm uppercase tracking-[0.2em] text-white/70 transition-colors duration-300 hover:border-white hover:bg-white hover:text-black"
+                className="cursor-default rounded-full border border-white/25 bg-black/10 px-5 py-2.5 text-xs uppercase tracking-[0.22em] text-white/75 backdrop-blur-sm transition-colors duration-300 hover:border-white hover:bg-white hover:text-black md:px-6 md:py-3 md:text-sm"
               >
                 {d}
               </span>
             ))}
           </div>
+        </div>
+      </section>
 
-          <h2 className={`${display.className} mt-10 text-3xl font-medium leading-snug text-white md:text-4xl`}>
+      {/* ── SEÇÃO 2 — CHAMADA PARA O EXEMPLO ── */}
+      <section className="bg-black px-8 py-20 md:px-16 md:py-24">
+        <div className="mx-auto max-w-4xl text-center">
+          <h2 className={`${display.className} text-3xl font-medium leading-snug text-white md:text-4xl`}>
             Independente da duração da sua viagem, temos a curadoria
             perfeita para você,{" "}
             <span className="bg-gradient-to-r from-[#1b6f93] via-[#2f9cc4] to-[#7fd4ec] bg-clip-text text-transparent">
