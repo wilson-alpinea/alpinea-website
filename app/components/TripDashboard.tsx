@@ -23,6 +23,11 @@ export type LinkCell = {
   href?: string;
 };
 
+export type HotelInfo = {
+  name: string;
+  logo?: string;
+};
+
 // Tons muito sutis por cidade — só para sugerir o fluxo da viagem,
 // sem fugir da paleta neutra do site.
 const CITY_BORDER: Record<string, string> = {
@@ -111,10 +116,11 @@ function computeStops(days: DayCell[]) {
   return stops;
 }
 
-function TripFlow({ days }: { days: DayCell[] }) {
+function TripFlow({ days, hotels }: { days: DayCell[]; hotels?: HotelInfo[] }) {
   const stops = computeStops(days);
   const circleSize = 56;
   const arrowWidth = 28;
+  const legendWidth = hotels && hotels.length ? 104 : circleSize;
 
   return (
     <div className="mb-12 flex flex-col items-center">
@@ -143,17 +149,32 @@ function TripFlow({ days }: { days: DayCell[] }) {
 
       {/* Linha das legendas — mesma largura dos círculos, alinhada por baixo deles */}
       <div className="mt-3 flex items-start justify-center">
-        {stops.map((stop, i) => (
-          <div key={i} className="flex items-center">
-            <div className="text-center" style={{ width: circleSize }}>
-              <p className="text-xs uppercase tracking-[0.2em] text-white/70">{stop.city}</p>
-              <p className="text-[11px] text-white/35">
-                {stop.days} {stop.days === 1 ? "dia" : "dias"}
-              </p>
+        {stops.map((stop, i) => {
+          const hotel = hotels?.[i];
+          return (
+            <div key={i} className="flex items-center">
+              <div className="text-center" style={{ width: legendWidth }}>
+                <p className="text-xs uppercase tracking-[0.2em] text-white/70">{stop.city}</p>
+                <p className="text-[11px] text-white/35">
+                  {stop.days} {stop.days === 1 ? "dia" : "dias"}
+                </p>
+                {hotel && (
+                  <div className="mt-3 border-t border-white/10 pt-3">
+                    <p className="text-[11px] tracking-[0.1em] text-white/55">{hotel.name}</p>
+                    {hotel.logo && (
+                      <img
+                        src={hotel.logo}
+                        alt={hotel.name}
+                        className="mx-auto mt-2 h-4 w-auto object-contain opacity-70 brightness-0 invert"
+                      />
+                    )}
+                  </div>
+                )}
+              </div>
+              {i < stops.length - 1 && <div className="mx-1 shrink-0" style={{ width: arrowWidth }} />}
             </div>
-            {i < stops.length - 1 && <div className="mx-1 shrink-0" style={{ width: arrowWidth }} />}
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );
@@ -163,15 +184,17 @@ export function TripDashboard({
   days,
   guides,
   annexes,
+  hotels,
 }: {
   days: DayCell[];
   guides: LinkCell[];
   annexes: LinkCell[];
+  hotels?: HotelInfo[];
 }) {
   return (
     <div className="overflow-hidden rounded-2xl border border-white/10 bg-black/60 p-5 sm:rounded-[2rem] sm:p-10">
       <p className="mb-6 text-center text-xs uppercase tracking-[0.35em] text-white/40">Cidades</p>
-      <TripFlow days={days} />
+      <TripFlow days={days} hotels={hotels} />
 
       <div className="space-y-12">
         <div>

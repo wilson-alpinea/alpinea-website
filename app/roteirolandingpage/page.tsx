@@ -37,79 +37,63 @@ export default function RoteirosAdsPage() {
       </header>
 
       {/* ── SEÇÃO 1 — HERO ── */}
-      <section className="relative flex min-h-[680px] items-center overflow-hidden px-8 pb-24 pt-40 md:px-16 md:pt-48">
+      <section className="relative min-h-[760px] overflow-hidden">
         <Image
-          src="/images/ginzanonsen.jpg"
+          src="/images/onsenkonanso.jpg"
           alt="Japão — viagem privada Alpinea"
           fill
           priority
           sizes="100vw"
-          className="object-cover opacity-55"
+          className="object-cover"
         />
-        <div className="absolute inset-0 bg-black/35" />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/55 via-black/20 to-black" />
+        <div className="absolute inset-0 bg-black/30" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/55 to-transparent" />
 
-        <div className="relative z-10 mx-auto max-w-5xl text-center">
-          <p className="mb-8 text-xs uppercase tracking-[0.35em] text-white/40">
-            Alpinea — Especialistas em Japão
-          </p>
-          <h1 className={`${display.className} text-5xl font-medium leading-[1.1] tracking-tight md:text-7xl`}>
-            Viagens privadas e
-            <br />
-            concierge de luxo.
-          </h1>
-          <p className="mx-auto mt-8 max-w-2xl text-lg font-light leading-9 text-white/65">
-            Confira abaixo alguns dos nossos exemplos de roteiros
-            personalizados para o Japão.
-          </p>
+        <div className="absolute inset-x-0 bottom-0 px-8 pb-16 text-center md:px-16 md:pb-20">
+          <div className="mx-auto max-w-3xl">
+            <h1 className={`${display.className} text-5xl font-medium leading-[1.1] tracking-tight md:text-7xl`}>
+              Viagens privadas e
+              <br />
+              concierge de luxo
+            </h1>
+            <p className="mx-auto mt-8 max-w-2xl text-lg font-light leading-9 text-white/65">
+              Confira abaixo alguns dos nossos exemplos de roteiros
+              personalizados para o Japão.
+            </p>
+          </div>
         </div>
       </section>
 
       {/* ── SEÇÃO 2 — OVERVIEW DOS TIPOS DE ROTEIRO ── */}
       <section className="border-t border-white/10 bg-white/[0.025] px-8 py-24 md:px-16">
         <div className="mx-auto max-w-4xl text-center">
-          <p className="mb-5 text-xs uppercase tracking-[0.35em] text-white/40">
-            Como trabalhamos
-          </p>
-          <h2 className={`${display.className} mb-12 text-3xl font-medium text-white md:text-4xl`}>
-            Roteiros sob medida, do início ao fim da viagem.
-          </h2>
-
-          <div className="mb-10 flex flex-wrap items-center justify-center gap-3">
-            {["7 dias", "10 dias", "12 dias", "15 dias", "20+ dias"].map((d) => (
-              <span
-                key={d}
-                className="rounded-full border border-white/25 px-4 py-1.5 text-xs uppercase tracking-[0.25em] text-white/70"
-              >
-                {d}
-              </span>
-            ))}
-          </div>
-
-          <p className="mx-auto max-w-2xl text-lg font-light leading-9 text-white/65">
-            Trabalhamos com roteiros personalizados de diversas durações.
-            Cada roteiro contém guias completos — desde a preparação
-            pré-viagem, guia de aeroporto, transporte e logística, até
-            guias especializados como restaurantes e compras de luxo.
-          </p>
-
-          <div className="mt-10 flex flex-wrap items-center justify-center gap-3 text-sm font-light text-white/55">
-            {["Preparação pré-viagem", "Aeroporto", "Transporte e logística", "Restaurantes", "Compras de luxo"].map(
-              (g) => (
-                <span key={g} className="rounded-lg border border-white/10 bg-white/[0.03] px-4 py-2">
-                  {g}
-                </span>
-              )
-            )}
-          </div>
-
-          <p className="mx-auto mt-14 max-w-2xl text-2xl font-light leading-relaxed text-white/85">
+          <h2 className={`${display.className} text-3xl font-medium leading-snug text-white md:text-4xl`}>
             Somos a{" "}
-            <span className="bg-gradient-to-r from-red-500 via-orange-400 to-amber-300 bg-clip-text font-medium text-transparent">
+            <span className="bg-gradient-to-r from-red-500 via-orange-400 to-amber-300 bg-clip-text text-transparent">
               única agência brasileira 100% focada no Japão
             </span>{" "}
             para o mercado de luxo.
-          </p>
+          </h2>
+
+          <div className="mt-16">
+            <p className="mb-4 text-xs uppercase tracking-[0.35em] text-white/40">
+              Nossos roteiros:
+            </p>
+            <p className="mx-auto max-w-xl text-lg font-light leading-9 text-white/65">
+              Roteiros personalizados para sua viagem, independente da duração.
+            </p>
+
+            <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+              {["7 dias", "10 dias", "12 dias", "15 dias", "20+ dias"].map((d) => (
+                <span
+                  key={d}
+                  className="rounded-full border border-white/25 px-4 py-1.5 text-xs uppercase tracking-[0.25em] text-white/70"
+                >
+                  {d}
+                </span>
+              ))}
+            </div>
+          </div>
         </div>
       </section>
 
@@ -155,6 +139,11 @@ export default function RoteirosAdsPage() {
               { label: "Trem Bala (Shinkansen)" },
               { label: "Logística de Malas" },
             ]}
+            hotels={[
+              { name: "The Peninsula", logo: "/images/logos/the-peninsula-tokyo.png" },
+              { name: "Aman Kyoto", logo: "/images/logos/aman-kyoto.png" },
+              { name: "The Peninsula", logo: "/images/logos/the-peninsula-tokyo.png" },
+            ]}
           />
         </div>
       </section>
@@ -162,8 +151,8 @@ export default function RoteirosAdsPage() {
       {/* ── PEDAÇO DO ROTEIRO — AMOSTRA DO DIA 1 ── */}
       <section id="dia-1" className="border-t border-white/10 px-8 py-24 md:px-16">
         <div className="mx-auto max-w-7xl">
-          <div className="border border-white/10 bg-white/[0.035] px-8 py-8 md:px-10">
-            <p className="mb-5 text-xs uppercase tracking-[0.45em] text-white/45">Dia 1</p>
+          <div className="group cursor-default border border-white/10 bg-white/[0.035] px-8 py-8 transition-all duration-500 ease-out hover:-translate-y-1 hover:border-amber-200/30 hover:bg-white/[0.05] hover:shadow-[0_30px_90px_-25px_rgba(255,175,90,0.3)] md:px-10">
+            <p className="mb-5 text-xs uppercase tracking-[0.45em] text-white/45 transition-colors duration-500 group-hover:text-amber-200/70">Dia 1</p>
             <h3 className={`${display.className} text-4xl font-medium tracking-tight text-white md:text-6xl`}>Tokyo</h3>
             <p className="mt-6 max-w-3xl text-lg font-light leading-9 text-white/60">
               Chegada ao Japão, acomodação inicial e primeira experiência em
@@ -184,7 +173,7 @@ export default function RoteirosAdsPage() {
               </div>
               <div className="flex items-start gap-6 border-t border-white/[0.06] pt-5">
                 <span className="mt-0.5 shrink-0 text-xs tracking-[0.2em] text-white/25 w-12">15:00</span>
-                <p className="text-white/80">Check-in · Grand Hyatt Tokyo</p>
+                <p className="text-white/80">Check-in · The Peninsula Tokyo</p>
               </div>
               <div className="flex items-start gap-6 border-t border-white/[0.06] pt-5">
                 <span className="mt-0.5 shrink-0 text-xs tracking-[0.2em] text-white/25 w-12">16:00</span>
