@@ -171,37 +171,39 @@ export function TripDashboard({
   const totalDays = days.length;
 
   return (
-    <div className="overflow-hidden rounded-2xl border border-white/10 bg-black/60 p-5 sm:rounded-[2rem] sm:p-10">
-      <p className="mb-6 text-center">
-        <span className="inline-block rounded-full border border-white/25 px-4 py-1.5 text-xs uppercase tracking-[0.25em] text-white/70">
-          Roteiro de {totalDays} dias
-        </span>
-      </p>
-      <p className="mb-6 text-center text-xs uppercase tracking-[0.35em] text-white/40">Cidades</p>
-      <TripFlow days={days} />
+    <div className="rounded-3xl bg-gradient-to-br from-white/25 via-white/10 to-white/15 p-1 shadow-[0_30px_70px_-25px_rgba(0,0,0,0.65)] sm:rounded-[2.5rem]">
+      <div className="overflow-hidden rounded-2xl border border-white/10 bg-black/60 p-5 sm:rounded-[2rem] sm:p-10">
+        <p className="mb-6 text-center">
+          <span className="inline-block rounded-full border border-white/25 px-4 py-1.5 text-xs uppercase tracking-[0.25em] text-white/70">
+            Roteiro de {totalDays} dias
+          </span>
+        </p>
+        <p className="mb-6 text-center text-xs uppercase tracking-[0.35em] text-white/40">Cidades</p>
+        <TripFlow days={days} />
 
-      <div className="space-y-12">
-        <div>
-          <p className="mb-2 text-xs uppercase tracking-[0.35em] text-white/40">Roteiro Diário</p>
-          <p className="mb-6 inline-block rounded-full border border-white/25 px-4 py-1.5 text-xs uppercase tracking-[0.25em] text-white/70">
-            Nesta amostra, apenas o Dia 1 está disponível para visualização.
-          </p>
-          <div className="grid grid-cols-3 gap-3 sm:grid-cols-5">
-            {days.map((d) => (
-              <Cell
-                key={d.day}
-                title={d.href ? `Dia ${d.day} →` : `Dia ${d.day}`}
-                subtitle={`${d.date} · ${d.city}`}
-                href={d.href}
-                borderColor={CITY_BORDER[d.city]}
-                highlighted={!!d.href}
-              />
-            ))}
+        <div className="space-y-12">
+          <div>
+            <p className="mb-2 text-xs uppercase tracking-[0.35em] text-white/40">Roteiro Diário</p>
+            <p className="mb-6 inline-block rounded-full border border-white/25 px-4 py-1.5 text-xs uppercase tracking-[0.25em] text-white/70">
+              Nesta amostra, apenas o Dia 1 está disponível para visualização.
+            </p>
+            <div className="grid grid-cols-3 gap-3 sm:grid-cols-5">
+              {days.map((d) => (
+                <Cell
+                  key={d.day}
+                  title={d.href ? `Dia ${d.day} →` : `Dia ${d.day}`}
+                  subtitle={`${d.date} · ${d.city}`}
+                  href={d.href}
+                  borderColor={CITY_BORDER[d.city]}
+                  highlighted={!!d.href}
+                />
+              ))}
+            </div>
           </div>
-        </div>
 
-        <CellGroup title="Guias" items={guides} />
-        <CellGroup title="Anexos Especiais" items={annexes} />
+          <CellGroup title="Guias" items={guides} />
+          <CellGroup title="Anexos Especiais" items={annexes} />
+        </div>
       </div>
     </div>
   );

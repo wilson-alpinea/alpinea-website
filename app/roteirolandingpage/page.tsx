@@ -141,47 +141,42 @@ export default function RoteirosAdsPage() {
 
       {/* ── PEDAÇO DO ROTEIRO — AMOSTRA DO DIA 1 ── */}
       <section id="dia-1" className="border-t border-white/10 px-8 py-24 md:px-16">
-        <div className="mx-auto max-w-7xl">
-          <div className="border border-white/10 bg-white/[0.035] px-8 py-8 md:px-10">
-            <p className="mb-5 text-xs uppercase tracking-[0.45em] text-white/45">Dia 1</p>
-            <h3 className={`${display.className} text-4xl font-medium tracking-tight text-white md:text-6xl`}>Tokyo</h3>
-            <p className="mt-6 max-w-3xl text-lg font-light leading-9 text-white/60">
-              Chegada ao Japão, acomodação inicial e primeira experiência em
-              Oshiage, com visita à Tokyo Skytree e exploração do complexo Tokyo Solamachi.
-            </p>
-          </div>
+        <div className="mx-auto max-w-3xl overflow-hidden rounded-2xl border border-white/10 bg-black/60 p-6 text-center sm:rounded-[2rem] sm:p-10">
+          <p className="text-xs uppercase tracking-[0.35em] text-white/40">Dia 1</p>
+          <h3 className={`${display.className} mt-2 text-2xl font-medium tracking-tight text-white md:text-3xl`}>Tokyo</h3>
+          <p className="mx-auto mt-4 max-w-xl text-sm font-light leading-7 text-white/55">
+            Chegada ao Japão, acomodação inicial e primeira experiência em
+            Oshiage, com visita à Tokyo Skytree e exploração do complexo Tokyo Solamachi.
+          </p>
 
-          <div className="mt-6 border border-white/10 bg-white/[0.03] p-10">
-            <p className="mb-6 text-xs uppercase tracking-[0.35em] text-white/40">Resumo do Dia 1</p>
-            <div className="space-y-6 text-sm leading-8 text-white/55">
-              <div className="flex items-start gap-6">
-                <span className="mt-0.5 shrink-0 text-xs tracking-[0.2em] text-white/25 w-12">10:30</span>
-                <p className="text-white/80">Chegada · Aeroporto Internacional de Narita — Terminal 3</p>
-              </div>
-              <div className="flex items-start gap-6 border-t border-white/[0.06] pt-5">
-                <span className="mt-0.5 shrink-0 text-xs tracking-[0.2em] text-white/25 w-12">11:30</span>
-                <p>Imigração, retirada de bagagem e deslocamento até o hotel</p>
-              </div>
-              <div className="flex items-start gap-6 border-t border-white/[0.06] pt-5">
-                <span className="mt-0.5 shrink-0 text-xs tracking-[0.2em] text-white/25 w-12">15:00</span>
-                <p className="text-white/80">Check-in · The Peninsula Tokyo</p>
-              </div>
-              <div className="flex items-start gap-6 border-t border-white/[0.06] pt-5">
-                <span className="mt-0.5 shrink-0 text-xs tracking-[0.2em] text-white/25 w-12">16:00</span>
-                <p>Saída do hotel rumo a Oshiage</p>
-              </div>
-              <div className="flex items-start gap-6 border-t border-white/[0.06] pt-5">
-                <span className="mt-0.5 shrink-0 text-xs tracking-[0.2em] text-white/25 w-12">16:30</span>
-                <p className="text-white/80">Tokyo Skytree · Subida ao observatório para o pôr do sol</p>
-              </div>
-              <div className="flex items-start gap-6 border-t border-white/[0.06] pt-5">
-                <span className="mt-0.5 shrink-0 text-xs tracking-[0.2em] text-white/25 w-12">18:30</span>
-                <p>Exploração do Tokyo Solamachi · lojas e gastronomia</p>
-              </div>
-              <div className="flex items-start gap-6 border-t border-white/[0.06] pt-5">
-                <span className="mt-0.5 shrink-0 text-xs tracking-[0.2em] text-white/25 w-12">20:00</span>
-                <p>Retorno ao hotel · noite livre</p>
-              </div>
+          <div className="mx-auto mt-10 max-w-md space-y-7">
+            <div>
+              <p className="text-sm font-medium tracking-[0.15em] text-white">10:30</p>
+              <p className="mt-1 text-sm text-white/55">Chegada · Aeroporto Internacional de Narita — Terminal 3</p>
+            </div>
+            <div>
+              <p className="text-sm font-medium tracking-[0.15em] text-white">11:30</p>
+              <p className="mt-1 text-sm text-white/55">Imigração, retirada de bagagem e deslocamento até o hotel</p>
+            </div>
+            <div>
+              <p className="text-sm font-medium tracking-[0.15em] text-white">15:00</p>
+              <p className="mt-1 text-sm text-white/55">Check-in · The Peninsula Tokyo</p>
+            </div>
+            <div>
+              <p className="text-sm font-medium tracking-[0.15em] text-white">16:00</p>
+              <p className="mt-1 text-sm text-white/55">Saída do hotel rumo a Oshiage</p>
+            </div>
+            <div>
+              <p className="text-sm font-medium tracking-[0.15em] text-white">16:30</p>
+              <p className="mt-1 text-sm text-white/55">Tokyo Skytree · Subida ao observatório para o pôr do sol</p>
+            </div>
+            <div>
+              <p className="text-sm font-medium tracking-[0.15em] text-white">18:30</p>
+              <p className="mt-1 text-sm text-white/55">Exploração do Tokyo Solamachi · lojas e gastronomia</p>
+            </div>
+            <div>
+              <p className="text-sm font-medium tracking-[0.15em] text-white">20:00</p>
+              <p className="mt-1 text-sm text-white/55">Retorno ao hotel · noite livre</p>
             </div>
           </div>
         </div>
