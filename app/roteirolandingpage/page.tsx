@@ -658,7 +658,7 @@ function DashboardPreview() {
 
       <div className="mt-16">
         <p className="mb-7 text-xs uppercase tracking-[0.35em] text-white/35">Guias</p>
-        <div className="grid gap-6 lg:grid-cols-3">
+        <div className="mx-auto grid max-w-[820px] gap-6 sm:grid-cols-3">
           {guides.map((guide) => (
             <GuideCard key={guide.title} {...guide} />
           ))}
@@ -690,7 +690,7 @@ function GuideCard({
   image: string;
 }) {
   return (
-    <article className="group relative aspect-square overflow-hidden rounded-[2rem] bg-black">
+    <article className="group relative aspect-[1.08/1] overflow-hidden rounded-[1.65rem] bg-black">
       <Image
         src={image}
         alt={title}
@@ -698,9 +698,9 @@ function GuideCard({
         sizes="(max-width: 1024px) 100vw, 33vw"
         className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.04]"
       />
-      <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-black via-black/70 to-transparent" />
-      <div className="absolute bottom-0 left-0 z-10 p-8">
-        <h3 className="text-2xl font-light tracking-tight text-white md:text-3xl">{title}</h3>
+      <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-black via-black/70 to-transparent" />
+      <div className="absolute bottom-0 left-0 z-10 p-6">
+        <h3 className="text-xl font-light tracking-tight text-white md:text-2xl">{title}</h3>
       </div>
     </article>
   );
