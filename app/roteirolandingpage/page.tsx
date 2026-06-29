@@ -869,10 +869,10 @@ function DashboardPreview() {
             <a
               key={d.day}
               href={d.active ? "#dia-1" : undefined}
-              className={`rounded-xl border p-5 transition duration-300 ${
+              className={`rounded-xl border p-5 transition duration-300 ease-out hover:-translate-y-0.5 hover:shadow-[0_0_0_1px_rgba(145,170,255,0.08),0_0_28px_rgba(55,90,210,0.10)] ${
                 d.active
-                  ? "border-white bg-white text-black hover:bg-white/90"
-                  : "border-white/10 bg-white/[0.02] text-white/35 hover:border-white/25 hover:text-white/60"
+                  ? "border-white bg-white text-black hover:border-[#91aaff]/40 hover:bg-white/90"
+                  : "border-white/10 bg-white/[0.02] text-white/35 hover:border-[#91aaff]/25 hover:bg-[#050505] hover:text-white/65"
               }`}
             >
               <p className="font-medium">
@@ -920,7 +920,7 @@ function DashboardPreview() {
           {guides.map((label) => (
             <div
               key={label}
-              className="flex min-h-[104px] items-center justify-center rounded-xl border border-white/10 bg-white/[0.02] px-5 py-4 text-center text-sm leading-6 text-white/55"
+              className="flex min-h-[104px] cursor-pointer items-center justify-center rounded-xl border border-white/10 bg-white/[0.02] px-5 py-4 text-center text-sm leading-6 text-white/55 transition duration-300 ease-out hover:-translate-y-0.5 hover:border-[#91aaff]/25 hover:bg-[#050505] hover:text-white/70 hover:shadow-[0_0_0_1px_rgba(145,170,255,0.08),0_0_28px_rgba(55,90,210,0.10)]"
             >
               {label}
             </div>
@@ -956,19 +956,19 @@ function GuideCard({
           <span className="text-sm">⌕</span>
         </div>
       </div>
-      <p className="mt-3 text-sm leading-6 text-white/55">{title}</p>
+      <p className="mt-3 text-sm leading-6 text-white/55 transition duration-300 group-hover:text-white/75">{title}</p>
     </>
   );
 
   if (href) {
     return (
-      <a href={href} className="group block max-w-[165px] cursor-zoom-in">
+      <a href={href} className="group block max-w-[165px] cursor-zoom-in transition duration-300 ease-out hover:-translate-y-0.5">
         {content}
       </a>
     );
   }
 
-  return <article className="group max-w-[165px]">{content}</article>;
+  return <article className="group max-w-[165px] transition duration-300 ease-out hover:-translate-y-0.5">{content}</article>;
 }
 
 function RoutePreviewModals() {
