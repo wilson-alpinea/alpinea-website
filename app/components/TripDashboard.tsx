@@ -23,11 +23,6 @@ export type LinkCell = {
   href?: string;
 };
 
-export type HotelInfo = {
-  name: string;
-  logo?: string;
-};
-
 // Tons muito sutis por cidade — só para sugerir o fluxo da viagem,
 // sem fugir da paleta neutra do site.
 const CITY_BORDER: Record<string, string> = {
@@ -116,29 +111,26 @@ function computeStops(days: DayCell[]) {
   return stops;
 }
 
-function TripFlow({ days, hotels }: { days: DayCell[]; hotels?: HotelInfo[] }) {
+function TripFlow({ days }: { days: DayCell[] }) {
   const stops = computeStops(days);
   const circleSize = 56;
   const arrowWidth = 28;
-  const legendWidth = hotels && hotels.length ? 104 : circleSize;
 
   return (
     <div className="mb-12 flex flex-col items-center">
-      {/* Linha dos círculos e setas — coluna com a mesma largura da legenda abaixo, círculo centralizado dentro dela */}
+      {/* Linha dos círculos e setas — todos do mesmo tamanho, setas centralizadas */}
       <div className="flex items-center justify-center">
         {stops.map((stop, i) => (
           <div key={i} className="flex items-center">
-            <div className="flex items-center justify-center" style={{ width: legendWidth }}>
-              <div
-                className="shrink-0 rounded-full border"
-                style={{
-                  width: circleSize,
-                  height: circleSize,
-                  borderColor: CITY_BORDER[stop.city] ?? "rgba(255,255,255,0.3)",
-                  backgroundColor: CITY_BORDER[stop.city] ?? "rgba(255,255,255,0.3)",
-                }}
-              />
-            </div>
+            <div
+              className="shrink-0 rounded-full border"
+              style={{
+                width: circleSize,
+                height: circleSize,
+                borderColor: CITY_BORDER[stop.city] ?? "rgba(255,255,255,0.3)",
+                backgroundColor: CITY_BORDER[stop.city] ?? "rgba(255,255,255,0.3)",
+              }}
+            />
             {i < stops.length - 1 && (
               <svg width={arrowWidth} height="10" viewBox="0 0 28 10" fill="none" className="mx-1 shrink-0">
                 <line x1="0" y1="5" x2="20" y2="5" stroke="rgba(255,255,255,0.3)" strokeWidth="1.5" />
@@ -151,32 +143,17 @@ function TripFlow({ days, hotels }: { days: DayCell[]; hotels?: HotelInfo[] }) {
 
       {/* Linha das legendas — mesma largura dos círculos, alinhada por baixo deles */}
       <div className="mt-3 flex items-start justify-center">
-        {stops.map((stop, i) => {
-          const hotel = hotels?.[i];
-          return (
-            <div key={i} className="flex items-center">
-              <div className="text-center" style={{ width: legendWidth }}>
-                <p className="text-xs uppercase tracking-[0.2em] text-white/70">{stop.city}</p>
-                <p className="text-[11px] text-white/35">
-                  {stop.days} {stop.days === 1 ? "dia" : "dias"}
-                </p>
-                {hotel && (
-                  <div className="mt-3 border-t border-white/10 pt-3">
-                    <p className="text-[11px] tracking-[0.1em] text-white/55">{hotel.name}</p>
-                    {hotel.logo && (
-                      <img
-                        src={hotel.logo}
-                        alt={hotel.name}
-                        className="mx-auto mt-2 h-5 w-auto object-contain opacity-70 brightness-0 invert"
-                      />
-                    )}
-                  </div>
-                )}
-              </div>
-              {i < stops.length - 1 && <div className="mx-1 shrink-0" style={{ width: arrowWidth }} />}
+        {stops.map((stop, i) => (
+          <div key={i} className="flex items-center">
+            <div className="text-center" style={{ width: circleSize }}>
+              <p className="text-xs uppercase tracking-[0.2em] text-white/70">{stop.city}</p>
+              <p className="text-[11px] text-white/35">
+                {stop.days} {stop.days === 1 ? "dia" : "dias"}
+              </p>
             </div>
-          );
-        })}
+            {i < stops.length - 1 && <div className="mx-1 shrink-0" style={{ width: arrowWidth }} />}
+          </div>
+        ))}
       </div>
     </div>
   );
@@ -186,17 +163,15 @@ export function TripDashboard({
   days,
   guides,
   annexes,
-  hotels,
 }: {
   days: DayCell[];
   guides: LinkCell[];
   annexes: LinkCell[];
-  hotels?: HotelInfo[];
 }) {
   return (
     <div className="overflow-hidden rounded-2xl border border-white/10 bg-black/60 p-5 sm:rounded-[2rem] sm:p-10">
       <p className="mb-6 text-center text-xs uppercase tracking-[0.35em] text-white/40">Cidades</p>
-      <TripFlow days={days} hotels={hotels} />
+      <TripFlow days={days} />
 
       <div className="space-y-12">
         <div>

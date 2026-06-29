@@ -115,36 +115,43 @@ export default function RoteirosAdsPage() {
             </p>
           </div>
 
-          <TripDashboard
-            days={[
-              { day: 1, date: "1 Out", city: "Tokyo", href: "#dia-1" },
-              { day: 2, date: "2 Out", city: "Tokyo" },
-              { day: 3, date: "3 Out", city: "Tokyo" },
-              { day: 4, date: "4 Out", city: "Kyoto" },
-              { day: 5, date: "5 Out", city: "Kyoto" },
-              { day: 6, date: "6 Out", city: "Kyoto" },
-              { day: 7, date: "7 Out", city: "Tokyo" },
-            ]}
-            guides={[
-              { label: "Restaurantes" },
-              { label: "Hotéis" },
-              { label: "Compras" },
-            ]}
-            annexes={[
-              { label: "Aeroporto Chegada Narita NRT" },
-              { label: "Aeroporto Partida Narita NRT" },
-              { label: "Instruções Conexão em Doha DOH" },
-              { label: "Dinheiro e Pagamentos" },
-              { label: "Apps e Conectividade" },
-              { label: "Trem Bala (Shinkansen)" },
-              { label: "Logística de Malas" },
-            ]}
-            hotels={[
-              { name: "The Peninsula", logo: "/images/thepeninsula.png" },
-              { name: "Aman Kyoto", logo: "/images/amankyoto.png" },
-              { name: "The Peninsula", logo: "/images/thepeninsula.png" },
-            ]}
-          />
+          <div className="relative">
+            {/* Glow ambiente atrás do "tablet" — paleta da marca, suave e fora de foco */}
+            <div
+              aria-hidden
+              className="pointer-events-none absolute -inset-x-16 -inset-y-24 -z-10 overflow-hidden blur-3xl"
+            >
+              <div className="absolute -left-10 top-0 h-80 w-80 rounded-full bg-red-600/25" />
+              <div className="absolute left-1/3 top-6 h-72 w-72 rounded-full bg-orange-500/20" />
+              <div className="absolute bottom-0 right-0 h-72 w-72 rounded-full bg-amber-400/15" />
+            </div>
+
+            <TripDashboard
+              days={[
+                { day: 1, date: "1 Out", city: "Tokyo", href: "#dia-1" },
+                { day: 2, date: "2 Out", city: "Tokyo" },
+                { day: 3, date: "3 Out", city: "Tokyo" },
+                { day: 4, date: "4 Out", city: "Kyoto" },
+                { day: 5, date: "5 Out", city: "Kyoto" },
+                { day: 6, date: "6 Out", city: "Kyoto" },
+                { day: 7, date: "7 Out", city: "Tokyo" },
+              ]}
+              guides={[
+                { label: "Restaurantes" },
+                { label: "Hotéis" },
+                { label: "Compras" },
+              ]}
+              annexes={[
+                { label: "Aeroporto Chegada Narita NRT" },
+                { label: "Aeroporto Partida Narita NRT" },
+                { label: "Instruções Conexão em Doha DOH" },
+                { label: "Dinheiro e Pagamentos" },
+                { label: "Apps e Conectividade" },
+                { label: "Trem Bala (Shinkansen)" },
+                { label: "Logística de Malas" },
+              ]}
+            />
+          </div>
         </div>
       </section>
 
