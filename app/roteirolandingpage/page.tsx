@@ -53,7 +53,7 @@ export default function RoteirosAdsPage() {
           />
         </div>
 
-        <div className="absolute inset-x-0 bottom-0 px-8 pb-10 text-center md:px-16 md:pb-14">
+        <div className="absolute inset-x-0 bottom-0 px-8 pb-2 text-center md:px-16 md:pb-4">
           <div className="mx-auto max-w-2xl">
             <h1 className={`${display.className} text-4xl font-medium leading-[1.15] tracking-tight md:text-5xl`}>
               Roteiros personalizados para o Japão
@@ -79,7 +79,7 @@ export default function RoteirosAdsPage() {
           <h2 className={`${display.className} mt-10 text-3xl font-medium leading-snug text-white md:text-4xl`}>
             Independente da duração da sua viagem, temos a curadoria
             perfeita para você,{" "}
-            <span className="bg-gradient-to-r from-[#08202D] via-[#146991] to-[#5fc2dd] bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-[#1b6f93] via-[#2f9cc4] to-[#7fd4ec] bg-clip-text text-transparent">
               confira nosso exemplo abaixo.
             </span>
           </h2>

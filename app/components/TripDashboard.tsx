@@ -168,8 +168,15 @@ export function TripDashboard({
   guides: LinkCell[];
   annexes: LinkCell[];
 }) {
+  const totalDays = days.length;
+
   return (
     <div className="overflow-hidden rounded-2xl border border-white/10 bg-black/60 p-5 sm:rounded-[2rem] sm:p-10">
+      <p className="mb-6 text-center">
+        <span className="inline-block rounded-full border border-white/25 px-4 py-1.5 text-xs uppercase tracking-[0.25em] text-white/70">
+          Roteiro de {totalDays} dias
+        </span>
+      </p>
       <p className="mb-6 text-center text-xs uppercase tracking-[0.35em] text-white/40">Cidades</p>
       <TripFlow days={days} />
 
