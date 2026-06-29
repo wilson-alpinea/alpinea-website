@@ -50,13 +50,13 @@ export default function RoteirosAdsPage() {
         <div className="absolute inset-0 bg-gradient-to-t from-black via-black/55 to-transparent" />
 
         <div className="absolute inset-x-0 bottom-0 px-8 pb-16 text-center md:px-16 md:pb-20">
-          <div className="mx-auto max-w-3xl">
-            <h1 className={`${display.className} text-5xl font-medium leading-[1.1] tracking-tight md:text-7xl`}>
+          <div className="mx-auto max-w-2xl">
+            <h1 className={`${display.className} text-4xl font-medium leading-[1.15] tracking-tight md:text-5xl`}>
               Viagens privadas e
               <br />
               concierge de luxo
             </h1>
-            <p className="mx-auto mt-8 max-w-2xl text-lg font-light leading-9 text-white/65">
+            <p className="mx-auto mt-6 max-w-xl text-base font-light leading-8 text-white/65 md:text-lg">
               Confira abaixo alguns dos nossos exemplos de roteiros
               personalizados para o Japão.
             </p>
@@ -83,11 +83,11 @@ export default function RoteirosAdsPage() {
               Roteiros personalizados para sua viagem, independente da duração.
             </p>
 
-            <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+            <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
               {["7 dias", "10 dias", "12 dias", "15 dias", "20+ dias"].map((d) => (
                 <span
                   key={d}
-                  className="rounded-full border border-white/25 px-4 py-1.5 text-xs uppercase tracking-[0.25em] text-white/70"
+                  className="rounded-full border border-white/25 px-6 py-3 text-sm uppercase tracking-[0.2em] text-white/70"
                 >
                   {d}
                 </span>
@@ -101,11 +101,8 @@ export default function RoteirosAdsPage() {
       <section className="border-t border-white/10 px-8 py-24 md:px-16">
         <div className="mx-auto max-w-7xl">
           <div className="mx-auto mb-16 max-w-3xl text-center">
-            <p className="mb-5 text-xs uppercase tracking-[0.35em] text-white/40">
-              Painel interativo
-            </p>
             <h2 className={`${display.className} mb-6 text-3xl font-medium text-white md:text-4xl`}>
-              Exemplo de Roteiro
+              Painel Interativo & Exemplo de Roteiro
             </h2>
             <p className="text-lg font-light leading-9 text-white/65">
               Nossos roteiros são fornecidos digitalmente num painel

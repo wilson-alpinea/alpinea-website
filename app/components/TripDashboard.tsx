@@ -124,19 +124,21 @@ function TripFlow({ days, hotels }: { days: DayCell[]; hotels?: HotelInfo[] }) {
 
   return (
     <div className="mb-12 flex flex-col items-center">
-      {/* Linha dos círculos e setas — todos do mesmo tamanho, setas centralizadas */}
+      {/* Linha dos círculos e setas — coluna com a mesma largura da legenda abaixo, círculo centralizado dentro dela */}
       <div className="flex items-center justify-center">
         {stops.map((stop, i) => (
           <div key={i} className="flex items-center">
-            <div
-              className="shrink-0 rounded-full border"
-              style={{
-                width: circleSize,
-                height: circleSize,
-                borderColor: CITY_BORDER[stop.city] ?? "rgba(255,255,255,0.3)",
-                backgroundColor: CITY_BORDER[stop.city] ?? "rgba(255,255,255,0.3)",
-              }}
-            />
+            <div className="flex items-center justify-center" style={{ width: legendWidth }}>
+              <div
+                className="shrink-0 rounded-full border"
+                style={{
+                  width: circleSize,
+                  height: circleSize,
+                  borderColor: CITY_BORDER[stop.city] ?? "rgba(255,255,255,0.3)",
+                  backgroundColor: CITY_BORDER[stop.city] ?? "rgba(255,255,255,0.3)",
+                }}
+              />
+            </div>
             {i < stops.length - 1 && (
               <svg width={arrowWidth} height="10" viewBox="0 0 28 10" fill="none" className="mx-1 shrink-0">
                 <line x1="0" y1="5" x2="20" y2="5" stroke="rgba(255,255,255,0.3)" strokeWidth="1.5" />
