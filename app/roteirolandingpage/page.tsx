@@ -709,16 +709,19 @@ export default function RoteirosAdsPage() {
       >
         <div className="mx-auto max-w-4xl text-center">
           <p className="mb-6 text-xs uppercase tracking-[0.35em] text-black/40">
-            Próximo passo
+            Contato
           </p>
           <h2
             className={`${display.className} text-4xl font-medium leading-tight md:text-6xl`}
           >
-            Uma viagem excepcional começa com uma curadoria excepcional.
+            Comece sua jornada no Japão.
           </h2>
           <p className="mx-auto mt-8 max-w-2xl text-lg leading-9 text-black/60">
             Compartilhe suas datas, preferências e estilo de viagem. A Alpinea
-            estrutura o roteiro a partir do seu perfil.
+            cuidará do restante.
+          </p>
+          <p className="mx-auto mt-5 max-w-2xl text-sm font-medium uppercase tracking-[0.22em] text-black/50">
+            Agenda limitada para o segundo semestre de 2026.
           </p>
           <ContactCTA />
         </div>
@@ -756,29 +759,52 @@ export default function RoteirosAdsPage() {
             </div>
           </div>
 
-          <div className="flex items-center gap-8 text-xs uppercase tracking-[0.25em] text-white/40">
-            <a
-              href="https://www.instagram.com/alpinea.private"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="transition hover:text-white"
-            >
-              Instagram
-            </a>
-            <a
-              href="https://www.youtube.com/@alpinea.private"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="transition hover:text-white"
-            >
-              YouTube
-            </a>
-            <a
-              href="mailto:wilson@alpinea.io"
-              className="transition hover:text-white"
-            >
-              Contato
-            </a>
+          <div className="flex flex-col gap-7 md:items-end">
+            <nav className="flex flex-wrap items-center justify-start gap-x-7 gap-y-3 text-xs uppercase tracking-[0.25em] text-white/35 md:justify-end">
+              <a href="/" className="transition hover:text-white">
+                Início
+              </a>
+              <a href="/services" className="transition hover:text-white">
+                Serviços
+              </a>
+              <a href="/restaurantes" className="transition hover:text-white">
+                Restaurantes
+              </a>
+              <a href="/compras" className="transition hover:text-white">
+                Compras
+              </a>
+              <a href="/roteirolandingpage" className="transition hover:text-white">
+                Roteiro
+              </a>
+              <a href="#contact" className="transition hover:text-white">
+                Contato
+              </a>
+            </nav>
+
+            <div className="flex flex-wrap items-center gap-8 text-xs uppercase tracking-[0.25em] text-white/40">
+              <a
+                href="https://www.instagram.com/alpinea.private"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="transition hover:text-white"
+              >
+                Instagram
+              </a>
+              <a
+                href="https://www.youtube.com/@alpinea.private"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="transition hover:text-white"
+              >
+                YouTube
+              </a>
+              <a
+                href="mailto:wilson@alpinea.io"
+                className="transition hover:text-white"
+              >
+                Contato
+              </a>
+            </div>
           </div>
         </div>
       </footer>
@@ -862,7 +888,7 @@ function DashboardPreview() {
           Roteiro diário
         </p>
         <p className="mb-7 inline-block rounded-full border border-white/20 px-4 py-1.5 text-xs uppercase tracking-[0.25em] text-white/75">
-          Nesta amostra, apenas o dia 1 está disponível para visualização.
+          Nesta amostra, apenas o dia 1 e os roteiros especiais estão disponíveis para visualização.
         </p>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
           {days.map((d) => (
