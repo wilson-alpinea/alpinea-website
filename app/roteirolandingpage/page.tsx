@@ -53,7 +53,7 @@ export default function RoteirosAdsPage() {
           />
         </div>
 
-        <div className="absolute inset-x-0 bottom-[34%] px-8 text-center md:px-16">
+        <div className="absolute inset-x-0 bottom-0 px-8 pb-10 text-center md:px-16 md:pb-14">
           <div className="mx-auto max-w-2xl">
             <h1 className={`${display.className} text-4xl font-medium leading-[1.15] tracking-tight md:text-5xl`}>
               Roteiros personalizados para o Japão
@@ -65,12 +65,7 @@ export default function RoteirosAdsPage() {
       {/* ── SEÇÃO 2 — OVERVIEW DOS TIPOS DE ROTEIRO ── */}
       <section className="bg-black px-8 py-24 md:px-16">
         <div className="mx-auto max-w-4xl text-center">
-          <h2 className={`${display.className} text-3xl font-medium leading-snug text-white md:text-4xl`}>
-            Independente da duração da sua viagem, temos a curadoria
-            perfeita para você, confira nosso exemplo abaixo.
-          </h2>
-
-          <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
+          <div className="flex flex-wrap items-center justify-center gap-4">
             {["7 dias", "10 dias", "12 dias", "15 dias", "20+ dias"].map((d) => (
               <span
                 key={d}
@@ -80,6 +75,14 @@ export default function RoteirosAdsPage() {
               </span>
             ))}
           </div>
+
+          <h2 className={`${display.className} mt-10 text-3xl font-medium leading-snug text-white md:text-4xl`}>
+            Independente da duração da sua viagem, temos a curadoria
+            perfeita para você,{" "}
+            <span className="bg-gradient-to-r from-[#08202D] via-[#146991] to-[#5fc2dd] bg-clip-text text-transparent">
+              confira nosso exemplo abaixo.
+            </span>
+          </h2>
         </div>
       </section>
 
