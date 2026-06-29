@@ -60,7 +60,7 @@ export default function RoteirosAdsPage() {
       <section className="relative min-h-[560px] overflow-hidden bg-black md:min-h-[820px]">
         <div className="absolute inset-0 mx-auto max-w-[1800px]">
           <Image
-            src="/images/ozegahara.png"
+            src="/images/ozenuma.jpeg"
             alt="Parque Nacional de Ozegahara"
             fill
             priority
@@ -82,19 +82,23 @@ export default function RoteirosAdsPage() {
         </div>
 
         <div className="absolute inset-x-0 bottom-16 z-10 px-8 text-center md:bottom-24 md:px-16">
-          <h1 className={`${display.className} mx-auto max-w-4xl text-3xl font-medium leading-tight text-white md:text-5xl`}>
+          <h1
+            className={`${display.className} mx-auto max-w-4xl text-3xl font-medium leading-tight text-white md:text-5xl`}
+          >
             Roteiros personalizados para o Japão
           </h1>
 
           <div className="mx-auto mt-8 flex max-w-4xl flex-wrap items-center justify-center gap-3 md:mt-10 md:gap-4">
-            {["7 dias", "10 dias", "12 dias", "15 dias", "20+ dias"].map((d) => (
-              <span
-                key={d}
-                className="cursor-default rounded-full border border-white/25 bg-black/10 px-5 py-2.5 text-xs uppercase tracking-[0.22em] text-white/75 backdrop-blur-sm transition-colors duration-300 hover:border-white hover:bg-white hover:text-black md:px-6 md:py-3 md:text-sm"
-              >
-                {d}
-              </span>
-            ))}
+            {["7 dias", "10 dias", "12 dias", "15 dias", "20+ dias"].map(
+              (d) => (
+                <span
+                  key={d}
+                  className="cursor-default rounded-full border border-white/25 bg-black/10 px-5 py-2.5 text-xs uppercase tracking-[0.22em] text-white/75 backdrop-blur-sm transition-colors duration-300 hover:border-white hover:bg-white hover:text-black md:px-6 md:py-3 md:text-sm"
+                >
+                  {d}
+                </span>
+              ),
+            )}
           </div>
         </div>
       </section>
@@ -102,7 +106,9 @@ export default function RoteirosAdsPage() {
       {/* ── SEÇÃO 2 — CHAMADA PARA O EXEMPLO ── */}
       <section className="bg-black px-8 py-20 md:px-16 md:py-24">
         <div className="mx-auto max-w-4xl text-center">
-          <h2 className={`${display.className} text-3xl font-medium leading-snug text-white md:text-4xl`}>
+          <h2
+            className={`${display.className} text-3xl font-medium leading-snug text-white md:text-4xl`}
+          >
             Receba um roteiro 100% personalizado para o seu perfil e estilo de
             viagem. Veja abaixo como funciona nossa plataforma digital.
           </h2>
@@ -116,7 +122,9 @@ export default function RoteirosAdsPage() {
             <p className="mb-5 text-xs uppercase tracking-[0.35em] text-white/40">
               Painel Interativo
             </p>
-            <h2 className={`${display.className} mb-6 text-3xl font-medium text-white md:text-4xl`}>
+            <h2
+              className={`${display.className} mb-6 text-3xl font-medium text-white md:text-4xl`}
+            >
               Exemplo de Roteiro
             </h2>
             <p className="text-lg font-light leading-9 text-white/65">
@@ -125,36 +133,51 @@ export default function RoteirosAdsPage() {
             </p>
           </div>
 
-          <div className="relative isolate">
-            {/* Glow ambiente atrás do dashboard — azul profundo, inspirado no efeito do Gemini */}
+          <div className="relative isolate mx-auto max-w-7xl">
+            {/* Glow de borda — sutil e externo ao dashboard, sem invadir o conteúdo */}
             <div
               aria-hidden
-              className="pointer-events-none absolute left-1/2 top-1/2 -z-10 h-[720px] w-[920px] -translate-x-1/2 -translate-y-1/2 rounded-full opacity-70 blur-3xl"
+              className="pointer-events-none absolute -inset-6 -z-10 rounded-[2.5rem] opacity-70 blur-2xl"
               style={{
                 background:
-                  "radial-gradient(circle, rgba(22,58,121,0.34) 0%, rgba(10,30,70,0.22) 38%, rgba(0,0,0,0) 72%)",
+                  "linear-gradient(135deg, rgba(72,46,118,0.22), rgba(16,57,116,0.24) 48%, rgba(0,0,0,0) 72%)",
               }}
             />
             <div
               aria-hidden
-              className="pointer-events-none absolute left-1/2 top-[58%] -z-10 h-[520px] w-[680px] -translate-x-1/2 rounded-full opacity-50 blur-3xl"
-              style={{
-                background:
-                  "radial-gradient(circle, rgba(42,110,150,0.18) 0%, rgba(9,18,45,0.24) 42%, rgba(0,0,0,0) 76%)",
-              }}
+              className="pointer-events-none absolute -left-10 top-12 -z-10 h-[70%] w-24 rounded-full bg-[#2d1b61]/25 blur-3xl"
             />
-
-            <DashboardPreview />
+            <div
+              aria-hidden
+              className="pointer-events-none absolute -right-10 bottom-12 -z-10 h-[70%] w-24 rounded-full bg-[#0d3b78]/25 blur-3xl"
+            />
+            <div className="rounded-[2rem] shadow-[0_0_80px_rgba(25,71,137,0.14),0_0_140px_rgba(66,36,111,0.09)]">
+              <DashboardPreview />
+            </div>
           </div>
+
+          <SpecialRoutePreviews />
         </div>
       </section>
 
       {/* ── PEDAÇO DO ROTEIRO — AMOSTRA DO DIA 1 ── */}
-      <section id="dia-1" className="border-t border-white/10 px-8 py-24 md:px-16">
+      <section
+        id="dia-1"
+        className="border-t border-white/10 px-8 py-24 md:px-16"
+      >
         <div className="mx-auto max-w-3xl overflow-hidden rounded-2xl border border-white/10 bg-black/60 p-6 text-center sm:rounded-[2rem] sm:p-10">
-          <p className="text-xs uppercase tracking-[0.35em] text-white/40">Dia 1</p>
-          <h3 className={`${display.className} mt-2 text-2xl font-medium tracking-tight text-white md:text-3xl`}>Tokyo</h3>
-          <div className="mt-5 flex items-center justify-center gap-2" aria-label="Dia 1 de 7">
+          <p className="text-xs uppercase tracking-[0.35em] text-white/40">
+            Dia 1
+          </p>
+          <h3
+            className={`${display.className} mt-2 text-2xl font-medium tracking-tight text-white md:text-3xl`}
+          >
+            Tokyo
+          </h3>
+          <div
+            className="mt-5 flex items-center justify-center gap-2"
+            aria-label="Dia 1 de 7"
+          >
             {Array.from({ length: 7 }).map((_, index) => (
               <span
                 key={index}
@@ -164,47 +187,75 @@ export default function RoteirosAdsPage() {
           </div>
           <p className="mx-auto mt-4 max-w-xl text-sm font-light leading-7 text-white/55">
             Chegada ao Japão, acomodação inicial e primeira experiência em
-            Oshiage, com visita à Tokyo Skytree e exploração do complexo Tokyo Solamachi.
+            Oshiage, com visita à Tokyo Skytree e exploração do complexo Tokyo
+            Solamachi.
           </p>
 
           <div className="mx-auto mt-10 max-w-md space-y-7">
             <div>
-              <p className="text-sm font-medium tracking-[0.15em] text-white">10:30</p>
-              <p className="mt-1 text-sm text-white/55">Chegada · Aeroporto Internacional de Narita — Terminal 3</p>
+              <p className="text-sm font-medium tracking-[0.15em] text-white">
+                10:30
+              </p>
+              <p className="mt-1 text-sm text-white/55">
+                Chegada · Aeroporto Internacional de Narita — Terminal 3
+              </p>
             </div>
             <div>
-              <p className="text-sm font-medium tracking-[0.15em] text-white">11:30</p>
-              <p className="mt-1 text-sm text-white/55">Imigração, retirada de bagagem e deslocamento até o hotel</p>
+              <p className="text-sm font-medium tracking-[0.15em] text-white">
+                11:30
+              </p>
+              <p className="mt-1 text-sm text-white/55">
+                Imigração, retirada de bagagem e deslocamento até o hotel
+              </p>
             </div>
             <div>
-              <p className="text-sm font-medium tracking-[0.15em] text-white">15:00</p>
-              <p className="mt-1 text-sm text-white/55">Check-in · Grand Hyatt Tokyo</p>
+              <p className="text-sm font-medium tracking-[0.15em] text-white">
+                15:00
+              </p>
+              <p className="mt-1 text-sm text-white/55">
+                Check-in · Grand Hyatt Tokyo
+              </p>
             </div>
             <div>
-              <p className="text-sm font-medium tracking-[0.15em] text-white">16:00</p>
-              <p className="mt-1 text-sm text-white/55">Saída do hotel rumo a Oshiage</p>
+              <p className="text-sm font-medium tracking-[0.15em] text-white">
+                16:00
+              </p>
+              <p className="mt-1 text-sm text-white/55">
+                Saída do hotel rumo a Oshiage
+              </p>
             </div>
             <div>
-              <p className="text-sm font-medium tracking-[0.15em] text-white">16:30</p>
+              <p className="text-sm font-medium tracking-[0.15em] text-white">
+                16:30
+              </p>
               <p className="mt-1 flex flex-wrap items-center justify-center gap-2 text-sm text-white/55">
-                <span>Tokyo Skytree · Subida ao observatório para o pôr do sol</span>
+                <span>
+                  Tokyo Skytree · Subida ao observatório para o pôr do sol
+                </span>
                 <span className="inline-block rounded-full border border-white/25 px-4 py-1.5 text-xs uppercase tracking-[0.25em] text-white/70">
                   Atração Principal
                 </span>
               </p>
             </div>
             <div>
-              <p className="text-sm font-medium tracking-[0.15em] text-white">18:30</p>
-              <p className="mt-1 text-sm text-white/55">Exploração do Tokyo Solamachi · lojas e gastronomia</p>
+              <p className="text-sm font-medium tracking-[0.15em] text-white">
+                18:30
+              </p>
+              <p className="mt-1 text-sm text-white/55">
+                Exploração do Tokyo Solamachi · lojas e gastronomia
+              </p>
             </div>
             <div>
-              <p className="text-sm font-medium tracking-[0.15em] text-white">20:00</p>
-              <p className="mt-1 text-sm text-white/55">Retorno ao hotel · noite livre</p>
+              <p className="text-sm font-medium tracking-[0.15em] text-white">
+                20:00
+              </p>
+              <p className="mt-1 text-sm text-white/55">
+                Retorno ao hotel · noite livre
+              </p>
             </div>
           </div>
         </div>
       </section>
-
 
       {/* ── HOSPEDAGEM — GRAND HYATT TOKYO ── */}
       <section className="border-t border-white/10">
@@ -221,8 +272,14 @@ export default function RoteirosAdsPage() {
 
           <div className="absolute inset-x-0 bottom-0 px-8 pb-14 text-center md:px-16 md:pb-16">
             <div className="mx-auto max-w-3xl">
-              <p className="mb-5 text-xs uppercase tracking-[0.35em] text-white/40">Hospedagem</p>
-              <h3 className={`${display.className} text-3xl font-medium text-white md:text-4xl`}>Grand Hyatt Tokyo</h3>
+              <p className="mb-5 text-xs uppercase tracking-[0.35em] text-white/40">
+                Hospedagem
+              </p>
+              <h3
+                className={`${display.className} text-3xl font-medium text-white md:text-4xl`}
+              >
+                Grand Hyatt Tokyo
+              </h3>
             </div>
           </div>
         </div>
@@ -242,11 +299,15 @@ export default function RoteirosAdsPage() {
               </p>
               <div className="grid gap-6 text-base leading-7 text-white/60 sm:grid-cols-2 lg:grid-cols-1">
                 <div>
-                  <p className="mb-2 text-xs uppercase tracking-[0.3em] text-white/35">Check-In</p>
+                  <p className="mb-2 text-xs uppercase tracking-[0.3em] text-white/35">
+                    Check-In
+                  </p>
                   <p className="text-lg text-white">15:00</p>
                 </div>
                 <div>
-                  <p className="mb-2 text-xs uppercase tracking-[0.3em] text-white/35">Reserva</p>
+                  <p className="mb-2 text-xs uppercase tracking-[0.3em] text-white/35">
+                    Reserva
+                  </p>
                   <p className="text-lg text-white">Confirmada</p>
                 </div>
               </div>
@@ -257,18 +318,24 @@ export default function RoteirosAdsPage() {
 
       <section className="border-t border-white/10 bg-white/[0.02] px-8 py-32 md:px-16">
         <div className="mx-auto max-w-7xl">
-          <p className={`${display.className} mb-6 text-3xl font-medium text-white md:text-4xl`}>Manhã</p>
+          <p
+            className={`${display.className} mb-6 text-3xl font-medium text-white md:text-4xl`}
+          >
+            Manhã
+          </p>
           <p className="mb-8 inline-block rounded-full border border-white/25 px-4 py-1.5 text-xs uppercase tracking-[0.25em] text-white/70">
             Não disponível na amostra de roteiro
           </p>
           <div className="max-w-4xl space-y-8 text-lg font-light leading-9 text-white/70">
             <p>
-              <span className="text-white">Local:</span> Aeroporto Internacional de Narita — Terminal 3
+              <span className="text-white">Local:</span> Aeroporto Internacional
+              de Narita — Terminal 3
             </p>
             <p>
               Instruções gerais de chegada, imigração, retirada de bagagem,
               restaurantes sugeridos no aeroporto, ações obrigatórias antes de
-              sair do aeroporto, comentários gerais e guia de deslocamento até o hotel.
+              sair do aeroporto, comentários gerais e guia de deslocamento até o
+              hotel.
             </p>
           </div>
         </div>
@@ -276,7 +343,11 @@ export default function RoteirosAdsPage() {
 
       <section className="border-t border-white/10 px-8 py-14 md:px-16 md:py-16">
         <div className="mx-auto max-w-7xl">
-          <p className={`${display.className} mb-8 text-3xl font-medium text-white md:text-4xl`}>Tarde</p>
+          <p
+            className={`${display.className} mb-8 text-3xl font-medium text-white md:text-4xl`}
+          >
+            Tarde
+          </p>
           <p className="max-w-4xl text-lg font-light leading-9 text-white/70">
             <span className="text-white">Local:</span> Oshiage, Tokyo
           </p>
@@ -298,10 +369,18 @@ export default function RoteirosAdsPage() {
 
           <div className="absolute inset-x-0 bottom-0 px-8 pb-14 text-center md:px-16 md:pb-16">
             <div className="mx-auto max-w-3xl">
-              <p className="mb-5 text-xs uppercase tracking-[0.35em] text-white/40">Mobilidade</p>
-              <h3 className={`${display.className} text-3xl font-medium text-white md:text-4xl`}>Trens e Metrô</h3>
+              <p className="mb-5 text-xs uppercase tracking-[0.35em] text-white/40">
+                Mobilidade
+              </p>
+              <h3
+                className={`${display.className} text-3xl font-medium text-white md:text-4xl`}
+              >
+                Trens e Metrô
+              </h3>
               <p className="mx-auto mt-5 max-w-xl text-base font-light leading-9 text-white/65">
-                Nesse exemplo, o deslocamento é por conta própria — e o Japão torna isso simples. A malha de trens e metrô é pontual, extensa e fácil de navegar com os recursos certos.
+                Nesse exemplo, o deslocamento é por conta própria — e o Japão
+                torna isso simples. A malha de trens e metrô é pontual, extensa
+                e fácil de navegar com os recursos certos.
               </p>
             </div>
           </div>
@@ -310,31 +389,46 @@ export default function RoteirosAdsPage() {
         <div className="px-8 py-24 md:px-16">
           <div className="mx-auto max-w-3xl space-y-12 text-center text-base font-light leading-9 text-white/65">
             <div className="mx-auto max-w-xl rounded-2xl border border-white/10 bg-black/60 p-6 text-left sm:rounded-[2rem] sm:p-10">
-              <p className="mb-8 text-xs uppercase tracking-[0.25em] text-white/30">Recomendação Alpinea</p>
+              <p className="mb-8 text-center text-xs uppercase tracking-[0.25em] text-white/30">
+                Recomendação Alpinea
+              </p>
 
               <div className="space-y-8">
                 <div>
-                  <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">Cartão IC recomendado</p>
+                  <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">
+                    Cartão IC recomendado
+                  </p>
                   <p>
-                    O Suica IC Card cobre praticamente todo trem, metrô e ônibus do país — basta aproximar o celular ou o cartão físico na entrada e saída de cada estação, sem precisar comprar passagem a cada trajeto.
+                    O Suica IC Card cobre praticamente todo trem, metrô e ônibus
+                    do país — basta aproximar o celular ou o cartão físico na
+                    entrada e saída de cada estação, sem precisar comprar
+                    passagem a cada trajeto.
                   </p>
                 </div>
 
                 <div className="border-t border-white/10 pt-8">
-                  <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">App de navegação</p>
+                  <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">
+                    App de navegação
+                  </p>
                   <p className="text-white/85">Google Maps</p>
-                  <p className="mt-1 text-sm leading-7 text-white/45">Rotas, horários e plataforma de embarque em tempo real</p>
+                  <p className="mt-1 text-sm leading-7 text-white/45">
+                    Rotas, horários e plataforma de embarque em tempo real
+                  </p>
                 </div>
 
                 <div className="border-t border-white/10 pt-8">
-                  <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">Horário de pico</p>
+                  <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">
+                    Horário de pico
+                  </p>
                   <p>Evitar 07:30–09:00 e 17:30–19:30, dias de semana</p>
                 </div>
               </div>
             </div>
 
-            <div className="pt-10 text-left">
-              <p className="mb-6 text-center text-xs uppercase tracking-[0.35em] text-white/30">Acesso à Estação · Oshiage</p>
+            <div className="text-left">
+              <p className="mb-6 text-center text-xs uppercase tracking-[0.35em] text-white/30">
+                Acesso à Estação · Oshiage
+              </p>
               <div className="mx-auto max-w-xl">
                 <Image
                   src="/images/oshiage-lines.png"
@@ -345,18 +439,34 @@ export default function RoteirosAdsPage() {
                 />
                 <p className="mt-4 text-center text-sm leading-7 text-white/45">
                   Oshiage Station é atendida pelas linhas Tobu Skytree Line,
-                  Keisei Oshiage Line, Toei Asakusa Line e Tokyo Metro Hanzomon Line.
+                  Keisei Oshiage Line, Toei Asakusa Line e Tokyo Metro Hanzomon
+                  Line.
                 </p>
                 <div className="mt-10 space-y-8">
                   <div>
-                    <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">Nome da Estação</p>
-                    <p className="text-white">Oshiage Station 押上駅〈スカイツリー前〉</p>
+                    <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">
+                      Nome da Estação
+                    </p>
+                    <p className="text-white">
+                      Oshiage Station 押上駅〈スカイツリー前〉
+                    </p>
                   </div>
                   <div>
-                    <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">Saída Recomendada</p>
-                    <p>A2 ou B3 para superfície. Em dias de chuva, recomendamos utilizar a conexão subterrânea direta com o Tokyo Solamachi.</p>
-                    <p className="mt-4 text-white">連絡通路直結 Solamachi B3F</p>
-                    <p className="mt-4">Caso encontre dificuldades, qualquer funcionário do metrô poderá indicar a direção correta.</p>
+                    <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">
+                      Saída Recomendada
+                    </p>
+                    <p>
+                      A2 ou B3 para superfície. Em dias de chuva, recomendamos
+                      utilizar a conexão subterrânea direta com o Tokyo
+                      Solamachi.
+                    </p>
+                    <p className="mt-4 text-white">
+                      連絡通路直結 Solamachi B3F
+                    </p>
+                    <p className="mt-4">
+                      Caso encontre dificuldades, qualquer funcionário do metrô
+                      poderá indicar a direção correta.
+                    </p>
                   </div>
                 </div>
               </div>
@@ -365,24 +475,31 @@ export default function RoteirosAdsPage() {
             <div className="border-t border-white/10 pt-10">
               <div className="mx-auto grid max-w-xl gap-8 text-left sm:grid-cols-2">
                 <div>
-                  <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">Tempo de deslocamento · Metrô</p>
+                  <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">
+                    Tempo de deslocamento · Metrô
+                  </p>
                   <p className="text-white">Aproximadamente 40 minutos</p>
                 </div>
                 <div>
-                  <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">Tempo de deslocamento · Carro / Táxi</p>
+                  <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">
+                    Tempo de deslocamento · Carro / Táxi
+                  </p>
                   <p className="text-white">Aproximadamente 35 minutos</p>
                 </div>
               </div>
             </div>
 
             <div className="mx-auto max-w-xl rounded-2xl border border-white/10 bg-black/60 p-6 text-left sm:rounded-[2rem] sm:p-10">
-              <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">Recomendação Alpinea</p>
+              <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">
+                Recomendação Alpinea
+              </p>
               <p>
-                A partir do Grand Hyatt Tokyo, a diferença de tempo entre metrô e
-                carro/táxi é irrelevante. O táxi proporciona maior comodidade,
+                A partir do Grand Hyatt Tokyo, a diferença de tempo entre metrô
+                e carro/táxi é irrelevante. O táxi proporciona maior comodidade,
                 mas a diferença de preço é grande. Em caso de chuva ou vento
                 forte, recomendamos substituir por outra atração, pois, embora
-                seja um local fechado, devido à altura, o observatório pode balançar mais que o normal.
+                seja um local fechado, devido à altura, o observatório pode
+                balançar mais que o normal.
               </p>
             </div>
           </div>
@@ -404,8 +521,14 @@ export default function RoteirosAdsPage() {
 
           <div className="absolute inset-x-0 bottom-0 px-8 pb-14 text-center md:px-16 md:pb-16">
             <div className="mx-auto max-w-3xl">
-              <p className="mb-5 text-xs uppercase tracking-[0.35em] text-white/40">Atração</p>
-              <h3 className={`${display.className} text-3xl font-medium text-white md:text-4xl`}>Tokyo Skytree</h3>
+              <p className="mb-5 text-xs uppercase tracking-[0.35em] text-white/40">
+                Atração
+              </p>
+              <h3
+                className={`${display.className} text-3xl font-medium text-white md:text-4xl`}
+              >
+                Tokyo Skytree
+              </h3>
             </div>
           </div>
         </div>
@@ -416,26 +539,36 @@ export default function RoteirosAdsPage() {
               <div>
                 <div className="grid gap-8 sm:grid-cols-2">
                   <div>
-                    <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/35">Melhor horário</p>
+                    <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/35">
+                      Melhor horário
+                    </p>
                     <p className="text-white">16:30–18:30</p>
                   </div>
                   <div>
-                    <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/35">Tempo estimado</p>
+                    <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/35">
+                      Tempo estimado
+                    </p>
                     <p className="text-white">1–2 horas</p>
                   </div>
                   <div>
-                    <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/35">Reserva</p>
+                    <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/35">
+                      Reserva
+                    </p>
                     <p className="text-white">Recomendada</p>
                   </div>
                   <div>
-                    <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/35">Horário de funcionamento</p>
+                    <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/35">
+                      Horário de funcionamento
+                    </p>
                     <p className="text-white">10:00 às 22:00</p>
                   </div>
                 </div>
               </div>
 
               <div>
-                <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/35">Ingressos</p>
+                <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/35">
+                  Ingressos
+                </p>
                 <div className="mt-2 space-y-2">
                   <p>1. Visita ao 350º andar — Tembo Deck</p>
                   <p>2. Visita ao 350º e 450º andar</p>
@@ -444,7 +577,9 @@ export default function RoteirosAdsPage() {
               </div>
 
               <div>
-                <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/35">Preço estimado</p>
+                <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/35">
+                  Preço estimado
+                </p>
                 <div className="mt-2 space-y-2">
                   <p>Tembo Deck: a partir de ¥1.800 por pessoa</p>
                   <p>Tembo Deck + Tembo Galleria: a partir de ¥3.000</p>
@@ -462,9 +597,21 @@ export default function RoteirosAdsPage() {
                 text="Entre 1 e 2 horas após a subida ao observatório."
               />
               <div className="rounded-2xl border border-white/10 bg-black/60 p-6 sm:rounded-[2rem] sm:p-10">
-                <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">Recomendação Alpinea</p>
+                <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">
+                  Recomendação Alpinea
+                </p>
                 <p>
-                  Eu normalmente compro o ingresso para o 350º andar, não vejo grande diferença entre os andares, não acho que vale a pena o restaurante e nem a galeria que ficam no topo da torre. As opções de comida na base são melhores, o complexo tem uma quantidade gigante de lojas. Recomendo passar nas lojas depois de subir para não precisar carregar peso. Todos os restaurantes costumam ter filas, se programe para chegar pelo menos 30 minutos antes do horário desejado para comer. Se não estiver com muita fome, a praça de alimentação tem ótimas opções para lanches como o Gindaco, que faz o típico bolinho de polvo frito, Takoyaki, da região de Kansai.
+                  Eu normalmente compro o ingresso para o 350º andar, não vejo
+                  grande diferença entre os andares, não acho que vale a pena o
+                  restaurante e nem a galeria que ficam no topo da torre. As
+                  opções de comida na base são melhores, o complexo tem uma
+                  quantidade gigante de lojas. Recomendo passar nas lojas depois
+                  de subir para não precisar carregar peso. Todos os
+                  restaurantes costumam ter filas, se programe para chegar pelo
+                  menos 30 minutos antes do horário desejado para comer. Se não
+                  estiver com muita fome, a praça de alimentação tem ótimas
+                  opções para lanches como o Gindaco, que faz o típico bolinho
+                  de polvo frito, Takoyaki, da região de Kansai.
                 </p>
               </div>
             </div>
@@ -473,7 +620,12 @@ export default function RoteirosAdsPage() {
               <p className="mb-4 text-xs uppercase tracking-[0.35em] text-white/40">
                 Mapa do Complexo Tokyo Solamachi
               </p>
-              <a href="/images/solamachi-floor1.png" target="_blank" rel="noopener noreferrer" className="block">
+              <a
+                href="/images/solamachi-floor1.png"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block"
+              >
                 <Image
                   src="/images/solamachi-floor1.png"
                   alt="Mapa do primeiro andar do Tokyo Solamachi"
@@ -495,7 +647,7 @@ export default function RoteirosAdsPage() {
       <section className="px-8 py-32 md:px-16">
         <div className="mx-auto max-w-7xl">
           <p className="mb-12 text-center">
-            <span className="inline-block rounded-full border border-white/25 px-7 py-2.5 text-sm uppercase tracking-[0.28em] text-white/80">
+            <span className="inline-block rounded-full border border-white/25 px-9 py-3 text-base uppercase tracking-[0.32em] text-white/80">
               Jantar
             </span>
           </p>
@@ -531,7 +683,12 @@ export default function RoteirosAdsPage() {
               <p className="mb-6 text-xs uppercase tracking-[0.35em] text-white/40">
                 Mapa — Solamachi Dining
               </p>
-              <a href="/images/solamachi-dining-map.png" target="_blank" rel="noopener noreferrer" className="block">
+              <a
+                href="/images/solamachi-dining-map.png"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block"
+              >
                 <Image
                   src="/images/solamachi-dining-map.png"
                   alt="Mapa dos restaurantes do Tokyo Solamachi"
@@ -545,7 +702,6 @@ export default function RoteirosAdsPage() {
         </div>
       </section>
 
-
       {/* ── CONTATO ── */}
       <section
         id="contact"
@@ -555,7 +711,9 @@ export default function RoteirosAdsPage() {
           <p className="mb-6 text-xs uppercase tracking-[0.35em] text-black/40">
             Próximo passo
           </p>
-          <h2 className={`${display.className} text-4xl font-medium leading-tight md:text-6xl`}>
+          <h2
+            className={`${display.className} text-4xl font-medium leading-tight md:text-6xl`}
+          >
             Uma viagem excepcional começa com uma curadoria excepcional.
           </h2>
           <p className="mx-auto mt-8 max-w-2xl text-lg leading-9 text-black/60">
@@ -577,11 +735,13 @@ export default function RoteirosAdsPage() {
 
             <div className="max-w-md space-y-3">
               <p className="text-sm leading-relaxed text-white/50">
-                Curadoria privada de experiências, gastronomia e lifestyle no Japão.
+                Curadoria privada de experiências, gastronomia e lifestyle no
+                Japão.
               </p>
 
               <p className="text-xs text-white/30">
-                © 2026 Alpinea Agências de Viagens LTDA — CNPJ 66.491.067/0001-84
+                © 2026 Alpinea Agências de Viagens LTDA — CNPJ
+                66.491.067/0001-84
               </p>
 
               <div className="flex flex-wrap items-center gap-3 text-xs text-white/25">
@@ -613,7 +773,10 @@ export default function RoteirosAdsPage() {
             >
               YouTube
             </a>
-            <a href="mailto:wilson@alpinea.io" className="transition hover:text-white">
+            <a
+              href="mailto:wilson@alpinea.io"
+              className="transition hover:text-white"
+            >
               Contato
             </a>
           </div>
@@ -660,14 +823,19 @@ function DashboardPreview() {
           Roteiro de 7 dias
         </p>
 
-        <p className="mb-6 text-xs uppercase tracking-[0.35em] text-white/35">Cidades</p>
+        <p className="mb-6 text-xs uppercase tracking-[0.35em] text-white/35">
+          Cidades
+        </p>
         <div className="flex flex-wrap items-start justify-center gap-4 sm:gap-6">
           {[
             { city: "Tokyo", days: "3 dias" },
             { city: "Kyoto", days: "3 dias", active: true },
             { city: "Tokyo", days: "1 dia" },
           ].map((stop, index, arr) => (
-            <div key={`${stop.city}-${index}`} className="flex items-center gap-4">
+            <div
+              key={`${stop.city}-${index}`}
+              className="flex items-center gap-4"
+            >
               <div>
                 <div
                   className={`mx-auto h-14 w-14 rounded-full border ${
@@ -676,17 +844,23 @@ function DashboardPreview() {
                       : "border-white/15 bg-white/10"
                   }`}
                 />
-                <p className="mt-4 text-xs uppercase tracking-[0.35em] text-white">{stop.city}</p>
+                <p className="mt-4 text-xs uppercase tracking-[0.35em] text-white">
+                  {stop.city}
+                </p>
                 <p className="mt-1 text-xs text-white/45">{stop.days}</p>
               </div>
-              {index < arr.length - 1 && <span className="mb-10 text-white/25">→</span>}
+              {index < arr.length - 1 && (
+                <span className="mb-10 text-white/25">→</span>
+              )}
             </div>
           ))}
         </div>
       </div>
 
       <div className="mt-14">
-        <p className="mb-3 text-xs uppercase tracking-[0.35em] text-white/35">Roteiro diário</p>
+        <p className="mb-3 text-xs uppercase tracking-[0.35em] text-white/35">
+          Roteiro diário
+        </p>
         <p className="mb-7 inline-block rounded-full border border-white/20 px-4 py-1.5 text-xs uppercase tracking-[0.25em] text-white/75">
           Nesta amostra, apenas o dia 1 está disponível para visualização.
         </p>
@@ -701,27 +875,44 @@ function DashboardPreview() {
                   : "border-white/10 bg-white/[0.02] text-white/35 hover:border-white/25 hover:text-white/60"
               }`}
             >
-              <p className="font-medium">Dia {d.day}{d.active ? " →" : ""}</p>
-              <p className="mt-1 text-sm opacity-70">{d.date} · {d.city}</p>
+              <p className="font-medium">
+                Dia {d.day}
+                {d.active ? " →" : ""}
+              </p>
+              <p className="mt-1 text-sm opacity-70">
+                {d.date} · {d.city}
+              </p>
             </a>
           ))}
         </div>
       </div>
 
       <div className="mt-16">
-        <p className="mb-3 text-xs uppercase tracking-[0.35em] text-white/35">Roteiros Especiais</p>
+        <p className="mb-3 text-xs uppercase tracking-[0.35em] text-white/35">
+          Roteiros Especiais
+        </p>
         <p className="mb-7 inline-block rounded-full border border-white/20 px-4 py-1.5 text-xs uppercase tracking-[0.25em] text-white/75">
           Contratação à parte
         </p>
         <div className="grid max-w-[360px] gap-5 sm:grid-cols-2">
           {specialRoutes.map((guide) => (
-            <GuideCard key={guide.title} {...guide} />
+            <GuideCard
+              key={guide.title}
+              {...guide}
+              href={
+                guide.title === "Restaurantes"
+                  ? "#roteiro-restaurantes"
+                  : "#roteiro-compras"
+              }
+            />
           ))}
         </div>
       </div>
 
       <div className="mt-16">
-        <p className="mb-3 text-xs uppercase tracking-[0.35em] text-white/35">Guias</p>
+        <p className="mb-3 text-xs uppercase tracking-[0.35em] text-white/35">
+          Guias
+        </p>
         <p className="mb-7 inline-block rounded-full border border-white/20 px-4 py-1.5 text-xs uppercase tracking-[0.25em] text-white/75">
           Incluso na contratação de qualquer roteiro
         </p>
@@ -743,14 +934,15 @@ function DashboardPreview() {
 function GuideCard({
   title,
   image,
+  href,
 }: {
   title: string;
   image: string;
+  href?: string;
 }) {
   const isShopping = title === "Compras";
-
-  return (
-    <article className="group max-w-[165px]">
+  const content = (
+    <>
       <div className="relative aspect-[1.18/1] overflow-hidden rounded-xl border border-white/10 bg-white/[0.02]">
         <Image
           src={image}
@@ -762,14 +954,116 @@ function GuideCard({
         <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-black/70 to-transparent" />
       </div>
       <p className="mt-3 text-sm leading-6 text-white/55">{title}</p>
-    </article>
+    </>
+  );
+
+  if (href) {
+    return (
+      <a href={href} className="group block max-w-[165px]">
+        {content}
+      </a>
+    );
+  }
+
+  return <article className="group max-w-[165px]">{content}</article>;
+}
+
+function SpecialRoutePreviews() {
+  const restaurantDays = [
+    ["Dia 1", "Harutaka", "Sushi · 3 estrelas Michelin"],
+    ["Dia 2", "Mikawa Zezankyo", "Tempurá · Lenda viva"],
+    ["Dia 3", "Sazenka", "Contemporâneo · 2 estrelas Michelin"],
+  ];
+
+  const shoppingDays = [
+    ["Dia 1", "Masamoto", "Gyuto · Afiação entregue"],
+    ["Dia 8", "Aritsugu", "Yanagiba · Kyoto"],
+    ["Dia 10", "Kikumori", "Deba · Sakai"],
+  ];
+
+  return (
+    <div className="mx-auto mt-20 grid max-w-7xl gap-6 lg:grid-cols-2">
+      <section
+        id="roteiro-restaurantes"
+        className="scroll-mt-28 rounded-[2rem] border border-white/10 bg-white/[0.025] p-8 md:p-10"
+      >
+        <p className="mb-4 text-xs uppercase tracking-[0.35em] text-white/35">
+          Sneak peek · Restaurantes
+        </p>
+        <h3
+          className={`${display.className} text-2xl font-medium text-white md:text-3xl`}
+        >
+          Curadoria gastronômica
+        </h3>
+        <p className="mt-5 text-sm font-light leading-8 text-white/55">
+          Uma amostra de roteiro especial com restaurantes selecionados por
+          estilo, cidade e sequência da viagem.
+        </p>
+        <div className="mt-8 space-y-5">
+          {restaurantDays.map(([day, name, tag]) => (
+            <div
+              key={name}
+              className="grid gap-3 border-t border-white/10 pt-5 sm:grid-cols-[80px_1fr]"
+            >
+              <p className="text-xs uppercase tracking-[0.25em] text-white/30">
+                {day}
+              </p>
+              <div>
+                <p className="text-base font-light text-white">{name}</p>
+                <p className="mt-1 text-xs uppercase tracking-[0.22em] text-white/35">
+                  {tag}
+                </p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section
+        id="roteiro-compras"
+        className="scroll-mt-28 rounded-[2rem] border border-white/10 bg-white/[0.025] p-8 md:p-10"
+      >
+        <p className="mb-4 text-xs uppercase tracking-[0.35em] text-white/35">
+          Sneak peek · Compras
+        </p>
+        <h3
+          className={`${display.className} text-2xl font-medium text-white md:text-3xl`}
+        >
+          Assessoria de compras
+        </h3>
+        <p className="mt-5 text-sm font-light leading-8 text-white/55">
+          Uma amostra de roteiro especial para compras técnicas e categorias de
+          alto valor, com lojas, logística e retirada coordenadas.
+        </p>
+        <div className="mt-8 space-y-5">
+          {shoppingDays.map(([day, name, tag]) => (
+            <div
+              key={name}
+              className="grid gap-3 border-t border-white/10 pt-5 sm:grid-cols-[80px_1fr]"
+            >
+              <p className="text-xs uppercase tracking-[0.25em] text-white/30">
+                {day}
+              </p>
+              <div>
+                <p className="text-base font-light text-white">{name}</p>
+                <p className="mt-1 text-xs uppercase tracking-[0.22em] text-white/35">
+                  {tag}
+                </p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+    </div>
   );
 }
 
 function InfoBlock({ title, text }: { title: string; text: string }) {
   return (
     <div className="border-t border-white/10 pt-10">
-      <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">{title}</p>
+      <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">
+        {title}
+      </p>
       <p>{text}</p>
     </div>
   );
@@ -804,9 +1098,7 @@ function RestaurantBlock({
         </div>
       )}
 
-      <h3 className={`${display.className} text-lg font-medium leading-snug text-white md:text-xl`}>
-        {name}
-      </h3>
+      <h3 className="text-lg font-light leading-snug text-white">{name}</h3>
 
       <p className="mt-3 max-w-xl text-[15px] font-light leading-8 text-white/60">
         {description}
@@ -814,15 +1106,21 @@ function RestaurantBlock({
 
       <div className="mt-6 grid gap-6 border-t border-white/10 pt-6 sm:grid-cols-3">
         <div>
-          <p className="mb-2 text-[10px] uppercase tracking-[0.26em] text-white/30">Local</p>
+          <p className="mb-2 text-[10px] uppercase tracking-[0.26em] text-white/30">
+            Local
+          </p>
           <p className="text-sm leading-7 text-white/58">{location}</p>
         </div>
         <div>
-          <p className="mb-2 text-[10px] uppercase tracking-[0.26em] text-white/30">Preço</p>
+          <p className="mb-2 text-[10px] uppercase tracking-[0.26em] text-white/30">
+            Preço
+          </p>
           <p className="text-sm leading-7 text-white/58">{price}</p>
         </div>
         <div>
-          <p className="mb-2 text-[10px] uppercase tracking-[0.26em] text-white/30">Horário</p>
+          <p className="mb-2 text-[10px] uppercase tracking-[0.26em] text-white/30">
+            Horário
+          </p>
           <p className="text-sm leading-7 text-white/58">{hours}</p>
         </div>
       </div>
