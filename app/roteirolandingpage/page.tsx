@@ -30,14 +30,14 @@ export default function RoteirosAdsPage() {
 
         <a
           href="#contact"
-          className="rounded-full border border-white/25 px-5 py-2 text-xs uppercase tracking-[0.25em] text-white/80 transition hover:border-white/60 hover:text-white"
+          className="hidden rounded-full border border-white/25 px-5 py-2 text-xs uppercase tracking-[0.25em] text-white/80 transition hover:border-white/60 hover:text-white md:inline-block"
         >
           Falar com a Alpinea
         </a>
       </header>
 
       {/* ── SEÇÃO 1 — HERO ── */}
-      <section className="relative min-h-[760px] overflow-hidden bg-black">
+      <section className="relative min-h-[480px] overflow-hidden bg-black md:min-h-[760px]">
         <div className="absolute inset-0 mx-auto max-w-[1800px]">
           <HeroVideo
             src="/videos/onsenanimated.mp4"
