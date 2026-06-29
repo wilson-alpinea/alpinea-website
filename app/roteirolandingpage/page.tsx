@@ -137,9 +137,9 @@ export default function RoteirosAdsPage() {
               { label: "Logística de Malas" },
             ]}
             hotels={[
-              { name: "The Peninsula", logo: "/images/logos/the-peninsula-tokyo.png" },
-              { name: "Aman Kyoto", logo: "/images/logos/aman-kyoto.png" },
-              { name: "The Peninsula", logo: "/images/logos/the-peninsula-tokyo.png" },
+              { name: "The Peninsula", logo: "/images/thepeninsula.png" },
+              { name: "Aman Kyoto", logo: "/images/amankyoto.png" },
+              { name: "The Peninsula", logo: "/images/thepeninsula.png" },
             ]}
           />
         </div>
