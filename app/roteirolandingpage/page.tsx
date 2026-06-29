@@ -40,7 +40,7 @@ export default function RoteirosAdsPage() {
       <section className="relative min-h-[480px] overflow-hidden bg-black md:min-h-[760px]">
         <div className="absolute inset-0 mx-auto max-w-[1800px]">
           <HeroVideo
-            src="/videos/onsenanimated.mp4"
+            src="/videos/kamikochi.mp4"
             poster="/images/onsenkonanso.jpg"
             className="absolute inset-0 h-full w-full object-cover"
           />
@@ -658,7 +658,7 @@ function DashboardPreview() {
 
       <div className="mt-16">
         <p className="mb-7 text-xs uppercase tracking-[0.35em] text-white/35">Guias</p>
-        <div className="mx-auto grid max-w-[820px] gap-6 sm:grid-cols-3">
+        <div className="grid max-w-[560px] gap-5 sm:grid-cols-3">
           {guides.map((guide) => (
             <GuideCard key={guide.title} {...guide} />
           ))}
@@ -689,19 +689,21 @@ function GuideCard({
   title: string;
   image: string;
 }) {
+  const isShopping = title === "Compras";
+
   return (
-    <article className="group relative aspect-[1.08/1] overflow-hidden rounded-[1.65rem] bg-black">
-      <Image
-        src={image}
-        alt={title}
-        fill
-        sizes="(max-width: 1024px) 100vw, 33vw"
-        className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.04]"
-      />
-      <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-black via-black/70 to-transparent" />
-      <div className="absolute bottom-0 left-0 z-10 p-6">
-        <h3 className="text-xl font-light tracking-tight text-white md:text-2xl">{title}</h3>
+    <article className="group max-w-[165px]">
+      <div className="relative aspect-[1.18/1] overflow-hidden rounded-xl border border-white/10 bg-white/[0.02]">
+        <Image
+          src={image}
+          alt={title}
+          fill
+          sizes="165px"
+          className={`${isShopping ? "object-contain p-2" : "object-cover"} transition-transform duration-700 ease-out group-hover:scale-[1.06]`}
+        />
+        <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-black/70 to-transparent" />
       </div>
+      <p className="mt-3 text-sm leading-6 text-white/55">{title}</p>
     </article>
   );
 }
