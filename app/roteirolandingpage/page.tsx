@@ -1,4 +1,3 @@
-import Image from "next/image";
 import { Bodoni_Moda } from "next/font/google";
 import { ContactCTA } from "../components/ContactCTA";
 import { TripDashboard } from "../components/TripDashboard";
@@ -37,22 +36,26 @@ export default function RoteirosAdsPage() {
       </header>
 
       {/* ── SEÇÃO 1 — HERO ── */}
-      <section className="relative min-h-[760px] overflow-hidden">
-        <Image
-          src="/images/onsenkonanso.jpg"
-          alt="Japão — viagem privada Alpinea"
-          fill
-          priority
-          sizes="100vw"
-          className="object-cover"
-        />
-        <div
-          className="absolute inset-0"
-          style={{
-            background:
-              "linear-gradient(to top, #000 0%, rgba(0,0,0,0.75) 18%, rgba(0,0,0,0.25) 38%, transparent 55%)",
-          }}
-        />
+      <section className="relative min-h-[760px] overflow-hidden bg-black">
+        <div className="absolute inset-0 mx-auto max-w-[1800px]">
+          <video
+            autoPlay
+            loop
+            muted
+            playsInline
+            poster="/images/onsenkonanso.jpg"
+            className="absolute inset-0 h-full w-full object-cover"
+          >
+            <source src="/images/onsenanimated.mp4" type="video/mp4" />
+          </video>
+          <div
+            className="absolute inset-0"
+            style={{
+              background:
+                "linear-gradient(to top, #000 0%, rgba(0,0,0,0.75) 18%, rgba(0,0,0,0.25) 38%, transparent 55%)",
+            }}
+          />
+        </div>
 
         <div className="absolute inset-x-0 bottom-0 px-8 pb-8 text-center md:px-16 md:pb-10">
           <div className="mx-auto max-w-2xl">
@@ -68,40 +71,27 @@ export default function RoteirosAdsPage() {
       </section>
 
       {/* ── SEÇÃO 2 — OVERVIEW DOS TIPOS DE ROTEIRO ── */}
-      <section className="bg-white/[0.025] px-8 py-24 md:px-16">
+      <section className="bg-black px-8 py-24 md:px-16">
         <div className="mx-auto max-w-4xl text-center">
           <h2 className={`${display.className} text-3xl font-medium leading-snug text-white md:text-4xl`}>
-            Somos a{" "}
-            <span className="bg-gradient-to-r from-red-500 via-orange-400 to-amber-300 bg-clip-text text-transparent">
-              única agência brasileira 100% focada no Japão
-            </span>{" "}
-            para o mercado de luxo.
+            Roteiros personalizados para sua viagem, independente da duração.
           </h2>
 
-          <div className="mt-16">
-            <p className="mb-4 text-xs uppercase tracking-[0.35em] text-white/40">
-              Nossos roteiros:
-            </p>
-            <p className="mx-auto max-w-xl text-lg font-light leading-9 text-white/65">
-              Roteiros personalizados para sua viagem, independente da duração.
-            </p>
-
-            <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
-              {["7 dias", "10 dias", "12 dias", "15 dias", "20+ dias"].map((d) => (
-                <span
-                  key={d}
-                  className="rounded-full border border-white/25 px-6 py-3 text-sm uppercase tracking-[0.2em] text-white/70"
-                >
-                  {d}
-                </span>
-              ))}
-            </div>
+          <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
+            {["7 dias", "10 dias", "12 dias", "15 dias", "20+ dias"].map((d) => (
+              <span
+                key={d}
+                className="cursor-default rounded-full border border-white/25 px-6 py-3 text-sm uppercase tracking-[0.2em] text-white/70 transition-colors duration-300 hover:border-white hover:bg-white hover:text-black"
+              >
+                {d}
+              </span>
+            ))}
           </div>
         </div>
       </section>
 
       {/* ── SEÇÃO 3 — EXEMPLO DE ROTEIRO ── */}
-      <section className="border-t border-white/10 px-8 py-24 md:px-16">
+      <section className="bg-black px-8 py-24 md:px-16">
         <div className="mx-auto max-w-7xl">
           <div className="mx-auto mb-16 max-w-3xl text-center">
             <h2 className={`${display.className} mb-6 text-3xl font-medium text-white md:text-4xl`}>
@@ -116,14 +106,14 @@ export default function RoteirosAdsPage() {
           </div>
 
           <div className="relative">
-            {/* Glow ambiente atrás do "tablet" — paleta da marca, suave e fora de foco */}
+            {/* Glow ambiente atrás do "tablet" — azul petróleo, suave e fora de foco */}
             <div
               aria-hidden
               className="pointer-events-none absolute -inset-x-16 -inset-y-24 -z-10 overflow-hidden blur-3xl"
             >
-              <div className="absolute -left-10 top-0 h-80 w-80 rounded-full bg-red-600/25" />
-              <div className="absolute left-1/3 top-6 h-72 w-72 rounded-full bg-orange-500/20" />
-              <div className="absolute bottom-0 right-0 h-72 w-72 rounded-full bg-amber-400/15" />
+              <div className="absolute -left-10 top-0 h-80 w-80 rounded-full" style={{ backgroundColor: "rgba(20,105,145,0.35)" }} />
+              <div className="absolute left-1/3 top-6 h-72 w-72 rounded-full" style={{ backgroundColor: "rgba(8,32,45,0.55)" }} />
+              <div className="absolute bottom-0 right-0 h-72 w-72 rounded-full" style={{ backgroundColor: "rgba(20,105,145,0.25)" }} />
             </div>
 
             <TripDashboard
