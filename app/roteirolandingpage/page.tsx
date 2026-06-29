@@ -1,6 +1,7 @@
 import { Bodoni_Moda } from "next/font/google";
 import { ContactCTA } from "../components/ContactCTA";
 import { TripDashboard } from "../components/TripDashboard";
+import { HeroVideo } from "../components/HeroVideo";
 
 // Mesma fonte de destaque usada nas demais páginas do site.
 const display = Bodoni_Moda({
@@ -38,16 +39,11 @@ export default function RoteirosAdsPage() {
       {/* ── SEÇÃO 1 — HERO ── */}
       <section className="relative min-h-[760px] overflow-hidden bg-black">
         <div className="absolute inset-0 mx-auto max-w-[1800px]">
-          <video
-            autoPlay
-            loop
-            muted
-            playsInline
+          <HeroVideo
+            src="/images/onsenanimated.mp4"
             poster="/images/onsenkonanso.jpg"
             className="absolute inset-0 h-full w-full object-cover"
-          >
-            <source src="/images/onsenanimated.mp4" type="video/mp4" />
-          </video>
+          />
           <div
             className="absolute inset-0"
             style={{
@@ -91,17 +87,19 @@ export default function RoteirosAdsPage() {
       </section>
 
       {/* ── SEÇÃO 3 — EXEMPLO DE ROTEIRO ── */}
-      <section className="bg-black px-8 py-24 md:px-16">
+      <section className="border-t border-white/10 bg-black px-8 py-24 md:px-16">
         <div className="mx-auto max-w-7xl">
           <div className="mx-auto mb-16 max-w-3xl text-center">
+            <p className="mb-5 text-xs uppercase tracking-[0.35em] text-white/40">
+              Painel Interativo
+            </p>
             <h2 className={`${display.className} mb-6 text-3xl font-medium text-white md:text-4xl`}>
-              Painel Interativo & Exemplo de Roteiro
+              Exemplo de Roteiro
             </h2>
             <p className="text-lg font-light leading-9 text-white/65">
-              Nossos roteiros são fornecidos digitalmente num painel
-              interativo, para você acessar a informação que precisa
-              rapidamente. Abaixo você confere um exemplo do painel e um
-              pedaço do roteiro:
+              Roteiro num formato moderno e digital, para você acessar a
+              informação que precisa rapidamente. Abaixo você confere um
+              exemplo do nosso painel e uma pequena amostra de um roteiro real.
             </p>
           </div>
 
@@ -148,8 +146,8 @@ export default function RoteirosAdsPage() {
       {/* ── PEDAÇO DO ROTEIRO — AMOSTRA DO DIA 1 ── */}
       <section id="dia-1" className="border-t border-white/10 px-8 py-24 md:px-16">
         <div className="mx-auto max-w-7xl">
-          <div className="group cursor-default border border-white/10 bg-white/[0.035] px-8 py-8 transition-all duration-500 ease-out hover:-translate-y-1 hover:border-amber-200/30 hover:bg-white/[0.05] hover:shadow-[0_30px_90px_-25px_rgba(255,175,90,0.3)] md:px-10">
-            <p className="mb-5 text-xs uppercase tracking-[0.45em] text-white/45 transition-colors duration-500 group-hover:text-amber-200/70">Dia 1</p>
+          <div className="border border-white/10 bg-white/[0.035] px-8 py-8 md:px-10">
+            <p className="mb-5 text-xs uppercase tracking-[0.45em] text-white/45">Dia 1</p>
             <h3 className={`${display.className} text-4xl font-medium tracking-tight text-white md:text-6xl`}>Tokyo</h3>
             <p className="mt-6 max-w-3xl text-lg font-light leading-9 text-white/60">
               Chegada ao Japão, acomodação inicial e primeira experiência em
