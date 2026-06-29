@@ -1,7 +1,6 @@
 import Image from "next/image";
 import { Bodoni_Moda } from "next/font/google";
 import { ContactCTA } from "../components/ContactCTA";
-import { TripDashboard } from "../components/TripDashboard";
 import { HeroVideo } from "../components/HeroVideo";
 
 // Mesma fonte de destaque usada nas demais páginas do site.
@@ -111,31 +110,7 @@ export default function RoteirosAdsPage() {
               <div className="absolute bottom-0 right-0 h-72 w-72 rounded-full" style={{ backgroundColor: "rgba(20,105,145,0.25)" }} />
             </div>
 
-            <TripDashboard
-              days={[
-                { day: 1, date: "1 Out", city: "Tokyo", href: "#dia-1" },
-                { day: 2, date: "2 Out", city: "Tokyo" },
-                { day: 3, date: "3 Out", city: "Tokyo" },
-                { day: 4, date: "4 Out", city: "Kyoto" },
-                { day: 5, date: "5 Out", city: "Kyoto" },
-                { day: 6, date: "6 Out", city: "Kyoto" },
-                { day: 7, date: "7 Out", city: "Tokyo" },
-              ]}
-              guides={[
-                { label: "Restaurantes" },
-                { label: "Hotéis" },
-                { label: "Compras" },
-              ]}
-              annexes={[
-                { label: "Aeroporto Chegada Narita NRT" },
-                { label: "Aeroporto Partida Narita NRT" },
-                { label: "Instruções Conexão em Doha DOH" },
-                { label: "Dinheiro e Pagamentos" },
-                { label: "Apps e Conectividade" },
-                { label: "Trem Bala (Shinkansen)" },
-                { label: "Logística de Malas" },
-              ]}
-            />
+            <DashboardPreview />
           </div>
         </div>
       </section>
@@ -587,6 +562,153 @@ export default function RoteirosAdsPage() {
         </div>
       </footer>
     </main>
+  );
+}
+
+function DashboardPreview() {
+  const days = [
+    { day: 1, date: "1 Out", city: "Tokyo", active: true },
+    { day: 2, date: "2 Out", city: "Tokyo" },
+    { day: 3, date: "3 Out", city: "Tokyo" },
+    { day: 4, date: "4 Out", city: "Kyoto" },
+    { day: 5, date: "5 Out", city: "Kyoto" },
+    { day: 6, date: "6 Out", city: "Kyoto" },
+    { day: 7, date: "7 Out", city: "Tokyo" },
+  ];
+
+  const guides = [
+    {
+      title: "Restaurantes",
+      description: "Curadoria gastronômica, reservas e recomendações conforme o perfil da viagem.",
+      image: "/images/sugita.png",
+    },
+    {
+      title: "Hotéis",
+      description: "Seleção de hospedagens em localizações estratégicas, com estilo e conforto alinhados ao roteiro.",
+      image: "/images/amanroom.png",
+    },
+    {
+      title: "Compras",
+      description: "Apoio em boutiques, artigos japoneses, relógios, câmeras e categorias especializadas.",
+      image: "/images/greubel.png",
+    },
+  ];
+
+  const annexes = [
+    "Aeroporto Chegada Narita NRT",
+    "Aeroporto Partida Narita NRT",
+    "Instruções Conexão em Doha DOH",
+    "Dinheiro e Pagamentos",
+    "Apps e Conectividade",
+    "Trem Bala (Shinkansen)",
+    "Logística de Malas",
+  ];
+
+  return (
+    <div className="mx-auto overflow-hidden rounded-[2rem] border border-white/10 bg-black/70 px-6 py-12 shadow-2xl sm:px-10 md:px-14 md:py-16">
+      <div className="text-center">
+        <p className="mx-auto mb-8 inline-block rounded-full border border-white/20 px-5 py-2 text-xs uppercase tracking-[0.35em] text-white/70">
+          Roteiro de 7 dias
+        </p>
+
+        <p className="mb-6 text-xs uppercase tracking-[0.35em] text-white/35">Cidades</p>
+        <div className="flex flex-wrap items-start justify-center gap-4 sm:gap-6">
+          {[
+            { city: "Tokyo", days: "3 dias" },
+            { city: "Kyoto", days: "3 dias", active: true },
+            { city: "Tokyo", days: "1 dia" },
+          ].map((stop, index, arr) => (
+            <div key={`${stop.city}-${index}`} className="flex items-center gap-4">
+              <div>
+                <div
+                  className={`mx-auto h-14 w-14 rounded-full border ${
+                    stop.active
+                      ? "border-[#6f8b97]/70 bg-[#2f4854]"
+                      : "border-white/15 bg-white/10"
+                  }`}
+                />
+                <p className="mt-4 text-xs uppercase tracking-[0.35em] text-white">{stop.city}</p>
+                <p className="mt-1 text-xs text-white/45">{stop.days}</p>
+              </div>
+              {index < arr.length - 1 && <span className="mb-10 text-white/25">→</span>}
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="mt-14">
+        <p className="mb-3 text-xs uppercase tracking-[0.35em] text-white/35">Roteiro diário</p>
+        <p className="mb-7 inline-block rounded-full border border-white/20 px-4 py-1.5 text-xs uppercase tracking-[0.25em] text-white/75">
+          Nesta amostra, apenas o dia 1 está disponível para visualização.
+        </p>
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+          {days.map((d) => (
+            <a
+              key={d.day}
+              href={d.active ? "#dia-1" : undefined}
+              className={`rounded-xl border p-5 transition duration-300 ${
+                d.active
+                  ? "border-white bg-white text-black hover:bg-white/90"
+                  : "border-white/10 bg-white/[0.02] text-white/35 hover:border-white/25 hover:text-white/60"
+              }`}
+            >
+              <p className="font-medium">Dia {d.day}{d.active ? " →" : ""}</p>
+              <p className="mt-1 text-sm opacity-70">{d.date} · {d.city}</p>
+            </a>
+          ))}
+        </div>
+      </div>
+
+      <div className="mt-16">
+        <p className="mb-7 text-xs uppercase tracking-[0.35em] text-white/35">Guias</p>
+        <div className="grid gap-6 lg:grid-cols-3">
+          {guides.map((guide) => (
+            <GuideCard key={guide.title} {...guide} />
+          ))}
+        </div>
+      </div>
+
+      <div className="mt-16">
+        <p className="mb-7 text-xs uppercase tracking-[0.35em] text-white/35">Anexos especiais</p>
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+          {annexes.map((label) => (
+            <div
+              key={label}
+              className="rounded-xl border border-white/10 bg-white/[0.02] px-5 py-4 text-sm leading-6 text-white/55"
+            >
+              {label}
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function GuideCard({
+  title,
+  description,
+  image,
+}: {
+  title: string;
+  description: string;
+  image: string;
+}) {
+  return (
+    <article className="group relative aspect-[4/3] overflow-hidden rounded-3xl border border-white/10 bg-white/[0.03]">
+      <Image
+        src={image}
+        alt={title}
+        fill
+        sizes="(max-width: 1024px) 100vw, 33vw"
+        className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+      />
+      <div className="absolute inset-0 bg-gradient-to-t from-black via-black/35 to-transparent" />
+      <div className="absolute inset-x-0 bottom-0 p-6 md:p-7">
+        <h3 className="text-2xl font-medium text-white md:text-3xl">{title}</h3>
+        <p className="mt-3 max-w-sm text-sm leading-6 text-white/65">{description}</p>
+      </div>
+    </article>
   );
 }
 
