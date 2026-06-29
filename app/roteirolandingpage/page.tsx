@@ -53,18 +53,15 @@ export default function RoteirosAdsPage() {
           />
         </div>
 
-        <div className="absolute inset-x-0 bottom-0 px-8 pb-2 text-center md:px-16 md:pb-4">
-          <div className="mx-auto max-w-2xl">
-            <h1 className={`${display.className} text-4xl font-medium leading-[1.15] tracking-tight md:text-5xl`}>
-              Roteiros personalizados para o Japão
-            </h1>
-          </div>
-        </div>
       </section>
 
       {/* ── SEÇÃO 2 — OVERVIEW DOS TIPOS DE ROTEIRO ── */}
       <section className="bg-black px-8 py-24 md:px-16">
         <div className="mx-auto max-w-4xl text-center">
+          <h1 className={`${display.className} mb-10 text-3xl font-medium text-white md:text-4xl`}>
+            Roteiros personalizados para o Japão
+          </h1>
+
           <div className="flex flex-wrap items-center justify-center gap-4">
             {["7 dias", "10 dias", "12 dias", "15 dias", "20+ dias"].map((d) => (
               <span
