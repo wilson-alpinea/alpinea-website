@@ -1,3 +1,4 @@
+import Image from "next/image";
 import { Bodoni_Moda } from "next/font/google";
 import { ContactCTA } from "../components/ContactCTA";
 import { TripDashboard } from "../components/TripDashboard";
@@ -586,5 +587,53 @@ export default function RoteirosAdsPage() {
         </div>
       </footer>
     </main>
+  );
+}
+
+function InfoBlock({ title, text }: { title: string; text: string }) {
+  return (
+    <div className="border-t border-white/10 pt-10">
+      <p className={`${display.className} text-2xl font-medium text-white md:text-3xl`}>{title}</p>
+      <p className="mt-3">{text}</p>
+    </div>
+  );
+}
+
+function RestaurantBlock({
+  name,
+  description,
+  location,
+  price,
+  hours,
+  photo,
+}: {
+  name: string;
+  description: string;
+  location: string;
+  price: string;
+  hours: string;
+  photo?: string;
+}) {
+  return (
+    <div className="border-t border-white/10 pt-8">
+      {photo && (
+        <div className="mb-6 aspect-[4/3] overflow-hidden rounded-2xl border border-white/10">
+          <Image
+            src={photo}
+            alt={name}
+            width={700}
+            height={520}
+            className="h-full w-full object-cover"
+          />
+        </div>
+      )}
+      <h3 className={`${display.className} text-2xl font-medium text-white`}>{name}</h3>
+      <p className="mt-4 text-lg font-light leading-9 text-white/65">{description}</p>
+      <div className="mt-6 space-y-3 text-base leading-8 text-white/55">
+        <p><span className="text-white/80">Local:</span> {location}</p>
+        <p><span className="text-white/80">Preço:</span> {price}</p>
+        <p><span className="text-white/80">Horário:</span> {hours}</p>
+      </div>
+    </div>
   );
 }
