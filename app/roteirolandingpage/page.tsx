@@ -134,29 +134,29 @@ export default function RoteirosAdsPage() {
           </div>
 
           <div className="relative isolate mx-auto max-w-7xl">
-            {/* Glow de borda — sutil e externo ao dashboard, sem invadir o conteúdo */}
+            {/* Glow externo — luz ambiente nas bordas, sem invadir o interior preto do dashboard */}
             <div
               aria-hidden
-              className="pointer-events-none absolute -inset-6 -z-10 rounded-[2.5rem] opacity-70 blur-2xl"
+              className="pointer-events-none absolute left-1/2 top-1/2 -z-30 h-[112%] w-[116%] -translate-x-1/2 -translate-y-1/2 rounded-[3rem] opacity-70 blur-[120px]"
               style={{
                 background:
-                  "linear-gradient(135deg, rgba(72,46,118,0.22), rgba(16,57,116,0.24) 48%, rgba(0,0,0,0) 72%)",
+                  "radial-gradient(ellipse at center, rgba(25,70,150,0.20) 0%, rgba(16,42,108,0.14) 36%, rgba(9,18,46,0.08) 55%, transparent 76%)",
               }}
             />
             <div
               aria-hidden
-              className="pointer-events-none absolute -left-10 top-12 -z-10 h-[70%] w-24 rounded-full bg-[#2d1b61]/25 blur-3xl"
+              className="pointer-events-none absolute left-1/2 top-1/2 -z-20 h-[104%] w-[104%] -translate-x-1/2 -translate-y-1/2 rounded-[2.35rem] opacity-45 blur-[38px]"
+              style={{
+                background:
+                  "linear-gradient(135deg, rgba(75,42,128,0.18), rgba(20,68,145,0.22) 48%, rgba(0,0,0,0) 78%)",
+              }}
             />
-            <div
-              aria-hidden
-              className="pointer-events-none absolute -right-10 bottom-12 -z-10 h-[70%] w-24 rounded-full bg-[#0d3b78]/25 blur-3xl"
-            />
-            <div className="rounded-[2rem] shadow-[0_0_80px_rgba(25,71,137,0.14),0_0_140px_rgba(66,36,111,0.09)]">
+            <div className="relative z-10 rounded-[2rem] bg-black">
               <DashboardPreview />
             </div>
           </div>
 
-          <SpecialRoutePreviews />
+          <RoutePreviewModals />
         </div>
       </section>
 
@@ -817,7 +817,7 @@ function DashboardPreview() {
   ];
 
   return (
-    <div className="mx-auto overflow-hidden rounded-[2rem] border border-white/10 bg-black/70 px-6 py-12 shadow-2xl sm:px-10 md:px-14 md:py-16">
+    <div className="mx-auto overflow-hidden rounded-[2rem] border border-white/10 bg-black px-6 py-12 shadow-2xl sm:px-10 md:px-14 md:py-16">
       <div className="text-center">
         <p className="mx-auto mb-8 inline-block rounded-full border border-white/20 px-5 py-2 text-xs uppercase tracking-[0.35em] text-white/70">
           Roteiro de 7 dias
@@ -901,8 +901,8 @@ function DashboardPreview() {
               {...guide}
               href={
                 guide.title === "Restaurantes"
-                  ? "#roteiro-restaurantes"
-                  : "#roteiro-compras"
+                  ? "#preview-restaurantes"
+                  : "#preview-compras"
               }
             />
           ))}
@@ -943,7 +943,7 @@ function GuideCard({
   const isShopping = title === "Compras";
   const content = (
     <>
-      <div className="relative aspect-[1.18/1] overflow-hidden rounded-xl border border-white/10 bg-white/[0.02]">
+      <div className="relative aspect-[1.18/1] overflow-hidden rounded-xl border border-white/10 bg-white/[0.02] transition duration-300 group-hover:border-[#345f91]/60 group-hover:shadow-[0_0_40px_rgba(30,78,150,0.18)]">
         <Image
           src={image}
           alt={title}
@@ -952,6 +952,9 @@ function GuideCard({
           className={`${isShopping ? "object-contain p-2" : "object-cover"} transition-transform duration-700 ease-out group-hover:scale-[1.06]`}
         />
         <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-black/70 to-transparent" />
+        <div className="absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-full border border-white/15 bg-black/70 text-white/80 opacity-0 backdrop-blur-md transition duration-300 group-hover:opacity-100" aria-hidden>
+          <span className="text-sm">⌕</span>
+        </div>
       </div>
       <p className="mt-3 text-sm leading-6 text-white/55">{title}</p>
     </>
@@ -959,7 +962,7 @@ function GuideCard({
 
   if (href) {
     return (
-      <a href={href} className="group block max-w-[165px]">
+      <a href={href} className="group block max-w-[165px] cursor-zoom-in">
         {content}
       </a>
     );
@@ -968,92 +971,96 @@ function GuideCard({
   return <article className="group max-w-[165px]">{content}</article>;
 }
 
-function SpecialRoutePreviews() {
-  const restaurantDays = [
-    ["Dia 1", "Harutaka", "Sushi · 3 estrelas Michelin"],
-    ["Dia 2", "Mikawa Zezankyo", "Tempurá · Lenda viva"],
-    ["Dia 3", "Sazenka", "Contemporâneo · 2 estrelas Michelin"],
-  ];
-
-  const shoppingDays = [
-    ["Dia 1", "Masamoto", "Gyuto · Afiação entregue"],
-    ["Dia 8", "Aritsugu", "Yanagiba · Kyoto"],
-    ["Dia 10", "Kikumori", "Deba · Sakai"],
-  ];
-
+function RoutePreviewModals() {
   return (
-    <div className="mx-auto mt-20 grid max-w-7xl gap-6 lg:grid-cols-2">
-      <section
-        id="roteiro-restaurantes"
-        className="scroll-mt-28 rounded-[2rem] border border-white/10 bg-white/[0.025] p-8 md:p-10"
-      >
-        <p className="mb-4 text-xs uppercase tracking-[0.35em] text-white/35">
-          Sneak peek · Restaurantes
-        </p>
-        <h3
-          className={`${display.className} text-2xl font-medium text-white md:text-3xl`}
-        >
-          Curadoria gastronômica
-        </h3>
-        <p className="mt-5 text-sm font-light leading-8 text-white/55">
-          Uma amostra de roteiro especial com restaurantes selecionados por
-          estilo, cidade e sequência da viagem.
-        </p>
-        <div className="mt-8 space-y-5">
-          {restaurantDays.map(([day, name, tag]) => (
-            <div
-              key={name}
-              className="grid gap-3 border-t border-white/10 pt-5 sm:grid-cols-[80px_1fr]"
-            >
-              <p className="text-xs uppercase tracking-[0.25em] text-white/30">
-                {day}
-              </p>
-              <div>
-                <p className="text-base font-light text-white">{name}</p>
-                <p className="mt-1 text-xs uppercase tracking-[0.22em] text-white/35">
-                  {tag}
-                </p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
+    <>
+      <RoutePreviewModal
+        id="preview-restaurantes"
+        eyebrow="Roteiro especial"
+        title="Curadoria gastronômica"
+        description="Amostra visual do roteiro especial de restaurantes entregue aos clientes Alpinea."
+        image="/images/roteiro-restaurantes.png"
+        alt="Preview do roteiro especial de restaurantes da Alpinea"
+      />
+      <RoutePreviewModal
+        id="preview-compras"
+        eyebrow="Roteiro especial"
+        title="Assessoria de compras"
+        description="Amostra visual do roteiro especial de compras técnicas e categorias de alto valor."
+        image="/images/roteiro-compras.png"
+        alt="Preview do roteiro especial de compras da Alpinea"
+      />
+    </>
+  );
+}
 
-      <section
-        id="roteiro-compras"
-        className="scroll-mt-28 rounded-[2rem] border border-white/10 bg-white/[0.025] p-8 md:p-10"
-      >
-        <p className="mb-4 text-xs uppercase tracking-[0.35em] text-white/35">
-          Sneak peek · Compras
-        </p>
-        <h3
-          className={`${display.className} text-2xl font-medium text-white md:text-3xl`}
-        >
-          Assessoria de compras
-        </h3>
-        <p className="mt-5 text-sm font-light leading-8 text-white/55">
-          Uma amostra de roteiro especial para compras técnicas e categorias de
-          alto valor, com lojas, logística e retirada coordenadas.
-        </p>
-        <div className="mt-8 space-y-5">
-          {shoppingDays.map(([day, name, tag]) => (
-            <div
-              key={name}
-              className="grid gap-3 border-t border-white/10 pt-5 sm:grid-cols-[80px_1fr]"
+function RoutePreviewModal({
+  id,
+  eyebrow,
+  title,
+  description,
+  image,
+  alt,
+}: {
+  id: string;
+  eyebrow: string;
+  title: string;
+  description: string;
+  image: string;
+  alt: string;
+}) {
+  return (
+    <div
+      id={id}
+      className="route-preview-modal fixed inset-0 z-[100] hidden items-center justify-center bg-black/92 px-4 py-8 backdrop-blur-xl target:flex"
+      aria-modal="true"
+      role="dialog"
+    >
+      <a href="#" className="absolute inset-0" aria-label="Fechar preview" />
+
+      <div className="relative z-10 flex max-h-[92vh] w-full max-w-6xl flex-col overflow-hidden rounded-[2rem] border border-white/10 bg-black shadow-[0_0_120px_rgba(20,62,135,0.22)]">
+        <div className="flex items-start justify-between gap-6 border-b border-white/10 px-5 py-5 md:px-8">
+          <div>
+            <p className="mb-2 text-[10px] uppercase tracking-[0.35em] text-white/35">
+              {eyebrow}
+            </p>
+            <h3
+              className={`${display.className} text-2xl font-medium text-white md:text-3xl`}
             >
-              <p className="text-xs uppercase tracking-[0.25em] text-white/30">
-                {day}
-              </p>
-              <div>
-                <p className="text-base font-light text-white">{name}</p>
-                <p className="mt-1 text-xs uppercase tracking-[0.22em] text-white/35">
-                  {tag}
-                </p>
-              </div>
-            </div>
-          ))}
+              {title}
+            </h3>
+            <p className="mt-2 max-w-2xl text-sm leading-7 text-white/50">
+              {description}
+            </p>
+          </div>
+
+          <a
+            href="#"
+            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-white/15 text-xl leading-none text-white/70 transition hover:border-white/45 hover:text-white"
+            aria-label="Fechar preview"
+          >
+            ×
+          </a>
         </div>
-      </section>
+
+        <div className="overflow-auto bg-black p-4 md:p-6">
+          <a
+            href={image}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group mx-auto block max-w-5xl cursor-zoom-in"
+            aria-label="Abrir imagem em tamanho completo"
+          >
+            <Image
+              src={image}
+              alt={alt}
+              width={1600}
+              height={2200}
+              className="mx-auto h-auto w-full rounded-xl border border-white/10 object-contain transition duration-300 group-hover:opacity-90"
+            />
+          </a>
+        </div>
+      </div>
     </div>
   );
 }
