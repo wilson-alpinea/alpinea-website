@@ -1,260 +1,208 @@
 import { Bodoni_Moda } from "next/font/google";
-import { ContactCTA } from "../components/ContactCTA";
-import { TripDashboard } from "../components/TripDashboard";
-import { HeroVideo } from "../components/HeroVideo";
 
-// Mesma fonte de destaque usada nas demais páginas do site.
+// Dashboard de viagem — usado em todos os roteiros vendidos, do Alpinea
+// Design ao Alpinea Private. Mostra o esquema de fluxo da viagem, o
+// roteiro diário, guias e anexos especiais do pacote. Em amostras
+// gratuitas, normalmente só o Dia 1 recebe `href` (os demais ficam sem
+// link, apenas ilustrativos).
+
 const display = Bodoni_Moda({
   subsets: ["latin"],
   weight: ["400", "500", "600"],
 });
 
-export const metadata = {
-  title: "Alpinea | Roteiros Personalizados de Luxo para o Japão",
-  description:
-    "A única agência brasileira 100% focada em viagens de luxo para o Japão. Veja exemplos reais de roteiros privados, com guias de restaurantes, hotéis e compras.",
+export type DayCell = {
+  day: number;
+  date: string;
+  city: string;
+  href?: string;
 };
 
-export default function RoteirosAdsPage() {
+export type LinkCell = {
+  label: string;
+  href?: string;
+};
+
+// Tons muito sutis por cidade — só para sugerir o fluxo da viagem,
+// sem fugir da paleta neutra do site.
+const CITY_BORDER: Record<string, string> = {
+  Tokyo: "rgba(255,255,255,0.16)",
+  Osaka: "rgba(196,148,110,0.45)",
+  Kyoto: "rgba(118,150,168,0.45)",
+  Nara: "rgba(150,172,120,0.45)",
+};
+
+function Cell({
+  title,
+  subtitle,
+  href,
+  borderColor,
+  highlighted = false,
+}: {
+  title: string;
+  subtitle?: string;
+  href?: string;
+  borderColor?: string;
+  highlighted?: boolean;
+}) {
+  if (highlighted) {
+    return (
+      <a
+        href={href}
+        className="block rounded-lg bg-white px-4 py-3 transition hover:bg-white/90"
+      >
+        <p className="text-sm font-semibold text-black">{title}</p>
+        {subtitle && <p className="mt-1 text-xs text-black/60">{subtitle}</p>}
+      </a>
+    );
+  }
+
+  const inner = (
+    <>
+      <p className="text-sm font-medium text-white">{title}</p>
+      {subtitle && <p className="mt-1 text-xs text-white/40">{subtitle}</p>}
+    </>
+  );
+
+  if (href) {
+    return (
+      <a
+        href={href}
+        className="block rounded-lg border border-white/20 px-4 py-3 transition hover:border-white/50 hover:bg-white/[0.04]"
+      >
+        {inner}
+      </a>
+    );
+  }
+
   return (
-    <main className="min-h-screen bg-black text-white">
-      {/* ── HEADER MINIMALISTA — sem menu, foco total em conversão ── */}
-      <header className="fixed left-0 right-0 top-0 z-50 flex items-center justify-between bg-black/10 px-8 py-5 backdrop-blur-2xl md:px-16">
-        <a href="/">
-          <img
-            src="/images/ALPINEA-LOGO-transparent.png"
-            alt="Alpinea"
-            className="h-8 w-auto object-contain"
-          />
-        </a>
+    <div
+      className="block cursor-default rounded-lg border px-4 py-3 opacity-[0.55]"
+      style={{ borderColor: borderColor ?? "rgba(255,255,255,0.1)" }}
+    >
+      {inner}
+    </div>
+  );
+}
 
-        <a
-          href="#contact"
-          className="hidden rounded-full border border-white/25 px-5 py-2 text-xs uppercase tracking-[0.25em] text-white/80 transition hover:border-white/60 hover:text-white md:inline-block"
-        >
-          Falar com a Alpinea
-        </a>
-      </header>
+function CellGroup({ title, items }: { title: string; items: LinkCell[] }) {
+  return (
+    <div>
+      <p className="mb-6 text-xs uppercase tracking-[0.35em] text-white/40">{title}</p>
+      <div className="grid grid-cols-3 gap-3 sm:grid-cols-5">
+        {items.map((g) => (
+          <Cell key={g.label} title={g.label} href={g.href} />
+        ))}
+      </div>
+    </div>
+  );
+}
 
-      {/* ── SEÇÃO 1 — HERO ── */}
-      <section className="relative min-h-[480px] overflow-hidden bg-black md:min-h-[760px]">
-        <div className="absolute inset-0 mx-auto max-w-[1800px]">
-          <HeroVideo
-            src="/videos/onsenanimated.mp4"
-            poster="/images/onsenkonanso.jpg"
-            className="absolute inset-0 h-full w-full object-cover"
-          />
-          <div
-            className="absolute inset-0"
-            style={{
-              background:
-                "linear-gradient(to top, #000 0%, rgba(0,0,0,0.75) 18%, rgba(0,0,0,0.25) 38%, transparent 55%)",
-            }}
-          />
-        </div>
+function computeStops(days: DayCell[]) {
+  const stops: { city: string; days: number }[] = [];
+  for (const d of days) {
+    const last = stops[stops.length - 1];
+    if (last && last.city === d.city) {
+      last.days += 1;
+    } else {
+      stops.push({ city: d.city, days: 1 });
+    }
+  }
+  return stops;
+}
 
-      </section>
+function TripFlow({ days }: { days: DayCell[] }) {
+  const stops = computeStops(days);
+  const circleSize = 56;
+  const arrowWidth = 28;
 
-      {/* ── SEÇÃO 2 — OVERVIEW DOS TIPOS DE ROTEIRO ── */}
-      <section className="bg-black px-8 py-24 md:px-16">
-        <div className="mx-auto max-w-4xl text-center">
-          <h1 className={`${display.className} mb-10 text-3xl font-medium text-white md:text-4xl`}>
-            Roteiros personalizados para o Japão
-          </h1>
+  return (
+    <div className="mb-12 flex flex-col items-center">
+      {/* Linha dos círculos e setas — todos do mesmo tamanho, setas centralizadas */}
+      <div className="flex items-center justify-center">
+        {stops.map((stop, i) => (
+          <div key={i} className="flex items-center">
+            <div
+              className="shrink-0 rounded-full border"
+              style={{
+                width: circleSize,
+                height: circleSize,
+                borderColor: CITY_BORDER[stop.city] ?? "rgba(255,255,255,0.3)",
+                backgroundColor: CITY_BORDER[stop.city] ?? "rgba(255,255,255,0.3)",
+              }}
+            />
+            {i < stops.length - 1 && (
+              <svg width={arrowWidth} height="10" viewBox="0 0 28 10" fill="none" className="mx-1 shrink-0">
+                <line x1="0" y1="5" x2="20" y2="5" stroke="rgba(255,255,255,0.3)" strokeWidth="1.5" />
+                <path d="M18 1 L26 5 L18 9" stroke="rgba(255,255,255,0.3)" strokeWidth="1.5" fill="none" />
+              </svg>
+            )}
+          </div>
+        ))}
+      </div>
 
-          <div className="flex flex-wrap items-center justify-center gap-4">
-            {["7 dias", "10 dias", "12 dias", "15 dias", "20+ dias"].map((d) => (
-              <span
-                key={d}
-                className="cursor-default rounded-full border border-white/25 px-6 py-3 text-sm uppercase tracking-[0.2em] text-white/70 transition-colors duration-300 hover:border-white hover:bg-white hover:text-black"
-              >
-                {d}
-              </span>
+      {/* Linha das legendas — mesma largura dos círculos, alinhada por baixo deles */}
+      <div className="mt-3 flex items-start justify-center">
+        {stops.map((stop, i) => (
+          <div key={i} className="flex items-center">
+            <div className="text-center" style={{ width: circleSize }}>
+              <p className="text-xs uppercase tracking-[0.2em] text-white/70">{stop.city}</p>
+              <p className="text-[11px] text-white/35">
+                {stop.days} {stop.days === 1 ? "dia" : "dias"}
+              </p>
+            </div>
+            {i < stops.length - 1 && <div className="mx-1 shrink-0" style={{ width: arrowWidth }} />}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+export function TripDashboard({
+  days,
+  guides,
+  annexes,
+}: {
+  days: DayCell[];
+  guides: LinkCell[];
+  annexes: LinkCell[];
+}) {
+  const totalDays = days.length;
+
+  return (
+    <div className="overflow-hidden rounded-2xl border border-white/10 bg-black/60 p-5 sm:rounded-[2rem] sm:p-10">
+      <p className="mb-6 text-center">
+        <span className="inline-block rounded-full border border-white/25 px-4 py-1.5 text-xs uppercase tracking-[0.25em] text-white/70">
+          Roteiro de {totalDays} dias
+        </span>
+      </p>
+      <p className="mb-6 text-center text-xs uppercase tracking-[0.35em] text-white/40">Cidades</p>
+      <TripFlow days={days} />
+
+      <div className="space-y-12">
+        <div>
+          <p className="mb-2 text-xs uppercase tracking-[0.35em] text-white/40">Roteiro Diário</p>
+          <p className="mb-6 inline-block rounded-full border border-white/25 px-4 py-1.5 text-xs uppercase tracking-[0.25em] text-white/70">
+            Nesta amostra, apenas o Dia 1 está disponível para visualização.
+          </p>
+          <div className="grid grid-cols-3 gap-3 sm:grid-cols-5">
+            {days.map((d) => (
+              <Cell
+                key={d.day}
+                title={d.href ? `Dia ${d.day} →` : `Dia ${d.day}`}
+                subtitle={`${d.date} · ${d.city}`}
+                href={d.href}
+                borderColor={CITY_BORDER[d.city]}
+                highlighted={!!d.href}
+              />
             ))}
           </div>
-
-          <h2 className={`${display.className} mt-10 text-3xl font-medium leading-snug text-white md:text-4xl`}>
-            Independente da duração da sua viagem, temos a curadoria
-            perfeita para você,{" "}
-            <span className="bg-gradient-to-r from-[#1b6f93] via-[#2f9cc4] to-[#7fd4ec] bg-clip-text text-transparent">
-              confira nosso exemplo abaixo.
-            </span>
-          </h2>
         </div>
-      </section>
 
-      {/* ── SEÇÃO 3 — EXEMPLO DE ROTEIRO ── */}
-      <section className="border-t border-white/10 bg-black px-8 py-24 md:px-16">
-        <div className="mx-auto max-w-7xl">
-          <div className="mx-auto mb-16 max-w-3xl text-center">
-            <p className="mb-5 text-xs uppercase tracking-[0.35em] text-white/40">
-              Painel Interativo
-            </p>
-            <h2 className={`${display.className} mb-6 text-3xl font-medium text-white md:text-4xl`}>
-              Exemplo de Roteiro
-            </h2>
-            <p className="text-lg font-light leading-9 text-white/65">
-              Roteiro num formato moderno e digital, para você acessar a
-              informação que precisa rapidamente.
-            </p>
-          </div>
-
-          <div className="relative">
-            {/* Glow ambiente atrás do "tablet" — azul petróleo, suave e fora de foco */}
-            <div
-              aria-hidden
-              className="pointer-events-none absolute -inset-x-16 -inset-y-24 -z-10 overflow-hidden blur-3xl"
-            >
-              <div className="absolute -left-10 top-0 h-80 w-80 rounded-full" style={{ backgroundColor: "rgba(20,105,145,0.35)" }} />
-              <div className="absolute left-1/3 top-6 h-72 w-72 rounded-full" style={{ backgroundColor: "rgba(8,32,45,0.55)" }} />
-              <div className="absolute bottom-0 right-0 h-72 w-72 rounded-full" style={{ backgroundColor: "rgba(20,105,145,0.25)" }} />
-            </div>
-
-            <TripDashboard
-              days={[
-                { day: 1, date: "1 Out", city: "Tokyo", href: "#dia-1" },
-                { day: 2, date: "2 Out", city: "Tokyo" },
-                { day: 3, date: "3 Out", city: "Tokyo" },
-                { day: 4, date: "4 Out", city: "Kyoto" },
-                { day: 5, date: "5 Out", city: "Kyoto" },
-                { day: 6, date: "6 Out", city: "Kyoto" },
-                { day: 7, date: "7 Out", city: "Tokyo" },
-              ]}
-              guides={[
-                { label: "Restaurantes" },
-                { label: "Hotéis" },
-                { label: "Compras" },
-              ]}
-              annexes={[
-                { label: "Aeroporto Chegada Narita NRT" },
-                { label: "Aeroporto Partida Narita NRT" },
-                { label: "Instruções Conexão em Doha DOH" },
-                { label: "Dinheiro e Pagamentos" },
-                { label: "Apps e Conectividade" },
-                { label: "Trem Bala (Shinkansen)" },
-                { label: "Logística de Malas" },
-              ]}
-            />
-          </div>
-        </div>
-      </section>
-
-      {/* ── PEDAÇO DO ROTEIRO — AMOSTRA DO DIA 1 ── */}
-      <section id="dia-1" className="border-t border-white/10 px-8 py-24 md:px-16">
-        <div className="mx-auto max-w-3xl overflow-hidden rounded-2xl border border-white/10 bg-black/60 p-6 text-center sm:rounded-[2rem] sm:p-10">
-          <p className="text-xs uppercase tracking-[0.35em] text-white/40">Dia 1</p>
-          <h3 className={`${display.className} mt-2 text-2xl font-medium tracking-tight text-white md:text-3xl`}>Tokyo</h3>
-          <p className="mx-auto mt-4 max-w-xl text-sm font-light leading-7 text-white/55">
-            Chegada ao Japão, acomodação inicial e primeira experiência em
-            Oshiage, com visita à Tokyo Skytree e exploração do complexo Tokyo Solamachi.
-          </p>
-
-          <div className="mx-auto mt-10 max-w-md space-y-7">
-            <div>
-              <p className="text-sm font-medium tracking-[0.15em] text-white">10:30</p>
-              <p className="mt-1 text-sm text-white/55">Chegada · Aeroporto Internacional de Narita — Terminal 3</p>
-            </div>
-            <div>
-              <p className="text-sm font-medium tracking-[0.15em] text-white">11:30</p>
-              <p className="mt-1 text-sm text-white/55">Imigração, retirada de bagagem e deslocamento até o hotel</p>
-            </div>
-            <div>
-              <p className="text-sm font-medium tracking-[0.15em] text-white">15:00</p>
-              <p className="mt-1 text-sm text-white/55">Check-in · The Peninsula Tokyo</p>
-            </div>
-            <div>
-              <p className="text-sm font-medium tracking-[0.15em] text-white">16:00</p>
-              <p className="mt-1 text-sm text-white/55">Saída do hotel rumo a Oshiage</p>
-            </div>
-            <div>
-              <p className="text-sm font-medium tracking-[0.15em] text-white">16:30</p>
-              <p className="mt-1 text-sm text-white/55">Tokyo Skytree · Subida ao observatório para o pôr do sol</p>
-            </div>
-            <div>
-              <p className="text-sm font-medium tracking-[0.15em] text-white">18:30</p>
-              <p className="mt-1 text-sm text-white/55">Exploração do Tokyo Solamachi · lojas e gastronomia</p>
-            </div>
-            <div>
-              <p className="text-sm font-medium tracking-[0.15em] text-white">20:00</p>
-              <p className="mt-1 text-sm text-white/55">Retorno ao hotel · noite livre</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ── CONTATO ── */}
-      <section
-        id="contact"
-        className="scroll-mt-32 bg-white px-8 py-28 text-black md:px-16"
-      >
-        <div className="mx-auto max-w-4xl text-center">
-          <p className="mb-6 text-xs uppercase tracking-[0.35em] text-black/40">
-            Próximo passo
-          </p>
-          <h2 className={`${display.className} text-4xl font-medium leading-tight md:text-6xl`}>
-            Uma viagem excepcional começa com uma curadoria excepcional.
-          </h2>
-          <p className="mx-auto mt-8 max-w-2xl text-lg leading-9 text-black/60">
-            Compartilhe suas datas, preferências e estilo de viagem. A Alpinea
-            estrutura o roteiro a partir do seu perfil.
-          </p>
-          <ContactCTA />
-        </div>
-      </section>
-
-      <footer className="border-t border-white/10 bg-black px-8 py-16 text-white md:px-16">
-        <div className="mx-auto flex max-w-7xl flex-col justify-between gap-12 md:flex-row md:items-end">
-          <div className="space-y-6">
-            <img
-              src="/images/ALPINEA-LOGO-transparent.png"
-              alt="Alpinea"
-              className="h-7 w-auto object-contain"
-            />
-
-            <div className="max-w-md space-y-3">
-              <p className="text-sm leading-relaxed text-white/50">
-                Curadoria privada de experiências, gastronomia e lifestyle no Japão.
-              </p>
-
-              <p className="text-xs text-white/30">
-                © 2026 Alpinea Agências de Viagens LTDA — CNPJ 66.491.067/0001-84
-              </p>
-
-              <div className="flex flex-wrap items-center gap-3 text-xs text-white/25">
-                <a href="/legal" className="transition hover:text-white/60">
-                  Termos e Condições
-                </a>
-                <span>·</span>
-                <a href="/privacy" className="transition hover:text-white/60">
-                  Política de Privacidade
-                </a>
-              </div>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-8 text-xs uppercase tracking-[0.25em] text-white/40">
-            <a
-              href="https://www.instagram.com/alpinea.private"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="transition hover:text-white"
-            >
-              Instagram
-            </a>
-            <a
-              href="https://www.youtube.com/@alpinea.private"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="transition hover:text-white"
-            >
-              YouTube
-            </a>
-            <a href="mailto:wilson@alpinea.io" className="transition hover:text-white">
-              Contato
-            </a>
-          </div>
-        </div>
-      </footer>
-    </main>
+        <CellGroup title="Guias" items={guides} />
+        <CellGroup title="Anexos Especiais" items={annexes} />
+      </div>
+    </div>
   );
 }
