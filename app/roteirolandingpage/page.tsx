@@ -638,11 +638,36 @@ export default function RoteirosAdsPage() {
               <p className="mb-4 text-xs uppercase tracking-[0.35em] text-white/40">
                 Mapa do Complexo Tokyo Solamachi
               </p>
+
+              {/* Mobile — prévia recortada + lupa, abre o mapa completo em nova aba */}
               <a
                 href="/images/solamachi-floor1.png"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="block"
+                className="group relative block aspect-square overflow-hidden rounded-xl border border-white/10 bg-white/[0.03] md:hidden"
+              >
+                <Image
+                  src="/images/solamachi-floor1.png"
+                  alt="Mapa do primeiro andar do Tokyo Solamachi"
+                  fill
+                  sizes="(max-width: 768px) 100vw, 0px"
+                  className="scale-[1.8] object-cover object-center transition group-active:opacity-80"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-transparent to-transparent" />
+                <div className="absolute right-3 top-3 flex h-9 w-9 items-center justify-center rounded-full border border-white/15 bg-black/70 text-white/85 backdrop-blur-md">
+                  <span className="text-base">⌕</span>
+                </div>
+                <p className="absolute inset-x-0 bottom-0 px-4 pb-3 text-xs uppercase tracking-[0.25em] text-white/80">
+                  Toque para ampliar
+                </p>
+              </a>
+
+              {/* Desktop — mapa completo, inalterado */}
+              <a
+                href="/images/solamachi-floor1.png"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hidden md:block"
               >
                 <Image
                   src="/images/solamachi-floor1.png"
@@ -701,11 +726,36 @@ export default function RoteirosAdsPage() {
               <p className="mb-6 text-xs uppercase tracking-[0.35em] text-white/40">
                 Mapa — Solamachi Dining
               </p>
+
+              {/* Mobile — prévia recortada + lupa, abre o mapa completo em nova aba */}
               <a
                 href="/images/solamachi-dining-map.png"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="block"
+                className="group relative block aspect-square overflow-hidden rounded-xl border border-white/10 bg-white/[0.03] md:hidden"
+              >
+                <Image
+                  src="/images/solamachi-dining-map.png"
+                  alt="Mapa dos restaurantes do Tokyo Solamachi"
+                  fill
+                  sizes="(max-width: 768px) 100vw, 0px"
+                  className="scale-[1.8] object-cover object-center transition group-active:opacity-80"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-transparent to-transparent" />
+                <div className="absolute right-3 top-3 flex h-9 w-9 items-center justify-center rounded-full border border-white/15 bg-black/70 text-white/85 backdrop-blur-md">
+                  <span className="text-base">⌕</span>
+                </div>
+                <p className="absolute inset-x-0 bottom-0 px-4 pb-3 text-xs uppercase tracking-[0.25em] text-white/80">
+                  Toque para ampliar
+                </p>
+              </a>
+
+              {/* Desktop — mapa completo, inalterado */}
+              <a
+                href="/images/solamachi-dining-map.png"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hidden md:block"
               >
                 <Image
                   src="/images/solamachi-dining-map.png"
