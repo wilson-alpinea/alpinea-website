@@ -104,7 +104,7 @@ export default function RoteirosAdsPage() {
       </section>
 
       {/* ── SEÇÃO 2 — CHAMADA PARA O EXEMPLO ── */}
-      <section className="bg-black px-8 py-20 md:px-16 md:py-24">
+      <section className="bg-black px-8 py-14 md:px-16 md:py-24">
         <div className="mx-auto max-w-4xl text-center">
           <h2
             className={`${display.className} text-3xl font-medium leading-snug text-white md:text-4xl`}
@@ -116,9 +116,9 @@ export default function RoteirosAdsPage() {
       </section>
 
       {/* ── SEÇÃO 3 — EXEMPLO DE ROTEIRO ── */}
-      <section className="border-t border-white/10 bg-black px-8 py-24 md:px-16">
+      <section className="border-t border-white/10 bg-black px-8 py-14 md:px-16 md:py-24">
         <div className="mx-auto max-w-7xl">
-          <div className="mx-auto mb-16 max-w-3xl text-center">
+          <div className="mx-auto mb-10 max-w-3xl text-center md:mb-16">
             <p className="mb-5 text-xs uppercase tracking-[0.35em] text-white/40">
               Painel Interativo
             </p>
@@ -163,7 +163,7 @@ export default function RoteirosAdsPage() {
       {/* ── PEDAÇO DO ROTEIRO — AMOSTRA DO DIA 1 ── */}
       <section
         id="dia-1"
-        className="border-t border-white/10 px-8 py-24 md:px-16"
+        className="border-t border-white/10 px-8 py-14 md:px-16 md:py-24"
       >
         <div className="mx-auto max-w-3xl overflow-hidden rounded-2xl border border-white/10 bg-black/60 p-6 text-center sm:rounded-[2rem] sm:p-10">
           <p className="text-xs uppercase tracking-[0.35em] text-white/40">
@@ -259,7 +259,7 @@ export default function RoteirosAdsPage() {
 
       {/* ── HOSPEDAGEM — GRAND HYATT TOKYO ── */}
       <section className="border-t border-white/10">
-        <div className="relative h-[75vh] min-h-[560px] max-h-[720px] w-full overflow-hidden">
+        <div className="relative h-[44vh] min-h-[380px] max-h-[460px] w-full overflow-hidden md:h-[75vh] md:min-h-[560px] md:max-h-[720px]">
           <Image
             src="/images/grandhyatt.png"
             alt="Grand Hyatt Tokyo — piscina e spa"
@@ -284,7 +284,7 @@ export default function RoteirosAdsPage() {
           </div>
         </div>
 
-        <div className="px-8 py-24 md:px-16">
+        <div className="px-8 py-14 md:px-16 md:py-24">
           <div className="mx-auto max-w-5xl">
             <div className="grid gap-10 lg:grid-cols-[0.8fr_1.1fr_1fr] lg:items-center">
               <Image
@@ -316,7 +316,7 @@ export default function RoteirosAdsPage() {
         </div>
       </section>
 
-      <section className="border-t border-white/10 bg-white/[0.02] px-8 py-32 md:px-16">
+      <section className="border-t border-white/10 bg-white/[0.02] px-8 py-16 md:px-16 md:py-32">
         <div className="mx-auto max-w-7xl">
           <p
             className={`${display.className} mb-6 text-3xl font-medium text-white md:text-4xl`}
@@ -356,7 +356,7 @@ export default function RoteirosAdsPage() {
 
       {/* ── MOBILIDADE — TRENS E METRÔ ── */}
       <section className="border-t border-white/10">
-        <div className="relative h-[75vh] min-h-[560px] max-h-[720px] w-full overflow-hidden">
+        <div className="relative h-[44vh] min-h-[380px] max-h-[460px] w-full overflow-hidden md:h-[75vh] md:min-h-[560px] md:max-h-[720px]">
           <Image
             src="/images/Nex_train.jpg"
             alt="Narita Express (N'EX) — JR East"
@@ -386,7 +386,7 @@ export default function RoteirosAdsPage() {
           </div>
         </div>
 
-        <div className="px-8 py-24 md:px-16">
+        <div className="px-8 py-14 md:px-16 md:py-24">
           <div className="mx-auto max-w-3xl space-y-12 text-center text-base font-light leading-9 text-white/65">
             <div className="mx-auto max-w-xl rounded-2xl border border-white/10 bg-black/60 p-6 text-left sm:rounded-[2rem] sm:p-10">
               <p className="mb-8 text-center text-xs uppercase tracking-[0.25em] text-white/30">
@@ -508,7 +508,7 @@ export default function RoteirosAdsPage() {
 
       {/* ── ATRAÇÃO — TOKYO SKYTREE ── */}
       <section className="border-t border-white/10">
-        <div className="relative h-[75vh] min-h-[560px] max-h-[720px] w-full overflow-hidden">
+        <div className="relative h-[44vh] min-h-[380px] max-h-[460px] w-full overflow-hidden md:h-[75vh] md:min-h-[560px] md:max-h-[720px]">
           <Image
             src="/images/skytree3.jpg"
             alt="Tokyo Skytree"
@@ -533,7 +533,7 @@ export default function RoteirosAdsPage() {
           </div>
         </div>
 
-        <div className="px-8 py-32 md:px-16">
+        <div className="px-8 py-16 md:px-16 md:py-32">
           <div className="mx-auto grid max-w-7xl gap-20 lg:grid-cols-2 lg:items-start">
             <div className="space-y-12 text-lg font-light leading-9 text-white/70">
               <div>
@@ -644,7 +644,7 @@ export default function RoteirosAdsPage() {
         </div>
       </section>
 
-      <section className="px-8 py-32 md:px-16">
+      <section className="px-8 py-16 md:px-16 md:py-32">
         <div className="mx-auto max-w-7xl">
           <p className="mb-12 text-center">
             <span className="inline-block rounded-full border border-white/25 px-9 py-3 text-base uppercase tracking-[0.32em] text-white/80">
@@ -705,7 +705,7 @@ export default function RoteirosAdsPage() {
       {/* ── CONTATO ── */}
       <section
         id="contact"
-        className="scroll-mt-32 bg-white px-8 py-28 text-black md:px-16"
+        className="scroll-mt-32 bg-white px-8 py-20 text-black md:px-16 md:py-28"
       >
         <div className="mx-auto max-w-4xl text-center">
           <p className="mb-6 text-xs uppercase tracking-[0.35em] text-black/40">
@@ -727,7 +727,7 @@ export default function RoteirosAdsPage() {
         </div>
       </section>
 
-      <footer className="border-t border-white/10 bg-black px-8 py-16 text-white md:px-16">
+      <footer className="border-t border-white/10 bg-black px-8 py-12 text-white md:px-16 md:py-16">
         <div className="mx-auto flex max-w-7xl flex-col justify-between gap-12 md:flex-row md:items-end">
           <div className="space-y-6">
             <img
@@ -890,26 +890,29 @@ function DashboardPreview() {
         <p className="mb-7 inline-block rounded-full border border-white/20 px-4 py-1.5 text-xs uppercase tracking-[0.25em] text-white/75">
           Nesta amostra, apenas o dia 1 e os roteiros especiais estão disponíveis para visualização.
         </p>
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
-          {days.map((d) => (
-            <a
-              key={d.day}
-              href={d.active ? "#dia-1" : undefined}
-              className={`rounded-xl border p-5 transition duration-300 ease-out hover:-translate-y-0.5 hover:shadow-[0_0_0_1px_rgba(145,170,255,0.08),0_0_28px_rgba(55,90,210,0.10)] ${
-                d.active
-                  ? "border-white bg-white text-black hover:border-[#91aaff]/40 hover:bg-white/90"
-                  : "border-white/10 bg-white/[0.02] text-white/35 hover:border-[#91aaff]/25 hover:bg-[#050505] hover:text-white/65"
-              }`}
-            >
-              <p className="font-medium">
-                Dia {d.day}
-                {d.active ? " →" : ""}
-              </p>
-              <p className="mt-1 text-sm opacity-70">
-                {d.date} · {d.city}
-              </p>
-            </a>
-          ))}
+        <div className="relative -mx-6 sm:-mx-10 md:mx-0">
+          <div className="flex gap-3 overflow-x-auto px-6 pb-2 snap-x snap-mandatory scroll-pl-6 [&::-webkit-scrollbar]:hidden sm:px-10 md:grid md:grid-cols-5 md:gap-4 md:overflow-visible md:px-0 md:pb-0">
+            {days.map((d) => (
+              <a
+                key={d.day}
+                href={d.active ? "#dia-1" : undefined}
+                className={`w-[148px] flex-shrink-0 snap-start [scroll-snap-stop:always] rounded-xl border p-5 transition duration-300 ease-out hover:-translate-y-0.5 hover:shadow-[0_0_0_1px_rgba(145,170,255,0.08),0_0_28px_rgba(55,90,210,0.10)] md:w-auto md:flex-shrink ${
+                  d.active
+                    ? "border-white bg-white text-black hover:border-[#91aaff]/40 hover:bg-white/90"
+                    : "border-white/10 bg-white/[0.02] text-white/35 hover:border-[#91aaff]/25 hover:bg-[#050505] hover:text-white/65"
+                }`}
+              >
+                <p className="font-medium">
+                  Dia {d.day}
+                  {d.active ? " →" : ""}
+                </p>
+                <p className="mt-1 text-sm opacity-70">
+                  {d.date} · {d.city}
+                </p>
+              </a>
+            ))}
+          </div>
+          <div className="pointer-events-none absolute inset-y-0 right-0 w-10 bg-gradient-to-l from-black to-transparent md:hidden" />
         </div>
       </div>
 
@@ -920,7 +923,7 @@ function DashboardPreview() {
         <p className="mb-7 inline-block rounded-full border border-white/20 px-4 py-1.5 text-xs uppercase tracking-[0.25em] text-white/75">
           Contratação à parte
         </p>
-        <div className="grid max-w-[360px] gap-5 sm:grid-cols-2">
+        <div className="grid max-w-[360px] grid-cols-2 gap-3 sm:gap-5">
           {specialRoutes.map((guide) => (
             <GuideCard
               key={guide.title}
@@ -942,15 +945,18 @@ function DashboardPreview() {
         <p className="mb-7 inline-block rounded-full border border-white/20 px-4 py-1.5 text-xs uppercase tracking-[0.25em] text-white/75">
           Incluso na contratação de qualquer roteiro
         </p>
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
-          {guides.map((label) => (
-            <div
-              key={label}
-              className="flex min-h-[104px] cursor-pointer items-center justify-center rounded-xl border border-white/10 bg-white/[0.02] px-5 py-4 text-center text-sm leading-6 text-white/55 transition duration-300 ease-out hover:-translate-y-0.5 hover:border-[#91aaff]/25 hover:bg-[#050505] hover:text-white/70 hover:shadow-[0_0_0_1px_rgba(145,170,255,0.08),0_0_28px_rgba(55,90,210,0.10)]"
-            >
-              {label}
-            </div>
-          ))}
+        <div className="relative -mx-6 sm:-mx-10 md:mx-0">
+          <div className="flex gap-3 overflow-x-auto px-6 pb-2 snap-x snap-mandatory scroll-pl-6 [&::-webkit-scrollbar]:hidden sm:px-10 md:grid md:grid-cols-5 md:gap-4 md:overflow-visible md:px-0 md:pb-0">
+            {guides.map((label) => (
+              <div
+                key={label}
+                className="flex w-[160px] flex-shrink-0 snap-start [scroll-snap-stop:always] min-h-[104px] cursor-pointer items-center justify-center rounded-xl border border-white/10 bg-white/[0.02] px-5 py-4 text-center text-sm leading-6 text-white/55 transition duration-300 ease-out hover:-translate-y-0.5 hover:border-[#91aaff]/25 hover:bg-[#050505] hover:text-white/70 hover:shadow-[0_0_0_1px_rgba(145,170,255,0.08),0_0_28px_rgba(55,90,210,0.10)] md:w-auto md:flex-shrink"
+              >
+                {label}
+              </div>
+            ))}
+          </div>
+          <div className="pointer-events-none absolute inset-y-0 right-0 w-10 bg-gradient-to-l from-black to-transparent md:hidden" />
         </div>
       </div>
     </div>
