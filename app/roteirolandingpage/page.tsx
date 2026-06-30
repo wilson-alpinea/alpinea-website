@@ -2,6 +2,7 @@ import Image from "next/image";
 import { Bodoni_Moda } from "next/font/google";
 import { ContactCTA } from "../components/ContactCTA";
 import { CarouselScroller } from "../components/CarouselScroller";
+import { RoutePreviewModal } from "../components/RoutePreviewModal";
 
 // Mesma fonte de destaque usada nas demais páginas do site.
 const display = Bodoni_Moda({
@@ -17,7 +18,7 @@ export const metadata = {
 
 export default function RoteirosAdsPage() {
   return (
-    <main className="min-h-screen bg-black pb-20 text-white md:pb-0">
+    <main className="min-h-screen bg-black pb-16 text-white md:pb-0">
       {/* ── HEADER MINIMALISTA — sem menu, foco total em conversão ── */}
       <header className="fixed left-0 right-0 top-0 z-50 flex items-center justify-between bg-black/10 px-8 py-5 backdrop-blur-2xl md:px-16">
         <a href="/">
@@ -38,27 +39,19 @@ export default function RoteirosAdsPage() {
 
       {/* ── CTA FIXO MOBILE — mesmo padrão usado na landingpage2 ── */}
       <div
-        className="fixed inset-x-0 bottom-0 z-40 flex items-center gap-3 border-t border-white/10 bg-black/95 px-4 pt-3 backdrop-blur-xl md:hidden"
-        style={{ paddingBottom: "max(0.75rem, env(safe-area-inset-bottom))" }}
+        className="fixed inset-x-0 bottom-0 z-40 border-t border-white/10 bg-black/[0.92] px-4 pt-2.5 backdrop-blur-xl md:hidden"
+        style={{ paddingBottom: "max(0.55rem, env(safe-area-inset-bottom))" }}
       >
         <ContactCTA
           mode="single"
-          channel="whatsapp"
-          label="WhatsApp"
-          className="flex-1"
-          buttonClassName="block w-full border border-white/25 px-4 py-3 text-center text-xs uppercase tracking-[0.25em] text-white/80 transition hover:border-white/60"
-        />
-        <ContactCTA
-          mode="single"
           channel="email"
-          label="Falar com a Alpinea"
-          className="flex-1"
-          buttonClassName="block w-full bg-white px-4 py-3 text-center text-xs uppercase tracking-[0.25em] text-black transition hover:bg-white/90"
+          label="Falar com a Alpinea →"
+          buttonClassName="block w-full bg-white px-4 py-3 text-center text-[11px] font-medium uppercase tracking-[0.22em] text-black transition hover:bg-white/90"
         />
       </div>
 
       {/* ── SEÇÃO 1 — HERO ── */}
-      <section className="relative min-h-[420px] h-[52svh] overflow-hidden bg-black md:h-auto md:min-h-[820px]">
+      <section className="relative h-[620px] min-h-[620px] overflow-hidden bg-black md:h-auto md:min-h-[820px]">
         <div className="absolute inset-0 mx-auto max-w-[1800px]">
           <Image
             src="/images/ozenuma.jpeg"
@@ -69,7 +62,7 @@ export default function RoteirosAdsPage() {
             className="object-cover"
           />
 
-          <div className="absolute right-6 top-24 z-10 rounded-full border border-white/15 bg-black px-4 py-2 text-[10px] uppercase tracking-[0.22em] text-white shadow-[0_12px_40px_rgba(0,0,0,0.35)] md:right-12 md:top-28 md:text-[11px]">
+          <div className="absolute right-5 top-24 z-10 rounded-full border border-white/15 bg-black/85 px-4 py-2 text-[9px] uppercase tracking-[0.22em] text-white shadow-[0_12px_40px_rgba(0,0,0,0.35)] md:right-12 md:top-28 md:text-[11px]">
             Parque Nacional de Ozegahara
           </div>
 
@@ -82,19 +75,19 @@ export default function RoteirosAdsPage() {
           />
         </div>
 
-        <div className="absolute inset-x-0 bottom-16 z-10 px-8 text-center md:bottom-24 md:px-16">
+        <div className="absolute inset-x-0 bottom-20 z-10 px-6 text-center md:bottom-24 md:px-16">
           <h1
-            className={`${display.className} mx-auto max-w-4xl text-3xl font-medium leading-tight text-white md:text-5xl`}
+            className={`${display.className} mx-auto max-w-4xl text-[2.35rem] font-medium leading-[1.08] text-white md:text-5xl`}
           >
             Roteiros personalizados para o Japão
           </h1>
 
-          <div className="mx-auto mt-8 flex max-w-4xl flex-wrap items-center justify-center gap-3 md:mt-10 md:gap-4">
+          <div className="mx-auto mt-7 flex max-w-full flex-nowrap items-center justify-start gap-3 overflow-x-auto px-1 pb-1 [scrollbar-width:none] md:mt-10 md:max-w-4xl md:flex-wrap md:justify-center md:gap-4">
             {["7 dias", "10 dias", "12 dias", "15 dias", "20+ dias"].map(
               (d) => (
                 <span
                   key={d}
-                  className="cursor-default rounded-full border border-white/25 bg-black/10 px-5 py-2.5 text-xs uppercase tracking-[0.22em] text-white/75 backdrop-blur-sm transition-colors duration-300 hover:border-white hover:bg-white hover:text-black md:px-6 md:py-3 md:text-sm"
+                  className="shrink-0 cursor-default rounded-full border border-white/25 bg-black/20 px-5 py-2.5 text-xs uppercase tracking-[0.22em] text-white/75 backdrop-blur-sm transition-colors duration-300 hover:border-white hover:bg-white hover:text-black md:px-6 md:py-3 md:text-sm"
                 >
                   {d}
                 </span>
@@ -127,10 +120,10 @@ export default function RoteirosAdsPage() {
       </section>
 
       {/* ── SEÇÃO 2 — CHAMADA PARA O EXEMPLO ── */}
-      <section id="overview" className="bg-black px-8 py-8 md:px-16 md:py-24">
+      <section id="overview" className="bg-black px-6 py-10 md:px-16 md:py-24">
         <div className="mx-auto max-w-4xl text-center">
           <h2
-            className={`${display.className} text-2xl font-medium leading-tight text-white md:text-4xl md:leading-snug`}
+            className={`${display.className} text-[2rem] font-medium leading-[1.15] text-white md:text-4xl md:leading-snug`}
           >
             Receba um roteiro 100% personalizado para o seu perfil e estilo de
             viagem. Veja abaixo como funciona nossa plataforma digital.
@@ -138,19 +131,47 @@ export default function RoteirosAdsPage() {
         </div>
       </section>
 
+      <nav className="sticky top-[72px] z-30 border-y border-white/10 bg-black/80 px-4 py-3 backdrop-blur-xl md:hidden">
+        <div className="flex gap-3 overflow-x-auto [scrollbar-width:none]">
+          {["Resumo", "Dia 1", "Hotel", "Mobilidade", "Skytree", "Jantar"].map(
+            (item) => (
+              <a
+                key={item}
+                href={
+                  item === "Resumo"
+                    ? "#overview"
+                    : item === "Dia 1"
+                      ? "#dia-1"
+                      : item === "Hotel"
+                        ? "#hotel"
+                        : item === "Mobilidade"
+                          ? "#mobilidade"
+                          : item === "Skytree"
+                            ? "#skytree"
+                            : "#jantar"
+                }
+                className="shrink-0 rounded-full border border-white/15 px-4 py-2 text-[10px] uppercase tracking-[0.22em] text-white/60"
+              >
+                {item}
+              </a>
+            ),
+          )}
+        </div>
+      </nav>
+
       {/* ── SEÇÃO 3 — EXEMPLO DE ROTEIRO ── */}
-      <section className="border-t border-white/10 bg-black px-8 py-8 md:px-16 md:py-24">
+      <section className="border-t border-white/10 bg-[#050505] px-5 py-12 md:bg-black md:px-16 md:py-24">
         <div className="mx-auto max-w-7xl">
-          <div className="mx-auto mb-10 max-w-3xl text-center md:mb-16">
+          <div className="mx-auto mb-8 max-w-3xl text-center md:mb-16">
             <p className="mb-5 text-xs uppercase tracking-[0.35em] text-white/40">
               Painel Interativo
             </p>
             <h2
-              className={`${display.className} mb-6 text-3xl font-medium text-white md:text-4xl`}
+              className={`${display.className} mb-5 text-[2.4rem] font-medium leading-tight text-white md:text-4xl`}
             >
               Exemplo de Roteiro
             </h2>
-            <p className="text-lg font-light leading-7 text-white/65 md:leading-9">
+            <p className="text-base font-light leading-7 text-white/65 md:text-lg md:leading-9">
               Roteiro num formato moderno e digital, para você acessar a
               informação que precisa rapidamente.
             </p>
@@ -186,9 +207,9 @@ export default function RoteirosAdsPage() {
       {/* ── PEDAÇO DO ROTEIRO — AMOSTRA DO DIA 1 ── */}
       <section
         id="dia-1"
-        className="border-t border-white/10 px-8 py-14 md:px-16 md:py-24"
+        className="border-t border-white/10 bg-black px-5 py-12 md:px-16 md:py-24"
       >
-        <div className="mx-auto max-w-3xl overflow-hidden rounded-2xl border border-white/10 bg-black/60 p-6 text-center sm:rounded-[2rem] sm:p-10">
+        <div className="mx-auto max-w-3xl overflow-hidden rounded-2xl border border-white/10 bg-white/[0.025] p-6 text-center sm:rounded-[2rem] sm:p-10">
           <p className="text-xs uppercase tracking-[0.35em] text-white/40">
             Dia 1
           </p>
@@ -214,75 +235,53 @@ export default function RoteirosAdsPage() {
             Solamachi.
           </p>
 
-          <div className="mx-auto mt-10 max-w-md space-y-7">
-            <div>
-              <p className="text-sm font-medium tracking-[0.15em] text-white">
-                10:30
-              </p>
-              <p className="mt-1 text-sm text-white/55">
-                Chegada · Aeroporto Internacional de Narita — Terminal 3
-              </p>
-            </div>
-            <div>
-              <p className="text-sm font-medium tracking-[0.15em] text-white">
-                11:30
-              </p>
-              <p className="mt-1 text-sm text-white/55">
-                Imigração, retirada de bagagem e deslocamento até o hotel
-              </p>
-            </div>
-            <div>
-              <p className="text-sm font-medium tracking-[0.15em] text-white">
-                15:00
-              </p>
-              <p className="mt-1 text-sm text-white/55">
-                Check-in · Grand Hyatt Tokyo
-              </p>
-            </div>
-            <div>
-              <p className="text-sm font-medium tracking-[0.15em] text-white">
-                16:00
-              </p>
-              <p className="mt-1 text-sm text-white/55">
-                Saída do hotel rumo a Oshiage
-              </p>
-            </div>
-            <div>
-              <p className="text-sm font-medium tracking-[0.15em] text-white">
-                16:30
-              </p>
-              <p className="mt-1 flex flex-wrap items-center justify-center gap-2 text-sm text-white/55">
-                <span>
-                  Tokyo Skytree · Subida ao observatório para o pôr do sol
-                </span>
-                <span className="inline-block rounded-full border border-white/25 px-4 py-1.5 text-xs uppercase tracking-[0.25em] text-white/70">
-                  Atração Principal
-                </span>
-              </p>
-            </div>
-            <div>
-              <p className="text-sm font-medium tracking-[0.15em] text-white">
-                18:30
-              </p>
-              <p className="mt-1 text-sm text-white/55">
-                Exploração do Tokyo Solamachi · lojas e gastronomia
-              </p>
-            </div>
-            <div>
-              <p className="text-sm font-medium tracking-[0.15em] text-white">
-                20:00
-              </p>
-              <p className="mt-1 text-sm text-white/55">
-                Retorno ao hotel · noite livre
-              </p>
-            </div>
+          <div className="mx-auto mt-9 max-w-md space-y-0 text-left">
+            {[
+              [
+                "10:30",
+                "Chegada · Aeroporto Internacional de Narita — Terminal 3",
+              ],
+              [
+                "11:30",
+                "Imigração, retirada de bagagem e deslocamento até o hotel",
+              ],
+              ["15:00", "Check-in · Grand Hyatt Tokyo"],
+              ["16:00", "Saída do hotel rumo a Oshiage"],
+              [
+                "16:30",
+                "Tokyo Skytree · Subida ao observatório para o pôr do sol",
+              ],
+              ["18:30", "Exploração do Tokyo Solamachi · lojas e gastronomia"],
+              ["20:00", "Retorno ao hotel · noite livre"],
+            ].map(([time, text], index) => (
+              <div
+                key={time}
+                className="relative grid grid-cols-[74px_1fr] gap-4 pb-7 last:pb-0"
+              >
+                {index < 6 && (
+                  <span className="absolute left-[72px] top-4 h-full w-px bg-white/10" />
+                )}
+                <p className="pt-0.5 text-sm font-medium tracking-[0.15em] text-white">
+                  {time}
+                </p>
+                <div className="relative">
+                  <span className="absolute -left-[18px] top-2 h-2.5 w-2.5 rounded-full bg-white/40 ring-4 ring-black" />
+                  <p className="text-[15px] leading-6 text-white/62">{text}</p>
+                  {time === "16:30" && (
+                    <span className="mt-3 inline-block rounded-full border border-white/25 px-4 py-1.5 text-[10px] uppercase tracking-[0.22em] text-white/70">
+                      Atração Principal
+                    </span>
+                  )}
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </section>
 
       {/* ── HOSPEDAGEM — GRAND HYATT TOKYO ── */}
-      <section className="border-t border-white/10">
-        <div className="relative h-[44vh] min-h-[380px] max-h-[460px] w-full overflow-hidden md:h-[75vh] md:min-h-[560px] md:max-h-[720px]">
+      <section id="hotel" className="border-t border-white/10">
+        <div className="relative h-[360px] min-h-[360px] max-h-[420px] w-full overflow-hidden md:h-[75vh] md:min-h-[560px] md:max-h-[720px]">
           <Image
             src="/images/grandhyatt.png"
             alt="Grand Hyatt Tokyo — piscina e spa"
@@ -306,7 +305,7 @@ export default function RoteirosAdsPage() {
           </div>
         </div>
 
-        <div className="px-8 py-14 md:px-16 md:py-24">
+        <div className="px-6 py-10 md:px-16 md:py-24">
           <div className="mx-auto max-w-5xl">
             <div className="grid gap-10 lg:grid-cols-[0.8fr_1.1fr_1fr] lg:items-center">
               <Image
@@ -341,7 +340,9 @@ export default function RoteirosAdsPage() {
       {/* Mobile — Manhã e Tarde unificadas, texto reduzido */}
       <section className="border-t border-white/10 bg-white/[0.02] px-8 py-12 md:hidden">
         <div className="mx-auto max-w-7xl">
-          <p className={`${display.className} mb-6 text-3xl font-medium text-white`}>
+          <p
+            className={`${display.className} mb-6 text-3xl font-medium text-white`}
+          >
             Manhã & Tarde
           </p>
           <p className="mb-6 inline-block rounded-full border border-white/25 px-4 py-1.5 text-xs uppercase tracking-[0.25em] text-white/70">
@@ -373,14 +374,14 @@ export default function RoteirosAdsPage() {
             </p>
             <div className="max-w-4xl space-y-8 text-lg font-light leading-7 text-white/70 md:leading-9">
               <p>
-                <span className="text-white">Local:</span> Aeroporto Internacional
-                de Narita — Terminal 3
+                <span className="text-white">Local:</span> Aeroporto
+                Internacional de Narita — Terminal 3
               </p>
               <p>
                 Instruções gerais de chegada, imigração, retirada de bagagem,
                 restaurantes sugeridos no aeroporto, ações obrigatórias antes de
-                sair do aeroporto, comentários gerais e guia de deslocamento até o
-                hotel.
+                sair do aeroporto, comentários gerais e guia de deslocamento até
+                o hotel.
               </p>
             </div>
           </div>
@@ -401,8 +402,8 @@ export default function RoteirosAdsPage() {
       </div>
 
       {/* ── MOBILIDADE — TRENS E METRÔ ── */}
-      <section className="border-t border-white/10">
-        <div className="relative h-[44vh] min-h-[380px] max-h-[460px] w-full overflow-hidden md:h-[75vh] md:min-h-[560px] md:max-h-[720px]">
+      <section id="mobilidade" className="border-t border-white/10">
+        <div className="relative h-[360px] min-h-[360px] max-h-[420px] w-full overflow-hidden md:h-[75vh] md:min-h-[560px] md:max-h-[720px]">
           <Image
             src="/images/Nex_train.jpg"
             alt="Narita Express (N'EX) — JR East"
@@ -431,8 +432,8 @@ export default function RoteirosAdsPage() {
           </div>
         </div>
 
-        <div className="px-8 py-14 md:px-16 md:py-24">
-          <div className="mx-auto max-w-3xl space-y-12 text-center text-base font-light leading-9 text-white/65">
+        <div className="px-6 py-10 md:px-16 md:py-24">
+          <div className="mx-auto max-w-3xl space-y-10 text-center text-[15px] font-light leading-8 text-white/65 md:space-y-12 md:text-base md:leading-9">
             <div className="mx-auto max-w-xl rounded-2xl border border-white/10 bg-black/60 p-6 text-left sm:rounded-[2rem] sm:p-10">
               <p className="mb-8 text-center text-xs uppercase tracking-[0.25em] text-white/30">
                 Recomendação Alpinea
@@ -518,18 +519,18 @@ export default function RoteirosAdsPage() {
             </div>
 
             <div className="border-t border-white/10 pt-10">
-              <div className="mx-auto grid max-w-xl gap-8 text-left sm:grid-cols-2">
-                <div>
-                  <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">
-                    Tempo de deslocamento · Metrô
+              <div className="mx-auto grid max-w-xl grid-cols-2 gap-3 text-left sm:gap-8">
+                <div className="rounded-2xl border border-white/10 bg-white/[0.025] p-5">
+                  <p className="mb-3 text-[10px] uppercase tracking-[0.22em] text-white/30">
+                    Metrô
                   </p>
-                  <p className="text-white">Aproximadamente 40 minutos</p>
+                  <p className="text-2xl text-white">40 min</p>
                 </div>
-                <div>
-                  <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">
-                    Tempo de deslocamento · Carro / Táxi
+                <div className="rounded-2xl border border-white/10 bg-white/[0.025] p-5">
+                  <p className="mb-3 text-[10px] uppercase tracking-[0.22em] text-white/30">
+                    Carro / Táxi
                   </p>
-                  <p className="text-white">Aproximadamente 35 minutos</p>
+                  <p className="text-2xl text-white">35 min</p>
                 </div>
               </div>
             </div>
@@ -552,8 +553,8 @@ export default function RoteirosAdsPage() {
       </section>
 
       {/* ── ATRAÇÃO — TOKYO SKYTREE ── */}
-      <section className="border-t border-white/10">
-        <div className="relative h-[44vh] min-h-[380px] max-h-[460px] w-full overflow-hidden md:h-[75vh] md:min-h-[560px] md:max-h-[720px]">
+      <section id="skytree" className="border-t border-white/10">
+        <div className="relative h-[360px] min-h-[360px] max-h-[420px] w-full overflow-hidden md:h-[75vh] md:min-h-[560px] md:max-h-[720px]">
           <Image
             src="/images/skytree3.jpg"
             alt="Tokyo Skytree"
@@ -577,11 +578,11 @@ export default function RoteirosAdsPage() {
           </div>
         </div>
 
-        <div className="px-8 py-16 md:px-16 md:py-32">
+        <div className="px-6 py-12 md:px-16 md:py-32">
           <div className="mx-auto grid max-w-7xl gap-20 lg:grid-cols-2 lg:items-start">
-            <div className="space-y-12 text-lg font-light leading-7 text-white/70 md:leading-9">
+            <div className="space-y-9 text-base font-light leading-7 text-white/70 md:space-y-12 md:text-lg md:leading-9">
               <div>
-                <div className="grid gap-8 sm:grid-cols-2">
+                <div className="grid grid-cols-2 gap-4 sm:gap-8">
                   <div>
                     <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/35">
                       Melhor horário
@@ -706,7 +707,7 @@ export default function RoteirosAdsPage() {
         </div>
       </section>
 
-      <section className="px-8 py-16 md:px-16 md:py-32">
+      <section id="jantar" className="px-6 py-12 md:px-16 md:py-32">
         <div className="mx-auto max-w-7xl">
           <p className="mb-12 text-center">
             <span className="inline-block rounded-full border border-white/25 px-9 py-3 text-base uppercase tracking-[0.32em] text-white/80">
@@ -807,7 +808,7 @@ export default function RoteirosAdsPage() {
         </div>
       </section>
 
-      <footer className="border-t border-white/10 bg-black px-8 py-12 text-white md:px-16 md:py-16">
+      <footer className="border-t border-white/10 bg-black px-8 pb-28 pt-12 text-white md:px-16 md:py-16">
         <div className="mx-auto flex max-w-7xl flex-col justify-between gap-12 md:flex-row md:items-end">
           <div className="space-y-6">
             <img
@@ -853,7 +854,10 @@ export default function RoteirosAdsPage() {
               <a href="/compras" className="transition hover:text-white">
                 Compras
               </a>
-              <a href="/roteirolandingpage" className="transition hover:text-white">
+              <a
+                href="/roteirolandingpage"
+                className="transition hover:text-white"
+              >
                 Roteiro
               </a>
               <a href="#contact" className="transition hover:text-white">
@@ -923,7 +927,7 @@ function DashboardPreview() {
   ];
 
   return (
-    <div className="mx-auto overflow-hidden rounded-[2rem] border border-white/10 bg-black px-6 py-12 shadow-2xl sm:px-10 md:px-14 md:py-16">
+    <div className="mx-auto overflow-hidden rounded-[1.5rem] border border-white/10 bg-black px-5 py-8 shadow-2xl sm:px-10 md:rounded-[2rem] md:px-14 md:py-16">
       <div className="text-center">
         <p className="mx-auto mb-8 inline-block rounded-full border border-white/20 px-5 py-2 text-xs uppercase tracking-[0.35em] text-white/70">
           Roteiro de 7 dias
@@ -963,19 +967,20 @@ function DashboardPreview() {
         </div>
       </div>
 
-      <div className="mt-14">
+      <div className="mt-10 md:mt-14">
         <p className="mb-3 text-xs uppercase tracking-[0.35em] text-white/35">
           Roteiro diário
         </p>
         <p className="mb-7 inline-block rounded-full border border-white/20 px-4 py-1.5 text-xs uppercase tracking-[0.25em] text-white/75">
-          Nesta amostra, apenas o dia 1 e os roteiros especiais estão disponíveis para visualização.
+          Nesta amostra, apenas o dia 1 e os roteiros especiais estão
+          disponíveis para visualização.
         </p>
         <CarouselScroller itemCount={days.length}>
           {days.map((d) => (
             <a
               key={d.day}
               href={d.active ? "#dia-1" : undefined}
-              className={`w-[148px] flex-shrink-0 snap-start [scroll-snap-stop:always] rounded-xl border p-5 transition duration-300 ease-out hover:-translate-y-0.5 hover:shadow-[0_0_0_1px_rgba(145,170,255,0.08),0_0_28px_rgba(55,90,210,0.10)] md:w-auto md:flex-shrink ${
+              className={`w-[170px] flex-shrink-0 snap-start [scroll-snap-stop:always] rounded-xl border p-5 transition duration-300 ease-out hover:-translate-y-0.5 hover:shadow-[0_0_0_1px_rgba(145,170,255,0.08),0_0_28px_rgba(55,90,210,0.10)] md:w-auto md:flex-shrink ${
                 d.active
                   ? "border-white bg-white text-black hover:border-[#91aaff]/40 hover:bg-white/90"
                   : "border-white/10 bg-white/[0.02] text-white/35 hover:border-[#91aaff]/25 hover:bg-[#050505] hover:text-white/65"
@@ -993,7 +998,7 @@ function DashboardPreview() {
         </CarouselScroller>
       </div>
 
-      <div className="mt-16">
+      <div className="mt-10 md:mt-16">
         <p className="mb-3 text-xs uppercase tracking-[0.35em] text-white/35">
           Roteiros Especiais
         </p>
@@ -1015,7 +1020,7 @@ function DashboardPreview() {
         </div>
       </div>
 
-      <div className="mt-16">
+      <div className="mt-10 md:mt-16">
         <p className="mb-3 text-xs uppercase tracking-[0.35em] text-white/35">
           Guias
         </p>
@@ -1058,29 +1063,42 @@ function GuideCard({
           className={`${isShopping ? "object-contain p-2" : "object-cover"} transition-transform duration-700 ease-out group-hover:scale-[1.06]`}
         />
         <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-black/70 to-transparent" />
-        <div className="absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-full border border-white/15 bg-black/70 text-white/80 opacity-0 backdrop-blur-md transition duration-300 group-hover:opacity-100" aria-hidden>
+        <div
+          className="absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-full border border-white/15 bg-black/70 text-white/80 opacity-0 backdrop-blur-md transition duration-300 group-hover:opacity-100"
+          aria-hidden
+        >
           <span className="text-sm">⌕</span>
         </div>
       </div>
-      <p className="mt-3 text-sm leading-6 text-white/55 transition duration-300 group-hover:text-white/75">{title}</p>
+      <p className="mt-3 text-sm leading-6 text-white/55 transition duration-300 group-hover:text-white/75">
+        {title}
+      </p>
     </>
   );
 
   if (href) {
     return (
-      <a href={href} className="group block max-w-[165px] cursor-zoom-in transition duration-300 ease-out hover:-translate-y-0.5">
+      <a
+        href={href}
+        className="group block max-w-[165px] cursor-zoom-in transition duration-300 ease-out hover:-translate-y-0.5"
+      >
         {content}
       </a>
     );
   }
 
-  return <article className="group max-w-[165px] transition duration-300 ease-out hover:-translate-y-0.5">{content}</article>;
+  return (
+    <article className="group max-w-[165px] transition duration-300 ease-out hover:-translate-y-0.5">
+      {content}
+    </article>
+  );
 }
 
 function RoutePreviewModals() {
   return (
     <>
       <RoutePreviewModal
+        displayClassName={display.className}
         id="preview-restaurantes"
         eyebrow="Roteiro especial"
         title="Curadoria gastronômica"
@@ -1089,6 +1107,7 @@ function RoutePreviewModals() {
         alt="Preview do roteiro especial de restaurantes da Alpinea"
       />
       <RoutePreviewModal
+        displayClassName={display.className}
         id="preview-compras"
         eyebrow="Roteiro especial"
         title="Assessoria de compras"
@@ -1097,6 +1116,7 @@ function RoutePreviewModals() {
         alt="Preview do roteiro especial de compras da Alpinea"
       />
       <RoutePreviewModal
+        displayClassName={display.className}
         id="preview-mapa-solamachi"
         eyebrow="Mapa do complexo"
         title="Tokyo Solamachi"
@@ -1105,6 +1125,7 @@ function RoutePreviewModals() {
         alt="Mapa do primeiro andar do Tokyo Solamachi"
       />
       <RoutePreviewModal
+        displayClassName={display.className}
         id="preview-mapa-dining"
         eyebrow="Mapa de restaurantes"
         title="Solamachi Dining"
@@ -1113,77 +1134,6 @@ function RoutePreviewModals() {
         alt="Mapa dos restaurantes do Tokyo Solamachi"
       />
     </>
-  );
-}
-
-function RoutePreviewModal({
-  id,
-  eyebrow,
-  title,
-  description,
-  image,
-  alt,
-}: {
-  id: string;
-  eyebrow: string;
-  title: string;
-  description: string;
-  image: string;
-  alt: string;
-}) {
-  return (
-    <div
-      id={id}
-      className="route-preview-modal fixed inset-0 z-[100] hidden items-center justify-center bg-black/92 px-4 py-8 backdrop-blur-xl target:flex"
-      aria-modal="true"
-      role="dialog"
-    >
-      <a href="#" className="absolute inset-0" aria-label="Fechar preview" />
-
-      <div className="relative z-10 flex max-h-[92vh] w-full max-w-6xl flex-col overflow-hidden rounded-[2rem] border border-white/10 bg-black shadow-[0_0_120px_rgba(20,62,135,0.22)]">
-        <div className="flex items-start justify-between gap-6 border-b border-white/10 px-5 py-5 md:px-8">
-          <div>
-            <p className="mb-2 text-[10px] uppercase tracking-[0.35em] text-white/35">
-              {eyebrow}
-            </p>
-            <h3
-              className={`${display.className} text-2xl font-medium text-white md:text-3xl`}
-            >
-              {title}
-            </h3>
-            <p className="mt-2 max-w-2xl text-sm leading-7 text-white/50">
-              {description}
-            </p>
-          </div>
-
-          <a
-            href="#"
-            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-white/15 text-xl leading-none text-white/70 transition hover:border-white/45 hover:text-white"
-            aria-label="Fechar preview"
-          >
-            ×
-          </a>
-        </div>
-
-        <div className="overflow-auto bg-black p-4 md:p-6">
-          <a
-            href={image}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="group mx-auto block max-w-5xl cursor-zoom-in"
-            aria-label="Abrir imagem em tamanho completo"
-          >
-            <Image
-              src={image}
-              alt={alt}
-              width={1600}
-              height={2200}
-              className="mx-auto h-auto w-full rounded-xl border border-white/10 object-contain transition duration-300 group-hover:opacity-90"
-            />
-          </a>
-        </div>
-      </div>
-    </div>
   );
 }
 
