@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { Bodoni_Moda } from "next/font/google";
 import { ContactCTA } from "../components/ContactCTA";
+import { CarouselScroller } from "../components/CarouselScroller";
 
 // Mesma fonte de destaque usada nas demais páginas do site.
 const display = Bodoni_Moda({
@@ -101,10 +102,30 @@ export default function RoteirosAdsPage() {
             )}
           </div>
         </div>
+
+        {/* Indicador de scroll — só mobile, desktop já tem CTA visível no header */}
+        <a
+          href="#overview"
+          aria-label="Rolar para o conteúdo"
+          className="absolute inset-x-0 bottom-5 z-10 flex justify-center md:hidden"
+        >
+          <svg
+            className="h-6 w-6 animate-bounce text-white/55 transition hover:text-white/90"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <polyline points="6 9 12 15 18 9" />
+          </svg>
+        </a>
       </section>
 
       {/* ── SEÇÃO 2 — CHAMADA PARA O EXEMPLO ── */}
-      <section className="bg-black px-8 py-14 md:px-16 md:py-24">
+      <section id="overview" className="bg-black px-8 py-14 md:px-16 md:py-24">
         <div className="mx-auto max-w-4xl text-center">
           <h2
             className={`${display.className} text-3xl font-medium leading-snug text-white md:text-4xl`}
@@ -264,7 +285,6 @@ export default function RoteirosAdsPage() {
             src="/images/grandhyatt.png"
             alt="Grand Hyatt Tokyo — piscina e spa"
             fill
-            priority
             sizes="100vw"
             className="object-cover"
           />
@@ -361,7 +381,6 @@ export default function RoteirosAdsPage() {
             src="/images/Nex_train.jpg"
             alt="Narita Express (N'EX) — JR East"
             fill
-            priority
             sizes="100vw"
             className="object-cover"
           />
@@ -513,7 +532,6 @@ export default function RoteirosAdsPage() {
             src="/images/skytree3.jpg"
             alt="Tokyo Skytree"
             fill
-            priority
             sizes="100vw"
             className="object-cover"
           />
@@ -890,30 +908,27 @@ function DashboardPreview() {
         <p className="mb-7 inline-block rounded-full border border-white/20 px-4 py-1.5 text-xs uppercase tracking-[0.25em] text-white/75">
           Nesta amostra, apenas o dia 1 e os roteiros especiais estão disponíveis para visualização.
         </p>
-        <div className="relative -mx-6 sm:-mx-10 md:mx-0">
-          <div className="flex gap-3 overflow-x-auto px-6 pb-2 snap-x snap-mandatory scroll-pl-6 [&::-webkit-scrollbar]:hidden sm:px-10 md:grid md:grid-cols-5 md:gap-4 md:overflow-visible md:px-0 md:pb-0">
-            {days.map((d) => (
-              <a
-                key={d.day}
-                href={d.active ? "#dia-1" : undefined}
-                className={`w-[148px] flex-shrink-0 snap-start [scroll-snap-stop:always] rounded-xl border p-5 transition duration-300 ease-out hover:-translate-y-0.5 hover:shadow-[0_0_0_1px_rgba(145,170,255,0.08),0_0_28px_rgba(55,90,210,0.10)] md:w-auto md:flex-shrink ${
-                  d.active
-                    ? "border-white bg-white text-black hover:border-[#91aaff]/40 hover:bg-white/90"
-                    : "border-white/10 bg-white/[0.02] text-white/35 hover:border-[#91aaff]/25 hover:bg-[#050505] hover:text-white/65"
-                }`}
-              >
-                <p className="font-medium">
-                  Dia {d.day}
-                  {d.active ? " →" : ""}
-                </p>
-                <p className="mt-1 text-sm opacity-70">
-                  {d.date} · {d.city}
-                </p>
-              </a>
-            ))}
-          </div>
-          <div className="pointer-events-none absolute inset-y-0 right-0 w-10 bg-gradient-to-l from-black to-transparent md:hidden" />
-        </div>
+        <CarouselScroller itemCount={days.length}>
+          {days.map((d) => (
+            <a
+              key={d.day}
+              href={d.active ? "#dia-1" : undefined}
+              className={`w-[148px] flex-shrink-0 snap-start [scroll-snap-stop:always] rounded-xl border p-5 transition duration-300 ease-out hover:-translate-y-0.5 hover:shadow-[0_0_0_1px_rgba(145,170,255,0.08),0_0_28px_rgba(55,90,210,0.10)] md:w-auto md:flex-shrink ${
+                d.active
+                  ? "border-white bg-white text-black hover:border-[#91aaff]/40 hover:bg-white/90"
+                  : "border-white/10 bg-white/[0.02] text-white/35 hover:border-[#91aaff]/25 hover:bg-[#050505] hover:text-white/65"
+              }`}
+            >
+              <p className="font-medium">
+                Dia {d.day}
+                {d.active ? " →" : ""}
+              </p>
+              <p className="mt-1 text-sm opacity-70">
+                {d.date} · {d.city}
+              </p>
+            </a>
+          ))}
+        </CarouselScroller>
       </div>
 
       <div className="mt-16">
@@ -945,19 +960,16 @@ function DashboardPreview() {
         <p className="mb-7 inline-block rounded-full border border-white/20 px-4 py-1.5 text-xs uppercase tracking-[0.25em] text-white/75">
           Incluso na contratação de qualquer roteiro
         </p>
-        <div className="relative -mx-6 sm:-mx-10 md:mx-0">
-          <div className="flex gap-3 overflow-x-auto px-6 pb-2 snap-x snap-mandatory scroll-pl-6 [&::-webkit-scrollbar]:hidden sm:px-10 md:grid md:grid-cols-5 md:gap-4 md:overflow-visible md:px-0 md:pb-0">
-            {guides.map((label) => (
-              <div
-                key={label}
-                className="flex w-[160px] flex-shrink-0 snap-start [scroll-snap-stop:always] min-h-[104px] cursor-pointer items-center justify-center rounded-xl border border-white/10 bg-white/[0.02] px-5 py-4 text-center text-sm leading-6 text-white/55 transition duration-300 ease-out hover:-translate-y-0.5 hover:border-[#91aaff]/25 hover:bg-[#050505] hover:text-white/70 hover:shadow-[0_0_0_1px_rgba(145,170,255,0.08),0_0_28px_rgba(55,90,210,0.10)] md:w-auto md:flex-shrink"
-              >
-                {label}
-              </div>
-            ))}
-          </div>
-          <div className="pointer-events-none absolute inset-y-0 right-0 w-10 bg-gradient-to-l from-black to-transparent md:hidden" />
-        </div>
+        <CarouselScroller itemCount={guides.length}>
+          {guides.map((label) => (
+            <div
+              key={label}
+              className="flex w-[160px] flex-shrink-0 snap-start [scroll-snap-stop:always] min-h-[104px] cursor-pointer items-center justify-center rounded-xl border border-white/10 bg-white/[0.02] px-5 py-4 text-center text-sm leading-6 text-white/55 transition duration-300 ease-out hover:-translate-y-0.5 hover:border-[#91aaff]/25 hover:bg-[#050505] hover:text-white/70 hover:shadow-[0_0_0_1px_rgba(145,170,255,0.08),0_0_28px_rgba(55,90,210,0.10)] md:w-auto md:flex-shrink"
+            >
+              {label}
+            </div>
+          ))}
+        </CarouselScroller>
       </div>
     </div>
   );
