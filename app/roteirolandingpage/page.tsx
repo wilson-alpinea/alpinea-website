@@ -2,7 +2,6 @@ import Image from "next/image";
 import { Bodoni_Moda } from "next/font/google";
 import { ContactCTA } from "../components/ContactCTA";
 import { CarouselScroller } from "../components/CarouselScroller";
-import { RoutePreviewModal } from "../components/RoutePreviewModal";
 
 // Mesma fonte de destaque usada nas demais páginas do site.
 const display = Bodoni_Moda({
@@ -131,34 +130,6 @@ export default function RoteirosAdsPage() {
         </div>
       </section>
 
-      <nav className="sticky top-[72px] z-30 border-y border-white/10 bg-black/80 px-4 py-3 backdrop-blur-xl md:hidden">
-        <div className="flex gap-3 overflow-x-auto [scrollbar-width:none]">
-          {["Resumo", "Dia 1", "Hotel", "Mobilidade", "Skytree", "Jantar"].map(
-            (item) => (
-              <a
-                key={item}
-                href={
-                  item === "Resumo"
-                    ? "#overview"
-                    : item === "Dia 1"
-                      ? "#dia-1"
-                      : item === "Hotel"
-                        ? "#hotel"
-                        : item === "Mobilidade"
-                          ? "#mobilidade"
-                          : item === "Skytree"
-                            ? "#skytree"
-                            : "#jantar"
-                }
-                className="shrink-0 rounded-full border border-white/15 px-4 py-2 text-[10px] uppercase tracking-[0.22em] text-white/60"
-              >
-                {item}
-              </a>
-            ),
-          )}
-        </div>
-      </nav>
-
       {/* ── SEÇÃO 3 — EXEMPLO DE ROTEIRO ── */}
       <section className="border-t border-white/10 bg-[#050505] px-5 py-12 md:bg-black md:px-16 md:py-24">
         <div className="mx-auto max-w-7xl">
@@ -280,57 +251,60 @@ export default function RoteirosAdsPage() {
       </section>
 
       {/* ── HOSPEDAGEM — GRAND HYATT TOKYO ── */}
-      <section id="hotel" className="border-t border-white/10">
-        <div className="relative h-[360px] min-h-[360px] max-h-[420px] w-full overflow-hidden md:h-[75vh] md:min-h-[560px] md:max-h-[720px]">
-          <Image
-            src="/images/grandhyatt.png"
-            alt="Grand Hyatt Tokyo — piscina e spa"
-            fill
-            sizes="100vw"
-            className="object-cover"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/55 to-transparent" />
-
-          <div className="absolute inset-x-0 bottom-0 px-8 pb-14 text-center md:px-16 md:pb-16">
-            <div className="mx-auto max-w-3xl">
-              <p className="mb-5 text-xs uppercase tracking-[0.35em] text-white/40">
-                Hospedagem
-              </p>
-              <h3
-                className={`${display.className} text-3xl font-medium text-white md:text-4xl`}
-              >
-                Grand Hyatt Tokyo
-              </h3>
-            </div>
-          </div>
-        </div>
-
-        <div className="px-6 py-10 md:px-16 md:py-24">
-          <div className="mx-auto max-w-5xl">
-            <div className="grid gap-10 lg:grid-cols-[0.8fr_1.1fr_1fr] lg:items-center">
-              <Image
-                src="/images/grandhyattlogo.png"
-                alt="Grand Hyatt Tokyo"
-                width={520}
-                height={260}
-                className="mx-auto w-full max-w-[200px] object-contain"
-              />
-              <p className="text-lg font-light leading-6 text-white/60 md:leading-8">
-                6 Chome-10-3 Roppongi, Minato City, Tokyo 106-0032, Japão
-              </p>
-              <div className="grid gap-6 text-base leading-7 text-white/60 sm:grid-cols-2 lg:grid-cols-1">
-                <div>
-                  <p className="mb-2 text-xs uppercase tracking-[0.3em] text-white/35">
-                    Check-In
-                  </p>
-                  <p className="text-lg text-white">15:00</p>
+      <section id="hotel" className="border-t border-white/10 bg-black">
+        <div className="px-5 py-10 md:px-16 md:py-24">
+          <div className="mx-auto max-w-5xl overflow-hidden rounded-2xl border border-white/10 bg-white/[0.025] md:rounded-[2rem]">
+            <div className="grid md:grid-cols-[0.95fr_1.05fr] md:items-stretch">
+              <div className="relative h-[220px] overflow-hidden md:h-auto md:min-h-[440px]">
+                <Image
+                  src="/images/grandhyatt.png"
+                  alt="Grand Hyatt Tokyo — piscina e spa"
+                  fill
+                  sizes="(max-width: 768px) 100vw, 48vw"
+                  className="object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent md:bg-gradient-to-r" />
+                <div className="absolute bottom-5 left-5 rounded-full border border-[#8fb7d9]/25 bg-[#12324a]/50 px-3 py-1 text-[10px] uppercase tracking-[0.24em] text-[#b7d8f2] backdrop-blur-md md:hidden">
+                  🏨 Hospedagem
                 </div>
-                <div>
-                  <p className="mb-2 text-xs uppercase tracking-[0.3em] text-white/35">
-                    Reserva
-                  </p>
-                  <p className="text-lg text-white">Confirmada</p>
+              </div>
+
+              <div className="p-6 md:p-10">
+                <p className="hidden text-xs uppercase tracking-[0.35em] text-[#8fb7d9] md:block">
+                  🏨 Hospedagem
+                </p>
+                <h3
+                  className={`${display.className} text-3xl font-medium text-white md:mt-4 md:text-4xl`}
+                >
+                  Grand Hyatt Tokyo
+                </h3>
+                <p className="mt-2 text-sm uppercase tracking-[0.22em] text-white/35">
+                  Roppongi · Minato
+                </p>
+
+                <div className="mt-7 grid grid-cols-2 gap-3">
+                  <MiniFact label="Check-in" value="15:00" />
+                  <MiniFact label="Reserva" value="Confirmada" />
+                  <MiniFact label="Região" value="Roppongi" />
+                  <MiniFact label="Perfil" value="Spa · Dining" />
                 </div>
+
+                <div className="mt-7 border-t border-white/10 pt-6">
+                  <p className="text-[11px] uppercase tracking-[0.28em] text-white/30">
+                    Endereço
+                  </p>
+                  <p className="mt-3 text-sm leading-6 text-white/60">
+                    6 Chome-10-3 Roppongi, Minato City, Tokyo 106-0032, Japão
+                  </p>
+                </div>
+
+                <Image
+                  src="/images/grandhyattlogo.png"
+                  alt="Grand Hyatt Tokyo"
+                  width={360}
+                  height={160}
+                  className="mt-8 w-32 object-contain opacity-90 md:w-40"
+                />
               </div>
             </div>
           </div>
@@ -434,40 +408,27 @@ export default function RoteirosAdsPage() {
 
         <div className="px-6 py-10 md:px-16 md:py-24">
           <div className="mx-auto max-w-3xl space-y-10 text-center text-[15px] font-light leading-8 text-white/65 md:space-y-12 md:text-base md:leading-9">
-            <div className="mx-auto max-w-xl rounded-2xl border border-white/10 bg-black/60 p-6 text-left sm:rounded-[2rem] sm:p-10">
-              <p className="mb-8 text-center text-xs uppercase tracking-[0.25em] text-white/30">
-                Recomendação Alpinea
+            <div className="mx-auto max-w-xl rounded-2xl border border-[#8fb7d9]/15 bg-[#071018] p-5 text-left sm:rounded-[2rem] sm:p-8">
+              <p className="mb-5 text-xs uppercase tracking-[0.25em] text-[#8fb7d9]">
+                💡 Recomendação Alpinea
               </p>
 
-              <div className="space-y-8">
-                <div>
-                  <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">
-                    Cartão IC recomendado
-                  </p>
-                  <p>
-                    O Suica IC Card cobre praticamente todo trem, metrô e ônibus
-                    do país — basta aproximar o celular ou o cartão físico na
-                    entrada e saída de cada estação, sem precisar comprar
-                    passagem a cada trajeto.
-                  </p>
-                </div>
-
-                <div className="border-t border-white/10 pt-8">
-                  <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">
-                    App de navegação
-                  </p>
-                  <p className="text-white/85">Google Maps</p>
-                  <p className="mt-1 text-sm leading-7 text-white/45">
-                    Rotas, horários e plataforma de embarque em tempo real
-                  </p>
-                </div>
-
-                <div className="border-t border-white/10 pt-8">
-                  <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">
-                    Horário de pico
-                  </p>
-                  <p>Evitar 07:30–09:00 e 17:30–19:30, dias de semana</p>
-                </div>
+              <div className="grid gap-3">
+                <RecommendationRow
+                  icon="💳"
+                  title="Suica IC Card"
+                  text="Use no celular ou cartão físico para trem, metrô e ônibus sem comprar passagem a cada trecho."
+                />
+                <RecommendationRow
+                  icon="🗺️"
+                  title="Google Maps"
+                  text="Rotas, horários e plataformas de embarque em tempo real."
+                />
+                <RecommendationRow
+                  icon="⏱️"
+                  title="Horários de pico"
+                  text="Evitar 07:30–09:00 e 17:30–19:30 em dias de semana."
+                />
               </div>
             </div>
 
@@ -535,17 +496,15 @@ export default function RoteirosAdsPage() {
               </div>
             </div>
 
-            <div className="mx-auto max-w-xl rounded-2xl border border-white/10 bg-black/60 p-6 text-left sm:rounded-[2rem] sm:p-10">
-              <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">
-                Recomendação Alpinea
+            <div className="mx-auto max-w-xl rounded-2xl border border-[#8fb7d9]/15 bg-[#071018] p-5 text-left sm:rounded-[2rem] sm:p-8">
+              <p className="mb-4 text-xs uppercase tracking-[0.25em] text-[#8fb7d9]">
+                💡 Recomendação Alpinea
               </p>
-              <p>
-                A partir do Grand Hyatt Tokyo, a diferença de tempo entre metrô
-                e carro/táxi é irrelevante. O táxi proporciona maior comodidade,
-                mas a diferença de preço é grande. Em caso de chuva ou vento
-                forte, recomendamos substituir por outra atração, pois, embora
-                seja um local fechado, devido à altura, o observatório pode
-                balançar mais que o normal.
+              <p className="leading-7">
+                Do Grand Hyatt, metrô e táxi têm tempo parecido. O táxi é mais
+                confortável; o metrô costuma ser o melhor custo-benefício. Com
+                chuva ou vento forte, recomendamos trocar a Skytree por outra
+                atração.
               </p>
             </div>
           </div>
@@ -722,21 +681,21 @@ export default function RoteirosAdsPage() {
                 reúne diversas opções de restaurantes, praça de alimentação e um
                 mercado no subsolo com alternativas para takeout.
               </p>
-              <div className="mt-16 space-y-14">
+              <div className="mt-8 grid grid-cols-2 gap-4 md:mt-16 md:gap-6">
                 <RestaurantBlock
-                  name="Hitsumabushi Bincho Tokyo Solamachi"
-                  description="Restaurante especializado em enguia, com destaque para o hitsumabushi, prato típico da província de Aichi."
-                  location="6º andar do Tokyo Solamachi"
-                  price="Aproximadamente ¥6.000 por pessoa"
+                  name="Hitsumabushi Bincho"
+                  description="Enguia · hitsumabushi"
+                  location="6º andar"
+                  price="~¥6.000"
                   hours="11:00–21:00"
                   photo="/images/Hitsumabushi.png"
                 />
                 <RestaurantBlock
                   name="Kaiten Sushi Toriton"
-                  description="Restaurante de sushi de esteira, conhecido por boa relação entre praticidade, qualidade e variedade."
-                  location="6º andar do Tokyo Solamachi"
-                  price="Aproximadamente ¥6.000 por pessoa"
-                  hours="11:00–22:00, último pedido às 21:30"
+                  description="Sushi de esteira · prático"
+                  location="6º andar"
+                  price="~¥6.000"
+                  hours="11:00–22:00"
                   photo="/images/Toriton.png"
                 />
               </div>
@@ -1148,6 +1107,94 @@ function InfoBlock({ title, text }: { title: string; text: string }) {
   );
 }
 
+function MiniFact({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="rounded-2xl border border-white/10 bg-black/45 p-4">
+      <p className="text-[10px] uppercase tracking-[0.22em] text-white/30">
+        {label}
+      </p>
+      <p className="mt-2 text-sm font-medium text-white">{value}</p>
+    </div>
+  );
+}
+
+function RecommendationRow({
+  icon,
+  title,
+  text,
+}: {
+  icon: string;
+  title: string;
+  text: string;
+}) {
+  return (
+    <div className="grid grid-cols-[34px_1fr] gap-3 rounded-2xl border border-white/10 bg-black/35 p-4">
+      <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#8fb7d9]/12 text-base">
+        {icon}
+      </div>
+      <div>
+        <p className="text-sm font-medium text-white">{title}</p>
+        <p className="mt-1 text-sm leading-6 text-white/55">{text}</p>
+      </div>
+    </div>
+  );
+}
+
+function RoutePreviewModal({
+  id,
+  eyebrow,
+  title,
+  description,
+  image,
+  alt,
+  displayClassName,
+}: {
+  id: string;
+  eyebrow: string;
+  title: string;
+  description: string;
+  image: string;
+  alt: string;
+  displayClassName: string;
+}) {
+  return (
+    <section
+      id={id}
+      className="fixed inset-0 z-[90] hidden overflow-y-auto bg-black/95 px-4 py-8 target:block md:px-8"
+    >
+      <a
+        href="#_"
+        aria-label="Fechar prévia"
+        className="fixed right-5 top-5 z-[110] flex h-12 w-12 items-center justify-center rounded-full bg-white text-3xl leading-none text-black shadow-[0_12px_40px_rgba(0,0,0,0.45)] md:right-8 md:top-8"
+      >
+        ×
+      </a>
+      <div className="mx-auto max-w-5xl pt-12">
+        <p className="mb-4 text-xs uppercase tracking-[0.35em] text-white/35">
+          {eyebrow}
+        </p>
+        <h3
+          className={`${displayClassName} text-3xl font-medium text-white md:text-5xl`}
+        >
+          {title}
+        </h3>
+        <p className="mt-4 max-w-2xl text-base leading-7 text-white/55">
+          {description}
+        </p>
+        <div className="mt-8 overflow-hidden rounded-2xl border border-white/10 bg-white/[0.03]">
+          <Image
+            src={image}
+            alt={alt}
+            width={1600}
+            height={1200}
+            className="h-auto w-full object-contain"
+          />
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function RestaurantBlock({
   name,
   description,
@@ -1164,45 +1211,31 @@ function RestaurantBlock({
   photo?: string;
 }) {
   return (
-    <div className="border-t border-white/10 pt-8">
+    <article className="rounded-2xl border border-white/10 bg-white/[0.025] p-3 md:p-4">
       {photo && (
-        <div className="mb-5 aspect-[4/3] overflow-hidden rounded-2xl border border-white/10 bg-white/[0.02]">
+        <div className="aspect-square overflow-hidden rounded-xl border border-white/10 bg-white/[0.02]">
           <Image
             src={photo}
             alt={name}
-            width={700}
-            height={520}
+            width={420}
+            height={420}
             className="h-full w-full object-cover"
           />
         </div>
       )}
 
-      <h3 className="text-lg font-light leading-snug text-white">{name}</h3>
-
-      <p className="mt-3 max-w-xl text-[15px] font-light leading-6 text-white/60 md:leading-8">
+      <h3 className="mt-3 text-sm font-medium leading-snug text-white md:text-base">
+        {name}
+      </h3>
+      <p className="mt-1 text-xs leading-5 text-[#d9a66d] md:text-sm">
         {description}
       </p>
 
-      <div className="mt-6 grid gap-6 border-t border-white/10 pt-6 sm:grid-cols-3">
-        <div>
-          <p className="mb-2 text-[10px] uppercase tracking-[0.26em] text-white/30">
-            Local
-          </p>
-          <p className="text-sm leading-7 text-white/58">{location}</p>
-        </div>
-        <div>
-          <p className="mb-2 text-[10px] uppercase tracking-[0.26em] text-white/30">
-            Preço
-          </p>
-          <p className="text-sm leading-7 text-white/58">{price}</p>
-        </div>
-        <div>
-          <p className="mb-2 text-[10px] uppercase tracking-[0.26em] text-white/30">
-            Horário
-          </p>
-          <p className="text-sm leading-7 text-white/58">{hours}</p>
-        </div>
+      <div className="mt-3 space-y-1 border-t border-white/10 pt-3 text-[11px] leading-5 text-white/45 md:text-xs">
+        <p>📍 {location}</p>
+        <p>¥ {price}</p>
+        <p>🕒 {hours}</p>
       </div>
-    </div>
+    </article>
   );
 }
