@@ -58,7 +58,7 @@ export default function RoteirosAdsPage() {
       </div>
 
       {/* ── SEÇÃO 1 — HERO ── */}
-      <section className="relative min-h-[560px] overflow-hidden bg-black md:min-h-[820px]">
+      <section className="relative min-h-[420px] h-[52svh] overflow-hidden bg-black md:h-auto md:min-h-[820px]">
         <div className="absolute inset-0 mx-auto max-w-[1800px]">
           <Image
             src="/images/ozenuma.jpeg"
@@ -107,28 +107,30 @@ export default function RoteirosAdsPage() {
         <a
           href="#overview"
           aria-label="Rolar para o conteúdo"
-          className="absolute inset-x-0 bottom-5 z-10 flex justify-center md:hidden"
+          className="absolute inset-x-0 bottom-6 z-10 flex justify-center md:hidden"
         >
-          <svg
-            className="h-6 w-6 animate-bounce text-white/55 transition hover:text-white/90"
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <polyline points="6 9 12 15 18 9" />
-          </svg>
+          <span className="flex h-12 w-12 items-center justify-center rounded-full border border-white/25 bg-black/20 backdrop-blur-sm transition hover:border-white/50">
+            <svg
+              className="h-7 w-7 animate-bounce text-white/80"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.75"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <polyline points="6 9 12 15 18 9" />
+            </svg>
+          </span>
         </a>
       </section>
 
       {/* ── SEÇÃO 2 — CHAMADA PARA O EXEMPLO ── */}
-      <section id="overview" className="bg-black px-8 py-14 md:px-16 md:py-24">
+      <section id="overview" className="bg-black px-8 py-8 md:px-16 md:py-24">
         <div className="mx-auto max-w-4xl text-center">
           <h2
-            className={`${display.className} text-3xl font-medium leading-snug text-white md:text-4xl`}
+            className={`${display.className} text-2xl font-medium leading-tight text-white md:text-4xl md:leading-snug`}
           >
             Receba um roteiro 100% personalizado para o seu perfil e estilo de
             viagem. Veja abaixo como funciona nossa plataforma digital.
@@ -137,7 +139,7 @@ export default function RoteirosAdsPage() {
       </section>
 
       {/* ── SEÇÃO 3 — EXEMPLO DE ROTEIRO ── */}
-      <section className="border-t border-white/10 bg-black px-8 py-14 md:px-16 md:py-24">
+      <section className="border-t border-white/10 bg-black px-8 py-8 md:px-16 md:py-24">
         <div className="mx-auto max-w-7xl">
           <div className="mx-auto mb-10 max-w-3xl text-center md:mb-16">
             <p className="mb-5 text-xs uppercase tracking-[0.35em] text-white/40">
@@ -148,7 +150,7 @@ export default function RoteirosAdsPage() {
             >
               Exemplo de Roteiro
             </h2>
-            <p className="text-lg font-light leading-9 text-white/65">
+            <p className="text-lg font-light leading-7 text-white/65 md:leading-9">
               Roteiro num formato moderno e digital, para você acessar a
               informação que precisa rapidamente.
             </p>
@@ -314,7 +316,7 @@ export default function RoteirosAdsPage() {
                 height={260}
                 className="mx-auto w-full max-w-[200px] object-contain"
               />
-              <p className="text-lg font-light leading-8 text-white/60">
+              <p className="text-lg font-light leading-6 text-white/60 md:leading-8">
                 6 Chome-10-3 Roppongi, Minato City, Tokyo 106-0032, Japão
               </p>
               <div className="grid gap-6 text-base leading-7 text-white/60 sm:grid-cols-2 lg:grid-cols-1">
@@ -336,43 +338,67 @@ export default function RoteirosAdsPage() {
         </div>
       </section>
 
-      <section className="border-t border-white/10 bg-white/[0.02] px-8 py-16 md:px-16 md:py-32">
+      {/* Mobile — Manhã e Tarde unificadas, texto reduzido */}
+      <section className="border-t border-white/10 bg-white/[0.02] px-8 py-12 md:hidden">
         <div className="mx-auto max-w-7xl">
-          <p
-            className={`${display.className} mb-6 text-3xl font-medium text-white md:text-4xl`}
-          >
-            Manhã
+          <p className={`${display.className} mb-6 text-3xl font-medium text-white`}>
+            Manhã & Tarde
           </p>
-          <p className="mb-8 inline-block rounded-full border border-white/25 px-4 py-1.5 text-xs uppercase tracking-[0.25em] text-white/70">
+          <p className="mb-6 inline-block rounded-full border border-white/25 px-4 py-1.5 text-xs uppercase tracking-[0.25em] text-white/70">
             Não disponível na amostra de roteiro
           </p>
-          <div className="max-w-4xl space-y-8 text-lg font-light leading-9 text-white/70">
+          <div className="max-w-4xl space-y-4 text-base font-light leading-6 text-white/70">
             <p>
-              <span className="text-white">Local:</span> Aeroporto Internacional
-              de Narita — Terminal 3
+              <span className="text-white">Manhã</span> · Chegada em Narita,
+              imigração e deslocamento até o hotel.
             </p>
             <p>
-              Instruções gerais de chegada, imigração, retirada de bagagem,
-              restaurantes sugeridos no aeroporto, ações obrigatórias antes de
-              sair do aeroporto, comentários gerais e guia de deslocamento até o
-              hotel.
+              <span className="text-white">Tarde</span> · Oshiage, Tokyo.
             </p>
           </div>
         </div>
       </section>
 
-      <section className="border-t border-white/10 px-8 py-14 md:px-16 md:py-16">
-        <div className="mx-auto max-w-7xl">
-          <p
-            className={`${display.className} mb-8 text-3xl font-medium text-white md:text-4xl`}
-          >
-            Tarde
-          </p>
-          <p className="max-w-4xl text-lg font-light leading-9 text-white/70">
-            <span className="text-white">Local:</span> Oshiage, Tokyo
-          </p>
-        </div>
-      </section>
+      {/* Desktop — Manhã e Tarde como seções separadas, inalterado */}
+      <div className="hidden md:block">
+        <section className="border-t border-white/10 bg-white/[0.02] px-8 py-16 md:px-16 md:py-32">
+          <div className="mx-auto max-w-7xl">
+            <p
+              className={`${display.className} mb-6 text-3xl font-medium text-white md:text-4xl`}
+            >
+              Manhã
+            </p>
+            <p className="mb-8 inline-block rounded-full border border-white/25 px-4 py-1.5 text-xs uppercase tracking-[0.25em] text-white/70">
+              Não disponível na amostra de roteiro
+            </p>
+            <div className="max-w-4xl space-y-8 text-lg font-light leading-7 text-white/70 md:leading-9">
+              <p>
+                <span className="text-white">Local:</span> Aeroporto Internacional
+                de Narita — Terminal 3
+              </p>
+              <p>
+                Instruções gerais de chegada, imigração, retirada de bagagem,
+                restaurantes sugeridos no aeroporto, ações obrigatórias antes de
+                sair do aeroporto, comentários gerais e guia de deslocamento até o
+                hotel.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <section className="border-t border-white/10 px-8 py-14 md:px-16 md:py-16">
+          <div className="mx-auto max-w-7xl">
+            <p
+              className={`${display.className} mb-8 text-3xl font-medium text-white md:text-4xl`}
+            >
+              Tarde
+            </p>
+            <p className="max-w-4xl text-lg font-light leading-7 text-white/70 md:leading-9">
+              <span className="text-white">Local:</span> Oshiage, Tokyo
+            </p>
+          </div>
+        </section>
+      </div>
 
       {/* ── MOBILIDADE — TRENS E METRÔ ── */}
       <section className="border-t border-white/10">
@@ -396,7 +422,7 @@ export default function RoteirosAdsPage() {
               >
                 Trens e Metrô
               </h3>
-              <p className="mx-auto mt-5 max-w-xl text-base font-light leading-9 text-white/65">
+              <p className="mx-auto mt-5 max-w-xl text-base font-light leading-7 text-white/65 md:leading-9">
                 Nesse exemplo, o deslocamento é por conta própria — e o Japão
                 torna isso simples. A malha de trens e metrô é pontual, extensa
                 e fácil de navegar com os recursos certos.
@@ -553,7 +579,7 @@ export default function RoteirosAdsPage() {
 
         <div className="px-8 py-16 md:px-16 md:py-32">
           <div className="mx-auto grid max-w-7xl gap-20 lg:grid-cols-2 lg:items-start">
-            <div className="space-y-12 text-lg font-light leading-9 text-white/70">
+            <div className="space-y-12 text-lg font-light leading-7 text-white/70 md:leading-9">
               <div>
                 <div className="grid gap-8 sm:grid-cols-2">
                   <div>
@@ -639,11 +665,9 @@ export default function RoteirosAdsPage() {
                 Mapa do Complexo Tokyo Solamachi
               </p>
 
-              {/* Mobile — prévia recortada + lupa, abre o mapa completo em nova aba */}
+              {/* Mobile — prévia recortada + lupa, abre em popup */}
               <a
-                href="/images/solamachi-floor1.png"
-                target="_blank"
-                rel="noopener noreferrer"
+                href="#preview-mapa-solamachi"
                 className="group relative block aspect-square overflow-hidden rounded-xl border border-white/10 bg-white/[0.03] md:hidden"
               >
                 <Image
@@ -662,13 +686,8 @@ export default function RoteirosAdsPage() {
                 </p>
               </a>
 
-              {/* Desktop — mapa completo, inalterado */}
-              <a
-                href="/images/solamachi-floor1.png"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="hidden md:block"
-              >
+              {/* Desktop — mapa completo, abre em popup */}
+              <a href="#preview-mapa-solamachi" className="hidden md:block">
                 <Image
                   src="/images/solamachi-floor1.png"
                   alt="Mapa do primeiro andar do Tokyo Solamachi"
@@ -697,7 +716,7 @@ export default function RoteirosAdsPage() {
 
           <div className="grid gap-20 lg:grid-cols-2 lg:items-start">
             <div>
-              <p className="text-lg font-light leading-9 text-white/70">
+              <p className="text-lg font-light leading-7 text-white/70 md:leading-9">
                 A Tokyo Skytree está integrada ao shopping Tokyo Solamachi, que
                 reúne diversas opções de restaurantes, praça de alimentação e um
                 mercado no subsolo com alternativas para takeout.
@@ -727,11 +746,9 @@ export default function RoteirosAdsPage() {
                 Mapa — Solamachi Dining
               </p>
 
-              {/* Mobile — prévia recortada + lupa, abre o mapa completo em nova aba */}
+              {/* Mobile — prévia recortada + lupa, abre em popup */}
               <a
-                href="/images/solamachi-dining-map.png"
-                target="_blank"
-                rel="noopener noreferrer"
+                href="#preview-mapa-dining"
                 className="group relative block aspect-square overflow-hidden rounded-xl border border-white/10 bg-white/[0.03] md:hidden"
               >
                 <Image
@@ -750,13 +767,8 @@ export default function RoteirosAdsPage() {
                 </p>
               </a>
 
-              {/* Desktop — mapa completo, inalterado */}
-              <a
-                href="/images/solamachi-dining-map.png"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="hidden md:block"
-              >
+              {/* Desktop — mapa completo, abre em popup */}
+              <a href="#preview-mapa-dining" className="hidden md:block">
                 <Image
                   src="/images/solamachi-dining-map.png"
                   alt="Mapa dos restaurantes do Tokyo Solamachi"
@@ -784,7 +796,7 @@ export default function RoteirosAdsPage() {
           >
             Comece sua jornada no Japão.
           </h2>
-          <p className="mx-auto mt-8 max-w-2xl text-lg leading-9 text-black/60">
+          <p className="mx-auto mt-8 max-w-2xl text-lg leading-7 text-black/60 md:leading-9">
             Compartilhe suas datas, preferências e estilo de viagem. A Alpinea
             cuidará do restante.
           </p>
@@ -1084,6 +1096,22 @@ function RoutePreviewModals() {
         image="/images/roteiro-compras.png"
         alt="Preview do roteiro especial de compras da Alpinea"
       />
+      <RoutePreviewModal
+        id="preview-mapa-solamachi"
+        eyebrow="Mapa do complexo"
+        title="Tokyo Solamachi"
+        description="Visão geral do primeiro andar do complexo Tokyo Solamachi, incluindo acessos à estação Oshiage, áreas comerciais, serviços, cafés, restaurantes e principais pontos de circulação."
+        image="/images/solamachi-floor1.png"
+        alt="Mapa do primeiro andar do Tokyo Solamachi"
+      />
+      <RoutePreviewModal
+        id="preview-mapa-dining"
+        eyebrow="Mapa de restaurantes"
+        title="Solamachi Dining"
+        description="Localização dos restaurantes do Tokyo Solamachi citados no roteiro."
+        image="/images/solamachi-dining-map.png"
+        alt="Mapa dos restaurantes do Tokyo Solamachi"
+      />
     </>
   );
 }
@@ -1201,7 +1229,7 @@ function RestaurantBlock({
 
       <h3 className="text-lg font-light leading-snug text-white">{name}</h3>
 
-      <p className="mt-3 max-w-xl text-[15px] font-light leading-8 text-white/60">
+      <p className="mt-3 max-w-xl text-[15px] font-light leading-6 text-white/60 md:leading-8">
         {description}
       </p>
 

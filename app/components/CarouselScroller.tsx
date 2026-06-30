@@ -53,39 +53,41 @@ export function CarouselScroller({
   };
 
   return (
-    <div className="relative -mx-6 sm:-mx-10 md:mx-0">
-      <div
-        ref={scrollRef}
-        className="flex gap-3 overflow-x-auto px-6 pb-2 snap-x snap-mandatory scroll-pl-6 [&::-webkit-scrollbar]:hidden sm:px-10 md:grid md:grid-cols-5 md:gap-4 md:overflow-visible md:px-0 md:pb-0"
-      >
-        {children}
+    <div className="-mx-6 sm:-mx-10 md:mx-0">
+      <div className="relative">
+        <div
+          ref={scrollRef}
+          className="flex gap-3 overflow-x-auto px-6 pb-2 snap-x snap-mandatory scroll-pl-6 [&::-webkit-scrollbar]:hidden sm:px-10 md:grid md:grid-cols-5 md:gap-4 md:overflow-visible md:px-0 md:pb-0"
+        >
+          {children}
+        </div>
+
+        {/* Fade lateral + seta "ver mais" — centralizados na altura da fileira, só mobile */}
+        <div className="pointer-events-none absolute inset-y-0 right-0 w-12 bg-gradient-to-l from-black to-transparent md:hidden" />
+        <button
+          type="button"
+          onClick={scrollNext}
+          aria-label="Ver mais"
+          className="absolute right-3 top-1/2 z-20 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full bg-white/15 backdrop-blur-sm transition active:bg-white/30 md:hidden"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="white"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <polyline points="9 18 15 12 9 6" />
+          </svg>
+        </button>
       </div>
 
-      {/* Fade lateral + seta "ver mais" — só mobile */}
-      <div className="pointer-events-none absolute inset-y-0 right-0 w-10 bg-gradient-to-l from-black to-transparent md:hidden" />
-      <button
-        type="button"
-        onClick={scrollNext}
-        aria-label="Ver mais"
-        className="absolute bottom-3 right-3 z-20 flex h-9 w-9 items-center justify-center rounded-full bg-white/15 backdrop-blur-sm transition active:bg-white/30 md:hidden"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="18"
-          height="18"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="white"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
-          <polyline points="9 18 15 12 9 6" />
-        </svg>
-      </button>
-
       {/* Bolinhas indicativas — só mobile */}
-      <div className="mt-4 flex items-center justify-center gap-2 md:hidden">
+      <div className="mt-4 flex items-center justify-center gap-2 px-6 sm:px-10 md:hidden">
         {Array.from({ length: itemCount }).map((_, i) => (
           <button
             key={i}
