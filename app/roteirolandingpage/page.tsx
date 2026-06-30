@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { Bodoni_Moda } from "next/font/google";
+import { Plane, ArrowLeftRight, Luggage, TrainFront, Castle } from "lucide-react";
 import { ContactCTA } from "../components/ContactCTA";
 import { CarouselScroller } from "../components/CarouselScroller";
 
@@ -76,17 +77,17 @@ export default function RoteirosAdsPage() {
 
         <div className="absolute inset-x-0 bottom-20 z-10 px-6 text-center md:bottom-24 md:px-16">
           <h1
-            className={`${display.className} mx-auto max-w-4xl text-[2.35rem] font-medium leading-[1.08] text-white md:text-5xl`}
+            className={`${display.className} mx-auto max-w-xs text-[1.85rem] font-medium leading-[1.18] text-white sm:max-w-md sm:text-[2.1rem] md:max-w-4xl md:text-5xl md:leading-[1.08]`}
           >
             Roteiros personalizados para o Japão
           </h1>
 
-          <div className="mx-auto mt-7 flex max-w-full flex-nowrap items-center justify-start gap-3 overflow-x-auto px-1 pb-1 [scrollbar-width:none] md:mt-10 md:max-w-4xl md:flex-wrap md:justify-center md:gap-4">
+          <div className="mx-auto mt-7 flex max-w-full flex-nowrap items-center justify-center gap-1.5 px-1 md:mt-10 md:max-w-4xl md:flex-wrap md:gap-4">
             {["7 dias", "10 dias", "12 dias", "15 dias", "20+ dias"].map(
               (d) => (
                 <span
                   key={d}
-                  className="shrink-0 cursor-default rounded-full border border-white/25 bg-black/20 px-5 py-2.5 text-xs uppercase tracking-[0.22em] text-white/75 backdrop-blur-sm transition-colors duration-300 hover:border-white hover:bg-white hover:text-black md:px-6 md:py-3 md:text-sm"
+                  className="shrink-0 cursor-default rounded-full border border-white/25 bg-black/20 px-2.5 py-1.5 text-[9px] uppercase tracking-[0.1em] text-white/75 backdrop-blur-sm transition-colors duration-300 hover:border-white hover:bg-white hover:text-black md:px-6 md:py-3 md:text-sm md:tracking-[0.22em]"
                 >
                   {d}
                 </span>
@@ -282,13 +283,6 @@ export default function RoteirosAdsPage() {
                   Roppongi · Minato
                 </p>
 
-                <div className="mt-7 grid grid-cols-2 gap-3">
-                  <MiniFact label="Check-in" value="15:00" />
-                  <MiniFact label="Reserva" value="Confirmada" />
-                  <MiniFact label="Região" value="Roppongi" />
-                  <MiniFact label="Perfil" value="Spa · Dining" />
-                </div>
-
                 <div className="mt-7 border-t border-white/10 pt-6">
                   <p className="text-[11px] uppercase tracking-[0.28em] text-white/30">
                     Endereço
@@ -298,13 +292,15 @@ export default function RoteirosAdsPage() {
                   </p>
                 </div>
 
-                <Image
-                  src="/images/grandhyattlogo.png"
-                  alt="Grand Hyatt Tokyo"
-                  width={360}
-                  height={160}
-                  className="mt-8 w-32 object-contain opacity-90 md:w-40"
-                />
+                <div className="mt-9 flex justify-center border-t border-white/10 pt-9">
+                  <Image
+                    src="/images/grandhyattlogo.png"
+                    alt="Grand Hyatt Tokyo"
+                    width={360}
+                    height={160}
+                    className="w-44 object-contain opacity-90 md:w-56"
+                  />
+                </div>
               </div>
             </div>
           </div>
@@ -600,9 +596,9 @@ export default function RoteirosAdsPage() {
                 title="Tempo estimado de visita"
                 text="Entre 1 e 2 horas após a subida ao observatório."
               />
-              <div className="rounded-2xl border border-white/10 bg-black/60 p-6 sm:rounded-[2rem] sm:p-10">
-                <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">
-                  Recomendação Alpinea
+              <div className="rounded-2xl border border-[#8fb7d9]/15 bg-[#071018] p-5 sm:rounded-[2rem] sm:p-8">
+                <p className="mb-4 text-xs uppercase tracking-[0.25em] text-[#8fb7d9]">
+                  💡 Recomendação Alpinea
                 </p>
                 <p>
                   Eu normalmente compro o ingresso para o 350º andar, não vejo
@@ -878,11 +874,11 @@ function DashboardPreview() {
   ];
 
   const guides = [
-    "Aeroportos",
-    "Câmbio",
-    "Logística",
-    "Trem Bala (Shinkansen)",
-    "Parques de Diversão (Disney & USJ)",
+    { label: "Aeroportos", Icon: Plane },
+    { label: "Câmbio", Icon: ArrowLeftRight },
+    { label: "Logística", Icon: Luggage },
+    { label: "Trem Bala (Shinkansen)", Icon: TrainFront },
+    { label: "Parques de Diversão (Disney & USJ)", Icon: Castle },
   ];
 
   return (
@@ -987,11 +983,14 @@ function DashboardPreview() {
           Incluso na contratação de qualquer roteiro
         </p>
         <CarouselScroller itemCount={guides.length}>
-          {guides.map((label) => (
+          {guides.map(({ label, Icon }) => (
             <div
               key={label}
-              className="flex w-[160px] flex-shrink-0 snap-start [scroll-snap-stop:always] min-h-[104px] cursor-pointer items-center justify-center rounded-xl border border-white/10 bg-white/[0.02] px-5 py-4 text-center text-sm leading-6 text-white/55 transition duration-300 ease-out hover:-translate-y-0.5 hover:border-[#91aaff]/25 hover:bg-[#050505] hover:text-white/70 hover:shadow-[0_0_0_1px_rgba(145,170,255,0.08),0_0_28px_rgba(55,90,210,0.10)] md:w-auto md:flex-shrink"
+              className="flex w-[160px] flex-shrink-0 snap-start [scroll-snap-stop:always] min-h-[128px] cursor-pointer flex-col items-center justify-center gap-3 rounded-xl border border-white/10 bg-white/[0.02] px-5 py-5 text-center text-sm leading-6 text-white/55 transition duration-300 ease-out hover:-translate-y-0.5 hover:border-[#91aaff]/25 hover:bg-[#050505] hover:text-white/70 hover:shadow-[0_0_0_1px_rgba(145,170,255,0.08),0_0_28px_rgba(55,90,210,0.10)] md:w-auto md:flex-shrink"
             >
+              <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[#8fb7d9]/12 text-[#8fb7d9]">
+                <Icon className="h-4 w-4" strokeWidth={1.75} />
+              </span>
               {label}
             </div>
           ))}
@@ -1107,17 +1106,6 @@ function InfoBlock({ title, text }: { title: string; text: string }) {
   );
 }
 
-function MiniFact({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="rounded-2xl border border-white/10 bg-black/45 p-4">
-      <p className="text-[10px] uppercase tracking-[0.22em] text-white/30">
-        {label}
-      </p>
-      <p className="mt-2 text-sm font-medium text-white">{value}</p>
-    </div>
-  );
-}
-
 function RecommendationRow({
   icon,
   title,
@@ -1165,7 +1153,7 @@ function RoutePreviewModal({
       <a
         href="#_"
         aria-label="Fechar prévia"
-        className="fixed right-5 top-5 z-[110] flex h-12 w-12 items-center justify-center rounded-full bg-white text-3xl leading-none text-black shadow-[0_12px_40px_rgba(0,0,0,0.45)] md:right-8 md:top-8"
+        className="fixed right-4 top-4 z-[110] flex h-14 w-14 items-center justify-center rounded-full border border-black/10 bg-white text-4xl leading-none text-black shadow-[0_12px_40px_rgba(0,0,0,0.5)] transition hover:bg-white/90 md:right-8 md:top-8 md:h-16 md:w-16 md:text-5xl"
       >
         ×
       </a>
