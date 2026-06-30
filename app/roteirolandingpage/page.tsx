@@ -1,6 +1,5 @@
 import Image from "next/image";
 import { Bodoni_Moda } from "next/font/google";
-import { Plane, ArrowLeftRight, Luggage, TrainFront, Castle } from "lucide-react";
 import { ContactCTA } from "../components/ContactCTA";
 import { CarouselScroller } from "../components/CarouselScroller";
 
@@ -851,6 +850,97 @@ export default function RoteirosAdsPage() {
   );
 }
 
+// Ícones inline da seção "Guias" — sem depender de lucide-react (não estava
+// instalado no projeto e quebrou o build).
+function IconPlane({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.75"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      <path d="M2 12 22 3l-9 20-2-9-9-2z" />
+    </svg>
+  );
+}
+
+function IconExchange({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.75"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      <path d="M6 7h12M14 3l4 4-4 4" />
+      <path d="M18 17H6m4 4-4-4 4-4" />
+    </svg>
+  );
+}
+
+function IconLuggage({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.75"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      <rect x="4" y="8" width="16" height="12" rx="2" />
+      <path d="M9 8V6a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2" />
+      <line x1="4" y1="13" x2="20" y2="13" />
+    </svg>
+  );
+}
+
+function IconTrain({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.75"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      <rect x="5" y="3" width="14" height="14" rx="4" />
+      <line x1="12" y1="3" x2="12" y2="11" />
+      <line x1="5" y1="11" x2="19" y2="11" />
+      <circle cx="9" cy="20" r="1.1" fill="currentColor" stroke="none" />
+      <circle cx="15" cy="20" r="1.1" fill="currentColor" stroke="none" />
+    </svg>
+  );
+}
+
+function IconCastle({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.75"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      <path d="M4 21V10l3-2V6h2v2l3-2 3 2V6h2v2l3 2v11H4z" />
+      <line x1="4" y1="21" x2="20" y2="21" />
+      <rect x="10" y="14" width="4" height="7" />
+    </svg>
+  );
+}
+
 function DashboardPreview() {
   const days = [
     { day: 1, date: "1 Out", city: "Tokyo", active: true },
@@ -874,11 +964,11 @@ function DashboardPreview() {
   ];
 
   const guides = [
-    { label: "Aeroportos", Icon: Plane },
-    { label: "Câmbio", Icon: ArrowLeftRight },
-    { label: "Logística", Icon: Luggage },
-    { label: "Trem Bala (Shinkansen)", Icon: TrainFront },
-    { label: "Parques de Diversão (Disney & USJ)", Icon: Castle },
+    { label: "Aeroportos", Icon: IconPlane },
+    { label: "Câmbio", Icon: IconExchange },
+    { label: "Logística", Icon: IconLuggage },
+    { label: "Trem Bala (Shinkansen)", Icon: IconTrain },
+    { label: "Parques de Diversão (Disney & USJ)", Icon: IconCastle },
   ];
 
   return (
@@ -989,7 +1079,7 @@ function DashboardPreview() {
               className="flex w-[160px] flex-shrink-0 snap-start [scroll-snap-stop:always] min-h-[128px] cursor-pointer flex-col items-center justify-center gap-3 rounded-xl border border-white/10 bg-white/[0.02] px-5 py-5 text-center text-sm leading-6 text-white/55 transition duration-300 ease-out hover:-translate-y-0.5 hover:border-[#91aaff]/25 hover:bg-[#050505] hover:text-white/70 hover:shadow-[0_0_0_1px_rgba(145,170,255,0.08),0_0_28px_rgba(55,90,210,0.10)] md:w-auto md:flex-shrink"
             >
               <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[#8fb7d9]/12 text-[#8fb7d9]">
-                <Icon className="h-4 w-4" strokeWidth={1.75} />
+                <Icon className="h-4 w-4" />
               </span>
               {label}
             </div>
