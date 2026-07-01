@@ -81,7 +81,7 @@ export default function RoteirosAdsPage() {
           />
 
           <div className="absolute right-5 top-24 z-10 rounded-full border border-white/15 bg-black/85 px-4 py-2 text-[9px] uppercase tracking-[0.22em] text-white shadow-[0_12px_40px_rgba(0,0,0,0.35)] md:right-12 md:top-28 md:text-[11px]">
-            Intuition Hotel, Niseko
+            Niseko, Hokkaido
           </div>
 
           <div
