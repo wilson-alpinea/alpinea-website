@@ -11,17 +11,12 @@ declare global {
   }
 }
 
-// Display serif for large headline moments — pairs with the ALPINEA logotype.
-// If it's not quite the match you're after, two easy swaps:
-//   import { Playfair_Display as Bodoni_Moda } from "next/font/google";
-//   import { Cormorant as Bodoni_Moda } from "next/font/google";
 const display = Bodoni_Moda({
   subsets: ["latin"],
   weight: ["400", "500", "600"],
 });
 
-// Seta de "ver mais" para os carrosséis horizontais do mobile — some no desktop (md:hidden),
-// já que lá o conteúdo é grid e não rola. Inclui fade lateral pra reforçar que há mais conteúdo.
+// Seta de "ver mais" para os carrosséis horizontais do mobile.
 function CarouselNextArrow({ targetRef }: { targetRef: RefObject<HTMLDivElement | null> }) {
   const scrollNext = () => {
     const el = targetRef.current;
@@ -46,8 +41,6 @@ function CarouselNextArrow({ targetRef }: { targetRef: RefObject<HTMLDivElement 
   );
 }
 
-// Rastreia qual card está mais visível no carrossel, comparando a posição de scroll
-// com a posição de cada filho — funciona mesmo com cards de larguras diferentes.
 function useActiveSlide(targetRef: RefObject<HTMLDivElement | null>) {
   const [active, setActive] = useState(0);
 
@@ -77,8 +70,6 @@ function useActiveSlide(targetRef: RefObject<HTMLDivElement | null>) {
   return active;
 }
 
-// Bolinhas indicativas embaixo dos carrosséis horizontais — só no mobile (md:hidden),
-// já que no desktop o conteúdo é grid e mostra tudo de uma vez, sem precisar de indicador.
 function CarouselDots({ targetRef, count }: { targetRef: RefObject<HTMLDivElement | null>; count: number }) {
   const active = useActiveSlide(targetRef);
 
@@ -109,7 +100,6 @@ function CarouselDots({ targetRef, count }: { targetRef: RefObject<HTMLDivElemen
   );
 }
 
-// Lightbox component
 function Lightbox({ src, alt, onClose }: { src: string; alt: string; onClose: () => void }) {
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
@@ -139,61 +129,18 @@ function Lightbox({ src, alt, onClose }: { src: string; alt: string; onClose: ()
   );
 }
 
-export default function LandingPage() {
+export default function LuaDeMelLandingPage() {
   const [scrolled, setScrolled] = useState(false);
   const [lightbox, setLightbox] = useState<{ src: string; alt: string } | null>(null);
 
-  const statsScrollRef = useRef<HTMLDivElement>(null);
-  const photosScrollRef = useRef<HTMLDivElement>(null);
-  const deliverablesScrollRef = useRef<HTMLDivElement>(null);
-  const tiersScrollRef = useRef<HTMLDivElement>(null);
   const whyJapanScrollRef = useRef<HTMLDivElement>(null);
-  const processScrollRef = useRef<HTMLDivElement>(null);
+  const whyAlpineaScrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 50);
     window.addEventListener("scroll", onScroll);
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
-
-  const accessCards = [
-    {
-      title: "Sushi Arai",
-      category: "Gastronomia · Tokyo",
-      image: "/images/arai2.png",
-      position: "object-center",
-    },
-    {
-      title: "The Peninsula Tokyo",
-      category: "Hospedagem · Tokyo",
-      image: "/images/peninsula3.jpg",
-      position: "object-center",
-    },
-    {
-      title: "Niku Kappou Miyata",
-      category: "Gastronomia · Osaka",
-      image: "/images/nikufood.jpeg",
-      position: "object-center",
-    },
-    {
-      title: "Sazenka",
-      category: "Gastronomia · Tokyo",
-      image: "/images/sazenka2.png",
-      position: "object-center",
-    },
-    {
-      title: "Ao",
-      category: "Gastronomia · Tokyo",
-      image: "/images/ao2.png",
-      position: "object-center",
-    },
-    {
-      title: "Fukamachi",
-      category: "Gastronomia · Tokyo",
-      image: "/images/fukamachi2.png",
-      position: "object-center",
-    },
-  ];
 
   const whyJapan = [
     {
@@ -214,42 +161,18 @@ export default function LandingPage() {
     },
   ];
 
-  const processSteps = [
+  const whyAlpinea = [
     {
-      step: "01",
-      title: "Antes da viagem",
-      items: ["Entendimento das preferências e estilo do casal", "Estilo da viagem"],
+      title: "+12 anos no Japão",
+      text: "Mais de uma década de relações locais — o tipo de acesso que não se compra, se constrói.",
     },
     {
-      step: "02",
-      title: "Durante o planejamento",
-      items: ["Hospedagem", "Voos", "Restaurantes", "Logística"],
+      title: "Presença real, sem intermediários",
+      text: "Operação própria no Japão, com atendimento direto e conhecimento de bairros, hotéis e restaurantes fora do óbvio.",
     },
     {
-      step: "03",
-      title: "Durante a viagem",
-      items: ["Concierge dedicado"],
-    },
-  ];
-
-  const tiers = [
-    {
-      label: "Orientação Estratégica",
-      title: "Roteiro Personalizado",
-      details: "Curadoria de destino, roteiro privado e recomendações estratégicas.",
-      highlighted: true,
-    },
-    {
-      label: "Planejamento Completo",
-      title: "Alpinea Executive",
-      details: "Planejamento completo, hotéis, passagens, reservas gastronômicas e concierge remoto.",
-      featured: false,
-    },
-    {
-      label: "Acompanhamento Presencial",
-      title: "Alpinea Private",
-      details: "Inclui o Executive, com acompanhamento presencial em restaurantes, compras e experiências.",
-      featured: true,
+      title: "Curadoria para casais",
+      text: "Cada roteiro é desenhado em torno do ritmo de vocês dois — não de um grupo, não de uma agenda genérica.",
     },
   ];
 
@@ -258,8 +181,9 @@ export default function LandingPage() {
       {lightbox && (
         <Lightbox src={lightbox.src} alt={lightbox.alt} onClose={() => setLightbox(null)} />
       )}
-      {/* HERO */}
-      <section className="relative h-[50svh] min-h-[460px] overflow-hidden md:h-[max(50vh,28vw)] md:max-h-[900px] md:min-h-[520px]">
+
+      {/* 1. HERO */}
+      <section className="relative h-[58svh] min-h-[500px] overflow-hidden md:h-[max(60vh,32vw)] md:max-h-[920px] md:min-h-[560px]">
         <Image
           src="/images/lua-de-mel-hero.png"
           alt="Casal de mãos dadas sob as cerejeiras em flor no Japão"
@@ -271,7 +195,6 @@ export default function LandingPage() {
 
         <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/60 to-black" />
 
-        {/* Header sem links de navegação */}
         <header
           className={`fixed left-0 right-0 top-0 z-50 flex items-center justify-between px-8 py-5 transition-all duration-700 md:px-16 ${
             scrolled ? "bg-black/20 backdrop-blur-2xl" : "bg-transparent"
@@ -287,17 +210,24 @@ export default function LandingPage() {
         </header>
 
         <div className="relative z-10 flex h-full flex-col items-center justify-center px-6 pt-20 text-center md:justify-end md:pb-28">
+          <p className="mb-5 text-xs uppercase tracking-[0.35em] text-white/55 md:mb-6 md:tracking-[0.45em]">
+            Lua de mel privada no Japão
+          </p>
+
           <h1 className={`${display.className} max-w-4xl text-4xl font-medium leading-[1.1] tracking-tight md:text-6xl`}>
             O começo da próxima história de vocês merece{" "}
             <span className="bg-gradient-to-r from-[#E94332] via-[#D96A2E] to-[#C9A03A] bg-clip-text text-transparent">
               mais do que um roteiro.
             </span>
           </h1>
+
+          <p className="mt-6 max-w-xl text-sm font-light leading-7 text-white/60 md:text-base">
+            Curadoria de quem vive no Japão há mais de uma década — para a viagem mais importante de vocês.
+          </p>
         </div>
 
-        {/* Indicador de scroll — agora em todas as telas */}
         <a
-          href="#overview"
+          href="#por-que-japao"
           aria-label="Rolar para o conteúdo"
           className="absolute inset-x-0 bottom-6 z-10 flex justify-center"
         >
@@ -316,8 +246,8 @@ export default function LandingPage() {
         </a>
       </section>
 
-      {/* POR QUE JAPÃO */}
-      <section id="overview" className="border-b border-white/10 px-8 py-8 md:px-16 md:py-28">
+      {/* 2. POR QUE JAPÃO PARA A LUA DE MEL */}
+      <section id="por-que-japao" className="border-b border-white/10 px-8 py-14 md:px-16 md:py-28">
         <div className="mx-auto max-w-7xl">
           <div className="mb-10 max-w-4xl md:mb-16">
             <h2 className={`${display.className} text-2xl font-medium leading-tight md:text-4xl`}>
@@ -332,20 +262,19 @@ export default function LandingPage() {
               ref={whyJapanScrollRef}
               className="flex gap-6 overflow-x-auto px-8 pb-2 snap-x snap-mandatory scroll-pl-8 [&::-webkit-scrollbar]:hidden md:grid md:grid-cols-4 md:gap-10 md:overflow-visible md:px-0 md:pb-0"
             >
-            {whyJapan.map((item) => (
-              <div
-                key={item.title}
-                className="w-[72vw] flex-shrink-0 snap-start [scroll-snap-stop:always] border-t border-white/15 pt-6 md:w-auto md:flex-shrink"
-              >
-                <h3 className={`${display.className} text-lg font-medium text-white md:text-xl`}>
-                  {item.title}
-                </h3>
-
-                <p className="mt-3 text-sm font-light leading-7 text-white/50">
-                  {item.text}
-                </p>
-              </div>
-            ))}
+              {whyJapan.map((item) => (
+                <div
+                  key={item.title}
+                  className="w-[72vw] flex-shrink-0 snap-start [scroll-snap-stop:always] border-t border-white/15 pt-6 md:w-auto md:flex-shrink"
+                >
+                  <h3 className={`${display.className} text-lg font-medium text-white md:text-xl`}>
+                    {item.title}
+                  </h3>
+                  <p className="mt-3 text-sm font-light leading-7 text-white/50">
+                    {item.text}
+                  </p>
+                </div>
+              ))}
             </div>
             <CarouselNextArrow targetRef={whyJapanScrollRef} />
           </div>
@@ -353,124 +282,33 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* EXECUÇÃO — entregáveis */}
-      <section className="border-b border-white/10 px-8 py-8 md:px-16 md:py-28">
+      {/* 3. PROVA REAL — a curadoria em ação */}
+      <section className="border-b border-white/10 px-8 py-14 md:px-16 md:py-28">
         <div className="mx-auto max-w-7xl">
-          <div className="mb-6 max-w-5xl md:mb-20">
-            <h2 className={`${display.className} text-3xl font-medium leading-tight md:text-6xl`}>
-              Única agência brasileira 100% focada em viagens de luxo para o Japão.
-            </h2>
+          <p className="mb-6 text-xs uppercase tracking-[0.3em] text-white/30 md:mb-10 md:tracking-[0.45em]">
+            A curadoria em ação
+          </p>
 
-            <p className="mt-8 hidden max-w-3xl text-lg font-light leading-9 text-white/68 md:block">
-              Do planejamento ao acompanhamento presencial, a Alpinea organiza os detalhes que determinam a qualidade real de uma lua de mel no Japão.
-            </p>
-          </div>
-
-          {/* Foto de impacto — quebra a sequência de screenshots de produto com uma imagem real de experiência, antes de entrar na prova prática */}
-          <div className="relative mb-10 aspect-[4/3] overflow-hidden rounded-[20px] md:mb-16 md:aspect-[16/9]">
+          {/* Foto de hospedagem — prova de padrão */}
+          <div className="relative mb-10 aspect-[4/3] overflow-hidden rounded-[20px] md:mb-20 md:aspect-[16/9]">
             <Image
               src="/images/peninsula3.jpg"
-              alt="Hospedagem de luxo no Japão"
+              alt="Hospedagem de luxo para lua de mel no Japão"
               fill
               sizes="100vw"
               className="object-cover object-center"
             />
           </div>
 
-          <p className="mb-6 text-xs uppercase tracking-[0.3em] text-white/30 md:mb-10 md:tracking-[0.45em]">
-            O que o cliente recebe
-          </p>
-
-          <div className="relative -mx-8 md:mx-0">
-            <div
-              ref={deliverablesScrollRef}
-              className="flex gap-6 overflow-x-auto px-8 pb-2 snap-x snap-mandatory scroll-pl-8 [&::-webkit-scrollbar]:hidden md:grid md:grid-cols-3 md:gap-6 md:overflow-visible md:px-0 md:pb-0"
-            >
-            {[
-              {
-                title: "Roteiro privado",
-                text: "Planejamento diário com logística, mapas, horários recomendados, contexto local e decisões práticas para cada etapa da viagem.",
-                image: "/images/ss-roteiro.png",
-              },
-              {
-                title: "Reservas gastronômicas",
-                text: "Curadoria, solicitação, acompanhamento e organização de restaurantes conforme perfil, preferências e restrições do cliente.",
-                image: "/images/ss-restaurantes.png",
-              },
-              {
-                title: "Assessoria de compras",
-                text: "Apoio na seleção, localização e aquisição de produtos japoneses de alto nível, incluindo itens artesanais e categorias especializadas.",
-                image: "/images/ss-rcompras.png",
-              },
-            ].map((item) => (
-              <div key={item.title} className="group w-[80vw] flex-shrink-0 snap-start [scroll-snap-stop:always] md:w-auto md:flex-shrink">
-                <p className="text-xs uppercase tracking-[0.35em] text-white/40">
-                  Entregável Alpinea
-                </p>
-
-                <h3 className="mt-3 text-2xl font-light text-white">
-                  {item.title}
-                </h3>
-
-                <p className="mt-5 text-sm font-light leading-7 text-white/55">
-                  {item.text}
-                </p>
-
-                <div
-                  className="mt-6 overflow-hidden rounded-[26px] bg-white/[0.04] cursor-zoom-in relative md:mt-8"
-                  onClick={() => setLightbox({ src: item.image, alt: item.title })}
-                >
-                  <div className="relative aspect-[4/3] overflow-hidden rounded-[26px] md:aspect-[4/5]">
-                    <Image
-                      src={item.image}
-                      alt={item.title}
-                      fill
-                      sizes="(max-width: 768px) 80vw, 33vw"
-                      className="object-cover object-top transition duration-700 group-hover:scale-[1.03]"
-                    />
-                    {/* Zoom overlay — efeito hover, só faz sentido no desktop (mouse) */}
-                    <div className="absolute inset-0 hidden items-center justify-center opacity-0 transition duration-300 group-hover:opacity-100 bg-black/30 md:flex">
-                      <div className="rounded-full bg-black/60 p-3 backdrop-blur-sm">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                          <circle cx="11" cy="11" r="8"/>
-                          <line x1="21" y1="21" x2="16.65" y2="16.65"/>
-                          <line x1="11" y1="8" x2="11" y2="14"/>
-                          <line x1="8" y1="11" x2="14" y2="11"/>
-                        </svg>
-                      </div>
-                    </div>
-
-                    {/* Badge de zoom sempre visível no mobile — touch não dispara :hover, então o indicador precisa estar sempre lá */}
-                    <div className="absolute right-3 top-3 flex h-8 w-8 items-center justify-center rounded-full bg-black/55 backdrop-blur-sm md:hidden">
-                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                        <circle cx="11" cy="11" r="8"/>
-                        <line x1="21" y1="21" x2="16.65" y2="16.65"/>
-                        <line x1="11" y1="8" x2="11" y2="14"/>
-                        <line x1="8" y1="11" x2="14" y2="11"/>
-                      </svg>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ))}
-            </div>
-            <CarouselNextArrow targetRef={deliverablesScrollRef} />
-          </div>
-          <CarouselDots targetRef={deliverablesScrollRef} count={3} />
-
-          {/* Dashboard da viagem — produto digital. Escondido no mobile: complemento visual bonito mas não essencial pra gerar lead, custava uma tela cheia. */}
-          <div className="hidden gap-10 border-t border-white/10 pt-10 md:mt-24 md:grid md:grid-cols-2 md:items-center md:gap-16 md:pt-20">
+          {/* Dashboard da viagem */}
+          <div className="grid gap-10 md:grid-cols-2 md:items-center md:gap-16">
             <div>
-              <p className="mb-6 text-xs uppercase tracking-[0.3em] text-white/30 md:tracking-[0.45em]">
-                Acesso digital
-              </p>
-
               <h3 className={`${display.className} text-3xl font-medium leading-tight text-white md:text-4xl`}>
-                Sua viagem, organizada num só painel — acessível do celular, em qualquer lugar.
+                Um roteiro pensado para dois, do primeiro ao último dia.
               </h3>
 
               <p className="mt-6 max-w-lg text-base font-light leading-8 text-white/65">
-                Cada roteiro Alpinea inclui acesso a uma versão digital resumida do planejamento: roteiro diário, guias complementares e anexos especiais reunidos num dashboard simples de consultar durante a viagem — sem precisar abrir PDF ou planilha nenhuma.
+                Tokyo, Hakone, Kyoto — ou o caminho que fizer sentido para vocês. Cada roteiro Alpinea inclui acesso a um dashboard digital com o planejamento diário, guias complementares e reservas organizadas, consultável do celular a qualquer momento da viagem.
               </p>
             </div>
 
@@ -493,8 +331,6 @@ export default function LandingPage() {
                     sizes="260px"
                     className="object-cover transition duration-700 group-hover:scale-[1.03]"
                   />
-
-                  {/* Zoom overlay */}
                   <div className="absolute inset-0 flex items-center justify-center bg-black/30 opacity-0 transition duration-300 group-hover:opacity-100">
                     <div className="rounded-full bg-black/60 p-3 backdrop-blur-sm">
                       <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
@@ -512,306 +348,44 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* COMO ORGANIZAMOS */}
-      <section className="border-b border-white/10 px-8 py-8 md:px-16 md:py-28">
+      {/* 4. POR QUE A ALPINEA */}
+      <section className="border-b border-white/10 px-8 py-14 md:px-16 md:py-28">
         <div className="mx-auto max-w-7xl">
-          <div className="mb-6 max-w-3xl md:mb-20">
+          <div className="mb-10 max-w-3xl md:mb-16">
             <p className="mb-6 text-xs uppercase tracking-[0.3em] text-white/40 md:tracking-[0.45em]">
-              Como organizamos
+              Por que a Alpinea
             </p>
-
             <h2 className={`${display.className} text-3xl font-medium leading-tight md:text-5xl`}>
-              Um processo claro, do primeiro contato ao último dia em solo japonês.
+              O acesso no Japão não se compra. Se constrói ao longo de anos.
             </h2>
           </div>
 
           <div className="relative -mx-8 md:mx-0">
             <div
-              ref={processScrollRef}
-              className="flex gap-6 overflow-x-auto px-8 pb-2 snap-x snap-mandatory scroll-pl-8 [&::-webkit-scrollbar]:hidden md:grid md:grid-cols-3 md:gap-8 md:overflow-visible md:px-0 md:pb-0"
+              ref={whyAlpineaScrollRef}
+              className="flex gap-6 overflow-x-auto px-8 pb-2 snap-x snap-mandatory scroll-pl-8 [&::-webkit-scrollbar]:hidden md:grid md:grid-cols-3 md:gap-10 md:overflow-visible md:px-0 md:pb-0"
             >
-            {processSteps.map((item) => (
-              <div
-                key={item.step}
-                className="relative w-[78vw] flex-shrink-0 snap-start [scroll-snap-stop:always] rounded-[20px] border border-white/10 bg-black px-6 py-8 md:w-auto md:flex-shrink md:px-10 md:py-12"
-              >
-                <p className={`${display.className} bg-gradient-to-r from-[#E94332] via-[#D96A2E] to-[#C9A03A] bg-clip-text text-3xl font-medium text-transparent md:text-4xl`}>
-                  {item.step}
-                </p>
-
-                <h3 className="mt-5 text-2xl font-light text-white md:text-3xl">
-                  {item.title}
-                </h3>
-
-                <ul className="mt-6 space-y-3">
-                  {item.items.map((point) => (
-                    <li key={point} className="flex items-start gap-3 text-sm font-light leading-7 text-white/55">
-                      <span className="mt-2.5 h-1 w-1 flex-shrink-0 rounded-full bg-white/40" />
-                      {point}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-            </div>
-            <CarouselNextArrow targetRef={processScrollRef} />
-          </div>
-          <CarouselDots targetRef={processScrollRef} count={processSteps.length} />
-        </div>
-      </section>
-
-      {/* POR QUE ESCOLHER A ALPINEA */}
-      <section className="border-b border-white/10 px-8 py-8 md:px-16 md:py-24">
-        <div className="mx-auto max-w-7xl">
-          <p className="mb-6 text-xs uppercase tracking-[0.3em] text-white/40 md:mb-16 md:tracking-[0.45em]">
-            Por que escolher a Alpinea
-          </p>
-
-          <div className="relative -mx-8 md:mx-0">
-            <div
-              ref={statsScrollRef}
-              className="flex gap-6 overflow-x-auto px-8 pb-2 snap-x snap-mandatory scroll-pl-8 [&::-webkit-scrollbar]:hidden md:grid md:grid-cols-4 md:gap-12 md:overflow-visible md:px-0 md:pb-0"
-            >
-            <div className="w-[72vw] flex-shrink-0 snap-start [scroll-snap-stop:always] md:w-auto md:flex-shrink">
-              <h3 className={`${display.className} text-2xl font-medium tracking-tight text-white md:text-3xl`}>
-                +12 anos
-              </h3>
-              <p className="mt-6 max-w-[280px] text-sm font-light leading-7 text-white/55">
-                Mais de uma década de vivência no Japão, entre gastronomia, hotelaria, cultura, logística e relações locais.
-              </p>
-            </div>
-
-            <div className="w-[72vw] flex-shrink-0 snap-start [scroll-snap-stop:always] md:w-auto md:flex-shrink">
-              <h3 className={`${display.className} text-2xl font-medium tracking-tight text-white md:text-3xl`}>
-                Exclusividade de Serviços
-              </h3>
-              <p className="mt-6 max-w-[280px] text-sm font-light leading-7 text-white/55">
-                Somos a única empresa que oferece ao público brasileiro curadoria de elite para gastronomia e consumo, incluso fluência no idioma para elevar as experiências.
-              </p>
-            </div>
-
-            <div className="w-[72vw] flex-shrink-0 snap-start [scroll-snap-stop:always] md:w-auto md:flex-shrink">
-              <h3 className={`${display.className} text-2xl font-medium tracking-tight text-white md:text-3xl`}>
-                Referência na conexão Brasil–Japão
-              </h3>
-              <p className="mt-6 max-w-[280px] text-sm font-light leading-7 text-white/55">
-                Entre os 3 maiores emissores de passagens aéreas dessa rota no mundo, unimos conhecimento operacional à curadoria de experiências privadas.
-              </p>
-            </div>
-
-            <div className="w-[72vw] flex-shrink-0 snap-start [scroll-snap-stop:always] md:w-auto md:flex-shrink">
-              <h3 className={`${display.className} text-2xl font-medium tracking-tight text-white md:text-3xl`}>
-                Presença real no Japão
-              </h3>
-              <p className="mt-6 max-w-[280px] text-sm font-light leading-7 text-white/55">
-                Nossa operação própria no Japão permite um atendimento sem intermediários, com maior flexibilidade, controle e proximidade dos melhores parceiros locais.
-              </p>
-            </div>
-            </div>
-            <CarouselNextArrow targetRef={statsScrollRef} />
-          </div>
-          <CarouselDots targetRef={statsScrollRef} count={4} />
-        </div>
-      </section>
-
-      {/* DIFERENCIAIS + ACESSO REAL — unified */}
-      <section className="border-b border-white/10 px-8 pt-8 pb-6 md:px-16 md:pt-28 md:pb-20">
-        <div className="mx-auto max-w-7xl">
-
-          {/* Texto diferenciais */}
-          <div className="mb-6 grid gap-10 md:mb-20 md:grid-cols-[0.8fr_1.2fr] md:gap-16">
-            <div>
-              <p className="mb-6 text-xs uppercase tracking-[0.3em] text-white/45 md:tracking-[0.45em]">
-                Nossos diferenciais
-              </p>
-              <h2 className={`${display.className} text-4xl font-medium leading-tight md:text-6xl`}>
-                Acesso, profundidade e execução no mercado de luxo japonês.
-              </h2>
-            </div>
-
-            {/* Versão curta — só mobile */}
-            <p className="text-base font-light leading-8 text-white/68 md:hidden">
-              O acesso no Japão exige anos de relacionamento: os grandes nomes da gastronomia não estão em plataformas, e os melhores produtos não fazem propaganda.
-            </p>
-
-            {/* Versão completa — só desktop */}
-            <div className="hidden space-y-10 text-lg font-light leading-9 text-white/68 md:block">
-              <p>
-                O acesso no Japão não é baseado somente em desejo e vontade de frequentar. Mais do que isso, são necessários anos de relacionamento com esses estabelecimentos.
-              </p>
-              <p>
-                Os grandes nomes da gastronomia japonesa não estão disponíveis em plataformas. Muitos não aceitam reservas em inglês e alguns só recebem clientes apresentados por relações construídas ao longo de anos.
-              </p>
-              <p>
-                Os melhores produtos de cada categoria não fazem propaganda.
-              </p>
-              <p>
-                Encontrar o hotel ideal exige mais do que reconhecer nomes famosos. Exige entender bairros, atmosferas e o estilo de viagem de cada cliente.
-              </p>
-            </div>
-          </div>
-
-          {/* Fotos — carrossel no mobile, grid no desktop */}
-          <div className="relative -mx-8 md:mx-0">
-            <div
-              ref={photosScrollRef}
-              className="flex gap-4 overflow-x-auto px-8 pb-2 snap-x snap-mandatory scroll-pl-8 [&::-webkit-scrollbar]:hidden md:grid md:grid-cols-3 md:gap-x-8 md:gap-y-12 md:overflow-visible md:px-0 md:pb-0"
-            >
-            {accessCards.map((item) => (
-              <div key={item.title} className="w-[46vw] flex-shrink-0 snap-start [scroll-snap-stop:always] md:w-auto md:flex-shrink">
-                <div className="relative aspect-[4/3] overflow-hidden rounded-[16px] bg-white/5 md:rounded-[22px]">
-                  <Image
-                    src={item.image}
-                    alt={item.title}
-                    fill
-                    sizes="(max-width: 768px) 50vw, 33vw"
-                    className={`object-cover ${item.position}`}
-                  />
+              {whyAlpinea.map((item) => (
+                <div
+                  key={item.title}
+                  className="w-[72vw] flex-shrink-0 snap-start [scroll-snap-stop:always] border-t border-white/15 pt-6 md:w-auto md:flex-shrink"
+                >
+                  <h3 className={`${display.className} text-lg font-medium text-white md:text-xl`}>
+                    {item.title}
+                  </h3>
+                  <p className="mt-3 text-sm font-light leading-7 text-white/50">
+                    {item.text}
+                  </p>
                 </div>
-                <h3 className="mt-3 text-sm font-light text-white md:mt-5 md:text-xl">
-                  {item.title}
-                </h3>
-              </div>
-            ))}
+              ))}
             </div>
-            <CarouselNextArrow targetRef={photosScrollRef} />
+            <CarouselNextArrow targetRef={whyAlpineaScrollRef} />
           </div>
-          <CarouselDots targetRef={photosScrollRef} count={accessCards.length} />
-
-          <p className="mt-6 hidden max-w-xl text-sm font-light leading-7 text-white/50 md:mt-14 md:block md:text-base md:leading-8">
-            Não operamos por plataformas. Cada reserva, cada acesso, cada experiência acima vem de uma relação construída ao longo de anos.
-          </p>
+          <CarouselDots targetRef={whyAlpineaScrollRef} count={whyAlpinea.length} />
         </div>
       </section>
 
-      {/* SERVIÇOS — 3 tiers compactos */}
-      <section className="border-b border-white/10 px-8 py-8 md:px-16 md:py-28">
-        <div className="mx-auto max-w-7xl">
-          <div className="mb-6 grid gap-10 md:mb-20 md:grid-cols-[1.05fr_0.95fr] md:items-center md:gap-16">
-            {/* Foto — só no desktop, preenche o espaço vazio ao lado do texto */}
-            <div className="relative hidden aspect-[4/5] overflow-hidden rounded-[20px] md:block">
-              <Image
-                src="/images/services-snow.jpg"
-                alt="Esqui de luxo com vista para o Monte Yotei, em Niseko"
-                fill
-                sizes="(max-width: 768px) 0px, 50vw"
-                className="object-cover object-center"
-              />
-            </div>
-
-            <div>
-              <p className="mb-6 text-xs uppercase tracking-[0.3em] text-white/45 md:tracking-[0.45em]">
-                Formatos de serviço
-              </p>
-
-              <h2 className={`${display.className} text-4xl font-medium leading-tight md:text-5xl`}>
-                Três níveis de presença. Uma mesma curadoria.
-              </h2>
-
-              <p className="mt-6 max-w-xl text-base font-light leading-8 text-white/60 md:text-lg">
-                O nível de execução e acompanhamento varia conforme o formato escolhido. O padrão de curadoria, o conhecimento de destino e o acesso à rede local são os mesmos em todos.
-              </p>
-
-              <p className="mt-6 hidden max-w-xl rounded-full border border-white/20 px-6 py-3 text-center text-xs uppercase tracking-[0.25em] text-white/70 md:block md:tracking-[0.3em]">
-                Para manter o padrão de atendimento, a Alpinea aceita um número limitado de novos clientes por temporada.
-              </p>
-            </div>
-          </div>
-
-          <div className="relative -mx-8 md:mx-0">
-            <div
-              ref={tiersScrollRef}
-              className="flex gap-6 overflow-x-auto px-8 pt-4 pb-2 snap-x snap-mandatory scroll-pl-8 [&::-webkit-scrollbar]:hidden md:grid md:grid-cols-3 md:gap-8 md:overflow-visible md:px-0 md:pt-0 md:pb-0"
-            >
-            {tiers.map((tier) => (
-              <div
-                key={tier.title}
-                className={`relative flex w-[78vw] flex-shrink-0 snap-start [scroll-snap-stop:always] flex-col rounded-[20px] border px-6 py-8 md:w-auto md:flex-shrink md:px-10 md:py-12 ${
-                  tier.highlighted
-                    ? "border-white/15 bg-white/[0.06]"
-                    : "border-white/10 bg-black"
-                }`}
-              >
-                {tier.featured && (
-                  <span className="absolute -top-3 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full bg-gradient-to-r from-[#E94332] via-[#D96A2E] to-[#C9A03A] px-4 py-1 text-[10px] font-medium uppercase tracking-[0.25em] text-black">
-                    Mais completo
-                  </span>
-                )}
-
-                <p className="mb-4 text-xs uppercase tracking-[0.4em] text-white/40">
-                  {tier.label}
-                </p>
-
-                <h3 className="text-2xl font-light text-white md:text-3xl">
-                  {tier.title}
-                </h3>
-
-                <p className="mt-6 text-sm font-light leading-7 text-white/55">
-                  {tier.details}
-                </p>
-              </div>
-            ))}
-            </div>
-            <CarouselNextArrow targetRef={tiersScrollRef} />
-          </div>
-          <CarouselDots targetRef={tiersScrollRef} count={tiers.length} />
-
-        </div>
-      </section>
-
-      {/* PRESENÇA DIGITAL — escondida no mobile: links de Instagram/YouTube movidos pro rodapé para não perder o acesso, mas sem custar uma tela inteira */}
-      <section className="hidden border-b border-white/10 px-8 py-10 md:block md:px-16 md:py-28">
-        <div className="mx-auto grid max-w-7xl gap-10 md:grid-cols-[0.9fr_1.1fr] md:items-start md:gap-16">
-          <div className="md:sticky md:top-24">
-            <p className="mb-6 text-xs uppercase tracking-[0.3em] text-white/45 md:tracking-[0.45em]">
-              Presença digital
-            </p>
-
-            <h2 className={`${display.className} text-4xl font-medium leading-tight md:text-6xl`}>
-              Conheça mais sobre destinos, hotéis, restaurantes e atrações.
-            </h2>
-
-            <p className="mt-8 text-lg font-light leading-9 text-white/68">
-              Acompanhe a Alpinea no Instagram e YouTube para ver uma leitura real do Japão: gastronomia, bairros, hotéis, experiências e bastidores de curadoria.
-            </p>
-
-            <div className="mt-10 flex flex-wrap gap-4">
-              <a
-                href="https://www.instagram.com/alpinea.private"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="border border-white/20 px-6 py-4 text-xs uppercase tracking-[0.3em] text-white/75 transition hover:border-white hover:text-white"
-              >
-                Instagram
-              </a>
-
-              <a
-                href="https://www.youtube.com/@alpinea.private"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="border border-white/20 px-6 py-4 text-xs uppercase tracking-[0.3em] text-white/75 transition hover:border-white hover:text-white"
-              >
-                YouTube
-              </a>
-            </div>
-          </div>
-
-          <div className="hidden flex-col gap-6 md:flex">
-            <div className="overflow-hidden rounded-[24px] bg-white/5">
-              <Image
-                src="/images/youtube-feed.png"
-                alt="Feed do YouTube Alpinea Private"
-                width={1332}
-                height={1181}
-                sizes="(max-width: 768px) 100vw, 50vw"
-                className="h-auto w-full object-cover object-top"
-              />
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* CONTATO */}
+      {/* 5. CONTATO */}
       <section id="contact" className="bg-white px-8 py-14 text-black md:px-16 md:py-28">
         <div className="mx-auto max-w-4xl text-center">
           <p className="mb-6 text-xs uppercase tracking-[0.3em] text-black/45 md:tracking-[0.45em]">
@@ -819,11 +393,11 @@ export default function LandingPage() {
           </p>
 
           <h2 className={`${display.className} text-4xl font-medium leading-tight md:text-6xl`}>
-            Comece sua jornada no Japão.
+            Comece a lua de mel de vocês no Japão.
           </h2>
 
           <p className="mx-auto mt-6 max-w-2xl text-base leading-8 text-black/60 md:mt-8 md:text-lg">
-            Compartilhe suas datas, preferências e estilo de viagem. A Alpinea cuidará do restante.
+            Compartilhem as datas e o estilo que imaginam para essa viagem. A Alpinea cuida do restante.
           </p>
 
           <p className="mt-4 text-sm font-light text-black/40 md:mt-6">
@@ -846,7 +420,7 @@ export default function LandingPage() {
 
             <div className="max-w-md space-y-3">
               <p className="text-sm leading-relaxed text-white/50">
-                Curadoria privada de experiências, gastronomia e lifestyle no Japão.
+                Curadoria privada de lua de mel, gastronomia e lifestyle no Japão.
               </p>
 
               <p className="text-xs text-white/30">
@@ -857,9 +431,7 @@ export default function LandingPage() {
                 <a href="/legal" className="transition hover:text-white/60">
                   Termos e Condições
                 </a>
-
                 <span>·</span>
-
                 <a href="/privacy" className="transition hover:text-white/60">
                   Política de Privacidade
                 </a>
@@ -871,49 +443,14 @@ export default function LandingPage() {
             <a href="/" className="transition hover:text-white">
               Início
             </a>
-
-            <a href="/services" className="transition hover:text-white">
-              Serviços
-            </a>
-
-            <a href="/gastro" className="transition hover:text-white">
-              Restaurantes
-            </a>
-
-            <a href="/guia" className="transition hover:text-white">
-              Compras
-            </a>
-
-            <a href="/preview" className="transition hover:text-white">
-              Roteiro
-            </a>
-
             <a href="#contact" className="transition hover:text-white">
               Contato
-            </a>
-
-            <a
-              href="https://www.instagram.com/alpinea.private"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="transition hover:text-white md:hidden"
-            >
-              Instagram
-            </a>
-
-            <a
-              href="https://www.youtube.com/@alpinea.private"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="transition hover:text-white md:hidden"
-            >
-              YouTube
             </a>
           </nav>
         </div>
       </footer>
 
-      {/* CTA FIXO MOBILE — abre o formulário direto, sem rolar/redirecionar */}
+      {/* CTA FIXO MOBILE */}
       <div
         className="fixed inset-x-0 bottom-0 z-40 border-t border-white/10 bg-black/95 px-6 pt-3 backdrop-blur-xl md:hidden"
         style={{ paddingBottom: "calc(0.75rem + env(safe-area-inset-bottom))" }}
