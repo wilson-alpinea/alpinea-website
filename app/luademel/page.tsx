@@ -14,6 +14,7 @@ declare global {
 const display = Bodoni_Moda({
   subsets: ["latin"],
   weight: ["400", "500", "600"],
+  style: ["normal", "italic"],
 });
 
 // Seta de "ver mais" para os carrosséis horizontais do mobile.
@@ -519,9 +520,18 @@ export default function LuaDeMelLandingPage() {
       </section>
 
       {/* PONTE — frase de efeito antes do CTA final */}
-      <section className="border-b border-white/10 bg-black px-8 py-16 md:px-16 md:py-24">
-        <p className={`${display.className} mx-auto max-w-3xl text-center text-2xl italic font-light leading-snug text-white/80 md:text-4xl`}>
-          "Algumas viagens mudam a maneira como lembramos um lugar."
+      <section className="relative border-b border-white/10 overflow-hidden px-8 py-24 md:px-16 md:py-40">
+        <Image
+          src="/images/shirakawago.jpg"
+          alt="Vilarejo histórico de Shirakawa-go entre montanhas verdes"
+          fill
+          sizes="100vw"
+          className="object-cover object-center"
+        />
+        <div className="absolute inset-0 bg-black/65" />
+
+        <p className={`${display.className} relative z-10 mx-auto max-w-3xl text-center text-2xl italic font-light leading-snug text-white/90 md:text-4xl`}>
+          "Algumas viagens não ficam só na memória — viram parte da história de vocês."
         </p>
       </section>
 
