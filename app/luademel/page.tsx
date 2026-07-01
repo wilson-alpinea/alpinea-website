@@ -164,19 +164,19 @@ export default function LuaDeMelLandingPage() {
   const honeymoonJourney = [
     {
       title: "Imaginem chegar ao Japão sabendo exatamente onde vale a pena estar.",
-      text: "Não porque alguém decidiu por vocês. Mas porque cada decisão da viagem foi construída com base em anos vivendo o país.",
+      text: "Não porque alguém decidiu por vocês, mas porque cada escolha foi construída com base em anos vivendo o país.",
       image: "/images/amanemu.png",
       alt: "Vista de um ryokan de luxo ao entardecer, com mesa de chá voltada para a baía",
     },
     {
       title: "Na lua de mel, tempo é precioso — e cada escolha tem um motivo.",
-      text: "Cada manhã, restaurante, hotel e deslocamento já fazem parte de uma jornada pensada para o ritmo de vocês. Não escolhemos porque aparece em listas da internet — escolhemos porque conhecemos o chef, o momento certo e o que fará sentido para vocês dois.",
+      text: "Cada manhã, restaurante e deslocamento já fazem parte de uma jornada pensada para o ritmo de vocês dois.",
       image: "/images/mizukaze.jpg",
       alt: "Trem de luxo japonês percorrendo a costa entre o mar e as montanhas",
     },
     {
       title: "Um roteiro que elimina decisões.",
-      text: "Quando vocês chegarem ao Japão, não precisarão passar horas pesquisando o que fazer no dia seguinte. Cada dia já foi cuidadosamente pensado para equilibrar descobertas, descanso e experiências que realmente merecem o tempo de vocês.",
+      text: "Vocês não vão passar horas pesquisando o que fazer no dia seguinte. Cada dia já foi pensado para equilibrar descobertas, descanso e experiência.",
       image: "/images/fuji.JPG",
       alt: "Monte Fuji ao entardecer refletido no lago",
     },
@@ -192,8 +192,8 @@ export default function LuaDeMelLandingPage() {
       text: "Operação própria no Japão, com atendimento direto e conhecimento de bairros, hotéis e restaurantes fora do óbvio.",
     },
     {
-      title: "Curadoria para casais",
-      text: "Cada roteiro é desenhado em torno do ritmo de vocês dois — não de um grupo, não de uma agenda genérica.",
+      title: "Lua de mel no Japão por especialistas",
+      text: "Nada de empresas que oferecem lua de mel para centenas de destinos com baixo conhecimento e roteiros genéricos — somos 100% dedicados ao Japão para o público brasileiro.",
     },
   ];
 
@@ -267,19 +267,9 @@ export default function LuaDeMelLandingPage() {
               Não existe segunda chance para uma primeira lua de mel.
             </h2>
 
-            <p className="mt-5 max-w-2xl text-base font-light leading-8 text-white/60 md:mt-7 md:text-lg md:leading-9">
+            <p className="mt-5 max-w-none text-base font-light leading-8 text-white/60 md:mt-7 md:text-lg md:leading-9">
               Durante algumas semanas, vocês terão apenas uma responsabilidade: estar presentes um para o outro. O restante — hotéis, reservas, logística, deslocamentos e cada detalhe da viagem — já terá sido cuidadosamente planejado antes mesmo do embarque.
             </p>
-          </div>
-
-          {/* CTA intermediário — só desktop, no mobile a barra fixa já cumpre esse papel */}
-          <div className="mb-10 hidden md:mb-16 md:flex">
-            <ContactCTA
-              mode="single"
-              channel="email"
-              label="Iniciar a curadoria de vocês"
-              buttonClassName="border border-white/25 px-8 py-3 text-xs uppercase tracking-[0.3em] text-white transition hover:border-white/60 hover:bg-white hover:text-black"
-            />
           </div>
 
           <div className="relative -mx-8 md:mx-0">
@@ -310,21 +300,21 @@ export default function LuaDeMelLandingPage() {
       {/* 3. COMO SERÁ A LUA DE MEL DE VOCÊS */}
       <section className="border-b border-white/10 px-8 py-14 md:px-16 md:py-28">
         <div className="mx-auto max-w-7xl">
-          <p className="mb-14 text-xs uppercase tracking-[0.3em] text-white/40 md:mb-24 md:tracking-[0.45em]">
+          <h2 className={`${display.className} mb-10 max-w-3xl text-3xl font-medium leading-tight text-white md:mb-20 md:text-5xl`}>
             Como será a lua de mel de vocês
-          </p>
+          </h2>
 
-          <div className="space-y-16 md:space-y-32">
+          <div className="space-y-10 md:space-y-16">
             {honeymoonJourney.map((item) => (
               <div
                 key={item.title}
-                className="grid gap-8 border-t border-white/10 pt-10 md:grid-cols-2 md:items-center md:gap-16 md:pt-0 md:border-t-0"
+                className="grid gap-6 border-t border-white/10 pt-8 md:grid-cols-2 md:items-center md:gap-16 md:pt-0 md:border-t-0"
               >
                 <div>
-                  <h3 className={`${display.className} text-2xl font-medium leading-tight text-white md:text-4xl`}>
+                  <h3 className={`${display.className} text-xl font-medium leading-tight text-white md:text-3xl`}>
                     {item.title}
                   </h3>
-                  <p className="mt-5 max-w-md text-base font-light leading-8 text-white/60 md:mt-7">
+                  <p className="mt-4 max-w-md text-sm font-light leading-7 text-white/60 md:mt-5 md:text-base md:leading-8">
                     {item.text}
                   </p>
                 </div>
@@ -349,20 +339,9 @@ export default function LuaDeMelLandingPage() {
       {/* 4. PROVA REAL — a curadoria em ação */}
       <section className="border-b border-white/10 px-8 py-14 md:px-16 md:py-28">
         <div className="mx-auto max-w-7xl">
-          <p className="mb-6 text-xs uppercase tracking-[0.3em] text-white/30 md:mb-10 md:tracking-[0.45em]">
-            A curadoria em ação
+          <p className="mb-10 text-xs uppercase tracking-[0.3em] text-white/30 md:mb-16 md:tracking-[0.45em]">
+            Curadoria alinhada ao melhor da tecnologia
           </p>
-
-          {/* Foto de hospedagem — prova de padrão */}
-          <div className="relative mb-10 aspect-[4/3] overflow-hidden rounded-[20px] md:mb-20 md:aspect-[16/9]">
-            <Image
-              src="/images/peninsula3.jpg"
-              alt="Hospedagem de luxo para lua de mel no Japão"
-              fill
-              sizes="100vw"
-              className="object-cover object-center"
-            />
-          </div>
 
           {/* Dashboard da viagem */}
           <div className="grid gap-10 md:grid-cols-2 md:items-center md:gap-16">
@@ -376,9 +355,27 @@ export default function LuaDeMelLandingPage() {
               </p>
             </div>
 
-            <div className="flex justify-center">
+            <div className="relative isolate flex justify-center">
+              {/* Glow ambiente atrás do celular */}
               <div
-                className="group relative w-[260px] cursor-zoom-in rounded-[44px] border border-white/15 bg-black p-4 shadow-2xl"
+                aria-hidden
+                className="pointer-events-none absolute left-1/2 top-1/2 -z-20 h-[125%] w-[150%] -translate-x-1/2 -translate-y-1/2 rounded-[3rem] opacity-70 blur-[100px]"
+                style={{
+                  background:
+                    "radial-gradient(ellipse at center, rgba(25,70,150,0.20) 0%, rgba(16,42,108,0.14) 36%, rgba(9,18,46,0.08) 55%, transparent 76%)",
+                }}
+              />
+              <div
+                aria-hidden
+                className="pointer-events-none absolute left-1/2 top-1/2 -z-10 h-[112%] w-[130%] -translate-x-1/2 -translate-y-1/2 rounded-[2.5rem] opacity-45 blur-[32px]"
+                style={{
+                  background:
+                    "linear-gradient(135deg, rgba(75,42,128,0.18), rgba(20,68,145,0.22) 48%, rgba(0,0,0,0) 78%)",
+                }}
+              />
+
+              <div
+                className="group relative z-10 w-[260px] cursor-zoom-in rounded-[44px] border border-white/15 bg-black p-4 shadow-2xl"
                 onClick={() =>
                   setLightbox({
                     src: "/images/dashmobile.jpg",
