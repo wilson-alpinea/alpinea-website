@@ -16,6 +16,25 @@ export const metadata = {
 };
 
 export default function RoteirosAdsPage() {
+  const whyAlpinea = [
+    {
+      title: "+12 anos no Japão",
+      text: "Mais de uma década de relações locais — o tipo de acesso que não se compra, se constrói.",
+    },
+    {
+      title: "Presença real, sem intermediários",
+      text: "Operação própria no Japão, com atendimento direto e conhecimento de bairros, hotéis e restaurantes fora do óbvio — sem terceirizar sua viagem, e sem expor os detalhes dela.",
+    },
+    {
+      title: "Roteiros no Japão por especialistas",
+      text: "Nada de empresas que oferecem roteiros para centenas de destinos com baixo conhecimento e roteiros genéricos — somos 100% dedicados ao Japão para o público brasileiro.",
+    },
+    {
+      title: "Referência na conexão Brasil–Japão",
+      text: "Entre os 3 maiores emissores de passagens aéreas dessa rota no mundo, unimos conhecimento operacional à curadoria de experiências privadas.",
+    },
+  ];
+
   return (
     <main className="min-h-screen bg-black pb-16 text-white md:pb-0">
       {/* ── HEADER MINIMALISTA — sem menu, foco total em conversão ── */}
@@ -735,6 +754,59 @@ export default function RoteirosAdsPage() {
             </div>
           </div>
         </div>
+      </section>
+
+      {/* ── POR QUE A ALPINEA ── */}
+      <section className="border-t border-white/10 bg-black px-6 py-14 md:px-16 md:py-28">
+        <div className="mx-auto max-w-7xl">
+          <div className="mb-10 max-w-3xl md:mb-16">
+            <p className="mb-6 text-xs uppercase tracking-[0.3em] text-white/40 md:tracking-[0.45em]">
+              Por que a Alpinea
+            </p>
+            <h2
+              className={`${display.className} text-3xl font-medium leading-tight md:text-5xl`}
+            >
+              O acesso no Japão não se compra. Se constrói ao longo de anos.
+            </h2>
+          </div>
+
+          <CarouselScroller itemCount={whyAlpinea.length}>
+            {whyAlpinea.map((item) => (
+              <div
+                key={item.title}
+                className="w-[72vw] flex-shrink-0 snap-start [scroll-snap-stop:always] border-t border-white/15 pt-6 md:w-auto md:flex-shrink"
+              >
+                <h3
+                  className={`${display.className} text-lg font-medium text-white md:text-xl`}
+                >
+                  {item.title}
+                </h3>
+                <p className="mt-3 text-sm font-light leading-7 text-white/50">
+                  {item.text}
+                </p>
+              </div>
+            ))}
+          </CarouselScroller>
+        </div>
+      </section>
+
+      {/* ── PONTE — frase de efeito antes do CTA final ── */}
+      <section className="relative flex min-h-[380px] items-center overflow-hidden border-t border-white/10 px-8 py-24 md:min-h-[560px] md:px-16 md:py-40">
+        <Image
+          src="/images/shirakawago.jpg"
+          alt="Vilarejo histórico de Shirakawa-go entre montanhas verdes"
+          fill
+          sizes="100vw"
+          className="object-cover object-center"
+        />
+        <div className="absolute inset-0 bg-black/65" />
+
+        <p
+          className={`${display.className} relative z-10 mx-auto max-w-3xl text-center text-2xl italic font-light leading-snug text-white/90 md:text-4xl`}
+        >
+          "Algumas viagens não ficam só na memória — viram parte da história
+          de vocês."
+        </p>
       </section>
 
       {/* ── CONTATO ── */}
