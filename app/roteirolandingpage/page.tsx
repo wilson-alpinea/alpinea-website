@@ -72,8 +72,8 @@ export default function RoteirosAdsPage() {
       <section className="relative h-[620px] min-h-[620px] overflow-hidden bg-black md:h-auto md:min-h-[820px]">
         <div className="absolute inset-0 mx-auto max-w-[1800px]">
           <Image
-            src="/images/ozenuma.jpeg"
-            alt="Parque Nacional de Ozegahara"
+            src="/images/niseko-intuition.png"
+            alt="Lounge do Intuition Hotel em Niseko, com vista para o Monte Yotei"
             fill
             priority
             sizes="100vw"
@@ -81,7 +81,7 @@ export default function RoteirosAdsPage() {
           />
 
           <div className="absolute right-5 top-24 z-10 rounded-full border border-white/15 bg-black/85 px-4 py-2 text-[9px] uppercase tracking-[0.22em] text-white shadow-[0_12px_40px_rgba(0,0,0,0.35)] md:right-12 md:top-28 md:text-[11px]">
-            Parque Nacional de Ozegahara
+            Intuition Hotel, Niseko
           </div>
 
           <div
