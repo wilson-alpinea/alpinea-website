@@ -308,7 +308,7 @@ export default function LuaDeMelLandingPage() {
             sizes="100vw"
             className="object-cover object-top"
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-black/60 to-black" />
+          <div className="absolute inset-0 bg-gradient-to-b from-black/5 via-black/35 to-black/75" />
         </div>
 
         <div className="px-8 pb-14 pt-10 md:px-16 md:pb-28 md:pt-16">
