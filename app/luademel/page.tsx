@@ -300,18 +300,18 @@ export default function LuaDeMelLandingPage() {
       {/* 3. COMO SERÁ A LUA DE MEL DE VOCÊS */}
       <section className="border-b border-white/10">
         {/* Banner full-width — degradê para o preto do fundo do site */}
-        <div className="relative h-[260px] w-full overflow-hidden md:h-[480px]">
+        <div className="relative h-[160px] w-full overflow-hidden md:h-[300px]">
           <Image
             src="/images/osaka-castle.png"
             alt="Castelo de Osaka iluminado ao entardecer"
             fill
             sizes="100vw"
-            className="object-cover object-center"
+            className="object-cover object-top"
           />
           <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-black/60 to-black" />
         </div>
 
-        <div className="px-8 py-14 md:px-16 md:py-28">
+        <div className="px-8 pb-14 pt-10 md:px-16 md:pb-28 md:pt-16">
           <div className="mx-auto max-w-7xl">
             <h2 className={`${display.className} mb-10 max-w-3xl text-3xl font-medium leading-tight text-white md:mb-20 md:text-5xl`}>
               Como será a lua de mel de vocês
