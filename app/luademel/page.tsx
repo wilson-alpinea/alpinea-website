@@ -197,20 +197,20 @@ export default function LandingPage() {
 
   const whyJapan = [
     {
-      title: "Tempo para vocês",
-      text: "Hotéis tranquilos, ryokans reservados e experiências pensadas para que vocês aproveitem a companhia um do outro, longe das multidões.",
+      title: "Intimidade",
+      text: "Ryokans com onsen privativo, jantares reservados só para dois e hospedagens onde a presença de outros hóspedes é a exceção, não a regra.",
     },
     {
-      title: "Tranquilidade",
-      text: "A liberdade de caminhar à noite, explorar novos bairros e viver cada dia sem preocupações desnecessárias.",
+      title: "Exclusividade",
+      text: "Acesso a endereços que não aparecem em roteiros comuns — mesas, hotéis e experiências reservadas a poucos casais por ano.",
     },
     {
-      title: "Descobertas à mesa",
-      text: "De balcões de sushi intimistas a menus degustação inesquecíveis, cada refeição pode se tornar uma das grandes lembranças da viagem.",
+      title: "Alta gastronomia",
+      text: "Balcões de sushi com uma única fileira de lugares e menus degustação assinados por chefs que raramente recebem estrangeiros.",
     },
     {
-      title: "Um novo ritmo",
-      text: "Jardins, montanhas, onsens e templos onde o silêncio faz parte da experiência e o tempo parece desacelerar.",
+      title: "Serenidade",
+      text: "Jardins, montanhas e templos vividos em ritmo próprio, sem filas, sem pressa — o silêncio como parte do luxo.",
     },
   ];
 
@@ -319,37 +319,29 @@ export default function LandingPage() {
       {/* POR QUE JAPÃO */}
       <section id="overview" className="border-b border-white/10 px-8 py-8 md:px-16 md:py-28">
         <div className="mx-auto max-w-7xl">
-          <div className="mb-6 max-w-5xl md:mb-16">
-            <p className="mb-6 text-xs uppercase tracking-[0.3em] text-white/40 md:tracking-[0.45em]">
-              Por que Japão
-            </p>
-
-            <h2 className={`${display.className} text-3xl font-medium leading-tight md:text-6xl`}>
+          <div className="mb-10 max-w-4xl md:mb-16">
+            <h2 className={`${display.className} text-2xl font-medium leading-tight md:text-4xl`}>
               Algumas viagens ficam nas fotografias.
               <br />
               Outras permanecem para toda a vida.
             </h2>
-
-            <p className="mt-8 hidden max-w-3xl text-lg font-light leading-9 text-white/68 md:block">
-              Poucos destinos no mundo combinam privacidade, segurança, gastronomia de referência e paisagens que convidam ao silêncio — tudo na mesma viagem.
-            </p>
           </div>
 
           <div className="relative -mx-8 md:mx-0">
             <div
               ref={whyJapanScrollRef}
-              className="flex gap-6 overflow-x-auto px-8 pb-2 snap-x snap-mandatory scroll-pl-8 [&::-webkit-scrollbar]:hidden md:grid md:grid-cols-4 md:gap-8 md:overflow-visible md:px-0 md:pb-0"
+              className="flex gap-6 overflow-x-auto px-8 pb-2 snap-x snap-mandatory scroll-pl-8 [&::-webkit-scrollbar]:hidden md:grid md:grid-cols-4 md:gap-10 md:overflow-visible md:px-0 md:pb-0"
             >
             {whyJapan.map((item) => (
               <div
                 key={item.title}
-                className="w-[72vw] flex-shrink-0 snap-start [scroll-snap-stop:always] rounded-[20px] border border-white/10 bg-white/[0.03] px-6 py-8 md:w-auto md:flex-shrink"
+                className="w-[72vw] flex-shrink-0 snap-start [scroll-snap-stop:always] border-t border-white/15 pt-6 md:w-auto md:flex-shrink"
               >
-                <h3 className="text-xl font-light text-white md:text-2xl">
+                <h3 className={`${display.className} text-lg font-medium text-white md:text-xl`}>
                   {item.title}
                 </h3>
 
-                <p className="mt-4 text-sm font-light leading-7 text-white/55">
+                <p className="mt-3 text-sm font-light leading-7 text-white/50">
                   {item.text}
                 </p>
               </div>
