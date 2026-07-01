@@ -243,8 +243,8 @@ export default function LuaDeMelLandingPage() {
           </a>
         </header>
 
-        <div className="relative z-10 flex h-full flex-col items-center justify-center px-6 pt-14 text-center md:justify-end md:pb-28">
-          <p className={`${display.className} mb-2 text-[10px] uppercase tracking-[0.3em] text-white/75 md:mb-7 md:text-base md:tracking-[0.5em]`}>
+        <div className="relative z-10 flex h-full flex-col items-center justify-center px-6 pt-32 text-center md:justify-end md:pb-28">
+          <p className={`${display.className} mb-3 text-xs uppercase tracking-[0.3em] text-white/75 md:mb-7 md:text-base md:tracking-[0.5em]`}>
             Lua de Mel no Japão
           </p>
 
