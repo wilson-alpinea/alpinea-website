@@ -217,7 +217,7 @@ export default function LuaDeMelLandingPage() {
       )}
 
       {/* 1. HERO */}
-      <section className="relative h-[58svh] min-h-[500px] overflow-hidden md:h-[max(60vh,32vw)] md:max-h-[920px] md:min-h-[560px]">
+      <section className="relative h-[64svh] min-h-[560px] overflow-hidden md:h-[max(60vh,32vw)] md:max-h-[920px] md:min-h-[560px]">
         <Image
           src="/images/lua-de-mel-hero.png"
           alt="Casal de mãos dadas sob as cerejeiras em flor no Japão"
@@ -243,19 +243,19 @@ export default function LuaDeMelLandingPage() {
           </a>
         </header>
 
-        <div className="relative z-10 flex h-full flex-col items-center justify-center px-6 pt-32 text-center md:justify-end md:pb-28">
-          <p className={`${display.className} mb-3 text-xs uppercase tracking-[0.3em] text-white/75 md:mb-7 md:text-base md:tracking-[0.5em]`}>
+        <div className="relative z-10 flex h-full flex-col items-center justify-center px-6 pt-48 text-center md:justify-end md:pb-28">
+          <p className={`${display.className} mb-3 text-sm uppercase tracking-[0.3em] text-white/75 md:mb-7 md:text-base md:tracking-[0.5em]`}>
             Lua de Mel no Japão
           </p>
 
-          <h1 className={`${display.className} max-w-full text-xl font-medium leading-[1.25] tracking-tight md:max-w-4xl md:text-6xl`}>
+          <h1 className={`${display.className} max-w-full text-[1.65rem] font-medium leading-[1.25] tracking-tight md:max-w-4xl md:text-6xl`}>
             O começo da próxima história de vocês merece{" "}
             <span className="bg-gradient-to-r from-[#E94332] via-[#D96A2E] to-[#C9A03A] bg-clip-text text-transparent">
               uma viagem inesquecível.
             </span>
           </h1>
 
-          <p className="mt-3 text-[11px] font-light text-white/45 md:mt-8 md:text-sm">
+          <p className="mt-3 text-xs font-light text-white/45 md:mt-8 md:text-sm">
             Agenda limitada para o segundo semestre de 2026.
           </p>
         </div>
