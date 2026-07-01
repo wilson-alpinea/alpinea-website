@@ -239,10 +239,14 @@ export default function LuaDeMelLandingPage() {
         </header>
 
         <div className="relative z-10 flex h-full flex-col items-center justify-center px-6 pt-20 text-center md:justify-end md:pb-28">
+          <p className="mb-4 text-xs uppercase tracking-[0.35em] text-white/55 md:mb-6 md:tracking-[0.45em]">
+            Lua de Mel no Japão
+          </p>
+
           <h1 className={`${display.className} max-w-4xl text-4xl font-medium leading-[1.1] tracking-tight md:text-6xl`}>
             O começo da próxima história de vocês merece{" "}
             <span className="bg-gradient-to-r from-[#E94332] via-[#D96A2E] to-[#C9A03A] bg-clip-text text-transparent">
-              mais do que um roteiro.
+              o roteiro perfeito.
             </span>
           </h1>
         </div>
@@ -276,7 +280,7 @@ export default function LuaDeMelLandingPage() {
             </h2>
 
             <p className="mt-5 max-w-none text-base font-light leading-8 text-white/60 md:mt-7 md:text-lg md:leading-9">
-              Durante algumas semanas, vocês terão apenas uma responsabilidade: estar presentes um para o outro. O restante — hotéis, reservas, logística, deslocamentos e cada detalhe da viagem — já terá sido cuidadosamente planejado antes mesmo do embarque.
+              Sua única responsabilidade será desfrutar da companhia um do outro. Reserva de hotéis, alta gastronomia, logística e conexões exclusivas: nossa operação desenha o invisível para que sua experiência seja impecável.
             </p>
           </div>
 
