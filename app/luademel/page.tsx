@@ -348,7 +348,7 @@ export default function LuaDeMelLandingPage() {
               mode="single"
               channel="email"
               label="Entrar em Contato"
-              buttonClassName="border border-white/50 bg-black/35 px-10 py-4 text-sm uppercase tracking-[0.35em] text-white backdrop-blur-sm transition hover:border-white hover:bg-white hover:text-black md:px-12 md:py-5 md:text-base"
+              buttonClassName="bg-white px-10 py-4 text-sm uppercase tracking-[0.35em] text-black shadow-[0_8px_32px_rgba(0,0,0,0.4)] transition hover:bg-white/90 md:px-12 md:py-5 md:text-base"
             />
           </div>
         </div>
@@ -410,7 +410,7 @@ export default function LuaDeMelLandingPage() {
       </section>
 
       {/* 4. PROVA REAL — a curadoria em ação */}
-      <section className="border-b border-white/10 px-8 py-14 md:px-16 md:py-28">
+      <section className="border-b border-white/10 bg-[#050505] px-8 py-14 md:px-16 md:py-28">
         <div className="mx-auto max-w-7xl">
           <p className="mb-10 text-xs uppercase tracking-[0.3em] text-white/30 md:mb-16 md:tracking-[0.45em]">
             Cada detalhe da viagem, disponível no celular.
@@ -520,7 +520,7 @@ export default function LuaDeMelLandingPage() {
       </section>
 
       {/* PONTE — frase de efeito antes do CTA final */}
-      <section className="relative border-b border-white/10 overflow-hidden px-8 py-24 md:px-16 md:py-40">
+      <section className="relative flex min-h-[380px] items-center overflow-hidden border-b border-white/10 px-8 py-24 md:min-h-[560px] md:px-16 md:py-40">
         <Image
           src="/images/shirakawago.jpg"
           alt="Vilarejo histórico de Shirakawa-go entre montanhas verdes"
