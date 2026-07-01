@@ -203,6 +203,10 @@ export default function LuaDeMelLandingPage() {
       title: "Lua de mel no Japão por especialistas",
       text: "Nada de empresas que oferecem lua de mel para centenas de destinos com baixo conhecimento e roteiros genéricos — somos 100% dedicados ao Japão para o público brasileiro.",
     },
+    {
+      title: "Referência na conexão Brasil–Japão",
+      text: "Entre os 3 maiores emissores de passagens aéreas dessa rota no mundo, unimos conhecimento operacional à curadoria de experiências privadas.",
+    },
   ];
 
   return (
@@ -239,16 +243,20 @@ export default function LuaDeMelLandingPage() {
         </header>
 
         <div className="relative z-10 flex h-full flex-col items-center justify-center px-6 pt-20 text-center md:justify-end md:pb-28">
-          <p className="mb-4 text-xs uppercase tracking-[0.35em] text-white/55 md:mb-6 md:tracking-[0.45em]">
+          <p className={`${display.className} mb-5 text-sm uppercase tracking-[0.4em] text-white/75 md:mb-7 md:text-base md:tracking-[0.5em]`}>
             Lua de Mel no Japão
           </p>
 
           <h1 className={`${display.className} max-w-4xl text-4xl font-medium leading-[1.1] tracking-tight md:text-6xl`}>
             O começo da próxima história de vocês merece{" "}
             <span className="bg-gradient-to-r from-[#E94332] via-[#D96A2E] to-[#C9A03A] bg-clip-text text-transparent">
-              o roteiro perfeito.
+              uma viagem inesquecível.
             </span>
           </h1>
+
+          <p className="mt-6 text-xs font-light text-white/45 md:mt-8 md:text-sm">
+            Agenda limitada para o segundo semestre de 2026.
+          </p>
         </div>
 
         <a
@@ -339,7 +347,7 @@ export default function LuaDeMelLandingPage() {
               mode="single"
               channel="email"
               label="Entrar em Contato"
-              buttonClassName="border border-white/40 bg-black/30 px-8 py-3 text-xs uppercase tracking-[0.3em] text-white backdrop-blur-sm transition hover:border-white hover:bg-white hover:text-black"
+              buttonClassName="border border-white/50 bg-black/35 px-10 py-4 text-sm uppercase tracking-[0.35em] text-white backdrop-blur-sm transition hover:border-white hover:bg-white hover:text-black md:px-12 md:py-5 md:text-base"
             />
           </div>
         </div>
@@ -404,7 +412,7 @@ export default function LuaDeMelLandingPage() {
       <section className="border-b border-white/10 px-8 py-14 md:px-16 md:py-28">
         <div className="mx-auto max-w-7xl">
           <p className="mb-10 text-xs uppercase tracking-[0.3em] text-white/30 md:mb-16 md:tracking-[0.45em]">
-            Curadoria alinhada ao melhor da tecnologia
+            Cada detalhe da viagem, disponível no celular.
           </p>
 
           {/* Dashboard da viagem */}
@@ -488,7 +496,7 @@ export default function LuaDeMelLandingPage() {
           <div className="relative -mx-8 md:mx-0">
             <div
               ref={whyAlpineaScrollRef}
-              className="flex gap-6 overflow-x-auto px-8 pb-2 snap-x snap-mandatory scroll-pl-8 [&::-webkit-scrollbar]:hidden md:grid md:grid-cols-3 md:gap-10 md:overflow-visible md:px-0 md:pb-0"
+              className="flex gap-6 overflow-x-auto px-8 pb-2 snap-x snap-mandatory scroll-pl-8 [&::-webkit-scrollbar]:hidden md:grid md:grid-cols-4 md:gap-10 md:overflow-visible md:px-0 md:pb-0"
             >
               {whyAlpinea.map((item) => (
                 <div
@@ -508,6 +516,13 @@ export default function LuaDeMelLandingPage() {
           </div>
           <CarouselDots targetRef={whyAlpineaScrollRef} count={whyAlpinea.length} />
         </div>
+      </section>
+
+      {/* PONTE — frase de efeito antes do CTA final */}
+      <section className="border-b border-white/10 bg-black px-8 py-16 md:px-16 md:py-24">
+        <p className={`${display.className} mx-auto max-w-3xl text-center text-2xl italic font-light leading-snug text-white/80 md:text-4xl`}>
+          "Algumas viagens mudam a maneira como lembramos um lugar."
+        </p>
       </section>
 
       {/* 6. CONTATO */}
