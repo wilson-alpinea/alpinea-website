@@ -197,20 +197,20 @@ export default function LandingPage() {
 
   const whyJapan = [
     {
-      title: "Privacidade",
-      text: "Hotéis discretos, ryokans privados e mesas reservadas sem badalação — a lua de mel vivida a dois, sem holofotes.",
+      title: "Tempo para vocês",
+      text: "Hotéis tranquilos, ryokans reservados e experiências pensadas para que vocês aproveitem a companhia um do outro, longe das multidões.",
     },
     {
-      title: "Segurança",
-      text: "Um dos países mais seguros do mundo: ruas tranquilas a qualquer hora e transporte impecável, em qualquer cidade do roteiro.",
+      title: "Tranquilidade",
+      text: "A liberdade de caminhar à noite, explorar novos bairros e viver cada dia sem preocupações desnecessárias.",
     },
     {
-      title: "Gastronomia",
-      text: "Tóquio reúne mais estrelas Michelin do que qualquer outra cidade do mundo — acesso a mesas que não aceitam reservas em inglês.",
+      title: "Descobertas à mesa",
+      text: "De balcões de sushi intimistas a menus degustação inesquecíveis, cada refeição pode se tornar uma das grandes lembranças da viagem.",
     },
     {
-      title: "Paz",
-      text: "Templos centenários, jardins zen e estações que transformam a paisagem — cenário raro para desacelerar juntos.",
+      title: "Um novo ritmo",
+      text: "Jardins, montanhas, onsens e templos onde o silêncio faz parte da experiência e o tempo parece desacelerar.",
     },
   ];
 
@@ -325,7 +325,9 @@ export default function LandingPage() {
             </p>
 
             <h2 className={`${display.className} text-3xl font-medium leading-tight md:text-6xl`}>
-              O destino que reúne tudo o que uma lua de mel precisa ter.
+              Algumas viagens ficam nas fotografias.
+              <br />
+              Outras permanecem para toda a vida.
             </h2>
 
             <p className="mt-8 hidden max-w-3xl text-lg font-light leading-9 text-white/68 md:block">
