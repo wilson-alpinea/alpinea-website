@@ -189,7 +189,7 @@ export default function LuaDeMelLandingPage() {
     },
     {
       title: "Presença real, sem intermediários",
-      text: "Operação própria no Japão, com atendimento direto e conhecimento de bairros, hotéis e restaurantes fora do óbvio.",
+      text: "Operação própria no Japão, com atendimento direto e conhecimento de bairros, hotéis e restaurantes fora do óbvio — sem terceirizar sua viagem, e sem expor os detalhes dela.",
     },
     {
       title: "Lua de mel no Japão por especialistas",
@@ -298,40 +298,54 @@ export default function LuaDeMelLandingPage() {
       </section>
 
       {/* 3. COMO SERÁ A LUA DE MEL DE VOCÊS */}
-      <section className="border-b border-white/10 px-8 py-14 md:px-16 md:py-28">
-        <div className="mx-auto max-w-7xl">
-          <h2 className={`${display.className} mb-10 max-w-3xl text-3xl font-medium leading-tight text-white md:mb-20 md:text-5xl`}>
-            Como será a lua de mel de vocês
-          </h2>
+      <section className="border-b border-white/10">
+        {/* Banner full-width — degradê para o preto do fundo do site */}
+        <div className="relative h-[260px] w-full overflow-hidden md:h-[480px]">
+          <Image
+            src="/images/osaka-castle.png"
+            alt="Castelo de Osaka iluminado ao entardecer"
+            fill
+            sizes="100vw"
+            className="object-cover object-center"
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-black/60 to-black" />
+        </div>
 
-          <div className="space-y-10 md:space-y-16">
-            {honeymoonJourney.map((item) => (
-              <div
-                key={item.title}
-                className="grid gap-6 border-t border-white/10 pt-8 md:grid-cols-2 md:items-center md:gap-16 md:pt-0 md:border-t-0"
-              >
-                <div>
-                  <h3 className={`${display.className} text-xl font-medium leading-tight text-white md:text-3xl`}>
-                    {item.title}
-                  </h3>
-                  <p className="mt-4 max-w-md text-sm font-light leading-7 text-white/60 md:mt-5 md:text-base md:leading-8">
-                    {item.text}
-                  </p>
-                </div>
+        <div className="px-8 py-14 md:px-16 md:py-28">
+          <div className="mx-auto max-w-7xl">
+            <h2 className={`${display.className} mb-10 max-w-3xl text-3xl font-medium leading-tight text-white md:mb-20 md:text-5xl`}>
+              Como será a lua de mel de vocês
+            </h2>
 
-                <div>
-                  <div className="relative aspect-[4/3] overflow-hidden rounded-[20px]">
-                    <Image
-                      src={item.image}
-                      alt={item.alt}
-                      fill
-                      sizes="(max-width: 768px) 100vw, 50vw"
-                      className="object-cover object-center"
-                    />
+            <div className="space-y-10 md:space-y-16">
+              {honeymoonJourney.map((item) => (
+                <div
+                  key={item.title}
+                  className="grid gap-6 border-t border-white/10 pt-8 md:grid-cols-2 md:items-center md:gap-16 md:pt-0 md:border-t-0"
+                >
+                  <div>
+                    <h3 className={`${display.className} text-xl font-medium leading-tight text-white md:text-3xl`}>
+                      {item.title}
+                    </h3>
+                    <p className="mt-4 max-w-md text-sm font-light leading-7 text-white/60 md:mt-5 md:text-base md:leading-8">
+                      {item.text}
+                    </p>
+                  </div>
+
+                  <div>
+                    <div className="relative aspect-[4/3] overflow-hidden rounded-[20px]">
+                      <Image
+                        src={item.image}
+                        alt={item.alt}
+                        fill
+                        sizes="(max-width: 768px) 100vw, 50vw"
+                        className="object-cover object-center"
+                      />
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </div>
       </section>
