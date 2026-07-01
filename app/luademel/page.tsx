@@ -169,16 +169,10 @@ export default function LuaDeMelLandingPage() {
       alt: "Vista de um ryokan de luxo ao entardecer, com mesa de chá voltada para a baía",
     },
     {
-      title: "Na lua de mel, tempo é precioso.",
-      text: "Por isso, cada manhã, restaurante, hotel e deslocamento já fazem parte de uma jornada pensada para o ritmo de vocês.",
+      title: "Na lua de mel, tempo é precioso — e cada escolha tem um motivo.",
+      text: "Cada manhã, restaurante, hotel e deslocamento já fazem parte de uma jornada pensada para o ritmo de vocês. Não escolhemos porque aparece em listas da internet — escolhemos porque conhecemos o chef, o momento certo e o que fará sentido para vocês dois.",
       image: "/images/mizukaze.jpg",
       alt: "Trem de luxo japonês percorrendo a costa entre o mar e as montanhas",
-    },
-    {
-      title: "Cada recomendação tem um motivo.",
-      text: "Não escolhemos restaurantes porque aparecem nas listas da internet. Escolhemos porque conhecemos o chef, entendemos o momento da viagem e sabemos quando aquela experiência fará mais sentido.",
-      image: "/images/amamoto.png",
-      alt: "Sushi de atum premium servido em balcão japonês",
     },
     {
       title: "Um roteiro que elimina decisões.",
@@ -271,14 +265,21 @@ export default function LuaDeMelLandingPage() {
           <div className="mb-10 max-w-4xl md:mb-16">
             <h2 className={`${display.className} text-2xl font-medium leading-snug md:text-4xl`}>
               Não existe segunda chance para uma primeira lua de mel.
-              <br className="hidden md:block" />
-              <span className="block mt-2 md:mt-3">
-                Durante algumas semanas, vocês terão apenas uma responsabilidade: estar presentes um para o outro.
-              </span>
-              <span className="block mt-2 text-xl font-light text-white/60 md:mt-4 md:text-2xl">
-                O restante — hotéis, reservas, logística, deslocamentos e cada detalhe da viagem — já terá sido cuidadosamente planejado antes mesmo do embarque.
-              </span>
             </h2>
+
+            <p className="mt-5 max-w-2xl text-base font-light leading-8 text-white/60 md:mt-7 md:text-lg md:leading-9">
+              Durante algumas semanas, vocês terão apenas uma responsabilidade: estar presentes um para o outro. O restante — hotéis, reservas, logística, deslocamentos e cada detalhe da viagem — já terá sido cuidadosamente planejado antes mesmo do embarque.
+            </p>
+          </div>
+
+          {/* CTA intermediário — só desktop, no mobile a barra fixa já cumpre esse papel */}
+          <div className="mb-10 hidden md:mb-16 md:flex">
+            <ContactCTA
+              mode="single"
+              channel="email"
+              label="Iniciar a curadoria de vocês"
+              buttonClassName="border border-white/25 px-8 py-3 text-xs uppercase tracking-[0.3em] text-white transition hover:border-white/60 hover:bg-white hover:text-black"
+            />
           </div>
 
           <div className="relative -mx-8 md:mx-0">
