@@ -333,6 +333,15 @@ export default function LuaDeMelLandingPage() {
             className="object-cover object-top"
           />
           <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-black/70 to-black" />
+
+          <div className="absolute inset-0 flex items-center justify-center">
+            <ContactCTA
+              mode="single"
+              channel="email"
+              label="Entrar em Contato"
+              buttonClassName="border border-white/40 bg-black/30 px-8 py-3 text-xs uppercase tracking-[0.3em] text-white backdrop-blur-sm transition hover:border-white hover:bg-white hover:text-black"
+            />
+          </div>
         </div>
 
         <div className="px-8 pb-14 pt-10 md:px-16 md:pb-28 md:pt-16">
@@ -343,29 +352,43 @@ export default function LuaDeMelLandingPage() {
 
             <div className="space-y-10 md:space-y-16">
               {honeymoonJourney.map((item) => (
-                <div
-                  key={item.title}
-                  className="grid gap-6 border-t border-white/10 pt-8 md:grid-cols-2 md:items-center md:gap-16 md:pt-0 md:border-t-0"
-                >
-                  <div>
-                    <h3 className={`${display.className} text-xl font-medium leading-tight text-white md:text-3xl`}>
-                      {item.title}
-                    </h3>
-                    <p className="mt-4 max-w-md text-sm font-light leading-7 text-white/60 md:mt-5 md:text-base md:leading-8">
-                      {item.text}
-                    </p>
+                <div key={item.title}>
+                  <div className="grid gap-6 border-t border-white/10 pt-8 md:grid-cols-2 md:items-center md:gap-16 md:pt-0 md:border-t-0">
+                    <div>
+                      <h3 className={`${display.className} text-xl font-medium leading-tight text-white md:text-3xl`}>
+                        {item.title}
+                      </h3>
+                      <p className="mt-4 max-w-md text-sm font-light leading-7 text-white/60 md:mt-5 md:text-base md:leading-8">
+                        {item.text}
+                      </p>
+                    </div>
+
+                    <div>
+                      <div className="relative aspect-[4/3] overflow-hidden rounded-[20px]">
+                        <Image
+                          src={item.image}
+                          alt={item.alt}
+                          fill
+                          sizes="(max-width: 768px) 100vw, 50vw"
+                          className="object-cover object-center"
+                        />
+                      </div>
+                    </div>
                   </div>
 
-                  <div>
-                    <div className="relative aspect-[4/3] overflow-hidden rounded-[20px]">
-                      <Image
-                        src={item.image}
-                        alt={item.alt}
-                        fill
-                        sizes="(max-width: 768px) 100vw, 50vw"
-                        className="object-cover object-center"
-                      />
-                    </div>
+                  <div className="mt-10 flex justify-center md:mt-16">
+                    <svg
+                      className="h-5 w-5 animate-bounce text-white/30"
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="1.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    >
+                      <polyline points="6 9 12 15 18 9" />
+                    </svg>
                   </div>
                 </div>
               ))}
@@ -538,12 +561,40 @@ export default function LuaDeMelLandingPage() {
             </div>
           </div>
 
-          <nav className="flex flex-col gap-3 text-xs uppercase tracking-[0.25em] text-white/40">
+          <nav className="flex flex-col items-start gap-3 text-xs uppercase tracking-[0.25em] text-white/40 md:items-end">
             <a href="/" className="transition hover:text-white">
               Início
             </a>
+            <a href="/services" className="transition hover:text-white">
+              Serviços
+            </a>
+            <a href="/restaurantes" className="transition hover:text-white">
+              Restaurantes
+            </a>
+            <a href="/compras" className="transition hover:text-white">
+              Compras
+            </a>
+            <a href="/roteirolandingpage" className="transition hover:text-white">
+              Roteiro
+            </a>
             <a href="#contact" className="transition hover:text-white">
               Contato
+            </a>
+            <a
+              href="https://www.instagram.com/alpinea.private"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="transition hover:text-white"
+            >
+              Instagram
+            </a>
+            <a
+              href="https://www.youtube.com/@alpinea.private"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="transition hover:text-white"
+            >
+              YouTube
             </a>
           </nav>
         </div>
