@@ -161,6 +161,33 @@ export default function LuaDeMelLandingPage() {
     },
   ];
 
+  const honeymoonJourney = [
+    {
+      title: "Imaginem chegar ao Japão sabendo exatamente onde vale a pena estar.",
+      text: "Não porque alguém decidiu por vocês. Mas porque cada decisão da viagem foi construída com base em anos vivendo o país.",
+      image: "/images/amanemu.png",
+      alt: "Vista de um ryokan de luxo ao entardecer, com mesa de chá voltada para a baía",
+    },
+    {
+      title: "Na lua de mel, tempo é precioso.",
+      text: "Por isso, cada manhã, restaurante, hotel e deslocamento já fazem parte de uma jornada pensada para o ritmo de vocês.",
+      image: "/images/mizukaze.jpg",
+      alt: "Trem de luxo japonês percorrendo a costa entre o mar e as montanhas",
+    },
+    {
+      title: "Cada recomendação tem um motivo.",
+      text: "Não escolhemos restaurantes porque aparecem nas listas da internet. Escolhemos porque conhecemos o chef, entendemos o momento da viagem e sabemos quando aquela experiência fará mais sentido.",
+      image: "/images/amamoto.png",
+      alt: "Sushi de atum premium servido em balcão japonês",
+    },
+    {
+      title: "Um roteiro que elimina decisões.",
+      text: "Quando vocês chegarem ao Japão, não precisarão passar horas pesquisando o que fazer no dia seguinte. Cada dia já foi cuidadosamente pensado para equilibrar descobertas, descanso e experiências que realmente merecem o tempo de vocês.",
+      image: "/images/fuji.JPG",
+      alt: "Monte Fuji ao entardecer refletido no lago",
+    },
+  ];
+
   const whyAlpinea = [
     {
       title: "+12 anos no Japão",
@@ -242,10 +269,15 @@ export default function LuaDeMelLandingPage() {
       <section id="por-que-japao" className="border-b border-white/10 px-8 py-14 md:px-16 md:py-28">
         <div className="mx-auto max-w-7xl">
           <div className="mb-10 max-w-4xl md:mb-16">
-            <h2 className={`${display.className} text-2xl font-medium leading-tight md:text-4xl`}>
-              Algumas viagens ficam nas fotografias.
-              <br />
-              Outras permanecem para toda a vida.
+            <h2 className={`${display.className} text-2xl font-medium leading-snug md:text-4xl`}>
+              Não existe segunda chance para uma primeira lua de mel.
+              <br className="hidden md:block" />
+              <span className="block mt-2 md:mt-3">
+                Durante algumas semanas, vocês terão apenas uma responsabilidade: estar presentes um para o outro.
+              </span>
+              <span className="block mt-2 text-xl font-light text-white/60 md:mt-4 md:text-2xl">
+                O restante — hotéis, reservas, logística, deslocamentos e cada detalhe da viagem — já terá sido cuidadosamente planejado antes mesmo do embarque.
+              </span>
             </h2>
           </div>
 
@@ -274,7 +306,46 @@ export default function LuaDeMelLandingPage() {
         </div>
       </section>
 
-      {/* 3. PROVA REAL — a curadoria em ação */}
+      {/* 3. COMO SERÁ A LUA DE MEL DE VOCÊS */}
+      <section className="border-b border-white/10 px-8 py-14 md:px-16 md:py-28">
+        <div className="mx-auto max-w-7xl">
+          <p className="mb-14 text-xs uppercase tracking-[0.3em] text-white/40 md:mb-24 md:tracking-[0.45em]">
+            Como será a lua de mel de vocês
+          </p>
+
+          <div className="space-y-16 md:space-y-32">
+            {honeymoonJourney.map((item) => (
+              <div
+                key={item.title}
+                className="grid gap-8 border-t border-white/10 pt-10 md:grid-cols-2 md:items-center md:gap-16 md:pt-0 md:border-t-0"
+              >
+                <div>
+                  <h3 className={`${display.className} text-2xl font-medium leading-tight text-white md:text-4xl`}>
+                    {item.title}
+                  </h3>
+                  <p className="mt-5 max-w-md text-base font-light leading-8 text-white/60 md:mt-7">
+                    {item.text}
+                  </p>
+                </div>
+
+                <div>
+                  <div className="relative aspect-[4/3] overflow-hidden rounded-[20px]">
+                    <Image
+                      src={item.image}
+                      alt={item.alt}
+                      fill
+                      sizes="(max-width: 768px) 100vw, 50vw"
+                      className="object-cover object-center"
+                    />
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* 4. PROVA REAL — a curadoria em ação */}
       <section className="border-b border-white/10 px-8 py-14 md:px-16 md:py-28">
         <div className="mx-auto max-w-7xl">
           <p className="mb-6 text-xs uppercase tracking-[0.3em] text-white/30 md:mb-10 md:tracking-[0.45em]">
@@ -340,7 +411,7 @@ export default function LuaDeMelLandingPage() {
         </div>
       </section>
 
-      {/* 4. POR QUE A ALPINEA */}
+      {/* 5. POR QUE A ALPINEA */}
       <section className="border-b border-white/10 px-8 py-14 md:px-16 md:py-28">
         <div className="mx-auto max-w-7xl">
           <div className="mb-10 max-w-3xl md:mb-16">
@@ -377,7 +448,7 @@ export default function LuaDeMelLandingPage() {
         </div>
       </section>
 
-      {/* 5. CONTATO */}
+      {/* 6. CONTATO */}
       <section id="contact" className="bg-white px-8 py-14 text-black md:px-16 md:py-28">
         <div className="mx-auto max-w-4xl text-center">
           <p className="mb-6 text-xs uppercase tracking-[0.3em] text-black/45 md:tracking-[0.45em]">
