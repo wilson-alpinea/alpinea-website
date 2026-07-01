@@ -27,14 +27,14 @@ function CarouselNextArrow({ targetRef }: { targetRef: RefObject<HTMLDivElement 
 
   return (
     <>
-      <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-14 bg-gradient-to-l from-black to-transparent md:hidden" />
+      <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-16 bg-gradient-to-l from-black to-transparent md:hidden" />
       <button
         type="button"
         onClick={scrollNext}
         aria-label="Ver mais"
-        className="absolute bottom-4 right-3 z-20 flex h-9 w-9 items-center justify-center rounded-full bg-white/15 backdrop-blur-sm transition active:bg-white/30 md:hidden"
+        className="absolute right-3 top-1/2 z-20 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-white/15 backdrop-blur-sm transition active:bg-white/30 md:hidden"
       >
-        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
           <polyline points="9 18 15 12 9 6" />
         </svg>
       </button>
@@ -153,7 +153,7 @@ export default function LuaDeMelLandingPage() {
     {
       title: "Exclusividade",
       text: "Acesso a endereços que não aparecem em roteiros comuns — mesas, hotéis e experiências reservadas a poucos casais por ano.",
-      image: "/images/exclusividade.png",
+      image: "/images/exclusividade2.png",
       alt: "Rolls-Royce na entrada de um hotel de luxo",
     },
     {
@@ -211,7 +211,7 @@ export default function LuaDeMelLandingPage() {
   ];
 
   return (
-    <main className="min-h-screen scroll-smooth bg-black text-white">
+    <main className="min-h-screen scroll-smooth overflow-x-hidden bg-black text-white">
       {lightbox && (
         <Lightbox src={lightbox.src} alt={lightbox.alt} onClose={() => setLightbox(null)} />
       )}
@@ -243,19 +243,19 @@ export default function LuaDeMelLandingPage() {
           </a>
         </header>
 
-        <div className="relative z-10 flex h-full flex-col items-center justify-center px-6 pt-20 text-center md:justify-end md:pb-28">
-          <p className={`${display.className} mb-5 text-sm uppercase tracking-[0.4em] text-white/75 md:mb-7 md:text-base md:tracking-[0.5em]`}>
+        <div className="relative z-10 flex h-full flex-col items-center justify-center px-6 pt-14 text-center md:justify-end md:pb-28">
+          <p className={`${display.className} mb-2 text-[10px] uppercase tracking-[0.3em] text-white/75 md:mb-7 md:text-base md:tracking-[0.5em]`}>
             Lua de Mel no Japão
           </p>
 
-          <h1 className={`${display.className} max-w-4xl text-4xl font-medium leading-[1.1] tracking-tight md:text-6xl`}>
+          <h1 className={`${display.className} max-w-full text-xl font-medium leading-[1.25] tracking-tight md:max-w-4xl md:text-6xl`}>
             O começo da próxima história de vocês merece{" "}
             <span className="bg-gradient-to-r from-[#E94332] via-[#D96A2E] to-[#C9A03A] bg-clip-text text-transparent">
               uma viagem inesquecível.
             </span>
           </h1>
 
-          <p className="mt-6 text-xs font-light text-white/45 md:mt-8 md:text-sm">
+          <p className="mt-3 text-[11px] font-light text-white/45 md:mt-8 md:text-sm">
             Agenda limitada para o segundo semestre de 2026.
           </p>
         </div>
@@ -360,7 +360,7 @@ export default function LuaDeMelLandingPage() {
             </h2>
 
             <div className="space-y-10 md:space-y-14">
-              {honeymoonJourney.map((item, index) => (
+              {honeymoonJourney.map((item) => (
                 <div
                   key={item.title}
                   className="grid gap-6 border-t border-white/10 pt-8 md:grid-cols-2 md:items-center md:gap-16 md:pt-0 md:border-t-0"
@@ -373,22 +373,20 @@ export default function LuaDeMelLandingPage() {
                       {item.text}
                     </p>
 
-                    {index < honeymoonJourney.length - 1 && (
-                      <div className="mt-6 flex max-w-md justify-center md:mt-8">
-                        <svg
-                          className="h-8 w-8 animate-bounce text-white/35"
-                          xmlns="http://www.w3.org/2000/svg"
-                          viewBox="0 0 24 24"
-                          fill="none"
-                          stroke="currentColor"
-                          strokeWidth="1.25"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        >
-                          <polyline points="6 9 12 15 18 9" />
-                        </svg>
-                      </div>
-                    )}
+                    <div className="mt-6 flex max-w-md justify-center md:mt-8">
+                      <svg
+                        className="h-8 w-8 animate-bounce text-white/35"
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="1.25"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      >
+                        <polyline points="6 9 12 15 18 9" />
+                      </svg>
+                    </div>
                   </div>
 
                   <div>
