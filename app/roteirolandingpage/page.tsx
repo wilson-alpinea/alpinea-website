@@ -770,11 +770,11 @@ export default function RoteirosAdsPage() {
             </h2>
           </div>
 
-          <CarouselScroller itemCount={whyAlpinea.length}>
+          <CarouselScroller itemCount={whyAlpinea.length} desktopColumns={4}>
             {whyAlpinea.map((item) => (
               <div
                 key={item.title}
-                className="w-[72vw] flex-shrink-0 snap-start [scroll-snap-stop:always] border-t border-white/15 pt-6 md:w-auto md:flex-shrink"
+                className="w-[72vw] flex-shrink-0 snap-start [scroll-snap-stop:always] border-t border-white/15 pt-6 md:w-auto"
               >
                 <h3
                   className={`${display.className} text-lg font-medium text-white md:text-xl`}

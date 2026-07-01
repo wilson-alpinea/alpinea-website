@@ -8,12 +8,23 @@ import { useEffect, useRef, useState, type ReactNode } from "react";
 export function CarouselScroller({
   children,
   itemCount,
+  desktopColumns = 5,
 }: {
   children: ReactNode;
   itemCount: number;
+  desktopColumns?: 2 | 3 | 4 | 5;
 }) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [active, setActive] = useState(0);
+
+  // Classes estáticas (Tailwind precisa ver a string literal completa pra gerar o CSS,
+  // então não dá pra interpolar `md:grid-cols-${n}` diretamente).
+  const gridColsClass = {
+    2: "md:grid-cols-2",
+    3: "md:grid-cols-3",
+    4: "md:grid-cols-4",
+    5: "md:grid-cols-5",
+  }[desktopColumns];
 
   useEffect(() => {
     const el = scrollRef.current;
@@ -57,7 +68,7 @@ export function CarouselScroller({
       <div className="relative">
         <div
           ref={scrollRef}
-          className="flex gap-3 overflow-x-auto px-6 pb-2 snap-x snap-mandatory scroll-pl-6 [&::-webkit-scrollbar]:hidden sm:px-10 md:grid md:grid-cols-5 md:gap-4 md:overflow-visible md:px-0 md:pb-0"
+          className={`flex gap-3 overflow-x-auto px-6 pb-2 snap-x snap-mandatory scroll-pl-6 [&::-webkit-scrollbar]:hidden sm:px-10 md:grid ${gridColsClass} md:gap-4 md:overflow-visible md:px-0 md:pb-0`}
         >
           {children}
         </div>
