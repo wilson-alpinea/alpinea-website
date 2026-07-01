@@ -146,18 +146,26 @@ export default function LuaDeMelLandingPage() {
     {
       title: "Intimidade",
       text: "Ryokans com onsen privativo, jantares reservados só para dois e hospedagens onde a presença de outros hóspedes é a exceção, não a regra.",
+      image: "/images/intimiact.png",
+      alt: "Casal sentado em um deck de madeira observando o mar",
     },
     {
       title: "Exclusividade",
       text: "Acesso a endereços que não aparecem em roteiros comuns — mesas, hotéis e experiências reservadas a poucos casais por ano.",
+      image: "/images/exclusividade.png",
+      alt: "Rolls-Royce na entrada de um hotel de luxo",
     },
     {
       title: "Alta gastronomia",
       text: "Balcões de sushi com uma única fileira de lugares e menus degustação assinados por chefs que raramente recebem estrangeiros.",
+      image: "/images/saitou.png",
+      alt: "Nigiri de atum premium servido em balcão japonês",
     },
     {
       title: "Serenidade",
       text: "Jardins, montanhas e templos vividos em ritmo próprio, sem filas, sem pressa — o silêncio como parte do luxo.",
+      image: "/images/serenity.png",
+      alt: "Rio de águas turquesa cercado por montanhas japonesas",
     },
   ];
 
@@ -280,14 +288,26 @@ export default function LuaDeMelLandingPage() {
               {whyJapan.map((item) => (
                 <div
                   key={item.title}
-                  className="w-[72vw] flex-shrink-0 snap-start [scroll-snap-stop:always] border-t border-white/15 pt-6 md:w-auto md:flex-shrink"
+                  className="w-[72vw] flex-shrink-0 snap-start [scroll-snap-stop:always] md:w-auto md:flex-shrink"
                 >
-                  <h3 className={`${display.className} text-lg font-medium text-white md:text-xl`}>
-                    {item.title}
-                  </h3>
-                  <p className="mt-3 text-sm font-light leading-7 text-white/50">
-                    {item.text}
-                  </p>
+                  <div className="relative mb-6 aspect-square overflow-hidden rounded-[16px]">
+                    <Image
+                      src={item.image}
+                      alt={item.alt}
+                      fill
+                      sizes="(max-width: 768px) 72vw, 25vw"
+                      className="object-cover object-center"
+                    />
+                  </div>
+
+                  <div className="border-t border-white/15 pt-6">
+                    <h3 className={`${display.className} text-lg font-medium text-white md:text-xl`}>
+                      {item.title}
+                    </h3>
+                    <p className="mt-3 text-sm font-light leading-7 text-white/50">
+                      {item.text}
+                    </p>
+                  </div>
                 </div>
               ))}
             </div>
@@ -299,52 +319,54 @@ export default function LuaDeMelLandingPage() {
 
       {/* 3. COMO SERÁ A LUA DE MEL DE VOCÊS */}
       <section className="border-b border-white/10">
-        {/* Banner full-width — degradê para o preto do fundo do site */}
-        <div className="relative h-[160px] w-full overflow-hidden md:h-[300px]">
-          <Image
-            src="/images/osaka-castle.png"
-            alt="Castelo de Osaka iluminado ao entardecer"
-            fill
-            sizes="100vw"
-            className="object-cover object-top"
-          />
-          <div className="absolute inset-0 bg-gradient-to-b from-black/5 via-black/35 to-black/75" />
-        </div>
+        <div className="relative">
+          {/* Imagem de fundo — se estende por trás do título até a metade do primeiro bloco */}
+          <div className="absolute inset-x-0 top-0 z-0 h-[560px] overflow-hidden md:h-[820px]">
+            <Image
+              src="/images/osaka-castle.png"
+              alt="Castelo de Osaka iluminado ao entardecer"
+              fill
+              sizes="100vw"
+              className="object-cover object-top"
+            />
+            <div className="absolute inset-0 bg-gradient-to-b from-black/5 via-black/45 to-black" />
+          </div>
 
-        <div className="px-8 pb-14 pt-10 md:px-16 md:pb-28 md:pt-16">
-          <div className="mx-auto max-w-7xl">
-            <h2 className={`${display.className} mb-10 max-w-3xl text-3xl font-medium leading-tight text-white md:mb-20 md:text-5xl`}>
-              Como será a lua de mel de vocês
-            </h2>
+          <div className="relative z-10 px-8 pb-14 pt-10 md:px-16 md:pb-28 md:pt-16">
+            <div className="mx-auto max-w-7xl">
+              <h2 className={`${display.className} mb-10 max-w-3xl text-3xl font-medium leading-tight text-white md:mb-20 md:text-5xl`}>
+                Como será a lua de mel de vocês
+              </h2>
 
-            <div className="space-y-10 md:space-y-16">
-              {honeymoonJourney.map((item) => (
-                <div
-                  key={item.title}
-                  className="grid gap-6 border-t border-white/10 pt-8 md:grid-cols-2 md:items-center md:gap-16 md:pt-0 md:border-t-0"
-                >
-                  <div>
-                    <h3 className={`${display.className} text-xl font-medium leading-tight text-white md:text-3xl`}>
-                      {item.title}
-                    </h3>
-                    <p className="mt-4 max-w-md text-sm font-light leading-7 text-white/60 md:mt-5 md:text-base md:leading-8">
-                      {item.text}
-                    </p>
-                  </div>
+              <div className="space-y-10 md:space-y-16">
+                {honeymoonJourney.map((item) => (
+                  <div
+                    key={item.title}
+                    className="grid gap-6 border-t border-white/10 pt-8 md:grid-cols-2 md:items-center md:gap-16 md:pt-0 md:border-t-0"
+                  >
+                    <div>
+                      <h3 className={`${display.className} text-xl font-medium leading-tight text-white md:text-3xl`}>
+                        {item.title}
+                      </h3>
+                      <p className="mt-4 max-w-md text-sm font-light leading-7 text-white/60 md:mt-5 md:text-base md:leading-8">
+                        {item.text}
+                      </p>
+                    </div>
 
-                  <div>
-                    <div className="relative aspect-[4/3] overflow-hidden rounded-[20px]">
-                      <Image
-                        src={item.image}
-                        alt={item.alt}
-                        fill
-                        sizes="(max-width: 768px) 100vw, 50vw"
-                        className="object-cover object-center"
-                      />
+                    <div>
+                      <div className="relative aspect-[4/3] overflow-hidden rounded-[20px]">
+                        <Image
+                          src={item.image}
+                          alt={item.alt}
+                          fill
+                          sizes="(max-width: 768px) 100vw, 50vw"
+                          className="object-cover object-center"
+                        />
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
           </div>
         </div>
