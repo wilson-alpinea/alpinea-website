@@ -350,45 +350,48 @@ export default function LuaDeMelLandingPage() {
               Como será a lua de mel de vocês
             </h2>
 
-            <div className="space-y-10 md:space-y-16">
-              {honeymoonJourney.map((item) => (
-                <div key={item.title}>
-                  <div className="grid gap-6 border-t border-white/10 pt-8 md:grid-cols-2 md:items-center md:gap-16 md:pt-0 md:border-t-0">
-                    <div>
-                      <h3 className={`${display.className} text-xl font-medium leading-tight text-white md:text-3xl`}>
-                        {item.title}
-                      </h3>
-                      <p className="mt-4 max-w-md text-sm font-light leading-7 text-white/60 md:mt-5 md:text-base md:leading-8">
-                        {item.text}
-                      </p>
-                    </div>
+            <div className="space-y-10 md:space-y-14">
+              {honeymoonJourney.map((item, index) => (
+                <div
+                  key={item.title}
+                  className="grid gap-6 border-t border-white/10 pt-8 md:grid-cols-2 md:items-center md:gap-16 md:pt-0 md:border-t-0"
+                >
+                  <div>
+                    <h3 className={`${display.className} text-xl font-medium leading-tight text-white md:text-3xl`}>
+                      {item.title}
+                    </h3>
+                    <p className="mt-4 max-w-md text-sm font-light leading-7 text-white/60 md:mt-5 md:text-base md:leading-8">
+                      {item.text}
+                    </p>
 
-                    <div>
-                      <div className="relative aspect-[4/3] overflow-hidden rounded-[20px]">
-                        <Image
-                          src={item.image}
-                          alt={item.alt}
-                          fill
-                          sizes="(max-width: 768px) 100vw, 50vw"
-                          className="object-cover object-center"
-                        />
+                    {index < honeymoonJourney.length - 1 && (
+                      <div className="mt-6 flex max-w-md justify-center md:mt-8">
+                        <svg
+                          className="h-8 w-8 animate-bounce text-white/35"
+                          xmlns="http://www.w3.org/2000/svg"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="1.25"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
+                          <polyline points="6 9 12 15 18 9" />
+                        </svg>
                       </div>
-                    </div>
+                    )}
                   </div>
 
-                  <div className="mt-10 flex justify-center md:mt-16">
-                    <svg
-                      className="h-5 w-5 animate-bounce text-white/30"
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="1.5"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                    >
-                      <polyline points="6 9 12 15 18 9" />
-                    </svg>
+                  <div>
+                    <div className="relative aspect-[4/3] overflow-hidden rounded-[20px]">
+                      <Image
+                        src={item.image}
+                        alt={item.alt}
+                        fill
+                        sizes="(max-width: 768px) 100vw, 50vw"
+                        className="object-cover object-center"
+                      />
+                    </div>
                   </div>
                 </div>
               ))}
