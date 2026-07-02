@@ -834,9 +834,9 @@ export default function RoteirosAdsPage() {
         </div>
       </section>
 
-      <footer className="border-t border-white/10 bg-black px-8 pb-28 pt-12 text-white md:px-16 md:py-16">
-        <div className="mx-auto flex max-w-7xl flex-col justify-between gap-12 md:flex-row md:items-end">
-          <div className="space-y-6">
+      <footer className="border-t border-white/10 bg-black px-8 pb-24 pt-12 text-white md:px-16 md:pb-16 md:pt-16">
+        <div className="mx-auto flex max-w-7xl flex-col justify-between gap-8 md:flex-row md:items-start md:gap-12">
+          <div className="space-y-4 md:space-y-6">
             <img
               src="/images/ALPINEA-LOGO-transparent.png"
               alt="Alpinea"
@@ -866,56 +866,45 @@ export default function RoteirosAdsPage() {
             </div>
           </div>
 
-          <div className="flex flex-col gap-7 md:items-end">
-            <nav className="flex flex-wrap items-center justify-start gap-x-7 gap-y-3 text-xs uppercase tracking-[0.25em] text-white/35 md:justify-end">
-              <a href="/" className="transition hover:text-white">
-                Início
-              </a>
-              <a href="/services" className="transition hover:text-white">
-                Serviços
-              </a>
-              <a href="/restaurantes" className="transition hover:text-white">
-                Restaurantes
-              </a>
-              <a href="/compras" className="transition hover:text-white">
-                Compras
-              </a>
-              <a
-                href="/roteirolandingpage"
-                className="transition hover:text-white"
-              >
-                Roteiro
-              </a>
-              <a href="#contact" className="transition hover:text-white">
-                Contato
-              </a>
-            </nav>
-
-            <div className="flex flex-wrap items-center gap-8 text-xs uppercase tracking-[0.25em] text-white/40">
-              <a
-                href="https://www.instagram.com/alpinea.private"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="transition hover:text-white"
-              >
-                Instagram
-              </a>
-              <a
-                href="https://www.youtube.com/@alpinea.private"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="transition hover:text-white"
-              >
-                YouTube
-              </a>
-              <a
-                href="mailto:wilson@alpinea.io"
-                className="transition hover:text-white"
-              >
-                Contato
-              </a>
-            </div>
-          </div>
+          <nav className="flex flex-col items-start gap-3 text-xs uppercase tracking-[0.25em] text-white/40 md:items-end">
+            <a href="/" className="transition hover:text-white">
+              Início
+            </a>
+            <a href="/services" className="transition hover:text-white">
+              Serviços
+            </a>
+            <a href="/restaurantes" className="transition hover:text-white">
+              Restaurantes
+            </a>
+            <a href="/compras" className="transition hover:text-white">
+              Compras
+            </a>
+            <a
+              href="/roteirolandingpage"
+              className="transition hover:text-white"
+            >
+              Roteiro
+            </a>
+            <a href="#contact" className="transition hover:text-white">
+              Contato
+            </a>
+            <a
+              href="https://www.instagram.com/alpinea.private"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="transition hover:text-white"
+            >
+              Instagram
+            </a>
+            <a
+              href="https://www.youtube.com/@alpinea.private"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="transition hover:text-white"
+            >
+              YouTube
+            </a>
+          </nav>
         </div>
       </footer>
     </main>
