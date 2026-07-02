@@ -160,11 +160,11 @@ export default function Home() {
       Gastronomia, hotéis, compras, experiências e um roteiro planejado em cada detalhe.
     </p>
 
-    <div className="mt-24 grid gap-x-8 gap-y-14 md:grid-cols-2">
+    <div className="mt-24 grid grid-cols-2 gap-x-4 gap-y-10 md:gap-x-8 md:gap-y-14">
 
       {/* ALTA GASTRONOMIA */}
       <a href="/gastro" className="group block">
-        <div className="relative aspect-square overflow-hidden rounded-[2rem] bg-black">
+        <div className="relative aspect-square overflow-hidden rounded-[1rem] bg-black md:rounded-[2rem]">
           <img
             src="/images/sugita.png"
             alt="Alta Gastronomia"
@@ -173,18 +173,18 @@ export default function Home() {
           />
         </div>
 
-        <h3 className="mt-6 text-2xl font-light tracking-tight text-white md:text-3xl">
+        <h3 className="mt-3 text-base font-light tracking-tight text-white md:mt-6 md:text-3xl">
           Alta Gastronomia
         </h3>
 
-        <p className="mt-2 max-w-md text-sm leading-7 text-white/55">
+        <p className="mt-1 text-xs leading-5 text-white/55 md:mt-2 md:max-w-md md:text-sm md:leading-7">
           Reservas em restaurantes estrelados e endereços que raramente aceitam turistas estrangeiros.
         </p>
       </a>
 
       {/* ARTIGOS DE LUXO */}
       <a href="/guia" className="group block">
-        <div className="relative aspect-square overflow-hidden rounded-[2rem] bg-black">
+        <div className="relative aspect-square overflow-hidden rounded-[1rem] bg-black md:rounded-[2rem]">
           <img
             src="/images/rolex.png"
             alt="Artigos de Luxo"
@@ -193,18 +193,18 @@ export default function Home() {
           />
         </div>
 
-        <h3 className="mt-6 text-2xl font-light tracking-tight text-white md:text-3xl">
+        <h3 className="mt-3 text-base font-light tracking-tight text-white md:mt-6 md:text-3xl">
           Artigos de Luxo
         </h3>
 
-        <p className="mt-2 max-w-md text-sm leading-7 text-white/55">
+        <p className="mt-1 text-xs leading-5 text-white/55 md:mt-2 md:max-w-md md:text-sm md:leading-7">
           Acesso a boutiques, relógios e itens colecionáveis difíceis de encontrar fora do Japão.
         </p>
       </a>
 
       {/* EXPERIÊNCIAS */}
       <a href="/roteirolandingpage" className="group block">
-        <div className="relative aspect-square overflow-hidden rounded-[2rem] bg-black">
+        <div className="relative aspect-square overflow-hidden rounded-[1rem] bg-black md:rounded-[2rem]">
           <img
             src="/images/fuji.JPG"
             alt="Experiências"
@@ -213,18 +213,18 @@ export default function Home() {
           />
         </div>
 
-        <h3 className="mt-6 text-2xl font-light tracking-tight text-white md:text-3xl">
+        <h3 className="mt-3 text-base font-light tracking-tight text-white md:mt-6 md:text-3xl">
           Experiências
         </h3>
 
-        <p className="mt-2 max-w-md text-sm leading-7 text-white/55">
+        <p className="mt-1 text-xs leading-5 text-white/55 md:mt-2 md:max-w-md md:text-sm md:leading-7">
           Roteiros culturais e naturais desenhados além dos pontos turísticos óbvios.
         </p>
       </a>
 
       {/* EVENTOS ESPECIAIS */}
       <a href="/luademel" className="group block">
-        <div className="relative aspect-square overflow-hidden rounded-[2rem] bg-black">
+        <div className="relative aspect-square overflow-hidden rounded-[1rem] bg-black md:rounded-[2rem]">
           <img
             src="/images/intimiact.png"
             alt="Eventos Especiais"
@@ -233,11 +233,11 @@ export default function Home() {
           />
         </div>
 
-        <h3 className="mt-6 text-2xl font-light tracking-tight text-white md:text-3xl">
+        <h3 className="mt-3 text-base font-light tracking-tight text-white md:mt-6 md:text-3xl">
           Eventos Especiais
         </h3>
 
-        <p className="mt-2 max-w-md text-sm leading-7 text-white/55">
+        <p className="mt-1 text-xs leading-5 text-white/55 md:mt-2 md:max-w-md md:text-sm md:leading-7">
           Viagens para ocasiões marcantes — lua de mel, aniversários, a Maratona de Tóquio e outros eventos que merecem uma jornada à altura.
         </p>
       </a>
