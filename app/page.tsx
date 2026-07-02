@@ -134,8 +134,8 @@ export default function Home() {
       Gastronomia, hotéis, compras, experiências e um roteiro planejado em cada detalhe.
     </h2>
 
-    <div className="mt-24 grid gap-8 md:grid-cols-3">
-      
+    <div className="mt-24 grid gap-x-8 gap-y-14 md:grid-cols-2">
+
       {/* ALTA GASTRONOMIA */}
       <a href="#fine-dining" className="group block">
         <div className="relative aspect-square overflow-hidden rounded-[2rem] bg-black">
@@ -145,17 +145,15 @@ export default function Home() {
             className="h-full w-full object-cover transition duration-700 group-hover:scale-[1.04]"
             style={{ objectPosition: "center center" }}
           />
-
-          {/* Fade */}
-          <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-black via-black/70 to-transparent" />
-
-          {/* Título */}
-          <div className="absolute bottom-0 left-0 z-10 p-8">
-            <h3 className="text-2xl font-light tracking-tight text-white md:text-3xl">
-              Alta Gastronomia
-            </h3>
-          </div>
         </div>
+
+        <h3 className="mt-6 text-2xl font-light tracking-tight text-white md:text-3xl">
+          Alta Gastronomia
+        </h3>
+
+        <p className="mt-2 max-w-md text-sm leading-7 text-white/55">
+          Reservas em restaurantes estrelados e endereços que raramente aceitam turistas estrangeiros.
+        </p>
       </a>
 
       {/* ARTIGOS DE LUXO */}
@@ -167,17 +165,15 @@ export default function Home() {
             className="h-full w-full object-cover transition duration-700 group-hover:scale-[1.04]"
             style={{ objectPosition: "center center" }}
           />
-
-          {/* Fade */}
-          <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-black via-black/70 to-transparent" />
-
-          {/* Título */}
-          <div className="absolute bottom-0 left-0 z-10 p-8">
-            <h3 className="text-2xl font-light tracking-tight text-white md:text-3xl">
-              Artigos de Luxo
-            </h3>
-          </div>
         </div>
+
+        <h3 className="mt-6 text-2xl font-light tracking-tight text-white md:text-3xl">
+          Artigos de Luxo
+        </h3>
+
+        <p className="mt-2 max-w-md text-sm leading-7 text-white/55">
+          Acesso a boutiques, relógios e itens colecionáveis difíceis de encontrar fora do Japão.
+        </p>
       </a>
 
       {/* EXPERIÊNCIAS */}
@@ -189,17 +185,35 @@ export default function Home() {
             className="h-full w-full object-cover transition duration-700 group-hover:scale-[1.04]"
             style={{ objectPosition: "center center" }}
           />
-
-          {/* Fade */}
-          <div className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-black via-black/70 to-transparent" />
-
-          {/* Título */}
-          <div className="absolute bottom-0 left-0 z-10 p-8">
-            <h3 className="text-2xl font-light tracking-tight text-white md:text-3xl">
-              Experiências
-            </h3>
-          </div>
         </div>
+
+        <h3 className="mt-6 text-2xl font-light tracking-tight text-white md:text-3xl">
+          Experiências
+        </h3>
+
+        <p className="mt-2 max-w-md text-sm leading-7 text-white/55">
+          Roteiros culturais e naturais desenhados além dos pontos turísticos óbvios.
+        </p>
+      </a>
+
+      {/* EVENTOS ESPECIAIS */}
+      <a href="#special-events" className="group block">
+        <div className="relative aspect-square overflow-hidden rounded-[2rem] bg-black">
+          <img
+            src="/images/intimiact.png"
+            alt="Eventos Especiais"
+            className="h-full w-full object-cover transition duration-700 group-hover:scale-[1.04]"
+            style={{ objectPosition: "center center" }}
+          />
+        </div>
+
+        <h3 className="mt-6 text-2xl font-light tracking-tight text-white md:text-3xl">
+          Eventos Especiais
+        </h3>
+
+        <p className="mt-2 max-w-md text-sm leading-7 text-white/55">
+          Acesso e acompanhamento em festivais, temporadas sazonais e eventos exclusivos do calendário japonês.
+        </p>
       </a>
 
     </div>
