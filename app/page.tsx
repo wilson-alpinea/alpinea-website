@@ -38,7 +38,7 @@ export default function Home() {
       className="absolute inset-0 h-full w-full object-cover"
     />
 
-    <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/60 to-black" />
+    <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/40 to-black" />
 
 <header
   className={`fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-8 py-5 md:px-16 transition-all duration-700 ${
@@ -90,13 +90,14 @@ export default function Home() {
           <h1 className={`${display.className} max-w-4xl text-4xl font-medium leading-[1.1] tracking-tight text-white md:text-6xl`}>
             Viagens privadas e{" "}
             <span className="bg-gradient-to-r from-[#E94332] via-[#D96A2E] to-[#C9A03A] bg-clip-text text-transparent">
-              roteiros sob medida no Japão.
-            </span>
+              roteiros sob medida
+            </span>{" "}
+            para conhecer o verdadeiro Japão.
           </h1>
 
           <a
             href="#contact"
-            className="mt-8 hidden border border-white/30 px-8 py-4 text-xs uppercase tracking-[0.3em] text-white transition hover:bg-white hover:text-black md:block"
+            className="mt-8 border border-white/30 px-8 py-4 text-xs uppercase tracking-[0.3em] text-white transition hover:bg-white hover:text-black"
           >
             Solicitar Atendimento
           </a>
@@ -130,7 +131,7 @@ export default function Home() {
     </p>
 
     <h2 className={`${display.className} max-w-6xl text-5xl font-medium leading-tight tracking-tight md:text-7xl`}>
-      O melhor do Japão, desenhado ao redor do seu estilo.
+      Gastronomia, hotéis, compras, experiências e um roteiro planejado em cada detalhe.
     </h2>
 
     <div className="mt-24 grid gap-8 md:grid-cols-3">
