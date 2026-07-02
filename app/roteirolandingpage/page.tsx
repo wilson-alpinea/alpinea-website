@@ -809,6 +809,42 @@ export default function RoteirosAdsPage() {
         </p>
       </section>
 
+      {/* ── O QUE VOCÊS RECEBEM ── */}
+      <section className="border-t border-white/10 bg-black px-6 py-14 md:px-16 md:py-28">
+        <div className="mx-auto max-w-3xl text-center">
+          <h2
+            className={`${display.className} mb-10 text-3xl font-medium leading-tight md:mb-14 md:text-5xl`}
+          >
+            O que vocês recebem
+          </h2>
+
+          <div className="mx-auto max-w-xl rounded-2xl border border-[#8fb7d9]/15 bg-[#071018] p-5 text-left sm:rounded-[2rem] sm:p-8">
+            <div className="grid gap-3">
+              <RecommendationRow
+                icon="🖥️"
+                title="Painel Digital Interativo"
+                text="A viagem organizada para consulta rápida no celular."
+              />
+              <RecommendationRow
+                icon="📍"
+                title="Roteiro 100% Personalizado"
+                text="Criado exclusivamente para o perfil e ritmo de vocês."
+              />
+              <RecommendationRow
+                icon="🏨"
+                title="Curadoria Completa"
+                text="Hotéis, restaurantes, logística e experiências."
+              />
+              <RecommendationRow
+                icon="💡"
+                title="Conhecimento Local"
+                text="Mais de 12 anos explorando o Japão transformados em recomendações práticas."
+              />
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* ── CONTATO ── */}
       <section
         id="contact"

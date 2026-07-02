@@ -16,6 +16,8 @@ export function CarouselScroller({
 }) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [active, setActive] = useState(0);
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(false);
 
   // Classes estáticas (Tailwind precisa ver a string literal completa pra gerar o CSS,
   // então não dá pra interpolar `md:grid-cols-${n}` diretamente).
@@ -42,17 +44,31 @@ export function CarouselScroller({
         }
       });
       setActive(closest);
+
+      // Margem de 8px pra absorver arredondamento de subpixel do scroll.
+      setCanScrollLeft(el.scrollLeft > 8);
+      setCanScrollRight(el.scrollLeft < el.scrollWidth - el.clientWidth - 8);
     };
 
     onScroll();
     el.addEventListener("scroll", onScroll, { passive: true });
-    return () => el.removeEventListener("scroll", onScroll);
+    window.addEventListener("resize", onScroll);
+    return () => {
+      el.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+    };
   }, []);
 
   const scrollNext = () => {
     const el = scrollRef.current;
     if (!el) return;
     el.scrollBy({ left: el.clientWidth * 0.85, behavior: "smooth" });
+  };
+
+  const scrollPrev = () => {
+    const el = scrollRef.current;
+    if (!el) return;
+    el.scrollBy({ left: -el.clientWidth * 0.85, behavior: "smooth" });
   };
 
   const goTo = (i: number) => {
@@ -73,28 +89,59 @@ export function CarouselScroller({
           {children}
         </div>
 
-        {/* Fade lateral + seta "ver mais" — centralizados na altura da fileira, só mobile */}
-        <div className="pointer-events-none absolute inset-y-0 right-0 w-12 bg-gradient-to-l from-black to-transparent md:hidden" />
-        <button
-          type="button"
-          onClick={scrollNext}
-          aria-label="Ver mais"
-          className="absolute right-3 top-1/2 z-20 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full bg-white/15 backdrop-blur-sm transition active:bg-white/30 md:hidden"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="18"
-            height="18"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="white"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <polyline points="9 18 15 12 9 6" />
-          </svg>
-        </button>
+        {/* Fades laterais + setas — ancoradas embaixo da fileira (não no meio),
+            pra nunca cobrir texto corrido nos cards sem imagem. Só mobile. */}
+        {canScrollLeft && (
+          <>
+            <div className="pointer-events-none absolute inset-y-0 left-0 w-12 bg-gradient-to-r from-black to-transparent md:hidden" />
+            <button
+              type="button"
+              onClick={scrollPrev}
+              aria-label="Ver anterior"
+              className="absolute bottom-3 left-3 z-20 flex h-9 w-9 items-center justify-center rounded-full bg-white/15 backdrop-blur-sm transition active:bg-white/30 md:hidden"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="white"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <polyline points="15 18 9 12 15 6" />
+              </svg>
+            </button>
+          </>
+        )}
+
+        {canScrollRight && (
+          <>
+            <div className="pointer-events-none absolute inset-y-0 right-0 w-12 bg-gradient-to-l from-black to-transparent md:hidden" />
+            <button
+              type="button"
+              onClick={scrollNext}
+              aria-label="Ver mais"
+              className="absolute bottom-3 right-3 z-20 flex h-9 w-9 items-center justify-center rounded-full bg-white/15 backdrop-blur-sm transition active:bg-white/30 md:hidden"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="white"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <polyline points="9 18 15 12 9 6" />
+              </svg>
+            </button>
+          </>
+        )}
       </div>
 
       {/* Bolinhas indicativas — só mobile */}
