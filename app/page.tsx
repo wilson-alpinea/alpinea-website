@@ -353,8 +353,8 @@ export default function Home() {
             <circle cx="12" cy="12" r="9" />
             <polyline points="12 7 12 12 15 14" />
           </svg>
-          <h3 className={`${display.className} text-2xl font-medium tracking-tight text-white md:text-3xl min-h-[90px] md:min-h-[130px]`}>
-            +12 anos
+          <h3 className={`${display.className} text-2xl font-medium tracking-tight text-white md:text-3xl`}>
+            <span className="align-middle text-[0.6em]">+</span>12 anos
           </h3>
           <p className="mt-6 max-w-[280px] text-sm font-light leading-7 text-white/55">
             Mais de uma década de vivência no Japão, entre gastronomia, hotelaria, cultura, logística e relações locais.
@@ -368,7 +368,7 @@ export default function Home() {
             <path d="M9 3l3 6-3 12" />
             <path d="M15 3l-3 6 3 12" />
           </svg>
-          <h3 className={`${display.className} text-2xl font-medium tracking-tight text-white md:text-3xl min-h-[90px] md:min-h-[130px]`}>
+          <h3 className={`${display.className} text-2xl font-medium tracking-tight text-white md:text-3xl`}>
             Exclusividade de Serviços
           </h3>
           <p className="mt-6 max-w-[280px] text-sm font-light leading-7 text-white/55">
@@ -380,7 +380,7 @@ export default function Home() {
           <svg className="mx-auto mb-5 h-7 w-7 text-white/70" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
             <path d="M21 16v-2l-8-5V3.5a1.5 1.5 0 0 0-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5z" />
           </svg>
-          <h3 className={`${display.className} text-2xl font-medium tracking-tight text-white md:text-3xl min-h-[90px] md:min-h-[130px]`}>
+          <h3 className={`${display.className} text-2xl font-medium tracking-tight text-white md:text-3xl`}>
             Referência na conexão Brasil–Japão
           </h3>
           <p className="mt-6 max-w-[280px] text-sm font-light leading-7 text-white/55">
@@ -393,7 +393,7 @@ export default function Home() {
             <path d="M12 21s7-7.58 7-12a7 7 0 1 0-14 0c0 4.42 7 12 7 12z" />
             <circle cx="12" cy="9" r="2.5" />
           </svg>
-          <h3 className={`${display.className} text-2xl font-medium tracking-tight text-white md:text-3xl min-h-[90px] md:min-h-[130px]`}>
+          <h3 className={`${display.className} text-2xl font-medium tracking-tight text-white md:text-3xl`}>
             Presença real no Japão
           </h3>
           <p className="mt-6 max-w-[280px] text-sm font-light leading-7 text-white/55">
