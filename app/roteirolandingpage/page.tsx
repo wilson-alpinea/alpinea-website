@@ -790,32 +790,13 @@ export default function RoteirosAdsPage() {
         </div>
       </section>
 
-      {/* ── PONTE — frase de efeito antes do CTA final ── */}
-      <section className="relative flex min-h-[380px] items-center overflow-hidden border-t border-white/10 px-8 py-24 md:min-h-[560px] md:px-16 md:py-40">
-        <Image
-          src="/images/shirakawago.jpg"
-          alt="Vilarejo histórico de Shirakawa-go entre montanhas verdes"
-          fill
-          sizes="100vw"
-          className="object-cover object-center"
-        />
-        <div className="absolute inset-0 bg-black/65" />
-
-        <p
-          className={`${display.className} relative z-10 mx-auto max-w-3xl text-center text-2xl italic font-light leading-snug text-white/90 md:text-4xl`}
-        >
-          "Algumas viagens não ficam só na memória — viram parte da história
-          de vocês."
-        </p>
-      </section>
-
-      {/* ── O QUE VOCÊS RECEBEM ── */}
+      {/* ── TUDO O QUE ACOMPANHA SEU ROTEIRO ── */}
       <section className="border-t border-white/10 bg-black px-6 py-14 md:px-16 md:py-28">
         <div className="mx-auto max-w-3xl text-center">
           <h2
             className={`${display.className} mb-10 text-3xl font-medium leading-tight md:mb-14 md:text-5xl`}
           >
-            O que vocês recebem
+            Tudo o que acompanha seu roteiro
           </h2>
 
           <div className="mx-auto max-w-xl rounded-2xl border border-[#8fb7d9]/15 bg-[#071018] p-5 text-left sm:rounded-[2rem] sm:p-8">
@@ -833,16 +814,35 @@ export default function RoteirosAdsPage() {
               <RecommendationRow
                 icon="🏨"
                 title="Curadoria Completa"
-                text="Hotéis, restaurantes, logística e experiências."
+                text="Hotéis, restaurantes, logística e sugestões distribuídas ao longo do roteiro."
               />
               <RecommendationRow
                 icon="💡"
                 title="Conhecimento Local"
-                text="Mais de 12 anos explorando o Japão transformados em recomendações práticas."
+                text="Mais de 12 anos explorando e morando no Japão transformados em recomendações práticas."
               />
             </div>
           </div>
         </div>
+      </section>
+
+      {/* ── PONTE — frase de efeito antes do CTA final ── */}
+      <section className="relative flex min-h-[380px] items-center overflow-hidden border-t border-white/10 px-8 py-24 md:min-h-[560px] md:px-16 md:py-40">
+        <Image
+          src="/images/shirakawago.jpg"
+          alt="Vilarejo histórico de Shirakawa-go entre montanhas verdes"
+          fill
+          sizes="100vw"
+          className="object-cover object-center"
+        />
+        <div className="absolute inset-0 bg-black/65" />
+
+        <p
+          className={`${display.className} relative z-10 mx-auto max-w-3xl text-center text-2xl italic font-light leading-snug text-white/90 md:text-4xl`}
+        >
+          "Algumas viagens não ficam só na memória — viram parte da história
+          de vocês."
+        </p>
       </section>
 
       {/* ── CONTATO ── */}
