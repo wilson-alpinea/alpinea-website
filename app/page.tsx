@@ -143,7 +143,7 @@ export default function Home() {
 
   return (
     <main className="min-h-screen bg-black text-white">
-  <section className="relative h-[50svh] min-h-[460px] overflow-hidden md:h-[max(50vh,28vw)] md:max-h-[900px] md:min-h-[520px]">
+  <section className="relative h-[62svh] min-h-[560px] overflow-hidden md:h-[max(50vh,28vw)] md:max-h-[900px] md:min-h-[520px]">
     <img
       src="/images/nachifalls2.png"
       alt="Templo Seiganto-ji e Cachoeira Nachi, Japão"
@@ -155,7 +155,7 @@ export default function Home() {
 <header
   className={`fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-8 py-5 md:px-16 transition-all duration-700 ${
     scrolled
-      ? "bg-black/10 backdrop-blur-2xl"
+      ? "bg-black/90 backdrop-blur-2xl"
       : "bg-transparent"
   }`}
 >

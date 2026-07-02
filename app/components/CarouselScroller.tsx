@@ -89,8 +89,8 @@ export function CarouselScroller({
           {children}
         </div>
 
-        {/* Fades laterais + setas — ancoradas embaixo da fileira (não no meio),
-            pra nunca cobrir texto corrido nos cards sem imagem. Só mobile. */}
+        {/* Fades laterais + setas — centralizadas verticalmente, pra funcionar tanto em
+            carrosséis de imagem pura quanto em cards com texto de altura variável. Só mobile. */}
         {canScrollLeft && (
           <>
             <div className="pointer-events-none absolute inset-y-0 left-0 w-12 bg-gradient-to-r from-black to-transparent md:hidden" />
@@ -98,7 +98,7 @@ export function CarouselScroller({
               type="button"
               onClick={scrollPrev}
               aria-label="Ver anterior"
-              className="absolute bottom-3 left-3 z-20 flex h-9 w-9 items-center justify-center rounded-full bg-white/15 backdrop-blur-sm transition active:bg-white/30 md:hidden"
+              className="absolute left-3 top-1/2 z-20 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full bg-white/15 backdrop-blur-sm transition active:bg-white/30 md:hidden"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -124,7 +124,7 @@ export function CarouselScroller({
               type="button"
               onClick={scrollNext}
               aria-label="Ver mais"
-              className="absolute bottom-3 right-3 z-20 flex h-9 w-9 items-center justify-center rounded-full bg-white/15 backdrop-blur-sm transition active:bg-white/30 md:hidden"
+              className="absolute right-3 top-1/2 z-20 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full bg-white/15 backdrop-blur-sm transition active:bg-white/30 md:hidden"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
