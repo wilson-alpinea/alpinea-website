@@ -87,7 +87,7 @@ export default function Home() {
             A Única Agência Brasileira 100% Dedicada ao Japão
           </p>
 
-          <h1 className={`${display.className} max-w-4xl text-4xl font-medium leading-[1.1] tracking-tight text-white md:text-6xl`}>
+          <h1 className={`${display.className} max-w-3xl text-3xl font-medium leading-[1.15] tracking-tight text-white md:text-5xl`}>
             Viagens privadas e{" "}
             <span className="bg-gradient-to-r from-[#E94332] via-[#D96A2E] to-[#C9A03A] bg-clip-text text-transparent">
               roteiros sob medida
@@ -130,7 +130,7 @@ export default function Home() {
       EXPERIÊNCIAS PERSONALIZADAS
     </p>
 
-    <h2 className={`${display.className} max-w-6xl text-5xl font-medium leading-tight tracking-tight md:text-7xl`}>
+    <h2 className={`${display.className} max-w-4xl text-2xl font-medium leading-tight tracking-tight md:text-4xl`}>
       Gastronomia, hotéis, compras, experiências e um roteiro planejado em cada detalhe.
     </h2>
 
