@@ -83,7 +83,7 @@ export default function Home() {
 </header>
 
         <div className="relative z-10 flex h-full flex-col items-center justify-center px-6 pt-20 text-center md:justify-end md:pb-24">
-          <p className="mb-5 text-xs uppercase tracking-[0.4em] text-white/60 md:tracking-[0.5em]">
+          <p className="mb-5 text-xs uppercase tracking-[0.3em] text-white/90 [text-shadow:0_1px_8px_rgba(0,0,0,0.6)] md:tracking-[0.35em]">
             A Única Agência Brasileira 100% Dedicada ao Japão
           </p>
 
