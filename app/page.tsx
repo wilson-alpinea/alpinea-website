@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useRef, useState, type RefObject } from "react";
+import { useEffect, useState } from "react";
 import { ContactCTA } from "./components/ContactCTA";
+import { CarouselScroller } from "./components/CarouselScroller";
 import { Bodoni_Moda } from "next/font/google";
 
 // Mesma fonte de destaque usada na landing page e na página de Serviços —
@@ -11,100 +12,9 @@ const display = Bodoni_Moda({
   weight: ["400", "500", "600"],
 });
 
-// Seta de "ver mais" para os carrosséis horizontais do mobile — some no desktop (md:hidden),
-// já que lá o conteúdo é grid e não rola. Inclui fade lateral pra reforçar que há mais conteúdo.
-function CarouselNextArrow({ targetRef }: { targetRef: RefObject<HTMLDivElement | null> }) {
-  const scrollNext = () => {
-    const el = targetRef.current;
-    if (!el) return;
-    el.scrollBy({ left: el.clientWidth * 0.85, behavior: "smooth" });
-  };
-
-  return (
-    <>
-      <div className="pointer-events-none absolute inset-y-0 right-0 z-10 w-14 bg-gradient-to-l from-black to-transparent md:hidden" />
-      <button
-        type="button"
-        onClick={scrollNext}
-        aria-label="Ver mais"
-        className="absolute right-3 top-1/2 z-20 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full bg-white/15 backdrop-blur-sm transition active:bg-white/30 md:hidden"
-      >
-        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <polyline points="9 18 15 12 9 6" />
-        </svg>
-      </button>
-    </>
-  );
-}
-
-// Rastreia qual card está mais visível no carrossel, comparando a posição de scroll
-// com a posição de cada filho — funciona mesmo com cards de larguras diferentes.
-function useActiveSlide(targetRef: RefObject<HTMLDivElement | null>) {
-  const [active, setActive] = useState(0);
-
-  useEffect(() => {
-    const el = targetRef.current;
-    if (!el) return;
-
-    const onScroll = () => {
-      const children = Array.from(el.children) as HTMLElement[];
-      let closest = 0;
-      let minDist = Infinity;
-      children.forEach((child, i) => {
-        const dist = Math.abs(child.offsetLeft - el.scrollLeft);
-        if (dist < minDist) {
-          minDist = dist;
-          closest = i;
-        }
-      });
-      setActive(closest);
-    };
-
-    onScroll();
-    el.addEventListener("scroll", onScroll, { passive: true });
-    return () => el.removeEventListener("scroll", onScroll);
-  }, [targetRef]);
-
-  return active;
-}
-
-// Bolinhas indicativas embaixo dos carrosséis horizontais — só no mobile (md:hidden),
-// já que no desktop o conteúdo é grid e mostra tudo de uma vez, sem precisar de indicador.
-function CarouselDots({ targetRef, count }: { targetRef: RefObject<HTMLDivElement | null>; count: number }) {
-  const active = useActiveSlide(targetRef);
-
-  const goTo = (i: number) => {
-    const el = targetRef.current;
-    if (!el) return;
-    const child = el.children[i] as HTMLElement | undefined;
-    if (!child) return;
-    el.scrollTo({ left: child.offsetLeft, behavior: "smooth" });
-  };
-
-  return (
-    <div className="mt-5 flex items-center justify-center gap-2 md:hidden">
-      {Array.from({ length: count }).map((_, i) => (
-        <button
-          key={i}
-          type="button"
-          aria-label={`Ir para item ${i + 1}`}
-          onClick={() => goTo(i)}
-          className={`h-1.5 rounded-full transition-all duration-300 ${
-            i === active
-              ? "w-6 bg-gradient-to-r from-[#E94332] via-[#D96A2E] to-[#C9A03A]"
-              : "w-1.5 bg-white/25"
-          }`}
-        />
-      ))}
-    </div>
-  );
-}
-
 
 export default function Home() {
   const [scrolled, setScrolled] = useState(false);
-  const statsScrollRef = useRef<HTMLDivElement>(null);
-  const tiersScrollRef = useRef<HTMLDivElement>(null);
 
   const tiers = [
     {
@@ -199,7 +109,7 @@ export default function Home() {
             A Única Agência Brasileira 100% Dedicada ao Japão
           </p>
 
-          <h1 className={`${display.className} max-w-3xl text-3xl font-medium leading-[1.15] tracking-tight text-white md:text-5xl`}>
+          <h1 className={`${display.className} max-w-3xl text-2xl font-medium leading-[1.15] tracking-tight text-white md:text-5xl`}>
             Viagens privadas e{" "}
             <span className="bg-gradient-to-r from-[#E94332] via-[#D96A2E] to-[#C9A03A] bg-clip-text text-transparent">
               roteiros personalizados
@@ -343,12 +253,8 @@ export default function Home() {
       Por que escolher a Alpinea
     </p>
 
-    <div className="relative -mx-8 md:mx-0">
-      <div
-        ref={statsScrollRef}
-        className="flex gap-6 overflow-x-auto px-8 pb-2 snap-x snap-mandatory scroll-pl-8 [&::-webkit-scrollbar]:hidden md:grid md:grid-cols-4 md:gap-12 md:overflow-visible md:px-0 md:pb-0"
-      >
-        <div className="w-[72vw] flex-shrink-0 snap-start [scroll-snap-stop:always] md:w-auto md:flex-shrink">
+    <CarouselScroller itemCount={4} desktopColumns={4}>
+        <div className="w-[72vw] flex-shrink-0 md:w-auto md:flex-shrink">
           <svg className="mx-auto mb-5 h-7 w-7 text-white/70" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
             <circle cx="12" cy="12" r="9" />
             <polyline points="12 7 12 12 15 14" />
@@ -361,7 +267,7 @@ export default function Home() {
           </p>
         </div>
 
-        <div className="w-[72vw] flex-shrink-0 snap-start [scroll-snap-stop:always] md:w-auto md:flex-shrink">
+        <div className="w-[72vw] flex-shrink-0 md:w-auto md:flex-shrink">
           <svg className="mx-auto mb-5 h-7 w-7 text-white/70" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
             <path d="M6 3h12l4 6-10 12L2 9z" />
             <path d="M2 9h20" />
@@ -376,7 +282,7 @@ export default function Home() {
           </p>
         </div>
 
-        <div className="w-[72vw] flex-shrink-0 snap-start [scroll-snap-stop:always] md:w-auto md:flex-shrink">
+        <div className="w-[72vw] flex-shrink-0 md:w-auto md:flex-shrink">
           <svg className="mx-auto mb-5 h-7 w-7 text-white/70" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
             <path d="M21 16v-2l-8-5V3.5a1.5 1.5 0 0 0-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5z" />
           </svg>
@@ -388,7 +294,7 @@ export default function Home() {
           </p>
         </div>
 
-        <div className="w-[72vw] flex-shrink-0 snap-start [scroll-snap-stop:always] md:w-auto md:flex-shrink">
+        <div className="w-[72vw] flex-shrink-0 md:w-auto md:flex-shrink">
           <svg className="mx-auto mb-5 h-7 w-7 text-white/70" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
             <path d="M12 21s7-7.58 7-12a7 7 0 1 0-14 0c0 4.42 7 12 7 12z" />
             <circle cx="12" cy="9" r="2.5" />
@@ -400,10 +306,7 @@ export default function Home() {
             Nossa operação própria no Japão permite um atendimento sem intermediários, com maior flexibilidade, controle e proximidade dos melhores parceiros locais.
           </p>
         </div>
-      </div>
-      <CarouselNextArrow targetRef={statsScrollRef} />
-    </div>
-    <CarouselDots targetRef={statsScrollRef} count={4} />
+    </CarouselScroller>
   </div>
 </section>
 
@@ -439,15 +342,11 @@ export default function Home() {
       </div>
     </div>
 
-    <div className="relative -mx-8 md:mx-0">
-      <div
-        ref={tiersScrollRef}
-        className="flex gap-6 overflow-x-auto px-8 pt-4 pb-2 snap-x snap-mandatory scroll-pl-8 [&::-webkit-scrollbar]:hidden md:grid md:grid-cols-3 md:gap-8 md:overflow-visible md:px-0 md:pt-0 md:pb-0"
-      >
+    <CarouselScroller itemCount={tiers.length} desktopColumns={3}>
         {tiers.map((tier) => (
           <div
             key={tier.title}
-            className={`relative flex w-[78vw] flex-shrink-0 snap-start [scroll-snap-stop:always] flex-col rounded-[20px] border px-6 py-8 md:w-auto md:flex-shrink md:px-10 md:py-12 ${
+            className={`relative mt-4 flex w-[78vw] flex-shrink-0 flex-col rounded-[20px] border px-6 py-8 md:w-auto md:flex-shrink md:px-10 md:py-12 ${
               tier.highlighted
                 ? "border-white/15 bg-white/[0.06]"
                 : "border-white/10 bg-black"
@@ -472,10 +371,7 @@ export default function Home() {
             </p>
           </div>
         ))}
-      </div>
-      <CarouselNextArrow targetRef={tiersScrollRef} />
-    </div>
-    <CarouselDots targetRef={tiersScrollRef} count={tiers.length} />
+    </CarouselScroller>
   </div>
 </section>
 
