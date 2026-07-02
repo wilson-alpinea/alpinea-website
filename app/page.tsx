@@ -202,7 +202,7 @@ export default function Home() {
           <h1 className={`${display.className} max-w-3xl text-3xl font-medium leading-[1.15] tracking-tight text-white md:text-5xl`}>
             Viagens privadas e{" "}
             <span className="bg-gradient-to-r from-[#E94332] via-[#D96A2E] to-[#C9A03A] bg-clip-text text-transparent">
-              roteiros sob medida
+              roteiros personalizados
             </span>{" "}
             para conhecer o verdadeiro Japão.
           </h1>
@@ -293,7 +293,7 @@ export default function Home() {
       </a>
 
       {/* EXPERIÊNCIAS */}
-      <a href="/roteiros" className="group block">
+      <a href="/roteirolandingpage" className="group block">
         <div className="relative aspect-square overflow-hidden rounded-[2rem] bg-black">
           <img
             src="/images/fuji.JPG"
@@ -313,7 +313,7 @@ export default function Home() {
       </a>
 
       {/* EVENTOS ESPECIAIS */}
-      <a href="/lua-de-mel" className="group block">
+      <a href="/luademel" className="group block">
         <div className="relative aspect-square overflow-hidden rounded-[2rem] bg-black">
           <img
             src="/images/intimiact.png"
@@ -349,7 +349,7 @@ export default function Home() {
         className="flex gap-6 overflow-x-auto px-8 pb-2 snap-x snap-mandatory scroll-pl-8 [&::-webkit-scrollbar]:hidden md:grid md:grid-cols-4 md:gap-12 md:overflow-visible md:px-0 md:pb-0"
       >
         <div className="w-[72vw] flex-shrink-0 snap-start [scroll-snap-stop:always] md:w-auto md:flex-shrink">
-          <svg className="mb-5 h-7 w-7 text-white/70" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+          <svg className="mx-auto mb-5 h-7 w-7 text-white/70" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
             <circle cx="12" cy="12" r="9" />
             <polyline points="12 7 12 12 15 14" />
           </svg>
@@ -362,7 +362,7 @@ export default function Home() {
         </div>
 
         <div className="w-[72vw] flex-shrink-0 snap-start [scroll-snap-stop:always] md:w-auto md:flex-shrink">
-          <svg className="mb-5 h-7 w-7 text-white/70" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+          <svg className="mx-auto mb-5 h-7 w-7 text-white/70" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
             <path d="M6 3h12l4 6-10 12L2 9z" />
             <path d="M2 9h20" />
             <path d="M9 3l3 6-3 12" />
@@ -377,7 +377,7 @@ export default function Home() {
         </div>
 
         <div className="w-[72vw] flex-shrink-0 snap-start [scroll-snap-stop:always] md:w-auto md:flex-shrink">
-          <svg className="mb-5 h-7 w-7 text-white/70" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+          <svg className="mx-auto mb-5 h-7 w-7 text-white/70" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
             <path d="M21 16v-2l-8-5V3.5a1.5 1.5 0 0 0-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5z" />
           </svg>
           <h3 className={`${display.className} text-2xl font-medium tracking-tight text-white md:text-3xl`}>
@@ -389,7 +389,7 @@ export default function Home() {
         </div>
 
         <div className="w-[72vw] flex-shrink-0 snap-start [scroll-snap-stop:always] md:w-auto md:flex-shrink">
-          <svg className="mb-5 h-7 w-7 text-white/70" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+          <svg className="mx-auto mb-5 h-7 w-7 text-white/70" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
             <path d="M12 21s7-7.58 7-12a7 7 0 1 0-14 0c0 4.42 7 12 7 12z" />
             <circle cx="12" cy="9" r="2.5" />
           </svg>
