@@ -31,48 +31,14 @@ export default function Home() {
 
   return (
     <main className="min-h-screen bg-black text-white">
-  <section className="relative h-screen overflow-hidden">
-    <div className="absolute inset-0">
-  <video
-    className="hero-video hero-video-0 absolute inset-0 h-full w-full object-cover"
-    autoPlay
-    muted
-    loop
-    playsInline
-    src="/videos/japan-hero.mp4"
-  />
+  <section className="relative h-[50svh] min-h-[460px] overflow-hidden md:h-[max(50vh,28vw)] md:max-h-[900px] md:min-h-[520px]">
+    <img
+      src="/images/nachifalls2.png"
+      alt="Templo Seiganto-ji e Cachoeira Nachi, Japão"
+      className="absolute inset-0 h-full w-full object-cover"
+    />
 
-  <video
-    className="hero-video hero-video-1 absolute inset-0 h-full w-full object-cover"
-    autoPlay
-    muted
-    loop
-    playsInline
-    src="/videos/tokyo-station.mp4"
-  />
-
-  <video
-    className="hero-video hero-video-2 absolute inset-0 h-full w-full object-cover"
-    autoPlay
-    muted
-    loop
-    playsInline
-    src="/videos/higashiyama.mp4"
-  />
-
-  <video
-    className="hero-video hero-video-3 absolute inset-0 min-h-full min-w-full object-cover"
-    autoPlay
-    muted
-    loop
-    playsInline
-    src="/videos/okinawa.mp4"
-  />
-</div>
-
-
-
-    <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/30 to-black" />
+    <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/60 to-black" />
 
 <header
   className={`fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-8 py-5 md:px-16 transition-all duration-700 ${
@@ -116,32 +82,45 @@ export default function Home() {
   </nav>
 </header>
 
-        <div className="relative z-10 flex h-[75vh] flex-col items-center justify-center px-6 text-center">
-          <p className="mb-6 text-xs uppercase tracking-[0.5em] text-white/60">
+        <div className="relative z-10 flex h-full flex-col items-center justify-center px-6 pt-20 text-center md:justify-end md:pb-24">
+          <p className="mb-5 text-xs uppercase tracking-[0.4em] text-white/60 md:tracking-[0.5em]">
             A Única Agência Brasileira 100% Dedicada ao Japão
           </p>
 
-          <h1 className={`${display.className} text-6xl font-medium leading-[1.05] tracking-tight text-white md:text-8xl`}>
-  Viva o Japão com
-  <br />
- <span className="bg-gradient-to-r from-[#E94332] via-[#D96A2E] to-[#C9A03A] bg-clip-text text-transparent animate-luxury-gradient bg-[length:180%_180%]">
-  exclusividade.
-  </span>
-</h1>
-
-          <p className="mt-8 max-w-2xl text-base font-light leading-8 text-white/70 md:text-lg">
-            Viagens privadas, gastronomia de excelência, acesso cultural e
-            planejamento impecável para clientes que esperam vivenciar o Japão
-            com absoluta fluidez.
-          </p>
+          <h1 className={`${display.className} max-w-4xl text-4xl font-medium leading-[1.1] tracking-tight text-white md:text-6xl`}>
+            Viagens privadas e{" "}
+            <span className="bg-gradient-to-r from-[#E94332] via-[#D96A2E] to-[#C9A03A] bg-clip-text text-transparent">
+              roteiros sob medida no Japão.
+            </span>
+          </h1>
 
           <a
             href="#contact"
-            className="mt-12 border border-white/30 px-8 py-4 text-xs uppercase tracking-[0.3em] text-white transition hover:bg-white hover:text-black"
+            className="mt-8 hidden border border-white/30 px-8 py-4 text-xs uppercase tracking-[0.3em] text-white transition hover:bg-white hover:text-black md:block"
           >
             Solicitar Atendimento
           </a>
         </div>
+
+        {/* Indicador de scroll */}
+        <a
+          href="#experiences"
+          aria-label="Rolar para o conteúdo"
+          className="absolute inset-x-0 bottom-6 z-10 flex justify-center"
+        >
+          <svg
+            className="h-6 w-6 animate-bounce text-white/55 transition hover:text-white/90"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <polyline points="6 9 12 15 18 9" />
+          </svg>
+        </a>
       </section>
 
 <section id="experiences" className="relative overflow-hidden px-6 py-32 md:px-16">
