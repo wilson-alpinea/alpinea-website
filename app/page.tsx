@@ -118,7 +118,7 @@ export default function Home() {
 
         <div className="relative z-10 flex h-[75vh] flex-col items-center justify-center px-6 text-center">
           <p className="mb-6 text-xs uppercase tracking-[0.5em] text-white/60">
-            Acesso, Execução e Curadoria do Japão
+            A Única Agência Brasileira 100% Dedicada ao Japão
           </p>
 
           <h1 className={`${display.className} text-6xl font-medium leading-[1.05] tracking-tight text-white md:text-8xl`}>
