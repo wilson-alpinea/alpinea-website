@@ -191,7 +191,7 @@ export default function HoteisDeLuxoLandingPage() {
   const hotelCaseStudy = {
     name: "The Ritz-Carlton, Osaka",
     location: "Nishi-Umeda, Osaka",
-    image: "/images/ritz-carlton-osaka.jpg",
+    image: "/images/ritzosaka.png",
     alt: "Fachada do The Ritz-Carlton, Osaka, no distrito de Nishi-Umeda",
     criteria: [
       {
@@ -217,6 +217,65 @@ export default function HoteisDeLuxoLandingPage() {
       },
     ],
   };
+
+  // 4.5 OS HOTÉIS MAIS LUXUOSOS DO JAPÃO — mapa de referência da curadoria
+  const topLuxuryHotels = [
+    {
+      region: "Tóquio",
+      hotels: [
+        "Aman Tokyo",
+        "Mandarin Oriental Tokyo",
+        "Four Seasons Hotel Tokyo at Otemachi",
+        "Four Seasons Hotel Tokyo at Marunouchi",
+        "The Peninsula Tokyo",
+        "Palace Hotel Tokyo",
+        "Park Hyatt Tokyo",
+        "Janu Tokyo",
+        "Hoshinoya Tokyo",
+        "The Ritz-Carlton, Tokyo",
+      ],
+    },
+    {
+      region: "Kyoto",
+      hotels: [
+        "Aman Kyoto",
+        "Hoshinoya Kyoto",
+        "Four Seasons Hotel Kyoto",
+        "The Ritz-Carlton, Kyoto",
+        "Hiiragiya",
+        "The Mitsui Kyoto, a Luxury Collection Hotel & Spa",
+      ],
+    },
+    {
+      region: "Osaka",
+      hotels: ["The Ritz-Carlton, Osaka", "The St. Regis Osaka", "Conrad Osaka"],
+    },
+    {
+      region: "Hakone, Fuji e Ise-Shima",
+      hotels: [
+        "Hoshinoya Fuji",
+        "Amanemu (Ise-Shima)",
+        "Gora Kadan (Hakone)",
+        "Espacio The Hakone Geihinkan Rin-Poh-Ki-Ryu (Hakone)",
+      ],
+    },
+    {
+      region: "Nikko",
+      hotels: ["The Ritz-Carlton, Nikko"],
+    },
+    {
+      region: "Hokkaido e Niseko",
+      hotels: ["Zaborin (Niseko)", "Higashiyama Niseko Village, a Ritz-Carlton Reserve"],
+    },
+    {
+      region: "Karuizawa",
+      hotels: ["Hoshinoya Karuizawa"],
+    },
+    {
+      region: "Okinawa",
+      hotels: ["Halekulani Okinawa", "The Ritz-Carlton, Okinawa", "Hoshinoya Okinawa"],
+    },
+  ];
 
   // 6. POR QUE A ALPINEA
   const whyAlpinea = [
@@ -247,8 +306,8 @@ export default function HoteisDeLuxoLandingPage() {
       {/* 1. HERO */}
       <section className="relative h-[64svh] min-h-[560px] overflow-hidden md:h-[max(60vh,32vw)] md:max-h-[920px] md:min-h-[560px]">
         <Image
-          src="/images/hoteis-luxo-hero.jpg"
-          alt="Suíte de hotel de luxo no Japão com vista panorâmica"
+          src="/images/hero-jantar-fuji.png"
+          alt="Vista de Tóquio e do Monte Fuji ao entardecer, de um salão de jantar em andar alto"
           fill
           priority
           sizes="100vw"
@@ -469,6 +528,44 @@ export default function HoteisDeLuxoLandingPage() {
 
           <p className="mt-12 max-w-2xl text-sm font-light leading-7 text-white/40 md:mt-16 md:text-base">
             Esse é o nível de detalhe por trás de cada indicação — repetido hotel por hotel, não apenas uma lista de nomes conhecidos.
+          </p>
+        </div>
+      </section>
+
+      {/* 4.5 OS HOTÉIS MAIS LUXUOSOS DO JAPÃO */}
+      <section className="border-b border-white/10 px-8 py-14 md:px-16 md:py-28">
+        <div className="mx-auto max-w-7xl">
+          <div className="mb-10 max-w-3xl md:mb-16">
+            <p className="mb-6 text-xs uppercase tracking-[0.3em] text-white/40 md:tracking-[0.45em]">
+              Mapa de referência
+            </p>
+            <h2 className={`${display.className} text-3xl font-medium leading-tight md:text-5xl`}>
+              Os hotéis mais luxuosos do Japão, região por região.
+            </h2>
+            <p className="mt-5 max-w-2xl text-base font-light leading-8 text-white/60 md:mt-7 md:text-lg md:leading-9">
+              Para montar a curadoria de cada cliente, mapeamos e comparamos continuamente as propriedades mais relevantes do país — de acordo com Forbes Travel Guide, Guia Michelin e nossa própria experiência em cada uma delas.
+            </p>
+          </div>
+
+          <div className="grid gap-x-10 gap-y-10 md:grid-cols-4">
+            {topLuxuryHotels.map((group) => (
+              <div key={group.region} className="border-t border-white/15 pt-6">
+                <h3 className="text-xs font-medium uppercase tracking-[0.25em] text-white/45">
+                  {group.region}
+                </h3>
+                <ul className="mt-4 space-y-2">
+                  {group.hotels.map((hotel) => (
+                    <li key={hotel} className="text-sm font-light leading-6 text-white/60">
+                      {hotel}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+
+          <p className="mt-12 max-w-2xl text-xs font-light leading-6 text-white/30 md:mt-16">
+            Lista de referência de mercado, construída a partir de fontes públicas e conhecimento próprio da Alpinea. Não representa convênio, parceria comercial ou exclusividade com as propriedades citadas.
           </p>
         </div>
       </section>
