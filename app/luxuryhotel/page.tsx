@@ -421,8 +421,8 @@ export default function HoteisDeLuxoLandingPage() {
       <section className="border-b border-white/10">
         <div className="relative h-[220px] w-full overflow-hidden md:h-[420px]">
           <Image
-            src="/images/hotel-corredor.jpg"
-            alt="Corredor elegante de hotel de luxo japonês"
+            src="/images/corredorelegante.png"
+            alt="Escultura e lobby de hotel de luxo com iluminação dourada"
             fill
             sizes="100vw"
             className="object-cover object-top"
