@@ -147,13 +147,13 @@ export default function HoteisDeLuxoLandingPage() {
   const whyAlpineaHotels = [
     {
       title: "Já dormimos onde recomendamos",
-      text: "Cada propriedade sugerida foi visitada e avaliada por nós — não escolhida por nota de plataforma ou comissão.",
+      text: "Cada propriedade sugerida foi visitada e avaliada por nós, não escolhida por nota de plataforma ou comissão.",
       image: "/images/hotelcard3.png",
       alt: "Lobby de hotel de luxo no Japão, com iluminação de cristal",
     },
     {
       title: "Sabemos qual quarto vale o preço",
-      text: "Nem toda suíte de um hotel 5 estrelas tem a mesma vista, o mesmo silêncio ou o mesmo onsen privativo. Indicamos a categoria certa dentro de cada propriedade — não só o hotel certo.",
+      text: "Nem toda suíte de um hotel 5 estrelas tem a mesma vista, o mesmo silêncio ou o mesmo onsen privativo. Indicamos a categoria certa dentro de cada propriedade, não só o hotel certo.",
       image: "/images/hotelcard2.png",
       alt: "Suíte de ryokan tradicional japonês com vista para o jardim",
     },
@@ -165,7 +165,7 @@ export default function HoteisDeLuxoLandingPage() {
     },
     {
       title: "Evitamos o erro caro",
-      text: "Localização que parece central mas isola vocês do que importa, quarto 'de luxo' voltado para o estacionamento — o tipo de decepção que só se descobre depois de já ter pago.",
+      text: "Localização que parece central mas isola vocês do que importa, quarto 'de luxo' voltado para o estacionamento: o tipo de decepção que só se descobre depois de já ter pago.",
       image: "/images/hotelcard1.png",
       alt: "Piscina de borda infinita em hotel de luxo, com vista da cidade ao entardecer",
     },
@@ -175,11 +175,11 @@ export default function HoteisDeLuxoLandingPage() {
   const hotelJourney = [
     {
       title: "Vocês nos contam quem está viajando.",
-      text: "Casal em lua de mel, família com crianças pequenas, viagem a sós — o perfil de quem viaja muda completamente qual propriedade, qual quarto e até qual bairro fazem sentido.",
+      text: "Casal em lua de mel, família com crianças pequenas ou viagem a sós: o perfil de quem viaja muda completamente qual propriedade, qual quarto e até qual bairro fazem sentido.",
     },
     {
       title: "Nós cruzamos isso com o que conhecemos de dentro.",
-      text: "Não recomendamos pela categoria do hotel — recomendamos pelo quarto específico, o andar, a vista, a distância real a pé do que vocês vão querer fazer.",
+      text: "Não recomendamos pela categoria do hotel, e sim pelo quarto específico: o andar, a vista, a distância real a pé do que vocês vão querer fazer.",
     },
     {
       title: "Vocês reservam sabendo exatamente no que estão entrando.",
@@ -197,22 +197,22 @@ export default function HoteisDeLuxoLandingPage() {
       {
         label: "Localização",
         verdict:
-          "Ligado à Estação de Osaka por passagem subterrânea — a poucos minutos de metrô de Namba e Dotonbori. Dificilmente existe base mais central na cidade.",
+          "Ligado à Estação de Osaka por passagem subterrânea, a poucos minutos de metrô de Namba e Dotonbori. Dificilmente existe base mais central na cidade.",
       },
       {
         label: "Quarto que vale o preço",
         verdict:
-          "Os quartos do Club Level (33º ao 35º andar) dão acesso a um lounge com cinco apresentações gastronômicas por dia — o upgrade que realmente muda a experiência da estadia, não apenas o andar mais alto.",
+          "Os quartos do Club Level (33º ao 35º andar) dão acesso a um lounge com cinco apresentações gastronômicas por dia: o upgrade que realmente muda a experiência da estadia, não apenas o andar mais alto.",
       },
       {
         label: "Ideal para",
         verdict:
-          "Famílias — com programa infantil próprio e quartos espaçosos — e viajantes a negócios que querem uma base de luxo central.",
+          "Famílias (com programa infantil próprio e quartos espaçosos) e viajantes a negócios que querem uma base de luxo central.",
       },
       {
         label: "Não recomendamos para",
         verdict:
-          "Quem busca imersão na estética japonesa através da hospedagem. A decoração do hotel é inspirada numa residência aristocrática britânica do século XVIII — luxo inegável, mas não o Japão tradicional. Para isso, indicamos um ryokan.",
+          "Quem busca imersão na estética japonesa através da hospedagem. A decoração do hotel é inspirada numa residência aristocrática britânica do século XVIII: luxo inegável, mas não o Japão tradicional. Para isso, indicamos um ryokan.",
         emphasis: true,
       },
     ],
@@ -281,11 +281,11 @@ export default function HoteisDeLuxoLandingPage() {
   const whyAlpinea = [
     {
       title: "+12 anos no Japão",
-      text: "Mais de uma década de relações locais — o tipo de acesso que não se compra, se constrói.",
+      text: "Mais de uma década de relações locais: o tipo de acesso que não se compra, se constrói.",
     },
     {
       title: "Presença real, sem intermediários",
-      text: "Operação própria no Japão, com atendimento direto e conhecimento de bairros, hotéis e restaurantes fora do óbvio — sem terceirizar sua viagem, e sem expor os detalhes dela.",
+      text: "Operação própria no Japão, com atendimento direto e conhecimento de bairros, hotéis e restaurantes fora do óbvio, sem terceirizar sua viagem e sem expor os detalhes dela.",
     },
     {
       title: "Indicação pelo perfil de quem viaja, não pelo nome do hotel",
@@ -338,7 +338,7 @@ export default function HoteisDeLuxoLandingPage() {
           <h1 className={`${display.className} max-w-full text-[1.65rem] font-medium leading-[1.25] tracking-tight md:max-w-4xl md:text-6xl`}>
             O hotel certo não é o mais caro.{" "}
             <span className="bg-gradient-to-r from-[#E94332] via-[#D96A2E] to-[#C9A03A] bg-clip-text text-transparent">
-              É o que foi feito para a viagem de vocês.
+              É{"\u00A0"}o que foi feito para a viagem de vocês.
             </span>
           </h1>
 
@@ -376,7 +376,7 @@ export default function HoteisDeLuxoLandingPage() {
             </h2>
 
             <p className="mt-5 max-w-none text-base font-light leading-8 text-white/60 md:mt-7 md:text-lg md:leading-9">
-              A Alpinea não tem convênio com hotéis. O que oferecemos é outra coisa: mais de uma década escolhendo, testando e comparando hospedagens no Japão, para indicar exatamente a propriedade — e o quarto dentro dela — certos para o perfil de quem viaja.
+              A Alpinea não tem convênio com hotéis. O que oferecemos é outra coisa: mais de uma década escolhendo, testando e comparando hospedagens no Japão, para indicar exatamente a propriedade (e o quarto dentro dela) certos para o perfil de quem viaja.
             </p>
           </div>
 
@@ -527,7 +527,7 @@ export default function HoteisDeLuxoLandingPage() {
           </div>
 
           <p className="mt-12 max-w-2xl text-sm font-light leading-7 text-white/40 md:mt-16 md:text-base">
-            Esse é o nível de detalhe por trás de cada indicação — repetido hotel por hotel, não apenas uma lista de nomes conhecidos.
+            Esse é o nível de detalhe por trás de cada indicação, repetido hotel por hotel, não apenas uma lista de nomes conhecidos.
           </p>
         </div>
       </section>
@@ -543,7 +543,7 @@ export default function HoteisDeLuxoLandingPage() {
               Os hotéis mais luxuosos do Japão, região por região.
             </h2>
             <p className="mt-5 max-w-2xl text-base font-light leading-8 text-white/60 md:mt-7 md:text-lg md:leading-9">
-              Para montar a curadoria de cada cliente, mapeamos e comparamos continuamente as propriedades mais relevantes do país — de acordo com Forbes Travel Guide, Guia Michelin e nossa própria experiência em cada uma delas.
+              Para montar a curadoria de cada cliente, mapeamos e comparamos continuamente as propriedades mais relevantes do país, de acordo com Forbes Travel Guide, Guia Michelin e nossa própria experiência em cada uma delas.
             </p>
           </div>
 
@@ -604,7 +604,7 @@ export default function HoteisDeLuxoLandingPage() {
               </h3>
 
               <p className="mt-6 max-w-lg text-base font-light leading-8 text-white/65">
-                Categoria de quarto, melhor época para aquela propriedade específica, o que vale reservar direto e o que evitar — cada hotel indicado pela Alpinea vem com o contexto que só quem já esteve lá consegue dar. Tudo organizado no dashboard digital, acessível a qualquer momento do planejamento.
+                Categoria de quarto, melhor época para aquela propriedade específica, o que vale reservar direto e o que evitar: cada hotel indicado pela Alpinea vem com o contexto que só quem já esteve lá consegue dar. Tudo organizado no dashboard digital, acessível a qualquer momento do planejamento.
               </p>
             </div>
 
@@ -710,7 +710,7 @@ export default function HoteisDeLuxoLandingPage() {
         <div className="absolute inset-0 bg-black/65" />
 
         <p className={`${display.className} relative z-10 mx-auto max-w-3xl text-center text-2xl italic font-light leading-snug text-white/90 md:text-4xl`}>
-          "Existe hotel de luxo em qualquer lugar do mundo. Existir com a curadoria certa por trás — isso é raro."
+          "Bons hotéis existem em qualquer lugar do mundo. Saber qual deles foi feito para vocês é o que muda a viagem."
         </p>
       </section>
 
@@ -726,7 +726,7 @@ export default function HoteisDeLuxoLandingPage() {
           </h2>
 
           <p className="mx-auto mt-6 max-w-2xl text-base leading-8 text-black/60 md:mt-8 md:text-lg">
-            Compartilhem quem viaja e o estilo que imaginam. A Alpinea indica a propriedade — e o quarto dentro dela — certos para vocês.
+            Compartilhem quem viaja e o estilo que imaginam. A Alpinea indica a propriedade (e o quarto dentro dela) certos para vocês.
           </p>
 
           <p className="mt-4 text-sm font-light text-black/40 md:mt-6">
@@ -753,7 +753,7 @@ export default function HoteisDeLuxoLandingPage() {
               </p>
 
               <p className="text-xs text-white/30">
-                © 2026 Alpinea Agências de Viagens LTDA — CNPJ 66.491.067/0001-84
+                © 2026 Alpinea Agências de Viagens LTDA · CNPJ 66.491.067/0001-84
               </p>
 
               <div className="flex flex-wrap items-center gap-3 text-xs text-white/25">
