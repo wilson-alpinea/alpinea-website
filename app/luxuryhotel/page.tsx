@@ -148,26 +148,26 @@ export default function HoteisDeLuxoLandingPage() {
     {
       title: "Já dormimos onde recomendamos",
       text: "Cada propriedade sugerida foi visitada e avaliada por nós — não escolhida por nota de plataforma ou comissão.",
-      image: "/images/hotel-avaliacao.jpg",
-      alt: "Quarto de hotel de luxo com vista panorâmica no Japão",
+      image: "/images/hotelcard3.png",
+      alt: "Lobby de hotel de luxo no Japão, com iluminação de cristal",
     },
     {
       title: "Sabemos qual quarto vale o preço",
       text: "Nem toda suíte de um hotel 5 estrelas tem a mesma vista, o mesmo silêncio ou o mesmo onsen privativo. Indicamos a categoria certa dentro de cada propriedade — não só o hotel certo.",
-      image: "/images/hotel-quarto.jpg",
+      image: "/images/hotelcard2.png",
       alt: "Suíte de ryokan tradicional japonês com vista para o jardim",
     },
     {
       title: "Perfil de viagem, não lista genérica",
       text: "O ryokan ideal para uma lua de mel raramente é o ideal para uma família com crianças, e o hotel perfeito para viajar sozinho é diferente dos dois. A recomendação muda com quem viaja.",
-      image: "/images/hotel-familia.jpg",
-      alt: "Família em área comum de hotel de luxo no Japão",
+      image: "/images/hotelcard4.png",
+      alt: "Sala de estar de suíte de hotel de luxo com vista panorâmica de Tóquio",
     },
     {
       title: "Evitamos o erro caro",
       text: "Localização que parece central mas isola vocês do que importa, quarto 'de luxo' voltado para o estacionamento — o tipo de decepção que só se descobre depois de já ter pago.",
-      image: "/images/hotel-vista.jpg",
-      alt: "Vista noturna da cidade a partir de um quarto de hotel alto",
+      image: "/images/hotelcard1.png",
+      alt: "Piscina de borda infinita em hotel de luxo, com vista da cidade ao entardecer",
     },
   ];
 
@@ -547,21 +547,41 @@ export default function HoteisDeLuxoLandingPage() {
             </p>
           </div>
 
-          <div className="grid gap-x-10 gap-y-10 md:grid-cols-4">
-            {topLuxuryHotels.map((group) => (
-              <div key={group.region} className="border-t border-white/15 pt-6">
-                <h3 className="text-xs font-medium uppercase tracking-[0.25em] text-white/45">
-                  {group.region}
-                </h3>
-                <ul className="mt-4 space-y-2">
-                  {group.hotels.map((hotel) => (
-                    <li key={hotel} className="text-sm font-light leading-6 text-white/60">
-                      {hotel}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
+          <div className="grid gap-10 md:grid-cols-[1.6fr_1fr] md:gap-16">
+            <div className="grid gap-x-10 gap-y-10 sm:grid-cols-2">
+              {topLuxuryHotels.map((group) => (
+                <div key={group.region} className="border-t border-white/15 pt-6">
+                  <h3 className="text-xs font-medium uppercase tracking-[0.25em] text-white/45">
+                    {group.region}
+                  </h3>
+                  <ul className="mt-4 space-y-2">
+                    {group.hotels.map((hotel) => (
+                      <li key={hotel} className="text-sm font-light leading-6 text-white/60">
+                        {hotel}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
+
+            <div
+              className="relative aspect-[3/4] cursor-zoom-in overflow-hidden rounded-[20px] md:sticky md:top-24"
+              onClick={() =>
+                setLightbox({
+                  src: "/images/mapadereferencia.png",
+                  alt: "Vista da Torre de Tóquio à noite, de uma suíte de hotel em andar alto",
+                })
+              }
+            >
+              <Image
+                src="/images/mapadereferencia.png"
+                alt="Vista da Torre de Tóquio à noite, de uma suíte de hotel em andar alto"
+                fill
+                sizes="(max-width: 768px) 100vw, 35vw"
+                className="object-cover object-center"
+              />
+            </div>
           </div>
 
           <p className="mt-12 max-w-2xl text-xs font-light leading-6 text-white/30 md:mt-16">
