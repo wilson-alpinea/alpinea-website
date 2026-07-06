@@ -178,7 +178,7 @@ export default function HoteisDeLuxoLandingPage() {
     {
       profile: "Lua de mel e casais",
       description: "Privacidade, romantismo e experiências a dois.",
-      hotels: ["Aman Kyoto", "Amanemu (Ise-Shima)", "Zaborin (Niseko)", "Hoshinoya Fuji"],
+      hotels: ["Amanemu (Ise-Shima)", "Zaborin (Niseko)", "Hoshinoya Fuji", "Higashiyama Niseko Village, a Ritz-Carlton Reserve"],
       accent: "from-[#E94332]/20 via-[#D96A2E]/14 to-transparent",
       iconBg: "bg-[#E94332]/15",
       icon: (
@@ -205,7 +205,7 @@ export default function HoteisDeLuxoLandingPage() {
     {
       profile: "Bem-estar e onsen",
       description: "Ryokans e retiros voltados para descanso e águas termais.",
-      hotels: ["Hoshinoya Kyoto", "Gora Kadan (Hakone)", "Hiiragiya", "Zaborin (Niseko)"],
+      hotels: ["Hoshinoya Kyoto", "Gora Kadan (Hakone)", "Hiiragiya", "Espacio The Hakone Geihinkan Rin-Poh-Ki-Ryu (Hakone)"],
       accent: "from-[#4B2A80]/20 via-[#144491]/16 to-transparent",
       iconBg: "bg-[#4B2A80]/18",
       icon: (
@@ -219,7 +219,7 @@ export default function HoteisDeLuxoLandingPage() {
     {
       profile: "Privacidade",
       description: "Propriedades com poucas suítes, isolamento real e o máximo de discrição.",
-      hotels: ["Aman Tokyo", "Aman Kyoto", "Amanemu (Ise-Shima)", "Park Hyatt Kyoto"],
+      hotels: ["Aman Tokyo", "Aman Kyoto", "The Ritz-Carlton, Nikko", "Hoshinoya Karuizawa"],
       accent: "from-[#C9A03A]/22 via-[#8C6A1F]/14 to-transparent",
       iconBg: "bg-[#C9A03A]/16",
       icon: (
