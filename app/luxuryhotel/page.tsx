@@ -299,7 +299,7 @@ export default function HoteisDeLuxoLandingPage() {
 
         <div className="relative z-10 flex h-full flex-col items-center justify-center px-6 pt-48 text-center md:justify-end md:pb-28">
           <p className={`${display.className} mb-3 text-sm uppercase tracking-[0.3em] text-white/75 md:mb-7 md:text-base md:tracking-[0.5em]`}>
-            Curadoria, planejamento e reserva de hotéis, tudo em um só lugar.
+            Do roteiro à reserva, em um só lugar.
           </p>
 
           <h1 className={`${display.className} max-w-full text-[1.65rem] font-medium leading-[1.25] tracking-tight md:max-w-4xl md:text-6xl`}>
@@ -403,9 +403,9 @@ export default function HoteisDeLuxoLandingPage() {
             </p>
           </div>
 
-          <div className="grid gap-10 lg:grid-cols-[0.85fr_1.15fr] lg:items-start lg:gap-14">
+          <div className="grid gap-10 lg:grid-cols-[0.85fr_1.15fr] lg:gap-14">
             <div
-              className="relative aspect-[4/5] cursor-zoom-in overflow-hidden rounded-[20px] lg:sticky lg:top-24"
+              className="relative aspect-[4/5] min-h-[420px] cursor-zoom-in overflow-hidden rounded-[20px] lg:aspect-auto lg:h-full"
               onClick={() =>
                 setLightbox({
                   src: "/images/mapadereferencia.png",
@@ -444,20 +444,25 @@ export default function HoteisDeLuxoLandingPage() {
               ))}
             </div>
           </div>
-
-          <p className="mt-12 max-w-2xl text-xs font-light leading-6 text-white/30 md:mt-16">
-            Lista de referência de mercado, construída a partir de fontes públicas, do Forbes Travel Guide, do Guia Michelin e do conhecimento próprio da Alpinea. A classificação por perfil é indicativa — uma mesma propriedade pode servir a mais de um perfil de viagem. Não representa convênio, parceria comercial ou exclusividade com as propriedades citadas.
-          </p>
         </div>
       </section>
 
       {/* CTA INTERMEDIÁRIO — após o mapa de referência */}
-      <section className="border-b border-white/10 bg-[#050505] px-8 py-14 text-center md:px-16 md:py-24">
-        <div className="mx-auto max-w-2xl">
+      <section className="relative overflow-hidden border-b border-white/10 px-8 py-20 text-center md:px-16 md:py-32">
+        <Image
+          src="/images/peninsula5.jpg"
+          alt="Entrada do The Peninsula Tokyo à noite"
+          fill
+          sizes="100vw"
+          className="object-cover object-center"
+        />
+        <div className="absolute inset-0 bg-black/70" />
+
+        <div className="relative z-10 mx-auto max-w-2xl">
           <h2 className={`${display.className} text-2xl font-medium leading-snug text-white md:text-4xl`}>
             Pronto para saber qual dessas propriedades foi feita para você?
           </h2>
-          <p className="mt-4 text-sm font-light leading-7 text-white/50 md:text-base">
+          <p className="mt-4 text-sm font-light leading-7 text-white/60 md:text-base">
             Curadoria, planejamento e reserva — tudo em um só lugar.
           </p>
 
