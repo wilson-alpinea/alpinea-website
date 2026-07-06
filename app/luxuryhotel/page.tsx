@@ -217,28 +217,15 @@ export default function HoteisDeLuxoLandingPage() {
       ),
     },
     {
-      profile: "Clássicos consagrados",
-      description: "Ícones de primeira viagem ao Japão, com o serviço mais tradicional.",
-      hotels: ["Aman Tokyo", "The Peninsula Tokyo", "Palace Hotel Tokyo", "The Ritz-Carlton, Kyoto"],
+      profile: "Privacidade",
+      description: "Propriedades com poucas suítes, isolamento real e o máximo de discrição.",
+      hotels: ["Aman Tokyo", "Aman Kyoto", "Amanemu (Ise-Shima)"],
       accent: "from-[#C9A03A]/22 via-[#8C6A1F]/14 to-transparent",
       iconBg: "bg-[#C9A03A]/16",
       icon: (
         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#E4CB86" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-          <path d="M12 2l2.6 6.6L21 9.3l-5 4.3 1.5 6.9L12 17l-5.5 3.5L8 13.6 3 9.3l6.4-.7z" />
-        </svg>
-      ),
-    },
-    {
-      profile: "Design e vida urbana",
-      description: "Estética contemporânea, para quem busca a cidade como parte da experiência.",
-      hotels: ["Janu Tokyo", "Mandarin Oriental Tokyo", "The Mitsui Kyoto, a Luxury Collection Hotel & Spa"],
-      accent: "from-[#1A4C93]/16 via-[#4B2A80]/14 to-transparent",
-      iconBg: "bg-white/10",
-      icon: (
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#C7D2E0" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-          <rect x="4" y="3" width="16" height="18" rx="1.5" />
-          <path d="M9 21v-4h6v4" />
-          <path d="M8 7h1M12 7h1M16 7h1M8 11h1M12 11h1M16 11h1" />
+          <rect x="5" y="11" width="14" height="10" rx="2" />
+          <path d="M8 11V7a4 4 0 0 1 8 0v4" />
         </svg>
       ),
     },
@@ -399,13 +386,13 @@ export default function HoteisDeLuxoLandingPage() {
               Os hotéis mais luxuosos do Japão, organizados pelo que importa: quem viaja.
             </h2>
             <p className="mt-5 max-w-2xl text-base font-light leading-8 text-white/60 md:mt-7 md:text-lg md:leading-9">
-              Para montar a curadoria de cada cliente, mapeamos e comparamos continuamente as propriedades mais relevantes do país, de acordo com Forbes Travel Guide, Guia Michelin e nossa própria experiência em cada uma delas.
+              Curadoria própria da Alpinea, para você escolher o hotel certo para o seu perfil de viagem.
             </p>
           </div>
 
           <div className="grid gap-10 lg:grid-cols-[0.85fr_1.15fr] lg:gap-14">
             <div
-              className="relative aspect-[4/5] min-h-[420px] cursor-zoom-in overflow-hidden rounded-[20px] lg:aspect-auto lg:h-full"
+              className="relative aspect-[4/5] cursor-zoom-in overflow-hidden rounded-[20px] lg:self-start"
               onClick={() =>
                 setLightbox({
                   src: "/images/mapadereferencia.png",
