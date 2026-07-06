@@ -165,73 +165,14 @@ export default function HoteisDeLuxoLandingPage() {
     },
     {
       title: "Evitamos o erro caro",
-      text: "Localização que parece central mas isola vocês do que importa, quarto 'de luxo' voltado para o estacionamento: o tipo de decepção que só se descobre depois de já ter pago.",
+      text: "Localização que parece central mas isola você do que importa, quarto 'de luxo' voltado para o estacionamento: o tipo de decepção que só se descobre depois de já ter pago.",
       image: "/images/hotelcard1.png",
       alt: "Piscina de borda infinita em hotel de luxo, com vista da cidade ao entardecer",
     },
   ];
 
-  // 4.5 OS HOTÉIS MAIS LUXUOSOS DO JAPÃO — mapa de referência da curadoria
-  const topLuxuryHotels = [
-    {
-      region: "Tóquio",
-      hotels: [
-        "Aman Tokyo",
-        "Mandarin Oriental Tokyo",
-        "Four Seasons Hotel Tokyo at Otemachi",
-        "Four Seasons Hotel Tokyo at Marunouchi",
-        "The Peninsula Tokyo",
-        "Palace Hotel Tokyo",
-        "Park Hyatt Tokyo",
-        "Janu Tokyo",
-        "Hoshinoya Tokyo",
-        "The Ritz-Carlton, Tokyo",
-      ],
-    },
-    {
-      region: "Kyoto",
-      hotels: [
-        "Aman Kyoto",
-        "Hoshinoya Kyoto",
-        "Four Seasons Hotel Kyoto",
-        "The Ritz-Carlton, Kyoto",
-        "Hiiragiya",
-        "The Mitsui Kyoto, a Luxury Collection Hotel & Spa",
-      ],
-    },
-    {
-      region: "Osaka",
-      hotels: ["The Ritz-Carlton, Osaka", "The St. Regis Osaka", "Conrad Osaka"],
-    },
-    {
-      region: "Hakone, Fuji e Ise-Shima",
-      hotels: [
-        "Hoshinoya Fuji",
-        "Amanemu (Ise-Shima)",
-        "Gora Kadan (Hakone)",
-        "Espacio The Hakone Geihinkan Rin-Poh-Ki-Ryu (Hakone)",
-      ],
-    },
-    {
-      region: "Nikko",
-      hotels: ["The Ritz-Carlton, Nikko"],
-    },
-    {
-      region: "Hokkaido e Niseko",
-      hotels: ["Zaborin (Niseko)", "Higashiyama Niseko Village, a Ritz-Carlton Reserve"],
-    },
-    {
-      region: "Karuizawa",
-      hotels: ["Hoshinoya Karuizawa"],
-    },
-    {
-      region: "Okinawa",
-      hotels: ["Halekulani Okinawa", "The Ritz-Carlton, Okinawa", "Hoshinoya Okinawa"],
-    },
-  ];
-
-  // 4.6 HOTÉIS POR PERFIL DE VIAGEM — agrupamento em cartões coloridos
-  // RASCUNHO — a categoria de cada propriedade precisa ser validada por vocês,
+  // 4.5 HOTÉIS POR PERFIL DE VIAGEM — agrupamento em cartões coloridos
+  // RASCUNHO — a categoria de cada propriedade precisa ser validada por você,
   // que já se hospedaram nelas. Ajustem os arrays de "hotels" antes de publicar.
   const hotelsByProfile = [
     {
@@ -358,19 +299,15 @@ export default function HoteisDeLuxoLandingPage() {
 
         <div className="relative z-10 flex h-full flex-col items-center justify-center px-6 pt-48 text-center md:justify-end md:pb-28">
           <p className={`${display.className} mb-3 text-sm uppercase tracking-[0.3em] text-white/75 md:mb-7 md:text-base md:tracking-[0.5em]`}>
-            Hospedagem de Luxo no Japão
+            Curadoria, planejamento e reserva de hotéis, tudo em um só lugar.
           </p>
 
           <h1 className={`${display.className} max-w-full text-[1.65rem] font-medium leading-[1.25] tracking-tight md:max-w-4xl md:text-6xl`}>
             O hotel certo não é o mais caro.{" "}
             <span className="bg-gradient-to-r from-[#E94332] via-[#D96A2E] to-[#C9A03A] bg-clip-text text-transparent">
-              É{"\u00A0"}o que foi feito para a viagem de vocês.
+              É{"\u00A0"}o que foi feito para a sua viagem.
             </span>
           </h1>
-
-          <p className="mt-3 text-xs font-light text-white/45 md:mt-8 md:text-sm">
-            Curadoria realizada para um número limitado de viagens por semestre.
-          </p>
 
           <ContactCTA
             mode="single"
@@ -379,10 +316,6 @@ export default function HoteisDeLuxoLandingPage() {
             className="mt-7 md:mt-10"
             buttonClassName="bg-white px-9 py-4 text-xs uppercase tracking-[0.35em] text-black shadow-[0_8px_32px_rgba(0,0,0,0.4)] transition hover:bg-white/90 md:px-11 md:py-5 md:text-sm"
           />
-
-          <p className="mt-4 text-[11px] font-light uppercase tracking-[0.2em] text-white/35 md:text-xs">
-            Curadoria, planejamento e reserva — tudo em um só lugar.
-          </p>
         </div>
 
         <a
@@ -455,7 +388,7 @@ export default function HoteisDeLuxoLandingPage() {
         </div>
       </section>
 
-      {/* 4.5 OS HOTÉIS MAIS LUXUOSOS DO JAPÃO */}
+      {/* 4.5 OS HOTÉIS MAIS LUXUOSOS DO JAPÃO — por perfil de viagem, com foto em destaque */}
       <section className="border-b border-white/10 px-8 py-14 md:px-16 md:py-28">
         <div className="mx-auto max-w-7xl">
           <div className="mb-10 max-w-3xl md:mb-16">
@@ -463,33 +396,16 @@ export default function HoteisDeLuxoLandingPage() {
               Mapa de referência
             </p>
             <h2 className={`${display.className} text-3xl font-medium leading-tight md:text-5xl`}>
-              Os hotéis mais luxuosos do Japão, região por região.
+              Os hotéis mais luxuosos do Japão, organizados pelo que importa: quem viaja.
             </h2>
             <p className="mt-5 max-w-2xl text-base font-light leading-8 text-white/60 md:mt-7 md:text-lg md:leading-9">
               Para montar a curadoria de cada cliente, mapeamos e comparamos continuamente as propriedades mais relevantes do país, de acordo com Forbes Travel Guide, Guia Michelin e nossa própria experiência em cada uma delas.
             </p>
           </div>
 
-          <div className="grid gap-10 md:grid-cols-[1.6fr_1fr] md:gap-16">
-            <div className="grid gap-x-10 gap-y-10 sm:grid-cols-2">
-              {topLuxuryHotels.map((group) => (
-                <div key={group.region} className="border-t border-white/15 pt-6">
-                  <h3 className="text-xs font-medium uppercase tracking-[0.25em] text-white/45">
-                    {group.region}
-                  </h3>
-                  <ul className="mt-4 space-y-2">
-                    {group.hotels.map((hotel) => (
-                      <li key={hotel} className="text-sm font-light leading-6 text-white/60">
-                        {hotel}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              ))}
-            </div>
-
+          <div className="grid gap-10 lg:grid-cols-[0.85fr_1.15fr] lg:items-start lg:gap-14">
             <div
-              className="relative aspect-[3/4] cursor-zoom-in overflow-hidden rounded-[20px] md:sticky md:top-24"
+              className="relative aspect-[4/5] cursor-zoom-in overflow-hidden rounded-[20px] lg:sticky lg:top-24"
               onClick={() =>
                 setLightbox({
                   src: "/images/mapadereferencia.png",
@@ -501,54 +417,36 @@ export default function HoteisDeLuxoLandingPage() {
                 src="/images/mapadereferencia.png"
                 alt="Vista da Torre de Tóquio à noite, de uma suíte de hotel em andar alto"
                 fill
-                sizes="(max-width: 768px) 100vw, 35vw"
+                sizes="(max-width: 1024px) 100vw, 40vw"
                 className="object-cover object-center"
               />
+            </div>
+
+            <div className="grid gap-5 sm:grid-cols-2">
+              {hotelsByProfile.map((group) => (
+                <div
+                  key={group.profile}
+                  className={`relative overflow-hidden rounded-[20px] border border-white/10 bg-gradient-to-br ${group.accent} bg-[#0a0a0c] p-6`}
+                >
+                  <div className={`mb-4 flex h-10 w-10 items-center justify-center rounded-full ${group.iconBg}`}>
+                    {group.icon}
+                  </div>
+                  <h3 className="text-base font-medium text-white">{group.profile}</h3>
+                  <p className="mt-1.5 text-sm font-light leading-6 text-white/50">{group.description}</p>
+                  <ul className="mt-4 space-y-1.5 border-t border-white/10 pt-4">
+                    {group.hotels.map((hotel) => (
+                      <li key={hotel} className="text-sm font-light leading-6 text-white/65">
+                        {hotel}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
             </div>
           </div>
 
           <p className="mt-12 max-w-2xl text-xs font-light leading-6 text-white/30 md:mt-16">
-            Lista de referência de mercado, construída a partir de fontes públicas e conhecimento próprio da Alpinea. Não representa convênio, parceria comercial ou exclusividade com as propriedades citadas.
-          </p>
-        </div>
-      </section>
-
-      {/* 4.6 HOTÉIS POR PERFIL DE VIAGEM */}
-      <section className="border-b border-white/10 px-8 py-14 md:px-16 md:py-28">
-        <div className="mx-auto max-w-7xl">
-          <div className="mb-10 max-w-3xl md:mb-16">
-            <p className="mb-6 text-xs uppercase tracking-[0.3em] text-white/40 md:tracking-[0.45em]">
-              Qual perfil combina com vocês
-            </p>
-            <h2 className={`${display.className} text-3xl font-medium leading-tight md:text-5xl`}>
-              A mesma lista, organizada pelo que importa: quem viaja.
-            </h2>
-          </div>
-
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {hotelsByProfile.map((group) => (
-              <div
-                key={group.profile}
-                className={`relative overflow-hidden rounded-[20px] border border-white/10 bg-gradient-to-br ${group.accent} bg-[#0a0a0c] p-6`}
-              >
-                <div className={`mb-4 flex h-10 w-10 items-center justify-center rounded-full ${group.iconBg}`}>
-                  {group.icon}
-                </div>
-                <h3 className="text-base font-medium text-white">{group.profile}</h3>
-                <p className="mt-1.5 text-sm font-light leading-6 text-white/50">{group.description}</p>
-                <ul className="mt-4 space-y-1.5 border-t border-white/10 pt-4">
-                  {group.hotels.map((hotel) => (
-                    <li key={hotel} className="text-sm font-light leading-6 text-white/65">
-                      {hotel}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </div>
-
-          <p className="mt-10 max-w-2xl text-xs font-light leading-6 text-white/30">
-            Classificação indicativa da Alpinea; uma mesma propriedade pode servir a mais de um perfil de viagem.
+            Lista de referência de mercado, construída a partir de fontes públicas, do Forbes Travel Guide, do Guia Michelin e do conhecimento próprio da Alpinea. A classificação por perfil é indicativa — uma mesma propriedade pode servir a mais de um perfil de viagem. Não representa convênio, parceria comercial ou exclusividade com as propriedades citadas.
           </p>
         </div>
       </section>
@@ -557,7 +455,7 @@ export default function HoteisDeLuxoLandingPage() {
       <section className="border-b border-white/10 bg-[#050505] px-8 py-14 text-center md:px-16 md:py-24">
         <div className="mx-auto max-w-2xl">
           <h2 className={`${display.className} text-2xl font-medium leading-snug text-white md:text-4xl`}>
-            Prontos para saber qual dessas propriedades foi feita para vocês?
+            Pronto para saber qual dessas propriedades foi feita para você?
           </h2>
           <p className="mt-4 text-sm font-light leading-7 text-white/50 md:text-base">
             Curadoria, planejamento e reserva — tudo em um só lugar.
@@ -693,7 +591,7 @@ export default function HoteisDeLuxoLandingPage() {
         <div className="absolute inset-0 bg-black/65" />
 
         <p className={`${display.className} relative z-10 mx-auto max-w-3xl text-center text-2xl italic font-light leading-snug text-white/90 md:text-4xl`}>
-          "Bons hotéis existem em qualquer lugar do mundo. Saber qual deles foi feito para vocês é o que muda a viagem."
+          "Bons hotéis existem em qualquer lugar do mundo. Saber qual deles foi feito para você é o que muda a viagem."
         </p>
       </section>
 
@@ -705,11 +603,11 @@ export default function HoteisDeLuxoLandingPage() {
           </p>
 
           <h2 className={`${display.className} text-4xl font-medium leading-tight md:text-6xl`}>
-            Descubram qual hospedagem foi feita para essa viagem.
+            Descubra qual hospedagem foi feita para essa viagem.
           </h2>
 
           <p className="mx-auto mt-6 max-w-2xl text-base leading-8 text-black/60 md:mt-8 md:text-lg">
-            Compartilhem quem viaja e o estilo que imaginam. A Alpinea indica a propriedade (e o quarto dentro dela) certos para vocês.
+            Compartilhe quem viaja e o estilo que imagina. A Alpinea indica a propriedade (e o quarto dentro dela) certos para você.
           </p>
 
           <p className="mt-4 text-sm font-light text-black/40 md:mt-6">
