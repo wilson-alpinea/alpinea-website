@@ -230,6 +230,79 @@ export default function HoteisDeLuxoLandingPage() {
     },
   ];
 
+  // 4.6 HOTÉIS POR PERFIL DE VIAGEM — agrupamento em cartões coloridos
+  // RASCUNHO — a categoria de cada propriedade precisa ser validada por vocês,
+  // que já se hospedaram nelas. Ajustem os arrays de "hotels" antes de publicar.
+  const hotelsByProfile = [
+    {
+      profile: "Lua de mel e casais",
+      description: "Privacidade, romantismo e experiências a dois.",
+      hotels: ["Aman Kyoto", "Amanemu (Ise-Shima)", "Zaborin (Niseko)", "Hoshinoya Fuji"],
+      accent: "from-[#E94332]/20 via-[#D96A2E]/14 to-transparent",
+      iconBg: "bg-[#E94332]/15",
+      icon: (
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#E9A28F" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+        </svg>
+      ),
+    },
+    {
+      profile: "Família",
+      description: "Espaço, conforto e estrutura para viajar com crianças.",
+      hotels: ["Four Seasons Hotel Tokyo at Otemachi", "The Ritz-Carlton, Osaka", "Halekulani Okinawa", "Conrad Osaka"],
+      accent: "from-[#1A4C93]/22 via-[#0F2E5C]/16 to-transparent",
+      iconBg: "bg-[#1A4C93]/18",
+      icon: (
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#8FB4E9" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2" />
+          <circle cx="9" cy="7" r="3.5" />
+          <path d="M16.5 3.5a3.5 3.5 0 0 1 0 7" />
+          <path d="M20 21v-2a4 4 0 0 0-2.5-3.7" />
+        </svg>
+      ),
+    },
+    {
+      profile: "Bem-estar e onsen",
+      description: "Ryokans e retiros voltados para descanso e águas termais.",
+      hotels: ["Hoshinoya Kyoto", "Gora Kadan (Hakone)", "Hiiragiya", "Zaborin (Niseko)"],
+      accent: "from-[#4B2A80]/20 via-[#144491]/16 to-transparent",
+      iconBg: "bg-[#4B2A80]/18",
+      icon: (
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#C7A8F0" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M12 2c-1.5 3-2 5-2 7a2 2 0 0 0 4 0c0-2-.5-4-2-7z" />
+          <path d="M4 15c1-1 2-1.5 3-1.5s2 .5 3 1.5 2 1.5 3 1.5 2-.5 3-1.5 2-1.5 3-1.5 2 .5 3 1.5" />
+          <path d="M4 19c1-1 2-1.5 3-1.5s2 .5 3 1.5 2 1.5 3 1.5 2-.5 3-1.5 2-1.5 3-1.5 2 .5 3 1.5" />
+        </svg>
+      ),
+    },
+    {
+      profile: "Clássicos consagrados",
+      description: "Ícones de primeira viagem ao Japão, com o serviço mais tradicional.",
+      hotels: ["Aman Tokyo", "The Peninsula Tokyo", "Palace Hotel Tokyo", "The Ritz-Carlton, Kyoto"],
+      accent: "from-[#C9A03A]/22 via-[#8C6A1F]/14 to-transparent",
+      iconBg: "bg-[#C9A03A]/16",
+      icon: (
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#E4CB86" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M12 2l2.6 6.6L21 9.3l-5 4.3 1.5 6.9L12 17l-5.5 3.5L8 13.6 3 9.3l6.4-.7z" />
+        </svg>
+      ),
+    },
+    {
+      profile: "Design e vida urbana",
+      description: "Estética contemporânea, para quem busca a cidade como parte da experiência.",
+      hotels: ["Janu Tokyo", "Mandarin Oriental Tokyo", "The Mitsui Kyoto, a Luxury Collection Hotel & Spa"],
+      accent: "from-[#1A4C93]/16 via-[#4B2A80]/14 to-transparent",
+      iconBg: "bg-white/10",
+      icon: (
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#C7D2E0" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+          <rect x="4" y="3" width="16" height="18" rx="1.5" />
+          <path d="M9 21v-4h6v4" />
+          <path d="M8 7h1M12 7h1M16 7h1M8 11h1M12 11h1M16 11h1" />
+        </svg>
+      ),
+    },
+  ];
+
   // 6. POR QUE A ALPINEA
   const whyAlpinea = [
     {
@@ -296,7 +369,7 @@ export default function HoteisDeLuxoLandingPage() {
           </h1>
 
           <p className="mt-3 text-xs font-light text-white/45 md:mt-8 md:text-sm">
-            Agenda limitada para o segundo semestre de 2026.
+            Curadoria realizada para um número limitado de viagens por semestre.
           </p>
 
           <ContactCTA
@@ -308,7 +381,7 @@ export default function HoteisDeLuxoLandingPage() {
           />
 
           <p className="mt-4 text-[11px] font-light uppercase tracking-[0.2em] text-white/35 md:text-xs">
-            Curadoria e planejamento personalizado — não reserva direta de hotel.
+            Curadoria, planejamento e reserva — tudo em um só lugar.
           </p>
         </div>
 
@@ -440,6 +513,46 @@ export default function HoteisDeLuxoLandingPage() {
         </div>
       </section>
 
+      {/* 4.6 HOTÉIS POR PERFIL DE VIAGEM */}
+      <section className="border-b border-white/10 px-8 py-14 md:px-16 md:py-28">
+        <div className="mx-auto max-w-7xl">
+          <div className="mb-10 max-w-3xl md:mb-16">
+            <p className="mb-6 text-xs uppercase tracking-[0.3em] text-white/40 md:tracking-[0.45em]">
+              Qual perfil combina com vocês
+            </p>
+            <h2 className={`${display.className} text-3xl font-medium leading-tight md:text-5xl`}>
+              A mesma lista, organizada pelo que importa: quem viaja.
+            </h2>
+          </div>
+
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {hotelsByProfile.map((group) => (
+              <div
+                key={group.profile}
+                className={`relative overflow-hidden rounded-[20px] border border-white/10 bg-gradient-to-br ${group.accent} bg-[#0a0a0c] p-6`}
+              >
+                <div className={`mb-4 flex h-10 w-10 items-center justify-center rounded-full ${group.iconBg}`}>
+                  {group.icon}
+                </div>
+                <h3 className="text-base font-medium text-white">{group.profile}</h3>
+                <p className="mt-1.5 text-sm font-light leading-6 text-white/50">{group.description}</p>
+                <ul className="mt-4 space-y-1.5 border-t border-white/10 pt-4">
+                  {group.hotels.map((hotel) => (
+                    <li key={hotel} className="text-sm font-light leading-6 text-white/65">
+                      {hotel}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+
+          <p className="mt-10 max-w-2xl text-xs font-light leading-6 text-white/30">
+            Classificação indicativa da Alpinea; uma mesma propriedade pode servir a mais de um perfil de viagem.
+          </p>
+        </div>
+      </section>
+
       {/* CTA INTERMEDIÁRIO — após o mapa de referência */}
       <section className="border-b border-white/10 bg-[#050505] px-8 py-14 text-center md:px-16 md:py-24">
         <div className="mx-auto max-w-2xl">
@@ -447,7 +560,7 @@ export default function HoteisDeLuxoLandingPage() {
             Prontos para saber qual dessas propriedades foi feita para vocês?
           </h2>
           <p className="mt-4 text-sm font-light leading-7 text-white/50 md:text-base">
-            Curadoria e planejamento personalizado — não reserva direta de hotel.
+            Curadoria, planejamento e reserva — tudo em um só lugar.
           </p>
 
           <ContactCTA
@@ -571,7 +684,7 @@ export default function HoteisDeLuxoLandingPage() {
       {/* PONTE — frase de efeito antes do CTA final */}
       <section className="relative flex min-h-[380px] items-center overflow-hidden border-b border-white/10 px-8 py-24 md:min-h-[560px] md:px-16 md:py-40">
         <Image
-          src="/images/janu.jpg"
+          src="/images/Janu.jpg"
           alt="Suíte de hotel de luxo em Tóquio com vista para a Torre de Tóquio ao entardecer"
           fill
           sizes="100vw"
@@ -600,7 +713,7 @@ export default function HoteisDeLuxoLandingPage() {
           </p>
 
           <p className="mt-4 text-sm font-light text-black/40 md:mt-6">
-            Agenda limitada para o segundo semestre de 2026.
+            Curadoria realizada para um número limitado de viagens por semestre.
           </p>
 
           <ContactCTA className="mt-8 flex flex-col justify-center gap-4 md:mt-10 md:flex-row" />
