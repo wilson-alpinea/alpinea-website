@@ -166,8 +166,8 @@ export default function HoteisDeLuxoLandingPage() {
     {
       title: "Evitamos o erro caro",
       text: "Localização que parece central mas isola você do que importa, quarto 'de luxo' voltado para o estacionamento: o tipo de decepção que só se descobre depois de já ter pago.",
-      image: "/images/hotelcard1.png",
-      alt: "Piscina de borda infinita em hotel de luxo, com vista da cidade ao entardecer",
+      image: "/images/inspection.png",
+      alt: "Equipe da Alpinea inspecionando pessoalmente uma suíte antes de indicá-la a um cliente",
     },
   ];
 
@@ -190,7 +190,7 @@ export default function HoteisDeLuxoLandingPage() {
     {
       profile: "Família",
       description: "Espaço, conforto e estrutura para viajar com crianças.",
-      hotels: ["Four Seasons Hotel Tokyo at Otemachi", "The Ritz-Carlton, Osaka", "Halekulani Okinawa", "Conrad Osaka"],
+      hotels: ["Four Seasons Hotel Tokyo at Otemachi", "Four Seasons Hotel Kyoto", "The Ritz-Carlton, Osaka", "Halekulani Okinawa"],
       accent: "from-[#1A4C93]/22 via-[#0F2E5C]/16 to-transparent",
       iconBg: "bg-[#1A4C93]/18",
       icon: (
@@ -219,7 +219,7 @@ export default function HoteisDeLuxoLandingPage() {
     {
       profile: "Privacidade",
       description: "Propriedades com poucas suítes, isolamento real e o máximo de discrição.",
-      hotels: ["Aman Tokyo", "Aman Kyoto", "Amanemu (Ise-Shima)"],
+      hotels: ["Aman Tokyo", "Aman Kyoto", "Amanemu (Ise-Shima)", "Park Hyatt Kyoto"],
       accent: "from-[#C9A03A]/22 via-[#8C6A1F]/14 to-transparent",
       iconBg: "bg-[#C9A03A]/16",
       icon: (
@@ -385,28 +385,30 @@ export default function HoteisDeLuxoLandingPage() {
             <h2 className={`${display.className} text-3xl font-medium leading-tight md:text-5xl`}>
               Os hotéis mais luxuosos do Japão, organizados pelo que importa: quem viaja.
             </h2>
-            <p className="mt-5 max-w-2xl text-base font-light leading-8 text-white/60 md:mt-7 md:text-lg md:leading-9">
-              Curadoria própria da Alpinea, para você escolher o hotel certo para o seu perfil de viagem.
-            </p>
           </div>
 
           <div className="grid gap-10 lg:grid-cols-[0.85fr_1.15fr] lg:gap-14">
-            <div
-              className="relative aspect-[4/5] cursor-zoom-in overflow-hidden rounded-[20px] lg:self-start"
-              onClick={() =>
-                setLightbox({
-                  src: "/images/mapadereferencia.png",
-                  alt: "Vista da Torre de Tóquio à noite, de uma suíte de hotel em andar alto",
-                })
-              }
-            >
-              <Image
-                src="/images/mapadereferencia.png"
-                alt="Vista da Torre de Tóquio à noite, de uma suíte de hotel em andar alto"
-                fill
-                sizes="(max-width: 1024px) 100vw, 40vw"
-                className="object-cover object-center"
-              />
+            <div>
+              <div
+                className="relative aspect-[4/5] cursor-zoom-in overflow-hidden rounded-[20px]"
+                onClick={() =>
+                  setLightbox({
+                    src: "/images/mapadereferencia.png",
+                    alt: "Vista da Torre de Tóquio à noite, de uma suíte de hotel em andar alto",
+                  })
+                }
+              >
+                <Image
+                  src="/images/mapadereferencia.png"
+                  alt="Vista da Torre de Tóquio à noite, de uma suíte de hotel em andar alto"
+                  fill
+                  sizes="(max-width: 1024px) 100vw, 40vw"
+                  className="object-cover object-center"
+                />
+              </div>
+              <p className="mt-5 max-w-md text-sm font-light leading-7 text-white/60">
+                Curadoria própria da Alpinea, para você escolher o hotel certo para o seu perfil de viagem.
+              </p>
             </div>
 
             <div className="grid gap-5 sm:grid-cols-2">
