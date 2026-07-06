@@ -613,7 +613,7 @@ export default function HoteisDeLuxoLandingPage() {
       </section>
 
       {/* FOOTER */}
-      <footer className="border-t border-white/10 bg-black px-8 pb-24 pt-12 text-white md:px-16 md:pb-16 md:pt-16">
+      <footer className="border-t border-white/10 bg-black px-8 pb-36 pt-12 text-white md:px-16 md:pb-16 md:pt-16">
         <div className="mx-auto flex max-w-7xl flex-col justify-between gap-8 md:flex-row md:items-start md:gap-12">
           <div className="space-y-4 md:space-y-6">
             <img
