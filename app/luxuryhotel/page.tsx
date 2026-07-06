@@ -334,7 +334,7 @@ export default function HoteisDeLuxoLandingPage() {
             </h2>
 
             <p className="mt-5 max-w-none text-base font-light leading-8 text-white/60 md:mt-7 md:text-lg md:leading-9">
-              A Alpinea não tem convênio com hotéis. O que oferecemos é outra coisa: mais de uma década escolhendo, testando e comparando hospedagens no Japão, para indicar exatamente a propriedade (e o quarto dentro dela) certos para o perfil de quem viaja.
+              A Alpinea não tem convênio com hotéis, somos uma agência de luxo independente. O que oferecemos é outra coisa: mais de uma década escolhendo, testando e comparando hospedagens no Japão, para indicar exatamente a propriedade (e o quarto dentro dela) certos para o perfil de quem viaja.
             </p>
           </div>
 
