@@ -190,7 +190,7 @@ export default function HoteisDeLuxoLandingPage() {
     {
       profile: "Família",
       description: "Espaço, conforto e estrutura para viajar com crianças.",
-      hotels: ["Four Seasons Hotel Tokyo at Otemachi", "Four Seasons Hotel Kyoto", "The Ritz-Carlton, Osaka", "Halekulani Okinawa"],
+      hotels: ["Four Seasons Hotel Tokyo", "Four Seasons Hotel Kyoto", "Ritz Carlton Osaka", "Halekulani Okinawa"],
       accent: "from-[#1A4C93]/22 via-[#0F2E5C]/16 to-transparent",
       iconBg: "bg-[#1A4C93]/18",
       icon: (
@@ -334,7 +334,7 @@ export default function HoteisDeLuxoLandingPage() {
             </h2>
 
             <p className="mt-5 max-w-none text-base font-light leading-8 text-white/60 md:mt-7 md:text-lg md:leading-9">
-              A Alpinea não tem convênio com hotéis, somos uma agência de luxo independente. O que oferecemos é outra coisa: mais de uma década escolhendo, testando e comparando hospedagens no Japão, para indicar exatamente a propriedade (e o quarto dentro dela) certos para o perfil de quem viaja.
+              A Alpinea não tem convênio com hotéis, somos uma agência de luxo independente. O que oferecemos é outra coisa: mais de uma década escolhendo, testando e comparando hospedagens no Japão, para indicar exatamente o hotel certo para o perfil de quem viaja.
             </p>
           </div>
 
@@ -449,7 +449,7 @@ export default function HoteisDeLuxoLandingPage() {
 
         <div className="relative z-10 mx-auto max-w-2xl">
           <h2 className={`${display.className} text-2xl font-medium leading-snug text-white md:text-4xl`}>
-            Pronto para saber qual dessas propriedades foi feita para você?
+            Pronto para saber qual desses hotéis foi feito para você?
           </h2>
           <p className="mt-4 text-sm font-light leading-7 text-white/60 md:text-base">
             Curadoria, planejamento e reserva — tudo em um só lugar.
@@ -597,11 +597,11 @@ export default function HoteisDeLuxoLandingPage() {
           </p>
 
           <h2 className={`${display.className} text-4xl font-medium leading-tight md:text-6xl`}>
-            Descubra qual hospedagem foi feita para essa viagem.
+            Descubra qual hospedagem se encaixa perfeitamente no roteiro da sua viagem.
           </h2>
 
           <p className="mx-auto mt-6 max-w-2xl text-base leading-8 text-black/60 md:mt-8 md:text-lg">
-            Compartilhe quem viaja e o estilo que imagina. A Alpinea indica a propriedade (e o quarto dentro dela) certos para você.
+            Compartilhe quem viaja e o estilo que imagina. A Alpinea indica o hotel certo para você.
           </p>
 
           <p className="mt-4 text-sm font-light text-black/40 md:mt-6">
