@@ -171,53 +171,6 @@ export default function HoteisDeLuxoLandingPage() {
     },
   ];
 
-  // 3. COMO FUNCIONA A CURADORIA
-  const hotelJourney = [
-    {
-      title: "Vocês nos contam quem está viajando.",
-      text: "Casal em lua de mel, família com crianças pequenas ou viagem a sós: o perfil de quem viaja muda completamente qual propriedade, qual quarto e até qual bairro fazem sentido.",
-    },
-    {
-      title: "Nós cruzamos isso com o que conhecemos de dentro.",
-      text: "Não recomendamos pela categoria do hotel, e sim pelo quarto específico: o andar, a vista, a distância real a pé do que vocês vão querer fazer.",
-    },
-    {
-      title: "Vocês reservam sabendo exatamente no que estão entrando.",
-      text: "Sem surpresa na chegada. A reserva é feita por vocês, com a segurança de saber que a escolha já foi validada por quem conhece a propriedade por dentro.",
-    },
-  ];
-
-  // 4. NOSSO CRITÉRIO NA PRÁTICA — estudo de caso
-  const hotelCaseStudy = {
-    name: "The Ritz-Carlton, Osaka",
-    location: "Nishi-Umeda, Osaka",
-    image: "/images/ritzosaka.png",
-    alt: "Fachada do The Ritz-Carlton, Osaka, no distrito de Nishi-Umeda",
-    criteria: [
-      {
-        label: "Localização",
-        verdict:
-          "Ligado à Estação de Osaka por passagem subterrânea, a poucos minutos de metrô de Namba e Dotonbori. Dificilmente existe base mais central na cidade.",
-      },
-      {
-        label: "Quarto que vale o preço",
-        verdict:
-          "Os quartos do Club Level (33º ao 35º andar) dão acesso a um lounge com cinco apresentações gastronômicas por dia: o upgrade que realmente muda a experiência da estadia, não apenas o andar mais alto.",
-      },
-      {
-        label: "Ideal para",
-        verdict:
-          "Famílias (com programa infantil próprio e quartos espaçosos) e viajantes a negócios que querem uma base de luxo central.",
-      },
-      {
-        label: "Não recomendamos para",
-        verdict:
-          "Quem busca imersão na estética japonesa através da hospedagem. A decoração do hotel é inspirada numa residência aristocrática britânica do século XVIII: luxo inegável, mas não o Japão tradicional. Para isso, indicamos um ryokan.",
-        emphasis: true,
-      },
-    ],
-  };
-
   // 4.5 OS HOTÉIS MAIS LUXUOSOS DO JAPÃO — mapa de referência da curadoria
   const topLuxuryHotels = [
     {
@@ -345,6 +298,18 @@ export default function HoteisDeLuxoLandingPage() {
           <p className="mt-3 text-xs font-light text-white/45 md:mt-8 md:text-sm">
             Agenda limitada para o segundo semestre de 2026.
           </p>
+
+          <ContactCTA
+            mode="single"
+            channel="email"
+            label="Quero minha curadoria"
+            className="mt-7 md:mt-10"
+            buttonClassName="bg-white px-9 py-4 text-xs uppercase tracking-[0.35em] text-black shadow-[0_8px_32px_rgba(0,0,0,0.4)] transition hover:bg-white/90 md:px-11 md:py-5 md:text-sm"
+          />
+
+          <p className="mt-4 text-[11px] font-light uppercase tracking-[0.2em] text-white/35 md:text-xs">
+            Curadoria e planejamento personalizado — não reserva direta de hotel.
+          </p>
         </div>
 
         <a
@@ -417,121 +382,6 @@ export default function HoteisDeLuxoLandingPage() {
         </div>
       </section>
 
-      {/* 3. COMO FUNCIONA A CURADORIA */}
-      <section className="border-b border-white/10">
-        <div className="relative h-[220px] w-full overflow-hidden md:h-[420px]">
-          <Image
-            src="/images/corredorelegante.png"
-            alt="Escultura e lobby de hotel de luxo com iluminação dourada"
-            fill
-            sizes="100vw"
-            className="object-cover object-top"
-          />
-          <div className="absolute inset-0 bg-gradient-to-b from-black/10 via-black/70 to-black" />
-
-          <div className="absolute inset-0 flex items-center justify-center">
-            <ContactCTA
-              mode="single"
-              channel="email"
-              label="Entrar em Contato"
-              buttonClassName="bg-white px-10 py-4 text-sm uppercase tracking-[0.35em] text-black shadow-[0_8px_32px_rgba(0,0,0,0.4)] transition hover:bg-white/90 md:px-12 md:py-5 md:text-base"
-            />
-          </div>
-        </div>
-
-        <div className="px-8 pb-14 pt-10 md:px-16 md:pb-28 md:pt-16">
-          <div className="mx-auto max-w-7xl">
-            <h2 className={`${display.className} mb-10 max-w-3xl text-3xl font-medium leading-tight text-white md:mb-20 md:text-5xl`}>
-              Como funciona a curadoria
-            </h2>
-
-            <div className="space-y-10 md:space-y-14">
-              {hotelJourney.map((item, i) => (
-                <div
-                  key={item.title}
-                  className="grid gap-6 border-t border-white/10 pt-8 md:grid-cols-[auto_1fr] md:items-start md:gap-16 md:pt-10"
-                >
-                  <p className={`${display.className} text-sm text-white/30 md:text-base`}>
-                    {String(i + 1).padStart(2, "0")}
-                  </p>
-                  <div>
-                    <h3 className={`${display.className} text-xl font-medium leading-tight text-white md:text-3xl`}>
-                      {item.title}
-                    </h3>
-                    <p className="mt-4 max-w-2xl text-sm font-light leading-7 text-white/60 md:mt-5 md:text-base md:leading-8">
-                      {item.text}
-                    </p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* 4. NOSSO CRITÉRIO NA PRÁTICA — estudo de caso */}
-      <section className="border-b border-white/10 bg-[#050505] px-8 py-14 md:px-16 md:py-28">
-        <div className="mx-auto max-w-7xl">
-          <div className="mb-10 max-w-3xl md:mb-16">
-            <p className="mb-6 text-xs uppercase tracking-[0.3em] text-white/40 md:tracking-[0.45em]">
-              Nosso critério, na prática
-            </p>
-            <h2 className={`${display.className} text-3xl font-medium leading-tight md:text-5xl`}>
-              Um exemplo de como avaliamos uma hospedagem antes de indicar.
-            </h2>
-          </div>
-
-          <div className="grid gap-10 md:grid-cols-2 md:gap-16">
-            <div>
-              <div
-                className="relative aspect-[4/3] cursor-zoom-in overflow-hidden rounded-[20px]"
-                onClick={() =>
-                  setLightbox({ src: hotelCaseStudy.image, alt: hotelCaseStudy.alt })
-                }
-              >
-                <Image
-                  src={hotelCaseStudy.image}
-                  alt={hotelCaseStudy.alt}
-                  fill
-                  sizes="(max-width: 768px) 100vw, 50vw"
-                  className="object-cover object-center"
-                />
-              </div>
-              <div className="mt-5">
-                <p className={`${display.className} text-xl font-medium text-white md:text-2xl`}>
-                  {hotelCaseStudy.name}
-                </p>
-                <p className="mt-1 text-xs uppercase tracking-[0.25em] text-white/40">
-                  {hotelCaseStudy.location}
-                </p>
-              </div>
-            </div>
-
-            <div className="space-y-8">
-              {hotelCaseStudy.criteria.map((c) => (
-                <div
-                  key={c.label}
-                  className={`border-t pt-5 ${
-                    c.emphasis ? "border-white/25" : "border-white/15"
-                  }`}
-                >
-                  <h3 className="text-xs font-medium uppercase tracking-[0.25em] text-white/45">
-                    {c.label}
-                  </h3>
-                  <p className="mt-3 text-sm font-light leading-7 text-white/70 md:text-base md:leading-8">
-                    {c.verdict}
-                  </p>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <p className="mt-12 max-w-2xl text-sm font-light leading-7 text-white/40 md:mt-16 md:text-base">
-            Esse é o nível de detalhe por trás de cada indicação, repetido hotel por hotel, não apenas uma lista de nomes conhecidos.
-          </p>
-        </div>
-      </section>
-
       {/* 4.5 OS HOTÉIS MAIS LUXUOSOS DO JAPÃO */}
       <section className="border-b border-white/10 px-8 py-14 md:px-16 md:py-28">
         <div className="mx-auto max-w-7xl">
@@ -587,6 +437,26 @@ export default function HoteisDeLuxoLandingPage() {
           <p className="mt-12 max-w-2xl text-xs font-light leading-6 text-white/30 md:mt-16">
             Lista de referência de mercado, construída a partir de fontes públicas e conhecimento próprio da Alpinea. Não representa convênio, parceria comercial ou exclusividade com as propriedades citadas.
           </p>
+        </div>
+      </section>
+
+      {/* CTA INTERMEDIÁRIO — após o mapa de referência */}
+      <section className="border-b border-white/10 bg-[#050505] px-8 py-14 text-center md:px-16 md:py-24">
+        <div className="mx-auto max-w-2xl">
+          <h2 className={`${display.className} text-2xl font-medium leading-snug text-white md:text-4xl`}>
+            Prontos para saber qual dessas propriedades foi feita para vocês?
+          </h2>
+          <p className="mt-4 text-sm font-light leading-7 text-white/50 md:text-base">
+            Curadoria e planejamento personalizado — não reserva direta de hotel.
+          </p>
+
+          <ContactCTA
+            mode="single"
+            channel="email"
+            label="Falar sobre minha viagem"
+            className="mt-8 flex justify-center"
+            buttonClassName="bg-white px-9 py-4 text-xs uppercase tracking-[0.35em] text-black shadow-[0_8px_32px_rgba(0,0,0,0.4)] transition hover:bg-white/90 md:px-11 md:py-5 md:text-sm"
+          />
         </div>
       </section>
 
@@ -701,8 +571,8 @@ export default function HoteisDeLuxoLandingPage() {
       {/* PONTE — frase de efeito antes do CTA final */}
       <section className="relative flex min-h-[380px] items-center overflow-hidden border-b border-white/10 px-8 py-24 md:min-h-[560px] md:px-16 md:py-40">
         <Image
-          src="/images/shirakawago.jpg"
-          alt="Vilarejo histórico de Shirakawa-go entre montanhas verdes"
+          src="/images/janu.jpg"
+          alt="Suíte de hotel de luxo em Tóquio com vista para a Torre de Tóquio ao entardecer"
           fill
           sizes="100vw"
           className="object-cover object-center"
@@ -815,7 +685,7 @@ export default function HoteisDeLuxoLandingPage() {
         <ContactCTA
           mode="single"
           channel="email"
-          label="Solicitar atendimento"
+          label="Falar sobre minha viagem"
           className="block w-full"
           buttonClassName="block w-full border border-white/30 py-3 text-center text-xs uppercase tracking-[0.3em] text-white transition active:bg-white active:text-black"
         />
