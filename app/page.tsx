@@ -247,65 +247,62 @@ export default function Home() {
 </section>
 
 {/* POR QUE ESCOLHER A ALPINEA */}
-<section className="border-y border-white/10 px-8 py-20 md:px-16 md:py-24">
-  <div className="mx-auto max-w-7xl">
-    <p className="mb-10 text-xs uppercase tracking-[0.3em] text-white/40 md:mb-16 md:tracking-[0.45em]">
+<section className="relative overflow-hidden border-y border-white/10 bg-[radial-gradient(circle_at_50%_0%,rgba(255,255,255,0.045),transparent_42%)] px-8 py-24 md:px-16 md:py-32">
+  <div className="pointer-events-none absolute inset-0 opacity-[0.035] [background-image:linear-gradient(rgba(255,255,255,.7)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,.7)_1px,transparent_1px)] [background-size:56px_56px]" />
+
+  <div className="relative mx-auto max-w-7xl">
+    <p className="mb-14 text-xs uppercase tracking-[0.45em] text-white/35 md:mb-20">
       Por que escolher a Alpinea
     </p>
 
     <CarouselScroller itemCount={4} desktopColumns={4}>
-        <div className="w-[72vw] flex-shrink-0 md:w-auto md:flex-shrink">
-          <svg className="mx-auto mb-5 h-7 w-7 text-white/70" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-            <circle cx="12" cy="12" r="9" />
-            <polyline points="12 7 12 12 15 14" />
-          </svg>
-          <h3 className={`${display.className} text-2xl font-medium tracking-tight text-white md:text-3xl`}>
-            <span className="align-middle text-[0.6em]">+</span>12 anos
-          </h3>
-          <p className="mt-6 max-w-[280px] text-sm font-light leading-7 text-white/55">
-            Mais de uma década de vivência no Japão, entre gastronomia, hotelaria, cultura, logística e relações locais.
-          </p>
-        </div>
+      <div className="w-[76vw] flex-shrink-0 border-t border-white/15 pt-8 md:w-auto md:flex-shrink md:pt-10">
+        <p className="mb-6 text-[10px] uppercase tracking-[0.35em] text-white/35">
+          Experiência
+        </p>
+        <h3 className={`${display.className} text-3xl font-medium leading-none tracking-tight text-white md:text-5xl`}>
+          12 anos
+        </h3>
+        <p className="mt-8 max-w-[280px] text-sm font-light leading-8 text-white/55">
+          Mais de uma década dedicada à gastronomia, hotelaria, logística e construção de relacionamentos locais no Japão.
+        </p>
+      </div>
 
-        <div className="w-[72vw] flex-shrink-0 md:w-auto md:flex-shrink">
-          <svg className="mx-auto mb-5 h-7 w-7 text-white/70" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M6 3h12l4 6-10 12L2 9z" />
-            <path d="M2 9h20" />
-            <path d="M9 3l3 6-3 12" />
-            <path d="M15 3l-3 6 3 12" />
-          </svg>
-          <h3 className={`${display.className} text-2xl font-medium tracking-tight text-white md:text-3xl`}>
-            Exclusividade de Serviços
-          </h3>
-          <p className="mt-6 max-w-[280px] text-sm font-light leading-7 text-white/55">
-            Somos a única empresa que oferece ao público brasileiro curadoria de elite para gastronomia e consumo, incluso fluência no idioma para elevar as experiências.
-          </p>
-        </div>
+      <div className="w-[76vw] flex-shrink-0 border-t border-white/15 pt-8 md:w-auto md:flex-shrink md:pt-10">
+        <p className="mb-6 text-[10px] uppercase tracking-[0.35em] text-white/35">
+          Curadoria
+        </p>
+        <h3 className={`${display.className} text-3xl font-medium leading-[1.05] tracking-tight text-white md:text-4xl`}>
+          Curadoria Exclusiva
+        </h3>
+        <p className="mt-8 max-w-[280px] text-sm font-light leading-8 text-white/55">
+          Restaurantes, hotéis e experiências selecionados a partir de conhecimento próprio, não de catálogos.
+        </p>
+      </div>
 
-        <div className="w-[72vw] flex-shrink-0 md:w-auto md:flex-shrink">
-          <svg className="mx-auto mb-5 h-7 w-7 text-white/70" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M21 16v-2l-8-5V3.5a1.5 1.5 0 0 0-3 0V9l-8 5v2l8-2.5V19l-2 1.5V22l3.5-1 3.5 1v-1.5L13 19v-5.5z" />
-          </svg>
-          <h3 className={`${display.className} text-2xl font-medium tracking-tight text-white md:text-3xl`}>
-            Referência na conexão Brasil–Japão
-          </h3>
-          <p className="mt-6 max-w-[280px] text-sm font-light leading-7 text-white/55">
-            Entre os 3 maiores emissores de passagens aéreas dessa rota no mundo, unimos conhecimento operacional à curadoria de experiências privadas.
-          </p>
-        </div>
+      <div className="w-[76vw] flex-shrink-0 border-t border-white/15 pt-8 md:w-auto md:flex-shrink md:pt-10">
+        <p className="mb-6 text-[10px] uppercase tracking-[0.35em] text-white/35">
+          Conexão
+        </p>
+        <h3 className={`${display.className} text-3xl font-medium leading-[1.05] tracking-tight text-white md:text-4xl`}>
+          Brasil–Japão
+        </h3>
+        <p className="mt-8 max-w-[280px] text-sm font-light leading-8 text-white/55">
+          Experiência adquirida em uma das maiores emissoras de passagens internacionais do mundo, aliada à operação especializada da Alpinea.
+        </p>
+      </div>
 
-        <div className="w-[72vw] flex-shrink-0 md:w-auto md:flex-shrink">
-          <svg className="mx-auto mb-5 h-7 w-7 text-white/70" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M12 21s7-7.58 7-12a7 7 0 1 0-14 0c0 4.42 7 12 7 12z" />
-            <circle cx="12" cy="9" r="2.5" />
-          </svg>
-          <h3 className={`${display.className} text-2xl font-medium tracking-tight text-white md:text-3xl`}>
-            Presença real no Japão
-          </h3>
-          <p className="mt-6 max-w-[280px] text-sm font-light leading-7 text-white/55">
-            Nossa operação própria no Japão permite um atendimento sem intermediários, com maior flexibilidade, controle e proximidade dos melhores parceiros locais.
-          </p>
-        </div>
+      <div className="w-[76vw] flex-shrink-0 border-t border-white/15 pt-8 md:w-auto md:flex-shrink md:pt-10">
+        <p className="mb-6 text-[10px] uppercase tracking-[0.35em] text-white/35">
+          Presença
+        </p>
+        <h3 className={`${display.className} text-3xl font-medium leading-[1.05] tracking-tight text-white md:text-4xl`}>
+          Operação Local
+        </h3>
+        <p className="mt-8 max-w-[280px] text-sm font-light leading-8 text-white/55">
+          Rede própria de parceiros no Japão para oferecer maior flexibilidade, rapidez e controle em cada viagem.
+        </p>
+      </div>
     </CarouselScroller>
   </div>
 </section>
