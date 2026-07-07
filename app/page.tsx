@@ -254,7 +254,7 @@ export default function Home() {
     </p>
 
     <CarouselScroller itemCount={4} desktopColumns={4}>
-      <div className="w-[78vw] flex-shrink-0 md:w-auto md:flex-shrink md:pr-8">
+      <div className="w-[78vw] min-w-0 flex-shrink-0 md:w-auto md:min-w-0 md:flex-shrink md:pr-8">
         <p className="mb-6 text-xs uppercase tracking-[0.32em] text-white/50">
           Experiência
         </p>
@@ -266,7 +266,7 @@ export default function Home() {
         </p>
       </div>
 
-      <div className="w-[78vw] flex-shrink-0 md:w-auto md:flex-shrink md:pr-8">
+      <div className="w-[78vw] min-w-0 flex-shrink-0 md:w-auto md:min-w-0 md:flex-shrink md:pr-8">
         <p className="mb-6 text-xs uppercase tracking-[0.32em] text-white/50">
           Curadoria
         </p>
@@ -278,7 +278,7 @@ export default function Home() {
         </p>
       </div>
 
-      <div className="w-[78vw] flex-shrink-0 md:w-auto md:flex-shrink md:pr-8">
+      <div className="w-[78vw] min-w-0 flex-shrink-0 md:w-auto md:min-w-0 md:flex-shrink md:pr-8">
         <p className="mb-6 text-xs uppercase tracking-[0.32em] text-white/50">
           Conexão Brasil–Japão
         </p>
@@ -290,7 +290,7 @@ export default function Home() {
         </p>
       </div>
 
-      <div className="w-[78vw] flex-shrink-0 md:w-auto md:flex-shrink md:pr-8">
+      <div className="w-[78vw] min-w-0 flex-shrink-0 md:w-auto md:min-w-0 md:flex-shrink md:pr-8">
         <p className="mb-6 text-xs uppercase tracking-[0.32em] text-white/50">
           Presença real no Japão
         </p>
