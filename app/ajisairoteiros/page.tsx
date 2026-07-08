@@ -551,38 +551,8 @@ export default function RoteirosAdsPage() {
         </div>
       </section>
 
-      {/* ── MOBILIDADE — TRENS E METRÔ ── */}
+      {/* ── MOBILIDADE — TRENS E METRÔ (sem hero, segue direto do Skytree) ── */}
       <section id="mobilidade" className="border-t border-white/10">
-        <div className="relative h-[360px] min-h-[360px] max-h-[420px] w-full overflow-hidden md:h-[75vh] md:min-h-[560px] md:max-h-[720px]">
-          <Image
-            src="/images/Nex_train.jpg"
-            alt="Narita Express (N'EX) — JR East"
-            fill
-            sizes="100vw"
-            className="object-cover"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/55 to-transparent" />
-
-          <div className="absolute inset-x-0 bottom-0 px-8 pb-14 text-center md:px-16 md:pb-16">
-            <div className="mx-auto max-w-3xl">
-              <p className="mb-5 text-xs uppercase tracking-[0.35em] text-white/40">
-                Mobilidade
-              </p>
-              <h3
-                className={`${display.className} text-3xl font-medium text-white md:text-4xl`}
-              >
-                Trens e Metrô
-              </h3>
-              <p className="mx-auto mt-5 max-w-xl text-base font-light leading-7 text-white/65 md:leading-9">
-                Para chegar à Tokyo Skytree, o deslocamento nesse exemplo é por
-                conta própria — e o Japão torna isso simples. A malha de trens
-                e metrô é pontual, extensa e fácil de navegar com os recursos
-                certos.
-              </p>
-            </div>
-          </div>
-        </div>
-
         <div className="px-6 py-10 md:px-16 md:py-24">
           <div className="mx-auto max-w-6xl">
             <p className="mb-5 text-xs uppercase tracking-[0.25em] text-[#b79ce6]">
