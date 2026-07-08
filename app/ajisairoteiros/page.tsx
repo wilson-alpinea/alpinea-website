@@ -481,7 +481,17 @@ export default function RoteirosAdsPage() {
 
             {/* Card da estação — fundo preto, modelo Tokyo Metro */}
             <div className="rounded-2xl border border-white/10 bg-black p-6 text-white sm:rounded-[2rem] sm:p-8">
-              <p className="text-center text-xl font-semibold sm:text-2xl">
+              <div className="flex justify-center">
+                <span
+                  className="flex h-11 w-11 items-center justify-center rounded-xl text-lg font-bold text-white"
+                  style={{ background: "#0089c8" }}
+                  aria-label="Tokyo Metro"
+                  title="Tokyo Metro"
+                >
+                  M
+                </span>
+              </div>
+              <p className="mt-3 text-center text-xl font-semibold sm:text-2xl">
                 Oshiage Station
               </p>
               <p className="mt-1 text-center text-sm text-white/45">
@@ -491,7 +501,7 @@ export default function RoteirosAdsPage() {
               <div className="mt-8 flex flex-wrap items-start justify-center gap-x-8 gap-y-5">
                 <div className="flex flex-col items-center gap-2">
                   <span
-                    className="flex h-11 w-11 items-center justify-center rounded-full text-[11px] font-bold text-white"
+                    className="flex h-16 w-16 items-center justify-center rounded-full text-[13px] font-bold text-white"
                     style={{ background: "#2f80c9" }}
                   >
                     TS03
@@ -502,7 +512,7 @@ export default function RoteirosAdsPage() {
                 </div>
                 <div className="flex flex-col items-center gap-2">
                   <span
-                    className="flex h-11 w-11 items-center justify-center rounded-full text-[11px] font-bold text-white"
+                    className="flex h-16 w-16 items-center justify-center rounded-full text-[13px] font-bold text-white"
                     style={{ background: "#1c5fa8" }}
                   >
                     KS45
@@ -513,7 +523,7 @@ export default function RoteirosAdsPage() {
                 </div>
                 <div className="flex flex-col items-center gap-2">
                   <span
-                    className="flex h-11 w-11 items-center justify-center rounded-full text-[11px] font-bold text-white"
+                    className="flex h-16 w-16 items-center justify-center rounded-full text-[13px] font-bold text-white"
                     style={{ background: "#e2542a" }}
                   >
                     A20
@@ -524,7 +534,7 @@ export default function RoteirosAdsPage() {
                 </div>
                 <div className="flex flex-col items-center gap-2">
                   <span
-                    className="flex h-11 w-11 items-center justify-center rounded-full text-[11px] font-bold text-white"
+                    className="flex h-16 w-16 items-center justify-center rounded-full text-[13px] font-bold text-white"
                     style={{ background: "#7c4fd1" }}
                   >
                     Z14
@@ -650,7 +660,7 @@ export default function RoteirosAdsPage() {
           </div>
         </div>
 
-        <div className="px-6 py-12 md:px-16 md:py-32">
+        <div className="px-6 pb-12 pt-12 md:px-16 md:pb-16 md:pt-32">
           <div className="mx-auto max-w-3xl">
             <div className="space-y-9 text-base font-light leading-7 text-white/70 md:space-y-12 md:text-lg md:leading-9">
               <SectionMarker number={2} label="Atração" />
@@ -751,7 +761,7 @@ export default function RoteirosAdsPage() {
         </div>
       </section>
 
-      <section id="jantar" className="px-6 py-12 md:px-16 md:py-32">
+      <section id="jantar" className="px-6 pb-12 pt-12 md:px-16 md:pb-32 md:pt-16">
         <div className="mx-auto max-w-3xl">
           <div className="mb-9 md:mb-12">
             <SectionMarker number={3} label="Refeição · Jantar" />
@@ -797,7 +807,7 @@ export default function RoteirosAdsPage() {
             <img
               src="/images/AJISAI-LOGO.avif"
               alt="Ajisai"
-              className="h-16 w-auto object-contain opacity-95 md:h-24"
+              className="h-10 w-auto object-contain opacity-95 md:h-14"
             />
           </div>
           <div className="mb-10 max-w-3xl md:mb-16">
@@ -889,22 +899,27 @@ export default function RoteirosAdsPage() {
             Prazo de entrega e fluxo de trabalho
           </h2>
 
-          <div className="grid grid-cols-2 gap-x-6 gap-y-10 sm:grid-cols-3 md:grid-cols-6 md:gap-x-5">
+          <div className="grid grid-cols-2 gap-4 text-left sm:grid-cols-3 md:grid-cols-6">
             {workflowSteps.map((step) => (
-              <div key={step.number}>
-                <p className="text-sm font-medium text-white/35">
+              <div
+                key={step.number}
+                className="relative overflow-hidden rounded-2xl border border-white/10 bg-white/[0.025] p-5 transition hover:border-[#b79ce6]/30"
+              >
+                <p
+                  className={`${display.className} pointer-events-none absolute -right-2 -top-4 text-6xl font-medium text-white/[0.05]`}
+                >
                   {step.number}
                 </p>
-                <span className="mx-auto my-3 flex h-10 w-10 items-center justify-center rounded-full bg-white/5 text-white/70">
+                <span className="relative flex h-10 w-10 items-center justify-center rounded-full bg-[#b79ce6]/12 text-[#b79ce6]">
                   <step.Icon className="h-5 w-5" />
                 </span>
-                <p className="text-sm font-medium leading-snug text-white">
+                <p className="relative mt-4 text-sm font-medium leading-snug text-white">
                   {step.title}
                 </p>
                 {step.lines.map((line) => (
                   <p
                     key={line}
-                    className="mt-1.5 text-xs leading-5 text-white/45"
+                    className="relative mt-1.5 text-xs leading-5 text-white/45"
                   >
                     {line}
                   </p>
