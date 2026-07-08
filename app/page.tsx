@@ -258,7 +258,7 @@ export default function Home() {
         <p className="mb-6 text-xs uppercase tracking-[0.32em] text-white/50">
           Experiência
         </p>
-        <h3 className={`${display.className} break-words text-[2.7rem] font-medium leading-[0.98] tracking-tight text-white md:text-[1.9rem] lg:text-[2.4rem] xl:text-[2.85rem]`}>
+        <h3 className={`${display.className} [hyphens:auto] break-words text-[2.7rem] font-medium leading-[0.98] tracking-tight text-white md:text-[1.6rem] lg:text-[2.2rem] xl:text-[2.85rem]`} lang="pt-BR">
           +12 anos
         </h3>
         <p className="mt-8 max-w-[340px] text-sm font-light leading-8 text-white/70 md:text-[15px] md:leading-8">
@@ -270,7 +270,7 @@ export default function Home() {
         <p className="mb-6 text-xs uppercase tracking-[0.32em] text-white/50">
           Curadoria
         </p>
-        <h3 className={`${display.className} break-words text-[2.7rem] font-medium leading-[1.02] tracking-tight text-white md:text-[1.9rem] lg:text-[2.4rem] xl:text-[2.85rem]`}>
+        <h3 className={`${display.className} [hyphens:auto] break-words text-[2.7rem] font-medium leading-[1.02] tracking-tight text-white md:text-[1.6rem] lg:text-[2.2rem] xl:text-[2.85rem]`} lang="pt-BR">
           Exclusividade<br />de Serviços
         </h3>
         <p className="mt-8 max-w-[340px] text-sm font-light leading-8 text-white/70 md:text-[15px] md:leading-8">
@@ -282,7 +282,7 @@ export default function Home() {
         <p className="mb-6 text-xs uppercase tracking-[0.32em] text-white/50">
           Conexão Brasil–Japão
         </p>
-        <h3 className={`${display.className} break-words text-[2.7rem] font-medium leading-[1.02] tracking-tight text-white md:text-[1.9rem] lg:text-[2.4rem] xl:text-[2.85rem]`}>
+        <h3 className={`${display.className} [hyphens:auto] break-words text-[2.7rem] font-medium leading-[1.02] tracking-tight text-white md:text-[1.6rem] lg:text-[2.2rem] xl:text-[2.85rem]`} lang="pt-BR">
           Referência na<br />conexão
         </h3>
         <p className="mt-8 max-w-[340px] text-sm font-light leading-8 text-white/70 md:text-[15px] md:leading-8">
@@ -294,7 +294,7 @@ export default function Home() {
         <p className="mb-6 text-xs uppercase tracking-[0.32em] text-white/50">
           Presença real no Japão
         </p>
-        <h3 className={`${display.className} break-words text-[2.7rem] font-medium leading-[1.02] tracking-tight text-white md:text-[1.9rem] lg:text-[2.4rem] xl:text-[2.85rem]`}>
+        <h3 className={`${display.className} [hyphens:auto] break-words text-[2.7rem] font-medium leading-[1.02] tracking-tight text-white md:text-[1.6rem] lg:text-[2.2rem] xl:text-[2.85rem]`} lang="pt-BR">
           Operação<br />própria
         </h3>
         <p className="mt-8 max-w-[340px] text-sm font-light leading-8 text-white/70 md:text-[15px] md:leading-8">
