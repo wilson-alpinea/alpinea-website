@@ -47,7 +47,7 @@ export default function RoteirosAdsPage() {
           <img
             src="/images/AJISAI-LOGO.avif"
             alt="Ajisai"
-            className="h-8 w-auto object-contain"
+            className="h-10 w-auto object-contain md:h-11"
           />
         </a>
 
@@ -441,85 +441,59 @@ export default function RoteirosAdsPage() {
                 押上駅〈スカイツリー前〉
               </p>
 
-              <div className="mt-6 grid grid-cols-1 gap-3 border-t border-black/10 pt-6 sm:grid-cols-2">
-                <div className="flex items-center gap-3">
+              <div className="mt-6 flex flex-wrap items-start justify-center gap-x-8 gap-y-5 border-t border-black/10 pt-6">
+                <div className="flex flex-col items-center gap-2">
                   <span
-                    className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-[10px] font-bold text-white"
+                    className="flex h-11 w-11 items-center justify-center rounded-full text-[11px] font-bold text-white"
                     style={{ background: "#2f80c9" }}
                   >
                     TS03
                   </span>
-                  <span className="text-sm text-black/70">
+                  <span className="text-center text-xs text-black/60">
                     Tobu Skytree Line
                   </span>
                 </div>
-                <div className="flex items-center gap-3">
+                <div className="flex flex-col items-center gap-2">
                   <span
-                    className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-[10px] font-bold text-white"
+                    className="flex h-11 w-11 items-center justify-center rounded-full text-[11px] font-bold text-white"
                     style={{ background: "#1c5fa8" }}
                   >
                     KS45
                   </span>
-                  <span className="text-sm text-black/70">
+                  <span className="text-center text-xs text-black/60">
                     Keisei Oshiage Line
                   </span>
                 </div>
-                <div className="flex items-center gap-3">
+                <div className="flex flex-col items-center gap-2">
                   <span
-                    className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-[10px] font-bold text-white"
+                    className="flex h-11 w-11 items-center justify-center rounded-full text-[11px] font-bold text-white"
                     style={{ background: "#e2542a" }}
                   >
                     A20
                   </span>
-                  <span className="text-sm text-black/70">
+                  <span className="text-center text-xs text-black/60">
                     Toei Asakusa Line
                   </span>
                 </div>
-                <div className="flex items-center gap-3">
+                <div className="flex flex-col items-center gap-2">
                   <span
-                    className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-[10px] font-bold text-white"
+                    className="flex h-11 w-11 items-center justify-center rounded-full text-[11px] font-bold text-white"
                     style={{ background: "#7c4fd1" }}
                   >
                     Z14
                   </span>
-                  <span className="text-sm text-black/70">
+                  <span className="text-center text-xs text-black/60">
                     Tokyo Metro Hanzomon Line
                   </span>
                 </div>
               </div>
 
               <div className="mt-6 border-t border-black/10 pt-6">
-                <p className="mb-3 text-center text-[10px] uppercase tracking-[0.22em] text-black/40">
-                  Mapa da Estação
-                </p>
-
-                {/* Mobile — prévia recortada + lupa, abre em popup */}
-                <a
+                <MapCard
+                  variant="light"
                   href="#preview-mapa-oshiage"
-                  className="group relative block aspect-[4/3] overflow-hidden rounded-xl border border-black/10 sm:hidden"
-                >
-                  <Image
-                    src="/images/oshiagemap.png"
-                    alt="Mapa da estação Oshiage"
-                    fill
-                    sizes="(max-width: 768px) 100vw, 0px"
-                    className="object-cover object-center transition group-active:opacity-80"
-                  />
-                  <div className="absolute right-3 top-3 flex h-9 w-9 items-center justify-center rounded-full border border-black/10 bg-white/90 text-black/70">
-                    <span className="text-base">⌕</span>
-                  </div>
-                </a>
-
-                {/* Desktop — mapa completo, abre em popup */}
-                <a href="#preview-mapa-oshiage" className="hidden sm:block">
-                  <Image
-                    src="/images/oshiagemap.png"
-                    alt="Mapa da estação Oshiage"
-                    width={1200}
-                    height={800}
-                    className="w-full cursor-zoom-in rounded-xl border border-black/10 object-contain transition hover:opacity-85"
-                  />
-                </a>
+                  label="Mapa da Estação"
+                />
               </div>
             </div>
 
@@ -719,41 +693,10 @@ export default function RoteirosAdsPage() {
             </div>
 
             <div className="lg:sticky lg:top-28">
-              <p className="mb-4 text-xs uppercase tracking-[0.35em] text-white/40">
-                Mapa do Complexo Tokyo Solamachi
-              </p>
-
-              {/* Mobile — prévia recortada + lupa, abre em popup */}
-              <a
+              <MapCard
                 href="#preview-mapa-solamachi"
-                className="group relative block aspect-square overflow-hidden rounded-xl border border-white/10 bg-white/[0.03] md:hidden"
-              >
-                <Image
-                  src="/images/solamachi-floor1.png"
-                  alt="Mapa do primeiro andar do Tokyo Solamachi"
-                  fill
-                  sizes="(max-width: 768px) 100vw, 0px"
-                  className="scale-[1.8] object-cover object-center transition group-active:opacity-80"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-transparent to-transparent" />
-                <div className="absolute right-3 top-3 flex h-9 w-9 items-center justify-center rounded-full border border-white/15 bg-black/70 text-white/85 backdrop-blur-md">
-                  <span className="text-base">⌕</span>
-                </div>
-                <p className="absolute inset-x-0 bottom-0 px-4 pb-3 text-xs uppercase tracking-[0.25em] text-white/80">
-                  Toque para ampliar
-                </p>
-              </a>
-
-              {/* Desktop — mapa completo, abre em popup */}
-              <a href="#preview-mapa-solamachi" className="hidden md:block">
-                <Image
-                  src="/images/solamachi-floor1.png"
-                  alt="Mapa do primeiro andar do Tokyo Solamachi"
-                  width={1200}
-                  height={900}
-                  className="w-full cursor-zoom-in rounded-xl border border-white/10 bg-white/[0.03] object-contain p-2 transition hover:opacity-85"
-                />
-              </a>
+                label="Mapa do Complexo Tokyo Solamachi"
+              />
               <p className="mt-4 text-sm leading-7 text-white/45">
                 Visão geral do primeiro andar do complexo Tokyo Solamachi,
                 incluindo acessos à estação Oshiage, áreas comerciais, serviços,
@@ -798,48 +741,17 @@ export default function RoteirosAdsPage() {
             </div>
 
             <div className="lg:sticky lg:top-28">
-              <p className="mb-6 text-xs uppercase tracking-[0.35em] text-white/40">
-                Mapa — Solamachi Dining
-              </p>
-
-              {/* Mobile — prévia recortada + lupa, abre em popup */}
-              <a
+              <MapCard
                 href="#preview-mapa-dining"
-                className="group relative block aspect-square overflow-hidden rounded-xl border border-white/10 bg-white/[0.03] md:hidden"
-              >
-                <Image
-                  src="/images/solamachi-dining-map.png"
-                  alt="Mapa dos restaurantes do Tokyo Solamachi"
-                  fill
-                  sizes="(max-width: 768px) 100vw, 0px"
-                  className="scale-[1.8] object-cover object-center transition group-active:opacity-80"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-transparent to-transparent" />
-                <div className="absolute right-3 top-3 flex h-9 w-9 items-center justify-center rounded-full border border-white/15 bg-black/70 text-white/85 backdrop-blur-md">
-                  <span className="text-base">⌕</span>
-                </div>
-                <p className="absolute inset-x-0 bottom-0 px-4 pb-3 text-xs uppercase tracking-[0.25em] text-white/80">
-                  Toque para ampliar
-                </p>
-              </a>
-
-              {/* Desktop — mapa completo, abre em popup */}
-              <a href="#preview-mapa-dining" className="hidden md:block">
-                <Image
-                  src="/images/solamachi-dining-map.png"
-                  alt="Mapa dos restaurantes do Tokyo Solamachi"
-                  width={1200}
-                  height={900}
-                  className="w-full cursor-zoom-in rounded-xl border border-white/10 bg-white/[0.03] object-contain p-2 transition hover:opacity-85"
-                />
-              </a>
+                label="Mapa — Solamachi Dining"
+              />
             </div>
           </div>
         </div>
       </section>
 
-      {/* ── POR QUE A AJISAI ── */}
-      <section className="border-t border-white/10 bg-black px-6 py-14 md:px-16 md:py-28">
+      {/* ── POR QUE A AJISAI — transição marcada para sinalizar fim do roteiro ── */}
+      <section className="border-t-2 border-white/15 bg-white/[0.02] px-6 py-20 md:px-16 md:py-36">
         <div className="mx-auto max-w-7xl">
           <div className="mb-10 max-w-3xl md:mb-16">
             <p className="mb-6 text-xs uppercase tracking-[0.3em] text-white/40 md:tracking-[0.45em]">
@@ -959,81 +871,42 @@ export default function RoteirosAdsPage() {
         </div>
       </section>
 
-      <footer className="border-t border-white/10 bg-black px-8 pb-24 pt-12 text-white md:px-16 md:pb-16 md:pt-16">
-        <div className="mx-auto flex max-w-7xl flex-col justify-between gap-8 md:flex-row md:items-start md:gap-12">
-          <div className="space-y-4 md:space-y-6">
-            <img
-              src="/images/AJISAI-LOGO.avif"
-              alt="Ajisai"
-              className="h-7 w-auto object-contain"
-            />
+      <footer className="border-t border-white/10 bg-black px-8 pb-20 pt-16 text-white md:px-16 md:pb-20 md:pt-20">
+        <div className="mx-auto flex max-w-2xl flex-col items-center gap-7 text-center">
+          <img
+            src="/images/AJISAI-LOGO.avif"
+            alt="Ajisai"
+            className="h-11 w-auto object-contain md:h-12"
+          />
 
-            <div className="max-w-md space-y-3">
-              <p className="text-sm leading-relaxed text-white/50">
-                Roteiros personalizados de viagem e curadoria de experiências no
-                Japão.
-              </p>
+          <p className="max-w-sm text-sm leading-relaxed text-white/50">
+            Roteiros personalizados de viagem e curadoria de experiências no
+            Japão.
+          </p>
 
-              <p className="text-xs text-white/30">
-                © 2026 AJISAIWORK JAPAN AGENCIA DE VIAGENS LTDA, Todos os Direitos
-                Reservados — CNPJ: 43.544.605/0001-56
-              </p>
+          <a
+            href="https://shorturl.at/Afhut"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="rounded-full border border-white/25 px-6 py-2.5 text-xs uppercase tracking-[0.25em] text-white/70 transition hover:border-white/60 hover:text-white"
+          >
+            WhatsApp da Ajisai · (11) 9-3030-0101
+          </a>
 
-              <p className="text-xs text-white/30">
-                ☎️ WhatsApp da Ajisai:{" "}
-                <a
-                  href="https://shorturl.at/Afhut"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="transition hover:text-white/60"
-                >
-                  (11) 9-3030-0101
-                </a>
-              </p>
-
-              <div className="flex flex-wrap items-center gap-3 text-xs text-white/25">
-                <a href="/legal" className="transition hover:text-white/60">
-                  Termos e Condições
-                </a>
-                <span>·</span>
-                <a href="/privacy" className="transition hover:text-white/60">
-                  Política de Privacidade
-                </a>
-              </div>
-            </div>
+          <div className="flex flex-wrap items-center justify-center gap-3 text-xs text-white/25">
+            <a href="/legal" className="transition hover:text-white/60">
+              Termos e Condições
+            </a>
+            <span>·</span>
+            <a href="/privacy" className="transition hover:text-white/60">
+              Política de Privacidade
+            </a>
           </div>
 
-          <nav className="flex flex-col items-start gap-3 text-xs uppercase tracking-[0.25em] text-white/40 md:items-end">
-            <a href="/" className="transition hover:text-white">
-              Início
-            </a>
-            <a href="/services" className="transition hover:text-white">
-              Serviços
-            </a>
-            <a href="/restaurantes" className="transition hover:text-white">
-              Restaurantes
-            </a>
-            <a href="/compras" className="transition hover:text-white">
-              Compras
-            </a>
-            <a
-              href="/roteirolandingpage"
-              className="transition hover:text-white"
-            >
-              Roteiro
-            </a>
-            <a href="#contact" className="transition hover:text-white">
-              Contato
-            </a>
-            <a
-              href="https://shorturl.at/Afhut"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="transition hover:text-white"
-            >
-              WhatsApp
-            </a>
-          </nav>
+          <p className="text-[11px] leading-relaxed text-white/25">
+            © 2026 AJISAIWORK JAPAN AGENCIA DE VIAGENS LTDA, Todos os Direitos
+            Reservados — CNPJ: 43.544.605/0001-56
+          </p>
         </div>
       </footer>
     </main>
@@ -1155,13 +1028,78 @@ function IconExit({ className }: { className?: string }) {
 function SectionMarker({ number, label }: { number: number; label: string }) {
   return (
     <div className="flex items-center gap-3">
-      <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-white/25 text-xs text-white/70">
+      <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#b79ce6] text-xs font-semibold text-black">
         {number}
       </span>
-      <p className="text-xs uppercase tracking-[0.35em] text-white/40">
+      <p className="text-xs uppercase tracking-[0.35em] text-[#b79ce6]">
         {label}
       </p>
     </div>
+  );
+}
+
+function IconMap({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.75"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      <path d="M9 3 3 5v16l6-2 6 2 6-2V3l-6 2-6-2Z" />
+      <path d="M9 3v16" />
+      <path d="M15 5v16" />
+    </svg>
+  );
+}
+
+function MapCard({
+  href,
+  label,
+  variant = "dark",
+}: {
+  href: string;
+  label: string;
+  variant?: "dark" | "light";
+}) {
+  const dark = variant === "dark";
+  return (
+    <a
+      href={href}
+      className={`group flex items-center gap-4 rounded-2xl border p-5 transition ${
+        dark
+          ? "border-white/10 bg-white/[0.025] hover:border-white/25"
+          : "border-black/10 bg-black/[0.02] hover:border-black/25"
+      }`}
+    >
+      <span
+        className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-full ${
+          dark ? "bg-white/10 text-white/70" : "bg-black/10 text-black/70"
+        }`}
+      >
+        <IconMap className="h-5 w-5" />
+      </span>
+      <div>
+        <p
+          className={`text-sm font-medium ${dark ? "text-white" : "text-black"}`}
+        >
+          {label}
+        </p>
+        <p
+          className={`text-xs ${dark ? "text-white/45" : "text-black/45"}`}
+        >
+          Toque para ampliar
+        </p>
+      </div>
+      <span
+        className={`ml-auto text-lg transition group-hover:translate-x-0.5 ${dark ? "text-white/40" : "text-black/40"}`}
+      >
+        →
+      </span>
+    </a>
   );
 }
 
