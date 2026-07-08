@@ -316,7 +316,7 @@ export default function RoteirosAdsPage() {
 
                 <div className="mt-9 flex justify-center border-t border-white/10 pt-9">
                   <Image
-                    src="/images/captionbyhyattlogo.png"
+                    src="/images/captionlogo.png"
                     alt="Caption By Hyatt Kabutocho"
                     width={360}
                     height={160}
