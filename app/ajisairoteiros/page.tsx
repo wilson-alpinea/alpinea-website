@@ -66,7 +66,7 @@ export default function RoteirosAdsPage() {
       >
         <ContactCTA
           mode="single"
-          channel="email"
+          channel="whatsapp"
           label="Falar com a Ajisai →"
           buttonClassName="block w-full bg-white px-4 py-3 text-center text-[11px] font-medium uppercase tracking-[0.22em] text-black transition hover:bg-white/90"
         />
@@ -428,74 +428,175 @@ export default function RoteirosAdsPage() {
           className="border-b border-white/10 px-6 py-12 md:px-16 md:py-16"
         >
           <div className="mx-auto max-w-6xl">
-            {/* Oshiage Station · Linhas · Saída recomendada */}
-            <div className="grid gap-4 sm:grid-cols-3">
-              <div className="rounded-2xl border border-white/10 bg-white/[0.025] p-6 text-center">
-                <p className="text-lg font-medium text-white">
-                  Oshiage Station
-                </p>
-                <p className="mt-1 text-sm text-white/50">
-                  押上駅〈スカイツリー前〉
-                </p>
+            <div className="mb-8">
+              <SectionMarker number={1} label="Deslocamento" />
+            </div>
+
+            {/* Card da estação — fundo branco, modelo Tokyo Metro */}
+            <div className="rounded-2xl bg-white p-6 text-black sm:rounded-[2rem] sm:p-8">
+              <p className="text-center text-xl font-semibold sm:text-2xl">
+                Oshiage Station
+              </p>
+              <p className="mt-1 text-center text-sm text-black/45">
+                押上駅〈スカイツリー前〉
+              </p>
+
+              <div className="mt-6 grid grid-cols-1 gap-3 border-t border-black/10 pt-6 sm:grid-cols-2">
+                <div className="flex items-center gap-3">
+                  <span
+                    className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-[10px] font-bold text-white"
+                    style={{ background: "#2f80c9" }}
+                  >
+                    TS03
+                  </span>
+                  <span className="text-sm text-black/70">
+                    Tobu Skytree Line
+                  </span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <span
+                    className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-[10px] font-bold text-white"
+                    style={{ background: "#1c5fa8" }}
+                  >
+                    KS45
+                  </span>
+                  <span className="text-sm text-black/70">
+                    Keisei Oshiage Line
+                  </span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <span
+                    className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-[10px] font-bold text-white"
+                    style={{ background: "#e2542a" }}
+                  >
+                    A20
+                  </span>
+                  <span className="text-sm text-black/70">
+                    Toei Asakusa Line
+                  </span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <span
+                    className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-[10px] font-bold text-white"
+                    style={{ background: "#7c4fd1" }}
+                  >
+                    Z14
+                  </span>
+                  <span className="text-sm text-black/70">
+                    Tokyo Metro Hanzomon Line
+                  </span>
+                </div>
               </div>
 
-              <div className="rounded-2xl border border-white/10 bg-white/[0.025] p-6">
-                <p className="mb-4 text-center text-[10px] uppercase tracking-[0.22em] text-white/30">
-                  Linhas Disponíveis
+              <div className="mt-6 border-t border-black/10 pt-6">
+                <p className="mb-3 text-center text-[10px] uppercase tracking-[0.22em] text-black/40">
+                  Mapa da Estação
                 </p>
-                <Image
-                  src="/images/oshiage-lines.png"
-                  alt="Linhas ferroviárias disponíveis na estação Oshiage"
-                  width={640}
-                  height={260}
-                  className="mx-auto w-full max-w-[220px] object-contain"
-                />
-                <p className="mt-4 text-center text-xs leading-6 text-white/45">
-                  Tobu Skytree Line, Keisei Oshiage Line, Toei Asakusa Line e
-                  Tokyo Metro Hanzomon Line.
-                </p>
-              </div>
 
-              <div className="rounded-2xl border border-white/10 bg-white/[0.025] p-6">
-                <p className="mb-2 text-[10px] uppercase tracking-[0.22em] text-white/30">
-                  Saída Recomendada
-                </p>
-                <p className="text-sm leading-6 text-white/70">
-                  A2 ou B3 para superfície. Em dias de chuva, recomendamos
-                  utilizar a conexão subterrânea direta com o Tokyo Solamachi.
-                </p>
-                <p className="mt-3 text-sm text-white">
-                  連絡通路直結 Solamachi B3F
-                </p>
-                <p className="mt-3 text-xs leading-5 text-white/45">
-                  Caso encontre dificuldades, qualquer funcionário do metrô
-                  poderá indicar a direção correta.
-                </p>
+                {/* Mobile — prévia recortada + lupa, abre em popup */}
+                <a
+                  href="#preview-mapa-oshiage"
+                  className="group relative block aspect-[4/3] overflow-hidden rounded-xl border border-black/10 sm:hidden"
+                >
+                  <Image
+                    src="/images/oshiagemap.png"
+                    alt="Mapa da estação Oshiage"
+                    fill
+                    sizes="(max-width: 768px) 100vw, 0px"
+                    className="object-cover object-center transition group-active:opacity-80"
+                  />
+                  <div className="absolute right-3 top-3 flex h-9 w-9 items-center justify-center rounded-full border border-black/10 bg-white/90 text-black/70">
+                    <span className="text-base">⌕</span>
+                  </div>
+                </a>
+
+                {/* Desktop — mapa completo, abre em popup */}
+                <a href="#preview-mapa-oshiage" className="hidden sm:block">
+                  <Image
+                    src="/images/oshiagemap.png"
+                    alt="Mapa da estação Oshiage"
+                    width={1200}
+                    height={800}
+                    className="w-full cursor-zoom-in rounded-xl border border-black/10 object-contain transition hover:opacity-85"
+                  />
+                </a>
               </div>
             </div>
 
-            {/* Tempo de deslocamento */}
-            <div className="mt-6 grid gap-4 sm:grid-cols-2">
-              <div className="flex items-center gap-4 rounded-2xl border border-white/10 bg-white/[0.025] p-5">
-                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white/10 text-white/70">
-                  <IconTrain className="h-5 w-5" />
-                </span>
-                <div>
-                  <p className="text-[10px] uppercase tracking-[0.22em] text-white/30">
-                    Metrô
+            {/* Tempo de deslocamento — Metrô, Carro e Saída, mesmo esquema visual */}
+            <div className="mt-6 grid gap-4 md:grid-cols-3">
+              <div className="rounded-2xl border-2 border-[#b79ce6] bg-white/[0.025] p-5">
+                <div className="flex items-center gap-4">
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white/10 text-white/70">
+                    <IconTrain className="h-5 w-5" />
+                  </span>
+                  <div>
+                    <p className="text-[10px] uppercase tracking-[0.22em] text-white/30">
+                      Metrô
+                    </p>
+                    <p className="text-2xl text-white">≈ 20 min</p>
+                  </div>
+                </div>
+                <p className="mt-3 inline-block rounded-full border border-[#b79ce6]/40 px-3 py-1 text-[10px] uppercase tracking-[0.2em] text-[#b79ce6]">
+                  Recomendado
+                </p>
+                <div className="mt-4 space-y-2 text-xs leading-5 text-white/55">
+                  <p>+ Linha direta (Toei Asakusa), sem baldeação.</p>
+                  <p>
+                    + Imune a trânsito — chegada previsível para o pôr do sol.
                   </p>
-                  <p className="text-2xl text-white">15 min</p>
+                  <p>
+                    − Caminhada até a estação e pode ficar cheio em horário de
+                    pico.
+                  </p>
                 </div>
               </div>
-              <div className="flex items-center gap-4 rounded-2xl border border-white/10 bg-white/[0.025] p-5">
-                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white/10 text-white/70">
-                  <IconCar className="h-5 w-5" />
-                </span>
-                <div>
-                  <p className="text-[10px] uppercase tracking-[0.22em] text-white/30">
-                    Carro / Táxi
+
+              <div className="rounded-2xl border border-white/10 bg-white/[0.025] p-5">
+                <div className="flex items-center gap-4">
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white/10 text-white/70">
+                    <IconCar className="h-5 w-5" />
+                  </span>
+                  <div>
+                    <p className="text-[10px] uppercase tracking-[0.22em] text-white/30">
+                      Carro / Táxi
+                    </p>
+                    <p className="text-2xl text-white">15–20 min</p>
+                  </div>
+                </div>
+                <div className="mt-4 space-y-2 text-xs leading-5 text-white/55">
+                  <p>+ Porta a porta, sem caminhada nem escadas.</p>
+                  <p>
+                    + Mais conforto em dias de chuva ou mobilidade reduzida.
                   </p>
-                  <p className="text-2xl text-white">15 min</p>
+                  <p>
+                    − Sujeito a trânsito; tempo pode variar bastante no
+                    horário de pico.
+                  </p>
+                </div>
+              </div>
+
+              <div className="rounded-2xl bg-[#F4C430] p-5 text-black">
+                <div className="flex items-center gap-4">
+                  <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-black/10 text-black">
+                    <IconExit className="h-5 w-5" />
+                  </span>
+                  <div>
+                    <p className="text-[10px] uppercase tracking-[0.22em] text-black/50">
+                      Saída Recomendada
+                    </p>
+                    <p className="text-2xl font-medium text-black">A2 / B3</p>
+                  </div>
+                </div>
+                <div className="mt-4 space-y-2 text-xs leading-5 text-black/70">
+                  <p>
+                    Em dias de chuva, use a conexão subterrânea direta com o
+                    Tokyo Solamachi — 連絡通路直結 Solamachi B3F.
+                  </p>
+                  <p>
+                    Qualquer funcionário do metrô pode indicar a direção
+                    correta.
+                  </p>
                 </div>
               </div>
             </div>
@@ -523,10 +624,10 @@ export default function RoteirosAdsPage() {
                 />
               </div>
               <p className="mt-5 text-sm leading-6 text-white/70">
-                Do Caption By Hyatt Kabutocho, o trajeto até a Skytree é
-                curto — cerca de 15 minutos tanto de metrô quanto de táxi.
-                Com chuva ou vento forte, recomendamos trocar a Skytree por
-                outra atração.
+                Do Caption By Hyatt Kabutocho, o trajeto até a Skytree é de
+                cerca de 20 minutos de metrô (linha direta, sem baldeação) ou
+                15–20 minutos de táxi, dependendo do trânsito. Com chuva ou
+                vento forte, recomendamos trocar a Skytree por outra atração.
               </p>
             </div>
           </div>
@@ -535,6 +636,8 @@ export default function RoteirosAdsPage() {
         <div className="px-6 py-12 md:px-16 md:py-32">
           <div className="mx-auto grid max-w-7xl gap-20 lg:grid-cols-2 lg:items-start">
             <div className="space-y-9 text-base font-light leading-7 text-white/70 md:space-y-12 md:text-lg md:leading-9">
+              <SectionMarker number={2} label="Atração" />
+
               <div>
                 <div className="grid grid-cols-2 gap-4 sm:gap-8">
                   <div>
@@ -663,11 +766,9 @@ export default function RoteirosAdsPage() {
 
       <section id="jantar" className="px-6 py-12 md:px-16 md:py-32">
         <div className="mx-auto max-w-7xl">
-          <p className="mb-12 text-center">
-            <span className="inline-block rounded-full border border-white/25 px-9 py-3 text-base uppercase tracking-[0.32em] text-white/80">
-              Jantar
-            </span>
-          </p>
+          <div className="mb-12 flex justify-center">
+            <SectionMarker number={3} label="Refeição · Jantar" />
+          </div>
 
           <div className="grid gap-20 lg:grid-cols-2 lg:items-start">
             <div>
@@ -850,7 +951,11 @@ export default function RoteirosAdsPage() {
           <p className="mx-auto mt-5 max-w-2xl text-sm font-medium uppercase tracking-[0.22em] text-black/50">
             Agenda limitada para o segundo semestre de 2026.
           </p>
-          <ContactCTA />
+          <ContactCTA
+            mode="single"
+            channel="whatsapp"
+            label="Falar no WhatsApp"
+          />
         </div>
       </section>
 
@@ -927,22 +1032,6 @@ export default function RoteirosAdsPage() {
               className="transition hover:text-white"
             >
               WhatsApp
-            </a>
-            <a
-              href="https://www.ajisaiwork.com.br/"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="transition hover:text-white"
-            >
-              Empregos no Japão
-            </a>
-            <a
-              href="https://www.ajisaiwork.com.br/passagens-aereas-para-o-japao"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="transition hover:text-white"
-            >
-              Passagens Aéreas
             </a>
           </nav>
         </div>
@@ -1042,6 +1131,37 @@ function IconCar({ className }: { className?: string }) {
       <circle cx="7.5" cy="13.5" r="0.6" fill="currentColor" stroke="none" />
       <circle cx="16.5" cy="13.5" r="0.6" fill="currentColor" stroke="none" />
     </svg>
+  );
+}
+
+function IconExit({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.75"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      <path d="M14 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
+      <path d="M4 12h13" />
+      <path d="M13 8l4 4-4 4" />
+    </svg>
+  );
+}
+
+function SectionMarker({ number, label }: { number: number; label: string }) {
+  return (
+    <div className="flex items-center gap-3">
+      <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-white/25 text-xs text-white/70">
+        {number}
+      </span>
+      <p className="text-xs uppercase tracking-[0.35em] text-white/40">
+        {label}
+      </p>
+    </div>
   );
 }
 
@@ -1302,6 +1422,15 @@ function RoutePreviewModals() {
         description="Localização dos restaurantes do Tokyo Solamachi citados no roteiro."
         image="/images/solamachi-dining-map.png"
         alt="Mapa dos restaurantes do Tokyo Solamachi"
+      />
+      <RoutePreviewModal
+        displayClassName={display.className}
+        id="preview-mapa-oshiage"
+        eyebrow="Mapa da estação"
+        title="Oshiage Station"
+        description="Plantas B1F, B2F e B3F da estação Oshiage, com saídas, escadas rolantes, elevadores e conexões entre as linhas Tobu Skytree, Keisei Oshiage, Toei Asakusa e Tokyo Metro Hanzomon."
+        image="/images/oshiagemap.png"
+        alt="Mapa da estação Oshiage"
       />
     </>
   );
