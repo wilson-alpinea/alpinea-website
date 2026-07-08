@@ -608,7 +608,7 @@ export default function RoteirosAdsPage() {
         </div>
 
         <div className="px-6 py-12 md:px-16 md:py-32">
-          <div className="mx-auto grid max-w-7xl gap-20 lg:grid-cols-2 lg:items-start">
+          <div className="mx-auto max-w-3xl">
             <div className="space-y-9 text-base font-light leading-7 text-white/70 md:space-y-12 md:text-lg md:leading-9">
               <SectionMarker number={2} label="Atração" />
 
@@ -690,18 +690,19 @@ export default function RoteirosAdsPage() {
                   de polvo frito, Takoyaki, da região de Kansai.
                 </p>
               </div>
-            </div>
 
-            <div className="lg:sticky lg:top-28">
-              <MapCard
-                href="#preview-mapa-solamachi"
-                label="Mapa do Complexo Tokyo Solamachi"
-              />
-              <p className="mt-4 text-sm leading-7 text-white/45">
-                Visão geral do primeiro andar do complexo Tokyo Solamachi,
-                incluindo acessos à estação Oshiage, áreas comerciais, serviços,
-                cafés, restaurantes e principais pontos de circulação.
-              </p>
+              <div>
+                <MapCard
+                  href="#preview-mapa-solamachi"
+                  label="Mapa do Complexo Tokyo Solamachi"
+                />
+                <p className="mt-4 text-sm leading-7 text-white/45">
+                  Visão geral do primeiro andar do complexo Tokyo Solamachi,
+                  incluindo acessos à estação Oshiage, áreas comerciais,
+                  serviços, cafés, restaurantes e principais pontos de
+                  circulação.
+                </p>
+              </div>
             </div>
           </div>
         </div>
@@ -713,34 +714,32 @@ export default function RoteirosAdsPage() {
             <SectionMarker number={3} label="Refeição · Jantar" />
           </div>
 
-          <div className="grid gap-20 lg:grid-cols-2 lg:items-start">
-            <div>
-              <p className="text-lg font-light leading-7 text-white/70 md:leading-9">
-                A Tokyo Skytree está integrada ao shopping Tokyo Solamachi, que
-                reúne diversas opções de restaurantes, praça de alimentação e um
-                mercado no subsolo com alternativas para takeout.
-              </p>
-              <div className="mt-8 grid grid-cols-2 gap-4 md:mt-16 md:gap-6">
-                <RestaurantBlock
-                  name="Hitsumabushi Bincho"
-                  description="Enguia · hitsumabushi"
-                  location="6º andar"
-                  price="~¥6.000"
-                  hours="11:00–21:00"
-                  photo="/images/Hitsumabushi.png"
-                />
-                <RestaurantBlock
-                  name="Kaiten Sushi Toriton"
-                  description="Sushi de esteira · prático"
-                  location="6º andar"
-                  price="~¥6.000"
-                  hours="11:00–22:00"
-                  photo="/images/Toriton.png"
-                />
-              </div>
+          <div className="mx-auto max-w-3xl">
+            <p className="text-lg font-light leading-7 text-white/70 md:leading-9">
+              A Tokyo Skytree está integrada ao shopping Tokyo Solamachi, que
+              reúne diversas opções de restaurantes, praça de alimentação e um
+              mercado no subsolo com alternativas para takeout.
+            </p>
+            <div className="mt-8 grid grid-cols-2 gap-4 md:mt-12 md:gap-6">
+              <RestaurantBlock
+                name="Hitsumabushi Bincho"
+                description="Enguia · hitsumabushi"
+                location="6º andar"
+                price="~¥6.000"
+                hours="11:00–21:00"
+                photo="/images/Hitsumabushi.png"
+              />
+              <RestaurantBlock
+                name="Kaiten Sushi Toriton"
+                description="Sushi de esteira · prático"
+                location="6º andar"
+                price="~¥6.000"
+                hours="11:00–22:00"
+                photo="/images/Toriton.png"
+              />
             </div>
 
-            <div className="lg:sticky lg:top-28">
+            <div className="mt-8 md:mt-12">
               <MapCard
                 href="#preview-mapa-dining"
                 label="Mapa — Solamachi Dining"
@@ -750,8 +749,17 @@ export default function RoteirosAdsPage() {
         </div>
       </section>
 
-      {/* ── POR QUE A AJISAI — transição marcada para sinalizar fim do roteiro ── */}
-      <section className="border-t-2 border-white/15 bg-white/[0.02] px-6 py-20 md:px-16 md:py-36">
+      {/* ── DIVISOR — fim do roteiro, início do conteúdo institucional ── */}
+      <div className="border-t border-white/10 bg-black px-6 py-14 md:px-16 md:py-20">
+        <div className="mx-auto flex max-w-7xl items-center gap-6">
+          <span className="h-px flex-1 bg-gradient-to-r from-transparent to-[#b79ce6]/50" />
+          <span className="h-2.5 w-2.5 shrink-0 rounded-full bg-[#b79ce6]" />
+          <span className="h-px flex-1 bg-gradient-to-l from-transparent to-[#b79ce6]/50" />
+        </div>
+      </div>
+
+      {/* ── POR QUE A AJISAI ── */}
+      <section className="border-t-2 border-[#b79ce6]/30 bg-white/[0.02] px-6 py-20 md:px-16 md:py-32">
         <div className="mx-auto max-w-7xl">
           <div className="mb-10 max-w-3xl md:mb-16">
             <p className="mb-6 text-xs uppercase tracking-[0.3em] text-white/40 md:tracking-[0.45em]">
@@ -885,7 +893,7 @@ export default function RoteirosAdsPage() {
           </p>
 
           <a
-            href="https://shorturl.at/Afhut"
+            href="https://wa.me/5511930300101?text=Ol%C3%A1!%20Gostaria%20de%20saber%20mais%20sobre%20roteiros%20personalizados%20para%20o%20Jap%C3%A3o."
             target="_blank"
             rel="noopener noreferrer"
             className="rounded-full border border-white/25 px-6 py-2.5 text-xs uppercase tracking-[0.25em] text-white/70 transition hover:border-white/60 hover:text-white"
@@ -1071,13 +1079,13 @@ function MapCard({
       href={href}
       className={`group flex items-center gap-4 rounded-2xl border p-5 transition ${
         dark
-          ? "border-white/10 bg-white/[0.025] hover:border-white/25"
+          ? "border-[#2f80c9]/30 bg-[#0f2340] hover:border-[#2f80c9]/60"
           : "border-black/10 bg-black/[0.02] hover:border-black/25"
       }`}
     >
       <span
         className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-full ${
-          dark ? "bg-white/10 text-white/70" : "bg-black/10 text-black/70"
+          dark ? "bg-[#2f80c9]/20 text-[#8fc0f0]" : "bg-black/10 text-black/70"
         }`}
       >
         <IconMap className="h-5 w-5" />
@@ -1089,13 +1097,13 @@ function MapCard({
           {label}
         </p>
         <p
-          className={`text-xs ${dark ? "text-white/45" : "text-black/45"}`}
+          className={`text-xs ${dark ? "text-[#8fc0f0]/70" : "text-black/45"}`}
         >
           Toque para ampliar
         </p>
       </div>
       <span
-        className={`ml-auto text-lg transition group-hover:translate-x-0.5 ${dark ? "text-white/40" : "text-black/40"}`}
+        className={`ml-auto text-lg transition group-hover:translate-x-0.5 ${dark ? "text-[#8fc0f0]/70" : "text-black/40"}`}
       >
         →
       </span>
