@@ -234,20 +234,27 @@ export default function RoteirosAdsPage() {
               [
                 "10:30",
                 "Chegada · Aeroporto Internacional de Narita — Terminal 3",
+                "Chegada",
               ],
               [
                 "11:30",
                 "Imigração, retirada de bagagem e deslocamento até o hotel",
+                "Deslocamento",
               ],
-              ["15:00", "Check-in · Caption By Hyatt Kabutocho"],
-              ["16:00", "Saída do hotel rumo a Oshiage"],
+              ["15:00", "Check-in · Caption By Hyatt Kabutocho", "Hospedagem"],
+              ["16:00", "Saída do hotel rumo a Oshiage", "Deslocamento"],
               [
                 "16:30",
                 "Tokyo Skytree · Subida ao observatório para o pôr do sol",
+                "Atração",
               ],
-              ["18:30", "Exploração do Tokyo Solamachi · lojas e gastronomia"],
-              ["20:00", "Retorno ao hotel · noite livre"],
-            ].map(([time, text], index) => (
+              [
+                "18:30",
+                "Exploração do Tokyo Solamachi · lojas e gastronomia",
+                "Refeição",
+              ],
+              ["20:00", "Retorno ao hotel · noite livre", "Deslocamento"],
+            ].map(([time, text, tag], index) => (
               <div
                 key={time}
                 className="relative grid grid-cols-[74px_1fr] gap-4 pb-7 last:pb-0"
@@ -260,12 +267,10 @@ export default function RoteirosAdsPage() {
                 </p>
                 <div className="relative">
                   <span className="absolute -left-[18px] top-2 h-2.5 w-2.5 rounded-full bg-white/40 ring-4 ring-black" />
+                  <p className="mb-1.5 text-[10px] font-medium uppercase tracking-[0.22em] text-[#b79ce6]">
+                    {tag}
+                  </p>
                   <p className="text-[15px] leading-6 text-white/62">{text}</p>
-                  {time === "16:30" && (
-                    <span className="mt-3 inline-block rounded-full border border-white/25 px-4 py-1.5 text-[10px] uppercase tracking-[0.22em] text-white/70">
-                      Atração Principal
-                    </span>
-                  )}
                 </div>
               </div>
             ))}
@@ -432,16 +437,16 @@ export default function RoteirosAdsPage() {
               <SectionMarker number={1} label="Deslocamento" />
             </div>
 
-            {/* Card da estação — fundo branco, modelo Tokyo Metro */}
-            <div className="rounded-2xl bg-white p-6 text-black sm:rounded-[2rem] sm:p-8">
+            {/* Card da estação — fundo preto, modelo Tokyo Metro */}
+            <div className="rounded-2xl border border-white/10 bg-black p-6 text-white sm:rounded-[2rem] sm:p-8">
               <p className="text-center text-xl font-semibold sm:text-2xl">
                 Oshiage Station
               </p>
-              <p className="mt-1 text-center text-sm text-black/45">
+              <p className="mt-1 text-center text-sm text-white/45">
                 押上駅〈スカイツリー前〉
               </p>
 
-              <div className="mt-6 flex flex-wrap items-start justify-center gap-x-8 gap-y-5 border-t border-black/10 pt-6">
+              <div className="mt-8 flex flex-wrap items-start justify-center gap-x-8 gap-y-5">
                 <div className="flex flex-col items-center gap-2">
                   <span
                     className="flex h-11 w-11 items-center justify-center rounded-full text-[11px] font-bold text-white"
@@ -449,7 +454,7 @@ export default function RoteirosAdsPage() {
                   >
                     TS03
                   </span>
-                  <span className="text-center text-xs text-black/60">
+                  <span className="text-center text-xs text-white/60">
                     Tobu Skytree Line
                   </span>
                 </div>
@@ -460,7 +465,7 @@ export default function RoteirosAdsPage() {
                   >
                     KS45
                   </span>
-                  <span className="text-center text-xs text-black/60">
+                  <span className="text-center text-xs text-white/60">
                     Keisei Oshiage Line
                   </span>
                 </div>
@@ -471,7 +476,7 @@ export default function RoteirosAdsPage() {
                   >
                     A20
                   </span>
-                  <span className="text-center text-xs text-black/60">
+                  <span className="text-center text-xs text-white/60">
                     Toei Asakusa Line
                   </span>
                 </div>
@@ -482,18 +487,14 @@ export default function RoteirosAdsPage() {
                   >
                     Z14
                   </span>
-                  <span className="text-center text-xs text-black/60">
+                  <span className="text-center text-xs text-white/60">
                     Tokyo Metro Hanzomon Line
                   </span>
                 </div>
               </div>
 
-              <div className="mt-6 border-t border-black/10 pt-6">
-                <MapCard
-                  variant="light"
-                  href="#preview-mapa-oshiage"
-                  label="Mapa da Estação"
-                />
+              <div className="mt-8">
+                <MapCard href="#preview-mapa-oshiage" label="Mapa da Estação" />
               </div>
             </div>
 
@@ -709,58 +710,54 @@ export default function RoteirosAdsPage() {
       </section>
 
       <section id="jantar" className="px-6 py-12 md:px-16 md:py-32">
-        <div className="mx-auto max-w-7xl">
-          <div className="mb-12 flex justify-center">
+        <div className="mx-auto max-w-3xl">
+          <div className="mb-9 md:mb-12">
             <SectionMarker number={3} label="Refeição · Jantar" />
           </div>
 
-          <div className="mx-auto max-w-3xl">
-            <p className="text-lg font-light leading-7 text-white/70 md:leading-9">
-              A Tokyo Skytree está integrada ao shopping Tokyo Solamachi, que
-              reúne diversas opções de restaurantes, praça de alimentação e um
-              mercado no subsolo com alternativas para takeout.
-            </p>
-            <div className="mt-8 grid grid-cols-2 gap-4 md:mt-12 md:gap-6">
-              <RestaurantBlock
-                name="Hitsumabushi Bincho"
-                description="Enguia · hitsumabushi"
-                location="6º andar"
-                price="~¥6.000"
-                hours="11:00–21:00"
-                photo="/images/Hitsumabushi.png"
-              />
-              <RestaurantBlock
-                name="Kaiten Sushi Toriton"
-                description="Sushi de esteira · prático"
-                location="6º andar"
-                price="~¥6.000"
-                hours="11:00–22:00"
-                photo="/images/Toriton.png"
-              />
-            </div>
+          <p className="text-lg font-light leading-7 text-white/70 md:leading-9">
+            A Tokyo Skytree está integrada ao shopping Tokyo Solamachi, que
+            reúne diversas opções de restaurantes, praça de alimentação e um
+            mercado no subsolo com alternativas para takeout.
+          </p>
+          <div className="mt-8 grid grid-cols-2 gap-4 md:mt-12 md:gap-6">
+            <RestaurantBlock
+              name="Hitsumabushi Bincho"
+              description="Enguia · hitsumabushi"
+              location="6º andar"
+              price="~¥6.000"
+              hours="11:00–21:00"
+              photo="/images/Hitsumabushi.png"
+            />
+            <RestaurantBlock
+              name="Kaiten Sushi Toriton"
+              description="Sushi de esteira · prático"
+              location="6º andar"
+              price="~¥6.000"
+              hours="11:00–22:00"
+              photo="/images/Toriton.png"
+            />
+          </div>
 
-            <div className="mt-8 md:mt-12">
-              <MapCard
-                href="#preview-mapa-dining"
-                label="Mapa — Solamachi Dining"
-              />
-            </div>
+          <div className="mt-8 md:mt-12">
+            <MapCard
+              href="#preview-mapa-dining"
+              label="Mapa — Solamachi Dining"
+            />
           </div>
         </div>
       </section>
 
-      {/* ── DIVISOR — fim do roteiro, início do conteúdo institucional ── */}
-      <div className="border-t border-white/10 bg-black px-6 py-14 md:px-16 md:py-20">
-        <div className="mx-auto flex max-w-7xl items-center gap-6">
-          <span className="h-px flex-1 bg-gradient-to-r from-transparent to-[#b79ce6]/50" />
-          <span className="h-2.5 w-2.5 shrink-0 rounded-full bg-[#b79ce6]" />
-          <span className="h-px flex-1 bg-gradient-to-l from-transparent to-[#b79ce6]/50" />
-        </div>
-      </div>
-
       {/* ── POR QUE A AJISAI ── */}
       <section className="border-t-2 border-[#b79ce6]/30 bg-white/[0.02] px-6 py-20 md:px-16 md:py-32">
         <div className="mx-auto max-w-7xl">
+          <div className="mb-10 flex justify-center md:mb-14">
+            <img
+              src="/images/AJISAI-LOGO.avif"
+              alt="Ajisai"
+              className="h-8 w-auto object-contain opacity-90 md:h-10"
+            />
+          </div>
           <div className="mb-10 max-w-3xl md:mb-16">
             <p className="mb-6 text-xs uppercase tracking-[0.3em] text-white/40 md:tracking-[0.45em]">
               Por que escolher a Ajisai
