@@ -276,7 +276,7 @@ export default function RoteirosAdsPage() {
             <div className="grid md:grid-cols-[0.95fr_1.05fr] md:items-stretch">
               <div className="relative h-[220px] overflow-hidden md:h-auto md:min-h-[440px]">
                 <Image
-                  src="/images/caption-by-hyatt-kabutocho.png"
+                  src="/images/caption.jpg"
                   alt="Caption By Hyatt Kabutocho — fachada do hotel"
                   fill
                   sizes="(max-width: 768px) 100vw, 48vw"
