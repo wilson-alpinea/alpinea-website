@@ -18,20 +18,24 @@ export const metadata = {
 export default function RoteirosAdsPage() {
   const whyAjisai = [
     {
-      title: "+12 anos no Japão",
-      text: "Mais de uma década de relações locais — o tipo de acesso que não se compra, se constrói.",
+      label: "Experiência",
+      title: "+12 anos",
+      text: "Mais de uma década de vivência no Japão, entre gastronomia, hotelaria, cultura, logística e relações locais.",
     },
     {
-      title: "Presença real, sem intermediários",
-      text: "Operação própria no Japão, com atendimento direto e conhecimento de bairros, hotéis e restaurantes fora do óbvio — sem terceirizar sua viagem, e sem expor os detalhes dela.",
+      label: "Curadoria",
+      title: "Exclusividade de Serviços",
+      text: "Curadoria de restaurantes, hotelaria e consumo desenvolvida a partir de experiência própria, fluência no idioma e uma rede construída ao longo de mais de uma década no Japão.",
     },
     {
-      title: "Roteiros no Japão por especialistas",
-      text: "Nada de empresas que oferecem roteiros para centenas de destinos com baixo conhecimento e roteiros genéricos — somos 100% dedicados ao Japão para o público brasileiro.",
-    },
-    {
-      title: "Referência na conexão Brasil–Japão",
+      label: "Conexão Brasil–Japão",
+      title: "Referência na conexão",
       text: "Entre os 3 maiores emissores de passagens aéreas dessa rota no mundo, unimos conhecimento operacional à curadoria de experiências privadas.",
+    },
+    {
+      label: "Presença real no Japão",
+      title: "Operação própria",
+      text: "Nossa operação própria no Japão permite atendimento sem intermediários, com maior flexibilidade, controle e proximidade dos melhores parceiros locais.",
     },
   ];
 
@@ -342,7 +346,8 @@ export default function RoteirosAdsPage() {
               imigração e deslocamento até o hotel.
             </p>
             <p>
-              <span className="text-white">Tarde</span> · Oshiage, Tokyo.
+              <span className="text-white">Tarde</span> · Oshiage, Tokyo —
+              Tokyo Skytree.
             </p>
           </div>
         </div>
@@ -383,144 +388,13 @@ export default function RoteirosAdsPage() {
               Tarde
             </p>
             <p className="max-w-4xl text-lg font-light leading-7 text-white/70 md:leading-9">
-              <span className="text-white">Local:</span> Oshiage, Tokyo
+              <span className="text-white">Local:</span> Oshiage, Tokyo —
+              atração principal: Tokyo Skytree. Detalhes completos e como
+              chegar logo abaixo.
             </p>
           </div>
         </section>
       </div>
-
-      {/* ── MOBILIDADE — TRENS E METRÔ ── */}
-      <section id="mobilidade" className="border-t border-white/10">
-        <div className="relative h-[360px] min-h-[360px] max-h-[420px] w-full overflow-hidden md:h-[75vh] md:min-h-[560px] md:max-h-[720px]">
-          <Image
-            src="/images/Nex_train.jpg"
-            alt="Narita Express (N'EX) — JR East"
-            fill
-            sizes="100vw"
-            className="object-cover"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/55 to-transparent" />
-
-          <div className="absolute inset-x-0 bottom-0 px-8 pb-14 text-center md:px-16 md:pb-16">
-            <div className="mx-auto max-w-3xl">
-              <p className="mb-5 text-xs uppercase tracking-[0.35em] text-white/40">
-                Mobilidade
-              </p>
-              <h3
-                className={`${display.className} text-3xl font-medium text-white md:text-4xl`}
-              >
-                Trens e Metrô
-              </h3>
-              <p className="mx-auto mt-5 max-w-xl text-base font-light leading-7 text-white/65 md:leading-9">
-                Nesse exemplo, o deslocamento é por conta própria — e o Japão
-                torna isso simples. A malha de trens e metrô é pontual, extensa
-                e fácil de navegar com os recursos certos.
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <div className="px-6 py-10 md:px-16 md:py-24">
-          <div className="mx-auto max-w-3xl space-y-10 text-center text-[15px] font-light leading-8 text-white/65 md:space-y-12 md:text-base md:leading-9">
-            <div className="mx-auto max-w-xl rounded-2xl border border-[#b79ce6]/15 bg-[#120a1f] p-5 text-left sm:rounded-[2rem] sm:p-8">
-              <p className="mb-5 text-xs uppercase tracking-[0.25em] text-[#b79ce6]">
-                💡 Recomendação Ajisai
-              </p>
-
-              <div className="grid gap-3">
-                <RecommendationRow
-                  icon="💳"
-                  title="Suica IC Card"
-                  text="Use no celular ou cartão físico para trem, metrô e ônibus sem comprar passagem a cada trecho."
-                />
-                <RecommendationRow
-                  icon="🗺️"
-                  title="Google Maps"
-                  text="Rotas, horários e plataformas de embarque em tempo real."
-                />
-                <RecommendationRow
-                  icon="⏱️"
-                  title="Horários de pico"
-                  text="Evitar 07:30–09:00 e 17:30–19:30 em dias de semana."
-                />
-              </div>
-            </div>
-
-            <div className="text-left">
-              <p className="mb-6 text-center text-xs uppercase tracking-[0.35em] text-white/30">
-                Acesso à Estação · Oshiage
-              </p>
-              <div className="mx-auto max-w-xl">
-                <Image
-                  src="/images/oshiage-lines.png"
-                  alt="Linhas ferroviárias disponíveis na estação Oshiage"
-                  width={640}
-                  height={260}
-                  className="mx-auto w-full max-w-sm rounded-lg object-contain"
-                />
-                <p className="mt-4 text-center text-sm leading-7 text-white/45">
-                  Oshiage Station é atendida pelas linhas Tobu Skytree Line,
-                  Keisei Oshiage Line, Toei Asakusa Line e Tokyo Metro Hanzomon
-                  Line.
-                </p>
-                <div className="mt-10 space-y-8">
-                  <div>
-                    <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">
-                      Nome da Estação
-                    </p>
-                    <p className="text-white">
-                      Oshiage Station 押上駅〈スカイツリー前〉
-                    </p>
-                  </div>
-                  <div>
-                    <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">
-                      Saída Recomendada
-                    </p>
-                    <p>
-                      A2 ou B3 para superfície. Em dias de chuva, recomendamos
-                      utilizar a conexão subterrânea direta com o Tokyo
-                      Solamachi.
-                    </p>
-                    <p className="mt-4 text-white">
-                      連絡通路直結 Solamachi B3F
-                    </p>
-                    <p className="mt-4">
-                      Caso encontre dificuldades, qualquer funcionário do metrô
-                      poderá indicar a direção correta.
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="border-t border-white/10 pt-10">
-              <div className="mx-auto grid max-w-xl grid-cols-2 gap-3 text-left sm:gap-8">
-                <div className="rounded-2xl border border-white/10 bg-white/[0.025] p-5">
-                  <p className="mb-3 text-[10px] uppercase tracking-[0.22em] text-white/30">
-                    Metrô
-                  </p>
-                  <p className="text-2xl text-white">15 min</p>
-                </div>
-                <div className="rounded-2xl border border-white/10 bg-white/[0.025] p-5">
-                  <p className="mb-3 text-[10px] uppercase tracking-[0.22em] text-white/30">
-                    Carro / Táxi
-                  </p>
-                  <p className="text-2xl text-white">15 min</p>
-                </div>
-              </div>
-            </div>
-
-            <div className="mx-auto max-w-xl rounded-2xl border border-[#b79ce6]/15 bg-[#120a1f] p-5 text-left sm:rounded-[2rem] sm:p-8">
-              <p className="mb-4 text-xs uppercase tracking-[0.25em] text-[#b79ce6]">
-                💡 Recomendação Ajisai
-              </p>
-              <p className="leading-7">
-                Do Caption By Hyatt Kabutocho, o trajeto até a Skytree é curto — cerca de 15 minutos tanto de metrô quanto de táxi. Com chuva ou vento forte, recomendamos trocar a Skytree por outra atração.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
 
       {/* ── ATRAÇÃO — TOKYO SKYTREE ── */}
       <section id="skytree" className="border-t border-white/10">
@@ -677,6 +551,138 @@ export default function RoteirosAdsPage() {
         </div>
       </section>
 
+      {/* ── MOBILIDADE — TRENS E METRÔ ── */}
+      <section id="mobilidade" className="border-t border-white/10">
+        <div className="relative h-[360px] min-h-[360px] max-h-[420px] w-full overflow-hidden md:h-[75vh] md:min-h-[560px] md:max-h-[720px]">
+          <Image
+            src="/images/Nex_train.jpg"
+            alt="Narita Express (N'EX) — JR East"
+            fill
+            sizes="100vw"
+            className="object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/55 to-transparent" />
+
+          <div className="absolute inset-x-0 bottom-0 px-8 pb-14 text-center md:px-16 md:pb-16">
+            <div className="mx-auto max-w-3xl">
+              <p className="mb-5 text-xs uppercase tracking-[0.35em] text-white/40">
+                Mobilidade
+              </p>
+              <h3
+                className={`${display.className} text-3xl font-medium text-white md:text-4xl`}
+              >
+                Trens e Metrô
+              </h3>
+              <p className="mx-auto mt-5 max-w-xl text-base font-light leading-7 text-white/65 md:leading-9">
+                Para chegar à Tokyo Skytree, o deslocamento nesse exemplo é por
+                conta própria — e o Japão torna isso simples. A malha de trens
+                e metrô é pontual, extensa e fácil de navegar com os recursos
+                certos.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div className="px-6 py-10 md:px-16 md:py-24">
+          <div className="mx-auto max-w-6xl">
+            <p className="mb-5 text-xs uppercase tracking-[0.25em] text-[#b79ce6]">
+              💡 Recomendação Ajisai
+            </p>
+            <div className="grid gap-4 sm:grid-cols-3">
+              <RecommendationRow
+                icon="💳"
+                title="Suica IC Card"
+                text="Use no celular ou cartão físico para trem, metrô e ônibus sem comprar passagem a cada trecho."
+              />
+              <RecommendationRow
+                icon="🗺️"
+                title="Google Maps"
+                text="Rotas, horários e plataformas de embarque em tempo real."
+              />
+              <RecommendationRow
+                icon="⏱️"
+                title="Horários de pico"
+                text="Evitar 07:30–09:00 e 17:30–19:30 em dias de semana."
+              />
+            </div>
+
+            <div className="mt-12 grid gap-8 border-t border-white/10 pt-12 lg:grid-cols-2">
+              <div>
+                <p className="mb-6 text-xs uppercase tracking-[0.35em] text-white/30">
+                  Acesso à Estação · Oshiage
+                </p>
+                <Image
+                  src="/images/oshiage-lines.png"
+                  alt="Linhas ferroviárias disponíveis na estação Oshiage"
+                  width={640}
+                  height={260}
+                  className="w-full max-w-sm rounded-lg object-contain"
+                />
+                <p className="mt-4 text-sm leading-7 text-white/45">
+                  Oshiage Station é atendida pelas linhas Tobu Skytree Line,
+                  Keisei Oshiage Line, Toei Asakusa Line e Tokyo Metro Hanzomon
+                  Line.
+                </p>
+              </div>
+
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-1">
+                <div className="rounded-2xl border border-white/10 bg-white/[0.025] p-5">
+                  <p className="mb-2 text-[10px] uppercase tracking-[0.22em] text-white/30">
+                    Nome da Estação
+                  </p>
+                  <p className="text-sm leading-6 text-white">
+                    Oshiage Station 押上駅〈スカイツリー前〉
+                  </p>
+                </div>
+                <div className="rounded-2xl border border-white/10 bg-white/[0.025] p-5">
+                  <p className="mb-2 text-[10px] uppercase tracking-[0.22em] text-white/30">
+                    Saída Recomendada
+                  </p>
+                  <p className="text-sm leading-6 text-white/70">
+                    A2 ou B3 para superfície. Em dias de chuva, recomendamos
+                    utilizar a conexão subterrânea direta com o Tokyo
+                    Solamachi.
+                  </p>
+                  <p className="mt-3 text-sm text-white">
+                    連絡通路直結 Solamachi B3F
+                  </p>
+                  <p className="mt-3 text-sm leading-6 text-white/50">
+                    Caso encontre dificuldades, qualquer funcionário do metrô
+                    poderá indicar a direção correta.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-12 grid gap-4 border-t border-white/10 pt-12 sm:grid-cols-2 lg:grid-cols-4">
+              <div className="rounded-2xl border border-white/10 bg-white/[0.025] p-5">
+                <p className="mb-3 text-[10px] uppercase tracking-[0.22em] text-white/30">
+                  Metrô
+                </p>
+                <p className="text-2xl text-white">15 min</p>
+              </div>
+              <div className="rounded-2xl border border-white/10 bg-white/[0.025] p-5">
+                <p className="mb-3 text-[10px] uppercase tracking-[0.22em] text-white/30">
+                  Carro / Táxi
+                </p>
+                <p className="text-2xl text-white">15 min</p>
+              </div>
+              <div className="rounded-2xl border border-[#b79ce6]/15 bg-[#120a1f] p-5 sm:col-span-2">
+                <p className="mb-2 text-xs uppercase tracking-[0.25em] text-[#b79ce6]">
+                  💡 Recomendação Ajisai
+                </p>
+                <p className="text-sm leading-6 text-white/70">
+                  Do Caption By Hyatt Kabutocho, o trajeto até a Skytree é
+                  curto — cerca de 15 minutos tanto de metrô quanto de táxi.
+                  Com chuva ou vento forte, recomendamos trocar a Skytree por
+                  outra atração.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <section id="jantar" className="px-6 py-12 md:px-16 md:py-32">
         <div className="mx-auto max-w-7xl">
           <p className="mb-12 text-center">
@@ -758,7 +764,7 @@ export default function RoteirosAdsPage() {
         <div className="mx-auto max-w-7xl">
           <div className="mb-10 max-w-3xl md:mb-16">
             <p className="mb-6 text-xs uppercase tracking-[0.3em] text-white/40 md:tracking-[0.45em]">
-              Por que a Ajisai
+              Por que escolher a Ajisai
             </p>
             <h2
               className={`${display.className} text-3xl font-medium leading-tight md:text-5xl`}
@@ -773,6 +779,9 @@ export default function RoteirosAdsPage() {
                 key={item.title}
                 className="w-[72vw] flex-shrink-0 snap-start [scroll-snap-stop:always] border-t border-white/15 pt-6 md:w-auto"
               >
+                <p className="mb-2 text-[11px] uppercase tracking-[0.25em] text-white/35">
+                  {item.label}
+                </p>
                 <h3
                   className={`${display.className} text-lg font-medium text-white md:text-xl`}
                 >
