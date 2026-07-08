@@ -39,6 +39,48 @@ export default function RoteirosAdsPage() {
     },
   ];
 
+  const workflowSteps = [
+    {
+      number: "01",
+      title: "Assinatura do contrato",
+      lines: ["Formalização digital do serviço."],
+      Icon: IconDocument,
+    },
+    {
+      number: "02",
+      title: "Pagamento de sinal",
+      lines: ["40% do investimento."],
+      Icon: IconCard,
+    },
+    {
+      number: "03",
+      title: "Briefing personalizado",
+      lines: ["Preferências, restrições e ritmo de viagem."],
+      Icon: IconCalendar,
+    },
+    {
+      number: "04",
+      title: "Rascunho do roteiro",
+      lines: [
+        "Versão de validação, ainda sem o painel digital.",
+        "10 dias úteis",
+      ],
+      Icon: IconDocument,
+    },
+    {
+      number: "05",
+      title: "Aprovação e versão digital",
+      lines: ["7 dias úteis"],
+      Icon: IconCheck,
+    },
+    {
+      number: "06",
+      title: "Pagamento final",
+      lines: ["60% na entrega."],
+      Icon: IconCard,
+    },
+  ];
+
   return (
     <main className="min-h-screen bg-black pb-16 text-white md:pb-0">
       {/* ── HEADER MINIMALISTA — sem menu, foco total em conversão ── */}
@@ -755,7 +797,7 @@ export default function RoteirosAdsPage() {
             <img
               src="/images/AJISAI-LOGO.avif"
               alt="Ajisai"
-              className="h-8 w-auto object-contain opacity-90 md:h-10"
+              className="h-16 w-auto object-contain opacity-95 md:h-24"
             />
           </div>
           <div className="mb-10 max-w-3xl md:mb-16">
@@ -824,6 +866,51 @@ export default function RoteirosAdsPage() {
                 text="Mais de 12 anos explorando e morando no Japão transformados em recomendações práticas."
               />
             </div>
+          </div>
+
+          <div className="mx-auto mt-6 max-w-xl rounded-2xl border border-white/10 bg-white/[0.03] p-6 sm:rounded-[2rem] sm:p-8">
+            <p className="text-xs uppercase tracking-[0.3em] text-white/40">
+              Investimento
+            </p>
+            <p className="mt-3 text-xl font-medium leading-snug text-white md:text-2xl">
+              Roteiros até 15 dias, a partir de{" "}
+              <span className="text-[#b79ce6]">R$ 1.500,00</span>
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* ── PRAZO DE ENTREGA E FLUXO DE TRABALHO ── */}
+      <section className="border-t border-white/10 bg-white/[0.02] px-6 py-14 md:px-16 md:py-28">
+        <div className="mx-auto max-w-6xl text-center">
+          <h2
+            className={`${display.className} mb-12 text-3xl font-medium leading-tight md:mb-16 md:text-5xl`}
+          >
+            Prazo de entrega e fluxo de trabalho
+          </h2>
+
+          <div className="grid grid-cols-2 gap-x-6 gap-y-10 sm:grid-cols-3 md:grid-cols-6 md:gap-x-5">
+            {workflowSteps.map((step) => (
+              <div key={step.number}>
+                <p className="text-sm font-medium text-white/35">
+                  {step.number}
+                </p>
+                <span className="mx-auto my-3 flex h-10 w-10 items-center justify-center rounded-full bg-white/5 text-white/70">
+                  <step.Icon className="h-5 w-5" />
+                </span>
+                <p className="text-sm font-medium leading-snug text-white">
+                  {step.title}
+                </p>
+                {step.lines.map((line) => (
+                  <p
+                    key={line}
+                    className="mt-1.5 text-xs leading-5 text-white/45"
+                  >
+                    {line}
+                  </p>
+                ))}
+              </div>
+            ))}
           </div>
         </div>
       </section>
@@ -1122,6 +1209,78 @@ function IconCastle({ className }: { className?: string }) {
       <path d="M4 21V10l3-2V6h2v2l3-2 3 2V6h2v2l3 2v11H4z" />
       <line x1="4" y1="21" x2="20" y2="21" />
       <rect x="10" y="14" width="4" height="7" />
+    </svg>
+  );
+}
+
+function IconDocument({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.75"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      <path d="M7 3h7l5 5v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Z" />
+      <path d="M14 3v5h5" />
+      <line x1="9" y1="13" x2="15" y2="13" />
+      <line x1="9" y1="17" x2="15" y2="17" />
+    </svg>
+  );
+}
+
+function IconCard({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.75"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      <rect x="2" y="5" width="20" height="14" rx="2" />
+      <line x1="2" y1="10" x2="22" y2="10" />
+    </svg>
+  );
+}
+
+function IconCalendar({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.75"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      <rect x="3" y="4" width="18" height="18" rx="2" />
+      <line x1="16" y1="2" x2="16" y2="6" />
+      <line x1="8" y1="2" x2="8" y2="6" />
+      <line x1="3" y1="10" x2="21" y2="10" />
+    </svg>
+  );
+}
+
+function IconCheck({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.75"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      <circle cx="12" cy="12" r="9" />
+      <path d="M8.5 12.5l2.5 2.5 4.5-5" />
     </svg>
   );
 }
