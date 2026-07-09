@@ -523,24 +523,15 @@ export default function RoteirosAdsPage() {
             {/* Card da estação — fundo preto, modelo Tokyo Metro */}
             <div className="rounded-2xl border border-white/10 bg-black p-6 text-white sm:rounded-[2rem] sm:p-8">
               <div className="flex justify-center">
-                <span
-                  className="flex h-12 w-12 items-center justify-center rounded-xl"
-                  style={{ background: "#00a8dd" }}
-                  aria-label="Tokyo Metro"
-                  title="Tokyo Metro"
-                >
-                  <svg
-                    viewBox="0 0 24 24"
-                    className="h-7 w-7"
-                    fill="none"
-                    stroke="white"
-                    strokeWidth="2.3"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <path d="M4 18c0-7.5 2-11.5 4.5-11.5S11 12 12 12s.5-5.5 3.5-5.5S20 10.5 20 18" />
-                  </svg>
-                </span>
+                <div className="h-12 w-12 overflow-hidden rounded-xl">
+                  <Image
+                    src="/images/tokyometro-mark.png"
+                    alt="Tokyo Metro"
+                    width={96}
+                    height={96}
+                    className="h-full w-full object-cover"
+                  />
+                </div>
               </div>
               <p className="mt-3 text-center text-xl font-semibold sm:text-2xl">
                 Oshiage Station
