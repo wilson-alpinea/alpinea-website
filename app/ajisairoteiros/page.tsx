@@ -45,16 +45,19 @@ export default function RoteirosAdsPage() {
       number: "01",
       title: "Assinatura do contrato",
       lines: ["Formalização digital do serviço."],
+      Icon: IconDocument,
     },
     {
       number: "02",
       title: "Pagamento de sinal",
       lines: ["40% do investimento."],
+      Icon: IconCard,
     },
     {
       number: "03",
       title: "Briefing personalizado",
       lines: ["Preferências, restrições e ritmo de viagem."],
+      Icon: IconCalendar,
     },
     {
       number: "04",
@@ -63,16 +66,19 @@ export default function RoteirosAdsPage() {
         "Versão de validação, ainda sem o painel digital.",
         "10 dias úteis",
       ],
+      Icon: IconDocument,
     },
     {
       number: "05",
       title: "Aprovação e versão digital",
       lines: ["7 dias úteis"],
+      Icon: IconCheck,
     },
     {
       number: "06",
       title: "Pagamento final",
       lines: ["60% na entrega."],
+      Icon: IconCard,
     },
   ];
 
@@ -92,21 +98,25 @@ export default function RoteirosAdsPage() {
       label: "Tecnologia",
       title: "Painel Digital Interativo",
       text: "A viagem organizada para consulta rápida no celular.",
+      Icon: IconMonitor,
     },
     {
       label: "Personalização",
       title: "Roteiro 100% Personalizado",
       text: "Criado exclusivamente para o perfil e ritmo de vocês.",
+      Icon: IconPin,
     },
     {
       label: "Curadoria",
       title: "Curadoria Completa",
       text: "Hotéis, restaurantes, logística e sugestões distribuídas ao longo do roteiro.",
+      Icon: IconLuggage,
     },
     {
       label: "Experiência",
       title: "Conhecimento Local",
       text: "Mais de 12 anos explorando e morando no Japão transformados em recomendações práticas.",
+      Icon: IconBulb,
     },
   ];
 
@@ -904,6 +914,9 @@ export default function RoteirosAdsPage() {
           <div className="grid grid-cols-1 gap-x-10 gap-y-10 sm:grid-cols-2">
             {inclusions.map((item) => (
               <div key={item.title} className="border-t border-white/15 pt-6">
+                <span className="mb-4 flex h-10 w-10 items-center justify-center rounded-full bg-[#b79ce6]/12 text-[#b79ce6]">
+                  <item.Icon className="h-5 w-5" />
+                </span>
                 <p className="mb-2 text-[11px] uppercase tracking-[0.25em] text-white/35">
                   {item.label}
                 </p>
@@ -949,21 +962,27 @@ export default function RoteirosAdsPage() {
             </h2>
           </div>
 
-          <div className="grid grid-cols-2 gap-x-8 gap-y-10 sm:grid-cols-3">
-            {workflowSteps.map((step) => (
-              <div key={step.number} className="border-t border-white/15 pt-6">
-                <p
-                  className={`${display.className} mb-2 text-2xl text-white/30 md:text-3xl`}
-                >
+          <div className="grid grid-cols-2 gap-x-6 gap-y-12 sm:grid-cols-3 md:flex md:items-start md:gap-6">
+            {workflowSteps.map((step, index) => (
+              <div key={step.number} className="md:min-w-0 md:flex-1">
+                <div className="flex items-center gap-3">
+                  <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#b79ce6]/12 text-[#b79ce6]">
+                    <step.Icon className="h-5 w-5" />
+                  </span>
+                  {index < workflowSteps.length - 1 && (
+                    <span className="hidden h-px flex-1 bg-white/15 md:block" />
+                  )}
+                </div>
+                <p className="mt-4 text-[11px] uppercase tracking-[0.2em] text-white/30">
                   {step.number}
                 </p>
-                <p className="text-sm font-medium text-white">
+                <p className="mt-1 text-sm font-medium text-white">
                   {step.title}
                 </p>
                 {step.lines.map((line) => (
                   <p
                     key={line}
-                    className="mt-2 text-sm font-light leading-6 text-white/50"
+                    className="mt-1.5 text-xs leading-5 text-white/50"
                   >
                     {line}
                   </p>
@@ -1154,6 +1173,131 @@ function IconCar({ className }: { className?: string }) {
       <path d="M16 16v2a1 1 0 0 0 1 1h1a1 1 0 0 0 1-1v-2" />
       <circle cx="7.5" cy="13.5" r="0.6" fill="currentColor" stroke="none" />
       <circle cx="16.5" cy="13.5" r="0.6" fill="currentColor" stroke="none" />
+    </svg>
+  );
+}
+
+function IconMonitor({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.75"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      <rect x="3" y="4" width="18" height="12" rx="2" />
+      <line x1="8" y1="20" x2="16" y2="20" />
+      <line x1="12" y1="16" x2="12" y2="20" />
+    </svg>
+  );
+}
+
+function IconPin({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.75"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      <path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21Z" />
+      <circle cx="12" cy="9.5" r="2.3" />
+    </svg>
+  );
+}
+
+function IconBulb({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.75"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      <path d="M9 18h6" />
+      <path d="M10 21h4" />
+      <path d="M12 3a6 6 0 0 0-3.6 10.8c.5.4.8 1 .8 1.7v.5h5.6v-.5c0-.7.3-1.3.8-1.7A6 6 0 0 0 12 3Z" />
+    </svg>
+  );
+}
+
+function IconDocument({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.75"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      <path d="M7 3h7l5 5v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Z" />
+      <path d="M14 3v5h5" />
+      <line x1="9" y1="13" x2="15" y2="13" />
+      <line x1="9" y1="17" x2="15" y2="17" />
+    </svg>
+  );
+}
+
+function IconCard({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.75"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      <rect x="2" y="5" width="20" height="14" rx="2" />
+      <line x1="2" y1="10" x2="22" y2="10" />
+    </svg>
+  );
+}
+
+function IconCalendar({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.75"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      <rect x="3" y="4" width="18" height="18" rx="2" />
+      <line x1="16" y1="2" x2="16" y2="6" />
+      <line x1="8" y1="2" x2="8" y2="6" />
+      <line x1="3" y1="10" x2="21" y2="10" />
+    </svg>
+  );
+}
+
+function IconCheck({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.75"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      <circle cx="12" cy="12" r="9" />
+      <path d="M8.5 12.5l2.5 2.5 4.5-5" />
     </svg>
   );
 }
