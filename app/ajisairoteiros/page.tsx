@@ -49,8 +49,8 @@ export default function RoteirosAdsPage() {
     },
     {
       number: "02",
-      title: "Pagamento de sinal",
-      lines: ["40% do investimento."],
+      title: "Pagamento de adiantamento",
+      lines: ["50% do investimento."],
       Icon: IconCard,
     },
     {
@@ -77,7 +77,7 @@ export default function RoteirosAdsPage() {
     {
       number: "06",
       title: "Pagamento final",
-      lines: ["60% na entrega."],
+      lines: ["50% na entrega.", "Nota fiscal emitida após este pagamento."],
       Icon: IconCard,
     },
   ];
