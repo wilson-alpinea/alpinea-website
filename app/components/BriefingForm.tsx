@@ -10,15 +10,12 @@ const display = Bodoni_Moda({
 });
 
 type FormState = {
-  name: string;
   whatsapp: string;
-  datas: string;
   duracao: string;
   cidadePartida: string;
   viajantes: string;
   passagens: string;
   orcamento: string;
-  primeiraVez: string;
   jaVisitou: string;
   ritmo: string;
   mobilidade: string;
@@ -36,15 +33,12 @@ type FormState = {
 };
 
 const emptyState: FormState = {
-  name: "",
   whatsapp: "",
-  datas: "",
   duracao: "",
   cidadePartida: "",
   viajantes: "",
   passagens: "",
   orcamento: "",
-  primeiraVez: "",
   jaVisitou: "",
   ritmo: "",
   mobilidade: "",
@@ -98,8 +92,7 @@ export default function BriefingForm() {
     });
   };
 
-  const canAdvanceFromStep0 =
-    data.name.trim().length > 0 && data.whatsapp.trim().length > 0;
+  const canAdvanceFromStep0 = data.whatsapp.trim().length > 0;
 
   function goNext() {
     if (step === 0 && !canAdvanceFromStep0) return;
@@ -151,9 +144,8 @@ export default function BriefingForm() {
             Briefing recebido!
           </h1>
           <p className="mt-4 text-sm leading-7 text-white/60">
-            Obrigado{data.name ? `, ${data.name.split(" ")[0]}` : ""}.
-            Recebemos todas as informações e já vamos começar a montar seu
-            roteiro. Em breve entramos em contato pelo WhatsApp.
+            Obrigado! Recebemos todas as informações e já vamos começar a
+            montar seu roteiro. Em breve entramos em contato pelo WhatsApp.
           </p>
         </div>
       </main>
@@ -270,7 +262,7 @@ export default function BriefingForm() {
 
         {step === 0 && !canAdvanceFromStep0 && (
           <p className="mt-4 text-center text-[11px] text-white/30">
-            Preencha nome e WhatsApp para continuar.
+            Preencha seu WhatsApp para continuar.
           </p>
         )}
       </div>
@@ -407,27 +399,11 @@ function StepViagem({ data, set }: { data: FormState; set: SetField }) {
       <p className="text-xs uppercase tracking-[0.3em] text-[#b79ce6]">
         1 · Sobre a viagem
       </p>
-      <div className="grid gap-6 sm:grid-cols-2">
-        <FieldBlock label="Nome completo *">
-          <TextInput
-            value={data.name}
-            onChange={(v) => set("name", v)}
-            placeholder="Seu nome"
-          />
-        </FieldBlock>
-        <FieldBlock label="WhatsApp *">
-          <TextInput
-            value={data.whatsapp}
-            onChange={(v) => set("whatsapp", v)}
-            placeholder="(11) 90000-0000"
-          />
-        </FieldBlock>
-      </div>
-      <FieldBlock label="Datas da viagem">
+      <FieldBlock label="WhatsApp *">
         <TextInput
-          value={data.datas}
-          onChange={(v) => set("datas", v)}
-          placeholder="Ex: 10 a 20 de outubro de 2026, ou 'ainda flexível'"
+          value={data.whatsapp}
+          onChange={(v) => set("whatsapp", v)}
+          placeholder="(11) 90000-0000"
         />
       </FieldBlock>
       <div className="grid gap-6 sm:grid-cols-2">
@@ -492,18 +468,11 @@ function StepPerfil({
       <p className="text-xs uppercase tracking-[0.3em] text-[#b79ce6]">
         2 · Perfil e ritmo
       </p>
-      <FieldBlock label="Primeira vez no Japão?">
-        <ChoiceGroup
-          options={["Sim", "Não"]}
-          value={data.primeiraVez}
-          onChange={(v) => set("primeiraVez", v)}
-        />
-      </FieldBlock>
-      <FieldBlock label="Se não, quais lugares já visitaram?">
+      <FieldBlock label="Já visitou o Japão antes? Se sim, quais lugares?">
         <TextArea
           value={data.jaVisitou}
           onChange={(v) => set("jaVisitou", v)}
-          placeholder="Opcional"
+          placeholder="Ex: primeira vez, ou 'já fomos a Tokyo e Osaka em 2023'"
           rows={2}
         />
       </FieldBlock>
@@ -667,15 +636,13 @@ function StepOcasioes({ data, set }: { data: FormState; set: SetField }) {
 
 function StepRevisao({ data }: { data: FormState }) {
   const rows: [string, string][] = [
-    ["Nome", data.name],
     ["WhatsApp", data.whatsapp],
-    ["Datas", data.datas],
     ["Duração", data.duracao],
     ["Cidade de partida", data.cidadePartida],
     ["Viajantes", data.viajantes],
     ["Passagens", data.passagens],
     ["Orçamento", data.orcamento],
-    ["Primeira vez no Japão", data.primeiraVez],
+    ["Viagens anteriores ao Japão", data.jaVisitou],
     ["Ritmo", data.ritmo],
     ["Hospedagem", data.hospedagem.join(", ")],
     ["Interesses", data.interesses.join(", ")],

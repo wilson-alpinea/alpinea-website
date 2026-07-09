@@ -45,26 +45,22 @@ export async function POST(req: Request) {
 
     const body = await req.json();
 
-    const name = String(body.name || "").trim();
     const whatsapp = String(body.whatsapp || "").trim();
 
-    if (!name || !whatsapp) {
+    if (!whatsapp) {
       return NextResponse.json(
-        { error: "Nome e WhatsApp são obrigatórios." },
+        { error: "WhatsApp é obrigatório." },
         { status: 400 },
       );
     }
 
     const fields: [string, unknown][] = [
-      ["Nome", name],
       ["WhatsApp", whatsapp],
-      ["Datas da viagem", body.datas],
       ["Duração total", body.duracao],
       ["Cidade de partida", body.cidadePartida],
       ["Viajantes", body.viajantes],
       ["Passagens já compradas", body.passagens],
       ["Orçamento estimado", body.orcamento],
-      ["Primeira vez no Japão", body.primeiraVez],
       ["Viagens anteriores ao Japão", body.jaVisitou],
       ["Ritmo desejado", body.ritmo],
       ["Mobilidade / limitações físicas", body.mobilidade],
@@ -106,7 +102,7 @@ export async function POST(req: Request) {
       body: JSON.stringify({
         from: "Alpinea <contato@alpinea.io>",
         to: ["wilson@alpinea.io"],
-        subject: `Novo briefing Ajisai — ${name}`,
+        subject: `Novo briefing Ajisai — ${whatsapp}`,
         text: textBody,
         html: htmlBody,
       }),
