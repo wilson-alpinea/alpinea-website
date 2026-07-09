@@ -75,6 +75,17 @@ export default function RoteirosAdsPage() {
     },
   ];
 
+  const categoryMeta: Record<
+    string,
+    { color: string; dot: string; Icon: (p: { className?: string }) => JSX.Element }
+  > = {
+    Chegada: { color: "text-[#6ec3d9]", dot: "bg-[#6ec3d9]", Icon: IconPlane },
+    Deslocamento: { color: "text-[#5b9bd5]", dot: "bg-[#5b9bd5]", Icon: IconTrain },
+    Hospedagem: { color: "text-[#d9a66d]", dot: "bg-[#d9a66d]", Icon: IconBed },
+    Atração: { color: "text-[#b79ce6]", dot: "bg-[#b79ce6]", Icon: IconStar },
+    Refeição: { color: "text-[#e0916a]", dot: "bg-[#e0916a]", Icon: IconFork },
+  };
+
   const inclusions = [
     {
       label: "Tecnologia",
@@ -313,26 +324,39 @@ export default function RoteirosAdsPage() {
                 "Refeição",
               ],
               ["20:00", "Retorno ao hotel · noite livre", "Deslocamento"],
-            ].map(([time, text, tag], index) => (
-              <div
-                key={time}
-                className="relative grid grid-cols-[74px_1fr] gap-4 pb-7 last:pb-0"
-              >
-                {index < 6 && (
-                  <span className="absolute left-[72px] top-4 h-full w-px bg-white/10" />
-                )}
-                <p className="pt-0.5 text-sm font-medium tracking-[0.15em] text-white">
-                  {time}
-                </p>
-                <div className="relative">
-                  <span className="absolute -left-[18px] top-2 h-2.5 w-2.5 rounded-full bg-white/40 ring-4 ring-black" />
-                  <p className="mb-1.5 text-[10px] font-medium uppercase tracking-[0.22em] text-[#b79ce6]">
-                    {tag}
+            ].map(([time, text, tag], index) => {
+              const meta = categoryMeta[tag];
+              const Icon = meta.Icon;
+              return (
+                <div
+                  key={time}
+                  className="relative grid grid-cols-[74px_1fr] gap-4 pb-7 last:pb-0"
+                >
+                  {index < 6 && (
+                    <span className="absolute left-[72px] top-4 h-full w-px bg-white/10" />
+                  )}
+                  <p className="pt-0.5 text-sm font-medium tracking-[0.15em] text-white">
+                    {time}
                   </p>
-                  <p className="text-[15px] leading-6 text-white/62">{text}</p>
+                  <div className="relative">
+                    <span
+                      className={`absolute -left-[18px] top-2 h-2.5 w-2.5 rounded-full ring-4 ring-black ${meta.dot}`}
+                    />
+                    <div className="mb-1.5 flex items-center gap-1.5">
+                      <Icon className={`h-3 w-3 ${meta.color}`} />
+                      <p
+                        className={`text-[10px] font-medium uppercase tracking-[0.22em] ${meta.color}`}
+                      >
+                        {tag}
+                      </p>
+                    </div>
+                    <p className="text-[15px] leading-6 text-white/62">
+                      {text}
+                    </p>
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </section>
@@ -630,7 +654,7 @@ export default function RoteirosAdsPage() {
                 </div>
               </div>
 
-              <div className="rounded-2xl bg-[#E3A46B] p-5 text-black">
+              <div className="rounded-2xl bg-[#8FC1E8] p-5 text-black">
                 <div className="flex items-center gap-4">
                   <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-black/10 text-black">
                     <IconExit className="h-5 w-5" />
@@ -903,14 +927,17 @@ export default function RoteirosAdsPage() {
             ))}
           </div>
 
-          <div className="mt-16 border-t border-white/15 pt-10 md:mt-20">
-            <p className="mb-3 text-[11px] uppercase tracking-[0.25em] text-white/35">
+          <div className="mt-16 border-t border-white/15 pt-10 md:mt-20 md:pt-14">
+            <p className="mb-4 text-[11px] uppercase tracking-[0.25em] text-white/35">
               Investimento
             </p>
+            <p className="text-sm font-light text-white/50 md:text-base">
+              Roteiros de até 15 dias, a partir de
+            </p>
             <p
-              className={`${display.className} text-2xl font-medium leading-snug text-white md:text-3xl`}
+              className={`${display.className} mt-2 text-6xl font-medium leading-none text-[#b79ce6] md:text-8xl`}
             >
-              Roteiros de até 15 dias, a partir de R$ 1.500,00
+              R$ 1.500
             </p>
           </div>
         </div>
@@ -1135,6 +1162,62 @@ function IconCar({ className }: { className?: string }) {
       <path d="M16 16v2a1 1 0 0 0 1 1h1a1 1 0 0 0 1-1v-2" />
       <circle cx="7.5" cy="13.5" r="0.6" fill="currentColor" stroke="none" />
       <circle cx="16.5" cy="13.5" r="0.6" fill="currentColor" stroke="none" />
+    </svg>
+  );
+}
+
+function IconBed({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.75"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      <path d="M2 17v-5a2 2 0 0 1 2-2h5a2 2 0 0 1 2 2v2" />
+      <path d="M11 14v-2a2 2 0 0 1 2-2h7a2 2 0 0 1 2 2v5" />
+      <line x1="2" y1="12" x2="2" y2="7" />
+      <line x1="2" y1="20" x2="2" y2="17" />
+      <line x1="22" y1="20" x2="22" y2="17" />
+      <line x1="2" y1="17" x2="22" y2="17" />
+    </svg>
+  );
+}
+
+function IconStar({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.75"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      <path d="M12 3l2.5 6 6.5.6-5 4.3 1.5 6.4L12 17l-5.5 3.3L8 13.9l-5-4.3L9.5 9.6 12 3Z" />
+    </svg>
+  );
+}
+
+function IconFork({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.75"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      <path d="M7 2v7a2 2 0 0 0 4 0V2" />
+      <line x1="9" y1="2" x2="9" y2="22" />
+      <path d="M16 2c-1.4 0-2 2.5-2 4.5S14.6 11 16 11" />
+      <line x1="16" y1="2" x2="16" y2="22" />
     </svg>
   );
 }
