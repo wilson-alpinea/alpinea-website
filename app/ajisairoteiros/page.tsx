@@ -386,14 +386,16 @@ export default function RoteirosAdsPage() {
                   className="object-cover"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent md:bg-gradient-to-r" />
-                <div className="absolute bottom-5 left-5 rounded-full border border-[#8fb7d9]/25 bg-[#12324a]/50 px-3 py-1 text-[10px] uppercase tracking-[0.24em] text-[#b7d8f2] backdrop-blur-md md:hidden">
-                  🏨 Hospedagem
+                <div className="absolute bottom-5 left-5 flex items-center gap-1.5 rounded-full border border-[#8fb7d9]/25 bg-[#12324a]/50 px-3 py-1 text-[10px] uppercase tracking-[0.24em] text-[#b7d8f2] backdrop-blur-md md:hidden">
+                  <IconBed className="h-3 w-3" />
+                  Hospedagem
                 </div>
               </div>
 
               <div className="p-6 md:p-10">
-                <p className="hidden text-xs uppercase tracking-[0.35em] text-[#8fb7d9] md:block">
-                  🏨 Hospedagem
+                <p className="hidden items-center gap-1.5 text-xs uppercase tracking-[0.35em] text-[#8fb7d9] md:flex">
+                  <IconBed className="h-3.5 w-3.5" />
+                  Hospedagem
                 </p>
                 <h3
                   className={`${display.className} text-3xl font-medium text-white md:mt-4 md:text-4xl`}
@@ -683,22 +685,23 @@ export default function RoteirosAdsPage() {
 
             {/* Recomendação Ajisai — tudo em um só card */}
             <div className="mt-6 rounded-2xl border border-[#b79ce6]/15 bg-[#120a1f] p-5 sm:rounded-[2rem] sm:p-8">
-              <p className="mb-5 text-xs uppercase tracking-[0.25em] text-[#b79ce6]">
-                💡 Recomendação Ajisai
+              <p className="mb-5 flex items-center gap-2 text-xs uppercase tracking-[0.25em] text-[#b79ce6]">
+                <IconBulb className="h-3.5 w-3.5" />
+                Recomendação Ajisai
               </p>
               <div className="grid gap-3">
                 <RecommendationRow
-                  icon="💳"
+                  Icon={IconCard}
                   title="Suica IC Card"
                   text="Use no celular ou cartão físico para trem, metrô e ônibus sem comprar passagem a cada trecho."
                 />
                 <RecommendationRow
-                  icon="🗺️"
+                  Icon={IconMap}
                   title="Google Maps"
                   text="Rotas, horários e plataformas de embarque em tempo real."
                 />
                 <RecommendationRow
-                  icon="⏱️"
+                  Icon={IconClock}
                   title="Horários de pico"
                   text="Evitar 07:30–09:00 e 17:30–19:30 em dias de semana."
                 />
@@ -779,8 +782,9 @@ export default function RoteirosAdsPage() {
                 text="Entre 1 e 2 horas após a subida ao observatório."
               />
               <div className="rounded-2xl border border-[#b79ce6]/15 bg-[#120a1f] p-5 sm:rounded-[2rem] sm:p-8">
-                <p className="mb-4 text-xs uppercase tracking-[0.25em] text-[#b79ce6]">
-                  💡 Recomendação Ajisai
+                <p className="mb-4 flex items-center gap-2 text-xs uppercase tracking-[0.25em] text-[#b79ce6]">
+                  <IconBulb className="h-3.5 w-3.5" />
+                  Recomendação Ajisai
                 </p>
                 <p>
                   Eu normalmente compro o ingresso para o 350º andar, não vejo
@@ -1302,6 +1306,23 @@ function IconCheck({ className }: { className?: string }) {
   );
 }
 
+function IconClock({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.75"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      <circle cx="12" cy="12" r="9" />
+      <path d="M12 7v5l3.5 2" />
+    </svg>
+  );
+}
+
 function IconBed({ className }: { className?: string }) {
   return (
     <svg
@@ -1527,7 +1548,7 @@ function DashboardPreview() {
                   className={`mx-auto h-14 w-14 rounded-full border ${
                     stop.active
                       ? "border-[#6f8b97]/70 bg-[#2f4854]"
-                      : "border-white/15 bg-white/10"
+                      : "border-white/35 bg-white/[0.04]"
                   }`}
                 />
                 <p className="mt-4 text-xs uppercase tracking-[0.35em] text-white">
@@ -1737,18 +1758,18 @@ function InfoBlock({ title, text }: { title: string; text: string }) {
 }
 
 function RecommendationRow({
-  icon,
+  Icon,
   title,
   text,
 }: {
-  icon: string;
+  Icon: (p: { className?: string }) => ReactElement;
   title: string;
   text: string;
 }) {
   return (
     <div className="grid grid-cols-[34px_1fr] gap-3 rounded-2xl border border-white/10 bg-black/35 p-4">
-      <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#b79ce6]/12 text-base">
-        {icon}
+      <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#b79ce6]/12 text-[#b79ce6]">
+        <Icon className="h-4 w-4" />
       </div>
       <div>
         <p className="text-sm font-medium text-white">{title}</p>
