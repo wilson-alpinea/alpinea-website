@@ -1,4 +1,5 @@
 import Image from "next/image";
+import type { ReactElement } from "react";
 import { Bodoni_Moda } from "next/font/google";
 import { ContactCTA } from "../components/ContactCTA";
 import { CarouselScroller } from "../components/CarouselScroller";
@@ -77,7 +78,7 @@ export default function RoteirosAdsPage() {
 
   const categoryMeta: Record<
     string,
-    { color: string; dot: string; Icon: (p: { className?: string }) => JSX.Element }
+    { color: string; dot: string; Icon: (p: { className?: string }) => ReactElement }
   > = {
     Chegada: { color: "text-[#6ec3d9]", dot: "bg-[#6ec3d9]", Icon: IconPlane },
     Deslocamento: { color: "text-[#5b9bd5]", dot: "bg-[#5b9bd5]", Icon: IconTrain },
