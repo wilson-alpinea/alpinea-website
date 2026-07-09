@@ -44,19 +44,16 @@ export default function RoteirosAdsPage() {
       number: "01",
       title: "Assinatura do contrato",
       lines: ["Formalização digital do serviço."],
-      Icon: IconDocument,
     },
     {
       number: "02",
       title: "Pagamento de sinal",
       lines: ["40% do investimento."],
-      Icon: IconCard,
     },
     {
       number: "03",
       title: "Briefing personalizado",
       lines: ["Preferências, restrições e ritmo de viagem."],
-      Icon: IconCalendar,
     },
     {
       number: "04",
@@ -65,19 +62,39 @@ export default function RoteirosAdsPage() {
         "Versão de validação, ainda sem o painel digital.",
         "10 dias úteis",
       ],
-      Icon: IconDocument,
     },
     {
       number: "05",
       title: "Aprovação e versão digital",
       lines: ["7 dias úteis"],
-      Icon: IconCheck,
     },
     {
       number: "06",
       title: "Pagamento final",
       lines: ["60% na entrega."],
-      Icon: IconCard,
+    },
+  ];
+
+  const inclusions = [
+    {
+      label: "Tecnologia",
+      title: "Painel Digital Interativo",
+      text: "A viagem organizada para consulta rápida no celular.",
+    },
+    {
+      label: "Personalização",
+      title: "Roteiro 100% Personalizado",
+      text: "Criado exclusivamente para o perfil e ritmo de vocês.",
+    },
+    {
+      label: "Curadoria",
+      title: "Curadoria Completa",
+      text: "Hotéis, restaurantes, logística e sugestões distribuídas ao longo do roteiro.",
+    },
+    {
+      label: "Experiência",
+      title: "Conhecimento Local",
+      text: "Mais de 12 anos explorando e morando no Japão transformados em recomendações práticas.",
     },
   ];
 
@@ -483,12 +500,22 @@ export default function RoteirosAdsPage() {
             <div className="rounded-2xl border border-white/10 bg-black p-6 text-white sm:rounded-[2rem] sm:p-8">
               <div className="flex justify-center">
                 <span
-                  className="flex h-11 w-11 items-center justify-center rounded-xl text-lg font-bold text-white"
-                  style={{ background: "#0089c8" }}
+                  className="flex h-12 w-12 items-center justify-center rounded-xl"
+                  style={{ background: "#00a8dd" }}
                   aria-label="Tokyo Metro"
                   title="Tokyo Metro"
                 >
-                  M
+                  <svg
+                    viewBox="0 0 24 24"
+                    className="h-7 w-7"
+                    fill="none"
+                    stroke="white"
+                    strokeWidth="2.3"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="M4 18c0-7.5 2-11.5 4.5-11.5S11 12 12 12s.5-5.5 3.5-5.5S20 10.5 20 18" />
+                  </svg>
                 </span>
               </div>
               <p className="mt-3 text-center text-xl font-semibold sm:text-2xl">
@@ -501,7 +528,7 @@ export default function RoteirosAdsPage() {
               <div className="mt-8 flex flex-wrap items-start justify-center gap-x-8 gap-y-5">
                 <div className="flex flex-col items-center gap-2">
                   <span
-                    className="flex h-16 w-16 items-center justify-center rounded-full text-[13px] font-bold text-white"
+                    className="flex h-16 w-16 items-center justify-center rounded-full text-[15px] font-bold text-white"
                     style={{ background: "#2f80c9" }}
                   >
                     TS03
@@ -512,7 +539,7 @@ export default function RoteirosAdsPage() {
                 </div>
                 <div className="flex flex-col items-center gap-2">
                   <span
-                    className="flex h-16 w-16 items-center justify-center rounded-full text-[13px] font-bold text-white"
+                    className="flex h-16 w-16 items-center justify-center rounded-full text-[15px] font-bold text-white"
                     style={{ background: "#1c5fa8" }}
                   >
                     KS45
@@ -523,7 +550,7 @@ export default function RoteirosAdsPage() {
                 </div>
                 <div className="flex flex-col items-center gap-2">
                   <span
-                    className="flex h-16 w-16 items-center justify-center rounded-full text-[13px] font-bold text-white"
+                    className="flex h-16 w-16 items-center justify-center rounded-full text-[15px] font-bold text-white"
                     style={{ background: "#e2542a" }}
                   >
                     A20
@@ -534,7 +561,7 @@ export default function RoteirosAdsPage() {
                 </div>
                 <div className="flex flex-col items-center gap-2">
                   <span
-                    className="flex h-16 w-16 items-center justify-center rounded-full text-[13px] font-bold text-white"
+                    className="flex h-16 w-16 items-center justify-center rounded-full text-[15px] font-bold text-white"
                     style={{ background: "#7c4fd1" }}
                   >
                     Z14
@@ -603,7 +630,7 @@ export default function RoteirosAdsPage() {
                 </div>
               </div>
 
-              <div className="rounded-2xl bg-[#F4C430] p-5 text-black">
+              <div className="rounded-2xl bg-[#E3A46B] p-5 text-black">
                 <div className="flex items-center gap-4">
                   <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-black/10 text-black">
                     <IconExit className="h-5 w-5" />
@@ -845,81 +872,79 @@ export default function RoteirosAdsPage() {
       </section>
 
       {/* ── TUDO O QUE ACOMPANHA SEU ROTEIRO ── */}
-      <section className="border-t border-white/10 bg-black px-6 py-14 md:px-16 md:py-28">
-        <div className="mx-auto max-w-3xl text-center">
-          <h2
-            className={`${display.className} mb-10 text-3xl font-medium leading-tight md:mb-14 md:text-5xl`}
-          >
-            Tudo o que acompanha seu roteiro
-          </h2>
-
-          <div className="mx-auto max-w-xl rounded-2xl border border-[#b79ce6]/15 bg-[#120a1f] p-5 text-left sm:rounded-[2rem] sm:p-8">
-            <div className="grid gap-3">
-              <RecommendationRow
-                icon="🖥️"
-                title="Painel Digital Interativo"
-                text="A viagem organizada para consulta rápida no celular."
-              />
-              <RecommendationRow
-                icon="📍"
-                title="Roteiro 100% Personalizado"
-                text="Criado exclusivamente para o perfil e ritmo de vocês."
-              />
-              <RecommendationRow
-                icon="🏨"
-                title="Curadoria Completa"
-                text="Hotéis, restaurantes, logística e sugestões distribuídas ao longo do roteiro."
-              />
-              <RecommendationRow
-                icon="💡"
-                title="Conhecimento Local"
-                text="Mais de 12 anos explorando e morando no Japão transformados em recomendações práticas."
-              />
-            </div>
+      <section className="border-t border-white/10 bg-black px-6 py-20 md:px-16 md:py-32">
+        <div className="mx-auto max-w-5xl">
+          <div className="mb-14 max-w-2xl md:mb-20">
+            <p className="mb-6 text-xs uppercase tracking-[0.3em] text-white/40 md:tracking-[0.45em]">
+              O que está incluído
+            </p>
+            <h2
+              className={`${display.className} text-3xl font-medium leading-tight md:text-5xl`}
+            >
+              Tudo o que acompanha seu roteiro
+            </h2>
           </div>
 
-          <div className="mx-auto mt-6 max-w-xl rounded-2xl border border-white/10 bg-white/[0.03] p-6 sm:rounded-[2rem] sm:p-8">
-            <p className="text-xs uppercase tracking-[0.3em] text-white/40">
+          <div className="grid grid-cols-1 gap-x-10 gap-y-10 sm:grid-cols-2">
+            {inclusions.map((item) => (
+              <div key={item.title} className="border-t border-white/15 pt-6">
+                <p className="mb-2 text-[11px] uppercase tracking-[0.25em] text-white/35">
+                  {item.label}
+                </p>
+                <h3
+                  className={`${display.className} text-lg font-medium text-white md:text-xl`}
+                >
+                  {item.title}
+                </h3>
+                <p className="mt-3 text-sm font-light leading-7 text-white/50">
+                  {item.text}
+                </p>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-16 border-t border-white/15 pt-10 md:mt-20">
+            <p className="mb-3 text-[11px] uppercase tracking-[0.25em] text-white/35">
               Investimento
             </p>
-            <p className="mt-3 text-xl font-medium leading-snug text-white md:text-2xl">
-              Roteiros até 15 dias, a partir de{" "}
-              <span className="text-[#b79ce6]">R$ 1.500,00</span>
+            <p
+              className={`${display.className} text-2xl font-medium leading-snug text-white md:text-3xl`}
+            >
+              Roteiros de até 15 dias, a partir de R$ 1.500,00
             </p>
           </div>
         </div>
       </section>
 
       {/* ── PRAZO DE ENTREGA E FLUXO DE TRABALHO ── */}
-      <section className="border-t border-white/10 bg-white/[0.02] px-6 py-14 md:px-16 md:py-28">
-        <div className="mx-auto max-w-6xl text-center">
-          <h2
-            className={`${display.className} mb-12 text-3xl font-medium leading-tight md:mb-16 md:text-5xl`}
-          >
-            Prazo de entrega e fluxo de trabalho
-          </h2>
+      <section className="border-t border-white/10 bg-white/[0.02] px-6 py-20 md:px-16 md:py-32">
+        <div className="mx-auto max-w-5xl">
+          <div className="mb-14 max-w-2xl md:mb-20">
+            <p className="mb-6 text-xs uppercase tracking-[0.3em] text-white/40 md:tracking-[0.45em]">
+              Como funciona
+            </p>
+            <h2
+              className={`${display.className} text-3xl font-medium leading-tight md:text-5xl`}
+            >
+              Prazo de entrega e fluxo de trabalho
+            </h2>
+          </div>
 
-          <div className="grid grid-cols-2 gap-4 text-left sm:grid-cols-3 md:grid-cols-6">
+          <div className="grid grid-cols-2 gap-x-8 gap-y-10 sm:grid-cols-3">
             {workflowSteps.map((step) => (
-              <div
-                key={step.number}
-                className="relative overflow-hidden rounded-2xl border border-white/10 bg-white/[0.025] p-5 transition hover:border-[#b79ce6]/30"
-              >
+              <div key={step.number} className="border-t border-white/15 pt-6">
                 <p
-                  className={`${display.className} pointer-events-none absolute -right-2 -top-4 text-6xl font-medium text-white/[0.05]`}
+                  className={`${display.className} mb-2 text-2xl text-white/30 md:text-3xl`}
                 >
                   {step.number}
                 </p>
-                <span className="relative flex h-10 w-10 items-center justify-center rounded-full bg-[#b79ce6]/12 text-[#b79ce6]">
-                  <step.Icon className="h-5 w-5" />
-                </span>
-                <p className="relative mt-4 text-sm font-medium leading-snug text-white">
+                <p className="text-sm font-medium text-white">
                   {step.title}
                 </p>
                 {step.lines.map((line) => (
                   <p
                     key={line}
-                    className="relative mt-1.5 text-xs leading-5 text-white/45"
+                    className="mt-2 text-sm font-light leading-6 text-white/50"
                   >
                     {line}
                   </p>
@@ -1224,78 +1249,6 @@ function IconCastle({ className }: { className?: string }) {
       <path d="M4 21V10l3-2V6h2v2l3-2 3 2V6h2v2l3 2v11H4z" />
       <line x1="4" y1="21" x2="20" y2="21" />
       <rect x="10" y="14" width="4" height="7" />
-    </svg>
-  );
-}
-
-function IconDocument({ className }: { className?: string }) {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.75"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className={className}
-    >
-      <path d="M7 3h7l5 5v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Z" />
-      <path d="M14 3v5h5" />
-      <line x1="9" y1="13" x2="15" y2="13" />
-      <line x1="9" y1="17" x2="15" y2="17" />
-    </svg>
-  );
-}
-
-function IconCard({ className }: { className?: string }) {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.75"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className={className}
-    >
-      <rect x="2" y="5" width="20" height="14" rx="2" />
-      <line x1="2" y1="10" x2="22" y2="10" />
-    </svg>
-  );
-}
-
-function IconCalendar({ className }: { className?: string }) {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.75"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className={className}
-    >
-      <rect x="3" y="4" width="18" height="18" rx="2" />
-      <line x1="16" y1="2" x2="16" y2="6" />
-      <line x1="8" y1="2" x2="8" y2="6" />
-      <line x1="3" y1="10" x2="21" y2="10" />
-    </svg>
-  );
-}
-
-function IconCheck({ className }: { className?: string }) {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.75"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className={className}
-    >
-      <circle cx="12" cy="12" r="9" />
-      <path d="M8.5 12.5l2.5 2.5 4.5-5" />
     </svg>
   );
 }
