@@ -996,55 +996,68 @@ export default function RoteirosAdsPage() {
       {/* ── SOCIAL PROOF — AVALIAÇÕES DO GOOGLE ── */}
       <section className="border-t border-white/10 bg-black px-6 py-20 md:px-16 md:py-32">
         <div className="mx-auto max-w-7xl">
-          <div className="mb-10 max-w-4xl md:mb-14">
-            <p className="mb-6 text-xs uppercase tracking-[0.3em] text-white/40 md:tracking-[0.45em]">
-              Quem viajou com a Ajisai
-            </p>
-            <h2
-              className={`${display.className} text-3xl font-medium leading-tight md:text-5xl`}
-            >
-              O que dizem os viajantes que já foram com a gente
-            </h2>
-          </div>
-
-          <div className="mb-14 grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6 md:mb-20 md:gap-8">
-            <div className="flex items-center gap-6 rounded-2xl border border-white/10 bg-white/[0.03] p-6 sm:rounded-[2rem] sm:p-8">
-              <p
-                className={`${display.className} text-6xl font-medium leading-none text-white md:text-7xl`}
-              >
-                4,8
+          <div className="mb-14 grid grid-cols-1 items-center gap-10 md:mb-20 md:grid-cols-2 md:gap-16">
+            <div>
+              <p className="mb-6 text-xs uppercase tracking-[0.3em] text-white/40 md:tracking-[0.45em]">
+                Quem viajou com a Ajisai
               </p>
-              <div>
-                <div className="flex items-center gap-1 text-[#b79ce6]">
-                  {Array.from({ length: 5 }).map((_, index) => (
-                    <IconStarFilled
-                      key={index}
-                      className="h-5 w-5 md:h-6 md:w-6"
-                    />
-                  ))}
+              <h2
+                className={`${display.className} text-3xl font-medium leading-tight md:text-5xl`}
+              >
+                Tudo é feito com muito carinho e atenção aos detalhes para
+                atender aos nossos clientes mais exigentes
+              </h2>
+
+              <div className="mt-10 space-y-4 md:space-y-6">
+                <div className="flex items-center gap-6 rounded-2xl border border-white/10 bg-white/[0.03] p-6 sm:rounded-[2rem] sm:p-8">
+                  <p
+                    className={`${display.className} text-6xl font-medium leading-none text-white md:text-7xl`}
+                  >
+                    4,8
+                  </p>
+                  <div>
+                    <div className="flex items-center gap-1 text-[#b79ce6]">
+                      {Array.from({ length: 5 }).map((_, index) => (
+                        <IconStarFilled
+                          key={index}
+                          className="h-5 w-5 md:h-6 md:w-6"
+                        />
+                      ))}
+                    </div>
+                    <p className="mt-3 text-sm font-light text-white/55 md:text-base">
+                      de 5,0 no Google ·{" "}
+                      <span className="text-white">+180 avaliações</span>
+                    </p>
+                  </div>
                 </div>
-                <p className="mt-3 text-sm font-light text-white/55 md:text-base">
-                  de 5,0 no Google ·{" "}
-                  <span className="text-white">+180 avaliações</span>
-                </p>
+
+                <div className="flex items-center gap-6 rounded-2xl border border-emerald-500/15 bg-emerald-500/[0.04] p-6 sm:rounded-[2rem] sm:p-8">
+                  <span className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-emerald-500/15 text-emerald-400 md:h-20 md:w-20">
+                    <IconShieldCheck className="h-8 w-8 md:h-10 md:w-10" />
+                  </span>
+                  <div>
+                    <p className="text-base font-medium text-white md:text-lg">
+                      Verificada pelo Reclame AQUI
+                    </p>
+                    <p className="mt-2 text-sm text-white/50 md:text-base">
+                      Aprovada em todas as checagens de segurança
+                    </p>
+                    <p className="mt-1 text-xs uppercase tracking-[0.15em] text-emerald-400/70">
+                      Última verificação · Mar/2026
+                    </p>
+                  </div>
+                </div>
               </div>
             </div>
 
-            <div className="flex items-center gap-6 rounded-2xl border border-emerald-500/15 bg-emerald-500/[0.04] p-6 sm:rounded-[2rem] sm:p-8">
-              <span className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-emerald-500/15 text-emerald-400 md:h-20 md:w-20">
-                <IconShieldCheck className="h-8 w-8 md:h-10 md:w-10" />
-              </span>
-              <div>
-                <p className="text-base font-medium text-white md:text-lg">
-                  Verificada pelo Reclame AQUI
-                </p>
-                <p className="mt-2 text-sm text-white/50 md:text-base">
-                  Aprovada em todas as checagens de segurança
-                </p>
-                <p className="mt-1 text-xs uppercase tracking-[0.15em] text-emerald-400/70">
-                  Última verificação · Mar/2026
-                </p>
-              </div>
+            <div className="relative aspect-[2/3] overflow-hidden rounded-2xl md:rounded-[2rem]">
+              <Image
+                src="/images/kyoto-maiko-street.png"
+                alt="Viajante Ajisai caminhando por rua tradicional em Kyoto, com pagode ao fundo"
+                fill
+                sizes="(max-width: 768px) 100vw, 50vw"
+                className="object-cover"
+              />
             </div>
           </div>
 
@@ -1175,9 +1188,9 @@ export default function RoteirosAdsPage() {
             </div>
           </div>
 
-          <div className="mt-16 border-t border-white/15 pt-10 md:mt-20 md:pt-14">
+          <div className="mt-16 flex flex-col items-center border-t border-white/15 pt-10 text-center md:mt-20 md:pt-14">
             <h3
-              className={`${display.className} text-3xl font-medium uppercase tracking-[0.08em] text-white md:text-5xl`}
+              className={`${display.className} text-3xl font-medium tracking-[0.08em] text-white md:text-5xl`}
             >
               Investimento
             </h3>
