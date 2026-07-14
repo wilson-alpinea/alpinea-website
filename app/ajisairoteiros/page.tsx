@@ -31,7 +31,7 @@ export default function RoteirosAdsPage() {
     {
       name: "Caio Paiva de Lima",
       context: "Cancelamento de voo de última hora",
-      text: "Excelente experiência com a AjisaiWork! Eles nos auxiliaram no retorno do Japão para o Brasil após um cancelamento de voo de última hora. O atendimento foi impecável: equipe disponível 24h por dia, passando total segurança e agilidade em um momento de estresse. Empresa de confiança e extremamente recomendada!",
+      text: "Excelente experiência com a AjisaiWork! Nos auxiliaram no retorno do Japão ao Brasil após um cancelamento de voo de última hora, com atendimento 24h, segurança e agilidade num momento de estresse. Empresa de confiança e extremamente recomendada!",
     },
     {
       name: "José Andrade",
@@ -46,17 +46,17 @@ export default function RoteirosAdsPage() {
     {
       name: "SBC & International Friends",
       context: "Acompanhamento de uma senhora de 77 anos",
-      text: "Nossa preocupação maior era que fosse um voo tranquilo desde o check-in em São Paulo até a chegada no destino final, pelo simples fato de que se tratava de minha mãe, uma senhora de 77 anos. A experiência junto à Ajisai foi melhor que esperávamos. Agradecimentos especiais ao Vinicius e à Julia pela atenção do início ao fim da viagem.",
+      text: "Nossa maior preocupação era um voo tranquilo desde o check-in em São Paulo até o destino final — minha mãe, uma senhora de 77 anos, viajava conosco. A experiência com a Ajisai foi melhor que esperávamos, com atenção especial do início ao fim da viagem.",
     },
     {
       name: "Conrado Areco Borelli",
       context: "Suporte completo, do primeiro contato ao embarque",
-      text: "Fomos afortunados em poder contar com o suporte da AjisaiWork na compra dos bilhetes aéreos de ida e volta do Brasil para o Japão. O atendimento muito solícito e eficiente. Desde o 1º contato via WhatsApp até o momento do embarque, a AjisaiWork esteve sempre disponível para nós, independente do fuso horário. Recomendamos com muita paz no coração e alegria.",
+      text: "Contamos com o suporte da AjisaiWork na compra dos bilhetes de ida e volta ao Japão — atendimento solícito e eficiente. Do 1º contato via WhatsApp até o embarque, estiveram sempre disponíveis, independente do fuso horário. Recomendamos de coração.",
     },
     {
       name: "Katia Ito",
       context: "Passagens para um grupo grande",
-      text: "Recomendo a AjisaiWork, que conheci através do canal no YouTube Tudo Sobre Japão Notícias. Desde o início nos atendeu com rapidez e sempre muito prestativo. Estávamos à procura de passagens para um grupo relativamente grande e nos forneceram o melhor custo-benefício. Tivemos assistência antes e no dia do voo, com a equipe no aeroporto para nos ajudar com o despacho das bagagens.",
+      text: "Recomendo a AjisaiWork, que conheci pelo canal Tudo Sobre Japão Notícias. Atenderam com rapidez desde o início, buscando passagens para um grupo grande com ótimo custo-benefício, com equipe no aeroporto para ajudar com o despacho das bagagens.",
     },
     {
       name: "Henrique Kishida",
@@ -220,8 +220,13 @@ export default function RoteirosAdsPage() {
           mode="single"
           channel="whatsapp"
           whatsappNumber="5511930300101"
-          label="Falar com a Ajisai →"
-          buttonClassName="block w-full bg-white px-4 py-3 text-center text-[11px] font-medium uppercase tracking-[0.22em] text-black transition hover:bg-white/90"
+          label={
+            <span className="flex items-center justify-center gap-2">
+              <IconWhatsApp className="h-4 w-4" />
+              Falar com a Ajisai →
+            </span>
+          }
+          buttonClassName="flex w-full items-center justify-center bg-[#2f80c9] px-4 py-3 text-center text-[11px] font-medium uppercase tracking-[0.22em] text-white transition hover:bg-[#2870b0]"
         />
       </div>
 
@@ -625,7 +630,7 @@ export default function RoteirosAdsPage() {
                 押上駅〈スカイツリー前〉
               </p>
 
-              <div className="mt-8 flex flex-wrap items-start justify-center gap-x-8 gap-y-5">
+              <div className="mt-8 grid grid-cols-2 justify-items-center gap-x-6 gap-y-6 sm:flex sm:flex-wrap sm:items-start sm:justify-center sm:gap-x-8 sm:gap-y-5">
                 <div className="flex flex-col items-center gap-2">
                   <span
                     className="flex h-16 w-16 items-center justify-center rounded-full text-[15px] font-bold text-white"
@@ -1051,7 +1056,7 @@ export default function RoteirosAdsPage() {
             {googleReviews.map((review, index) => (
               <div
                 key={review.name}
-                className="flex min-h-[430px] w-[80vw] flex-shrink-0 snap-start [scroll-snap-stop:always] flex-col rounded-2xl border border-white/10 bg-white/[0.03] p-5 sm:rounded-[2rem] sm:p-8 md:w-[31%] md:shrink-0"
+                className="flex min-h-[380px] w-[80vw] flex-shrink-0 snap-start [scroll-snap-stop:always] flex-col rounded-2xl border border-white/10 bg-white/[0.03] p-5 sm:rounded-[2rem] sm:p-8 md:w-[31%] md:shrink-0"
               >
                 <div className="mb-4 flex items-center gap-0.5 text-[#b79ce6]">
                   {Array.from({ length: 5 }).map((_, starIndex) => (
@@ -1628,6 +1633,15 @@ function IconStar({ className }: { className?: string }) {
       className={className}
     >
       <path d="M12 3l2.5 6 6.5.6-5 4.3 1.5 6.4L12 17l-5.5 3.3L8 13.9l-5-4.3L9.5 9.6 12 3Z" />
+    </svg>
+  );
+}
+
+function IconWhatsApp({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" className={className}>
+      <path d="M17.47 14.38c-.29-.15-1.7-.84-1.96-.93-.26-.1-.46-.15-.65.14-.19.29-.75.93-.92 1.12-.17.19-.34.22-.63.07-.29-.15-1.22-.45-2.32-1.43-.86-.76-1.44-1.71-1.6-2-.17-.29-.02-.45.13-.6.13-.13.29-.34.43-.51.15-.17.19-.29.29-.48.1-.19.05-.36-.02-.51-.07-.15-.65-1.57-.9-2.15-.24-.57-.48-.5-.65-.5-.17-.01-.36-.01-.55-.01-.19 0-.51.07-.78.36-.26.29-1.02 1-1.02 2.43 0 1.43 1.04 2.82 1.19 3.01.15.19 2.05 3.13 4.96 4.39.69.3 1.23.48 1.65.61.69.22 1.32.19 1.82.11.55-.08 1.7-.7 1.94-1.37.24-.67.24-1.24.17-1.37-.07-.12-.26-.19-.55-.34Z" />
+      <path d="M12.02 2C6.5 2 2 6.48 2 12c0 1.85.5 3.58 1.38 5.07L2 22l5.08-1.33A9.96 9.96 0 0 0 12.02 22C17.53 22 22 17.52 22 12S17.53 2 12.02 2Zm0 18.15c-1.66 0-3.2-.46-4.52-1.25l-.32-.19-3.02.79.8-2.94-.21-.3A8.14 8.14 0 0 1 3.85 12c0-4.5 3.67-8.15 8.17-8.15 4.5 0 8.17 3.66 8.17 8.15 0 4.5-3.67 8.15-8.17 8.15Z" />
     </svg>
   );
 }

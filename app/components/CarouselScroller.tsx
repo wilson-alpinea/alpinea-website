@@ -73,25 +73,22 @@ export function CarouselScroller({
     };
   }, []);
 
-  const scrollNext = () => {
-    const el = scrollRef.current;
-    if (!el) return;
-    el.scrollBy({ left: el.clientWidth * 0.85, behavior: "smooth" });
-  };
-
-  const scrollPrev = () => {
-    const el = scrollRef.current;
-    if (!el) return;
-    el.scrollBy({ left: -el.clientWidth * 0.85, behavior: "smooth" });
-  };
-
+  // Sempre mira exatamente no offsetLeft do item alvo, em vez de um scrollBy
+  // por porcentagem — isso garante alinhamento perfeito com o snap, mesmo
+  // quando o item é mais estreito que 85% da tela (o que fazia a seta
+  // "pular" para um ponto intermediário, cortando texto e deixando um vão
+  // vazio depois do último item).
   const goTo = (i: number) => {
     const el = scrollRef.current;
     if (!el) return;
-    const child = el.children[i] as HTMLElement | undefined;
+    const clamped = Math.max(0, Math.min(itemCount - 1, i));
+    const child = el.children[clamped] as HTMLElement | undefined;
     if (!child) return;
     el.scrollTo({ left: child.offsetLeft, behavior: "smooth" });
   };
+
+  const scrollNext = () => goTo(active + 1);
+  const scrollPrev = () => goTo(active - 1);
 
   return (
     <div className="-mx-6 sm:-mx-10 md:mx-0">

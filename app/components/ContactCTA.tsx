@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent, type ReactNode } from "react";
 import { createPortal } from "react-dom";
 
 declare global {
@@ -380,8 +380,8 @@ export function ContactCTA({
   mode?: "buttons" | "single";
   /** Canal usado quando mode="single". */
   channel?: "email" | "whatsapp";
-  /** Texto do botão quando mode="single". */
-  label?: string;
+  /** Texto (ou conteúdo, ex: ícone + texto) do botão quando mode="single". */
+  label?: ReactNode;
   /** Classe do próprio botão quando mode="single" (sobrescreve o estilo padrão). */
   buttonClassName?: string;
   /** Número de WhatsApp (só dígitos, com DDI) usado quando o canal é "whatsapp". Padrão: número da Alpinea. */
