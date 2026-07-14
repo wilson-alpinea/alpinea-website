@@ -123,7 +123,7 @@ export default function RoteirosAdsPage() {
   return (
     <main className="min-h-screen bg-black pb-16 text-white md:pb-0">
       {/* ── HEADER MINIMALISTA — sem menu, foco total em conversão ── */}
-      <header className="fixed left-0 right-0 top-0 z-50 flex items-center justify-between bg-black/10 px-8 py-5 backdrop-blur-2xl md:px-16">
+      <header className="fixed left-0 right-0 top-0 z-50 flex transform-gpu items-center justify-between bg-black/10 px-8 py-5 backdrop-blur-2xl md:px-16">
         <a href="/">
           <img
             src="/images/AJISAI-LOGO.avif"
@@ -142,7 +142,7 @@ export default function RoteirosAdsPage() {
 
       {/* ── CTA FIXO MOBILE — mesmo padrão usado na landingpage2 ── */}
       <div
-        className="fixed inset-x-0 bottom-0 z-40 border-t border-white/10 bg-black/[0.92] px-4 pt-2.5 backdrop-blur-xl md:hidden"
+        className="fixed inset-x-0 bottom-0 z-40 transform-gpu border-t border-white/10 bg-black/[0.92] px-4 pt-2.5 backdrop-blur-xl md:hidden"
         style={{ paddingBottom: "max(0.55rem, env(safe-area-inset-bottom))" }}
       >
         <ContactCTA
@@ -970,12 +970,15 @@ export default function RoteirosAdsPage() {
             </h2>
           </div>
 
-          {/* Mobile — fluxo vertical com flechas ligando cada etapa à próxima */}
+          {/* Mobile — fluxo vertical com flechas ligando cada etapa à próxima.
+              Grid de coluna fixa (2.75rem = w-11) garante que o ícone e a seta
+              fiquem sempre alinhados no mesmo eixo, com o círculo sólido no
+              mesmo padrão visual do SectionMarker usado no resumo do dia. */}
           <div className="flex flex-col md:hidden">
             {workflowSteps.map((step, index) => (
               <div key={step.number}>
-                <div className="flex items-start gap-4">
-                  <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#b79ce6]/12 text-[#b79ce6]">
+                <div className="grid grid-cols-[2.75rem_1fr] gap-4">
+                  <span className="flex h-11 w-11 items-center justify-center rounded-full bg-[#b79ce6] text-black">
                     <step.Icon className="h-5 w-5" />
                   </span>
                   <div className="pt-1.5">
@@ -996,8 +999,12 @@ export default function RoteirosAdsPage() {
                   </div>
                 </div>
                 {index < workflowSteps.length - 1 && (
-                  <div className="flex h-9 w-11 shrink-0 items-center justify-center text-[#b79ce6]/50">
-                    <IconArrowDown className="h-5 w-5" />
+                  <div className="grid grid-cols-[2.75rem_1fr] gap-4">
+                    <div className="flex h-9 items-center justify-center">
+                      <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#b79ce6]/15 text-[#b79ce6]">
+                        <IconArrowDown className="h-4 w-4" />
+                      </span>
+                    </div>
                   </div>
                 )}
               </div>
@@ -1081,6 +1088,7 @@ export default function RoteirosAdsPage() {
             channel="whatsapp"
             whatsappNumber="5511930300101"
             label="Falar no WhatsApp"
+            buttonClassName="rounded-full bg-[#7c4fd1] px-12 py-5 text-sm font-medium uppercase tracking-[0.3em] text-white shadow-[0_20px_50px_rgba(124,79,209,0.35)] transition hover:bg-[#6c40c0] hover:shadow-[0_24px_60px_rgba(124,79,209,0.45)] md:px-14 md:py-6 md:text-base"
           />
         </div>
       </section>
@@ -1097,24 +1105,6 @@ export default function RoteirosAdsPage() {
             Roteiros personalizados de viagem e curadoria de experiências no
             Japão.
           </p>
-
-          <ContactCTA
-            mode="single"
-            channel="whatsapp"
-            whatsappNumber="5511930300101"
-            label="WhatsApp da Ajisai · (11) 9-3030-0101"
-            buttonClassName="rounded-full border border-white/25 px-6 py-2.5 text-xs uppercase tracking-[0.25em] text-white/70 transition hover:border-white/60 hover:text-white"
-          />
-
-          <div className="flex flex-wrap items-center justify-center gap-3 text-xs text-white/25">
-            <a href="/legal" className="transition hover:text-white/60">
-              Termos e Condições
-            </a>
-            <span>·</span>
-            <a href="/privacy" className="transition hover:text-white/60">
-              Política de Privacidade
-            </a>
-          </div>
 
           <p className="text-[11px] leading-relaxed text-white/25">
             © 2026 AJISAIWORK JAPAN AGENCIA DE VIAGENS LTDA, Todos os Direitos

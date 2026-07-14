@@ -84,7 +84,7 @@ export function CarouselScroller({
       <div className="relative">
         <div
           ref={scrollRef}
-          className={`flex gap-3 overflow-x-auto px-6 pb-2 snap-x snap-mandatory scroll-pl-6 [&::-webkit-scrollbar]:hidden sm:px-10 md:grid ${gridColsClass} md:gap-4 md:overflow-visible md:px-0 md:pb-0`}
+          className={`flex transform-gpu gap-3 overflow-x-auto px-6 pb-2 snap-x snap-mandatory scroll-pl-6 [&::-webkit-scrollbar]:hidden sm:px-10 md:grid ${gridColsClass} md:gap-4 md:overflow-visible md:px-0 md:pb-0`}
         >
           {children}
         </div>
