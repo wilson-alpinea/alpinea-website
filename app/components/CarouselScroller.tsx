@@ -5,14 +5,20 @@ import { useEffect, useRef, useState, type ReactNode } from "react";
 // Carrossel horizontal com seta "ver mais" e bolinhas indicativas — usado apenas no mobile
 // (md:hidden), já que no desktop o conteúdo continua em grid e mostra tudo de uma vez.
 // Mesmo padrão visual/comportamental do /landingpage2.
+//
+// Passar `desktopScroll` mantém o comportamento de carrossel (scroll lateral) também no
+// desktop, em vez de virar grid mostrando tudo de uma vez — usado quando há muitos itens
+// (ex.: avaliações) e queremos mostrar só alguns por vez com scroll horizontal.
 export function CarouselScroller({
   children,
   itemCount,
   desktopColumns = 5,
+  desktopScroll = false,
 }: {
   children: ReactNode;
   itemCount: number;
   desktopColumns?: 2 | 3 | 4 | 5;
+  desktopScroll?: boolean;
 }) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [active, setActive] = useState(0);
@@ -27,6 +33,14 @@ export function CarouselScroller({
     4: "md:grid-cols-4",
     5: "md:grid-cols-5",
   }[desktopColumns];
+
+  const desktopContainerClass = desktopScroll
+    ? "md:flex md:gap-4 md:overflow-x-auto md:px-0 md:pb-0"
+    : `md:grid ${gridColsClass} md:gap-4 md:overflow-visible md:px-0 md:pb-0`;
+
+  // Setas e bolinhas normalmente só aparecem no mobile (no desktop o grid mostra tudo).
+  // Com desktopScroll, também fazem sentido no desktop, já que nem tudo está visível.
+  const controlsVisibility = desktopScroll ? "" : "md:hidden";
 
   useEffect(() => {
     const el = scrollRef.current;
@@ -84,21 +98,24 @@ export function CarouselScroller({
       <div className="relative">
         <div
           ref={scrollRef}
-          className={`flex transform-gpu gap-3 overflow-x-auto px-6 pb-2 snap-x snap-mandatory scroll-pl-6 [&::-webkit-scrollbar]:hidden sm:px-10 md:grid ${gridColsClass} md:gap-4 md:overflow-visible md:px-0 md:pb-0`}
+          className={`flex transform-gpu gap-3 overflow-x-auto px-6 pb-2 snap-x snap-mandatory scroll-pl-6 [&::-webkit-scrollbar]:hidden sm:px-10 ${desktopContainerClass}`}
         >
           {children}
         </div>
 
         {/* Fades laterais + setas — centralizadas verticalmente, pra funcionar tanto em
-            carrosséis de imagem pura quanto em cards com texto de altura variável. Só mobile. */}
+            carrosséis de imagem pura quanto em cards com texto de altura variável. Só mobile,
+            a menos que desktopScroll esteja ativo. */}
         {canScrollLeft && (
           <>
-            <div className="pointer-events-none absolute inset-y-0 left-0 w-12 bg-gradient-to-r from-black to-transparent md:hidden" />
+            <div
+              className={`pointer-events-none absolute inset-y-0 left-0 w-12 bg-gradient-to-r from-black to-transparent ${controlsVisibility}`}
+            />
             <button
               type="button"
               onClick={scrollPrev}
               aria-label="Ver anterior"
-              className="absolute left-3 top-1/2 z-20 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full bg-white/15 backdrop-blur-sm transition active:bg-white/30 md:hidden"
+              className={`absolute left-3 top-1/2 z-20 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full bg-white/15 backdrop-blur-sm transition active:bg-white/30 ${controlsVisibility}`}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -119,12 +136,14 @@ export function CarouselScroller({
 
         {canScrollRight && (
           <>
-            <div className="pointer-events-none absolute inset-y-0 right-0 w-12 bg-gradient-to-l from-black to-transparent md:hidden" />
+            <div
+              className={`pointer-events-none absolute inset-y-0 right-0 w-12 bg-gradient-to-l from-black to-transparent ${controlsVisibility}`}
+            />
             <button
               type="button"
               onClick={scrollNext}
               aria-label="Ver mais"
-              className="absolute right-3 top-1/2 z-20 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full bg-white/15 backdrop-blur-sm transition active:bg-white/30 md:hidden"
+              className={`absolute right-3 top-1/2 z-20 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full bg-white/15 backdrop-blur-sm transition active:bg-white/30 ${controlsVisibility}`}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -144,8 +163,10 @@ export function CarouselScroller({
         )}
       </div>
 
-      {/* Bolinhas indicativas — só mobile */}
-      <div className="mt-4 flex items-center justify-center gap-2 px-6 sm:px-10 md:hidden">
+      {/* Bolinhas indicativas — só mobile, a menos que desktopScroll esteja ativo */}
+      <div
+        className={`mt-4 flex items-center justify-center gap-2 px-6 sm:px-10 ${controlsVisibility}`}
+      >
         {Array.from({ length: itemCount }).map((_, i) => (
           <button
             key={i}
