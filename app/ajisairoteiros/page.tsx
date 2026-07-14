@@ -3,6 +3,7 @@ import type { ReactElement } from "react";
 import { Bodoni_Moda } from "next/font/google";
 import { ContactCTA } from "../components/ContactCTA";
 import { CarouselScroller } from "../components/CarouselScroller";
+import { PriceCalculator } from "../components/PriceCalculator";
 
 // Mesma fonte de destaque usada nas demais páginas do site.
 const display = Bodoni_Moda({
@@ -179,7 +180,7 @@ export default function RoteirosAdsPage() {
       Icon: IconLuggage,
     },
     {
-      label: "Detalhamento",
+      label: "Tranquilidade ao Viajar",
       title: "Anexos com Informações Detalhadas",
       text: "São seções no seu roteiro que entram em detalhes de informações vitais para se ter uma experiência tranquila durante sua viagem.",
       Icon: IconDocument,
@@ -1050,7 +1051,7 @@ export default function RoteirosAdsPage() {
             {googleReviews.map((review, index) => (
               <div
                 key={review.name}
-                className="flex h-full w-[80vw] flex-shrink-0 snap-start [scroll-snap-stop:always] flex-col rounded-2xl border border-white/10 bg-white/[0.03] p-5 sm:rounded-[2rem] sm:p-8 md:w-[31%] md:shrink-0"
+                className="flex w-[80vw] flex-shrink-0 snap-start [scroll-snap-stop:always] flex-col rounded-2xl border border-white/10 bg-white/[0.03] p-5 sm:rounded-[2rem] sm:p-8 md:w-[31%] md:shrink-0"
               >
                 <div className="mb-4 flex items-center gap-0.5 text-[#b79ce6]">
                   {Array.from({ length: 5 }).map((_, starIndex) => (
@@ -1124,11 +1125,58 @@ export default function RoteirosAdsPage() {
             ))}
           </div>
 
+          {/* Mini painel de viagem — mesma imagem/estrutura usada no /landingpage2.
+              Escondido no mobile: complemento visual bonito mas não essencial pra
+              gerar lead, custava uma tela cheia. */}
+          <div className="mt-16 hidden gap-10 border-t border-white/10 pt-10 md:mt-20 md:grid md:grid-cols-2 md:items-center md:gap-16 md:pt-20">
+            <div>
+              <p className="mb-6 text-xs uppercase tracking-[0.3em] text-white/30 md:tracking-[0.45em]">
+                Acesso digital
+              </p>
+              <h3
+                className={`${display.className} text-3xl font-medium leading-tight text-white md:text-4xl`}
+              >
+                Sua viagem, organizada num só painel — acessível do celular,
+                em qualquer lugar.
+              </h3>
+              <p className="mt-6 max-w-lg text-base font-light leading-8 text-white/65">
+                Cada roteiro Ajisai inclui acesso a uma versão digital
+                resumida do planejamento: roteiro diário, guias
+                complementares e anexos especiais reunidos num dashboard
+                simples de consultar durante a viagem — sem precisar abrir
+                PDF ou planilha nenhuma.
+              </p>
+            </div>
+
+            <div className="flex justify-center">
+              <a
+                href="/images/dashmobile.jpg"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Ver dashboard de viagem em tamanho maior"
+                className="group relative w-[260px] rounded-[44px] border border-white/15 bg-black p-4 shadow-2xl"
+              >
+                <div className="absolute left-1/2 top-6 z-10 h-5 w-24 -translate-x-1/2 rounded-full bg-black" />
+                <div className="relative aspect-[1320/2257] w-full overflow-hidden rounded-[30px] bg-black">
+                  <Image
+                    src="/images/dashmobile.jpg"
+                    alt="Dashboard de viagem, acessado pelo celular"
+                    fill
+                    sizes="260px"
+                    className="object-cover transition duration-700 group-hover:scale-[1.03]"
+                  />
+                </div>
+              </a>
+            </div>
+          </div>
+
           <div className="mt-16 border-t border-white/15 pt-10 md:mt-20 md:pt-14">
-            <p className="mb-4 text-[11px] uppercase tracking-[0.25em] text-white/35">
+            <h3
+              className={`${display.className} text-3xl font-medium uppercase tracking-[0.08em] text-white md:text-5xl`}
+            >
               Investimento
-            </p>
-            <p className="text-sm font-light text-white/50 md:text-base">
+            </h3>
+            <p className="mt-4 text-sm font-light text-white/50 md:text-base">
               Roteiros de até 15 dias, a partir de
             </p>
             <p
@@ -1136,6 +1184,8 @@ export default function RoteirosAdsPage() {
             >
               R$ 1.500
             </p>
+
+            <PriceCalculator />
           </div>
         </div>
       </section>
@@ -1199,24 +1249,24 @@ export default function RoteirosAdsPage() {
           <div className="hidden md:flex md:items-start md:gap-6">
             {workflowSteps.map((step, index) => (
               <div key={step.number} className="md:min-w-0 md:flex-1">
-                <div className="flex items-center gap-3">
-                  <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#b79ce6]/12 text-[#b79ce6]">
-                    <step.Icon className="h-5 w-5" />
-                  </span>
+                <div className="relative flex justify-center">
                   {index < workflowSteps.length - 1 && (
-                    <span className="h-px flex-1 bg-white/15" />
+                    <span className="absolute left-1/2 top-1/2 z-0 h-px w-[calc(100%+1.5rem)] -translate-y-1/2 bg-white/15" />
                   )}
+                  <span className="relative z-10 flex h-16 w-16 items-center justify-center rounded-full bg-[#b79ce6]/12 text-[#b79ce6]">
+                    <step.Icon className="h-7 w-7" />
+                  </span>
                 </div>
-                <p className="mt-4 text-[11px] uppercase tracking-[0.2em] text-white/30">
+                <p className="mt-4 text-center text-[11px] uppercase tracking-[0.2em] text-white/30">
                   {step.number}
                 </p>
-                <p className="mt-1 text-sm font-medium text-white">
+                <p className="mt-1 text-center text-sm font-medium text-white">
                   {step.title}
                 </p>
                 {step.lines.map((line) => (
                   <p
                     key={line}
-                    className="mt-1.5 text-xs leading-5 text-white/50"
+                    className="mt-1.5 text-center text-xs leading-5 text-white/50"
                   >
                     {line}
                   </p>

@@ -58,9 +58,9 @@ function ContactModal({
       message: String(data.get("message") || "").trim(),
     };
 
-    if (!payload.name || (channel === "email" && !payload.email)) {
+    if (!payload.name || !payload.email) {
       setStatus("error");
-      setErrorMsg("Preencha nome" + (channel === "email" ? " e e-mail" : "") + " para continuar.");
+      setErrorMsg("Preencha nome e e-mail para continuar.");
       return;
     }
 
@@ -180,8 +180,8 @@ function ContactModal({
             </h3>
 
             <p className="mt-3 text-sm leading-6 text-black/55">
-              Conte um pouco sobre a viagem. Nenhum campo abaixo é obrigatório além do nome
-              {channel === "email" ? " e do e-mail" : ""}.
+              Conte um pouco sobre a viagem. Nenhum campo abaixo é obrigatório
+              além do nome e do e-mail.
             </p>
 
             <form onSubmit={handleSubmit} className="mt-8 space-y-5">
@@ -200,12 +200,12 @@ function ContactModal({
 
                 <label className="block">
                   <span className="mb-2 block text-xs uppercase tracking-[0.25em] text-black/40">
-                    E-mail{channel === "email" ? "" : " (opcional)"}
+                    E-mail
                   </span>
                   <input
                     name="email"
                     type="email"
-                    required={channel === "email"}
+                    required
                     className="w-full border-b border-black/20 bg-transparent py-2 text-sm outline-none focus:border-black"
                   />
                 </label>
