@@ -33,6 +33,11 @@ export default function RoteirosAdsPage() {
       text: "Excelente experiência com a AjisaiWork! Eles nos auxiliaram no retorno do Japão para o Brasil após um cancelamento de voo de última hora. O atendimento foi impecável: equipe disponível 24h por dia, passando total segurança e agilidade em um momento de estresse. Empresa de confiança e extremamente recomendada!",
     },
     {
+      name: "José Andrade",
+      context: "Passagens, trens e hotéis",
+      text: "Tivemos a feliz oportunidade de utilizar os serviços da AjisaiWork e a equipe me proporcionou uma viagem tranquila, segura e prazerosa. Ficamos satisfeitos com o auxílio na reserva de passagens de avião, trens e hotéis. Foi fantástico!",
+    },
+    {
       name: "Cristina Álvares",
       context: "Viagem em período de instabilidade aérea",
       text: "Fomos para o Japão com o apoio total da Ajisai. O período era complicado, pela Emirates via Dubai, em um momento incerto pela guerra. A Ajisai tinha opções com outras cias aéreas caso necessário. Atendimento 24hs todos os dias, durante todo o período da viagem. Excelente!",
@@ -46,11 +51,6 @@ export default function RoteirosAdsPage() {
       name: "Conrado Areco Borelli",
       context: "Suporte completo, do primeiro contato ao embarque",
       text: "Fomos afortunados em poder contar com o suporte da AjisaiWork na compra dos bilhetes aéreos de ida e volta do Brasil para o Japão. O atendimento muito solícito e eficiente. Desde o 1º contato via WhatsApp até o momento do embarque, a AjisaiWork esteve sempre disponível para nós, independente do fuso horário. Recomendamos com muita paz no coração e alegria.",
-    },
-    {
-      name: "José Andrade",
-      context: "Passagens, trens e hotéis",
-      text: "Tivemos a feliz oportunidade de utilizar os serviços da AjisaiWork e a equipe me proporcionou uma viagem tranquila, segura e prazerosa. Ficamos satisfeitos com o auxílio na reserva de passagens de avião, trens e hotéis. Foi fantástico!",
     },
     {
       name: "Katia Ito",
@@ -179,10 +179,10 @@ export default function RoteirosAdsPage() {
       Icon: IconLuggage,
     },
     {
-      label: "Experiência",
-      title: "Conhecimento Local",
-      text: "Mais de 12 anos explorando e morando no Japão transformados em recomendações práticas.",
-      Icon: IconBulb,
+      label: "Detalhamento",
+      title: "Anexos com Informações Detalhadas",
+      text: "São seções no seu roteiro que entram em detalhes de informações vitais para se ter uma experiência tranquila durante sua viagem.",
+      Icon: IconDocument,
     },
   ];
 
@@ -974,7 +974,7 @@ export default function RoteirosAdsPage() {
                   {item.label}
                 </p>
                 <h3
-                  className={`${display.className} text-lg font-medium text-white md:text-xl`}
+                  className={`${display.className} flex min-h-[3.5rem] items-center justify-center text-lg font-medium text-white md:min-h-[3.8rem] md:text-xl`}
                 >
                   {item.title}
                 </h3>
@@ -990,7 +990,7 @@ export default function RoteirosAdsPage() {
       {/* ── SOCIAL PROOF — AVALIAÇÕES DO GOOGLE ── */}
       <section className="border-t border-white/10 bg-black px-6 py-20 md:px-16 md:py-32">
         <div className="mx-auto max-w-7xl">
-          <div className="mb-10 max-w-2xl md:mb-14">
+          <div className="mb-10 max-w-4xl md:mb-14">
             <p className="mb-6 text-xs uppercase tracking-[0.3em] text-white/40 md:tracking-[0.45em]">
               Quem viajou com a Ajisai
             </p>
@@ -1001,10 +1001,10 @@ export default function RoteirosAdsPage() {
             </h2>
           </div>
 
-          <div className="mb-14 flex flex-wrap items-center gap-8 border-y border-white/10 py-7 md:mb-20 md:gap-12 md:py-8">
-            <div className="flex items-center gap-5">
+          <div className="mb-14 grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-6 md:mb-20 md:gap-8">
+            <div className="flex items-center gap-6 rounded-2xl border border-white/10 bg-white/[0.03] p-6 sm:rounded-[2rem] sm:p-8">
               <p
-                className={`${display.className} text-5xl font-medium leading-none text-white md:text-6xl`}
+                className={`${display.className} text-6xl font-medium leading-none text-white md:text-7xl`}
               >
                 4,8
               </p>
@@ -1017,25 +1017,26 @@ export default function RoteirosAdsPage() {
                     />
                   ))}
                 </div>
-                <p className="mt-2 text-sm font-light text-white/55 md:text-base">
+                <p className="mt-3 text-sm font-light text-white/55 md:text-base">
                   de 5,0 no Google ·{" "}
                   <span className="text-white">+180 avaliações</span>
                 </p>
               </div>
             </div>
 
-            <div className="hidden h-12 w-px bg-white/10 md:block" />
-
-            <div className="flex items-center gap-4">
-              <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-emerald-500/12 text-emerald-400">
-                <IconShieldCheck className="h-5 w-5" />
+            <div className="flex items-center gap-6 rounded-2xl border border-emerald-500/15 bg-emerald-500/[0.04] p-6 sm:rounded-[2rem] sm:p-8">
+              <span className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-emerald-500/15 text-emerald-400 md:h-20 md:w-20">
+                <IconShieldCheck className="h-8 w-8 md:h-10 md:w-10" />
               </span>
               <div>
-                <p className="text-sm font-medium text-white md:text-base">
+                <p className="text-base font-medium text-white md:text-lg">
                   Verificada pelo Reclame AQUI
                 </p>
-                <p className="mt-0.5 text-xs text-white/45 md:text-sm">
-                  Aprovada em todas as checagens de segurança · Mar/2026
+                <p className="mt-2 text-sm text-white/50 md:text-base">
+                  Aprovada em todas as checagens de segurança
+                </p>
+                <p className="mt-1 text-xs uppercase tracking-[0.15em] text-emerald-400/70">
+                  Última verificação · Mar/2026
                 </p>
               </div>
             </div>
@@ -1049,7 +1050,7 @@ export default function RoteirosAdsPage() {
             {googleReviews.map((review, index) => (
               <div
                 key={review.name}
-                className="flex w-[80vw] flex-shrink-0 snap-start [scroll-snap-stop:always] flex-col rounded-2xl border border-white/10 bg-white/[0.03] p-5 sm:rounded-[2rem] sm:p-8 md:w-[31%] md:shrink-0"
+                className="flex h-full w-[80vw] flex-shrink-0 snap-start [scroll-snap-stop:always] flex-col rounded-2xl border border-white/10 bg-white/[0.03] p-5 sm:rounded-[2rem] sm:p-8 md:w-[31%] md:shrink-0"
               >
                 <div className="mb-4 flex items-center gap-0.5 text-[#b79ce6]">
                   {Array.from({ length: 5 }).map((_, starIndex) => (
@@ -1901,7 +1902,7 @@ function DashboardPreview() {
 
       <div className="mt-10 md:mt-16">
         <p className="mb-3 text-xs uppercase tracking-[0.35em] text-white/35">
-          Guias
+          Anexos com Informações Detalhadas
         </p>
         <p className="mb-7 inline-block rounded-full border border-white/20 px-4 py-1.5 text-xs uppercase tracking-[0.25em] text-white/75">
           Incluso na contratação de qualquer roteiro
