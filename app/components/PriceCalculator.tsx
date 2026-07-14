@@ -167,6 +167,7 @@ export function PriceCalculator({
               mode="single"
               channel="whatsapp"
               whatsappNumber="5511930300101"
+              brand="Ajisai"
               label="Falar sobre esse roteiro"
               buttonClassName="mt-7 block w-full rounded-full bg-white px-6 py-4 text-center text-xs font-medium uppercase tracking-[0.25em] text-black transition hover:bg-white/90"
             />

@@ -188,7 +188,7 @@ export default function RoteirosAdsPage() {
   ];
 
   return (
-    <main className="min-h-screen bg-black pb-16 text-white md:pb-0">
+    <main className="min-h-screen overflow-x-hidden bg-black pb-16 text-white md:pb-0">
       {/* ── HEADER MINIMALISTA — sem menu, foco total em conversão ──
           Conteúdo contido em max-w-7xl (mesmo limite do restante do corpo
           da página) para não deformar em telas widescreen, onde o logo e o
@@ -220,6 +220,7 @@ export default function RoteirosAdsPage() {
           mode="single"
           channel="whatsapp"
           whatsappNumber="5511930300101"
+          brand="Ajisai"
           label={
             <span className="flex items-center justify-center gap-2">
               <IconWhatsApp className="h-4 w-4" />
@@ -1336,6 +1337,7 @@ export default function RoteirosAdsPage() {
             mode="single"
             channel="whatsapp"
             whatsappNumber="5511930300101"
+            brand="Ajisai"
             label="Falar no WhatsApp"
             buttonClassName="rounded-full bg-[#7c4fd1] px-12 py-5 text-sm font-medium uppercase tracking-[0.3em] text-white shadow-[0_20px_50px_rgba(124,79,209,0.35)] transition hover:bg-[#6c40c0] hover:shadow-[0_24px_60px_rgba(124,79,209,0.45)] md:px-14 md:py-6 md:text-base"
           />

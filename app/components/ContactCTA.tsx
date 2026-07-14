@@ -12,10 +12,12 @@ declare global {
 function ContactModal({
   channel,
   whatsappNumber,
+  brand,
   onClose,
 }: {
   channel: "email" | "whatsapp";
   whatsappNumber: string;
+  brand: string;
   onClose: () => void;
 }) {
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
@@ -73,7 +75,7 @@ function ContactModal({
         payload.travelers && `Quem irá viajar: ${payload.travelers}`,
         payload.tripType && `Tipo de viagem: ${payload.tripType}`,
         payload.travelStyle && `Como costuma viajar: ${payload.travelStyle}`,
-        payload.source && `Como conheceu a Alpinea: ${payload.source}`,
+        payload.source && `Como conheceu a ${brand}: ${payload.source}`,
         payload.message && `Interesses específicos: ${payload.message}`,
       ].filter(Boolean);
 
@@ -134,50 +136,69 @@ function ContactModal({
 
   return createPortal(
     <div
-      className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 p-4 md:p-8"
+      className="fixed inset-0 z-[100] bg-black/80 md:flex md:items-center md:justify-center md:p-8"
       onClick={onClose}
     >
       <div
-        className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-[24px] bg-white p-8 text-black md:p-12"
+        className="relative flex h-[100dvh] w-full flex-col bg-white text-black md:h-auto md:max-h-[90vh] md:max-w-lg md:overflow-y-auto md:rounded-[24px]"
         onClick={(e) => e.stopPropagation()}
       >
-        <button
-          onClick={onClose}
-          aria-label="Fechar"
-          className="mb-6 block text-xs uppercase tracking-[0.3em] text-black/40 transition hover:text-black"
-        >
-          Fechar ×
-        </button>
+        {/* Header fixo — só no mobile. O formulário tem muitos campos e rola bastante;
+            sem isso, o botão de fechar saía de vista assim que o usuário começava a
+            rolar e ficava quase impossível de encontrar de novo. */}
+        <div className="flex shrink-0 items-center justify-between border-b border-black/10 px-5 py-3 md:hidden">
+          <p className="text-[11px] uppercase tracking-[0.25em] text-black/40">
+            Fale com a {brand}
+          </p>
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label="Fechar"
+            className="flex h-10 w-10 items-center justify-center rounded-full border border-black/15 text-xl leading-none text-black transition active:bg-black/5"
+          >
+            ×
+          </button>
+        </div>
 
-        {status === "success" ? (
-          <div className="py-6 text-center">
-            <p className="mb-4 text-xs uppercase tracking-[0.45em] text-black/40">
-              {channel === "email" ? "Mensagem enviada" : "WhatsApp aberto"}
-            </p>
-            <h3 className="text-2xl font-medium leading-tight md:text-3xl">
-              {channel === "email" ? "Recebemos sua mensagem." : "Quase lá."}
-            </h3>
-            <p className="mt-4 text-sm leading-7 text-black/60">
-              {channel === "email"
-                ? "A Alpinea responde pessoalmente, normalmente em até 1 dia útil."
-                : "Finalize o envio da mensagem na aba do WhatsApp que abrimos para você."}
-            </p>
-            <button
-              onClick={onClose}
-              className="mt-8 border border-black px-8 py-3 text-xs uppercase tracking-[0.3em] transition hover:bg-black hover:text-white"
-            >
-              Fechar
-            </button>
-          </div>
-        ) : (
-          <>
-            <p className="mb-3 text-xs uppercase tracking-[0.45em] text-black/40">
-              Fale com a Alpinea
-            </p>
+        <div className="overflow-y-auto p-6 pt-5 md:overflow-visible md:p-12">
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label="Fechar"
+            className="mb-6 hidden text-xs uppercase tracking-[0.3em] text-black/40 transition hover:text-black md:block"
+          >
+            Fechar ×
+          </button>
 
-            <h3 className="text-2xl font-medium leading-tight md:text-3xl">
-              {channel === "email" ? "Vamos conversar por e-mail." : "Vamos conversar por WhatsApp."}
-            </h3>
+          {status === "success" ? (
+            <div className="py-6 text-center">
+              <p className="mb-4 text-xs uppercase tracking-[0.45em] text-black/40">
+                {channel === "email" ? "Mensagem enviada" : "WhatsApp aberto"}
+              </p>
+              <h3 className="text-2xl font-medium leading-tight md:text-3xl">
+                {channel === "email" ? "Recebemos sua mensagem." : "Quase lá."}
+              </h3>
+              <p className="mt-4 text-sm leading-7 text-black/60">
+                {channel === "email"
+                  ? `A ${brand} responde pessoalmente, normalmente em até 1 dia útil.`
+                  : "Finalize o envio da mensagem na aba do WhatsApp que abrimos para você."}
+              </p>
+              <button
+                onClick={onClose}
+                className="mt-8 border border-black px-8 py-3 text-xs uppercase tracking-[0.3em] transition hover:bg-black hover:text-white"
+              >
+                Fechar
+              </button>
+            </div>
+          ) : (
+            <>
+              <p className="mb-3 hidden text-xs uppercase tracking-[0.45em] text-black/40 md:block">
+                Fale com a {brand}
+              </p>
+
+              <h3 className="text-2xl font-medium leading-tight md:text-3xl">
+                {channel === "email" ? "Vamos conversar por e-mail." : "Vamos conversar por WhatsApp."}
+              </h3>
 
             <p className="mt-3 text-sm leading-6 text-black/55">
               Conte um pouco sobre a viagem. Nenhum campo abaixo é obrigatório
@@ -313,7 +334,7 @@ function ContactModal({
 
                 <label className="block md:col-span-2">
                   <span className="mb-2 block text-xs uppercase tracking-[0.25em] text-black/40">
-                    Como conheceu a Alpinea? (opcional)
+                    Como conheceu a {brand}? (opcional)
                   </span>
                   <select
                     name="source"
@@ -361,6 +382,7 @@ function ContactModal({
             </form>
           </>
         )}
+        </div>
       </div>
     </div>,
     document.body
@@ -374,6 +396,7 @@ export function ContactCTA({
   label = "Falar por e-mail",
   buttonClassName,
   whatsappNumber = "5511996691818",
+  brand = "Alpinea",
 }: {
   className?: string;
   /** "buttons" (padrão) renderiza os 2 CTAs de sempre. "single" renderiza 1 botão que já abre o modal direto. */
@@ -386,6 +409,8 @@ export function ContactCTA({
   buttonClassName?: string;
   /** Número de WhatsApp (só dígitos, com DDI) usado quando o canal é "whatsapp". Padrão: número da Alpinea. */
   whatsappNumber?: string;
+  /** Nome da marca exibido no modal (ex: "Vamos conversar por WhatsApp", "Fale com a {brand}"). Padrão: "Alpinea". */
+  brand?: string;
 }) {
   const [contactChannel, setContactChannel] = useState<"email" | "whatsapp" | null>(null);
 
@@ -396,6 +421,7 @@ export function ContactCTA({
           <ContactModal
             channel={contactChannel}
             whatsappNumber={whatsappNumber}
+            brand={brand}
             onClose={() => setContactChannel(null)}
           />
         )}
@@ -422,6 +448,7 @@ export function ContactCTA({
         <ContactModal
           channel={contactChannel}
           whatsappNumber={whatsappNumber}
+          brand={brand}
           onClose={() => setContactChannel(null)}
         />
       )}
