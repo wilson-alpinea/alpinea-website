@@ -17,21 +17,65 @@ export const metadata = {
 };
 
 export default function RoteirosAdsPage() {
+  const avatarColors = [
+    "#7c4fd1",
+    "#6ec3d9",
+    "#d9a66d",
+    "#5b9bd5",
+    "#e0916a",
+    "#8fb7d9",
+  ];
+
   const googleReviews = [
-    {
-      name: "Cristina Álvares",
-      context: "Viagem em período de instabilidade aérea",
-      text: "Fomos para o Japão com o apoio total da Ajisai. O período era complicado, pela Emirates via Dubai, em um momento incerto pela guerra. A Ajisai tinha opções com outras cias aéreas caso necessário. Atendimento 24hs todos os dias, durante todo o período da viagem. Excelente!",
-    },
     {
       name: "Caio Paiva de Lima",
       context: "Cancelamento de voo de última hora",
       text: "Excelente experiência com a AjisaiWork! Eles nos auxiliaram no retorno do Japão para o Brasil após um cancelamento de voo de última hora. O atendimento foi impecável: equipe disponível 24h por dia, passando total segurança e agilidade em um momento de estresse. Empresa de confiança e extremamente recomendada!",
     },
     {
+      name: "Cristina Álvares",
+      context: "Viagem em período de instabilidade aérea",
+      text: "Fomos para o Japão com o apoio total da Ajisai. O período era complicado, pela Emirates via Dubai, em um momento incerto pela guerra. A Ajisai tinha opções com outras cias aéreas caso necessário. Atendimento 24hs todos os dias, durante todo o período da viagem. Excelente!",
+    },
+    {
+      name: "SBC & International Friends",
+      context: "Acompanhamento de uma senhora de 77 anos",
+      text: "Nossa preocupação maior era que fosse um voo tranquilo desde o check-in em São Paulo até a chegada no destino final, pelo simples fato de que se tratava de minha mãe, uma senhora de 77 anos. A experiência junto à Ajisai foi melhor que esperávamos. Agradecimentos especiais ao Vinicius e à Julia pela atenção do início ao fim da viagem.",
+    },
+    {
       name: "Conrado Areco Borelli",
       context: "Suporte completo, do primeiro contato ao embarque",
       text: "Fomos afortunados em poder contar com o suporte da AjisaiWork na compra dos bilhetes aéreos de ida e volta do Brasil para o Japão. O atendimento muito solícito e eficiente. Desde o 1º contato via WhatsApp até o momento do embarque, a AjisaiWork esteve sempre disponível para nós, independente do fuso horário. Recomendamos com muita paz no coração e alegria.",
+    },
+    {
+      name: "José Andrade",
+      context: "Passagens, trens e hotéis",
+      text: "Tivemos a feliz oportunidade de utilizar os serviços da AjisaiWork e a equipe me proporcionou uma viagem tranquila, segura e prazerosa. Ficamos satisfeitos com o auxílio na reserva de passagens de avião, trens e hotéis. Foi fantástico!",
+    },
+    {
+      name: "Katia Ito",
+      context: "Passagens para um grupo grande",
+      text: "Recomendo a AjisaiWork, que conheci através do canal no YouTube Tudo Sobre Japão Notícias. Desde o início nos atendeu com rapidez e sempre muito prestativo. Estávamos à procura de passagens para um grupo relativamente grande e nos forneceram o melhor custo-benefício. Tivemos assistência antes e no dia do voo, com a equipe no aeroporto para nos ajudar com o despacho das bagagens.",
+    },
+    {
+      name: "Henrique Kishida",
+      context: "Suporte contínuo após a chegada ao Japão",
+      text: "Desde o primeiro contato, tem sido uma ótima empresa. Todos muito simpáticos e atenciosos. Cheguei ao Japão e o suporte continua: mandam mensagens para checar como foi a viagem e como está a adaptação ao novo país. Até o momento fico muito feliz com minha escolha.",
+    },
+    {
+      name: "Bruno Lima",
+      context: "Do preenchimento online ao embarque",
+      text: "Foram muito atenciosos, do início ao fim. Sempre que eu estava com dúvidas, eles me explicavam tudo com bastante clareza e atenção, quase no mesmo momento em que eu perguntava. Me auxiliaram desde o preenchimento online até o momento de embarque e desembarque.",
+    },
+    {
+      name: "Lenox",
+      context: "Viagem completa, ida e volta",
+      text: "Adorei tudo. O pessoal da Ajisai é muito atencioso e prestativo. Minha viagem foi maravilhosa, correu tudo muito bem na ida, durante e na volta da viagem. Recomendo 100%.",
+    },
+    {
+      name: "Marília Mesquita",
+      context: "Acompanhamento durante toda a viagem",
+      text: "Excelente atendimento e acompanhamento durante toda a viagem. Todos os profissionais são ótimos.",
     },
   ];
 
@@ -40,21 +84,25 @@ export default function RoteirosAdsPage() {
       label: "Experiência",
       title: "+12 anos",
       text: "Mais de uma década de vivência no Japão, entre gastronomia, hotelaria, cultura, logística e relações locais.",
+      Icon: IconClock,
     },
     {
       label: "Curadoria",
       title: "Exclusividade de Serviços",
       text: "Curadoria de restaurantes, hotelaria e consumo desenvolvida a partir de experiência própria, fluência no idioma e uma rede construída ao longo de mais de uma década no Japão.",
+      Icon: IconGem,
     },
     {
       label: "Conexão Brasil–Japão",
       title: "Referência na conexão",
       text: "Entre os 3 maiores emissores de passagens aéreas dessa rota no mundo, unimos conhecimento operacional à curadoria de experiências privadas.",
+      Icon: IconExchange,
     },
     {
       label: "Presença real no Japão",
       title: "Operação própria",
       text: "Nossa operação própria no Japão permite atendimento sem intermediários, com maior flexibilidade, controle e proximidade dos melhores parceiros locais.",
+      Icon: IconPin,
     },
   ];
 
@@ -147,13 +195,11 @@ export default function RoteirosAdsPage() {
           com o conteúdo abaixo. */}
       <header className="fixed left-0 right-0 top-0 z-50 transform-gpu bg-black/10 backdrop-blur-2xl">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-8 py-5 md:px-16">
-          <a href="/">
-            <img
-              src="/images/AJISAI-LOGO.avif"
-              alt="Ajisai"
-              className="h-10 w-auto object-contain md:h-11"
-            />
-          </a>
+          <img
+            src="/images/AJISAI-LOGO.avif"
+            alt="Ajisai"
+            className="h-10 w-auto object-contain md:h-11"
+          />
 
           <a
             href="#contact"
@@ -919,8 +965,11 @@ export default function RoteirosAdsPage() {
             {whyAjisai.map((item) => (
               <div
                 key={item.title}
-                className="w-[72vw] flex-shrink-0 snap-start [scroll-snap-stop:always] border-t border-white/15 pt-6 md:w-auto"
+                className="flex w-[72vw] flex-shrink-0 snap-start [scroll-snap-stop:always] flex-col items-center text-center md:w-auto"
               >
+                <span className="mb-5 flex h-12 w-12 items-center justify-center rounded-full bg-[#b79ce6]/12 text-[#b79ce6]">
+                  <item.Icon className="h-5 w-5" />
+                </span>
                 <p className="mb-2 text-[11px] uppercase tracking-[0.25em] text-white/35">
                   {item.label}
                 </p>
@@ -948,35 +997,47 @@ export default function RoteirosAdsPage() {
             <h2
               className={`${display.className} text-3xl font-medium leading-tight md:text-5xl`}
             >
-              4,8 de 5,0 no Google, com mais de 180 avaliações
+              O que dizem os viajantes que já foram com a gente
             </h2>
           </div>
 
-          <div className="grid grid-cols-1 gap-4 sm:gap-6 md:grid-cols-3 md:gap-8">
-            {googleReviews.map((review) => (
+          <CarouselScroller itemCount={googleReviews.length} desktopColumns={3}>
+            {googleReviews.map((review, index) => (
               <div
                 key={review.name}
-                className="flex flex-col rounded-2xl border border-white/10 bg-white/[0.03] p-5 sm:rounded-[2rem] sm:p-8"
+                className="flex w-[80vw] flex-shrink-0 snap-start [scroll-snap-stop:always] flex-col rounded-2xl border border-white/10 bg-white/[0.03] p-5 sm:rounded-[2rem] sm:p-8 md:w-auto"
               >
                 <div className="mb-4 flex items-center gap-0.5 text-[#b79ce6]">
-                  {Array.from({ length: 5 }).map((_, index) => (
-                    <IconStarFilled key={index} className="h-3.5 w-3.5" />
+                  {Array.from({ length: 5 }).map((_, starIndex) => (
+                    <IconStarFilled key={starIndex} className="h-3.5 w-3.5" />
                   ))}
                 </div>
                 <p className="flex-1 text-sm font-light leading-7 text-white/60">
                   “{review.text}”
                 </p>
-                <div className="mt-6 border-t border-white/10 pt-4">
-                  <p className="text-sm font-medium text-white">
-                    {review.name}
-                  </p>
-                  <p className="mt-0.5 text-xs text-white/35">
-                    {review.context} · Avaliação no Google
-                  </p>
+                <div className="mt-6 flex items-center gap-3 border-t border-white/10 pt-4">
+                  <span
+                    className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-xs font-medium text-white"
+                    style={{
+                      backgroundColor:
+                        avatarColors[index % avatarColors.length],
+                    }}
+                    aria-hidden
+                  >
+                    {review.name.charAt(0).toUpperCase()}
+                  </span>
+                  <div>
+                    <p className="text-sm font-medium text-white">
+                      {review.name}
+                    </p>
+                    <p className="mt-0.5 text-xs text-white/35">
+                      {review.context} · Avaliação no Google
+                    </p>
+                  </div>
                 </div>
               </div>
             ))}
-          </div>
+          </CarouselScroller>
         </div>
       </section>
 
@@ -1184,12 +1245,21 @@ export default function RoteirosAdsPage() {
             Japão.
           </p>
 
+          <a
+            href="#faq"
+            className="text-xs uppercase tracking-[0.25em] text-white/50 underline underline-offset-4 transition hover:text-white"
+          >
+            FAQ · Perguntas Frequentes
+          </a>
+
           <p className="text-[11px] leading-relaxed text-white/25">
             © 2026 AJISAIWORK JAPAN AGENCIA DE VIAGENS LTDA, Todos os Direitos
             Reservados — CNPJ: 43.544.605/0001-56
           </p>
         </div>
       </footer>
+
+      <FaqModal displayClassName={display.className} />
     </main>
   );
 }
@@ -1471,6 +1541,25 @@ function IconStarFilled({ className }: { className?: string }) {
   return (
     <svg viewBox="0 0 24 24" fill="currentColor" className={className}>
       <path d="M12 3l2.5 6 6.5.6-5 4.3 1.5 6.4L12 17l-5.5 3.3L8 13.9l-5-4.3L9.5 9.6 12 3Z" />
+    </svg>
+  );
+}
+
+function IconGem({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.75"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      <path d="M6 3h12l3 5.5L12 21 3 8.5 6 3Z" />
+      <path d="M3 8.5h18" />
+      <path d="M9 3l3 5.5-3 12.5" />
+      <path d="M15 3l-3 5.5 3 12.5" />
     </svg>
   );
 }
@@ -1960,6 +2049,57 @@ function RoutePreviewModal({
             height={1200}
             className="h-auto w-full object-contain"
           />
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function FaqModal({ displayClassName }: { displayClassName: string }) {
+  const faqs = [
+    {
+      question: "Qual a relação entre Ajisai e Alpinea?",
+      answer:
+        "Ajisai e Alpinea são empresas sob a mesma holding, com a mesma estrutura de sócios-administradores. Os serviços são contratados de acordo com a especialidade de cada frente: de modo geral, todos os serviços relacionados a turismo no Japão são executados pela estrutura da Alpinea.",
+    },
+  ];
+
+  return (
+    <section
+      id="faq"
+      className="fixed inset-0 z-[90] hidden overflow-y-auto bg-black/95 px-4 py-8 target:block md:px-8"
+    >
+      <a
+        href="#_"
+        aria-label="Fechar FAQ"
+        className="fixed right-4 top-4 z-[110] flex h-14 w-14 items-center justify-center rounded-full border border-black/10 bg-white text-4xl leading-none text-black shadow-[0_12px_40px_rgba(0,0,0,0.5)] transition hover:bg-white/90 md:right-8 md:top-8 md:h-16 md:w-16 md:text-5xl"
+      >
+        ×
+      </a>
+      <div className="mx-auto max-w-3xl pt-12 pb-12">
+        <p className="mb-4 text-xs uppercase tracking-[0.35em] text-white/35">
+          Ajuda
+        </p>
+        <h3
+          className={`${displayClassName} text-3xl font-medium text-white md:text-5xl`}
+        >
+          Perguntas Frequentes
+        </h3>
+
+        <div className="mt-10 space-y-8">
+          {faqs.map((faq) => (
+            <div
+              key={faq.question}
+              className="border-t border-white/10 pt-6"
+            >
+              <h4 className="text-base font-medium text-white md:text-lg">
+                {faq.question}
+              </h4>
+              <p className="mt-3 text-sm leading-7 text-white/60 md:text-base">
+                {faq.answer}
+              </p>
+            </div>
+          ))}
         </div>
       </div>
     </section>
