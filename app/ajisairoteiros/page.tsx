@@ -1051,7 +1051,7 @@ export default function RoteirosAdsPage() {
             {googleReviews.map((review, index) => (
               <div
                 key={review.name}
-                className="flex w-[80vw] flex-shrink-0 snap-start [scroll-snap-stop:always] flex-col rounded-2xl border border-white/10 bg-white/[0.03] p-5 sm:rounded-[2rem] sm:p-8 md:w-[31%] md:shrink-0"
+                className="flex min-h-[430px] w-[80vw] flex-shrink-0 snap-start [scroll-snap-stop:always] flex-col rounded-2xl border border-white/10 bg-white/[0.03] p-5 sm:rounded-[2rem] sm:p-8 md:w-[31%] md:shrink-0"
               >
                 <div className="mb-4 flex items-center gap-0.5 text-[#b79ce6]">
                   {Array.from({ length: 5 }).map((_, starIndex) => (
@@ -1150,7 +1150,7 @@ export default function RoteirosAdsPage() {
 
             <div className="flex justify-center">
               <a
-                href="/images/dashmobile.jpg"
+                href="/images/dashmobile-ajisai.jpg"
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label="Ver dashboard de viagem em tamanho maior"
@@ -1159,7 +1159,7 @@ export default function RoteirosAdsPage() {
                 <div className="absolute left-1/2 top-6 z-10 h-5 w-24 -translate-x-1/2 rounded-full bg-black" />
                 <div className="relative aspect-[1320/2257] w-full overflow-hidden rounded-[30px] bg-black">
                   <Image
-                    src="/images/dashmobile.jpg"
+                    src="/images/dashmobile-ajisai.jpg"
                     alt="Dashboard de viagem, acessado pelo celular"
                     fill
                     sizes="260px"

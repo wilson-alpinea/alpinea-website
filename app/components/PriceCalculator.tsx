@@ -22,6 +22,29 @@ function calculatePrice(days: number) {
   return BASE_PRICE + extraDays * EXTRA_DAY_PRICE;
 }
 
+function IconCalculator({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.6"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      <rect x="5" y="2" width="14" height="20" rx="2.4" />
+      <rect x="7.4" y="4.4" width="9.2" height="4" rx="0.6" />
+      <rect x="7.4" y="11" width="2.5" height="2.5" rx="0.5" />
+      <rect x="10.75" y="11" width="2.5" height="2.5" rx="0.5" />
+      <rect x="14.1" y="11" width="2.5" height="2.5" rx="0.5" />
+      <rect x="7.4" y="14.1" width="2.5" height="2.5" rx="0.5" />
+      <rect x="10.75" y="14.1" width="2.5" height="2.5" rx="0.5" />
+      <rect x="14.1" y="14.1" width="2.5" height="5.4" rx="0.5" />
+    </svg>
+  );
+}
+
 export function PriceCalculator({
   triggerClassName,
 }: {
@@ -40,10 +63,15 @@ export function PriceCalculator({
         onClick={() => setOpen(true)}
         className={
           triggerClassName ??
-          "mt-6 inline-flex items-center gap-2 rounded-full border border-[#b79ce6]/40 px-6 py-3 text-xs uppercase tracking-[0.25em] text-[#b79ce6] transition hover:border-[#b79ce6] hover:bg-[#b79ce6]/10"
+          "group mt-6 inline-flex items-center gap-4 rounded-full border border-[#b79ce6]/30 py-2 pl-2 pr-6 transition hover:border-[#b79ce6]/60"
         }
       >
-        Calcular meu investimento →
+        <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[#b79ce6]/12 text-[#b79ce6] transition-transform duration-300 ease-out group-hover:scale-110 md:h-14 md:w-14">
+          <IconCalculator className="h-6 w-6 md:h-7 md:w-7" />
+        </span>
+        <span className="text-xs uppercase tracking-[0.25em] text-[#b79ce6]">
+          Calcular meu investimento →
+        </span>
       </button>
 
       {open && (
