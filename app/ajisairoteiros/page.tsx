@@ -1002,47 +1002,44 @@ export default function RoteirosAdsPage() {
                 Quem viajou com a Ajisai
               </p>
               <h2
-                className={`${display.className} text-3xl font-medium leading-tight md:text-5xl`}
+                className={`${display.className} text-3xl font-medium leading-tight md:text-4xl`}
               >
                 Tudo é feito com muito carinho e atenção aos detalhes para
                 atender aos nossos clientes mais exigentes
               </h2>
 
-              <div className="mt-10 space-y-4 md:space-y-6">
-                <div className="flex items-center gap-6 rounded-2xl border border-white/10 bg-white/[0.03] p-6 sm:rounded-[2rem] sm:p-8">
+              <div className="mt-6 space-y-3 md:mt-8 md:space-y-4">
+                <div className="flex items-center gap-4 rounded-2xl border border-white/10 bg-white/[0.03] p-4 sm:rounded-[1.5rem] md:p-6">
                   <p
-                    className={`${display.className} text-6xl font-medium leading-none text-white md:text-7xl`}
+                    className={`${display.className} text-5xl font-medium leading-none text-white md:text-6xl`}
                   >
                     4,8
                   </p>
                   <div>
                     <div className="flex items-center gap-1 text-[#b79ce6]">
                       {Array.from({ length: 5 }).map((_, index) => (
-                        <IconStarFilled
-                          key={index}
-                          className="h-5 w-5 md:h-6 md:w-6"
-                        />
+                        <IconStarFilled key={index} className="h-4 w-4" />
                       ))}
                     </div>
-                    <p className="mt-3 text-sm font-light text-white/55 md:text-base">
+                    <p className="mt-2 text-xs font-light text-white/55 md:text-sm">
                       de 5,0 no Google ·{" "}
                       <span className="text-white">+180 avaliações</span>
                     </p>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-6 rounded-2xl border border-emerald-500/15 bg-emerald-500/[0.04] p-6 sm:rounded-[2rem] sm:p-8">
-                  <span className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-emerald-500/15 text-emerald-400 md:h-20 md:w-20">
-                    <IconShieldCheck className="h-8 w-8 md:h-10 md:w-10" />
+                <div className="flex items-center gap-4 rounded-2xl border border-emerald-500/15 bg-emerald-500/[0.04] p-4 sm:rounded-[1.5rem] md:p-6">
+                  <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-emerald-500/15 text-emerald-400 md:h-14 md:w-14">
+                    <IconShieldCheck className="h-6 w-6 md:h-7 md:w-7" />
                   </span>
                   <div>
-                    <p className="text-base font-medium text-white md:text-lg">
+                    <p className="text-sm font-medium text-white md:text-base">
                       Verificada pelo Reclame AQUI
                     </p>
-                    <p className="mt-2 text-sm text-white/50 md:text-base">
+                    <p className="mt-1 text-xs text-white/50 md:text-sm">
                       Aprovada em todas as checagens de segurança
                     </p>
-                    <p className="mt-1 text-xs uppercase tracking-[0.15em] text-emerald-400/70">
+                    <p className="mt-1 text-[10px] uppercase tracking-[0.15em] text-emerald-400/70">
                       Última verificação · Mar/2026
                     </p>
                   </div>
