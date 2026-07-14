@@ -148,6 +148,7 @@ export default function RoteirosAdsPage() {
         <ContactCTA
           mode="single"
           channel="whatsapp"
+          whatsappNumber="5511930300101"
           label="Falar com a Ajisai →"
           buttonClassName="block w-full bg-white px-4 py-3 text-center text-[11px] font-medium uppercase tracking-[0.22em] text-black transition hover:bg-white/90"
         />
@@ -915,9 +916,12 @@ export default function RoteirosAdsPage() {
             </h2>
           </div>
 
-          <div className="grid grid-cols-1 gap-x-10 gap-y-10 sm:grid-cols-2">
+          <div className="grid grid-cols-2 gap-4 sm:gap-6 md:gap-8">
             {inclusions.map((item) => (
-              <div key={item.title} className="border-t border-white/15 pt-6">
+              <div
+                key={item.title}
+                className="rounded-2xl border border-white/10 bg-white/[0.03] p-5 transition hover:border-white/20 sm:p-8"
+              >
                 <span className="mb-4 flex h-10 w-10 items-center justify-center rounded-full bg-[#b79ce6]/12 text-[#b79ce6]">
                   <item.Icon className="h-5 w-5" />
                 </span>
@@ -966,7 +970,42 @@ export default function RoteirosAdsPage() {
             </h2>
           </div>
 
-          <div className="grid grid-cols-2 gap-x-6 gap-y-12 sm:grid-cols-3 md:flex md:items-start md:gap-6">
+          {/* Mobile — fluxo vertical com flechas ligando cada etapa à próxima */}
+          <div className="flex flex-col md:hidden">
+            {workflowSteps.map((step, index) => (
+              <div key={step.number}>
+                <div className="flex items-start gap-4">
+                  <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#b79ce6]/12 text-[#b79ce6]">
+                    <step.Icon className="h-5 w-5" />
+                  </span>
+                  <div className="pt-1.5">
+                    <p className="text-[11px] uppercase tracking-[0.2em] text-white/30">
+                      {step.number}
+                    </p>
+                    <p className="mt-1 text-sm font-medium text-white">
+                      {step.title}
+                    </p>
+                    {step.lines.map((line) => (
+                      <p
+                        key={line}
+                        className="mt-1.5 text-xs leading-5 text-white/50"
+                      >
+                        {line}
+                      </p>
+                    ))}
+                  </div>
+                </div>
+                {index < workflowSteps.length - 1 && (
+                  <div className="flex h-9 w-11 shrink-0 items-center justify-center text-[#b79ce6]/50">
+                    <IconArrowDown className="h-5 w-5" />
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+
+          {/* Desktop — fluxo horizontal, ícones ligados por uma linha */}
+          <div className="hidden md:flex md:items-start md:gap-6">
             {workflowSteps.map((step, index) => (
               <div key={step.number} className="md:min-w-0 md:flex-1">
                 <div className="flex items-center gap-3">
@@ -974,7 +1013,7 @@ export default function RoteirosAdsPage() {
                     <step.Icon className="h-5 w-5" />
                   </span>
                   {index < workflowSteps.length - 1 && (
-                    <span className="hidden h-px flex-1 bg-white/15 md:block" />
+                    <span className="h-px flex-1 bg-white/15" />
                   )}
                 </div>
                 <p className="mt-4 text-[11px] uppercase tracking-[0.2em] text-white/30">
@@ -1040,6 +1079,7 @@ export default function RoteirosAdsPage() {
           <ContactCTA
             mode="single"
             channel="whatsapp"
+            whatsappNumber="5511930300101"
             label="Falar no WhatsApp"
           />
         </div>
@@ -1058,14 +1098,13 @@ export default function RoteirosAdsPage() {
             Japão.
           </p>
 
-          <a
-            href="https://wa.me/5511930300101?text=Ol%C3%A1!%20Gostaria%20de%20saber%20mais%20sobre%20roteiros%20personalizados%20para%20o%20Jap%C3%A3o."
-            target="_blank"
-            rel="noopener noreferrer"
-            className="rounded-full border border-white/25 px-6 py-2.5 text-xs uppercase tracking-[0.25em] text-white/70 transition hover:border-white/60 hover:text-white"
-          >
-            WhatsApp da Ajisai · (11) 9-3030-0101
-          </a>
+          <ContactCTA
+            mode="single"
+            channel="whatsapp"
+            whatsappNumber="5511930300101"
+            label="WhatsApp da Ajisai · (11) 9-3030-0101"
+            buttonClassName="rounded-full border border-white/25 px-6 py-2.5 text-xs uppercase tracking-[0.25em] text-white/70 transition hover:border-white/60 hover:text-white"
+          />
 
           <div className="flex flex-wrap items-center justify-center gap-3 text-xs text-white/25">
             <a href="/legal" className="transition hover:text-white/60">
@@ -1393,6 +1432,23 @@ function IconExit({ className }: { className?: string }) {
       <path d="M14 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
       <path d="M4 12h13" />
       <path d="M13 8l4 4-4 4" />
+    </svg>
+  );
+}
+
+function IconArrowDown({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.75"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      <line x1="12" y1="4" x2="12" y2="18" />
+      <polyline points="7 13 12 18 17 13" />
     </svg>
   );
 }

@@ -11,9 +11,11 @@ declare global {
 
 function ContactModal({
   channel,
+  whatsappNumber,
   onClose,
 }: {
   channel: "email" | "whatsapp";
+  whatsappNumber: string;
   onClose: () => void;
 }) {
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
@@ -94,7 +96,7 @@ function ContactModal({
         currency: "BRL",
       });
 
-      window.open(`https://wa.me/5511996691818?text=${text}`, "_blank");
+      window.open(`https://wa.me/${whatsappNumber}?text=${text}`, "_blank");
       setStatus("success");
       return;
     }
@@ -322,6 +324,7 @@ function ContactModal({
                     <option value="Google">Google</option>
                     <option value="Instagram">Instagram</option>
                     <option value="YouTube">YouTube</option>
+                    <option value="YouTube - Tudo Sobre Japão">YouTube - Tudo Sobre Japão</option>
                     <option value="Indicação">Indicação</option>
                     <option value="Cliente anterior">Cliente anterior</option>
                     <option value="Imprensa">Imprensa</option>
@@ -370,6 +373,7 @@ export function ContactCTA({
   channel = "email",
   label = "Falar por e-mail",
   buttonClassName,
+  whatsappNumber = "5511996691818",
 }: {
   className?: string;
   /** "buttons" (padrão) renderiza os 2 CTAs de sempre. "single" renderiza 1 botão que já abre o modal direto. */
@@ -380,6 +384,8 @@ export function ContactCTA({
   label?: string;
   /** Classe do próprio botão quando mode="single" (sobrescreve o estilo padrão). */
   buttonClassName?: string;
+  /** Número de WhatsApp (só dígitos, com DDI) usado quando o canal é "whatsapp". Padrão: número da Alpinea. */
+  whatsappNumber?: string;
 }) {
   const [contactChannel, setContactChannel] = useState<"email" | "whatsapp" | null>(null);
 
@@ -387,7 +393,11 @@ export function ContactCTA({
     return (
       <>
         {contactChannel && (
-          <ContactModal channel={contactChannel} onClose={() => setContactChannel(null)} />
+          <ContactModal
+            channel={contactChannel}
+            whatsappNumber={whatsappNumber}
+            onClose={() => setContactChannel(null)}
+          />
         )}
 
         <div className={className}>
@@ -409,7 +419,11 @@ export function ContactCTA({
   return (
     <>
       {contactChannel && (
-        <ContactModal channel={contactChannel} onClose={() => setContactChannel(null)} />
+        <ContactModal
+          channel={contactChannel}
+          whatsappNumber={whatsappNumber}
+          onClose={() => setContactChannel(null)}
+        />
       )}
 
       <div className={className}>
