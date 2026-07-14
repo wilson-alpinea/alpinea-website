@@ -17,6 +17,24 @@ export const metadata = {
 };
 
 export default function RoteirosAdsPage() {
+  const googleReviews = [
+    {
+      name: "Cristina Álvares",
+      context: "Viagem em período de instabilidade aérea",
+      text: "Fomos para o Japão com o apoio total da Ajisai. O período era complicado, pela Emirates via Dubai, em um momento incerto pela guerra. A Ajisai tinha opções com outras cias aéreas caso necessário. Atendimento 24hs todos os dias, durante todo o período da viagem. Excelente!",
+    },
+    {
+      name: "Caio Paiva de Lima",
+      context: "Cancelamento de voo de última hora",
+      text: "Excelente experiência com a AjisaiWork! Eles nos auxiliaram no retorno do Japão para o Brasil após um cancelamento de voo de última hora. O atendimento foi impecável: equipe disponível 24h por dia, passando total segurança e agilidade em um momento de estresse. Empresa de confiança e extremamente recomendada!",
+    },
+    {
+      name: "Conrado Areco Borelli",
+      context: "Suporte completo, do primeiro contato ao embarque",
+      text: "Fomos afortunados em poder contar com o suporte da AjisaiWork na compra dos bilhetes aéreos de ida e volta do Brasil para o Japão. O atendimento muito solícito e eficiente. Desde o 1º contato via WhatsApp até o momento do embarque, a AjisaiWork esteve sempre disponível para nós, independente do fuso horário. Recomendamos com muita paz no coração e alegria.",
+    },
+  ];
+
   const whyAjisai = [
     {
       label: "Experiência",
@@ -122,22 +140,28 @@ export default function RoteirosAdsPage() {
 
   return (
     <main className="min-h-screen bg-black pb-16 text-white md:pb-0">
-      {/* ── HEADER MINIMALISTA — sem menu, foco total em conversão ── */}
-      <header className="fixed left-0 right-0 top-0 z-50 flex transform-gpu items-center justify-between bg-black/10 px-8 py-5 backdrop-blur-2xl md:px-16">
-        <a href="/">
-          <img
-            src="/images/AJISAI-LOGO.avif"
-            alt="Ajisai"
-            className="h-10 w-auto object-contain md:h-11"
-          />
-        </a>
+      {/* ── HEADER MINIMALISTA — sem menu, foco total em conversão ──
+          Conteúdo contido em max-w-7xl (mesmo limite do restante do corpo
+          da página) para não deformar em telas widescreen, onde o logo e o
+          CTA ficavam colados nas bordas da viewport em vez de alinhados
+          com o conteúdo abaixo. */}
+      <header className="fixed left-0 right-0 top-0 z-50 transform-gpu bg-black/10 backdrop-blur-2xl">
+        <div className="mx-auto flex max-w-7xl items-center justify-between px-8 py-5 md:px-16">
+          <a href="/">
+            <img
+              src="/images/AJISAI-LOGO.avif"
+              alt="Ajisai"
+              className="h-10 w-auto object-contain md:h-11"
+            />
+          </a>
 
-        <a
-          href="#contact"
-          className="hidden rounded-full border border-white/25 px-5 py-2 text-xs uppercase tracking-[0.25em] text-white/80 transition hover:border-white/60 hover:text-white md:inline-block"
-        >
-          Falar com a Ajisai
-        </a>
+          <a
+            href="#contact"
+            className="hidden rounded-full border border-white/25 px-5 py-2 text-xs uppercase tracking-[0.25em] text-white/80 transition hover:border-white/60 hover:text-white md:inline-block"
+          >
+            Falar com a Ajisai
+          </a>
+        </div>
       </header>
 
       {/* ── CTA FIXO MOBILE — mesmo padrão usado na landingpage2 ── */}
@@ -877,6 +901,18 @@ export default function RoteirosAdsPage() {
             >
               O acesso no Japão não se compra. Se constrói ao longo de anos.
             </h2>
+
+            <div className="mt-6 flex items-center gap-3">
+              <div className="flex items-center gap-0.5 text-[#b79ce6]">
+                {Array.from({ length: 5 }).map((_, index) => (
+                  <IconStarFilled key={index} className="h-4 w-4" />
+                ))}
+              </div>
+              <p className="text-sm font-light text-white/60">
+                <span className="font-medium text-white">4,8 de 5,0</span> no
+                Google · +180 avaliações
+              </p>
+            </div>
           </div>
 
           <CarouselScroller itemCount={whyAjisai.length} desktopColumns={4}>
@@ -899,6 +935,48 @@ export default function RoteirosAdsPage() {
               </div>
             ))}
           </CarouselScroller>
+        </div>
+      </section>
+
+      {/* ── SOCIAL PROOF — AVALIAÇÕES DO GOOGLE ── */}
+      <section className="border-t border-white/10 bg-black px-6 py-20 md:px-16 md:py-32">
+        <div className="mx-auto max-w-7xl">
+          <div className="mb-14 max-w-2xl md:mb-20">
+            <p className="mb-6 text-xs uppercase tracking-[0.3em] text-white/40 md:tracking-[0.45em]">
+              Quem viajou com a Ajisai
+            </p>
+            <h2
+              className={`${display.className} text-3xl font-medium leading-tight md:text-5xl`}
+            >
+              4,8 de 5,0 no Google, com mais de 180 avaliações
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 gap-4 sm:gap-6 md:grid-cols-3 md:gap-8">
+            {googleReviews.map((review) => (
+              <div
+                key={review.name}
+                className="flex flex-col rounded-2xl border border-white/10 bg-white/[0.03] p-5 sm:rounded-[2rem] sm:p-8"
+              >
+                <div className="mb-4 flex items-center gap-0.5 text-[#b79ce6]">
+                  {Array.from({ length: 5 }).map((_, index) => (
+                    <IconStarFilled key={index} className="h-3.5 w-3.5" />
+                  ))}
+                </div>
+                <p className="flex-1 text-sm font-light leading-7 text-white/60">
+                  “{review.text}”
+                </p>
+                <div className="mt-6 border-t border-white/10 pt-4">
+                  <p className="text-sm font-medium text-white">
+                    {review.name}
+                  </p>
+                  <p className="mt-0.5 text-xs text-white/35">
+                    {review.context} · Avaliação no Google
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
@@ -1384,6 +1462,14 @@ function IconStar({ className }: { className?: string }) {
       strokeLinejoin="round"
       className={className}
     >
+      <path d="M12 3l2.5 6 6.5.6-5 4.3 1.5 6.4L12 17l-5.5 3.3L8 13.9l-5-4.3L9.5 9.6 12 3Z" />
+    </svg>
+  );
+}
+
+function IconStarFilled({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" className={className}>
       <path d="M12 3l2.5 6 6.5.6-5 4.3 1.5 6.4L12 17l-5.5 3.3L8 13.9l-5-4.3L9.5 9.6 12 3Z" />
     </svg>
   );
