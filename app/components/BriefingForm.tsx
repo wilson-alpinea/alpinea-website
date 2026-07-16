@@ -269,7 +269,7 @@ export default function BriefingForm() {
   const hydrated = useRef(false);
 
   const totalSteps = STEP_LABELS.length;
-  const progressPercent = Math.round(((step + 1) / totalSteps) * 100);
+  const progressPercent = Math.round((step / (totalSteps - 1)) * 100);
 
   const set: SetField = (key, value) => {
     setData((d) => ({ ...d, [key]: value }) as FormState);
@@ -541,7 +541,8 @@ export default function BriefingForm() {
 function SubSection({ title, children }: { title: string; children: ReactNode }) {
   return (
     <div className="space-y-5">
-      <p className="border-b border-white/10 pb-2 text-[10px] font-semibold uppercase tracking-[0.25em] text-white/45">
+      <p className="flex items-center gap-2 text-[10px] font-semibold uppercase tracking-[0.25em] text-white/45">
+        <span className="h-1 w-1 shrink-0 rounded-full bg-[#b79ce6]/70" />
         {title}
       </p>
       <div className="space-y-6">{children}</div>
