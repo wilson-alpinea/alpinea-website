@@ -1463,7 +1463,23 @@ function StepAlimentacao({
           complete={hasItems(data.experienciasGastronomicas)}
         >
           <MultiChoiceGroup
-            options={["Omakase", "Kaiseki", "Restaurante estrela Michelin", "Izakaya local", "Não é prioridade"]}
+            options={[
+              "Omakase",
+              "Kaiseki",
+              "Restaurante estrela Michelin",
+              "Izakaya local",
+              "Yakitori",
+              "Sushi tradicional",
+              "Tempura",
+              "Yakiniku",
+              "Shabu-shabu",
+              "Ramen",
+              "Unagi",
+              "Kaisendon",
+              "Coffee shops",
+              "Confeitarias",
+              "Não é prioridade",
+            ]}
             values={data.experienciasGastronomicas}
             onToggle={(v) => toggle("experienciasGastronomicas", v)}
           />
