@@ -1064,17 +1064,18 @@ function DateInput({
   max?: string;
 }) {
   return (
-    <input
-      type="date"
-      value={value}
-      onChange={(e) => onChange(e.target.value)}
-      onFocus={onFocus}
-      onBlur={onBlur}
-      min={min}
-      max={max}
-      className="w-full min-w-0 max-w-full rounded-xl border border-white/15 bg-black px-4 py-3 text-sm text-white outline-none transition [color-scheme:dark] focus:border-[#b79ce6]/60"
-      style={{ boxSizing: "border-box" }}
-    />
+    <div className="flex w-full min-w-0 rounded-xl border border-white/15 bg-black transition focus-within:border-[#b79ce6]/60">
+      <input
+        type="date"
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        onFocus={onFocus}
+        onBlur={onBlur}
+        min={min}
+        max={max}
+        className="w-0 min-w-0 flex-1 bg-transparent px-4 py-3 text-sm text-white outline-none [color-scheme:dark]"
+      />
+    </div>
   );
 }
 
