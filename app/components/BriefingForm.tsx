@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { ReactNode } from "react";
 import { Bodoni_Moda } from "next/font/google";
 
@@ -9,14 +9,21 @@ const display = Bodoni_Moda({
   weight: ["400", "500", "600"],
 });
 
+const STORAGE_KEY = "ajisai-briefing-draft";
+
 type FormState = {
   nome: string;
   whatsapp: string;
-  duracao: string;
+  dataInicio: string;
+  dataFim: string;
   cidadePartida: string;
-  viajantes: string;
+  aeroportoPartida: string;
+  adultos: string;
+  criancas: string;
+  idadesCriancas: string;
   passagens: string;
   orcamento: string;
+  orcamentoOutros: string;
   jaVisitou: string;
   ritmo: string;
   mobilidade: string;
@@ -36,11 +43,16 @@ type FormState = {
 const emptyState: FormState = {
   nome: "",
   whatsapp: "",
-  duracao: "",
+  dataInicio: "",
+  dataFim: "",
   cidadePartida: "",
-  viajantes: "",
+  aeroportoPartida: "",
+  adultos: "",
+  criancas: "",
+  idadesCriancas: "",
   passagens: "",
   orcamento: "",
+  orcamentoOutros: "",
   jaVisitou: "",
   ritmo: "",
   mobilidade: "",
@@ -61,6 +73,21 @@ type ArrayField = "hospedagem" | "interesses" | "experienciasGastronomicas";
 type SetField = (key: keyof FormState, value: string | string[]) => void;
 type ToggleField = (key: ArrayField, value: string) => void;
 
+function hasText(v: string) {
+  return v.trim().length > 0;
+}
+
+function hasItems(v: string[]) {
+  return v.length > 0;
+}
+
+function formatDate(iso: string) {
+  if (!iso) return "";
+  const [y, m, d] = iso.split("-");
+  if (!y || !m || !d) return iso;
+  return `${d}/${m}/${y}`;
+}
+
 const STEP_LABELS = [
   "Sobre a viagem",
   "Perfil e ritmo",
@@ -68,6 +95,33 @@ const STEP_LABELS = [
   "Alimentação",
   "Ocasiões",
   "Revisão",
+];
+
+const BUDGET_OPTIONS = [
+  {
+    label: "Econômico",
+    description:
+      "Hotéis 3★ e business hotels (ex: Toyoko Inn, APA Hotel). Quartos compactos, de 13 a 16m².",
+  },
+  {
+    label: "Confortável",
+    description:
+      "Hotéis 4★ bem localizados (ex: Richmond Hotel, Hotel Gracery). Quartos de 20 a 25m².",
+  },
+  {
+    label: "Premium",
+    description:
+      "Hotéis 5★ internacionais (ex: Hyatt Regency, Conrad Tokyo). Quartos de 30 a 40m², vistas privilegiadas.",
+  },
+  {
+    label: "Luxo",
+    description:
+      "Hotéis de altíssimo padrão (ex: Aman Tokyo, Park Hyatt, Ritz-Carlton). Suítes a partir de 50m².",
+  },
+  {
+    label: "Outros",
+    description: "Prefere descrever com suas próprias palavras.",
+  },
 ];
 
 function IconViagem({ className }: { className?: string }) {
@@ -151,6 +205,50 @@ function IconRevisao({ className }: { className?: string }) {
   );
 }
 
+function IconCheck({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 20 20" fill="currentColor" className={className}>
+      <path
+        fillRule="evenodd"
+        d="M16.704 5.29a1 1 0 0 1 .006 1.414l-7.5 7.6a1 1 0 0 1-1.42.006l-3.5-3.5a1 1 0 1 1 1.414-1.414l2.796 2.796 6.79-6.888a1 1 0 0 1 1.414-.014Z"
+        clipRule="evenodd"
+      />
+    </svg>
+  );
+}
+
+function IconChevronRight({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={2}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      <path d="m9 6 6 6-6 6" />
+    </svg>
+  );
+}
+
+function IconChevronLeft({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={2}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      <path d="m15 6-6 6 6 6" />
+    </svg>
+  );
+}
+
 const STEP_ICONS = [
   IconViagem,
   IconPerfil,
@@ -167,8 +265,11 @@ export default function BriefingForm() {
     "idle" | "submitting" | "success" | "error"
   >("idle");
   const [error, setError] = useState("");
+  const [savedMessage, setSavedMessage] = useState(false);
+  const hydrated = useRef(false);
 
   const totalSteps = STEP_LABELS.length;
+  const progressPercent = Math.round(((step + 1) / totalSteps) * 100);
 
   const set: SetField = (key, value) => {
     setData((d) => ({ ...d, [key]: value }) as FormState);
@@ -186,6 +287,36 @@ export default function BriefingForm() {
 
   const canAdvanceFromStep0 =
     data.nome.trim().length > 0 && data.whatsapp.trim().length > 0;
+
+  // Carrega rascunho salvo ao abrir a página.
+  useEffect(() => {
+    try {
+      const raw = window.localStorage.getItem(STORAGE_KEY);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        setData((d) => ({ ...d, ...parsed }));
+      }
+    } catch {
+      // ignora rascunhos corrompidos
+    }
+    hydrated.current = true;
+  }, []);
+
+  // Auto-save do rascunho com debounce.
+  useEffect(() => {
+    if (!hydrated.current) return;
+    const handle = setTimeout(() => {
+      try {
+        window.localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+        setSavedMessage(true);
+        const hide = setTimeout(() => setSavedMessage(false), 2200);
+        return () => clearTimeout(hide);
+      } catch {
+        // ignora falha de storage (modo privado, quota, etc.)
+      }
+    }, 600);
+    return () => clearTimeout(handle);
+  }, [data]);
 
   function goNext() {
     if (step === 0 && !canAdvanceFromStep0) return;
@@ -216,6 +347,11 @@ export default function BriefingForm() {
         throw new Error(json.error || "Não foi possível enviar.");
       }
       setStatus("success");
+      try {
+        window.localStorage.removeItem(STORAGE_KEY);
+      } catch {
+        // ignora
+      }
     } catch (e) {
       setStatus("error");
       setError(e instanceof Error ? e.message : "Erro ao enviar.");
@@ -271,7 +407,32 @@ export default function BriefingForm() {
           </p>
         </div>
 
-        <div className="my-10 flex items-center">
+        <div className="mt-8">
+          <div className="flex items-center justify-between text-[10px] uppercase tracking-[0.2em] text-white/40">
+            <span>
+              Etapa {step + 1} de {totalSteps}
+            </span>
+            <span className="text-[#b79ce6]">{progressPercent}% concluído</span>
+          </div>
+          <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-white/10">
+            <div
+              className="h-full rounded-full bg-[#b79ce6] transition-all duration-500"
+              style={{ width: `${progressPercent}%` }}
+            />
+          </div>
+          <div className="mt-1.5 h-4 text-right">
+            <span
+              className={`inline-flex items-center gap-1 text-[10px] uppercase tracking-[0.2em] text-[#b79ce6] transition-opacity duration-500 ${
+                savedMessage ? "opacity-100" : "opacity-0"
+              }`}
+            >
+              <IconCheck className="h-3 w-3" />
+              Alterações salvas
+            </span>
+          </div>
+        </div>
+
+        <div className="my-6 flex items-center">
           {STEP_LABELS.map((label, index) => {
             const Icon = STEP_ICONS[index];
             const active = index <= step;
@@ -292,18 +453,20 @@ export default function BriefingForm() {
                       active ? "text-[#b79ce6]" : "text-white/30"
                     }`}
                   >
-                    <Icon className="h-3.5 w-3.5" />
+                    <Icon className="h-5 w-5" />
                     <span className="text-center text-[9px] uppercase tracking-[0.15em]">
                       {label}
                     </span>
                   </span>
                 </div>
                 {index < totalSteps - 1 && (
-                  <span
-                    className={`mx-2 h-px flex-1 ${
-                      index < step ? "bg-[#b79ce6]/60" : "bg-white/10"
-                    }`}
-                  />
+                  <div className="flex flex-1 items-center justify-center px-1">
+                    <IconChevronRight
+                      className={`h-4 w-4 ${
+                        index < step ? "text-[#b79ce6]" : "text-white/20"
+                      }`}
+                    />
+                  </div>
                 )}
               </div>
             );
@@ -333,9 +496,10 @@ export default function BriefingForm() {
               type="button"
               onClick={goBack}
               disabled={step === 0}
-              className="text-xs uppercase tracking-[0.2em] text-white/40 transition hover:text-white disabled:opacity-0"
+              className="flex items-center gap-1.5 text-xs uppercase tracking-[0.2em] text-white/40 transition hover:text-white disabled:opacity-0"
             >
-              ← Voltar
+              <IconChevronLeft className="h-3.5 w-3.5" />
+              Voltar
             </button>
 
             {step < totalSteps - 1 ? (
@@ -343,26 +507,30 @@ export default function BriefingForm() {
                 type="button"
                 onClick={goNext}
                 disabled={step === 0 && !canAdvanceFromStep0}
-                className="rounded-full bg-white px-6 py-3 text-xs font-medium uppercase tracking-[0.22em] text-black transition hover:bg-white/90 disabled:cursor-not-allowed disabled:opacity-30"
+                className="group flex items-center gap-2 rounded-full bg-[#b79ce6] px-7 py-3.5 text-xs font-semibold uppercase tracking-[0.22em] text-black shadow-lg shadow-[#b79ce6]/25 transition hover:bg-[#c7b0f0] disabled:cursor-not-allowed disabled:bg-white disabled:text-black disabled:opacity-30 disabled:shadow-none"
               >
-                Continuar →
+                Continuar
+                <IconChevronRight className="h-4 w-4 transition group-hover:translate-x-0.5" />
               </button>
             ) : (
               <button
                 type="button"
                 onClick={handleSubmit}
                 disabled={status === "submitting"}
-                className="rounded-full bg-white px-6 py-3 text-xs font-medium uppercase tracking-[0.22em] text-black transition hover:bg-white/90 disabled:opacity-50"
+                className="group flex items-center gap-2 rounded-full bg-[#b79ce6] px-7 py-3.5 text-xs font-semibold uppercase tracking-[0.22em] text-black shadow-lg shadow-[#b79ce6]/25 transition hover:bg-[#c7b0f0] disabled:opacity-50"
               >
                 {status === "submitting" ? "Enviando..." : "Enviar briefing"}
+                {status !== "submitting" && (
+                  <IconChevronRight className="h-4 w-4 transition group-hover:translate-x-0.5" />
+                )}
               </button>
             )}
           </div>
         </div>
 
-        {step === 0 && !canAdvanceFromStep0 && (
+        {step < totalSteps - 1 && (
           <p className="mt-4 text-center text-[11px] text-white/30">
-            Preencha seu nome e WhatsApp para continuar.
+            Você poderá revisar todas as respostas antes do envio.
           </p>
         )}
       </div>
@@ -370,19 +538,42 @@ export default function BriefingForm() {
   );
 }
 
-function FieldLabel({ children }: { children: ReactNode }) {
+function SubSection({ title, children }: { title: string; children: ReactNode }) {
   return (
-    <label className="mb-2 block text-[11px] uppercase tracking-[0.25em] text-white/35">
-      {children}
-    </label>
+    <div className="space-y-5">
+      <p className="border-b border-white/10 pb-2 text-[10px] font-semibold uppercase tracking-[0.25em] text-white/45">
+        {title}
+      </p>
+      <div className="space-y-6">{children}</div>
+    </div>
   );
 }
 
-function FieldBlock({ label, children }: { label: string; children: ReactNode }) {
+function FieldBlock({
+  label,
+  hint,
+  complete,
+  children,
+}: {
+  label: string;
+  hint?: string;
+  complete?: boolean;
+  children: ReactNode;
+}) {
   return (
     <div>
-      <FieldLabel>{label}</FieldLabel>
+      <div className="mb-2 flex items-center gap-1.5">
+        <label className="block text-[11px] uppercase tracking-[0.25em] text-white/35">
+          {label}
+        </label>
+        {complete && (
+          <IconCheck className="h-3.5 w-3.5 shrink-0 text-[#b79ce6]" />
+        )}
+      </div>
       {children}
+      {hint && (
+        <p className="mt-1.5 text-[11px] leading-5 text-white/30">{hint}</p>
+      )}
     </div>
   );
 }
@@ -403,6 +594,23 @@ function TextInput({
       onChange={(e) => onChange(e.target.value)}
       placeholder={placeholder}
       className="w-full rounded-xl border border-white/15 bg-black px-4 py-3 text-sm text-white placeholder:text-white/25 outline-none transition focus:border-[#b79ce6]/60"
+    />
+  );
+}
+
+function DateInput({
+  value,
+  onChange,
+}: {
+  value: string;
+  onChange: (v: string) => void;
+}) {
+  return (
+    <input
+      type="date"
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      className="w-full rounded-xl border border-white/15 bg-black px-4 py-3 text-sm text-white outline-none transition [color-scheme:dark] focus:border-[#b79ce6]/60"
     />
   );
 }
@@ -493,70 +701,201 @@ function MultiChoiceGroup({
   );
 }
 
+function BudgetChoiceGroup({
+  value,
+  onChange,
+}: {
+  value: string;
+  onChange: (v: string) => void;
+}) {
+  return (
+    <div className="space-y-2">
+      {BUDGET_OPTIONS.map((option) => {
+        const active = value === option.label;
+        return (
+          <button
+            key={option.label}
+            type="button"
+            onClick={() => onChange(option.label)}
+            className={`w-full rounded-xl border px-4 py-3 text-left transition ${
+              active
+                ? "border-[#b79ce6] bg-[#b79ce6]/10"
+                : "border-white/15 hover:border-white/30"
+            }`}
+          >
+            <span
+              className={`block text-xs font-semibold uppercase tracking-[0.15em] ${
+                active ? "text-[#b79ce6]" : "text-white/70"
+              }`}
+            >
+              {option.label}
+            </span>
+            <span className="mt-1 block text-xs leading-5 text-white/40">
+              {option.description}
+            </span>
+          </button>
+        );
+      })}
+    </div>
+  );
+}
+
 function StepViagem({ data, set }: { data: FormState; set: SetField }) {
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       <p className="text-xs uppercase tracking-[0.3em] text-[#b79ce6]">
         1 · Sobre a viagem
       </p>
-      <FieldBlock label="Nome *">
-        <TextInput
-          value={data.nome}
-          onChange={(v) => set("nome", v)}
-          placeholder="Seu nome completo"
-        />
-      </FieldBlock>
-      <FieldBlock label="WhatsApp *">
-        <TextInput
-          value={data.whatsapp}
-          onChange={(v) => set("whatsapp", v)}
-          placeholder="(11) 90000-0000"
-        />
-      </FieldBlock>
-      <div className="grid gap-6 sm:grid-cols-2">
-        <FieldBlock label="Duração total">
+
+      <SubSection title="Sobre você">
+        <FieldBlock
+          label="Nome *"
+          hint="Para personalizarmos o atendimento e o roteiro."
+          complete={hasText(data.nome)}
+        >
           <TextInput
-            value={data.duracao}
-            onChange={(v) => set("duracao", v)}
-            placeholder="Ex: 12 dias"
+            value={data.nome}
+            onChange={(v) => set("nome", v)}
+            placeholder="Seu nome completo"
           />
         </FieldBlock>
-        <FieldBlock label="Cidade de partida">
+        <FieldBlock
+          label="WhatsApp *"
+          hint="Principal canal de contato durante o processo."
+          complete={hasText(data.whatsapp)}
+        >
           <TextInput
-            value={data.cidadePartida}
-            onChange={(v) => set("cidadePartida", v)}
-            placeholder="Ex: São Paulo"
+            value={data.whatsapp}
+            onChange={(v) => set("whatsapp", v)}
+            placeholder="(11) 90000-0000"
           />
         </FieldBlock>
-      </div>
-      <FieldBlock label="Quantidade e composição do grupo">
-        <TextArea
-          value={data.viajantes}
-          onChange={(v) => set("viajantes", v)}
-          placeholder="Ex: 2 adultos e 1 criança de 8 anos"
-          rows={2}
-        />
-      </FieldBlock>
-      <FieldBlock label="Passagens aéreas já compradas?">
-        <ChoiceGroup
-          options={["Sim, já compradas", "Não, ainda não", "Ainda não decidi"]}
-          value={data.passagens}
-          onChange={(v) => set("passagens", v)}
-        />
-      </FieldBlock>
-      <FieldBlock label="Faixa de orçamento estimado">
-        <ChoiceGroup
-          options={[
-            "Até R$15.000",
-            "R$15.000 – R$30.000",
-            "R$30.000 – R$60.000",
-            "Acima de R$60.000",
-            "Prefiro conversar diretamente",
-          ]}
-          value={data.orcamento}
-          onChange={(v) => set("orcamento", v)}
-        />
-      </FieldBlock>
+      </SubSection>
+
+      <SubSection title="Sobre a viagem">
+        <div className="grid gap-6 sm:grid-cols-2">
+          <FieldBlock
+            label="Data de início"
+            hint="Define o período exato da viagem."
+            complete={hasText(data.dataInicio)}
+          >
+            <DateInput
+              value={data.dataInicio}
+              onChange={(v) => set("dataInicio", v)}
+            />
+          </FieldBlock>
+          <FieldBlock
+            label="Data de término"
+            hint="Usamos para calcular a duração total."
+            complete={hasText(data.dataFim)}
+          >
+            <DateInput
+              value={data.dataFim}
+              onChange={(v) => set("dataFim", v)}
+            />
+          </FieldBlock>
+        </div>
+        <div className="grid gap-6 sm:grid-cols-2">
+          <FieldBlock
+            label="Cidade de partida"
+            hint="Ajuda a definir rotas e horários de voo."
+            complete={hasText(data.cidadePartida)}
+          >
+            <TextInput
+              value={data.cidadePartida}
+              onChange={(v) => set("cidadePartida", v)}
+              placeholder="Ex: São Paulo"
+            />
+          </FieldBlock>
+          <FieldBlock
+            label="Aeroporto de partida"
+            hint="Ex: GRU, CGH ou VCP, em São Paulo."
+            complete={hasText(data.aeroportoPartida)}
+          >
+            <TextInput
+              value={data.aeroportoPartida}
+              onChange={(v) => set("aeroportoPartida", v)}
+              placeholder="Ex: GRU"
+            />
+          </FieldBlock>
+        </div>
+        <div className="grid gap-6 sm:grid-cols-2">
+          <FieldBlock
+            label="Quantos adultos"
+            hint="Define quartos e vagas necessárias."
+            complete={hasText(data.adultos)}
+          >
+            <TextInput
+              value={data.adultos}
+              onChange={(v) => set("adultos", v)}
+              placeholder="Ex: 2"
+            />
+          </FieldBlock>
+          <FieldBlock
+            label="Quantas crianças"
+            hint="Ajuda a ajustar atividades e hospedagem."
+            complete={hasText(data.criancas)}
+          >
+            <TextInput
+              value={data.criancas}
+              onChange={(v) => set("criancas", v)}
+              placeholder="Ex: 1"
+            />
+          </FieldBlock>
+        </div>
+        <FieldBlock
+          label="Idade das crianças"
+          hint="Necessário apenas se houver crianças na viagem."
+          complete={hasText(data.idadesCriancas)}
+        >
+          <TextInput
+            value={data.idadesCriancas}
+            onChange={(v) => set("idadesCriancas", v)}
+            placeholder="Ex: 5 e 8 anos"
+          />
+        </FieldBlock>
+      </SubSection>
+
+      <SubSection title="Voos">
+        <FieldBlock
+          label="Passagens aéreas já compradas?"
+          hint="Se já compradas, ajustamos o roteiro aos horários de voo."
+          complete={hasText(data.passagens)}
+        >
+          <ChoiceGroup
+            options={["Sim, já compradas", "Não, ainda não", "Ainda não decidi"]}
+            value={data.passagens}
+            onChange={(v) => set("passagens", v)}
+          />
+        </FieldBlock>
+      </SubSection>
+
+      <SubSection title="Orçamento">
+        <FieldBlock
+          label="Faixa de orçamento estimado"
+          hint="Usamos como referência para sugerir hospedagens compatíveis."
+          complete={hasText(data.orcamento)}
+        >
+          <BudgetChoiceGroup
+            value={data.orcamento}
+            onChange={(v) => set("orcamento", v)}
+          />
+        </FieldBlock>
+        {data.orcamento === "Outros" && (
+          <FieldBlock
+            label="Descreva o padrão de hospedagem que imagina"
+            hint="Descreva o padrão de hospedagem que você tem em mente."
+            complete={hasText(data.orcamentoOutros)}
+          >
+            <TextArea
+              value={data.orcamentoOutros}
+              onChange={(v) => set("orcamentoOutros", v)}
+              placeholder="Ex: hotéis boutique, entre 4 e 5 estrelas"
+              rows={2}
+            />
+          </FieldBlock>
+        )}
+      </SubSection>
     </div>
   );
 }
@@ -571,40 +910,65 @@ function StepPerfil({
   toggle: ToggleField;
 }) {
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       <p className="text-xs uppercase tracking-[0.3em] text-[#b79ce6]">
         2 · Perfil e ritmo
       </p>
-      <FieldBlock label="Já visitou o Japão antes? Se sim, quais lugares?">
-        <TextArea
-          value={data.jaVisitou}
-          onChange={(v) => set("jaVisitou", v)}
-          placeholder="Ex: primeira vez, ou 'já fomos a Tokyo e Osaka em 2023'"
-          rows={2}
-        />
-      </FieldBlock>
-      <FieldBlock label="Ritmo desejado">
-        <ChoiceGroup
-          options={["Dinâmico e cheio", "Equilibrado", "Tranquilo, com tempo livre"]}
-          value={data.ritmo}
-          onChange={(v) => set("ritmo", v)}
-        />
-      </FieldBlock>
-      <FieldBlock label="Mobilidade física ou alguma limitação">
-        <TextArea
-          value={data.mobilidade}
-          onChange={(v) => set("mobilidade", v)}
-          placeholder="Ex: dificuldade com escadas, uso de cadeira de rodas, caminhadas longas..."
-          rows={2}
-        />
-      </FieldBlock>
-      <FieldBlock label="Estilo de hospedagem preferido">
-        <MultiChoiceGroup
-          options={["Hotéis de luxo", "Ryokan tradicional", "Boutique", "Resorts", "Sem preferência"]}
-          values={data.hospedagem}
-          onToggle={(v) => toggle("hospedagem", v)}
-        />
-      </FieldBlock>
+
+      <SubSection title="Experiência anterior">
+        <FieldBlock
+          label="Já visitou o Japão antes? Se sim, quais lugares?"
+          hint="Evita repetir lugares já conhecidos."
+          complete={hasText(data.jaVisitou)}
+        >
+          <TextArea
+            value={data.jaVisitou}
+            onChange={(v) => set("jaVisitou", v)}
+            placeholder="Ex: primeira vez, ou 'já fomos a Tokyo e Osaka em 2023'"
+            rows={2}
+          />
+        </FieldBlock>
+      </SubSection>
+
+      <SubSection title="Estilo de viagem">
+        <FieldBlock
+          label="Ritmo desejado"
+          hint="Define quantas atividades incluir por dia."
+          complete={hasText(data.ritmo)}
+        >
+          <ChoiceGroup
+            options={["Dinâmico e cheio", "Equilibrado", "Tranquilo, com tempo livre"]}
+            value={data.ritmo}
+            onChange={(v) => set("ritmo", v)}
+          />
+        </FieldBlock>
+        <FieldBlock
+          label="Mobilidade física ou alguma limitação"
+          hint="Garante um roteiro confortável para todos."
+          complete={hasText(data.mobilidade)}
+        >
+          <TextArea
+            value={data.mobilidade}
+            onChange={(v) => set("mobilidade", v)}
+            placeholder="Ex: dificuldade com escadas, uso de cadeira de rodas, caminhadas longas..."
+            rows={2}
+          />
+        </FieldBlock>
+      </SubSection>
+
+      <SubSection title="Hospedagem">
+        <FieldBlock
+          label="Estilo de hospedagem preferido"
+          hint="Direciona as sugestões de hotéis e ryokans."
+          complete={hasItems(data.hospedagem)}
+        >
+          <MultiChoiceGroup
+            options={["Hotéis de luxo", "Ryokan tradicional", "Boutique", "Resorts", "Sem preferência"]}
+            values={data.hospedagem}
+            onToggle={(v) => toggle("hospedagem", v)}
+          />
+        </FieldBlock>
+      </SubSection>
     </div>
   );
 }
@@ -619,43 +983,64 @@ function StepInteresses({
   toggle: ToggleField;
 }) {
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       <p className="text-xs uppercase tracking-[0.3em] text-[#b79ce6]">
         3 · Interesses e prioridades
       </p>
-      <FieldBlock label="O que não pode faltar nessa viagem?">
-        <TextArea
-          value={data.bucketList}
-          onChange={(v) => set("bucketList", v)}
-          placeholder="Lugares, experiências ou coisas que fazem parte do sonho dessa viagem"
-          rows={3}
-        />
-      </FieldBlock>
-      <FieldBlock label="Temas de interesse">
-        <MultiChoiceGroup
-          options={[
-            "Gastronomia",
-            "Cultura e história",
-            "Natureza e onsen",
-            "Compras",
-            "Arte e design",
-            "Cultura pop",
-            "Vida noturna",
-            "Bem-estar",
-            "Esportes de inverno",
-          ]}
-          values={data.interesses}
-          onToggle={(v) => toggle("interesses", v)}
-        />
-      </FieldBlock>
-      <FieldBlock label="O que preferem evitar?">
-        <TextArea
-          value={data.evitar}
-          onChange={(v) => set("evitar", v)}
-          placeholder="Ex: lugares muito turísticos, filas longas, determinado tipo de comida..."
-          rows={2}
-        />
-      </FieldBlock>
+
+      <SubSection title="Prioridades">
+        <FieldBlock
+          label="O que não pode faltar nessa viagem?"
+          hint="Prioridades garantidas no roteiro final."
+          complete={hasText(data.bucketList)}
+        >
+          <TextArea
+            value={data.bucketList}
+            onChange={(v) => set("bucketList", v)}
+            placeholder="Lugares, experiências ou coisas que fazem parte do sonho dessa viagem"
+            rows={3}
+          />
+        </FieldBlock>
+      </SubSection>
+
+      <SubSection title="Temas">
+        <FieldBlock
+          label="Temas de interesse"
+          hint="Direciona as experiências e passeios sugeridos."
+          complete={hasItems(data.interesses)}
+        >
+          <MultiChoiceGroup
+            options={[
+              "Gastronomia",
+              "Cultura e história",
+              "Natureza e onsen",
+              "Compras",
+              "Arte e design",
+              "Cultura pop",
+              "Vida noturna",
+              "Bem-estar",
+              "Esportes de inverno",
+            ]}
+            values={data.interesses}
+            onToggle={(v) => toggle("interesses", v)}
+          />
+        </FieldBlock>
+      </SubSection>
+
+      <SubSection title="Preferências">
+        <FieldBlock
+          label="O que preferem evitar?"
+          hint="Evita desconfortos durante a viagem."
+          complete={hasText(data.evitar)}
+        >
+          <TextArea
+            value={data.evitar}
+            onChange={(v) => set("evitar", v)}
+            placeholder="Ex: lugares muito turísticos, filas longas, determinado tipo de comida..."
+            rows={2}
+          />
+        </FieldBlock>
+      </SubSection>
     </div>
   );
 }
@@ -670,86 +1055,152 @@ function StepAlimentacao({
   toggle: ToggleField;
 }) {
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       <p className="text-xs uppercase tracking-[0.3em] text-[#b79ce6]">
         4 · Alimentação
       </p>
-      <FieldBlock label="Restrições alimentares ou alergias">
-        <TextArea
-          value={data.restricoes}
-          onChange={(v) => set("restricoes", v)}
-          placeholder="Ex: vegetariano, alergia a frutos do mar, sem lactose..."
-          rows={2}
-        />
-      </FieldBlock>
-      <FieldBlock label="Nível de abertura culinária">
-        <ChoiceGroup
-          options={["Comem de tudo", "Preferem algo mais familiar", "Depende do dia"]}
-          value={data.aberturaCulinaria}
-          onChange={(v) => set("aberturaCulinaria", v)}
-        />
-      </FieldBlock>
-      <FieldBlock label="Experiências gastronômicas de interesse">
-        <MultiChoiceGroup
-          options={["Omakase", "Kaiseki", "Restaurante estrela Michelin", "Izakaya local", "Não é prioridade"]}
-          values={data.experienciasGastronomicas}
-          onToggle={(v) => toggle("experienciasGastronomicas", v)}
-        />
-      </FieldBlock>
+
+      <SubSection title="Restrições">
+        <FieldBlock
+          label="Restrições alimentares ou alergias"
+          hint="Garante segurança nos restaurantes selecionados."
+          complete={hasText(data.restricoes)}
+        >
+          <TextArea
+            value={data.restricoes}
+            onChange={(v) => set("restricoes", v)}
+            placeholder="Ex: vegetariano, alergia a frutos do mar, sem lactose..."
+            rows={2}
+          />
+        </FieldBlock>
+      </SubSection>
+
+      <SubSection title="Perfil culinário">
+        <FieldBlock
+          label="Nível de abertura culinária"
+          hint="Ajusta o tipo de experiência gastronômica sugerida."
+          complete={hasText(data.aberturaCulinaria)}
+        >
+          <ChoiceGroup
+            options={["Comem de tudo", "Preferem algo mais familiar", "Depende do dia"]}
+            value={data.aberturaCulinaria}
+            onChange={(v) => set("aberturaCulinaria", v)}
+          />
+        </FieldBlock>
+        <FieldBlock
+          label="Experiências gastronômicas de interesse"
+          hint="Prioriza reservas em experiências específicas."
+          complete={hasItems(data.experienciasGastronomicas)}
+        >
+          <MultiChoiceGroup
+            options={["Omakase", "Kaiseki", "Restaurante estrela Michelin", "Izakaya local", "Não é prioridade"]}
+            values={data.experienciasGastronomicas}
+            onToggle={(v) => toggle("experienciasGastronomicas", v)}
+          />
+        </FieldBlock>
+      </SubSection>
     </div>
   );
 }
 
 function StepOcasioes({ data, set }: { data: FormState; set: SetField }) {
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       <p className="text-xs uppercase tracking-[0.3em] text-[#b79ce6]">
         5 · Ocasiões e observações
       </p>
-      <FieldBlock label="Alguma ocasião especial durante a viagem?">
-        <TextArea
-          value={data.ocasiaoEspecial}
-          onChange={(v) => set("ocasiaoEspecial", v)}
-          placeholder="Ex: lua de mel, aniversário, comemoração..."
-          rows={2}
-        />
-      </FieldBlock>
-      <FieldBlock label="Nível de conforto com o inglês">
-        <ChoiceGroup
-          options={["Fluente", "Básico", "Nenhum"]}
-          value={data.ingles}
-          onChange={(v) => set("ingles", v)}
-        />
-      </FieldBlock>
-      <FieldBlock label="Alguma experiência ruim em viagens anteriores que queiram evitar?">
-        <TextArea
-          value={data.experienciaRuim}
-          onChange={(v) => set("experienciaRuim", v)}
-          placeholder="Opcional"
-          rows={2}
-        />
-      </FieldBlock>
-      <FieldBlock label="Algo mais que devemos saber?">
-        <TextArea
-          value={data.observacoes}
-          onChange={(v) => set("observacoes", v)}
-          placeholder="Opcional"
-          rows={2}
-        />
-      </FieldBlock>
+
+      <SubSection title="Ocasiões especiais">
+        <FieldBlock
+          label="Alguma ocasião especial durante a viagem?"
+          hint="Permite planejar surpresas e comemorações."
+          complete={hasText(data.ocasiaoEspecial)}
+        >
+          <TextArea
+            value={data.ocasiaoEspecial}
+            onChange={(v) => set("ocasiaoEspecial", v)}
+            placeholder="Ex: lua de mel, aniversário, comemoração..."
+            rows={2}
+          />
+        </FieldBlock>
+      </SubSection>
+
+      <SubSection title="Idioma">
+        <FieldBlock
+          label="Nível de conforto com o inglês"
+          hint="Ajuda a definir a necessidade de guias ou tradução."
+          complete={hasText(data.ingles)}
+        >
+          <ChoiceGroup
+            options={["Fluente", "Básico", "Nenhum"]}
+            value={data.ingles}
+            onChange={(v) => set("ingles", v)}
+          />
+        </FieldBlock>
+      </SubSection>
+
+      <SubSection title="Observações">
+        <FieldBlock
+          label="Alguma experiência ruim em viagens anteriores que queiram evitar?"
+          hint="Evita repetir problemas de viagens anteriores."
+          complete={hasText(data.experienciaRuim)}
+        >
+          <TextArea
+            value={data.experienciaRuim}
+            onChange={(v) => set("experienciaRuim", v)}
+            placeholder="Opcional"
+            rows={2}
+          />
+        </FieldBlock>
+        <FieldBlock
+          label="Algo mais que devemos saber?"
+          hint="Qualquer detalhe adicional que julgar importante."
+          complete={hasText(data.observacoes)}
+        >
+          <TextArea
+            value={data.observacoes}
+            onChange={(v) => set("observacoes", v)}
+            placeholder="Opcional"
+            rows={2}
+          />
+        </FieldBlock>
+      </SubSection>
     </div>
   );
 }
 
 function StepRevisao({ data }: { data: FormState }) {
+  const periodo =
+    data.dataInicio && data.dataFim
+      ? `${formatDate(data.dataInicio)} a ${formatDate(data.dataFim)}`
+      : data.dataInicio
+        ? `A partir de ${formatDate(data.dataInicio)}`
+        : "";
+
+  const passageiros = [
+    data.adultos && `${data.adultos} adulto(s)`,
+    data.criancas &&
+      `${data.criancas} criança(s)${
+        data.idadesCriancas ? ` (${data.idadesCriancas})` : ""
+      }`,
+  ]
+    .filter(Boolean)
+    .join(" · ");
+
+  const orcamento =
+    data.orcamento === "Outros" && data.orcamentoOutros
+      ? `Outros — ${data.orcamentoOutros}`
+      : data.orcamento;
+
   const rows: [string, string][] = [
     ["Nome", data.nome],
     ["WhatsApp", data.whatsapp],
-    ["Duração", data.duracao],
+    ["Período da viagem", periodo],
     ["Cidade de partida", data.cidadePartida],
-    ["Viajantes", data.viajantes],
+    ["Aeroporto de partida", data.aeroportoPartida],
+    ["Passageiros", passageiros],
     ["Passagens", data.passagens],
-    ["Orçamento", data.orcamento],
+    ["Orçamento", orcamento],
     ["Viagens anteriores ao Japão", data.jaVisitou],
     ["Ritmo", data.ritmo],
     ["Hospedagem", data.hospedagem.join(", ")],
