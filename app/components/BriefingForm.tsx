@@ -10,6 +10,7 @@ const display = Bodoni_Moda({
 });
 
 type FormState = {
+  nome: string;
   whatsapp: string;
   duracao: string;
   cidadePartida: string;
@@ -33,6 +34,7 @@ type FormState = {
 };
 
 const emptyState: FormState = {
+  nome: "",
   whatsapp: "",
   duracao: "",
   cidadePartida: "",
@@ -68,6 +70,96 @@ const STEP_LABELS = [
   "Revisão",
 ];
 
+function IconViagem({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 20 20" fill="currentColor" className={className}>
+      <path d="M3.105 2.289a.75.75 0 0 0-.826.95l1.414 4.925A1.5 1.5 0 0 0 5.135 9.25h6.115a.75.75 0 0 1 0 1.5H5.135a1.5 1.5 0 0 0-1.442 1.086l-1.414 4.926a.75.75 0 0 0 .826.95 28.897 28.897 0 0 0 15.293-7.155.75.75 0 0 0 0-1.114A28.897 28.897 0 0 0 3.105 2.289Z" />
+    </svg>
+  );
+}
+
+function IconPerfil({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 20 20" fill="currentColor" className={className}>
+      <path d="M10 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM3.465 14.493a1.23 1.23 0 0 0 .41 1.412A9.957 9.957 0 0 0 10 18c2.31 0 4.438-.784 6.131-2.1.416-.323.578-.874.409-1.412a7.002 7.002 0 0 0-13.074.005Z" />
+    </svg>
+  );
+}
+
+function IconInteresses({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 20 20" fill="currentColor" className={className}>
+      <path d="M3.172 5.172a4 4 0 0 1 5.656 0L10 6.343l1.172-1.171a4 4 0 1 1 5.656 5.656L10 17.657l-6.828-6.829a4 4 0 0 1 0-5.656Z" />
+    </svg>
+  );
+}
+
+function IconAlimentacao({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.8}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      <path d="M3 2v7c0 1.1.9 2 2 2h2a2 2 0 0 0 2-2V2" />
+      <path d="M7 2v20" />
+      <path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Z" />
+      <path d="M19 15v7" />
+    </svg>
+  );
+}
+
+function IconOcasioes({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.8}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      <path d="M20 12v9H4v-9" />
+      <path d="M2 7h20v5H2z" />
+      <path d="M12 22V7" />
+      <path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7Z" />
+      <path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C9 2 12 7 12 7Z" />
+    </svg>
+  );
+}
+
+function IconRevisao({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.8}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      <rect x="8" y="2" width="8" height="4" rx="1" />
+      <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" />
+      <path d="m9 13.5 2 2 4-4.5" />
+    </svg>
+  );
+}
+
+const STEP_ICONS = [
+  IconViagem,
+  IconPerfil,
+  IconInteresses,
+  IconAlimentacao,
+  IconOcasioes,
+  IconRevisao,
+];
+
 export default function BriefingForm() {
   const [step, setStep] = useState(0);
   const [data, setData] = useState<FormState>(emptyState);
@@ -92,7 +184,8 @@ export default function BriefingForm() {
     });
   };
 
-  const canAdvanceFromStep0 = data.whatsapp.trim().length > 0;
+  const canAdvanceFromStep0 =
+    data.nome.trim().length > 0 && data.whatsapp.trim().length > 0;
 
   function goNext() {
     if (step === 0 && !canAdvanceFromStep0) return;
@@ -170,44 +263,51 @@ export default function BriefingForm() {
           <h1
             className={`${display.className} mt-3 text-3xl font-medium md:text-4xl`}
           >
-            Vamos montar seu roteiro
+            Informações para montagem de roteiro
           </h1>
           <p className="mx-auto mt-4 max-w-lg text-sm leading-7 text-white/55">
-            Quanto mais detalhes você compartilhar, mais preciso e pessoal
-            será o roteiro. Leva cerca de 5 minutos.
+            Seja o mais detalhado possível ao fornecer informações e
+            preferências, assim conseguimos montar o roteiro ideal para você
           </p>
         </div>
 
         <div className="my-10 flex items-center">
-          {STEP_LABELS.map((label, index) => (
-            <div key={label} className="flex flex-1 items-center last:flex-none">
-              <div className="flex flex-col items-center gap-2">
-                <span
-                  className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-semibold transition ${
-                    index <= step
-                      ? "bg-[#b79ce6] text-black"
-                      : "border border-white/15 text-white/40"
-                  }`}
-                >
-                  {index + 1}
-                </span>
-                <span
-                  className={`hidden text-center text-[9px] uppercase tracking-[0.15em] md:block ${
-                    index <= step ? "text-[#b79ce6]" : "text-white/30"
-                  }`}
-                >
-                  {label}
-                </span>
+          {STEP_LABELS.map((label, index) => {
+            const Icon = STEP_ICONS[index];
+            const active = index <= step;
+            return (
+              <div key={label} className="flex flex-1 items-center last:flex-none">
+                <div className="flex w-16 shrink-0 flex-col items-center gap-2 sm:w-20">
+                  <span
+                    className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-semibold transition ${
+                      active
+                        ? "bg-[#b79ce6] text-black"
+                        : "border border-white/15 text-white/40"
+                    }`}
+                  >
+                    {index + 1}
+                  </span>
+                  <span
+                    className={`hidden flex-col items-center gap-1 md:flex ${
+                      active ? "text-[#b79ce6]" : "text-white/30"
+                    }`}
+                  >
+                    <Icon className="h-3.5 w-3.5" />
+                    <span className="text-center text-[9px] uppercase tracking-[0.15em]">
+                      {label}
+                    </span>
+                  </span>
+                </div>
+                {index < totalSteps - 1 && (
+                  <span
+                    className={`mx-2 h-px flex-1 ${
+                      index < step ? "bg-[#b79ce6]/60" : "bg-white/10"
+                    }`}
+                  />
+                )}
               </div>
-              {index < totalSteps - 1 && (
-                <span
-                  className={`mx-2 h-px flex-1 ${
-                    index < step ? "bg-[#b79ce6]/60" : "bg-white/10"
-                  }`}
-                />
-              )}
-            </div>
-          ))}
+            );
+          })}
         </div>
 
         <div className="rounded-2xl border border-white/10 bg-white/[0.025] p-6 sm:rounded-[2rem] sm:p-10">
@@ -262,7 +362,7 @@ export default function BriefingForm() {
 
         {step === 0 && !canAdvanceFromStep0 && (
           <p className="mt-4 text-center text-[11px] text-white/30">
-            Preencha seu WhatsApp para continuar.
+            Preencha seu nome e WhatsApp para continuar.
           </p>
         )}
       </div>
@@ -399,6 +499,13 @@ function StepViagem({ data, set }: { data: FormState; set: SetField }) {
       <p className="text-xs uppercase tracking-[0.3em] text-[#b79ce6]">
         1 · Sobre a viagem
       </p>
+      <FieldBlock label="Nome *">
+        <TextInput
+          value={data.nome}
+          onChange={(v) => set("nome", v)}
+          placeholder="Seu nome completo"
+        />
+      </FieldBlock>
       <FieldBlock label="WhatsApp *">
         <TextInput
           value={data.whatsapp}
@@ -636,6 +743,7 @@ function StepOcasioes({ data, set }: { data: FormState; set: SetField }) {
 
 function StepRevisao({ data }: { data: FormState }) {
   const rows: [string, string][] = [
+    ["Nome", data.nome],
     ["WhatsApp", data.whatsapp],
     ["Duração", data.duracao],
     ["Cidade de partida", data.cidadePartida],
