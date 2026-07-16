@@ -31,6 +31,8 @@ type FormState = {
   prioridadesHospedagem: string[];
   bucketList: string;
   interesses: string[];
+  interesseCompras: string;
+  categoriasCompras: string[];
   evitar: string;
   restricoes: string;
   aberturaCulinaria: string;
@@ -61,6 +63,8 @@ const emptyState: FormState = {
   prioridadesHospedagem: [],
   bucketList: "",
   interesses: [],
+  interesseCompras: "",
+  categoriasCompras: [],
   evitar: "",
   restricoes: "",
   aberturaCulinaria: "",
@@ -75,6 +79,7 @@ type ArrayField =
   | "hospedagem"
   | "prioridadesHospedagem"
   | "interesses"
+  | "categoriasCompras"
   | "experienciasGastronomicas";
 type SetField = (key: keyof FormState, value: string | string[]) => void;
 type ToggleField = (key: ArrayField, value: string) => void;
@@ -439,13 +444,207 @@ function IconEsportesInverno({ className }: { className?: string }) {
   );
 }
 
+function IconArquitetura({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.6}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      <path d="M4 21V9l8-5 8 5v12" />
+      <path d="M4 21h16" />
+      <path d="M9 21v-6h6v6" />
+      <path d="M9 12h.01M15 12h.01M12 8h.01" />
+    </svg>
+  );
+}
+
+function IconMuseus({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.6}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      <path d="M3 21h18" />
+      <path d="M4 21V10M9 21V10M15 21V10M20 21V10" />
+      <path d="M2 10 12 4l10 6" />
+    </svg>
+  );
+}
+
+function IconJardins({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.6}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      <path d="M12 21V10" />
+      <path d="M12 14c-4 0-7-3-7-7 4 0 7 2 7 5" />
+      <path d="M12 11c4 0 7-3 7-7-4 0-7 2-7 5" />
+      <path d="M8 21h8" />
+    </svg>
+  );
+}
+
+function IconTrens({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.6}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      <rect x="5" y="3" width="14" height="13" rx="4" />
+      <path d="M5 11h14" />
+      <path d="M8 19l-2.5 3M16 19l2.5 3" />
+      <circle cx="9" cy="13.5" r="1" fill="currentColor" stroke="none" />
+      <circle cx="15" cy="13.5" r="1" fill="currentColor" stroke="none" />
+    </svg>
+  );
+}
+
+function IconBrecho({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.6}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      <path d="M12 3a2 2 0 1 1 2 2" />
+      <path d="M12 5v3" />
+      <path d="M12 8 3 14.5a2 2 0 0 0 1 3.7h16a2 2 0 0 0 1-3.7Z" />
+    </svg>
+  );
+}
+
+function IconMercados({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.6}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      <path d="M3 8l1.5-4h15L21 8" />
+      <path d="M4 8h16v11a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1Z" />
+      <path d="M9 20v-5a3 3 0 0 1 6 0v5" />
+    </svg>
+  );
+}
+
+function IconFotografia({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.6}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      <path d="M4 8h3l2-2h6l2 2h3a1 1 0 0 1 1 1v10a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1Z" />
+      <circle cx="12" cy="13" r="3.5" />
+    </svg>
+  );
+}
+
+function IconParqueDiversoes({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.6}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      <circle cx="12" cy="10" r="7" />
+      <circle cx="12" cy="10" r="1.1" fill="currentColor" stroke="none" />
+      <path d="M12 3v14M5 10h14M7.05 5.05l9.9 9.9M16.95 5.05l-9.9 9.9" />
+      <path d="M12 17v4M9 21h6" />
+    </svg>
+  );
+}
+
+function IconAnimeManga({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.6}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      <path d="M4 4h11a3 3 0 0 1 3 3v13H7a3 3 0 0 1-3-3Z" />
+      <path d="M7 4v17" />
+      <path d="M11 8.5l1 2 2.2.3-1.6 1.5.4 2.2-2-1-2 1 .4-2.2-1.6-1.5 2.2-.3Z" />
+    </svg>
+  );
+}
+
+function IconGames({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.6}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      <rect x="2" y="8" width="20" height="10" rx="5" />
+      <path d="M7 11v4M5 13h4" />
+      <path d="M16.5 12.2h.01M18.5 14.2h.01" />
+    </svg>
+  );
+}
+
 const INTEREST_OPTIONS = [
   { label: "Gastronomia", Icon: IconGastronomia },
   { label: "Cultura e história", Icon: IconCultura },
+  { label: "Arquitetura", Icon: IconArquitetura },
+  { label: "Museus", Icon: IconMuseus },
+  { label: "Jardins japoneses", Icon: IconJardins },
   { label: "Natureza e onsen", Icon: IconOnsen },
+  { label: "Trens e ferrovias", Icon: IconTrens },
   { label: "Compras", Icon: IconCompras },
+  { label: "Brechó e vintage", Icon: IconBrecho },
+  { label: "Mercados locais", Icon: IconMercados },
   { label: "Arte e design", Icon: IconArte },
+  { label: "Fotografia", Icon: IconFotografia },
   { label: "Cultura pop", Icon: IconCulturaPop },
+  { label: "Anime e mangá", Icon: IconAnimeManga },
+  { label: "Games", Icon: IconGames },
+  { label: "Parques de diversão", Icon: IconParqueDiversoes },
   { label: "Vida noturna", Icon: IconVidaNoturna },
   { label: "Bem-estar", Icon: IconBemEstar },
   { label: "Esportes de inverno", Icon: IconEsportesInverno },
@@ -638,22 +837,29 @@ export default function BriefingForm() {
         <div className="my-6 flex items-center">
           {STEP_LABELS.map((label, index) => {
             const Icon = STEP_ICONS[index];
-            const active = index <= step;
+            const isCompleted = index < step;
+            const isCurrent = index === step;
             return (
               <div key={label} className="flex flex-1 items-center last:flex-none">
                 <div className="flex w-16 shrink-0 flex-col items-center gap-2 sm:w-20">
                   <span
                     className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-semibold transition ${
-                      active
-                        ? "bg-[#b79ce6] text-black"
-                        : "border border-white/15 text-white/40"
+                      isCurrent
+                        ? "scale-110 bg-black text-[#b79ce6] ring-2 ring-[#b79ce6]"
+                        : isCompleted
+                          ? "bg-[#b79ce6] text-black"
+                          : "border border-white/15 text-white/40"
                     }`}
                   >
                     {index + 1}
                   </span>
                   <span
                     className={`hidden h-12 flex-col items-center gap-1 md:flex ${
-                      active ? "text-[#b79ce6]" : "text-white/30"
+                      isCurrent
+                        ? "font-semibold text-[#b79ce6]"
+                        : isCompleted
+                          ? "text-[#b79ce6]/60"
+                          : "text-white/30"
                     }`}
                   >
                     <Icon className="h-5 w-5 shrink-0" />
@@ -1389,6 +1595,46 @@ function StepInteresses({
         </FieldBlock>
       </SubSection>
 
+      <SubSection title="Compras">
+        <FieldBlock
+          label="Têm interesse em fazer compras durante a viagem?"
+          hint="Define se incluímos tempo e sugestões de compras no roteiro."
+          complete={hasText(data.interesseCompras)}
+        >
+          <ChoiceGroup
+            options={["Sim", "Não"]}
+            value={data.interesseCompras}
+            onChange={(v) => set("interesseCompras", v)}
+          />
+        </FieldBlock>
+        {data.interesseCompras === "Sim" && (
+          <FieldBlock
+            label="Categorias de interesse"
+            hint="Ajuda a sugerir lojas e regiões certas para cada tipo de compra."
+            complete={hasItems(data.categoriasCompras)}
+          >
+            <MultiChoiceGroup
+              options={[
+                "Luxo",
+                "Moda",
+                "Eletrônicos",
+                "Relógios",
+                "Cosméticos",
+                "TCG",
+                "Facas",
+                "Papelaria",
+                "Doces e snacks",
+                "Sneakers",
+                "Artesanato e cerâmica",
+                "Sem preferência",
+              ]}
+              values={data.categoriasCompras}
+              onToggle={(v) => toggle("categoriasCompras", v)}
+            />
+          </FieldBlock>
+        )}
+      </SubSection>
+
       <SubSection title="Preferências">
         <FieldBlock
           label="O que preferem evitar?"
@@ -1468,6 +1714,7 @@ function StepAlimentacao({
               "Kaiseki",
               "Restaurante estrela Michelin",
               "Izakaya local",
+              "Comida de rua / street food",
               "Yakitori",
               "Sushi tradicional",
               "Tempura",
@@ -1608,6 +1855,8 @@ function StepRevisao({ data }: { data: FormState }) {
     ["Hospedagem", data.hospedagem.join(", ")],
     ["Prioridades na hospedagem", data.prioridadesHospedagem.join(", ")],
     ["Interesses", data.interesses.join(", ")],
+    ["Interesse em compras", data.interesseCompras],
+    ["Categorias de compras", data.categoriasCompras.join(", ")],
     ["Restrições alimentares", data.restricoes],
     [
       "Experiências gastronômicas",
