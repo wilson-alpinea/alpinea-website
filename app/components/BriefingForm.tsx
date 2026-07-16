@@ -931,7 +931,7 @@ function ChoiceGroup({
   );
 }
 
-type InterestOption = { label: string; Icon: (props: { className?: string }) => JSX.Element };
+type InterestOption = { label: string; Icon: (props: { className?: string }) => ReactNode };
 
 function IllustratedMultiChoiceGroup({
   options,
