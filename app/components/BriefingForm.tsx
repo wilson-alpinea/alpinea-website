@@ -452,12 +452,12 @@ export default function BriefingForm() {
                     {index + 1}
                   </span>
                   <span
-                    className={`hidden flex-col items-center gap-1 md:flex ${
+                    className={`hidden h-12 flex-col items-center gap-1 md:flex ${
                       active ? "text-[#b79ce6]" : "text-white/30"
                     }`}
                   >
-                    <Icon className="h-5 w-5" />
-                    <span className="text-center text-[9px] uppercase tracking-[0.15em]">
+                    <Icon className="h-5 w-5 shrink-0" />
+                    <span className="text-center text-[9px] uppercase leading-tight tracking-[0.15em]">
                       {label}
                     </span>
                   </span>
