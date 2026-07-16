@@ -1005,7 +1005,7 @@ function FieldBlock({
   children: ReactNode;
 }) {
   return (
-    <div>
+    <div className="min-w-0">
       <div className="mb-2 flex items-center gap-1.5">
         <label className="block text-[11px] uppercase tracking-[0.25em] text-white/35">
           {label}
@@ -1072,7 +1072,8 @@ function DateInput({
       onBlur={onBlur}
       min={min}
       max={max}
-      className="w-full rounded-xl border border-white/15 bg-black px-4 py-3 text-sm text-white outline-none transition [color-scheme:dark] focus:border-[#b79ce6]/60"
+      className="w-full min-w-0 max-w-full rounded-xl border border-white/15 bg-black px-4 py-3 text-sm text-white outline-none transition [color-scheme:dark] focus:border-[#b79ce6]/60"
+      style={{ boxSizing: "border-box" }}
     />
   );
 }
@@ -1305,7 +1306,9 @@ function StepViagem({
               onChange={(v) => {
                 set("dataInicio", v);
                 if (data.dataFim && v && data.dataFim < v) {
-                  set("dataFim", "");
+                  set("dataFim", v);
+                } else if (!data.dataFim && v) {
+                  set("dataFim", v);
                 }
               }}
               onFocus={() => setActiveField("dataInicio")}
