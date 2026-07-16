@@ -72,6 +72,8 @@ const emptyState: FormState = {
 type ArrayField = "hospedagem" | "interesses" | "experienciasGastronomicas";
 type SetField = (key: keyof FormState, value: string | string[]) => void;
 type ToggleField = (key: ArrayField, value: string) => void;
+type ActiveField = keyof FormState | null;
+type SetActiveField = (key: ActiveField) => void;
 
 function hasText(v: string) {
   return v.trim().length > 0;
@@ -266,6 +268,7 @@ export default function BriefingForm() {
   >("idle");
   const [error, setError] = useState("");
   const [savedMessage, setSavedMessage] = useState(false);
+  const [activeField, setActiveField] = useState<keyof FormState | null>(null);
   const hydrated = useRef(false);
 
   const totalSteps = STEP_LABELS.length;
@@ -474,15 +477,49 @@ export default function BriefingForm() {
         </div>
 
         <div className="rounded-2xl border border-white/10 bg-white/[0.025] p-6 sm:rounded-[2rem] sm:p-10">
-          {step === 0 && <StepViagem data={data} set={set} />}
-          {step === 1 && <StepPerfil data={data} set={set} toggle={toggle} />}
+          {step === 0 && (
+            <StepViagem
+              data={data}
+              set={set}
+              activeField={activeField}
+              setActiveField={setActiveField}
+            />
+          )}
+          {step === 1 && (
+            <StepPerfil
+              data={data}
+              set={set}
+              toggle={toggle}
+              activeField={activeField}
+              setActiveField={setActiveField}
+            />
+          )}
           {step === 2 && (
-            <StepInteresses data={data} set={set} toggle={toggle} />
+            <StepInteresses
+              data={data}
+              set={set}
+              toggle={toggle}
+              activeField={activeField}
+              setActiveField={setActiveField}
+            />
           )}
           {step === 3 && (
-            <StepAlimentacao data={data} set={set} toggle={toggle} />
+            <StepAlimentacao
+              data={data}
+              set={set}
+              toggle={toggle}
+              activeField={activeField}
+              setActiveField={setActiveField}
+            />
           )}
-          {step === 4 && <StepOcasioes data={data} set={set} />}
+          {step === 4 && (
+            <StepOcasioes
+              data={data}
+              set={set}
+              activeField={activeField}
+              setActiveField={setActiveField}
+            />
+          )}
           {step === 5 && <StepRevisao data={data} />}
 
           {status === "error" && (
@@ -583,16 +620,22 @@ function TextInput({
   value,
   onChange,
   placeholder,
+  onFocus,
+  onBlur,
 }: {
   value: string;
   onChange: (v: string) => void;
   placeholder?: string;
+  onFocus?: () => void;
+  onBlur?: () => void;
 }) {
   return (
     <input
       type="text"
       value={value}
       onChange={(e) => onChange(e.target.value)}
+      onFocus={onFocus}
+      onBlur={onBlur}
       placeholder={placeholder}
       className="w-full rounded-xl border border-white/15 bg-black px-4 py-3 text-sm text-white placeholder:text-white/25 outline-none transition focus:border-[#b79ce6]/60"
     />
@@ -602,15 +645,21 @@ function TextInput({
 function DateInput({
   value,
   onChange,
+  onFocus,
+  onBlur,
 }: {
   value: string;
   onChange: (v: string) => void;
+  onFocus?: () => void;
+  onBlur?: () => void;
 }) {
   return (
     <input
       type="date"
       value={value}
       onChange={(e) => onChange(e.target.value)}
+      onFocus={onFocus}
+      onBlur={onBlur}
       className="w-full rounded-xl border border-white/15 bg-black px-4 py-3 text-sm text-white outline-none transition [color-scheme:dark] focus:border-[#b79ce6]/60"
     />
   );
@@ -621,16 +670,22 @@ function TextArea({
   onChange,
   placeholder,
   rows = 3,
+  onFocus,
+  onBlur,
 }: {
   value: string;
   onChange: (v: string) => void;
   placeholder?: string;
   rows?: number;
+  onFocus?: () => void;
+  onBlur?: () => void;
 }) {
   return (
     <textarea
       value={value}
       onChange={(e) => onChange(e.target.value)}
+      onFocus={onFocus}
+      onBlur={onBlur}
       placeholder={placeholder}
       rows={rows}
       className="w-full resize-none rounded-xl border border-white/15 bg-black px-4 py-3 text-sm text-white placeholder:text-white/25 outline-none transition focus:border-[#b79ce6]/60"
@@ -741,7 +796,17 @@ function BudgetChoiceGroup({
   );
 }
 
-function StepViagem({ data, set }: { data: FormState; set: SetField }) {
+function StepViagem({
+  data,
+  set,
+  activeField,
+  setActiveField,
+}: {
+  data: FormState;
+  set: SetField;
+  activeField: ActiveField;
+  setActiveField: SetActiveField;
+}) {
   return (
     <div className="space-y-8">
       <p className="text-xs uppercase tracking-[0.3em] text-[#b79ce6]">
@@ -752,22 +817,26 @@ function StepViagem({ data, set }: { data: FormState; set: SetField }) {
         <FieldBlock
           label="Nome *"
           hint="Para personalizarmos o atendimento e o roteiro."
-          complete={hasText(data.nome)}
+          complete={hasText(data.nome) && activeField !== "nome"}
         >
           <TextInput
             value={data.nome}
             onChange={(v) => set("nome", v)}
+            onFocus={() => setActiveField("nome")}
+            onBlur={() => setActiveField(null)}
             placeholder="Seu nome completo"
           />
         </FieldBlock>
         <FieldBlock
           label="WhatsApp *"
           hint="Principal canal de contato durante o processo."
-          complete={hasText(data.whatsapp)}
+          complete={hasText(data.whatsapp) && activeField !== "whatsapp"}
         >
           <TextInput
             value={data.whatsapp}
             onChange={(v) => set("whatsapp", v)}
+            onFocus={() => setActiveField("whatsapp")}
+            onBlur={() => setActiveField(null)}
             placeholder="(11) 90000-0000"
           />
         </FieldBlock>
@@ -778,21 +847,25 @@ function StepViagem({ data, set }: { data: FormState; set: SetField }) {
           <FieldBlock
             label="Data de início"
             hint="Define o período exato da viagem."
-            complete={hasText(data.dataInicio)}
+            complete={hasText(data.dataInicio) && activeField !== "dataInicio"}
           >
             <DateInput
               value={data.dataInicio}
               onChange={(v) => set("dataInicio", v)}
+              onFocus={() => setActiveField("dataInicio")}
+              onBlur={() => setActiveField(null)}
             />
           </FieldBlock>
           <FieldBlock
             label="Data de término"
             hint="Usamos para calcular a duração total."
-            complete={hasText(data.dataFim)}
+            complete={hasText(data.dataFim) && activeField !== "dataFim"}
           >
             <DateInput
               value={data.dataFim}
               onChange={(v) => set("dataFim", v)}
+              onFocus={() => setActiveField("dataFim")}
+              onBlur={() => setActiveField(null)}
             />
           </FieldBlock>
         </div>
@@ -800,22 +873,26 @@ function StepViagem({ data, set }: { data: FormState; set: SetField }) {
           <FieldBlock
             label="Cidade de partida"
             hint="Ajuda a definir rotas e horários de voo."
-            complete={hasText(data.cidadePartida)}
+            complete={hasText(data.cidadePartida) && activeField !== "cidadePartida"}
           >
             <TextInput
               value={data.cidadePartida}
               onChange={(v) => set("cidadePartida", v)}
+              onFocus={() => setActiveField("cidadePartida")}
+              onBlur={() => setActiveField(null)}
               placeholder="Ex: São Paulo"
             />
           </FieldBlock>
           <FieldBlock
             label="Aeroporto de partida"
             hint="Ex: GRU, CGH ou VCP, em São Paulo."
-            complete={hasText(data.aeroportoPartida)}
+            complete={hasText(data.aeroportoPartida) && activeField !== "aeroportoPartida"}
           >
             <TextInput
               value={data.aeroportoPartida}
               onChange={(v) => set("aeroportoPartida", v)}
+              onFocus={() => setActiveField("aeroportoPartida")}
+              onBlur={() => setActiveField(null)}
               placeholder="Ex: GRU"
             />
           </FieldBlock>
@@ -824,22 +901,26 @@ function StepViagem({ data, set }: { data: FormState; set: SetField }) {
           <FieldBlock
             label="Quantos adultos"
             hint="Define quartos e vagas necessárias."
-            complete={hasText(data.adultos)}
+            complete={hasText(data.adultos) && activeField !== "adultos"}
           >
             <TextInput
               value={data.adultos}
               onChange={(v) => set("adultos", v)}
+              onFocus={() => setActiveField("adultos")}
+              onBlur={() => setActiveField(null)}
               placeholder="Ex: 2"
             />
           </FieldBlock>
           <FieldBlock
             label="Quantas crianças"
             hint="Ajuda a ajustar atividades e hospedagem."
-            complete={hasText(data.criancas)}
+            complete={hasText(data.criancas) && activeField !== "criancas"}
           >
             <TextInput
               value={data.criancas}
               onChange={(v) => set("criancas", v)}
+              onFocus={() => setActiveField("criancas")}
+              onBlur={() => setActiveField(null)}
               placeholder="Ex: 1"
             />
           </FieldBlock>
@@ -847,11 +928,13 @@ function StepViagem({ data, set }: { data: FormState; set: SetField }) {
         <FieldBlock
           label="Idade das crianças"
           hint="Necessário apenas se houver crianças na viagem."
-          complete={hasText(data.idadesCriancas)}
+          complete={hasText(data.idadesCriancas) && activeField !== "idadesCriancas"}
         >
           <TextInput
             value={data.idadesCriancas}
             onChange={(v) => set("idadesCriancas", v)}
+            onFocus={() => setActiveField("idadesCriancas")}
+            onBlur={() => setActiveField(null)}
             placeholder="Ex: 5 e 8 anos"
           />
         </FieldBlock>
@@ -886,11 +969,13 @@ function StepViagem({ data, set }: { data: FormState; set: SetField }) {
           <FieldBlock
             label="Descreva o padrão de hospedagem que imagina"
             hint="Descreva o padrão de hospedagem que você tem em mente."
-            complete={hasText(data.orcamentoOutros)}
+            complete={hasText(data.orcamentoOutros) && activeField !== "orcamentoOutros"}
           >
             <TextArea
               value={data.orcamentoOutros}
               onChange={(v) => set("orcamentoOutros", v)}
+              onFocus={() => setActiveField("orcamentoOutros")}
+              onBlur={() => setActiveField(null)}
               placeholder="Ex: hotéis boutique, entre 4 e 5 estrelas"
               rows={2}
             />
@@ -905,10 +990,14 @@ function StepPerfil({
   data,
   set,
   toggle,
+  activeField,
+  setActiveField,
 }: {
   data: FormState;
   set: SetField;
   toggle: ToggleField;
+  activeField: ActiveField;
+  setActiveField: SetActiveField;
 }) {
   return (
     <div className="space-y-8">
@@ -920,11 +1009,13 @@ function StepPerfil({
         <FieldBlock
           label="Já visitou o Japão antes? Se sim, quais lugares?"
           hint="Evita repetir lugares já conhecidos."
-          complete={hasText(data.jaVisitou)}
+          complete={hasText(data.jaVisitou) && activeField !== "jaVisitou"}
         >
           <TextArea
             value={data.jaVisitou}
             onChange={(v) => set("jaVisitou", v)}
+            onFocus={() => setActiveField("jaVisitou")}
+            onBlur={() => setActiveField(null)}
             placeholder="Ex: primeira vez, ou 'já fomos a Tokyo e Osaka em 2023'"
             rows={2}
           />
@@ -946,11 +1037,13 @@ function StepPerfil({
         <FieldBlock
           label="Mobilidade física ou alguma limitação"
           hint="Garante um roteiro confortável para todos."
-          complete={hasText(data.mobilidade)}
+          complete={hasText(data.mobilidade) && activeField !== "mobilidade"}
         >
           <TextArea
             value={data.mobilidade}
             onChange={(v) => set("mobilidade", v)}
+            onFocus={() => setActiveField("mobilidade")}
+            onBlur={() => setActiveField(null)}
             placeholder="Ex: dificuldade com escadas, uso de cadeira de rodas, caminhadas longas..."
             rows={2}
           />
@@ -978,10 +1071,14 @@ function StepInteresses({
   data,
   set,
   toggle,
+  activeField,
+  setActiveField,
 }: {
   data: FormState;
   set: SetField;
   toggle: ToggleField;
+  activeField: ActiveField;
+  setActiveField: SetActiveField;
 }) {
   return (
     <div className="space-y-8">
@@ -993,11 +1090,13 @@ function StepInteresses({
         <FieldBlock
           label="O que não pode faltar nessa viagem?"
           hint="Prioridades garantidas no roteiro final."
-          complete={hasText(data.bucketList)}
+          complete={hasText(data.bucketList) && activeField !== "bucketList"}
         >
           <TextArea
             value={data.bucketList}
             onChange={(v) => set("bucketList", v)}
+            onFocus={() => setActiveField("bucketList")}
+            onBlur={() => setActiveField(null)}
             placeholder="Lugares, experiências ou coisas que fazem parte do sonho dessa viagem"
             rows={3}
           />
@@ -1032,11 +1131,13 @@ function StepInteresses({
         <FieldBlock
           label="O que preferem evitar?"
           hint="Evita desconfortos durante a viagem."
-          complete={hasText(data.evitar)}
+          complete={hasText(data.evitar) && activeField !== "evitar"}
         >
           <TextArea
             value={data.evitar}
             onChange={(v) => set("evitar", v)}
+            onFocus={() => setActiveField("evitar")}
+            onBlur={() => setActiveField(null)}
             placeholder="Ex: lugares muito turísticos, filas longas, determinado tipo de comida..."
             rows={2}
           />
@@ -1050,10 +1151,14 @@ function StepAlimentacao({
   data,
   set,
   toggle,
+  activeField,
+  setActiveField,
 }: {
   data: FormState;
   set: SetField;
   toggle: ToggleField;
+  activeField: ActiveField;
+  setActiveField: SetActiveField;
 }) {
   return (
     <div className="space-y-8">
@@ -1065,11 +1170,13 @@ function StepAlimentacao({
         <FieldBlock
           label="Restrições alimentares ou alergias"
           hint="Garante segurança nos restaurantes selecionados."
-          complete={hasText(data.restricoes)}
+          complete={hasText(data.restricoes) && activeField !== "restricoes"}
         >
           <TextArea
             value={data.restricoes}
             onChange={(v) => set("restricoes", v)}
+            onFocus={() => setActiveField("restricoes")}
+            onBlur={() => setActiveField(null)}
             placeholder="Ex: vegetariano, alergia a frutos do mar, sem lactose..."
             rows={2}
           />
@@ -1104,7 +1211,17 @@ function StepAlimentacao({
   );
 }
 
-function StepOcasioes({ data, set }: { data: FormState; set: SetField }) {
+function StepOcasioes({
+  data,
+  set,
+  activeField,
+  setActiveField,
+}: {
+  data: FormState;
+  set: SetField;
+  activeField: ActiveField;
+  setActiveField: SetActiveField;
+}) {
   return (
     <div className="space-y-8">
       <p className="text-xs uppercase tracking-[0.3em] text-[#b79ce6]">
@@ -1115,11 +1232,13 @@ function StepOcasioes({ data, set }: { data: FormState; set: SetField }) {
         <FieldBlock
           label="Alguma ocasião especial durante a viagem?"
           hint="Permite planejar surpresas e comemorações."
-          complete={hasText(data.ocasiaoEspecial)}
+          complete={hasText(data.ocasiaoEspecial) && activeField !== "ocasiaoEspecial"}
         >
           <TextArea
             value={data.ocasiaoEspecial}
             onChange={(v) => set("ocasiaoEspecial", v)}
+            onFocus={() => setActiveField("ocasiaoEspecial")}
+            onBlur={() => setActiveField(null)}
             placeholder="Ex: lua de mel, aniversário, comemoração..."
             rows={2}
           />
@@ -1144,11 +1263,13 @@ function StepOcasioes({ data, set }: { data: FormState; set: SetField }) {
         <FieldBlock
           label="Alguma experiência ruim em viagens anteriores que queiram evitar?"
           hint="Evita repetir problemas de viagens anteriores."
-          complete={hasText(data.experienciaRuim)}
+          complete={hasText(data.experienciaRuim) && activeField !== "experienciaRuim"}
         >
           <TextArea
             value={data.experienciaRuim}
             onChange={(v) => set("experienciaRuim", v)}
+            onFocus={() => setActiveField("experienciaRuim")}
+            onBlur={() => setActiveField(null)}
             placeholder="Opcional"
             rows={2}
           />
@@ -1156,11 +1277,13 @@ function StepOcasioes({ data, set }: { data: FormState; set: SetField }) {
         <FieldBlock
           label="Algo mais que devemos saber?"
           hint="Qualquer detalhe adicional que julgar importante."
-          complete={hasText(data.observacoes)}
+          complete={hasText(data.observacoes) && activeField !== "observacoes"}
         >
           <TextArea
             value={data.observacoes}
             onChange={(v) => set("observacoes", v)}
+            onFocus={() => setActiveField("observacoes")}
+            onBlur={() => setActiveField(null)}
             placeholder="Opcional"
             rows={2}
           />
