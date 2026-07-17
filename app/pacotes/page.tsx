@@ -39,7 +39,7 @@ export default function PacotesJapaoPage() {
         "Hotéis bem localizados, próximos às estações",
         "Ideal para a primeira viagem ao Japão",
       ],
-      precoDe: "R$ 9.490",
+      precoDe: "R$ 10.690",
       accent: "#5b9bd5",
       imagem: "/images/maiko.png",
       imagemAlt: "Gueixa em rua tradicional durante festival de lanternas, Japão",
@@ -58,7 +58,7 @@ export default function PacotesJapaoPage() {
         "Hospedagem em regiões com boa vista da florada",
         "Datas de alta procura — reserva antecipada recomendada",
       ],
-      precoDe: "R$ 10.990",
+      precoDe: "R$ 13.490",
       accent: "#e6a6c7",
       imagem: "/images/sakura.jpg",
       imagemAlt: "Torre de Tóquio entre flores de cerejeira (sakura) à noite",
@@ -77,7 +77,7 @@ export default function PacotesJapaoPage() {
         "Clima ameno, ótimo para caminhadas",
         "Menor fluxo turístico que a primavera",
       ],
-      precoDe: "R$ 9.990",
+      precoDe: "R$ 11.790",
       accent: "#d9a66d",
       imagem: "/images/autumn.jpg",
       imagemAlt: "Monte Fuji nevado emoldurado por folhagens vermelhas de outono",
@@ -96,7 +96,7 @@ export default function PacotesJapaoPage() {
         "Roteiro equilibrado entre parques e cultura local",
         "Ótimo para famílias e grupos",
       ],
-      precoDe: "R$ 11.490",
+      precoDe: "R$ 13.290",
       accent: "#7c4fd1",
       imagem: "/images/usj.jpg",
       imagemAlt: "Atração temática na Universal Studios Japan, em Osaka",
@@ -115,7 +115,7 @@ export default function PacotesJapaoPage() {
         "Hospedagem próxima ao trajeto e à largada",
         "Roteiro turístico complementar nos demais dias",
       ],
-      precoDe: "R$ 12.990",
+      precoDe: "R$ 14.690",
       accent: "#6ec3d9",
       imagem: "/images/tokyo-marathon.png",
       imagemAlt: "Logo oficial da Tokyo Marathon",
@@ -386,17 +386,6 @@ export default function PacotesJapaoPage() {
         </a>
       </section>
 
-      {/* ── CHAMADA ── */}
-      <section className="bg-black px-6 py-10 md:px-16 md:py-24">
-        <div className="mx-auto max-w-4xl text-center">
-          <h2
-            className={`${display.className} text-[2rem] font-medium leading-[1.15] text-white md:text-4xl md:leading-snug`}
-          >
-            Escolha o pacote e deixe o resto conosco!
-          </h2>
-        </div>
-      </section>
-
       {/* ── PACOTES ── */}
       <section
         id="pacotes"
@@ -426,19 +415,6 @@ export default function PacotesJapaoPage() {
                   {!pacote.imagemFundoClaro && (
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent" />
                   )}
-                  <div
-                    className="absolute left-4 top-4 flex items-center gap-1.5 rounded-full border px-3 py-1 text-[9px] uppercase tracking-[0.2em] backdrop-blur-md"
-                    style={{
-                      borderColor: `${pacote.accent}55`,
-                      backgroundColor: pacote.imagemFundoClaro
-                        ? "#00000010"
-                        : `${pacote.accent}22`,
-                      color: pacote.imagemFundoClaro ? "#333333" : pacote.accent,
-                    }}
-                  >
-                    <pacote.Icon className="h-3 w-3" />
-                    {pacote.categoria}
-                  </div>
                 </div>
 
                 <div className="flex flex-1 flex-col p-6">
@@ -493,7 +469,7 @@ export default function PacotesJapaoPage() {
                       whatsappNumber="5511930300101"
                       brand="Ajisai"
                       label={`Consultar ${pacote.nome}`}
-                      buttonClassName="mt-5 flex w-full items-center justify-center rounded-full px-5 py-3 text-center text-[11px] font-medium uppercase tracking-[0.2em] text-white transition"
+                      buttonClassName="mt-5 flex w-full items-center justify-center rounded-full bg-[#7c4fd1] px-5 py-3.5 text-center text-[11px] font-semibold uppercase tracking-[0.2em] text-white shadow-[0_10px_30px_rgba(124,79,209,0.35)] transition duration-300 hover:-translate-y-0.5 hover:bg-[#6c40c0] hover:shadow-[0_14px_36px_rgba(124,79,209,0.5)]"
                     />
                   </div>
                 </div>
@@ -783,25 +759,6 @@ export default function PacotesJapaoPage() {
             ))}
           </div>
         </div>
-      </section>
-
-      {/* ── PONTE ── */}
-      <section className="relative flex min-h-[380px] items-center overflow-hidden border-t border-white/10 px-8 py-24 md:min-h-[560px] md:px-16 md:py-40">
-        <Image
-          src="/images/shirakawago.jpg"
-          alt="Vilarejo histórico de Shirakawa-go entre montanhas verdes"
-          fill
-          sizes="100vw"
-          className="object-cover object-center"
-        />
-        <div className="absolute inset-0 bg-black/65" />
-
-        <p
-          className={`${display.className} relative z-10 mx-auto max-w-3xl text-center text-2xl italic font-light leading-snug text-white/90 md:text-4xl`}
-        >
-          "Um pacote completo, pensado para quem quer viajar tranquilo — sem
-          abrir mão da curadoria Ajisai."
-        </p>
       </section>
 
       {/* ── CONTATO ── */}
