@@ -41,7 +41,8 @@ export default function PacotesJapaoPage() {
       ],
       precoDe: "R$ 9.490",
       accent: "#5b9bd5",
-      imagem: "/images/pacotes/japao-classico.jpg",
+      imagem: "/images/maiko.png",
+      imagemAlt: "Gueixa em rua tradicional durante festival de lanternas, Japão",
       Icon: IconPin,
     },
     {
@@ -59,7 +60,8 @@ export default function PacotesJapaoPage() {
       ],
       precoDe: "R$ 10.990",
       accent: "#e6a6c7",
-      imagem: "/images/pacotes/japao-sakura.jpg",
+      imagem: "/images/sakura.jpg",
+      imagemAlt: "Torre de Tóquio entre flores de cerejeira (sakura) à noite",
       Icon: IconFlower,
     },
     {
@@ -77,7 +79,8 @@ export default function PacotesJapaoPage() {
       ],
       precoDe: "R$ 9.990",
       accent: "#d9a66d",
-      imagem: "/images/pacotes/japao-outono.jpg",
+      imagem: "/images/autumn.jpg",
+      imagemAlt: "Monte Fuji nevado emoldurado por folhagens vermelhas de outono",
       Icon: IconLeaf,
     },
     {
@@ -95,7 +98,8 @@ export default function PacotesJapaoPage() {
       ],
       precoDe: "R$ 11.490",
       accent: "#7c4fd1",
-      imagem: "/images/pacotes/japao-disney-usj.jpg",
+      imagem: "/images/usj.jpg",
+      imagemAlt: "Atração temática na Universal Studios Japan, em Osaka",
       Icon: IconTicket,
     },
     {
@@ -113,7 +117,9 @@ export default function PacotesJapaoPage() {
       ],
       precoDe: "R$ 12.990",
       accent: "#6ec3d9",
-      imagem: "/images/pacotes/maratona-tokyo-2027.jpg",
+      imagem: "/images/tokyo-marathon.png",
+      imagemAlt: "Logo oficial da Tokyo Marathon",
+      imagemFundoClaro: true,
       Icon: IconMedal,
     },
   ];
@@ -193,8 +199,8 @@ export default function PacotesJapaoPage() {
     },
     {
       number: "02",
-      title: "Reserva com sinal",
-      lines: ["Confirmação da reserva com pagamento do sinal."],
+      title: "Reserva com primeira parcela",
+      lines: ["Confirmação da reserva com pagamento da primeira parcela."],
       Icon: IconCard,
     },
     {
@@ -270,7 +276,7 @@ export default function PacotesJapaoPage() {
     {
       pergunta: "Posso parcelar o pagamento?",
       resposta:
-        "Sim. O pacote é reservado com um sinal e o restante é pago em etapas até a data da viagem, conforme condições apresentadas no fechamento da proposta.",
+        "Sim. O pacote é reservado com o pagamento da primeira parcela e o restante é pago em etapas até a data da viagem, conforme condições apresentadas no fechamento da proposta.",
     },
     {
       pergunta: "Preciso de visto para viajar ao Japão?",
@@ -354,20 +360,8 @@ export default function PacotesJapaoPage() {
             Pacotes completos para o Japão, prontos para reservar
           </h1>
           <p className="mx-auto mt-5 max-w-md text-sm font-light leading-6 text-white/65 md:max-w-2xl md:text-lg md:leading-8">
-            Hotel, passagem aérea, seguro viagem e Wi-Fi já inclusos. Guia
-            turístico e transfer, se quiser, ficam por nossa conta também.
+            Hotel, passagem aérea, seguro viagem e Wi-Fi já inclusos.
           </p>
-
-          <div className="mx-auto mt-7 flex max-w-full flex-nowrap items-center justify-center gap-1.5 px-1 md:mt-10 md:max-w-4xl md:flex-wrap md:gap-4">
-            {["7 dias", "10 dias", "12 dias", "15 dias"].map((d) => (
-              <span
-                key={d}
-                className="shrink-0 cursor-default rounded-full border border-white/25 bg-black/20 px-2.5 py-1.5 text-[9px] uppercase tracking-[0.1em] text-white/75 backdrop-blur-sm transition-colors duration-300 hover:border-white hover:bg-white hover:text-black md:px-6 md:py-3 md:text-sm md:tracking-[0.22em]"
-              >
-                {d}
-              </span>
-            ))}
-          </div>
         </div>
 
         <a
@@ -398,8 +392,7 @@ export default function PacotesJapaoPage() {
           <h2
             className={`${display.className} text-[2rem] font-medium leading-[1.15] text-white md:text-4xl md:leading-snug`}
           >
-            Cinco roteiros prontos, com a curadoria Ajisai. Escolha o seu e
-            deixe o resto com a gente.
+            Escolha o pacote e deixe o resto conosco!
           </h2>
         </div>
       </section>
@@ -416,21 +409,31 @@ export default function PacotesJapaoPage() {
                 key={pacote.slug}
                 className="flex flex-col overflow-hidden rounded-2xl border border-white/10 bg-white/[0.025] sm:rounded-[2rem]"
               >
-                <div className="relative h-[200px] overflow-hidden">
+                <div
+                  className={`relative h-[200px] overflow-hidden ${pacote.imagemFundoClaro ? "bg-white" : ""}`}
+                >
                   <Image
                     src={pacote.imagem}
-                    alt={pacote.nome}
+                    alt={pacote.imagemAlt ?? pacote.nome}
                     fill
                     sizes="(max-width: 768px) 100vw, 33vw"
-                    className="object-cover"
+                    className={
+                      pacote.imagemFundoClaro
+                        ? "object-contain p-10"
+                        : "object-cover"
+                    }
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent" />
+                  {!pacote.imagemFundoClaro && (
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent" />
+                  )}
                   <div
                     className="absolute left-4 top-4 flex items-center gap-1.5 rounded-full border px-3 py-1 text-[9px] uppercase tracking-[0.2em] backdrop-blur-md"
                     style={{
                       borderColor: `${pacote.accent}55`,
-                      backgroundColor: `${pacote.accent}22`,
-                      color: pacote.accent,
+                      backgroundColor: pacote.imagemFundoClaro
+                        ? "#00000010"
+                        : `${pacote.accent}22`,
+                      color: pacote.imagemFundoClaro ? "#333333" : pacote.accent,
                     }}
                   >
                     <pacote.Icon className="h-3 w-3" />
@@ -518,14 +521,24 @@ export default function PacotesJapaoPage() {
             {inclusoes.map((item) => (
               <div
                 key={item.title}
-                className="relative rounded-2xl border border-white/10 bg-white/[0.03] p-5 transition hover:border-white/20 sm:p-8"
+                className={`relative rounded-2xl border p-5 transition sm:p-8 ${
+                  item.opcional
+                    ? "border-[#b79ce6]/40 bg-[#b79ce6]/[0.08] hover:border-[#b79ce6]/70"
+                    : "border-white/10 bg-white/[0.03] hover:border-white/20"
+                }`}
               >
                 {item.opcional && (
-                  <span className="absolute right-4 top-4 rounded-full border border-white/20 px-2.5 py-0.5 text-[9px] uppercase tracking-[0.15em] text-white/45">
+                  <span className="absolute right-4 top-4 rounded-full bg-[#b79ce6] px-2.5 py-1 text-[9px] font-semibold uppercase tracking-[0.15em] text-black">
                     Opcional
                   </span>
                 )}
-                <span className="mb-4 flex h-10 w-10 items-center justify-center rounded-full bg-[#b79ce6]/12 text-[#b79ce6]">
+                <span
+                  className={`mb-4 flex h-10 w-10 items-center justify-center rounded-full ${
+                    item.opcional
+                      ? "bg-[#b79ce6] text-black"
+                      : "bg-[#b79ce6]/12 text-[#b79ce6]"
+                  }`}
+                >
                   <item.Icon className="h-5 w-5" />
                 </span>
                 <h3
