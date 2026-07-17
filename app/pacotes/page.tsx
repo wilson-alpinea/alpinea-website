@@ -41,6 +41,7 @@ export default function PacotesJapaoPage() {
       ],
       precoDe: "R$ 11.990",
       accent: "#5b9bd5",
+      selo: "⭐ Mais vendido",
       imagem: "/images/maiko.png",
       imagemAlt: "Gueixa em rua tradicional durante festival de lanternas, Japão",
       Icon: IconPin,
@@ -117,6 +118,7 @@ export default function PacotesJapaoPage() {
       ],
       precoDe: "R$ 21.990",
       accent: "#6ec3d9",
+      selo: "🏃 Vagas limitadas",
       imagem: "/images/tokyo-marathon.png",
       imagemAlt: "Logo oficial da Tokyo Marathon",
       imagemFundoClaro: true,
@@ -144,8 +146,8 @@ export default function PacotesJapaoPage() {
       opcional: false,
     },
     {
-      title: "Wi-Fi",
-      text: "Conexão portátil disponível durante todo o roteiro.",
+      title: "Pocket Wi-Fi ou eSIM 5G",
+      text: "Conexão disponível durante todo o roteiro.",
       Icon: IconWifi,
       opcional: false,
     },
@@ -266,7 +268,7 @@ export default function PacotesJapaoPage() {
     {
       pergunta: "O que está incluso no valor do pacote?",
       resposta:
-        "Hotel, passagem aérea de ida e volta, seguro viagem e Wi-Fi portátil já estão inclusos no preço de todos os pacotes. Guia turístico e transfer são opcionais e podem ser adicionados à parte.",
+        "Hotel, passagem aérea de ida e volta, seguro viagem e Pocket Wi-Fi ou eSIM 5G já estão inclusos no preço de todos os pacotes. Guia turístico e transfer são opcionais e podem ser adicionados à parte.",
     },
     {
       pergunta: "O valor exibido vale para quantos dias?",
@@ -358,10 +360,12 @@ export default function PacotesJapaoPage() {
           <h1
             className={`${display.className} mx-auto max-w-xs text-[1.85rem] font-medium leading-[1.18] text-white sm:max-w-md sm:text-[2.1rem] md:max-w-4xl md:text-5xl md:leading-[1.08]`}
           >
-            Pacotes completos para o Japão, prontos para reservar
+            Pacotes criados por especialistas, agência 100% focado em Japão
+            com operação direta nos dois países
           </h1>
           <p className="mx-auto mt-5 max-w-md text-sm font-light leading-6 text-white/65 md:max-w-2xl md:text-lg md:leading-8">
-            Hotel, passagem aérea, seguro viagem e Wi-Fi já inclusos.
+            Hotéis selecionados, passagens, suporte local e operação própria
+            no Japão.
           </p>
         </div>
 
@@ -422,6 +426,11 @@ export default function PacotesJapaoPage() {
                   />
                   {!pacote.imagemFundoClaro && (
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent" />
+                  )}
+                  {pacote.selo && (
+                    <span className="absolute right-4 top-4 rounded-full bg-[#b79ce6] px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.15em] text-black shadow-[0_6px_18px_rgba(0,0,0,0.35)]">
+                      {pacote.selo}
+                    </span>
                   )}
                 </div>
 
