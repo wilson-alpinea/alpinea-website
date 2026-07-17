@@ -365,12 +365,11 @@ export default function PacotesJapaoPage() {
           <h1
             className={`${display.className} mx-auto max-w-xs text-[1.85rem] font-medium leading-[1.18] text-white sm:max-w-md sm:text-[2.1rem] md:max-w-4xl md:text-5xl md:leading-[1.08]`}
           >
-            Pacotes criados por especialistas, agência 100% focado em Japão
-            com operação direta nos dois países
+            Pacotes criados por especialistas, agência 100% focado em Japão.
           </h1>
           <p className="mx-auto mt-5 max-w-md text-sm font-light leading-6 text-white/65 md:max-w-2xl md:text-lg md:leading-8">
             Hotéis selecionados, passagens, suporte local e operação própria
-            no Japão.
+            independente no Japão.
           </p>
         </div>
 
