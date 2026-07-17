@@ -12,7 +12,7 @@ const display = Bodoni_Moda({
 export const metadata = {
   title: "Ajisai | Pacotes de Viagem para o Japão",
   description:
-    "Pacotes completos para o Japão com a curadoria Ajisai: hotel, passagem aérea, seguro viagem, Wi-Fi, guia turístico e transfer opcionais. Japão Clássico, Sakura, Outono, Japão + Disney + USJ e Maratona de Tóquio 2027.",
+    "Pacotes completos para o Japão com a curadoria Ajisai: hotel, passagem aérea, seguro viagem, Wi-Fi, guia turístico e transfer opcionais. Primeira Viagem ao Japão, Temporada das Cerejeiras, Outono no Japão, Japão em Família e Tokyo Marathon Experience.",
 };
 
 export default function PacotesJapaoPage() {
@@ -29,7 +29,7 @@ export default function PacotesJapaoPage() {
     {
       slug: "japao-classico",
       categoria: "Essencial",
-      nome: "Japão Clássico",
+      nome: "Primeira Viagem ao Japão",
       tagline: "Tóquio, Kyoto e Osaka nas paradas certas",
       descricao:
         "O roteiro ideal para quem vai ao Japão pela primeira vez: os templos de Kyoto, a energia de Tóquio e a gastronomia de Osaka, com hospedagem confortável e toda a logística resolvida do início ao fim.",
@@ -39,7 +39,7 @@ export default function PacotesJapaoPage() {
         "Hotéis bem localizados, próximos às estações",
         "Ideal para a primeira viagem ao Japão",
       ],
-      precoDe: "R$ 10.690",
+      precoDe: "R$ 11.990",
       accent: "#5b9bd5",
       imagem: "/images/maiko.png",
       imagemAlt: "Gueixa em rua tradicional durante festival de lanternas, Japão",
@@ -48,7 +48,7 @@ export default function PacotesJapaoPage() {
     {
       slug: "japao-sakura",
       categoria: "Primavera · Alta temporada",
-      nome: "Japão Sakura",
+      nome: "Temporada das Cerejeiras",
       tagline: "A temporada das cerejeiras em flor",
       descricao:
         "Viaje entre o final de março e início de abril para acompanhar a florada das cerejeiras em parques, templos e avenidas históricas — um dos espetáculos naturais mais aguardados do mundo.",
@@ -58,7 +58,7 @@ export default function PacotesJapaoPage() {
         "Hospedagem em regiões com boa vista da florada",
         "Datas de alta procura — reserva antecipada recomendada",
       ],
-      precoDe: "R$ 13.490",
+      precoDe: "R$ 15.990",
       accent: "#e6a6c7",
       imagem: "/images/sakura.jpg",
       imagemAlt: "Torre de Tóquio entre flores de cerejeira (sakura) à noite",
@@ -67,7 +67,7 @@ export default function PacotesJapaoPage() {
     {
       slug: "japao-outono",
       categoria: "Outono · Kōyō",
-      nome: "Japão Outono",
+      nome: "Outono no Japão",
       tagline: "As folhas vermelhas e douradas do outono japonês",
       descricao:
         "Entre meados de novembro e início de dezembro, jardins, templos e montanhas se transformam em um mosaico de vermelho e dourado. Um roteiro pensado para acompanhar o kōyō nos melhores pontos do país.",
@@ -77,7 +77,7 @@ export default function PacotesJapaoPage() {
         "Clima ameno, ótimo para caminhadas",
         "Menor fluxo turístico que a primavera",
       ],
-      precoDe: "R$ 11.790",
+      precoDe: "R$ 13.490",
       accent: "#d9a66d",
       imagem: "/images/autumn.jpg",
       imagemAlt: "Monte Fuji nevado emoldurado por folhagens vermelhas de outono",
@@ -86,7 +86,7 @@ export default function PacotesJapaoPage() {
     {
       slug: "japao-disney-usj",
       categoria: "Família · Parques temáticos",
-      nome: "Japão + Disney + USJ",
+      nome: "Japão em Família",
       tagline: "Japão clássico com Tokyo Disney Resort e Universal Studios Japan",
       descricao:
         "A combinação perfeita para famílias e fãs de parques temáticos: cultura, gastronomia e tradição japonesa, mais um dia na Tokyo Disneyland ou DisneySea e outro na Universal Studios Japan, em Osaka.",
@@ -96,7 +96,7 @@ export default function PacotesJapaoPage() {
         "Roteiro equilibrado entre parques e cultura local",
         "Ótimo para famílias e grupos",
       ],
-      precoDe: "R$ 13.290",
+      precoDe: "R$ 15.490",
       accent: "#7c4fd1",
       imagem: "/images/usj.jpg",
       imagemAlt: "Atração temática na Universal Studios Japan, em Osaka",
@@ -105,7 +105,7 @@ export default function PacotesJapaoPage() {
     {
       slug: "maratona-tokyo-2027",
       categoria: "Evento esportivo · 07 de março de 2027",
-      nome: "Maratona de Tóquio 2027",
+      nome: "Tokyo Marathon Experience",
       tagline: "Viva a 20ª edição da Tokyo Marathon",
       descricao:
         "Pacote especial para corredores e acompanhantes na Tokyo Marathon 2027, no dia 7 de março, que celebra a 20ª edição do evento. Hospedagem estrategicamente localizada e roteiro turístico complementar nos dias sem prova.",
@@ -115,7 +115,7 @@ export default function PacotesJapaoPage() {
         "Hospedagem próxima ao trajeto e à largada",
         "Roteiro turístico complementar nos demais dias",
       ],
-      precoDe: "R$ 14.690",
+      precoDe: "R$ 21.990",
       accent: "#6ec3d9",
       imagem: "/images/tokyo-marathon.png",
       imagemAlt: "Logo oficial da Tokyo Marathon",
@@ -157,7 +157,7 @@ export default function PacotesJapaoPage() {
     },
     {
       title: "Transfer",
-      text: "Traslados entre aeroporto, hotéis e principais atrações.",
+      text: "Translados entre aeroporto, hotéis e principais atrações.",
       Icon: IconCar,
       opcional: true,
     },
@@ -393,6 +393,13 @@ export default function PacotesJapaoPage() {
         className="border-t border-white/10 bg-[#050505] px-5 py-12 md:bg-black md:px-16 md:py-24"
       >
         <div className="mx-auto max-w-7xl">
+          <div className="mb-10 flex justify-center md:mb-14">
+            <span className="inline-flex items-center gap-2 rounded-full border border-[#b79ce6]/50 bg-[#b79ce6]/15 px-5 py-2 text-[11px] font-semibold uppercase tracking-[0.2em] text-[#b79ce6] md:text-xs">
+              <IconClock className="h-3.5 w-3.5" />
+              Preços válidos até 30/07/2026
+            </span>
+          </div>
+
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
             {pacotes.map((pacote) => (
               <div
