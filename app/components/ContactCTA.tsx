@@ -162,7 +162,7 @@ function ContactModal({
             type="button"
             onClick={onClose}
             aria-label="Fechar"
-            className="flex h-10 w-10 items-center justify-center rounded-full border border-black/15 text-xl leading-none text-black transition active:bg-black/5"
+            className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-full border border-black/15 text-xl leading-none text-black transition active:bg-black/5"
           >
             ×
           </button>
@@ -173,7 +173,7 @@ function ContactModal({
             type="button"
             onClick={onClose}
             aria-label="Fechar"
-            className="mb-6 hidden text-xs uppercase tracking-[0.3em] text-black/40 transition hover:text-black md:block"
+            className="mb-6 hidden cursor-pointer text-xs uppercase tracking-[0.3em] text-black/40 transition hover:text-black md:block"
           >
             Fechar ×
           </button>
@@ -193,7 +193,7 @@ function ContactModal({
               </p>
               <button
                 onClick={onClose}
-                className="mt-8 border border-black px-8 py-3 text-xs uppercase tracking-[0.3em] transition hover:bg-black hover:text-white"
+                className="mt-8 cursor-pointer border border-black px-8 py-3 text-xs uppercase tracking-[0.3em] transition hover:bg-black hover:text-white"
               >
                 Fechar
               </button>
@@ -400,7 +400,7 @@ function ContactModal({
               <button
                 type="submit"
                 disabled={status === "loading"}
-                className="mt-2 w-full border border-black px-8 py-4 text-xs uppercase tracking-[0.35em] transition hover:bg-black hover:text-white disabled:opacity-50 md:w-auto"
+                className="mt-2 w-full cursor-pointer border border-black px-8 py-4 text-xs uppercase tracking-[0.35em] transition hover:bg-black hover:text-white disabled:opacity-50 md:w-auto disabled:cursor-not-allowed"
               >
                 {status === "loading"
                   ? "Enviando..."
@@ -467,10 +467,10 @@ export function ContactCTA({
           <button
             type="button"
             onClick={() => setContactChannel(channel)}
-            className={
+            className={`cursor-pointer ${
               buttonClassName ??
               "bg-black px-8 py-4 text-xs uppercase tracking-[0.3em] text-white transition hover:bg-black/85"
-            }
+            }`}
           >
             {label}
           </button>
@@ -494,7 +494,7 @@ export function ContactCTA({
         <button
           type="button"
           onClick={() => setContactChannel("email")}
-          className="bg-black px-8 py-4 text-xs uppercase tracking-[0.3em] text-white transition hover:bg-black/85"
+          className="cursor-pointer bg-black px-8 py-4 text-xs uppercase tracking-[0.3em] text-white transition hover:bg-black/85"
         >
           Falar por e-mail
         </button>
@@ -502,7 +502,7 @@ export function ContactCTA({
         <button
           type="button"
           onClick={() => setContactChannel("whatsapp")}
-          className="border border-black/20 px-8 py-4 text-xs uppercase tracking-[0.3em] text-black/70 transition hover:border-black hover:text-black"
+          className="cursor-pointer border border-black/20 px-8 py-4 text-xs uppercase tracking-[0.3em] text-black/70 transition hover:border-black hover:text-black"
         >
           WhatsApp
         </button>

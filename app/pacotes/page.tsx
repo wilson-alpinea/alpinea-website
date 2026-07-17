@@ -40,6 +40,7 @@ export default function PacotesJapaoPage() {
         "Ideal para a primeira viagem ao Japão",
       ],
       precoDe: "R$ 11.990",
+      parcelaDe: "R$ 999,17",
       accent: "#5b9bd5",
       selo: "⭐ Mais vendido",
       imagem: "/images/maiko.png",
@@ -60,6 +61,7 @@ export default function PacotesJapaoPage() {
         "Datas de alta procura — reserva antecipada recomendada",
       ],
       precoDe: "R$ 15.990",
+      parcelaDe: "R$ 1.332,50",
       accent: "#e6a6c7",
       imagem: "/images/sakura.jpg",
       imagemAlt: "Torre de Tóquio entre flores de cerejeira (sakura) à noite",
@@ -79,6 +81,7 @@ export default function PacotesJapaoPage() {
         "Menor fluxo turístico que a primavera",
       ],
       precoDe: "R$ 13.490",
+      parcelaDe: "R$ 1.124,17",
       accent: "#d9a66d",
       imagem: "/images/autumn.jpg",
       imagemAlt: "Monte Fuji nevado emoldurado por folhagens vermelhas de outono",
@@ -98,6 +101,7 @@ export default function PacotesJapaoPage() {
         "Ótimo para famílias e grupos",
       ],
       precoDe: "R$ 15.490",
+      parcelaDe: "R$ 1.290,83",
       accent: "#7c4fd1",
       imagem: "/images/usj.jpg",
       imagemAlt: "Atração temática na Universal Studios Japan, em Osaka",
@@ -117,6 +121,7 @@ export default function PacotesJapaoPage() {
         "Roteiro turístico complementar nos demais dias",
       ],
       precoDe: "R$ 21.990",
+      parcelaDe: "R$ 1.832,50",
       accent: "#6ec3d9",
       selo: "🏃 Vagas limitadas",
       imagem: "/images/tokyo-marathon.png",
@@ -273,7 +278,7 @@ export default function PacotesJapaoPage() {
     {
       pergunta: "O valor exibido vale para quantos dias?",
       resposta:
-        "O valor \"a partir de\" corresponde à versão de 7 dias do pacote, em apartamento duplo. Roteiros de 10, 12 e 15 dias têm valores sob consulta, de acordo com a data escolhida.",
+        "O valor \"a partir de\" corresponde à versão de 7 dias do pacote, em quarto individual. Roteiros de 10, 12 e 15 dias têm valores sob consulta, de acordo com a data escolhida.",
     },
     {
       pergunta: "Posso parcelar o pagamento?",
@@ -475,8 +480,11 @@ export default function PacotesJapaoPage() {
                     >
                       {pacote.precoDe}
                     </p>
-                    <p className="mt-1 text-[11px] leading-5 text-white/40">
-                      Por pessoa, em apartamento duplo, roteiro de 7 dias.
+                    <p className="mt-1 text-sm font-medium text-white/70">
+                      ou 12x de {pacote.parcelaDe}
+                    </p>
+                    <p className="mt-2 text-[11px] leading-5 text-white/40">
+                      Por pessoa, em quarto individual, roteiro de 7 dias.
                       Valores para 10, 12 e 15 dias sob consulta.
                     </p>
 
