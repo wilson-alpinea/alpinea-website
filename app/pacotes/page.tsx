@@ -369,7 +369,7 @@ export default function PacotesJapaoPage() {
           </h1>
           <p className="mx-auto mt-5 max-w-md text-sm font-light leading-6 text-white/65 md:max-w-2xl md:text-lg md:leading-8">
             Hotéis selecionados, passagens, suporte local e operação própria
-            independente no Japão.
+            no Japão, sem intermediários.
           </p>
         </div>
 
