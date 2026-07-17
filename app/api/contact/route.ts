@@ -31,6 +31,7 @@ export async function POST(req: Request) {
     const name = String(body.name || "").trim();
     const email = String(body.email || "").trim();
     const phone = String(body.phone || "").trim();
+    const pkg = String(body.package || "").trim();
     const dates = String(body.dates || "").trim();
     const firstJapan = String(body.firstJapan || "").trim();
     const travelers = String(body.travelers || "").trim();
@@ -52,6 +53,7 @@ Novo contato pelo site Alpinea
 Nome: ${name}
 E-mail: ${email}
 Telefone: ${phone || "Não informado"}
+Pacote de interesse: ${pkg || "Não informado"}
 Datas previstas: ${dates || "Não informado"}
 Primeira viagem ao Japão: ${firstJapan || "Não informado"}
 Quem irá viajar: ${travelers || "Não informado"}
@@ -69,6 +71,7 @@ ${message || "Não informado"}
         <p><strong>Nome:</strong> ${escapeHtml(name)}</p>
         <p><strong>E-mail:</strong> ${escapeHtml(email)}</p>
         <p><strong>Telefone:</strong> ${escapeHtml(phone || "Não informado")}</p>
+        <p><strong>Pacote de interesse:</strong> ${escapeHtml(pkg || "Não informado")}</p>
         <p><strong>Datas previstas:</strong> ${escapeHtml(dates || "Não informado")}</p>
         <p><strong>Primeira viagem ao Japão:</strong> ${escapeHtml(firstJapan || "Não informado")}</p>
         <p><strong>Quem irá viajar:</strong> ${escapeHtml(travelers || "Não informado")}</p>

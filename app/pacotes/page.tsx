@@ -320,6 +320,7 @@ export default function PacotesJapaoPage() {
           channel="whatsapp"
           whatsappNumber="5511930300101"
           brand="Ajisai"
+          packageOptions={pacotes.map((p) => p.nome)}
           label={
             <span className="flex items-center justify-center gap-2">
               <IconWhatsApp className="h-4 w-4" />
@@ -468,6 +469,8 @@ export default function PacotesJapaoPage() {
                       channel="whatsapp"
                       whatsappNumber="5511930300101"
                       brand="Ajisai"
+                      packageOptions={pacotes.map((p) => p.nome)}
+                      defaultPackage={pacote.nome}
                       label={`Consultar ${pacote.nome}`}
                       buttonClassName="mt-5 flex w-full items-center justify-center rounded-full bg-[#7c4fd1] px-5 py-3.5 text-center text-[11px] font-semibold uppercase tracking-[0.2em] text-white shadow-[0_10px_30px_rgba(124,79,209,0.35)] transition duration-300 hover:-translate-y-0.5 hover:bg-[#6c40c0] hover:shadow-[0_14px_36px_rgba(124,79,209,0.5)]"
                     />
@@ -785,6 +788,7 @@ export default function PacotesJapaoPage() {
             whatsappNumber="5511930300101"
             brand="Ajisai"
             label="Falar no WhatsApp"
+            packageOptions={pacotes.map((p) => p.nome)}
             buttonClassName="mt-10 rounded-full bg-[#7c4fd1] px-12 py-5 text-sm font-medium uppercase tracking-[0.3em] text-white shadow-[0_20px_50px_rgba(124,79,209,0.35)] transition hover:bg-[#6c40c0] hover:shadow-[0_24px_60px_rgba(124,79,209,0.45)] md:px-14 md:py-6 md:text-base"
           />
         </div>

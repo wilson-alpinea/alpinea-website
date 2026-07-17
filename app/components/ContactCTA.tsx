@@ -14,11 +14,17 @@ function ContactModal({
   whatsappNumber,
   brand,
   onClose,
+  packageOptions,
+  defaultPackage,
 }: {
   channel: "email" | "whatsapp";
   whatsappNumber: string;
   brand: string;
   onClose: () => void;
+  /** Se informado, exibe um seletor de pacote no formulário (ex: página de pacotes prontos). */
+  packageOptions?: string[];
+  /** Pacote pré-selecionado no seletor (ex: botão "Consultar" dentro do card de um pacote específico). */
+  defaultPackage?: string;
 }) {
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [errorMsg, setErrorMsg] = useState("");
@@ -51,6 +57,7 @@ function ContactModal({
       name: String(data.get("name") || "").trim(),
       email: String(data.get("email") || "").trim(),
       phone: String(data.get("phone") || "").trim(),
+      package: String(data.get("package") || "").trim(),
       dates: String(data.get("dates") || "").trim(),
       firstJapan: String(data.get("firstJapan") || "").trim(),
       travelers: String(data.get("travelers") || "").trim(),
@@ -70,6 +77,7 @@ function ContactModal({
       const lines = [
         `Olá! Meu nome é ${payload.name}.`,
         payload.phone && `Telefone: ${payload.phone}`,
+        payload.package && `Pacote de interesse: ${payload.package}`,
         payload.dates && `Datas previstas: ${payload.dates}`,
         payload.firstJapan && `Primeira viagem ao Japão: ${payload.firstJapan}`,
         payload.travelers && `Quem irá viajar: ${payload.travelers}`,
@@ -231,6 +239,27 @@ function ContactModal({
                   />
                 </label>
               </div>
+
+              {packageOptions && packageOptions.length > 0 && (
+                <label className="block">
+                  <span className="mb-2 block text-xs uppercase tracking-[0.25em] text-black/40">
+                    Qual pacote te interessou? (opcional)
+                  </span>
+                  <select
+                    name="package"
+                    defaultValue={defaultPackage ?? ""}
+                    className="w-full border-b border-black/20 bg-transparent py-2 text-sm outline-none focus:border-black"
+                  >
+                    <option value=""></option>
+                    {packageOptions.map((option) => (
+                      <option key={option} value={option}>
+                        {option}
+                      </option>
+                    ))}
+                    <option value="Ainda não decidi">Ainda não decidi</option>
+                  </select>
+                </label>
+              )}
 
               <div className="grid gap-5 md:grid-cols-2">
                 <label className="block">
@@ -397,6 +426,8 @@ export function ContactCTA({
   buttonClassName,
   whatsappNumber = "5511996691818",
   brand = "Alpinea",
+  packageOptions,
+  defaultPackage,
 }: {
   className?: string;
   /** "buttons" (padrão) renderiza os 2 CTAs de sempre. "single" renderiza 1 botão que já abre o modal direto. */
@@ -411,6 +442,10 @@ export function ContactCTA({
   whatsappNumber?: string;
   /** Nome da marca exibido no modal (ex: "Vamos conversar por WhatsApp", "Fale com a {brand}"). Padrão: "Alpinea". */
   brand?: string;
+  /** Se informado, o formulário exibe um seletor "Qual pacote te interessou?" com essas opções. */
+  packageOptions?: string[];
+  /** Pacote pré-selecionado no seletor. */
+  defaultPackage?: string;
 }) {
   const [contactChannel, setContactChannel] = useState<"email" | "whatsapp" | null>(null);
 
@@ -423,6 +458,8 @@ export function ContactCTA({
             whatsappNumber={whatsappNumber}
             brand={brand}
             onClose={() => setContactChannel(null)}
+            packageOptions={packageOptions}
+            defaultPackage={defaultPackage}
           />
         )}
 
