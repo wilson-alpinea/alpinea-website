@@ -157,37 +157,33 @@ export default function PacotesJapaoPage() {
       title: "Hotel",
       text: "Hospedagem selecionada, em localizações estratégicas para o roteiro.",
       Icon: IconBed,
-      opcional: false,
     },
     {
       title: "Passagem Aérea",
       text: "Ida e volta, com as melhores opções de conexão para o Japão.",
       Icon: IconPlane,
-      opcional: false,
     },
     {
       title: "Seguro Viagem",
       text: "Cobertura para toda a duração da viagem.",
       Icon: IconShieldCheck,
-      opcional: false,
     },
     {
       title: "Pocket Wi-Fi ou eSIM 5G",
       text: "Conexão disponível durante todo o roteiro.",
       Icon: IconWifi,
-      opcional: false,
     },
     {
       title: "Guia Turístico",
       text: "Acompanhamento local em pontos-chave do roteiro.",
       Icon: IconPin,
-      opcional: true,
+      badge: { label: "Oferta limitada para determinadas datas", tone: "orange" },
     },
     {
       title: "Transfer",
       text: "Translados entre aeroporto, hotéis e principais atrações.",
       Icon: IconCar,
-      opcional: true,
+      badge: { label: "Opcional", tone: "purple" },
     },
   ];
 
@@ -295,6 +291,11 @@ export default function PacotesJapaoPage() {
       pergunta: "O que está incluso no valor do pacote?",
       resposta:
         "Hotel, passagem aérea de ida e volta, seguro viagem e Pocket Wi-Fi ou eSIM 5G já estão inclusos no preço de todos os pacotes. Guia turístico e transfer são opcionais e podem ser adicionados à parte.",
+    },
+    {
+      pergunta: "Como funciona a oferta do Guia Turístico?",
+      resposta:
+        "A oferta de Guia Turístico é limitada para determinadas datas. As datas são definidas quando há número mínimo de clientes viajando no mesmo período e agenda livre da equipe de guias turísticos. Até 30 dias antes da viagem, caso exista disponibilidade de guia turístico, a Ajisai e/ou Alpinea entrará em contato para confirmar que a oferta está disponível.",
     },
     {
       pergunta: "O valor exibido vale para quantos dias?",
@@ -541,39 +542,52 @@ export default function PacotesJapaoPage() {
           </div>
 
           <div className="grid grid-cols-2 gap-4 sm:gap-6 md:grid-cols-3 md:gap-8">
-            {inclusoes.map((item) => (
-              <div
-                key={item.title}
-                className={`relative rounded-2xl border p-5 transition sm:p-8 ${
-                  item.opcional
+            {inclusoes.map((item) => {
+              const tone = item.badge?.tone;
+              const cardTone =
+                tone === "orange"
+                  ? "border-orange-400/40 bg-orange-400/[0.08] hover:border-orange-400/70"
+                  : tone === "purple"
                     ? "border-[#b79ce6]/40 bg-[#b79ce6]/[0.08] hover:border-[#b79ce6]/70"
-                    : "border-white/10 bg-white/[0.03] hover:border-white/20"
-                }`}
-              >
-                {item.opcional && (
-                  <span className="absolute right-4 top-4 rounded-full bg-[#b79ce6] px-2.5 py-1 text-[9px] font-semibold uppercase tracking-[0.15em] text-black">
-                    Opcional
+                    : "border-white/10 bg-white/[0.03] hover:border-white/20";
+              const badgeTone =
+                tone === "orange"
+                  ? "bg-orange-400 text-black"
+                  : "bg-[#b79ce6] text-black";
+              const iconTone = tone
+                ? tone === "orange"
+                  ? "bg-orange-400 text-black"
+                  : "bg-[#b79ce6] text-black"
+                : "bg-[#b79ce6]/12 text-[#b79ce6]";
+
+              return (
+                <div
+                  key={item.title}
+                  className={`relative rounded-2xl border p-5 transition sm:p-8 ${cardTone}`}
+                >
+                  {item.badge && (
+                    <span
+                      className={`absolute right-4 top-4 max-w-[7.5rem] rounded-xl px-2.5 py-1.5 text-right text-[8px] font-semibold uppercase leading-tight tracking-[0.06em] shadow-[0_6px_18px_rgba(0,0,0,0.35)] sm:max-w-[9rem] sm:text-[9px] ${badgeTone}`}
+                    >
+                      {item.badge.label}
+                    </span>
+                  )}
+                  <span
+                    className={`mb-4 flex h-10 w-10 items-center justify-center rounded-full ${iconTone}`}
+                  >
+                    <item.Icon className="h-5 w-5" />
                   </span>
-                )}
-                <span
-                  className={`mb-4 flex h-10 w-10 items-center justify-center rounded-full ${
-                    item.opcional
-                      ? "bg-[#b79ce6] text-black"
-                      : "bg-[#b79ce6]/12 text-[#b79ce6]"
-                  }`}
-                >
-                  <item.Icon className="h-5 w-5" />
-                </span>
-                <h3
-                  className={`${display.className} text-lg font-medium text-white md:text-xl`}
-                >
-                  {item.title}
-                </h3>
-                <p className="mt-3 text-sm font-light leading-7 text-white/50">
-                  {item.text}
-                </p>
-              </div>
-            ))}
+                  <h3
+                    className={`${display.className} text-lg font-medium text-white md:text-xl`}
+                  >
+                    {item.title}
+                  </h3>
+                  <p className="mt-3 text-sm font-light leading-7 text-white/50">
+                    {item.text}
+                  </p>
+                </div>
+              );
+            })}
           </div>
         </div>
       </section>
