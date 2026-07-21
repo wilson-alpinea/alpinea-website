@@ -12,7 +12,7 @@ const display = Bodoni_Moda({
 export const metadata = {
   title: "Ajisai | Pacotes de Viagem para o Japão",
   description:
-    "Pacotes completos para o Japão com a curadoria Ajisai: hotel, passagem aérea, seguro viagem, Wi-Fi, guia turístico e transfer opcionais. Primeira Viagem ao Japão, Temporada das Cerejeiras, Outono no Japão, Japão em Família, Tokyo Marathon Experience e Anime, Gaming & TCG.",
+    "Pacotes completos para o Japão com a curadoria Ajisai: hotel, passagem aérea, seguro viagem, Wi-Fi, roteiro digital, guia turístico e transfer opcionais. Primeira Viagem ao Japão, Temporada das Cerejeiras, Outono no Japão, Japão em Família, Tokyo Marathon Experience e Anime, Gaming & TCG.",
 };
 
 export default function PacotesJapaoPage() {
@@ -168,6 +168,11 @@ export default function PacotesJapaoPage() {
       Icon: IconWifi,
     },
     {
+      title: "Roteiro Digital",
+      text: "Roteiro digital eletrônico com itinerário diário e informações detalhadas sobre atrações, deslocamento, refeições, aeroportos, entre outros.",
+      Icon: IconSmartphone,
+    },
+    {
       title: "Guia Turístico",
       text: "Acompanhamento local em pontos-chave do roteiro.",
       Icon: IconPin,
@@ -290,7 +295,7 @@ export default function PacotesJapaoPage() {
     {
       pergunta: "O que está incluso no valor do pacote?",
       resposta:
-        "Hotel, passagem aérea de ida e volta, seguro viagem e Pocket Wi-Fi ou eSIM 5G já estão inclusos no preço de todos os pacotes. Guia turístico, transfer e o serviço de Mobilidade & Saúde são opcionais e podem ser adicionados à parte.",
+        "Hotel, passagem aérea de ida e volta, seguro viagem, Pocket Wi-Fi ou eSIM 5G e roteiro digital já estão inclusos no preço de todos os pacotes. Guia turístico, transfer e o serviço de Mobilidade & Saúde são opcionais e podem ser adicionados à parte.",
     },
     {
       pergunta: "Como funciona a oferta do Guia Turístico?",
@@ -301,6 +306,11 @@ export default function PacotesJapaoPage() {
       pergunta: "O que inclui o serviço de Mobilidade & Saúde?",
       resposta:
         "É um serviço opcional voltado a viajantes que precisam de motorista particular para os deslocamentos do roteiro e de um mapeamento mais detalhado da rede de hospitais e clínicas médicas na região visitada, para maior segurança durante a viagem.",
+    },
+    {
+      pergunta: "O que é o Roteiro Digital?",
+      resposta:
+        "É o itinerário eletrônico da viagem, disponível durante todo o roteiro, com a programação diária e informações detalhadas sobre atrações, deslocamento entre pontos, refeições, aeroportos e outros detalhes práticos da viagem.",
     },
     {
       pergunta: "O valor exibido vale para quantos dias?",
@@ -1283,6 +1293,27 @@ function IconHeartPulse({ className }: { className?: string }) {
     >
       <path d="M12 20.5c-4-2.7-9-6.8-9-11.2C3 6 5.2 4 8 4c1.7 0 3.2.9 4 2.3C12.8 4.9 14.3 4 16 4c2.8 0 5 2 5 5.3 0 4.4-5 8.5-9 11.2Z" />
       <path d="M5 12h2.5l1.5-3 2 5 1.5-3h2.5" />
+    </svg>
+  );
+}
+
+function IconSmartphone({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.75"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      <rect x="6" y="2.5" width="12" height="19" rx="2.2" />
+      <line x1="6" y1="6" x2="18" y2="6" />
+      <line x1="6" y1="17.5" x2="18" y2="17.5" />
+      <line x1="9" y1="9.5" x2="15" y2="9.5" />
+      <line x1="9" y1="12.5" x2="14" y2="12.5" />
+      <circle cx="12" cy="19.3" r="0.9" fill="currentColor" stroke="none" />
     </svg>
   );
 }
