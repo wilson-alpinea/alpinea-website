@@ -639,20 +639,39 @@ export default function PacotesJapaoPage() {
               atender aos nossos clientes mais exigentes
             </h2>
 
-            <div className="mt-8 inline-flex flex-wrap items-center gap-4 rounded-full border border-[#b79ce6]/40 bg-[#b79ce6]/10 px-6 py-4 sm:gap-5 sm:px-8 sm:py-5">
-              <div className="flex items-center gap-1 text-[#b79ce6]">
-                {Array.from({ length: 5 }).map((_, index) => (
-                  <IconStarFilled key={index} className="h-5 w-5 sm:h-6 sm:w-6" />
-                ))}
+            <div className="mt-8 flex flex-wrap items-stretch gap-4">
+              <div className="inline-flex flex-wrap items-center gap-4 rounded-full border border-[#b79ce6]/40 bg-[#b79ce6]/10 px-6 py-4 sm:gap-5 sm:px-8 sm:py-5">
+                <div className="flex items-center gap-1 text-[#b79ce6]">
+                  {Array.from({ length: 5 }).map((_, index) => (
+                    <IconStarFilled key={index} className="h-5 w-5 sm:h-6 sm:w-6" />
+                  ))}
+                </div>
+                <p className="text-base font-light text-white/70 sm:text-lg">
+                  <span
+                    className={`${display.className} text-xl font-medium text-white sm:text-2xl`}
+                  >
+                    4,8 de 5,0
+                  </span>{" "}
+                  no Google · +180 avaliações
+                </p>
               </div>
-              <p className="text-base font-light text-white/70 sm:text-lg">
-                <span
-                  className={`${display.className} text-xl font-medium text-white sm:text-2xl`}
-                >
-                  4,8 de 5,0
-                </span>{" "}
-                no Google · +180 avaliações
-              </p>
+
+              <div className="inline-flex items-center gap-4 rounded-2xl border border-emerald-500/30 bg-emerald-500/[0.07] px-6 py-4">
+                <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-emerald-500/15 text-emerald-400">
+                  <IconShieldCheck className="h-5 w-5" />
+                </span>
+                <div>
+                  <p className="text-sm font-medium text-white">
+                    Verificada pelo Reclame AQUI
+                  </p>
+                  <p className="mt-0.5 text-xs font-light text-white/50">
+                    Aprovada em todas as checagens de segurança
+                  </p>
+                  <p className="mt-1.5 text-[10px] font-medium uppercase tracking-[0.15em] text-emerald-400">
+                    Última verificação · Mar/2026
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
 
