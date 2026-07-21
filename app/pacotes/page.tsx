@@ -40,6 +40,7 @@ export default function PacotesJapaoPage() {
         "Ideal para a primeira viagem ao Japão",
       ],
       precoDe: "R$ 11.990",
+      parcelaDe: "R$ 999,17",
       accent: "#5b9bd5",
       selo: "⭐ Mais vendido",
       imagem: "/images/maiko.png",
@@ -60,6 +61,7 @@ export default function PacotesJapaoPage() {
         "Datas de alta procura — reserva antecipada recomendada",
       ],
       precoDe: "R$ 15.990",
+      parcelaDe: "R$ 1.332,50",
       accent: "#e6a6c7",
       imagem: "/images/sakura.jpg",
       imagemAlt: "Torre de Tóquio entre flores de cerejeira (sakura) à noite",
@@ -79,6 +81,7 @@ export default function PacotesJapaoPage() {
         "Menor fluxo turístico que a primavera",
       ],
       precoDe: "R$ 13.490",
+      parcelaDe: "R$ 1.124,17",
       accent: "#d9a66d",
       imagem: "/images/autumn.jpg",
       imagemAlt: "Monte Fuji nevado emoldurado por folhagens vermelhas de outono",
@@ -98,6 +101,7 @@ export default function PacotesJapaoPage() {
         "Ótimo para famílias e grupos",
       ],
       precoDe: "R$ 15.490",
+      parcelaDe: "R$ 1.290,83",
       accent: "#7c4fd1",
       imagem: "/images/usj.jpg",
       imagemAlt: "Atração temática na Universal Studios Japan, em Osaka",
@@ -117,6 +121,7 @@ export default function PacotesJapaoPage() {
         "Roteiro turístico complementar nos demais dias",
       ],
       precoDe: "R$ 21.990",
+      parcelaDe: "R$ 1.832,50",
       accent: "#6ec3d9",
       selo: "🏃 Vagas limitadas",
       imagem: "/images/tokyo-marathon.png",
@@ -138,6 +143,7 @@ export default function PacotesJapaoPage() {
         "Akihabara: colecionáveis retrô (N64, Super Nintendo, PS1) e itens atuais como mousepads Artisan",
       ],
       precoDe: "R$ 16.990",
+      parcelaDe: "R$ 1.415,83",
       accent: "#ff5964",
       selo: "🎮 Novo pacote",
       imagem: "/images/anime-gaming-cover.png",
@@ -147,6 +153,11 @@ export default function PacotesJapaoPage() {
   ];
 
   const inclusoes = [
+    {
+      title: "Roteiro Digital",
+      text: "Roteiro digital eletrônico com itinerário diário e informações detalhadas sobre atrações, deslocamento, refeições, aeroportos, entre outros.",
+      Icon: IconSmartphone,
+    },
     {
       title: "Hotel",
       text: "Hospedagem selecionada, em localizações estratégicas para o roteiro.",
@@ -166,11 +177,6 @@ export default function PacotesJapaoPage() {
       title: "Pocket Wi-Fi ou eSIM 5G",
       text: "Conexão disponível durante todo o roteiro.",
       Icon: IconWifi,
-    },
-    {
-      title: "Roteiro Digital",
-      text: "Roteiro digital eletrônico com itinerário diário e informações detalhadas sobre atrações, deslocamento, refeições, aeroportos, entre outros.",
-      Icon: IconSmartphone,
     },
     {
       title: "Guia Turístico",
@@ -336,6 +342,12 @@ export default function PacotesJapaoPage() {
 
   return (
     <main className="min-h-screen overflow-x-hidden bg-black pb-16 text-white md:pb-0">
+      {/* CSS puro para abrir/fechar o pop-up de FAQ via :target, sem JS, funciona igual em desktop e mobile */}
+      <style>{`
+        #faq-modal { display: none; }
+        #faq-modal:target { display: flex; }
+      `}</style>
+
       {/* ── HEADER ── */}
       <header className="fixed left-0 right-0 top-0 z-50 transform-gpu bg-black/10 backdrop-blur-2xl">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-8 py-5 md:px-16">
@@ -517,7 +529,7 @@ export default function PacotesJapaoPage() {
                       {pacote.precoDe}
                     </p>
                     <p className="mt-1 text-sm font-medium text-white/70">
-                      ou em até 12x de {pacote.precoDe} + Juros Mensais
+                      ou em até 12x de {pacote.parcelaDe} + Juros Mensais
                     </p>
                     <p className="mt-2 text-[11px] leading-5 text-white/40">
                       Por pessoa, em quarto individual, roteiro de 7 dias.
@@ -832,33 +844,73 @@ export default function PacotesJapaoPage() {
 
       {/* ── FAQ ── */}
       <section id="faq" className="border-t border-white/10 bg-black px-6 py-20 md:px-16 md:py-32">
-        <div className="mx-auto max-w-3xl">
+        <div className="mx-auto max-w-3xl text-center">
           <p className="mb-6 text-xs uppercase tracking-[0.3em] text-white/40 md:tracking-[0.45em]">
             Perguntas frequentes
           </p>
           <h2
-            className={`${display.className} mb-12 text-3xl font-medium leading-tight md:text-5xl`}
+            className={`${display.className} mb-6 text-3xl font-medium leading-tight md:text-5xl`}
+          >
+            Dúvidas sobre os pacotes
+          </h2>
+          <p className="mx-auto mb-10 max-w-xl text-sm font-light leading-7 text-white/55 md:text-base">
+            Reunimos as perguntas mais comuns sobre valores, parcelamento,
+            guia turístico, transfer e o que está incluso em cada pacote.
+          </p>
+          <a
+            href="#faq-modal"
+            className="inline-flex items-center justify-center rounded-full bg-[#7c4fd1] px-8 py-4 text-center text-[11px] font-semibold uppercase tracking-[0.2em] text-white shadow-[0_10px_30px_rgba(124,79,209,0.35)] transition duration-300 hover:-translate-y-0.5 hover:bg-[#6c40c0] hover:shadow-[0_14px_36px_rgba(124,79,209,0.5)]"
+          >
+            Ver perguntas frequentes
+          </a>
+        </div>
+      </section>
+
+      {/* ── POP-UP FAQ (funciona em desktop e mobile via #faq-modal:target) ── */}
+      <div
+        id="faq-modal"
+        className="fixed inset-0 z-[100] hidden items-center justify-center px-4 py-8 sm:py-10"
+      >
+        <a
+          href="#_"
+          aria-label="Fechar perguntas frequentes"
+          className="absolute inset-0 bg-black/80 backdrop-blur-sm"
+        />
+        <div className="relative z-10 max-h-[85vh] w-full max-w-2xl overflow-y-auto rounded-2xl border border-white/10 bg-[#0a0a0a] p-6 shadow-[0_30px_80px_rgba(0,0,0,0.6)] sm:rounded-[2rem] sm:p-10">
+          <a
+            href="#_"
+            aria-label="Fechar"
+            className="absolute right-4 top-4 flex h-9 w-9 items-center justify-center rounded-full border border-white/15 text-white/60 transition hover:border-white/40 hover:text-white sm:right-6 sm:top-6"
+          >
+            <IconX className="h-4 w-4" />
+          </a>
+
+          <p className="mb-4 pr-12 text-xs uppercase tracking-[0.3em] text-white/40">
+            Perguntas frequentes
+          </p>
+          <h2
+            className={`${display.className} mb-8 pr-12 text-2xl font-medium leading-tight md:text-3xl`}
           >
             Dúvidas sobre os pacotes
           </h2>
 
-          <div className="space-y-6">
+          <div className="space-y-5">
             {faq.map((item) => (
               <div
                 key={item.pergunta}
-                className="rounded-2xl border border-white/10 bg-white/[0.025] p-6 sm:p-8"
+                className="rounded-2xl border border-white/10 bg-white/[0.025] p-5 sm:p-6"
               >
-                <h3 className="text-base font-medium text-white md:text-lg">
+                <h3 className="text-base font-medium text-white">
                   {item.pergunta}
                 </h3>
-                <p className="mt-3 text-sm font-light leading-7 text-white/55">
+                <p className="mt-2.5 text-sm font-light leading-7 text-white/55">
                   {item.resposta}
                 </p>
               </div>
             ))}
           </div>
         </div>
-      </section>
+      </div>
 
       {/* ── CONTATO ── */}
       <section
@@ -903,7 +955,7 @@ export default function PacotesJapaoPage() {
           </p>
 
           <a
-            href="#faq"
+            href="#faq-modal"
             className="text-xs uppercase tracking-[0.25em] text-white/50 transition hover:text-white"
           >
             FAQ · Perguntas Frequentes
@@ -1293,6 +1345,23 @@ function IconHeartPulse({ className }: { className?: string }) {
     >
       <path d="M12 20.5c-4-2.7-9-6.8-9-11.2C3 6 5.2 4 8 4c1.7 0 3.2.9 4 2.3C12.8 4.9 14.3 4 16 4c2.8 0 5 2 5 5.3 0 4.4-5 8.5-9 11.2Z" />
       <path d="M5 12h2.5l1.5-3 2 5 1.5-3h2.5" />
+    </svg>
+  );
+}
+
+function IconX({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.75"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      <line x1="5" y1="5" x2="19" y2="19" />
+      <line x1="19" y1="5" x2="5" y2="19" />
     </svg>
   );
 }
