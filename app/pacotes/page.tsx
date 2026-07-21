@@ -40,7 +40,6 @@ export default function PacotesJapaoPage() {
         "Ideal para a primeira viagem ao Japão",
       ],
       precoDe: "R$ 11.990",
-      parcelaDe: "R$ 999,17",
       accent: "#5b9bd5",
       selo: "⭐ Mais vendido",
       imagem: "/images/maiko.png",
@@ -61,7 +60,6 @@ export default function PacotesJapaoPage() {
         "Datas de alta procura — reserva antecipada recomendada",
       ],
       precoDe: "R$ 15.990",
-      parcelaDe: "R$ 1.332,50",
       accent: "#e6a6c7",
       imagem: "/images/sakura.jpg",
       imagemAlt: "Torre de Tóquio entre flores de cerejeira (sakura) à noite",
@@ -81,7 +79,6 @@ export default function PacotesJapaoPage() {
         "Menor fluxo turístico que a primavera",
       ],
       precoDe: "R$ 13.490",
-      parcelaDe: "R$ 1.124,17",
       accent: "#d9a66d",
       imagem: "/images/autumn.jpg",
       imagemAlt: "Monte Fuji nevado emoldurado por folhagens vermelhas de outono",
@@ -101,7 +98,6 @@ export default function PacotesJapaoPage() {
         "Ótimo para famílias e grupos",
       ],
       precoDe: "R$ 15.490",
-      parcelaDe: "R$ 1.290,83",
       accent: "#7c4fd1",
       imagem: "/images/usj.jpg",
       imagemAlt: "Atração temática na Universal Studios Japan, em Osaka",
@@ -121,7 +117,6 @@ export default function PacotesJapaoPage() {
         "Roteiro turístico complementar nos demais dias",
       ],
       precoDe: "R$ 21.990",
-      parcelaDe: "R$ 1.832,50",
       accent: "#6ec3d9",
       selo: "🏃 Vagas limitadas",
       imagem: "/images/tokyo-marathon.png",
@@ -143,7 +138,6 @@ export default function PacotesJapaoPage() {
         "Akihabara: colecionáveis retrô (N64, Super Nintendo, PS1) e itens atuais como mousepads Artisan",
       ],
       precoDe: "R$ 16.990",
-      parcelaDe: "R$ 1.415,83",
       accent: "#ff5964",
       selo: "🎮 Novo pacote",
       imagem: "/images/anime-gaming-cover.png",
@@ -181,8 +175,14 @@ export default function PacotesJapaoPage() {
     },
     {
       title: "Transfer",
-      text: "Translados entre aeroporto, hotéis e principais atrações.",
+      text: "Translados aeroporto-hotel e hotel-aeroporto.",
       Icon: IconCar,
+      badge: { label: "Opcional", tone: "purple" },
+    },
+    {
+      title: "Mobilidade & Saúde",
+      text: "Motorista particular para deslocamentos e mapeamento detalhado da rede de hospitais e clínicas médicas na região do roteiro.",
+      Icon: IconHeartPulse,
       badge: { label: "Opcional", tone: "purple" },
     },
   ];
@@ -290,12 +290,17 @@ export default function PacotesJapaoPage() {
     {
       pergunta: "O que está incluso no valor do pacote?",
       resposta:
-        "Hotel, passagem aérea de ida e volta, seguro viagem e Pocket Wi-Fi ou eSIM 5G já estão inclusos no preço de todos os pacotes. Guia turístico e transfer são opcionais e podem ser adicionados à parte.",
+        "Hotel, passagem aérea de ida e volta, seguro viagem e Pocket Wi-Fi ou eSIM 5G já estão inclusos no preço de todos os pacotes. Guia turístico, transfer e o serviço de Mobilidade & Saúde são opcionais e podem ser adicionados à parte.",
     },
     {
       pergunta: "Como funciona a oferta do Guia Turístico?",
       resposta:
         "A oferta de Guia Turístico é limitada para determinadas datas. As datas são definidas quando há número mínimo de clientes viajando no mesmo período e agenda livre da equipe de guias turísticos. Até 30 dias antes da viagem, caso exista disponibilidade de guia turístico, a Ajisai e/ou Alpinea entrará em contato para confirmar que a oferta está disponível.",
+    },
+    {
+      pergunta: "O que inclui o serviço de Mobilidade & Saúde?",
+      resposta:
+        "É um serviço opcional voltado a viajantes que precisam de motorista particular para os deslocamentos do roteiro e de um mapeamento mais detalhado da rede de hospitais e clínicas médicas na região visitada, para maior segurança durante a viagem.",
     },
     {
       pergunta: "O valor exibido vale para quantos dias?",
@@ -502,7 +507,7 @@ export default function PacotesJapaoPage() {
                       {pacote.precoDe}
                     </p>
                     <p className="mt-1 text-sm font-medium text-white/70">
-                      ou 12x de {pacote.parcelaDe}
+                      ou em até 12x de {pacote.precoDe} + Juros Mensais
                     </p>
                     <p className="mt-2 text-[11px] leading-5 text-white/40">
                       Por pessoa, em quarto individual, roteiro de 7 dias.
@@ -1261,6 +1266,23 @@ function IconGamepad({ className }: { className?: string }) {
       <line x1="6" y1="13" x2="9" y2="13" />
       <circle cx="15.5" cy="12.5" r="0.9" fill="currentColor" stroke="none" />
       <circle cx="17.5" cy="14.5" r="0.9" fill="currentColor" stroke="none" />
+    </svg>
+  );
+}
+
+function IconHeartPulse({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.75"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      <path d="M12 20.5c-4-2.7-9-6.8-9-11.2C3 6 5.2 4 8 4c1.7 0 3.2.9 4 2.3C12.8 4.9 14.3 4 16 4c2.8 0 5 2 5 5.3 0 4.4-5 8.5-9 11.2Z" />
+      <path d="M5 12h2.5l1.5-3 2 5 1.5-3h2.5" />
     </svg>
   );
 }
