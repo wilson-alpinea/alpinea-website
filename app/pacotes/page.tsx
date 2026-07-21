@@ -423,9 +423,9 @@ export default function PacotesJapaoPage() {
       >
         <div className="mx-auto max-w-7xl">
           <div className="mb-10 flex justify-center md:mb-14">
-            <span className="inline-flex items-center gap-2 rounded-full border border-[#b79ce6]/50 bg-[#b79ce6]/15 px-5 py-2 text-[11px] font-semibold uppercase tracking-[0.2em] text-[#b79ce6] md:text-xs">
-              <IconClock className="h-3.5 w-3.5" />
-              Preços válidos até 30/07/2026
+            <span className="inline-flex max-w-full flex-wrap items-center justify-center gap-2 rounded-full border border-[#b79ce6]/50 bg-[#b79ce6]/15 px-5 py-2 text-center text-[11px] font-semibold uppercase tracking-[0.2em] text-[#b79ce6] md:text-xs">
+              <IconClock className="h-3.5 w-3.5 shrink-0" />
+              Preços válidos até 30/07/2026 · Sujeitos a alteração conforme variação cambial
             </span>
           </div>
 
@@ -597,22 +597,6 @@ export default function PacotesJapaoPage() {
             >
               O acesso no Japão não se compra. Se constrói ao longo de anos.
             </h2>
-
-            <div className="mt-8 inline-flex flex-wrap items-center gap-4 rounded-full border border-[#b79ce6]/40 bg-[#b79ce6]/10 px-6 py-4 sm:gap-5 sm:px-8 sm:py-5">
-              <div className="flex items-center gap-1 text-[#b79ce6]">
-                {Array.from({ length: 5 }).map((_, index) => (
-                  <IconStarFilled key={index} className="h-5 w-5 sm:h-6 sm:w-6" />
-                ))}
-              </div>
-              <p className="text-base font-light text-white/70 sm:text-lg">
-                <span
-                  className={`${display.className} text-xl font-medium text-white sm:text-2xl`}
-                >
-                  4,8 de 5,0
-                </span>{" "}
-                no Google · +180 avaliações
-              </p>
-            </div>
           </div>
 
           <CarouselScroller itemCount={whyAjisai.length} desktopColumns={4}>
@@ -654,6 +638,22 @@ export default function PacotesJapaoPage() {
               Tudo é feito com muito carinho e atenção aos detalhes para
               atender aos nossos clientes mais exigentes
             </h2>
+
+            <div className="mt-8 inline-flex flex-wrap items-center gap-4 rounded-full border border-[#b79ce6]/40 bg-[#b79ce6]/10 px-6 py-4 sm:gap-5 sm:px-8 sm:py-5">
+              <div className="flex items-center gap-1 text-[#b79ce6]">
+                {Array.from({ length: 5 }).map((_, index) => (
+                  <IconStarFilled key={index} className="h-5 w-5 sm:h-6 sm:w-6" />
+                ))}
+              </div>
+              <p className="text-base font-light text-white/70 sm:text-lg">
+                <span
+                  className={`${display.className} text-xl font-medium text-white sm:text-2xl`}
+                >
+                  4,8 de 5,0
+                </span>{" "}
+                no Google · +180 avaliações
+              </p>
+            </div>
           </div>
 
           <CarouselScroller
