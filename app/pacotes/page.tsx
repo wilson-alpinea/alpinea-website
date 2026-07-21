@@ -12,7 +12,7 @@ const display = Bodoni_Moda({
 export const metadata = {
   title: "Ajisai | Pacotes de Viagem para o Japão",
   description:
-    "Pacotes completos para o Japão com a curadoria Ajisai: hotel, passagem aérea, seguro viagem, Wi-Fi, guia turístico e transfer opcionais. Primeira Viagem ao Japão, Temporada das Cerejeiras, Outono no Japão, Japão em Família e Tokyo Marathon Experience.",
+    "Pacotes completos para o Japão com a curadoria Ajisai: hotel, passagem aérea, seguro viagem, Wi-Fi, guia turístico e transfer opcionais. Primeira Viagem ao Japão, Temporada das Cerejeiras, Outono no Japão, Japão em Família, Tokyo Marathon Experience e Anime, Gaming & TCG.",
 };
 
 export default function PacotesJapaoPage() {
@@ -128,6 +128,27 @@ export default function PacotesJapaoPage() {
       imagemAlt: "Logo oficial da Tokyo Marathon",
       imagemFundoClaro: true,
       Icon: IconMedal,
+    },
+    {
+      slug: "japao-anime-gaming-tcg",
+      categoria: "Cultura pop · Anime, Gaming e TCG",
+      nome: "Anime, Gaming & TCG",
+      tagline: "Parques temáticos, lojas oficiais e o circuito TCG do Japão",
+      descricao:
+        "Pacote pensado para fãs de anime, games e TCG: o melhor de atrações como Tokyo Disneyland, Universal Studios Japan, PokéPark e Studio Ghibli, somado a visitas às lojas oficiais das principais franquias e ao circuito de compra e venda de cards em Tokyo e Osaka.",
+      destaques: [
+        "Tokyo Disneyland, Universal Studios Japan, PokéPark e Studio Ghibli",
+        "Lojas oficiais: Nintendo, Capcom, Square Enix, Pokémon Center e Toei (One Piece, Dragon Ball)",
+        "Circuito de lojas de TCG em Tokyo e Osaka, como a Hareruya 2",
+        "Akihabara: colecionáveis retrô (N64, Super Nintendo, PS1) e itens atuais como mousepads Artisan",
+      ],
+      precoDe: "R$ 16.990",
+      parcelaDe: "R$ 1.415,83",
+      accent: "#ff5964",
+      selo: "🎮 Novo pacote",
+      imagem: "/images/anime-gaming-tcg.jpg",
+      imagemAlt: "Personagens de One Piece com colecionáveis, referência à cultura pop japonesa",
+      Icon: IconGamepad,
     },
   ];
 
@@ -1183,6 +1204,26 @@ function IconMedal({ className }: { className?: string }) {
       <circle cx="12" cy="15" r="5.5" />
       <path d="M9.5 10 7 3M14.5 10 17 3" />
       <path d="M12 12.5v5" />
+    </svg>
+  );
+}
+
+function IconGamepad({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.75"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      <path d="M6 8h12a4 4 0 0 1 4 4.2l.6 4A2.4 2.4 0 0 1 20 19.3c-.9 0-1.7-.5-2.1-1.3l-1-2H7.1l-1 2A2.4 2.4 0 0 1 4 19.3a2.4 2.4 0 0 1-2.6-2.7l.6-4.4A4 4 0 0 1 6 8Z" />
+      <line x1="7.5" y1="11.5" x2="7.5" y2="14.5" />
+      <line x1="6" y1="13" x2="9" y2="13" />
+      <circle cx="15.5" cy="12.5" r="0.9" fill="currentColor" stroke="none" />
+      <circle cx="17.5" cy="14.5" r="0.9" fill="currentColor" stroke="none" />
     </svg>
   );
 }
