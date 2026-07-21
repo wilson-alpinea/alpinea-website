@@ -146,7 +146,7 @@ export default function PacotesJapaoPage() {
       parcelaDe: "R$ 1.415,83",
       accent: "#ff5964",
       selo: "🎮 Novo pacote",
-      imagem: "/images/anime-gaming-tcg.jpg",
+      imagem: "/images/anime-gaming-cover.png",
       imagemAlt: "Personagens de One Piece com colecionáveis, referência à cultura pop japonesa",
       Icon: IconGamepad,
     },
