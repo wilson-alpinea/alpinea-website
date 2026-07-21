@@ -598,15 +598,19 @@ export default function PacotesJapaoPage() {
               O acesso no Japão não se compra. Se constrói ao longo de anos.
             </h2>
 
-            <div className="mt-6 flex items-center gap-3">
-              <div className="flex items-center gap-0.5 text-[#b79ce6]">
+            <div className="mt-8 inline-flex flex-wrap items-center gap-4 rounded-full border border-[#b79ce6]/40 bg-[#b79ce6]/10 px-6 py-4 sm:gap-5 sm:px-8 sm:py-5">
+              <div className="flex items-center gap-1 text-[#b79ce6]">
                 {Array.from({ length: 5 }).map((_, index) => (
-                  <IconStarFilled key={index} className="h-4 w-4" />
+                  <IconStarFilled key={index} className="h-5 w-5 sm:h-6 sm:w-6" />
                 ))}
               </div>
-              <p className="text-sm font-light text-white/60">
-                <span className="font-medium text-white">4,8 de 5,0</span> no
-                Google · +180 avaliações
+              <p className="text-base font-light text-white/70 sm:text-lg">
+                <span
+                  className={`${display.className} text-xl font-medium text-white sm:text-2xl`}
+                >
+                  4,8 de 5,0
+                </span>{" "}
+                no Google · +180 avaliações
               </p>
             </div>
           </div>
