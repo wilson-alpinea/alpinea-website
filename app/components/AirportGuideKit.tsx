@@ -334,7 +334,13 @@ export function ImmigrationArrivalGuide({ displayClassName }: { displayClassName
 
       <div className="space-y-4 border-t border-white/10 pt-8">
         <SubStepHeading number={3} title="Retirar Bagagem" />
-        <p className="text-sm italic leading-6 text-white/35">Conteúdo em elaboração.</p>
+        <p className="text-base font-light leading-8 text-white/70">
+          Procure a indicação nos painéis na área das esteiras o número da esteira
+          indicado pelo número de voo e companhia aérea. Após pegar as malas, existe uma
+          última verificação — nessa etapa, o oficial da alfândega normalmente pede o
+          documento Customs Declaration. Após a liberação, você chegará à área externa
+          de desembarque, normalmente no Terminal 1 ou 2.
+        </p>
       </div>
     </div>
   );

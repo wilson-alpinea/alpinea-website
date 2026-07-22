@@ -3,7 +3,6 @@ import type { Metadata } from "next";
 import {
   InternalGuideHeader,
   SectionMarker,
-  InfoBlock,
   RecommendationRow,
   TransportOption,
   RestaurantMini,
@@ -13,11 +12,11 @@ import {
   MapModal,
   PreviewModal,
   ImmigrationArrivalGuide,
+  SubStepHeading,
   IconTrain,
   IconCar,
   IconCard,
   IconExchange,
-  IconWifi,
   IconLuggage,
   IconBulb,
   IconClock,
@@ -161,15 +160,61 @@ export default function NaritaGuidePage() {
 
           <ImmigrationArrivalGuide displayClassName={display.className} />
 
-          <div className="mt-10 space-y-8 text-base font-light leading-8 text-white/70">
-            <InfoBlock
-              title="Joint Kiosk em Narita"
-              text="Desde 2026, Narita conta com o Joint Kiosk, que lê o QR code do Visit Japan Web e o passaporte em uma única etapa, reduzindo o tempo na imigração em cerca de 20–30 minutos."
-            />
-            <InfoBlock
-              title="Tempo de fila"
-              text="Em temporada alta, a fila da imigração pode passar de 1 hora. Se houver conexão doméstica em seguida, considere essa margem no planejamento do dia de chegada."
-            />
+          <div className="mt-10 space-y-5 border-t border-white/10 pt-8">
+            <SubStepHeading number={4} title="O Que Devo Fazer Antes de Sair do Aeroporto?" />
+            <p className="text-base font-light leading-8 text-white/70">
+              O Aeroporto de Narita fica bem distante de Tóquio — em horários com
+              trânsito, pode levar até 2 horas para chegar ao centro da cidade. Por
+              isso, existem algumas recomendações gerais.
+            </p>
+
+            <div className="space-y-4 pt-2">
+              <p className="text-sm font-medium uppercase tracking-[0.15em] text-white/70">
+                4.1 — Aluguel de Pocket Wi-Fi ou eSIM 5G
+              </p>
+              <p className="text-base font-light leading-8 text-white/70">
+                Caso ainda não tenha comprado um eSIM 5G, recomendamos que faça o
+                aluguel de um wi-fi móvel ou a compra de um eSIM 5G dentro do
+                aeroporto.
+              </p>
+
+              <div className="grid gap-4 md:grid-cols-3">
+                <div className="rounded-2xl border border-white/10 bg-white/[0.025] p-5">
+                  <p className="text-sm font-medium text-white">Terminal 1</p>
+                  <p className="mt-2 text-sm leading-6 text-white/60">
+                    Máquinas de venda de chip e guichês de pocket Wi-Fi no 1F, tanto na
+                    Ala Sul quanto na Ala Norte.
+                  </p>
+                </div>
+                <div className="rounded-2xl border border-white/10 bg-white/[0.025] p-5">
+                  <p className="text-sm font-medium text-white">Terminal 2</p>
+                  <p className="mt-2 text-sm leading-6 text-white/60">
+                    Guichês de pocket Wi-Fi no lobby de embarque, no 3F. Máquinas de
+                    eSIM normalmente no 2F.
+                  </p>
+                </div>
+                <div className="rounded-2xl border border-white/10 bg-white/[0.025] p-5">
+                  <p className="text-sm font-medium text-white">Terminal 3</p>
+                  <p className="mt-2 text-sm leading-6 text-white/60">
+                    Guichês de pocket Wi-Fi e máquinas de eSIM no 1F.
+                  </p>
+                </div>
+              </div>
+
+              <div className="rounded-2xl border border-[#5b9bd5]/15 bg-[#0f2340] p-6 sm:p-8">
+                <p className="mb-4 flex items-center gap-2 text-xs uppercase tracking-[0.25em] text-[#5b9bd5]">
+                  <IconBulb className="h-3.5 w-3.5" />
+                  Recomendação Alpinea
+                </p>
+                <p className="text-sm leading-7 text-white/70 md:text-base md:leading-8">
+                  O método mais conveniente é contratar o eSIM digitalmente em
+                  aplicativos como Airalo — nós normalmente usamos a própria Airalo
+                  para contratação. A vantagem de usar o pocket wi-fi é que você pode
+                  conectar vários aparelhos diferentes nele; a desvantagem é que
+                  precisa carregá-lo para qualquer lugar que for.
+                </p>
+              </div>
+            </div>
           </div>
         </div>
       </section>
@@ -202,7 +247,7 @@ export default function NaritaGuidePage() {
           <div className="mb-10">
             <SectionMarker number={3} label="Bagagem e Ações Antes de Sair do Aeroporto" />
           </div>
-          <div className="grid gap-5 sm:grid-cols-2">
+          <div className="grid gap-5 sm:grid-cols-3">
             <ActionItem
               Icon={IconCard}
               title="IC Card (Suica/Pasmo)"
@@ -212,11 +257,6 @@ export default function NaritaGuidePage() {
               Icon={IconExchange}
               title="Câmbio"
               text="Balcões de câmbio nos halls de chegada de cada terminal. Trocar o suficiente para os primeiros dias evita depender só de caixas eletrônicos no trajeto até o hotel."
-            />
-            <ActionItem
-              Icon={IconWifi}
-              title="eSIM / Pocket WiFi"
-              text="SoftBank Global Rental tem balcões no T1 (1F, Central Building, junto à entrada central do hall de chegada) e no T2 (1F, Main Building, centro do hall de chegada internacional), das 07:00 às 21:00. Sakura Mobile e NINJA WiFi também têm balcões nos dois terminais."
             />
             <ActionItem
               Icon={IconLuggage}
