@@ -9,7 +9,8 @@ import {
   RestaurantMini,
   ActionItem,
   TerminalCard,
-  MapImage,
+  MapCard,
+  MapModal,
   IconTrain,
   IconCar,
   IconCard,
@@ -78,16 +79,8 @@ export default function NaritaGuidePage() {
           </div>
 
           <div className="grid gap-4 md:grid-cols-2">
-            <MapImage
-              src="/images/visao-geral-narita-todos-terminais.png"
-              alt="Mapa geral do Aeroporto de Narita com Terminal 1, 2 e 3 e estacionamentos"
-              label="Mapa geral — Terminal 1, 2 e 3"
-            />
-            <MapImage
-              src="/images/T1-Overview.png"
-              alt="Planta do Terminal 1 de Narita, com Ala Norte e Ala Sul"
-              label="Planta do Terminal 1 — Ala Norte e Ala Sul"
-            />
+            <MapCard href="#mapa-geral-narita" label="Mapa Geral — Terminal 1, 2 e 3" />
+            <MapCard href="#mapa-terminal1" label="Planta do Terminal 1" />
           </div>
 
           <div className="rounded-2xl border border-[#5b9bd5]/15 bg-[#0f2340] p-6 sm:p-8">
@@ -108,11 +101,7 @@ export default function NaritaGuidePage() {
               </p>
             </div>
             <div className="mt-5">
-              <MapImage
-                src="/images/passagem-terminal-terrestre.png"
-                alt="Passagem no terceiro andar entre o Terminal 2 e o Terminal 3 de Narita"
-                label="Passagem no 3º andar entre o Terminal 2 e o Terminal 3"
-              />
+              <MapCard href="#mapa-passagem-t2-t3" label="Passagem entre o Terminal 2 e o Terminal 3" />
             </div>
 
             <div className="mt-8 space-y-4 border-t border-white/10 pt-6 text-sm leading-7 text-white/70 md:text-base md:leading-8">
@@ -123,20 +112,43 @@ export default function NaritaGuidePage() {
               </p>
             </div>
             <div className="mt-5 grid gap-4 sm:grid-cols-2">
-              <MapImage
-                src="/images/T1-Terminal-Shuttle.png"
-                alt="No. 6 Terminal Shuttle Bus Stop, com destino ao Terminal 2, no Terminal 1 de Narita"
-                label="Parada do shuttle T1 → T2 (No. 6 Terminal Shuttle Bus Stop)"
-              />
-              <MapImage
-                src="/images/T3-terminal-shuttle.png"
-                alt="No. 1 Terminal Shuttle Bus Stop, com destino ao Terminal 3, no Terminal 1 de Narita"
-                label="Parada do shuttle T1 → T3 (No. 1 Terminal Shuttle Bus Stop)"
-              />
+              <MapCard href="#mapa-shuttle-t1-t2" label="Parada do shuttle T1 → T2 (No. 6)" />
+              <MapCard href="#mapa-shuttle-t1-t3" label="Parada do shuttle T1 → T3 (No. 1)" />
             </div>
           </div>
         </div>
       </section>
+
+      <MapModal
+        id="mapa-geral-narita"
+        label="Mapa Geral — Terminal 1, 2 e 3"
+        src="/images/visao-geral-narita-todos-terminais.png"
+        alt="Mapa geral do Aeroporto de Narita com Terminal 1, 2 e 3 e estacionamentos"
+      />
+      <MapModal
+        id="mapa-terminal1"
+        label="Planta do Terminal 1 — Ala Norte e Ala Sul"
+        src="/images/T1-Overview.png"
+        alt="Planta do Terminal 1 de Narita, com Ala Norte e Ala Sul"
+      />
+      <MapModal
+        id="mapa-passagem-t2-t3"
+        label="Passagem no 3º andar entre o Terminal 2 e o Terminal 3"
+        src="/images/passagem-terminal-terrestre.png"
+        alt="Passagem no terceiro andar entre o Terminal 2 e o Terminal 3 de Narita"
+      />
+      <MapModal
+        id="mapa-shuttle-t1-t2"
+        label="Parada do shuttle T1 → T2 (No. 6 Terminal Shuttle Bus Stop)"
+        src="/images/T1-Terminal-Shuttle.png"
+        alt="No. 6 Terminal Shuttle Bus Stop, com destino ao Terminal 2, no Terminal 1 de Narita"
+      />
+      <MapModal
+        id="mapa-shuttle-t1-t3"
+        label="Parada do shuttle T1 → T3 (No. 1 Terminal Shuttle Bus Stop)"
+        src="/images/T3-terminal-shuttle.png"
+        alt="No. 1 Terminal Shuttle Bus Stop, com destino ao Terminal 3, no Terminal 1 de Narita"
+      />
 
       {/* Chegada e imigração */}
       <section className="border-t border-white/10 bg-white/[0.02] px-6 py-14 md:px-10 md:py-20">

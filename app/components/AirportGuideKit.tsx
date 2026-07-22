@@ -151,7 +151,7 @@ export function IconMap({ className }: { className?: string }) {
 
 // Espaço reservado para um mapa que ainda precisa ser anexado ao guia.
 // Usado enquanto a imagem oficial (print/foto do mapa do aeroporto) não
-// é fornecida — substituir por <MapImage /> assim que a imagem existir.
+// é fornecida — substituir por <MapCard />/<MapModal /> assim que a imagem existir.
 export function PendingMap({ label }: { label: string }) {
   return (
     <div className="flex items-center gap-4 rounded-2xl border border-dashed border-white/20 bg-black/30 p-5">
@@ -166,16 +166,61 @@ export function PendingMap({ label }: { label: string }) {
   );
 }
 
-// Mapa já anexado — mesmo padrão visual do MapCard usado no roteiro-exemplo,
-// mas com a imagem inline (sem depender de um modal de preview).
-export function MapImage({ src, alt, label }: { src: string; alt: string; label?: string }) {
+// Cartão colapsado de mapa — mesmo padrão visual do roteiro-exemplo
+// (variante escura do MapCard). Abre o MapModal correspondente ao ser
+// clicado, via âncora + :target (sem JS).
+export function MapCard({ href, label }: { href: string; label: string }) {
   return (
-    <div className="overflow-hidden rounded-2xl border border-[#5b9bd5]/25 bg-black">
-      <Image src={src} alt={alt} width={1600} height={1200} className="h-auto w-full object-contain" />
-      {label && (
-        <p className="border-t border-white/10 bg-[#0f2340] px-5 py-3 text-xs leading-5 text-white/50">{label}</p>
-      )}
-    </div>
+    <a
+      href={href}
+      className="group flex items-center gap-4 rounded-2xl border border-[#2f80c9]/30 bg-[#0f2340] p-5 transition hover:border-[#2f80c9]/60"
+    >
+      <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#2f80c9]/20 text-[#8fc0f0]">
+        <IconMap className="h-5 w-5" />
+      </span>
+      <div>
+        <p className="text-sm font-medium text-white">{label}</p>
+        <p className="text-xs text-[#8fc0f0]/70">Toque para ampliar</p>
+      </div>
+      <span className="ml-auto text-lg text-[#8fc0f0]/70 transition group-hover:translate-x-0.5">→</span>
+    </a>
+  );
+}
+
+// Modal em tela cheia com o mapa ampliado — acionado pelo MapCard acima.
+// Deve ser renderizado uma vez por página (ex.: perto do fechamento do
+// <main>), com o mesmo `id` usado no `href` do MapCard correspondente.
+export function MapModal({
+  id,
+  label,
+  src,
+  alt,
+}: {
+  id: string;
+  label: string;
+  src: string;
+  alt: string;
+}) {
+  return (
+    <section
+      id={id}
+      className="fixed inset-0 z-[90] hidden overflow-y-auto bg-black/95 px-4 py-8 target:block md:px-8"
+    >
+      <a
+        href="#_"
+        aria-label="Fechar mapa"
+        className="fixed right-4 top-4 z-[110] flex h-14 w-14 items-center justify-center rounded-full border border-black/10 bg-white text-4xl leading-none text-black shadow-[0_12px_40px_rgba(0,0,0,0.5)] transition hover:bg-white/90 md:right-8 md:top-8 md:h-16 md:w-16 md:text-5xl"
+      >
+        ×
+      </a>
+      <div className="mx-auto max-w-5xl pt-12 pb-12">
+        <p className="mb-4 text-xs uppercase tracking-[0.35em] text-white/35">Mapa</p>
+        <h3 className="text-2xl font-medium text-white md:text-3xl">{label}</h3>
+        <div className="mt-8 overflow-hidden rounded-2xl border border-white/10 bg-white/[0.03]">
+          <Image src={src} alt={alt} width={1600} height={1200} className="h-auto w-full object-contain" />
+        </div>
+      </div>
+    </section>
   );
 }
 
