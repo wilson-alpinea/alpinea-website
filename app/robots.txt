@@ -5,6 +5,9 @@ export default function robots(): MetadataRoute.Robots {
     rules: {
       userAgent: "*",
       allow: "/",
+      // Banco de conteúdo interno (guias/atrações reutilizados nos roteiros) —
+      // não deve ser indexado nem rastreado.
+      disallow: "/database",
     },
 
     sitemap: "https://www.alpinea.io/sitemap.xml",
