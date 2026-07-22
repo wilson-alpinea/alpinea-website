@@ -166,17 +166,26 @@ export function PendingMap({ label }: { label: string }) {
   );
 }
 
-// Cartão colapsado de mapa — mesmo padrão visual do roteiro-exemplo
-// (variante escura do MapCard). Abre o MapModal correspondente ao ser
-// clicado, via âncora + :target (sem JS).
-export function MapCard({ href, label }: { href: string; label: string }) {
+// Cartão colapsado de preview — mesmo padrão visual do MapCard usado no
+// roteiro-exemplo. Abre o PreviewModal correspondente ao ser clicado, via
+// âncora + :target (sem JS). Serve tanto para mapas quanto para documentos
+// (formulários, QR codes etc.) — troque o Icon conforme o conteúdo.
+export function PreviewCard({
+  href,
+  label,
+  Icon = IconMap,
+}: {
+  href: string;
+  label: string;
+  Icon?: (p: { className?: string }) => ReactElement;
+}) {
   return (
     <a
       href={href}
       className="group flex items-center gap-4 rounded-2xl border border-[#2f80c9]/30 bg-[#0f2340] p-5 transition hover:border-[#2f80c9]/60"
     >
       <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#2f80c9]/20 text-[#8fc0f0]">
-        <IconMap className="h-5 w-5" />
+        <Icon className="h-5 w-5" />
       </span>
       <div>
         <p className="text-sm font-medium text-white">{label}</p>
@@ -187,16 +196,18 @@ export function MapCard({ href, label }: { href: string; label: string }) {
   );
 }
 
-// Modal em tela cheia com o mapa ampliado — acionado pelo MapCard acima.
-// Deve ser renderizado uma vez por página (ex.: perto do fechamento do
-// <main>), com o mesmo `id` usado no `href` do MapCard correspondente.
-export function MapModal({
+// Modal em tela cheia com a imagem ampliada — acionado pelo PreviewCard
+// acima. Deve ser renderizado uma vez por página (ex.: perto do fechamento
+// do <main>), com o mesmo `id` usado no `href` do PreviewCard correspondente.
+export function PreviewModal({
   id,
+  eyebrow = "Mapa",
   label,
   src,
   alt,
 }: {
   id: string;
+  eyebrow?: string;
   label: string;
   src: string;
   alt: string;
@@ -208,19 +219,124 @@ export function MapModal({
     >
       <a
         href="#_"
-        aria-label="Fechar mapa"
+        aria-label="Fechar"
         className="fixed right-4 top-4 z-[110] flex h-14 w-14 items-center justify-center rounded-full border border-black/10 bg-white text-4xl leading-none text-black shadow-[0_12px_40px_rgba(0,0,0,0.5)] transition hover:bg-white/90 md:right-8 md:top-8 md:h-16 md:w-16 md:text-5xl"
       >
         ×
       </a>
       <div className="mx-auto max-w-5xl pt-12 pb-12">
-        <p className="mb-4 text-xs uppercase tracking-[0.35em] text-white/35">Mapa</p>
+        <p className="mb-4 text-xs uppercase tracking-[0.35em] text-white/35">{eyebrow}</p>
         <h3 className="text-2xl font-medium text-white md:text-3xl">{label}</h3>
         <div className="mt-8 overflow-hidden rounded-2xl border border-white/10 bg-white/[0.03]">
           <Image src={src} alt={alt} width={1600} height={1200} className="h-auto w-full object-contain" />
         </div>
       </div>
     </section>
+  );
+}
+
+// Atalhos com os nomes antigos, para manter compatibilidade com páginas
+// que já usam MapCard/MapModal especificamente para mapas.
+export function MapCard({ href, label }: { href: string; label: string }) {
+  return <PreviewCard href={href} label={label} Icon={IconMap} />;
+}
+
+export function MapModal(props: { id: string; label: string; src: string; alt: string }) {
+  return <PreviewModal eyebrow="Mapa" {...props} />;
+}
+
+// Cabeçalho numerado para passos dentro de uma seção (ex.: "1. Documentos
+// de Imigração"). Menor e mais discreto que o SectionMarker, usado para
+// organizar sub-etapas de um fluxo.
+export function SubStepHeading({ number, title }: { number: number; title: string }) {
+  return (
+    <div className="flex items-center gap-3">
+      <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-[#5b9bd5]/40 text-xs font-medium text-[#5b9bd5]">
+        {number}
+      </span>
+      <p className="text-sm font-medium uppercase tracking-[0.15em] text-white">{title}</p>
+    </div>
+  );
+}
+
+// Conteúdo genérico "Meu avião pousou, o que devo fazer?" — igual para
+// qualquer aeroporto do Japão (documentos de imigração, entrevista,
+// retirada de bagagem). Os PreviewModal dos documentos/QR code devem ser
+// renderizados uma vez por página, com os ids: doc-qr-code,
+// doc-disembarkation, doc-customs.
+export function ImmigrationArrivalGuide({ displayClassName }: { displayClassName: string }) {
+  return (
+    <div className="space-y-10">
+      <h3 className={`${displayClassName} text-2xl font-medium text-white md:text-3xl`}>
+        Meu Avião Pousou, o Que Devo Fazer?
+      </h3>
+
+      <div className="space-y-5">
+        <SubStepHeading number={1} title="Documentos de Imigração" />
+        <p className="text-base font-light leading-8 text-white/70">
+          Ao pousar, siga o fluxo até os guichês de imigração. Todos os não-residentes
+          devem apresentar os documentos de imigração — existem duas opções.
+        </p>
+
+        <div className="grid gap-4 md:grid-cols-2">
+          <div className="rounded-2xl border border-white/10 bg-white/[0.025] p-6">
+            <p className="mb-2 text-xs uppercase tracking-[0.25em] text-[#5b9bd5]">Opção A</p>
+            <p className="text-sm font-medium text-white md:text-base">Apresentar Digitalmente</p>
+            <p className="mt-3 text-sm leading-6 text-white/60">
+              Preencha online a declaração e apresente o QR Code gerado no Visit Japan
+              Web (
+              <a
+                href="https://www.vjw.digital.go.jp"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[#8fc0e8] underline underline-offset-2"
+              >
+                vjw.digital.go.jp
+              </a>
+              ).
+            </p>
+            <div className="mt-4">
+              <PreviewCard href="#doc-qr-code" label="Ver QR Code de exemplo" Icon={IconDocument} />
+            </div>
+          </div>
+
+          <div className="rounded-2xl border border-white/10 bg-white/[0.025] p-6">
+            <p className="mb-2 text-xs uppercase tracking-[0.25em] text-[#5b9bd5]">Opção B</p>
+            <p className="text-sm font-medium text-white md:text-base">Apresentar Manualmente</p>
+            <p className="mt-3 text-sm leading-6 text-white/60">
+              Durante o voo, as companhias aéreas costumam distribuir os formulários
+              antes do pouso — ou eles podem ser retirados em balcões espalhados pela
+              área de imigração. Dois documentos devem ser preenchidos, frente e verso:
+            </p>
+            <div className="mt-4 grid gap-3">
+              <PreviewCard
+                href="#doc-disembarkation"
+                label="Disembarkation Card for Foreigner"
+                Icon={IconDocument}
+              />
+              <PreviewCard href="#doc-customs" label="Customs Declaration" Icon={IconDocument} />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="space-y-4 border-t border-white/10 pt-8">
+        <SubStepHeading number={2} title="Entrevista de Imigração" />
+        <p className="text-base font-light leading-8 text-white/70">
+          Depois de inserir o QR Code na máquina — ou apresentar os dois documentos
+          preenchidos — dirija-se à fila de imigração para a entrevista com o oficial.
+          As instruções são fornecidas no seu idioma nativo (português, por exemplo).
+          Na entrevista, suas impressões digitais são escaneadas, o passaporte é
+          verificado, e podem ser feitas perguntas sobre onde você vai ficar, o
+          objetivo da viagem e quais locais pretende visitar — normalmente em inglês.
+        </p>
+      </div>
+
+      <div className="space-y-4 border-t border-white/10 pt-8">
+        <SubStepHeading number={3} title="Retirar Bagagem" />
+        <p className="text-sm italic leading-6 text-white/35">Conteúdo em elaboração.</p>
+      </div>
+    </div>
   );
 }
 

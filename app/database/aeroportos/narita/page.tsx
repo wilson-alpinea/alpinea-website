@@ -11,6 +11,8 @@ import {
   TerminalCard,
   MapCard,
   MapModal,
+  PreviewModal,
+  ImmigrationArrivalGuide,
   IconTrain,
   IconCar,
   IconCard,
@@ -152,18 +154,47 @@ export default function NaritaGuidePage() {
 
       {/* Chegada e imigração */}
       <section className="border-t border-white/10 bg-white/[0.02] px-6 py-14 md:px-10 md:py-20">
-        <div className="mx-auto max-w-3xl space-y-8 text-base font-light leading-8 text-white/70">
-          <SectionMarker number={2} label="Chegada e Imigração" />
-          <InfoBlock
-            title="Visit Japan Web"
-            text="Recomendamos preencher o Visit Japan Web (vjw.digital.go.jp) antes do embarque, com cartão de desembarque e declaração aduaneira. Desde 2026, Narita conta com o Joint Kiosk, que lê o QR code e o passaporte em uma única etapa, reduzindo o tempo na imigração em cerca de 20–30 minutos. O formulário em papel continua disponível a bordo para quem preferir."
-          />
-          <InfoBlock
-            title="Tempo de fila"
-            text="Em temporada alta, a fila da imigração pode passar de 1 hora. Se houver conexão doméstica em seguida, considere essa margem no planejamento do dia de chegada."
-          />
+        <div className="mx-auto max-w-3xl">
+          <div className="mb-8">
+            <SectionMarker number={2} label="Chegada e Imigração" />
+          </div>
+
+          <ImmigrationArrivalGuide displayClassName={display.className} />
+
+          <div className="mt-10 space-y-8 text-base font-light leading-8 text-white/70">
+            <InfoBlock
+              title="Joint Kiosk em Narita"
+              text="Desde 2026, Narita conta com o Joint Kiosk, que lê o QR code do Visit Japan Web e o passaporte em uma única etapa, reduzindo o tempo na imigração em cerca de 20–30 minutos."
+            />
+            <InfoBlock
+              title="Tempo de fila"
+              text="Em temporada alta, a fila da imigração pode passar de 1 hora. Se houver conexão doméstica em seguida, considere essa margem no planejamento do dia de chegada."
+            />
+          </div>
         </div>
       </section>
+
+      <PreviewModal
+        id="doc-qr-code"
+        eyebrow="Documento"
+        label="QR Code de exemplo — Visit Japan Web"
+        src="/images/qr-code.png"
+        alt="Tela do Visit Japan Web mostrando o QR Code de exemplo para imigração e declaração aduaneira"
+      />
+      <PreviewModal
+        id="doc-disembarkation"
+        eyebrow="Documento"
+        label="Disembarkation Card for Foreigner"
+        src="/images/disembarkation-card.png"
+        alt="Formulário Disembarkation Card for Foreigner — Cartão de Imigração para Não-Residente"
+      />
+      <PreviewModal
+        id="doc-customs"
+        eyebrow="Documento"
+        label="Customs Declaration"
+        src="/images/custom-declaration.png"
+        alt="Formulário Customs Declaration — Declaração Aduaneira"
+      />
 
       {/* Bagagem e ações obrigatórias */}
       <section className="border-t border-white/10 px-6 py-14 md:px-10 md:py-20">
