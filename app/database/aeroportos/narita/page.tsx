@@ -9,7 +9,7 @@ import {
   RestaurantMini,
   ActionItem,
   TerminalCard,
-  PendingMap,
+  MapImage,
   IconTrain,
   IconCar,
   IconCard,
@@ -77,6 +77,19 @@ export default function NaritaGuidePage() {
             />
           </div>
 
+          <div className="grid gap-4 md:grid-cols-2">
+            <MapImage
+              src="/images/visao-geral-narita-todos-terminais.png"
+              alt="Mapa geral do Aeroporto de Narita com Terminal 1, 2 e 3 e estacionamentos"
+              label="Mapa geral — Terminal 1, 2 e 3"
+            />
+            <MapImage
+              src="/images/T1-Overview.png"
+              alt="Planta do Terminal 1 de Narita, com Ala Norte e Ala Sul"
+              label="Planta do Terminal 1 — Ala Norte e Ala Sul"
+            />
+          </div>
+
           <div className="rounded-2xl border border-[#5b9bd5]/15 bg-[#0f2340] p-6 sm:p-8">
             <p className="mb-5 flex items-center gap-2 text-xs uppercase tracking-[0.25em] text-[#5b9bd5]">
               <IconBulb className="h-3.5 w-3.5" />
@@ -95,7 +108,11 @@ export default function NaritaGuidePage() {
               </p>
             </div>
             <div className="mt-5">
-              <PendingMap label="Mapa — Passagem entre o Terminal 2 e o Terminal 3" />
+              <MapImage
+                src="/images/passagem-terminal-terrestre.png"
+                alt="Passagem no terceiro andar entre o Terminal 2 e o Terminal 3 de Narita"
+                label="Passagem no 3º andar entre o Terminal 2 e o Terminal 3"
+              />
             </div>
 
             <div className="mt-8 space-y-4 border-t border-white/10 pt-6 text-sm leading-7 text-white/70 md:text-base md:leading-8">
@@ -105,8 +122,17 @@ export default function NaritaGuidePage() {
                 essa transferência leva em média 10 minutos.
               </p>
             </div>
-            <div className="mt-5">
-              <PendingMap label="Mapa — Ponto de embarque do transfer interno" />
+            <div className="mt-5 grid gap-4 sm:grid-cols-2">
+              <MapImage
+                src="/images/T1-Terminal-Shuttle.png"
+                alt="No. 6 Terminal Shuttle Bus Stop, com destino ao Terminal 2, no Terminal 1 de Narita"
+                label="Parada do shuttle T1 → T2 (No. 6 Terminal Shuttle Bus Stop)"
+              />
+              <MapImage
+                src="/images/T3-terminal-shuttle.png"
+                alt="No. 1 Terminal Shuttle Bus Stop, com destino ao Terminal 3, no Terminal 1 de Narita"
+                label="Parada do shuttle T1 → T3 (No. 1 Terminal Shuttle Bus Stop)"
+              />
             </div>
           </div>
         </div>
