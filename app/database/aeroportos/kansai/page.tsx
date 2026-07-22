@@ -201,8 +201,8 @@ export default function KansaiGuidePage() {
             Para Shin-Osaka, o Haruka também é a opção mais direta: ≈ 50 min, ¥2.380.
           </p>
 
-          <div className="mt-8 rounded-2xl border border-[#b79ce6]/15 bg-[#120a1f] p-6 sm:p-8">
-            <p className="mb-5 flex items-center gap-2 text-xs uppercase tracking-[0.25em] text-[#b79ce6]">
+          <div className="mt-8 rounded-2xl border border-[#5b9bd5]/15 bg-[#0f2340] p-6 sm:p-8">
+            <p className="mb-5 flex items-center gap-2 text-xs uppercase tracking-[0.25em] text-[#5b9bd5]">
               <IconBulb className="h-3.5 w-3.5" />
               Recomendação Ajisai
             </p>

@@ -58,7 +58,7 @@ export default function DatabaseIndexPage() {
               href={c.href}
               className="group rounded-2xl border border-white/10 bg-white/[0.025] p-6 transition hover:border-white/25 hover:bg-white/[0.04]"
             >
-              <span className="flex h-10 w-10 items-center justify-center rounded-full bg-[#b79ce6]/12 text-[#b79ce6]">
+              <span className="flex h-10 w-10 items-center justify-center rounded-full bg-[#5b9bd5]/12 text-[#5b9bd5]">
                 <c.Icon className="h-5 w-5" />
               </span>
               <h2 className={`${display.className} mt-5 text-xl font-medium text-white`}>{c.titulo}</h2>

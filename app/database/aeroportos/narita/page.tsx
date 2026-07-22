@@ -8,6 +8,7 @@ import {
   TransportOption,
   RestaurantMini,
   ActionItem,
+  TerminalCard,
   IconTrain,
   IconCar,
   IconCard,
@@ -41,35 +42,39 @@ export default function NaritaGuidePage() {
     <main className="min-h-screen bg-black text-white">
       <InternalGuideHeader
         displayClassName={display.className}
-        eyebrow="Guia de Aeroportos · Chegada"
-        title="Narita"
+        eyebrow="Anexo com Informação Detalhada - Aeroportos - Narita (NRT)"
+        title="Narita International Airport - 成田国際空港"
         code="NRT"
+        heroImage="/images/Narita-hero.png"
+        heroAlt="Vista aérea do pátio de aeronaves e terminais do Aeroporto Internacional de Narita"
         subtitle="Aeroporto Internacional de Narita, em Chiba — a cerca de 60 km a leste do centro de Tóquio. Recebe a maior parte dos voos internacionais de longo curso com destino a Tóquio."
       />
 
       {/* Visão geral */}
       <section className="border-t border-white/10 px-6 py-14 md:px-10 md:py-20">
-        <div className="mx-auto max-w-3xl space-y-9 text-base font-light leading-8 text-white/70">
+        <div className="mx-auto max-w-5xl space-y-10">
           <SectionMarker number={1} label="Visão Geral" />
-          <div className="grid gap-6 sm:grid-cols-3">
-            <div>
-              <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/35">Terminais</p>
-              <p className="text-white">T1 · T2 · T3</p>
-            </div>
-            <div>
-              <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/35">Distância ao centro</p>
-              <p className="text-white">≈ 60 km</p>
-            </div>
-            <div>
-              <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/35">Trem</p>
-              <p className="text-white">B1 de cada terminal</p>
-            </div>
-          </div>
-          <p>
-            T1 concentra companhias estrangeiras (Ala Norte) e a ANA (Ala Sul); T2 recebe a
-            JAL e parceiros oneworld; T3 é voltado a companhias de baixo custo. Confirme o
-            terminal na confirmação do voo — companhias e alocações mudam com frequência.
+          <p className="max-w-3xl text-base font-light leading-8 text-white/70">
+            Confirme sempre o terminal na confirmação do voo — companhias e alocações
+            mudam com frequência.
           </p>
+          <div className="grid gap-4 md:grid-cols-3">
+            <TerminalCard
+              nome="Terminal 1"
+              tipo="Internacional — Ala Norte e Ala Sul. Voos domésticos da ANA e da Peach em área separada, acessada pelo saguão de chegadas da Ala Sul."
+              companhias="Ala Sul: Star Alliance (ANA, United, Lufthansa, Air Canada, Thai, Asiana, entre outras). Ala Norte: SkyTeam (Delta, Korean Air, China Airlines, Vietnam Airlines, Garuda Indonesia, entre outras)."
+            />
+            <TerminalCard
+              nome="Terminal 2"
+              tipo="Internacional, com voos domésticos da JAL."
+              companhias="Oneworld — JAL, British Airways, Finnair, Cathay Pacific, American Airlines, Qatar Airways, Malaysia Airlines, entre outras."
+            />
+            <TerminalCard
+              nome="Terminal 3"
+              tipo="Doméstico e internacional — companhias de baixo custo."
+              companhias="Jetstar Japan, Spring Airlines Japan, Zipair Tokyo, Air Japan, entre outras."
+            />
+          </div>
         </div>
       </section>
 
@@ -189,8 +194,8 @@ export default function NaritaGuidePage() {
             />
           </div>
 
-          <div className="mt-6 rounded-2xl border border-[#b79ce6]/15 bg-[#120a1f] p-6 sm:p-8">
-            <p className="mb-5 flex items-center gap-2 text-xs uppercase tracking-[0.25em] text-[#b79ce6]">
+          <div className="mt-6 rounded-2xl border border-[#5b9bd5]/15 bg-[#0f2340] p-6 sm:p-8">
+            <p className="mb-5 flex items-center gap-2 text-xs uppercase tracking-[0.25em] text-[#5b9bd5]">
               <IconBulb className="h-3.5 w-3.5" />
               Recomendação Ajisai
             </p>

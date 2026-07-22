@@ -87,7 +87,7 @@ export default function AeroportosIndexPage() {
               href={`/database/aeroportos/${a.slug}`}
               className="group rounded-2xl border border-white/10 bg-white/[0.025] p-6 transition hover:border-white/25 hover:bg-white/[0.04]"
             >
-              <span className="flex h-10 w-10 items-center justify-center rounded-full bg-[#b79ce6]/12 text-[#b79ce6]">
+              <span className="flex h-10 w-10 items-center justify-center rounded-full bg-[#5b9bd5]/12 text-[#5b9bd5]">
                 <IconPlane className="h-5 w-5" />
               </span>
               <p className="mt-5 text-xs uppercase tracking-[0.25em] text-white/35">

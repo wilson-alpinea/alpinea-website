@@ -1,4 +1,5 @@
 import type { ReactElement } from "react";
+import Image from "next/image";
 
 // ── Kit visual compartilhado pelas páginas do banco de conteúdo (guias de
 // aeroporto, e futuramente câmbio, logística, shinkansen, parques etc.).
@@ -141,10 +142,10 @@ export function IconArrowLeft({ className }: { className?: string }) {
 export function SectionMarker({ number, label }: { number: number; label: string }) {
   return (
     <div className="flex items-center gap-3">
-      <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#b79ce6] text-xs font-semibold text-black">
+      <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#5b9bd5] text-xs font-semibold text-black">
         {number}
       </span>
-      <p className="text-xs uppercase tracking-[0.35em] text-[#b79ce6]">{label}</p>
+      <p className="text-xs uppercase tracking-[0.35em] text-[#5b9bd5]">{label}</p>
     </div>
   );
 }
@@ -169,7 +170,7 @@ export function RecommendationRow({
 }) {
   return (
     <div className="grid grid-cols-[34px_1fr] gap-3 rounded-2xl border border-white/10 bg-black/35 p-4">
-      <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#b79ce6]/12 text-[#b79ce6]">
+      <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#5b9bd5]/12 text-[#5b9bd5]">
         <Icon className="h-4 w-4" />
       </div>
       <div>
@@ -203,7 +204,7 @@ export function TransportOption({
     <div
       className={`rounded-2xl p-5 ${
         highlight
-          ? "border-2 border-[#b79ce6] bg-white/[0.025]"
+          ? "border-2 border-[#5b9bd5] bg-white/[0.025]"
           : "border border-white/10 bg-white/[0.025]"
       }`}
     >
@@ -217,7 +218,7 @@ export function TransportOption({
         </div>
       </div>
       {tag && (
-        <p className="mt-3 inline-block rounded-full border border-[#b79ce6]/40 px-3 py-1 text-[10px] uppercase tracking-[0.2em] text-[#b79ce6]">
+        <p className="mt-3 inline-block rounded-full border border-[#5b9bd5]/40 px-3 py-1 text-[10px] uppercase tracking-[0.2em] text-[#5b9bd5]">
           {tag}
         </p>
       )}
@@ -231,6 +232,32 @@ export function TransportOption({
           ))}
         </div>
       )}
+    </div>
+  );
+}
+
+export function TerminalCard({
+  nome,
+  tipo,
+  companhias,
+}: {
+  nome: string;
+  tipo: string;
+  companhias: string;
+}) {
+  return (
+    <div className="rounded-2xl border border-white/10 bg-white/[0.025] p-6">
+      <p className="text-base font-medium text-white md:text-lg">{nome}</p>
+      <div className="mt-5 space-y-4 border-t border-white/10 pt-5">
+        <div>
+          <p className="text-[10px] uppercase tracking-[0.22em] text-white/30">Tipo</p>
+          <p className="mt-1.5 text-sm leading-6 text-white/70">{tipo}</p>
+        </div>
+        <div>
+          <p className="text-[10px] uppercase tracking-[0.22em] text-white/30">Companhias aéreas</p>
+          <p className="mt-1.5 text-sm leading-6 text-white/70">{companhias}</p>
+        </div>
+      </div>
     </div>
   );
 }
@@ -266,7 +293,7 @@ export function ActionItem({
 }) {
   return (
     <div className="rounded-2xl border border-white/10 bg-white/[0.025] p-6">
-      <span className="mb-4 flex h-9 w-9 items-center justify-center rounded-full bg-[#b79ce6]/12 text-[#b79ce6]">
+      <span className="mb-4 flex h-9 w-9 items-center justify-center rounded-full bg-[#5b9bd5]/12 text-[#5b9bd5]">
         <Icon className="h-4 w-4" />
       </span>
       <p className="text-sm font-medium text-white md:text-base">{title}</p>
@@ -284,12 +311,16 @@ export function InternalGuideHeader({
   subtitle,
   code,
   displayClassName = "",
+  heroImage,
+  heroAlt,
 }: {
   eyebrow: string;
   title: string;
   subtitle: string;
   code?: string;
   displayClassName?: string;
+  heroImage?: string;
+  heroAlt?: string;
 }) {
   return (
     <header className="border-b border-white/10 bg-black">
@@ -305,17 +336,53 @@ export function InternalGuideHeader({
           Uso interno · não indexado
         </span>
       </div>
-      <div className="mx-auto max-w-5xl px-6 pb-12 pt-4 md:px-10 md:pb-16">
-        <p className="mb-4 text-xs uppercase tracking-[0.35em] text-white/40">{eyebrow}</p>
-        <div className="flex flex-wrap items-end gap-4">
-          <h1 className={`${displayClassName} text-4xl font-medium leading-tight text-white md:text-6xl`}>{title}</h1>
-          {code && (
-            <span className="mb-1 rounded-full border border-[#b79ce6]/30 bg-[#b79ce6]/10 px-3 py-1 text-sm font-medium text-[#b79ce6]">
-              {code}
-            </span>
-          )}
+
+      {heroImage ? (
+        <div className="relative h-[280px] min-h-[280px] w-full overflow-hidden md:h-[420px] md:min-h-[420px]">
+          <Image
+            src={heroImage}
+            alt={heroAlt ?? title}
+            fill
+            priority
+            sizes="100vw"
+            className="object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/55 to-transparent" />
+          <div className="absolute inset-x-0 bottom-0 px-6 pb-8 md:px-10 md:pb-12">
+            <div className="mx-auto max-w-5xl">
+              <p className="mb-3 text-xs uppercase tracking-[0.35em] text-white/50">{eyebrow}</p>
+              <div className="flex flex-wrap items-end gap-4">
+                <h1 className={`${displayClassName} text-3xl font-medium leading-tight text-white md:text-5xl`}>
+                  {title}
+                </h1>
+                {code && (
+                  <span className="mb-1 rounded-full border border-[#5b9bd5]/40 bg-[#5b9bd5]/15 px-3 py-1 text-sm font-medium text-[#8fc0e8]">
+                    {code}
+                  </span>
+                )}
+              </div>
+            </div>
+          </div>
         </div>
-        <p className="mt-5 max-w-2xl text-base font-light leading-8 text-white/55">{subtitle}</p>
+      ) : null}
+
+      <div className="mx-auto max-w-5xl px-6 pb-12 pt-8 md:px-10 md:pb-16">
+        {!heroImage && (
+          <>
+            <p className="mb-4 text-xs uppercase tracking-[0.35em] text-white/40">{eyebrow}</p>
+            <div className="mb-5 flex flex-wrap items-end gap-4">
+              <h1 className={`${displayClassName} text-4xl font-medium leading-tight text-white md:text-6xl`}>
+                {title}
+              </h1>
+              {code && (
+                <span className="mb-1 rounded-full border border-[#5b9bd5]/30 bg-[#5b9bd5]/10 px-3 py-1 text-sm font-medium text-[#5b9bd5]">
+                  {code}
+                </span>
+              )}
+            </div>
+          </>
+        )}
+        <p className="max-w-2xl text-base font-light leading-8 text-white/55">{subtitle}</p>
       </div>
     </header>
   );
