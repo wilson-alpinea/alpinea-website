@@ -137,7 +137,47 @@ export function IconArrowLeft({ className }: { className?: string }) {
   );
 }
 
+export function IconMap({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <path d="M9 3 3 5v16l6-2 6 2 6-2V3l-6 2-6-2Z" />
+      <path d="M9 3v16" />
+      <path d="M15 5v16" />
+    </svg>
+  );
+}
+
 // ── Blocos de layout ──
+
+// Espaço reservado para um mapa que ainda precisa ser anexado ao guia.
+// Usado enquanto a imagem oficial (print/foto do mapa do aeroporto) não
+// é fornecida — substituir por <MapImage /> assim que a imagem existir.
+export function PendingMap({ label }: { label: string }) {
+  return (
+    <div className="flex items-center gap-4 rounded-2xl border border-dashed border-white/20 bg-black/30 p-5">
+      <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-white/5 text-white/40">
+        <IconMap className="h-5 w-5" />
+      </span>
+      <div>
+        <p className="text-sm font-medium text-white/70">{label}</p>
+        <p className="mt-1 text-xs text-white/35">Mapa pendente — anexar imagem</p>
+      </div>
+    </div>
+  );
+}
+
+// Mapa já anexado — mesmo padrão visual do MapCard usado no roteiro-exemplo,
+// mas com a imagem inline (sem depender de um modal de preview).
+export function MapImage({ src, alt, label }: { src: string; alt: string; label?: string }) {
+  return (
+    <div className="overflow-hidden rounded-2xl border border-[#5b9bd5]/25 bg-black">
+      <Image src={src} alt={alt} width={1600} height={1200} className="h-auto w-full object-contain" />
+      {label && (
+        <p className="border-t border-white/10 bg-[#0f2340] px-5 py-3 text-xs leading-5 text-white/50">{label}</p>
+      )}
+    </div>
+  );
+}
 
 export function SectionMarker({ number, label }: { number: number; label: string }) {
   return (

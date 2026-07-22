@@ -9,6 +9,7 @@ import {
   RestaurantMini,
   ActionItem,
   TerminalCard,
+  PendingMap,
   IconTrain,
   IconCar,
   IconCard,
@@ -74,6 +75,39 @@ export default function NaritaGuidePage() {
               tipo="Doméstico e internacional — companhias de baixo custo."
               companhias="Jetstar Japan, Spring Airlines Japan, Zipair Tokyo, Air Japan, entre outras."
             />
+          </div>
+
+          <div className="rounded-2xl border border-[#5b9bd5]/15 bg-[#0f2340] p-6 sm:p-8">
+            <p className="mb-5 flex items-center gap-2 text-xs uppercase tracking-[0.25em] text-[#5b9bd5]">
+              <IconBulb className="h-3.5 w-3.5" />
+              Recomendação Ajisai
+            </p>
+            <h3 className={`${display.className} text-xl font-medium text-white md:text-2xl`}>
+              Errei o Terminal e Agora?
+            </h3>
+
+            <div className="mt-5 space-y-4 text-sm leading-7 text-white/70 md:text-base md:leading-8">
+              <p>
+                Diferente do Aeroporto de Guarulhos, em São Paulo, os três terminais de
+                Narita <span className="text-white">não são conectados entre si</span>.
+                Apenas o Terminal 2 e o Terminal 3 têm ligação terrestre — mesmo assim, o
+                trajeto a pé leva cerca de 10–15 minutos.
+              </p>
+            </div>
+            <div className="mt-5">
+              <PendingMap label="Mapa — Passagem entre o Terminal 2 e o Terminal 3" />
+            </div>
+
+            <div className="mt-8 space-y-4 border-t border-white/10 pt-6 text-sm leading-7 text-white/70 md:text-base md:leading-8">
+              <p>
+                Se você precisa se deslocar do Terminal 1 para o Terminal 2 ou 3 (ou
+                vice-versa), é necessário usar o <span className="text-white">transfer interno</span> —
+                essa transferência leva em média 10 minutos.
+              </p>
+            </div>
+            <div className="mt-5">
+              <PendingMap label="Mapa — Ponto de embarque do transfer interno" />
+            </div>
           </div>
         </div>
       </section>
