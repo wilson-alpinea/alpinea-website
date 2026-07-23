@@ -190,6 +190,12 @@ export default function NaritaGuidePage() {
         src="/images/T3-terminal-shuttle.png"
         alt="No. 1 Terminal Shuttle Bus Stop, com destino ao Terminal 3, no Terminal 1 de Narita"
       />
+      <MapModal
+        id="mapa-narita-tokyo"
+        label="Mapa da rota — Narita até o centro de Tóquio"
+        src="/images/narita-to-tokyo-map.png"
+        alt="Mapa de rota do Aeroporto de Narita até o centro de Tóquio, com distância e tempo estimado"
+      />
 
       {/* Chegada e imigração */}
       <section className="border-t border-white/10 bg-white/[0.02] px-6 py-14 md:px-10 md:py-20">
@@ -665,6 +671,10 @@ export default function NaritaGuidePage() {
                 { label: "Táxi/Uber", tempo: 5, custo: 1, recomendacao: "Opção mais Confortável, porém muito caro" },
               ]}
             />
+          </div>
+
+          <div className="mb-10">
+            <MapCard href="#mapa-narita-tokyo" label="Mapa da rota — Narita até o centro de Tóquio" />
           </div>
 
           <div className="space-y-5">
