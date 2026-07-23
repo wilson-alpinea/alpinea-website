@@ -253,17 +253,24 @@ export function ImageCard({
   src,
   alt,
   label,
+  fit = "contain",
   className = "",
 }: {
   src: string;
   alt: string;
   label?: string;
+  fit?: "contain" | "cover";
   className?: string;
 }) {
   return (
     <div className={`overflow-hidden rounded-2xl border border-white/10 bg-white/[0.03] ${className}`}>
       <div className="relative aspect-[4/3] w-full">
-        <Image src={src} alt={alt} fill className="object-contain p-6" />
+        <Image
+          src={src}
+          alt={alt}
+          fill
+          className={fit === "cover" ? "object-cover" : "object-contain p-6"}
+        />
       </div>
       {label && (
         <p className="border-t border-white/10 px-4 py-3 text-center text-sm font-medium text-white">

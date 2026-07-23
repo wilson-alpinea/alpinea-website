@@ -1,5 +1,6 @@
 import { Bodoni_Moda } from "next/font/google";
 import type { Metadata } from "next";
+import Image from "next/image";
 import {
   InternalGuideHeader,
   SectionMarker,
@@ -255,34 +256,71 @@ export default function NaritaGuidePage() {
               </p>
             </div>
 
-            <div className="space-y-4 border-t border-white/10 pt-6">
+            <div className="space-y-8 border-t border-white/10 pt-6">
               <p className="text-sm font-medium uppercase tracking-[0.15em] text-white/70">
                 4.4 — Restaurantes
               </p>
-              <div className="grid gap-4 md:grid-cols-3">
-                <div className="rounded-2xl border border-white/10 bg-white/[0.025] p-5">
-                  <p className="text-sm font-medium text-white">Terminal 1</p>
-                  <p className="mt-2 text-sm leading-6 text-white/60">
-                    Kaitensushi Misaki (5F), Ramen Ichikakuya (5F), Tonkatsu Shinjuku
-                    Saboten (4F) e Tsukiji Sushiiwa (4F). Para comida ocidental:
-                    McDonald&apos;s, Starbucks, Shake Shack e Subway (4F).
-                  </p>
+
+              <div className="rounded-2xl border border-white/10 bg-white/[0.025] p-5">
+                <p className="text-sm font-medium text-white">Terminal 1</p>
+                <p className="mt-2 text-sm leading-6 text-white/60">
+                  Kaitensushi Misaki (5F), Ramen Ichikakuya (5F), Tonkatsu Shinjuku
+                  Saboten (4F) e Tsukiji Sushiiwa (4F). Para comida ocidental:
+                  McDonald&apos;s, Starbucks, Shake Shack e Subway (4F).
+                </p>
+                <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
+                  <ImageCard src="/images/misaki.jpg" alt="Sushi de salmão do Kaitensushi Misaki" label="Kaitensushi Misaki" fit="cover" />
+                  <ImageCard src="/images/ramen-ichikakuya.jpg" alt="Tigela de ramen do Ramen Ichikakuya" label="Ramen Ichikakuya" fit="cover" />
+                  <ImageCard src="/images/saboten.jpg" alt="Prato de tonkatsu com curry do Tonkatsu Shinjuku Saboten" label="Tonkatsu Shinjuku Saboten" fit="cover" />
+                  <ImageCard src="/images/sushi-iwa.jpg" alt="Prato variado de sushi do Tsukiji Sushiiwa" label="Tsukiji Sushiiwa" fit="cover" />
                 </div>
-                <div className="rounded-2xl border border-white/10 bg-white/[0.025] p-5">
-                  <p className="text-sm font-medium text-white">Terminal 2</p>
-                  <p className="mt-2 text-sm leading-6 text-white/60">
-                    Tokyo Tonkotsu by Ippudo (4F), Sushi Uogashi Nihon-ichi (4F),
-                    Sushi-go-round Gansozushi (4F) e Tonkatsu Inaba Wako (4F). Para
-                    comida ocidental: Starbucks (4F).
-                  </p>
+                <div className="mt-4 flex flex-wrap items-center gap-3">
+                  {[
+                    { src: "/images/mcdonalds.webp", alt: "Logo McDonald's" },
+                    { src: "/images/Starbucks-Logo.wine.png", alt: "Logo Starbucks" },
+                    { src: "/images/Shake_Shack_logo.svg.webp", alt: "Logo Shake Shack" },
+                    { src: "/images/Subway_2016_logo.svg.webp", alt: "Logo Subway" },
+                  ].map((logo) => (
+                    <div
+                      key={logo.src}
+                      className="relative h-9 w-16 overflow-hidden rounded-md bg-white p-1.5"
+                    >
+                      <Image src={logo.src} alt={logo.alt} fill className="object-contain" />
+                    </div>
+                  ))}
                 </div>
-                <div className="rounded-2xl border border-white/10 bg-white/[0.025] p-5">
-                  <p className="text-sm font-medium text-white">Terminal 3</p>
-                  <p className="mt-2 text-sm leading-6 text-white/60">
-                    Tatsu Sushi e Freshness Burger (comida ocidental). Vale mais a
-                    pena usar a passagem do 3F e comer no Terminal 2 — tem mais
-                    opções e de melhor qualidade.
-                  </p>
+              </div>
+
+              <div className="rounded-2xl border border-white/10 bg-white/[0.025] p-5">
+                <p className="text-sm font-medium text-white">Terminal 2</p>
+                <p className="mt-2 text-sm leading-6 text-white/60">
+                  Tokyo Tonkotsu by Ippudo (4F), Sushi Uogashi Nihon-ichi (4F),
+                  Sushi-go-round Gansozushi (4F) e Tonkatsu Inaba Wako (4F). Para
+                  comida ocidental: Starbucks (4F).
+                </p>
+                <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
+                  <ImageCard src="/images/tokyo-tonkotsu.jpg" alt="Tigela de ramen do Tokyo Tonkotsu by Ippudo" label="Tokyo Tonkotsu by Ippudo" fit="cover" />
+                  <ImageCard src="/images/sushi-uogashi.jpg" alt="Prato variado de sushi do Sushi Uogashi Nihon-ichi" label="Sushi Uogashi Nihon-ichi" fit="cover" />
+                  <ImageCard src="/images/gansozushi.jpg" alt="Sushi de salmão do Sushi-go-round Gansozushi" label="Sushi-go-round Gansozushi" fit="cover" />
+                  <ImageCard src="/images/inaba-wako.jpg" alt="Prato de tonkatsu do Tonkatsu Inaba Wako" label="Tonkatsu Inaba Wako" fit="cover" />
+                </div>
+                <div className="mt-4 flex flex-wrap items-center gap-3">
+                  <div className="relative h-9 w-16 overflow-hidden rounded-md bg-white p-1.5">
+                    <Image src="/images/Starbucks-Logo.wine.png" alt="Logo Starbucks" fill className="object-contain" />
+                  </div>
+                </div>
+              </div>
+
+              <div className="rounded-2xl border border-white/10 bg-white/[0.025] p-5">
+                <p className="text-sm font-medium text-white">Terminal 3</p>
+                <p className="mt-2 text-sm leading-6 text-white/60">
+                  Tatsu Sushi e Freshness Burger (comida ocidental). Vale mais a
+                  pena usar a passagem do 3F e comer no Terminal 2 — tem mais
+                  opções e de melhor qualidade.
+                </p>
+                <div className="mt-4 grid grid-cols-2 gap-3">
+                  <ImageCard src="/images/tatsu-sushi.jpg" alt="Sushi do Tatsu Sushi" label="Tatsu Sushi" fit="cover" />
+                  <ImageCard src="/images/freshness.jpg" alt="Hambúrguer e batatas do Freshness Burger" label="Freshness Burger" fit="cover" />
                 </div>
               </div>
             </div>
