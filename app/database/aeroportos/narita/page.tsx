@@ -6,11 +6,10 @@ import {
   TerminalCard,
   MapCard,
   MapModal,
-  PreviewCard,
   PreviewModal,
+  ImageCard,
   ImmigrationArrivalGuide,
   SubStepHeading,
-  IconCard,
   IconBulb,
 } from "../../../components/AirportGuideKit";
 
@@ -224,8 +223,16 @@ export default function NaritaGuidePage() {
                 lojas de conveniência, pequenas compras e máquinas de bebida na rua.
               </p>
               <div className="grid gap-4 sm:grid-cols-2">
-                <PreviewCard href="#doc-suica" label="JR Suica" Icon={IconCard} />
-                <PreviewCard href="#doc-pasmo" label="Pasmo" Icon={IconCard} />
+                <ImageCard
+                  src="/images/suica-iccard-transparent.png"
+                  alt="Cartão JR Suica, com o mascote pinguim"
+                  label="JR Suica"
+                />
+                <ImageCard
+                  src="/images/pasmo-card.webp"
+                  alt="Cartão Pasmo, com ícones de trem e ônibus"
+                  label="Pasmo"
+                />
               </div>
             </div>
 
@@ -302,21 +309,6 @@ export default function NaritaGuidePage() {
           </div>
         </div>
       </section>
-
-      <PreviewModal
-        id="doc-suica"
-        eyebrow="IC Card"
-        label="JR Suica"
-        src="/images/suica-iccard-transparent.png"
-        alt="Cartão JR Suica, com o mascote pinguim"
-      />
-      <PreviewModal
-        id="doc-pasmo"
-        eyebrow="IC Card"
-        label="Pasmo"
-        src="/images/pasmo-card.webp"
-        alt="Cartão Pasmo, com ícones de trem e ônibus"
-      />
 
       <PreviewModal
         id="doc-qr-code"

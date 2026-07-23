@@ -245,6 +245,35 @@ export function MapModal(props: { id: string; label: string; src: string; alt: s
   return <PreviewModal eyebrow="Mapa" {...props} />;
 }
 
+// Exibe a imagem diretamente no corpo da página (sem o link colapsado
+// "toque para ampliar"), com legenda opcional abaixo. Útil para imagens
+// pequenas/objetos (cartões, documentos) que ganham em ser vistos direto,
+// em vez de escondidos atrás de um modal.
+export function ImageCard({
+  src,
+  alt,
+  label,
+  className = "",
+}: {
+  src: string;
+  alt: string;
+  label?: string;
+  className?: string;
+}) {
+  return (
+    <div className={`overflow-hidden rounded-2xl border border-white/10 bg-white/[0.03] ${className}`}>
+      <div className="relative aspect-[4/3] w-full">
+        <Image src={src} alt={alt} fill className="object-contain p-6" />
+      </div>
+      {label && (
+        <p className="border-t border-white/10 px-4 py-3 text-center text-sm font-medium text-white">
+          {label}
+        </p>
+      )}
+    </div>
+  );
+}
+
 // Cabeçalho numerado para passos dentro de uma seção (ex.: "1. Documentos
 // de Imigração"). Menor e mais discreto que o SectionMarker, usado para
 // organizar sub-etapas de um fluxo.
