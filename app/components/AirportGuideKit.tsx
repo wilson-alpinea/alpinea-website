@@ -256,9 +256,18 @@ export function PreviewModal({
       <div className="mx-auto max-w-5xl pt-12 pb-12">
         <p className="mb-4 text-xs uppercase tracking-[0.35em] text-white/35">{eyebrow}</p>
         <h3 className="text-2xl font-medium text-white md:text-3xl">{label}</h3>
-        <div className="mt-8 overflow-hidden rounded-2xl border border-white/10 bg-white/[0.03]">
+
+        <input type="checkbox" id={`${id}-zoom`} className="peer hidden" />
+        <label
+          htmlFor={`${id}-zoom`}
+          className="relative mt-8 block max-h-[70vh] cursor-zoom-in overflow-auto rounded-2xl border border-white/10 bg-white/[0.03] peer-checked:max-h-none peer-checked:cursor-zoom-out peer-checked:[&_img]:h-auto peer-checked:[&_img]:w-auto peer-checked:[&_img]:max-w-none peer-checked:[&_img]:min-w-[1800px]"
+        >
+          <span className="pointer-events-none absolute right-3 top-3 z-10 flex items-center gap-2 rounded-full bg-black/70 px-3 py-1.5 text-xs uppercase tracking-[0.15em] text-white">
+            <IconZoom className="h-3.5 w-3.5" />
+            Toque para ampliar
+          </span>
           <Image src={src} alt={alt} width={1600} height={1200} className="h-auto w-full object-contain" />
-        </div>
+        </label>
       </div>
     </section>
   );

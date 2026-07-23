@@ -56,6 +56,9 @@ export default function NaritaGuidePage() {
       <section className="px-6 py-14 md:px-10 md:py-20">
         <div className="mx-auto max-w-5xl space-y-10">
           <SectionMarker number={1} label="Visão Geral" />
+          <h2 className={`${display.className} text-2xl font-medium text-white md:text-3xl`}>
+            Como Funciona o Aeroporto de Narita? São Muitos Terminais?
+          </h2>
           <p className="max-w-3xl text-base font-light leading-8 text-white/70">
             Confirme sempre o terminal na confirmação do voo — companhias e alocações
             mudam com frequência.
@@ -256,6 +259,33 @@ export default function NaritaGuidePage() {
                   src="/images/pasmo-card.webp"
                   alt="Cartão Pasmo, com ícones de trem e ônibus"
                   caption="IC Card Pasmo"
+                />
+              </div>
+
+              <div className="grid grid-cols-3 gap-3">
+                <ImageCard
+                  src="/images/ic-metro.png"
+                  alt="Catraca do metrô com área de toque para cartão IC e QR code"
+                  label="Catraca do metrô"
+                  sublabel="Aproxime o cartão na área indicada"
+                  fit="cover"
+                  zoomHref="#foto-ic-metro"
+                />
+                <ImageCard
+                  src="/images/ic-card-2.png"
+                  alt="Sensor circular de IC card sendo usado com um cartão Pasmo"
+                  label="Sensor de aproximação"
+                  sublabel="Encoste o cartão até o bipe"
+                  fit="cover"
+                  zoomHref="#foto-ic-sensor"
+                />
+                <ImageCard
+                  src="/images/ic-card-vending-machine.png"
+                  alt="Máquina de bebidas com leitor de IC card por aproximação"
+                  label="Máquinas de bebida"
+                  sublabel="Também aceitam o IC Card"
+                  fit="cover"
+                  zoomHref="#foto-ic-vending"
                 />
               </div>
             </div>
@@ -466,12 +496,39 @@ export default function NaritaGuidePage() {
         alt="Hambúrguer e batatas do Freshness Burger"
       />
 
+      <PreviewModal
+        id="foto-ic-metro"
+        eyebrow="IC Card"
+        label="Catraca do metrô"
+        src="/images/ic-metro.png"
+        alt="Catraca do metrô com área de toque para cartão IC e QR code"
+      />
+      <PreviewModal
+        id="foto-ic-sensor"
+        eyebrow="IC Card"
+        label="Sensor de aproximação"
+        src="/images/ic-card-2.png"
+        alt="Sensor circular de IC card sendo usado com um cartão Pasmo"
+      />
+      <PreviewModal
+        id="foto-ic-vending"
+        eyebrow="IC Card"
+        label="Máquinas de bebida"
+        src="/images/ic-card-vending-machine.png"
+        alt="Máquina de bebidas com leitor de IC card por aproximação"
+      />
+
       {/* Deslocamento */}
       <section id="deslocamento" className="border-t border-white/10 px-6 py-14 md:px-10 md:py-20">
         <div className="mx-auto max-w-3xl">
           <div className="mb-8">
             <SectionMarker number={3} label="Deslocamento até Tóquio" />
           </div>
+
+          <h2 className={`${display.className} mb-8 text-2xl font-medium text-white md:text-3xl`}>
+            Já Terminei os Preparativos, Como Chego ao Hotel e Qual Meio de Transporte
+            Devo Escolher?
+          </h2>
 
           <p className="mb-10 text-base font-light leading-8 text-white/70">
             Existem basicamente 3 formas de chegar até Tóquio a partir de Narita.
