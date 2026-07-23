@@ -580,14 +580,12 @@ export function TerminalCard({
   nome,
   tipo,
   companhias,
-  allianceLogo,
-  allianceLabel,
+  aliancas,
 }: {
   nome: string;
   tipo: string;
-  companhias: string;
-  allianceLogo?: string;
-  allianceLabel?: string;
+  companhias?: string;
+  aliancas?: { logo?: string; logoAlt?: string; texto: string }[];
 }) {
   return (
     <div className="rounded-2xl border border-white/10 bg-white/[0.025] p-6">
@@ -599,11 +597,21 @@ export function TerminalCard({
         </div>
         <div>
           <p className="text-[10px] uppercase tracking-[0.22em] text-white/30">Companhias aéreas</p>
-          <p className="mt-1.5 text-sm leading-6 text-white/70">{companhias}</p>
-          {allianceLogo && (
-            <div className="relative mx-auto mt-4 h-14 w-36">
-              <Image src={allianceLogo} alt={allianceLabel ?? "Logo da aliança aérea"} fill className="object-contain" />
+          {aliancas ? (
+            <div className="mt-3 space-y-4">
+              {aliancas.map((a, i) => (
+                <div key={i}>
+                  {a.logo && (
+                    <div className="relative mx-auto mb-2 h-14 w-36">
+                      <Image src={a.logo} alt={a.logoAlt ?? "Logo da aliança aérea"} fill className="object-contain" />
+                    </div>
+                  )}
+                  <p className="text-sm leading-6 text-white/70">{a.texto}</p>
+                </div>
+              ))}
             </div>
+          ) : (
+            <p className="mt-1.5 text-sm leading-6 text-white/70">{companhias}</p>
           )}
         </div>
       </div>

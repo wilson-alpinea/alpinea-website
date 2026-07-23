@@ -70,16 +70,32 @@ export default function NaritaGuidePage() {
             <TerminalCard
               nome="Terminal 1"
               tipo="Internacional — Ala Norte e Ala Sul. Voos domésticos da ANA e da Peach em área separada, acessada pelo saguão de chegadas da Ala Sul."
-              companhias="Ala Sul: Star Alliance (ANA, United, Lufthansa, Air Canada, Thai, Asiana, entre outras). Ala Norte: SkyTeam (Delta, Korean Air, China Airlines, Vietnam Airlines, Garuda Indonesia, entre outras)."
-              allianceLogo="/images/star-alliance.png"
-              allianceLabel="Logo da Star Alliance"
+              aliancas={[
+                {
+                  logo: "/images/star-alliance.png",
+                  logoAlt: "Logo da Star Alliance",
+                  texto: "Ala Sul: Star Alliance (ANA, United, Lufthansa, Air Canada, Thai, Asiana, Ethiopian Airlines, entre outras).",
+                },
+                {
+                  logo: "/images/SkyTeam-Logo.png",
+                  logoAlt: "Logo da SkyTeam",
+                  texto: "Ala Norte: SkyTeam (Delta, Korean Air, China Airlines, Vietnam Airlines, Garuda Indonesia, entre outras).",
+                },
+              ]}
             />
             <TerminalCard
               nome="Terminal 2"
               tipo="Internacional, com voos domésticos da JAL."
-              companhias="Oneworld — JAL, British Airways, Finnair, Cathay Pacific, American Airlines, Qatar Airways, Malaysia Airlines, entre outras."
-              allianceLogo="/images/one-world.webp"
-              allianceLabel="Logo da Oneworld"
+              aliancas={[
+                {
+                  logo: "/images/one-world.webp",
+                  logoAlt: "Logo da Oneworld",
+                  texto: "Oneworld — JAL, British Airways, Finnair, Cathay Pacific, American Airlines, Qatar Airways, Malaysia Airlines, entre outras.",
+                },
+                {
+                  texto: "Emirates também opera no Terminal 2, mas não é alinhada a nenhuma das 3 alianças.",
+                },
+              ]}
             />
             <TerminalCard
               nome="Terminal 3"
