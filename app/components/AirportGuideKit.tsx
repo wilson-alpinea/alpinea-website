@@ -386,7 +386,7 @@ export function SubStepHeading({ number, title }: { number: number; title: strin
 // qualquer aeroporto do Japão (documentos de imigração, entrevista,
 // retirada de bagagem). Os PreviewModal dos documentos/QR code/fotos devem
 // ser renderizados uma vez por página, com os ids: doc-qr-code,
-// doc-disembarkation, doc-customs, foto-kiosk-imigracao.
+// doc-disembarkation, doc-customs, foto-kiosk-imigracao, foto-arrivals-placa.
 export function ImmigrationArrivalGuide({ displayClassName }: { displayClassName: string }) {
   return (
     <div className="space-y-10">
@@ -394,11 +394,25 @@ export function ImmigrationArrivalGuide({ displayClassName }: { displayClassName
         Meu Avião Pousou, o Que Devo Fazer?
       </h3>
 
+      <div className="space-y-4">
+        <p className="text-base font-light leading-8 text-white/70">
+          Ao pousar, siga as placas <span className="text-white">Arrivals (到着)</span>{" "}
+          até os guichês de imigração.
+        </p>
+        <ImageCard
+          src="/images/arrivals-placa.png"
+          alt="Placa de sinalização do aeroporto indicando Arrivals (到着), em japonês, inglês, coreano e chinês"
+          fit="cover"
+          aspect="aspect-[16/9]"
+          zoomHref="#foto-arrivals-placa"
+        />
+      </div>
+
       <div className="space-y-5">
         <SubStepHeading number={1} title="Documentos de Imigração" />
         <p className="text-base font-light leading-8 text-white/70">
-          Ao pousar, siga o fluxo até os guichês de imigração. Todos os não-residentes
-          devem apresentar os documentos de imigração — existem duas opções.
+          Todos os não-residentes devem apresentar os documentos de imigração —
+          existem duas opções.
         </p>
 
         <div className="grid gap-4 md:grid-cols-2">
@@ -431,6 +445,43 @@ export function ImmigrationArrivalGuide({ displayClassName }: { displayClassName
                 zoomHref="#foto-kiosk-imigracao"
               />
             </div>
+
+            <div className="mt-5 space-y-3 border-t border-white/10 pt-5">
+              <p className="text-sm font-medium text-white">
+                Vá até os quiosques Visit Japan Web
+              </p>
+              <p className="text-sm leading-6 text-white/60">
+                Existem diversos totens antes da fila da imigração. No quiosque:
+              </p>
+              <div className="space-y-3 rounded-xl border border-white/10 bg-black/20 p-4 text-sm leading-6 text-white/60">
+                <p>
+                  <span className="font-medium text-white">a) Selecione o idioma</span> — pode
+                  escolher português.
+                </p>
+                <p>
+                  <span className="font-medium text-white">b) Escaneie o QR Code</span> — abra o
+                  QR Code no celular e escaneie na máquina.
+                </p>
+                <p>
+                  <span className="font-medium text-white">c) Escaneie o passaporte</span> —
+                  coloque o passaporte no leitor indicado; a máquina lê automaticamente.
+                </p>
+                <p>
+                  <span className="font-medium text-white">d) Confirme as informações</span> — na
+                  tela aparecerão nome, nacionalidade e número do passaporte; basta confirmar.
+                </p>
+                <p>
+                  <span className="font-medium text-white">e) Biometria no quiosque</span> (quando
+                  solicitado) — em alguns aeroportos ou períodos, o quiosque já pede uma
+                  fotografia e as digitais; em outros casos, isso acontece diretamente no
+                  balcão da imigração.
+                </p>
+              </div>
+              <p className="text-sm leading-6 text-white/60">
+                <span className="font-medium text-white">Receba o comprovante</span> — o
+                quiosque imprime um pequeno comprovante. Leve-o junto com o passaporte.
+              </p>
+            </div>
           </div>
 
           <div className="rounded-2xl border border-white/10 bg-white/[0.025] p-6">
@@ -456,13 +507,36 @@ export function ImmigrationArrivalGuide({ displayClassName }: { displayClassName
       <div className="space-y-4 border-t border-white/10 pt-8">
         <SubStepHeading number={2} title="Entrevista de Imigração" />
         <p className="text-base font-light leading-8 text-white/70">
-          Depois de inserir o QR Code na máquina — ou apresentar os dois documentos
-          preenchidos — dirija-se à fila de imigração para a entrevista com o oficial.
-          As instruções são fornecidas no seu idioma nativo (português, por exemplo).
-          Na entrevista, suas impressões digitais são escaneadas, o passaporte é
-          verificado, e podem ser feitas perguntas sobre onde você vai ficar, o
-          objetivo da viagem e quais locais pretende visitar — normalmente em inglês.
+          Com o comprovante do quiosque em mãos — ou os dois documentos preenchidos
+          manualmente — entre na fila da imigração, destinada aos visitantes
+          estrangeiros. As instruções nos painéis costumam estar disponíveis também
+          no seu idioma nativo (português, por exemplo).
         </p>
+        <div className="rounded-2xl border border-white/10 bg-white/[0.025] p-6">
+          <p className="mb-2 text-xs uppercase tracking-[0.25em] text-[#5b9bd5]">
+            No guichê da imigração
+          </p>
+          <p className="text-sm leading-6 text-white/60">
+            Entregue o passaporte e o comprovante emitido pelo quiosque (ou os
+            documentos preenchidos manualmente). O oficial normalmente:
+          </p>
+          <div className="mt-3 space-y-1.5 text-sm leading-6 text-white/60">
+            <p>• Verifica o passaporte</p>
+            <p>• Confirma sua identidade</p>
+            <p>• Coleta as digitais (se ainda não foram coletadas)</p>
+            <p>• Tira uma fotografia (se ainda não foi feita)</p>
+            <p>• Faz algumas perguntas simples, normalmente em inglês</p>
+          </div>
+          <p className="mt-4 text-xs uppercase tracking-[0.25em] text-white/30">
+            Perguntas mais comuns
+          </p>
+          <div className="mt-2 space-y-1.5 text-sm leading-6 text-white/60">
+            <p>• Qual o objetivo da viagem?</p>
+            <p>• Quantos dias ficará no Japão?</p>
+            <p>• Onde ficará hospedado?</p>
+            <p>• É sua primeira visita ao Japão?</p>
+          </div>
+        </div>
       </div>
 
       <div className="space-y-4 border-t border-white/10 pt-8">
@@ -610,7 +684,7 @@ export function TransportSummaryTable({
     <div className="overflow-x-auto rounded-2xl border border-white/10">
       <table className="w-full min-w-[560px] border-collapse text-left text-sm">
         <thead>
-          <tr className="border-b border-white/10">
+          <tr className="border-b border-[#2f80c9]/40">
             <th className="px-5 py-4 text-xs font-medium uppercase tracking-[0.15em] text-white">Opção</th>
             <th className="px-5 py-4 text-xs font-medium uppercase tracking-[0.15em] text-white">Tempo</th>
             <th className="px-5 py-4 text-xs font-medium uppercase tracking-[0.15em] text-white">Custo</th>

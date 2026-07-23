@@ -20,6 +20,8 @@ import {
   IconClock,
   IconPlaneLanding,
   IconPlaneTakeoff,
+  IconCard,
+  IconLuggage,
 } from "../../../components/AirportGuideKit";
 
 const display = Bodoni_Moda({
@@ -340,17 +342,19 @@ export default function NaritaGuidePage() {
                 </div>
               </div>
 
-              <div className="rounded-2xl border border-[#5b9bd5]/15 bg-[#0f2340] p-6 sm:p-8">
-                <div className="mb-4 flex flex-wrap items-center gap-3">
-                  <p className="flex items-center gap-2 text-xs uppercase tracking-[0.25em] text-[#5b9bd5]">
-                    <IconBulb className="h-3.5 w-3.5" />
+              <div className="rounded-2xl border border-yellow-400/25 bg-yellow-400/[0.05] p-6 sm:p-8">
+                <div className="flex flex-col items-center gap-2 text-center">
+                  <span className="flex h-12 w-12 items-center justify-center rounded-full bg-yellow-400/15 text-yellow-400">
+                    <IconCard className="h-6 w-6" />
+                  </span>
+                  <p className="text-xs uppercase tracking-[0.25em] text-yellow-400">
                     Suica/Pasmo no celular
                   </p>
                   <span className="rounded-full bg-yellow-400/15 px-3 py-1 text-[10px] font-medium uppercase tracking-[0.2em] text-yellow-400">
                     Opcional
                   </span>
                 </div>
-                <p className="text-sm leading-7 text-white/70 md:text-base md:leading-8">
+                <p className="mt-5 text-center text-sm leading-7 text-white/70 md:text-base md:leading-8">
                   O cartão IC pode ser adicionado diretamente na Carteira do iPhone
                   (Apple Wallet) ou no Google Wallet, sem precisar de um cartão
                   físico — o que facilita muito caso haja escassez temporária de
@@ -369,7 +373,7 @@ export default function NaritaGuidePage() {
                     />
                   </div>
                 </div>
-                <div className="mt-5 space-y-2 text-sm leading-6">
+                <div className="mt-5 space-y-2 text-center text-sm leading-6">
                   <a
                     href="https://support.apple.com/pt-br/108772"
                     target="_blank"
@@ -501,24 +505,32 @@ export default function NaritaGuidePage() {
             </div>
 
             <div className="space-y-4 border-t border-white/10 pt-6">
-              <div className="flex flex-wrap items-center gap-3">
-                <p className="text-sm font-medium uppercase tracking-[0.15em] text-white/70">
-                  3.6 — Envio de Bagagem (Takkyubin)
-                </p>
-                <span className="rounded-full bg-yellow-400/15 px-3 py-1 text-[10px] font-medium uppercase tracking-[0.2em] text-yellow-400">
-                  Opcional
-                </span>
-              </div>
-              <p className="text-base font-light leading-8 text-white/70">
-                Logo na saída do desembarque existe o balcão de envio de malas
-                (Luggage Delivery / Yamato Transport, o TA-Q-BIN). Para clientes de
-                alto padrão ou famílias com muitas malas, mandar a bagagem direto
-                para o hotel — chegando no mesmo dia ou no dia seguinte — e seguir
-                até o centro apenas com uma mochila é um diferencial gigante de
-                conforto.
+              <p className="text-sm font-medium uppercase tracking-[0.15em] text-white/70">
+                3.6 — Envio de Bagagem (Takkyubin)
               </p>
-              <div className="relative mx-auto h-12 w-24">
-                <Image src="/images/taqbinlogo.png" alt="Logo TA-Q-BIN, da Yamato Transport" fill className="object-contain" />
+              <div className="rounded-2xl border border-yellow-400/25 bg-yellow-400/[0.05] p-6 sm:p-8">
+                <div className="flex flex-col items-center gap-2 text-center">
+                  <span className="flex h-12 w-12 items-center justify-center rounded-full bg-yellow-400/15 text-yellow-400">
+                    <IconLuggage className="h-6 w-6" />
+                  </span>
+                  <p className="text-xs uppercase tracking-[0.25em] text-yellow-400">
+                    Luggage Delivery (TA-Q-BIN)
+                  </p>
+                  <span className="rounded-full bg-yellow-400/15 px-3 py-1 text-[10px] font-medium uppercase tracking-[0.2em] text-yellow-400">
+                    Opcional
+                  </span>
+                </div>
+                <div className="relative mx-auto mt-5 h-12 w-24">
+                  <Image src="/images/taqbinlogo.png" alt="Logo TA-Q-BIN, da Yamato Transport" fill className="object-contain" />
+                </div>
+                <p className="mt-5 text-center text-base font-light leading-8 text-white/70">
+                  Logo na saída do desembarque existe o balcão de envio de malas
+                  (Luggage Delivery / Yamato Transport, o TA-Q-BIN). Para clientes de
+                  alto padrão ou famílias com muitas malas, mandar a bagagem direto
+                  para o hotel — chegando no mesmo dia ou no dia seguinte — e seguir
+                  até o centro apenas com uma mochila é um diferencial gigante de
+                  conforto.
+                </p>
               </div>
             </div>
           </div>
@@ -538,6 +550,13 @@ export default function NaritaGuidePage() {
         label="Quiosque de leitura do QR Code"
         src="/images/kiosk-imigracao-qr-code.jpg"
         alt="Quiosque de leitura do QR Code do Visit Japan Web para imigração e alfândega"
+      />
+      <PreviewModal
+        id="foto-arrivals-placa"
+        eyebrow="Imigração"
+        label="Placa de Arrivals (到着)"
+        src="/images/arrivals-placa.png"
+        alt="Placa de sinalização do aeroporto indicando Arrivals (到着), em japonês, inglês, coreano e chinês"
       />
       <PreviewModal
         id="doc-disembarkation"
