@@ -570,10 +570,14 @@ export function TerminalCard({
   nome,
   tipo,
   companhias,
+  allianceLogo,
+  allianceLabel,
 }: {
   nome: string;
   tipo: string;
   companhias: string;
+  allianceLogo?: string;
+  allianceLabel?: string;
 }) {
   return (
     <div className="rounded-2xl border border-white/10 bg-white/[0.025] p-6">
@@ -586,6 +590,11 @@ export function TerminalCard({
         <div>
           <p className="text-[10px] uppercase tracking-[0.22em] text-white/30">Companhias aéreas</p>
           <p className="mt-1.5 text-sm leading-6 text-white/70">{companhias}</p>
+          {allianceLogo && (
+            <div className="relative mt-3 h-10 w-24 overflow-hidden rounded-md bg-white p-1.5">
+              <Image src={allianceLogo} alt={allianceLabel ?? "Logo da aliança aérea"} fill className="object-contain" />
+            </div>
+          )}
         </div>
       </div>
     </div>
@@ -638,14 +647,12 @@ export function StatCard({
   }
 
   return (
-    <div className="flex items-start gap-3 rounded-2xl border border-white/10 bg-white/[0.025] p-5">
-      <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#5b9bd5]/12 text-[#5b9bd5]">
+    <div className="flex flex-col items-center justify-center gap-2 rounded-2xl border border-white/10 bg-white/[0.025] p-5 text-center">
+      <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[#5b9bd5]/12 text-[#5b9bd5]">
         <Icon className="h-4 w-4" />
       </span>
-      <div>
-        <p className="text-xs uppercase tracking-[0.25em] text-white/35">{label}</p>
-        <p className="mt-1 text-sm font-medium text-white md:text-base">{value}</p>
-      </div>
+      <p className="text-[11px] uppercase tracking-[0.25em] text-white/30">{label}</p>
+      <p className="text-sm font-medium text-white md:text-base">{value}</p>
     </div>
   );
 }

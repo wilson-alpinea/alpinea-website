@@ -71,11 +71,15 @@ export default function NaritaGuidePage() {
               nome="Terminal 1"
               tipo="Internacional — Ala Norte e Ala Sul. Voos domésticos da ANA e da Peach em área separada, acessada pelo saguão de chegadas da Ala Sul."
               companhias="Ala Sul: Star Alliance (ANA, United, Lufthansa, Air Canada, Thai, Asiana, entre outras). Ala Norte: SkyTeam (Delta, Korean Air, China Airlines, Vietnam Airlines, Garuda Indonesia, entre outras)."
+              allianceLogo="/images/star-alliance.png"
+              allianceLabel="Logo da Star Alliance"
             />
             <TerminalCard
               nome="Terminal 2"
               tipo="Internacional, com voos domésticos da JAL."
               companhias="Oneworld — JAL, British Airways, Finnair, Cathay Pacific, American Airlines, Qatar Airways, Malaysia Airlines, entre outras."
+              allianceLogo="/images/one-world.webp"
+              allianceLabel="Logo da Oneworld"
             />
             <TerminalCard
               nome="Terminal 3"
@@ -294,7 +298,7 @@ export default function NaritaGuidePage() {
                     src="/images/ic-card-2.png"
                     alt="Sensor circular de IC card sendo usado com um cartão Pasmo"
                     fit="cover"
-                    aspect="aspect-[4/5]"
+                    aspect="aspect-[3/5]"
                     zoomHref="#foto-ic-sensor"
                   />
                   <p className="mt-3 text-center text-sm font-medium text-white">Sensor de aproximação</p>
@@ -305,7 +309,7 @@ export default function NaritaGuidePage() {
                     src="/images/ic-card-vending-machine.png"
                     alt="Máquina de bebidas com leitor de IC card por aproximação"
                     fit="cover"
-                    aspect="aspect-[3/4]"
+                    aspect="aspect-[3/5]"
                     zoomHref="#foto-ic-vending"
                   />
                   <p className="mt-3 text-center text-sm font-medium text-white">Máquinas de bebida</p>
