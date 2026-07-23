@@ -46,6 +46,8 @@ export default function KansaiGuidePage() {
         eyebrow="Anexo com Informação Detalhada - Aeroportos - Kansai (KIX)"
         title="Kansai International Airport - 関西国際空港"
         code="KIX"
+        heroImage="/images/kix-airport.webp"
+        heroAlt="Vista aérea do Aeroporto Internacional de Kansai, construído sobre uma ilha artificial na baía de Osaka"
         subtitle="Aeroporto Internacional de Kansai, construído sobre uma ilha artificial na baía de Osaka. Porta de entrada para Osaka, Kyoto, Kobe e toda a região de Kansai."
       />
 

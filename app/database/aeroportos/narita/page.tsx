@@ -748,7 +748,7 @@ export default function NaritaGuidePage() {
                 Icon={IconExchange}
                 label="Custo"
                 value="¥3.250"
-                detail="Narita Express, classe ordinária — até a estação de Shinjuku"
+                detail="Narita Express, classe normal — até a estação de Shinjuku"
               />
               <StatCard Icon={IconClock} label="Tempo de deslocamento" value="≈ 80 minutos" variant="highlight" />
             </div>

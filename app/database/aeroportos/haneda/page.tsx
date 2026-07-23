@@ -46,6 +46,8 @@ export default function HanedaGuidePage() {
         eyebrow="Anexo com Informação Detalhada - Aeroportos - Haneda (HND)"
         title="Haneda Airport - 東京国際空港"
         code="HND"
+        heroImage="/images/haneda-hero.jpg"
+        heroAlt="Aeronaves da ANA e JAL estacionadas no pátio do Aeroporto de Haneda, com o Monte Fuji ao fundo"
         subtitle="Tokyo International Airport, mais conhecido como Haneda — a cerca de 30 minutos do centro de Tóquio. Opção mais próxima e conveniente para voos internacionais com destino à cidade."
       />
 
