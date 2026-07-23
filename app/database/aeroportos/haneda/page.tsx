@@ -339,13 +339,6 @@ export default function HanedaGuidePage() {
         alt="Placa de sinalização do aeroporto indicando Arrivals (到着), em japonês, inglês, coreano e chinês"
       />
       <PreviewModal
-        id="foto-passaporte-brasileiro"
-        eyebrow="Imigração"
-        label="Passaporte Brasileiro"
-        src="/images/passaporte-brasileiro.jpg"
-        alt="Passaporte brasileiro aberto, mostrando a página de identificação do titular"
-      />
-      <PreviewModal
         id="doc-disembarkation"
         eyebrow="Documento"
         label="Disembarkation Card for Foreigner"
