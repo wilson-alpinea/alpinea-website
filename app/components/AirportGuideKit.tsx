@@ -492,13 +492,37 @@ export function ImmigrationArrivalGuide({ displayClassName }: { displayClassName
               antes do pouso — ou eles podem ser retirados em balcões espalhados pela
               área de imigração. Dois documentos devem ser preenchidos, frente e verso:
             </p>
-            <div className="mt-4 grid gap-3">
-              <PreviewCard
-                href="#doc-disembarkation"
-                label="Disembarkation Card for Foreigner"
-                Icon={IconDocument}
-              />
-              <PreviewCard href="#doc-customs" label="Customs Declaration" Icon={IconDocument} />
+            <div className="mt-4 grid gap-4 sm:grid-cols-2">
+              <div>
+                <ImageCard
+                  src="/images/disembarkation-card.png"
+                  alt="Formulário Disembarkation Card for Foreigner — Cartão de Imigração para Não-Residente"
+                  fit="cover"
+                  aspect="aspect-[3/4]"
+                  zoomHref="#doc-disembarkation"
+                />
+                <p className="mt-3 text-center text-sm font-medium text-white">
+                  Disembarkation Card for Foreigner
+                </p>
+                <p className="text-center text-xs text-white/45">
+                  Cartão de imigração — dados pessoais e de estadia
+                </p>
+              </div>
+              <div>
+                <ImageCard
+                  src="/images/custom-declaration.png"
+                  alt="Formulário Customs Declaration — Declaração Aduaneira"
+                  fit="cover"
+                  aspect="aspect-[3/4]"
+                  zoomHref="#doc-customs"
+                />
+                <p className="mt-3 text-center text-sm font-medium text-white">
+                  Customs Declaration
+                </p>
+                <p className="text-center text-xs text-white/45">
+                  Declaração aduaneira — itens trazidos e valores
+                </p>
+              </div>
             </div>
           </div>
         </div>
@@ -932,13 +956,13 @@ export function FlowTag({
   subtitle?: string;
 }) {
   return (
-    <div className="group flex items-center gap-4 rounded-2xl border border-[#4f9de0]/40 bg-[#12315c] p-5 transition duration-300 hover:-translate-y-0.5 hover:border-[#4f9de0]/80 hover:bg-[#173e75] hover:shadow-[0_8px_30px_rgba(79,157,224,0.25)]">
-      <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#4f9de0]/25 text-[#a8d4f5] transition duration-300 group-hover:scale-110 group-hover:bg-[#4f9de0]/40">
+    <div className="group flex items-center gap-4 rounded-2xl border border-yellow-400/40 bg-[#3a2f0a] p-5 transition duration-300 hover:-translate-y-0.5 hover:border-yellow-400/80 hover:bg-[#4a3c0d] hover:shadow-[0_8px_30px_rgba(250,204,21,0.2)]">
+      <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-yellow-400/20 text-yellow-400 transition duration-300 group-hover:scale-110 group-hover:bg-yellow-400/35">
         <Icon className="h-5 w-5" />
       </span>
       <div>
         <p className="text-sm font-medium text-white">{label}</p>
-        {subtitle && <p className="text-xs text-[#a8d4f5]/80">{subtitle}</p>}
+        {subtitle && <p className="text-xs text-yellow-200/70">{subtitle}</p>}
       </div>
     </div>
   );

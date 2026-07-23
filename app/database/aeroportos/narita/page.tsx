@@ -342,12 +342,12 @@ export default function NaritaGuidePage() {
                 </div>
               </div>
 
-              <div className="rounded-2xl border border-yellow-400/25 bg-yellow-400/[0.05] p-6 sm:p-8">
+              <div className="rounded-2xl border border-[#5b9bd5]/15 bg-[#0f2340] p-6 sm:p-8">
                 <div className="flex flex-col items-center gap-2 text-center">
-                  <span className="flex h-12 w-12 items-center justify-center rounded-full bg-yellow-400/15 text-yellow-400">
+                  <span className="flex h-12 w-12 items-center justify-center rounded-full bg-[#5b9bd5]/15 text-[#8fc0e8]">
                     <IconCard className="h-6 w-6" />
                   </span>
-                  <p className="text-xs uppercase tracking-[0.25em] text-yellow-400">
+                  <p className="text-xs uppercase tracking-[0.25em] text-[#5b9bd5]">
                     Suica/Pasmo no celular
                   </p>
                   <span className="rounded-full bg-yellow-400/15 px-3 py-1 text-[10px] font-medium uppercase tracking-[0.2em] text-yellow-400">
@@ -508,12 +508,12 @@ export default function NaritaGuidePage() {
               <p className="text-sm font-medium uppercase tracking-[0.15em] text-white/70">
                 3.6 — Envio de Bagagem (Takkyubin)
               </p>
-              <div className="rounded-2xl border border-yellow-400/25 bg-yellow-400/[0.05] p-6 sm:p-8">
+              <div className="rounded-2xl border border-[#5b9bd5]/15 bg-[#0f2340] p-6 sm:p-8">
                 <div className="flex flex-col items-center gap-2 text-center">
-                  <span className="flex h-12 w-12 items-center justify-center rounded-full bg-yellow-400/15 text-yellow-400">
+                  <span className="flex h-12 w-12 items-center justify-center rounded-full bg-[#5b9bd5]/15 text-[#8fc0e8]">
                     <IconLuggage className="h-6 w-6" />
                   </span>
-                  <p className="text-xs uppercase tracking-[0.25em] text-yellow-400">
+                  <p className="text-xs uppercase tracking-[0.25em] text-[#5b9bd5]">
                     Luggage Delivery (TA-Q-BIN)
                   </p>
                   <span className="rounded-full bg-yellow-400/15 px-3 py-1 text-[10px] font-medium uppercase tracking-[0.2em] text-yellow-400">
