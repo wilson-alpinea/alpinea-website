@@ -3,8 +3,6 @@ import type { Metadata } from "next";
 import {
   InternalGuideHeader,
   SectionMarker,
-  RecommendationRow,
-  TransportOption,
   TerminalCard,
   MapCard,
   MapModal,
@@ -12,13 +10,8 @@ import {
   PreviewModal,
   ImmigrationArrivalGuide,
   SubStepHeading,
-  IconTrain,
-  IconCar,
   IconCard,
   IconBulb,
-  IconClock,
-  IconDocument,
-  IconCheck,
 } from "../../../components/AirportGuideKit";
 
 const display = Bodoni_Moda({
@@ -349,84 +342,110 @@ export default function NaritaGuidePage() {
 
       {/* Deslocamento */}
       <section id="deslocamento" className="border-t border-white/10 px-6 py-14 md:px-10 md:py-20">
-        <div className="mx-auto max-w-5xl">
-          <div className="mb-10">
+        <div className="mx-auto max-w-3xl">
+          <div className="mb-8">
             <SectionMarker number={3} label="Deslocamento até Tóquio" />
           </div>
 
-          <div className="grid gap-4 md:grid-cols-3">
-            <TransportOption
-              Icon={IconTrain}
-              label="Keisei Skyliner"
-              value="36 min"
-              tag="Mais rápido"
-              highlight
-              pros={[
-                "Direto até Ueno/Nippori, a cada 20 min",
-                "¥2.310 com tarifa promocional para estrangeiros (compra antecipada) · ¥2.780 até Tokyo Station",
-              ]}
-              cons={["Opera das 07:23 às 23:00 (fins de semana 07:30–23:00)"]}
-            />
-            <TransportOption
-              Icon={IconTrain}
-              label="Narita Express (N'EX)"
-              value="≈ 60 min"
-              pros={[
-                "Direto até Tokyo/Shinjuku/Shibuya, sem baldeação",
-                "Gratuito com o Japan Rail Pass",
-              ]}
-              cons={["¥3.140 sem JR Pass — mais caro que o Skyliner"]}
-            />
-            <TransportOption
-              Icon={IconCar}
-              label="Táxi"
-              value="¥20.000+"
-              pros={["Porta a porta, sem carregar bagagem"]}
-              cons={["Sujeito a trânsito, 90+ min até o centro", "Custo elevado — recomendado só em casos excepcionais"]}
-            />
-          </div>
-
-          <div className="mt-6 rounded-2xl border border-[#5b9bd5]/15 bg-[#0f2340] p-6 sm:p-8">
-            <p className="mb-5 flex items-center gap-2 text-xs uppercase tracking-[0.25em] text-[#5b9bd5]">
-              <IconBulb className="h-3.5 w-3.5" />
-              Recomendação Ajisai
-            </p>
-            <div className="grid gap-3">
-              <RecommendationRow
-                Icon={IconDocument}
-                title="Visit Japan Web antes do embarque"
-                text="Preencher com antecedência garante uso do Joint Kiosk e evita perder tempo em formulários no avião ou no balcão."
-              />
-              <RecommendationRow
-                Icon={IconCheck}
-                title="Resolver tudo antes de sair do hall"
-                text="IC card, câmbio e eSIM/wifi devem ser resolvidos ainda no hall de chegada — os balcões enchem no meio da tarde, quando vários voos de longo curso chegam juntos."
-              />
-              <RecommendationRow
-                Icon={IconClock}
-                title="Ônibus Limousine como alternativa"
-                text="Para hotéis fora do eixo das estações de trem, o ônibus Limousine (porta a porta) costuma ser mais prático que somar trem + táxi."
-              />
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Comentários gerais */}
-      <section className="border-t border-white/10 bg-white/[0.02] px-6 py-14 md:px-10 md:py-20">
-        <div className="mx-auto max-w-3xl">
-          <div className="mb-8">
-            <SectionMarker number={4} label="Comentários Gerais" />
-          </div>
-          <p className="text-base font-light leading-8 text-white/60">
-            Narita costuma ser a porta de entrada natural para roteiros que iniciam em
-            Tóquio com voo de longo curso direto ou com uma conexão. Se o cliente tiver
-            hotel com check-in tardio, considerar despachar a mala grande via takkyubin
-            diretamente pela recepção, liberando o resto do primeiro dia para a primeira
-            atração do roteiro.
+          <p className="mb-10 text-base font-light leading-8 text-white/70">
+            Existem basicamente 3 formas de chegar até Tóquio a partir de Narita.
           </p>
+
+          <div className="space-y-5">
+            <SubStepHeading number={1} title="Trem" />
+            <div className="grid gap-6 sm:grid-cols-2">
+              <div>
+                <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/35">Custo</p>
+                <p className="text-white">
+                  ¥3.250 (Narita Express, classe ordinária) até a estação de Shinjuku
+                </p>
+              </div>
+              <div>
+                <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/35">
+                  Tempo de deslocamento
+                </p>
+                <p className="text-white">≈ 80 minutos</p>
+              </div>
+            </div>
+            <p className="text-base font-light leading-8 text-white/70">
+              Mesmo utilizando o trem expresso (N&apos;EX), o trajeto é longo, e após
+              chegar em uma das estações que conectam com a linha expressa você ainda
+              vai precisar se deslocar até a estação de metrô mais próxima do seu hotel
+              e realizar a parte final do trajeto a pé. A maioria das estações de metrô
+              no Japão são grandes e possuem muitos lances de escada, o que torna
+              carregar malas após 30h de viagem uma tarefa muito cansativa. Além disso,
+              é comum ter que fazer o trajeto em pé dentro do vagão do metrô em alguns
+              horários, por lotação dos vagões nos horários de pico.
+            </p>
+            <p className="text-base font-light leading-8 text-white/70">
+              Dentre as 3 opções, é sem dúvida a pior de todas.
+            </p>
+          </div>
+
+          <div className="mt-10 space-y-5 border-t border-white/10 pt-8">
+            <div className="flex flex-wrap items-center gap-3">
+              <SubStepHeading number={2} title="Ônibus" />
+              <span className="rounded-full bg-[#5b9bd5]/15 px-3 py-1 text-[10px] uppercase tracking-[0.2em] text-[#5b9bd5]">
+                Método recomendado
+              </span>
+            </div>
+            <div className="grid gap-6 sm:grid-cols-2">
+              <div>
+                <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/35">Custo</p>
+                <p className="text-white">¥3.600 (Limousine Bus) até a estação de Shinjuku</p>
+              </div>
+              <div>
+                <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/35">
+                  Tempo de deslocamento
+                </p>
+                <p className="text-white">≈ 105 minutos</p>
+              </div>
+            </div>
+            <p className="text-base font-light leading-8 text-white/70">
+              Dependendo do hotel, existe um ônibus chamado Limousine Bus que vai desde
+              o aeroporto de Narita até a porta do hotel. Nem todos os hotéis são
+              cobertos, mas existe sempre um terminal de ônibus ou estação de metrô
+              próximo aos hotéis que possuem paradas finais para esses ônibus.
+            </p>
+            <p className="text-base font-light leading-8 text-white/70">
+              De todas as 3 opções, é o melhor custo-benefício: você vai sentado e não
+              precisa se preocupar com as bagagens, pois elas vão no bagageiro. A única
+              desvantagem é quando não existe ônibus direto ao hotel — nesses casos,
+              normalmente recomendamos que seja pego um táxi para a parte final do
+              trajeto.
+            </p>
+          </div>
+
+          <div className="mt-10 space-y-5 border-t border-white/10 pt-8">
+            <SubStepHeading number={3} title="Táxi/Uber" />
+            <div className="grid gap-6 sm:grid-cols-2">
+              <div>
+                <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/35">Custo</p>
+                <p className="text-white">
+                  ¥26.300 (táxi, tarifa fixa) a ¥36.000 (Uber, tarifa dinâmica) até
+                  Shinjuku
+                </p>
+              </div>
+              <div>
+                <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/35">
+                  Tempo de deslocamento
+                </p>
+                <p className="text-white">≈ 75 minutos</p>
+              </div>
+            </div>
+            <p className="text-base font-light leading-8 text-white/70">
+              É a opção mais cômoda e confortável, mas custa até 10x mais que as
+              outras — uma viagem de Narita até Tóquio pode facilmente chegar a
+              R$ 1.000,00.
+            </p>
+            <p className="text-base font-light leading-8 text-white/70">
+              Recomendo usar somente caso o desembarque em Tóquio ocorra num horário
+              muito tarde e já não exista ônibus disponível.
+            </p>
+          </div>
         </div>
       </section>
+
     </main>
   );
 }
