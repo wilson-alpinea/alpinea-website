@@ -37,7 +37,17 @@ async function login(formData: FormData) {
   redirect("/database?erro=1");
 }
 
+// Gate temporariamente desativado: só ativa a senha quando
+// DATABASE_ACCESS_PASSWORD estiver configurada no .env.local (e no
+// provedor de hosting). Sem isso, ninguém consegue entrar — inclusive
+// você — então o acesso fica liberado normalmente até a senha ser criada.
 export default async function DatabaseLayout({ children }: { children: React.ReactNode }) {
+  const passwordConfigured = Boolean(process.env.DATABASE_ACCESS_PASSWORD);
+
+  if (!passwordConfigured) {
+    return <>{children}</>;
+  }
+
   const cookieStore = await cookies();
   const authorized = cookieStore.get(COOKIE_NAME)?.value === COOKIE_VALUE;
 
