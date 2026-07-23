@@ -5,19 +5,16 @@ import {
   SectionMarker,
   RecommendationRow,
   TransportOption,
-  RestaurantMini,
-  ActionItem,
   TerminalCard,
   MapCard,
   MapModal,
+  PreviewCard,
   PreviewModal,
   ImmigrationArrivalGuide,
   SubStepHeading,
   IconTrain,
   IconCar,
   IconCard,
-  IconExchange,
-  IconLuggage,
   IconBulb,
   IconClock,
   IconDocument,
@@ -215,9 +212,118 @@ export default function NaritaGuidePage() {
                 </p>
               </div>
             </div>
+
+            <div className="space-y-4 border-t border-white/10 pt-6">
+              <p className="text-sm font-medium uppercase tracking-[0.15em] text-white/70">
+                4.2 — Comprar IC Card (JR Suica ou Pasmo)
+              </p>
+              <p className="text-base font-light leading-8 text-white/70">
+                No Japão, o valor do ticket de metrô é definido pela distância — ou
+                seja, você precisa definir o trajeto e comprar o valor correto a cada
+                viagem. Para evitar isso, recomendamos adquirir um IC Card (cartão
+                pré-pago). Existem dois operadores em Tóquio, JR Suica e Pasmo — não
+                existe diferença prática entre os dois: o Suica é produzido pela JR e
+                o Pasmo pela Tokyo Metro, ambas entre as maiores operadoras de trem do
+                Japão.
+              </p>
+              <p className="text-base font-light leading-8 text-white/70">
+                O IC Card também é utilizado e aceito como forma de pagamento em
+                lojas de conveniência, pequenas compras e máquinas de bebida na rua.
+              </p>
+              <div className="grid gap-4 sm:grid-cols-2">
+                <PreviewCard href="#doc-suica" label="JR Suica" Icon={IconCard} />
+                <PreviewCard href="#doc-pasmo" label="Pasmo" Icon={IconCard} />
+              </div>
+            </div>
+
+            <div className="space-y-4 border-t border-white/10 pt-6">
+              <p className="text-sm font-medium uppercase tracking-[0.15em] text-white/70">
+                4.3 — Câmbio
+              </p>
+              <p className="text-base font-light leading-8 text-white/70">
+                Caso planeje fazer uma refeição no aeroporto ou pedir um Uber,
+                recomendamos retirar o valor necessário: uma refeição num restaurante
+                de sushi de esteira no aeroporto custa, em média, ¥2.000–3.500 por
+                pessoa; um Uber de Narita até Shinjuku custa entre ¥26.300 (tarifa
+                fixa) e cerca de ¥36.000 (tarifa dinâmica), dependendo do horário.
+              </p>
+              <p className="text-base font-light leading-8 text-white/70">
+                Ao chegar no centro de Tóquio, nossa recomendação é trocar o dinheiro
+                numa casa de câmbio como a 銀座エクスチェンジ GINZA EXCHANGE (bairro de
+                Ginza), ou em bancos como o Mitsubishi-UFJ, que possuem guichê de
+                troca de câmbio.
+              </p>
+            </div>
+
+            <div className="space-y-4 border-t border-white/10 pt-6">
+              <p className="text-sm font-medium uppercase tracking-[0.15em] text-white/70">
+                4.4 — Restaurantes
+              </p>
+              <div className="grid gap-4 md:grid-cols-3">
+                <div className="rounded-2xl border border-white/10 bg-white/[0.025] p-5">
+                  <p className="text-sm font-medium text-white">Terminal 1</p>
+                  <p className="mt-2 text-sm leading-6 text-white/60">
+                    Kaitensushi Misaki (5F), Ramen Ichikakuya (5F), Tonkatsu Shinjuku
+                    Saboten (4F) e Tsukiji Sushiiwa (4F). Para comida ocidental:
+                    McDonald&apos;s, Starbucks, Shake Shack e Subway (4F).
+                  </p>
+                </div>
+                <div className="rounded-2xl border border-white/10 bg-white/[0.025] p-5">
+                  <p className="text-sm font-medium text-white">Terminal 2</p>
+                  <p className="mt-2 text-sm leading-6 text-white/60">
+                    Tokyo Tonkotsu by Ippudo (4F), Sushi Uogashi Nihon-ichi (4F),
+                    Sushi-go-round Gansozushi (4F) e Tonkatsu Inaba Wako (4F). Para
+                    comida ocidental: Starbucks (4F).
+                  </p>
+                </div>
+                <div className="rounded-2xl border border-white/10 bg-white/[0.025] p-5">
+                  <p className="text-sm font-medium text-white">Terminal 3</p>
+                  <p className="mt-2 text-sm leading-6 text-white/60">
+                    Tatsu Sushi e Freshness Burger (comida ocidental). Vale mais a
+                    pena usar a passagem do 3F e comer no Terminal 2 — tem mais
+                    opções e de melhor qualidade.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="space-y-4 border-t border-white/10 pt-6">
+              <p className="text-sm font-medium uppercase tracking-[0.15em] text-white/70">
+                4.5 — Farmácia
+              </p>
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div className="rounded-2xl border border-white/10 bg-white/[0.025] p-5">
+                  <p className="text-sm font-medium text-white">Terminal 1</p>
+                  <p className="mt-2 text-sm leading-6 text-white/60">
+                    4F — Airport Drug e AP American Pharmacy.
+                  </p>
+                </div>
+                <div className="rounded-2xl border border-white/10 bg-white/[0.025] p-5">
+                  <p className="text-sm font-medium text-white">Terminal 2</p>
+                  <p className="mt-2 text-sm leading-6 text-white/60">
+                    4F — Drug Box MediCosme.
+                  </p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>
+
+      <PreviewModal
+        id="doc-suica"
+        eyebrow="IC Card"
+        label="JR Suica"
+        src="/images/suica-iccard-transparent.png"
+        alt="Cartão JR Suica, com o mascote pinguim"
+      />
+      <PreviewModal
+        id="doc-pasmo"
+        eyebrow="IC Card"
+        label="Pasmo"
+        src="/images/pasmo-card.webp"
+        alt="Cartão Pasmo, com ícones de trem e ônibus"
+      />
 
       <PreviewModal
         id="doc-qr-code"
@@ -241,68 +347,11 @@ export default function NaritaGuidePage() {
         alt="Formulário Customs Declaration — Declaração Aduaneira"
       />
 
-      {/* Bagagem e ações obrigatórias */}
-      <section className="border-t border-white/10 px-6 py-14 md:px-10 md:py-20">
-        <div className="mx-auto max-w-5xl">
-          <div className="mb-10">
-            <SectionMarker number={3} label="Bagagem e Ações Antes de Sair do Aeroporto" />
-          </div>
-          <div className="grid gap-5 sm:grid-cols-3">
-            <ActionItem
-              Icon={IconCard}
-              title="IC Card (Suica/Pasmo)"
-              text="Compre em máquinas ou balcões no hall de chegada. Carregue ¥3.000–5.000 — cobre trem, metrô, ônibus e boa parte das compras do dia a dia."
-            />
-            <ActionItem
-              Icon={IconExchange}
-              title="Câmbio"
-              text="Balcões de câmbio nos halls de chegada de cada terminal. Trocar o suficiente para os primeiros dias evita depender só de caixas eletrônicos no trajeto até o hotel."
-            />
-            <ActionItem
-              Icon={IconLuggage}
-              title="Despacho de bagagem (Takkyubin)"
-              text="Balcões Yamato/JAL ABC nos halls de chegada. Para a região de Tóquio (Kanto), cerca de ¥2.190–2.510 por mala grande, com entrega geralmente no dia seguinte — não despachar nada necessário na primeira noite."
-            />
-          </div>
-        </div>
-      </section>
-
-      {/* Restaurantes */}
-      <section id="restaurantes" className="border-t border-white/10 bg-white/[0.02] px-6 py-14 md:px-10 md:py-20">
-        <div className="mx-auto max-w-5xl">
-          <div className="mb-10 flex items-center gap-3">
-            <SectionMarker number={4} label="Restaurantes no Aeroporto" />
-          </div>
-          <div className="grid gap-4 sm:grid-cols-2">
-            <RestaurantMini
-              name="Misakiko"
-              detail="Sushi de esteira"
-              location="T1 · 5º andar, após a imigração"
-            />
-            <RestaurantMini
-              name="Chukasoba Tomita"
-              detail="Tsukemen premiado (3x campeão nacional)"
-              location="T1"
-            />
-            <RestaurantMini
-              name="Tokyo Food Bar"
-              detail="Praça de alimentação — sukiyaki udon, tempura unagi, ramen vegano"
-              location="T1"
-            />
-            <RestaurantMini
-              name="Japan Food Hall"
-              detail="10 restaurantes — sushi, tonkatsu, okonomiyaki. Aberto 07:30–22:00"
-              location="T2 · após alfândega e segurança"
-            />
-          </div>
-        </div>
-      </section>
-
       {/* Deslocamento */}
       <section id="deslocamento" className="border-t border-white/10 px-6 py-14 md:px-10 md:py-20">
         <div className="mx-auto max-w-5xl">
           <div className="mb-10">
-            <SectionMarker number={5} label="Deslocamento até Tóquio" />
+            <SectionMarker number={3} label="Deslocamento até Tóquio" />
           </div>
 
           <div className="grid gap-4 md:grid-cols-3">
@@ -367,7 +416,7 @@ export default function NaritaGuidePage() {
       <section className="border-t border-white/10 bg-white/[0.02] px-6 py-14 md:px-10 md:py-20">
         <div className="mx-auto max-w-3xl">
           <div className="mb-8">
-            <SectionMarker number={6} label="Comentários Gerais" />
+            <SectionMarker number={4} label="Comentários Gerais" />
           </div>
           <p className="text-base font-light leading-8 text-white/60">
             Narita costuma ser a porta de entrada natural para roteiros que iniciam em
