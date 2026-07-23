@@ -674,7 +674,13 @@ export default function NaritaGuidePage() {
           </div>
 
           <div className="mb-10">
-            <MapCard href="#mapa-narita-tokyo" label="Mapa da rota — Narita até o centro de Tóquio" />
+            <ImageCard
+              src="/images/narita-to-tokyo-map.png"
+              alt="Mapa de rota do Aeroporto de Narita até o centro de Tóquio, com distância e tempo estimado"
+              fit="cover"
+              aspect="aspect-[21/9]"
+              zoomHref="#mapa-narita-tokyo"
+            />
           </div>
 
           <div className="space-y-5">
