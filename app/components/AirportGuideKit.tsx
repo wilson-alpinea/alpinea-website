@@ -14,6 +14,24 @@ export function IconPlane({ className }: { className?: string }) {
   );
 }
 
+export function IconPlaneLanding({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <path d="M2 21h20" />
+      <path d="M3.5 15.5 8 13l2.2-5.8a1 1 0 0 1 1.9.1L13 13l4.2 1.7a1.6 1.6 0 0 1 1 1.5v.8L13 15.7 9.6 17 6 15.9v-.9z" />
+    </svg>
+  );
+}
+
+export function IconPlaneTakeoff({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <path d="M2 21h20" />
+      <path d="M6.5 17 9 12.3 3.8 10.6a1 1 0 0 1 .3-1.9l2.3.4L11 11l4.9-4.3a1.7 1.7 0 0 1 2.6 1.9L15.8 14l2.2 4.2" />
+    </svg>
+  );
+}
+
 export function IconTrain({ className }: { className?: string }) {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" className={className}>
@@ -628,5 +646,22 @@ export function InternalGuideHeader({
         <p className="max-w-2xl text-base font-light leading-8 text-white/55">{subtitle}</p>
       </div>
     </header>
+  );
+}
+
+// Etiqueta com ícone usada para marcar se um trecho do guia se refere ao
+// fluxo de Desembarque (chegada) ou Embarque (saída) do aeroporto.
+export function FlowTag({
+  Icon,
+  label,
+}: {
+  Icon: (p: { className?: string }) => ReactElement;
+  label: string;
+}) {
+  return (
+    <span className="inline-flex items-center gap-2 rounded-full border border-[#5b9bd5]/30 bg-[#5b9bd5]/10 px-4 py-1.5 text-xs font-medium uppercase tracking-[0.2em] text-[#8fc0e8]">
+      <Icon className="h-3.5 w-3.5" />
+      {label}
+    </span>
   );
 }

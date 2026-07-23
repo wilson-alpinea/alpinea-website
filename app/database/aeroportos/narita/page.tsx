@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import {
   InternalGuideHeader,
+  FlowTag,
   SectionMarker,
   TerminalCard,
   MapCard,
@@ -12,6 +13,8 @@ import {
   ImmigrationArrivalGuide,
   SubStepHeading,
   IconBulb,
+  IconPlaneLanding,
+  IconPlaneTakeoff,
 } from "../../../components/AirportGuideKit";
 
 const display = Bodoni_Moda({
@@ -42,6 +45,11 @@ export default function NaritaGuidePage() {
         heroAlt="Vista aérea do pátio de aeronaves e terminais do Aeroporto Internacional de Narita"
         subtitle="Aeroporto Internacional de Narita, em Chiba — a cerca de 60 km a leste do centro de Tóquio. Recebe a maior parte dos voos internacionais de longo curso com destino a Tóquio."
       />
+
+      <div className="mx-auto flex max-w-5xl flex-wrap gap-3 px-6 pt-8 md:px-10">
+        <FlowTag Icon={IconPlaneLanding} label="Desembarque" />
+        <FlowTag Icon={IconPlaneTakeoff} label="Embarque" />
+      </div>
 
       {/* Visão geral */}
       <section className="border-t border-white/10 px-6 py-14 md:px-10 md:py-20">
