@@ -1,5 +1,6 @@
 import { Bodoni_Moda } from "next/font/google";
 import type { Metadata } from "next";
+import Image from "next/image";
 import { IconArrowLeft, IconPlane } from "../../components/AirportGuideKit";
 
 const display = Bodoni_Moda({
@@ -29,6 +30,7 @@ const aeroportos = [
     regiao: "Tóquio · Chiba",
     resumo:
       "Principal porta de entrada para a maioria dos voos internacionais de longo curso com destino a Tóquio. Três terminais, ~60 km do centro.",
+    heroImage: "/images/Narita-hero.png",
   },
   {
     slug: "haneda",
@@ -37,6 +39,7 @@ const aeroportos = [
     regiao: "Tóquio",
     resumo:
       "Terminal internacional (T3) a ~30 min do centro de Tóquio. Boa opção para chegadas noturnas ou voos com conexão mais curta até o hotel.",
+    heroImage: "/images/haneda-hero.jpg",
   },
   {
     slug: "kansai",
@@ -45,6 +48,7 @@ const aeroportos = [
     regiao: "Osaka · Kyoto · Kobe",
     resumo:
       "Aeroporto insular que serve toda a região de Kansai. Porta de entrada para roteiros que começam por Osaka ou Kyoto.",
+    heroImage: "/images/kix-airport.webp",
   },
 ];
 
@@ -85,21 +89,33 @@ export default function AeroportosIndexPage() {
             <a
               key={a.slug}
               href={`/database/aeroportos/${a.slug}`}
-              className="group rounded-2xl border border-white/10 bg-white/[0.025] p-6 transition hover:border-white/25 hover:bg-white/[0.04]"
+              className="group overflow-hidden rounded-2xl border border-white/10 bg-white/[0.025] transition hover:border-white/25 hover:bg-white/[0.04]"
             >
-              <span className="flex h-10 w-10 items-center justify-center rounded-full bg-[#5b9bd5]/12 text-[#5b9bd5]">
-                <IconPlane className="h-5 w-5" />
-              </span>
-              <p className="mt-5 text-xs uppercase tracking-[0.25em] text-white/35">
-                {a.codigo} · {a.regiao}
-              </p>
-              <h2 className={`${display.className} mt-2 text-xl font-medium text-white`}>
-                {a.nome}
-              </h2>
-              <p className="mt-3 text-sm leading-6 text-white/50">{a.resumo}</p>
-              <p className="mt-5 text-xs uppercase tracking-[0.2em] text-white/30 transition group-hover:text-white/60">
-                Ver guia →
-              </p>
+              <div className="relative h-32 w-full overflow-hidden">
+                <Image
+                  src={a.heroImage}
+                  alt={a.nome}
+                  fill
+                  sizes="(min-width: 768px) 33vw, 100vw"
+                  className="object-cover transition duration-300 group-hover:scale-105"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
+              </div>
+              <div className="p-6">
+                <span className="flex h-10 w-10 items-center justify-center rounded-full bg-[#5b9bd5]/12 text-[#5b9bd5]">
+                  <IconPlane className="h-5 w-5" />
+                </span>
+                <p className="mt-5 text-xs uppercase tracking-[0.25em] text-white/35">
+                  {a.codigo} · {a.regiao}
+                </p>
+                <h2 className={`${display.className} mt-2 text-xl font-medium text-white`}>
+                  {a.nome}
+                </h2>
+                <p className="mt-3 text-sm leading-6 text-white/50">{a.resumo}</p>
+                <p className="mt-5 text-xs uppercase tracking-[0.2em] text-white/30 transition group-hover:text-white/60">
+                  Ver guia →
+                </p>
+              </div>
             </a>
           ))}
         </div>
