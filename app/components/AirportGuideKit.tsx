@@ -165,6 +165,17 @@ export function IconMap({ className }: { className?: string }) {
   );
 }
 
+export function IconZoom({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <circle cx="11" cy="11" r="7" />
+      <line x1="21" y1="21" x2="16.2" y2="16.2" />
+      <line x1="11" y1="8" x2="11" y2="14" />
+      <line x1="8" y1="11" x2="14" y2="11" />
+    </svg>
+  );
+}
+
 // ── Blocos de layout ──
 
 // Espaço reservado para um mapa que ainda precisa ser anexado ao guia.
@@ -273,6 +284,7 @@ export function ImageCard({
   label,
   sublabel,
   fit = "contain",
+  zoomHref,
   className = "",
 }: {
   src: string;
@@ -280,18 +292,36 @@ export function ImageCard({
   label?: string;
   sublabel?: string;
   fit?: "contain" | "cover";
+  zoomHref?: string;
   className?: string;
 }) {
+  const imageBox = (
+    <div className="relative aspect-[4/3] w-full">
+      <Image
+        src={src}
+        alt={alt}
+        fill
+        className={fit === "cover" ? "object-cover" : "object-contain p-6"}
+      />
+      {zoomHref && (
+        <span className="absolute inset-0 flex items-center justify-center bg-black/0 opacity-0 transition group-hover:bg-black/30 group-hover:opacity-100">
+          <span className="flex h-9 w-9 items-center justify-center rounded-full bg-black/70 text-white">
+            <IconZoom className="h-4 w-4" />
+          </span>
+        </span>
+      )}
+    </div>
+  );
+
   return (
     <div className={`overflow-hidden rounded-2xl border border-white/10 bg-white/[0.03] ${className}`}>
-      <div className="relative aspect-[4/3] w-full">
-        <Image
-          src={src}
-          alt={alt}
-          fill
-          className={fit === "cover" ? "object-cover" : "object-contain p-6"}
-        />
-      </div>
+      {zoomHref ? (
+        <a href={zoomHref} className="group block cursor-zoom-in">
+          {imageBox}
+        </a>
+      ) : (
+        imageBox
+      )}
       {label && (
         <div className="border-t border-white/10 px-4 py-3 text-center">
           <p className="text-sm font-medium text-white">{label}</p>
@@ -317,8 +347,8 @@ export function CaptionedImage({
 }) {
   return (
     <div className={`text-center ${className}`}>
-      <div className="relative aspect-[3/2] w-full">
-        <Image src={src} alt={alt} fill className="object-contain" />
+      <div className="relative mx-auto h-44 w-full max-w-[300px] sm:h-52">
+        <Image src={src} alt={alt} fill sizes="300px" className="object-contain" />
       </div>
       {caption && (
         <p className="mt-3 text-xs uppercase tracking-[0.2em] text-white/40">{caption}</p>
@@ -612,7 +642,7 @@ export function InternalGuideHeader({
   heroAlt?: string;
 }) {
   return (
-    <header className="border-b border-white/10 bg-black">
+    <header className="bg-black">
       <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-5 md:px-10">
         <a
           href="/database/aeroportos"
@@ -689,8 +719,8 @@ export function FlowTag({
   subtitle?: string;
 }) {
   return (
-    <div className="flex items-center gap-4 rounded-2xl border border-[#4f9de0]/40 bg-[#12315c] p-5">
-      <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#4f9de0]/25 text-[#a8d4f5]">
+    <div className="group flex items-center gap-4 rounded-2xl border border-[#4f9de0]/40 bg-[#12315c] p-5 transition duration-300 hover:-translate-y-0.5 hover:border-[#4f9de0]/80 hover:bg-[#173e75] hover:shadow-[0_8px_30px_rgba(79,157,224,0.25)]">
+      <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#4f9de0]/25 text-[#a8d4f5] transition duration-300 group-hover:scale-110 group-hover:bg-[#4f9de0]/40">
         <Icon className="h-5 w-5" />
       </span>
       <div>

@@ -53,7 +53,7 @@ export default function NaritaGuidePage() {
       </div>
 
       {/* Visão geral */}
-      <section className="border-t border-white/10 px-6 py-14 md:px-10 md:py-20">
+      <section className="px-6 py-14 md:px-10 md:py-20">
         <div className="mx-auto max-w-5xl space-y-10">
           <SectionMarker number={1} label="Visão Geral" />
           <p className="max-w-3xl text-base font-light leading-8 text-white/70">
@@ -81,6 +81,8 @@ export default function NaritaGuidePage() {
           <div className="grid gap-4 md:grid-cols-2">
             <MapCard href="#mapa-geral-narita" label="Mapa Geral — Terminal 1, 2 e 3" />
             <MapCard href="#mapa-terminal1" label="Planta do Terminal 1" />
+            <MapCard href="#mapa-terminal2" label="Planta do Terminal 2" />
+            <MapCard href="#mapa-terminal3" label="Planta do Terminal 3" />
           </div>
 
           <div className="rounded-2xl border border-[#5b9bd5]/15 bg-[#0f2340] p-6 sm:p-8">
@@ -130,6 +132,18 @@ export default function NaritaGuidePage() {
         label="Planta do Terminal 1 — Ala Norte e Ala Sul"
         src="/images/T1-Overview.png"
         alt="Planta do Terminal 1 de Narita, com Ala Norte e Ala Sul"
+      />
+      <MapModal
+        id="mapa-terminal2"
+        label="Planta do Terminal 2"
+        src="/images/visao-geral-terminal-2.png"
+        alt="Planta do Terminal 2 de Narita, com esteiras de bagagem, alfândega e paradas de ônibus"
+      />
+      <MapModal
+        id="mapa-terminal3"
+        label="Planta do Terminal 3"
+        src="/images/visao-geral-terminal3.png"
+        alt="Planta do Terminal 3 de Narita, com esteiras de bagagem, alfândega e paradas de ônibus"
       />
       <MapModal
         id="mapa-passagem-t2-t3"
@@ -278,10 +292,10 @@ export default function NaritaGuidePage() {
                   McDonald&apos;s, Starbucks, Shake Shack e Subway (4F).
                 </p>
                 <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
-                  <ImageCard src="/images/misaki.jpg" alt="Sushi de salmão do Kaitensushi Misaki" label="Kaitensushi Misaki" sublabel="≈ ¥1.500–2.500 por pessoa" fit="cover" />
-                  <ImageCard src="/images/ramen-ichikakuya.jpg" alt="Tigela de ramen do Ramen Ichikakuya" label="Ramen Ichikakuya" sublabel="≈ ¥1.000–1.300 por pessoa" fit="cover" />
-                  <ImageCard src="/images/saboten.jpg" alt="Prato de tonkatsu com curry do Tonkatsu Shinjuku Saboten" label="Tonkatsu Shinjuku Saboten" sublabel="≈ ¥1.300–1.800 por pessoa" fit="cover" />
-                  <ImageCard src="/images/sushi-iwa.jpg" alt="Prato variado de sushi do Tsukiji Sushiiwa" label="Tsukiji Sushiiwa" sublabel="≈ ¥2.500–3.500 por pessoa" fit="cover" />
+                  <ImageCard src="/images/misaki.jpg" alt="Sushi de salmão do Kaitensushi Misaki" label="Kaitensushi Misaki" sublabel="≈ ¥1.500–2.500 por pessoa" fit="cover" zoomHref="#foto-misaki" />
+                  <ImageCard src="/images/ramen-ichikakuya.jpg" alt="Tigela de ramen do Ramen Ichikakuya" label="Ramen Ichikakuya" sublabel="≈ ¥1.000–1.300 por pessoa" fit="cover" zoomHref="#foto-ramen-ichikakuya" />
+                  <ImageCard src="/images/saboten.jpg" alt="Prato de tonkatsu com curry do Tonkatsu Shinjuku Saboten" label="Tonkatsu Shinjuku Saboten" sublabel="≈ ¥1.300–1.800 por pessoa" fit="cover" zoomHref="#foto-saboten" />
+                  <ImageCard src="/images/sushi-iwa.jpg" alt="Prato variado de sushi do Tsukiji Sushiiwa" label="Tsukiji Sushiiwa" sublabel="≈ ¥2.500–3.500 por pessoa" fit="cover" zoomHref="#foto-sushi-iwa" />
                 </div>
                 <div className="mt-4 flex flex-wrap items-center gap-3">
                   {[
@@ -308,10 +322,10 @@ export default function NaritaGuidePage() {
                   comida ocidental: Starbucks (4F).
                 </p>
                 <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
-                  <ImageCard src="/images/tokyo-tonkotsu.jpg" alt="Tigela de ramen do Tokyo Tonkotsu by Ippudo" label="Tokyo Tonkotsu by Ippudo" sublabel="≈ ¥1.000–1.500 por pessoa" fit="cover" />
-                  <ImageCard src="/images/sushi-uogashi.jpg" alt="Prato variado de sushi do Sushi Uogashi Nihon-ichi" label="Sushi Uogashi Nihon-ichi" sublabel="≈ ¥2.000–3.000 por pessoa" fit="cover" />
-                  <ImageCard src="/images/gansozushi.jpg" alt="Sushi de salmão do Sushi-go-round Gansozushi" label="Sushi-go-round Gansozushi" sublabel="≈ ¥1.500–2.500 por pessoa" fit="cover" />
-                  <ImageCard src="/images/inaba-wako.jpg" alt="Prato de tonkatsu do Tonkatsu Inaba Wako" label="Tonkatsu Inaba Wako" sublabel="≈ ¥1.300–1.800 por pessoa" fit="cover" />
+                  <ImageCard src="/images/tokyo-tonkotsu.jpg" alt="Tigela de ramen do Tokyo Tonkotsu by Ippudo" label="Tokyo Tonkotsu by Ippudo" sublabel="≈ ¥1.000–1.500 por pessoa" fit="cover" zoomHref="#foto-tokyo-tonkotsu" />
+                  <ImageCard src="/images/sushi-uogashi.jpg" alt="Prato variado de sushi do Sushi Uogashi Nihon-ichi" label="Sushi Uogashi Nihon-ichi" sublabel="≈ ¥2.000–3.000 por pessoa" fit="cover" zoomHref="#foto-sushi-uogashi" />
+                  <ImageCard src="/images/gansozushi.jpg" alt="Sushi de salmão do Sushi-go-round Gansozushi" label="Sushi-go-round Gansozushi" sublabel="≈ ¥1.500–2.500 por pessoa" fit="cover" zoomHref="#foto-gansozushi" />
+                  <ImageCard src="/images/inaba-wako.jpg" alt="Prato de tonkatsu do Tonkatsu Inaba Wako" label="Tonkatsu Inaba Wako" sublabel="≈ ¥1.300–1.800 por pessoa" fit="cover" zoomHref="#foto-inaba-wako" />
                 </div>
                 <div className="mt-4 flex flex-wrap items-center gap-3">
                   <div className="relative h-9 w-16 overflow-hidden rounded-md bg-white p-1.5">
@@ -323,13 +337,15 @@ export default function NaritaGuidePage() {
               <div className="rounded-2xl border border-white/10 bg-white/[0.025] p-5">
                 <p className="text-sm font-medium text-white">Terminal 3</p>
                 <p className="mt-2 text-sm leading-6 text-white/60">
-                  Tatsu Sushi e Freshness Burger (comida ocidental). Vale mais a
-                  pena usar a passagem do 3F e comer no Terminal 2 — tem mais
-                  opções e de melhor qualidade.
+                  Tatsu Sushi e Freshness Burger (comida ocidental). O Terminal 3 é
+                  bem pequeno em comparação aos demais, porém se o objetivo for
+                  comer sushi o Tatsu é na verdade um dos 2 melhores restaurantes
+                  de sushi da área externa do aeroporto. Se quiser outros tipos de
+                  comida, siga até o Terminal 2 pela passagem terrestre no 3F.
                 </p>
                 <div className="mt-4 grid grid-cols-2 gap-3">
-                  <ImageCard src="/images/tatsu-sushi.jpg" alt="Sushi do Tatsu Sushi" label="Tatsu Sushi" sublabel="≈ ¥2.000–3.000 por pessoa" fit="cover" />
-                  <ImageCard src="/images/freshness.jpg" alt="Hambúrguer e batatas do Freshness Burger" label="Freshness Burger" sublabel="≈ ¥900–1.200 por pessoa" fit="cover" />
+                  <ImageCard src="/images/tatsu-sushi.jpg" alt="Sushi do Tatsu Sushi" label="Tatsu Sushi" sublabel="≈ ¥2.000–3.000 por pessoa" fit="cover" zoomHref="#foto-tatsu-sushi" />
+                  <ImageCard src="/images/freshness.jpg" alt="Hambúrguer e batatas do Freshness Burger" label="Freshness Burger" sublabel="≈ ¥900–1.200 por pessoa" fit="cover" zoomHref="#foto-freshness" />
                 </div>
               </div>
             </div>
@@ -377,6 +393,77 @@ export default function NaritaGuidePage() {
         label="Customs Declaration"
         src="/images/custom-declaration.png"
         alt="Formulário Customs Declaration — Declaração Aduaneira"
+      />
+
+      <PreviewModal
+        id="foto-misaki"
+        eyebrow="Terminal 1"
+        label="Kaitensushi Misaki"
+        src="/images/misaki.jpg"
+        alt="Sushi de salmão do Kaitensushi Misaki"
+      />
+      <PreviewModal
+        id="foto-ramen-ichikakuya"
+        eyebrow="Terminal 1"
+        label="Ramen Ichikakuya"
+        src="/images/ramen-ichikakuya.jpg"
+        alt="Tigela de ramen do Ramen Ichikakuya"
+      />
+      <PreviewModal
+        id="foto-saboten"
+        eyebrow="Terminal 1"
+        label="Tonkatsu Shinjuku Saboten"
+        src="/images/saboten.jpg"
+        alt="Prato de tonkatsu com curry do Tonkatsu Shinjuku Saboten"
+      />
+      <PreviewModal
+        id="foto-sushi-iwa"
+        eyebrow="Terminal 1"
+        label="Tsukiji Sushiiwa"
+        src="/images/sushi-iwa.jpg"
+        alt="Prato variado de sushi do Tsukiji Sushiiwa"
+      />
+      <PreviewModal
+        id="foto-tokyo-tonkotsu"
+        eyebrow="Terminal 2"
+        label="Tokyo Tonkotsu by Ippudo"
+        src="/images/tokyo-tonkotsu.jpg"
+        alt="Tigela de ramen do Tokyo Tonkotsu by Ippudo"
+      />
+      <PreviewModal
+        id="foto-sushi-uogashi"
+        eyebrow="Terminal 2"
+        label="Sushi Uogashi Nihon-ichi"
+        src="/images/sushi-uogashi.jpg"
+        alt="Prato variado de sushi do Sushi Uogashi Nihon-ichi"
+      />
+      <PreviewModal
+        id="foto-gansozushi"
+        eyebrow="Terminal 2"
+        label="Sushi-go-round Gansozushi"
+        src="/images/gansozushi.jpg"
+        alt="Sushi de salmão do Sushi-go-round Gansozushi"
+      />
+      <PreviewModal
+        id="foto-inaba-wako"
+        eyebrow="Terminal 2"
+        label="Tonkatsu Inaba Wako"
+        src="/images/inaba-wako.jpg"
+        alt="Prato de tonkatsu do Tonkatsu Inaba Wako"
+      />
+      <PreviewModal
+        id="foto-tatsu-sushi"
+        eyebrow="Terminal 3"
+        label="Tatsu Sushi"
+        src="/images/tatsu-sushi.jpg"
+        alt="Sushi do Tatsu Sushi"
+      />
+      <PreviewModal
+        id="foto-freshness"
+        eyebrow="Terminal 3"
+        label="Freshness Burger"
+        src="/images/freshness.jpg"
+        alt="Hambúrguer e batatas do Freshness Burger"
       />
 
       {/* Deslocamento */}
