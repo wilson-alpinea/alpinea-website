@@ -386,7 +386,8 @@ export function SubStepHeading({ number, title }: { number: number; title: strin
 // qualquer aeroporto do Japão (documentos de imigração, entrevista,
 // retirada de bagagem). Os PreviewModal dos documentos/QR code/fotos devem
 // ser renderizados uma vez por página, com os ids: doc-qr-code,
-// doc-disembarkation, doc-customs, foto-kiosk-imigracao, foto-arrivals-placa.
+// doc-disembarkation, doc-customs, foto-kiosk-imigracao, foto-arrivals-placa,
+// foto-passaporte-brasileiro.
 export function ImmigrationArrivalGuide({ displayClassName }: { displayClassName: string }) {
   return (
     <div className="space-y-10">
@@ -537,28 +538,42 @@ export function ImmigrationArrivalGuide({ displayClassName }: { displayClassName
           no seu idioma nativo (português, por exemplo).
         </p>
         <div className="rounded-2xl border border-white/10 bg-white/[0.025] p-6">
-          <p className="mb-2 text-xs uppercase tracking-[0.25em] text-[#5b9bd5]">
-            No guichê da imigração
-          </p>
-          <p className="text-sm leading-6 text-white/60">
-            Entregue o passaporte e o comprovante emitido pelo quiosque (ou os
-            documentos preenchidos manualmente). O oficial normalmente:
-          </p>
-          <div className="mt-3 space-y-1.5 text-sm leading-6 text-white/60">
-            <p>• Verifica o passaporte</p>
-            <p>• Confirma sua identidade</p>
-            <p>• Coleta as digitais (se ainda não foram coletadas)</p>
-            <p>• Tira uma fotografia (se ainda não foi feita)</p>
-            <p>• Faz algumas perguntas simples, normalmente em inglês</p>
-          </div>
-          <p className="mt-4 text-xs uppercase tracking-[0.25em] text-white/30">
-            Perguntas mais comuns
-          </p>
-          <div className="mt-2 space-y-1.5 text-sm leading-6 text-white/60">
-            <p>• Qual o objetivo da viagem?</p>
-            <p>• Quantos dias ficará no Japão?</p>
-            <p>• Onde ficará hospedado?</p>
-            <p>• É sua primeira visita ao Japão?</p>
+          <div className="grid gap-6 md:grid-cols-[1fr_220px]">
+            <div>
+              <p className="mb-2 text-xs uppercase tracking-[0.25em] text-[#5b9bd5]">
+                No guichê da imigração
+              </p>
+              <p className="text-sm leading-6 text-white/60">
+                Entregue o passaporte e o comprovante emitido pelo quiosque (ou os
+                documentos preenchidos manualmente). O oficial normalmente:
+              </p>
+              <div className="mt-3 space-y-1.5 text-sm leading-6 text-white/60">
+                <p>• Verifica o passaporte</p>
+                <p>• Confirma sua identidade</p>
+                <p>• Coleta as digitais (se ainda não foram coletadas)</p>
+                <p>• Tira uma fotografia (se ainda não foi feita)</p>
+                <p>• Faz algumas perguntas simples, normalmente em inglês</p>
+              </div>
+              <p className="mt-4 text-xs uppercase tracking-[0.25em] text-white/30">
+                Perguntas mais comuns
+              </p>
+              <div className="mt-2 space-y-1.5 text-sm leading-6 text-white/60">
+                <p>• Qual o objetivo da viagem?</p>
+                <p>• Quantos dias ficará no Japão?</p>
+                <p>• Onde ficará hospedado?</p>
+                <p>• É sua primeira visita ao Japão?</p>
+              </div>
+            </div>
+            <div>
+              <ImageCard
+                src="/images/passaporte-brasileiro.jpg"
+                alt="Passaporte brasileiro aberto, mostrando a página de identificação do titular"
+                fit="cover"
+                aspect="aspect-[3/4]"
+                zoomHref="#foto-passaporte-brasileiro"
+              />
+              <p className="mt-3 text-center text-xs text-white/45">Passaporte brasileiro</p>
+            </div>
           </div>
         </div>
       </div>
