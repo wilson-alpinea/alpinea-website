@@ -109,7 +109,7 @@ export default function NaritaGuidePage() {
               <MapCard href="#mapa-passagem-t2-t3" label="Passagem entre o Terminal 2 e o Terminal 3" />
             </div>
 
-            <div className="mt-8 space-y-4 border-t border-white/10 pt-6 text-sm leading-7 text-white/70 md:text-base md:leading-8">
+            <div className="mt-8 space-y-4 pt-6 text-sm leading-7 text-white/70 md:text-base md:leading-8">
               <p>
                 Se você precisa se deslocar do Terminal 1 para o Terminal 2 ou 3 (ou
                 vice-versa), é necessário usar o <span className="text-white">transfer interno</span> —
@@ -175,9 +175,21 @@ export default function NaritaGuidePage() {
           </div>
 
           <ImmigrationArrivalGuide displayClassName={display.className} />
+        </div>
+      </section>
 
-          <div className="mt-10 space-y-5 border-t border-white/10 pt-8">
-            <SubStepHeading number={4} title="O Que Devo Fazer Antes de Sair do Aeroporto?" />
+      {/* Recomendações antes de sair do aeroporto */}
+      <section className="border-t border-white/10 px-6 py-14 md:px-10 md:py-20">
+        <div className="mx-auto max-w-3xl">
+          <div className="mb-8">
+            <SectionMarker number={3} label="Recomendações Antes de Sair do Aeroporto" />
+          </div>
+
+          <h2 className={`${display.className} mb-8 text-2xl font-medium text-white md:text-3xl`}>
+            Passei pela Imigração e Estou com Minhas Malas, e Agora?
+          </h2>
+
+          <div className="space-y-5">
             <p className="text-base font-light leading-8 text-white/70">
               O Aeroporto de Narita fica bem distante de Tóquio — em horários com
               trânsito, pode levar até 2 horas para chegar ao centro da cidade. Por
@@ -186,7 +198,7 @@ export default function NaritaGuidePage() {
 
             <div className="space-y-4 pt-2">
               <p className="text-sm font-medium uppercase tracking-[0.15em] text-white/70">
-                4.1 — Aluguel de Pocket Wi-Fi ou eSIM 5G
+                3.1 — Aluguel de Pocket Wi-Fi ou eSIM 5G
               </p>
               <p className="text-base font-light leading-8 text-white/70">
                 Caso ainda não tenha comprado um eSIM 5G, recomendamos que faça o
@@ -234,7 +246,7 @@ export default function NaritaGuidePage() {
 
             <div className="space-y-4 border-t border-white/10 pt-6">
               <p className="text-sm font-medium uppercase tracking-[0.15em] text-white/70">
-                4.2 — Comprar IC Card (JR Suica ou Pasmo)
+                3.2 — Comprar IC Card (JR Suica ou Pasmo)
               </p>
               <p className="text-base font-light leading-8 text-white/70">
                 No Japão, o valor do ticket de metrô é definido pela distância — ou
@@ -292,7 +304,7 @@ export default function NaritaGuidePage() {
 
             <div className="space-y-4 border-t border-white/10 pt-6">
               <p className="text-sm font-medium uppercase tracking-[0.15em] text-white/70">
-                4.3 — Câmbio
+                3.3 — Câmbio
               </p>
               <p className="text-base font-light leading-8 text-white/70">
                 Caso planeje fazer uma refeição no aeroporto ou pedir um Uber,
@@ -311,7 +323,7 @@ export default function NaritaGuidePage() {
 
             <div className="space-y-8 border-t border-white/10 pt-6">
               <p className="text-sm font-medium uppercase tracking-[0.15em] text-white/70">
-                4.4 — Restaurantes
+                3.4 — Restaurantes
               </p>
 
               <div className="rounded-2xl border border-white/10 bg-white/[0.025] p-5">
@@ -382,7 +394,7 @@ export default function NaritaGuidePage() {
 
             <div className="space-y-4 border-t border-white/10 pt-6">
               <p className="text-sm font-medium uppercase tracking-[0.15em] text-white/70">
-                4.5 — Farmácia
+                3.5 — Farmácia
               </p>
               <div className="grid gap-4 sm:grid-cols-2">
                 <div className="rounded-2xl border border-white/10 bg-white/[0.025] p-5">
@@ -522,7 +534,7 @@ export default function NaritaGuidePage() {
       <section id="deslocamento" className="border-t border-white/10 px-6 py-14 md:px-10 md:py-20">
         <div className="mx-auto max-w-3xl">
           <div className="mb-8">
-            <SectionMarker number={3} label="Deslocamento até Tóquio" />
+            <SectionMarker number={4} label="Deslocamento até Tóquio" />
           </div>
 
           <h2 className={`${display.className} mb-8 text-2xl font-medium text-white md:text-3xl`}>
