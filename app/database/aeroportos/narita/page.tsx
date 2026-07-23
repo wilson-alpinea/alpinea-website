@@ -5,6 +5,7 @@ import {
   InternalGuideHeader,
   FlowTag,
   SectionMarker,
+  TableOfContents,
   TerminalCard,
   MapCard,
   MapModal,
@@ -18,6 +19,8 @@ import {
   IconBulb,
   IconExchange,
   IconClock,
+  IconMap,
+  IconTrain,
   IconPlaneLanding,
   IconPlaneTakeoff,
   IconCard,
@@ -58,8 +61,40 @@ export default function NaritaGuidePage() {
         <FlowTag Icon={IconPlaneTakeoff} label="Embarque" subtitle="Trâmites de saída e check-in" />
       </div>
 
+      <TableOfContents
+        items={[
+          { Icon: IconMap, number: 1, label: "Visão Geral", href: "#secao-1" },
+          { Icon: IconPlaneLanding, number: 2, label: "Chegada e Imigração", href: "#secao-2" },
+          {
+            Icon: IconBulb,
+            number: 3,
+            label: "Recomendações Antes de Sair do Aeroporto",
+            href: "#secao-3",
+            subsections: [
+              { label: "Wi-Fi / eSIM", href: "#secao-3-1" },
+              { label: "IC Card (Suica/Pasmo)", href: "#secao-3-2" },
+              { label: "Câmbio", href: "#secao-3-3" },
+              { label: "Restaurantes", href: "#secao-3-4" },
+              { label: "Farmácia", href: "#secao-3-5" },
+              { label: "Envio de Bagagem (Takkyubin)", href: "#secao-3-6" },
+            ],
+          },
+          {
+            Icon: IconTrain,
+            number: 4,
+            label: "Deslocamento até Tóquio",
+            href: "#deslocamento",
+            subsections: [
+              { label: "Trem", href: "#deslocamento-trem" },
+              { label: "Ônibus", href: "#deslocamento-onibus" },
+              { label: "Táxi/Uber", href: "#deslocamento-taxi" },
+            ],
+          },
+        ]}
+      />
+
       {/* Visão geral */}
-      <section className="px-6 py-14 md:px-10 md:py-20">
+      <section id="secao-1" className="px-6 py-14 md:px-10 md:py-20">
         <div className="mx-auto max-w-5xl space-y-10">
           <SectionMarker number={1} label="Visão Geral" />
           <h2 className={`${display.className} text-2xl font-medium text-white md:text-3xl`}>
@@ -200,7 +235,7 @@ export default function NaritaGuidePage() {
       />
 
       {/* Chegada e imigração */}
-      <section className="border-t border-white/10 bg-white/[0.02] px-6 py-14 md:px-10 md:py-20">
+      <section id="secao-2" className="border-t border-white/10 bg-white/[0.02] px-6 py-14 md:px-10 md:py-20">
         <div className="mx-auto max-w-3xl">
           <div className="mb-8">
             <SectionMarker number={2} label="Chegada e Imigração" />
@@ -211,7 +246,7 @@ export default function NaritaGuidePage() {
       </section>
 
       {/* Recomendações antes de sair do aeroporto */}
-      <section className="border-t border-white/10 px-6 py-14 md:px-10 md:py-20">
+      <section id="secao-3" className="border-t border-white/10 px-6 py-14 md:px-10 md:py-20">
         <div className="mx-auto max-w-3xl">
           <div className="mb-8">
             <SectionMarker number={3} label="Recomendações Antes de Sair do Aeroporto" />
@@ -229,7 +264,7 @@ export default function NaritaGuidePage() {
             </p>
 
             <div className="space-y-4 pt-2">
-              <p className="text-sm font-medium uppercase tracking-[0.15em] text-white/70">
+              <p id="secao-3-1" className="text-sm font-medium uppercase tracking-[0.15em] text-white/70">
                 3.1 — Aluguel de Pocket Wi-Fi ou eSIM 5G
               </p>
               <p className="text-base font-light leading-8 text-white/70">
@@ -277,7 +312,7 @@ export default function NaritaGuidePage() {
             </div>
 
             <div className="space-y-4 border-t border-white/10 pt-6">
-              <p className="text-sm font-medium uppercase tracking-[0.15em] text-white/70">
+              <p id="secao-3-2" className="text-sm font-medium uppercase tracking-[0.15em] text-white/70">
                 3.2 — Comprar IC Card (JR Suica ou Pasmo)
               </p>
               <p className="text-base font-light leading-8 text-white/70">
@@ -395,7 +430,7 @@ export default function NaritaGuidePage() {
             </div>
 
             <div className="space-y-4 border-t border-white/10 pt-6">
-              <p className="text-sm font-medium uppercase tracking-[0.15em] text-white/70">
+              <p id="secao-3-3" className="text-sm font-medium uppercase tracking-[0.15em] text-white/70">
                 3.3 — Câmbio
               </p>
               <p className="text-base font-light leading-8 text-white/70">
@@ -414,7 +449,7 @@ export default function NaritaGuidePage() {
             </div>
 
             <div className="space-y-8 border-t border-white/10 pt-6">
-              <p className="text-sm font-medium uppercase tracking-[0.15em] text-white/70">
+              <p id="secao-3-4" className="text-sm font-medium uppercase tracking-[0.15em] text-white/70">
                 3.4 — Restaurantes
               </p>
 
@@ -485,7 +520,7 @@ export default function NaritaGuidePage() {
             </div>
 
             <div className="space-y-4 border-t border-white/10 pt-6">
-              <p className="text-sm font-medium uppercase tracking-[0.15em] text-white/70">
+              <p id="secao-3-5" className="text-sm font-medium uppercase tracking-[0.15em] text-white/70">
                 3.5 — Farmácia
               </p>
               <div className="grid gap-4 sm:grid-cols-2">
@@ -505,7 +540,7 @@ export default function NaritaGuidePage() {
             </div>
 
             <div className="space-y-4 border-t border-white/10 pt-6">
-              <p className="text-sm font-medium uppercase tracking-[0.15em] text-white/70">
+              <p id="secao-3-6" className="text-sm font-medium uppercase tracking-[0.15em] text-white/70">
                 3.6 — Envio de Bagagem (Takkyubin)
               </p>
               <div className="rounded-2xl border border-[#5b9bd5]/15 bg-[#0f2340] p-6 sm:p-8">
@@ -702,7 +737,7 @@ export default function NaritaGuidePage() {
             />
           </div>
 
-          <div className="space-y-5">
+          <div id="deslocamento-trem" className="space-y-5">
             <SubStepHeading number={1} title="Trem" />
 
             <p className="text-sm font-medium uppercase tracking-[0.15em] text-white/50">
@@ -754,7 +789,7 @@ export default function NaritaGuidePage() {
             </p>
           </div>
 
-          <div className="mt-10 space-y-5 border-t border-white/10 pt-8">
+          <div id="deslocamento-onibus" className="mt-10 space-y-5 border-t border-white/10 pt-8">
             <div className="flex flex-wrap items-center gap-3">
               <SubStepHeading number={2} title="Ônibus" />
               <span className="rounded-full bg-[#5b9bd5]/15 px-3 py-1 text-[10px] uppercase tracking-[0.2em] text-[#5b9bd5]">
@@ -785,7 +820,7 @@ export default function NaritaGuidePage() {
             </p>
           </div>
 
-          <div className="mt-10 space-y-5 border-t border-white/10 pt-8">
+          <div id="deslocamento-taxi" className="mt-10 space-y-5 border-t border-white/10 pt-8">
             <SubStepHeading number={3} title="Táxi/Uber" />
             <div className="grid gap-4 sm:grid-cols-2">
               <StatCard

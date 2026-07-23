@@ -598,6 +598,61 @@ export function SectionMarker({ number, label }: { number: number; label: string
   );
 }
 
+// Índice vertical clicável com as seções (1-4) e subseções da página,
+// exibido logo abaixo das etiquetas Desembarque/Embarque. Cada item leva
+// a um #id âncora dentro da mesma página — sem JS, apenas <a href="#...">.
+export function TableOfContents({
+  items,
+}: {
+  items: {
+    Icon: (p: { className?: string }) => ReactElement;
+    number: number;
+    label: string;
+    href: string;
+    subsections?: { label: string; href: string }[];
+  }[];
+}) {
+  return (
+    <div className="mx-auto max-w-5xl px-6 pt-6 md:px-10">
+      <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-5 md:p-6">
+        <p className="mb-4 text-xs uppercase tracking-[0.3em] text-white/35">Índice</p>
+        <ol className="space-y-1">
+          {items.map((item) => (
+            <li key={item.href}>
+              <a
+                href={item.href}
+                className="group flex items-center gap-3 rounded-xl px-2 py-2 transition hover:bg-white/[0.04]"
+              >
+                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#5b9bd5]/15 text-[#8fc0e8] transition group-hover:bg-[#5b9bd5]/30">
+                  <item.Icon className="h-4 w-4" />
+                </span>
+                <span className="text-sm text-white/80 transition group-hover:text-white">
+                  <span className="mr-1.5 text-white/40">{item.number}.</span>
+                  {item.label}
+                </span>
+              </a>
+              {item.subsections && (
+                <ul className="ml-11 space-y-0.5 border-l border-white/10 pl-4">
+                  {item.subsections.map((sub) => (
+                    <li key={sub.href}>
+                      <a
+                        href={sub.href}
+                        className="block py-1 text-xs text-white/50 transition hover:text-[#8fc0e8]"
+                      >
+                        {sub.label}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </li>
+          ))}
+        </ol>
+      </div>
+    </div>
+  );
+}
+
 export function InfoBlock({ title, text }: { title: string; text: string }) {
   return (
     <div className="border-t border-white/10 pt-8">
