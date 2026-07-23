@@ -278,33 +278,39 @@ export default function NaritaGuidePage() {
               </div>
 
               <div className="grid grid-cols-3 gap-3">
-                <ImageCard
-                  src="/images/ic-metro.png"
-                  alt="Catraca do metrô com área de toque para cartão IC e QR code"
-                  label="Catraca do metrô"
-                  sublabel="Aproxime o cartão na área indicada"
-                  fit="contain"
-                  aspect="aspect-[3/5]"
-                  zoomHref="#foto-ic-metro"
-                />
-                <ImageCard
-                  src="/images/ic-card-2.png"
-                  alt="Sensor circular de IC card sendo usado com um cartão Pasmo"
-                  label="Sensor de aproximação"
-                  sublabel="Encoste o cartão até o bipe"
-                  fit="contain"
-                  aspect="aspect-[4/5]"
-                  zoomHref="#foto-ic-sensor"
-                />
-                <ImageCard
-                  src="/images/ic-card-vending-machine.png"
-                  alt="Máquina de bebidas com leitor de IC card por aproximação"
-                  label="Máquinas de bebida"
-                  sublabel="Também aceitam o IC Card"
-                  fit="contain"
-                  aspect="aspect-[3/4]"
-                  zoomHref="#foto-ic-vending"
-                />
+                <div>
+                  <ImageCard
+                    src="/images/ic-metro.png"
+                    alt="Catraca do metrô com área de toque para cartão IC e QR code"
+                    fit="cover"
+                    aspect="aspect-[3/5]"
+                    zoomHref="#foto-ic-metro"
+                  />
+                  <p className="mt-3 text-center text-sm font-medium text-white">Catraca do metrô</p>
+                  <p className="text-center text-xs text-white/45">Aproxime o cartão na área indicada</p>
+                </div>
+                <div>
+                  <ImageCard
+                    src="/images/ic-card-2.png"
+                    alt="Sensor circular de IC card sendo usado com um cartão Pasmo"
+                    fit="cover"
+                    aspect="aspect-[4/5]"
+                    zoomHref="#foto-ic-sensor"
+                  />
+                  <p className="mt-3 text-center text-sm font-medium text-white">Sensor de aproximação</p>
+                  <p className="text-center text-xs text-white/45">Encoste o cartão até o bipe</p>
+                </div>
+                <div>
+                  <ImageCard
+                    src="/images/ic-card-vending-machine.png"
+                    alt="Máquina de bebidas com leitor de IC card por aproximação"
+                    fit="cover"
+                    aspect="aspect-[3/4]"
+                    zoomHref="#foto-ic-vending"
+                  />
+                  <p className="mt-3 text-center text-sm font-medium text-white">Máquinas de bebida</p>
+                  <p className="text-center text-xs text-white/45">Também aceitam o IC Card</p>
+                </div>
               </div>
             </div>
 
@@ -560,7 +566,7 @@ export default function NaritaGuidePage() {
                 label="Custo"
                 value="¥3.250 (Narita Express, classe ordinária) até a estação de Shinjuku"
               />
-              <StatCard Icon={IconClock} label="Tempo de deslocamento" value="≈ 80 minutos" />
+              <StatCard Icon={IconClock} label="Tempo de deslocamento" value="≈ 80 minutos" variant="highlight" />
             </div>
             <p className="text-base font-light leading-8 text-white/70">
               Mesmo utilizando o trem expresso (N&apos;EX), o trajeto é longo, e após
@@ -590,7 +596,7 @@ export default function NaritaGuidePage() {
                 label="Custo"
                 value="¥3.600 (Limousine Bus) até a estação de Shinjuku"
               />
-              <StatCard Icon={IconClock} label="Tempo de deslocamento" value="≈ 105 minutos" />
+              <StatCard Icon={IconClock} label="Tempo de deslocamento" value="≈ 105 minutos" variant="highlight" />
             </div>
             <p className="text-base font-light leading-8 text-white/70">
               Dependendo do hotel, existe um ônibus chamado Limousine Bus que vai desde
@@ -615,7 +621,7 @@ export default function NaritaGuidePage() {
                 label="Custo"
                 value="¥26.300 (táxi, tarifa fixa) a ¥36.000 (Uber, tarifa dinâmica) até Shinjuku"
               />
-              <StatCard Icon={IconClock} label="Tempo de deslocamento" value="≈ 75 minutos" />
+              <StatCard Icon={IconClock} label="Tempo de deslocamento" value="≈ 75 minutos" variant="highlight" />
             </div>
             <p className="text-base font-light leading-8 text-white/70">
               É a opção mais cômoda e confortável, mas custa até 10x mais que as

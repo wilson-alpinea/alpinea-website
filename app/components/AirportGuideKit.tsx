@@ -618,11 +618,25 @@ export function StatCard({
   Icon,
   label,
   value,
+  variant = "default",
 }: {
   Icon: (p: { className?: string }) => ReactElement;
   label: string;
   value: string;
+  variant?: "default" | "highlight";
 }) {
+  if (variant === "highlight") {
+    return (
+      <div className="flex flex-col items-center justify-center gap-2 rounded-2xl border border-white/10 bg-white/[0.025] p-5 text-center">
+        <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[#5b9bd5]/12 text-[#5b9bd5]">
+          <Icon className="h-4 w-4" />
+        </span>
+        <p className="text-xs uppercase tracking-[0.25em] text-white/35">{label}</p>
+        <p className="text-xl font-medium uppercase text-white md:text-2xl">{value}</p>
+      </div>
+    );
+  }
+
   return (
     <div className="flex items-start gap-3 rounded-2xl border border-white/10 bg-white/[0.025] p-5">
       <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#5b9bd5]/12 text-[#5b9bd5]">
