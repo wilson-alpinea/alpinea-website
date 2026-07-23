@@ -439,6 +439,13 @@ export default function NaritaGuidePage() {
         alt="Tela do Visit Japan Web mostrando o QR Code de exemplo para imigração e declaração aduaneira"
       />
       <PreviewModal
+        id="foto-kiosk-imigracao"
+        eyebrow="Imigração"
+        label="Quiosque de leitura do QR Code"
+        src="/images/kiosk-imigracao-qr-code.jpg"
+        alt="Quiosque de leitura do QR Code do Visit Japan Web para imigração e alfândega"
+      />
+      <PreviewModal
         id="doc-disembarkation"
         eyebrow="Documento"
         label="Disembarkation Card for Foreigner"

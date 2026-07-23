@@ -384,9 +384,9 @@ export function SubStepHeading({ number, title }: { number: number; title: strin
 
 // Conteúdo genérico "Meu avião pousou, o que devo fazer?" — igual para
 // qualquer aeroporto do Japão (documentos de imigração, entrevista,
-// retirada de bagagem). Os PreviewModal dos documentos/QR code devem ser
-// renderizados uma vez por página, com os ids: doc-qr-code,
-// doc-disembarkation, doc-customs.
+// retirada de bagagem). Os PreviewModal dos documentos/QR code/fotos devem
+// ser renderizados uma vez por página, com os ids: doc-qr-code,
+// doc-disembarkation, doc-customs, foto-kiosk-imigracao.
 export function ImmigrationArrivalGuide({ displayClassName }: { displayClassName: string }) {
   return (
     <div className="space-y-10">
@@ -420,6 +420,16 @@ export function ImmigrationArrivalGuide({ displayClassName }: { displayClassName
             </p>
             <div className="mt-4">
               <PreviewCard href="#doc-qr-code" label="Ver QR Code de exemplo" Icon={IconDocument} />
+            </div>
+            <div className="mt-3">
+              <ImageCard
+                src="/images/kiosk-imigracao-qr-code.jpg"
+                alt="Quiosque de leitura do QR Code do Visit Japan Web para imigração e alfândega"
+                sublabel="Quiosque de leitura do QR Code"
+                fit="cover"
+                aspect="aspect-[4/5]"
+                zoomHref="#foto-kiosk-imigracao"
+              />
             </div>
           </div>
 
