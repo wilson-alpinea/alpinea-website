@@ -575,7 +575,8 @@ export default function NaritaGuidePage() {
               <StatCard
                 Icon={IconExchange}
                 label="Custo"
-                value="¥3.250 (Narita Express, classe ordinária) até a estação de Shinjuku"
+                value="¥3.250"
+                detail="Narita Express, classe ordinária — até a estação de Shinjuku"
               />
               <StatCard Icon={IconClock} label="Tempo de deslocamento" value="≈ 80 minutos" variant="highlight" />
             </div>
@@ -605,7 +606,8 @@ export default function NaritaGuidePage() {
               <StatCard
                 Icon={IconExchange}
                 label="Custo"
-                value="¥3.600 (Limousine Bus) até a estação de Shinjuku"
+                value="¥3.600"
+                detail="Limousine Bus — até a estação de Shinjuku"
               />
               <StatCard Icon={IconClock} label="Tempo de deslocamento" value="≈ 105 minutos" variant="highlight" />
             </div>
@@ -630,7 +632,8 @@ export default function NaritaGuidePage() {
               <StatCard
                 Icon={IconExchange}
                 label="Custo"
-                value="¥26.300 (táxi, tarifa fixa) a ¥36.000 (Uber, tarifa dinâmica) até Shinjuku"
+                value="¥26.300 a ¥36.000"
+                detail="Táxi (tarifa fixa) a Uber (tarifa dinâmica) — até Shinjuku"
               />
               <StatCard Icon={IconClock} label="Tempo de deslocamento" value="≈ 75 minutos" variant="highlight" />
             </div>

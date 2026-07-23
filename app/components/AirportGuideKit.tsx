@@ -601,7 +601,7 @@ export function TerminalCard({
           <p className="text-[10px] uppercase tracking-[0.22em] text-white/30">Companhias aéreas</p>
           <p className="mt-1.5 text-sm leading-6 text-white/70">{companhias}</p>
           {allianceLogo && (
-            <div className="relative mt-3 h-10 w-24 overflow-hidden rounded-md bg-white p-1.5">
+            <div className="relative mx-auto mt-4 h-14 w-36">
               <Image src={allianceLogo} alt={allianceLabel ?? "Logo da aliança aérea"} fill className="object-contain" />
             </div>
           )}
@@ -637,11 +637,13 @@ export function StatCard({
   Icon,
   label,
   value,
+  detail,
   variant = "default",
 }: {
   Icon: (p: { className?: string }) => ReactElement;
   label: string;
   value: string;
+  detail?: string;
   variant?: "default" | "highlight";
 }) {
   if (variant === "highlight") {
@@ -662,7 +664,8 @@ export function StatCard({
         <Icon className="h-4 w-4" />
       </span>
       <p className="text-[11px] uppercase tracking-[0.25em] text-white/30">{label}</p>
-      <p className="text-sm font-medium text-white md:text-base">{value}</p>
+      <p className="text-xl font-medium text-white md:text-2xl">{value}</p>
+      {detail && <p className="text-xs leading-5 text-white/45">{detail}</p>}
     </div>
   );
 }
