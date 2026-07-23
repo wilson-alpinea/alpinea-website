@@ -577,6 +577,67 @@ export function TransportOption({
   );
 }
 
+export function IconStar({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" className={className} fill="currentColor">
+      <path d="M12 2.5l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6L12 17.6l-5.9 3 1.3-6.6-4.9-4.6 6.6-.8L12 2.5z" />
+    </svg>
+  );
+}
+
+function StarRating({ value, max = 5 }: { value: number; max?: number }) {
+  return (
+    <div className="flex gap-0.5">
+      {Array.from({ length: max }).map((_, i) => (
+        <IconStar
+          key={i}
+          className={`h-4 w-4 ${i < value ? "text-[#e8c368]" : "text-white/15"}`}
+        />
+      ))}
+    </div>
+  );
+}
+
+// Tabela-resumo rápida acima das opções de transporte detalhadas — uma
+// linha por opção, com nota (1-5 estrelas) para Tempo e Custo e uma
+// recomendação curta.
+export function TransportSummaryTable({
+  rows,
+}: {
+  rows: { label: string; tempo: number; custo: number; recomendacao: string }[];
+}) {
+  return (
+    <div className="overflow-x-auto rounded-2xl border border-white/10">
+      <table className="w-full min-w-[560px] border-collapse text-left text-sm">
+        <thead>
+          <tr className="border-b border-white/10">
+            <th className="px-5 py-4 text-xs font-medium uppercase tracking-[0.15em] text-white">Opção</th>
+            <th className="px-5 py-4 text-xs font-medium uppercase tracking-[0.15em] text-white">Tempo</th>
+            <th className="px-5 py-4 text-xs font-medium uppercase tracking-[0.15em] text-white">Custo</th>
+            <th className="px-5 py-4 text-xs font-medium uppercase tracking-[0.15em] text-white">
+              Nossa recomendação
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {rows.map((r, i) => (
+            <tr key={r.label} className={i > 0 ? "border-t border-white/10" : ""}>
+              <td className="px-5 py-4 font-medium text-white">{r.label}</td>
+              <td className="px-5 py-4">
+                <StarRating value={r.tempo} />
+              </td>
+              <td className="px-5 py-4">
+                <StarRating value={r.custo} />
+              </td>
+              <td className="px-5 py-4 text-white/70">{r.recomendacao}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
 export function TerminalCard({
   nome,
   tipo,

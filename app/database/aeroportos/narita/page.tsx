@@ -14,6 +14,7 @@ import {
   ImmigrationArrivalGuide,
   SubStepHeading,
   StatCard,
+  TransportSummaryTable,
   IconBulb,
   IconExchange,
   IconClock,
@@ -332,6 +333,55 @@ export default function NaritaGuidePage() {
                   <p className="text-center text-xs text-white/45">Também aceitam o IC Card</p>
                 </div>
               </div>
+
+              <div className="rounded-2xl border border-[#5b9bd5]/15 bg-[#0f2340] p-6 sm:p-8">
+                <div className="mb-4 flex flex-wrap items-center gap-3">
+                  <p className="flex items-center gap-2 text-xs uppercase tracking-[0.25em] text-[#5b9bd5]">
+                    <IconBulb className="h-3.5 w-3.5" />
+                    Suica/Pasmo no celular
+                  </p>
+                  <span className="rounded-full bg-yellow-400/15 px-3 py-1 text-[10px] font-medium uppercase tracking-[0.2em] text-yellow-400">
+                    Opcional
+                  </span>
+                </div>
+                <p className="text-sm leading-7 text-white/70 md:text-base md:leading-8">
+                  O cartão IC pode ser adicionado diretamente na Carteira do iPhone
+                  (Apple Wallet) ou no Google Wallet, sem precisar de um cartão
+                  físico — o que facilita muito caso haja escassez temporária de
+                  chips para os cartões tradicionais.
+                </p>
+                <div className="mt-5 flex flex-wrap items-center gap-4">
+                  <div className="relative h-9 w-16 overflow-hidden rounded-md bg-white p-1.5">
+                    <Image src="/images/apple-pay.png" alt="Logo Apple Pay" fill className="object-contain" />
+                  </div>
+                  <div className="relative h-9 w-16 overflow-hidden rounded-md bg-white p-1.5">
+                    <Image
+                      src="/images/google-pay-primary-logo-logo.svg"
+                      alt="Logo Google Pay"
+                      fill
+                      className="object-contain"
+                    />
+                  </div>
+                </div>
+                <div className="mt-5 space-y-2 text-sm leading-6">
+                  <a
+                    href="https://support.apple.com/pt-br/108772"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="block text-[#8fc0e8] underline underline-offset-2"
+                  >
+                    Como adicionar o Suica/Pasmo na Apple Wallet →
+                  </a>
+                  <a
+                    href="https://support.google.com/wallet/thread/269371334/n%C3%A3o-consigo-adicionar-o-suica-cart%C3%A3o-de-transporte-do-jap%C3%A3o-na-carteira?hl=pt"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="block text-[#8fc0e8] underline underline-offset-2"
+                  >
+                    Como adicionar o Suica no Google Wallet →
+                  </a>
+                </div>
+              </div>
             </div>
 
             <div className="space-y-4 border-t border-white/10 pt-6">
@@ -441,6 +491,28 @@ export default function NaritaGuidePage() {
                     4F — Drug Box MediCosme.
                   </p>
                 </div>
+              </div>
+            </div>
+
+            <div className="space-y-4 border-t border-white/10 pt-6">
+              <div className="flex flex-wrap items-center gap-3">
+                <p className="text-sm font-medium uppercase tracking-[0.15em] text-white/70">
+                  3.6 — Envio de Bagagem (Takkyubin)
+                </p>
+                <span className="rounded-full bg-yellow-400/15 px-3 py-1 text-[10px] font-medium uppercase tracking-[0.2em] text-yellow-400">
+                  Opcional
+                </span>
+              </div>
+              <p className="text-base font-light leading-8 text-white/70">
+                Logo na saída do desembarque existe o balcão de envio de malas
+                (Luggage Delivery / Yamato Transport, o TA-Q-BIN). Para clientes de
+                alto padrão ou famílias com muitas malas, mandar a bagagem direto
+                para o hotel — chegando no mesmo dia ou no dia seguinte — e seguir
+                até o centro apenas com uma mochila é um diferencial gigante de
+                conforto.
+              </p>
+              <div className="relative h-12 w-24">
+                <Image src="/images/taqbinlogo.png" alt="Logo TA-Q-BIN, da Yamato Transport" fill className="object-contain" />
               </div>
             </div>
           </div>
@@ -585,8 +657,22 @@ export default function NaritaGuidePage() {
             Existem basicamente 3 formas de chegar até Tóquio a partir de Narita.
           </p>
 
+          <div className="mb-10">
+            <TransportSummaryTable
+              rows={[
+                { label: "Trem (N'EX)", tempo: 4, custo: 5, recomendacao: "Evite se possível" },
+                { label: "Ônibus (Limousine Bus)", tempo: 3, custo: 4, recomendacao: "Melhor opção" },
+                { label: "Táxi/Uber", tempo: 5, custo: 1, recomendacao: "Apenas em casos excepcionais" },
+              ]}
+            />
+          </div>
+
           <div className="space-y-5">
             <SubStepHeading number={1} title="Trem" />
+
+            <p className="text-sm font-medium uppercase tracking-[0.15em] text-white/50">
+              Narita Express (N&apos;EX) — para Shinjuku, Shibuya, Tóquio
+            </p>
             <div className="grid gap-4 sm:grid-cols-2">
               <StatCard
                 Icon={IconExchange}
@@ -606,8 +692,30 @@ export default function NaritaGuidePage() {
               é comum ter que fazer o trajeto em pé dentro do vagão do metrô em alguns
               horários, por lotação dos vagões nos horários de pico.
             </p>
+
+            <p className="pt-2 text-sm font-medium uppercase tracking-[0.15em] text-white/50">
+              Keisei Skyliner — para Ueno, Asakusa, Ginza, Nihonbashi
+            </p>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <StatCard
+                Icon={IconExchange}
+                label="Custo"
+                value="¥2.310"
+                detail="Compra antecipada online — até a estação de Ueno"
+              />
+              <StatCard Icon={IconClock} label="Tempo de deslocamento" value="≈ 41 minutos" variant="highlight" />
+            </div>
             <p className="text-base font-light leading-8 text-white/70">
-              Dentre as 3 opções, é sem dúvida a pior de todas.
+              Para clientes que vão se hospedar no lado leste de Tóquio — Ueno,
+              Asakusa, Ginza, Nihonbashi — o Keisei Skyliner costuma ser mais rápido
+              que o N&apos;EX (cerca de 36 a 41 minutos até Ueno) e muito confortável,
+              já que evita o trajeto mais longo até Shinjuku seguido de baldeação.
+            </p>
+
+            <p className="text-base font-light leading-8 text-white/70">
+              Dentre as 3 opções (Trem, Ônibus, Táxi/Uber), o trem é sem dúvida a
+              pior de todas para quem vai para o lado oeste de Tóquio — mas pode
+              valer a pena via Skyliner se o hotel for no lado leste.
             </p>
           </div>
 
