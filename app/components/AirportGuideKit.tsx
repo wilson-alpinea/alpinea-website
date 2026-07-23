@@ -293,6 +293,7 @@ export function ImageCard({
   label,
   sublabel,
   fit = "contain",
+  aspect = "aspect-[4/3]",
   zoomHref,
   className = "",
 }: {
@@ -301,11 +302,12 @@ export function ImageCard({
   label?: string;
   sublabel?: string;
   fit?: "contain" | "cover";
+  aspect?: string;
   zoomHref?: string;
   className?: string;
 }) {
   const imageBox = (
-    <div className="relative aspect-[4/3] w-full">
+    <div className={`relative w-full ${aspect}`}>
       <Image
         src={src}
         alt={alt}
@@ -606,6 +608,30 @@ export function RestaurantMini({
       <p className="mt-3 border-t border-white/10 pt-3 text-[11px] leading-5 text-white/45 md:text-xs">
         📍 {location}
       </p>
+    </div>
+  );
+}
+
+// Card compacto para exibir um par label/valor com ícone — usado para
+// "Custo" e "Tempo de deslocamento" nas opções de transporte.
+export function StatCard({
+  Icon,
+  label,
+  value,
+}: {
+  Icon: (p: { className?: string }) => ReactElement;
+  label: string;
+  value: string;
+}) {
+  return (
+    <div className="flex items-start gap-3 rounded-2xl border border-white/10 bg-white/[0.025] p-5">
+      <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#5b9bd5]/12 text-[#5b9bd5]">
+        <Icon className="h-4 w-4" />
+      </span>
+      <div>
+        <p className="text-xs uppercase tracking-[0.25em] text-white/35">{label}</p>
+        <p className="mt-1 text-sm font-medium text-white md:text-base">{value}</p>
+      </div>
     </div>
   );
 }

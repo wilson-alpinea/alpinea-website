@@ -13,7 +13,10 @@ import {
   CaptionedImage,
   ImmigrationArrivalGuide,
   SubStepHeading,
+  StatCard,
   IconBulb,
+  IconExchange,
+  IconClock,
   IconPlaneLanding,
   IconPlaneTakeoff,
 } from "../../../components/AirportGuideKit";
@@ -280,7 +283,8 @@ export default function NaritaGuidePage() {
                   alt="Catraca do metrô com área de toque para cartão IC e QR code"
                   label="Catraca do metrô"
                   sublabel="Aproxime o cartão na área indicada"
-                  fit="cover"
+                  fit="contain"
+                  aspect="aspect-[3/5]"
                   zoomHref="#foto-ic-metro"
                 />
                 <ImageCard
@@ -288,7 +292,8 @@ export default function NaritaGuidePage() {
                   alt="Sensor circular de IC card sendo usado com um cartão Pasmo"
                   label="Sensor de aproximação"
                   sublabel="Encoste o cartão até o bipe"
-                  fit="cover"
+                  fit="contain"
+                  aspect="aspect-[4/5]"
                   zoomHref="#foto-ic-sensor"
                 />
                 <ImageCard
@@ -296,7 +301,8 @@ export default function NaritaGuidePage() {
                   alt="Máquina de bebidas com leitor de IC card por aproximação"
                   label="Máquinas de bebida"
                   sublabel="Também aceitam o IC Card"
-                  fit="cover"
+                  fit="contain"
+                  aspect="aspect-[3/4]"
                   zoomHref="#foto-ic-vending"
                 />
               </div>
@@ -548,19 +554,13 @@ export default function NaritaGuidePage() {
 
           <div className="space-y-5">
             <SubStepHeading number={1} title="Trem" />
-            <div className="grid gap-6 sm:grid-cols-2">
-              <div>
-                <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/35">Custo</p>
-                <p className="text-white">
-                  ¥3.250 (Narita Express, classe ordinária) até a estação de Shinjuku
-                </p>
-              </div>
-              <div>
-                <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/35">
-                  Tempo de deslocamento
-                </p>
-                <p className="text-white">≈ 80 minutos</p>
-              </div>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <StatCard
+                Icon={IconExchange}
+                label="Custo"
+                value="¥3.250 (Narita Express, classe ordinária) até a estação de Shinjuku"
+              />
+              <StatCard Icon={IconClock} label="Tempo de deslocamento" value="≈ 80 minutos" />
             </div>
             <p className="text-base font-light leading-8 text-white/70">
               Mesmo utilizando o trem expresso (N&apos;EX), o trajeto é longo, e após
@@ -584,17 +584,13 @@ export default function NaritaGuidePage() {
                 Método recomendado
               </span>
             </div>
-            <div className="grid gap-6 sm:grid-cols-2">
-              <div>
-                <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/35">Custo</p>
-                <p className="text-white">¥3.600 (Limousine Bus) até a estação de Shinjuku</p>
-              </div>
-              <div>
-                <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/35">
-                  Tempo de deslocamento
-                </p>
-                <p className="text-white">≈ 105 minutos</p>
-              </div>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <StatCard
+                Icon={IconExchange}
+                label="Custo"
+                value="¥3.600 (Limousine Bus) até a estação de Shinjuku"
+              />
+              <StatCard Icon={IconClock} label="Tempo de deslocamento" value="≈ 105 minutos" />
             </div>
             <p className="text-base font-light leading-8 text-white/70">
               Dependendo do hotel, existe um ônibus chamado Limousine Bus que vai desde
@@ -613,20 +609,13 @@ export default function NaritaGuidePage() {
 
           <div className="mt-10 space-y-5 border-t border-white/10 pt-8">
             <SubStepHeading number={3} title="Táxi/Uber" />
-            <div className="grid gap-6 sm:grid-cols-2">
-              <div>
-                <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/35">Custo</p>
-                <p className="text-white">
-                  ¥26.300 (táxi, tarifa fixa) a ¥36.000 (Uber, tarifa dinâmica) até
-                  Shinjuku
-                </p>
-              </div>
-              <div>
-                <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/35">
-                  Tempo de deslocamento
-                </p>
-                <p className="text-white">≈ 75 minutos</p>
-              </div>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <StatCard
+                Icon={IconExchange}
+                label="Custo"
+                value="¥26.300 (táxi, tarifa fixa) a ¥36.000 (Uber, tarifa dinâmica) até Shinjuku"
+              />
+              <StatCard Icon={IconClock} label="Tempo de deslocamento" value="≈ 75 minutos" />
             </div>
             <p className="text-base font-light leading-8 text-white/70">
               É a opção mais cômoda e confortável, mas custa até 10x mais que as
