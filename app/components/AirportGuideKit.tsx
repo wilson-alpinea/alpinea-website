@@ -271,12 +271,14 @@ export function ImageCard({
   src,
   alt,
   label,
+  sublabel,
   fit = "contain",
   className = "",
 }: {
   src: string;
   alt: string;
   label?: string;
+  sublabel?: string;
   fit?: "contain" | "cover";
   className?: string;
 }) {
@@ -291,9 +293,35 @@ export function ImageCard({
         />
       </div>
       {label && (
-        <p className="border-t border-white/10 px-4 py-3 text-center text-sm font-medium text-white">
-          {label}
-        </p>
+        <div className="border-t border-white/10 px-4 py-3 text-center">
+          <p className="text-sm font-medium text-white">{label}</p>
+          {sublabel && <p className="mt-0.5 text-xs text-white/45">{sublabel}</p>}
+        </div>
+      )}
+    </div>
+  );
+}
+
+// Mostra a imagem "solta" (sem moldura de card), com legenda pequena
+// abaixo — para objetos que já têm bordas/design próprios (ex.: IC cards).
+export function CaptionedImage({
+  src,
+  alt,
+  caption,
+  className = "",
+}: {
+  src: string;
+  alt: string;
+  caption?: string;
+  className?: string;
+}) {
+  return (
+    <div className={`text-center ${className}`}>
+      <div className="relative aspect-[3/2] w-full">
+        <Image src={src} alt={alt} fill className="object-contain" />
+      </div>
+      {caption && (
+        <p className="mt-3 text-xs uppercase tracking-[0.2em] text-white/40">{caption}</p>
       )}
     </div>
   );
@@ -654,14 +682,21 @@ export function InternalGuideHeader({
 export function FlowTag({
   Icon,
   label,
+  subtitle,
 }: {
   Icon: (p: { className?: string }) => ReactElement;
   label: string;
+  subtitle?: string;
 }) {
   return (
-    <span className="inline-flex items-center gap-2 rounded-full border border-[#5b9bd5]/30 bg-[#5b9bd5]/10 px-4 py-1.5 text-xs font-medium uppercase tracking-[0.2em] text-[#8fc0e8]">
-      <Icon className="h-3.5 w-3.5" />
-      {label}
-    </span>
+    <div className="flex items-center gap-4 rounded-2xl border border-[#4f9de0]/40 bg-[#12315c] p-5">
+      <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#4f9de0]/25 text-[#a8d4f5]">
+        <Icon className="h-5 w-5" />
+      </span>
+      <div>
+        <p className="text-sm font-medium text-white">{label}</p>
+        {subtitle && <p className="text-xs text-[#a8d4f5]/80">{subtitle}</p>}
+      </div>
+    </div>
   );
 }

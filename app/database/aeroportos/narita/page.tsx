@@ -10,6 +10,7 @@ import {
   MapModal,
   PreviewModal,
   ImageCard,
+  CaptionedImage,
   ImmigrationArrivalGuide,
   SubStepHeading,
   IconBulb,
@@ -46,9 +47,9 @@ export default function NaritaGuidePage() {
         subtitle="Aeroporto Internacional de Narita, em Chiba — a cerca de 60 km a leste do centro de Tóquio. Recebe a maior parte dos voos internacionais de longo curso com destino a Tóquio."
       />
 
-      <div className="mx-auto flex max-w-5xl flex-wrap gap-3 px-6 pt-8 md:px-10">
-        <FlowTag Icon={IconPlaneLanding} label="Desembarque" />
-        <FlowTag Icon={IconPlaneTakeoff} label="Embarque" />
+      <div className="mx-auto grid max-w-5xl gap-4 px-6 pt-8 md:grid-cols-2 md:px-10">
+        <FlowTag Icon={IconPlaneLanding} label="Desembarque" subtitle="Chegada e trâmites de entrada" />
+        <FlowTag Icon={IconPlaneTakeoff} label="Embarque" subtitle="Trâmites de saída e check-in" />
       </div>
 
       {/* Visão geral */}
@@ -231,16 +232,16 @@ export default function NaritaGuidePage() {
                 O IC Card também é utilizado e aceito como forma de pagamento em
                 lojas de conveniência, pequenas compras e máquinas de bebida na rua.
               </p>
-              <div className="grid gap-4 sm:grid-cols-2">
-                <ImageCard
-                  src="/images/suica-iccard-transparent.png"
+              <div className="grid gap-6 sm:grid-cols-2">
+                <CaptionedImage
+                  src="/images/suica-vector.png"
                   alt="Cartão JR Suica, com o mascote pinguim"
-                  label="JR Suica"
+                  caption="IC Card JR Suica"
                 />
-                <ImageCard
+                <CaptionedImage
                   src="/images/pasmo-card.webp"
                   alt="Cartão Pasmo, com ícones de trem e ônibus"
-                  label="Pasmo"
+                  caption="IC Card Pasmo"
                 />
               </div>
             </div>
@@ -277,10 +278,10 @@ export default function NaritaGuidePage() {
                   McDonald&apos;s, Starbucks, Shake Shack e Subway (4F).
                 </p>
                 <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
-                  <ImageCard src="/images/misaki.jpg" alt="Sushi de salmão do Kaitensushi Misaki" label="Kaitensushi Misaki" fit="cover" />
-                  <ImageCard src="/images/ramen-ichikakuya.jpg" alt="Tigela de ramen do Ramen Ichikakuya" label="Ramen Ichikakuya" fit="cover" />
-                  <ImageCard src="/images/saboten.jpg" alt="Prato de tonkatsu com curry do Tonkatsu Shinjuku Saboten" label="Tonkatsu Shinjuku Saboten" fit="cover" />
-                  <ImageCard src="/images/sushi-iwa.jpg" alt="Prato variado de sushi do Tsukiji Sushiiwa" label="Tsukiji Sushiiwa" fit="cover" />
+                  <ImageCard src="/images/misaki.jpg" alt="Sushi de salmão do Kaitensushi Misaki" label="Kaitensushi Misaki" sublabel="≈ ¥1.500–2.500 por pessoa" fit="cover" />
+                  <ImageCard src="/images/ramen-ichikakuya.jpg" alt="Tigela de ramen do Ramen Ichikakuya" label="Ramen Ichikakuya" sublabel="≈ ¥1.000–1.300 por pessoa" fit="cover" />
+                  <ImageCard src="/images/saboten.jpg" alt="Prato de tonkatsu com curry do Tonkatsu Shinjuku Saboten" label="Tonkatsu Shinjuku Saboten" sublabel="≈ ¥1.300–1.800 por pessoa" fit="cover" />
+                  <ImageCard src="/images/sushi-iwa.jpg" alt="Prato variado de sushi do Tsukiji Sushiiwa" label="Tsukiji Sushiiwa" sublabel="≈ ¥2.500–3.500 por pessoa" fit="cover" />
                 </div>
                 <div className="mt-4 flex flex-wrap items-center gap-3">
                   {[
@@ -307,10 +308,10 @@ export default function NaritaGuidePage() {
                   comida ocidental: Starbucks (4F).
                 </p>
                 <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
-                  <ImageCard src="/images/tokyo-tonkotsu.jpg" alt="Tigela de ramen do Tokyo Tonkotsu by Ippudo" label="Tokyo Tonkotsu by Ippudo" fit="cover" />
-                  <ImageCard src="/images/sushi-uogashi.jpg" alt="Prato variado de sushi do Sushi Uogashi Nihon-ichi" label="Sushi Uogashi Nihon-ichi" fit="cover" />
-                  <ImageCard src="/images/gansozushi.jpg" alt="Sushi de salmão do Sushi-go-round Gansozushi" label="Sushi-go-round Gansozushi" fit="cover" />
-                  <ImageCard src="/images/inaba-wako.jpg" alt="Prato de tonkatsu do Tonkatsu Inaba Wako" label="Tonkatsu Inaba Wako" fit="cover" />
+                  <ImageCard src="/images/tokyo-tonkotsu.jpg" alt="Tigela de ramen do Tokyo Tonkotsu by Ippudo" label="Tokyo Tonkotsu by Ippudo" sublabel="≈ ¥1.000–1.500 por pessoa" fit="cover" />
+                  <ImageCard src="/images/sushi-uogashi.jpg" alt="Prato variado de sushi do Sushi Uogashi Nihon-ichi" label="Sushi Uogashi Nihon-ichi" sublabel="≈ ¥2.000–3.000 por pessoa" fit="cover" />
+                  <ImageCard src="/images/gansozushi.jpg" alt="Sushi de salmão do Sushi-go-round Gansozushi" label="Sushi-go-round Gansozushi" sublabel="≈ ¥1.500–2.500 por pessoa" fit="cover" />
+                  <ImageCard src="/images/inaba-wako.jpg" alt="Prato de tonkatsu do Tonkatsu Inaba Wako" label="Tonkatsu Inaba Wako" sublabel="≈ ¥1.300–1.800 por pessoa" fit="cover" />
                 </div>
                 <div className="mt-4 flex flex-wrap items-center gap-3">
                   <div className="relative h-9 w-16 overflow-hidden rounded-md bg-white p-1.5">
@@ -327,8 +328,8 @@ export default function NaritaGuidePage() {
                   opções e de melhor qualidade.
                 </p>
                 <div className="mt-4 grid grid-cols-2 gap-3">
-                  <ImageCard src="/images/tatsu-sushi.jpg" alt="Sushi do Tatsu Sushi" label="Tatsu Sushi" fit="cover" />
-                  <ImageCard src="/images/freshness.jpg" alt="Hambúrguer e batatas do Freshness Burger" label="Freshness Burger" fit="cover" />
+                  <ImageCard src="/images/tatsu-sushi.jpg" alt="Sushi do Tatsu Sushi" label="Tatsu Sushi" sublabel="≈ ¥2.000–3.000 por pessoa" fit="cover" />
+                  <ImageCard src="/images/freshness.jpg" alt="Hambúrguer e batatas do Freshness Burger" label="Freshness Burger" sublabel="≈ ¥900–1.200 por pessoa" fit="cover" />
                 </div>
               </div>
             </div>
