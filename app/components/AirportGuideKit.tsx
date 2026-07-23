@@ -399,13 +399,15 @@ export function ImmigrationArrivalGuide({ displayClassName }: { displayClassName
           Ao pousar, siga as placas <span className="text-white">Arrivals (到着)</span>{" "}
           até os guichês de imigração.
         </p>
-        <ImageCard
-          src="/images/arrivals-placa.png"
-          alt="Placa de sinalização do aeroporto indicando Arrivals (到着), em japonês, inglês, coreano e chinês"
-          fit="cover"
-          aspect="aspect-[16/9]"
-          zoomHref="#foto-arrivals-placa"
-        />
+        <div className="max-w-xs">
+          <ImageCard
+            src="/images/visao-nova-placa-arrivals.png"
+            alt="Placa de sinalização do aeroporto indicando Arrivals (到着), em japonês, inglês, coreano e chinês"
+            fit="cover"
+            aspect="aspect-[16/9]"
+            zoomHref="#foto-arrivals-placa"
+          />
+        </div>
       </div>
 
       <div className="space-y-5">

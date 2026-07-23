@@ -555,7 +555,7 @@ export default function NaritaGuidePage() {
         id="foto-arrivals-placa"
         eyebrow="Imigração"
         label="Placa de Arrivals (到着)"
-        src="/images/arrivals-placa.png"
+        src="/images/visao-nova-placa-arrivals.png"
         alt="Placa de sinalização do aeroporto indicando Arrivals (到着), em japonês, inglês, coreano e chinês"
       />
       <PreviewModal
