@@ -471,8 +471,9 @@ export function ImmigrationArrivalGuide({ displayClassName }: { displayClassName
           Procure a indicação nos painéis na área das esteiras o número da esteira
           indicado pelo número de voo e companhia aérea. Após pegar as malas, existe uma
           última verificação — nessa etapa, o oficial da alfândega normalmente pede o
-          documento Customs Declaration. Após a liberação, você chegará à área externa
-          de desembarque, normalmente no Terminal 1 ou 2.
+          documento Customs Declaration (Manual) ou QR Code (Digital). Após a
+          liberação, você chegará à área externa de desembarque, normalmente no
+          Terminal 1 ou 2.
         </p>
       </div>
     </div>
