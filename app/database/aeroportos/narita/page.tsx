@@ -350,7 +350,7 @@ export default function NaritaGuidePage() {
                   físico — o que facilita muito caso haja escassez temporária de
                   chips para os cartões tradicionais.
                 </p>
-                <div className="mt-5 flex flex-wrap items-center gap-4">
+                <div className="mt-5 flex flex-wrap items-center justify-center gap-4">
                   <div className="relative h-9 w-16 overflow-hidden rounded-md bg-white p-1.5">
                     <Image src="/images/apple-pay.png" alt="Logo Apple Pay" fill className="object-contain" />
                   </div>
@@ -511,7 +511,7 @@ export default function NaritaGuidePage() {
                 até o centro apenas com uma mochila é um diferencial gigante de
                 conforto.
               </p>
-              <div className="relative h-12 w-24">
+              <div className="relative mx-auto h-12 w-24">
                 <Image src="/images/taqbinlogo.png" alt="Logo TA-Q-BIN, da Yamato Transport" fill className="object-contain" />
               </div>
             </div>
@@ -660,9 +660,9 @@ export default function NaritaGuidePage() {
           <div className="mb-10">
             <TransportSummaryTable
               rows={[
-                { label: "Trem (N'EX)", tempo: 4, custo: 5, recomendacao: "Evite se possível" },
-                { label: "Ônibus (Limousine Bus)", tempo: 3, custo: 4, recomendacao: "Melhor opção" },
-                { label: "Táxi/Uber", tempo: 5, custo: 1, recomendacao: "Apenas em casos excepcionais" },
+                { label: "Trem (N'EX ou Skyliner)", tempo: 4, custo: 5, recomendacao: "Pior Opção" },
+                { label: "Ônibus (Limousine Bus)", tempo: 3, custo: 4, recomendacao: "Melhor Custo-Benefício" },
+                { label: "Táxi/Uber", tempo: 5, custo: 1, recomendacao: "Opção mais Confortável, porém muito caro" },
               ]}
             />
           </div>
