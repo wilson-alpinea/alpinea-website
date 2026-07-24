@@ -1018,7 +1018,21 @@ export default function NaritaGuidePage() {
               embarque</span> — algumas companhias já recusam qualquer mala acima de 32 kg,
               independentemente do pagamento de taxa, por norma de segurança no
               manuseio. Esses valores variam por companhia aérea e rota — confirme
-              sempre a política específica da companhia do cliente antes da viagem.
+              sempre a política específica da companhia aérea antes da viagem.
+            </p>
+          </div>
+
+          <div className="mt-6 rounded-2xl border border-[#5b9bd5]/15 bg-[#0f2340] p-6 sm:p-8">
+            <p className="mb-4 flex items-center gap-2 text-xs uppercase tracking-[0.25em] text-[#5b9bd5]">
+              <IconBulb className="h-3.5 w-3.5" />
+              Recomendação Alpinea
+            </p>
+            <p className="text-sm leading-7 text-white/70 md:text-base md:leading-8">
+              Se você pretende comprar no duty free, vale a pena pré-reservar online
+              antes de sair para o aeroporto — o prazo costuma ir de 1 mês até 2 dias
+              antes da viagem, dependendo da loja. Assim, o produto já fica separado
+              para retirada na área pós-segurança, sem depender de encontrá-lo em
+              estoque no dia do voo.
             </p>
           </div>
         </div>
@@ -1036,9 +1050,9 @@ export default function NaritaGuidePage() {
           </h2>
 
           <p className="mb-10 text-base font-light leading-8 text-white/70">
-            A mesma comparação do trajeto Narita → Tóquio (seção &quot;Deslocamento até
-            Tóquio&quot;, no Desembarque) vale para o caminho inverso — Hotel → Narita —
-            mas aqui a recomendação muda.
+            Existem basicamente as mesmas 3 formas de ir até Narita que usamos para
+            sair de lá (seção &quot;Deslocamento até Tóquio&quot;, no Desembarque) — mas aqui,
+            no caminho inverso, a recomendação muda.
           </p>
 
           <div className="mb-10">
@@ -1051,14 +1065,98 @@ export default function NaritaGuidePage() {
             />
           </div>
 
-          <p className="text-base font-light leading-8 text-white/70">
-            Diferente do desembarque, aqui nossa recomendação é sempre que possível
-            ir de <span className="text-white">táxi/Uber</span> ou de{" "}
-            <span className="text-white">ônibus (Limousine Bus)</span>. O motivo é
-            que, após dias de viagem, as bagagens normalmente estão no limite do
-            peso, e carregar diversas malas por escadas de metrô ou andar na rua com
-            as bagagens é bastante incômodo.
-          </p>
+          <div id="secao-6-trem" className="space-y-5">
+            <SubStepHeading number={1} title="Trem" />
+
+            <p className="text-sm font-medium uppercase tracking-[0.15em] text-white/50">
+              Narita Express (N&apos;EX) — de Shinjuku, Shibuya, Tóquio
+            </p>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <StatCard
+                Icon={IconExchange}
+                label="Custo"
+                value="¥3.250"
+                detail="Narita Express, classe normal — a partir da estação de Shinjuku"
+              />
+              <StatCard Icon={IconClock} label="Tempo de deslocamento" value="≈ 80 minutos" variant="highlight" />
+            </div>
+
+            <p className="pt-2 text-sm font-medium uppercase tracking-[0.15em] text-white/50">
+              Keisei Skyliner — de Ueno, Asakusa, Ginza, Nihonbashi
+            </p>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <StatCard
+                Icon={IconExchange}
+                label="Custo"
+                value="¥2.310"
+                detail="Compra antecipada online — a partir da estação de Ueno"
+              />
+              <StatCard Icon={IconClock} label="Tempo de deslocamento" value="≈ 41 minutos" variant="highlight" />
+            </div>
+
+            <p className="text-base font-light leading-8 text-white/70">
+              Mesmo sendo rápido em trânsito, o trem exige primeiro chegar até a
+              estação com as malas, comprar ou validar a passagem, e possivelmente
+              enfrentar escadas e catracas ao longo do caminho — tudo isso antes de
+              embarcar. Depois de dias de viagem, com bagagem no limite do peso, esse
+              trajeto inicial costuma ser mais desgastante do que parece.
+            </p>
+            <p className="text-base font-light leading-8 text-white/70">
+              Dentre as 3 opções, o trem é a que menos recomendamos para quem está
+              indo embora — o oposto do que acontece no desembarque, quando as malas
+              ainda não pesam tanto.
+            </p>
+          </div>
+
+          <div id="secao-6-onibus" className="mt-10 space-y-5 border-t border-white/10 pt-8">
+            <div className="flex flex-wrap items-center gap-3">
+              <SubStepHeading number={2} title="Ônibus" />
+              <span className="rounded-full bg-[#5b9bd5]/15 px-3 py-1 text-[10px] uppercase tracking-[0.2em] text-[#5b9bd5]">
+                Método recomendado
+              </span>
+            </div>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <StatCard
+                Icon={IconExchange}
+                label="Custo"
+                value="¥3.600"
+                detail="Limousine Bus — a partir da estação de Shinjuku"
+              />
+              <StatCard Icon={IconClock} label="Tempo de deslocamento" value="≈ 105 minutos" variant="highlight" />
+            </div>
+            <p className="text-base font-light leading-8 text-white/70">
+              O Limousine Bus passa por diversos hotéis de Tóquio antes de seguir
+              direto para Narita — vale confirmar se o hotel do cliente está na rota
+              e o horário exato de saída, já que os embarques costumam ser pontuais.
+            </p>
+            <p className="text-base font-light leading-8 text-white/70">
+              É a melhor opção para quem está de saída: as malas vão no bagageiro, o
+              trajeto é sentado e direto até o terminal, sem baldeações ou escadas no
+              meio do caminho.
+            </p>
+          </div>
+
+          <div id="secao-6-taxi" className="mt-10 space-y-5 border-t border-white/10 pt-8">
+            <SubStepHeading number={3} title="Táxi/Uber" />
+            <div className="grid gap-4 sm:grid-cols-2">
+              <StatCard
+                Icon={IconExchange}
+                label="Custo"
+                value="¥26.300 a ¥36.000"
+                detail="Táxi (tarifa fixa) a Uber (tarifa dinâmica) — a partir de Shinjuku"
+              />
+              <StatCard Icon={IconClock} label="Tempo de deslocamento" value="≈ 75 minutos" variant="highlight" />
+            </div>
+            <p className="text-base font-light leading-8 text-white/70">
+              Assim como no desembarque, é a opção mais cômoda — porta a porta, sem
+              necessidade de arrastar malas em nenhum momento — mas custa até 10x
+              mais que as outras.
+            </p>
+            <p className="text-base font-light leading-8 text-white/70">
+              Recomendo usar quando o voo for muito cedo pela manhã ou muito tarde à
+              noite, fora do horário de funcionamento do Limousine Bus.
+            </p>
+          </div>
         </div>
       </section>
 
@@ -1074,16 +1172,30 @@ export default function NaritaGuidePage() {
           </h2>
 
           <div className="space-y-5">
-            <div className="flex items-start gap-4 rounded-2xl border border-white/10 bg-white/[0.025] p-5">
-              <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-[#5b9bd5]/40 text-xs font-medium text-[#5b9bd5]">
-                1
-              </span>
-              <p className="text-sm leading-6 text-white/70 md:text-base">
-                <span className="font-medium text-white">Devolver o Pocket Wi-Fi</span> no guichê
-                da empresa — em Narita costuma ficar no <span className="text-white">1F</span>; em
-                Haneda, no <span className="text-white">3F</span>, próximo aos guichês das
-                companhias aéreas.
-              </p>
+            <div className="rounded-2xl border border-white/10 bg-white/[0.025] p-5">
+              <div className="flex items-start gap-4">
+                <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-[#5b9bd5]/40 text-xs font-medium text-[#5b9bd5]">
+                  1
+                </span>
+                <p className="text-sm leading-6 text-white/70 md:text-base">
+                  <span className="font-medium text-white">Devolver o Pocket Wi-Fi</span> no
+                  guichê da locadora, no mesmo terminal do embarque.
+                </p>
+              </div>
+              <div className="mt-4 grid gap-3 pl-11 sm:grid-cols-3">
+                <div className="rounded-xl border border-white/10 bg-black/20 p-4">
+                  <p className="text-xs font-medium text-white">Terminal 1</p>
+                  <p className="mt-1.5 text-xs leading-5 text-white/55">1F, Ala Sul ou Ala Norte.</p>
+                </div>
+                <div className="rounded-xl border border-white/10 bg-black/20 p-4">
+                  <p className="text-xs font-medium text-white">Terminal 2</p>
+                  <p className="mt-1.5 text-xs leading-5 text-white/55">Lobby de embarque, 3F.</p>
+                </div>
+                <div className="rounded-xl border border-white/10 bg-black/20 p-4">
+                  <p className="text-xs font-medium text-white">Terminal 3</p>
+                  <p className="mt-1.5 text-xs leading-5 text-white/55">1F.</p>
+                </div>
+              </div>
             </div>
             <div className="flex items-start gap-4 rounded-2xl border border-white/10 bg-white/[0.025] p-5">
               <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-[#5b9bd5]/40 text-xs font-medium text-[#5b9bd5]">
@@ -1120,9 +1232,9 @@ export default function NaritaGuidePage() {
           </h2>
 
           <p className="mb-8 text-base font-light leading-8 text-white/70">
-            Tanto em Haneda quanto em Narita existem várias opções de comida na parte
-            externa do aeroporto e na área após a checagem de segurança. Abaixo, os
-            principais restaurantes disponíveis no Terminal 1 e 2{" "}
+            Em Narita existem várias opções de comida na parte externa do aeroporto e
+            na área após a checagem de segurança. Abaixo, os principais restaurantes
+            disponíveis no Terminal 1 e 2{" "}
             <span className="text-white">após a checagem de segurança</span>.
           </p>
 
@@ -1203,36 +1315,23 @@ export default function NaritaGuidePage() {
           </h2>
 
           <p className="mb-8 text-base font-light leading-8 text-white/70">
-            Haneda e Narita possuem procedimentos de segurança distintos e,
-            dependendo da época do ano, eles mudam.
+            Os procedimentos de segurança em Narita mudam com alguma frequência,
+            dependendo da época do ano — mas via de regra:
           </p>
 
-          <div className="grid gap-4 md:grid-cols-2">
-            <div className="rounded-2xl border border-white/10 bg-white/[0.025] p-6">
-              <p className="text-sm font-medium text-white md:text-base">Em Narita</p>
-              <div className="mt-3 space-y-1.5 text-sm leading-6 text-white/60">
-                <p>• É necessário remover o notebook da mala e colocá-lo na bandeja.</p>
-                <p>
-                  • Não é possível embarcar com líquidos acima de 100 ml — se houver
-                  alguma garrafa maior, é comum pedirem para abrir a mala e verificar.
-                </p>
-                <p>
-                  • Exceção: bebidas, cosméticos e outros líquidos comprados no duty
-                  free após a checagem de segurança podem ser levados sem essa
-                  restrição.
-                </p>
-                <p>• Os demais itens proibidos comuns a qualquer aeroporto se aplicam normalmente.</p>
-              </div>
-            </div>
-            <div className="rounded-2xl border border-white/10 bg-white/[0.025] p-6">
-              <p className="text-sm font-medium text-white md:text-base">Em Haneda</p>
-              <p className="mt-3 text-sm leading-6 text-white/60">
-                Em alguns corredores (Smart Lanes) é utilizado um scanner de tomografia
-                que não exige que nada seja removido de dentro da mala — o escaneamento
-                ocorre de maneira quase instantânea. Nem sempre o serviço está
-                disponível, mas quando está, a passagem pela segurança leva menos de 5
-                minutos.
+          <div className="rounded-2xl border border-white/10 bg-white/[0.025] p-6">
+            <div className="space-y-1.5 text-sm leading-6 text-white/60">
+              <p>• É necessário remover o notebook da mala e colocá-lo na bandeja.</p>
+              <p>
+                • Não é possível embarcar com líquidos acima de 100 ml — se houver
+                alguma garrafa maior, é comum pedirem para abrir a mala e verificar.
               </p>
+              <p>
+                • Exceção: bebidas, cosméticos e outros líquidos comprados no duty
+                free após a checagem de segurança podem ser levados sem essa
+                restrição.
+              </p>
+              <p>• Os demais itens proibidos comuns a qualquer aeroporto se aplicam normalmente.</p>
             </div>
           </div>
 
@@ -1254,13 +1353,13 @@ export default function NaritaGuidePage() {
               </p>
               <p className="text-sm leading-7 text-white/70 md:text-base md:leading-8">
                 A partir de <span className="text-white">1º de novembro de 2026</span>, o Japão
-                substitui esse sistema: o turista passa a pagar o preço cheio (com
-                imposto) na loja e só recebe o reembolso do imposto de consumo em
+                substitui esse sistema: você passa a pagar o preço cheio (com imposto)
+                na loja e só recebe o reembolso do imposto de consumo em
                 terminais/guichês dedicados no aeroporto (Narita incluso), antes de
-                embarcar, via escaneamento do passaporte. Vale confirmar com o cliente
-                qual sistema estará vigente na data do voo e reservar um tempo extra
-                (recomenda-se 45–60 minutos a mais) nesse processo de reembolso
-                enquanto o novo sistema estiver rodando.
+                embarcar, via escaneamento do passaporte. Se sua viagem for depois
+                dessa data, reserve um tempo extra (recomenda-se 45–60 minutos a mais)
+                para esse processo de reembolso, já que o sistema ainda estará em
+                transição.
               </p>
             </div>
           </div>
@@ -1298,17 +1397,12 @@ export default function NaritaGuidePage() {
             <p className="text-base font-light leading-8 text-white/70">
               Você pode <span className="text-white">comprar diretamente</span> nas lojas de duty
               free já dentro da área de embarque (pós-segurança) e sair com o produto
-              na hora. Ou pode <span className="text-white">pré-reservar online</span> (de 1 mês
-              até 2 dias antes da viagem, dependendo da loja) e retirar no Duty Free
-              Pick Up Counter, também na área pós-segurança — a retirada é permitida
-              apenas pelo próprio comprador, até 1 hora antes do embarque; chegando
-              depois disso, a loja pode não conseguir entregar o produto a tempo.
-            </p>
-            <p className="text-base font-light leading-8 text-white/70">
-              Itens líquidos comprados em lojas de duty free da área antes da
-              segurança (landside) não podem ser levados na cabine — nesse caso,
-              precisam ser despachados na mala ou comprados apenas nas lojas
-              pós-segurança.
+              na hora. Se já tiver pré-reservado antes de sair do hotel (ver
+              recomendação na seção &quot;Antes de Sair do Hotel&quot;), a retirada é feita no{" "}
+              <span className="text-white">Duty Free Pick Up Counter</span>, também na área
+              pós-segurança — apenas pelo próprio comprador, até 1 hora antes do
+              embarque; chegando depois disso, a loja pode não conseguir entregar o
+              produto a tempo.
             </p>
           </div>
 
@@ -1319,30 +1413,45 @@ export default function NaritaGuidePage() {
               <div className="rounded-2xl border border-white/10 bg-white/[0.025] p-6">
                 <p className="text-sm font-medium text-white md:text-base">ANA Lounge — Terminal 1</p>
                 <p className="mt-2 text-sm leading-6 text-white/60">
-                  Inclui opções de ramen e sushi. Aceita passageiros de Business/First
-                  da Star Alliance, elite ANA Mileage Club, ou portadores de Priority
-                  Pass.
+                  Inclui opções de ramen e sushi. Aberto a passageiros de Business/First
+                  da Star Alliance e elite ANA Mileage Club. Também aceita Priority
+                  Pass, mas com restrições em horários de pico (às vezes fechado a
+                  portadores de Priority Pass até 11h) — havendo essa restrição, o
+                  Satellite 2 Lounge, também no T1, costuma aceitar Priority Pass como
+                  alternativa.
                 </p>
               </div>
               <div className="rounded-2xl border border-white/10 bg-white/[0.025] p-6">
-                <p className="text-sm font-medium text-white md:text-base">JAL Sakura Lounge — Terminal 1</p>
+                <p className="text-sm font-medium text-white md:text-base">JAL Sakura Lounge — Terminal 2</p>
                 <p className="mt-2 text-sm leading-6 text-white/60">
                   Atende passageiros de Classe Executiva da JAL e parceiras Oneworld
                   (Qatar Airways, British Airways etc.), além de membros JGC/JMB
-                  Sapphire ou superior. Também aceita Priority Pass, com limite de
-                  passes conforme o cartão do portador.
+                  Sapphire ou superior.{" "}
+                  <span className="text-white">Não aceita Priority Pass</span> — acesso
+                  exclusivo por classe/status.
                 </p>
               </div>
             </div>
 
             <p className="pt-2 text-sm leading-7 text-white/70 md:text-base md:leading-8">
-              Cartões brasileiros com acesso a salas Priority Pass (confirme as
-              condições vigentes antes da viagem):
+              Se o cartão do cliente oferecer acesso via Priority Pass (Nubank
+              Ultravioleta, cartões Amex Platinum, entre outros) e o ANA Lounge não
+              for opção no horário do voo, a alternativa garantida é uma das salas
+              próprias do programa em Narita:
             </p>
-            <div className="space-y-1.5 text-sm leading-6 text-white/60">
-              <p>• <span className="text-white">Nubank Ultravioleta</span> (Mastercard Black) — 4 acessos anuais via Priority Pass.</p>
-              <p>• <span className="text-white">Santander The Platinum Card</span> (Amex) — 2 acessos anuais, condicionados a gasto mínimo recente no cartão.</p>
-              <p>• Cartões <span className="text-white">Itaú Private/Personnalité</span> costumam dar acesso apenas às salas próprias da bandeira no Brasil, sem Priority Pass gratuito internacional.</p>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <div className="rounded-2xl border border-white/10 bg-white/[0.025] p-5">
+                <p className="text-sm font-medium text-white">I.A.S.S Superior Lounge — NOA</p>
+                <p className="mt-1.5 text-xs leading-5 text-white/55">
+                  Terminal 1, 3F, próximo ao portão 26 — pós-segurança.
+                </p>
+              </div>
+              <div className="rounded-2xl border border-white/10 bg-white/[0.025] p-5">
+                <p className="text-sm font-medium text-white">I.A.S.S Superior Lounge — KoCoo</p>
+                <p className="mt-1.5 text-xs leading-5 text-white/55">
+                  Terminal 2, 4F, acima da loja Cartier — pós-segurança.
+                </p>
+              </div>
             </div>
           </div>
 

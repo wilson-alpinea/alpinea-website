@@ -20,6 +20,8 @@ import {
   IconTrain,
   IconPlaneLanding,
   IconPlaneTakeoff,
+  IconDocument,
+  FlowDivider,
 } from "../../../components/AirportGuideKit";
 
 const display = Bodoni_Moda({
@@ -52,19 +54,30 @@ export default function HanedaGuidePage() {
       />
 
       <div className="mx-auto grid max-w-5xl gap-4 px-6 pt-8 md:grid-cols-2 md:px-10">
-        <FlowTag Icon={IconPlaneLanding} label="Desembarque" subtitle="Chegada e trâmites de entrada" />
-        <FlowTag Icon={IconPlaneTakeoff} label="Embarque" subtitle="Trâmites de saída e check-in" />
+        <a href="#secao-2">
+          <FlowTag Icon={IconPlaneLanding} label="Desembarque" subtitle="Chegada e trâmites de entrada" />
+        </a>
+        <a href="#secao-5">
+          <FlowTag Icon={IconPlaneTakeoff} label="Embarque" subtitle="Trâmites de saída e check-in" />
+        </a>
       </div>
 
       <TableOfContents
         items={[
           { Icon: IconMap, number: 1, label: "Visão Geral", href: "#secao-1" },
-          { Icon: IconPlaneLanding, number: 2, label: "Chegada e Imigração", href: "#secao-2" },
+          {
+            Icon: IconPlaneLanding,
+            number: 2,
+            label: "Chegada e Imigração",
+            href: "#secao-2",
+            groupLabel: "Desembarque",
+          },
           {
             Icon: IconBulb,
             number: 3,
             label: "Recomendações Antes de Sair do Aeroporto",
             href: "#secao-3",
+            groupLabel: "Desembarque",
             subsections: [
               { label: "Wi-Fi / eSIM", href: "#secao-3-1" },
               { label: "IC Card (Suica/Pasmo)", href: "#secao-3-2" },
@@ -78,11 +91,19 @@ export default function HanedaGuidePage() {
             number: 4,
             label: "Deslocamento até Tóquio",
             href: "#deslocamento",
+            groupLabel: "Desembarque",
             subsections: [
               { label: "Trem", href: "#deslocamento-trem" },
               { label: "Ônibus", href: "#deslocamento-onibus" },
               { label: "Táxi/Uber", href: "#deslocamento-taxi" },
             ],
+          },
+          {
+            Icon: IconDocument,
+            number: 1,
+            label: "Notas Iniciais (a expandir)",
+            href: "#secao-5",
+            groupLabel: "Embarque",
           },
         ]}
       />
@@ -491,6 +512,52 @@ export default function HanedaGuidePage() {
               do que em Narita — uma alternativa razoável mesmo fora de horários muito
               tardios, especialmente para grupos que dividem o valor da corrida.
             </p>
+          </div>
+        </div>
+      </section>
+
+      <FlowDivider
+        Icon={IconPlaneTakeoff}
+        title="Embarque"
+        subtitle="Trâmites de saída e check-in — do hotel até a entrada no avião, na volta para casa."
+        displayClassName={display.className}
+      />
+
+      {/* Embarque — notas iniciais (fluxo completo ainda a estruturar, nos moldes do guia de Narita) */}
+      <section id="secao-5" className="border-t border-white/10 bg-white/[0.02] px-6 py-14 md:px-10 md:py-20">
+        <div className="mx-auto max-w-3xl">
+          <div className="mb-8">
+            <SectionMarker number={1} label="Notas Iniciais (a expandir)" />
+          </div>
+
+          <h2 className={`${display.className} mb-6 text-2xl font-medium text-white md:text-3xl`}>
+            Embarque em Haneda
+          </h2>
+
+          <p className="mb-8 text-base font-light leading-8 text-white/70">
+            O fluxo completo de Embarque de Haneda ainda será estruturado nos mesmos
+            moldes do guia de Narita. Por ora, seguem duas notas específicas deste
+            aeroporto:
+          </p>
+
+          <div className="space-y-4">
+            <div className="rounded-2xl border border-white/10 bg-white/[0.025] p-6">
+              <p className="text-sm font-medium text-white md:text-base">Checagem de Segurança — Smart Lanes</p>
+              <p className="mt-2 text-sm leading-6 text-white/60">
+                Em alguns corredores (Smart Lanes) é utilizado um scanner de tomografia
+                que não exige que nada seja removido de dentro da mala — o escaneamento
+                ocorre de maneira quase instantânea. Nem sempre o serviço está
+                disponível, mas quando está, a passagem pela segurança leva menos de 5
+                minutos.
+              </p>
+            </div>
+            <div className="rounded-2xl border border-white/10 bg-white/[0.025] p-6">
+              <p className="text-sm font-medium text-white md:text-base">Devolução do Pocket Wi-Fi</p>
+              <p className="mt-2 text-sm leading-6 text-white/60">
+                O guichê de devolução fica no 3F, próximo aos guichês das companhias
+                aéreas.
+              </p>
+            </div>
           </div>
         </div>
       </section>
