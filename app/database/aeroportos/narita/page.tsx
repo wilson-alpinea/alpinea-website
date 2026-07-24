@@ -1245,14 +1245,19 @@ export default function NaritaGuidePage() {
               </p>
               <div className="grid gap-4 sm:grid-cols-2">
                 <RestaurantMini
-                  name="Yomenya Goemon"
-                  detail="Massas italianas com toque japonês"
-                  location="5F — vista para o deck de observação"
+                  name="IPPUDO"
+                  detail="Ramen da conhecida rede"
+                  location="3F, Central Building"
                 />
                 <RestaurantMini
-                  name="Food Court do 5F"
-                  detail="Diversas cozinhas — japonesa, tailandesa, ocidental"
-                  location="5F"
+                  name="Japanese Grill & Craft Beer TATSU"
+                  detail="Grelhados japoneses e cervejas artesanais"
+                  location="3F, Central Building"
+                />
+                <RestaurantMini
+                  name="Mitsumoto Tei"
+                  detail="Culinária ocidental"
+                  location="3F, Central Building"
                 />
                 <RestaurantMini
                   name="Narita Nakamise"
