@@ -192,7 +192,7 @@ export default function NaritaGuidePage() {
                 {
                   logo: "/images/SkyTeam-Logo.png",
                   logoAlt: "Logo da SkyTeam",
-                  texto: "Ala Norte: SkyTeam (Delta, Korean Air, China Airlines, Vietnam Airlines, Garuda Indonesia, entre outras).",
+                  texto: "Ala Norte: SkyTeam (Delta, Korean Air, China Airlines, Vietnam Airlines, Garuda Indonesia, entre outras) e a ZIPAIR Tokyo (4F).",
                 },
               ]}
             />
@@ -213,7 +213,7 @@ export default function NaritaGuidePage() {
             <TerminalCard
               nome="Terminal 3"
               tipo="Doméstico e internacional — companhias de baixo custo."
-              companhias="Jetstar Japan, Spring Airlines Japan, Zipair Tokyo, Air Japan, entre outras."
+              companhias="Jetstar Japan, Spring Airlines Japan, entre outras companhias de baixo custo."
             />
           </div>
 
@@ -1414,11 +1414,10 @@ export default function NaritaGuidePage() {
                 <p className="text-sm font-medium text-white md:text-base">ANA Lounge — Terminal 1</p>
                 <p className="mt-2 text-sm leading-6 text-white/60">
                   Inclui opções de ramen e sushi. Aberto a passageiros de Business/First
-                  da Star Alliance e elite ANA Mileage Club. Também aceita Priority
-                  Pass, mas com restrições em horários de pico (às vezes fechado a
-                  portadores de Priority Pass até 11h) — havendo essa restrição, o
-                  Satellite 2 Lounge, também no T1, costuma aceitar Priority Pass como
-                  alternativa.
+                  da Star Alliance e elite ANA Mileage Club, ou mediante acesso pago
+                  direto pela ANA.{" "}
+                  <span className="text-white">Não aceita mais Priority Pass</span> —
+                  saiu do programa.
                 </p>
               </div>
               <div className="rounded-2xl border border-white/10 bg-white/[0.025] p-6">
@@ -1434,10 +1433,10 @@ export default function NaritaGuidePage() {
             </div>
 
             <p className="pt-2 text-sm leading-7 text-white/70 md:text-base md:leading-8">
-              Se o cartão do cliente oferecer acesso via Priority Pass (Nubank
-              Ultravioleta, cartões Amex Platinum, entre outros) e o ANA Lounge não
-              for opção no horário do voo, a alternativa garantida é uma das salas
-              próprias do programa em Narita:
+              Nem o ANA Lounge nem o JAL Sakura Lounge aceitam Priority Pass hoje — se
+              o cartão do cliente oferecer acesso via Priority Pass (Nubank
+              Ultravioleta, cartões Amex Platinum, entre outros), as salas realmente
+              conveniadas ao programa em Narita são estas:
             </p>
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="rounded-2xl border border-white/10 bg-white/[0.025] p-5">
@@ -1450,6 +1449,14 @@ export default function NaritaGuidePage() {
                 <p className="text-sm font-medium text-white">I.A.S.S Superior Lounge — KoCoo</p>
                 <p className="mt-1.5 text-xs leading-5 text-white/55">
                   Terminal 2, 4F, acima da loja Cartier — pós-segurança.
+                </p>
+              </div>
+              <div className="rounded-2xl border border-white/10 bg-white/[0.025] p-5 sm:col-span-2">
+                <p className="text-sm font-medium text-white">9h nine hours Narita Airport</p>
+                <p className="mt-1.5 text-xs leading-5 text-white/55">
+                  Terminal 2, subsolo (B1) do estacionamento P2 — landside, antes da
+                  segurança. Capsule hotel que aceita Priority Pass para estadia de
+                  até 5h, das 9h às 18h.
                 </p>
               </div>
             </div>
