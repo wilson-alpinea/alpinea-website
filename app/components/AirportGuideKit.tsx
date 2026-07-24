@@ -610,6 +610,11 @@ export function TableOfContents({
     label: string;
     href: string;
     subsections?: { label: string; href: string }[];
+    // Rótulo opcional de agrupamento (ex.: "Desembarque" / "Embarque").
+    // Quando presente e diferente do item anterior, um cabeçalho de grupo é
+    // inserido antes do item — usado para separar visualmente os dois
+    // fluxos de um mesmo guia de aeroporto no índice.
+    groupLabel?: string;
   }[];
 }) {
   return (
@@ -617,37 +622,80 @@ export function TableOfContents({
       <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-5 md:p-6">
         <p className="mb-4 text-xs uppercase tracking-[0.3em] text-white/35">Índice</p>
         <ol className="space-y-1">
-          {items.map((item) => (
-            <li key={item.href}>
-              <a
-                href={item.href}
-                className="group flex items-center gap-3 rounded-xl px-2 py-2 transition hover:bg-white/[0.04]"
-              >
-                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#5b9bd5]/15 text-[#8fc0e8] transition group-hover:bg-[#5b9bd5]/30">
-                  <item.Icon className="h-4 w-4" />
-                </span>
-                <span className="text-sm text-white/80 transition group-hover:text-white">
-                  <span className="mr-1.5 text-white/40">{item.number}.</span>
-                  {item.label}
-                </span>
-              </a>
-              {item.subsections && (
-                <ul className="ml-11 space-y-0.5 border-l border-white/10 pl-4">
-                  {item.subsections.map((sub) => (
-                    <li key={sub.href}>
-                      <a
-                        href={sub.href}
-                        className="block py-1 text-xs text-white/50 transition hover:text-[#8fc0e8]"
-                      >
-                        {sub.label}
-                      </a>
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </li>
-          ))}
+          {items.map((item, idx) => {
+            const showGroupHeader =
+              !!item.groupLabel && item.groupLabel !== items[idx - 1]?.groupLabel;
+            return (
+              <li key={item.href}>
+                {showGroupHeader && (
+                  <p
+                    className={`px-2 pb-1.5 text-[10px] font-medium uppercase tracking-[0.3em] text-yellow-400/70 ${
+                      idx > 0 ? "mt-4 border-t border-white/10 pt-4" : ""
+                    }`}
+                  >
+                    {item.groupLabel}
+                  </p>
+                )}
+                <a
+                  href={item.href}
+                  className="group flex items-center gap-3 rounded-xl px-2 py-2 transition hover:bg-white/[0.04]"
+                >
+                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#5b9bd5]/15 text-[#8fc0e8] transition group-hover:bg-[#5b9bd5]/30">
+                    <item.Icon className="h-4 w-4" />
+                  </span>
+                  <span className="text-sm text-white/80 transition group-hover:text-white">
+                    <span className="mr-1.5 text-white/40">{item.number}.</span>
+                    {item.label}
+                  </span>
+                </a>
+                {item.subsections && (
+                  <ul className="ml-11 space-y-0.5 border-l border-white/10 pl-4">
+                    {item.subsections.map((sub) => (
+                      <li key={sub.href}>
+                        <a
+                          href={sub.href}
+                          className="block py-1 text-xs text-white/50 transition hover:text-[#8fc0e8]"
+                        >
+                          {sub.label}
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </li>
+            );
+          })}
         </ol>
+      </div>
+    </div>
+  );
+}
+
+// Divisor de página inteira usado para marcar visualmente a transição entre
+// os dois grandes fluxos de um guia de aeroporto (Desembarque → Embarque).
+// Renderizar como uma seção própria, fora do <section> do conteúdo anterior.
+export function FlowDivider({
+  Icon,
+  title,
+  subtitle,
+  displayClassName = "",
+}: {
+  Icon: (p: { className?: string }) => ReactElement;
+  title: string;
+  subtitle: string;
+  displayClassName?: string;
+}) {
+  return (
+    <div className="border-t border-yellow-400/25 bg-[#1a1506] px-6 py-14 md:px-10 md:py-20">
+      <div className="mx-auto flex max-w-3xl flex-col items-center gap-4 text-center">
+        <span className="flex h-14 w-14 items-center justify-center rounded-full bg-yellow-400/15 text-yellow-400">
+          <Icon className="h-7 w-7" />
+        </span>
+        <p className="text-xs uppercase tracking-[0.4em] text-yellow-400/70">A partir daqui</p>
+        <h2 className={`${displayClassName} text-3xl font-medium text-white md:text-5xl`}>
+          {title}
+        </h2>
+        <p className="max-w-xl text-base font-light leading-8 text-white/60">{subtitle}</p>
       </div>
     </div>
   );
