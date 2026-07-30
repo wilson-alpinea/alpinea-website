@@ -17,6 +17,115 @@ const display = Bodoni_Moda({
 
 const APPROVAL_KEY = "lpfyslh1";
 
+// Perfil do viajante — pontuação (0–10) baseada no briefing preenchido pelo
+// cliente na contratação. Usada só como leitura interna da equipe pra
+// orientar a curadoria do roteiro; segue as 6 dimensões padrão de perfil.
+type RadarDimension = {
+  lines: string[];
+  score: number;
+};
+
+const RADAR_DIMENSIONS: RadarDimension[] = [
+  { lines: ["Cultura &", "História"], score: 9 },
+  { lines: ["Gastronomia"], score: 7 },
+  { lines: ["Natureza &", "Aventura"], score: 2 },
+  { lines: ["Entretenimento"], score: 9 },
+  { lines: ["Compras"], score: 7 },
+  { lines: ["Bem-Estar, Relaxamento", "& Esportes"], score: 1 },
+];
+
+function RadarChart({ dimensions }: { dimensions: RadarDimension[] }) {
+  const size = 340;
+  const cx = size / 2;
+  const cy = size / 2 - 4;
+  const radius = 104;
+  const levels = [0.2, 0.4, 0.6, 0.8, 1];
+  const n = dimensions.length;
+  const lineHeight = 12;
+
+  const point = (r: number, i: number) => {
+    const angle = (Math.PI * 2 * i) / n - Math.PI / 2;
+    return { x: cx + r * Math.cos(angle), y: cy + r * Math.sin(angle) };
+  };
+
+  const toPolygon = (pts: { x: number; y: number }[]) =>
+    pts.map((p) => `${p.x.toFixed(2)},${p.y.toFixed(2)}`).join(" ");
+
+  const dataPoints = dimensions.map((d, i) => point((d.score / 10) * radius, i));
+
+  return (
+    <svg
+      viewBox={`0 0 ${size} ${size}`}
+      className="mx-auto block h-auto w-full max-w-[360px]"
+    >
+      {levels.map((level, li) => (
+        <polygon
+          key={li}
+          points={toPolygon(
+            Array.from({ length: n }, (_, i) => point(level * radius, i)),
+          )}
+          fill="none"
+          stroke="#000"
+          strokeOpacity={0.08}
+          strokeWidth={1}
+        />
+      ))}
+
+      {Array.from({ length: n }, (_, i) => {
+        const p = point(radius, i);
+        return (
+          <line
+            key={i}
+            x1={cx}
+            y1={cy}
+            x2={p.x}
+            y2={p.y}
+            stroke="#000"
+            strokeOpacity={0.08}
+            strokeWidth={1}
+          />
+        );
+      })}
+
+      <polygon
+        points={toPolygon(dataPoints)}
+        fill="#2f5aa8"
+        fillOpacity={0.16}
+        stroke="#2f5aa8"
+        strokeWidth={2}
+      />
+      {dataPoints.map((p, i) => (
+        <circle key={i} cx={p.x} cy={p.y} r={3.5} fill="#2f5aa8" />
+      ))}
+
+      {dimensions.map((d, i) => {
+        const p = point(radius + 24, i);
+        const anchor =
+          Math.abs(p.x - cx) < 4 ? "middle" : p.x > cx ? "start" : "end";
+        const startY = p.y - ((d.lines.length - 1) * lineHeight) / 2;
+        return (
+          <text
+            key={i}
+            x={p.x}
+            y={startY}
+            textAnchor={anchor}
+            className="fill-black/50 uppercase"
+            fontSize={10}
+            fontWeight={700}
+            style={{ letterSpacing: "0.03em" }}
+          >
+            {d.lines.map((line, li) => (
+              <tspan key={li} x={p.x} dy={li === 0 ? 0 : lineHeight}>
+                {line}
+              </tspan>
+            ))}
+          </text>
+        );
+      })}
+    </svg>
+  );
+}
+
 export const metadata: Metadata = {
   title: "Aprovação de Roteiro | Ajisai",
   description: "Página privada de aprovação de rascunho de roteiro.",
@@ -47,7 +156,7 @@ export default function AprovacaoRoteiroPage() {
 
       <section className="px-6 pb-4 pt-14 text-center md:px-16">
         <div className="mx-auto max-w-2xl">
-          <p className="mb-4 text-xs uppercase tracking-[0.3em] text-[#2f5aa8]">
+          <p className="mx-auto mb-4 block w-fit rounded-full bg-[#1b3a6b] px-5 py-2 text-center text-xs uppercase tracking-[0.3em] text-white">
             Aprovação do roteiro
           </p>
           <h1
@@ -59,13 +168,21 @@ export default function AprovacaoRoteiroPage() {
             Revise abaixo a estrutura do seu roteiro de 7 dias. Ao aprovar,
             iniciamos a elaboração do seu painel digital personalizado.
           </p>
+          <p className="mx-auto mt-4 text-xs leading-6 text-black/40 md:text-sm">
+            Esta versão é apenas um rascunho, ela não contém mapas,
+            informações de logística, transporte, detalhes dos restaurantes,
+            detalhe das lojas, resumo do dia, horário de funcionamento,
+            horário indicado para chegada e saída, entre outras informações
+            que serão adicionadas durante a criação da versão final do
+            roteiro personalizado.
+          </p>
         </div>
       </section>
 
       <section className="px-5 pb-4 md:px-16">
         <div className="mx-auto max-w-4xl">
           <div className="rounded-2xl border border-black/10 bg-white p-6 shadow-[0_20px_60px_-30px_rgba(0,0,0,0.25)] sm:rounded-[2rem] sm:p-8">
-            <p className="mx-auto mb-5 block w-fit rounded-full border border-black/15 px-5 py-2 text-center text-xs font-bold uppercase tracking-[0.25em] text-black/40">
+            <p className="mx-auto mb-5 block w-fit rounded-full border border-black/15 px-5 py-2 text-center text-xs uppercase tracking-[0.3em] text-black/65">
               Dados do Cliente
             </p>
             <div className="grid grid-cols-1 gap-5 border-b border-black/10 pb-6 sm:grid-cols-3">
@@ -90,7 +207,7 @@ export default function AprovacaoRoteiroPage() {
                   Duração
                 </p>
                 <p className="mt-1 text-sm font-semibold text-black">
-                  7 Dias
+                  9 Dias · 8 Noites
                 </p>
               </div>
             </div>
@@ -145,6 +262,26 @@ export default function AprovacaoRoteiroPage() {
                 <p className="mt-2 text-xs text-black/40">
                   Saída de Tokyo pelo Aeroporto de Haneda (HND), Terminal 3
                 </p>
+              </div>
+            </div>
+
+            <div className="mt-6 border-t border-black/10 pt-6">
+              <p className="mx-auto mb-4 block w-fit rounded-full border border-black/15 px-5 py-2 text-center text-xs uppercase tracking-[0.3em] text-black/65">
+                Perfil do Viajante
+              </p>
+              <RadarChart dimensions={RADAR_DIMENSIONS} />
+              <div className="mx-auto mt-2 grid max-w-md grid-cols-2 gap-x-6 gap-y-2 sm:grid-cols-3">
+                {RADAR_DIMENSIONS.map((d, i) => (
+                  <div key={i} className="flex items-center gap-2">
+                    <span className="h-2 w-2 shrink-0 rounded-full bg-[#2f5aa8]" />
+                    <p className="text-xs text-black/55">
+                      <span className="text-black/70">
+                        {d.lines.join(" ")}
+                      </span>{" "}
+                      <span className="text-black/35">— {d.score}/10</span>
+                    </p>
+                  </div>
+                ))}
               </div>
             </div>
           </div>

@@ -38,8 +38,12 @@ type Period = {
 type DayContent = {
   day: number;
   city: string;
-  manha: Period;
-  tarde: Period;
+  date?: string;
+  contexto?: string[];
+  travel?: boolean;
+  travelNote?: string;
+  manha?: Period;
+  tarde?: Period;
 };
 
 function genericPeriod(): Period {
@@ -50,8 +54,13 @@ function genericPeriod(): Period {
 }
 
 const DAY_1: DayContent = {
-  day: 1,
+  day: 2,
   city: "Tokyo",
+  date: "05 Mai",
+  contexto: [
+    "Nesse primeiro dia vamos explorar a parte mais tradicional de Tokyo, visitar o maior templo de Tokyo e conhecer um pouco a história de como Edo se transformou em Tokyo.",
+    "Depois vamos para Tokyo Sky Tree, a torre mais alta de Tokyo que vai te ajudar a entender a ter uma visão macro da cidade antes de iniciar sua jornada por diversos bairros nos próximos dias.",
+  ],
   manha: {
     regiao: {
       nome: "Taito",
@@ -151,16 +160,36 @@ const DAY_1: DayContent = {
   },
 };
 
-const DAYS: DayContent[] = Array.from({ length: 7 }, (_, i) =>
-  i === 0
-    ? DAY_1
-    : {
-        day: i + 1,
-        city: "Tokyo",
-        manha: genericPeriod(),
-        tarde: genericPeriod(),
-      },
-);
+const CHEGADA: DayContent = {
+  day: 1,
+  city: "Chegada",
+  date: "04 Mai",
+  travel: true,
+  travelNote:
+    "Chegada em Tokyo às 17:35 pelo Aeroporto de Narita (NRT). Dia reservado para desembarque, deslocamento até o hotel e descanso — sem tempo útil para passeios.",
+};
+
+const PARTIDA: DayContent = {
+  day: 9,
+  city: "Partida",
+  date: "12 Mai",
+  travel: true,
+  travelNote:
+    "Voo de volta decola às 00:05 pelo Aeroporto de Haneda (HND), logo após a virada do dia. Dia reservado para preparar a bagagem e seguir para o aeroporto — sem tempo útil para passeios.",
+};
+
+const DAYS: DayContent[] = [
+  CHEGADA,
+  DAY_1,
+  ...Array.from({ length: 6 }, (_, i) => ({
+    day: i + 3,
+    city: "Tokyo",
+    date: `${String(i + 6).padStart(2, "0")} Mai`,
+    manha: genericPeriod(),
+    tarde: genericPeriod(),
+  })),
+  PARTIDA,
+];
 
 // Paleta por bairro — Sumida fica no azul padrão dos cards, Ryogoku ganha um
 // roxo próprio (mesma família do lilás já usado no site) só pra deixar
@@ -245,6 +274,23 @@ function PoiCard({ index, poi }: { index: number; poi: Poi }) {
             ))}
           </div>
         )}
+      </div>
+    </div>
+  );
+}
+
+function ContextoBlock({ contexto }: { contexto: string[] }) {
+  return (
+    <div className="mb-10 rounded-2xl border border-black/10 bg-black/[0.02] p-5 sm:p-6">
+      <p className="mb-3 text-xs font-bold uppercase tracking-[0.25em] text-black/45">
+        Contexto
+      </p>
+      <div className="space-y-3">
+        {contexto.map((paragrafo, index) => (
+          <p key={index} className="text-sm leading-6 text-black/65">
+            {paragrafo}
+          </p>
+        ))}
       </div>
     </div>
   );
@@ -428,14 +474,15 @@ export function ApprovalPanel({
         <div className="relative z-10 overflow-hidden rounded-2xl border border-black/10 bg-white shadow-[0_20px_60px_-30px_rgba(0,0,0,0.25)] sm:rounded-[2rem]">
         <div className="border-b border-black/10 px-6 py-7 text-center sm:px-10">
           <p className="mx-auto mb-5 inline-block rounded-full border border-black/15 px-5 py-2 text-xs uppercase tracking-[0.3em] text-black/65">
-            Roteiro de 7 dias
+            Viagem de 9 dias · 04 a 12 Mai
           </p>
           <h2 className={`${displayClassName} text-2xl font-medium text-black md:text-3xl`}>
             Painel Interativo · Rascunho
           </h2>
           <p className="mx-auto mt-3 max-w-lg text-sm leading-6 text-black/50">
             Selecione um dia para revisar a atração principal e os pontos de
-            interesse propostos para a manhã e a tarde.
+            interesse propostos para a manhã e a tarde. Chegada e partida
+            estão marcadas à parte, sem tempo útil para passeios.
           </p>
         </div>
 
@@ -465,22 +512,53 @@ export function ApprovalPanel({
                 >
                   {d.city}
                 </span>
+                {d.date && (
+                  <span
+                    className={`text-[10px] tracking-[0.15em] ${
+                      active ? "text-black/50" : "text-black/30"
+                    }`}
+                  >
+                    {d.date}
+                  </span>
+                )}
               </button>
             );
           })}
         </div>
 
-        <div className="space-y-10 px-6 py-8 sm:px-10 sm:py-10">
-          <PeriodBlock
-            label="Manhã"
-            period={current.manha}
-            displayClassName={displayClassName}
-          />
-          <PeriodBlock
-            label="Tarde"
-            period={current.tarde}
-            displayClassName={displayClassName}
-          />
+        <div className="px-6 py-8 sm:px-10 sm:py-10">
+          {current.travel ? (
+            <div className="rounded-2xl border border-black/10 bg-black/[0.02] p-6 text-center sm:p-8">
+              <p className="text-xs font-bold uppercase tracking-[0.25em] text-black/40">
+                {current.city} · {current.date}
+              </p>
+              <p className="mx-auto mt-3 max-w-md text-sm leading-6 text-black/55">
+                {current.travelNote}
+              </p>
+            </div>
+          ) : (
+            <>
+              {current.contexto && (
+                <ContextoBlock contexto={current.contexto} />
+              )}
+              <div className="space-y-10">
+                {current.manha && (
+                  <PeriodBlock
+                    label="Manhã"
+                    period={current.manha}
+                    displayClassName={displayClassName}
+                  />
+                )}
+                {current.tarde && (
+                  <PeriodBlock
+                    label="Tarde"
+                    period={current.tarde}
+                    displayClassName={displayClassName}
+                  />
+                )}
+              </div>
+            </>
+          )}
         </div>
         </div>
       </div>
