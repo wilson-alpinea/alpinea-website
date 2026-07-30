@@ -645,7 +645,7 @@ export function ApprovalPanel({
             </div>
           ) : (
             <>
-              <p className="mb-5 inline-block rounded-full border border-black/15 px-5 py-2 text-xs uppercase tracking-[0.3em] text-black/65">
+              <p className="mb-5 inline-block rounded-full border border-[#2f5aa8]/20 bg-[#eef3fb] px-5 py-2 text-xs uppercase tracking-[0.3em] text-[#2f5aa8]">
                 Dia {current.day}
               </p>
               {current.contexto && (
