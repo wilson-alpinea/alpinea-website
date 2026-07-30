@@ -32,6 +32,7 @@ type Period = {
   regiao?: Regiao;
   atracaoPrincipal: string;
   atracaoPrincipalImagem?: string;
+  atracaoPrincipalFoco?: "top" | "center" | "bottom";
   pois: Poi[];
   gastronomia?: Gastronomia;
 };
@@ -229,6 +230,7 @@ const DAY_2: DayContent = {
     },
     atracaoPrincipal: "Distrito de Ginza",
     atracaoPrincipalImagem: "/images/dia2-ginza.png",
+    atracaoPrincipalFoco: "center",
     pois: [
       {
         category: "Compras",
@@ -746,7 +748,13 @@ function PeriodBlock({
             <img
               src={period.atracaoPrincipalImagem}
               alt={period.atracaoPrincipal}
-              className="absolute inset-0 h-full w-full object-cover object-top"
+              className={`absolute inset-0 h-full w-full object-cover ${
+                period.atracaoPrincipalFoco === "bottom"
+                  ? "object-bottom"
+                  : period.atracaoPrincipalFoco === "center"
+                    ? "object-center"
+                    : "object-top"
+              }`}
             />
             <div className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-black/85 via-black/35 to-transparent" />
             <h3
