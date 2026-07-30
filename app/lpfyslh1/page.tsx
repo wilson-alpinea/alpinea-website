@@ -309,12 +309,12 @@ export default function AprovacaoRoteiroPage() {
               </div>
             </div>
 
-            <div className="relative mt-5">
+            <div className="relative mt-5 overflow-hidden rounded-xl">
               <img
                 src="/images/goku-bw.png"
                 alt=""
                 aria-hidden="true"
-                className="pointer-events-none absolute left-1/2 top-1/2 z-0 h-24 w-24 -translate-x-1/2 -translate-y-1/2 object-contain opacity-80 sm:h-28 sm:w-28"
+                className="pointer-events-none absolute left-1/2 top-1/2 z-0 h-16 w-16 -translate-x-1/2 -translate-y-1/2 object-contain opacity-80 sm:h-20 sm:w-20"
               />
               <div className="relative z-10 grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div className="rounded-xl border border-black/10 bg-white p-4">
