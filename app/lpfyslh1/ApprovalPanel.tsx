@@ -8,9 +8,29 @@ import { useState } from "react";
 // das informações principais pelo cliente antes de iniciarmos o painel
 // digital completo.
 
+type Poi = {
+  category?: string;
+  title: string;
+  description?: string;
+  rating?: number;
+};
+
+type Gastronomia = {
+  subtitulo?: string;
+  itens: { nome: string; descricao?: string }[];
+};
+
+type Regiao = {
+  nome: string;
+  descricao: string;
+};
+
 type Period = {
-  atracao: string;
-  pois: string[];
+  label?: string;
+  regiao?: Regiao;
+  atracaoPrincipal: string;
+  pois: Poi[];
+  gastronomia?: Gastronomia;
 };
 
 type DayContent = {
@@ -19,35 +39,163 @@ type DayContent = {
   tarde: Period;
 };
 
-const DAYS: DayContent[] = Array.from({ length: 7 }, (_, i) => ({
-  day: i + 1,
+function genericPeriod(): Period {
+  return {
+    atracaoPrincipal: "Atração Principal",
+    pois: [1, 2, 3, 4].map((n) => ({ title: `Ponto de Interesse ${n}` })),
+  };
+}
+
+const DAY_1: DayContent = {
+  day: 1,
   manha: {
-    atracao: "Atração Principal",
+    regiao: {
+      nome: "Taito",
+      descricao:
+        "Taito é um dos bairros mais antigos de Tokyo e já era um dos principais quando a cidade ainda era chamada Edo, a fundação do bairro ocorreu por volta do ano 1600, até hoje é um dos bairros da Tokyo Antiga preservando alguns costumes milenares que já foram abandonados em outras partes da cidade, um dos exemplos é que até hoje existem vendedores de leite em garrafa de vidro que passam de casa em casa antes de amanhecer.",
+    },
+    atracaoPrincipal: "Templo Sensoji Asakusa",
     pois: [
-      "Ponto de Interesse 1",
-      "Ponto de Interesse 2",
-      "Ponto de Interesse 3",
-      "Ponto de Interesse 4",
+      {
+        category: "Compras",
+        title: "Masamoto Sohonten",
+        description:
+          "Uma das Top5 melhores fabricantes de faca profissional do Japão, também tem equipe dedicada de afiador profissional para facas de alta complexidade",
+        rating: 4,
+      },
+      {
+        title: "Nakamise Street",
+        description:
+          "Rua Dentro do complexo do Templo Sensoji, focado em souvenir e itens de pequeno porte",
+        rating: 3,
+      },
+      {
+        title: "Sumida Park",
+        description:
+          "Parque as margens do Rio Sumida que corta a parte leste da cidade de Tokyo, vista para a Tokyo Sky Tree",
+        rating: 3,
+      },
+      {
+        title: "Kappabashi Kitchen Town",
+        description:
+          "Avenida com lojas que vendem artigos de cozinha desde utensílios domésticos, louças, comida cenográfica",
+        rating: 2,
+      },
     ],
+    gastronomia: {
+      subtitulo: "Grande quantidade de lojas que vendem snacks de rua",
+      itens: [
+        { nome: "Melon Pan" },
+        { nome: "Ningyo-yaki" },
+        { nome: "Kibi Dango" },
+        { nome: "Senbei feito na hora" },
+      ],
+    },
   },
   tarde: {
-    atracao: "Atração Principal",
+    label: "Tarde/Noite",
+    regiao: {
+      nome: "Sumida + Ryogoku",
+      descricao:
+        "Sumida é o bairro que abriga a Tokyo Sky Tree (Torre mais alta do Japão) desde 2012, o bairro como o próprio nome diz cresceu as margens do Rio Sumida que antigamente era uma das principais rotas de transporte marítimo de Tokyo. Ryogoku é o bairro onde fica o estádio nacional de sumô Kokugikan e centro do sumô com infraestrutura de gastronomia e temática de sumô nas ruas, também é onde fica um dos maiores museus de Tokyo, Tokyo-Edo Museum, que conta através de maquetes gigantes como foi a transformação de Edo (1603) até Tokyo (1868).",
+    },
+    atracaoPrincipal: "Tokyo Sky Tree",
     pois: [
-      "Ponto de Interesse 1",
-      "Ponto de Interesse 2",
-      "Ponto de Interesse 3",
-      "Ponto de Interesse 4",
+      { title: "Tokyo Solamachi", description: "Sumida", rating: 5 },
+      { title: "Museu Edo-Tokyo", description: "Ryogoku", rating: 4 },
+      {
+        title: "Estádio Kokugikan + Área Externa Edo Noren",
+        description: "Ryogoku",
+        rating: 3,
+      },
+      { title: "Museu de Espadas", rating: 3 },
+      {
+        title: "Santuário Nomi-no-Sukune",
+        description:
+          "Monumento com os nomes de todos os Yokozuna (Título máximo de lutador de Sumô)",
+        rating: 2,
+      },
     ],
+    gastronomia: {
+      itens: [
+        {
+          nome: "Chanko Nabe",
+          descricao:
+            "Ensopado altamente calórico que os lutadores de Sumô comem diariamente pra conseguir manter o peso",
+        },
+      ],
+    },
   },
-}));
+};
 
-function PoiCard({ index, label }: { index: number; label: string }) {
+const DAYS: DayContent[] = Array.from({ length: 7 }, (_, i) =>
+  i === 0
+    ? DAY_1
+    : {
+        day: i + 1,
+        manha: genericPeriod(),
+        tarde: genericPeriod(),
+      },
+);
+
+function Stars({ rating }: { rating: number }) {
   return (
-    <div className="flex items-center gap-3 rounded-2xl border-2 border-[#2f5aa8] bg-[#eef3fb] px-4 py-3.5">
+    <span className="text-xs tracking-tight text-[#2f5aa8]" aria-label={`${rating} de 5 estrelas`}>
+      {"★".repeat(rating)}
+      <span className="text-[#2f5aa8]/25">{"★".repeat(5 - rating)}</span>
+    </span>
+  );
+}
+
+function PoiCard({ index, poi }: { index: number; poi: Poi }) {
+  return (
+    <div className="flex gap-3 rounded-2xl border-2 border-[#2f5aa8] bg-[#eef3fb] px-4 py-3.5">
       <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[#2f5aa8] text-xs font-bold text-white">
         {index + 1}
       </span>
-      <span className="text-sm font-semibold text-[#2f5aa8]">{label}</span>
+      <div className="min-w-0 flex-1">
+        <div className="flex flex-wrap items-center gap-2">
+          {poi.category && (
+            <span className="rounded-full bg-[#2f5aa8]/15 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-[#2f5aa8]">
+              {poi.category}
+            </span>
+          )}
+          <span className="text-sm font-semibold text-[#2f5aa8]">
+            {poi.title}
+          </span>
+          {typeof poi.rating === "number" && <Stars rating={poi.rating} />}
+        </div>
+        {poi.description && (
+          <p className="mt-1 text-xs leading-5 text-[#2f5aa8]/70">
+            {poi.description}
+          </p>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function GastronomiaBlock({ gastronomia }: { gastronomia: Gastronomia }) {
+  return (
+    <div className="mt-6 rounded-2xl border border-black/10 bg-black/[0.02] p-4">
+      <p className="text-xs font-bold uppercase tracking-[0.2em] text-black/45">
+        Gastronomia
+        {gastronomia.subtitulo && (
+          <span className="ml-2 font-normal normal-case tracking-normal text-black/40">
+            ({gastronomia.subtitulo})
+          </span>
+        )}
+      </p>
+      <ul className="mt-3 space-y-1.5">
+        {gastronomia.itens.map((item) => (
+          <li key={item.nome} className="text-sm leading-6 text-black/65">
+            <span className="font-semibold text-black/80">{item.nome}</span>
+            {item.descricao && (
+              <span className="text-black/55"> — {item.descricao}</span>
+            )}
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }
@@ -66,22 +214,38 @@ function PeriodBlock({
       <div className="mb-4 flex items-center gap-2.5">
         <span className="h-2 w-2 rounded-full bg-gradient-to-r from-[#E94332] via-[#D96A2E] to-[#C9A03A]" />
         <span className="text-xs font-bold uppercase tracking-[0.25em] text-black/40">
-          {label}
+          {period.label ?? label}
         </span>
       </div>
+
+      {period.regiao && (
+        <div className="mb-5">
+          <p className="text-xs font-bold uppercase tracking-[0.15em] text-black/45">
+            Região: {period.regiao.nome}
+          </p>
+          <p className="mt-1.5 text-sm leading-6 text-black/60">
+            {period.regiao.descricao}
+          </p>
+        </div>
+      )}
+
       <h3
         className={`${displayClassName} mb-1 text-xl font-medium text-black md:text-2xl`}
       >
-        {period.atracao}
+        {period.atracaoPrincipal}
       </h3>
       <p className="mb-5 text-xs text-black/40">
         Pontos de interesse propostos para o período
       </p>
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         {period.pois.map((poi, index) => (
-          <PoiCard key={poi + index} index={index} label={poi} />
+          <PoiCard key={poi.title + index} index={index} poi={poi} />
         ))}
       </div>
+
+      {period.gastronomia && (
+        <GastronomiaBlock gastronomia={period.gastronomia} />
+      )}
     </div>
   );
 }
@@ -161,7 +325,7 @@ export function ApprovalPanel({
         <img
           src="/images/goku-bw.png"
           alt="Goku"
-          className="absolute bottom-full right-6 z-20 h-36 w-36 object-contain sm:right-8 sm:h-44 sm:w-44"
+          className="absolute bottom-full right-6 z-20 h-24 w-24 object-contain sm:right-8 sm:h-28 sm:w-28"
         />
         <div className="relative overflow-hidden rounded-2xl border border-black/10 bg-white shadow-[0_20px_60px_-30px_rgba(0,0,0,0.25)] sm:rounded-[2rem]">
         <div className="border-b border-black/10 px-6 py-7 text-center sm:px-10">
