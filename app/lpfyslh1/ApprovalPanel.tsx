@@ -161,6 +161,98 @@ const DAY_1: DayContent = {
   },
 };
 
+const DAY_2: DayContent = {
+  day: 2,
+  city: "Tokyo",
+  date: "06 Mai",
+  contexto: [
+    "Neste dia iremos visitar o lado mais comercial do Japão e o centro financeiro. Começamos o passeio com uma visita a Tokyo Station para que você possa ir diretamente à Dragonball Store, que fica dentro do complexo da estação, na mesma área onde existem lojas das principais franquias de anime.",
+    "Depois passamos rapidamente pela região de Otemachi, onde fica a sede das maiores empresas japonesas, para ver um pouco do lado moderno do Japão. Perto dali se encontram dois pontos históricos importantes: o marco zero (Nihonbashi) e o Palácio Imperial, onde mora o imperador do Japão.",
+  ],
+  manha: {
+    regiao: {
+      nome: "Marunouchi + Otemachi",
+      descricao:
+        "Marunouchi, junto do seu distrito vizinho Otemachi, é desde os tempos feudais um dos pilares da economia japonesa. Fica nessa região a estação central de trem do Japão, Tokyo Station, que junto da estação de Shinagawa são as únicas com acesso ao trem-bala em Tóquio. Nos arredores da estação você encontrará a sede de praticamente todos os bancos, seguradoras e boa parte das grandes empresas japonesas — o local funciona como a Wall Street ou a Faria Lima do Japão.",
+    },
+    atracaoPrincipal: "Tokyo Station",
+    pois: [
+      {
+        category: "Compras",
+        title: "Dragonball Store",
+        description:
+          "Dentro do complexo da estação (Tokyo Station First Avenue), na Tokyo Character Street — corredor com mais de 10 lojas de outras franquias de anime.",
+        lista: [
+          "Jump Shop",
+          "Pokémon Store",
+          "Kirby Café",
+          "Ghibli Shop",
+          "Tomica Shop",
+          "Rilakkuma Store",
+        ],
+      },
+      {
+        title: "Nihonbashi",
+        description:
+          "Marco zero das estradas e vias de Tóquio. Entre 1600 e 1868 foi o centro comercial do Japão — aqui você encontra prédios e lojas centenárias que funcionam até hoje, como Mitsukoshi (1673), Yamatoyama (1690), Ninben (1699) e Sembikiya (1834).",
+      },
+      {
+        title: "Marunouchi Naka-dori",
+        description:
+          "Rua arborizada com cafés e restaurantes que alimentam os escritórios financeiros da região.",
+      },
+    ],
+    gastronomia: {
+      subtitulo: "Grande quantidade de lojas que vendem snacks de rua",
+      itens: [
+        {
+          nome: "Musk Melon",
+          descricao:
+            "Melão que só existe no Japão — mais suculento que o nosso, e esverdeado em vez de amarelo.",
+        },
+      ],
+    },
+  },
+  tarde: {
+    label: "Tarde/Noite",
+    regiao: {
+      nome: "Ginza + Chiyoda",
+      descricao:
+        "Ginza é o distrito de compras mais tradicional e sofisticado de Tóquio, com lojas de luxo instaladas ali desde a era Meiji. Chiyoda é o bairro central que abriga o Palácio Imperial e boa parte dos órgãos do governo japonês — os dois formam o contraponto elegante e histórico ao lado corporativo de Marunouchi visto pela manhã.",
+    },
+    atracaoPrincipal: "Distrito de Ginza — Ginza Six, Uniqlo Ginza e MUJI Ginza",
+    pois: [
+      {
+        title: "Área Externa do Palácio Imperial",
+      },
+      {
+        title: "Parque de Hibiya",
+        description:
+          "Primeiro parque com temática ocidental do Japão — bom para um passeio rápido.",
+      },
+      {
+        category: "Compras",
+        title: "Itoya",
+        description:
+          "Uma das maiores lojas de papelaria do Japão, com 12 andares — de canetas a acessórios.",
+      },
+      {
+        title: "Tsukiji Outer Market",
+        description:
+          "Antigo mercado de peixes de Tóquio antes da mudança para Toyosu. O mercado em si não existe mais, mas a estrutura de restaurantes e lojas de rua no entorno permanece ativa.",
+      },
+    ],
+    gastronomia: {
+      itens: [
+        {
+          nome: "Menu Degustação de Sushi",
+          descricao: "Sugestão: Hakkoku (necessário reserva antecipada).",
+        },
+      ],
+    },
+  },
+};
+
 const CHEGADA: DayContent = {
   day: 0,
   badge: "DXB-NRT",
@@ -184,10 +276,11 @@ const PARTIDA: DayContent = {
 const DAYS: DayContent[] = [
   CHEGADA,
   DAY_1,
-  ...Array.from({ length: 6 }, (_, i) => ({
-    day: i + 2,
+  DAY_2,
+  ...Array.from({ length: 5 }, (_, i) => ({
+    day: i + 3,
     city: "Tokyo",
-    date: `${String(i + 6).padStart(2, "0")} Mai`,
+    date: `${String(i + 7).padStart(2, "0")} Mai`,
     manha: genericPeriod(),
     tarde: genericPeriod(),
   })),
