@@ -436,6 +436,45 @@ const DAY_4: DayContent = {
   },
 };
 
+const DAY_5: DayContent = {
+  day: 5,
+  city: "Kyoto",
+  date: "09 Mai",
+  contexto: [
+    "Se Tóquio é sinônimo de modernidade e tecnologia mesclada à parte cultural, Kyoto é um patrimônio histórico. Nesses dois dias iremos visitar 3 dos principais pontos turísticos do Japão: Kiyomizu-dera + Gion, Kinkaku-ji e Fushimi-Inari Taisha.",
+  ],
+  manha: {
+    atracaoPrincipal: "Templo Kiyomizu-dera",
+    pois: [{ title: "Ninenzaka" }, { title: "Sannenzaka" }],
+  },
+  tarde: {
+    label: "Tarde/Noite",
+    atracaoPrincipal: "Distrito de Gion",
+    pois: [{ title: "Yasaka Tower" }, { title: "Pontocho" }],
+  },
+};
+
+const DAY_6: DayContent = {
+  day: 6,
+  city: "Kyoto",
+  date: "10 Mai",
+  manha: {
+    atracaoPrincipal: "Fushimi-Inari Taisha",
+    pois: [],
+  },
+  tarde: {
+    label: "Tarde",
+    atracaoPrincipal: "Kinkaku-ji",
+    pois: [
+      { title: "Museu do Mangá de Kyoto" },
+      {
+        title: "Nintendo Store Kyoto",
+        description: "A Nintendo fica localizada em Kyoto.",
+      },
+    ],
+  },
+};
+
 const CHEGADA: DayContent = {
   day: 0,
   badge: "DXB-NRT",
@@ -462,13 +501,15 @@ const DAYS: DayContent[] = [
   DAY_2,
   DAY_3,
   DAY_4,
-  ...Array.from({ length: 3 }, (_, i) => ({
-    day: i + 5,
-    city: i < 2 ? "Kyoto" : "Tokyo",
-    date: `${String(i + 9).padStart(2, "0")} Mai`,
+  DAY_5,
+  DAY_6,
+  {
+    day: 7,
+    city: "Tokyo",
+    date: "11 Mai",
     manha: genericPeriod(),
     tarde: genericPeriod(),
-  })),
+  },
   PARTIDA,
 ];
 
