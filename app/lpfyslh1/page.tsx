@@ -151,7 +151,7 @@ export default function AprovacaoRoteiroPage() {
         </div>
       </section>
 
-      <section className="px-5 pb-12 pt-40 md:px-16 md:pb-16 md:pt-56">
+      <section className="px-5 pb-12 pt-32 md:px-16 md:pb-16 md:pt-48">
         <div className="mx-auto max-w-4xl">
           <ApprovalPanel
             displayClassName={display.className}
