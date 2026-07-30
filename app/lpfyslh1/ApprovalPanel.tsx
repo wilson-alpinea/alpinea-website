@@ -228,6 +228,7 @@ const DAY_2: DayContent = {
         "Ginza é o distrito de compras mais tradicional e sofisticado de Tóquio, com lojas de luxo instaladas ali desde a era Meiji. Chiyoda é o bairro central que abriga o Palácio Imperial e boa parte dos órgãos do governo japonês — os dois formam o contraponto elegante e histórico ao lado corporativo de Marunouchi visto pela manhã.",
     },
     atracaoPrincipal: "Distrito de Ginza — Ginza Six, Uniqlo Ginza e MUJI Ginza",
+    atracaoPrincipalImagem: "/images/dia2-ginza.png",
     pois: [
       {
         title: "Área Externa do Palácio Imperial",
@@ -730,10 +731,8 @@ function PeriodBlock({
 
       <p className="mb-2 text-xs text-black/40">Atração Principal</p>
       <div
-        className={`relative mb-5 h-64 overflow-hidden rounded-2xl sm:h-80 ${
-          period.atracaoPrincipalImagem
-            ? "bg-black"
-            : "border-2 border-[#2f5aa8]"
+        className={`relative mb-5 aspect-[4/3] overflow-hidden rounded-2xl sm:aspect-[16/10] ${
+          period.atracaoPrincipalImagem ? "" : "border-2 border-[#2f5aa8]"
         }`}
       >
         {period.atracaoPrincipalImagem ? (
@@ -741,7 +740,7 @@ function PeriodBlock({
             <img
               src={period.atracaoPrincipalImagem}
               alt={period.atracaoPrincipal}
-              className="absolute inset-0 h-full w-full object-contain"
+              className="absolute inset-0 h-full w-full object-cover object-top"
             />
             <div className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-black/85 via-black/35 to-transparent" />
             <h3
