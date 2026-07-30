@@ -371,17 +371,21 @@ const DAY_4: DayContent = {
     pois: [
       {
         title: "Tokyo Tower",
+        rating: 4,
       },
       {
         title: "Complexo Comercial Azabudai Hills",
         description:
           "Complexo com arquitetura arrojada que abriga restaurantes de elite e a atração principal, o teamLab Borderless.",
+        rating: 3,
       },
       {
         title: "Templo Zojo-ji",
+        rating: 3,
       },
       {
         title: "Odaiba + Rainbow Bridge + Estátua de Gundam",
+        rating: 3,
       },
     ],
     gastronomia: {
@@ -404,14 +408,21 @@ const DAY_4: DayContent = {
     pois: [
       {
         title: "Museu de Arte Moderna Mori",
+        rating: 4,
       },
       {
         title: "Aranha Gigante de Louise Bourgeois",
         description:
-          "A única no mundo preparada para terremotos — ao lado do Mori Tower e do Mori Garden.",
+          "A única no mundo preparada para terremotos, aos pés do Mori Tower.",
+        rating: 3,
+      },
+      {
+        title: "Mori Garden",
+        rating: 3,
       },
       {
         title: "Hinokicho Park",
+        rating: 2,
       },
     ],
     gastronomia: {
@@ -760,7 +771,7 @@ export function ApprovalPanel({
           </p>
         </div>
 
-        <div className="flex flex-wrap items-start justify-center gap-x-5 gap-y-5 border-b border-black/10 px-6 py-7 sm:gap-x-7 sm:px-10">
+        <div className="flex flex-wrap items-start justify-center gap-x-5 gap-y-5 px-6 pt-7 sm:gap-x-7 sm:px-10">
           {DAYS.map((d, index) => {
             const active = index === activeDay;
             return (
@@ -805,6 +816,39 @@ export function ApprovalPanel({
               </button>
             );
           })}
+        </div>
+
+        <div className="space-y-4 border-b border-black/10 px-6 py-6 sm:px-10">
+          <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 sm:gap-x-6">
+            <span className="mr-1 rounded-full border border-black/15 bg-white px-3 py-1 text-[10px] font-bold uppercase tracking-[0.2em] text-black/50">
+              Opção A
+            </span>
+            {[5, 6].map((n) => (
+              <div key={n} className="flex flex-col items-center gap-1.5">
+                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border-2 border-black/15 bg-white text-xs font-bold text-black/50">
+                  {n}
+                </span>
+                <span className="text-[9px] uppercase tracking-[0.2em] text-black/40">
+                  Kyoto
+                </span>
+              </div>
+            ))}
+          </div>
+          <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 sm:gap-x-6">
+            <span className="mr-1 rounded-full border border-black/15 bg-white px-3 py-1 text-[10px] font-bold uppercase tracking-[0.2em] text-black/50">
+              Opção B
+            </span>
+            {[5, 6].map((n) => (
+              <div key={n} className="flex flex-col items-center gap-1.5">
+                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border-2 border-black/15 bg-white text-xs font-bold text-black/50">
+                  {n}
+                </span>
+                <span className="text-[9px] uppercase tracking-[0.2em] text-black/40">
+                  Osaka
+                </span>
+              </div>
+            ))}
+          </div>
         </div>
 
         <div className="px-6 py-8 sm:px-10 sm:py-10">
