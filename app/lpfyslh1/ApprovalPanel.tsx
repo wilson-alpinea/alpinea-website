@@ -374,7 +374,7 @@ const DAY_4: DayContent = {
         "Minato é um dos bairros mais diversos de Tóquio, misturando marcos históricos como o Templo Zojo-ji e a Tokyo Tower com empreendimentos modernos como o Azabudai Hills — o mais novo e ousado complexo da cidade, que abriga o teamLab Borderless. À noite, o bairro se transforma no principal polo de vida noturna de Tóquio, com Roppongi concentrando boa parte das baladas e bares da cidade.",
     },
     atracaoPrincipal: "teamLab Borderless (Toranomon)",
-    atracaoPrincipalImagem: "/images/dia4-teamlab.png",
+    atracaoPrincipalImagem: "/images/dia4-teamlab-v2.png",
     pois: [
       {
         title: "Tokyo Tower",
@@ -730,8 +730,10 @@ function PeriodBlock({
 
       <p className="mb-2 text-xs text-black/40">Atração Principal</p>
       <div
-        className={`relative mb-5 h-56 overflow-hidden rounded-2xl sm:h-72 ${
-          period.atracaoPrincipalImagem ? "" : "border-2 border-[#2f5aa8]"
+        className={`relative mb-5 h-64 overflow-hidden rounded-2xl sm:h-80 ${
+          period.atracaoPrincipalImagem
+            ? "bg-black"
+            : "border-2 border-[#2f5aa8]"
         }`}
       >
         {period.atracaoPrincipalImagem ? (
@@ -739,7 +741,7 @@ function PeriodBlock({
             <img
               src={period.atracaoPrincipalImagem}
               alt={period.atracaoPrincipal}
-              className="absolute inset-0 h-full w-full object-cover object-center"
+              className="absolute inset-0 h-full w-full object-contain"
             />
             <div className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-black/85 via-black/35 to-transparent" />
             <h3
