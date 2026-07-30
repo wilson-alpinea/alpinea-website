@@ -475,6 +475,56 @@ const DAY_6: DayContent = {
   },
 };
 
+const DAY_7: DayContent = {
+  day: 7,
+  city: "Tokyo",
+  date: "11 Mai",
+  contexto: [
+    "No último dia da viagem vamos finalmente a Akihabara, epicentro da cultura de Animes & Mangá, Videogames e Artigos Eletrônicos.",
+  ],
+  manha: {
+    atracaoPrincipal: "Akihabara Electric Town",
+    pois: [
+      {
+        category: "Compras",
+        title: "Animate",
+        description: "Uma das maiores redes de lojas de mangá do Japão.",
+      },
+      {
+        category: "Compras",
+        title: "Super Potato",
+        description:
+          "Loja retrô de videogames — nas proximidades também fica a Suruga-ya Anime & Hobby Store, com videogames e itens de anime.",
+      },
+      {
+        category: "Compras",
+        title: "Mandarake Complex",
+        description: "Mangá e action figures.",
+      },
+      {
+        category: "Compras",
+        title: "Akihabara Radio Kaikan",
+        description: "Action figures e um shopping com um pouco de tudo.",
+      },
+      {
+        category: "Compras",
+        title: "Ark",
+        description: "Peças de computador.",
+      },
+      {
+        category: "Compras",
+        title: "Hareruya 2",
+        description: "Pokémon Trading Card Game.",
+      },
+      {
+        category: "Compras",
+        title: "BIC Camera ou Yodobashi Camera",
+        description: "Grandes lojas de eletrônicos.",
+      },
+    ],
+  },
+};
+
 const CHEGADA: DayContent = {
   day: 0,
   badge: "DXB-NRT",
@@ -503,13 +553,7 @@ const DAYS: DayContent[] = [
   DAY_4,
   DAY_5,
   DAY_6,
-  {
-    day: 7,
-    city: "Tokyo",
-    date: "11 Mai",
-    manha: genericPeriod(),
-    tarde: genericPeriod(),
-  },
+  DAY_7,
   PARTIDA,
 ];
 
@@ -709,6 +753,7 @@ export function ApprovalPanel({
   approvalKey: string;
 }) {
   const [activeDay, setActiveDay] = useState(1);
+  const [activeRow, setActiveRow] = useState<"a" | "b">("a");
   const [showAdjustBox, setShowAdjustBox] = useState(false);
   const [mensagem, setMensagem] = useState("");
   const [status, setStatus] = useState<
@@ -817,12 +862,15 @@ export function ApprovalPanel({
         </p>
         <div className="flex flex-wrap items-start justify-center gap-x-5 gap-y-5 px-6 pt-3 sm:gap-x-7 sm:px-10">
           {DAYS.map((d, index) => {
-            const active = index === activeDay;
+            const active = index === activeDay && activeRow === "a";
             return (
               <button
                 key={d.day}
                 type="button"
-                onClick={() => setActiveDay(index)}
+                onClick={() => {
+                  setActiveDay(index);
+                  setActiveRow("a");
+                }}
                 className="flex flex-col items-center gap-2.5"
               >
                 <span
@@ -896,13 +944,16 @@ export function ApprovalPanel({
               );
             }
 
-            const active = index === activeDay;
+            const active = index === activeDay && activeRow === "b";
 
             return (
               <button
                 key={d.day}
                 type="button"
-                onClick={() => setActiveDay(index)}
+                onClick={() => {
+                  setActiveDay(index);
+                  setActiveRow("b");
+                }}
                 className="flex flex-col items-center gap-2.5"
               >
                 <span
