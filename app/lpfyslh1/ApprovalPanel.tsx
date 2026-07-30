@@ -396,13 +396,32 @@ export function ApprovalPanel({
 
   return (
     <>
-      <div className="relative">
+      <div className="relative isolate">
+        {/* Glow ao redor do painel — mesma técnica do /ajisairoteiros, mas em
+            tons de azul pra combinar com o fundo claro desta página. */}
+        <div
+          aria-hidden
+          className="pointer-events-none absolute left-1/2 top-1/2 -z-30 h-[112%] w-[116%] -translate-x-1/2 -translate-y-1/2 rounded-[3rem] opacity-80 blur-[100px]"
+          style={{
+            background:
+              "radial-gradient(ellipse at center, rgba(47,90,168,0.35) 0%, rgba(47,90,168,0.18) 40%, transparent 72%)",
+          }}
+        />
+        <div
+          aria-hidden
+          className="pointer-events-none absolute left-1/2 top-1/2 -z-20 h-[104%] w-[104%] -translate-x-1/2 -translate-y-1/2 rounded-[2.35rem] opacity-60 blur-[32px]"
+          style={{
+            background:
+              "linear-gradient(135deg, rgba(47,90,168,0.3), rgba(90,140,220,0.22) 48%, transparent 78%)",
+          }}
+        />
+
         <img
           src="/images/goku-bw.png"
           alt="Goku"
-          className="absolute bottom-full right-6 z-20 h-32 w-32 object-contain sm:right-8 sm:h-36 sm:w-36"
+          className="absolute bottom-full right-2 z-20 h-36 w-36 object-contain sm:right-4 sm:h-40 sm:w-40"
         />
-        <div className="relative overflow-hidden rounded-2xl border border-black/10 bg-white shadow-[0_20px_60px_-30px_rgba(0,0,0,0.25)] sm:rounded-[2rem]">
+        <div className="relative z-10 overflow-hidden rounded-2xl border border-black/10 bg-white shadow-[0_20px_60px_-30px_rgba(0,0,0,0.25)] sm:rounded-[2rem]">
         <div className="border-b border-black/10 px-6 py-7 text-center sm:px-10">
           <p className="mx-auto mb-5 inline-block rounded-full border border-black/15 px-5 py-2 text-xs uppercase tracking-[0.3em] text-black/65">
             Roteiro de 7 dias
