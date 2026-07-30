@@ -117,9 +117,10 @@ function DimensionIcon({
 }
 
 function RadarChart({ dimensions }: { dimensions: RadarDimension[] }) {
-  const size = 420;
-  const cx = size / 2;
-  const cy = size / 2;
+  const width = 420;
+  const height = 310;
+  const cx = width / 2;
+  const cy = height / 2;
   const radius = 88;
   const levels = [0.2, 0.4, 0.6, 0.8, 1];
   const n = dimensions.length;
@@ -137,8 +138,8 @@ function RadarChart({ dimensions }: { dimensions: RadarDimension[] }) {
 
   return (
     <svg
-      viewBox={`0 0 ${size} ${size}`}
-      className="mx-auto block h-auto w-full max-w-[380px]"
+      viewBox={`0 0 ${width} ${height}`}
+      className="mx-auto -my-4 block h-auto w-full max-w-[380px]"
     >
       {levels.map((level, li) => (
         <polygon
@@ -225,7 +226,7 @@ export const metadata: Metadata = {
 export default function AprovacaoRoteiroPage() {
   return (
     <main className="min-h-screen bg-white">
-      <header className="flex items-center justify-between border-b border-black/10 px-6 py-5 md:px-16">
+      <header className="fixed left-0 right-0 top-0 z-50 flex items-center justify-between border-b border-black/10 bg-white/85 px-6 py-5 backdrop-blur-2xl md:px-16">
         <img
           src="/images/logo-alpinea-v2-crop.png"
           alt="Alpinea — Empresa do Grupo Ajisai"
@@ -236,7 +237,7 @@ export default function AprovacaoRoteiroPage() {
         </span>
       </header>
 
-      <section className="px-6 pb-4 pt-14 text-center md:px-16">
+      <section className="px-6 pb-4 pt-36 text-center md:px-16 md:pt-40">
         <div className="mx-auto max-w-2xl">
           <p className="mx-auto mb-4 block w-fit rounded-full bg-[#1b3a6b] px-5 py-2 text-center text-xs uppercase tracking-[0.3em] text-white">
             Aprovação do roteiro
@@ -348,11 +349,11 @@ export default function AprovacaoRoteiroPage() {
             </div>
 
             <div className="mt-8">
-              <p className="mx-auto mb-4 block w-fit rounded-full border border-black/15 px-5 py-2 text-center text-xs uppercase tracking-[0.3em] text-black/65">
+              <p className="mx-auto mb-1 block w-fit rounded-full border border-black/15 px-5 py-2 text-center text-xs uppercase tracking-[0.3em] text-black/65">
                 Perfil do Viajante
               </p>
               <RadarChart dimensions={RADAR_DIMENSIONS} />
-              <div className="mx-auto mt-2 grid max-w-lg grid-cols-1 gap-x-6 gap-y-3 sm:grid-cols-2">
+              <div className="mx-auto -mt-2 grid max-w-lg grid-cols-1 gap-x-6 gap-y-3 sm:grid-cols-2">
                 {RADAR_DIMENSIONS.map((d, i) => {
                   const stars = starsFromScore(d.score);
                   return (

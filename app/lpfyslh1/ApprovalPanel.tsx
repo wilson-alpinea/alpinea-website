@@ -37,6 +37,7 @@ type Period = {
 
 type DayContent = {
   day: number;
+  badge?: string;
   city: string;
   date?: string;
   contexto?: string[];
@@ -54,7 +55,7 @@ function genericPeriod(): Period {
 }
 
 const DAY_1: DayContent = {
-  day: 2,
+  day: 1,
   city: "Tokyo",
   date: "05 Mai",
   contexto: [
@@ -161,7 +162,8 @@ const DAY_1: DayContent = {
 };
 
 const CHEGADA: DayContent = {
-  day: 1,
+  day: 0,
+  badge: "DXB-NRT",
   city: "Chegada",
   date: "04 Mai",
   travel: true,
@@ -170,7 +172,8 @@ const CHEGADA: DayContent = {
 };
 
 const PARTIDA: DayContent = {
-  day: 9,
+  day: 8,
+  badge: "NRT-DXB",
   city: "Partida",
   date: "12 Mai",
   travel: true,
@@ -182,7 +185,7 @@ const DAYS: DayContent[] = [
   CHEGADA,
   DAY_1,
   ...Array.from({ length: 6 }, (_, i) => ({
-    day: i + 3,
+    day: i + 2,
     city: "Tokyo",
     date: `${String(i + 6).padStart(2, "0")} Mai`,
     manha: genericPeriod(),
@@ -497,13 +500,15 @@ export function ApprovalPanel({
                 className="flex flex-col items-center gap-2.5"
               >
                 <span
-                  className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-full border-2 text-sm font-bold transition ${
-                    active
-                      ? "border-black bg-black text-white"
-                      : "border-black/15 bg-white text-black/50 hover:border-[#2f5aa8]/50 hover:text-black"
+                  className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-full border-2 font-bold transition ${
+                    d.badge
+                      ? "border-black bg-black text-[9px] tracking-tight text-white"
+                      : active
+                        ? "border-black bg-black text-sm text-white"
+                        : "border-black/15 bg-white text-sm text-black/50 hover:border-[#2f5aa8]/50 hover:text-black"
                   }`}
                 >
-                  {d.day}
+                  {d.badge ?? d.day}
                 </span>
                 <span
                   className={`text-[10px] uppercase tracking-[0.25em] ${
