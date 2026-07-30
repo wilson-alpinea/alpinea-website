@@ -227,9 +227,15 @@ const DAY_2: DayContent = {
       descricao:
         "Ginza é o distrito de compras mais tradicional e sofisticado de Tóquio, com lojas de luxo instaladas ali desde a era Meiji. Chiyoda é o bairro central que abriga o Palácio Imperial e boa parte dos órgãos do governo japonês — os dois formam o contraponto elegante e histórico ao lado corporativo de Marunouchi visto pela manhã.",
     },
-    atracaoPrincipal: "Distrito de Ginza — Ginza Six, Uniqlo Ginza e MUJI Ginza",
+    atracaoPrincipal: "Distrito de Ginza",
     atracaoPrincipalImagem: "/images/dia2-ginza.png",
     pois: [
+      {
+        category: "Compras",
+        title: "Ginza Six, Uniqlo Ginza e MUJI Ginza",
+        description:
+          "Lojas âncora do distrito — ótimo ponto de partida para o passeio a pé por Ginza.",
+      },
       {
         title: "Área Externa do Palácio Imperial",
         rating: 3,
@@ -744,7 +750,7 @@ function PeriodBlock({
             />
             <div className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-black/85 via-black/35 to-transparent" />
             <h3
-              className={`${displayClassName} absolute inset-x-5 bottom-4 text-2xl font-medium text-white md:text-3xl`}
+              className={`${displayClassName} absolute inset-x-5 bottom-4 text-2xl font-medium leading-snug text-white md:text-3xl`}
             >
               {period.atracaoPrincipal}
             </h3>
