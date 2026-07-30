@@ -139,7 +139,7 @@ function RadarChart({ dimensions }: { dimensions: RadarDimension[] }) {
   return (
     <svg
       viewBox={`0 0 ${width} ${height}`}
-      className="mx-auto -my-4 block h-auto w-full max-w-[380px]"
+      className="mx-auto -mb-4 -mt-2 block h-auto w-full max-w-[380px]"
     >
       {levels.map((level, li) => (
         <polygon
