@@ -36,10 +36,9 @@ export default function AprovacaoRoteiroPage() {
     <main className="min-h-screen bg-white">
       <header className="flex items-center justify-between border-b border-black/10 px-6 py-5 md:px-16">
         <img
-          src="/images/AJISAI-LOGO.avif"
-          alt="Ajisai"
-          className="h-6 w-auto object-contain md:h-7"
-          style={{ filter: "invert(1) brightness(0.15)" }}
+          src="/images/ajisai-alpinea-logo.png"
+          alt="Alpinea — Empresa do Grupo Ajisai"
+          className="h-10 w-auto rounded-md object-contain md:h-12"
         />
         <span className="rounded-full border border-black/15 px-4 py-1.5 text-[11px] uppercase tracking-[0.2em] text-black/50">
           Draft para aprovação
