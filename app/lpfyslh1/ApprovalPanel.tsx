@@ -729,13 +729,17 @@ function PeriodBlock({
       )}
 
       <p className="mb-2 text-xs text-black/40">Atração Principal</p>
-      <div className="relative mb-5 h-48 overflow-hidden rounded-2xl border-2 border-[#2f5aa8] sm:h-60">
+      <div
+        className={`relative mb-5 h-56 overflow-hidden rounded-2xl sm:h-72 ${
+          period.atracaoPrincipalImagem ? "" : "border-2 border-[#2f5aa8]"
+        }`}
+      >
         {period.atracaoPrincipalImagem ? (
           <>
             <img
               src={period.atracaoPrincipalImagem}
               alt={period.atracaoPrincipal}
-              className="absolute inset-0 h-full w-full object-cover"
+              className="absolute inset-0 h-full w-full object-cover object-center"
             />
             <div className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-black/85 via-black/35 to-transparent" />
             <h3
