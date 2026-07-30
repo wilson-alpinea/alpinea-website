@@ -31,6 +31,7 @@ type Period = {
   label?: string;
   regiao?: Regiao;
   atracaoPrincipal: string;
+  atracaoPrincipalImagem?: string;
   pois: Poi[];
   gastronomia?: Gastronomia;
 };
@@ -69,6 +70,7 @@ const DAY_1: DayContent = {
         "Taito é um dos bairros mais antigos de Tokyo e já era um dos principais quando a cidade ainda era chamada Edo, a fundação do bairro ocorreu por volta do ano 1600, até hoje é um dos bairros da Tokyo Antiga preservando alguns costumes milenares que já foram abandonados em outras partes da cidade, um dos exemplos é que até hoje existem vendedores de leite em garrafa de vidro que passam de casa em casa antes de amanhecer.",
     },
     atracaoPrincipal: "Templo Sensoji Asakusa",
+    atracaoPrincipalImagem: "/images/dia1-sensoji.png",
     pois: [
       {
         category: "Compras",
@@ -114,6 +116,7 @@ const DAY_1: DayContent = {
         "Sumida é o bairro que abriga a Tokyo Sky Tree (Torre mais alta do Japão) desde 2012, o bairro como o próprio nome diz cresceu as margens do Rio Sumida que antigamente era uma das principais rotas de transporte marítimo de Tokyo. Ryogoku é o bairro onde fica o estádio nacional de sumô Kokugikan e centro do sumô com infraestrutura de gastronomia e temática de sumô nas ruas, também é onde fica um dos maiores museus de Tokyo, Tokyo-Edo Museum, que conta através de maquetes gigantes como foi a transformação de Edo (1603) até Tokyo (1868).",
     },
     atracaoPrincipal: "Tokyo Sky Tree",
+    atracaoPrincipalImagem: "/images/dia1-skytree.png",
     pois: [
       {
         title: "Tokyo Solamachi",
@@ -176,6 +179,7 @@ const DAY_2: DayContent = {
         "Marunouchi, junto do seu distrito vizinho Otemachi, é desde os tempos feudais um dos pilares da economia japonesa. Fica nessa região a estação central de trem do Japão, Tokyo Station, que junto da estação de Shinagawa são as únicas com acesso ao trem-bala em Tóquio. Nos arredores da estação você encontrará a sede de praticamente todos os bancos, seguradoras e boa parte das grandes empresas japonesas — o local funciona como a Wall Street ou a Faria Lima do Japão.",
     },
     atracaoPrincipal: "Tokyo Station",
+    atracaoPrincipalImagem: "/images/dia2-tokyostation.png",
     pois: [
       {
         category: "Compras",
@@ -278,6 +282,7 @@ const DAY_3: DayContent = {
         "Aqui iremos explorar o superdistrito de Shibuya, que compreende as áreas de Yoyogi, Omotesando e Harajuku.",
     },
     atracaoPrincipal: "Meiji Jingu",
+    atracaoPrincipalImagem: "/images/dia3-meijijingu.png",
     pois: [
       {
         title: "Parque de Yoyogi",
@@ -322,6 +327,7 @@ const DAY_3: DayContent = {
         "Mesma região da manhã, agora com foco no lado mais moderno e jovem do bairro: a vista do topo do Shibuya Sky, a efervescência de Harajuku e Daikanyama, e o Estádio Nacional, que ficou mundialmente conhecido nas Olimpíadas de Tóquio 2020.",
     },
     atracaoPrincipal: "Shibuya Sky",
+    atracaoPrincipalImagem: "/images/dia3-shibuyasky.png",
     pois: [
       {
         title: "Takeshita Street",
@@ -368,6 +374,7 @@ const DAY_4: DayContent = {
         "Minato é um dos bairros mais diversos de Tóquio, misturando marcos históricos como o Templo Zojo-ji e a Tokyo Tower com empreendimentos modernos como o Azabudai Hills — o mais novo e ousado complexo da cidade, que abriga o teamLab Borderless. À noite, o bairro se transforma no principal polo de vida noturna de Tóquio, com Roppongi concentrando boa parte das baladas e bares da cidade.",
     },
     atracaoPrincipal: "teamLab Borderless (Toranomon)",
+    atracaoPrincipalImagem: "/images/dia4-teamlab.png",
     pois: [
       {
         title: "Tokyo Tower",
@@ -405,6 +412,7 @@ const DAY_4: DayContent = {
         "Mesma região da manhã, agora com foco no lado noturno e cultural do bairro: os museus e jardins do Mori Tower, o Hinokicho Park e a vida noturna badalada de Roppongi.",
     },
     atracaoPrincipal: "R3 Club Lounge ou V2 Tokyo (Roppongi)",
+    atracaoPrincipalImagem: "/images/dia4-roppongi.png",
     pois: [
       {
         title: "Museu de Arte Moderna Mori",
@@ -721,12 +729,30 @@ function PeriodBlock({
       )}
 
       <p className="mb-2 text-xs text-black/40">Atração Principal</p>
-      <div className="mb-5 flex items-center gap-3 rounded-2xl border-2 border-[#2f5aa8] bg-[#eef3fb] px-5 py-5">
-        <h3
-          className={`${displayClassName} text-2xl font-medium text-[#2f5aa8] md:text-3xl`}
-        >
-          {period.atracaoPrincipal}
-        </h3>
+      <div className="relative mb-5 h-48 overflow-hidden rounded-2xl border-2 border-[#2f5aa8] sm:h-60">
+        {period.atracaoPrincipalImagem ? (
+          <>
+            <img
+              src={period.atracaoPrincipalImagem}
+              alt={period.atracaoPrincipal}
+              className="absolute inset-0 h-full w-full object-cover"
+            />
+            <div className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-black/85 via-black/35 to-transparent" />
+            <h3
+              className={`${displayClassName} absolute inset-x-5 bottom-4 text-2xl font-medium text-white md:text-3xl`}
+            >
+              {period.atracaoPrincipal}
+            </h3>
+          </>
+        ) : (
+          <div className="flex h-full items-center justify-center bg-[#eef3fb] px-5">
+            <h3
+              className={`${displayClassName} text-2xl font-medium text-[#2f5aa8] md:text-3xl`}
+            >
+              {period.atracaoPrincipal}
+            </h3>
+          </div>
+        )}
       </div>
 
       <p className="mb-5 text-xs text-black/40">
