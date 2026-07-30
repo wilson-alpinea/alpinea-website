@@ -358,9 +358,9 @@ function PeriodBlock({
       )}
 
       <p className="mb-2 text-xs text-black/40">Atração Principal</p>
-      <div className="mb-5 flex items-center gap-3 rounded-2xl border-2 border-[#2f5aa8] bg-[#eef3fb] px-4 py-3.5">
+      <div className="mb-5 flex items-center gap-3 rounded-2xl border-2 border-[#2f5aa8] bg-[#eef3fb] px-5 py-5">
         <h3
-          className={`${displayClassName} text-lg font-medium text-[#2f5aa8] md:text-xl`}
+          className={`${displayClassName} text-2xl font-medium text-[#2f5aa8] md:text-3xl`}
         >
           {period.atracaoPrincipal}
         </h3>
@@ -523,11 +523,16 @@ export function ApprovalPanel({
                 </span>
                 {d.date && (
                   <span
-                    className={`text-[10px] tracking-[0.15em] ${
+                    className={`flex flex-col items-center leading-tight tracking-[0.1em] ${
                       active ? "text-black/50" : "text-black/30"
                     }`}
                   >
-                    {d.date}
+                    <span className="text-sm font-semibold">
+                      {d.date.split(" ")[0]}
+                    </span>
+                    <span className="text-xs uppercase">
+                      {d.date.split(" ")[1]}
+                    </span>
                   </span>
                 )}
               </button>
