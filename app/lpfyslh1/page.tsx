@@ -309,42 +309,50 @@ export default function AprovacaoRoteiroPage() {
               </div>
             </div>
 
-            <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2">
-              <div className="rounded-xl border border-black/10 p-4">
-                <p className="mb-2 text-[11px] font-bold uppercase tracking-[0.2em] text-black/40">
-                  Ida · 03–04 Mai 2027
-                </p>
-                <div className="space-y-1.5 text-sm text-black/70">
-                  <p>
-                    <span className="font-semibold text-black">EK262</span>{" "}
-                    · GRU → DXB · 01:35 → 23:00
+            <div className="relative mt-5">
+              <img
+                src="/images/goku-bw.png"
+                alt=""
+                aria-hidden="true"
+                className="pointer-events-none absolute left-1/2 top-1/2 z-0 h-24 w-24 -translate-x-1/2 -translate-y-1/2 object-contain opacity-80 sm:h-28 sm:w-28"
+              />
+              <div className="relative z-10 grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <div className="rounded-xl border border-black/10 bg-white p-4">
+                  <p className="mb-2 text-[11px] font-bold uppercase tracking-[0.2em] text-black/40">
+                    Ida · 03–04 Mai 2027
                   </p>
-                  <p>
-                    <span className="font-semibold text-black">EK318</span>{" "}
-                    · DXB → NRT · 23:40 → 17:35
-                  </p>
-                </div>
-                <p className="mt-2 text-xs text-black/40">
-                  Chegada em Tokyo pelo Aeroporto de Narita (NRT), Terminal 2
-                </p>
-              </div>
-              <div className="rounded-xl border border-black/10 p-4">
-                <p className="mb-2 text-[11px] font-bold uppercase tracking-[0.2em] text-black/40">
-                  Volta · 12 Mai 2027
-                </p>
-                <div className="space-y-1.5 text-sm text-black/70">
-                  <p>
-                    <span className="font-semibold text-black">EK313</span>{" "}
-                    · HND → DXB · 00:05 → 06:25
-                  </p>
-                  <p>
-                    <span className="font-semibold text-black">EK261</span>{" "}
-                    · DXB → GRU · 06:05 → 17:40
+                  <div className="space-y-1.5 text-sm text-black/70">
+                    <p>
+                      <span className="font-semibold text-black">EK262</span>{" "}
+                      · GRU → DXB · 01:35 → 23:00
+                    </p>
+                    <p>
+                      <span className="font-semibold text-black">EK318</span>{" "}
+                      · DXB → NRT · 23:40 → 17:35
+                    </p>
+                  </div>
+                  <p className="mt-2 text-xs text-black/40">
+                    Chegada em Tokyo pelo Aeroporto de Narita (NRT), Terminal 2
                   </p>
                 </div>
-                <p className="mt-2 text-xs text-black/40">
-                  Saída de Tokyo pelo Aeroporto de Haneda (HND), Terminal 3
-                </p>
+                <div className="rounded-xl border border-black/10 bg-white p-4">
+                  <p className="mb-2 text-[11px] font-bold uppercase tracking-[0.2em] text-black/40">
+                    Volta · 12 Mai 2027
+                  </p>
+                  <div className="space-y-1.5 text-sm text-black/70">
+                    <p>
+                      <span className="font-semibold text-black">EK313</span>{" "}
+                      · HND → DXB · 00:05 → 06:25
+                    </p>
+                    <p>
+                      <span className="font-semibold text-black">EK261</span>{" "}
+                      · DXB → GRU · 06:05 → 17:40
+                    </p>
+                  </div>
+                  <p className="mt-2 text-xs text-black/40">
+                    Saída de Tokyo pelo Aeroporto de Haneda (HND), Terminal 3
+                  </p>
+                </div>
               </div>
             </div>
 
