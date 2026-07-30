@@ -65,7 +65,7 @@ export default function AprovacaoRoteiroPage() {
       <section className="px-5 pb-4 md:px-16">
         <div className="mx-auto max-w-4xl">
           <div className="rounded-2xl border border-black/10 bg-white p-6 shadow-[0_20px_60px_-30px_rgba(0,0,0,0.25)] sm:rounded-[2rem] sm:p-8">
-            <p className="mb-5 text-xs font-bold uppercase tracking-[0.25em] text-black/40">
+            <p className="mx-auto mb-5 block w-fit rounded-full border border-black/15 px-5 py-2 text-center text-xs font-bold uppercase tracking-[0.25em] text-black/40">
               Dados do Cliente
             </p>
             <div className="grid grid-cols-1 gap-5 border-b border-black/10 pb-6 sm:grid-cols-3">
@@ -99,7 +99,7 @@ export default function AprovacaoRoteiroPage() {
               <img
                 src="/images/emirates-logo.png"
                 alt="Emirates"
-                className="h-16 w-auto rounded-md object-contain sm:h-20"
+                className="h-24 w-auto rounded-md object-contain sm:h-28"
               />
               <div>
                 <p className="text-[11px] uppercase tracking-[0.2em] text-black/40">
@@ -161,8 +161,14 @@ export default function AprovacaoRoteiroPage() {
       </section>
 
       <footer className="border-t border-black/10 px-6 py-8 text-center text-xs text-black/40 md:px-16">
-        © {new Date().getFullYear()} AJISAIWORK JAPAN AGENCIA DE VIAGENS LTDA
-        — Página de aprovação privada, não indexada.
+        <p>
+          © {new Date().getFullYear()} AJISAIWORK JAPAN AGENCIA DE VIAGENS
+          LTDA — CNPJ 43.544.605/0001-56
+        </p>
+        <p className="mt-1">
+          Alpinea Agências de Viagens LTDA — CNPJ 66.491.067/0001-84
+        </p>
+        <p className="mt-1.5">Página de aprovação privada, não indexada.</p>
       </footer>
     </main>
   );

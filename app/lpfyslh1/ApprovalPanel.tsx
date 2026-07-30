@@ -271,6 +271,10 @@ function GastronomiaBlock({ gastronomia }: { gastronomia: Gastronomia }) {
           </li>
         ))}
       </ul>
+      <p className="mt-3 border-t border-black/10 pt-3 text-xs leading-5 text-black/45">
+        Mapeamento de opções de restaurantes nos arredores da atração
+        principal
+      </p>
     </div>
   );
 }
@@ -419,7 +423,7 @@ export function ApprovalPanel({
         <img
           src="/images/goku-bw.png"
           alt="Goku"
-          className="absolute bottom-full right-2 z-20 h-36 w-36 object-contain sm:right-4 sm:h-40 sm:w-40"
+          className="absolute bottom-full right-10 z-20 h-48 w-48 object-contain sm:right-14 sm:h-56 sm:w-56"
         />
         <div className="relative z-10 overflow-hidden rounded-2xl border border-black/10 bg-white shadow-[0_20px_60px_-30px_rgba(0,0,0,0.25)] sm:rounded-[2rem]">
         <div className="border-b border-black/10 px-6 py-7 text-center sm:px-10">
