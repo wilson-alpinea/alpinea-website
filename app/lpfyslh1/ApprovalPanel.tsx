@@ -248,6 +248,10 @@ const DAY_2: DayContent = {
           nome: "Menu Degustação de Sushi",
           descricao: "Sugestão: Hakkoku (necessário reserva antecipada).",
         },
+        {
+          nome: "Ramen (Estilo Hakata Fukuoka) + Gyoza",
+          descricao: "Sugestão: Ippudo Ginza.",
+        },
       ],
     },
   },
