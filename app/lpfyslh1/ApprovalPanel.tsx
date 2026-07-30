@@ -505,7 +505,7 @@ export function ApprovalPanel({
                       ? "border-black bg-black text-[9px] tracking-tight text-white"
                       : active
                         ? "border-black bg-black text-sm text-white"
-                        : "border-black/15 bg-white text-sm text-black/50 hover:border-[#7c4fd1] hover:text-black"
+                        : "border-black/15 bg-white text-sm text-black/50 hover:border-transparent hover:bg-gradient-to-r hover:from-[#2f5aa8] hover:via-[#5b6fc7] hover:to-[#7c4fd1] hover:text-white"
                   }`}
                 >
                   {d.badge ?? d.day}
