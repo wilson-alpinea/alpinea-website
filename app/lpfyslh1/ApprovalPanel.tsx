@@ -771,7 +771,10 @@ export function ApprovalPanel({
           </p>
         </div>
 
-        <div className="flex flex-wrap items-start justify-center gap-x-5 gap-y-5 px-6 pt-7 sm:gap-x-7 sm:px-10">
+        <p className="px-6 pt-6 text-[10px] font-bold uppercase tracking-[0.2em] text-black/35 sm:px-10">
+          Opção A
+        </p>
+        <div className="flex flex-wrap items-start justify-center gap-x-5 gap-y-5 px-6 pt-3 sm:gap-x-7 sm:px-10">
           {DAYS.map((d, index) => {
             const active = index === activeDay;
             return (
@@ -818,37 +821,61 @@ export function ApprovalPanel({
           })}
         </div>
 
-        <div className="space-y-4 border-b border-black/10 px-6 py-6 sm:px-10">
-          <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 sm:gap-x-6">
-            <span className="mr-1 rounded-full border border-black/15 bg-white px-3 py-1 text-[10px] font-bold uppercase tracking-[0.2em] text-black/50">
-              Opção A
-            </span>
-            {[5, 6].map((n) => (
-              <div key={n} className="flex flex-col items-center gap-1.5">
-                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border-2 border-black/15 bg-white text-xs font-bold text-black/50">
-                  {n}
+        <p className="px-6 pt-6 text-[10px] font-bold uppercase tracking-[0.2em] text-black/35 sm:px-10">
+          Opção B
+        </p>
+        <div className="flex flex-wrap items-start justify-center gap-x-5 gap-y-5 border-b border-black/10 px-6 pb-6 pt-3 sm:gap-x-7 sm:px-10">
+          {DAYS.map((d) => {
+            const isAlt = d.day === 5 || d.day === 6;
+
+            if (!isAlt) {
+              return (
+                <div
+                  key={d.day}
+                  aria-hidden="true"
+                  className="flex flex-col items-center gap-2.5 opacity-0"
+                >
+                  <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full border-2 text-sm font-bold">
+                    {d.badge ?? d.day}
+                  </span>
+                  <span className="text-[10px] uppercase tracking-[0.25em]">
+                    {d.city}
+                  </span>
+                  {d.date && (
+                    <span className="flex flex-col items-center leading-tight tracking-[0.1em]">
+                      <span className="text-sm font-semibold">
+                        {d.date.split(" ")[0]}
+                      </span>
+                      <span className="text-xs uppercase">
+                        {d.date.split(" ")[1]}
+                      </span>
+                    </span>
+                  )}
+                </div>
+              );
+            }
+
+            return (
+              <div key={d.day} className="flex flex-col items-center gap-2.5">
+                <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full border-2 border-[#C9A03A]/50 bg-[#fdf6e3] text-sm font-bold text-[#8a6d1a]">
+                  {d.day}
                 </span>
-                <span className="text-[9px] uppercase tracking-[0.2em] text-black/40">
-                  Kyoto
-                </span>
-              </div>
-            ))}
-          </div>
-          <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 sm:gap-x-6">
-            <span className="mr-1 rounded-full border border-black/15 bg-white px-3 py-1 text-[10px] font-bold uppercase tracking-[0.2em] text-black/50">
-              Opção B
-            </span>
-            {[5, 6].map((n) => (
-              <div key={n} className="flex flex-col items-center gap-1.5">
-                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border-2 border-black/15 bg-white text-xs font-bold text-black/50">
-                  {n}
-                </span>
-                <span className="text-[9px] uppercase tracking-[0.2em] text-black/40">
+                <span className="text-[10px] uppercase tracking-[0.25em] text-[#8a6d1a]">
                   Osaka
                 </span>
+                {d.date && (
+                  <span className="flex flex-col items-center leading-tight tracking-[0.1em] text-[#8a6d1a]/60">
+                    <span className="text-sm font-semibold">
+                      {d.date.split(" ")[0]}
+                    </span>
+                    <span className="text-xs uppercase">
+                      {d.date.split(" ")[1]}
+                    </span>
+                  </span>
+                )}
               </div>
-            ))}
-          </div>
+            );
+          })}
         </div>
 
         <div className="px-6 py-8 sm:px-10 sm:py-10">
