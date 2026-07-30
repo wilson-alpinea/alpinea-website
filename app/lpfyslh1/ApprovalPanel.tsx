@@ -283,22 +283,26 @@ const DAY_3: DayContent = {
         title: "Parque de Yoyogi",
         description:
           "Você precisa entrar nele para acessar o Meiji Jingu — trata-se de uma enorme floresta com árvores extremamente altas, erguida do zero em homenagem à morte do imperador Meiji.",
+        rating: 5,
       },
       {
         title: "Shibuya Crossing",
         description:
           "O famoso cruzamento hexagonal de Shibuya, que fica caótico às 18h.",
+        rating: 4,
       },
       {
         title: "Estátua de Hachiko",
         description:
           "Estátua em homenagem ao cão que continuou esperando seu dono voltar para casa sem saber que ele havia falecido — deu origem ao filme \"Pra Sempre ao Seu Lado\".",
+        rating: 3,
       },
       {
         category: "Compras",
         title: "Omotesando",
         description:
           "Uma das maiores avenidas de boutiques e lojas de luxo de Tóquio, com diversos cafés e restaurantes importantes nas ruas ao redor da avenida principal.",
+        rating: 3,
       },
     ],
     gastronomia: {
@@ -323,16 +327,19 @@ const DAY_3: DayContent = {
         title: "Takeshita Street",
         description:
           "Rua caótica que funciona como ponto de encontro da cultura Lolita, Kawaii, Decora e Visual Kei.",
+        rating: 4,
       },
       {
         title: "Daikanyama T-Site",
         description:
           "Projeto arquitetônico para criar uma das livrarias mais bonitas do mundo — a TSUTAYA, que na prática vende poucos livros; a maior parte do espaço é usada como área de leitura, estudo e trabalho.",
+        rating: 3,
       },
       {
         title: "National Stadium",
         description:
           "Principal estádio poliesportivo do Japão, com arquitetura arrojada projetada pelo arquiteto Kengo Kuma — famoso por ser o ponto final da Maratona de Tóquio.",
+        rating: 2,
       },
     ],
     gastronomia: {

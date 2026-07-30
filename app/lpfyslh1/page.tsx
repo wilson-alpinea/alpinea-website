@@ -311,7 +311,7 @@ export default function AprovacaoRoteiroPage() {
 
             <div className="relative mt-5">
               <img
-                src="/images/goku-bw.png"
+                src="/images/goku-flying.png"
                 alt=""
                 aria-hidden="true"
                 className="pointer-events-none absolute bottom-full left-1/2 z-0 h-20 w-20 -translate-x-1/2 translate-y-3 object-contain opacity-80 sm:h-24 sm:w-24"
