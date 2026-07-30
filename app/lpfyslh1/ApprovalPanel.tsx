@@ -157,12 +157,13 @@ export function ApprovalPanel({
 
   return (
     <>
-      <div className="relative overflow-hidden rounded-2xl border border-black/10 bg-white shadow-[0_20px_60px_-30px_rgba(0,0,0,0.25)] sm:rounded-[2rem]">
+      <div className="relative">
         <img
           src="/images/goku.png"
           alt="Goku"
-          className="absolute right-3 top-3 z-10 h-12 w-12 object-contain sm:right-5 sm:top-5 sm:h-16 sm:w-16"
+          className="absolute bottom-full right-6 z-20 h-20 w-20 object-contain sm:right-8 sm:h-24 sm:w-24"
         />
+        <div className="relative overflow-hidden rounded-2xl border border-black/10 bg-white shadow-[0_20px_60px_-30px_rgba(0,0,0,0.25)] sm:rounded-[2rem]">
         <div className="border-b border-black/10 px-6 py-7 text-center sm:px-10">
           <p className="mx-auto mb-5 inline-block rounded-full border border-black/15 px-5 py-2 text-xs uppercase tracking-[0.3em] text-black/65">
             Roteiro de 7 dias
@@ -204,6 +205,7 @@ export function ApprovalPanel({
             period={current.tarde}
             displayClassName={displayClassName}
           />
+        </div>
         </div>
       </div>
 
