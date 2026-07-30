@@ -190,16 +190,19 @@ const DAY_2: DayContent = {
           "Tomica Shop",
           "Rilakkuma Store",
         ],
+        rating: 5,
       },
       {
         title: "Nihonbashi",
         description:
           "Marco zero das estradas e vias de Tóquio. Entre 1600 e 1868 foi o centro comercial do Japão — aqui você encontra prédios e lojas centenárias que funcionam até hoje, como Mitsukoshi (1673), Yamatoyama (1690), Ninben (1699) e Sembikiya (1834).",
+        rating: 3,
       },
       {
         title: "Marunouchi Naka-dori",
         description:
           "Rua arborizada com cafés e restaurantes que alimentam os escritórios financeiros da região.",
+        rating: 2,
       },
     ],
     gastronomia: {
@@ -224,22 +227,26 @@ const DAY_2: DayContent = {
     pois: [
       {
         title: "Área Externa do Palácio Imperial",
+        rating: 3,
       },
       {
         title: "Parque de Hibiya",
         description:
           "Primeiro parque com temática ocidental do Japão — bom para um passeio rápido.",
+        rating: 3,
       },
       {
         category: "Compras",
         title: "Itoya",
         description:
           "Uma das maiores lojas de papelaria do Japão, com 12 andares — de canetas a acessórios.",
+        rating: 3,
       },
       {
         title: "Tsukiji Outer Market",
         description:
           "Antigo mercado de peixes de Tóquio antes da mudança para Toyosu. O mercado em si não existe mais, mas a estrutura de restaurantes e lojas de rua no entorno permanece ativa.",
+        rating: 2,
       },
     ],
     gastronomia: {
