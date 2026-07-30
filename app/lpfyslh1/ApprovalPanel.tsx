@@ -464,7 +464,7 @@ const DAYS: DayContent[] = [
   DAY_4,
   ...Array.from({ length: 3 }, (_, i) => ({
     day: i + 5,
-    city: "Tokyo",
+    city: i < 2 ? "Kyoto" : "Tokyo",
     date: `${String(i + 9).padStart(2, "0")} Mai`,
     manha: genericPeriod(),
     tarde: genericPeriod(),
@@ -825,7 +825,7 @@ export function ApprovalPanel({
           Opção B
         </p>
         <div className="flex flex-wrap items-start justify-center gap-x-5 gap-y-5 border-b border-black/10 px-6 pb-6 pt-3 sm:gap-x-7 sm:px-10">
-          {DAYS.map((d) => {
+          {DAYS.map((d, index) => {
             const isAlt = d.day === 5 || d.day === 6;
 
             if (!isAlt) {
@@ -855,16 +855,37 @@ export function ApprovalPanel({
               );
             }
 
+            const active = index === activeDay;
+
             return (
-              <div key={d.day} className="flex flex-col items-center gap-2.5">
-                <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full border-2 border-[#C9A03A]/50 bg-[#fdf6e3] text-sm font-bold text-[#8a6d1a]">
+              <button
+                key={d.day}
+                type="button"
+                onClick={() => setActiveDay(index)}
+                className="flex flex-col items-center gap-2.5"
+              >
+                <span
+                  className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-full border-2 text-sm font-bold transition ${
+                    active
+                      ? "border-black bg-white text-black hover:border-transparent hover:bg-gradient-to-r hover:from-[#2f5aa8] hover:via-[#5b6fc7] hover:to-[#7c4fd1] hover:text-white"
+                      : "border-[#C9A03A]/50 bg-[#fdf6e3] text-[#8a6d1a] hover:border-transparent hover:bg-gradient-to-r hover:from-[#2f5aa8] hover:via-[#5b6fc7] hover:to-[#7c4fd1] hover:text-white"
+                  }`}
+                >
                   {d.day}
                 </span>
-                <span className="text-[10px] uppercase tracking-[0.25em] text-[#8a6d1a]">
+                <span
+                  className={`text-[10px] uppercase tracking-[0.25em] ${
+                    active ? "text-black" : "text-[#8a6d1a]"
+                  }`}
+                >
                   Osaka
                 </span>
                 {d.date && (
-                  <span className="flex flex-col items-center leading-tight tracking-[0.1em] text-[#8a6d1a]/60">
+                  <span
+                    className={`flex flex-col items-center leading-tight tracking-[0.1em] ${
+                      active ? "text-black/50" : "text-[#8a6d1a]/60"
+                    }`}
+                  >
                     <span className="text-sm font-semibold">
                       {d.date.split(" ")[0]}
                     </span>
@@ -873,7 +894,7 @@ export function ApprovalPanel({
                     </span>
                   </span>
                 )}
-              </div>
+              </button>
             );
           })}
         </div>
