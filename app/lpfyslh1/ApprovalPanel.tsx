@@ -357,11 +357,15 @@ function PeriodBlock({
         </div>
       )}
 
-      <h3
-        className={`${displayClassName} mb-1 text-xl font-medium text-black md:text-2xl`}
-      >
-        {period.atracaoPrincipal}
-      </h3>
+      <p className="mb-2 text-xs text-black/40">Atração Principal</p>
+      <div className="mb-5 flex items-center gap-3 rounded-2xl border-2 border-[#2f5aa8] bg-[#eef3fb] px-4 py-3.5">
+        <h3
+          className={`${displayClassName} text-lg font-medium text-[#2f5aa8] md:text-xl`}
+        >
+          {period.atracaoPrincipal}
+        </h3>
+      </div>
+
       <p className="mb-5 text-xs text-black/40">
         Pontos de interesse propostos para o período
       </p>
