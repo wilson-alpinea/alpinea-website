@@ -264,6 +264,89 @@ const DAY_2: DayContent = {
   },
 };
 
+const DAY_3: DayContent = {
+  day: 3,
+  city: "Tokyo",
+  date: "07 Mai",
+  contexto: [
+    "O superdistrito de Shibuya é um dos bairros mais famosos, principalmente pela Shibuya Crossing e pela impressionante floresta erguida do zero que tem no centro o maior templo Shintoísta do mundo. Nessa região encontraremos Harajuku, o epicentro da cultura Lolita, Kawaii e Jovem do Japão, bem como a luxuosa avenida de Omotesando, com parada obrigatória no topo do edifício Shibuya Sky, que tem uma das maiores escadas rolantes do mundo.",
+  ],
+  manha: {
+    regiao: {
+      nome: "Superdistrito de Shibuya",
+      descricao:
+        "Aqui iremos explorar o superdistrito de Shibuya, que compreende as áreas de Yoyogi, Omotesando e Harajuku.",
+    },
+    atracaoPrincipal: "Meiji Jingu",
+    pois: [
+      {
+        title: "Parque de Yoyogi",
+        description:
+          "Você precisa entrar nele para acessar o Meiji Jingu — trata-se de uma enorme floresta com árvores extremamente altas, erguida do zero em homenagem à morte do imperador Meiji.",
+      },
+      {
+        title: "Shibuya Crossing",
+        description:
+          "O famoso cruzamento hexagonal de Shibuya, que fica caótico às 18h.",
+      },
+      {
+        title: "Estátua de Hachiko",
+        description:
+          "Estátua em homenagem ao cão que continuou esperando seu dono voltar para casa sem saber que ele havia falecido — deu origem ao filme \"Pra Sempre ao Seu Lado\".",
+      },
+      {
+        category: "Compras",
+        title: "Omotesando",
+        description:
+          "Uma das maiores avenidas de boutiques e lojas de luxo de Tóquio, com diversos cafés e restaurantes importantes nas ruas ao redor da avenida principal.",
+      },
+    ],
+    gastronomia: {
+      itens: [
+        {
+          nome: "Kaitenzushi Ginza Onodera",
+          descricao: "Sushi de esteira, considerado por muitos o melhor de Tóquio.",
+        },
+      ],
+    },
+  },
+  tarde: {
+    label: "Tarde/Noite",
+    regiao: {
+      nome: "Superdistrito de Shibuya",
+      descricao:
+        "Mesma região da manhã, agora com foco no lado mais moderno e jovem do bairro: a vista do topo do Shibuya Sky, a efervescência de Harajuku e Daikanyama, e o Estádio Nacional, que ficou mundialmente conhecido nas Olimpíadas de Tóquio 2020.",
+    },
+    atracaoPrincipal: "Shibuya Sky",
+    pois: [
+      {
+        title: "Takeshita Street",
+        description:
+          "Rua caótica que funciona como ponto de encontro da cultura Lolita, Kawaii, Decora e Visual Kei.",
+      },
+      {
+        title: "Daikanyama T-Site",
+        description:
+          "Projeto arquitetônico para criar uma das livrarias mais bonitas do mundo — a TSUTAYA, que na prática vende poucos livros; a maior parte do espaço é usada como área de leitura, estudo e trabalho.",
+      },
+      {
+        title: "National Stadium",
+        description:
+          "Principal estádio poliesportivo do Japão, com arquitetura arrojada projetada pelo arquiteto Kengo Kuma — famoso por ser o ponto final da Maratona de Tóquio.",
+      },
+    ],
+    gastronomia: {
+      subtitulo: "Comidas da Takeshita Street",
+      itens: [
+        { nome: "Crepes japoneses recheados" },
+        { nome: "Algodão-doce gigante" },
+        { nome: "Morangos cobertos com chocolate" },
+        { nome: "Batatas em espiral" },
+      ],
+    },
+  },
+};
+
 const CHEGADA: DayContent = {
   day: 0,
   badge: "DXB-NRT",
@@ -288,10 +371,11 @@ const DAYS: DayContent[] = [
   CHEGADA,
   DAY_1,
   DAY_2,
-  ...Array.from({ length: 5 }, (_, i) => ({
-    day: i + 3,
+  DAY_3,
+  ...Array.from({ length: 4 }, (_, i) => ({
+    day: i + 4,
     city: "Tokyo",
-    date: `${String(i + 7).padStart(2, "0")} Mai`,
+    date: `${String(i + 8).padStart(2, "0")} Mai`,
     manha: genericPeriod(),
     tarde: genericPeriod(),
   })),
