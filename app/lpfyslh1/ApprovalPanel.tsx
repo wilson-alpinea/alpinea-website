@@ -161,7 +161,7 @@ export function ApprovalPanel({
         <img
           src="/images/goku.png"
           alt="Goku"
-          className="absolute bottom-full right-6 z-20 h-20 w-20 object-contain sm:right-8 sm:h-24 sm:w-24"
+          className="absolute bottom-full right-6 z-20 h-24 w-24 object-contain sm:right-8 sm:h-28 sm:w-28"
         />
         <div className="relative overflow-hidden rounded-2xl border border-black/10 bg-white shadow-[0_20px_60px_-30px_rgba(0,0,0,0.25)] sm:rounded-[2rem]">
         <div className="border-b border-black/10 px-6 py-7 text-center sm:px-10">
