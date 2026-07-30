@@ -383,7 +383,7 @@ const DAY_4: DayContent = {
         "Minato é um dos bairros mais diversos de Tóquio, misturando marcos históricos como o Templo Zojo-ji e a Tokyo Tower com empreendimentos modernos como o Azabudai Hills — o mais novo e ousado complexo da cidade, que abriga o teamLab Borderless. À noite, o bairro se transforma no principal polo de vida noturna de Tóquio, com Roppongi concentrando boa parte das baladas e bares da cidade.",
     },
     atracaoPrincipal: "teamLab Borderless (Toranomon)",
-    atracaoPrincipalImagem: "/images/dia4-teamlab-v2.png",
+    atracaoPrincipalImagem: "/images/dia4-teamlab-v3.png",
     pois: [
       {
         title: "Tokyo Tower",
