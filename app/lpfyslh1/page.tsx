@@ -20,25 +20,107 @@ const APPROVAL_KEY = "lpfyslh1";
 // Perfil do viajante — pontuação (0–10) baseada no briefing preenchido pelo
 // cliente na contratação. Usada só como leitura interna da equipe pra
 // orientar a curadoria do roteiro; segue as 6 dimensões padrão de perfil.
+type DimensionIconKind =
+  | "cultura"
+  | "gastronomia"
+  | "natureza"
+  | "entretenimento"
+  | "compras"
+  | "bemestar";
+
 type RadarDimension = {
   lines: string[];
   score: number;
+  icon: DimensionIconKind;
 };
 
 const RADAR_DIMENSIONS: RadarDimension[] = [
-  { lines: ["Cultura &", "História"], score: 9 },
-  { lines: ["Gastronomia"], score: 7 },
-  { lines: ["Natureza &", "Aventura"], score: 2 },
-  { lines: ["Entretenimento"], score: 9 },
-  { lines: ["Compras"], score: 7 },
-  { lines: ["Bem-Estar, Relaxamento", "& Esportes"], score: 1 },
+  { lines: ["Cultura &", "História"], score: 9, icon: "cultura" },
+  { lines: ["Gastronomia"], score: 7, icon: "gastronomia" },
+  { lines: ["Natureza &", "Aventura"], score: 2, icon: "natureza" },
+  { lines: ["Entretenimento"], score: 9, icon: "entretenimento" },
+  { lines: ["Compras"], score: 7, icon: "compras" },
+  {
+    lines: ["Bem-Estar,", "Relaxamento", "& Esportes"],
+    score: 1,
+    icon: "bemestar",
+  },
 ];
 
+// Converte a pontuação de 0–10 do radar pra uma escala de 1–5 estrelas,
+// mesmo padrão visual usado nos Pontos de Interesse do painel abaixo.
+function starsFromScore(score: number) {
+  return Math.max(1, Math.min(5, Math.round(score / 2)));
+}
+
+function DimensionIcon({
+  kind,
+  className,
+}: {
+  kind: DimensionIconKind;
+  className?: string;
+}) {
+  const common = {
+    viewBox: "0 0 24 24",
+    fill: "none",
+    stroke: "currentColor",
+    strokeWidth: 1.8,
+    strokeLinecap: "round" as const,
+    strokeLinejoin: "round" as const,
+    className,
+  };
+  switch (kind) {
+    case "cultura":
+      return (
+        <svg {...common}>
+          <path d="M3 6h18" />
+          <path d="M5 6v14M19 6v14" />
+          <path d="M2 9h20" />
+        </svg>
+      );
+    case "gastronomia":
+      return (
+        <svg {...common}>
+          <path d="M4 12h16a8 8 0 0 1-16 0Z" />
+          <path d="M6 12 5 8" />
+          <path d="M12 12V6" />
+          <path d="m18 12 1-4" />
+        </svg>
+      );
+    case "natureza":
+      return (
+        <svg {...common}>
+          <path d="M3 19 9 7l4 6 3-4 5 10H3Z" />
+        </svg>
+      );
+    case "entretenimento":
+      return (
+        <svg {...common}>
+          <rect x="3" y="5" width="18" height="12" rx="2" />
+          <path d="M8 20h8M12 17v3" />
+        </svg>
+      );
+    case "compras":
+      return (
+        <svg {...common}>
+          <path d="M6 8V6a6 6 0 0 1 12 0v2" />
+          <path d="M4 8h16l-1 12a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2L4 8Z" />
+        </svg>
+      );
+    case "bemestar":
+      return (
+        <svg {...common}>
+          <path d="M12 20s-7-4.35-9.5-8.5C.5 8 2 4 6 4c2 0 3.5 1 6 3.5C14.5 5 16 4 18 4c4 0 5.5 4 3.5 7.5C19 15.65 12 20 12 20Z" />
+        </svg>
+      );
+  }
+}
+
 function RadarChart({ dimensions }: { dimensions: RadarDimension[] }) {
-  const size = 340;
+  const size = 420;
   const cx = size / 2;
-  const cy = size / 2 - 4;
-  const radius = 104;
+  const cy = size / 2;
+  const radius = 88;
   const levels = [0.2, 0.4, 0.6, 0.8, 1];
   const n = dimensions.length;
   const lineHeight = 12;
@@ -56,7 +138,7 @@ function RadarChart({ dimensions }: { dimensions: RadarDimension[] }) {
   return (
     <svg
       viewBox={`0 0 ${size} ${size}`}
-      className="mx-auto block h-auto w-full max-w-[360px]"
+      className="mx-auto block h-auto w-full max-w-[380px]"
     >
       {levels.map((level, li) => (
         <polygon
@@ -99,7 +181,7 @@ function RadarChart({ dimensions }: { dimensions: RadarDimension[] }) {
       ))}
 
       {dimensions.map((d, i) => {
-        const p = point(radius + 24, i);
+        const p = point(radius + 36, i);
         const anchor =
           Math.abs(p.x - cx) < 4 ? "middle" : p.x > cx ? "start" : "end";
         const startY = p.y - ((d.lines.length - 1) * lineHeight) / 2;
@@ -110,7 +192,7 @@ function RadarChart({ dimensions }: { dimensions: RadarDimension[] }) {
             y={startY}
             textAnchor={anchor}
             className="fill-black/50 uppercase"
-            fontSize={10}
+            fontSize={9.5}
             fontWeight={700}
             style={{ letterSpacing: "0.03em" }}
           >
@@ -265,23 +347,32 @@ export default function AprovacaoRoteiroPage() {
               </div>
             </div>
 
-            <div className="mt-6 border-t border-black/10 pt-6">
+            <div className="mt-8">
               <p className="mx-auto mb-4 block w-fit rounded-full border border-black/15 px-5 py-2 text-center text-xs uppercase tracking-[0.3em] text-black/65">
                 Perfil do Viajante
               </p>
               <RadarChart dimensions={RADAR_DIMENSIONS} />
-              <div className="mx-auto mt-2 grid max-w-md grid-cols-2 gap-x-6 gap-y-2 sm:grid-cols-3">
-                {RADAR_DIMENSIONS.map((d, i) => (
-                  <div key={i} className="flex items-center gap-2">
-                    <span className="h-2 w-2 shrink-0 rounded-full bg-[#2f5aa8]" />
-                    <p className="text-xs text-black/55">
-                      <span className="text-black/70">
+              <div className="mx-auto mt-2 grid max-w-lg grid-cols-1 gap-x-6 gap-y-3 sm:grid-cols-2">
+                {RADAR_DIMENSIONS.map((d, i) => {
+                  const stars = starsFromScore(d.score);
+                  return (
+                    <div key={i} className="flex items-center gap-2.5">
+                      <DimensionIcon
+                        kind={d.icon}
+                        className="h-4 w-4 shrink-0 text-[#2f5aa8]"
+                      />
+                      <p className="text-xs text-black/70">
                         {d.lines.join(" ")}
-                      </span>{" "}
-                      <span className="text-black/35">— {d.score}/10</span>
-                    </p>
-                  </div>
-                ))}
+                      </p>
+                      <span className="ml-auto shrink-0 text-xs tracking-tight text-[#2f5aa8]">
+                        {"★".repeat(stars)}
+                        <span className="text-[#2f5aa8]/25">
+                          {"★".repeat(5 - stars)}
+                        </span>
+                      </span>
+                    </div>
+                  );
+                })}
               </div>
             </div>
           </div>

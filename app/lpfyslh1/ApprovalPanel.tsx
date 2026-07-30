@@ -382,7 +382,7 @@ export function ApprovalPanel({
   displayClassName: string;
   approvalKey: string;
 }) {
-  const [activeDay, setActiveDay] = useState(0);
+  const [activeDay, setActiveDay] = useState(1);
   const [showAdjustBox, setShowAdjustBox] = useState(false);
   const [mensagem, setMensagem] = useState("");
   const [status, setStatus] = useState<
