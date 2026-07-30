@@ -10,8 +10,10 @@ import { useState } from "react";
 
 type Poi = {
   category?: string;
+  bairro?: "Sumida" | "Ryogoku";
   title: string;
   description?: string;
+  lista?: string[];
   rating?: number;
 };
 
@@ -35,6 +37,7 @@ type Period = {
 
 type DayContent = {
   day: number;
+  city: string;
   manha: Period;
   tarde: Period;
 };
@@ -48,6 +51,7 @@ function genericPeriod(): Period {
 
 const DAY_1: DayContent = {
   day: 1,
+  city: "Tokyo",
   manha: {
     regiao: {
       nome: "Taito",
@@ -101,16 +105,35 @@ const DAY_1: DayContent = {
     },
     atracaoPrincipal: "Tokyo Sky Tree",
     pois: [
-      { title: "Tokyo Solamachi", description: "Sumida", rating: 5 },
-      { title: "Museu Edo-Tokyo", description: "Ryogoku", rating: 4 },
+      {
+        title: "Tokyo Solamachi",
+        bairro: "Sumida",
+        rating: 5,
+        lista: [
+          "Pokémon Center Skytree Town",
+          "Jump Shop",
+          "STRICT-G (Gundam)",
+          "Donguri Republic (Studio Ghibli)",
+          "Chiikawa Land",
+          "Kirby Cafe Tokyo",
+          "Ultraman World M78",
+        ],
+      },
+      {
+        title: "Museu Edo-Tokyo",
+        bairro: "Ryogoku",
+        description: "Reabertura em 2026 após 4 anos fechado",
+        rating: 4,
+      },
       {
         title: "Estádio Kokugikan + Área Externa Edo Noren",
-        description: "Ryogoku",
+        bairro: "Ryogoku",
         rating: 3,
       },
-      { title: "Museu de Espadas", rating: 3 },
+      { title: "Museu de Espadas", bairro: "Ryogoku", rating: 3 },
       {
         title: "Santuário Nomi-no-Sukune",
+        bairro: "Ryogoku",
         description:
           "Monumento com os nomes de todos os Yokozuna (Título máximo de lutador de Sumô)",
         rating: 2,
@@ -133,42 +156,94 @@ const DAYS: DayContent[] = Array.from({ length: 7 }, (_, i) =>
     ? DAY_1
     : {
         day: i + 1,
+        city: "Tokyo",
         manha: genericPeriod(),
         tarde: genericPeriod(),
       },
 );
 
-function Stars({ rating }: { rating: number }) {
+// Paleta por bairro — Sumida fica no azul padrão dos cards, Ryogoku ganha um
+// roxo próprio (mesma família do lilás já usado no site) só pra deixar
+// visualmente óbvio, num roteiro que mistura os dois bairros na mesma tarde,
+// que são regiões diferentes.
+const BAIRRO_STYLES = {
+  Sumida: {
+    border: "border-[#2f5aa8]",
+    bg: "bg-[#eef3fb]",
+    circle: "bg-[#2f5aa8]",
+    text: "text-[#2f5aa8]",
+    muted: "text-[#2f5aa8]/70",
+    starMuted: "text-[#2f5aa8]/25",
+    badge: "border-[#2f5aa8]/30 bg-[#2f5aa8]/10 text-[#2f5aa8]",
+    chip: "border-[#2f5aa8]/25 bg-white text-[#2f5aa8]",
+  },
+  Ryogoku: {
+    border: "border-[#7c4fd1]",
+    bg: "bg-[#f3eefc]",
+    circle: "bg-[#7c4fd1]",
+    text: "text-[#7c4fd1]",
+    muted: "text-[#7c4fd1]/70",
+    starMuted: "text-[#7c4fd1]/25",
+    badge: "border-[#7c4fd1]/30 bg-[#7c4fd1]/10 text-[#7c4fd1]",
+    chip: "border-[#7c4fd1]/25 bg-white text-[#7c4fd1]",
+  },
+} as const;
+
+function poiStyles(bairro?: Poi["bairro"]) {
+  return BAIRRO_STYLES[bairro ?? "Sumida"];
+}
+
+function Stars({ rating, styles }: { rating: number; styles: ReturnType<typeof poiStyles> }) {
   return (
-    <span className="text-xs tracking-tight text-[#2f5aa8]" aria-label={`${rating} de 5 estrelas`}>
+    <span className={`text-xs tracking-tight ${styles.text}`} aria-label={`${rating} de 5 estrelas`}>
       {"★".repeat(rating)}
-      <span className="text-[#2f5aa8]/25">{"★".repeat(5 - rating)}</span>
+      <span className={styles.starMuted}>{"★".repeat(5 - rating)}</span>
     </span>
   );
 }
 
 function PoiCard({ index, poi }: { index: number; poi: Poi }) {
+  const s = poiStyles(poi.bairro);
   return (
-    <div className="flex gap-3 rounded-2xl border-2 border-[#2f5aa8] bg-[#eef3fb] px-4 py-3.5">
-      <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[#2f5aa8] text-xs font-bold text-white">
+    <div className={`flex gap-3 rounded-2xl border-2 px-4 py-3.5 ${s.border} ${s.bg}`}>
+      <span className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-bold text-white ${s.circle}`}>
         {index + 1}
       </span>
       <div className="min-w-0 flex-1">
         <div className="flex flex-wrap items-center gap-2">
+          {poi.bairro && (
+            <span className={`rounded-full border px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide ${s.badge}`}>
+              {poi.bairro}
+            </span>
+          )}
           {poi.category && (
-            <span className="rounded-full bg-[#2f5aa8]/15 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-[#2f5aa8]">
+            <span className="rounded-full border border-[#caa62c] bg-[#fdf0c8] px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-[#8a6d1a]">
               {poi.category}
             </span>
           )}
-          <span className="text-sm font-semibold text-[#2f5aa8]">
+          <span className={`text-sm font-semibold ${s.text}`}>
             {poi.title}
           </span>
-          {typeof poi.rating === "number" && <Stars rating={poi.rating} />}
+          {typeof poi.rating === "number" && (
+            <Stars rating={poi.rating} styles={s} />
+          )}
         </div>
         {poi.description && (
-          <p className="mt-1 text-xs leading-5 text-[#2f5aa8]/70">
+          <p className={`mt-1 text-xs leading-5 ${s.muted}`}>
             {poi.description}
           </p>
+        )}
+        {poi.lista && (
+          <div className="mt-2 flex flex-wrap gap-1.5">
+            {poi.lista.map((item) => (
+              <span
+                key={item}
+                className={`rounded-md border px-1.5 py-0.5 text-[10px] font-medium ${s.chip}`}
+              >
+                {item}
+              </span>
+            ))}
+          </div>
         )}
       </div>
     </div>
@@ -325,7 +400,7 @@ export function ApprovalPanel({
         <img
           src="/images/goku-bw.png"
           alt="Goku"
-          className="absolute bottom-full right-6 z-20 h-24 w-24 object-contain sm:right-8 sm:h-28 sm:w-28"
+          className="absolute bottom-full right-6 z-20 h-32 w-32 object-contain sm:right-8 sm:h-36 sm:w-36"
         />
         <div className="relative overflow-hidden rounded-2xl border border-black/10 bg-white shadow-[0_20px_60px_-30px_rgba(0,0,0,0.25)] sm:rounded-[2rem]">
         <div className="border-b border-black/10 px-6 py-7 text-center sm:px-10">
@@ -341,21 +416,35 @@ export function ApprovalPanel({
           </p>
         </div>
 
-        <div className="flex gap-2 overflow-x-auto border-b border-black/10 px-6 py-5 sm:px-10 [&::-webkit-scrollbar]:hidden">
-          {DAYS.map((d, index) => (
-            <button
-              key={d.day}
-              type="button"
-              onClick={() => setActiveDay(index)}
-              className={`shrink-0 rounded-lg border px-4 py-2 text-xs font-semibold transition ${
-                index === activeDay
-                  ? "border-black bg-black text-white"
-                  : "border-black/15 text-black/50 hover:border-[#2f5aa8]/50 hover:text-black"
-              }`}
-            >
-              Dia {d.day}
-            </button>
-          ))}
+        <div className="flex flex-wrap items-start justify-center gap-x-5 gap-y-5 border-b border-black/10 px-6 py-7 sm:gap-x-7 sm:px-10">
+          {DAYS.map((d, index) => {
+            const active = index === activeDay;
+            return (
+              <button
+                key={d.day}
+                type="button"
+                onClick={() => setActiveDay(index)}
+                className="flex flex-col items-center gap-2.5"
+              >
+                <span
+                  className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-full border-2 text-sm font-bold transition ${
+                    active
+                      ? "border-black bg-black text-white"
+                      : "border-black/15 bg-white text-black/50 hover:border-[#2f5aa8]/50 hover:text-black"
+                  }`}
+                >
+                  {d.day}
+                </span>
+                <span
+                  className={`text-[10px] uppercase tracking-[0.25em] ${
+                    active ? "text-black" : "text-black/40"
+                  }`}
+                >
+                  {d.city}
+                </span>
+              </button>
+            );
+          })}
         </div>
 
         <div className="space-y-10 px-6 py-8 sm:px-10 sm:py-10">
