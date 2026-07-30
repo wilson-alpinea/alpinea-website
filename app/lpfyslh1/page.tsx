@@ -151,7 +151,7 @@ export default function AprovacaoRoteiroPage() {
         </div>
       </section>
 
-      <section className="px-5 pb-12 pt-24 md:px-16 md:pb-16 md:pt-32">
+      <section className="px-5 pb-12 pt-40 md:px-16 md:pb-16 md:pt-56">
         <div className="mx-auto max-w-4xl">
           <ApprovalPanel
             displayClassName={display.className}
@@ -162,11 +162,12 @@ export default function AprovacaoRoteiroPage() {
 
       <footer className="border-t border-black/10 px-6 py-8 text-center text-xs text-black/40 md:px-16">
         <p>
-          © {new Date().getFullYear()} AJISAIWORK JAPAN AGENCIA DE VIAGENS
+          © {new Date().getFullYear()} AjisaiWork Japan Agência de Viagens
           LTDA — CNPJ 43.544.605/0001-56
         </p>
         <p className="mt-1">
-          Alpinea Agências de Viagens LTDA — CNPJ 66.491.067/0001-84
+          © {new Date().getFullYear()} Alpinea Agências de Viagens LTDA —
+          CNPJ 66.491.067/0001-84
         </p>
         <p className="mt-1.5">Página de aprovação privada, não indexada.</p>
       </footer>
