@@ -354,6 +354,77 @@ const DAY_3: DayContent = {
   },
 };
 
+const DAY_4: DayContent = {
+  day: 4,
+  city: "Tokyo",
+  date: "08 Mai",
+  contexto: [
+    "No dia 4 iremos explorar experiências de entretenimento e visualizar um dos pontos turísticos mais famosos do Japão — a Tokyo Tower. Dentro das experiências de entretenimento temos o teamLab Borderless, o Museu de Arte Moderna Mori e a vida noturna de Roppongi com as baladas.",
+  ],
+  manha: {
+    regiao: {
+      nome: "Minato",
+      descricao:
+        "Minato é um dos bairros mais diversos de Tóquio, misturando marcos históricos como o Templo Zojo-ji e a Tokyo Tower com empreendimentos modernos como o Azabudai Hills — o mais novo e ousado complexo da cidade, que abriga o teamLab Borderless. À noite, o bairro se transforma no principal polo de vida noturna de Tóquio, com Roppongi concentrando boa parte das baladas e bares da cidade.",
+    },
+    atracaoPrincipal: "teamLab Borderless (Toranomon)",
+    pois: [
+      {
+        title: "Tokyo Tower",
+      },
+      {
+        title: "Complexo Comercial Azabudai Hills",
+        description:
+          "Complexo com arquitetura arrojada que abriga restaurantes de elite e a atração principal, o teamLab Borderless.",
+      },
+      {
+        title: "Templo Zojo-ji",
+      },
+      {
+        title: "Odaiba + Rainbow Bridge + Estátua de Gundam",
+      },
+    ],
+    gastronomia: {
+      itens: [
+        {
+          nome: "Barbacoa",
+          descricao: "Famosa churrascaria brasileira, só que no Japão.",
+        },
+      ],
+    },
+  },
+  tarde: {
+    label: "Noite",
+    regiao: {
+      nome: "Minato",
+      descricao:
+        "Mesma região da manhã, agora com foco no lado noturno e cultural do bairro: os museus e jardins do Mori Tower, o Hinokicho Park e a vida noturna badalada de Roppongi.",
+    },
+    atracaoPrincipal: "R3 Club Lounge ou V2 Tokyo (Roppongi)",
+    pois: [
+      {
+        title: "Museu de Arte Moderna Mori",
+      },
+      {
+        title: "Aranha Gigante de Louise Bourgeois",
+        description:
+          "A única no mundo preparada para terremotos — ao lado do Mori Tower e do Mori Garden.",
+      },
+      {
+        title: "Hinokicho Park",
+      },
+    ],
+    gastronomia: {
+      itens: [
+        {
+          nome: "Tonkatsu",
+          descricao: "Sugestão: Butagumi Shokudou ou Imakatsu Roppongi.",
+        },
+      ],
+    },
+  },
+};
+
 const CHEGADA: DayContent = {
   day: 0,
   badge: "DXB-NRT",
@@ -379,10 +450,11 @@ const DAYS: DayContent[] = [
   DAY_1,
   DAY_2,
   DAY_3,
-  ...Array.from({ length: 4 }, (_, i) => ({
-    day: i + 4,
+  DAY_4,
+  ...Array.from({ length: 3 }, (_, i) => ({
+    day: i + 5,
     city: "Tokyo",
-    date: `${String(i + 8).padStart(2, "0")} Mai`,
+    date: `${String(i + 9).padStart(2, "0")} Mai`,
     manha: genericPeriod(),
     tarde: genericPeriod(),
   })),
