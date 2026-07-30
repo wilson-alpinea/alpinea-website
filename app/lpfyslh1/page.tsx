@@ -290,7 +290,7 @@ export default function AprovacaoRoteiroPage() {
                   Duração
                 </p>
                 <p className="mt-1 text-sm font-semibold text-black">
-                  9 Dias · 8 Noites
+                  7 Dias
                 </p>
               </div>
             </div>
