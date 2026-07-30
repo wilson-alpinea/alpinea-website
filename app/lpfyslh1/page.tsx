@@ -95,60 +95,63 @@ export default function AprovacaoRoteiroPage() {
               </div>
             </div>
 
-            <div className="mt-6 flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
-              <div className="flex items-center gap-3">
-                <img
-                  src="/images/emirates-logo.png"
-                  alt="Emirates"
-                  className="h-11 w-auto rounded-md object-contain"
-                />
-                <div>
-                  <p className="text-[11px] uppercase tracking-[0.2em] text-black/40">
-                    Companhia Aérea
-                  </p>
-                  <p className="text-sm font-semibold text-black">Emirates</p>
-                </div>
+            <div className="mt-6 flex items-center gap-3">
+              <img
+                src="/images/emirates-logo.png"
+                alt="Emirates"
+                className="h-16 w-auto rounded-md object-contain sm:h-20"
+              />
+              <div>
+                <p className="text-[11px] uppercase tracking-[0.2em] text-black/40">
+                  Companhia Aérea
+                </p>
+                <p className="text-sm font-semibold text-black">Emirates</p>
               </div>
-              <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-                <div>
-                  <p className="text-[11px] uppercase tracking-[0.2em] text-black/40">
-                    Aeroporto de Partida
+            </div>
+
+            <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <div className="rounded-xl border border-black/10 p-4">
+                <p className="mb-2 text-[11px] font-bold uppercase tracking-[0.2em] text-black/40">
+                  Ida · 03–04 Mai 2027
+                </p>
+                <div className="space-y-1.5 text-sm text-black/70">
+                  <p>
+                    <span className="font-semibold text-black">EK262</span>{" "}
+                    · GRU → DXB · 01:35 → 23:00
                   </p>
-                  <p className="mt-1 text-sm font-semibold text-black/50">
-                    A definir
-                  </p>
-                </div>
-                <div>
-                  <p className="text-[11px] uppercase tracking-[0.2em] text-black/40">
-                    Aeroporto de Chegada
-                  </p>
-                  <p className="mt-1 text-sm font-semibold text-black/50">
-                    A definir
-                  </p>
-                </div>
-                <div>
-                  <p className="text-[11px] uppercase tracking-[0.2em] text-black/40">
-                    Voo de Ida
-                  </p>
-                  <p className="mt-1 text-sm font-semibold text-black/50">
-                    A definir
+                  <p>
+                    <span className="font-semibold text-black">EK318</span>{" "}
+                    · DXB → NRT · 23:40 → 17:35
                   </p>
                 </div>
-                <div>
-                  <p className="text-[11px] uppercase tracking-[0.2em] text-black/40">
-                    Voo de Volta
+                <p className="mt-2 text-xs text-black/40">
+                  Chegada em Tokyo pelo Aeroporto de Narita (NRT), Terminal 2
+                </p>
+              </div>
+              <div className="rounded-xl border border-black/10 p-4">
+                <p className="mb-2 text-[11px] font-bold uppercase tracking-[0.2em] text-black/40">
+                  Volta · 12 Mai 2027
+                </p>
+                <div className="space-y-1.5 text-sm text-black/70">
+                  <p>
+                    <span className="font-semibold text-black">EK313</span>{" "}
+                    · HND → DXB · 00:05 → 06:25
                   </p>
-                  <p className="mt-1 text-sm font-semibold text-black/50">
-                    A definir
+                  <p>
+                    <span className="font-semibold text-black">EK261</span>{" "}
+                    · DXB → GRU · 06:05 → 17:40
                   </p>
                 </div>
+                <p className="mt-2 text-xs text-black/40">
+                  Saída de Tokyo pelo Aeroporto de Haneda (HND), Terminal 3
+                </p>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      <section className="px-5 pb-12 pt-16 md:px-16 md:pb-16 md:pt-24">
+      <section className="px-5 pb-12 pt-24 md:px-16 md:pb-16 md:pt-32">
         <div className="mx-auto max-w-4xl">
           <ApprovalPanel
             displayClassName={display.className}
