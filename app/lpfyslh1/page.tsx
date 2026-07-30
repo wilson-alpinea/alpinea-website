@@ -57,14 +57,98 @@ export default function AprovacaoRoteiroPage() {
           </h1>
           <p className="mx-auto mt-5 text-sm leading-7 text-black/55 md:text-base">
             Revise abaixo a estrutura do seu roteiro de 7 dias. Ao aprovar,
-            iniciamos a elaboração do seu painel digital personalizado, com
-            todos os detalhes de horários, deslocamentos, hospedagem e
-            recomendações.
+            iniciamos a elaboração do seu painel digital personalizado.
           </p>
         </div>
       </section>
 
-      <section className="px-5 py-12 md:px-16 md:py-16">
+      <section className="px-5 pb-4 md:px-16">
+        <div className="mx-auto max-w-4xl">
+          <div className="rounded-2xl border border-black/10 bg-white p-6 shadow-[0_20px_60px_-30px_rgba(0,0,0,0.25)] sm:rounded-[2rem] sm:p-8">
+            <p className="mb-5 text-xs font-bold uppercase tracking-[0.25em] text-black/40">
+              Dados do Cliente
+            </p>
+            <div className="grid grid-cols-1 gap-5 border-b border-black/10 pb-6 sm:grid-cols-3">
+              <div>
+                <p className="text-[11px] uppercase tracking-[0.2em] text-black/40">
+                  Data da Contratação
+                </p>
+                <p className="mt-1 text-sm font-semibold text-black">
+                  28 de Julho de 2026
+                </p>
+              </div>
+              <div>
+                <p className="text-[11px] uppercase tracking-[0.2em] text-black/40">
+                  Cliente
+                </p>
+                <p className="mt-1 text-sm font-semibold text-black">
+                  Rafael Serafim Sousa
+                </p>
+              </div>
+              <div>
+                <p className="text-[11px] uppercase tracking-[0.2em] text-black/40">
+                  Duração
+                </p>
+                <p className="mt-1 text-sm font-semibold text-black">
+                  7 Dias
+                </p>
+              </div>
+            </div>
+
+            <div className="mt-6 flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex items-center gap-3">
+                <img
+                  src="/images/emirates-logo.png"
+                  alt="Emirates"
+                  className="h-11 w-auto rounded-md object-contain"
+                />
+                <div>
+                  <p className="text-[11px] uppercase tracking-[0.2em] text-black/40">
+                    Companhia Aérea
+                  </p>
+                  <p className="text-sm font-semibold text-black">Emirates</p>
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+                <div>
+                  <p className="text-[11px] uppercase tracking-[0.2em] text-black/40">
+                    Aeroporto de Partida
+                  </p>
+                  <p className="mt-1 text-sm font-semibold text-black/50">
+                    A definir
+                  </p>
+                </div>
+                <div>
+                  <p className="text-[11px] uppercase tracking-[0.2em] text-black/40">
+                    Aeroporto de Chegada
+                  </p>
+                  <p className="mt-1 text-sm font-semibold text-black/50">
+                    A definir
+                  </p>
+                </div>
+                <div>
+                  <p className="text-[11px] uppercase tracking-[0.2em] text-black/40">
+                    Voo de Ida
+                  </p>
+                  <p className="mt-1 text-sm font-semibold text-black/50">
+                    A definir
+                  </p>
+                </div>
+                <div>
+                  <p className="text-[11px] uppercase tracking-[0.2em] text-black/40">
+                    Voo de Volta
+                  </p>
+                  <p className="mt-1 text-sm font-semibold text-black/50">
+                    A definir
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="px-5 pb-12 pt-16 md:px-16 md:pb-16 md:pt-24">
         <div className="mx-auto max-w-4xl">
           <ApprovalPanel
             displayClassName={display.className}

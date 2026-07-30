@@ -505,7 +505,7 @@ export function ApprovalPanel({
             type="button"
             disabled={status === "submitting"}
             onClick={() => sendResponse("aprovado")}
-            className="rounded-full bg-gradient-to-r from-[#E94332] via-[#D96A2E] to-[#C9A03A] px-7 py-3.5 text-xs font-bold uppercase tracking-[0.2em] text-white transition hover:opacity-90 disabled:opacity-50"
+            className="rounded-full bg-gradient-to-r from-[#2f5aa8] via-[#5b6fc7] to-[#7c4fd1] px-7 py-3.5 text-xs font-bold uppercase tracking-[0.2em] text-white transition hover:opacity-90 disabled:opacity-50"
           >
             {status === "submitting" ? "Enviando..." : "Aprovar Roteiro"}
           </button>
