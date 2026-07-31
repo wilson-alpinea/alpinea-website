@@ -468,7 +468,7 @@ const DAY_5: DayContent = {
   tarde: {
     label: "Tarde/Noite",
     atracaoPrincipal: "Distrito de Gion",
-    atracaoPrincipalImagem: "/images/dia5-gion.png",
+    atracaoPrincipalImagem: "/images/dia5-gion-v2.png",
     pois: [{ title: "Yasaka Tower" }, { title: "Pontocho" }],
   },
 };
