@@ -761,10 +761,16 @@ const OSAKA_DAY_5: DayContent = {
       descricao:
         "O parque vende centenas de itens exclusivos — canecas, baldes de pipoca e acessórios temáticos que não são encontrados em nenhuma loja fora da Universal Studios Japan. Boa parte é produzida em lotes limitados e sai de linha permanentemente assim que o estoque acaba, sem republicação.",
       itens: [
-        { nome: "Caneca Donkey Kong" },
-        { nome: "Balde de Pipoca Mario Kart" },
-        { nome: "Balde de Pipoca Superstar" },
-        { nome: "Caneca Yoshi" },
+        { nome: "Caneca Donkey Kong", imagem: "/images/usj-dk-mug.png" },
+        {
+          nome: "Balde de Pipoca Mario Kart",
+          imagem: "/images/usj-mariokart-popcorn.jpg",
+        },
+        {
+          nome: "Balde de Pipoca Superstar",
+          imagem: "/images/usj-superstar-popcorn.png",
+        },
+        { nome: "Caneca Yoshi", imagem: "/images/usj-yoshi-mug.jpg" },
       ],
     },
   },
