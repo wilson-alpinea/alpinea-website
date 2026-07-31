@@ -230,7 +230,7 @@ export default function AprovacaoRoteiroPage() {
         <img
           src="/images/logo-alpinea-v5.png"
           alt="Alpinea — Empresa do Grupo Ajisai"
-          className="h-[51px] w-auto object-contain md:h-16"
+          className="h-8 w-auto object-contain md:h-9"
         />
         <span className="rounded-full border border-black/15 px-4 py-1.5 text-[11px] uppercase tracking-[0.2em] text-black/50">
           Draft para aprovação

@@ -545,6 +545,12 @@ const DAY_7: DayContent = {
       },
     ],
   },
+  tarde: {
+    label: "Tarde/Noite",
+    atracaoPrincipal: "Izakaya em Kanda (酒場なごみ堂)",
+    atracaoPrincipalImagem: "/images/dia7-izakaya-kanda.png",
+    pois: [],
+  },
 };
 
 const OSAKA_DAY_5: DayContent = {
