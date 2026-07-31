@@ -122,6 +122,7 @@ const DAY_1: DayContent = {
       {
         title: "Tokyo Solamachi",
         bairro: "Sumida",
+        description: "Shopping aos pés da Skytree, com lojas de franquias japonesas.",
         rating: 5,
         lista: [
           "Pokémon Center Skytree Town",
@@ -142,9 +143,15 @@ const DAY_1: DayContent = {
       {
         title: "Estádio Kokugikan + Área Externa Edo Noren",
         bairro: "Ryogoku",
+        description: "Arena de sumô e vila gastronômica temática.",
         rating: 3,
       },
-      { title: "Museu de Espadas", bairro: "Ryogoku", rating: 3 },
+      {
+        title: "Museu de Espadas",
+        bairro: "Ryogoku",
+        description: "Coleção de espadas samurai tradicionais.",
+        rating: 3,
+      },
       {
         title: "Santuário Nomi-no-Sukune",
         bairro: "Ryogoku",
@@ -240,6 +247,7 @@ const DAY_2: DayContent = {
       },
       {
         title: "Área Externa do Palácio Imperial",
+        description: "Jardins e muralhas onde vive o imperador.",
         rating: 3,
       },
       {
@@ -387,6 +395,7 @@ const DAY_4: DayContent = {
     pois: [
       {
         title: "Tokyo Tower",
+        description: "Torre de comunicação símbolo de Tóquio.",
         rating: 4,
       },
       {
@@ -397,10 +406,12 @@ const DAY_4: DayContent = {
       },
       {
         title: "Templo Zojo-ji",
+        description: "Templo budista histórico aos pés da Tokyo Tower.",
         rating: 3,
       },
       {
         title: "Odaiba + Rainbow Bridge + Estátua de Gundam",
+        description: "Ilha artificial com vista, ponte iluminada e estátua do Gundam.",
         rating: 3,
       },
     ],
@@ -425,6 +436,7 @@ const DAY_4: DayContent = {
     pois: [
       {
         title: "Museu de Arte Moderna Mori",
+        description: "Museu de arte contemporânea no topo do Mori Tower.",
         rating: 4,
       },
       {
@@ -435,10 +447,12 @@ const DAY_4: DayContent = {
       },
       {
         title: "Mori Garden",
+        description: "Jardim japonês tradicional aos pés do Mori Tower.",
         rating: 3,
       },
       {
         title: "Hinokicho Park",
+        description: "Parque tranquilo no coração de Roppongi.",
         rating: 2,
       },
     ],
@@ -529,10 +543,30 @@ const DAY_6: DayContent = {
     atracaoPrincipal: "Kinkaku-ji",
     atracaoPrincipalImagem: "/images/dia6-kinkakuji.png",
     pois: [
-      { title: "Museu do Mangá de Kyoto" },
+      {
+        title: "Museu do Mangá de Kyoto",
+        description: "Acervo com milhares de títulos de mangá.",
+        rating: 3,
+      },
       {
         title: "Nintendo Store Kyoto",
         description: "A Nintendo fica localizada em Kyoto.",
+        rating: 3,
+      },
+      {
+        title: "Ryoan-ji",
+        description: "Templo zen famoso pelo jardim de pedras.",
+        rating: 4,
+      },
+      {
+        title: "Ninna-ji",
+        description: "Templo histórico com belas cerejeiras.",
+        rating: 2,
+      },
+      {
+        title: "Café % Arabica Kyoto",
+        description: "Cafeteria minimalista muito concorrida.",
+        rating: 2,
       },
     ],
   },
@@ -558,37 +592,44 @@ const DAY_7: DayContent = {
         category: "Compras",
         title: "Animate",
         description: "Uma das maiores redes de lojas de mangá do Japão.",
+        rating: 4,
       },
       {
         category: "Compras",
         title: "Super Potato",
         description:
           "Loja retrô de videogames — nas proximidades também fica a Suruga-ya Anime & Hobby Store, com videogames e itens de anime.",
+        rating: 4,
       },
       {
         category: "Compras",
         title: "Mandarake Complex",
         description: "Mangá e action figures.",
+        rating: 4,
       },
       {
         category: "Compras",
         title: "Akihabara Radio Kaikan",
         description: "Action figures e um shopping com um pouco de tudo.",
+        rating: 3,
       },
       {
         category: "Compras",
         title: "Ark",
         description: "Peças de computador.",
+        rating: 3,
       },
       {
         category: "Compras",
         title: "Hareruya 2",
         description: "Pokémon Trading Card Game.",
+        rating: 3,
       },
       {
         category: "Compras",
         title: "BIC Camera ou Yodobashi Camera",
         description: "Grandes lojas de eletrônicos.",
+        rating: 3,
       },
     ],
   },
@@ -1256,12 +1297,13 @@ export function ApprovalPanel({
         </p>
         <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-5 px-6 pt-3 sm:gap-x-7 sm:px-10">
           {[1, 2, 3, 4].map((n) => (
-            <span
+            <button
               key={n}
-              className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full border-2 border-black/15 bg-white text-sm font-bold text-black/50"
+              type="button"
+              className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full border-2 border-black/15 bg-white text-sm font-bold text-black/50 transition hover:border-transparent hover:bg-gradient-to-r hover:from-[#2f5aa8] hover:via-[#5b6fc7] hover:to-[#7c4fd1] hover:text-white"
             >
               {n}
-            </span>
+            </button>
           ))}
         </div>
 
@@ -1272,9 +1314,9 @@ export function ApprovalPanel({
           {INFO_CARDS.map(({ label, Icon }) => (
             <div
               key={label}
-              className="flex min-h-[112px] flex-col items-center justify-center gap-2.5 rounded-xl border border-black/10 bg-black/[0.02] px-3 py-4 text-center text-xs leading-5 text-black/55"
+              className="group flex min-h-[112px] cursor-pointer flex-col items-center justify-center gap-2.5 rounded-xl border border-black/10 bg-black/[0.02] px-3 py-4 text-center text-xs leading-5 text-black/55 transition duration-300 ease-out hover:-translate-y-0.5 hover:border-[#2f5aa8]/30 hover:bg-[#eef3fb] hover:text-[#2f5aa8] hover:shadow-[0_10px_30px_-15px_rgba(47,90,168,0.35)]"
             >
-              <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[#eef3fb] text-[#2f5aa8]">
+              <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[#eef3fb] text-[#2f5aa8] transition group-hover:bg-white">
                 <Icon className="h-4 w-4" />
               </span>
               {label}
