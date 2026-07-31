@@ -548,7 +548,7 @@ const DAY_7: DayContent = {
   tarde: {
     label: "Tarde/Noite",
     atracaoPrincipal: "Izakaya em Kanda (酒場なごみ堂)",
-    atracaoPrincipalImagem: "/images/dia7-izakaya-kanda.png",
+    atracaoPrincipalImagem: "/images/dia7-izakaya-kanda-v2.png",
     pois: [],
   },
 };
