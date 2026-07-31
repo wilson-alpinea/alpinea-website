@@ -37,6 +37,12 @@ type Period = {
   gastronomia?: Gastronomia;
 };
 
+type TransporteSugerido = {
+  linha: string;
+  tempo: string;
+  recomendacao: string;
+};
+
 type DayContent = {
   day: number;
   badge?: string;
@@ -47,6 +53,7 @@ type DayContent = {
   travelNote?: string;
   manha?: Period;
   tarde?: Period;
+  transporte?: TransporteSugerido;
 };
 
 function genericPeriod(): Period {
@@ -173,9 +180,9 @@ const DAY_1: DayContent = {
 };
 
 const DAY_2: DayContent = {
-  day: 2,
+  day: 4,
   city: "Tokyo",
-  date: "06 Mai",
+  date: "08 Mai",
   contexto: [
     "Neste dia iremos visitar o lado mais comercial do Japão e o centro financeiro. Começamos o passeio com uma visita a Tokyo Station para que você possa ir diretamente à Dragonball Store, que fica dentro do complexo da estação, na mesma área onde existem lojas das principais franquias de anime.",
     "Depois passamos rapidamente pela região de Otemachi, onde fica a sede das maiores empresas japonesas, para ver um pouco do lado moderno do Japão. Perto dali se encontram dois pontos históricos importantes: o marco zero (Nihonbashi) e o Palácio Imperial, onde mora o imperador do Japão.",
@@ -283,6 +290,13 @@ const DAY_2: DayContent = {
       ],
     },
   },
+  transporte: {
+    linha: "Shinkansen Tokyo–Kyoto",
+    tempo:
+      "Hikari: ~2h40 (incluso no JR Pass) · Nozomi: ~2h20 (mais rápido, à parte do JR Pass)",
+    recomendacao:
+      "Recomendamos fortemente que a viagem para Kyoto seja feita neste dia, porque os pontos turísticos que iremos visitar são melhores logo no começo da manhã — depois sofrem com superlotação.",
+  },
 };
 
 const DAY_3: DayContent = {
@@ -378,11 +392,11 @@ const DAY_3: DayContent = {
 };
 
 const DAY_4: DayContent = {
-  day: 4,
+  day: 2,
   city: "Tokyo",
-  date: "08 Mai",
+  date: "06 Mai",
   contexto: [
-    "No dia 4 iremos explorar experiências de entretenimento e visualizar um dos pontos turísticos mais famosos do Japão — a Tokyo Tower. Dentro das experiências de entretenimento temos o teamLab Borderless, o Museu de Arte Moderna Mori e a vida noturna de Roppongi com as baladas.",
+    "Neste dia iremos explorar experiências de entretenimento e visualizar um dos pontos turísticos mais famosos do Japão — a Tokyo Tower. Dentro das experiências de entretenimento temos o teamLab Borderless, o Museu de Arte Moderna Mori e a vida noturna de Roppongi com as baladas.",
   ],
   manha: {
     regiao: {
@@ -585,6 +599,16 @@ const DAY_6: DayContent = {
         rating: 2,
       },
     ],
+    gastronomia: {
+      itens: [{ nome: "Unagi-don", descricao: "Enguia grelhada sobre arroz." }],
+    },
+  },
+  transporte: {
+    linha: "Shinkansen Kyoto–Tokyo",
+    tempo:
+      "Hikari: ~2h40 (incluso no JR Pass) · Nozomi: ~2h20 (mais rápido, à parte do JR Pass)",
+    recomendacao:
+      "Não existe necessidade de chegar muito cedo em Tokyo para o dia 7 — você pode pegar o trem tanto no final deste dia quanto bem cedo pela manhã, já de volta para Tokyo.",
   },
 };
 
@@ -686,7 +710,38 @@ const OSAKA_DAY_5: DayContent = {
     },
     atracaoPrincipal: "Universal Studios Japan & Super Nintendo World",
     atracaoPrincipalImagem: "/images/osaka5-nintendoworld-v2.jpg",
-    pois: [],
+    pois: [
+      {
+        title: "Mario Kart: Koopa's Challenge",
+        description: "Corrida com realidade aumentada — a atração mais concorrida do parque.",
+        rating: 5,
+      },
+      {
+        title: "Harry Potter and the Forbidden Journey",
+        description: "Simulador imersivo dentro do castelo de Hogwarts.",
+        rating: 5,
+      },
+      {
+        title: "The Flying Dinosaur",
+        description: "Montanha-russa invertida, uma das mais radicais do mundo.",
+        rating: 5,
+      },
+      {
+        title: "Hollywood Dream: The Ride",
+        description: "Montanha-russa com trilha sonora escolhida pelo passageiro.",
+        rating: 4,
+      },
+      {
+        title: "Jurassic Park - The Ride",
+        description: "Passeio aquático com dinossauros animatrônicos e queda final.",
+        rating: 4,
+      },
+      {
+        title: "Minion Park (Despicable Me Minion Mayhem)",
+        description: "Simulador 3D e área temática ideal para famílias.",
+        rating: 4,
+      },
+    ],
     gastronomia: {
       subtitulo: "Food carts espalhados pelo parque",
       itens: [
@@ -733,6 +788,13 @@ const OSAKA_DAY_6: DayContent = {
       itens: [{ nome: "Takoyaki" }, { nome: "Wagyu" }],
     },
   },
+  transporte: {
+    linha: "Shinkansen Shin-Osaka–Tokyo",
+    tempo:
+      "Hikari: ~3h (incluso no JR Pass) · Nozomi: ~2h30 (mais rápido, à parte do JR Pass)",
+    recomendacao:
+      "Não existe necessidade de chegar muito cedo em Tokyo para o dia 7 — você pode pegar o trem tanto no final deste dia quanto bem cedo pela manhã, já de volta para Tokyo.",
+  },
 };
 
 const OSAKA_ALT: Record<number, DayContent> = {
@@ -763,9 +825,9 @@ const PARTIDA: DayContent = {
 const DAYS: DayContent[] = [
   CHEGADA,
   DAY_1,
-  DAY_2,
-  DAY_3,
   DAY_4,
+  DAY_3,
+  DAY_2,
   DAY_5,
   DAY_6,
   DAY_7,
@@ -901,6 +963,30 @@ function GastronomiaBlock({ gastronomia }: { gastronomia: Gastronomia }) {
       <p className="mt-3 border-t border-black/10 pt-3 text-xs leading-5 text-black/45">
         Mapeamento de opções de restaurantes nos arredores da atração
         principal
+      </p>
+    </div>
+  );
+}
+
+function TransporteBlock({
+  transporte,
+}: {
+  transporte: TransporteSugerido;
+}) {
+  return (
+    <div className="mt-10 rounded-2xl border-2 border-[#2f5aa8]/30 bg-[#eef3fb] p-5 sm:p-6">
+      <div className="mb-3 flex items-center gap-2.5">
+        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#2f5aa8] text-white">
+          <IconShinkansen className="h-4 w-4" />
+        </span>
+        <p className="text-xs font-bold uppercase tracking-[0.25em] text-[#2f5aa8]">
+          Sugestão de Transporte
+        </p>
+      </div>
+      <p className="text-lg font-semibold text-black">{transporte.linha}</p>
+      <p className="mt-1 text-sm text-black/60">{transporte.tempo}</p>
+      <p className="mt-3 text-sm leading-6 text-black/70">
+        {transporte.recomendacao}
       </p>
     </div>
   );
@@ -1404,6 +1490,9 @@ export function ApprovalPanel({
                   />
                 )}
               </div>
+              {current.transporte && (
+                <TransporteBlock transporte={current.transporte} />
+              )}
             </>
           )}
         </div>
