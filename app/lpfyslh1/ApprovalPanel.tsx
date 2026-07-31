@@ -479,7 +479,7 @@ const DAY_6: DayContent = {
   date: "10 Mai",
   manha: {
     atracaoPrincipal: "Fushimi-Inari Taisha",
-    atracaoPrincipalImagem: "/images/dia6-fushimiinari-v2.png",
+    atracaoPrincipalImagem: "/images/dia6-fushimiinari-v3.png",
     pois: [],
   },
   tarde: {
