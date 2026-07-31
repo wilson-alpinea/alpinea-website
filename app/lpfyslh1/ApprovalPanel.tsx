@@ -687,6 +687,15 @@ const OSAKA_DAY_5: DayContent = {
     atracaoPrincipal: "Universal Studios Japan & Super Nintendo World",
     atracaoPrincipalImagem: "/images/osaka5-nintendoworld-v2.jpg",
     pois: [],
+    gastronomia: {
+      subtitulo: "Food carts espalhados pelo parque",
+      itens: [
+        { nome: "Shark Bun", descricao: "Amity Village." },
+        { nome: "Turkey Leg Bun" },
+        { nome: "Churros temáticos", descricao: "Hogwarts, Minions e outros." },
+        { nome: "Caramel Popcorn Churritos" },
+      ],
+    },
   },
 };
 
