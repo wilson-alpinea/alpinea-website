@@ -479,7 +479,7 @@ const DAY_6: DayContent = {
   date: "10 Mai",
   manha: {
     atracaoPrincipal: "Fushimi-Inari Taisha",
-    atracaoPrincipalImagem: "/images/dia6-fushimiinari.png",
+    atracaoPrincipalImagem: "/images/dia6-fushimiinari-v2.png",
     pois: [],
   },
   tarde: {
@@ -559,7 +559,7 @@ const OSAKA_DAY_5: DayContent = {
   date: "09 Mai",
   manha: {
     atracaoPrincipal: "Universal Studios Japan & Super Nintendo World",
-    atracaoPrincipalImagem: "/images/osaka5-nintendoworld.png",
+    atracaoPrincipalImagem: "/images/osaka5-nintendoworld-v2.jpg",
     pois: [],
   },
 };
