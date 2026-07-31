@@ -27,6 +27,11 @@ type Regiao = {
   descricao: string;
 };
 
+type ComprasExclusivas = {
+  descricao: string;
+  itens: { nome: string; imagem?: string }[];
+};
+
 type Period = {
   label?: string;
   regiao?: Regiao;
@@ -35,6 +40,7 @@ type Period = {
   atracaoPrincipalFoco?: "top" | "center" | "bottom";
   pois: Poi[];
   gastronomia?: Gastronomia;
+  comprasExclusivas?: ComprasExclusivas;
 };
 
 type TransporteSugerido = {
@@ -751,6 +757,16 @@ const OSAKA_DAY_5: DayContent = {
         { nome: "Caramel Popcorn Churritos" },
       ],
     },
+    comprasExclusivas: {
+      descricao:
+        "O parque vende centenas de itens exclusivos — canecas, baldes de pipoca e acessórios temáticos que não são encontrados em nenhuma loja fora da Universal Studios Japan. Boa parte é produzida em lotes limitados e sai de linha permanentemente assim que o estoque acaba, sem republicação.",
+      itens: [
+        { nome: "Caneca Donkey Kong" },
+        { nome: "Balde de Pipoca Mario Kart" },
+        { nome: "Balde de Pipoca Superstar" },
+        { nome: "Caneca Yoshi" },
+      ],
+    },
   },
 };
 
@@ -968,6 +984,46 @@ function GastronomiaBlock({ gastronomia }: { gastronomia: Gastronomia }) {
   );
 }
 
+function ComprasExclusivasBlock({
+  compras,
+}: {
+  compras: ComprasExclusivas;
+}) {
+  return (
+    <div className="mt-6 rounded-2xl border border-black/10 bg-black/[0.02] p-4">
+      <p className="text-xs font-bold uppercase tracking-[0.2em] text-black/45">
+        Compras Exclusivas
+      </p>
+      <p className="mt-2 text-sm leading-6 text-black/60">
+        {compras.descricao}
+      </p>
+      <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
+        {compras.itens.map((item) => (
+          <div
+            key={item.nome}
+            className="overflow-hidden rounded-xl border border-black/10 bg-white"
+          >
+            {item.imagem ? (
+              <img
+                src={item.imagem}
+                alt={item.nome}
+                className="h-28 w-full object-cover"
+              />
+            ) : (
+              <div className="flex h-28 w-full items-center justify-center bg-black/[0.03] text-[10px] uppercase tracking-wide text-black/30">
+                Sem imagem
+              </div>
+            )}
+            <p className="p-2 text-center text-xs font-medium leading-4 text-black/70">
+              {item.nome}
+            </p>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function TransporteBlock({
   transporte,
 }: {
@@ -1069,6 +1125,9 @@ function PeriodBlock({
 
       {period.gastronomia && (
         <GastronomiaBlock gastronomia={period.gastronomia} />
+      )}
+      {period.comprasExclusivas && (
+        <ComprasExclusivasBlock compras={period.comprasExclusivas} />
       )}
     </div>
   );
@@ -1427,16 +1486,30 @@ export function ApprovalPanel({
         <p className="px-6 pt-6 text-[10px] font-bold uppercase tracking-[0.2em] text-black/35 sm:px-10">
           Escolha de Hotel
         </p>
-        <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-5 px-6 pt-3 sm:gap-x-7 sm:px-10">
-          {[1, 2, 3, 4].map((n) => (
-            <button
-              key={n}
-              type="button"
-              className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full border-2 border-black/15 bg-white text-sm font-bold text-black/50 transition hover:border-transparent hover:bg-gradient-to-r hover:from-[#2f5aa8] hover:via-[#5b6fc7] hover:to-[#7c4fd1] hover:text-white"
-            >
-              {n}
-            </button>
-          ))}
+        <div className="flex flex-wrap items-start justify-center gap-x-5 gap-y-5 px-6 pt-3 sm:gap-x-7 sm:px-10">
+          {DAYS.map((d, index) => {
+            const isHotelSlot = index >= 1 && index <= 3;
+
+            if (!isHotelSlot) {
+              return (
+                <div
+                  key={d.day}
+                  aria-hidden="true"
+                  className="h-14 w-14 shrink-0 opacity-0"
+                />
+              );
+            }
+
+            return (
+              <button
+                key={d.day}
+                type="button"
+                className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full border-2 border-black/15 bg-white text-sm font-bold text-black/50 transition hover:border-transparent hover:bg-gradient-to-r hover:from-[#2f5aa8] hover:via-[#5b6fc7] hover:to-[#7c4fd1] hover:text-white"
+              >
+                {index}
+              </button>
+            );
+          })}
         </div>
 
         <p className="px-6 pt-8 text-[10px] font-bold uppercase tracking-[0.2em] text-black/35 sm:px-10">
