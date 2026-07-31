@@ -494,6 +494,13 @@ const DAY_5: DayContent = {
         rating: 4,
       },
     ],
+    gastronomia: {
+      itens: [
+        { nome: "Matcha de Uji" },
+        { nome: "Yatsuhashi" },
+        { nome: "Dengaku" },
+      ],
+    },
   },
   tarde: {
     label: "Tarde/Noite",
@@ -516,6 +523,9 @@ const DAY_5: DayContent = {
         rating: 4,
       },
     ],
+    gastronomia: {
+      itens: [{ nome: "Kaiseki" }, { nome: "Obanzai" }],
+    },
   },
 };
 
@@ -523,6 +533,9 @@ const DAY_6: DayContent = {
   day: 6,
   city: "Kyoto",
   date: "10 Mai",
+  contexto: [
+    "No segundo dia em Kyoto, começamos cedo no Santuário Fushimi Inari para aproveitar o famoso corredor de milhares de torii antes das aglomerações. À tarde seguimos para o Kinkaku-ji, o Pavilhão Dourado, e aproveitamos para conhecer outros templos e cafés da região norte da cidade.",
+  ],
   manha: {
     regiao: {
       nome: "Fushimi",
@@ -532,6 +545,9 @@ const DAY_6: DayContent = {
     atracaoPrincipal: "Fushimi-Inari Taisha",
     atracaoPrincipalImagem: "/images/dia6-fushimiinari.png",
     pois: [],
+    gastronomia: {
+      itens: [{ nome: "Inari-zushi" }, { nome: "Kitsune Udon" }],
+    },
   },
   tarde: {
     label: "Tarde",
@@ -578,6 +594,7 @@ const DAY_7: DayContent = {
   date: "11 Mai",
   contexto: [
     "No último dia da viagem vamos finalmente a Akihabara, epicentro da cultura de Animes & Mangá, Videogames e Artigos Eletrônicos.",
+    "Depois de Akihabara vamos visitar um izakaya fora do circuito turístico de Tokyo em Kanda para uma experiência autêntica.",
   ],
   manha: {
     regiao: {
@@ -632,6 +649,9 @@ const DAY_7: DayContent = {
         rating: 3,
       },
     ],
+    gastronomia: {
+      itens: [{ nome: "Curry Japonês" }],
+    },
   },
   tarde: {
     label: "Tarde/Noite",
@@ -642,7 +662,12 @@ const DAY_7: DayContent = {
     },
     atracaoPrincipal: "Izakaya em Kanda (酒場なごみ堂)",
     atracaoPrincipalImagem: "/images/dia7-izakaya-kanda-v2.png",
-    pois: [],
+    pois: [
+      { title: "Osusumeya Kanda", rating: 5 },
+      { title: "Yakitori Izakaya Kanda-syouten", rating: 5 },
+      { title: "Izakaya Genki Kanda", rating: 5 },
+      { title: "Robatayaki HOTARU", rating: 5 },
+    ],
   },
 };
 
@@ -650,6 +675,9 @@ const OSAKA_DAY_5: DayContent = {
   day: 5,
   city: "Osaka",
   date: "09 Mai",
+  contexto: [
+    "Nesta versão alternativa do roteiro, trocamos os templos de Kyoto por um dia inteiro de diversão na Universal Studios Japan, com destaque para a área do Super Nintendo World — ideal para quem viaja com crianças ou quer uma pausa mais leve em meio à viagem.",
+  ],
   manha: {
     regiao: {
       nome: "Sakurajima (Konohana-ku)",
@@ -666,6 +694,9 @@ const OSAKA_DAY_6: DayContent = {
   day: 6,
   city: "Osaka",
   date: "10 Mai",
+  contexto: [
+    "No segundo dia em Osaka, começamos pelo Castelo de Osaka, um dos marcos históricos mais importantes da cidade, e à noite mergulhamos em Dotombori — o coração da vida noturna e gastronômica, com seus letreiros icônicos e comida de rua.",
+  ],
   manha: {
     regiao: {
       nome: "Chuo-ku (Osaka-jo)",
@@ -675,6 +706,9 @@ const OSAKA_DAY_6: DayContent = {
     atracaoPrincipal: "Osaka Castle",
     atracaoPrincipalImagem: "/images/osaka6-castle.png",
     pois: [],
+    gastronomia: {
+      itens: [{ nome: "Kushikatsu" }],
+    },
   },
   tarde: {
     label: "Tarde/Noite",
@@ -686,6 +720,9 @@ const OSAKA_DAY_6: DayContent = {
     atracaoPrincipal: "Dotombori",
     atracaoPrincipalImagem: "/images/osaka6-dotombori.png",
     pois: [],
+    gastronomia: {
+      itens: [{ nome: "Takoyaki" }, { nome: "Wagyu" }],
+    },
   },
 };
 

@@ -228,7 +228,7 @@ export default function AprovacaoRoteiroPage() {
     <main className="min-h-screen bg-white">
       <header className="fixed left-0 right-0 top-0 z-50 flex items-center justify-between border-b border-black/10 bg-white/60 px-6 py-5 shadow-[0_1px_24px_rgba(0,0,0,0.05)] backdrop-blur-xl md:px-16">
         <img
-          src="/images/logo-alpinea-v5.png"
+          src="/images/logo-alpinea-v6.png"
           alt="Alpinea — Empresa do Grupo Ajisai"
           className="h-[42px] w-auto object-contain md:h-[50px]"
         />
