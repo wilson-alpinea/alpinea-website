@@ -461,15 +461,47 @@ const DAY_5: DayContent = {
     "Se Tóquio é sinônimo de modernidade e tecnologia mesclada à parte cultural, Kyoto é um patrimônio histórico. Nesses dois dias iremos visitar 3 dos principais pontos turísticos do Japão: Kiyomizu-dera + Gion, Kinkaku-ji e Fushimi-Inari Taisha.",
   ],
   manha: {
+    regiao: {
+      nome: "Higashiyama",
+      descricao:
+        "Bairro aos pés das colinas do leste de Kyoto, preservado desde o período Edo — reúne o Kiyomizu-dera e as ladeiras históricas de Ninenzaka e Sannenzaka.",
+    },
     atracaoPrincipal: "Templo Kiyomizu-dera",
     atracaoPrincipalImagem: "/images/dia5-kiyomizudera.jpg",
-    pois: [{ title: "Ninenzaka" }, { title: "Sannenzaka" }],
+    pois: [
+      {
+        title: "Ninenzaka",
+        description: "Ladeira histórica de casas tradicionais.",
+        rating: 4,
+      },
+      {
+        title: "Sannenzaka",
+        description: "Continuação de Ninenzaka, rumo ao templo.",
+        rating: 4,
+      },
+    ],
   },
   tarde: {
     label: "Tarde/Noite",
+    regiao: {
+      nome: "Gion",
+      descricao:
+        "O distrito de gueixas mais famoso do Japão, com casas de chá tradicionais, o Santuário Yasaka e a viela de Pontocho às margens do rio Kamo.",
+    },
     atracaoPrincipal: "Distrito de Gion",
     atracaoPrincipalImagem: "/images/dia5-gion-v2.png",
-    pois: [{ title: "Yasaka Tower" }, { title: "Pontocho" }],
+    pois: [
+      {
+        title: "Yasaka Shrine",
+        description: "Santuário xintoísta símbolo de Gion.",
+        rating: 3,
+      },
+      {
+        title: "Pontocho",
+        description: "Viela tradicional de restaurantes e gueixas.",
+        rating: 4,
+      },
+    ],
   },
 };
 
@@ -478,12 +510,22 @@ const DAY_6: DayContent = {
   city: "Kyoto",
   date: "10 Mai",
   manha: {
+    regiao: {
+      nome: "Fushimi",
+      descricao:
+        "Bairro ao sul de Kyoto, historicamente ligado à produção de saquê — hoje conhecido principalmente pelos milhares de torii do Santuário Fushimi Inari.",
+    },
     atracaoPrincipal: "Fushimi-Inari Taisha",
     atracaoPrincipalImagem: "/images/dia6-fushimiinari.png",
     pois: [],
   },
   tarde: {
     label: "Tarde",
+    regiao: {
+      nome: "Kinkaku-ji (Kitayama)",
+      descricao:
+        "Região arborizada ao norte de Kyoto, onde fica o Pavilhão Dourado — um dos templos mais fotografados do Japão.",
+    },
     atracaoPrincipal: "Kinkaku-ji",
     atracaoPrincipalImagem: "/images/dia6-kinkakuji.png",
     pois: [
@@ -504,6 +546,11 @@ const DAY_7: DayContent = {
     "No último dia da viagem vamos finalmente a Akihabara, epicentro da cultura de Animes & Mangá, Videogames e Artigos Eletrônicos.",
   ],
   manha: {
+    regiao: {
+      nome: "Akihabara",
+      descricao:
+        "Bairro de Chiyoda conhecido como o centro mundial da cultura otaku, com lojas de eletrônicos, anime, mangá e videogame concentradas em poucas quadras.",
+    },
     atracaoPrincipal: "Akihabara Electric Town",
     atracaoPrincipalImagem: "/images/dia7-akihabara.png",
     pois: [
@@ -547,6 +594,11 @@ const DAY_7: DayContent = {
   },
   tarde: {
     label: "Tarde/Noite",
+    regiao: {
+      nome: "Kanda",
+      descricao:
+        "Bairro tradicional de Chiyoda, vizinho a Akihabara — conhecido pelos izakayas e por uma vida noturna mais local, longe do circuito turístico.",
+    },
     atracaoPrincipal: "Izakaya em Kanda (酒場なごみ堂)",
     atracaoPrincipalImagem: "/images/dia7-izakaya-kanda-v2.png",
     pois: [],
@@ -558,6 +610,11 @@ const OSAKA_DAY_5: DayContent = {
   city: "Osaka",
   date: "09 Mai",
   manha: {
+    regiao: {
+      nome: "Sakurajima (Konohana-ku)",
+      descricao:
+        "Península à beira da Baía de Osaka que abriga o parque temático da Universal Studios Japan e a área do Super Nintendo World.",
+    },
     atracaoPrincipal: "Universal Studios Japan & Super Nintendo World",
     atracaoPrincipalImagem: "/images/osaka5-nintendoworld-v2.jpg",
     pois: [],
@@ -569,12 +626,22 @@ const OSAKA_DAY_6: DayContent = {
   city: "Osaka",
   date: "10 Mai",
   manha: {
+    regiao: {
+      nome: "Chuo-ku (Osaka-jo)",
+      descricao:
+        "Região central de Osaka onde fica o Castelo de Osaka, cercado por um extenso parque e fosso histórico.",
+    },
     atracaoPrincipal: "Osaka Castle",
     atracaoPrincipalImagem: "/images/osaka6-castle.png",
     pois: [],
   },
   tarde: {
     label: "Tarde/Noite",
+    regiao: {
+      nome: "Dotombori (Namba)",
+      descricao:
+        "Coração da vida noturna e gastronômica de Osaka, às margens do Canal Dotombori — famoso pelos letreiros iluminados e pela comida de rua.",
+    },
     atracaoPrincipal: "Dotombori",
     atracaoPrincipalImagem: "/images/osaka6-dotombori.png",
     pois: [],
@@ -834,6 +901,103 @@ function PeriodBlock({
   );
 }
 
+function iconProps(className?: string) {
+  return {
+    viewBox: "0 0 24 24",
+    fill: "none",
+    stroke: "currentColor",
+    strokeWidth: 1.75,
+    strokeLinecap: "round" as const,
+    strokeLinejoin: "round" as const,
+    className,
+  };
+}
+
+function IconPlane({ className }: { className?: string }) {
+  return (
+    <svg {...iconProps(className)}>
+      <path d="M22 2 11 13" />
+      <path d="M22 2 15 22l-4-9-9-4 20-7z" />
+    </svg>
+  );
+}
+
+function IconMetro({ className }: { className?: string }) {
+  return (
+    <svg {...iconProps(className)}>
+      <rect x="5" y="3" width="14" height="13" rx="4" />
+      <line x1="5" y1="10" x2="19" y2="10" />
+      <circle cx="8.5" cy="19" r="1.3" />
+      <circle cx="15.5" cy="19" r="1.3" />
+    </svg>
+  );
+}
+
+function IconBus({ className }: { className?: string }) {
+  return (
+    <svg {...iconProps(className)}>
+      <rect x="3" y="5" width="18" height="11" rx="2" />
+      <line x1="3" y1="10" x2="21" y2="10" />
+      <line x1="7" y1="10" x2="7" y2="16" />
+      <line x1="17" y1="10" x2="17" y2="16" />
+      <circle cx="7" cy="19" r="1.3" />
+      <circle cx="17" cy="19" r="1.3" />
+    </svg>
+  );
+}
+
+function IconShinkansen({ className }: { className?: string }) {
+  return (
+    <svg {...iconProps(className)}>
+      <path d="M3 15c0-5 3-9 9-9h5a4 4 0 0 1 4 4v5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+      <line x1="9" y1="10" x2="20" y2="10" />
+      <circle cx="8" cy="19" r="1.3" />
+      <circle cx="16" cy="19" r="1.3" />
+    </svg>
+  );
+}
+
+function IconExchange({ className }: { className?: string }) {
+  return (
+    <svg {...iconProps(className)}>
+      <path d="M6 8h13l-4-4" />
+      <path d="M18 16H5l4 4" />
+    </svg>
+  );
+}
+
+function IconCustoms({ className }: { className?: string }) {
+  return (
+    <svg {...iconProps(className)}>
+      <rect x="6" y="3" width="12" height="18" rx="2" />
+      <line x1="9" y1="8" x2="15" y2="8" />
+      <line x1="9" y1="12" x2="15" y2="12" />
+      <line x1="9" y1="16" x2="13" y2="16" />
+    </svg>
+  );
+}
+
+function IconWords({ className }: { className?: string }) {
+  return (
+    <svg {...iconProps(className)}>
+      <path d="M4 5h16a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H9l-4 4v-4H4a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2z" />
+      <line x1="7" y1="10" x2="17" y2="10" />
+      <line x1="7" y1="13" x2="13" y2="13" />
+    </svg>
+  );
+}
+
+const INFO_CARDS = [
+  { label: "Aeroporto DXB", Icon: IconPlane },
+  { label: "Aeroporto NRT (Narita)", Icon: IconPlane },
+  { label: "Metrô", Icon: IconMetro },
+  { label: "Ônibus", Icon: IconBus },
+  { label: "Trem Bala (Shinkansen)", Icon: IconShinkansen },
+  { label: "Câmbio", Icon: IconExchange },
+  { label: "Costumes", Icon: IconCustoms },
+  { label: "Palavras Comuns", Icon: IconWords },
+];
+
 export function ApprovalPanel({
   displayClassName,
   approvalKey,
@@ -949,9 +1113,11 @@ export function ApprovalPanel({
           </p>
         </div>
 
-        <p className="px-6 pt-6 text-[10px] font-bold uppercase tracking-[0.2em] text-black/35 sm:px-10">
-          Opção A
-        </p>
+        <div className="px-6 pt-6 sm:px-10">
+          <p className="inline-block rounded-full border border-[#2f5aa8]/25 bg-[#eef3fb] px-3 py-1 text-[10px] font-bold uppercase tracking-[0.2em] text-[#2f5aa8]">
+            Opção A
+          </p>
+        </div>
         <div className="flex flex-wrap items-start justify-center gap-x-5 gap-y-5 px-6 pt-3 sm:gap-x-7 sm:px-10">
           {DAYS.map((d, index) => {
             const active = index === activeDay && activeRow === "a";
@@ -1002,10 +1168,12 @@ export function ApprovalPanel({
           })}
         </div>
 
-        <p className="px-6 pt-6 text-[10px] font-bold uppercase tracking-[0.2em] text-black/35 sm:px-10">
-          Opção B
-        </p>
-        <div className="flex flex-wrap items-start justify-center gap-x-5 gap-y-5 border-b border-black/10 px-6 pb-6 pt-3 sm:gap-x-7 sm:px-10">
+        <div className="px-6 pt-6 sm:px-10">
+          <p className="inline-block rounded-full border border-[#2f5aa8]/25 bg-[#eef3fb] px-3 py-1 text-[10px] font-bold uppercase tracking-[0.2em] text-[#2f5aa8]">
+            Opção B
+          </p>
+        </div>
+        <div className="flex flex-wrap items-start justify-center gap-x-5 gap-y-5 px-6 pb-6 pt-3 sm:gap-x-7 sm:px-10">
           {DAYS.map((d, index) => {
             const isAlt = d.day === 5 || d.day === 6;
 
@@ -1081,6 +1249,37 @@ export function ApprovalPanel({
               </button>
             );
           })}
+        </div>
+
+        <p className="px-6 pt-6 text-[10px] font-bold uppercase tracking-[0.2em] text-black/35 sm:px-10">
+          Escolha de Hotel
+        </p>
+        <div className="flex flex-wrap items-center justify-center gap-x-5 gap-y-5 px-6 pt-3 sm:gap-x-7 sm:px-10">
+          {[1, 2, 3, 4].map((n) => (
+            <span
+              key={n}
+              className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full border-2 border-black/15 bg-white text-sm font-bold text-black/50"
+            >
+              {n}
+            </span>
+          ))}
+        </div>
+
+        <p className="px-6 pt-8 text-[10px] font-bold uppercase tracking-[0.2em] text-black/35 sm:px-10">
+          Informações Detalhadas
+        </p>
+        <div className="grid grid-cols-2 gap-3 border-b border-black/10 px-6 pb-6 pt-3 sm:grid-cols-4 sm:px-10">
+          {INFO_CARDS.map(({ label, Icon }) => (
+            <div
+              key={label}
+              className="flex min-h-[112px] flex-col items-center justify-center gap-2.5 rounded-xl border border-black/10 bg-black/[0.02] px-3 py-4 text-center text-xs leading-5 text-black/55"
+            >
+              <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[#eef3fb] text-[#2f5aa8]">
+                <Icon className="h-4 w-4" />
+              </span>
+              {label}
+            </div>
+          ))}
         </div>
 
         <div className="px-6 py-8 sm:px-10 sm:py-10">
