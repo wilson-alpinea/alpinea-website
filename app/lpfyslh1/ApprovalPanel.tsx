@@ -462,11 +462,13 @@ const DAY_5: DayContent = {
   ],
   manha: {
     atracaoPrincipal: "Templo Kiyomizu-dera",
+    atracaoPrincipalImagem: "/images/dia5-kiyomizudera.jpg",
     pois: [{ title: "Ninenzaka" }, { title: "Sannenzaka" }],
   },
   tarde: {
     label: "Tarde/Noite",
     atracaoPrincipal: "Distrito de Gion",
+    atracaoPrincipalImagem: "/images/dia5-gion.png",
     pois: [{ title: "Yasaka Tower" }, { title: "Pontocho" }],
   },
 };
@@ -477,11 +479,13 @@ const DAY_6: DayContent = {
   date: "10 Mai",
   manha: {
     atracaoPrincipal: "Fushimi-Inari Taisha",
+    atracaoPrincipalImagem: "/images/dia6-fushimiinari.png",
     pois: [],
   },
   tarde: {
     label: "Tarde",
     atracaoPrincipal: "Kinkaku-ji",
+    atracaoPrincipalImagem: "/images/dia6-kinkakuji.png",
     pois: [
       { title: "Museu do Mangá de Kyoto" },
       {
@@ -501,6 +505,7 @@ const DAY_7: DayContent = {
   ],
   manha: {
     atracaoPrincipal: "Akihabara Electric Town",
+    atracaoPrincipalImagem: "/images/dia7-akihabara.png",
     pois: [
       {
         category: "Compras",
@@ -540,6 +545,39 @@ const DAY_7: DayContent = {
       },
     ],
   },
+};
+
+const OSAKA_DAY_5: DayContent = {
+  day: 5,
+  city: "Osaka",
+  date: "09 Mai",
+  manha: {
+    atracaoPrincipal: "Universal Studios Japan & Super Nintendo World",
+    atracaoPrincipalImagem: "/images/osaka5-nintendoworld.png",
+    pois: [],
+  },
+};
+
+const OSAKA_DAY_6: DayContent = {
+  day: 6,
+  city: "Osaka",
+  date: "10 Mai",
+  manha: {
+    atracaoPrincipal: "Osaka Castle",
+    atracaoPrincipalImagem: "/images/osaka6-castle.png",
+    pois: [],
+  },
+  tarde: {
+    label: "Tarde/Noite",
+    atracaoPrincipal: "Dotombori",
+    atracaoPrincipalImagem: "/images/osaka6-dotombori.png",
+    pois: [],
+  },
+};
+
+const OSAKA_ALT: Record<number, DayContent> = {
+  5: OSAKA_DAY_5,
+  6: OSAKA_DAY_6,
 };
 
 const CHEGADA: DayContent = {
@@ -805,7 +843,10 @@ export function ApprovalPanel({
     "idle" | "submitting" | "aprovado" | "ajustes" | "error"
   >("idle");
 
-  const current = DAYS[activeDay];
+  const current =
+    activeRow === "b" && OSAKA_ALT[activeDay]
+      ? OSAKA_ALT[activeDay]
+      : DAYS[activeDay];
 
   async function sendResponse(action: "aprovado" | "ajustes") {
     setStatus("submitting");
