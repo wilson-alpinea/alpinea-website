@@ -2020,9 +2020,14 @@ export function ApprovalPanel({
           })}
         </div>
 
-        <p className="px-6 pt-8 text-[10px] font-bold uppercase tracking-[0.2em] text-black/35 sm:px-10">
-          Informações Detalhadas
-        </p>
+        <div className="flex flex-wrap items-center gap-2.5 px-6 pt-8 sm:px-10">
+          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-black/35">
+            Informações Detalhadas
+          </p>
+          <span className="rounded-full border border-amber-300/70 bg-amber-50 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.15em] text-amber-700">
+            Conteúdo Só Disponível Na Versão Final
+          </span>
+        </div>
         <div className="grid grid-cols-2 gap-3 border-b border-black/10 px-6 pb-6 pt-3 sm:grid-cols-4 sm:px-10">
           {INFO_CARDS.map(({ label, Icon }) => (
             <div
