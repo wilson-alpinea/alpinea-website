@@ -698,6 +698,15 @@ const DAY_7: DayContent = {
       { title: "Izakaya Genki Kanda", rating: 5 },
       { title: "Robatayaki HOTARU", rating: 5 },
     ],
+    gastronomia: {
+      itens: [
+        { nome: "Yakitori", descricao: "Espetinhos de frango grelhados no carvão, clássico de todo izakaya." },
+        { nome: "Karaage", descricao: "Frango frito marinado em molho de soja e gengibre." },
+        { nome: "Sashimi Moriawase", descricao: "Seleção de sashimis variados do dia." },
+        { nome: "Motsu Nikomi", descricao: "Ensopado de vísceras de porco cozidas lentamente com missô ou molho de soja." },
+        { nome: "Tamagoyaki", descricao: "Omelete japonesa levemente adocicada, enrolada em camadas." },
+      ],
+    },
   },
 };
 
@@ -1580,13 +1589,6 @@ function HotelComparisonTable({ cidade }: { cidade: HotelCidade }) {
 
   const rows = [
     {
-      label: "Nota Alpinea",
-      Icon: IconStar,
-      render: (h: HotelOpcao) => (
-        <span className="font-semibold">{h.notaAlpinea}</span>
-      ),
-    },
-    {
       label: "Perfil",
       Icon: IconTag,
       render: (h: HotelOpcao) => h.perfil,
@@ -1674,10 +1676,12 @@ function HotelComparisonTable({ cidade }: { cidade: HotelCidade }) {
             <th className="w-40 px-4 py-3 text-left text-xs font-bold uppercase tracking-[0.15em] text-black/40">
               Critério
             </th>
-            {cidade.opcoes.map((h) => (
+            {cidade.opcoes.map((h, idx) => (
               <th
                 key={h.nome}
-                className="px-4 py-3 text-left text-sm font-semibold text-black"
+                className={`px-4 py-3 text-center text-sm font-semibold text-black ${
+                  idx > 0 ? "border-l border-black/10" : ""
+                }`}
               >
                 {h.nome}
               </th>
@@ -1696,10 +1700,12 @@ function HotelComparisonTable({ cidade }: { cidade: HotelCidade }) {
                   {row.label}
                 </span>
               </td>
-              {cidade.opcoes.map((h) => (
+              {cidade.opcoes.map((h, idx) => (
                 <td
                   key={h.nome}
-                  className="px-4 py-3 align-top text-sm text-black/70"
+                  className={`px-4 py-3 text-center align-middle text-sm text-black/70 ${
+                    idx > 0 ? "border-l border-black/10" : ""
+                  }`}
                 >
                   {row.render(h)}
                 </td>
