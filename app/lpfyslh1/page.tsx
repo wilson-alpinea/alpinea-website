@@ -267,9 +267,14 @@ export default function AprovacaoRoteiroPage() {
       <section className="px-5 pb-4 md:px-16">
         <div className="mx-auto max-w-4xl">
           <div className="rounded-2xl border border-black/10 bg-white p-6 shadow-[0_20px_60px_-30px_rgba(0,0,0,0.25)] sm:rounded-[2rem] sm:p-8">
-            <p className="mx-auto mb-5 block w-fit rounded-full border border-black/15 px-5 py-2 text-center text-xs uppercase tracking-[0.3em] text-black/65">
-              Dados do Cliente
-            </p>
+            <div className="mx-auto mb-5 flex w-fit items-center gap-2.5">
+              <p className="rounded-full border border-black/15 px-5 py-2 text-center text-xs uppercase tracking-[0.3em] text-black/65">
+                Dados do Cliente
+              </p>
+              <p className="rounded-full border border-[#2f5aa8]/25 bg-[#2f5aa8]/[0.06] px-4 py-2 text-center text-xs uppercase tracking-[0.2em] text-[#2f5aa8]">
+                ID 52130383
+              </p>
+            </div>
             <div className="grid grid-cols-1 gap-5 border-b border-black/10 pb-6 sm:grid-cols-3">
               <div>
                 <p className="text-[11px] uppercase tracking-[0.2em] text-black/40">
