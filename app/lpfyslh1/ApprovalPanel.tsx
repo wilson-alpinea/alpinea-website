@@ -1236,6 +1236,456 @@ const INFO_CARDS = [
   { label: "Palavras Comuns", Icon: IconWords },
 ];
 
+function IconCheck({ className }: { className?: string }) {
+  return (
+    <svg {...iconProps(className)}>
+      <path d="M4 12l5 5L20 6" />
+    </svg>
+  );
+}
+
+function IconX({ className }: { className?: string }) {
+  return (
+    <svg {...iconProps(className)}>
+      <path d="M5 5l14 14M19 5 5 19" />
+    </svg>
+  );
+}
+
+function IconStar({ className }: { className?: string }) {
+  return (
+    <svg {...iconProps(className)}>
+      <path d="M12 3l2.6 5.6 6.1.6-4.6 4.1 1.3 6-5.4-3.1-5.4 3.1 1.3-6-4.6-4.1 6.1-.6z" />
+    </svg>
+  );
+}
+
+function IconTag({ className }: { className?: string }) {
+  return (
+    <svg {...iconProps(className)}>
+      <path d="M12 2 20 2 22 4v8L12 22 2 12 2 4z" />
+      <circle cx="15" cy="7" r="1.4" fill="currentColor" stroke="none" />
+    </svg>
+  );
+}
+
+function IconCalendar({ className }: { className?: string }) {
+  return (
+    <svg {...iconProps(className)}>
+      <rect x="3" y="5" width="18" height="16" rx="2" />
+      <line x1="3" y1="10" x2="21" y2="10" />
+      <line x1="8" y1="3" x2="8" y2="7" />
+      <line x1="16" y1="3" x2="16" y2="7" />
+    </svg>
+  );
+}
+
+function IconWrench({ className }: { className?: string }) {
+  return (
+    <svg {...iconProps(className)}>
+      <path d="M14.7 6.3a4 4 0 0 0-5.6 5.1L3 17.5 6.5 21l6.1-6.1a4 4 0 0 0 5.1-5.6l-3 3-2.6-2.6z" />
+    </svg>
+  );
+}
+
+function IconBed({ className }: { className?: string }) {
+  return (
+    <svg {...iconProps(className)}>
+      <path d="M3 19v-7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v7" />
+      <path d="M3 19v2M21 19v2" />
+      <path d="M3 14V8a1 1 0 0 1 1-1h6v5" />
+      <circle cx="7" cy="10" r="1.3" />
+    </svg>
+  );
+}
+
+function IconYen({ className }: { className?: string }) {
+  return (
+    <svg {...iconProps(className)}>
+      <path d="M6 4l6 8 6-8" />
+      <line x1="12" y1="12" x2="12" y2="21" />
+      <line x1="8" y1="14" x2="16" y2="14" />
+      <line x1="8" y1="17" x2="16" y2="17" />
+    </svg>
+  );
+}
+
+function IconWalk({ className }: { className?: string }) {
+  return (
+    <svg {...iconProps(className)}>
+      <circle cx="13" cy="4" r="1.6" fill="currentColor" stroke="none" />
+      <path d="M10 21l1.5-5.5L9 14l1-4.5 3-1.5 2 2 3 1" />
+      <path d="M11.5 15.5 15 17l1.5 4" />
+    </svg>
+  );
+}
+
+function IconBath({ className }: { className?: string }) {
+  return (
+    <svg {...iconProps(className)}>
+      <path d="M4 12h16v2a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5z" />
+      <path d="M4 12V7a2 2 0 0 1 3-1.7" />
+      <line x1="2" y1="19" x2="22" y2="19" />
+      <line x1="9" y1="6" x2="9" y2="4" />
+    </svg>
+  );
+}
+
+function IconFork({ className }: { className?: string }) {
+  return (
+    <svg {...iconProps(className)}>
+      <path d="M7 3v6a2 2 0 0 0 4 0V3M9 9v12" />
+      <path d="M17 3c-1.5 0-2 1.5-2 3v4c0 1.5.5 2 2 2v9" />
+    </svg>
+  );
+}
+
+function IconDumbbell({ className }: { className?: string }) {
+  return (
+    <svg {...iconProps(className)}>
+      <line x1="6" y1="12" x2="18" y2="12" />
+      <rect x="2" y="9" width="3" height="6" rx="1" />
+      <rect x="19" y="9" width="3" height="6" rx="1" />
+      <rect x="5" y="7" width="2.5" height="10" rx="1" />
+      <rect x="16.5" y="7" width="2.5" height="10" rx="1" />
+    </svg>
+  );
+}
+
+function IconSwim({ className }: { className?: string }) {
+  return (
+    <svg {...iconProps(className)}>
+      <path d="M3 17c1.5 1.5 3 1.5 4.5 0s3-1.5 4.5 0 3 1.5 4.5 0 3-1.5 4.5 0" />
+      <circle cx="17" cy="6" r="1.6" fill="currentColor" stroke="none" />
+      <path d="M4 13l6-2 3 2 4-3" />
+    </svg>
+  );
+}
+
+function IconStore({ className }: { className?: string }) {
+  return (
+    <svg {...iconProps(className)}>
+      <path d="M3 9l1-5h16l1 5" />
+      <path d="M4 9v10h16V9" />
+      <path d="M9 19v-5a3 3 0 0 1 6 0v5" />
+    </svg>
+  );
+}
+
+type HotelOpcao = {
+  nome: string;
+  notaAlpinea: number;
+  perfil: string;
+  inauguracao: string;
+  inauguracaoNota?: string;
+  reforma: string;
+  quarto: string;
+  preco: string;
+  estacao: string;
+  distanciaEstacao: string;
+  distanciaTokyoStation?: string;
+  ofuro: boolean;
+  restaurante: boolean;
+  academia: boolean;
+  piscina: boolean;
+  konbini: string;
+};
+
+type HotelCidade = {
+  cidade: string;
+  opcoes: HotelOpcao[];
+};
+
+const HOTEIS: HotelCidade[] = [
+  {
+    cidade: "Tokyo",
+    opcoes: [
+      {
+        nome: "Mitsui Garden Nihonbashi Premier",
+        notaAlpinea: 98,
+        perfil: "Melhor experiência",
+        inauguracao: "2018",
+        inauguracaoNota: "Mitsui Fudosan",
+        reforma: "Não",
+        quarto: "20 m²",
+        preco: "¥28–45 mil",
+        estacao: "Mitsukoshimae",
+        distanciaEstacao: "1 min",
+        distanciaTokyoStation: "8–10 min a pé",
+        ofuro: true,
+        restaurante: true,
+        academia: false,
+        piscina: false,
+        konbini: "FamilyMart (30 m)",
+      },
+      {
+        nome: "Hotel Intergate Tokyo Kyobashi",
+        notaAlpinea: 97,
+        perfil: "Melhor localização / Custo-benefício",
+        inauguracao: "2018",
+        reforma: "Não",
+        quarto: "15 m² (19 m² recomendado)",
+        preco: "¥18–32 mil",
+        estacao: "Kyobashi",
+        distanciaEstacao: "1 min",
+        distanciaTokyoStation: "6–8 min a pé",
+        ofuro: false,
+        restaurante: true,
+        academia: false,
+        piscina: false,
+        konbini: "Lawson (20 m)",
+      },
+      {
+        nome: "Daiwa Roynet PREMIER Tokyo Oshiage",
+        notaAlpinea: 96,
+        perfil: "Maior quarto pelo investimento",
+        inauguracao: "2017",
+        reforma: "Não",
+        quarto: "21–23 m²",
+        preco: "¥17–28 mil",
+        estacao: "Oshiage (Skytree)",
+        distanciaEstacao: "1 min",
+        distanciaTokyoStation: "15–20 min",
+        ofuro: false,
+        restaurante: true,
+        academia: false,
+        piscina: false,
+        konbini: "Lawson (15 m)",
+      },
+    ],
+  },
+  {
+    cidade: "Kyoto",
+    opcoes: [
+      {
+        nome: "Daiwa Roynet Kyoto Ekimae PREMIER",
+        notaAlpinea: 98,
+        perfil: "Melhor custo-benefício",
+        inauguracao: "2016",
+        reforma: "Não",
+        quarto: "21 m²",
+        preco: "¥18–30 mil",
+        estacao: "Kyoto Station",
+        distanciaEstacao: "3 min",
+        ofuro: false,
+        restaurante: true,
+        academia: false,
+        piscina: false,
+        konbini: "Lawson (20 m)",
+      },
+      {
+        nome: "Hotel Vischio Kyoto by GRANVIA",
+        notaAlpinea: 97,
+        perfil: "Melhor equilíbrio",
+        inauguracao: "2019",
+        reforma: "Não",
+        quarto: "20 m²",
+        preco: "¥20–33 mil",
+        estacao: "Kyoto Station",
+        distanciaEstacao: "2 min",
+        ofuro: true,
+        restaurante: true,
+        academia: false,
+        piscina: false,
+        konbini: "FamilyMart (30 m)",
+      },
+      {
+        nome: "Hotel Kanra Kyoto",
+        notaAlpinea: 99,
+        perfil: "Maior quarto pelo investimento",
+        inauguracao: "2010",
+        reforma: "Renovações graduais de quartos e áreas comuns",
+        quarto: "30 m²",
+        preco: "¥28–40 mil",
+        estacao: "Gojo Station (10 min de Kyoto Station)",
+        distanciaEstacao: "1 min até Gojo",
+        ofuro: false,
+        restaurante: true,
+        academia: false,
+        piscina: false,
+        konbini: "Lawson (30 m)",
+      },
+    ],
+  },
+  {
+    cidade: "Osaka",
+    opcoes: [
+      {
+        nome: "Citadines Namba Osaka",
+        notaAlpinea: 99,
+        perfil: "Maior quarto pelo investimento",
+        inauguracao: "2020",
+        inauguracaoNota: "prédio histórico restaurado",
+        reforma: "Não",
+        quarto: "25 m²",
+        preco: "¥20–34 mil",
+        estacao: "Namba Station",
+        distanciaEstacao: "8 min",
+        ofuro: false,
+        restaurante: true,
+        academia: true,
+        piscina: false,
+        konbini: "FamilyMart (15 m)",
+      },
+      {
+        nome: "Hotel Keihan Namba Grande",
+        notaAlpinea: 98,
+        perfil: "Melhor custo-benefício",
+        inauguracao: "2023",
+        reforma: "Não",
+        quarto: "21 m²",
+        preco: "¥18–30 mil",
+        estacao: "Namba Station",
+        distanciaEstacao: "5 min",
+        ofuro: false,
+        restaurante: true,
+        academia: false,
+        piscina: false,
+        konbini: "FamilyMart (20 m)",
+      },
+      {
+        nome: "Cross Hotel Osaka",
+        notaAlpinea: 98,
+        perfil: "Melhor localização",
+        inauguracao: "2007",
+        reforma: "Reforma completa em 2020–2021",
+        quarto: "27 m²",
+        preco: "¥22–35 mil",
+        estacao: "Namba Station",
+        distanciaEstacao: "3 min",
+        ofuro: false,
+        restaurante: true,
+        academia: false,
+        piscina: false,
+        konbini: "Lawson (20 m)",
+      },
+    ],
+  },
+];
+
+function HotelBoolCell({ value }: { value: boolean }) {
+  return value ? (
+    <span className="mx-auto flex h-6 w-6 items-center justify-center rounded-md bg-emerald-100 text-emerald-600">
+      <IconCheck className="h-3.5 w-3.5" />
+    </span>
+  ) : (
+    <span className="mx-auto flex h-6 w-6 items-center justify-center rounded-md bg-rose-100 text-rose-500">
+      <IconX className="h-3.5 w-3.5" />
+    </span>
+  );
+}
+
+function HotelComparisonTable({ cidade }: { cidade: HotelCidade }) {
+  const temTokyoStation = cidade.opcoes.some((h) => h.distanciaTokyoStation);
+
+  const rows = [
+    {
+      label: "Nota Alpinea",
+      Icon: IconStar,
+      render: (h) => <span className="font-semibold">{h.notaAlpinea}</span>,
+    },
+    { label: "Perfil", Icon: IconTag, render: (h) => h.perfil },
+    {
+      label: "Inauguração",
+      Icon: IconCalendar,
+      render: (h) => (
+        <>
+          {h.inauguracao}
+          {h.inauguracaoNota && (
+            <span className="block text-xs text-black/40">
+              {h.inauguracaoNota}
+            </span>
+          )}
+        </>
+      ),
+    },
+    { label: "Reforma recente", Icon: IconWrench, render: (h) => h.reforma },
+    { label: "Quarto Standard", Icon: IconBed, render: (h) => h.quarto },
+    { label: "Preço médio", Icon: IconYen, render: (h) => h.preco },
+    { label: "Estação", Icon: IconMetro, render: (h) => h.estacao },
+    {
+      label: "Distância estação",
+      Icon: IconWalk,
+      render: (h) => h.distanciaEstacao,
+    },
+    ...(temTokyoStation
+      ? [
+          {
+            label: "Tokyo Station",
+            Icon: IconWalk,
+            render: (h: HotelOpcao) => h.distanciaTokyoStation ?? "—",
+          },
+        ]
+      : []),
+    {
+      label: "Ofurô",
+      Icon: IconBath,
+      render: (h) => <HotelBoolCell value={h.ofuro} />,
+    },
+    {
+      label: "Restaurante",
+      Icon: IconFork,
+      render: (h) => <HotelBoolCell value={h.restaurante} />,
+    },
+    {
+      label: "Academia",
+      Icon: IconDumbbell,
+      render: (h) => <HotelBoolCell value={h.academia} />,
+    },
+    {
+      label: "Piscina",
+      Icon: IconSwim,
+      render: (h) => <HotelBoolCell value={h.piscina} />,
+    },
+    { label: "Kombini", Icon: IconStore, render: (h) => h.konbini },
+  ];
+
+  return (
+    <div className="overflow-x-auto rounded-2xl border border-black/10">
+      <table className="w-full min-w-[600px] border-collapse text-sm">
+        <thead>
+          <tr className="border-b border-black/10 bg-black/[0.02]">
+            <th className="w-40 px-4 py-3 text-left text-xs font-bold uppercase tracking-[0.15em] text-black/40">
+              Critério
+            </th>
+            {cidade.opcoes.map((h) => (
+              <th
+                key={h.nome}
+                className="px-4 py-3 text-left text-sm font-semibold text-black"
+              >
+                {h.nome}
+              </th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {rows.map((row, i) => (
+            <tr
+              key={row.label}
+              className={i % 2 === 1 ? "bg-black/[0.015]" : undefined}
+            >
+              <td className="px-4 py-3 align-top text-xs font-semibold text-black/50">
+                <span className="flex items-center gap-1.5">
+                  <row.Icon className="h-3.5 w-3.5 text-[#2f5aa8]" />
+                  {row.label}
+                </span>
+              </td>
+              {cidade.opcoes.map((h) => (
+                <td
+                  key={h.nome}
+                  className="px-4 py-3 align-top text-sm text-black/70"
+                >
+                  {row.render(h)}
+                </td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
 export function ApprovalPanel({
   displayClassName,
   approvalKey,
@@ -1245,6 +1695,7 @@ export function ApprovalPanel({
 }) {
   const [activeDay, setActiveDay] = useState(1);
   const [activeRow, setActiveRow] = useState<"a" | "b">("a");
+  const [hotelCity, setHotelCity] = useState(0);
   const [showAdjustBox, setShowAdjustBox] = useState(false);
   const [mensagem, setMensagem] = useState("");
   const [status, setStatus] = useState<
@@ -1494,7 +1945,7 @@ export function ApprovalPanel({
         </p>
         <div className="flex flex-wrap items-start justify-center gap-x-5 gap-y-5 px-6 pt-3 sm:gap-x-7 sm:px-10">
           {DAYS.map((d, index) => {
-            const isHotelSlot = index >= 1 && index <= 3;
+            const isHotelSlot = index >= 0 && index <= 2;
 
             if (!isHotelSlot) {
               return (
@@ -1506,16 +1957,38 @@ export function ApprovalPanel({
               );
             }
 
+            const active = index === hotelCity;
+
             return (
               <button
                 key={d.day}
                 type="button"
-                className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full border-2 border-black/15 bg-white text-sm font-bold text-black/50 transition hover:border-transparent hover:bg-gradient-to-r hover:from-[#2f5aa8] hover:via-[#5b6fc7] hover:to-[#7c4fd1] hover:text-white"
+                onClick={() => setHotelCity(index)}
+                className="flex flex-col items-center gap-2.5"
               >
-                {index}
+                <span
+                  className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-full border-2 text-sm font-bold transition ${
+                    active
+                      ? "border-black bg-white text-black hover:border-transparent hover:bg-gradient-to-r hover:from-[#2f5aa8] hover:via-[#5b6fc7] hover:to-[#7c4fd1] hover:text-white"
+                      : "border-black/15 bg-white text-black/50 hover:border-transparent hover:bg-gradient-to-r hover:from-[#2f5aa8] hover:via-[#5b6fc7] hover:to-[#7c4fd1] hover:text-white"
+                  }`}
+                >
+                  {index + 1}
+                </span>
+                <span
+                  className={`text-[10px] uppercase tracking-[0.25em] ${
+                    active ? "text-black" : "text-black/40"
+                  }`}
+                >
+                  {HOTEIS[index].cidade}
+                </span>
               </button>
             );
           })}
+        </div>
+
+        <div className="px-6 pb-6 pt-6 sm:px-10">
+          <HotelComparisonTable cidade={HOTEIS[hotelCity]} />
         </div>
 
         <p className="px-6 pt-8 text-[10px] font-bold uppercase tracking-[0.2em] text-black/35 sm:px-10">
