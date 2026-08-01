@@ -251,14 +251,16 @@ export default function AprovacaoRoteiroPage() {
             Revise abaixo a estrutura do seu roteiro de 7 dias. Ao aprovar,
             iniciamos a elaboração do seu painel digital personalizado.
           </p>
-          <p className="mx-auto mt-4 text-xs leading-6 text-black/40 md:text-sm">
-            Esta versão é apenas um rascunho, ela não contém mapas,
-            informações de logística, transporte, detalhes dos restaurantes,
-            detalhe das lojas, resumo do dia, horário de funcionamento,
-            horário indicado para chegada e saída, entre outras informações
-            que serão adicionadas durante a criação da versão final do
-            roteiro personalizado.
-          </p>
+          <div className="mx-auto mt-5 max-w-xl rounded-2xl border border-amber-200 bg-amber-50 px-5 py-4 text-left">
+            <p className="text-xs leading-6 text-amber-900/70 md:text-sm">
+              Esta versão é apenas um rascunho, ela não contém mapas,
+              informações de logística, transporte, detalhes dos restaurantes,
+              detalhe das lojas, resumo do dia, horário de funcionamento,
+              horário indicado para chegada e saída, entre outras informações
+              que serão adicionadas durante a criação da versão final do
+              roteiro personalizado.
+            </p>
+          </div>
         </div>
       </section>
 

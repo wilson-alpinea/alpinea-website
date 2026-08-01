@@ -1013,10 +1013,10 @@ function ComprasExclusivasBlock({
               <img
                 src={item.imagem}
                 alt={item.nome}
-                className="h-28 w-full object-cover"
+                className="aspect-square w-full object-cover"
               />
             ) : (
-              <div className="flex h-28 w-full items-center justify-center bg-black/[0.03] text-[10px] uppercase tracking-wide text-black/30">
+              <div className="flex aspect-square w-full items-center justify-center bg-black/[0.03] text-[10px] uppercase tracking-wide text-black/30">
                 Sem imagem
               </div>
             )}
@@ -1036,12 +1036,12 @@ function TransporteBlock({
   transporte: TransporteSugerido;
 }) {
   return (
-    <div className="mt-10 rounded-2xl border-2 border-[#2f5aa8]/30 bg-[#eef3fb] p-5 sm:p-6">
+    <div className="mb-8 rounded-2xl border-2 border-emerald-300/60 bg-emerald-50 p-5 sm:p-6">
       <div className="mb-3 flex items-center gap-2.5">
-        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#2f5aa8] text-white">
+        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-emerald-600 text-white">
           <IconShinkansen className="h-4 w-4" />
         </span>
-        <p className="text-xs font-bold uppercase tracking-[0.25em] text-[#2f5aa8]">
+        <p className="text-xs font-bold uppercase tracking-[0.25em] text-emerald-700">
           Sugestão de Transporte
         </p>
       </div>
@@ -1582,13 +1582,19 @@ function HotelComparisonTable({ cidade }: { cidade: HotelCidade }) {
     {
       label: "Nota Alpinea",
       Icon: IconStar,
-      render: (h) => <span className="font-semibold">{h.notaAlpinea}</span>,
+      render: (h: HotelOpcao) => (
+        <span className="font-semibold">{h.notaAlpinea}</span>
+      ),
     },
-    { label: "Perfil", Icon: IconTag, render: (h) => h.perfil },
+    {
+      label: "Perfil",
+      Icon: IconTag,
+      render: (h: HotelOpcao) => h.perfil,
+    },
     {
       label: "Inauguração",
       Icon: IconCalendar,
-      render: (h) => (
+      render: (h: HotelOpcao) => (
         <>
           {h.inauguracao}
           {h.inauguracaoNota && (
@@ -1599,14 +1605,30 @@ function HotelComparisonTable({ cidade }: { cidade: HotelCidade }) {
         </>
       ),
     },
-    { label: "Reforma recente", Icon: IconWrench, render: (h) => h.reforma },
-    { label: "Quarto Standard", Icon: IconBed, render: (h) => h.quarto },
-    { label: "Preço médio", Icon: IconYen, render: (h) => h.preco },
-    { label: "Estação", Icon: IconMetro, render: (h) => h.estacao },
+    {
+      label: "Reforma recente",
+      Icon: IconWrench,
+      render: (h: HotelOpcao) => h.reforma,
+    },
+    {
+      label: "Quarto Standard",
+      Icon: IconBed,
+      render: (h: HotelOpcao) => h.quarto,
+    },
+    {
+      label: "Preço médio",
+      Icon: IconYen,
+      render: (h: HotelOpcao) => h.preco,
+    },
+    {
+      label: "Estação",
+      Icon: IconMetro,
+      render: (h: HotelOpcao) => h.estacao,
+    },
     {
       label: "Distância estação",
       Icon: IconWalk,
-      render: (h) => h.distanciaEstacao,
+      render: (h: HotelOpcao) => h.distanciaEstacao,
     },
     ...(temTokyoStation
       ? [
@@ -1620,24 +1642,28 @@ function HotelComparisonTable({ cidade }: { cidade: HotelCidade }) {
     {
       label: "Ofurô",
       Icon: IconBath,
-      render: (h) => <HotelBoolCell value={h.ofuro} />,
+      render: (h: HotelOpcao) => <HotelBoolCell value={h.ofuro} />,
     },
     {
       label: "Restaurante",
       Icon: IconFork,
-      render: (h) => <HotelBoolCell value={h.restaurante} />,
+      render: (h: HotelOpcao) => <HotelBoolCell value={h.restaurante} />,
     },
     {
       label: "Academia",
       Icon: IconDumbbell,
-      render: (h) => <HotelBoolCell value={h.academia} />,
+      render: (h: HotelOpcao) => <HotelBoolCell value={h.academia} />,
     },
     {
       label: "Piscina",
       Icon: IconSwim,
-      render: (h) => <HotelBoolCell value={h.piscina} />,
+      render: (h: HotelOpcao) => <HotelBoolCell value={h.piscina} />,
     },
-    { label: "Kombini", Icon: IconStore, render: (h) => h.konbini },
+    {
+      label: "Kombini",
+      Icon: IconStore,
+      render: (h: HotelOpcao) => h.konbini,
+    },
   ];
 
   return (
@@ -2026,6 +2052,9 @@ export function ApprovalPanel({
               {current.contexto && (
                 <ContextoBlock contexto={current.contexto} />
               )}
+              {current.transporte && (
+                <TransporteBlock transporte={current.transporte} />
+              )}
               <div className="space-y-10">
                 {current.manha && (
                   <PeriodBlock
@@ -2042,9 +2071,6 @@ export function ApprovalPanel({
                   />
                 )}
               </div>
-              {current.transporte && (
-                <TransporteBlock transporte={current.transporte} />
-              )}
             </>
           )}
         </div>
