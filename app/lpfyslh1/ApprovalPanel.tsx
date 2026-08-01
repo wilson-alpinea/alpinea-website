@@ -298,8 +298,7 @@ const DAY_2: DayContent = {
   },
   transporte: {
     linha: "Shinkansen Tokyo–Kyoto",
-    tempo:
-      "Hikari: ~2h40 (incluso no JR Pass) · Nozomi: ~2h20 (mais rápido, à parte do JR Pass)",
+    tempo: "Hikari: ~2h40 (incluso no JR Pass)",
     recomendacao:
       "Recomendamos fortemente que a viagem para Kyoto seja feita neste dia, porque os pontos turísticos que iremos visitar são melhores logo no começo da manhã — depois sofrem com superlotação.",
   },
@@ -611,8 +610,7 @@ const DAY_6: DayContent = {
   },
   transporte: {
     linha: "Shinkansen Kyoto–Tokyo",
-    tempo:
-      "Hikari: ~2h40 (incluso no JR Pass) · Nozomi: ~2h20 (mais rápido, à parte do JR Pass)",
+    tempo: "Hikari: ~2h40 (incluso no JR Pass)",
     recomendacao:
       "Não existe necessidade de chegar muito cedo em Tokyo para o dia 7 — você pode pegar o trem tanto no final deste dia quanto bem cedo pela manhã, já de volta para Tokyo.",
   },
@@ -821,8 +819,7 @@ const OSAKA_DAY_6: DayContent = {
   },
   transporte: {
     linha: "Shinkansen Shin-Osaka–Tokyo",
-    tempo:
-      "Hikari: ~3h (incluso no JR Pass) · Nozomi: ~2h30 (mais rápido, à parte do JR Pass)",
+    tempo: "Hikari: ~3h (incluso no JR Pass)",
     recomendacao:
       "Não existe necessidade de chegar muito cedo em Tokyo para o dia 7 — você pode pegar o trem tanto no final deste dia quanto bem cedo pela manhã, já de volta para Tokyo.",
   },
@@ -1676,12 +1673,10 @@ function HotelComparisonTable({ cidade }: { cidade: HotelCidade }) {
             <th className="w-40 px-4 py-3 text-left text-xs font-bold uppercase tracking-[0.15em] text-black/40">
               Critério
             </th>
-            {cidade.opcoes.map((h, idx) => (
+            {cidade.opcoes.map((h) => (
               <th
                 key={h.nome}
-                className={`px-4 py-3 text-center text-sm font-semibold text-black ${
-                  idx > 0 ? "border-l border-black/10" : ""
-                }`}
+                className="border-l border-black/10 px-4 py-3 text-center text-sm font-semibold text-black"
               >
                 {h.nome}
               </th>
@@ -1700,12 +1695,10 @@ function HotelComparisonTable({ cidade }: { cidade: HotelCidade }) {
                   {row.label}
                 </span>
               </td>
-              {cidade.opcoes.map((h, idx) => (
+              {cidade.opcoes.map((h) => (
                 <td
                   key={h.nome}
-                  className={`px-4 py-3 text-center align-middle text-sm text-black/70 ${
-                    idx > 0 ? "border-l border-black/10" : ""
-                  }`}
+                  className="border-l border-black/10 px-4 py-3 text-center align-middle text-sm text-black/70"
                 >
                   {row.render(h)}
                 </td>
@@ -1728,6 +1721,7 @@ export function ApprovalPanel({
   const [activeDay, setActiveDay] = useState(1);
   const [activeRow, setActiveRow] = useState<"a" | "b">("a");
   const [hotelCity, setHotelCity] = useState(0);
+  const [viewMode, setViewMode] = useState<"dia" | "hotel">("dia");
   const [showAdjustBox, setShowAdjustBox] = useState(false);
   const [mensagem, setMensagem] = useState("");
   const [status, setStatus] = useState<
@@ -1841,7 +1835,8 @@ export function ApprovalPanel({
         </div>
         <div className="flex flex-wrap items-start justify-center gap-x-5 gap-y-5 px-6 pt-3 sm:gap-x-7 sm:px-10">
           {DAYS.map((d, index) => {
-            const active = index === activeDay && activeRow === "a";
+            const active =
+              index === activeDay && activeRow === "a" && viewMode === "dia";
             return (
               <button
                 key={d.day}
@@ -1849,6 +1844,7 @@ export function ApprovalPanel({
                 onClick={() => {
                   setActiveDay(index);
                   setActiveRow("a");
+                  setViewMode("dia");
                 }}
                 className="flex flex-col items-center gap-2.5"
               >
@@ -1925,7 +1921,8 @@ export function ApprovalPanel({
               );
             }
 
-            const active = index === activeDay && activeRow === "b";
+            const active =
+              index === activeDay && activeRow === "b" && viewMode === "dia";
 
             return (
               <button
@@ -1934,6 +1931,7 @@ export function ApprovalPanel({
                 onClick={() => {
                   setActiveDay(index);
                   setActiveRow("b");
+                  setViewMode("dia");
                 }}
                 className="flex flex-col items-center gap-2.5"
               >
@@ -1989,13 +1987,16 @@ export function ApprovalPanel({
               );
             }
 
-            const active = index === hotelCity;
+            const active = index === hotelCity && viewMode === "hotel";
 
             return (
               <button
                 key={d.day}
                 type="button"
-                onClick={() => setHotelCity(index)}
+                onClick={() => {
+                  setHotelCity(index);
+                  setViewMode("hotel");
+                }}
                 className="flex flex-col items-center gap-2.5"
               >
                 <span
@@ -2019,10 +2020,6 @@ export function ApprovalPanel({
           })}
         </div>
 
-        <div className="px-6 pb-6 pt-6 sm:px-10">
-          <HotelComparisonTable cidade={HOTEIS[hotelCity]} />
-        </div>
-
         <p className="px-6 pt-8 text-[10px] font-bold uppercase tracking-[0.2em] text-black/35 sm:px-10">
           Informações Detalhadas
         </p>
@@ -2041,7 +2038,14 @@ export function ApprovalPanel({
         </div>
 
         <div className="px-6 py-8 sm:px-10 sm:py-10">
-          {current.travel ? (
+          {viewMode === "hotel" ? (
+            <>
+              <p className="mb-5 inline-block rounded-full border border-[#2f5aa8]/20 bg-[#eef3fb] px-5 py-2 text-xs uppercase tracking-[0.3em] text-[#2f5aa8]">
+                Hotel · {HOTEIS[hotelCity].cidade}
+              </p>
+              <HotelComparisonTable cidade={HOTEIS[hotelCity]} />
+            </>
+          ) : current.travel ? (
             <div className="rounded-2xl border border-black/10 bg-black/[0.02] p-6 text-center sm:p-8">
               <p className="text-xs font-bold uppercase tracking-[0.25em] text-black/40">
                 {current.city} · {current.date}
