@@ -1395,6 +1395,7 @@ type HotelOpcao = {
   academia: boolean;
   piscina: boolean;
   konbini: string;
+  site?: string;
 };
 
 type HotelCidade = {
@@ -1423,6 +1424,7 @@ const HOTEIS: HotelCidade[] = [
         academia: false,
         piscina: false,
         konbini: "FamilyMart (30 m)",
+        site: "https://www.gardenhotels.co.jp/nihonbashi-premier/eng/",
       },
       {
         nome: "Hotel Intergate Tokyo Kyobashi",
@@ -1440,6 +1442,7 @@ const HOTEIS: HotelCidade[] = [
         academia: false,
         piscina: false,
         konbini: "Lawson (20 m)",
+        site: "https://www.intergatehotels.jp/tokyo-kyobashi/en/facility/",
       },
       {
         nome: "Daiwa Roynet PREMIER Tokyo Oshiage",
@@ -1478,6 +1481,7 @@ const HOTEIS: HotelCidade[] = [
         academia: false,
         piscina: false,
         konbini: "Lawson (20 m)",
+        site: "https://www.daiwaroynet.jp/en/kyoto-ekimae/",
       },
       {
         nome: "Hotel Vischio Kyoto by GRANVIA",
@@ -1494,6 +1498,7 @@ const HOTEIS: HotelCidade[] = [
         academia: false,
         piscina: false,
         konbini: "FamilyMart (30 m)",
+        site: "https://www.hotelvischio-kyoto.com/en/",
       },
       {
         nome: "Hotel Kanra Kyoto",
@@ -1510,6 +1515,7 @@ const HOTEIS: HotelCidade[] = [
         academia: false,
         piscina: false,
         konbini: "Lawson (30 m)",
+        site: "https://www.uds-hotels.com/en/kanra/kyoto/facilities/",
       },
     ],
   },
@@ -1532,6 +1538,7 @@ const HOTEIS: HotelCidade[] = [
         academia: true,
         piscina: false,
         konbini: "FamilyMart (15 m)",
+        site: "https://www.discoverasr.com/en/citadines/japan/citadines-namba-osaka/gallery",
       },
       {
         nome: "Hotel Keihan Namba Grande",
@@ -1548,6 +1555,7 @@ const HOTEIS: HotelCidade[] = [
         academia: false,
         piscina: false,
         konbini: "FamilyMart (20 m)",
+        site: "https://namba.hotelkeihan.co.jp/rooms/",
       },
       {
         nome: "Cross Hotel Osaka",
@@ -1564,6 +1572,7 @@ const HOTEIS: HotelCidade[] = [
         academia: false,
         piscina: false,
         konbini: "Lawson (20 m)",
+        site: "https://global-cross-osaka.orixhotelsandresorts.com/LUC2ORIXOS/cdata/luc2orixos_0_jaen.html",
       },
     ],
   },
@@ -1679,6 +1688,16 @@ function HotelComparisonTable({ cidade }: { cidade: HotelCidade }) {
                 className="border-l border-black/10 px-4 py-3 text-center text-sm font-semibold text-black"
               >
                 {h.nome}
+                {h.site && (
+                  <a
+                    href={h.site}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-1.5 block text-[10px] font-semibold uppercase tracking-[0.1em] text-[#2f5aa8] hover:underline"
+                  >
+                    Ver galeria oficial
+                  </a>
+                )}
               </th>
             ))}
           </tr>
