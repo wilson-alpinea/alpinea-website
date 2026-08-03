@@ -1175,6 +1175,15 @@ function IconArrowRight({ className }: { className?: string }) {
   );
 }
 
+function IconArrowLeft({ className }: { className?: string }) {
+  return (
+    <svg {...iconProps(className)}>
+      <line x1="20" y1="12" x2="5" y2="12" />
+      <path d="M11 6l-6 6 6 6" />
+    </svg>
+  );
+}
+
 function IconPin({ className }: { className?: string }) {
   return (
     <svg {...iconProps(className)}>
@@ -1881,14 +1890,36 @@ function HotelComparisonTable({ cidade }: { cidade: HotelCidade }) {
                 Opção {selected + 1} de {cidade.opcoes.length}
               </span>
             </div>
-            {selected < cidade.opcoes.length - 1 && (
-              <div className="mt-3 flex flex-col items-center gap-1 sm:hidden">
-                <IconArrowRight className="h-7 w-7 shrink-0 animate-pulse text-[#2f5aa8]" />
-                <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#2f5aa8]">
-                  Arraste para a direita
-                </p>
-              </div>
-            )}
+            {(() => {
+              const canLeft = selected > 0;
+              const canRight = selected < cidade.opcoes.length - 1;
+              if (!canLeft && !canRight) return null;
+              const label =
+                canLeft && canRight
+                  ? "Arraste para os lados"
+                  : canRight
+                    ? "Arraste para a direita"
+                    : "Arraste para a esquerda";
+              return (
+                <div className="mt-3 flex flex-col items-center gap-1.5 sm:hidden">
+                  <div className="flex items-center gap-3">
+                    {canLeft && (
+                      <span className="flex h-9 w-9 shrink-0 animate-pulse items-center justify-center rounded-full bg-[#2f5aa8] text-white">
+                        <IconArrowLeft className="h-5 w-5" />
+                      </span>
+                    )}
+                    {canRight && (
+                      <span className="flex h-9 w-9 shrink-0 animate-pulse items-center justify-center rounded-full bg-[#2f5aa8] text-white">
+                        <IconArrowRight className="h-5 w-5" />
+                      </span>
+                    )}
+                  </div>
+                  <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#2f5aa8]">
+                    {label}
+                  </p>
+                </div>
+              );
+            })()}
             <div className="mt-2.5 flex items-center justify-center gap-1.5">
               {cidade.opcoes.map((h, i) => (
                 <span
@@ -1906,7 +1937,7 @@ function HotelComparisonTable({ cidade }: { cidade: HotelCidade }) {
                 rel="noopener noreferrer"
                 className="mt-2.5 inline-block text-[10px] font-semibold uppercase tracking-[0.1em] text-[#2f5aa8] hover:underline"
               >
-                Ver galeria oficial
+                Ver fotos e detalhes do hotel
               </a>
             )}
           </div>
@@ -1954,7 +1985,7 @@ function HotelComparisonTable({ cidade }: { cidade: HotelCidade }) {
                         rel="noopener noreferrer"
                         className="mt-1.5 block text-[10px] font-semibold uppercase tracking-[0.1em] text-[#2f5aa8] hover:underline"
                       >
-                        Ver galeria oficial
+                        Ver fotos e detalhes do hotel
                       </a>
                     )}
                   </th>
