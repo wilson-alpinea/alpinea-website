@@ -1166,6 +1166,15 @@ function IconPlane({ className }: { className?: string }) {
   );
 }
 
+function IconPin({ className }: { className?: string }) {
+  return (
+    <svg {...iconProps(className)}>
+      <path d="M12 21s7-6.5 7-12a7 7 0 0 0-14 0c0 5.5 7 12 7 12z" />
+      <circle cx="12" cy="9" r="2.3" />
+    </svg>
+  );
+}
+
 function IconMetro({ className }: { className?: string }) {
   return (
     <svg {...iconProps(className)}>
@@ -1457,6 +1466,7 @@ type HotelOpcao = {
   reforma: string;
   quarto: string;
   preco: string;
+  bairro: string;
   estacao: string;
   distanciaEstacao: string;
   distanciaTokyoStation?: string;
@@ -1488,6 +1498,7 @@ const HOTEIS: HotelCidade[] = [
         reforma: "Não",
         quarto: "20 m²",
         preco: "¥28–45 mil",
+        bairro: "Nihonbashi",
         estacao: "Mitsukoshimae",
         distanciaEstacao: "1 min",
         distanciaTokyoStation: "8–10 min a pé",
@@ -1508,6 +1519,7 @@ const HOTEIS: HotelCidade[] = [
         reforma: "Não",
         quarto: "15 m² (19 m² recomendado)",
         preco: "¥18–32 mil",
+        bairro: "Kyobashi",
         estacao: "Kyobashi",
         distanciaEstacao: "1 min",
         distanciaTokyoStation: "6–8 min a pé",
@@ -1528,6 +1540,7 @@ const HOTEIS: HotelCidade[] = [
         reforma: "Não",
         quarto: "18–26 m²",
         preco: "¥19–30 mil",
+        bairro: "Oshiage",
         estacao: "Oshiage (Skytree)",
         distanciaEstacao: "2 min",
         distanciaTokyoStation: "15–20 min",
@@ -1553,6 +1566,7 @@ const HOTEIS: HotelCidade[] = [
         reforma: "Não",
         quarto: "21 m²",
         preco: "¥18–30 mil",
+        bairro: "Karasuma-guchi (frente à Kyoto Station)",
         estacao: "Kyoto Station",
         distanciaEstacao: "3 min",
         ofuro: false,
@@ -1572,6 +1586,7 @@ const HOTEIS: HotelCidade[] = [
         reforma: "Não",
         quarto: "20 m²",
         preco: "¥20–33 mil",
+        bairro: "Higashikujo (saída Hachijo da Kyoto Station)",
         estacao: "Kyoto Station",
         distanciaEstacao: "2 min",
         ofuro: true,
@@ -1591,6 +1606,7 @@ const HOTEIS: HotelCidade[] = [
         reforma: "Renovações graduais de quartos e áreas comuns",
         quarto: "30 m²",
         preco: "¥28–40 mil",
+        bairro: "Gojo (Karasuma-dori)",
         estacao: "Gojo Station (10 min de Kyoto Station)",
         distanciaEstacao: "1 min até Gojo",
         ofuro: false,
@@ -1616,6 +1632,7 @@ const HOTEIS: HotelCidade[] = [
         reforma: "Não",
         quarto: "25 m²",
         preco: "¥20–34 mil",
+        bairro: "Namba",
         estacao: "Namba Station",
         distanciaEstacao: "8 min",
         ofuro: false,
@@ -1635,6 +1652,7 @@ const HOTEIS: HotelCidade[] = [
         reforma: "Não",
         quarto: "21 m²",
         preco: "¥18–30 mil",
+        bairro: "Namba (Naniwa-ku)",
         estacao: "Namba Station",
         distanciaEstacao: "5 min",
         ofuro: false,
@@ -1654,6 +1672,7 @@ const HOTEIS: HotelCidade[] = [
         reforma: "Reforma completa em 2020–2021",
         quarto: "27 m²",
         preco: "¥22–35 mil",
+        bairro: "Shinsaibashi",
         estacao: "Namba Station",
         distanciaEstacao: "3 min",
         ofuro: false,
@@ -1720,6 +1739,11 @@ function HotelComparisonTable({ cidade }: { cidade: HotelCidade }) {
       render: (h: HotelOpcao) => h.preco,
     },
     {
+      label: "Bairro",
+      Icon: IconPin,
+      render: (h: HotelOpcao) => h.bairro,
+    },
+    {
       label: "Estação",
       Icon: IconMetro,
       render: (h: HotelOpcao) => h.estacao,
@@ -1778,59 +1802,73 @@ function HotelComparisonTable({ cidade }: { cidade: HotelCidade }) {
   ];
 
   return (
-    <div className="overflow-x-auto rounded-2xl border border-black/10">
-      <table className="w-full min-w-[600px] border-collapse text-sm">
-        <thead>
-          <tr className="border-b border-black/10 bg-black/[0.02]">
-            <th className="w-40 px-4 py-3 text-left text-xs font-bold uppercase tracking-[0.15em] text-black/40">
-              Critério
-            </th>
-            {cidade.opcoes.map((h) => (
-              <th
-                key={h.nome}
-                className="border-l border-black/10 px-4 py-3 text-center text-sm font-semibold text-black"
-              >
-                {h.nome}
-                {h.site && (
-                  <a
-                    href={h.site}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="mt-1.5 block text-[10px] font-semibold uppercase tracking-[0.1em] text-[#2f5aa8] hover:underline"
+    <div className="relative">
+      <p className="mb-2 flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-[0.15em] text-black/35 sm:hidden">
+        Deslize para o lado para comparar
+        <span aria-hidden>→</span>
+      </p>
+      <div className="relative overflow-hidden rounded-2xl border border-black/10">
+        <div className="overflow-x-auto">
+          <table className="w-full min-w-[560px] border-collapse text-sm">
+            <thead>
+              <tr className="border-b border-black/10 bg-black/[0.02]">
+                <th className="sticky left-0 z-10 w-32 border-r border-black/10 bg-[#fafafa] px-3 py-3 text-left text-xs font-bold uppercase tracking-[0.15em] text-black/40 sm:w-40 sm:px-4">
+                  Critério
+                </th>
+                {cidade.opcoes.map((h) => (
+                  <th
+                    key={h.nome}
+                    className="w-[150px] border-l border-black/10 px-3 py-3 text-center text-sm font-semibold text-black sm:w-auto sm:px-4"
                   >
-                    Ver galeria oficial
-                  </a>
-                )}
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {rows.map((row, i) => (
-            <tr
-              key={row.label}
-              className={i % 2 === 1 ? "bg-black/[0.015]" : undefined}
-            >
-              <td className="px-4 py-3 align-top text-xs font-semibold text-black/50">
-                <span className="flex items-center gap-1.5">
-                  <row.Icon className="h-3.5 w-3.5 text-[#2f5aa8]" />
-                  {row.label !== "Avaliação Booking" &&
-                    row.label !== "Avaliação Trivago" &&
-                    row.label}
-                </span>
-              </td>
-              {cidade.opcoes.map((h) => (
-                <td
-                  key={h.nome}
-                  className="border-l border-black/10 px-4 py-3 text-center align-middle text-sm text-black/70"
-                >
-                  {row.render(h)}
-                </td>
-              ))}
-            </tr>
-          ))}
-        </tbody>
-      </table>
+                    {h.nome}
+                    {h.site && (
+                      <a
+                        href={h.site}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="mt-1.5 block text-[10px] font-semibold uppercase tracking-[0.1em] text-[#2f5aa8] hover:underline"
+                      >
+                        Ver galeria oficial
+                      </a>
+                    )}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {rows.map((row, i) => {
+                const rowBg = i % 2 === 1 ? "bg-black/[0.015]" : "bg-white";
+                return (
+                  <tr key={row.label} className={rowBg}>
+                    <td
+                      className={`sticky left-0 z-10 border-r border-black/10 px-3 py-3 align-top text-xs font-semibold text-black/50 sm:px-4 ${rowBg}`}
+                    >
+                      <span className="flex items-center gap-1.5">
+                        <row.Icon className="h-3.5 w-3.5 shrink-0 text-[#2f5aa8]" />
+                        {row.label !== "Avaliação Booking" &&
+                          row.label !== "Avaliação Trivago" &&
+                          row.label}
+                      </span>
+                    </td>
+                    {cidade.opcoes.map((h) => (
+                      <td
+                        key={h.nome}
+                        className="border-l border-black/10 px-3 py-3 text-center align-middle text-sm text-black/70 sm:px-4"
+                      >
+                        {row.render(h)}
+                      </td>
+                    ))}
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-y-0 right-0 w-8 bg-gradient-to-l from-white to-transparent sm:hidden"
+        />
+      </div>
     </div>
   );
 }
@@ -1935,7 +1973,7 @@ export function ApprovalPanel({
         <img
           src="/images/goku-bw.png"
           alt="Goku"
-          className="absolute bottom-full right-10 z-20 h-48 w-48 object-contain sm:right-14 sm:h-56 sm:w-56"
+          className="absolute right-6 top-0 z-20 h-20 w-20 -translate-y-1/2 object-contain sm:bottom-full sm:right-14 sm:top-auto sm:h-56 sm:w-56 sm:translate-y-0"
         />
         <div className="relative z-10 overflow-hidden rounded-2xl border border-black/10 bg-white shadow-[0_20px_60px_-30px_rgba(0,0,0,0.25)] sm:rounded-[2rem]">
         <div className="border-b border-black/10 px-6 py-7 text-center sm:px-10">
