@@ -1366,6 +1366,26 @@ function IconYen({ className }: { className?: string }) {
   );
 }
 
+function IconBookingLogo({ className: _className }: { className?: string }) {
+  return (
+    <img
+      src="/images/Booking.com-Logo-trimmed.png"
+      alt="Booking.com"
+      className="h-4 w-auto shrink-0 object-contain"
+    />
+  );
+}
+
+function IconTrivagoLogo({ className: _className }: { className?: string }) {
+  return (
+    <img
+      src="/images/Trivago_logo_2023.svg.webp"
+      alt="Trivago"
+      className="h-4 w-auto shrink-0 object-contain"
+    />
+  );
+}
+
 function IconWalk({ className }: { className?: string }) {
   return (
     <svg {...iconProps(className)}>
@@ -1446,6 +1466,8 @@ type HotelOpcao = {
   piscina: boolean;
   konbini: string;
   site?: string;
+  avaliacaoBooking?: number;
+  avaliacaoTrivago?: number;
 };
 
 type HotelCidade = {
@@ -1475,6 +1497,8 @@ const HOTEIS: HotelCidade[] = [
         piscina: false,
         konbini: "FamilyMart (30 m)",
         site: "https://www.gardenhotels.co.jp/nihonbashi-premier/eng/",
+        avaliacaoBooking: 8.9,
+        avaliacaoTrivago: 9.0,
       },
       {
         nome: "Hotel Intergate Tokyo Kyobashi",
@@ -1493,23 +1517,28 @@ const HOTEIS: HotelCidade[] = [
         piscina: false,
         konbini: "Lawson (20 m)",
         site: "https://www.intergatehotels.jp/tokyo-kyobashi/en/facility/",
+        avaliacaoBooking: 8.5,
+        avaliacaoTrivago: 8.7,
       },
       {
-        nome: "Daiwa Roynet PREMIER Tokyo Oshiage",
+        nome: "Richmond Hotel Premier Tokyo Schole",
         notaAlpinea: 96,
-        perfil: "Maior quarto pelo investimento",
-        inauguracao: "2017",
+        perfil: "Conceito boutique com lounge social",
+        inauguracao: "2015",
         reforma: "Não",
-        quarto: "21–23 m²",
-        preco: "¥17–28 mil",
+        quarto: "18–26 m²",
+        preco: "¥19–30 mil",
         estacao: "Oshiage (Skytree)",
-        distanciaEstacao: "1 min",
+        distanciaEstacao: "2 min",
         distanciaTokyoStation: "15–20 min",
         ofuro: false,
         restaurante: true,
         academia: false,
         piscina: false,
-        konbini: "Lawson (15 m)",
+        konbini: "FamilyMart (em frente)",
+        site: "https://richmondhotel.jp/en/tokyo-oshiage/gallery/",
+        avaliacaoBooking: 9.1,
+        avaliacaoTrivago: 9.1,
       },
     ],
   },
@@ -1532,6 +1561,8 @@ const HOTEIS: HotelCidade[] = [
         piscina: false,
         konbini: "Lawson (20 m)",
         site: "https://www.daiwaroynet.jp/en/kyoto-ekimae/",
+        avaliacaoBooking: 8.7,
+        avaliacaoTrivago: 9.0,
       },
       {
         nome: "Hotel Vischio Kyoto by GRANVIA",
@@ -1549,6 +1580,8 @@ const HOTEIS: HotelCidade[] = [
         piscina: false,
         konbini: "FamilyMart (30 m)",
         site: "https://www.hotelvischio-kyoto.com/en/",
+        avaliacaoBooking: 9.0,
+        avaliacaoTrivago: 9.1,
       },
       {
         nome: "Hotel Kanra Kyoto",
@@ -1566,6 +1599,8 @@ const HOTEIS: HotelCidade[] = [
         piscina: false,
         konbini: "Lawson (30 m)",
         site: "https://www.uds-hotels.com/en/kanra/kyoto/facilities/",
+        avaliacaoBooking: 9.3,
+        avaliacaoTrivago: 9.3,
       },
     ],
   },
@@ -1588,7 +1623,9 @@ const HOTEIS: HotelCidade[] = [
         academia: true,
         piscina: false,
         konbini: "FamilyMart (15 m)",
-        site: "https://www.discoverasr.com/en/citadines/japan/citadines-namba-osaka/gallery",
+        site: "https://www.discoverasr.com/en/citadines/japan/citadines-namba-osaka/amenities",
+        avaliacaoBooking: 9.1,
+        avaliacaoTrivago: 9.3,
       },
       {
         nome: "Hotel Keihan Namba Grande",
@@ -1606,6 +1643,8 @@ const HOTEIS: HotelCidade[] = [
         piscina: false,
         konbini: "FamilyMart (20 m)",
         site: "https://namba.hotelkeihan.co.jp/rooms/",
+        avaliacaoBooking: 8.6,
+        avaliacaoTrivago: 8.9,
       },
       {
         nome: "Cross Hotel Osaka",
@@ -1623,6 +1662,8 @@ const HOTEIS: HotelCidade[] = [
         piscina: false,
         konbini: "Lawson (20 m)",
         site: "https://global-cross-osaka.orixhotelsandresorts.com/LUC2ORIXOS/cdata/luc2orixos_0_jaen.html",
+        avaliacaoBooking: 8.9,
+        avaliacaoTrivago: 9.0,
       },
     ],
   },
@@ -1721,6 +1762,18 @@ function HotelComparisonTable({ cidade }: { cidade: HotelCidade }) {
       label: "Kombini",
       Icon: IconStore,
       render: (h: HotelOpcao) => h.konbini,
+    },
+    {
+      label: "Avaliação Booking",
+      Icon: IconBookingLogo,
+      render: (h: HotelOpcao) =>
+        h.avaliacaoBooking ? `${h.avaliacaoBooking.toFixed(1)} / 10` : "—",
+    },
+    {
+      label: "Avaliação Trivago",
+      Icon: IconTrivagoLogo,
+      render: (h: HotelOpcao) =>
+        h.avaliacaoTrivago ? `${h.avaliacaoTrivago.toFixed(1)} / 10` : "—",
     },
   ];
 
@@ -2111,11 +2164,17 @@ export function ApprovalPanel({
           ))}
         </div>
 
-        <div className="flex flex-wrap items-center gap-2.5 px-6 pt-8 sm:px-10">
+        <p className="mt-8 px-6 sm:px-10">
+          <span className="inline-block rounded-full border border-[#2f5aa8]/20 bg-[#eef3fb] px-5 py-2 text-xs uppercase tracking-[0.3em] text-[#2f5aa8]">
+            Marketplace de Serviços
+          </span>
+        </p>
+
+        <div className="flex flex-wrap items-center gap-2.5 px-6 pt-3 sm:px-10">
           <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-black/35">
             Serviços Adicionais Disponíveis
           </p>
-          <span className="rounded-full border border-black/10 bg-black/[0.03] px-3 py-1 text-[10px] font-bold uppercase tracking-[0.15em] text-black/40">
+          <span className="rounded-full border border-amber-300/70 bg-amber-50 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.15em] text-amber-700">
             Contratação à Parte
           </span>
         </div>
