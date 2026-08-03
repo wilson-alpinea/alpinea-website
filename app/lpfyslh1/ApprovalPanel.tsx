@@ -1802,14 +1802,13 @@ function HotelComparisonTable({ cidade }: { cidade: HotelCidade }) {
   ];
 
   return (
-    <div className="relative">
+    <div>
       <p className="mb-2 flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-[0.15em] text-black/35 sm:hidden">
         Deslize para o lado para comparar
         <span aria-hidden>→</span>
       </p>
-      <div className="relative overflow-hidden rounded-2xl border border-black/10">
-        <div className="overflow-x-auto">
-          <table className="w-full min-w-[560px] border-collapse text-sm">
+      <div className="overflow-x-auto rounded-2xl border border-black/10">
+        <table className="w-full min-w-[560px] border-collapse text-sm">
             <thead>
               <tr className="border-b border-black/10 bg-black/[0.02]">
                 <th className="sticky left-0 z-10 w-32 border-r border-black/10 bg-[#fafafa] px-3 py-3 text-left text-xs font-bold uppercase tracking-[0.15em] text-black/40 sm:w-40 sm:px-4">
@@ -1863,11 +1862,6 @@ function HotelComparisonTable({ cidade }: { cidade: HotelCidade }) {
               })}
             </tbody>
           </table>
-        </div>
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-y-0 right-0 w-8 bg-gradient-to-l from-white to-transparent sm:hidden"
-        />
       </div>
     </div>
   );
@@ -1980,7 +1974,7 @@ export function ApprovalPanel({
         <img
           src="/images/goku-bw.png"
           alt="Goku"
-          className="absolute right-4 top-0 z-20 h-36 w-36 -translate-y-1/2 object-contain sm:bottom-full sm:right-14 sm:top-auto sm:h-56 sm:w-56 sm:translate-y-0"
+          className="absolute bottom-full right-4 z-20 h-28 w-28 object-contain sm:right-14 sm:h-56 sm:w-56"
         />
         <div className="relative z-10 overflow-hidden rounded-2xl border border-black/10 bg-white shadow-[0_20px_60px_-30px_rgba(0,0,0,0.25)] sm:rounded-[2rem]">
         <div className="border-b border-black/10 px-6 py-7 text-center sm:px-10">

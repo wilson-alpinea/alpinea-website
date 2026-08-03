@@ -225,7 +225,7 @@ export const metadata: Metadata = {
 
 export default function AprovacaoRoteiroPage() {
   return (
-    <main className="min-h-screen bg-white">
+    <main className="min-h-screen overflow-x-hidden bg-white">
       <header className="fixed left-0 right-0 top-0 z-50 flex items-center justify-between border-b border-black/10 bg-white/60 px-6 py-5 shadow-[0_1px_24px_rgba(0,0,0,0.05)] backdrop-blur-xl md:px-16">
         <img
           src="/images/logo-alpinea-v6.png"
