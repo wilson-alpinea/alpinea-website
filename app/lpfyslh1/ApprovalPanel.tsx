@@ -1242,6 +1242,56 @@ const INFO_CARDS = [
   { label: "Palavras Comuns", Icon: IconWords },
 ];
 
+function IconTicket({ className }: { className?: string }) {
+  return (
+    <svg {...iconProps(className)}>
+      <path d="M3 9a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v1.5a1.5 1.5 0 0 0 0 3V16a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2.5a1.5 1.5 0 0 0 0-3z" />
+      <line x1="10" y1="7" x2="10" y2="18" strokeDasharray="1.5 2.5" />
+    </svg>
+  );
+}
+
+function IconCash({ className }: { className?: string }) {
+  return (
+    <svg {...iconProps(className)}>
+      <rect x="2.5" y="6" width="19" height="12" rx="2" />
+      <circle cx="12" cy="12" r="3" />
+      <line x1="6" y1="9" x2="6" y2="9.01" />
+      <line x1="18" y1="15" x2="18" y2="15.01" />
+    </svg>
+  );
+}
+
+function IconDriver({ className }: { className?: string }) {
+  return (
+    <svg {...iconProps(className)}>
+      <path d="M5 16h14l-1.5-6a2 2 0 0 0-1.9-1.5H8.4A2 2 0 0 0 6.5 10z" />
+      <circle cx="7.5" cy="16.5" r="1.5" />
+      <circle cx="16.5" cy="16.5" r="1.5" />
+      <line x1="8" y1="10" x2="16" y2="10" />
+    </svg>
+  );
+}
+
+function IconConcierge({ className }: { className?: string }) {
+  return (
+    <svg {...iconProps(className)}>
+      <path d="M4 18a8 8 0 0 1 16 0" />
+      <path d="M4 18h1a1 1 0 0 0 1-1v-3a1 1 0 0 0-1-1H4z" />
+      <path d="M20 18h-1a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h1z" />
+      <path d="M12 18v1a2 2 0 0 1-2 2H9" />
+    </svg>
+  );
+}
+
+const ADDITIONAL_SERVICES = [
+  { label: "Ticket para USJ/Disney/teamLab", Icon: IconTicket },
+  { label: "Reserva para Restaurantes", Icon: IconFork },
+  { label: "Serviço de Câmbio no Brasil", Icon: IconCash },
+  { label: "Motorista Particular", Icon: IconDriver },
+  { label: "Cobertura Expandida para Concierge", Icon: IconConcierge },
+];
+
 function IconCheck({ className }: { className?: string }) {
   return (
     <svg {...iconProps(className)}>
@@ -2054,6 +2104,28 @@ export function ApprovalPanel({
               className="group flex min-h-[112px] cursor-pointer flex-col items-center justify-center gap-2.5 rounded-xl border border-black/10 bg-black/[0.02] px-3 py-4 text-center text-xs leading-5 text-black/55 transition duration-300 ease-out hover:-translate-y-0.5 hover:border-[#2f5aa8]/30 hover:bg-[#eef3fb] hover:text-[#2f5aa8] hover:shadow-[0_10px_30px_-15px_rgba(47,90,168,0.35)]"
             >
               <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[#eef3fb] text-[#2f5aa8] transition group-hover:bg-white">
+                <Icon className="h-4 w-4" />
+              </span>
+              {label}
+            </div>
+          ))}
+        </div>
+
+        <div className="flex flex-wrap items-center gap-2.5 px-6 pt-8 sm:px-10">
+          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-black/35">
+            Serviços Adicionais Disponíveis
+          </p>
+          <span className="rounded-full border border-black/10 bg-black/[0.03] px-3 py-1 text-[10px] font-bold uppercase tracking-[0.15em] text-black/40">
+            Contratação à Parte
+          </span>
+        </div>
+        <div className="grid grid-cols-2 gap-3 border-b border-black/10 px-6 pb-6 pt-3 sm:grid-cols-4 sm:px-10">
+          {ADDITIONAL_SERVICES.map(({ label, Icon }) => (
+            <div
+              key={label}
+              className="group flex min-h-[112px] cursor-pointer flex-col items-center justify-center gap-2.5 rounded-xl border border-[#7c4fd1]/25 bg-[#f4effc] px-3 py-4 text-center text-xs leading-5 text-[#5b3ea6] transition duration-300 ease-out hover:-translate-y-0.5 hover:border-[#7c4fd1]/40 hover:bg-[#ece2fa] hover:shadow-[0_10px_30px_-15px_rgba(124,79,209,0.35)]"
+            >
+              <span className="flex h-9 w-9 items-center justify-center rounded-full bg-white text-[#7c4fd1] transition group-hover:bg-[#7c4fd1] group-hover:text-white">
                 <Icon className="h-4 w-4" />
               </span>
               {label}
