@@ -1808,16 +1808,16 @@ function HotelComparisonTable({ cidade }: { cidade: HotelCidade }) {
         <span aria-hidden>→</span>
       </p>
       <div className="overflow-x-auto rounded-2xl border border-black/10">
-        <table className="w-full min-w-[560px] border-collapse text-sm">
+        <table className="w-full min-w-[560px] border-separate border-spacing-0 text-sm">
             <thead>
-              <tr className="border-b border-black/10 bg-black/[0.02]">
-                <th className="sticky left-0 z-10 w-32 border-r border-black/10 bg-[#fafafa] px-3 py-3 text-left text-xs font-bold uppercase tracking-[0.15em] text-black/40 sm:w-40 sm:px-4">
+              <tr className="bg-black/[0.02]">
+                <th className="sticky left-0 z-10 w-32 border-b border-r border-black/10 bg-[#fafafa] px-3 py-3 text-left text-xs font-bold uppercase tracking-[0.15em] text-black/40 sm:w-40 sm:px-4">
                   Critério
                 </th>
                 {cidade.opcoes.map((h) => (
                   <th
                     key={h.nome}
-                    className="w-[150px] border-l border-black/10 px-3 py-3 text-center text-sm font-semibold text-black sm:w-auto sm:px-4"
+                    className="w-[150px] border-b border-l border-black/10 bg-black/[0.02] px-3 py-3 text-center text-sm font-semibold text-black sm:w-auto sm:px-4"
                   >
                     {h.nome}
                     {h.site && (
