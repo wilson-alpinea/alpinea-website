@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 // Painel de aprovação de rascunho — mesma lógica visual do Painel Interativo
 // usado em /ajisairoteiros (pílulas, abas de dia, tipografia Bodoni Moda),
@@ -1889,6 +1889,13 @@ export function ApprovalPanel({
   const [status, setStatus] = useState<
     "idle" | "submitting" | "aprovado" | "ajustes" | "error"
   >("idle");
+  const contentRef = useRef<HTMLDivElement>(null);
+
+  function scrollToContent() {
+    requestAnimationFrame(() => {
+      contentRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+  }
 
   const current =
     activeRow === "b" && OSAKA_ALT[activeDay]
@@ -1973,7 +1980,7 @@ export function ApprovalPanel({
         <img
           src="/images/goku-bw.png"
           alt="Goku"
-          className="absolute right-6 top-0 z-20 h-20 w-20 -translate-y-1/2 object-contain sm:bottom-full sm:right-14 sm:top-auto sm:h-56 sm:w-56 sm:translate-y-0"
+          className="absolute right-4 top-0 z-20 h-36 w-36 -translate-y-1/2 object-contain sm:bottom-full sm:right-14 sm:top-auto sm:h-56 sm:w-56 sm:translate-y-0"
         />
         <div className="relative z-10 overflow-hidden rounded-2xl border border-black/10 bg-white shadow-[0_20px_60px_-30px_rgba(0,0,0,0.25)] sm:rounded-[2rem]">
         <div className="border-b border-black/10 px-6 py-7 text-center sm:px-10">
@@ -2007,6 +2014,7 @@ export function ApprovalPanel({
                   setActiveDay(index);
                   setActiveRow("a");
                   setViewMode("dia");
+                  scrollToContent();
                 }}
                 className="flex flex-col items-center gap-2.5"
               >
@@ -2061,7 +2069,7 @@ export function ApprovalPanel({
                 <div
                   key={d.day}
                   aria-hidden="true"
-                  className="flex flex-col items-center gap-2.5 opacity-0"
+                  className="hidden flex-col items-center gap-2.5 opacity-0 sm:flex"
                 >
                   <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full border-2 text-sm font-bold">
                     {d.badge ?? d.day}
@@ -2094,6 +2102,7 @@ export function ApprovalPanel({
                   setActiveDay(index);
                   setActiveRow("b");
                   setViewMode("dia");
+                  scrollToContent();
                 }}
                 className="flex flex-col items-center gap-2.5"
               >
@@ -2144,7 +2153,7 @@ export function ApprovalPanel({
                 <div
                   key={d.day}
                   aria-hidden="true"
-                  className="h-14 w-14 shrink-0 opacity-0"
+                  className="hidden h-14 w-14 shrink-0 opacity-0 sm:block"
                 />
               );
             }
@@ -2158,6 +2167,7 @@ export function ApprovalPanel({
                 onClick={() => {
                   setHotelCity(index);
                   setViewMode("hotel");
+                  scrollToContent();
                 }}
                 className="flex flex-col items-center gap-2.5"
               >
@@ -2234,7 +2244,7 @@ export function ApprovalPanel({
           </div>
         </div>
 
-        <div className="px-6 py-8 sm:px-10 sm:py-10">
+        <div ref={contentRef} className="scroll-mt-6 px-6 py-8 sm:px-10 sm:py-10">
           {viewMode === "hotel" ? (
             <>
               <p className="mb-5 inline-block rounded-full border border-[#2f5aa8]/20 bg-[#eef3fb] px-5 py-2 text-xs uppercase tracking-[0.3em] text-[#2f5aa8]">
