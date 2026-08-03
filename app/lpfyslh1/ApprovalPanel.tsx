@@ -1876,14 +1876,19 @@ function HotelComparisonTable({ cidade }: { cidade: HotelCidade }) {
             <p className="text-base font-semibold text-black">
               {cidade.opcoes[selected].nome}
             </p>
-            <div className="mt-2.5 flex items-center justify-center gap-2.5">
+            <div className="mt-2.5 flex items-center justify-center">
               <span className="inline-block rounded-full border border-[#2f5aa8]/25 bg-[#2f5aa8] px-4 py-1.5 text-[10px] font-bold uppercase tracking-[0.25em] text-white">
                 Opção {selected + 1} de {cidade.opcoes.length}
               </span>
-              {selected < cidade.opcoes.length - 1 && (
-                <IconArrowRight className="h-4 w-4 shrink-0 animate-pulse text-[#2f5aa8]" />
-              )}
             </div>
+            {selected < cidade.opcoes.length - 1 && (
+              <div className="mt-3 flex flex-col items-center gap-1 sm:hidden">
+                <IconArrowRight className="h-7 w-7 shrink-0 animate-pulse text-[#2f5aa8]" />
+                <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#2f5aa8]">
+                  Arraste para a direita
+                </p>
+              </div>
+            )}
             <div className="mt-2.5 flex items-center justify-center gap-1.5">
               {cidade.opcoes.map((h, i) => (
                 <span
