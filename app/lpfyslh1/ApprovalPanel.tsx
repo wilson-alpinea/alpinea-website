@@ -1371,7 +1371,7 @@ function IconBookingLogo({ className: _className }: { className?: string }) {
     <img
       src="/images/Booking.com-Logo-trimmed.png"
       alt="Booking.com"
-      className="h-4 w-auto shrink-0 object-contain"
+      className="h-5 w-auto shrink-0 object-contain"
     />
   );
 }
@@ -1381,7 +1381,7 @@ function IconTrivagoLogo({ className: _className }: { className?: string }) {
     <img
       src="/images/Trivago_logo_2023.svg.webp"
       alt="Trivago"
-      className="h-4 w-auto shrink-0 object-contain"
+      className="h-5 w-auto shrink-0 object-contain"
     />
   );
 }
@@ -1536,7 +1536,7 @@ const HOTEIS: HotelCidade[] = [
         academia: false,
         piscina: false,
         konbini: "FamilyMart (em frente)",
-        site: "https://richmondhotel.jp/en/tokyo-oshiage/gallery/",
+        site: "https://richmondhotel.jp/tokyo-oshiage/",
         avaliacaoBooking: 9.1,
         avaliacaoTrivago: 9.1,
       },
@@ -1814,7 +1814,9 @@ function HotelComparisonTable({ cidade }: { cidade: HotelCidade }) {
               <td className="px-4 py-3 align-top text-xs font-semibold text-black/50">
                 <span className="flex items-center gap-1.5">
                   <row.Icon className="h-3.5 w-3.5 text-[#2f5aa8]" />
-                  {row.label}
+                  {row.label !== "Avaliação Booking" &&
+                    row.label !== "Avaliação Trivago" &&
+                    row.label}
                 </span>
               </td>
               {cidade.opcoes.map((h) => (
@@ -2164,32 +2166,34 @@ export function ApprovalPanel({
           ))}
         </div>
 
-        <p className="mt-8 px-6 sm:px-10">
-          <span className="inline-block rounded-full border border-[#2f5aa8]/20 bg-[#eef3fb] px-5 py-2 text-xs uppercase tracking-[0.3em] text-[#2f5aa8]">
-            Marketplace de Serviços
-          </span>
-        </p>
-
-        <div className="flex flex-wrap items-center gap-2.5 px-6 pt-3 sm:px-10">
-          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-black/35">
-            Serviços Adicionais Disponíveis
+        <div className="border-b border-black/10 bg-black/[0.02] pb-6 pt-8">
+          <p className="px-6 text-center sm:px-10">
+            <span className="inline-block rounded-full border border-[#2f5aa8]/20 bg-[#eef3fb] px-5 py-2 text-xs uppercase tracking-[0.3em] text-[#2f5aa8]">
+              Marketplace de Serviços
+            </span>
           </p>
-          <span className="rounded-full border border-amber-300/70 bg-amber-50 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.15em] text-amber-700">
-            Contratação à Parte
-          </span>
-        </div>
-        <div className="grid grid-cols-2 gap-3 border-b border-black/10 px-6 pb-6 pt-3 sm:grid-cols-4 sm:px-10">
-          {ADDITIONAL_SERVICES.map(({ label, Icon }) => (
-            <div
-              key={label}
-              className="group flex min-h-[112px] cursor-pointer flex-col items-center justify-center gap-2.5 rounded-xl border border-[#7c4fd1]/25 bg-[#f4effc] px-3 py-4 text-center text-xs leading-5 text-[#5b3ea6] transition duration-300 ease-out hover:-translate-y-0.5 hover:border-[#7c4fd1]/40 hover:bg-[#ece2fa] hover:shadow-[0_10px_30px_-15px_rgba(124,79,209,0.35)]"
-            >
-              <span className="flex h-9 w-9 items-center justify-center rounded-full bg-white text-[#7c4fd1] transition group-hover:bg-[#7c4fd1] group-hover:text-white">
-                <Icon className="h-4 w-4" />
-              </span>
-              {label}
-            </div>
-          ))}
+
+          <div className="flex flex-wrap items-center gap-2.5 px-6 pt-3 sm:px-10">
+            <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-black/35">
+              Serviços Adicionais Disponíveis
+            </p>
+            <span className="rounded-full border border-amber-300/70 bg-amber-50 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.15em] text-amber-700">
+              Contratação à Parte
+            </span>
+          </div>
+          <div className="grid grid-cols-2 gap-3 px-6 pt-3 sm:grid-cols-4 sm:px-10">
+            {ADDITIONAL_SERVICES.map(({ label, Icon }) => (
+              <div
+                key={label}
+                className="group flex min-h-[112px] cursor-pointer flex-col items-center justify-center gap-2.5 rounded-xl border border-[#7c4fd1]/25 bg-[#f4effc] px-3 py-4 text-center text-xs leading-5 text-[#5b3ea6] transition duration-300 ease-out hover:-translate-y-0.5 hover:border-[#7c4fd1]/40 hover:bg-[#ece2fa] hover:shadow-[0_10px_30px_-15px_rgba(124,79,209,0.35)]"
+              >
+                <span className="flex h-9 w-9 items-center justify-center rounded-full bg-white text-[#7c4fd1] transition group-hover:bg-[#7c4fd1] group-hover:text-white">
+                  <Icon className="h-4 w-4" />
+                </span>
+                {label}
+              </div>
+            ))}
+          </div>
         </div>
 
         <div className="px-6 py-8 sm:px-10 sm:py-10">
