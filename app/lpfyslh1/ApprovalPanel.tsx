@@ -1920,12 +1920,12 @@ function HotelComparisonTable({ cidade }: { cidade: HotelCidade }) {
                 </div>
               );
             })()}
-            <div className="mt-2.5 flex items-center justify-center gap-1.5">
+            <div className="mt-2.5 flex items-center justify-center gap-2.5 px-6">
               {cidade.opcoes.map((h, i) => (
                 <span
                   key={h.nome}
-                  className={`h-1.5 rounded-full transition-all ${
-                    i === selected ? "w-6 bg-[#2f5aa8]" : "w-1.5 bg-black/15"
+                  className={`h-2 flex-1 max-w-24 rounded-full transition-all ${
+                    i === selected ? "bg-[#2f5aa8]" : "bg-black/15"
                   }`}
                 />
               ))}
