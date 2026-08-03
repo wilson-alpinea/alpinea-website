@@ -1184,6 +1184,15 @@ function IconArrowLeft({ className }: { className?: string }) {
   );
 }
 
+function IconArrowUp({ className }: { className?: string }) {
+  return (
+    <svg {...iconProps(className)}>
+      <line x1="12" y1="20" x2="12" y2="5" />
+      <path d="M6 11l6-6 6 6" />
+    </svg>
+  );
+}
+
 function IconPin({ className }: { className?: string }) {
   return (
     <svg {...iconProps(className)}>
@@ -2042,10 +2051,17 @@ export function ApprovalPanel({
     "idle" | "submitting" | "aprovado" | "ajustes" | "error"
   >("idle");
   const contentRef = useRef<HTMLDivElement>(null);
+  const daysMenuRef = useRef<HTMLDivElement>(null);
 
   function scrollToContent() {
     requestAnimationFrame(() => {
       contentRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+  }
+
+  function scrollToDaysMenu() {
+    requestAnimationFrame(() => {
+      daysMenuRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
     });
   }
 
@@ -2149,7 +2165,7 @@ export function ApprovalPanel({
           </p>
         </div>
 
-        <div className="px-6 pt-6 sm:px-10">
+        <div ref={daysMenuRef} className="scroll-mt-6 px-6 pt-6 sm:px-10">
           <p className="inline-block rounded-full border border-[#2f5aa8]/25 bg-[#eef3fb] px-3 py-1 text-[10px] font-bold uppercase tracking-[0.2em] text-[#2f5aa8]">
             Opção A
           </p>
@@ -2440,6 +2456,18 @@ export function ApprovalPanel({
                   />
                 )}
               </div>
+              <button
+                type="button"
+                onClick={scrollToDaysMenu}
+                className="mt-8 flex w-full flex-col items-center gap-2 rounded-2xl border border-black/10 bg-black/[0.02] py-6 text-center transition hover:bg-[#eef3fb] sm:hidden"
+              >
+                <span className="flex h-10 w-10 shrink-0 animate-pulse items-center justify-center rounded-full bg-[#2f5aa8] text-white">
+                  <IconArrowUp className="h-5 w-5" />
+                </span>
+                <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#2f5aa8]">
+                  Voltar para o menu de dias do roteiro
+                </span>
+              </button>
             </>
           )}
         </div>
