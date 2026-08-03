@@ -1701,6 +1701,7 @@ function HotelBoolCell({ value }: { value: boolean }) {
 }
 
 function HotelComparisonTable({ cidade }: { cidade: HotelCidade }) {
+  const [selected, setSelected] = useState(0);
   const temTokyoStation = cidade.opcoes.some((h) => h.distanciaTokyoStation);
 
   const rows = [
@@ -1803,11 +1804,66 @@ function HotelComparisonTable({ cidade }: { cidade: HotelCidade }) {
 
   return (
     <div>
-      <p className="mb-2 flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-[0.15em] text-black/35 sm:hidden">
-        Deslize para o lado para comparar
-        <span aria-hidden>→</span>
-      </p>
-      <div className="overflow-x-auto rounded-2xl border border-black/10">
+      {/* Mobile: sem tabela nem scroll horizontal — abas pra escolher o
+          hotel, cartão único com os critérios empilhados verticalmente. */}
+      <div className="sm:hidden">
+        <div className="mb-3 flex gap-2 overflow-x-auto pb-1">
+          {cidade.opcoes.map((h, i) => (
+            <button
+              key={h.nome}
+              type="button"
+              onClick={() => setSelected(i)}
+              className={`shrink-0 rounded-full border px-4 py-2 text-xs font-semibold transition ${
+                i === selected
+                  ? "border-black bg-black text-white"
+                  : "border-black/15 bg-white text-black/50"
+              }`}
+            >
+              {h.nome}
+            </button>
+          ))}
+        </div>
+        <div className="overflow-hidden rounded-2xl border border-black/10">
+          <div className="border-b border-black/10 bg-black/[0.02] px-4 py-4 text-center">
+            <p className="text-base font-semibold text-black">
+              {cidade.opcoes[selected].nome}
+            </p>
+            {cidade.opcoes[selected].site && (
+              <a
+                href={cidade.opcoes[selected].site}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-1.5 inline-block text-[10px] font-semibold uppercase tracking-[0.1em] text-[#2f5aa8] hover:underline"
+              >
+                Ver galeria oficial
+              </a>
+            )}
+          </div>
+          <div>
+            {rows.map((row, i) => (
+              <div
+                key={row.label}
+                className={`flex items-center justify-between gap-4 px-4 py-3 ${
+                  i % 2 === 1 ? "bg-black/[0.015]" : "bg-white"
+                }`}
+              >
+                <span className="flex shrink-0 items-center gap-1.5 text-xs font-semibold text-black/50">
+                  <row.Icon className="h-3.5 w-3.5 shrink-0 text-[#2f5aa8]" />
+                  {row.label !== "Avaliação Booking" &&
+                    row.label !== "Avaliação Trivago" &&
+                    row.label}
+                </span>
+                <span className="text-right text-sm text-black/70">
+                  {row.render(cidade.opcoes[selected])}
+                </span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Desktop: tabela comparativa completa lado a lado. */}
+      <div className="hidden overflow-x-auto rounded-2xl border border-black/10 sm:block">
         <table className="w-full min-w-[560px] border-separate border-spacing-0 text-sm">
             <thead>
               <tr className="bg-black/[0.02]">
