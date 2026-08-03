@@ -1166,6 +1166,15 @@ function IconPlane({ className }: { className?: string }) {
   );
 }
 
+function IconArrowRight({ className }: { className?: string }) {
+  return (
+    <svg {...iconProps(className)}>
+      <line x1="4" y1="12" x2="19" y2="12" />
+      <path d="M13 6l6 6-6 6" />
+    </svg>
+  );
+}
+
 function IconPin({ className }: { className?: string }) {
   return (
     <svg {...iconProps(className)}>
@@ -1813,12 +1822,21 @@ function HotelComparisonTable({ cidade }: { cidade: HotelCidade }) {
               key={h.nome}
               type="button"
               onClick={() => setSelected(i)}
-              className={`shrink-0 rounded-full border px-4 py-2 text-xs font-semibold transition ${
+              className={`flex shrink-0 items-center gap-1.5 rounded-full border px-4 py-2 text-xs font-semibold transition ${
                 i === selected
                   ? "border-black bg-black text-white"
                   : "border-black/15 bg-white text-black/50"
               }`}
             >
+              <span
+                className={`flex h-4 w-4 shrink-0 items-center justify-center rounded-full text-[9px] font-bold ${
+                  i === selected
+                    ? "bg-white text-black"
+                    : "bg-black/10 text-black/50"
+                }`}
+              >
+                {i + 1}
+              </span>
               {h.nome}
             </button>
           ))}
@@ -1828,12 +1846,30 @@ function HotelComparisonTable({ cidade }: { cidade: HotelCidade }) {
             <p className="text-base font-semibold text-black">
               {cidade.opcoes[selected].nome}
             </p>
+            <div className="mt-2.5 flex items-center justify-center gap-2.5">
+              <span className="inline-block rounded-full border border-[#2f5aa8]/25 bg-[#2f5aa8] px-4 py-1.5 text-[10px] font-bold uppercase tracking-[0.25em] text-white">
+                Opção {selected + 1} de {cidade.opcoes.length}
+              </span>
+              {selected < cidade.opcoes.length - 1 && (
+                <IconArrowRight className="h-4 w-4 shrink-0 animate-pulse text-[#2f5aa8]" />
+              )}
+            </div>
+            <div className="mt-2.5 flex items-center justify-center gap-1.5">
+              {cidade.opcoes.map((h, i) => (
+                <span
+                  key={h.nome}
+                  className={`h-1.5 rounded-full transition-all ${
+                    i === selected ? "w-6 bg-[#2f5aa8]" : "w-1.5 bg-black/15"
+                  }`}
+                />
+              ))}
+            </div>
             {cidade.opcoes[selected].site && (
               <a
                 href={cidade.opcoes[selected].site}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="mt-1.5 inline-block text-[10px] font-semibold uppercase tracking-[0.1em] text-[#2f5aa8] hover:underline"
+                className="mt-2.5 inline-block text-[10px] font-semibold uppercase tracking-[0.1em] text-[#2f5aa8] hover:underline"
               >
                 Ver galeria oficial
               </a>
