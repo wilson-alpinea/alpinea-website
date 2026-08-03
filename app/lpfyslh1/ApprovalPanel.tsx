@@ -2459,7 +2459,7 @@ export function ApprovalPanel({
               <button
                 type="button"
                 onClick={scrollToDaysMenu}
-                className="mt-8 flex w-full flex-col items-center gap-2 rounded-2xl border border-black/10 bg-black/[0.02] py-6 text-center transition hover:bg-[#eef3fb] sm:hidden"
+                className="mt-8 flex w-full flex-col items-center gap-2 rounded-2xl border border-[#2f5aa8]/20 bg-[#eef3fb] py-6 text-center transition hover:bg-[#e2eaf8]"
               >
                 <span className="flex h-10 w-10 shrink-0 animate-pulse items-center justify-center rounded-full bg-[#2f5aa8] text-white">
                   <IconArrowUp className="h-5 w-5" />
