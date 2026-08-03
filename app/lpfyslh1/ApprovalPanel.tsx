@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useRef, useState, type TouchEvent } from "react";
 
 // Painel de aprovação de rascunho — mesma lógica visual do Painel Interativo
 // usado em /ajisairoteiros (pílulas, abas de dia, tipografia Bodoni Moda),
@@ -1711,6 +1711,31 @@ function HotelBoolCell({ value }: { value: boolean }) {
 
 function HotelComparisonTable({ cidade }: { cidade: HotelCidade }) {
   const [selected, setSelected] = useState(0);
+  const touchStartX = useRef<number | null>(null);
+  const touchDeltaX = useRef(0);
+
+  function handleTouchStart(e: TouchEvent) {
+    touchStartX.current = e.touches[0].clientX;
+    touchDeltaX.current = 0;
+  }
+
+  function handleTouchMove(e: TouchEvent) {
+    if (touchStartX.current === null) return;
+    touchDeltaX.current = e.touches[0].clientX - touchStartX.current;
+  }
+
+  function handleTouchEnd() {
+    const delta = touchDeltaX.current;
+    const threshold = 40;
+    if (delta < -threshold) {
+      setSelected((s) => Math.min(s + 1, cidade.opcoes.length - 1));
+    } else if (delta > threshold) {
+      setSelected((s) => Math.max(s - 1, 0));
+    }
+    touchStartX.current = null;
+    touchDeltaX.current = 0;
+  }
+
   const temTokyoStation = cidade.opcoes.some((h) => h.distanciaTokyoStation);
 
   const rows = [
@@ -1841,7 +1866,12 @@ function HotelComparisonTable({ cidade }: { cidade: HotelCidade }) {
             </button>
           ))}
         </div>
-        <div className="overflow-hidden rounded-2xl border border-black/10">
+        <div
+          className="overflow-hidden rounded-2xl border border-black/10"
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
+        >
           <div className="border-b border-black/10 bg-black/[0.02] px-4 py-4 text-center">
             <p className="text-base font-semibold text-black">
               {cidade.opcoes[selected].nome}
