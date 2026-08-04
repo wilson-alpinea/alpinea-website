@@ -169,6 +169,7 @@ const DAY_2: DayContent = {
   contexto: [
     "Neste dia iremos visitar o lado mais comercial do Japão e o centro financeiro. Começamos o passeio com uma visita a Tokyo Station para que você possa ir diretamente à Dragonball Store, que fica dentro do complexo da estação, na mesma área onde existem lojas das principais franquias de anime.",
     "Depois passamos rapidamente pela região de Otemachi, onde fica a sede das maiores empresas japonesas, para ver um pouco do lado moderno do Japão. Perto dali se encontram dois pontos históricos importantes: o marco zero (Nihonbashi) e o Palácio Imperial, onde mora o imperador do Japão.",
+    "À tarde/noite seguimos para Toyosu, onde fica o maior mercado de peixes do mundo, sucessor do histórico Tsukiji, e encerramos o dia relaxando no Manyo Club, um onsen urbano com vista para a Baía de Tóquio.",
   ],
   manha: {
     regiao: {
@@ -225,7 +226,7 @@ const DAY_2: DayContent = {
       descricao:
         "Toyosu é um bairro à beira da Baía de Tóquio que se tornou o novo epicentro do comércio de pescado da cidade desde 2018, quando o tradicional mercado de Tsukiji se mudou para lá. Hoje reúne o maior mercado de peixes do mundo e, desde 2024, também um dos complexos de onsen urbano mais modernos de Tóquio.",
     },
-    atracaoPrincipal: "Mercado de Toyosu + Manyo Club (Onsen)",
+    atracaoPrincipal: "Mercado de Toyosu",
     atracaoPrincipalImagem: "/images/draft-toyosu.png",
     atracaoPrincipalFoco: "center",
     pois: [
@@ -240,12 +241,6 @@ const DAY_2: DayContent = {
         description:
           "Complexo temático de rua à moda Edo, com lojas, restaurantes e vista para o mercado.",
         rating: 3,
-      },
-      {
-        title: "Toyosu Manyo Club (Onsen)",
-        description:
-          "Spa urbano com onsen ao ar livre voltado para a Baía de Tóquio, água mineral trazida diariamente de Hakone e Yugawara, sauna de pedra e restaurante — ideal para fechar o dia relaxando.",
-        rating: 5,
       },
     ],
     gastronomia: {
@@ -262,6 +257,14 @@ const DAY_2: DayContent = {
         },
       ],
     },
+    subAtracao: {
+      label: "Noite",
+      titulo: "Manyo Club (Onsen)",
+      imagem: "/images/draft-onsen.png",
+      foco: "center",
+      descricao:
+        "Spa urbano de 9 andares voltado para a Baía de Tóquio, com onsen ao ar livre e indoor, água mineral trazida diariamente de Hakone e Yugawara, banhos de pedra, sauna, restaurante buffet e uma biblioteca de mangá com mais de 10.000 títulos no andar de descanso — ideal para fechar o dia relaxando.",
+    },
   },
   transporte: {
     linha: "Shinkansen Tokyo–Kyoto",
@@ -276,7 +279,8 @@ const DAY_3: DayContent = {
   city: "Tokyo",
   date: "07 Mai",
   contexto: [
-    "O superdistrito de Shibuya é um dos bairros mais famosos, principalmente pela Shibuya Crossing e pela impressionante floresta erguida do zero que tem no centro o maior templo Shintoísta do mundo. Nessa região encontraremos Harajuku, o epicentro da cultura Lolita, Kawaii e Jovem do Japão, bem como a luxuosa avenida de Omotesando, com parada obrigatória no topo do edifício Shibuya Sky, que tem uma das maiores escadas rolantes do mundo.",
+    "O superdistrito de Shibuya é um dos bairros mais famosos, principalmente pela Shibuya Crossing e pela impressionante floresta erguida do zero que tem no centro o maior templo Shintoísta do mundo. Nessa região encontraremos Harajuku, o epicentro da cultura Lolita, Kawaii e Jovem do Japão, bem como a luxuosa avenida de Omotesando.",
+    "À tarde seguimos para Shinjuku, bairro que mistura o Japão corporativo com o mais boêmio — do mirante gratuito do Prédio do Governo Metropolitano ao caos neon de Kabukicho, passando pelas vielas de Golden Gai e Omoide Yokocho, onde fechamos a noite com jantar num izakaya tradicional.",
   ],
   manha: {
     regiao: {
@@ -386,7 +390,41 @@ const DAY_3: DayContent = {
       foco: "center",
       descricao:
         "Viela histórica de izakayas e yakitori-ya sob os trilhos da estação de Shinjuku, com lanternas vermelhas e balcões minúsculos — parada para jantar antes de seguir a noite pelo bairro.",
-      pois: [{ title: "Kabuto" }, { title: "Tonchan" }],
+      pois: [
+        {
+          title: "Kabuto",
+          description:
+            "Bar minúsculo especializado só em espetinhos de enguia desde 1948 — serve o animal inteiro (cabeça, barbatana, fígado). O set completo \"Hitotouri\", com 7 espetinhos, é o pedido mais popular; o espetinho de fígado costuma esgotar ainda no fim da tarde.",
+          rating: 5,
+        },
+        {
+          title: "Tonchan",
+          description:
+            "Uma das casas mais tradicionais de motsuyaki (espetinhos de vísceras grelhadas) da viela — prato que nasceu justamente em Omoide Yokocho no período pós-guerra.",
+          rating: 5,
+        },
+        {
+          title: "Daini Horaiya",
+          description:
+            "Fundado em 1947, considerado o pioneiro do motsuyaki na região — espetinhos grelhados no carvão binchotan, a 1 minuto da saída D1 da estação de Shinjuku.",
+          rating: 4,
+        },
+        {
+          title: "Asadachi",
+          description:
+            "Izakaya bastante receptivo a turistas, com cardápio em inglês e pratos mais ousados (baleia, tartar de salmão) além do izakaya tradicional — só balcão, sem reserva.",
+          rating: 4,
+        },
+      ],
+      gastronomia: {
+        itens: [
+          {
+            nome: "Espetinho de Enguia (Kabuto)",
+            descricao:
+              "Set \"Hitotouri\" com 7 partes diferentes da enguia grelhada no carvão — o prato mais pedido do bar.",
+          },
+        ],
+      },
     },
   },
 };
@@ -625,7 +663,7 @@ const DAY_6: DayContent = {
     linha: "Shinkansen Kyoto–Tokyo",
     tempo: "Hikari: ~2h40 (incluso no JR Pass)",
     recomendacao:
-      "Não existe necessidade de chegar muito cedo em Tokyo para o dia 7 — você pode pegar o trem tanto no final deste dia quanto bem cedo pela manhã, já de volta para Tokyo.",
+      "Diferente dos outros trechos, recomendamos pegar o trem ainda à noite, ao final deste dia, e não pela manhã seguinte — a primeira luta do Grand Sumo Tournament no dia 11 pode começar às 09:00, e chegar em cima da hora vindo de Kyoto é arriscado.",
   },
 };
 
@@ -635,7 +673,8 @@ const DAY_7: DayContent = {
   date: "11 Mai",
   contexto: [
     "Atração principal da manhã ainda a definir.",
-    "À tarde/noite seguimos para Ryogoku, o bairro do sumô, para acompanhar ao vivo o Grand Sumo Tournament 2027 no Kokugikan, o estádio nacional da modalidade — o torneio de maio acontece de 9 a 23 de maio de 2027, encerrando a viagem com uma experiência única e genuinamente japonesa.",
+    "O dia 11 de maio é um dos dias do Grand Sumo Tournament de Tóquio em maio de 2027 (torneio completo de 9 a 23 de maio) — a venda dos bilhetes para assistir ao vivo começa em abril de 2027.",
+    "À tarde seguimos para Ryogoku, o bairro do sumô, para acompanhar ao vivo uma das rodadas do torneio no Kokugikan, o estádio nacional da modalidade. À noite, encerramos a viagem com jantar num izakaya autêntico em Kanda, bairro vizinho.",
   ],
   tarde: {
     label: "Tarde/Noite",
@@ -650,25 +689,21 @@ const DAY_7: DayContent = {
     pois: [
       {
         title: "Museu Edo-Tokyo",
-        bairro: "Ryogoku",
         description: "Reabertura em 2026 após 4 anos fechado.",
         rating: 4,
       },
       {
         title: "Edo Noren (Área Externa do Kokugikan)",
-        bairro: "Ryogoku",
         description: "Vila gastronômica temática de sumô, na entrada do estádio.",
         rating: 3,
       },
       {
         title: "Museu de Espadas",
-        bairro: "Ryogoku",
         description: "Coleção de espadas samurai tradicionais.",
         rating: 3,
       },
       {
         title: "Santuário Nomi-no-Sukune",
-        bairro: "Ryogoku",
         description:
           "Monumento com os nomes de todos os Yokozuna (Título máximo de lutador de Sumô).",
         rating: 2,
