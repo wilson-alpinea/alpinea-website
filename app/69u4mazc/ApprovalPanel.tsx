@@ -60,6 +60,12 @@ type TransporteSugerido = {
   recomendacao: string;
 };
 
+type AlertaSugerido = {
+  titulo: string;
+  horario: string;
+  mensagem: string;
+};
+
 type DayContent = {
   day: number;
   badge?: string;
@@ -71,6 +77,7 @@ type DayContent = {
   manha?: Period;
   tarde?: Period;
   transporte?: TransporteSugerido;
+  alerta?: AlertaSugerido;
 };
 
 function genericPeriod(): Period {
@@ -435,7 +442,7 @@ const DAY_4: DayContent = {
   date: "06 Mai",
   contexto: [
     "Neste dia começamos por Akihabara, epicentro da cultura de Animes & Mangá, Videogames e Artigos Eletrônicos.",
-    "À noite seguimos para Roppongi, um dos principais polos de vida noturna de Tóquio, com os museus e jardins do Mori Tower e as baladas da região.",
+    "À tarde/noite seguimos para Kanda, bairro vizinho conhecido pelos izakayas e por uma vida noturna mais local, longe do circuito turístico, para jantar num izakaya autêntico.",
   ],
   manha: {
     regiao: {
@@ -495,43 +502,27 @@ const DAY_4: DayContent = {
     },
   },
   tarde: {
-    label: "Noite",
+    label: "Tarde/Noite",
     regiao: {
-      nome: "Minato",
+      nome: "Kanda",
       descricao:
-        "Bairro badalado de Tóquio que reúne o Mori Tower, seus museus e jardins, e a vida noturna de Roppongi — um contraste completo com a manhã dedicada à cultura otaku de Akihabara.",
+        "Bairro tradicional de Chiyoda, vizinho a Akihabara — conhecido pelos izakayas e por uma vida noturna mais local, longe do circuito turístico.",
     },
-    atracaoPrincipal: "R3 Club Lounge ou V2 Tokyo (Roppongi)",
-    atracaoPrincipalImagem: "/images/dia4-roppongi.png",
+    atracaoPrincipal: "Izakaya em Kanda (酒場なごみ堂)",
+    atracaoPrincipalImagem: "/images/dia7-izakaya-kanda-v2.png",
     pois: [
-      {
-        title: "Museu de Arte Moderna Mori",
-        description: "Museu de arte contemporânea no topo do Mori Tower.",
-        rating: 4,
-      },
-      {
-        title: "Aranha Gigante de Louise Bourgeois",
-        description:
-          "A única no mundo preparada para terremotos, aos pés do Mori Tower.",
-        rating: 3,
-      },
-      {
-        title: "Mori Garden",
-        description: "Jardim japonês tradicional aos pés do Mori Tower.",
-        rating: 3,
-      },
-      {
-        title: "Hinokicho Park",
-        description: "Parque tranquilo no coração de Roppongi.",
-        rating: 2,
-      },
+      { title: "Osusumeya Kanda", rating: 5 },
+      { title: "Yakitori Izakaya Kanda-syouten", rating: 5 },
+      { title: "Izakaya Genki Kanda", rating: 5 },
+      { title: "Robatayaki HOTARU", rating: 5 },
     ],
     gastronomia: {
       itens: [
-        {
-          nome: "Tonkatsu",
-          descricao: "Sugestão: Butagumi Shokudou ou Imakatsu Roppongi.",
-        },
+        { nome: "Yakitori", descricao: "Espetinhos de frango grelhados no carvão, clássico de todo izakaya." },
+        { nome: "Karaage", descricao: "Frango frito marinado em molho de soja e gengibre." },
+        { nome: "Sashimi Moriawase", descricao: "Seleção de sashimis variados do dia." },
+        { nome: "Motsu Nikomi", descricao: "Ensopado de vísceras de porco cozidas lentamente com missô ou molho de soja." },
+        { nome: "Tamagoyaki", descricao: "Omelete japonesa levemente adocicada, enrolada em camadas." },
       ],
     },
   },
@@ -674,10 +665,16 @@ const DAY_7: DayContent = {
   contexto: [
     "Atração principal da manhã ainda a definir.",
     "O dia 11 de maio é um dos dias do Grand Sumo Tournament de Tóquio em maio de 2027 (torneio completo de 9 a 23 de maio) — a venda dos bilhetes para assistir ao vivo começa em abril de 2027.",
-    "À tarde seguimos para Ryogoku, o bairro do sumô, para acompanhar ao vivo uma das rodadas do torneio no Kokugikan, o estádio nacional da modalidade. À noite, encerramos a viagem com jantar num izakaya autêntico em Kanda, bairro vizinho.",
+    "À tarde seguimos para Ryogoku, o bairro do sumô, para acompanhar ao vivo uma das rodadas do torneio no Kokugikan, o estádio nacional da modalidade — nosso último compromisso antes de seguir direto para o aeroporto.",
   ],
+  alerta: {
+    titulo: "Alerta Aeroporto",
+    horario: "Horário de Chegada Esperado no Aeroporto: 21:00",
+    mensagem:
+      "O voo de volta decola às 00:05 (já dia 12) pelo Aeroporto de Haneda (HND). Como o torneio de sumô pode se estender até o fim da tarde, é essencial sair do Kokugikan a tempo de chegar ao aeroporto até este horário, com folga para o check-in internacional — considere reservar o motorista particular para esse trecho.",
+  },
   tarde: {
-    label: "Tarde/Noite",
+    label: "Manhã/Tarde",
     regiao: {
       nome: "Ryogoku",
       descricao:
@@ -718,28 +715,6 @@ const DAY_7: DayContent = {
         },
       ],
     },
-    subAtracao: {
-      label: "Noite",
-      titulo: "Izakaya em Kanda (酒場なごみ堂)",
-      imagem: "/images/dia7-izakaya-kanda-v2.png",
-      descricao:
-        "Depois do torneio de sumô, seguimos para Kanda, bairro tradicional de Chiyoda vizinho a Ryogoku e Akihabara — conhecido pelos izakayas e por uma vida noturna mais local, longe do circuito turístico.",
-      pois: [
-        { title: "Osusumeya Kanda", rating: 5 },
-        { title: "Yakitori Izakaya Kanda-syouten", rating: 5 },
-        { title: "Izakaya Genki Kanda", rating: 5 },
-        { title: "Robatayaki HOTARU", rating: 5 },
-      ],
-      gastronomia: {
-        itens: [
-          { nome: "Yakitori", descricao: "Espetinhos de frango grelhados no carvão, clássico de todo izakaya." },
-          { nome: "Karaage", descricao: "Frango frito marinado em molho de soja e gengibre." },
-          { nome: "Sashimi Moriawase", descricao: "Seleção de sashimis variados do dia." },
-          { nome: "Motsu Nikomi", descricao: "Ensopado de vísceras de porco cozidas lentamente com missô ou molho de soja." },
-          { nome: "Tamagoyaki", descricao: "Omelete japonesa levemente adocicada, enrolada em camadas." },
-        ],
-      },
-    },
   },
 };
 
@@ -775,10 +750,10 @@ const DAYS: DayContent[] = [
   PARTIDA,
 ];
 
-// Paleta por bairro — Sumida fica no azul padrão dos cards, Ryogoku ganha um
-// roxo próprio (mesma família do lilás já usado no site) só pra deixar
-// visualmente óbvio, num roteiro que mistura os dois bairros na mesma tarde,
-// que são regiões diferentes.
+// Paleta por bairro — Sumida fica no azul padrão dos cards. Ryogoku tem uma
+// variante roxa própria (mesma família do lilás já usado no site) mas não é
+// usada nesta versão do roteiro, já que Ryogoku ganhou seu próprio dia
+// dedicado em vez de dividir a tarde com Sumida.
 const BAIRRO_STYLES = {
   Sumida: {
     border: "border-[#2f5aa8]",
@@ -968,6 +943,35 @@ function TransporteBlock({
       <p className="mt-1 text-sm text-black/60">{transporte.tempo}</p>
       <p className="mt-3 text-sm leading-6 text-black/70">
         {transporte.recomendacao}
+      </p>
+    </div>
+  );
+}
+
+function IconAlertTriangle({ className }: { className?: string }) {
+  return (
+    <svg {...iconProps(className)}>
+      <path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z" />
+      <line x1="12" y1="9" x2="12" y2="13" />
+      <line x1="12" y1="17" x2="12.01" y2="17" />
+    </svg>
+  );
+}
+
+function AlertaBlock({ alerta }: { alerta: AlertaSugerido }) {
+  return (
+    <div className="mb-8 rounded-2xl border-2 border-red-300/60 bg-red-50 p-5 sm:p-6">
+      <div className="mb-3 flex items-center gap-2.5">
+        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-red-600 text-white">
+          <IconAlertTriangle className="h-4 w-4" />
+        </span>
+        <p className="text-xs font-bold uppercase tracking-[0.25em] text-red-700">
+          {alerta.titulo}
+        </p>
+      </div>
+      <p className="text-lg font-semibold text-black">{alerta.horario}</p>
+      <p className="mt-3 text-sm leading-6 text-black/70">
+        {alerta.mensagem}
       </p>
     </div>
   );
@@ -1316,7 +1320,7 @@ function IconConcierge({ className }: { className?: string }) {
 }
 
 const ADDITIONAL_SERVICES = [
-  { label: "Ticket para USJ/Disney/teamLab", Icon: IconTicket },
+  { label: "Ingressos para Eventos e Parques Temáticos", Icon: IconTicket },
   { label: "Reserva para Restaurantes", Icon: IconFork },
   { label: "Serviço de Câmbio no Brasil", Icon: IconCash },
   { label: "Motorista Particular", Icon: IconDriver },
@@ -2274,6 +2278,9 @@ export function ApprovalPanel({
               )}
               {current.transporte && (
                 <TransporteBlock transporte={current.transporte} />
+              )}
+              {current.alerta && (
+                <AlertaBlock alerta={current.alerta} />
               )}
               <div className="space-y-10">
                 {current.manha && (
