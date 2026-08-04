@@ -39,10 +39,10 @@ const RADAR_DIMENSIONS: RadarDimension[] = [
   { lines: ["Gastronomia"], score: 7, icon: "gastronomia" },
   { lines: ["Natureza &", "Aventura"], score: 2, icon: "natureza" },
   { lines: ["Entretenimento"], score: 9, icon: "entretenimento" },
-  { lines: ["Compras"], score: 7, icon: "compras" },
+  { lines: ["Compras"], score: 5, icon: "compras" },
   {
     lines: ["Bem-Estar,", "Relaxamento", "& Esportes"],
-    score: 1,
+    score: 4,
     icon: "bemestar",
   },
 ];

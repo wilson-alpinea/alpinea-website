@@ -384,7 +384,7 @@ const DAY_3: DayContent = {
       ],
     },
     subAtracao: {
-      label: "Noite",
+      label: "Noite em Shinjuku",
       titulo: "Omoide Yokocho - Izakaya",
       imagem: "/images/draft-yokocho.png",
       foco: "center",
