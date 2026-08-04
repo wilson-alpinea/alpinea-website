@@ -39,6 +39,7 @@ type SubAtracao = {
   foco?: "top" | "center" | "bottom";
   descricao?: string;
   pois?: Poi[];
+  gastronomia?: Gastronomia;
 };
 
 type Period = {
@@ -225,6 +226,8 @@ const DAY_2: DayContent = {
         "Toyosu é um bairro à beira da Baía de Tóquio que se tornou o novo epicentro do comércio de pescado da cidade desde 2018, quando o tradicional mercado de Tsukiji se mudou para lá. Hoje reúne o maior mercado de peixes do mundo e, desde 2024, também um dos complexos de onsen urbano mais modernos de Tóquio.",
     },
     atracaoPrincipal: "Mercado de Toyosu + Manyo Club (Onsen)",
+    atracaoPrincipalImagem: "/images/draft-toyosu.png",
+    atracaoPrincipalFoco: "center",
     pois: [
       {
         title: "Toyosu Market (Mercado de Peixes)",
@@ -328,6 +331,7 @@ const DAY_3: DayContent = {
     },
     atracaoPrincipal: "Bairro de Shinjuku",
     atracaoPrincipalImagem: "/images/draft-shinjuku.png",
+    atracaoPrincipalFoco: "center",
     pois: [
       {
         title: "Estátua do Godzilla",
@@ -392,46 +396,64 @@ const DAY_4: DayContent = {
   city: "Tokyo",
   date: "06 Mai",
   contexto: [
-    "Neste dia iremos explorar experiências de entretenimento e visualizar um dos pontos turísticos mais famosos do Japão — a Tokyo Tower. Dentro das experiências de entretenimento temos o teamLab Borderless, o Museu de Arte Moderna Mori e a vida noturna de Roppongi com as baladas.",
+    "Neste dia começamos por Akihabara, epicentro da cultura de Animes & Mangá, Videogames e Artigos Eletrônicos.",
+    "À noite seguimos para Roppongi, um dos principais polos de vida noturna de Tóquio, com os museus e jardins do Mori Tower e as baladas da região.",
   ],
   manha: {
     regiao: {
-      nome: "Minato",
+      nome: "Akihabara",
       descricao:
-        "Minato é um dos bairros mais diversos de Tóquio, misturando marcos históricos como o Templo Zojo-ji e a Tokyo Tower com empreendimentos modernos como o Azabudai Hills — o mais novo e ousado complexo da cidade, que abriga o teamLab Borderless. À noite, o bairro se transforma no principal polo de vida noturna de Tóquio, com Roppongi concentrando boa parte das baladas e bares da cidade.",
+        "Bairro de Chiyoda conhecido como o centro mundial da cultura otaku, com lojas de eletrônicos, anime, mangá e videogame concentradas em poucas quadras.",
     },
-    atracaoPrincipal: "teamLab Borderless (Toranomon)",
-    atracaoPrincipalImagem: "/images/dia4-teamlab-v3.png",
+    atracaoPrincipal: "Akihabara Electric Town",
+    atracaoPrincipalImagem: "/images/dia7-akihabara.png",
     pois: [
       {
-        title: "Tokyo Tower",
-        description: "Torre de comunicação símbolo de Tóquio.",
+        category: "Compras",
+        title: "Animate",
+        description: "Uma das maiores redes de lojas de mangá do Japão.",
         rating: 4,
       },
       {
-        title: "Complexo Comercial Azabudai Hills",
+        category: "Compras",
+        title: "Super Potato",
         description:
-          "Complexo com arquitetura arrojada que abriga restaurantes de elite e a atração principal, o teamLab Borderless.",
+          "Loja retrô de videogames — nas proximidades também fica a Suruga-ya Anime & Hobby Store, com videogames e itens de anime.",
+        rating: 4,
+      },
+      {
+        category: "Compras",
+        title: "Mandarake Complex",
+        description: "Mangá e action figures.",
+        rating: 4,
+      },
+      {
+        category: "Compras",
+        title: "Akihabara Radio Kaikan",
+        description: "Action figures e um shopping com um pouco de tudo.",
         rating: 3,
       },
       {
-        title: "Templo Zojo-ji",
-        description: "Templo budista histórico aos pés da Tokyo Tower.",
+        category: "Compras",
+        title: "Ark",
+        description: "Peças de computador.",
         rating: 3,
       },
       {
-        title: "Odaiba + Rainbow Bridge + Estátua de Gundam",
-        description: "Ilha artificial com vista, ponte iluminada e estátua do Gundam.",
+        category: "Compras",
+        title: "Hareruya 2",
+        description: "Pokémon Trading Card Game.",
+        rating: 3,
+      },
+      {
+        category: "Compras",
+        title: "BIC Camera ou Yodobashi Camera",
+        description: "Grandes lojas de eletrônicos.",
         rating: 3,
       },
     ],
     gastronomia: {
-      itens: [
-        {
-          nome: "Barbacoa",
-          descricao: "Famosa churrascaria brasileira, só que no Japão.",
-        },
-      ],
+      itens: [{ nome: "Curry Japonês" }],
     },
   },
   tarde: {
@@ -439,7 +461,7 @@ const DAY_4: DayContent = {
     regiao: {
       nome: "Minato",
       descricao:
-        "Mesma região da manhã, agora com foco no lado noturno e cultural do bairro: os museus e jardins do Mori Tower, o Hinokicho Park e a vida noturna badalada de Roppongi.",
+        "Bairro badalado de Tóquio que reúne o Mori Tower, seus museus e jardins, e a vida noturna de Roppongi — um contraste completo com a manhã dedicada à cultura otaku de Akihabara.",
     },
     atracaoPrincipal: "R3 Club Lounge ou V2 Tokyo (Roppongi)",
     atracaoPrincipalImagem: "/images/dia4-roppongi.png",
@@ -612,66 +634,9 @@ const DAY_7: DayContent = {
   city: "Tokyo",
   date: "11 Mai",
   contexto: [
-    "Neste último dia da viagem vamos finalmente a Akihabara, epicentro da cultura de Animes & Mangá, Videogames e Artigos Eletrônicos.",
+    "Atração principal da manhã ainda a definir.",
     "À tarde/noite seguimos para Ryogoku, o bairro do sumô, para acompanhar ao vivo o Grand Sumo Tournament 2027 no Kokugikan, o estádio nacional da modalidade — o torneio de maio acontece de 9 a 23 de maio de 2027, encerrando a viagem com uma experiência única e genuinamente japonesa.",
   ],
-  manha: {
-    regiao: {
-      nome: "Akihabara",
-      descricao:
-        "Bairro de Chiyoda conhecido como o centro mundial da cultura otaku, com lojas de eletrônicos, anime, mangá e videogame concentradas em poucas quadras.",
-    },
-    atracaoPrincipal: "Akihabara Electric Town",
-    atracaoPrincipalImagem: "/images/dia7-akihabara.png",
-    pois: [
-      {
-        category: "Compras",
-        title: "Animate",
-        description: "Uma das maiores redes de lojas de mangá do Japão.",
-        rating: 4,
-      },
-      {
-        category: "Compras",
-        title: "Super Potato",
-        description:
-          "Loja retrô de videogames — nas proximidades também fica a Suruga-ya Anime & Hobby Store, com videogames e itens de anime.",
-        rating: 4,
-      },
-      {
-        category: "Compras",
-        title: "Mandarake Complex",
-        description: "Mangá e action figures.",
-        rating: 4,
-      },
-      {
-        category: "Compras",
-        title: "Akihabara Radio Kaikan",
-        description: "Action figures e um shopping com um pouco de tudo.",
-        rating: 3,
-      },
-      {
-        category: "Compras",
-        title: "Ark",
-        description: "Peças de computador.",
-        rating: 3,
-      },
-      {
-        category: "Compras",
-        title: "Hareruya 2",
-        description: "Pokémon Trading Card Game.",
-        rating: 3,
-      },
-      {
-        category: "Compras",
-        title: "BIC Camera ou Yodobashi Camera",
-        description: "Grandes lojas de eletrônicos.",
-        rating: 3,
-      },
-    ],
-    gastronomia: {
-      itens: [{ nome: "Curry Japonês" }],
-    },
-  },
   tarde: {
     label: "Tarde/Noite",
     regiao: {
@@ -680,6 +645,8 @@ const DAY_7: DayContent = {
         "Ryogoku é o bairro onde fica o estádio nacional de sumô Kokugikan, centro do sumô com infraestrutura de gastronomia e temática de sumô nas ruas, e também onde fica um dos maiores museus de Tóquio, o Tokyo-Edo Museum, que conta através de maquetes gigantes como foi a transformação de Edo (1603) até Tóquio (1868).",
     },
     atracaoPrincipal: "Ryogoku Kokugikan - Grand Sumo Tournament 2027",
+    atracaoPrincipalImagem: "/images/draft-sumo.png",
+    atracaoPrincipalFoco: "center",
     pois: [
       {
         title: "Museu Edo-Tokyo",
@@ -715,6 +682,28 @@ const DAY_7: DayContent = {
             "Ensopado altamente calórico que os lutadores de Sumô comem diariamente pra conseguir manter o peso.",
         },
       ],
+    },
+    subAtracao: {
+      label: "Noite",
+      titulo: "Izakaya em Kanda (酒場なごみ堂)",
+      imagem: "/images/dia7-izakaya-kanda-v2.png",
+      descricao:
+        "Depois do torneio de sumô, seguimos para Kanda, bairro tradicional de Chiyoda vizinho a Ryogoku e Akihabara — conhecido pelos izakayas e por uma vida noturna mais local, longe do circuito turístico.",
+      pois: [
+        { title: "Osusumeya Kanda", rating: 5 },
+        { title: "Yakitori Izakaya Kanda-syouten", rating: 5 },
+        { title: "Izakaya Genki Kanda", rating: 5 },
+        { title: "Robatayaki HOTARU", rating: 5 },
+      ],
+      gastronomia: {
+        itens: [
+          { nome: "Yakitori", descricao: "Espetinhos de frango grelhados no carvão, clássico de todo izakaya." },
+          { nome: "Karaage", descricao: "Frango frito marinado em molho de soja e gengibre." },
+          { nome: "Sashimi Moriawase", descricao: "Seleção de sashimis variados do dia." },
+          { nome: "Motsu Nikomi", descricao: "Ensopado de vísceras de porco cozidas lentamente com missô ou molho de soja." },
+          { nome: "Tamagoyaki", descricao: "Omelete japonesa levemente adocicada, enrolada em camadas." },
+        ],
+      },
     },
   },
 };
@@ -1107,6 +1096,10 @@ function SubAtracaoBlock({
             ))}
           </div>
         </>
+      )}
+
+      {subAtracao.gastronomia && (
+        <GastronomiaBlock gastronomia={subAtracao.gastronomia} />
       )}
     </div>
   );
