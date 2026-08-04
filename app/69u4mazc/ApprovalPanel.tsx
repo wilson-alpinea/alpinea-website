@@ -442,7 +442,8 @@ const DAY_4: DayContent = {
   date: "06 Mai",
   contexto: [
     "Neste dia começamos por Akihabara, epicentro da cultura de Animes & Mangá, Videogames e Artigos Eletrônicos.",
-    "À tarde/noite seguimos para Kanda, bairro vizinho conhecido pelos izakayas e por uma vida noturna mais local, longe do circuito turístico, para jantar num izakaya autêntico.",
+    "À tarde seguimos para Kanda, bairro vizinho conhecido pelos izakayas e por uma vida noturna mais local, longe do circuito turístico, para jantar num izakaya autêntico.",
+    "À noite fechamos o dia em Roppongi, um dos principais polos de vida noturna de Tóquio, com baladas e bares badalados.",
   ],
   manha: {
     regiao: {
@@ -502,7 +503,7 @@ const DAY_4: DayContent = {
     },
   },
   tarde: {
-    label: "Tarde/Noite",
+    label: "Tarde",
     regiao: {
       nome: "Kanda",
       descricao:
@@ -524,6 +525,44 @@ const DAY_4: DayContent = {
         { nome: "Motsu Nikomi", descricao: "Ensopado de vísceras de porco cozidas lentamente com missô ou molho de soja." },
         { nome: "Tamagoyaki", descricao: "Omelete japonesa levemente adocicada, enrolada em camadas." },
       ],
+    },
+    subAtracao: {
+      label: "Noite",
+      titulo: "R3 Club Lounge ou V2 Tokyo (Roppongi)",
+      imagem: "/images/dia4-roppongi.png",
+      descricao:
+        "Bairro badalado de Tóquio que reúne o Mori Tower, seus museus e jardins, e a vida noturna de Roppongi — principal polo de baladas e bares da cidade.",
+      pois: [
+        {
+          title: "Museu de Arte Moderna Mori",
+          description: "Museu de arte contemporânea no topo do Mori Tower.",
+          rating: 4,
+        },
+        {
+          title: "Aranha Gigante de Louise Bourgeois",
+          description:
+            "A única no mundo preparada para terremotos, aos pés do Mori Tower.",
+          rating: 3,
+        },
+        {
+          title: "Mori Garden",
+          description: "Jardim japonês tradicional aos pés do Mori Tower.",
+          rating: 3,
+        },
+        {
+          title: "Hinokicho Park",
+          description: "Parque tranquilo no coração de Roppongi.",
+          rating: 2,
+        },
+      ],
+      gastronomia: {
+        itens: [
+          {
+            nome: "Tonkatsu",
+            descricao: "Sugestão: Butagumi Shokudou ou Imakatsu Roppongi.",
+          },
+        ],
+      },
     },
   },
 };
@@ -671,7 +710,7 @@ const DAY_7: DayContent = {
     titulo: "Alerta Aeroporto",
     horario: "Horário de Chegada Esperado no Aeroporto: 21:00",
     mensagem:
-      "O voo de volta decola às 00:05 (já dia 12) pelo Aeroporto de Haneda (HND). Como o torneio de sumô pode se estender até o fim da tarde, é essencial sair do Kokugikan a tempo de chegar ao aeroporto até este horário, com folga para o check-in internacional — considere reservar o motorista particular para esse trecho.",
+      "O voo de volta decola às 00:05 (já dia 12) pelo Aeroporto de Haneda (HND). Como o torneio de sumô pode se estender até o fim da tarde, é essencial sair do Kokugikan a tempo de chegar ao aeroporto até este horário, com folga para o check-in internacional.",
   },
   tarde: {
     label: "Manhã/Tarde",
