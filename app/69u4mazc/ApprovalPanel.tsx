@@ -32,6 +32,15 @@ type ComprasExclusivas = {
   itens: { nome: string; imagem?: string }[];
 };
 
+type SubAtracao = {
+  label?: string;
+  titulo: string;
+  imagem?: string;
+  foco?: "top" | "center" | "bottom";
+  descricao?: string;
+  pois?: Poi[];
+};
+
 type Period = {
   label?: string;
   regiao?: Regiao;
@@ -41,6 +50,7 @@ type Period = {
   pois: Poi[];
   gastronomia?: Gastronomia;
   comprasExclusivas?: ComprasExclusivas;
+  subAtracao?: SubAtracao;
 };
 
 type TransporteSugerido = {
@@ -125,9 +135,9 @@ const DAY_1: DayContent = {
   tarde: {
     label: "Tarde/Noite",
     regiao: {
-      nome: "Sumida + Ryogoku",
+      nome: "Sumida",
       descricao:
-        "Sumida é o bairro que abriga a Tokyo Sky Tree (Torre mais alta do Japão) desde 2012, o bairro como o próprio nome diz cresceu as margens do Rio Sumida que antigamente era uma das principais rotas de transporte marítimo de Tokyo. Ryogoku é o bairro onde fica o estádio nacional de sumô Kokugikan e centro do sumô com infraestrutura de gastronomia e temática de sumô nas ruas, também é onde fica um dos maiores museus de Tokyo, Tokyo-Edo Museum, que conta através de maquetes gigantes como foi a transformação de Edo (1603) até Tokyo (1868).",
+        "Sumida é o bairro que abriga a Tokyo Sky Tree (Torre mais alta do Japão) desde 2012, o bairro como o próprio nome diz cresceu as margens do Rio Sumida que antigamente era uma das principais rotas de transporte marítimo de Tokyo.",
     },
     atracaoPrincipal: "Tokyo Sky Tree",
     atracaoPrincipalImagem: "/images/dia1-skytree.png",
@@ -147,41 +157,7 @@ const DAY_1: DayContent = {
           "Ultraman World M78",
         ],
       },
-      {
-        title: "Museu Edo-Tokyo",
-        bairro: "Ryogoku",
-        description: "Reabertura em 2026 após 4 anos fechado",
-        rating: 4,
-      },
-      {
-        title: "Estádio Kokugikan + Área Externa Edo Noren",
-        bairro: "Ryogoku",
-        description: "Arena de sumô e vila gastronômica temática.",
-        rating: 3,
-      },
-      {
-        title: "Museu de Espadas",
-        bairro: "Ryogoku",
-        description: "Coleção de espadas samurai tradicionais.",
-        rating: 3,
-      },
-      {
-        title: "Santuário Nomi-no-Sukune",
-        bairro: "Ryogoku",
-        description:
-          "Monumento com os nomes de todos os Yokozuna (Título máximo de lutador de Sumô)",
-        rating: 2,
-      },
     ],
-    gastronomia: {
-      itens: [
-        {
-          nome: "Chanko Nabe",
-          descricao:
-            "Ensopado altamente calórico que os lutadores de Sumô comem diariamente pra conseguir manter o peso",
-        },
-      ],
-    },
   },
 };
 
@@ -244,54 +220,42 @@ const DAY_2: DayContent = {
   tarde: {
     label: "Tarde/Noite",
     regiao: {
-      nome: "Ginza + Chiyoda",
+      nome: "Toyosu (Koto-ku)",
       descricao:
-        "Ginza é o distrito de compras mais tradicional e sofisticado de Tóquio, com lojas de luxo instaladas ali desde a era Meiji. Chiyoda é o bairro central que abriga o Palácio Imperial e boa parte dos órgãos do governo japonês — os dois formam o contraponto elegante e histórico ao lado corporativo de Marunouchi visto pela manhã.",
+        "Toyosu é um bairro à beira da Baía de Tóquio que se tornou o novo epicentro do comércio de pescado da cidade desde 2018, quando o tradicional mercado de Tsukiji se mudou para lá. Hoje reúne o maior mercado de peixes do mundo e, desde 2024, também um dos complexos de onsen urbano mais modernos de Tóquio.",
     },
-    atracaoPrincipal: "Distrito de Ginza",
-    atracaoPrincipalImagem: "/images/dia2-ginza.png",
-    atracaoPrincipalFoco: "center",
+    atracaoPrincipal: "Mercado de Toyosu + Manyo Club (Onsen)",
     pois: [
       {
-        category: "Compras",
-        title: "Ginza Six, Uniqlo Ginza e MUJI Ginza",
+        title: "Toyosu Market (Mercado de Peixes)",
         description:
-          "Lojas âncora do distrito — ótimo ponto de partida para o passeio a pé por Ginza.",
+          "Sucessor do histórico Tsukiji — leilões de atum ao amanhecer, corredores de atacado e um mezanino de restaurantes de sushi e frutos do mar fresquíssimos.",
+        rating: 5,
       },
       {
-        title: "Área Externa do Palácio Imperial",
-        description: "Jardins e muralhas onde vive o imperador.",
+        title: "Toyosu Senkyaku Banrai",
+        description:
+          "Complexo temático de rua à moda Edo, com lojas, restaurantes e vista para o mercado.",
         rating: 3,
       },
       {
-        title: "Parque de Hibiya",
+        title: "Toyosu Manyo Club (Onsen)",
         description:
-          "Primeiro parque com temática ocidental do Japão — bom para um passeio rápido.",
-        rating: 3,
-      },
-      {
-        category: "Compras",
-        title: "Itoya",
-        description:
-          "Uma das maiores lojas de papelaria do Japão, com 12 andares — de canetas a acessórios.",
-        rating: 3,
-      },
-      {
-        title: "Tsukiji Outer Market",
-        description:
-          "Antigo mercado de peixes de Tóquio antes da mudança para Toyosu. O mercado em si não existe mais, mas a estrutura de restaurantes e lojas de rua no entorno permanece ativa.",
-        rating: 2,
+          "Spa urbano com onsen ao ar livre voltado para a Baía de Tóquio, água mineral trazida diariamente de Hakone e Yugawara, sauna de pedra e restaurante — ideal para fechar o dia relaxando.",
+        rating: 5,
       },
     ],
     gastronomia: {
+      subtitulo: "Direto do próprio mercado",
       itens: [
         {
-          nome: "Menu Degustação de Sushi",
-          descricao: "Sugestão: Hakkoku (necessário reserva antecipada).",
+          nome: "Sushi Omakase",
+          descricao:
+            "Restaurantes de sushi do mezanino do mercado, com peixe comprado horas antes no próprio leilão.",
         },
         {
-          nome: "Ramen (Estilo Hakata Fukuoka) + Gyoza",
-          descricao: "Sugestão: Ippudo Ginza.",
+          nome: "Uni (Ouriço-do-mar) e Tamagoyaki de rua",
+          descricao: "Bancas típicas do mercado de peixes.",
         },
       ],
     },
@@ -358,40 +322,67 @@ const DAY_3: DayContent = {
   tarde: {
     label: "Tarde/Noite",
     regiao: {
-      nome: "Superdistrito de Shibuya",
+      nome: "Shinjuku",
       descricao:
-        "Mesma região da manhã, agora com foco no lado mais moderno e jovem do bairro: a vista do topo do Shibuya Sky, a efervescência de Harajuku e Daikanyama, e o Estádio Nacional, que ficou mundialmente conhecido nas Olimpíadas de Tóquio 2020.",
+        "Bairro que reúne o maior terminal ferroviário do mundo, arranha-céus corporativos, o distrito de entretenimento de Kabukicho e algumas das vielas mais icônicas de Tóquio — um contraste denso entre o Japão corporativo e o mais boêmio.",
     },
-    atracaoPrincipal: "Shibuya Sky",
-    atracaoPrincipalImagem: "/images/dia3-shibuyasky.png",
+    atracaoPrincipal: "Bairro de Shinjuku",
+    atracaoPrincipalImagem: "/images/draft-shinjuku.png",
     pois: [
       {
-        title: "Takeshita Street",
+        title: "Estátua do Godzilla",
         description:
-          "Rua caótica que funciona como ponto de encontro da cultura Lolita, Kawaii, Decora e Visual Kei.",
+          "Réplica em tamanho real na varanda do Hotel Gracery, símbolo do distrito de entretenimento de Kabukicho.",
         rating: 4,
       },
       {
-        title: "Daikanyama T-Site",
+        title: "Gato 3D Gigante",
         description:
-          "Projeto arquitetônico para criar uma das livrarias mais bonitas do mundo — a TSUTAYA, que na prática vende poucos livros; a maior parte do espaço é usada como área de leitura, estudo e trabalho.",
-        rating: 3,
+          "Gato tridimensional gigante exibido em telão curvo no edifício Cross Shinjuku Vision, na saída leste da estação — uma das atrações mais fotografadas do bairro.",
+        rating: 4,
       },
       {
-        title: "National Stadium",
+        title: "Kabukicho",
         description:
-          "Principal estádio poliesportivo do Japão, com arquitetura arrojada projetada pelo arquiteto Kengo Kuma — famoso por ser o ponto final da Maratona de Tóquio.",
-        rating: 2,
+          "Maior distrito de entretenimento noturno de Tóquio, com neons, bares temáticos e vida noturna intensa.",
+        rating: 4,
+      },
+      {
+        title: "Golden Gai",
+        description:
+          "Rede de vielas estreitas com mais de 200 bares minúsculos, a maioria com capacidade para menos de 10 pessoas.",
+        rating: 5,
+      },
+      {
+        title: "Prédio do Governo Metropolitano de Tóquio + Mirante",
+        description:
+          "Torres gêmeas projetadas por Kenzo Tange com mirante gratuito no 45º andar e vista panorâmica da cidade — em dias claros, dá para ver o Monte Fuji.",
+        rating: 4,
+      },
+      {
+        title: "Shinjuku Gyoen",
+        description:
+          "Um dos parques mais bonitos de Tóquio, misturando jardins japonês, francês e inglês — refúgio verde no meio do bairro mais denso da cidade.",
+        rating: 4,
       },
     ],
     gastronomia: {
-      subtitulo: "Comidas da Takeshita Street",
       itens: [
-        { nome: "Crepes japoneses recheados" },
-        { nome: "Algodão-doce gigante" },
-        { nome: "Morangos cobertos com chocolate" },
-        { nome: "Batatas em espiral" },
+        {
+          nome: "Bar temático em Golden Gai",
+          descricao:
+            "Cada bar tem uma curadoria própria de temática e trilha sonora — vale entrar em mais de um.",
+        },
       ],
+    },
+    subAtracao: {
+      label: "Noite",
+      titulo: "Omoide Yokocho - Izakaya",
+      imagem: "/images/draft-yokocho.png",
+      foco: "center",
+      descricao:
+        "Viela histórica de izakayas e yakitori-ya sob os trilhos da estação de Shinjuku, com lanternas vermelhas e balcões minúsculos — parada para jantar antes de seguir a noite pelo bairro.",
+      pois: [{ title: "Kabuto" }, { title: "Tonchan" }],
     },
   },
 };
@@ -621,8 +612,8 @@ const DAY_7: DayContent = {
   city: "Tokyo",
   date: "11 Mai",
   contexto: [
-    "No último dia da viagem vamos finalmente a Akihabara, epicentro da cultura de Animes & Mangá, Videogames e Artigos Eletrônicos.",
-    "Depois de Akihabara vamos visitar um izakaya fora do circuito turístico de Tokyo em Kanda para uma experiência autêntica.",
+    "Neste último dia da viagem vamos finalmente a Akihabara, epicentro da cultura de Animes & Mangá, Videogames e Artigos Eletrônicos.",
+    "À tarde/noite seguimos para Ryogoku, o bairro do sumô, para acompanhar ao vivo o Grand Sumo Tournament 2027 no Kokugikan, o estádio nacional da modalidade — o torneio de maio acontece de 9 a 23 de maio de 2027, encerrando a viagem com uma experiência única e genuinamente japonesa.",
   ],
   manha: {
     regiao: {
@@ -684,150 +675,48 @@ const DAY_7: DayContent = {
   tarde: {
     label: "Tarde/Noite",
     regiao: {
-      nome: "Kanda",
+      nome: "Ryogoku",
       descricao:
-        "Bairro tradicional de Chiyoda, vizinho a Akihabara — conhecido pelos izakayas e por uma vida noturna mais local, longe do circuito turístico.",
+        "Ryogoku é o bairro onde fica o estádio nacional de sumô Kokugikan, centro do sumô com infraestrutura de gastronomia e temática de sumô nas ruas, e também onde fica um dos maiores museus de Tóquio, o Tokyo-Edo Museum, que conta através de maquetes gigantes como foi a transformação de Edo (1603) até Tóquio (1868).",
     },
-    atracaoPrincipal: "Izakaya em Kanda (酒場なごみ堂)",
-    atracaoPrincipalImagem: "/images/dia7-izakaya-kanda-v2.png",
+    atracaoPrincipal: "Ryogoku Kokugikan - Grand Sumo Tournament 2027",
     pois: [
-      { title: "Osusumeya Kanda", rating: 5 },
-      { title: "Yakitori Izakaya Kanda-syouten", rating: 5 },
-      { title: "Izakaya Genki Kanda", rating: 5 },
-      { title: "Robatayaki HOTARU", rating: 5 },
+      {
+        title: "Museu Edo-Tokyo",
+        bairro: "Ryogoku",
+        description: "Reabertura em 2026 após 4 anos fechado.",
+        rating: 4,
+      },
+      {
+        title: "Edo Noren (Área Externa do Kokugikan)",
+        bairro: "Ryogoku",
+        description: "Vila gastronômica temática de sumô, na entrada do estádio.",
+        rating: 3,
+      },
+      {
+        title: "Museu de Espadas",
+        bairro: "Ryogoku",
+        description: "Coleção de espadas samurai tradicionais.",
+        rating: 3,
+      },
+      {
+        title: "Santuário Nomi-no-Sukune",
+        bairro: "Ryogoku",
+        description:
+          "Monumento com os nomes de todos os Yokozuna (Título máximo de lutador de Sumô).",
+        rating: 2,
+      },
     ],
     gastronomia: {
       itens: [
-        { nome: "Yakitori", descricao: "Espetinhos de frango grelhados no carvão, clássico de todo izakaya." },
-        { nome: "Karaage", descricao: "Frango frito marinado em molho de soja e gengibre." },
-        { nome: "Sashimi Moriawase", descricao: "Seleção de sashimis variados do dia." },
-        { nome: "Motsu Nikomi", descricao: "Ensopado de vísceras de porco cozidas lentamente com missô ou molho de soja." },
-        { nome: "Tamagoyaki", descricao: "Omelete japonesa levemente adocicada, enrolada em camadas." },
-      ],
-    },
-  },
-};
-
-const OSAKA_DAY_5: DayContent = {
-  day: 5,
-  city: "Osaka",
-  date: "09 Mai",
-  contexto: [
-    "Nesta versão alternativa do roteiro, trocamos os templos de Kyoto por um dia inteiro de diversão na Universal Studios Japan, com destaque para a área do Super Nintendo World — ideal para quem viaja com crianças ou quer uma pausa mais leve em meio à viagem.",
-  ],
-  manha: {
-    regiao: {
-      nome: "Sakurajima (Konohana-ku)",
-      descricao:
-        "Península à beira da Baía de Osaka que abriga o parque temático da Universal Studios Japan e a área do Super Nintendo World.",
-    },
-    atracaoPrincipal: "Universal Studios Japan & Super Nintendo World",
-    atracaoPrincipalImagem: "/images/osaka5-nintendoworld-v2.jpg",
-    pois: [
-      {
-        title: "Mario Kart: Koopa's Challenge",
-        description: "Corrida com realidade aumentada — a atração mais concorrida do parque.",
-        rating: 5,
-      },
-      {
-        title: "Harry Potter and the Forbidden Journey",
-        description: "Simulador imersivo dentro do castelo de Hogwarts.",
-        rating: 5,
-      },
-      {
-        title: "The Flying Dinosaur",
-        description: "Montanha-russa invertida, uma das mais radicais do mundo.",
-        rating: 5,
-      },
-      {
-        title: "Hollywood Dream: The Ride",
-        description: "Montanha-russa com trilha sonora escolhida pelo passageiro.",
-        rating: 4,
-      },
-      {
-        title: "Jurassic Park - The Ride",
-        description: "Passeio aquático com dinossauros animatrônicos e queda final.",
-        rating: 4,
-      },
-      {
-        title: "Minion Park (Despicable Me Minion Mayhem)",
-        description: "Simulador 3D e área temática ideal para famílias.",
-        rating: 4,
-      },
-    ],
-    gastronomia: {
-      subtitulo: "Food carts espalhados pelo parque",
-      itens: [
-        { nome: "Shark Bun", descricao: "Amity Village." },
-        { nome: "Turkey Leg Bun" },
-        { nome: "Churros temáticos", descricao: "Hogwarts, Minions e outros." },
-        { nome: "Caramel Popcorn Churritos" },
-      ],
-    },
-    comprasExclusivas: {
-      descricao:
-        "O parque vende centenas de itens exclusivos — canecas, baldes de pipoca e acessórios temáticos que não são encontrados em nenhuma loja fora da Universal Studios Japan. Boa parte é produzida em lotes limitados e sai de linha permanentemente assim que o estoque acaba, sem republicação.",
-      itens: [
-        { nome: "Caneca Donkey Kong", imagem: "/images/usj-dk-mug.png" },
         {
-          nome: "Balde de Pipoca Mario Kart",
-          imagem: "/images/usj-mariokart-popcorn.jpg",
+          nome: "Chanko Nabe",
+          descricao:
+            "Ensopado altamente calórico que os lutadores de Sumô comem diariamente pra conseguir manter o peso.",
         },
-        {
-          nome: "Balde de Pipoca Superstar",
-          imagem: "/images/usj-superstar-popcorn.png",
-        },
-        { nome: "Caneca Yoshi", imagem: "/images/usj-yoshi-mug.jpg" },
       ],
     },
   },
-};
-
-const OSAKA_DAY_6: DayContent = {
-  day: 6,
-  city: "Osaka",
-  date: "10 Mai",
-  contexto: [
-    "No segundo dia em Osaka, começamos pelo Castelo de Osaka, um dos marcos históricos mais importantes da cidade, e à noite mergulhamos em Dotombori — o coração da vida noturna e gastronômica, com seus letreiros icônicos e comida de rua.",
-  ],
-  manha: {
-    regiao: {
-      nome: "Chuo-ku (Osaka-jo)",
-      descricao:
-        "Região central de Osaka onde fica o Castelo de Osaka, cercado por um extenso parque e fosso histórico.",
-    },
-    atracaoPrincipal: "Osaka Castle",
-    atracaoPrincipalImagem: "/images/osaka6-castle.png",
-    pois: [],
-    gastronomia: {
-      itens: [{ nome: "Kushikatsu" }],
-    },
-  },
-  tarde: {
-    label: "Tarde/Noite",
-    regiao: {
-      nome: "Dotombori (Namba)",
-      descricao:
-        "Coração da vida noturna e gastronômica de Osaka, às margens do Canal Dotombori — famoso pelos letreiros iluminados e pela comida de rua.",
-    },
-    atracaoPrincipal: "Dotombori",
-    atracaoPrincipalImagem: "/images/osaka6-dotombori.png",
-    pois: [],
-    gastronomia: {
-      itens: [{ nome: "Takoyaki" }, { nome: "Wagyu" }],
-    },
-  },
-  transporte: {
-    linha: "Shinkansen Shin-Osaka–Tokyo",
-    tempo: "Hikari: ~3h (incluso no JR Pass)",
-    recomendacao:
-      "Não existe necessidade de chegar muito cedo em Tokyo para o dia 7 — você pode pegar o trem tanto no final deste dia quanto bem cedo pela manhã, já de volta para Tokyo.",
-  },
-};
-
-const OSAKA_ALT: Record<number, DayContent> = {
-  5: OSAKA_DAY_5,
-  6: OSAKA_DAY_6,
 };
 
 const CHEGADA: DayContent = {
@@ -1140,6 +1029,84 @@ function PeriodBlock({
       )}
       {period.comprasExclusivas && (
         <ComprasExclusivasBlock compras={period.comprasExclusivas} />
+      )}
+      {period.subAtracao && (
+        <SubAtracaoBlock
+          subAtracao={period.subAtracao}
+          displayClassName={displayClassName}
+        />
+      )}
+    </div>
+  );
+}
+
+function SubAtracaoBlock({
+  subAtracao,
+  displayClassName,
+}: {
+  subAtracao: SubAtracao;
+  displayClassName: string;
+}) {
+  return (
+    <div className="mt-8 border-t border-black/10 pt-8">
+      <div className="mb-4 flex items-center gap-2.5">
+        <span className="h-2 w-2 rounded-full bg-gradient-to-r from-[#E94332] via-[#D96A2E] to-[#C9A03A]" />
+        <span className="text-xs font-bold uppercase tracking-[0.25em] text-black/40">
+          {subAtracao.label ?? "Noite"}
+        </span>
+      </div>
+
+      <div
+        className={`relative mb-5 aspect-[4/3] overflow-hidden rounded-2xl sm:aspect-[16/10] ${
+          subAtracao.imagem ? "" : "border-2 border-[#2f5aa8]"
+        }`}
+      >
+        {subAtracao.imagem ? (
+          <>
+            <img
+              src={subAtracao.imagem}
+              alt={subAtracao.titulo}
+              className={`absolute inset-0 h-full w-full object-cover ${
+                subAtracao.foco === "bottom"
+                  ? "object-bottom"
+                  : subAtracao.foco === "center"
+                    ? "object-center"
+                    : "object-top"
+              }`}
+            />
+            <div className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-black/85 via-black/35 to-transparent" />
+            <h3
+              className={`${displayClassName} absolute inset-x-5 bottom-4 text-2xl font-medium leading-snug text-white md:text-3xl`}
+            >
+              {subAtracao.titulo}
+            </h3>
+          </>
+        ) : (
+          <div className="flex h-full items-center justify-center bg-[#eef3fb] px-5">
+            <h3
+              className={`${displayClassName} text-2xl font-medium text-[#2f5aa8] md:text-3xl`}
+            >
+              {subAtracao.titulo}
+            </h3>
+          </div>
+        )}
+      </div>
+
+      {subAtracao.descricao && (
+        <p className="mb-5 text-sm leading-6 text-black/60">
+          {subAtracao.descricao}
+        </p>
+      )}
+
+      {subAtracao.pois && subAtracao.pois.length > 0 && (
+        <>
+          <p className="mb-5 text-xs text-black/40">Restaurantes sugeridos</p>
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+            {subAtracao.pois.map((poi, index) => (
+              <PoiCard key={poi.title + index} index={index} poi={poi} />
+            ))}
+          </div>
+        </>
       )}
     </div>
   );
@@ -1647,72 +1614,6 @@ const HOTEIS: HotelCidade[] = [
       },
     ],
   },
-  {
-    cidade: "Osaka",
-    opcoes: [
-      {
-        nome: "Citadines Namba Osaka",
-        notaAlpinea: 99,
-        perfil: "Maior quarto pelo investimento",
-        inauguracao: "2020",
-        inauguracaoNota: "prédio histórico restaurado",
-        reforma: "Não",
-        quarto: "25 m²",
-        preco: "¥20–34 mil",
-        bairro: "Namba",
-        estacao: "Namba Station",
-        distanciaEstacao: "8 min",
-        ofuro: false,
-        restaurante: true,
-        academia: true,
-        piscina: false,
-        konbini: "FamilyMart (15 m)",
-        site: "https://www.discoverasr.com/en/citadines/japan/citadines-namba-osaka/amenities",
-        avaliacaoBooking: 9.1,
-        avaliacaoTrivago: 9.3,
-      },
-      {
-        nome: "Hotel Keihan Namba Grande",
-        notaAlpinea: 98,
-        perfil: "Melhor custo-benefício",
-        inauguracao: "2023",
-        reforma: "Não",
-        quarto: "21 m²",
-        preco: "¥18–30 mil",
-        bairro: "Namba (Naniwa-ku)",
-        estacao: "Namba Station",
-        distanciaEstacao: "5 min",
-        ofuro: false,
-        restaurante: true,
-        academia: false,
-        piscina: false,
-        konbini: "FamilyMart (20 m)",
-        site: "https://namba.hotelkeihan.co.jp/rooms/",
-        avaliacaoBooking: 8.6,
-        avaliacaoTrivago: 8.9,
-      },
-      {
-        nome: "Cross Hotel Osaka",
-        notaAlpinea: 98,
-        perfil: "Melhor localização",
-        inauguracao: "2007",
-        reforma: "Reforma completa em 2020–2021",
-        quarto: "27 m²",
-        preco: "¥22–35 mil",
-        bairro: "Shinsaibashi",
-        estacao: "Namba Station",
-        distanciaEstacao: "3 min",
-        ofuro: false,
-        restaurante: true,
-        academia: false,
-        piscina: false,
-        konbini: "Lawson (20 m)",
-        site: "https://global-cross-osaka.orixhotelsandresorts.com/LUC2ORIXOS/cdata/luc2orixos_0_jaen.html",
-        avaliacaoBooking: 8.9,
-        avaliacaoTrivago: 9.0,
-      },
-    ],
-  },
 ];
 
 function HotelBoolCell({ value }: { value: boolean }) {
@@ -2042,7 +1943,6 @@ export function ApprovalPanel({
   approvalKey: string;
 }) {
   const [activeDay, setActiveDay] = useState(1);
-  const [activeRow, setActiveRow] = useState<"a" | "b">("a");
   const [hotelCity, setHotelCity] = useState(0);
   const [viewMode, setViewMode] = useState<"dia" | "hotel">("dia");
   const [showAdjustBox, setShowAdjustBox] = useState(false);
@@ -2065,10 +1965,7 @@ export function ApprovalPanel({
     });
   }
 
-  const current =
-    activeRow === "b" && OSAKA_ALT[activeDay]
-      ? OSAKA_ALT[activeDay]
-      : DAYS[activeDay];
+  const current = DAYS[activeDay];
 
   async function sendResponse(action: "aprovado" | "ajustes") {
     setStatus("submitting");
@@ -2165,25 +2062,18 @@ export function ApprovalPanel({
           </p>
         </div>
 
-        <div className="px-6 pt-6 sm:px-10">
-          <p className="inline-block rounded-full border border-[#2f5aa8]/25 bg-[#eef3fb] px-3 py-1 text-[10px] font-bold uppercase tracking-[0.2em] text-[#2f5aa8]">
-            Opção A
-          </p>
-        </div>
         <div
           ref={daysMenuRef}
-          className="flex flex-wrap items-start justify-center gap-x-5 gap-y-5 px-6 pt-3 sm:gap-x-7 sm:px-10"
+          className="flex flex-wrap items-start justify-center gap-x-5 gap-y-5 px-6 pt-6 sm:gap-x-7 sm:px-10"
         >
           {DAYS.map((d, index) => {
-            const active =
-              index === activeDay && activeRow === "a" && viewMode === "dia";
+            const active = index === activeDay && viewMode === "dia";
             return (
               <button
                 key={d.day}
                 type="button"
                 onClick={() => {
                   setActiveDay(index);
-                  setActiveRow("a");
                   setViewMode("dia");
                   scrollToContent();
                 }}
@@ -2226,98 +2116,12 @@ export function ApprovalPanel({
           })}
         </div>
 
-        <div className="px-6 pt-6 sm:px-10">
-          <p className="inline-block rounded-full border border-[#2f5aa8]/25 bg-[#eef3fb] px-3 py-1 text-[10px] font-bold uppercase tracking-[0.2em] text-[#2f5aa8]">
-            Opção B
-          </p>
-        </div>
-        <div className="flex flex-wrap items-start justify-center gap-x-5 gap-y-5 px-6 pb-6 pt-3 sm:gap-x-7 sm:px-10">
-          {DAYS.map((d, index) => {
-            const isAlt = d.day === 5 || d.day === 6;
-
-            if (!isAlt) {
-              return (
-                <div
-                  key={d.day}
-                  aria-hidden="true"
-                  className="hidden flex-col items-center gap-2.5 opacity-0 sm:flex"
-                >
-                  <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full border-2 text-sm font-bold">
-                    {d.badge ?? d.day}
-                  </span>
-                  <span className="text-[10px] uppercase tracking-[0.25em]">
-                    {d.city}
-                  </span>
-                  {d.date && (
-                    <span className="flex flex-col items-center leading-tight tracking-[0.1em]">
-                      <span className="text-sm font-semibold">
-                        {d.date.split(" ")[0]}
-                      </span>
-                      <span className="text-xs uppercase">
-                        {d.date.split(" ")[1]}
-                      </span>
-                    </span>
-                  )}
-                </div>
-              );
-            }
-
-            const active =
-              index === activeDay && activeRow === "b" && viewMode === "dia";
-
-            return (
-              <button
-                key={d.day}
-                type="button"
-                onClick={() => {
-                  setActiveDay(index);
-                  setActiveRow("b");
-                  setViewMode("dia");
-                  scrollToContent();
-                }}
-                className="flex flex-col items-center gap-2.5"
-              >
-                <span
-                  className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-full border-2 text-sm font-bold transition ${
-                    active
-                      ? "border-black bg-white text-black hover:border-transparent hover:bg-gradient-to-r hover:from-[#2f5aa8] hover:via-[#5b6fc7] hover:to-[#7c4fd1] hover:text-white"
-                      : "border-[#C9A03A]/50 bg-[#fdf6e3] text-[#8a6d1a] hover:border-transparent hover:bg-gradient-to-r hover:from-[#2f5aa8] hover:via-[#5b6fc7] hover:to-[#7c4fd1] hover:text-white"
-                  }`}
-                >
-                  {d.day}
-                </span>
-                <span
-                  className={`text-[10px] uppercase tracking-[0.25em] ${
-                    active ? "text-black" : "text-[#8a6d1a]"
-                  }`}
-                >
-                  Osaka
-                </span>
-                {d.date && (
-                  <span
-                    className={`flex flex-col items-center leading-tight tracking-[0.1em] ${
-                      active ? "text-black/50" : "text-[#8a6d1a]/60"
-                    }`}
-                  >
-                    <span className="text-sm font-semibold">
-                      {d.date.split(" ")[0]}
-                    </span>
-                    <span className="text-xs uppercase">
-                      {d.date.split(" ")[1]}
-                    </span>
-                  </span>
-                )}
-              </button>
-            );
-          })}
-        </div>
-
         <p className="px-6 pt-6 text-[10px] font-bold uppercase tracking-[0.2em] text-black/35 sm:px-10">
           Escolha de Hotel
         </p>
         <div className="flex flex-wrap items-start justify-center gap-x-5 gap-y-5 px-6 pt-3 sm:gap-x-7 sm:px-10">
           {DAYS.map((d, index) => {
-            const isHotelSlot = index >= 0 && index <= 2;
+            const isHotelSlot = index >= 0 && index <= 1;
 
             if (!isHotelSlot) {
               return (
