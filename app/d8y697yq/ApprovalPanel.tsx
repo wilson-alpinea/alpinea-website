@@ -189,7 +189,6 @@ const DAY_2: DayContent = {
   date: "11 Mai",
   contexto: [
     "Neste nosso último dia de passeios, visitamos o lado mais comercial do Japão e o centro financeiro. Começamos o passeio com uma visita a Tokyo Station para que você possa ir diretamente à Dragonball Store, que fica dentro do complexo da estação, na mesma área onde existem lojas das principais franquias de anime.",
-    "Depois seguimos a pé até Nihonbashi, o marco zero das estradas de Tóquio e antigo centro comercial da cidade entre 1600 e 1868 — ali ainda funcionam lojas e prédios centenários.",
     "À tarde visitamos os Jardins do Leste do Palácio Imperial (Imperial Palace East Gardens), de entrada gratuita e a poucos minutos a pé da Tokyo Station.",
     "Como é nosso último dia, seguimos direto para o aeroporto depois dos jardins — sem mais compromissos.",
   ],
@@ -222,12 +221,6 @@ const DAY_2: DayContent = {
           "Rilakkuma Store",
         ],
         rating: 5,
-      },
-      {
-        title: "Nihonbashi",
-        description:
-          "Marco zero das estradas e vias de Tóquio. Entre 1600 e 1868 foi o centro comercial do Japão — aqui você encontra prédios e lojas centenárias que funcionam até hoje, como Mitsukoshi (1673), Yamatoyama (1690), Ninben (1699) e Sembikiya (1834).",
-        rating: 3,
       },
       {
         title: "Marunouchi Naka-dori",
