@@ -258,9 +258,9 @@ const DAY_2: DayContent = {
     atracaoPrincipalFoco: "center",
     pois: [
       {
-        title: "Jardins do Leste do Palácio Imperial",
+        title: "Fujimi-yagura",
         description:
-          "Jardins públicos e gratuitos erguidos sobre os antigos fundamentos do Castelo de Edo — jardim tradicional japonês, muralhas de pedra e amplos gramados.",
+          "Torre de vigia construída em 1659, uma das poucas estruturas originais remanescentes do Castelo de Edo — depois que o incêndio de 1657 destruiu a torre principal, passou a funcionar como sua substituta simbólica. Não é possível entrar, mas dá para ver de fora, dentro dos jardins.",
         rating: 4,
       },
     ],
