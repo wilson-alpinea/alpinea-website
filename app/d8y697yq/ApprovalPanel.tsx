@@ -235,9 +235,9 @@ const DAY_2: DayContent = {
 };
 
 const DAY_3: DayContent = {
-  day: 4,
+  day: 3,
   city: "Tokyo",
-  date: "08 Mai",
+  date: "07 Mai",
   contexto: [
     "O superdistrito de Shibuya é um dos bairros mais famosos, principalmente pela Shibuya Crossing e pela impressionante floresta erguida do zero que tem no centro o maior templo Shintoísta do mundo. Nessa região encontraremos Harajuku, o epicentro da cultura Lolita, Kawaii e Jovem do Japão, bem como a luxuosa avenida de Omotesando.",
     "À tarde seguimos para Shinjuku, bairro que mistura o Japão corporativo com o mais boêmio — do mirante gratuito do Prédio do Governo Metropolitano ao caos neon de Kabukicho, passando pelas vielas de Golden Gai. Relaxamos no onsen urbano Thermae-Yu antes de fechar a noite com jantar num izakaya tradicional em Omoide Yokocho.",
@@ -401,7 +401,7 @@ const DAY_3: DayContent = {
     linha: "Shinkansen Tokyo–Kyoto",
     tempo: "Hikari: ~2h40 (incluso no JR Pass)",
     recomendacao:
-      "Recomendamos pegar o trem para Kyoto ainda nesta noite, após o jantar em Omoide Yokocho, para aproveitar o Fushimi Inari logo cedo no dia seguinte, antes das aglomerações.",
+      "Recomendamos pegar o trem para Kyoto ainda nesta noite, após o jantar em Omoide Yokocho, para aproveitar o Kiyomizu-dera logo cedo no dia seguinte, antes das aglomerações.",
   },
 };
 
@@ -536,20 +536,14 @@ const DAY_4: DayContent = {
       },
     ],
   },
-  transporte: {
-    linha: "Shinkansen Tokyo–Kyoto",
-    tempo: "Hikari: ~2h40 (incluso no JR Pass)",
-    recomendacao:
-      "Recomendamos fortemente que a viagem para Kyoto seja feita neste dia, porque os pontos turísticos que iremos visitar são melhores logo no começo da manhã — depois sofrem com superlotação.",
-  },
 };
 
 const DAY_5: DayContent = {
-  day: 3,
+  day: 4,
   city: "Kyoto",
-  date: "07 Mai",
+  date: "08 Mai",
   contexto: [
-    "Se Tóquio é sinônimo de modernidade e tecnologia mesclada à parte cultural, Kyoto é um patrimônio histórico. Faremos duas passagens por Kyoto ao longo da viagem — nesta primeira, visitamos o Templo Kiyomizu-dera e o distrito de Gion. A segunda passagem, alguns dias depois, será dedicada ao Kinkaku-ji e ao Fushimi-Inari Taisha.",
+    "Se Tóquio é sinônimo de modernidade e tecnologia mesclada à parte cultural, Kyoto é um patrimônio histórico. Nesses dois dias iremos visitar 3 dos principais pontos turísticos do Japão: Kiyomizu-dera + Gion, Kinkaku-ji e Fushimi-Inari Taisha.",
   ],
   manha: {
     regiao: {
@@ -604,12 +598,6 @@ const DAY_5: DayContent = {
       itens: [{ nome: "Kaiseki" }, { nome: "Obanzai" }],
     },
   },
-  transporte: {
-    linha: "Shinkansen Kyoto–Tokyo",
-    tempo: "Hikari: ~2h40 (incluso no JR Pass)",
-    recomendacao:
-      "Não existe necessidade de chegar muito cedo em Tóquio no dia seguinte — você pode pegar o trem tanto no final deste dia quanto bem cedo pela manhã.",
-  },
 };
 
 const DAY_6: DayContent = {
@@ -617,7 +605,7 @@ const DAY_6: DayContent = {
   city: "Kyoto",
   date: "09 Mai",
   contexto: [
-    "Nesta segunda passagem por Kyoto, começamos cedo no Santuário Fushimi Inari para aproveitar o famoso corredor de milhares de torii antes das aglomerações. À tarde seguimos para o Kinkaku-ji, o Pavilhão Dourado, e aproveitamos para conhecer outros templos e cafés da região norte da cidade.",
+    "No segundo dia em Kyoto, começamos cedo no Santuário Fushimi Inari para aproveitar o famoso corredor de milhares de torii antes das aglomerações. À tarde seguimos para o Kinkaku-ji, o Pavilhão Dourado, e aproveitamos para conhecer outros templos e cafés da região norte da cidade.",
   ],
   manha: {
     regiao: {
@@ -758,8 +746,8 @@ const DAYS: DayContent[] = [
   CHEGADA,
   DAY_1,
   DAY_4,
-  DAY_5,
   DAY_3,
+  DAY_5,
   DAY_6,
   DAY_7,
   DAY_2,
