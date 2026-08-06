@@ -35,7 +35,13 @@ type ComprasExclusivas = {
 type GradeHorarios = {
   titulo?: string;
   nota?: string;
-  itens: { horario: string; evento: string; destaque?: boolean }[];
+  itens: {
+    horario: string;
+    evento: string;
+    destaque?: boolean;
+    recomendado?: boolean;
+    tag?: string;
+  }[];
 };
 
 type SubAtracao = {
@@ -295,7 +301,7 @@ const DAY_3: DayContent = {
     },
   },
   tarde: {
-    label: "Tarde/Noite",
+    label: "Tarde",
     regiao: {
       nome: "Shinjuku",
       descricao:
@@ -638,26 +644,35 @@ const DAY_7: DayContent = {
   city: "Tokyo",
   date: "10 Mai",
   contexto: [
+    "Começamos a manhã no Museu Edo-Tokyo, que reabriu em 31 de março de 2026 após 4 anos fechado para uma grande reforma — fica no mesmo bairro do Kokugikan, então dá pra emendar direto com o sumô.",
     "O dia 10 de maio é um dos dias do Grand Sumo Tournament de Tóquio em maio de 2027 (torneio completo de 9 a 23 de maio) — a venda dos bilhetes para assistir ao vivo começa em 10 de abril de 2027.",
     "O ingresso vale para o dia inteiro no Kokugikan, em Ryogoku: as lutas das categorias inferiores começam já às 8h40, mas o grande destaque — a cerimônia de entrada e as lutas da divisão principal (Makuuchi) — só acontece a partir das 15h45, indo até por volta das 18h.",
     "Recomendamos chegar ao Kokugikan no início da tarde, por volta das 14h30, a tempo da cerimônia de entrada da segunda divisão e para garantir um bom lugar antes do início da divisão principal.",
   ],
+  manha: {
+    atracaoPrincipal: "Museu Edo-Tokyo",
+    atracaoPrincipalImagem: "/images/edo-tokyo-museum.png",
+    atracaoPrincipalFoco: "center",
+    pois: [
+      {
+        title: "Reabertura 2026",
+        description:
+          "Reabriu em 31 de março de 2026 após 4 anos fechado para uma grande reforma — nova galeria permanente sobre a história de Tóquio do período Edo (1603–1868) até os dias atuais, telões interativos e réplicas do antigo comércio de rua.",
+        rating: 4,
+      },
+    ],
+  },
   tarde: {
-    label: "Manhã/Tarde",
+    label: "Tarde",
     regiao: {
       nome: "Ryogoku",
       descricao:
-        "Ryogoku é o bairro onde fica o estádio nacional de sumô Kokugikan, centro do sumô com infraestrutura de gastronomia e temática de sumô nas ruas, e também onde fica um dos maiores museus de Tóquio, o Tokyo-Edo Museum, que conta através de maquetes gigantes como foi a transformação de Edo (1603) até Tóquio (1868).",
+        "Ryogoku é o bairro onde fica o estádio nacional de sumô Kokugikan, centro do sumô com infraestrutura de gastronomia e temática de sumô nas ruas.",
     },
     atracaoPrincipal: "Ryogoku Kokugikan - Grand Sumo Tournament 2027",
     atracaoPrincipalImagem: "/images/draft-sumo.png",
     atracaoPrincipalFoco: "center",
     pois: [
-      {
-        title: "Museu Edo-Tokyo",
-        description: "Reabertura em 2026 após 4 anos fechado.",
-        rating: 4,
-      },
       {
         title: "Edo Noren (Área Externa do Kokugikan)",
         description: "Vila gastronômica temática de sumô, na entrada do estádio.",
@@ -685,15 +700,19 @@ const DAY_7: DayContent = {
         {
           horario: "14h30",
           evento: "Cerimônia de entrada da 2ª divisão (Jūryō)",
+          recomendado: true,
+          tag: "Horário Recomendado de Entrada",
         },
         {
           horario: "15h45",
           evento: "Cerimônia de entrada da divisão principal (Makuuchi)",
           destaque: true,
+          recomendado: true,
         },
         {
           horario: "18h00",
           evento: "Fim das lutas do dia",
+          recomendado: true,
         },
       ],
       nota: "Horários aproximados válidos para os dias 1 a 12 do torneio, conforme a bilheteria oficial. O ingresso vale para o dia inteiro — o confronto de cada luta individual só é divulgado no dia anterior.",
@@ -1086,26 +1105,29 @@ function GradeHorariosBlock({ grade }: { grade: GradeHorarios }) {
         {grade.itens.map((item) => (
           <div
             key={item.evento}
-            className={`flex items-center gap-4 px-4 py-2.5 ${
-              item.destaque ? "bg-[#2f5aa8]/[0.06]" : ""
-            }`}
+            className={`px-4 py-2.5 ${item.recomendado ? "bg-amber-50" : ""}`}
           >
-            <span
-              className={`w-16 shrink-0 text-sm font-semibold ${
-                item.destaque ? "text-[#2f5aa8]" : "text-black/70"
-              }`}
-            >
-              {item.horario}
-            </span>
-            <span
-              className={`text-sm leading-5 ${
-                item.destaque
-                  ? "font-semibold text-[#2f5aa8]"
-                  : "text-black/60"
-              }`}
-            >
-              {item.evento}
-            </span>
+            <div className="flex items-center gap-4">
+              <span
+                className={`w-16 shrink-0 text-sm font-semibold ${
+                  item.recomendado ? "text-amber-800" : "text-black/70"
+                }`}
+              >
+                {item.horario}
+              </span>
+              <span
+                className={`text-sm leading-5 ${
+                  item.destaque ? "font-semibold" : ""
+                } ${item.recomendado ? "text-amber-800" : "text-black/60"}`}
+              >
+                {item.evento}
+              </span>
+            </div>
+            {item.tag && (
+              <span className="ml-20 mt-1.5 inline-block rounded-full border border-amber-400/70 bg-amber-400/20 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-[0.15em] text-amber-800">
+                {item.tag}
+              </span>
+            )}
           </div>
         ))}
       </div>
