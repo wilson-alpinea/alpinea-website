@@ -680,8 +680,8 @@ const DAY_7: DayContent = {
   city: "Tokyo",
   date: "10 Mai",
   contexto: [
-    "Começamos a manhã no Museu Edo-Tokyo, que reabriu em 31 de março de 2026 após 4 anos fechado para uma grande reforma — fica no mesmo bairro do Kokugikan, então dá pra emendar direto com o sumô.",
-    "O dia 10 de maio é um dos dias do Grand Sumo Tournament de Tóquio em maio de 2027 (torneio completo de 9 a 23 de maio) — a venda dos bilhetes para assistir ao vivo começa em 10 de abril de 2027.",
+    "Começamos a manhã no Museu Edo-Tokyo, que reabriu em 31 de março de 2026 após 4 anos fechado para uma grande reforma — fica literalmente do outro lado da rua do Kokugikan, então dá pra emendar direto com o sumô.",
+    "O dia 10 de maio é um dos dias do Grand Sumo Tournament de Tóquio em maio de 2027 (torneio completo de 9 a 23 de maio) — a venda dos ingressos para o torneio começa dia 10 de abril de 2027.",
     "O ingresso vale para o dia inteiro no Kokugikan, em Ryogoku: as lutas das categorias inferiores começam já às 8h40, mas o grande destaque — a cerimônia de entrada e as lutas da divisão principal (Makuuchi) — só acontece a partir das 15h45, indo até por volta das 18h.",
     "Recomendamos chegar ao Kokugikan no início da tarde, por volta das 14h30, a tempo da cerimônia de entrada da segunda divisão e para garantir um bom lugar antes do início da divisão principal.",
   ],
