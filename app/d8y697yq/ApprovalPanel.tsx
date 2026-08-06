@@ -40,6 +40,7 @@ type SubAtracao = {
   descricao?: string;
   pois?: Poi[];
   gastronomia?: Gastronomia;
+  opcional?: boolean;
 };
 
 type Period = {
@@ -240,7 +241,7 @@ const DAY_3: DayContent = {
   date: "07 Mai",
   contexto: [
     "O superdistrito de Shibuya é um dos bairros mais famosos, principalmente pela Shibuya Crossing e pela impressionante floresta erguida do zero que tem no centro o maior templo Shintoísta do mundo. Nessa região encontraremos Harajuku, o epicentro da cultura Lolita, Kawaii e Jovem do Japão, bem como a luxuosa avenida de Omotesando.",
-    "À tarde seguimos para Shinjuku, bairro que mistura o Japão corporativo com o mais boêmio — do mirante gratuito do Prédio do Governo Metropolitano ao caos neon de Kabukicho, passando pelas vielas de Golden Gai. Relaxamos no onsen urbano Thermae-Yu antes de fechar a noite com jantar num izakaya tradicional em Omoide Yokocho.",
+    "À tarde seguimos para Shinjuku, bairro que mistura o Japão corporativo com o mais boêmio — do mirante gratuito do Prédio do Governo Metropolitano ao caos neon de Kabukicho, passando pelas vielas de Golden Gai. Relaxamos no onsen urbano Thermae-Yu antes de seguir para a estação e pegar o trem noturno rumo a Kyoto.",
   ],
   manha: {
     regiao: {
@@ -345,55 +346,12 @@ const DAY_3: DayContent = {
     },
     subAtracoes: [
       {
-        label: "Tarde/Noite",
+        label: "Tarde",
         titulo: "Thermae-Yu",
         imagem: "/images/thermae-yu.png",
         foco: "center",
         descricao:
           "Onsen urbano aberto 24 horas no coração de Kabukicho, ao lado do Golden Gai — água termal natural trazida diariamente de Nakaizu (famosa pelas propriedades para a pele), com banhos internos e ao ar livre, banho carbonatado, saunas e, na temporada quente, deck na cobertura.",
-      },
-      {
-        label: "Noite em Shinjuku",
-        titulo: "Omoide Yokocho - Izakaya",
-        imagem: "/images/draft-yokocho.png",
-        foco: "center",
-        descricao:
-          "Viela histórica de izakayas e yakitori-ya sob os trilhos da estação de Shinjuku, com lanternas vermelhas e balcões minúsculos — parada para jantar antes de seguir a noite pelo bairro.",
-        pois: [
-          {
-            title: "Kabuto",
-            description:
-              "Bar minúsculo especializado só em espetinhos de enguia desde 1948 — serve o animal inteiro (cabeça, barbatana, fígado). O set completo \"Hitotouri\", com 7 espetinhos, é o pedido mais popular; o espetinho de fígado costuma esgotar ainda no fim da tarde.",
-            rating: 5,
-          },
-          {
-            title: "Tonchan",
-            description:
-              "Uma das casas mais tradicionais de motsuyaki (espetinhos de vísceras grelhadas) da viela — prato que nasceu justamente em Omoide Yokocho no período pós-guerra.",
-            rating: 5,
-          },
-          {
-            title: "Daini Horaiya",
-            description:
-              "Fundado em 1947, considerado o pioneiro do motsuyaki na região — espetinhos grelhados no carvão binchotan, a 1 minuto da saída D1 da estação de Shinjuku.",
-            rating: 4,
-          },
-          {
-            title: "Asadachi",
-            description:
-              "Izakaya bastante receptivo a turistas, com cardápio em inglês e pratos mais ousados (baleia, tartar de salmão) além do izakaya tradicional — só balcão, sem reserva.",
-            rating: 4,
-          },
-        ],
-        gastronomia: {
-          itens: [
-            {
-              nome: "Espetinho de Enguia (Kabuto)",
-              descricao:
-                "Set \"Hitotouri\" com 7 partes diferentes da enguia grelhada no carvão — o prato mais pedido do bar.",
-            },
-          ],
-        },
       },
     ],
   },
@@ -401,7 +359,7 @@ const DAY_3: DayContent = {
     linha: "Shinkansen Tokyo–Kyoto",
     tempo: "Hikari: ~2h40 (incluso no JR Pass)",
     recomendacao:
-      "Recomendamos pegar o trem para Kyoto ainda nesta noite, após o jantar em Omoide Yokocho, para aproveitar o Kiyomizu-dera logo cedo no dia seguinte, antes das aglomerações.",
+      "Recomendamos pegar o trem para Kyoto ainda nesta noite, após o onsen Thermae-Yu, para aproveitar o Kiyomizu-dera logo cedo no dia seguinte, antes das aglomerações.",
   },
 };
 
