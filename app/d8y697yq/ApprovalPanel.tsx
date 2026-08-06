@@ -32,6 +32,12 @@ type ComprasExclusivas = {
   itens: { nome: string; imagem?: string }[];
 };
 
+type GradeHorarios = {
+  titulo?: string;
+  nota?: string;
+  itens: { horario: string; evento: string; destaque?: boolean }[];
+};
+
 type SubAtracao = {
   label?: string;
   titulo: string;
@@ -53,6 +59,7 @@ type Period = {
   gastronomia?: Gastronomia;
   comprasExclusivas?: ComprasExclusivas;
   subAtracoes?: SubAtracao[];
+  gradeHorarios?: GradeHorarios;
 };
 
 type TransporteSugerido = {
@@ -622,7 +629,7 @@ const DAY_6: DayContent = {
     linha: "Shinkansen Kyoto–Tokyo",
     tempo: "Hikari: ~2h40 (incluso no JR Pass)",
     recomendacao:
-      "Diferente dos outros trechos, recomendamos pegar o trem ainda à noite, ao final deste dia, e não pela manhã seguinte — a primeira luta do Grand Sumo Tournament no dia 10 pode começar às 09:00, e chegar em cima da hora vindo de Kyoto é arriscado.",
+      "Diferente dos outros trechos, recomendamos pegar o trem ainda à noite, ao final deste dia, e não pela manhã seguinte — as lutas das categorias inferiores do Grand Sumo Tournament no dia 10 já começam às 8h40, e chegar em cima da hora vindo de Kyoto tiraria a opção de aproveitar o dia inteiro no Kokugikan.",
   },
 };
 
@@ -631,9 +638,9 @@ const DAY_7: DayContent = {
   city: "Tokyo",
   date: "10 Mai",
   contexto: [
-    "Atração principal da manhã ainda a definir.",
-    "O dia 10 de maio é um dos dias do Grand Sumo Tournament de Tóquio em maio de 2027 (torneio completo de 9 a 23 de maio) — a venda dos bilhetes para assistir ao vivo começa em abril de 2027.",
-    "À tarde seguimos para Ryogoku, o bairro do sumô, para acompanhar ao vivo uma das rodadas do torneio no Kokugikan, o estádio nacional da modalidade.",
+    "O dia 10 de maio é um dos dias do Grand Sumo Tournament de Tóquio em maio de 2027 (torneio completo de 9 a 23 de maio) — a venda dos bilhetes para assistir ao vivo começa em 10 de abril de 2027.",
+    "O ingresso vale para o dia inteiro no Kokugikan, em Ryogoku: as lutas das categorias inferiores começam já às 8h40, mas o grande destaque — a cerimônia de entrada e as lutas da divisão principal (Makuuchi) — só acontece a partir das 15h45, indo até por volta das 18h.",
+    "Recomendamos chegar ao Kokugikan no início da tarde, por volta das 14h30, a tempo da cerimônia de entrada da segunda divisão e para garantir um bom lugar antes do início da divisão principal.",
   ],
   tarde: {
     label: "Manhã/Tarde",
@@ -668,6 +675,29 @@ const DAY_7: DayContent = {
         rating: 2,
       },
     ],
+    gradeHorarios: {
+      titulo: "Grade de Horários — Dia 10/05 (Dia 2 do torneio)",
+      itens: [
+        {
+          horario: "8h40",
+          evento: "Início das lutas das categorias inferiores (Jonokuchi a Makushita)",
+        },
+        {
+          horario: "14h30",
+          evento: "Cerimônia de entrada da 2ª divisão (Jūryō)",
+        },
+        {
+          horario: "15h45",
+          evento: "Cerimônia de entrada da divisão principal (Makuuchi)",
+          destaque: true,
+        },
+        {
+          horario: "18h00",
+          evento: "Fim das lutas do dia",
+        },
+      ],
+      nota: "Horários aproximados válidos para os dias 1 a 12 do torneio, conforme a bilheteria oficial. O ingresso vale para o dia inteiro — o confronto de cada luta individual só é divulgado no dia anterior.",
+    },
     gastronomia: {
       itens: [
         {
@@ -920,6 +950,15 @@ function IconAlertTriangle({ className }: { className?: string }) {
   );
 }
 
+function IconClock({ className }: { className?: string }) {
+  return (
+    <svg {...iconProps(className)}>
+      <circle cx="12" cy="12" r="9" />
+      <polyline points="12 7 12 12 15.5 14" />
+    </svg>
+  );
+}
+
 function AlertaBlock({ alerta }: { alerta: AlertaSugerido }) {
   return (
     <div className="mb-8 rounded-2xl border-2 border-red-300/60 bg-red-50 p-5 sm:p-6">
@@ -1014,6 +1053,9 @@ function PeriodBlock({
         ))}
       </div>
 
+      {period.gradeHorarios && (
+        <GradeHorariosBlock grade={period.gradeHorarios} />
+      )}
       {period.gastronomia && (
         <GastronomiaBlock gastronomia={period.gastronomia} />
       )}
@@ -1027,6 +1069,51 @@ function PeriodBlock({
           displayClassName={displayClassName}
         />
       ))}
+    </div>
+  );
+}
+
+function GradeHorariosBlock({ grade }: { grade: GradeHorarios }) {
+  return (
+    <div className="mb-6 rounded-2xl border border-black/10 bg-black/[0.02] p-4">
+      <div className="flex items-center gap-2">
+        <IconClock className="h-3.5 w-3.5 text-black/45" />
+        <p className="text-xs font-bold uppercase tracking-[0.2em] text-black/45">
+          {grade.titulo ?? "Grade de Horários"}
+        </p>
+      </div>
+      <div className="mt-3 divide-y divide-black/10 overflow-hidden rounded-xl border border-black/10 bg-white">
+        {grade.itens.map((item) => (
+          <div
+            key={item.evento}
+            className={`flex items-center gap-4 px-4 py-2.5 ${
+              item.destaque ? "bg-[#2f5aa8]/[0.06]" : ""
+            }`}
+          >
+            <span
+              className={`w-16 shrink-0 text-sm font-semibold ${
+                item.destaque ? "text-[#2f5aa8]" : "text-black/70"
+              }`}
+            >
+              {item.horario}
+            </span>
+            <span
+              className={`text-sm leading-5 ${
+                item.destaque
+                  ? "font-semibold text-[#2f5aa8]"
+                  : "text-black/60"
+              }`}
+            >
+              {item.evento}
+            </span>
+          </div>
+        ))}
+      </div>
+      {grade.nota && (
+        <p className="mt-3 border-t border-black/10 pt-3 text-xs leading-5 text-black/45">
+          {grade.nota}
+        </p>
+      )}
     </div>
   );
 }
