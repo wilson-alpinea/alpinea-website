@@ -260,8 +260,32 @@ const DAY_2: DayContent = {
       {
         title: "Fujimi-yagura",
         description:
-          "Torre de vigia construída em 1659, uma das poucas estruturas originais remanescentes do Castelo de Edo — depois que o incêndio de 1657 destruiu a torre principal, passou a funcionar como sua substituta simbólica. Não é possível entrar, mas dá para ver de fora, dentro dos jardins.",
+          "Torre de vigia construída em 1659, uma das poucas estruturas originais remanescentes do Castelo de Edo — depois que o incêndio de 1657 destruiu a torre principal, passou a funcionar como sua substituta simbólica. Não é possível entrar, mas dá para ver de fora, dentro dos jardins. Uma das construções mais fotogênicas do local.",
         rating: 4,
+      },
+      {
+        title: "Otemon Gate",
+        description:
+          "Antigo portão principal do Castelo de Edo, usado pelos daimyō em suas visitas oficiais ao shogun. Destruído em bombardeio aéreo em 1945 e reconstruído em 1967 — hoje é a entrada principal dos jardins.",
+        rating: 4,
+      },
+      {
+        title: "Tenshudai",
+        description:
+          "Enorme base de pedra onde ficava a torre principal (tenshu) do Castelo de Edo — pode ser escalada, e é um dos pontos mais impressionantes dos jardins.",
+        rating: 4,
+      },
+      {
+        title: "Muralhas e Fossos Originais",
+        description:
+          "Trechos originais das muralhas de pedra e fossos que protegiam o Castelo de Edo, preservados desde o período feudal.",
+        rating: 3,
+      },
+      {
+        title: "Bansho (Casas de Guarda)",
+        description:
+          "Uma das três casas de guarda samurai que sobrevivem do Castelo de Edo — o Hyakunin Bansho abrigava quatro unidades de 120 guardas responsáveis pela proteção do recinto interno do castelo.",
+        rating: 3,
       },
     ],
   },
@@ -669,17 +693,53 @@ const DAY_7: DayContent = {
     "Recomendamos chegar ao Kokugikan no início da tarde, por volta das 14h30, a tempo da cerimônia de entrada da segunda divisão e para garantir um bom lugar antes do início da divisão principal.",
   ],
   manha: {
+    regiao: {
+      nome: "Ryogoku",
+      descricao:
+        "Bairro às margens do Rio Sumida, tradicionalmente ligado ao comércio da era Edo — hoje reúne o Museu Edo-Tokyo e o estádio nacional de sumô Kokugikan, os dois pontos mais importantes do bairro.",
+    },
     atracaoPrincipal: "Museu Edo-Tokyo",
     atracaoPrincipalImagem: "/images/edo-tokyo-museum.png",
     atracaoPrincipalFoco: "center",
     pois: [
       {
-        title: "Reabertura 2026",
+        title: "Réplica da Ponte Nihonbashi",
         description:
-          "Reabriu em 31 de março de 2026 após 4 anos fechado para uma grande reforma — nova galeria permanente sobre a história de Tóquio do período Edo (1603–1868) até os dias atuais, telões interativos e réplicas do antigo comércio de rua.",
+          "Reprodução em tamanho real da ponte que marcava o ponto de partida das principais estradas do Japão no período Edo — uma das peças centrais da galeria permanente.",
+        rating: 5,
+      },
+      {
+        title: "Réplica da Relojoaria Hattori",
+        description:
+          "Reconstrução em tamanho real da loja de relógios Hattori, símbolo da Ginza da era Meiji (1868–1912).",
         rating: 4,
       },
+      {
+        title: "Telões de Edo e Tóquio",
+        description:
+          "Grandes telões que recriam o céu da antiga Edo e da Tóquio contemporânea sobre as maquetes e reconstruções em escala real do museu.",
+        rating: 3,
+      },
+      {
+        title: "Comércio de Rua de Edo",
+        description:
+          "Barracas reconstituídas do comércio de rua do período Edo, incluindo um vendedor de asagao (campainha-japonesa) e uma barraca de tempura.",
+        rating: 3,
+      },
     ],
+    gastronomia: {
+      itens: [
+        {
+          nome: "Ippuku Cafe",
+          descricao:
+            "Cafeteria dentro do próprio museu — doces japoneses, matcha e sorvete soft, boa opção para uma pausa antes de seguir para o Kokugikan.",
+        },
+        {
+          nome: "Saint Etoile Ryogoku",
+          descricao: "Padaria e cafeteria bem avaliada, na frente do museu.",
+        },
+      ],
+    },
   },
   tarde: {
     label: "Tarde",
