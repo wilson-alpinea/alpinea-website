@@ -155,7 +155,7 @@ const DAY_1: DayContent = {
     },
   },
   tarde: {
-    label: "Tarde/Noite",
+    label: "Tarde",
     regiao: {
       nome: "Sumida",
       descricao:
@@ -189,20 +189,21 @@ const DAY_2: DayContent = {
   date: "11 Mai",
   contexto: [
     "Neste nosso último dia de passeios, visitamos o lado mais comercial do Japão e o centro financeiro. Começamos o passeio com uma visita a Tokyo Station para que você possa ir diretamente à Dragonball Store, que fica dentro do complexo da estação, na mesma área onde existem lojas das principais franquias de anime.",
-    "Depois passamos rapidamente pela região de Otemachi, onde fica a sede das maiores empresas japonesas, para ver um pouco do lado moderno do Japão. Perto dali se encontram dois pontos históricos importantes: o marco zero (Nihonbashi) e o Palácio Imperial, onde mora o imperador do Japão.",
-    "Como é nosso último dia, seguimos direto para o aeroporto após o passeio pela manhã — sem compromissos à tarde.",
+    "Depois seguimos a pé até Nihonbashi, o marco zero das estradas de Tóquio e antigo centro comercial da cidade entre 1600 e 1868 — ali ainda funcionam lojas e prédios centenários.",
+    "À tarde visitamos os Jardins do Leste do Palácio Imperial (Imperial Palace East Gardens), de entrada gratuita e a poucos minutos a pé da Tokyo Station.",
+    "Como é nosso último dia, seguimos direto para o aeroporto depois dos jardins — sem mais compromissos.",
   ],
   alerta: {
     titulo: "Alerta Aeroporto",
     horario: "Horário de Chegada Esperado no Aeroporto: 21:00",
     mensagem:
-      "O voo de volta decola às 00:05 (já dia 12) pelo Aeroporto de Haneda (HND). Reserve a tarde para retornar ao hotel, buscar a bagagem e seguir com folga para o aeroporto, com tempo para o check-in internacional.",
+      "O voo de volta decola às 00:05 (já dia 12) pelo Aeroporto de Haneda (HND). Após os Jardins do Palácio Imperial, retorne ao hotel, busque a bagagem e siga com folga para o aeroporto, com tempo para o check-in internacional.",
   },
   manha: {
     regiao: {
-      nome: "Marunouchi + Otemachi",
+      nome: "Marunouchi",
       descricao:
-        "Marunouchi, junto do seu distrito vizinho Otemachi, é desde os tempos feudais um dos pilares da economia japonesa. Fica nessa região a estação central de trem do Japão, Tokyo Station, que junto da estação de Shinagawa são as únicas com acesso ao trem-bala em Tóquio. Nos arredores da estação você encontrará a sede de praticamente todos os bancos, seguradoras e boa parte das grandes empresas japonesas — o local funciona como a Wall Street ou a Faria Lima do Japão.",
+        "Marunouchi é, desde os tempos feudais, um dos pilares da economia japonesa. Fica nessa região a estação central de trem do Japão, Tokyo Station, que junto da estação de Shinagawa são as únicas com acesso ao trem-bala em Tóquio. Nos arredores da estação você encontrará a sede de praticamente todos os bancos, seguradoras e boa parte das grandes empresas japonesas — o local funciona como a Wall Street ou a Faria Lima do Japão.",
     },
     atracaoPrincipal: "Tokyo Station",
     atracaoPrincipalImagem: "/images/dia2-tokyostation.png",
@@ -245,6 +246,24 @@ const DAY_2: DayContent = {
         },
       ],
     },
+  },
+  tarde: {
+    regiao: {
+      nome: "Chiyoda",
+      descricao:
+        "Bairro central onde fica o Palácio Imperial, residência da família imperial japonesa, erguido sobre as ruínas do antigo Castelo de Edo — a poucos minutos a pé de Tokyo Station.",
+    },
+    atracaoPrincipal: "Imperial Palace East Gardens",
+    atracaoPrincipalImagem: "/images/imperial-palace-east-gardens.png",
+    atracaoPrincipalFoco: "center",
+    pois: [
+      {
+        title: "Jardins do Leste do Palácio Imperial",
+        description:
+          "Jardins públicos e gratuitos erguidos sobre os antigos fundamentos do Castelo de Edo — jardim tradicional japonês, muralhas de pedra e amplos gramados.",
+        rating: 4,
+      },
+    ],
   },
 };
 
@@ -545,7 +564,7 @@ const DAY_5: DayContent = {
     },
   },
   tarde: {
-    label: "Tarde/Noite",
+    label: "Tarde",
     regiao: {
       nome: "Gion",
       descricao:
