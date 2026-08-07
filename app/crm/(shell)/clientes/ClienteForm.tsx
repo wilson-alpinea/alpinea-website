@@ -3,7 +3,16 @@ import { PRODUTOS_PRINCIPAIS, PRODUTOS_SECUNDARIOS } from "@/lib/crm/produtos";
 import type { Cliente } from "@/lib/crm/types";
 import { PRODUTO_ICONS } from "./ProdutoIcons";
 
-const ORIGENS = ["Instagram", "Google Ads", "Indicação", "Site", "WhatsApp", "Outro"];
+const ORIGENS = [
+  "Instagram",
+  "Google Ads",
+  "Indicação",
+  "Site",
+  "WhatsApp",
+  "YouTube - TSJ",
+  "YouTube - frttt",
+  "Outro",
+];
 
 const inputClass =
   "w-full rounded-xl border border-black/15 bg-white px-4 py-2.5 text-sm text-black placeholder-black/30 outline-none transition focus:border-black/40";

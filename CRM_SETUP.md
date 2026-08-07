@@ -18,11 +18,14 @@ banco de dados e autenticação.
 2. Cole todo o conteúdo de `supabase/schema.sql` (neste repositório) e
    execute. Isso cria as tabelas `clientes`, `interacoes`, `perfis`, o
    funil de estágios e as permissões de acesso.
-3. Se o schema já tinha sido rodado antes, rode também, uma única vez,
-   `supabase/migrations/002_produtos_e_data_viagem.sql` — adiciona os
-   campos de produto principal/secundário e data da viagem, remove
-   "tier" e "destino de interesse" e renomeia "valor_estimado" para
-   "valor_proposta".
+3. Se o schema já tinha sido rodado antes, rode também, uma única vez
+   cada:
+   - `supabase/migrations/002_produtos_e_data_viagem.sql` — adiciona os
+     campos de produto principal/secundário e data da viagem, remove
+     "tier" e "destino de interesse" e renomeia "valor_estimado" para
+     "valor_proposta".
+   - `supabase/migrations/003_arquivos_cliente.sql` — cria a tabela de
+     arquivos/links por cliente (drafts de roteiro, propostas, etc.).
 
 ## 3. Configurar as variáveis de ambiente
 

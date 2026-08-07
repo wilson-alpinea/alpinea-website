@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { isEstagio } from "@/lib/crm/estagios";
 import { isProdutoPrincipal, isProdutoSecundario } from "@/lib/crm/produtos";
+import { isTipoArquivo } from "@/lib/crm/arquivos";
 
 export async function logout() {
   const supabase = await createClient();
@@ -156,4 +157,63 @@ export async function addInteracao(clienteId: string, formData: FormData) {
 
   revalidatePath(`/crm/clientes/${clienteId}`);
   redirect(`/crm/clientes/${clienteId}`);
+}
+
+export async function deleteInteracao(clienteId: string, interacaoId: string, formData: FormData) {
+  void formData;
+  const supabase = await createClient();
+  const { error } = await supabase.from("interacoes").delete().eq("id", interacaoId);
+
+  if (error) {
+    console.error("Erro ao excluir interação:", error);
+  }
+
+  revalidatePath(`/crm/clientes/${clienteId}`);
+}
+
+function normalizarUrl(valor: string) {
+  const texto = valor.trim();
+  if (!texto) return "";
+  if (texto.startsWith("http://") || texto.startsWith("https://") || texto.startsWith("/")) {
+    return texto;
+  }
+  return `/${texto}`;
+}
+
+export async function addArquivo(clienteId: string, formData: FormData) {
+  const label = String(formData.get("label") || "").trim();
+  const urlBruta = String(formData.get("url") || "").trim();
+  const tipoBruto = String(formData.get("tipo") || "roteiro_draft");
+
+  if (!label || !urlBruta) {
+    redirect(`/crm/clientes/${clienteId}?erro=3`);
+  }
+
+  const supabase = await createClient();
+  const { error } = await supabase.from("arquivos_cliente").insert({
+    cliente_id: clienteId,
+    tipo: isTipoArquivo(tipoBruto) ? tipoBruto : "roteiro_draft",
+    label,
+    url: normalizarUrl(urlBruta),
+  });
+
+  if (error) {
+    console.error("Erro ao adicionar arquivo:", error);
+    redirect(`/crm/clientes/${clienteId}?erro=3`);
+  }
+
+  revalidatePath(`/crm/clientes/${clienteId}`);
+  redirect(`/crm/clientes/${clienteId}`);
+}
+
+export async function deleteArquivo(clienteId: string, arquivoId: string, formData: FormData) {
+  void formData;
+  const supabase = await createClient();
+  const { error } = await supabase.from("arquivos_cliente").delete().eq("id", arquivoId);
+
+  if (error) {
+    console.error("Erro ao excluir arquivo:", error);
+  }
+
+  revalidatePath(`/crm/clientes/${clienteId}`);
 }

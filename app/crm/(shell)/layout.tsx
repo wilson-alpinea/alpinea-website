@@ -39,15 +39,16 @@ export default async function CrmShellLayout({
       <header className="sticky top-0 z-10 border-b border-white/10 bg-black backdrop-blur">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4 md:px-10">
           <div className="flex items-center gap-8">
-            <Link href="/crm" className="flex items-center gap-3">
+            <Link href="/crm" className="flex items-center gap-4">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src="/images/ajisai-group-white-crop.png"
                 alt="Alpinea — Empresa do Grupo Ajisai"
-                className="h-7 w-auto md:h-8"
+                className="h-12 w-auto sm:h-16"
               />
+              <span className="hidden h-9 w-px bg-white/15 sm:block" />
               <span
-                className={`${display.className} hidden text-xs uppercase tracking-[0.25em] text-white/45 sm:inline`}
+                className={`${display.className} hidden text-4xl leading-none tracking-[0.03em] text-white sm:inline sm:text-5xl`}
               >
                 CRM
               </span>
