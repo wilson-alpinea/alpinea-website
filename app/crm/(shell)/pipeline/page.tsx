@@ -1,0 +1,98 @@
+import { Bodoni_Moda } from "next/font/google";
+import Link from "next/link";
+import type { Metadata } from "next";
+import { createClient } from "@/lib/supabase/server";
+import { ESTAGIOS, ESTAGIO_COR } from "@/lib/crm/estagios";
+import type { Estagio } from "@/lib/crm/types";
+import { moveEstagio } from "../../actions";
+import { EstagioSelect } from "./EstagioSelect";
+
+const display = Bodoni_Moda({
+  subsets: ["latin"],
+  weight: ["400", "500", "600"],
+});
+
+export const metadata: Metadata = {
+  title: "Pipeline — CRM Alpinea",
+  robots: { index: false, follow: false, nocache: true, googleBot: { index: false, follow: false } },
+};
+
+export const dynamic = "force-dynamic";
+
+function formatBRL(valor: number | null) {
+  if (!valor) return null;
+  return valor.toLocaleString("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 0 });
+}
+
+export default async function PipelinePage() {
+  const supabase = await createClient();
+
+  const { data: clientes, error } = await supabase
+    .from("clientes")
+    .select("id, nome, estagio, valor_estimado, destino_interesse, tier")
+    .order("created_at", { ascending: false });
+
+  if (error) console.error("Erro ao carregar pipeline:", error);
+
+  const lista = clientes ?? [];
+
+  return (
+    <div>
+      <p className="mb-2 text-xs uppercase tracking-[0.3em] text-white/40">Funil comercial</p>
+      <h1 className={`${display.className} text-3xl font-medium text-white md:text-4xl`}>
+        Pipeline
+      </h1>
+
+      <div className="mt-8 grid grid-flow-col auto-cols-[260px] gap-5 overflow-x-auto pb-4">
+        {ESTAGIOS.map((estagio) => {
+          const clientesDoEstagio = lista.filter((c) => c.estagio === estagio.valor);
+          return (
+            <div key={estagio.valor} className="flex flex-col rounded-2xl border border-white/10 bg-white/[0.015]">
+              <div className="flex items-center justify-between gap-2 border-b border-white/10 px-4 py-3">
+                <div className="flex items-center gap-2">
+                  <span
+                    className="h-1.5 w-1.5 rounded-full"
+                    style={{ background: ESTAGIO_COR[estagio.valor as Estagio] }}
+                  />
+                  <h2 className="text-xs font-medium uppercase tracking-[0.1em] text-white/70">
+                    {estagio.label}
+                  </h2>
+                </div>
+                <span className="text-xs text-white/30">{clientesDoEstagio.length}</span>
+              </div>
+
+              <div className="flex-1 space-y-3 p-3">
+                {clientesDoEstagio.length === 0 && (
+                  <p className="px-1 py-4 text-center text-xs text-white/20">Vazio</p>
+                )}
+                {clientesDoEstagio.map((c) => {
+                  const valor = formatBRL(c.valor_estimado);
+                  return (
+                    <div
+                      key={c.id}
+                      className="space-y-2.5 rounded-xl border border-white/10 bg-black p-3.5 transition hover:border-white/25"
+                    >
+                      <Link href={`/crm/clientes/${c.id}`} className="block">
+                        <p className="text-sm font-medium text-white hover:underline">{c.nome}</p>
+                        {c.destino_interesse && (
+                          <p className="mt-0.5 line-clamp-2 text-xs text-white/40">
+                            {c.destino_interesse}
+                          </p>
+                        )}
+                        {valor && <p className="mt-1.5 text-xs text-white/50">{valor}</p>}
+                      </Link>
+                      <EstagioSelect
+                        action={moveEstagio.bind(null, c.id)}
+                        estagioAtual={c.estagio}
+                      />
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
