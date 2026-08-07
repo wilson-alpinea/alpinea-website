@@ -26,6 +26,9 @@ banco de dados e autenticação.
      "valor_proposta".
    - `supabase/migrations/003_arquivos_cliente.sql` — cria a tabela de
      arquivos/links por cliente (drafts de roteiro, propostas, etc.).
+   - `supabase/migrations/004_historico_estagio.sql` — permite registrar,
+     no histórico do cliente, a data em que ele entrou em cada estágio
+     (alimenta o funil visual no topo da ficha do cliente).
 
 ## 3. Configurar as variáveis de ambiente
 

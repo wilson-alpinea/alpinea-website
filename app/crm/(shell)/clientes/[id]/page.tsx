@@ -3,8 +3,9 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
-import { TIPOS_INTERACAO, TIPO_INTERACAO_LABEL } from "@/lib/crm/interacoes";
+import { TIPOS_INTERACAO, TIPO_INTERACAO_LABEL, TIPO_INTERACAO_COR } from "@/lib/crm/interacoes";
 import { TIPOS_ARQUIVO, TIPO_ARQUIVO_LABEL, type TipoArquivo } from "@/lib/crm/arquivos";
+import type { Estagio } from "@/lib/crm/types";
 import {
   updateCliente,
   addInteracao,
@@ -16,6 +17,8 @@ import {
 import { ClienteForm } from "../ClienteForm";
 import { EstagioSelect } from "../../pipeline/EstagioSelect";
 import { ARQUIVO_ICONS } from "../ArquivoIcons";
+import { INTERACAO_ICONS } from "../InteracaoIcons";
+import { FunnelStepper } from "../FunnelStepper";
 
 const display = Bodoni_Moda({
   subsets: ["latin"],
@@ -52,9 +55,22 @@ export default async function ClienteDetalhePage({
 
   const { data: interacoes } = await supabase
     .from("interacoes")
-    .select("id, tipo, conteudo, created_at, autor_id, perfis(nome, email)")
+    .select("id, tipo, conteudo, created_at, autor_id, estagio_destino, perfis(nome, email)")
     .eq("cliente_id", id)
     .order("created_at", { ascending: false });
+
+  // Data em que o cliente entrou em cada estágio — construída a partir do
+  // histórico de "mudanca_estagio" (mais recente primeiro, então o primeiro
+  // valor encontrado por estágio já é o mais atual).
+  const datasPorEstagio: Partial<Record<Estagio, string>> = {};
+  for (const i of interacoes ?? []) {
+    if (i.tipo === "mudanca_estagio" && i.estagio_destino) {
+      const estagioDestino = i.estagio_destino as Estagio;
+      if (!datasPorEstagio[estagioDestino]) {
+        datasPorEstagio[estagioDestino] = i.created_at;
+      }
+    }
+  }
 
   const { data: arquivos } = await supabase
     .from("arquivos_cliente")
@@ -73,7 +89,11 @@ export default async function ClienteDetalhePage({
         ← Clientes
       </Link>
 
-      <div className="mt-4 flex flex-wrap items-center justify-between gap-4">
+      <div className="mt-4">
+        <FunnelStepper cliente={cliente} datasPorEstagio={datasPorEstagio} />
+      </div>
+
+      <div className="mt-6 flex flex-wrap items-center justify-between gap-4">
         <div>
           <h1 className={`${display.className} text-3xl font-medium text-black md:text-4xl`}>
             {cliente.nome}
@@ -156,37 +176,50 @@ export default async function ClienteDetalhePage({
                 {interacoes.map((i) => {
                   const autor = Array.isArray(i.perfis) ? i.perfis[0] : i.perfis;
                   const excluirInteracao = deleteInteracao.bind(null, id, i.id);
+                  const cor = TIPO_INTERACAO_COR[i.tipo] ?? "#57534E";
+                  const Icon = INTERACAO_ICONS[i.tipo];
                   return (
-                    <li key={i.id} className="group border-l border-black/10 pl-4">
-                      <div className="flex items-center justify-between gap-3">
-                        <span className="text-xs uppercase tracking-[0.15em] text-black/40">
-                          {TIPO_INTERACAO_LABEL[i.tipo] ?? i.tipo}
-                        </span>
-                        <div className="flex items-center gap-2">
-                          <span className="text-xs text-black/30">
-                            {new Date(i.created_at).toLocaleDateString("pt-BR", {
-                              day: "2-digit",
-                              month: "2-digit",
-                              hour: "2-digit",
-                              minute: "2-digit",
-                            })}
+                    <li key={i.id} className="flex gap-3">
+                      <span
+                        className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full"
+                        style={{ background: `${cor}1a`, color: cor }}
+                      >
+                        {Icon && <Icon className="h-3.5 w-3.5" />}
+                      </span>
+                      <div className="min-w-0 flex-1 border-l border-black/10 pl-4">
+                        <div className="flex items-center justify-between gap-3">
+                          <span
+                            className="text-xs font-medium uppercase tracking-[0.15em]"
+                            style={{ color: cor }}
+                          >
+                            {TIPO_INTERACAO_LABEL[i.tipo] ?? i.tipo}
                           </span>
-                          <form action={excluirInteracao}>
-                            <button
-                              type="submit"
-                              title="Excluir interação"
-                              aria-label="Excluir interação"
-                              className="px-1 text-sm leading-none text-black/20 transition hover:text-red-600"
-                            >
-                              ×
-                            </button>
-                          </form>
+                          <div className="flex items-center gap-2">
+                            <span className="text-xs text-black/30">
+                              {new Date(i.created_at).toLocaleDateString("pt-BR", {
+                                day: "2-digit",
+                                month: "2-digit",
+                                hour: "2-digit",
+                                minute: "2-digit",
+                              })}
+                            </span>
+                            <form action={excluirInteracao}>
+                              <button
+                                type="submit"
+                                title="Excluir interação"
+                                aria-label="Excluir interação"
+                                className="px-1 text-sm leading-none text-black/20 transition hover:text-red-600"
+                              >
+                                ×
+                              </button>
+                            </form>
+                          </div>
                         </div>
+                        <p className="mt-1.5 text-sm leading-relaxed text-black/80 whitespace-pre-wrap">
+                          {i.conteudo}
+                        </p>
+                        {autor?.email && <p className="mt-1 text-xs text-black/30">— {autor.email}</p>}
                       </div>
-                      <p className="mt-1.5 text-sm leading-relaxed text-black/80 whitespace-pre-wrap">
-                        {i.conteudo}
-                      </p>
-                      {autor?.nome && <p className="mt-1 text-xs text-black/30">— {autor.nome}</p>}
                     </li>
                   );
                 })}

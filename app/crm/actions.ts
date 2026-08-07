@@ -3,7 +3,8 @@
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
-import { isEstagio } from "@/lib/crm/estagios";
+import { isEstagio, ESTAGIO_LABEL } from "@/lib/crm/estagios";
+import type { Estagio } from "@/lib/crm/types";
 import { isProdutoPrincipal, isProdutoSecundario } from "@/lib/crm/produtos";
 import { isTipoArquivo } from "@/lib/crm/arquivos";
 
@@ -35,6 +36,31 @@ function produtosSecundarios(formData: FormData) {
     .getAll("produto_secundario")
     .map((v) => String(v))
     .filter(isProdutoSecundario);
+}
+
+// Registra no histórico do cliente (interacoes) toda vez que o estágio
+// muda de fato — alimenta tanto o histórico quanto o funil visual.
+async function registrarMudancaEstagio(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  clienteId: string,
+  novoEstagio: Estagio,
+  autorId: string | null,
+) {
+  const { data: atual } = await supabase
+    .from("clientes")
+    .select("estagio")
+    .eq("id", clienteId)
+    .maybeSingle();
+
+  if (!atual || atual.estagio === novoEstagio) return;
+
+  await supabase.from("interacoes").insert({
+    cliente_id: clienteId,
+    autor_id: autorId,
+    tipo: "mudanca_estagio",
+    estagio_destino: novoEstagio,
+    conteudo: `Estágio alterado de "${ESTAGIO_LABEL[atual.estagio as Estagio]}" para "${ESTAGIO_LABEL[novoEstagio]}".`,
+  });
 }
 
 export async function createCliente(formData: FormData) {
@@ -79,8 +105,16 @@ export async function createCliente(formData: FormData) {
 export async function updateCliente(clienteId: string, formData: FormData) {
   const nome = String(formData.get("nome") || "").trim();
   const estagioBruto = String(formData.get("estagio") || "");
+  const novoEstagio = isEstagio(estagioBruto) ? estagioBruto : undefined;
 
   const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (novoEstagio) {
+    await registrarMudancaEstagio(supabase, clienteId, novoEstagio, user?.id ?? null);
+  }
 
   const { error } = await supabase
     .from("clientes")
@@ -93,7 +127,7 @@ export async function updateCliente(clienteId: string, formData: FormData) {
       produto_principal: produtoPrincipalOuNull(formData.get("produto_principal")),
       produto_secundario: produtosSecundarios(formData),
       data_viagem: textoOuNull(formData.get("data_viagem")),
-      estagio: isEstagio(estagioBruto) ? estagioBruto : undefined,
+      estagio: novoEstagio,
       observacoes: textoOuNull(formData.get("observacoes")),
     })
     .eq("id", clienteId);
@@ -115,6 +149,12 @@ export async function moveEstagio(clienteId: string, formData: FormData) {
   if (!isEstagio(novoEstagio)) return;
 
   const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  await registrarMudancaEstagio(supabase, clienteId, novoEstagio, user?.id ?? null);
+
   const { error } = await supabase
     .from("clientes")
     .update({ estagio: novoEstagio })
