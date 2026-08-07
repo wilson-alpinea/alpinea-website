@@ -35,19 +35,19 @@ export default async function CrmShellLayout({
   }
 
   return (
-    <div className="min-h-screen bg-black text-white">
-      <header className="sticky top-0 z-10 border-b border-white/10 bg-black/95 backdrop-blur">
+    <div className="min-h-screen bg-white text-black">
+      <header className="sticky top-0 z-10 border-b border-black/10 bg-white/95 backdrop-blur">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4 md:px-10">
           <div className="flex items-center gap-8">
-            <span className={`${display.className} text-lg font-medium text-white`}>
+            <span className={`${display.className} text-lg font-medium text-black`}>
               CRM Alpinea
             </span>
-            <nav className="hidden items-center gap-6 text-sm text-white/50 md:flex">
+            <nav className="hidden items-center gap-6 text-sm text-black/50 md:flex">
               {NAV.map((item) => (
                 <Link
                   key={item.href}
                   href={item.href}
-                  className="transition hover:text-white"
+                  className="transition hover:text-black"
                 >
                   {item.label}
                 </Link>
@@ -56,13 +56,13 @@ export default async function CrmShellLayout({
           </div>
 
           <div className="flex items-center gap-4">
-            <span className="hidden text-xs uppercase tracking-[0.2em] text-white/30 sm:inline">
+            <span className="hidden text-xs uppercase tracking-[0.2em] text-black/35 sm:inline">
               {nomeExibicao}
             </span>
             <form action={logout}>
               <button
                 type="submit"
-                className="rounded-full border border-white/15 px-4 py-1.5 text-xs uppercase tracking-[0.15em] text-white/50 transition hover:border-white/40 hover:text-white"
+                className="rounded-full border border-black/15 px-4 py-1.5 text-xs uppercase tracking-[0.15em] text-black/50 transition hover:border-black/40 hover:text-black"
               >
                 Sair
               </button>
@@ -70,9 +70,9 @@ export default async function CrmShellLayout({
           </div>
         </div>
 
-        <nav className="flex items-center gap-5 overflow-x-auto border-t border-white/5 px-6 py-2.5 text-sm text-white/50 md:hidden">
+        <nav className="flex items-center gap-5 overflow-x-auto border-t border-black/5 px-6 py-2.5 text-sm text-black/50 md:hidden">
           {NAV.map((item) => (
-            <Link key={item.href} href={item.href} className="whitespace-nowrap transition hover:text-white">
+            <Link key={item.href} href={item.href} className="whitespace-nowrap transition hover:text-black">
               {item.label}
             </Link>
           ))}

@@ -18,7 +18,7 @@ export function EstagioSelect({
         name="estagio"
         defaultValue={estagioAtual}
         onChange={() => formRef.current?.requestSubmit()}
-        className="w-full rounded-lg border border-white/10 bg-black px-2.5 py-1.5 text-xs text-white/70 outline-none transition focus:border-white/40"
+        className="w-full rounded-lg border border-black/15 bg-white px-2.5 py-1.5 text-xs text-black/70 outline-none transition focus:border-black/40"
       >
         {ESTAGIOS.map((e) => (
           <option key={e.valor} value={e.valor}>

@@ -5,8 +5,8 @@ const TIERS = ["Alpinea Design", "Alpinea Executive", "Alpinea Private", "A defi
 const ORIGENS = ["Instagram", "Google Ads", "Indicação", "Site", "WhatsApp", "Outro"];
 
 const inputClass =
-  "w-full rounded-xl border border-white/15 bg-black px-4 py-2.5 text-sm text-white placeholder-white/30 outline-none transition focus:border-white/40";
-const labelClass = "mb-1.5 block text-xs uppercase tracking-[0.15em] text-white/40";
+  "w-full rounded-xl border border-black/15 bg-white px-4 py-2.5 text-sm text-black placeholder-black/30 outline-none transition focus:border-black/40";
+const labelClass = "mb-1.5 block text-xs uppercase tracking-[0.15em] text-black/40";
 
 export function ClienteForm({
   action,
@@ -138,7 +138,7 @@ export function ClienteForm({
 
       <button
         type="submit"
-        className="w-full rounded-xl bg-white px-4 py-3 text-sm font-medium text-black transition hover:bg-white/90 sm:w-auto sm:px-8"
+        className="w-full rounded-xl bg-black px-4 py-3 text-sm font-medium text-white transition hover:bg-black/85 sm:w-auto sm:px-8"
       >
         {submitLabel}
       </button>

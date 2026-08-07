@@ -53,17 +53,17 @@ export default async function ClienteDetalhePage({
 
   return (
     <div>
-      <Link href="/crm/clientes" className="text-xs uppercase tracking-[0.2em] text-white/40 transition hover:text-white">
+      <Link href="/crm/clientes" className="text-xs uppercase tracking-[0.2em] text-black/40 transition hover:text-black">
         ← Clientes
       </Link>
 
       <div className="mt-4 flex flex-wrap items-center justify-between gap-4">
         <div>
-          <h1 className={`${display.className} text-3xl font-medium text-white md:text-4xl`}>
+          <h1 className={`${display.className} text-3xl font-medium text-black md:text-4xl`}>
             {cliente.nome}
           </h1>
         </div>
-        <span className="inline-flex items-center gap-2 rounded-full border border-white/15 px-4 py-1.5 text-xs uppercase tracking-[0.15em] text-white/70">
+        <span className="inline-flex items-center gap-2 rounded-full border border-black/15 px-4 py-1.5 text-xs uppercase tracking-[0.15em] text-black/70">
           <span
             className="h-1.5 w-1.5 rounded-full"
             style={{ background: ESTAGIO_COR[cliente.estagio as Estagio] }}
@@ -73,15 +73,15 @@ export default async function ClienteDetalhePage({
       </div>
 
       {sp.erro === "1" && (
-        <p className="mt-4 text-sm text-red-400">Não foi possível salvar as alterações.</p>
+        <p className="mt-4 text-sm text-red-600">Não foi possível salvar as alterações.</p>
       )}
       {sp.erro === "2" && (
-        <p className="mt-4 text-sm text-red-400">Não foi possível registrar a interação.</p>
+        <p className="mt-4 text-sm text-red-600">Não foi possível registrar a interação.</p>
       )}
 
       <div className="mt-8 grid gap-6 lg:grid-cols-5">
-        <div className="rounded-2xl border border-white/10 bg-white/[0.025] p-6 md:p-8 lg:col-span-3">
-          <h2 className={`${display.className} mb-6 text-lg font-medium text-white`}>
+        <div className="rounded-2xl border border-black/10 bg-black/[0.02] p-6 md:p-8 lg:col-span-3">
+          <h2 className={`${display.className} mb-6 text-lg font-medium text-black`}>
             Dados do cliente
           </h2>
           <ClienteForm
@@ -93,15 +93,15 @@ export default async function ClienteDetalhePage({
         </div>
 
         <div className="space-y-6 lg:col-span-2">
-          <div className="rounded-2xl border border-white/10 bg-white/[0.025] p-6">
-            <h2 className={`${display.className} mb-4 text-lg font-medium text-white`}>
+          <div className="rounded-2xl border border-black/10 bg-black/[0.02] p-6">
+            <h2 className={`${display.className} mb-4 text-lg font-medium text-black`}>
               Nova interação
             </h2>
             <form action={addInteracaoComId} className="space-y-4">
               <select
                 name="tipo"
                 defaultValue="nota"
-                className="w-full rounded-xl border border-white/15 bg-black px-4 py-2.5 text-sm text-white outline-none transition focus:border-white/40"
+                className="w-full rounded-xl border border-black/15 bg-white px-4 py-2.5 text-sm text-black outline-none transition focus:border-black/40"
               >
                 {TIPOS_INTERACAO.map((t) => (
                   <option key={t.valor} value={t.valor}>
@@ -114,35 +114,35 @@ export default async function ClienteDetalhePage({
                 required
                 rows={3}
                 placeholder="O que foi conversado, enviado ou combinado…"
-                className="w-full rounded-xl border border-white/15 bg-black px-4 py-2.5 text-sm text-white placeholder-white/30 outline-none transition focus:border-white/40"
+                className="w-full rounded-xl border border-black/15 bg-white px-4 py-2.5 text-sm text-black placeholder-black/30 outline-none transition focus:border-black/40"
               />
               <button
                 type="submit"
-                className="w-full rounded-xl bg-white px-4 py-2.5 text-sm font-medium text-black transition hover:bg-white/90"
+                className="w-full rounded-xl bg-black px-4 py-2.5 text-sm font-medium text-white transition hover:bg-black/85"
               >
                 Registrar
               </button>
             </form>
           </div>
 
-          <div className="rounded-2xl border border-white/10 bg-white/[0.025] p-6">
-            <h2 className={`${display.className} mb-4 text-lg font-medium text-white`}>
+          <div className="rounded-2xl border border-black/10 bg-black/[0.02] p-6">
+            <h2 className={`${display.className} mb-4 text-lg font-medium text-black`}>
               Histórico
             </h2>
 
             {!interacoes || interacoes.length === 0 ? (
-              <p className="text-sm text-white/40">Nenhuma interação registrada ainda.</p>
+              <p className="text-sm text-black/40">Nenhuma interação registrada ainda.</p>
             ) : (
               <ul className="space-y-5">
                 {interacoes.map((i) => {
                   const autor = Array.isArray(i.perfis) ? i.perfis[0] : i.perfis;
                   return (
-                    <li key={i.id} className="border-l border-white/10 pl-4">
+                    <li key={i.id} className="border-l border-black/10 pl-4">
                       <div className="flex items-center justify-between gap-3">
-                        <span className="text-xs uppercase tracking-[0.15em] text-white/40">
+                        <span className="text-xs uppercase tracking-[0.15em] text-black/40">
                           {TIPO_INTERACAO_LABEL[i.tipo] ?? i.tipo}
                         </span>
-                        <span className="text-xs text-white/30">
+                        <span className="text-xs text-black/30">
                           {new Date(i.created_at).toLocaleDateString("pt-BR", {
                             day: "2-digit",
                             month: "2-digit",
@@ -151,10 +151,10 @@ export default async function ClienteDetalhePage({
                           })}
                         </span>
                       </div>
-                      <p className="mt-1.5 text-sm leading-relaxed text-white/80 whitespace-pre-wrap">
+                      <p className="mt-1.5 text-sm leading-relaxed text-black/80 whitespace-pre-wrap">
                         {i.conteudo}
                       </p>
-                      {autor?.nome && <p className="mt-1 text-xs text-white/30">— {autor.nome}</p>}
+                      {autor?.nome && <p className="mt-1 text-xs text-black/30">— {autor.nome}</p>}
                     </li>
                   );
                 })}

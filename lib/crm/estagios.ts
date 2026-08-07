@@ -16,14 +16,15 @@ export const ESTAGIO_LABEL: Record<Estagio, string> = ESTAGIOS.reduce(
   {} as Record<Estagio, string>,
 );
 
-// Cor sutil por estágio, coerente com a paleta neutra do site (sem gold).
+// Cor sutil por estágio — tons compatíveis com fundo claro (identidade
+// branca dos painéis de roteiro: azul #2f5aa8, roxo #7c4fd1).
 export const ESTAGIO_COR: Record<Estagio, string> = {
-  novo_lead: "rgba(255,255,255,0.4)",
-  qualificacao: "rgba(118,150,168,0.9)",
-  proposta_enviada: "rgba(196,148,110,0.9)",
-  negociacao: "rgba(224,168,88,0.9)",
-  fechado_ganho: "rgba(122,178,120,0.9)",
-  fechado_perdido: "rgba(200,90,90,0.7)",
+  novo_lead: "rgba(0,0,0,0.35)",
+  qualificacao: "#2f5aa8",
+  proposta_enviada: "#7c4fd1",
+  negociacao: "#C9A03A",
+  fechado_ganho: "rgba(58,140,90,0.9)",
+  fechado_perdido: "rgba(190,70,70,0.8)",
 };
 
 export function isEstagio(valor: string): valor is Estagio {

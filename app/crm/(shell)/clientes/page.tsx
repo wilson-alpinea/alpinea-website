@@ -54,16 +54,16 @@ export default async function ClientesPage({
     <div>
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <p className="mb-2 text-xs uppercase tracking-[0.3em] text-white/40">
+          <p className="mb-2 text-xs uppercase tracking-[0.3em] text-black/40">
             {lista.length} {lista.length === 1 ? "cliente" : "clientes"}
           </p>
-          <h1 className={`${display.className} text-3xl font-medium text-white md:text-4xl`}>
+          <h1 className={`${display.className} text-3xl font-medium text-black md:text-4xl`}>
             Clientes
           </h1>
         </div>
         <Link
           href="/crm/clientes/novo"
-          className="rounded-full bg-white px-5 py-2.5 text-sm font-medium text-black transition hover:bg-white/90"
+          className="rounded-full bg-black px-5 py-2.5 text-sm font-medium text-white transition hover:bg-black/85"
         >
           + Novo cliente
         </Link>
@@ -75,12 +75,12 @@ export default async function ClientesPage({
           name="q"
           defaultValue={busca}
           placeholder="Buscar por nome, e-mail ou telefone…"
-          className="min-w-[240px] flex-1 rounded-xl border border-white/15 bg-black px-4 py-2.5 text-sm text-white placeholder-white/30 outline-none transition focus:border-white/40"
+          className="min-w-[240px] flex-1 rounded-xl border border-black/15 bg-white px-4 py-2.5 text-sm text-black placeholder-black/30 outline-none transition focus:border-black/40"
         />
         <select
           name="estagio"
           defaultValue={estagioFiltro}
-          className="rounded-xl border border-white/15 bg-black px-4 py-2.5 text-sm text-white outline-none transition focus:border-white/40"
+          className="rounded-xl border border-black/15 bg-white px-4 py-2.5 text-sm text-black outline-none transition focus:border-black/40"
         >
           <option value="">Todos os estágios</option>
           {ESTAGIOS.map((e) => (
@@ -91,29 +91,29 @@ export default async function ClientesPage({
         </select>
         <button
           type="submit"
-          className="rounded-xl border border-white/15 px-5 py-2.5 text-sm text-white/70 transition hover:border-white/40 hover:text-white"
+          className="rounded-xl border border-black/15 px-5 py-2.5 text-sm text-black/70 transition hover:border-black/40 hover:text-black"
         >
           Filtrar
         </button>
         {(busca || estagioFiltro) && (
           <Link
             href="/crm/clientes"
-            className="rounded-xl px-5 py-2.5 text-sm text-white/40 transition hover:text-white"
+            className="rounded-xl px-5 py-2.5 text-sm text-black/40 transition hover:text-black"
           >
             Limpar
           </Link>
         )}
       </form>
 
-      <div className="mt-8 overflow-hidden rounded-2xl border border-white/10">
+      <div className="mt-8 overflow-hidden rounded-2xl border border-black/10">
         {lista.length === 0 ? (
-          <p className="p-8 text-center text-sm text-white/40">
+          <p className="p-8 text-center text-sm text-black/40">
             Nenhum cliente encontrado.
           </p>
         ) : (
           <table className="w-full text-left text-sm">
             <thead>
-              <tr className="border-b border-white/10 text-xs uppercase tracking-[0.15em] text-white/40">
+              <tr className="border-b border-black/10 bg-black/[0.02] text-xs uppercase tracking-[0.15em] text-black/40">
                 <th className="px-5 py-3 font-medium">Nome</th>
                 <th className="hidden px-5 py-3 font-medium md:table-cell">Destino</th>
                 <th className="hidden px-5 py-3 font-medium sm:table-cell">Estágio</th>
@@ -125,20 +125,20 @@ export default async function ClientesPage({
               {lista.map((c) => (
                 <tr
                   key={c.id}
-                  className="border-b border-white/5 transition last:border-0 hover:bg-white/[0.03]"
+                  className="border-b border-black/5 transition last:border-0 hover:bg-black/[0.02]"
                 >
                   <td className="px-5 py-4">
-                    <Link href={`/crm/clientes/${c.id}`} className="text-white hover:underline">
+                    <Link href={`/crm/clientes/${c.id}`} className="text-black hover:underline">
                       {c.nome}
                     </Link>
-                    <p className="mt-0.5 text-xs text-white/40">{c.email || c.telefone || "—"}</p>
+                    <p className="mt-0.5 text-xs text-black/40">{c.email || c.telefone || "—"}</p>
                   </td>
-                  <td className="hidden px-5 py-4 text-white/60 md:table-cell">
+                  <td className="hidden px-5 py-4 text-black/60 md:table-cell">
                     {c.destino_interesse || "—"}
                   </td>
                   <td className="hidden px-5 py-4 sm:table-cell">
                     <span
-                      className="inline-flex items-center gap-2 rounded-full border border-white/10 px-3 py-1 text-xs text-white/70"
+                      className="inline-flex items-center gap-2 rounded-full border border-black/10 px-3 py-1 text-xs text-black/70"
                     >
                       <span
                         className="h-1.5 w-1.5 rounded-full"
@@ -147,10 +147,10 @@ export default async function ClientesPage({
                       {ESTAGIO_LABEL[c.estagio as Estagio]}
                     </span>
                   </td>
-                  <td className="hidden px-5 py-4 text-white/60 lg:table-cell">
+                  <td className="hidden px-5 py-4 text-black/60 lg:table-cell">
                     {formatBRL(c.valor_estimado)}
                   </td>
-                  <td className="px-5 py-4 text-white/40">
+                  <td className="px-5 py-4 text-black/40">
                     {new Date(c.created_at).toLocaleDateString("pt-BR")}
                   </td>
                 </tr>

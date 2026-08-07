@@ -10,11 +10,11 @@ export function FunilChart({
   return (
     <ResponsiveContainer width="100%" height={240}>
       <BarChart data={dados} margin={{ top: 8, right: 8, left: -20, bottom: 0 }}>
-        <CartesianGrid stroke="rgba(255,255,255,0.06)" vertical={false} />
+        <CartesianGrid stroke="rgba(0,0,0,0.06)" vertical={false} />
         <XAxis
           dataKey="label"
-          tick={{ fill: "rgba(255,255,255,0.35)", fontSize: 10 }}
-          axisLine={{ stroke: "rgba(255,255,255,0.1)" }}
+          tick={{ fill: "rgba(0,0,0,0.4)", fontSize: 10 }}
+          axisLine={{ stroke: "rgba(0,0,0,0.1)" }}
           tickLine={false}
           interval={0}
           angle={-20}
@@ -23,21 +23,22 @@ export function FunilChart({
         />
         <YAxis
           allowDecimals={false}
-          tick={{ fill: "rgba(255,255,255,0.35)", fontSize: 11 }}
+          tick={{ fill: "rgba(0,0,0,0.4)", fontSize: 11 }}
           axisLine={false}
           tickLine={false}
           width={28}
         />
         <Tooltip
-          cursor={{ fill: "rgba(255,255,255,0.04)" }}
+          cursor={{ fill: "rgba(0,0,0,0.04)" }}
           contentStyle={{
-            background: "#0a0a0a",
-            border: "1px solid rgba(255,255,255,0.12)",
+            background: "#fff",
+            border: "1px solid rgba(0,0,0,0.12)",
             borderRadius: 12,
             fontSize: 12,
-            color: "#fff",
+            color: "#000",
+            boxShadow: "0 12px 30px -12px rgba(0,0,0,0.25)",
           }}
-          labelStyle={{ color: "rgba(255,255,255,0.5)" }}
+          labelStyle={{ color: "rgba(0,0,0,0.5)" }}
         />
         <Bar dataKey="total" radius={[6, 6, 0, 0]}>
           {dados.map((d) => (

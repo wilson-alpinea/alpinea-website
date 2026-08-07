@@ -38,48 +38,48 @@ export default async function PipelinePage() {
 
   return (
     <div>
-      <p className="mb-2 text-xs uppercase tracking-[0.3em] text-white/40">Funil comercial</p>
-      <h1 className={`${display.className} text-3xl font-medium text-white md:text-4xl`}>
+      <p className="mb-2 text-xs uppercase tracking-[0.3em] text-black/40">Funil comercial</p>
+      <h1 className={`${display.className} text-3xl font-medium text-black md:text-4xl`}>
         Pipeline
       </h1>
 
-      <div className="mt-8 grid grid-flow-col auto-cols-[260px] gap-5 overflow-x-auto pb-4">
+      <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
         {ESTAGIOS.map((estagio) => {
           const clientesDoEstagio = lista.filter((c) => c.estagio === estagio.valor);
           return (
-            <div key={estagio.valor} className="flex flex-col rounded-2xl border border-white/10 bg-white/[0.015]">
-              <div className="flex items-center justify-between gap-2 border-b border-white/10 px-4 py-3">
-                <div className="flex items-center gap-2">
+            <div key={estagio.valor} className="flex flex-col rounded-2xl border border-black/10 bg-black/[0.015]">
+              <div className="flex items-center justify-between gap-2 border-b border-black/10 px-3 py-3">
+                <div className="flex items-center gap-1.5">
                   <span
-                    className="h-1.5 w-1.5 rounded-full"
+                    className="h-1.5 w-1.5 shrink-0 rounded-full"
                     style={{ background: ESTAGIO_COR[estagio.valor as Estagio] }}
                   />
-                  <h2 className="text-xs font-medium uppercase tracking-[0.1em] text-white/70">
+                  <h2 className="text-[10px] font-medium uppercase leading-tight tracking-[0.08em] text-black/70">
                     {estagio.label}
                   </h2>
                 </div>
-                <span className="text-xs text-white/30">{clientesDoEstagio.length}</span>
+                <span className="shrink-0 text-xs text-black/30">{clientesDoEstagio.length}</span>
               </div>
 
-              <div className="flex-1 space-y-3 p-3">
+              <div className="flex-1 space-y-2.5 p-2.5">
                 {clientesDoEstagio.length === 0 && (
-                  <p className="px-1 py-4 text-center text-xs text-white/20">Vazio</p>
+                  <p className="px-1 py-4 text-center text-xs text-black/20">Vazio</p>
                 )}
                 {clientesDoEstagio.map((c) => {
                   const valor = formatBRL(c.valor_estimado);
                   return (
                     <div
                       key={c.id}
-                      className="space-y-2.5 rounded-xl border border-white/10 bg-black p-3.5 transition hover:border-white/25"
+                      className="space-y-2 rounded-xl border border-black/10 bg-white p-3 shadow-[0_8px_24px_-16px_rgba(0,0,0,0.3)] transition hover:border-black/25"
                     >
                       <Link href={`/crm/clientes/${c.id}`} className="block">
-                        <p className="text-sm font-medium text-white hover:underline">{c.nome}</p>
+                        <p className="text-sm font-medium text-black hover:underline">{c.nome}</p>
                         {c.destino_interesse && (
-                          <p className="mt-0.5 line-clamp-2 text-xs text-white/40">
+                          <p className="mt-0.5 line-clamp-2 text-xs text-black/45">
                             {c.destino_interesse}
                           </p>
                         )}
-                        {valor && <p className="mt-1.5 text-xs text-white/50">{valor}</p>}
+                        {valor && <p className="mt-1.5 text-xs text-black/55">{valor}</p>}
                       </Link>
                       <EstagioSelect
                         action={moveEstagio.bind(null, c.id)}

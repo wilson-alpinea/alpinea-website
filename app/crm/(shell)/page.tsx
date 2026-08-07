@@ -25,10 +25,10 @@ function formatBRL(valor: number) {
 
 function KpiCard({ label, valor, sublabel }: { label: string; valor: string; sublabel?: string }) {
   return (
-    <div className="rounded-2xl border border-white/10 bg-white/[0.025] p-6">
-      <p className="text-xs uppercase tracking-[0.2em] text-white/40">{label}</p>
-      <p className={`${display.className} mt-3 text-3xl font-medium text-white`}>{valor}</p>
-      {sublabel && <p className="mt-1 text-xs text-white/40">{sublabel}</p>}
+    <div className="rounded-2xl border border-black/10 bg-black/[0.02] p-6">
+      <p className="text-xs uppercase tracking-[0.2em] text-black/40">{label}</p>
+      <p className={`${display.className} mt-3 text-3xl font-medium text-black`}>{valor}</p>
+      {sublabel && <p className="mt-1 text-xs text-black/40">{sublabel}</p>}
     </div>
   );
 }
@@ -89,14 +89,14 @@ export default async function CrmDashboardPage() {
     <div>
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <p className="mb-2 text-xs uppercase tracking-[0.3em] text-white/40">Visão geral</p>
-          <h1 className={`${display.className} text-3xl font-medium text-white md:text-4xl`}>
+          <p className="mb-2 text-xs uppercase tracking-[0.3em] text-black/40">Visão geral</p>
+          <h1 className={`${display.className} text-3xl font-medium text-black md:text-4xl`}>
             Dashboard
           </h1>
         </div>
         <Link
           href="/crm/clientes/novo"
-          className="rounded-full bg-white px-5 py-2.5 text-sm font-medium text-black transition hover:bg-white/90"
+          className="rounded-full bg-black px-5 py-2.5 text-sm font-medium text-white transition hover:bg-black/85"
         >
           + Novo cliente
         </Link>
@@ -118,21 +118,21 @@ export default async function CrmDashboardPage() {
       </div>
 
       <div className="mt-6 grid gap-5 lg:grid-cols-5">
-        <div className="rounded-2xl border border-white/10 bg-white/[0.025] p-6 lg:col-span-3">
-          <h2 className={`${display.className} text-lg font-medium text-white`}>
+        <div className="rounded-2xl border border-black/10 bg-black/[0.02] p-6 lg:col-span-3">
+          <h2 className={`${display.className} text-lg font-medium text-black`}>
             Novos clientes por dia
           </h2>
-          <p className="mt-1 text-xs text-white/40">Últimos 30 dias</p>
+          <p className="mt-1 text-xs text-black/40">Últimos 30 dias</p>
           <div className="mt-4">
             <NovosClientesChart dados={dias} />
           </div>
         </div>
 
-        <div className="rounded-2xl border border-white/10 bg-white/[0.025] p-6 lg:col-span-2">
-          <h2 className={`${display.className} text-lg font-medium text-white`}>
+        <div className="rounded-2xl border border-black/10 bg-black/[0.02] p-6 lg:col-span-2">
+          <h2 className={`${display.className} text-lg font-medium text-black`}>
             Funil comercial
           </h2>
-          <p className="mt-1 text-xs text-white/40">Clientes por estágio</p>
+          <p className="mt-1 text-xs text-black/40">Clientes por estágio</p>
           <div className="mt-4">
             <FunilChart dados={funil} />
           </div>
@@ -140,9 +140,9 @@ export default async function CrmDashboardPage() {
       </div>
 
       {lista.length === 0 && (
-        <p className="mt-10 text-sm text-white/40">
+        <p className="mt-10 text-sm text-black/40">
           Nenhum cliente cadastrado ainda. Comece criando o primeiro em{" "}
-          <Link href="/crm/clientes/novo" className="text-white underline underline-offset-4">
+          <Link href="/crm/clientes/novo" className="text-black underline underline-offset-4">
             + Novo cliente
           </Link>
           .
