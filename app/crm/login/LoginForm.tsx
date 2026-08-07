@@ -13,14 +13,23 @@ export function LoginForm({
   const showError = searchParams.get("erro") === "1";
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-white px-6 text-black">
+    <main className="flex min-h-screen items-center justify-center bg-[#FAF9F6] px-6 text-black">
       <form
         action={action}
-        className="w-full max-w-sm space-y-5 rounded-2xl border border-black/10 bg-black/[0.02] p-8 shadow-[0_20px_60px_-30px_rgba(0,0,0,0.25)]"
+        className="w-full max-w-sm space-y-5 rounded-2xl border border-black/10 bg-[#57534E]/[0.05] p-8 shadow-[0_20px_60px_-30px_rgba(0,0,0,0.2)]"
       >
-        <div>
-          <p className="mb-2 text-xs uppercase tracking-[0.3em] text-black/40">Acesso restrito</p>
-          <h1 className={`${displayClassName} text-2xl font-medium text-black`}>CRM Alpinea</h1>
+        <div className="text-center">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/images/ajisai-group-logo-crop.png"
+            alt="Alpinea — Empresa do Grupo Ajisai"
+            className="mx-auto h-12 w-auto"
+          />
+          <p
+            className={`${displayClassName} mt-4 text-xs uppercase tracking-[0.35em] text-black/40`}
+          >
+            CRM · Acesso restrito
+          </p>
         </div>
 
         <input
@@ -46,7 +55,7 @@ export function LoginForm({
 
         <button
           type="submit"
-          className="w-full rounded-xl bg-black px-4 py-3 text-sm font-medium text-white transition hover:bg-black/85"
+          className="w-full rounded-xl bg-[#1C3A5E] px-4 py-3 text-sm font-medium text-white transition hover:bg-[#254a73]"
         >
           Entrar
         </button>

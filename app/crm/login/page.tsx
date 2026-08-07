@@ -16,7 +16,7 @@ export const metadata: Metadata = {
 
 export default function CrmLoginPage() {
   return (
-    <Suspense fallback={<main className="min-h-screen bg-black" />}>
+    <Suspense fallback={<main className="min-h-screen bg-[#FAF9F6]" />}>
       <LoginForm action={login} displayClassName={display.className} />
     </Suspense>
   );

@@ -18,6 +18,11 @@ banco de dados e autenticação.
 2. Cole todo o conteúdo de `supabase/schema.sql` (neste repositório) e
    execute. Isso cria as tabelas `clientes`, `interacoes`, `perfis`, o
    funil de estágios e as permissões de acesso.
+3. Se o schema já tinha sido rodado antes, rode também, uma única vez,
+   `supabase/migrations/002_produtos_e_data_viagem.sql` — adiciona os
+   campos de produto principal/secundário e data da viagem, remove
+   "tier" e "destino de interesse" e renomeia "valor_estimado" para
+   "valor_proposta".
 
 ## 3. Configurar as variáveis de ambiente
 
@@ -58,7 +63,8 @@ Acesse `http://localhost:3000/crm`.
 - **Clientes** (`/crm/clientes`): lista com busca (nome/e-mail/telefone) e
   filtro por estágio.
 - **Cadastro/edição** (`/crm/clientes/novo`, `/crm/clientes/[id]`): dados
-  do cliente, tier de serviço, valor estimado, estágio, observações.
+  do cliente, produto principal e secundário (cards com ícone), data da
+  viagem, valor da proposta, estágio, observações.
 - **Histórico de interações**: registro de ligações, WhatsApp, e-mails,
   reuniões e notas por cliente, com autor e data.
 - **Pipeline** (`/crm/pipeline`): visão em colunas por estágio, com opção

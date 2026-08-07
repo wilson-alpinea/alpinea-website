@@ -3,6 +3,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
 import { ESTAGIOS, ESTAGIO_COR } from "@/lib/crm/estagios";
+import { PRODUTO_PRINCIPAL_LABEL, type ProdutoPrincipal } from "@/lib/crm/produtos";
 import type { Estagio } from "@/lib/crm/types";
 import { moveEstagio } from "../../actions";
 import { EstagioSelect } from "./EstagioSelect";
@@ -29,7 +30,7 @@ export default async function PipelinePage() {
 
   const { data: clientes, error } = await supabase
     .from("clientes")
-    .select("id, nome, estagio, valor_estimado, destino_interesse, tier")
+    .select("id, nome, estagio, valor_proposta, produto_principal")
     .order("created_at", { ascending: false });
 
   if (error) console.error("Erro ao carregar pipeline:", error);
@@ -47,7 +48,7 @@ export default async function PipelinePage() {
         {ESTAGIOS.map((estagio) => {
           const clientesDoEstagio = lista.filter((c) => c.estagio === estagio.valor);
           return (
-            <div key={estagio.valor} className="flex flex-col rounded-2xl border border-black/10 bg-black/[0.015]">
+            <div key={estagio.valor} className="flex flex-col rounded-2xl border border-black/10 bg-[#57534E]/[0.05]">
               <div className="flex items-center justify-between gap-2 border-b border-black/10 px-3 py-3">
                 <div className="flex items-center gap-1.5">
                   <span
@@ -66,7 +67,7 @@ export default async function PipelinePage() {
                   <p className="px-1 py-4 text-center text-xs text-black/20">Vazio</p>
                 )}
                 {clientesDoEstagio.map((c) => {
-                  const valor = formatBRL(c.valor_estimado);
+                  const valor = formatBRL(c.valor_proposta);
                   return (
                     <div
                       key={c.id}
@@ -74,9 +75,9 @@ export default async function PipelinePage() {
                     >
                       <Link href={`/crm/clientes/${c.id}`} className="block">
                         <p className="text-sm font-medium text-black hover:underline">{c.nome}</p>
-                        {c.destino_interesse && (
+                        {c.produto_principal && (
                           <p className="mt-0.5 line-clamp-2 text-xs text-black/45">
-                            {c.destino_interesse}
+                            {PRODUTO_PRINCIPAL_LABEL[c.produto_principal as ProdutoPrincipal]}
                           </p>
                         )}
                         {valor && <p className="mt-1.5 text-xs text-black/55">{valor}</p>}

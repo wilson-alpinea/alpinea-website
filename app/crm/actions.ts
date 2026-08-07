@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { isEstagio } from "@/lib/crm/estagios";
+import { isProdutoPrincipal, isProdutoSecundario } from "@/lib/crm/produtos";
 
 export async function logout() {
   const supabase = await createClient();
@@ -21,6 +22,18 @@ function numeroOuNull(valor: FormDataEntryValue | null) {
 function textoOuNull(valor: FormDataEntryValue | null) {
   const texto = String(valor ?? "").trim();
   return texto || null;
+}
+
+function produtoPrincipalOuNull(valor: FormDataEntryValue | null) {
+  const texto = String(valor ?? "").trim();
+  return isProdutoPrincipal(texto) ? texto : null;
+}
+
+function produtosSecundarios(formData: FormData) {
+  return formData
+    .getAll("produto_secundario")
+    .map((v) => String(v))
+    .filter(isProdutoSecundario);
 }
 
 export async function createCliente(formData: FormData) {
@@ -41,9 +54,10 @@ export async function createCliente(formData: FormData) {
       email: textoOuNull(formData.get("email")),
       telefone: textoOuNull(formData.get("telefone")),
       origem: textoOuNull(formData.get("origem")),
-      tier: textoOuNull(formData.get("tier")),
-      destino_interesse: textoOuNull(formData.get("destino_interesse")),
-      valor_estimado: numeroOuNull(formData.get("valor_estimado")),
+      valor_proposta: numeroOuNull(formData.get("valor_proposta")),
+      produto_principal: produtoPrincipalOuNull(formData.get("produto_principal")),
+      produto_secundario: produtosSecundarios(formData),
+      data_viagem: textoOuNull(formData.get("data_viagem")),
       estagio: "novo_lead",
       responsavel_id: user?.id ?? null,
       observacoes: textoOuNull(formData.get("observacoes")),
@@ -74,9 +88,10 @@ export async function updateCliente(clienteId: string, formData: FormData) {
       email: textoOuNull(formData.get("email")),
       telefone: textoOuNull(formData.get("telefone")),
       origem: textoOuNull(formData.get("origem")),
-      tier: textoOuNull(formData.get("tier")),
-      destino_interesse: textoOuNull(formData.get("destino_interesse")),
-      valor_estimado: numeroOuNull(formData.get("valor_estimado")),
+      valor_proposta: numeroOuNull(formData.get("valor_proposta")),
+      produto_principal: produtoPrincipalOuNull(formData.get("produto_principal")),
+      produto_secundario: produtosSecundarios(formData),
+      data_viagem: textoOuNull(formData.get("data_viagem")),
       estagio: isEstagio(estagioBruto) ? estagioBruto : undefined,
       observacoes: textoOuNull(formData.get("observacoes")),
     })

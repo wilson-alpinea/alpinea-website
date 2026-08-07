@@ -33,7 +33,7 @@ export default async function NovoClientePage({
         </p>
       )}
 
-      <div className="mt-8 rounded-2xl border border-black/10 bg-black/[0.02] p-6 md:p-8">
+      <div className="mt-8 rounded-2xl border border-black/10 bg-[#57534E]/[0.05] p-6 md:p-8">
         <ClienteForm action={createCliente} submitLabel="Cadastrar cliente" />
       </div>
     </div>

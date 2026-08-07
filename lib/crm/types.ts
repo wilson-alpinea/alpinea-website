@@ -12,9 +12,10 @@ export type Cliente = {
   email: string | null;
   telefone: string | null;
   origem: string | null;
-  tier: string | null;
-  destino_interesse: string | null;
-  valor_estimado: number | null;
+  valor_proposta: number | null;
+  produto_principal: string | null;
+  produto_secundario: string[];
+  data_viagem: string | null;
   estagio: Estagio;
   responsavel_id: string | null;
   observacoes: string | null;

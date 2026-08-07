@@ -1,12 +1,45 @@
 import { ESTAGIOS } from "@/lib/crm/estagios";
+import { PRODUTOS_PRINCIPAIS, PRODUTOS_SECUNDARIOS } from "@/lib/crm/produtos";
 import type { Cliente } from "@/lib/crm/types";
+import { PRODUTO_ICONS } from "./ProdutoIcons";
 
-const TIERS = ["Alpinea Design", "Alpinea Executive", "Alpinea Private", "A definir"];
 const ORIGENS = ["Instagram", "Google Ads", "Indicação", "Site", "WhatsApp", "Outro"];
 
 const inputClass =
   "w-full rounded-xl border border-black/15 bg-white px-4 py-2.5 text-sm text-black placeholder-black/30 outline-none transition focus:border-black/40";
 const labelClass = "mb-1.5 block text-xs uppercase tracking-[0.15em] text-black/40";
+
+function ProdutoCard({
+  type,
+  name,
+  value,
+  label,
+  detalhe,
+  defaultChecked,
+}: {
+  type: "radio" | "checkbox";
+  name: string;
+  value: string;
+  label: string;
+  detalhe?: string;
+  defaultChecked: boolean;
+}) {
+  const Icon = PRODUTO_ICONS[value];
+  return (
+    <label
+      title={detalhe}
+      className="flex cursor-pointer flex-col items-center gap-2 rounded-xl border border-black/15 bg-white p-3 text-center transition has-[:checked]:border-[#1C3A5E] has-[:checked]:bg-[#1C3A5E]/[0.06] hover:border-black/30"
+    >
+      <input type={type} name={name} value={value} defaultChecked={defaultChecked} className="peer sr-only" />
+      {Icon && (
+        <Icon className="h-5 w-5 text-black/45 transition peer-checked:text-[#1C3A5E]" />
+      )}
+      <span className="text-xs font-medium leading-tight text-black/70 transition peer-checked:text-black">
+        {label}
+      </span>
+    </label>
+  );
+}
 
 export function ClienteForm({
   action,
@@ -19,6 +52,8 @@ export function ClienteForm({
   submitLabel: string;
   showEstagio?: boolean;
 }) {
+  const secundariosAtuais = new Set(cliente?.produto_secundario ?? []);
+
   return (
     <form action={action} className="space-y-6">
       <div className="grid gap-5 sm:grid-cols-2">
@@ -73,35 +108,22 @@ export function ClienteForm({
         </div>
 
         <div>
-          <label className={labelClass}>Tier de serviço</label>
-          <select name="tier" defaultValue={cliente?.tier ?? ""} className={inputClass}>
-            <option value="">Selecionar…</option>
-            {TIERS.map((t) => (
-              <option key={t} value={t}>
-                {t}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div className="sm:col-span-2">
-          <label className={labelClass}>Destino / tipo de viagem</label>
+          <label className={labelClass}>Data da viagem</label>
           <input
-            type="text"
-            name="destino_interesse"
-            defaultValue={cliente?.destino_interesse ?? ""}
+            type="date"
+            name="data_viagem"
+            defaultValue={cliente?.data_viagem ?? ""}
             className={inputClass}
-            placeholder="Ex.: Lua de mel — 14 dias, Tóquio e Kyoto"
           />
         </div>
 
         <div>
-          <label className={labelClass}>Valor estimado (R$)</label>
+          <label className={labelClass}>Valor da proposta (R$)</label>
           <input
             type="text"
             inputMode="decimal"
-            name="valor_estimado"
-            defaultValue={cliente?.valor_estimado ?? ""}
+            name="valor_proposta"
+            defaultValue={cliente?.valor_proposta ?? ""}
             className={inputClass}
             placeholder="0,00"
           />
@@ -125,6 +147,39 @@ export function ClienteForm({
         )}
 
         <div className="sm:col-span-2">
+          <label className={labelClass}>Produto principal</label>
+          <div className="grid grid-cols-3 gap-2.5 sm:grid-cols-5">
+            {PRODUTOS_PRINCIPAIS.map((p) => (
+              <ProdutoCard
+                key={p.valor}
+                type="radio"
+                name="produto_principal"
+                value={p.valor}
+                label={p.label}
+                detalhe={p.detalhe}
+                defaultChecked={cliente?.produto_principal === p.valor}
+              />
+            ))}
+          </div>
+        </div>
+
+        <div className="sm:col-span-2">
+          <label className={labelClass}>Produto secundário</label>
+          <div className="grid grid-cols-3 gap-2.5 sm:grid-cols-4">
+            {PRODUTOS_SECUNDARIOS.map((p) => (
+              <ProdutoCard
+                key={p.valor}
+                type="checkbox"
+                name="produto_secundario"
+                value={p.valor}
+                label={p.label}
+                defaultChecked={secundariosAtuais.has(p.valor)}
+              />
+            ))}
+          </div>
+        </div>
+
+        <div className="sm:col-span-2">
           <label className={labelClass}>Observações</label>
           <textarea
             name="observacoes"
@@ -138,7 +193,7 @@ export function ClienteForm({
 
       <button
         type="submit"
-        className="w-full rounded-xl bg-black px-4 py-3 text-sm font-medium text-white transition hover:bg-black/85 sm:w-auto sm:px-8"
+        className="w-full rounded-xl bg-[#1C3A5E] px-4 py-3 text-sm font-medium text-white transition hover:bg-[#254a73] sm:w-auto sm:px-8"
       >
         {submitLabel}
       </button>

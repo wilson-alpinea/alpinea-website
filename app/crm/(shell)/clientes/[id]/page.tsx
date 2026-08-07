@@ -80,7 +80,7 @@ export default async function ClienteDetalhePage({
       )}
 
       <div className="mt-8 grid gap-6 lg:grid-cols-5">
-        <div className="rounded-2xl border border-black/10 bg-black/[0.02] p-6 md:p-8 lg:col-span-3">
+        <div className="rounded-2xl border border-black/10 bg-[#57534E]/[0.05] p-6 md:p-8 lg:col-span-3">
           <h2 className={`${display.className} mb-6 text-lg font-medium text-black`}>
             Dados do cliente
           </h2>
@@ -93,7 +93,7 @@ export default async function ClienteDetalhePage({
         </div>
 
         <div className="space-y-6 lg:col-span-2">
-          <div className="rounded-2xl border border-black/10 bg-black/[0.02] p-6">
+          <div className="rounded-2xl border border-black/10 bg-[#57534E]/[0.05] p-6">
             <h2 className={`${display.className} mb-4 text-lg font-medium text-black`}>
               Nova interação
             </h2>
@@ -118,14 +118,14 @@ export default async function ClienteDetalhePage({
               />
               <button
                 type="submit"
-                className="w-full rounded-xl bg-black px-4 py-2.5 text-sm font-medium text-white transition hover:bg-black/85"
+                className="w-full rounded-xl bg-[#1C3A5E] px-4 py-2.5 text-sm font-medium text-white transition hover:bg-[#254a73]"
               >
                 Registrar
               </button>
             </form>
           </div>
 
-          <div className="rounded-2xl border border-black/10 bg-black/[0.02] p-6">
+          <div className="rounded-2xl border border-black/10 bg-[#57534E]/[0.05] p-6">
             <h2 className={`${display.className} mb-4 text-lg font-medium text-black`}>
               Histórico
             </h2>

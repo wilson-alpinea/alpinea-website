@@ -3,6 +3,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
 import { ESTAGIOS, ESTAGIO_COR, ESTAGIO_LABEL } from "@/lib/crm/estagios";
+import { PRODUTO_PRINCIPAL_LABEL, type ProdutoPrincipal } from "@/lib/crm/produtos";
 import type { Estagio } from "@/lib/crm/types";
 
 const display = Bodoni_Moda({
@@ -35,7 +36,7 @@ export default async function ClientesPage({
 
   let query = supabase
     .from("clientes")
-    .select("id, nome, email, telefone, estagio, valor_estimado, destino_interesse, created_at")
+    .select("id, nome, email, telefone, estagio, valor_proposta, produto_principal, created_at")
     .order("created_at", { ascending: false });
 
   if (busca) {
@@ -63,7 +64,7 @@ export default async function ClientesPage({
         </div>
         <Link
           href="/crm/clientes/novo"
-          className="rounded-full bg-black px-5 py-2.5 text-sm font-medium text-white transition hover:bg-black/85"
+          className="rounded-full bg-[#1C3A5E] px-5 py-2.5 text-sm font-medium text-white transition hover:bg-[#254a73]"
         >
           + Novo cliente
         </Link>
@@ -113,11 +114,11 @@ export default async function ClientesPage({
         ) : (
           <table className="w-full text-left text-sm">
             <thead>
-              <tr className="border-b border-black/10 bg-black/[0.02] text-xs uppercase tracking-[0.15em] text-black/40">
+              <tr className="border-b border-black/10 bg-[#57534E]/[0.05] text-xs uppercase tracking-[0.15em] text-black/40">
                 <th className="px-5 py-3 font-medium">Nome</th>
-                <th className="hidden px-5 py-3 font-medium md:table-cell">Destino</th>
+                <th className="hidden px-5 py-3 font-medium md:table-cell">Produto principal</th>
                 <th className="hidden px-5 py-3 font-medium sm:table-cell">Estágio</th>
-                <th className="hidden px-5 py-3 font-medium lg:table-cell">Valor estimado</th>
+                <th className="hidden px-5 py-3 font-medium lg:table-cell">Valor da proposta</th>
                 <th className="px-5 py-3 font-medium">Cadastro</th>
               </tr>
             </thead>
@@ -125,7 +126,7 @@ export default async function ClientesPage({
               {lista.map((c) => (
                 <tr
                   key={c.id}
-                  className="border-b border-black/5 transition last:border-0 hover:bg-black/[0.02]"
+                  className="border-b border-black/5 transition last:border-0 hover:bg-[#57534E]/[0.04]"
                 >
                   <td className="px-5 py-4">
                     <Link href={`/crm/clientes/${c.id}`} className="text-black hover:underline">
@@ -134,7 +135,9 @@ export default async function ClientesPage({
                     <p className="mt-0.5 text-xs text-black/40">{c.email || c.telefone || "—"}</p>
                   </td>
                   <td className="hidden px-5 py-4 text-black/60 md:table-cell">
-                    {c.destino_interesse || "—"}
+                    {c.produto_principal
+                      ? PRODUTO_PRINCIPAL_LABEL[c.produto_principal as ProdutoPrincipal]
+                      : "—"}
                   </td>
                   <td className="hidden px-5 py-4 sm:table-cell">
                     <span
@@ -148,7 +151,7 @@ export default async function ClientesPage({
                     </span>
                   </td>
                   <td className="hidden px-5 py-4 text-black/60 lg:table-cell">
-                    {formatBRL(c.valor_estimado)}
+                    {formatBRL(c.valor_proposta)}
                   </td>
                   <td className="px-5 py-4 text-black/40">
                     {new Date(c.created_at).toLocaleDateString("pt-BR")}

@@ -6,6 +6,7 @@ import { ESTAGIOS, ESTAGIO_COR } from "@/lib/crm/estagios";
 import type { Estagio } from "@/lib/crm/types";
 import { NovosClientesChart } from "./components/NovosClientesChart";
 import { FunilChart } from "./components/FunilChart";
+import { PeriodoSelector } from "./components/PeriodoSelector";
 
 const display = Bodoni_Moda({
   subsets: ["latin"],
@@ -25,7 +26,7 @@ function formatBRL(valor: number) {
 
 function KpiCard({ label, valor, sublabel }: { label: string; valor: string; sublabel?: string }) {
   return (
-    <div className="rounded-2xl border border-black/10 bg-black/[0.02] p-6">
+    <div className="rounded-2xl border border-black/10 bg-[#57534E]/[0.05] p-6">
       <p className="text-xs uppercase tracking-[0.2em] text-black/40">{label}</p>
       <p className={`${display.className} mt-3 text-3xl font-medium text-black`}>{valor}</p>
       {sublabel && <p className="mt-1 text-xs text-black/40">{sublabel}</p>}
@@ -33,12 +34,17 @@ function KpiCard({ label, valor, sublabel }: { label: string; valor: string; sub
   );
 }
 
-export default async function CrmDashboardPage() {
+export default async function CrmDashboardPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ dias?: string; de?: string; ate?: string }>;
+}) {
+  const params = await searchParams;
   const supabase = await createClient();
 
   const { data: clientes, error } = await supabase
     .from("clientes")
-    .select("id, created_at, estagio, valor_estimado");
+    .select("id, created_at, estagio, valor_proposta");
 
   if (error) {
     console.error("Erro ao carregar dashboard:", error);
@@ -54,23 +60,56 @@ export default async function CrmDashboardPage() {
   const novosUltimos7Dias = lista.filter((c) => new Date(c.created_at) >= seteDiasAtras).length;
 
   const abertos = lista.filter((c) => c.estagio !== "fechado_ganho" && c.estagio !== "fechado_perdido");
-  const valorEmPipeline = abertos.reduce((soma, c) => soma + (c.valor_estimado ?? 0), 0);
+  const valorEmPipeline = abertos.reduce((soma, c) => soma + (c.valor_proposta ?? 0), 0);
 
   const ganhos = lista.filter((c) => c.estagio === "fechado_ganho").length;
   const perdidos = lista.filter((c) => c.estagio === "fechado_perdido").length;
   const taxaConversao =
     ganhos + perdidos > 0 ? `${Math.round((ganhos / (ganhos + perdidos)) * 100)}%` : "—";
 
-  // Novos clientes por dia — últimos 30 dias
+  // Novos clientes por dia — período selecionável (7 / 15 / 30 dias ou
+  // intervalo personalizado via ?de=&ate=)
+  let periodoAtivo = "30";
+  let inicioPeriodo = new Date(hoje);
+  let fimPeriodo = new Date(hoje);
+  let rangeLabel = "Últimos 30 dias";
+
+  const deValida = params.de && !Number.isNaN(new Date(`${params.de}T00:00:00`).getTime());
+  const ateValida = params.ate && !Number.isNaN(new Date(`${params.ate}T00:00:00`).getTime());
+
+  if (deValida && ateValida) {
+    const deDate = new Date(`${params.de}T00:00:00`);
+    const ateDate = new Date(`${params.ate}T00:00:00`);
+    if (deDate <= ateDate) {
+      periodoAtivo = "custom";
+      inicioPeriodo = deDate;
+      fimPeriodo = ateDate;
+      rangeLabel = `${inicioPeriodo.toLocaleDateString("pt-BR")} – ${fimPeriodo.toLocaleDateString("pt-BR")}`;
+    }
+  }
+
+  if (periodoAtivo !== "custom") {
+    const diasValidos = ["7", "15", "30"];
+    const diasParam = diasValidos.includes(params.dias ?? "") ? params.dias! : "30";
+    periodoAtivo = diasParam;
+    inicioPeriodo = new Date(hoje);
+    inicioPeriodo.setDate(hoje.getDate() - (Number(diasParam) - 1));
+    rangeLabel = `Últimos ${diasParam} dias`;
+  }
+
   const dias: { data: string; total: number }[] = [];
   const contagemPorDia = new Map<string, number>();
   for (const c of lista) {
     const chave = new Date(c.created_at).toISOString().slice(0, 10);
     contagemPorDia.set(chave, (contagemPorDia.get(chave) ?? 0) + 1);
   }
-  for (let i = 29; i >= 0; i--) {
-    const d = new Date(hoje);
-    d.setDate(hoje.getDate() - i);
+  const totalDiasNoIntervalo = Math.min(
+    Math.round((fimPeriodo.getTime() - inicioPeriodo.getTime()) / 86_400_000) + 1,
+    366,
+  );
+  for (let i = 0; i < totalDiasNoIntervalo; i++) {
+    const d = new Date(inicioPeriodo);
+    d.setDate(inicioPeriodo.getDate() + i);
     const chave = d.toISOString().slice(0, 10);
     dias.push({
       data: d.toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" }),
@@ -96,7 +135,7 @@ export default async function CrmDashboardPage() {
         </div>
         <Link
           href="/crm/clientes/novo"
-          className="rounded-full bg-black px-5 py-2.5 text-sm font-medium text-white transition hover:bg-black/85"
+          className="rounded-full bg-[#1C3A5E] px-5 py-2.5 text-sm font-medium text-white transition hover:bg-[#254a73]"
         >
           + Novo cliente
         </Link>
@@ -118,17 +157,22 @@ export default async function CrmDashboardPage() {
       </div>
 
       <div className="mt-6 grid gap-5 lg:grid-cols-5">
-        <div className="rounded-2xl border border-black/10 bg-black/[0.02] p-6 lg:col-span-3">
-          <h2 className={`${display.className} text-lg font-medium text-black`}>
-            Novos clientes por dia
-          </h2>
-          <p className="mt-1 text-xs text-black/40">Últimos 30 dias</p>
+        <div className="rounded-2xl border border-black/10 bg-[#57534E]/[0.05] p-6 lg:col-span-3">
+          <div className="flex flex-wrap items-start justify-between gap-3">
+            <div>
+              <h2 className={`${display.className} text-lg font-medium text-black`}>
+                Novos clientes por dia
+              </h2>
+              <p className="mt-1 text-xs text-black/40">{rangeLabel}</p>
+            </div>
+            <PeriodoSelector periodoAtivo={periodoAtivo} de={params.de} ate={params.ate} />
+          </div>
           <div className="mt-4">
             <NovosClientesChart dados={dias} />
           </div>
         </div>
 
-        <div className="rounded-2xl border border-black/10 bg-black/[0.02] p-6 lg:col-span-2">
+        <div className="rounded-2xl border border-black/10 bg-[#57534E]/[0.05] p-6 lg:col-span-2">
           <h2 className={`${display.className} text-lg font-medium text-black`}>
             Funil comercial
           </h2>
