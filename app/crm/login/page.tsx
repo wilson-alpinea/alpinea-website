@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { Bodoni_Moda } from "next/font/google";
 import type { Metadata } from "next";
 import { login } from "./actions";
@@ -14,5 +15,9 @@ export const metadata: Metadata = {
 };
 
 export default function CrmLoginPage() {
-  return <LoginForm action={login} displayClassName={display.className} />;
+  return (
+    <Suspense fallback={<main className="min-h-screen bg-black" />}>
+      <LoginForm action={login} displayClassName={display.className} />
+    </Suspense>
+  );
 }

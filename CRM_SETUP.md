@@ -10,7 +10,7 @@ banco de dados e autenticação.
    use um que você já tenha).
 2. Em **Project Settings → API**, copie:
    - `Project URL`
-   - `anon public` key
+   - `publishable` key (`sb_publishable_...`) — na tela "Connect", aba `.env.local`
 
 ## 2. Rodar o schema do banco
 
@@ -22,7 +22,7 @@ banco de dados e autenticação.
 ## 3. Configurar as variáveis de ambiente
 
 1. Copie `.env.local.example` para `.env.local` na raiz do projeto.
-2. Preencha `NEXT_PUBLIC_SUPABASE_URL` e `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+2. Preencha `NEXT_PUBLIC_SUPABASE_URL` e `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`
    com os valores copiados no passo 1.
 3. Para produção (Vercel): adicione as mesmas duas variáveis em
    **Project Settings → Environment Variables** e faça um novo deploy.
