@@ -257,3 +257,17 @@ export async function deleteArquivo(clienteId: string, arquivoId: string, formDa
 
   revalidatePath(`/crm/clientes/${clienteId}`);
 }
+
+export async function deleteClientes(ids: string[]) {
+  if (!ids || ids.length === 0) return;
+  const supabase = await createClient();
+  const { error } = await supabase.from("clientes").delete().in("id", ids);
+
+  if (error) {
+    console.error("Erro ao excluir clientes:", error);
+  }
+
+  revalidatePath("/crm/clientes");
+  revalidatePath("/crm");
+  revalidatePath("/crm/pipeline");
+}

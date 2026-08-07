@@ -473,6 +473,12 @@ const DAY_4: DayContent = {
         description: "Grandes lojas de eletrônicos.",
         rating: 3,
       },
+      {
+        category: "Curiosidade",
+        title: "Weird Vending Machine Corner",
+        description: "Cantinho com máquinas de venda automática bizarras e inusitadas, um clássico despretensioso de Akihabara.",
+        rating: 2,
+      },
     ],
     gastronomia: {
       itens: [{ nome: "Curry Japonês" }],

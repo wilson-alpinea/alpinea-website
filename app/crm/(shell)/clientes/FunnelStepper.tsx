@@ -15,6 +15,23 @@ function formatarData(valor: string | null | undefined) {
   return new Date(valor).toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit", year: "2-digit" });
 }
 
+function SetaDireita({ cor }: { cor: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke={cor}
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className="h-6 w-6 shrink-0"
+    >
+      <path d="M5 12h14" />
+      <path d="m13 6 6 6-6 6" />
+    </svg>
+  );
+}
+
 export function FunnelStepper({
   cliente,
   datasPorEstagio,
@@ -51,14 +68,14 @@ export function FunnelStepper({
   ];
 
   return (
-    <div className="rounded-2xl border border-black/10 bg-[#57534E]/[0.05] px-5 py-6 sm:px-8">
-      <div className="flex items-start">
+    <div className="overflow-x-auto rounded-2xl border border-black/10 bg-[#57534E]/[0.05] px-6 py-8 sm:px-10">
+      <div className="flex min-w-[720px] items-start justify-between sm:min-w-0">
         {steps.map((step, i) => {
           const completo = i < currentIndex;
           const isAtual = i === currentIndex;
           const ehFechado = step.key === "fechado";
 
-          let cor = "rgba(0,0,0,0.15)"; // pendente
+          let cor = "rgba(0,0,0,0.18)"; // pendente
           let preenchido = false;
 
           if (completo) {
@@ -78,27 +95,26 @@ export function FunnelStepper({
           }
 
           return (
-            <div key={step.key} className="flex flex-1 items-start last:flex-none last:items-start">
-              <div className="flex w-20 flex-col items-center gap-1.5 text-center sm:w-28">
+            <div key={step.key} className="flex flex-1 items-center last:flex-none">
+              <div className="flex w-28 flex-col items-center gap-2 text-center sm:w-36">
                 <span
-                  className="h-3.5 w-3.5 shrink-0 rounded-full"
+                  className="h-6 w-6 shrink-0 rounded-full"
                   style={{
                     background: preenchido ? cor : "#fff",
-                    border: `2px solid ${cor}`,
-                    boxShadow: isAtual && !preenchido ? `0 0 0 4px ${cor}22` : undefined,
+                    border: `3px solid ${cor}`,
+                    boxShadow: isAtual && !preenchido ? `0 0 0 6px ${cor}22` : undefined,
                   }}
                 />
-                <span className="text-[10px] font-medium uppercase leading-tight tracking-[0.06em] text-black/70">
+                <span className="text-xs font-semibold uppercase leading-tight tracking-[0.06em] text-black/75">
                   {step.label}
                 </span>
-                <span className="text-[10px] text-black/35">{formatarData(step.data)}</span>
+                <span className="text-xs text-black/40">{formatarData(step.data)}</span>
               </div>
 
               {i < steps.length - 1 && (
-                <div
-                  className="mt-[7px] h-px flex-1"
-                  style={{ background: i < currentIndex ? NAVY : "rgba(0,0,0,0.1)" }}
-                />
+                <div className="flex h-6 flex-1 items-center justify-center px-1">
+                  <SetaDireita cor={i < currentIndex ? NAVY : "rgba(0,0,0,0.18)"} />
+                </div>
               )}
             </div>
           );

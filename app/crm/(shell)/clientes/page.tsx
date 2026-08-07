@@ -2,9 +2,8 @@ import { Bodoni_Moda } from "next/font/google";
 import Link from "next/link";
 import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
-import { ESTAGIOS, ESTAGIO_COR, ESTAGIO_LABEL } from "@/lib/crm/estagios";
-import { PRODUTO_PRINCIPAL_LABEL, type ProdutoPrincipal } from "@/lib/crm/produtos";
-import type { Estagio } from "@/lib/crm/types";
+import { ESTAGIOS } from "@/lib/crm/estagios";
+import { ClientesTable } from "./ClientesTable";
 
 const display = Bodoni_Moda({
   subsets: ["latin"],
@@ -17,11 +16,6 @@ export const metadata: Metadata = {
 };
 
 export const dynamic = "force-dynamic";
-
-function formatBRL(valor: number | null) {
-  if (valor === null) return "—";
-  return valor.toLocaleString("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 0 });
-}
 
 export default async function ClientesPage({
   searchParams,
@@ -106,60 +100,15 @@ export default async function ClientesPage({
         )}
       </form>
 
-      <div className="mt-8 overflow-hidden rounded-2xl border border-black/10">
+      <div className="mt-8">
         {lista.length === 0 ? (
-          <p className="p-8 text-center text-sm text-black/40">
-            Nenhum cliente encontrado.
-          </p>
+          <div className="overflow-hidden rounded-2xl border border-black/10">
+            <p className="p-8 text-center text-sm text-black/40">
+              Nenhum cliente encontrado.
+            </p>
+          </div>
         ) : (
-          <table className="w-full text-left text-sm">
-            <thead>
-              <tr className="border-b border-black/10 bg-[#57534E]/[0.05] text-xs uppercase tracking-[0.15em] text-black/40">
-                <th className="px-5 py-3 font-medium">Nome</th>
-                <th className="hidden px-5 py-3 font-medium md:table-cell">Produto principal</th>
-                <th className="hidden px-5 py-3 font-medium sm:table-cell">Estágio</th>
-                <th className="hidden px-5 py-3 font-medium lg:table-cell">Valor da proposta</th>
-                <th className="px-5 py-3 font-medium">Cadastro</th>
-              </tr>
-            </thead>
-            <tbody>
-              {lista.map((c) => (
-                <tr
-                  key={c.id}
-                  className="border-b border-black/5 transition last:border-0 hover:bg-[#57534E]/[0.04]"
-                >
-                  <td className="px-5 py-4">
-                    <Link href={`/crm/clientes/${c.id}`} className="text-black hover:underline">
-                      {c.nome}
-                    </Link>
-                    <p className="mt-0.5 text-xs text-black/40">{c.email || c.telefone || "—"}</p>
-                  </td>
-                  <td className="hidden px-5 py-4 text-black/60 md:table-cell">
-                    {c.produto_principal
-                      ? PRODUTO_PRINCIPAL_LABEL[c.produto_principal as ProdutoPrincipal]
-                      : "—"}
-                  </td>
-                  <td className="hidden px-5 py-4 sm:table-cell">
-                    <span
-                      className="inline-flex items-center gap-2 rounded-full border border-black/10 px-3 py-1 text-xs text-black/70"
-                    >
-                      <span
-                        className="h-1.5 w-1.5 rounded-full"
-                        style={{ background: ESTAGIO_COR[c.estagio as Estagio] }}
-                      />
-                      {ESTAGIO_LABEL[c.estagio as Estagio]}
-                    </span>
-                  </td>
-                  <td className="hidden px-5 py-4 text-black/60 lg:table-cell">
-                    {formatBRL(c.valor_proposta)}
-                  </td>
-                  <td className="px-5 py-4 text-black/40">
-                    {new Date(c.created_at).toLocaleDateString("pt-BR")}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          <ClientesTable clientes={lista} />
         )}
       </div>
     </div>
