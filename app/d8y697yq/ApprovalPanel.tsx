@@ -53,6 +53,7 @@ type SubAtracao = {
   pois?: Poi[];
   gastronomia?: Gastronomia;
   opcional?: boolean;
+  compacta?: boolean;
 };
 
 type Period = {
@@ -61,6 +62,7 @@ type Period = {
   atracaoPrincipal: string;
   atracaoPrincipalImagem?: string;
   atracaoPrincipalFoco?: "top" | "center" | "bottom";
+  atracaoPrincipalCompacta?: boolean;
   pois: Poi[];
   gastronomia?: Gastronomia;
   comprasExclusivas?: ComprasExclusivas;
@@ -686,105 +688,23 @@ const DAY_7: DayContent = {
   city: "Tokyo",
   date: "10 Mai",
   contexto: [
-    "Começamos a manhã em Kuramae e Asakusabashi, bairros vizinhos conhecidos pelo artesanato e design autoral japonês — uma sequência de pequenas lojas e ateliês a poucos passos um do outro, terminando em Ryogoku para o almoço antes do sumô.",
+    "Começamos a manhã em Fan Fun Street, na sede da Bandai — o resto da manhã (Kuramae, Asakusabashi e o almoço) ainda está em definição, já que boa parte das lojas dessa região fecha às segundas-feiras.",
     "O dia 10 de maio é um dos dias do Grand Sumo Tournament de Tóquio em maio de 2027 (torneio completo de 9 a 23 de maio) — a venda dos ingressos para o torneio começa dia 10 de abril de 2027.",
     "O ingresso vale para o dia inteiro no Kokugikan, em Ryogoku: as lutas das categorias inferiores começam já às 8h40, mas o grande destaque — a cerimônia de entrada e as lutas da divisão principal (Makuuchi) — só acontece a partir das 15h45, indo até por volta das 18h.",
     "Recomendamos chegar ao Kokugikan no início da tarde, por volta das 14h30, a tempo da cerimônia de entrada da segunda divisão e para garantir um bom lugar antes do início da divisão principal.",
   ],
   manha: {
-    regiao: {
-      nome: "Kuramae & Asakusabashi",
-      descricao:
-        "Dois bairros vizinhos às margens do Rio Sumida, ligados por poucos quarteirões ao longo da Edo-dori. Kuramae, antigo distrito de depósitos de arroz do xogunato, hoje reúne ateliês e lojas de design autoral — ganhou o apelido de \"Brooklyn de Tóquio\". Asakusabashi, historicamente ligado à fabricação de bonecas tradicionais e fogos de artifício, ainda concentra atacadistas centenários do ramo.",
-    },
     atracaoPrincipal: "09:30 — Fan Fun Street (Bandai)",
     atracaoPrincipalImagem: "/images/fanfunstreet.jpg",
+    atracaoPrincipalCompacta: true,
     pois: [],
-    subAtracoes: [
-      {
-        label: "10:15",
-        titulo: "Caminhada por Kuramae",
-        descricao:
-          "Trecho a pé pela Edo-dori, coração de Kuramae — bairro de antigos depósitos de arroz do xogunato, hoje tomado por ateliês, cafés e lojas de design autoral japonês.",
-      },
-      {
-        label: "11:00",
-        titulo: "Kakimori ⭐",
-        imagem: "/images/kakimori.webp",
-        descricao:
-          "Papelaria de cadernos sob medida — escolha capa, papel, argolas e fecho, e veja sua caderneta ser montada na hora, em até uma hora. Aberta em 2010, é um clássico de Kuramae para quem gosta de escrever à mão.",
-      },
-      {
-        label: "Kuramae",
-        opcional: true,
-        titulo: "CAMERA",
-        imagem: "/images/camera-shop.webp",
-        descricao:
-          "Café e ateliê do casal Tamura, a poucos passos da Kakimori — une a marca de couro artesanal numeri aos doces da Miwako Bake, num pequeno refúgio tranquilo para uma pausa com café e sobremesa.",
-      },
-      {
-        label: "Kuramae",
-        opcional: true,
-        titulo: "MAITO",
-        imagem: "/images/maito.webp",
-        descricao:
-          "Marca de tingimento natural e malharia fundada por Maito Komuro — peças e acessórios tingidos à mão em tons suaves, técnica aprendida ainda na infância na oficina da família.",
-      },
-      {
-        label: "11:35",
-        titulo: "KONCENT ⭐",
-        imagem: "/images/koncent.jpg",
-        descricao:
-          "Loja-conceito da h concept, referência em design de objetos do dia a dia com um toque de humor. Funciona num antigo depósito de brinquedos reformado, com pé-direito alto e passarela — uma vitrine viva do design japonês contemporâneo.",
-      },
-      {
-        label: "12:00",
-        titulo: "proto ⭐",
-        imagem: "/images/proto.jpg",
-        descricao:
-          "Pequena loja de cerâmica e objetos autorais de artesãos independentes japoneses, com curadoria pessoal do dono — um contraponto mais intimista ao design industrial da KONCENT.",
-      },
-      {
-        label: "12:25",
-        titulo: "IRODORI TABLE ⭐ · Cerâmica",
-        descricao:
-          "Galeria-loja dedicada à louça de mesa japonesa, reunindo peças de ceramistas de todo o país sob o conceito de \"colorir o cotidiano\" — taças, pratos e objetos de mesa com apoio de consultoria especializada em table setting.",
-      },
-      {
-        label: "12:50",
-        titulo: "Caminhada por Asakusabashi",
-        descricao:
-          "Trecho a pé até Asakusabashi, bairro historicamente ligado à fabricação de bonecas tradicionais e fogos de artifício — ainda concentra atacadistas centenários do ramo às margens do Rio Kanda.",
-      },
-      {
-        label: "Kojima",
-        opcional: true,
-        titulo: "Carmine",
-        imagem: "/images/carmine.webp",
-        descricao:
-          "Ateliê de acessórios de couro coloridos e cheios de personalidade, com motivos de animais — peças feitas em Tóquio por duas designers, já vendidas até em lojas de museus de Nova York. Numa vielinha tranquila a caminho de Asakusabashi.",
-      },
-      {
-        label: "13:00",
-        titulo: "Yoshitoku",
-        imagem: "/images/yoshitoku.jpg",
-        descricao:
-          "Fundada em 1711, é a mais antiga fabricante de bonecas tradicionais de Tóquio, hoje na 12ª geração da família. Funciona como loja e pequeno museu, com peças que contam a história das bonecas Hina e Gogatsu Ningyo.",
-      },
-      {
-        label: "13:30",
-        titulo: "Ryogoku",
-        descricao:
-          "Chegada a Ryogoku, bairro às margens do Rio Sumida e sede do sumô em Tóquio — pausa para o almoço antes de seguir para o Kokugikan.",
-      },
-    ],
     gastronomia: {
-      subtitulo: "Almoço · 13:30–14:20",
+      subtitulo: "Restante da manhã e almoço em definição",
       itens: [
         {
-          nome: "Almoço em Ryogoku",
+          nome: "Kuramae, Asakusabashi e almoço",
           descricao:
-            "Janela reservada entre a caminhada e a entrada no Kokugikan — restaurante a definir na versão final do roteiro.",
+            "Programação a confirmar — a maior parte das lojas da região (Kakimori, KONCENT, MAITO, CAMERA, IRODORI TABLE) fecha às segundas-feiras, e 10/05/2027 cai numa segunda comum, sem feriado.",
         },
       ],
     },
@@ -1155,9 +1075,11 @@ function PeriodBlock({
 
       <p className="mb-2 text-xs text-black/40">Atração Principal</p>
       <div
-        className={`relative mb-5 aspect-[4/3] overflow-hidden rounded-2xl sm:aspect-[16/10] ${
-          period.atracaoPrincipalImagem ? "" : "border-2 border-[#2f5aa8]"
-        }`}
+        className={`relative mb-5 overflow-hidden rounded-2xl ${
+          period.atracaoPrincipalCompacta
+            ? "mx-auto aspect-[3/4] max-w-[280px]"
+            : "aspect-[4/3] sm:aspect-[16/10]"
+        } ${period.atracaoPrincipalImagem ? "" : "border-2 border-[#2f5aa8]"}`}
       >
         {period.atracaoPrincipalImagem ? (
           <>
@@ -1174,7 +1096,11 @@ function PeriodBlock({
             />
             <div className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-black/85 via-black/35 to-transparent" />
             <h3
-              className={`${displayClassName} absolute inset-x-5 bottom-4 text-2xl font-medium leading-snug text-white md:text-3xl`}
+              className={`${displayClassName} absolute inset-x-5 bottom-4 font-medium leading-snug text-white ${
+                period.atracaoPrincipalCompacta
+                  ? "text-lg md:text-xl"
+                  : "text-2xl md:text-3xl"
+              }`}
             >
               {period.atracaoPrincipal}
             </h3>
@@ -1190,14 +1116,18 @@ function PeriodBlock({
         )}
       </div>
 
-      <p className="mb-5 text-xs text-black/40">
-        Pontos de interesse propostos para o período
-      </p>
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-        {period.pois.map((poi, index) => (
-          <PoiCard key={poi.title + index} index={index} poi={poi} />
-        ))}
-      </div>
+      {period.pois.length > 0 && (
+        <>
+          <p className="mb-5 text-xs text-black/40">
+            Pontos de interesse propostos para o período
+          </p>
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+            {period.pois.map((poi, index) => (
+              <PoiCard key={poi.title + index} index={index} poi={poi} />
+            ))}
+          </div>
+        </>
+      )}
 
       {period.gradeHorarios && (
         <GradeHorariosBlock grade={period.gradeHorarios} />
@@ -1275,8 +1205,14 @@ function SubAtracaoBlock({
   displayClassName: string;
 }) {
   return (
-    <div className="mt-8 border-t border-black/10 pt-8">
-      <div className="mb-4 flex items-center gap-2.5">
+    <div className="mt-6">
+      <div className="mb-4 flex justify-center">
+        <span className="flex h-8 w-8 items-center justify-center rounded-full border border-black/10 bg-black/[0.02] text-black/30">
+          <IconArrowDown className="h-4 w-4" />
+        </span>
+      </div>
+
+      <div className="mb-4 flex items-center justify-center gap-2.5">
         <span className="h-2 w-2 rounded-full bg-gradient-to-r from-[#E94332] via-[#D96A2E] to-[#C9A03A]" />
         <span className="text-xs font-bold uppercase tracking-[0.25em] text-black/40">
           {subAtracao.label ?? "Noite"}
@@ -1289,9 +1225,11 @@ function SubAtracaoBlock({
       </div>
 
       <div
-        className={`relative mb-5 aspect-[4/3] overflow-hidden rounded-2xl sm:aspect-[16/10] ${
-          subAtracao.imagem ? "" : "border-2 border-[#2f5aa8]"
-        }`}
+        className={`relative mb-5 overflow-hidden rounded-2xl ${
+          subAtracao.compacta
+            ? "mx-auto aspect-[3/4] max-w-[240px]"
+            : "aspect-[4/3] sm:aspect-[16/10]"
+        } ${subAtracao.imagem ? "" : "border-2 border-[#2f5aa8]"}`}
       >
         {subAtracao.imagem ? (
           <>
@@ -1308,7 +1246,9 @@ function SubAtracaoBlock({
             />
             <div className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-black/85 via-black/35 to-transparent" />
             <h3
-              className={`${displayClassName} absolute inset-x-5 bottom-4 text-2xl font-medium leading-snug text-white md:text-3xl`}
+              className={`${displayClassName} absolute inset-x-5 bottom-4 font-medium leading-snug text-white ${
+                subAtracao.compacta ? "text-lg md:text-xl" : "text-2xl md:text-3xl"
+              }`}
             >
               {subAtracao.titulo}
             </h3>
@@ -1325,7 +1265,11 @@ function SubAtracaoBlock({
       </div>
 
       {subAtracao.descricao && (
-        <p className="mb-5 text-sm leading-6 text-black/60">
+        <p
+          className={`mb-5 leading-6 text-black/60 ${
+            subAtracao.compacta ? "mx-auto max-w-[280px] text-center text-xs" : "text-sm"
+          }`}
+        >
           {subAtracao.descricao}
         </p>
       )}
@@ -1365,6 +1309,15 @@ function IconPlane({ className }: { className?: string }) {
     <svg {...iconProps(className)}>
       <path d="M22 2 11 13" />
       <path d="M22 2 15 22l-4-9-9-4 20-7z" />
+    </svg>
+  );
+}
+
+function IconArrowDown({ className }: { className?: string }) {
+  return (
+    <svg {...iconProps(className)}>
+      <line x1="12" y1="5" x2="12" y2="20" />
+      <path d="M6 14l6 6 6-6" />
     </svg>
   );
 }
