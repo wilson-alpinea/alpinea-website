@@ -1279,9 +1279,9 @@ function SubAtracaoBlock({
       </div>
 
       {subAtracao.compacta ? (
-        <div className="mx-auto flex max-w-md items-center gap-4 rounded-2xl border border-black/10 bg-black/[0.02] p-3">
+        <div className="mx-auto flex max-w-lg items-center gap-4 rounded-2xl border border-black/10 bg-black/[0.02] p-3">
           <div
-            className={`relative aspect-square h-24 w-24 shrink-0 overflow-hidden rounded-xl ${
+            className={`relative aspect-square h-36 w-36 shrink-0 overflow-hidden rounded-xl sm:h-40 sm:w-40 ${
               subAtracao.imagem ? "" : "border-2 border-[#2f5aa8]"
             }`}
           >
