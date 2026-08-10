@@ -737,10 +737,12 @@ const DAY_7: DayContent = {
           "Gyokueido Hikokuro, casa de doces japoneses fundada em 1576 em Kyoto, com filial em Nihonbashi desde 1954. Marcas registradas: o torayaki, massa fofa recheada com feijão azuki graúdo de Hokkaido, e a warabi mochi, elástica e macia, finalizada com kinako (farinha de soja torrada).",
       },
       {
-        label: "10:50–11:15",
-        titulo: "Caminhada pela Amazake Yokocho",
+        label: "11:00",
+        titulo: "Edo Rakugo Karakuri Yagura",
+        imagem: "/images/ningyocho.png",
+        compacta: true,
         descricao:
-          "Tempo livre para passear com calma pela viela, espiar outras lojinhas de doces e artesanato e sentir o clima shitamachi do bairro.",
+          "Torre-relógio karakuri ao lado do Suitengu, próxima a Nihonbashi-Ningyocho 2-chome — a cada hora cheia (das 11h às 19h), as cortinas se abrem e um boneco contador de rakugo narra, por 2 a 3 minutos, a história de como o bairro ganhou seu nome. A outra torre de Ningyocho, com tema dos machibikeshi (bombeiros de Edo), está temporariamente removida por causa das obras do metrô — por isso não entra como parada garantida.",
       },
       {
         label: "11:20–11:45",
@@ -749,18 +751,6 @@ const DAY_7: DayContent = {
         compacta: true,
         descricao:
           "Santuário xintoísta fundado em 1818 pelo senhor feudal de Kurume — referência nacional em orações por parto seguro e proteção infantil. A tradição nasceu de uma faixa de barriga feita com o cordão do sino do templo, usada por uma gestante no período Edo. A estátua Kodakara Inu, de uma cadela com seu filhote, é o símbolo do santuário.",
-      },
-      {
-        label: "11:50–12:10",
-        titulo: "Tempo livre em Ningyocho",
-        descricao:
-          "Últimos minutos livres para compras ou uma última parada antes de seguir para Ryogoku.",
-      },
-      {
-        label: "12:15",
-        titulo: "Saída para Ryogoku",
-        descricao:
-          "Deslocamento até Ryogoku, a caminho do almoço e do Kokugikan.",
       },
     ],
     gastronomia: {
