@@ -688,23 +688,88 @@ const DAY_7: DayContent = {
   city: "Tokyo",
   date: "10 Mai",
   contexto: [
-    "Começamos a manhã em Fan Fun Street, na sede da Bandai — o resto da manhã (Kuramae, Asakusabashi e o almoço) ainda está em definição, já que boa parte das lojas dessa região fecha às segundas-feiras.",
+    "Saímos do hotel em Kyobashi às 9h30, rumo a Ningyocho — bairro do shitamachi (baixa cidade) de Tóquio que preserva o traçado de ruas mais antigo da região central, já que escapou quase intacto do Grande Terremoto de 1923 e dos bombardeios da Segunda Guerra.",
     "O dia 10 de maio é um dos dias do Grand Sumo Tournament de Tóquio em maio de 2027 (torneio completo de 9 a 23 de maio) — a venda dos ingressos para o torneio começa dia 10 de abril de 2027.",
     "O ingresso vale para o dia inteiro no Kokugikan, em Ryogoku: as lutas das categorias inferiores começam já às 8h40, mas o grande destaque — a cerimônia de entrada e as lutas da divisão principal (Makuuchi) — só acontece a partir das 15h45, indo até por volta das 18h.",
     "Recomendamos chegar ao Kokugikan no início da tarde, por volta das 14h30, a tempo da cerimônia de entrada da segunda divisão e para garantir um bom lugar antes do início da divisão principal.",
   ],
   manha: {
-    atracaoPrincipal: "09:30 — Fan Fun Street (Bandai)",
-    atracaoPrincipalImagem: "/images/fanfunstreet.jpg",
+    regiao: {
+      nome: "Ningyocho",
+      descricao:
+        "Bairro do shitamachi de Tóquio, erguido sobre um brejo aterrado no início do período Edo. Ganhou o apelido de \"cidade das bonecas\" por abrigar teatros de kabuki e bunraku e os artesãos que faziam as bonecas usadas nos espetáculos — a produção migrou para Asakusa ainda no século 19, mas o nome ficou.",
+    },
+    atracaoPrincipal: "09:45 — Chegada a Ningyocho",
+    atracaoPrincipalImagem: "/images/ningyocho.png",
     atracaoPrincipalCompacta: true,
     pois: [],
+    subAtracoes: [
+      {
+        label: "09:50",
+        titulo: "Shigemori Eishindo",
+        imagem: "/images/ningyoyaki.jpg",
+        compacta: true,
+        descricao:
+          "Fundada em 1917, é a casa mais tradicional de ningyoyaki de Ningyocho — bolinhos fofos em formato de rosto ou dos sete deuses da sorte, recheados de pasta de feijão azuki. Vende em média 3 mil unidades por dia, chegando a 10 mil em dias de pico.",
+      },
+      {
+        label: "10:10",
+        titulo: "Início da Amazake Yokocho",
+        imagem: "/images/amazake-yokocho.webp",
+        compacta: true,
+        descricao:
+          "Viela de cerca de 400 metros que leva até o Teatro Meiji-za, batizada em homenagem a uma loja de amazake (saquê doce) que ficava na entrada, no início da era Meiji. Sobreviveu ao Grande Terremoto de Kanto e reúne até hoje doçarias, izakayas e lojas de artesanato tradicionais.",
+      },
+      {
+        label: "10:15",
+        titulo: "Toritada",
+        imagem: "/images/toritada.png",
+        compacta: true,
+        descricao:
+          "Avícola fundada em 1911, tradicional em Amazake Yokocho — trabalha com as três principais raças de frango do Japão e pato fresco. Seu tamagoyaki (omelete enrolada) é o item mais pedido, famoso por durar bem e virar lembrancinha.",
+      },
+      {
+        label: "10:35",
+        titulo: "Hikokuro",
+        imagem: "/images/gyokueido-hikokuro.png",
+        compacta: true,
+        descricao:
+          "Gyokueido Hikokuro, casa de doces japoneses fundada em 1576 em Kyoto, com filial em Nihonbashi desde 1954. Marcas registradas: o torayaki, massa fofa recheada com feijão azuki graúdo de Hokkaido, e a warabi mochi, elástica e macia, finalizada com kinako (farinha de soja torrada).",
+      },
+      {
+        label: "10:50–11:15",
+        titulo: "Caminhada pela Amazake Yokocho",
+        descricao:
+          "Tempo livre para passear com calma pela viela, espiar outras lojinhas de doces e artesanato e sentir o clima shitamachi do bairro.",
+      },
+      {
+        label: "11:20–11:45",
+        titulo: "Suitengu",
+        imagem: "/images/suitengu.webp",
+        compacta: true,
+        descricao:
+          "Santuário xintoísta fundado em 1818 pelo senhor feudal de Kurume — referência nacional em orações por parto seguro e proteção infantil. A tradição nasceu de uma faixa de barriga feita com o cordão do sino do templo, usada por uma gestante no período Edo. A estátua Kodakara Inu, de uma cadela com seu filhote, é o símbolo do santuário.",
+      },
+      {
+        label: "11:50–12:10",
+        titulo: "Tempo livre em Ningyocho",
+        descricao:
+          "Últimos minutos livres para compras ou uma última parada antes de seguir para Ryogoku.",
+      },
+      {
+        label: "12:15",
+        titulo: "Saída para Ryogoku",
+        descricao:
+          "Deslocamento até Ryogoku, a caminho do almoço e do Kokugikan.",
+      },
+    ],
     gastronomia: {
-      subtitulo: "Restante da manhã e almoço em definição",
+      subtitulo: "Almoço · 12:30–13:45",
       itens: [
         {
-          nome: "Kuramae, Asakusabashi e almoço",
+          nome: "Almoço em Ryogoku",
           descricao:
-            "Programação a confirmar — a maior parte das lojas da região (Kakimori, KONCENT, MAITO, CAMERA, IRODORI TABLE) fecha às segundas-feiras, e 10/05/2027 cai numa segunda comum, sem feriado.",
+            "Janela reservada antes da entrada no Kokugikan — restaurante a definir na versão final do roteiro.",
         },
       ],
     },
