@@ -701,7 +701,6 @@ const DAY_7: DayContent = {
     },
     atracaoPrincipal: "09:45 — Chegada a Ningyocho",
     atracaoPrincipalImagem: "/images/ningyocho.png",
-    atracaoPrincipalCompacta: true,
     pois: [],
     subAtracoes: [
       {
@@ -757,9 +756,9 @@ const DAY_7: DayContent = {
       subtitulo: "Almoço · 12:30–13:45",
       itens: [
         {
-          nome: "Almoço em Ryogoku",
+          nome: "Almoço em Ningyocho",
           descricao:
-            "Janela reservada antes da entrada no Kokugikan — restaurante a definir na versão final do roteiro.",
+            "Janela reservada logo após o Suitengu, antes do deslocamento para o Kokugikan — restaurante a definir na versão final do roteiro.",
         },
       ],
     },
@@ -1279,54 +1278,86 @@ function SubAtracaoBlock({
         )}
       </div>
 
-      <div
-        className={`relative mb-5 overflow-hidden rounded-2xl ${
-          subAtracao.compacta
-            ? "mx-auto aspect-[3/4] max-w-[240px]"
-            : "aspect-[4/3] sm:aspect-[16/10]"
-        } ${subAtracao.imagem ? "" : "border-2 border-[#2f5aa8]"}`}
-      >
-        {subAtracao.imagem ? (
-          <>
-            <img
-              src={subAtracao.imagem}
-              alt={subAtracao.titulo}
-              className={`absolute inset-0 h-full w-full object-cover ${
-                subAtracao.foco === "bottom"
-                  ? "object-bottom"
-                  : subAtracao.foco === "center"
-                    ? "object-center"
-                    : "object-top"
-              }`}
-            />
-            <div className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-black/85 via-black/35 to-transparent" />
-            <h3
-              className={`${displayClassName} absolute inset-x-5 bottom-4 font-medium leading-snug text-white ${
-                subAtracao.compacta ? "text-lg md:text-xl" : "text-2xl md:text-3xl"
-              }`}
-            >
-              {subAtracao.titulo}
-            </h3>
-          </>
-        ) : (
-          <div className="flex h-full items-center justify-center bg-[#eef3fb] px-5">
-            <h3
-              className={`${displayClassName} text-2xl font-medium text-[#2f5aa8] md:text-3xl`}
-            >
-              {subAtracao.titulo}
-            </h3>
+      {subAtracao.compacta ? (
+        <div className="mx-auto flex max-w-md items-center gap-4 rounded-2xl border border-black/10 bg-black/[0.02] p-3">
+          <div
+            className={`relative aspect-square h-24 w-24 shrink-0 overflow-hidden rounded-xl ${
+              subAtracao.imagem ? "" : "border-2 border-[#2f5aa8]"
+            }`}
+          >
+            {subAtracao.imagem ? (
+              <img
+                src={subAtracao.imagem}
+                alt={subAtracao.titulo}
+                className={`absolute inset-0 h-full w-full object-cover ${
+                  subAtracao.foco === "bottom"
+                    ? "object-bottom"
+                    : subAtracao.foco === "center"
+                      ? "object-center"
+                      : "object-top"
+                }`}
+              />
+            ) : (
+              <div className="flex h-full items-center justify-center bg-[#eef3fb]" />
+            )}
           </div>
-        )}
-      </div>
+          <div className="min-w-0 flex-1">
+            <h3
+              className={`${displayClassName} text-base font-medium leading-snug text-black md:text-lg`}
+            >
+              {subAtracao.titulo}
+            </h3>
+            {subAtracao.descricao && (
+              <p className="mt-1 text-xs leading-5 text-black/60">
+                {subAtracao.descricao}
+              </p>
+            )}
+          </div>
+        </div>
+      ) : (
+        <>
+          <div
+            className={`relative mb-5 aspect-[4/3] overflow-hidden rounded-2xl sm:aspect-[16/10] ${
+              subAtracao.imagem ? "" : "border-2 border-[#2f5aa8]"
+            }`}
+          >
+            {subAtracao.imagem ? (
+              <>
+                <img
+                  src={subAtracao.imagem}
+                  alt={subAtracao.titulo}
+                  className={`absolute inset-0 h-full w-full object-cover ${
+                    subAtracao.foco === "bottom"
+                      ? "object-bottom"
+                      : subAtracao.foco === "center"
+                        ? "object-center"
+                        : "object-top"
+                  }`}
+                />
+                <div className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-black/85 via-black/35 to-transparent" />
+                <h3
+                  className={`${displayClassName} absolute inset-x-5 bottom-4 text-2xl font-medium leading-snug text-white md:text-3xl`}
+                >
+                  {subAtracao.titulo}
+                </h3>
+              </>
+            ) : (
+              <div className="flex h-full items-center justify-center bg-[#eef3fb] px-5">
+                <h3
+                  className={`${displayClassName} text-2xl font-medium text-[#2f5aa8] md:text-3xl`}
+                >
+                  {subAtracao.titulo}
+                </h3>
+              </div>
+            )}
+          </div>
 
-      {subAtracao.descricao && (
-        <p
-          className={`mb-5 leading-6 text-black/60 ${
-            subAtracao.compacta ? "mx-auto max-w-[280px] text-center text-xs" : "text-sm"
-          }`}
-        >
-          {subAtracao.descricao}
-        </p>
+          {subAtracao.descricao && (
+            <p className="mb-5 text-sm leading-6 text-black/60">
+              {subAtracao.descricao}
+            </p>
+          )}
+        </>
       )}
 
       {subAtracao.pois && subAtracao.pois.length > 0 && (
