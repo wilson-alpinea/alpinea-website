@@ -686,56 +686,105 @@ const DAY_7: DayContent = {
   city: "Tokyo",
   date: "10 Mai",
   contexto: [
-    "Começamos a manhã no Museu Edo-Tokyo, que reabriu em 31 de março de 2026 após 4 anos fechado para uma grande reforma — fica literalmente do outro lado da rua do Kokugikan, então dá pra emendar direto com o sumô.",
+    "Começamos a manhã em Kuramae e Asakusabashi, bairros vizinhos conhecidos pelo artesanato e design autoral japonês — uma sequência de pequenas lojas e ateliês a poucos passos um do outro, terminando em Ryogoku para o almoço antes do sumô.",
     "O dia 10 de maio é um dos dias do Grand Sumo Tournament de Tóquio em maio de 2027 (torneio completo de 9 a 23 de maio) — a venda dos ingressos para o torneio começa dia 10 de abril de 2027.",
     "O ingresso vale para o dia inteiro no Kokugikan, em Ryogoku: as lutas das categorias inferiores começam já às 8h40, mas o grande destaque — a cerimônia de entrada e as lutas da divisão principal (Makuuchi) — só acontece a partir das 15h45, indo até por volta das 18h.",
     "Recomendamos chegar ao Kokugikan no início da tarde, por volta das 14h30, a tempo da cerimônia de entrada da segunda divisão e para garantir um bom lugar antes do início da divisão principal.",
   ],
   manha: {
     regiao: {
-      nome: "Ryogoku",
+      nome: "Kuramae & Asakusabashi",
       descricao:
-        "Bairro às margens do Rio Sumida, tradicionalmente ligado ao comércio da era Edo — hoje reúne o Museu Edo-Tokyo e o estádio nacional de sumô Kokugikan, os dois pontos mais importantes do bairro.",
+        "Dois bairros vizinhos às margens do Rio Sumida, ligados por poucos quarteirões ao longo da Edo-dori. Kuramae, antigo distrito de depósitos de arroz do xogunato, hoje reúne ateliês e lojas de design autoral — ganhou o apelido de \"Brooklyn de Tóquio\". Asakusabashi, historicamente ligado à fabricação de bonecas tradicionais e fogos de artifício, ainda concentra atacadistas centenários do ramo.",
     },
-    atracaoPrincipal: "Museu Edo-Tokyo",
-    atracaoPrincipalImagem: "/images/edo-tokyo-museum.png",
-    atracaoPrincipalFoco: "center",
-    pois: [
+    atracaoPrincipal: "09:30 — Fan Fun Street (Bandai)",
+    atracaoPrincipalImagem: "/images/fanfunstreet.jpg",
+    pois: [],
+    subAtracoes: [
       {
-        title: "Réplica da Ponte Nihonbashi",
-        description:
-          "Reprodução em tamanho real da ponte que marcava o ponto de partida das principais estradas do Japão no período Edo — uma das peças centrais da galeria permanente.",
-        rating: 5,
+        label: "10:15",
+        titulo: "Caminhada por Kuramae",
+        descricao:
+          "Trecho a pé pela Edo-dori, coração de Kuramae — bairro de antigos depósitos de arroz do xogunato, hoje tomado por ateliês, cafés e lojas de design autoral japonês.",
       },
       {
-        title: "Réplica da Relojoaria Hattori",
-        description:
-          "Reconstrução em tamanho real da loja de relógios Hattori, símbolo da Ginza da era Meiji (1868–1912).",
-        rating: 4,
+        label: "11:00",
+        titulo: "Kakimori ⭐",
+        imagem: "/images/kakimori.webp",
+        descricao:
+          "Papelaria de cadernos sob medida — escolha capa, papel, argolas e fecho, e veja sua caderneta ser montada na hora, em até uma hora. Aberta em 2010, é um clássico de Kuramae para quem gosta de escrever à mão.",
       },
       {
-        title: "Telões de Edo e Tóquio",
-        description:
-          "Grandes telões que recriam o céu da antiga Edo e da Tóquio contemporânea sobre as maquetes e reconstruções em escala real do museu.",
-        rating: 3,
+        label: "Kuramae",
+        opcional: true,
+        titulo: "CAMERA",
+        imagem: "/images/camera-shop.webp",
+        descricao:
+          "Café e ateliê do casal Tamura, a poucos passos da Kakimori — une a marca de couro artesanal numeri aos doces da Miwako Bake, num pequeno refúgio tranquilo para uma pausa com café e sobremesa.",
       },
       {
-        title: "Comércio de Rua de Edo",
-        description:
-          "Barracas reconstituídas do comércio de rua do período Edo, incluindo um vendedor de asagao (campainha-japonesa) e uma barraca de tempura.",
-        rating: 3,
+        label: "Kuramae",
+        opcional: true,
+        titulo: "MAITO",
+        imagem: "/images/maito.webp",
+        descricao:
+          "Marca de tingimento natural e malharia fundada por Maito Komuro — peças e acessórios tingidos à mão em tons suaves, técnica aprendida ainda na infância na oficina da família.",
+      },
+      {
+        label: "11:35",
+        titulo: "KONCENT ⭐",
+        imagem: "/images/koncent.jpg",
+        descricao:
+          "Loja-conceito da h concept, referência em design de objetos do dia a dia com um toque de humor. Funciona num antigo depósito de brinquedos reformado, com pé-direito alto e passarela — uma vitrine viva do design japonês contemporâneo.",
+      },
+      {
+        label: "12:00",
+        titulo: "proto ⭐",
+        imagem: "/images/proto.jpg",
+        descricao:
+          "Pequena loja de cerâmica e objetos autorais de artesãos independentes japoneses, com curadoria pessoal do dono — um contraponto mais intimista ao design industrial da KONCENT.",
+      },
+      {
+        label: "12:25",
+        titulo: "IRODORI TABLE ⭐ · Cerâmica",
+        descricao:
+          "Galeria-loja dedicada à louça de mesa japonesa, reunindo peças de ceramistas de todo o país sob o conceito de \"colorir o cotidiano\" — taças, pratos e objetos de mesa com apoio de consultoria especializada em table setting.",
+      },
+      {
+        label: "12:50",
+        titulo: "Caminhada por Asakusabashi",
+        descricao:
+          "Trecho a pé até Asakusabashi, bairro historicamente ligado à fabricação de bonecas tradicionais e fogos de artifício — ainda concentra atacadistas centenários do ramo às margens do Rio Kanda.",
+      },
+      {
+        label: "Kojima",
+        opcional: true,
+        titulo: "Carmine",
+        imagem: "/images/carmine.webp",
+        descricao:
+          "Ateliê de acessórios de couro coloridos e cheios de personalidade, com motivos de animais — peças feitas em Tóquio por duas designers, já vendidas até em lojas de museus de Nova York. Numa vielinha tranquila a caminho de Asakusabashi.",
+      },
+      {
+        label: "13:00",
+        titulo: "Yoshitoku",
+        imagem: "/images/yoshitoku.jpg",
+        descricao:
+          "Fundada em 1711, é a mais antiga fabricante de bonecas tradicionais de Tóquio, hoje na 12ª geração da família. Funciona como loja e pequeno museu, com peças que contam a história das bonecas Hina e Gogatsu Ningyo.",
+      },
+      {
+        label: "13:30",
+        titulo: "Ryogoku",
+        descricao:
+          "Chegada a Ryogoku, bairro às margens do Rio Sumida e sede do sumô em Tóquio — pausa para o almoço antes de seguir para o Kokugikan.",
       },
     ],
     gastronomia: {
+      subtitulo: "Almoço · 13:30–14:20",
       itens: [
         {
-          nome: "Ippuku Cafe",
+          nome: "Almoço em Ryogoku",
           descricao:
-            "Cafeteria dentro do próprio museu — doces japoneses, matcha e sorvete soft, boa opção para uma pausa antes de seguir para o Kokugikan.",
-        },
-        {
-          nome: "Saint Etoile Ryogoku",
-          descricao: "Padaria e cafeteria bem avaliada, na frente do museu.",
+            "Janela reservada entre a caminhada e a entrada no Kokugikan — restaurante a definir na versão final do roteiro.",
         },
       ],
     },
@@ -1232,6 +1281,11 @@ function SubAtracaoBlock({
         <span className="text-xs font-bold uppercase tracking-[0.25em] text-black/40">
           {subAtracao.label ?? "Noite"}
         </span>
+        {subAtracao.opcional && (
+          <span className="rounded-full border border-amber-300/70 bg-amber-50 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-[0.15em] text-amber-700">
+            Opcional
+          </span>
+        )}
       </div>
 
       <div
