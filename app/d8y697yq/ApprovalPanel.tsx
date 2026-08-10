@@ -1663,29 +1663,28 @@ type HotelCidade = {
 
 const HOTEIS: HotelCidade[] = [
   {
-    cidade: "Tokyo",
+    cidade: "Tokyo 1",
     opcoes: [
       {
-        nome: "remm Tokyo Kyobashi",
-        notaAlpinea: 98,
-        perfil: "Melhor localização — a 10 min a pé da Tokyo Station",
-        inauguracao: "2019",
-        inauguracaoNota: "Abril",
-        reforma: "Não",
-        quarto: "21 m² (twin)",
-        preco: "¥18–33 mil",
+        nome: "lyf Ginza Tokyo",
+        notaAlpinea: 95,
+        perfil: "Conceito lifestyle/coliving, a poucos passos de Ginza e Tokyo Station",
+        inauguracao: "2023",
+        inauguracaoNota: "Novembro — reforma completa do antigo an/other TOKYO",
+        reforma: "Sim",
+        quarto: "13 m² (studio duplo)",
+        preco: "¥15–25 mil",
         bairro: "Kyobashi",
-        estacao: "Kyobashi (Ginza Line, saída 6)",
-        distanciaEstacao: "1 min (50 m)",
-        distanciaTokyoStation: "10 min a pé",
+        estacao: "Kyobashi (Ginza Line) / Takaracho",
+        distanciaEstacao: "~3 min a pé",
+        distanciaTokyoStation: "~12 min a pé",
         ofuro: false,
         restaurante: true,
-        academia: false,
+        academia: true,
         piscina: false,
-        konbini: "7-Eleven (térreo)",
-        site: "https://www.hankyu-hotel.com/en/hotel/remm/tokyo-kyobashi",
-        avaliacaoBooking: 8.6,
-        avaliacaoTrivago: 8.8,
+        konbini: "Diversos nas proximidades",
+        site: "https://www.discoverasr.com/en/lyf/japan/lyf-ginza-tokyo",
+        avaliacaoBooking: 8.7,
       },
     ],
   },
@@ -1711,6 +1710,33 @@ const HOTEIS: HotelCidade[] = [
         site: "https://www.daiwaroynet.jp/en/kyoto-ekimae/",
         avaliacaoBooking: 8.7,
         avaliacaoTrivago: 9.0,
+      },
+    ],
+  },
+  {
+    cidade: "Tokyo 2",
+    opcoes: [
+      {
+        nome: "remm Tokyo Kyobashi",
+        notaAlpinea: 98,
+        perfil: "Melhor localização — a 10 min a pé da Tokyo Station",
+        inauguracao: "2019",
+        inauguracaoNota: "Abril",
+        reforma: "Não",
+        quarto: "21 m² (twin)",
+        preco: "¥18–33 mil",
+        bairro: "Kyobashi",
+        estacao: "Kyobashi (Ginza Line, saída 6)",
+        distanciaEstacao: "1 min (50 m)",
+        distanciaTokyoStation: "10 min a pé",
+        ofuro: false,
+        restaurante: true,
+        academia: false,
+        piscina: false,
+        konbini: "7-Eleven (térreo)",
+        site: "https://www.hankyu-hotel.com/en/hotel/remm/tokyo-kyobashi",
+        avaliacaoBooking: 8.6,
+        avaliacaoTrivago: 8.8,
       },
     ],
   },
@@ -2221,7 +2247,7 @@ export function ApprovalPanel({
         </p>
         <div className="flex flex-wrap items-start justify-center gap-x-5 gap-y-5 px-6 pt-3 sm:gap-x-7 sm:px-10">
           {DAYS.map((d, index) => {
-            const isHotelSlot = index >= 0 && index <= 1;
+            const isHotelSlot = index >= 0 && index <= 2;
 
             if (!isHotelSlot) {
               return (
