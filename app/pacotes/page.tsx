@@ -15,7 +15,7 @@ const display = Bodoni_Moda({
 export const metadata = {
   title: "Ajisai | Pacotes de Viagem para o Japão",
   description:
-    "Pacotes de viagem para o Japão com a curadoria Ajisai: Caravana (grupo fechado), Individual ou Pequenos Grupos e Pacotes Personalizados por hora. Monte seu carrinho e finalize direto no WhatsApp.",
+    "Pacotes de viagem para o Japão com a curadoria Ajisai: Caravana (grupo fechado), Individual ou Pequenos Grupos e Pacotes Personalizados sob medida. Monte seu carrinho e finalize direto no WhatsApp.",
 };
 
 // Preço-base de 7 dias usa como referência o valor do pacote sazonal
@@ -176,24 +176,24 @@ const pacotesIndividuais = [
 
 const divisoes = [
   {
-    numero: "01",
+    letra: "A",
     titulo: "Pacotes de Caravana",
     texto:
       "Para quem não deseja viajar somente com o próprio grupo. Saída em grupo fechado, data única, guia compartilhado do início ao fim.",
     href: "#pacotes",
   },
   {
-    numero: "02",
+    letra: "B",
     titulo: "Individual ou Pequenos Grupos",
     texto:
       "Para viajar só com quem você escolher. Datas flexíveis dentro da temporada e guia particular dedicado ao seu grupo.",
     href: "#individuais",
   },
   {
-    numero: "03",
+    letra: "C",
     titulo: "Pacotes Personalizados",
     texto:
-      "Viaje em qualquer data e pela quantidade de horas que preferir, com motorista e guia particular.",
+      "Viaje em qualquer data, com um roteiro sob medida e motorista e guia particular.",
     href: "#personalizado",
   },
 ];
@@ -221,12 +221,6 @@ export default function PacotesJapaoPage() {
 
             <div className="flex items-center gap-3 md:gap-5">
               <CartWidget />
-              <a
-                href="#contact"
-                className="hidden rounded-full border border-white/25 px-5 py-2 text-xs uppercase tracking-[0.25em] text-white/80 transition hover:border-white/60 hover:text-white md:inline-block"
-              >
-                Falar com a Ajisai
-              </a>
             </div>
           </div>
         </header>
@@ -268,21 +262,25 @@ export default function PacotesJapaoPage() {
         <section className="border-b border-white/10 bg-[#050505] px-6 py-14 md:px-16 md:py-20">
           <div className="mx-auto grid max-w-6xl gap-5 sm:grid-cols-3">
             {divisoes.map((item) => (
-              <a
-                key={item.numero}
-                href={item.href}
-                className="group flex flex-col rounded-2xl border border-white/10 bg-white/[0.02] p-6 text-left transition hover:border-white/25 hover:bg-white/[0.04] sm:rounded-[1.5rem] md:p-8"
-              >
-                <h2 className={`${display.className} text-xl font-medium text-white md:text-2xl`}>
-                  {item.titulo}
-                </h2>
-                <p className="mt-3 flex-1 text-sm font-light leading-6 text-white/55">
-                  {item.texto}
-                </p>
-                <span className="mt-4 inline-flex items-center gap-1.5 text-xs uppercase tracking-[0.2em] text-white/50 transition group-hover:text-white">
-                  Ver pacotes →
+              <div key={item.letra} className="flex flex-col items-center">
+                <span className="mb-4 flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-[#6ec3d9]/40 bg-[#6ec3d9]/10 text-base font-semibold text-[#6ec3d9]">
+                  {item.letra}
                 </span>
-              </a>
+                <a
+                  href={item.href}
+                  className="group flex w-full flex-col rounded-2xl border border-white/10 bg-white/[0.02] p-6 text-left shadow-[0_0_60px_-10px_rgba(37,99,235,0.45)] transition hover:border-white/25 hover:bg-white/[0.04] sm:rounded-[1.5rem] md:p-8"
+                >
+                  <h2 className={`${display.className} text-xl font-medium text-white md:text-2xl`}>
+                    {item.titulo}
+                  </h2>
+                  <p className="mt-3 flex-1 text-sm font-light leading-6 text-white/55">
+                    {item.texto}
+                  </p>
+                  <span className="mt-4 inline-flex items-center gap-1.5 text-xs uppercase tracking-[0.2em] text-white/50 transition group-hover:text-white">
+                    Ver pacotes →
+                  </span>
+                </a>
+              </div>
             ))}
           </div>
         </section>
@@ -293,26 +291,18 @@ export default function PacotesJapaoPage() {
           className="border-t border-white/10 bg-[#050505] px-5 py-12 md:bg-black md:px-16 md:py-24"
         >
           <div className="mx-auto max-w-7xl">
-            <div className="mb-10 max-w-2xl md:mb-14">
+            <div className="mb-10 md:mb-14">
               <h2 className={`${display.className} text-3xl font-medium leading-tight md:text-5xl`}>
                 Pacotes de Caravana
               </h2>
-              <p className="mt-4 text-sm font-light leading-6 text-white/55 md:text-base md:leading-7">
+              <p className="mt-4 max-w-2xl text-sm font-light leading-6 text-white/55 md:text-base md:leading-7">
                 Para quem não deseja viajar somente com o próprio grupo — saída
                 em grupo fechado, com guia bilíngue dedicado à caravana do
                 início ao fim.
               </p>
-              <ul className="mt-5 flex flex-wrap gap-x-6 gap-y-2">
-                {BENEFICIOS_CARAVANA.map((item) => (
-                  <li key={item} className="flex items-center gap-2 text-xs text-white/45 md:text-sm">
-                    <IconCheck className="h-3.5 w-3.5 shrink-0 text-[#b79ce6]" />
-                    {item}
-                  </li>
-                ))}
-              </ul>
             </div>
 
-            <div className="relative mb-8 aspect-[16/10] overflow-hidden rounded-2xl md:mb-10 md:rounded-[2rem]">
+            <div className="relative mb-6 aspect-[16/10] overflow-hidden rounded-2xl md:mb-8 md:rounded-[2rem]">
               <Image
                 src={BANNER_CARAVANA.src}
                 alt={BANNER_CARAVANA.alt}
@@ -323,8 +313,17 @@ export default function PacotesJapaoPage() {
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/5 to-transparent" />
             </div>
 
+            <ul className="mb-8 flex flex-wrap gap-x-8 gap-y-3 md:mb-10">
+              {BENEFICIOS_CARAVANA.map((item) => (
+                <li key={item} className="flex items-center gap-2.5 text-sm text-white/60 md:text-base">
+                  <IconCheck className="h-4 w-4 shrink-0 text-[#b79ce6]" />
+                  {item}
+                </li>
+              ))}
+            </ul>
+
             <div className="mb-8 flex justify-center md:mb-10 md:justify-start">
-              <span className="inline-flex max-w-full flex-wrap items-center justify-center gap-2 rounded-full border border-[#b79ce6]/50 bg-[#b79ce6]/15 px-5 py-2 text-center text-[11px] font-semibold uppercase tracking-[0.2em] text-[#b79ce6] md:text-xs">
+              <span className="inline-flex max-w-full flex-wrap items-center justify-center gap-2 rounded-full border border-[#6ec3d9]/50 bg-[#6ec3d9]/15 px-5 py-2 text-center text-[11px] font-semibold uppercase tracking-[0.2em] text-[#6ec3d9] md:text-xs">
                 <IconClock className="h-3.5 w-3.5 shrink-0" />
                 Datas e valores sujeitos a alteração conforme disponibilidade e câmbio
               </span>
@@ -358,26 +357,18 @@ export default function PacotesJapaoPage() {
           className="border-t border-white/10 bg-black px-5 py-12 md:px-16 md:py-24"
         >
           <div className="mx-auto max-w-7xl">
-            <div className="mb-10 max-w-2xl md:mb-14">
+            <div className="mb-10 md:mb-14">
               <h2 className={`${display.className} text-3xl font-medium leading-tight md:text-5xl`}>
                 Individual ou Pequenos Grupos
               </h2>
-              <p className="mt-4 text-sm font-light leading-6 text-white/55 md:text-base md:leading-7">
+              <p className="mt-4 max-w-2xl text-sm font-light leading-6 text-white/55 md:text-base md:leading-7">
                 Para viajar apenas com quem você escolher — datas flexíveis
                 dentro da temporada e guia particular dedicado só ao seu
                 grupo.
               </p>
-              <ul className="mt-5 flex flex-wrap gap-x-6 gap-y-2">
-                {BENEFICIOS_INDIVIDUAL.map((item) => (
-                  <li key={item} className="flex items-center gap-2 text-xs text-white/45 md:text-sm">
-                    <IconCheck className="h-3.5 w-3.5 shrink-0 text-[#b79ce6]" />
-                    {item}
-                  </li>
-                ))}
-              </ul>
             </div>
 
-            <div className="relative mb-8 aspect-[16/10] overflow-hidden rounded-2xl md:mb-10 md:rounded-[2rem]">
+            <div className="relative mb-6 aspect-[16/10] overflow-hidden rounded-2xl md:mb-8 md:rounded-[2rem]">
               <Image
                 src={BANNER_INDIVIDUAL.src}
                 alt={BANNER_INDIVIDUAL.alt}
@@ -388,8 +379,17 @@ export default function PacotesJapaoPage() {
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/5 to-transparent" />
             </div>
 
+            <ul className="mb-8 flex flex-wrap gap-x-8 gap-y-3 md:mb-10">
+              {BENEFICIOS_INDIVIDUAL.map((item) => (
+                <li key={item} className="flex items-center gap-2.5 text-sm text-white/60 md:text-base">
+                  <IconCheck className="h-4 w-4 shrink-0 text-[#b79ce6]" />
+                  {item}
+                </li>
+              ))}
+            </ul>
+
             <div className="mb-8 flex justify-center md:mb-10 md:justify-start">
-              <span className="inline-flex max-w-full flex-wrap items-center justify-center gap-2 rounded-full border border-[#b79ce6]/50 bg-[#b79ce6]/15 px-5 py-2 text-center text-[11px] font-semibold uppercase tracking-[0.2em] text-[#b79ce6] md:text-xs">
+              <span className="inline-flex max-w-full flex-wrap items-center justify-center gap-2 rounded-full border border-[#6ec3d9]/50 bg-[#6ec3d9]/15 px-5 py-2 text-center text-[11px] font-semibold uppercase tracking-[0.2em] text-[#6ec3d9] md:text-xs">
                 <IconClock className="h-3.5 w-3.5 shrink-0" />
                 Datas e valores sujeitos a alteração conforme disponibilidade e câmbio
               </span>
@@ -422,12 +422,13 @@ export default function PacotesJapaoPage() {
           className="border-t border-white/10 bg-white/[0.02] px-5 py-12 md:px-16 md:py-24"
         >
           <div className="mx-auto max-w-7xl">
-            <div className="mb-10 max-w-2xl md:mb-14">
+            <div className="mb-10 md:mb-14">
               <h2 className={`${display.className} text-3xl font-medium leading-tight md:text-5xl`}>
                 Pacotes Personalizados
               </h2>
-              <p className="mt-4 text-sm font-light leading-6 text-white/55 md:text-base md:leading-7">
-                Viaje em qualquer data e pela quantidade de horas que preferir.
+              <p className="mt-4 max-w-2xl text-sm font-light leading-6 text-white/55 md:text-base md:leading-7">
+                Viaje em qualquer data, com um roteiro sob medida, motorista e
+                guia particular.
               </p>
             </div>
 

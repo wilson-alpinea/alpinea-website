@@ -3,10 +3,6 @@
 import { useState, type FormEvent } from "react";
 import { useCart } from "./CartContext";
 
-// Atalhos rápidos — o campo continua livre para qualquer número de horas,
-// isso é só um preenchimento rápido pros valores mais comuns.
-const ATALHOS_HORAS = [4, 6, 8, 12, 24];
-
 function IconCheck({ className }: { className?: string }) {
   return (
     <svg
@@ -45,7 +41,6 @@ function IconCart({ className }: { className?: string }) {
 export function CustomPackageCard() {
   const { addItem } = useCart();
   const [data, setData] = useState("");
-  const [horas, setHoras] = useState(6);
   const [observacoes, setObservacoes] = useState("");
   const [adicionado, setAdicionado] = useState(false);
 
@@ -63,7 +58,7 @@ export function CustomPackageCard() {
     addItem({
       divisao: "Personalizado",
       nome: "Pacote Personalizado",
-      variante: `${horas}h · ${dataFormatada}`,
+      variante: dataFormatada,
       detalhes: observacoes ? [`Observações: ${observacoes}`] : undefined,
       precoLabel: "Sob consulta",
       imagem: "/images/personalizado-hero.png",
@@ -80,52 +75,17 @@ export function CustomPackageCard() {
       </p>
 
       <form onSubmit={handleSubmit} className="mt-5 space-y-5">
-        <div className="grid gap-5 sm:grid-cols-2">
-          <label className="block">
-            <span className="mb-2 block text-[10px] uppercase tracking-[0.2em] text-white/40">
-              Data preferida
-            </span>
-            <input
-              type="date"
-              value={data}
-              onChange={(e) => setData(e.target.value)}
-              className="w-full rounded-lg border border-white/15 bg-black/30 px-3 py-2.5 text-sm text-white outline-none [color-scheme:dark] focus:border-white/40"
-            />
-          </label>
-
-          <label className="block">
-            <span className="mb-2 block text-[10px] uppercase tracking-[0.2em] text-white/40">
-              Quantidade de horas
-            </span>
-            <div className="flex items-center gap-2 rounded-lg border border-white/15 bg-black/30 px-3 py-2.5 focus-within:border-white/40">
-              <input
-                type="number"
-                min={1}
-                max={999}
-                value={horas}
-                onChange={(e) => setHoras(Math.max(1, Number(e.target.value) || 1))}
-                className="w-full bg-transparent text-sm text-white outline-none [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
-              />
-              <span className="shrink-0 text-sm text-white/40">horas</span>
-            </div>
-            <div className="mt-2 flex flex-wrap gap-1.5">
-              {ATALHOS_HORAS.map((opcao) => (
-                <button
-                  key={opcao}
-                  type="button"
-                  onClick={() => setHoras(opcao)}
-                  className={`rounded-full border px-2.5 py-1 text-[11px] font-medium transition ${
-                    horas === opcao
-                      ? "border-[#e0916a] bg-[#e0916a]/15 text-[#e0916a]"
-                      : "border-white/15 text-white/45 hover:border-white/35 hover:text-white/80"
-                  }`}
-                >
-                  {opcao}h
-                </button>
-              ))}
-            </div>
-          </label>
-        </div>
+        <label className="block sm:max-w-xs">
+          <span className="mb-2 block text-[10px] uppercase tracking-[0.2em] text-white/40">
+            Data preferida
+          </span>
+          <input
+            type="date"
+            value={data}
+            onChange={(e) => setData(e.target.value)}
+            className="w-full rounded-lg border border-white/15 bg-black/30 px-3 py-2.5 text-sm text-white outline-none [color-scheme:dark] focus:border-white/40"
+          />
+        </label>
 
         <label className="block">
           <span className="mb-2 block text-[10px] uppercase tracking-[0.2em] text-white/40">
@@ -141,8 +101,8 @@ export function CustomPackageCard() {
         </label>
 
         <p className="text-[11px] leading-5 text-white/40">
-          Valor calculado conforme data, horas e roteiro escolhidos. A Ajisai
-          retorna com uma proposta sob consulta.
+          Valor calculado conforme data e roteiro escolhidos. A Ajisai retorna
+          com uma proposta sob consulta.
         </p>
 
         <button
