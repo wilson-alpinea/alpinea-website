@@ -1,23 +1,11 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
-import Image from "next/image";
-import { Bodoni_Moda } from "next/font/google";
 import { useCart } from "./CartContext";
 
-const display = Bodoni_Moda({
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
-});
-
-const OPCOES_HORAS = [
-  "4 horas",
-  "6 horas",
-  "8 horas",
-  "10 horas",
-  "12 horas",
-  "Mais de 1 dia",
-];
+// Atalhos rápidos — o campo continua livre para qualquer número de horas,
+// isso é só um preenchimento rápido pros valores mais comuns.
+const ATALHOS_HORAS = [4, 6, 8, 12, 24];
 
 function IconCheck({ className }: { className?: string }) {
   return (
@@ -57,7 +45,7 @@ function IconCart({ className }: { className?: string }) {
 export function CustomPackageCard() {
   const { addItem } = useCart();
   const [data, setData] = useState("");
-  const [horas, setHoras] = useState(OPCOES_HORAS[1]);
+  const [horas, setHoras] = useState(6);
   const [observacoes, setObservacoes] = useState("");
   const [adicionado, setAdicionado] = useState(false);
 
@@ -75,7 +63,7 @@ export function CustomPackageCard() {
     addItem({
       divisao: "Personalizado",
       nome: "Pacote Personalizado",
-      variante: `${horas} · ${dataFormatada}`,
+      variante: `${horas}h · ${dataFormatada}`,
       detalhes: observacoes ? [`Observações: ${observacoes}`] : undefined,
       precoLabel: "Sob consulta",
       imagem: "/images/personalizado-hero.png",
@@ -86,98 +74,93 @@ export function CustomPackageCard() {
   }
 
   return (
-    <div className="overflow-hidden rounded-2xl border border-white/10 bg-white/[0.025] sm:rounded-[2rem]">
-      <div className="relative h-[220px] overflow-hidden sm:h-[320px] md:h-[420px]">
-        <Image
-          src="/images/personalizado-hero.png"
-          alt="Pacotes Personalizados"
-          fill
-          sizes="100vw"
-          className="object-cover"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/5 to-transparent" />
-      </div>
+    <div className="flex flex-col overflow-hidden rounded-2xl border border-white/10 bg-white/[0.025] p-6 sm:rounded-[2rem] md:p-8">
+      <p className="text-[10px] uppercase tracking-[0.2em] text-[#e0916a]">
+        Sob medida
+      </p>
 
-      <div className="flex flex-col p-6 md:p-10">
-        <p className="text-[10px] uppercase tracking-[0.2em] text-[#e0916a]">
-          Divisão 3 · Sob medida
-        </p>
-        <h3 className={`${display.className} mt-1.5 text-2xl font-medium text-white md:text-3xl`}>
-          Pacotes Personalizados
-        </h3>
-        <p className="mt-2 text-sm font-light leading-6 text-white/60">
-          Viaje em qualquer data e pela quantidade de horas que preferir. Monte
-          um roteiro sob medida com motorista e guia particular, sem se
-          encaixar em datas ou grupos fixos.
-        </p>
-
-        <form onSubmit={handleSubmit} className="mt-6 space-y-5">
-          <div className="grid gap-5 sm:grid-cols-2">
-            <label className="block">
-              <span className="mb-2 block text-[10px] uppercase tracking-[0.2em] text-white/40">
-                Data preferida
-              </span>
-              <input
-                type="date"
-                value={data}
-                onChange={(e) => setData(e.target.value)}
-                className="w-full rounded-lg border border-white/15 bg-black/30 px-3 py-2.5 text-sm text-white outline-none [color-scheme:dark] focus:border-white/40"
-              />
-            </label>
-
-            <label className="block">
-              <span className="mb-2 block text-[10px] uppercase tracking-[0.2em] text-white/40">
-                Quantidade de horas
-              </span>
-              <select
-                value={horas}
-                onChange={(e) => setHoras(e.target.value)}
-                className="w-full rounded-lg border border-white/15 bg-black/30 px-3 py-2.5 text-sm text-white outline-none focus:border-white/40"
-              >
-                {OPCOES_HORAS.map((opcao) => (
-                  <option key={opcao} value={opcao}>
-                    {opcao}
-                  </option>
-                ))}
-              </select>
-            </label>
-          </div>
-
+      <form onSubmit={handleSubmit} className="mt-5 space-y-5">
+        <div className="grid gap-5 sm:grid-cols-2">
           <label className="block">
             <span className="mb-2 block text-[10px] uppercase tracking-[0.2em] text-white/40">
-              O que você gostaria de incluir? (opcional)
+              Data preferida
             </span>
-            <textarea
-              value={observacoes}
-              onChange={(e) => setObservacoes(e.target.value)}
-              rows={3}
-              placeholder="Ex: passeio noturno em Ginza, compras em Ginza, jantar especial..."
-              className="w-full rounded-lg border border-white/15 bg-black/30 px-3 py-2.5 text-sm text-white outline-none placeholder:text-white/25 focus:border-white/40"
+            <input
+              type="date"
+              value={data}
+              onChange={(e) => setData(e.target.value)}
+              className="w-full rounded-lg border border-white/15 bg-black/30 px-3 py-2.5 text-sm text-white outline-none [color-scheme:dark] focus:border-white/40"
             />
           </label>
 
-          <p className="text-[11px] leading-5 text-white/40">
-            Valor calculado conforme data, horas e roteiro escolhidos. A Ajisai
-            retorna com uma proposta sob consulta.
-          </p>
+          <label className="block">
+            <span className="mb-2 block text-[10px] uppercase tracking-[0.2em] text-white/40">
+              Quantidade de horas
+            </span>
+            <div className="flex items-center gap-2 rounded-lg border border-white/15 bg-black/30 px-3 py-2.5 focus-within:border-white/40">
+              <input
+                type="number"
+                min={1}
+                max={999}
+                value={horas}
+                onChange={(e) => setHoras(Math.max(1, Number(e.target.value) || 1))}
+                className="w-full bg-transparent text-sm text-white outline-none [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+              />
+              <span className="shrink-0 text-sm text-white/40">horas</span>
+            </div>
+            <div className="mt-2 flex flex-wrap gap-1.5">
+              {ATALHOS_HORAS.map((opcao) => (
+                <button
+                  key={opcao}
+                  type="button"
+                  onClick={() => setHoras(opcao)}
+                  className={`rounded-full border px-2.5 py-1 text-[11px] font-medium transition ${
+                    horas === opcao
+                      ? "border-[#e0916a] bg-[#e0916a]/15 text-[#e0916a]"
+                      : "border-white/15 text-white/45 hover:border-white/35 hover:text-white/80"
+                  }`}
+                >
+                  {opcao}h
+                </button>
+              ))}
+            </div>
+          </label>
+        </div>
 
-          <button
-            type="submit"
-            className="flex w-full items-center justify-center gap-2 rounded-full px-5 py-3.5 text-center text-[11px] font-semibold uppercase tracking-[0.2em] text-white shadow-[0_10px_30px_rgba(0,0,0,0.35)] transition duration-300 hover:-translate-y-0.5 sm:w-auto sm:px-8"
-            style={{ backgroundColor: adicionado ? "#2f9e6e" : "#e0916a" }}
-          >
-            {adicionado ? (
-              <>
-                <IconCheck className="h-4 w-4" /> Adicionado ao carrinho
-              </>
-            ) : (
-              <>
-                <IconCart className="h-4 w-4" /> Adicionar ao carrinho
-              </>
-            )}
-          </button>
-        </form>
-      </div>
+        <label className="block">
+          <span className="mb-2 block text-[10px] uppercase tracking-[0.2em] text-white/40">
+            O que você gostaria de incluir? (opcional)
+          </span>
+          <textarea
+            value={observacoes}
+            onChange={(e) => setObservacoes(e.target.value)}
+            rows={3}
+            placeholder="Ex: passeio noturno em Ginza, compras em Ginza, jantar especial..."
+            className="w-full rounded-lg border border-white/15 bg-black/30 px-3 py-2.5 text-sm text-white outline-none placeholder:text-white/25 focus:border-white/40"
+          />
+        </label>
+
+        <p className="text-[11px] leading-5 text-white/40">
+          Valor calculado conforme data, horas e roteiro escolhidos. A Ajisai
+          retorna com uma proposta sob consulta.
+        </p>
+
+        <button
+          type="submit"
+          className="flex w-full items-center justify-center gap-2 rounded-full px-5 py-3.5 text-center text-[11px] font-semibold uppercase tracking-[0.2em] text-white shadow-[0_10px_30px_rgba(0,0,0,0.35)] transition duration-300 hover:-translate-y-0.5 sm:w-auto sm:px-8"
+          style={{ backgroundColor: adicionado ? "#2f9e6e" : "#e0916a" }}
+        >
+          {adicionado ? (
+            <>
+              <IconCheck className="h-4 w-4" /> Adicionado ao carrinho
+            </>
+          ) : (
+            <>
+              <IconCart className="h-4 w-4" /> Adicionar ao carrinho
+            </>
+          )}
+        </button>
+      </form>
     </div>
   );
 }

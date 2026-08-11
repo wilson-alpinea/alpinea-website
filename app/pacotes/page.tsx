@@ -65,6 +65,10 @@ const BANNER_INDIVIDUAL = {
   src: "/images/individual-2-hero.png",
   alt: "Individual ou Pequenos Grupos",
 };
+const BANNER_PERSONALIZADO = {
+  src: "/images/personalizado-hero.png",
+  alt: "Pacotes Personalizados",
+};
 
 const pacotesCaravana = [
   {
@@ -264,10 +268,7 @@ export default function PacotesJapaoPage() {
                 href={item.href}
                 className="group flex flex-col rounded-2xl border border-white/10 bg-white/[0.02] p-6 text-left transition hover:border-white/25 hover:bg-white/[0.04] sm:rounded-[1.5rem] md:p-8"
               >
-                <p className="text-xs uppercase tracking-[0.25em] text-white/35">
-                  Divisão {item.numero}
-                </p>
-                <h2 className={`${display.className} mt-2 text-xl font-medium text-white md:text-2xl`}>
+                <h2 className={`${display.className} text-xl font-medium text-white md:text-2xl`}>
                   {item.titulo}
                 </h2>
                 <p className="mt-3 flex-1 text-sm font-light leading-6 text-white/55">
@@ -288,9 +289,6 @@ export default function PacotesJapaoPage() {
         >
           <div className="mx-auto max-w-7xl">
             <div className="mb-10 max-w-2xl md:mb-14">
-              <p className="mb-4 text-xs uppercase tracking-[0.3em] text-white/40 md:tracking-[0.45em]">
-                Divisão 1
-              </p>
               <h2 className={`${display.className} text-3xl font-medium leading-tight md:text-5xl`}>
                 Pacotes de Caravana
               </h2>
@@ -348,9 +346,6 @@ export default function PacotesJapaoPage() {
         >
           <div className="mx-auto max-w-7xl">
             <div className="mb-10 max-w-2xl md:mb-14">
-              <p className="mb-4 text-xs uppercase tracking-[0.3em] text-white/40 md:tracking-[0.45em]">
-                Divisão 2
-              </p>
               <h2 className={`${display.className} text-3xl font-medium leading-tight md:text-5xl`}>
                 Individual ou Pequenos Grupos
               </h2>
@@ -407,9 +402,6 @@ export default function PacotesJapaoPage() {
         >
           <div className="mx-auto max-w-7xl">
             <div className="mb-10 max-w-2xl md:mb-14">
-              <p className="mb-4 text-xs uppercase tracking-[0.3em] text-white/40 md:tracking-[0.45em]">
-                Divisão 3
-              </p>
               <h2 className={`${display.className} text-3xl font-medium leading-tight md:text-5xl`}>
                 Pacotes Personalizados
               </h2>
@@ -418,7 +410,20 @@ export default function PacotesJapaoPage() {
               </p>
             </div>
 
-            <CustomPackageCard />
+            <div className="relative mb-8 h-[220px] overflow-hidden rounded-2xl sm:h-[320px] md:mb-10 md:h-[420px] md:rounded-[2rem]">
+              <Image
+                src={BANNER_PERSONALIZADO.src}
+                alt={BANNER_PERSONALIZADO.alt}
+                fill
+                sizes="100vw"
+                className="object-cover object-[center_38%]"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/5 to-transparent" />
+            </div>
+
+            <div className="max-w-2xl">
+              <CustomPackageCard />
+            </div>
           </div>
         </section>
 
