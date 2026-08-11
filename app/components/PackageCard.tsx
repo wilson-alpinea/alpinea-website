@@ -128,10 +128,10 @@ export function PackageCard({
                       }}
                       className={`rounded-full border px-7 py-3.5 text-base font-semibold uppercase tracking-[0.1em] transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-[1.06] active:scale-95 ${
                         ativo
-                          ? "border-transparent text-black shadow-[0_10px_26px_rgba(0,0,0,0.4)]"
+                          ? "border-transparent text-white shadow-[0_10px_26px_rgba(0,0,0,0.4)]"
                           : "border-white/20 text-white/60 hover:border-white/50 hover:text-white hover:shadow-[0_10px_24px_rgba(0,0,0,0.3)]"
                       }`}
-                      style={ativo ? { backgroundColor: accent } : undefined}
+                      style={ativo ? { backgroundColor: "#2f80c9" } : undefined}
                     >
                       {v.label}
                     </button>

@@ -181,6 +181,7 @@ const divisoes = [
     texto:
       "Para quem não deseja viajar somente com o próprio grupo. Saída em grupo fechado, data única, guia compartilhado do início ao fim.",
     href: "#pacotes",
+    imagem: BANNER_CARAVANA.src,
   },
   {
     letra: "B",
@@ -188,6 +189,7 @@ const divisoes = [
     texto:
       "Para viajar só com quem você escolher. Datas flexíveis dentro da temporada e guia particular dedicado ao seu grupo.",
     href: "#individuais",
+    imagem: BANNER_INDIVIDUAL.src,
   },
   {
     letra: "C",
@@ -195,6 +197,7 @@ const divisoes = [
     texto:
       "Viaje em qualquer data, com um roteiro sob medida e motorista e guia particular.",
     href: "#personalizado",
+    imagem: BANNER_PERSONALIZADO.src,
   },
 ];
 
@@ -260,15 +263,26 @@ export default function PacotesJapaoPage() {
 
         {/* ── 3 DIVISÕES ── */}
         <section className="border-b border-white/10 bg-[#050505] px-6 py-14 md:px-16 md:py-20">
-          <div className="mx-auto grid max-w-6xl gap-5 sm:grid-cols-3">
+          <div className="mx-auto grid max-w-6xl gap-8 pt-6 sm:grid-cols-3">
             {divisoes.map((item) => (
-              <div key={item.letra} className="flex flex-col items-center">
-                <span className="mb-4 flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-[#6ec3d9]/40 bg-[#6ec3d9]/10 text-base font-semibold text-[#6ec3d9]">
-                  {item.letra}
-                </span>
+              <div key={item.letra} className="relative">
+                <div className="absolute -top-6 left-7 z-10 h-16 w-16">
+                  <div className="relative h-full w-full overflow-hidden rounded-2xl border border-white/15 shadow-[0_6px_20px_rgba(0,0,0,0.5)]">
+                    <Image
+                      src={item.imagem}
+                      alt=""
+                      fill
+                      sizes="64px"
+                      className="object-cover object-top"
+                    />
+                  </div>
+                  <span className="absolute -bottom-2 -right-2 flex h-7 w-7 items-center justify-center rounded-full border border-[#6ec3d9]/60 bg-[#0d0d0d] text-[11px] font-semibold text-[#6ec3d9] shadow-[0_2px_8px_rgba(0,0,0,0.45)]">
+                    {item.letra}
+                  </span>
+                </div>
                 <a
                   href={item.href}
-                  className="group flex w-full flex-col rounded-2xl border border-white/10 bg-white/[0.02] p-6 text-left shadow-[0_0_60px_-10px_rgba(37,99,235,0.45)] transition hover:border-white/25 hover:bg-white/[0.04] sm:rounded-[1.5rem] md:p-8"
+                  className="group flex h-full flex-col rounded-2xl border border-white/10 bg-white/[0.02] p-6 pt-12 text-left shadow-[0_0_30px_-14px_rgba(37,99,235,0.3)] transition hover:border-white/25 hover:bg-white/[0.04] sm:rounded-[1.5rem] md:p-8 md:pt-14"
                 >
                   <h2 className={`${display.className} text-xl font-medium text-white md:text-2xl`}>
                     {item.titulo}
@@ -313,7 +327,7 @@ export default function PacotesJapaoPage() {
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/5 to-transparent" />
             </div>
 
-            <ul className="mb-8 flex flex-wrap gap-x-8 gap-y-3 md:mb-10">
+            <ul className="mb-8 flex flex-col gap-y-3 md:mb-10">
               {BENEFICIOS_CARAVANA.map((item) => (
                 <li key={item} className="flex items-center gap-2.5 text-sm text-white/60 md:text-base">
                   <IconCheck className="h-4 w-4 shrink-0 text-[#b79ce6]" />
@@ -379,7 +393,7 @@ export default function PacotesJapaoPage() {
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/5 to-transparent" />
             </div>
 
-            <ul className="mb-8 flex flex-wrap gap-x-8 gap-y-3 md:mb-10">
+            <ul className="mb-8 flex flex-col gap-y-3 md:mb-10">
               {BENEFICIOS_INDIVIDUAL.map((item) => (
                 <li key={item} className="flex items-center gap-2.5 text-sm text-white/60 md:text-base">
                   <IconCheck className="h-4 w-4 shrink-0 text-[#b79ce6]" />
