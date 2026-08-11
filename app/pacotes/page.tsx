@@ -138,7 +138,7 @@ const pacotesIndividuais = [
     nome: "Primavera 1 — Temporada de Cerejeiras 2027",
     tagline: "Datas flexíveis, guia dedicado só ao seu grupo",
     descricao:
-      "O mesmo roteiro da temporada de cerejeiras, com liberdade para escolher suas datas dentro da florada.",
+      "Viaje na temporada de floração das cerejeiras — parques, templos e avenidas históricas no auge do hanami, com liberdade para escolher suas datas dentro da florada.",
     destaques: [
       "Datas flexíveis dentro da temporada de floração das cerejeiras",
     ],
@@ -158,7 +158,7 @@ const pacotesIndividuais = [
     nome: "Primavera 2 — Maio 2027",
     tagline: "Datas flexíveis, guia dedicado só ao seu grupo",
     descricao:
-      "O mesmo roteiro de maio, com liberdade para escolher suas datas dentro do mês — clima ameno e menos turistas.",
+      "Viaje em maio, fora do pico de alta temporada — clima ameno, menos turistas e liberdade para escolher suas datas dentro do mês.",
     destaques: [
       "Datas flexíveis dentro de maio, fora do pico de alta temporada",
     ],
