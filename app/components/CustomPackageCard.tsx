@@ -86,16 +86,16 @@ export function CustomPackageCard() {
   }
 
   return (
-    <div className="grid overflow-hidden rounded-2xl border border-white/10 bg-white/[0.025] sm:rounded-[2rem] lg:grid-cols-[1.1fr_1.4fr]">
-      <div className="relative h-[220px] overflow-hidden lg:h-auto">
+    <div className="overflow-hidden rounded-2xl border border-white/10 bg-white/[0.025] sm:rounded-[2rem]">
+      <div className="relative h-[220px] overflow-hidden sm:h-[320px] md:h-[420px]">
         <Image
           src="/images/personalizado-hero.png"
           alt="Pacotes Personalizados"
           fill
-          sizes="(max-width: 1024px) 100vw, 40vw"
+          sizes="100vw"
           className="object-cover"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent lg:bg-gradient-to-r" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/5 to-transparent" />
       </div>
 
       <div className="flex flex-col p-6 md:p-10">
