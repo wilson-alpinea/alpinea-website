@@ -58,11 +58,11 @@ const variantesPadrao = (
 // Uma única foto representa cada divisão (em vez de uma por pacote) — usada
 // tanto no banner da seção quanto na miniatura do item no carrinho.
 const BANNER_CARAVANA = {
-  src: "/images/caravana-hero.png",
+  src: "/images/caravana-2-hero.png",
   alt: "Pacotes de Caravana",
 };
 const BANNER_INDIVIDUAL = {
-  src: "/images/individual-hero.png",
+  src: "/images/individual-2-hero.png",
   alt: "Individual ou Pequenos Grupos",
 };
 
