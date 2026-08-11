@@ -79,14 +79,14 @@ export function PackageCard({
           <div className="flex flex-wrap items-center gap-2.5">
             <p
               className="text-[10px] uppercase tracking-[0.2em]"
-              style={{ color: accent }}
+              style={{ color: "#6ec3d9" }}
             >
               {categoria}
             </p>
             {selo && (
               <span
-                className="rounded-full px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-black"
-                style={{ backgroundColor: accent }}
+                className="rounded-full px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-white"
+                style={{ backgroundColor: "#2f80c9" }}
               >
                 {selo}
               </span>
@@ -102,7 +102,7 @@ export function PackageCard({
           <ul className="mt-5 space-y-2.5">
             {destaques.map((item) => (
               <li key={item} className="flex items-start gap-2.5 text-sm leading-5 text-white/65">
-                <span className="mt-0.5 shrink-0" style={{ color: accent }}>
+                <span className="mt-0.5 shrink-0" style={{ color: "#6ec3d9" }}>
                   <IconCheck className="h-3.5 w-3.5" />
                 </span>
                 {item}

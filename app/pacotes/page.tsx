@@ -263,27 +263,24 @@ export default function PacotesJapaoPage() {
 
         {/* ── 3 DIVISÕES ── */}
         <section className="border-b border-white/10 bg-[#050505] px-6 py-14 md:px-16 md:py-20">
-          <div className="mx-auto grid max-w-6xl gap-8 pt-6 sm:grid-cols-3">
+          <div className="mx-auto grid max-w-6xl gap-8 sm:grid-cols-3">
             {divisoes.map((item) => (
-              <div key={item.letra} className="relative">
-                <div className="absolute -top-6 left-7 z-10 h-16 w-16">
-                  <div className="relative h-full w-full overflow-hidden rounded-2xl border border-white/15 shadow-[0_6px_20px_rgba(0,0,0,0.5)]">
-                    <Image
-                      src={item.imagem}
-                      alt=""
-                      fill
-                      sizes="64px"
-                      className="object-cover object-top"
-                    />
-                  </div>
-                  <span className="absolute -bottom-2 -right-2 flex h-7 w-7 items-center justify-center rounded-full border border-[#6ec3d9]/60 bg-[#0d0d0d] text-[11px] font-semibold text-[#6ec3d9] shadow-[0_2px_8px_rgba(0,0,0,0.45)]">
-                    {item.letra}
-                  </span>
+              <a
+                key={item.letra}
+                href={item.href}
+                className="group flex h-full flex-col overflow-hidden rounded-2xl border border-white/10 bg-white/[0.02] text-left shadow-[0_0_30px_-14px_rgba(37,99,235,0.3)] transition hover:border-white/25 hover:bg-white/[0.04] sm:rounded-[1.5rem]"
+              >
+                <div className="relative aspect-[16/10] w-full overflow-hidden">
+                  <Image
+                    src={item.imagem}
+                    alt=""
+                    fill
+                    sizes="(min-width: 640px) 33vw, 100vw"
+                    className="object-cover object-top transition duration-500 group-hover:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/0 to-transparent" />
                 </div>
-                <a
-                  href={item.href}
-                  className="group flex h-full flex-col rounded-2xl border border-white/10 bg-white/[0.02] p-6 pt-12 text-left shadow-[0_0_30px_-14px_rgba(37,99,235,0.3)] transition hover:border-white/25 hover:bg-white/[0.04] sm:rounded-[1.5rem] md:p-8 md:pt-14"
-                >
+                <div className="flex flex-1 flex-col p-6 md:p-8">
                   <h2 className={`${display.className} text-xl font-medium text-white md:text-2xl`}>
                     {item.titulo}
                   </h2>
@@ -293,8 +290,8 @@ export default function PacotesJapaoPage() {
                   <span className="mt-4 inline-flex items-center gap-1.5 text-xs uppercase tracking-[0.2em] text-white/50 transition group-hover:text-white">
                     Ver pacotes →
                   </span>
-                </a>
-              </div>
+                </div>
+              </a>
             ))}
           </div>
         </section>
@@ -330,7 +327,7 @@ export default function PacotesJapaoPage() {
             <ul className="mb-8 flex flex-col gap-y-3 md:mb-10">
               {BENEFICIOS_CARAVANA.map((item) => (
                 <li key={item} className="flex items-center gap-2.5 text-sm text-white/60 md:text-base">
-                  <IconCheck className="h-4 w-4 shrink-0 text-[#b79ce6]" />
+                  <IconCheck className="h-4 w-4 shrink-0 text-[#6ec3d9]" />
                   {item}
                 </li>
               ))}
@@ -396,7 +393,7 @@ export default function PacotesJapaoPage() {
             <ul className="mb-8 flex flex-col gap-y-3 md:mb-10">
               {BENEFICIOS_INDIVIDUAL.map((item) => (
                 <li key={item} className="flex items-center gap-2.5 text-sm text-white/60 md:text-base">
-                  <IconCheck className="h-4 w-4 shrink-0 text-[#b79ce6]" />
+                  <IconCheck className="h-4 w-4 shrink-0 text-[#6ec3d9]" />
                   {item}
                 </li>
               ))}

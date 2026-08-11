@@ -178,13 +178,13 @@ export function PackageDetailModal({
       >
         <div className="sticky top-0 z-10 flex shrink-0 items-center justify-between border-b border-white/10 bg-[#0a0a0a]/95 px-5 py-4 backdrop-blur-sm md:px-8">
           <div className="flex items-center gap-2.5">
-            <p className="text-[10px] uppercase tracking-[0.2em]" style={{ color: accent }}>
+            <p className="text-[10px] uppercase tracking-[0.2em]" style={{ color: "#6ec3d9" }}>
               {categoria}
             </p>
             {selo && (
               <span
-                className="rounded-full px-2 py-0.5 text-[9px] font-semibold uppercase tracking-[0.1em] text-black"
-                style={{ backgroundColor: accent }}
+                className="rounded-full px-2 py-0.5 text-[9px] font-semibold uppercase tracking-[0.1em] text-white"
+                style={{ backgroundColor: "#2f80c9" }}
               >
                 {selo}
               </span>
@@ -210,7 +210,7 @@ export function PackageDetailModal({
           <ul className="mt-5 space-y-2.5">
             {destaques.map((item) => (
               <li key={item} className="flex items-start gap-2.5 text-sm leading-5 text-white/70">
-                <span className="mt-0.5 shrink-0" style={{ color: accent }}>
+                <span className="mt-0.5 shrink-0" style={{ color: "#6ec3d9" }}>
                   <IconCheck className="h-3.5 w-3.5" />
                 </span>
                 {item}
@@ -241,7 +241,7 @@ export function PackageDetailModal({
                   <p className="flex items-center gap-2 text-sm font-medium text-white">
                     {item.title}
                     {item.opcional && (
-                      <span className="rounded-full bg-[#b79ce6]/15 px-2 py-0.5 text-[9px] font-semibold uppercase tracking-[0.08em] text-[#b79ce6]">
+                      <span className="rounded-full bg-[#6ec3d9]/15 px-2 py-0.5 text-[9px] font-semibold uppercase tracking-[0.08em] text-[#6ec3d9]">
                         Opcional
                       </span>
                     )}
