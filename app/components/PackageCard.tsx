@@ -1,10 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
 import { Bodoni_Moda } from "next/font/google";
 import { useCart, type CartItem } from "./CartContext";
-import { PackageVideoTrigger } from "./PackageVideoModal";
 
 const display = Bodoni_Moda({
   subsets: ["latin"],
@@ -64,10 +62,8 @@ export function PackageCard({
   descricao,
   destaques,
   imagem,
-  imagemAlt,
   selo,
   accent = "#b79ce6",
-  videoSrc,
   variantes,
   varianteHint = "Duração",
   rodape,
@@ -79,10 +75,8 @@ export function PackageCard({
   descricao: string;
   destaques: string[];
   imagem: string;
-  imagemAlt?: string;
   selo?: string;
   accent?: string;
-  videoSrc?: string;
   variantes: PackageVariant[];
   varianteHint?: string;
   rodape?: string;
@@ -109,40 +103,23 @@ export function PackageCard({
 
   return (
     <div className="flex flex-col overflow-hidden rounded-2xl border border-white/10 bg-white/[0.025] sm:rounded-[2rem]">
-      <div className="relative h-[200px] overflow-hidden">
-        <Image
-          src={imagem}
-          alt={imagemAlt ?? nome}
-          fill
-          sizes="(max-width: 768px) 100vw, 33vw"
-          className="object-cover"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent" />
-        {selo && (
-          <span
-            className="absolute right-4 top-4 rounded-full px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.15em] text-black shadow-[0_6px_18px_rgba(0,0,0,0.35)]"
-            style={{ backgroundColor: accent }}
-          >
-            {selo}
-          </span>
-        )}
-        <div className="absolute inset-x-4 bottom-4">
-          <PackageVideoTrigger
-            titulo={nome}
-            videoSrc={videoSrc}
-            triggerClassName="inline-flex items-center gap-2 rounded-full bg-black/45 px-3 py-1.5 text-[10px] font-medium uppercase tracking-[0.18em] text-white backdrop-blur-sm transition hover:bg-black/65"
-            triggerLabel="Assistir vídeo"
-          />
-        </div>
-      </div>
-
       <div className="flex flex-1 flex-col p-6">
-        <p
-          className="text-[10px] uppercase tracking-[0.2em]"
-          style={{ color: accent }}
-        >
-          {categoria}
-        </p>
+        <div className="flex flex-wrap items-center gap-2.5">
+          <p
+            className="text-[10px] uppercase tracking-[0.2em]"
+            style={{ color: accent }}
+          >
+            {categoria}
+          </p>
+          {selo && (
+            <span
+              className="rounded-full px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.12em] text-black"
+              style={{ backgroundColor: accent }}
+            >
+              {selo}
+            </span>
+          )}
+        </div>
         <h3 className={`${display.className} mt-1.5 text-2xl font-medium text-white`}>
           {nome}
         </h3>
@@ -163,10 +140,10 @@ export function PackageCard({
 
         {variantes.length > 1 && (
           <div className="mt-6">
-            <p className="mb-2.5 text-[10px] uppercase tracking-[0.22em] text-white/35">
+            <p className="mb-3 text-[10px] uppercase tracking-[0.22em] text-white/35">
               {varianteHint}
             </p>
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-wrap gap-3">
               {variantes.map((v) => {
                 const ativo = v.id === selecionada;
                 return (
@@ -174,10 +151,10 @@ export function PackageCard({
                     key={v.id}
                     type="button"
                     onClick={() => setSelecionada(v.id)}
-                    className={`rounded-full border px-4 py-2 text-xs font-medium uppercase tracking-[0.1em] transition ${
+                    className={`rounded-full border px-7 py-3.5 text-base font-semibold uppercase tracking-[0.1em] transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-[1.06] active:scale-95 ${
                       ativo
-                        ? "border-transparent text-black"
-                        : "border-white/20 text-white/60 hover:border-white/40 hover:text-white"
+                        ? "border-transparent text-black shadow-[0_10px_26px_rgba(0,0,0,0.4)]"
+                        : "border-white/20 text-white/60 hover:border-white/50 hover:text-white hover:shadow-[0_10px_24px_rgba(0,0,0,0.3)]"
                     }`}
                     style={ativo ? { backgroundColor: accent } : undefined}
                   >

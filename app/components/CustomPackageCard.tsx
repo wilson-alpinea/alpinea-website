@@ -4,7 +4,6 @@ import { useState, type FormEvent } from "react";
 import Image from "next/image";
 import { Bodoni_Moda } from "next/font/google";
 import { useCart } from "./CartContext";
-import { PackageVideoTrigger } from "./PackageVideoModal";
 
 const display = Bodoni_Moda({
   subsets: ["latin"],
@@ -97,13 +96,6 @@ export function CustomPackageCard() {
           className="object-cover"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent lg:bg-gradient-to-r" />
-        <div className="absolute inset-x-4 bottom-4 lg:inset-x-6 lg:bottom-6">
-          <PackageVideoTrigger
-            titulo="Pacotes Personalizados"
-            triggerClassName="inline-flex items-center gap-2 rounded-full bg-black/45 px-3 py-1.5 text-[10px] font-medium uppercase tracking-[0.18em] text-white backdrop-blur-sm transition hover:bg-black/65"
-            triggerLabel="Assistir vídeo"
-          />
-        </div>
       </div>
 
       <div className="flex flex-col p-6 md:p-10">
