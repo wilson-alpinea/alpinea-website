@@ -2,7 +2,11 @@
 
 import { useState } from "react";
 import { Bodoni_Moda } from "next/font/google";
-import { useCart, type CartItem } from "./CartContext";
+import type { CartItem } from "./CartContext";
+import type { PackageVariant } from "./packageTypes";
+import { PackageDetailModal } from "./PackageDetailModal";
+
+export type { PackageVariant } from "./packageTypes";
 
 const display = Bodoni_Moda({
   subsets: ["latin"],
@@ -25,34 +29,6 @@ function IconCheck({ className }: { className?: string }) {
     </svg>
   );
 }
-
-function IconCart({ className }: { className?: string }) {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.75"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className={className}
-    >
-      <circle cx="9" cy="20" r="1.4" fill="currentColor" stroke="none" />
-      <circle cx="17" cy="20" r="1.4" fill="currentColor" stroke="none" />
-      <path d="M2.5 3h2.2l1.8 11a2 2 0 0 0 2 1.7h7.7a2 2 0 0 0 2-1.6l1.4-7.4H6.1" />
-    </svg>
-  );
-}
-
-export type PackageVariant = {
-  id: string;
-  /** Ex: "7 dias" */
-  label: string;
-  /** Datas de referência da variante, ex: "28 mar – 03 abr 2027" */
-  datas: string;
-  precoLabel: string;
-  parcelaLabel?: string;
-};
 
 export function PackageCard({
   divisao,
@@ -81,29 +57,23 @@ export function PackageCard({
   varianteHint?: string;
   rodape?: string;
 }) {
-  const { addItem } = useCart();
-  const [selecionada, setSelecionada] = useState(variantes[0]?.id ?? "");
-  const [adicionado, setAdicionado] = useState(false);
-
-  const variante = variantes.find((v) => v.id === selecionada) ?? variantes[0];
-
-  function handleAdd() {
-    if (!variante) return;
-    addItem({
-      divisao,
-      nome,
-      variante: `${variante.label} · ${variante.datas}`,
-      detalhes: [`Preço: ${variante.precoLabel}`],
-      precoLabel: variante.precoLabel,
-      imagem,
-    });
-    setAdicionado(true);
-    window.setTimeout(() => setAdicionado(false), 2200);
-  }
+  const [open, setOpen] = useState(false);
+  const precoDesde = variantes[0]?.precoLabel;
 
   return (
-    <div className="flex flex-col overflow-hidden rounded-2xl border border-white/10 bg-white/[0.025] sm:rounded-[2rem]">
-      <div className="flex flex-1 flex-col p-6">
+    <>
+      <div
+        role="button"
+        tabIndex={0}
+        onClick={() => setOpen(true)}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            setOpen(true);
+          }
+        }}
+        className="flex cursor-pointer flex-col overflow-hidden rounded-2xl border border-white/10 bg-white/[0.025] p-6 transition hover:border-white/25 hover:bg-white/[0.04] sm:rounded-[2rem]"
+      >
         <div className="flex flex-wrap items-center gap-2.5">
           <p
             className="text-[10px] uppercase tracking-[0.2em]"
@@ -138,68 +108,41 @@ export function PackageCard({
           ))}
         </ul>
 
-        {variantes.length > 1 && (
-          <div className="mt-6">
-            <p className="mb-3 text-[10px] uppercase tracking-[0.22em] text-white/35">
-              {varianteHint}
-            </p>
-            <div className="flex flex-wrap gap-3">
-              {variantes.map((v) => {
-                const ativo = v.id === selecionada;
-                return (
-                  <button
-                    key={v.id}
-                    type="button"
-                    onClick={() => setSelecionada(v.id)}
-                    className={`rounded-full border px-7 py-3.5 text-base font-semibold uppercase tracking-[0.1em] transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-[1.06] active:scale-95 ${
-                      ativo
-                        ? "border-transparent text-black shadow-[0_10px_26px_rgba(0,0,0,0.4)]"
-                        : "border-white/20 text-white/60 hover:border-white/50 hover:text-white hover:shadow-[0_10px_24px_rgba(0,0,0,0.3)]"
-                    }`}
-                    style={ativo ? { backgroundColor: accent } : undefined}
-                  >
-                    {v.label}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-        )}
-
         <div className="mt-6 flex flex-1 flex-col justify-end border-t border-white/10 pt-5">
-          {variante && (
-            <>
-              <p className="text-[10px] uppercase tracking-[0.22em] text-white/35">
-                {variante.datas}
-              </p>
-              <p className={`${display.className} mt-1 text-3xl font-medium text-white`}>
-                {variante.precoLabel}
-              </p>
-              {variante.parcelaLabel && (
-                <p className="mt-1 text-sm font-medium text-white/70">{variante.parcelaLabel}</p>
-              )}
-            </>
-          )}
+          <p className="text-[10px] uppercase tracking-[0.22em] text-white/35">
+            A partir de
+          </p>
+          <p className={`${display.className} mt-1 text-3xl font-medium text-white`}>
+            {precoDesde}
+          </p>
           {rodape && <p className="mt-2 text-[11px] leading-5 text-white/40">{rodape}</p>}
 
-          <button
-            type="button"
-            onClick={handleAdd}
-            className="mt-5 flex w-full items-center justify-center gap-2 rounded-full px-5 py-3.5 text-center text-[11px] font-semibold uppercase tracking-[0.2em] text-white shadow-[0_10px_30px_rgba(0,0,0,0.35)] transition duration-300 hover:-translate-y-0.5"
-            style={{ backgroundColor: adicionado ? "#2f9e6e" : "#7c4fd1" }}
+          <span
+            className="mt-5 flex w-full items-center justify-center gap-2 rounded-full px-5 py-3.5 text-center text-[11px] font-semibold uppercase tracking-[0.2em] text-white shadow-[0_10px_30px_rgba(0,0,0,0.35)] transition duration-300"
+            style={{ backgroundColor: "#2f80c9" }}
           >
-            {adicionado ? (
-              <>
-                <IconCheck className="h-4 w-4" /> Adicionado ao carrinho
-              </>
-            ) : (
-              <>
-                <IconCart className="h-4 w-4" /> Adicionar ao carrinho
-              </>
-            )}
-          </button>
+            Ver detalhes e itinerário →
+          </span>
         </div>
       </div>
-    </div>
+
+      {open && (
+        <PackageDetailModal
+          divisao={divisao}
+          categoria={categoria}
+          nome={nome}
+          tagline={tagline}
+          descricao={descricao}
+          destaques={destaques}
+          imagem={imagem}
+          accent={accent}
+          selo={selo}
+          variantes={variantes}
+          varianteHint={varianteHint}
+          rodape={rodape}
+          onClose={() => setOpen(false)}
+        />
+      )}
+    </>
   );
 }

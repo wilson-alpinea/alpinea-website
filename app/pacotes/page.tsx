@@ -70,6 +70,21 @@ const BANNER_PERSONALIZADO = {
   alt: "Pacotes Personalizados",
 };
 
+// Fatos que valem para todos os pacotes da divisão (data fixa, guia
+// compartilhado, vagas limitadas...) ficam num único bloco por seção, em vez
+// de repetidos em cada card — só o que muda de pacote pra pacote (temporada,
+// clima, datas, preço) aparece dentro do card.
+const BENEFICIOS_CARAVANA = [
+  "Data de saída fixa, em grupo fechado",
+  "Guia bilíngue acompanhando a caravana do início ao fim",
+  "Vagas limitadas — reserva antecipada recomendada",
+];
+const BENEFICIOS_INDIVIDUAL = [
+  "Guia particular, dedicado só ao seu grupo",
+  "Roteiro pode ser ajustado ao seu ritmo e interesses",
+  "Ideal para famílias, casais e grupos de amigos",
+];
+
 const pacotesCaravana = [
   {
     slug: "caravana-cerejeiras",
@@ -77,12 +92,10 @@ const pacotesCaravana = [
     nome: "Primavera 1 — Temporada de Cerejeiras 2027",
     tagline: "Saída em grupo fechado, direto na florada",
     descricao:
-      "Viaje em grupo, com data de saída única e guia bilíngue dedicado à caravana do início ao fim, durante a temporada de floração das cerejeiras.",
+      "Direto na temporada de floração das cerejeiras — parques, templos e avenidas históricas no auge do hanami.",
     destaques: [
-      "Data de saída fixa, em grupo fechado",
-      "Guia bilíngue acompanhando a caravana do início ao fim",
-      "Hospedagem e passagens já reservadas para o grupo",
-      "Vagas limitadas — reserva antecipada recomendada",
+      "Época da floração das sakuras",
+      "Hospedagem e passeios posicionados para os melhores pontos de hanami",
     ],
     imagem: BANNER_CARAVANA.src,
     imagemAlt: BANNER_CARAVANA.alt,
@@ -101,12 +114,10 @@ const pacotesCaravana = [
     nome: "Primavera 2 — Maio 2027",
     tagline: "Saída em grupo fechado, fora do pico de alta temporada",
     descricao:
-      "Viaje em grupo, com data de saída única e guia bilíngue dedicado à caravana do início ao fim, em maio — clima ameno e menor fluxo turístico.",
+      "Fora do pico da alta temporada — clima ameno, menos turistas e mais disponibilidade de hospedagem.",
     destaques: [
-      "Data de saída fixa, em grupo fechado",
-      "Guia bilíngue acompanhando a caravana do início ao fim",
-      "Clima ameno e menor fluxo turístico que a alta temporada",
-      "Vagas limitadas — reserva antecipada recomendada",
+      "Clima ameno, ótimo para caminhadas e passeios ao ar livre",
+      "Menor fluxo turístico que a temporada de cerejeiras",
     ],
     imagem: BANNER_CARAVANA.src,
     imagemAlt: BANNER_CARAVANA.alt,
@@ -127,12 +138,9 @@ const pacotesIndividuais = [
     nome: "Primavera 1 — Temporada de Cerejeiras 2027",
     tagline: "Datas flexíveis, guia dedicado só ao seu grupo",
     descricao:
-      "O mesmo roteiro da temporada de cerejeiras, com datas flexíveis dentro da temporada e guia particular dedicado exclusivamente ao seu grupo.",
+      "O mesmo roteiro da temporada de cerejeiras, com liberdade para escolher suas datas dentro da florada.",
     destaques: [
-      "Datas flexíveis dentro da temporada de cerejeiras",
-      "Guia particular, dedicado só ao seu grupo",
-      "Roteiro pode ser ajustado ao seu ritmo e interesses",
-      "Ideal para famílias, casais e grupos de amigos",
+      "Datas flexíveis dentro da temporada de floração das cerejeiras",
     ],
     imagem: BANNER_INDIVIDUAL.src,
     imagemAlt: BANNER_INDIVIDUAL.alt,
@@ -150,12 +158,9 @@ const pacotesIndividuais = [
     nome: "Primavera 2 — Maio 2027",
     tagline: "Datas flexíveis, guia dedicado só ao seu grupo",
     descricao:
-      "O mesmo roteiro de maio, com datas flexíveis dentro do mês e guia particular dedicado exclusivamente ao seu grupo.",
+      "O mesmo roteiro de maio, com liberdade para escolher suas datas dentro do mês — clima ameno e menos turistas.",
     destaques: [
-      "Datas flexíveis dentro de maio de 2027",
-      "Guia particular, dedicado só ao seu grupo",
-      "Roteiro pode ser ajustado ao seu ritmo e interesses",
-      "Ideal para famílias, casais e grupos de amigos",
+      "Datas flexíveis dentro de maio, fora do pico de alta temporada",
     ],
     imagem: BANNER_INDIVIDUAL.src,
     imagemAlt: BANNER_INDIVIDUAL.alt,
@@ -297,15 +302,23 @@ export default function PacotesJapaoPage() {
                 em grupo fechado, com guia bilíngue dedicado à caravana do
                 início ao fim.
               </p>
+              <ul className="mt-5 flex flex-wrap gap-x-6 gap-y-2">
+                {BENEFICIOS_CARAVANA.map((item) => (
+                  <li key={item} className="flex items-center gap-2 text-xs text-white/45 md:text-sm">
+                    <IconCheck className="h-3.5 w-3.5 shrink-0 text-[#b79ce6]" />
+                    {item}
+                  </li>
+                ))}
+              </ul>
             </div>
 
-            <div className="relative mb-8 h-[220px] overflow-hidden rounded-2xl sm:h-[320px] md:mb-10 md:h-[420px] md:rounded-[2rem]">
+            <div className="relative mb-8 aspect-[16/10] overflow-hidden rounded-2xl md:mb-10 md:rounded-[2rem]">
               <Image
                 src={BANNER_CARAVANA.src}
                 alt={BANNER_CARAVANA.alt}
                 fill
                 sizes="100vw"
-                className="object-cover"
+                className="object-cover object-top"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/5 to-transparent" />
             </div>
@@ -354,15 +367,23 @@ export default function PacotesJapaoPage() {
                 dentro da temporada e guia particular dedicado só ao seu
                 grupo.
               </p>
+              <ul className="mt-5 flex flex-wrap gap-x-6 gap-y-2">
+                {BENEFICIOS_INDIVIDUAL.map((item) => (
+                  <li key={item} className="flex items-center gap-2 text-xs text-white/45 md:text-sm">
+                    <IconCheck className="h-3.5 w-3.5 shrink-0 text-[#b79ce6]" />
+                    {item}
+                  </li>
+                ))}
+              </ul>
             </div>
 
-            <div className="relative mb-8 h-[220px] overflow-hidden rounded-2xl sm:h-[320px] md:mb-10 md:h-[420px] md:rounded-[2rem]">
+            <div className="relative mb-8 aspect-[16/10] overflow-hidden rounded-2xl md:mb-10 md:rounded-[2rem]">
               <Image
                 src={BANNER_INDIVIDUAL.src}
                 alt={BANNER_INDIVIDUAL.alt}
                 fill
                 sizes="100vw"
-                className="object-cover"
+                className="object-cover object-top"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/5 to-transparent" />
             </div>
@@ -410,13 +431,13 @@ export default function PacotesJapaoPage() {
               </p>
             </div>
 
-            <div className="relative mb-8 h-[220px] overflow-hidden rounded-2xl sm:h-[320px] md:mb-10 md:h-[420px] md:rounded-[2rem]">
+            <div className="relative mb-8 aspect-[16/10] overflow-hidden rounded-2xl md:mb-10 md:rounded-[2rem]">
               <Image
                 src={BANNER_PERSONALIZADO.src}
                 alt={BANNER_PERSONALIZADO.alt}
                 fill
                 sizes="100vw"
-                className="object-cover object-[center_38%]"
+                className="object-cover object-top"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/5 to-transparent" />
             </div>
@@ -456,6 +477,23 @@ function IconWhatsApp({ className }: { className?: string }) {
     <svg viewBox="0 0 24 24" fill="currentColor" className={className}>
       <path d="M17.47 14.38c-.29-.15-1.7-.84-1.96-.93-.26-.1-.46-.15-.65.14-.19.29-.75.93-.92 1.12-.17.19-.34.22-.63.07-.29-.15-1.22-.45-2.32-1.43-.86-.76-1.44-1.71-1.6-2-.17-.29-.02-.45.13-.6.13-.13.29-.34.43-.51.15-.17.19-.29.29-.48.1-.19.05-.36-.02-.51-.07-.15-.65-1.57-.9-2.15-.24-.57-.48-.5-.65-.5-.17-.01-.36-.01-.55-.01-.19 0-.51.07-.78.36-.26.29-1.02 1-1.02 2.43 0 1.43 1.04 2.82 1.19 3.01.15.19 2.05 3.13 4.96 4.39.69.3 1.23.48 1.65.61.69.22 1.32.19 1.82.11.55-.08 1.7-.7 1.94-1.37.24-.67.24-1.24.17-1.37-.07-.12-.26-.19-.55-.34Z" />
       <path d="M12.02 2C6.5 2 2 6.48 2 12c0 1.85.5 3.58 1.38 5.07L2 22l5.08-1.33A9.96 9.96 0 0 0 12.02 22C17.53 22 22 17.52 22 12S17.53 2 12.02 2Zm0 18.15c-1.66 0-3.2-.46-4.52-1.25l-.32-.19-3.02.79.8-2.94-.21-.3A8.14 8.14 0 0 1 3.85 12c0-4.5 3.67-8.15 8.17-8.15 4.5 0 8.17 3.66 8.17 8.15 0 4.5-3.67 8.15-8.17 8.15Z" />
+    </svg>
+  );
+}
+
+function IconCheck({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.75"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      <circle cx="12" cy="12" r="9" />
+      <path d="M8.5 12.5l2.5 2.5 4.5-5" />
     </svg>
   );
 }

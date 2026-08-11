@@ -1,0 +1,320 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
+import { Bodoni_Moda } from "next/font/google";
+import { useCart, type CartItem } from "./CartContext";
+import type { PackageVariant } from "./packageTypes";
+
+const display = Bodoni_Moda({
+  subsets: ["latin"],
+  weight: ["400", "500", "600"],
+});
+
+// Vale para todos os pacotes de Caravana e Individual — mesma lista usada
+// antes na seção global "O que está incluso", agora dentro do detalhe de
+// cada pacote.
+const INCLUSOES_PADRAO = [
+  {
+    title: "Roteiro Digital",
+    text: "Itinerário dia a dia, com atrações, deslocamento, refeições e aeroportos, acessível durante toda a viagem.",
+  },
+  {
+    title: "Hotel",
+    text: "Hospedagem selecionada, em localizações estratégicas para o roteiro.",
+  },
+  {
+    title: "Passagem Aérea",
+    text: "Ida e volta, com as melhores opções de conexão para o Japão.",
+  },
+  {
+    title: "Seguro Viagem",
+    text: "Cobertura para toda a duração da viagem.",
+  },
+  {
+    title: "Pocket Wi-Fi ou eSIM 5G",
+    text: "Conexão disponível durante todo o roteiro.",
+  },
+  {
+    title: "Guia Turístico",
+    text: "Acompanhamento local em pontos-chave do roteiro.",
+    opcional: true,
+  },
+  {
+    title: "Transfer",
+    text: "Translados aeroporto-hotel e hotel-aeroporto.",
+    opcional: true,
+  },
+];
+
+function IconCheck({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.75"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      <circle cx="12" cy="12" r="9" />
+      <path d="M8.5 12.5l2.5 2.5 4.5-5" />
+    </svg>
+  );
+}
+
+function IconCart({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.75"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      <circle cx="9" cy="20" r="1.4" fill="currentColor" stroke="none" />
+      <circle cx="17" cy="20" r="1.4" fill="currentColor" stroke="none" />
+      <path d="M2.5 3h2.2l1.8 11a2 2 0 0 0 2 1.7h7.7a2 2 0 0 0 2-1.6l1.4-7.4H6.1" />
+    </svg>
+  );
+}
+
+function IconX({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.75"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      <line x1="5" y1="5" x2="19" y2="19" />
+      <line x1="19" y1="5" x2="5" y2="19" />
+    </svg>
+  );
+}
+
+export function PackageDetailModal({
+  divisao,
+  categoria,
+  nome,
+  tagline,
+  descricao,
+  destaques,
+  imagem,
+  selo,
+  accent = "#b79ce6",
+  variantes,
+  varianteHint = "Duração",
+  rodape,
+  onClose,
+}: {
+  divisao: CartItem["divisao"];
+  categoria: string;
+  nome: string;
+  tagline: string;
+  descricao: string;
+  destaques: string[];
+  imagem: string;
+  selo?: string;
+  accent?: string;
+  variantes: PackageVariant[];
+  varianteHint?: string;
+  rodape?: string;
+  onClose: () => void;
+}) {
+  const { addItem } = useCart();
+  const [selecionada, setSelecionada] = useState(variantes[0]?.id ?? "");
+  const [adicionado, setAdicionado] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => setMounted(true), []);
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [onClose]);
+
+  const variante = variantes.find((v) => v.id === selecionada) ?? variantes[0];
+
+  function handleAdd() {
+    if (!variante) return;
+    addItem({
+      divisao,
+      nome,
+      variante: `${variante.label} · ${variante.datas}`,
+      detalhes: [`Preço: ${variante.precoLabel}`],
+      precoLabel: variante.precoLabel,
+      imagem,
+    });
+    setAdicionado(true);
+    window.setTimeout(() => {
+      setAdicionado(false);
+      onClose();
+    }, 1200);
+  }
+
+  if (!mounted) return null;
+
+  return createPortal(
+    <div
+      className="fixed inset-0 z-[130] bg-black/85 backdrop-blur-sm md:flex md:items-center md:justify-center md:p-6"
+      onClick={onClose}
+    >
+      <div
+        className="relative flex h-[100dvh] w-full flex-col bg-[#0a0a0a] text-white md:h-auto md:max-h-[88vh] md:max-w-2xl md:overflow-hidden md:rounded-[28px] md:border md:border-white/10"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="sticky top-0 z-10 flex shrink-0 items-center justify-between border-b border-white/10 bg-[#0a0a0a]/95 px-5 py-4 backdrop-blur-sm md:px-8">
+          <div className="flex items-center gap-2.5">
+            <p className="text-[10px] uppercase tracking-[0.2em]" style={{ color: accent }}>
+              {categoria}
+            </p>
+            {selo && (
+              <span
+                className="rounded-full px-2 py-0.5 text-[9px] font-semibold uppercase tracking-[0.1em] text-black"
+                style={{ backgroundColor: accent }}
+              >
+                {selo}
+              </span>
+            )}
+          </div>
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label="Fechar"
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-white/15 text-white/60 transition hover:border-white/40 hover:text-white"
+          >
+            <IconX className="h-4 w-4" />
+          </button>
+        </div>
+
+        <div className="flex-1 overflow-y-auto px-5 py-6 md:px-8 md:py-8">
+          <h2 className={`${display.className} text-2xl font-medium text-white md:text-3xl`}>
+            {nome}
+          </h2>
+          <p className="mt-1.5 text-sm font-light leading-6 text-white/55">{tagline}</p>
+          <p className="mt-4 text-sm font-light leading-6 text-white/65">{descricao}</p>
+
+          <ul className="mt-5 space-y-2.5">
+            {destaques.map((item) => (
+              <li key={item} className="flex items-start gap-2.5 text-sm leading-5 text-white/70">
+                <span className="mt-0.5 shrink-0" style={{ color: accent }}>
+                  <IconCheck className="h-3.5 w-3.5" />
+                </span>
+                {item}
+              </li>
+            ))}
+          </ul>
+
+          <div className="mt-8 border-t border-white/10 pt-6">
+            <h3 className={`${display.className} text-lg font-medium text-white`}>Itinerário</h3>
+            <p className="mt-2.5 text-sm font-light leading-6 text-white/60">
+              Assim que a reserva é confirmada, você recebe o Roteiro Digital
+              Ajisai: a programação dia a dia da viagem, com hospedagem,
+              deslocamentos e os principais pontos de cada data, disponível
+              pelo celular durante toda a viagem.
+            </p>
+          </div>
+
+          <div className="mt-8 border-t border-white/10 pt-6">
+            <h3 className={`${display.className} text-lg font-medium text-white`}>
+              O que está incluso
+            </h3>
+            <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
+              {INCLUSOES_PADRAO.map((item) => (
+                <div
+                  key={item.title}
+                  className="rounded-xl border border-white/10 bg-white/[0.03] p-3.5"
+                >
+                  <p className="flex items-center gap-2 text-sm font-medium text-white">
+                    {item.title}
+                    {item.opcional && (
+                      <span className="rounded-full bg-[#b79ce6]/15 px-2 py-0.5 text-[9px] font-semibold uppercase tracking-[0.08em] text-[#b79ce6]">
+                        Opcional
+                      </span>
+                    )}
+                  </p>
+                  <p className="mt-1 text-xs font-light leading-5 text-white/50">{item.text}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="mt-8 border-t border-white/10 pt-6">
+            {variantes.length > 1 && (
+              <>
+                <p className="mb-3 text-[10px] uppercase tracking-[0.22em] text-white/35">
+                  {varianteHint}
+                </p>
+                <div className="flex flex-wrap gap-3">
+                  {variantes.map((v) => {
+                    const ativo = v.id === selecionada;
+                    return (
+                      <button
+                        key={v.id}
+                        type="button"
+                        onClick={() => setSelecionada(v.id)}
+                        className={`rounded-full border px-7 py-3.5 text-base font-semibold uppercase tracking-[0.1em] transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-[1.06] active:scale-95 ${
+                          ativo
+                            ? "border-transparent text-black shadow-[0_10px_26px_rgba(0,0,0,0.4)]"
+                            : "border-white/20 text-white/60 hover:border-white/50 hover:text-white hover:shadow-[0_10px_24px_rgba(0,0,0,0.3)]"
+                        }`}
+                        style={ativo ? { backgroundColor: accent } : undefined}
+                      >
+                        {v.label}
+                      </button>
+                    );
+                  })}
+                </div>
+              </>
+            )}
+
+            {variante && (
+              <div className="mt-6">
+                <p className="text-[10px] uppercase tracking-[0.22em] text-white/35">
+                  {variante.datas}
+                </p>
+                <p className={`${display.className} mt-1 text-3xl font-medium text-white`}>
+                  {variante.precoLabel}
+                </p>
+                {variante.parcelaLabel && (
+                  <p className="mt-1 text-sm font-medium text-white/70">{variante.parcelaLabel}</p>
+                )}
+              </div>
+            )}
+            {rodape && <p className="mt-2 text-[11px] leading-5 text-white/40">{rodape}</p>}
+          </div>
+        </div>
+
+        <div className="shrink-0 border-t border-white/10 bg-[#0a0a0a] px-5 py-4 md:px-8">
+          <button
+            type="button"
+            onClick={handleAdd}
+            className="flex w-full items-center justify-center gap-2 rounded-full px-5 py-3.5 text-center text-[11px] font-semibold uppercase tracking-[0.2em] text-white shadow-[0_10px_30px_rgba(0,0,0,0.35)] transition duration-300 hover:-translate-y-0.5"
+            style={{ backgroundColor: adicionado ? "#2f9e6e" : "#2f80c9" }}
+          >
+            {adicionado ? (
+              <>
+                <IconCheck className="h-4 w-4" /> Adicionado ao carrinho
+              </>
+            ) : (
+              <>
+                <IconCart className="h-4 w-4" /> Adicionar ao carrinho
+              </>
+            )}
+          </button>
+        </div>
+      </div>
+    </div>,
+    document.body,
+  );
+}

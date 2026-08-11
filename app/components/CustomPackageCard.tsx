@@ -148,7 +148,7 @@ export function CustomPackageCard() {
         <button
           type="submit"
           className="flex w-full items-center justify-center gap-2 rounded-full px-5 py-3.5 text-center text-[11px] font-semibold uppercase tracking-[0.2em] text-white shadow-[0_10px_30px_rgba(0,0,0,0.35)] transition duration-300 hover:-translate-y-0.5 sm:w-auto sm:px-8"
-          style={{ backgroundColor: adicionado ? "#2f9e6e" : "#e0916a" }}
+          style={{ backgroundColor: adicionado ? "#2f9e6e" : "#2f80c9" }}
         >
           {adicionado ? (
             <>
