@@ -111,6 +111,7 @@ export function PackageDetailModal({
   accent = "#b79ce6",
   variantes,
   varianteHint = "Duração",
+  varianteInicialId,
   rodape,
   onClose,
 }: {
@@ -125,11 +126,13 @@ export function PackageDetailModal({
   accent?: string;
   variantes: PackageVariant[];
   varianteHint?: string;
+  /** Variante já escolhida no card, antes de abrir o detalhe — abre o modal com essa selecionada. */
+  varianteInicialId?: string;
   rodape?: string;
   onClose: () => void;
 }) {
   const { addItem } = useCart();
-  const [selecionada, setSelecionada] = useState(variantes[0]?.id ?? "");
+  const [selecionada, setSelecionada] = useState(varianteInicialId ?? variantes[0]?.id ?? "");
   const [adicionado, setAdicionado] = useState(false);
   const [mounted, setMounted] = useState(false);
 
