@@ -2,6 +2,10 @@ import Image from "next/image";
 import { Bodoni_Moda } from "next/font/google";
 import { ContactCTA } from "../components/ContactCTA";
 import { CarouselScroller } from "../components/CarouselScroller";
+import { CartProvider } from "../components/CartContext";
+import { CartWidget } from "../components/CartWidget";
+import { PackageCard, type PackageVariant } from "../components/PackageCard";
+import { CustomPackageCard } from "../components/CustomPackageCard";
 
 // Mesma fonte de destaque usada nas demais páginas do site.
 const display = Bodoni_Moda({
@@ -12,8 +16,148 @@ const display = Bodoni_Moda({
 export const metadata = {
   title: "Ajisai | Pacotes de Viagem para o Japão",
   description:
-    "Pacotes completos para o Japão com a curadoria Ajisai: hotel, passagem aérea, seguro viagem, Wi-Fi, roteiro digital, guia turístico e transfer opcionais. Primeira Viagem ao Japão, Temporada das Cerejeiras, Outono no Japão, Japão em Família, Tokyo Marathon Experience e Anime, Gaming & TCG.",
+    "Pacotes de viagem para o Japão com a curadoria Ajisai: Caravana (grupo fechado), Individual ou Pequenos Grupos e Pacotes Personalizados por hora. Monte seu carrinho e finalize direto no WhatsApp.",
 };
+
+// Preço-base de 7 dias usa como referência o valor do pacote sazonal
+// equivalente que já existia na página (Temporada das Cerejeiras → R$ 15.990;
+// Outono, como estação de menor fluxo mais próxima do perfil de maio → R$
+// 13.490). O valor de 15 dias aplica escala linear simples (preço 7 dias ÷ 7
+// × 15, arredondado para a terminação em "990"/"490" usada nos demais
+// pacotes do site) — sem desconto por estadia mais longa. Se preferir outro
+// critério (ex: descontar a passagem aérea, que é custo fixo, do cálculo dos
+// dias extras), é só avisar que ajusto a fórmula. Datas também são
+// provisórias — confirmar antes de publicar.
+const parcelaDe = (preco: number) =>
+  `ou em até 12x de R$ ${(preco / 12).toLocaleString("pt-BR", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  })} + Juros Mensais`;
+
+const variantesPadrao = (
+  preco7: number,
+  datas7: string,
+  preco15: number,
+  datas15: string,
+): PackageVariant[] => [
+  {
+    id: "7d",
+    label: "7 dias",
+    datas: datas7,
+    precoLabel: `R$ ${preco7.toLocaleString("pt-BR")}`,
+    parcelaLabel: parcelaDe(preco7),
+  },
+  {
+    id: "15d",
+    label: "15 dias",
+    datas: datas15,
+    precoLabel: `R$ ${preco15.toLocaleString("pt-BR")}`,
+    parcelaLabel: parcelaDe(preco15),
+  },
+];
+
+const pacotesCaravana = [
+  {
+    slug: "caravana-cerejeiras",
+    categoria: "Temporada de Cerejeiras",
+    nome: "Primavera 1 — Temporada de Cerejeiras 2027",
+    tagline: "Saída em grupo fechado, direto na florada",
+    descricao:
+      "Viaje em grupo, com data de saída única e guia bilíngue dedicado à caravana do início ao fim, durante a temporada de floração das cerejeiras.",
+    destaques: [
+      "Data de saída fixa, em grupo fechado",
+      "Guia bilíngue acompanhando a caravana do início ao fim",
+      "Hospedagem e passagens já reservadas para o grupo",
+      "Vagas limitadas — reserva antecipada recomendada",
+    ],
+    imagem: "/images/sakura.jpg",
+    imagemAlt: "Torre de Tóquio entre flores de cerejeira (sakura) à noite",
+    accent: "#e6a6c7",
+    selo: "🌸 Alta procura",
+    videoSrc: "/videos/higashiyama.mp4",
+    variantes: variantesPadrao(
+      15990,
+      "28 mar – 03 abr 2027",
+      34490,
+      "24 mar – 07 abr 2027",
+    ),
+  },
+  {
+    slug: "caravana-maio",
+    categoria: "Maio 2027",
+    nome: "Primavera 2 — Maio 2027",
+    tagline: "Saída em grupo fechado, fora do pico de alta temporada",
+    descricao:
+      "Viaje em grupo, com data de saída única e guia bilíngue dedicado à caravana do início ao fim, em maio — clima ameno e menor fluxo turístico.",
+    destaques: [
+      "Data de saída fixa, em grupo fechado",
+      "Guia bilíngue acompanhando a caravana do início ao fim",
+      "Clima ameno e menor fluxo turístico que a alta temporada",
+      "Vagas limitadas — reserva antecipada recomendada",
+    ],
+    imagem: "/images/azumino.jpg",
+    imagemAlt: "Paisagem verde de Nagano no início do verão",
+    accent: "#7fbf6e",
+    videoSrc: "/videos/kamikochi.mp4",
+    variantes: variantesPadrao(
+      13490,
+      "08 – 14 mai 2027",
+      28990,
+      "08 – 22 mai 2027",
+    ),
+  },
+];
+
+const pacotesIndividuais = [
+  {
+    slug: "individual-cerejeiras",
+    categoria: "Temporada de Cerejeiras",
+    nome: "Primavera 1 — Temporada de Cerejeiras 2027",
+    tagline: "Datas flexíveis, guia dedicado só ao seu grupo",
+    descricao:
+      "O mesmo roteiro da temporada de cerejeiras, com datas flexíveis dentro da temporada e guia particular dedicado exclusivamente ao seu grupo.",
+    destaques: [
+      "Datas flexíveis dentro da temporada de cerejeiras",
+      "Guia particular, dedicado só ao seu grupo",
+      "Roteiro pode ser ajustado ao seu ritmo e interesses",
+      "Ideal para famílias, casais e grupos de amigos",
+    ],
+    imagem: "/images/kyoto-maiko-street.png",
+    imagemAlt: "Rua tradicional em Kyoto durante a temporada de cerejeiras",
+    accent: "#e6a6c7",
+    videoSrc: "/videos/higashiyama.mp4",
+    variantes: variantesPadrao(
+      15990,
+      "Datas flexíveis · mar–abr 2027",
+      34490,
+      "Datas flexíveis · mar–abr 2027",
+    ),
+  },
+  {
+    slug: "individual-maio",
+    categoria: "Maio 2027",
+    nome: "Primavera 2 — Maio 2027",
+    tagline: "Datas flexíveis, guia dedicado só ao seu grupo",
+    descricao:
+      "O mesmo roteiro de maio, com datas flexíveis dentro do mês e guia particular dedicado exclusivamente ao seu grupo.",
+    destaques: [
+      "Datas flexíveis dentro de maio de 2027",
+      "Guia particular, dedicado só ao seu grupo",
+      "Roteiro pode ser ajustado ao seu ritmo e interesses",
+      "Ideal para famílias, casais e grupos de amigos",
+    ],
+    imagem: "/images/shirakawago.jpg",
+    imagemAlt: "Vilarejo tradicional japonês cercado por vegetação",
+    accent: "#7fbf6e",
+    videoSrc: "/videos/kamikochi.mp4",
+    variantes: variantesPadrao(
+      13490,
+      "Datas flexíveis · maio 2027",
+      28990,
+      "Datas flexíveis · maio 2027",
+    ),
+  },
+];
 
 export default function PacotesJapaoPage() {
   const avatarColors = [
@@ -25,131 +169,12 @@ export default function PacotesJapaoPage() {
     "#8fb7d9",
   ];
 
-  const pacotes = [
-    {
-      slug: "japao-classico",
-      categoria: "Essencial",
-      nome: "Primeira Viagem ao Japão",
-      tagline: "Tóquio, Kyoto e Osaka nas paradas certas",
-      descricao:
-        "O roteiro ideal para quem vai ao Japão pela primeira vez: os templos de Kyoto, a energia de Tóquio e a gastronomia de Osaka, com hospedagem confortável e toda a logística resolvida do início ao fim.",
-      destaques: [
-        "Tóquio, Kyoto e Osaka",
-        "Deslocamento entre cidades incluído no roteiro",
-        "Hotéis bem localizados, próximos às estações",
-        "Ideal para a primeira viagem ao Japão",
-      ],
-      precoDe: "R$ 11.990",
-      parcelaDe: "R$ 999,17",
-      accent: "#5b9bd5",
-      selo: "⭐ Mais vendido",
-      imagem: "/images/maiko.png",
-      imagemAlt: "Gueixa em rua tradicional durante festival de lanternas, Japão",
-      Icon: IconPin,
-    },
-    {
-      slug: "japao-sakura",
-      categoria: "Primavera · Alta temporada",
-      nome: "Temporada das Cerejeiras",
-      tagline: "A temporada das cerejeiras em flor",
-      descricao:
-        "Viaje entre o final de março e início de abril para acompanhar a florada das cerejeiras em parques, templos e avenidas históricas — um dos espetáculos naturais mais aguardados do mundo.",
-      destaques: [
-        "Época da florada das sakuras",
-        "Parques e pontos panorâmicos de hanami",
-        "Hospedagem em regiões com boa vista da florada",
-        "Datas de alta procura — reserva antecipada recomendada",
-      ],
-      precoDe: "R$ 15.990",
-      parcelaDe: "R$ 1.332,50",
-      accent: "#e6a6c7",
-      imagem: "/images/sakura.jpg",
-      imagemAlt: "Torre de Tóquio entre flores de cerejeira (sakura) à noite",
-      Icon: IconFlower,
-    },
-    {
-      slug: "japao-outono",
-      categoria: "Outono · Kōyō",
-      nome: "Outono no Japão",
-      tagline: "As folhas vermelhas e douradas do outono japonês",
-      descricao:
-        "Entre meados de novembro e início de dezembro, jardins, templos e montanhas se transformam em um mosaico de vermelho e dourado. Um roteiro pensado para acompanhar o kōyō nos melhores pontos do país.",
-      destaques: [
-        "Época do kōyō (folhagens de outono)",
-        "Jardins e templos históricos",
-        "Clima ameno, ótimo para caminhadas",
-        "Menor fluxo turístico que a primavera",
-      ],
-      precoDe: "R$ 13.490",
-      parcelaDe: "R$ 1.124,17",
-      accent: "#d9a66d",
-      imagem: "/images/autumn.jpg",
-      imagemAlt: "Monte Fuji nevado emoldurado por folhagens vermelhas de outono",
-      Icon: IconLeaf,
-    },
-    {
-      slug: "japao-disney-usj",
-      categoria: "Família · Parques temáticos",
-      nome: "Japão em Família",
-      tagline: "Japão clássico com Tokyo Disney Resort e Universal Studios Japan",
-      descricao:
-        "A combinação perfeita para famílias e fãs de parques temáticos: cultura, gastronomia e tradição japonesa, mais um dia na Tokyo Disneyland ou DisneySea e outro na Universal Studios Japan, em Osaka.",
-      destaques: [
-        "Ingresso e visita à Tokyo Disneyland ou DisneySea",
-        "Ingresso e visita à Universal Studios Japan",
-        "Roteiro equilibrado entre parques e cultura local",
-        "Ótimo para famílias e grupos",
-      ],
-      precoDe: "R$ 15.490",
-      parcelaDe: "R$ 1.290,83",
-      accent: "#7c4fd1",
-      imagem: "/images/usj.jpg",
-      imagemAlt: "Atração temática na Universal Studios Japan, em Osaka",
-      Icon: IconTicket,
-    },
-    {
-      slug: "maratona-tokyo-2027",
-      categoria: "Evento esportivo · 07 de março de 2027",
-      nome: "Tokyo Marathon Experience",
-      tagline: "Viva a 20ª edição da Tokyo Marathon",
-      descricao:
-        "Pacote especial para corredores e acompanhantes na Tokyo Marathon 2027, no dia 7 de março, que celebra a 20ª edição do evento. Hospedagem estrategicamente localizada e roteiro turístico complementar nos dias sem prova.",
-      destaques: [
-        "Tokyo Marathon 2027 · 07 de março de 2027 (20ª edição)",
-        "Apoio na inscrição da prova, sob consulta e disponibilidade",
-        "Hospedagem próxima ao trajeto e à largada",
-        "Roteiro turístico complementar nos demais dias",
-      ],
-      precoDe: "R$ 21.990",
-      parcelaDe: "R$ 1.832,50",
-      accent: "#6ec3d9",
-      selo: "🏃 Vagas limitadas",
-      imagem: "/images/tokyo-marathon.png",
-      imagemAlt: "Logo oficial da Tokyo Marathon",
-      imagemFundoClaro: true,
-      Icon: IconMedal,
-    },
-    {
-      slug: "japao-anime-gaming-tcg",
-      categoria: "Cultura pop · Anime, Gaming e TCG",
-      nome: "Anime, Gaming & TCG",
-      tagline: "Parques temáticos, lojas oficiais e o circuito TCG do Japão",
-      descricao:
-        "Pacote pensado para fãs de anime, games e TCG: o melhor de atrações como Tokyo Disneyland, Universal Studios Japan, PokéPark e Studio Ghibli, somado a visitas às lojas oficiais das principais franquias e ao circuito de compra e venda de cards em Tokyo e Osaka.",
-      destaques: [
-        "Tokyo Disneyland, Universal Studios Japan, PokéPark e Studio Ghibli",
-        "Lojas oficiais: Nintendo, Capcom, Square Enix, Pokémon Center e Toei (One Piece, Dragon Ball)",
-        "Circuito de lojas de TCG em Tokyo e Osaka, como a Hareruya 2",
-        "Akihabara: colecionáveis retrô (N64, Super Nintendo, PS1) e itens atuais como mousepads Artisan",
-      ],
-      precoDe: "R$ 16.990",
-      parcelaDe: "R$ 1.415,83",
-      accent: "#ff5964",
-      selo: "🎮 Novo pacote",
-      imagem: "/images/anime-gaming-cover.png",
-      imagemAlt: "Personagens de One Piece com colecionáveis, referência à cultura pop japonesa",
-      Icon: IconGamepad,
-    },
+  const todosOsNomesDePacote = [
+    "Primavera 1 — Temporada de Cerejeiras 2027 (Caravana)",
+    "Primavera 2 — Maio 2027 (Caravana)",
+    "Primavera 1 — Temporada de Cerejeiras 2027 (Individual)",
+    "Primavera 2 — Maio 2027 (Individual)",
+    "Pacote Personalizado",
   ];
 
   const inclusoes = [
@@ -228,36 +253,42 @@ export default function PacotesJapaoPage() {
   const workflowSteps = [
     {
       number: "01",
-      title: "Escolha o pacote",
-      lines: ["Roteiro e duração, de 7 a 15 dias."],
-      Icon: IconDocument,
+      title: "Monte seu carrinho",
+      lines: ["Escolha o pacote, personalize a duração ou a data e adicione ao carrinho."],
+      Icon: IconCart,
     },
     {
       number: "02",
+      title: "Finalize no WhatsApp",
+      lines: ["Envie o carrinho e fale direto com a equipe Ajisai."],
+      Icon: IconDocument,
+    },
+    {
+      number: "03",
       title: "Reserva com primeira parcela",
       lines: ["Confirmação da reserva com pagamento da primeira parcela."],
       Icon: IconCard,
     },
     {
-      number: "03",
+      number: "04",
       title: "Emissão de voos e hotéis",
       lines: ["Passagens, hospedagem e seguro viagem confirmados."],
       Icon: IconPlane,
     },
     {
-      number: "04",
+      number: "05",
       title: "Guia de viagem",
       lines: ["Documentos e orientações antes do embarque."],
       Icon: IconDocument,
     },
     {
-      number: "05",
+      number: "06",
       title: "Pagamento final",
       lines: ["Quitação do valor restante antes da viagem."],
       Icon: IconCard,
     },
     {
-      number: "06",
+      number: "07",
       title: "Embarque e suporte 24h",
       lines: ["Acompanhamento Ajisai durante toda a viagem."],
       Icon: IconCheck,
@@ -299,19 +330,24 @@ export default function PacotesJapaoPage() {
 
   const faq = [
     {
-      pergunta: "O que está incluso no valor do pacote?",
+      pergunta: "Qual a diferença entre Caravana e Individual ou Pequenos Grupos?",
       resposta:
-        "Hotel, passagem aérea de ida e volta, seguro viagem, Pocket Wi-Fi ou eSIM 5G e roteiro digital já estão inclusos no preço de todos os pacotes. Guia turístico, transfer e o serviço de Mobilidade & Saúde são opcionais e podem ser adicionados à parte.",
+        "Os Pacotes de Caravana têm data de saída única, em grupo fechado, com guia compartilhado por toda a caravana. Os pacotes Individual ou Pequenos Grupos têm datas flexíveis dentro da temporada e guia particular dedicado só ao seu grupo.",
     },
     {
-      pergunta: "Como funciona a oferta do Guia Turístico?",
+      pergunta: "Como funciona o carrinho de pacotes?",
       resposta:
-        "A oferta de Guia Turístico é limitada para determinadas datas. As datas são definidas quando há número mínimo de clientes viajando no mesmo período e agenda livre da equipe de guias turísticos. Até 30 dias antes da viagem, caso exista disponibilidade de guia turístico, a Ajisai e/ou Alpinea entrará em contato para confirmar que a oferta está disponível.",
+        "Escolha um ou mais pacotes, personalize a duração (ou, no Personalizado, a data e a quantidade de horas) e adicione ao carrinho. Ao finalizar, os itens do carrinho viram uma única mensagem enviada para a nossa equipe no WhatsApp.",
     },
     {
-      pergunta: "O que inclui o serviço de Mobilidade & Saúde?",
+      pergunta: "O que está incluso no valor dos pacotes de Caravana e Individuais?",
       resposta:
-        "É um serviço opcional voltado a viajantes que precisam de motorista particular para os deslocamentos do roteiro e de um mapeamento mais detalhado da rede de hospitais e clínicas médicas na região visitada, para maior segurança durante a viagem.",
+        "Hotel, passagem aérea de ida e volta, seguro viagem, Pocket Wi-Fi ou eSIM 5G e roteiro digital já estão inclusos no preço. Guia turístico, transfer e o serviço de Mobilidade & Saúde são opcionais e podem ser adicionados à parte.",
+    },
+    {
+      pergunta: "Como funciona o Pacote Personalizado?",
+      resposta:
+        "Você escolhe a data e a quantidade de horas do passeio, com motorista e guia particular à disposição. O valor é calculado conforme a data, as horas e o roteiro escolhidos, e nossa equipe retorna com uma proposta.",
     },
     {
       pergunta: "O que é o Roteiro Digital?",
@@ -321,7 +357,7 @@ export default function PacotesJapaoPage() {
     {
       pergunta: "O valor exibido vale para quantos dias?",
       resposta:
-        "O valor \"a partir de\" corresponde à versão de 7 dias do pacote, em quarto individual. Roteiros de 10, 12 e 15 dias têm valores sob consulta, de acordo com a data escolhida.",
+        "Nos pacotes de Caravana e Individuais, o valor \"a partir de\" corresponde à versão escolhida (7 ou 15 dias), por pessoa, em quarto individual. No Personalizado, o valor depende da data e da quantidade de horas selecionadas.",
     },
     {
       pergunta: "Posso parcelar o pagamento?",
@@ -333,279 +369,340 @@ export default function PacotesJapaoPage() {
       resposta:
         "A exigência de visto depende da nacionalidade do viajante. A equipe Ajisai orienta sobre a documentação necessária durante o processo de reserva.",
     },
-    {
-      pergunta: "Dá para personalizar algum desses pacotes?",
-      resposta:
-        "Sim, pequenos ajustes de hotel, datas e passeios podem ser feitos dentro de cada pacote. Para um roteiro 100% sob medida, temos também o serviço de roteiros personalizados Ajisai.",
-    },
   ];
 
   return (
-    <main className="min-h-screen overflow-x-hidden bg-black pb-16 text-white md:pb-0">
-      {/* CSS puro para abrir/fechar o pop-up de FAQ via :target, sem JS, funciona igual em desktop e mobile */}
-      <style>{`
-        #faq-modal { display: none; }
-        #faq-modal:target { display: flex; }
-      `}</style>
+    <CartProvider>
+      <main className="min-h-screen overflow-x-hidden bg-black pb-16 text-white md:pb-0">
+        {/* CSS puro para abrir/fechar o pop-up de FAQ via :target, sem JS, funciona igual em desktop e mobile */}
+        <style>{`
+          #faq-modal { display: none; }
+          #faq-modal:target { display: flex; }
+        `}</style>
 
-      {/* ── HEADER ── */}
-      <header className="fixed left-0 right-0 top-0 z-50 transform-gpu bg-black/10 backdrop-blur-2xl">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-8 py-5 md:px-16">
-          <img
-            src="/images/AJISAI-LOGO.avif"
-            alt="Ajisai"
-            className="h-10 w-auto object-contain md:h-11"
+        {/* ── HEADER ── */}
+        <header className="fixed left-0 right-0 top-0 z-50 transform-gpu bg-black/10 backdrop-blur-2xl">
+          <div className="mx-auto flex max-w-7xl items-center justify-between px-8 py-5 md:px-16">
+            <img
+              src="/images/AJISAI-LOGO.avif"
+              alt="Ajisai"
+              className="h-10 w-auto object-contain md:h-11"
+            />
+
+            <div className="flex items-center gap-3 md:gap-5">
+              <CartWidget />
+              <a
+                href="#contact"
+                className="hidden rounded-full border border-white/25 px-5 py-2 text-xs uppercase tracking-[0.25em] text-white/80 transition hover:border-white/60 hover:text-white md:inline-block"
+              >
+                Falar com a Ajisai
+              </a>
+            </div>
+          </div>
+        </header>
+
+        {/* ── CTA FIXO MOBILE ── */}
+        <div
+          className="fixed inset-x-0 bottom-0 z-40 transform-gpu border-t border-white/10 bg-black/[0.92] px-4 pt-2.5 backdrop-blur-xl md:hidden"
+          style={{ paddingBottom: "max(0.55rem, env(safe-area-inset-bottom))" }}
+        >
+          <ContactCTA
+            mode="single"
+            channel="whatsapp"
+            whatsappNumber="5511930300101"
+            brand="Ajisai"
+            packageOptions={todosOsNomesDePacote}
+            label={
+              <span className="flex items-center justify-center gap-2">
+                <IconWhatsApp className="h-4 w-4" />
+                Falar com a Ajisai →
+              </span>
+            }
+            buttonClassName="flex w-full items-center justify-center bg-[#2f80c9] px-4 py-3 text-center text-[11px] font-medium uppercase tracking-[0.22em] text-white transition hover:bg-[#2870b0]"
           />
+        </div>
+
+        {/* ── HERO ── */}
+        <section className="relative h-[560px] min-h-[560px] overflow-hidden bg-black md:h-auto md:min-h-[720px]">
+          <div className="absolute inset-0 mx-auto max-w-[1800px]">
+            <Image
+              src="/images/kyoto-maiko-street.png"
+              alt="Rua tradicional em Kyoto, Japão"
+              fill
+              priority
+              sizes="100vw"
+              className="object-cover"
+            />
+            <div
+              className="absolute inset-0"
+              style={{
+                background:
+                  "linear-gradient(to top, #000 0%, rgba(0,0,0,0.92) 14%, rgba(0,0,0,0.68) 32%, rgba(0,0,0,0.22) 58%, rgba(0,0,0,0.06) 100%)",
+              }}
+            />
+          </div>
+
+          <div className="absolute inset-x-0 bottom-20 z-10 px-6 text-center md:bottom-24 md:px-16">
+            <p className="mb-5 text-xs uppercase tracking-[0.35em] text-white/50">
+              Pacotes Ajisai
+            </p>
+            <h1
+              className={`${display.className} mx-auto max-w-xs text-[1.85rem] font-medium leading-[1.18] text-white sm:max-w-md sm:text-[2.1rem] md:max-w-4xl md:text-5xl md:leading-[1.08]`}
+            >
+              Pacotes criados por especialistas, agência 100% focada em Japão.
+            </h1>
+            <p className="mx-auto mt-5 max-w-md text-sm font-light leading-6 text-white/65 md:max-w-2xl md:text-lg md:leading-8">
+              Escolha entre Caravana, Individual ou Pequenos Grupos e Pacotes
+              Personalizados. Monte seu carrinho e finalize direto no
+              WhatsApp.
+            </p>
+          </div>
 
           <a
-            href="#contact"
-            className="hidden rounded-full border border-white/25 px-5 py-2 text-xs uppercase tracking-[0.25em] text-white/80 transition hover:border-white/60 hover:text-white md:inline-block"
+            href="#pacotes"
+            aria-label="Rolar para os pacotes"
+            className="absolute inset-x-0 bottom-6 z-10 flex justify-center md:hidden"
           >
-            Falar com a Ajisai
-          </a>
-        </div>
-      </header>
-
-      {/* ── CTA FIXO MOBILE ── */}
-      <div
-        className="fixed inset-x-0 bottom-0 z-40 transform-gpu border-t border-white/10 bg-black/[0.92] px-4 pt-2.5 backdrop-blur-xl md:hidden"
-        style={{ paddingBottom: "max(0.55rem, env(safe-area-inset-bottom))" }}
-      >
-        <ContactCTA
-          mode="single"
-          channel="whatsapp"
-          whatsappNumber="5511930300101"
-          brand="Ajisai"
-          packageOptions={pacotes.map((p) => p.nome)}
-          label={
-            <span className="flex items-center justify-center gap-2">
-              <IconWhatsApp className="h-4 w-4" />
-              Falar com a Ajisai →
-            </span>
-          }
-          buttonClassName="flex w-full items-center justify-center bg-[#2f80c9] px-4 py-3 text-center text-[11px] font-medium uppercase tracking-[0.22em] text-white transition hover:bg-[#2870b0]"
-        />
-      </div>
-
-      {/* ── HERO ── */}
-      <section className="relative h-[560px] min-h-[560px] overflow-hidden bg-black md:h-auto md:min-h-[720px]">
-        <div className="absolute inset-0 mx-auto max-w-[1800px]">
-          <Image
-            src="/images/kyoto-maiko-street.png"
-            alt="Rua tradicional em Kyoto, Japão"
-            fill
-            priority
-            sizes="100vw"
-            className="object-cover"
-          />
-          <div
-            className="absolute inset-0"
-            style={{
-              background:
-                "linear-gradient(to top, #000 0%, rgba(0,0,0,0.92) 14%, rgba(0,0,0,0.68) 32%, rgba(0,0,0,0.22) 58%, rgba(0,0,0,0.06) 100%)",
-            }}
-          />
-        </div>
-
-        <div className="absolute inset-x-0 bottom-20 z-10 px-6 text-center md:bottom-24 md:px-16">
-          <p className="mb-5 text-xs uppercase tracking-[0.35em] text-white/50">
-            Pacotes Ajisai
-          </p>
-          <h1
-            className={`${display.className} mx-auto max-w-xs text-[1.85rem] font-medium leading-[1.18] text-white sm:max-w-md sm:text-[2.1rem] md:max-w-4xl md:text-5xl md:leading-[1.08]`}
-          >
-            Pacotes criados por especialistas, agência 100% focado em Japão.
-          </h1>
-          <p className="mx-auto mt-5 max-w-md text-sm font-light leading-6 text-white/65 md:max-w-2xl md:text-lg md:leading-8">
-            Hotéis selecionados, passagens, suporte local e operação própria
-            no Japão, sem intermediários.
-          </p>
-        </div>
-
-        <a
-          href="#pacotes"
-          aria-label="Rolar para os pacotes"
-          className="absolute inset-x-0 bottom-6 z-10 flex justify-center md:hidden"
-        >
-          <span className="flex h-12 w-12 items-center justify-center rounded-full border border-white/25 bg-black/20 backdrop-blur-sm transition hover:border-white/50">
-            <svg
-              className="h-7 w-7 animate-bounce text-white/80"
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.75"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <polyline points="6 9 12 15 18 9" />
-            </svg>
-          </span>
-        </a>
-      </section>
-
-      {/* ── PACOTES ── */}
-      <section
-        id="pacotes"
-        className="border-t border-white/10 bg-[#050505] px-5 py-12 md:bg-black md:px-16 md:py-24"
-      >
-        <div className="mx-auto max-w-7xl">
-          <div className="mb-10 flex justify-center md:mb-14">
-            <span className="inline-flex max-w-full flex-wrap items-center justify-center gap-2 rounded-full border border-[#b79ce6]/50 bg-[#b79ce6]/15 px-5 py-2 text-center text-[11px] font-semibold uppercase tracking-[0.2em] text-[#b79ce6] md:text-xs">
-              <IconClock className="h-3.5 w-3.5 shrink-0" />
-              Preços válidos até 30/07/2026 · Sujeitos a alteração conforme variação cambial
-            </span>
-          </div>
-
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-            {pacotes.map((pacote) => (
-              <div
-                key={pacote.slug}
-                className="flex flex-col overflow-hidden rounded-2xl border border-white/10 bg-white/[0.025] sm:rounded-[2rem]"
+            <span className="flex h-12 w-12 items-center justify-center rounded-full border border-white/25 bg-black/20 backdrop-blur-sm transition hover:border-white/50">
+              <svg
+                className="h-7 w-7 animate-bounce text-white/80"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.75"
+                strokeLinecap="round"
+                strokeLinejoin="round"
               >
-                <div
-                  className={`relative h-[200px] overflow-hidden ${pacote.imagemFundoClaro ? "bg-white" : ""}`}
-                >
-                  <Image
-                    src={pacote.imagem}
-                    alt={pacote.imagemAlt ?? pacote.nome}
-                    fill
-                    sizes="(max-width: 768px) 100vw, 33vw"
-                    className={
-                      pacote.imagemFundoClaro
-                        ? "object-contain p-10"
-                        : "object-cover"
-                    }
-                  />
-                  {!pacote.imagemFundoClaro && (
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent" />
-                  )}
-                  {pacote.selo && (
-                    <span className="absolute right-4 top-4 rounded-full bg-[#b79ce6] px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.15em] text-black shadow-[0_6px_18px_rgba(0,0,0,0.35)]">
-                      {pacote.selo}
-                    </span>
-                  )}
-                </div>
+                <polyline points="6 9 12 15 18 9" />
+              </svg>
+            </span>
+          </a>
+        </section>
 
-                <div className="flex flex-1 flex-col p-6">
-                  <h3
-                    className={`${display.className} text-2xl font-medium text-white`}
+        {/* ── DIVISÃO 1 · PACOTES DE CARAVANA ── */}
+        <section
+          id="pacotes"
+          className="border-t border-white/10 bg-[#050505] px-5 py-12 md:bg-black md:px-16 md:py-24"
+        >
+          <div className="mx-auto max-w-7xl">
+            <div className="mb-10 max-w-2xl md:mb-14">
+              <p className="mb-4 text-xs uppercase tracking-[0.3em] text-white/40 md:tracking-[0.45em]">
+                Divisão 1
+              </p>
+              <h2 className={`${display.className} text-3xl font-medium leading-tight md:text-5xl`}>
+                Pacotes de Caravana
+              </h2>
+              <p className="mt-4 text-sm font-light leading-6 text-white/55 md:text-base md:leading-7">
+                Para quem não deseja viajar somente com o próprio grupo — saída
+                em grupo fechado, com guia bilíngue dedicado à caravana do
+                início ao fim.
+              </p>
+            </div>
+
+            <div className="mb-8 flex justify-center md:mb-10 md:justify-start">
+              <span className="inline-flex max-w-full flex-wrap items-center justify-center gap-2 rounded-full border border-[#b79ce6]/50 bg-[#b79ce6]/15 px-5 py-2 text-center text-[11px] font-semibold uppercase tracking-[0.2em] text-[#b79ce6] md:text-xs">
+                <IconClock className="h-3.5 w-3.5 shrink-0" />
+                Datas e valores sujeitos a alteração conforme disponibilidade e câmbio
+              </span>
+            </div>
+
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+              {pacotesCaravana.map((pacote) => (
+                <PackageCard
+                  key={pacote.slug}
+                  divisao="Pacotes de Caravana"
+                  categoria={pacote.categoria}
+                  nome={pacote.nome}
+                  tagline={pacote.tagline}
+                  descricao={pacote.descricao}
+                  destaques={pacote.destaques}
+                  imagem={pacote.imagem}
+                  imagemAlt={pacote.imagemAlt}
+                  accent={pacote.accent}
+                  selo={pacote.selo}
+                  videoSrc={pacote.videoSrc}
+                  variantes={pacote.variantes}
+                  varianteHint="Duração"
+                  rodape="Por pessoa, em quarto individual. Vagas limitadas por grupo."
+                />
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ── DIVISÃO 2 · INDIVIDUAL OU PEQUENOS GRUPOS ── */}
+        <section
+          id="individuais"
+          className="border-t border-white/10 bg-black px-5 py-12 md:px-16 md:py-24"
+        >
+          <div className="mx-auto max-w-7xl">
+            <div className="mb-10 max-w-2xl md:mb-14">
+              <p className="mb-4 text-xs uppercase tracking-[0.3em] text-white/40 md:tracking-[0.45em]">
+                Divisão 2
+              </p>
+              <h2 className={`${display.className} text-3xl font-medium leading-tight md:text-5xl`}>
+                Individual ou Pequenos Grupos
+              </h2>
+              <p className="mt-4 text-sm font-light leading-6 text-white/55 md:text-base md:leading-7">
+                Para viajar apenas com quem você escolher — datas flexíveis
+                dentro da temporada e guia particular dedicado só ao seu
+                grupo.
+              </p>
+            </div>
+
+            <div className="mb-8 flex justify-center md:mb-10 md:justify-start">
+              <span className="inline-flex max-w-full flex-wrap items-center justify-center gap-2 rounded-full border border-[#b79ce6]/50 bg-[#b79ce6]/15 px-5 py-2 text-center text-[11px] font-semibold uppercase tracking-[0.2em] text-[#b79ce6] md:text-xs">
+                <IconClock className="h-3.5 w-3.5 shrink-0" />
+                Datas e valores sujeitos a alteração conforme disponibilidade e câmbio
+              </span>
+            </div>
+
+            <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+              {pacotesIndividuais.map((pacote) => (
+                <PackageCard
+                  key={pacote.slug}
+                  divisao="Individual ou Pequenos Grupos"
+                  categoria={pacote.categoria}
+                  nome={pacote.nome}
+                  tagline={pacote.tagline}
+                  descricao={pacote.descricao}
+                  destaques={pacote.destaques}
+                  imagem={pacote.imagem}
+                  imagemAlt={pacote.imagemAlt}
+                  accent={pacote.accent}
+                  videoSrc={pacote.videoSrc}
+                  variantes={pacote.variantes}
+                  varianteHint="Duração"
+                  rodape="Por pessoa, em quarto individual. Datas dentro da temporada indicada."
+                />
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ── DIVISÃO 3 · PACOTES PERSONALIZADOS ── */}
+        <section
+          id="personalizado"
+          className="border-t border-white/10 bg-white/[0.02] px-5 py-12 md:px-16 md:py-24"
+        >
+          <div className="mx-auto max-w-7xl">
+            <div className="mb-10 max-w-2xl md:mb-14">
+              <p className="mb-4 text-xs uppercase tracking-[0.3em] text-white/40 md:tracking-[0.45em]">
+                Divisão 3
+              </p>
+              <h2 className={`${display.className} text-3xl font-medium leading-tight md:text-5xl`}>
+                Pacotes Personalizados
+              </h2>
+              <p className="mt-4 text-sm font-light leading-6 text-white/55 md:text-base md:leading-7">
+                Viaje em qualquer data e pela quantidade de horas que preferir.
+              </p>
+            </div>
+
+            <CustomPackageCard />
+          </div>
+        </section>
+
+        {/* ── O QUE ESTÁ INCLUSO ── */}
+        <section className="border-t border-white/10 bg-black px-6 py-20 md:px-16 md:py-32">
+          <div className="mx-auto max-w-5xl">
+            <div className="mb-14 max-w-2xl md:mb-20">
+              <p className="mb-6 text-xs uppercase tracking-[0.3em] text-white/40 md:tracking-[0.45em]">
+                Nos pacotes de Caravana e Individuais
+              </p>
+              <h2
+                className={`${display.className} text-3xl font-medium leading-tight md:text-5xl`}
+              >
+                O que está incluso
+              </h2>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4 sm:gap-6 md:grid-cols-3 md:gap-8">
+              {inclusoes.map((item) => {
+                const tone = item.badge?.tone;
+                const cardTone =
+                  tone === "orange"
+                    ? "border-orange-400/40 bg-orange-400/[0.08] hover:border-orange-400/70"
+                    : tone === "purple"
+                      ? "border-[#b79ce6]/40 bg-[#b79ce6]/[0.08] hover:border-[#b79ce6]/70"
+                      : "border-white/10 bg-white/[0.03] hover:border-white/20";
+                const badgeTone =
+                  tone === "orange"
+                    ? "bg-orange-400 text-black"
+                    : "bg-[#b79ce6] text-black";
+                const iconTone = tone
+                  ? tone === "orange"
+                    ? "bg-orange-400 text-black"
+                    : "bg-[#b79ce6] text-black"
+                  : "bg-[#b79ce6]/12 text-[#b79ce6]";
+
+                return (
+                  <div
+                    key={item.title}
+                    className={`relative rounded-2xl border p-5 transition sm:p-8 ${cardTone}`}
                   >
-                    {pacote.nome}
-                  </h3>
-                  <p
-                    className="mt-1.5 text-xs uppercase tracking-[0.18em]"
-                    style={{ color: pacote.accent }}
-                  >
-                    {pacote.tagline}
-                  </p>
-                  <p className="mt-2 text-[11px] uppercase tracking-[0.22em] text-white/35">
-                    7 a 15 dias
-                  </p>
-
-                  <p className="mt-4 text-sm font-light leading-6 text-white/60">
-                    {pacote.descricao}
-                  </p>
-
-                  <ul className="mt-5 space-y-2.5">
-                    {pacote.destaques.map((item) => (
-                      <li
-                        key={item}
-                        className="flex items-start gap-2.5 text-sm leading-5 text-white/65"
+                    {item.badge && (
+                      <span
+                        className={`absolute right-4 top-4 max-w-[7.5rem] rounded-xl px-2.5 py-1.5 text-right text-[8px] font-semibold uppercase leading-tight tracking-[0.06em] shadow-[0_6px_18px_rgba(0,0,0,0.35)] sm:max-w-[9rem] sm:text-[9px] ${badgeTone}`}
                       >
-                        <IconCheck className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[#b79ce6]" />
-                        {item}
-                      </li>
-                    ))}
-                  </ul>
-
-                  <div className="mt-6 flex flex-1 flex-col justify-end border-t border-white/10 pt-5">
-                    <p className="text-[10px] uppercase tracking-[0.22em] text-white/35">
-                      A partir de
-                    </p>
-                    <p
-                      className={`${display.className} mt-1 text-3xl font-medium text-white`}
+                        {item.badge.label}
+                      </span>
+                    )}
+                    <span
+                      className={`mb-4 flex h-10 w-10 items-center justify-center rounded-full ${iconTone}`}
                     >
-                      {pacote.precoDe}
+                      <item.Icon className="h-5 w-5" />
+                    </span>
+                    <h3
+                      className={`${display.className} text-lg font-medium text-white md:text-xl`}
+                    >
+                      {item.title}
+                    </h3>
+                    <p className="mt-3 text-sm font-light leading-7 text-white/50">
+                      {item.text}
                     </p>
-                    <p className="mt-1 text-sm font-medium text-white/70">
-                      ou em até 12x de {pacote.parcelaDe} + Juros Mensais
-                    </p>
-                    <p className="mt-2 text-[11px] leading-5 text-white/40">
-                      Por pessoa, em quarto individual, roteiro de 7 dias.
-                      Valores para 10, 12 e 15 dias sob consulta.
-                    </p>
-
-                    <ContactCTA
-                      mode="single"
-                      channel="whatsapp"
-                      whatsappNumber="5511930300101"
-                      brand="Ajisai"
-                      packageOptions={pacotes.map((p) => p.nome)}
-                      defaultPackage={pacote.nome}
-                      label={`Consultar ${pacote.nome}`}
-                      buttonClassName="mt-5 flex w-full items-center justify-center rounded-full bg-[#7c4fd1] px-5 py-3.5 text-center text-[11px] font-semibold uppercase tracking-[0.2em] text-white shadow-[0_10px_30px_rgba(124,79,209,0.35)] transition duration-300 hover:-translate-y-0.5 hover:bg-[#6c40c0] hover:shadow-[0_14px_36px_rgba(124,79,209,0.5)]"
-                    />
                   </div>
-                </div>
-              </div>
-            ))}
+                );
+              })}
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* ── O QUE ESTÁ INCLUSO ── */}
-      <section className="border-t border-white/10 bg-black px-6 py-20 md:px-16 md:py-32">
-        <div className="mx-auto max-w-5xl">
-          <div className="mb-14 max-w-2xl md:mb-20">
-            <p className="mb-6 text-xs uppercase tracking-[0.3em] text-white/40 md:tracking-[0.45em]">
-              Em todos os pacotes
-            </p>
-            <h2
-              className={`${display.className} text-3xl font-medium leading-tight md:text-5xl`}
-            >
-              O que está incluso
-            </h2>
-          </div>
+        {/* ── POR QUE A AJISAI ── */}
+        <section className="border-t-2 border-[#b79ce6]/30 bg-white/[0.02] px-6 py-20 md:px-16 md:py-32">
+          <div className="mx-auto max-w-7xl">
+            <div className="mb-10 flex justify-center md:mb-14">
+              <img
+                src="/images/AJISAI-LOGO.avif"
+                alt="Ajisai"
+                className="h-10 w-auto object-contain opacity-95 md:h-14"
+              />
+            </div>
+            <div className="mb-10 max-w-3xl md:mb-16">
+              <p className="mb-6 text-xs uppercase tracking-[0.3em] text-white/40 md:tracking-[0.45em]">
+                Por que escolher a Ajisai
+              </p>
+              <h2
+                className={`${display.className} text-3xl font-medium leading-tight md:text-5xl`}
+              >
+                O acesso no Japão não se compra. Se constrói ao longo de anos.
+              </h2>
+            </div>
 
-          <div className="grid grid-cols-2 gap-4 sm:gap-6 md:grid-cols-3 md:gap-8">
-            {inclusoes.map((item) => {
-              const tone = item.badge?.tone;
-              const cardTone =
-                tone === "orange"
-                  ? "border-orange-400/40 bg-orange-400/[0.08] hover:border-orange-400/70"
-                  : tone === "purple"
-                    ? "border-[#b79ce6]/40 bg-[#b79ce6]/[0.08] hover:border-[#b79ce6]/70"
-                    : "border-white/10 bg-white/[0.03] hover:border-white/20";
-              const badgeTone =
-                tone === "orange"
-                  ? "bg-orange-400 text-black"
-                  : "bg-[#b79ce6] text-black";
-              const iconTone = tone
-                ? tone === "orange"
-                  ? "bg-orange-400 text-black"
-                  : "bg-[#b79ce6] text-black"
-                : "bg-[#b79ce6]/12 text-[#b79ce6]";
-
-              return (
+            <CarouselScroller itemCount={whyAjisai.length} desktopColumns={4}>
+              {whyAjisai.map((item) => (
                 <div
                   key={item.title}
-                  className={`relative rounded-2xl border p-5 transition sm:p-8 ${cardTone}`}
+                  className="flex w-[72vw] flex-shrink-0 snap-start [scroll-snap-stop:always] flex-col items-center text-center md:w-auto"
                 >
-                  {item.badge && (
-                    <span
-                      className={`absolute right-4 top-4 max-w-[7.5rem] rounded-xl px-2.5 py-1.5 text-right text-[8px] font-semibold uppercase leading-tight tracking-[0.06em] shadow-[0_6px_18px_rgba(0,0,0,0.35)] sm:max-w-[9rem] sm:text-[9px] ${badgeTone}`}
-                    >
-                      {item.badge.label}
-                    </span>
-                  )}
-                  <span
-                    className={`mb-4 flex h-10 w-10 items-center justify-center rounded-full ${iconTone}`}
-                  >
+                  <span className="mb-5 flex h-12 w-12 items-center justify-center rounded-full bg-[#b79ce6]/12 text-[#b79ce6]">
                     <item.Icon className="h-5 w-5" />
                   </span>
+                  <p className="mb-2 text-[11px] uppercase tracking-[0.25em] text-white/35">
+                    {item.label}
+                  </p>
                   <h3
-                    className={`${display.className} text-lg font-medium text-white md:text-xl`}
+                    className={`${display.className} flex min-h-[3.5rem] items-center justify-center text-lg font-medium text-white md:min-h-[3.8rem] md:text-xl`}
                   >
                     {item.title}
                   </h3>
@@ -613,361 +710,315 @@ export default function PacotesJapaoPage() {
                     {item.text}
                   </p>
                 </div>
-              );
-            })}
+              ))}
+            </CarouselScroller>
+          </div>
+        </section>
+
+        {/* ── AVALIAÇÕES ── */}
+        <section className="border-t border-white/10 bg-black px-6 py-20 md:px-16 md:py-32">
+          <div className="mx-auto max-w-7xl">
+            <div className="mb-14 max-w-2xl md:mb-20">
+              <p className="mb-6 text-xs uppercase tracking-[0.3em] text-white/40 md:tracking-[0.45em]">
+                Quem viajou com a Ajisai
+              </p>
+              <h2
+                className={`${display.className} text-3xl font-medium leading-tight md:text-4xl`}
+              >
+                Tudo é feito com muito carinho e atenção aos detalhes para
+                atender aos nossos clientes mais exigentes
+              </h2>
+            </div>
+
+            <div className="mb-14 flex flex-col gap-4 sm:max-w-3xl sm:flex-row md:mb-20">
+              <div className="flex flex-1 items-center justify-center gap-3 rounded-2xl border border-[#b79ce6]/40 bg-[#b79ce6]/10 px-6 py-5 sm:gap-4">
+                <div className="flex shrink-0 items-center gap-1 text-[#b79ce6]">
+                  {Array.from({ length: 5 }).map((_, index) => (
+                    <IconStarFilled key={index} className="h-5 w-5" />
+                  ))}
+                </div>
+                <p className="text-base font-light text-white/70">
+                  <span
+                    className={`${display.className} text-xl font-medium text-white`}
+                  >
+                    4,8 de 5,0
+                  </span>{" "}
+                  no Google · +180 avaliações
+                </p>
+              </div>
+
+              <div className="flex flex-1 items-center gap-4 rounded-2xl border border-emerald-500/30 bg-emerald-500/[0.07] px-6 py-5">
+                <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-emerald-500/15 text-emerald-400">
+                  <IconShieldCheck className="h-5 w-5" />
+                </span>
+                <div>
+                  <p className="text-sm font-medium text-white">
+                    Verificada pelo Reclame AQUI
+                  </p>
+                  <p className="mt-0.5 text-xs font-light text-white/50">
+                    Aprovada em todas as checagens de segurança
+                  </p>
+                  <p className="mt-1.5 text-[10px] font-medium uppercase tracking-[0.15em] text-emerald-400">
+                    Última verificação · Mar/2026
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <CarouselScroller
+              itemCount={googleReviews.length}
+              desktopColumns={3}
+              desktopScroll
+            >
+              {googleReviews.map((review, index) => (
+                <div
+                  key={review.name}
+                  className="flex min-h-[340px] w-[80vw] flex-shrink-0 snap-start [scroll-snap-stop:always] flex-col rounded-2xl border border-white/10 bg-white/[0.03] p-5 sm:rounded-[2rem] sm:p-8 md:w-[31%] md:shrink-0"
+                >
+                  <div className="mb-4 flex items-center gap-0.5 text-[#b79ce6]">
+                    {Array.from({ length: 5 }).map((_, starIndex) => (
+                      <IconStarFilled key={starIndex} className="h-3.5 w-3.5" />
+                    ))}
+                  </div>
+                  <p className="flex-1 text-sm font-light leading-7 text-white/60">
+                    &ldquo;{review.text}&rdquo;
+                  </p>
+                  <div className="mt-6 flex items-center gap-3 border-t border-white/10 pt-4">
+                    <span
+                      className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-xs font-medium text-white"
+                      style={{
+                        backgroundColor:
+                          avatarColors[index % avatarColors.length],
+                      }}
+                      aria-hidden
+                    >
+                      {review.name.charAt(0).toUpperCase()}
+                    </span>
+                    <div>
+                      <p className="text-sm font-medium text-white">
+                        {review.name}
+                      </p>
+                      <p className="mt-0.5 text-xs text-white/35">
+                        {review.context} · Avaliação no Google
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </CarouselScroller>
+          </div>
+        </section>
+
+        {/* ── COMO FUNCIONA ── */}
+        <section className="border-t border-white/10 bg-white/[0.02] px-6 py-20 md:px-16 md:py-32">
+          <div className="mx-auto max-w-5xl">
+            <div className="mb-14 max-w-2xl md:mb-20">
+              <p className="mb-6 text-xs uppercase tracking-[0.3em] text-white/40 md:tracking-[0.45em]">
+                Como funciona
+              </p>
+              <h2
+                className={`${display.className} text-3xl font-medium leading-tight md:text-5xl`}
+              >
+                Do carrinho ao embarque
+              </h2>
+            </div>
+
+            <div className="flex flex-col md:hidden">
+              {workflowSteps.map((step, index) => (
+                <div key={step.number}>
+                  <div className="grid grid-cols-[2.75rem_1fr] gap-4">
+                    <span className="flex h-11 w-11 items-center justify-center rounded-full bg-[#b79ce6] text-black">
+                      <step.Icon className="h-5 w-5" />
+                    </span>
+                    <div className="pt-1.5">
+                      <p className="text-[11px] uppercase tracking-[0.2em] text-white/30">
+                        {step.number}
+                      </p>
+                      <p className="mt-1 text-sm font-medium text-white">
+                        {step.title}
+                      </p>
+                      {step.lines.map((line) => (
+                        <p
+                          key={line}
+                          className="mt-1.5 text-xs leading-5 text-white/50"
+                        >
+                          {line}
+                        </p>
+                      ))}
+                    </div>
+                  </div>
+                  {index < workflowSteps.length - 1 && (
+                    <div className="grid grid-cols-[2.75rem_1fr] gap-4">
+                      <div className="flex h-9 items-center justify-center">
+                        <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#b79ce6]/15 text-[#b79ce6]">
+                          <IconArrowDown className="h-4 w-4" />
+                        </span>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+
+            <div className="hidden md:flex md:flex-wrap md:items-start md:gap-y-10 md:gap-x-6">
+              {workflowSteps.map((step, index) => (
+                <div key={step.number} className="md:min-w-[8rem] md:flex-1">
+                  <div className="relative flex justify-center">
+                    {index < workflowSteps.length - 1 && (
+                      <span className="absolute left-1/2 top-1/2 z-0 h-px w-[calc(100%+1.5rem)] -translate-y-1/2 bg-white/15" />
+                    )}
+                    <span className="relative z-10 flex h-16 w-16 items-center justify-center rounded-full bg-[#b79ce6]/12 text-[#b79ce6]">
+                      <step.Icon className="h-7 w-7" />
+                    </span>
+                  </div>
+                  <p className="mt-4 text-center text-[11px] uppercase tracking-[0.2em] text-white/30">
+                    {step.number}
+                  </p>
+                  <p className="mt-1 text-center text-sm font-medium text-white">
+                    {step.title}
+                  </p>
+                  {step.lines.map((line) => (
+                    <p
+                      key={line}
+                      className="mt-1.5 text-center text-xs leading-5 text-white/50"
+                    >
+                      {line}
+                    </p>
+                  ))}
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* ── FAQ ── */}
+        <section id="faq" className="border-t border-white/10 bg-black px-6 py-20 md:px-16 md:py-32">
+          <div className="mx-auto max-w-3xl text-center">
+            <p className="mb-6 text-xs uppercase tracking-[0.3em] text-white/40 md:tracking-[0.45em]">
+              Perguntas frequentes
+            </p>
+            <h2
+              className={`${display.className} mb-6 text-3xl font-medium leading-tight md:text-5xl`}
+            >
+              Dúvidas sobre os pacotes
+            </h2>
+            <p className="mx-auto mb-10 max-w-xl text-sm font-light leading-7 text-white/55 md:text-base">
+              Reunimos as perguntas mais comuns sobre as divisões de pacotes,
+              o carrinho, valores, parcelamento e o que está incluso.
+            </p>
+            <a
+              href="#faq-modal"
+              className="inline-flex items-center justify-center rounded-full bg-[#7c4fd1] px-8 py-4 text-center text-[11px] font-semibold uppercase tracking-[0.2em] text-white shadow-[0_10px_30px_rgba(124,79,209,0.35)] transition duration-300 hover:-translate-y-0.5 hover:bg-[#6c40c0] hover:shadow-[0_14px_36px_rgba(124,79,209,0.5)]"
+            >
+              Ver perguntas frequentes
+            </a>
+          </div>
+        </section>
+
+        {/* ── POP-UP FAQ (funciona em desktop e mobile via #faq-modal:target) ── */}
+        <div
+          id="faq-modal"
+          className="fixed inset-0 z-[100] hidden items-center justify-center px-4 py-8 sm:py-10"
+        >
+          <a
+            href="#_"
+            aria-label="Fechar perguntas frequentes"
+            className="absolute inset-0 bg-black/80 backdrop-blur-sm"
+          />
+          <div className="relative z-10 max-h-[85vh] w-full max-w-2xl overflow-y-auto rounded-2xl border border-white/10 bg-[#0a0a0a] p-6 shadow-[0_30px_80px_rgba(0,0,0,0.6)] sm:rounded-[2rem] sm:p-10">
+            <a
+              href="#_"
+              aria-label="Fechar"
+              className="absolute right-4 top-4 flex h-9 w-9 items-center justify-center rounded-full border border-white/15 text-white/60 transition hover:border-white/40 hover:text-white sm:right-6 sm:top-6"
+            >
+              <IconX className="h-4 w-4" />
+            </a>
+
+            <p className="mb-4 pr-12 text-xs uppercase tracking-[0.3em] text-white/40">
+              Perguntas frequentes
+            </p>
+            <h2
+              className={`${display.className} mb-8 pr-12 text-2xl font-medium leading-tight md:text-3xl`}
+            >
+              Dúvidas sobre os pacotes
+            </h2>
+
+            <div className="space-y-5">
+              {faq.map((item) => (
+                <div
+                  key={item.pergunta}
+                  className="rounded-2xl border border-white/10 bg-white/[0.025] p-5 sm:p-6"
+                >
+                  <h3 className="text-base font-medium text-white">
+                    {item.pergunta}
+                  </h3>
+                  <p className="mt-2.5 text-sm font-light leading-7 text-white/55">
+                    {item.resposta}
+                  </p>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
-      </section>
 
-      {/* ── POR QUE A AJISAI ── */}
-      <section className="border-t-2 border-[#b79ce6]/30 bg-white/[0.02] px-6 py-20 md:px-16 md:py-32">
-        <div className="mx-auto max-w-7xl">
-          <div className="mb-10 flex justify-center md:mb-14">
+        {/* ── CONTATO ── */}
+        <section
+          id="contact"
+          className="scroll-mt-32 bg-white px-8 py-20 text-black md:px-16 md:py-28"
+        >
+          <div className="mx-auto max-w-4xl text-center">
+            <p className="mb-6 text-xs uppercase tracking-[0.35em] text-black/40">
+              Contato
+            </p>
+            <h2
+              className={`${display.className} text-4xl font-medium leading-tight md:text-6xl`}
+            >
+              Escolha seu pacote e comece a organizar sua viagem.
+            </h2>
+            <p className="mx-auto mt-8 max-w-2xl text-lg leading-7 text-black/60 md:leading-9">
+              Monte seu carrinho com os pacotes que te interessaram ou conte
+              pra gente qual divisão faz mais sentido para a sua viagem. A
+              Ajisai cuida do restante.
+            </p>
+            <ContactCTA
+              mode="single"
+              channel="whatsapp"
+              whatsappNumber="5511930300101"
+              brand="Ajisai"
+              label="Falar no WhatsApp"
+              packageOptions={todosOsNomesDePacote}
+              buttonClassName="mt-10 rounded-full bg-[#7c4fd1] px-12 py-5 text-sm font-medium uppercase tracking-[0.3em] text-white shadow-[0_20px_50px_rgba(124,79,209,0.35)] transition hover:bg-[#6c40c0] hover:shadow-[0_24px_60px_rgba(124,79,209,0.45)] md:px-14 md:py-6 md:text-base"
+            />
+          </div>
+        </section>
+
+        <footer className="border-t border-white/10 bg-black px-8 pb-20 pt-16 text-white md:px-16 md:pb-20 md:pt-20">
+          <div className="mx-auto flex max-w-2xl flex-col items-center gap-7 text-center">
             <img
               src="/images/AJISAI-LOGO.avif"
               alt="Ajisai"
-              className="h-10 w-auto object-contain opacity-95 md:h-14"
+              className="h-11 w-auto object-contain md:h-12"
             />
-          </div>
-          <div className="mb-10 max-w-3xl md:mb-16">
-            <p className="mb-6 text-xs uppercase tracking-[0.3em] text-white/40 md:tracking-[0.45em]">
-              Por que escolher a Ajisai
+
+            <p className="max-w-sm text-sm leading-relaxed text-white/50">
+              Pacotes de viagem e roteiros personalizados para o Japão.
             </p>
-            <h2
-              className={`${display.className} text-3xl font-medium leading-tight md:text-5xl`}
+
+            <a
+              href="#faq-modal"
+              className="text-xs uppercase tracking-[0.25em] text-white/50 transition hover:text-white"
             >
-              O acesso no Japão não se compra. Se constrói ao longo de anos.
-            </h2>
-          </div>
+              FAQ · Perguntas Frequentes
+            </a>
 
-          <CarouselScroller itemCount={whyAjisai.length} desktopColumns={4}>
-            {whyAjisai.map((item) => (
-              <div
-                key={item.title}
-                className="flex w-[72vw] flex-shrink-0 snap-start [scroll-snap-stop:always] flex-col items-center text-center md:w-auto"
-              >
-                <span className="mb-5 flex h-12 w-12 items-center justify-center rounded-full bg-[#b79ce6]/12 text-[#b79ce6]">
-                  <item.Icon className="h-5 w-5" />
-                </span>
-                <p className="mb-2 text-[11px] uppercase tracking-[0.25em] text-white/35">
-                  {item.label}
-                </p>
-                <h3
-                  className={`${display.className} flex min-h-[3.5rem] items-center justify-center text-lg font-medium text-white md:min-h-[3.8rem] md:text-xl`}
-                >
-                  {item.title}
-                </h3>
-                <p className="mt-3 text-sm font-light leading-7 text-white/50">
-                  {item.text}
-                </p>
-              </div>
-            ))}
-          </CarouselScroller>
-        </div>
-      </section>
-
-      {/* ── AVALIAÇÕES ── */}
-      <section className="border-t border-white/10 bg-black px-6 py-20 md:px-16 md:py-32">
-        <div className="mx-auto max-w-7xl">
-          <div className="mb-14 max-w-2xl md:mb-20">
-            <p className="mb-6 text-xs uppercase tracking-[0.3em] text-white/40 md:tracking-[0.45em]">
-              Quem viajou com a Ajisai
+            <p className="text-[11px] leading-relaxed text-white/25">
+              © 2026 AJISAIWORK JAPAN AGENCIA DE VIAGENS LTDA, Todos os Direitos
+              Reservados — CNPJ: 43.544.605/0001-56
             </p>
-            <h2
-              className={`${display.className} text-3xl font-medium leading-tight md:text-4xl`}
-            >
-              Tudo é feito com muito carinho e atenção aos detalhes para
-              atender aos nossos clientes mais exigentes
-            </h2>
           </div>
-
-          <div className="mb-14 flex flex-col gap-4 sm:max-w-3xl sm:flex-row md:mb-20">
-            <div className="flex flex-1 items-center justify-center gap-3 rounded-2xl border border-[#b79ce6]/40 bg-[#b79ce6]/10 px-6 py-5 sm:gap-4">
-              <div className="flex shrink-0 items-center gap-1 text-[#b79ce6]">
-                {Array.from({ length: 5 }).map((_, index) => (
-                  <IconStarFilled key={index} className="h-5 w-5" />
-                ))}
-              </div>
-              <p className="text-base font-light text-white/70">
-                <span
-                  className={`${display.className} text-xl font-medium text-white`}
-                >
-                  4,8 de 5,0
-                </span>{" "}
-                no Google · +180 avaliações
-              </p>
-            </div>
-
-            <div className="flex flex-1 items-center gap-4 rounded-2xl border border-emerald-500/30 bg-emerald-500/[0.07] px-6 py-5">
-              <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-emerald-500/15 text-emerald-400">
-                <IconShieldCheck className="h-5 w-5" />
-              </span>
-              <div>
-                <p className="text-sm font-medium text-white">
-                  Verificada pelo Reclame AQUI
-                </p>
-                <p className="mt-0.5 text-xs font-light text-white/50">
-                  Aprovada em todas as checagens de segurança
-                </p>
-                <p className="mt-1.5 text-[10px] font-medium uppercase tracking-[0.15em] text-emerald-400">
-                  Última verificação · Mar/2026
-                </p>
-              </div>
-            </div>
-          </div>
-
-          <CarouselScroller
-            itemCount={googleReviews.length}
-            desktopColumns={3}
-            desktopScroll
-          >
-            {googleReviews.map((review, index) => (
-              <div
-                key={review.name}
-                className="flex min-h-[340px] w-[80vw] flex-shrink-0 snap-start [scroll-snap-stop:always] flex-col rounded-2xl border border-white/10 bg-white/[0.03] p-5 sm:rounded-[2rem] sm:p-8 md:w-[31%] md:shrink-0"
-              >
-                <div className="mb-4 flex items-center gap-0.5 text-[#b79ce6]">
-                  {Array.from({ length: 5 }).map((_, starIndex) => (
-                    <IconStarFilled key={starIndex} className="h-3.5 w-3.5" />
-                  ))}
-                </div>
-                <p className="flex-1 text-sm font-light leading-7 text-white/60">
-                  "{review.text}"
-                </p>
-                <div className="mt-6 flex items-center gap-3 border-t border-white/10 pt-4">
-                  <span
-                    className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-xs font-medium text-white"
-                    style={{
-                      backgroundColor:
-                        avatarColors[index % avatarColors.length],
-                    }}
-                    aria-hidden
-                  >
-                    {review.name.charAt(0).toUpperCase()}
-                  </span>
-                  <div>
-                    <p className="text-sm font-medium text-white">
-                      {review.name}
-                    </p>
-                    <p className="mt-0.5 text-xs text-white/35">
-                      {review.context} · Avaliação no Google
-                    </p>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </CarouselScroller>
-        </div>
-      </section>
-
-      {/* ── COMO FUNCIONA ── */}
-      <section className="border-t border-white/10 bg-white/[0.02] px-6 py-20 md:px-16 md:py-32">
-        <div className="mx-auto max-w-5xl">
-          <div className="mb-14 max-w-2xl md:mb-20">
-            <p className="mb-6 text-xs uppercase tracking-[0.3em] text-white/40 md:tracking-[0.45em]">
-              Como funciona
-            </p>
-            <h2
-              className={`${display.className} text-3xl font-medium leading-tight md:text-5xl`}
-            >
-              Da escolha do pacote ao embarque
-            </h2>
-          </div>
-
-          <div className="flex flex-col md:hidden">
-            {workflowSteps.map((step, index) => (
-              <div key={step.number}>
-                <div className="grid grid-cols-[2.75rem_1fr] gap-4">
-                  <span className="flex h-11 w-11 items-center justify-center rounded-full bg-[#b79ce6] text-black">
-                    <step.Icon className="h-5 w-5" />
-                  </span>
-                  <div className="pt-1.5">
-                    <p className="text-[11px] uppercase tracking-[0.2em] text-white/30">
-                      {step.number}
-                    </p>
-                    <p className="mt-1 text-sm font-medium text-white">
-                      {step.title}
-                    </p>
-                    {step.lines.map((line) => (
-                      <p
-                        key={line}
-                        className="mt-1.5 text-xs leading-5 text-white/50"
-                      >
-                        {line}
-                      </p>
-                    ))}
-                  </div>
-                </div>
-                {index < workflowSteps.length - 1 && (
-                  <div className="grid grid-cols-[2.75rem_1fr] gap-4">
-                    <div className="flex h-9 items-center justify-center">
-                      <span className="flex h-6 w-6 items-center justify-center rounded-full bg-[#b79ce6]/15 text-[#b79ce6]">
-                        <IconArrowDown className="h-4 w-4" />
-                      </span>
-                    </div>
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-
-          <div className="hidden md:flex md:items-start md:gap-6">
-            {workflowSteps.map((step, index) => (
-              <div key={step.number} className="md:min-w-0 md:flex-1">
-                <div className="relative flex justify-center">
-                  {index < workflowSteps.length - 1 && (
-                    <span className="absolute left-1/2 top-1/2 z-0 h-px w-[calc(100%+1.5rem)] -translate-y-1/2 bg-white/15" />
-                  )}
-                  <span className="relative z-10 flex h-16 w-16 items-center justify-center rounded-full bg-[#b79ce6]/12 text-[#b79ce6]">
-                    <step.Icon className="h-7 w-7" />
-                  </span>
-                </div>
-                <p className="mt-4 text-center text-[11px] uppercase tracking-[0.2em] text-white/30">
-                  {step.number}
-                </p>
-                <p className="mt-1 text-center text-sm font-medium text-white">
-                  {step.title}
-                </p>
-                {step.lines.map((line) => (
-                  <p
-                    key={line}
-                    className="mt-1.5 text-center text-xs leading-5 text-white/50"
-                  >
-                    {line}
-                  </p>
-                ))}
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── FAQ ── */}
-      <section id="faq" className="border-t border-white/10 bg-black px-6 py-20 md:px-16 md:py-32">
-        <div className="mx-auto max-w-3xl text-center">
-          <p className="mb-6 text-xs uppercase tracking-[0.3em] text-white/40 md:tracking-[0.45em]">
-            Perguntas frequentes
-          </p>
-          <h2
-            className={`${display.className} mb-6 text-3xl font-medium leading-tight md:text-5xl`}
-          >
-            Dúvidas sobre os pacotes
-          </h2>
-          <p className="mx-auto mb-10 max-w-xl text-sm font-light leading-7 text-white/55 md:text-base">
-            Reunimos as perguntas mais comuns sobre valores, parcelamento,
-            guia turístico, transfer e o que está incluso em cada pacote.
-          </p>
-          <a
-            href="#faq-modal"
-            className="inline-flex items-center justify-center rounded-full bg-[#7c4fd1] px-8 py-4 text-center text-[11px] font-semibold uppercase tracking-[0.2em] text-white shadow-[0_10px_30px_rgba(124,79,209,0.35)] transition duration-300 hover:-translate-y-0.5 hover:bg-[#6c40c0] hover:shadow-[0_14px_36px_rgba(124,79,209,0.5)]"
-          >
-            Ver perguntas frequentes
-          </a>
-        </div>
-      </section>
-
-      {/* ── POP-UP FAQ (funciona em desktop e mobile via #faq-modal:target) ── */}
-      <div
-        id="faq-modal"
-        className="fixed inset-0 z-[100] hidden items-center justify-center px-4 py-8 sm:py-10"
-      >
-        <a
-          href="#_"
-          aria-label="Fechar perguntas frequentes"
-          className="absolute inset-0 bg-black/80 backdrop-blur-sm"
-        />
-        <div className="relative z-10 max-h-[85vh] w-full max-w-2xl overflow-y-auto rounded-2xl border border-white/10 bg-[#0a0a0a] p-6 shadow-[0_30px_80px_rgba(0,0,0,0.6)] sm:rounded-[2rem] sm:p-10">
-          <a
-            href="#_"
-            aria-label="Fechar"
-            className="absolute right-4 top-4 flex h-9 w-9 items-center justify-center rounded-full border border-white/15 text-white/60 transition hover:border-white/40 hover:text-white sm:right-6 sm:top-6"
-          >
-            <IconX className="h-4 w-4" />
-          </a>
-
-          <p className="mb-4 pr-12 text-xs uppercase tracking-[0.3em] text-white/40">
-            Perguntas frequentes
-          </p>
-          <h2
-            className={`${display.className} mb-8 pr-12 text-2xl font-medium leading-tight md:text-3xl`}
-          >
-            Dúvidas sobre os pacotes
-          </h2>
-
-          <div className="space-y-5">
-            {faq.map((item) => (
-              <div
-                key={item.pergunta}
-                className="rounded-2xl border border-white/10 bg-white/[0.025] p-5 sm:p-6"
-              >
-                <h3 className="text-base font-medium text-white">
-                  {item.pergunta}
-                </h3>
-                <p className="mt-2.5 text-sm font-light leading-7 text-white/55">
-                  {item.resposta}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {/* ── CONTATO ── */}
-      <section
-        id="contact"
-        className="scroll-mt-32 bg-white px-8 py-20 text-black md:px-16 md:py-28"
-      >
-        <div className="mx-auto max-w-4xl text-center">
-          <p className="mb-6 text-xs uppercase tracking-[0.35em] text-black/40">
-            Contato
-          </p>
-          <h2
-            className={`${display.className} text-4xl font-medium leading-tight md:text-6xl`}
-          >
-            Escolha seu pacote e comece a organizar sua viagem.
-          </h2>
-          <p className="mx-auto mt-8 max-w-2xl text-lg leading-7 text-black/60 md:leading-9">
-            Conte pra gente qual pacote te interessou, suas datas preferidas e
-            quantas pessoas vão viajar. A Ajisai cuida do restante.
-          </p>
-          <ContactCTA
-            mode="single"
-            channel="whatsapp"
-            whatsappNumber="5511930300101"
-            brand="Ajisai"
-            label="Falar no WhatsApp"
-            packageOptions={pacotes.map((p) => p.nome)}
-            buttonClassName="mt-10 rounded-full bg-[#7c4fd1] px-12 py-5 text-sm font-medium uppercase tracking-[0.3em] text-white shadow-[0_20px_50px_rgba(124,79,209,0.35)] transition hover:bg-[#6c40c0] hover:shadow-[0_24px_60px_rgba(124,79,209,0.45)] md:px-14 md:py-6 md:text-base"
-          />
-        </div>
-      </section>
-
-      <footer className="border-t border-white/10 bg-black px-8 pb-20 pt-16 text-white md:px-16 md:pb-20 md:pt-20">
-        <div className="mx-auto flex max-w-2xl flex-col items-center gap-7 text-center">
-          <img
-            src="/images/AJISAI-LOGO.avif"
-            alt="Ajisai"
-            className="h-11 w-auto object-contain md:h-12"
-          />
-
-          <p className="max-w-sm text-sm leading-relaxed text-white/50">
-            Pacotes de viagem e roteiros personalizados para o Japão.
-          </p>
-
-          <a
-            href="#faq-modal"
-            className="text-xs uppercase tracking-[0.25em] text-white/50 transition hover:text-white"
-          >
-            FAQ · Perguntas Frequentes
-          </a>
-
-          <p className="text-[11px] leading-relaxed text-white/25">
-            © 2026 AJISAIWORK JAPAN AGENCIA DE VIAGENS LTDA, Todos os Direitos
-            Reservados — CNPJ: 43.544.605/0001-56
-          </p>
-        </div>
-      </footer>
-    </main>
+        </footer>
+      </main>
+    </CartProvider>
   );
 }
 
@@ -1240,7 +1291,7 @@ function IconWifi({ className }: { className?: string }) {
   );
 }
 
-function IconFlower({ className }: { className?: string }) {
+function IconCart({ className }: { className?: string }) {
   return (
     <svg
       viewBox="0 0 24 24"
@@ -1251,83 +1302,9 @@ function IconFlower({ className }: { className?: string }) {
       strokeLinejoin="round"
       className={className}
     >
-      <circle cx="12" cy="12" r="2.2" />
-      <path d="M12 9.8c-1.4-1.4-1.4-3.6 0-5 1.4 1.4 1.4 3.6 0 5Z" />
-      <path d="M12 14.2c1.4 1.4 1.4 3.6 0 5-1.4-1.4-1.4-3.6 0-5Z" />
-      <path d="M9.8 12c-1.4 1.4-3.6 1.4-5 0 1.4-1.4 3.6-1.4 5 0Z" />
-      <path d="M14.2 12c1.4-1.4 3.6-1.4 5 0-1.4 1.4-3.6 1.4-5 0Z" />
-    </svg>
-  );
-}
-
-function IconLeaf({ className }: { className?: string }) {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.75"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className={className}
-    >
-      <path d="M4 20c8-1 14-7 15-15-8 1-14 7-15 15Z" />
-      <path d="M9 15c2-2 4-3.5 6.5-5" />
-    </svg>
-  );
-}
-
-function IconTicket({ className }: { className?: string }) {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.75"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className={className}
-    >
-      <path d="M3 8a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2a2 2 0 0 0 0 4v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2a2 2 0 0 0 0-4V8Z" />
-      <line x1="10" y1="6" x2="10" y2="18" strokeDasharray="1.5 2" />
-    </svg>
-  );
-}
-
-function IconMedal({ className }: { className?: string }) {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.75"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className={className}
-    >
-      <circle cx="12" cy="15" r="5.5" />
-      <path d="M9.5 10 7 3M14.5 10 17 3" />
-      <path d="M12 12.5v5" />
-    </svg>
-  );
-}
-
-function IconGamepad({ className }: { className?: string }) {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.75"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className={className}
-    >
-      <path d="M6 8h12a4 4 0 0 1 4 4.2l.6 4A2.4 2.4 0 0 1 20 19.3c-.9 0-1.7-.5-2.1-1.3l-1-2H7.1l-1 2A2.4 2.4 0 0 1 4 19.3a2.4 2.4 0 0 1-2.6-2.7l.6-4.4A4 4 0 0 1 6 8Z" />
-      <line x1="7.5" y1="11.5" x2="7.5" y2="14.5" />
-      <line x1="6" y1="13" x2="9" y2="13" />
-      <circle cx="15.5" cy="12.5" r="0.9" fill="currentColor" stroke="none" />
-      <circle cx="17.5" cy="14.5" r="0.9" fill="currentColor" stroke="none" />
+      <circle cx="9" cy="20" r="1.4" fill="currentColor" stroke="none" />
+      <circle cx="17" cy="20" r="1.4" fill="currentColor" stroke="none" />
+      <path d="M2.5 3h2.2l1.8 11a2 2 0 0 0 2 1.7h7.7a2 2 0 0 0 2-1.6l1.4-7.4H6.1" />
     </svg>
   );
 }
