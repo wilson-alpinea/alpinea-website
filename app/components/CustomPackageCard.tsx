@@ -78,7 +78,7 @@ export function CustomPackageCard() {
       variante: `${horas} · ${dataFormatada}`,
       detalhes: observacoes ? [`Observações: ${observacoes}`] : undefined,
       precoLabel: "Sob consulta",
-      imagem: "/images/tanakamotorista.png",
+      imagem: "/images/personalizado-hero.png",
     });
 
     setAdicionado(true);
@@ -89,8 +89,8 @@ export function CustomPackageCard() {
     <div className="grid overflow-hidden rounded-2xl border border-white/10 bg-white/[0.025] sm:rounded-[2rem] lg:grid-cols-[1.1fr_1.4fr]">
       <div className="relative h-[220px] overflow-hidden lg:h-auto">
         <Image
-          src="/images/tanakamotorista.png"
-          alt="Motorista particular à disposição para roteiro personalizado no Japão"
+          src="/images/personalizado-hero.png"
+          alt="Pacotes Personalizados"
           fill
           sizes="(max-width: 1024px) 100vw, 40vw"
           className="object-cover"

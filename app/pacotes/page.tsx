@@ -58,12 +58,12 @@ const variantesPadrao = (
 // Uma única foto representa cada divisão (em vez de uma por pacote) — usada
 // tanto no banner da seção quanto na miniatura do item no carrinho.
 const BANNER_CARAVANA = {
-  src: "/images/kyoto-maiko-street.png",
-  alt: "Grupo caminhando por rua tradicional em Kyoto — Pacotes de Caravana",
+  src: "/images/caravana-hero.png",
+  alt: "Pacotes de Caravana",
 };
 const BANNER_INDIVIDUAL = {
-  src: "/images/shirakawago.jpg",
-  alt: "Vilarejo tradicional japonês cercado por natureza — Individual ou Pequenos Grupos",
+  src: "/images/individual-hero.png",
+  alt: "Individual ou Pequenos Grupos",
 };
 
 const pacotesCaravana = [
