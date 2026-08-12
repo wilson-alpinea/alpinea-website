@@ -40,7 +40,7 @@ export function PackageCard({
   imagem,
   selo,
   variantes,
-  varianteHint = "Duração",
+  varianteHint = "Selecionar duração",
   rodape,
 }: {
   divisao: CartItem["divisao"];
@@ -111,7 +111,7 @@ export function PackageCard({
 
         {variantes.length > 1 && (
           <div className="mt-6">
-            <p className="mb-3 text-[10px] uppercase tracking-[0.22em] text-white/35">
+            <p className="mb-3 text-xs font-semibold uppercase tracking-[0.2em] text-white">
               {varianteHint}
             </p>
             <div className="flex flex-wrap gap-3">

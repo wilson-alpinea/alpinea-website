@@ -20,7 +20,7 @@ function IconCheck({ className }: { className?: string }) {
   );
 }
 
-function IconCart({ className }: { className?: string }) {
+function IconSend({ className }: { className?: string }) {
   return (
     <svg
       viewBox="0 0 24 24"
@@ -31,9 +31,8 @@ function IconCart({ className }: { className?: string }) {
       strokeLinejoin="round"
       className={className}
     >
-      <circle cx="9" cy="20" r="1.4" fill="currentColor" stroke="none" />
-      <circle cx="17" cy="20" r="1.4" fill="currentColor" stroke="none" />
-      <path d="M2.5 3h2.2l1.8 11a2 2 0 0 0 2 1.7h7.7a2 2 0 0 0 2-1.6l1.4-7.4H6.1" />
+      <path d="M21 3 3 10.5l7.5 3L14 21l7-18Z" />
+      <path d="M10.5 13.5 21 3" />
     </svg>
   );
 }
@@ -58,8 +57,8 @@ export function CustomPackageCard() {
     addItem({
       divisao: "Personalizado",
       nome: "Pacote Personalizado",
-      variante: dataFormatada,
-      detalhes: observacoes ? [`Observações: ${observacoes}`] : undefined,
+      variante: `Data solicitada: ${dataFormatada}`,
+      detalhes: [`Preferências: ${observacoes || "a combinar"}`],
       precoLabel: "Sob consulta",
       imagem: "/images/personalizado-hero.png",
     });
@@ -112,11 +111,11 @@ export function CustomPackageCard() {
         >
           {adicionado ? (
             <>
-              <IconCheck className="h-4 w-4" /> Adicionado ao carrinho
+              <IconCheck className="h-4 w-4" /> Solicitação adicionada
             </>
           ) : (
             <>
-              <IconCart className="h-4 w-4" /> Adicionar ao carrinho
+              <IconSend className="h-4 w-4" /> Solicitar proposta →
             </>
           )}
         </button>

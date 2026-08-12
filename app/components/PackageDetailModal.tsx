@@ -75,7 +75,7 @@ function ItinerarioFlow({ stops }: { stops: ItinerarioStop[] }) {
         {stops.map((stop, i) => (
           <div key={i} className="flex items-center">
             <div className="text-center" style={{ width: circleSize }}>
-              <p className="text-[10px] uppercase leading-tight tracking-[0.12em] text-white/70">
+              <p className="break-words text-[9px] uppercase leading-tight tracking-[0.04em] text-white/70">
                 {stop.city}
               </p>
               <p className="text-[11px] text-white/35">
@@ -125,6 +125,44 @@ const INCLUSOES_PADRAO = [
     title: "Transfer",
     text: "Translados aeroporto-hotel e hotel-aeroporto.",
     opcional: true,
+  },
+];
+
+// Respostas padrão para as dúvidas comerciais mais comuns. ATENÇÃO: valores
+// de referência — precisam ser confirmados/ajustados por você antes de
+// publicar, igual combinamos com os preços.
+const FAQ_PADRAO = [
+  {
+    pergunta: "Qual categoria de hotel?",
+    resposta: "Hotéis 4 e 5 estrelas, selecionados por localização e conforto — sempre com curadoria Ajisai.",
+  },
+  {
+    pergunta: "Quarto individual ou duplo?",
+    resposta: "Preço padrão por pessoa em quarto individual. Quarto duplo (compartilhado) disponível mediante consulta.",
+  },
+  {
+    pergunta: "Bagagem está incluída na passagem?",
+    resposta: "Sim — 1 bagagem despachada e 1 de mão por pessoa, conforme a companhia aérea selecionada.",
+  },
+  {
+    pergunta: "Café da manhã?",
+    resposta: "Incluído em todos os hotéis do roteiro.",
+  },
+  {
+    pergunta: "Shinkansen?",
+    resposta: "Trechos de trem-bala previstos no roteiro estão inclusos.",
+  },
+  {
+    pergunta: "Transportes urbanos?",
+    resposta: "Transfers e deslocamentos do roteiro estão inclusos; transporte público de uso livre não faz parte do pacote.",
+  },
+  {
+    pergunta: "Ingressos das atrações?",
+    resposta: "Ingressos das atrações previstas no roteiro estão inclusos; passeios opcionais são à parte.",
+  },
+  {
+    pergunta: "Refeições?",
+    resposta: "Café da manhã incluso; almoços e jantares não inclusos, salvo indicação no roteiro.",
   },
 ];
 
@@ -190,7 +228,7 @@ export function PackageDetailModal({
   imagem,
   selo,
   variantes,
-  varianteHint = "Duração",
+  varianteHint = "Selecionar duração",
   varianteInicialId,
   rodape,
   onClose,
@@ -252,7 +290,7 @@ export function PackageDetailModal({
       onClick={onClose}
     >
       <div
-        className="relative flex h-[100dvh] w-full flex-col bg-[#0a0a0a] text-white md:h-auto md:max-h-[88vh] md:max-w-2xl md:overflow-hidden md:rounded-[28px] md:border md:border-white/10"
+        className="relative flex h-[100dvh] w-full flex-col overflow-x-hidden bg-[#0a0a0a] text-white md:h-auto md:max-h-[88vh] md:max-w-2xl md:overflow-hidden md:rounded-[28px] md:border md:border-white/10"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="sticky top-0 z-10 flex shrink-0 items-center justify-between border-b border-white/10 bg-[#0a0a0a]/95 px-5 py-4 backdrop-blur-sm md:px-8">
@@ -279,7 +317,7 @@ export function PackageDetailModal({
           </button>
         </div>
 
-        <div className="flex-1 overflow-y-auto px-5 py-6 md:px-8 md:py-8">
+        <div className="flex-1 overflow-x-hidden overflow-y-auto px-5 py-6 md:px-8 md:py-8">
           <h2 className={`${display.className} text-2xl font-medium text-white md:text-3xl`}>
             {nome}
           </h2>
@@ -347,9 +385,26 @@ export function PackageDetailModal({
           </div>
 
           <div className="mt-8 border-t border-white/10 pt-6">
+            <h3 className={`${display.className} text-lg font-medium text-white`}>
+              Perguntas frequentes
+            </h3>
+            <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
+              {FAQ_PADRAO.map((item) => (
+                <div
+                  key={item.pergunta}
+                  className="rounded-xl border border-white/10 bg-white/[0.03] p-3.5 transition hover:border-white/25 hover:bg-white/[0.06]"
+                >
+                  <p className="text-sm font-medium text-white">{item.pergunta}</p>
+                  <p className="mt-1 text-xs font-light leading-5 text-white/50">{item.resposta}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="mt-8 border-t border-white/10 pt-6">
             {variantes.length > 1 && (
               <>
-                <p className="mb-3 text-[10px] uppercase tracking-[0.22em] text-white/35">
+                <p className="mb-3 text-xs font-semibold uppercase tracking-[0.2em] text-white">
                   {varianteHint}
                 </p>
                 <div className="flex flex-wrap gap-3">

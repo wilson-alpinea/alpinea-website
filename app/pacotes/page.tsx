@@ -178,26 +178,49 @@ const divisoes = [
   {
     letra: "A",
     titulo: "Pacotes de Caravana",
+    frase: "Quero viajar com outras pessoas",
     texto:
-      "Para quem não deseja viajar somente com o próprio grupo. Saída em grupo fechado, data única, guia compartilhado do início ao fim.",
+      "Saída em grupo fechado, data única, guia compartilhado do início ao fim.",
     href: "#pacotes",
     imagem: BANNER_CARAVANA.src,
   },
   {
     letra: "B",
     titulo: "Individual ou Pequenos Grupos",
+    frase: "Quero viajar só com minha família ou amigos",
     texto:
-      "Para viajar só com quem você escolher. Datas flexíveis dentro da temporada e guia particular dedicado ao seu grupo.",
+      "Datas flexíveis dentro da temporada e guia particular dedicado ao seu grupo.",
     href: "#individuais",
     imagem: BANNER_INDIVIDUAL.src,
   },
   {
     letra: "C",
     titulo: "Pacotes Personalizados",
+    frase: "Quero tudo feito para mim",
     texto:
       "Viaje em qualquer data, com um roteiro sob medida e motorista e guia particular.",
     href: "#personalizado",
     imagem: BANNER_PERSONALIZADO.src,
+  },
+];
+
+// Mesmos 3 pilares de confiança usados em /ajisairoteiros — nota do Google
+// (4,8 · +180 avaliações) também replicada da mesma página.
+const DIFERENCIAIS = [
+  {
+    titulo: "Operação especializada em Japão",
+    texto: "Atendimento no Brasil e suporte especializado para sua viagem.",
+    Icon: IconGlobe,
+  },
+  {
+    titulo: "Compra segura",
+    texto: "Contrato, condições da viagem e pagamentos formalizados.",
+    Icon: IconShieldCheck,
+  },
+  {
+    titulo: "Suporte antes do embarque",
+    texto: "Orientação desde a reserva até a preparação para a viagem.",
+    Icon: IconHeadset,
   },
 ];
 
@@ -251,9 +274,6 @@ export default function PacotesJapaoPage() {
 
         {/* ── TÍTULO ── */}
         <section className="border-b border-white/10 bg-black px-6 pb-14 pt-32 text-center md:px-16 md:pb-16 md:pt-40">
-          <p className="mb-5 text-xs uppercase tracking-[0.35em] text-white/50">
-            Pacotes Ajisai
-          </p>
           <h1
             className={`${display.className} text-3xl font-medium leading-tight text-white sm:text-4xl md:text-6xl`}
           >
@@ -284,6 +304,9 @@ export default function PacotesJapaoPage() {
                   <h2 className={`${display.className} text-xl font-medium text-white md:text-2xl`}>
                     {item.titulo}
                   </h2>
+                  <p className="mt-2.5 text-sm italic text-[#6ec3d9]">
+                    &ldquo;{item.frase}&rdquo;
+                  </p>
                   <p className="mt-3 flex-1 text-sm font-light leading-6 text-white/55">
                     {item.texto}
                   </p>
@@ -353,7 +376,6 @@ export default function PacotesJapaoPage() {
                   imagem={pacote.imagem}
                   selo={pacote.selo}
                   variantes={pacote.variantes}
-                  varianteHint="Duração"
                   rodape="Por pessoa, em quarto individual. Vagas limitadas por grupo."
                 />
               ))}
@@ -417,7 +439,6 @@ export default function PacotesJapaoPage() {
                   destaques={pacote.destaques}
                   imagem={pacote.imagem}
                   variantes={pacote.variantes}
-                  varianteHint="Duração"
                   rodape="Por pessoa, em quarto individual. Datas dentro da temporada indicada."
                 />
               ))}
@@ -453,6 +474,44 @@ export default function PacotesJapaoPage() {
             </div>
 
             <CustomPackageCard />
+          </div>
+        </section>
+
+        {/* ── VIAJE COM A AJISAI ── */}
+        <section className="border-t border-white/10 bg-[#050505] px-6 py-16 md:px-16 md:py-24">
+          <div className="mx-auto max-w-5xl text-center">
+            <h2 className={`${display.className} text-3xl font-medium leading-tight md:text-4xl`}>
+              Viaje com a Ajisai
+            </h2>
+
+            <div className="mt-5 flex items-center justify-center gap-1 text-[#b79ce6]">
+              {Array.from({ length: 5 }).map((_, i) => (
+                <IconStarFilled key={i} className="h-4 w-4" />
+              ))}
+              <span className="ml-2 text-xs font-light text-white/55">
+                4,8 de 5,0 no Google ·{" "}
+                <span className="text-white">+180 avaliações</span>
+              </span>
+            </div>
+
+            <div className="mt-10 grid gap-6 sm:grid-cols-3 md:mt-14">
+              {DIFERENCIAIS.map((item) => (
+                <div
+                  key={item.titulo}
+                  className="rounded-2xl border border-white/10 bg-white/[0.02] p-6 text-center md:p-8"
+                >
+                  <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-[#6ec3d9]/10 text-[#6ec3d9]">
+                    <item.Icon className="h-5 w-5" />
+                  </span>
+                  <h3 className={`${display.className} mt-4 text-lg font-medium text-white`}>
+                    {item.titulo}
+                  </h3>
+                  <p className="mt-2 text-sm font-light leading-6 text-white/55">
+                    {item.texto}
+                  </p>
+                </div>
+              ))}
+            </div>
           </div>
         </section>
 
@@ -519,6 +578,68 @@ function IconClock({ className }: { className?: string }) {
     >
       <circle cx="12" cy="12" r="9" />
       <path d="M12 7v5l3.5 2" />
+    </svg>
+  );
+}
+
+function IconStarFilled({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" className={className}>
+      <path d="M12 3l2.5 6 6.5.6-5 4.3 1.5 6.4L12 17l-5.5 3.3L8 13.9l-5-4.3L9.5 9.6 12 3Z" />
+    </svg>
+  );
+}
+
+function IconGlobe({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.75"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      <circle cx="12" cy="12" r="9" />
+      <path d="M3 12h18" />
+      <path d="M12 3c2.5 2.5 3.8 5.7 3.8 9s-1.3 6.5-3.8 9c-2.5-2.5-3.8-5.7-3.8-9s1.3-6.5 3.8-9Z" />
+    </svg>
+  );
+}
+
+function IconShieldCheck({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.75"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      <path d="M12 3l7 3v6c0 4.5-3 7.7-7 9-4-1.3-7-4.5-7-9V6l7-3Z" />
+      <path d="M9 12l2 2 4-4.5" />
+    </svg>
+  );
+}
+
+function IconHeadset({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.75"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      <path d="M4 13v-1a8 8 0 0 1 16 0v1" />
+      <path d="M4 13a2 2 0 0 1 2-2h1v6H6a2 2 0 0 1-2-2v-2Z" />
+      <path d="M20 13a2 2 0 0 0-2-2h-1v6h1a2 2 0 0 0 2-2v-2Z" />
+      <path d="M18 17.5c0 1.9-2.2 3-4.5 3" />
     </svg>
   );
 }

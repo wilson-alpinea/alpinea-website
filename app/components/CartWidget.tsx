@@ -78,7 +78,7 @@ export function CartWidget({ triggerClassName }: { triggerClassName?: string }) 
   const [open, setOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
   const [nome, setNome] = useState("");
-  const [telefone, setTelefone] = useState("");
+  const [email, setEmail] = useState("");
   const [enviado, setEnviado] = useState(false);
 
   useEffect(() => setMounted(true), []);
@@ -97,7 +97,7 @@ export function CartWidget({ triggerClassName }: { triggerClassName?: string }) 
 
     const lines = [
       `Olá! Meu nome é ${nome || "(não informado)"}.`,
-      telefone && `Telefone: ${telefone}`,
+      email && `E-mail: ${email}`,
       "",
       "Tenho interesse nos seguintes itens do carrinho de pacotes:",
       ...items.flatMap((item, index) => [
@@ -229,8 +229,15 @@ export function CartWidget({ triggerClassName }: { triggerClassName?: string }) 
                             {item.nome}
                           </p>
                           <p className="mt-0.5 text-xs text-white/55">{item.variante}</p>
+                          {item.detalhes?.map((linha) => (
+                            <p key={linha} className="mt-0.5 text-xs text-white/45">
+                              {linha}
+                            </p>
+                          ))}
                           <p className="mt-1 text-xs font-medium text-white/70">
-                            {item.precoLabel}
+                            {item.divisao === "Personalizado"
+                              ? `Valor: ${item.precoLabel}`
+                              : item.precoLabel}
                           </p>
                         </div>
                         <button
@@ -248,7 +255,18 @@ export function CartWidget({ triggerClassName }: { triggerClassName?: string }) 
               </div>
 
               {items.length > 0 && !enviado && (
-                <div className="shrink-0 space-y-3 border-t border-white/10 px-5 py-5 sm:px-6">
+                <div className="shrink-0 space-y-4 border-t border-white/10 px-5 py-5 sm:px-6">
+                  <div className="rounded-xl border border-[#6ec3d9]/25 bg-[#6ec3d9]/5 p-3.5">
+                    <p className="text-[10px] font-semibold uppercase tracking-[0.15em] text-[#6ec3d9]">
+                      Próximo passo
+                    </p>
+                    <p className="mt-1.5 text-xs leading-5 text-white/60">
+                      Ao finalizar, nossa equipe recebe sua solicitação pelo
+                      WhatsApp e confirma disponibilidade e valores. Adicionar
+                      ao carrinho não gera cobrança imediata.
+                    </p>
+                  </div>
+
                   <div className="grid gap-3 sm:grid-cols-2">
                     <input
                       value={nome}
@@ -257,9 +275,10 @@ export function CartWidget({ triggerClassName }: { triggerClassName?: string }) 
                       className="w-full rounded-lg border border-white/15 bg-black/30 px-3 py-2.5 text-sm text-white outline-none placeholder:text-white/30 focus:border-white/40"
                     />
                     <input
-                      value={telefone}
-                      onChange={(e) => setTelefone(e.target.value)}
-                      placeholder="Telefone (opcional)"
+                      type="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      placeholder="E-mail (opcional)"
                       className="w-full rounded-lg border border-white/15 bg-black/30 px-3 py-2.5 text-sm text-white outline-none placeholder:text-white/30 focus:border-white/40"
                     />
                   </div>
