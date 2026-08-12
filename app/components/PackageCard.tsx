@@ -149,6 +149,9 @@ export function PackageCard({
               <p className={`${display.className} mt-1 text-3xl font-medium text-white`}>
                 {variante.precoLabel}
               </p>
+              <p className="mt-1 text-xs uppercase tracking-[0.15em] text-white/40">
+                Por pessoa · Quarto Individual
+              </p>
               {variante.parcelaLabel && (
                 <p className="mt-1 text-sm font-medium text-white/70">{variante.parcelaLabel}</p>
               )}

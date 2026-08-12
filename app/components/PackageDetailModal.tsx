@@ -43,6 +43,140 @@ const ITINERARIOS: Record<string, ItinerarioStop[]> = {
   ],
 };
 
+// Roteiro dia a dia — consistente com o fluxo de cidades acima. ATENÇÃO:
+// atrações e ordem dos dias são um exemplo de referência (mesmo nível de
+// detalhe de um roteiro real), precisam ser revisados e confirmados por
+// você antes de publicar — datas exatas só são atribuídas na reserva.
+type DiaRoteiro = { dia: number; titulo: string; texto: string };
+
+const ROTEIRO_7D: DiaRoteiro[] = [
+  {
+    dia: 1,
+    titulo: "Chegada em Tóquio",
+    texto: "Desembarque no Aeroporto de Narita ou Haneda e traslado ao hotel. Restante do dia livre para descanso.",
+  },
+  {
+    dia: 2,
+    titulo: "Tóquio — Asakusa & Skytree",
+    texto: "Templo Senso-ji e a tradicional Nakamise-dori, seguido de subida à Tokyo Skytree para uma vista panorâmica da cidade.",
+  },
+  {
+    dia: 3,
+    titulo: "Tóquio — Harajuku & Shibuya",
+    texto: "Santuário Meiji, passeio por Takeshita-dori em Harajuku e passagem pelo icônico cruzamento de Shibuya.",
+  },
+  {
+    dia: 4,
+    titulo: "Tóquio → Kyoto",
+    texto: "Deslocamento em trem-bala (Shinkansen) até Kyoto. Chegada e caminhada noturna pelo distrito histórico de Gion.",
+  },
+  {
+    dia: 5,
+    titulo: "Kyoto — Fushimi Inari & Kinkaku-ji",
+    texto: "Santuário Fushimi Inari Taisha, famoso pelos milhares de portais vermelhos, e Kinkaku-ji, o Pavilhão Dourado.",
+  },
+  {
+    dia: 6,
+    titulo: "Kyoto — Kiyomizu-dera & Arashiyama",
+    texto: "Templo Kiyomizu-dera, com vista elevada sobre a cidade, e o Bosque de Bambu de Arashiyama.",
+  },
+  {
+    dia: 7,
+    titulo: "Retorno a Tóquio & embarque",
+    texto: "Deslocamento de volta a Tóquio, tempo livre para compras e traslado ao aeroporto para o voo de retorno.",
+  },
+];
+
+const ROTEIRO_15D: DiaRoteiro[] = [
+  {
+    dia: 1,
+    titulo: "Chegada em Tóquio",
+    texto: "Desembarque no Aeroporto de Narita ou Haneda e traslado ao hotel. Restante do dia livre para descanso.",
+  },
+  {
+    dia: 2,
+    titulo: "Tóquio — Asakusa & Skytree",
+    texto: "Templo Senso-ji e a tradicional Nakamise-dori, seguido de subida à Tokyo Skytree para uma vista panorâmica da cidade.",
+  },
+  {
+    dia: 3,
+    titulo: "Tóquio — Harajuku & Shibuya",
+    texto: "Santuário Meiji, passeio por Takeshita-dori em Harajuku e passagem pelo icônico cruzamento de Shibuya.",
+  },
+  {
+    dia: 4,
+    titulo: "Tóquio — Palácio Imperial & Ginza",
+    texto: "Jardins do Palácio Imperial, Estação de Tóquio e tempo livre para compras em Ginza e Akihabara.",
+  },
+  {
+    dia: 5,
+    titulo: "Tóquio — dia livre",
+    texto: "Dia livre com sugestões de passeio: Odaiba, TeamLab, Tokyo Disney Resort ou compras em Shinjuku.",
+  },
+  {
+    dia: 6,
+    titulo: "Tóquio — tempo livre",
+    texto: "Manhã livre no hotel; à tarde, deslocamento até a região do Monte Fuji.",
+  },
+  {
+    dia: 7,
+    titulo: "Fujiyoshida/Kawaguchiko — Monte Fuji",
+    texto: "Vila de Oshino Hakkai, com suas lagoas alimentadas pelo degelo do Monte Fuji, e vista panorâmica da montanha.",
+  },
+  {
+    dia: 8,
+    titulo: "Fujiyoshida/Kawaguchiko → Kyoto",
+    texto: "Manhã no Lago Kawaguchi; deslocamento em trem-bala até Kyoto, chegada e passeio noturno por Gion.",
+  },
+  {
+    dia: 9,
+    titulo: "Kyoto — Fushimi Inari & Kinkaku-ji",
+    texto: "Santuário Fushimi Inari Taisha, famoso pelos milhares de portais vermelhos, e Kinkaku-ji, o Pavilhão Dourado.",
+  },
+  {
+    dia: 10,
+    titulo: "Kyoto — Kiyomizu-dera & Arashiyama",
+    texto: "Templo Kiyomizu-dera, com vista elevada sobre a cidade, e o Bosque de Bambu de Arashiyama.",
+  },
+  {
+    dia: 11,
+    titulo: "Kyoto → Osaka",
+    texto: "Deslocamento até Osaka. Castelo de Osaka e seu jardim, seguido de Dotombori, região de compras e gastronomia.",
+  },
+  {
+    dia: 12,
+    titulo: "Osaka — Aquário & tempo livre",
+    texto: "Aquário Kaiyukan e tempo livre para explorar a cidade — Universal Studios Japan como sugestão opcional.",
+  },
+  {
+    dia: 13,
+    titulo: "Bate-volta a Nara",
+    texto: "Parque de Nara, com seus cervos sagrados, e o Templo Todai-ji, que abriga o grande Buda de bronze. Retorno a Osaka.",
+  },
+  {
+    dia: 14,
+    titulo: "Bate-volta a Nachikatsuura",
+    texto: "Cachoeira Nachi e o Santuário Kumano Nachi Taisha, na região de Kumano. Retorno a Osaka.",
+  },
+  {
+    dia: 15,
+    titulo: "Embarque de volta",
+    texto: "Traslado ao aeroporto e embarque no voo de retorno ao Brasil.",
+  },
+];
+
+const ROTEIROS_DETALHADOS: Record<string, DiaRoteiro[]> = {
+  "7d": ROTEIRO_7D,
+  "15d": ROTEIRO_15D,
+};
+
+// Resumo de refeições inclusas — estimativa por duração, mesma ressalva do
+// roteiro acima (revisar antes de publicar).
+const REFEICOES_INCLUSAS: Record<string, { cafe: number; almoco: number; jantar: number }> = {
+  "7d": { cafe: 6, almoco: 4, jantar: 1 },
+  "15d": { cafe: 14, almoco: 10, jantar: 2 },
+};
+
 function ItinerarioFlow({ stops }: { stops: ItinerarioStop[] }) {
   const circleSize = 56;
   const arrowWidth = 28;
@@ -115,7 +249,11 @@ const INCLUSOES_PADRAO = [
   },
   {
     title: "Seguro Viagem",
-    text: "Cobertura para toda a duração da viagem.",
+    text: "Cobertura médico-hospitalar de US$ 60 mil, para toda a duração da viagem. Passageiros a partir de 85 anos, sob consulta.",
+  },
+  {
+    title: "Bagagem",
+    text: "1 bagagem despachada de até 23kg e 1 bagagem de mão por pessoa, conforme a companhia aérea selecionada.",
   },
   {
     title: "Pocket Wi-Fi ou eSIM 5G",
@@ -139,7 +277,11 @@ const INCLUSOES_PADRAO = [
 const FAQ_PADRAO = [
   {
     pergunta: "Qual categoria de hotel?",
-    resposta: "Hotéis 4 e 5 estrelas, selecionados por localização e conforto — sempre com curadoria Ajisai.",
+    resposta: "Acomodação de 3 a 4 estrelas, selecionada por localização e conforto — sempre com curadoria Ajisai. Exemplo: Daiwa Roynet.",
+  },
+  {
+    pergunta: "O que é um hotel 4 estrelas?",
+    resposta: "Hotéis de categoria superior, com padrão internacional de conforto: quartos bem equipados, café da manhã incluso, localização estratégica e serviços como recepção 24h — sem o luxo e as amenidades adicionais (spa, múltiplos restaurantes) de um 5 estrelas.",
   },
   {
     pergunta: "Quarto individual ou duplo?",
@@ -382,11 +524,72 @@ export function PackageDetailModal({
               </div>
             )}
 
+            {variante && ROTEIROS_DETALHADOS[variante.id] && (
+              <div className="mt-8">
+                <p className="mb-4 text-center text-xs uppercase tracking-[0.35em] text-white/40">
+                  Roteiro dia a dia
+                </p>
+                <div className="space-y-3">
+                  {ROTEIROS_DETALHADOS[variante.id].map((d) => (
+                    <div
+                      key={d.dia}
+                      className="flex gap-3 rounded-xl border border-white/10 bg-white/[0.03] p-3.5"
+                    >
+                      <span
+                        className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-semibold text-white"
+                        style={{ backgroundColor: "#2f80c9" }}
+                      >
+                        {d.dia}
+                      </span>
+                      <div className="min-w-0">
+                        <p className="text-sm font-medium text-white">{d.titulo}</p>
+                        <p className="mt-1 text-xs font-light leading-5 text-white/50">
+                          {d.texto}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {REFEICOES_INCLUSAS[variante.id] && (
+                  <div className="mt-5 grid grid-cols-3 gap-3">
+                    <div className="rounded-xl border border-white/10 bg-white/[0.03] p-3 text-center">
+                      <p className="text-lg">☕</p>
+                      <p className="mt-1 text-sm font-semibold text-white">
+                        {REFEICOES_INCLUSAS[variante.id].cafe}
+                      </p>
+                      <p className="text-[10px] uppercase tracking-[0.1em] text-white/40">
+                        Café da manhã
+                      </p>
+                    </div>
+                    <div className="rounded-xl border border-white/10 bg-white/[0.03] p-3 text-center">
+                      <p className="text-lg">🍽️</p>
+                      <p className="mt-1 text-sm font-semibold text-white">
+                        {REFEICOES_INCLUSAS[variante.id].almoco}
+                      </p>
+                      <p className="text-[10px] uppercase tracking-[0.1em] text-white/40">
+                        Almoço
+                      </p>
+                    </div>
+                    <div className="rounded-xl border border-white/10 bg-white/[0.03] p-3 text-center">
+                      <p className="text-lg">🍶</p>
+                      <p className="mt-1 text-sm font-semibold text-white">
+                        {REFEICOES_INCLUSAS[variante.id].jantar}
+                      </p>
+                      <p className="text-[10px] uppercase tracking-[0.1em] text-white/40">
+                        Jantar
+                      </p>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+
             <p className="mt-6 text-sm font-light leading-6 text-white/60">
               Assim que a reserva é confirmada, você recebe o Roteiro Digital
-              Ajisai: a programação dia a dia da viagem, com hospedagem,
-              deslocamentos e os principais pontos de cada data, disponível
-              pelo celular durante toda a viagem.
+              Ajisai: a versão completa da programação dia a dia, com
+              hospedagem, deslocamentos e os principais pontos de cada data,
+              disponível pelo celular durante toda a viagem.
             </p>
           </div>
 
@@ -411,6 +614,18 @@ export function PackageDetailModal({
                   <p className="mt-1 text-xs font-light leading-5 text-white/50">{item.text}</p>
                 </div>
               ))}
+            </div>
+
+            <div className="mt-4 rounded-xl border border-amber-400/20 bg-amber-400/[0.05] p-3.5">
+              <p className="text-xs font-semibold uppercase tracking-[0.15em] text-amber-300">
+                Notas importantes
+              </p>
+              <p className="mt-1.5 text-xs font-light leading-5 text-white/55">
+                Há passeios com longas caminhadas e subida de escadas, que
+                exigem esforço físico relativo — recomendamos que os
+                participantes estejam em condições físicas adequadas para
+                melhor aproveitamento da viagem.
+              </p>
             </div>
           </div>
 
@@ -467,6 +682,9 @@ export function PackageDetailModal({
                 </p>
                 <p className={`${display.className} mt-1 text-3xl font-medium text-white`}>
                   {variante.precoLabel}
+                </p>
+                <p className="mt-1 text-xs uppercase tracking-[0.15em] text-white/40">
+                  Por pessoa · Quarto Individual
                 </p>
                 {variante.parcelaLabel && (
                   <p className="mt-1 text-sm font-medium text-white/70">{variante.parcelaLabel}</p>
