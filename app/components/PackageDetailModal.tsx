@@ -47,121 +47,149 @@ const ITINERARIOS: Record<string, ItinerarioStop[]> = {
 // atrações e ordem dos dias são um exemplo de referência (mesmo nível de
 // detalhe de um roteiro real), precisam ser revisados e confirmados por
 // você antes de publicar — datas exatas só são atribuídas na reserva.
-type DiaRoteiro = { dia: number; titulo: string; texto: string };
+// cidade usa as mesmas chaves de ITINERARIO_CITY_BORDER, pra colorir a
+// bolinha do dia com a mesma cor da cidade no fluxo "Cidades" acima.
+type DiaRoteiro = { dia: number; titulo: string; texto: string; cidade: string };
 
 const ROTEIRO_7D: DiaRoteiro[] = [
   {
     dia: 1,
     titulo: "Chegada em Tóquio",
     texto: "Desembarque no Aeroporto de Narita ou Haneda e traslado ao hotel. Restante do dia livre para descanso.",
+    cidade: "Tokyo",
   },
   {
     dia: 2,
     titulo: "Tóquio — Asakusa & Skytree",
     texto: "Templo Senso-ji e a tradicional Nakamise-dori, seguido de subida à Tokyo Skytree para uma vista panorâmica da cidade.",
+    cidade: "Tokyo",
   },
   {
     dia: 3,
     titulo: "Tóquio — Harajuku & Shibuya",
     texto: "Santuário Meiji, passeio por Takeshita-dori em Harajuku e passagem pelo icônico cruzamento de Shibuya.",
+    cidade: "Tokyo",
   },
   {
     dia: 4,
     titulo: "Tóquio → Kyoto",
     texto: "Deslocamento em trem-bala (Shinkansen) até Kyoto. Chegada e caminhada noturna pelo distrito histórico de Gion.",
+    cidade: "Kyoto",
   },
   {
     dia: 5,
     titulo: "Kyoto — Fushimi Inari & Kinkaku-ji",
     texto: "Santuário Fushimi Inari Taisha, famoso pelos milhares de portais vermelhos, e Kinkaku-ji, o Pavilhão Dourado.",
+    cidade: "Kyoto",
   },
   {
     dia: 6,
     titulo: "Kyoto — Kiyomizu-dera & Arashiyama",
     texto: "Templo Kiyomizu-dera, com vista elevada sobre a cidade, e o Bosque de Bambu de Arashiyama.",
+    cidade: "Kyoto",
   },
   {
     dia: 7,
     titulo: "Retorno a Tóquio & embarque",
     texto: "Deslocamento de volta a Tóquio, tempo livre para compras e traslado ao aeroporto para o voo de retorno.",
+    cidade: "Tokyo",
   },
 ];
 
+// Ordem dos dias segue a mesma sequência de cidades de ITINERARIOS["15d"]
+// (Tóquio → Kyoto → Osaka → Nara → Nachikatsuura → Fujiyoshida), pra bater
+// com o fluxo "Cidades" mostrado acima — o Monte Fuji fica no fim da
+// viagem, a caminho do embarque, e não logo depois de Tóquio.
 const ROTEIRO_15D: DiaRoteiro[] = [
   {
     dia: 1,
     titulo: "Chegada em Tóquio",
     texto: "Desembarque no Aeroporto de Narita ou Haneda e traslado ao hotel. Restante do dia livre para descanso.",
+    cidade: "Tokyo",
   },
   {
     dia: 2,
     titulo: "Tóquio — Asakusa & Skytree",
     texto: "Templo Senso-ji e a tradicional Nakamise-dori, seguido de subida à Tokyo Skytree para uma vista panorâmica da cidade.",
+    cidade: "Tokyo",
   },
   {
     dia: 3,
     titulo: "Tóquio — Harajuku & Shibuya",
     texto: "Santuário Meiji, passeio por Takeshita-dori em Harajuku e passagem pelo icônico cruzamento de Shibuya.",
+    cidade: "Tokyo",
   },
   {
     dia: 4,
     titulo: "Tóquio — Palácio Imperial & Ginza",
     texto: "Jardins do Palácio Imperial, Estação de Tóquio e tempo livre para compras em Ginza e Akihabara.",
+    cidade: "Tokyo",
   },
   {
     dia: 5,
     titulo: "Tóquio — dia livre",
     texto: "Dia livre com sugestões de passeio: Odaiba, TeamLab, Tokyo Disney Resort ou compras em Shinjuku.",
+    cidade: "Tokyo",
   },
   {
     dia: 6,
-    titulo: "Tóquio — tempo livre",
-    texto: "Manhã livre no hotel; à tarde, deslocamento até a região do Monte Fuji.",
+    titulo: "Tóquio → Kyoto",
+    texto: "Deslocamento em trem-bala (Shinkansen) até Kyoto. Chegada e caminhada noturna pelo distrito histórico de Gion.",
+    cidade: "Kyoto",
   },
   {
     dia: 7,
-    titulo: "Fujiyoshida/Kawaguchiko — Monte Fuji",
-    texto: "Vila de Oshino Hakkai, com suas lagoas alimentadas pelo degelo do Monte Fuji, e vista panorâmica da montanha.",
+    titulo: "Kyoto — Fushimi Inari & Kinkaku-ji",
+    texto: "Santuário Fushimi Inari Taisha, famoso pelos milhares de portais vermelhos, e Kinkaku-ji, o Pavilhão Dourado.",
+    cidade: "Kyoto",
   },
   {
     dia: 8,
-    titulo: "Fujiyoshida/Kawaguchiko → Kyoto",
-    texto: "Manhã no Lago Kawaguchi; deslocamento em trem-bala até Kyoto, chegada e passeio noturno por Gion.",
+    titulo: "Kyoto — Kiyomizu-dera & Arashiyama",
+    texto: "Templo Kiyomizu-dera, com vista elevada sobre a cidade, e o Bosque de Bambu de Arashiyama.",
+    cidade: "Kyoto",
   },
   {
     dia: 9,
-    titulo: "Kyoto — Fushimi Inari & Kinkaku-ji",
-    texto: "Santuário Fushimi Inari Taisha, famoso pelos milhares de portais vermelhos, e Kinkaku-ji, o Pavilhão Dourado.",
+    titulo: "Kyoto → Osaka",
+    texto: "Deslocamento até Osaka. Castelo de Osaka e seu jardim, seguido de Dotombori, região de compras e gastronomia.",
+    cidade: "Osaka",
   },
   {
     dia: 10,
-    titulo: "Kyoto — Kiyomizu-dera & Arashiyama",
-    texto: "Templo Kiyomizu-dera, com vista elevada sobre a cidade, e o Bosque de Bambu de Arashiyama.",
+    titulo: "Osaka — Aquário & tempo livre",
+    texto: "Aquário Kaiyukan e tempo livre para explorar a cidade — Universal Studios Japan como sugestão opcional.",
+    cidade: "Osaka",
   },
   {
     dia: 11,
-    titulo: "Kyoto → Osaka",
-    texto: "Deslocamento até Osaka. Castelo de Osaka e seu jardim, seguido de Dotombori, região de compras e gastronomia.",
+    titulo: "Bate-volta a Nara",
+    texto: "Parque de Nara, com seus cervos sagrados, e o Templo Todai-ji, que abriga o grande Buda de bronze. Retorno a Osaka.",
+    cidade: "Nara",
   },
   {
     dia: 12,
-    titulo: "Osaka — Aquário & tempo livre",
-    texto: "Aquário Kaiyukan e tempo livre para explorar a cidade — Universal Studios Japan como sugestão opcional.",
+    titulo: "Bate-volta a Nachikatsuura",
+    texto: "Cachoeira Nachi e o Santuário Kumano Nachi Taisha, na região de Kumano. Retorno a Osaka.",
+    cidade: "Nachikatsuura",
   },
   {
     dia: 13,
-    titulo: "Bate-volta a Nara",
-    texto: "Parque de Nara, com seus cervos sagrados, e o Templo Todai-ji, que abriga o grande Buda de bronze. Retorno a Osaka.",
+    titulo: "Osaka → Fujiyoshida/Kawaguchiko",
+    texto: "Deslocamento até a região do Monte Fuji. Vila de Oshino Hakkai, com suas lagoas alimentadas pelo degelo da montanha.",
+    cidade: "Fujiyoshida/Fujikawaguchiko",
   },
   {
     dia: 14,
-    titulo: "Bate-volta a Nachikatsuura",
-    texto: "Cachoeira Nachi e o Santuário Kumano Nachi Taisha, na região de Kumano. Retorno a Osaka.",
+    titulo: "Fujiyoshida/Kawaguchiko — Monte Fuji",
+    texto: "Manhã no Lago Kawaguchi, com vista panorâmica do Monte Fuji; tarde livre na região.",
+    cidade: "Fujiyoshida/Fujikawaguchiko",
   },
   {
     dia: 15,
     titulo: "Embarque de volta",
     texto: "Traslado ao aeroporto e embarque no voo de retorno ao Brasil.",
+    cidade: "Fujiyoshida/Fujikawaguchiko",
   },
 ];
 
@@ -180,12 +208,17 @@ const REFEICOES_INCLUSAS: Record<string, { cafe: number; almoco: number; jantar:
 function ItinerarioFlow({ stops }: { stops: ItinerarioStop[] }) {
   const circleSize = 56;
   const arrowWidth = 28;
+  const labelWidth = 96;
 
   return (
-    <div className="flex flex-col items-center">
-      <div className="flex flex-wrap items-center justify-center gap-y-6">
-        {stops.map((stop, i) => (
-          <div key={i} className="flex items-center">
+    // Cada parada (círculo + rótulo) fica num único bloco flex, pra não
+    // quebrar linha separadamente — antes o círculo e o texto viviam em
+    // duas linhas flex-wrap independentes e podiam desalinhar quando o
+    // rótulo era mais largo que o círculo (nomes de cidade compostos).
+    <div className="flex flex-wrap items-start justify-center gap-y-8">
+      {stops.map((stop, i) => (
+        <div key={i} className="flex items-start">
+          <div className="flex flex-col items-center" style={{ width: labelWidth }}>
             <div
               className="shrink-0 rounded-full border"
               style={{
@@ -195,20 +228,7 @@ function ItinerarioFlow({ stops }: { stops: ItinerarioStop[] }) {
                 backgroundColor: ITINERARIO_CITY_BORDER[stop.city] ?? "rgba(255,255,255,0.3)",
               }}
             />
-            {i < stops.length - 1 && (
-              <svg width={arrowWidth} height="10" viewBox="0 0 28 10" fill="none" className="mx-1 shrink-0">
-                <line x1="0" y1="5" x2="20" y2="5" stroke="rgba(255,255,255,0.3)" strokeWidth="1.5" />
-                <path d="M18 1 L26 5 L18 9" stroke="rgba(255,255,255,0.3)" strokeWidth="1.5" fill="none" />
-              </svg>
-            )}
-          </div>
-        ))}
-      </div>
-
-      <div className="mt-3 flex flex-wrap items-start justify-center">
-        {stops.map((stop, i) => (
-          <div key={i} className="flex items-center">
-            <div className="text-center" style={{ width: Math.max(circleSize, 96) }}>
+            <div className="mt-3 text-center">
               <p className="break-words text-[9px] uppercase leading-tight tracking-[0.02em] text-white/70">
                 {stop.city.split("/").map((part, idx, arr) => (
                   <span key={idx}>
@@ -226,10 +246,22 @@ function ItinerarioFlow({ stops }: { stops: ItinerarioStop[] }) {
                 </p>
               )}
             </div>
-            {i < stops.length - 1 && <div className="mx-1 shrink-0" style={{ width: arrowWidth }} />}
           </div>
-        ))}
-      </div>
+          {i < stops.length - 1 && (
+            <svg
+              width={arrowWidth}
+              height="10"
+              viewBox="0 0 28 10"
+              fill="none"
+              className="mx-1 mt-6 shrink-0"
+              style={{ marginTop: circleSize / 2 - 5 }}
+            >
+              <line x1="0" y1="5" x2="20" y2="5" stroke="rgba(255,255,255,0.3)" strokeWidth="1.5" />
+              <path d="M18 1 L26 5 L18 9" stroke="rgba(255,255,255,0.3)" strokeWidth="1.5" fill="none" />
+            </svg>
+          )}
+        </div>
+      ))}
     </div>
   );
 }
@@ -300,12 +332,8 @@ const FAQ_PADRAO = [
     resposta: "Trechos de trem-bala previstos no roteiro estão inclusos.",
   },
   {
-    pergunta: "Transportes urbanos?",
-    resposta: "Transfers e deslocamentos do roteiro estão inclusos; transporte público de uso livre não faz parte do pacote.",
-  },
-  {
     pergunta: "Ingressos das atrações?",
-    resposta: "Ingressos das atrações previstas no roteiro estão inclusos; passeios opcionais são à parte.",
+    resposta: "Ingressos das atrações previstas no roteiro estão inclusos.",
   },
   {
     pergunta: "Refeições?",
@@ -537,7 +565,7 @@ export function PackageDetailModal({
                     >
                       <span
                         className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-semibold text-white"
-                        style={{ backgroundColor: "#2f80c9" }}
+                        style={{ backgroundColor: ITINERARIO_CITY_BORDER[d.cidade] ?? "#2f80c9" }}
                       >
                         {d.dia}
                       </span>
@@ -634,15 +662,32 @@ export function PackageDetailModal({
               Perguntas frequentes
             </h3>
             <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
-              {FAQ_PADRAO.map((item) => (
-                <div
-                  key={item.pergunta}
-                  className="rounded-xl border border-white/10 bg-white/[0.03] p-3.5 transition hover:border-white/25 hover:bg-white/[0.06]"
-                >
-                  <p className="text-sm font-medium text-white">{item.pergunta}</p>
-                  <p className="mt-1 text-xs font-light leading-5 text-white/50">{item.resposta}</p>
-                </div>
-              ))}
+              {FAQ_PADRAO.map((item) => {
+                const destaque = item.pergunta === "O que é um hotel 4 estrelas?";
+                return (
+                  <div
+                    key={item.pergunta}
+                    className={
+                      destaque
+                        ? "rounded-xl border p-3.5 transition"
+                        : "rounded-xl border border-white/10 bg-white/[0.03] p-3.5 transition hover:border-white/25 hover:bg-white/[0.06]"
+                    }
+                    style={
+                      destaque
+                        ? { borderColor: "rgba(234,179,8,0.4)", backgroundColor: "rgba(234,179,8,0.08)" }
+                        : undefined
+                    }
+                  >
+                    <p
+                      className="text-sm font-medium text-white"
+                      style={destaque ? { color: "#eab308" } : undefined}
+                    >
+                      {item.pergunta}
+                    </p>
+                    <p className="mt-1 text-xs font-light leading-5 text-white/50">{item.resposta}</p>
+                  </div>
+                );
+              })}
             </div>
           </div>
 

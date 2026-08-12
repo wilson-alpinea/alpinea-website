@@ -1604,6 +1604,10 @@ const INFO_CARDS: {
   { label: "Logística", Icon: IconLuggage },
   { label: "Trem Bala (Shinkansen)", Icon: IconShinkansen },
   { label: "Parques de Diversão (Disney & USJ)", Icon: IconCastle },
+  { label: "JR Pass", Icon: IconTicket },
+  { label: "Seguro Viagem", Icon: IconShield },
+  { label: "Câmbio no Brasil", Icon: IconCash },
+  { label: "Transfer / Motorista Privado", Icon: IconDriver },
 ];
 
 function IconTicket({ className }: { className?: string }) {
@@ -1611,6 +1615,15 @@ function IconTicket({ className }: { className?: string }) {
     <svg {...iconProps(className)}>
       <path d="M3 9a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v1.5a1.5 1.5 0 0 0 0 3V16a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2.5a1.5 1.5 0 0 0 0-3z" />
       <line x1="10" y1="7" x2="10" y2="18" strokeDasharray="1.5 2.5" />
+    </svg>
+  );
+}
+
+function IconShield({ className }: { className?: string }) {
+  return (
+    <svg {...iconProps(className)}>
+      <path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6z" />
+      <path d="M9 12l2 2 4-4" />
     </svg>
   );
 }

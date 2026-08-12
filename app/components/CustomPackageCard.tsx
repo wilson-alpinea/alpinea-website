@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useMemo, useState, type FormEvent } from "react";
 import { useCart } from "./CartContext";
 
@@ -42,50 +43,6 @@ function formatBRL(valor: number): string {
   return `R$ ${Math.round(valor).toLocaleString("pt-BR")}`;
 }
 
-// Preços por item — estimativas de referência pra composição do pacote sob
-// medida, iguais pra qualquer roteiro/duração. ATENÇÃO: valores fictícios,
-// precisam ser confirmados/ajustados por você antes de publicar (mesmo aviso
-// que já vale pros preços fixos de Caravana/Individual).
-const OPCOES = [
-  {
-    key: "aereo",
-    label: "Aéreo",
-    icone: "✈️",
-    descricao: "Passagem internacional ida e volta",
-    preco: 8000,
-  },
-  {
-    key: "hotel",
-    label: "Hotel",
-    icone: "🏨",
-    descricao: "Hospedagem selecionada durante toda a viagem",
-    preco: 12000,
-  },
-  {
-    key: "transporte",
-    label: "Transporte",
-    icone: "🚐",
-    descricao: "Transfers e deslocamentos do roteiro",
-    preco: 3000,
-  },
-  {
-    key: "guia",
-    label: "Guia",
-    icone: "🧭",
-    descricao: "Guia turístico acompanhando o roteiro",
-    preco: 4000,
-  },
-  {
-    key: "servicos",
-    label: "Serviços Adicionais",
-    icone: "✨",
-    descricao: "Reservas, concierge e experiências sob medida",
-    preco: 2500,
-  },
-] as const;
-
-type OpcaoKey = (typeof OPCOES)[number]["key"];
-
 const CATEGORIAS_HOTEL = ["3 estrelas", "4 estrelas", "5 estrelas"] as const;
 const TIPOS_QUARTO = [
   "Individual",
@@ -93,6 +50,93 @@ const TIPOS_QUARTO = [
   "Duplo (compartilhado)",
   "Triplo",
 ] as const;
+
+type PrecoCtx = {
+  dias: number;
+  categoriaHotel: (typeof CATEGORIAS_HOTEL)[number];
+  tipoQuarto: (typeof TIPOS_QUARTO)[number];
+};
+
+// Diária de hotel por categoria — usada pra calcular o total do pacote
+// conforme categoria do hotel, tipo de quarto e quantidade de dias.
+// ATENÇÃO: valores fictícios, precisam ser confirmados/ajustados por você
+// antes de publicar (mesmo aviso que já vale pros preços fixos de
+// Caravana/Individual).
+const DIARIA_HOTEL: Record<(typeof CATEGORIAS_HOTEL)[number], number> = {
+  "3 estrelas": 250,
+  "4 estrelas": 400,
+  "5 estrelas": 700,
+};
+
+// Fator por tipo de quarto — quarto compartilhado dilui o custo por pessoa.
+const FATOR_QUARTO: Record<(typeof TIPOS_QUARTO)[number], number> = {
+  Individual: 1,
+  "Duplo (casal)": 0.65,
+  "Duplo (compartilhado)": 0.65,
+  Triplo: 0.5,
+};
+
+const DIARIA_TRANSPORTE = 150;
+const DIARIA_GUIA = 300;
+
+// Preços por item — aéreo e serviços adicionais têm valor fixo por viagem;
+// hotel, transporte e guia variam conforme categoria do hotel, tipo de
+// quarto e quantidade de dias selecionados acima.
+const OPCOES = [
+  {
+    key: "aereo",
+    label: "Aéreo",
+    icone: "✈️",
+    descricao: "Passagem internacional ida e volta",
+    calcPreco: () => 8000,
+  },
+  {
+    key: "hotel",
+    label: "Hotel",
+    icone: "🏨",
+    descricao: "Hospedagem selecionada durante toda a viagem",
+    calcPreco: (ctx: PrecoCtx) =>
+      Math.round(DIARIA_HOTEL[ctx.categoriaHotel] * ctx.dias * FATOR_QUARTO[ctx.tipoQuarto]),
+  },
+  {
+    key: "transporte",
+    label: "Transporte",
+    icone: "🚐",
+    descricao: "Transfers e deslocamentos do roteiro",
+    calcPreco: (ctx: PrecoCtx) => DIARIA_TRANSPORTE * ctx.dias,
+  },
+  {
+    key: "guia",
+    label: "Guia",
+    icone: "🧭",
+    descricao: "Guia turístico acompanhando o roteiro",
+    calcPreco: (ctx: PrecoCtx) => DIARIA_GUIA * ctx.dias,
+  },
+  {
+    key: "servicos",
+    label: "Serviços Adicionais",
+    icone: "✨",
+    descricao: "Reservas, concierge e experiências sob medida",
+    calcPreco: () => 2500,
+  },
+] as const;
+
+type OpcaoKey = (typeof OPCOES)[number]["key"];
+
+// Fotos ainda faltando pra Okinawa e Hiroshima na biblioteca de imagens —
+// os cards seguem funcionais (fundo sólido com o nome da cidade) até você
+// subir as fotos reais dessas duas.
+const DESTINOS = [
+  { key: "tokyo", nome: "Tokyo", imagem: "/images/tokyo.jpg" },
+  { key: "osaka", nome: "Osaka", imagem: "/images/osaka-castle.png" },
+  { key: "kyoto", nome: "Kyoto", imagem: "/images/kyoto-maiko-street.png" },
+  { key: "okinawa", nome: "Okinawa", imagem: null },
+  { key: "hiroshima", nome: "Hiroshima", imagem: null },
+  { key: "hakone", nome: "Hakone", imagem: "/images/fuji.JPG" },
+] as const;
+
+type DestinoKey = (typeof DESTINOS)[number]["key"];
+
 const MIN_DIAS = 3;
 const MAX_DIAS = 30;
 
@@ -110,13 +154,18 @@ export function CustomPackageCard() {
   const [observacoes, setObservacoes] = useState("");
   const [adicionado, setAdicionado] = useState(false);
 
+  const precoCtx = useMemo<PrecoCtx>(
+    () => ({ dias, categoriaHotel, tipoQuarto }),
+    [dias, categoriaHotel, tipoQuarto],
+  );
+
   const itensSelecionados = useMemo(
     () => OPCOES.filter((o) => selecionados.has(o.key)),
     [selecionados],
   );
   const total = useMemo(
-    () => itensSelecionados.reduce((soma, o) => soma + o.preco, 0),
-    [itensSelecionados],
+    () => itensSelecionados.reduce((soma, o) => soma + o.calcPreco(precoCtx), 0),
+    [itensSelecionados, precoCtx],
   );
 
   function toggleOpcao(key: OpcaoKey) {
@@ -277,13 +326,8 @@ export function CustomPackageCard() {
                     <IconCheck className="h-3 w-3" />
                   </span>
                   <span className="min-w-0 flex-1">
-                    <span className="flex items-center justify-between gap-2">
-                      <span className="text-sm font-medium text-white">
-                        {opcao.icone} {opcao.label}
-                      </span>
-                      <span className="shrink-0 text-xs text-white/50">
-                        + {formatBRL(opcao.preco)}
-                      </span>
+                    <span className="text-sm font-medium text-white">
+                      {opcao.icone} {opcao.label}
                     </span>
                     <span className="mt-0.5 block text-xs leading-5 text-white/40">
                       {opcao.descricao}
