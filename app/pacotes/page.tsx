@@ -513,7 +513,7 @@ export default function PacotesJapaoPage() {
               ))}
             </div>
 
-            <div className="mt-10 flex flex-wrap items-center justify-center gap-8 md:mt-12">
+            <div className="mt-10 flex flex-col items-center justify-center gap-8 md:mt-12">
               <Image
                 src="/images/badge-cadastur.png"
                 alt="Cadastur — Agência de Turismo registrada"
