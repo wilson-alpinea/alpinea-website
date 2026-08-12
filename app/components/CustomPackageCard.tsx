@@ -78,10 +78,15 @@ const FATOR_QUARTO: Record<(typeof TIPOS_QUARTO)[number], number> = {
 
 const DIARIA_TRANSPORTE = 150;
 const DIARIA_GUIA = 300;
+const DIARIA_JR_PASS = 180;
+const DIARIA_SEGURO_VIAGEM = 35;
+const DIARIA_MOTORISTA_PRIVADO = 350;
+const PRECO_CAMBIO_BRASIL = 150;
 
-// Preços por item — aéreo e serviços adicionais têm valor fixo por viagem;
-// hotel, transporte e guia variam conforme categoria do hotel, tipo de
-// quarto e quantidade de dias selecionados acima.
+// Preços por item — aéreo, câmbio e serviços adicionais têm valor fixo por
+// viagem; hotel, transporte, guia, JR Pass, seguro viagem e motorista
+// privado variam conforme categoria do hotel, tipo de quarto e quantidade
+// de dias selecionados acima.
 const OPCOES = [
   {
     key: "aereo",
@@ -113,6 +118,34 @@ const OPCOES = [
     calcPreco: (ctx: PrecoCtx) => DIARIA_GUIA * ctx.dias,
   },
   {
+    key: "jrpass",
+    label: "JR Pass",
+    icone: "🚄",
+    descricao: "Passe ferroviário com deslocamentos ilimitados de trem-bala",
+    calcPreco: (ctx: PrecoCtx) => DIARIA_JR_PASS * ctx.dias,
+  },
+  {
+    key: "seguro",
+    label: "Seguro Viagem",
+    icone: "🛡️",
+    descricao: "Cobertura médica e assistência durante toda a viagem",
+    calcPreco: (ctx: PrecoCtx) => DIARIA_SEGURO_VIAGEM * ctx.dias,
+  },
+  {
+    key: "cambio",
+    label: "Câmbio no Brasil",
+    icone: "💴",
+    descricao: "Retirada de ienes com câmbio comercial antes do embarque",
+    calcPreco: () => PRECO_CAMBIO_BRASIL,
+  },
+  {
+    key: "motorista",
+    label: "Transfer com Motorista Privado",
+    icone: "🚗",
+    descricao: "Traslados exclusivos, sem compartilhar veículo com outros grupos",
+    calcPreco: (ctx: PrecoCtx) => DIARIA_MOTORISTA_PRIVADO * ctx.dias,
+  },
+  {
     key: "servicos",
     label: "Serviços Adicionais",
     icone: "✨",
@@ -122,6 +155,11 @@ const OPCOES = [
 ] as const;
 
 type OpcaoKey = (typeof OPCOES)[number]["key"];
+
+// Itens essenciais vêm pré-selecionados; os complementares (JR Pass, seguro
+// viagem, câmbio, motorista privado) ficam disponíveis pra adicionar sob
+// demanda.
+const ITENS_PADRAO: OpcaoKey[] = ["aereo", "hotel", "transporte", "guia", "servicos"];
 
 // Fotos ainda faltando pra Okinawa e Hiroshima na biblioteca de imagens —
 // os cards seguem funcionais (fundo sólido com o nome da cidade) até você
@@ -149,7 +187,7 @@ export function CustomPackageCard() {
   const [tipoQuarto, setTipoQuarto] =
     useState<(typeof TIPOS_QUARTO)[number]>("Individual");
   const [selecionados, setSelecionados] = useState<Set<OpcaoKey>>(
-    () => new Set(OPCOES.map((o) => o.key)),
+    () => new Set(ITENS_PADRAO),
   );
   const [destinosSelecionados, setDestinosSelecionados] = useState<Set<DestinoKey>>(
     () => new Set(),
@@ -247,55 +285,6 @@ export function CustomPackageCard() {
       </p>
 
       <form onSubmit={handleSubmit} className="mt-5 space-y-6">
-        <div>
-          <span className="mb-2 block text-[10px] uppercase tracking-[0.2em] text-white/40">
-            Destinos
-          </span>
-          <div className="grid grid-cols-3 gap-2.5 sm:grid-cols-6">
-            {DESTINOS.map((destino) => {
-              const ativo = destinosSelecionados.has(destino.key);
-              return (
-                <button
-                  key={destino.key}
-                  type="button"
-                  onClick={() => toggleDestino(destino.key)}
-                  aria-pressed={ativo}
-                  className={`group relative aspect-square overflow-hidden rounded-xl border text-left transition ${
-                    ativo
-                      ? "border-[#2f80c9] shadow-[0_0_0_1px_rgba(47,128,201,0.5)]"
-                      : "border-white/10 hover:border-white/30"
-                  }`}
-                >
-                  {destino.imagem ? (
-                    <Image
-                      src={destino.imagem}
-                      alt={destino.nome}
-                      fill
-                      sizes="140px"
-                      className="object-cover transition duration-300 group-hover:scale-105"
-                    />
-                  ) : (
-                    <div className="absolute inset-0 bg-gradient-to-br from-[#1c2b45] to-[#0a0f1c]" />
-                  )}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent" />
-                  <span className="absolute bottom-1.5 left-2 right-2 text-xs font-medium leading-tight text-white">
-                    {destino.nome}
-                  </span>
-                  <span
-                    className={`absolute right-1.5 top-1.5 flex h-5 w-5 items-center justify-center rounded-full border text-[10px] transition ${
-                      ativo
-                        ? "border-[#2f80c9] bg-[#2f80c9] text-white"
-                        : "border-white/40 bg-black/30 text-transparent"
-                    }`}
-                  >
-                    <IconCheck className="h-3 w-3" />
-                  </span>
-                </button>
-              );
-            })}
-          </div>
-        </div>
-
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 md:grid-cols-4">
           <label className="block">
             <span className="mb-2 block text-[10px] uppercase tracking-[0.2em] text-white/40">
@@ -408,6 +397,55 @@ export function CustomPackageCard() {
                     <span className="mt-0.5 block text-xs leading-5 text-white/40">
                       {opcao.descricao}
                     </span>
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        <div>
+          <span className="mb-2 block text-[10px] uppercase tracking-[0.2em] text-white/40">
+            Destinos
+          </span>
+          <div className="grid grid-cols-3 gap-2.5 sm:grid-cols-6">
+            {DESTINOS.map((destino) => {
+              const ativo = destinosSelecionados.has(destino.key);
+              return (
+                <button
+                  key={destino.key}
+                  type="button"
+                  onClick={() => toggleDestino(destino.key)}
+                  aria-pressed={ativo}
+                  className={`group relative aspect-square overflow-hidden rounded-xl border text-left transition ${
+                    ativo
+                      ? "border-[#2f80c9] shadow-[0_0_0_1px_rgba(47,128,201,0.5)]"
+                      : "border-white/10 hover:border-white/30"
+                  }`}
+                >
+                  {destino.imagem ? (
+                    <Image
+                      src={destino.imagem}
+                      alt={destino.nome}
+                      fill
+                      sizes="140px"
+                      className="object-cover transition duration-300 group-hover:scale-105"
+                    />
+                  ) : (
+                    <div className="absolute inset-0 bg-gradient-to-br from-[#1c2b45] to-[#0a0f1c]" />
+                  )}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent" />
+                  <span className="absolute bottom-1.5 left-2 right-2 text-xs font-medium leading-tight text-white">
+                    {destino.nome}
+                  </span>
+                  <span
+                    className={`absolute right-1.5 top-1.5 flex h-5 w-5 items-center justify-center rounded-full border text-[10px] transition ${
+                      ativo
+                        ? "border-[#2f80c9] bg-[#2f80c9] text-white"
+                        : "border-white/40 bg-black/30 text-transparent"
+                    }`}
+                  >
+                    <IconCheck className="h-3 w-3" />
                   </span>
                 </button>
               );
