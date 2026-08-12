@@ -519,14 +519,14 @@ export default function PacotesJapaoPage() {
                 alt="Cadastur — Agência de Turismo registrada"
                 width={1254}
                 height={1254}
-                className="h-28 w-auto sm:h-36"
+                className="h-auto w-full max-w-[220px] sm:max-w-[260px]"
               />
               <Image
                 src="/images/badge-reclameaqui.png"
                 alt="Verificado no Reclame Aqui"
                 width={1536}
                 height={1024}
-                className="h-24 w-auto sm:h-32"
+                className="h-auto w-full max-w-[220px] sm:max-w-[260px]"
               />
             </div>
           </div>

@@ -228,7 +228,7 @@ export default function AprovacaoRoteiroPage() {
     <main className="min-h-screen overflow-x-hidden bg-[#FAF9F6]">
       <header className="fixed left-0 right-0 top-0 z-50 flex items-center justify-between border-b border-black/10 bg-[#FAF9F6]/60 px-6 py-5 shadow-[0_1px_24px_rgba(0,0,0,0.05)] backdrop-blur-xl md:px-16">
         <img
-          src="/images/AJISAI-LOGO.avif"
+          src="/images/ajisai-group-logo-crop.png"
           alt="Ajisai"
           className="h-[60px] w-auto object-contain md:h-[72px]"
         />
@@ -263,16 +263,24 @@ export default function AprovacaoRoteiroPage() {
                 Dados do Cliente
               </p>
               <p className="rounded-full border border-[#2f5aa8]/25 bg-[#2f5aa8]/[0.06] px-4 py-2 text-center text-xs uppercase tracking-[0.2em] text-[#2f5aa8]">
-                ID 52130383
+                ID 74920156
               </p>
             </div>
-            <div className="grid grid-cols-1 gap-5 border-b border-black/10 pb-6 sm:grid-cols-2">
+            <div className="grid grid-cols-1 gap-5 border-b border-black/10 pb-6 sm:grid-cols-3">
               <div>
                 <p className="text-[11px] uppercase tracking-[0.2em] text-black/40">
                   Data da Contratação
                 </p>
                 <p className="mt-1 text-sm font-semibold text-black">
                   28 de Julho de 2026
+                </p>
+              </div>
+              <div>
+                <p className="text-[11px] uppercase tracking-[0.2em] text-black/40">
+                  Cliente
+                </p>
+                <p className="mt-1 text-sm font-semibold text-black">
+                  Maria da Silva
                 </p>
               </div>
               <div>
@@ -337,15 +345,15 @@ export default function AprovacaoRoteiroPage() {
                   <div className="space-y-1.5 text-sm text-black/70">
                     <p>
                       <span className="font-semibold text-black">QR807</span>{" "}
-                      · HND → DOH · 00:35 → 06:10
+                      · NRT → DOH · 11:20 → 17:05
                     </p>
                     <p>
                       <span className="font-semibold text-black">QR774</span>{" "}
-                      · DOH → GRU · 08:00 → 17:20
+                      · DOH → GRU · 19:00 → 05:15+1
                     </p>
                   </div>
                   <p className="mt-2 text-xs text-black/40">
-                    Saída de Tokyo pelo Aeroporto de Haneda (HND), Terminal 3
+                    Saída de Tokyo pelo Aeroporto de Narita (NRT), Terminal 1
                   </p>
                 </div>
               </div>

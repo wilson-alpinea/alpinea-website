@@ -167,7 +167,6 @@ function genericPeriod(): Period {
 
 const DAY_1: DayContent = {
   day: 1,
-  badge: "NRT",
   city: "Tokyo",
   date: "04 Mai",
   contexto: [
@@ -949,12 +948,12 @@ const DAY_7: DayContent = {
 
 const PARTIDA: DayContent = {
   day: 8,
-  badge: "HND-DOH",
+  badge: "NRT-DOH",
   city: "Partida",
   date: "12 Mai",
   travel: true,
   travelNote:
-    "Voo de volta decola às 00:35 pelo Aeroporto de Haneda (HND), logo após a virada do dia. Dia reservado para preparar a bagagem e seguir para o aeroporto.",
+    "Voo de volta decola às 11:20 pelo Aeroporto de Narita (NRT). Dia reservado para preparar a bagagem e seguir para o aeroporto.",
 };
 
 const DAYS: DayContent[] = [
@@ -1528,15 +1527,6 @@ function IconArrowLeft({ className }: { className?: string }) {
     <svg {...iconProps(className)}>
       <line x1="20" y1="12" x2="5" y2="12" />
       <path d="M11 6l-6 6 6 6" />
-    </svg>
-  );
-}
-
-function IconArrowUp({ className }: { className?: string }) {
-  return (
-    <svg {...iconProps(className)}>
-      <line x1="12" y1="20" x2="12" y2="5" />
-      <path d="M6 11l6-6 6 6" />
     </svg>
   );
 }
@@ -2309,12 +2299,6 @@ export function ApprovalPanel({
     });
   }
 
-  function scrollToDaysMenu() {
-    requestAnimationFrame(() => {
-      daysMenuRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
-    });
-  }
-
   const current = DAYS[activeDay];
 
   return (
@@ -2536,18 +2520,6 @@ export function ApprovalPanel({
               <div className="mt-8 rounded-2xl border border-black/10 bg-black/[0.02] p-6 sm:p-8">
                 <DayTimeline items={current.timeline} />
               </div>
-              <button
-                type="button"
-                onClick={scrollToDaysMenu}
-                className="mt-8 flex w-full flex-col items-center gap-2 rounded-2xl border border-[#2f5aa8]/20 bg-[#eef3fb] py-6 text-center transition hover:bg-[#e2eaf8]"
-              >
-                <span className="flex h-10 w-10 shrink-0 animate-pulse items-center justify-center rounded-full bg-[#2f5aa8] text-white">
-                  <IconArrowUp className="h-5 w-5" />
-                </span>
-                <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#2f5aa8]">
-                  Voltar para o menu de dias do roteiro
-                </span>
-              </button>
             </>
           ) : current.travel ? (
             <div className="rounded-2xl border border-black/10 bg-black/[0.02] p-6 text-center sm:p-8">
@@ -2588,18 +2560,6 @@ export function ApprovalPanel({
                   />
                 )}
               </div>
-              <button
-                type="button"
-                onClick={scrollToDaysMenu}
-                className="mt-8 flex w-full flex-col items-center gap-2 rounded-2xl border border-[#2f5aa8]/20 bg-[#eef3fb] py-6 text-center transition hover:bg-[#e2eaf8]"
-              >
-                <span className="flex h-10 w-10 shrink-0 animate-pulse items-center justify-center rounded-full bg-[#2f5aa8] text-white">
-                  <IconArrowUp className="h-5 w-5" />
-                </span>
-                <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#2f5aa8]">
-                  Voltar para o menu de dias do roteiro
-                </span>
-              </button>
             </>
           )}
         </div>
