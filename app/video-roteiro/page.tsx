@@ -6,14 +6,14 @@ import { ApprovalPanel } from "./ApprovalPanel";
 // Roteiro Personalizado. Não é uma página de cliente real — é uma versão
 // fictícia/demo do painel digital final (dados de embarque, perfil e
 // hospedagem são todos ilustrativos), usada só como cenário para captura
-// de tela. Baseada no template de /d8y697yq, em tema escuro, com logo
-// Ajisai e sem qualquer texto de "rascunho" ou "aprovação".
+// de tela. Baseada no template de /d8y697yq, em tema claro (fundo
+// off-white), com logo Ajisai e sem qualquer texto de "rascunho" ou
+// "aprovação".
 
 const display = Bodoni_Moda({
   subsets: ["latin"],
   weight: ["400", "500", "600"],
 });
-
 
 // Perfil do viajante — pontuação (0–10) baseada no briefing preenchido pelo
 // cliente na contratação. Usada só como leitura interna da equipe pra
@@ -148,8 +148,8 @@ function RadarChart({ dimensions }: { dimensions: RadarDimension[] }) {
             Array.from({ length: n }, (_, i) => point(level * radius, i)),
           )}
           fill="none"
-          stroke="#fff"
-          strokeOpacity={0.14}
+          stroke="#000"
+          strokeOpacity={0.08}
           strokeWidth={1}
         />
       ))}
@@ -163,8 +163,8 @@ function RadarChart({ dimensions }: { dimensions: RadarDimension[] }) {
             y1={cy}
             x2={p.x}
             y2={p.y}
-            stroke="#fff"
-            strokeOpacity={0.14}
+            stroke="#000"
+            strokeOpacity={0.08}
             strokeWidth={1}
           />
         );
@@ -192,7 +192,7 @@ function RadarChart({ dimensions }: { dimensions: RadarDimension[] }) {
             x={p.x}
             y={startY}
             textAnchor={anchor}
-            className="fill-white/50 uppercase"
+            className="fill-black/50 uppercase"
             fontSize={9.5}
             fontWeight={700}
             style={{ letterSpacing: "0.03em" }}
@@ -225,14 +225,14 @@ export const metadata: Metadata = {
 
 export default function AprovacaoRoteiroPage() {
   return (
-    <main className="min-h-screen overflow-x-hidden bg-black">
-      <header className="fixed left-0 right-0 top-0 z-50 flex items-center justify-between border-b border-white/10 bg-black/60 px-6 py-5 shadow-[0_1px_24px_rgba(0,0,0,0.05)] backdrop-blur-xl md:px-16">
+    <main className="min-h-screen overflow-x-hidden bg-[#FAF9F6]">
+      <header className="fixed left-0 right-0 top-0 z-50 flex items-center justify-between border-b border-black/10 bg-[#FAF9F6]/60 px-6 py-5 shadow-[0_1px_24px_rgba(0,0,0,0.05)] backdrop-blur-xl md:px-16">
         <img
           src="/images/AJISAI-LOGO.avif"
           alt="Ajisai"
           className="h-[60px] w-auto object-contain md:h-[72px]"
         />
-        <span className="rounded-full border border-white/15 px-4 py-1.5 text-[11px] uppercase tracking-[0.2em] text-white/50">
+        <span className="rounded-full border border-black/15 px-4 py-1.5 text-[11px] uppercase tracking-[0.2em] text-black/50">
           Painel do Roteiro Personalizado
         </span>
       </header>
@@ -243,11 +243,11 @@ export default function AprovacaoRoteiroPage() {
             Roteiro Personalizado
           </p>
           <h1
-            className={`${display.className} text-[1.9rem] font-medium leading-tight text-white md:text-[2.4rem]`}
+            className={`${display.className} text-[1.9rem] font-medium leading-tight text-black md:text-[2.4rem]`}
           >
             A estrutura completa do seu roteiro, em um só lugar
           </h1>
-          <p className="mx-auto mt-5 text-sm leading-7 text-white/55 md:text-base">
+          <p className="mx-auto mt-5 text-sm leading-7 text-black/55 md:text-base">
             Dados de embarque, perfil de viagem, hospedagem e um dia completo
             do roteiro de 7 dias, organizados no mesmo painel digital que
             você recebe ao contratar um Roteiro Personalizado Ajisai.
@@ -257,29 +257,29 @@ export default function AprovacaoRoteiroPage() {
 
       <section className="px-5 pb-4 md:px-16">
         <div className="mx-auto max-w-4xl">
-          <div className="rounded-2xl border border-white/10 bg-black p-6 shadow-[0_20px_60px_-30px_rgba(0,0,0,0.25)] sm:rounded-[2rem] sm:p-8">
+          <div className="rounded-2xl border border-black/10 bg-[#FAF9F6] p-6 shadow-[0_20px_60px_-30px_rgba(0,0,0,0.25)] sm:rounded-[2rem] sm:p-8">
             <div className="mx-auto mb-5 flex w-fit flex-col items-center gap-2.5">
-              <p className="rounded-full border border-white/15 px-5 py-2 text-center text-xs uppercase tracking-[0.3em] text-white/65">
+              <p className="rounded-full border border-black/15 px-5 py-2 text-center text-xs uppercase tracking-[0.3em] text-black/65">
                 Dados do Cliente
               </p>
               <p className="rounded-full border border-[#2f5aa8]/25 bg-[#2f5aa8]/[0.06] px-4 py-2 text-center text-xs uppercase tracking-[0.2em] text-[#2f5aa8]">
                 ID 52130383
               </p>
             </div>
-            <div className="grid grid-cols-1 gap-5 border-b border-white/10 pb-6 sm:grid-cols-2">
+            <div className="grid grid-cols-1 gap-5 border-b border-black/10 pb-6 sm:grid-cols-2">
               <div>
-                <p className="text-[11px] uppercase tracking-[0.2em] text-white/40">
+                <p className="text-[11px] uppercase tracking-[0.2em] text-black/40">
                   Data da Contratação
                 </p>
-                <p className="mt-1 text-sm font-semibold text-white">
+                <p className="mt-1 text-sm font-semibold text-black">
                   28 de Julho de 2026
                 </p>
               </div>
               <div>
-                <p className="text-[11px] uppercase tracking-[0.2em] text-white/40">
+                <p className="text-[11px] uppercase tracking-[0.2em] text-black/40">
                   Duração
                 </p>
-                <p className="mt-1 text-sm font-semibold text-white">
+                <p className="mt-1 text-sm font-semibold text-black">
                   7 Dias
                 </p>
               </div>
@@ -294,10 +294,10 @@ export default function AprovacaoRoteiroPage() {
                 className="h-24 w-auto rounded-md object-contain sm:h-28"
               />
               <div>
-                <p className="text-[11px] uppercase tracking-[0.2em] text-white/40">
+                <p className="text-[11px] uppercase tracking-[0.2em] text-black/40">
                   Companhia Aérea
                 </p>
-                <p className="text-sm font-semibold text-white">
+                <p className="text-sm font-semibold text-black">
                   Qatar Airways
                 </p>
               </div>
@@ -305,21 +305,21 @@ export default function AprovacaoRoteiroPage() {
 
             <div className="mt-5">
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                <div className="rounded-xl border border-white/10 bg-black p-4">
-                  <p className="mb-2 text-[11px] font-bold uppercase tracking-[0.2em] text-white/40">
+                <div className="rounded-xl border border-black/10 bg-[#FAF9F6] p-4">
+                  <p className="mb-2 text-[11px] font-bold uppercase tracking-[0.2em] text-black/40">
                     Ida · 03–04 Mai 2027
                   </p>
-                  <div className="space-y-1.5 text-sm text-white/70">
+                  <div className="space-y-1.5 text-sm text-black/70">
                     <p>
-                      <span className="font-semibold text-white">QR773</span>{" "}
+                      <span className="font-semibold text-black">QR773</span>{" "}
                       · GRU → DOH · 23:15 → 19:45
                     </p>
                     <p>
-                      <span className="font-semibold text-white">QR812</span>{" "}
+                      <span className="font-semibold text-black">QR812</span>{" "}
                       · DOH → NRT · 21:35 → 09:15+1
                     </p>
                   </div>
-                  <p className="mt-2 text-xs text-white/40">
+                  <p className="mt-2 text-xs text-black/40">
                     Chegada em Tokyo pelo Aeroporto de Narita (NRT), Terminal 1,
                     às 09:15 do dia seguinte
                   </p>
@@ -330,21 +330,21 @@ export default function AprovacaoRoteiroPage() {
                     Ver guia completo do Aeroporto de Narita →
                   </a>
                 </div>
-                <div className="rounded-xl border border-white/10 bg-black p-4">
-                  <p className="mb-2 text-[11px] font-bold uppercase tracking-[0.2em] text-white/40">
+                <div className="rounded-xl border border-black/10 bg-[#FAF9F6] p-4">
+                  <p className="mb-2 text-[11px] font-bold uppercase tracking-[0.2em] text-black/40">
                     Volta · 12 Mai 2027
                   </p>
-                  <div className="space-y-1.5 text-sm text-white/70">
+                  <div className="space-y-1.5 text-sm text-black/70">
                     <p>
-                      <span className="font-semibold text-white">QR807</span>{" "}
+                      <span className="font-semibold text-black">QR807</span>{" "}
                       · HND → DOH · 00:35 → 06:10
                     </p>
                     <p>
-                      <span className="font-semibold text-white">QR774</span>{" "}
+                      <span className="font-semibold text-black">QR774</span>{" "}
                       · DOH → GRU · 08:00 → 17:20
                     </p>
                   </div>
-                  <p className="mt-2 text-xs text-white/40">
+                  <p className="mt-2 text-xs text-black/40">
                     Saída de Tokyo pelo Aeroporto de Haneda (HND), Terminal 3
                   </p>
                 </div>
@@ -352,7 +352,7 @@ export default function AprovacaoRoteiroPage() {
             </div>
 
             <div className="mt-8">
-              <p className="mx-auto mb-1 block w-fit rounded-full border border-white/15 px-5 py-2 text-center text-xs uppercase tracking-[0.3em] text-white/65">
+              <p className="mx-auto mb-1 block w-fit rounded-full border border-black/15 px-5 py-2 text-center text-xs uppercase tracking-[0.3em] text-black/65">
                 Perfil do Viajante
               </p>
               <RadarChart dimensions={RADAR_DIMENSIONS} />
@@ -365,7 +365,7 @@ export default function AprovacaoRoteiroPage() {
                         kind={d.icon}
                         className="h-4 w-4 shrink-0 text-[#2f5aa8]"
                       />
-                      <p className="text-xs text-white/70">
+                      <p className="text-xs text-black/70">
                         {d.lines.join(" ")}
                       </p>
                       <span className="ml-auto shrink-0 text-xs tracking-tight text-[#2f5aa8]">
@@ -389,7 +389,7 @@ export default function AprovacaoRoteiroPage() {
         </div>
       </section>
 
-      <footer className="border-t border-white/10 px-6 py-8 text-center text-xs text-white/40 md:px-16">
+      <footer className="border-t border-black/10 px-6 py-8 text-center text-xs text-black/40 md:px-16">
         <p>
           © {new Date().getFullYear()} AjisaiWork Japan Agência de Viagens
           LTDA — CNPJ 43.544.605/0001-56
