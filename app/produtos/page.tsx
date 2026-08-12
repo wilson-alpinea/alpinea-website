@@ -20,8 +20,8 @@ const WHATSAPP_NUMBER = "5511930300101";
 
 type ProdutoKey = "roteiro" | "caravana" | "individual" | "personalizado";
 
-// Usado nos botões/pills de qualificação, no recomendador e para montar a
-// mensagem final do WhatsApp — uma única fonte de verdade para nome/preço.
+// Usado no recomendador, na tela de qualificação e para montar a mensagem
+// final do WhatsApp — uma única fonte de verdade para nome/preço.
 const PRODUTOS: Record<ProdutoKey, { nome: string; precoLabel: string; href: string }> = {
   roteiro: {
     nome: "Roteiro Personalizado",
@@ -45,6 +45,17 @@ const PRODUTOS: Record<ProdutoKey, { nome: string; precoLabel: string; href: str
   },
 };
 
+// Descrição de uma linha mostrada no resultado do recomendador — resume o
+// que o produto entrega, sem repetir os bullets já usados nos cards.
+const DESCRICOES_CURTAS: Record<ProdutoKey, string> = {
+  roteiro:
+    "Planejamos sua viagem em detalhes. Você faz as reservas e viaja por conta própria.",
+  caravana: "Viaje em grupo, com data e roteiro já definidos pela Ajisai.",
+  individual:
+    "Viagem pronta, nas suas datas, com guia particular dedicado ao seu grupo.",
+  personalizado: "Roteiro, hotéis e logística inteiramente criados para você.",
+};
+
 // Espelha os 4 blocos do roteiro-vídeo descrito: perfil do dia, detalhe da
 // atração, hotéis/restaurantes/anexos e o "nós planejamos, você reserva".
 const ROTEIRO_DESTAQUES = [
@@ -60,20 +71,18 @@ const PACOTES_AJISAI: {
   frase: string;
   pontos: string[];
   ctaVer: string;
-  ctaWhats: string;
 }[] = [
   {
     key: "caravana",
     titulo: "Caravana",
-    frase: "Quero viajar acompanhado e gastar menos.",
+    frase: "Quero viajar em grupo, com tudo organizado.",
     pontos: [
       "Datas e roteiro predefinidos",
       "Grupo maior",
       "Menor flexibilidade",
       "Melhor custo-benefício",
     ],
-    ctaVer: "Ver caravanas →",
-    ctaWhats: "Falar no WhatsApp",
+    ctaVer: "Conhecer as caravanas →",
   },
   {
     key: "individual",
@@ -85,8 +94,7 @@ const PACOTES_AJISAI: {
       "Roteiro predefinido",
       "Ajisai organiza a viagem",
     ],
-    ctaVer: "Ver pacotes →",
-    ctaWhats: "Falar no WhatsApp",
+    ctaVer: "Conhecer os pacotes →",
   },
   {
     key: "personalizado",
@@ -98,8 +106,7 @@ const PACOTES_AJISAI: {
       "Hotéis e logística personalizados",
       "Ajisai organiza a viagem",
     ],
-    ctaVer: "Ver detalhes →",
-    ctaWhats: "Solicitar proposta",
+    ctaVer: "Conhecer o pacote personalizado →",
   },
 ];
 
@@ -156,6 +163,9 @@ const LINHAS: { label: string; valores: Record<ProdutoKey, boolean | string> }[]
 ];
 
 export default function ProdutosPage() {
+  const [estagio, setEstagio] = useState<"perguntas" | "resultado" | "qualificacao">(
+    "perguntas",
+  );
   const [qualProduto, setQualProduto] = useState<ProdutoKey | null>(null);
   const [nome, setNome] = useState("");
   const [periodo, setPeriodo] = useState("");
@@ -167,11 +177,14 @@ export default function ProdutosPage() {
   const [recStep, setRecStep] = useState<1 | 2 | 3>(1);
   const [recResultado, setRecResultado] = useState<ProdutoKey | null>(null);
 
+  // Entrada direta (ex: CTA do Roteiro Personalizado) — pula o recomendador
+  // e vai direto para a qualificação, já com o produto marcado.
   function escolherProduto(produto: ProdutoKey) {
     setQualProduto(produto);
+    setEstagio("qualificacao");
     setEnviado(false);
     requestAnimationFrame(() => {
-      document.getElementById("qualificacao")?.scrollIntoView({ behavior: "smooth", block: "start" });
+      document.getElementById("recomendador")?.scrollIntoView({ behavior: "smooth", block: "start" });
     });
   }
 
@@ -179,6 +192,7 @@ export default function ProdutosPage() {
     if (passo === 1) {
       if (resposta === "sim") {
         setRecResultado("roteiro");
+        setEstagio("resultado");
         return;
       }
       setRecStep(2);
@@ -187,17 +201,29 @@ export default function ProdutosPage() {
     if (passo === 2) {
       if (resposta === "sim") {
         setRecResultado("caravana");
+        setEstagio("resultado");
         return;
       }
       setRecStep(3);
       return;
     }
     setRecResultado(resposta === "estruturado" ? "individual" : "personalizado");
+    setEstagio("resultado");
   }
 
-  function resetRecomendador() {
+  // Do resultado do recomendador para a qualificação — o produto recomendado
+  // já vem marcado, sem pedir de novo.
+  function continuarParaQualificacao() {
+    if (recResultado) setQualProduto(recResultado);
+    setEstagio("qualificacao");
+  }
+
+  function trocarProduto() {
+    setEstagio("perguntas");
     setRecStep(1);
     setRecResultado(null);
+    setQualProduto(null);
+    setEnviado(false);
   }
 
   function handleQualificar() {
@@ -266,8 +292,8 @@ export default function ProdutosPage() {
           Como você quer viajar pelo Japão?
         </h1>
         <p className="mx-auto mt-6 max-w-2xl text-sm font-light leading-6 text-white/60 md:text-base md:leading-7">
-          A Ajisai oferece diferentes formas de planejar sua viagem. Escolha
-          quanto da organização você quer fazer por conta própria.
+          Escolha se prefere organizar sua viagem com nosso planejamento ou
+          deixar a organização com a Ajisai.
         </p>
 
         <div className="mx-auto mt-12 grid max-w-4xl gap-6 sm:grid-cols-2 md:mt-16">
@@ -282,7 +308,7 @@ export default function ProdutosPage() {
               Roteiro Personalizado
             </h2>
             <p className="mt-3 flex-1 text-sm font-light leading-6 text-white/55">
-              Você recebe todo o planejamento e viaja por conta própria.
+              Recebo o planejamento completo e faço minhas próprias reservas.
             </p>
             <span className="mt-6 inline-flex items-center gap-1.5 text-xs uppercase tracking-[0.2em] text-white/50 transition group-hover:text-white">
               Conhecer o Roteiro →
@@ -300,7 +326,7 @@ export default function ProdutosPage() {
               Pacotes de Viagem
             </h2>
             <p className="mt-3 flex-1 text-sm font-light leading-6 text-white/55">
-              A Ajisai organiza os principais componentes da viagem para você.
+              A Ajisai cuida da organização e eu recebo a viagem pronta.
             </p>
             <span className="mt-6 inline-flex items-center gap-1.5 text-xs uppercase tracking-[0.2em] text-white/50 transition group-hover:text-white">
               Ver opções →
@@ -428,21 +454,14 @@ export default function ProdutosPage() {
                   {PRODUTOS[p.key].precoLabel.replace("A partir de ", "")}
                 </p>
 
-                <div className="mt-5 flex flex-col gap-2.5">
+                <div className="mt-5">
                   <Link
                     href={PRODUTOS[p.key].href}
-                    className="rounded-full border border-white/20 px-5 py-3 text-center text-[11px] font-semibold uppercase tracking-[0.2em] text-white/80 transition hover:border-white/50 hover:text-white"
+                    className="block rounded-full px-5 py-3 text-center text-[11px] font-semibold uppercase tracking-[0.2em] text-white transition duration-300 hover:-translate-y-0.5"
+                    style={{ backgroundColor: "#2f80c9" }}
                   >
                     {p.ctaVer}
                   </Link>
-                  <button
-                    type="button"
-                    onClick={() => escolherProduto(p.key)}
-                    className="rounded-full px-5 py-3 text-center text-[11px] font-semibold uppercase tracking-[0.2em] text-white transition duration-300 hover:-translate-y-0.5"
-                    style={{ backgroundColor: "#2f80c9" }}
-                  >
-                    {p.ctaWhats}
-                  </button>
                 </div>
               </div>
             ))}
@@ -505,46 +524,37 @@ export default function ProdutosPage() {
         </div>
       </section>
 
-      {/* ── RECOMENDADOR — 3 PERGUNTAS ── */}
+      {/* ── RECOMENDADOR → RESULTADO → QUALIFICAÇÃO → WHATSAPP (fluxo único) ── */}
       <section id="recomendador" className="border-b border-white/10 bg-black px-6 py-16 md:px-16 md:py-24">
-        <div className="mx-auto max-w-2xl text-center">
-          <p className="text-[10px] uppercase tracking-[0.2em] text-[#6ec3d9]">
-            Ainda não sabe qual escolher?
-          </p>
-          <h2
-            className={`${display.className} mt-3 text-3xl font-medium leading-tight text-white md:text-4xl`}
-          >
-            Encontre sua opção em 30 segundos
-          </h2>
+        <div className="mx-auto max-w-2xl">
+          {enviado ? (
+            <div className="flex flex-col items-center gap-4 py-6 text-center">
+              <p className="text-xs uppercase tracking-[0.3em] text-white/40">WhatsApp aberto</p>
+              <h2 className={`${display.className} text-2xl font-medium text-white`}>Quase lá.</h2>
+              <p className="max-w-xs text-sm leading-6 text-white/55">
+                Finalize o envio da mensagem na aba do WhatsApp que abrimos
+                para você. A equipe Ajisai responde em breve.
+              </p>
+              <button
+                type="button"
+                onClick={trocarProduto}
+                className="mt-2 rounded-full border border-white/20 px-6 py-2.5 text-xs uppercase tracking-[0.25em] text-white/80 transition hover:border-white/50 hover:text-white"
+              >
+                Fazer outra solicitação
+              </button>
+            </div>
+          ) : estagio === "perguntas" ? (
+            <div className="text-center">
+              <p className="text-[10px] uppercase tracking-[0.2em] text-[#6ec3d9]">
+                Ainda não sabe qual escolher?
+              </p>
+              <h2
+                className={`${display.className} mt-3 text-3xl font-medium leading-tight text-white md:text-4xl`}
+              >
+                Encontre sua opção em 30 segundos
+              </h2>
 
-          <div className="mt-10 rounded-2xl border border-white/10 bg-white/[0.02] p-8 md:p-10">
-            {recResultado ? (
-              <div>
-                <p className="text-[10px] uppercase tracking-[0.2em] text-white/40">Recomendação</p>
-                <p className={`${display.className} mt-2 text-2xl font-medium text-white`}>
-                  {PRODUTOS[recResultado].nome}
-                </p>
-                <p className="mt-2 text-sm text-white/55">{PRODUTOS[recResultado].precoLabel}</p>
-                <div className="mt-7 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
-                  <button
-                    type="button"
-                    onClick={() => escolherProduto(recResultado)}
-                    className="rounded-full px-6 py-3.5 text-center text-[11px] font-semibold uppercase tracking-[0.2em] text-white transition duration-300 hover:-translate-y-0.5"
-                    style={{ backgroundColor: "#2f80c9" }}
-                  >
-                    Falar no WhatsApp →
-                  </button>
-                  <button
-                    type="button"
-                    onClick={resetRecomendador}
-                    className="text-xs uppercase tracking-[0.2em] text-white/40 underline underline-offset-4 transition hover:text-white"
-                  >
-                    Refazer perguntas
-                  </button>
-                </div>
-              </div>
-            ) : (
-              <div>
+              <div className="mt-10 rounded-2xl border border-white/10 bg-white/[0.02] p-8 text-left md:p-10">
                 <p className="text-[10px] uppercase tracking-[0.2em] text-white/40">
                   Pergunta {recStep} de 3
                 </p>
@@ -593,72 +603,74 @@ export default function ProdutosPage() {
                   )}
                 </div>
               </div>
-            )}
-          </div>
-        </div>
-      </section>
-
-      {/* ── QUALIFICAÇÃO + WHATSAPP ── */}
-      <section id="qualificacao" className="border-b border-white/10 bg-[#050505] px-6 py-16 md:px-16 md:py-24">
-        <div className="mx-auto max-w-xl">
-          {enviado ? (
-            <div className="flex flex-col items-center gap-4 py-6 text-center">
-              <p className="text-xs uppercase tracking-[0.3em] text-white/40">WhatsApp aberto</p>
-              <h2 className={`${display.className} text-2xl font-medium text-white`}>Quase lá.</h2>
-              <p className="max-w-xs text-sm leading-6 text-white/55">
-                Finalize o envio da mensagem na aba do WhatsApp que abrimos
-                para você. A equipe Ajisai responde em breve.
+            </div>
+          ) : estagio === "resultado" && recResultado ? (
+            <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-8 text-center md:p-10">
+              <p className="text-[10px] uppercase tracking-[0.2em] text-white/40">
+                Sua melhor opção é
               </p>
-              <button
-                type="button"
-                onClick={() => setEnviado(false)}
-                className="mt-2 rounded-full border border-white/20 px-6 py-2.5 text-xs uppercase tracking-[0.25em] text-white/80 transition hover:border-white/50 hover:text-white"
-              >
-                Fazer outra solicitação
-              </button>
+              <p className={`${display.className} mt-2 text-3xl font-medium text-white`}>
+                {PRODUTOS[recResultado].nome}
+              </p>
+              <p className="mx-auto mt-3 max-w-sm text-sm leading-6 text-white/60">
+                {DESCRICOES_CURTAS[recResultado]}
+              </p>
+              <p className="mt-3 text-sm font-medium text-white/70">
+                {PRODUTOS[recResultado].precoLabel}
+              </p>
+              <div className="mt-7 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
+                <button
+                  type="button"
+                  onClick={continuarParaQualificacao}
+                  className="rounded-full px-6 py-3.5 text-center text-[11px] font-semibold uppercase tracking-[0.2em] text-white transition duration-300 hover:-translate-y-0.5"
+                  style={{ backgroundColor: "#2f80c9" }}
+                >
+                  Continuar →
+                </button>
+                <button
+                  type="button"
+                  onClick={trocarProduto}
+                  className="text-xs uppercase tracking-[0.2em] text-white/40 underline underline-offset-4 transition hover:text-white"
+                >
+                  Refazer perguntas
+                </button>
+              </div>
             </div>
           ) : (
             <>
-              <p className="text-[10px] uppercase tracking-[0.2em] text-[#6ec3d9]">
+              {qualProduto && (
+                <div className="mb-8 rounded-2xl border border-white/10 bg-white/[0.02] p-6 text-center md:p-7">
+                  <p className="text-[10px] uppercase tracking-[0.2em] text-white/40">
+                    Produto selecionado
+                  </p>
+                  <p className={`${display.className} mt-1.5 text-xl font-medium text-white`}>
+                    {PRODUTOS[qualProduto].nome}
+                  </p>
+                  <p className="mt-1 text-xs text-white/50">{PRODUTOS[qualProduto].precoLabel}</p>
+                  <button
+                    type="button"
+                    onClick={trocarProduto}
+                    className="mt-3 text-[11px] uppercase tracking-[0.15em] text-white/40 underline underline-offset-4 transition hover:text-white"
+                  >
+                    Trocar produto
+                  </button>
+                </div>
+              )}
+
+              <p className="text-center text-[10px] uppercase tracking-[0.2em] text-[#6ec3d9]">
                 Fale com a Ajisai
               </p>
               <h2
-                className={`${display.className} mt-3 text-3xl font-medium leading-tight text-white`}
+                className={`${display.className} mt-3 text-center text-3xl font-medium leading-tight text-white`}
               >
-                Vamos qualificar sua viagem antes do WhatsApp
+                Conte um pouco sobre sua viagem
               </h2>
-              <p className="mt-3 text-sm leading-6 text-white/55">
+              <p className="mt-3 text-center text-sm leading-6 text-white/55">
                 Três perguntas rápidas — assim nossa equipe já entra na
                 conversa sabendo exatamente o que você precisa.
               </p>
 
-              <div className="mt-8">
-                <p className="mb-2.5 text-[10px] uppercase tracking-[0.2em] text-white/40">
-                  Produto de interesse
-                </p>
-                <div className="flex flex-wrap gap-2.5">
-                  {(Object.keys(PRODUTOS) as ProdutoKey[]).map((key) => {
-                    const ativo = qualProduto === key;
-                    return (
-                      <button
-                        key={key}
-                        type="button"
-                        onClick={() => setQualProduto(key)}
-                        className={`rounded-full border px-4 py-2 text-[11px] font-medium uppercase tracking-[0.1em] transition ${
-                          ativo
-                            ? "border-transparent text-white"
-                            : "border-white/20 text-white/60 hover:border-white/50 hover:text-white"
-                        }`}
-                        style={ativo ? { backgroundColor: "#2f80c9" } : undefined}
-                      >
-                        {PRODUTOS[key].nome}
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-
-              <div className="mt-6 grid gap-3 sm:grid-cols-2">
+              <div className="mt-8 grid gap-3 sm:grid-cols-2">
                 <input
                   value={nome}
                   onChange={(e) => setNome(e.target.value)}
