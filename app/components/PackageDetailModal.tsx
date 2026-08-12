@@ -74,9 +74,14 @@ function ItinerarioFlow({ stops }: { stops: ItinerarioStop[] }) {
       <div className="mt-3 flex flex-wrap items-start justify-center">
         {stops.map((stop, i) => (
           <div key={i} className="flex items-center">
-            <div className="text-center" style={{ width: circleSize }}>
-              <p className="break-words text-[9px] uppercase leading-tight tracking-[0.04em] text-white/70">
-                {stop.city}
+            <div className="text-center" style={{ width: Math.max(circleSize, 96) }}>
+              <p className="break-words text-[9px] uppercase leading-tight tracking-[0.02em] text-white/70">
+                {stop.city.split("/").map((part, idx, arr) => (
+                  <span key={idx}>
+                    {part}
+                    {idx < arr.length - 1 && <br />}
+                  </span>
+                ))}
               </p>
               <p className="text-[11px] text-white/35">
                 {stop.dias} {stop.dias === 1 ? "dia" : "dias"}
