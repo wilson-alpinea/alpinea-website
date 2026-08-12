@@ -377,7 +377,7 @@ export function PackageDetailModal({
 
             {variante && (
               <div className="mt-6">
-                <p className="text-[10px] uppercase tracking-[0.22em] text-white/35">
+                <p className="text-xs font-medium uppercase tracking-[0.15em] text-white/45">
                   {variante.datas}
                 </p>
                 <p className={`${display.className} mt-1 text-3xl font-medium text-white`}>

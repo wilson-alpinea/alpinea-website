@@ -107,43 +107,43 @@ export function PackageCard({
               </li>
             ))}
           </ul>
-
-          {variantes.length > 1 && (
-            <div className="mt-6">
-              <p className="mb-3 text-[10px] uppercase tracking-[0.22em] text-white/35">
-                {varianteHint}
-              </p>
-              <div className="flex flex-wrap gap-3">
-                {variantes.map((v) => {
-                  const ativo = v.id === selecionada;
-                  return (
-                    <button
-                      key={v.id}
-                      type="button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setSelecionada(v.id);
-                      }}
-                      className={`rounded-full border px-7 py-3.5 text-base font-semibold uppercase tracking-[0.1em] transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-[1.06] active:scale-95 ${
-                        ativo
-                          ? "border-transparent text-white shadow-[0_10px_26px_rgba(0,0,0,0.4)]"
-                          : "border-white/20 text-white/60 hover:border-white/50 hover:text-white hover:shadow-[0_10px_24px_rgba(0,0,0,0.3)]"
-                      }`}
-                      style={ativo ? { backgroundColor: "#2f80c9" } : undefined}
-                    >
-                      {v.label}
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          )}
         </div>
+
+        {variantes.length > 1 && (
+          <div className="mt-6">
+            <p className="mb-3 text-[10px] uppercase tracking-[0.22em] text-white/35">
+              {varianteHint}
+            </p>
+            <div className="flex flex-wrap gap-3">
+              {variantes.map((v) => {
+                const ativo = v.id === selecionada;
+                return (
+                  <button
+                    key={v.id}
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setSelecionada(v.id);
+                    }}
+                    className={`rounded-full border px-7 py-3.5 text-base font-semibold uppercase tracking-[0.1em] transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-[1.06] active:scale-95 ${
+                      ativo
+                        ? "border-transparent text-white shadow-[0_10px_26px_rgba(0,0,0,0.4)]"
+                        : "border-white/20 text-white/60 hover:border-white/50 hover:text-white hover:shadow-[0_10px_24px_rgba(0,0,0,0.3)]"
+                    }`}
+                    style={ativo ? { backgroundColor: "#2f80c9" } : undefined}
+                  >
+                    {v.label}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        )}
 
         <div className="mt-6 border-t border-white/10 pt-5">
           {variante && (
             <>
-              <p className="text-[10px] uppercase tracking-[0.22em] text-white/35">
+              <p className="text-xs font-medium uppercase tracking-[0.15em] text-white/45">
                 {variante.datas}
               </p>
               <p className={`${display.className} mt-1 text-3xl font-medium text-white`}>

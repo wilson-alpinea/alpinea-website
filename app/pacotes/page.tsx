@@ -384,7 +384,7 @@ export default function PacotesJapaoPage() {
                 alt={BANNER_INDIVIDUAL.alt}
                 fill
                 sizes="100vw"
-                className="object-cover object-top"
+                className="object-cover"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/5 to-transparent" />
             </div>
@@ -447,7 +447,7 @@ export default function PacotesJapaoPage() {
                 alt={BANNER_PERSONALIZADO.alt}
                 fill
                 sizes="100vw"
-                className="object-cover object-top"
+                className="object-cover"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/5 to-transparent" />
             </div>

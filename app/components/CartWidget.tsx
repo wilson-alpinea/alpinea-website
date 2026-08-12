@@ -134,10 +134,11 @@ export function CartWidget({ triggerClassName }: { triggerClassName?: string }) 
         aria-label="Abrir carrinho de pacotes"
         className={
           triggerClassName ??
-          "relative flex h-10 w-10 items-center justify-center rounded-full border border-white/25 text-white/80 transition hover:border-white/60 hover:text-white"
+          "relative flex items-center gap-2 rounded-full border border-white/25 px-4 py-2.5 text-[11px] font-semibold uppercase tracking-[0.18em] text-white/80 transition hover:border-white/60 hover:text-white"
         }
       >
-        <IconCart className="h-4 w-4" />
+        <IconCart className="h-4 w-4 shrink-0" />
+        Meu Carrinho
         {count > 0 && (
           <span className="absolute -right-1.5 -top-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-[#7c4fd1] text-[10px] font-semibold text-white">
             {count}
