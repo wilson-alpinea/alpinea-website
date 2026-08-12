@@ -151,6 +151,9 @@ export function CustomPackageCard() {
   const [selecionados, setSelecionados] = useState<Set<OpcaoKey>>(
     () => new Set(OPCOES.map((o) => o.key)),
   );
+  const [destinosSelecionados, setDestinosSelecionados] = useState<Set<DestinoKey>>(
+    () => new Set(),
+  );
   const [observacoes, setObservacoes] = useState("");
   const [adicionado, setAdicionado] = useState(false);
 
@@ -180,6 +183,30 @@ export function CustomPackageCard() {
     });
   }
 
+  function toggleDestino(key: DestinoKey) {
+    setDestinosSelecionados((prev) => {
+      const next = new Set(prev);
+      if (next.has(key)) {
+        next.delete(key);
+      } else {
+        next.add(key);
+      }
+      return next;
+    });
+  }
+
+  const nomesDestinos = useMemo(
+    () => DESTINOS.filter((d) => destinosSelecionados.has(d.key)).map((d) => d.nome),
+    [destinosSelecionados],
+  );
+
+  const detalhesPacote = useMemo(() => {
+    const linhas: string[] = [];
+    if (nomesDestinos.length) linhas.push(`Destinos: ${nomesDestinos.join(", ")}`);
+    if (observacoes) linhas.push(`Preferências: ${observacoes}`);
+    return linhas;
+  }, [nomesDestinos, observacoes]);
+
   function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
 
@@ -203,7 +230,7 @@ export function CustomPackageCard() {
           ? { icone: o.icone, texto: `${o.label} — ${categoriaHotel}` }
           : { icone: o.icone, texto: o.label },
       ),
-      detalhes: observacoes ? [`Preferências: ${observacoes}`] : undefined,
+      detalhes: detalhesPacote.length > 0 ? detalhesPacote : undefined,
       precoLabel: total > 0 ? formatBRL(total) : "Sob consulta",
       precoSufixo: total > 0 ? "estimativa, sujeita a confirmação" : undefined,
       imagem: "/images/personalizado-hero.png",
@@ -220,6 +247,55 @@ export function CustomPackageCard() {
       </p>
 
       <form onSubmit={handleSubmit} className="mt-5 space-y-6">
+        <div>
+          <span className="mb-2 block text-[10px] uppercase tracking-[0.2em] text-white/40">
+            Destinos
+          </span>
+          <div className="grid grid-cols-3 gap-2.5 sm:grid-cols-6">
+            {DESTINOS.map((destino) => {
+              const ativo = destinosSelecionados.has(destino.key);
+              return (
+                <button
+                  key={destino.key}
+                  type="button"
+                  onClick={() => toggleDestino(destino.key)}
+                  aria-pressed={ativo}
+                  className={`group relative aspect-square overflow-hidden rounded-xl border text-left transition ${
+                    ativo
+                      ? "border-[#2f80c9] shadow-[0_0_0_1px_rgba(47,128,201,0.5)]"
+                      : "border-white/10 hover:border-white/30"
+                  }`}
+                >
+                  {destino.imagem ? (
+                    <Image
+                      src={destino.imagem}
+                      alt={destino.nome}
+                      fill
+                      sizes="140px"
+                      className="object-cover transition duration-300 group-hover:scale-105"
+                    />
+                  ) : (
+                    <div className="absolute inset-0 bg-gradient-to-br from-[#1c2b45] to-[#0a0f1c]" />
+                  )}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent" />
+                  <span className="absolute bottom-1.5 left-2 right-2 text-xs font-medium leading-tight text-white">
+                    {destino.nome}
+                  </span>
+                  <span
+                    className={`absolute right-1.5 top-1.5 flex h-5 w-5 items-center justify-center rounded-full border text-[10px] transition ${
+                      ativo
+                        ? "border-[#2f80c9] bg-[#2f80c9] text-white"
+                        : "border-white/40 bg-black/30 text-transparent"
+                    }`}
+                  >
+                    <IconCheck className="h-3 w-3" />
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 md:grid-cols-4">
           <label className="block">
             <span className="mb-2 block text-[10px] uppercase tracking-[0.2em] text-white/40">
