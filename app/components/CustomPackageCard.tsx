@@ -58,6 +58,7 @@ export function CustomPackageCard() {
       divisao: "Personalizado",
       nome: "Pacote Personalizado",
       variante: `Data solicitada: ${dataFormatada}`,
+      periodo: dataFormatada,
       detalhes: [`Preferências: ${observacoes || "a combinar"}`],
       precoLabel: "Sob consulta",
       imagem: "/images/personalizado-hero.png",

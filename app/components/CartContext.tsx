@@ -20,10 +20,22 @@ export type CartItem = {
   nome: string;
   /** Linha secundária com a variante escolhida (ex: "7 dias" ou "12h, 20/04/2027"). */
   variante: string;
+  /** Duração isolada (ex: "15 dias"), usada no card enriquecido e no resumo. */
+  duracao?: string;
+  /** Período/datas isolado (ex: "Datas flexíveis · Mar–Abr 2027"). */
+  periodo?: string;
+  /** Quantidade de viajantes (ex: "1 adulto"). */
+  viajantes?: string;
+  /** Tipo de acomodação (ex: "Quarto individual"). */
+  acomodacao?: string;
+  /** Itens inclusos, com ícone, exibidos como lista no card do carrinho. */
+  itens?: { icone: string; texto: string }[];
   /** Detalhes extra em linhas soltas, mostrados no carrinho e na mensagem do WhatsApp. */
   detalhes?: string[];
   /** Preço de referência para exibição (pode ser "Sob consulta"). */
   precoLabel: string;
+  /** Complemento do preço (ex: "por pessoa"). */
+  precoSufixo?: string;
   imagem?: string;
 };
 

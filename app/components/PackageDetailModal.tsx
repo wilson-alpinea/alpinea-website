@@ -277,8 +277,17 @@ export function PackageDetailModal({
       divisao,
       nome,
       variante: `${variante.label} · ${variante.datas}`,
-      detalhes: [`Preço: ${variante.precoLabel}`],
+      duracao: variante.label,
+      periodo: variante.datas,
+      viajantes: "1 adulto",
+      acomodacao: "Quarto individual",
+      itens: [
+        { icone: "✈️", texto: "Passagem aérea incluída" },
+        { icone: "🏨", texto: "Hospedagem incluída" },
+        { icone: "📱", texto: "Roteiro Digital Ajisai incluído" },
+      ],
       precoLabel: variante.precoLabel,
+      precoSufixo: "por pessoa",
       imagem,
     });
     setAdicionado(true);

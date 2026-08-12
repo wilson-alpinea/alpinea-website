@@ -20,6 +20,27 @@ declare global {
 const WHATSAPP_NUMBER = "5511930300101";
 const BRAND = "Ajisai";
 
+// "R$ 34.490" -> 34490. Retorna null para preços não numéricos (ex: "Sob
+// consulta"), para não entrarem na soma do total estimado.
+function parsePrecoNumero(label: string): number | null {
+  const digits = label.replace(/[^\d]/g, "");
+  if (!digits) return null;
+  return Number(digits);
+}
+
+function formatBRL(valor: number): string {
+  return `R$ ${Math.round(valor).toLocaleString("pt-BR")}`;
+}
+
+function ResumoLinha({ label, valor }: { label: string; valor: string }) {
+  return (
+    <div className="flex items-baseline justify-between gap-3 text-xs">
+      <dt className="shrink-0 text-white/40">{label}</dt>
+      <dd className="text-right text-white/70">{valor}</dd>
+    </div>
+  );
+}
+
 function IconCart({ className }: { className?: string }) {
   return (
     <svg
@@ -81,6 +102,26 @@ export function CartWidget({ triggerClassName }: { triggerClassName?: string }) 
   const [email, setEmail] = useState("");
   const [enviado, setEnviado] = useState(false);
 
+  const totalNumerico = items.reduce((soma, item) => {
+    const n = parsePrecoNumero(item.precoLabel);
+    return n ? soma + n : soma;
+  }, 0);
+  const temSobConsulta = items.some((item) => parsePrecoNumero(item.precoLabel) === null);
+  const totalViajantes = items.reduce((soma, item) => {
+    const n = item.viajantes ? parseInt(item.viajantes, 10) : NaN;
+    return soma + (Number.isFinite(n) ? n : 1);
+  }, 0);
+  const duracoesUnicas = Array.from(
+    new Set(items.map((item) => item.duracao).filter((d): d is string => Boolean(d))),
+  );
+  const duracaoResumo =
+    duracoesUnicas.length === 1
+      ? duracoesUnicas[0]
+      : `${items.length} ${items.length === 1 ? "pacote" : "pacotes"}`;
+  const acomodacoesUnicas = Array.from(
+    new Set(items.map((item) => item.acomodacao).filter((a): a is string => Boolean(a))),
+  );
+
   useEffect(() => setMounted(true), []);
 
   useEffect(() => {
@@ -104,6 +145,10 @@ export function CartWidget({ triggerClassName }: { triggerClassName?: string }) 
         "",
         `${index + 1}. [${item.divisao}] ${item.nome}`,
         `Variante: ${item.variante}`,
+        item.viajantes && `Viajantes: ${item.viajantes}`,
+        item.acomodacao && `Acomodação: ${item.acomodacao}`,
+        ...(item.itens?.map((it) => `${it.icone} ${it.texto}`) ?? []),
+        `Valor: ${item.precoLabel}${item.precoSufixo ? ` ${item.precoSufixo}` : ""}`,
         ...(item.detalhes ?? []),
       ]),
     ].filter((line): line is string => Boolean(line) || line === "");
@@ -204,50 +249,107 @@ export function CartWidget({ triggerClassName }: { triggerClassName?: string }) 
                     </p>
                   </div>
                 ) : (
-                  <div className="space-y-4">
+                  <div className="space-y-3">
                     {items.map((item) => (
-                      <div
-                        key={item.id}
-                        className="flex gap-3 rounded-xl border border-white/10 bg-white/[0.03] p-3"
-                      >
-                        {item.imagem && (
-                          <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-lg">
-                            <Image
-                              src={item.imagem}
-                              alt={item.nome}
-                              fill
-                              sizes="64px"
-                              className="object-cover"
-                            />
-                          </div>
-                        )}
-                        <div className="min-w-0 flex-1">
-                          <p className="text-[10px] uppercase tracking-[0.15em] text-white/35">
-                            {item.divisao}
-                          </p>
-                          <p className="mt-0.5 truncate text-sm font-medium text-white">
-                            {item.nome}
-                          </p>
-                          <p className="mt-0.5 text-xs text-white/55">{item.variante}</p>
-                          {item.detalhes?.map((linha) => (
-                            <p key={linha} className="mt-0.5 text-xs text-white/45">
-                              {linha}
+                      <div key={item.id} className="space-y-2">
+                        <div className="flex gap-3 rounded-xl border border-white/10 bg-white/[0.03] p-4">
+                          {item.imagem && (
+                            <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-lg">
+                              <Image
+                                src={item.imagem}
+                                alt={item.nome}
+                                fill
+                                sizes="64px"
+                                className="object-cover"
+                              />
+                            </div>
+                          )}
+                          <div className="min-w-0 flex-1">
+                            <div className="flex items-start justify-between gap-2">
+                              <div className="min-w-0">
+                                <p className="text-[10px] uppercase tracking-[0.15em] text-white/35">
+                                  {item.divisao}
+                                </p>
+                                <p className="mt-0.5 text-sm font-medium leading-snug text-white">
+                                  {item.nome}
+                                </p>
+                              </div>
+                              <button
+                                type="button"
+                                onClick={() => removeItem(item.id)}
+                                aria-label={`Remover ${item.nome}`}
+                                className="shrink-0 text-white/30 transition hover:text-red-400"
+                              >
+                                <IconTrash className="h-4 w-4" />
+                              </button>
+                            </div>
+
+                            {(item.duracao || item.periodo) && (
+                              <p className="mt-1.5 text-xs text-white/55">
+                                {[item.duracao, item.periodo].filter(Boolean).join(" · ")}
+                              </p>
+                            )}
+
+                            {(item.viajantes || item.acomodacao || item.itens?.length) && (
+                              <ul className="mt-2.5 space-y-1.5">
+                                {item.viajantes && (
+                                  <li className="flex items-center gap-2 text-xs text-white/60">
+                                    <span aria-hidden>👤</span>
+                                    {item.viajantes}
+                                  </li>
+                                )}
+                                {item.acomodacao && (
+                                  <li className="flex items-center gap-2 text-xs text-white/60">
+                                    <span aria-hidden>🛏️</span>
+                                    {item.acomodacao}
+                                  </li>
+                                )}
+                                {item.itens?.map((it) => (
+                                  <li
+                                    key={it.texto}
+                                    className="flex items-center gap-2 text-xs text-white/60"
+                                  >
+                                    <span aria-hidden>{it.icone}</span>
+                                    {it.texto}
+                                  </li>
+                                ))}
+                              </ul>
+                            )}
+
+                            {item.detalhes?.map((linha) => (
+                              <p key={linha} className="mt-1.5 text-xs text-white/45">
+                                {linha}
+                              </p>
+                            ))}
+
+                            <p className="mt-3 text-sm font-semibold text-white">
+                              {item.precoLabel}
+                              {item.precoSufixo && (
+                                <span className="ml-1 text-xs font-normal text-white/50">
+                                  {item.precoSufixo}
+                                </span>
+                              )}
                             </p>
-                          ))}
-                          <p className="mt-1 text-xs font-medium text-white/70">
-                            {item.divisao === "Personalizado"
-                              ? `Valor: ${item.precoLabel}`
-                              : item.precoLabel}
-                          </p>
+                          </div>
                         </div>
-                        <button
-                          type="button"
-                          onClick={() => removeItem(item.id)}
-                          aria-label={`Remover ${item.nome}`}
-                          className="shrink-0 self-start text-white/30 transition hover:text-red-400"
-                        >
-                          <IconTrash className="h-4 w-4" />
-                        </button>
+
+                        <div className="rounded-xl border border-white/10 bg-white/[0.015] p-3.5">
+                          <p className="text-[10px] font-semibold uppercase tracking-[0.15em] text-white/40">
+                            Resumo da solicitação
+                          </p>
+                          <dl className="mt-2 space-y-1.5">
+                            <ResumoLinha label="Pacote" valor={item.nome} />
+                            <ResumoLinha label="Modalidade" valor={item.divisao} />
+                            {item.duracao && <ResumoLinha label="Duração" valor={item.duracao} />}
+                            {item.periodo && <ResumoLinha label="Período" valor={item.periodo} />}
+                            {item.viajantes && (
+                              <ResumoLinha label="Viajantes" valor={item.viajantes} />
+                            )}
+                            {item.acomodacao && (
+                              <ResumoLinha label="Acomodação" valor={item.acomodacao} />
+                            )}
+                          </dl>
+                        </div>
                       </div>
                     ))}
                   </div>
@@ -256,15 +358,41 @@ export function CartWidget({ triggerClassName }: { triggerClassName?: string }) 
 
               {items.length > 0 && !enviado && (
                 <div className="shrink-0 space-y-4 border-t border-white/10 px-5 py-5 sm:px-6">
-                  <div className="rounded-xl border border-[#6ec3d9]/25 bg-[#6ec3d9]/5 p-3.5">
-                    <p className="text-[10px] font-semibold uppercase tracking-[0.15em] text-[#6ec3d9]">
-                      Próximo passo
+                  <div className="rounded-xl border border-white/10 bg-white/[0.03] p-4">
+                    <p className="text-[10px] uppercase tracking-[0.2em] text-white/40">Resumo</p>
+                    <p className="mt-1 text-sm text-white/70">
+                      {totalViajantes} {totalViajantes === 1 ? "viajante" : "viajantes"} ·{" "}
+                      {duracaoResumo}
                     </p>
-                    <p className="mt-1.5 text-xs leading-5 text-white/60">
-                      Ao finalizar, nossa equipe recebe sua solicitação pelo
-                      WhatsApp e confirma disponibilidade e valores. Adicionar
-                      ao carrinho não gera cobrança imediata.
-                    </p>
+
+                    {totalNumerico > 0 ? (
+                      <>
+                        <p className="mt-3 text-[10px] uppercase tracking-[0.2em] text-white/40">
+                          Total estimado
+                        </p>
+                        <p
+                          className={`${display.className} mt-1 text-3xl font-medium text-white`}
+                        >
+                          {formatBRL(totalNumerico)}
+                          {temSobConsulta && " +"}
+                        </p>
+                        {acomodacoesUnicas.length === 1 && (
+                          <p className="mt-1 text-xs text-white/50">
+                            Valor por pessoa em {acomodacoesUnicas[0].toLowerCase()}
+                          </p>
+                        )}
+                        <p className="mt-0.5 text-xs text-white/50">
+                          ou em até 12x de {formatBRL(totalNumerico / 12)} + juros
+                        </p>
+                        {temSobConsulta && (
+                          <p className="mt-1.5 text-[11px] text-white/35">
+                            + itens sob consulta, valor a combinar
+                          </p>
+                        )}
+                      </>
+                    ) : (
+                      <p className="mt-3 text-sm text-white/60">Valor sob consulta</p>
+                    )}
                   </div>
 
                   <div className="grid gap-3 sm:grid-cols-2">
@@ -290,8 +418,12 @@ export function CartWidget({ triggerClassName }: { triggerClassName?: string }) 
                   >
                     Finalizar no WhatsApp →
                   </button>
+                  <p className="text-center text-[11px] leading-4 text-white/35">
+                    Ao continuar, você será direcionado ao WhatsApp para
+                    confirmação de disponibilidade e reserva.
+                  </p>
                   {!nome && (
-                    <p className="text-center text-[11px] text-white/35">
+                    <p className="text-center text-[11px] text-[#6ec3d9]">
                       Informe seu nome para finalizar.
                     </p>
                   )}

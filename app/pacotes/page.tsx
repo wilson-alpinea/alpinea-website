@@ -488,9 +488,9 @@ export default function PacotesJapaoPage() {
               {Array.from({ length: 5 }).map((_, i) => (
                 <IconStarFilled key={i} className="h-4 w-4" />
               ))}
-              <span className="ml-2 text-xs font-light text-white/55">
+              <span className="ml-2 text-base font-semibold text-white">
                 4,8 de 5,0 no Google ·{" "}
-                <span className="text-white">+180 avaliações</span>
+                <span className="text-[#6ec3d9]">+180 avaliações</span>
               </span>
             </div>
 
