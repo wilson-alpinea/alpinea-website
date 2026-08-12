@@ -90,7 +90,7 @@ const pacotesCaravana = [
     slug: "caravana-cerejeiras",
     categoria: "Temporada de Cerejeiras",
     nome: "Primavera 1 — Temporada de Cerejeiras 2027",
-    tagline: "Saída em grupo fechado, direto na florada",
+    tagline: "Saída em grupo fechado",
     descricao:
       "Direto na temporada de floração das cerejeiras — parques, templos e avenidas históricas no auge do hanami.",
     destaques: [

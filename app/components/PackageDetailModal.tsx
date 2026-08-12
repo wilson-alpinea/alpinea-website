@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { Bodoni_Moda } from "next/font/google";
 import { useCart, type CartItem } from "./CartContext";
@@ -252,6 +252,12 @@ export function PackageDetailModal({
   const [selecionada, setSelecionada] = useState(varianteInicialId ?? variantes[0]?.id ?? "");
   const [adicionado, setAdicionado] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  function selecionarVariante(id: string) {
+    setSelecionada(id);
+    scrollRef.current?.scrollTo({ top: 0, behavior: "smooth" });
+  }
 
   useEffect(() => setMounted(true), []);
 
@@ -317,7 +323,10 @@ export function PackageDetailModal({
           </button>
         </div>
 
-        <div className="flex-1 overflow-x-hidden overflow-y-auto px-5 py-6 md:px-8 md:py-8">
+        <div
+          ref={scrollRef}
+          className="flex-1 overflow-x-hidden overflow-y-auto px-5 py-6 md:px-8 md:py-8"
+        >
           <h2 className={`${display.className} text-2xl font-medium text-white md:text-3xl`}>
             {nome}
           </h2>
@@ -414,7 +423,7 @@ export function PackageDetailModal({
                       <button
                         key={v.id}
                         type="button"
-                        onClick={() => setSelecionada(v.id)}
+                        onClick={() => selecionarVariante(v.id)}
                         className={`rounded-full border px-7 py-3.5 text-base font-semibold uppercase tracking-[0.1em] transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-[1.06] active:scale-95 ${
                           ativo
                             ? "border-transparent text-white shadow-[0_10px_26px_rgba(0,0,0,0.4)]"
