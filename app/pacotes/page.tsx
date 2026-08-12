@@ -512,6 +512,23 @@ export default function PacotesJapaoPage() {
                 </div>
               ))}
             </div>
+
+            <div className="mt-10 flex flex-wrap items-center justify-center gap-6 md:mt-12">
+              <Image
+                src="/images/badge-cadastur.png"
+                alt="Cadastur — Agência de Turismo registrada"
+                width={1254}
+                height={1254}
+                className="h-16 w-auto sm:h-20"
+              />
+              <Image
+                src="/images/badge-reclameaqui.png"
+                alt="Verificado no Reclame Aqui"
+                width={1536}
+                height={1024}
+                className="h-16 w-auto sm:h-20"
+              />
+            </div>
           </div>
         </section>
 
