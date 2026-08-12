@@ -39,7 +39,6 @@ export function PackageCard({
   destaques,
   imagem,
   selo,
-  accent = "#b79ce6",
   variantes,
   varianteHint = "Duração",
   rodape,
@@ -52,7 +51,6 @@ export function PackageCard({
   destaques: string[];
   imagem: string;
   selo?: string;
-  accent?: string;
   variantes: PackageVariant[];
   varianteHint?: string;
   rodape?: string;
@@ -176,7 +174,6 @@ export function PackageCard({
           descricao={descricao}
           destaques={destaques}
           imagem={imagem}
-          accent={accent}
           selo={selo}
           variantes={variantes}
           varianteHint={varianteHint}

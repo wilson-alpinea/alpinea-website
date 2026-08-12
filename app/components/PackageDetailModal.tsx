@@ -14,6 +14,87 @@ const display = Bodoni_Moda({
 // Vale para todos os pacotes de Caravana e Individual — mesma lista usada
 // antes na seção global "O que está incluso", agora dentro do detalhe de
 // cada pacote.
+// Fluxo de cidades por duração — mesmo padrão visual (bolinhas + etiqueta)
+// usado no TripDashboard da página de roteiros.
+type ItinerarioStop = { city: string; dias: number; bateVolta?: boolean };
+
+const ITINERARIO_CITY_BORDER: Record<string, string> = {
+  Tokyo: "rgba(255,255,255,0.16)",
+  Osaka: "rgba(196,148,110,0.45)",
+  Kyoto: "rgba(118,150,168,0.45)",
+  Nara: "rgba(150,172,120,0.45)",
+  Nachikatsuura: "rgba(150,172,120,0.45)",
+  "Fujiyoshida/Fujikawaguchiko": "rgba(110,195,217,0.45)",
+};
+
+const ITINERARIOS: Record<string, ItinerarioStop[]> = {
+  "7d": [
+    { city: "Tokyo", dias: 3 },
+    { city: "Kyoto", dias: 3 },
+    { city: "Tokyo", dias: 1 },
+  ],
+  "15d": [
+    { city: "Tokyo", dias: 6 },
+    { city: "Kyoto", dias: 3 },
+    { city: "Osaka", dias: 2 },
+    { city: "Nara", dias: 1, bateVolta: true },
+    { city: "Nachikatsuura", dias: 1, bateVolta: true },
+    { city: "Fujiyoshida/Fujikawaguchiko", dias: 2 },
+  ],
+};
+
+function ItinerarioFlow({ stops }: { stops: ItinerarioStop[] }) {
+  const circleSize = 56;
+  const arrowWidth = 28;
+
+  return (
+    <div className="flex flex-col items-center">
+      <div className="flex flex-wrap items-center justify-center gap-y-6">
+        {stops.map((stop, i) => (
+          <div key={i} className="flex items-center">
+            <div
+              className="shrink-0 rounded-full border"
+              style={{
+                width: circleSize,
+                height: circleSize,
+                borderColor: ITINERARIO_CITY_BORDER[stop.city] ?? "rgba(255,255,255,0.3)",
+                backgroundColor: ITINERARIO_CITY_BORDER[stop.city] ?? "rgba(255,255,255,0.3)",
+              }}
+            />
+            {i < stops.length - 1 && (
+              <svg width={arrowWidth} height="10" viewBox="0 0 28 10" fill="none" className="mx-1 shrink-0">
+                <line x1="0" y1="5" x2="20" y2="5" stroke="rgba(255,255,255,0.3)" strokeWidth="1.5" />
+                <path d="M18 1 L26 5 L18 9" stroke="rgba(255,255,255,0.3)" strokeWidth="1.5" fill="none" />
+              </svg>
+            )}
+          </div>
+        ))}
+      </div>
+
+      <div className="mt-3 flex flex-wrap items-start justify-center">
+        {stops.map((stop, i) => (
+          <div key={i} className="flex items-center">
+            <div className="text-center" style={{ width: circleSize }}>
+              <p className="text-[10px] uppercase leading-tight tracking-[0.12em] text-white/70">
+                {stop.city}
+              </p>
+              <p className="text-[11px] text-white/35">
+                {stop.dias} {stop.dias === 1 ? "dia" : "dias"}
+              </p>
+              {stop.bateVolta && (
+                <p className="mt-0.5 text-[9px] uppercase tracking-[0.08em] text-white/25">
+                  Bate e volta
+                </p>
+              )}
+            </div>
+            {i < stops.length - 1 && <div className="mx-1 shrink-0" style={{ width: arrowWidth }} />}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 const INCLUSOES_PADRAO = [
   {
     title: "Roteiro Digital",
@@ -108,7 +189,6 @@ export function PackageDetailModal({
   destaques,
   imagem,
   selo,
-  accent = "#b79ce6",
   variantes,
   varianteHint = "Duração",
   varianteInicialId,
@@ -123,7 +203,6 @@ export function PackageDetailModal({
   destaques: string[];
   imagem: string;
   selo?: string;
-  accent?: string;
   variantes: PackageVariant[];
   varianteHint?: string;
   /** Variante já escolhida no card, antes de abrir o detalhe — abre o modal com essa selecionada. */
@@ -220,7 +299,22 @@ export function PackageDetailModal({
 
           <div className="mt-8 border-t border-white/10 pt-6">
             <h3 className={`${display.className} text-lg font-medium text-white`}>Itinerário</h3>
-            <p className="mt-2.5 text-sm font-light leading-6 text-white/60">
+
+            {variante && ITINERARIOS[variante.id] && (
+              <div className="mt-5">
+                <p className="mb-5 text-center">
+                  <span className="inline-block rounded-full border border-white/25 px-4 py-1.5 text-xs uppercase tracking-[0.25em] text-white/70">
+                    Roteiro de {variante.label}
+                  </span>
+                </p>
+                <p className="mb-5 text-center text-xs uppercase tracking-[0.35em] text-white/40">
+                  Cidades
+                </p>
+                <ItinerarioFlow stops={ITINERARIOS[variante.id]} />
+              </div>
+            )}
+
+            <p className="mt-6 text-sm font-light leading-6 text-white/60">
               Assim que a reserva é confirmada, você recebe o Roteiro Digital
               Ajisai: a programação dia a dia da viagem, com hospedagem,
               deslocamentos e os principais pontos de cada data, disponível
@@ -236,7 +330,7 @@ export function PackageDetailModal({
               {INCLUSOES_PADRAO.map((item) => (
                 <div
                   key={item.title}
-                  className="rounded-xl border border-white/10 bg-white/[0.03] p-3.5"
+                  className="rounded-xl border border-white/10 bg-white/[0.03] p-3.5 transition hover:border-white/25 hover:bg-white/[0.06]"
                 >
                   <p className="flex items-center gap-2 text-sm font-medium text-white">
                     {item.title}

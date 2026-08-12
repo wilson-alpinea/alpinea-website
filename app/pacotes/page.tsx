@@ -268,7 +268,7 @@ export default function PacotesJapaoPage() {
               <a
                 key={item.letra}
                 href={item.href}
-                className="group flex h-full flex-col overflow-hidden rounded-2xl border border-white/10 bg-white/[0.02] text-left shadow-[0_0_30px_-14px_rgba(37,99,235,0.3)] transition hover:border-white/25 hover:bg-white/[0.04] sm:rounded-[1.5rem]"
+                className="group flex h-full flex-col overflow-hidden rounded-2xl border border-white/10 bg-white/[0.02] text-center shadow-[0_0_30px_-14px_rgba(37,99,235,0.3)] transition hover:border-white/25 hover:bg-white/[0.04] sm:rounded-[1.5rem]"
               >
                 <div className="relative aspect-[16/10] w-full overflow-hidden">
                   <Image
@@ -280,7 +280,7 @@ export default function PacotesJapaoPage() {
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/0 to-transparent" />
                 </div>
-                <div className="flex flex-1 flex-col p-6 md:p-8">
+                <div className="flex flex-1 flex-col items-center p-6 md:p-8">
                   <h2 className={`${display.className} text-xl font-medium text-white md:text-2xl`}>
                     {item.titulo}
                   </h2>
@@ -351,7 +351,6 @@ export default function PacotesJapaoPage() {
                   descricao={pacote.descricao}
                   destaques={pacote.destaques}
                   imagem={pacote.imagem}
-                  accent={pacote.accent}
                   selo={pacote.selo}
                   variantes={pacote.variantes}
                   varianteHint="Duração"
@@ -417,7 +416,6 @@ export default function PacotesJapaoPage() {
                   descricao={pacote.descricao}
                   destaques={pacote.destaques}
                   imagem={pacote.imagem}
-                  accent={pacote.accent}
                   variantes={pacote.variantes}
                   varianteHint="Duração"
                   rodape="Por pessoa, em quarto individual. Datas dentro da temporada indicada."
@@ -454,9 +452,7 @@ export default function PacotesJapaoPage() {
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/5 to-transparent" />
             </div>
 
-            <div className="max-w-2xl">
-              <CustomPackageCard />
-            </div>
+            <CustomPackageCard />
           </div>
         </section>
 
