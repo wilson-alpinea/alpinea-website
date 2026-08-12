@@ -4,6 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Bodoni_Moda } from "next/font/google";
+import { PriceCalculator } from "../components/PriceCalculator";
 
 const display = Bodoni_Moda({
   subsets: ["latin"],
@@ -54,6 +55,24 @@ const DESCRICOES_CURTAS: Record<ProdutoKey, string> = {
   individual:
     "Viagem pronta, nas suas datas, com guia particular dedicado ao seu grupo.",
   personalizado: "Roteiro, hotéis e logística inteiramente criados para você.",
+};
+
+// Mesmas fotos já usadas em /pacotes para cada divisão — reaproveitadas
+// aqui no resultado do recomendador para tornar a recomendação concreta.
+const IMAGENS_PRODUTO: Record<ProdutoKey, { src: string; alt: string }> = {
+  roteiro: {
+    src: "/images/dashmobile-ajisai.jpg",
+    alt: "Painel do Roteiro Personalizado Ajisai",
+  },
+  caravana: { src: "/images/caravana-2-hero.png", alt: "Pacotes de Caravana" },
+  individual: {
+    src: "/images/individual-2-hero.png",
+    alt: "Individual ou Pequenos Grupos",
+  },
+  personalizado: {
+    src: "/images/personalizado-hero.png",
+    alt: "Pacotes Personalizados",
+  },
 };
 
 // Espelha os 4 blocos do roteiro-vídeo descrito: perfil do dia, detalhe da
@@ -376,6 +395,9 @@ export default function ProdutosPage() {
                 Quero meu roteiro personalizado →
               </button>
             </div>
+            <div>
+              <PriceCalculator />
+            </div>
             <Link
               href="/ajisairoteiros"
               className="mt-5 inline-block text-xs uppercase tracking-[0.2em] text-white/40 underline underline-offset-4 transition hover:text-white"
@@ -606,6 +628,22 @@ export default function ProdutosPage() {
             </div>
           ) : estagio === "resultado" && recResultado ? (
             <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-8 text-center md:p-10">
+              <div
+                className={`relative mx-auto mb-6 overflow-hidden rounded-2xl ${
+                  recResultado === "roteiro" ? "aspect-[16/10] max-w-[220px]" : "aspect-[16/10]"
+                }`}
+              >
+                <Image
+                  src={IMAGENS_PRODUTO[recResultado].src}
+                  alt={IMAGENS_PRODUTO[recResultado].alt}
+                  fill
+                  sizes="(min-width: 640px) 42rem, 100vw"
+                  className={`object-cover ${
+                    recResultado === "roteiro" ? "object-center" : "object-top"
+                  }`}
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/5 to-transparent" />
+              </div>
               <p className="text-[10px] uppercase tracking-[0.2em] text-white/40">
                 Sua melhor opção é
               </p>
