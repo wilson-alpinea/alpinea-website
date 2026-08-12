@@ -31,12 +31,12 @@ const PRODUTOS: Record<ProdutoKey, { nome: string; precoLabel: string; href: str
   },
   caravana: {
     nome: "Caravana",
-    precoLabel: "A partir de R$ 13.490",
+    precoLabel: "A partir de R$ 38.000",
     href: "/pacotes#pacotes",
   },
   individual: {
     nome: "Individual ou Pequenos Grupos",
-    precoLabel: "A partir de R$ 13.490",
+    precoLabel: "A partir de R$ 38.000",
     href: "/pacotes#individuais",
   },
   personalizado: {
@@ -174,8 +174,8 @@ const LINHAS: { label: string; valores: Record<ProdutoKey, boolean | string> }[]
     label: "A partir de",
     valores: {
       roteiro: "R$ 1.500",
-      caravana: "R$ 13.490",
-      individual: "R$ 13.490",
+      caravana: "R$ 38.000",
+      individual: "R$ 38.000",
       personalizado: "Sob consulta",
     },
   },

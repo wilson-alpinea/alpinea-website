@@ -18,15 +18,10 @@ export const metadata = {
     "Pacotes de viagem para o Japão com a curadoria Ajisai: Caravana (grupo fechado), Individual ou Pequenos Grupos e Pacotes Personalizados sob medida. Monte seu carrinho e finalize direto no WhatsApp.",
 };
 
-// Preço-base de 7 dias usa como referência o valor do pacote sazonal
-// equivalente que já existia na página (Temporada das Cerejeiras → R$ 15.990;
-// Outono, como estação de menor fluxo mais próxima do perfil de maio → R$
-// 13.490). O valor de 15 dias aplica escala linear simples (preço 7 dias ÷ 7
-// × 15, arredondado para a terminação em "990"/"490" usada nos demais
-// pacotes do site) — sem desconto por estadia mais longa. Se preferir outro
-// critério (ex: descontar a passagem aérea, que é custo fixo, do cálculo dos
-// dias extras), é só avisar que ajusto a fórmula. Datas também são
-// provisórias — confirmar antes de publicar.
+// Preço padrão fixo pra todos os pacotes de Caravana e Individual/Pequenos
+// Grupos: 7 dias = R$ 38.000, 15 dias = R$ 50.000 (mesmo valor
+// independente da temporada). Datas continuam provisórias — confirmar
+// antes de publicar.
 const parcelaDe = (preco: number) =>
   `ou em até 12x de R$ ${(preco / 12).toLocaleString("pt-BR", {
     minimumFractionDigits: 2,
@@ -102,9 +97,9 @@ const pacotesCaravana = [
     accent: "#e6a6c7",
     selo: "🌸 Alta procura",
     variantes: variantesPadrao(
-      15990,
+      38000,
       "28 mar – 03 abr 2027",
-      34490,
+      50000,
       "24 mar – 07 abr 2027",
     ),
   },
@@ -123,9 +118,9 @@ const pacotesCaravana = [
     imagemAlt: BANNER_CARAVANA.alt,
     accent: "#7fbf6e",
     variantes: variantesPadrao(
-      13490,
+      38000,
       "08 – 14 mai 2027",
-      28990,
+      50000,
       "08 – 22 mai 2027",
     ),
   },
@@ -146,9 +141,9 @@ const pacotesIndividuais = [
     imagemAlt: BANNER_INDIVIDUAL.alt,
     accent: "#e6a6c7",
     variantes: variantesPadrao(
-      15990,
+      38000,
       "Datas flexíveis · mar–abr 2027",
-      34490,
+      50000,
       "Datas flexíveis · mar–abr 2027",
     ),
   },
@@ -166,9 +161,9 @@ const pacotesIndividuais = [
     imagemAlt: BANNER_INDIVIDUAL.alt,
     accent: "#7fbf6e",
     variantes: variantesPadrao(
-      13490,
+      38000,
       "Datas flexíveis · maio 2027",
-      28990,
+      50000,
       "Datas flexíveis · maio 2027",
     ),
   },

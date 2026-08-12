@@ -271,6 +271,13 @@ export function PackageDetailModal({
 
   const variante = variantes.find((v) => v.id === selecionada) ?? variantes[0];
 
+  // Guia e transfer são padrão (não opcionais) nos Pacotes de Caravana —
+  // já vêm inclusos no grupo fechado, ao contrário das demais divisões.
+  const inclusoes =
+    divisao === "Pacotes de Caravana"
+      ? INCLUSOES_PADRAO.map((item) => ({ ...item, opcional: false }))
+      : INCLUSOES_PADRAO;
+
   function handleAdd() {
     if (!variante) return;
     addItem({
@@ -383,7 +390,7 @@ export function PackageDetailModal({
               O que está incluso
             </h3>
             <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
-              {INCLUSOES_PADRAO.map((item) => (
+              {inclusoes.map((item) => (
                 <div
                   key={item.title}
                   className="rounded-xl border border-white/10 bg-white/[0.03] p-3.5 transition hover:border-white/25 hover:bg-white/[0.06]"
