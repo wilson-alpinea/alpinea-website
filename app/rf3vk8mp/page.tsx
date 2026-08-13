@@ -231,24 +231,7 @@ export default function AprovacaoRoteiroPage() {
         />
       </header>
 
-      <section className="px-6 pb-4 pt-36 text-center md:px-16 md:pt-40">
-        <div className="mx-auto max-w-2xl">
-          <p className="mx-auto mb-4 block w-fit rounded-full bg-[#1b3a6b] px-5 py-2 text-center text-xs uppercase tracking-[0.3em] text-white">
-            Aprovação do roteiro
-          </p>
-          <h1
-            className={`${display.className} text-[1.9rem] font-medium leading-tight text-black md:text-[2.4rem]`}
-          >
-            Confirme as informações principais da sua viagem
-          </h1>
-          <p className="mx-auto mt-5 text-sm leading-7 text-black/55 md:text-base">
-            Revise abaixo a estrutura do seu roteiro de 7 dias. Ao aprovar,
-            iniciamos a elaboração do seu painel digital personalizado.
-          </p>
-        </div>
-      </section>
-
-      <section className="px-5 pb-4 md:px-16">
+      <section className="px-5 pb-4 pt-36 md:px-16 md:pt-40">
         <div className="mx-auto max-w-4xl">
           <div className="rounded-2xl border border-black/10 bg-white p-6 shadow-[0_20px_60px_-30px_rgba(0,0,0,0.25)] sm:rounded-[2rem] sm:p-8">
             <div className="mx-auto mb-5 flex w-fit flex-col items-center gap-2.5">
