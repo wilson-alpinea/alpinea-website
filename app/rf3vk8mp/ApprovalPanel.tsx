@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, type TouchEvent } from "react";
+import { useRef, useState, type ReactElement } from "react";
 import Image from "next/image";
 
 // Painel interativo do roteiro personalizado — mesma lógica visual do Painel
@@ -1407,38 +1407,11 @@ function IconArrowDown({ className }: { className?: string }) {
   );
 }
 
-function IconArrowRight({ className }: { className?: string }) {
-  return (
-    <svg {...iconProps(className)}>
-      <line x1="4" y1="12" x2="19" y2="12" />
-      <path d="M13 6l6 6-6 6" />
-    </svg>
-  );
-}
-
-function IconArrowLeft({ className }: { className?: string }) {
-  return (
-    <svg {...iconProps(className)}>
-      <line x1="20" y1="12" x2="5" y2="12" />
-      <path d="M11 6l-6 6 6 6" />
-    </svg>
-  );
-}
-
 function IconArrowUp({ className }: { className?: string }) {
   return (
     <svg {...iconProps(className)}>
       <line x1="12" y1="20" x2="12" y2="5" />
       <path d="M6 11l6-6 6 6" />
-    </svg>
-  );
-}
-
-function IconPin({ className }: { className?: string }) {
-  return (
-    <svg {...iconProps(className)}>
-      <path d="M12 21s7-6.5 7-12a7 7 0 0 0-14 0c0 5.5 7 12 7 12z" />
-      <circle cx="12" cy="9" r="2.3" />
     </svg>
   );
 }
@@ -1519,121 +1492,6 @@ const INFO_CARDS = [
   { label: "Palavras Comuns", Icon: IconWords },
 ];
 
-function IconCheck({ className }: { className?: string }) {
-  return (
-    <svg {...iconProps(className)}>
-      <path d="M4 12l5 5L20 6" />
-    </svg>
-  );
-}
-
-function IconX({ className }: { className?: string }) {
-  return (
-    <svg {...iconProps(className)}>
-      <path d="M5 5l14 14M19 5 5 19" />
-    </svg>
-  );
-}
-
-function IconStar({ className }: { className?: string }) {
-  return (
-    <svg {...iconProps(className)}>
-      <path d="M12 3l2.6 5.6 6.1.6-4.6 4.1 1.3 6-5.4-3.1-5.4 3.1 1.3-6-4.6-4.1 6.1-.6z" />
-    </svg>
-  );
-}
-
-function IconTag({ className }: { className?: string }) {
-  return (
-    <svg {...iconProps(className)}>
-      <path d="M12 2 20 2 22 4v8L12 22 2 12 2 4z" />
-      <circle cx="15" cy="7" r="1.4" fill="currentColor" stroke="none" />
-    </svg>
-  );
-}
-
-function IconCalendar({ className }: { className?: string }) {
-  return (
-    <svg {...iconProps(className)}>
-      <rect x="3" y="5" width="18" height="16" rx="2" />
-      <line x1="3" y1="10" x2="21" y2="10" />
-      <line x1="8" y1="3" x2="8" y2="7" />
-      <line x1="16" y1="3" x2="16" y2="7" />
-    </svg>
-  );
-}
-
-function IconWrench({ className }: { className?: string }) {
-  return (
-    <svg {...iconProps(className)}>
-      <path d="M14.7 6.3a4 4 0 0 0-5.6 5.1L3 17.5 6.5 21l6.1-6.1a4 4 0 0 0 5.1-5.6l-3 3-2.6-2.6z" />
-    </svg>
-  );
-}
-
-function IconBed({ className }: { className?: string }) {
-  return (
-    <svg {...iconProps(className)}>
-      <path d="M3 19v-7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v7" />
-      <path d="M3 19v2M21 19v2" />
-      <path d="M3 14V8a1 1 0 0 1 1-1h6v5" />
-      <circle cx="7" cy="10" r="1.3" />
-    </svg>
-  );
-}
-
-function IconYen({ className }: { className?: string }) {
-  return (
-    <svg {...iconProps(className)}>
-      <path d="M6 4l6 8 6-8" />
-      <line x1="12" y1="12" x2="12" y2="21" />
-      <line x1="8" y1="14" x2="16" y2="14" />
-      <line x1="8" y1="17" x2="16" y2="17" />
-    </svg>
-  );
-}
-
-function IconBookingLogo({ className: _className }: { className?: string }) {
-  return (
-    <img
-      src="/images/Booking.com-Logo-trimmed.png"
-      alt="Booking.com"
-      className="h-5 w-auto shrink-0 object-contain"
-    />
-  );
-}
-
-function IconTrivagoLogo({ className: _className }: { className?: string }) {
-  return (
-    <img
-      src="/images/Trivago_logo_2023.svg.webp"
-      alt="Trivago"
-      className="h-5 w-auto shrink-0 object-contain"
-    />
-  );
-}
-
-function IconWalk({ className }: { className?: string }) {
-  return (
-    <svg {...iconProps(className)}>
-      <circle cx="13" cy="4" r="1.6" fill="currentColor" stroke="none" />
-      <path d="M10 21l1.5-5.5L9 14l1-4.5 3-1.5 2 2 3 1" />
-      <path d="M11.5 15.5 15 17l1.5 4" />
-    </svg>
-  );
-}
-
-function IconBath({ className }: { className?: string }) {
-  return (
-    <svg {...iconProps(className)}>
-      <path d="M4 12h16v2a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5z" />
-      <path d="M4 12V7a2 2 0 0 1 3-1.7" />
-      <line x1="2" y1="19" x2="22" y2="19" />
-      <line x1="9" y1="6" x2="9" y2="4" />
-    </svg>
-  );
-}
-
 function IconFork({ className }: { className?: string }) {
   return (
     <svg {...iconProps(className)}>
@@ -1655,16 +1513,6 @@ function IconDumbbell({ className }: { className?: string }) {
   );
 }
 
-function IconSwim({ className }: { className?: string }) {
-  return (
-    <svg {...iconProps(className)}>
-      <path d="M3 17c1.5 1.5 3 1.5 4.5 0s3-1.5 4.5 0 3 1.5 4.5 0 3-1.5 4.5 0" />
-      <circle cx="17" cy="6" r="1.6" fill="currentColor" stroke="none" />
-      <path d="M4 13l6-2 3 2 4-3" />
-    </svg>
-  );
-}
-
 function IconStore({ className }: { className?: string }) {
   return (
     <svg {...iconProps(className)}>
@@ -1675,429 +1523,298 @@ function IconStore({ className }: { className?: string }) {
   );
 }
 
-type HotelOpcao = {
+function IconWifi({ className }: { className?: string }) {
+  return (
+    <svg {...iconProps(className)}>
+      <path d="M2 8.5a16 16 0 0 1 20 0" />
+      <path d="M5 12.5a11 11 0 0 1 14 0" />
+      <path d="M8.5 16.5a6 6 0 0 1 7 0" />
+      <line x1="12" y1="20" x2="12.01" y2="20" />
+    </svg>
+  );
+}
+
+function IconCross({ className }: { className?: string }) {
+  return (
+    <svg {...iconProps(className)}>
+      <rect x="3" y="3" width="18" height="18" rx="3" />
+      <line x1="12" y1="8" x2="12" y2="16" />
+      <line x1="8" y1="12" x2="16" y2="12" />
+    </svg>
+  );
+}
+
+function IconWasher({ className }: { className?: string }) {
+  return (
+    <svg {...iconProps(className)}>
+      <rect x="3" y="3" width="18" height="18" rx="2" />
+      <circle cx="12" cy="13" r="5" />
+      <circle cx="12" cy="13" r="2" />
+      <line x1="7" y1="6" x2="7.01" y2="6" />
+      <line x1="10" y1="6" x2="10.01" y2="6" />
+    </svg>
+  );
+}
+
+function IconSuitcase({ className }: { className?: string }) {
+  return (
+    <svg {...iconProps(className)}>
+      <rect x="3" y="8" width="18" height="12" rx="2" />
+      <path d="M8 8V6a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+      <line x1="3" y1="13" x2="21" y2="13" />
+    </svg>
+  );
+}
+
+type HotelAmenity = {
+  label: string;
+  Icon: (props: { className?: string }) => ReactElement;
+};
+
+type HotelNearby = {
+  label: string;
   nome: string;
-  notaAlpinea: number;
-  perfil: string;
-  inauguracao: string;
-  inauguracaoNota?: string;
-  reforma: string;
-  quarto: string;
-  preco: string;
-  bairro: string;
-  estacao: string;
-  distanciaEstacao: string;
-  distanciaTokyoStation?: string;
-  ofuro: boolean;
-  restaurante: boolean;
-  academia: boolean;
-  piscina: boolean;
-  konbini: string;
-  site?: string;
-  avaliacaoBooking?: number;
-  avaliacaoTrivago?: number;
+  detalhe?: string;
+  Icon: (props: { className?: string }) => ReactElement;
 };
 
-type HotelCidade = {
+type HotelInfo = {
   cidade: string;
-  opcoes: HotelOpcao[];
+  nome: string;
+  bairro: string;
+  endereco: string;
+  site?: string;
+  checkin: string;
+  checkout: string;
+  estrutura: HotelAmenity[];
+  essenciais: HotelNearby[];
 };
 
-const HOTEIS: HotelCidade[] = [
+// Hotéis já reservados e confirmados — o roteiro não é mais um comparativo de
+// opções, e sim um guia prático pro cliente durante a estadia: estrutura do
+// hotel e o que existe de essencial nos arredores (farmácia, clínica/hospital,
+// conveniência).
+const HOTEIS: HotelInfo[] = [
   {
     cidade: "Tokyo 1",
-    opcoes: [
+    nome: "lyf Ginza Tokyo",
+    bairro: "Kyobashi, Chuo-ku",
+    endereco: "2-5-4 Kyobashi, Chuo-ku, Tokyo",
+    site: "https://www.discoverasr.com/en/lyf/japan/lyf-ginza-tokyo",
+    checkin: "A partir das 15h00",
+    checkout: "Até às 11h00",
+    estrutura: [
+      { label: "Wi-Fi grátis em todo o hotel", Icon: IconWifi },
+      { label: "Recepção 24h", Icon: IconClock },
+      { label: "Academia 24h", Icon: IconDumbbell },
+      { label: "Cozinha compartilhada e lounge/bar", Icon: IconFork },
+      { label: "Lavanderia", Icon: IconWasher },
+      { label: "Guarda-volumes", Icon: IconSuitcase },
+    ],
+    essenciais: [
       {
-        nome: "lyf Ginza Tokyo",
-        notaAlpinea: 95,
-        perfil: "Conceito lifestyle/coliving, a poucos passos de Ginza e Tokyo Station",
-        inauguracao: "2023",
-        inauguracaoNota: "Novembro — reforma completa do antigo an/other TOKYO",
-        reforma: "Sim",
-        quarto: "13 m² (studio duplo)",
-        preco: "¥15–25 mil",
-        bairro: "Kyobashi",
-        estacao: "Kyobashi (Ginza Line) / Takaracho",
-        distanciaEstacao: "~3 min a pé",
-        distanciaTokyoStation: "~12 min a pé",
-        ofuro: false,
-        restaurante: true,
-        academia: true,
-        piscina: false,
-        konbini: "Diversos nas proximidades",
-        site: "https://www.discoverasr.com/en/lyf/japan/lyf-ginza-tokyo",
-        avaliacaoBooking: 8.7,
+        label: "Conveniência",
+        nome: "7-Eleven e Lawson",
+        detalhe: "Dentro do Kyobashi Edogrand, a poucos passos do hotel",
+        Icon: IconStore,
+      },
+      {
+        label: "Farmácia",
+        nome: "Matsumoto Kiyoshi Kyobashi Ekimae",
+        detalhe: "Na saída da Estação Kyobashi",
+        Icon: IconCross,
+      },
+      {
+        label: "Clínica",
+        nome: "Kameda Kyobashi Clinic",
+        detalhe: "Tokyo Square Garden — seg. a sáb., 8h30–18h, atendimento em inglês",
+        Icon: IconCross,
+      },
+      {
+        label: "Hospital",
+        nome: "St. Luke's International Hospital",
+        detalhe: "Pronto-socorro 24h — ~15 min a pé ou táxi curto",
+        Icon: IconCross,
+      },
+      {
+        label: "Estação",
+        nome: "Kyobashi (Ginza Line) / Takaracho (Asakusa Line)",
+        detalhe: "~3 min a pé",
+        Icon: IconMetro,
       },
     ],
   },
   {
     cidade: "Kyoto",
-    opcoes: [
+    nome: "Daiwa Roynet Hotel Kyoto-Ekimae PREMIER",
+    bairro: "Karasuma-guchi, em frente à Kyoto Station",
+    endereco: "707-2 Higashishiokojicho, Karasuma-dori, Shimogyo-ku, Kyoto",
+    site: "https://www.daiwaroynet.jp/en/kyoto-ekimae/",
+    checkin: "A partir das 14h00",
+    checkout: "Até às 11h00",
+    estrutura: [
+      { label: "Wi-Fi grátis (com e sem fio)", Icon: IconWifi },
+      { label: "Recepção 24h", Icon: IconClock },
+      { label: "Restaurante próprio", Icon: IconFork },
+      { label: "Lavanderia", Icon: IconWasher },
+      { label: "Guarda-volumes", Icon: IconSuitcase },
+    ],
+    essenciais: [
       {
-        nome: "Daiwa Roynet Kyoto Ekimae PREMIER",
-        notaAlpinea: 98,
-        perfil: "Melhor custo-benefício",
-        inauguracao: "2016",
-        reforma: "Não",
-        quarto: "21 m²",
-        preco: "¥18–30 mil",
-        bairro: "Karasuma-guchi (frente à Kyoto Station)",
-        estacao: "Kyoto Station",
-        distanciaEstacao: "3 min",
-        ofuro: false,
-        restaurante: true,
-        academia: false,
-        piscina: false,
-        konbini: "Lawson (20 m)",
-        site: "https://www.daiwaroynet.jp/en/kyoto-ekimae/",
-        avaliacaoBooking: 8.7,
-        avaliacaoTrivago: 9.0,
+        label: "Conveniência",
+        nome: "Lawson",
+        detalhe: "A 20 m do hotel",
+        Icon: IconStore,
+      },
+      {
+        label: "Farmácia",
+        nome: "Ain Pharmacy Kyoto Ekimae",
+        detalhe: "No mesmo quarteirão, Yamazaki Medical Bldg B1F",
+        Icon: IconCross,
+      },
+      {
+        label: "Hospital",
+        nome: "Koseikai Takeda Hospital",
+        detalhe: "Pronto-socorro 24h, 365 dias por ano — ~5 min a pé",
+        Icon: IconCross,
+      },
+      {
+        label: "Estação",
+        nome: "Kyoto Station (saída Karasuma)",
+        detalhe: "Na porta do hotel",
+        Icon: IconMetro,
       },
     ],
   },
   {
     cidade: "Tokyo 2",
-    opcoes: [
+    nome: "remm Tokyo Kyobashi",
+    bairro: "Kyobashi, Chuo-ku",
+    endereco: "2-6-21 Kyobashi, Chuo-ku, Tokyo",
+    site: "https://www.hankyu-hotel.com/en/hotel/remm/tokyo-kyobashi",
+    checkin: "14h00 às 24h00",
+    checkout: "Até às 12h00",
+    estrutura: [
+      { label: "Wi-Fi grátis", Icon: IconWifi },
+      { label: "Recepção 24h", Icon: IconClock },
       {
-        nome: "remm Tokyo Kyobashi",
-        notaAlpinea: 98,
-        perfil: "Melhor localização — a 10 min a pé da Tokyo Station",
-        inauguracao: "2019",
-        inauguracaoNota: "Abril",
-        reforma: "Não",
-        quarto: "21 m² (twin)",
-        preco: "¥18–33 mil",
-        bairro: "Kyobashi",
-        estacao: "Kyobashi (Ginza Line, saída 6)",
-        distanciaEstacao: "1 min (50 m)",
-        distanciaTokyoStation: "10 min a pé",
-        ofuro: false,
-        restaurante: true,
-        academia: false,
-        piscina: false,
-        konbini: "7-Eleven (térreo)",
-        site: "https://www.hankyu-hotel.com/en/hotel/remm/tokyo-kyobashi",
-        avaliacaoBooking: 8.6,
-        avaliacaoTrivago: 8.8,
+        label: "Restaurante DINING STAGE ARCH — café da manhã 7h–10h30 (à parte)",
+        Icon: IconFork,
+      },
+      { label: "Lavanderia", Icon: IconWasher },
+      { label: "Guarda-volumes", Icon: IconSuitcase },
+    ],
+    essenciais: [
+      {
+        label: "Conveniência",
+        nome: "7-Eleven",
+        detalhe: "No térreo do próprio hotel",
+        Icon: IconStore,
+      },
+      {
+        label: "Farmácia",
+        nome: "Matsumoto Kiyoshi Kyobashi Ekimae",
+        detalhe: "Na Estação Kyobashi",
+        Icon: IconCross,
+      },
+      {
+        label: "Clínica",
+        nome: "Kameda Kyobashi Clinic",
+        detalhe: "Tokyo Square Garden — seg. a sáb., 8h30–18h, atendimento em inglês",
+        Icon: IconCross,
+      },
+      {
+        label: "Hospital",
+        nome: "St. Luke's International Hospital",
+        detalhe: "Pronto-socorro 24h — ~15 min a pé ou táxi curto",
+        Icon: IconCross,
+      },
+      {
+        label: "Estação",
+        nome: "Kyobashi (Ginza Line, saída 6)",
+        detalhe: "1 min a pé (50 m)",
+        Icon: IconMetro,
       },
     ],
   },
 ];
 
-function HotelBoolCell({ value }: { value: boolean }) {
-  return value ? (
-    <span className="mx-auto flex h-6 w-6 items-center justify-center rounded-md bg-emerald-100 text-emerald-600">
-      <IconCheck className="h-3.5 w-3.5" />
-    </span>
-  ) : (
-    <span className="mx-auto flex h-6 w-6 items-center justify-center rounded-md bg-rose-100 text-rose-500">
-      <IconX className="h-3.5 w-3.5" />
-    </span>
-  );
-}
-
-function HotelComparisonTable({ cidade }: { cidade: HotelCidade }) {
-  const [selected, setSelected] = useState(0);
-  const touchStartX = useRef<number | null>(null);
-  const touchDeltaX = useRef(0);
-
-  function handleTouchStart(e: TouchEvent) {
-    touchStartX.current = e.touches[0].clientX;
-    touchDeltaX.current = 0;
-  }
-
-  function handleTouchMove(e: TouchEvent) {
-    if (touchStartX.current === null) return;
-    touchDeltaX.current = e.touches[0].clientX - touchStartX.current;
-  }
-
-  function handleTouchEnd() {
-    const delta = touchDeltaX.current;
-    const threshold = 40;
-    if (delta < -threshold) {
-      setSelected((s) => Math.min(s + 1, cidade.opcoes.length - 1));
-    } else if (delta > threshold) {
-      setSelected((s) => Math.max(s - 1, 0));
-    }
-    touchStartX.current = null;
-    touchDeltaX.current = 0;
-  }
-
-  const temTokyoStation = cidade.opcoes.some((h) => h.distanciaTokyoStation);
-
-  const rows = [
-    {
-      label: "Perfil",
-      Icon: IconTag,
-      render: (h: HotelOpcao) => h.perfil,
-    },
-    {
-      label: "Inauguração",
-      Icon: IconCalendar,
-      render: (h: HotelOpcao) => (
-        <>
-          {h.inauguracao}
-          {h.inauguracaoNota && (
-            <span className="block text-xs text-[#24211D]/40">
-              {h.inauguracaoNota}
-            </span>
-          )}
-        </>
-      ),
-    },
-    {
-      label: "Reforma recente",
-      Icon: IconWrench,
-      render: (h: HotelOpcao) => h.reforma,
-    },
-    {
-      label: "Quarto Standard",
-      Icon: IconBed,
-      render: (h: HotelOpcao) => h.quarto,
-    },
-    {
-      label: "Preço médio",
-      Icon: IconYen,
-      render: (h: HotelOpcao) => h.preco,
-    },
-    {
-      label: "Bairro",
-      Icon: IconPin,
-      render: (h: HotelOpcao) => h.bairro,
-    },
-    {
-      label: "Estação",
-      Icon: IconMetro,
-      render: (h: HotelOpcao) => h.estacao,
-    },
-    {
-      label: "Distância estação",
-      Icon: IconWalk,
-      render: (h: HotelOpcao) => h.distanciaEstacao,
-    },
-    ...(temTokyoStation
-      ? [
-          {
-            label: "Tokyo Station",
-            Icon: IconWalk,
-            render: (h: HotelOpcao) => h.distanciaTokyoStation ?? "—",
-          },
-        ]
-      : []),
-    {
-      label: "Ofurô",
-      Icon: IconBath,
-      render: (h: HotelOpcao) => <HotelBoolCell value={h.ofuro} />,
-    },
-    {
-      label: "Restaurante",
-      Icon: IconFork,
-      render: (h: HotelOpcao) => <HotelBoolCell value={h.restaurante} />,
-    },
-    {
-      label: "Academia",
-      Icon: IconDumbbell,
-      render: (h: HotelOpcao) => <HotelBoolCell value={h.academia} />,
-    },
-    {
-      label: "Piscina",
-      Icon: IconSwim,
-      render: (h: HotelOpcao) => <HotelBoolCell value={h.piscina} />,
-    },
-    {
-      label: "Kombini",
-      Icon: IconStore,
-      render: (h: HotelOpcao) => h.konbini,
-    },
-    {
-      label: "Avaliação Booking",
-      Icon: IconBookingLogo,
-      render: (h: HotelOpcao) =>
-        h.avaliacaoBooking ? `${h.avaliacaoBooking.toFixed(1)} / 10` : "—",
-    },
-    {
-      label: "Avaliação Trivago",
-      Icon: IconTrivagoLogo,
-      render: (h: HotelOpcao) =>
-        h.avaliacaoTrivago ? `${h.avaliacaoTrivago.toFixed(1)} / 10` : "—",
-    },
-  ];
-
+function HotelGuestGuide({ hotel }: { hotel: HotelInfo }) {
   return (
-    <div>
-      {/* Mobile: sem tabela nem scroll horizontal — abas pra escolher o
-          hotel, cartão único com os critérios empilhados verticalmente. */}
-      <div className="sm:hidden">
-        <div className="mb-3 flex gap-2 overflow-x-auto pb-1">
-          {cidade.opcoes.map((h, i) => (
-            <button
-              key={h.nome}
-              type="button"
-              onClick={() => setSelected(i)}
-              className={`flex shrink-0 items-center gap-1.5 rounded-full border px-4 py-2 text-xs font-semibold transition ${
-                i === selected
-                  ? "border-[#173B45] bg-[#173B45] text-white"
-                  : "border-[#DDD8CF] bg-[#FDFCF9] text-[#24211D]/50"
-              }`}
-            >
-              <span
-                className={`flex h-4 w-4 shrink-0 items-center justify-center rounded-full text-[9px] font-bold ${
-                  i === selected
-                    ? "bg-[#FDFCF9] text-[#24211D]"
-                    : "bg-[#DDD8CF] text-[#24211D]/50"
-                }`}
-              >
-                {i + 1}
-              </span>
-              {h.nome}
-            </button>
-          ))}
+    <div className="overflow-hidden rounded-2xl border border-[#DDD8CF]">
+      <div className="border-b border-[#DDD8CF] bg-[#FAF9F6] px-5 py-5 text-center sm:px-8">
+        <p className="text-base font-semibold text-[#24211D] sm:text-lg">
+          {hotel.nome}
+        </p>
+        <p className="mt-1 text-xs text-[#24211D]/50">
+          {hotel.bairro} · {hotel.endereco}
+        </p>
+        {hotel.site && (
+          <a
+            href={hotel.site}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-2 inline-block text-[10px] font-semibold uppercase tracking-[0.1em] text-[#173B45] hover:underline"
+          >
+            Ver fotos e detalhes do hotel
+          </a>
+        )}
+        <div className="mt-4 flex flex-wrap items-center justify-center gap-2.5">
+          <span className="rounded-full border border-[#173B45]/25 bg-[#173B45]/[0.06] px-4 py-1.5 text-[10px] font-bold uppercase tracking-[0.2em] text-[#173B45]">
+            Check-in · {hotel.checkin}
+          </span>
+          <span className="rounded-full border border-[#173B45]/25 bg-[#173B45]/[0.06] px-4 py-1.5 text-[10px] font-bold uppercase tracking-[0.2em] text-[#173B45]">
+            Check-out · {hotel.checkout}
+          </span>
         </div>
-        <div
-          className="overflow-hidden rounded-2xl border border-[#DDD8CF]"
-          onTouchStart={handleTouchStart}
-          onTouchMove={handleTouchMove}
-          onTouchEnd={handleTouchEnd}
-        >
-          <div className="border-b border-[#DDD8CF] bg-[#FAF9F6] px-4 py-4 text-center">
-            <p className="text-base font-semibold text-[#24211D]">
-              {cidade.opcoes[selected].nome}
-            </p>
-            <div className="mt-2.5 flex items-center justify-center">
-              <span className="inline-block rounded-full border border-[#173B45]/25 bg-[#173B45] px-4 py-1.5 text-[10px] font-bold uppercase tracking-[0.25em] text-white">
-                Opção {selected + 1} de {cidade.opcoes.length}
-              </span>
-            </div>
-            {(() => {
-              const canLeft = selected > 0;
-              const canRight = selected < cidade.opcoes.length - 1;
-              if (!canLeft && !canRight) return null;
-              const label =
-                canLeft && canRight
-                  ? "Arraste para os lados"
-                  : canRight
-                    ? "Arraste para a direita"
-                    : "Arraste para a esquerda";
-              return (
-                <div className="mt-3 flex flex-col items-center gap-1.5 sm:hidden">
-                  <div className="flex items-center gap-3">
-                    {canLeft && (
-                      <span className="flex h-9 w-9 shrink-0 animate-pulse items-center justify-center rounded-full bg-[#173B45] text-white">
-                        <IconArrowLeft className="h-5 w-5" />
-                      </span>
-                    )}
-                    {canRight && (
-                      <span className="flex h-9 w-9 shrink-0 animate-pulse items-center justify-center rounded-full bg-[#173B45] text-white">
-                        <IconArrowRight className="h-5 w-5" />
-                      </span>
-                    )}
-                  </div>
-                  <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#173B45]">
-                    {label}
-                  </p>
-                </div>
-              );
-            })()}
-            <div className="mt-2.5 flex items-center justify-center gap-2.5 px-6">
-              {cidade.opcoes.map((h, i) => (
-                <span
-                  key={h.nome}
-                  className={`h-2 flex-1 max-w-24 rounded-full transition-all ${
-                    i === selected ? "bg-[#173B45]" : "bg-[#DDD8CF]"
-                  }`}
-                />
-              ))}
-            </div>
-            {cidade.opcoes[selected].site && (
-              <a
-                href={cidade.opcoes[selected].site}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="mt-2.5 inline-block text-[10px] font-semibold uppercase tracking-[0.1em] text-[#173B45] hover:underline"
-              >
-                Ver fotos e detalhes do hotel
-              </a>
-            )}
-          </div>
-          <div>
-            {rows.map((row, i) => (
-              <div
-                key={row.label}
-                className={`flex items-center justify-between gap-4 px-4 py-3 ${
-                  i % 2 === 1 ? "bg-[#FAF9F6]" : "bg-[#FDFCF9]"
-                }`}
-              >
-                <span className="flex shrink-0 items-center gap-1.5 text-xs font-semibold text-[#24211D]/50">
-                  <row.Icon className="h-3.5 w-3.5 shrink-0 text-[#173B45]" />
-                  {row.label !== "Avaliação Booking" &&
-                    row.label !== "Avaliação Trivago" &&
-                    row.label}
+      </div>
+
+      <div className="grid grid-cols-1 gap-px bg-[#DDD8CF] sm:grid-cols-2">
+        <div className="bg-[#FDFCF9] p-5 sm:p-6">
+          <p className="mb-4 text-xs font-bold uppercase tracking-[0.2em] text-[#24211D]/45">
+            Estrutura do Hotel
+          </p>
+          <div className="space-y-3.5">
+            {hotel.estrutura.map((item) => (
+              <div key={item.label} className="flex items-start gap-3">
+                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#173B45]/[0.08] text-[#173B45]">
+                  <item.Icon className="h-4 w-4" />
                 </span>
-                <span className="text-right text-sm text-[#24211D]/70">
-                  {row.render(cidade.opcoes[selected])}
+                <span className="pt-1.5 text-sm leading-5 text-[#24211D]/75">
+                  {item.label}
                 </span>
               </div>
             ))}
           </div>
         </div>
-      </div>
 
-      {/* Desktop: tabela comparativa completa lado a lado. */}
-      <div className="hidden overflow-x-auto rounded-2xl border border-[#DDD8CF] sm:block">
-        <table className="w-full min-w-[560px] border-separate border-spacing-0 text-sm">
-            <thead>
-              <tr className="bg-[#FAF9F6]">
-                <th className="sticky left-0 z-10 w-32 border-b border-r border-[#DDD8CF] bg-[#FAF9F6] px-3 py-3 text-left text-xs font-bold uppercase tracking-[0.15em] text-[#24211D]/40 sm:w-40 sm:px-4">
-                  Critério
-                </th>
-                {cidade.opcoes.map((h) => (
-                  <th
-                    key={h.nome}
-                    className="w-[150px] border-b border-l border-[#DDD8CF] bg-[#FAF9F6] px-3 py-3 text-center text-sm font-semibold text-[#24211D] sm:w-auto sm:px-4"
-                  >
-                    {h.nome}
-                    {h.site && (
-                      <a
-                        href={h.site}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="mt-1.5 block text-[10px] font-semibold uppercase tracking-[0.1em] text-[#173B45] hover:underline"
-                      >
-                        Ver fotos e detalhes do hotel
-                      </a>
-                    )}
-                  </th>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {rows.map((row, i) => {
-                const rowBg = i % 2 === 1 ? "bg-[#FAF9F6]" : "bg-[#FDFCF9]";
-                return (
-                  <tr key={row.label} className={rowBg}>
-                    <td
-                      className={`sticky left-0 z-10 border-r border-[#DDD8CF] px-3 py-3 align-top text-xs font-semibold text-[#24211D]/50 sm:px-4 ${rowBg}`}
-                    >
-                      <span className="flex items-center gap-1.5">
-                        <row.Icon className="h-3.5 w-3.5 shrink-0 text-[#173B45]" />
-                        {row.label !== "Avaliação Booking" &&
-                          row.label !== "Avaliação Trivago" &&
-                          row.label}
-                      </span>
-                    </td>
-                    {cidade.opcoes.map((h) => (
-                      <td
-                        key={h.nome}
-                        className="border-l border-[#DDD8CF] px-3 py-3 text-center align-middle text-sm text-[#24211D]/70 sm:px-4"
-                      >
-                        {row.render(h)}
-                      </td>
-                    ))}
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
+        <div className="bg-[#FDFCF9] p-5 sm:p-6">
+          <p className="mb-4 text-xs font-bold uppercase tracking-[0.2em] text-[#24211D]/45">
+            Nas Proximidades
+          </p>
+          <div className="space-y-3.5">
+            {hotel.essenciais.map((item) => (
+              <div key={item.label} className="flex items-start gap-3">
+                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#B96432]/[0.1] text-[#B96432]">
+                  <item.Icon className="h-4 w-4" />
+                </span>
+                <div className="min-w-0 flex-1 pt-0.5">
+                  <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-[#24211D]/40">
+                    {item.label}
+                  </p>
+                  <p className="text-sm font-semibold leading-5 text-[#24211D]">
+                    {item.nome}
+                  </p>
+                  {item.detalhe && (
+                    <p className="mt-0.5 text-xs leading-5 text-[#24211D]/55">
+                      {item.detalhe}
+                    </p>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     </div>
   );
@@ -2181,12 +1898,12 @@ export function ApprovalPanel({
                 className="flex flex-col items-center gap-2.5"
               >
                 <span
-                  className={`relative flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-full border-2 font-bold transition-all duration-300 ${
+                  className={`relative flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-full font-bold transition-all duration-300 ${
                     d.badge
-                      ? "border-[#173B45] bg-[#173B45] text-[9px] tracking-tight text-white"
+                      ? "border-2 border-[#173B45] bg-[#173B45] text-[9px] tracking-tight text-white"
                       : active
-                        ? "border-[#B69463]"
-                        : "border-[#DDD8CF] hover:-translate-y-0.5 hover:border-[#B69463]/60 hover:shadow-[0_10px_24px_-12px_rgba(182,148,99,0.5)]"
+                        ? "shadow-[0_0_0_2px_#B69463]"
+                        : "hover:-translate-y-0.5 hover:shadow-[0_0_0_2px_rgba(182,148,99,0.6)]"
                   }`}
                 >
                   {d.badge ? (
@@ -2307,7 +2024,7 @@ export function ApprovalPanel({
               <p className="mb-5 inline-block rounded-full border border-[#173B45]/20 bg-[#F8FAF9] px-5 py-2 text-xs uppercase tracking-[0.3em] text-[#173B45]">
                 Hotel · {HOTEIS[hotelCity].cidade}
               </p>
-              <HotelComparisonTable cidade={HOTEIS[hotelCity]} />
+              <HotelGuestGuide hotel={HOTEIS[hotelCity]} />
             </>
           ) : current.travel ? (
             <div className="rounded-2xl border border-[#DDD8CF] bg-[#FAF9F6] p-6 text-center sm:p-8">
