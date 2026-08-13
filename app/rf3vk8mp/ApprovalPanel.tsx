@@ -2245,7 +2245,7 @@ export function ApprovalPanel({
                     d.badge
                   ) : (
                     <Image
-                      src={`/images/dragonball-${d.day}-star.png`}
+                      src={`/images/dragonball-${d.day}-star-tight.png`}
                       alt={`Dia ${d.day}`}
                       fill
                       sizes="56px"
