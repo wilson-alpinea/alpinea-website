@@ -3,11 +3,9 @@
 import { useRef, useState, type TouchEvent } from "react";
 import Image from "next/image";
 
-// Painel de aprovação de rascunho — mesma lógica visual do Painel Interativo
-// usado em /ajisairoteiros (pílulas, abas de dia, tipografia Bodoni Moda),
-// mas em tema claro e sem hero, já que aqui o objetivo é só validação rápida
-// das informações principais pelo cliente antes de iniciarmos o painel
-// digital completo.
+// Painel interativo do roteiro personalizado — mesma lógica visual do Painel
+// Interativo usado em /ajisairoteiros (pílulas, abas de dia, tipografia
+// Bodoni Moda), mas em tema claro e sem hero.
 
 type Poi = {
   category?: string;
@@ -759,7 +757,7 @@ const DAY_7: DayContent = {
         {
           nome: "Almoço em Ningyocho",
           descricao:
-            "Janela reservada logo após o Suitengu, antes do deslocamento para o Kokugikan — restaurante a definir na versão final do roteiro.",
+            "Janela reservada logo após o Suitengu, antes do deslocamento para o Kokugikan — restaurante a confirmar com a equipe Alpinea.",
         },
       ],
     },
@@ -2335,8 +2333,8 @@ export function ApprovalPanel({
           <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-black/35">
             Informações Detalhadas
           </p>
-          <span className="rounded-full border border-amber-300/70 bg-amber-50 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.15em] text-amber-700">
-            Conteúdo Só Disponível Na Versão Final
+          <span className="rounded-full border border-[#2f5aa8]/25 bg-[#2f5aa8]/[0.06] px-3 py-1 text-[10px] font-bold uppercase tracking-[0.15em] text-[#2f5aa8]">
+            Detalhes Completos No Painel Digital
           </span>
         </div>
         <div className="grid grid-cols-2 gap-3 border-b border-black/10 px-6 pb-6 pt-3 sm:grid-cols-4 sm:px-10">

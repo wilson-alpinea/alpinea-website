@@ -2,13 +2,12 @@ import type { Metadata } from "next";
 import { Bodoni_Moda } from "next/font/google";
 import { ApprovalPanel } from "./ApprovalPanel";
 
-// Página de aprovação de rascunho — enviada individualmente para cada
+// Página do roteiro personalizado — enviada individualmente para cada
 // cliente por uma URL não listada (chave alfanumérica de 8 dígitos, sem
 // link em nenhum outro lugar do site). Baseada no template visual de
 // /ajisairoteiros, mas em tema claro, sem hero, e com a "Amostra do Dia 1"
 // substituída por uma visão simplificada dos 7 dias (Manhã/Tarde, atração
-// principal e pontos de interesse) para validação rápida antes de
-// iniciarmos o painel digital completo.
+// principal e pontos de interesse).
 
 const display = Bodoni_Moda({
   subsets: ["latin"],
@@ -208,8 +207,8 @@ function RadarChart({ dimensions }: { dimensions: RadarDimension[] }) {
 }
 
 export const metadata: Metadata = {
-  title: "Aprovação de Roteiro | Ajisai",
-  description: "Página privada de aprovação de rascunho de roteiro.",
+  title: "Roteiro Personalizado | Ajisai",
+  description: "Página privada do roteiro personalizado.",
   robots: {
     index: false,
     follow: false,
@@ -230,9 +229,6 @@ export default function AprovacaoRoteiroPage() {
           alt="Alpinea — Empresa do Grupo Ajisai"
           className="h-[60px] w-auto object-contain md:h-[72px]"
         />
-        <span className="rounded-full border border-black/15 px-4 py-1.5 text-[11px] uppercase tracking-[0.2em] text-black/50">
-          Draft para aprovação
-        </span>
       </header>
 
       <section className="px-6 pb-4 pt-36 text-center md:px-16 md:pt-40">
@@ -249,16 +245,6 @@ export default function AprovacaoRoteiroPage() {
             Revise abaixo a estrutura do seu roteiro de 7 dias. Ao aprovar,
             iniciamos a elaboração do seu painel digital personalizado.
           </p>
-          <div className="mx-auto mt-5 max-w-xl rounded-2xl border border-amber-200 bg-amber-50 px-5 py-4 text-left">
-            <p className="text-xs leading-6 text-amber-900/70 md:text-sm">
-              Esta versão é apenas um rascunho, ela não contém mapas,
-              informações de logística, transporte, detalhes dos restaurantes,
-              detalhe das lojas, resumo do dia, horário de funcionamento,
-              horário indicado para chegada e saída, entre outras informações
-              que serão adicionadas durante a criação da versão final do
-              roteiro personalizado.
-            </p>
-          </div>
         </div>
       </section>
 
