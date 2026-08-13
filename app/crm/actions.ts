@@ -7,6 +7,8 @@ import { isEstagio, ESTAGIO_LABEL } from "@/lib/crm/estagios";
 import type { Estagio } from "@/lib/crm/types";
 import { isProdutoPrincipal, isProdutoSecundario } from "@/lib/crm/produtos";
 import { isTipoArquivo } from "@/lib/crm/arquivos";
+import { isCategoriaFornecedor } from "@/lib/crm/fornecedores";
+import { isTipoPagamento, isStatusPagamento } from "@/lib/crm/pagamentos";
 
 export async function logout() {
   const supabase = await createClient();
@@ -270,4 +272,157 @@ export async function deleteClientes(ids: string[]) {
   revalidatePath("/crm/clientes");
   revalidatePath("/crm");
   revalidatePath("/crm/pipeline");
+}
+
+// ---------------------------------------------------------------
+// Fornecedores
+// ---------------------------------------------------------------
+
+function categoriaFornecedorOuNull(valor: FormDataEntryValue | null) {
+  const texto = String(valor ?? "").trim();
+  return isCategoriaFornecedor(texto) ? texto : null;
+}
+
+export async function createFornecedor(formData: FormData) {
+  const nome = String(formData.get("nome") || "").trim();
+  if (!nome) {
+    redirect("/crm/fornecedores/novo?erro=1");
+  }
+
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("fornecedores")
+    .insert({
+      nome,
+      categoria: categoriaFornecedorOuNull(formData.get("categoria")),
+      contato_nome: textoOuNull(formData.get("contato_nome")),
+      email: textoOuNull(formData.get("email")),
+      telefone: textoOuNull(formData.get("telefone")),
+      cidade: textoOuNull(formData.get("cidade")),
+      observacoes: textoOuNull(formData.get("observacoes")),
+    })
+    .select("id")
+    .single();
+
+  if (error || !data) {
+    console.error("Erro ao criar fornecedor:", error);
+    redirect("/crm/fornecedores/novo?erro=1");
+  }
+
+  revalidatePath("/crm/fornecedores");
+  redirect(`/crm/fornecedores/${data.id}`);
+}
+
+export async function updateFornecedor(fornecedorId: string, formData: FormData) {
+  const nome = String(formData.get("nome") || "").trim();
+
+  const supabase = await createClient();
+  const { error } = await supabase
+    .from("fornecedores")
+    .update({
+      nome: nome || undefined,
+      categoria: categoriaFornecedorOuNull(formData.get("categoria")),
+      contato_nome: textoOuNull(formData.get("contato_nome")),
+      email: textoOuNull(formData.get("email")),
+      telefone: textoOuNull(formData.get("telefone")),
+      cidade: textoOuNull(formData.get("cidade")),
+      observacoes: textoOuNull(formData.get("observacoes")),
+    })
+    .eq("id", fornecedorId);
+
+  if (error) {
+    console.error("Erro ao atualizar fornecedor:", error);
+    redirect(`/crm/fornecedores/${fornecedorId}?erro=1`);
+  }
+
+  revalidatePath(`/crm/fornecedores/${fornecedorId}`);
+  revalidatePath("/crm/fornecedores");
+  redirect(`/crm/fornecedores/${fornecedorId}`);
+}
+
+export async function deleteFornecedores(ids: string[]) {
+  if (!ids || ids.length === 0) return;
+  const supabase = await createClient();
+  const { error } = await supabase.from("fornecedores").delete().in("id", ids);
+
+  if (error) {
+    console.error("Erro ao excluir fornecedores:", error);
+  }
+
+  revalidatePath("/crm/fornecedores");
+}
+
+// ---------------------------------------------------------------
+// Financeiro (pagamentos/parcelas por cliente)
+// ---------------------------------------------------------------
+
+export async function addPagamento(clienteId: string, formData: FormData) {
+  const valorBruto = numeroOuNull(formData.get("valor"));
+  if (!valorBruto) {
+    redirect(`/crm/clientes/${clienteId}?erro=4`);
+  }
+
+  const tipoBruto = String(formData.get("tipo_pagamento") || "");
+  const statusBruto = String(formData.get("status") || "pendente");
+  const numeroParcela = Number(formData.get("numero_parcela")) || 1;
+  const totalParcelas = Number(formData.get("total_parcelas")) || 1;
+
+  const supabase = await createClient();
+  const { error } = await supabase.from("pagamentos").insert({
+    cliente_id: clienteId,
+    tipo_pagamento: isTipoPagamento(tipoBruto) ? tipoBruto : null,
+    numero_parcela: numeroParcela,
+    total_parcelas: totalParcelas,
+    valor: valorBruto,
+    status: isStatusPagamento(statusBruto) ? statusBruto : "pendente",
+    data_vencimento: textoOuNull(formData.get("data_vencimento")),
+    data_pagamento:
+      statusBruto === "pago" ? textoOuNull(formData.get("data_pagamento")) : null,
+    observacoes: textoOuNull(formData.get("observacoes")),
+  });
+
+  if (error) {
+    console.error("Erro ao registrar pagamento:", error);
+    redirect(`/crm/clientes/${clienteId}?erro=4`);
+  }
+
+  revalidatePath(`/crm/clientes/${clienteId}`);
+  redirect(`/crm/clientes/${clienteId}`);
+}
+
+// Alterna rapidamente entre pago/pendente direto na lista, sem precisar
+// abrir um formulário — marca a data de pagamento como hoje ao confirmar.
+export async function alternarStatusPagamento(
+  clienteId: string,
+  pagamentoId: string,
+  novoStatus: string,
+) {
+  if (!isStatusPagamento(novoStatus)) return;
+
+  const supabase = await createClient();
+  const { error } = await supabase
+    .from("pagamentos")
+    .update({
+      status: novoStatus,
+      data_pagamento: novoStatus === "pago" ? new Date().toISOString().slice(0, 10) : null,
+    })
+    .eq("id", pagamentoId);
+
+  if (error) {
+    console.error("Erro ao atualizar status do pagamento:", error);
+  }
+
+  revalidatePath(`/crm/clientes/${clienteId}`);
+}
+
+export async function deletePagamento(clienteId: string, pagamentoId: string, formData: FormData) {
+  void formData;
+  const supabase = await createClient();
+  const { error } = await supabase.from("pagamentos").delete().eq("id", pagamentoId);
+
+  if (error) {
+    console.error("Erro ao excluir pagamento:", error);
+  }
+
+  revalidatePath(`/crm/clientes/${clienteId}`);
 }

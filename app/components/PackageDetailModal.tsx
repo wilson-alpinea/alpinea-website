@@ -5,6 +5,8 @@ import { createPortal } from "react-dom";
 import { Bodoni_Moda } from "next/font/google";
 import { useCart, type CartItem } from "./CartContext";
 import type { PackageVariant } from "./packageTypes";
+import { PrecoPacote } from "./PrecoPacote";
+import { useCambioUSD, brlParaUSDLabel } from "../hooks/useCambioUSD";
 
 const display = Bodoni_Moda({
   subsets: ["latin"],
@@ -424,6 +426,7 @@ export function PackageDetailModal({
   onClose: () => void;
 }) {
   const { addItem } = useCart();
+  const cambio = useCambioUSD();
   const [selecionada, setSelecionada] = useState(varianteInicialId ?? variantes[0]?.id ?? "");
   const [adicionado, setAdicionado] = useState(false);
   const [mounted, setMounted] = useState(false);
@@ -468,7 +471,8 @@ export function PackageDetailModal({
         { icone: "🏨", texto: "Hospedagem incluída" },
         { icone: "📱", texto: "Roteiro Digital Ajisai incluído" },
       ],
-      precoLabel: variante.precoLabel,
+      precoLabel:
+        variante.precoBRL != null ? brlParaUSDLabel(variante.precoBRL, cambio) : variante.precoLabel,
       precoSufixo: "por pessoa",
       imagem,
     });
@@ -725,15 +729,10 @@ export function PackageDetailModal({
                 <p className="text-xs font-medium uppercase tracking-[0.15em] text-white/45">
                   {variante.datas}
                 </p>
-                <p className={`${display.className} mt-1 text-3xl font-medium text-white`}>
-                  {variante.precoLabel}
-                </p>
-                <p className="mt-1 text-xs uppercase tracking-[0.15em] text-white/40">
-                  Por pessoa · Quarto Individual
-                </p>
-                {variante.parcelaLabel && (
-                  <p className="mt-1 text-sm font-medium text-white/70">{variante.parcelaLabel}</p>
-                )}
+                <PrecoPacote
+                  variante={variante}
+                  precoClassName={`${display.className} mt-1 text-3xl font-medium text-white`}
+                />
               </div>
             )}
             {rodape && <p className="mt-2 text-[11px] leading-5 text-white/40">{rodape}</p>}
@@ -744,7 +743,8 @@ export function PackageDetailModal({
           <button
             type="button"
             onClick={handleAdd}
-            className="flex w-full items-center justify-center gap-2 rounded-full px-5 py-3.5 text-center text-[11px] font-semibold uppercase tracking-[0.2em] text-white shadow-[0_10px_30px_rgba(0,0,0,0.35)] transition duration-300 hover:-translate-y-0.5"
+            disabled={variante?.precoBRL != null && !cambio}
+            className="flex w-full items-center justify-center gap-2 rounded-full px-5 py-3.5 text-center text-[11px] font-semibold uppercase tracking-[0.2em] text-white shadow-[0_10px_30px_rgba(0,0,0,0.35)] transition duration-300 hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0"
             style={{ backgroundColor: adicionado ? "#2f9e6e" : "#2f80c9" }}
           >
             {adicionado ? (

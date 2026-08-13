@@ -19,6 +19,9 @@ import { EstagioSelect } from "../../pipeline/EstagioSelect";
 import { ARQUIVO_ICONS } from "../ArquivoIcons";
 import { INTERACAO_ICONS } from "../InteracaoIcons";
 import { FunnelStepper } from "../FunnelStepper";
+import { FinanceiroSection } from "./FinanceiroSection";
+import { addPagamento, deletePagamento } from "../../../actions";
+import type { Pagamento } from "@/lib/crm/types";
 
 const display = Bodoni_Moda({
   subsets: ["latin"],
@@ -78,10 +81,18 @@ export default async function ClienteDetalhePage({
     .eq("cliente_id", id)
     .order("created_at", { ascending: true });
 
+  const { data: pagamentos } = await supabase
+    .from("pagamentos")
+    .select("*")
+    .eq("cliente_id", id)
+    .order("numero_parcela", { ascending: true });
+
   const updateClienteComId = updateCliente.bind(null, id);
   const addInteracaoComId = addInteracao.bind(null, id);
   const moveEstagioComId = moveEstagio.bind(null, id);
   const addArquivoComId = addArquivo.bind(null, id);
+  const addPagamentoComId = addPagamento.bind(null, id);
+  const deletePagamentoComId = deletePagamento.bind(null, id);
 
   return (
     <div>
@@ -116,6 +127,9 @@ export default async function ClienteDetalhePage({
       )}
       {sp.erro === "3" && (
         <p className="mt-4 text-sm text-red-600">Não foi possível adicionar o arquivo. Preencha rótulo e link.</p>
+      )}
+      {sp.erro === "4" && (
+        <p className="mt-4 text-sm text-red-600">Não foi possível registrar o pagamento. Preencha o valor.</p>
       )}
 
       <div className="mt-8 grid gap-6 lg:grid-cols-5">
@@ -227,6 +241,15 @@ export default async function ClienteDetalhePage({
             )}
           </div>
         </div>
+      </div>
+
+      <div className="mt-6">
+        <FinanceiroSection
+          clienteId={id}
+          pagamentos={(pagamentos ?? []) as Pagamento[]}
+          addAction={addPagamentoComId}
+          deleteAction={deletePagamentoComId}
+        />
       </div>
 
       <div className="mt-6 rounded-2xl border border-black/10 bg-[#57534E]/[0.05] p-6 md:p-8">

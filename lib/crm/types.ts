@@ -38,3 +38,31 @@ export type Perfil = {
   email: string | null;
   created_at: string;
 };
+
+export type Fornecedor = {
+  id: string;
+  nome: string;
+  categoria: string | null;
+  contato_nome: string | null;
+  email: string | null;
+  telefone: string | null;
+  cidade: string | null;
+  observacoes: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+export type Pagamento = {
+  id: string;
+  cliente_id: string;
+  tipo_pagamento: string | null;
+  numero_parcela: number;
+  total_parcelas: number;
+  valor: number;
+  status: string;
+  data_vencimento: string | null;
+  data_pagamento: string | null;
+  observacoes: string | null;
+  created_at: string;
+  updated_at: string;
+};

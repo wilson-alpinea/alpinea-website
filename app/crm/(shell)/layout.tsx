@@ -11,6 +11,7 @@ const display = Bodoni_Moda({
 const NAV = [
   { href: "/crm", label: "Dashboard" },
   { href: "/crm/clientes", label: "Clientes" },
+  { href: "/crm/fornecedores", label: "Fornecedores" },
   { href: "/crm/pipeline", label: "Pipeline" },
 ];
 

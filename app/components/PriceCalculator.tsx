@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { Bodoni_Moda } from "next/font/google";
 import { ContactCTA } from "./ContactCTA";
+import { useCambioUSD, brlParaUSDLabel } from "../hooks/useCambioUSD";
+import { CambioLabel } from "./CambioLabel";
 
 const display = Bodoni_Moda({
   subsets: ["latin"],
@@ -50,6 +52,7 @@ export function PriceCalculator({
 }: {
   triggerClassName?: string;
 }) {
+  const cambio = useCambioUSD();
   const [open, setOpen] = useState(false);
   const [days, setDays] = useState(BASE_DAYS);
 
@@ -155,8 +158,9 @@ export function PriceCalculator({
               <p
                 className={`${display.className} mt-2 text-5xl font-medium leading-none text-[#b79ce6] md:text-6xl`}
               >
-                R$ {price.toLocaleString("pt-BR")}
+                {brlParaUSDLabel(price, cambio)}
               </p>
+              <CambioLabel cambio={cambio} className="mt-2 text-[11px] text-white/30" />
               <p className="mt-3 text-xs text-white/30">
                 Estimativa para roteiro personalizado. Valor final pode variar
                 conforme complexidade e época da viagem.

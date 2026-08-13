@@ -3,6 +3,8 @@
 import Image from "next/image";
 import { useMemo, useState, type FormEvent } from "react";
 import { useCart } from "./CartContext";
+import { useCambioUSD, brlParaUSDLabel } from "../hooks/useCambioUSD";
+import { CambioLabel } from "./CambioLabel";
 
 function IconCheck({ className }: { className?: string }) {
   return (
@@ -37,10 +39,6 @@ function IconCart({ className }: { className?: string }) {
       <path d="M2.5 3h2.2l1.8 11a2 2 0 0 0 2 1.7h7.7a2 2 0 0 0 2-1.6l1.4-7.4H6.1" />
     </svg>
   );
-}
-
-function formatBRL(valor: number): string {
-  return `R$ ${Math.round(valor).toLocaleString("pt-BR")}`;
 }
 
 const CATEGORIAS_HOTEL = ["3 estrelas", "4 estrelas", "5 estrelas"] as const;
@@ -161,16 +159,31 @@ type OpcaoKey = (typeof OPCOES)[number]["key"];
 // demanda.
 const ITENS_PADRAO: OpcaoKey[] = ["aereo", "hotel", "transporte", "guia", "servicos"];
 
-// Fotos ainda faltando pra Okinawa e Hiroshima na biblioteca de imagens —
-// os cards seguem funcionais (fundo sólido com o nome da cidade) até você
-// subir as fotos reais dessas duas.
+// Os 20 destinos mais procurados do Japão pra turismo de lazer — mistura de
+// grandes cidades, cultura tradicional, natureza e praia/ilhas. Só Tokyo,
+// Osaka, Kyoto e Hakone têm foto na biblioteca de imagens por enquanto; os
+// demais seguem com fundo sólido (só o nome) até você subir fotos reais.
 const DESTINOS = [
   { key: "tokyo", nome: "Tokyo", imagem: "/images/tokyo.jpg" },
-  { key: "osaka", nome: "Osaka", imagem: "/images/osaka-castle.png" },
   { key: "kyoto", nome: "Kyoto", imagem: "/images/kyoto-maiko-street.png" },
+  { key: "osaka", nome: "Osaka", imagem: "/images/osaka-castle.png" },
+  { key: "hokkaido", nome: "Hokkaido (Sapporo)", imagem: null },
   { key: "okinawa", nome: "Okinawa", imagem: null },
   { key: "hiroshima", nome: "Hiroshima", imagem: null },
+  { key: "nara", nome: "Nara", imagem: null },
   { key: "hakone", nome: "Hakone", imagem: "/images/fuji.JPG" },
+  { key: "nikko", nome: "Nikko", imagem: null },
+  { key: "kanazawa", nome: "Kanazawa", imagem: null },
+  { key: "takayama", nome: "Takayama", imagem: null },
+  { key: "kamakura", nome: "Kamakura", imagem: null },
+  { key: "nagoya", nome: "Nagoya", imagem: null },
+  { key: "fukuoka", nome: "Fukuoka", imagem: null },
+  { key: "kobe", nome: "Kobe", imagem: null },
+  { key: "yokohama", nome: "Yokohama", imagem: null },
+  { key: "miyajima", nome: "Miyajima", imagem: null },
+  { key: "nagano", nome: "Nagano", imagem: null },
+  { key: "ishigaki", nome: "Ishigaki", imagem: null },
+  { key: "yakushima", nome: "Yakushima", imagem: null },
 ] as const;
 
 type DestinoKey = (typeof DESTINOS)[number]["key"];
@@ -180,6 +193,7 @@ const MAX_DIAS = 30;
 
 export function CustomPackageCard() {
   const { addItem } = useCart();
+  const cambio = useCambioUSD();
   const [data, setData] = useState("");
   const [dias, setDias] = useState(10);
   const [categoriaHotel, setCategoriaHotel] =
@@ -269,8 +283,13 @@ export function CustomPackageCard() {
           : { icone: o.icone, texto: o.label },
       ),
       detalhes: detalhesPacote.length > 0 ? detalhesPacote : undefined,
-      precoLabel: total > 0 ? formatBRL(total) : "Sob consulta",
-      precoSufixo: total > 0 ? "estimativa, sujeita a confirmação" : undefined,
+      precoLabel: total > 0 ? brlParaUSDLabel(total, cambio) : "Sob consulta",
+      precoSufixo:
+        total > 0
+          ? `estimativa, sujeita a confirmação — câmbio do dia${
+              cambio?.data ? ` (${cambio.data})` : ""
+            }: US$ 1 = R$ ${cambio ? cambio.cotacao.toFixed(2).replace(".", ",") : "—"}`
+          : undefined,
       imagem: "/images/personalizado-hero.png",
     });
 
@@ -472,8 +491,9 @@ export function CustomPackageCard() {
               Total estimado
             </p>
             <p className="mt-1 text-2xl font-semibold text-white">
-              {total > 0 ? formatBRL(total) : "Sob consulta"}
+              {total > 0 ? brlParaUSDLabel(total, cambio) : "Sob consulta"}
             </p>
+            {total > 0 && <CambioLabel cambio={cambio} className="mt-1 text-[11px] text-white/40" />}
             <p className="mt-1 text-[11px] leading-5 text-white/40">
               Valor calculado conforme os itens selecionados acima — a Ajisai
               confirma o preço final por consulta.
@@ -482,7 +502,8 @@ export function CustomPackageCard() {
 
           <button
             type="submit"
-            className="flex items-center justify-center gap-2 rounded-full px-5 py-3.5 text-center text-[11px] font-semibold uppercase tracking-[0.2em] text-white shadow-[0_10px_30px_rgba(0,0,0,0.35)] transition duration-300 hover:-translate-y-0.5 sm:px-8"
+            disabled={!cambio}
+            className="flex items-center justify-center gap-2 rounded-full px-5 py-3.5 text-center text-[11px] font-semibold uppercase tracking-[0.2em] text-white shadow-[0_10px_30px_rgba(0,0,0,0.35)] transition duration-300 hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0 sm:px-8"
             style={{ backgroundColor: adicionado ? "#2f9e6e" : "#2f80c9" }}
           >
             {adicionado ? (

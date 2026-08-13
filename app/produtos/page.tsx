@@ -5,6 +5,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { Bodoni_Moda } from "next/font/google";
 import { PriceCalculator } from "../components/PriceCalculator";
+import { useCambioUSD, brlParaUSDLabel } from "../hooks/useCambioUSD";
+import { CambioLabel } from "../components/CambioLabel";
 
 const display = Bodoni_Moda({
   subsets: ["latin"],
@@ -23,25 +25,25 @@ type ProdutoKey = "roteiro" | "caravana" | "individual" | "personalizado";
 
 // Usado no recomendador, na tela de qualificação e para montar a mensagem
 // final do WhatsApp — uma única fonte de verdade para nome/preço.
-const PRODUTOS: Record<ProdutoKey, { nome: string; precoLabel: string; href: string }> = {
+const PRODUTOS: Record<ProdutoKey, { nome: string; precoBRL: number | null; href: string }> = {
   roteiro: {
     nome: "Roteiro Personalizado",
-    precoLabel: "A partir de R$ 1.500",
+    precoBRL: 1500,
     href: "/ajisairoteiros",
   },
   caravana: {
     nome: "Caravana",
-    precoLabel: "A partir de R$ 38.000",
+    precoBRL: 38000,
     href: "/pacotes#pacotes",
   },
   individual: {
     nome: "Individual ou Pequenos Grupos",
-    precoLabel: "A partir de R$ 38.000",
+    precoBRL: 38000,
     href: "/pacotes#individuais",
   },
   personalizado: {
     nome: "Pacote Personalizado",
-    precoLabel: "Sob consulta",
+    precoBRL: null,
     href: "/pacotes#personalizado",
   },
 };
@@ -171,6 +173,9 @@ const LINHAS: { label: string; valores: Record<ProdutoKey, boolean | string> }[]
     },
   },
   {
+    // Valores aqui não são exibidos — a linha "A partir de" é renderizada
+    // com preço ao vivo em dólar (ver precoProdutoLabel no render da
+    // tabela), mantidos só como referência em reais pra leitura do código.
     label: "A partir de",
     valores: {
       roteiro: "R$ 1.500",
@@ -182,6 +187,14 @@ const LINHAS: { label: string; valores: Record<ProdutoKey, boolean | string> }[]
 ];
 
 export default function ProdutosPage() {
+  const cambio = useCambioUSD();
+
+  function precoProdutoLabel(produto: (typeof PRODUTOS)[ProdutoKey], comPrefixo: boolean) {
+    if (produto.precoBRL == null) return "Sob consulta";
+    const valor = brlParaUSDLabel(produto.precoBRL, cambio);
+    return comPrefixo ? `A partir de ${valor}` : valor;
+  }
+
   const [estagio, setEstagio] = useState<"perguntas" | "resultado" | "qualificacao">(
     "perguntas",
   );
@@ -320,7 +333,7 @@ export default function ProdutosPage() {
             href="#roteiro"
             className="group flex flex-col rounded-2xl border border-white/10 bg-white/[0.02] p-8 text-left shadow-[0_0_30px_-14px_rgba(37,99,235,0.3)] transition hover:border-white/25 hover:bg-white/[0.04] md:p-10"
           >
-            <p className="text-[10px] uppercase tracking-[0.2em] text-[#6ec3d9]">
+            <p className="text-base font-semibold uppercase tracking-[0.12em] text-[#6ec3d9] md:text-lg">
               Quero organizar minha viagem
             </p>
             <h2 className={`${display.className} mt-3 text-2xl font-medium text-white md:text-3xl`}>
@@ -338,7 +351,7 @@ export default function ProdutosPage() {
             href="#pacotes-ajisai"
             className="group flex flex-col rounded-2xl border border-white/10 bg-white/[0.02] p-8 text-left shadow-[0_0_30px_-14px_rgba(37,99,235,0.3)] transition hover:border-white/25 hover:bg-white/[0.04] md:p-10"
           >
-            <p className="text-[10px] uppercase tracking-[0.2em] text-[#6ec3d9]">
+            <p className="text-base font-semibold uppercase tracking-[0.12em] text-[#6ec3d9] md:text-lg">
               Quero que a Ajisai organize
             </p>
             <h2 className={`${display.className} mt-3 text-2xl font-medium text-white md:text-3xl`}>
@@ -384,7 +397,10 @@ export default function ProdutosPage() {
             <div className="mt-8 flex flex-wrap items-center gap-6">
               <div>
                 <p className="text-[10px] uppercase tracking-[0.2em] text-white/40">A partir de</p>
-                <p className={`${display.className} text-4xl font-medium text-white`}>R$ 1.500</p>
+                <p className={`${display.className} text-4xl font-medium text-white`}>
+                  {precoProdutoLabel(PRODUTOS.roteiro, false)}
+                </p>
+                <CambioLabel cambio={cambio} className="mt-1 text-[11px] text-white/40" />
               </div>
               <button
                 type="button"
@@ -473,7 +489,7 @@ export default function ProdutosPage() {
                   A partir de
                 </p>
                 <p className={`${display.className} mt-1 text-2xl font-medium text-white`}>
-                  {PRODUTOS[p.key].precoLabel.replace("A partir de ", "")}
+                  {precoProdutoLabel(PRODUTOS[p.key], false)}
                 </p>
 
                 <div className="mt-5">
@@ -526,7 +542,11 @@ export default function ProdutosPage() {
                       const valor = linha.valores[c.key];
                       return (
                         <td key={c.key} className="px-3 py-3.5 text-center">
-                          {typeof valor === "boolean" ? (
+                          {linha.label === "A partir de" ? (
+                            <span className="text-xs text-white/70">
+                              {precoProdutoLabel(PRODUTOS[c.key], false)}
+                            </span>
+                          ) : typeof valor === "boolean" ? (
                             valor ? (
                               <IconCheck className="mx-auto h-4 w-4 text-[#6ec3d9]" />
                             ) : (
@@ -543,6 +563,7 @@ export default function ProdutosPage() {
               </tbody>
             </table>
           </div>
+          <CambioLabel cambio={cambio} className="mt-3 text-center text-[11px] text-white/40" />
         </div>
       </section>
 
@@ -654,7 +675,7 @@ export default function ProdutosPage() {
                 {DESCRICOES_CURTAS[recResultado]}
               </p>
               <p className="mt-3 text-sm font-medium text-white/70">
-                {PRODUTOS[recResultado].precoLabel}
+                {precoProdutoLabel(PRODUTOS[recResultado], true)}
               </p>
               <div className="mt-7 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
                 <button
@@ -684,7 +705,9 @@ export default function ProdutosPage() {
                   <p className={`${display.className} mt-1.5 text-xl font-medium text-white`}>
                     {PRODUTOS[qualProduto].nome}
                   </p>
-                  <p className="mt-1 text-xs text-white/50">{PRODUTOS[qualProduto].precoLabel}</p>
+                  <p className="mt-1 text-xs text-white/50">
+                    {precoProdutoLabel(PRODUTOS[qualProduto], true)}
+                  </p>
                   <button
                     type="button"
                     onClick={trocarProduto}

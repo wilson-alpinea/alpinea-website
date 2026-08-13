@@ -40,6 +40,7 @@ const variantesPadrao = (
     datas: datas7,
     precoLabel: `R$ ${preco7.toLocaleString("pt-BR")}`,
     parcelaLabel: parcelaDe(preco7),
+    precoBRL: preco7,
   },
   {
     id: "15d",
@@ -47,6 +48,7 @@ const variantesPadrao = (
     datas: datas15,
     precoLabel: `R$ ${preco15.toLocaleString("pt-BR")}`,
     parcelaLabel: parcelaDe(preco15),
+    precoBRL: preco15,
   },
 ];
 

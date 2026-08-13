@@ -5,6 +5,7 @@ import { createPortal } from "react-dom";
 import Image from "next/image";
 import { Bodoni_Moda } from "next/font/google";
 import { useCart } from "./CartContext";
+import { formatUSD } from "../hooks/useCambioUSD";
 
 const display = Bodoni_Moda({
   subsets: ["latin"],
@@ -20,16 +21,14 @@ declare global {
 const WHATSAPP_NUMBER = "5511930300101";
 const BRAND = "Ajisai";
 
-// "R$ 34.490" -> 34490. Retorna null para preços não numéricos (ex: "Sob
-// consulta"), para não entrarem na soma do total estimado.
+// "US$ 1.500" -> 1500. Retorna null para preços não numéricos (ex: "Sob
+// consulta"), para não entrarem na soma do total estimado. Os itens do
+// carrinho já chegam com precoLabel em dólar (ver PrecoPacote/CustomPackageCard),
+// então a soma aqui é sempre em dólar.
 function parsePrecoNumero(label: string): number | null {
   const digits = label.replace(/[^\d]/g, "");
   if (!digits) return null;
   return Number(digits);
-}
-
-function formatBRL(valor: number): string {
-  return `R$ ${Math.round(valor).toLocaleString("pt-BR")}`;
 }
 
 function ResumoLinha({ label, valor }: { label: string; valor: string }) {
@@ -373,7 +372,7 @@ export function CartWidget({ triggerClassName }: { triggerClassName?: string }) 
                         <p
                           className={`${display.className} mt-1 text-3xl font-medium text-white`}
                         >
-                          {formatBRL(totalNumerico)}
+                          {formatUSD(totalNumerico)}
                           {temSobConsulta && " +"}
                         </p>
                         {acomodacoesUnicas.length === 1 && (
@@ -382,7 +381,7 @@ export function CartWidget({ triggerClassName }: { triggerClassName?: string }) 
                           </p>
                         )}
                         <p className="mt-0.5 text-xs text-white/50">
-                          ou em até 12x de {formatBRL(totalNumerico / 12)} + juros
+                          ou em até 12x de {formatUSD(totalNumerico / 12)} + juros
                         </p>
                         {temSobConsulta && (
                           <p className="mt-1.5 text-[11px] text-white/35">
