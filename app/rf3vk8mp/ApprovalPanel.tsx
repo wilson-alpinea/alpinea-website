@@ -1566,6 +1566,15 @@ function IconSuitcase({ className }: { className?: string }) {
   );
 }
 
+function IconMapPin({ className }: { className?: string }) {
+  return (
+    <svg {...iconProps(className)}>
+      <path d="M12 21s7-6.5 7-12a7 7 0 0 0-14 0c0 5.5 7 12 7 12z" />
+      <circle cx="12" cy="9" r="2.3" />
+    </svg>
+  );
+}
+
 type HotelAmenity = {
   label: string;
   Icon: (props: { className?: string }) => ReactElement;
@@ -1575,6 +1584,17 @@ type HotelNearby = {
   label: string;
   nome: string;
   detalhe?: string;
+  Icon: (props: { className?: string }) => ReactElement;
+};
+
+// Ponto num mapa esquemático (não geográfico/à escala) posicionado em
+// porcentagem (0-100) dentro do quadro — só pra dar noção rápida de direção
+// e distância a pé em relação ao hotel.
+type MapaPonto = {
+  x: number;
+  y: number;
+  label: string;
+  detalhe: string;
   Icon: (props: { className?: string }) => ReactElement;
 };
 
@@ -1588,6 +1608,12 @@ type HotelInfo = {
   checkout: string;
   estrutura: HotelAmenity[];
   essenciais: HotelNearby[];
+  mapa?: {
+    hotelX: number;
+    hotelY: number;
+    pontos: MapaPonto[];
+    nota?: string;
+  };
 };
 
 // Hotéis já reservados e confirmados — o roteiro não é mais um comparativo de
@@ -1643,6 +1669,48 @@ const HOTEIS: HotelInfo[] = [
         Icon: IconMetro,
       },
     ],
+    mapa: {
+      hotelX: 46,
+      hotelY: 62,
+      nota: "Mapa esquemático — direções e tempos de caminhada aproximados.",
+      pontos: [
+        {
+          x: 28,
+          y: 18,
+          label: "Estação Kyobashi / Takaracho",
+          detalhe: "~3 min a pé",
+          Icon: IconMetro,
+        },
+        {
+          x: 50,
+          y: 10,
+          label: "Kyobashi Edogrand (7-Eleven, Lawson)",
+          detalhe: "~3 min a pé",
+          Icon: IconStore,
+        },
+        {
+          x: 70,
+          y: 18,
+          label: "Matsumoto Kiyoshi (farmácia)",
+          detalhe: "~3 min a pé",
+          Icon: IconCross,
+        },
+        {
+          x: 46,
+          y: 30,
+          label: "Kameda Kyobashi Clinic",
+          detalhe: "~4 min a pé",
+          Icon: IconCross,
+        },
+        {
+          x: 84,
+          y: 88,
+          label: "St. Luke's International Hospital",
+          detalhe: "Pronto-socorro 24h · ~15 min a pé ou táxi curto",
+          Icon: IconCross,
+        },
+      ],
+    },
   },
   {
     cidade: "Kyoto",
@@ -1816,6 +1884,102 @@ function HotelGuestGuide({ hotel }: { hotel: HotelInfo }) {
           </div>
         </div>
       </div>
+
+      {hotel.mapa && (
+        <div className="border-t border-[#DDD8CF] bg-[#FDFCF9] p-5 sm:p-6">
+          <p className="mb-4 text-xs font-bold uppercase tracking-[0.2em] text-[#24211D]/45">
+            Mapa dos Arredores
+          </p>
+          <HotelNeighborhoodMap
+            hotelLabel={hotel.nome}
+            hotelX={hotel.mapa.hotelX}
+            hotelY={hotel.mapa.hotelY}
+            pontos={hotel.mapa.pontos}
+          />
+          {hotel.mapa.nota && (
+            <p className="mt-3 text-center text-[10px] leading-4 text-[#24211D]/40">
+              {hotel.mapa.nota}
+            </p>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function HotelNeighborhoodMap({
+  hotelLabel,
+  hotelX,
+  hotelY,
+  pontos,
+}: {
+  hotelLabel: string;
+  hotelX: number;
+  hotelY: number;
+  pontos: MapaPonto[];
+}) {
+  return (
+    <div className="relative h-[340px] w-full overflow-hidden rounded-2xl border border-[#DDD8CF] bg-[#F5F3EF] sm:h-[380px]">
+      <svg
+        className="absolute inset-0 h-full w-full"
+        viewBox="0 0 100 100"
+        preserveAspectRatio="none"
+        aria-hidden
+      >
+        {pontos.map((p, i) => (
+          <line
+            key={i}
+            x1={hotelX}
+            y1={hotelY}
+            x2={p.x}
+            y2={p.y}
+            stroke="#DDD8CF"
+            strokeWidth={0.6}
+            strokeDasharray="2 2"
+            vectorEffect="non-scaling-stroke"
+          />
+        ))}
+      </svg>
+
+      <div
+        className="absolute flex flex-col items-center"
+        style={{
+          left: `${hotelX}%`,
+          top: `${hotelY}%`,
+          transform: "translate(-50%, -50%)",
+        }}
+      >
+        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border-2 border-[#F5F3EF] bg-[#173B45] text-white shadow-[0_4px_14px_rgba(23,59,69,0.4)]">
+          <IconMapPin className="h-5 w-5" />
+        </span>
+        <span className="mt-1.5 whitespace-nowrap rounded-full bg-[#173B45] px-2.5 py-1 text-[9px] font-bold uppercase tracking-wide text-white shadow-sm">
+          {hotelLabel}
+        </span>
+      </div>
+
+      {pontos.map((p, i) => (
+        <div
+          key={i}
+          className="absolute flex flex-col items-center"
+          style={{
+            left: `${p.x}%`,
+            top: `${p.y}%`,
+            transform: "translate(-50%, -50%)",
+          }}
+        >
+          <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border-2 border-[#F5F3EF] bg-[#B96432] text-white shadow-[0_3px_10px_rgba(185,100,50,0.35)]">
+            <p.Icon className="h-3.5 w-3.5" />
+          </span>
+          <div className="mt-1.5 w-[104px] rounded-lg border border-[#DDD8CF] bg-[#FDFCF9] px-2 py-1 text-center shadow-sm">
+            <p className="text-[9px] font-bold leading-tight text-[#24211D]">
+              {p.label}
+            </p>
+            <p className="mt-0.5 text-[8px] leading-tight text-[#24211D]/50">
+              {p.detalhe}
+            </p>
+          </div>
+        </div>
+      ))}
     </div>
   );
 }
