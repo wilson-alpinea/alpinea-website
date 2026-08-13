@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState, type TouchEvent } from "react";
+import Image from "next/image";
 
 // Painel de aprovação de rascunho — mesma lógica visual do Painel Interativo
 // usado em /ajisairoteiros (pílulas, abas de dia, tipografia Bodoni Moda),
@@ -2202,14 +2203,14 @@ export function ApprovalPanel({
         />
 
         <div className="relative z-10 overflow-hidden rounded-2xl border border-black/10 bg-white shadow-[0_20px_60px_-30px_rgba(0,0,0,0.25)] sm:rounded-[2rem]">
-        <div className="rounded-t-2xl border-b border-black/10 bg-black px-6 py-7 text-center sm:rounded-t-[2rem] sm:px-10">
-          <p className="mx-auto mb-5 inline-block rounded-full border border-white/20 px-5 py-2 text-xs uppercase tracking-[0.3em] text-white/70">
+        <div className="border-b border-black/10 px-6 py-7 text-center sm:px-10">
+          <p className="mx-auto mb-5 inline-block rounded-full border border-black/15 px-5 py-2 text-xs uppercase tracking-[0.3em] text-black/65">
             Roteiro de 7 dias
           </p>
-          <h2 className={`${displayClassName} text-2xl font-medium text-white md:text-3xl`}>
+          <h2 className={`${displayClassName} text-2xl font-medium text-black md:text-3xl`}>
             Painel Interativo
           </h2>
-          <p className="mx-auto mt-3 max-w-lg text-sm leading-6 text-white/50">
+          <p className="mx-auto mt-3 max-w-lg text-sm leading-6 text-black/50">
             Selecione o conteúdo desejado abaixo
           </p>
         </div>
@@ -2232,7 +2233,7 @@ export function ApprovalPanel({
                 className="flex flex-col items-center gap-2.5"
               >
                 <span
-                  className={`flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-full border-2 font-bold transition-all duration-300 ${
+                  className={`relative flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-full border-2 font-bold transition-all duration-300 ${
                     d.badge
                       ? "border-black bg-black text-[9px] tracking-tight text-white"
                       : active
@@ -2243,10 +2244,13 @@ export function ApprovalPanel({
                   {d.badge ? (
                     d.badge
                   ) : (
-                    <img
+                    <Image
                       src={`/images/dragonball-${d.day}-star.png`}
                       alt={`Dia ${d.day}`}
-                      className="h-full w-full object-cover"
+                      fill
+                      sizes="56px"
+                      quality={90}
+                      className="object-cover"
                     />
                   )}
                 </span>
