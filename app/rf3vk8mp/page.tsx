@@ -145,7 +145,7 @@ function RadarChart({ dimensions }: { dimensions: RadarDimension[] }) {
             Array.from({ length: n }, (_, i) => point(level * radius, i)),
           )}
           fill="none"
-          stroke="#000"
+          stroke="#24211D"
           strokeOpacity={0.08}
           strokeWidth={1}
         />
@@ -160,7 +160,7 @@ function RadarChart({ dimensions }: { dimensions: RadarDimension[] }) {
             y1={cy}
             x2={p.x}
             y2={p.y}
-            stroke="#000"
+            stroke="#24211D"
             strokeOpacity={0.08}
             strokeWidth={1}
           />
@@ -169,13 +169,13 @@ function RadarChart({ dimensions }: { dimensions: RadarDimension[] }) {
 
       <polygon
         points={toPolygon(dataPoints)}
-        fill="#2f5aa8"
+        fill="#173B45"
         fillOpacity={0.16}
-        stroke="#2f5aa8"
+        stroke="#173B45"
         strokeWidth={2}
       />
       {dataPoints.map((p, i) => (
-        <circle key={i} cx={p.x} cy={p.y} r={3.5} fill="#2f5aa8" />
+        <circle key={i} cx={p.x} cy={p.y} r={3.5} fill="#173B45" />
       ))}
 
       {dimensions.map((d, i) => {
@@ -189,7 +189,7 @@ function RadarChart({ dimensions }: { dimensions: RadarDimension[] }) {
             x={p.x}
             y={startY}
             textAnchor={anchor}
-            className="fill-black/50 uppercase"
+            className="fill-[#24211D]/50 uppercase"
             fontSize={9.5}
             fontWeight={700}
             style={{ letterSpacing: "0.03em" }}
@@ -222,8 +222,8 @@ export const metadata: Metadata = {
 
 export default function AprovacaoRoteiroPage() {
   return (
-    <main className="min-h-screen overflow-x-hidden bg-white">
-      <header className="fixed left-0 right-0 top-0 z-50 flex items-center justify-between border-b border-black/10 bg-white/60 px-6 py-5 shadow-[0_1px_24px_rgba(0,0,0,0.05)] backdrop-blur-xl md:px-16">
+    <main className="min-h-screen overflow-x-hidden bg-[#F5F3EF]">
+      <header className="fixed left-0 right-0 top-0 z-50 flex items-center justify-between border-b border-[#DDD8CF] bg-[#F5F3EF]/70 px-6 py-5 shadow-[0_1px_24px_rgba(0,0,0,0.05)] backdrop-blur-xl md:px-16">
         <img
           src="/images/logo-alpinea-v6.png"
           alt="Alpinea — Empresa do Grupo Ajisai"
@@ -233,37 +233,37 @@ export default function AprovacaoRoteiroPage() {
 
       <section className="px-5 pb-4 pt-36 md:px-16 md:pt-40">
         <div className="mx-auto max-w-4xl">
-          <div className="rounded-2xl border border-black/10 bg-white p-6 shadow-[0_20px_60px_-30px_rgba(0,0,0,0.25)] sm:rounded-[2rem] sm:p-8">
+          <div className="rounded-2xl border border-[#DDD8CF] bg-[#FDFCF9] p-6 shadow-[0_20px_60px_-30px_rgba(0,0,0,0.25)] sm:rounded-[2rem] sm:p-8">
             <div className="mx-auto mb-5 flex w-fit flex-col items-center gap-2.5">
-              <p className="rounded-full border border-black/15 px-5 py-2 text-center text-xs uppercase tracking-[0.3em] text-black/65">
+              <p className="rounded-full border border-[#DDD8CF] px-5 py-2 text-center text-xs uppercase tracking-[0.3em] text-[#24211D]/65">
                 Dados do Cliente
               </p>
-              <p className="rounded-full border border-[#2f5aa8]/25 bg-[#2f5aa8]/[0.06] px-4 py-2 text-center text-xs uppercase tracking-[0.2em] text-[#2f5aa8]">
+              <p className="rounded-full border border-[#173B45]/25 bg-[#173B45]/[0.06] px-4 py-2 text-center text-xs uppercase tracking-[0.2em] text-[#173B45]">
                 ID 52130383
               </p>
             </div>
-            <div className="grid grid-cols-1 gap-5 border-b border-black/10 pb-6 sm:grid-cols-3">
+            <div className="grid grid-cols-1 gap-5 border-b border-[#DDD8CF] pb-6 sm:grid-cols-3">
               <div>
-                <p className="text-[11px] uppercase tracking-[0.2em] text-black/40">
+                <p className="text-[11px] uppercase tracking-[0.2em] text-[#24211D]/40">
                   Data da Contratação
                 </p>
-                <p className="mt-1 text-sm font-semibold text-black">
+                <p className="mt-1 text-sm font-semibold text-[#24211D]">
                   28 de Julho de 2026
                 </p>
               </div>
               <div>
-                <p className="text-[11px] uppercase tracking-[0.2em] text-black/40">
+                <p className="text-[11px] uppercase tracking-[0.2em] text-[#24211D]/40">
                   Cliente
                 </p>
-                <p className="mt-1 text-sm font-semibold text-black">
+                <p className="mt-1 text-sm font-semibold text-[#24211D]">
                   Rafael Serafim Sousa
                 </p>
               </div>
               <div>
-                <p className="text-[11px] uppercase tracking-[0.2em] text-black/40">
+                <p className="text-[11px] uppercase tracking-[0.2em] text-[#24211D]/40">
                   Duração
                 </p>
-                <p className="mt-1 text-sm font-semibold text-black">
+                <p className="mt-1 text-sm font-semibold text-[#24211D]">
                   7 Dias
                 </p>
               </div>
@@ -276,48 +276,48 @@ export default function AprovacaoRoteiroPage() {
                 className="h-24 w-auto rounded-md object-contain sm:h-28"
               />
               <div>
-                <p className="text-[11px] uppercase tracking-[0.2em] text-black/40">
+                <p className="text-[11px] uppercase tracking-[0.2em] text-[#24211D]/40">
                   Companhia Aérea
                 </p>
-                <p className="text-sm font-semibold text-black">Emirates</p>
+                <p className="text-sm font-semibold text-[#24211D]">Emirates</p>
               </div>
             </div>
 
             <div className="mt-5">
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                <div className="rounded-xl border border-black/10 bg-white p-4">
-                  <p className="mb-2 text-[11px] font-bold uppercase tracking-[0.2em] text-black/40">
+                <div className="rounded-xl border border-[#DDD8CF] bg-[#FDFCF9] p-4">
+                  <p className="mb-2 text-[11px] font-bold uppercase tracking-[0.2em] text-[#24211D]/40">
                     Ida · 03–04 Mai 2027
                   </p>
-                  <div className="space-y-1.5 text-sm text-black/70">
+                  <div className="space-y-1.5 text-sm text-[#24211D]/70">
                     <p>
-                      <span className="font-semibold text-black">EK262</span>{" "}
+                      <span className="font-semibold text-[#24211D]">EK262</span>{" "}
                       · GRU → DXB · 01:35 → 23:00
                     </p>
                     <p>
-                      <span className="font-semibold text-black">EK318</span>{" "}
+                      <span className="font-semibold text-[#24211D]">EK318</span>{" "}
                       · DXB → NRT · 23:40 → 17:35
                     </p>
                   </div>
-                  <p className="mt-2 text-xs text-black/40">
+                  <p className="mt-2 text-xs text-[#24211D]/40">
                     Chegada em Tokyo pelo Aeroporto de Narita (NRT), Terminal 2
                   </p>
                 </div>
-                <div className="rounded-xl border border-black/10 bg-white p-4">
-                  <p className="mb-2 text-[11px] font-bold uppercase tracking-[0.2em] text-black/40">
+                <div className="rounded-xl border border-[#DDD8CF] bg-[#FDFCF9] p-4">
+                  <p className="mb-2 text-[11px] font-bold uppercase tracking-[0.2em] text-[#24211D]/40">
                     Volta · 12 Mai 2027
                   </p>
-                  <div className="space-y-1.5 text-sm text-black/70">
+                  <div className="space-y-1.5 text-sm text-[#24211D]/70">
                     <p>
-                      <span className="font-semibold text-black">EK313</span>{" "}
+                      <span className="font-semibold text-[#24211D]">EK313</span>{" "}
                       · HND → DXB · 00:05 → 06:25
                     </p>
                     <p>
-                      <span className="font-semibold text-black">EK261</span>{" "}
+                      <span className="font-semibold text-[#24211D]">EK261</span>{" "}
                       · DXB → GRU · 06:05 → 17:40
                     </p>
                   </div>
-                  <p className="mt-2 text-xs text-black/40">
+                  <p className="mt-2 text-xs text-[#24211D]/40">
                     Saída de Tokyo pelo Aeroporto de Haneda (HND), Terminal 3
                   </p>
                 </div>
@@ -325,7 +325,7 @@ export default function AprovacaoRoteiroPage() {
             </div>
 
             <div className="mt-8">
-              <p className="mx-auto mb-1 block w-fit rounded-full border border-black/15 px-5 py-2 text-center text-xs uppercase tracking-[0.3em] text-black/65">
+              <p className="mx-auto mb-1 block w-fit rounded-full border border-[#DDD8CF] px-5 py-2 text-center text-xs uppercase tracking-[0.3em] text-[#24211D]/65">
                 Perfil do Viajante
               </p>
               <RadarChart dimensions={RADAR_DIMENSIONS} />
@@ -336,14 +336,14 @@ export default function AprovacaoRoteiroPage() {
                     <div key={i} className="flex items-center gap-2.5">
                       <DimensionIcon
                         kind={d.icon}
-                        className="h-4 w-4 shrink-0 text-[#2f5aa8]"
+                        className="h-4 w-4 shrink-0 text-[#173B45]"
                       />
-                      <p className="text-xs text-black/70">
+                      <p className="text-xs text-[#24211D]/70">
                         {d.lines.join(" ")}
                       </p>
-                      <span className="ml-auto shrink-0 text-xs tracking-tight text-[#2f5aa8]">
+                      <span className="ml-auto shrink-0 text-xs tracking-tight text-[#173B45]">
                         {"★".repeat(stars)}
-                        <span className="text-[#2f5aa8]/25">
+                        <span className="text-[#173B45]/25">
                           {"★".repeat(5 - stars)}
                         </span>
                       </span>
@@ -362,7 +362,7 @@ export default function AprovacaoRoteiroPage() {
         </div>
       </section>
 
-      <footer className="border-t border-black/10 px-6 py-8 text-center text-xs text-black/40 md:px-16">
+      <footer className="border-t border-[#DDD8CF] px-6 py-8 text-center text-xs text-[#24211D]/40 md:px-16">
         <p>
           © {new Date().getFullYear()} AjisaiWork Japan Agência de Viagens
           LTDA — CNPJ 43.544.605/0001-56

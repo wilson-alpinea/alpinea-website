@@ -867,24 +867,24 @@ const DAYS: DayContent[] = [
 // dedicado em vez de dividir a tarde com Sumida.
 const BAIRRO_STYLES = {
   Sumida: {
-    border: "border-[#2f5aa8]",
-    bg: "bg-[#eef3fb]",
-    circle: "bg-[#2f5aa8]",
-    text: "text-[#2f5aa8]",
-    muted: "text-[#2f5aa8]/70",
-    starMuted: "text-[#2f5aa8]/25",
-    badge: "border-[#2f5aa8]/30 bg-[#2f5aa8]/10 text-[#2f5aa8]",
-    chip: "border-[#2f5aa8]/25 bg-white text-[#2f5aa8]",
+    border: "border-[#173B45]",
+    bg: "bg-[#F8FAF9]",
+    circle: "bg-[#173B45]",
+    text: "text-[#173B45]",
+    muted: "text-[#173B45]/70",
+    starMuted: "text-[#173B45]/25",
+    badge: "border-[#173B45]/30 bg-[#173B45]/10 text-[#173B45]",
+    chip: "border-[#173B45]/25 bg-[#FDFCF9] text-[#173B45]",
   },
   Ryogoku: {
-    border: "border-[#7c4fd1]",
-    bg: "bg-[#f3eefc]",
-    circle: "bg-[#7c4fd1]",
-    text: "text-[#7c4fd1]",
-    muted: "text-[#7c4fd1]/70",
-    starMuted: "text-[#7c4fd1]/25",
-    badge: "border-[#7c4fd1]/30 bg-[#7c4fd1]/10 text-[#7c4fd1]",
-    chip: "border-[#7c4fd1]/25 bg-white text-[#7c4fd1]",
+    border: "border-[#B96432]",
+    bg: "bg-[#F5E9DF]",
+    circle: "bg-[#B96432]",
+    text: "text-[#B96432]",
+    muted: "text-[#B96432]/70",
+    starMuted: "text-[#B96432]/25",
+    badge: "border-[#B96432]/30 bg-[#B96432]/10 text-[#B96432]",
+    chip: "border-[#B96432]/25 bg-[#FDFCF9] text-[#B96432]",
   },
 } as const;
 
@@ -916,7 +916,7 @@ function PoiCard({ index, poi }: { index: number; poi: Poi }) {
             </span>
           )}
           {poi.category && (
-            <span className="rounded-full border border-[#caa62c] bg-[#fdf0c8] px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-[#8a6d1a]">
+            <span className="rounded-full border border-[#B69463] bg-[#F7F2E9] px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-[#7B6038]">
               {poi.category}
             </span>
           )}
@@ -951,13 +951,13 @@ function PoiCard({ index, poi }: { index: number; poi: Poi }) {
 
 function ContextoBlock({ contexto }: { contexto: string[] }) {
   return (
-    <div className="mb-10 rounded-2xl border border-black/10 bg-black/[0.02] p-5 sm:p-6">
-      <p className="mb-3 text-xs font-bold uppercase tracking-[0.25em] text-black/45">
+    <div className="mb-10 rounded-2xl border border-[#DDD8CF] bg-[#FAF9F6] p-5 sm:p-6">
+      <p className="mb-3 text-xs font-bold uppercase tracking-[0.25em] text-[#24211D]/45">
         Contexto
       </p>
       <div className="space-y-3">
         {contexto.map((paragrafo, index) => (
-          <p key={index} className="text-sm leading-6 text-black/65">
+          <p key={index} className="text-sm leading-6 text-[#24211D]/65">
             {paragrafo}
           </p>
         ))}
@@ -968,26 +968,26 @@ function ContextoBlock({ contexto }: { contexto: string[] }) {
 
 function GastronomiaBlock({ gastronomia }: { gastronomia: Gastronomia }) {
   return (
-    <div className="mt-6 rounded-2xl border border-black/10 bg-black/[0.02] p-4">
-      <p className="text-xs font-bold uppercase tracking-[0.2em] text-black/45">
+    <div className="mt-6 rounded-2xl border border-[#DDD8CF] bg-[#FAF9F6] p-4">
+      <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#24211D]/45">
         Gastronomia
         {gastronomia.subtitulo && (
-          <span className="ml-2 font-normal normal-case tracking-normal text-black/40">
+          <span className="ml-2 font-normal normal-case tracking-normal text-[#24211D]/40">
             ({gastronomia.subtitulo})
           </span>
         )}
       </p>
       <ul className="mt-3 space-y-1.5">
         {gastronomia.itens.map((item) => (
-          <li key={item.nome} className="text-sm leading-6 text-black/65">
-            <span className="font-semibold text-black/80">{item.nome}</span>
+          <li key={item.nome} className="text-sm leading-6 text-[#24211D]/65">
+            <span className="font-semibold text-[#24211D]/80">{item.nome}</span>
             {item.descricao && (
-              <span className="text-black/55"> — {item.descricao}</span>
+              <span className="text-[#24211D]/55"> — {item.descricao}</span>
             )}
           </li>
         ))}
       </ul>
-      <p className="mt-3 border-t border-black/10 pt-3 text-xs leading-5 text-black/45">
+      <p className="mt-3 border-t border-[#DDD8CF] pt-3 text-xs leading-5 text-[#24211D]/45">
         Mapeamento de opções de restaurantes nos arredores da atração
         principal
       </p>
@@ -1001,18 +1001,18 @@ function ComprasExclusivasBlock({
   compras: ComprasExclusivas;
 }) {
   return (
-    <div className="mt-6 rounded-2xl border border-black/10 bg-black/[0.02] p-4">
-      <p className="text-xs font-bold uppercase tracking-[0.2em] text-black/45">
+    <div className="mt-6 rounded-2xl border border-[#DDD8CF] bg-[#FAF9F6] p-4">
+      <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#24211D]/45">
         Compras Exclusivas
       </p>
-      <p className="mt-2 text-sm leading-6 text-black/60">
+      <p className="mt-2 text-sm leading-6 text-[#24211D]/60">
         {compras.descricao}
       </p>
       <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
         {compras.itens.map((item) => (
           <div
             key={item.nome}
-            className="overflow-hidden rounded-xl border border-black/10 bg-white"
+            className="overflow-hidden rounded-xl border border-[#DDD8CF] bg-[#FDFCF9]"
           >
             {item.imagem ? (
               <img
@@ -1021,11 +1021,11 @@ function ComprasExclusivasBlock({
                 className="aspect-square w-full object-cover"
               />
             ) : (
-              <div className="flex aspect-square w-full items-center justify-center bg-black/[0.03] text-[10px] uppercase tracking-wide text-black/30">
+              <div className="flex aspect-square w-full items-center justify-center bg-[#FAF9F6] text-[10px] uppercase tracking-wide text-[#24211D]/30">
                 Sem imagem
               </div>
             )}
-            <p className="p-2 text-center text-xs font-medium leading-4 text-black/70">
+            <p className="p-2 text-center text-xs font-medium leading-4 text-[#24211D]/70">
               {item.nome}
             </p>
           </div>
@@ -1050,9 +1050,9 @@ function TransporteBlock({
           Sugestão de Transporte
         </p>
       </div>
-      <p className="text-lg font-semibold text-black">{transporte.linha}</p>
-      <p className="mt-1 text-sm text-black/60">{transporte.tempo}</p>
-      <p className="mt-3 text-sm leading-6 text-black/70">
+      <p className="text-lg font-semibold text-[#24211D]">{transporte.linha}</p>
+      <p className="mt-1 text-sm text-[#24211D]/60">{transporte.tempo}</p>
+      <p className="mt-3 text-sm leading-6 text-[#24211D]/70">
         {transporte.recomendacao}
       </p>
     </div>
@@ -1089,8 +1089,8 @@ function AlertaBlock({ alerta }: { alerta: AlertaSugerido }) {
           {alerta.titulo}
         </p>
       </div>
-      <p className="text-lg font-semibold text-black">{alerta.horario}</p>
-      <p className="mt-3 text-sm leading-6 text-black/70">
+      <p className="text-lg font-semibold text-[#24211D]">{alerta.horario}</p>
+      <p className="mt-3 text-sm leading-6 text-[#24211D]/70">
         {alerta.mensagem}
       </p>
     </div>
@@ -1109,30 +1109,30 @@ function PeriodBlock({
   return (
     <div>
       <div className="mb-4 flex items-center gap-2.5">
-        <span className="h-2 w-2 rounded-full bg-gradient-to-r from-[#E94332] via-[#D96A2E] to-[#C9A03A]" />
-        <span className="text-xs font-bold uppercase tracking-[0.25em] text-black/40">
+        <span className="h-2 w-2 rounded-full bg-[#B96432]" />
+        <span className="text-xs font-bold uppercase tracking-[0.25em] text-[#24211D]/40">
           {period.label ?? label}
         </span>
       </div>
 
       {period.regiao && (
         <div className="mb-5">
-          <p className="text-xs font-bold uppercase tracking-[0.15em] text-black/45">
+          <p className="text-xs font-bold uppercase tracking-[0.15em] text-[#24211D]/45">
             Região: {period.regiao.nome}
           </p>
-          <p className="mt-1.5 text-sm leading-6 text-black/60">
+          <p className="mt-1.5 text-sm leading-6 text-[#24211D]/60">
             {period.regiao.descricao}
           </p>
         </div>
       )}
 
-      <p className="mb-2 text-xs text-black/40">Atração Principal</p>
+      <p className="mb-2 text-xs text-[#24211D]/40">Atração Principal</p>
       <div
         className={`relative mb-5 overflow-hidden rounded-2xl ${
           period.atracaoPrincipalCompacta
             ? "mx-auto aspect-[3/4] max-w-[280px]"
             : "aspect-[4/3] sm:aspect-[16/10]"
-        } ${period.atracaoPrincipalImagem ? "" : "border-2 border-[#2f5aa8]"}`}
+        } ${period.atracaoPrincipalImagem ? "" : "border-2 border-[#173B45]"}`}
       >
         {period.atracaoPrincipalImagem ? (
           <>
@@ -1159,9 +1159,9 @@ function PeriodBlock({
             </h3>
           </>
         ) : (
-          <div className="flex h-full items-center justify-center bg-[#eef3fb] px-5">
+          <div className="flex h-full items-center justify-center bg-[#F8FAF9] px-5">
             <h3
-              className={`${displayClassName} text-2xl font-medium text-[#2f5aa8] md:text-3xl`}
+              className={`${displayClassName} text-2xl font-medium text-[#173B45] md:text-3xl`}
             >
               {period.atracaoPrincipal}
             </h3>
@@ -1171,7 +1171,7 @@ function PeriodBlock({
 
       {period.pois.length > 0 && (
         <>
-          <p className="mb-5 text-xs text-black/40">
+          <p className="mb-5 text-xs text-[#24211D]/40">
             Pontos de interesse propostos para o período
           </p>
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
@@ -1204,14 +1204,14 @@ function PeriodBlock({
 
 function GradeHorariosBlock({ grade }: { grade: GradeHorarios }) {
   return (
-    <div className="mb-6 rounded-2xl border border-black/10 bg-black/[0.02] p-4">
+    <div className="mb-6 rounded-2xl border border-[#DDD8CF] bg-[#FAF9F6] p-4">
       <div className="flex items-center gap-2">
-        <IconClock className="h-3.5 w-3.5 text-black/45" />
-        <p className="text-xs font-bold uppercase tracking-[0.2em] text-black/45">
+        <IconClock className="h-3.5 w-3.5 text-[#24211D]/45" />
+        <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#24211D]/45">
           {grade.titulo ?? "Grade de Horários"}
         </p>
       </div>
-      <div className="mt-3 divide-y divide-black/10 overflow-hidden rounded-xl border border-black/10 bg-white">
+      <div className="mt-3 divide-y divide-[#DDD8CF] overflow-hidden rounded-xl border border-[#DDD8CF] bg-[#FDFCF9]">
         {grade.itens.map((item) => (
           <div
             key={item.evento}
@@ -1220,7 +1220,7 @@ function GradeHorariosBlock({ grade }: { grade: GradeHorarios }) {
             <div className="flex items-center gap-4">
               <span
                 className={`w-16 shrink-0 text-sm font-semibold ${
-                  item.recomendado ? "text-amber-800" : "text-black/70"
+                  item.recomendado ? "text-amber-800" : "text-[#24211D]/70"
                 }`}
               >
                 {item.horario}
@@ -1228,7 +1228,7 @@ function GradeHorariosBlock({ grade }: { grade: GradeHorarios }) {
               <span
                 className={`text-sm leading-5 ${
                   item.destaque ? "font-semibold" : ""
-                } ${item.recomendado ? "text-amber-800" : "text-black/60"}`}
+                } ${item.recomendado ? "text-amber-800" : "text-[#24211D]/60"}`}
               >
                 {item.evento}
               </span>
@@ -1242,7 +1242,7 @@ function GradeHorariosBlock({ grade }: { grade: GradeHorarios }) {
         ))}
       </div>
       {grade.nota && (
-        <p className="mt-3 border-t border-black/10 pt-3 text-xs leading-5 text-black/45">
+        <p className="mt-3 border-t border-[#DDD8CF] pt-3 text-xs leading-5 text-[#24211D]/45">
           {grade.nota}
         </p>
       )}
@@ -1260,14 +1260,14 @@ function SubAtracaoBlock({
   return (
     <div className="mt-6">
       <div className="mb-4 flex justify-center">
-        <span className="flex h-8 w-8 items-center justify-center rounded-full border border-black/10 bg-black/[0.02] text-black/30">
+        <span className="flex h-8 w-8 items-center justify-center rounded-full border border-[#DDD8CF] bg-[#FAF9F6] text-[#24211D]/30">
           <IconArrowDown className="h-4 w-4" />
         </span>
       </div>
 
       <div className="mb-4 flex items-center justify-center gap-2.5">
-        <span className="h-2 w-2 rounded-full bg-gradient-to-r from-[#E94332] via-[#D96A2E] to-[#C9A03A]" />
-        <span className="text-xs font-bold uppercase tracking-[0.25em] text-black/40">
+        <span className="h-2 w-2 rounded-full bg-[#B96432]" />
+        <span className="text-xs font-bold uppercase tracking-[0.25em] text-[#24211D]/40">
           {subAtracao.label ?? "Noite"}
         </span>
         {subAtracao.opcional && (
@@ -1278,10 +1278,10 @@ function SubAtracaoBlock({
       </div>
 
       {subAtracao.compacta ? (
-        <div className="mx-auto flex max-w-lg items-center gap-4 rounded-2xl border border-black/10 bg-black/[0.02] p-3">
+        <div className="mx-auto flex max-w-lg items-center gap-4 rounded-2xl border border-[#DDD8CF] bg-[#FAF9F6] p-3">
           <div
             className={`relative aspect-square h-36 w-36 shrink-0 overflow-hidden rounded-xl sm:h-40 sm:w-40 ${
-              subAtracao.imagem ? "" : "border-2 border-[#2f5aa8]"
+              subAtracao.imagem ? "" : "border-2 border-[#173B45]"
             }`}
           >
             {subAtracao.imagem ? (
@@ -1297,17 +1297,17 @@ function SubAtracaoBlock({
                 }`}
               />
             ) : (
-              <div className="flex h-full items-center justify-center bg-[#eef3fb]" />
+              <div className="flex h-full items-center justify-center bg-[#F8FAF9]" />
             )}
           </div>
           <div className="min-w-0 flex-1">
             <h3
-              className={`${displayClassName} text-base font-medium leading-snug text-black md:text-lg`}
+              className={`${displayClassName} text-base font-medium leading-snug text-[#24211D] md:text-lg`}
             >
               {subAtracao.titulo}
             </h3>
             {subAtracao.descricao && (
-              <p className="mt-1 text-xs leading-5 text-black/60">
+              <p className="mt-1 text-xs leading-5 text-[#24211D]/60">
                 {subAtracao.descricao}
               </p>
             )}
@@ -1317,7 +1317,7 @@ function SubAtracaoBlock({
         <>
           <div
             className={`relative mb-5 aspect-[4/3] overflow-hidden rounded-2xl sm:aspect-[16/10] ${
-              subAtracao.imagem ? "" : "border-2 border-[#2f5aa8]"
+              subAtracao.imagem ? "" : "border-2 border-[#173B45]"
             }`}
           >
             {subAtracao.imagem ? (
@@ -1341,9 +1341,9 @@ function SubAtracaoBlock({
                 </h3>
               </>
             ) : (
-              <div className="flex h-full items-center justify-center bg-[#eef3fb] px-5">
+              <div className="flex h-full items-center justify-center bg-[#F8FAF9] px-5">
                 <h3
-                  className={`${displayClassName} text-2xl font-medium text-[#2f5aa8] md:text-3xl`}
+                  className={`${displayClassName} text-2xl font-medium text-[#173B45] md:text-3xl`}
                 >
                   {subAtracao.titulo}
                 </h3>
@@ -1352,7 +1352,7 @@ function SubAtracaoBlock({
           </div>
 
           {subAtracao.descricao && (
-            <p className="mb-5 text-sm leading-6 text-black/60">
+            <p className="mb-5 text-sm leading-6 text-[#24211D]/60">
               {subAtracao.descricao}
             </p>
           )}
@@ -1361,7 +1361,7 @@ function SubAtracaoBlock({
 
       {subAtracao.pois && subAtracao.pois.length > 0 && (
         <>
-          <p className="mb-5 text-xs text-black/40">Restaurantes sugeridos</p>
+          <p className="mb-5 text-xs text-[#24211D]/40">Restaurantes sugeridos</p>
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             {subAtracao.pois.map((poi, index) => (
               <PoiCard key={poi.title + index} index={index} poi={poi} />
@@ -1517,56 +1517,6 @@ const INFO_CARDS = [
   { label: "Câmbio", Icon: IconExchange },
   { label: "Costumes", Icon: IconCustoms },
   { label: "Palavras Comuns", Icon: IconWords },
-];
-
-function IconTicket({ className }: { className?: string }) {
-  return (
-    <svg {...iconProps(className)}>
-      <path d="M3 9a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v1.5a1.5 1.5 0 0 0 0 3V16a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2.5a1.5 1.5 0 0 0 0-3z" />
-      <line x1="10" y1="7" x2="10" y2="18" strokeDasharray="1.5 2.5" />
-    </svg>
-  );
-}
-
-function IconCash({ className }: { className?: string }) {
-  return (
-    <svg {...iconProps(className)}>
-      <rect x="2.5" y="6" width="19" height="12" rx="2" />
-      <circle cx="12" cy="12" r="3" />
-      <line x1="6" y1="9" x2="6" y2="9.01" />
-      <line x1="18" y1="15" x2="18" y2="15.01" />
-    </svg>
-  );
-}
-
-function IconDriver({ className }: { className?: string }) {
-  return (
-    <svg {...iconProps(className)}>
-      <path d="M5 16h14l-1.5-6a2 2 0 0 0-1.9-1.5H8.4A2 2 0 0 0 6.5 10z" />
-      <circle cx="7.5" cy="16.5" r="1.5" />
-      <circle cx="16.5" cy="16.5" r="1.5" />
-      <line x1="8" y1="10" x2="16" y2="10" />
-    </svg>
-  );
-}
-
-function IconConcierge({ className }: { className?: string }) {
-  return (
-    <svg {...iconProps(className)}>
-      <path d="M4 18a8 8 0 0 1 16 0" />
-      <path d="M4 18h1a1 1 0 0 0 1-1v-3a1 1 0 0 0-1-1H4z" />
-      <path d="M20 18h-1a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h1z" />
-      <path d="M12 18v1a2 2 0 0 1-2 2H9" />
-    </svg>
-  );
-}
-
-const ADDITIONAL_SERVICES = [
-  { label: "Ingressos para Eventos e Parques Temáticos", Icon: IconTicket },
-  { label: "Reserva para Restaurantes", Icon: IconFork },
-  { label: "Serviço de Câmbio no Brasil", Icon: IconCash },
-  { label: "Motorista Particular", Icon: IconDriver },
-  { label: "Cobertura Expandida para Concierge", Icon: IconConcierge },
 ];
 
 function IconCheck({ className }: { className?: string }) {
@@ -1888,7 +1838,7 @@ function HotelComparisonTable({ cidade }: { cidade: HotelCidade }) {
         <>
           {h.inauguracao}
           {h.inauguracaoNota && (
-            <span className="block text-xs text-black/40">
+            <span className="block text-xs text-[#24211D]/40">
               {h.inauguracaoNota}
             </span>
           )}
@@ -1986,15 +1936,15 @@ function HotelComparisonTable({ cidade }: { cidade: HotelCidade }) {
               onClick={() => setSelected(i)}
               className={`flex shrink-0 items-center gap-1.5 rounded-full border px-4 py-2 text-xs font-semibold transition ${
                 i === selected
-                  ? "border-black bg-black text-white"
-                  : "border-black/15 bg-white text-black/50"
+                  ? "border-[#173B45] bg-[#173B45] text-white"
+                  : "border-[#DDD8CF] bg-[#FDFCF9] text-[#24211D]/50"
               }`}
             >
               <span
                 className={`flex h-4 w-4 shrink-0 items-center justify-center rounded-full text-[9px] font-bold ${
                   i === selected
-                    ? "bg-white text-black"
-                    : "bg-black/10 text-black/50"
+                    ? "bg-[#FDFCF9] text-[#24211D]"
+                    : "bg-[#DDD8CF] text-[#24211D]/50"
                 }`}
               >
                 {i + 1}
@@ -2004,17 +1954,17 @@ function HotelComparisonTable({ cidade }: { cidade: HotelCidade }) {
           ))}
         </div>
         <div
-          className="overflow-hidden rounded-2xl border border-black/10"
+          className="overflow-hidden rounded-2xl border border-[#DDD8CF]"
           onTouchStart={handleTouchStart}
           onTouchMove={handleTouchMove}
           onTouchEnd={handleTouchEnd}
         >
-          <div className="border-b border-black/10 bg-black/[0.02] px-4 py-4 text-center">
-            <p className="text-base font-semibold text-black">
+          <div className="border-b border-[#DDD8CF] bg-[#FAF9F6] px-4 py-4 text-center">
+            <p className="text-base font-semibold text-[#24211D]">
               {cidade.opcoes[selected].nome}
             </p>
             <div className="mt-2.5 flex items-center justify-center">
-              <span className="inline-block rounded-full border border-[#2f5aa8]/25 bg-[#2f5aa8] px-4 py-1.5 text-[10px] font-bold uppercase tracking-[0.25em] text-white">
+              <span className="inline-block rounded-full border border-[#173B45]/25 bg-[#173B45] px-4 py-1.5 text-[10px] font-bold uppercase tracking-[0.25em] text-white">
                 Opção {selected + 1} de {cidade.opcoes.length}
               </span>
             </div>
@@ -2032,17 +1982,17 @@ function HotelComparisonTable({ cidade }: { cidade: HotelCidade }) {
                 <div className="mt-3 flex flex-col items-center gap-1.5 sm:hidden">
                   <div className="flex items-center gap-3">
                     {canLeft && (
-                      <span className="flex h-9 w-9 shrink-0 animate-pulse items-center justify-center rounded-full bg-[#2f5aa8] text-white">
+                      <span className="flex h-9 w-9 shrink-0 animate-pulse items-center justify-center rounded-full bg-[#173B45] text-white">
                         <IconArrowLeft className="h-5 w-5" />
                       </span>
                     )}
                     {canRight && (
-                      <span className="flex h-9 w-9 shrink-0 animate-pulse items-center justify-center rounded-full bg-[#2f5aa8] text-white">
+                      <span className="flex h-9 w-9 shrink-0 animate-pulse items-center justify-center rounded-full bg-[#173B45] text-white">
                         <IconArrowRight className="h-5 w-5" />
                       </span>
                     )}
                   </div>
-                  <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#2f5aa8]">
+                  <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#173B45]">
                     {label}
                   </p>
                 </div>
@@ -2053,7 +2003,7 @@ function HotelComparisonTable({ cidade }: { cidade: HotelCidade }) {
                 <span
                   key={h.nome}
                   className={`h-2 flex-1 max-w-24 rounded-full transition-all ${
-                    i === selected ? "bg-[#2f5aa8]" : "bg-black/15"
+                    i === selected ? "bg-[#173B45]" : "bg-[#DDD8CF]"
                   }`}
                 />
               ))}
@@ -2063,7 +2013,7 @@ function HotelComparisonTable({ cidade }: { cidade: HotelCidade }) {
                 href={cidade.opcoes[selected].site}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="mt-2.5 inline-block text-[10px] font-semibold uppercase tracking-[0.1em] text-[#2f5aa8] hover:underline"
+                className="mt-2.5 inline-block text-[10px] font-semibold uppercase tracking-[0.1em] text-[#173B45] hover:underline"
               >
                 Ver fotos e detalhes do hotel
               </a>
@@ -2074,16 +2024,16 @@ function HotelComparisonTable({ cidade }: { cidade: HotelCidade }) {
               <div
                 key={row.label}
                 className={`flex items-center justify-between gap-4 px-4 py-3 ${
-                  i % 2 === 1 ? "bg-black/[0.015]" : "bg-white"
+                  i % 2 === 1 ? "bg-[#FAF9F6]" : "bg-[#FDFCF9]"
                 }`}
               >
-                <span className="flex shrink-0 items-center gap-1.5 text-xs font-semibold text-black/50">
-                  <row.Icon className="h-3.5 w-3.5 shrink-0 text-[#2f5aa8]" />
+                <span className="flex shrink-0 items-center gap-1.5 text-xs font-semibold text-[#24211D]/50">
+                  <row.Icon className="h-3.5 w-3.5 shrink-0 text-[#173B45]" />
                   {row.label !== "Avaliação Booking" &&
                     row.label !== "Avaliação Trivago" &&
                     row.label}
                 </span>
-                <span className="text-right text-sm text-black/70">
+                <span className="text-right text-sm text-[#24211D]/70">
                   {row.render(cidade.opcoes[selected])}
                 </span>
               </div>
@@ -2093,17 +2043,17 @@ function HotelComparisonTable({ cidade }: { cidade: HotelCidade }) {
       </div>
 
       {/* Desktop: tabela comparativa completa lado a lado. */}
-      <div className="hidden overflow-x-auto rounded-2xl border border-black/10 sm:block">
+      <div className="hidden overflow-x-auto rounded-2xl border border-[#DDD8CF] sm:block">
         <table className="w-full min-w-[560px] border-separate border-spacing-0 text-sm">
             <thead>
-              <tr className="bg-black/[0.02]">
-                <th className="sticky left-0 z-10 w-32 border-b border-r border-black/10 bg-[#fafafa] px-3 py-3 text-left text-xs font-bold uppercase tracking-[0.15em] text-black/40 sm:w-40 sm:px-4">
+              <tr className="bg-[#FAF9F6]">
+                <th className="sticky left-0 z-10 w-32 border-b border-r border-[#DDD8CF] bg-[#FAF9F6] px-3 py-3 text-left text-xs font-bold uppercase tracking-[0.15em] text-[#24211D]/40 sm:w-40 sm:px-4">
                   Critério
                 </th>
                 {cidade.opcoes.map((h) => (
                   <th
                     key={h.nome}
-                    className="w-[150px] border-b border-l border-black/10 bg-black/[0.02] px-3 py-3 text-center text-sm font-semibold text-black sm:w-auto sm:px-4"
+                    className="w-[150px] border-b border-l border-[#DDD8CF] bg-[#FAF9F6] px-3 py-3 text-center text-sm font-semibold text-[#24211D] sm:w-auto sm:px-4"
                   >
                     {h.nome}
                     {h.site && (
@@ -2111,7 +2061,7 @@ function HotelComparisonTable({ cidade }: { cidade: HotelCidade }) {
                         href={h.site}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="mt-1.5 block text-[10px] font-semibold uppercase tracking-[0.1em] text-[#2f5aa8] hover:underline"
+                        className="mt-1.5 block text-[10px] font-semibold uppercase tracking-[0.1em] text-[#173B45] hover:underline"
                       >
                         Ver fotos e detalhes do hotel
                       </a>
@@ -2122,14 +2072,14 @@ function HotelComparisonTable({ cidade }: { cidade: HotelCidade }) {
             </thead>
             <tbody>
               {rows.map((row, i) => {
-                const rowBg = i % 2 === 1 ? "bg-black/[0.015]" : "bg-white";
+                const rowBg = i % 2 === 1 ? "bg-[#FAF9F6]" : "bg-[#FDFCF9]";
                 return (
                   <tr key={row.label} className={rowBg}>
                     <td
-                      className={`sticky left-0 z-10 border-r border-black/10 px-3 py-3 align-top text-xs font-semibold text-black/50 sm:px-4 ${rowBg}`}
+                      className={`sticky left-0 z-10 border-r border-[#DDD8CF] px-3 py-3 align-top text-xs font-semibold text-[#24211D]/50 sm:px-4 ${rowBg}`}
                     >
                       <span className="flex items-center gap-1.5">
-                        <row.Icon className="h-3.5 w-3.5 shrink-0 text-[#2f5aa8]" />
+                        <row.Icon className="h-3.5 w-3.5 shrink-0 text-[#173B45]" />
                         {row.label !== "Avaliação Booking" &&
                           row.label !== "Avaliação Trivago" &&
                           row.label}
@@ -2138,7 +2088,7 @@ function HotelComparisonTable({ cidade }: { cidade: HotelCidade }) {
                     {cidade.opcoes.map((h) => (
                       <td
                         key={h.nome}
-                        className="border-l border-black/10 px-3 py-3 text-center align-middle text-sm text-black/70 sm:px-4"
+                        className="border-l border-[#DDD8CF] px-3 py-3 text-center align-middle text-sm text-[#24211D]/70 sm:px-4"
                       >
                         {row.render(h)}
                       </td>
@@ -2182,13 +2132,13 @@ export function ApprovalPanel({
     <>
       <div className="relative isolate">
         {/* Glow ao redor do painel — mesma técnica do /ajisairoteiros, mas em
-            tons de azul pra combinar com o fundo claro desta página. */}
+            tons de petróleo pra combinar com o fundo claro desta página. */}
         <div
           aria-hidden
           className="pointer-events-none absolute left-1/2 top-1/2 -z-30 h-[112%] w-[116%] -translate-x-1/2 -translate-y-1/2 rounded-[3rem] opacity-80 blur-[100px]"
           style={{
             background:
-              "radial-gradient(ellipse at center, rgba(47,90,168,0.35) 0%, rgba(47,90,168,0.18) 40%, transparent 72%)",
+              "radial-gradient(ellipse at center, rgba(23,59,69,0.35) 0%, rgba(23,59,69,0.18) 40%, transparent 72%)",
           }}
         />
         <div
@@ -2196,19 +2146,19 @@ export function ApprovalPanel({
           className="pointer-events-none absolute left-1/2 top-1/2 -z-20 h-[104%] w-[104%] -translate-x-1/2 -translate-y-1/2 rounded-[2.35rem] opacity-60 blur-[32px]"
           style={{
             background:
-              "linear-gradient(135deg, rgba(47,90,168,0.3), rgba(90,140,220,0.22) 48%, transparent 78%)",
+              "linear-gradient(135deg, rgba(23,59,69,0.3), rgba(182,148,99,0.22) 48%, transparent 78%)",
           }}
         />
 
-        <div className="relative z-10 overflow-hidden rounded-2xl border border-black/10 bg-white shadow-[0_20px_60px_-30px_rgba(0,0,0,0.25)] sm:rounded-[2rem]">
-        <div className="border-b border-black/10 px-6 py-7 text-center sm:px-10">
-          <p className="mx-auto mb-5 inline-block rounded-full border border-black/15 px-5 py-2 text-xs uppercase tracking-[0.3em] text-black/65">
+        <div className="relative z-10 overflow-hidden rounded-2xl border border-[#DDD8CF] bg-[#FDFCF9] shadow-[0_20px_60px_-30px_rgba(0,0,0,0.25)] sm:rounded-[2rem]">
+        <div className="border-b border-[#DDD8CF] px-6 py-7 text-center sm:px-10">
+          <p className="mx-auto mb-5 inline-block rounded-full border border-[#DDD8CF] px-5 py-2 text-xs uppercase tracking-[0.3em] text-[#24211D]/65">
             Roteiro de 7 dias
           </p>
-          <h2 className={`${displayClassName} text-2xl font-medium text-black md:text-3xl`}>
+          <h2 className={`${displayClassName} text-2xl font-medium text-[#24211D] md:text-3xl`}>
             Painel Interativo
           </h2>
-          <p className="mx-auto mt-3 max-w-lg text-sm leading-6 text-black/50">
+          <p className="mx-auto mt-3 max-w-lg text-sm leading-6 text-[#24211D]/50">
             Selecione o conteúdo desejado abaixo
           </p>
         </div>
@@ -2233,10 +2183,10 @@ export function ApprovalPanel({
                 <span
                   className={`relative flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-full border-2 font-bold transition-all duration-300 ${
                     d.badge
-                      ? "border-black bg-black text-[9px] tracking-tight text-white"
+                      ? "border-[#173B45] bg-[#173B45] text-[9px] tracking-tight text-white"
                       : active
-                        ? "border-[#caa62c]"
-                        : "border-black/15 hover:-translate-y-0.5 hover:border-[#caa62c]/60 hover:shadow-[0_10px_24px_-12px_rgba(201,160,58,0.5)]"
+                        ? "border-[#B69463]"
+                        : "border-[#DDD8CF] hover:-translate-y-0.5 hover:border-[#B69463]/60 hover:shadow-[0_10px_24px_-12px_rgba(182,148,99,0.5)]"
                   }`}
                 >
                   {d.badge ? (
@@ -2254,7 +2204,7 @@ export function ApprovalPanel({
                 </span>
                 <span
                   className={`text-[10px] uppercase tracking-[0.25em] ${
-                    active ? "text-black" : "text-black/40"
+                    active ? "text-[#24211D]" : "text-[#24211D]/40"
                   }`}
                 >
                   {d.city}
@@ -2262,7 +2212,7 @@ export function ApprovalPanel({
                 {d.date && (
                   <span
                     className={`flex flex-col items-center leading-tight tracking-[0.1em] ${
-                      active ? "text-black/50" : "text-black/30"
+                      active ? "text-[#24211D]/50" : "text-[#24211D]/30"
                     }`}
                   >
                     <span className="text-sm font-semibold">
@@ -2278,7 +2228,7 @@ export function ApprovalPanel({
           })}
         </div>
 
-        <p className="px-6 pt-6 text-[10px] font-bold uppercase tracking-[0.2em] text-black/35 sm:px-10">
+        <p className="px-6 pt-6 text-[10px] font-bold uppercase tracking-[0.2em] text-[#24211D]/35 sm:px-10">
           Hotéis
         </p>
         <div className="flex flex-wrap items-start justify-center gap-x-5 gap-y-5 px-6 pt-3 sm:gap-x-7 sm:px-10">
@@ -2311,15 +2261,15 @@ export function ApprovalPanel({
                 <span
                   className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-full border-2 text-sm font-bold transition ${
                     active
-                      ? "border-black bg-white text-black hover:border-transparent hover:bg-gradient-to-r hover:from-[#2f5aa8] hover:via-[#5b6fc7] hover:to-[#7c4fd1] hover:text-white"
-                      : "border-black/15 bg-white text-black/50 hover:border-transparent hover:bg-gradient-to-r hover:from-[#2f5aa8] hover:via-[#5b6fc7] hover:to-[#7c4fd1] hover:text-white"
+                      ? "border-[#173B45] bg-[#FDFCF9] text-[#24211D] hover:border-transparent hover:bg-[#173B45] hover:text-white"
+                      : "border-[#DDD8CF] bg-[#FDFCF9] text-[#24211D]/50 hover:border-transparent hover:bg-[#173B45] hover:text-white"
                   }`}
                 >
                   {index + 1}
                 </span>
                 <span
                   className={`text-[10px] uppercase tracking-[0.25em] ${
-                    active ? "text-black" : "text-black/40"
+                    active ? "text-[#24211D]" : "text-[#24211D]/40"
                   }`}
                 >
                   {HOTEIS[index].cidade}
@@ -2330,20 +2280,20 @@ export function ApprovalPanel({
         </div>
 
         <div className="flex flex-wrap items-center gap-2.5 px-6 pt-8 sm:px-10">
-          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-black/35">
+          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#24211D]/35">
             Informações Detalhadas
           </p>
-          <span className="rounded-full border border-[#2f5aa8]/25 bg-[#2f5aa8]/[0.06] px-3 py-1 text-[10px] font-bold uppercase tracking-[0.15em] text-[#2f5aa8]">
+          <span className="rounded-full border border-[#173B45]/25 bg-[#173B45]/[0.06] px-3 py-1 text-[10px] font-bold uppercase tracking-[0.15em] text-[#173B45]">
             Detalhes Completos No Painel Digital
           </span>
         </div>
-        <div className="grid grid-cols-2 gap-3 border-b border-black/10 px-6 pb-6 pt-3 sm:grid-cols-4 sm:px-10">
+        <div className="grid grid-cols-2 gap-3 border-b border-[#DDD8CF] px-6 pb-6 pt-3 sm:grid-cols-4 sm:px-10">
           {INFO_CARDS.map(({ label, Icon }) => (
             <div
               key={label}
-              className="group flex min-h-[112px] cursor-pointer flex-col items-center justify-center gap-2.5 rounded-xl border border-black/10 bg-black/[0.02] px-3 py-4 text-center text-xs leading-5 text-black/55 transition duration-300 ease-out hover:-translate-y-0.5 hover:border-[#2f5aa8]/30 hover:bg-[#eef3fb] hover:text-[#2f5aa8] hover:shadow-[0_10px_30px_-15px_rgba(47,90,168,0.35)]"
+              className="group flex min-h-[112px] cursor-pointer flex-col items-center justify-center gap-2.5 rounded-xl border border-[#DDD8CF] bg-[#FAF9F6] px-3 py-4 text-center text-xs leading-5 text-[#24211D]/55 transition duration-300 ease-out hover:-translate-y-0.5 hover:border-[#173B45]/30 hover:bg-[#F8FAF9] hover:text-[#173B45] hover:shadow-[0_10px_30px_-15px_rgba(23,59,69,0.35)]"
             >
-              <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[#eef3fb] text-[#2f5aa8] transition group-hover:bg-white">
+              <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[#F8FAF9] text-[#173B45] transition group-hover:bg-[#FDFCF9]">
                 <Icon className="h-4 w-4" />
               </span>
               {label}
@@ -2351,56 +2301,26 @@ export function ApprovalPanel({
           ))}
         </div>
 
-        <div className="border-b border-black/10 bg-black/[0.02] pb-6 pt-8">
-          <p className="px-6 text-center sm:px-10">
-            <span className="inline-block rounded-full border border-[#2f5aa8]/20 bg-[#eef3fb] px-5 py-2 text-xs uppercase tracking-[0.3em] text-[#2f5aa8]">
-              Marketplace de Serviços
-            </span>
-          </p>
-
-          <div className="flex flex-wrap items-center gap-2.5 px-6 pt-3 sm:px-10">
-            <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-black/35">
-              Serviços Adicionais Disponíveis
-            </p>
-            <span className="rounded-full border border-amber-300/70 bg-amber-50 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.15em] text-amber-700">
-              Contratação à Parte
-            </span>
-          </div>
-          <div className="grid grid-cols-2 gap-3 px-6 pt-3 sm:grid-cols-4 sm:px-10">
-            {ADDITIONAL_SERVICES.map(({ label, Icon }) => (
-              <div
-                key={label}
-                className="group flex min-h-[112px] cursor-pointer flex-col items-center justify-center gap-2.5 rounded-xl border border-[#7c4fd1]/25 bg-[#f4effc] px-3 py-4 text-center text-xs leading-5 text-[#5b3ea6] transition duration-300 ease-out hover:-translate-y-0.5 hover:border-[#7c4fd1]/40 hover:bg-[#ece2fa] hover:shadow-[0_10px_30px_-15px_rgba(124,79,209,0.35)]"
-              >
-                <span className="flex h-9 w-9 items-center justify-center rounded-full bg-white text-[#7c4fd1] transition group-hover:bg-[#7c4fd1] group-hover:text-white">
-                  <Icon className="h-4 w-4" />
-                </span>
-                {label}
-              </div>
-            ))}
-          </div>
-        </div>
-
         <div ref={contentRef} className="scroll-mt-6 px-6 py-8 sm:px-10 sm:py-10">
           {viewMode === "hotel" ? (
             <>
-              <p className="mb-5 inline-block rounded-full border border-[#2f5aa8]/20 bg-[#eef3fb] px-5 py-2 text-xs uppercase tracking-[0.3em] text-[#2f5aa8]">
+              <p className="mb-5 inline-block rounded-full border border-[#173B45]/20 bg-[#F8FAF9] px-5 py-2 text-xs uppercase tracking-[0.3em] text-[#173B45]">
                 Hotel · {HOTEIS[hotelCity].cidade}
               </p>
               <HotelComparisonTable cidade={HOTEIS[hotelCity]} />
             </>
           ) : current.travel ? (
-            <div className="rounded-2xl border border-black/10 bg-black/[0.02] p-6 text-center sm:p-8">
-              <p className="text-xs font-bold uppercase tracking-[0.25em] text-black/40">
+            <div className="rounded-2xl border border-[#DDD8CF] bg-[#FAF9F6] p-6 text-center sm:p-8">
+              <p className="text-xs font-bold uppercase tracking-[0.25em] text-[#24211D]/40">
                 {current.city} · {current.date}
               </p>
-              <p className="mx-auto mt-3 max-w-md text-sm leading-6 text-black/55">
+              <p className="mx-auto mt-3 max-w-md text-sm leading-6 text-[#24211D]/55">
                 {current.travelNote}
               </p>
             </div>
           ) : (
             <>
-              <p className="mb-5 inline-block rounded-full border border-[#2f5aa8]/20 bg-[#eef3fb] px-5 py-2 text-xs uppercase tracking-[0.3em] text-[#2f5aa8]">
+              <p className="mb-5 inline-block rounded-full border border-[#173B45]/20 bg-[#F8FAF9] px-5 py-2 text-xs uppercase tracking-[0.3em] text-[#173B45]">
                 Dia {current.day}
               </p>
               {current.contexto && (
@@ -2431,12 +2351,12 @@ export function ApprovalPanel({
               <button
                 type="button"
                 onClick={scrollToDaysMenu}
-                className="mt-8 flex w-full flex-col items-center gap-2 rounded-2xl border border-[#2f5aa8]/20 bg-[#eef3fb] py-6 text-center transition hover:bg-[#e2eaf8]"
+                className="mt-8 flex w-full flex-col items-center gap-2 rounded-2xl border border-[#173B45]/20 bg-[#F8FAF9] py-6 text-center transition hover:bg-[#EAF1EF]"
               >
-                <span className="flex h-10 w-10 shrink-0 animate-pulse items-center justify-center rounded-full bg-[#2f5aa8] text-white">
+                <span className="flex h-10 w-10 shrink-0 animate-pulse items-center justify-center rounded-full bg-[#173B45] text-white">
                   <IconArrowUp className="h-5 w-5" />
                 </span>
-                <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#2f5aa8]">
+                <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#173B45]">
                   Voltar para o menu de dias do roteiro
                 </span>
               </button>
