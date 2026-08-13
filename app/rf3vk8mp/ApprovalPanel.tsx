@@ -2202,17 +2202,15 @@ export function ApprovalPanel({
         />
 
         <div className="relative z-10 overflow-hidden rounded-2xl border border-black/10 bg-white shadow-[0_20px_60px_-30px_rgba(0,0,0,0.25)] sm:rounded-[2rem]">
-        <div className="border-b border-black/10 px-6 py-7 text-center sm:px-10">
-          <p className="mx-auto mb-5 inline-block rounded-full border border-black/15 px-5 py-2 text-xs uppercase tracking-[0.3em] text-black/65">
+        <div className="rounded-t-2xl border-b border-black/10 bg-black px-6 py-7 text-center sm:rounded-t-[2rem] sm:px-10">
+          <p className="mx-auto mb-5 inline-block rounded-full border border-white/20 px-5 py-2 text-xs uppercase tracking-[0.3em] text-white/70">
             Roteiro de 7 dias
           </p>
-          <h2 className={`${displayClassName} text-2xl font-medium text-black md:text-3xl`}>
-            Painel Interativo · Rascunho
+          <h2 className={`${displayClassName} text-2xl font-medium text-white md:text-3xl`}>
+            Painel Interativo
           </h2>
-          <p className="mx-auto mt-3 max-w-lg text-sm leading-6 text-black/50">
-            Selecione um dia para revisar a atração principal e os pontos de
-            interesse propostos para a manhã e a tarde. Chegada e partida
-            estão marcadas à parte, sem tempo útil para passeios.
+          <p className="mx-auto mt-3 max-w-lg text-sm leading-6 text-white/50">
+            Selecione o conteúdo desejado abaixo
           </p>
         </div>
 
@@ -2234,12 +2232,12 @@ export function ApprovalPanel({
                 className="flex flex-col items-center gap-2.5"
               >
                 <span
-                  className={`group relative flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-full border-2 font-bold transition-all duration-300 ${
+                  className={`flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-full border-2 font-bold transition-all duration-300 ${
                     d.badge
                       ? "border-black bg-black text-[9px] tracking-tight text-white"
                       : active
-                        ? "border-transparent shadow-[0_0_18px_rgba(201,160,58,0.55)] ring-2 ring-[#caa62c] ring-offset-2 ring-offset-white"
-                        : "border-black/15 hover:-translate-y-0.5 hover:border-transparent hover:shadow-[0_0_18px_rgba(201,160,58,0.5)]"
+                        ? "border-[#caa62c]"
+                        : "border-black/15 hover:-translate-y-0.5 hover:border-[#caa62c]/60 hover:shadow-[0_10px_24px_-12px_rgba(201,160,58,0.5)]"
                   }`}
                 >
                   {d.badge ? (
@@ -2248,11 +2246,7 @@ export function ApprovalPanel({
                     <img
                       src={`/images/dragonball-${d.day}-star.png`}
                       alt={`Dia ${d.day}`}
-                      className={`h-full w-full object-cover transition-all duration-300 ${
-                        active
-                          ? "scale-105 grayscale-0"
-                          : "grayscale group-hover:scale-110 group-hover:grayscale-0"
-                      }`}
+                      className="h-full w-full object-cover"
                     />
                   )}
                 </span>
