@@ -2008,22 +2008,22 @@ export function ApprovalPanel({
   return (
     <>
       <div className="relative isolate">
-        {/* Glow ao redor do painel — mesma técnica do /ajisairoteiros, mas em
-            tons de petróleo pra combinar com o fundo claro desta página. */}
+        {/* Glow ao redor do painel — mesma técnica e paleta azulada do
+            /roteirolandingpage, já que o painel flutua sobre fundo preto. */}
         <div
           aria-hidden
-          className="pointer-events-none absolute left-1/2 top-1/2 -z-30 h-[112%] w-[116%] -translate-x-1/2 -translate-y-1/2 rounded-[3rem] opacity-80 blur-[100px]"
+          className="pointer-events-none absolute left-1/2 top-1/2 -z-30 h-[112%] w-[116%] -translate-x-1/2 -translate-y-1/2 rounded-[3rem] opacity-70 blur-[120px]"
           style={{
             background:
-              "radial-gradient(ellipse at center, rgba(23,59,69,0.35) 0%, rgba(23,59,69,0.18) 40%, transparent 72%)",
+              "radial-gradient(ellipse at center, rgba(25,70,150,0.20) 0%, rgba(16,42,108,0.14) 36%, rgba(9,18,46,0.08) 55%, transparent 76%)",
           }}
         />
         <div
           aria-hidden
-          className="pointer-events-none absolute left-1/2 top-1/2 -z-20 h-[104%] w-[104%] -translate-x-1/2 -translate-y-1/2 rounded-[2.35rem] opacity-60 blur-[32px]"
+          className="pointer-events-none absolute left-1/2 top-1/2 -z-20 h-[104%] w-[104%] -translate-x-1/2 -translate-y-1/2 rounded-[2.35rem] opacity-45 blur-[38px]"
           style={{
             background:
-              "linear-gradient(135deg, rgba(23,59,69,0.3), rgba(182,148,99,0.22) 48%, transparent 78%)",
+              "linear-gradient(135deg, rgba(75,42,128,0.18), rgba(20,68,145,0.22) 48%, transparent 78%)",
           }}
         />
 

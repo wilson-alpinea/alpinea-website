@@ -222,8 +222,8 @@ export const metadata: Metadata = {
 
 export default function AprovacaoRoteiroPage() {
   return (
-    <main className="min-h-screen overflow-x-hidden bg-[#F5F3EF]">
-      <header className="fixed left-0 right-0 top-0 z-50 flex items-center justify-between border-b border-[#DDD8CF] bg-[#F5F3EF]/70 px-6 py-5 shadow-[0_1px_24px_rgba(0,0,0,0.05)] backdrop-blur-xl md:px-16">
+    <main className="min-h-screen overflow-x-hidden bg-black text-white">
+      <header className="fixed left-0 right-0 top-0 z-50 flex items-center justify-between border-b border-white/10 bg-black/40 px-6 py-5 backdrop-blur-2xl md:px-16">
         <img
           src="/images/logo-alpinea-v6.png"
           alt="Alpinea — Empresa do Grupo Ajisai"
@@ -232,8 +232,24 @@ export default function AprovacaoRoteiroPage() {
       </header>
 
       <section className="px-5 pb-4 pt-36 md:px-16 md:pt-40">
-        <div className="mx-auto max-w-4xl">
-          <div className="rounded-2xl border border-[#DDD8CF] bg-[#FDFCF9] p-6 shadow-[0_20px_60px_-30px_rgba(0,0,0,0.25)] sm:rounded-[2rem] sm:p-8">
+        <div className="relative isolate mx-auto max-w-4xl">
+          <div
+            aria-hidden
+            className="pointer-events-none absolute left-1/2 top-1/2 -z-30 h-[112%] w-[116%] -translate-x-1/2 -translate-y-1/2 rounded-[3rem] opacity-70 blur-[120px]"
+            style={{
+              background:
+                "radial-gradient(ellipse at center, rgba(25,70,150,0.20) 0%, rgba(16,42,108,0.14) 36%, rgba(9,18,46,0.08) 55%, transparent 76%)",
+            }}
+          />
+          <div
+            aria-hidden
+            className="pointer-events-none absolute left-1/2 top-1/2 -z-20 h-[104%] w-[104%] -translate-x-1/2 -translate-y-1/2 rounded-[2.35rem] opacity-45 blur-[38px]"
+            style={{
+              background:
+                "linear-gradient(135deg, rgba(75,42,128,0.18), rgba(20,68,145,0.22) 48%, rgba(0,0,0,0) 78%)",
+            }}
+          />
+          <div className="relative z-10 rounded-2xl border border-[#DDD8CF] bg-[#FDFCF9] p-6 shadow-[0_20px_60px_-30px_rgba(0,0,0,0.6)] sm:rounded-[2rem] sm:p-8">
             <div className="mx-auto mb-5 flex w-fit flex-col items-center gap-2.5">
               <p className="rounded-full border border-[#DDD8CF] px-5 py-2 text-center text-xs uppercase tracking-[0.3em] text-[#24211D]/65">
                 Dados do Cliente
@@ -362,7 +378,7 @@ export default function AprovacaoRoteiroPage() {
         </div>
       </section>
 
-      <footer className="border-t border-[#DDD8CF] px-6 py-8 text-center text-xs text-[#24211D]/40 md:px-16">
+      <footer className="border-t border-white/10 px-6 py-8 text-center text-xs text-white/40 md:px-16">
         <p>
           © {new Date().getFullYear()} AjisaiWork Japan Agência de Viagens
           LTDA — CNPJ 43.544.605/0001-56
