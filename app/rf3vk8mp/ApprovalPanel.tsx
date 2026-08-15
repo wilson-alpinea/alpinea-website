@@ -953,12 +953,12 @@ function PoiCard({ index, poi }: { index: number; poi: Poi }) {
 function ContextoBlock({ contexto }: { contexto: string[] }) {
   return (
     <div className="mb-10 rounded-2xl border border-[#DDD8CF] bg-[#FAF9F6] p-5 sm:p-6">
-      <p className="mb-3 text-xs font-bold uppercase tracking-[0.25em] text-[#24211D]/45">
+      <p className="mb-3 text-xs font-bold uppercase tracking-[0.25em] text-[#24211D]/68">
         Contexto
       </p>
       <div className="space-y-3">
         {contexto.map((paragrafo, index) => (
-          <p key={index} className="text-sm leading-6 text-[#24211D]/65">
+          <p key={index} className="text-sm leading-6 text-[#24211D]/85">
             {paragrafo}
           </p>
         ))}
@@ -970,25 +970,25 @@ function ContextoBlock({ contexto }: { contexto: string[] }) {
 function GastronomiaBlock({ gastronomia }: { gastronomia: Gastronomia }) {
   return (
     <div className="mt-6 rounded-2xl border border-[#DDD8CF] bg-[#FAF9F6] p-4">
-      <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#24211D]/45">
+      <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#24211D]/68">
         Gastronomia
         {gastronomia.subtitulo && (
-          <span className="ml-2 font-normal normal-case tracking-normal text-[#24211D]/40">
+          <span className="ml-2 font-normal normal-case tracking-normal text-[#24211D]/65">
             ({gastronomia.subtitulo})
           </span>
         )}
       </p>
       <ul className="mt-3 space-y-1.5">
         {gastronomia.itens.map((item) => (
-          <li key={item.nome} className="text-sm leading-6 text-[#24211D]/65">
-            <span className="font-semibold text-[#24211D]/80">{item.nome}</span>
+          <li key={item.nome} className="text-sm leading-6 text-[#24211D]/85">
+            <span className="font-semibold text-[#24211D]/95">{item.nome}</span>
             {item.descricao && (
-              <span className="text-[#24211D]/55"> — {item.descricao}</span>
+              <span className="text-[#24211D]/75"> — {item.descricao}</span>
             )}
           </li>
         ))}
       </ul>
-      <p className="mt-3 border-t border-[#DDD8CF] pt-3 text-xs leading-5 text-[#24211D]/45">
+      <p className="mt-3 border-t border-[#DDD8CF] pt-3 text-xs leading-5 text-[#24211D]/68">
         Mapeamento de opções de restaurantes nos arredores da atração
         principal
       </p>
@@ -1003,10 +1003,10 @@ function ComprasExclusivasBlock({
 }) {
   return (
     <div className="mt-6 rounded-2xl border border-[#DDD8CF] bg-[#FAF9F6] p-4">
-      <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#24211D]/45">
+      <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#24211D]/68">
         Compras Exclusivas
       </p>
-      <p className="mt-2 text-sm leading-6 text-[#24211D]/60">
+      <p className="mt-2 text-sm leading-6 text-[#24211D]/78">
         {compras.descricao}
       </p>
       <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
@@ -1022,11 +1022,11 @@ function ComprasExclusivasBlock({
                 className="aspect-square w-full object-cover"
               />
             ) : (
-              <div className="flex aspect-square w-full items-center justify-center bg-[#FAF9F6] text-[10px] uppercase tracking-wide text-[#24211D]/30">
+              <div className="flex aspect-square w-full items-center justify-center bg-[#FAF9F6] text-[10px] uppercase tracking-wide text-[#24211D]/55">
                 Sem imagem
               </div>
             )}
-            <p className="p-2 text-center text-xs font-medium leading-4 text-[#24211D]/70">
+            <p className="p-2 text-center text-xs font-medium leading-4 text-[#24211D]/90">
               {item.nome}
             </p>
           </div>
@@ -1052,8 +1052,8 @@ function TransporteBlock({
         </p>
       </div>
       <p className="text-lg font-semibold text-[#24211D]">{transporte.linha}</p>
-      <p className="mt-1 text-sm text-[#24211D]/60">{transporte.tempo}</p>
-      <p className="mt-3 text-sm leading-6 text-[#24211D]/70">
+      <p className="mt-1 text-sm text-[#24211D]/78">{transporte.tempo}</p>
+      <p className="mt-3 text-sm leading-6 text-[#24211D]/90">
         {transporte.recomendacao}
       </p>
     </div>
@@ -1091,7 +1091,7 @@ function AlertaBlock({ alerta }: { alerta: AlertaSugerido }) {
         </p>
       </div>
       <p className="text-lg font-semibold text-[#24211D]">{alerta.horario}</p>
-      <p className="mt-3 text-sm leading-6 text-[#24211D]/70">
+      <p className="mt-3 text-sm leading-6 text-[#24211D]/90">
         {alerta.mensagem}
       </p>
     </div>
@@ -1111,23 +1111,23 @@ function PeriodBlock({
     <div>
       <div className="mb-4 flex items-center gap-2.5">
         <span className="h-2 w-2 rounded-full bg-[#B96432]" />
-        <span className="text-xs font-bold uppercase tracking-[0.25em] text-[#24211D]/40">
+        <span className="text-xs font-bold uppercase tracking-[0.25em] text-[#24211D]/65">
           {period.label ?? label}
         </span>
       </div>
 
       {period.regiao && (
         <div className="mb-5">
-          <p className="text-xs font-bold uppercase tracking-[0.15em] text-[#24211D]/45">
+          <p className="text-xs font-bold uppercase tracking-[0.15em] text-[#24211D]/68">
             Região: {period.regiao.nome}
           </p>
-          <p className="mt-1.5 text-sm leading-6 text-[#24211D]/60">
+          <p className="mt-1.5 text-sm leading-6 text-[#24211D]/78">
             {period.regiao.descricao}
           </p>
         </div>
       )}
 
-      <p className="mb-2 text-xs text-[#24211D]/40">Atração Principal</p>
+      <p className="mb-2 text-xs text-[#24211D]/65">Atração Principal</p>
       <div
         className={`relative mb-5 overflow-hidden rounded-2xl ${
           period.atracaoPrincipalCompacta
@@ -1172,7 +1172,7 @@ function PeriodBlock({
 
       {period.pois.length > 0 && (
         <>
-          <p className="mb-5 text-xs text-[#24211D]/40">
+          <p className="mb-5 text-xs text-[#24211D]/65">
             Pontos de interesse propostos para o período
           </p>
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
@@ -1207,8 +1207,8 @@ function GradeHorariosBlock({ grade }: { grade: GradeHorarios }) {
   return (
     <div className="mb-6 rounded-2xl border border-[#DDD8CF] bg-[#FAF9F6] p-4">
       <div className="flex items-center gap-2">
-        <IconClock className="h-3.5 w-3.5 text-[#24211D]/45" />
-        <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#24211D]/45">
+        <IconClock className="h-3.5 w-3.5 text-[#24211D]/68" />
+        <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#24211D]/68">
           {grade.titulo ?? "Grade de Horários"}
         </p>
       </div>
@@ -1221,7 +1221,7 @@ function GradeHorariosBlock({ grade }: { grade: GradeHorarios }) {
             <div className="flex items-center gap-4">
               <span
                 className={`w-16 shrink-0 text-sm font-semibold ${
-                  item.recomendado ? "text-amber-800" : "text-[#24211D]/70"
+                  item.recomendado ? "text-amber-800" : "text-[#24211D]/90"
                 }`}
               >
                 {item.horario}
@@ -1229,7 +1229,7 @@ function GradeHorariosBlock({ grade }: { grade: GradeHorarios }) {
               <span
                 className={`text-sm leading-5 ${
                   item.destaque ? "font-semibold" : ""
-                } ${item.recomendado ? "text-amber-800" : "text-[#24211D]/60"}`}
+                } ${item.recomendado ? "text-amber-800" : "text-[#24211D]/78"}`}
               >
                 {item.evento}
               </span>
@@ -1243,7 +1243,7 @@ function GradeHorariosBlock({ grade }: { grade: GradeHorarios }) {
         ))}
       </div>
       {grade.nota && (
-        <p className="mt-3 border-t border-[#DDD8CF] pt-3 text-xs leading-5 text-[#24211D]/45">
+        <p className="mt-3 border-t border-[#DDD8CF] pt-3 text-xs leading-5 text-[#24211D]/68">
           {grade.nota}
         </p>
       )}
@@ -1261,14 +1261,14 @@ function SubAtracaoBlock({
   return (
     <div className="mt-6">
       <div className="mb-4 flex justify-center">
-        <span className="flex h-8 w-8 items-center justify-center rounded-full border border-[#DDD8CF] bg-[#FAF9F6] text-[#24211D]/30">
+        <span className="flex h-8 w-8 items-center justify-center rounded-full border border-[#DDD8CF] bg-[#FAF9F6] text-[#24211D]/55">
           <IconArrowDown className="h-4 w-4" />
         </span>
       </div>
 
       <div className="mb-4 flex items-center justify-center gap-2.5">
         <span className="h-2 w-2 rounded-full bg-[#B96432]" />
-        <span className="text-xs font-bold uppercase tracking-[0.25em] text-[#24211D]/40">
+        <span className="text-xs font-bold uppercase tracking-[0.25em] text-[#24211D]/65">
           {subAtracao.label ?? "Noite"}
         </span>
         {subAtracao.opcional && (
@@ -1308,7 +1308,7 @@ function SubAtracaoBlock({
               {subAtracao.titulo}
             </h3>
             {subAtracao.descricao && (
-              <p className="mt-1 text-xs leading-5 text-[#24211D]/60">
+              <p className="mt-1 text-xs leading-5 text-[#24211D]/78">
                 {subAtracao.descricao}
               </p>
             )}
@@ -1353,7 +1353,7 @@ function SubAtracaoBlock({
           </div>
 
           {subAtracao.descricao && (
-            <p className="mb-5 text-sm leading-6 text-[#24211D]/60">
+            <p className="mb-5 text-sm leading-6 text-[#24211D]/78">
               {subAtracao.descricao}
             </p>
           )}
@@ -1362,7 +1362,7 @@ function SubAtracaoBlock({
 
       {subAtracao.pois && subAtracao.pois.length > 0 && (
         <>
-          <p className="mb-5 text-xs text-[#24211D]/40">Restaurantes sugeridos</p>
+          <p className="mb-5 text-xs text-[#24211D]/65">Restaurantes sugeridos</p>
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             {subAtracao.pois.map((poi, index) => (
               <PoiCard key={poi.title + index} index={index} poi={poi} />
@@ -1821,7 +1821,7 @@ function HotelGuestGuide({ hotel }: { hotel: HotelInfo }) {
         <p className="text-base font-semibold text-[#24211D] sm:text-lg">
           {hotel.nome}
         </p>
-        <p className="mt-1 text-xs text-[#24211D]/50">
+        <p className="mt-1 text-xs text-[#24211D]/72">
           {hotel.bairro} · {hotel.endereco}
         </p>
         {hotel.site && (
@@ -1846,7 +1846,7 @@ function HotelGuestGuide({ hotel }: { hotel: HotelInfo }) {
 
       <div className="grid grid-cols-1 gap-px bg-[#DDD8CF] sm:grid-cols-2">
         <div className="bg-[#FDFCF9] p-5 sm:p-6">
-          <p className="mb-4 text-xs font-bold uppercase tracking-[0.2em] text-[#24211D]/45">
+          <p className="mb-4 text-xs font-bold uppercase tracking-[0.2em] text-[#24211D]/68">
             Estrutura do Hotel
           </p>
           <div className="space-y-3.5">
@@ -1855,7 +1855,7 @@ function HotelGuestGuide({ hotel }: { hotel: HotelInfo }) {
                 <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#173B45]/[0.08] text-[#173B45]">
                   <item.Icon className="h-4 w-4" />
                 </span>
-                <span className="pt-1.5 text-sm leading-5 text-[#24211D]/75">
+                <span className="pt-1.5 text-sm leading-5 text-[#24211D]/92">
                   {item.label}
                 </span>
               </div>
@@ -1864,7 +1864,7 @@ function HotelGuestGuide({ hotel }: { hotel: HotelInfo }) {
         </div>
 
         <div className="bg-[#FDFCF9] p-5 sm:p-6">
-          <p className="mb-4 text-xs font-bold uppercase tracking-[0.2em] text-[#24211D]/45">
+          <p className="mb-4 text-xs font-bold uppercase tracking-[0.2em] text-[#24211D]/68">
             Nas Proximidades
           </p>
           <div className="space-y-3.5">
@@ -1874,14 +1874,14 @@ function HotelGuestGuide({ hotel }: { hotel: HotelInfo }) {
                   <item.Icon className="h-4 w-4" />
                 </span>
                 <div className="min-w-0 flex-1 pt-0.5">
-                  <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-[#24211D]/40">
+                  <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-[#24211D]/65">
                     {item.label}
                   </p>
                   <p className="text-sm font-semibold leading-5 text-[#24211D]">
                     {item.nome}
                   </p>
                   {item.detalhe && (
-                    <p className="mt-0.5 text-xs leading-5 text-[#24211D]/55">
+                    <p className="mt-0.5 text-xs leading-5 text-[#24211D]/75">
                       {item.detalhe}
                     </p>
                   )}
@@ -1894,12 +1894,12 @@ function HotelGuestGuide({ hotel }: { hotel: HotelInfo }) {
 
       {hotel.mapa && (
         <div className="border-t border-[#DDD8CF] bg-[#FDFCF9] p-5 sm:p-6">
-          <p className="mb-4 text-xs font-bold uppercase tracking-[0.2em] text-[#24211D]/45">
+          <p className="mb-4 text-xs font-bold uppercase tracking-[0.2em] text-[#24211D]/68">
             Mapa dos Arredores
           </p>
           <HotelNeighborhoodMap mapa={hotel.mapa} />
           {hotel.mapa.nota && (
-            <p className="mt-3 text-center text-[10px] leading-4 text-[#24211D]/40">
+            <p className="mt-3 text-center text-[10px] leading-4 text-[#24211D]/65">
               {hotel.mapa.nota}
             </p>
           )}
@@ -1951,7 +1951,7 @@ function HotelNeighborhoodMap({ mapa }: { mapa: NonNullable<HotelInfo["mapa"]> }
             <p className="text-[9px] font-bold leading-tight text-[#24211D]">
               {p.label}
             </p>
-            <p className="mt-0.5 text-[8px] leading-tight text-[#24211D]/55">
+            <p className="mt-0.5 text-[8px] leading-tight text-[#24211D]/75">
               {p.detalhe}
             </p>
           </div>
@@ -1971,7 +1971,7 @@ function HotelNeighborhoodMap({ mapa }: { mapa: NonNullable<HotelInfo["mapa"]> }
             <p.Icon className="h-3.5 w-3.5 shrink-0 text-[#B96432]" />
             <div className="leading-tight">
               <p className="text-[9px] font-bold text-[#24211D]">{p.label}</p>
-              <p className="text-[8px] text-[#24211D]/55">{p.detalhe}</p>
+              <p className="text-[8px] text-[#24211D]/75">{p.detalhe}</p>
             </div>
           </div>
         );
@@ -2037,13 +2037,13 @@ export function ApprovalPanel({
 
         <div className="relative z-10 overflow-hidden rounded-2xl border border-[#DDD8CF] bg-[#FDFCF9] shadow-[0_20px_60px_-30px_rgba(0,0,0,0.25)] sm:rounded-[2rem]">
         <div className="border-b border-[#DDD8CF] px-6 py-7 text-center sm:px-10">
-          <p className="mx-auto mb-5 inline-block rounded-full border border-[#DDD8CF] px-5 py-2 text-xs uppercase tracking-[0.3em] text-[#24211D]/65">
+          <p className="mx-auto mb-5 inline-block rounded-full border border-[#DDD8CF] px-5 py-2 text-xs uppercase tracking-[0.3em] text-[#24211D]/85">
             Roteiro de 7 dias
           </p>
           <h2 className={`${displayClassName} text-2xl font-medium text-[#24211D] md:text-3xl`}>
             Painel Interativo
           </h2>
-          <p className="mx-auto mt-3 max-w-lg text-sm leading-6 text-[#24211D]/50">
+          <p className="mx-auto mt-3 max-w-lg text-sm leading-6 text-[#24211D]/72">
             Selecione o conteúdo desejado abaixo
           </p>
         </div>
@@ -2089,7 +2089,7 @@ export function ApprovalPanel({
                 </span>
                 <span
                   className={`text-[10px] uppercase tracking-[0.25em] ${
-                    active ? "text-[#24211D]" : "text-[#24211D]/40"
+                    active ? "text-[#24211D]" : "text-[#24211D]/65"
                   }`}
                 >
                   {d.city}
@@ -2097,7 +2097,7 @@ export function ApprovalPanel({
                 {d.date && (
                   <span
                     className={`flex flex-col items-center leading-tight tracking-[0.1em] ${
-                      active ? "text-[#24211D]/50" : "text-[#24211D]/30"
+                      active ? "text-[#24211D]/72" : "text-[#24211D]/55"
                     }`}
                   >
                     <span className="text-sm font-semibold">
@@ -2113,7 +2113,7 @@ export function ApprovalPanel({
           })}
         </div>
 
-        <p className="px-6 pt-6 text-[10px] font-bold uppercase tracking-[0.2em] text-[#24211D]/35 sm:px-10">
+        <p className="px-6 pt-6 text-[10px] font-bold uppercase tracking-[0.2em] text-[#24211D]/60 sm:px-10">
           Hotéis
         </p>
         <div className="flex flex-wrap items-start justify-center gap-x-5 gap-y-5 px-6 pt-3 sm:gap-x-7 sm:px-10">
@@ -2147,14 +2147,14 @@ export function ApprovalPanel({
                   className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-full border-2 text-sm font-bold transition ${
                     active
                       ? "border-[#173B45] bg-[#FDFCF9] text-[#24211D] hover:border-transparent hover:bg-[#173B45] hover:text-white"
-                      : "border-[#DDD8CF] bg-[#FDFCF9] text-[#24211D]/50 hover:border-transparent hover:bg-[#173B45] hover:text-white"
+                      : "border-[#DDD8CF] bg-[#FDFCF9] text-[#24211D]/72 hover:border-transparent hover:bg-[#173B45] hover:text-white"
                   }`}
                 >
                   {index + 1}
                 </span>
                 <span
                   className={`text-[10px] uppercase tracking-[0.25em] ${
-                    active ? "text-[#24211D]" : "text-[#24211D]/40"
+                    active ? "text-[#24211D]" : "text-[#24211D]/65"
                   }`}
                 >
                   {HOTEIS[index].cidade}
@@ -2165,7 +2165,7 @@ export function ApprovalPanel({
         </div>
 
         <div className="flex flex-wrap items-center gap-2.5 px-6 pt-8 sm:px-10">
-          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#24211D]/35">
+          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#24211D]/60">
             Informações Detalhadas
           </p>
           <span className="rounded-full border border-[#173B45]/25 bg-[#173B45]/[0.06] px-3 py-1 text-[10px] font-bold uppercase tracking-[0.15em] text-[#173B45]">
@@ -2175,7 +2175,7 @@ export function ApprovalPanel({
         <div className="grid grid-cols-2 gap-3 border-b border-[#DDD8CF] px-6 pb-6 pt-3 sm:grid-cols-4 sm:px-10">
           {INFO_CARDS.map(({ label, Icon, view }) => {
             const cardClassName =
-              "group flex min-h-[112px] cursor-pointer flex-col items-center justify-center gap-2.5 rounded-xl border border-[#DDD8CF] bg-[#FAF9F6] px-3 py-4 text-center text-xs leading-5 text-[#24211D]/55 transition duration-300 ease-out hover:-translate-y-0.5 hover:border-[#173B45]/30 hover:bg-[#F8FAF9] hover:text-[#173B45] hover:shadow-[0_10px_30px_-15px_rgba(23,59,69,0.35)]";
+              "group flex min-h-[112px] cursor-pointer flex-col items-center justify-center gap-2.5 rounded-xl border border-[#DDD8CF] bg-[#FAF9F6] px-3 py-4 text-center text-xs leading-5 text-[#24211D]/75 transition duration-300 ease-out hover:-translate-y-0.5 hover:border-[#173B45]/30 hover:bg-[#F8FAF9] hover:text-[#173B45] hover:shadow-[0_10px_30px_-15px_rgba(23,59,69,0.35)]";
             const content = (
               <>
                 <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[#F8FAF9] text-[#173B45] transition group-hover:bg-[#FDFCF9]">
@@ -2223,10 +2223,10 @@ export function ApprovalPanel({
             </>
           ) : current.travel ? (
             <div className="rounded-2xl border border-[#DDD8CF] bg-[#FAF9F6] p-6 text-center sm:p-8">
-              <p className="text-xs font-bold uppercase tracking-[0.25em] text-[#24211D]/40">
+              <p className="text-xs font-bold uppercase tracking-[0.25em] text-[#24211D]/65">
                 {current.city} · {current.date}
               </p>
-              <p className="mx-auto mt-3 max-w-md text-sm leading-6 text-[#24211D]/55">
+              <p className="mx-auto mt-3 max-w-md text-sm leading-6 text-[#24211D]/75">
                 {current.travelNote}
               </p>
             </div>

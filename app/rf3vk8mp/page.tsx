@@ -189,7 +189,7 @@ function RadarChart({ dimensions }: { dimensions: RadarDimension[] }) {
             x={p.x}
             y={startY}
             textAnchor={anchor}
-            className="fill-[#24211D]/50 uppercase"
+            className="fill-[#24211D]/72 uppercase"
             fontSize={9.5}
             fontWeight={700}
             style={{ letterSpacing: "0.03em" }}
@@ -285,7 +285,7 @@ export default function AprovacaoRoteiroPage() {
           />
           <div className="relative z-10 overflow-hidden rounded-2xl border border-[#DDD8CF] bg-[#FDFCF9] p-6 shadow-[0_20px_60px_-30px_rgba(0,0,0,0.6)] sm:rounded-[2rem] sm:p-8">
             <div className="mx-auto mb-5 flex w-fit flex-col items-center gap-2.5">
-              <p className="rounded-full border border-[#DDD8CF] px-5 py-2 text-center text-xs uppercase tracking-[0.3em] text-[#24211D]/65">
+              <p className="rounded-full border border-[#DDD8CF] px-5 py-2 text-center text-xs uppercase tracking-[0.3em] text-[#24211D]/85">
                 Dados do Cliente
               </p>
               <p className="rounded-full border border-[#173B45]/25 bg-[#173B45]/[0.06] px-4 py-2 text-center text-xs uppercase tracking-[0.2em] text-[#173B45]">
@@ -294,7 +294,7 @@ export default function AprovacaoRoteiroPage() {
             </div>
             <div className="grid grid-cols-1 gap-5 border-b border-[#DDD8CF] pb-6 sm:grid-cols-3">
               <div>
-                <p className="text-[11px] uppercase tracking-[0.2em] text-[#24211D]/40">
+                <p className="text-[11px] uppercase tracking-[0.2em] text-[#24211D]/65">
                   Data da Contratação
                 </p>
                 <p className="mt-1 text-sm font-semibold text-[#24211D]">
@@ -302,7 +302,7 @@ export default function AprovacaoRoteiroPage() {
                 </p>
               </div>
               <div>
-                <p className="text-[11px] uppercase tracking-[0.2em] text-[#24211D]/40">
+                <p className="text-[11px] uppercase tracking-[0.2em] text-[#24211D]/65">
                   Cliente
                 </p>
                 <p className="mt-1 text-sm font-semibold text-[#24211D]">
@@ -310,7 +310,7 @@ export default function AprovacaoRoteiroPage() {
                 </p>
               </div>
               <div>
-                <p className="text-[11px] uppercase tracking-[0.2em] text-[#24211D]/40">
+                <p className="text-[11px] uppercase tracking-[0.2em] text-[#24211D]/65">
                   Duração
                 </p>
                 <p className="mt-1 text-sm font-semibold text-[#24211D]">
@@ -326,7 +326,7 @@ export default function AprovacaoRoteiroPage() {
                 className="h-24 w-auto rounded-md object-contain sm:h-28"
               />
               <div>
-                <p className="text-[11px] uppercase tracking-[0.2em] text-[#24211D]/40">
+                <p className="text-[11px] uppercase tracking-[0.2em] text-[#24211D]/65">
                   Companhia Aérea
                 </p>
                 <p className="text-sm font-semibold text-[#24211D]">Emirates</p>
@@ -336,10 +336,10 @@ export default function AprovacaoRoteiroPage() {
             <div className="mt-5">
               <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                 <div className="rounded-xl border border-[#DDD8CF] bg-[#FDFCF9] p-4">
-                  <p className="mb-2 text-[11px] font-bold uppercase tracking-[0.2em] text-[#24211D]/40">
+                  <p className="mb-2 text-[11px] font-bold uppercase tracking-[0.2em] text-[#24211D]/65">
                     Ida · 03–04 Mai 2027
                   </p>
-                  <div className="space-y-1.5 text-sm text-[#24211D]/70">
+                  <div className="space-y-1.5 text-sm text-[#24211D]/90">
                     <p>
                       <span className="font-semibold text-[#24211D]">EK262</span>{" "}
                       · GRU → DXB · 01:35 → 23:00
@@ -349,15 +349,15 @@ export default function AprovacaoRoteiroPage() {
                       · DXB → NRT · 23:40 → 17:35
                     </p>
                   </div>
-                  <p className="mt-2 text-xs text-[#24211D]/40">
+                  <p className="mt-2 text-xs text-[#24211D]/65">
                     Chegada em Tokyo pelo Aeroporto de Narita (NRT), Terminal 2
                   </p>
                 </div>
                 <div className="rounded-xl border border-[#DDD8CF] bg-[#FDFCF9] p-4">
-                  <p className="mb-2 text-[11px] font-bold uppercase tracking-[0.2em] text-[#24211D]/40">
+                  <p className="mb-2 text-[11px] font-bold uppercase tracking-[0.2em] text-[#24211D]/65">
                     Volta · 12 Mai 2027
                   </p>
-                  <div className="space-y-1.5 text-sm text-[#24211D]/70">
+                  <div className="space-y-1.5 text-sm text-[#24211D]/90">
                     <p>
                       <span className="font-semibold text-[#24211D]">EK313</span>{" "}
                       · HND → DXB · 00:05 → 06:25
@@ -367,7 +367,7 @@ export default function AprovacaoRoteiroPage() {
                       · DXB → GRU · 06:05 → 17:40
                     </p>
                   </div>
-                  <p className="mt-2 text-xs text-[#24211D]/40">
+                  <p className="mt-2 text-xs text-[#24211D]/65">
                     Saída de Tokyo pelo Aeroporto de Haneda (HND), Terminal 3
                   </p>
                 </div>
@@ -375,7 +375,7 @@ export default function AprovacaoRoteiroPage() {
             </div>
 
             <div className="mt-8">
-              <p className="mx-auto mb-1 block w-fit rounded-full border border-[#DDD8CF] px-5 py-2 text-center text-xs uppercase tracking-[0.3em] text-[#24211D]/65">
+              <p className="mx-auto mb-1 block w-fit rounded-full border border-[#DDD8CF] px-5 py-2 text-center text-xs uppercase tracking-[0.3em] text-[#24211D]/85">
                 Perfil do Viajante
               </p>
               <RadarChart dimensions={RADAR_DIMENSIONS} />
@@ -388,7 +388,7 @@ export default function AprovacaoRoteiroPage() {
                         kind={d.icon}
                         className="h-4 w-4 shrink-0 text-[#173B45]"
                       />
-                      <p className="text-xs text-[#24211D]/70">
+                      <p className="text-xs text-[#24211D]/90">
                         {d.lines.join(" ")}
                       </p>
                       <span className="ml-auto shrink-0 text-xs tracking-tight text-[#173B45]">
