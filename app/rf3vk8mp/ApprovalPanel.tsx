@@ -2006,9 +2006,20 @@ function HotelGuestGuide({ hotel }: { hotel: HotelInfo }) {
         </div>
       </div>
 
-      {/* 3. Localização & Arredores — lista + mapa no mesmo bloco de largura
-          total, sem divisor forte entre os dois */}
+      {/* 3. Localização & Arredores — foto da fachada, lista e rotas, no
+          mesmo bloco de largura total */}
       <div className="border-t border-[#DDD8CF] bg-[#FDFCF9] p-5 sm:p-8">
+        {hotel.mapa && (
+          <div className="relative mb-6 aspect-[16/9] w-full overflow-hidden rounded-2xl border border-[#DDD8CF] sm:aspect-[2/1]">
+            <Image
+              src={hotel.mapa.imagem}
+              alt={hotel.mapa.imagemAlt}
+              fill
+              sizes="(max-width: 640px) 100vw, 800px"
+              className="object-cover"
+            />
+          </div>
+        )}
         <p className="mb-5 text-xs font-bold uppercase tracking-[0.2em] text-[#24211D]/68">
           Localização &amp; Arredores
         </p>
@@ -2062,17 +2073,8 @@ function HotelGuestGuide({ hotel }: { hotel: HotelInfo }) {
 
         {hotel.mapa && (
           <div className="mt-6">
-            <div className="relative aspect-[16/9] w-full overflow-hidden rounded-2xl border border-[#DDD8CF] sm:aspect-[2/1]">
-              <Image
-                src={hotel.mapa.imagem}
-                alt={hotel.mapa.imagemAlt}
-                fill
-                sizes="(max-width: 640px) 100vw, 800px"
-                className="object-cover"
-              />
-            </div>
             {hotel.mapa.rotas && hotel.mapa.rotas.length > 0 && (
-              <div className="mt-5">
+              <div>
                 <p className="mb-3 text-[10px] font-bold uppercase tracking-[0.2em] text-[#24211D]/58">
                   Rotas a pé (prints do Google Maps)
                 </p>
