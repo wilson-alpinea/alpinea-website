@@ -2007,35 +2007,17 @@ export function ApprovalPanel({
 
   return (
     <>
-      <div className="relative isolate">
-        {/* Glow ao redor do painel — mesma técnica e paleta azulada do
-            /roteirolandingpage, já que o painel flutua sobre fundo preto. */}
+      <div className="relative">
+        {/* Glow via box-shadow direto no card — mesma paleta do
+            /roteirolandingpage, sem risco de vazar para dentro do painel
+            branco (sombra CSS só pinta fora da caixa). */}
         <div
-          aria-hidden
-          className="pointer-events-none absolute left-1/2 top-1/2 -z-30 h-[128%] w-[136%] -translate-x-1/2 -translate-y-1/2 rounded-[3rem] opacity-60 blur-[70px]"
+          className="overflow-hidden rounded-2xl border border-[#DDD8CF] bg-[#FDFCF9] sm:rounded-[2rem]"
           style={{
-            background:
-              "radial-gradient(ellipse at center, rgba(35,90,190,0.4) 0%, rgba(20,55,130,0.22) 40%, transparent 72%)",
+            boxShadow:
+              "0 0 90px 6px rgba(35,90,190,0.28), 0 0 42px -4px rgba(90,50,155,0.28), 0 20px 60px -30px rgba(0,0,0,0.25)",
           }}
-        />
-        <div
-          aria-hidden
-          className="pointer-events-none absolute left-1/2 top-1/2 -z-20 h-[114%] w-[118%] -translate-x-1/2 -translate-y-1/2 rounded-[2.5rem] opacity-55 blur-[26px]"
-          style={{
-            background:
-              "linear-gradient(135deg, rgba(90,50,155,0.3), rgba(30,90,190,0.32) 50%, transparent 78%)",
-          }}
-        />
-        <div
-          aria-hidden
-          className="pointer-events-none absolute left-1/2 top-1/2 -z-10 h-[103%] w-[103%] -translate-x-1/2 -translate-y-1/2 rounded-[2.2rem] opacity-55 blur-[8px]"
-          style={{
-            background:
-              "radial-gradient(ellipse at center, rgba(60,120,220,0.3) 0%, transparent 68%)",
-          }}
-        />
-
-        <div className="relative z-10 overflow-hidden rounded-2xl border border-[#DDD8CF] bg-[#FDFCF9] shadow-[0_20px_60px_-30px_rgba(0,0,0,0.25)] sm:rounded-[2rem]">
+        >
         <div className="border-b border-[#DDD8CF] px-6 py-7 text-center sm:px-10">
           <p className="mx-auto mb-5 inline-block rounded-full border border-[#DDD8CF] px-5 py-2 text-xs uppercase tracking-[0.3em] text-[#24211D]/85">
             Roteiro de 7 dias
