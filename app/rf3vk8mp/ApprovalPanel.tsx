@@ -2,6 +2,7 @@
 
 import { useRef, useState, type ReactElement } from "react";
 import Image from "next/image";
+import { NaritaGuideContent } from "../components/NaritaGuideContent";
 
 // Painel interativo do roteiro personalizado — mesma lógica visual do Painel
 // Interativo usado em /ajisairoteiros (pílulas, abas de dia, tipografia
@@ -1483,7 +1484,7 @@ function IconWords({ className }: { className?: string }) {
 
 const INFO_CARDS = [
   { label: "Aeroporto DXB", Icon: IconPlane },
-  { label: "Aeroporto NRT (Narita)", Icon: IconPlane, href: "/database/aeroportos/narita" },
+  { label: "Aeroporto NRT (Narita)", Icon: IconPlane, view: "narita" as const },
   { label: "Metrô", Icon: IconMetro },
   { label: "Ônibus", Icon: IconBus },
   { label: "Trem Bala (Shinkansen)", Icon: IconShinkansen },
@@ -1986,7 +1987,7 @@ export function ApprovalPanel({
 }) {
   const [activeDay, setActiveDay] = useState(1);
   const [hotelCity, setHotelCity] = useState(0);
-  const [viewMode, setViewMode] = useState<"dia" | "hotel">("dia");
+  const [viewMode, setViewMode] = useState<"dia" | "hotel" | "narita">("dia");
   const contentRef = useRef<HTMLDivElement>(null);
   const daysMenuRef = useRef<HTMLDivElement>(null);
 
@@ -2164,7 +2165,7 @@ export function ApprovalPanel({
           </span>
         </div>
         <div className="grid grid-cols-2 gap-3 border-b border-[#DDD8CF] px-6 pb-6 pt-3 sm:grid-cols-4 sm:px-10">
-          {INFO_CARDS.map(({ label, Icon, href }) => {
+          {INFO_CARDS.map(({ label, Icon, view }) => {
             const cardClassName =
               "group flex min-h-[112px] cursor-pointer flex-col items-center justify-center gap-2.5 rounded-xl border border-[#DDD8CF] bg-[#FAF9F6] px-3 py-4 text-center text-xs leading-5 text-[#24211D]/55 transition duration-300 ease-out hover:-translate-y-0.5 hover:border-[#173B45]/30 hover:bg-[#F8FAF9] hover:text-[#173B45] hover:shadow-[0_10px_30px_-15px_rgba(23,59,69,0.35)]";
             const content = (
@@ -2175,16 +2176,18 @@ export function ApprovalPanel({
                 {label}
               </>
             );
-            return href ? (
-              <a
+            return view ? (
+              <button
                 key={label}
-                href={href}
-                target="_blank"
-                rel="noopener noreferrer"
+                type="button"
+                onClick={() => {
+                  setViewMode(view);
+                  scrollToContent();
+                }}
                 className={cardClassName}
               >
                 {content}
-              </a>
+              </button>
             ) : (
               <div key={label} className={cardClassName}>
                 {content}
@@ -2194,7 +2197,16 @@ export function ApprovalPanel({
         </div>
 
         <div ref={contentRef} className="scroll-mt-6 px-6 py-8 sm:px-10 sm:py-10">
-          {viewMode === "hotel" ? (
+          {viewMode === "narita" ? (
+            <>
+              <p className="mb-5 inline-block rounded-full border border-[#173B45]/20 bg-[#F8FAF9] px-5 py-2 text-xs uppercase tracking-[0.3em] text-[#173B45]">
+                Aeroporto de Narita (NRT)
+              </p>
+              <div className="overflow-hidden rounded-2xl">
+                <NaritaGuideContent displayClassName={displayClassName} />
+              </div>
+            </>
+          ) : viewMode === "hotel" ? (
             <>
               <p className="mb-5 inline-block rounded-full border border-[#173B45]/20 bg-[#F8FAF9] px-5 py-2 text-xs uppercase tracking-[0.3em] text-[#173B45]">
                 Hotel · {HOTEIS[hotelCity].cidade}
