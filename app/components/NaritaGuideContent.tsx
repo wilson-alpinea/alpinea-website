@@ -41,11 +41,16 @@ import {
 // não é acessível a clientes. Editar aqui atualiza os dois lugares.
 export function NaritaGuideContent({
   displayClassName,
+  internal = true,
 }: {
   displayClassName: string;
+  // false quando embutido no painel do cliente (app/rf3vk8mp) — oculta o
+  // link "Banco de conteúdo" e o selo "Uso interno", que só fazem sentido
+  // na página interna /database.
+  internal?: boolean;
 }) {
   return (
-    <div className="bg-black text-white">
+    <div className="bg-[#FDFCF9] text-[#24211D]">
       <InternalGuideHeader
         displayClassName={displayClassName}
         eyebrow="Anexo com Informação Detalhada - Aeroportos - Narita (NRT)"
@@ -54,6 +59,7 @@ export function NaritaGuideContent({
         heroImage="/images/Narita-hero.png"
         heroAlt="Vista aérea do pátio de aeronaves e terminais do Aeroporto Internacional de Narita"
         subtitle="Aeroporto Internacional de Narita, em Chiba — a cerca de 60 km a leste do centro de Tóquio. Recebe a maior parte dos voos internacionais de longo curso com destino a Tóquio."
+        internal={internal}
       />
 
       <div className="mx-auto grid max-w-5xl gap-4 px-6 pt-8 md:grid-cols-2 md:px-10">
@@ -163,10 +169,10 @@ export function NaritaGuideContent({
       <section id="secao-1" className="px-6 py-14 md:px-10 md:py-20">
         <div className="mx-auto max-w-5xl space-y-10">
           <SectionMarker number={1} label="Visão Geral" />
-          <h2 className={`${displayClassName} text-2xl font-medium text-white md:text-3xl`}>
+          <h2 className={`${displayClassName} text-2xl font-medium text-[#24211D] md:text-3xl`}>
             Como Funciona o Aeroporto de Narita? São Muitos Terminais?
           </h2>
-          <p className="max-w-3xl text-base font-light leading-8 text-white/70">
+          <p className="max-w-3xl text-base font-light leading-8 text-[#24211D]/88">
             Confirme sempre o terminal na confirmação do voo — companhias e alocações
             mudam com frequência.
           </p>
@@ -215,19 +221,19 @@ export function NaritaGuideContent({
             <MapCard href="#mapa-terminal3" label="Planta do Terminal 3" />
           </div>
 
-          <div className="rounded-2xl border border-[#5b9bd5]/15 bg-[#0f2340] p-6 sm:p-8">
+          <div className="rounded-2xl border border-[#5b9bd5]/15 bg-[#5b9bd5]/[0.08] p-6 sm:p-8">
             <p className="mb-5 flex items-center gap-2 text-xs uppercase tracking-[0.25em] text-[#5b9bd5]">
               <IconBulb className="h-3.5 w-3.5" />
               Recomendação Ajisai
             </p>
-            <h3 className={`${displayClassName} text-xl font-medium text-white md:text-2xl`}>
+            <h3 className={`${displayClassName} text-xl font-medium text-[#24211D] md:text-2xl`}>
               Errei o Terminal e Agora?
             </h3>
 
-            <div className="mt-5 space-y-4 text-sm leading-7 text-white/70 md:text-base md:leading-8">
+            <div className="mt-5 space-y-4 text-sm leading-7 text-[#24211D]/88 md:text-base md:leading-8">
               <p>
                 Diferente do Aeroporto de Guarulhos, em São Paulo, os três terminais de
-                Narita <span className="text-white">não são conectados entre si</span>.
+                Narita <span className="text-[#24211D]">não são conectados entre si</span>.
                 Apenas o Terminal 2 e o Terminal 3 têm ligação terrestre — mesmo assim, o
                 trajeto a pé leva cerca de 10–15 minutos.
               </p>
@@ -236,10 +242,10 @@ export function NaritaGuideContent({
               <MapCard href="#mapa-passagem-t2-t3" label="Passagem entre o Terminal 2 e o Terminal 3" />
             </div>
 
-            <div className="mt-8 space-y-4 pt-6 text-sm leading-7 text-white/70 md:text-base md:leading-8">
+            <div className="mt-8 space-y-4 pt-6 text-sm leading-7 text-[#24211D]/88 md:text-base md:leading-8">
               <p>
                 Se você precisa se deslocar do Terminal 1 para o Terminal 2 ou 3 (ou
-                vice-versa), é necessário usar o <span className="text-white">transfer interno</span> —
+                vice-versa), é necessário usar o <span className="text-[#24211D]">transfer interno</span> —
                 essa transferência leva em média 10 minutos.
               </p>
             </div>
@@ -308,7 +314,7 @@ export function NaritaGuideContent({
       />
 
       {/* Chegada e imigração */}
-      <section id="secao-2" className="border-t border-white/10 bg-white/[0.02] px-6 py-14 md:px-10 md:py-20">
+      <section id="secao-2" className="border-t border-[#DDD8CF] bg-[#F8FAF9] px-6 py-14 md:px-10 md:py-20">
         <div className="mx-auto max-w-3xl">
           <div className="mb-8">
             <SectionMarker number={2} label="Chegada e Imigração" />
@@ -319,62 +325,62 @@ export function NaritaGuideContent({
       </section>
 
       {/* Recomendações antes de sair do aeroporto */}
-      <section id="secao-3" className="border-t border-white/10 px-6 py-14 md:px-10 md:py-20">
+      <section id="secao-3" className="border-t border-[#DDD8CF] px-6 py-14 md:px-10 md:py-20">
         <div className="mx-auto max-w-3xl">
           <div className="mb-8">
             <SectionMarker number={3} label="Recomendações Antes de Sair do Aeroporto" />
           </div>
 
-          <h2 className={`${displayClassName} mb-8 text-2xl font-medium text-white md:text-3xl`}>
+          <h2 className={`${displayClassName} mb-8 text-2xl font-medium text-[#24211D] md:text-3xl`}>
             Passei pela Imigração e Estou com Minhas Malas, e Agora?
           </h2>
 
           <div className="space-y-5">
-            <p className="text-base font-light leading-8 text-white/70">
+            <p className="text-base font-light leading-8 text-[#24211D]/88">
               O Aeroporto de Narita fica bem distante de Tóquio — em horários com
               trânsito, pode levar até 2 horas para chegar ao centro da cidade. Por
               isso, existem algumas recomendações gerais.
             </p>
 
             <div className="space-y-4 pt-2">
-              <p id="secao-3-1" className="text-sm font-medium uppercase tracking-[0.15em] text-white/70">
+              <p id="secao-3-1" className="text-sm font-medium uppercase tracking-[0.15em] text-[#24211D]/88">
                 3.1 — Aluguel de Pocket Wi-Fi ou eSIM 5G
               </p>
-              <p className="text-base font-light leading-8 text-white/70">
+              <p className="text-base font-light leading-8 text-[#24211D]/88">
                 Caso ainda não tenha comprado um eSIM 5G, recomendamos que faça o
                 aluguel de um wi-fi móvel ou a compra de um eSIM 5G dentro do
                 aeroporto.
               </p>
 
               <div className="grid gap-4 md:grid-cols-3">
-                <div className="rounded-2xl border border-white/10 bg-white/[0.025] p-5">
-                  <p className="text-sm font-medium text-white">Terminal 1</p>
-                  <p className="mt-2 text-sm leading-6 text-white/60">
+                <div className="rounded-2xl border border-[#DDD8CF] bg-[#F8FAF9] p-5">
+                  <p className="text-sm font-medium text-[#24211D]">Terminal 1</p>
+                  <p className="mt-2 text-sm leading-6 text-[#24211D]/80">
                     Máquinas de venda de chip e guichês de pocket Wi-Fi no 1F, tanto na
                     Ala Sul quanto na Ala Norte.
                   </p>
                 </div>
-                <div className="rounded-2xl border border-white/10 bg-white/[0.025] p-5">
-                  <p className="text-sm font-medium text-white">Terminal 2</p>
-                  <p className="mt-2 text-sm leading-6 text-white/60">
+                <div className="rounded-2xl border border-[#DDD8CF] bg-[#F8FAF9] p-5">
+                  <p className="text-sm font-medium text-[#24211D]">Terminal 2</p>
+                  <p className="mt-2 text-sm leading-6 text-[#24211D]/80">
                     Guichês de pocket Wi-Fi no lobby de embarque, no 3F. Máquinas de
                     eSIM normalmente no 2F.
                   </p>
                 </div>
-                <div className="rounded-2xl border border-white/10 bg-white/[0.025] p-5">
-                  <p className="text-sm font-medium text-white">Terminal 3</p>
-                  <p className="mt-2 text-sm leading-6 text-white/60">
+                <div className="rounded-2xl border border-[#DDD8CF] bg-[#F8FAF9] p-5">
+                  <p className="text-sm font-medium text-[#24211D]">Terminal 3</p>
+                  <p className="mt-2 text-sm leading-6 text-[#24211D]/80">
                     Guichês de pocket Wi-Fi e máquinas de eSIM no 1F.
                   </p>
                 </div>
               </div>
 
-              <div className="rounded-2xl border border-[#5b9bd5]/15 bg-[#0f2340] p-6 sm:p-8">
+              <div className="rounded-2xl border border-[#5b9bd5]/15 bg-[#5b9bd5]/[0.08] p-6 sm:p-8">
                 <p className="mb-4 flex items-center gap-2 text-xs uppercase tracking-[0.25em] text-[#5b9bd5]">
                   <IconBulb className="h-3.5 w-3.5" />
                   Recomendação Alpinea
                 </p>
-                <p className="text-sm leading-7 text-white/70 md:text-base md:leading-8">
+                <p className="text-sm leading-7 text-[#24211D]/88 md:text-base md:leading-8">
                   O método mais conveniente é contratar o eSIM digitalmente em
                   aplicativos como Airalo — nós normalmente usamos a própria Airalo
                   para contratação. A vantagem de usar o pocket wi-fi é que você pode
@@ -384,11 +390,11 @@ export function NaritaGuideContent({
               </div>
             </div>
 
-            <div className="space-y-4 border-t border-white/10 pt-6">
-              <p id="secao-3-2" className="text-sm font-medium uppercase tracking-[0.15em] text-white/70">
+            <div className="space-y-4 border-t border-[#DDD8CF] pt-6">
+              <p id="secao-3-2" className="text-sm font-medium uppercase tracking-[0.15em] text-[#24211D]/88">
                 3.2 — Comprar IC Card (JR Suica ou Pasmo)
               </p>
-              <p className="text-base font-light leading-8 text-white/70">
+              <p className="text-base font-light leading-8 text-[#24211D]/88">
                 No Japão, o valor do ticket de metrô é definido pela distância — ou
                 seja, você precisa definir o trajeto e comprar o valor correto a cada
                 viagem. Para evitar isso, recomendamos adquirir um IC Card (cartão
@@ -397,7 +403,7 @@ export function NaritaGuideContent({
                 o Pasmo pela Tokyo Metro, ambas entre as maiores operadoras de trem do
                 Japão.
               </p>
-              <p className="text-base font-light leading-8 text-white/70">
+              <p className="text-base font-light leading-8 text-[#24211D]/88">
                 O IC Card também é utilizado e aceito como forma de pagamento em
                 lojas de conveniência, pequenas compras e máquinas de bebida na rua.
               </p>
@@ -423,8 +429,8 @@ export function NaritaGuideContent({
                     aspect="aspect-[3/5]"
                     zoomHref="#foto-ic-metro"
                   />
-                  <p className="mt-3 text-center text-sm font-medium text-white">Catraca do metrô</p>
-                  <p className="text-center text-xs text-white/45">Aproxime o cartão na área indicada</p>
+                  <p className="mt-3 text-center text-sm font-medium text-[#24211D]">Catraca do metrô</p>
+                  <p className="text-center text-xs text-[#24211D]/70">Aproxime o cartão na área indicada</p>
                 </div>
                 <div>
                   <ImageCard
@@ -434,8 +440,8 @@ export function NaritaGuideContent({
                     aspect="aspect-[3/5]"
                     zoomHref="#foto-ic-sensor"
                   />
-                  <p className="mt-3 text-center text-sm font-medium text-white">Sensor de aproximação</p>
-                  <p className="text-center text-xs text-white/45">Encoste o cartão até o bipe</p>
+                  <p className="mt-3 text-center text-sm font-medium text-[#24211D]">Sensor de aproximação</p>
+                  <p className="text-center text-xs text-[#24211D]/70">Encoste o cartão até o bipe</p>
                 </div>
                 <div>
                   <ImageCard
@@ -445,24 +451,24 @@ export function NaritaGuideContent({
                     aspect="aspect-[3/5]"
                     zoomHref="#foto-ic-vending"
                   />
-                  <p className="mt-3 text-center text-sm font-medium text-white">Máquinas de bebida</p>
-                  <p className="text-center text-xs text-white/45">Também aceitam o IC Card</p>
+                  <p className="mt-3 text-center text-sm font-medium text-[#24211D]">Máquinas de bebida</p>
+                  <p className="text-center text-xs text-[#24211D]/70">Também aceitam o IC Card</p>
                 </div>
               </div>
 
-              <div className="rounded-2xl border border-[#5b9bd5]/15 bg-[#0f2340] p-6 sm:p-8">
+              <div className="rounded-2xl border border-[#5b9bd5]/15 bg-[#5b9bd5]/[0.08] p-6 sm:p-8">
                 <div className="flex flex-col items-center gap-2 text-center">
-                  <span className="flex h-12 w-12 items-center justify-center rounded-full bg-[#5b9bd5]/15 text-[#8fc0e8]">
+                  <span className="flex h-12 w-12 items-center justify-center rounded-full bg-[#5b9bd5]/15 text-[#2f80c9]">
                     <IconCard className="h-6 w-6" />
                   </span>
                   <p className="text-xs uppercase tracking-[0.25em] text-[#5b9bd5]">
                     Suica/Pasmo no celular
                   </p>
-                  <span className="rounded-full bg-yellow-400/15 px-3 py-1 text-[10px] font-medium uppercase tracking-[0.2em] text-yellow-400">
+                  <span className="rounded-full bg-[#6b46c1]/10 px-3 py-1 text-[10px] font-medium uppercase tracking-[0.2em] text-[#6b46c1]">
                     Opcional
                   </span>
                 </div>
-                <p className="mt-5 text-center text-sm leading-7 text-white/70 md:text-base md:leading-8">
+                <p className="mt-5 text-center text-sm leading-7 text-[#24211D]/88 md:text-base md:leading-8">
                   O cartão IC pode ser adicionado diretamente na Carteira do iPhone
                   (Apple Wallet) ou no Google Wallet, sem precisar de um cartão
                   físico — o que facilita muito caso haja escassez temporária de
@@ -486,7 +492,7 @@ export function NaritaGuideContent({
                     href="https://support.apple.com/pt-br/108772"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="block text-[#8fc0e8] underline underline-offset-2"
+                    className="block text-[#2f80c9] underline underline-offset-2"
                   >
                     Como adicionar o Suica/Pasmo na Apple Wallet →
                   </a>
@@ -494,7 +500,7 @@ export function NaritaGuideContent({
                     href="https://support.google.com/wallet/thread/269371334/n%C3%A3o-consigo-adicionar-o-suica-cart%C3%A3o-de-transporte-do-jap%C3%A3o-na-carteira?hl=pt"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="block text-[#8fc0e8] underline underline-offset-2"
+                    className="block text-[#2f80c9] underline underline-offset-2"
                   >
                     Como adicionar o Suica no Google Wallet →
                   </a>
@@ -502,18 +508,18 @@ export function NaritaGuideContent({
               </div>
             </div>
 
-            <div className="space-y-4 border-t border-white/10 pt-6">
-              <p id="secao-3-3" className="text-sm font-medium uppercase tracking-[0.15em] text-white/70">
+            <div className="space-y-4 border-t border-[#DDD8CF] pt-6">
+              <p id="secao-3-3" className="text-sm font-medium uppercase tracking-[0.15em] text-[#24211D]/88">
                 3.3 — Câmbio
               </p>
-              <p className="text-base font-light leading-8 text-white/70">
+              <p className="text-base font-light leading-8 text-[#24211D]/88">
                 Caso planeje fazer uma refeição no aeroporto ou pedir um Uber,
                 recomendamos retirar o valor necessário: uma refeição num restaurante
                 de sushi de esteira no aeroporto custa, em média, ¥2.000–3.500 por
                 pessoa; um Uber de Narita até Shinjuku custa entre ¥26.300 (tarifa
                 fixa) e cerca de ¥36.000 (tarifa dinâmica), dependendo do horário.
               </p>
-              <p className="text-base font-light leading-8 text-white/70">
+              <p className="text-base font-light leading-8 text-[#24211D]/88">
                 Ao chegar no centro de Tóquio, nossa recomendação é trocar o dinheiro
                 numa casa de câmbio como a 銀座エクスチェンジ GINZA EXCHANGE (bairro de
                 Ginza), ou em bancos como o Mitsubishi-UFJ, que possuem guichê de
@@ -521,14 +527,14 @@ export function NaritaGuideContent({
               </p>
             </div>
 
-            <div className="space-y-8 border-t border-white/10 pt-6">
-              <p id="secao-3-4" className="text-sm font-medium uppercase tracking-[0.15em] text-white/70">
+            <div className="space-y-8 border-t border-[#DDD8CF] pt-6">
+              <p id="secao-3-4" className="text-sm font-medium uppercase tracking-[0.15em] text-[#24211D]/88">
                 3.4 — Restaurantes
               </p>
 
-              <div className="rounded-2xl border border-white/10 bg-white/[0.025] p-5">
-                <p className="text-sm font-medium text-white">Terminal 1</p>
-                <p className="mt-2 text-sm leading-6 text-white/60">
+              <div className="rounded-2xl border border-[#DDD8CF] bg-[#F8FAF9] p-5">
+                <p className="text-sm font-medium text-[#24211D]">Terminal 1</p>
+                <p className="mt-2 text-sm leading-6 text-[#24211D]/80">
                   Kaitensushi Misaki (5F), Ramen Ichikakuya (5F), Tonkatsu Shinjuku
                   Saboten (4F) e Tsukiji Sushiiwa (4F). Para comida ocidental:
                   McDonald&apos;s, Starbucks, Shake Shack e Subway (4F).
@@ -556,9 +562,9 @@ export function NaritaGuideContent({
                 </div>
               </div>
 
-              <div className="rounded-2xl border border-white/10 bg-white/[0.025] p-5">
-                <p className="text-sm font-medium text-white">Terminal 2</p>
-                <p className="mt-2 text-sm leading-6 text-white/60">
+              <div className="rounded-2xl border border-[#DDD8CF] bg-[#F8FAF9] p-5">
+                <p className="text-sm font-medium text-[#24211D]">Terminal 2</p>
+                <p className="mt-2 text-sm leading-6 text-[#24211D]/80">
                   Tokyo Tonkotsu by Ippudo (4F), Sushi Uogashi Nihon-ichi (4F),
                   Sushi-go-round Gansozushi (4F) e Tonkatsu Inaba Wako (4F). Para
                   comida ocidental: Starbucks (4F).
@@ -576,9 +582,9 @@ export function NaritaGuideContent({
                 </div>
               </div>
 
-              <div className="rounded-2xl border border-white/10 bg-white/[0.025] p-5">
-                <p className="text-sm font-medium text-white">Terminal 3</p>
-                <p className="mt-2 text-sm leading-6 text-white/60">
+              <div className="rounded-2xl border border-[#DDD8CF] bg-[#F8FAF9] p-5">
+                <p className="text-sm font-medium text-[#24211D]">Terminal 3</p>
+                <p className="mt-2 text-sm leading-6 text-[#24211D]/80">
                   Tatsu Sushi e Freshness Burger (comida ocidental). O Terminal 3 é
                   bem pequeno em comparação aos demais, porém se o objetivo for
                   comer sushi o Tatsu é na verdade um dos 2 melhores restaurantes
@@ -592,46 +598,46 @@ export function NaritaGuideContent({
               </div>
             </div>
 
-            <div className="space-y-4 border-t border-white/10 pt-6">
-              <p id="secao-3-5" className="text-sm font-medium uppercase tracking-[0.15em] text-white/70">
+            <div className="space-y-4 border-t border-[#DDD8CF] pt-6">
+              <p id="secao-3-5" className="text-sm font-medium uppercase tracking-[0.15em] text-[#24211D]/88">
                 3.5 — Farmácia
               </p>
               <div className="grid gap-4 sm:grid-cols-2">
-                <div className="rounded-2xl border border-white/10 bg-white/[0.025] p-5">
-                  <p className="text-sm font-medium text-white">Terminal 1</p>
-                  <p className="mt-2 text-sm leading-6 text-white/60">
+                <div className="rounded-2xl border border-[#DDD8CF] bg-[#F8FAF9] p-5">
+                  <p className="text-sm font-medium text-[#24211D]">Terminal 1</p>
+                  <p className="mt-2 text-sm leading-6 text-[#24211D]/80">
                     4F — Airport Drug e AP American Pharmacy.
                   </p>
                 </div>
-                <div className="rounded-2xl border border-white/10 bg-white/[0.025] p-5">
-                  <p className="text-sm font-medium text-white">Terminal 2</p>
-                  <p className="mt-2 text-sm leading-6 text-white/60">
+                <div className="rounded-2xl border border-[#DDD8CF] bg-[#F8FAF9] p-5">
+                  <p className="text-sm font-medium text-[#24211D]">Terminal 2</p>
+                  <p className="mt-2 text-sm leading-6 text-[#24211D]/80">
                     4F — Drug Box MediCosme.
                   </p>
                 </div>
               </div>
             </div>
 
-            <div className="space-y-4 border-t border-white/10 pt-6">
-              <p id="secao-3-6" className="text-sm font-medium uppercase tracking-[0.15em] text-white/70">
+            <div className="space-y-4 border-t border-[#DDD8CF] pt-6">
+              <p id="secao-3-6" className="text-sm font-medium uppercase tracking-[0.15em] text-[#24211D]/88">
                 3.6 — Envio de Bagagem (Takkyubin)
               </p>
-              <div className="rounded-2xl border border-[#5b9bd5]/15 bg-[#0f2340] p-6 sm:p-8">
+              <div className="rounded-2xl border border-[#5b9bd5]/15 bg-[#5b9bd5]/[0.08] p-6 sm:p-8">
                 <div className="flex flex-col items-center gap-2 text-center">
-                  <span className="flex h-12 w-12 items-center justify-center rounded-full bg-[#5b9bd5]/15 text-[#8fc0e8]">
+                  <span className="flex h-12 w-12 items-center justify-center rounded-full bg-[#5b9bd5]/15 text-[#2f80c9]">
                     <IconLuggage className="h-6 w-6" />
                   </span>
                   <p className="text-xs uppercase tracking-[0.25em] text-[#5b9bd5]">
                     Luggage Delivery (TA-Q-BIN)
                   </p>
-                  <span className="rounded-full bg-yellow-400/15 px-3 py-1 text-[10px] font-medium uppercase tracking-[0.2em] text-yellow-400">
+                  <span className="rounded-full bg-[#6b46c1]/10 px-3 py-1 text-[10px] font-medium uppercase tracking-[0.2em] text-[#6b46c1]">
                     Opcional
                   </span>
                 </div>
                 <div className="relative mx-auto mt-5 h-12 w-24">
                   <Image src="/images/taqbinlogo.png" alt="Logo TA-Q-BIN, da Yamato Transport" fill className="object-contain" />
                 </div>
-                <p className="mt-5 text-center text-base font-light leading-8 text-white/70">
+                <p className="mt-5 text-center text-base font-light leading-8 text-[#24211D]/88">
                   Logo na saída do desembarque existe o balcão de envio de malas
                   (Luggage Delivery / Yamato Transport, o TA-Q-BIN). Para clientes de
                   alto padrão ou famílias com muitas malas, mandar a bagagem direto
@@ -775,18 +781,18 @@ export function NaritaGuideContent({
       />
 
       {/* Deslocamento */}
-      <section id="deslocamento" className="border-t border-white/10 px-6 py-14 md:px-10 md:py-20">
+      <section id="deslocamento" className="border-t border-[#DDD8CF] px-6 py-14 md:px-10 md:py-20">
         <div className="mx-auto max-w-3xl">
           <div className="mb-8">
             <SectionMarker number={4} label="Deslocamento até Tóquio" />
           </div>
 
-          <h2 className={`${displayClassName} mb-8 text-2xl font-medium text-white md:text-3xl`}>
+          <h2 className={`${displayClassName} mb-8 text-2xl font-medium text-[#24211D] md:text-3xl`}>
             Já Terminei os Preparativos, Como Chego ao Hotel e Qual Meio de Transporte
             Devo Escolher?
           </h2>
 
-          <p className="mb-10 text-base font-light leading-8 text-white/70">
+          <p className="mb-10 text-base font-light leading-8 text-[#24211D]/88">
             Existem basicamente 3 formas de chegar até Tóquio a partir de Narita.
           </p>
 
@@ -813,7 +819,7 @@ export function NaritaGuideContent({
           <div id="deslocamento-trem" className="space-y-5">
             <SubStepHeading number={1} title="Trem" />
 
-            <p className="text-sm font-medium uppercase tracking-[0.15em] text-white/50">
+            <p className="text-sm font-medium uppercase tracking-[0.15em] text-[#24211D]/74">
               Narita Express (N&apos;EX) — para Shinjuku, Shibuya, Tóquio
             </p>
             <div className="grid gap-4 sm:grid-cols-2">
@@ -825,7 +831,7 @@ export function NaritaGuideContent({
               />
               <StatCard Icon={IconClock} label="Tempo de deslocamento" value="≈ 80 minutos" variant="highlight" />
             </div>
-            <p className="text-base font-light leading-8 text-white/70">
+            <p className="text-base font-light leading-8 text-[#24211D]/88">
               Mesmo utilizando o trem expresso (N&apos;EX), o trajeto é longo, e após
               chegar em uma das estações que conectam com a linha expressa você ainda
               vai precisar se deslocar até a estação de metrô mais próxima do seu hotel
@@ -836,7 +842,7 @@ export function NaritaGuideContent({
               horários, por lotação dos vagões nos horários de pico.
             </p>
 
-            <p className="pt-2 text-sm font-medium uppercase tracking-[0.15em] text-white/50">
+            <p className="pt-2 text-sm font-medium uppercase tracking-[0.15em] text-[#24211D]/74">
               Keisei Skyliner — para Ueno, Asakusa, Ginza, Nihonbashi
             </p>
             <div className="grid gap-4 sm:grid-cols-2">
@@ -848,21 +854,21 @@ export function NaritaGuideContent({
               />
               <StatCard Icon={IconClock} label="Tempo de deslocamento" value="≈ 41 minutos" variant="highlight" />
             </div>
-            <p className="text-base font-light leading-8 text-white/70">
+            <p className="text-base font-light leading-8 text-[#24211D]/88">
               Para clientes que vão se hospedar no lado leste de Tóquio — Ueno,
               Asakusa, Ginza, Nihonbashi — o Keisei Skyliner costuma ser mais rápido
               que o N&apos;EX (cerca de 36 a 41 minutos até Ueno) e muito confortável,
               já que evita o trajeto mais longo até Shinjuku seguido de baldeação.
             </p>
 
-            <p className="text-base font-light leading-8 text-white/70">
+            <p className="text-base font-light leading-8 text-[#24211D]/88">
               Dentre as 3 opções (Trem, Ônibus, Táxi/Uber), o trem é sem dúvida a
               pior de todas para quem vai para o lado oeste de Tóquio — mas pode
               valer a pena via Skyliner se o hotel for no lado leste.
             </p>
           </div>
 
-          <div id="deslocamento-onibus" className="mt-10 space-y-5 border-t border-white/10 pt-8">
+          <div id="deslocamento-onibus" className="mt-10 space-y-5 border-t border-[#DDD8CF] pt-8">
             <div className="flex flex-wrap items-center gap-3">
               <SubStepHeading number={2} title="Ônibus" />
               <span className="rounded-full bg-[#5b9bd5]/15 px-3 py-1 text-[10px] uppercase tracking-[0.2em] text-[#5b9bd5]">
@@ -878,13 +884,13 @@ export function NaritaGuideContent({
               />
               <StatCard Icon={IconClock} label="Tempo de deslocamento" value="≈ 105 minutos" variant="highlight" />
             </div>
-            <p className="text-base font-light leading-8 text-white/70">
+            <p className="text-base font-light leading-8 text-[#24211D]/88">
               Dependendo do hotel, existe um ônibus chamado Limousine Bus que vai desde
               o aeroporto de Narita até a porta do hotel. Nem todos os hotéis são
               cobertos, mas existe sempre um terminal de ônibus ou estação de metrô
               próximo aos hotéis que possuem paradas finais para esses ônibus.
             </p>
-            <p className="text-base font-light leading-8 text-white/70">
+            <p className="text-base font-light leading-8 text-[#24211D]/88">
               De todas as 3 opções, é o melhor custo-benefício: você vai sentado e não
               precisa se preocupar com as bagagens, pois elas vão no bagageiro. A única
               desvantagem é quando não existe ônibus direto ao hotel — nesses casos,
@@ -893,7 +899,7 @@ export function NaritaGuideContent({
             </p>
           </div>
 
-          <div id="deslocamento-taxi" className="mt-10 space-y-5 border-t border-white/10 pt-8">
+          <div id="deslocamento-taxi" className="mt-10 space-y-5 border-t border-[#DDD8CF] pt-8">
             <SubStepHeading number={3} title="Táxi/Uber" />
             <div className="grid gap-4 sm:grid-cols-2">
               <StatCard
@@ -904,12 +910,12 @@ export function NaritaGuideContent({
               />
               <StatCard Icon={IconClock} label="Tempo de deslocamento" value="≈ 75 minutos" variant="highlight" />
             </div>
-            <p className="text-base font-light leading-8 text-white/70">
+            <p className="text-base font-light leading-8 text-[#24211D]/88">
               É a opção mais cômoda e confortável, mas custa até 10x mais que as
               outras — uma viagem de Narita até Tóquio pode facilmente chegar a
               R$ 1.000,00.
             </p>
-            <p className="text-base font-light leading-8 text-white/70">
+            <p className="text-base font-light leading-8 text-[#24211D]/88">
               Recomendo usar somente caso o desembarque em Tóquio ocorra num horário
               muito tarde e já não exista ônibus disponível.
             </p>
@@ -925,18 +931,18 @@ export function NaritaGuideContent({
       />
 
       {/* Antes de sair do hotel */}
-      <section id="secao-5" className="border-t border-white/10 bg-white/[0.02] px-6 py-14 md:px-10 md:py-20">
+      <section id="secao-5" className="border-t border-[#DDD8CF] bg-[#F8FAF9] px-6 py-14 md:px-10 md:py-20">
         <div className="mx-auto max-w-3xl">
           <div className="mb-8">
             <SectionMarker number={1} label="Antes de Sair do Hotel" />
           </div>
 
-          <h2 className={`${displayClassName} mb-8 text-2xl font-medium text-white md:text-3xl`}>
+          <h2 className={`${displayClassName} mb-8 text-2xl font-medium text-[#24211D] md:text-3xl`}>
             O Que Verificar Antes de Sair do Hotel?
           </h2>
 
-          <p className="mb-8 text-base font-light leading-8 text-white/70">
-            Se programe para sair do hotel pelo menos <span className="text-white">3 horas antes</span> do
+          <p className="mb-8 text-base font-light leading-8 text-[#24211D]/88">
+            Se programe para sair do hotel pelo menos <span className="text-[#24211D]">3 horas antes</span> do
             horário de embarque.
           </p>
 
@@ -963,49 +969,49 @@ export function NaritaGuideContent({
             />
           </div>
 
-          <div className="mt-8 rounded-2xl border border-[#5b9bd5]/15 bg-[#0f2340] p-6 sm:p-8">
+          <div className="mt-8 rounded-2xl border border-[#5b9bd5]/15 bg-[#5b9bd5]/[0.08] p-6 sm:p-8">
             <p className="mb-5 flex items-center gap-2 text-xs uppercase tracking-[0.25em] text-[#5b9bd5]">
               <IconBulb className="h-3.5 w-3.5" />
               Recomendação Ajisai
             </p>
-            <h3 className={`${displayClassName} text-xl font-medium text-white md:text-2xl`}>
+            <h3 className={`${displayClassName} text-xl font-medium text-[#24211D] md:text-2xl`}>
               Confira o Peso das Malas Antes de Sair
             </h3>
-            <p className="mt-5 text-sm leading-7 text-white/70 md:text-base md:leading-8">
+            <p className="mt-5 text-sm leading-7 text-[#24211D]/88 md:text-base md:leading-8">
               Verifique se o peso das malas está de acordo com os limites estabelecidos
               pela companhia aérea. Embora seja difícil ter uma balança no hotel,
               procure distribuir o peso uniformemente entre as malas.
             </p>
 
-            <div className="mt-6 overflow-x-auto rounded-2xl border border-white/10">
+            <div className="mt-6 overflow-x-auto rounded-2xl border border-[#DDD8CF]">
               <table className="w-full min-w-[480px] border-collapse text-left text-sm">
                 <thead>
                   <tr className="border-b border-[#2f80c9]/40">
-                    <th className="px-5 py-4 text-xs font-medium uppercase tracking-[0.15em] text-white">Classe</th>
-                    <th className="px-5 py-4 text-xs font-medium uppercase tracking-[0.15em] text-white">Peso por mala</th>
-                    <th className="px-5 py-4 text-xs font-medium uppercase tracking-[0.15em] text-white">Malas incluídas</th>
+                    <th className="px-5 py-4 text-xs font-medium uppercase tracking-[0.15em] text-[#24211D]">Classe</th>
+                    <th className="px-5 py-4 text-xs font-medium uppercase tracking-[0.15em] text-[#24211D]">Peso por mala</th>
+                    <th className="px-5 py-4 text-xs font-medium uppercase tracking-[0.15em] text-[#24211D]">Malas incluídas</th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr>
-                    <td className="px-5 py-4 font-medium text-white">Econômica / Premium Economy</td>
-                    <td className="px-5 py-4 text-white/70">até 23 kg</td>
-                    <td className="px-5 py-4 text-white/70">2 malas</td>
+                    <td className="px-5 py-4 font-medium text-[#24211D]">Econômica / Premium Economy</td>
+                    <td className="px-5 py-4 text-[#24211D]/88">até 23 kg</td>
+                    <td className="px-5 py-4 text-[#24211D]/88">2 malas</td>
                   </tr>
-                  <tr className="border-t border-white/10">
-                    <td className="px-5 py-4 font-medium text-white">Executiva / Primeira Classe</td>
-                    <td className="px-5 py-4 text-white/70">até 32 kg</td>
-                    <td className="px-5 py-4 text-white/70">2–3 malas (varia por companhia/rota)</td>
+                  <tr className="border-t border-[#DDD8CF]">
+                    <td className="px-5 py-4 font-medium text-[#24211D]">Executiva / Primeira Classe</td>
+                    <td className="px-5 py-4 text-[#24211D]/88">até 32 kg</td>
+                    <td className="px-5 py-4 text-[#24211D]/88">2–3 malas (varia por companhia/rota)</td>
                   </tr>
                 </tbody>
               </table>
             </div>
 
-            <p className="mt-6 text-sm leading-7 text-white/70 md:text-base md:leading-8">
+            <p className="mt-6 text-sm leading-7 text-[#24211D]/88 md:text-base md:leading-8">
               Como referência (JAL, rotas internacionais): o excesso entre 23 kg e 32 kg
-              costuma gerar uma taxa de aproximadamente <span className="text-white">¥10.000 (≈ US$100)</span> por
-              mala; entre 32 kg e 45 kg, a taxa sobe para cerca de <span className="text-white">¥60.000 (≈
-              US$600)</span>. Acima de <span className="text-white">45 kg a mala normalmente não é aceita para
+              costuma gerar uma taxa de aproximadamente <span className="text-[#24211D]">¥10.000 (≈ US$100)</span> por
+              mala; entre 32 kg e 45 kg, a taxa sobe para cerca de <span className="text-[#24211D]">¥60.000 (≈
+              US$600)</span>. Acima de <span className="text-[#24211D]">45 kg a mala normalmente não é aceita para
               embarque</span> — algumas companhias já recusam qualquer mala acima de 32 kg,
               independentemente do pagamento de taxa, por norma de segurança no
               manuseio. Esses valores variam por companhia aérea e rota — confirme
@@ -1013,12 +1019,12 @@ export function NaritaGuideContent({
             </p>
           </div>
 
-          <div className="mt-6 rounded-2xl border border-[#5b9bd5]/15 bg-[#0f2340] p-6 sm:p-8">
+          <div className="mt-6 rounded-2xl border border-[#5b9bd5]/15 bg-[#5b9bd5]/[0.08] p-6 sm:p-8">
             <p className="mb-4 flex items-center gap-2 text-xs uppercase tracking-[0.25em] text-[#5b9bd5]">
               <IconBulb className="h-3.5 w-3.5" />
               Recomendação Alpinea
             </p>
-            <p className="text-sm leading-7 text-white/70 md:text-base md:leading-8">
+            <p className="text-sm leading-7 text-[#24211D]/88 md:text-base md:leading-8">
               Se você pretende comprar no duty free, vale a pena pré-reservar online
               antes de sair para o aeroporto — o prazo costuma ir de 1 mês até 2 dias
               antes da viagem, dependendo da loja. Assim, o produto já fica separado
@@ -1030,17 +1036,17 @@ export function NaritaGuideContent({
       </section>
 
       {/* Qual meio de transporte escolher (embarque) */}
-      <section id="secao-6" className="border-t border-white/10 px-6 py-14 md:px-10 md:py-20">
+      <section id="secao-6" className="border-t border-[#DDD8CF] px-6 py-14 md:px-10 md:py-20">
         <div className="mx-auto max-w-3xl">
           <div className="mb-8">
             <SectionMarker number={2} label="Qual Meio de Transporte Escolher?" />
           </div>
 
-          <h2 className={`${displayClassName} mb-8 text-2xl font-medium text-white md:text-3xl`}>
+          <h2 className={`${displayClassName} mb-8 text-2xl font-medium text-[#24211D] md:text-3xl`}>
             Qual Meio de Transporte Escolher Até o Aeroporto?
           </h2>
 
-          <p className="mb-10 text-base font-light leading-8 text-white/70">
+          <p className="mb-10 text-base font-light leading-8 text-[#24211D]/88">
             Existem basicamente as mesmas 3 formas de ir até Narita que usamos para
             sair de lá (seção &quot;Deslocamento até Tóquio&quot;, no Desembarque) — mas aqui,
             no caminho inverso, a recomendação muda.
@@ -1059,7 +1065,7 @@ export function NaritaGuideContent({
           <div id="secao-6-trem" className="space-y-5">
             <SubStepHeading number={1} title="Trem" />
 
-            <p className="text-sm font-medium uppercase tracking-[0.15em] text-white/50">
+            <p className="text-sm font-medium uppercase tracking-[0.15em] text-[#24211D]/74">
               Narita Express (N&apos;EX) — de Shinjuku, Shibuya, Tóquio
             </p>
             <div className="grid gap-4 sm:grid-cols-2">
@@ -1072,7 +1078,7 @@ export function NaritaGuideContent({
               <StatCard Icon={IconClock} label="Tempo de deslocamento" value="≈ 80 minutos" variant="highlight" />
             </div>
 
-            <p className="pt-2 text-sm font-medium uppercase tracking-[0.15em] text-white/50">
+            <p className="pt-2 text-sm font-medium uppercase tracking-[0.15em] text-[#24211D]/74">
               Keisei Skyliner — de Ueno, Asakusa, Ginza, Nihonbashi
             </p>
             <div className="grid gap-4 sm:grid-cols-2">
@@ -1085,21 +1091,21 @@ export function NaritaGuideContent({
               <StatCard Icon={IconClock} label="Tempo de deslocamento" value="≈ 41 minutos" variant="highlight" />
             </div>
 
-            <p className="text-base font-light leading-8 text-white/70">
+            <p className="text-base font-light leading-8 text-[#24211D]/88">
               Mesmo sendo rápido em trânsito, o trem exige primeiro chegar até a
               estação com as malas, comprar ou validar a passagem, e possivelmente
               enfrentar escadas e catracas ao longo do caminho — tudo isso antes de
               embarcar. Depois de dias de viagem, com bagagem no limite do peso, esse
               trajeto inicial costuma ser mais desgastante do que parece.
             </p>
-            <p className="text-base font-light leading-8 text-white/70">
+            <p className="text-base font-light leading-8 text-[#24211D]/88">
               Dentre as 3 opções, o trem é a que menos recomendamos para quem está
               indo embora — o oposto do que acontece no desembarque, quando as malas
               ainda não pesam tanto.
             </p>
           </div>
 
-          <div id="secao-6-onibus" className="mt-10 space-y-5 border-t border-white/10 pt-8">
+          <div id="secao-6-onibus" className="mt-10 space-y-5 border-t border-[#DDD8CF] pt-8">
             <div className="flex flex-wrap items-center gap-3">
               <SubStepHeading number={2} title="Ônibus" />
               <span className="rounded-full bg-[#5b9bd5]/15 px-3 py-1 text-[10px] uppercase tracking-[0.2em] text-[#5b9bd5]">
@@ -1115,19 +1121,19 @@ export function NaritaGuideContent({
               />
               <StatCard Icon={IconClock} label="Tempo de deslocamento" value="≈ 105 minutos" variant="highlight" />
             </div>
-            <p className="text-base font-light leading-8 text-white/70">
+            <p className="text-base font-light leading-8 text-[#24211D]/88">
               O Limousine Bus passa por diversos hotéis de Tóquio antes de seguir
               direto para Narita — vale confirmar se o hotel do cliente está na rota
               e o horário exato de saída, já que os embarques costumam ser pontuais.
             </p>
-            <p className="text-base font-light leading-8 text-white/70">
+            <p className="text-base font-light leading-8 text-[#24211D]/88">
               É a melhor opção para quem está de saída: as malas vão no bagageiro, o
               trajeto é sentado e direto até o terminal, sem baldeações ou escadas no
               meio do caminho.
             </p>
           </div>
 
-          <div id="secao-6-taxi" className="mt-10 space-y-5 border-t border-white/10 pt-8">
+          <div id="secao-6-taxi" className="mt-10 space-y-5 border-t border-[#DDD8CF] pt-8">
             <SubStepHeading number={3} title="Táxi/Uber" />
             <div className="grid gap-4 sm:grid-cols-2">
               <StatCard
@@ -1138,12 +1144,12 @@ export function NaritaGuideContent({
               />
               <StatCard Icon={IconClock} label="Tempo de deslocamento" value="≈ 75 minutos" variant="highlight" />
             </div>
-            <p className="text-base font-light leading-8 text-white/70">
+            <p className="text-base font-light leading-8 text-[#24211D]/88">
               Assim como no desembarque, é a opção mais cômoda — porta a porta, sem
               necessidade de arrastar malas em nenhum momento — mas custa até 10x
               mais que as outras.
             </p>
-            <p className="text-base font-light leading-8 text-white/70">
+            <p className="text-base font-light leading-8 text-[#24211D]/88">
               Recomendo usar quando o voo for muito cedo pela manhã ou muito tarde à
               noite, fora do horário de funcionamento do Limousine Bus.
             </p>
@@ -1152,59 +1158,59 @@ export function NaritaGuideContent({
       </section>
 
       {/* Cheguei no aeroporto, e agora? */}
-      <section id="secao-7" className="border-t border-white/10 bg-white/[0.02] px-6 py-14 md:px-10 md:py-20">
+      <section id="secao-7" className="border-t border-[#DDD8CF] bg-[#F8FAF9] px-6 py-14 md:px-10 md:py-20">
         <div className="mx-auto max-w-3xl">
           <div className="mb-8">
             <SectionMarker number={3} label="Cheguei no Aeroporto, e Agora?" />
           </div>
 
-          <h2 className={`${displayClassName} mb-8 text-2xl font-medium text-white md:text-3xl`}>
+          <h2 className={`${displayClassName} mb-8 text-2xl font-medium text-[#24211D] md:text-3xl`}>
             Cheguei no Aeroporto, e Agora?
           </h2>
 
           <div className="space-y-5">
-            <div className="rounded-2xl border border-white/10 bg-white/[0.025] p-5">
+            <div className="rounded-2xl border border-[#DDD8CF] bg-[#F8FAF9] p-5">
               <div className="flex items-start gap-4">
                 <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-[#5b9bd5]/40 text-xs font-medium text-[#5b9bd5]">
                   1
                 </span>
-                <p className="text-sm leading-6 text-white/70 md:text-base">
-                  <span className="font-medium text-white">Devolver o Pocket Wi-Fi</span> no
+                <p className="text-sm leading-6 text-[#24211D]/88 md:text-base">
+                  <span className="font-medium text-[#24211D]">Devolver o Pocket Wi-Fi</span> no
                   guichê da locadora, no mesmo terminal do embarque.
                 </p>
               </div>
               <div className="mt-4 grid gap-3 pl-11 sm:grid-cols-3">
-                <div className="rounded-xl border border-white/10 bg-black/20 p-4">
-                  <p className="text-xs font-medium text-white">Terminal 1</p>
-                  <p className="mt-1.5 text-xs leading-5 text-white/55">1F, Ala Sul ou Ala Norte.</p>
+                <div className="rounded-xl border border-[#DDD8CF] bg-[#F8FAF9] p-4">
+                  <p className="text-xs font-medium text-[#24211D]">Terminal 1</p>
+                  <p className="mt-1.5 text-xs leading-5 text-[#24211D]/78">1F, Ala Sul ou Ala Norte.</p>
                 </div>
-                <div className="rounded-xl border border-white/10 bg-black/20 p-4">
-                  <p className="text-xs font-medium text-white">Terminal 2</p>
-                  <p className="mt-1.5 text-xs leading-5 text-white/55">Lobby de embarque, 3F.</p>
+                <div className="rounded-xl border border-[#DDD8CF] bg-[#F8FAF9] p-4">
+                  <p className="text-xs font-medium text-[#24211D]">Terminal 2</p>
+                  <p className="mt-1.5 text-xs leading-5 text-[#24211D]/78">Lobby de embarque, 3F.</p>
                 </div>
-                <div className="rounded-xl border border-white/10 bg-black/20 p-4">
-                  <p className="text-xs font-medium text-white">Terminal 3</p>
-                  <p className="mt-1.5 text-xs leading-5 text-white/55">1F.</p>
+                <div className="rounded-xl border border-[#DDD8CF] bg-[#F8FAF9] p-4">
+                  <p className="text-xs font-medium text-[#24211D]">Terminal 3</p>
+                  <p className="mt-1.5 text-xs leading-5 text-[#24211D]/78">1F.</p>
                 </div>
               </div>
             </div>
-            <div className="flex items-start gap-4 rounded-2xl border border-white/10 bg-white/[0.025] p-5">
+            <div className="flex items-start gap-4 rounded-2xl border border-[#DDD8CF] bg-[#F8FAF9] p-5">
               <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-[#5b9bd5]/40 text-xs font-medium text-[#5b9bd5]">
                 2
               </span>
-              <p className="text-sm leading-6 text-white/70 md:text-base">
-                <span className="font-medium text-white">Confirmar o terminal certo</span> e
+              <p className="text-sm leading-6 text-[#24211D]/88 md:text-base">
+                <span className="font-medium text-[#24211D]">Confirmar o terminal certo</span> e
                 verificar se o check-in/despacho de mala já está disponível —
-                normalmente abre cerca de <span className="text-white">3 horas antes</span> da partida do
+                normalmente abre cerca de <span className="text-[#24211D]">3 horas antes</span> da partida do
                 voo.
               </p>
             </div>
-            <div className="flex items-start gap-4 rounded-2xl border border-white/10 bg-white/[0.025] p-5">
+            <div className="flex items-start gap-4 rounded-2xl border border-[#DDD8CF] bg-[#F8FAF9] p-5">
               <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-[#5b9bd5]/40 text-xs font-medium text-[#5b9bd5]">
                 3
               </span>
-              <p className="text-sm leading-6 text-white/70 md:text-base">
-                Se dirigir ao guichê e realizar o <span className="text-white">check-in</span>.
+              <p className="text-sm leading-6 text-[#24211D]/88 md:text-base">
+                Se dirigir ao guichê e realizar o <span className="text-[#24211D]">check-in</span>.
               </p>
             </div>
           </div>
@@ -1212,26 +1218,26 @@ export function NaritaGuideContent({
       </section>
 
       {/* Estou com fome */}
-      <section id="secao-8" className="border-t border-white/10 px-6 py-14 md:px-10 md:py-20">
+      <section id="secao-8" className="border-t border-[#DDD8CF] px-6 py-14 md:px-10 md:py-20">
         <div className="mx-auto max-w-3xl">
           <div className="mb-8">
             <SectionMarker number={4} label="Estou com Fome" />
           </div>
 
-          <h2 className={`${displayClassName} mb-8 text-2xl font-medium text-white md:text-3xl`}>
+          <h2 className={`${displayClassName} mb-8 text-2xl font-medium text-[#24211D] md:text-3xl`}>
             Devo Realizar a Refeição Fora ou Dentro da Área de Segurança?
           </h2>
 
-          <p className="mb-8 text-base font-light leading-8 text-white/70">
+          <p className="mb-8 text-base font-light leading-8 text-[#24211D]/88">
             Em Narita existem várias opções de comida na parte externa do aeroporto e
             na área após a checagem de segurança. Abaixo, os principais restaurantes
             disponíveis no Terminal 1 e 2{" "}
-            <span className="text-white">após a checagem de segurança</span>.
+            <span className="text-[#24211D]">após a checagem de segurança</span>.
           </p>
 
           <div className="space-y-6">
             <div>
-              <p className="mb-4 text-sm font-medium uppercase tracking-[0.15em] text-white/70">
+              <p className="mb-4 text-sm font-medium uppercase tracking-[0.15em] text-[#24211D]/88">
                 Terminal 1 — Após Segurança
               </p>
               <div className="grid gap-4 sm:grid-cols-2">
@@ -1259,7 +1265,7 @@ export function NaritaGuideContent({
             </div>
 
             <div>
-              <p className="mb-4 text-sm font-medium uppercase tracking-[0.15em] text-white/70">
+              <p className="mb-4 text-sm font-medium uppercase tracking-[0.15em] text-[#24211D]/88">
                 Terminal 2 — Após Segurança
               </p>
               <div className="grid gap-4 sm:grid-cols-2">
@@ -1292,7 +1298,7 @@ export function NaritaGuideContent({
             </div>
           </div>
 
-          <p className="mt-8 text-sm leading-6 text-white/50">
+          <p className="mt-8 text-sm leading-6 text-[#24211D]/74">
             Recomendamos confirmar o horário de funcionamento antes — algumas casas
             fecham mais cedo do que o esperado para o último voo do dia.
           </p>
@@ -1300,23 +1306,23 @@ export function NaritaGuideContent({
       </section>
 
       {/* Checagem de segurança */}
-      <section id="secao-9" className="border-t border-white/10 bg-white/[0.02] px-6 py-14 md:px-10 md:py-20">
+      <section id="secao-9" className="border-t border-[#DDD8CF] bg-[#F8FAF9] px-6 py-14 md:px-10 md:py-20">
         <div className="mx-auto max-w-3xl">
           <div className="mb-8">
             <SectionMarker number={5} label="Checagem de Segurança e Entrada na Área de Segurança" />
           </div>
 
-          <h2 className={`${displayClassName} mb-8 text-2xl font-medium text-white md:text-3xl`}>
+          <h2 className={`${displayClassName} mb-8 text-2xl font-medium text-[#24211D] md:text-3xl`}>
             Checagem de Segurança e Entrada na Área de Segurança
           </h2>
 
-          <p className="mb-8 text-base font-light leading-8 text-white/70">
+          <p className="mb-8 text-base font-light leading-8 text-[#24211D]/88">
             Os procedimentos de segurança em Narita mudam com alguma frequência,
             dependendo da época do ano — mas via de regra:
           </p>
 
-          <div className="rounded-2xl border border-white/10 bg-white/[0.025] p-6">
-            <div className="space-y-1.5 text-sm leading-6 text-white/60">
+          <div className="rounded-2xl border border-[#DDD8CF] bg-[#F8FAF9] p-6">
+            <div className="space-y-1.5 text-sm leading-6 text-[#24211D]/80">
               <p>• É necessário remover o notebook da mala e colocá-lo na bandeja.</p>
               <p>
                 • Não é possível embarcar com líquidos acima de 100 ml — se houver
@@ -1331,24 +1337,24 @@ export function NaritaGuideContent({
             </div>
           </div>
 
-          <div id="secao-9-passaporte" className="mt-10 space-y-5 border-t border-white/10 pt-8">
+          <div id="secao-9-passaporte" className="mt-10 space-y-5 border-t border-[#DDD8CF] pt-8">
             <SubStepHeading number={1} title="Verificação de Passaporte" />
-            <p className="text-base font-light leading-8 text-white/70">
+            <p className="text-base font-light leading-8 text-[#24211D]/88">
               Em alguns casos, nessa etapa o oficial retira do passaporte os
               comprovantes e notas fiscais de compras feitas no Japão. Pode ser pedido
               para conferir se você está portando algum dos itens citados nas notas,
               assegurando que ele está de fato deixando o país — condição para a
-              isenção do imposto de consumo de <span className="text-white">10%</span> (8%
+              isenção do imposto de consumo de <span className="text-[#24211D]">10%</span> (8%
               para alimentos/bebidas não alcoólicas), que o não-residente não paga.
             </p>
 
-            <div className="rounded-2xl border border-[#5b9bd5]/15 bg-[#0f2340] p-6 sm:p-8">
+            <div className="rounded-2xl border border-[#5b9bd5]/15 bg-[#5b9bd5]/[0.08] p-6 sm:p-8">
               <p className="mb-4 flex items-center gap-2 text-xs uppercase tracking-[0.25em] text-[#5b9bd5]">
                 <IconClock className="h-3.5 w-3.5" />
                 Atualização Importante
               </p>
-              <p className="text-sm leading-7 text-white/70 md:text-base md:leading-8">
-                A partir de <span className="text-white">1º de novembro de 2026</span>, o Japão
+              <p className="text-sm leading-7 text-[#24211D]/88 md:text-base md:leading-8">
+                A partir de <span className="text-[#24211D]">1º de novembro de 2026</span>, o Japão
                 substitui esse sistema: você passa a pagar o preço cheio (com imposto)
                 na loja e só recebe o reembolso do imposto de consumo em
                 terminais/guichês dedicados no aeroporto (Narita incluso), antes de
@@ -1363,93 +1369,93 @@ export function NaritaGuideContent({
       </section>
 
       {/* Pós-checagem de segurança */}
-      <section id="secao-10" className="border-t border-white/10 px-6 py-14 md:px-10 md:py-20">
+      <section id="secao-10" className="border-t border-[#DDD8CF] px-6 py-14 md:px-10 md:py-20">
         <div className="mx-auto max-w-3xl">
           <div className="mb-8">
             <SectionMarker number={6} label="Pós-Checagem de Segurança" />
           </div>
 
-          <h2 className={`${displayClassName} mb-8 text-2xl font-medium text-white md:text-3xl`}>
+          <h2 className={`${displayClassName} mb-8 text-2xl font-medium text-[#24211D] md:text-3xl`}>
             Pós-Checagem de Segurança
           </h2>
 
-          <p className="mb-8 text-base font-light leading-8 text-white/70">
+          <p className="mb-8 text-base font-light leading-8 text-[#24211D]/88">
             Aqui você tem algumas opções sobre o que fazer antes do embarque — entre
             as mais comuns, restaurantes, compras em duty free ou o lounge/sala VIP
             de sua preferência.
           </p>
 
           <div className="space-y-4">
-            <p className="text-sm font-medium uppercase tracking-[0.15em] text-white/70">Restaurantes</p>
-            <p className="text-base font-light leading-8 text-white/70">
+            <p className="text-sm font-medium uppercase tracking-[0.15em] text-[#24211D]/88">Restaurantes</p>
+            <p className="text-base font-light leading-8 text-[#24211D]/88">
               Ver a lista completa na seção &quot;Estou com Fome&quot;, logo acima — os mesmos
               restaurantes de Terminal 1 e 2 seguem disponíveis nesta etapa, já que
               estão todos após a checagem de segurança.
             </p>
           </div>
 
-          <div id="secao-10-dutyfree" className="mt-10 space-y-4 border-t border-white/10 pt-8">
-            <p className="text-sm font-medium uppercase tracking-[0.15em] text-white/70">Duty Free</p>
-            <p className="text-base font-light leading-8 text-white/70">
-              Você pode <span className="text-white">comprar diretamente</span> nas lojas de duty
+          <div id="secao-10-dutyfree" className="mt-10 space-y-4 border-t border-[#DDD8CF] pt-8">
+            <p className="text-sm font-medium uppercase tracking-[0.15em] text-[#24211D]/88">Duty Free</p>
+            <p className="text-base font-light leading-8 text-[#24211D]/88">
+              Você pode <span className="text-[#24211D]">comprar diretamente</span> nas lojas de duty
               free já dentro da área de embarque (pós-segurança) e sair com o produto
               na hora. Se já tiver pré-reservado antes de sair do hotel (ver
               recomendação na seção &quot;Antes de Sair do Hotel&quot;), a retirada é feita no{" "}
-              <span className="text-white">Duty Free Pick Up Counter</span>, também na área
+              <span className="text-[#24211D]">Duty Free Pick Up Counter</span>, também na área
               pós-segurança — apenas pelo próprio comprador, até 1 hora antes do
               embarque; chegando depois disso, a loja pode não conseguir entregar o
               produto a tempo.
             </p>
           </div>
 
-          <div id="secao-10-lounges" className="mt-10 space-y-4 border-t border-white/10 pt-8">
-            <p className="text-sm font-medium uppercase tracking-[0.15em] text-white/70">Lounges</p>
+          <div id="secao-10-lounges" className="mt-10 space-y-4 border-t border-[#DDD8CF] pt-8">
+            <p className="text-sm font-medium uppercase tracking-[0.15em] text-[#24211D]/88">Lounges</p>
 
             <div className="grid gap-4 md:grid-cols-2">
-              <div className="rounded-2xl border border-white/10 bg-white/[0.025] p-6">
-                <p className="text-sm font-medium text-white md:text-base">ANA Lounge — Terminal 1</p>
-                <p className="mt-2 text-sm leading-6 text-white/60">
+              <div className="rounded-2xl border border-[#DDD8CF] bg-[#F8FAF9] p-6">
+                <p className="text-sm font-medium text-[#24211D] md:text-base">ANA Lounge — Terminal 1</p>
+                <p className="mt-2 text-sm leading-6 text-[#24211D]/80">
                   Inclui opções de ramen e sushi. Aberto a passageiros de Business/First
                   da Star Alliance e elite ANA Mileage Club, ou mediante acesso pago
                   direto pela ANA.{" "}
-                  <span className="text-white">Não aceita mais Priority Pass</span> —
+                  <span className="text-[#24211D]">Não aceita mais Priority Pass</span> —
                   saiu do programa.
                 </p>
               </div>
-              <div className="rounded-2xl border border-white/10 bg-white/[0.025] p-6">
-                <p className="text-sm font-medium text-white md:text-base">JAL Sakura Lounge — Terminal 2</p>
-                <p className="mt-2 text-sm leading-6 text-white/60">
+              <div className="rounded-2xl border border-[#DDD8CF] bg-[#F8FAF9] p-6">
+                <p className="text-sm font-medium text-[#24211D] md:text-base">JAL Sakura Lounge — Terminal 2</p>
+                <p className="mt-2 text-sm leading-6 text-[#24211D]/80">
                   Atende passageiros de Classe Executiva da JAL e parceiras Oneworld
                   (Qatar Airways, British Airways etc.), além de membros JGC/JMB
                   Sapphire ou superior.{" "}
-                  <span className="text-white">Não aceita Priority Pass</span> — acesso
+                  <span className="text-[#24211D]">Não aceita Priority Pass</span> — acesso
                   exclusivo por classe/status.
                 </p>
               </div>
             </div>
 
-            <p className="pt-2 text-sm leading-7 text-white/70 md:text-base md:leading-8">
+            <p className="pt-2 text-sm leading-7 text-[#24211D]/88 md:text-base md:leading-8">
               Nem o ANA Lounge nem o JAL Sakura Lounge aceitam Priority Pass hoje — se
               o cartão do cliente oferecer acesso via Priority Pass (Nubank
               Ultravioleta, cartões Amex Platinum, entre outros), as salas realmente
               conveniadas ao programa em Narita são estas:
             </p>
             <div className="grid gap-4 sm:grid-cols-2">
-              <div className="rounded-2xl border border-white/10 bg-white/[0.025] p-5">
-                <p className="text-sm font-medium text-white">I.A.S.S Superior Lounge — NOA</p>
-                <p className="mt-1.5 text-xs leading-5 text-white/55">
+              <div className="rounded-2xl border border-[#DDD8CF] bg-[#F8FAF9] p-5">
+                <p className="text-sm font-medium text-[#24211D]">I.A.S.S Superior Lounge — NOA</p>
+                <p className="mt-1.5 text-xs leading-5 text-[#24211D]/78">
                   Terminal 1, 3F, próximo ao portão 26 — pós-segurança.
                 </p>
               </div>
-              <div className="rounded-2xl border border-white/10 bg-white/[0.025] p-5">
-                <p className="text-sm font-medium text-white">I.A.S.S Superior Lounge — KoCoo</p>
-                <p className="mt-1.5 text-xs leading-5 text-white/55">
+              <div className="rounded-2xl border border-[#DDD8CF] bg-[#F8FAF9] p-5">
+                <p className="text-sm font-medium text-[#24211D]">I.A.S.S Superior Lounge — KoCoo</p>
+                <p className="mt-1.5 text-xs leading-5 text-[#24211D]/78">
                   Terminal 2, 4F, acima da loja Cartier — pós-segurança.
                 </p>
               </div>
-              <div className="rounded-2xl border border-white/10 bg-white/[0.025] p-5 sm:col-span-2">
-                <p className="text-sm font-medium text-white">9h nine hours Narita Airport</p>
-                <p className="mt-1.5 text-xs leading-5 text-white/55">
+              <div className="rounded-2xl border border-[#DDD8CF] bg-[#F8FAF9] p-5 sm:col-span-2">
+                <p className="text-sm font-medium text-[#24211D]">9h nine hours Narita Airport</p>
+                <p className="mt-1.5 text-xs leading-5 text-[#24211D]/78">
                   Terminal 2, subsolo (B1) do estacionamento P2 — landside, antes da
                   segurança. Capsule hotel que aceita Priority Pass para estadia de
                   até 5h, das 9h às 18h.
@@ -1458,19 +1464,19 @@ export function NaritaGuideContent({
             </div>
           </div>
 
-          <div className="mt-8 rounded-2xl border border-[#5b9bd5]/15 bg-[#0f2340] p-6 sm:p-8">
+          <div className="mt-8 rounded-2xl border border-[#5b9bd5]/15 bg-[#5b9bd5]/[0.08] p-6 sm:p-8">
             <p className="mb-5 flex items-center gap-2 text-xs uppercase tracking-[0.25em] text-[#5b9bd5]">
               <IconBulb className="h-3.5 w-3.5" />
               Recomendação Ajisai
             </p>
-            <p className="text-sm leading-7 text-white/70 md:text-base md:leading-8">
+            <p className="text-sm leading-7 text-[#24211D]/88 md:text-base md:leading-8">
               Embora contra-intuitivo, o JAL Sakura Lounge — utilizado pela JAL e
               Qatar Airways, entre outras parceiras, para Business Class — tem
               péssimas opções de refeição. Minha recomendação é fazer a refeição fora
               do lounge se tiver interesse em comer algo melhor; o lounge em si é
               espaçoso e confortável, mas comida realmente não é o forte.
             </p>
-            <p className="mt-4 text-sm leading-7 text-white/70 md:text-base md:leading-8">
+            <p className="mt-4 text-sm leading-7 text-[#24211D]/88 md:text-base md:leading-8">
               O melhor lounge de Narita é o ANA Lounge, com opção até de comer ramen e
               sushi.
             </p>
@@ -1479,13 +1485,13 @@ export function NaritaGuideContent({
       </section>
 
       {/* Antes do embarque */}
-      <section id="secao-11" className="border-t border-white/10 bg-white/[0.02] px-6 py-14 md:px-10 md:py-20">
+      <section id="secao-11" className="border-t border-[#DDD8CF] bg-[#F8FAF9] px-6 py-14 md:px-10 md:py-20">
         <div className="mx-auto max-w-3xl">
           <div className="mb-8">
             <SectionMarker number={7} label="Antes do Embarque" />
           </div>
 
-          <h2 className={`${displayClassName} mb-6 text-2xl font-medium text-white md:text-3xl`}>
+          <h2 className={`${displayClassName} mb-6 text-2xl font-medium text-[#24211D] md:text-3xl`}>
             Antes do Embarque
           </h2>
 

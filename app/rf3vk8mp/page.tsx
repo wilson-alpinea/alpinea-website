@@ -249,7 +249,7 @@ export default function AprovacaoRoteiroPage() {
         />
       </div>
 
-      <header className="fixed left-0 right-0 top-0 z-50 flex items-center justify-between bg-black/25 px-6 py-5 backdrop-blur-2xl md:px-16">
+      <header className="fixed left-0 right-0 top-0 z-50 flex items-center justify-between bg-black/70 px-6 py-5 backdrop-blur-2xl md:px-16">
         <img
           src="/images/alpinea-ajisai-final-logo-branco.png"
           alt="Alpinea — Empresa do Grupo Ajisai"

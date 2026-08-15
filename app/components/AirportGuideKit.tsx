@@ -183,13 +183,13 @@ export function IconZoom({ className }: { className?: string }) {
 // é fornecida — substituir por <MapCard />/<MapModal /> assim que a imagem existir.
 export function PendingMap({ label }: { label: string }) {
   return (
-    <div className="flex items-center gap-4 rounded-2xl border border-dashed border-white/20 bg-black/30 p-5">
-      <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-white/5 text-white/40">
+    <div className="flex items-center gap-4 rounded-2xl border border-dashed border-[#DDD8CF] bg-[#FDFCF9] p-5">
+      <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#F8FAF9] text-[#24211D]/66">
         <IconMap className="h-5 w-5" />
       </span>
       <div>
-        <p className="text-sm font-medium text-white/70">{label}</p>
-        <p className="mt-1 text-xs text-white/35">Mapa pendente — anexar imagem</p>
+        <p className="text-sm font-medium text-[#24211D]/88">{label}</p>
+        <p className="mt-1 text-xs text-[#24211D]/62">Mapa pendente — anexar imagem</p>
       </div>
     </div>
   );
@@ -211,16 +211,16 @@ export function PreviewCard({
   return (
     <a
       href={href}
-      className="group flex items-center gap-4 rounded-2xl border border-[#2f80c9]/30 bg-[#0f2340] p-5 transition hover:border-[#2f80c9]/60"
+      className="group flex items-center gap-4 rounded-2xl border border-[#2f80c9]/30 bg-[#5b9bd5]/[0.08] p-5 transition hover:border-[#2f80c9]/60"
     >
-      <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#2f80c9]/20 text-[#8fc0f0]">
+      <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#2f80c9]/20 text-[#2f80c9]">
         <Icon className="h-5 w-5" />
       </span>
       <div>
-        <p className="text-sm font-medium text-white">{label}</p>
-        <p className="text-xs text-[#8fc0f0]/70">Toque para ampliar</p>
+        <p className="text-sm font-medium text-[#24211D]">{label}</p>
+        <p className="text-xs text-[#2f80c9]/70">Toque para ampliar</p>
       </div>
-      <span className="ml-auto text-lg text-[#8fc0f0]/70 transition group-hover:translate-x-0.5">→</span>
+      <span className="ml-auto text-lg text-[#2f80c9]/70 transition group-hover:translate-x-0.5">→</span>
     </a>
   );
 }
@@ -325,7 +325,7 @@ export function ImageCard({
   );
 
   return (
-    <div className={`overflow-hidden rounded-2xl border border-white/10 bg-white/[0.03] ${className}`}>
+    <div className={`overflow-hidden rounded-2xl border border-[#DDD8CF] bg-[#F8FAF9] ${className}`}>
       {zoomHref ? (
         <a href={zoomHref} className="group block cursor-zoom-in">
           {imageBox}
@@ -334,9 +334,9 @@ export function ImageCard({
         imageBox
       )}
       {label && (
-        <div className="border-t border-white/10 px-4 py-3 text-center">
-          <p className="text-sm font-medium text-white">{label}</p>
-          {sublabel && <p className="mt-0.5 text-xs text-white/45">{sublabel}</p>}
+        <div className="border-t border-[#DDD8CF] px-4 py-3 text-center">
+          <p className="text-sm font-medium text-[#24211D]">{label}</p>
+          {sublabel && <p className="mt-0.5 text-xs text-[#24211D]/70">{sublabel}</p>}
         </div>
       )}
     </div>
@@ -362,7 +362,7 @@ export function CaptionedImage({
         <Image src={src} alt={alt} fill sizes="300px" className="object-contain" />
       </div>
       {caption && (
-        <p className="mt-3 text-xs uppercase tracking-[0.2em] text-white/40">{caption}</p>
+        <p className="mt-3 text-xs uppercase tracking-[0.2em] text-[#24211D]/66">{caption}</p>
       )}
     </div>
   );
@@ -377,7 +377,7 @@ export function SubStepHeading({ number, title }: { number: number; title: strin
       <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-[#5b9bd5]/40 text-xs font-medium text-[#5b9bd5]">
         {number}
       </span>
-      <p className="text-sm font-medium uppercase tracking-[0.15em] text-white">{title}</p>
+      <p className="text-sm font-medium uppercase tracking-[0.15em] text-[#24211D]">{title}</p>
     </div>
   );
 }
@@ -390,13 +390,13 @@ export function SubStepHeading({ number, title }: { number: number; title: strin
 export function ImmigrationArrivalGuide({ displayClassName }: { displayClassName: string }) {
   return (
     <div className="space-y-10">
-      <h3 className={`${displayClassName} text-2xl font-medium text-white md:text-3xl`}>
+      <h3 className={`${displayClassName} text-2xl font-medium text-[#24211D] md:text-3xl`}>
         Meu Avião Pousou, o Que Devo Fazer?
       </h3>
 
       <div className="space-y-4">
-        <p className="text-base font-light leading-8 text-white/70">
-          Ao pousar, siga as placas <span className="text-white">Arrivals (到着)</span>{" "}
+        <p className="text-base font-light leading-8 text-[#24211D]/88">
+          Ao pousar, siga as placas <span className="text-[#24211D]">Arrivals (到着)</span>{" "}
           até os guichês de imigração.
         </p>
         <a
@@ -419,23 +419,23 @@ export function ImmigrationArrivalGuide({ displayClassName }: { displayClassName
 
       <div className="space-y-5">
         <SubStepHeading number={1} title="Documentos de Imigração" />
-        <p className="text-base font-light leading-8 text-white/70">
+        <p className="text-base font-light leading-8 text-[#24211D]/88">
           Todos os não-residentes devem apresentar os documentos de imigração —
           existem duas opções.
         </p>
 
         <div className="grid gap-4 md:grid-cols-2">
-          <div className="rounded-2xl border border-white/10 bg-white/[0.025] p-6">
+          <div className="rounded-2xl border border-[#DDD8CF] bg-[#F8FAF9] p-6">
             <p className="mb-2 text-xs uppercase tracking-[0.25em] text-[#5b9bd5]">Opção A</p>
-            <p className="text-sm font-medium text-white md:text-base">Apresentar Digitalmente</p>
-            <p className="mt-3 text-sm leading-6 text-white/60">
+            <p className="text-sm font-medium text-[#24211D] md:text-base">Apresentar Digitalmente</p>
+            <p className="mt-3 text-sm leading-6 text-[#24211D]/80">
               Preencha online a declaração e apresente o QR Code gerado no Visit Japan
               Web (
               <a
                 href="https://www.vjw.digital.go.jp"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-[#8fc0e8] underline underline-offset-2"
+                className="text-[#2f80c9] underline underline-offset-2"
               >
                 vjw.digital.go.jp
               </a>
@@ -455,48 +455,48 @@ export function ImmigrationArrivalGuide({ displayClassName }: { displayClassName
               />
             </div>
 
-            <div className="mt-5 space-y-3 border-t border-white/10 pt-5">
-              <p className="text-sm font-medium text-white">
+            <div className="mt-5 space-y-3 border-t border-[#DDD8CF] pt-5">
+              <p className="text-sm font-medium text-[#24211D]">
                 Vá até os quiosques Visit Japan Web
               </p>
-              <p className="text-sm leading-6 text-white/60">
+              <p className="text-sm leading-6 text-[#24211D]/80">
                 Existem diversos totens antes da fila da imigração. No quiosque:
               </p>
-              <div className="space-y-3 rounded-xl border border-white/10 bg-black/20 p-4 text-sm leading-6 text-white/60">
+              <div className="space-y-3 rounded-xl border border-[#DDD8CF] bg-[#F8FAF9] p-4 text-sm leading-6 text-[#24211D]/80">
                 <p>
-                  <span className="font-medium text-white">a) Selecione o idioma</span> — pode
+                  <span className="font-medium text-[#24211D]">a) Selecione o idioma</span> — pode
                   escolher português.
                 </p>
                 <p>
-                  <span className="font-medium text-white">b) Escaneie o QR Code</span> — abra o
+                  <span className="font-medium text-[#24211D]">b) Escaneie o QR Code</span> — abra o
                   QR Code no celular e escaneie na máquina.
                 </p>
                 <p>
-                  <span className="font-medium text-white">c) Escaneie o passaporte</span> —
+                  <span className="font-medium text-[#24211D]">c) Escaneie o passaporte</span> —
                   coloque o passaporte no leitor indicado; a máquina lê automaticamente.
                 </p>
                 <p>
-                  <span className="font-medium text-white">d) Confirme as informações</span> — na
+                  <span className="font-medium text-[#24211D]">d) Confirme as informações</span> — na
                   tela aparecerão nome, nacionalidade e número do passaporte; basta confirmar.
                 </p>
                 <p>
-                  <span className="font-medium text-white">e) Biometria no quiosque</span> (quando
+                  <span className="font-medium text-[#24211D]">e) Biometria no quiosque</span> (quando
                   solicitado) — em alguns aeroportos ou períodos, o quiosque já pede uma
                   fotografia e as digitais; em outros casos, isso acontece diretamente no
                   balcão da imigração.
                 </p>
               </div>
-              <p className="text-sm leading-6 text-white/60">
-                <span className="font-medium text-white">Receba o comprovante</span> — o
+              <p className="text-sm leading-6 text-[#24211D]/80">
+                <span className="font-medium text-[#24211D]">Receba o comprovante</span> — o
                 quiosque imprime um pequeno comprovante. Leve-o junto com o passaporte.
               </p>
             </div>
           </div>
 
-          <div className="rounded-2xl border border-white/10 bg-white/[0.025] p-6">
+          <div className="rounded-2xl border border-[#DDD8CF] bg-[#F8FAF9] p-6">
             <p className="mb-2 text-xs uppercase tracking-[0.25em] text-[#5b9bd5]">Opção B</p>
-            <p className="text-sm font-medium text-white md:text-base">Apresentar Manualmente</p>
-            <p className="mt-3 text-sm leading-6 text-white/60">
+            <p className="text-sm font-medium text-[#24211D] md:text-base">Apresentar Manualmente</p>
+            <p className="mt-3 text-sm leading-6 text-[#24211D]/80">
               Durante o voo, as companhias aéreas costumam distribuir os formulários
               antes do pouso — ou eles podem ser retirados em balcões espalhados pela
               área de imigração. Dois documentos devem ser preenchidos, frente e verso:
@@ -510,10 +510,10 @@ export function ImmigrationArrivalGuide({ displayClassName }: { displayClassName
                   aspect="aspect-[4/3]"
                   zoomHref="#doc-disembarkation"
                 />
-                <p className="mt-3 text-center text-sm font-medium text-white">
+                <p className="mt-3 text-center text-sm font-medium text-[#24211D]">
                   Disembarkation Card for Foreigner
                 </p>
-                <p className="text-center text-xs text-white/45">
+                <p className="text-center text-xs text-[#24211D]/70">
                   Cartão de imigração — dados pessoais e de estadia
                 </p>
               </div>
@@ -525,10 +525,10 @@ export function ImmigrationArrivalGuide({ displayClassName }: { displayClassName
                   aspect="aspect-[4/3]"
                   zoomHref="#doc-customs"
                 />
-                <p className="mt-3 text-center text-sm font-medium text-white">
+                <p className="mt-3 text-center text-sm font-medium text-[#24211D]">
                   Customs Declaration
                 </p>
-                <p className="text-center text-xs text-white/45">
+                <p className="text-center text-xs text-[#24211D]/70">
                   Declaração aduaneira — itens trazidos e valores
                 </p>
               </div>
@@ -537,33 +537,33 @@ export function ImmigrationArrivalGuide({ displayClassName }: { displayClassName
         </div>
       </div>
 
-      <div className="space-y-4 border-t border-white/10 pt-8">
+      <div className="space-y-4 border-t border-[#DDD8CF] pt-8">
         <SubStepHeading number={2} title="Entrevista de Imigração" />
-        <p className="text-base font-light leading-8 text-white/70">
+        <p className="text-base font-light leading-8 text-[#24211D]/88">
           Com o comprovante do quiosque em mãos — ou os dois documentos preenchidos
           manualmente — entre na fila da imigração, destinada aos visitantes
           estrangeiros. As instruções nos painéis costumam estar disponíveis também
           no seu idioma nativo (português, por exemplo).
         </p>
-        <div className="rounded-2xl border border-white/10 bg-white/[0.025] p-6">
+        <div className="rounded-2xl border border-[#DDD8CF] bg-[#F8FAF9] p-6">
           <p className="mb-2 text-xs uppercase tracking-[0.25em] text-[#5b9bd5]">
             No guichê da imigração
           </p>
-          <p className="text-sm leading-6 text-white/60">
+          <p className="text-sm leading-6 text-[#24211D]/80">
             Entregue o passaporte e o comprovante emitido pelo quiosque (ou os
             documentos preenchidos manualmente). O oficial normalmente:
           </p>
-          <div className="mt-3 space-y-1.5 text-sm leading-6 text-white/60">
+          <div className="mt-3 space-y-1.5 text-sm leading-6 text-[#24211D]/80">
             <p>• Verifica o passaporte</p>
             <p>• Confirma sua identidade</p>
             <p>• Coleta as digitais (se ainda não foram coletadas)</p>
             <p>• Tira uma fotografia (se ainda não foi feita)</p>
             <p>• Faz algumas perguntas simples, normalmente em inglês</p>
           </div>
-          <p className="mt-4 text-xs uppercase tracking-[0.25em] text-white/30">
+          <p className="mt-4 text-xs uppercase tracking-[0.25em] text-[#24211D]/58">
             Perguntas mais comuns
           </p>
-          <div className="mt-2 space-y-1.5 text-sm leading-6 text-white/60">
+          <div className="mt-2 space-y-1.5 text-sm leading-6 text-[#24211D]/80">
             <p>• Qual o objetivo da viagem?</p>
             <p>• Quantos dias ficará no Japão?</p>
             <p>• Onde ficará hospedado?</p>
@@ -572,9 +572,9 @@ export function ImmigrationArrivalGuide({ displayClassName }: { displayClassName
         </div>
       </div>
 
-      <div className="space-y-4 border-t border-white/10 pt-8">
+      <div className="space-y-4 border-t border-[#DDD8CF] pt-8">
         <SubStepHeading number={3} title="Retirar Bagagem" />
-        <p className="text-base font-light leading-8 text-white/70">
+        <p className="text-base font-light leading-8 text-[#24211D]/88">
           Procure a indicação nos painéis na área das esteiras o número da esteira
           indicado pelo número de voo e companhia aérea. Após pegar as malas, existe uma
           última verificação — nessa etapa, o oficial da alfândega normalmente pede o
@@ -619,8 +619,8 @@ export function TableOfContents({
 }) {
   return (
     <div className="mx-auto max-w-5xl px-6 pt-6 md:px-10">
-      <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-5 md:p-6">
-        <p className="mb-4 text-xs uppercase tracking-[0.3em] text-white/35">Índice</p>
+      <div className="rounded-2xl border border-[#DDD8CF] bg-[#F8FAF9] p-5 md:p-6">
+        <p className="mb-4 text-xs uppercase tracking-[0.3em] text-[#24211D]/62">Índice</p>
         <ol className="space-y-1">
           {items.map((item, idx) => {
             const showGroupHeader =
@@ -629,8 +629,8 @@ export function TableOfContents({
               <li key={item.href}>
                 {showGroupHeader && (
                   <p
-                    className={`px-2 pb-1.5 text-[10px] font-medium uppercase tracking-[0.3em] text-yellow-400/70 ${
-                      idx > 0 ? "mt-4 border-t border-white/10 pt-4" : ""
+                    className={`px-2 pb-1.5 text-[10px] font-medium uppercase tracking-[0.3em] text-[#6b46c1]/70 ${
+                      idx > 0 ? "mt-4 border-t border-[#DDD8CF] pt-4" : ""
                     }`}
                   >
                     {item.groupLabel}
@@ -638,23 +638,23 @@ export function TableOfContents({
                 )}
                 <a
                   href={item.href}
-                  className="group flex items-center gap-3 rounded-xl px-2 py-2 transition hover:bg-white/[0.04]"
+                  className="group flex items-center gap-3 rounded-xl px-2 py-2 transition hover:bg-[#F8FAF9]"
                 >
-                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#5b9bd5]/15 text-[#8fc0e8] transition group-hover:bg-[#5b9bd5]/30">
+                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#5b9bd5]/15 text-[#2f80c9] transition group-hover:bg-[#5b9bd5]/30">
                     <item.Icon className="h-4 w-4" />
                   </span>
-                  <span className="text-sm text-white/80 transition group-hover:text-white">
-                    <span className="mr-1.5 text-white/40">{item.number}.</span>
+                  <span className="text-sm text-[#24211D]/92 transition group-hover:text-[#24211D]">
+                    <span className="mr-1.5 text-[#24211D]/66">{item.number}.</span>
                     {item.label}
                   </span>
                 </a>
                 {item.subsections && (
-                  <ul className="ml-11 space-y-0.5 border-l border-white/10 pl-4">
+                  <ul className="ml-11 space-y-0.5 border-l border-[#DDD8CF] pl-4">
                     {item.subsections.map((sub) => (
                       <li key={sub.href}>
                         <a
                           href={sub.href}
-                          className="block py-1 text-xs text-white/50 transition hover:text-[#8fc0e8]"
+                          className="block py-1 text-xs text-[#24211D]/74 transition hover:text-[#2f80c9]"
                         >
                           {sub.label}
                         </a>
@@ -686,16 +686,16 @@ export function FlowDivider({
   displayClassName?: string;
 }) {
   return (
-    <div className="border-t border-yellow-400/25 bg-[#1a1506] px-6 py-14 md:px-10 md:py-20">
+    <div className="border-t border-[#6b46c1]/20 bg-[#F3EFFA] px-6 py-14 md:px-10 md:py-20">
       <div className="mx-auto flex max-w-3xl flex-col items-center gap-4 text-center">
-        <span className="flex h-14 w-14 items-center justify-center rounded-full bg-yellow-400/15 text-yellow-400">
+        <span className="flex h-14 w-14 items-center justify-center rounded-full bg-[#6b46c1]/10 text-[#6b46c1]">
           <Icon className="h-7 w-7" />
         </span>
-        <p className="text-xs uppercase tracking-[0.4em] text-yellow-400/70">A partir daqui</p>
-        <h2 className={`${displayClassName} text-3xl font-medium text-white md:text-5xl`}>
+        <p className="text-xs uppercase tracking-[0.4em] text-[#6b46c1]/70">A partir daqui</p>
+        <h2 className={`${displayClassName} text-3xl font-medium text-[#24211D] md:text-5xl`}>
           {title}
         </h2>
-        <p className="max-w-xl text-base font-light leading-8 text-white/60">{subtitle}</p>
+        <p className="max-w-xl text-base font-light leading-8 text-[#24211D]/80">{subtitle}</p>
       </div>
     </div>
   );
@@ -703,9 +703,9 @@ export function FlowDivider({
 
 export function InfoBlock({ title, text }: { title: string; text: string }) {
   return (
-    <div className="border-t border-white/10 pt-8">
-      <p className="mb-2 text-xs uppercase tracking-[0.25em] text-white/30">{title}</p>
-      <p className="text-sm leading-7 text-white/65 md:text-base md:leading-8">{text}</p>
+    <div className="border-t border-[#DDD8CF] pt-8">
+      <p className="mb-2 text-xs uppercase tracking-[0.25em] text-[#24211D]/58">{title}</p>
+      <p className="text-sm leading-7 text-[#24211D]/85 md:text-base md:leading-8">{text}</p>
     </div>
   );
 }
@@ -720,13 +720,13 @@ export function RecommendationRow({
   text: string;
 }) {
   return (
-    <div className="grid grid-cols-[34px_1fr] gap-3 rounded-2xl border border-white/10 bg-black/35 p-4">
+    <div className="grid grid-cols-[34px_1fr] gap-3 rounded-2xl border border-[#DDD8CF] bg-[#F8FAF9] p-4">
       <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#5b9bd5]/12 text-[#5b9bd5]">
         <Icon className="h-4 w-4" />
       </div>
       <div>
-        <p className="text-sm font-medium text-white">{title}</p>
-        <p className="mt-1 text-sm leading-6 text-white/55">{text}</p>
+        <p className="text-sm font-medium text-[#24211D]">{title}</p>
+        <p className="mt-1 text-sm leading-6 text-[#24211D]/78">{text}</p>
       </div>
     </div>
   );
@@ -755,17 +755,17 @@ export function TransportOption({
     <div
       className={`rounded-2xl p-5 ${
         highlight
-          ? "border-2 border-[#5b9bd5] bg-white/[0.025]"
-          : "border border-white/10 bg-white/[0.025]"
+          ? "border-2 border-[#5b9bd5] bg-[#F8FAF9]"
+          : "border border-[#DDD8CF] bg-[#F8FAF9]"
       }`}
     >
       <div className="flex items-center gap-4">
-        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white/10 text-white/70">
+        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#F8FAF9] text-[#24211D]/88">
           <Icon className="h-5 w-5" />
         </span>
         <div>
-          <p className="text-[10px] uppercase tracking-[0.22em] text-white/30">{label}</p>
-          <p className="text-2xl text-white">{value}</p>
+          <p className="text-[10px] uppercase tracking-[0.22em] text-[#24211D]/58">{label}</p>
+          <p className="text-2xl text-[#24211D]">{value}</p>
         </div>
       </div>
       {tag && (
@@ -774,7 +774,7 @@ export function TransportOption({
         </p>
       )}
       {(pros.length > 0 || cons.length > 0) && (
-        <div className="mt-4 space-y-2 text-xs leading-5 text-white/55">
+        <div className="mt-4 space-y-2 text-xs leading-5 text-[#24211D]/78">
           {pros.map((p) => (
             <p key={p}>+ {p}</p>
           ))}
@@ -801,7 +801,7 @@ function StarRating({ value, max = 5 }: { value: number; max?: number }) {
       {Array.from({ length: max }).map((_, i) => (
         <IconStar
           key={i}
-          className={`h-4 w-4 ${i < value ? "text-[#e8c368]" : "text-white/15"}`}
+          className={`h-4 w-4 ${i < value ? "text-[#B69463]" : "text-[#24211D]/25"}`}
         />
       ))}
     </div>
@@ -817,29 +817,29 @@ export function TransportSummaryTable({
   rows: { label: string; tempo: number; custo: number; recomendacao: string }[];
 }) {
   return (
-    <div className="overflow-x-auto rounded-2xl border border-white/10">
+    <div className="overflow-x-auto rounded-2xl border border-[#DDD8CF]">
       <table className="w-full min-w-[560px] border-collapse text-left text-sm">
         <thead>
           <tr className="border-b border-[#2f80c9]/40">
-            <th className="px-5 py-4 text-xs font-medium uppercase tracking-[0.15em] text-white">Opção</th>
-            <th className="px-5 py-4 text-xs font-medium uppercase tracking-[0.15em] text-white">Tempo</th>
-            <th className="px-5 py-4 text-xs font-medium uppercase tracking-[0.15em] text-white">Custo</th>
-            <th className="px-5 py-4 text-xs font-medium uppercase tracking-[0.15em] text-white">
+            <th className="px-5 py-4 text-xs font-medium uppercase tracking-[0.15em] text-[#24211D]">Opção</th>
+            <th className="px-5 py-4 text-xs font-medium uppercase tracking-[0.15em] text-[#24211D]">Tempo</th>
+            <th className="px-5 py-4 text-xs font-medium uppercase tracking-[0.15em] text-[#24211D]">Custo</th>
+            <th className="px-5 py-4 text-xs font-medium uppercase tracking-[0.15em] text-[#24211D]">
               Nossa recomendação
             </th>
           </tr>
         </thead>
         <tbody>
           {rows.map((r, i) => (
-            <tr key={r.label} className={i > 0 ? "border-t border-white/10" : ""}>
-              <td className="px-5 py-4 font-medium text-white">{r.label}</td>
+            <tr key={r.label} className={i > 0 ? "border-t border-[#DDD8CF]" : ""}>
+              <td className="px-5 py-4 font-medium text-[#24211D]">{r.label}</td>
               <td className="px-5 py-4">
                 <StarRating value={r.tempo} />
               </td>
               <td className="px-5 py-4">
                 <StarRating value={r.custo} />
               </td>
-              <td className="px-5 py-4 text-white/70">{r.recomendacao}</td>
+              <td className="px-5 py-4 text-[#24211D]/88">{r.recomendacao}</td>
             </tr>
           ))}
         </tbody>
@@ -860,15 +860,15 @@ export function TerminalCard({
   aliancas?: { logo?: string; logoAlt?: string; texto: string }[];
 }) {
   return (
-    <div className="rounded-2xl border border-white/10 bg-white/[0.025] p-6">
-      <p className="text-base font-medium text-white md:text-lg">{nome}</p>
-      <div className="mt-5 space-y-4 border-t border-white/10 pt-5">
+    <div className="rounded-2xl border border-[#DDD8CF] bg-[#F8FAF9] p-6">
+      <p className="text-base font-medium text-[#24211D] md:text-lg">{nome}</p>
+      <div className="mt-5 space-y-4 border-t border-[#DDD8CF] pt-5">
         <div>
-          <p className="text-[10px] uppercase tracking-[0.22em] text-white/30">Tipo</p>
-          <p className="mt-1.5 text-sm leading-6 text-white/70">{tipo}</p>
+          <p className="text-[10px] uppercase tracking-[0.22em] text-[#24211D]/58">Tipo</p>
+          <p className="mt-1.5 text-sm leading-6 text-[#24211D]/88">{tipo}</p>
         </div>
         <div>
-          <p className="text-[10px] uppercase tracking-[0.22em] text-white/30">Companhias aéreas</p>
+          <p className="text-[10px] uppercase tracking-[0.22em] text-[#24211D]/58">Companhias aéreas</p>
           {aliancas ? (
             <div className="mt-3 space-y-4">
               {aliancas.map((a, i) => (
@@ -878,12 +878,12 @@ export function TerminalCard({
                       <Image src={a.logo} alt={a.logoAlt ?? "Logo da aliança aérea"} fill className="object-contain" />
                     </div>
                   )}
-                  <p className="text-sm leading-6 text-white/70">{a.texto}</p>
+                  <p className="text-sm leading-6 text-[#24211D]/88">{a.texto}</p>
                 </div>
               ))}
             </div>
           ) : (
-            <p className="mt-1.5 text-sm leading-6 text-white/70">{companhias}</p>
+            <p className="mt-1.5 text-sm leading-6 text-[#24211D]/88">{companhias}</p>
           )}
         </div>
       </div>
@@ -901,10 +901,10 @@ export function RestaurantMini({
   location: string;
 }) {
   return (
-    <div className="rounded-2xl border border-white/10 bg-white/[0.025] p-5">
-      <p className="text-sm font-medium text-white md:text-base">{name}</p>
+    <div className="rounded-2xl border border-[#DDD8CF] bg-[#F8FAF9] p-5">
+      <p className="text-sm font-medium text-[#24211D] md:text-base">{name}</p>
       <p className="mt-1 text-xs leading-5 text-[#d9a66d] md:text-sm">{detail}</p>
-      <p className="mt-3 border-t border-white/10 pt-3 text-[11px] leading-5 text-white/45 md:text-xs">
+      <p className="mt-3 border-t border-[#DDD8CF] pt-3 text-[11px] leading-5 text-[#24211D]/70 md:text-xs">
         📍 {location}
       </p>
     </div>
@@ -928,24 +928,24 @@ export function StatCard({
 }) {
   if (variant === "highlight") {
     return (
-      <div className="flex flex-col items-center justify-center gap-2 rounded-2xl border border-white/10 bg-white/[0.025] p-5 text-center">
+      <div className="flex flex-col items-center justify-center gap-2 rounded-2xl border border-[#DDD8CF] bg-[#F8FAF9] p-5 text-center">
         <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[#5b9bd5]/12 text-[#5b9bd5]">
           <Icon className="h-4 w-4" />
         </span>
-        <p className="text-xs uppercase tracking-[0.25em] text-white/35">{label}</p>
-        <p className="text-xl font-medium uppercase text-white md:text-2xl">{value}</p>
+        <p className="text-xs uppercase tracking-[0.25em] text-[#24211D]/62">{label}</p>
+        <p className="text-xl font-medium uppercase text-[#24211D] md:text-2xl">{value}</p>
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col items-center justify-center gap-2 rounded-2xl border border-white/10 bg-white/[0.025] p-5 text-center">
+    <div className="flex flex-col items-center justify-center gap-2 rounded-2xl border border-[#DDD8CF] bg-[#F8FAF9] p-5 text-center">
       <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[#5b9bd5]/12 text-[#5b9bd5]">
         <Icon className="h-4 w-4" />
       </span>
-      <p className="text-[11px] uppercase tracking-[0.25em] text-white/30">{label}</p>
-      <p className="text-xl font-medium text-white md:text-2xl">{value}</p>
-      {detail && <p className="text-xs leading-5 text-white/45">{detail}</p>}
+      <p className="text-[11px] uppercase tracking-[0.25em] text-[#24211D]/58">{label}</p>
+      <p className="text-xl font-medium text-[#24211D] md:text-2xl">{value}</p>
+      {detail && <p className="text-xs leading-5 text-[#24211D]/70">{detail}</p>}
     </div>
   );
 }
@@ -960,12 +960,12 @@ export function ActionItem({
   text: string;
 }) {
   return (
-    <div className="rounded-2xl border border-white/10 bg-white/[0.025] p-6">
+    <div className="rounded-2xl border border-[#DDD8CF] bg-[#F8FAF9] p-6">
       <span className="mb-4 flex h-9 w-9 items-center justify-center rounded-full bg-[#5b9bd5]/12 text-[#5b9bd5]">
         <Icon className="h-4 w-4" />
       </span>
-      <p className="text-sm font-medium text-white md:text-base">{title}</p>
-      <p className="mt-2 text-sm leading-6 text-white/55">{text}</p>
+      <p className="text-sm font-medium text-[#24211D] md:text-base">{title}</p>
+      <p className="mt-2 text-sm leading-6 text-[#24211D]/78">{text}</p>
     </div>
   );
 }
@@ -981,6 +981,7 @@ export function InternalGuideHeader({
   displayClassName = "",
   heroImage,
   heroAlt,
+  internal = true,
 }: {
   eyebrow: string;
   title: string;
@@ -989,21 +990,27 @@ export function InternalGuideHeader({
   displayClassName?: string;
   heroImage?: string;
   heroAlt?: string;
+  // false quando este conteúdo está embutido no painel do cliente — nesse
+  // caso o link "Banco de conteúdo" e o selo "Uso interno" não fazem
+  // sentido pro cliente e são ocultados.
+  internal?: boolean;
 }) {
   return (
-    <header className="bg-black">
-      <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-5 md:px-10">
-        <a
-          href="/database/aeroportos"
-          className="flex items-center gap-2 text-xs uppercase tracking-[0.2em] text-white/40 transition hover:text-white/70"
-        >
-          <IconArrowLeft className="h-3.5 w-3.5" />
-          Banco de conteúdo
-        </a>
-        <span className="rounded-full border border-white/15 bg-white/[0.03] px-3 py-1 text-[10px] uppercase tracking-[0.22em] text-white/35">
-          Uso interno · não indexado
-        </span>
-      </div>
+    <header className="bg-[#FDFCF9]">
+      {internal && (
+        <div className="mx-auto flex max-w-5xl items-center justify-between border-b border-[#DDD8CF] px-6 py-5 md:px-10">
+          <a
+            href="/database/aeroportos"
+            className="flex items-center gap-2 text-xs uppercase tracking-[0.2em] text-[#24211D]/60 transition hover:text-[#24211D]/85"
+          >
+            <IconArrowLeft className="h-3.5 w-3.5" />
+            Banco de conteúdo
+          </a>
+          <span className="rounded-full border border-[#DDD8CF] bg-[#F8FAF9] px-3 py-1 text-[10px] uppercase tracking-[0.22em] text-[#24211D]/55">
+            Uso interno · não indexado
+          </span>
+        </div>
+      )}
 
       {heroImage ? (
         <div className="relative h-[280px] min-h-[280px] w-full overflow-hidden md:h-[420px] md:min-h-[420px]">
@@ -1037,9 +1044,9 @@ export function InternalGuideHeader({
       <div className="mx-auto max-w-5xl px-6 pb-12 pt-8 md:px-10 md:pb-16">
         {!heroImage && (
           <>
-            <p className="mb-4 text-xs uppercase tracking-[0.35em] text-white/40">{eyebrow}</p>
+            <p className="mb-4 text-xs uppercase tracking-[0.35em] text-[#24211D]/66">{eyebrow}</p>
             <div className="mb-5 flex flex-wrap items-end gap-4">
-              <h1 className={`${displayClassName} text-4xl font-medium leading-tight text-white md:text-6xl`}>
+              <h1 className={`${displayClassName} text-4xl font-medium leading-tight text-[#24211D] md:text-6xl`}>
                 {title}
               </h1>
               {code && (
@@ -1050,7 +1057,7 @@ export function InternalGuideHeader({
             </div>
           </>
         )}
-        <p className="max-w-2xl text-base font-light leading-8 text-white/55">{subtitle}</p>
+        <p className="max-w-2xl text-base font-light leading-8 text-[#24211D]/78">{subtitle}</p>
       </div>
     </header>
   );
@@ -1068,13 +1075,13 @@ export function FlowTag({
   subtitle?: string;
 }) {
   return (
-    <div className="group flex items-center gap-4 rounded-2xl border border-yellow-400/40 bg-[#3a2f0a] p-5 transition duration-300 hover:-translate-y-0.5 hover:border-yellow-400/80 hover:bg-[#4a3c0d] hover:shadow-[0_8px_30px_rgba(250,204,21,0.2)]">
-      <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-yellow-400/20 text-yellow-400 transition duration-300 group-hover:scale-110 group-hover:bg-yellow-400/35">
+    <div className="group flex items-center gap-4 rounded-2xl border border-[#6b46c1]/25 bg-[#F3EFFA] p-5 transition duration-300 hover:-translate-y-0.5 hover:border-[#6b46c1]/50 hover:bg-[#EDE6F8] hover:shadow-[0_8px_30px_rgba(107,70,193,0.15)]">
+      <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#6b46c1]/12 text-[#6b46c1] transition duration-300 group-hover:scale-110 group-hover:bg-[#6b46c1]/22">
         <Icon className="h-5 w-5" />
       </span>
       <div>
-        <p className="text-sm font-medium text-white">{label}</p>
-        {subtitle && <p className="text-xs text-yellow-200/70">{subtitle}</p>}
+        <p className="text-sm font-medium text-[#24211D]">{label}</p>
+        {subtitle && <p className="text-xs text-[#6b46c1]/70">{subtitle}</p>}
       </div>
     </div>
   );

@@ -1591,6 +1591,9 @@ type MapaPonto = {
   label: string;
   detalhe: string;
   Icon: (props: { className?: string }) => ReactElement;
+  // Direção da etiqueta em relação ao pino — evita que etiquetas de pontos
+  // próximos colidam entre si. Padrão: "down".
+  dir?: "up" | "down" | "left" | "right";
 };
 
 // Ponto que fica fora da área visível do recorte (ex: hospital mais distante)
@@ -1686,6 +1689,7 @@ const HOTEIS: HotelInfo[] = [
           label: "Estação Kyobashi / Takaracho",
           detalhe: "~3 min a pé",
           Icon: IconMetro,
+          dir: "down",
         },
         {
           x: 37.5,
@@ -1693,6 +1697,7 @@ const HOTEIS: HotelInfo[] = [
           label: "Kyobashi Edogrand (7-Eleven, Lawson)",
           detalhe: "~3 min a pé",
           Icon: IconStore,
+          dir: "right",
         },
         {
           x: 33,
@@ -1700,6 +1705,7 @@ const HOTEIS: HotelInfo[] = [
           label: "Matsumoto Kiyoshi (farmácia)",
           detalhe: "Na saída da estação",
           Icon: IconCross,
+          dir: "left",
         },
         {
           x: 43,
@@ -1707,13 +1713,14 @@ const HOTEIS: HotelInfo[] = [
           label: "Kameda Kyobashi Clinic",
           detalhe: "Tokyo Square Garden · ~4 min a pé",
           Icon: IconCross,
+          dir: "up",
         },
       ],
       foraDoQuadro: [
         {
           label: "St. Luke's International Hospital",
           detalhe: "Pronto-socorro 24h · ~15 min a pé ou táxi curto",
-          direcao: "SE",
+          direcao: "NE",
           Icon: IconCross,
         },
       ],
@@ -1923,6 +1930,30 @@ const DIRECAO_ESTILO: Record<
   NW: { posicao: "left-2 top-2", seta: "↖" },
 };
 
+// Layout da etiqueta em relação ao pino, por direção — evita colisão entre
+// pontos próximos no aglomerado (estação/farmácia/conveniência/clínica).
+const PONTO_LAYOUT: Record<
+  NonNullable<MapaPonto["dir"]>,
+  { wrapper: string; label: string }
+> = {
+  down: {
+    wrapper: "flex-col items-center",
+    label: "mt-1 w-[112px] text-center",
+  },
+  up: {
+    wrapper: "flex-col-reverse items-center",
+    label: "mb-1 w-[112px] text-center",
+  },
+  left: {
+    wrapper: "flex-row-reverse items-center",
+    label: "mr-1.5 w-[104px] text-right",
+  },
+  right: {
+    wrapper: "flex-row items-center",
+    label: "ml-1.5 w-[104px] text-left",
+  },
+};
+
 function HotelNeighborhoodMap({ mapa }: { mapa: NonNullable<HotelInfo["mapa"]> }) {
   return (
     <div className="relative w-full overflow-hidden rounded-2xl border border-[#DDD8CF] bg-[#F5F3EF]">
@@ -1933,30 +1964,38 @@ function HotelNeighborhoodMap({ mapa }: { mapa: NonNullable<HotelInfo["mapa"]> }
         height={700}
         className="h-auto w-full"
       />
+      {/* Leve escurecimento do mapa base — ajuda os pinos e etiquetas da
+          Alpinea a se destacarem da própria sinalização do Google Maps. */}
+      <div className="pointer-events-none absolute inset-0 bg-black/[0.08]" />
 
-      {mapa.pontos.map((p, i) => (
-        <div
-          key={i}
-          className="absolute flex flex-col items-center"
-          style={{
-            left: `${p.x}%`,
-            top: `${p.y}%`,
-            transform: "translate(-50%, -50%)",
-          }}
-        >
-          <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border-2 border-[#FDFCF9] bg-[#173B45] text-white shadow-[0_3px_10px_rgba(23,59,69,0.4)]">
-            <p.Icon className="h-3.5 w-3.5" />
-          </span>
-          <div className="mt-1 w-[112px] rounded-lg border border-[#DDD8CF] bg-[#FDFCF9]/95 px-2 py-1 text-center shadow-sm backdrop-blur-sm">
-            <p className="text-[9px] font-bold leading-tight text-[#24211D]">
-              {p.label}
-            </p>
-            <p className="mt-0.5 text-[8px] leading-tight text-[#24211D]/75">
-              {p.detalhe}
-            </p>
+      {mapa.pontos.map((p, i) => {
+        const layout = PONTO_LAYOUT[p.dir ?? "down"];
+        return (
+          <div
+            key={i}
+            className={`absolute flex ${layout.wrapper}`}
+            style={{
+              left: `${p.x}%`,
+              top: `${p.y}%`,
+              transform: "translate(-50%, -50%)",
+            }}
+          >
+            <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border-2 border-[#FDFCF9] bg-[#173B45] text-white shadow-[0_3px_10px_rgba(23,59,69,0.4)]">
+              <p.Icon className="h-3.5 w-3.5" />
+            </span>
+            <div
+              className={`rounded-lg border border-[#DDD8CF] bg-[#FDFCF9]/95 px-2 py-1 shadow-sm backdrop-blur-sm ${layout.label}`}
+            >
+              <p className="text-[9px] font-bold leading-tight text-[#24211D]">
+                {p.label}
+              </p>
+              <p className="mt-0.5 text-[8px] leading-tight text-[#24211D]/75">
+                {p.detalhe}
+              </p>
+            </div>
           </div>
-        </div>
-      ))}
+        );
+      })}
 
       {mapa.foraDoQuadro?.map((p, i) => {
         const estilo = DIRECAO_ESTILO[p.direcao];
@@ -1976,6 +2015,24 @@ function HotelNeighborhoodMap({ mapa }: { mapa: NonNullable<HotelInfo["mapa"]> }
           </div>
         );
       })}
+
+      {/* Legenda */}
+      <div className="absolute bottom-2 left-2 flex items-center gap-3 rounded-full border border-[#DDD8CF] bg-[#FDFCF9]/95 px-3 py-1.5 shadow-sm backdrop-blur-sm">
+        <span className="flex items-center gap-1.5">
+          <span className="h-3 w-3 shrink-0 rounded-full border border-[#FDFCF9] bg-[#173B45]" />
+          <span className="text-[8px] font-semibold uppercase tracking-wide text-[#24211D]/80">
+            No quarteirão
+          </span>
+        </span>
+        <span className="flex items-center gap-1.5">
+          <span className="h-3 w-3 shrink-0 rounded-full bg-[#B96432] text-center text-[7px] leading-3 text-white">
+            ↗
+          </span>
+          <span className="text-[8px] font-semibold uppercase tracking-wide text-[#24211D]/80">
+            Fora do quadro
+          </span>
+        </span>
+      </div>
     </div>
   );
 }
@@ -2050,11 +2107,21 @@ export function ApprovalPanel({
                 <span
                   className={`relative flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-full font-bold transition-all duration-300 ${
                     d.badge
-                      ? "border-2 border-[#173B45] bg-[#173B45] text-[9px] tracking-tight text-white"
+                      ? "text-[9px] tracking-tight text-white [text-shadow:0_1px_3px_rgba(0,0,0,0.75)]"
                       : active
                         ? "shadow-[0_0_0_2px_#B69463]"
                         : "hover:-translate-y-0.5 hover:shadow-[0_0_0_2px_rgba(182,148,99,0.6)]"
                   }`}
+                  style={
+                    d.badge
+                      ? {
+                          background:
+                            "radial-gradient(circle at 30% 26%, rgba(160,180,255,0.55) 0%, rgba(100,80,200,0.32) 20%, transparent 46%), conic-gradient(from 210deg at 50% 50%, #120a24, #241448, #3a1f66, #17224e, #1c2f5e, #2a1550, #120a24)",
+                          boxShadow:
+                            "inset 0 0 8px rgba(180,190,255,0.25), 0 0 0 1px rgba(150,160,255,0.3)",
+                        }
+                      : undefined
+                  }
                 >
                   {d.badge ? (
                     d.badge
@@ -2193,7 +2260,7 @@ export function ApprovalPanel({
                 Aeroporto de Narita (NRT)
               </p>
               <div className="overflow-hidden rounded-2xl">
-                <NaritaGuideContent displayClassName={displayClassName} />
+                <NaritaGuideContent displayClassName={displayClassName} internal={false} />
               </div>
             </>
           ) : viewMode === "hotel" ? (
