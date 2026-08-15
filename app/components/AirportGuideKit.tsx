@@ -211,16 +211,16 @@ export function PreviewCard({
   return (
     <a
       href={href}
-      className="group flex items-center gap-4 rounded-2xl border border-[#2f80c9]/30 bg-[#5b9bd5]/[0.08] p-5 transition hover:border-[#2f80c9]/60"
+      className="group flex items-center gap-4 rounded-2xl border border-[#173B45]/30 bg-[#173B45]/[0.08] p-5 transition hover:border-[#173B45]/60"
     >
-      <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#2f80c9]/20 text-[#2f80c9]">
+      <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#173B45]/20 text-[#173B45]">
         <Icon className="h-5 w-5" />
       </span>
       <div>
         <p className="text-sm font-medium text-[#24211D]">{label}</p>
-        <p className="text-xs text-[#2f80c9]/70">Toque para ampliar</p>
+        <p className="text-xs text-[#173B45]/70">Toque para ampliar</p>
       </div>
-      <span className="ml-auto text-lg text-[#2f80c9]/70 transition group-hover:translate-x-0.5">→</span>
+      <span className="ml-auto text-lg text-[#173B45]/70 transition group-hover:translate-x-0.5">→</span>
     </a>
   );
 }
@@ -374,7 +374,7 @@ export function CaptionedImage({
 export function SubStepHeading({ number, title }: { number: number; title: string }) {
   return (
     <div className="flex items-center gap-3">
-      <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-[#5b9bd5]/40 text-xs font-medium text-[#5b9bd5]">
+      <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-[#173B45]/40 text-xs font-medium text-[#173B45]">
         {number}
       </span>
       <p className="text-sm font-medium uppercase tracking-[0.15em] text-[#24211D]">{title}</p>
@@ -426,7 +426,7 @@ export function ImmigrationArrivalGuide({ displayClassName }: { displayClassName
 
         <div className="grid gap-4 md:grid-cols-2">
           <div className="rounded-2xl border border-[#DDD8CF] bg-[#F8FAF9] p-6">
-            <p className="mb-2 text-xs uppercase tracking-[0.25em] text-[#5b9bd5]">Opção A</p>
+            <p className="mb-2 text-xs uppercase tracking-[0.25em] text-[#173B45]">Opção A</p>
             <p className="text-sm font-medium text-[#24211D] md:text-base">Apresentar Digitalmente</p>
             <p className="mt-3 text-sm leading-6 text-[#24211D]/80">
               Preencha online a declaração e apresente o QR Code gerado no Visit Japan
@@ -435,7 +435,7 @@ export function ImmigrationArrivalGuide({ displayClassName }: { displayClassName
                 href="https://www.vjw.digital.go.jp"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-[#2f80c9] underline underline-offset-2"
+                className="text-[#173B45] underline underline-offset-2"
               >
                 vjw.digital.go.jp
               </a>
@@ -494,7 +494,7 @@ export function ImmigrationArrivalGuide({ displayClassName }: { displayClassName
           </div>
 
           <div className="rounded-2xl border border-[#DDD8CF] bg-[#F8FAF9] p-6">
-            <p className="mb-2 text-xs uppercase tracking-[0.25em] text-[#5b9bd5]">Opção B</p>
+            <p className="mb-2 text-xs uppercase tracking-[0.25em] text-[#173B45]">Opção B</p>
             <p className="text-sm font-medium text-[#24211D] md:text-base">Apresentar Manualmente</p>
             <p className="mt-3 text-sm leading-6 text-[#24211D]/80">
               Durante o voo, as companhias aéreas costumam distribuir os formulários
@@ -546,7 +546,7 @@ export function ImmigrationArrivalGuide({ displayClassName }: { displayClassName
           no seu idioma nativo (português, por exemplo).
         </p>
         <div className="rounded-2xl border border-[#DDD8CF] bg-[#F8FAF9] p-6">
-          <p className="mb-2 text-xs uppercase tracking-[0.25em] text-[#5b9bd5]">
+          <p className="mb-2 text-xs uppercase tracking-[0.25em] text-[#173B45]">
             No guichê da imigração
           </p>
           <p className="text-sm leading-6 text-[#24211D]/80">
@@ -590,10 +590,10 @@ export function ImmigrationArrivalGuide({ displayClassName }: { displayClassName
 export function SectionMarker({ number, label }: { number: number; label: string }) {
   return (
     <div className="flex items-center gap-3">
-      <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#5b9bd5] text-xs font-semibold text-black">
+      <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#173B45] text-xs font-semibold text-white">
         {number}
       </span>
-      <p className="text-xs uppercase tracking-[0.35em] text-[#5b9bd5]">{label}</p>
+      <p className="text-xs uppercase tracking-[0.35em] text-[#173B45]">{label}</p>
     </div>
   );
 }
@@ -629,7 +629,7 @@ export function TableOfContents({
               <li key={item.href}>
                 {showGroupHeader && (
                   <p
-                    className={`px-2 pb-1.5 text-[10px] font-medium uppercase tracking-[0.3em] text-[#6b46c1]/70 ${
+                    className={`px-2 pb-1.5 text-[10px] font-medium uppercase tracking-[0.3em] text-[#B96432]/70 ${
                       idx > 0 ? "mt-4 border-t border-[#DDD8CF] pt-4" : ""
                     }`}
                   >
@@ -640,7 +640,7 @@ export function TableOfContents({
                   href={item.href}
                   className="group flex items-center gap-3 rounded-xl px-2 py-2 transition hover:bg-[#F8FAF9]"
                 >
-                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#5b9bd5]/15 text-[#2f80c9] transition group-hover:bg-[#5b9bd5]/30">
+                  <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#173B45]/15 text-[#173B45] transition group-hover:bg-[#173B45]/30">
                     <item.Icon className="h-4 w-4" />
                   </span>
                   <span className="text-sm text-[#24211D]/92 transition group-hover:text-[#24211D]">
@@ -654,7 +654,7 @@ export function TableOfContents({
                       <li key={sub.href}>
                         <a
                           href={sub.href}
-                          className="block py-1 text-xs text-[#24211D]/74 transition hover:text-[#2f80c9]"
+                          className="block py-1 text-xs text-[#24211D]/74 transition hover:text-[#173B45]"
                         >
                           {sub.label}
                         </a>
@@ -686,12 +686,12 @@ export function FlowDivider({
   displayClassName?: string;
 }) {
   return (
-    <div className="border-t border-[#6b46c1]/20 bg-[#F3EFFA] px-6 py-14 md:px-10 md:py-20">
+    <div className="border-t border-[#B96432]/20 bg-[#F9F2ED] px-6 py-14 md:px-10 md:py-20">
       <div className="mx-auto flex max-w-3xl flex-col items-center gap-4 text-center">
-        <span className="flex h-14 w-14 items-center justify-center rounded-full bg-[#6b46c1]/10 text-[#6b46c1]">
+        <span className="flex h-14 w-14 items-center justify-center rounded-full bg-[#B96432]/10 text-[#B96432]">
           <Icon className="h-7 w-7" />
         </span>
-        <p className="text-xs uppercase tracking-[0.4em] text-[#6b46c1]/70">A partir daqui</p>
+        <p className="text-xs uppercase tracking-[0.4em] text-[#B96432]/70">A partir daqui</p>
         <h2 className={`${displayClassName} text-3xl font-medium text-[#24211D] md:text-5xl`}>
           {title}
         </h2>
@@ -721,7 +721,7 @@ export function RecommendationRow({
 }) {
   return (
     <div className="grid grid-cols-[34px_1fr] gap-3 rounded-2xl border border-[#DDD8CF] bg-[#F8FAF9] p-4">
-      <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#5b9bd5]/12 text-[#5b9bd5]">
+      <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#173B45]/12 text-[#173B45]">
         <Icon className="h-4 w-4" />
       </div>
       <div>
@@ -755,7 +755,7 @@ export function TransportOption({
     <div
       className={`rounded-2xl p-5 ${
         highlight
-          ? "border-2 border-[#5b9bd5] bg-[#F8FAF9]"
+          ? "border-2 border-[#173B45] bg-[#F8FAF9]"
           : "border border-[#DDD8CF] bg-[#F8FAF9]"
       }`}
     >
@@ -769,7 +769,7 @@ export function TransportOption({
         </div>
       </div>
       {tag && (
-        <p className="mt-3 inline-block rounded-full border border-[#5b9bd5]/40 px-3 py-1 text-[10px] uppercase tracking-[0.2em] text-[#5b9bd5]">
+        <p className="mt-3 inline-block rounded-full border border-[#173B45]/40 px-3 py-1 text-[10px] uppercase tracking-[0.2em] text-[#173B45]">
           {tag}
         </p>
       )}
@@ -820,7 +820,7 @@ export function TransportSummaryTable({
     <div className="overflow-x-auto rounded-2xl border border-[#DDD8CF]">
       <table className="w-full min-w-[560px] border-collapse text-left text-sm">
         <thead>
-          <tr className="border-b border-[#2f80c9]/40">
+          <tr className="border-b border-[#173B45]/40">
             <th className="px-5 py-4 text-xs font-medium uppercase tracking-[0.15em] text-[#24211D]">Opção</th>
             <th className="px-5 py-4 text-xs font-medium uppercase tracking-[0.15em] text-[#24211D]">Tempo</th>
             <th className="px-5 py-4 text-xs font-medium uppercase tracking-[0.15em] text-[#24211D]">Custo</th>
@@ -929,7 +929,7 @@ export function StatCard({
   if (variant === "highlight") {
     return (
       <div className="flex flex-col items-center justify-center gap-2 rounded-2xl border border-[#DDD8CF] bg-[#F8FAF9] p-5 text-center">
-        <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[#5b9bd5]/12 text-[#5b9bd5]">
+        <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[#173B45]/12 text-[#173B45]">
           <Icon className="h-4 w-4" />
         </span>
         <p className="text-xs uppercase tracking-[0.25em] text-[#24211D]/62">{label}</p>
@@ -940,7 +940,7 @@ export function StatCard({
 
   return (
     <div className="flex flex-col items-center justify-center gap-2 rounded-2xl border border-[#DDD8CF] bg-[#F8FAF9] p-5 text-center">
-      <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[#5b9bd5]/12 text-[#5b9bd5]">
+      <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[#173B45]/12 text-[#173B45]">
         <Icon className="h-4 w-4" />
       </span>
       <p className="text-[11px] uppercase tracking-[0.25em] text-[#24211D]/58">{label}</p>
@@ -961,7 +961,7 @@ export function ActionItem({
 }) {
   return (
     <div className="rounded-2xl border border-[#DDD8CF] bg-[#F8FAF9] p-6">
-      <span className="mb-4 flex h-9 w-9 items-center justify-center rounded-full bg-[#5b9bd5]/12 text-[#5b9bd5]">
+      <span className="mb-4 flex h-9 w-9 items-center justify-center rounded-full bg-[#173B45]/12 text-[#173B45]">
         <Icon className="h-4 w-4" />
       </span>
       <p className="text-sm font-medium text-[#24211D] md:text-base">{title}</p>
@@ -1050,7 +1050,7 @@ export function InternalGuideHeader({
                 {title}
               </h1>
               {code && (
-                <span className="mb-1 rounded-full border border-[#5b9bd5]/30 bg-[#5b9bd5]/10 px-3 py-1 text-sm font-medium text-[#5b9bd5]">
+                <span className="mb-1 rounded-full border border-[#173B45]/30 bg-[#173B45]/10 px-3 py-1 text-sm font-medium text-[#173B45]">
                   {code}
                 </span>
               )}
@@ -1075,13 +1075,13 @@ export function FlowTag({
   subtitle?: string;
 }) {
   return (
-    <div className="group flex items-center gap-4 rounded-2xl border border-[#6b46c1]/25 bg-[#F3EFFA] p-5 transition duration-300 hover:-translate-y-0.5 hover:border-[#6b46c1]/50 hover:bg-[#EDE6F8] hover:shadow-[0_8px_30px_rgba(107,70,193,0.15)]">
-      <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#6b46c1]/12 text-[#6b46c1] transition duration-300 group-hover:scale-110 group-hover:bg-[#6b46c1]/22">
+    <div className="group flex items-center gap-4 rounded-2xl border border-[#B96432]/25 bg-[#F9F2ED] p-5 transition duration-300 hover:-translate-y-0.5 hover:border-[#B96432]/50 hover:bg-[#F3E4D8] hover:shadow-[0_8px_30px_rgba(185,100,50,0.15)]">
+      <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#B96432]/12 text-[#B96432] transition duration-300 group-hover:scale-110 group-hover:bg-[#B96432]/22">
         <Icon className="h-5 w-5" />
       </span>
       <div>
         <p className="text-sm font-medium text-[#24211D]">{label}</p>
-        {subtitle && <p className="text-xs text-[#6b46c1]/70">{subtitle}</p>}
+        {subtitle && <p className="text-xs text-[#B96432]/70">{subtitle}</p>}
       </div>
     </div>
   );

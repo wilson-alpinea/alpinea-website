@@ -221,8 +221,8 @@ export function NaritaGuideContent({
             <MapCard href="#mapa-terminal3" label="Planta do Terminal 3" />
           </div>
 
-          <div className="rounded-2xl border border-[#5b9bd5]/15 bg-[#5b9bd5]/[0.08] p-6 sm:p-8">
-            <p className="mb-5 flex items-center gap-2 text-xs uppercase tracking-[0.25em] text-[#5b9bd5]">
+          <div className="rounded-2xl border border-[#173B45]/15 bg-[#173B45]/[0.08] p-6 sm:p-8">
+            <p className="mb-5 flex items-center gap-2 text-xs uppercase tracking-[0.25em] text-[#173B45]">
               <IconBulb className="h-3.5 w-3.5" />
               Recomendação Ajisai
             </p>
@@ -375,8 +375,8 @@ export function NaritaGuideContent({
                 </div>
               </div>
 
-              <div className="rounded-2xl border border-[#5b9bd5]/15 bg-[#5b9bd5]/[0.08] p-6 sm:p-8">
-                <p className="mb-4 flex items-center gap-2 text-xs uppercase tracking-[0.25em] text-[#5b9bd5]">
+              <div className="rounded-2xl border border-[#173B45]/15 bg-[#173B45]/[0.08] p-6 sm:p-8">
+                <p className="mb-4 flex items-center gap-2 text-xs uppercase tracking-[0.25em] text-[#173B45]">
                   <IconBulb className="h-3.5 w-3.5" />
                   Recomendação Alpinea
                 </p>
@@ -456,15 +456,15 @@ export function NaritaGuideContent({
                 </div>
               </div>
 
-              <div className="rounded-2xl border border-[#5b9bd5]/15 bg-[#5b9bd5]/[0.08] p-6 sm:p-8">
+              <div className="rounded-2xl border border-[#173B45]/15 bg-[#173B45]/[0.08] p-6 sm:p-8">
                 <div className="flex flex-col items-center gap-2 text-center">
-                  <span className="flex h-12 w-12 items-center justify-center rounded-full bg-[#5b9bd5]/15 text-[#2f80c9]">
+                  <span className="flex h-12 w-12 items-center justify-center rounded-full bg-[#173B45]/15 text-[#173B45]">
                     <IconCard className="h-6 w-6" />
                   </span>
-                  <p className="text-xs uppercase tracking-[0.25em] text-[#5b9bd5]">
+                  <p className="text-xs uppercase tracking-[0.25em] text-[#173B45]">
                     Suica/Pasmo no celular
                   </p>
-                  <span className="rounded-full bg-[#6b46c1]/10 px-3 py-1 text-[10px] font-medium uppercase tracking-[0.2em] text-[#6b46c1]">
+                  <span className="rounded-full bg-[#B96432]/10 px-3 py-1 text-[10px] font-medium uppercase tracking-[0.2em] text-[#B96432]">
                     Opcional
                   </span>
                 </div>
@@ -492,7 +492,7 @@ export function NaritaGuideContent({
                     href="https://support.apple.com/pt-br/108772"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="block text-[#2f80c9] underline underline-offset-2"
+                    className="block text-[#173B45] underline underline-offset-2"
                   >
                     Como adicionar o Suica/Pasmo na Apple Wallet →
                   </a>
@@ -500,7 +500,7 @@ export function NaritaGuideContent({
                     href="https://support.google.com/wallet/thread/269371334/n%C3%A3o-consigo-adicionar-o-suica-cart%C3%A3o-de-transporte-do-jap%C3%A3o-na-carteira?hl=pt"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="block text-[#2f80c9] underline underline-offset-2"
+                    className="block text-[#173B45] underline underline-offset-2"
                   >
                     Como adicionar o Suica no Google Wallet →
                   </a>
@@ -622,15 +622,15 @@ export function NaritaGuideContent({
               <p id="secao-3-6" className="text-sm font-medium uppercase tracking-[0.15em] text-[#24211D]/88">
                 3.6 — Envio de Bagagem (Takkyubin)
               </p>
-              <div className="rounded-2xl border border-[#5b9bd5]/15 bg-[#5b9bd5]/[0.08] p-6 sm:p-8">
+              <div className="rounded-2xl border border-[#173B45]/15 bg-[#173B45]/[0.08] p-6 sm:p-8">
                 <div className="flex flex-col items-center gap-2 text-center">
-                  <span className="flex h-12 w-12 items-center justify-center rounded-full bg-[#5b9bd5]/15 text-[#2f80c9]">
+                  <span className="flex h-12 w-12 items-center justify-center rounded-full bg-[#173B45]/15 text-[#173B45]">
                     <IconLuggage className="h-6 w-6" />
                   </span>
-                  <p className="text-xs uppercase tracking-[0.25em] text-[#5b9bd5]">
+                  <p className="text-xs uppercase tracking-[0.25em] text-[#173B45]">
                     Luggage Delivery (TA-Q-BIN)
                   </p>
-                  <span className="rounded-full bg-[#6b46c1]/10 px-3 py-1 text-[10px] font-medium uppercase tracking-[0.2em] text-[#6b46c1]">
+                  <span className="rounded-full bg-[#B96432]/10 px-3 py-1 text-[10px] font-medium uppercase tracking-[0.2em] text-[#B96432]">
                     Opcional
                   </span>
                 </div>
@@ -871,7 +871,7 @@ export function NaritaGuideContent({
           <div id="deslocamento-onibus" className="mt-10 space-y-5 border-t border-[#DDD8CF] pt-8">
             <div className="flex flex-wrap items-center gap-3">
               <SubStepHeading number={2} title="Ônibus" />
-              <span className="rounded-full bg-[#5b9bd5]/15 px-3 py-1 text-[10px] uppercase tracking-[0.2em] text-[#5b9bd5]">
+              <span className="rounded-full bg-[#173B45]/15 px-3 py-1 text-[10px] uppercase tracking-[0.2em] text-[#173B45]">
                 Método recomendado
               </span>
             </div>
@@ -969,8 +969,8 @@ export function NaritaGuideContent({
             />
           </div>
 
-          <div className="mt-8 rounded-2xl border border-[#5b9bd5]/15 bg-[#5b9bd5]/[0.08] p-6 sm:p-8">
-            <p className="mb-5 flex items-center gap-2 text-xs uppercase tracking-[0.25em] text-[#5b9bd5]">
+          <div className="mt-8 rounded-2xl border border-[#173B45]/15 bg-[#173B45]/[0.08] p-6 sm:p-8">
+            <p className="mb-5 flex items-center gap-2 text-xs uppercase tracking-[0.25em] text-[#173B45]">
               <IconBulb className="h-3.5 w-3.5" />
               Recomendação Ajisai
             </p>
@@ -986,7 +986,7 @@ export function NaritaGuideContent({
             <div className="mt-6 overflow-x-auto rounded-2xl border border-[#DDD8CF]">
               <table className="w-full min-w-[480px] border-collapse text-left text-sm">
                 <thead>
-                  <tr className="border-b border-[#2f80c9]/40">
+                  <tr className="border-b border-[#173B45]/40">
                     <th className="px-5 py-4 text-xs font-medium uppercase tracking-[0.15em] text-[#24211D]">Classe</th>
                     <th className="px-5 py-4 text-xs font-medium uppercase tracking-[0.15em] text-[#24211D]">Peso por mala</th>
                     <th className="px-5 py-4 text-xs font-medium uppercase tracking-[0.15em] text-[#24211D]">Malas incluídas</th>
@@ -1019,8 +1019,8 @@ export function NaritaGuideContent({
             </p>
           </div>
 
-          <div className="mt-6 rounded-2xl border border-[#5b9bd5]/15 bg-[#5b9bd5]/[0.08] p-6 sm:p-8">
-            <p className="mb-4 flex items-center gap-2 text-xs uppercase tracking-[0.25em] text-[#5b9bd5]">
+          <div className="mt-6 rounded-2xl border border-[#173B45]/15 bg-[#173B45]/[0.08] p-6 sm:p-8">
+            <p className="mb-4 flex items-center gap-2 text-xs uppercase tracking-[0.25em] text-[#173B45]">
               <IconBulb className="h-3.5 w-3.5" />
               Recomendação Alpinea
             </p>
@@ -1108,7 +1108,7 @@ export function NaritaGuideContent({
           <div id="secao-6-onibus" className="mt-10 space-y-5 border-t border-[#DDD8CF] pt-8">
             <div className="flex flex-wrap items-center gap-3">
               <SubStepHeading number={2} title="Ônibus" />
-              <span className="rounded-full bg-[#5b9bd5]/15 px-3 py-1 text-[10px] uppercase tracking-[0.2em] text-[#5b9bd5]">
+              <span className="rounded-full bg-[#173B45]/15 px-3 py-1 text-[10px] uppercase tracking-[0.2em] text-[#173B45]">
                 Método recomendado
               </span>
             </div>
@@ -1171,7 +1171,7 @@ export function NaritaGuideContent({
           <div className="space-y-5">
             <div className="rounded-2xl border border-[#DDD8CF] bg-[#F8FAF9] p-5">
               <div className="flex items-start gap-4">
-                <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-[#5b9bd5]/40 text-xs font-medium text-[#5b9bd5]">
+                <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-[#173B45]/40 text-xs font-medium text-[#173B45]">
                   1
                 </span>
                 <p className="text-sm leading-6 text-[#24211D]/88 md:text-base">
@@ -1195,7 +1195,7 @@ export function NaritaGuideContent({
               </div>
             </div>
             <div className="flex items-start gap-4 rounded-2xl border border-[#DDD8CF] bg-[#F8FAF9] p-5">
-              <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-[#5b9bd5]/40 text-xs font-medium text-[#5b9bd5]">
+              <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-[#173B45]/40 text-xs font-medium text-[#173B45]">
                 2
               </span>
               <p className="text-sm leading-6 text-[#24211D]/88 md:text-base">
@@ -1206,7 +1206,7 @@ export function NaritaGuideContent({
               </p>
             </div>
             <div className="flex items-start gap-4 rounded-2xl border border-[#DDD8CF] bg-[#F8FAF9] p-5">
-              <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-[#5b9bd5]/40 text-xs font-medium text-[#5b9bd5]">
+              <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-[#173B45]/40 text-xs font-medium text-[#173B45]">
                 3
               </span>
               <p className="text-sm leading-6 text-[#24211D]/88 md:text-base">
@@ -1348,8 +1348,8 @@ export function NaritaGuideContent({
               para alimentos/bebidas não alcoólicas), que o não-residente não paga.
             </p>
 
-            <div className="rounded-2xl border border-[#5b9bd5]/15 bg-[#5b9bd5]/[0.08] p-6 sm:p-8">
-              <p className="mb-4 flex items-center gap-2 text-xs uppercase tracking-[0.25em] text-[#5b9bd5]">
+            <div className="rounded-2xl border border-[#173B45]/15 bg-[#173B45]/[0.08] p-6 sm:p-8">
+              <p className="mb-4 flex items-center gap-2 text-xs uppercase tracking-[0.25em] text-[#173B45]">
                 <IconClock className="h-3.5 w-3.5" />
                 Atualização Importante
               </p>
@@ -1464,8 +1464,8 @@ export function NaritaGuideContent({
             </div>
           </div>
 
-          <div className="mt-8 rounded-2xl border border-[#5b9bd5]/15 bg-[#5b9bd5]/[0.08] p-6 sm:p-8">
-            <p className="mb-5 flex items-center gap-2 text-xs uppercase tracking-[0.25em] text-[#5b9bd5]">
+          <div className="mt-8 rounded-2xl border border-[#173B45]/15 bg-[#173B45]/[0.08] p-6 sm:p-8">
+            <p className="mb-5 flex items-center gap-2 text-xs uppercase tracking-[0.25em] text-[#173B45]">
               <IconBulb className="h-3.5 w-3.5" />
               Recomendação Ajisai
             </p>

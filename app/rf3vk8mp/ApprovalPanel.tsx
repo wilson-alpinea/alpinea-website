@@ -2259,7 +2259,11 @@ export function ApprovalPanel({
               <p className="mb-5 inline-block rounded-full border border-[#173B45]/20 bg-[#F8FAF9] px-5 py-2 text-xs uppercase tracking-[0.3em] text-[#173B45]">
                 Aeroporto de Narita (NRT)
               </p>
-              <div className="overflow-hidden rounded-2xl">
+              {/* -mx cancela o px-6/sm:px-10 do painel — o Narita já traz seu
+                  próprio ritmo de espaçamento interno (mx-auto max-w-5xl
+                  px-6), então sem isso ele ficava com margem dobrada nas
+                  laterais, diferente do resto do conteúdo (Dia 1, Dia 2...). */}
+              <div className="-mx-6 overflow-hidden rounded-2xl sm:-mx-10">
                 <NaritaGuideContent displayClassName={displayClassName} internal={false} />
               </div>
             </>
