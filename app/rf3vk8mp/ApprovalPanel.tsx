@@ -1930,54 +1930,57 @@ function HotelGuestGuide({ hotel }: { hotel: HotelInfo }) {
 
   return (
     <div className="overflow-hidden rounded-2xl border border-[#DDD8CF]">
-      {/* 1. Informações do hotel — identificação e referência rápida */}
-      <div className="relative overflow-hidden border-b border-[#DDD8CF] px-5 py-6 text-center sm:px-8 sm:py-8">
-        {hotel.cidade === "Tokyo 1" && (
-          <>
-            <Image
-              src="/images/lyf-mural-fachada.png"
-              alt=""
-              fill
-              sizes="(max-width: 640px) 100vw, 800px"
-              className="object-cover"
-              aria-hidden="true"
-            />
-            <div className="absolute inset-0 bg-[#FAF9F6]/88" />
-          </>
-        )}
+      {/* 1. Informações do hotel — foto de fachada + etiqueta com o nome */}
+      {hotel.cidade === "Tokyo 1" && (
+        <div className="relative aspect-[16/9] w-full overflow-hidden border-b border-[#DDD8CF] sm:aspect-[21/9]">
+          <Image
+            src="/images/lyf-fachada-real.png"
+            alt={`Fachada do ${hotel.nome}`}
+            fill
+            sizes="(max-width: 640px) 100vw, 800px"
+            className="object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/45 via-transparent to-transparent" />
+          <span className="absolute bottom-4 left-4 rounded-md bg-[#0B2530] px-3.5 py-2 text-sm font-semibold text-white sm:bottom-5 sm:left-5">
+            {hotel.nome}
+          </span>
+        </div>
+      )}
+
+      {/* Identificação — endereço, telefone, site e horários */}
+      <div className="border-b border-[#DDD8CF] bg-[#FAF9F6] px-5 py-5 text-center sm:px-8">
         {hotel.cidade !== "Tokyo 1" && (
-          <div className="absolute inset-0 bg-[#FAF9F6]" />
-        )}
-        <div className="relative">
           <p className="text-base font-semibold text-[#24211D] sm:text-lg">
             {hotel.nome}
           </p>
-          <p className="mt-1 text-xs text-[#24211D]/72">{hotel.endereco}</p>
-          {hotel.enderecoJapones && (
-            <p className="mt-0.5 text-xs text-[#24211D]/58">{hotel.enderecoJapones}</p>
+        )}
+        <p className={`text-xs text-[#24211D]/72 ${hotel.cidade !== "Tokyo 1" ? "mt-1" : ""}`}>
+          {hotel.endereco}
+        </p>
+        {hotel.enderecoJapones && (
+          <p className="mt-0.5 text-xs text-[#24211D]/58">{hotel.enderecoJapones}</p>
+        )}
+        <div className="mt-2 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-[11px] text-[#24211D]/72">
+          {hotel.telefone && <span>{hotel.telefone}</span>}
+          {hotel.telefone && hotel.site && <span className="text-[#24211D]/35">·</span>}
+          {hotel.site && (
+            <a
+              href={hotel.site}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-semibold uppercase tracking-[0.1em] text-[#173B45] hover:underline"
+            >
+              Site oficial
+            </a>
           )}
-          <div className="mt-2 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-[11px] text-[#24211D]/72">
-            {hotel.telefone && <span>{hotel.telefone}</span>}
-            {hotel.telefone && hotel.site && <span className="text-[#24211D]/35">·</span>}
-            {hotel.site && (
-              <a
-                href={hotel.site}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="font-semibold uppercase tracking-[0.1em] text-[#173B45] hover:underline"
-              >
-                Site oficial
-              </a>
-            )}
-          </div>
-          <div className="mt-4 flex flex-wrap items-center justify-center gap-2.5">
-            <span className="rounded-full border border-[#173B45]/25 bg-white/70 px-4 py-1.5 text-[10px] font-bold uppercase tracking-[0.2em] text-[#173B45]">
-              Check-in · {hotel.checkin}
-            </span>
-            <span className="rounded-full border border-[#173B45]/25 bg-white/70 px-4 py-1.5 text-[10px] font-bold uppercase tracking-[0.2em] text-[#173B45]">
-              Check-out · {hotel.checkout}
-            </span>
-          </div>
+        </div>
+        <div className="mt-4 flex flex-wrap items-center justify-center gap-2.5">
+          <span className="rounded-full border border-[#173B45]/25 bg-[#173B45]/[0.06] px-4 py-1.5 text-[10px] font-bold uppercase tracking-[0.2em] text-[#173B45]">
+            Check-in · {hotel.checkin}
+          </span>
+          <span className="rounded-full border border-[#173B45]/25 bg-[#173B45]/[0.06] px-4 py-1.5 text-[10px] font-bold uppercase tracking-[0.2em] text-[#173B45]">
+            Check-out · {hotel.checkout}
+          </span>
         </div>
       </div>
 
