@@ -1637,6 +1637,9 @@ type HotelInfo = {
     pontos: MapaPonto[];
     foraDoQuadro?: MapaForaDoQuadro[];
     nota?: string;
+    // Prints de rota a pé (Google Maps) pra pontos específicos — abrem a
+    // imagem original em tamanho real numa nova aba.
+    rotas?: { label: string; imagem: string; imagemAlt: string }[];
   };
 };
 
@@ -1761,6 +1764,43 @@ const HOTEIS: HotelInfo[] = [
           detalhe: "Pronto-socorro 24h · ~15 min a pé ou táxi curto",
           direcao: "NE",
           Icon: IconCross,
+        },
+      ],
+      rotas: [
+        {
+          label: "Estação Kyobashi",
+          imagem: "/images/lyf-rota-estacao-kyobashi.png",
+          imagemAlt: "Rota a pé da Estação Kyobashi até o lyf Ginza Tokyo",
+        },
+        {
+          label: "7-Eleven",
+          imagem: "/images/lyf-rota-seven-eleven.png",
+          imagemAlt: "Rota a pé do 7-Eleven até o lyf Ginza Tokyo",
+        },
+        {
+          label: "Lawson",
+          imagem: "/images/lyf-rota-lawson.png",
+          imagemAlt: "Rota a pé do Lawson até o lyf Ginza Tokyo",
+        },
+        {
+          label: "Saída 6 (Estação Kyobashi)",
+          imagem: "/images/lyf-estacao-kyobashi-saida6.png",
+          imagemAlt: "Vista de rua da Saída 6 da Estação Kyobashi",
+        },
+        {
+          label: "Farmácia Welcia",
+          imagem: "/images/lyf-rota-welcia.png",
+          imagemAlt: "Rota a pé da Farmácia Welcia mais próxima até o lyf Ginza Tokyo",
+        },
+        {
+          label: "St. Luke's International Hospital",
+          imagem: "/images/lyf-rota-st-lukes.png",
+          imagemAlt: "Rota de carro até o St. Luke's International Hospital",
+        },
+        {
+          label: "Kameda Kyobashi Clinic",
+          imagem: "/images/lyf-rota-kameda-clinic.png",
+          imagemAlt: "Rota a pé até a Kameda Kyobashi Clinic",
         },
       ],
     },
@@ -1896,75 +1936,104 @@ function HotelGuestGuide({ hotel }: { hotel: HotelInfo }) {
         </div>
       </div>
 
-      {/* 2. Estrutura & Serviços · 3. Localização & Arredores (lista + mapa,
-          tratadas como uma única seção contínua, sem divisor forte entre
-          a lista e o mapa) */}
-      <div className="grid grid-cols-1 gap-px bg-[#DDD8CF] sm:grid-cols-2">
-        <div className="bg-[#FDFCF9] p-5 sm:p-6">
-          <p className="mb-4 text-xs font-bold uppercase tracking-[0.2em] text-[#24211D]/68">
-            Estrutura &amp; Serviços
-          </p>
-          <div className="space-y-3.5">
-            {hotel.estrutura.map((item) => (
-              <div key={item.label} className="flex items-start gap-3">
-                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#173B45]/[0.08] text-[#173B45]">
-                  <item.Icon className="h-4 w-4" />
-                </span>
-                <span className="pt-1.5 text-sm leading-5 text-[#24211D]/92">
-                  {item.label}
-                </span>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div className="bg-[#FDFCF9] p-5 sm:p-6">
-          <p className="mb-4 text-xs font-bold uppercase tracking-[0.2em] text-[#24211D]/68">
-            Localização &amp; Arredores
-          </p>
-          <div className="space-y-3.5">
-            {hotel.essenciais.map((item) => (
-              <div key={item.label} className="flex items-start gap-3">
-                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#B96432]/[0.1] text-[#B96432]">
-                  <item.Icon className="h-4 w-4" />
-                </span>
-                <div className="min-w-0 flex-1 pt-0.5">
-                  <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-[#24211D]/65">
-                    {item.label}
-                  </p>
-                  <p className="text-sm font-semibold leading-5 text-[#24211D]">
-                    {item.nome}
-                  </p>
-                  {item.detalhe && (
-                    <p className="mt-0.5 text-xs leading-5 text-[#24211D]/75">
-                      {item.detalhe}
-                    </p>
-                  )}
-                </div>
-              </div>
-            ))}
-          </div>
+      {/* 2. Estrutura & Serviços — bloco de largura total */}
+      <div className="border-t border-[#DDD8CF] bg-[#FDFCF9] p-5 sm:p-8">
+        <p className="mb-5 text-xs font-bold uppercase tracking-[0.2em] text-[#24211D]/68">
+          Estrutura &amp; Serviços
+        </p>
+        <div className="grid grid-cols-1 gap-x-8 gap-y-3.5 sm:grid-cols-2">
+          {hotel.estrutura.map((item) => (
+            <div key={item.label} className="flex items-start gap-3">
+              <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#173B45]/[0.08] text-[#173B45]">
+                <item.Icon className="h-4 w-4" />
+              </span>
+              <span className="pt-1.5 text-sm leading-5 text-[#24211D]/92">
+                {item.label}
+              </span>
+            </div>
+          ))}
         </div>
       </div>
 
-      {hotel.mapa && (
-        <div className="bg-[#FDFCF9] px-5 pb-5 sm:px-6 sm:pb-6">
-          <HotelNeighborhoodMap mapa={hotel.mapa} />
-          {hotel.mapa.nota && (
-            <p className="mt-3 text-center text-[10px] leading-4 text-[#24211D]/65">
-              {hotel.mapa.nota}
-            </p>
-          )}
+      {/* 3. Localização & Arredores — lista + mapa no mesmo bloco de largura
+          total, sem divisor forte entre os dois */}
+      <div className="border-t border-[#DDD8CF] bg-[#FDFCF9] p-5 sm:p-8">
+        <p className="mb-5 text-xs font-bold uppercase tracking-[0.2em] text-[#24211D]/68">
+          Localização &amp; Arredores
+        </p>
+        <div className="grid grid-cols-1 gap-x-8 gap-y-4 sm:grid-cols-2">
+          {hotel.essenciais.map((item) => (
+            <div key={item.label} className="flex items-start gap-3">
+              <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#B96432]/[0.1] text-[#B96432]">
+                <item.Icon className="h-4 w-4" />
+              </span>
+              <div className="min-w-0 flex-1 pt-0.5">
+                <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-[#24211D]/65">
+                  {item.label}
+                </p>
+                <p className="text-sm font-semibold leading-5 text-[#24211D]">
+                  {item.nome}
+                </p>
+                {item.detalhe && (
+                  <p className="mt-0.5 text-xs leading-5 text-[#24211D]/75">
+                    {item.detalhe}
+                  </p>
+                )}
+              </div>
+            </div>
+          ))}
         </div>
-      )}
+
+        {hotel.mapa && (
+          <div className="mt-6">
+            <HotelNeighborhoodMap mapa={hotel.mapa} />
+            {hotel.mapa.nota && (
+              <p className="mt-3 text-center text-[10px] leading-4 text-[#24211D]/65">
+                {hotel.mapa.nota}
+              </p>
+            )}
+            {hotel.mapa.rotas && hotel.mapa.rotas.length > 0 && (
+              <div className="mt-5">
+                <p className="mb-3 text-[10px] font-bold uppercase tracking-[0.2em] text-[#24211D]/58">
+                  Rotas a pé (prints do Google Maps)
+                </p>
+                <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+                  {hotel.mapa.rotas.map((rota) => (
+                    <a
+                      key={rota.label}
+                      href={rota.imagem}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="group block overflow-hidden rounded-xl border border-[#DDD8CF] bg-[#F8FAF9]"
+                    >
+                      <div className="relative aspect-[4/3] w-full overflow-hidden">
+                        <Image
+                          src={rota.imagem}
+                          alt={rota.imagemAlt}
+                          fill
+                          sizes="(max-width: 640px) 50vw, 25vw"
+                          className="object-cover transition duration-300 group-hover:scale-105"
+                        />
+                      </div>
+                      <p className="px-2.5 py-2 text-[10px] font-semibold leading-tight text-[#24211D]/85">
+                        {rota.label}
+                      </p>
+                    </a>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
 
       {/* 4. Informações úteis — só aparece quando há conteúdo real */}
       {hotel.informacoesUteis && hotel.informacoesUteis.length > 0 && (
-        <div className="border-t border-[#DDD8CF] bg-[#FAF9F6] p-5 sm:p-6">
-          <p className="mb-4 text-xs font-bold uppercase tracking-[0.2em] text-[#24211D]/68">
+        <div className="border-t border-[#DDD8CF] bg-[#FAF9F6] p-5 sm:p-8">
+          <p className="mb-5 text-xs font-bold uppercase tracking-[0.2em] text-[#24211D]/68">
             Informações Úteis
           </p>
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <div className="grid grid-cols-1 gap-x-8 gap-y-4 sm:grid-cols-2">
             {hotel.informacoesUteis.map((item) => (
               <div key={item.label}>
                 <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-[#B96432]">
