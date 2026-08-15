@@ -1567,6 +1567,16 @@ function IconSuitcase({ className }: { className?: string }) {
   );
 }
 
+// Caixa/pacote — usado para o serviço de envio de bagagem (Takkyubin).
+function IconBox({ className }: { className?: string }) {
+  return (
+    <svg {...iconProps(className)}>
+      <path d="M21 8 12 3 3 8v8l9 5 9-5V8Z" />
+      <path d="M3 8l9 5 9-5M12 13v8" />
+    </svg>
+  );
+}
+
 type HotelAmenity = {
   label: string;
   Icon: (props: { className?: string }) => ReactElement;
@@ -1611,11 +1621,16 @@ type HotelInfo = {
   nome: string;
   bairro: string;
   endereco: string;
+  enderecoJapones?: string;
+  telefone?: string;
   site?: string;
   checkin: string;
   checkout: string;
   estrutura: HotelAmenity[];
   essenciais: HotelNearby[];
+  // Seção final, só preenchida quando existe informação real o bastante pra
+  // justificar — não é pra inventar conteúdo pra preencher espaço.
+  informacoesUteis?: { label: string; texto: string }[];
   mapa?: {
     imagem: string;
     imagemAlt: string;
@@ -1634,7 +1649,9 @@ const HOTEIS: HotelInfo[] = [
     cidade: "Tokyo 1",
     nome: "lyf Ginza Tokyo",
     bairro: "Kyobashi, Chuo-ku",
-    endereco: "2-5-4 Kyobashi, Chuo-ku, Tokyo",
+    endereco: "2-5-4 Kyobashi, Chuo-ku, Tokyo 104-0031",
+    enderecoJapones: "〒104-0031 東京都中央区京橋2-5-4",
+    telefone: "+81 3-3528-6505",
     site: "https://www.discoverasr.com/en/lyf/japan/lyf-ginza-tokyo",
     checkin: "A partir das 15h00",
     checkout: "Até às 11h00",
@@ -1645,8 +1662,15 @@ const HOTEIS: HotelInfo[] = [
       { label: "Cozinha compartilhada e lounge/bar", Icon: IconFork },
       { label: "Lavanderia", Icon: IconWasher },
       { label: "Guarda-volumes", Icon: IconSuitcase },
+      { label: "Envio/recebimento de bagagem (Takkyubin) via recepção", Icon: IconBox },
     ],
     essenciais: [
+      {
+        label: "Estação",
+        nome: "Kyobashi (Ginza Line) / Takaracho (Asakusa Line)",
+        detalhe: "Kyobashi ~1 min a pé · Takaracho ~2 min a pé",
+        Icon: IconMetro,
+      },
       {
         label: "Conveniência",
         nome: "7-Eleven e Lawson",
@@ -1671,11 +1695,26 @@ const HOTEIS: HotelInfo[] = [
         detalhe: "Pronto-socorro 24h — ~15 min a pé ou táxi curto",
         Icon: IconCross,
       },
+    ],
+    informacoesUteis: [
       {
-        label: "Estação",
-        nome: "Kyobashi (Ginza Line) / Takaracho (Asakusa Line)",
-        detalhe: "~3 min a pé",
-        Icon: IconMetro,
+        label: "Bagagem",
+        texto:
+          "Guarda-volumes disponível na recepção. Consulte diretamente o hotel sobre armazenamento antes do check-in ou após o check-out.",
+      },
+      {
+        label: "Takkyubin",
+        texto:
+          "Envio/recebimento de malas disponível via recepção (24h) — combine o serviço e o valor com a equipe antes do check-out.",
+      },
+      {
+        label: "Atendimento",
+        texto: "Recepção 24h com atendimento em inglês e japonês.",
+      },
+      {
+        label: "Em caso de emergência",
+        texto:
+          "Número de emergência no Japão: 119 (ambulância/incêndio) ou 110 (polícia). Hospital de referência: St. Luke's International Hospital.",
       },
     ],
     mapa: {
@@ -1743,6 +1782,12 @@ const HOTEIS: HotelInfo[] = [
     ],
     essenciais: [
       {
+        label: "Estação",
+        nome: "Kyoto Station (saída Karasuma)",
+        detalhe: "Na porta do hotel",
+        Icon: IconMetro,
+      },
+      {
         label: "Conveniência",
         nome: "Lawson",
         detalhe: "A 20 m do hotel",
@@ -1759,12 +1804,6 @@ const HOTEIS: HotelInfo[] = [
         nome: "Koseikai Takeda Hospital",
         detalhe: "Pronto-socorro 24h, 365 dias por ano — ~5 min a pé",
         Icon: IconCross,
-      },
-      {
-        label: "Estação",
-        nome: "Kyoto Station (saída Karasuma)",
-        detalhe: "Na porta do hotel",
-        Icon: IconMetro,
       },
     ],
   },
@@ -1787,6 +1826,12 @@ const HOTEIS: HotelInfo[] = [
       { label: "Guarda-volumes", Icon: IconSuitcase },
     ],
     essenciais: [
+      {
+        label: "Estação",
+        nome: "Kyobashi (Ginza Line, saída 6)",
+        detalhe: "1 min a pé (50 m)",
+        Icon: IconMetro,
+      },
       {
         label: "Conveniência",
         nome: "7-Eleven",
@@ -1811,12 +1856,6 @@ const HOTEIS: HotelInfo[] = [
         detalhe: "Pronto-socorro 24h — ~15 min a pé ou táxi curto",
         Icon: IconCross,
       },
-      {
-        label: "Estação",
-        nome: "Kyobashi (Ginza Line, saída 6)",
-        detalhe: "1 min a pé (50 m)",
-        Icon: IconMetro,
-      },
     ],
   },
 ];
@@ -1824,23 +1863,29 @@ const HOTEIS: HotelInfo[] = [
 function HotelGuestGuide({ hotel }: { hotel: HotelInfo }) {
   return (
     <div className="overflow-hidden rounded-2xl border border-[#DDD8CF]">
+      {/* 1. Informações do hotel — identificação e referência rápida */}
       <div className="border-b border-[#DDD8CF] bg-[#FAF9F6] px-5 py-5 text-center sm:px-8">
         <p className="text-base font-semibold text-[#24211D] sm:text-lg">
           {hotel.nome}
         </p>
-        <p className="mt-1 text-xs text-[#24211D]/72">
-          {hotel.bairro} · {hotel.endereco}
-        </p>
-        {hotel.site && (
-          <a
-            href={hotel.site}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="mt-2 inline-block text-[10px] font-semibold uppercase tracking-[0.1em] text-[#173B45] hover:underline"
-          >
-            Ver fotos e detalhes do hotel
-          </a>
+        <p className="mt-1 text-xs text-[#24211D]/72">{hotel.endereco}</p>
+        {hotel.enderecoJapones && (
+          <p className="mt-0.5 text-xs text-[#24211D]/58">{hotel.enderecoJapones}</p>
         )}
+        <div className="mt-2 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-[11px] text-[#24211D]/72">
+          {hotel.telefone && <span>{hotel.telefone}</span>}
+          {hotel.telefone && hotel.site && <span className="text-[#24211D]/35">·</span>}
+          {hotel.site && (
+            <a
+              href={hotel.site}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-semibold uppercase tracking-[0.1em] text-[#173B45] hover:underline"
+            >
+              Site oficial
+            </a>
+          )}
+        </div>
         <div className="mt-4 flex flex-wrap items-center justify-center gap-2.5">
           <span className="rounded-full border border-[#173B45]/25 bg-[#173B45]/[0.06] px-4 py-1.5 text-[10px] font-bold uppercase tracking-[0.2em] text-[#173B45]">
             Check-in · {hotel.checkin}
@@ -1851,10 +1896,13 @@ function HotelGuestGuide({ hotel }: { hotel: HotelInfo }) {
         </div>
       </div>
 
+      {/* 2. Estrutura & Serviços · 3. Localização & Arredores (lista + mapa,
+          tratadas como uma única seção contínua, sem divisor forte entre
+          a lista e o mapa) */}
       <div className="grid grid-cols-1 gap-px bg-[#DDD8CF] sm:grid-cols-2">
         <div className="bg-[#FDFCF9] p-5 sm:p-6">
           <p className="mb-4 text-xs font-bold uppercase tracking-[0.2em] text-[#24211D]/68">
-            Estrutura do Hotel
+            Estrutura &amp; Serviços
           </p>
           <div className="space-y-3.5">
             {hotel.estrutura.map((item) => (
@@ -1872,7 +1920,7 @@ function HotelGuestGuide({ hotel }: { hotel: HotelInfo }) {
 
         <div className="bg-[#FDFCF9] p-5 sm:p-6">
           <p className="mb-4 text-xs font-bold uppercase tracking-[0.2em] text-[#24211D]/68">
-            Nas Proximidades
+            Localização &amp; Arredores
           </p>
           <div className="space-y-3.5">
             {hotel.essenciais.map((item) => (
@@ -1900,16 +1948,32 @@ function HotelGuestGuide({ hotel }: { hotel: HotelInfo }) {
       </div>
 
       {hotel.mapa && (
-        <div className="border-t border-[#DDD8CF] bg-[#FDFCF9] p-5 sm:p-6">
-          <p className="mb-4 text-xs font-bold uppercase tracking-[0.2em] text-[#24211D]/68">
-            Mapa dos Arredores
-          </p>
+        <div className="bg-[#FDFCF9] px-5 pb-5 sm:px-6 sm:pb-6">
           <HotelNeighborhoodMap mapa={hotel.mapa} />
           {hotel.mapa.nota && (
             <p className="mt-3 text-center text-[10px] leading-4 text-[#24211D]/65">
               {hotel.mapa.nota}
             </p>
           )}
+        </div>
+      )}
+
+      {/* 4. Informações úteis — só aparece quando há conteúdo real */}
+      {hotel.informacoesUteis && hotel.informacoesUteis.length > 0 && (
+        <div className="border-t border-[#DDD8CF] bg-[#FAF9F6] p-5 sm:p-6">
+          <p className="mb-4 text-xs font-bold uppercase tracking-[0.2em] text-[#24211D]/68">
+            Informações Úteis
+          </p>
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            {hotel.informacoesUteis.map((item) => (
+              <div key={item.label}>
+                <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-[#B96432]">
+                  {item.label}
+                </p>
+                <p className="mt-1 text-xs leading-5 text-[#24211D]/85">{item.texto}</p>
+              </div>
+            ))}
+          </div>
         </div>
       )}
     </div>
