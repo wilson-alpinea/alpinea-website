@@ -1483,7 +1483,7 @@ function IconWords({ className }: { className?: string }) {
 
 const INFO_CARDS = [
   { label: "Aeroporto DXB", Icon: IconPlane },
-  { label: "Aeroporto NRT (Narita)", Icon: IconPlane },
+  { label: "Aeroporto NRT (Narita)", Icon: IconPlane, href: "/database/aeroportos/narita" },
   { label: "Metrô", Icon: IconMetro },
   { label: "Ônibus", Icon: IconBus },
   { label: "Trem Bala (Shinkansen)", Icon: IconShinkansen },
@@ -1566,15 +1566,6 @@ function IconSuitcase({ className }: { className?: string }) {
   );
 }
 
-function IconMapPin({ className }: { className?: string }) {
-  return (
-    <svg {...iconProps(className)}>
-      <path d="M12 21s7-6.5 7-12a7 7 0 0 0-14 0c0 5.5 7 12 7 12z" />
-      <circle cx="12" cy="9" r="2.3" />
-    </svg>
-  );
-}
-
 type HotelAmenity = {
   label: string;
   Icon: (props: { className?: string }) => ReactElement;
@@ -1590,11 +1581,24 @@ type HotelNearby = {
 // Ponto num mapa esquemático (não geográfico/à escala) posicionado em
 // porcentagem (0-100) dentro do quadro — só pra dar noção rápida de direção
 // e distância a pé em relação ao hotel.
+// Ponto marcado sobre um recorte real do mapa (screenshot), em porcentagem
+// (0-100) da imagem — x/y foram calibrados visualmente sobre a imagem em
+// public/images/lyf-mapa-arredores.png.
 type MapaPonto = {
   x: number;
   y: number;
   label: string;
   detalhe: string;
+  Icon: (props: { className?: string }) => ReactElement;
+};
+
+// Ponto que fica fora da área visível do recorte (ex: hospital mais distante)
+// — mostrado como uma indicação de direção/distância na borda do mapa, em
+// vez de inventar uma posição falsa dentro do quadro.
+type MapaForaDoQuadro = {
+  label: string;
+  detalhe: string;
+  direcao: "N" | "NE" | "E" | "SE" | "S" | "SW" | "W" | "NW";
   Icon: (props: { className?: string }) => ReactElement;
 };
 
@@ -1609,9 +1613,10 @@ type HotelInfo = {
   estrutura: HotelAmenity[];
   essenciais: HotelNearby[];
   mapa?: {
-    hotelX: number;
-    hotelY: number;
+    imagem: string;
+    imagemAlt: string;
     pontos: MapaPonto[];
+    foraDoQuadro?: MapaForaDoQuadro[];
     nota?: string;
   };
 };
@@ -1670,43 +1675,44 @@ const HOTEIS: HotelInfo[] = [
       },
     ],
     mapa: {
-      hotelX: 46,
-      hotelY: 62,
-      nota: "Mapa esquemático — direções e tempos de caminhada aproximados.",
+      imagem: "/images/lyf-mapa-arredores.png",
+      imagemAlt: "Mapa da região de Kyobashi com o lyf Ginza Tokyo e a Estação Kyobashi",
+      nota: "Estação, farmácia, conveniência e clínica ficam todas no mesmo quarteirão/complexo da Estação Kyobashi — posições aproximadas dentro desse quarteirão.",
       pontos: [
         {
-          x: 28,
-          y: 18,
+          x: 36,
+          y: 55,
           label: "Estação Kyobashi / Takaracho",
           detalhe: "~3 min a pé",
           Icon: IconMetro,
         },
         {
-          x: 50,
-          y: 10,
+          x: 37.5,
+          y: 49,
           label: "Kyobashi Edogrand (7-Eleven, Lawson)",
           detalhe: "~3 min a pé",
           Icon: IconStore,
         },
         {
-          x: 70,
-          y: 18,
+          x: 33,
+          y: 50,
           label: "Matsumoto Kiyoshi (farmácia)",
-          detalhe: "~3 min a pé",
+          detalhe: "Na saída da estação",
           Icon: IconCross,
         },
         {
-          x: 46,
-          y: 30,
+          x: 43,
+          y: 43,
           label: "Kameda Kyobashi Clinic",
-          detalhe: "~4 min a pé",
+          detalhe: "Tokyo Square Garden · ~4 min a pé",
           Icon: IconCross,
         },
+      ],
+      foraDoQuadro: [
         {
-          x: 84,
-          y: 88,
           label: "St. Luke's International Hospital",
           detalhe: "Pronto-socorro 24h · ~15 min a pé ou táxi curto",
+          direcao: "SE",
           Icon: IconCross,
         },
       ],
@@ -1890,12 +1896,7 @@ function HotelGuestGuide({ hotel }: { hotel: HotelInfo }) {
           <p className="mb-4 text-xs font-bold uppercase tracking-[0.2em] text-[#24211D]/45">
             Mapa dos Arredores
           </p>
-          <HotelNeighborhoodMap
-            hotelLabel={hotel.nome}
-            hotelX={hotel.mapa.hotelX}
-            hotelY={hotel.mapa.hotelY}
-            pontos={hotel.mapa.pontos}
-          />
+          <HotelNeighborhoodMap mapa={hotel.mapa} />
           {hotel.mapa.nota && (
             <p className="mt-3 text-center text-[10px] leading-4 text-[#24211D]/40">
               {hotel.mapa.nota}
@@ -1907,57 +1908,32 @@ function HotelGuestGuide({ hotel }: { hotel: HotelInfo }) {
   );
 }
 
-function HotelNeighborhoodMap({
-  hotelLabel,
-  hotelX,
-  hotelY,
-  pontos,
-}: {
-  hotelLabel: string;
-  hotelX: number;
-  hotelY: number;
-  pontos: MapaPonto[];
-}) {
+const DIRECAO_ESTILO: Record<
+  MapaForaDoQuadro["direcao"],
+  { posicao: string; seta: string }
+> = {
+  N: { posicao: "left-1/2 top-2 -translate-x-1/2", seta: "↑" },
+  NE: { posicao: "right-2 top-2", seta: "↗" },
+  E: { posicao: "right-2 top-1/2 -translate-y-1/2", seta: "→" },
+  SE: { posicao: "bottom-2 right-2", seta: "↘" },
+  S: { posicao: "bottom-2 left-1/2 -translate-x-1/2", seta: "↓" },
+  SW: { posicao: "bottom-2 left-2", seta: "↙" },
+  W: { posicao: "left-2 top-1/2 -translate-y-1/2", seta: "←" },
+  NW: { posicao: "left-2 top-2", seta: "↖" },
+};
+
+function HotelNeighborhoodMap({ mapa }: { mapa: NonNullable<HotelInfo["mapa"]> }) {
   return (
-    <div className="relative h-[340px] w-full overflow-hidden rounded-2xl border border-[#DDD8CF] bg-[#F5F3EF] sm:h-[380px]">
-      <svg
-        className="absolute inset-0 h-full w-full"
-        viewBox="0 0 100 100"
-        preserveAspectRatio="none"
-        aria-hidden
-      >
-        {pontos.map((p, i) => (
-          <line
-            key={i}
-            x1={hotelX}
-            y1={hotelY}
-            x2={p.x}
-            y2={p.y}
-            stroke="#DDD8CF"
-            strokeWidth={0.6}
-            strokeDasharray="2 2"
-            vectorEffect="non-scaling-stroke"
-          />
-        ))}
-      </svg>
+    <div className="relative w-full overflow-hidden rounded-2xl border border-[#DDD8CF] bg-[#F5F3EF]">
+      <Image
+        src={mapa.imagem}
+        alt={mapa.imagemAlt}
+        width={1300}
+        height={700}
+        className="h-auto w-full"
+      />
 
-      <div
-        className="absolute flex flex-col items-center"
-        style={{
-          left: `${hotelX}%`,
-          top: `${hotelY}%`,
-          transform: "translate(-50%, -50%)",
-        }}
-      >
-        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border-2 border-[#F5F3EF] bg-[#173B45] text-white shadow-[0_4px_14px_rgba(23,59,69,0.4)]">
-          <IconMapPin className="h-5 w-5" />
-        </span>
-        <span className="mt-1.5 whitespace-nowrap rounded-full bg-[#173B45] px-2.5 py-1 text-[9px] font-bold uppercase tracking-wide text-white shadow-sm">
-          {hotelLabel}
-        </span>
-      </div>
-
-      {pontos.map((p, i) => (
+      {mapa.pontos.map((p, i) => (
         <div
           key={i}
           className="absolute flex flex-col items-center"
@@ -1967,19 +1943,38 @@ function HotelNeighborhoodMap({
             transform: "translate(-50%, -50%)",
           }}
         >
-          <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border-2 border-[#F5F3EF] bg-[#B96432] text-white shadow-[0_3px_10px_rgba(185,100,50,0.35)]">
+          <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border-2 border-[#FDFCF9] bg-[#173B45] text-white shadow-[0_3px_10px_rgba(23,59,69,0.4)]">
             <p.Icon className="h-3.5 w-3.5" />
           </span>
-          <div className="mt-1.5 w-[104px] rounded-lg border border-[#DDD8CF] bg-[#FDFCF9] px-2 py-1 text-center shadow-sm">
+          <div className="mt-1 w-[112px] rounded-lg border border-[#DDD8CF] bg-[#FDFCF9]/95 px-2 py-1 text-center shadow-sm backdrop-blur-sm">
             <p className="text-[9px] font-bold leading-tight text-[#24211D]">
               {p.label}
             </p>
-            <p className="mt-0.5 text-[8px] leading-tight text-[#24211D]/50">
+            <p className="mt-0.5 text-[8px] leading-tight text-[#24211D]/55">
               {p.detalhe}
             </p>
           </div>
         </div>
       ))}
+
+      {mapa.foraDoQuadro?.map((p, i) => {
+        const estilo = DIRECAO_ESTILO[p.direcao];
+        return (
+          <div
+            key={i}
+            className={`absolute flex items-center gap-2 rounded-full border border-[#B96432]/30 bg-[#FDFCF9] py-1.5 pl-2 pr-3 shadow-sm ${estilo.posicao}`}
+          >
+            <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[#B96432] text-xs text-white">
+              {estilo.seta}
+            </span>
+            <p.Icon className="h-3.5 w-3.5 shrink-0 text-[#B96432]" />
+            <div className="leading-tight">
+              <p className="text-[9px] font-bold text-[#24211D]">{p.label}</p>
+              <p className="text-[8px] text-[#24211D]/55">{p.detalhe}</p>
+            </div>
+          </div>
+        );
+      })}
     </div>
   );
 }
@@ -2169,17 +2164,33 @@ export function ApprovalPanel({
           </span>
         </div>
         <div className="grid grid-cols-2 gap-3 border-b border-[#DDD8CF] px-6 pb-6 pt-3 sm:grid-cols-4 sm:px-10">
-          {INFO_CARDS.map(({ label, Icon }) => (
-            <div
-              key={label}
-              className="group flex min-h-[112px] cursor-pointer flex-col items-center justify-center gap-2.5 rounded-xl border border-[#DDD8CF] bg-[#FAF9F6] px-3 py-4 text-center text-xs leading-5 text-[#24211D]/55 transition duration-300 ease-out hover:-translate-y-0.5 hover:border-[#173B45]/30 hover:bg-[#F8FAF9] hover:text-[#173B45] hover:shadow-[0_10px_30px_-15px_rgba(23,59,69,0.35)]"
-            >
-              <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[#F8FAF9] text-[#173B45] transition group-hover:bg-[#FDFCF9]">
-                <Icon className="h-4 w-4" />
-              </span>
-              {label}
-            </div>
-          ))}
+          {INFO_CARDS.map(({ label, Icon, href }) => {
+            const cardClassName =
+              "group flex min-h-[112px] cursor-pointer flex-col items-center justify-center gap-2.5 rounded-xl border border-[#DDD8CF] bg-[#FAF9F6] px-3 py-4 text-center text-xs leading-5 text-[#24211D]/55 transition duration-300 ease-out hover:-translate-y-0.5 hover:border-[#173B45]/30 hover:bg-[#F8FAF9] hover:text-[#173B45] hover:shadow-[0_10px_30px_-15px_rgba(23,59,69,0.35)]";
+            const content = (
+              <>
+                <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[#F8FAF9] text-[#173B45] transition group-hover:bg-[#FDFCF9]">
+                  <Icon className="h-4 w-4" />
+                </span>
+                {label}
+              </>
+            );
+            return href ? (
+              <a
+                key={label}
+                href={href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={cardClassName}
+              >
+                {content}
+              </a>
+            ) : (
+              <div key={label} className={cardClassName}>
+                {content}
+              </div>
+            );
+          })}
         </div>
 
         <div ref={contentRef} className="scroll-mt-6 px-6 py-8 sm:px-10 sm:py-10">
