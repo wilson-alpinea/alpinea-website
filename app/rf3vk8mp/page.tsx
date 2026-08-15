@@ -261,18 +261,26 @@ export default function AprovacaoRoteiroPage() {
         <div className="relative isolate mx-auto max-w-4xl">
           <div
             aria-hidden
-            className="pointer-events-none absolute left-1/2 top-1/2 -z-30 h-[112%] w-[116%] -translate-x-1/2 -translate-y-1/2 rounded-[3rem] opacity-70 blur-[120px]"
+            className="pointer-events-none absolute left-1/2 top-1/2 -z-30 h-[150%] w-[165%] -translate-x-1/2 -translate-y-1/2 rounded-[3rem] opacity-90 blur-[110px]"
             style={{
               background:
-                "radial-gradient(ellipse at center, rgba(25,70,150,0.20) 0%, rgba(16,42,108,0.14) 36%, rgba(9,18,46,0.08) 55%, transparent 76%)",
+                "radial-gradient(ellipse at center, rgba(35,90,190,0.45) 0%, rgba(20,55,130,0.3) 35%, rgba(10,25,70,0.15) 55%, transparent 75%)",
             }}
           />
           <div
             aria-hidden
-            className="pointer-events-none absolute left-1/2 top-1/2 -z-20 h-[104%] w-[104%] -translate-x-1/2 -translate-y-1/2 rounded-[2.35rem] opacity-45 blur-[38px]"
+            className="pointer-events-none absolute left-1/2 top-1/2 -z-20 h-[122%] w-[126%] -translate-x-1/2 -translate-y-1/2 rounded-[2.5rem] opacity-80 blur-[45px]"
             style={{
               background:
-                "linear-gradient(135deg, rgba(75,42,128,0.18), rgba(20,68,145,0.22) 48%, rgba(0,0,0,0) 78%)",
+                "linear-gradient(135deg, rgba(90,50,155,0.35), rgba(30,90,190,0.4) 50%, transparent 80%)",
+            }}
+          />
+          <div
+            aria-hidden
+            className="pointer-events-none absolute left-1/2 top-1/2 -z-10 h-[104%] w-[104%] -translate-x-1/2 -translate-y-1/2 rounded-[2.2rem] opacity-70 blur-[16px]"
+            style={{
+              background:
+                "radial-gradient(ellipse at center, rgba(60,120,220,0.35) 0%, transparent 70%)",
             }}
           />
           <div className="relative z-10 rounded-2xl border border-[#DDD8CF] bg-[#FDFCF9] p-6 shadow-[0_20px_60px_-30px_rgba(0,0,0,0.6)] sm:rounded-[2rem] sm:p-8">
