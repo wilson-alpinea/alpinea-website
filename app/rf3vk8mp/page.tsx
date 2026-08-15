@@ -223,7 +223,33 @@ export const metadata: Metadata = {
 export default function AprovacaoRoteiroPage() {
   return (
     <main className="min-h-screen overflow-x-hidden bg-black text-white">
-      <header className="fixed left-0 right-0 top-0 z-50 flex items-center justify-between border-b border-white/10 bg-black/40 px-6 py-5 backdrop-blur-2xl md:px-16">
+      {/* Glow ambiente saindo das bordas da página — mesma paleta azul/roxa
+          do /roteirolandingpage, fixo por trás de todo o conteúdo. */}
+      <div aria-hidden className="pointer-events-none fixed inset-0 overflow-hidden">
+        <div
+          className="absolute -left-56 -top-56 h-[640px] w-[640px] rounded-full opacity-70 blur-[150px]"
+          style={{
+            background:
+              "radial-gradient(circle, rgba(25,70,150,0.38) 0%, rgba(16,42,108,0.2) 45%, transparent 75%)",
+          }}
+        />
+        <div
+          className="absolute -right-56 -top-56 h-[640px] w-[640px] rounded-full opacity-70 blur-[150px]"
+          style={{
+            background:
+              "radial-gradient(circle, rgba(75,42,128,0.34) 0%, rgba(20,68,145,0.18) 45%, transparent 75%)",
+          }}
+        />
+        <div
+          className="absolute -bottom-56 left-1/2 h-[640px] w-[900px] -translate-x-1/2 rounded-full opacity-50 blur-[150px]"
+          style={{
+            background:
+              "radial-gradient(ellipse, rgba(25,70,150,0.3) 0%, rgba(16,42,108,0.15) 45%, transparent 75%)",
+          }}
+        />
+      </div>
+
+      <header className="fixed left-0 right-0 top-0 z-50 flex items-center justify-between border-b border-[#DDD8CF] bg-white px-6 py-5 md:px-16">
         <img
           src="/images/logo-alpinea-v6.png"
           alt="Alpinea — Empresa do Grupo Ajisai"
