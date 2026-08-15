@@ -1742,9 +1742,8 @@ const HOTEIS: HotelInfo[] = [
       },
     ],
     mapa: {
-      imagem: "/images/lyf-mapa-arredores.png",
-      imagemAlt: "Mapa da região de Kyobashi com o lyf Ginza Tokyo e a Estação Kyobashi",
-      nota: "Estação, farmácia, conveniência e clínica ficam todas no mesmo quarteirão/complexo da Estação Kyobashi — posições aproximadas dentro desse quarteirão.",
+      imagem: "/images/lyf-fachada-real.png",
+      imagemAlt: "Fachada do lyf Ginza Tokyo",
       pontos: [
         {
           x: 36,
@@ -1922,45 +1921,49 @@ const HOTEIS: HotelInfo[] = [
 ];
 
 function HotelGuestGuide({ hotel }: { hotel: HotelInfo }) {
-  const [rotaAberta, setRotaAberta] = useState<{
-    imagem: string;
-    imagemAlt: string;
-    label: string;
+  const [rotaModal, setRotaModal] = useState<{
+    items: { imagem: string; imagemAlt: string; label: string }[];
+    index: number;
   } | null>(null);
+
+  function openRotas(items: { imagem: string; imagemAlt: string; label: string }[]) {
+    if (items.length > 0) setRotaModal({ items, index: 0 });
+  }
 
   return (
     <div className="overflow-hidden rounded-2xl border border-[#DDD8CF]">
-      {/* 1. Informações do hotel — foto de fachada + etiqueta com o nome */}
+      {/* 1. Informações do hotel — fundo com o mural + etiqueta com o nome */}
       {hotel.cidade === "Tokyo 1" && (
-        <div className="relative aspect-[16/9] w-full overflow-hidden border-b border-[#DDD8CF] sm:aspect-[21/9]">
+        <div className="relative flex min-h-[150px] items-end overflow-hidden border-b border-[#DDD8CF] p-5 sm:min-h-[190px] sm:p-8">
           <Image
-            src="/images/lyf-fachada-real.png"
-            alt={`Fachada do ${hotel.nome}`}
+            src="/images/lyf-mural-fachada.png"
+            alt=""
             fill
             sizes="(max-width: 640px) 100vw, 800px"
             className="object-cover"
+            aria-hidden="true"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/45 via-transparent to-transparent" />
-          <span className="absolute bottom-4 left-4 rounded-md bg-[#0B2530] px-3.5 py-2 text-sm font-semibold text-white sm:bottom-5 sm:left-5">
+          <div className="absolute inset-0 bg-[#FAF9F6]/45" />
+          <span className="relative rounded-lg bg-[#0B2530] px-5 py-3 text-lg font-bold text-white sm:px-6 sm:py-3.5 sm:text-xl">
             {hotel.nome}
           </span>
         </div>
       )}
 
       {/* Identificação — endereço, telefone, site e horários */}
-      <div className="border-b border-[#DDD8CF] bg-[#FAF9F6] px-5 py-5 text-center sm:px-8">
+      <div className="border-b border-[#DDD8CF] bg-[#FAF9F6] px-5 py-6 text-center sm:px-8">
         {hotel.cidade !== "Tokyo 1" && (
           <p className="text-base font-semibold text-[#24211D] sm:text-lg">
             {hotel.nome}
           </p>
         )}
-        <p className={`text-xs text-[#24211D]/72 ${hotel.cidade !== "Tokyo 1" ? "mt-1" : ""}`}>
+        <p className={`text-sm text-[#24211D]/80 sm:text-base ${hotel.cidade !== "Tokyo 1" ? "mt-1" : ""}`}>
           {hotel.endereco}
         </p>
         {hotel.enderecoJapones && (
-          <p className="mt-0.5 text-xs text-[#24211D]/58">{hotel.enderecoJapones}</p>
+          <p className="mt-1 text-sm text-[#24211D]/65 sm:text-base">{hotel.enderecoJapones}</p>
         )}
-        <div className="mt-2 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-[11px] text-[#24211D]/72">
+        <div className="mt-3 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-sm text-[#24211D]/80">
           {hotel.telefone && <span>{hotel.telefone}</span>}
           {hotel.telefone && hotel.site && <span className="text-[#24211D]/35">·</span>}
           {hotel.site && (
@@ -2009,37 +2012,65 @@ function HotelGuestGuide({ hotel }: { hotel: HotelInfo }) {
         <p className="mb-5 text-xs font-bold uppercase tracking-[0.2em] text-[#24211D]/68">
           Localização &amp; Arredores
         </p>
-        <div className="grid grid-cols-1 gap-x-8 gap-y-4 sm:grid-cols-2">
-          {hotel.essenciais.map((item) => (
-            <div key={item.label} className="flex items-start gap-3">
-              <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#B96432]/[0.1] text-[#B96432]">
-                <item.Icon className="h-4 w-4" />
-              </span>
-              <div className="min-w-0 flex-1 pt-0.5">
-                <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-[#24211D]/65">
-                  {item.label}
-                </p>
-                <p className="text-sm font-semibold leading-5 text-[#24211D]">
-                  {item.nome}
-                </p>
-                {item.detalhe && (
-                  <p className="mt-0.5 text-xs leading-5 text-[#24211D]/75">
-                    {item.detalhe}
+        <div className="grid grid-cols-1 gap-x-8 gap-y-3 sm:grid-cols-2">
+          {hotel.essenciais.map((item) => {
+            const rotas =
+              hotel.mapa?.rotas?.filter((r) =>
+                ROTAS_POR_ESSENCIAL[item.label]?.includes(r.label)
+              ) ?? [];
+            const cardBody = (
+              <>
+                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#B96432]/[0.1] text-[#B96432]">
+                  <item.Icon className="h-4 w-4" />
+                </span>
+                <div className="min-w-0 flex-1 pt-0.5">
+                  <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-[#24211D]/65">
+                    {item.label}
                   </p>
+                  <p className="text-sm font-semibold leading-5 text-[#24211D]">
+                    {item.nome}
+                  </p>
+                  {item.detalhe && (
+                    <p className="mt-0.5 text-xs leading-5 text-[#24211D]/75">
+                      {item.detalhe}
+                    </p>
+                  )}
+                </div>
+                {rotas.length > 0 && (
+                  <span className="ml-1 flex h-7 w-7 shrink-0 items-center justify-center self-center rounded-full bg-[#173B45]/[0.06] text-[#173B45] transition group-hover:bg-[#173B45]/[0.12]">
+                    <IconZoom className="h-3.5 w-3.5" />
+                  </span>
                 )}
+              </>
+            );
+            return rotas.length > 0 ? (
+              <button
+                key={item.label}
+                type="button"
+                onClick={() => openRotas(rotas)}
+                className="group flex items-start gap-3 rounded-xl border border-transparent p-2 text-left transition duration-200 hover:-translate-y-0.5 hover:border-[#DDD8CF] hover:bg-[#FAF9F6]"
+              >
+                {cardBody}
+              </button>
+            ) : (
+              <div key={item.label} className="flex items-start gap-3 p-2">
+                {cardBody}
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
 
         {hotel.mapa && (
           <div className="mt-6">
-            <HotelNeighborhoodMap mapa={hotel.mapa} />
-            {hotel.mapa.nota && (
-              <p className="mt-3 text-center text-[10px] leading-4 text-[#24211D]/65">
-                {hotel.mapa.nota}
-              </p>
-            )}
+            <div className="relative aspect-[16/9] w-full overflow-hidden rounded-2xl border border-[#DDD8CF] sm:aspect-[2/1]">
+              <Image
+                src={hotel.mapa.imagem}
+                alt={hotel.mapa.imagemAlt}
+                fill
+                sizes="(max-width: 640px) 100vw, 800px"
+                className="object-cover"
+              />
+            </div>
             {hotel.mapa.rotas && hotel.mapa.rotas.length > 0 && (
               <div className="mt-5">
                 <p className="mb-3 text-[10px] font-bold uppercase tracking-[0.2em] text-[#24211D]/58">
@@ -2050,7 +2081,7 @@ function HotelGuestGuide({ hotel }: { hotel: HotelInfo }) {
                     <button
                       key={rota.label}
                       type="button"
-                      onClick={() => setRotaAberta(rota)}
+                      onClick={() => openRotas([rota])}
                       className="group block overflow-hidden rounded-xl border border-[#DDD8CF] bg-[#F8FAF9] text-left"
                     >
                       <div className="relative aspect-[4/3] w-full overflow-hidden">
@@ -2098,30 +2129,66 @@ function HotelGuestGuide({ hotel }: { hotel: HotelInfo }) {
         </div>
       )}
 
-      {rotaAberta && (
+      {rotaModal && (
         <div
           className="fixed inset-0 z-[100] flex items-center justify-center bg-black/85 p-4 backdrop-blur-sm sm:p-8"
-          onClick={() => setRotaAberta(null)}
+          onClick={() => setRotaModal(null)}
         >
           <button
             type="button"
-            onClick={() => setRotaAberta(null)}
+            onClick={() => setRotaModal(null)}
             className="absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white transition hover:bg-white/20 sm:right-6 sm:top-6"
             aria-label="Fechar"
           >
             <IconX className="h-5 w-5" />
           </button>
+
+          {rotaModal.items.length > 1 && (
+            <>
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setRotaModal((s) =>
+                    s
+                      ? { ...s, index: (s.index - 1 + s.items.length) % s.items.length }
+                      : s
+                  );
+                }}
+                className="absolute left-2 top-1/2 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-white/10 text-2xl text-white transition hover:bg-white/20 sm:left-6"
+                aria-label="Foto anterior"
+              >
+                ‹
+              </button>
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setRotaModal((s) =>
+                    s ? { ...s, index: (s.index + 1) % s.items.length } : s
+                  );
+                }}
+                className="absolute right-2 top-1/2 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-white/10 text-2xl text-white transition hover:bg-white/20 sm:right-6"
+                aria-label="Próxima foto"
+              >
+                ›
+              </button>
+            </>
+          )}
+
           <div
             className="relative max-h-full max-w-full overflow-hidden rounded-2xl"
             onClick={(e) => e.stopPropagation()}
           >
             <img
-              src={rotaAberta.imagem}
-              alt={rotaAberta.imagemAlt}
+              src={rotaModal.items[rotaModal.index].imagem}
+              alt={rotaModal.items[rotaModal.index].imagemAlt}
               className="max-h-[85vh] max-w-[92vw] rounded-2xl object-contain"
             />
             <p className="mt-3 text-center text-xs font-semibold uppercase tracking-[0.15em] text-white/85">
-              {rotaAberta.label}
+              {rotaModal.items[rotaModal.index].label}
+              {rotaModal.items.length > 1 &&
+                ` · ${rotaModal.index + 1}/${rotaModal.items.length}`}
             </p>
           </div>
         </div>
@@ -2130,126 +2197,13 @@ function HotelGuestGuide({ hotel }: { hotel: HotelInfo }) {
   );
 }
 
-const DIRECAO_ESTILO: Record<
-  MapaForaDoQuadro["direcao"],
-  { posicao: string; seta: string }
-> = {
-  N: { posicao: "left-1/2 top-2 -translate-x-1/2", seta: "↑" },
-  NE: { posicao: "right-2 top-2", seta: "↗" },
-  E: { posicao: "right-2 top-1/2 -translate-y-1/2", seta: "→" },
-  SE: { posicao: "bottom-2 right-2", seta: "↘" },
-  S: { posicao: "bottom-2 left-1/2 -translate-x-1/2", seta: "↓" },
-  SW: { posicao: "bottom-2 left-2", seta: "↙" },
-  W: { posicao: "left-2 top-1/2 -translate-y-1/2", seta: "←" },
-  NW: { posicao: "left-2 top-2", seta: "↖" },
+const ROTAS_POR_ESSENCIAL: Record<string, string[]> = {
+  "Estação": ["Estação Kyobashi", "Saída 6 (Estação Kyobashi)"],
+  "Conveniência": ["7-Eleven", "Lawson"],
+  "Farmácia": ["Farmácia Welcia"],
+  "Clínica": ["Kameda Kyobashi Clinic"],
+  "Hospital": ["St. Luke's International Hospital"],
 };
-
-// Layout da etiqueta em relação ao pino, por direção — evita colisão entre
-// pontos próximos no aglomerado (estação/farmácia/conveniência/clínica).
-const PONTO_LAYOUT: Record<
-  NonNullable<MapaPonto["dir"]>,
-  { wrapper: string; label: string }
-> = {
-  down: {
-    wrapper: "flex-col items-center",
-    label: "mt-1 w-[112px] text-center",
-  },
-  up: {
-    wrapper: "flex-col-reverse items-center",
-    label: "mb-1 w-[112px] text-center",
-  },
-  left: {
-    wrapper: "flex-row-reverse items-center",
-    label: "mr-1.5 w-[104px] text-right",
-  },
-  right: {
-    wrapper: "flex-row items-center",
-    label: "ml-1.5 w-[104px] text-left",
-  },
-};
-
-function HotelNeighborhoodMap({ mapa }: { mapa: NonNullable<HotelInfo["mapa"]> }) {
-  return (
-    <div className="relative w-full overflow-hidden rounded-2xl border border-[#DDD8CF] bg-[#F5F3EF]">
-      <Image
-        src={mapa.imagem}
-        alt={mapa.imagemAlt}
-        width={1300}
-        height={700}
-        className="h-auto w-full"
-      />
-      {/* Leve escurecimento do mapa base — ajuda os pinos e etiquetas da
-          Alpinea a se destacarem da própria sinalização do Google Maps. */}
-      <div className="pointer-events-none absolute inset-0 bg-black/[0.08]" />
-
-      {mapa.pontos.map((p, i) => {
-        const layout = PONTO_LAYOUT[p.dir ?? "down"];
-        return (
-          <div
-            key={i}
-            className={`absolute flex ${layout.wrapper}`}
-            style={{
-              left: `${p.x}%`,
-              top: `${p.y}%`,
-              transform: "translate(-50%, -50%)",
-            }}
-          >
-            <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border-2 border-[#FDFCF9] bg-[#173B45] text-white shadow-[0_3px_10px_rgba(23,59,69,0.4)]">
-              <p.Icon className="h-3.5 w-3.5" />
-            </span>
-            <div
-              className={`rounded-lg border border-[#DDD8CF] bg-[#FDFCF9]/95 px-2 py-1 shadow-sm backdrop-blur-sm ${layout.label}`}
-            >
-              <p className="text-[9px] font-bold leading-tight text-[#24211D]">
-                {p.label}
-              </p>
-              <p className="mt-0.5 text-[8px] leading-tight text-[#24211D]/75">
-                {p.detalhe}
-              </p>
-            </div>
-          </div>
-        );
-      })}
-
-      {mapa.foraDoQuadro?.map((p, i) => {
-        const estilo = DIRECAO_ESTILO[p.direcao];
-        return (
-          <div
-            key={i}
-            className={`absolute flex items-center gap-2 rounded-full border border-[#B96432]/30 bg-[#FDFCF9] py-1.5 pl-2 pr-3 shadow-sm ${estilo.posicao}`}
-          >
-            <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[#B96432] text-xs text-white">
-              {estilo.seta}
-            </span>
-            <p.Icon className="h-3.5 w-3.5 shrink-0 text-[#B96432]" />
-            <div className="leading-tight">
-              <p className="text-[9px] font-bold text-[#24211D]">{p.label}</p>
-              <p className="text-[8px] text-[#24211D]/75">{p.detalhe}</p>
-            </div>
-          </div>
-        );
-      })}
-
-      {/* Legenda */}
-      <div className="absolute bottom-2 left-2 flex items-center gap-3 rounded-full border border-[#DDD8CF] bg-[#FDFCF9]/95 px-3 py-1.5 shadow-sm backdrop-blur-sm">
-        <span className="flex items-center gap-1.5">
-          <span className="h-3 w-3 shrink-0 rounded-full border border-[#FDFCF9] bg-[#173B45]" />
-          <span className="text-[8px] font-semibold uppercase tracking-wide text-[#24211D]/80">
-            No quarteirão
-          </span>
-        </span>
-        <span className="flex items-center gap-1.5">
-          <span className="h-3 w-3 shrink-0 rounded-full bg-[#B96432] text-center text-[7px] leading-3 text-white">
-            ↗
-          </span>
-          <span className="text-[8px] font-semibold uppercase tracking-wide text-[#24211D]/80">
-            Fora do quadro
-          </span>
-        </span>
-      </div>
-    </div>
-  );
-}
 
 export function ApprovalPanel({
   displayClassName,
@@ -2441,8 +2395,8 @@ export function ApprovalPanel({
               "group flex min-h-[112px] cursor-pointer flex-col items-center justify-center gap-2.5 rounded-xl border border-[#DDD8CF] bg-[#FAF9F6] px-3 py-4 text-center text-xs leading-5 text-[#24211D]/75 transition duration-300 ease-out hover:-translate-y-0.5 hover:border-[#173B45]/30 hover:bg-[#F8FAF9] hover:text-[#173B45] hover:shadow-[0_10px_30px_-15px_rgba(23,59,69,0.35)]";
             const content = (
               <>
-                <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[#F8FAF9] text-[#173B45] transition group-hover:bg-[#FDFCF9]">
-                  <Icon className="h-4 w-4" />
+                <span className="flex h-11 w-11 items-center justify-center rounded-full bg-[#F8FAF9] text-[#173B45] transition group-hover:bg-[#FDFCF9]">
+                  <Icon className="h-6 w-6" />
                 </span>
                 {label}
               </>
