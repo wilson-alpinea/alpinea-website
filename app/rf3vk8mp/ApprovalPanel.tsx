@@ -1577,6 +1577,27 @@ function IconBox({ className }: { className?: string }) {
   );
 }
 
+// Lupa — indica que o thumbnail pode ser ampliado (zoom in-page).
+function IconZoom({ className }: { className?: string }) {
+  return (
+    <svg {...iconProps(className)}>
+      <circle cx="11" cy="11" r="7" />
+      <line x1="21" y1="21" x2="16.65" y2="16.65" />
+      <line x1="11" y1="8" x2="11" y2="14" />
+      <line x1="8" y1="11" x2="14" y2="11" />
+    </svg>
+  );
+}
+
+function IconX({ className }: { className?: string }) {
+  return (
+    <svg {...iconProps(className)}>
+      <line x1="18" y1="6" x2="6" y2="18" />
+      <line x1="6" y1="6" x2="18" y2="18" />
+    </svg>
+  );
+}
+
 type HotelAmenity = {
   label: string;
   Icon: (props: { className?: string }) => ReactElement;
@@ -1901,38 +1922,62 @@ const HOTEIS: HotelInfo[] = [
 ];
 
 function HotelGuestGuide({ hotel }: { hotel: HotelInfo }) {
+  const [rotaAberta, setRotaAberta] = useState<{
+    imagem: string;
+    imagemAlt: string;
+    label: string;
+  } | null>(null);
+
   return (
     <div className="overflow-hidden rounded-2xl border border-[#DDD8CF]">
       {/* 1. Informações do hotel — identificação e referência rápida */}
-      <div className="border-b border-[#DDD8CF] bg-[#FAF9F6] px-5 py-5 text-center sm:px-8">
-        <p className="text-base font-semibold text-[#24211D] sm:text-lg">
-          {hotel.nome}
-        </p>
-        <p className="mt-1 text-xs text-[#24211D]/72">{hotel.endereco}</p>
-        {hotel.enderecoJapones && (
-          <p className="mt-0.5 text-xs text-[#24211D]/58">{hotel.enderecoJapones}</p>
+      <div className="relative overflow-hidden border-b border-[#DDD8CF] px-5 py-6 text-center sm:px-8 sm:py-8">
+        {hotel.cidade === "Tokyo 1" && (
+          <>
+            <Image
+              src="/images/lyf-mural-fachada.png"
+              alt=""
+              fill
+              sizes="(max-width: 640px) 100vw, 800px"
+              className="object-cover"
+              aria-hidden="true"
+            />
+            <div className="absolute inset-0 bg-[#FAF9F6]/88" />
+          </>
         )}
-        <div className="mt-2 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-[11px] text-[#24211D]/72">
-          {hotel.telefone && <span>{hotel.telefone}</span>}
-          {hotel.telefone && hotel.site && <span className="text-[#24211D]/35">·</span>}
-          {hotel.site && (
-            <a
-              href={hotel.site}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="font-semibold uppercase tracking-[0.1em] text-[#173B45] hover:underline"
-            >
-              Site oficial
-            </a>
+        {hotel.cidade !== "Tokyo 1" && (
+          <div className="absolute inset-0 bg-[#FAF9F6]" />
+        )}
+        <div className="relative">
+          <p className="text-base font-semibold text-[#24211D] sm:text-lg">
+            {hotel.nome}
+          </p>
+          <p className="mt-1 text-xs text-[#24211D]/72">{hotel.endereco}</p>
+          {hotel.enderecoJapones && (
+            <p className="mt-0.5 text-xs text-[#24211D]/58">{hotel.enderecoJapones}</p>
           )}
-        </div>
-        <div className="mt-4 flex flex-wrap items-center justify-center gap-2.5">
-          <span className="rounded-full border border-[#173B45]/25 bg-[#173B45]/[0.06] px-4 py-1.5 text-[10px] font-bold uppercase tracking-[0.2em] text-[#173B45]">
-            Check-in · {hotel.checkin}
-          </span>
-          <span className="rounded-full border border-[#173B45]/25 bg-[#173B45]/[0.06] px-4 py-1.5 text-[10px] font-bold uppercase tracking-[0.2em] text-[#173B45]">
-            Check-out · {hotel.checkout}
-          </span>
+          <div className="mt-2 flex flex-wrap items-center justify-center gap-x-3 gap-y-1 text-[11px] text-[#24211D]/72">
+            {hotel.telefone && <span>{hotel.telefone}</span>}
+            {hotel.telefone && hotel.site && <span className="text-[#24211D]/35">·</span>}
+            {hotel.site && (
+              <a
+                href={hotel.site}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-semibold uppercase tracking-[0.1em] text-[#173B45] hover:underline"
+              >
+                Site oficial
+              </a>
+            )}
+          </div>
+          <div className="mt-4 flex flex-wrap items-center justify-center gap-2.5">
+            <span className="rounded-full border border-[#173B45]/25 bg-white/70 px-4 py-1.5 text-[10px] font-bold uppercase tracking-[0.2em] text-[#173B45]">
+              Check-in · {hotel.checkin}
+            </span>
+            <span className="rounded-full border border-[#173B45]/25 bg-white/70 px-4 py-1.5 text-[10px] font-bold uppercase tracking-[0.2em] text-[#173B45]">
+              Check-out · {hotel.checkout}
+            </span>
+          </div>
         </div>
       </div>
 
@@ -1999,12 +2044,11 @@ function HotelGuestGuide({ hotel }: { hotel: HotelInfo }) {
                 </p>
                 <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
                   {hotel.mapa.rotas.map((rota) => (
-                    <a
+                    <button
                       key={rota.label}
-                      href={rota.imagem}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="group block overflow-hidden rounded-xl border border-[#DDD8CF] bg-[#F8FAF9]"
+                      type="button"
+                      onClick={() => setRotaAberta(rota)}
+                      className="group block overflow-hidden rounded-xl border border-[#DDD8CF] bg-[#F8FAF9] text-left"
                     >
                       <div className="relative aspect-[4/3] w-full overflow-hidden">
                         <Image
@@ -2014,11 +2058,16 @@ function HotelGuestGuide({ hotel }: { hotel: HotelInfo }) {
                           sizes="(max-width: 640px) 50vw, 25vw"
                           className="object-cover transition duration-300 group-hover:scale-105"
                         />
+                        <div className="absolute inset-0 flex items-center justify-center bg-black/0 transition duration-300 group-hover:bg-black/35">
+                          <span className="flex h-9 w-9 scale-75 items-center justify-center rounded-full bg-white/90 text-[#173B45] opacity-0 shadow-md transition duration-300 group-hover:scale-100 group-hover:opacity-100">
+                            <IconZoom className="h-4 w-4" />
+                          </span>
+                        </div>
                       </div>
                       <p className="px-2.5 py-2 text-[10px] font-semibold leading-tight text-[#24211D]/85">
                         {rota.label}
                       </p>
-                    </a>
+                    </button>
                   ))}
                 </div>
               </div>
@@ -2042,6 +2091,35 @@ function HotelGuestGuide({ hotel }: { hotel: HotelInfo }) {
                 <p className="mt-1 text-xs leading-5 text-[#24211D]/85">{item.texto}</p>
               </div>
             ))}
+          </div>
+        </div>
+      )}
+
+      {rotaAberta && (
+        <div
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/85 p-4 backdrop-blur-sm sm:p-8"
+          onClick={() => setRotaAberta(null)}
+        >
+          <button
+            type="button"
+            onClick={() => setRotaAberta(null)}
+            className="absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white transition hover:bg-white/20 sm:right-6 sm:top-6"
+            aria-label="Fechar"
+          >
+            <IconX className="h-5 w-5" />
+          </button>
+          <div
+            className="relative max-h-full max-w-full overflow-hidden rounded-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <img
+              src={rotaAberta.imagem}
+              alt={rotaAberta.imagemAlt}
+              className="max-h-[85vh] max-w-[92vw] rounded-2xl object-contain"
+            />
+            <p className="mt-3 text-center text-xs font-semibold uppercase tracking-[0.15em] text-white/85">
+              {rotaAberta.label}
+            </p>
           </div>
         </div>
       )}
@@ -2235,15 +2313,15 @@ export function ApprovalPanel({
                   setViewMode("dia");
                   scrollToContent();
                 }}
-                className="flex flex-col items-center gap-2.5"
+                className="group flex flex-col items-center gap-2.5"
               >
                 <span
                   className={`relative flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-full font-bold transition-all duration-300 ${
                     d.badge
                       ? "text-[9px] tracking-tight text-white [text-shadow:0_1px_3px_rgba(0,0,0,0.75)]"
                       : active
-                        ? "shadow-[0_0_0_2px_#B69463]"
-                        : "hover:-translate-y-0.5 hover:shadow-[0_0_0_2px_rgba(182,148,99,0.6)]"
+                        ? "shadow-[0_0_0_2px_#173B45]"
+                        : "hover:-translate-y-0.5 hover:shadow-[0_0_0_2px_rgba(23,59,69,0.55)]"
                   }`}
                   style={
                     d.badge
