@@ -261,29 +261,29 @@ export default function AprovacaoRoteiroPage() {
         <div className="relative isolate mx-auto max-w-4xl">
           <div
             aria-hidden
-            className="pointer-events-none absolute left-1/2 top-1/2 -z-30 h-[150%] w-[165%] -translate-x-1/2 -translate-y-1/2 rounded-[3rem] opacity-90 blur-[110px]"
+            className="pointer-events-none absolute left-1/2 top-1/2 -z-30 h-[128%] w-[136%] -translate-x-1/2 -translate-y-1/2 rounded-[3rem] opacity-60 blur-[70px]"
             style={{
               background:
-                "radial-gradient(ellipse at center, rgba(35,90,190,0.45) 0%, rgba(20,55,130,0.3) 35%, rgba(10,25,70,0.15) 55%, transparent 75%)",
+                "radial-gradient(ellipse at center, rgba(35,90,190,0.4) 0%, rgba(20,55,130,0.22) 40%, transparent 72%)",
             }}
           />
           <div
             aria-hidden
-            className="pointer-events-none absolute left-1/2 top-1/2 -z-20 h-[122%] w-[126%] -translate-x-1/2 -translate-y-1/2 rounded-[2.5rem] opacity-80 blur-[45px]"
+            className="pointer-events-none absolute left-1/2 top-1/2 -z-20 h-[114%] w-[118%] -translate-x-1/2 -translate-y-1/2 rounded-[2.5rem] opacity-55 blur-[26px]"
             style={{
               background:
-                "linear-gradient(135deg, rgba(90,50,155,0.35), rgba(30,90,190,0.4) 50%, transparent 80%)",
+                "linear-gradient(135deg, rgba(90,50,155,0.3), rgba(30,90,190,0.32) 50%, transparent 78%)",
             }}
           />
           <div
             aria-hidden
-            className="pointer-events-none absolute left-1/2 top-1/2 -z-10 h-[104%] w-[104%] -translate-x-1/2 -translate-y-1/2 rounded-[2.2rem] opacity-70 blur-[16px]"
+            className="pointer-events-none absolute left-1/2 top-1/2 -z-10 h-[103%] w-[103%] -translate-x-1/2 -translate-y-1/2 rounded-[2.2rem] opacity-55 blur-[8px]"
             style={{
               background:
-                "radial-gradient(ellipse at center, rgba(60,120,220,0.35) 0%, transparent 70%)",
+                "radial-gradient(ellipse at center, rgba(60,120,220,0.3) 0%, transparent 68%)",
             }}
           />
-          <div className="relative z-10 rounded-2xl border border-[#DDD8CF] bg-[#FDFCF9] p-6 shadow-[0_20px_60px_-30px_rgba(0,0,0,0.6)] sm:rounded-[2rem] sm:p-8">
+          <div className="relative z-10 overflow-hidden rounded-2xl border border-[#DDD8CF] bg-[#FDFCF9] p-6 shadow-[0_20px_60px_-30px_rgba(0,0,0,0.6)] sm:rounded-[2rem] sm:p-8">
             <div className="mx-auto mb-5 flex w-fit flex-col items-center gap-2.5">
               <p className="rounded-full border border-[#DDD8CF] px-5 py-2 text-center text-xs uppercase tracking-[0.3em] text-[#24211D]/65">
                 Dados do Cliente
