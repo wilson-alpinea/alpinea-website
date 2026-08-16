@@ -12,9 +12,16 @@ type Poi = {
   category?: string;
   bairro?: "Sumida" | "Ryogoku";
   title: string;
+  nomeJapones?: string;
   description?: string;
   lista?: string[];
   rating?: number;
+  // Foto real do ponto — só preenchida quando existe imagem de verdade.
+  imagem?: string;
+  imagemAlt?: string;
+  // Galeria com mais de uma foto real — quando presente, tem prioridade
+  // sobre imagem/imagemAlt e abre com navegação (‹ ›) no zoom.
+  imagens?: { src: string; alt: string }[];
 };
 
 type Gastronomia = {
@@ -78,10 +85,6 @@ type EstacaoInfo = {
   nome: string;
   nomeJapones?: string;
   distancia?: string;
-  // Foto real da estação (fachada/entrada) — só preenchida quando existe
-  // uma foto de verdade, não é pra ilustrar com imagem genérica.
-  foto?: string;
-  fotoAlt?: string;
 };
 
 type Deslocamento = {
@@ -90,6 +93,9 @@ type Deslocamento = {
   estacaoDestino: EstacaoInfo;
   opcoes: OpcaoDeslocamento[];
   recomendacao?: string;
+  // Mapa grande (print real) do trajeto a pé da saída da estação até a
+  // atração — separado das fotos de estação, que ficam só no guia do hotel.
+  mapaChegada?: { imagem: string; imagemAlt: string; nota?: string };
 };
 
 type Period = {
@@ -110,7 +116,16 @@ type Period = {
   visaoAnotada?: {
     imagem: string;
     imagemAlt: string;
-    pontos: { cor: string; titulo: string; nomeJapones?: string; descricao: string }[];
+    nota?: string;
+    // Sem pontos = a própria imagem já é o infográfico completo (legendas
+    // embutidas); com pontos, mostra a legenda ao lado em colunas.
+    pontos?: {
+      cor: string;
+      titulo: string;
+      nomeJapones?: string;
+      descricao: string;
+      foto?: string;
+    }[];
   };
   pois: Poi[];
   gastronomia?: Gastronomia;
@@ -227,6 +242,7 @@ const DAY_1: DayContent = {
           nomeJapones: "雷門",
           descricao:
             "\"Portão do Trovão\" — entrada principal do templo, construído originalmente em 942. Marcado pela icônica lanterna vermelha gigante (chōchin) pendurada no centro.",
+          foto: "/images/sensoji-kaminarimon.png",
         },
         {
           cor: "#D97A1F",
@@ -234,6 +250,7 @@ const DAY_1: DayContent = {
           nomeJapones: "仲見世通り",
           descricao:
             "Rua comercial de ~250 m entre o Kaminarimon e o Hōzōmon, com quase 90 lojinhas tradicionais de souvenires e snacks — uma das ruas de compras mais antigas do Japão, ativa desde o período Edo.",
+          foto: "/images/sensoji-nakamise.png",
         },
         {
           cor: "#1E6FB8",
@@ -241,6 +258,7 @@ const DAY_1: DayContent = {
           nomeJapones: "宝蔵門",
           descricao:
             "\"Portão do Tesouro\" — segundo portão do complexo, guarda relíquias do templo no piso superior e é flanqueado por duas estátuas guardiãs (Niō).",
+          foto: "/images/sensoji-hozomon.png",
         },
         {
           cor: "#3F8F3F",
@@ -248,6 +266,7 @@ const DAY_1: DayContent = {
           nomeJapones: "本堂 / Kannondō",
           descricao:
             "Santuário principal do templo, onde fica a estátua de Kannon (Deusa da Misericórdia) que deu origem ao Sensoji — fundado em 628, o templo mais antigo de Tóquio.",
+          foto: "/images/sensoji-kannondo.png",
         },
         {
           cor: "#6B3FA0",
@@ -255,6 +274,7 @@ const DAY_1: DayContent = {
           nomeJapones: "五重塔",
           descricao:
             "Reconstrução do pagode original de 942 — cada um dos cinco andares representa um elemento budista (terra, água, fogo, vento, vazio). Guarda relíquias de Buda.",
+          foto: "/images/sensoji-pagode.png",
         },
       ],
     },
@@ -274,8 +294,6 @@ const DAY_1: DayContent = {
         nome: "Estação Asakusa",
         nomeJapones: "浅草駅",
         distancia: "Saída 1 · ~4 min a pé (300 m) até o Kaminarimon",
-        foto: "/images/rota-asakusa-sensoji.png",
-        fotoAlt: "Rota a pé da Saída 1 da Estação Asakusa até o Kaminarimon (Templo Sensoji)",
       },
       opcoes: [
         {
@@ -301,6 +319,11 @@ const DAY_1: DayContent = {
       ],
       recomendacao:
         "Do lyf Ginza Tokyo, o trajeto até Asakusa é de cerca de 16 minutos de metrô pela Ginza Line, sem baldeação — embarque pela Saída 6 da Estação Kyobashi (a menos de 1 minuto a pé do hotel) e, ao chegar, saia pela Saída 1 de Asakusa, a mais próxima do Kaminarimon — de lá são ~4 minutos a pé (300 m) até o portão do Templo Sensoji.",
+      mapaChegada: {
+        imagem: "/images/rota-asakusa-sensoji.png",
+        imagemAlt: "Rota a pé da Saída 1 da Estação Asakusa até o Kaminarimon (Templo Sensoji)",
+        nota: "Saída 1 da Estação Asakusa até o Kaminarimon — ≈4 min a pé (300 m).",
+      },
     },
     atracaoPrincipal: "Templo Sensoji Asakusa",
     atracaoPrincipalImagem: "/images/dia1-sensoji.png",
@@ -324,10 +347,41 @@ const DAY_1: DayContent = {
         rating: 3,
       },
       {
+        title: "Escultura do Dragão",
+        nomeJapones: "雷門提灯の龍彫刻",
+        description:
+          "A maioria passa direto sem notar: embaixo da lanterna gigante do Kaminarimon há um dragão entalhado em madeira, considerado protetor do templo na tradição budista. A lanterna atual (3,9 m de altura, ~700 kg) foi doada em 1960 por Konosuke Matsushita, fundador da Panasonic, em agradecimento por ter se curado de uma doença após rezar no Sensoji — o nome \"Matsushita Electric\" ainda aparece gravado na base.",
+        rating: 3,
+        imagens: [
+          { src: "/images/kaminarimon-dragon.png", alt: "Dragão entalhado embaixo da lanterna do Kaminarimon" },
+          { src: "/images/kaminari-dragon-lantern.png", alt: "Lanterna do Kaminarimon vista de baixo, com a talha do dragão" },
+        ],
+      },
+      {
+        title: "Jokoro",
+        nomeJapones: "常香炉",
+        description:
+          "Grande incensário de bronze em frente ao Salão Principal — acenda um incenso, deposite no jokoro e leve a fumaça sobre o corpo, tradicionalmente pra atrair saúde e sabedoria (muita gente direciona pra cabeça).",
+        rating: 3,
+        imagem: "/images/Jokoro.png",
+        imagemAlt: "Jokoro — incensário de bronze em frente ao Salão Principal do Sensoji",
+      },
+      {
+        title: "Omikuji",
+        nomeJapones: "おみくじ",
+        description:
+          "Papelzinho de sorte por ¥100: deposite a moeda, chacoalhe a caixa até sair um bastão numerado e pegue a gaveta correspondente. O Sensoji é famoso por sortear azar (kyō) com mais frequência que outros templos — se calhar de tirar, é tradição amarrar o papel num varal ali perto pra deixar a má sorte no templo.",
+        rating: 3,
+        imagem: "/images/mikuji.png",
+        imagemAlt: "Gavetas de omikuji (papéis da sorte) no Templo Sensoji",
+      },
+      {
         title: "Kappabashi Kitchen Town",
         description:
           "Avenida com lojas que vendem artigos de cozinha desde utensílios domésticos, louças, comida cenográfica — fica a oeste do templo, vale visitar antes de seguir para o lado do rio.",
         rating: 2,
+        imagem: "/images/kappabashi.png",
+        imagemAlt: "Loja de utensílios de cozinha em Kappabashi Kitchen Town",
       },
       {
         title: "Sumida Park",
@@ -341,6 +395,8 @@ const DAY_1: DayContent = {
         description:
           "Uma das Top5 melhores fabricantes de faca profissional do Japão, também tem equipe dedicada de afiador profissional para facas de alta complexidade — fica perto do Sumida Park, do lado do rio.",
         rating: 4,
+        imagem: "/images/masamoto-sohonten.png",
+        imagemAlt: "Vitrine de facas profissionais na Masamoto Sohonten",
       },
     ],
     gastronomia: {
@@ -355,6 +411,11 @@ const DAY_1: DayContent = {
   },
   tarde: {
     label: "Tarde",
+    visaoAnotada: {
+      imagem: "/images/dia1-skytree-visao-anotada.png",
+      imagemAlt: "Infográfico da Tokyo Sky Tree com altura e observatórios (Tembo Deck e Tembo Galleria)",
+      nota: "634 m de altura total, concluída em 2012 — a torre de transmissão e observação mais alta do Japão.",
+    },
     regiao: {
       nome: "Sumida",
       descricao:
@@ -365,8 +426,6 @@ const DAY_1: DayContent = {
         nome: "Estação Takaracho",
         nomeJapones: "宝町駅",
         distancia: "~2 min a pé do hotel",
-        foto: "/images/lyf-takaracho-estacao-real.png",
-        fotoAlt: "Entrada da Estação Takaracho (Toei Subway)",
       },
       linha: { codigo: "A12", nome: "Toei Asakusa Line", cor: "#E85298", logo: "/images/toei-mark.png" },
       estacaoDestino: {
@@ -1600,8 +1659,6 @@ const DAY_7: DayContent = {
         nome: "Estação Takaracho",
         nomeJapones: "宝町駅",
         distancia: "~1 min a pé do remm Tokyo Kyobashi",
-        foto: "/images/lyf-takaracho-estacao-real.png",
-        fotoAlt: "Entrada da Estação Takaracho (Toei Subway)",
       },
       linha: { codigo: "A12", nome: "Toei Asakusa Line", cor: "#E85298", logo: "/images/toei-mark.png" },
       estacaoDestino: { nome: "Estação Ningyocho", nomeJapones: "人形町駅" },
@@ -1883,6 +1940,15 @@ function Stars({ rating, styles }: { rating: number; styles: ReturnType<typeof p
 
 function PoiCard({ index, poi }: { index: number; poi: Poi }) {
   const s = poiStyles(poi.bairro);
+  const [zoomIndex, setZoomIndex] = useState<number | null>(null);
+
+  const imagens: { src: string; alt: string }[] =
+    poi.imagens && poi.imagens.length > 0
+      ? poi.imagens
+      : poi.imagem
+        ? [{ src: poi.imagem, alt: poi.imagemAlt ?? poi.title }]
+        : [];
+
   return (
     <div className={`flex gap-3 rounded-2xl border-2 px-4 py-3.5 ${s.border} ${s.bg}`}>
       <span className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-bold text-white ${s.circle}`}>
@@ -1903,6 +1969,9 @@ function PoiCard({ index, poi }: { index: number; poi: Poi }) {
           <span className={`text-sm font-semibold ${s.text}`}>
             {poi.title}
           </span>
+          {poi.nomeJapones && (
+            <span className={`text-xs ${s.muted}`}>{poi.nomeJapones}</span>
+          )}
           {typeof poi.rating === "number" && (
             <Stars rating={poi.rating} styles={s} />
           )}
@@ -1924,7 +1993,82 @@ function PoiCard({ index, poi }: { index: number; poi: Poi }) {
             ))}
           </div>
         )}
+        {imagens.length > 0 && (
+          <div
+            className={`mt-2.5 grid gap-1.5 ${imagens.length > 1 ? "grid-cols-2" : "grid-cols-1"}`}
+          >
+            {imagens.map((img, i) => (
+              <button
+                key={img.src}
+                type="button"
+                onClick={() => setZoomIndex(i)}
+                className="group relative h-24 w-full overflow-hidden rounded-xl border border-black/10"
+              >
+                <img
+                  src={img.src}
+                  alt={img.alt}
+                  className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
+                />
+                <div className="absolute inset-0 flex items-center justify-center bg-black/0 transition duration-300 group-hover:bg-black/35">
+                  <span className="flex h-7 w-7 scale-75 items-center justify-center rounded-full bg-white/90 text-[#173B45] opacity-0 shadow-md transition duration-300 group-hover:scale-100 group-hover:opacity-100">
+                    <IconZoom className="h-3.5 w-3.5" />
+                  </span>
+                </div>
+              </button>
+            ))}
+          </div>
+        )}
       </div>
+
+      {zoomIndex !== null && imagens[zoomIndex] && (
+        <div
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/85 p-4 backdrop-blur-sm sm:p-8"
+          onClick={() => setZoomIndex(null)}
+        >
+          <button
+            type="button"
+            onClick={() => setZoomIndex(null)}
+            className="absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white transition hover:bg-white/20 sm:right-6 sm:top-6"
+            aria-label="Fechar"
+          >
+            <IconX className="h-5 w-5" />
+          </button>
+
+          {imagens.length > 1 && (
+            <>
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setZoomIndex((i) => (i! - 1 + imagens.length) % imagens.length);
+                }}
+                className="absolute left-2 top-1/2 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-white/10 text-2xl text-white transition hover:bg-white/20 sm:left-6"
+                aria-label="Foto anterior"
+              >
+                ‹
+              </button>
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setZoomIndex((i) => (i! + 1) % imagens.length);
+                }}
+                className="absolute right-2 top-1/2 flex h-10 w-10 -translate-y-1/2 items-center justify-center rounded-full bg-white/10 text-2xl text-white transition hover:bg-white/20 sm:right-6"
+                aria-label="Próxima foto"
+              >
+                ›
+              </button>
+            </>
+          )}
+
+          <img
+            src={imagens[zoomIndex].src}
+            alt={imagens[zoomIndex].alt}
+            className="max-h-[85vh] max-w-[92vw] rounded-2xl object-contain"
+            onClick={(e) => e.stopPropagation()}
+          />
+        </div>
+      )}
     </div>
   );
 }
@@ -2102,17 +2246,16 @@ function NumberedStep({
 }
 
 function DeslocamentoCard({ deslocamento }: { deslocamento: Deslocamento }) {
-  const [fotoZoom, setFotoZoom] = useState<{ src: string; alt: string } | null>(null);
-
   return (
     <div className="rounded-2xl border border-[#DDD8CF] bg-[#FDFCF9] p-6 sm:p-7">
       {/* Mesmo template de card de estação do /ajisairoteiros: logo da
           companhia operadora, nome da estação e nome em japonês — repetido
-          pra origem e destino, ligados por uma seta. */}
+          pra origem e destino, ligados por uma seta. Fotos de estação em si
+          (fachada/entrada) não entram aqui — ficam só no guia do hotel. */}
       <div className="flex flex-wrap items-start justify-center gap-6 text-center sm:gap-10">
         <div className="flex flex-col items-center">
           {deslocamento.linha.logo && (
-            <div className="mb-3 flex h-12 w-12 items-center justify-center overflow-hidden rounded-xl border border-[#DDD8CF] bg-white p-2">
+            <div className="mb-3 flex h-16 w-16 items-center justify-center">
               <img
                 src={deslocamento.linha.logo}
                 alt={deslocamento.linha.nome}
@@ -2133,36 +2276,11 @@ function DeslocamentoCard({ deslocamento }: { deslocamento: Deslocamento }) {
               {deslocamento.estacaoOrigem.distancia}
             </p>
           )}
-          {deslocamento.estacaoOrigem.foto && (
-            <button
-              type="button"
-              onClick={() =>
-                setFotoZoom({
-                  src: deslocamento.estacaoOrigem.foto!,
-                  alt:
-                    deslocamento.estacaoOrigem.fotoAlt ??
-                    deslocamento.estacaoOrigem.nome,
-                })
-              }
-              className="group relative mt-3 h-20 w-28 shrink-0 overflow-hidden rounded-xl border border-[#DDD8CF]"
-            >
-              <img
-                src={deslocamento.estacaoOrigem.foto}
-                alt={deslocamento.estacaoOrigem.fotoAlt ?? deslocamento.estacaoOrigem.nome}
-                className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
-              />
-              <div className="absolute inset-0 flex items-center justify-center bg-black/0 transition duration-300 group-hover:bg-black/35">
-                <span className="flex h-7 w-7 scale-75 items-center justify-center rounded-full bg-white/90 text-[#173B45] opacity-0 shadow-md transition duration-300 group-hover:scale-100 group-hover:opacity-100">
-                  <IconZoom className="h-3.5 w-3.5" />
-                </span>
-              </div>
-            </button>
-          )}
         </div>
         <span className="mt-4 text-lg text-[#24211D]/30 sm:mt-5">→</span>
         <div className="flex flex-col items-center">
           {deslocamento.linha.logo && (
-            <div className="mb-3 flex h-12 w-12 items-center justify-center overflow-hidden rounded-xl border border-[#DDD8CF] bg-white p-2">
+            <div className="mb-3 flex h-16 w-16 items-center justify-center">
               <img
                 src={deslocamento.linha.logo}
                 alt={deslocamento.linha.nome}
@@ -2178,30 +2296,10 @@ function DeslocamentoCard({ deslocamento }: { deslocamento: Deslocamento }) {
               {deslocamento.estacaoDestino.nomeJapones}
             </p>
           )}
-          {deslocamento.estacaoDestino.foto && (
-            <button
-              type="button"
-              onClick={() =>
-                setFotoZoom({
-                  src: deslocamento.estacaoDestino.foto!,
-                  alt:
-                    deslocamento.estacaoDestino.fotoAlt ??
-                    deslocamento.estacaoDestino.nome,
-                })
-              }
-              className="group relative mt-3 h-20 w-28 shrink-0 overflow-hidden rounded-xl border border-[#DDD8CF]"
-            >
-              <img
-                src={deslocamento.estacaoDestino.foto}
-                alt={deslocamento.estacaoDestino.fotoAlt ?? deslocamento.estacaoDestino.nome}
-                className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
-              />
-              <div className="absolute inset-0 flex items-center justify-center bg-black/0 transition duration-300 group-hover:bg-black/35">
-                <span className="flex h-7 w-7 scale-75 items-center justify-center rounded-full bg-white/90 text-[#173B45] opacity-0 shadow-md transition duration-300 group-hover:scale-100 group-hover:opacity-100">
-                  <IconZoom className="h-3.5 w-3.5" />
-                </span>
-              </div>
-            </button>
+          {deslocamento.estacaoDestino.distancia && (
+            <p className="mt-0.5 text-[10px] uppercase tracking-wide text-[#24211D]/50">
+              {deslocamento.estacaoDestino.distancia}
+            </p>
           )}
         </div>
       </div>
@@ -2210,57 +2308,28 @@ function DeslocamentoCard({ deslocamento }: { deslocamento: Deslocamento }) {
         {deslocamento.linha.nome} · sem baldeação
       </p>
 
-      {fotoZoom && (
-        <div
-          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/85 p-4 backdrop-blur-sm sm:p-8"
-          onClick={() => setFotoZoom(null)}
-        >
-          <button
-            type="button"
-            onClick={() => setFotoZoom(null)}
-            className="absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white transition hover:bg-white/20 sm:right-6 sm:top-6"
-            aria-label="Fechar"
-          >
-            <IconX className="h-5 w-5" />
-          </button>
-          <div
-            className="relative max-h-full max-w-full overflow-hidden rounded-2xl"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <img
-              src={fotoZoom.src}
-              alt={fotoZoom.alt}
-              className="max-h-[85vh] max-w-[92vw] rounded-2xl object-contain"
-            />
-            <p className="mt-3 text-center text-xs font-semibold uppercase tracking-[0.15em] text-white/85">
-              {fotoZoom.alt}
-            </p>
-          </div>
-        </div>
-      )}
-
       <div className="mt-6 grid gap-3 sm:grid-cols-2">
         {deslocamento.opcoes.map((opcao) => (
           <div
             key={opcao.meio}
-            className={`rounded-xl p-4 ${
+            className={`rounded-xl bg-[#EDF3FC] p-4 ${
               opcao.recomendado
-                ? "border-2 border-[#173B45] bg-[#173B45]/[0.04]"
-                : "border border-[#DDD8CF] bg-[#FAF9F6]"
+                ? "border-2 border-[#3E5FA8]"
+                : "border border-[#CBD9F2]"
             }`}
           >
             <div className="flex items-center gap-3">
               <span
                 className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full ${
                   opcao.recomendado
-                    ? "bg-[#173B45] text-white"
-                    : "bg-white text-[#24211D]/60"
+                    ? "bg-[#3E5FA8] text-white"
+                    : "bg-white text-[#3E5FA8]/70"
                 }`}
               >
                 <opcao.Icon className="h-4 w-4" />
               </span>
               <div>
-                <p className="text-[10px] uppercase tracking-[0.18em] text-[#24211D]/55">
+                <p className="text-[10px] uppercase tracking-[0.18em] text-[#3E5FA8]/70">
                   {opcao.meio}
                 </p>
                 <p className="text-lg font-semibold text-[#24211D]">
@@ -2269,7 +2338,7 @@ function DeslocamentoCard({ deslocamento }: { deslocamento: Deslocamento }) {
               </div>
             </div>
             {opcao.recomendado && (
-              <p className="mt-2 inline-block rounded-full border border-[#173B45]/30 px-2.5 py-0.5 text-[9px] font-bold uppercase tracking-[0.15em] text-[#173B45]">
+              <p className="mt-2 inline-block rounded-full border border-[#3E5FA8]/35 px-2.5 py-0.5 text-[9px] font-bold uppercase tracking-[0.15em] text-[#3E5FA8]">
                 Recomendado
               </p>
             )}
@@ -2288,6 +2357,12 @@ function DeslocamentoCard({ deslocamento }: { deslocamento: Deslocamento }) {
         <p className="mt-5 border-t border-[#DDD8CF] pt-4 text-sm leading-6 text-[#24211D]/80">
           {deslocamento.recomendacao}
         </p>
+      )}
+
+      {deslocamento.mapaChegada && (
+        <div className="mt-5">
+          <MapaVisaoGeralBlock mapa={deslocamento.mapaChegada} />
+        </div>
       )}
     </div>
   );
@@ -2354,13 +2429,68 @@ function VisaoAnotadaBlock({
 }: {
   visaoAnotada: NonNullable<Period["visaoAnotada"]>;
 }) {
+  const [zoom, setZoom] = useState<{ src: string; alt: string } | null>(null);
+
+  // Sem pontos: a imagem já é um infográfico completo — mostra só ela, no
+  // tamanho/proporção natural (sem recorte) e clicável pra zoom, sem a
+  // coluna de legenda ao lado.
+  if (!visaoAnotada.pontos || visaoAnotada.pontos.length === 0) {
+    return (
+      <div className="mb-8">
+        <button
+          type="button"
+          onClick={() => setZoom({ src: visaoAnotada.imagem, alt: visaoAnotada.imagemAlt })}
+          className="group relative mx-auto block max-w-md overflow-hidden rounded-2xl border border-[#DDD8CF]"
+        >
+          <img
+            src={visaoAnotada.imagem}
+            alt={visaoAnotada.imagemAlt}
+            className="block h-auto w-full transition duration-300 group-hover:scale-[1.02]"
+          />
+          <div className="absolute inset-0 flex items-center justify-center bg-black/0 transition duration-300 group-hover:bg-black/25">
+            <span className="flex h-9 w-9 scale-75 items-center justify-center rounded-full bg-white/90 text-[#173B45] opacity-0 shadow-md transition duration-300 group-hover:scale-100 group-hover:opacity-100">
+              <IconZoom className="h-4 w-4" />
+            </span>
+          </div>
+        </button>
+        {visaoAnotada.nota && (
+          <p className="mt-2 text-center text-xs leading-5 text-[#24211D]/60">
+            {visaoAnotada.nota}
+          </p>
+        )}
+
+        {zoom && (
+          <div
+            className="fixed inset-0 z-[100] flex items-center justify-center bg-black/85 p-4 backdrop-blur-sm sm:p-8"
+            onClick={() => setZoom(null)}
+          >
+            <button
+              type="button"
+              onClick={() => setZoom(null)}
+              className="absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white transition hover:bg-white/20 sm:right-6 sm:top-6"
+              aria-label="Fechar"
+            >
+              <IconX className="h-5 w-5" />
+            </button>
+            <img
+              src={zoom.src}
+              alt={zoom.alt}
+              className="max-h-[90vh] max-w-[95vw] rounded-2xl object-contain"
+              onClick={(e) => e.stopPropagation()}
+            />
+          </div>
+        )}
+      </div>
+    );
+  }
+
   return (
     <div className="mb-8 grid grid-cols-1 gap-5 sm:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] sm:gap-8">
-      <div className="relative aspect-[3/4] w-full overflow-hidden rounded-2xl border border-[#DDD8CF] sm:aspect-auto">
+      <div className="overflow-hidden rounded-2xl border border-[#DDD8CF]">
         <img
           src={visaoAnotada.imagem}
           alt={visaoAnotada.imagemAlt}
-          className="absolute inset-0 h-full w-full object-cover"
+          className="block h-auto w-full"
         />
       </div>
       <div className="flex flex-col justify-center gap-4">
@@ -2370,6 +2500,24 @@ function VisaoAnotadaBlock({
               className="mt-1.5 h-2.5 w-2.5 shrink-0 rounded-full"
               style={{ background: ponto.cor }}
             />
+            {ponto.foto && (
+              <button
+                type="button"
+                onClick={() => setZoom({ src: ponto.foto!, alt: ponto.titulo })}
+                className="group relative h-16 w-16 shrink-0 overflow-hidden rounded-xl border border-[#DDD8CF]"
+              >
+                <img
+                  src={ponto.foto}
+                  alt={ponto.titulo}
+                  className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
+                />
+                <div className="absolute inset-0 flex items-center justify-center bg-black/0 transition duration-300 group-hover:bg-black/35">
+                  <span className="flex h-6 w-6 scale-75 items-center justify-center rounded-full bg-white/90 text-[#173B45] opacity-0 shadow-md transition duration-300 group-hover:scale-100 group-hover:opacity-100">
+                    <IconZoom className="h-3 w-3" />
+                  </span>
+                </div>
+              </button>
+            )}
             <div className="min-w-0">
               <p className="text-sm font-semibold text-[#24211D]">
                 {ponto.titulo}
@@ -2386,6 +2534,35 @@ function VisaoAnotadaBlock({
           </div>
         ))}
       </div>
+
+      {zoom && (
+        <div
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/85 p-4 backdrop-blur-sm sm:p-8"
+          onClick={() => setZoom(null)}
+        >
+          <button
+            type="button"
+            onClick={() => setZoom(null)}
+            className="absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white transition hover:bg-white/20 sm:right-6 sm:top-6"
+            aria-label="Fechar"
+          >
+            <IconX className="h-5 w-5" />
+          </button>
+          <div
+            className="relative max-h-full max-w-full overflow-hidden rounded-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <img
+              src={zoom.src}
+              alt={zoom.alt}
+              className="max-h-[85vh] max-w-[92vw] rounded-2xl object-contain"
+            />
+            <p className="mt-3 text-center text-xs font-semibold uppercase tracking-[0.15em] text-white/85">
+              {zoom.alt}
+            </p>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -2411,10 +2588,6 @@ function PeriodBlock({
         </span>
       </div>
 
-      {period.visaoAnotada && (
-        <VisaoAnotadaBlock visaoAnotada={period.visaoAnotada} />
-      )}
-
       {/* Headliner — foto da atração principal do período, antes dos
           passos numerados (mesmo padrão do /ajisairoteiros). Full-bleed:
           -mx cancela o px-6/sm:px-10 do painel pra imagem ir de borda a
@@ -2439,9 +2612,6 @@ function PeriodBlock({
                     : "object-top"
               }`}
             />
-            {/* Fade suave no topo, na cor do card (Ivory) — evita o corte
-                seco entre o fundo claro do site e a foto full-bleed. */}
-            <div className="absolute inset-x-0 top-0 h-14 bg-gradient-to-b from-[#FDFCF9] to-transparent sm:h-20" />
             <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-black/50 to-transparent" />
             <p className="absolute inset-x-5 bottom-14 text-[10px] font-bold uppercase tracking-[0.3em] text-white/70 sm:inset-x-10">
               Atração
@@ -2466,6 +2636,10 @@ function PeriodBlock({
           </div>
         )}
       </div>
+
+      {period.visaoAnotada && (
+        <VisaoAnotadaBlock visaoAnotada={period.visaoAnotada} />
+      )}
 
       {period.deslocamento && (
         <NumberedStep number={1} label="Deslocamento">
