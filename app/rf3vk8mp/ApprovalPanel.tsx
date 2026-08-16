@@ -56,13 +56,37 @@ type SubAtracao = {
   compacta?: boolean;
 };
 
+type LinhaBadge = {
+  codigo: string;
+  nome: string;
+  cor: string;
+};
+
+type OpcaoDeslocamento = {
+  meio: string;
+  tempo: string;
+  Icon: (props: { className?: string }) => ReactElement;
+  recomendado?: boolean;
+  detalhes: string[];
+};
+
+type Deslocamento = {
+  estacaoOrigem: { nome: string; nomeJapones?: string; distancia?: string };
+  linha: LinhaBadge;
+  estacaoDestino: { nome: string; nomeJapones?: string };
+  opcoes: OpcaoDeslocamento[];
+  recomendacao?: string;
+};
+
 type Period = {
   label?: string;
   regiao?: Regiao;
+  deslocamento?: Deslocamento;
   atracaoPrincipal: string;
   atracaoPrincipalImagem?: string;
   atracaoPrincipalFoco?: "top" | "center" | "bottom";
   atracaoPrincipalCompacta?: boolean;
+  detalhesPraticos?: { label: string; valor: string }[];
   pois: Poi[];
   gastronomia?: Gastronomia;
   comprasExclusivas?: ComprasExclusivas;
@@ -87,6 +111,7 @@ type DayContent = {
   badge?: string;
   city: string;
   date?: string;
+  hotel?: "Tokyo 1" | "Kyoto" | "Tokyo 2";
   contexto?: string[];
   travel?: boolean;
   travelNote?: string;
@@ -94,6 +119,7 @@ type DayContent = {
   tarde?: Period;
   transporte?: TransporteSugerido;
   alerta?: AlertaSugerido;
+  gradeHorarios?: GradeHorarios;
 };
 
 function genericPeriod(): Period {
@@ -107,18 +133,110 @@ const DAY_1: DayContent = {
   day: 1,
   city: "Tokyo",
   date: "05 Mai",
+  hotel: "Tokyo 1",
   contexto: [
     "Nesse primeiro dia vamos explorar a parte mais tradicional de Tokyo, visitar o maior templo de Tokyo e conhecer um pouco a história de como Edo se transformou em Tokyo.",
     "Depois vamos para Tokyo Sky Tree, a torre mais alta de Tokyo que vai te ajudar a entender a ter uma visão macro da cidade antes de iniciar sua jornada por diversos bairros nos próximos dias.",
   ],
+  gradeHorarios: {
+    titulo: "Mapa por Horário",
+    itens: [
+      { horario: "08:00", evento: "Café da manhã no lyf Ginza Tokyo" },
+      {
+        horario: "08:45",
+        evento: "Saída do hotel rumo à Estação Kyobashi",
+        tag: "Deslocamento",
+      },
+      {
+        horario: "09:00",
+        evento: "Metrô até Asakusa · Ginza Line, direto (~16 min)",
+        tag: "Deslocamento",
+      },
+      { horario: "09:20", evento: "Kaminarimon e Nakamise Street" },
+      {
+        horario: "09:45",
+        evento: "Templo Sensoji Asakusa",
+        destaque: true,
+        tag: "Atração",
+      },
+      { horario: "11:30", evento: "Kappabashi Kitchen Town e Sumida Park" },
+      {
+        horario: "12:30",
+        evento: "Almoço com snacks de rua em Asakusa",
+        tag: "Refeição",
+      },
+      {
+        horario: "14:00",
+        evento: "Saída rumo à Estação Takaracho",
+        tag: "Deslocamento",
+      },
+      {
+        horario: "14:15",
+        evento: "Metrô até Oshiage · Toei Asakusa Line, direto (~14 min)",
+        tag: "Deslocamento",
+      },
+      {
+        horario: "14:35",
+        evento: "Subida à Tokyo Sky Tree para o pôr do sol",
+        destaque: true,
+        recomendado: true,
+        tag: "Atração",
+      },
+      {
+        horario: "16:30",
+        evento: "Tokyo Solamachi · lojas e jantar",
+        tag: "Refeição",
+      },
+      { horario: "19:00", evento: "Retorno ao lyf Ginza Tokyo" },
+    ],
+    nota: "Horários estimados considerando saída do lyf Ginza Tokyo (Kyobashi) — ajuste conforme seu ritmo.",
+  },
   manha: {
     regiao: {
       nome: "Taito",
       descricao:
         "Taito é um dos bairros mais antigos de Tokyo e já era um dos principais quando a cidade ainda era chamada Edo, a fundação do bairro ocorreu por volta do ano 1600, até hoje é um dos bairros da Tokyo Antiga preservando alguns costumes milenares que já foram abandonados em outras partes da cidade, um dos exemplos é que até hoje existem vendedores de leite em garrafa de vidro que passam de casa em casa antes de amanhecer.",
     },
+    deslocamento: {
+      estacaoOrigem: {
+        nome: "Estação Kyobashi",
+        nomeJapones: "京橋駅",
+        distancia: "~1 min a pé do hotel",
+      },
+      linha: { codigo: "G10", nome: "Tokyo Metro Ginza Line", cor: "#F39700" },
+      estacaoDestino: { nome: "Estação Asakusa", nomeJapones: "浅草駅" },
+      opcoes: [
+        {
+          meio: "Metrô",
+          tempo: "≈16 min",
+          Icon: IconMetro,
+          recomendado: true,
+          detalhes: [
+            "Linha direta (Ginza Line), sem baldeação.",
+            "Embarque a ~1 min a pé do lyf Ginza Tokyo.",
+          ],
+        },
+        {
+          meio: "Táxi / Carro",
+          tempo: "≈15–20 min",
+          Icon: IconCar,
+          detalhes: [
+            "Sujeito a trânsito no período da manhã.",
+            "Porta a porta, sem caminhada até a estação.",
+          ],
+        },
+      ],
+      recomendacao:
+        "Do lyf Ginza Tokyo, o trajeto até Asakusa é de cerca de 16 minutos de metrô pela Ginza Line, sem baldeação — a Estação Kyobashi fica a menos de 1 minuto a pé do hotel.",
+    },
     atracaoPrincipal: "Templo Sensoji Asakusa",
     atracaoPrincipalImagem: "/images/dia1-sensoji.png",
+    detalhesPraticos: [
+      { label: "Entrada", valor: "Gratuita" },
+      { label: "Salão principal", valor: "6h–17h" },
+      { label: "Nakamise Street", valor: "~9h–17h (varia por loja)" },
+      { label: "Melhor horário", valor: "Antes das 9h ou após 17h" },
+    ],
     pois: [
       {
         category: "Compras",
@@ -163,8 +281,49 @@ const DAY_1: DayContent = {
       descricao:
         "Sumida é o bairro que abriga a Tokyo Sky Tree (Torre mais alta do Japão) desde 2012, o bairro como o próprio nome diz cresceu as margens do Rio Sumida que antigamente era uma das principais rotas de transporte marítimo de Tokyo.",
     },
+    deslocamento: {
+      estacaoOrigem: {
+        nome: "Estação Takaracho",
+        nomeJapones: "宝町駅",
+        distancia: "~2 min a pé do hotel",
+      },
+      linha: { codigo: "A12", nome: "Toei Asakusa Line", cor: "#E85298" },
+      estacaoDestino: {
+        nome: "Estação Oshiage",
+        nomeJapones: "押上駅〈スカイツリー前〉",
+      },
+      opcoes: [
+        {
+          meio: "Metrô",
+          tempo: "≈14 min",
+          Icon: IconMetro,
+          recomendado: true,
+          detalhes: [
+            "Linha direta (Toei Asakusa Line), sem baldeação.",
+            "Embarque a ~2 min a pé do lyf Ginza Tokyo.",
+          ],
+        },
+        {
+          meio: "Táxi / Carro",
+          tempo: "≈15–20 min",
+          Icon: IconCar,
+          detalhes: [
+            "Sujeito a trânsito; tempo pode variar no horário de pico.",
+            "Porta a porta, sem caminhada nem escadas.",
+          ],
+        },
+      ],
+      recomendacao:
+        "Do lyf Ginza Tokyo, o trajeto até Oshiage é de cerca de 14 minutos de metrô pela Toei Asakusa Line, sem baldeação — a Estação Takaracho fica a ~2 minutos a pé do hotel.",
+    },
     atracaoPrincipal: "Tokyo Sky Tree",
     atracaoPrincipalImagem: "/images/dia1-skytree.png",
+    detalhesPraticos: [
+      { label: "Tembo Deck (350m)", valor: "¥2.100 antecipado / ¥2.400 no dia" },
+      { label: "Deck + Galleria", valor: "A partir de ¥3.100" },
+      { label: "Horário", valor: "Varia por temporada — conferir site oficial" },
+      { label: "Reserva", valor: "Recomendada, especialmente no pôr do sol" },
+    ],
     pois: [
       {
         title: "Tokyo Solamachi",
@@ -182,6 +341,19 @@ const DAY_1: DayContent = {
         ],
       },
     ],
+    gastronomia: {
+      subtitulo: "Dentro do complexo Tokyo Solamachi, aos pés da Skytree",
+      itens: [
+        {
+          nome: "Hitsumabushi Bincho",
+          descricao: "Enguia (unagi) · 6º andar · ~¥6.000 · 11h–21h",
+        },
+        {
+          nome: "Kaiten Sushi Toriton",
+          descricao: "Sushi de esteira · 6º andar · ~¥6.000 · 11h–22h",
+        },
+      ],
+    },
   },
 };
 
@@ -189,11 +361,53 @@ const DAY_2: DayContent = {
   day: 7,
   city: "Tokyo",
   date: "11 Mai",
+  hotel: "Tokyo 2",
   contexto: [
     "Neste nosso último dia de passeios, visitamos o lado mais comercial do Japão e o centro financeiro. Começamos o passeio com uma visita a Tokyo Station para que você possa ir diretamente à Dragonball Store, que fica dentro do complexo da estação, na mesma área onde existem lojas das principais franquias de anime.",
     "À tarde visitamos os Jardins do Leste do Palácio Imperial (Imperial Palace East Gardens), de entrada gratuita e a poucos minutos a pé da Tokyo Station.",
     "Como é nosso último dia, seguimos direto para o aeroporto depois dos jardins — sem mais compromissos.",
   ],
+  gradeHorarios: {
+    titulo: "Mapa por Horário",
+    itens: [
+      {
+        horario: "08:30",
+        evento: "Café da manhã e arrumação da bagagem no remm Tokyo Kyobashi",
+      },
+      {
+        horario: "09:15",
+        evento: "Caminhada até a Tokyo Station (~10 min)",
+        tag: "Deslocamento",
+      },
+      {
+        horario: "09:30",
+        evento: "Tokyo Character Street e Dragonball Store",
+        destaque: true,
+        tag: "Atração",
+      },
+      { horario: "11:30", evento: "Marunouchi Naka-dori" },
+      { horario: "12:00", evento: "Almoço leve na região", tag: "Refeição" },
+      {
+        horario: "13:00",
+        evento: "Caminhada até os Jardins do Palácio Imperial (~10 min)",
+        tag: "Deslocamento",
+      },
+      {
+        horario: "13:15",
+        evento: "Imperial Palace East Gardens",
+        destaque: true,
+        tag: "Atração",
+      },
+      { horario: "15:30", evento: "Retorno ao hotel e retirada da bagagem" },
+      {
+        horario: "16:30",
+        evento: "Deslocamento ao Aeroporto de Haneda (HND)",
+        tag: "Deslocamento",
+      },
+      { horario: "21:00", evento: "Chegada esperada no aeroporto", recomendado: true },
+    ],
+    nota: "Horários estimados considerando saída do remm Tokyo Kyobashi — o voo decola às 00:05 do dia seguinte pelo Aeroporto de Haneda.",
+  },
   alerta: {
     titulo: "Alerta Aeroporto",
     horario: "Horário de Chegada Esperado no Aeroporto: 21:00",
@@ -206,8 +420,44 @@ const DAY_2: DayContent = {
       descricao:
         "Marunouchi é, desde os tempos feudais, um dos pilares da economia japonesa. Fica nessa região a estação central de trem do Japão, Tokyo Station, que junto da estação de Shinagawa são as únicas com acesso ao trem-bala em Tóquio. Nos arredores da estação você encontrará a sede de praticamente todos os bancos, seguradoras e boa parte das grandes empresas japonesas — o local funciona como a Wall Street ou a Faria Lima do Japão.",
     },
+    deslocamento: {
+      estacaoOrigem: {
+        nome: "remm Tokyo Kyobashi",
+        distancia: "Saindo direto do hotel",
+      },
+      linha: { codigo: "🚶", nome: "A pé, via Yaesu", cor: "#B96432" },
+      estacaoDestino: { nome: "Tokyo Station (saída Yaesu)" },
+      opcoes: [
+        {
+          meio: "A pé",
+          tempo: "≈8–10 min",
+          Icon: IconWalk,
+          recomendado: true,
+          detalhes: [
+            "Trajeto plano e simples pelo bairro de Kyobashi até a saída Yaesu.",
+            "Sem necessidade de metrô para essa distância.",
+          ],
+        },
+        {
+          meio: "Táxi / Carro",
+          tempo: "≈5 min",
+          Icon: IconCar,
+          detalhes: [
+            "Útil se estiver com bagagem de mão pesada.",
+            "Distância curta — pouca vantagem sobre caminhar.",
+          ],
+        },
+      ],
+      recomendacao:
+        "O remm Tokyo Kyobashi fica a cerca de 8 a 10 minutos a pé da Tokyo Station (saída Yaesu) — não é necessário pegar metrô para esse trecho.",
+    },
     atracaoPrincipal: "Tokyo Station",
     atracaoPrincipalImagem: "/images/dia2-tokyostation.png",
+    detalhesPraticos: [
+      { label: "Tokyo Character Street", valor: "~10h–20h30" },
+      { label: "Melhor horário", valor: "Manhã, antes das aglomerações" },
+      { label: "Pagamento", valor: "Cartão aceito na maioria das lojas" },
+    ],
     pois: [
       {
         category: "Compras",
@@ -248,9 +498,42 @@ const DAY_2: DayContent = {
       descricao:
         "Bairro central onde fica o Palácio Imperial, residência da família imperial japonesa, erguido sobre as ruínas do antigo Castelo de Edo — a poucos minutos a pé de Tokyo Station.",
     },
+    deslocamento: {
+      estacaoOrigem: { nome: "Tokyo Station (saída Marunouchi)" },
+      linha: { codigo: "🚶", nome: "A pé, via Otemon Gate", cor: "#B96432" },
+      estacaoDestino: { nome: "Imperial Palace East Gardens" },
+      opcoes: [
+        {
+          meio: "A pé",
+          tempo: "≈10 min",
+          Icon: IconWalk,
+          recomendado: true,
+          detalhes: [
+            "Caminhada plana pela saída Marunouchi até o portão Otemon.",
+            "Sem necessidade de metrô para essa distância.",
+          ],
+        },
+        {
+          meio: "Táxi / Carro",
+          tempo: "≈5 min",
+          Icon: IconCar,
+          detalhes: [
+            "Distância curta — pouca vantagem sobre caminhar.",
+            "Útil em dias de chuva.",
+          ],
+        },
+      ],
+      recomendacao:
+        "Da Tokyo Station até a entrada dos Jardins do Palácio Imperial (portão Otemon) são cerca de 10 minutos a pé — não é necessário transporte para esse trecho.",
+    },
     atracaoPrincipal: "Imperial Palace East Gardens",
     atracaoPrincipalImagem: "/images/imperial-palace-east-gardens.png",
     atracaoPrincipalFoco: "center",
+    detalhesPraticos: [
+      { label: "Entrada", valor: "Gratuita" },
+      { label: "Horário", valor: "9h–18h (maio)" },
+      { label: "Fechado", valor: "Segundas e sextas-feiras" },
+    ],
     pois: [
       {
         title: "Fujimi-yagura",
@@ -290,18 +573,106 @@ const DAY_3: DayContent = {
   day: 3,
   city: "Tokyo",
   date: "07 Mai",
+  hotel: "Tokyo 1",
   contexto: [
     "O superdistrito de Shibuya é um dos bairros mais famosos, principalmente pela Shibuya Crossing e pela impressionante floresta erguida do zero que tem no centro o maior templo Shintoísta do mundo. Nessa região encontraremos Harajuku, o epicentro da cultura Lolita, Kawaii e Jovem do Japão, bem como a luxuosa avenida de Omotesando.",
     "À tarde seguimos para Shinjuku, bairro que mistura o Japão corporativo com o mais boêmio — do mirante gratuito do Prédio do Governo Metropolitano ao caos neon de Kabukicho, passando pelas vielas de Golden Gai. Relaxamos no onsen urbano Thermae-Yu antes de seguir para a estação e pegar o trem noturno rumo a Kyoto.",
   ],
+  gradeHorarios: {
+    titulo: "Mapa por Horário",
+    itens: [
+      { horario: "08:30", evento: "Café da manhã no lyf Ginza Tokyo" },
+      {
+        horario: "09:15",
+        evento: "Saída do hotel rumo à Estação Kyobashi",
+        tag: "Deslocamento",
+      },
+      {
+        horario: "09:30",
+        evento: "Metrô até Omotesando · Ginza Line, direto (~16 min)",
+        tag: "Deslocamento",
+      },
+      {
+        horario: "10:00",
+        evento: "Meiji Jingu e Parque de Yoyogi",
+        destaque: true,
+        tag: "Atração",
+      },
+      { horario: "12:00", evento: "Shibuya Crossing e Estátua de Hachiko" },
+      {
+        horario: "13:00",
+        evento: "Almoço no Kaitenzushi Ginza Onodera",
+        tag: "Refeição",
+      },
+      {
+        horario: "14:30",
+        evento: "Deslocamento até Shinjuku · JR Yamanote Line (~5 min)",
+        tag: "Deslocamento",
+      },
+      {
+        horario: "14:45",
+        evento: "Mirante do Governo Metropolitano e Kabukicho",
+        tag: "Atração",
+      },
+      {
+        horario: "19:00",
+        evento: "Bares em Golden Gai",
+        destaque: true,
+        tag: "Refeição",
+      },
+      { horario: "21:00", evento: "Onsen urbano Thermae-Yu" },
+      {
+        horario: "23:00",
+        evento: "Deslocamento até a estação para o trem noturno rumo a Kyoto",
+      },
+    ],
+    nota: "Horários estimados considerando saída do lyf Ginza Tokyo (Kyobashi) — ajuste conforme seu ritmo.",
+  },
   manha: {
     regiao: {
       nome: "Superdistrito de Shibuya",
       descricao:
         "Aqui iremos explorar o superdistrito de Shibuya, que compreende as áreas de Yoyogi, Omotesando e Harajuku.",
     },
+    deslocamento: {
+      estacaoOrigem: {
+        nome: "Estação Kyobashi",
+        nomeJapones: "京橋駅",
+        distancia: "~1 min a pé do hotel",
+      },
+      linha: { codigo: "G10", nome: "Tokyo Metro Ginza Line", cor: "#F39700" },
+      estacaoDestino: { nome: "Estação Omotesando", nomeJapones: "表参道駅" },
+      opcoes: [
+        {
+          meio: "Metrô",
+          tempo: "≈16 min",
+          Icon: IconMetro,
+          recomendado: true,
+          detalhes: [
+            "Linha direta (Ginza Line), sem baldeação — a mesma linha do hotel.",
+            "Da estação, ~8 min a pé até a entrada do Parque de Yoyogi.",
+          ],
+        },
+        {
+          meio: "Táxi / Carro",
+          tempo: "≈20–25 min",
+          Icon: IconCar,
+          detalhes: [
+            "Sujeito a trânsito no período da manhã.",
+            "Porta a porta, sem caminhada até a estação.",
+          ],
+        },
+      ],
+      recomendacao:
+        "Do lyf Ginza Tokyo, o trajeto até Omotesando é de cerca de 16 minutos de metrô pela Ginza Line, sem baldeação — a mesma linha que passa pela Estação Kyobashi, a menos de 1 minuto a pé do hotel.",
+    },
     atracaoPrincipal: "Meiji Jingu",
     atracaoPrincipalImagem: "/images/dia3-meijijingu.png",
+    detalhesPraticos: [
+      { label: "Entrada (terreno principal)", valor: "Gratuita" },
+      { label: "Jardim Interior", valor: "¥500" },
+      { label: "Horário", valor: "Nascer ao pôr do sol (~5h–18h em maio)" },
+    ],
     pois: [
       {
         title: "Parque de Yoyogi",
@@ -345,8 +716,41 @@ const DAY_3: DayContent = {
       descricao:
         "Bairro que reúne o maior terminal ferroviário do mundo, arranha-céus corporativos, o distrito de entretenimento de Kabukicho e algumas das vielas mais icônicas de Tóquio — um contraste denso entre o Japão corporativo e o mais boêmio.",
     },
+    deslocamento: {
+      estacaoOrigem: { nome: "Estação Harajuku", nomeJapones: "原宿駅" },
+      linha: { codigo: "JY", nome: "JR Yamanote Line", cor: "#8FAADC" },
+      estacaoDestino: { nome: "Estação Shinjuku", nomeJapones: "新宿駅" },
+      opcoes: [
+        {
+          meio: "Trem JR",
+          tempo: "≈5 min",
+          Icon: IconMetro,
+          recomendado: true,
+          detalhes: [
+            "Linha direta (Yamanote Line), sem baldeação.",
+            "Harajuku fica a poucos minutos a pé do Parque de Yoyogi.",
+          ],
+        },
+        {
+          meio: "Táxi / Carro",
+          tempo: "≈15–20 min",
+          Icon: IconCar,
+          detalhes: [
+            "Sujeito a trânsito no início da tarde.",
+            "Porta a porta, sem caminhada até a estação.",
+          ],
+        },
+      ],
+      recomendacao:
+        "De Harajuku até Shinjuku são cerca de 5 minutos de trem pela JR Yamanote Line, sem baldeação — uma das linhas mais frequentes de Tóquio.",
+    },
     atracaoPrincipal: "Bairro de Shinjuku",
     atracaoPrincipalImagem: "/images/draft-shinjuku.png",
+    detalhesPraticos: [
+      { label: "Mirante do Governo Metropolitano", valor: "Gratuito · ~9h30–22h" },
+      { label: "Golden Gai", valor: "Maioria dos bares abre após 20h" },
+      { label: "Thermae-Yu", valor: "Aberto 24h" },
+    ],
     atracaoPrincipalFoco: "center",
     pois: [
       {
@@ -418,19 +822,102 @@ const DAY_4: DayContent = {
   day: 2,
   city: "Tokyo",
   date: "06 Mai",
+  hotel: "Tokyo 1",
   contexto: [
     "Neste dia começamos por Akihabara, epicentro da cultura de Animes & Mangá, Videogames e Artigos Eletrônicos.",
     "À tarde seguimos para Kanda, bairro vizinho conhecido pelos izakayas e por uma vida noturna mais local, longe do circuito turístico, para jantar num izakaya autêntico.",
     "À noite fechamos o dia em Roppongi, um dos principais polos de vida noturna de Tóquio, com baladas e bares badalados.",
   ],
+  gradeHorarios: {
+    titulo: "Mapa por Horário",
+    itens: [
+      { horario: "08:30", evento: "Café da manhã no lyf Ginza Tokyo" },
+      {
+        horario: "09:15",
+        evento: "Saída do hotel rumo à Estação Kyobashi",
+        tag: "Deslocamento",
+      },
+      {
+        horario: "09:30",
+        evento: "Metrô até Akihabara · Ginza Line + baldeação p/ Hibiya Line (~11 min)",
+        tag: "Deslocamento",
+      },
+      {
+        horario: "09:45",
+        evento: "Akihabara Electric Town",
+        destaque: true,
+        tag: "Atração",
+      },
+      {
+        horario: "12:30",
+        evento: "Almoço com curry japonês em Akihabara",
+        tag: "Refeição",
+      },
+      {
+        horario: "14:00",
+        evento: "Deslocamento até Kanda (poucos minutos, trem local)",
+        tag: "Deslocamento",
+      },
+      { horario: "14:15", evento: "Passeio por Kanda", tag: "Atração" },
+      {
+        horario: "19:00",
+        evento: "Jantar num izakaya autêntico em Kanda",
+        destaque: true,
+        recomendado: true,
+        tag: "Refeição",
+      },
+      {
+        horario: "21:30",
+        evento: "Deslocamento até Roppongi para a vida noturna (opcional)",
+      },
+    ],
+    nota: "Horários estimados considerando saída do lyf Ginza Tokyo (Kyobashi) — ajuste conforme seu ritmo.",
+  },
   manha: {
     regiao: {
       nome: "Akihabara",
       descricao:
         "Bairro de Chiyoda conhecido como o centro mundial da cultura otaku, com lojas de eletrônicos, anime, mangá e videogame concentradas em poucas quadras.",
     },
+    deslocamento: {
+      estacaoOrigem: {
+        nome: "Estação Kyobashi",
+        nomeJapones: "京橋駅",
+        distancia: "~1 min a pé do hotel",
+      },
+      linha: { codigo: "G10", nome: "Tokyo Metro Ginza Line", cor: "#F39700" },
+      estacaoDestino: { nome: "Estação Akihabara", nomeJapones: "秋葉原駅" },
+      opcoes: [
+        {
+          meio: "Metrô",
+          tempo: "≈11 min",
+          Icon: IconMetro,
+          recomendado: true,
+          detalhes: [
+            "Ginza Line até Ueno-hirokoji (~8 min) + baldeação a pé até a Hibiya Line (1 estação, ~3 min).",
+            "Uma baldeação simples, bem sinalizada.",
+          ],
+        },
+        {
+          meio: "Táxi / Carro",
+          tempo: "≈15–20 min",
+          Icon: IconCar,
+          detalhes: [
+            "Sujeito a trânsito no período da manhã.",
+            "Porta a porta, sem baldeação.",
+          ],
+        },
+      ],
+      recomendacao:
+        "Do lyf Ginza Tokyo, o trajeto até Akihabara é de cerca de 11 minutos: Ginza Line até Ueno-hirokoji e uma baldeação curta a pé para a Hibiya Line.",
+    },
     atracaoPrincipal: "Akihabara Electric Town",
     atracaoPrincipalImagem: "/images/dia7-akihabara.png",
+    detalhesPraticos: [
+      { label: "Horário das lojas", valor: "~10h–20h (maioria)" },
+      { label: "Melhor horário", valor: "Manhã, antes das aglomerações" },
+      { label: "Pagamento", valor: "Muitas lojas aceitam cartão" },
+    ],
     pois: [
       {
         category: "Compras",
@@ -493,8 +980,41 @@ const DAY_4: DayContent = {
       descricao:
         "Bairro tradicional de Chiyoda, vizinho a Akihabara — conhecido pelos izakayas e por uma vida noturna mais local, longe do circuito turístico.",
     },
+    deslocamento: {
+      estacaoOrigem: { nome: "Estação Akihabara", nomeJapones: "秋葉原駅" },
+      linha: { codigo: "JY", nome: "JR Yamanote / Keihin-Tohoku Line", cor: "#8FAADC" },
+      estacaoDestino: { nome: "Estação Kanda", nomeJapones: "神田駅" },
+      opcoes: [
+        {
+          meio: "Trem JR",
+          tempo: "≈2 min",
+          Icon: IconMetro,
+          recomendado: true,
+          detalhes: [
+            "Uma estação de distância, sem baldeação.",
+            "Alternativa: ~15 min a pé, se preferir caminhar.",
+          ],
+        },
+        {
+          meio: "A pé",
+          tempo: "≈15 min",
+          Icon: IconWalk,
+          detalhes: [
+            "Trajeto simples e plano entre os dois bairros.",
+            "Boa opção se quiser ver as ruas no caminho.",
+          ],
+        },
+      ],
+      recomendacao:
+        "Akihabara e Kanda são bairros vizinhos — uma estação de trem (~2 min) ou uma caminhada tranquila de ~15 min.",
+    },
     atracaoPrincipal: "Izakaya em Kanda (酒場なごみ堂)",
     atracaoPrincipalImagem: "/images/dia7-izakaya-kanda-v2.png",
+    detalhesPraticos: [
+      { label: "Melhor horário", valor: "A partir das 18h" },
+      { label: "Reserva", valor: "Recomendada nos fins de semana" },
+      { label: "Preço médio", valor: "~¥4.000–6.000 por pessoa" },
+    ],
     pois: [
       { title: "Osusumeya Kanda", rating: 5 },
       { title: "Yakitori Izakaya Kanda-syouten", rating: 5 },
@@ -557,17 +1077,103 @@ const DAY_5: DayContent = {
   day: 4,
   city: "Kyoto",
   date: "08 Mai",
+  hotel: "Kyoto",
   contexto: [
     "Se Tóquio é sinônimo de modernidade e tecnologia mesclada à parte cultural, Kyoto é um patrimônio histórico. Nesses dois dias iremos visitar 3 dos principais pontos turísticos do Japão: Kiyomizu-dera + Gion, Kinkaku-ji e Fushimi-Inari Taisha.",
   ],
+  gradeHorarios: {
+    titulo: "Mapa por Horário",
+    itens: [
+      {
+        horario: "08:00",
+        evento: "Café da manhã no Daiwa Roynet Hotel Kyoto-Ekimae",
+      },
+      {
+        horario: "08:45",
+        evento: "Ônibus 100/206 até Kiyomizu-dera",
+        tag: "Deslocamento",
+      },
+      {
+        horario: "09:15",
+        evento: "Desembarque e caminhada até o templo (~10 min subindo)",
+        tag: "Deslocamento",
+      },
+      {
+        horario: "09:30",
+        evento: "Templo Kiyomizu-dera",
+        destaque: true,
+        tag: "Atração",
+      },
+      { horario: "11:00", evento: "Ninenzaka e Sannenzaka" },
+      {
+        horario: "12:00",
+        evento: "Chá e doces tradicionais (matcha, yatsuhashi)",
+        tag: "Refeição",
+      },
+      {
+        horario: "13:30",
+        evento: "Caminhada até Gion (~15–20 min pelas ladeiras históricas)",
+        tag: "Deslocamento",
+      },
+      {
+        horario: "14:00",
+        evento: "Distrito de Gion, Yasaka Shrine e Pontocho",
+        tag: "Atração",
+      },
+      {
+        horario: "19:00",
+        evento: "Jantar kaiseki ou obanzai",
+        destaque: true,
+        recomendado: true,
+        tag: "Refeição",
+      },
+    ],
+    nota: "Horários estimados considerando saída do Daiwa Roynet Hotel Kyoto-Ekimae (em frente à Kyoto Station) — ajuste conforme seu ritmo.",
+  },
   manha: {
     regiao: {
       nome: "Higashiyama",
       descricao:
         "Bairro aos pés das colinas do leste de Kyoto, preservado desde o período Edo — reúne o Kiyomizu-dera e as ladeiras históricas de Ninenzaka e Sannenzaka.",
     },
+    deslocamento: {
+      estacaoOrigem: {
+        nome: "Kyoto Station (saída Karasuma)",
+        distancia: "~1 min a pé do hotel",
+      },
+      linha: { codigo: "100", nome: "Kyoto City Bus 100 / 206", cor: "#2E7D32" },
+      estacaoDestino: { nome: "Parada Gojozaka ou Kiyomizu-michi" },
+      opcoes: [
+        {
+          meio: "Ônibus",
+          tempo: "≈20 min",
+          Icon: IconBus,
+          recomendado: true,
+          detalhes: [
+            "Ônibus 100 ou 206, direto — depois ~10 min a pé subindo até o templo.",
+            "Compre o Kyoto City Bus one-day pass se for usar ônibus várias vezes no dia.",
+          ],
+        },
+        {
+          meio: "Táxi / Carro",
+          tempo: "≈15 min",
+          Icon: IconCar,
+          detalhes: [
+            "Mais rápido e sem pé no ladeira, mas sujeito a trânsito.",
+            "Táxi não chega à porta do templo — últimos minutos são a pé de qualquer forma.",
+          ],
+        },
+      ],
+      recomendacao:
+        "Do Daiwa Roynet Hotel Kyoto-Ekimae, em frente à Kyoto Station, o ônibus 100 ou 206 leva cerca de 20 minutos até Gojozaka ou Kiyomizu-michi — de lá são mais 10 minutos a pé subindo até o templo. Chegar por volta das 9h ajuda a evitar as aglomerações do meio da manhã.",
+    },
     atracaoPrincipal: "Templo Kiyomizu-dera",
     atracaoPrincipalImagem: "/images/dia5-kiyomizudera.jpg",
+    detalhesPraticos: [
+      { label: "Entrada", valor: "¥500 (adultos)" },
+      { label: "Horário", valor: "6h–18h (aprox., varia por temporada)" },
+      { label: "Melhor horário", valor: "Logo na abertura, 6h" },
+    ],
     pois: [
       {
         title: "Ninenzaka",
@@ -595,8 +1201,41 @@ const DAY_5: DayContent = {
       descricao:
         "O distrito de gueixas mais famoso do Japão, com casas de chá tradicionais, o Santuário Yasaka e a viela de Pontocho às margens do rio Kamo.",
     },
+    deslocamento: {
+      estacaoOrigem: { nome: "Kiyomizu-dera / Sannenzaka" },
+      linha: { codigo: "🚶", nome: "A pé, pelas ladeiras históricas", cor: "#B96432" },
+      estacaoDestino: { nome: "Gion / Yasaka Shrine" },
+      opcoes: [
+        {
+          meio: "A pé",
+          tempo: "≈15–20 min",
+          Icon: IconWalk,
+          recomendado: true,
+          detalhes: [
+            "Descendo por Sannenzaka e Ninenzaka até Yasaka-dori — o trajeto mais tradicional entre as duas regiões.",
+            "Sem necessidade de ônibus ou trem — Kiyomizu-dera e Gion são vizinhos.",
+          ],
+        },
+        {
+          meio: "Táxi / Carro",
+          tempo: "≈8–10 min",
+          Icon: IconCar,
+          detalhes: [
+            "Mais rápido, mas perde as ladeiras históricas no caminho.",
+            "Útil em dias de chuva ou calor intenso.",
+          ],
+        },
+      ],
+      recomendacao:
+        "Kiyomizu-dera e Gion são vizinhos — a caminhada de 15 a 20 minutos por Sannenzaka e Ninenzaka é parte da experiência, com lojas e casas de chá tradicionais no caminho.",
+    },
     atracaoPrincipal: "Distrito de Gion",
     atracaoPrincipalImagem: "/images/dia5-gion-v2.png",
+    detalhesPraticos: [
+      { label: "Yasaka Shrine", valor: "Entrada gratuita, aberto 24h" },
+      { label: "Melhor horário", valor: "Fim de tarde, início da noite" },
+      { label: "Pontocho", valor: "Restaurantes abrem a partir das 17h–18h" },
+    ],
     pois: [
       {
         title: "Yasaka Shrine",
@@ -619,17 +1258,99 @@ const DAY_6: DayContent = {
   day: 5,
   city: "Kyoto",
   date: "09 Mai",
+  hotel: "Kyoto",
   contexto: [
     "No segundo dia em Kyoto, começamos cedo no Santuário Fushimi Inari para aproveitar o famoso corredor de milhares de torii antes das aglomerações. À tarde seguimos para o Kinkaku-ji, o Pavilhão Dourado, e aproveitamos para conhecer outros templos e cafés da região norte da cidade.",
   ],
+  gradeHorarios: {
+    titulo: "Mapa por Horário",
+    itens: [
+      {
+        horario: "07:30",
+        evento: "Café da manhã cedo no Daiwa Roynet Hotel Kyoto-Ekimae",
+      },
+      {
+        horario: "08:00",
+        evento: "Trem até Fushimi Inari · JR Nara Line, direto (~5 min)",
+        tag: "Deslocamento",
+      },
+      {
+        horario: "08:15",
+        evento: "Santuário Fushimi Inari e corredor de torii",
+        destaque: true,
+        recomendado: true,
+        tag: "Atração",
+      },
+      { horario: "10:30", evento: "Retorno à Kyoto Station" },
+      {
+        horario: "11:00",
+        evento: "Inari-zushi ou Kitsune Udon",
+        tag: "Refeição",
+      },
+      {
+        horario: "12:00",
+        evento: "Deslocamento até Kinkaku-ji via Kyoto Station + ônibus (~45–50 min)",
+        tag: "Deslocamento",
+      },
+      {
+        horario: "13:00",
+        evento: "Kinkaku-ji, o Pavilhão Dourado",
+        destaque: true,
+        tag: "Atração",
+      },
+      { horario: "14:30", evento: "Ryoan-ji, Museu do Mangá e Nintendo Store" },
+      {
+        horario: "19:00",
+        evento: "Jantar com unagi-don",
+        tag: "Refeição",
+      },
+    ],
+    nota: "Horários estimados considerando saída do Daiwa Roynet Hotel Kyoto-Ekimae (em frente à Kyoto Station) — chegar cedo em Fushimi Inari é o que mais compensa nesse dia.",
+  },
   manha: {
     regiao: {
       nome: "Fushimi",
       descricao:
         "Bairro ao sul de Kyoto, historicamente ligado à produção de saquê — hoje conhecido principalmente pelos milhares de torii do Santuário Fushimi Inari.",
     },
+    deslocamento: {
+      estacaoOrigem: {
+        nome: "Kyoto Station",
+        distancia: "~1 min a pé do hotel",
+      },
+      linha: { codigo: "JR", nome: "JR Nara Line", cor: "#00A650" },
+      estacaoDestino: { nome: "Estação Inari", nomeJapones: "稲荷駅" },
+      opcoes: [
+        {
+          meio: "Trem JR",
+          tempo: "≈5 min",
+          Icon: IconMetro,
+          recomendado: true,
+          detalhes: [
+            "Linha direta (JR Nara Line, trem local), sem baldeação.",
+            "A estação Inari fica literalmente na entrada do santuário.",
+          ],
+        },
+        {
+          meio: "Táxi / Carro",
+          tempo: "≈10 min",
+          Icon: IconCar,
+          detalhes: [
+            "Rápido, mas sem vantagem real sobre o trem direto.",
+            "Útil fora do horário de funcionamento do trem local.",
+          ],
+        },
+      ],
+      recomendacao:
+        "Do Daiwa Roynet Hotel Kyoto-Ekimae, em frente à Kyoto Station, o trem local da JR Nara Line leva cerca de 5 minutos até a Estação Inari — que fica na entrada do santuário. Importante: apenas trens locais param em Inari, expressos não param.",
+    },
     atracaoPrincipal: "Fushimi-Inari Taisha",
     atracaoPrincipalImagem: "/images/dia6-fushimiinari.png",
+    detalhesPraticos: [
+      { label: "Entrada", valor: "Gratuita" },
+      { label: "Horário", valor: "Aberto 24h" },
+      { label: "Melhor horário", valor: "Antes das 9h, para evitar aglomerações" },
+    ],
     pois: [],
     gastronomia: {
       itens: [{ nome: "Inari-zushi" }, { nome: "Kitsune Udon" }],
@@ -642,8 +1363,41 @@ const DAY_6: DayContent = {
       descricao:
         "Região arborizada ao norte de Kyoto, onde fica o Pavilhão Dourado — um dos templos mais fotografados do Japão.",
     },
+    deslocamento: {
+      estacaoOrigem: { nome: "Kyoto Station" },
+      linha: { codigo: "101", nome: "Kyoto City Bus 101 / 205", cor: "#2E7D32" },
+      estacaoDestino: { nome: "Parada Kinkakuji-michi" },
+      opcoes: [
+        {
+          meio: "Trem + Ônibus",
+          tempo: "≈45–50 min",
+          Icon: IconBus,
+          recomendado: true,
+          detalhes: [
+            "JR Nara Line de volta a Kyoto Station (~5 min) + ônibus 101 ou 205 até Kinkakuji-michi (~40 min).",
+            "Compre o Kyoto City Bus one-day pass se ainda não tiver.",
+          ],
+        },
+        {
+          meio: "Táxi / Carro",
+          tempo: "≈16–20 min",
+          Icon: IconCar,
+          detalhes: [
+            "Trajeto direto, cruzando a cidade sem baldeação.",
+            "Vale a pena se estiver com o grupo ou com pressa entre os dois templos.",
+          ],
+        },
+      ],
+      recomendacao:
+        "Fushimi Inari e Kinkaku-ji ficam em lados opostos de Kyoto — o caminho mais prático é retornar a Kyoto Station e seguir de ônibus (101 ou 205), cerca de 45 a 50 minutos no total. De táxi, o trajeto direto cai para 16 a 20 minutos.",
+    },
     atracaoPrincipal: "Kinkaku-ji",
     atracaoPrincipalImagem: "/images/dia6-kinkakuji.png",
+    detalhesPraticos: [
+      { label: "Entrada", valor: "¥500 (adultos)" },
+      { label: "Horário", valor: "9h–17h, todos os dias" },
+      { label: "Pagamento", valor: "Somente dinheiro na bilheteria" },
+    ],
     pois: [
       {
         title: "Museu do Mangá de Kyoto",
@@ -687,17 +1441,101 @@ const DAY_7: DayContent = {
   day: 6,
   city: "Tokyo",
   date: "10 Mai",
+  hotel: "Tokyo 2",
   contexto: [
     "Saímos do hotel em Kyobashi às 9h30, rumo a Ningyocho — bairro do shitamachi (baixa cidade) de Tóquio que preserva o traçado de ruas mais antigo da região central, já que escapou quase intacto do Grande Terremoto de 1923 e dos bombardeios da Segunda Guerra.",
     "O dia 10 de maio é um dos dias do Grand Sumo Tournament de Tóquio em maio de 2027 (torneio completo de 9 a 23 de maio) — a venda dos ingressos para o torneio começa dia 10 de abril de 2027.",
     "O ingresso vale para o dia inteiro no Kokugikan, em Ryogoku: as lutas das categorias inferiores começam já às 8h40, mas o grande destaque — a cerimônia de entrada e as lutas da divisão principal (Makuuchi) — só acontece a partir das 15h45, indo até por volta das 18h.",
     "Recomendamos chegar ao Kokugikan no início da tarde, por volta das 14h30, a tempo da cerimônia de entrada da segunda divisão e para garantir um bom lugar antes do início da divisão principal.",
   ],
+  gradeHorarios: {
+    titulo: "Mapa por Horário",
+    itens: [
+      { horario: "08:30", evento: "Café da manhã no remm Tokyo Kyobashi" },
+      {
+        horario: "09:15",
+        evento: "Saída do hotel rumo à Estação Takaracho",
+        tag: "Deslocamento",
+      },
+      {
+        horario: "09:30",
+        evento: "Metrô até Ningyocho · Toei Asakusa Line, direto (~5 min)",
+        tag: "Deslocamento",
+      },
+      {
+        horario: "09:45",
+        evento: "Passeio a pé por Ningyocho — doçarias, Amazake Yokocho e Suitengu",
+        destaque: true,
+        tag: "Atração",
+      },
+      {
+        horario: "12:30",
+        evento: "Almoço em Ningyocho",
+        tag: "Refeição",
+      },
+      {
+        horario: "13:45",
+        evento: "Deslocamento até Ryogoku · Asakusa Line + JR Sobu Line (~10 min)",
+        tag: "Deslocamento",
+      },
+      {
+        horario: "14:30",
+        evento: "Chegada ao Kokugikan — cerimônia de entrada da 2ª divisão",
+        recomendado: true,
+        tag: "Atração",
+      },
+      {
+        horario: "15:45",
+        evento: "Cerimônia de entrada e lutas da divisão principal (Makuuchi)",
+        destaque: true,
+        recomendado: true,
+        tag: "Atração",
+      },
+      {
+        horario: "18:00",
+        evento: "Fim das lutas do dia e jantar com chanko nabe",
+        tag: "Refeição",
+      },
+    ],
+    nota: "Horários estimados considerando saída do remm Tokyo Kyobashi — o ingresso do Kokugikan vale para o dia inteiro, mas o horário recomendado de chegada é 14h30.",
+  },
   manha: {
     regiao: {
       nome: "Ningyocho",
       descricao:
         "Bairro do shitamachi de Tóquio, erguido sobre um brejo aterrado no início do período Edo. Ganhou o apelido de \"cidade das bonecas\" por abrigar teatros de kabuki e bunraku e os artesãos que faziam as bonecas usadas nos espetáculos — a produção migrou para Asakusa ainda no século 19, mas o nome ficou.",
+    },
+    deslocamento: {
+      estacaoOrigem: {
+        nome: "Estação Takaracho",
+        nomeJapones: "宝町駅",
+        distancia: "~1 min a pé do remm Tokyo Kyobashi",
+      },
+      linha: { codigo: "A12", nome: "Toei Asakusa Line", cor: "#E85298" },
+      estacaoDestino: { nome: "Estação Ningyocho", nomeJapones: "人形町駅" },
+      opcoes: [
+        {
+          meio: "Metrô",
+          tempo: "≈5 min",
+          Icon: IconMetro,
+          recomendado: true,
+          detalhes: [
+            "Linha direta (Toei Asakusa Line), sem baldeação — apenas 2 estações.",
+            "Embarque a ~1 min a pé do hotel.",
+          ],
+        },
+        {
+          meio: "Táxi / Carro",
+          tempo: "≈10 min",
+          Icon: IconCar,
+          detalhes: [
+            "Trajeto curto, mas sem vantagem real sobre o metrô direto.",
+            "Porta a porta, sem caminhada até a estação.",
+          ],
+        },
+      ],
+      recomendacao:
+        "Do remm Tokyo Kyobashi, o trajeto até Ningyocho é de cerca de 5 minutos de metrô pela Toei Asakusa Line, sem baldeação — apenas 2 estações a partir de Takaracho, a menos de 1 minuto a pé do hotel.",
     },
     atracaoPrincipal: "09:45 — Chegada a Ningyocho",
     atracaoPrincipalImagem: "/images/ningyocho.png",
@@ -770,9 +1608,43 @@ const DAY_7: DayContent = {
       descricao:
         "Ryogoku é o bairro onde fica o estádio nacional de sumô Kokugikan, centro do sumô com infraestrutura de gastronomia e temática de sumô nas ruas.",
     },
+    deslocamento: {
+      estacaoOrigem: { nome: "Estação Ningyocho", nomeJapones: "人形町駅" },
+      linha: { codigo: "A14", nome: "Toei Asakusa Line", cor: "#E85298" },
+      estacaoDestino: { nome: "Estação Ryogoku", nomeJapones: "両国駅" },
+      opcoes: [
+        {
+          meio: "Metrô + JR",
+          tempo: "≈10 min",
+          Icon: IconMetro,
+          recomendado: true,
+          detalhes: [
+            "Toei Asakusa Line até Asakusabashi (~5 min) + baldeação para a JR Sobu Line até Ryogoku (~5 min).",
+            "Kokugikan fica a ~1 min a pé da saída da estação.",
+          ],
+        },
+        {
+          meio: "Táxi / Carro",
+          tempo: "≈15 min",
+          Icon: IconCar,
+          detalhes: [
+            "Sujeito a trânsito no início da tarde.",
+            "Porta a porta, sem baldeação.",
+          ],
+        },
+      ],
+      recomendacao:
+        "De Ningyocho até Ryogoku são cerca de 10 minutos: Toei Asakusa Line até Asakusabashi, com uma baldeação curta para a JR Sobu Line até Ryogoku — o Kokugikan fica a 1 minuto a pé da estação.",
+    },
     atracaoPrincipal: "Ryogoku Kokugikan - Grand Sumo Tournament 2027",
     atracaoPrincipalImagem: "/images/draft-sumo.png",
     atracaoPrincipalFoco: "center",
+    detalhesPraticos: [
+      { label: "Entrada geral (no dia)", valor: "A partir de ¥2.200" },
+      { label: "Cadeira", valor: "~¥3.500–8.500" },
+      { label: "Box tatami (por pessoa)", valor: "~¥8.000–15.000" },
+      { label: "Chegada recomendada", valor: "14h30, para a 2ª divisão" },
+    ],
     pois: [
       {
         title: "Edo Noren (Área Externa do Kokugikan)",
@@ -1098,6 +1970,125 @@ function AlertaBlock({ alerta }: { alerta: AlertaSugerido }) {
   );
 }
 
+function NumberedStep({
+  number,
+  label,
+  children,
+}: {
+  number: number;
+  label: string;
+  children: ReactElement | (ReactElement | false | null)[];
+}) {
+  return (
+    <div className="mb-8">
+      <div className="mb-4 flex items-center gap-3">
+        <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#173B45] text-xs font-bold text-white">
+          {number}
+        </span>
+        <p className="text-xs font-bold uppercase tracking-[0.25em] text-[#173B45]">
+          {label}
+        </p>
+      </div>
+      {children}
+    </div>
+  );
+}
+
+function DeslocamentoCard({ deslocamento }: { deslocamento: Deslocamento }) {
+  return (
+    <div className="rounded-2xl border border-[#DDD8CF] bg-[#FDFCF9] p-6 sm:p-7">
+      <div className="flex flex-wrap items-center justify-center gap-4 text-center sm:gap-6">
+        <div>
+          <p className="text-sm font-semibold text-[#24211D]">
+            {deslocamento.estacaoOrigem.nome}
+          </p>
+          {deslocamento.estacaoOrigem.nomeJapones && (
+            <p className="text-xs text-[#24211D]/55">
+              {deslocamento.estacaoOrigem.nomeJapones}
+            </p>
+          )}
+          {deslocamento.estacaoOrigem.distancia && (
+            <p className="mt-0.5 text-[10px] uppercase tracking-wide text-[#24211D]/50">
+              {deslocamento.estacaoOrigem.distancia}
+            </p>
+          )}
+        </div>
+        <span
+          className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-xs font-bold text-white"
+          style={{ background: deslocamento.linha.cor }}
+        >
+          {deslocamento.linha.codigo}
+        </span>
+        <span className="text-lg text-[#24211D]/30">→</span>
+        <div>
+          <p className="text-sm font-semibold text-[#24211D]">
+            {deslocamento.estacaoDestino.nome}
+          </p>
+          {deslocamento.estacaoDestino.nomeJapones && (
+            <p className="text-xs text-[#24211D]/55">
+              {deslocamento.estacaoDestino.nomeJapones}
+            </p>
+          )}
+        </div>
+      </div>
+      <p className="mt-3 text-center text-[10px] font-bold uppercase tracking-[0.2em] text-[#24211D]/50">
+        {deslocamento.linha.nome} · sem baldeação
+      </p>
+
+      <div className="mt-6 grid gap-3 sm:grid-cols-2">
+        {deslocamento.opcoes.map((opcao) => (
+          <div
+            key={opcao.meio}
+            className={`rounded-xl p-4 ${
+              opcao.recomendado
+                ? "border-2 border-[#173B45] bg-[#173B45]/[0.04]"
+                : "border border-[#DDD8CF] bg-[#FAF9F6]"
+            }`}
+          >
+            <div className="flex items-center gap-3">
+              <span
+                className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full ${
+                  opcao.recomendado
+                    ? "bg-[#173B45] text-white"
+                    : "bg-white text-[#24211D]/60"
+                }`}
+              >
+                <opcao.Icon className="h-4 w-4" />
+              </span>
+              <div>
+                <p className="text-[10px] uppercase tracking-[0.18em] text-[#24211D]/55">
+                  {opcao.meio}
+                </p>
+                <p className="text-lg font-semibold text-[#24211D]">
+                  {opcao.tempo}
+                </p>
+              </div>
+            </div>
+            {opcao.recomendado && (
+              <p className="mt-2 inline-block rounded-full border border-[#173B45]/30 px-2.5 py-0.5 text-[9px] font-bold uppercase tracking-[0.15em] text-[#173B45]">
+                Recomendado
+              </p>
+            )}
+            <div className="mt-3 space-y-1">
+              {opcao.detalhes.map((d, i) => (
+                <p key={i} className="text-xs leading-5 text-[#24211D]/72">
+                  {d}
+                </p>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {deslocamento.recomendacao && (
+        <p className="mt-5 border-t border-[#DDD8CF] pt-4 text-sm leading-6 text-[#24211D]/80">
+          {deslocamento.recomendacao}
+        </p>
+      )}
+    </div>
+  );
+}
+
 function PeriodBlock({
   label,
   period,
@@ -1107,32 +2098,25 @@ function PeriodBlock({
   period: Period;
   displayClassName: string;
 }) {
+  const passoAtracao = period.deslocamento ? 2 : 1;
+  const passoRefeicao = passoAtracao + 1;
+
   return (
     <div>
-      <div className="mb-4 flex items-center gap-2.5">
+      <div className="mb-6 flex items-center gap-2.5">
         <span className="h-2 w-2 rounded-full bg-[#B96432]" />
         <span className="text-xs font-bold uppercase tracking-[0.25em] text-[#24211D]/65">
           {period.label ?? label}
         </span>
       </div>
 
-      {period.regiao && (
-        <div className="mb-5">
-          <p className="text-xs font-bold uppercase tracking-[0.15em] text-[#24211D]/68">
-            Região: {period.regiao.nome}
-          </p>
-          <p className="mt-1.5 text-sm leading-6 text-[#24211D]/78">
-            {period.regiao.descricao}
-          </p>
-        </div>
-      )}
-
-      <p className="mb-2 text-xs text-[#24211D]/65">Atração Principal</p>
+      {/* Headliner — foto da atração principal do período, antes dos
+          passos numerados (mesmo padrão do /ajisairoteiros) */}
       <div
-        className={`relative mb-5 overflow-hidden rounded-2xl ${
+        className={`relative mb-8 overflow-hidden rounded-2xl ${
           period.atracaoPrincipalCompacta
             ? "mx-auto aspect-[3/4] max-w-[280px]"
-            : "aspect-[4/3] sm:aspect-[16/10]"
+            : "aspect-[4/3] sm:aspect-[16/9]"
         } ${period.atracaoPrincipalImagem ? "" : "border-2 border-[#173B45]"}`}
       >
         {period.atracaoPrincipalImagem ? (
@@ -1149,6 +2133,9 @@ function PeriodBlock({
               }`}
             />
             <div className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-black/85 via-black/35 to-transparent" />
+            <p className="absolute inset-x-5 bottom-14 text-[10px] font-bold uppercase tracking-[0.3em] text-white/70">
+              Atração
+            </p>
             <h3
               className={`${displayClassName} absolute inset-x-5 bottom-4 font-medium leading-snug text-white ${
                 period.atracaoPrincipalCompacta
@@ -1170,25 +2157,65 @@ function PeriodBlock({
         )}
       </div>
 
-      {period.pois.length > 0 && (
-        <>
-          <p className="mb-5 text-xs text-[#24211D]/65">
-            Pontos de interesse propostos para o período
-          </p>
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-            {period.pois.map((poi, index) => (
-              <PoiCard key={poi.title + index} index={index} poi={poi} />
-            ))}
-          </div>
-        </>
+      {period.deslocamento && (
+        <NumberedStep number={1} label="Deslocamento">
+          <DeslocamentoCard deslocamento={period.deslocamento} />
+        </NumberedStep>
       )}
 
-      {period.gradeHorarios && (
-        <GradeHorariosBlock grade={period.gradeHorarios} />
-      )}
+      <NumberedStep number={passoAtracao} label="Atração">
+        <>
+          {period.regiao && (
+            <div className="mb-5">
+              <p className="text-xs font-bold uppercase tracking-[0.15em] text-[#24211D]/68">
+                Região: {period.regiao.nome}
+              </p>
+              <p className="mt-1.5 text-sm leading-6 text-[#24211D]/78">
+                {period.regiao.descricao}
+              </p>
+            </div>
+          )}
+
+          {period.detalhesPraticos && period.detalhesPraticos.length > 0 && (
+            <div className="mb-5 grid grid-cols-2 gap-x-6 gap-y-4 rounded-2xl border border-[#DDD8CF] bg-[#FAF9F6] p-5 sm:grid-cols-4">
+              {period.detalhesPraticos.map((item) => (
+                <div key={item.label}>
+                  <p className="mb-1.5 text-[10px] font-bold uppercase tracking-[0.15em] text-[#24211D]/55">
+                    {item.label}
+                  </p>
+                  <p className="text-sm font-semibold text-[#24211D]">
+                    {item.valor}
+                  </p>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {period.pois.length > 0 && (
+            <>
+              <p className="mb-5 text-xs text-[#24211D]/65">
+                Pontos de interesse propostos para o período
+              </p>
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                {period.pois.map((poi, index) => (
+                  <PoiCard key={poi.title + index} index={index} poi={poi} />
+                ))}
+              </div>
+            </>
+          )}
+
+          {period.gradeHorarios && (
+            <GradeHorariosBlock grade={period.gradeHorarios} />
+          )}
+        </>
+      </NumberedStep>
+
       {period.gastronomia && (
-        <GastronomiaBlock gastronomia={period.gastronomia} />
+        <NumberedStep number={passoRefeicao} label="Refeição">
+          <GastronomiaBlock gastronomia={period.gastronomia} />
+        </NumberedStep>
       )}
+
       {period.comprasExclusivas && (
         <ComprasExclusivasBlock compras={period.comprasExclusivas} />
       )}
@@ -1437,6 +2464,28 @@ function IconBus({ className }: { className?: string }) {
       <line x1="17" y1="10" x2="17" y2="16" />
       <circle cx="7" cy="19" r="1.3" />
       <circle cx="17" cy="19" r="1.3" />
+    </svg>
+  );
+}
+
+function IconCar({ className }: { className?: string }) {
+  return (
+    <svg {...iconProps(className)}>
+      <path d="M5 11 6.5 6h11L19 11" />
+      <rect x="3" y="11" width="18" height="6" rx="2" />
+      <circle cx="7.5" cy="17.5" r="1.3" />
+      <circle cx="16.5" cy="17.5" r="1.3" />
+    </svg>
+  );
+}
+
+function IconWalk({ className }: { className?: string }) {
+  return (
+    <svg {...iconProps(className)}>
+      <circle cx="13" cy="4" r="1.6" />
+      <path d="M10 8 7 10l1 5-3 5" />
+      <path d="M10 8l3 2 3-1 2 3" />
+      <path d="M11 13l-1 2 4 3" />
     </svg>
   );
 }
@@ -2460,6 +3509,9 @@ export function ApprovalPanel({
               </p>
               {current.contexto && (
                 <ContextoBlock contexto={current.contexto} />
+              )}
+              {current.gradeHorarios && (
+                <GradeHorariosBlock grade={current.gradeHorarios} />
               )}
               {current.transporte && (
                 <TransporteBlock transporte={current.transporte} />
