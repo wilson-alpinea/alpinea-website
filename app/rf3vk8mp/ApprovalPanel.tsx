@@ -60,6 +60,10 @@ type LinhaBadge = {
   codigo: string;
   nome: string;
   cor: string;
+  // Logo da companhia operadora da linha (Tokyo Metro, Toei, JR...) — só
+  // preenchido quando existe o logo real da empresa; sem isso o badge de
+  // código/cor é o único indicador visual (ex.: a pé, ônibus municipal).
+  logo?: string;
 };
 
 type OpcaoDeslocamento = {
@@ -70,10 +74,20 @@ type OpcaoDeslocamento = {
   detalhes: string[];
 };
 
+type EstacaoInfo = {
+  nome: string;
+  nomeJapones?: string;
+  distancia?: string;
+  // Foto real da estação (fachada/entrada) — só preenchida quando existe
+  // uma foto de verdade, não é pra ilustrar com imagem genérica.
+  foto?: string;
+  fotoAlt?: string;
+};
+
 type Deslocamento = {
-  estacaoOrigem: { nome: string; nomeJapones?: string; distancia?: string };
+  estacaoOrigem: EstacaoInfo;
   linha: LinhaBadge;
-  estacaoDestino: { nome: string; nomeJapones?: string };
+  estacaoDestino: EstacaoInfo;
   opcoes: OpcaoDeslocamento[];
   recomendacao?: string;
 };
@@ -87,6 +101,17 @@ type Period = {
   atracaoPrincipalFoco?: "top" | "center" | "bottom";
   atracaoPrincipalCompacta?: boolean;
   detalhesPraticos?: { label: string; valor: string }[];
+  // Mapa aberto (print real) com visão geral do trajeto a pé do período,
+  // conectando os pontos de interesse — mostrado antes da grade de POIs.
+  mapaVisaoGeral?: { imagem: string; imagemAlt: string; nota?: string };
+  // Foto aérea/panorâmica anotada com as partes destacadas de uma atração
+  // (ex.: portões, salão principal, pagode) — mostrada logo no início do
+  // período, com uma pequena explicação de cada ponto ao lado.
+  visaoAnotada?: {
+    imagem: string;
+    imagemAlt: string;
+    pontos: { cor: string; titulo: string; nomeJapones?: string; descricao: string }[];
+  };
   pois: Poi[];
   gastronomia?: Gastronomia;
   comprasExclusivas?: ComprasExclusivas;
@@ -192,6 +217,47 @@ const DAY_1: DayContent = {
     nota: "Horários estimados considerando saída do lyf Ginza Tokyo (Kyobashi) — ajuste conforme seu ritmo.",
   },
   manha: {
+    visaoAnotada: {
+      imagem: "/images/dia1-sensoji-visao-anotada.png",
+      imagemAlt: "Vista aérea do complexo do Templo Sensoji com as partes principais destacadas",
+      pontos: [
+        {
+          cor: "#C81D25",
+          titulo: "Kaminarimon",
+          nomeJapones: "雷門",
+          descricao:
+            "\"Portão do Trovão\" — entrada principal do templo, construído originalmente em 942. Marcado pela icônica lanterna vermelha gigante (chōchin) pendurada no centro.",
+        },
+        {
+          cor: "#D97A1F",
+          titulo: "Nakamise Street",
+          nomeJapones: "仲見世通り",
+          descricao:
+            "Rua comercial de ~250 m entre o Kaminarimon e o Hōzōmon, com quase 90 lojinhas tradicionais de souvenires e snacks — uma das ruas de compras mais antigas do Japão, ativa desde o período Edo.",
+        },
+        {
+          cor: "#1E6FB8",
+          titulo: "Hōzōmon",
+          nomeJapones: "宝蔵門",
+          descricao:
+            "\"Portão do Tesouro\" — segundo portão do complexo, guarda relíquias do templo no piso superior e é flanqueado por duas estátuas guardiãs (Niō).",
+        },
+        {
+          cor: "#3F8F3F",
+          titulo: "Salão Principal",
+          nomeJapones: "本堂 / Kannondō",
+          descricao:
+            "Santuário principal do templo, onde fica a estátua de Kannon (Deusa da Misericórdia) que deu origem ao Sensoji — fundado em 628, o templo mais antigo de Tóquio.",
+        },
+        {
+          cor: "#6B3FA0",
+          titulo: "Pagode de Cinco Andares",
+          nomeJapones: "五重塔",
+          descricao:
+            "Reconstrução do pagode original de 942 — cada um dos cinco andares representa um elemento budista (terra, água, fogo, vento, vazio). Guarda relíquias de Buda.",
+        },
+      ],
+    },
     regiao: {
       nome: "Taito",
       descricao:
@@ -201,10 +267,16 @@ const DAY_1: DayContent = {
       estacaoOrigem: {
         nome: "Estação Kyobashi",
         nomeJapones: "京橋駅",
-        distancia: "~1 min a pé do hotel",
+        distancia: "~1 min a pé do hotel · Saída 6",
       },
-      linha: { codigo: "G10", nome: "Tokyo Metro Ginza Line", cor: "#F39700" },
-      estacaoDestino: { nome: "Estação Asakusa", nomeJapones: "浅草駅" },
+      linha: { codigo: "G10", nome: "Tokyo Metro Ginza Line", cor: "#F39700", logo: "/images/tokyometro-mark.png" },
+      estacaoDestino: {
+        nome: "Estação Asakusa",
+        nomeJapones: "浅草駅",
+        distancia: "Saída 1 · ~4 min a pé (300 m) até o Kaminarimon",
+        foto: "/images/rota-asakusa-sensoji.png",
+        fotoAlt: "Rota a pé da Saída 1 da Estação Asakusa até o Kaminarimon (Templo Sensoji)",
+      },
       opcoes: [
         {
           meio: "Metrô",
@@ -213,7 +285,8 @@ const DAY_1: DayContent = {
           recomendado: true,
           detalhes: [
             "Linha direta (Ginza Line), sem baldeação.",
-            "Embarque a ~1 min a pé do lyf Ginza Tokyo.",
+            "Embarque pela Saída 6 da Estação Kyobashi — a mais próxima do lyf Ginza Tokyo, ~1 min a pé.",
+            "Desça em Asakusa e siga pela Saída 1, a mais próxima do templo — dali são ~4 min a pé (300 m) até o Kaminarimon.",
           ],
         },
         {
@@ -227,7 +300,7 @@ const DAY_1: DayContent = {
         },
       ],
       recomendacao:
-        "Do lyf Ginza Tokyo, o trajeto até Asakusa é de cerca de 16 minutos de metrô pela Ginza Line, sem baldeação — a Estação Kyobashi fica a menos de 1 minuto a pé do hotel.",
+        "Do lyf Ginza Tokyo, o trajeto até Asakusa é de cerca de 16 minutos de metrô pela Ginza Line, sem baldeação — embarque pela Saída 6 da Estação Kyobashi (a menos de 1 minuto a pé do hotel) e, ao chegar, saia pela Saída 1 de Asakusa, a mais próxima do Kaminarimon — de lá são ~4 minutos a pé (300 m) até o portão do Templo Sensoji.",
     },
     atracaoPrincipal: "Templo Sensoji Asakusa",
     atracaoPrincipalImagem: "/images/dia1-sensoji.png",
@@ -237,6 +310,12 @@ const DAY_1: DayContent = {
       { label: "Nakamise Street", valor: "~9h–17h (varia por loja)" },
       { label: "Melhor horário", valor: "Antes das 9h ou após 17h" },
     ],
+    mapaVisaoGeral: {
+      imagem: "/images/dia1-manha-visao-geral-mapa.png",
+      imagemAlt:
+        "Visão geral do trajeto a pé conectando Sensoji, Nakamise Street, Kappabashi Kitchen Town e Sumida Park",
+      nota: "≈36 min · 2,5 km — trajeto completo a pé conectando os pontos de interesse do período, sem pressa de fazer tudo na ordem: ajuste conforme o ritmo do grupo.",
+    },
     pois: [
       {
         title: "Nakamise Street",
@@ -286,8 +365,10 @@ const DAY_1: DayContent = {
         nome: "Estação Takaracho",
         nomeJapones: "宝町駅",
         distancia: "~2 min a pé do hotel",
+        foto: "/images/lyf-takaracho-estacao-real.png",
+        fotoAlt: "Entrada da Estação Takaracho (Toei Subway)",
       },
-      linha: { codigo: "A12", nome: "Toei Asakusa Line", cor: "#E85298" },
+      linha: { codigo: "A12", nome: "Toei Asakusa Line", cor: "#E85298", logo: "/images/toei-mark.png" },
       estacaoDestino: {
         nome: "Estação Oshiage",
         nomeJapones: "押上駅〈スカイツリー前〉",
@@ -640,7 +721,7 @@ const DAY_3: DayContent = {
         nomeJapones: "京橋駅",
         distancia: "~1 min a pé do hotel",
       },
-      linha: { codigo: "G10", nome: "Tokyo Metro Ginza Line", cor: "#F39700" },
+      linha: { codigo: "G10", nome: "Tokyo Metro Ginza Line", cor: "#F39700", logo: "/images/tokyometro-mark.png" },
       estacaoDestino: { nome: "Estação Omotesando", nomeJapones: "表参道駅" },
       opcoes: [
         {
@@ -718,7 +799,7 @@ const DAY_3: DayContent = {
     },
     deslocamento: {
       estacaoOrigem: { nome: "Estação Shibuya", nomeJapones: "渋谷駅" },
-      linha: { codigo: "JY", nome: "JR Yamanote Line", cor: "#8FAADC" },
+      linha: { codigo: "JY", nome: "JR Yamanote Line", cor: "#8FAADC", logo: "/images/jr-logo.webp" },
       estacaoDestino: { nome: "Estação Shinjuku", nomeJapones: "新宿駅" },
       opcoes: [
         {
@@ -885,7 +966,7 @@ const DAY_4: DayContent = {
         nomeJapones: "京橋駅",
         distancia: "~1 min a pé do hotel",
       },
-      linha: { codigo: "G10", nome: "Tokyo Metro Ginza Line", cor: "#F39700" },
+      linha: { codigo: "G10", nome: "Tokyo Metro Ginza Line", cor: "#F39700", logo: "/images/tokyometro-mark.png" },
       estacaoDestino: { nome: "Estação Akihabara", nomeJapones: "秋葉原駅" },
       opcoes: [
         {
@@ -984,7 +1065,7 @@ const DAY_4: DayContent = {
     },
     deslocamento: {
       estacaoOrigem: { nome: "Estação Akihabara", nomeJapones: "秋葉原駅" },
-      linha: { codigo: "JY", nome: "JR Yamanote / Keihin-Tohoku Line", cor: "#8FAADC" },
+      linha: { codigo: "JY", nome: "JR Yamanote / Keihin-Tohoku Line", cor: "#8FAADC", logo: "/images/jr-logo.webp" },
       estacaoDestino: { nome: "Estação Kanda", nomeJapones: "神田駅" },
       opcoes: [
         {
@@ -1328,7 +1409,7 @@ const DAY_6: DayContent = {
         nome: "Kyoto Station",
         distancia: "~1 min a pé do hotel",
       },
-      linha: { codigo: "JR", nome: "JR Nara Line", cor: "#00A650" },
+      linha: { codigo: "JR", nome: "JR Nara Line", cor: "#00A650", logo: "/images/jr-logo.webp" },
       estacaoDestino: { nome: "Estação Inari", nomeJapones: "稲荷駅" },
       opcoes: [
         {
@@ -1519,8 +1600,10 @@ const DAY_7: DayContent = {
         nome: "Estação Takaracho",
         nomeJapones: "宝町駅",
         distancia: "~1 min a pé do remm Tokyo Kyobashi",
+        foto: "/images/lyf-takaracho-estacao-real.png",
+        fotoAlt: "Entrada da Estação Takaracho (Toei Subway)",
       },
-      linha: { codigo: "A12", nome: "Toei Asakusa Line", cor: "#E85298" },
+      linha: { codigo: "A12", nome: "Toei Asakusa Line", cor: "#E85298", logo: "/images/toei-mark.png" },
       estacaoDestino: { nome: "Estação Ningyocho", nomeJapones: "人形町駅" },
       opcoes: [
         {
@@ -1619,7 +1702,7 @@ const DAY_7: DayContent = {
     },
     deslocamento: {
       estacaoOrigem: { nome: "Estação Ningyocho", nomeJapones: "人形町駅" },
-      linha: { codigo: "A14", nome: "Toei Asakusa Line", cor: "#E85298" },
+      linha: { codigo: "A14", nome: "Toei Asakusa Line", cor: "#E85298", logo: "/images/toei-mark.png" },
       estacaoDestino: { nome: "Estação Ryogoku", nomeJapones: "両国駅" },
       opcoes: [
         {
@@ -1730,6 +1813,20 @@ const PARTIDA: DayContent = {
   travel: true,
   travelNote:
     "Voo de volta decola às 00:05 pelo Aeroporto de Haneda (HND), logo após a virada do dia. Dia reservado para preparar a bagagem e seguir para o aeroporto — sem tempo útil para passeios.",
+};
+
+// Dia da semana de cada data do roteiro (04–12 de maio de 2027), exibido
+// abaixo do "05 / MAI" no seletor de dias.
+const DIA_SEMANA: Record<string, string> = {
+  "04 Mai": "Terça",
+  "05 Mai": "Quarta",
+  "06 Mai": "Quinta",
+  "07 Mai": "Sexta",
+  "08 Mai": "Sábado",
+  "09 Mai": "Domingo",
+  "10 Mai": "Segunda",
+  "11 Mai": "Terça",
+  "12 Mai": "Quarta",
 };
 
 const DAYS: DayContent[] = [
@@ -2005,10 +2102,24 @@ function NumberedStep({
 }
 
 function DeslocamentoCard({ deslocamento }: { deslocamento: Deslocamento }) {
+  const [fotoZoom, setFotoZoom] = useState<{ src: string; alt: string } | null>(null);
+
   return (
     <div className="rounded-2xl border border-[#DDD8CF] bg-[#FDFCF9] p-6 sm:p-7">
-      <div className="flex flex-wrap items-center justify-center gap-4 text-center sm:gap-6">
-        <div>
+      {/* Mesmo template de card de estação do /ajisairoteiros: logo da
+          companhia operadora, nome da estação e nome em japonês — repetido
+          pra origem e destino, ligados por uma seta. */}
+      <div className="flex flex-wrap items-start justify-center gap-6 text-center sm:gap-10">
+        <div className="flex flex-col items-center">
+          {deslocamento.linha.logo && (
+            <div className="mb-3 flex h-12 w-12 items-center justify-center overflow-hidden rounded-xl border border-[#DDD8CF] bg-white p-2">
+              <img
+                src={deslocamento.linha.logo}
+                alt={deslocamento.linha.nome}
+                className="h-full w-full object-contain"
+              />
+            </div>
+          )}
           <p className="text-sm font-semibold text-[#24211D]">
             {deslocamento.estacaoOrigem.nome}
           </p>
@@ -2022,15 +2133,43 @@ function DeslocamentoCard({ deslocamento }: { deslocamento: Deslocamento }) {
               {deslocamento.estacaoOrigem.distancia}
             </p>
           )}
+          {deslocamento.estacaoOrigem.foto && (
+            <button
+              type="button"
+              onClick={() =>
+                setFotoZoom({
+                  src: deslocamento.estacaoOrigem.foto!,
+                  alt:
+                    deslocamento.estacaoOrigem.fotoAlt ??
+                    deslocamento.estacaoOrigem.nome,
+                })
+              }
+              className="group relative mt-3 h-20 w-28 shrink-0 overflow-hidden rounded-xl border border-[#DDD8CF]"
+            >
+              <img
+                src={deslocamento.estacaoOrigem.foto}
+                alt={deslocamento.estacaoOrigem.fotoAlt ?? deslocamento.estacaoOrigem.nome}
+                className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
+              />
+              <div className="absolute inset-0 flex items-center justify-center bg-black/0 transition duration-300 group-hover:bg-black/35">
+                <span className="flex h-7 w-7 scale-75 items-center justify-center rounded-full bg-white/90 text-[#173B45] opacity-0 shadow-md transition duration-300 group-hover:scale-100 group-hover:opacity-100">
+                  <IconZoom className="h-3.5 w-3.5" />
+                </span>
+              </div>
+            </button>
+          )}
         </div>
-        <span
-          className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-xs font-bold text-white"
-          style={{ background: deslocamento.linha.cor }}
-        >
-          {deslocamento.linha.codigo}
-        </span>
-        <span className="text-lg text-[#24211D]/30">→</span>
-        <div>
+        <span className="mt-4 text-lg text-[#24211D]/30 sm:mt-5">→</span>
+        <div className="flex flex-col items-center">
+          {deslocamento.linha.logo && (
+            <div className="mb-3 flex h-12 w-12 items-center justify-center overflow-hidden rounded-xl border border-[#DDD8CF] bg-white p-2">
+              <img
+                src={deslocamento.linha.logo}
+                alt={deslocamento.linha.nome}
+                className="h-full w-full object-contain"
+              />
+            </div>
+          )}
           <p className="text-sm font-semibold text-[#24211D]">
             {deslocamento.estacaoDestino.nome}
           </p>
@@ -2039,11 +2178,66 @@ function DeslocamentoCard({ deslocamento }: { deslocamento: Deslocamento }) {
               {deslocamento.estacaoDestino.nomeJapones}
             </p>
           )}
+          {deslocamento.estacaoDestino.foto && (
+            <button
+              type="button"
+              onClick={() =>
+                setFotoZoom({
+                  src: deslocamento.estacaoDestino.foto!,
+                  alt:
+                    deslocamento.estacaoDestino.fotoAlt ??
+                    deslocamento.estacaoDestino.nome,
+                })
+              }
+              className="group relative mt-3 h-20 w-28 shrink-0 overflow-hidden rounded-xl border border-[#DDD8CF]"
+            >
+              <img
+                src={deslocamento.estacaoDestino.foto}
+                alt={deslocamento.estacaoDestino.fotoAlt ?? deslocamento.estacaoDestino.nome}
+                className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
+              />
+              <div className="absolute inset-0 flex items-center justify-center bg-black/0 transition duration-300 group-hover:bg-black/35">
+                <span className="flex h-7 w-7 scale-75 items-center justify-center rounded-full bg-white/90 text-[#173B45] opacity-0 shadow-md transition duration-300 group-hover:scale-100 group-hover:opacity-100">
+                  <IconZoom className="h-3.5 w-3.5" />
+                </span>
+              </div>
+            </button>
+          )}
         </div>
       </div>
-      <p className="mt-3 text-center text-[10px] font-bold uppercase tracking-[0.2em] text-[#24211D]/50">
+      <p className="mt-5 text-center text-[10px] font-bold uppercase tracking-[0.2em] text-[#24211D]/50">
+        {deslocamento.linha.logo && `${deslocamento.linha.codigo} · `}
         {deslocamento.linha.nome} · sem baldeação
       </p>
+
+      {fotoZoom && (
+        <div
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/85 p-4 backdrop-blur-sm sm:p-8"
+          onClick={() => setFotoZoom(null)}
+        >
+          <button
+            type="button"
+            onClick={() => setFotoZoom(null)}
+            className="absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white transition hover:bg-white/20 sm:right-6 sm:top-6"
+            aria-label="Fechar"
+          >
+            <IconX className="h-5 w-5" />
+          </button>
+          <div
+            className="relative max-h-full max-w-full overflow-hidden rounded-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <img
+              src={fotoZoom.src}
+              alt={fotoZoom.alt}
+              className="max-h-[85vh] max-w-[92vw] rounded-2xl object-contain"
+            />
+            <p className="mt-3 text-center text-xs font-semibold uppercase tracking-[0.15em] text-white/85">
+              {fotoZoom.alt}
+            </p>
+          </div>
+        </div>
+      )}
 
       <div className="mt-6 grid gap-3 sm:grid-cols-2">
         {deslocamento.opcoes.map((opcao) => (
@@ -2099,6 +2293,103 @@ function DeslocamentoCard({ deslocamento }: { deslocamento: Deslocamento }) {
   );
 }
 
+function MapaVisaoGeralBlock({
+  mapa,
+}: {
+  mapa: { imagem: string; imagemAlt: string; nota?: string };
+}) {
+  const [zoom, setZoom] = useState(false);
+
+  return (
+    <div className="mb-5">
+      <button
+        type="button"
+        onClick={() => setZoom(true)}
+        className="group relative block w-full overflow-hidden rounded-2xl border border-[#DDD8CF]"
+      >
+        <div className="relative aspect-[21/9]">
+          <img
+            src={mapa.imagem}
+            alt={mapa.imagemAlt}
+            className="absolute inset-0 h-full w-full object-cover transition duration-300 group-hover:scale-[1.02]"
+          />
+        </div>
+        <div className="absolute inset-0 flex items-center justify-center bg-black/0 transition duration-300 group-hover:bg-black/25">
+          <span className="flex h-9 w-9 scale-75 items-center justify-center rounded-full bg-white/90 text-[#173B45] opacity-0 shadow-md transition duration-300 group-hover:scale-100 group-hover:opacity-100">
+            <IconZoom className="h-4 w-4" />
+          </span>
+        </div>
+      </button>
+      {mapa.nota && (
+        <p className="mt-2 text-xs leading-5 text-[#24211D]/60">{mapa.nota}</p>
+      )}
+
+      {zoom && (
+        <div
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/85 p-4 backdrop-blur-sm sm:p-8"
+          onClick={() => setZoom(false)}
+        >
+          <button
+            type="button"
+            onClick={() => setZoom(false)}
+            className="absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white transition hover:bg-white/20 sm:right-6 sm:top-6"
+            aria-label="Fechar"
+          >
+            <IconX className="h-5 w-5" />
+          </button>
+          <img
+            src={mapa.imagem}
+            alt={mapa.imagemAlt}
+            className="max-h-[90vh] max-w-[95vw] rounded-2xl object-contain"
+            onClick={(e) => e.stopPropagation()}
+          />
+        </div>
+      )}
+    </div>
+  );
+}
+
+function VisaoAnotadaBlock({
+  visaoAnotada,
+}: {
+  visaoAnotada: NonNullable<Period["visaoAnotada"]>;
+}) {
+  return (
+    <div className="mb-8 grid grid-cols-1 gap-5 sm:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] sm:gap-8">
+      <div className="relative aspect-[3/4] w-full overflow-hidden rounded-2xl border border-[#DDD8CF] sm:aspect-auto">
+        <img
+          src={visaoAnotada.imagem}
+          alt={visaoAnotada.imagemAlt}
+          className="absolute inset-0 h-full w-full object-cover"
+        />
+      </div>
+      <div className="flex flex-col justify-center gap-4">
+        {visaoAnotada.pontos.map((ponto) => (
+          <div key={ponto.titulo} className="flex items-start gap-3">
+            <span
+              className="mt-1.5 h-2.5 w-2.5 shrink-0 rounded-full"
+              style={{ background: ponto.cor }}
+            />
+            <div className="min-w-0">
+              <p className="text-sm font-semibold text-[#24211D]">
+                {ponto.titulo}
+                {ponto.nomeJapones && (
+                  <span className="ml-2 text-xs font-normal text-[#24211D]/50">
+                    {ponto.nomeJapones}
+                  </span>
+                )}
+              </p>
+              <p className="mt-1 text-xs leading-5 text-[#24211D]/72">
+                {ponto.descricao}
+              </p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function PeriodBlock({
   label,
   period,
@@ -2120,13 +2411,19 @@ function PeriodBlock({
         </span>
       </div>
 
+      {period.visaoAnotada && (
+        <VisaoAnotadaBlock visaoAnotada={period.visaoAnotada} />
+      )}
+
       {/* Headliner — foto da atração principal do período, antes dos
-          passos numerados (mesmo padrão do /ajisairoteiros) */}
+          passos numerados (mesmo padrão do /ajisairoteiros). Full-bleed:
+          -mx cancela o px-6/sm:px-10 do painel pra imagem ir de borda a
+          borda do card, sem cantos arredondados nem moldura lateral. */}
       <div
-        className={`relative mb-8 overflow-hidden rounded-2xl ${
+        className={`relative mb-8 overflow-hidden ${
           period.atracaoPrincipalCompacta
-            ? "mx-auto aspect-[3/4] max-w-[280px]"
-            : "aspect-[4/3] sm:aspect-[16/9]"
+            ? "mx-auto aspect-[3/4] max-w-[280px] rounded-2xl"
+            : "-mx-6 aspect-[4/3] sm:-mx-10 sm:aspect-[16/9]"
         } ${period.atracaoPrincipalImagem ? "" : "border-2 border-[#173B45]"}`}
       >
         {period.atracaoPrincipalImagem ? (
@@ -2142,12 +2439,15 @@ function PeriodBlock({
                     : "object-top"
               }`}
             />
-            <div className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-black/85 via-black/35 to-transparent" />
-            <p className="absolute inset-x-5 bottom-14 text-[10px] font-bold uppercase tracking-[0.3em] text-white/70">
+            {/* Fade suave no topo, na cor do card (Ivory) — evita o corte
+                seco entre o fundo claro do site e a foto full-bleed. */}
+            <div className="absolute inset-x-0 top-0 h-14 bg-gradient-to-b from-[#FDFCF9] to-transparent sm:h-20" />
+            <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-black/50 to-transparent" />
+            <p className="absolute inset-x-5 bottom-14 text-[10px] font-bold uppercase tracking-[0.3em] text-white/70 sm:inset-x-10">
               Atração
             </p>
             <h3
-              className={`${displayClassName} absolute inset-x-5 bottom-4 font-medium leading-snug text-white ${
+              className={`${displayClassName} absolute inset-x-5 bottom-4 font-medium leading-snug text-white sm:inset-x-10 ${
                 period.atracaoPrincipalCompacta
                   ? "text-lg md:text-xl"
                   : "text-2xl md:text-3xl"
@@ -2187,18 +2487,56 @@ function PeriodBlock({
           )}
 
           {period.detalhesPraticos && period.detalhesPraticos.length > 0 && (
-            <div className="mb-5 grid grid-cols-2 gap-x-6 gap-y-4 rounded-2xl border border-[#DDD8CF] bg-[#FAF9F6] p-5 sm:grid-cols-4">
-              {period.detalhesPraticos.map((item) => (
-                <div key={item.label}>
-                  <p className="mb-1.5 text-[10px] font-bold uppercase tracking-[0.15em] text-[#24211D]/55">
-                    {item.label}
-                  </p>
-                  <p className="text-sm font-semibold text-[#24211D]">
-                    {item.valor}
-                  </p>
-                </div>
-              ))}
-            </div>
+            <>
+              {(() => {
+                const outros = period.detalhesPraticos!.filter(
+                  (item) => item.label !== "Melhor horário"
+                );
+                return (
+                  outros.length > 0 && (
+                    <div className="mb-5 grid grid-cols-2 gap-x-6 gap-y-4 rounded-2xl border border-[#DDD8CF] bg-[#FAF9F6] p-5 sm:grid-cols-4">
+                      {outros.map((item) => (
+                        <div key={item.label}>
+                          <p className="mb-1.5 text-[10px] font-bold uppercase tracking-[0.15em] text-[#24211D]/55">
+                            {item.label}
+                          </p>
+                          <p className="text-sm font-semibold text-[#24211D]">
+                            {item.valor}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                  )
+                );
+              })()}
+
+              {/* Melhor Horário — card próprio em destaque, separado da
+                  grade de detalhes práticos. */}
+              {period.detalhesPraticos
+                .filter((item) => item.label === "Melhor horário")
+                .map((item) => (
+                  <div
+                    key={item.label}
+                    className="mb-5 flex items-center gap-4 rounded-2xl border border-[#BFDCF2] bg-[#EAF3FC] p-5"
+                  >
+                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white text-[#2C6CA6]">
+                      <IconClock className="h-5 w-5" />
+                    </span>
+                    <div>
+                      <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-[#2C6CA6]/85">
+                        Melhor Horário
+                      </p>
+                      <p className="text-sm font-semibold text-[#1B4A73]">
+                        {item.valor}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+            </>
+          )}
+
+          {period.mapaVisaoGeral && (
+            <MapaVisaoGeralBlock mapa={period.mapaVisaoGeral} />
           )}
 
           {period.pois.length > 0 && (
@@ -2242,45 +2580,45 @@ function PeriodBlock({
 
 function GradeHorariosBlock({ grade }: { grade: GradeHorarios }) {
   return (
-    <div className="mb-6 rounded-2xl border border-[#DDD8CF] bg-[#FAF9F6] p-4">
-      <div className="flex items-center gap-2">
-        <IconClock className="h-3.5 w-3.5 text-[#24211D]/68" />
-        <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#24211D]/68">
+    <div className="mb-6 rounded-2xl border border-[#DDD8CF] bg-[#FDFCF9] p-5 sm:p-7">
+      <div className="flex items-center gap-2.5">
+        <IconClock className="h-3.5 w-3.5 text-[#24211D]/50" />
+        <p className="text-xs font-bold uppercase tracking-[0.25em] text-[#24211D]/55">
           {grade.titulo ?? "Grade de Horários"}
         </p>
       </div>
-      <div className="mt-3 divide-y divide-[#DDD8CF] overflow-hidden rounded-xl border border-[#DDD8CF] bg-[#FDFCF9]">
-        {grade.itens.map((item) => (
+      <div className="mt-4">
+        {grade.itens.map((item, i) => (
           <div
             key={item.evento}
-            className={`px-4 py-2.5 ${item.recomendado ? "bg-amber-50" : ""}`}
+            className={`flex items-baseline gap-5 py-3 ${
+              i !== grade.itens.length - 1 ? "border-b border-[#DDD8CF]/55" : ""
+            } ${item.recomendado ? "border-l border-[#B96432] pl-4" : ""}`}
           >
-            <div className="flex items-center gap-4">
-              <span
-                className={`w-16 shrink-0 text-sm font-semibold ${
-                  item.recomendado ? "text-amber-800" : "text-[#24211D]/90"
-                }`}
-              >
-                {item.horario}
-              </span>
-              <span
-                className={`text-sm leading-5 ${
-                  item.destaque ? "font-semibold" : ""
-                } ${item.recomendado ? "text-amber-800" : "text-[#24211D]/78"}`}
-              >
-                {item.evento}
-              </span>
-            </div>
-            {item.tag && (
-              <span className="ml-20 mt-1.5 inline-block rounded-full border border-amber-400/70 bg-amber-400/20 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-[0.15em] text-amber-800">
-                {item.tag}
-              </span>
-            )}
+            <span
+              className={`w-12 shrink-0 text-sm font-semibold tabular-nums tracking-tight ${
+                item.recomendado ? "text-[#B96432]" : "text-[#24211D]/80"
+              }`}
+            >
+              {item.horario}
+            </span>
+            <span
+              className={`min-w-0 flex-1 text-sm leading-6 ${
+                item.destaque ? "font-semibold" : "font-normal"
+              } ${item.recomendado ? "text-[#B96432]" : "text-[#24211D]/75"}`}
+            >
+              {item.evento}
+              {item.tag && (
+                <span className="ml-2.5 inline-block align-middle text-[9px] font-semibold uppercase tracking-[0.2em] text-[#24211D]/40">
+                  {item.tag}
+                </span>
+              )}
+            </span>
           </div>
         ))}
       </div>
       {grade.nota && (
-        <p className="mt-3 border-t border-[#DDD8CF] pt-3 text-xs leading-5 text-[#24211D]/68">
+        <p className="mt-5 border-t border-[#DDD8CF] pt-4 text-xs leading-5 text-[#24211D]/55">
           {grade.nota}
         </p>
       )}
@@ -2712,6 +3050,14 @@ type HotelInfo = {
   fotoHero?: string;
   estrutura: HotelAmenity[];
   essenciais: HotelNearby[];
+  // Aviso de transporte — só preenchido quando o hotel tem mais de uma
+  // estação próxima em linhas diferentes, onde a escolha errada de linha
+  // muda bastante o tempo de deslocamento. Mostra o sinalizador oficial
+  // (código + nome) de cada estação relevante.
+  transporte?: {
+    nota: string;
+    estacoes: { nome: string; imagem: string; imagemAlt: string }[];
+  };
   // Seção final, só preenchida quando existe informação real o bastante pra
   // justificar — não é pra inventar conteúdo pra preencher espaço.
   informacoesUteis?: { label: string; texto: string }[];
@@ -2784,6 +3130,22 @@ const HOTEIS: HotelInfo[] = [
         Icon: IconCross,
       },
     ],
+    transporte: {
+      nota:
+        "As duas estações mais próximas do lyf Ginza Tokyo são Kyobashi (Tokyo Metro Ginza Line) e Takaracho (Toei Asakusa Line) — cada uma faz parte de uma linha diferente. Dependendo do dia, o roteiro indica uma ou outra: preste atenção às instruções de cada deslocamento, porque usar a linha errada pode aumentar bastante o tempo de trajeto.",
+      estacoes: [
+        {
+          nome: "Estação Kyobashi",
+          imagem: "/images/kyobashi-station-logo.png",
+          imagemAlt: "Sinalização da Estação Kyobashi — G10, Tokyo Metro Ginza Line",
+        },
+        {
+          nome: "Estação Takaracho",
+          imagem: "/images/takaracho-station-logo.png",
+          imagemAlt: "Sinalização da Estação Takaracho — A12, Toei Asakusa Line",
+        },
+      ],
+    },
     informacoesUteis: [
       {
         label: "Bagagem",
@@ -2855,6 +3217,11 @@ const HOTEIS: HotelInfo[] = [
           label: "Estação Kyobashi",
           imagem: "/images/lyf-rota-estacao-kyobashi.png",
           imagemAlt: "Rota a pé da Estação Kyobashi até o lyf Ginza Tokyo",
+        },
+        {
+          label: "Estação Takaracho",
+          imagem: "/images/lyf-rota-takaracho.png",
+          imagemAlt: "Rota a pé da Estação Takaracho até o lyf Ginza Tokyo",
         },
         {
           label: "7-Eleven",
@@ -2948,6 +3315,11 @@ const HOTEIS: HotelInfo[] = [
           "Número de emergência no Japão: 119 (ambulância/incêndio) ou 110 (polícia). Hospital de referência: Koseikai Takeda Hospital, pronto-socorro 24h a ~5 min a pé do hotel.",
       },
     ],
+    mapa: {
+      imagem: "/images/daiwa-roynet-fachada-real.png",
+      imagemAlt: "Fachada do Daiwa Roynet Hotel Kyoto-Ekimae PREMIER",
+      pontos: [],
+    },
   },
   {
     cidade: "Tokyo 2",
@@ -3017,6 +3389,11 @@ const HOTEIS: HotelInfo[] = [
           "Número de emergência no Japão: 119 (ambulância/incêndio) ou 110 (polícia). Hospital de referência: St. Luke's International Hospital.",
       },
     ],
+    mapa: {
+      imagem: "/images/remm-fachada-real.png",
+      imagemAlt: "Fachada do remm Tokyo Kyobashi",
+      pontos: [],
+    },
   },
 ];
 
@@ -3105,6 +3482,40 @@ function HotelGuestGuide({ hotel }: { hotel: HotelInfo }) {
           ))}
         </div>
       </div>
+
+      {/* Transporte — sinalização oficial das estações próximas, só quando
+          existe mais de uma opção de linha e vale destacar a diferença. */}
+      {hotel.transporte && (
+        <div className="border-t border-[#DDD8CF] bg-[#FDFCF9] p-5 sm:p-8">
+          <p className="mb-5 text-xs font-bold uppercase tracking-[0.2em] text-[#24211D]/68">
+            Transporte
+          </p>
+          <div className="grid grid-cols-2 gap-4 sm:gap-6">
+            {hotel.transporte.estacoes.map((estacao) => (
+              <div
+                key={estacao.nome}
+                className="overflow-hidden rounded-2xl border border-[#DDD8CF] bg-white"
+              >
+                <div className="relative aspect-[4/3]">
+                  <Image
+                    src={estacao.imagem}
+                    alt={estacao.imagemAlt}
+                    fill
+                    sizes="(max-width: 640px) 50vw, 380px"
+                    className="object-contain p-4"
+                  />
+                </div>
+                <p className="border-t border-[#DDD8CF] px-3 py-2.5 text-center text-xs font-semibold text-[#24211D]/85">
+                  {estacao.nome}
+                </p>
+              </div>
+            ))}
+          </div>
+          <p className="mt-5 text-sm leading-6 text-[#24211D]/80">
+            {hotel.transporte.nota}
+          </p>
+        </div>
+      )}
 
       {/* 3. Localização & Arredores — foto da fachada, lista e rotas, no
           mesmo bloco de largura total */}
@@ -3300,7 +3711,7 @@ function HotelGuestGuide({ hotel }: { hotel: HotelInfo }) {
 }
 
 const ROTAS_POR_ESSENCIAL: Record<string, string[]> = {
-  "Estação": ["Estação Kyobashi", "Saída 6 (Estação Kyobashi)"],
+  "Estação": ["Estação Kyobashi", "Saída 6 (Estação Kyobashi)", "Estação Takaracho"],
   "Conveniência": ["7-Eleven", "Lawson"],
   "Farmácia": ["Farmácia Welcia"],
   "Clínica": ["Kameda Kyobashi Clinic"],
@@ -3425,6 +3836,11 @@ export function ApprovalPanel({
                     <span className="text-xs uppercase">
                       {d.date.split(" ")[1]}
                     </span>
+                    {DIA_SEMANA[d.date] && (
+                      <span className="mt-0.5 text-[9px] uppercase tracking-[0.15em] text-[#24211D]/45">
+                        {DIA_SEMANA[d.date]}
+                      </span>
+                    )}
                   </span>
                 )}
               </button>
