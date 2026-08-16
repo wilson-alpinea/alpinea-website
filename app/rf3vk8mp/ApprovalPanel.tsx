@@ -239,17 +239,16 @@ const DAY_1: DayContent = {
     ],
     pois: [
       {
-        category: "Compras",
-        title: "Masamoto Sohonten",
-        description:
-          "Uma das Top5 melhores fabricantes de faca profissional do Japão, também tem equipe dedicada de afiador profissional para facas de alta complexidade",
-        rating: 4,
-      },
-      {
         title: "Nakamise Street",
         description:
           "Rua Dentro do complexo do Templo Sensoji, focado em souvenir e itens de pequeno porte",
         rating: 3,
+      },
+      {
+        title: "Kappabashi Kitchen Town",
+        description:
+          "Avenida com lojas que vendem artigos de cozinha desde utensílios domésticos, louças, comida cenográfica — fica a oeste do templo, vale visitar antes de seguir para o lado do rio.",
+        rating: 2,
       },
       {
         title: "Sumida Park",
@@ -258,10 +257,11 @@ const DAY_1: DayContent = {
         rating: 3,
       },
       {
-        title: "Kappabashi Kitchen Town",
+        category: "Compras",
+        title: "Masamoto Sohonten",
         description:
-          "Avenida com lojas que vendem artigos de cozinha desde utensílios domésticos, louças, comida cenográfica",
-        rating: 2,
+          "Uma das Top5 melhores fabricantes de faca profissional do Japão, também tem equipe dedicada de afiador profissional para facas de alta complexidade — fica perto do Sumida Park, do lado do rio.",
+        rating: 4,
       },
     ],
     gastronomia: {
@@ -536,34 +536,34 @@ const DAY_2: DayContent = {
     ],
     pois: [
       {
+        title: "Otemon Gate",
+        description:
+          "Antigo portão principal do Castelo de Edo, usado pelos daimyō em suas visitas oficiais ao shogun. Destruído em bombardeio aéreo em 1945 e reconstruído em 1967 — hoje é a entrada principal dos jardins, o primeiro ponto do passeio.",
+        rating: 4,
+      },
+      {
+        title: "Bansho (Casas de Guarda)",
+        description:
+          "Uma das três casas de guarda samurai que sobrevivem do Castelo de Edo — o Hyakunin Bansho abrigava quatro unidades de 120 guardas responsáveis pela proteção do recinto interno do castelo. Fica logo após a entrada por Otemon.",
+        rating: 3,
+      },
+      {
+        title: "Muralhas e Fossos Originais",
+        description:
+          "Trechos originais das muralhas de pedra e fossos que protegiam o Castelo de Edo, preservados desde o período feudal — visíveis ao longo de todo o caminho.",
+        rating: 3,
+      },
+      {
         title: "Fujimi-yagura",
         description:
           "Torre de vigia construída em 1659, uma das poucas estruturas originais remanescentes do Castelo de Edo — depois que o incêndio de 1657 destruiu a torre principal, passou a funcionar como sua substituta simbólica. Não é possível entrar, mas dá para ver de fora, dentro dos jardins. Uma das construções mais fotogênicas do local.",
         rating: 4,
       },
       {
-        title: "Otemon Gate",
-        description:
-          "Antigo portão principal do Castelo de Edo, usado pelos daimyō em suas visitas oficiais ao shogun. Destruído em bombardeio aéreo em 1945 e reconstruído em 1967 — hoje é a entrada principal dos jardins.",
-        rating: 4,
-      },
-      {
         title: "Tenshudai",
         description:
-          "Enorme base de pedra onde ficava a torre principal (tenshu) do Castelo de Edo — pode ser escalada, e é um dos pontos mais impressionantes dos jardins.",
+          "Enorme base de pedra onde ficava a torre principal (tenshu) do Castelo de Edo — pode ser escalada, e é um dos pontos mais impressionantes dos jardins. Fica no extremo norte do complexo, o ponto mais distante da entrada — bom encerramento do passeio.",
         rating: 4,
-      },
-      {
-        title: "Muralhas e Fossos Originais",
-        description:
-          "Trechos originais das muralhas de pedra e fossos que protegiam o Castelo de Edo, preservados desde o período feudal.",
-        rating: 3,
-      },
-      {
-        title: "Bansho (Casas de Guarda)",
-        description:
-          "Uma das três casas de guarda samurai que sobrevivem do Castelo de Edo — o Hyakunin Bansho abrigava quatro unidades de 120 guardas responsáveis pela proteção do recinto interno do castelo.",
-        rating: 3,
       },
     ],
   },
@@ -681,23 +681,23 @@ const DAY_3: DayContent = {
         rating: 5,
       },
       {
-        title: "Shibuya Crossing",
+        category: "Compras",
+        title: "Omotesando",
         description:
-          "O famoso cruzamento hexagonal de Shibuya, que fica caótico às 18h.",
-        rating: 4,
+          "Uma das maiores avenidas de boutiques e lojas de luxo de Tóquio, com diversos cafés e restaurantes importantes nas ruas ao redor da avenida principal — liga a saída do parque a Shibuya, seguindo para o sul.",
+        rating: 3,
       },
       {
         title: "Estátua de Hachiko",
         description:
-          "Estátua em homenagem ao cão que continuou esperando seu dono voltar para casa sem saber que ele havia falecido — deu origem ao filme \"Pra Sempre ao Seu Lado\".",
+          "Estátua em homenagem ao cão que continuou esperando seu dono voltar para casa sem saber que ele havia falecido — deu origem ao filme \"Pra Sempre ao Seu Lado\". Fica bem na saída da Estação Shibuya.",
         rating: 3,
       },
       {
-        category: "Compras",
-        title: "Omotesando",
+        title: "Shibuya Crossing",
         description:
-          "Uma das maiores avenidas de boutiques e lojas de luxo de Tóquio, com diversos cafés e restaurantes importantes nas ruas ao redor da avenida principal.",
-        rating: 3,
+          "O famoso cruzamento hexagonal de Shibuya, que fica caótico às 18h — ao lado da estátua de Hachiko, último ponto antes de seguir para Shinjuku.",
+        rating: 4,
       },
     ],
     gastronomia: {
@@ -717,18 +717,18 @@ const DAY_3: DayContent = {
         "Bairro que reúne o maior terminal ferroviário do mundo, arranha-céus corporativos, o distrito de entretenimento de Kabukicho e algumas das vielas mais icônicas de Tóquio — um contraste denso entre o Japão corporativo e o mais boêmio.",
     },
     deslocamento: {
-      estacaoOrigem: { nome: "Estação Harajuku", nomeJapones: "原宿駅" },
+      estacaoOrigem: { nome: "Estação Shibuya", nomeJapones: "渋谷駅" },
       linha: { codigo: "JY", nome: "JR Yamanote Line", cor: "#8FAADC" },
       estacaoDestino: { nome: "Estação Shinjuku", nomeJapones: "新宿駅" },
       opcoes: [
         {
           meio: "Trem JR",
-          tempo: "≈5 min",
+          tempo: "≈7 min",
           Icon: IconMetro,
           recomendado: true,
           detalhes: [
             "Linha direta (Yamanote Line), sem baldeação.",
-            "Harajuku fica a poucos minutos a pé do Parque de Yoyogi.",
+            "Embarque na mesma estação onde termina o passeio por Shibuya Crossing.",
           ],
         },
         {
@@ -742,7 +742,7 @@ const DAY_3: DayContent = {
         },
       ],
       recomendacao:
-        "De Harajuku até Shinjuku são cerca de 5 minutos de trem pela JR Yamanote Line, sem baldeação — uma das linhas mais frequentes de Tóquio.",
+        "De Shibuya até Shinjuku são cerca de 7 minutos de trem pela JR Yamanote Line, sem baldeação — a mesma linha usada em quase todo o trecho central de Tóquio.",
     },
     atracaoPrincipal: "Bairro de Shinjuku",
     atracaoPrincipalImagem: "/images/draft-shinjuku.png",
@@ -754,15 +754,27 @@ const DAY_3: DayContent = {
     atracaoPrincipalFoco: "center",
     pois: [
       {
-        title: "Estátua do Godzilla",
+        title: "Shinjuku Gyoen",
         description:
-          "Réplica em tamanho real na varanda do Hotel Gracery, símbolo do distrito de entretenimento de Kabukicho.",
+          "Um dos parques mais bonitos de Tóquio, misturando jardins japonês, francês e inglês — refúgio verde no meio do bairro mais denso da cidade. Melhor visitar logo na chegada, ainda com luz do dia (fica ao sul da estação, fecha à noite).",
+        rating: 4,
+      },
+      {
+        title: "Prédio do Governo Metropolitano de Tóquio + Mirante",
+        description:
+          "Torres gêmeas projetadas por Kenzo Tange com mirante gratuito no 45º andar e vista panorâmica da cidade — em dias claros, dá para ver o Monte Fuji. Fica no lado oeste da estação; ideal chegar perto do fim da tarde para ver o pôr do sol.",
         rating: 4,
       },
       {
         title: "Gato 3D Gigante",
         description:
-          "Gato tridimensional gigante exibido em telão curvo no edifício Cross Shinjuku Vision, na saída leste da estação — uma das atrações mais fotografadas do bairro.",
+          "Gato tridimensional gigante exibido em telão curvo no edifício Cross Shinjuku Vision, na saída leste da estação — uma das atrações mais fotografadas do bairro, já a caminho de Kabukicho.",
+        rating: 4,
+      },
+      {
+        title: "Estátua do Godzilla",
+        description:
+          "Réplica em tamanho real na varanda do Hotel Gracery, símbolo do distrito de entretenimento de Kabukicho — pertinho do Gato 3D.",
         rating: 4,
       },
       {
@@ -774,20 +786,8 @@ const DAY_3: DayContent = {
       {
         title: "Golden Gai",
         description:
-          "Rede de vielas estreitas com mais de 200 bares minúsculos, a maioria com capacidade para menos de 10 pessoas.",
+          "Rede de vielas estreitas com mais de 200 bares minúsculos, a maioria com capacidade para menos de 10 pessoas — encostado em Kabukicho, último ponto da noite antes do onsen Thermae-Yu.",
         rating: 5,
-      },
-      {
-        title: "Prédio do Governo Metropolitano de Tóquio + Mirante",
-        description:
-          "Torres gêmeas projetadas por Kenzo Tange com mirante gratuito no 45º andar e vista panorâmica da cidade — em dias claros, dá para ver o Monte Fuji.",
-        rating: 4,
-      },
-      {
-        title: "Shinjuku Gyoen",
-        description:
-          "Um dos parques mais bonitos de Tóquio, misturando jardins japonês, francês e inglês — refúgio verde no meio do bairro mais denso da cidade.",
-        rating: 4,
       },
     ],
     gastronomia: {
@@ -921,8 +921,21 @@ const DAY_4: DayContent = {
     pois: [
       {
         category: "Compras",
+        title: "Akihabara Radio Kaikan",
+        description:
+          "Action figures e um shopping com um pouco de tudo — logo na saída Electric Town da estação, o primeiro ponto do passeio.",
+        rating: 3,
+      },
+      {
+        category: "Compras",
         title: "Animate",
         description: "Uma das maiores redes de lojas de mangá do Japão.",
+        rating: 4,
+      },
+      {
+        category: "Compras",
+        title: "Mandarake Complex",
+        description: "Mangá e action figures.",
         rating: 4,
       },
       {
@@ -934,14 +947,8 @@ const DAY_4: DayContent = {
       },
       {
         category: "Compras",
-        title: "Mandarake Complex",
-        description: "Mangá e action figures.",
-        rating: 4,
-      },
-      {
-        category: "Compras",
-        title: "Akihabara Radio Kaikan",
-        description: "Action figures e um shopping com um pouco de tudo.",
+        title: "Hareruya 2",
+        description: "Pokémon Trading Card Game.",
         rating: 3,
       },
       {
@@ -951,22 +958,17 @@ const DAY_4: DayContent = {
         rating: 3,
       },
       {
-        category: "Compras",
-        title: "Hareruya 2",
-        description: "Pokémon Trading Card Game.",
-        rating: 3,
-      },
-      {
-        category: "Compras",
-        title: "BIC Camera ou Yodobashi Camera",
-        description: "Grandes lojas de eletrônicos.",
-        rating: 3,
-      },
-      {
         category: "Curiosidade",
         title: "Weird Vending Machine Corner",
         description: "Cantinho com máquinas de venda automática bizarras e inusitadas, um clássico despretensioso de Akihabara.",
         rating: 2,
+      },
+      {
+        category: "Compras",
+        title: "BIC Camera ou Yodobashi Camera",
+        description:
+          "Grandes lojas de eletrônicos — Yodobashi-Akiba fica do lado leste da estação (saída Showa-dori), um bom último ponto antes de seguir para o almoço.",
+        rating: 3,
       },
     ],
     gastronomia: {
@@ -1039,15 +1041,15 @@ const DAY_4: DayContent = {
           "Bairro badalado de Tóquio que reúne o Mori Tower, seus museus e jardins, e a vida noturna de Roppongi — principal polo de baladas e bares da cidade.",
         pois: [
           {
+            title: "Aranha Gigante de Louise Bourgeois",
+            description:
+              "A única no mundo preparada para terremotos, aos pés do Mori Tower — o primeiro ponto ao chegar em Roppongi Hills.",
+            rating: 3,
+          },
+          {
             title: "Museu de Arte Moderna Mori",
             description: "Museu de arte contemporânea no topo do Mori Tower.",
             rating: 4,
-          },
-          {
-            title: "Aranha Gigante de Louise Bourgeois",
-            description:
-              "A única no mundo preparada para terremotos, aos pés do Mori Tower.",
-            rating: 3,
           },
           {
             title: "Mori Garden",
@@ -1056,7 +1058,8 @@ const DAY_4: DayContent = {
           },
           {
             title: "Hinokicho Park",
-            description: "Parque tranquilo no coração de Roppongi.",
+            description:
+              "Parque tranquilo no coração de Roppongi, a poucos minutos a pé do Mori Tower.",
             rating: 2,
           },
         ],
@@ -1176,14 +1179,21 @@ const DAY_5: DayContent = {
     ],
     pois: [
       {
-        title: "Ninenzaka",
-        description: "Ladeira histórica de casas tradicionais.",
+        title: "Sannenzaka",
+        description:
+          "Ladeira histórica de casas tradicionais, logo na descida a partir do templo.",
         rating: 4,
       },
       {
-        title: "Sannenzaka",
-        description: "Continuação de Ninenzaka, rumo ao templo.",
+        title: "Ninenzaka",
+        description: "Continuação de Sannenzaka, descendo rumo a Gion.",
         rating: 4,
+      },
+      {
+        title: "Café % Arabica Kyoto Higashiyama",
+        description:
+          "Cafeteria minimalista muito concorrida, a poucos passos da Pagode Yasaka — última parada antes de seguir para Gion.",
+        rating: 2,
       },
     ],
     gastronomia: {
@@ -1400,29 +1410,28 @@ const DAY_6: DayContent = {
     ],
     pois: [
       {
-        title: "Museu do Mangá de Kyoto",
-        description: "Acervo com milhares de títulos de mangá.",
-        rating: 3,
-      },
-      {
-        title: "Nintendo Store Kyoto",
-        description: "A Nintendo fica localizada em Kyoto.",
-        rating: 3,
-      },
-      {
         title: "Ryoan-ji",
-        description: "Templo zen famoso pelo jardim de pedras.",
+        description:
+          "Templo zen famoso pelo jardim de pedras — pega o mesmo ônibus/circuito de Kinkaku-ji, poucos minutos de distância.",
         rating: 4,
       },
       {
         title: "Ninna-ji",
-        description: "Templo histórico com belas cerejeiras.",
+        description:
+          "Templo histórico com belas cerejeiras, um pouco mais além de Ryoan-ji no mesmo circuito.",
         rating: 2,
       },
       {
-        title: "Café % Arabica Kyoto",
-        description: "Cafeteria minimalista muito concorrida.",
-        rating: 2,
+        title: "Museu do Mangá de Kyoto",
+        description:
+          "Acervo com milhares de títulos de mangá — fica no centro de Kyoto (Karasuma-Oike), fora da rota de Kinkaku-ji: exige um deslocamento à parte (~20-30 min), não dá pra encaixar sem voltar ao centro.",
+        rating: 3,
+      },
+      {
+        title: "Nintendo Store Kyoto",
+        description:
+          "Loja oficial da Nintendo no Takashimaya, no centro de Kyoto — também fora da rota de Kinkaku-ji, exige o mesmo deslocamento ao centro do Museu do Mangá.",
+        rating: 3,
       },
     ],
     gastronomia: {
@@ -1652,15 +1661,16 @@ const DAY_7: DayContent = {
         rating: 3,
       },
       {
-        title: "Museu de Espadas",
-        description: "Coleção de espadas samurai tradicionais.",
-        rating: 3,
-      },
-      {
         title: "Santuário Nomi-no-Sukune",
         description:
-          "Monumento com os nomes de todos os Yokozuna (Título máximo de lutador de Sumô).",
+          "Monumento com os nomes de todos os Yokozuna (Título máximo de lutador de Sumô) — pertinho do Kokugikan.",
         rating: 2,
+      },
+      {
+        title: "Museu de Espadas",
+        description:
+          "Coleção de espadas samurai tradicionais, a alguns minutos a pé do estádio.",
+        rating: 3,
       },
     ],
     gradeHorarios: {
