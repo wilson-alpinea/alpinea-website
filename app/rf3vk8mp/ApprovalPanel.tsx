@@ -2706,6 +2706,10 @@ type HotelInfo = {
   site?: string;
   checkin: string;
   checkout: string;
+  // Imagem de fundo do cabeçalho "Informações do hotel" — só definida quando
+  // existe uma imagem real (mural, ilustração ou foto) pra usar; sem isso o
+  // cabeçalho não aparece e o nome do hotel vai direto no card de identificação.
+  fotoHero?: string;
   estrutura: HotelAmenity[];
   essenciais: HotelNearby[];
   // Seção final, só preenchida quando existe informação real o bastante pra
@@ -2738,6 +2742,7 @@ const HOTEIS: HotelInfo[] = [
     site: "https://www.discoverasr.com/en/lyf/japan/lyf-ginza-tokyo",
     checkin: "A partir das 15h00",
     checkout: "Até às 11h00",
+    fotoHero: "/images/lyf-mural-fachada.png",
     estrutura: [
       { label: "Wi-Fi grátis em todo o hotel", Icon: IconWifi },
       { label: "Recepção 24h", Icon: IconClock },
@@ -2888,7 +2893,9 @@ const HOTEIS: HotelInfo[] = [
     cidade: "Kyoto",
     nome: "Daiwa Roynet Hotel Kyoto-Ekimae PREMIER",
     bairro: "Karasuma-guchi, em frente à Kyoto Station",
-    endereco: "707-2 Higashishiokojicho, Karasuma-dori, Shimogyo-ku, Kyoto",
+    endereco: "707-2 Higashishiokojicho, Karasuma-dori, Shimogyo-ku, Kyoto 600-8216",
+    enderecoJapones: "〒600-8216 京都府京都市下京区東塩小路町707-2",
+    telefone: "+81 75-344-3055",
     site: "https://www.daiwaroynet.jp/en/kyoto-ekimae/",
     checkin: "A partir das 14h00",
     checkout: "Até às 11h00",
@@ -2925,12 +2932,30 @@ const HOTEIS: HotelInfo[] = [
         Icon: IconCross,
       },
     ],
+    informacoesUteis: [
+      {
+        label: "Bagagem",
+        texto:
+          "Guarda-volumes disponível na recepção. Consulte diretamente o hotel sobre armazenamento antes do check-in ou após o check-out.",
+      },
+      {
+        label: "Atendimento",
+        texto: "Recepção 24h.",
+      },
+      {
+        label: "Em caso de emergência",
+        texto:
+          "Número de emergência no Japão: 119 (ambulância/incêndio) ou 110 (polícia). Hospital de referência: Koseikai Takeda Hospital, pronto-socorro 24h a ~5 min a pé do hotel.",
+      },
+    ],
   },
   {
     cidade: "Tokyo 2",
     nome: "remm Tokyo Kyobashi",
     bairro: "Kyobashi, Chuo-ku",
-    endereco: "2-6-21 Kyobashi, Chuo-ku, Tokyo",
+    endereco: "2-6-21 Kyobashi, Chuo-ku, Tokyo 104-0031",
+    enderecoJapones: "〒104-0031 東京都中央区京橋2-6-21",
+    telefone: "+81 3-6843-0606",
     site: "https://www.hankyu-hotel.com/en/hotel/remm/tokyo-kyobashi",
     checkin: "14h00 às 24h00",
     checkout: "Até às 12h00",
@@ -2976,6 +3001,22 @@ const HOTEIS: HotelInfo[] = [
         Icon: IconCross,
       },
     ],
+    informacoesUteis: [
+      {
+        label: "Bagagem",
+        texto:
+          "Guarda-volumes disponível na recepção. Consulte diretamente o hotel sobre armazenamento antes do check-in ou após o check-out.",
+      },
+      {
+        label: "Atendimento",
+        texto: "Recepção 24h.",
+      },
+      {
+        label: "Em caso de emergência",
+        texto:
+          "Número de emergência no Japão: 119 (ambulância/incêndio) ou 110 (polícia). Hospital de referência: St. Luke's International Hospital.",
+      },
+    ],
   },
 ];
 
@@ -2991,11 +3032,11 @@ function HotelGuestGuide({ hotel }: { hotel: HotelInfo }) {
 
   return (
     <div className="overflow-hidden rounded-2xl border border-[#DDD8CF]">
-      {/* 1. Informações do hotel — fundo com o mural + etiqueta com o nome */}
-      {hotel.cidade === "Tokyo 1" && (
+      {/* 1. Informações do hotel — fundo com o mural/foto + etiqueta com o nome */}
+      {hotel.fotoHero && (
         <div className="relative flex min-h-[150px] items-end overflow-hidden border-b border-[#DDD8CF] p-5 sm:min-h-[190px] sm:p-8">
           <Image
-            src="/images/lyf-mural-fachada.png"
+            src={hotel.fotoHero}
             alt=""
             fill
             sizes="(max-width: 640px) 100vw, 800px"
@@ -3011,12 +3052,12 @@ function HotelGuestGuide({ hotel }: { hotel: HotelInfo }) {
 
       {/* Identificação — endereço, telefone, site e horários */}
       <div className="border-b border-[#DDD8CF] bg-[#FAF9F6] px-5 py-6 text-center sm:px-8">
-        {hotel.cidade !== "Tokyo 1" && (
+        {!hotel.fotoHero && (
           <p className="text-base font-semibold text-[#24211D] sm:text-lg">
             {hotel.nome}
           </p>
         )}
-        <p className={`text-sm text-[#24211D]/80 sm:text-base ${hotel.cidade !== "Tokyo 1" ? "mt-1" : ""}`}>
+        <p className={`text-sm text-[#24211D]/80 sm:text-base ${!hotel.fotoHero ? "mt-1" : ""}`}>
           {hotel.endereco}
         </p>
         {hotel.enderecoJapones && (
