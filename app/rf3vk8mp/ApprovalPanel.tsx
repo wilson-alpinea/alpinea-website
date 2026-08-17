@@ -43,15 +43,19 @@ type Gastronomia = {
   // Parágrafo curto de contexto (ex.: "está integrada ao shopping X, que
   // reúne diversas opções de restaurantes...") — mostrado acima da lista.
   intro?: string;
+  // Rótulo acima da lista de snacks/itens simples (ex.: "Snacks de rua").
+  itensLabel?: string;
   itens?: { nome: string; descricao?: string; foto?: string }[];
-  // Cards ricos com foto — usado quando há fotos reais dos restaurantes;
-  // tem prioridade sobre `itens` quando presente.
+  // Rótulo acima da lista de restaurantes (ex.: "Opções de refeição").
+  restaurantesLabel?: string;
+  // Cards ricos com foto — usado quando há fotos reais dos restaurantes.
+  // Pode aparecer junto com `itens` (ex.: snacks de rua + restaurantes).
   restaurantes?: {
     nome: string;
-    descricao: string;
-    localizacao: string;
-    preco: string;
-    horario: string;
+    descricao?: string;
+    localizacao?: string;
+    preco?: string;
+    horario?: string;
     foto?: string;
   }[];
   // Mapa clicável (zoom) com a localização dos restaurantes.
@@ -532,6 +536,7 @@ const DAY_1: DayContent = {
     ],
     gastronomia: {
       subtitulo: "Grande quantidade de lojas que vendem snacks de rua",
+      itensLabel: "Snacks de rua · Nakamise-dori",
       itens: [
         {
           nome: "Melon Pan (Kagetsudo)",
@@ -573,6 +578,24 @@ const DAY_1: DayContent = {
           descricao:
             "Croquete de carne empanado, crocante por fora e suculento por dentro — uma das filas mais disputadas da rua.",
           foto: "/images/nakamise-asakusa-menchi.jpg",
+        },
+      ],
+      restaurantesLabel: "Opções de refeição",
+      restaurantes: [
+        {
+          nome: "Tanaka Soba Ten Asakusa Ten",
+          descricao: "Ramen tradicional",
+          foto: "/images/nakamise-tanaka-soba.jpg",
+        },
+        {
+          nome: "Sushi Zanmai Asakusa Kaminari Mon Ten",
+          descricao: "Sushi de balcão",
+          foto: "/images/nakamise-sushi-zanmai.jpg",
+        },
+        {
+          nome: "Asakusa Amai",
+          descricao: "Tempura",
+          foto: "/images/nakamise-asakusa-amai-tempura.jpg",
         },
       ],
     },
@@ -2470,73 +2493,53 @@ function GastronomiaBlock({ gastronomia }: { gastronomia: Gastronomia }) {
         </p>
       )}
 
-      {temRestaurantes ? (
-        <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
-          {gastronomia.restaurantes!.map((r) => (
-            <div
-              key={r.nome}
-              className="overflow-hidden rounded-2xl border border-[#DDD8CF] bg-[#FDFCF9]"
-            >
-              {r.foto && (
-                <button
-                  type="button"
-                  onClick={() => setZoomedFoto({ src: r.foto!, alt: r.nome })}
-                  className="group relative block aspect-square w-full overflow-hidden"
-                >
-                  <img
-                    src={r.foto}
-                    alt={r.nome}
-                    className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
-                  />
-                  <div className="absolute inset-0 flex items-center justify-center bg-black/0 transition duration-300 group-hover:bg-black/25">
-                    <span className="flex h-8 w-8 scale-75 items-center justify-center rounded-full bg-white/90 text-[#173B45] opacity-0 shadow-md transition duration-300 group-hover:scale-100 group-hover:opacity-100">
-                      <IconZoom className="h-4 w-4" />
-                    </span>
-                  </div>
-                </button>
-              )}
-              <div className="p-4">
-                <p className="text-sm font-semibold text-[#24211D]">
-                  {r.nome}
-                </p>
-                <p className="mt-0.5 text-xs text-[#B96432]">
-                  {r.descricao}
-                </p>
-                <div className="mt-3 space-y-1 border-t border-[#DDD8CF] pt-3 text-[11px] leading-5 text-[#24211D]/60">
-                  <p>📍 {r.localizacao}</p>
-                  <p>¥ {r.preco}</p>
-                  <p>🕒 {r.horario}</p>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      ) : gastronomia.itens && gastronomia.itens.length > 0 ? (
-        gastronomia.itens.some((item) => item.foto) ? (
-          <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3">
-            {gastronomia.itens.map((item) =>
-              item.foto ? (
-                <div
-                  key={item.nome}
-                  className="overflow-hidden rounded-2xl border border-[#DDD8CF] bg-[#FDFCF9]"
-                >
-                  <button
-                    type="button"
-                    onClick={() => setZoomedFoto({ src: item.foto!, alt: item.nome })}
-                    className="group relative block aspect-square w-full overflow-hidden"
+      {gastronomia.itens && gastronomia.itens.length > 0 && (
+        <>
+          {gastronomia.itensLabel && (
+            <p className="mt-4 text-[11px] font-bold uppercase tracking-[0.15em] text-[#24211D]/45">
+              {gastronomia.itensLabel}
+            </p>
+          )}
+          {gastronomia.itens.some((item) => item.foto) ? (
+            <div className={`grid grid-cols-2 gap-3 sm:grid-cols-3 ${gastronomia.itensLabel ? "mt-2" : "mt-4"}`}>
+              {gastronomia.itens.map((item, i) =>
+                item.foto ? (
+                  <div
+                    key={`${item.nome}-${i}`}
+                    className="overflow-hidden rounded-2xl border border-[#DDD8CF] bg-[#FDFCF9]"
                   >
-                    <img
-                      src={item.foto}
-                      alt={item.nome}
-                      className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
-                    />
-                    <div className="absolute inset-0 flex items-center justify-center bg-black/0 transition duration-300 group-hover:bg-black/25">
-                      <span className="flex h-8 w-8 scale-75 items-center justify-center rounded-full bg-white/90 text-[#173B45] opacity-0 shadow-md transition duration-300 group-hover:scale-100 group-hover:opacity-100">
-                        <IconZoom className="h-4 w-4" />
-                      </span>
+                    <button
+                      type="button"
+                      onClick={() => setZoomedFoto({ src: item.foto!, alt: item.nome })}
+                      className="group relative block aspect-square w-full overflow-hidden"
+                    >
+                      <img
+                        src={item.foto}
+                        alt={item.nome}
+                        className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
+                      />
+                      <div className="absolute inset-0 flex items-center justify-center bg-black/0 transition duration-300 group-hover:bg-black/25">
+                        <span className="flex h-8 w-8 scale-75 items-center justify-center rounded-full bg-white/90 text-[#173B45] opacity-0 shadow-md transition duration-300 group-hover:scale-100 group-hover:opacity-100">
+                          <IconZoom className="h-4 w-4" />
+                        </span>
+                      </div>
+                    </button>
+                    <div className="p-3">
+                      <p className="text-xs font-semibold text-[#24211D]">
+                        {item.nome}
+                      </p>
+                      {item.descricao && (
+                        <p className="mt-0.5 text-[11px] leading-4 text-[#24211D]/70">
+                          {item.descricao}
+                        </p>
+                      )}
                     </div>
-                  </button>
-                  <div className="p-3">
+                  </div>
+                ) : (
+                  <div
+                    key={`${item.nome}-${i}`}
+                    className="flex flex-col justify-center rounded-2xl border border-dashed border-[#DDD8CF] bg-[#FDFCF9] p-3"
+                  >
                     <p className="text-xs font-semibold text-[#24211D]">
                       {item.nome}
                     </p>
@@ -2546,37 +2549,77 @@ function GastronomiaBlock({ gastronomia }: { gastronomia: Gastronomia }) {
                       </p>
                     )}
                   </div>
-                </div>
-              ) : (
-                <div
-                  key={item.nome}
-                  className="flex flex-col justify-center rounded-2xl border border-dashed border-[#DDD8CF] bg-[#FDFCF9] p-3"
-                >
-                  <p className="text-xs font-semibold text-[#24211D]">
-                    {item.nome}
-                  </p>
+                )
+              )}
+            </div>
+          ) : (
+            <ul className="mt-3 space-y-1.5">
+              {gastronomia.itens.map((item, i) => (
+                <li key={`${item.nome}-${i}`} className="text-sm leading-6 text-[#24211D]/85">
+                  <span className="font-semibold text-[#24211D]/95">{item.nome}</span>
                   {item.descricao && (
-                    <p className="mt-0.5 text-[11px] leading-4 text-[#24211D]/70">
-                      {item.descricao}
+                    <span className="text-[#24211D]/75"> — {item.descricao}</span>
+                  )}
+                </li>
+              ))}
+            </ul>
+          )}
+        </>
+      )}
+
+      {temRestaurantes && (
+        <>
+          {gastronomia.restaurantesLabel && (
+            <p className="mt-5 text-[11px] font-bold uppercase tracking-[0.15em] text-[#24211D]/45">
+              {gastronomia.restaurantesLabel}
+            </p>
+          )}
+          <div className={`grid grid-cols-1 gap-4 sm:grid-cols-2 ${gastronomia.restaurantesLabel ? "mt-2" : "mt-4"}`}>
+            {gastronomia.restaurantes!.map((r) => (
+              <div
+                key={r.nome}
+                className="overflow-hidden rounded-2xl border border-[#DDD8CF] bg-[#FDFCF9]"
+              >
+                {r.foto && (
+                  <button
+                    type="button"
+                    onClick={() => setZoomedFoto({ src: r.foto!, alt: r.nome })}
+                    className="group relative block aspect-square w-full overflow-hidden"
+                  >
+                    <img
+                      src={r.foto}
+                      alt={r.nome}
+                      className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
+                    />
+                    <div className="absolute inset-0 flex items-center justify-center bg-black/0 transition duration-300 group-hover:bg-black/25">
+                      <span className="flex h-8 w-8 scale-75 items-center justify-center rounded-full bg-white/90 text-[#173B45] opacity-0 shadow-md transition duration-300 group-hover:scale-100 group-hover:opacity-100">
+                        <IconZoom className="h-4 w-4" />
+                      </span>
+                    </div>
+                  </button>
+                )}
+                <div className="p-4">
+                  <p className="text-sm font-semibold text-[#24211D]">
+                    {r.nome}
+                  </p>
+                  {r.descricao && (
+                    <p className="mt-0.5 text-xs text-[#B96432]">
+                      {r.descricao}
                     </p>
                   )}
+                  {(r.localizacao || r.preco || r.horario) && (
+                    <div className="mt-3 space-y-1 border-t border-[#DDD8CF] pt-3 text-[11px] leading-5 text-[#24211D]/60">
+                      {r.localizacao && <p>📍 {r.localizacao}</p>}
+                      {r.preco && <p>¥ {r.preco}</p>}
+                      {r.horario && <p>🕒 {r.horario}</p>}
+                    </div>
+                  )}
                 </div>
-              )
-            )}
-          </div>
-        ) : (
-          <ul className="mt-3 space-y-1.5">
-            {gastronomia.itens.map((item) => (
-              <li key={item.nome} className="text-sm leading-6 text-[#24211D]/85">
-                <span className="font-semibold text-[#24211D]/95">{item.nome}</span>
-                {item.descricao && (
-                  <span className="text-[#24211D]/75"> — {item.descricao}</span>
-                )}
-              </li>
+              </div>
             ))}
-          </ul>
-        )
-      ) : null}
+          </div>
+        </>
+      )}
 
       {gastronomia.mapa ? (
         <>
