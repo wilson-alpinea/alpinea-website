@@ -2356,14 +2356,14 @@ const DAYS: DayContent[] = [
 // dedicado em vez de dividir a tarde com Sumida.
 const BAIRRO_STYLES = {
   Sumida: {
-    border: "border-[#173B45]",
+    border: "border-[#000000]",
     bg: "bg-[#F8FAF9]",
-    circle: "bg-[#173B45]",
-    text: "text-[#173B45]",
-    muted: "text-[#173B45]/70",
-    starMuted: "text-[#173B45]/25",
-    badge: "border-[#173B45]/30 bg-[#173B45]/10 text-[#173B45]",
-    chip: "border-[#173B45]/25 bg-[#FDFCF9] text-[#173B45]",
+    circle: "bg-[#000000]",
+    text: "text-[#000000]",
+    muted: "text-[#000000]/70",
+    starMuted: "text-[#000000]/25",
+    badge: "border-[#000000]/30 bg-[#000000]/10 text-[#000000]",
+    chip: "border-[#000000]/25 bg-[#FDFCF9] text-[#000000]",
   },
   Ryogoku: {
     border: "border-[#B96432]",
@@ -2441,7 +2441,7 @@ function PoiCard({ index, poi }: { index: number; poi: Poi }) {
             />
             <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent" />
             <div className="absolute inset-0 flex items-center justify-center bg-black/0 transition duration-300 group-hover:bg-black/25">
-              <span className="flex h-8 w-8 scale-75 items-center justify-center rounded-full bg-white/90 text-[#173B45] opacity-0 shadow-md transition duration-300 group-hover:scale-100 group-hover:opacity-100">
+              <span className="flex h-8 w-8 scale-75 items-center justify-center rounded-full bg-white/90 text-[#000000] opacity-0 shadow-md transition duration-300 group-hover:scale-100 group-hover:opacity-100">
                 <IconZoom className="h-4 w-4" />
               </span>
             </div>
@@ -2613,8 +2613,8 @@ function ResumoDiaBlock({
   resumo: NonNullable<DayContent["resumoDia"]>;
 }) {
   return (
-    <div className="mb-10 rounded-2xl border-2 border-[#173B45] bg-[#F8FAF9] p-5 sm:p-6">
-      <p className="mb-5 text-xs font-bold uppercase tracking-[0.25em] text-[#173B45]">
+    <div className="mb-10 rounded-2xl border-2 border-[#000000] bg-[#F8FAF9] p-5 sm:p-6">
+      <p className="mb-5 text-xs font-bold uppercase tracking-[0.25em] text-[#000000]">
         Resumo do Dia
       </p>
       <div>
@@ -2630,20 +2630,20 @@ function ResumoDiaBlock({
                   />
                 </div>
               ) : (
-                <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full border-2 border-dashed border-[#173B45]/25 text-[#173B45]/40 sm:h-[76px] sm:w-[76px]">
+                <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full border-2 border-dashed border-[#000000]/25 text-[#000000]/40 sm:h-[76px] sm:w-[76px]">
                   <IconClock className="h-6 w-6" />
                 </div>
               )}
               {i < resumo.passos.length - 1 && (
-                <span className="my-1 min-h-[18px] w-[2px] flex-1 rounded-full bg-[#173B45]/20" />
+                <span className="my-1 min-h-[18px] w-[2px] flex-1 rounded-full bg-[#000000]/20" />
               )}
             </div>
             <div className={`min-w-0 flex-1 pt-2.5 ${i < resumo.passos.length - 1 ? "pb-6" : ""}`}>
-              <p className="text-base font-semibold leading-tight text-[#173B45]">
+              <p className="text-base font-semibold leading-tight text-[#000000]">
                 {passo.titulo}
               </p>
               {passo.horario && (
-                <p className="mt-1 text-sm font-medium tracking-wide text-[#173B45]/60">
+                <p className="mt-1 text-sm font-medium tracking-wide text-[#000000]/60">
                   {passo.horario}
                 </p>
               )}
@@ -2732,7 +2732,7 @@ function GastronomiaBlock({ gastronomia }: { gastronomia: Gastronomia }) {
                         className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
                       />
                       <div className="absolute inset-0 flex items-center justify-center bg-black/0 transition duration-300 group-hover:bg-black/25">
-                        <span className="flex h-8 w-8 scale-75 items-center justify-center rounded-full bg-white/90 text-[#173B45] opacity-0 shadow-md transition duration-300 group-hover:scale-100 group-hover:opacity-100">
+                        <span className="flex h-8 w-8 scale-75 items-center justify-center rounded-full bg-white/90 text-[#000000] opacity-0 shadow-md transition duration-300 group-hover:scale-100 group-hover:opacity-100">
                           <IconZoom className="h-4 w-4" />
                         </span>
                       </div>
@@ -2813,7 +2813,7 @@ function GastronomiaBlock({ gastronomia }: { gastronomia: Gastronomia }) {
                       className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
                     />
                     <div className="absolute inset-0 flex items-center justify-center bg-black/0 transition duration-300 group-hover:bg-black/25">
-                      <span className="flex h-8 w-8 scale-75 items-center justify-center rounded-full bg-white/90 text-[#173B45] opacity-0 shadow-md transition duration-300 group-hover:scale-100 group-hover:opacity-100">
+                      <span className="flex h-8 w-8 scale-75 items-center justify-center rounded-full bg-white/90 text-[#000000] opacity-0 shadow-md transition duration-300 group-hover:scale-100 group-hover:opacity-100">
                         <IconZoom className="h-4 w-4" />
                       </span>
                     </div>
@@ -3045,10 +3045,10 @@ function NumberedStep({
   return (
     <div className="mb-8">
       <div className="mb-4 flex items-center gap-3">
-        <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#173B45] text-xs font-bold text-white">
+        <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#000000] text-xs font-bold text-white">
           {number}
         </span>
-        <p className="text-xs font-bold uppercase tracking-[0.25em] text-[#173B45]">
+        <p className="text-xs font-bold uppercase tracking-[0.25em] text-[#000000]">
           {label}
         </p>
       </div>
@@ -3265,7 +3265,7 @@ function MapaVisaoGeralBlock({
           />
         </div>
         <div className="absolute inset-0 flex items-center justify-center bg-black/0 transition duration-300 group-hover:bg-black/25">
-          <span className="flex h-9 w-9 scale-75 items-center justify-center rounded-full bg-white/90 text-[#173B45] opacity-0 shadow-md transition duration-300 group-hover:scale-100 group-hover:opacity-100">
+          <span className="flex h-9 w-9 scale-75 items-center justify-center rounded-full bg-white/90 text-[#000000] opacity-0 shadow-md transition duration-300 group-hover:scale-100 group-hover:opacity-100">
             <IconZoom className="h-4 w-4" />
           </span>
         </div>
@@ -3316,7 +3316,7 @@ function VisaoAnotadaBlock({
       <div className="mb-8">
         {visaoAnotada.simples ? (
           <div className="mb-4 flex items-center gap-2.5">
-            <span className="h-2 w-2 rounded-full bg-[#173B45]/50" />
+            <span className="h-2 w-2 rounded-full bg-[#000000]/50" />
             <span className="text-xs font-bold uppercase tracking-[0.2em] text-[#24211D]/55">
               {visaoAnotada.titulo ?? "Mapa"}
             </span>
@@ -3339,7 +3339,7 @@ function VisaoAnotadaBlock({
             className="block h-auto w-full transition duration-300 group-hover:scale-[1.02]"
           />
           <div className="absolute inset-0 flex items-center justify-center bg-black/0 transition duration-300 group-hover:bg-black/25">
-            <span className="flex h-9 w-9 scale-75 items-center justify-center rounded-full bg-white/90 text-[#173B45] opacity-0 shadow-md transition duration-300 group-hover:scale-100 group-hover:opacity-100">
+            <span className="flex h-9 w-9 scale-75 items-center justify-center rounded-full bg-white/90 text-[#000000] opacity-0 shadow-md transition duration-300 group-hover:scale-100 group-hover:opacity-100">
               <IconZoom className="h-4 w-4" />
             </span>
           </div>
@@ -3379,7 +3379,7 @@ function VisaoAnotadaBlock({
     <div className="mb-8">
       {visaoAnotada.simples ? (
         <div className="mb-4 flex items-center gap-2.5">
-          <span className="h-2 w-2 rounded-full bg-[#173B45]/50" />
+          <span className="h-2 w-2 rounded-full bg-[#000000]/50" />
           <span className="text-xs font-bold uppercase tracking-[0.2em] text-[#24211D]/55">
             {visaoAnotada.titulo ?? "Mapa"}
           </span>
@@ -3404,7 +3404,7 @@ function VisaoAnotadaBlock({
           className="block h-auto w-full transition duration-300 group-hover:scale-[1.01]"
         />
         <div className="absolute inset-0 flex items-center justify-center bg-black/0 transition duration-300 group-hover:bg-black/20">
-          <span className="flex h-9 w-9 scale-75 items-center justify-center rounded-full bg-white/90 text-[#173B45] opacity-0 shadow-md transition duration-300 group-hover:scale-100 group-hover:opacity-100">
+          <span className="flex h-9 w-9 scale-75 items-center justify-center rounded-full bg-white/90 text-[#000000] opacity-0 shadow-md transition duration-300 group-hover:scale-100 group-hover:opacity-100">
             <IconZoom className="h-4 w-4" />
           </span>
         </div>
@@ -3432,7 +3432,7 @@ function VisaoAnotadaBlock({
                   />
                   <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/25 via-transparent to-transparent" />
                   <div className="absolute inset-0 flex items-center justify-center bg-black/0 transition duration-300 group-hover:bg-black/25">
-                    <span className="flex h-9 w-9 scale-75 items-center justify-center rounded-full bg-white/90 text-[#173B45] opacity-0 shadow-md transition duration-300 group-hover:scale-100 group-hover:opacity-100">
+                    <span className="flex h-9 w-9 scale-75 items-center justify-center rounded-full bg-white/90 text-[#000000] opacity-0 shadow-md transition duration-300 group-hover:scale-100 group-hover:opacity-100">
                       <IconZoom className="h-4 w-4" />
                     </span>
                   </div>
@@ -3548,7 +3548,7 @@ function GaleriaBlock({
               />
               <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/25 via-transparent to-transparent" />
               <div className="absolute inset-0 flex items-center justify-center bg-black/0 transition duration-300 group-hover:bg-black/20">
-                <span className="flex h-9 w-9 scale-75 items-center justify-center rounded-full bg-white/90 text-[#173B45] opacity-0 shadow-md transition duration-300 group-hover:scale-100 group-hover:opacity-100">
+                <span className="flex h-9 w-9 scale-75 items-center justify-center rounded-full bg-white/90 text-[#000000] opacity-0 shadow-md transition duration-300 group-hover:scale-100 group-hover:opacity-100">
                   <IconZoom className="h-4 w-4" />
                 </span>
               </div>
@@ -3626,7 +3626,7 @@ function PeriodBlock({
           period.atracaoPrincipalCompacta
             ? "mx-auto aspect-[3/4] max-w-[280px] rounded-2xl"
             : "-mx-6 aspect-[4/3] sm:-mx-10 sm:aspect-[16/9]"
-        } ${period.atracaoPrincipalImagem ? "" : "border-2 border-[#173B45]"}`}
+        } ${period.atracaoPrincipalImagem ? "" : "border-2 border-[#000000]"}`}
       >
         {period.atracaoPrincipalImagem ? (
           <>
@@ -3658,7 +3658,7 @@ function PeriodBlock({
         ) : (
           <div className="flex h-full items-center justify-center bg-[#F8FAF9] px-5">
             <h3
-              className={`${displayClassName} text-2xl font-medium text-[#173B45] md:text-3xl`}
+              className={`${displayClassName} text-2xl font-medium text-[#000000] md:text-3xl`}
             >
               {period.atracaoPrincipal}
             </h3>
@@ -3673,12 +3673,12 @@ function PeriodBlock({
       )}
 
       {period.percursoEssencial && (
-        <div className="mb-8 rounded-2xl border-2 border-[#173B45] bg-[#F8FAF9] p-5 sm:p-6">
+        <div className="mb-8 rounded-2xl border-2 border-[#000000] bg-[#F8FAF9] p-5 sm:p-6">
           <div className="flex flex-wrap items-center justify-between gap-2">
-            <p className="text-xs font-bold uppercase tracking-[0.25em] text-[#173B45]">
+            <p className="text-xs font-bold uppercase tracking-[0.25em] text-[#000000]">
               Percurso essencial
             </p>
-            <span className="rounded-full border border-[#173B45]/25 bg-white px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wide text-[#173B45]">
+            <span className="rounded-full border border-[#000000]/25 bg-white px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wide text-[#000000]">
               {period.percursoEssencial.duracao}
             </span>
           </div>
@@ -3695,12 +3695,12 @@ function PeriodBlock({
                       />
                     </div>
                   ) : (
-                    <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full border-2 border-dashed border-[#173B45]/25 text-[#173B45]/40 sm:h-[76px] sm:w-[76px]">
+                    <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full border-2 border-dashed border-[#000000]/25 text-[#000000]/40 sm:h-[76px] sm:w-[76px]">
                       <IconWalk className="h-6 w-6" />
                     </div>
                   )}
                   {i < period.percursoEssencial!.passos.length - 1 && (
-                    <span className="my-1 min-h-[18px] w-[2px] flex-1 rounded-full bg-[#173B45]/20" />
+                    <span className="my-1 min-h-[18px] w-[2px] flex-1 rounded-full bg-[#000000]/20" />
                   )}
                 </div>
                 <div
@@ -3708,11 +3708,11 @@ function PeriodBlock({
                     i < period.percursoEssencial!.passos.length - 1 ? "pb-6" : ""
                   }`}
                 >
-                  <p className="text-base font-semibold leading-tight text-[#173B45]">
+                  <p className="text-base font-semibold leading-tight text-[#000000]">
                     {passo.titulo}
                   </p>
                   {passo.horario && (
-                    <p className="mt-1 text-sm font-medium tracking-wide text-[#173B45]/60">
+                    <p className="mt-1 text-sm font-medium tracking-wide text-[#000000]/60">
                       {passo.horario}
                     </p>
                   )}
@@ -3720,7 +3720,7 @@ function PeriodBlock({
               </div>
             ))}
           </div>
-          <p className="mt-4 text-xs leading-5 text-[#173B45]/60">
+          <p className="mt-4 text-xs leading-5 text-[#000000]/60">
             O que dá pra fazer sem pressa. Os detalhes de cada ponto vêm a seguir — comece por aqui.
           </p>
         </div>
@@ -3801,7 +3801,7 @@ function PeriodBlock({
                             className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
                           />
                           <div className="absolute inset-0 flex items-center justify-center bg-black/0 transition duration-300 group-hover:bg-black/25">
-                            <span className="flex h-7 w-7 scale-75 items-center justify-center rounded-full bg-white/90 text-[#173B45] opacity-0 shadow-md transition duration-300 group-hover:scale-100 group-hover:opacity-100">
+                            <span className="flex h-7 w-7 scale-75 items-center justify-center rounded-full bg-white/90 text-[#000000] opacity-0 shadow-md transition duration-300 group-hover:scale-100 group-hover:opacity-100">
                               <IconZoom className="h-3.5 w-3.5" />
                             </span>
                           </div>
@@ -3891,7 +3891,7 @@ function PeriodBlock({
           {period.banheirosProximos && period.banheirosProximos.length > 0 && (
             <div className="mb-5 rounded-2xl border border-[#DDD8CF] bg-[#FAF9F6] p-5">
               <p className="mb-3.5 flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.15em] text-[#24211D]/55">
-                <IconToilet className="h-4 w-4 text-[#173B45]" />
+                <IconToilet className="h-4 w-4 text-[#000000]" />
                 Banheiros Públicos Mais Próximos
               </p>
               <div className="space-y-3.5">
@@ -4102,7 +4102,7 @@ function SubAtracaoBlock({
       {subAtracao.visaoAnotada ? (
         <>
           <h3
-            className={`${displayClassName} mb-5 text-center text-2xl font-medium text-[#173B45] md:text-3xl`}
+            className={`${displayClassName} mb-5 text-center text-2xl font-medium text-[#000000] md:text-3xl`}
           >
             {subAtracao.titulo}
           </h3>
@@ -4120,7 +4120,7 @@ function SubAtracaoBlock({
         <div className="mx-auto flex max-w-lg items-center gap-4 rounded-2xl border border-[#DDD8CF] bg-[#FAF9F6] p-3">
           <div
             className={`relative aspect-square h-36 w-36 shrink-0 overflow-hidden rounded-xl sm:h-40 sm:w-40 ${
-              subAtracao.imagem ? "" : "border-2 border-[#173B45]"
+              subAtracao.imagem ? "" : "border-2 border-[#000000]"
             }`}
           >
             {subAtracao.imagem ? (
@@ -4156,7 +4156,7 @@ function SubAtracaoBlock({
         <>
           <div
             className={`relative mb-5 aspect-[4/3] overflow-hidden rounded-2xl sm:aspect-[16/10] ${
-              subAtracao.imagem ? "" : "border-2 border-[#173B45]"
+              subAtracao.imagem ? "" : "border-2 border-[#000000]"
             }`}
           >
             {subAtracao.imagem ? (
@@ -4182,7 +4182,7 @@ function SubAtracaoBlock({
             ) : (
               <div className="flex h-full items-center justify-center bg-[#F8FAF9] px-5">
                 <h3
-                  className={`${displayClassName} text-2xl font-medium text-[#173B45] md:text-3xl`}
+                  className={`${displayClassName} text-2xl font-medium text-[#000000] md:text-3xl`}
                 >
                   {subAtracao.titulo}
                 </h3>
@@ -4944,17 +4944,17 @@ function HotelGuestGuide({ hotel }: { hotel: HotelInfo }) {
               href={hotel.site}
               target="_blank"
               rel="noopener noreferrer"
-              className="font-semibold uppercase tracking-[0.1em] text-[#173B45] hover:underline"
+              className="font-semibold uppercase tracking-[0.1em] text-[#000000] hover:underline"
             >
               Site oficial
             </a>
           )}
         </div>
         <div className="mt-4 flex flex-wrap items-center justify-center gap-2.5">
-          <span className="rounded-full border border-[#173B45]/25 bg-[#173B45]/[0.06] px-4 py-1.5 text-[10px] font-bold uppercase tracking-[0.2em] text-[#173B45]">
+          <span className="rounded-full border border-[#000000]/25 bg-[#000000]/[0.06] px-4 py-1.5 text-[10px] font-bold uppercase tracking-[0.2em] text-[#000000]">
             Check-in · {hotel.checkin}
           </span>
-          <span className="rounded-full border border-[#173B45]/25 bg-[#173B45]/[0.06] px-4 py-1.5 text-[10px] font-bold uppercase tracking-[0.2em] text-[#173B45]">
+          <span className="rounded-full border border-[#000000]/25 bg-[#000000]/[0.06] px-4 py-1.5 text-[10px] font-bold uppercase tracking-[0.2em] text-[#000000]">
             Check-out · {hotel.checkout}
           </span>
         </div>
@@ -4968,7 +4968,7 @@ function HotelGuestGuide({ hotel }: { hotel: HotelInfo }) {
         <div className="grid grid-cols-1 gap-x-8 gap-y-3.5 sm:grid-cols-2">
           {hotel.estrutura.map((item) => (
             <div key={item.label} className="flex items-start gap-3">
-              <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#173B45]/[0.08] text-[#173B45]">
+              <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#000000]/[0.08] text-[#000000]">
                 <item.Icon className="h-4 w-4" />
               </span>
               <span className="pt-1.5 text-sm leading-5 text-[#24211D]/92">
@@ -5055,7 +5055,7 @@ function HotelGuestGuide({ hotel }: { hotel: HotelInfo }) {
                   )}
                 </div>
                 {rotas.length > 0 && (
-                  <span className="ml-1 flex h-7 w-7 shrink-0 items-center justify-center self-center rounded-full bg-[#173B45]/[0.06] text-[#173B45] transition group-hover:bg-[#173B45]/[0.12]">
+                  <span className="ml-1 flex h-7 w-7 shrink-0 items-center justify-center self-center rounded-full bg-[#000000]/[0.06] text-[#000000] transition group-hover:bg-[#000000]/[0.12]">
                     <IconZoom className="h-3.5 w-3.5" />
                   </span>
                 )}
@@ -5102,7 +5102,7 @@ function HotelGuestGuide({ hotel }: { hotel: HotelInfo }) {
                           className="object-cover transition duration-300 group-hover:scale-105"
                         />
                         <div className="absolute inset-0 flex items-center justify-center bg-black/0 transition duration-300 group-hover:bg-black/35">
-                          <span className="flex h-9 w-9 scale-75 items-center justify-center rounded-full bg-white/90 text-[#173B45] opacity-0 shadow-md transition duration-300 group-hover:scale-100 group-hover:opacity-100">
+                          <span className="flex h-9 w-9 scale-75 items-center justify-center rounded-full bg-white/90 text-[#000000] opacity-0 shadow-md transition duration-300 group-hover:scale-100 group-hover:opacity-100">
                             <IconZoom className="h-4 w-4" />
                           </span>
                         </div>
@@ -5286,7 +5286,7 @@ export function ApprovalPanel({
                     d.badge
                       ? "text-[9px] tracking-tight text-white [text-shadow:0_1px_3px_rgba(0,0,0,0.75)]"
                       : active
-                        ? "shadow-[0_0_0_2px_#173B45]"
+                        ? "shadow-[0_0_0_2px_#000000]"
                         : "hover:-translate-y-0.5 hover:shadow-[0_0_0_2px_rgba(23,59,69,0.55)]"
                   }`}
                   style={
@@ -5376,8 +5376,8 @@ export function ApprovalPanel({
                 <span
                   className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-full border-2 text-sm font-bold transition ${
                     active
-                      ? "border-[#173B45] bg-[#FDFCF9] text-[#24211D] hover:border-transparent hover:bg-[#173B45] hover:text-white"
-                      : "border-[#DDD8CF] bg-[#FDFCF9] text-[#24211D]/72 hover:border-transparent hover:bg-[#173B45] hover:text-white"
+                      ? "border-[#000000] bg-[#FDFCF9] text-[#24211D] hover:border-transparent hover:bg-[#000000] hover:text-white"
+                      : "border-[#DDD8CF] bg-[#FDFCF9] text-[#24211D]/72 hover:border-transparent hover:bg-[#000000] hover:text-white"
                   }`}
                 >
                   {index + 1}
@@ -5398,17 +5398,17 @@ export function ApprovalPanel({
           <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#24211D]/60">
             Informações Detalhadas
           </p>
-          <span className="rounded-full border border-[#173B45]/25 bg-[#173B45]/[0.06] px-3 py-1 text-[10px] font-bold uppercase tracking-[0.15em] text-[#173B45]">
+          <span className="rounded-full border border-[#000000]/25 bg-[#000000]/[0.06] px-3 py-1 text-[10px] font-bold uppercase tracking-[0.15em] text-[#000000]">
             Detalhes Completos No Painel Digital
           </span>
         </div>
         <div className="grid grid-cols-2 gap-3 border-b border-[#DDD8CF] px-6 pb-6 pt-3 sm:grid-cols-4 sm:px-10">
           {INFO_CARDS.map(({ label, Icon, view }) => {
             const cardClassName =
-              "group flex min-h-[112px] cursor-pointer flex-col items-center justify-center gap-2.5 rounded-xl border border-[#DDD8CF] bg-[#FAF9F6] px-3 py-4 text-center text-xs leading-5 text-[#24211D]/75 transition duration-300 ease-out hover:-translate-y-0.5 hover:border-[#173B45]/30 hover:bg-[#F8FAF9] hover:text-[#173B45] hover:shadow-[0_10px_30px_-15px_rgba(23,59,69,0.35)]";
+              "group flex min-h-[112px] cursor-pointer flex-col items-center justify-center gap-2.5 rounded-xl border border-[#DDD8CF] bg-[#FAF9F6] px-3 py-4 text-center text-xs leading-5 text-[#24211D]/75 transition duration-300 ease-out hover:-translate-y-0.5 hover:border-[#000000]/30 hover:bg-[#F8FAF9] hover:text-[#000000] hover:shadow-[0_10px_30px_-15px_rgba(23,59,69,0.35)]";
             const content = (
               <>
-                <span className="flex h-11 w-11 items-center justify-center rounded-full bg-[#F8FAF9] text-[#173B45] transition group-hover:bg-[#FDFCF9]">
+                <span className="flex h-11 w-11 items-center justify-center rounded-full bg-[#F8FAF9] text-[#000000] transition group-hover:bg-[#FDFCF9]">
                   <Icon className="h-6 w-6" />
                 </span>
                 {label}
@@ -5437,7 +5437,7 @@ export function ApprovalPanel({
         <div ref={contentRef} className="scroll-mt-6 px-6 py-8 sm:px-10 sm:py-10">
           {viewMode === "narita" ? (
             <>
-              <p className="mb-5 inline-block rounded-full border border-[#173B45]/20 bg-[#F8FAF9] px-5 py-2 text-xs uppercase tracking-[0.3em] text-[#173B45]">
+              <p className="mb-5 inline-block rounded-full border border-[#000000]/20 bg-[#F8FAF9] px-5 py-2 text-xs uppercase tracking-[0.3em] text-[#000000]">
                 Aeroporto de Narita (NRT)
               </p>
               {/* -mx cancela o px-6/sm:px-10 do painel — o Narita já traz seu
@@ -5450,7 +5450,7 @@ export function ApprovalPanel({
             </>
           ) : viewMode === "hotel" ? (
             <>
-              <p className="mb-5 inline-block rounded-full border border-[#173B45]/20 bg-[#F8FAF9] px-5 py-2 text-xs uppercase tracking-[0.3em] text-[#173B45]">
+              <p className="mb-5 inline-block rounded-full border border-[#000000]/20 bg-[#F8FAF9] px-5 py-2 text-xs uppercase tracking-[0.3em] text-[#000000]">
                 Hotel · {HOTEIS[hotelCity].cidade}
               </p>
               <HotelGuestGuide hotel={HOTEIS[hotelCity]} />
@@ -5466,7 +5466,7 @@ export function ApprovalPanel({
             </div>
           ) : (
             <>
-              <p className="mb-5 inline-block rounded-full border border-[#173B45]/20 bg-[#F8FAF9] px-5 py-2 text-xs uppercase tracking-[0.3em] text-[#173B45]">
+              <p className="mb-5 inline-block rounded-full border border-[#000000]/20 bg-[#F8FAF9] px-5 py-2 text-xs uppercase tracking-[0.3em] text-[#000000]">
                 Dia {current.day}
               </p>
               {current.contexto && (
@@ -5505,12 +5505,12 @@ export function ApprovalPanel({
               <button
                 type="button"
                 onClick={scrollToDaysMenu}
-                className="mt-8 flex w-full flex-col items-center gap-2 rounded-2xl border border-[#173B45]/20 bg-[#F8FAF9] py-6 text-center transition hover:bg-[#EAF1EF]"
+                className="mt-8 flex w-full flex-col items-center gap-2 rounded-2xl border border-[#000000]/20 bg-[#F8FAF9] py-6 text-center transition hover:bg-[#EAF1EF]"
               >
-                <span className="flex h-10 w-10 shrink-0 animate-pulse items-center justify-center rounded-full bg-[#173B45] text-white">
+                <span className="flex h-10 w-10 shrink-0 animate-pulse items-center justify-center rounded-full bg-[#000000] text-white">
                   <IconArrowUp className="h-5 w-5" />
                 </span>
-                <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#173B45]">
+                <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#000000]">
                   Voltar para o menu de dias do roteiro
                 </span>
               </button>

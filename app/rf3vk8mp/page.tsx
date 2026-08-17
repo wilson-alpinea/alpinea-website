@@ -169,13 +169,13 @@ function RadarChart({ dimensions }: { dimensions: RadarDimension[] }) {
 
       <polygon
         points={toPolygon(dataPoints)}
-        fill="#173B45"
+        fill="#000000"
         fillOpacity={0.16}
-        stroke="#173B45"
+        stroke="#000000"
         strokeWidth={2}
       />
       {dataPoints.map((p, i) => (
-        <circle key={i} cx={p.x} cy={p.y} r={3.5} fill="#173B45" />
+        <circle key={i} cx={p.x} cy={p.y} r={3.5} fill="#000000" />
       ))}
 
       {dimensions.map((d, i) => {
@@ -281,7 +281,7 @@ export default function AprovacaoRoteiroPage() {
                   Rafael Serafim Sousa · 7 dias · 03–12 Mai 2027
                 </span>
               </span>
-              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-[#DDD8CF] bg-[#F3F1EB] text-[#173B45] transition-colors duration-300 group-hover:bg-[#173B45] group-hover:text-white">
+              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-[#DDD8CF] bg-[#F3F1EB] text-[#000000] transition-colors duration-300 group-hover:bg-[#000000] group-hover:text-white">
                 <svg
                   viewBox="0 0 24 24"
                   fill="none"
@@ -391,14 +391,14 @@ export default function AprovacaoRoteiroPage() {
                     <div key={i} className="flex items-center gap-2.5">
                       <DimensionIcon
                         kind={d.icon}
-                        className="h-4 w-4 shrink-0 text-[#173B45]"
+                        className="h-4 w-4 shrink-0 text-[#000000]"
                       />
                       <p className="text-xs text-[#24211D]/90">
                         {d.lines.join(" ")}
                       </p>
-                      <span className="ml-auto shrink-0 text-xs tracking-tight text-[#173B45]">
+                      <span className="ml-auto shrink-0 text-xs tracking-tight text-[#000000]">
                         {"★".repeat(stars)}
-                        <span className="text-[#173B45]/25">
+                        <span className="text-[#000000]/25">
                           {"★".repeat(5 - stars)}
                         </span>
                       </span>

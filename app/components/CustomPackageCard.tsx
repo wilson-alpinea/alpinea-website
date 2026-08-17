@@ -191,11 +191,68 @@ type DestinoKey = (typeof DESTINOS)[number]["key"];
 const MIN_DIAS = 3;
 const MAX_DIAS = 30;
 
+const MIN_PESSOAS = 1;
+const MAX_PESSOAS = 20;
+
+// Grupos acima de 3 pessoas têm custo adicional de logística (veículo maior,
+// guia/motorista ajustado etc.) — cobrado por passageiro excedente.
+const LIMITE_PESSOAS_SEM_TAXA = 3;
+const TAXA_POR_PASSAGEIRO_EXTRA = 350;
+
+function NumberStepper({
+  label,
+  value,
+  onChange,
+  min,
+  max,
+  formatValue,
+}: {
+  label: string;
+  value: number;
+  onChange: (value: number) => void;
+  min: number;
+  max: number;
+  formatValue?: (value: number) => string;
+}) {
+  return (
+    <label className="block">
+      <span className="mb-2 block text-[10px] uppercase tracking-[0.2em] text-white/40">
+        {label}
+      </span>
+      <div className="flex items-center gap-2">
+        <button
+          type="button"
+          onClick={() => onChange(Math.max(min, value - 1))}
+          aria-label={`Diminuir — ${label}`}
+          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-white/15 text-white transition hover:border-white/40"
+        >
+          −
+        </button>
+        <span className="flex-1 rounded-lg border border-white/15 bg-black/30 py-2.5 text-center text-sm text-white">
+          {formatValue ? formatValue(value) : value}
+        </span>
+        <button
+          type="button"
+          onClick={() => onChange(Math.min(max, value + 1))}
+          aria-label={`Aumentar — ${label}`}
+          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-white/15 text-white transition hover:border-white/40"
+        >
+          +
+        </button>
+      </div>
+    </label>
+  );
+}
+
 export function CustomPackageCard() {
   const { addItem } = useCart();
   const cambio = useCambioUSD();
   const [data, setData] = useState("");
   const [dias, setDias] = useState(10);
+  const [pessoas, setPessoas] = useState(2);
+  const [acima60, setAcima60] = useState(0);
+  const [menoresIdade, setMenoresIdade] = useState(0);
+  const [criancas, setCriancas] = useState(0);
   const [categoriaHotel, setCategoriaHotel] =
     useState<(typeof CATEGORIAS_HOTEL)[number]>("4 estrelas");
   const [tipoQuarto, setTipoQuarto] =
@@ -218,9 +275,15 @@ export function CustomPackageCard() {
     () => OPCOES.filter((o) => selecionados.has(o.key)),
     [selecionados],
   );
+
+  const passageirosExtras = Math.max(0, pessoas - LIMITE_PESSOAS_SEM_TAXA);
+  const taxaGrupo = passageirosExtras * TAXA_POR_PASSAGEIRO_EXTRA;
+
   const total = useMemo(
-    () => itensSelecionados.reduce((soma, o) => soma + o.calcPreco(precoCtx), 0),
-    [itensSelecionados, precoCtx],
+    () =>
+      itensSelecionados.reduce((soma, o) => soma + o.calcPreco(precoCtx), 0) +
+      taxaGrupo,
+    [itensSelecionados, precoCtx, taxaGrupo],
   );
 
   function toggleOpcao(key: OpcaoKey) {
@@ -254,10 +317,32 @@ export function CustomPackageCard() {
 
   const detalhesPacote = useMemo(() => {
     const linhas: string[] = [];
+    linhas.push(`Passageiros: ${pessoas} ${pessoas === 1 ? "pessoa" : "pessoas"}`);
+    if (acima60 > 0)
+      linhas.push(`Acima de 60 anos: ${acima60}`);
+    if (menoresIdade > 0)
+      linhas.push(`Menores de idade (12–17 anos): ${menoresIdade}`);
+    if (criancas > 0)
+      linhas.push(`Crianças (até 11 anos): ${criancas}`);
+    if (taxaGrupo > 0)
+      linhas.push(
+        `Taxa de grupo: R$ ${taxaGrupo.toLocaleString("pt-BR")} (${passageirosExtras} ${
+          passageirosExtras === 1 ? "passageiro" : "passageiros"
+        } acima de ${LIMITE_PESSOAS_SEM_TAXA})`,
+      );
     if (nomesDestinos.length) linhas.push(`Destinos: ${nomesDestinos.join(", ")}`);
     if (observacoes) linhas.push(`Preferências: ${observacoes}`);
     return linhas;
-  }, [nomesDestinos, observacoes]);
+  }, [
+    pessoas,
+    acima60,
+    menoresIdade,
+    criancas,
+    taxaGrupo,
+    passageirosExtras,
+    nomesDestinos,
+    observacoes,
+  ]);
 
   function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -276,7 +361,7 @@ export function CustomPackageCard() {
       variante: `Data solicitada: ${dataFormatada}`,
       duracao: `${dias} dias`,
       periodo: dataFormatada,
-      acomodacao: `${tipoQuarto} · Hotel ${categoriaHotel}`,
+      acomodacao: `${pessoas} ${pessoas === 1 ? "pessoa" : "pessoas"} · ${tipoQuarto} · Hotel ${categoriaHotel}`,
       itens: itensSelecionados.map((o) =>
         o.key === "hotel"
           ? { icone: o.icone, texto: `${o.label} — ${categoriaHotel}` }
@@ -304,7 +389,7 @@ export function CustomPackageCard() {
       </p>
 
       <form onSubmit={handleSubmit} className="mt-5 space-y-6">
-        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 md:grid-cols-4">
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 md:grid-cols-5">
           <label className="block">
             <span className="mb-2 block text-[10px] uppercase tracking-[0.2em] text-white/40">
               Data preferida
@@ -317,32 +402,23 @@ export function CustomPackageCard() {
             />
           </label>
 
-          <label className="block">
-            <span className="mb-2 block text-[10px] uppercase tracking-[0.2em] text-white/40">
-              Quantidade de dias
-            </span>
-            <div className="flex items-center gap-2">
-              <button
-                type="button"
-                onClick={() => setDias((d) => Math.max(MIN_DIAS, d - 1))}
-                aria-label="Diminuir um dia"
-                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-white/15 text-white transition hover:border-white/40"
-              >
-                −
-              </button>
-              <span className="flex-1 rounded-lg border border-white/15 bg-black/30 py-2.5 text-center text-sm text-white">
-                {dias} {dias === 1 ? "dia" : "dias"}
-              </span>
-              <button
-                type="button"
-                onClick={() => setDias((d) => Math.min(MAX_DIAS, d + 1))}
-                aria-label="Aumentar um dia"
-                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-white/15 text-white transition hover:border-white/40"
-              >
-                +
-              </button>
-            </div>
-          </label>
+          <NumberStepper
+            label="Quantidade de dias"
+            value={dias}
+            onChange={setDias}
+            min={MIN_DIAS}
+            max={MAX_DIAS}
+            formatValue={(v) => `${v} ${v === 1 ? "dia" : "dias"}`}
+          />
+
+          <NumberStepper
+            label="Número de pessoas"
+            value={pessoas}
+            onChange={setPessoas}
+            min={MIN_PESSOAS}
+            max={MAX_PESSOAS}
+            formatValue={(v) => `${v} ${v === 1 ? "pessoa" : "pessoas"}`}
+          />
 
           <label className="block">
             <span className="mb-2 block text-[10px] uppercase tracking-[0.2em] text-white/40">
@@ -379,6 +455,44 @@ export function CustomPackageCard() {
               ))}
             </select>
           </label>
+        </div>
+
+        {pessoas > LIMITE_PESSOAS_SEM_TAXA && (
+          <p className="-mt-2 text-[11px] leading-5 text-white/40">
+            Grupos acima de {LIMITE_PESSOAS_SEM_TAXA} pessoas têm taxa adicional de R${" "}
+            {TAXA_POR_PASSAGEIRO_EXTRA.toLocaleString("pt-BR")} por passageiro excedente
+            — já incluída no total estimado abaixo.
+          </p>
+        )}
+
+        <div>
+          <span className="mb-2 block text-[10px] uppercase tracking-[0.2em] text-white/40">
+            Perfil dos passageiros{" "}
+            <span className="normal-case tracking-normal text-white/25">(opcional)</span>
+          </span>
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-3">
+            <NumberStepper
+              label="Acima de 60 anos"
+              value={acima60}
+              onChange={setAcima60}
+              min={0}
+              max={pessoas}
+            />
+            <NumberStepper
+              label="Menores de idade (12–17 anos)"
+              value={menoresIdade}
+              onChange={setMenoresIdade}
+              min={0}
+              max={pessoas}
+            />
+            <NumberStepper
+              label="Crianças (até 11 anos)"
+              value={criancas}
+              onChange={setCriancas}
+              min={0}
+              max={pessoas}
+            />
+          </div>
         </div>
 
         <div>
@@ -494,6 +608,13 @@ export function CustomPackageCard() {
               {total > 0 ? brlParaUSDLabel(total, cambio) : "Sob consulta"}
             </p>
             {total > 0 && <CambioLabel cambio={cambio} className="mt-1 text-[11px] text-white/40" />}
+            {taxaGrupo > 0 && (
+              <p className="mt-1 text-[11px] leading-5 text-white/50">
+                Inclui taxa de grupo: R$ {taxaGrupo.toLocaleString("pt-BR")} (
+                {passageirosExtras} {passageirosExtras === 1 ? "passageiro" : "passageiros"}{" "}
+                acima de {LIMITE_PESSOAS_SEM_TAXA})
+              </p>
+            )}
             <p className="mt-1 text-[11px] leading-5 text-white/40">
               Valor calculado conforme os itens selecionados acima — a Ajisai
               confirma o preço final por consulta.
