@@ -556,7 +556,12 @@ const DAY_1: DayContent = {
             "Mochi macio, tradição de Asakusa desde o período Edo.",
           foto: "/images/nakamise-kibi-dango.jpg",
         },
-        { nome: "Senbei feito na hora" },
+        {
+          nome: "Senbei (Iriyama Senbei Seizojo)",
+          descricao:
+            "Cracker de arroz grelhado e temperado na hora, tradição centenária de Asakusa — dá pra ver o processo sendo feito na loja.",
+          foto: "/images/nakamise-senbei-iriyama.jpg",
+        },
         {
           nome: "Senbei Gigante",
           descricao:
@@ -2316,9 +2321,6 @@ function PoiCard({ index, poi }: { index: number; poi: Poi }) {
           <span className={`text-sm font-semibold ${s.text}`}>
             {poi.title}
           </span>
-          {poi.nomeJapones && (
-            <span className={`text-xs ${s.muted}`}>{poi.nomeJapones}</span>
-          )}
           {poi.prioridade ? (
             <PriorityBadge prioridade={poi.prioridade} />
           ) : (
@@ -2327,6 +2329,9 @@ function PoiCard({ index, poi }: { index: number; poi: Poi }) {
             )
           )}
         </div>
+        {poi.nomeJapones && (
+          <p className={`text-sm ${s.muted}`}>{poi.nomeJapones}</p>
+        )}
         {poi.description && (
           <p className={`text-xs leading-5 ${s.muted}`}>
             {poi.description}
@@ -2445,6 +2450,7 @@ function DiaEmNumerosBlock({
 
 function GastronomiaBlock({ gastronomia }: { gastronomia: Gastronomia }) {
   const [zoom, setZoom] = useState(false);
+  const [zoomedFoto, setZoomedFoto] = useState<{ src: string; alt: string } | null>(null);
   const temRestaurantes = gastronomia.restaurantes && gastronomia.restaurantes.length > 0;
 
   return (
@@ -2472,13 +2478,22 @@ function GastronomiaBlock({ gastronomia }: { gastronomia: Gastronomia }) {
               className="overflow-hidden rounded-2xl border border-[#DDD8CF] bg-[#FDFCF9]"
             >
               {r.foto && (
-                <div className="aspect-square overflow-hidden">
+                <button
+                  type="button"
+                  onClick={() => setZoomedFoto({ src: r.foto!, alt: r.nome })}
+                  className="group relative block aspect-square w-full overflow-hidden"
+                >
                   <img
                     src={r.foto}
                     alt={r.nome}
-                    className="h-full w-full object-cover"
+                    className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
                   />
-                </div>
+                  <div className="absolute inset-0 flex items-center justify-center bg-black/0 transition duration-300 group-hover:bg-black/25">
+                    <span className="flex h-8 w-8 scale-75 items-center justify-center rounded-full bg-white/90 text-[#173B45] opacity-0 shadow-md transition duration-300 group-hover:scale-100 group-hover:opacity-100">
+                      <IconZoom className="h-4 w-4" />
+                    </span>
+                  </div>
+                </button>
               )}
               <div className="p-4">
                 <p className="text-sm font-semibold text-[#24211D]">
@@ -2505,13 +2520,22 @@ function GastronomiaBlock({ gastronomia }: { gastronomia: Gastronomia }) {
                   key={item.nome}
                   className="overflow-hidden rounded-2xl border border-[#DDD8CF] bg-[#FDFCF9]"
                 >
-                  <div className="aspect-square overflow-hidden">
+                  <button
+                    type="button"
+                    onClick={() => setZoomedFoto({ src: item.foto!, alt: item.nome })}
+                    className="group relative block aspect-square w-full overflow-hidden"
+                  >
                     <img
                       src={item.foto}
                       alt={item.nome}
-                      className="h-full w-full object-cover"
+                      className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
                     />
-                  </div>
+                    <div className="absolute inset-0 flex items-center justify-center bg-black/0 transition duration-300 group-hover:bg-black/25">
+                      <span className="flex h-8 w-8 scale-75 items-center justify-center rounded-full bg-white/90 text-[#173B45] opacity-0 shadow-md transition duration-300 group-hover:scale-100 group-hover:opacity-100">
+                        <IconZoom className="h-4 w-4" />
+                      </span>
+                    </div>
+                  </button>
                   <div className="p-3">
                     <p className="text-xs font-semibold text-[#24211D]">
                       {item.nome}
@@ -2604,6 +2628,28 @@ function GastronomiaBlock({ gastronomia }: { gastronomia: Gastronomia }) {
           Mapeamento de opções de restaurantes nos arredores da atração
           principal
         </p>
+      )}
+
+      {zoomedFoto && (
+        <div
+          className="fixed inset-0 z-[100] flex items-start justify-center overflow-y-auto bg-black/85 p-4 backdrop-blur-sm sm:p-8"
+          onClick={() => setZoomedFoto(null)}
+        >
+          <button
+            type="button"
+            onClick={() => setZoomedFoto(null)}
+            className="absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white transition hover:bg-white/20 sm:right-6 sm:top-6"
+            aria-label="Fechar"
+          >
+            <IconX className="h-5 w-5" />
+          </button>
+          <img
+            src={zoomedFoto.src}
+            alt={zoomedFoto.alt}
+            className="max-h-[90vh] max-w-[95vw] rounded-2xl object-contain"
+            onClick={(e) => e.stopPropagation()}
+          />
+        </div>
       )}
     </div>
   );
@@ -3088,12 +3134,12 @@ function VisaoAnotadaBlock({
             <div className="p-5">
               <p className="text-base font-semibold text-[#24211D]">
                 {ponto.titulo}
-                {ponto.nomeJapones && (
-                  <span className="ml-2 text-sm font-normal text-[#24211D]/50">
-                    {ponto.nomeJapones}
-                  </span>
-                )}
               </p>
+              {ponto.nomeJapones && (
+                <p className="mt-0.5 text-base font-normal text-[#24211D]/50">
+                  {ponto.nomeJapones}
+                </p>
+              )}
               <p className="mt-2 text-sm leading-6 text-[#24211D]/75">
                 {ponto.descricao}
               </p>
