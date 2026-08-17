@@ -131,6 +131,9 @@ type EstacaoInfo = {
   // Saída/plataforma específica a usar — mostrada em card verde em
   // destaque, separada do texto de distância a pé.
   saida?: string;
+  // Foto real da entrada/fachada da estação — quando presente, substitui o
+  // ícone/logo da linha no card de deslocamento.
+  foto?: string;
 };
 
 type Deslocamento = {
@@ -219,7 +222,16 @@ type Period = {
   // logo após o hero, antes do diagrama anotado.
   percursoEssencial?: {
     duracao: string;
-    passos: { titulo: string; foto?: string; horario?: string }[];
+    passos: {
+      titulo: string;
+      foto?: string;
+      horario?: string;
+      // Parágrafo curto explicando o ponto — mostrado abaixo do título.
+      descricao?: string;
+      // Curiosidade/destaque rápido, mostrado em card à parte ao lado do
+      // texto (ex.: "o enorme lanternão vermelho de 700 kg").
+      destaque?: string;
+    }[];
   };
   // Pequeno bloco de apoio à decisão (ex.: qual ingresso escolher, o que
   // fazer se estiver muito cheio) — direto ao ponto, sem prosa longa.
@@ -390,17 +402,82 @@ const DAY_1: DayContent = {
     percursoEssencial: {
       duracao: "1h30–2h",
       passos: [
-        { titulo: "Kaminarimon", foto: "/images/sensoji-kaminarimon.png", horario: "09:20" },
-        { titulo: "Dragão sob a lanterna", foto: "/images/kaminarimon-dragon.png", horario: "~09:25" },
-        { titulo: "Nakamise Street", foto: "/images/sensoji-nakamise.png", horario: "~09:30" },
-        { titulo: "Hōzōmon", foto: "/images/sensoji-hozomon.png", horario: "~09:45" },
-        { titulo: "Jōkoro", foto: "/images/Jokoro.png", horario: "~09:50" },
-        { titulo: "Salão Principal", foto: "/images/sensoji-kannondo.png", horario: "~10:00" },
-        { titulo: "Omikuji", foto: "/images/mikuji.png", horario: "~10:15" },
-        { titulo: "Pagode de Cinco Andares", foto: "/images/sensoji-pagode.png", horario: "~10:25" },
-        { titulo: "Saída pelo lado oeste", horario: "~10:35" },
-        { titulo: "Kappabashi", foto: "/images/kappabashi.png", horario: "~11:00" },
-        { titulo: "Sumida Park", foto: "/images/sumida-park.png", horario: "~11:30" },
+        {
+          titulo: "Kaminarimon",
+          foto: "/images/sensoji-kaminarimon.png",
+          horario: "09:20",
+          descricao: "O icônico portão de entrada do Templo Senso-ji. Comece sua experiência em Asakusa.",
+          destaque: "O enorme lanternão vermelho de 700 kg.",
+        },
+        {
+          titulo: "Dragão sob a lanterna",
+          foto: "/images/kaminarimon-dragon.png",
+          horario: "~09:25",
+          descricao: "Observe o dragão esculpido na base da lanterna — símbolo de proteção e sabedoria.",
+          destaque: "Detalhe pouco visto por quem passa rápido.",
+        },
+        {
+          titulo: "Nakamise Street",
+          foto: "/images/sensoji-nakamise.png",
+          horario: "~09:30",
+          descricao: "A tradicional rua de compras com mais de 90 lojas de souvenirs e guloseimas típicas.",
+          destaque: "Experimente um ningyoyaki acabado de fazer.",
+        },
+        {
+          titulo: "Hōzōmon",
+          foto: "/images/sensoji-hozomon.png",
+          horario: "~09:45",
+          descricao: "O belíssimo portão interno com guardiões imponentes protegendo o templo.",
+          destaque: "Um dos portões mais bonitos do Japão.",
+        },
+        {
+          titulo: "Jōkoro",
+          foto: "/images/Jokoro.png",
+          horario: "~09:50",
+          descricao: "Incensário de bronze onde os visitantes purificam corpo e mente com a fumaça sagrada.",
+          destaque: "Passe a fumaça sobre você para boa sorte.",
+        },
+        {
+          titulo: "Salão Principal",
+          foto: "/images/sensoji-kannondo.png",
+          horario: "~10:00",
+          descricao: "O coração do Templo Senso-ji. Faça uma oração e aprecie a arquitetura centenária.",
+          destaque: "A imagem de Kannon, deusa da compaixão, no altar principal.",
+        },
+        {
+          titulo: "Omikuji",
+          foto: "/images/mikuji.png",
+          horario: "~10:15",
+          descricao: "Tire sua sorte! Os papeizinhos da fortuna podem trazer conselhos e boas energias.",
+          destaque: "Se tirar má sorte, amarre o papel e deixe o azar para trás.",
+        },
+        {
+          titulo: "Pagode de Cinco Andares",
+          foto: "/images/sensoji-pagode.png",
+          horario: "~10:25",
+          descricao: "A estrutura mais alta do complexo, símbolo de paz e harmonia.",
+          destaque: "Ótimo ponto para fotos clássicas de Asakusa.",
+        },
+        {
+          titulo: "Saída pelo lado oeste",
+          horario: "~10:35",
+          descricao: "Caminhada tranquila em direção a Kappabashi e Sumida Park.",
+          destaque: "≈10 min a pé — percurso agradável e sinalizado.",
+        },
+        {
+          titulo: "Kappabashi",
+          foto: "/images/kappabashi.png",
+          horario: "~11:00",
+          descricao: "A famosa \"Kitchen Town\", o paraíso dos utensílios de cozinha e artigos profissionais.",
+          destaque: "Mais de 160 lojas de utensílios e facas japonesas.",
+        },
+        {
+          titulo: "Sumida Park",
+          foto: "/images/sumida-park.png",
+          horario: "~11:30",
+          descricao: "Encerramento perfeito com vista para a Tokyo Skytree e o Rio Sumida.",
+          destaque: "Ideal para um momento de descanso e fotos memoráveis.",
+        },
       ],
     },
     visaoAnotada: {
@@ -501,6 +578,7 @@ const DAY_1: DayContent = {
         nomeJapones: "京橋駅",
         distancia: "~1 min a pé do hotel",
         saida: "Saída 6",
+        foto: "/images/Kyobashi_Station_entrance_7_20170813.jpg",
       },
       linha: { codigo: "G10", nome: "Tokyo Metro Ginza Line", cor: "#F39700", logo: "/images/tokyometro-mark.png" },
       estacoesIntermediarias: [
@@ -518,6 +596,7 @@ const DAY_1: DayContent = {
         nomeJapones: "浅草駅",
         distancia: "~4 min a pé (300 m) até o Kaminarimon",
         saida: "Saída 1",
+        foto: "/images/asakusa-station-entrance.webp",
       },
       opcoes: [
         {
@@ -538,6 +617,7 @@ const DAY_1: DayContent = {
           detalhes: [
             "Sujeito a trânsito no período da manhã.",
             "Porta a porta, sem caminhada até a estação.",
+            "Mais confortável para bagagens ou em dias de chuva.",
           ],
         },
       ],
@@ -767,6 +847,7 @@ const DAY_1: DayContent = {
         nomeJapones: "浅草駅",
         distancia: "Plataforma Toei Asakusa Line — a poucos minutos a pé do almoço em Asakusa",
         saida: "Entrada/Saída A4, direção Kaminarimon",
+        foto: "/images/asakusa-station-entrance.webp",
       },
       linha: { codigo: "A", nome: "Toei Asakusa Line", cor: "#EF5BA1" },
       estacoesIntermediarias: ["Honjo-Azumabashi"],
@@ -774,6 +855,7 @@ const DAY_1: DayContent = {
         nome: "Oshiage (Tokyo Skytree Station)",
         nomeJapones: "押上（スカイツリー前）駅",
         saida: "Saída B3, ligação direta e subterrânea com a Tokyo Solamachi",
+        foto: "/images/oshiage-station-entrance.jpeg",
       },
       opcoes: [
         {
@@ -3082,14 +3164,24 @@ function DeslocamentoCard({ deslocamento }: { deslocamento: Deslocamento }) {
           (fachada/entrada) não entram aqui — ficam só no guia do hotel. */}
       <div className="flex items-start justify-center gap-3 text-center sm:gap-5">
         <div className="flex w-32 min-w-0 flex-col items-center sm:w-40">
-          {deslocamento.linha.logo && (
-            <div className="mb-3 flex h-20 w-20 items-center justify-center">
+          {deslocamento.estacaoOrigem.foto ? (
+            <div className="mb-3 h-20 w-full overflow-hidden rounded-xl border border-[#DDD8CF] shadow-sm">
               <img
-                src={deslocamento.linha.logo}
-                alt={deslocamento.linha.nome}
-                className="h-full w-full object-contain"
+                src={deslocamento.estacaoOrigem.foto}
+                alt={`Entrada da ${deslocamento.estacaoOrigem.nome}`}
+                className="h-full w-full object-cover"
               />
             </div>
+          ) : (
+            deslocamento.linha.logo && (
+              <div className="mb-3 flex h-20 w-20 items-center justify-center">
+                <img
+                  src={deslocamento.linha.logo}
+                  alt={deslocamento.linha.nome}
+                  className="h-full w-full object-contain"
+                />
+              </div>
+            )
           )}
           <p className="text-sm font-semibold text-[#24211D]">
             {deslocamento.estacaoOrigem.nome}
@@ -3165,14 +3257,24 @@ function DeslocamentoCard({ deslocamento }: { deslocamento: Deslocamento }) {
         </div>
 
         <div className="flex w-32 min-w-0 flex-col items-center sm:w-40">
-          {deslocamento.linha.logo && (
-            <div className="mb-3 flex h-20 w-20 items-center justify-center">
+          {deslocamento.estacaoDestino.foto ? (
+            <div className="mb-3 h-20 w-full overflow-hidden rounded-xl border border-[#DDD8CF] shadow-sm">
               <img
-                src={deslocamento.linha.logo}
-                alt={deslocamento.linha.nome}
-                className="h-full w-full object-contain"
+                src={deslocamento.estacaoDestino.foto}
+                alt={`Entrada da ${deslocamento.estacaoDestino.nome}`}
+                className="h-full w-full object-cover"
               />
             </div>
+          ) : (
+            deslocamento.linha.logo && (
+              <div className="mb-3 flex h-20 w-20 items-center justify-center">
+                <img
+                  src={deslocamento.linha.logo}
+                  alt={deslocamento.linha.nome}
+                  className="h-full w-full object-contain"
+                />
+              </div>
+            )
           )}
           <p className="text-sm font-semibold text-[#24211D]">
             {deslocamento.estacaoDestino.nome}
@@ -3233,11 +3335,16 @@ function DeslocamentoCard({ deslocamento }: { deslocamento: Deslocamento }) {
                 Recomendado
               </p>
             )}
-            <div className="mt-3 space-y-1">
+            <div className="mt-3 space-y-1.5">
               {opcao.detalhes.map((d, i) => (
-                <p key={i} className="text-xs leading-5 text-[#24211D]/72">
-                  {d}
-                </p>
+                <div key={i} className="flex items-start gap-2">
+                  <IconCheckSmall
+                    className={`mt-0.5 h-3 w-3 shrink-0 ${
+                      opcao.recomendado ? "text-[#3E5FA8]" : "text-[#3E5FA8]/50"
+                    }`}
+                  />
+                  <p className="text-xs leading-5 text-[#24211D]/72">{d}</p>
+                </div>
               ))}
             </div>
           </div>
@@ -3727,42 +3834,73 @@ function PeriodBlock({
             </span>
           </div>
           <div className="mt-5">
-            {period.percursoEssencial.passos.map((passo, i) => (
-              <div key={passo.titulo} className="flex gap-4">
-                <div className="flex flex-col items-center">
-                  {passo.foto ? (
-                    <div className="h-16 w-16 shrink-0 overflow-hidden rounded-full border-2 border-white shadow-sm sm:h-[76px] sm:w-[76px]">
-                      <img
-                        src={passo.foto}
-                        alt={passo.titulo}
-                        className="h-full w-full object-cover"
-                      />
+            {(() => {
+              let numero = 0;
+              return period.percursoEssencial!.passos.map((passo, i) => {
+                if (passo.foto) numero += 1;
+                return (
+                  <div key={passo.titulo} className="flex gap-4">
+                    <div className="flex flex-col items-center">
+                      {passo.foto ? (
+                        <div className="relative h-16 w-16 shrink-0 sm:h-[76px] sm:w-[76px]">
+                          <div className="h-full w-full overflow-hidden rounded-full border-2 border-white shadow-sm">
+                            <img
+                              src={passo.foto}
+                              alt={passo.titulo}
+                              className="h-full w-full object-cover"
+                            />
+                          </div>
+                          <span className="absolute -bottom-1 -right-1 flex h-6 w-6 items-center justify-center rounded-full border-2 border-white bg-[#B96432] text-[10px] font-bold text-white shadow-sm">
+                            {String(numero).padStart(2, "0")}
+                          </span>
+                        </div>
+                      ) : (
+                        <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full border border-dashed border-[#2C6CA6]/35 text-[#2C6CA6]/50 sm:h-[76px] sm:w-[76px]">
+                          <IconWalk className="h-6 w-6" />
+                        </div>
+                      )}
+                      {i < period.percursoEssencial!.passos.length - 1 && (
+                        <span className="my-1 min-h-[18px] w-[2px] flex-1 rounded-full bg-[#000000]/20" />
+                      )}
                     </div>
-                  ) : (
-                    <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full border border-dashed border-[#2C6CA6]/35 text-[#2C6CA6]/50 sm:h-[76px] sm:w-[76px]">
-                      <IconWalk className="h-6 w-6" />
+                    <div
+                      className={`flex min-w-0 flex-1 flex-col gap-3 pt-2.5 sm:flex-row sm:items-start sm:justify-between sm:gap-5 ${
+                        i < period.percursoEssencial!.passos.length - 1 ? "pb-6" : ""
+                      }`}
+                    >
+                      <div className="min-w-0 flex-1">
+                        {passo.horario && (
+                          <p className="text-xs font-medium uppercase tracking-[0.1em] text-[#B96432]">
+                            {passo.horario}
+                          </p>
+                        )}
+                        <p className="mt-0.5 text-base font-semibold leading-tight text-[#000000]">
+                          {passo.titulo}
+                        </p>
+                        {passo.descricao && (
+                          <p className="mt-1.5 text-sm leading-6 text-[#24211D]/70">
+                            {passo.descricao}
+                          </p>
+                        )}
+                      </div>
+                      {passo.destaque && (
+                        <div className="flex shrink-0 items-start gap-2 rounded-xl border border-[#DDD8CF] bg-white px-3 py-2.5 sm:w-48">
+                          <span className="mt-0.5 shrink-0 text-[#B96432]">✦</span>
+                          <div>
+                            <p className="text-[9px] font-bold uppercase tracking-[0.15em] text-[#B96432]">
+                              Destaque
+                            </p>
+                            <p className="mt-0.5 text-xs leading-5 text-[#24211D]/75">
+                              {passo.destaque}
+                            </p>
+                          </div>
+                        </div>
+                      )}
                     </div>
-                  )}
-                  {i < period.percursoEssencial!.passos.length - 1 && (
-                    <span className="my-1 min-h-[18px] w-[2px] flex-1 rounded-full bg-[#000000]/20" />
-                  )}
-                </div>
-                <div
-                  className={`min-w-0 flex-1 pt-2.5 ${
-                    i < period.percursoEssencial!.passos.length - 1 ? "pb-6" : ""
-                  }`}
-                >
-                  <p className="text-base font-semibold leading-tight text-[#000000]">
-                    {passo.titulo}
-                  </p>
-                  {passo.horario && (
-                    <p className="mt-1 text-sm font-medium tracking-wide text-[#000000]/60">
-                      {passo.horario}
-                    </p>
-                  )}
-                </div>
-              </div>
-            ))}
+                  </div>
+                );
+              });
+            })()}
           </div>
           <p className="mt-4 text-xs leading-5 text-[#000000]/60">
             O que dá pra fazer sem pressa. Os detalhes de cada ponto vêm a seguir — comece por aqui.
@@ -4343,6 +4481,14 @@ function IconWalk({ className }: { className?: string }) {
       <path d="M10 8 7 10l1 5-3 5" />
       <path d="M10 8l3 2 3-1 2 3" />
       <path d="M11 13l-1 2 4 3" />
+    </svg>
+  );
+}
+
+function IconCheckSmall({ className }: { className?: string }) {
+  return (
+    <svg {...iconProps(className)}>
+      <path d="M5 12.5l4 4 10-10" />
     </svg>
   );
 }
