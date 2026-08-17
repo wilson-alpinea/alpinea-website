@@ -264,18 +264,37 @@ export default function AprovacaoRoteiroPage() {
         <div className="relative mx-auto max-w-4xl">
           {/* Glow via box-shadow direto no card — nunca "vaza" para dentro do
               fundo opaco, já que sombra CSS só pinta fora da caixa. */}
-          <div
-            className="overflow-hidden rounded-2xl border border-[#DDD8CF] bg-[#FDFCF9] p-6 sm:rounded-[2rem] sm:p-8"
+          <details
+            className="group overflow-hidden rounded-2xl border border-[#DDD8CF] bg-[#FDFCF9] sm:rounded-[2rem]"
             style={{
               boxShadow:
                 "0 0 90px 6px rgba(35,90,190,0.28), 0 0 42px -4px rgba(90,50,155,0.28), 0 20px 60px -30px rgba(0,0,0,0.6)",
             }}
+            open
           >
-            <div className="mx-auto mb-5 flex w-fit flex-col items-center gap-2.5">
-              <p className="rounded-full border border-[#DDD8CF] px-5 py-2 text-center text-xs uppercase tracking-[0.3em] text-[#24211D]/85">
-                Dados do Cliente
-              </p>
-            </div>
+            <summary className="flex cursor-pointer list-none flex-wrap items-center justify-between gap-3 p-6 [&::-webkit-details-marker]:hidden sm:p-8">
+              <span className="flex flex-wrap items-center gap-3 sm:gap-4">
+                <span className="w-fit rounded-full border border-[#DDD8CF] px-5 py-2 text-center text-xs uppercase tracking-[0.3em] text-[#24211D]/85">
+                  Dados do Cliente
+                </span>
+                <span className="text-xs text-[#24211D]/55 sm:text-sm">
+                  Rafael Serafim Sousa · 7 dias · 03–12 Mai 2027
+                </span>
+              </span>
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth={2}
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="h-4 w-4 shrink-0 text-[#24211D]/45 transition-transform duration-300 group-open:rotate-180"
+              >
+                <path d="m6 9 6 6 6-6" />
+              </svg>
+            </summary>
+
+            <div className="border-t border-[#DDD8CF] px-6 pb-6 pt-6 sm:px-8 sm:pb-8">
             <div className="grid grid-cols-1 gap-5 border-b border-[#DDD8CF] pb-6 sm:grid-cols-3">
               <div>
                 <p className="text-[11px] uppercase tracking-[0.2em] text-[#24211D]/65">
@@ -386,7 +405,8 @@ export default function AprovacaoRoteiroPage() {
                 })}
               </div>
             </div>
-          </div>
+            </div>
+          </details>
         </div>
       </section>
 
