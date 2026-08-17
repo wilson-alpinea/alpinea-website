@@ -15,7 +15,21 @@ type Poi = {
   nomeJapones?: string;
   description?: string;
   lista?: string[];
+  // Legado — sendo substituído por `prioridade`, mais preciso (rating
+  // insinua nota/qualidade; prioridade indica o quanto vale priorizar
+  // dentro do tempo disponível).
   rating?: number;
+  // IMPERDÍVEL / RECOMENDADO / OPCIONAL — usado em vez de estrelas quando
+  // presente. Deixe vazio para POIs cobertos só pelo diagrama anotado.
+  prioridade?: "imperdivel" | "recomendado" | "opcional";
+  // Agrupa POIs em subseções dentro do período (ex.: "Dentro do complexo"
+  // vs. "Se houver tempo · nos arredores"). Sem isso, renderiza tudo numa
+  // grade única (comportamento padrão, usado nos demais dias).
+  grupo?: string;
+  // Posição explícita na sequência de visita recomendada (percursoEssencial)
+  // — usada como número do card em vez do índice do array, pra bater com o
+  // diagrama anotado e com o texto do percurso essencial.
+  ordem?: number;
   // Foto real do ponto — só preenchida quando existe imagem de verdade.
   imagem?: string;
   imagemAlt?: string;
@@ -48,6 +62,9 @@ type GradeHorarios = {
     destaque?: boolean;
     recomendado?: boolean;
     tag?: string;
+    // Tempo estimado de permanência no local — ajuda a enxergar onde há
+    // folga no cronograma. Opcional: só aparece quando preenchido.
+    permanencia?: string;
   }[];
 };
 
@@ -125,8 +142,25 @@ type Period = {
       nomeJapones?: string;
       descricao: string;
       foto?: string;
+      // Posição na sequência de visita recomendada (percursoEssencial) —
+      // quando presente, substitui a bolinha de cor lisa por um círculo
+      // numerado da mesma cor, criando a mesma numeração usada nos cards.
+      ordem?: number;
     }[];
   };
+  // Resposta rápida a "o que eu faço agora?" — resumo do percurso a pé
+  // recomendado dentro da atração, antes de qualquer detalhe. Mostrado
+  // logo após o hero, antes do diagrama anotado.
+  percursoEssencial?: {
+    duracao: string;
+    passos: string[];
+  };
+  // Pequeno bloco de apoio à decisão (ex.: qual ingresso escolher, o que
+  // fazer se estiver muito cheio) — direto ao ponto, sem prosa longa.
+  decisoes?: {
+    titulo: string;
+    resposta: string;
+  }[];
   pois: Poi[];
   gastronomia?: Gastronomia;
   comprasExclusivas?: ComprasExclusivas;
@@ -160,6 +194,17 @@ type DayContent = {
   transporte?: TransporteSugerido;
   alerta?: AlertaSugerido;
   gradeHorarios?: GradeHorarios;
+  // Resumo rápido do dia em números — mostrado logo após o Contexto, antes
+  // do cliente sair do hotel.
+  diaEmNumeros?: {
+    atracoes: string;
+    caminhada: string;
+    transporte: string;
+    linhasMetro: string;
+    ritmo: string;
+    saida: string;
+    retorno: string;
+  };
 };
 
 function genericPeriod(): Period {
@@ -181,7 +226,7 @@ const DAY_1: DayContent = {
   gradeHorarios: {
     titulo: "Mapa por Horário",
     itens: [
-      { horario: "08:00", evento: "Café da manhã no lyf Ginza Tokyo" },
+      { horario: "08:00", evento: "Café da manhã no lyf Ginza Tokyo", permanencia: "~45 min" },
       {
         horario: "08:45",
         evento: "Saída do hotel rumo à Estação Kyobashi",
@@ -192,27 +237,30 @@ const DAY_1: DayContent = {
         evento: "Metrô até Asakusa · Ginza Line, direto (~16 min)",
         tag: "Deslocamento",
       },
-      { horario: "09:20", evento: "Kaminarimon e Nakamise Street" },
+      { horario: "09:20", evento: "Kaminarimon e Nakamise Street", permanencia: "~25 min" },
       {
         horario: "09:45",
         evento: "Templo Sensoji Asakusa",
         destaque: true,
         tag: "Atração",
+        permanencia: "~1h15",
       },
-      { horario: "11:30", evento: "Kappabashi Kitchen Town e Sumida Park" },
+      { horario: "11:00", evento: "Kappabashi Kitchen Town", permanencia: "~30 min" },
+      { horario: "11:30", evento: "Sumida Park", permanencia: "~30–40 min" },
       {
         horario: "12:30",
         evento: "Almoço com snacks de rua em Asakusa",
         tag: "Refeição",
+        permanencia: "~45 min",
       },
       {
-        horario: "14:00",
-        evento: "Saída rumo à Estação Takaracho",
+        horario: "13:15",
+        evento: "Caminhada até a Estação Asakusa, plataforma Tobu (~8 min)",
         tag: "Deslocamento",
       },
       {
-        horario: "14:15",
-        evento: "Metrô até Oshiage · Toei Asakusa Line, direto (~14 min)",
+        horario: "13:25",
+        evento: "Trem até Oshiage · Tobu Skytree Line, direto (~3 min)",
         tag: "Deslocamento",
       },
       {
@@ -221,17 +269,42 @@ const DAY_1: DayContent = {
         destaque: true,
         recomendado: true,
         tag: "Atração",
+        permanencia: "~1h45",
       },
       {
         horario: "16:30",
         evento: "Tokyo Solamachi · lojas e jantar",
         tag: "Refeição",
+        permanencia: "~2h30",
       },
       { horario: "19:00", evento: "Retorno ao lyf Ginza Tokyo" },
     ],
-    nota: "Horários estimados considerando saída do lyf Ginza Tokyo (Kyobashi) — ajuste conforme seu ritmo.",
+    nota: "Horários estimados considerando saída do lyf Ginza Tokyo (Kyobashi) — ajuste conforme seu ritmo. Entre a chegada a Oshiage (~13:28) e a subida à torre (14:35) há uma folga proposital de ~1h para explorar a Tokyo Solamachi com calma antes do pôr do sol.",
+  },
+  diaEmNumeros: {
+    atracoes: "2 atrações principais",
+    caminhada: "~2,5 km a pé",
+    transporte: "~19 min de trem no total",
+    linhasMetro: "2 linhas, sem baldeações",
+    ritmo: "Moderado",
+    saida: "08:45",
+    retorno: "≈19:00",
   },
   manha: {
+    percursoEssencial: {
+      duracao: "1h30–2h",
+      passos: [
+        "Kaminarimon",
+        "Dragão sob a lanterna",
+        "Nakamise Street",
+        "Hōzōmon",
+        "Jōkoro",
+        "Salão Principal",
+        "Omikuji",
+        "Saída pelo lado oeste",
+        "Kappabashi / Sumida Park",
+      ],
+    },
     visaoAnotada: {
       imagem: "/images/dia1-sensoji-visao-anotada.png",
       imagemAlt: "Vista aérea do complexo do Templo Sensoji com as partes principais destacadas",
@@ -243,6 +316,7 @@ const DAY_1: DayContent = {
           descricao:
             "\"Portão do Trovão\" — entrada principal do templo, construído originalmente em 942. Marcado pela icônica lanterna vermelha gigante (chōchin) pendurada no centro.",
           foto: "/images/sensoji-kaminarimon.png",
+          ordem: 1,
         },
         {
           cor: "#D97A1F",
@@ -251,6 +325,7 @@ const DAY_1: DayContent = {
           descricao:
             "Rua comercial de ~250 m entre o Kaminarimon e o Hōzōmon, com quase 90 lojinhas tradicionais de souvenires e snacks — uma das ruas de compras mais antigas do Japão, ativa desde o período Edo.",
           foto: "/images/sensoji-nakamise.png",
+          ordem: 3,
         },
         {
           cor: "#1E6FB8",
@@ -259,6 +334,7 @@ const DAY_1: DayContent = {
           descricao:
             "\"Portão do Tesouro\" — segundo portão do complexo, guarda relíquias do templo no piso superior e é flanqueado por duas estátuas guardiãs (Niō).",
           foto: "/images/sensoji-hozomon.png",
+          ordem: 4,
         },
         {
           cor: "#3F8F3F",
@@ -267,22 +343,30 @@ const DAY_1: DayContent = {
           descricao:
             "Santuário principal do templo, onde fica a estátua de Kannon (Deusa da Misericórdia) que deu origem ao Sensoji — fundado em 628, o templo mais antigo de Tóquio.",
           foto: "/images/sensoji-kannondo.png",
+          ordem: 6,
         },
         {
           cor: "#6B3FA0",
           titulo: "Pagode de Cinco Andares",
           nomeJapones: "五重塔",
           descricao:
-            "Reconstrução do pagode original de 942 — cada um dos cinco andares representa um elemento budista (terra, água, fogo, vento, vazio). Guarda relíquias de Buda.",
+            "Reconstrução do pagode original de 942 — cada um dos cinco andares representa um elemento budista (terra, água, fogo, vento, vazio). Guarda relíquias de Buda. Não faz parte do percurso essencial (fica ao lado, visível de longe), mas vale o desvio rápido se houver tempo.",
           foto: "/images/sensoji-pagode.png",
         },
       ],
     },
     regiao: {
-      nome: "Taito",
+      nome: "Asakusa · Tokyo",
       descricao:
-        "Taito é um dos bairros mais antigos de Tokyo e já era um dos principais quando a cidade ainda era chamada Edo, a fundação do bairro ocorreu por volta do ano 1600, até hoje é um dos bairros da Tokyo Antiga preservando alguns costumes milenares que já foram abandonados em outras partes da cidade, um dos exemplos é que até hoje existem vendedores de leite em garrafa de vidro que passam de casa em casa antes de amanhecer.",
+        "Bairro histórico às margens do Rio Sumida, coração da \"Tokyo antiga\" — templos, comércio tradicional e costumes que sobreviveram em poucos outros lugares da cidade. Faz parte do distrito administrativo de Taito, um dos mais antigos de Tokyo, fundado por volta de 1600 quando a cidade ainda se chamava Edo — até hoje existem vendedores de leite em garrafa de vidro que passam de casa em casa antes de amanhecer.",
     },
+    decisoes: [
+      {
+        titulo: "Se o templo estiver muito cheio",
+        resposta:
+          "Priorize Kaminarimon → Hōzōmon → Salão Principal e deixe a Nakamise Street para o caminho de volta, quando o movimento costuma ceder.",
+      },
+    ],
     deslocamento: {
       estacaoOrigem: {
         nome: "Estação Kyobashi",
@@ -317,8 +401,6 @@ const DAY_1: DayContent = {
           ],
         },
       ],
-      recomendacao:
-        "Do lyf Ginza Tokyo, o trajeto até Asakusa é de cerca de 16 minutos de metrô pela Ginza Line, sem baldeação — embarque pela Saída 6 da Estação Kyobashi (a menos de 1 minuto a pé do hotel) e, ao chegar, saia pela Saída 1 de Asakusa, a mais próxima do Kaminarimon — de lá são ~4 minutos a pé (300 m) até o portão do Templo Sensoji.",
       mapaChegada: {
         imagem: "/images/rota-asakusa-sensoji.png",
         imagemAlt: "Rota a pé da Saída 1 da Estação Asakusa até o Kaminarimon (Templo Sensoji)",
@@ -331,7 +413,11 @@ const DAY_1: DayContent = {
       { label: "Entrada", valor: "Gratuita" },
       { label: "Salão principal", valor: "6h–17h" },
       { label: "Nakamise Street", valor: "~9h–17h (varia por loja)" },
-      { label: "Melhor horário", valor: "Antes das 9h ou após 17h" },
+      {
+        label: "Melhor horário",
+        valor:
+          "Logo na abertura das lojas, 9h–9h30 — é por isso que o roteiro chega às 9h20: o pico de grupos de turismo começa por volta das 11h e vai até 15h.",
+      },
     ],
     mapaVisaoGeral: {
       imagem: "/images/dia1-manha-visao-geral-mapa.png",
@@ -341,19 +427,13 @@ const DAY_1: DayContent = {
     },
     pois: [
       {
-        title: "Nakamise Street",
-        description:
-          "Rua Dentro do complexo do Templo Sensoji, focado em souvenir e itens de pequeno porte",
-        rating: 3,
-        imagem: "/images/sensoji-nakamise.png",
-        imagemAlt: "Nakamise Street, a rua de lojas entre o Kaminarimon e o Hōzōmon",
-      },
-      {
         title: "Escultura do Dragão",
         nomeJapones: "雷門提灯の龍彫刻",
         description:
           "A maioria passa direto sem notar: embaixo da lanterna gigante do Kaminarimon há um dragão entalhado em madeira, considerado protetor do templo na tradição budista. A lanterna atual (3,9 m de altura, ~700 kg) foi doada em 1960 por Konosuke Matsushita, fundador da Panasonic, em agradecimento por ter se curado de uma doença após rezar no Sensoji — o nome \"Matsushita Electric\" ainda aparece gravado na base.",
-        rating: 3,
+        grupo: "Dentro do complexo",
+        ordem: 2,
+        prioridade: "recomendado",
         imagens: [
           { src: "/images/kaminarimon-dragon.png", alt: "Dragão entalhado embaixo da lanterna do Kaminarimon" },
           { src: "/images/kaminari-dragon-lantern.png", alt: "Lanterna do Kaminarimon vista de baixo, com a talha do dragão" },
@@ -364,7 +444,9 @@ const DAY_1: DayContent = {
         nomeJapones: "常香炉",
         description:
           "Grande incensário de bronze em frente ao Salão Principal — acenda um incenso, deposite no jokoro e leve a fumaça sobre o corpo, tradicionalmente pra atrair saúde e sabedoria (muita gente direciona pra cabeça).",
-        rating: 3,
+        grupo: "Dentro do complexo",
+        ordem: 5,
+        prioridade: "recomendado",
         imagem: "/images/Jokoro.png",
         imagemAlt: "Jokoro — incensário de bronze em frente ao Salão Principal do Sensoji",
       },
@@ -373,7 +455,9 @@ const DAY_1: DayContent = {
         nomeJapones: "おみくじ",
         description:
           "Papelzinho de sorte por ¥100: deposite a moeda, chacoalhe a caixa até sair um bastão numerado e pegue a gaveta correspondente. O Sensoji é famoso por sortear azar (kyō) com mais frequência que outros templos — se calhar de tirar, é tradição amarrar o papel num varal ali perto pra deixar a má sorte no templo.",
-        rating: 3,
+        grupo: "Dentro do complexo",
+        ordem: 7,
+        prioridade: "recomendado",
         imagem: "/images/mikuji.png",
         imagemAlt: "Gavetas de omikuji (papéis da sorte) no Templo Sensoji",
       },
@@ -381,7 +465,8 @@ const DAY_1: DayContent = {
         title: "Kappabashi Kitchen Town",
         description:
           "Avenida com lojas que vendem artigos de cozinha desde utensílios domésticos, louças, comida cenográfica — fica a oeste do templo, vale visitar antes de seguir para o lado do rio.",
-        rating: 2,
+        grupo: "Se houver tempo · nos arredores",
+        prioridade: "opcional",
         imagem: "/images/kappabashi.png",
         imagemAlt: "Loja de utensílios de cozinha em Kappabashi Kitchen Town",
       },
@@ -389,14 +474,16 @@ const DAY_1: DayContent = {
         title: "Sumida Park",
         description:
           "Parque as margens do Rio Sumida que corta a parte leste da cidade de Tokyo, vista para a Tokyo Sky Tree",
-        rating: 3,
+        grupo: "Se houver tempo · nos arredores",
+        prioridade: "opcional",
       },
       {
         category: "Compras",
         title: "Masamoto Sohonten",
         description:
           "Uma das Top5 melhores fabricantes de faca profissional do Japão, também tem equipe dedicada de afiador profissional para facas de alta complexidade — fica perto do Sumida Park, do lado do rio.",
-        rating: 4,
+        grupo: "Se houver tempo · nos arredores",
+        prioridade: "recomendado",
         imagem: "/images/masamoto-sohonten.png",
         imagemAlt: "Vitrine de facas profissionais na Masamoto Sohonten",
       },
@@ -419,30 +506,43 @@ const DAY_1: DayContent = {
       nota: "634 m de altura total, concluída em 2012 — a torre de transmissão e observação mais alta do Japão.",
     },
     regiao: {
-      nome: "Sumida",
+      nome: "Oshiage / Sumida · Tokyo",
       descricao:
-        "Sumida é o bairro que abriga a Tokyo Sky Tree (Torre mais alta do Japão) desde 2012, o bairro como o próprio nome diz cresceu as margens do Rio Sumida que antigamente era uma das principais rotas de transporte marítimo de Tokyo.",
+        "Bairro à margem leste do Rio Sumida, dominado pela Tokyo Sky Tree (torre mais alta do Japão, desde 2012) — entretenimento, vista panorâmica e o complexo de lojas Tokyo Solamachi aos pés da torre. O nome do distrito administrativo, Sumida, vem do próprio rio, antigamente uma das principais rotas de transporte marítimo de Tokyo.",
     },
+    decisoes: [
+      {
+        titulo: "Qual ingresso escolher?",
+        resposta:
+          "Tembo Deck (350 m) já entrega a vista principal sobre a cidade — suficiente pra uma primeira visita. Deck + Galleria (450 m) soma o observatório mais alto, vale se quiser a experiência completa ou tentar fotografar o Monte Fuji em dias claros.",
+      },
+      {
+        titulo: "Se o tempo estiver ruim",
+        resposta:
+          "Com neblina ou chuva forte a vista do observatório fica comprometida — considere adiar a subida para outro horário do roteiro. A Tokyo Solamachi, ao nível do chão, continua valendo a visita.",
+      },
+    ],
     deslocamento: {
       estacaoOrigem: {
-        nome: "Estação Takaracho",
-        nomeJapones: "宝町駅",
-        distancia: "~2 min a pé do hotel",
+        nome: "Estação Asakusa",
+        nomeJapones: "浅草駅",
+        distancia: "Plataforma Tobu — a poucos minutos a pé do almoço em Asakusa",
       },
-      linha: { codigo: "A12", nome: "Toei Asakusa Line", cor: "#E85298", logo: "/images/toei-mark.png" },
+      linha: { codigo: "TS", nome: "Tobu Skytree Line", cor: "#1E90FF" },
       estacaoDestino: {
         nome: "Estação Oshiage",
         nomeJapones: "押上駅〈スカイツリー前〉",
       },
       opcoes: [
         {
-          meio: "Metrô",
-          tempo: "≈14 min",
+          meio: "Trem",
+          tempo: "≈3 min",
           Icon: IconMetro,
           recomendado: true,
           detalhes: [
-            "Linha direta (Toei Asakusa Line), sem baldeação.",
-            "Embarque a ~2 min a pé do lyf Ginza Tokyo.",
+            "Linha direta (Tobu Skytree Line), sem baldeação, direto de Asakusa até Oshiage — não é preciso voltar para perto do hotel.",
+            "Trens a cada ~10 min · tarifa ≈¥150.",
+            "Embarque na plataforma Tobu da Estação Asakusa, separada da entrada do metrô usada de manhã.",
           ],
         },
         {
@@ -455,8 +555,6 @@ const DAY_1: DayContent = {
           ],
         },
       ],
-      recomendacao:
-        "Do lyf Ginza Tokyo, o trajeto até Oshiage é de cerca de 14 minutos de metrô pela Toei Asakusa Line, sem baldeação — a Estação Takaracho fica a ~2 minutos a pé do hotel.",
     },
     atracaoPrincipal: "Tokyo Sky Tree",
     atracaoPrincipalImagem: "/images/dia1-skytree.png",
@@ -472,7 +570,7 @@ const DAY_1: DayContent = {
         title: "Tokyo Solamachi",
         bairro: "Sumida",
         description: "Shopping aos pés da Skytree, com lojas de franquias japonesas.",
-        rating: 5,
+        prioridade: "opcional",
         lista: [
           "Pokémon Center Skytree Town",
           "Jump Shop",
@@ -1945,6 +2043,28 @@ function Stars({ rating, styles }: { rating: number; styles: ReturnType<typeof p
   );
 }
 
+const PRIORIDADE_LABEL: Record<NonNullable<Poi["prioridade"]>, string> = {
+  imperdivel: "Imperdível",
+  recomendado: "Recomendado",
+  opcional: "Opcional",
+};
+
+function PriorityBadge({ prioridade }: { prioridade: NonNullable<Poi["prioridade"]> }) {
+  const style =
+    prioridade === "imperdivel"
+      ? "border-[#B96432] bg-[#B96432] text-white"
+      : prioridade === "recomendado"
+        ? "border-[#B96432]/40 bg-[#B96432]/10 text-[#B96432]"
+        : "border-[#24211D]/20 bg-transparent text-[#24211D]/50";
+  return (
+    <span
+      className={`rounded-full border px-2 py-0.5 text-[9px] font-bold uppercase tracking-[0.15em] ${style}`}
+    >
+      {PRIORIDADE_LABEL[prioridade]}
+    </span>
+  );
+}
+
 function PoiCard({ index, poi }: { index: number; poi: Poi }) {
   const s = poiStyles(poi.bairro);
   const [zoomIndex, setZoomIndex] = useState<number | null>(null);
@@ -1979,11 +2099,13 @@ function PoiCard({ index, poi }: { index: number; poi: Poi }) {
               </span>
             </div>
           </button>
-          <span
-            className={`absolute left-3 top-3 flex h-7 w-7 items-center justify-center rounded-full text-xs font-bold text-white shadow-md ring-2 ring-white/70 ${s.circle}`}
-          >
-            {index + 1}
-          </span>
+          {typeof poi.ordem === "number" && (
+            <span
+              className={`absolute left-3 top-3 flex h-7 w-7 items-center justify-center rounded-full text-xs font-bold text-white shadow-md ring-2 ring-white/70 ${s.circle}`}
+            >
+              {poi.ordem}
+            </span>
+          )}
           {imagens.length > 1 && (
             <div className="absolute bottom-3 right-3 flex gap-1.5">
               {imagens.slice(1, 3).map((img, i) => (
@@ -2008,9 +2130,9 @@ function PoiCard({ index, poi }: { index: number; poi: Poi }) {
 
       <div className="flex flex-1 flex-col gap-1.5 px-4 py-3.5">
         <div className="flex flex-wrap items-center gap-2">
-          {!hasPhoto && (
+          {!hasPhoto && typeof poi.ordem === "number" && (
             <span className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-bold text-white ${s.circle}`}>
-              {index + 1}
+              {poi.ordem}
             </span>
           )}
           {poi.bairro && (
@@ -2029,8 +2151,12 @@ function PoiCard({ index, poi }: { index: number; poi: Poi }) {
           {poi.nomeJapones && (
             <span className={`text-xs ${s.muted}`}>{poi.nomeJapones}</span>
           )}
-          {typeof poi.rating === "number" && (
-            <Stars rating={poi.rating} styles={s} />
+          {poi.prioridade ? (
+            <PriorityBadge prioridade={poi.prioridade} />
+          ) : (
+            typeof poi.rating === "number" && (
+              <Stars rating={poi.rating} styles={s} />
+            )
           )}
         </div>
         {poi.description && (
@@ -2118,6 +2244,33 @@ function ContextoBlock({ contexto }: { contexto: string[] }) {
           </p>
         ))}
       </div>
+    </div>
+  );
+}
+
+function DiaEmNumerosBlock({
+  numeros,
+}: {
+  numeros: NonNullable<DayContent["diaEmNumeros"]>;
+}) {
+  const itens: { label: string; valor: string }[] = [
+    { label: "Atrações", valor: numeros.atracoes },
+    { label: "Caminhada", valor: numeros.caminhada },
+    { label: "Transporte", valor: numeros.transporte },
+    { label: "Metrô/Trem", valor: numeros.linhasMetro },
+    { label: "Ritmo", valor: numeros.ritmo },
+    { label: "Saída · Retorno", valor: `${numeros.saida} · ${numeros.retorno}` },
+  ];
+  return (
+    <div className="mb-10 grid grid-cols-2 gap-x-6 gap-y-4 rounded-2xl border border-[#DDD8CF] bg-[#FDFCF9] p-5 sm:grid-cols-3 sm:p-6">
+      {itens.map((item) => (
+        <div key={item.label}>
+          <p className="mb-1 text-[10px] font-bold uppercase tracking-[0.15em] text-[#24211D]/45">
+            {item.label}
+          </p>
+          <p className="text-sm font-semibold text-[#24211D]">{item.valor}</p>
+        </div>
+      ))}
     </div>
   );
 }
@@ -2548,10 +2701,19 @@ function VisaoAnotadaBlock({
             )}
             <div className="min-w-0 flex-1">
               <div className="flex items-center gap-2">
-                <span
-                  className="h-2.5 w-2.5 shrink-0 rounded-full"
-                  style={{ background: ponto.cor }}
-                />
+                {typeof ponto.ordem === "number" ? (
+                  <span
+                    className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[10px] font-bold text-white"
+                    style={{ background: ponto.cor }}
+                  >
+                    {ponto.ordem}
+                  </span>
+                ) : (
+                  <span
+                    className="h-2.5 w-2.5 shrink-0 rounded-full"
+                    style={{ background: ponto.cor }}
+                  />
+                )}
                 <p className="text-sm font-semibold text-[#24211D]">
                   {ponto.titulo}
                   {ponto.nomeJapones && (
@@ -2671,6 +2833,32 @@ function PeriodBlock({
         )}
       </div>
 
+      {period.percursoEssencial && (
+        <div className="mb-8 rounded-2xl border-2 border-[#173B45] bg-[#F8FAF9] p-5 sm:p-6">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <p className="text-xs font-bold uppercase tracking-[0.25em] text-[#173B45]">
+              Percurso essencial
+            </p>
+            <span className="rounded-full border border-[#173B45]/25 bg-white px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wide text-[#173B45]">
+              {period.percursoEssencial.duracao}
+            </span>
+          </div>
+          <p className="mt-3 text-sm leading-7 text-[#173B45]/90">
+            {period.percursoEssencial.passos.map((passo, i) => (
+              <span key={passo}>
+                <span className="font-semibold">{passo}</span>
+                {i < period.percursoEssencial!.passos.length - 1 && (
+                  <span className="mx-1.5 text-[#173B45]/40">→</span>
+                )}
+              </span>
+            ))}
+          </p>
+          <p className="mt-3 text-xs leading-5 text-[#173B45]/60">
+            O que dá pra fazer sem pressa. Os detalhes de cada ponto vêm a seguir — comece por aqui.
+          </p>
+        </div>
+      )}
+
       {period.visaoAnotada && (
         <VisaoAnotadaBlock visaoAnotada={period.visaoAnotada} />
       )}
@@ -2686,7 +2874,7 @@ function PeriodBlock({
           {period.regiao && (
             <div className="mb-5">
               <p className="text-xs font-bold uppercase tracking-[0.15em] text-[#24211D]/68">
-                Região: {period.regiao.nome}
+                {period.regiao.nome}
               </p>
               <p className="mt-1.5 text-sm leading-6 text-[#24211D]/78">
                 {period.regiao.descricao}
@@ -2743,6 +2931,25 @@ function PeriodBlock({
             </>
           )}
 
+          {period.decisoes && period.decisoes.length > 0 && (
+            <div className="mb-5 space-y-3">
+              {period.decisoes.map((d) => (
+                <div
+                  key={d.titulo}
+                  className="rounded-2xl border border-[#DDD8CF] bg-[#FAF9F6] p-5"
+                >
+                  <p className="mb-1.5 flex items-center gap-2 text-xs font-bold uppercase tracking-[0.12em] text-[#24211D]/70">
+                    <IconArrowDown className="h-3 w-3 -rotate-90 text-[#B96432]" />
+                    {d.titulo}
+                  </p>
+                  <p className="text-sm leading-6 text-[#24211D]/78">
+                    {d.resposta}
+                  </p>
+                </div>
+              ))}
+            </div>
+          )}
+
           {period.mapaVisaoGeral && (
             <MapaVisaoGeralBlock mapa={period.mapaVisaoGeral} />
           )}
@@ -2752,11 +2959,33 @@ function PeriodBlock({
               <p className="mb-5 text-xs text-[#24211D]/65">
                 Pontos de interesse propostos para o período
               </p>
-              <div className="grid grid-cols-1 items-start gap-3 sm:grid-cols-2">
-                {period.pois.map((poi, index) => (
-                  <PoiCard key={poi.title + index} index={index} poi={poi} />
-                ))}
-              </div>
+              {period.pois.some((p) => p.grupo) ? (
+                Array.from(new Set(period.pois.map((p) => p.grupo ?? "Outros"))).map(
+                  (grupo, gIndex) => {
+                    const itens = period.pois.filter(
+                      (p) => (p.grupo ?? "Outros") === grupo
+                    );
+                    return (
+                      <div key={grupo} className={gIndex > 0 ? "mt-6" : ""}>
+                        <p className="mb-3 text-[10px] font-bold uppercase tracking-[0.2em] text-[#24211D]/45">
+                          {grupo}
+                        </p>
+                        <div className="grid grid-cols-1 items-start gap-3 sm:grid-cols-2">
+                          {itens.map((poi, index) => (
+                            <PoiCard key={poi.title + index} index={index} poi={poi} />
+                          ))}
+                        </div>
+                      </div>
+                    );
+                  }
+                )
+              ) : (
+                <div className="grid grid-cols-1 items-start gap-3 sm:grid-cols-2">
+                  {period.pois.map((poi, index) => (
+                    <PoiCard key={poi.title + index} index={index} poi={poi} />
+                  ))}
+                </div>
+              )}
             </>
           )}
 
@@ -2822,6 +3051,11 @@ function GradeHorariosBlock({ grade }: { grade: GradeHorarios }) {
                 </span>
               )}
             </span>
+            {item.permanencia && (
+              <span className="shrink-0 text-right text-xs font-medium tabular-nums text-[#24211D]/45">
+                {item.permanencia}
+              </span>
+            )}
           </div>
         ))}
       </div>
@@ -4184,6 +4418,9 @@ export function ApprovalPanel({
               </p>
               {current.contexto && (
                 <ContextoBlock contexto={current.contexto} />
+              )}
+              {current.diaEmNumeros && (
+                <DiaEmNumerosBlock numeros={current.diaEmNumeros} />
               )}
               {current.gradeHorarios && (
                 <GradeHorariosBlock grade={current.gradeHorarios} />
