@@ -40,7 +40,22 @@ type Poi = {
 
 type Gastronomia = {
   subtitulo?: string;
-  itens: { nome: string; descricao?: string }[];
+  // Parágrafo curto de contexto (ex.: "está integrada ao shopping X, que
+  // reúne diversas opções de restaurantes...") — mostrado acima da lista.
+  intro?: string;
+  itens?: { nome: string; descricao?: string }[];
+  // Cards ricos com foto — usado quando há fotos reais dos restaurantes;
+  // tem prioridade sobre `itens` quando presente.
+  restaurantes?: {
+    nome: string;
+    descricao: string;
+    localizacao: string;
+    preco: string;
+    horario: string;
+    foto?: string;
+  }[];
+  // Mapa clicável (zoom) com a localização dos restaurantes.
+  mapa?: { titulo?: string; imagem: string; imagemAlt: string };
 };
 
 type Regiao = {
@@ -133,6 +148,16 @@ type Period = {
     // exibir grande e em destaque, com `valor` virando a explicação menor
     // logo abaixo. Sem isso, cai no formato antigo (só o parágrafo).
     horarioDestaque?: string;
+    // Foto opcional que ilustra o "Melhor horário" (ex.: pôr do sol no
+    // ponto) — mostrada como miniatura ao lado do texto, só quando presente.
+    imagem?: string;
+    imagemAlt?: string;
+  }[];
+  // Listas curtas de apoio (ex.: "Ingressos", "Preço Estimado") — mostradas
+  // logo depois da grade de detalhes práticos, antes das decisões.
+  listasPraticas?: {
+    titulo: string;
+    itens: string[];
   }[];
   // Mapa aberto (print real) com visão geral do trajeto a pé do período,
   // conectando os pontos de interesse — mostrado antes da grade de POIs.
@@ -150,14 +175,16 @@ type Period = {
     // Sem pontos = a própria imagem já é o infográfico completo (legendas
     // embutidas); com pontos, mostra a legenda ao lado em colunas.
     pontos?: {
-      cor: string;
+      cor?: string;
       titulo: string;
       nomeJapones?: string;
       descricao: string;
       foto?: string;
       // Posição na sequência de visita recomendada (percursoEssencial) —
-      // quando presente, substitui a bolinha de cor lisa por um círculo
-      // numerado da mesma cor, criando a mesma numeração usada nos cards.
+      // é o número mostrado no card (numeração única, igual à do Percurso
+      // Essencial e dos cards de Pontos de Interesse). Sem isso, o card
+      // recebe o rótulo "Opcional" em vez de número — não faz parte do
+      // percurso essencial.
       ordem?: number;
     }[];
   };
@@ -340,6 +367,14 @@ const DAY_1: DayContent = {
           ordem: 1,
         },
         {
+          titulo: "Escultura do Dragão",
+          nomeJapones: "雷門提灯の龍彫刻",
+          descricao:
+            "A maioria passa direto sem notar: embaixo da lanterna gigante do Kaminarimon há um dragão entalhado em madeira, considerado protetor do templo na tradição budista. A lanterna atual (3,9 m de altura, ~700 kg) foi doada em 1960 por Konosuke Matsushita, fundador da Panasonic, em agradecimento por ter se curado de uma doença após rezar no Sensoji — o nome \"Matsushita Electric\" ainda aparece gravado na base.",
+          foto: "/images/kaminarimon-dragon.png",
+          ordem: 2,
+        },
+        {
           cor: "#D97A1F",
           titulo: "Nakamise Street",
           nomeJapones: "仲見世通り",
@@ -358,6 +393,14 @@ const DAY_1: DayContent = {
           ordem: 4,
         },
         {
+          titulo: "Jokoro",
+          nomeJapones: "常香炉",
+          descricao:
+            "Grande incensário de bronze em frente ao Salão Principal — acenda um incenso, deposite no jokoro e leve a fumaça sobre o corpo, tradicionalmente pra atrair saúde e sabedoria (muita gente direciona pra cabeça).",
+          foto: "/images/Jokoro.png",
+          ordem: 5,
+        },
+        {
           cor: "#3F8F3F",
           titulo: "Salão Principal",
           nomeJapones: "本堂 / Kannondō",
@@ -365,6 +408,14 @@ const DAY_1: DayContent = {
             "Santuário principal do templo, onde fica a estátua de Kannon (Deusa da Misericórdia) que deu origem ao Sensoji — fundado em 628, o templo mais antigo de Tóquio.",
           foto: "/images/sensoji-kannondo.png",
           ordem: 6,
+        },
+        {
+          titulo: "Omikuji",
+          nomeJapones: "おみくじ",
+          descricao:
+            "Papelzinho de sorte por ¥100: deposite a moeda, chacoalhe a caixa até sair um bastão numerado e pegue a gaveta correspondente. O Sensoji é famoso por sortear azar (kyō) com mais frequência que outros templos — se calhar de tirar, é tradição amarrar o papel num varal ali perto pra deixar a má sorte no templo.",
+          foto: "/images/mikuji.png",
+          ordem: 7,
         },
         {
           cor: "#6B3FA0",
@@ -379,7 +430,7 @@ const DAY_1: DayContent = {
     regiao: {
       nome: "Asakusa · Tokyo",
       descricao:
-        "Bairro histórico às margens do Rio Sumida, coração da \"Tokyo antiga\" — templos, comércio tradicional e costumes que sobreviveram em poucos outros lugares da cidade. Faz parte do distrito administrativo de Taito, um dos mais antigos de Tokyo, fundado por volta de 1600 quando a cidade ainda se chamava Edo — até hoje existem vendedores de leite em garrafa de vidro que passam de casa em casa antes de amanhecer.",
+        "Bairro histórico às margens do Rio Sumida, coração da \"Tokyo antiga\" — templos, comércio tradicional e costumes que sobreviveram em poucos outros lugares da cidade. Parte do distrito de Taito, um dos mais antigos de Tokyo, fundado por volta de 1600, quando a cidade ainda se chamava Edo.",
     },
     deslocamento: {
       estacaoOrigem: {
@@ -444,41 +495,6 @@ const DAY_1: DayContent = {
     },
     pois: [
       {
-        title: "Escultura do Dragão",
-        nomeJapones: "雷門提灯の龍彫刻",
-        description:
-          "A maioria passa direto sem notar: embaixo da lanterna gigante do Kaminarimon há um dragão entalhado em madeira, considerado protetor do templo na tradição budista. A lanterna atual (3,9 m de altura, ~700 kg) foi doada em 1960 por Konosuke Matsushita, fundador da Panasonic, em agradecimento por ter se curado de uma doença após rezar no Sensoji — o nome \"Matsushita Electric\" ainda aparece gravado na base.",
-        grupo: "Dentro do complexo",
-        ordem: 2,
-        prioridade: "recomendado",
-        imagens: [
-          { src: "/images/kaminarimon-dragon.png", alt: "Dragão entalhado embaixo da lanterna do Kaminarimon" },
-          { src: "/images/kaminari-dragon-lantern.png", alt: "Lanterna do Kaminarimon vista de baixo, com a talha do dragão" },
-        ],
-      },
-      {
-        title: "Jokoro",
-        nomeJapones: "常香炉",
-        description:
-          "Grande incensário de bronze em frente ao Salão Principal — acenda um incenso, deposite no jokoro e leve a fumaça sobre o corpo, tradicionalmente pra atrair saúde e sabedoria (muita gente direciona pra cabeça).",
-        grupo: "Dentro do complexo",
-        ordem: 5,
-        prioridade: "recomendado",
-        imagem: "/images/Jokoro.png",
-        imagemAlt: "Jokoro — incensário de bronze em frente ao Salão Principal do Sensoji",
-      },
-      {
-        title: "Omikuji",
-        nomeJapones: "おみくじ",
-        description:
-          "Papelzinho de sorte por ¥100: deposite a moeda, chacoalhe a caixa até sair um bastão numerado e pegue a gaveta correspondente. O Sensoji é famoso por sortear azar (kyō) com mais frequência que outros templos — se calhar de tirar, é tradição amarrar o papel num varal ali perto pra deixar a má sorte no templo.",
-        grupo: "Dentro do complexo",
-        ordem: 7,
-        prioridade: "recomendado",
-        imagem: "/images/mikuji.png",
-        imagemAlt: "Gavetas de omikuji (papéis da sorte) no Templo Sensoji",
-      },
-      {
         title: "Kappabashi Kitchen Town",
         description:
           "Avenida com lojas que vendem artigos de cozinha desde utensílios domésticos, louças, comida cenográfica — fica a oeste do templo, vale visitar antes de seguir para o lado do rio.",
@@ -502,7 +518,7 @@ const DAY_1: DayContent = {
         description:
           "Uma das Top5 melhores fabricantes de faca profissional do Japão, também tem equipe dedicada de afiador profissional para facas de alta complexidade — fica perto do Sumida Park, do lado do rio.",
         grupo: "Se houver tempo · nos arredores",
-        prioridade: "recomendado",
+        prioridade: "opcional",
         imagem: "/images/masamoto-sohonten.png",
         imagemAlt: "Vitrine de facas profissionais na Masamoto Sohonten",
       },
@@ -519,6 +535,17 @@ const DAY_1: DayContent = {
   },
   tarde: {
     label: "Tarde",
+    percursoEssencial: {
+      duracao: "~1h30 (Deck) · ~2h (c/ Galleria)",
+      passos: [
+        { titulo: "Chegada Oshiage" },
+        { titulo: "4F · Entrada" },
+        { titulo: "Tembo Deck · 350 m", foto: "/images/skytree-tembo-deck-aerea.jpg" },
+        { titulo: "Tembo Galleria · 450 m (opcional)" },
+        { titulo: "Descida" },
+        { titulo: "Tokyo Solamachi", foto: "/images/solamachi-floor1.png" },
+      ],
+    },
     visaoAnotada: {
       titulo: "Tokyo Sky Tree",
       imagem: "/images/dia1-skytree-visao-anotada-v2.png",
@@ -547,11 +574,6 @@ const DAY_1: DayContent = {
           src: "/images/skytree-tembo-deck-vista-noturna.jpg",
           alt: "Vista de dentro do Tembo Deck à noite, com a cidade iluminada ao fundo",
           legenda: "Vista de dentro do Tembo Deck, à noite",
-        },
-        {
-          src: "/images/skytree-por-do-sol-fuji.jpg",
-          alt: "Tokyo Sky Tree ao pôr do sol, com o Monte Fuji visível ao fundo",
-          legenda: "Pôr do sol na torre, com o Monte Fuji ao fundo em dias claros",
         },
       ],
     },
@@ -609,14 +631,35 @@ const DAY_1: DayContent = {
     atracaoPrincipal: "Tokyo Sky Tree",
     atracaoPrincipalImagem: "/images/dia1-skytree.png",
     detalhesPraticos: [
-      { label: "Tembo Deck (350m)", valor: "¥2.100 antecipado / ¥2.400 no dia" },
-      { label: "Deck + Galleria", valor: "A partir de ¥3.100" },
-      { label: "Horário", valor: "Varia por temporada — conferir site oficial" },
-      { label: "Reserva", valor: "Recomendada, especialmente no pôr do sol" },
       {
         label: "Melhor horário",
-        horarioDestaque: "~1h antes do pôr do sol",
-        valor: "Assim dá pra ver o dia virar noite lá de cima, sem perder o horário de última entrada.",
+        horarioDestaque: "16:30–18:30",
+        valor:
+          "Chegada ao complexo Tokyo Solamachi às 17:00, com subida à torre por volta das 18:15 — tempo certo para acompanhar o pôr do sol do topo.",
+        imagem: "/images/skytree-por-do-sol-fuji.jpg",
+        imagemAlt: "Tokyo Sky Tree ao pôr do sol, com o Monte Fuji visível ao fundo",
+      },
+      { label: "Tempo estimado", valor: "1–2 horas" },
+      { label: "Reserva", valor: "Recomendada" },
+      { label: "Horário de funcionamento", valor: "10:00 às 22:00" },
+    ],
+    listasPraticas: [
+      {
+        titulo: "Ingressos",
+        itens: [
+          "1. Visita ao 350º andar — Tembo Deck",
+          "2. Visita ao 350º e 450º andar",
+          "3. Ingresso separado para a Tembo Galleria",
+        ],
+      },
+      {
+        titulo: "Preço Estimado",
+        itens: [
+          "Tembo Deck: a partir de ¥1.800 por pessoa",
+          "Tembo Deck + Tembo Galleria: a partir de ¥3.000",
+          "Tembo Galleria avulsa: ¥1.400 por pessoa",
+          "Crianças entre 6 e 14 anos pagam meia entrada.",
+        ],
       },
     ],
     pois: [
@@ -655,17 +698,31 @@ const DAY_1: DayContent = {
       },
     ],
     gastronomia: {
-      subtitulo: "Dentro do complexo Tokyo Solamachi, aos pés da Skytree",
-      itens: [
+      intro:
+        "A Tokyo Sky Tree está integrada ao shopping Tokyo Solamachi, que reúne diversas opções de restaurantes, praça de alimentação e um mercado no subsolo com alternativas para takeout.",
+      restaurantes: [
         {
           nome: "Hitsumabushi Bincho",
-          descricao: "Enguia (unagi) · 6º andar · ~¥6.000 · 11h–21h",
+          descricao: "Enguia · hitsumabushi",
+          localizacao: "6º andar",
+          preco: "~¥6.000",
+          horario: "11:00–21:00",
+          foto: "/images/Hitsumabushi.png",
         },
         {
           nome: "Kaiten Sushi Toriton",
-          descricao: "Sushi de esteira · 6º andar · ~¥6.000 · 11h–22h",
+          descricao: "Sushi de esteira · prático",
+          localizacao: "6º andar",
+          preco: "~¥6.000",
+          horario: "11:00–22:00",
+          foto: "/images/Toriton.png",
         },
       ],
+      mapa: {
+        titulo: "Mapa — Solamachi Dining",
+        imagem: "/images/solamachi-dining-map.png",
+        imagemAlt: "Mapa dos restaurantes do Tokyo Solamachi",
+      },
     },
   },
 };
@@ -2348,8 +2405,11 @@ function DiaEmNumerosBlock({
 }
 
 function GastronomiaBlock({ gastronomia }: { gastronomia: Gastronomia }) {
+  const [zoom, setZoom] = useState(false);
+  const temRestaurantes = gastronomia.restaurantes && gastronomia.restaurantes.length > 0;
+
   return (
-    <div className="mt-6 rounded-2xl border border-[#DDD8CF] bg-[#FAF9F6] p-4">
+    <div className="mt-6 rounded-2xl border border-[#DDD8CF] bg-[#FAF9F6] p-4 sm:p-6">
       <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#24211D]/68">
         Gastronomia
         {gastronomia.subtitulo && (
@@ -2358,20 +2418,112 @@ function GastronomiaBlock({ gastronomia }: { gastronomia: Gastronomia }) {
           </span>
         )}
       </p>
-      <ul className="mt-3 space-y-1.5">
-        {gastronomia.itens.map((item) => (
-          <li key={item.nome} className="text-sm leading-6 text-[#24211D]/85">
-            <span className="font-semibold text-[#24211D]/95">{item.nome}</span>
-            {item.descricao && (
-              <span className="text-[#24211D]/75"> — {item.descricao}</span>
-            )}
-          </li>
-        ))}
-      </ul>
-      <p className="mt-3 border-t border-[#DDD8CF] pt-3 text-xs leading-5 text-[#24211D]/68">
-        Mapeamento de opções de restaurantes nos arredores da atração
-        principal
-      </p>
+
+      {gastronomia.intro && (
+        <p className="mt-3 text-sm leading-6 text-[#24211D]/78">
+          {gastronomia.intro}
+        </p>
+      )}
+
+      {temRestaurantes ? (
+        <div className="mt-4 grid grid-cols-1 gap-4 sm:grid-cols-2">
+          {gastronomia.restaurantes!.map((r) => (
+            <div
+              key={r.nome}
+              className="overflow-hidden rounded-2xl border border-[#DDD8CF] bg-[#FDFCF9]"
+            >
+              {r.foto && (
+                <div className="aspect-square overflow-hidden">
+                  <img
+                    src={r.foto}
+                    alt={r.nome}
+                    className="h-full w-full object-cover"
+                  />
+                </div>
+              )}
+              <div className="p-4">
+                <p className="text-sm font-semibold text-[#24211D]">
+                  {r.nome}
+                </p>
+                <p className="mt-0.5 text-xs text-[#B96432]">
+                  {r.descricao}
+                </p>
+                <div className="mt-3 space-y-1 border-t border-[#DDD8CF] pt-3 text-[11px] leading-5 text-[#24211D]/60">
+                  <p>📍 {r.localizacao}</p>
+                  <p>¥ {r.preco}</p>
+                  <p>🕒 {r.horario}</p>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : (
+        gastronomia.itens &&
+        gastronomia.itens.length > 0 && (
+          <ul className="mt-3 space-y-1.5">
+            {gastronomia.itens.map((item) => (
+              <li key={item.nome} className="text-sm leading-6 text-[#24211D]/85">
+                <span className="font-semibold text-[#24211D]/95">{item.nome}</span>
+                {item.descricao && (
+                  <span className="text-[#24211D]/75"> — {item.descricao}</span>
+                )}
+              </li>
+            ))}
+          </ul>
+        )
+      )}
+
+      {gastronomia.mapa ? (
+        <>
+          <button
+            type="button"
+            onClick={() => setZoom(true)}
+            className="mt-4 flex w-full items-center gap-4 rounded-2xl border border-[#BFDCF2] bg-[#EAF3FC] p-4 text-left transition hover:border-[#2C6CA6]/50"
+          >
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white text-[#2C6CA6]">
+              <IconMap className="h-5 w-5" />
+            </span>
+            <span className="min-w-0">
+              <span className="block text-sm font-medium text-[#1B4A73]">
+                {gastronomia.mapa.titulo ?? "Mapa de restaurantes"}
+              </span>
+              <span className="block text-xs text-[#2C6CA6]/70">
+                Toque para ampliar
+              </span>
+            </span>
+            <span className="ml-auto shrink-0 text-lg text-[#2C6CA6]/60">
+              →
+            </span>
+          </button>
+
+          {zoom && (
+            <div
+              className="fixed inset-0 z-[100] flex items-center justify-center bg-black/85 p-4 backdrop-blur-sm sm:p-8"
+              onClick={() => setZoom(false)}
+            >
+              <button
+                type="button"
+                onClick={() => setZoom(false)}
+                className="absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white transition hover:bg-white/20 sm:right-6 sm:top-6"
+                aria-label="Fechar"
+              >
+                <IconX className="h-5 w-5" />
+              </button>
+              <img
+                src={gastronomia.mapa.imagem}
+                alt={gastronomia.mapa.imagemAlt}
+                className="max-h-[90vh] max-w-[95vw] rounded-2xl object-contain"
+                onClick={(e) => e.stopPropagation()}
+              />
+            </div>
+          )}
+        </>
+      ) : (
+        <p className="mt-3 border-t border-[#DDD8CF] pt-3 text-xs leading-5 text-[#24211D]/68">
+          Mapeamento de opções de restaurantes nos arredores da atração
+          principal
+        </p>
+      )}
     </div>
   );
 }
@@ -2824,9 +2976,15 @@ function VisaoAnotadaBlock({
                     <IconZoom className="h-4 w-4" />
                   </span>
                 </div>
-                <span className="absolute left-3 top-3 flex h-8 w-8 items-center justify-center rounded-full bg-black text-sm font-bold text-white shadow-md ring-2 ring-white/70">
-                  {i + 1}
-                </span>
+                {typeof ponto.ordem === "number" ? (
+                  <span className="absolute left-3 top-3 flex h-8 w-8 items-center justify-center rounded-full bg-black text-sm font-bold text-white shadow-md ring-2 ring-white/70">
+                    {ponto.ordem}
+                  </span>
+                ) : (
+                  <span className="absolute left-3 top-3 rounded-full border border-white/70 bg-black/70 px-2.5 py-1 text-[9px] font-bold uppercase tracking-[0.15em] text-white shadow-md">
+                    Opcional
+                  </span>
+                )}
               </button>
             )}
             <div className="p-5">
@@ -3087,12 +3245,6 @@ function PeriodBlock({
         </NumberedStep>
       )}
 
-      {period.visaoAnotada && (
-        <VisaoAnotadaBlock visaoAnotada={period.visaoAnotada} />
-      )}
-
-      {period.galeria && <GaleriaBlock galeria={period.galeria} />}
-
       <NumberedStep number={passoAtracao} label="Atração">
         <>
           {period.regiao && (
@@ -3143,7 +3295,7 @@ function PeriodBlock({
                       <span className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-white text-[#2C6CA6] shadow-sm">
                         <IconClock className="h-8 w-8" />
                       </span>
-                      <div className="min-w-0">
+                      <div className="min-w-0 flex-1">
                         <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#2C6CA6]/85">
                           Melhor Horário
                         </p>
@@ -3154,6 +3306,13 @@ function PeriodBlock({
                           {item.valor}
                         </p>
                       </div>
+                      {item.imagem && (
+                        <img
+                          src={item.imagem}
+                          alt={item.imagemAlt ?? ""}
+                          className="hidden h-24 w-24 shrink-0 rounded-xl object-cover shadow-sm sm:block"
+                        />
+                      )}
                     </div>
                   ) : (
                     <div
@@ -3175,6 +3334,25 @@ function PeriodBlock({
                   )
                 )}
             </>
+          )}
+
+          {period.listasPraticas && period.listasPraticas.length > 0 && (
+            <div className="mb-5 grid grid-cols-1 gap-5 sm:grid-cols-2">
+              {period.listasPraticas.map((lista) => (
+                <div key={lista.titulo}>
+                  <p className="mb-2 text-[10px] font-bold uppercase tracking-[0.2em] text-[#24211D]/55">
+                    {lista.titulo}
+                  </p>
+                  <div className="space-y-1.5">
+                    {lista.itens.map((item, i) => (
+                      <p key={i} className="text-sm leading-6 text-[#24211D]/78">
+                        {item}
+                      </p>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
           )}
 
           {period.decisoes && period.decisoes.length > 0 && (
@@ -3201,6 +3379,12 @@ function PeriodBlock({
           )}
         </>
       </NumberedStep>
+
+      {period.visaoAnotada && (
+        <VisaoAnotadaBlock visaoAnotada={period.visaoAnotada} />
+      )}
+
+      {period.galeria && <GaleriaBlock galeria={period.galeria} />}
 
       {period.pois.length > 0 && (
         <NumberedStep number={passoPois!} label="Pontos de Interesse">
@@ -3681,6 +3865,16 @@ function IconX({ className }: { className?: string }) {
     <svg {...iconProps(className)}>
       <line x1="18" y1="6" x2="6" y2="18" />
       <line x1="6" y1="6" x2="18" y2="18" />
+    </svg>
+  );
+}
+
+function IconMap({ className }: { className?: string }) {
+  return (
+    <svg {...iconProps(className)}>
+      <polygon points="1 6 8 3 16 6 23 3 23 18 16 21 8 18 1 21 1 6" />
+      <line x1="8" y1="3" x2="8" y2="18" />
+      <line x1="16" y1="6" x2="16" y2="21" />
     </svg>
   );
 }
