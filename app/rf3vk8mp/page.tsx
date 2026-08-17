@@ -281,17 +281,19 @@ export default function AprovacaoRoteiroPage() {
                   Rafael Serafim Sousa · 7 dias · 03–12 Mai 2027
                 </span>
               </span>
-              <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth={2}
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="h-4 w-4 shrink-0 text-[#24211D]/45 transition-transform duration-300 group-open:rotate-180"
-              >
-                <path d="m6 9 6 6 6-6" />
-              </svg>
+              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-[#DDD8CF] bg-[#F3F1EB] text-[#173B45] transition-colors duration-300 group-hover:bg-[#173B45] group-hover:text-white">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth={2.5}
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="h-4 w-4 transition-transform duration-300 group-open:rotate-180"
+                >
+                  <path d="m6 9 6 6 6-6" />
+                </svg>
+              </span>
             </summary>
 
             <div className="border-t border-[#DDD8CF] px-6 pb-6 pt-6 sm:px-8 sm:pb-8">

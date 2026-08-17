@@ -352,7 +352,7 @@ const DAY_1: DayContent = {
       },
       {
         horario: "13:25",
-        evento: "Trem até Oshiage · Tobu Skytree Line, direto (~3 min)",
+        evento: "Trem até Tokyo Skytree Station · Tobu Skytree Line, direto (~3 min)",
         tag: "Deslocamento",
       },
       {
@@ -371,7 +371,7 @@ const DAY_1: DayContent = {
       },
       { horario: "19:00", evento: "Retorno ao lyf Ginza Tokyo" },
     ],
-    nota: "Horários estimados considerando saída do lyf Ginza Tokyo (Kyobashi) — ajuste conforme seu ritmo. Entre a chegada a Oshiage (~13:28) e a subida à torre (14:35) há uma folga proposital de ~1h para explorar a Tokyo Solamachi com calma antes do pôr do sol.",
+    nota: "Horários estimados considerando saída do lyf Ginza Tokyo (Kyobashi) — ajuste conforme seu ritmo. Entre a chegada à Tokyo Skytree Station (~13:28) e a subida à torre (14:35) há uma folga proposital de ~1h para explorar a Tokyo Solamachi com calma antes do pôr do sol.",
   },
   diaEmNumeros: {
     atracoes: "2 atrações principais",
@@ -690,7 +690,7 @@ const DAY_1: DayContent = {
     percursoEssencial: {
       duracao: "~1h30 (Deck) · ~2h (c/ Galleria)",
       passos: [
-        { titulo: "Chegada Oshiage" },
+        { titulo: "Chegada Tokyo Skytree Station" },
         { titulo: "4F · Entrada" },
         { titulo: "Tembo Deck · 350 m", foto: "/images/skytree-tembo-deck-aerea.jpg" },
         { titulo: "Tembo Galleria · 450 m (opcional)" },
@@ -754,11 +754,10 @@ const DAY_1: DayContent = {
         saida: "Entrada EKIMISE, 2º andar",
       },
       linha: { codigo: "TS", nome: "Tobu Skytree Line", cor: "#1E90FF" },
-      estacoesIntermediarias: ["Tokyo Skytree"],
       estacaoDestino: {
-        nome: "Estação Oshiage",
-        nomeJapones: "押上駅〈スカイツリー前〉",
-        saida: "Saída B3 → Solamachi",
+        nome: "Tokyo Skytree Station",
+        nomeJapones: "とうきょうスカイツリー駅",
+        saida: "Ligação direta com a Tokyo Solamachi",
       },
       opcoes: [
         {
@@ -767,9 +766,10 @@ const DAY_1: DayContent = {
           Icon: IconMetro,
           recomendado: true,
           detalhes: [
-            "Linha direta (Tobu Skytree Line), sem baldeação, direto de Asakusa até Oshiage — não é preciso voltar para perto do hotel.",
+            "Linha direta (Tobu Skytree Line), sem baldeação — 1,1 km, é a próxima parada depois de Asakusa. Não é preciso voltar para perto do hotel.",
             "Trens a cada ~10 min · tarifa ≈¥150.",
             "Embarque na plataforma Tobu da Estação Asakusa, separada da entrada do metrô usada de manhã.",
+            "Não confundir com a Estação Oshiage (Hanzomon/Toei Asakusa/Keisei) — é outra estação, a ~10 min a pé dali. A Tokyo Skytree Station já entrega você direto na base da torre e na Tokyo Solamachi.",
           ],
         },
         {
@@ -3112,7 +3112,7 @@ function DeslocamentoCard({ deslocamento }: { deslocamento: Deslocamento }) {
                   return (
                     <span
                       key={nome}
-                      className="absolute bottom-0 origin-bottom-left -rotate-45 whitespace-nowrap text-[9px] font-semibold text-[#24211D]"
+                      className="absolute bottom-0 origin-bottom-left -rotate-45 whitespace-nowrap text-[11px] font-semibold text-[#24211D]"
                       style={{ left: `${pct}%` }}
                     >
                       {nome}
