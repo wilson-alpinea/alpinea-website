@@ -265,7 +265,7 @@ export default function AprovacaoRoteiroPage() {
           {/* Glow via box-shadow direto no card — nunca "vaza" para dentro do
               fundo opaco, já que sombra CSS só pinta fora da caixa. */}
           <details
-            className="group overflow-hidden rounded-2xl border border-[#DDD8CF] bg-[#FDFCF9] sm:rounded-[2rem]"
+            className="group overflow-hidden rounded-2xl border border-[#DDD8CF] bg-[#F2F1ED] sm:rounded-[2rem]"
             style={{
               boxShadow:
                 "0 0 90px 6px rgba(35,90,190,0.28), 0 0 42px -4px rgba(90,50,155,0.28), 0 20px 60px -30px rgba(0,0,0,0.6)",

@@ -351,12 +351,12 @@ const DAY_1: DayContent = {
       },
       {
         horario: "13:15",
-        evento: "Caminhada até a Estação Asakusa, plataforma Tobu (~8 min)",
+        evento: "Caminhada até a Estação Asakusa, saída A4 (~8 min)",
         tag: "Deslocamento",
       },
       {
         horario: "13:25",
-        evento: "Trem até Tokyo Skytree Station · Tobu Skytree Line, direto (~3 min)",
+        evento: "Trem até Oshiage · Toei Asakusa Line, direto (~4 min)",
         tag: "Deslocamento",
       },
       {
@@ -375,7 +375,7 @@ const DAY_1: DayContent = {
       },
       { horario: "19:00", evento: "Retorno ao lyf Ginza Tokyo" },
     ],
-    nota: "Horários estimados considerando saída do lyf Ginza Tokyo (Kyobashi) — ajuste conforme seu ritmo. Entre a chegada à Tokyo Skytree Station (~13:28) e a subida à torre (14:35) há uma folga proposital de ~1h para explorar a Tokyo Solamachi com calma antes do pôr do sol.",
+    nota: "Horários estimados considerando saída do lyf Ginza Tokyo (Kyobashi) — ajuste conforme seu ritmo. Entre a chegada à Oshiage (~13:29) e a subida à torre (14:35) há uma folga proposital de ~1h para explorar a Tokyo Solamachi com calma antes do pôr do sol.",
   },
   diaEmNumeros: {
     atracoes: "2 atrações principais",
@@ -701,7 +701,7 @@ const DAY_1: DayContent = {
     percursoEssencial: {
       duracao: "~1h30 (Deck) · ~2h (c/ Galleria)",
       passos: [
-        { titulo: "Chegada Tokyo Skytree Station" },
+        { titulo: "Chegada Oshiage (saída B3)" },
         { titulo: "4F · Entrada" },
         { titulo: "Tembo Deck · 350 m", foto: "/images/skytree-tembo-deck-aerea.jpg" },
         { titulo: "Tembo Galleria · 450 m (opcional)" },
@@ -765,26 +765,27 @@ const DAY_1: DayContent = {
       estacaoOrigem: {
         nome: "Estação Asakusa",
         nomeJapones: "浅草駅",
-        distancia: "Plataforma Tobu — a poucos minutos a pé do almoço em Asakusa",
-        saida: "Entrada EKIMISE, 2º andar",
+        distancia: "Plataforma Toei Asakusa Line — a poucos minutos a pé do almoço em Asakusa",
+        saida: "Entrada/Saída A4, direção Kaminarimon",
       },
-      linha: { codigo: "TS", nome: "Tobu Skytree Line", cor: "#1E90FF" },
+      linha: { codigo: "A", nome: "Toei Asakusa Line", cor: "#EF5BA1" },
+      estacoesIntermediarias: ["Honjo-Azumabashi"],
       estacaoDestino: {
-        nome: "Tokyo Skytree Station",
-        nomeJapones: "とうきょうスカイツリー駅",
-        saida: "Ligação direta com a Tokyo Solamachi",
+        nome: "Oshiage (Tokyo Skytree Station)",
+        nomeJapones: "押上（スカイツリー前）駅",
+        saida: "Saída B3, ligação direta e subterrânea com a Tokyo Solamachi",
       },
       opcoes: [
         {
           meio: "Trem",
-          tempo: "≈3 min",
+          tempo: "≈4 min",
           Icon: IconMetro,
           recomendado: true,
           detalhes: [
-            "Linha direta (Tobu Skytree Line), sem baldeação — 1,1 km, é a próxima parada depois de Asakusa. Não é preciso voltar para perto do hotel.",
-            "Trens a cada ~10 min · tarifa ≈¥150.",
-            "Embarque na plataforma Tobu da Estação Asakusa, separada da entrada do metrô usada de manhã.",
-            "Não confundir com a Estação Oshiage (Hanzomon/Toei Asakusa/Keisei) — é outra estação, a ~10 min a pé dali. A Tokyo Skytree Station já entrega você direto na base da torre e na Tokyo Solamachi.",
+            "Toei Asakusa Line, sem baldeação — 2 paradas (Honjo-Azumabashi no meio do caminho). Não é preciso voltar para perto do hotel.",
+            "Trens a cada ~5–8 min · tarifa ≈¥180.",
+            "Embarque na plataforma do metrô na Estação Asakusa, saída A4, a mesma região da manhã.",
+            "A Estação Oshiage já entrega você direto na base da torre pela saída B3, com acesso subterrâneo à Tokyo Solamachi.",
           ],
         },
         {

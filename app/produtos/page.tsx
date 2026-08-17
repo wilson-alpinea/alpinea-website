@@ -84,11 +84,9 @@ const IMAGENS_PRODUTO: Record<ProdutoKey, { src: string; alt: string }> = {
     src: "/images/personalizado-hero.png",
     alt: "Pacotes Personalizados",
   },
-  // TODO: trocar por uma foto real de guia em campo — reaproveitando a do
-  // Individual/Pequenos Grupos como placeholder por ora.
   guia: {
-    src: "/images/individual-2-hero.png",
-    alt: "Guia Turístico Avulso",
+    src: "/images/guia-ajisai-campo.png",
+    alt: "Guia Ajisai em campo, com bandeira e placa de identificação",
   },
 };
 
