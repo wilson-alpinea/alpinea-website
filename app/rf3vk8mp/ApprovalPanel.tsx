@@ -3323,7 +3323,7 @@ function VisaoAnotadaBlock({
           </div>
         ) : (
           <div className="mb-5 rounded-2xl bg-black px-6 py-4 text-center">
-            <p className={`${displayClassName} text-base uppercase tracking-[0.25em] text-white sm:text-lg`}>
+            <p className={`${displayClassName} text-2xl font-medium text-white md:text-3xl`}>
               Raio-X Alpinea{visaoAnotada.titulo && ` — ${visaoAnotada.titulo}`}
             </p>
           </div>
@@ -5292,10 +5292,9 @@ export function ApprovalPanel({
                   style={
                     d.badge
                       ? {
-                          background:
-                            "radial-gradient(circle at 30% 26%, rgba(160,180,255,0.55) 0%, rgba(100,80,200,0.32) 20%, transparent 46%), conic-gradient(from 210deg at 50% 50%, #120a24, #241448, #3a1f66, #17224e, #1c2f5e, #2a1550, #120a24)",
+                          background: "#0A0A0A",
                           boxShadow:
-                            "inset 0 0 8px rgba(180,190,255,0.25), 0 0 0 1px rgba(150,160,255,0.3)",
+                            "inset 0 0 8px rgba(255,255,255,0.12), 0 0 0 1px rgba(255,255,255,0.15)",
                         }
                       : undefined
                   }
