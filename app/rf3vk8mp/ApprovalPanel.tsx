@@ -191,6 +191,10 @@ type Period = {
     // shopping) — não é um infográfico "Raio-X Alpinea" com pontos
     // anotados. Troca o card preto de destaque por um rótulo simples.
     simples?: boolean;
+    // Parágrafos de comentário livre mostrados no card preto do Raio-X
+    // Alpinea, abaixo do título — leitura de contexto/dicas da seção,
+    // separado da legenda de cada ponto.
+    comentarios?: string[];
     // Sem pontos = a própria imagem já é o infográfico completo (legendas
     // embutidas); com pontos, mostra a legenda ao lado em colunas.
     pontos?: {
@@ -403,6 +407,13 @@ const DAY_1: DayContent = {
       titulo: "Templo Sensoji",
       imagem: "/images/dia1-sensoji-visao-anotada-v2.png",
       imagemAlt: "Vista aérea do complexo do Templo Sensoji com as partes principais destacadas",
+      comentarios: [
+        "A prioridade aqui é evitar o início das aglomerações no complexo — por ser um dos pontos turísticos mais visitados do Japão, próximo do horário do almoço começa a ficar muito cheio. Nossa recomendação é chegar antes da abertura das lojas da Nakamise e aproveitar com calma todos os pontos destacados abaixo. A partir das 09:00 (abertura das lojas) você começa a explorar as lojinhas, tanto de snacks quanto de souvenir. Após finalizar essa visita, você tem algumas opções.",
+        "Existem 3 pontos de interesse destacados abaixo — nossa recomendação seria visitar os 3, porém o tempo que vai passar em cada um depende de você. Kappabashi é enorme, não recomendo visitar todas as lojas.",
+        "Para ir à Tokyo Sky Tree você pode ir andando pelo Sumida Park, ou pegar o metrô (são duas estações de distância).",
+        "Outra opção é voltar pro hotel e descansar antes de ir pra Tokyo Sky Tree.",
+        "Sobre o almoço, recomendo sair de perto do complexo de Sensoji — as filas são gigantes.",
+      ],
       pontos: [
         {
           cor: "#C81D25",
@@ -703,6 +714,10 @@ const DAY_1: DayContent = {
       imagem: "/images/dia1-skytree-visao-anotada-v2.png",
       imagemAlt: "Infográfico da Tokyo Sky Tree com altura e observatórios (Tembo Deck e Tembo Galleria)",
       nota: "634 m de altura total, concluída em 2012 — a torre de transmissão e observação mais alta do Japão.",
+      comentarios: [
+        "Considerando que você chegue num horário apropriado para subir antes do pôr do sol, a prioridade é se dirigir à bilheteria e comprar o ingresso. Existem 2 opções: uma que sobe até o observatório superior e outra até o observatório inferior — a diferença é mínima entre os dois. Uma diferença importante é que o espaço é muito mais reduzido no superior (recomendo evitar se for claustrofóbico). Alguns viajantes gostam de fazer uma refeição no Musashi ou comer algo no café e sentar para fazer esse lanche — fica a seu critério; em termos de qualidade de comida, na base da torre (Solamachi) a comida é melhor.",
+        "O shopping Solamachi é enorme — deixei em destaque as lojas referentes a anime/mangá, mas tem dezenas de lojas de outros temas que podem ser interessantes de explorar.",
+      ],
     },
     galeria: {
       titulo: "Skytree em Detalhes",
@@ -2356,14 +2371,14 @@ const DAYS: DayContent[] = [
 // dedicado em vez de dividir a tarde com Sumida.
 const BAIRRO_STYLES = {
   Sumida: {
-    border: "border-[#000000]",
+    border: "border-[#2C6CA6]",
     bg: "bg-[#F8FAF9]",
-    circle: "bg-[#000000]",
-    text: "text-[#000000]",
-    muted: "text-[#000000]/70",
-    starMuted: "text-[#000000]/25",
-    badge: "border-[#000000]/30 bg-[#000000]/10 text-[#000000]",
-    chip: "border-[#000000]/25 bg-[#FDFCF9] text-[#000000]",
+    circle: "bg-[#2C6CA6]",
+    text: "text-[#2C6CA6]",
+    muted: "text-[#24211D]/70",
+    starMuted: "text-[#2C6CA6]/25",
+    badge: "border-[#2C6CA6]/30 bg-[#2C6CA6]/10 text-[#2C6CA6]",
+    chip: "border-[#2C6CA6]/25 bg-[#FDFCF9] text-[#2C6CA6]",
   },
   Ryogoku: {
     border: "border-[#B96432]",
@@ -2426,7 +2441,7 @@ function PoiCard({ index, poi }: { index: number; poi: Poi }) {
   const hasPhoto = imagens.length > 0;
 
   return (
-    <div className={`flex h-full flex-col overflow-hidden rounded-2xl border-2 ${s.border} ${s.bg}`}>
+    <div className={`flex h-full flex-col overflow-hidden rounded-2xl border ${s.border} ${s.bg}`}>
       {hasPhoto && (
         <div className="relative shrink-0">
           <button
@@ -2613,7 +2628,7 @@ function ResumoDiaBlock({
   resumo: NonNullable<DayContent["resumoDia"]>;
 }) {
   return (
-    <div className="mb-10 rounded-2xl border-2 border-[#000000] bg-[#F8FAF9] p-5 sm:p-6">
+    <div className="mb-10 rounded-2xl border border-[#2C6CA6] bg-[#F8FAF9] p-5 sm:p-6">
       <p className="mb-5 text-xs font-bold uppercase tracking-[0.25em] text-[#000000]">
         Resumo do Dia
       </p>
@@ -2630,7 +2645,7 @@ function ResumoDiaBlock({
                   />
                 </div>
               ) : (
-                <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full border-2 border-dashed border-[#000000]/25 text-[#000000]/40 sm:h-[76px] sm:w-[76px]">
+                <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full border border-dashed border-[#2C6CA6]/35 text-[#2C6CA6]/50 sm:h-[76px] sm:w-[76px]">
                   <IconClock className="h-6 w-6" />
                 </div>
               )}
@@ -3322,10 +3337,24 @@ function VisaoAnotadaBlock({
             </span>
           </div>
         ) : (
-          <div className="mb-5 rounded-2xl bg-black px-6 py-4 text-center">
+          <div className="mb-5 rounded-2xl bg-black px-6 py-5 text-center">
             <p className={`${displayClassName} text-2xl font-medium text-white md:text-3xl`}>
               Raio-X Alpinea{visaoAnotada.titulo && ` — ${visaoAnotada.titulo}`}
             </p>
+            {visaoAnotada.comentarios && visaoAnotada.comentarios.length > 0 && (
+              <div className="mx-auto mt-4 max-w-2xl border-t border-white/15 pt-4 text-left">
+                <p className="mb-2 text-[10px] font-bold uppercase tracking-[0.2em] text-white/50">
+                  Principais Comentários da Seção
+                </p>
+                <div className="space-y-3">
+                  {visaoAnotada.comentarios.map((c, i) => (
+                    <p key={i} className="text-sm leading-6 text-white/80">
+                      {c}
+                    </p>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         )}
         <button
@@ -3385,10 +3414,24 @@ function VisaoAnotadaBlock({
           </span>
         </div>
       ) : (
-        <div className="mb-5 rounded-2xl bg-black px-6 py-4 text-center">
-          <p className="text-sm font-bold uppercase tracking-[0.3em] text-white sm:text-base">
+        <div className="mb-5 rounded-2xl bg-black px-6 py-5 text-center">
+          <p className={`${displayClassName} text-2xl font-medium text-white md:text-3xl`}>
             Raio-X Alpinea{visaoAnotada.titulo && ` — ${visaoAnotada.titulo}`}
           </p>
+          {visaoAnotada.comentarios && visaoAnotada.comentarios.length > 0 && (
+            <div className="mx-auto mt-4 max-w-2xl border-t border-white/15 pt-4 text-left">
+              <p className="mb-2 text-[10px] font-bold uppercase tracking-[0.2em] text-white/50">
+                Principais Comentários da Seção
+              </p>
+              <div className="space-y-3">
+                {visaoAnotada.comentarios.map((c, i) => (
+                  <p key={i} className="text-sm leading-6 text-white/80">
+                    {c}
+                  </p>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       )}
 
@@ -3626,7 +3669,7 @@ function PeriodBlock({
           period.atracaoPrincipalCompacta
             ? "mx-auto aspect-[3/4] max-w-[280px] rounded-2xl"
             : "-mx-6 aspect-[4/3] sm:-mx-10 sm:aspect-[16/9]"
-        } ${period.atracaoPrincipalImagem ? "" : "border-2 border-[#000000]"}`}
+        } ${period.atracaoPrincipalImagem ? "" : "border border-[#2C6CA6]"}`}
       >
         {period.atracaoPrincipalImagem ? (
           <>
@@ -3673,7 +3716,7 @@ function PeriodBlock({
       )}
 
       {period.percursoEssencial && (
-        <div className="mb-8 rounded-2xl border-2 border-[#000000] bg-[#F8FAF9] p-5 sm:p-6">
+        <div className="mb-8 rounded-2xl border border-[#2C6CA6] bg-[#F8FAF9] p-5 sm:p-6">
           <div className="flex flex-wrap items-center justify-between gap-2">
             <p className="text-xs font-bold uppercase tracking-[0.25em] text-[#000000]">
               Percurso essencial
@@ -3695,7 +3738,7 @@ function PeriodBlock({
                       />
                     </div>
                   ) : (
-                    <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full border-2 border-dashed border-[#000000]/25 text-[#000000]/40 sm:h-[76px] sm:w-[76px]">
+                    <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full border border-dashed border-[#2C6CA6]/35 text-[#2C6CA6]/50 sm:h-[76px] sm:w-[76px]">
                       <IconWalk className="h-6 w-6" />
                     </div>
                   )}
@@ -4120,7 +4163,7 @@ function SubAtracaoBlock({
         <div className="mx-auto flex max-w-lg items-center gap-4 rounded-2xl border border-[#DDD8CF] bg-[#FAF9F6] p-3">
           <div
             className={`relative aspect-square h-36 w-36 shrink-0 overflow-hidden rounded-xl sm:h-40 sm:w-40 ${
-              subAtracao.imagem ? "" : "border-2 border-[#000000]"
+              subAtracao.imagem ? "" : "border border-[#2C6CA6]"
             }`}
           >
             {subAtracao.imagem ? (
@@ -4156,7 +4199,7 @@ function SubAtracaoBlock({
         <>
           <div
             className={`relative mb-5 aspect-[4/3] overflow-hidden rounded-2xl sm:aspect-[16/10] ${
-              subAtracao.imagem ? "" : "border-2 border-[#000000]"
+              subAtracao.imagem ? "" : "border border-[#2C6CA6]"
             }`}
           >
             {subAtracao.imagem ? (
