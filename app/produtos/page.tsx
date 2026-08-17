@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Bodoni_Moda } from "next/font/google";
 import { PriceCalculator } from "../components/PriceCalculator";
-import { useCambioUSD, brlParaUSDLabel } from "../hooks/useCambioUSD";
+import { useCambioUSD, brlParaUSDLabel, formatBRL, formatUSD } from "../hooks/useCambioUSD";
 import { CambioLabel } from "../components/CambioLabel";
 
 const display = Bodoni_Moda({
@@ -25,7 +25,10 @@ type ProdutoKey = "roteiro" | "caravana" | "individual" | "personalizado" | "gui
 
 // Usado no recomendador, na tela de qualificação e para montar a mensagem
 // final do WhatsApp — uma única fonte de verdade para nome/preço.
-const PRODUTOS: Record<ProdutoKey, { nome: string; precoBRL: number | null; href: string }> = {
+const PRODUTOS: Record<
+  ProdutoKey,
+  { nome: string; precoBRL: number | null; precoUSD?: number; href: string }
+> = {
   roteiro: {
     nome: "Roteiro Personalizado",
     precoBRL: 1500,
@@ -48,10 +51,10 @@ const PRODUTOS: Record<ProdutoKey, { nome: string; precoBRL: number | null; href
   },
   guia: {
     nome: "Guia Turístico Avulso",
-    // Mesma diária de guia já usada como referência interna no calculador
-    // do Pacote Personalizado (DIARIA_GUIA, em CustomPackageCard.tsx) —
-    // valor de partida, ajustável por você antes de publicar.
-    precoBRL: 300,
+    // Diária cotada nativamente em dólar (não é conversão de um valor em
+    // reais) — precoUSD tem prioridade sobre precoBRL no cálculo do preço.
+    precoBRL: null,
+    precoUSD: 300,
     href: "#guia",
   },
 };
@@ -270,9 +273,24 @@ export default function ProdutosPage() {
   const cambio = useCambioUSD();
 
   function precoProdutoLabel(produto: (typeof PRODUTOS)[ProdutoKey], comPrefixo: boolean) {
+    if (produto.precoUSD != null) {
+      const valor = formatUSD(produto.precoUSD);
+      return comPrefixo ? `A partir de ${valor}` : valor;
+    }
     if (produto.precoBRL == null) return "Sob consulta";
     const valor = brlParaUSDLabel(produto.precoBRL, cambio);
     return comPrefixo ? `A partir de ${valor}` : valor;
+  }
+
+  // Linha "ou R$ X" mostrada junto do preço em dólar — null quando o
+  // produto não tem preço fixo (ex: Pacote Personalizado, "Sob consulta").
+  function precoBRLProdutoLabel(produto: (typeof PRODUTOS)[ProdutoKey]) {
+    if (produto.precoUSD != null) {
+      if (!cambio) return null;
+      return `ou ${formatBRL(produto.precoUSD * cambio.cotacao)}`;
+    }
+    if (produto.precoBRL == null) return null;
+    return `ou ${formatBRL(produto.precoBRL)}`;
   }
 
   const [estagio, setEstagio] = useState<"perguntas" | "resultado" | "qualificacao">(
@@ -522,6 +540,11 @@ export default function ProdutosPage() {
                 <p className={`${display.className} text-4xl font-medium text-white`}>
                   {precoProdutoLabel(PRODUTOS.roteiro, false)}
                 </p>
+                {precoBRLProdutoLabel(PRODUTOS.roteiro) && (
+                  <p className="mt-0.5 text-sm font-medium text-white/60">
+                    {precoBRLProdutoLabel(PRODUTOS.roteiro)}
+                  </p>
+                )}
                 <CambioLabel cambio={cambio} className="mt-1 text-[11px] text-white/40" />
               </div>
               <button
@@ -605,7 +628,7 @@ export default function ProdutosPage() {
             {PACOTES_AJISAI.map((p) => (
               <div
                 key={p.key}
-                className="flex flex-col rounded-2xl border border-white/10 bg-white/[0.02] p-6 md:p-8"
+                className="flex flex-col rounded-2xl border border-white/10 bg-white/[0.02] p-6 shadow-[0_0_30px_-14px_rgba(37,99,235,0.3)] transition hover:border-white/25 hover:bg-white/[0.04] md:p-8"
               >
                 <p className="text-[10px] uppercase tracking-[0.2em] text-[#6ec3d9]">{p.titulo}</p>
                 <h3 className={`${display.className} mt-2 text-xl font-medium text-white`}>
@@ -629,6 +652,11 @@ export default function ProdutosPage() {
                 <p className={`${display.className} mt-1 text-2xl font-medium text-white`}>
                   {precoProdutoLabel(PRODUTOS[p.key], false)}
                 </p>
+                {precoBRLProdutoLabel(PRODUTOS[p.key]) && (
+                  <p className="mt-0.5 text-xs font-medium text-white/50">
+                    {precoBRLProdutoLabel(PRODUTOS[p.key])}
+                  </p>
+                )}
 
                 <div className="mt-5">
                   <Link
@@ -647,9 +675,9 @@ export default function ProdutosPage() {
 
       {/* ── GUIA TURÍSTICO AVULSO ── */}
       <section id="guia" className="border-b border-white/10 bg-[#050505] px-6 py-16 md:px-16 md:py-24">
-        <div className="mx-auto grid max-w-6xl items-center gap-12 md:grid-cols-2">
-          <div className="order-2 md:order-1 flex justify-center">
-            <div className="relative aspect-[16/10] w-full max-w-lg overflow-hidden rounded-2xl border border-white/10">
+        <div className="mx-auto grid max-w-6xl items-stretch gap-12 md:grid-cols-2">
+          <div className="order-2 flex justify-center md:order-1">
+            <div className="relative aspect-[3/4] w-full max-w-lg overflow-hidden rounded-2xl border border-white/10 md:aspect-auto md:h-full md:min-h-[560px]">
               <Image
                 src={IMAGENS_PRODUTO.guia.src}
                 alt={IMAGENS_PRODUTO.guia.alt}
@@ -696,6 +724,11 @@ export default function ProdutosPage() {
                 <p className={`${display.className} text-4xl font-medium text-white`}>
                   {precoProdutoLabel(PRODUTOS.guia, false)}
                 </p>
+                {precoBRLProdutoLabel(PRODUTOS.guia) && (
+                  <p className="mt-0.5 text-sm font-medium text-white/60">
+                    {precoBRLProdutoLabel(PRODUTOS.guia)}
+                  </p>
+                )}
                 <p className="mt-1 text-[11px] text-white/40">por dia de acompanhamento</p>
                 <CambioLabel cambio={cambio} className="mt-1 text-[11px] text-white/40" />
               </div>
@@ -750,6 +783,11 @@ export default function ProdutosPage() {
                           {linha.label === "A partir de" ? (
                             <span className="text-xs text-white/70">
                               {precoProdutoLabel(PRODUTOS[c.key], false)}
+                              {precoBRLProdutoLabel(PRODUTOS[c.key]) && (
+                                <span className="mt-0.5 block text-[10px] text-white/45">
+                                  {precoBRLProdutoLabel(PRODUTOS[c.key])}
+                                </span>
+                              )}
                             </span>
                           ) : typeof valor === "boolean" ? (
                             valor ? (
@@ -945,6 +983,11 @@ export default function ProdutosPage() {
               <p className="mt-3 text-sm font-medium text-white/70">
                 {precoProdutoLabel(PRODUTOS[recResultado], true)}
               </p>
+              {precoBRLProdutoLabel(PRODUTOS[recResultado]) && (
+                <p className="mt-0.5 text-xs text-white/45">
+                  {precoBRLProdutoLabel(PRODUTOS[recResultado])}
+                </p>
+              )}
               <div className="mt-7 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
                 <button
                   type="button"
@@ -976,6 +1019,11 @@ export default function ProdutosPage() {
                   <p className="mt-1 text-xs text-white/50">
                     {precoProdutoLabel(PRODUTOS[qualProduto], true)}
                   </p>
+                  {precoBRLProdutoLabel(PRODUTOS[qualProduto]) && (
+                    <p className="mt-0.5 text-[11px] text-white/40">
+                      {precoBRLProdutoLabel(PRODUTOS[qualProduto])}
+                    </p>
+                  )}
                   <button
                     type="button"
                     onClick={trocarProduto}

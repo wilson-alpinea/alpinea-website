@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Bodoni_Moda } from "next/font/google";
 import { ContactCTA } from "./ContactCTA";
-import { useCambioUSD, brlParaUSDLabel } from "../hooks/useCambioUSD";
+import { useCambioUSD, formatUSD } from "../hooks/useCambioUSD";
 import { CambioLabel } from "./CambioLabel";
 
 const display = Bodoni_Moda({
@@ -22,6 +22,19 @@ const MAX_DAYS = 45;
 function calculatePrice(days: number) {
   const extraDays = Math.max(0, days - BASE_DAYS);
   return BASE_PRICE + extraDays * EXTRA_DAY_PRICE;
+}
+
+// Acima de 3 passageiros, soma US$ 80 a cada 2 passageiros adicionais —
+// cobrado já em dólar (não é conversão de um valor em reais), diferente do
+// preço-base acima que é calculado em reais.
+const MIN_PASSENGERS = 1;
+const MAX_PASSENGERS = 20;
+const PASSENGERS_SEM_TAXA = 3;
+const TAXA_USD_A_CADA_2_PASSAGEIROS = 80;
+
+function calcularGruposExtras(passengers: number) {
+  const extras = Math.max(0, passengers - PASSENGERS_SEM_TAXA);
+  return Math.ceil(extras / 2);
 }
 
 function IconCalculator({ className }: { className?: string }) {
@@ -55,9 +68,19 @@ export function PriceCalculator({
   const cambio = useCambioUSD();
   const [open, setOpen] = useState(false);
   const [days, setDays] = useState(BASE_DAYS);
+  const [passengers, setPassengers] = useState(1);
 
   const extraDays = Math.max(0, days - BASE_DAYS);
   const price = calculatePrice(days);
+  const gruposExtras = calcularGruposExtras(passengers);
+  const taxaPassageirosUSD = gruposExtras * TAXA_USD_A_CADA_2_PASSAGEIROS;
+
+  // Preço-base é calculado em reais e convertido pra dólar; a taxa de
+  // passageiros já nasce em dólar, então some depois da conversão.
+  const totalLabel =
+    cambio == null
+      ? "…"
+      : formatUSD(price / cambio.cotacao + taxaPassageirosUSD);
 
   return (
     <>
@@ -147,7 +170,45 @@ export function PriceCalculator({
               </div>
             </div>
 
-            <div className="mt-8 border-t border-white/10 pt-6 text-center">
+            <div className="mt-7 border-t border-white/10 pt-7">
+              <p className="text-center text-[10px] uppercase tracking-[0.2em] text-white/40">
+                Quantos passageiros?
+              </p>
+              <div className="mt-3 flex items-center justify-center gap-6">
+                <button
+                  type="button"
+                  onClick={() => setPassengers((p) => Math.max(MIN_PASSENGERS, p - 1))}
+                  aria-label="Diminuir um passageiro"
+                  className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-white/15 text-lg text-white transition hover:border-white/40"
+                >
+                  −
+                </button>
+                <p
+                  className={`${display.className} flex items-baseline gap-2 text-3xl font-medium leading-none text-white`}
+                >
+                  {passengers}
+                  <span className="text-sm font-light uppercase tracking-[0.2em] text-white/40">
+                    {passengers === 1 ? "passageiro" : "passageiros"}
+                  </span>
+                </p>
+                <button
+                  type="button"
+                  onClick={() => setPassengers((p) => Math.min(MAX_PASSENGERS, p + 1))}
+                  aria-label="Aumentar um passageiro"
+                  className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-white/15 text-lg text-white transition hover:border-white/40"
+                >
+                  +
+                </button>
+              </div>
+              {gruposExtras > 0 && (
+                <p className="mt-2 text-center text-xs text-white/40">
+                  +{formatUSD(TAXA_USD_A_CADA_2_PASSAGEIROS)} a cada 2 passageiros acima de{" "}
+                  {PASSENGERS_SEM_TAXA} — inclui {formatUSD(taxaPassageirosUSD)}
+                </p>
+              )}
+            </div>
+
+            <div className="mt-6 border-t border-white/10 pt-6 text-center">
               <p className="text-sm font-light text-white/50">
                 {extraDays > 0
                   ? `${BASE_DAYS} dias inclusos no valor-base + ${extraDays} ${
@@ -158,7 +219,7 @@ export function PriceCalculator({
               <p
                 className={`${display.className} mt-2 text-5xl font-medium leading-none text-[#b79ce6] md:text-6xl`}
               >
-                {brlParaUSDLabel(price, cambio)}
+                {totalLabel}
               </p>
               <CambioLabel cambio={cambio} className="mt-2 text-[11px] text-white/30" />
               <p className="mt-3 text-xs text-white/30">

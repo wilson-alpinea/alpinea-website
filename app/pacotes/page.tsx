@@ -510,20 +510,20 @@ export default function PacotesJapaoPage() {
               ))}
             </div>
 
-            <div className="mt-10 flex flex-col items-center justify-center gap-1 md:mt-12">
+            <div className="mt-10 flex flex-row flex-wrap items-center justify-center gap-6 md:mt-12">
               <Image
                 src="/images/badge-cadastur.png"
                 alt="Cadastur — Agência de Turismo registrada"
                 width={1254}
                 height={1254}
-                className="h-auto w-full max-w-[220px] sm:max-w-[260px]"
+                className="h-auto w-full max-w-[180px] sm:max-w-[200px]"
               />
               <Image
                 src="/images/badge-reclameaqui.png"
                 alt="Verificado no Reclame Aqui"
                 width={1536}
                 height={1024}
-                className="h-auto w-full max-w-[220px] sm:max-w-[260px]"
+                className="h-auto w-full max-w-[180px] sm:max-w-[200px]"
               />
             </div>
           </div>

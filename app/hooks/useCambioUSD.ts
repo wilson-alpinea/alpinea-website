@@ -71,3 +71,9 @@ export function brlParaUSDLabel(valorBRL: number, cambio: Cambio | null): string
   if (!cambio) return "…";
   return formatUSD(valorBRL / cambio.cotacao);
 }
+
+// "R$ X.XXX" no formato brasileiro — usado ao lado do preço em dólar, já
+// que o valor de referência interno de todo preço é sempre em reais.
+export function formatBRL(valor: number): string {
+  return `R$ ${Math.round(valor).toLocaleString("pt-BR")}`;
+}

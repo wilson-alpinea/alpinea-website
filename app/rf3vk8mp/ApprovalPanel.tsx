@@ -3081,7 +3081,7 @@ function DeslocamentoCard({ deslocamento }: { deslocamento: Deslocamento }) {
           pra origem e destino, ligados por uma seta. Fotos de estação em si
           (fachada/entrada) não entram aqui — ficam só no guia do hotel. */}
       <div className="flex items-start justify-center gap-3 text-center sm:gap-5">
-        <div className="flex w-32 flex-col items-center sm:w-40">
+        <div className="flex w-32 min-w-0 flex-col items-center sm:w-40">
           {deslocamento.linha.logo && (
             <div className="mb-3 flex h-20 w-20 items-center justify-center">
               <img
@@ -3105,7 +3105,7 @@ function DeslocamentoCard({ deslocamento }: { deslocamento: Deslocamento }) {
             </p>
           )}
           {deslocamento.estacaoOrigem.saida && (
-            <p className="mt-3 inline-block rounded-xl border-2 border-emerald-400 bg-emerald-50 px-5 py-2.5 text-lg font-bold uppercase tracking-[0.1em] text-emerald-800 shadow-sm sm:text-xl">
+            <p className="mt-3 w-full break-words rounded-xl border-2 border-emerald-400 bg-emerald-50 px-3 py-2.5 text-xs font-bold uppercase leading-snug tracking-[0.04em] text-emerald-800 shadow-sm sm:text-sm">
               {deslocamento.estacaoOrigem.saida}
             </p>
           )}
@@ -3164,7 +3164,7 @@ function DeslocamentoCard({ deslocamento }: { deslocamento: Deslocamento }) {
           </div>
         </div>
 
-        <div className="flex w-32 flex-col items-center sm:w-40">
+        <div className="flex w-32 min-w-0 flex-col items-center sm:w-40">
           {deslocamento.linha.logo && (
             <div className="mb-3 flex h-20 w-20 items-center justify-center">
               <img
@@ -3188,7 +3188,7 @@ function DeslocamentoCard({ deslocamento }: { deslocamento: Deslocamento }) {
             </p>
           )}
           {deslocamento.estacaoDestino.saida && (
-            <p className="mt-3 inline-block rounded-xl border-2 border-emerald-400 bg-emerald-50 px-5 py-2.5 text-lg font-bold uppercase tracking-[0.1em] text-emerald-800 shadow-sm sm:text-xl">
+            <p className="mt-3 w-full break-words rounded-xl border-2 border-emerald-400 bg-emerald-50 px-3 py-2.5 text-xs font-bold uppercase leading-snug tracking-[0.04em] text-emerald-800 shadow-sm sm:text-sm">
               {deslocamento.estacaoDestino.saida}
             </p>
           )}

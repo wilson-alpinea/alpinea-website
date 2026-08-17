@@ -388,59 +388,87 @@ export default function RoteirosAdsPage() {
             Solamachi.
           </p>
 
-          <div className="mx-auto mt-9 max-w-md space-y-0 text-left">
+          <div className="mx-auto mt-9 max-w-md text-left">
             {[
-              [
-                "10:30",
-                "Chegada · Aeroporto Internacional de Narita — Terminal 3",
-                "Chegada",
-              ],
-              [
-                "11:30",
-                "Imigração, retirada de bagagem e deslocamento até o hotel",
-                "Deslocamento",
-              ],
-              ["15:00", "Check-in · Caption By Hyatt Kabutocho", "Hospedagem"],
-              ["16:00", "Saída do hotel rumo a Oshiage", "Deslocamento"],
-              [
-                "16:30",
-                "Tokyo Skytree · Subida ao observatório para o pôr do sol",
-                "Atração",
-              ],
-              [
-                "18:30",
-                "Exploração do Tokyo Solamachi · lojas e gastronomia",
-                "Refeição",
-              ],
-              ["20:00", "Retorno ao hotel · noite livre", "Deslocamento"],
-            ].map(([time, text, tag], index) => {
-              const meta = categoryMeta[tag];
+              {
+                time: "10:30",
+                text: "Chegada · Aeroporto Internacional de Narita — Terminal 3",
+                tag: "Chegada",
+                foto: "/images/Narita-hero.png",
+              },
+              {
+                time: "11:30",
+                text: "Imigração, retirada de bagagem e deslocamento até o hotel",
+                tag: "Deslocamento",
+              },
+              {
+                time: "15:00",
+                text: "Check-in · Caption By Hyatt Kabutocho",
+                tag: "Hospedagem",
+                foto: "/images/caption.jpg",
+              },
+              {
+                time: "16:00",
+                text: "Saída do hotel rumo a Oshiage",
+                tag: "Deslocamento",
+              },
+              {
+                time: "16:30",
+                text: "Tokyo Skytree · Subida ao observatório para o pôr do sol",
+                tag: "Atração",
+                foto: "/images/dia1-skytree.png",
+              },
+              {
+                time: "18:30",
+                text: "Exploração do Tokyo Solamachi · lojas e gastronomia",
+                tag: "Refeição",
+                foto: "/images/solamachi-floor1.png",
+              },
+              {
+                time: "20:00",
+                text: "Retorno ao hotel · noite livre",
+                tag: "Deslocamento",
+                foto: "/images/caption.jpg",
+              },
+            ].map((passo, index, arr) => {
+              const meta = categoryMeta[passo.tag];
               const Icon = meta.Icon;
               return (
-                <div
-                  key={time}
-                  className="relative grid grid-cols-[74px_1fr] gap-4 pb-7 last:pb-0"
-                >
-                  {index < 6 && (
-                    <span className="absolute left-[72px] top-4 h-full w-px bg-white/10" />
-                  )}
-                  <p className="pt-0.5 text-sm font-medium tracking-[0.15em] text-white">
-                    {time}
-                  </p>
-                  <div className="relative">
-                    <span
-                      className={`absolute -left-[18px] top-2 h-2.5 w-2.5 rounded-full ring-4 ring-black ${meta.dot}`}
-                    />
-                    <div className="mb-1.5 flex items-center gap-1.5">
+                <div key={passo.time} className="flex gap-4">
+                  <div className="flex flex-col items-center">
+                    {passo.foto ? (
+                      <div className="h-14 w-14 shrink-0 overflow-hidden rounded-full border-2 border-white/15 shadow-sm sm:h-16 sm:w-16">
+                        <img
+                          src={passo.foto}
+                          alt={passo.tag}
+                          className="h-full w-full object-cover"
+                        />
+                      </div>
+                    ) : (
+                      <div
+                        className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-full border border-dashed border-white/20 sm:h-16 sm:w-16`}
+                      >
+                        <Icon className={`h-5 w-5 ${meta.color}`} />
+                      </div>
+                    )}
+                    {index < arr.length - 1 && (
+                      <span className="my-1 min-h-[14px] w-px flex-1 bg-white/10" />
+                    )}
+                  </div>
+                  <div className={`min-w-0 flex-1 pt-1.5 ${index < arr.length - 1 ? "pb-6" : ""}`}>
+                    <div className="flex items-center gap-1.5">
                       <Icon className={`h-3 w-3 ${meta.color}`} />
                       <p
                         className={`text-[10px] font-medium uppercase tracking-[0.22em] ${meta.color}`}
                       >
-                        {tag}
+                        {passo.tag}
                       </p>
                     </div>
-                    <p className="text-[15px] leading-6 text-white/62">
-                      {text}
+                    <p className="mt-1.5 text-[15px] leading-6 text-white/85">
+                      {passo.text}
+                    </p>
+                    <p className="mt-1 text-xs font-medium tracking-[0.1em] text-white/40">
+                      {passo.time}
                     </p>
                   </div>
                 </div>

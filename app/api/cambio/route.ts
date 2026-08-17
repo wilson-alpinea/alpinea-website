@@ -2,9 +2,10 @@ import { NextResponse } from "next/server";
 
 export const runtime = "nodejs";
 
-// PTAX só é publicada em dia útil (~13h de Brasília) — revalida de hora em
-// hora, não precisa ser mais frequente que isso.
-export const revalidate = 3600;
+// PTAX só é publicada em dia útil (~13h de Brasília) — revalida a cada 15
+// min pra pegar a cotação do dia assim que ela sair, sem bater na API do
+// Banco Central a cada request.
+export const revalidate = 900;
 
 // Usado só se a consulta ao Banco Central falhar (fora do ar, sem rede,
 // formato inesperado etc.) — pra tela nunca quebrar. Sempre marcado como
@@ -38,7 +39,7 @@ export async function GET() {
   try {
     const resp = await fetch(url, {
       headers: { Accept: "application/json" },
-      next: { revalidate: 3600 },
+      next: { revalidate: 900 },
     });
 
     if (!resp.ok) throw new Error(`BCB respondeu ${resp.status}`);

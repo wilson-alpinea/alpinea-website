@@ -1,9 +1,10 @@
 "use client";
 
 import Image from "next/image";
-import { useMemo, useState, type FormEvent } from "react";
+import { createPortal } from "react-dom";
+import { useEffect, useMemo, useState, type FormEvent } from "react";
 import { useCart } from "./CartContext";
-import { useCambioUSD, brlParaUSDLabel } from "../hooks/useCambioUSD";
+import { useCambioUSD, brlParaUSDLabel, formatBRL } from "../hooks/useCambioUSD";
 import { CambioLabel } from "./CambioLabel";
 
 function IconCheck({ className }: { className?: string }) {
@@ -37,6 +38,42 @@ function IconCart({ className }: { className?: string }) {
       <circle cx="9" cy="20" r="1.4" fill="currentColor" stroke="none" />
       <circle cx="17" cy="20" r="1.4" fill="currentColor" stroke="none" />
       <path d="M2.5 3h2.2l1.8 11a2 2 0 0 0 2 1.7h7.7a2 2 0 0 0 2-1.6l1.4-7.4H6.1" />
+    </svg>
+  );
+}
+
+function IconDocument({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.75"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      <path d="M7 3h7l4 4v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Z" />
+      <path d="M14 3v4h4" />
+      <path d="M9 13h6" />
+      <path d="M9 17h6" />
+    </svg>
+  );
+}
+
+function IconX({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.75"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      <line x1="5" y1="5" x2="19" y2="19" />
+      <line x1="19" y1="5" x2="5" y2="19" />
     </svg>
   );
 }
@@ -91,6 +128,8 @@ const OPCOES = [
     label: "Aéreo",
     icone: "✈️",
     descricao: "Passagem internacional ida e volta",
+    detalhe:
+      "Bilhete aéreo internacional de ida e volta, com a Ajisai buscando as melhores opções de conexão disponíveis para as datas escolhidas. Inclui bagagem conforme a franquia da companhia aérea selecionada.",
     calcPreco: () => 8000,
   },
   {
@@ -98,6 +137,8 @@ const OPCOES = [
     label: "Hotel",
     icone: "🏨",
     descricao: "Hospedagem selecionada durante toda a viagem",
+    detalhe:
+      "Hospedagem selecionada por categoria (3 a 5 estrelas) e tipo de quarto, em localizações estratégicas para o roteiro escolhido — sempre com curadoria Ajisai. Café da manhã incluso.",
     calcPreco: (ctx: PrecoCtx) =>
       Math.round(DIARIA_HOTEL[ctx.categoriaHotel] * ctx.dias * FATOR_QUARTO[ctx.tipoQuarto]),
   },
@@ -106,6 +147,8 @@ const OPCOES = [
     label: "Transporte",
     icone: "🚐",
     descricao: "Transfers e deslocamentos do roteiro",
+    detalhe:
+      "Transfers e deslocamentos previstos no roteiro dia a dia — do aeroporto ao hotel, entre cidades e até as atrações, conforme a logística definida no seu Roteiro Digital.",
     calcPreco: (ctx: PrecoCtx) => DIARIA_TRANSPORTE * ctx.dias,
   },
   {
@@ -113,6 +156,8 @@ const OPCOES = [
     label: "Guia",
     icone: "🧭",
     descricao: "Guia turístico acompanhando o roteiro",
+    detalhe:
+      "Guia particular fluente em português, dedicado ao seu grupo, acompanhando pontos-chave do roteiro — ajuda com trajetos, horários e como evitar filas nas atrações.",
     calcPreco: (ctx: PrecoCtx) => DIARIA_GUIA * ctx.dias,
   },
   {
@@ -120,6 +165,8 @@ const OPCOES = [
     label: "JR Pass",
     icone: "🚄",
     descricao: "Passe ferroviário com deslocamentos ilimitados de trem-bala",
+    detalhe:
+      "Passe ferroviário JR válido por todo o período contratado, com deslocamentos ilimitados nas linhas JR (incluindo a maioria dos trens-bala/Shinkansen) — vale a pena principalmente em roteiros com várias cidades.",
     calcPreco: (ctx: PrecoCtx) => DIARIA_JR_PASS * ctx.dias,
   },
   {
@@ -127,6 +174,8 @@ const OPCOES = [
     label: "Seguro Viagem",
     icone: "🛡️",
     descricao: "Cobertura médica e assistência durante toda a viagem",
+    detalhe:
+      "Cobertura médico-hospitalar e assistência durante toda a duração da viagem contratada. Passageiros a partir de 85 anos entram sob consulta, já que a maioria das seguradoras aplica condições diferenciadas para essa faixa etária.",
     calcPreco: (ctx: PrecoCtx) => DIARIA_SEGURO_VIAGEM * ctx.dias,
   },
   {
@@ -134,6 +183,8 @@ const OPCOES = [
     label: "Câmbio no Brasil",
     icone: "💴",
     descricao: "Retirada de ienes com câmbio comercial antes do embarque",
+    detalhe:
+      "Retirada de ienes em espécie ainda no Brasil, com cotação comercial fechada antes do embarque — evita depender só de caixas eletrônicos ou casas de câmbio no Japão nos primeiros dias de viagem.",
     calcPreco: () => PRECO_CAMBIO_BRASIL,
   },
   {
@@ -141,6 +192,8 @@ const OPCOES = [
     label: "Transfer com Motorista Privado",
     icone: "🚗",
     descricao: "Traslados exclusivos, sem compartilhar veículo com outros grupos",
+    detalhe:
+      "Traslados exclusivos com motorista particular, sem compartilhar veículo com outros grupos — ideal para famílias com bagagem extra, crianças pequenas ou quem prefere mais privacidade e flexibilidade de horário.",
     calcPreco: (ctx: PrecoCtx) => DIARIA_MOTORISTA_PRIVADO * ctx.dias,
   },
   {
@@ -148,6 +201,8 @@ const OPCOES = [
     label: "Serviços Adicionais",
     icone: "✨",
     descricao: "Reservas, concierge e experiências sob medida",
+    detalhe:
+      "Reservas de restaurantes concorridos, concierge durante a viagem e experiências sob medida (ingressos especiais, eventos sazonais, atividades personalizadas) — sob consulta conforme o interesse do grupo.",
     calcPreco: () => 2500,
   },
 ] as const;
@@ -265,6 +320,10 @@ export function CustomPackageCard() {
   );
   const [observacoes, setObservacoes] = useState("");
   const [adicionado, setAdicionado] = useState(false);
+  const [opcaoAberta, setOpcaoAberta] = useState<(typeof OPCOES)[number] | null>(null);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => setMounted(true), []);
 
   const precoCtx = useMemo<PrecoCtx>(
     () => ({ dias, categoriaHotel, tipoQuarto }),
@@ -383,6 +442,7 @@ export function CustomPackageCard() {
   }
 
   return (
+    <>
     <div className="flex flex-col overflow-hidden rounded-2xl border border-white/10 bg-white/[0.025] p-6 sm:rounded-[2rem] md:p-8">
       <p className="text-[10px] uppercase tracking-[0.2em] text-[#e0916a]">
         Sob medida
@@ -458,11 +518,13 @@ export function CustomPackageCard() {
         </div>
 
         {pessoas > LIMITE_PESSOAS_SEM_TAXA && (
-          <p className="-mt-2 text-[11px] leading-5 text-white/40">
-            Grupos acima de {LIMITE_PESSOAS_SEM_TAXA} pessoas têm taxa adicional de R${" "}
-            {TAXA_POR_PASSAGEIRO_EXTRA.toLocaleString("pt-BR")} por passageiro excedente
-            — já incluída no total estimado abaixo.
-          </p>
+          <div className="rounded-xl border border-amber-400/30 bg-amber-400/[0.08] p-4">
+            <p className="text-sm font-medium leading-6 text-amber-300">
+              Grupos acima de {LIMITE_PESSOAS_SEM_TAXA} pessoas têm taxa adicional de R${" "}
+              {TAXA_POR_PASSAGEIRO_EXTRA.toLocaleString("pt-BR")} por passageiro excedente —
+              já incluída no total estimado abaixo.
+            </p>
+          </div>
         )}
 
         <div>
@@ -503,12 +565,19 @@ export function CustomPackageCard() {
             {OPCOES.map((opcao) => {
               const ativo = selecionados.has(opcao.key);
               return (
-                <button
+                <div
                   key={opcao.key}
-                  type="button"
+                  role="button"
+                  tabIndex={0}
                   onClick={() => toggleOpcao(opcao.key)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      toggleOpcao(opcao.key);
+                    }
+                  }}
                   aria-pressed={ativo}
-                  className={`flex items-start gap-3 rounded-xl border px-4 py-3 text-left transition ${
+                  className={`flex cursor-pointer items-start gap-3 rounded-xl border px-4 py-3 text-left transition ${
                     ativo
                       ? "border-[#2f80c9]/50 bg-[#2f80c9]/10"
                       : "border-white/10 bg-black/20 hover:border-white/25"
@@ -531,7 +600,19 @@ export function CustomPackageCard() {
                       {opcao.descricao}
                     </span>
                   </span>
-                </button>
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setOpcaoAberta(opcao);
+                    }}
+                    aria-label={`Ver detalhes — ${opcao.label}`}
+                    className="mt-0.5 flex shrink-0 items-center gap-1 rounded-full border border-white/15 px-2 py-1 text-[9px] uppercase tracking-[0.1em] text-white/50 transition hover:border-white/40 hover:text-white"
+                  >
+                    <IconDocument className="h-3 w-3" />
+                    Ver detalhes
+                  </button>
+                </div>
               );
             })}
           </div>
@@ -607,6 +688,9 @@ export function CustomPackageCard() {
             <p className="mt-1 text-2xl font-semibold text-white">
               {total > 0 ? brlParaUSDLabel(total, cambio) : "Sob consulta"}
             </p>
+            {total > 0 && (
+              <p className="mt-0.5 text-sm font-medium text-white/60">ou {formatBRL(total)}</p>
+            )}
             {total > 0 && <CambioLabel cambio={cambio} className="mt-1 text-[11px] text-white/40" />}
             {taxaGrupo > 0 && (
               <p className="mt-1 text-[11px] leading-5 text-white/50">
@@ -640,5 +724,36 @@ export function CustomPackageCard() {
         </div>
       </form>
     </div>
+
+    {mounted &&
+      opcaoAberta &&
+      createPortal(
+        <div
+          className="fixed inset-0 z-[140] flex items-center justify-center bg-black/85 p-6 backdrop-blur-sm"
+          onClick={() => setOpcaoAberta(null)}
+        >
+          <div
+            className="relative w-full max-w-md rounded-[24px] border border-white/10 bg-[#0a0a0a] p-6 text-white"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              type="button"
+              onClick={() => setOpcaoAberta(null)}
+              aria-label="Fechar"
+              className="absolute right-4 top-4 flex h-8 w-8 items-center justify-center rounded-full border border-white/15 text-white/60 transition hover:border-white/40 hover:text-white"
+            >
+              <IconX className="h-3.5 w-3.5" />
+            </button>
+            <p className="pr-8 text-base font-medium text-white">
+              {opcaoAberta.icone} {opcaoAberta.label}
+            </p>
+            <p className="mt-3 text-sm font-light leading-6 text-white/65">
+              {opcaoAberta.detalhe}
+            </p>
+          </div>
+        </div>,
+        document.body,
+      )}
+    </>
   );
 }

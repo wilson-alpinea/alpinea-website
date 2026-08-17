@@ -1,6 +1,6 @@
 "use client";
 
-import { useCambioUSD, brlParaUSDLabel, formatUSD } from "../hooks/useCambioUSD";
+import { useCambioUSD, brlParaUSDLabel, formatUSD, formatBRL } from "../hooks/useCambioUSD";
 import { CambioLabel } from "./CambioLabel";
 import type { PackageVariant } from "./packageTypes";
 
@@ -36,6 +36,9 @@ export function PrecoPacote({
   return (
     <>
       <p className={precoClassName}>{brlParaUSDLabel(variante.precoBRL, cambio)}</p>
+      <p className="mt-1 text-sm font-medium text-white/60">
+        ou {formatBRL(variante.precoBRL)}
+      </p>
       <p className="mt-1 text-xs uppercase tracking-[0.15em] text-white/40">
         Por pessoa · Quarto Individual
       </p>
