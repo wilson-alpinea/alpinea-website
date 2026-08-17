@@ -272,35 +272,51 @@ const INCLUSOES_PADRAO = [
   {
     title: "Roteiro Digital",
     text: "Itinerário dia a dia, com atrações, deslocamento, refeições e aeroportos, acessível durante toda a viagem.",
+    detalhe:
+      "Painel digital Ajisai, acessível pelo navegador do celular durante toda a viagem — sem precisar instalar aplicativo. Cada dia do roteiro traz atrações com melhor horário de visita, tempo estimado, deslocamento recomendado (linha de trem/metrô, tempo de trajeto), refeições sugeridas e informações práticas dos aeroportos de chegada e saída. É o mesmo tipo de painel usado no Roteiro Personalizado.",
   },
   {
     title: "Hotel",
     text: "Hospedagem selecionada, em localizações estratégicas para o roteiro.",
+    detalhe:
+      "Acomodação de 3 a 4 estrelas, selecionada por localização e conforto, sempre com curadoria Ajisai (exemplo de padrão: Daiwa Roynet). Hotéis 4 estrelas têm padrão internacional de conforto — quartos bem equipados, café da manhã incluso, localização estratégica e recepção 24h — sem as amenidades adicionais de um 5 estrelas. Preço padrão considera quarto individual; quarto duplo (compartilhado) disponível mediante consulta.",
   },
   {
     title: "Passagem Aérea",
     text: "Ida e volta, com as melhores opções de conexão para o Japão.",
+    detalhe:
+      "Bilhete aéreo de ida e volta ao Japão, com a Ajisai buscando as melhores opções de conexão disponíveis para as datas do roteiro. Já inclui 1 bagagem despachada de até 23kg e 1 bagagem de mão por pessoa, conforme a companhia aérea selecionada.",
   },
   {
     title: "Seguro Viagem",
     text: "Cobertura médico-hospitalar de US$ 60 mil, para toda a duração da viagem. Passageiros a partir de 85 anos, sob consulta.",
+    detalhe:
+      "Cobertura médico-hospitalar de US$ 60 mil, válida por toda a duração da viagem contratada. Passageiros a partir de 85 anos entram sob consulta, já que a maioria das seguradoras aplica condições diferenciadas para essa faixa etária.",
   },
   {
     title: "Bagagem",
     text: "1 bagagem despachada de até 23kg e 1 bagagem de mão por pessoa, conforme a companhia aérea selecionada.",
+    detalhe:
+      "1 bagagem despachada de até 23kg e 1 bagagem de mão por pessoa, seguindo a franquia da companhia aérea selecionada para o seu bilhete — já incluída no valor da passagem, sem custo adicional.",
   },
   {
     title: "Pocket Wi-Fi ou eSIM 5G",
     text: "Conexão disponível durante todo o roteiro.",
+    detalhe:
+      "Você escolhe entre pocket Wi-Fi (aparelho físico retirado e devolvido no Japão, compartilhável entre o grupo) ou eSIM 5G (chip digital, ativado direto no celular antes mesmo de embarcar, sem precisar carregar aparelho extra). Qualquer uma das opções mantém conexão de dados disponível durante todo o roteiro.",
   },
   {
     title: "Guia Turístico",
     text: "Acompanhamento local em pontos-chave do roteiro.",
+    detalhe:
+      "Guia particular fluente em português, dedicado ao seu grupo, acompanhando pontos-chave do roteiro — ajuda com trajetos, horários e como evitar filas nas atrações. Item opcional nos Pacotes Individuais/Personalizados; incluso por padrão nas Caravanas (saída em grupo fechado).",
     opcional: true,
   },
   {
     title: "Transfer",
     text: "Translados aeroporto-hotel e hotel-aeroporto.",
+    detalhe:
+      "Translado do aeroporto até o hotel na chegada, e do hotel até o aeroporto na saída — sem precisar organizar trem ou táxi com bagagem logo após o voo internacional. Item opcional nos Pacotes Individuais/Personalizados; incluso por padrão nas Caravanas (saída em grupo fechado).",
     opcional: true,
   },
 ];
@@ -357,6 +373,44 @@ function IconCheck({ className }: { className?: string }) {
       <circle cx="12" cy="12" r="9" />
       <path d="M8.5 12.5l2.5 2.5 4.5-5" />
     </svg>
+  );
+}
+
+function IconPlay({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" className={className}>
+      <path d="M8 5.14v13.72c0 .8.87 1.29 1.56.87l10.99-6.86a1 1 0 0 0 0-1.7L9.56 4.27A1 1 0 0 0 8 5.14Z" />
+    </svg>
+  );
+}
+
+// Placeholder de vídeo — sem player/arquivo real ainda. Troque o miolo por
+// um <video>/embed quando o material estiver pronto; mantém o mesmo espaço
+// e legenda pra não quebrar o layout.
+function VideoPlaceholder({
+  titulo,
+  descricao,
+  className = "",
+}: {
+  titulo: string;
+  descricao?: string;
+  className?: string;
+}) {
+  return (
+    <div
+      className={`group relative aspect-video w-full overflow-hidden rounded-xl border border-white/10 bg-white/[0.03] ${className}`}
+    >
+      <div className="absolute inset-0 flex flex-col items-center justify-center gap-2.5 px-5 text-center">
+        <span className="flex h-11 w-11 items-center justify-center rounded-full border border-white/25 bg-white/10 backdrop-blur transition group-hover:scale-105 group-hover:bg-white/20">
+          <IconPlay className="h-4 w-4 translate-x-0.5 text-white" />
+        </span>
+        <p className="text-[9px] uppercase tracking-[0.2em] text-white/40">Vídeo em breve</p>
+        <p className="max-w-xs text-sm font-medium text-white">{titulo}</p>
+        {descricao && (
+          <p className="max-w-xs text-[11px] leading-4 text-white/50">{descricao}</p>
+        )}
+      </div>
+    </div>
   );
 }
 
@@ -430,6 +484,9 @@ export function PackageDetailModal({
   const [selecionada, setSelecionada] = useState(varianteInicialId ?? variantes[0]?.id ?? "");
   const [adicionado, setAdicionado] = useState(false);
   const [mounted, setMounted] = useState(false);
+  const [inclusaoAberta, setInclusaoAberta] = useState<(typeof INCLUSOES_PADRAO)[number] | null>(
+    null,
+  );
   const scrollRef = useRef<HTMLDivElement>(null);
 
   function selecionarVariante(id: string) {
@@ -441,11 +498,16 @@ export function PackageDetailModal({
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
+      if (e.key !== "Escape") return;
+      if (inclusaoAberta) {
+        setInclusaoAberta(null);
+        return;
+      }
+      onClose();
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [onClose]);
+  }, [onClose, inclusaoAberta]);
 
   const variante = variantes.find((v) => v.id === selecionada) ?? variantes[0];
 
@@ -485,11 +547,13 @@ export function PackageDetailModal({
 
   if (!mounted) return null;
 
-  return createPortal(
-    <div
-      className="fixed inset-0 z-[130] bg-black/85 backdrop-blur-sm md:flex md:items-center md:justify-center md:p-6"
-      onClick={onClose}
-    >
+  return (
+    <>
+      {createPortal(
+        <div
+          className="fixed inset-0 z-[130] bg-black/85 backdrop-blur-sm md:flex md:items-center md:justify-center md:p-6"
+          onClick={onClose}
+        >
       <div
         className="relative flex h-[100dvh] w-full flex-col overflow-x-hidden bg-[#0a0a0a] text-white md:h-auto md:max-h-[88vh] md:max-w-2xl md:overflow-hidden md:rounded-[28px] md:border md:border-white/10"
         onClick={(e) => e.stopPropagation()}
@@ -541,6 +605,12 @@ export function PackageDetailModal({
 
           <div className="mt-8 border-t border-white/10 pt-6">
             <h3 className={`${display.className} text-lg font-medium text-white`}>Itinerário</h3>
+
+            <VideoPlaceholder
+              titulo="Demonstração do itinerário"
+              descricao="Navegação real pelo roteiro dia a dia, com atrações, deslocamento e logística."
+              className="mt-4"
+            />
 
             {variante && ITINERARIOS[variante.id] && (
               <div className="mt-5">
@@ -631,9 +701,11 @@ export function PackageDetailModal({
             </h3>
             <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
               {inclusoes.map((item) => (
-                <div
+                <button
                   key={item.title}
-                  className="rounded-xl border border-white/10 bg-white/[0.03] p-3.5 transition hover:border-white/25 hover:bg-white/[0.06]"
+                  type="button"
+                  onClick={() => setInclusaoAberta(item)}
+                  className="rounded-xl border border-white/10 bg-white/[0.03] p-3.5 text-left transition hover:border-white/25 hover:bg-white/[0.06]"
                 >
                   <p className="flex items-center gap-2 text-sm font-medium text-white">
                     {item.title}
@@ -644,7 +716,10 @@ export function PackageDetailModal({
                     )}
                   </p>
                   <p className="mt-1 text-xs font-light leading-5 text-white/50">{item.text}</p>
-                </div>
+                  <p className="mt-2 text-[10px] uppercase tracking-[0.15em] text-[#6ec3d9]">
+                    Saiba mais →
+                  </p>
+                </button>
               ))}
             </div>
 
@@ -759,7 +834,43 @@ export function PackageDetailModal({
           </button>
         </div>
       </div>
-    </div>,
-    document.body,
+        </div>,
+        document.body,
+      )}
+
+      {inclusaoAberta &&
+        createPortal(
+          <div
+            className="fixed inset-0 z-[140] flex items-center justify-center bg-black/85 p-6 backdrop-blur-sm"
+            onClick={() => setInclusaoAberta(null)}
+          >
+            <div
+              className="relative w-full max-w-md rounded-[24px] border border-white/10 bg-[#0a0a0a] p-6 text-white"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <button
+                type="button"
+                onClick={() => setInclusaoAberta(null)}
+                aria-label="Fechar"
+                className="absolute right-4 top-4 flex h-8 w-8 items-center justify-center rounded-full border border-white/15 text-white/60 transition hover:border-white/40 hover:text-white"
+              >
+                <IconX className="h-3.5 w-3.5" />
+              </button>
+              <p className="flex items-center gap-2 pr-8 text-base font-medium text-white">
+                {inclusaoAberta.title}
+                {inclusaoAberta.opcional && (
+                  <span className="rounded-full bg-[#6ec3d9]/15 px-2 py-0.5 text-[9px] font-semibold uppercase tracking-[0.08em] text-[#6ec3d9]">
+                    Opcional
+                  </span>
+                )}
+              </p>
+              <p className="mt-3 text-sm font-light leading-6 text-white/65">
+                {inclusaoAberta.detalhe}
+              </p>
+            </div>
+          </div>,
+          document.body,
+        )}
+    </>
   );
 }
