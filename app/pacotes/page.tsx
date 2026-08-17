@@ -195,7 +195,7 @@ const divisoes = [
     titulo: "Pacotes Personalizados",
     frase: "Quero tudo feito para mim",
     texto:
-      "Viaje em qualquer data, com um roteiro sob medida e motorista e guia particular.",
+      "Viaje em qualquer data, com um roteiro sob medida e adicionais que você preferir.",
     href: "#personalizado",
     imagem: BANNER_PERSONALIZADO.src,
   },
@@ -454,8 +454,8 @@ export default function PacotesJapaoPage() {
                 Pacotes Personalizados
               </h2>
               <p className="mt-4 max-w-2xl text-sm font-light leading-6 text-white/55 md:text-base md:leading-7">
-                Viaje em qualquer data, com um roteiro sob medida, motorista e
-                guia particular.
+                Viaje em qualquer data, com um roteiro sob medida e
+                adicionais que você preferir.
               </p>
             </div>
 

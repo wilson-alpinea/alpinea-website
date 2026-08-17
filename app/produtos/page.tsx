@@ -93,6 +93,60 @@ const IMAGENS_PRODUTO: Record<ProdutoKey, { src: string; alt: string }> = {
   },
 };
 
+// Mesmos itens e preços de referência do calculador do Pacote
+// Personalizado (OPCOES, em CustomPackageCard.tsx) — mostrados aqui como
+// cards avulsos pra quem só quer adicionar um serviço pontual ao roteiro
+// já organizado por conta própria. porDia indica se o valor é por dia de
+// viagem ou fixo por viagem.
+const SERVICOS_AVULSOS: {
+  nome: string;
+  icone: string;
+  descricao: string;
+  precoBRL: number;
+  porDia?: boolean;
+}[] = [
+  {
+    nome: "JR Pass",
+    icone: "🚄",
+    descricao: "Passe ferroviário com deslocamentos ilimitados de trem-bala.",
+    precoBRL: 180,
+    porDia: true,
+  },
+  {
+    nome: "Seguro Viagem",
+    icone: "🛡️",
+    descricao: "Cobertura médica e assistência durante toda a viagem.",
+    precoBRL: 35,
+    porDia: true,
+  },
+  {
+    nome: "Câmbio no Brasil",
+    icone: "💴",
+    descricao: "Retirada de ienes com câmbio comercial antes do embarque.",
+    precoBRL: 150,
+  },
+  {
+    nome: "Transfer com Motorista Privado",
+    icone: "🚗",
+    descricao: "Traslados exclusivos, sem compartilhar veículo com outros grupos.",
+    precoBRL: 350,
+    porDia: true,
+  },
+  {
+    nome: "Transporte",
+    icone: "🚐",
+    descricao: "Transfers e deslocamentos do roteiro dia a dia.",
+    precoBRL: 150,
+    porDia: true,
+  },
+  {
+    nome: "Serviços Adicionais",
+    icone: "✨",
+    descricao: "Reservas, concierge e experiências sob medida.",
+    precoBRL: 2500,
+  },
+];
+
 // Espelha os 4 blocos do roteiro-vídeo descrito: perfil do dia, detalhe da
 // atração, hotéis/restaurantes/anexos e o "nós planejamos, você reserva".
 const ROTEIRO_DESTAQUES = [
@@ -1130,6 +1184,63 @@ export default function ProdutosPage() {
               )}
             </>
           )}
+        </div>
+      </section>
+
+      {/* ── SERVIÇOS AVULSOS ── */}
+      <section className="border-b border-white/10 bg-[#050505] px-6 py-16 md:px-16 md:py-24">
+        <div className="mx-auto max-w-6xl">
+          <div className="mx-auto max-w-2xl text-center">
+            <p className="text-[10px] uppercase tracking-[0.2em] text-[#6ec3d9]">
+              Complementos
+            </p>
+            <h2
+              className={`${display.className} mt-3 text-3xl font-medium leading-tight text-white md:text-4xl`}
+            >
+              Serviços avulsos
+            </h2>
+            <p className="mt-4 text-sm font-light leading-6 text-white/55 md:text-base">
+              Já tem passagem e hospedagem resolvidas? Adicione só o que
+              falta ao seu roteiro — mesmos itens disponíveis no Pacote
+              Personalizado.
+            </p>
+          </div>
+
+          <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {SERVICOS_AVULSOS.map((servico) => (
+              <div
+                key={servico.nome}
+                className="flex flex-col rounded-2xl border border-white/10 bg-white/[0.02] p-6 shadow-[0_0_30px_-14px_rgba(37,99,235,0.3)] transition hover:border-white/25 hover:bg-white/[0.04]"
+              >
+                <p className="text-2xl">{servico.icone}</p>
+                <h3 className={`${display.className} mt-3 text-lg font-medium text-white`}>
+                  {servico.nome}
+                </h3>
+                <p className="mt-2 flex-1 text-sm font-light leading-6 text-white/55">
+                  {servico.descricao}
+                </p>
+                <div className="mt-5 border-t border-white/10 pt-4">
+                  <p className="text-[10px] uppercase tracking-[0.2em] text-white/40">
+                    A partir de
+                  </p>
+                  <p className={`${display.className} mt-1 text-xl font-medium text-white`}>
+                    {brlParaUSDLabel(servico.precoBRL, cambio)}
+                    {servico.porDia ? "/dia" : ""}
+                  </p>
+                  <p className="mt-0.5 text-xs font-medium text-white/50">
+                    ou {formatBRL(servico.precoBRL)}
+                    {servico.porDia ? "/dia" : ""}
+                  </p>
+                </div>
+                <Link
+                  href="/pacotes#personalizado"
+                  className="mt-5 block rounded-full border border-white/15 px-5 py-3 text-center text-[11px] font-semibold uppercase tracking-[0.2em] text-white transition hover:border-white/40"
+                >
+                  Adicionar ao meu pacote →
+                </Link>
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
