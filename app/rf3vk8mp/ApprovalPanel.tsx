@@ -141,6 +141,9 @@ type Period = {
   // (ex.: portões, salão principal, pagode) — mostrada logo no início do
   // período, com uma pequena explicação de cada ponto ao lado.
   visaoAnotada?: {
+    // Nome curto da atração — aparece ao lado de "Raio-X Alpinea"
+    // (ex.: "Raio-X Alpinea — Templo Sensoji").
+    titulo?: string;
     imagem: string;
     imagemAlt: string;
     nota?: string;
@@ -163,7 +166,7 @@ type Period = {
   // logo após o hero, antes do diagrama anotado.
   percursoEssencial?: {
     duracao: string;
-    passos: { titulo: string; foto?: string }[];
+    passos: { titulo: string; foto?: string; horario?: string }[];
   };
   // Pequeno bloco de apoio à decisão (ex.: qual ingresso escolher, o que
   // fazer se estiver muito cheio) — direto ao ponto, sem prosa longa.
@@ -310,19 +313,20 @@ const DAY_1: DayContent = {
     percursoEssencial: {
       duracao: "1h30–2h",
       passos: [
-        { titulo: "Kaminarimon", foto: "/images/sensoji-kaminarimon.png" },
-        { titulo: "Dragão sob a lanterna", foto: "/images/kaminarimon-dragon.png" },
-        { titulo: "Nakamise Street", foto: "/images/sensoji-nakamise.png" },
-        { titulo: "Hōzōmon", foto: "/images/sensoji-hozomon.png" },
-        { titulo: "Jōkoro", foto: "/images/Jokoro.png" },
-        { titulo: "Salão Principal", foto: "/images/sensoji-kannondo.png" },
-        { titulo: "Omikuji", foto: "/images/mikuji.png" },
-        { titulo: "Saída pelo lado oeste" },
-        { titulo: "Kappabashi", foto: "/images/kappabashi.png" },
-        { titulo: "Sumida Park", foto: "/images/sumida-park.png" },
+        { titulo: "Kaminarimon", foto: "/images/sensoji-kaminarimon.png", horario: "09:20" },
+        { titulo: "Dragão sob a lanterna", foto: "/images/kaminarimon-dragon.png", horario: "09:20" },
+        { titulo: "Nakamise Street", foto: "/images/sensoji-nakamise.png", horario: "09:20" },
+        { titulo: "Hōzōmon", foto: "/images/sensoji-hozomon.png", horario: "09:45" },
+        { titulo: "Jōkoro", foto: "/images/Jokoro.png", horario: "09:45" },
+        { titulo: "Salão Principal", foto: "/images/sensoji-kannondo.png", horario: "09:45" },
+        { titulo: "Omikuji", foto: "/images/mikuji.png", horario: "09:45" },
+        { titulo: "Saída pelo lado oeste", horario: "09:45" },
+        { titulo: "Kappabashi", foto: "/images/kappabashi.png", horario: "11:00" },
+        { titulo: "Sumida Park", foto: "/images/sumida-park.png", horario: "11:30" },
       ],
     },
     visaoAnotada: {
+      titulo: "Templo Sensoji",
       imagem: "/images/dia1-sensoji-visao-anotada-v2.png",
       imagemAlt: "Vista aérea do complexo do Templo Sensoji com as partes principais destacadas",
       pontos: [
@@ -516,6 +520,7 @@ const DAY_1: DayContent = {
   tarde: {
     label: "Tarde",
     visaoAnotada: {
+      titulo: "Tokyo Sky Tree",
       imagem: "/images/dia1-skytree-visao-anotada-v2.png",
       imagemAlt: "Infográfico da Tokyo Sky Tree com altura e observatórios (Tembo Deck e Tembo Galleria)",
       nota: "634 m de altura total, concluída em 2012 — a torre de transmissão e observação mais alta do Japão.",
@@ -2717,7 +2722,7 @@ function VisaoAnotadaBlock({
         <div className="mb-4 flex items-center gap-2.5">
           <span className="h-2 w-2 rounded-full bg-[#173B45]" />
           <span className="text-xs font-bold uppercase tracking-[0.25em] text-[#173B45]">
-            Raio-X Alpinea
+            Raio-X Alpinea{visaoAnotada.titulo && ` — ${visaoAnotada.titulo}`}
           </span>
         </div>
         <button
@@ -2772,7 +2777,7 @@ function VisaoAnotadaBlock({
       <div className="mb-4 flex items-center gap-2.5">
         <span className="h-2 w-2 rounded-full bg-[#173B45]" />
         <span className="text-xs font-bold uppercase tracking-[0.25em] text-[#173B45]">
-          Raio-X Alpinea
+          Raio-X Alpinea{visaoAnotada.titulo && ` — ${visaoAnotada.titulo}`}
         </span>
       </div>
 
@@ -2819,10 +2824,7 @@ function VisaoAnotadaBlock({
                     <IconZoom className="h-4 w-4" />
                   </span>
                 </div>
-                <span
-                  className="absolute left-3 top-3 flex h-8 w-8 items-center justify-center rounded-full text-sm font-bold text-white shadow-md ring-2 ring-white/70"
-                  style={{ background: ponto.cor }}
-                >
+                <span className="absolute left-3 top-3 flex h-8 w-8 items-center justify-center rounded-full bg-black text-sm font-bold text-white shadow-md ring-2 ring-white/70">
                   {i + 1}
                 </span>
               </button>
@@ -2894,29 +2896,38 @@ function GaleriaBlock({
           {galeria.titulo}
         </p>
       )}
-      <div className="grid grid-cols-1 items-start gap-4 sm:grid-cols-2">
-        {galeria.imagens.map((img) => (
-          <div key={img.src}>
+      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+        {galeria.imagens.map((img, i) => (
+          <div
+            key={img.src}
+            className="flex flex-col overflow-hidden rounded-2xl border border-[#DDD8CF] bg-[#FDFCF9]"
+          >
             <button
               type="button"
               onClick={() => setZoom({ src: img.src, alt: img.alt })}
-              className="group relative block w-full overflow-hidden rounded-2xl border border-[#DDD8CF]"
+              className="group relative block aspect-[4/3] w-full shrink-0 overflow-hidden"
             >
               <img
                 src={img.src}
                 alt={img.alt}
-                className="block h-auto w-full transition duration-300 group-hover:scale-[1.01]"
+                className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
               />
+              <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/25 via-transparent to-transparent" />
               <div className="absolute inset-0 flex items-center justify-center bg-black/0 transition duration-300 group-hover:bg-black/20">
                 <span className="flex h-9 w-9 scale-75 items-center justify-center rounded-full bg-white/90 text-[#173B45] opacity-0 shadow-md transition duration-300 group-hover:scale-100 group-hover:opacity-100">
                   <IconZoom className="h-4 w-4" />
                 </span>
               </div>
+              <span className="absolute left-3 top-3 flex h-8 w-8 items-center justify-center rounded-full bg-black text-sm font-bold text-white shadow-md ring-2 ring-white/70">
+                {i + 1}
+              </span>
             </button>
             {img.legenda && (
-              <p className="mt-2 text-center text-xs leading-5 text-[#24211D]/60">
-                {img.legenda}
-              </p>
+              <div className="p-5">
+                <p className="text-sm font-semibold leading-6 text-[#24211D]">
+                  {img.legenda}
+                </p>
+              </div>
             )}
           </div>
         ))}
@@ -2956,8 +2967,11 @@ function PeriodBlock({
   period: Period;
   displayClassName: string;
 }) {
-  const passoAtracao = period.deslocamento ? 2 : 1;
-  const passoRefeicao = passoAtracao + 1;
+  let stepCounter = 0;
+  const passoDeslocamento = period.deslocamento ? ++stepCounter : undefined;
+  const passoAtracao = ++stepCounter;
+  const passoPois = period.pois.length > 0 ? ++stepCounter : undefined;
+  const passoRefeicao = period.gastronomia ? ++stepCounter : undefined;
 
   return (
     <div>
@@ -3047,6 +3061,11 @@ function PeriodBlock({
                   <p className="text-[11px] font-semibold leading-tight text-[#173B45]">
                     {passo.titulo}
                   </p>
+                  {passo.horario && (
+                    <p className="text-[10px] font-medium tracking-wide text-[#173B45]/55">
+                      {passo.horario}
+                    </p>
+                  )}
                 </div>
                 {i < period.percursoEssencial!.passos.length - 1 && (
                   <span className="mt-6 shrink-0 px-0.5 text-[#173B45]/30 sm:mt-7">
@@ -3062,17 +3081,17 @@ function PeriodBlock({
         </div>
       )}
 
+      {period.deslocamento && (
+        <NumberedStep number={passoDeslocamento!} label="Deslocamento">
+          <DeslocamentoCard deslocamento={period.deslocamento} />
+        </NumberedStep>
+      )}
+
       {period.visaoAnotada && (
         <VisaoAnotadaBlock visaoAnotada={period.visaoAnotada} />
       )}
 
       {period.galeria && <GaleriaBlock galeria={period.galeria} />}
-
-      {period.deslocamento && (
-        <NumberedStep number={1} label="Deslocamento">
-          <DeslocamentoCard deslocamento={period.deslocamento} />
-        </NumberedStep>
-      )}
 
       <NumberedStep number={passoAtracao} label="Atração">
         <>
@@ -3177,53 +3196,55 @@ function PeriodBlock({
             </div>
           )}
 
-          {period.mapaVisaoGeral && (
-            <MapaVisaoGeralBlock mapa={period.mapaVisaoGeral} />
-          )}
-
-          {period.pois.length > 0 && (
-            <>
-              <p className="mb-5 text-xs text-[#24211D]/65">
-                Pontos de interesse propostos para o período
-              </p>
-              {period.pois.some((p) => p.grupo) ? (
-                Array.from(new Set(period.pois.map((p) => p.grupo ?? "Outros"))).map(
-                  (grupo, gIndex) => {
-                    const itens = period.pois.filter(
-                      (p) => (p.grupo ?? "Outros") === grupo
-                    );
-                    return (
-                      <div key={grupo} className={gIndex > 0 ? "mt-6" : ""}>
-                        <p className="mb-3 text-[10px] font-bold uppercase tracking-[0.2em] text-[#24211D]/45">
-                          {grupo}
-                        </p>
-                        <div className="grid grid-cols-1 items-start gap-3 sm:grid-cols-2">
-                          {itens.map((poi, index) => (
-                            <PoiCard key={poi.title + index} index={index} poi={poi} />
-                          ))}
-                        </div>
-                      </div>
-                    );
-                  }
-                )
-              ) : (
-                <div className="grid grid-cols-1 items-start gap-3 sm:grid-cols-2">
-                  {period.pois.map((poi, index) => (
-                    <PoiCard key={poi.title + index} index={index} poi={poi} />
-                  ))}
-                </div>
-              )}
-            </>
-          )}
-
           {period.gradeHorarios && (
             <GradeHorariosBlock grade={period.gradeHorarios} />
           )}
         </>
       </NumberedStep>
 
+      {period.pois.length > 0 && (
+        <NumberedStep number={passoPois!} label="Pontos de Interesse">
+          <>
+            {period.mapaVisaoGeral && (
+              <MapaVisaoGeralBlock mapa={period.mapaVisaoGeral} />
+            )}
+
+            <p className="mb-5 text-xs text-[#24211D]/65">
+              Pontos de interesse propostos para o período
+            </p>
+            {period.pois.some((p) => p.grupo) ? (
+              Array.from(new Set(period.pois.map((p) => p.grupo ?? "Outros"))).map(
+                (grupo, gIndex) => {
+                  const itens = period.pois.filter(
+                    (p) => (p.grupo ?? "Outros") === grupo
+                  );
+                  return (
+                    <div key={grupo} className={gIndex > 0 ? "mt-6" : ""}>
+                      <p className="mb-3 text-[10px] font-bold uppercase tracking-[0.2em] text-[#24211D]/45">
+                        {grupo}
+                      </p>
+                      <div className="grid grid-cols-1 items-start gap-3 sm:grid-cols-2">
+                        {itens.map((poi, index) => (
+                          <PoiCard key={poi.title + index} index={index} poi={poi} />
+                        ))}
+                      </div>
+                    </div>
+                  );
+                }
+              )
+            ) : (
+              <div className="grid grid-cols-1 items-start gap-3 sm:grid-cols-2">
+                {period.pois.map((poi, index) => (
+                  <PoiCard key={poi.title + index} index={index} poi={poi} />
+                ))}
+              </div>
+            )}
+          </>
+        </NumberedStep>
+      )}
+
       {period.gastronomia && (
-        <NumberedStep number={passoRefeicao} label="Refeição">
+        <NumberedStep number={passoRefeicao!} label="Refeição">
           <GastronomiaBlock gastronomia={period.gastronomia} />
         </NumberedStep>
       )}
@@ -4649,7 +4670,9 @@ export function ApprovalPanel({
               {current.diaEmNumeros && (
                 <DiaEmNumerosBlock numeros={current.diaEmNumeros} />
               )}
-              {current.gradeHorarios && (
+              {current.gradeHorarios &&
+                !current.manha?.percursoEssencial &&
+                !current.tarde?.percursoEssencial && (
                 <GradeHorariosBlock grade={current.gradeHorarios} />
               )}
               {current.transporte && (
