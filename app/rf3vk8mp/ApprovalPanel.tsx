@@ -2775,11 +2775,12 @@ function VisaoAnotadaBlock({
           Raio-X Alpinea
         </span>
       </div>
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-start">
+
+      {/* Mapa centralizado, sozinho — nada ao lado. */}
       <button
         type="button"
         onClick={() => setZoom({ src: visaoAnotada.imagem, alt: visaoAnotada.imagemAlt })}
-        className="group relative block overflow-hidden rounded-2xl border border-[#DDD8CF]"
+        className="group relative mx-auto block max-w-xl overflow-hidden rounded-2xl border border-[#DDD8CF] sm:max-w-2xl"
       >
         <img
           src={visaoAnotada.imagem}
@@ -2793,42 +2794,54 @@ function VisaoAnotadaBlock({
         </div>
       </button>
 
-      {/* Só miniaturas ao lado do esquema — sem texto, pra não competir com
-          o diagrama. Título/descrição de cada ponto aparecem no zoom. */}
-      <div className="flex gap-3 sm:w-40 sm:flex-col">
-        {visaoAnotada.pontos.map((ponto) =>
-          ponto.foto ? (
-            <button
-              key={ponto.titulo}
-              type="button"
-              onClick={() => setZoom({ src: ponto.foto!, alt: ponto.titulo, descricao: ponto.descricao })}
-              className="group relative block aspect-square w-full shrink-0 overflow-hidden rounded-xl border border-[#DDD8CF] sm:aspect-[4/3]"
-            >
-              <img
-                src={ponto.foto}
-                alt={ponto.titulo}
-                className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
-              />
-              <div className="absolute inset-0 flex items-center justify-center bg-black/0 transition duration-300 group-hover:bg-black/25">
-                <IconZoom className="h-4 w-4 scale-75 text-white opacity-0 transition duration-300 group-hover:scale-100 group-hover:opacity-100" />
-              </div>
-              {typeof ponto.ordem === "number" ? (
+      {/* Tudo desce pra baixo do mapa — cards grandes, foto + descrição
+          completa de cada ponto, pra realmente encantar. */}
+      <div className="mt-6 grid grid-cols-1 gap-5 sm:grid-cols-2">
+        {visaoAnotada.pontos.map((ponto, i) => (
+          <div
+            key={ponto.titulo}
+            className="flex flex-col overflow-hidden rounded-2xl border border-[#DDD8CF] bg-[#FDFCF9]"
+          >
+            {ponto.foto && (
+              <button
+                type="button"
+                onClick={() => setZoom({ src: ponto.foto!, alt: ponto.titulo, descricao: ponto.descricao })}
+                className="group relative block aspect-[4/3] w-full shrink-0 overflow-hidden"
+              >
+                <img
+                  src={ponto.foto}
+                  alt={ponto.titulo}
+                  className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
+                />
+                <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/25 via-transparent to-transparent" />
+                <div className="absolute inset-0 flex items-center justify-center bg-black/0 transition duration-300 group-hover:bg-black/25">
+                  <span className="flex h-9 w-9 scale-75 items-center justify-center rounded-full bg-white/90 text-[#173B45] opacity-0 shadow-md transition duration-300 group-hover:scale-100 group-hover:opacity-100">
+                    <IconZoom className="h-4 w-4" />
+                  </span>
+                </div>
                 <span
-                  className="absolute left-1.5 top-1.5 flex h-6 w-6 items-center justify-center rounded-full text-xs font-bold text-white shadow-md ring-2 ring-white/70"
+                  className="absolute left-3 top-3 flex h-8 w-8 items-center justify-center rounded-full text-sm font-bold text-white shadow-md ring-2 ring-white/70"
                   style={{ background: ponto.cor }}
                 >
-                  {ponto.ordem}
+                  {i + 1}
                 </span>
-              ) : (
-                <span
-                  className="absolute left-1.5 top-1.5 h-3 w-3 rounded-full shadow-md ring-2 ring-white/70"
-                  style={{ background: ponto.cor }}
-                />
-              )}
-            </button>
-          ) : null
-        )}
-      </div>
+              </button>
+            )}
+            <div className="p-5">
+              <p className="text-base font-semibold text-[#24211D]">
+                {ponto.titulo}
+                {ponto.nomeJapones && (
+                  <span className="ml-2 text-sm font-normal text-[#24211D]/50">
+                    {ponto.nomeJapones}
+                  </span>
+                )}
+              </p>
+              <p className="mt-2 text-sm leading-6 text-[#24211D]/75">
+                {ponto.descricao}
+              </p>
+            </div>
+          </div>
+        ))}
       </div>
 
       {zoom && (
