@@ -43,7 +43,7 @@ type Gastronomia = {
   // Parágrafo curto de contexto (ex.: "está integrada ao shopping X, que
   // reúne diversas opções de restaurantes...") — mostrado acima da lista.
   intro?: string;
-  itens?: { nome: string; descricao?: string }[];
+  itens?: { nome: string; descricao?: string; foto?: string }[];
   // Cards ricos com foto — usado quando há fotos reais dos restaurantes;
   // tem prioridade sobre `itens` quando presente.
   restaurantes?: {
@@ -180,6 +180,9 @@ type Period = {
       nomeJapones?: string;
       descricao: string;
       foto?: string;
+      // Foto extra (ex.: um detalhe escondido) — mostrada como miniatura
+      // em destaque sobre o canto da foto principal, clicável pra zoom.
+      fotoExtra?: { src: string; alt: string };
       // Posição na sequência de visita recomendada (percursoEssencial) —
       // é o número mostrado no card (numeração única, igual à do Percurso
       // Essencial e dos cards de Pontos de Interesse). Sem isso, o card
@@ -372,6 +375,10 @@ const DAY_1: DayContent = {
           descricao:
             "A maioria passa direto sem notar: embaixo da lanterna gigante do Kaminarimon há um dragão entalhado em madeira, considerado protetor do templo na tradição budista. A lanterna atual (3,9 m de altura, ~700 kg) foi doada em 1960 por Konosuke Matsushita, fundador da Panasonic, em agradecimento por ter se curado de uma doença após rezar no Sensoji — o nome \"Matsushita Electric\" ainda aparece gravado na base.",
           foto: "/images/kaminarimon-dragon.png",
+          fotoExtra: {
+            src: "/images/kaminari-dragon-lantern.png",
+            alt: "Lanterna do Kaminarimon vista de baixo, com a talha do dragão",
+          },
           ordem: 2,
         },
         {
@@ -526,10 +533,42 @@ const DAY_1: DayContent = {
     gastronomia: {
       subtitulo: "Grande quantidade de lojas que vendem snacks de rua",
       itens: [
-        { nome: "Melon Pan" },
-        { nome: "Ningyo-yaki" },
-        { nome: "Kibi Dango" },
+        {
+          nome: "Melon Pan (Kagetsudo)",
+          descricao:
+            "Pão doce crocante por fora, macio por dentro — uma das barracas mais tradicionais da Nakamise.",
+          foto: "/images/nakamise-melon-pan-kagetsudo-2.jpg",
+        },
+        {
+          nome: "Ningyo-yaki",
+          descricao:
+            "Bolinho recheado de doce de feijão vermelho, moldado em formatos icônicos e vendido morno, recém-feito.",
+          foto: "/images/nakamise-ningyo-yaki-1.jpg",
+        },
+        {
+          nome: "Ningyo-yaki",
+          descricao: "Vendido em pacotes — ótimo para levar de lembrança.",
+          foto: "/images/nakamise-ningyo-yaki-2b.jpg",
+        },
+        {
+          nome: "Kibi Dango",
+          descricao:
+            "Mochi macio, tradição de Asakusa desde o período Edo.",
+          foto: "/images/nakamise-kibi-dango.jpg",
+        },
         { nome: "Senbei feito na hora" },
+        {
+          nome: "Senbei Gigante",
+          descricao:
+            "Cracker de arroz grelhado na hora, do tamanho do rosto — vira atração à parte.",
+          foto: "/images/nakamise-senbei-gigante.jpg",
+        },
+        {
+          nome: "Asakusa Menchi",
+          descricao:
+            "Croquete de carne empanado, crocante por fora e suculento por dentro — uma das filas mais disputadas da rua.",
+          foto: "/images/nakamise-asakusa-menchi.jpg",
+        },
       ],
     },
   },
@@ -2309,7 +2348,7 @@ function PoiCard({ index, poi }: { index: number; poi: Poi }) {
 
       {zoomIndex !== null && imagens[zoomIndex] && (
         <div
-          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/85 p-4 backdrop-blur-sm sm:p-8"
+          className="fixed inset-0 z-[100] flex items-start justify-center overflow-y-auto bg-black/85 p-4 backdrop-blur-sm sm:p-8"
           onClick={() => setZoomIndex(null)}
         >
           <button
@@ -2457,9 +2496,51 @@ function GastronomiaBlock({ gastronomia }: { gastronomia: Gastronomia }) {
             </div>
           ))}
         </div>
-      ) : (
-        gastronomia.itens &&
-        gastronomia.itens.length > 0 && (
+      ) : gastronomia.itens && gastronomia.itens.length > 0 ? (
+        gastronomia.itens.some((item) => item.foto) ? (
+          <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-3">
+            {gastronomia.itens.map((item) =>
+              item.foto ? (
+                <div
+                  key={item.nome}
+                  className="overflow-hidden rounded-2xl border border-[#DDD8CF] bg-[#FDFCF9]"
+                >
+                  <div className="aspect-square overflow-hidden">
+                    <img
+                      src={item.foto}
+                      alt={item.nome}
+                      className="h-full w-full object-cover"
+                    />
+                  </div>
+                  <div className="p-3">
+                    <p className="text-xs font-semibold text-[#24211D]">
+                      {item.nome}
+                    </p>
+                    {item.descricao && (
+                      <p className="mt-0.5 text-[11px] leading-4 text-[#24211D]/70">
+                        {item.descricao}
+                      </p>
+                    )}
+                  </div>
+                </div>
+              ) : (
+                <div
+                  key={item.nome}
+                  className="flex flex-col justify-center rounded-2xl border border-dashed border-[#DDD8CF] bg-[#FDFCF9] p-3"
+                >
+                  <p className="text-xs font-semibold text-[#24211D]">
+                    {item.nome}
+                  </p>
+                  {item.descricao && (
+                    <p className="mt-0.5 text-[11px] leading-4 text-[#24211D]/70">
+                      {item.descricao}
+                    </p>
+                  )}
+                </div>
+              )
+            )}
+          </div>
+        ) : (
           <ul className="mt-3 space-y-1.5">
             {gastronomia.itens.map((item) => (
               <li key={item.nome} className="text-sm leading-6 text-[#24211D]/85">
@@ -2471,7 +2552,7 @@ function GastronomiaBlock({ gastronomia }: { gastronomia: Gastronomia }) {
             ))}
           </ul>
         )
-      )}
+      ) : null}
 
       {gastronomia.mapa ? (
         <>
@@ -2498,7 +2579,7 @@ function GastronomiaBlock({ gastronomia }: { gastronomia: Gastronomia }) {
 
           {zoom && (
             <div
-              className="fixed inset-0 z-[100] flex items-center justify-center bg-black/85 p-4 backdrop-blur-sm sm:p-8"
+              className="fixed inset-0 z-[100] flex items-start justify-center overflow-y-auto bg-black/85 p-4 backdrop-blur-sm sm:p-8"
               onClick={() => setZoom(false)}
             >
               <button
@@ -2835,7 +2916,7 @@ function MapaVisaoGeralBlock({
 
       {zoom && (
         <div
-          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/85 p-4 backdrop-blur-sm sm:p-8"
+          className="fixed inset-0 z-[100] flex items-start justify-center overflow-y-auto bg-black/85 p-4 backdrop-blur-sm sm:p-8"
           onClick={() => setZoom(false)}
         >
           <button
@@ -2901,7 +2982,7 @@ function VisaoAnotadaBlock({
 
         {zoom && (
           <div
-            className="fixed inset-0 z-[100] flex items-center justify-center bg-black/85 p-4 backdrop-blur-sm sm:p-8"
+            className="fixed inset-0 z-[100] flex items-start justify-center overflow-y-auto bg-black/85 p-4 backdrop-blur-sm sm:p-8"
             onClick={() => setZoom(null)}
           >
             <button
@@ -2960,32 +3041,49 @@ function VisaoAnotadaBlock({
             className="flex flex-col overflow-hidden rounded-2xl border border-[#DDD8CF] bg-[#FDFCF9]"
           >
             {ponto.foto && (
-              <button
-                type="button"
-                onClick={() => setZoom({ src: ponto.foto!, alt: ponto.titulo, descricao: ponto.descricao })}
-                className="group relative block aspect-[4/3] w-full shrink-0 overflow-hidden"
-              >
-                <img
-                  src={ponto.foto}
-                  alt={ponto.titulo}
-                  className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
-                />
-                <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/25 via-transparent to-transparent" />
-                <div className="absolute inset-0 flex items-center justify-center bg-black/0 transition duration-300 group-hover:bg-black/25">
-                  <span className="flex h-9 w-9 scale-75 items-center justify-center rounded-full bg-white/90 text-[#173B45] opacity-0 shadow-md transition duration-300 group-hover:scale-100 group-hover:opacity-100">
-                    <IconZoom className="h-4 w-4" />
-                  </span>
-                </div>
-                {typeof ponto.ordem === "number" ? (
-                  <span className="absolute left-3 top-3 flex h-8 w-8 items-center justify-center rounded-full bg-black text-sm font-bold text-white shadow-md ring-2 ring-white/70">
-                    {ponto.ordem}
-                  </span>
-                ) : (
-                  <span className="absolute left-3 top-3 rounded-full border border-white/70 bg-black/70 px-2.5 py-1 text-[9px] font-bold uppercase tracking-[0.15em] text-white shadow-md">
-                    Opcional
-                  </span>
+              <div className="relative shrink-0">
+                <button
+                  type="button"
+                  onClick={() => setZoom({ src: ponto.foto!, alt: ponto.titulo, descricao: ponto.descricao })}
+                  className="group relative block aspect-[4/3] w-full overflow-hidden"
+                >
+                  <img
+                    src={ponto.foto}
+                    alt={ponto.titulo}
+                    className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
+                  />
+                  <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/25 via-transparent to-transparent" />
+                  <div className="absolute inset-0 flex items-center justify-center bg-black/0 transition duration-300 group-hover:bg-black/25">
+                    <span className="flex h-9 w-9 scale-75 items-center justify-center rounded-full bg-white/90 text-[#173B45] opacity-0 shadow-md transition duration-300 group-hover:scale-100 group-hover:opacity-100">
+                      <IconZoom className="h-4 w-4" />
+                    </span>
+                  </div>
+                  {typeof ponto.ordem === "number" ? (
+                    <span className="absolute left-3 top-3 flex h-8 w-8 items-center justify-center rounded-full bg-black text-sm font-bold text-white shadow-md ring-2 ring-white/70">
+                      {ponto.ordem}
+                    </span>
+                  ) : (
+                    <span className="absolute left-3 top-3 rounded-full border border-white/70 bg-black/70 px-2.5 py-1 text-[9px] font-bold uppercase tracking-[0.15em] text-white shadow-md">
+                      Opcional
+                    </span>
+                  )}
+                </button>
+                {ponto.fotoExtra && (
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setZoom({ src: ponto.fotoExtra!.src, alt: ponto.fotoExtra!.alt })
+                    }
+                    className="absolute bottom-3 right-3 h-16 w-16 overflow-hidden rounded-xl border-[3px] border-[#B96432] shadow-lg ring-2 ring-white transition hover:scale-105"
+                  >
+                    <img
+                      src={ponto.fotoExtra.src}
+                      alt={ponto.fotoExtra.alt}
+                      className="h-full w-full object-cover"
+                    />
+                  </button>
                 )}
-              </button>
+              </div>
             )}
             <div className="p-5">
               <p className="text-base font-semibold text-[#24211D]">
@@ -3006,7 +3104,7 @@ function VisaoAnotadaBlock({
 
       {zoom && (
         <div
-          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/85 p-4 backdrop-blur-sm sm:p-8"
+          className="fixed inset-0 z-[100] flex items-start justify-center overflow-y-auto bg-black/85 p-4 backdrop-blur-sm sm:p-8"
           onClick={() => setZoom(null)}
         >
           <button
@@ -3093,7 +3191,7 @@ function GaleriaBlock({
 
       {zoom && (
         <div
-          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/85 p-4 backdrop-blur-sm sm:p-8"
+          className="fixed inset-0 z-[100] flex items-start justify-center overflow-y-auto bg-black/85 p-4 backdrop-blur-sm sm:p-8"
           onClick={() => setZoom(null)}
         >
           <button
@@ -4528,7 +4626,7 @@ function HotelGuestGuide({ hotel }: { hotel: HotelInfo }) {
 
       {rotaModal && (
         <div
-          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/85 p-4 backdrop-blur-sm sm:p-8"
+          className="fixed inset-0 z-[100] flex items-start justify-center overflow-y-auto bg-black/85 p-4 backdrop-blur-sm sm:p-8"
           onClick={() => setRotaModal(null)}
         >
           <button
