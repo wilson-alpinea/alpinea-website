@@ -102,6 +102,9 @@ type EstacaoInfo = {
   nome: string;
   nomeJapones?: string;
   distancia?: string;
+  // Saída/plataforma específica a usar — mostrada em card verde em
+  // destaque, separada do texto de distância a pé.
+  saida?: string;
 };
 
 type Deslocamento = {
@@ -161,6 +164,12 @@ type Period = {
     titulo: string;
     resposta: string;
   }[];
+  // Galeria de apoio (mapas de andar, fotos do ambiente) — tamanho natural,
+  // sem recorte, pra não perder texto/legendas de mapas oficiais.
+  galeria?: {
+    titulo?: string;
+    imagens: { src: string; alt: string; legenda?: string }[];
+  };
   pois: Poi[];
   gastronomia?: Gastronomia;
   comprasExclusivas?: ComprasExclusivas;
@@ -371,13 +380,15 @@ const DAY_1: DayContent = {
       estacaoOrigem: {
         nome: "Estação Kyobashi",
         nomeJapones: "京橋駅",
-        distancia: "~1 min a pé do hotel · Saída 6",
+        distancia: "~1 min a pé do hotel",
+        saida: "Saída 6",
       },
       linha: { codigo: "G10", nome: "Tokyo Metro Ginza Line", cor: "#F39700", logo: "/images/tokyometro-mark.png" },
       estacaoDestino: {
         nome: "Estação Asakusa",
         nomeJapones: "浅草駅",
-        distancia: "Saída 1 · ~4 min a pé (300 m) até o Kaminarimon",
+        distancia: "~4 min a pé (300 m) até o Kaminarimon",
+        saida: "Saída 1",
       },
       opcoes: [
         {
@@ -505,6 +516,36 @@ const DAY_1: DayContent = {
       imagemAlt: "Infográfico da Tokyo Sky Tree com altura e observatórios (Tembo Deck e Tembo Galleria)",
       nota: "634 m de altura total, concluída em 2012 — a torre de transmissão e observação mais alta do Japão.",
     },
+    galeria: {
+      titulo: "Skytree em Detalhes",
+      imagens: [
+        {
+          src: "/images/skytree-tembo-deck-aerea.jpg",
+          alt: "Vista aérea do Tembo Deck da Tokyo Sky Tree, mostrando a estrutura do observatório",
+          legenda: "Tembo Deck, visto de fora",
+        },
+        {
+          src: "/images/skytree-tembo-deck-mapa.png",
+          alt: "Mapa oficial do Tembo Deck (350 m) da Tokyo Sky Tree, pisos 340 a 350",
+          legenda: "Tembo Deck · pisos 340–350",
+        },
+        {
+          src: "/images/skytree-tembo-galleria-mapa.png",
+          alt: "Mapa oficial do Tembo Galleria (450 m) da Tokyo Sky Tree, pisos 445 a 450",
+          legenda: "Tembo Galleria · pisos 445–450",
+        },
+        {
+          src: "/images/skytree-tembo-deck-vista-noturna.jpg",
+          alt: "Vista de dentro do Tembo Deck à noite, com a cidade iluminada ao fundo",
+          legenda: "Vista de dentro do Tembo Deck, à noite",
+        },
+        {
+          src: "/images/skytree-por-do-sol-fuji.jpg",
+          alt: "Tokyo Sky Tree ao pôr do sol, com o Monte Fuji visível ao fundo",
+          legenda: "Pôr do sol na torre, com o Monte Fuji ao fundo em dias claros",
+        },
+      ],
+    },
     regiao: {
       nome: "Oshiage / Sumida · Tokyo",
       descricao:
@@ -566,6 +607,24 @@ const DAY_1: DayContent = {
       { label: "Melhor horário", valor: "Cerca de 1h antes do pôr do sol, para ver o dia virar noite" },
     ],
     pois: [
+      {
+        category: "Gastronomia",
+        title: "Sky Restaurant 634 (Musashi)",
+        description:
+          "Dentro do próprio Tembo Deck, piso 345 — menu degustação sazonal que mistura técnica francesa com ingredientes japoneses inspirados na culinária de Edo. Almoço ~¥6.200–8.500, jantar ~¥15.000–19.200 por pessoa (fora o ingresso da torre). Reserva recomendada.",
+        prioridade: "opcional",
+        imagem: "/images/skytree-sky-restaurant-musashi.jpg",
+        imagemAlt: "Interior do Sky Restaurant 634 (Musashi), no piso 345 da Tokyo Sky Tree",
+      },
+      {
+        category: "Gastronomia",
+        title: "Skytree Cafe",
+        description:
+          "Cafeteria informal do Tembo Deck (piso 340, com mesas — a versão do piso 350 é só balcão) — bebidas autorais, lanches leves e sobremesas temáticas com vista para a cidade.",
+        prioridade: "opcional",
+        imagem: "/images/skytree-cafe.jpg",
+        imagemAlt: "Balcão do Skytree Cafe, no piso 340 da Tokyo Sky Tree",
+      },
       {
         title: "Tokyo Solamachi",
         bairro: "Sumida",
@@ -2437,8 +2496,8 @@ function DeslocamentoCard({ deslocamento }: { deslocamento: Deslocamento }) {
           companhia operadora, nome da estação e nome em japonês — repetido
           pra origem e destino, ligados por uma seta. Fotos de estação em si
           (fachada/entrada) não entram aqui — ficam só no guia do hotel. */}
-      <div className="flex flex-wrap items-start justify-center gap-6 text-center sm:gap-10">
-        <div className="flex flex-col items-center">
+      <div className="flex items-start justify-center gap-3 text-center sm:gap-5">
+        <div className="flex w-32 flex-col items-center sm:w-40">
           {deslocamento.linha.logo && (
             <div className="mb-3 flex h-20 w-20 items-center justify-center">
               <img
@@ -2461,9 +2520,29 @@ function DeslocamentoCard({ deslocamento }: { deslocamento: Deslocamento }) {
               {deslocamento.estacaoOrigem.distancia}
             </p>
           )}
+          {deslocamento.estacaoOrigem.saida && (
+            <p className="mt-2 inline-block rounded-lg border border-emerald-300 bg-emerald-50 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.1em] text-emerald-800">
+              {deslocamento.estacaoOrigem.saida}
+            </p>
+          )}
         </div>
-        <span className="mt-4 text-lg text-[#24211D]/30 sm:mt-5">→</span>
-        <div className="flex flex-col items-center">
+
+        {/* Traço horizontal ligando as duas estações, na cor da linha —
+            alinhado ao centro vertical dos logos (h-20 = 80px, centro em
+            40px, daí o mt-10). */}
+        <div className="flex h-20 min-w-[32px] flex-1 items-center sm:min-w-[64px]">
+          <div
+            className="relative h-[3px] w-full rounded-full"
+            style={{ background: deslocamento.linha.cor || "#B96432" }}
+          >
+            <span
+              className="absolute right-0 top-1/2 h-2.5 w-2.5 -translate-y-1/2 translate-x-1/2 rotate-45 border-r-[3px] border-t-[3px]"
+              style={{ borderColor: deslocamento.linha.cor || "#B96432" }}
+            />
+          </div>
+        </div>
+
+        <div className="flex w-32 flex-col items-center sm:w-40">
           {deslocamento.linha.logo && (
             <div className="mb-3 flex h-20 w-20 items-center justify-center">
               <img
@@ -2484,6 +2563,11 @@ function DeslocamentoCard({ deslocamento }: { deslocamento: Deslocamento }) {
           {deslocamento.estacaoDestino.distancia && (
             <p className="mt-1 text-xs font-medium uppercase tracking-wide text-[#24211D]/65">
               {deslocamento.estacaoDestino.distancia}
+            </p>
+          )}
+          {deslocamento.estacaoDestino.saida && (
+            <p className="mt-2 inline-block rounded-lg border border-emerald-300 bg-emerald-50 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.1em] text-emerald-800">
+              {deslocamento.estacaoDestino.saida}
             </p>
           )}
         </div>
@@ -2614,7 +2698,7 @@ function VisaoAnotadaBlock({
 }: {
   visaoAnotada: NonNullable<Period["visaoAnotada"]>;
 }) {
-  const [zoom, setZoom] = useState<{ src: string; alt: string } | null>(null);
+  const [zoom, setZoom] = useState<{ src: string; alt: string; descricao?: string } | null>(null);
 
   // Sem pontos: a imagem já é um infográfico completo — mostra só ela, no
   // tamanho/proporção natural (sem recorte) e clicável pra zoom, sem a
@@ -2670,65 +2754,59 @@ function VisaoAnotadaBlock({
   }
 
   return (
-    <div className="mb-8 grid grid-cols-1 gap-5 sm:grid-cols-[minmax(0,1fr)_minmax(0,1fr)] sm:gap-8">
-      <div className="overflow-hidden rounded-2xl border border-[#DDD8CF]">
+    <div className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-start">
+      <button
+        type="button"
+        onClick={() => setZoom({ src: visaoAnotada.imagem, alt: visaoAnotada.imagemAlt })}
+        className="group relative block overflow-hidden rounded-2xl border border-[#DDD8CF]"
+      >
         <img
           src={visaoAnotada.imagem}
           alt={visaoAnotada.imagemAlt}
-          className="block h-auto w-full"
+          className="block h-auto w-full transition duration-300 group-hover:scale-[1.01]"
         />
-      </div>
-      <div className="flex flex-col gap-5">
-        {visaoAnotada.pontos.map((ponto) => (
-          <div key={ponto.titulo} className="flex gap-3">
-            {ponto.foto && (
-              <button
-                type="button"
-                onClick={() => setZoom({ src: ponto.foto!, alt: ponto.titulo })}
-                className="group relative h-24 w-28 shrink-0 overflow-hidden rounded-xl border border-[#DDD8CF] sm:h-28 sm:w-32"
-              >
-                <img
-                  src={ponto.foto}
-                  alt={ponto.titulo}
-                  className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
-                />
-                <div className="absolute inset-0 flex items-center justify-center bg-black/0 transition duration-300 group-hover:bg-black/35">
-                  <span className="flex h-8 w-8 scale-75 items-center justify-center rounded-full bg-white/90 text-[#173B45] opacity-0 shadow-md transition duration-300 group-hover:scale-100 group-hover:opacity-100">
-                    <IconZoom className="h-3.5 w-3.5" />
-                  </span>
-                </div>
-              </button>
-            )}
-            <div className="min-w-0 flex-1">
-              <div className="flex items-center gap-2">
-                {typeof ponto.ordem === "number" ? (
-                  <span
-                    className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[10px] font-bold text-white"
-                    style={{ background: ponto.cor }}
-                  >
-                    {ponto.ordem}
-                  </span>
-                ) : (
-                  <span
-                    className="h-2.5 w-2.5 shrink-0 rounded-full"
-                    style={{ background: ponto.cor }}
-                  />
-                )}
-                <p className="text-sm font-semibold text-[#24211D]">
-                  {ponto.titulo}
-                  {ponto.nomeJapones && (
-                    <span className="ml-2 text-xs font-normal text-[#24211D]/50">
-                      {ponto.nomeJapones}
-                    </span>
-                  )}
-                </p>
+        <div className="absolute inset-0 flex items-center justify-center bg-black/0 transition duration-300 group-hover:bg-black/20">
+          <span className="flex h-9 w-9 scale-75 items-center justify-center rounded-full bg-white/90 text-[#173B45] opacity-0 shadow-md transition duration-300 group-hover:scale-100 group-hover:opacity-100">
+            <IconZoom className="h-4 w-4" />
+          </span>
+        </div>
+      </button>
+
+      {/* Só miniaturas ao lado do esquema — sem texto, pra não competir com
+          o diagrama. Título/descrição de cada ponto aparecem no zoom. */}
+      <div className="flex gap-3 sm:w-40 sm:flex-col">
+        {visaoAnotada.pontos.map((ponto) =>
+          ponto.foto ? (
+            <button
+              key={ponto.titulo}
+              type="button"
+              onClick={() => setZoom({ src: ponto.foto!, alt: ponto.titulo, descricao: ponto.descricao })}
+              className="group relative block aspect-square w-full shrink-0 overflow-hidden rounded-xl border border-[#DDD8CF] sm:aspect-[4/3]"
+            >
+              <img
+                src={ponto.foto}
+                alt={ponto.titulo}
+                className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
+              />
+              <div className="absolute inset-0 flex items-center justify-center bg-black/0 transition duration-300 group-hover:bg-black/25">
+                <IconZoom className="h-4 w-4 scale-75 text-white opacity-0 transition duration-300 group-hover:scale-100 group-hover:opacity-100" />
               </div>
-              <p className="mt-1.5 text-xs leading-5 text-[#24211D]/72">
-                {ponto.descricao}
-              </p>
-            </div>
-          </div>
-        ))}
+              {typeof ponto.ordem === "number" ? (
+                <span
+                  className="absolute left-1.5 top-1.5 flex h-6 w-6 items-center justify-center rounded-full text-xs font-bold text-white shadow-md ring-2 ring-white/70"
+                  style={{ background: ponto.cor }}
+                >
+                  {ponto.ordem}
+                </span>
+              ) : (
+                <span
+                  className="absolute left-1.5 top-1.5 h-3 w-3 rounded-full shadow-md ring-2 ring-white/70"
+                  style={{ background: ponto.cor }}
+                />
+              )}
+            </button>
+          ) : null
+        )}
       </div>
 
       {zoom && (
@@ -2751,12 +2829,83 @@ function VisaoAnotadaBlock({
             <img
               src={zoom.src}
               alt={zoom.alt}
-              className="max-h-[85vh] max-w-[92vw] rounded-2xl object-contain"
+              className="max-h-[80vh] max-w-[92vw] rounded-2xl object-contain"
             />
             <p className="mt-3 text-center text-xs font-semibold uppercase tracking-[0.15em] text-white/85">
               {zoom.alt}
             </p>
+            {zoom.descricao && (
+              <p className="mx-auto mt-1.5 max-w-md text-center text-xs leading-5 text-white/65">
+                {zoom.descricao}
+              </p>
+            )}
           </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function GaleriaBlock({
+  galeria,
+}: {
+  galeria: NonNullable<Period["galeria"]>;
+}) {
+  const [zoom, setZoom] = useState<{ src: string; alt: string } | null>(null);
+  return (
+    <div className="mb-8">
+      {galeria.titulo && (
+        <p className="mb-4 text-xs font-bold uppercase tracking-[0.25em] text-[#24211D]/55">
+          {galeria.titulo}
+        </p>
+      )}
+      <div className="grid grid-cols-1 items-start gap-4 sm:grid-cols-2">
+        {galeria.imagens.map((img) => (
+          <div key={img.src}>
+            <button
+              type="button"
+              onClick={() => setZoom({ src: img.src, alt: img.alt })}
+              className="group relative block w-full overflow-hidden rounded-2xl border border-[#DDD8CF]"
+            >
+              <img
+                src={img.src}
+                alt={img.alt}
+                className="block h-auto w-full transition duration-300 group-hover:scale-[1.01]"
+              />
+              <div className="absolute inset-0 flex items-center justify-center bg-black/0 transition duration-300 group-hover:bg-black/20">
+                <span className="flex h-9 w-9 scale-75 items-center justify-center rounded-full bg-white/90 text-[#173B45] opacity-0 shadow-md transition duration-300 group-hover:scale-100 group-hover:opacity-100">
+                  <IconZoom className="h-4 w-4" />
+                </span>
+              </div>
+            </button>
+            {img.legenda && (
+              <p className="mt-2 text-center text-xs leading-5 text-[#24211D]/60">
+                {img.legenda}
+              </p>
+            )}
+          </div>
+        ))}
+      </div>
+
+      {zoom && (
+        <div
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/85 p-4 backdrop-blur-sm sm:p-8"
+          onClick={() => setZoom(null)}
+        >
+          <button
+            type="button"
+            onClick={() => setZoom(null)}
+            className="absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white transition hover:bg-white/20 sm:right-6 sm:top-6"
+            aria-label="Fechar"
+          >
+            <IconX className="h-5 w-5" />
+          </button>
+          <img
+            src={zoom.src}
+            alt={zoom.alt}
+            className="max-h-[90vh] max-w-[95vw] rounded-2xl object-contain"
+            onClick={(e) => e.stopPropagation()}
+          />
         </div>
       )}
     </div>
@@ -2862,6 +3011,8 @@ function PeriodBlock({
       {period.visaoAnotada && (
         <VisaoAnotadaBlock visaoAnotada={period.visaoAnotada} />
       )}
+
+      {period.galeria && <GaleriaBlock galeria={period.galeria} />}
 
       {period.deslocamento && (
         <NumberedStep number={1} label="Deslocamento">
