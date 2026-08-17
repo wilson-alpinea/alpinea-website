@@ -126,7 +126,14 @@ type Period = {
   atracaoPrincipalImagem?: string;
   atracaoPrincipalFoco?: "top" | "center" | "bottom";
   atracaoPrincipalCompacta?: boolean;
-  detalhesPraticos?: { label: string; valor: string }[];
+  detalhesPraticos?: {
+    label: string;
+    valor: string;
+    // Só usado no item "Melhor horário" — valor curto (ex.: "9h–9h30") pra
+    // exibir grande e em destaque, com `valor` virando a explicação menor
+    // logo abaixo. Sem isso, cai no formato antigo (só o parágrafo).
+    horarioDestaque?: string;
+  }[];
   // Mapa aberto (print real) com visão geral do trajeto a pé do período,
   // conectando os pontos de interesse — mostrado antes da grade de POIs.
   mapaVisaoGeral?: { imagem: string; imagemAlt: string; nota?: string };
@@ -156,7 +163,7 @@ type Period = {
   // logo após o hero, antes do diagrama anotado.
   percursoEssencial?: {
     duracao: string;
-    passos: string[];
+    passos: { titulo: string; foto?: string }[];
   };
   // Pequeno bloco de apoio à decisão (ex.: qual ingresso escolher, o que
   // fazer se estiver muito cheio) — direto ao ponto, sem prosa longa.
@@ -303,19 +310,20 @@ const DAY_1: DayContent = {
     percursoEssencial: {
       duracao: "1h30–2h",
       passos: [
-        "Kaminarimon",
-        "Dragão sob a lanterna",
-        "Nakamise Street",
-        "Hōzōmon",
-        "Jōkoro",
-        "Salão Principal",
-        "Omikuji",
-        "Saída pelo lado oeste",
-        "Kappabashi / Sumida Park",
+        { titulo: "Kaminarimon", foto: "/images/sensoji-kaminarimon.png" },
+        { titulo: "Dragão sob a lanterna", foto: "/images/kaminarimon-dragon.png" },
+        { titulo: "Nakamise Street", foto: "/images/sensoji-nakamise.png" },
+        { titulo: "Hōzōmon", foto: "/images/sensoji-hozomon.png" },
+        { titulo: "Jōkoro", foto: "/images/Jokoro.png" },
+        { titulo: "Salão Principal", foto: "/images/sensoji-kannondo.png" },
+        { titulo: "Omikuji", foto: "/images/mikuji.png" },
+        { titulo: "Saída pelo lado oeste" },
+        { titulo: "Kappabashi", foto: "/images/kappabashi.png" },
+        { titulo: "Sumida Park", foto: "/images/sumida-park.png" },
       ],
     },
     visaoAnotada: {
-      imagem: "/images/dia1-sensoji-visao-anotada.png",
+      imagem: "/images/dia1-sensoji-visao-anotada-v2.png",
       imagemAlt: "Vista aérea do complexo do Templo Sensoji com as partes principais destacadas",
       pontos: [
         {
@@ -369,13 +377,6 @@ const DAY_1: DayContent = {
       descricao:
         "Bairro histórico às margens do Rio Sumida, coração da \"Tokyo antiga\" — templos, comércio tradicional e costumes que sobreviveram em poucos outros lugares da cidade. Faz parte do distrito administrativo de Taito, um dos mais antigos de Tokyo, fundado por volta de 1600 quando a cidade ainda se chamava Edo — até hoje existem vendedores de leite em garrafa de vidro que passam de casa em casa antes de amanhecer.",
     },
-    decisoes: [
-      {
-        titulo: "Se o templo estiver muito cheio",
-        resposta:
-          "Priorize Kaminarimon → Hōzōmon → Salão Principal e deixe a Nakamise Street para o caminho de volta, quando o movimento costuma ceder.",
-      },
-    ],
     deslocamento: {
       estacaoOrigem: {
         nome: "Estação Kyobashi",
@@ -426,8 +427,9 @@ const DAY_1: DayContent = {
       { label: "Nakamise Street", valor: "~9h–17h (varia por loja)" },
       {
         label: "Melhor horário",
+        horarioDestaque: "9h–9h30",
         valor:
-          "Logo na abertura das lojas, 9h–9h30 — é por isso que o roteiro chega às 9h20: o pico de grupos de turismo começa por volta das 11h e vai até 15h.",
+          "Logo na abertura das lojas — é por isso que o roteiro chega às 9h20: o pico de grupos de turismo começa por volta das 11h e vai até 15h.",
       },
     ],
     mapaVisaoGeral: {
@@ -487,6 +489,8 @@ const DAY_1: DayContent = {
           "Parque as margens do Rio Sumida que corta a parte leste da cidade de Tokyo, vista para a Tokyo Sky Tree",
         grupo: "Se houver tempo · nos arredores",
         prioridade: "opcional",
+        imagem: "/images/sumida-park.png",
+        imagemAlt: "Margem do Rio Sumida no Sumida Park, com cerejeiras floridas",
       },
       {
         category: "Compras",
@@ -512,7 +516,7 @@ const DAY_1: DayContent = {
   tarde: {
     label: "Tarde",
     visaoAnotada: {
-      imagem: "/images/dia1-skytree-visao-anotada.png",
+      imagem: "/images/dia1-skytree-visao-anotada-v2.png",
       imagemAlt: "Infográfico da Tokyo Sky Tree com altura e observatórios (Tembo Deck e Tembo Galleria)",
       nota: "634 m de altura total, concluída em 2012 — a torre de transmissão e observação mais alta do Japão.",
     },
@@ -604,7 +608,11 @@ const DAY_1: DayContent = {
       { label: "Deck + Galleria", valor: "A partir de ¥3.100" },
       { label: "Horário", valor: "Varia por temporada — conferir site oficial" },
       { label: "Reserva", valor: "Recomendada, especialmente no pôr do sol" },
-      { label: "Melhor horário", valor: "Cerca de 1h antes do pôr do sol, para ver o dia virar noite" },
+      {
+        label: "Melhor horário",
+        horarioDestaque: "~1h antes do pôr do sol",
+        valor: "Assim dá pra ver o dia virar noite lá de cima, sem perder o horário de última entrada.",
+      },
     ],
     pois: [
       {
@@ -2706,6 +2714,12 @@ function VisaoAnotadaBlock({
   if (!visaoAnotada.pontos || visaoAnotada.pontos.length === 0) {
     return (
       <div className="mb-8">
+        <div className="mb-4 flex items-center gap-2.5">
+          <span className="h-2 w-2 rounded-full bg-[#173B45]" />
+          <span className="text-xs font-bold uppercase tracking-[0.25em] text-[#173B45]">
+            Raio-X Alpinea
+          </span>
+        </div>
         <button
           type="button"
           onClick={() => setZoom({ src: visaoAnotada.imagem, alt: visaoAnotada.imagemAlt })}
@@ -2754,7 +2768,14 @@ function VisaoAnotadaBlock({
   }
 
   return (
-    <div className="mb-8 grid grid-cols-1 gap-4 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-start">
+    <div className="mb-8">
+      <div className="mb-4 flex items-center gap-2.5">
+        <span className="h-2 w-2 rounded-full bg-[#173B45]" />
+        <span className="text-xs font-bold uppercase tracking-[0.25em] text-[#173B45]">
+          Raio-X Alpinea
+        </span>
+      </div>
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-start">
       <button
         type="button"
         onClick={() => setZoom({ src: visaoAnotada.imagem, alt: visaoAnotada.imagemAlt })}
@@ -2807,6 +2828,7 @@ function VisaoAnotadaBlock({
             </button>
           ) : null
         )}
+      </div>
       </div>
 
       {zoom && (
@@ -2992,17 +3014,36 @@ function PeriodBlock({
               {period.percursoEssencial.duracao}
             </span>
           </div>
-          <p className="mt-3 text-sm leading-7 text-[#173B45]/90">
+          <div className="mt-4 flex flex-wrap items-start gap-y-4">
             {period.percursoEssencial.passos.map((passo, i) => (
-              <span key={passo}>
-                <span className="font-semibold">{passo}</span>
+              <div key={passo.titulo} className="flex items-start">
+                <div className="flex w-16 flex-col items-center gap-1.5 text-center sm:w-[72px]">
+                  {passo.foto ? (
+                    <div className="h-14 w-14 overflow-hidden rounded-full border-2 border-white shadow-sm sm:h-16 sm:w-16">
+                      <img
+                        src={passo.foto}
+                        alt={passo.titulo}
+                        className="h-full w-full object-cover"
+                      />
+                    </div>
+                  ) : (
+                    <div className="flex h-14 w-14 items-center justify-center rounded-full border-2 border-dashed border-[#173B45]/25 text-[#173B45]/40 sm:h-16 sm:w-16">
+                      <IconWalk className="h-5 w-5" />
+                    </div>
+                  )}
+                  <p className="text-[11px] font-semibold leading-tight text-[#173B45]">
+                    {passo.titulo}
+                  </p>
+                </div>
                 {i < period.percursoEssencial!.passos.length - 1 && (
-                  <span className="mx-1.5 text-[#173B45]/40">→</span>
+                  <span className="mt-6 shrink-0 px-0.5 text-[#173B45]/30 sm:mt-7">
+                    →
+                  </span>
                 )}
-              </span>
+              </div>
             ))}
-          </p>
-          <p className="mt-3 text-xs leading-5 text-[#173B45]/60">
+          </div>
+          <p className="mt-4 text-xs leading-5 text-[#173B45]/60">
             O que dá pra fazer sem pressa. Os detalhes de cada ponto vêm a seguir — comece por aqui.
           </p>
         </div>
@@ -3061,24 +3102,46 @@ function PeriodBlock({
                   grade de detalhes práticos. */}
               {period.detalhesPraticos
                 .filter((item) => item.label === "Melhor horário")
-                .map((item) => (
-                  <div
-                    key={item.label}
-                    className="mb-5 flex items-center gap-4 rounded-2xl border border-[#BFDCF2] bg-[#EAF3FC] p-5"
-                  >
-                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white text-[#2C6CA6]">
-                      <IconClock className="h-5 w-5" />
-                    </span>
-                    <div>
-                      <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-[#2C6CA6]/85">
-                        Melhor Horário
-                      </p>
-                      <p className="text-sm font-semibold text-[#1B4A73]">
-                        {item.valor}
-                      </p>
+                .map((item) =>
+                  item.horarioDestaque ? (
+                    <div
+                      key={item.label}
+                      className="mb-5 flex items-center gap-5 rounded-2xl border border-[#BFDCF2] bg-[#EAF3FC] p-6 sm:p-7"
+                    >
+                      <span className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-white text-[#2C6CA6] shadow-sm">
+                        <IconClock className="h-8 w-8" />
+                      </span>
+                      <div className="min-w-0">
+                        <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#2C6CA6]/85">
+                          Melhor Horário
+                        </p>
+                        <p className="mt-0.5 text-3xl font-semibold leading-tight text-[#1B4A73] sm:text-4xl">
+                          {item.horarioDestaque}
+                        </p>
+                        <p className="mt-1.5 text-sm leading-6 text-[#1B4A73]/80">
+                          {item.valor}
+                        </p>
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  ) : (
+                    <div
+                      key={item.label}
+                      className="mb-5 flex items-center gap-4 rounded-2xl border border-[#BFDCF2] bg-[#EAF3FC] p-5"
+                    >
+                      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white text-[#2C6CA6]">
+                        <IconClock className="h-5 w-5" />
+                      </span>
+                      <div>
+                        <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-[#2C6CA6]/85">
+                          Melhor Horário
+                        </p>
+                        <p className="text-sm font-semibold text-[#1B4A73]">
+                          {item.valor}
+                        </p>
+                      </div>
+                    </div>
+                  )
+                )}
             </>
           )}
 
