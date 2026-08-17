@@ -345,6 +345,8 @@ const DAY_1: DayContent = {
         description:
           "Rua Dentro do complexo do Templo Sensoji, focado em souvenir e itens de pequeno porte",
         rating: 3,
+        imagem: "/images/sensoji-nakamise.png",
+        imagemAlt: "Nakamise Street, a rua de lojas entre o Kaminarimon e o Hōzōmon",
       },
       {
         title: "Escultura do Dragão",
@@ -463,6 +465,7 @@ const DAY_1: DayContent = {
       { label: "Deck + Galleria", valor: "A partir de ¥3.100" },
       { label: "Horário", valor: "Varia por temporada — conferir site oficial" },
       { label: "Reserva", valor: "Recomendada, especialmente no pôr do sol" },
+      { label: "Melhor horário", valor: "Cerca de 1h antes do pôr do sol, para ver o dia virar noite" },
     ],
     pois: [
       {
@@ -673,6 +676,7 @@ const DAY_2: DayContent = {
       { label: "Entrada", valor: "Gratuita" },
       { label: "Horário", valor: "9h–18h (maio)" },
       { label: "Fechado", valor: "Segundas e sextas-feiras" },
+      { label: "Melhor horário", valor: "Logo na abertura, às 9h" },
     ],
     pois: [
       {
@@ -812,6 +816,7 @@ const DAY_3: DayContent = {
       { label: "Entrada (terreno principal)", valor: "Gratuita" },
       { label: "Jardim Interior", valor: "¥500" },
       { label: "Horário", valor: "Nascer ao pôr do sol (~5h–18h em maio)" },
+      { label: "Melhor horário", valor: "Logo na abertura, antes dos grupos de turismo" },
     ],
     pois: [
       {
@@ -890,6 +895,7 @@ const DAY_3: DayContent = {
       { label: "Mirante do Governo Metropolitano", valor: "Gratuito · ~9h30–22h" },
       { label: "Golden Gai", valor: "Maioria dos bares abre após 20h" },
       { label: "Thermae-Yu", valor: "Aberto 24h" },
+      { label: "Melhor horário", valor: "A partir das 17h–18h, quando os letreiros de neon acendem" },
     ],
     atracaoPrincipalFoco: "center",
     pois: [
@@ -1547,6 +1553,7 @@ const DAY_6: DayContent = {
       { label: "Entrada", valor: "¥500 (adultos)" },
       { label: "Horário", valor: "9h–17h, todos os dias" },
       { label: "Pagamento", valor: "Somente dinheiro na bilheteria" },
+      { label: "Melhor horário", valor: "Logo na abertura, antes dos ônibus de turismo" },
     ],
     pois: [
       {
@@ -1792,7 +1799,7 @@ const DAY_7: DayContent = {
       { label: "Entrada geral (no dia)", valor: "A partir de ¥2.200" },
       { label: "Cadeira", valor: "~¥3.500–8.500" },
       { label: "Box tatami (por pessoa)", valor: "~¥8.000–15.000" },
-      { label: "Chegada recomendada", valor: "14h30, para a 2ª divisão" },
+      { label: "Melhor horário", valor: "Chegar às 14h30, para acompanhar a 2ª divisão" },
     ],
     pois: [
       {
@@ -1949,13 +1956,63 @@ function PoiCard({ index, poi }: { index: number; poi: Poi }) {
         ? [{ src: poi.imagem, alt: poi.imagemAlt ?? poi.title }]
         : [];
 
+  const hasPhoto = imagens.length > 0;
+
   return (
-    <div className={`flex gap-3 rounded-2xl border-2 px-4 py-3.5 ${s.border} ${s.bg}`}>
-      <span className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-bold text-white ${s.circle}`}>
-        {index + 1}
-      </span>
-      <div className="min-w-0 flex-1">
+    <div className={`flex h-full flex-col overflow-hidden rounded-2xl border-2 ${s.border} ${s.bg}`}>
+      {hasPhoto && (
+        <div className="relative shrink-0">
+          <button
+            type="button"
+            onClick={() => setZoomIndex(0)}
+            className="group relative block aspect-[16/10] w-full overflow-hidden"
+          >
+            <img
+              src={imagens[0].src}
+              alt={imagens[0].alt}
+              className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
+            />
+            <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent" />
+            <div className="absolute inset-0 flex items-center justify-center bg-black/0 transition duration-300 group-hover:bg-black/25">
+              <span className="flex h-8 w-8 scale-75 items-center justify-center rounded-full bg-white/90 text-[#173B45] opacity-0 shadow-md transition duration-300 group-hover:scale-100 group-hover:opacity-100">
+                <IconZoom className="h-4 w-4" />
+              </span>
+            </div>
+          </button>
+          <span
+            className={`absolute left-3 top-3 flex h-7 w-7 items-center justify-center rounded-full text-xs font-bold text-white shadow-md ring-2 ring-white/70 ${s.circle}`}
+          >
+            {index + 1}
+          </span>
+          {imagens.length > 1 && (
+            <div className="absolute bottom-3 right-3 flex gap-1.5">
+              {imagens.slice(1, 3).map((img, i) => (
+                <button
+                  key={img.src}
+                  type="button"
+                  onClick={() => setZoomIndex(i + 1)}
+                  className="h-10 w-10 overflow-hidden rounded-lg border-2 border-white/85 shadow-md transition hover:scale-105"
+                >
+                  <img src={img.src} alt={img.alt} className="h-full w-full object-cover" />
+                </button>
+              ))}
+              {imagens.length > 3 && (
+                <span className="flex h-10 w-10 items-center justify-center rounded-lg border-2 border-white/85 bg-black/55 text-xs font-bold text-white shadow-md">
+                  +{imagens.length - 3}
+                </span>
+              )}
+            </div>
+          )}
+        </div>
+      )}
+
+      <div className="flex flex-1 flex-col gap-1.5 px-4 py-3.5">
         <div className="flex flex-wrap items-center gap-2">
+          {!hasPhoto && (
+            <span className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-bold text-white ${s.circle}`}>
+              {index + 1}
+            </span>
+          )}
           {poi.bairro && (
             <span className={`rounded-full border px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide ${s.badge}`}>
               {poi.bairro}
@@ -1977,12 +2034,12 @@ function PoiCard({ index, poi }: { index: number; poi: Poi }) {
           )}
         </div>
         {poi.description && (
-          <p className={`mt-1 text-xs leading-5 ${s.muted}`}>
+          <p className={`text-xs leading-5 ${s.muted}`}>
             {poi.description}
           </p>
         )}
         {poi.lista && (
-          <div className="mt-2 flex flex-wrap gap-1.5">
+          <div className="mt-0.5 flex flex-wrap gap-1.5">
             {poi.lista.map((item) => (
               <span
                 key={item}
@@ -1990,31 +2047,6 @@ function PoiCard({ index, poi }: { index: number; poi: Poi }) {
               >
                 {item}
               </span>
-            ))}
-          </div>
-        )}
-        {imagens.length > 0 && (
-          <div
-            className={`mt-2.5 grid gap-1.5 ${imagens.length > 1 ? "grid-cols-2" : "grid-cols-1"}`}
-          >
-            {imagens.map((img, i) => (
-              <button
-                key={img.src}
-                type="button"
-                onClick={() => setZoomIndex(i)}
-                className="group relative h-24 w-full overflow-hidden rounded-xl border border-black/10"
-              >
-                <img
-                  src={img.src}
-                  alt={img.alt}
-                  className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
-                />
-                <div className="absolute inset-0 flex items-center justify-center bg-black/0 transition duration-300 group-hover:bg-black/35">
-                  <span className="flex h-7 w-7 scale-75 items-center justify-center rounded-full bg-white/90 text-[#173B45] opacity-0 shadow-md transition duration-300 group-hover:scale-100 group-hover:opacity-100">
-                    <IconZoom className="h-3.5 w-3.5" />
-                  </span>
-                </div>
-              </button>
             ))}
           </div>
         )}
@@ -2255,7 +2287,7 @@ function DeslocamentoCard({ deslocamento }: { deslocamento: Deslocamento }) {
       <div className="flex flex-wrap items-start justify-center gap-6 text-center sm:gap-10">
         <div className="flex flex-col items-center">
           {deslocamento.linha.logo && (
-            <div className="mb-3 flex h-16 w-16 items-center justify-center">
+            <div className="mb-3 flex h-20 w-20 items-center justify-center">
               <img
                 src={deslocamento.linha.logo}
                 alt={deslocamento.linha.nome}
@@ -2272,7 +2304,7 @@ function DeslocamentoCard({ deslocamento }: { deslocamento: Deslocamento }) {
             </p>
           )}
           {deslocamento.estacaoOrigem.distancia && (
-            <p className="mt-0.5 text-[10px] uppercase tracking-wide text-[#24211D]/50">
+            <p className="mt-1 text-xs font-medium uppercase tracking-wide text-[#24211D]/65">
               {deslocamento.estacaoOrigem.distancia}
             </p>
           )}
@@ -2280,7 +2312,7 @@ function DeslocamentoCard({ deslocamento }: { deslocamento: Deslocamento }) {
         <span className="mt-4 text-lg text-[#24211D]/30 sm:mt-5">→</span>
         <div className="flex flex-col items-center">
           {deslocamento.linha.logo && (
-            <div className="mb-3 flex h-16 w-16 items-center justify-center">
+            <div className="mb-3 flex h-20 w-20 items-center justify-center">
               <img
                 src={deslocamento.linha.logo}
                 alt={deslocamento.linha.nome}
@@ -2297,13 +2329,13 @@ function DeslocamentoCard({ deslocamento }: { deslocamento: Deslocamento }) {
             </p>
           )}
           {deslocamento.estacaoDestino.distancia && (
-            <p className="mt-0.5 text-[10px] uppercase tracking-wide text-[#24211D]/50">
+            <p className="mt-1 text-xs font-medium uppercase tracking-wide text-[#24211D]/65">
               {deslocamento.estacaoDestino.distancia}
             </p>
           )}
         </div>
       </div>
-      <p className="mt-5 text-center text-[10px] font-bold uppercase tracking-[0.2em] text-[#24211D]/50">
+      <p className="mt-5 text-center text-xs font-bold uppercase tracking-[0.15em] text-[#24211D]/65">
         {deslocamento.linha.logo && `${deslocamento.linha.codigo} · `}
         {deslocamento.linha.nome} · sem baldeação
       </p>
@@ -2440,7 +2472,7 @@ function VisaoAnotadaBlock({
         <button
           type="button"
           onClick={() => setZoom({ src: visaoAnotada.imagem, alt: visaoAnotada.imagemAlt })}
-          className="group relative mx-auto block max-w-md overflow-hidden rounded-2xl border border-[#DDD8CF]"
+          className="group relative mx-auto block max-w-xl overflow-hidden rounded-2xl border border-[#DDD8CF] sm:max-w-2xl"
         >
           <img
             src={visaoAnotada.imagem}
@@ -2493,18 +2525,14 @@ function VisaoAnotadaBlock({
           className="block h-auto w-full"
         />
       </div>
-      <div className="flex flex-col justify-center gap-4">
+      <div className="flex flex-col gap-5">
         {visaoAnotada.pontos.map((ponto) => (
-          <div key={ponto.titulo} className="flex items-start gap-3">
-            <span
-              className="mt-1.5 h-2.5 w-2.5 shrink-0 rounded-full"
-              style={{ background: ponto.cor }}
-            />
+          <div key={ponto.titulo} className="flex gap-3">
             {ponto.foto && (
               <button
                 type="button"
                 onClick={() => setZoom({ src: ponto.foto!, alt: ponto.titulo })}
-                className="group relative h-16 w-16 shrink-0 overflow-hidden rounded-xl border border-[#DDD8CF]"
+                className="group relative h-24 w-28 shrink-0 overflow-hidden rounded-xl border border-[#DDD8CF] sm:h-28 sm:w-32"
               >
                 <img
                   src={ponto.foto}
@@ -2512,22 +2540,28 @@ function VisaoAnotadaBlock({
                   className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
                 />
                 <div className="absolute inset-0 flex items-center justify-center bg-black/0 transition duration-300 group-hover:bg-black/35">
-                  <span className="flex h-6 w-6 scale-75 items-center justify-center rounded-full bg-white/90 text-[#173B45] opacity-0 shadow-md transition duration-300 group-hover:scale-100 group-hover:opacity-100">
-                    <IconZoom className="h-3 w-3" />
+                  <span className="flex h-8 w-8 scale-75 items-center justify-center rounded-full bg-white/90 text-[#173B45] opacity-0 shadow-md transition duration-300 group-hover:scale-100 group-hover:opacity-100">
+                    <IconZoom className="h-3.5 w-3.5" />
                   </span>
                 </div>
               </button>
             )}
-            <div className="min-w-0">
-              <p className="text-sm font-semibold text-[#24211D]">
-                {ponto.titulo}
-                {ponto.nomeJapones && (
-                  <span className="ml-2 text-xs font-normal text-[#24211D]/50">
-                    {ponto.nomeJapones}
-                  </span>
-                )}
-              </p>
-              <p className="mt-1 text-xs leading-5 text-[#24211D]/72">
+            <div className="min-w-0 flex-1">
+              <div className="flex items-center gap-2">
+                <span
+                  className="h-2.5 w-2.5 shrink-0 rounded-full"
+                  style={{ background: ponto.cor }}
+                />
+                <p className="text-sm font-semibold text-[#24211D]">
+                  {ponto.titulo}
+                  {ponto.nomeJapones && (
+                    <span className="ml-2 text-xs font-normal text-[#24211D]/50">
+                      {ponto.nomeJapones}
+                    </span>
+                  )}
+                </p>
+              </div>
+              <p className="mt-1.5 text-xs leading-5 text-[#24211D]/72">
                 {ponto.descricao}
               </p>
             </div>
@@ -2718,7 +2752,7 @@ function PeriodBlock({
               <p className="mb-5 text-xs text-[#24211D]/65">
                 Pontos de interesse propostos para o período
               </p>
-              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+              <div className="grid grid-cols-1 items-start gap-3 sm:grid-cols-2">
                 {period.pois.map((poi, index) => (
                   <PoiCard key={poi.title + index} index={index} poi={poi} />
                 ))}
@@ -2912,7 +2946,7 @@ function SubAtracaoBlock({
       {subAtracao.pois && subAtracao.pois.length > 0 && (
         <>
           <p className="mb-5 text-xs text-[#24211D]/65">Restaurantes sugeridos</p>
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+          <div className="grid grid-cols-1 items-start gap-3 sm:grid-cols-2">
             {subAtracao.pois.map((poi, index) => (
               <PoiCard key={poi.title + index} index={index} poi={poi} />
             ))}
