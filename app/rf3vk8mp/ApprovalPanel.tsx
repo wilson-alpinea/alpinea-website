@@ -3208,7 +3208,7 @@ function DeslocamentoCard({ deslocamento }: { deslocamento: Deslocamento }) {
             40px, daí o mt-10). Estações intermediárias (quando houver)
             aparecem como tiques na própria linha, com o nome em diagonal
             acima — mesmo padrão dos mapas oficiais de metrô. */}
-        <div className="flex h-24 min-w-[32px] flex-1 flex-col justify-end pt-10 sm:min-w-[64px] sm:pt-12">
+        <div className="flex h-24 min-w-[32px] flex-1 flex-col justify-start pt-10 sm:min-w-[64px]">
           {deslocamento.estacoesIntermediarias &&
             deslocamento.estacoesIntermediarias.length > 0 && (
               <div className="relative h-0 w-full">
@@ -3296,7 +3296,16 @@ function DeslocamentoCard({ deslocamento }: { deslocamento: Deslocamento }) {
           )}
         </div>
       </div>
-      <p className="mt-5 text-center text-xs font-bold uppercase tracking-[0.15em] text-[#24211D]/65">
+      <p className="mt-5 flex items-center justify-center gap-2 text-center text-xs font-bold uppercase tracking-[0.15em] text-[#24211D]/65">
+        <span
+          className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-white"
+          style={{ background: deslocamento.linha.cor || "#B96432" }}
+        >
+          {(() => {
+            const Icon = deslocamento.opcoes.find((o) => o.recomendado)?.Icon ?? IconMetro;
+            return <Icon className="h-3.5 w-3.5" />;
+          })()}
+        </span>
         {deslocamento.linha.logo && `${deslocamento.linha.codigo} · `}
         {deslocamento.linha.nome} · sem baldeação
       </p>
@@ -3825,15 +3834,20 @@ function PeriodBlock({
 
       {period.percursoEssencial && (
         <div className="mb-8 rounded-2xl border border-[#2C6CA6] bg-[#F8FAF9] p-5 sm:p-6">
-          <div className="flex flex-wrap items-center justify-between gap-2">
+          <div className="flex flex-wrap items-center justify-between gap-4">
             <p className="text-xs font-bold uppercase tracking-[0.25em] text-[#000000]">
               Percurso essencial
             </p>
-            <span className="rounded-full border border-[#000000]/25 bg-white px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wide text-[#000000]">
-              {period.percursoEssencial.duracao}
-            </span>
+            <div className="text-right">
+              <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#B96432]">
+                Tempo estimado de visitação
+              </p>
+              <p className="mt-0.5 text-3xl font-bold leading-none text-[#000000] sm:text-4xl">
+                {period.percursoEssencial.duracao}
+              </p>
+            </div>
           </div>
-          <div className="mt-5">
+          <div className="mt-6">
             {(() => {
               let numero = 0;
               return period.percursoEssencial!.passos.map((passo, i) => {
@@ -3850,8 +3864,8 @@ function PeriodBlock({
                               className="h-full w-full object-cover"
                             />
                           </div>
-                          <span className="absolute -bottom-1 -right-1 flex h-6 w-6 items-center justify-center rounded-full border-2 border-white bg-[#B96432] text-[10px] font-bold text-white shadow-sm">
-                            {String(numero).padStart(2, "0")}
+                          <span className="absolute -bottom-2 -right-2 flex h-8 w-8 items-center justify-center rounded-full border-2 border-white bg-[#B96432] text-sm font-bold text-white shadow-sm sm:h-9 sm:w-9 sm:text-base">
+                            {numero}
                           </span>
                         </div>
                       ) : (
@@ -3864,38 +3878,18 @@ function PeriodBlock({
                       )}
                     </div>
                     <div
-                      className={`flex min-w-0 flex-1 flex-col gap-3 pt-2.5 sm:flex-row sm:items-start sm:justify-between sm:gap-5 ${
+                      className={`min-w-0 flex-1 pt-2.5 ${
                         i < period.percursoEssencial!.passos.length - 1 ? "pb-6" : ""
                       }`}
                     >
-                      <div className="min-w-0 flex-1">
-                        {passo.horario && (
-                          <p className="text-xs font-medium uppercase tracking-[0.1em] text-[#B96432]">
-                            {passo.horario}
-                          </p>
-                        )}
-                        <p className="mt-0.5 text-base font-semibold leading-tight text-[#000000]">
-                          {passo.titulo}
+                      {passo.horario && (
+                        <p className="text-xs font-medium uppercase tracking-[0.1em] text-[#B96432]">
+                          {passo.horario}
                         </p>
-                        {passo.descricao && (
-                          <p className="mt-1.5 text-sm leading-6 text-[#24211D]/70">
-                            {passo.descricao}
-                          </p>
-                        )}
-                      </div>
-                      {passo.destaque && (
-                        <div className="flex shrink-0 items-start gap-2 rounded-xl border border-[#DDD8CF] bg-white px-3 py-2.5 sm:w-48">
-                          <span className="mt-0.5 shrink-0 text-[#B96432]">✦</span>
-                          <div>
-                            <p className="text-[9px] font-bold uppercase tracking-[0.15em] text-[#B96432]">
-                              Destaque
-                            </p>
-                            <p className="mt-0.5 text-xs leading-5 text-[#24211D]/75">
-                              {passo.destaque}
-                            </p>
-                          </div>
-                        </div>
                       )}
+                      <p className="mt-0.5 text-base font-semibold leading-tight text-[#000000]">
+                        {passo.titulo}
+                      </p>
                     </div>
                   </div>
                 );
