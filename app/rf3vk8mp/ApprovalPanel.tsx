@@ -93,6 +93,10 @@ type SubAtracao = {
   imagem?: string;
   foco?: "top" | "center" | "bottom";
   descricao?: string;
+  // Diagrama tipo "Raio-X Alpinea" (mapa de andares, infográfico) — quando
+  // presente, substitui o headliner de foto padrão, em tamanho natural e
+  // sem recorte.
+  visaoAnotada?: Period["visaoAnotada"];
   pois?: Poi[];
   gastronomia?: Gastronomia;
   opcional?: boolean;
@@ -791,6 +795,19 @@ const DAY_1: DayContent = {
         imagemAlt: "Mapa dos restaurantes do Tokyo Solamachi",
       },
     },
+    subAtracoes: [
+      {
+        label: "Solamachi",
+        titulo: "Tokyo Solamachi",
+        descricao:
+          "O complexo aos pés da torre, do subsolo ao 31º andar — lojas, restaurantes, o Aquário de Sumida e o Planetário Konica Minolta TENKU. Elevadores de acesso ao aquário e ao jardim na cobertura ficam nas entradas do 3º andar.",
+        visaoAnotada: {
+          imagem: "/images/solamachi-mapa-andares.png",
+          imagemAlt: "Mapa oficial dos andares do complexo Tokyo Solamachi, do B3 ao 31º andar",
+          nota: "As áreas e lojas podem estar sujeitas a alterações — conferir no local.",
+        },
+      },
+    ],
   },
 };
 
@@ -3714,7 +3731,21 @@ function SubAtracaoBlock({
         )}
       </div>
 
-      {subAtracao.compacta ? (
+      {subAtracao.visaoAnotada ? (
+        <>
+          <h3
+            className={`${displayClassName} mb-5 text-center text-2xl font-medium text-[#173B45] md:text-3xl`}
+          >
+            {subAtracao.titulo}
+          </h3>
+          {subAtracao.descricao && (
+            <p className="mb-6 text-sm leading-6 text-[#24211D]/78">
+              {subAtracao.descricao}
+            </p>
+          )}
+          <VisaoAnotadaBlock visaoAnotada={subAtracao.visaoAnotada} />
+        </>
+      ) : subAtracao.compacta ? (
         <div className="mx-auto flex max-w-lg items-center gap-4 rounded-2xl border border-[#DDD8CF] bg-[#FAF9F6] p-3">
           <div
             className={`relative aspect-square h-36 w-36 shrink-0 overflow-hidden rounded-xl sm:h-40 sm:w-40 ${
