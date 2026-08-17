@@ -45,7 +45,7 @@ type Gastronomia = {
   intro?: string;
   // Rótulo acima da lista de snacks/itens simples (ex.: "Snacks de rua").
   itensLabel?: string;
-  itens?: { nome: string; descricao?: string; localizacao?: string; foto?: string }[];
+  itens?: { nome: string; descricao?: string; localizacao?: string; preco?: string; foto?: string }[];
   // Rótulo acima da lista de restaurantes (ex.: "Opções de refeição").
   restaurantesLabel?: string;
   // Cards ricos com foto — usado quando há fotos reais dos restaurantes.
@@ -97,6 +97,9 @@ type SubAtracao = {
   // presente, substitui o headliner de foto padrão, em tamanho natural e
   // sem recorte.
   visaoAnotada?: Period["visaoAnotada"];
+  // Rótulo acima da grade de `pois` — sem isso, cai no padrão "Restaurantes
+  // sugeridos" (histórico). Usado p/ contextos não-gastronômicos (ex.: lojas).
+  poisLabel?: string;
   pois?: Poi[];
   gastronomia?: Gastronomia;
   opcional?: boolean;
@@ -180,6 +183,10 @@ type Period = {
     imagem: string;
     imagemAlt: string;
     nota?: string;
+    // Quando true, é só um mapa de referência (ex.: mapa de andares de um
+    // shopping) — não é um infográfico "Raio-X Alpinea" com pontos
+    // anotados. Troca o card preto de destaque por um rótulo simples.
+    simples?: boolean;
     // Sem pontos = a própria imagem já é o infográfico completo (legendas
     // embutidas); com pontos, mostra a legenda ao lado em colunas.
     pontos?: {
@@ -223,6 +230,12 @@ type Period = {
   comprasExclusivas?: ComprasExclusivas;
   subAtracoes?: SubAtracao[];
   gradeHorarios?: GradeHorarios;
+  // Banheiro público mais próximo da atração — card de apoio prático.
+  banheiroProximo?: {
+    local: string;
+    endereco?: string;
+    nota?: string;
+  };
 };
 
 type TransporteSugerido = {
@@ -368,15 +381,15 @@ const DAY_1: DayContent = {
       duracao: "1h30–2h",
       passos: [
         { titulo: "Kaminarimon", foto: "/images/sensoji-kaminarimon.png", horario: "09:20" },
-        { titulo: "Dragão sob a lanterna", foto: "/images/kaminarimon-dragon.png", horario: "09:20" },
-        { titulo: "Nakamise Street", foto: "/images/sensoji-nakamise.png", horario: "09:20" },
-        { titulo: "Hōzōmon", foto: "/images/sensoji-hozomon.png", horario: "09:45" },
-        { titulo: "Jōkoro", foto: "/images/Jokoro.png", horario: "09:45" },
-        { titulo: "Salão Principal", foto: "/images/sensoji-kannondo.png", horario: "09:45" },
-        { titulo: "Omikuji", foto: "/images/mikuji.png", horario: "09:45" },
-        { titulo: "Saída pelo lado oeste", horario: "09:45" },
-        { titulo: "Kappabashi", foto: "/images/kappabashi.png", horario: "11:00" },
-        { titulo: "Sumida Park", foto: "/images/sumida-park.png", horario: "11:30" },
+        { titulo: "Dragão sob a lanterna", foto: "/images/kaminarimon-dragon.png", horario: "~09:25" },
+        { titulo: "Nakamise Street", foto: "/images/sensoji-nakamise.png", horario: "~09:30" },
+        { titulo: "Hōzōmon", foto: "/images/sensoji-hozomon.png", horario: "~09:45" },
+        { titulo: "Jōkoro", foto: "/images/Jokoro.png", horario: "~09:50" },
+        { titulo: "Salão Principal", foto: "/images/sensoji-kannondo.png", horario: "~10:00" },
+        { titulo: "Omikuji", foto: "/images/mikuji.png", horario: "~10:15" },
+        { titulo: "Saída pelo lado oeste", horario: "~10:30" },
+        { titulo: "Kappabashi", foto: "/images/kappabashi.png", horario: "~11:00" },
+        { titulo: "Sumida Park", foto: "/images/sumida-park.png", horario: "~11:30" },
       ],
     },
     visaoAnotada: {
@@ -562,48 +575,55 @@ const DAY_1: DayContent = {
           nome: "Melon Pan (Kagetsudo)",
           descricao:
             "Pão doce crocante por fora, macio por dentro — uma das barracas mais tradicionais da Nakamise.",
-          localizacao: "Nakamise-dori, perto do Kaminarimon",
+          localizacao: "Kagetsudo — Nakamise-dori, perto do Kaminarimon",
+          preco: "200",
           foto: "/images/nakamise-melon-pan-kagetsudo-2.jpg",
         },
         {
-          nome: "Ningyo-yaki",
+          nome: "Ningyo-yaki (Kimuraya Honten)",
           descricao:
             "Bolinho recheado de doce de feijão vermelho, moldado em formatos icônicos e vendido morno, recém-feito.",
-          localizacao: "Nakamise-dori",
+          localizacao: "Kimuraya Honten — Nakamise-dori",
+          preco: "~500 (pacote)",
           foto: "/images/nakamise-ningyo-yaki-1.jpg",
         },
         {
-          nome: "Ningyo-yaki",
+          nome: "Ningyo-yaki (Kimuraya Honten)",
           descricao: "Vendido em pacotes — ótimo para levar de lembrança.",
-          localizacao: "Nakamise-dori",
+          localizacao: "Kimuraya Honten — Nakamise-dori",
+          preco: "~600 (pacote de 10)",
           foto: "/images/nakamise-ningyo-yaki-2b.jpg",
         },
         {
-          nome: "Kibi Dango",
+          nome: "Kibi Dango (Asakusa Kibi Dango Azuma)",
           descricao:
             "Mochi macio, tradição de Asakusa desde o período Edo.",
-          localizacao: "Nakamise-dori",
+          localizacao: "Asakusa Kibi Dango Azuma — Nakamise-dori",
+          preco: "~350 (5 espetos)",
           foto: "/images/nakamise-kibi-dango.jpg",
         },
         {
           nome: "Senbei (Iriyama Senbei Seizojo)",
           descricao:
             "Cracker de arroz grelhado e temperado na hora, tradição centenária de Asakusa — dá pra ver o processo sendo feito na loja.",
-          localizacao: "Nakamise-dori",
+          localizacao: "Iriyama Senbei Seizojo — Nakamise-dori",
+          preco: "~150–300 (unidade)",
           foto: "/images/nakamise-senbei-iriyama.jpg",
         },
         {
-          nome: "Senbei Gigante",
+          nome: "Senbei Gigante (Tako no Nakigoe)",
           descricao:
-            "Cracker de arroz grelhado na hora, do tamanho do rosto — vira atração à parte.",
-          localizacao: "Nakamise-dori",
+            "Cracker de arroz grelhado na hora com polvo inteiro prensado — do tamanho do rosto, vira atração à parte.",
+          localizacao: "Tako no Nakigoe Asakusa — Nakamise-dori",
+          preco: "~500–700",
           foto: "/images/nakamise-senbei-gigante.jpg",
         },
         {
           nome: "Asakusa Menchi",
           descricao:
             "Croquete de carne empanado, crocante por fora e suculento por dentro — uma das filas mais disputadas da rua.",
-          localizacao: "Nakamise-dori",
+          localizacao: "Asakusa Menchi — Nakamise-dori",
+          preco: "~400",
           foto: "/images/nakamise-asakusa-menchi.jpg",
         },
       ],
@@ -628,6 +648,11 @@ const DAY_1: DayContent = {
           foto: "/images/nakamise-asakusa-amai-tempura.jpg",
         },
       ],
+    },
+    banheiroProximo: {
+      local: "Asakusa Culture Tourist Information Center",
+      endereco: "2-18-9 Kaminarimon, Taito-ku — em frente ao Kaminarimon · 9h–20h",
+      nota: "Opção mais limpa e acessível da região — a 1 min a pé da Estação Asakusa (linha Ginza).",
     },
   },
   tarde: {
@@ -778,62 +803,94 @@ const DAY_1: DayContent = {
         imagem: "/images/skytree-cafe.jpg",
         imagemAlt: "Balcão do Skytree Cafe, no piso 340 da Tokyo Sky Tree",
       },
-      {
-        title: "Tokyo Solamachi",
-        bairro: "Sumida",
-        description: "Shopping aos pés da Skytree, com lojas de franquias japonesas.",
-        prioridade: "opcional",
-        lista: [
-          "Pokémon Center Skytree Town",
-          "Jump Shop",
-          "STRICT-G (Gundam)",
-          "Donguri Republic (Studio Ghibli)",
-          "Chiikawa Land",
-          "Kirby Cafe Tokyo",
-          "Ultraman World M78",
-        ],
-      },
     ],
-    gastronomia: {
-      intro:
-        "A Tokyo Sky Tree está integrada ao shopping Tokyo Solamachi, que reúne diversas opções de restaurantes, praça de alimentação e um mercado no subsolo com alternativas para takeout.",
-      restaurantes: [
-        {
-          nome: "Hitsumabushi Bincho",
-          descricao: "Enguia · hitsumabushi",
-          localizacao: "6º andar",
-          preco: "~¥6.000",
-          horario: "11:00–21:00",
-          foto: "/images/Hitsumabushi.png",
-        },
-        {
-          nome: "Kaiten Sushi Toriton",
-          descricao: "Sushi de esteira · prático",
-          localizacao: "6º andar",
-          preco: "~¥6.000",
-          horario: "11:00–22:00",
-          foto: "/images/Toriton.png",
-        },
-      ],
-      mapa: {
-        titulo: "Mapa — Solamachi Dining",
-        imagem: "/images/solamachi-dining-map.png",
-        imagemAlt: "Mapa dos restaurantes do Tokyo Solamachi",
-      },
-    },
     subAtracoes: [
       {
         label: "Solamachi",
         titulo: "Tokyo Solamachi",
         descricao:
-          "O complexo aos pés da torre, do subsolo ao 31º andar — lojas, restaurantes, o Aquário de Sumida e o Planetário Konica Minolta TENKU. Elevadores de acesso ao aquário e ao jardim na cobertura ficam nas entradas do 3º andar.",
+          "O complexo aos pés da torre, do subsolo ao 31º andar — lojas, restaurantes, o Aquário de Sumida e o Planetário Konica Minolta TENKU. Elevadores de acesso ao aquário e ao jardim na cobertura ficam nas entradas do 3º andar. Outras lojas populares no complexo: Chiikawa Land, Kirby Cafe Tokyo e Ultraman World M78.",
         visaoAnotada: {
+          titulo: "Mapa dos andares — Tokyo Solamachi",
           imagem: "/images/solamachi-mapa-andares.png",
           imagemAlt: "Mapa oficial dos andares do complexo Tokyo Solamachi, do B3 ao 31º andar",
           nota: "As áreas e lojas podem estar sujeitas a alterações — conferir no local.",
+          simples: true,
+        },
+        poisLabel: "Lojas para conhecer",
+        pois: [
+          {
+            category: "Loja",
+            title: "Jump Shop",
+            description:
+              "Loja oficial da Shueisha com produtos das séries da Weekly Shonen Jump — One Piece, Naruto, Dragon Ball e outras.",
+            prioridade: "opcional",
+            imagem: "/images/solamachi-jump-shop.jpg",
+            imagemAlt: "Vitrine da Jump Shop no Tokyo Solamachi, 4º andar",
+          },
+          {
+            category: "Loja",
+            title: "Pokémon Center Skytree Town",
+            description:
+              "Uma das maiores Pokémon Centers do Japão — pelúcias, action figures e itens exclusivos da região, no East Yard.",
+            prioridade: "opcional",
+            imagem: "/images/solamachi-pokemon-center.jpg",
+            imagemAlt: "Interior do Pokémon Center Skytree Town, 4º andar",
+          },
+          {
+            category: "Loja",
+            title: "Donguri Republic",
+            description:
+              "Loja oficial do Studio Ghibli — produtos de Totoro, A Viagem de Chihiro e outros clássicos do estúdio.",
+            prioridade: "opcional",
+            imagem: "/images/solamachi-donguri-republic.jpg",
+            imagemAlt: "Vitrine da Donguri Republic (Studio Ghibli) no Tokyo Solamachi, 2º andar",
+          },
+          {
+            category: "Loja",
+            title: "STRICT-G",
+            description:
+              "Loja oficial da linha Gundam — roupas, acessórios e modelos (Gunpla) inspirados na franquia.",
+            prioridade: "opcional",
+            imagem: "/images/solamachi-strict-g.jpg",
+            imagemAlt: "Vitrine da STRICT-G (Gundam) no Tokyo Solamachi, 4º andar",
+          },
+        ],
+        gastronomia: {
+          intro:
+            "A Tokyo Sky Tree está integrada ao shopping Tokyo Solamachi, que reúne diversas opções de restaurantes, praça de alimentação e um mercado no subsolo com alternativas para takeout.",
+          restaurantesLabel: "Opções de refeição",
+          restaurantes: [
+            {
+              nome: "Hitsumabushi Bincho",
+              descricao: "Enguia · hitsumabushi",
+              localizacao: "6º andar",
+              preco: "~¥6.000",
+              horario: "11:00–21:00",
+              foto: "/images/Hitsumabushi.png",
+            },
+            {
+              nome: "Kaiten Sushi Toriton",
+              descricao: "Sushi de esteira · prático",
+              localizacao: "6º andar",
+              preco: "~¥6.000",
+              horario: "11:00–22:00",
+              foto: "/images/Toriton.png",
+            },
+          ],
+          mapa: {
+            titulo: "Mapa — Solamachi Dining",
+            imagem: "/images/solamachi-dining-map.png",
+            imagemAlt: "Mapa dos restaurantes do Tokyo Solamachi",
+          },
         },
       },
     ],
+    banheiroProximo: {
+      local: "4F do Tokyo Solamachi (entrada do Tembo Deck)",
+      endereco: "Também disponíveis nos próprios observatórios — Tembo Deck (350 m) e Tembo Galleria (450 m)",
+      nota: "Todos com banheiro acessível/cadeirante.",
+    },
   },
 };
 
@@ -2494,15 +2551,15 @@ function ResumoDiaBlock({
 }) {
   return (
     <div className="mb-10 rounded-2xl border-2 border-[#173B45] bg-[#F8FAF9] p-5 sm:p-6">
-      <p className="mb-4 text-xs font-bold uppercase tracking-[0.25em] text-[#173B45]">
+      <p className="mb-5 text-xs font-bold uppercase tracking-[0.25em] text-[#173B45]">
         Resumo do Dia
       </p>
-      <div className="flex flex-wrap items-start gap-y-4">
+      <div>
         {resumo.passos.map((passo, i) => (
-          <div key={passo.titulo + i} className="flex items-start">
-            <div className="flex w-16 flex-col items-center gap-1.5 text-center sm:w-[72px]">
+          <div key={passo.titulo + i} className="flex gap-4">
+            <div className="flex flex-col items-center">
               {passo.foto ? (
-                <div className="h-14 w-14 overflow-hidden rounded-full border-2 border-white shadow-sm sm:h-16 sm:w-16">
+                <div className="h-16 w-16 shrink-0 overflow-hidden rounded-full border-2 border-white shadow-sm sm:h-[76px] sm:w-[76px]">
                   <img
                     src={passo.foto}
                     alt={passo.titulo}
@@ -2510,24 +2567,24 @@ function ResumoDiaBlock({
                   />
                 </div>
               ) : (
-                <div className="flex h-14 w-14 items-center justify-center rounded-full border-2 border-dashed border-[#173B45]/25 text-[#173B45]/40 sm:h-16 sm:w-16">
-                  <IconClock className="h-5 w-5" />
+                <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full border-2 border-dashed border-[#173B45]/25 text-[#173B45]/40 sm:h-[76px] sm:w-[76px]">
+                  <IconClock className="h-6 w-6" />
                 </div>
               )}
-              <p className="text-[11px] font-semibold leading-tight text-[#173B45]">
+              {i < resumo.passos.length - 1 && (
+                <span className="my-1 min-h-[18px] w-[2px] flex-1 rounded-full bg-[#173B45]/20" />
+              )}
+            </div>
+            <div className={`min-w-0 flex-1 pt-2.5 ${i < resumo.passos.length - 1 ? "pb-6" : ""}`}>
+              <p className="text-base font-semibold leading-tight text-[#173B45]">
                 {passo.titulo}
               </p>
               {passo.horario && (
-                <p className="text-[10px] font-medium tracking-wide text-[#173B45]/55">
+                <p className="mt-1 text-sm font-medium tracking-wide text-[#173B45]/60">
                   {passo.horario}
                 </p>
               )}
             </div>
-            {i < resumo.passos.length - 1 && (
-              <span className="mt-6 shrink-0 px-0.5 text-[#173B45]/30 sm:mt-7">
-                →
-              </span>
-            )}
           </div>
         ))}
       </div>
@@ -2626,10 +2683,11 @@ function GastronomiaBlock({ gastronomia }: { gastronomia: Gastronomia }) {
                           {item.descricao}
                         </p>
                       )}
-                      {item.localizacao && (
-                        <p className="mt-1.5 border-t border-[#DDD8CF] pt-1.5 text-[10px] leading-4 text-[#24211D]/55">
-                          📍 {item.localizacao}
-                        </p>
+                      {(item.localizacao || item.preco) && (
+                        <div className="mt-1.5 space-y-1 border-t border-[#DDD8CF] pt-1.5 text-[10px] leading-4 text-[#24211D]/55">
+                          {item.localizacao && <p>📍 {item.localizacao}</p>}
+                          {item.preco && <p>¥ {item.preco}</p>}
+                        </div>
                       )}
                     </div>
                   </div>
@@ -3153,12 +3211,20 @@ function VisaoAnotadaBlock({
   if (!visaoAnotada.pontos || visaoAnotada.pontos.length === 0) {
     return (
       <div className="mb-8">
-        <div className="mb-4 flex items-center gap-2.5">
-          <span className="h-2 w-2 rounded-full bg-[#173B45]" />
-          <span className="text-xs font-bold uppercase tracking-[0.25em] text-[#173B45]">
-            Raio-X Alpinea{visaoAnotada.titulo && ` — ${visaoAnotada.titulo}`}
-          </span>
-        </div>
+        {visaoAnotada.simples ? (
+          <div className="mb-4 flex items-center gap-2.5">
+            <span className="h-2 w-2 rounded-full bg-[#173B45]/50" />
+            <span className="text-xs font-bold uppercase tracking-[0.2em] text-[#24211D]/55">
+              {visaoAnotada.titulo ?? "Mapa"}
+            </span>
+          </div>
+        ) : (
+          <div className="mb-5 rounded-2xl bg-black px-6 py-4 text-center">
+            <p className="text-sm font-bold uppercase tracking-[0.3em] text-white sm:text-base">
+              Raio-X Alpinea{visaoAnotada.titulo && ` — ${visaoAnotada.titulo}`}
+            </p>
+          </div>
+        )}
         <button
           type="button"
           onClick={() => setZoom({ src: visaoAnotada.imagem, alt: visaoAnotada.imagemAlt })}
@@ -3208,12 +3274,20 @@ function VisaoAnotadaBlock({
 
   return (
     <div className="mb-8">
-      <div className="mb-4 flex items-center gap-2.5">
-        <span className="h-2 w-2 rounded-full bg-[#173B45]" />
-        <span className="text-xs font-bold uppercase tracking-[0.25em] text-[#173B45]">
-          Raio-X Alpinea{visaoAnotada.titulo && ` — ${visaoAnotada.titulo}`}
-        </span>
-      </div>
+      {visaoAnotada.simples ? (
+        <div className="mb-4 flex items-center gap-2.5">
+          <span className="h-2 w-2 rounded-full bg-[#173B45]/50" />
+          <span className="text-xs font-bold uppercase tracking-[0.2em] text-[#24211D]/55">
+            {visaoAnotada.titulo ?? "Mapa"}
+          </span>
+        </div>
+      ) : (
+        <div className="mb-5 rounded-2xl bg-black px-6 py-4 text-center">
+          <p className="text-sm font-bold uppercase tracking-[0.3em] text-white sm:text-base">
+            Raio-X Alpinea{visaoAnotada.titulo && ` — ${visaoAnotada.titulo}`}
+          </p>
+        </div>
+      )}
 
       {/* Mapa centralizado, sozinho — nada ao lado. */}
       <button
@@ -3429,6 +3503,7 @@ function PeriodBlock({
   const passoAtracao = ++stepCounter;
   const passoPois = period.pois.length > 0 ? ++stepCounter : undefined;
   const passoRefeicao = period.gastronomia ? ++stepCounter : undefined;
+  const [zoom, setZoom] = useState<{ src: string; alt: string } | null>(null);
 
   return (
     <div>
@@ -3504,12 +3579,12 @@ function PeriodBlock({
               {period.percursoEssencial.duracao}
             </span>
           </div>
-          <div className="mt-4 flex flex-wrap items-start gap-y-4">
+          <div className="mt-5">
             {period.percursoEssencial.passos.map((passo, i) => (
-              <div key={passo.titulo} className="flex items-start">
-                <div className="flex w-16 flex-col items-center gap-1.5 text-center sm:w-[72px]">
+              <div key={passo.titulo} className="flex gap-4">
+                <div className="flex flex-col items-center">
                   {passo.foto ? (
-                    <div className="h-14 w-14 overflow-hidden rounded-full border-2 border-white shadow-sm sm:h-16 sm:w-16">
+                    <div className="h-16 w-16 shrink-0 overflow-hidden rounded-full border-2 border-white shadow-sm sm:h-[76px] sm:w-[76px]">
                       <img
                         src={passo.foto}
                         alt={passo.titulo}
@@ -3517,24 +3592,28 @@ function PeriodBlock({
                       />
                     </div>
                   ) : (
-                    <div className="flex h-14 w-14 items-center justify-center rounded-full border-2 border-dashed border-[#173B45]/25 text-[#173B45]/40 sm:h-16 sm:w-16">
-                      <IconWalk className="h-5 w-5" />
+                    <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full border-2 border-dashed border-[#173B45]/25 text-[#173B45]/40 sm:h-[76px] sm:w-[76px]">
+                      <IconWalk className="h-6 w-6" />
                     </div>
                   )}
-                  <p className="text-[11px] font-semibold leading-tight text-[#173B45]">
+                  {i < period.percursoEssencial!.passos.length - 1 && (
+                    <span className="my-1 min-h-[18px] w-[2px] flex-1 rounded-full bg-[#173B45]/20" />
+                  )}
+                </div>
+                <div
+                  className={`min-w-0 flex-1 pt-2.5 ${
+                    i < period.percursoEssencial!.passos.length - 1 ? "pb-6" : ""
+                  }`}
+                >
+                  <p className="text-base font-semibold leading-tight text-[#173B45]">
                     {passo.titulo}
                   </p>
                   {passo.horario && (
-                    <p className="text-[10px] font-medium tracking-wide text-[#173B45]/55">
+                    <p className="mt-1 text-sm font-medium tracking-wide text-[#173B45]/60">
                       {passo.horario}
                     </p>
                   )}
                 </div>
-                {i < period.percursoEssencial!.passos.length - 1 && (
-                  <span className="mt-6 shrink-0 px-0.5 text-[#173B45]/30 sm:mt-7">
-                    →
-                  </span>
-                )}
               </div>
             ))}
           </div>
@@ -3606,11 +3685,24 @@ function PeriodBlock({
                         </p>
                       </div>
                       {item.imagem && (
-                        <img
-                          src={item.imagem}
-                          alt={item.imagemAlt ?? ""}
-                          className="hidden h-24 w-24 shrink-0 rounded-xl object-cover shadow-sm sm:block"
-                        />
+                        <button
+                          type="button"
+                          onClick={() =>
+                            setZoom({ src: item.imagem!, alt: item.imagemAlt ?? "" })
+                          }
+                          className="group relative hidden h-24 w-24 shrink-0 overflow-hidden rounded-xl shadow-sm sm:block"
+                        >
+                          <img
+                            src={item.imagem}
+                            alt={item.imagemAlt ?? ""}
+                            className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
+                          />
+                          <div className="absolute inset-0 flex items-center justify-center bg-black/0 transition duration-300 group-hover:bg-black/25">
+                            <span className="flex h-7 w-7 scale-75 items-center justify-center rounded-full bg-white/90 text-[#173B45] opacity-0 shadow-md transition duration-300 group-hover:scale-100 group-hover:opacity-100">
+                              <IconZoom className="h-3.5 w-3.5" />
+                            </span>
+                          </div>
+                        </button>
                       )}
                     </div>
                   ) : (
@@ -3655,21 +3747,53 @@ function PeriodBlock({
           )}
 
           {period.decisoes && period.decisoes.length > 0 && (
-            <div className="mb-5 space-y-3">
-              {period.decisoes.map((d) => (
-                <div
-                  key={d.titulo}
-                  className="rounded-2xl border border-[#DDD8CF] bg-[#FAF9F6] p-5"
-                >
-                  <p className="mb-1.5 flex items-center gap-2 text-xs font-bold uppercase tracking-[0.12em] text-[#24211D]/70">
-                    <IconArrowDown className="h-3 w-3 -rotate-90 text-[#B96432]" />
-                    {d.titulo}
+            <div className="mb-5">
+              <p className="mb-3 flex items-center gap-2 text-xs font-bold uppercase tracking-[0.2em] text-[#24211D]/65">
+                <span className="text-sm">💡</span>
+                Dúvidas Frequentes
+              </p>
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                {period.decisoes.map((d) => (
+                  <div
+                    key={d.titulo}
+                    className="rounded-2xl border border-emerald-200 bg-emerald-50 p-5"
+                  >
+                    <p className="mb-1.5 flex items-center gap-2 text-xs font-bold uppercase tracking-[0.12em] text-emerald-900">
+                      <IconArrowDown className="h-3 w-3 -rotate-90 text-emerald-700" />
+                      {d.titulo}
+                    </p>
+                    <p className="text-sm leading-6 text-emerald-950/75">
+                      {d.resposta}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {period.banheiroProximo && (
+            <div className="mb-5 flex items-start gap-4 rounded-2xl border border-[#DDD8CF] bg-[#FAF9F6] p-5">
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white text-[#173B45]">
+                <IconMap className="h-5 w-5" />
+              </span>
+              <div className="min-w-0">
+                <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-[#24211D]/55">
+                  Banheiro Público Mais Próximo
+                </p>
+                <p className="mt-1 text-sm font-semibold text-[#24211D]">
+                  {period.banheiroProximo.local}
+                </p>
+                {period.banheiroProximo.endereco && (
+                  <p className="mt-0.5 text-xs text-[#24211D]/60">
+                    {period.banheiroProximo.endereco}
                   </p>
-                  <p className="text-sm leading-6 text-[#24211D]/78">
-                    {d.resposta}
+                )}
+                {period.banheiroProximo.nota && (
+                  <p className="mt-1.5 text-xs leading-5 text-[#24211D]/70">
+                    {period.banheiroProximo.nota}
                   </p>
-                </div>
-              ))}
+                )}
+              </div>
             </div>
           )}
 
@@ -3742,6 +3866,28 @@ function PeriodBlock({
           displayClassName={displayClassName}
         />
       ))}
+
+      {zoom && (
+        <div
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/85 p-4 backdrop-blur-sm sm:p-8"
+          onClick={() => setZoom(null)}
+        >
+          <button
+            type="button"
+            onClick={() => setZoom(null)}
+            className="absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white transition hover:bg-white/20 sm:right-6 sm:top-6"
+            aria-label="Fechar"
+          >
+            <IconX className="h-5 w-5" />
+          </button>
+          <img
+            src={zoom.src}
+            alt={zoom.alt}
+            className="max-h-[90vh] max-w-[95vw] rounded-2xl object-contain"
+            onClick={(e) => e.stopPropagation()}
+          />
+        </div>
+      )}
     </div>
   );
 }
@@ -3924,7 +4070,9 @@ function SubAtracaoBlock({
 
       {subAtracao.pois && subAtracao.pois.length > 0 && (
         <>
-          <p className="mb-5 text-xs text-[#24211D]/65">Restaurantes sugeridos</p>
+          <p className="mb-5 text-xs text-[#24211D]/65">
+            {subAtracao.poisLabel ?? "Restaurantes sugeridos"}
+          </p>
           <div className="grid grid-cols-1 items-start gap-3 sm:grid-cols-2">
             {subAtracao.pois.map((poi, index) => (
               <PoiCard key={poi.title + index} index={index} poi={poi} />
