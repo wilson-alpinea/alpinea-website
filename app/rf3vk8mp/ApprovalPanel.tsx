@@ -751,12 +751,14 @@ const DAY_1: DayContent = {
         nome: "Estação Asakusa",
         nomeJapones: "浅草駅",
         distancia: "Plataforma Tobu — a poucos minutos a pé do almoço em Asakusa",
+        saida: "Entrada EKIMISE, 2º andar",
       },
       linha: { codigo: "TS", nome: "Tobu Skytree Line", cor: "#1E90FF" },
       estacoesIntermediarias: ["Tokyo Skytree"],
       estacaoDestino: {
         nome: "Estação Oshiage",
         nomeJapones: "押上駅〈スカイツリー前〉",
+        saida: "Saída B3 → Solamachi",
       },
       opcoes: [
         {
@@ -3096,18 +3098,49 @@ function DeslocamentoCard({ deslocamento }: { deslocamento: Deslocamento }) {
         {/* Traço horizontal ligando as duas estações, na cor da linha —
             alinhado ao centro vertical dos logos (h-20 = 80px, centro em
             40px, daí o mt-10). Estações intermediárias (quando houver)
-            aparecem em texto pequeno logo acima do traço. */}
-        <div className="flex h-20 min-w-[32px] flex-1 flex-col justify-center sm:min-w-[64px]">
+            aparecem como tiques na própria linha, com o nome em diagonal
+            acima — mesmo padrão dos mapas oficiais de metrô. */}
+        <div className="flex h-24 min-w-[32px] flex-1 flex-col justify-end pt-10 sm:min-w-[64px] sm:pt-12">
           {deslocamento.estacoesIntermediarias &&
             deslocamento.estacoesIntermediarias.length > 0 && (
-              <p className="mb-1.5 text-center text-[9px] font-medium uppercase leading-tight tracking-[0.06em] text-[#24211D]/45">
-                {deslocamento.estacoesIntermediarias.join(" · ")}
-              </p>
+              <div className="relative h-0 w-full">
+                {deslocamento.estacoesIntermediarias.map((nome, i) => {
+                  const pct =
+                    ((i + 1) /
+                      (deslocamento.estacoesIntermediarias!.length + 1)) *
+                    100;
+                  return (
+                    <span
+                      key={nome}
+                      className="absolute bottom-0 origin-bottom-left -rotate-45 whitespace-nowrap text-[9px] font-semibold text-[#24211D]"
+                      style={{ left: `${pct}%` }}
+                    >
+                      {nome}
+                    </span>
+                  );
+                })}
+              </div>
             )}
           <div
             className="relative h-[3px] w-full rounded-full"
             style={{ background: deslocamento.linha.cor || "#B96432" }}
           >
+            {deslocamento.estacoesIntermediarias?.map((nome, i) => {
+              const pct =
+                ((i + 1) /
+                  (deslocamento.estacoesIntermediarias!.length + 1)) *
+                100;
+              return (
+                <span
+                  key={nome}
+                  className="absolute top-1/2 h-2 w-2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white"
+                  style={{
+                    left: `${pct}%`,
+                    boxShadow: `0 0 0 2px ${deslocamento.linha.cor || "#B96432"}`,
+                  }}
+                />
+              );
+            })}
             <span
               className="absolute right-0 top-1/2 h-2.5 w-2.5 -translate-y-1/2 translate-x-1/2 rotate-45 border-r-[3px] border-t-[3px]"
               style={{ borderColor: deslocamento.linha.cor || "#B96432" }}
