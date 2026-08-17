@@ -137,6 +137,10 @@ type Deslocamento = {
   estacaoOrigem: EstacaoInfo;
   linha: LinhaBadge;
   estacaoDestino: EstacaoInfo;
+  // Estações intermediárias reais entre origem e destino, na ordem do
+  // trajeto — mostradas acima do traço/seta que liga as duas estações.
+  // Só preenchido pra trechos de trem/metrô sem baldeação confirmados.
+  estacoesIntermediarias?: string[];
   opcoes: OpcaoDeslocamento[];
   recomendacao?: string;
   // Mapa grande (print real) do trajeto a pé da saída da estação até a
@@ -231,11 +235,13 @@ type Period = {
   subAtracoes?: SubAtracao[];
   gradeHorarios?: GradeHorarios;
   // Banheiro público mais próximo da atração — card de apoio prático.
-  banheiroProximo?: {
+  // Lista (não só uma opção): geralmente há um banheiro dentro da própria
+  // atração/estação, além da opção mais limpa/recomendada.
+  banheirosProximos?: {
     local: string;
     endereco?: string;
     nota?: string;
-  };
+  }[];
 };
 
 type TransporteSugerido = {
@@ -387,7 +393,8 @@ const DAY_1: DayContent = {
         { titulo: "Jōkoro", foto: "/images/Jokoro.png", horario: "~09:50" },
         { titulo: "Salão Principal", foto: "/images/sensoji-kannondo.png", horario: "~10:00" },
         { titulo: "Omikuji", foto: "/images/mikuji.png", horario: "~10:15" },
-        { titulo: "Saída pelo lado oeste", horario: "~10:30" },
+        { titulo: "Pagode de Cinco Andares", foto: "/images/sensoji-pagode.png", horario: "~10:25" },
+        { titulo: "Saída pelo lado oeste", horario: "~10:35" },
         { titulo: "Kappabashi", foto: "/images/kappabashi.png", horario: "~11:00" },
         { titulo: "Sumida Park", foto: "/images/sumida-park.png", horario: "~11:30" },
       ],
@@ -466,8 +473,9 @@ const DAY_1: DayContent = {
           titulo: "Pagode de Cinco Andares",
           nomeJapones: "五重塔",
           descricao:
-            "Reconstrução do pagode original de 942 — cada um dos cinco andares representa um elemento budista (terra, água, fogo, vento, vazio). Guarda relíquias de Buda. Não faz parte do percurso essencial (fica ao lado, visível de longe), mas vale o desvio rápido se houver tempo.",
+            "Reconstrução do pagode original de 942 — cada um dos cinco andares representa um elemento budista (terra, água, fogo, vento, vazio). Guarda relíquias de Buda. Fica a caminho da saída oeste, logo depois do Omikuji — vale parar pra ver de perto.",
           foto: "/images/sensoji-pagode.png",
+          ordem: 8,
         },
       ],
     },
@@ -484,6 +492,16 @@ const DAY_1: DayContent = {
         saida: "Saída 6",
       },
       linha: { codigo: "G10", nome: "Tokyo Metro Ginza Line", cor: "#F39700", logo: "/images/tokyometro-mark.png" },
+      estacoesIntermediarias: [
+        "Nihombashi",
+        "Mitsukoshimae",
+        "Kanda",
+        "Suehirocho",
+        "Ueno-hirokoji",
+        "Ueno",
+        "Inaricho",
+        "Tawaramachi",
+      ],
       estacaoDestino: {
         nome: "Estação Asakusa",
         nomeJapones: "浅草駅",
@@ -649,11 +667,23 @@ const DAY_1: DayContent = {
         },
       ],
     },
-    banheiroProximo: {
-      local: "Asakusa Culture Tourist Information Center",
-      endereco: "2-18-9 Kaminarimon, Taito-ku — em frente ao Kaminarimon · 9h–20h",
-      nota: "Opção mais limpa e acessível da região — a 1 min a pé da Estação Asakusa (linha Ginza).",
-    },
+    banheirosProximos: [
+      {
+        local: "Dentro do complexo do templo",
+        endereco: "A leste e a oeste do Salão Principal (Kannondo), e ao sul do templo",
+        nota: "Mais simples/rústicos, mas a poucos passos de onde você já está — inclui opção acessível.",
+      },
+      {
+        local: "Estação Asakusa (Ginza / Toei / Tobu)",
+        endereco: "Dentro da própria estação, perto das catracas",
+        nota: "A menos de 5 min a pé do Salão Principal, do outro lado do Kaminarimon.",
+      },
+      {
+        local: "Asakusa Culture Tourist Information Center",
+        endereco: "2-18-9 Kaminarimon, Taito-ku — em frente ao Kaminarimon · 9h–20h",
+        nota: "Opção mais limpa e acessível da região — a 1 min a pé da Estação Asakusa.",
+      },
+    ],
   },
   tarde: {
     label: "Tarde",
@@ -723,6 +753,7 @@ const DAY_1: DayContent = {
         distancia: "Plataforma Tobu — a poucos minutos a pé do almoço em Asakusa",
       },
       linha: { codigo: "TS", nome: "Tobu Skytree Line", cor: "#1E90FF" },
+      estacoesIntermediarias: ["Tokyo Skytree"],
       estacaoDestino: {
         nome: "Estação Oshiage",
         nomeJapones: "押上駅〈スカイツリー前〉",
@@ -886,11 +917,18 @@ const DAY_1: DayContent = {
         },
       },
     ],
-    banheiroProximo: {
-      local: "4F do Tokyo Solamachi (entrada do Tembo Deck)",
-      endereco: "Também disponíveis nos próprios observatórios — Tembo Deck (350 m) e Tembo Galleria (450 m)",
-      nota: "Todos com banheiro acessível/cadeirante.",
-    },
+    banheirosProximos: [
+      {
+        local: "4F do Tokyo Solamachi",
+        endereco: "Bem na entrada do Tembo Deck",
+        nota: "Acessível/cadeirante.",
+      },
+      {
+        local: "Nos próprios observatórios",
+        endereco: "Tembo Deck (350 m) e Tembo Galleria (450 m)",
+        nota: "Não precisa descer — tem banheiro em cada andar de observação.",
+      },
+    ],
   },
 };
 
@@ -1179,6 +1217,14 @@ const DAY_3: DayContent = {
         distancia: "~1 min a pé do hotel",
       },
       linha: { codigo: "G10", nome: "Tokyo Metro Ginza Line", cor: "#F39700", logo: "/images/tokyometro-mark.png" },
+      estacoesIntermediarias: [
+        "Ginza",
+        "Toranomon",
+        "Tameike-sanno",
+        "Akasaka-mitsuke",
+        "Aoyama-itchome",
+        "Gaiemmae",
+      ],
       estacaoDestino: { nome: "Estação Omotesando", nomeJapones: "表参道駅" },
       opcoes: [
         {
@@ -1258,6 +1304,7 @@ const DAY_3: DayContent = {
     deslocamento: {
       estacaoOrigem: { nome: "Estação Shibuya", nomeJapones: "渋谷駅" },
       linha: { codigo: "JY", nome: "JR Yamanote Line", cor: "#8FAADC", logo: "/images/jr-logo.webp" },
+      estacoesIntermediarias: ["Harajuku", "Yoyogi"],
       estacaoDestino: { nome: "Estação Shinjuku", nomeJapones: "新宿駅" },
       opcoes: [
         {
@@ -1869,6 +1916,7 @@ const DAY_6: DayContent = {
         distancia: "~1 min a pé do hotel",
       },
       linha: { codigo: "JR", nome: "JR Nara Line", cor: "#00A650", logo: "/images/jr-logo.webp" },
+      estacoesIntermediarias: ["Tofukuji"],
       estacaoDestino: { nome: "Estação Inari", nomeJapones: "稲荷駅" },
       opcoes: [
         {
@@ -2062,6 +2110,7 @@ const DAY_7: DayContent = {
         distancia: "~1 min a pé do remm Tokyo Kyobashi",
       },
       linha: { codigo: "A12", nome: "Toei Asakusa Line", cor: "#E85298", logo: "/images/toei-mark.png" },
+      estacoesIntermediarias: ["Nihombashi (Toei)"],
       estacaoDestino: { nome: "Estação Ningyocho", nomeJapones: "人形町駅" },
       opcoes: [
         {
@@ -2515,12 +2564,24 @@ function PoiCard({ index, poi }: { index: number; poi: Poi }) {
             </>
           )}
 
-          <img
-            src={imagens[zoomIndex].src}
-            alt={imagens[zoomIndex].alt}
-            className="max-h-[85vh] max-w-[92vw] rounded-2xl object-contain"
+          <div
+            className="relative max-h-full max-w-full overflow-hidden rounded-2xl"
             onClick={(e) => e.stopPropagation()}
-          />
+          >
+            <img
+              src={imagens[zoomIndex].src}
+              alt={imagens[zoomIndex].alt}
+              className="max-h-[80vh] max-w-[92vw] rounded-2xl object-contain"
+            />
+            <p className="mt-3 text-center text-xs font-semibold uppercase tracking-[0.15em] text-white/85">
+              {poi.title}
+            </p>
+            {(poi.description || imagens[zoomIndex].alt !== poi.title) && (
+              <p className="mx-auto mt-1.5 max-w-md text-center text-xs leading-5 text-white/65">
+                {poi.description ?? imagens[zoomIndex].alt}
+              </p>
+            )}
+          </div>
         </div>
       )}
     </div>
@@ -3026,7 +3087,7 @@ function DeslocamentoCard({ deslocamento }: { deslocamento: Deslocamento }) {
             </p>
           )}
           {deslocamento.estacaoOrigem.saida && (
-            <p className="mt-2 inline-block rounded-lg border border-emerald-300 bg-emerald-50 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.1em] text-emerald-800">
+            <p className="mt-3 inline-block rounded-xl border-2 border-emerald-400 bg-emerald-50 px-5 py-2.5 text-lg font-bold uppercase tracking-[0.1em] text-emerald-800 shadow-sm sm:text-xl">
               {deslocamento.estacaoOrigem.saida}
             </p>
           )}
@@ -3034,8 +3095,15 @@ function DeslocamentoCard({ deslocamento }: { deslocamento: Deslocamento }) {
 
         {/* Traço horizontal ligando as duas estações, na cor da linha —
             alinhado ao centro vertical dos logos (h-20 = 80px, centro em
-            40px, daí o mt-10). */}
-        <div className="flex h-20 min-w-[32px] flex-1 items-center sm:min-w-[64px]">
+            40px, daí o mt-10). Estações intermediárias (quando houver)
+            aparecem em texto pequeno logo acima do traço. */}
+        <div className="flex h-20 min-w-[32px] flex-1 flex-col justify-center sm:min-w-[64px]">
+          {deslocamento.estacoesIntermediarias &&
+            deslocamento.estacoesIntermediarias.length > 0 && (
+              <p className="mb-1.5 text-center text-[9px] font-medium uppercase leading-tight tracking-[0.06em] text-[#24211D]/45">
+                {deslocamento.estacoesIntermediarias.join(" · ")}
+              </p>
+            )}
           <div
             className="relative h-[3px] w-full rounded-full"
             style={{ background: deslocamento.linha.cor || "#B96432" }}
@@ -3071,7 +3139,7 @@ function DeslocamentoCard({ deslocamento }: { deslocamento: Deslocamento }) {
             </p>
           )}
           {deslocamento.estacaoDestino.saida && (
-            <p className="mt-2 inline-block rounded-lg border border-emerald-300 bg-emerald-50 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.1em] text-emerald-800">
+            <p className="mt-3 inline-block rounded-xl border-2 border-emerald-400 bg-emerald-50 px-5 py-2.5 text-lg font-bold uppercase tracking-[0.1em] text-emerald-800 shadow-sm sm:text-xl">
               {deslocamento.estacaoDestino.saida}
             </p>
           )}
@@ -3200,8 +3268,10 @@ function MapaVisaoGeralBlock({
 
 function VisaoAnotadaBlock({
   visaoAnotada,
+  displayClassName,
 }: {
   visaoAnotada: NonNullable<Period["visaoAnotada"]>;
+  displayClassName: string;
 }) {
   const [zoom, setZoom] = useState<{ src: string; alt: string; descricao?: string } | null>(null);
 
@@ -3220,7 +3290,7 @@ function VisaoAnotadaBlock({
           </div>
         ) : (
           <div className="mb-5 rounded-2xl bg-black px-6 py-4 text-center">
-            <p className="text-sm font-bold uppercase tracking-[0.3em] text-white sm:text-base">
+            <p className={`${displayClassName} text-base uppercase tracking-[0.25em] text-white sm:text-lg`}>
               Raio-X Alpinea{visaoAnotada.titulo && ` — ${visaoAnotada.titulo}`}
             </p>
           </div>
@@ -3728,35 +3798,49 @@ function PeriodBlock({
           )}
 
           {period.listasPraticas && period.listasPraticas.length > 0 && (
-            <div className="mb-5 grid grid-cols-1 gap-5 sm:grid-cols-2">
-              {period.listasPraticas.map((lista) => (
-                <div key={lista.titulo}>
-                  <p className="mb-2 text-[10px] font-bold uppercase tracking-[0.2em] text-[#24211D]/55">
-                    {lista.titulo}
-                  </p>
-                  <div className="space-y-1.5">
-                    {lista.itens.map((item, i) => (
-                      <p key={i} className="text-sm leading-6 text-[#24211D]/78">
-                        {item}
-                      </p>
-                    ))}
+            <div className="mb-5 rounded-2xl border border-[#BFDCF2] bg-[#EAF3FC] p-6 sm:p-7">
+              <div className="mb-5 flex items-center gap-4">
+                <span className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-white text-[#2C6CA6] shadow-sm">
+                  <IconTicket className="h-8 w-8" />
+                </span>
+                <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#2C6CA6]/85">
+                  Ingressos & Preços
+                </p>
+              </div>
+              <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
+                {period.listasPraticas.map((lista) => (
+                  <div key={lista.titulo}>
+                    <p className="mb-2 text-[10px] font-bold uppercase tracking-[0.2em] text-[#1B4A73]/70">
+                      {lista.titulo}
+                    </p>
+                    <div className="space-y-1.5">
+                      {lista.itens.map((item, i) => (
+                        <p key={i} className="text-sm leading-6 text-[#1B4A73]/85">
+                          {item}
+                        </p>
+                      ))}
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
           )}
 
           {period.decisoes && period.decisoes.length > 0 && (
-            <div className="mb-5">
-              <p className="mb-3 flex items-center gap-2 text-xs font-bold uppercase tracking-[0.2em] text-[#24211D]/65">
+            <div className="mb-5 rounded-2xl border border-emerald-200 bg-emerald-50 p-5">
+              <p className="mb-4 flex items-center gap-2 text-xs font-bold uppercase tracking-[0.2em] text-emerald-900">
                 <span className="text-sm">💡</span>
                 Dúvidas Frequentes
               </p>
-              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                {period.decisoes.map((d) => (
+              <div className="grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-2">
+                {period.decisoes.map((d, i) => (
                   <div
                     key={d.titulo}
-                    className="rounded-2xl border border-emerald-200 bg-emerald-50 p-5"
+                    className={
+                      i % 2 === 0
+                        ? "sm:border-r sm:border-emerald-200/80 sm:pr-6"
+                        : ""
+                    }
                   >
                     <p className="mb-1.5 flex items-center gap-2 text-xs font-bold uppercase tracking-[0.12em] text-emerald-900">
                       <IconArrowDown className="h-3 w-3 -rotate-90 text-emerald-700" />
@@ -3771,28 +3855,35 @@ function PeriodBlock({
             </div>
           )}
 
-          {period.banheiroProximo && (
-            <div className="mb-5 flex items-start gap-4 rounded-2xl border border-[#DDD8CF] bg-[#FAF9F6] p-5">
-              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white text-[#173B45]">
-                <IconMap className="h-5 w-5" />
-              </span>
-              <div className="min-w-0">
-                <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-[#24211D]/55">
-                  Banheiro Público Mais Próximo
-                </p>
-                <p className="mt-1 text-sm font-semibold text-[#24211D]">
-                  {period.banheiroProximo.local}
-                </p>
-                {period.banheiroProximo.endereco && (
-                  <p className="mt-0.5 text-xs text-[#24211D]/60">
-                    {period.banheiroProximo.endereco}
-                  </p>
-                )}
-                {period.banheiroProximo.nota && (
-                  <p className="mt-1.5 text-xs leading-5 text-[#24211D]/70">
-                    {period.banheiroProximo.nota}
-                  </p>
-                )}
+          {period.banheirosProximos && period.banheirosProximos.length > 0 && (
+            <div className="mb-5 rounded-2xl border border-[#DDD8CF] bg-[#FAF9F6] p-5">
+              <p className="mb-3.5 flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.15em] text-[#24211D]/55">
+                <IconToilet className="h-4 w-4 text-[#173B45]" />
+                Banheiros Públicos Mais Próximos
+              </p>
+              <div className="space-y-3.5">
+                {period.banheirosProximos.map((b, i) => (
+                  <div
+                    key={b.local}
+                    className={
+                      i > 0 ? "border-t border-[#DDD8CF] pt-3.5" : ""
+                    }
+                  >
+                    <p className="text-sm font-semibold text-[#24211D]">
+                      {b.local}
+                    </p>
+                    {b.endereco && (
+                      <p className="mt-0.5 text-xs text-[#24211D]/60">
+                        {b.endereco}
+                      </p>
+                    )}
+                    {b.nota && (
+                      <p className="mt-1 text-xs leading-5 text-[#24211D]/70">
+                        {b.nota}
+                      </p>
+                    )}
+                  </div>
+                ))}
               </div>
             </div>
           )}
@@ -3804,7 +3895,10 @@ function PeriodBlock({
       </NumberedStep>
 
       {period.visaoAnotada && (
-        <VisaoAnotadaBlock visaoAnotada={period.visaoAnotada} />
+        <VisaoAnotadaBlock
+          visaoAnotada={period.visaoAnotada}
+          displayClassName={displayClassName}
+        />
       )}
 
       {period.galeria && <GaleriaBlock galeria={period.galeria} />}
@@ -3984,7 +4078,10 @@ function SubAtracaoBlock({
               {subAtracao.descricao}
             </p>
           )}
-          <VisaoAnotadaBlock visaoAnotada={subAtracao.visaoAnotada} />
+          <VisaoAnotadaBlock
+            visaoAnotada={subAtracao.visaoAnotada}
+            displayClassName={displayClassName}
+          />
         </>
       ) : subAtracao.compacta ? (
         <div className="mx-auto flex max-w-lg items-center gap-4 rounded-2xl border border-[#DDD8CF] bg-[#FAF9F6] p-3">
@@ -4336,6 +4433,27 @@ function IconMap({ className }: { className?: string }) {
       <polygon points="1 6 8 3 16 6 23 3 23 18 16 21 8 18 1 21 1 6" />
       <line x1="8" y1="3" x2="8" y2="18" />
       <line x1="16" y1="6" x2="16" y2="21" />
+    </svg>
+  );
+}
+
+function IconToilet({ className }: { className?: string }) {
+  return (
+    <svg {...iconProps(className)}>
+      <path d="M7.5 3h6v3.5a3 3 0 0 1-3 3 3 3 0 0 1-3-3V3z" />
+      <path d="M6.5 9.5c-1.8 1-3 3-3 5.5 0 3.6 3.3 6 6.5 6s6.5-2.4 6.5-6c0-2.5-1.2-4.5-3-5.5" />
+      <path d="M8.5 21v-2.2M13.5 21v-2.2" />
+    </svg>
+  );
+}
+
+function IconTicket({ className }: { className?: string }) {
+  return (
+    <svg {...iconProps(className)}>
+      <path d="M3 8a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2a2 2 0 1 0 0 4v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2a2 2 0 1 0 0-4V8z" />
+      <line x1="13" y1="8" x2="13" y2="10" />
+      <line x1="13" y1="12.5" x2="13" y2="14.5" />
+      <line x1="13" y1="16" x2="13" y2="16.5" />
     </svg>
   );
 }
