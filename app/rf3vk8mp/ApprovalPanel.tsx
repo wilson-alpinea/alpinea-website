@@ -141,9 +141,11 @@ type Deslocamento = {
   linha: LinhaBadge;
   estacaoDestino: EstacaoInfo;
   // Estações intermediárias reais entre origem e destino, na ordem do
-  // trajeto — mostradas acima do traço/seta que liga as duas estações.
-  // Só preenchido pra trechos de trem/metrô sem baldeação confirmados.
-  estacoesIntermediarias?: string[];
+  // trajeto — mostradas acima do traço/seta que liga as duas estações,
+  // com o mesmo padrão dos mapas oficiais de metrô (círculo com letra +
+  // número da linha, nome em japonês e em romaji). Só preenchido pra
+  // trechos de trem/metrô sem baldeação confirmados.
+  estacoesIntermediarias?: { nome: string; nomeJapones?: string; numero?: string }[];
   opcoes: OpcaoDeslocamento[];
   recomendacao?: string;
   // Mapa grande (print real) do trajeto a pé da saída da estação até a
@@ -582,14 +584,14 @@ const DAY_1: DayContent = {
       },
       linha: { codigo: "G10", nome: "Tokyo Metro Ginza Line", cor: "#F39700", logo: "/images/tokyometro-mark.png" },
       estacoesIntermediarias: [
-        "Nihombashi",
-        "Mitsukoshimae",
-        "Kanda",
-        "Suehirocho",
-        "Ueno-hirokoji",
-        "Ueno",
-        "Inaricho",
-        "Tawaramachi",
+        { nome: "Nihombashi", nomeJapones: "日本橋", numero: "G11" },
+        { nome: "Mitsukoshimae", nomeJapones: "三越前", numero: "G12" },
+        { nome: "Kanda", nomeJapones: "神田", numero: "G13" },
+        { nome: "Suehirocho", nomeJapones: "末広町", numero: "G14" },
+        { nome: "Ueno-hirokoji", nomeJapones: "上野広小路", numero: "G15" },
+        { nome: "Ueno", nomeJapones: "上野", numero: "G16" },
+        { nome: "Inaricho", nomeJapones: "稲荷町", numero: "G17" },
+        { nome: "Tawaramachi", nomeJapones: "田原町", numero: "G18" },
       ],
       estacaoDestino: {
         nome: "Estação Asakusa",
@@ -850,7 +852,9 @@ const DAY_1: DayContent = {
         foto: "/images/asakusa-station-entrance.webp",
       },
       linha: { codigo: "A", nome: "Toei Asakusa Line", cor: "#EF5BA1" },
-      estacoesIntermediarias: ["Honjo-Azumabashi"],
+      estacoesIntermediarias: [
+        { nome: "Honjo-Azumabashi", nomeJapones: "本所吾妻橋", numero: "A19" },
+      ],
       estacaoDestino: {
         nome: "Oshiage (Tokyo Skytree Station)",
         nomeJapones: "押上（スカイツリー前）駅",
@@ -1318,12 +1322,13 @@ const DAY_3: DayContent = {
       },
       linha: { codigo: "G10", nome: "Tokyo Metro Ginza Line", cor: "#F39700", logo: "/images/tokyometro-mark.png" },
       estacoesIntermediarias: [
-        "Ginza",
-        "Toranomon",
-        "Tameike-sanno",
-        "Akasaka-mitsuke",
-        "Aoyama-itchome",
-        "Gaiemmae",
+        { nome: "Ginza", nomeJapones: "銀座", numero: "G09" },
+        { nome: "Shimbashi", nomeJapones: "新橋", numero: "G08" },
+        { nome: "Toranomon", nomeJapones: "虎ノ門", numero: "G07" },
+        { nome: "Tameike-sanno", nomeJapones: "溜池山王", numero: "G06" },
+        { nome: "Akasaka-mitsuke", nomeJapones: "赤坂見附", numero: "G05" },
+        { nome: "Aoyama-itchome", nomeJapones: "青山一丁目", numero: "G04" },
+        { nome: "Gaiemmae", nomeJapones: "外苑前", numero: "G03" },
       ],
       estacaoDestino: { nome: "Estação Omotesando", nomeJapones: "表参道駅" },
       opcoes: [
@@ -1404,7 +1409,10 @@ const DAY_3: DayContent = {
     deslocamento: {
       estacaoOrigem: { nome: "Estação Shibuya", nomeJapones: "渋谷駅" },
       linha: { codigo: "JY", nome: "JR Yamanote Line", cor: "#8FAADC", logo: "/images/jr-logo.webp" },
-      estacoesIntermediarias: ["Harajuku", "Yoyogi"],
+      estacoesIntermediarias: [
+        { nome: "Harajuku", nomeJapones: "原宿", numero: "JY19" },
+        { nome: "Yoyogi", nomeJapones: "代々木", numero: "JY18" },
+      ],
       estacaoDestino: { nome: "Estação Shinjuku", nomeJapones: "新宿駅" },
       opcoes: [
         {
@@ -2016,7 +2024,7 @@ const DAY_6: DayContent = {
         distancia: "~1 min a pé do hotel",
       },
       linha: { codigo: "JR", nome: "JR Nara Line", cor: "#00A650", logo: "/images/jr-logo.webp" },
-      estacoesIntermediarias: ["Tofukuji"],
+      estacoesIntermediarias: [{ nome: "Tofukuji", nomeJapones: "東福寺", numero: "D02" }],
       estacaoDestino: { nome: "Estação Inari", nomeJapones: "稲荷駅" },
       opcoes: [
         {
@@ -2210,7 +2218,7 @@ const DAY_7: DayContent = {
         distancia: "~1 min a pé do remm Tokyo Kyobashi",
       },
       linha: { codigo: "A12", nome: "Toei Asakusa Line", cor: "#E85298", logo: "/images/toei-mark.png" },
-      estacoesIntermediarias: ["Nihombashi (Toei)"],
+      estacoesIntermediarias: [{ nome: "Nihombashi", nomeJapones: "日本橋", numero: "A13" }],
       estacaoDestino: { nome: "Estação Ningyocho", nomeJapones: "人形町駅" },
       opcoes: [
         {
@@ -3206,47 +3214,31 @@ function DeslocamentoCard({ deslocamento }: { deslocamento: Deslocamento }) {
         {/* Traço horizontal ligando as duas estações, na cor da linha —
             alinhado ao centro vertical dos logos (h-20 = 80px, centro em
             40px, daí o mt-10). Estações intermediárias (quando houver)
-            aparecem como tiques na própria linha, com o nome em diagonal
-            acima — mesmo padrão dos mapas oficiais de metrô. */}
+            aparecem como círculos com letra+número da linha sobre o traço
+            grosso, com o nome (japonês + romaji) em diagonal logo abaixo —
+            mesmo padrão dos mapas oficiais de metrô de Tóquio. */}
         <div className="flex h-24 min-w-[32px] flex-1 flex-col justify-start pt-10 sm:min-w-[64px]">
-          {deslocamento.estacoesIntermediarias &&
-            deslocamento.estacoesIntermediarias.length > 0 && (
-              <div className="relative h-0 w-full">
-                {deslocamento.estacoesIntermediarias.map((nome, i) => {
-                  const pct =
-                    ((i + 1) /
-                      (deslocamento.estacoesIntermediarias!.length + 1)) *
-                    100;
-                  return (
-                    <span
-                      key={nome}
-                      className="absolute bottom-0 origin-bottom-left -rotate-45 whitespace-nowrap text-[11px] font-semibold text-[#24211D]"
-                      style={{ left: `${pct}%` }}
-                    >
-                      {nome}
-                    </span>
-                  );
-                })}
-              </div>
-            )}
           <div
-            className="relative h-[3px] w-full rounded-full"
+            className="relative h-2 w-full rounded-full"
             style={{ background: deslocamento.linha.cor || "#B96432" }}
           >
-            {deslocamento.estacoesIntermediarias?.map((nome, i) => {
+            {deslocamento.estacoesIntermediarias?.map((estacao, i) => {
               const pct =
                 ((i + 1) /
                   (deslocamento.estacoesIntermediarias!.length + 1)) *
                 100;
               return (
                 <span
-                  key={nome}
-                  className="absolute top-1/2 h-2 w-2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-white"
+                  key={estacao.nome}
+                  className="absolute top-1/2 flex h-5 w-5 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border-2 bg-white text-[8px] font-bold leading-none sm:h-6 sm:w-6 sm:text-[9px]"
                   style={{
                     left: `${pct}%`,
-                    boxShadow: `0 0 0 2px ${deslocamento.linha.cor || "#B96432"}`,
+                    borderColor: deslocamento.linha.cor || "#B96432",
+                    color: deslocamento.linha.cor || "#B96432",
                   }}
-                />
+                >
+                  {estacao.numero ?? "•"}
+                </span>
               );
             })}
             <span
@@ -3254,6 +3246,27 @@ function DeslocamentoCard({ deslocamento }: { deslocamento: Deslocamento }) {
               style={{ borderColor: deslocamento.linha.cor || "#B96432" }}
             />
           </div>
+          {deslocamento.estacoesIntermediarias &&
+            deslocamento.estacoesIntermediarias.length > 0 && (
+              <div className="relative h-0 w-full">
+                {deslocamento.estacoesIntermediarias.map((estacao, i) => {
+                  const pct =
+                    ((i + 1) /
+                      (deslocamento.estacoesIntermediarias!.length + 1)) *
+                    100;
+                  return (
+                    <span
+                      key={estacao.nome}
+                      className="absolute top-2 origin-top-left rotate-45 whitespace-nowrap text-[9px] font-semibold leading-tight text-[#24211D]"
+                      style={{ left: `${pct}%` }}
+                    >
+                      {estacao.nomeJapones && `${estacao.nomeJapones} · `}
+                      {estacao.nome}
+                    </span>
+                  );
+                })}
+              </div>
+            )}
         </div>
 
         <div className="flex w-32 min-w-0 flex-col items-center sm:w-40">
