@@ -45,7 +45,7 @@ type Gastronomia = {
   intro?: string;
   // Rótulo acima da lista de snacks/itens simples (ex.: "Snacks de rua").
   itensLabel?: string;
-  itens?: { nome: string; descricao?: string; foto?: string }[];
+  itens?: { nome: string; descricao?: string; localizacao?: string; foto?: string }[];
   // Rótulo acima da lista de restaurantes (ex.: "Opções de refeição").
   restaurantesLabel?: string;
   // Cards ricos com foto — usado quando há fotos reais dos restaurantes.
@@ -262,6 +262,11 @@ type DayContent = {
     saida: string;
     retorno: string;
   };
+  // Linha do tempo visual do dia inteiro (hotel → atrações → refeições →
+  // hotel), com miniatura de cada parada — mostrada logo após o Contexto.
+  resumoDia?: {
+    passos: { titulo: string; foto?: string; horario?: string }[];
+  };
 };
 
 function genericPeriod(): Period {
@@ -280,6 +285,17 @@ const DAY_1: DayContent = {
     "Nesse primeiro dia vamos explorar a parte mais tradicional de Tokyo, visitar o maior templo de Tokyo e conhecer um pouco a história de como Edo se transformou em Tokyo.",
     "Depois vamos para Tokyo Sky Tree, a torre mais alta de Tokyo que vai te ajudar a entender a ter uma visão macro da cidade antes de iniciar sua jornada por diversos bairros nos próximos dias.",
   ],
+  resumoDia: {
+    passos: [
+      { titulo: "Café da Manhã", horario: "08:00" },
+      { titulo: "Saída do Hotel", horario: "08:45", foto: "/images/lyf-mural-fachada.png" },
+      { titulo: "Templo Sensoji", horario: "09:45", foto: "/images/dia1-sensoji.png" },
+      { titulo: "Almoço", horario: "12:30", foto: "/images/nakamise-tanaka-soba.jpg" },
+      { titulo: "Tokyo Sky Tree", horario: "14:35", foto: "/images/dia1-skytree.png" },
+      { titulo: "Jantar", horario: "16:30", foto: "/images/Hitsumabushi.png" },
+      { titulo: "Retorno ao Hotel", horario: "19:00", foto: "/images/lyf-mural-fachada.png" },
+    ],
+  },
   gradeHorarios: {
     titulo: "Mapa por Horário",
     itens: [
@@ -546,41 +562,48 @@ const DAY_1: DayContent = {
           nome: "Melon Pan (Kagetsudo)",
           descricao:
             "Pão doce crocante por fora, macio por dentro — uma das barracas mais tradicionais da Nakamise.",
+          localizacao: "Nakamise-dori, perto do Kaminarimon",
           foto: "/images/nakamise-melon-pan-kagetsudo-2.jpg",
         },
         {
           nome: "Ningyo-yaki",
           descricao:
             "Bolinho recheado de doce de feijão vermelho, moldado em formatos icônicos e vendido morno, recém-feito.",
+          localizacao: "Nakamise-dori",
           foto: "/images/nakamise-ningyo-yaki-1.jpg",
         },
         {
           nome: "Ningyo-yaki",
           descricao: "Vendido em pacotes — ótimo para levar de lembrança.",
+          localizacao: "Nakamise-dori",
           foto: "/images/nakamise-ningyo-yaki-2b.jpg",
         },
         {
           nome: "Kibi Dango",
           descricao:
             "Mochi macio, tradição de Asakusa desde o período Edo.",
+          localizacao: "Nakamise-dori",
           foto: "/images/nakamise-kibi-dango.jpg",
         },
         {
           nome: "Senbei (Iriyama Senbei Seizojo)",
           descricao:
             "Cracker de arroz grelhado e temperado na hora, tradição centenária de Asakusa — dá pra ver o processo sendo feito na loja.",
+          localizacao: "Nakamise-dori",
           foto: "/images/nakamise-senbei-iriyama.jpg",
         },
         {
           nome: "Senbei Gigante",
           descricao:
             "Cracker de arroz grelhado na hora, do tamanho do rosto — vira atração à parte.",
+          localizacao: "Nakamise-dori",
           foto: "/images/nakamise-senbei-gigante.jpg",
         },
         {
           nome: "Asakusa Menchi",
           descricao:
             "Croquete de carne empanado, crocante por fora e suculento por dentro — uma das filas mais disputadas da rua.",
+          localizacao: "Nakamise-dori",
           foto: "/images/nakamise-asakusa-menchi.jpg",
         },
       ],
@@ -589,16 +612,19 @@ const DAY_1: DayContent = {
         {
           nome: "Tanaka Soba Ten Asakusa Ten",
           descricao: "Ramen tradicional",
+          localizacao: "1-1-8 Asakusa, Taito-ku — Saída 6 da Estação Asakusa",
           foto: "/images/nakamise-tanaka-soba.jpg",
         },
         {
           nome: "Sushi Zanmai Asakusa Kaminari Mon Ten",
           descricao: "Sushi de balcão",
+          localizacao: "1-3-6 Asakusa, Taito-ku — ~50 m do Kaminarimon",
           foto: "/images/nakamise-sushi-zanmai.jpg",
         },
         {
           nome: "Asakusa Amai",
           descricao: "Tempura",
+          localizacao: "1-20-7 Asakusa, Taito-ku",
           foto: "/images/nakamise-asakusa-amai-tempura.jpg",
         },
       ],
@@ -2370,7 +2396,7 @@ function PoiCard({ index, poi }: { index: number; poi: Poi }) {
           )}
         </div>
         {poi.nomeJapones && (
-          <p className={`text-sm ${s.muted}`}>{poi.nomeJapones}</p>
+          <p className={`text-[19px] ${s.muted}`}>{poi.nomeJapones}</p>
         )}
         {poi.description && (
           <p className={`text-xs leading-5 ${s.muted}`}>
@@ -2461,6 +2487,54 @@ function ContextoBlock({ contexto }: { contexto: string[] }) {
   );
 }
 
+function ResumoDiaBlock({
+  resumo,
+}: {
+  resumo: NonNullable<DayContent["resumoDia"]>;
+}) {
+  return (
+    <div className="mb-10 rounded-2xl border-2 border-[#173B45] bg-[#F8FAF9] p-5 sm:p-6">
+      <p className="mb-4 text-xs font-bold uppercase tracking-[0.25em] text-[#173B45]">
+        Resumo do Dia
+      </p>
+      <div className="flex flex-wrap items-start gap-y-4">
+        {resumo.passos.map((passo, i) => (
+          <div key={passo.titulo + i} className="flex items-start">
+            <div className="flex w-16 flex-col items-center gap-1.5 text-center sm:w-[72px]">
+              {passo.foto ? (
+                <div className="h-14 w-14 overflow-hidden rounded-full border-2 border-white shadow-sm sm:h-16 sm:w-16">
+                  <img
+                    src={passo.foto}
+                    alt={passo.titulo}
+                    className="h-full w-full object-cover"
+                  />
+                </div>
+              ) : (
+                <div className="flex h-14 w-14 items-center justify-center rounded-full border-2 border-dashed border-[#173B45]/25 text-[#173B45]/40 sm:h-16 sm:w-16">
+                  <IconClock className="h-5 w-5" />
+                </div>
+              )}
+              <p className="text-[11px] font-semibold leading-tight text-[#173B45]">
+                {passo.titulo}
+              </p>
+              {passo.horario && (
+                <p className="text-[10px] font-medium tracking-wide text-[#173B45]/55">
+                  {passo.horario}
+                </p>
+              )}
+            </div>
+            {i < resumo.passos.length - 1 && (
+              <span className="mt-6 shrink-0 px-0.5 text-[#173B45]/30 sm:mt-7">
+                →
+              </span>
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function DiaEmNumerosBlock({
   numeros,
 }: {
@@ -2490,7 +2564,7 @@ function DiaEmNumerosBlock({
 
 function GastronomiaBlock({ gastronomia }: { gastronomia: Gastronomia }) {
   const [zoom, setZoom] = useState(false);
-  const [zoomedFoto, setZoomedFoto] = useState<{ src: string; alt: string } | null>(null);
+  const [zoomedFoto, setZoomedFoto] = useState<{ src: string; alt: string; endereco?: string } | null>(null);
   const temRestaurantes = gastronomia.restaurantes && gastronomia.restaurantes.length > 0;
 
   return (
@@ -2527,7 +2601,9 @@ function GastronomiaBlock({ gastronomia }: { gastronomia: Gastronomia }) {
                   >
                     <button
                       type="button"
-                      onClick={() => setZoomedFoto({ src: item.foto!, alt: item.nome })}
+                      onClick={() =>
+                        setZoomedFoto({ src: item.foto!, alt: item.nome, endereco: item.localizacao })
+                      }
                       className="group relative block aspect-square w-full overflow-hidden"
                     >
                       <img
@@ -2548,6 +2624,11 @@ function GastronomiaBlock({ gastronomia }: { gastronomia: Gastronomia }) {
                       {item.descricao && (
                         <p className="mt-0.5 text-[11px] leading-4 text-[#24211D]/70">
                           {item.descricao}
+                        </p>
+                      )}
+                      {item.localizacao && (
+                        <p className="mt-1.5 border-t border-[#DDD8CF] pt-1.5 text-[10px] leading-4 text-[#24211D]/55">
+                          📍 {item.localizacao}
                         </p>
                       )}
                     </div>
@@ -2600,7 +2681,9 @@ function GastronomiaBlock({ gastronomia }: { gastronomia: Gastronomia }) {
                 {r.foto && (
                   <button
                     type="button"
-                    onClick={() => setZoomedFoto({ src: r.foto!, alt: r.nome })}
+                    onClick={() =>
+                      setZoomedFoto({ src: r.foto!, alt: r.nome, endereco: r.localizacao })
+                    }
                     className="group relative block aspect-square w-full overflow-hidden"
                   >
                     <img
@@ -2692,7 +2775,7 @@ function GastronomiaBlock({ gastronomia }: { gastronomia: Gastronomia }) {
 
       {zoomedFoto && (
         <div
-          className="fixed inset-0 z-[100] flex items-start justify-center overflow-y-auto bg-black/85 p-4 backdrop-blur-sm sm:p-8"
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/85 p-4 backdrop-blur-sm sm:p-8"
           onClick={() => setZoomedFoto(null)}
         >
           <button
@@ -2703,12 +2786,24 @@ function GastronomiaBlock({ gastronomia }: { gastronomia: Gastronomia }) {
           >
             <IconX className="h-5 w-5" />
           </button>
-          <img
-            src={zoomedFoto.src}
-            alt={zoomedFoto.alt}
-            className="max-h-[90vh] max-w-[95vw] rounded-2xl object-contain"
+          <div
+            className="relative max-h-full max-w-full overflow-hidden rounded-2xl"
             onClick={(e) => e.stopPropagation()}
-          />
+          >
+            <img
+              src={zoomedFoto.src}
+              alt={zoomedFoto.alt}
+              className="max-h-[80vh] max-w-[92vw] rounded-2xl object-contain"
+            />
+            <p className="mt-3 text-center text-xs font-semibold uppercase tracking-[0.15em] text-white/85">
+              {zoomedFoto.alt}
+            </p>
+            {zoomedFoto.endereco && (
+              <p className="mx-auto mt-1.5 max-w-md text-center text-xs leading-5 text-white/65">
+                {zoomedFoto.endereco}
+              </p>
+            )}
+          </div>
         </div>
       )}
     </div>
@@ -2863,7 +2958,7 @@ function DeslocamentoCard({ deslocamento }: { deslocamento: Deslocamento }) {
             {deslocamento.estacaoOrigem.nome}
           </p>
           {deslocamento.estacaoOrigem.nomeJapones && (
-            <p className="text-xs text-[#24211D]/55">
+            <p className="text-base text-[#24211D]/55">
               {deslocamento.estacaoOrigem.nomeJapones}
             </p>
           )}
@@ -2908,7 +3003,7 @@ function DeslocamentoCard({ deslocamento }: { deslocamento: Deslocamento }) {
             {deslocamento.estacaoDestino.nome}
           </p>
           {deslocamento.estacaoDestino.nomeJapones && (
-            <p className="text-xs text-[#24211D]/55">
+            <p className="text-base text-[#24211D]/55">
               {deslocamento.estacaoDestino.nomeJapones}
             </p>
           )}
@@ -3196,7 +3291,7 @@ function VisaoAnotadaBlock({
                 {ponto.titulo}
               </p>
               {ponto.nomeJapones && (
-                <p className="mt-0.5 text-base font-normal text-[#24211D]/50">
+                <p className="mt-0.5 text-[21px] font-normal text-[#24211D]/50">
                   {ponto.nomeJapones}
                 </p>
               )}
@@ -3393,6 +3488,12 @@ function PeriodBlock({
         )}
       </div>
 
+      {period.deslocamento && (
+        <NumberedStep number={passoDeslocamento!} label="Deslocamento">
+          <DeslocamentoCard deslocamento={period.deslocamento} />
+        </NumberedStep>
+      )}
+
       {period.percursoEssencial && (
         <div className="mb-8 rounded-2xl border-2 border-[#173B45] bg-[#F8FAF9] p-5 sm:p-6">
           <div className="flex flex-wrap items-center justify-between gap-2">
@@ -3441,12 +3542,6 @@ function PeriodBlock({
             O que dá pra fazer sem pressa. Os detalhes de cada ponto vêm a seguir — comece por aqui.
           </p>
         </div>
-      )}
-
-      {period.deslocamento && (
-        <NumberedStep number={passoDeslocamento!} label="Deslocamento">
-          <DeslocamentoCard deslocamento={period.deslocamento} />
-        </NumberedStep>
       )}
 
       <NumberedStep number={passoAtracao} label="Atração">
@@ -5079,8 +5174,8 @@ export function ApprovalPanel({
               {current.contexto && (
                 <ContextoBlock contexto={current.contexto} />
               )}
-              {current.diaEmNumeros && (
-                <DiaEmNumerosBlock numeros={current.diaEmNumeros} />
+              {current.resumoDia && (
+                <ResumoDiaBlock resumo={current.resumoDia} />
               )}
               {current.gradeHorarios &&
                 !current.manha?.percursoEssencial &&
