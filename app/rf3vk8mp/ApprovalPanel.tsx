@@ -3113,10 +3113,11 @@ function IconAlertTriangle({ className }: { className?: string }) {
 
 function IconClock({ className }: { className?: string }) {
   return (
-    <svg {...iconProps(className)}>
-      <circle cx="12" cy="12" r="9" />
-      <polyline points="12 7 12 12 15.5 14" />
-    </svg>
+    <img
+      src="/images/icone-relogio.png"
+      alt=""
+      className={`${className ?? ""} object-contain`}
+    />
   );
 }
 
@@ -3213,10 +3214,10 @@ function DeslocamentoCard({ deslocamento }: { deslocamento: Deslocamento }) {
 
         {/* Traço horizontal ligando as duas estações, na cor da linha —
             alinhado ao centro vertical dos logos (h-20 = 80px, centro em
-            40px, daí o mt-10). Estações intermediárias (quando houver)
+            40px, daí o pt-10). Estações intermediárias (quando houver)
             aparecem como círculos com letra+número da linha sobre o traço
-            grosso, com o nome (japonês + romaji) em diagonal logo abaixo —
-            mesmo padrão dos mapas oficiais de metrô de Tóquio. */}
+            grosso, nome em romaji acima e nome em japonês na vertical
+            abaixo — mesmo padrão dos mapas oficiais de metrô de Tóquio. */}
         <div className="flex h-24 min-w-[32px] flex-1 flex-col justify-start pt-10 sm:min-w-[64px]">
           <div
             className="relative h-2 w-full rounded-full"
@@ -3229,8 +3230,23 @@ function DeslocamentoCard({ deslocamento }: { deslocamento: Deslocamento }) {
                 100;
               return (
                 <span
+                  key={`romaji-${estacao.nome}`}
+                  className="absolute -top-1 -translate-x-1/2 -translate-y-full whitespace-nowrap text-[11px] font-semibold leading-tight text-[#24211D] sm:text-xs"
+                  style={{ left: `${pct}%` }}
+                >
+                  {estacao.nome}
+                </span>
+              );
+            })}
+            {deslocamento.estacoesIntermediarias?.map((estacao, i) => {
+              const pct =
+                ((i + 1) /
+                  (deslocamento.estacoesIntermediarias!.length + 1)) *
+                100;
+              return (
+                <span
                   key={estacao.nome}
-                  className="absolute top-1/2 flex h-5 w-5 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border-2 bg-white text-[8px] font-bold leading-none sm:h-6 sm:w-6 sm:text-[9px]"
+                  className="absolute top-1/2 flex h-5 w-5 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border-2 bg-white text-[9px] font-bold leading-none sm:h-6 sm:w-6 sm:text-[10px]"
                   style={{
                     left: `${pct}%`,
                     borderColor: deslocamento.linha.cor || "#B96432",
@@ -3242,26 +3258,36 @@ function DeslocamentoCard({ deslocamento }: { deslocamento: Deslocamento }) {
               );
             })}
             <span
-              className="absolute right-0 top-1/2 h-2.5 w-2.5 -translate-y-1/2 translate-x-1/2 rotate-45 border-r-[3px] border-t-[3px]"
-              style={{ borderColor: deslocamento.linha.cor || "#B96432" }}
+              className="absolute -right-px top-1/2 -translate-y-1/2"
+              style={{
+                width: 0,
+                height: 0,
+                borderTop: "8px solid transparent",
+                borderBottom: "8px solid transparent",
+                borderLeft: `13px solid ${deslocamento.linha.cor || "#B96432"}`,
+              }}
             />
           </div>
           {deslocamento.estacoesIntermediarias &&
             deslocamento.estacoesIntermediarias.length > 0 && (
               <div className="relative h-0 w-full">
                 {deslocamento.estacoesIntermediarias.map((estacao, i) => {
+                  if (!estacao.nomeJapones) return null;
                   const pct =
                     ((i + 1) /
                       (deslocamento.estacoesIntermediarias!.length + 1)) *
                     100;
                   return (
                     <span
-                      key={estacao.nome}
-                      className="absolute top-2 origin-top-left rotate-45 whitespace-nowrap text-[9px] font-semibold leading-tight text-[#24211D]"
-                      style={{ left: `${pct}%` }}
+                      key={`ja-${estacao.nome}`}
+                      className="absolute top-4 -translate-x-1/2 whitespace-nowrap text-[11px] font-medium leading-none text-[#24211D]/70 sm:top-5 sm:text-xs"
+                      style={{
+                        left: `${pct}%`,
+                        writingMode: "vertical-rl",
+                        textOrientation: "upright",
+                      }}
                     >
-                      {estacao.nomeJapones && `${estacao.nomeJapones} · `}
-                      {estacao.nome}
+                      {estacao.nomeJapones}
                     </span>
                   );
                 })}
@@ -4448,12 +4474,11 @@ function IconArrowUp({ className }: { className?: string }) {
 
 function IconMetro({ className }: { className?: string }) {
   return (
-    <svg {...iconProps(className)}>
-      <rect x="5" y="3" width="14" height="13" rx="4" />
-      <line x1="5" y1="10" x2="19" y2="10" />
-      <circle cx="8.5" cy="19" r="1.3" />
-      <circle cx="15.5" cy="19" r="1.3" />
-    </svg>
+    <img
+      src="/images/icone-trem.png"
+      alt=""
+      className={`${className ?? ""} object-contain`}
+    />
   );
 }
 
@@ -4472,23 +4497,21 @@ function IconBus({ className }: { className?: string }) {
 
 function IconCar({ className }: { className?: string }) {
   return (
-    <svg {...iconProps(className)}>
-      <path d="M5 11 6.5 6h11L19 11" />
-      <rect x="3" y="11" width="18" height="6" rx="2" />
-      <circle cx="7.5" cy="17.5" r="1.3" />
-      <circle cx="16.5" cy="17.5" r="1.3" />
-    </svg>
+    <img
+      src="/images/icone-taxi.png"
+      alt=""
+      className={`${className ?? ""} object-contain`}
+    />
   );
 }
 
 function IconWalk({ className }: { className?: string }) {
   return (
-    <svg {...iconProps(className)}>
-      <circle cx="13" cy="4" r="1.6" />
-      <path d="M10 8 7 10l1 5-3 5" />
-      <path d="M10 8l3 2 3-1 2 3" />
-      <path d="M11 13l-1 2 4 3" />
-    </svg>
+    <img
+      src="/images/icone-andando-a-pe.png"
+      alt=""
+      className={`${className ?? ""} object-contain`}
+    />
   );
 }
 
@@ -4669,22 +4692,21 @@ function IconMap({ className }: { className?: string }) {
 
 function IconToilet({ className }: { className?: string }) {
   return (
-    <svg {...iconProps(className)}>
-      <path d="M7.5 3h6v3.5a3 3 0 0 1-3 3 3 3 0 0 1-3-3V3z" />
-      <path d="M6.5 9.5c-1.8 1-3 3-3 5.5 0 3.6 3.3 6 6.5 6s6.5-2.4 6.5-6c0-2.5-1.2-4.5-3-5.5" />
-      <path d="M8.5 21v-2.2M13.5 21v-2.2" />
-    </svg>
+    <img
+      src="/images/icone-banheiro.png"
+      alt=""
+      className={`${className ?? ""} object-contain`}
+    />
   );
 }
 
 function IconTicket({ className }: { className?: string }) {
   return (
-    <svg {...iconProps(className)}>
-      <path d="M3 8a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2a2 2 0 1 0 0 4v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2a2 2 0 1 0 0-4V8z" />
-      <line x1="13" y1="8" x2="13" y2="10" />
-      <line x1="13" y1="12.5" x2="13" y2="14.5" />
-      <line x1="13" y1="16" x2="13" y2="16.5" />
-    </svg>
+    <img
+      src="/images/icone-ingressos.png"
+      alt=""
+      className={`${className ?? ""} object-contain`}
+    />
   );
 }
 
