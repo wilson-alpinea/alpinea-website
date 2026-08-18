@@ -5,6 +5,7 @@ import { CartProvider } from "../components/CartContext";
 import { CartWidget } from "../components/CartWidget";
 import { PackageCard, type PackageVariant } from "../components/PackageCard";
 import { CustomPackageCard } from "../components/CustomPackageCard";
+import { formatUSD } from "../hooks/useCambioUSD";
 
 // Mesma fonte de destaque usada nas demais páginas do site.
 const display = Bodoni_Moda({
@@ -18,37 +19,58 @@ export const metadata = {
     "Pacotes de viagem para o Japão com a curadoria Ajisai: Caravana (grupo fechado), Individual ou Pequenos Grupos e Pacotes Personalizados sob medida. Monte seu carrinho e finalize direto no WhatsApp.",
 };
 
-// Preço padrão fixo pra todos os pacotes de Caravana e Individual/Pequenos
-// Grupos: 7 dias = R$ 38.000, 15 dias = R$ 50.000 (mesmo valor
-// independente da temporada). Datas continuam provisórias — confirmar
-// antes de publicar.
-const parcelaDe = (preco: number) =>
-  `ou em até 12x de R$ ${(preco / 12).toLocaleString("pt-BR", {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  })} + Juros Mensais`;
-
-const variantesPadrao = (
+// Preços fixos em dólar (valores definitivos passados pelo cliente) —
+// id da variante de 14 dias continua "15d" internamente só porque o
+// roteiro dia a dia (ITINERARIOS/ROTEIROS_DETALHADOS no
+// PackageDetailModal) já usa essa chave; o rótulo exibido é "14 dias",
+// que é a duração real vendida. Datas continuam provisórias/aproximadas
+// — ver aviso na seção.
+const variantesUSD = (
   preco7: number,
   datas7: string,
-  preco15: number,
-  datas15: string,
+  preco14: number,
+  datas14: string,
 ): PackageVariant[] => [
   {
     id: "7d",
     label: "7 dias",
     datas: datas7,
-    precoLabel: `R$ ${preco7.toLocaleString("pt-BR")}`,
-    parcelaLabel: parcelaDe(preco7),
-    precoBRL: preco7,
+    precoLabel: formatUSD(preco7),
+    precoUSD: preco7,
   },
   {
     id: "15d",
-    label: "15 dias",
-    datas: datas15,
-    precoLabel: `R$ ${preco15.toLocaleString("pt-BR")}`,
-    parcelaLabel: parcelaDe(preco15),
-    precoBRL: preco15,
+    label: "14 dias",
+    datas: datas14,
+    precoLabel: formatUSD(preco14),
+    precoUSD: preco14,
+  },
+];
+
+// Mesma coisa, mas pros pacotes Individual/Pequeno Grupo — cada variante
+// também carrega o preço da versão Personalizada do mesmo roteiro
+// (Individual × 1.5), exibido como opção adicional dentro do card.
+const variantesIndividualUSD = (
+  preco7: number,
+  datas7: string,
+  preco14: number,
+  datas14: string,
+): PackageVariant[] => [
+  {
+    id: "7d",
+    label: "7 dias",
+    datas: datas7,
+    precoLabel: formatUSD(preco7),
+    precoUSD: preco7,
+    personalizadoUSD: Math.round(preco7 * 1.5),
+  },
+  {
+    id: "15d",
+    label: "14 dias",
+    datas: datas14,
+    precoLabel: formatUSD(preco14),
+    precoUSD: preco14,
+    personalizadoUSD: Math.round(preco14 * 1.5),
   },
 ];
 
@@ -98,11 +120,11 @@ const pacotesCaravana = [
     imagemAlt: BANNER_CARAVANA.alt,
     accent: "#e6a6c7",
     selo: "🌸 Alta procura",
-    variantes: variantesPadrao(
-      38000,
-      "28 mar – 03 abr 2027",
-      50000,
-      "24 mar – 07 abr 2027",
+    variantes: variantesUSD(
+      4550,
+      "28 mar – 03 abr 2027 (aproximada)",
+      8280,
+      "24 mar – 07 abr 2027 (aproximada)",
     ),
   },
   {
@@ -119,11 +141,11 @@ const pacotesCaravana = [
     imagem: BANNER_CARAVANA.src,
     imagemAlt: BANNER_CARAVANA.alt,
     accent: "#7fbf6e",
-    variantes: variantesPadrao(
-      38000,
-      "08 – 14 mai 2027",
-      50000,
-      "08 – 22 mai 2027",
+    variantes: variantesUSD(
+      4280,
+      "08 – 14 mai 2027 (aproximada)",
+      7980,
+      "08 – 22 mai 2027 (aproximada)",
     ),
   },
 ];
@@ -142,11 +164,11 @@ const pacotesIndividuais = [
     imagem: BANNER_INDIVIDUAL.src,
     imagemAlt: BANNER_INDIVIDUAL.alt,
     accent: "#e6a6c7",
-    variantes: variantesPadrao(
-      38000,
-      "Datas flexíveis · mar–abr 2027",
-      50000,
-      "Datas flexíveis · mar–abr 2027",
+    variantes: variantesIndividualUSD(
+      2790,
+      "Datas flexíveis (aproximadas) · mar–abr 2027",
+      4980,
+      "Datas flexíveis (aproximadas) · mar–abr 2027",
     ),
   },
   {
@@ -162,11 +184,11 @@ const pacotesIndividuais = [
     imagem: BANNER_INDIVIDUAL.src,
     imagemAlt: BANNER_INDIVIDUAL.alt,
     accent: "#7fbf6e",
-    variantes: variantesPadrao(
-      38000,
-      "Datas flexíveis · maio 2027",
-      50000,
-      "Datas flexíveis · maio 2027",
+    variantes: variantesIndividualUSD(
+      2490,
+      "Datas flexíveis (aproximadas) · maio 2027",
+      4480,
+      "Datas flexíveis (aproximadas) · maio 2027",
     ),
   },
 ];
@@ -218,6 +240,30 @@ const DIFERENCIAIS = [
     titulo: "Suporte antes do embarque",
     texto: "Orientação desde a reserva até a preparação para a viagem.",
     Icon: IconHeadset,
+  },
+];
+
+// Diferenciais Ajisai específicos pra quem compra a passagem aérea com a
+// gente — mesmo conteúdo usado no popup "Passagem Aérea" de cada pacote e
+// na opção "Aéreo" do Pacote Personalizado.
+const DIFERENCIAIS_AEREO = [
+  {
+    titulo: "Concierge no Aeroporto de Guarulhos",
+    texto:
+      "Apoio presencial na partida de voos internacionais — check-in, remarcação em cancelamento involuntário e direitos básicos em atrasos.",
+    Icon: IconConcierge,
+  },
+  {
+    titulo: "Protocolo pré-embarque (Visit Japan Web)",
+    texto:
+      "Assistente dedicado ajuda com os QR codes de imigração/alfândega e revisa o itinerário com você antes do voo.",
+    Icon: IconQrCode,
+  },
+  {
+    titulo: "Monitoramento de viagem",
+    texto:
+      "Grupo de WhatsApp com nossa equipe emergencial durante a viagem — horário comercial, seg. a sex., 9h–18h de Brasília.",
+    Icon: IconWhatsApp,
   },
 ];
 
@@ -332,6 +378,43 @@ export default function PacotesJapaoPage() {
           </div>
         </section>
 
+        {/* ── DIFERENCIAIS AJISAI · PASSAGENS AÉREAS ── */}
+        <section className="border-t border-white/10 bg-black px-6 py-14 md:px-16 md:py-20">
+          <div className="mx-auto max-w-5xl">
+            <p className="text-center text-[10px] uppercase tracking-[0.2em] text-white/40">
+              Passagem comprada com a Ajisai
+            </p>
+            <h2
+              className={`${display.className} mt-2 text-center text-2xl font-medium leading-tight text-white md:text-4xl`}
+            >
+              Diferenciais Ajisai para Passagens Aéreas
+            </h2>
+            <p className="mx-auto mt-3 max-w-2xl text-center text-sm font-light leading-6 text-white/55">
+              O mesmo suporte que você encontra dentro de cada pacote, na
+              seção Aéreo/Passagem Aérea — aqui resumido em um único lugar.
+            </p>
+
+            <div className="mt-10 grid gap-6 sm:grid-cols-3">
+              {DIFERENCIAIS_AEREO.map((item) => (
+                <div
+                  key={item.titulo}
+                  className="rounded-2xl border border-white/10 bg-white/[0.02] p-6 text-center md:p-8"
+                >
+                  <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-[#6ec3d9]/10 text-[#6ec3d9]">
+                    <item.Icon className="h-5 w-5" />
+                  </span>
+                  <h3 className={`${display.className} mt-4 text-lg font-medium text-white`}>
+                    {item.titulo}
+                  </h3>
+                  <p className="mt-2 text-sm font-light leading-6 text-white/55">
+                    {item.texto}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
         {/* ── DIVISÃO 1 · PACOTES DE CARAVANA ── */}
         <section
           id="pacotes"
@@ -372,7 +455,7 @@ export default function PacotesJapaoPage() {
             <div className="mb-8 flex justify-center md:mb-10 md:justify-start">
               <span className="inline-flex max-w-full flex-wrap items-center justify-center gap-2 rounded-full border border-[#6ec3d9]/50 bg-[#6ec3d9]/15 px-5 py-2 text-center text-[11px] font-semibold uppercase tracking-[0.2em] text-[#6ec3d9] md:text-xs">
                 <IconClock className="h-3.5 w-3.5 shrink-0" />
-                Datas e valores sujeitos a alteração conforme disponibilidade e câmbio
+                Datas aproximadas — datas e valores sujeitos a alteração conforme disponibilidade e câmbio
               </span>
             </div>
 
@@ -436,7 +519,7 @@ export default function PacotesJapaoPage() {
             <div className="mb-8 flex justify-center md:mb-10 md:justify-start">
               <span className="inline-flex max-w-full flex-wrap items-center justify-center gap-2 rounded-full border border-[#6ec3d9]/50 bg-[#6ec3d9]/15 px-5 py-2 text-center text-[11px] font-semibold uppercase tracking-[0.2em] text-[#6ec3d9] md:text-xs">
                 <IconClock className="h-3.5 w-3.5 shrink-0" />
-                Datas e valores sujeitos a alteração conforme disponibilidade e câmbio
+                Datas aproximadas — datas e valores sujeitos a alteração conforme disponibilidade e câmbio
               </span>
             </div>
 
@@ -651,6 +734,43 @@ function IconShieldCheck({ className }: { className?: string }) {
     >
       <path d="M12 3l7 3v6c0 4.5-3 7.7-7 9-4-1.3-7-4.5-7-9V6l7-3Z" />
       <path d="M9 12l2 2 4-4.5" />
+    </svg>
+  );
+}
+
+function IconConcierge({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.75"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      <path d="M4 20a8 8 0 0 1 16 0" />
+      <path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z" />
+      <path d="M2 20h20" />
+    </svg>
+  );
+}
+
+function IconQrCode({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.75"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      <rect x="3" y="3" width="7" height="7" rx="1" />
+      <rect x="14" y="3" width="7" height="7" rx="1" />
+      <rect x="3" y="14" width="7" height="7" rx="1" />
+      <path d="M14 14h3v3h-3zM20 14v3M14 20h3M20 20v.01" />
     </svg>
   );
 }

@@ -88,8 +88,10 @@ const TIPOS_QUARTO = [
 
 type PrecoCtx = {
   dias: number;
+  pessoas: number;
   categoriaHotel: (typeof CATEGORIAS_HOTEL)[number];
   tipoQuarto: (typeof TIPOS_QUARTO)[number];
+  classeAereo: (typeof CLASSES_AEREO)[number];
 };
 
 // Diária de hotel por categoria — usada pra calcular o total do pacote
@@ -112,11 +114,26 @@ const FATOR_QUARTO: Record<(typeof TIPOS_QUARTO)[number], number> = {
 };
 
 const DIARIA_TRANSPORTE = 150;
-const DIARIA_GUIA = 300;
+// Guia: US$ 350/dia a cada 4 pessoas — grupos maiores precisam de mais de
+// um guia, cobrado proporcionalmente.
+const DIARIA_GUIA = 350;
+const GUIA_TAMANHO_GRUPO = 4;
 const DIARIA_JR_PASS = 180;
 const DIARIA_SEGURO_VIAGEM = 35;
-const DIARIA_MOTORISTA_PRIVADO = 350;
+// Motorista privado: US$ 700/dia, cobre até 4 pessoas — mesma lógica de
+// grupo do guia.
+const DIARIA_MOTORISTA_PRIVADO = 700;
+const MOTORISTA_TAMANHO_GRUPO = 4;
 const PRECO_CAMBIO_BRASIL = 150;
+// Wi-fi e ingressos Disney/Universal: valores de referência da planilha
+// "Simulação de Orçamento v2.1" (JPY convertido) — não foram passados
+// valores explícitos por você para esses dois itens.
+const DIARIA_WIFI_PAX = 7; // ≈ JPY 1000/dia/pax
+const PRECO_INGRESSO_DISNEY_UNIVERSAL_PAX = 83; // ≈ JPY 12000/pax (ingresso avulso)
+
+const CLASSES_AEREO = ["Economy", "Business"] as const;
+const PRECO_AEREO_ECONOMY = 8000;
+const PRECO_AEREO_BUSINESS = 6000;
 
 // Preços por item — aéreo, câmbio e serviços adicionais têm valor fixo por
 // viagem; hotel, transporte, guia, JR Pass, seguro viagem e motorista
@@ -127,10 +144,11 @@ const OPCOES = [
     key: "aereo",
     label: "Aéreo",
     icone: "✈️",
-    descricao: "Passagem internacional ida e volta",
+    descricao: "Passagem internacional ida e volta — Economy ou Business",
     detalhe:
-      "Bilhete aéreo internacional de ida e volta, com a Ajisai buscando as melhores opções de conexão disponíveis para as datas escolhidas. Inclui bagagem conforme a franquia da companhia aérea selecionada.",
-    calcPreco: () => 8000,
+      "Bilhete aéreo internacional de ida e volta, com a Ajisai buscando as melhores opções de conexão disponíveis para as datas escolhidas. Inclui bagagem conforme a franquia da companhia aérea selecionada. Disponível em Economy ou Business.\n\nDiferenciais Ajisai para quem compra a passagem com a gente: concierge presencial no Aeroporto de Guarulhos na partida (apoio no check-in, remarcação em caso de cancelamento involuntário e direitos básicos em atrasos); protocolo pré-embarque com assistente dedicado para o Visit Japan Web (VJW) e revisão do itinerário; e monitoramento da viagem com grupo de WhatsApp emergencial (horário comercial, seg. a sex., 9h–18h de Brasília).",
+    calcPreco: (ctx: PrecoCtx) =>
+      ctx.classeAereo === "Business" ? PRECO_AEREO_BUSINESS : PRECO_AEREO_ECONOMY,
   },
   {
     key: "hotel",
@@ -155,10 +173,11 @@ const OPCOES = [
     key: "guia",
     label: "Guia",
     icone: "🧭",
-    descricao: "Guia turístico acompanhando o roteiro",
+    descricao: "Guia turístico acompanhando o roteiro — US$ 350/dia a cada 4 pessoas",
     detalhe:
-      "Guia particular fluente em português, dedicado ao seu grupo, acompanhando pontos-chave do roteiro — ajuda com trajetos, horários e como evitar filas nas atrações.",
-    calcPreco: (ctx: PrecoCtx) => DIARIA_GUIA * ctx.dias,
+      "Guia particular fluente em português, dedicado ao seu grupo, acompanhando pontos-chave do roteiro — ajuda com trajetos, horários e como evitar filas nas atrações. US$ 350 por dia a cada 4 pessoas; grupos maiores recebem guias adicionais, cobrados proporcionalmente.",
+    calcPreco: (ctx: PrecoCtx) =>
+      DIARIA_GUIA * ctx.dias * Math.max(1, Math.ceil(ctx.pessoas / GUIA_TAMANHO_GRUPO)),
   },
   {
     key: "jrpass",
@@ -191,10 +210,11 @@ const OPCOES = [
     key: "motorista",
     label: "Transfer com Motorista Privado",
     icone: "🚗",
-    descricao: "Traslados exclusivos, sem compartilhar veículo com outros grupos",
+    descricao: "Traslados exclusivos — US$ 700/dia para até 4 pessoas",
     detalhe:
-      "Traslados exclusivos com motorista particular, sem compartilhar veículo com outros grupos — ideal para famílias com bagagem extra, crianças pequenas ou quem prefere mais privacidade e flexibilidade de horário.",
-    calcPreco: (ctx: PrecoCtx) => DIARIA_MOTORISTA_PRIVADO * ctx.dias,
+      "Traslados exclusivos com motorista particular, sem compartilhar veículo com outros grupos — ideal para famílias com bagagem extra, crianças pequenas ou quem prefere mais privacidade e flexibilidade de horário. US$ 700 por dia, cobrindo até 4 pessoas; grupos maiores recebem veículos adicionais, cobrados proporcionalmente.",
+    calcPreco: (ctx: PrecoCtx) =>
+      DIARIA_MOTORISTA_PRIVADO * ctx.dias * Math.max(1, Math.ceil(ctx.pessoas / MOTORISTA_TAMANHO_GRUPO)),
   },
   {
     key: "servicos",
@@ -205,6 +225,43 @@ const OPCOES = [
       "Reservas de restaurantes concorridos, concierge durante a viagem e experiências sob medida (ingressos especiais, eventos sazonais, atividades personalizadas) — sob consulta conforme o interesse do grupo.",
     calcPreco: () => 2500,
   },
+  {
+    key: "roteiro",
+    label: "Roteiro Personalizado",
+    icone: "📱",
+    descricao: "Painel digital Ajisai com o roteiro sob medida do seu grupo",
+    detalhe:
+      "Roteiro Digital Ajisai personalizado dia a dia — atrações, deslocamento, refeições e informações práticas dos aeroportos, montado sob medida para o seu grupo e acessível pelo navegador do celular durante toda a viagem. Incluso em todo Pacote Personalizado.",
+    calcPreco: () => 0,
+  },
+  {
+    key: "transferOnibus",
+    label: "Transfer de Ônibus Aeroporto ↔ Centro de Tóquio",
+    icone: "🚌",
+    descricao: "Ida e volta entre o aeroporto e o centro de Tóquio",
+    detalhe:
+      "Transfer de ônibus entre o aeroporto (Narita ou Haneda) e o centro de Tóquio, ida e volta. Valor sob consulta, conforme aeroporto e horário do voo.",
+    calcPreco: () => 0,
+  },
+  {
+    key: "wifi",
+    label: "Wi-fi",
+    icone: "📶",
+    descricao: "Conexão disponível durante todo o roteiro",
+    detalhe:
+      "Pocket Wi-Fi ou eSIM 5G com conexão de dados disponível durante todo o roteiro, para todo o grupo.",
+    calcPreco: (ctx: PrecoCtx) => Math.round(DIARIA_WIFI_PAX * ctx.dias * ctx.pessoas),
+  },
+  {
+    key: "ingressos",
+    label: "Ingressos para Atrações: Disney e Universal",
+    icone: "🎟️",
+    descricao: "Ingresso avulso, por pessoa",
+    detalhe:
+      "Ingresso para Tokyo Disney Resort ou Universal Studios Japan, por pessoa.",
+    calcPreco: (ctx: PrecoCtx) =>
+      Math.round(PRECO_INGRESSO_DISNEY_UNIVERSAL_PAX * ctx.pessoas),
+  },
 ] as const;
 
 type OpcaoKey = (typeof OPCOES)[number]["key"];
@@ -212,7 +269,7 @@ type OpcaoKey = (typeof OPCOES)[number]["key"];
 // Itens essenciais vêm pré-selecionados; os complementares (JR Pass, seguro
 // viagem, câmbio, motorista privado) ficam disponíveis pra adicionar sob
 // demanda.
-const ITENS_PADRAO: OpcaoKey[] = ["aereo", "hotel", "transporte", "guia", "servicos"];
+const ITENS_PADRAO: OpcaoKey[] = ["aereo", "hotel", "transporte", "guia", "servicos", "roteiro"];
 
 // Os 20 destinos mais procurados do Japão pra turismo de lazer — mistura de
 // grandes cidades, cultura tradicional, natureza e praia/ilhas. Só Tokyo,
@@ -312,6 +369,8 @@ export function CustomPackageCard() {
     useState<(typeof CATEGORIAS_HOTEL)[number]>("4 estrelas");
   const [tipoQuarto, setTipoQuarto] =
     useState<(typeof TIPOS_QUARTO)[number]>("Individual");
+  const [classeAereo, setClasseAereo] =
+    useState<(typeof CLASSES_AEREO)[number]>("Economy");
   const [selecionados, setSelecionados] = useState<Set<OpcaoKey>>(
     () => new Set(ITENS_PADRAO),
   );
@@ -326,8 +385,8 @@ export function CustomPackageCard() {
   useEffect(() => setMounted(true), []);
 
   const precoCtx = useMemo<PrecoCtx>(
-    () => ({ dias, categoriaHotel, tipoQuarto }),
-    [dias, categoriaHotel, tipoQuarto],
+    () => ({ dias, pessoas, categoriaHotel, tipoQuarto, classeAereo }),
+    [dias, pessoas, categoriaHotel, tipoQuarto, classeAereo],
   );
 
   const itensSelecionados = useMemo(
@@ -421,11 +480,11 @@ export function CustomPackageCard() {
       duracao: `${dias} dias`,
       periodo: dataFormatada,
       acomodacao: `${pessoas} ${pessoas === 1 ? "pessoa" : "pessoas"} · ${tipoQuarto} · Hotel ${categoriaHotel}`,
-      itens: itensSelecionados.map((o) =>
-        o.key === "hotel"
-          ? { icone: o.icone, texto: `${o.label} — ${categoriaHotel}` }
-          : { icone: o.icone, texto: o.label },
-      ),
+      itens: itensSelecionados.map((o) => {
+        if (o.key === "hotel") return { icone: o.icone, texto: `${o.label} — ${categoriaHotel}` };
+        if (o.key === "aereo") return { icone: o.icone, texto: `${o.label} — ${classeAereo}` };
+        return { icone: o.icone, texto: o.label };
+      }),
       detalhes: detalhesPacote.length > 0 ? detalhesPacote : undefined,
       precoLabel: total > 0 ? brlParaUSDLabel(total, cambio) : "Sob consulta",
       precoSufixo:
@@ -449,7 +508,7 @@ export function CustomPackageCard() {
       </p>
 
       <form onSubmit={handleSubmit} className="mt-5 space-y-6">
-        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 md:grid-cols-5">
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 md:grid-cols-6">
           <label className="block">
             <span className="mb-2 block text-[10px] uppercase tracking-[0.2em] text-white/40">
               Data preferida
@@ -511,6 +570,23 @@ export function CustomPackageCard() {
               {TIPOS_QUARTO.map((t) => (
                 <option key={t} value={t} className="bg-black">
                   {t}
+                </option>
+              ))}
+            </select>
+          </label>
+
+          <label className="block">
+            <span className="mb-2 block text-[10px] uppercase tracking-[0.2em] text-white/40">
+              Classe do voo
+            </span>
+            <select
+              value={classeAereo}
+              onChange={(e) => setClasseAereo(e.target.value as (typeof CLASSES_AEREO)[number])}
+              className="w-full rounded-lg border border-white/15 bg-black/30 px-3 py-2.5 text-sm text-white outline-none focus:border-white/40"
+            >
+              {CLASSES_AEREO.map((c) => (
+                <option key={c} value={c} className="bg-black">
+                  {c === "Economy" ? "Economy" : "Business"}
                 </option>
               ))}
             </select>
@@ -747,7 +823,7 @@ export function CustomPackageCard() {
             <p className="pr-8 text-base font-medium text-white">
               {opcaoAberta.icone} {opcaoAberta.label}
             </p>
-            <p className="mt-3 text-sm font-light leading-6 text-white/65">
+            <p className="mt-3 whitespace-pre-line text-sm font-light leading-6 text-white/65">
               {opcaoAberta.detalhe}
             </p>
           </div>

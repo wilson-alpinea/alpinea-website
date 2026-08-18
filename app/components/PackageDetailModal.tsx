@@ -285,7 +285,7 @@ const INCLUSOES_PADRAO = [
     title: "Passagem Aérea",
     text: "Ida e volta, com as melhores opções de conexão para o Japão.",
     detalhe:
-      "Bilhete aéreo de ida e volta ao Japão, com a Ajisai buscando as melhores opções de conexão disponíveis para as datas do roteiro. Já inclui 1 bagagem despachada de até 23kg e 1 bagagem de mão por pessoa, conforme a companhia aérea selecionada.",
+      "Bilhete aéreo de ida e volta ao Japão, com a Ajisai buscando as melhores opções de conexão disponíveis para as datas do roteiro. Já inclui 1 bagagem despachada de até 23kg e 1 bagagem de mão por pessoa, conforme a companhia aérea selecionada.\n\nDiferenciais Ajisai para quem compra a passagem com a gente: concierge presencial no Aeroporto de Guarulhos na partida (apoio no balcão de check-in, remarcação em caso de cancelamento involuntário e direitos básicos em atrasos — alimentação acima de 3h, hospedagem acima de 8h); protocolo pré-embarque com assistente dedicado para o Visit Japan Web (VJW) e revisão final do itinerário; e monitoramento da viagem, com grupo de WhatsApp emergencial disponível em horário comercial (seg. a sex., 9h–18h de Brasília), com prioridade para menores desacompanhados e passageiros acima de 65 anos.",
   },
   {
     title: "Seguro Viagem",
@@ -864,7 +864,7 @@ export function PackageDetailModal({
                   </span>
                 )}
               </p>
-              <p className="mt-3 text-sm font-light leading-6 text-white/65">
+              <p className="mt-3 whitespace-pre-line text-sm font-light leading-6 text-white/65">
                 {inclusaoAberta.detalhe}
               </p>
             </div>

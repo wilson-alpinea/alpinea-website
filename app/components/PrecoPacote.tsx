@@ -17,6 +17,32 @@ export function PrecoPacote({
 }) {
   const cambio = useCambioUSD();
 
+  if (variante.precoUSD != null) {
+    const parcela = formatUSD(variante.precoUSD / 12);
+    return (
+      <>
+        <p className={precoClassName}>{formatUSD(variante.precoUSD)}</p>
+        {cambio && (
+          <p className="mt-1 text-sm font-medium text-white/60">
+            ou {formatBRL(variante.precoUSD * cambio.cotacao)}
+          </p>
+        )}
+        <p className="mt-1 text-xs uppercase tracking-[0.15em] text-white/40">
+          Por pessoa · Quarto Individual
+        </p>
+        <p className="mt-1 text-sm font-medium text-white/70">
+          ou em até 12x de {parcela} + Juros Mensais
+        </p>
+        {variante.personalizadoUSD != null && (
+          <p className="mt-2 rounded-lg border border-[#e0916a]/30 bg-[#e0916a]/10 px-3 py-2 text-xs leading-5 text-[#e0916a]">
+            Versão Personalizada deste roteiro: {formatUSD(variante.personalizadoUSD)}
+          </p>
+        )}
+        {cambio && <CambioLabel cambio={cambio} className="mt-1 text-[11px] text-white/40" />}
+      </>
+    );
+  }
+
   if (variante.precoBRL == null) {
     return (
       <>
