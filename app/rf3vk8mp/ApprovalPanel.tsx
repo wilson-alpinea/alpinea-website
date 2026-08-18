@@ -4216,7 +4216,12 @@ function PeriodBlock({
           {period.decisoes && period.decisoes.length > 0 && (
             <div className="mb-5 rounded-2xl border border-emerald-200 bg-emerald-50 p-5">
               <p className="mb-4 flex items-center gap-2 text-xs font-bold uppercase tracking-[0.2em] text-emerald-900">
-                <span className="text-sm">💡</span>
+                <img
+                  src="/images/icone-duvidas-frequentes.png"
+                  alt=""
+                  className="h-4 w-4 object-contain"
+                  style={{ filter: "brightness(0) saturate(100%)" }}
+                />
                 Dúvidas Frequentes
               </p>
               <div className="grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-2">
@@ -4230,7 +4235,12 @@ function PeriodBlock({
                     }
                   >
                     <p className="mb-1.5 flex items-center gap-2 text-xs font-bold uppercase tracking-[0.12em] text-emerald-900">
-                      <IconArrowDown className="h-3 w-3 -rotate-90 text-emerald-700" />
+                      <img
+                        src="/images/icone-ideia-sugestao.png"
+                        alt=""
+                        className="h-3.5 w-3.5 object-contain"
+                        style={{ filter: "brightness(0) saturate(100%)" }}
+                      />
                       {d.titulo}
                     </p>
                     <p className="text-sm leading-6 text-emerald-950/75">
