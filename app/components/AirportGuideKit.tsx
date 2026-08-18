@@ -70,10 +70,7 @@ export function IconCard({ className }: { className?: string }) {
 
 export function IconExchange({ className }: { className?: string }) {
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" className={className}>
-      <path d="M6 7h12M14 3l4 4-4 4" />
-      <path d="M18 17H6m4 4-4-4 4-4" />
-    </svg>
+    <img src="/images/icone-cambio-dinheiro.png" alt="" className={`${className ?? ""} object-contain`} />
   );
 }
 

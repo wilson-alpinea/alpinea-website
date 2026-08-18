@@ -3171,16 +3171,18 @@ function DeslocamentoCard({ deslocamento }: { deslocamento: Deslocamento }) {
           companhia operadora, nome da estação e nome em japonês — repetido
           pra origem e destino, ligados por uma seta. Fotos de estação em si
           (fachada/entrada) não entram aqui — ficam só no guia do hotel. */}
-      <p className="mb-5 flex items-center justify-center gap-2.5 text-center text-xs font-bold uppercase tracking-[0.15em] text-[#24211D]/65">
-        <span
-          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-white sm:h-10 sm:w-10"
-          style={{ background: deslocamento.linha.cor || "#B96432" }}
-        >
-          {(() => {
-            const Icon = deslocamento.opcoes.find((o) => o.recomendado)?.Icon ?? IconMetro;
-            return <Icon className="h-6 w-6 sm:h-7 sm:w-7" />;
-          })()}
-        </span>
+      <p
+        className={`flex items-center justify-center gap-2 text-center text-xs font-bold uppercase tracking-[0.15em] text-[#24211D]/65 ${
+          deslocamento.estacoesIntermediarias &&
+          deslocamento.estacoesIntermediarias.length > 0
+            ? "mb-16 sm:mb-20"
+            : "mb-5"
+        }`}
+      >
+        {(() => {
+          const Icon = deslocamento.opcoes.find((o) => o.recomendado)?.Icon ?? IconMetro;
+          return <Icon className="h-9 w-9 shrink-0 sm:h-10 sm:w-10" />;
+        })()}
         {deslocamento.linha.logo && `${deslocamento.linha.codigo} · `}
         {deslocamento.linha.nome} · sem baldeação
       </p>
@@ -3219,9 +3221,16 @@ function DeslocamentoCard({ deslocamento }: { deslocamento: Deslocamento }) {
             </p>
           )}
           {deslocamento.estacaoOrigem.saida && (
-            <p className="mt-3 w-full break-words rounded-xl border-2 border-emerald-400 bg-emerald-50 px-3 py-2.5 text-xs font-bold uppercase leading-snug tracking-[0.04em] text-emerald-800 shadow-sm sm:text-sm">
-              {deslocamento.estacaoOrigem.saida}
-            </p>
+            <div className="mt-3 flex w-full flex-col items-center gap-1 break-words rounded-xl border-2 border-emerald-400 bg-emerald-50 px-3 py-2.5 shadow-sm">
+              <img
+                src="/images/icone-saida-entrada-metro.png"
+                alt=""
+                className="h-6 w-6 object-contain"
+              />
+              <p className="text-xs font-bold uppercase leading-snug tracking-[0.04em] text-emerald-800 sm:text-sm">
+                {deslocamento.estacaoOrigem.saida}
+              </p>
+            </div>
           )}
         </div>
 
@@ -3347,9 +3356,16 @@ function DeslocamentoCard({ deslocamento }: { deslocamento: Deslocamento }) {
             </p>
           )}
           {deslocamento.estacaoDestino.saida && (
-            <p className="mt-3 w-full break-words rounded-xl border-2 border-emerald-400 bg-emerald-50 px-3 py-2.5 text-xs font-bold uppercase leading-snug tracking-[0.04em] text-emerald-800 shadow-sm sm:text-sm">
-              {deslocamento.estacaoDestino.saida}
-            </p>
+            <div className="mt-3 flex w-full flex-col items-center gap-1 break-words rounded-xl border-2 border-emerald-400 bg-emerald-50 px-3 py-2.5 shadow-sm">
+              <img
+                src="/images/icone-saida-entrada-metro.png"
+                alt=""
+                className="h-6 w-6 object-contain"
+              />
+              <p className="text-xs font-bold uppercase leading-snug tracking-[0.04em] text-emerald-800 sm:text-sm">
+                {deslocamento.estacaoDestino.saida}
+              </p>
+            </div>
           )}
         </div>
       </div>
@@ -3365,15 +3381,7 @@ function DeslocamentoCard({ deslocamento }: { deslocamento: Deslocamento }) {
             }`}
           >
             <div className="flex items-center gap-3">
-              <span
-                className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-full ${
-                  opcao.recomendado
-                    ? "bg-[#3E5FA8] text-white"
-                    : "bg-white text-[#3E5FA8]/70"
-                }`}
-              >
-                <opcao.Icon className="h-8 w-8" />
-              </span>
+              <opcao.Icon className="h-12 w-12 shrink-0" />
               <div>
                 <p className="text-[10px] uppercase tracking-[0.18em] text-[#3E5FA8]/70">
                   {opcao.meio}
@@ -4527,21 +4535,21 @@ function IconCheckSmall({ className }: { className?: string }) {
 
 function IconShinkansen({ className }: { className?: string }) {
   return (
-    <svg {...iconProps(className)}>
-      <path d="M3 15c0-5 3-9 9-9h5a4 4 0 0 1 4 4v5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
-      <line x1="9" y1="10" x2="20" y2="10" />
-      <circle cx="8" cy="19" r="1.3" />
-      <circle cx="16" cy="19" r="1.3" />
-    </svg>
+    <img
+      src="/images/icone-trem-bala-shinkansen.png"
+      alt=""
+      className={`${className ?? ""} object-contain`}
+    />
   );
 }
 
 function IconExchange({ className }: { className?: string }) {
   return (
-    <svg {...iconProps(className)}>
-      <path d="M6 8h13l-4-4" />
-      <path d="M18 16H5l4 4" />
-    </svg>
+    <img
+      src="/images/icone-cambio-dinheiro.png"
+      alt=""
+      className={`${className ?? ""} object-contain`}
+    />
   );
 }
 
