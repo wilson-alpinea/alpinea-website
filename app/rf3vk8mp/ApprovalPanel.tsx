@@ -797,7 +797,7 @@ const DAY_1: DayContent = {
       passos: [
         { titulo: "Tembo Deck · 350 m", foto: "/images/skytree-tembo-deck-miniatura.png" },
         { titulo: "Tembo Galleria · 450 m (opcional)", foto: "/images/skytree-tembo-deck-aerea.jpg" },
-        { titulo: "Tokyo Solamachi", foto: "/images/solamachi-floor1.png" },
+        { titulo: "Tokyo Solamachi", foto: "/images/solamachi-pokemon-center.jpg" },
       ],
     },
     visaoAnotada: {
@@ -820,9 +820,9 @@ const DAY_1: DayContent = {
           legenda: "Tembo Galleria, visto de fora",
         },
         {
-          src: "/images/skytree-tembo-deck-vista-noturna.jpg",
-          alt: "Vista de dentro do Tembo Deck à noite, com a cidade iluminada ao fundo",
-          legenda: "Vista do Tembo Deck, à noite",
+          src: "/images/skytree-tembo-deck-janela.jpg",
+          alt: "Vista da cidade através das janelas do Tembo Deck da Tokyo Sky Tree",
+          legenda: "Vista do Tembo Deck",
         },
       ],
       mapas: [
@@ -2784,8 +2784,8 @@ function ResumoDiaBlock({
   resumo: NonNullable<DayContent["resumoDia"]>;
 }) {
   return (
-    <div className="mb-10 rounded-2xl border border-[#2C6CA6] bg-[#F8FAF9] p-5 sm:p-6">
-      <p className="mb-5 text-xs font-bold uppercase tracking-[0.25em] text-[#000000]">
+    <div className="mb-10 rounded-2xl bg-black p-5 sm:p-6">
+      <p className="mb-5 text-xs font-bold uppercase tracking-[0.25em] text-white">
         Resumo do Dia
       </p>
       <div className="flex overflow-x-auto pb-1">
@@ -2794,11 +2794,11 @@ function ResumoDiaBlock({
             <div className="flex w-[72px] shrink-0 flex-col items-center text-center sm:w-20">
               {passo.foto ? (
                 passo.foto.includes("/images/icone-") ? (
-                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border-2 border-white bg-[#F8FAF9] shadow-sm sm:h-14 sm:w-14">
+                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-white shadow-sm sm:h-14 sm:w-14">
                     <img
                       src={passo.foto}
                       alt={passo.titulo}
-                      className="h-6 w-6 object-contain sm:h-7 sm:w-7"
+                      className="h-8 w-8 object-contain sm:h-9 sm:w-9"
                     />
                   </div>
                 ) : (
@@ -2811,21 +2811,21 @@ function ResumoDiaBlock({
                   </div>
                 )
               ) : (
-                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-dashed border-[#2C6CA6]/35 text-[#2C6CA6]/50 sm:h-14 sm:w-14">
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-dashed border-white/25 text-white/40 sm:h-14 sm:w-14">
                   <IconClock className="h-5 w-5" />
                 </div>
               )}
-              <p className="mt-2 text-[11px] font-semibold leading-tight text-[#000000] sm:text-xs">
+              <p className="mt-2 text-[11px] font-semibold leading-tight text-white sm:text-xs">
                 {passo.titulo}
               </p>
               {passo.horario && (
-                <p className="mt-0.5 text-[10px] font-medium tracking-wide text-[#000000]/55">
+                <p className="mt-0.5 text-[10px] font-medium tracking-wide text-white/55">
                   {passo.horario}
                 </p>
               )}
             </div>
             {i < resumo.passos.length - 1 && (
-              <span className="mt-6 h-[2px] w-4 shrink-0 rounded-full bg-[#000000]/20 sm:mt-7 sm:w-6" />
+              <span className="mt-6 h-[2px] w-4 shrink-0 rounded-full bg-white/20 sm:mt-7 sm:w-6" />
             )}
           </div>
         ))}
@@ -4069,7 +4069,7 @@ function PeriodBlock({
                       </p>
                     </div>
                     {i < period.percursoEssencial!.passos.length - 1 && (
-                      <span className="mt-7 h-[2px] w-5 shrink-0 rounded-full bg-[#000000]/20 sm:mt-8 sm:w-7" />
+                      <span className="mt-7 h-[2px] w-10 shrink-0 rounded-full bg-[#000000]/20 sm:mt-8 sm:w-12" />
                     )}
                   </div>
                 );
@@ -5698,8 +5698,8 @@ export function ApprovalPanel({
                 <span
                   className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-full border-2 text-sm font-bold transition ${
                     active
-                      ? "border-[#000000] bg-[#FDFCF9] text-[#24211D] hover:border-transparent hover:bg-[#000000] hover:text-white"
-                      : "border-[#DDD8CF] bg-[#FDFCF9] text-[#24211D]/72 hover:border-transparent hover:bg-[#000000] hover:text-white"
+                      ? "border-[#000000] bg-[#E7F4E9] text-[#24211D] hover:border-transparent hover:bg-[#000000] hover:text-white"
+                      : "border-[#DDD8CF] bg-[#E7F4E9] text-[#24211D]/72 hover:border-transparent hover:bg-[#000000] hover:text-white"
                   }`}
                 >
                   {index + 1}
