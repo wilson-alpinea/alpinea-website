@@ -53,30 +53,15 @@ const DIMENSION_ICON_SRC: Record<DimensionIconKind, string> = {
   bemestar: "/images/icone-bemestar-relaxamento.png",
 };
 
-function DimensionIcon({
-  kind,
-  className,
-}: {
-  kind: DimensionIconKind;
-  className?: string;
-}) {
-  return (
-    <img
-      src={DIMENSION_ICON_SRC[kind]}
-      alt=""
-      className={`${className ?? ""} object-contain`}
-    />
-  );
-}
-
 function RadarChart({ dimensions }: { dimensions: RadarDimension[] }) {
-  const width = 280;
-  const height = 280;
+  const width = 460;
+  const height = 380;
   const cx = width / 2;
   const cy = height / 2;
   const radius = 88;
   const levels = [0.2, 0.4, 0.6, 0.8, 1];
   const n = dimensions.length;
+  const lineHeight = 13;
 
   const point = (r: number, i: number) => {
     const angle = (Math.PI * 2 * i) / n - Math.PI / 2;
@@ -91,7 +76,7 @@ function RadarChart({ dimensions }: { dimensions: RadarDimension[] }) {
   return (
     <svg
       viewBox={`0 0 ${width} ${height}`}
-      className="mx-auto -mb-4 -mt-2 block h-auto w-full max-w-[380px]"
+      className="mx-auto -mb-4 -mt-2 block h-auto w-full max-w-[460px]"
     >
       {levels.map((level, li) => (
         <polygon
@@ -134,8 +119,8 @@ function RadarChart({ dimensions }: { dimensions: RadarDimension[] }) {
       ))}
 
       {dimensions.map((d, i) => {
-        const p = point(radius + 30, i);
-        const size = 30;
+        const p = point(radius + 28, i);
+        const size = 28;
         return (
           <image
             key={i}
@@ -145,6 +130,31 @@ function RadarChart({ dimensions }: { dimensions: RadarDimension[] }) {
             width={size}
             height={size}
           />
+        );
+      })}
+
+      {dimensions.map((d, i) => {
+        const p = point(radius + 54, i);
+        const anchor =
+          Math.abs(p.x - cx) < 4 ? "middle" : p.x > cx ? "start" : "end";
+        const startY = p.y - ((d.lines.length - 1) * lineHeight) / 2;
+        return (
+          <text
+            key={i}
+            x={p.x}
+            y={startY}
+            textAnchor={anchor}
+            className="fill-[#24211D] uppercase"
+            fontSize={12}
+            fontWeight={700}
+            style={{ letterSpacing: "0.03em" }}
+          >
+            {d.lines.map((line, li) => (
+              <tspan key={li} x={p.x} dy={li === 0 ? 0 : lineHeight}>
+                {line}
+              </tspan>
+            ))}
+          </text>
         );
       })}
     </svg>
@@ -329,19 +339,6 @@ export default function AprovacaoRoteiroPage() {
                 Perfil do Viajante
               </p>
               <RadarChart dimensions={RADAR_DIMENSIONS} />
-              <div className="mx-auto -mt-2 grid max-w-lg grid-cols-1 gap-x-6 gap-y-5 sm:grid-cols-2">
-                {RADAR_DIMENSIONS.map((d, i) => (
-                  <div key={i} className="flex items-center gap-4">
-                    <DimensionIcon
-                      kind={d.icon}
-                      className="h-14 w-14 shrink-0 text-[#000000]"
-                    />
-                    <p className="text-lg font-semibold text-[#24211D]">
-                      {d.lines.join(" ")}
-                    </p>
-                  </div>
-                ))}
-              </div>
             </div>
             </div>
           </details>

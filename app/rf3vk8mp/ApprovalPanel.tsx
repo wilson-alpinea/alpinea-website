@@ -3511,19 +3511,16 @@ function VisaoAnotadaBlock({
           </div>
         ) : (
           <div className="mb-5 rounded-2xl bg-black px-6 py-5 text-center">
-            <img
-              src="/images/icone-raiox-alpinea.png"
-              alt=""
-              className="mx-auto mb-3 h-20 w-20 object-contain"
-            />
             <p className={`${displayClassName} text-2xl font-medium text-white md:text-3xl`}>
               Raio-X Alpinea{visaoAnotada.titulo && ` — ${visaoAnotada.titulo}`}
             </p>
+            <img
+              src="/images/icone-raiox-alpinea.png"
+              alt=""
+              className="mx-auto my-4 h-16 w-16 object-contain"
+            />
             {visaoAnotada.comentarios && visaoAnotada.comentarios.length > 0 && (
-              <div className="mx-auto mt-4 max-w-2xl border-t border-white/15 pt-4 text-left">
-                <p className="mb-2 text-[10px] font-bold uppercase tracking-[0.2em] text-white/50">
-                  Principais Comentários da Seção
-                </p>
+              <div className="mx-auto max-w-2xl text-left">
                 <div className="space-y-3">
                   {visaoAnotada.comentarios.map((c, i) => (
                     <p key={i} className="text-sm leading-6 text-white/80">
@@ -3931,7 +3928,7 @@ function PeriodBlock({
                         </div>
                       ) : (
                         <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full border border-dashed border-[#2C6CA6]/35 text-[#2C6CA6]/50 sm:h-[76px] sm:w-[76px]">
-                          <IconWalk className="h-6 w-6" />
+                          <IconWalk className="h-9 w-9 sm:h-11 sm:w-11" />
                         </div>
                       )}
                       {i < period.percursoEssencial!.passos.length - 1 && (
@@ -4124,7 +4121,7 @@ function PeriodBlock({
           {period.banheirosProximos && period.banheirosProximos.length > 0 && (
             <div className="mb-5 rounded-2xl border border-[#DDD8CF] bg-[#FAF9F6] p-5">
               <p className="mb-3.5 flex items-center gap-2.5 text-[10px] font-bold uppercase tracking-[0.15em] text-[#24211D]/55">
-                <IconToilet className="h-12 w-12 text-[#000000]" />
+                <IconToilet className="h-20 w-20 text-[#000000]" />
                 Banheiros Públicos Mais Próximos
               </p>
               <div className="space-y-3.5">
@@ -5642,7 +5639,11 @@ export function ApprovalPanel({
               "group flex min-h-[112px] cursor-pointer flex-col items-center justify-center gap-2.5 rounded-xl border border-[#DDD8CF] bg-[#FAF9F6] px-3 py-4 text-center text-xs leading-5 text-[#24211D]/75 transition duration-300 ease-out hover:-translate-y-0.5 hover:border-[#000000]/30 hover:bg-[#F8FAF9] hover:text-[#000000] hover:shadow-[0_10px_30px_-15px_rgba(23,59,69,0.35)]";
             const content = (
               <>
-                <Icon className="h-14 w-14" />
+                <Icon
+                  className={
+                    label === "Trem Bala (Shinkansen)" ? "h-20 w-20" : "h-14 w-14"
+                  }
+                />
                 {label}
               </>
             );
