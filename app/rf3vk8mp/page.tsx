@@ -70,8 +70,8 @@ function DimensionIcon({
 }
 
 function RadarChart({ dimensions }: { dimensions: RadarDimension[] }) {
-  const width = 220;
-  const height = 220;
+  const width = 280;
+  const height = 280;
   const cx = width / 2;
   const cy = height / 2;
   const radius = 88;
@@ -132,6 +132,21 @@ function RadarChart({ dimensions }: { dimensions: RadarDimension[] }) {
       {dataPoints.map((p, i) => (
         <circle key={i} cx={p.x} cy={p.y} r={3.5} fill="#000000" />
       ))}
+
+      {dimensions.map((d, i) => {
+        const p = point(radius + 30, i);
+        const size = 30;
+        return (
+          <image
+            key={i}
+            href={DIMENSION_ICON_SRC[d.icon]}
+            x={p.x - size / 2}
+            y={p.y - size / 2}
+            width={size}
+            height={size}
+          />
+        );
+      })}
     </svg>
   );
 }

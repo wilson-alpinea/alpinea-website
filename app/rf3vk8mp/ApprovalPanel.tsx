@@ -3225,7 +3225,7 @@ function DeslocamentoCard({ deslocamento }: { deslocamento: Deslocamento }) {
               <img
                 src="/images/icone-saida2.png"
                 alt=""
-                className="h-12 w-12 object-contain"
+                className="h-20 w-20 object-contain"
               />
               <p className="text-xs font-bold uppercase leading-snug tracking-[0.04em] text-emerald-800 sm:text-sm">
                 {deslocamento.estacaoOrigem.saida}
@@ -3360,7 +3360,7 @@ function DeslocamentoCard({ deslocamento }: { deslocamento: Deslocamento }) {
               <img
                 src="/images/icone-saida2.png"
                 alt=""
-                className="h-12 w-12 object-contain"
+                className="h-20 w-20 object-contain"
               />
               <p className="text-xs font-bold uppercase leading-snug tracking-[0.04em] text-emerald-800 sm:text-sm">
                 {deslocamento.estacaoDestino.saida}
@@ -3381,7 +3381,11 @@ function DeslocamentoCard({ deslocamento }: { deslocamento: Deslocamento }) {
             }`}
           >
             <div className="flex items-center gap-3">
-              <opcao.Icon className="h-12 w-12 shrink-0" />
+              <opcao.Icon
+                className={`shrink-0 ${
+                  opcao.meio === "Táxi / Carro" ? "h-16 w-16" : "h-12 w-12"
+                }`}
+              />
               <div>
                 <p className="text-[10px] uppercase tracking-[0.18em] text-[#3E5FA8]/70">
                   {opcao.meio}
@@ -3507,6 +3511,11 @@ function VisaoAnotadaBlock({
           </div>
         ) : (
           <div className="mb-5 rounded-2xl bg-black px-6 py-5 text-center">
+            <img
+              src="/images/icone-raiox-alpinea.png"
+              alt=""
+              className="mx-auto mb-3 h-20 w-20 object-contain"
+            />
             <p className={`${displayClassName} text-2xl font-medium text-white md:text-3xl`}>
               Raio-X Alpinea{visaoAnotada.titulo && ` — ${visaoAnotada.titulo}`}
             </p>
@@ -4001,9 +4010,7 @@ function PeriodBlock({
                       key={item.label}
                       className="mb-5 flex items-center gap-5 rounded-2xl border border-[#BFDCF2] bg-[#EAF3FC] p-6 sm:p-7"
                     >
-                      <span className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-white text-[#2C6CA6] shadow-sm">
-                        <IconClock className="h-8 w-8" />
-                      </span>
+                      <IconClock className="h-20 w-20 shrink-0 text-[#2C6CA6] sm:h-24 sm:w-24" />
                       <div className="min-w-0 flex-1">
                         <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#2C6CA6]/85">
                           Melhor Horário
@@ -4041,9 +4048,7 @@ function PeriodBlock({
                       key={item.label}
                       className="mb-5 flex items-center gap-4 rounded-2xl border border-[#BFDCF2] bg-[#EAF3FC] p-5"
                     >
-                      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white text-[#2C6CA6]">
-                        <IconClock className="h-5 w-5" />
-                      </span>
+                      <IconClock className="h-14 w-14 shrink-0 text-[#2C6CA6]" />
                       <div>
                         <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-[#2C6CA6]/85">
                           Melhor Horário
@@ -4119,7 +4124,7 @@ function PeriodBlock({
           {period.banheirosProximos && period.banheirosProximos.length > 0 && (
             <div className="mb-5 rounded-2xl border border-[#DDD8CF] bg-[#FAF9F6] p-5">
               <p className="mb-3.5 flex items-center gap-2.5 text-[10px] font-bold uppercase tracking-[0.15em] text-[#24211D]/55">
-                <IconToilet className="h-7 w-7 text-[#000000]" />
+                <IconToilet className="h-12 w-12 text-[#000000]" />
                 Banheiros Públicos Mais Próximos
               </p>
               <div className="space-y-3.5">
