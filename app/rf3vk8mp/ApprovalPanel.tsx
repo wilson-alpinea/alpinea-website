@@ -3431,7 +3431,7 @@ function DeslocamentoCard({ deslocamento }: { deslocamento: Deslocamento }) {
           </div>
           {deslocamento.estacoesIntermediarias &&
             deslocamento.estacoesIntermediarias.length > 0 && (
-              <div className="relative h-0 w-full">
+              <div className="relative h-16 w-full sm:h-20">
                 {deslocamento.estacoesIntermediarias.map((estacao, i) => {
                   if (!estacao.nomeJapones) return null;
                   const pct =
