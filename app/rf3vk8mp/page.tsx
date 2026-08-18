@@ -54,8 +54,8 @@ const DIMENSION_ICON_SRC: Record<DimensionIconKind, string> = {
 };
 
 function RadarChart({ dimensions }: { dimensions: RadarDimension[] }) {
-  const width = 520;
-  const height = 420;
+  const width = 560;
+  const height = 440;
   const cx = width / 2;
   const cy = height / 2;
   const radius = 88;
@@ -120,7 +120,7 @@ function RadarChart({ dimensions }: { dimensions: RadarDimension[] }) {
 
       {dimensions.map((d, i) => {
         const p = point(radius + 34, i);
-        const size = 44;
+        const size = 57;
         return (
           <image
             key={i}
@@ -134,14 +134,25 @@ function RadarChart({ dimensions }: { dimensions: RadarDimension[] }) {
       })}
 
       {dimensions.map((d, i) => {
-        const p = point(radius + 80, i);
-        const anchor =
-          Math.abs(p.x - cx) < 4 ? "middle" : p.x > cx ? "start" : "end";
-        const startY = p.y - ((d.lines.length - 1) * lineHeight) / 2;
+        const iconP = point(radius + 34, i);
+        const angle = (Math.PI * 2 * i) / n - Math.PI / 2;
+        const dx = Math.cos(angle);
+        const dy = Math.sin(angle);
+        // Dimensões próximas do eixo vertical (topo/base) empilham o texto
+        // acima/abaixo do ícone; as demais mantêm o texto na mesma altura do
+        // ícone, deslocado só na horizontal — evita o texto "flutuar" longe
+        // do ícone que ele rotula.
+        const isVertical = Math.abs(dx) < 0.35;
+        const gapX = 56;
+        const gapY = 50;
+        const tx = isVertical ? iconP.x : iconP.x + Math.sign(dx) * gapX;
+        const ty = isVertical ? iconP.y + Math.sign(dy) * gapY : iconP.y;
+        const anchor = isVertical ? "middle" : dx > 0 ? "start" : "end";
+        const startY = ty - ((d.lines.length - 1) * lineHeight) / 2 + 4;
         return (
           <text
             key={i}
-            x={p.x}
+            x={tx}
             y={startY}
             textAnchor={anchor}
             className="fill-[#24211D] uppercase"
@@ -150,7 +161,7 @@ function RadarChart({ dimensions }: { dimensions: RadarDimension[] }) {
             style={{ letterSpacing: "0.03em" }}
           >
             {d.lines.map((line, li) => (
-              <tspan key={li} x={p.x} dy={li === 0 ? 0 : lineHeight}>
+              <tspan key={li} x={tx} dy={li === 0 ? 0 : lineHeight}>
                 {line}
               </tspan>
             ))}

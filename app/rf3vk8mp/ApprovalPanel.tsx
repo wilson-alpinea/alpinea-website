@@ -3526,13 +3526,13 @@ function VisaoAnotadaBlock({
           </div>
         ) : (
           <div
-            className={`mb-5 flex min-h-[240px] w-full flex-col rounded-2xl bg-black bg-cover bg-center px-6 py-6 text-center sm:min-h-[300px] ${
-              visaoAnotada.fundo ? "justify-between" : "justify-center"
+            className={`mb-5 flex min-h-[240px] w-full flex-col rounded-2xl bg-black bg-cover px-6 py-6 text-center sm:min-h-[300px] ${
+              visaoAnotada.fundo ? "justify-between bg-top" : "justify-center bg-center"
             }`}
             style={
               visaoAnotada.fundo
                 ? {
-                    backgroundImage: `linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.55)), url(${visaoAnotada.fundo})`,
+                    backgroundImage: `linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.82)), url(${visaoAnotada.fundo})`,
                   }
                 : undefined
             }
@@ -3565,7 +3565,7 @@ function VisaoAnotadaBlock({
         <button
           type="button"
           onClick={() => setZoom({ src: visaoAnotada.imagem, alt: visaoAnotada.imagemAlt })}
-          className="group relative mx-auto block max-w-xl overflow-hidden rounded-2xl border border-[#DDD8CF] sm:max-w-2xl"
+          className="group relative block w-full overflow-hidden rounded-2xl border border-[#DDD8CF]"
         >
           <img
             src={visaoAnotada.imagem}
@@ -3926,8 +3926,7 @@ function PeriodBlock({
             <p className="text-xs font-bold uppercase tracking-[0.25em] text-[#000000]">
               Percurso essencial
             </p>
-            <div className="flex items-center gap-2.5 text-right">
-              <IconClock className="h-6 w-6 shrink-0 text-[#B96432]" />
+            <div className="flex items-center gap-3 text-right">
               <div>
                 <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#B96432]">
                   Tempo estimado de visitação
@@ -3936,6 +3935,7 @@ function PeriodBlock({
                   {period.percursoEssencial.duracao}
                 </p>
               </div>
+              <IconClock className="h-9 w-9 shrink-0 text-[#B96432] sm:h-10 sm:w-10" />
             </div>
           </div>
           <div className="mt-6 flex justify-center">
