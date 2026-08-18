@@ -314,6 +314,22 @@ export default function PacotesJapaoPage() {
               </a>
             ))}
           </div>
+
+          <div className="mx-auto mt-14 max-w-3xl">
+            <p className="text-center text-[10px] uppercase tracking-[0.2em] text-white/40">
+              Veja funcionando
+            </p>
+            <h3
+              className={`${display.className} mt-2 text-center text-xl font-medium text-white md:text-2xl`}
+            >
+              Como funcionam os pacotes Ajisai
+            </h3>
+            <VideoPlaceholder
+              titulo="Como funcionam os pacotes Ajisai"
+              descricao="Vídeo explicativo sobre as opções de pacote e como escolher a certa."
+              className="mx-auto mt-6"
+            />
+          </div>
         </section>
 
         {/* ── DIVISÃO 1 · PACOTES DE CARAVANA ── */}
@@ -655,5 +671,47 @@ function IconHeadset({ className }: { className?: string }) {
       <path d="M20 13a2 2 0 0 0-2-2h-1v6h1a2 2 0 0 0 2-2v-2Z" />
       <path d="M18 17.5c0 1.9-2.2 3-4.5 3" />
     </svg>
+  );
+}
+
+function IconPlay({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="currentColor" className={className}>
+      <path d="M8 5.14v13.72c0 .8.87 1.29 1.56.87l10.99-6.86a1 1 0 0 0 0-1.7L9.56 4.27A1 1 0 0 0 8 5.14Z" />
+    </svg>
+  );
+}
+
+// Placeholder de vídeo — sem player/arquivo real ainda. Troque o miolo por
+// um <video>/embed quando o material estiver pronto; mantém o mesmo espaço
+// e legenda pra não quebrar o layout.
+function VideoPlaceholder({
+  titulo,
+  descricao,
+  className = "",
+}: {
+  titulo: string;
+  descricao?: string;
+  className?: string;
+}) {
+  return (
+    <div
+      className={`group relative aspect-video w-full overflow-hidden rounded-2xl border border-white/10 bg-white/[0.02] ${className}`}
+    >
+      <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 px-6 text-center">
+        <span className="flex h-14 w-14 items-center justify-center rounded-full border border-white/25 bg-white/10 backdrop-blur transition group-hover:scale-105 group-hover:bg-white/20">
+          <IconPlay className="h-5 w-5 translate-x-0.5 text-white" />
+        </span>
+        <p className="text-[10px] uppercase tracking-[0.2em] text-white/40">
+          Vídeo em breve
+        </p>
+        <p className={`${display.className} max-w-xs text-base font-medium text-white md:text-lg`}>
+          {titulo}
+        </p>
+        {descricao && (
+          <p className="max-w-sm text-xs leading-5 text-white/50">{descricao}</p>
+        )}
+      </div>
+    </div>
   );
 }
