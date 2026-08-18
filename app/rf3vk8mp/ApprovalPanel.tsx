@@ -139,6 +139,10 @@ type EstacaoInfo = {
   // Foto real da entrada/fachada da estação — quando presente, substitui o
   // ícone/logo da linha no card de deslocamento.
   foto?: string;
+  // Mapa/planta oficial da estação — mostrado como miniatura com zoom,
+  // abaixo da distância a pé.
+  mapa?: string;
+  mapaAlt?: string;
 };
 
 type Deslocamento = {
@@ -3282,6 +3286,7 @@ function NumberedStep({
 }
 
 function DeslocamentoCard({ deslocamento }: { deslocamento: Deslocamento }) {
+  const [zoomMapa, setZoomMapa] = useState<{ src: string; alt: string } | null>(null);
   return (
     <div className="rounded-2xl border border-[#DDD8CF] bg-[#FDFCF9] p-6 sm:p-7">
       {/* Mesmo template de card de estação do /ajisairoteiros: logo da
@@ -3303,8 +3308,14 @@ function DeslocamentoCard({ deslocamento }: { deslocamento: Deslocamento }) {
         {deslocamento.linha.logo && `${deslocamento.linha.codigo} · `}
         {deslocamento.linha.nome} · sem baldeação
       </p>
-      <div className="flex items-start justify-center gap-3 text-center sm:gap-5">
-        <div className="flex w-32 min-w-0 flex-col items-center sm:w-40">
+      {/* Grid (não flex) pra origem/destino: cada lado é dividido em duas
+          linhas de grid — "info" (foto/nome/distância/mapa) e "saída"
+          (card verde) — de modo que os dois cards verdes sempre comecem
+          na mesma altura, mesmo quando um lado tem mais texto que o
+          outro. A coluna central (traço + estações intermediárias) ocupa
+          as duas linhas. */}
+      <div className="grid grid-cols-[auto_minmax(32px,1fr)_auto] items-start gap-3 text-center sm:gap-5">
+        <div className="col-start-1 row-start-1 flex w-32 min-w-0 flex-col items-center sm:w-40">
           {deslocamento.estacaoOrigem.foto ? (
             <div className="mb-3 h-20 w-full overflow-hidden rounded-xl border border-[#DDD8CF] shadow-sm">
               <img
@@ -3337,6 +3348,31 @@ function DeslocamentoCard({ deslocamento }: { deslocamento: Deslocamento }) {
               {deslocamento.estacaoOrigem.distancia}
             </p>
           )}
+          {deslocamento.estacaoOrigem.mapa && (
+            <button
+              type="button"
+              onClick={() =>
+                setZoomMapa({
+                  src: deslocamento.estacaoOrigem.mapa!,
+                  alt: deslocamento.estacaoOrigem.mapaAlt ?? `Mapa da ${deslocamento.estacaoOrigem.nome}`,
+                })
+              }
+              className="group relative mt-3 block h-20 w-full overflow-hidden rounded-xl border border-[#DDD8CF] shadow-sm"
+            >
+              <img
+                src={deslocamento.estacaoOrigem.mapa}
+                alt={deslocamento.estacaoOrigem.mapaAlt ?? ""}
+                className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
+              />
+              <div className="absolute inset-0 flex items-center justify-center bg-black/0 transition duration-300 group-hover:bg-black/25">
+                <span className="flex h-6 w-6 scale-75 items-center justify-center rounded-full bg-white/90 text-[#000000] opacity-0 shadow-md transition duration-300 group-hover:scale-100 group-hover:opacity-100">
+                  <IconZoom className="h-3 w-3" />
+                </span>
+              </div>
+            </button>
+          )}
+        </div>
+        <div className="col-start-1 row-start-2 flex w-32 min-w-0 flex-col items-center sm:w-40">
           {deslocamento.estacaoOrigem.saida && (
             <div className="mt-3 flex w-full flex-col items-center gap-1 break-words rounded-xl border-2 border-emerald-400 bg-emerald-50 px-3 py-2.5 shadow-sm">
               <img
@@ -3357,7 +3393,7 @@ function DeslocamentoCard({ deslocamento }: { deslocamento: Deslocamento }) {
             aparecem como círculos com letra+número da linha sobre o traço
             grosso, nome em romaji acima e nome em japonês na vertical
             abaixo — mesmo padrão dos mapas oficiais de metrô de Tóquio. */}
-        <div className="flex h-24 min-w-[32px] flex-1 flex-col justify-start pt-10 sm:min-w-[64px]">
+        <div className="col-start-2 row-start-1 row-span-2 flex h-24 min-w-[32px] flex-1 flex-col justify-start pt-10 sm:min-w-[64px]">
           {deslocamento.estacoesIntermediarias &&
             deslocamento.estacoesIntermediarias.length > 0 && (
               <div className="relative h-0 w-full">
@@ -3439,7 +3475,7 @@ function DeslocamentoCard({ deslocamento }: { deslocamento: Deslocamento }) {
             )}
         </div>
 
-        <div className="flex w-32 min-w-0 flex-col items-center sm:w-40">
+        <div className="col-start-3 row-start-1 flex w-32 min-w-0 flex-col items-center sm:w-40">
           {deslocamento.estacaoDestino.foto ? (
             <div className="mb-3 h-20 w-full overflow-hidden rounded-xl border border-[#DDD8CF] shadow-sm">
               <img
@@ -3472,6 +3508,31 @@ function DeslocamentoCard({ deslocamento }: { deslocamento: Deslocamento }) {
               {deslocamento.estacaoDestino.distancia}
             </p>
           )}
+          {deslocamento.estacaoDestino.mapa && (
+            <button
+              type="button"
+              onClick={() =>
+                setZoomMapa({
+                  src: deslocamento.estacaoDestino.mapa!,
+                  alt: deslocamento.estacaoDestino.mapaAlt ?? `Mapa da ${deslocamento.estacaoDestino.nome}`,
+                })
+              }
+              className="group relative mt-3 block h-20 w-full overflow-hidden rounded-xl border border-[#DDD8CF] shadow-sm"
+            >
+              <img
+                src={deslocamento.estacaoDestino.mapa}
+                alt={deslocamento.estacaoDestino.mapaAlt ?? ""}
+                className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
+              />
+              <div className="absolute inset-0 flex items-center justify-center bg-black/0 transition duration-300 group-hover:bg-black/25">
+                <span className="flex h-6 w-6 scale-75 items-center justify-center rounded-full bg-white/90 text-[#000000] opacity-0 shadow-md transition duration-300 group-hover:scale-100 group-hover:opacity-100">
+                  <IconZoom className="h-3 w-3" />
+                </span>
+              </div>
+            </button>
+          )}
+        </div>
+        <div className="col-start-3 row-start-2 flex w-32 min-w-0 flex-col items-center sm:w-40">
           {deslocamento.estacaoDestino.saida && (
             <div className="mt-3 flex w-full flex-col items-center gap-1 break-words rounded-xl border-2 border-emerald-400 bg-emerald-50 px-3 py-2.5 shadow-sm">
               <img
@@ -3542,6 +3603,35 @@ function DeslocamentoCard({ deslocamento }: { deslocamento: Deslocamento }) {
       {deslocamento.mapaChegada && (
         <div className="mt-5">
           <MapaVisaoGeralBlock mapa={deslocamento.mapaChegada} />
+        </div>
+      )}
+
+      {zoomMapa && (
+        <div
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/85 p-4 backdrop-blur-sm sm:p-8"
+          onClick={() => setZoomMapa(null)}
+        >
+          <button
+            type="button"
+            onClick={() => setZoomMapa(null)}
+            className="absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white transition hover:bg-white/20 sm:right-6 sm:top-6"
+            aria-label="Fechar"
+          >
+            <IconX className="h-5 w-5" />
+          </button>
+          <div
+            className="relative max-h-full max-w-full overflow-hidden rounded-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <img
+              src={zoomMapa.src}
+              alt={zoomMapa.alt}
+              className="max-h-[80vh] max-w-[92vw] rounded-2xl bg-white object-contain"
+            />
+            <p className="mt-3 text-center text-xs font-semibold uppercase tracking-[0.15em] text-white/85">
+              {zoomMapa.alt}
+            </p>
+          </div>
         </div>
       )}
     </div>
