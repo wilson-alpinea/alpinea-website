@@ -253,6 +253,9 @@ type Period = {
   galeria?: {
     titulo?: string;
     imagens: { src: string; alt: string; legenda?: string }[];
+    // Mapas/plantas — mostrados como botão discreto com ícone de mapa em
+    // vez de foto grande na grade, já que o cliente só consulta se quiser.
+    mapas?: { titulo: string; imagem: string; imagemAlt: string }[];
   };
   pois: Poi[];
   gastronomia?: Gastronomia;
@@ -335,7 +338,7 @@ const DAY_1: DayContent = {
       { titulo: "Saída do Hotel", horario: "08:45", foto: "/images/icone-hotel2.png" },
       { titulo: "Templo Sensoji", horario: "09:45", foto: "/images/sensoji-kaminarimon.png" },
       { titulo: "Almoço", horario: "12:30", foto: "/images/icone-gastronomia.png" },
-      { titulo: "Tokyo Sky Tree", horario: "14:35", foto: "/images/skytree-tembo-deck-aerea.jpg" },
+      { titulo: "Tokyo Sky Tree", horario: "14:35", foto: "/images/dia1-skytree-miniatura.png" },
       { titulo: "Jantar", horario: "16:30", foto: "/images/icone-gastronomia.png" },
       { titulo: "Retorno ao Hotel", horario: "19:00", foto: "/images/icone-hotel2.png" },
     ],
@@ -792,11 +795,8 @@ const DAY_1: DayContent = {
     percursoEssencial: {
       duracao: "~1h30 (Deck) · ~2h (c/ Galleria)",
       passos: [
-        { titulo: "Chegada Oshiage (saída B3)" },
-        { titulo: "4F · Entrada" },
-        { titulo: "Tembo Deck · 350 m", foto: "/images/skytree-tembo-deck-aerea.jpg" },
-        { titulo: "Tembo Galleria · 450 m (opcional)" },
-        { titulo: "Descida" },
+        { titulo: "Tembo Deck · 350 m", foto: "/images/skytree-tembo-deck-miniatura.png" },
+        { titulo: "Tembo Galleria · 450 m (opcional)", foto: "/images/skytree-tembo-deck-aerea.jpg" },
         { titulo: "Tokyo Solamachi", foto: "/images/solamachi-floor1.png" },
       ],
     },
@@ -816,23 +816,25 @@ const DAY_1: DayContent = {
       imagens: [
         {
           src: "/images/skytree-tembo-deck-aerea.jpg",
-          alt: "Vista aérea do Tembo Deck da Tokyo Sky Tree, mostrando a estrutura do observatório",
-          legenda: "Tembo Deck, visto de fora",
-        },
-        {
-          src: "/images/skytree-tembo-deck-mapa.png",
-          alt: "Mapa oficial do Tembo Deck (350 m) da Tokyo Sky Tree, pisos 340 a 350",
-          legenda: "Tembo Deck · pisos 340–350",
-        },
-        {
-          src: "/images/skytree-tembo-galleria-mapa.png",
-          alt: "Mapa oficial do Tembo Galleria (450 m) da Tokyo Sky Tree, pisos 445 a 450",
-          legenda: "Tembo Galleria · pisos 445–450",
+          alt: "Vista aérea do Tembo Galleria da Tokyo Sky Tree, mostrando a estrutura do observatório superior",
+          legenda: "Tembo Galleria, visto de fora",
         },
         {
           src: "/images/skytree-tembo-deck-vista-noturna.jpg",
           alt: "Vista de dentro do Tembo Deck à noite, com a cidade iluminada ao fundo",
-          legenda: "Vista de dentro do Tembo Deck, à noite",
+          legenda: "Vista do Tembo Deck, à noite",
+        },
+      ],
+      mapas: [
+        {
+          titulo: "Mapa — Tembo Deck (pisos 340–350)",
+          imagem: "/images/skytree-tembo-deck-mapa.png",
+          imagemAlt: "Mapa oficial do Tembo Deck (350 m) da Tokyo Sky Tree, pisos 340 a 350",
+        },
+        {
+          titulo: "Mapa — Tembo Galleria (pisos 445–450)",
+          imagem: "/images/skytree-tembo-galleria-mapa.png",
+          imagemAlt: "Mapa oficial do Tembo Galleria (450 m) da Tokyo Sky Tree, pisos 445 a 450",
         },
       ],
     },
@@ -2725,6 +2727,57 @@ function ContextoBlock({ contexto }: { contexto: string[] }) {
   );
 }
 
+function BanheirosProximosBlock({
+  itens,
+}: {
+  itens: NonNullable<Period["banheirosProximos"]>;
+}) {
+  const [aberto, setAberto] = useState(false);
+
+  return (
+    <div className="mb-5 rounded-2xl border border-[#DDD8CF] bg-[#FAF9F6]">
+      <button
+        type="button"
+        onClick={() => setAberto((v) => !v)}
+        className="flex w-full items-center gap-2.5 p-5 text-left"
+      >
+        <IconToilet className="h-8 w-8 shrink-0 text-[#000000]" />
+        <span className="min-w-0 flex-1 text-[10px] font-bold uppercase tracking-[0.15em] text-[#24211D]/55">
+          Banheiros Públicos Mais Próximos
+        </span>
+        <svg
+          viewBox="0 0 24 24"
+          className={`h-4 w-4 shrink-0 text-[#24211D]/45 transition-transform duration-200 ${
+            aberto ? "rotate-180" : ""
+          }`}
+          fill="none"
+          stroke="currentColor"
+          strokeWidth={2}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <path d="M6 9l6 6 6-6" />
+        </svg>
+      </button>
+      {aberto && (
+        <div className="space-y-3.5 px-5 pb-5">
+          {itens.map((b, i) => (
+            <div key={b.local} className={i > 0 ? "border-t border-[#DDD8CF] pt-3.5" : ""}>
+              <p className="text-sm font-semibold text-[#24211D]">{b.local}</p>
+              {b.endereco && (
+                <p className="mt-0.5 text-xs text-[#24211D]/60">{b.endereco}</p>
+              )}
+              {b.nota && (
+                <p className="mt-1 text-xs leading-5 text-[#24211D]/70">{b.nota}</p>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 function ResumoDiaBlock({
   resumo,
 }: {
@@ -2735,21 +2788,21 @@ function ResumoDiaBlock({
       <p className="mb-5 text-xs font-bold uppercase tracking-[0.25em] text-[#000000]">
         Resumo do Dia
       </p>
-      <div>
+      <div className="flex overflow-x-auto pb-1">
         {resumo.passos.map((passo, i) => (
-          <div key={passo.titulo + i} className="flex gap-4">
-            <div className="flex flex-col items-center">
+          <div key={passo.titulo + i} className="flex shrink-0 items-start">
+            <div className="flex w-[72px] shrink-0 flex-col items-center text-center sm:w-20">
               {passo.foto ? (
                 passo.foto.includes("/images/icone-") ? (
-                  <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full border-2 border-white bg-[#F8FAF9] shadow-sm sm:h-[76px] sm:w-[76px]">
+                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border-2 border-white bg-[#F8FAF9] shadow-sm sm:h-14 sm:w-14">
                     <img
                       src={passo.foto}
                       alt={passo.titulo}
-                      className="h-8 w-8 object-contain sm:h-10 sm:w-10"
+                      className="h-6 w-6 object-contain sm:h-7 sm:w-7"
                     />
                   </div>
                 ) : (
-                  <div className="h-16 w-16 shrink-0 overflow-hidden rounded-full border-2 border-white shadow-sm sm:h-[76px] sm:w-[76px]">
+                  <div className="h-12 w-12 shrink-0 overflow-hidden rounded-full border-2 border-white shadow-sm sm:h-14 sm:w-14">
                     <img
                       src={passo.foto}
                       alt={passo.titulo}
@@ -2758,24 +2811,22 @@ function ResumoDiaBlock({
                   </div>
                 )
               ) : (
-                <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full border border-dashed border-[#2C6CA6]/35 text-[#2C6CA6]/50 sm:h-[76px] sm:w-[76px]">
-                  <IconClock className="h-6 w-6" />
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-dashed border-[#2C6CA6]/35 text-[#2C6CA6]/50 sm:h-14 sm:w-14">
+                  <IconClock className="h-5 w-5" />
                 </div>
               )}
-              {i < resumo.passos.length - 1 && (
-                <span className="my-1 min-h-[18px] w-[2px] flex-1 rounded-full bg-[#000000]/20" />
-              )}
-            </div>
-            <div className={`min-w-0 flex-1 pt-2.5 ${i < resumo.passos.length - 1 ? "pb-6" : ""}`}>
-              <p className="text-base font-semibold leading-tight text-[#000000]">
+              <p className="mt-2 text-[11px] font-semibold leading-tight text-[#000000] sm:text-xs">
                 {passo.titulo}
               </p>
               {passo.horario && (
-                <p className="mt-1 text-sm font-medium tracking-wide text-[#000000]/60">
+                <p className="mt-0.5 text-[10px] font-medium tracking-wide text-[#000000]/55">
                   {passo.horario}
                 </p>
               )}
             </div>
+            {i < resumo.passos.length - 1 && (
+              <span className="mt-6 h-[2px] w-4 shrink-0 rounded-full bg-[#000000]/20 sm:mt-7 sm:w-6" />
+            )}
           </div>
         ))}
       </div>
@@ -3548,7 +3599,7 @@ function VisaoAnotadaBlock({
             style={
               visaoAnotada.fundo
                 ? {
-                    backgroundImage: `linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.82)), url(${visaoAnotada.fundo})`,
+                    backgroundImage: `linear-gradient(rgba(0,0,0,0.94), rgba(0,0,0,0.98)), url(${visaoAnotada.fundo})`,
                   }
                 : undefined
             }
@@ -3831,6 +3882,34 @@ function GaleriaBlock({
         ))}
       </div>
 
+      {galeria.mapas && galeria.mapas.length > 0 && (
+        <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
+          {galeria.mapas.map((mapa) => (
+            <button
+              key={mapa.imagem}
+              type="button"
+              onClick={() => setZoom({ src: mapa.imagem, alt: mapa.imagemAlt })}
+              className="flex w-full items-center gap-3 rounded-2xl border border-[#BFDCF2] bg-[#EAF3FC] p-3.5 text-left transition hover:border-[#2C6CA6]/50"
+            >
+              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white text-[#2C6CA6]">
+                <IconMap className="h-4 w-4" />
+              </span>
+              <span className="min-w-0">
+                <span className="block text-sm font-medium text-[#1B4A73]">
+                  {mapa.titulo}
+                </span>
+                <span className="block text-xs text-[#2C6CA6]/70">
+                  Toque para ampliar
+                </span>
+              </span>
+              <span className="ml-auto shrink-0 text-lg text-[#2C6CA6]/60">
+                →
+              </span>
+            </button>
+          ))}
+        </div>
+      )}
+
       {zoom && (
         <div
           className="fixed inset-0 z-[100] flex items-start justify-center overflow-y-auto bg-black/85 p-4 backdrop-blur-sm sm:p-8"
@@ -3954,56 +4033,48 @@ function PeriodBlock({
               <IconClock className="h-9 w-9 shrink-0 text-[#B96432] sm:h-10 sm:w-10" />
             </div>
           </div>
-          <div className="mt-6 flex justify-center">
-            <div className="w-full max-w-md">
-              {(() => {
-                let numero = 0;
-                return period.percursoEssencial!.passos.map((passo, i) => {
-                  if (passo.foto) numero += 1;
-                  return (
-                    <div key={passo.titulo} className="flex gap-4">
-                      <div className="flex flex-col items-center">
-                        {passo.foto ? (
-                          <div className="relative h-16 w-16 shrink-0 sm:h-[76px] sm:w-[76px]">
-                            <div className="h-full w-full overflow-hidden rounded-full border-2 border-white shadow-sm">
-                              <img
-                                src={passo.foto}
-                                alt={passo.titulo}
-                                className="h-full w-full object-cover"
-                              />
-                            </div>
-                            <span className="absolute -bottom-2 -right-2 flex h-8 w-8 items-center justify-center rounded-full border-2 border-white bg-[#1B4A73] text-sm font-bold text-white shadow-sm sm:h-9 sm:w-9 sm:text-base">
-                              {numero}
-                            </span>
+          <div className="mt-6 flex overflow-x-auto pb-1">
+            {(() => {
+              let numero = 0;
+              return period.percursoEssencial!.passos.map((passo, i) => {
+                if (passo.foto) numero += 1;
+                return (
+                  <div key={passo.titulo} className="flex shrink-0 items-start">
+                    <div className="flex w-24 shrink-0 flex-col items-center text-center sm:w-28">
+                      {passo.foto ? (
+                        <div className="relative h-14 w-14 shrink-0 sm:h-16 sm:w-16">
+                          <div className="h-full w-full overflow-hidden rounded-full border-2 border-white shadow-sm">
+                            <img
+                              src={passo.foto}
+                              alt={passo.titulo}
+                              className="h-full w-full object-cover"
+                            />
                           </div>
-                        ) : (
-                          <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full border border-dashed border-[#2C6CA6]/35 text-[#2C6CA6]/50 sm:h-[76px] sm:w-[76px]">
-                            <IconWalk className="h-9 w-9 sm:h-11 sm:w-11" />
-                          </div>
-                        )}
-                        {i < period.percursoEssencial!.passos.length - 1 && (
-                          <span className="my-1 min-h-[18px] w-[2px] flex-1 rounded-full bg-[#000000]/20" />
-                        )}
-                      </div>
-                      <div
-                        className={`min-w-0 flex-1 pt-2.5 ${
-                          i < period.percursoEssencial!.passos.length - 1 ? "pb-6" : ""
-                        }`}
-                      >
-                        {passo.horario && (
-                          <p className="text-xs font-medium uppercase tracking-[0.1em] text-[#B96432]">
-                            {passo.horario}
-                          </p>
-                        )}
-                        <p className="mt-0.5 text-base font-semibold leading-tight text-[#000000]">
-                          {passo.titulo}
+                          <span className="absolute -bottom-1.5 -right-1.5 flex h-6 w-6 items-center justify-center rounded-full border-2 border-white bg-[#1B4A73] text-xs font-bold text-white shadow-sm">
+                            {numero}
+                          </span>
+                        </div>
+                      ) : (
+                        <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full border border-dashed border-[#2C6CA6]/35 text-[#2C6CA6]/50 sm:h-16 sm:w-16">
+                          <IconWalk className="h-7 w-7" />
+                        </div>
+                      )}
+                      {passo.horario && (
+                        <p className="mt-2 text-[10px] font-medium uppercase tracking-[0.08em] text-[#B96432]">
+                          {passo.horario}
                         </p>
-                      </div>
+                      )}
+                      <p className="mt-0.5 text-xs font-semibold leading-tight text-[#000000]">
+                        {passo.titulo}
+                      </p>
                     </div>
-                  );
-                });
-              })()}
-            </div>
+                    {i < period.percursoEssencial!.passos.length - 1 && (
+                      <span className="mt-7 h-[2px] w-5 shrink-0 rounded-full bg-[#000000]/20 sm:mt-8 sm:w-7" />
+                    )}
+                  </div>
+                );
+              });
+            })()}
           </div>
           <p className="mt-4 text-xs leading-5 text-[#000000]/60">
             O que dá pra fazer sem pressa. Os detalhes de cada ponto vêm a seguir — comece por aqui.
@@ -4168,36 +4239,7 @@ function PeriodBlock({
           )}
 
           {period.banheirosProximos && period.banheirosProximos.length > 0 && (
-            <div className="mb-5 rounded-2xl border border-[#DDD8CF] bg-[#FAF9F6] p-5">
-              <p className="mb-3.5 flex items-center gap-2.5 text-[10px] font-bold uppercase tracking-[0.15em] text-[#24211D]/55">
-                <IconToilet className="h-20 w-20 text-[#000000]" />
-                Banheiros Públicos Mais Próximos
-              </p>
-              <div className="space-y-3.5">
-                {period.banheirosProximos.map((b, i) => (
-                  <div
-                    key={b.local}
-                    className={
-                      i > 0 ? "border-t border-[#DDD8CF] pt-3.5" : ""
-                    }
-                  >
-                    <p className="text-sm font-semibold text-[#24211D]">
-                      {b.local}
-                    </p>
-                    {b.endereco && (
-                      <p className="mt-0.5 text-xs text-[#24211D]/60">
-                        {b.endereco}
-                      </p>
-                    )}
-                    {b.nota && (
-                      <p className="mt-1 text-xs leading-5 text-[#24211D]/70">
-                        {b.nota}
-                      </p>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </div>
+            <BanheirosProximosBlock itens={period.banheirosProximos} />
           )}
 
           {period.gradeHorarios && (
@@ -5682,7 +5724,7 @@ export function ApprovalPanel({
         <div className="grid grid-cols-2 gap-3 border-b border-[#DDD8CF] px-6 pb-6 pt-3 sm:grid-cols-4 sm:px-10">
           {INFO_CARDS.map(({ label, Icon, view }) => {
             const cardClassName =
-              "group flex min-h-[112px] cursor-pointer flex-col items-center justify-center gap-2.5 rounded-xl border border-[#DDD8CF] bg-[#FAF9F6] px-3 py-4 text-center text-xs leading-5 text-[#24211D]/75 transition duration-300 ease-out hover:-translate-y-0.5 hover:border-[#000000]/30 hover:bg-[#F8FAF9] hover:text-[#000000] hover:shadow-[0_10px_30px_-15px_rgba(23,59,69,0.35)]";
+              "group flex min-h-[112px] cursor-pointer flex-col items-center justify-center gap-2.5 rounded-xl border border-[#DCE7F2] bg-[#F1F6FB] px-3 py-4 text-center text-xs leading-5 text-[#24211D]/75 transition duration-300 ease-out hover:-translate-y-0.5 hover:border-[#2C6CA6]/35 hover:bg-[#E9F1FA] hover:text-[#000000] hover:shadow-[0_10px_30px_-15px_rgba(23,59,69,0.35)]";
             const content = (
               <>
                 <Icon
