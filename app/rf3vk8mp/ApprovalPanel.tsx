@@ -798,7 +798,7 @@ const DAY_1: DayContent = {
   tarde: {
     label: "Tarde",
     percursoEssencial: {
-      duracao: "~1h30 (Deck) · ~2h (c/ Galleria)",
+      duracao: "1h30 (Deck) · 2h (com Galleria)",
       passos: [
         { titulo: "Tembo Deck · 350 m", foto: "/images/skytree-tembo-deck-miniatura.png" },
         { titulo: "Tembo Galleria · 450 m (opcional)", foto: "/images/skytree-tembo-deck-aerea.jpg" },
@@ -872,7 +872,7 @@ const DAY_1: DayContent = {
         saida: "Entrada/Saída A4, direção Kaminarimon",
         foto: "/images/asakusa-station-entrance.webp",
       },
-      linha: { codigo: "A", nome: "Toei Asakusa Line", cor: "#EF5BA1" },
+      linha: { codigo: "A", nome: "Toei Asakusa Line", cor: "#D04E3C" },
       estacoesIntermediarias: [
         { nome: "Honjo-Azumabashi", nomeJapones: "本所吾妻橋", numero: "A19" },
       ],
@@ -2240,7 +2240,7 @@ const DAY_7: DayContent = {
         nomeJapones: "宝町駅",
         distancia: "~1 min a pé do remm Tokyo Kyobashi",
       },
-      linha: { codigo: "A12", nome: "Toei Asakusa Line", cor: "#E85298", logo: "/images/toei-mark.png" },
+      linha: { codigo: "A12", nome: "Toei Asakusa Line", cor: "#D04E3C", logo: "/images/toei-mark.png" },
       estacoesIntermediarias: [{ nome: "Nihombashi", nomeJapones: "日本橋", numero: "A13" }],
       estacaoDestino: { nome: "Estação Ningyocho", nomeJapones: "人形町駅" },
       opcoes: [
@@ -2340,7 +2340,7 @@ const DAY_7: DayContent = {
     },
     deslocamento: {
       estacaoOrigem: { nome: "Estação Ningyocho", nomeJapones: "人形町駅" },
-      linha: { codigo: "A14", nome: "Toei Asakusa Line", cor: "#E85298", logo: "/images/toei-mark.png" },
+      linha: { codigo: "A14", nome: "Toei Asakusa Line", cor: "#D04E3C", logo: "/images/toei-mark.png" },
       estacaoDestino: { nome: "Estação Ryogoku", nomeJapones: "両国駅" },
       opcoes: [
         {
@@ -2748,10 +2748,10 @@ function BanheirosProximosBlock({
       <button
         type="button"
         onClick={() => setAberto((v) => !v)}
-        className="flex w-full items-center gap-3 p-5 text-left"
+        className="flex w-full items-center gap-4 p-5 text-left sm:p-7"
       >
-        <IconToilet className="h-12 w-12 shrink-0 text-[#000000]" />
-        <span className="min-w-0 flex-1 text-[10px] font-bold uppercase tracking-[0.15em] text-[#24211D]/55">
+        <IconToilet className="h-20 w-20 shrink-0 text-[#000000]" />
+        <span className="min-w-0 flex-1 text-base font-bold uppercase tracking-[0.2em] text-[#24211D]/70 sm:text-lg">
           Banheiros Públicos Mais Próximos
         </span>
         <svg
@@ -2801,7 +2801,7 @@ function ResumoDiaBlock({
         <div className="flex shrink-0">
         {resumo.passos.map((passo, i) => (
           <div key={passo.titulo + i} className="flex shrink-0 items-start">
-            <div className="group flex w-[72px] shrink-0 cursor-default flex-col items-center text-center sm:w-20">
+            <div className="group flex w-24 shrink-0 cursor-default flex-col items-center text-center sm:w-28">
               {passo.foto ? (
                 passo.foto.includes("/images/icone-") ? (
                   <div
@@ -2839,11 +2839,11 @@ function ResumoDiaBlock({
                   <IconClock className="h-5 w-5" />
                 </div>
               )}
-              <p className="mt-2 text-[11px] font-semibold leading-tight text-white transition duration-200 group-hover:text-white/80 sm:text-xs">
+              <p className="mt-2 whitespace-nowrap text-xs font-semibold leading-tight text-white transition duration-200 group-hover:text-white/80 sm:text-sm">
                 {passo.titulo}
               </p>
               {passo.horario && (
-                <p className="mt-0.5 text-[10px] font-medium tracking-wide text-white/55">
+                <p className="mt-0.5 whitespace-nowrap text-[11px] font-medium tracking-wide text-white/55 sm:text-xs">
                   {passo.horario}
                 </p>
               )}
@@ -2893,14 +2893,24 @@ function GastronomiaBlock({ gastronomia }: { gastronomia: Gastronomia }) {
 
   return (
     <div className="mt-6 rounded-2xl border border-[#DDD8CF] bg-[#FAF9F6] p-4 sm:p-6">
-      <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#24211D]/68">
-        {gastronomia.titulo ?? "Gastronomia"}
-        {gastronomia.subtitulo && (
-          <span className="ml-2 font-normal normal-case tracking-normal text-[#24211D]/65">
-            ({gastronomia.subtitulo})
-          </span>
-        )}
-      </p>
+      <div className="mb-4 flex items-center gap-4">
+        <img
+          src="/images/icone-gastronomia.png"
+          alt=""
+          className="h-20 w-20 shrink-0 object-contain"
+          style={{ filter: "brightness(0) saturate(100%)" }}
+        />
+        <div>
+          <p className="text-base font-bold uppercase tracking-[0.2em] text-[#24211D]/70 sm:text-lg">
+            {gastronomia.titulo ?? "Gastronomia"}
+          </p>
+          {gastronomia.subtitulo && (
+            <p className="mt-1 text-sm text-[#24211D]/65">
+              {gastronomia.subtitulo}
+            </p>
+          )}
+        </div>
+      </div>
 
       {gastronomia.intro && (
         <p className="mt-3 text-sm leading-6 text-[#24211D]/78">
@@ -4138,17 +4148,30 @@ function PeriodBlock({
                 );
                 return (
                   outros.length > 0 && (
-                    <div className="mb-5 grid grid-cols-2 gap-x-6 gap-y-4 rounded-2xl border border-[#DDD8CF] bg-[#FAF9F6] p-5 sm:grid-cols-4">
-                      {outros.map((item) => (
-                        <div key={item.label} className="text-center">
-                          <p className="mb-1.5 text-[10px] font-bold uppercase tracking-[0.15em] text-[#24211D]/55">
-                            {item.label}
-                          </p>
-                          <p className="text-sm font-semibold text-[#24211D]">
-                            {item.valor}
-                          </p>
-                        </div>
-                      ))}
+                    <div className="mb-5 rounded-2xl border border-[#DDD8CF] bg-[#FAF9F6] p-5 sm:p-7">
+                      <div className="mb-5 flex items-center gap-4">
+                        <img
+                          src="/images/icone-informacoes-iniciais.png"
+                          alt=""
+                          className="h-20 w-20 shrink-0 object-contain"
+                          style={{ filter: "brightness(0) saturate(100%)" }}
+                        />
+                        <p className="text-base font-bold uppercase tracking-[0.2em] text-[#24211D]/70 sm:text-lg">
+                          Informações Iniciais
+                        </p>
+                      </div>
+                      <div className="grid grid-cols-2 gap-x-6 gap-y-4 sm:grid-cols-4">
+                        {outros.map((item) => (
+                          <div key={item.label} className="text-center">
+                            <p className="mb-1.5 text-[10px] font-bold uppercase tracking-[0.15em] text-[#24211D]/55">
+                              {item.label}
+                            </p>
+                            <p className="text-sm font-semibold text-[#24211D]">
+                              {item.valor}
+                            </p>
+                          </div>
+                        ))}
+                      </div>
                     </div>
                   )
                 );
@@ -4164,9 +4187,9 @@ function PeriodBlock({
                       key={item.label}
                       className="mb-5 flex items-center gap-5 rounded-2xl border border-[#BFDCF2] bg-[#EAF3FC] p-6 sm:p-7"
                     >
-                      <IconClock className="h-20 w-20 shrink-0 text-[#2C6CA6] sm:h-24 sm:w-24" />
+                      <IconClock className="h-20 w-20 shrink-0 text-[#2C6CA6]" />
                       <div className="min-w-0 flex-1">
-                        <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#2C6CA6]/85">
+                        <p className="text-base font-bold uppercase tracking-[0.2em] text-[#2C6CA6]/85 sm:text-lg">
                           Melhor Horário
                         </p>
                         <p className="mt-0.5 text-3xl font-semibold leading-tight text-[#1B4A73] sm:text-4xl">
@@ -4200,11 +4223,11 @@ function PeriodBlock({
                   ) : (
                     <div
                       key={item.label}
-                      className="mb-5 flex items-center gap-4 rounded-2xl border border-[#BFDCF2] bg-[#EAF3FC] p-5"
+                      className="mb-5 flex items-center gap-4 rounded-2xl border border-[#BFDCF2] bg-[#EAF3FC] p-5 sm:p-7"
                     >
-                      <IconClock className="h-14 w-14 shrink-0 text-[#2C6CA6]" />
+                      <IconClock className="h-20 w-20 shrink-0 text-[#2C6CA6]" />
                       <div>
-                        <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-[#2C6CA6]/85">
+                        <p className="text-base font-bold uppercase tracking-[0.2em] text-[#2C6CA6]/85 sm:text-lg">
                           Melhor Horário
                         </p>
                         <p className="text-sm font-semibold text-[#1B4A73]">
