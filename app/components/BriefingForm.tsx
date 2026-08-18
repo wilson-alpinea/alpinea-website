@@ -277,57 +277,31 @@ function IconChevronLeft({ className }: { className?: string }) {
 
 function IconGastronomia({ className }: { className?: string }) {
   return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth={1.6}
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className={className}
-    >
-      <path d="M3 2v7c0 1.1.9 2 2 2h2a2 2 0 0 0 2-2V2" />
-      <path d="M7 2v20" />
-      <path d="M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Z" />
-      <path d="M19 15v7" />
-    </svg>
+    <img
+      src="/images/icone-gastronomia.png"
+      alt=""
+      className={`${className ?? ""} object-contain`}
+    />
   );
 }
 
 function IconCultura({ className }: { className?: string }) {
   return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth={1.6}
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className={className}
-    >
-      <path d="M3.5 5.5h17" />
-      <path d="M2.5 8.5h19" />
-      <path d="M6.5 8.5v12" />
-      <path d="M17.5 8.5v12" />
-    </svg>
+    <img
+      src="/images/icone-cultura.png"
+      alt=""
+      className={`${className ?? ""} object-contain`}
+    />
   );
 }
 
 function IconOnsen({ className }: { className?: string }) {
   return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth={1.6}
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className={className}
-    >
-      <path d="M3 8c1.5-1.5 3-1.5 4.5 0s3 1.5 4.5 0 3-1.5 4.5 0 3 1.5 4.5 0" />
-      <path d="M3 13c1.5-1.5 3-1.5 4.5 0s3 1.5 4.5 0 3-1.5 4.5 0 3 1.5 4.5 0" />
-      <path d="M3 18c1.5-1.5 3-1.5 4.5 0s3 1.5 4.5 0 3-1.5 4.5 0 3 1.5 4.5 0" />
-    </svg>
+    <img
+      src="/images/icone-natureza.png"
+      alt=""
+      className={`${className ?? ""} object-contain`}
+    />
   );
 }
 

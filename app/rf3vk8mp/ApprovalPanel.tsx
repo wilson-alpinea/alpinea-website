@@ -3223,9 +3223,9 @@ function DeslocamentoCard({ deslocamento }: { deslocamento: Deslocamento }) {
           {deslocamento.estacaoOrigem.saida && (
             <div className="mt-3 flex w-full flex-col items-center gap-1 break-words rounded-xl border-2 border-emerald-400 bg-emerald-50 px-3 py-2.5 shadow-sm">
               <img
-                src="/images/icone-saida-entrada-metro.png"
+                src="/images/icone-saida2.png"
                 alt=""
-                className="h-6 w-6 object-contain"
+                className="h-12 w-12 object-contain"
               />
               <p className="text-xs font-bold uppercase leading-snug tracking-[0.04em] text-emerald-800 sm:text-sm">
                 {deslocamento.estacaoOrigem.saida}
@@ -3358,9 +3358,9 @@ function DeslocamentoCard({ deslocamento }: { deslocamento: Deslocamento }) {
           {deslocamento.estacaoDestino.saida && (
             <div className="mt-3 flex w-full flex-col items-center gap-1 break-words rounded-xl border-2 border-emerald-400 bg-emerald-50 px-3 py-2.5 shadow-sm">
               <img
-                src="/images/icone-saida-entrada-metro.png"
+                src="/images/icone-saida2.png"
                 alt=""
-                className="h-6 w-6 object-contain"
+                className="h-12 w-12 object-contain"
               />
               <p className="text-xs font-bold uppercase leading-snug tracking-[0.04em] text-emerald-800 sm:text-sm">
                 {deslocamento.estacaoDestino.saida}
@@ -4460,10 +4460,11 @@ function iconProps(className?: string) {
 
 function IconPlane({ className }: { className?: string }) {
   return (
-    <svg {...iconProps(className)}>
-      <path d="M22 2 11 13" />
-      <path d="M22 2 15 22l-4-9-9-4 20-7z" />
-    </svg>
+    <img
+      src="/images/icone-aeroporto.png"
+      alt=""
+      className={`${className ?? ""} object-contain`}
+    />
   );
 }
 
@@ -4555,22 +4556,21 @@ function IconExchange({ className }: { className?: string }) {
 
 function IconCustoms({ className }: { className?: string }) {
   return (
-    <svg {...iconProps(className)}>
-      <rect x="6" y="3" width="12" height="18" rx="2" />
-      <line x1="9" y1="8" x2="15" y2="8" />
-      <line x1="9" y1="12" x2="15" y2="12" />
-      <line x1="9" y1="16" x2="13" y2="16" />
-    </svg>
+    <img
+      src="/images/icone-costumes.png"
+      alt=""
+      className={`${className ?? ""} object-contain`}
+    />
   );
 }
 
 function IconWords({ className }: { className?: string }) {
   return (
-    <svg {...iconProps(className)}>
-      <path d="M4 5h16a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H9l-4 4v-4H4a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2z" />
-      <line x1="7" y1="10" x2="17" y2="10" />
-      <line x1="7" y1="13" x2="13" y2="13" />
-    </svg>
+    <img
+      src="/images/icone-frases-palavras-comuns.png"
+      alt=""
+      className={`${className ?? ""} object-contain`}
+    />
   );
 }
 
@@ -5637,9 +5637,7 @@ export function ApprovalPanel({
               "group flex min-h-[112px] cursor-pointer flex-col items-center justify-center gap-2.5 rounded-xl border border-[#DDD8CF] bg-[#FAF9F6] px-3 py-4 text-center text-xs leading-5 text-[#24211D]/75 transition duration-300 ease-out hover:-translate-y-0.5 hover:border-[#000000]/30 hover:bg-[#F8FAF9] hover:text-[#000000] hover:shadow-[0_10px_30px_-15px_rgba(23,59,69,0.35)]";
             const content = (
               <>
-                <span className="flex h-11 w-11 items-center justify-center rounded-full bg-[#F8FAF9] text-[#000000] transition group-hover:bg-[#FDFCF9]">
-                  <Icon className="h-6 w-6" />
-                </span>
+                <Icon className="h-14 w-14" />
                 {label}
               </>
             );

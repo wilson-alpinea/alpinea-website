@@ -1643,7 +1643,7 @@ function IconClock({ className }: { className?: string }) {
 function IconBed({ className }: { className?: string }) {
   return (
     <img
-      src="/images/icone-hotel.png"
+      src="/images/icone-hotel2.png"
       alt=""
       className={`${className ?? ""} object-contain`}
     />
