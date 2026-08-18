@@ -417,7 +417,7 @@ const DAY_1: DayContent = {
   },
   manha: {
     percursoEssencial: {
-      duracao: "1h30–2h",
+      duracao: "De 1h30 a 2h",
       passos: [
         {
           titulo: "Kaminarimon",
@@ -2801,7 +2801,7 @@ function ResumoDiaBlock({
         <div className="flex shrink-0">
         {resumo.passos.map((passo, i) => (
           <div key={passo.titulo + i} className="flex shrink-0 items-start">
-            <div className="group flex w-24 shrink-0 cursor-default flex-col items-center text-center sm:w-28">
+            <div className="group flex shrink-0 cursor-default flex-col items-center px-1 text-center">
               {passo.foto ? (
                 passo.foto.includes("/images/icone-") ? (
                   <div
