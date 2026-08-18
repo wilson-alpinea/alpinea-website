@@ -8,27 +8,19 @@ import Image from "next/image";
 
 export function IconPlane({ className }: { className?: string }) {
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" className={className}>
-      <path d="M2 12 22 3l-9 20-2-9-9-2z" />
-    </svg>
+    <img src="/images/icone-aeroporto.png" alt="" className={`${className ?? ""} object-contain`} />
   );
 }
 
 export function IconPlaneLanding({ className }: { className?: string }) {
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" className={className}>
-      <path d="M2 21h20" />
-      <path d="M3.5 15.5 8 13l2.2-5.8a1 1 0 0 1 1.9.1L13 13l4.2 1.7a1.6 1.6 0 0 1 1 1.5v.8L13 15.7 9.6 17 6 15.9v-.9z" />
-    </svg>
+    <img src="/images/icone-pousando.png" alt="" className={`${className ?? ""} object-contain`} />
   );
 }
 
 export function IconPlaneTakeoff({ className }: { className?: string }) {
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" className={className}>
-      <path d="M2 21h20" />
-      <path d="M6.5 17 9 12.3 3.8 10.6a1 1 0 0 1 .3-1.9l2.3.4L11 11l4.9-4.3a1.7 1.7 0 0 1 2.6 1.9L15.8 14l2.2 4.2" />
-    </svg>
+    <img src="/images/icone-decolagem.png" alt="" className={`${className ?? ""} object-contain`} />
   );
 }
 

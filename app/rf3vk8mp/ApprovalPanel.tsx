@@ -3171,6 +3171,19 @@ function DeslocamentoCard({ deslocamento }: { deslocamento: Deslocamento }) {
           companhia operadora, nome da estação e nome em japonês — repetido
           pra origem e destino, ligados por uma seta. Fotos de estação em si
           (fachada/entrada) não entram aqui — ficam só no guia do hotel. */}
+      <p className="mb-5 flex items-center justify-center gap-2.5 text-center text-xs font-bold uppercase tracking-[0.15em] text-[#24211D]/65">
+        <span
+          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-white sm:h-10 sm:w-10"
+          style={{ background: deslocamento.linha.cor || "#B96432" }}
+        >
+          {(() => {
+            const Icon = deslocamento.opcoes.find((o) => o.recomendado)?.Icon ?? IconMetro;
+            return <Icon className="h-6 w-6 sm:h-7 sm:w-7" />;
+          })()}
+        </span>
+        {deslocamento.linha.logo && `${deslocamento.linha.codigo} · `}
+        {deslocamento.linha.nome} · sem baldeação
+      </p>
       <div className="flex items-start justify-center gap-3 text-center sm:gap-5">
         <div className="flex w-32 min-w-0 flex-col items-center sm:w-40">
           {deslocamento.estacaoOrigem.foto ? (
@@ -3219,25 +3232,30 @@ function DeslocamentoCard({ deslocamento }: { deslocamento: Deslocamento }) {
             grosso, nome em romaji acima e nome em japonês na vertical
             abaixo — mesmo padrão dos mapas oficiais de metrô de Tóquio. */}
         <div className="flex h-24 min-w-[32px] flex-1 flex-col justify-start pt-10 sm:min-w-[64px]">
+          {deslocamento.estacoesIntermediarias &&
+            deslocamento.estacoesIntermediarias.length > 0 && (
+              <div className="relative h-0 w-full">
+                {deslocamento.estacoesIntermediarias.map((estacao, i) => {
+                  const pct =
+                    ((i + 1) /
+                      (deslocamento.estacoesIntermediarias!.length + 1)) *
+                    100;
+                  return (
+                    <span
+                      key={`romaji-${estacao.nome}`}
+                      className="absolute bottom-2 origin-bottom-left -rotate-45 whitespace-nowrap text-[11px] font-semibold leading-tight text-[#24211D] sm:text-xs"
+                      style={{ left: `${pct}%` }}
+                    >
+                      {estacao.nome}
+                    </span>
+                  );
+                })}
+              </div>
+            )}
           <div
             className="relative h-2 w-full rounded-full"
             style={{ background: deslocamento.linha.cor || "#B96432" }}
           >
-            {deslocamento.estacoesIntermediarias?.map((estacao, i) => {
-              const pct =
-                ((i + 1) /
-                  (deslocamento.estacoesIntermediarias!.length + 1)) *
-                100;
-              return (
-                <span
-                  key={`romaji-${estacao.nome}`}
-                  className="absolute -top-1 -translate-x-1/2 -translate-y-full whitespace-nowrap text-[11px] font-semibold leading-tight text-[#24211D] sm:text-xs"
-                  style={{ left: `${pct}%` }}
-                >
-                  {estacao.nome}
-                </span>
-              );
-            })}
             {deslocamento.estacoesIntermediarias?.map((estacao, i) => {
               const pct =
                 ((i + 1) /
@@ -3335,19 +3353,6 @@ function DeslocamentoCard({ deslocamento }: { deslocamento: Deslocamento }) {
           )}
         </div>
       </div>
-      <p className="mt-5 flex items-center justify-center gap-2 text-center text-xs font-bold uppercase tracking-[0.15em] text-[#24211D]/65">
-        <span
-          className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-white"
-          style={{ background: deslocamento.linha.cor || "#B96432" }}
-        >
-          {(() => {
-            const Icon = deslocamento.opcoes.find((o) => o.recomendado)?.Icon ?? IconMetro;
-            return <Icon className="h-3.5 w-3.5" />;
-          })()}
-        </span>
-        {deslocamento.linha.logo && `${deslocamento.linha.codigo} · `}
-        {deslocamento.linha.nome} · sem baldeação
-      </p>
 
       <div className="mt-6 grid gap-3 sm:grid-cols-2">
         {deslocamento.opcoes.map((opcao) => (
@@ -3361,13 +3366,13 @@ function DeslocamentoCard({ deslocamento }: { deslocamento: Deslocamento }) {
           >
             <div className="flex items-center gap-3">
               <span
-                className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full ${
+                className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-full ${
                   opcao.recomendado
                     ? "bg-[#3E5FA8] text-white"
                     : "bg-white text-[#3E5FA8]/70"
                 }`}
               >
-                <opcao.Icon className="h-4 w-4" />
+                <opcao.Icon className="h-8 w-8" />
               </span>
               <div>
                 <p className="text-[10px] uppercase tracking-[0.18em] text-[#3E5FA8]/70">
@@ -4105,8 +4110,8 @@ function PeriodBlock({
 
           {period.banheirosProximos && period.banheirosProximos.length > 0 && (
             <div className="mb-5 rounded-2xl border border-[#DDD8CF] bg-[#FAF9F6] p-5">
-              <p className="mb-3.5 flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.15em] text-[#24211D]/55">
-                <IconToilet className="h-4 w-4 text-[#000000]" />
+              <p className="mb-3.5 flex items-center gap-2.5 text-[10px] font-bold uppercase tracking-[0.15em] text-[#24211D]/55">
+                <IconToilet className="h-7 w-7 text-[#000000]" />
                 Banheiros Públicos Mais Próximos
               </p>
               <div className="space-y-3.5">
@@ -4484,14 +4489,11 @@ function IconMetro({ className }: { className?: string }) {
 
 function IconBus({ className }: { className?: string }) {
   return (
-    <svg {...iconProps(className)}>
-      <rect x="3" y="5" width="18" height="11" rx="2" />
-      <line x1="3" y1="10" x2="21" y2="10" />
-      <line x1="7" y1="10" x2="7" y2="16" />
-      <line x1="17" y1="10" x2="17" y2="16" />
-      <circle cx="7" cy="19" r="1.3" />
-      <circle cx="17" cy="19" r="1.3" />
-    </svg>
+    <img
+      src="/images/icone-onibus.png"
+      alt=""
+      className={`${className ?? ""} object-contain`}
+    />
   );
 }
 
@@ -4598,11 +4600,11 @@ function IconDumbbell({ className }: { className?: string }) {
 
 function IconStore({ className }: { className?: string }) {
   return (
-    <svg {...iconProps(className)}>
-      <path d="M3 9l1-5h16l1 5" />
-      <path d="M4 9v10h16V9" />
-      <path d="M9 19v-5a3 3 0 0 1 6 0v5" />
-    </svg>
+    <img
+      src="/images/icone-compras.png"
+      alt=""
+      className={`${className ?? ""} object-contain`}
+    />
   );
 }
 

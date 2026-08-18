@@ -1642,22 +1642,11 @@ function IconClock({ className }: { className?: string }) {
 
 function IconBed({ className }: { className?: string }) {
   return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.75"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className={className}
-    >
-      <path d="M2 17v-5a2 2 0 0 1 2-2h5a2 2 0 0 1 2 2v2" />
-      <path d="M11 14v-2a2 2 0 0 1 2-2h7a2 2 0 0 1 2 2v5" />
-      <line x1="2" y1="12" x2="2" y2="7" />
-      <line x1="2" y1="20" x2="2" y2="17" />
-      <line x1="22" y1="20" x2="22" y2="17" />
-      <line x1="2" y1="17" x2="22" y2="17" />
-    </svg>
+    <img
+      src="/images/icone-hotel.png"
+      alt=""
+      className={`${className ?? ""} object-contain`}
+    />
   );
 }
 
