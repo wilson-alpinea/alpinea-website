@@ -656,19 +656,27 @@ export default function ProdutosPage() {
             Duas versões — escolha a que preferir: a rápida dura só 1:46, a
             completa mostra o painel com todos os detalhes.
           </p>
-          <div className="mx-auto mt-8 grid max-w-4xl gap-8 md:grid-cols-2">
+          <div className="mx-auto mt-8 max-w-3xl">
             <DemoVideo
               src="/videos/roteiro-personalizado-short.mp4"
               poster="/videos/roteiro-personalizado-short-poster.jpg"
               label="Versão Rápida · 1:46"
               descricao="Visão geral direto ao ponto, em menos de 2 minutos."
             />
-            <DemoVideo
-              src="/videos/roteiro-personalizado-detalhado.mp4"
-              poster="/videos/roteiro-personalizado-detalhado-poster.jpg"
-              label="Versão Completa · 8:08"
-              descricao="Navegação real pelo painel — dia a dia, atrações, deslocamento e logística."
-            />
+          </div>
+
+          <div className="mx-auto mt-10 max-w-sm">
+            <p className="text-center text-[10px] uppercase tracking-[0.2em] text-white/35">
+              Quer ver mais?
+            </p>
+            <div className="mt-3">
+              <DemoVideo
+                src="/videos/roteiro-personalizado-detalhado.mp4"
+                poster="/videos/roteiro-personalizado-detalhado-poster.jpg"
+                label="Versão Completa · 8:08"
+                descricao="Navegação real pelo painel — dia a dia, atrações, deslocamento e logística."
+              />
+            </div>
           </div>
         </div>
       </section>
