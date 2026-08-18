@@ -200,6 +200,10 @@ type Period = {
     // Alpinea, abaixo do título — leitura de contexto/dicas da seção,
     // separado da legenda de cada ponto.
     comentarios?: string[];
+    // Foto já escurecida usada como fundo do card do Raio-X Alpinea (no
+    // lugar do preto liso) — cobre o card inteiro, atrás do título e dos
+    // comentários.
+    fundo?: string;
     // Sem pontos = a própria imagem já é o infográfico completo (legendas
     // embutidas); com pontos, mostra a legenda ao lado em colunas.
     pontos?: {
@@ -796,6 +800,7 @@ const DAY_1: DayContent = {
       imagem: "/images/dia1-skytree-visao-anotada-v2.png",
       imagemAlt: "Infográfico da Tokyo Sky Tree com altura e observatórios (Tembo Deck e Tembo Galleria)",
       nota: "634 m de altura total, concluída em 2012 — a torre de transmissão e observação mais alta do Japão.",
+      fundo: "/images/raiox-skytree-bg.jpg",
       comentarios: [
         "Considerando que você chegue num horário apropriado para subir antes do pôr do sol, a prioridade é se dirigir à bilheteria e comprar o ingresso. Existem 2 opções: uma que sobe até o observatório superior e outra até o observatório inferior — a diferença é mínima entre os dois. Uma diferença importante é que o espaço é muito mais reduzido no superior (recomendo evitar se for claustrofóbico). Alguns viajantes gostam de fazer uma refeição no Musashi ou comer algo no café e sentar para fazer esse lanche — fica a seu critério; em termos de qualidade de comida, na base da torre (Solamachi) a comida é melhor.",
         "O shopping Solamachi é enorme — deixei em destaque as lojas referentes a anime/mangá, mas tem dezenas de lojas de outros temas que podem ser interessantes de explorar.",
@@ -3510,15 +3515,28 @@ function VisaoAnotadaBlock({
             </span>
           </div>
         ) : (
-          <div className="mb-5 rounded-2xl bg-black px-6 py-5 text-center">
+          <div
+            className="mb-5 rounded-2xl bg-black bg-cover bg-center px-6 py-5 text-center"
+            style={
+              visaoAnotada.fundo
+                ? {
+                    backgroundImage: `linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url(${visaoAnotada.fundo})`,
+                  }
+                : undefined
+            }
+          >
             <p className={`${displayClassName} text-2xl font-medium text-white md:text-3xl`}>
               Raio-X Alpinea{visaoAnotada.titulo && ` — ${visaoAnotada.titulo}`}
             </p>
-            <img
-              src="/images/icone-raiox-alpinea.png"
-              alt=""
-              className="mx-auto my-4 h-16 w-16 object-contain"
-            />
+            {visaoAnotada.fundo ? (
+              <div className="my-4" />
+            ) : (
+              <img
+                src="/images/icone-raiox-alpinea.png"
+                alt=""
+                className="mx-auto my-4 h-16 w-16 object-contain"
+              />
+            )}
             {visaoAnotada.comentarios && visaoAnotada.comentarios.length > 0 && (
               <div className="mx-auto max-w-2xl text-left">
                 <div className="space-y-3">
@@ -3896,63 +3914,68 @@ function PeriodBlock({
             <p className="text-xs font-bold uppercase tracking-[0.25em] text-[#000000]">
               Percurso essencial
             </p>
-            <div className="text-right">
-              <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#B96432]">
-                Tempo estimado de visitação
-              </p>
-              <p className="mt-0.5 text-3xl font-bold leading-none text-[#000000] sm:text-4xl">
-                {period.percursoEssencial.duracao}
-              </p>
+            <div className="flex items-center gap-2.5 text-right">
+              <IconClock className="h-6 w-6 shrink-0 text-[#B96432]" />
+              <div>
+                <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#B96432]">
+                  Tempo estimado de visitação
+                </p>
+                <p className="mt-0.5 text-lg font-bold leading-snug text-[#000000] sm:text-xl">
+                  {period.percursoEssencial.duracao}
+                </p>
+              </div>
             </div>
           </div>
-          <div className="mt-6">
-            {(() => {
-              let numero = 0;
-              return period.percursoEssencial!.passos.map((passo, i) => {
-                if (passo.foto) numero += 1;
-                return (
-                  <div key={passo.titulo} className="flex gap-4">
-                    <div className="flex flex-col items-center">
-                      {passo.foto ? (
-                        <div className="relative h-16 w-16 shrink-0 sm:h-[76px] sm:w-[76px]">
-                          <div className="h-full w-full overflow-hidden rounded-full border-2 border-white shadow-sm">
-                            <img
-                              src={passo.foto}
-                              alt={passo.titulo}
-                              className="h-full w-full object-cover"
-                            />
+          <div className="mt-6 flex justify-center">
+            <div className="w-full max-w-md">
+              {(() => {
+                let numero = 0;
+                return period.percursoEssencial!.passos.map((passo, i) => {
+                  if (passo.foto) numero += 1;
+                  return (
+                    <div key={passo.titulo} className="flex gap-4">
+                      <div className="flex flex-col items-center">
+                        {passo.foto ? (
+                          <div className="relative h-16 w-16 shrink-0 sm:h-[76px] sm:w-[76px]">
+                            <div className="h-full w-full overflow-hidden rounded-full border-2 border-white shadow-sm">
+                              <img
+                                src={passo.foto}
+                                alt={passo.titulo}
+                                className="h-full w-full object-cover"
+                              />
+                            </div>
+                            <span className="absolute -bottom-2 -right-2 flex h-8 w-8 items-center justify-center rounded-full border-2 border-white bg-[#1B4A73] text-sm font-bold text-white shadow-sm sm:h-9 sm:w-9 sm:text-base">
+                              {numero}
+                            </span>
                           </div>
-                          <span className="absolute -bottom-2 -right-2 flex h-8 w-8 items-center justify-center rounded-full border-2 border-white bg-[#B96432] text-sm font-bold text-white shadow-sm sm:h-9 sm:w-9 sm:text-base">
-                            {numero}
-                          </span>
-                        </div>
-                      ) : (
-                        <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full border border-dashed border-[#2C6CA6]/35 text-[#2C6CA6]/50 sm:h-[76px] sm:w-[76px]">
-                          <IconWalk className="h-9 w-9 sm:h-11 sm:w-11" />
-                        </div>
-                      )}
-                      {i < period.percursoEssencial!.passos.length - 1 && (
-                        <span className="my-1 min-h-[18px] w-[2px] flex-1 rounded-full bg-[#000000]/20" />
-                      )}
-                    </div>
-                    <div
-                      className={`min-w-0 flex-1 pt-2.5 ${
-                        i < period.percursoEssencial!.passos.length - 1 ? "pb-6" : ""
-                      }`}
-                    >
-                      {passo.horario && (
-                        <p className="text-xs font-medium uppercase tracking-[0.1em] text-[#B96432]">
-                          {passo.horario}
+                        ) : (
+                          <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full border border-dashed border-[#2C6CA6]/35 text-[#2C6CA6]/50 sm:h-[76px] sm:w-[76px]">
+                            <IconWalk className="h-9 w-9 sm:h-11 sm:w-11" />
+                          </div>
+                        )}
+                        {i < period.percursoEssencial!.passos.length - 1 && (
+                          <span className="my-1 min-h-[18px] w-[2px] flex-1 rounded-full bg-[#000000]/20" />
+                        )}
+                      </div>
+                      <div
+                        className={`min-w-0 flex-1 pt-2.5 ${
+                          i < period.percursoEssencial!.passos.length - 1 ? "pb-6" : ""
+                        }`}
+                      >
+                        {passo.horario && (
+                          <p className="text-xs font-medium uppercase tracking-[0.1em] text-[#B96432]">
+                            {passo.horario}
+                          </p>
+                        )}
+                        <p className="mt-0.5 text-base font-semibold leading-tight text-[#000000]">
+                          {passo.titulo}
                         </p>
-                      )}
-                      <p className="mt-0.5 text-base font-semibold leading-tight text-[#000000]">
-                        {passo.titulo}
-                      </p>
+                      </div>
                     </div>
-                  </div>
-                );
-              });
-            })()}
+                  );
+                });
+              })()}
+            </div>
           </div>
           <p className="mt-4 text-xs leading-5 text-[#000000]/60">
             O que dá pra fazer sem pressa. Os detalhes de cada ponto vêm a seguir — comece por aqui.
@@ -4063,9 +4086,7 @@ function PeriodBlock({
           {period.listasPraticas && period.listasPraticas.length > 0 && (
             <div className="mb-5 rounded-2xl border border-[#BFDCF2] bg-[#EAF3FC] p-6 sm:p-7">
               <div className="mb-5 flex items-center gap-4">
-                <span className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-white text-[#2C6CA6] shadow-sm">
-                  <IconTicket className="h-8 w-8" />
-                </span>
+                <IconTicket className="h-20 w-20 shrink-0 text-[#2C6CA6]" />
                 <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#2C6CA6]/85">
                   Ingressos & Preços
                 </p>
@@ -5629,9 +5650,6 @@ export function ApprovalPanel({
           <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#24211D]/60">
             Informações Detalhadas
           </p>
-          <span className="rounded-full border border-[#000000]/25 bg-[#000000]/[0.06] px-3 py-1 text-[10px] font-bold uppercase tracking-[0.15em] text-[#000000]">
-            Detalhes Completos No Painel Digital
-          </span>
         </div>
         <div className="grid grid-cols-2 gap-3 border-b border-[#DDD8CF] px-6 pb-6 pt-3 sm:grid-cols-4 sm:px-10">
           {INFO_CARDS.map(({ label, Icon, view }) => {

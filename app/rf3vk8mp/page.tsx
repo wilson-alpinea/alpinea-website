@@ -54,8 +54,8 @@ const DIMENSION_ICON_SRC: Record<DimensionIconKind, string> = {
 };
 
 function RadarChart({ dimensions }: { dimensions: RadarDimension[] }) {
-  const width = 460;
-  const height = 380;
+  const width = 520;
+  const height = 420;
   const cx = width / 2;
   const cy = height / 2;
   const radius = 88;
@@ -76,7 +76,7 @@ function RadarChart({ dimensions }: { dimensions: RadarDimension[] }) {
   return (
     <svg
       viewBox={`0 0 ${width} ${height}`}
-      className="mx-auto -mb-4 -mt-2 block h-auto w-full max-w-[460px]"
+      className="mx-auto -mb-4 -mt-2 block h-auto w-full max-w-[520px]"
     >
       {levels.map((level, li) => (
         <polygon
@@ -119,8 +119,8 @@ function RadarChart({ dimensions }: { dimensions: RadarDimension[] }) {
       ))}
 
       {dimensions.map((d, i) => {
-        const p = point(radius + 28, i);
-        const size = 28;
+        const p = point(radius + 34, i);
+        const size = 44;
         return (
           <image
             key={i}
@@ -134,7 +134,7 @@ function RadarChart({ dimensions }: { dimensions: RadarDimension[] }) {
       })}
 
       {dimensions.map((d, i) => {
-        const p = point(radius + 54, i);
+        const p = point(radius + 80, i);
         const anchor =
           Math.abs(p.x - cx) < 4 ? "middle" : p.x > cx ? "start" : "end";
         const startY = p.y - ((d.lines.length - 1) * lineHeight) / 2;
