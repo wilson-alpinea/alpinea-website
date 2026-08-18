@@ -3475,7 +3475,7 @@ function DeslocamentoCard({ deslocamento }: { deslocamento: Deslocamento }) {
                     alt: mapa.mapaAlt ?? `Mapa da ${mapa.nome}`,
                   })
                 }
-                className="group relative mx-auto mt-6 block h-72 w-full overflow-hidden rounded-xl border border-[#DDD8CF] bg-white shadow-sm sm:h-96"
+                className="group relative mx-auto mt-6 block h-56 w-full overflow-hidden rounded-xl border border-[#DDD8CF] bg-white shadow-sm sm:h-64"
               >
                 <img
                   src={mapa.mapa}
