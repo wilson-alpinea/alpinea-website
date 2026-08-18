@@ -46,6 +46,9 @@ type Gastronomia = {
   // Rótulo acima da lista de snacks/itens simples (ex.: "Snacks de rua").
   itensLabel?: string;
   itens?: { nome: string; descricao?: string; localizacao?: string; preco?: string; foto?: string }[];
+  // Aviso curto de fila/lotação — mostrado em destaque (ex.: horário de
+  // pico com fila grande, recomendação de chegar cedo etc.).
+  alerta?: string;
   // Rótulo acima da lista de restaurantes (ex.: "Opções de refeição").
   restaurantesLabel?: string;
   // Cards ricos com foto — usado quando há fotos reais dos restaurantes.
@@ -467,21 +470,21 @@ const DAY_1: DayContent = {
         {
           titulo: "Saída pelo lado oeste",
           horario: "~10:35",
-          descricao: "Caminhada tranquila em direção a Kappabashi e Sumida Park.",
+          descricao: "Desvio opcional até Kappabashi, a oeste do templo — quem pular vai direto para o Rio Sumida, do lado leste.",
           destaque: "≈10 min a pé — percurso agradável e sinalizado.",
         },
         {
-          titulo: "Kappabashi",
+          titulo: "Kappabashi (desvio opcional)",
           foto: "/images/kappabashi.png",
           horario: "~11:00",
           descricao: "A famosa \"Kitchen Town\", o paraíso dos utensílios de cozinha e artigos profissionais.",
-          destaque: "Mais de 160 lojas de utensílios e facas japonesas.",
+          destaque: "Mais de 160 lojas — depois é preciso voltar em direção ao templo para seguir ao Rio Sumida, do lado oposto.",
         },
         {
           titulo: "Sumida Park",
           foto: "/images/sumida-park.png",
           horario: "~11:30",
-          descricao: "Encerramento perfeito com vista para a Tokyo Skytree e o Rio Sumida.",
+          descricao: "≈15 min a pé partindo do templo, do lado leste — encerramento perfeito com vista para a Tokyo Skytree e o Rio Sumida.",
           destaque: "Ideal para um momento de descanso e fotos memoráveis.",
         },
       ],
@@ -492,8 +495,8 @@ const DAY_1: DayContent = {
       imagemAlt: "Vista aérea do complexo do Templo Sensoji com as partes principais destacadas",
       comentarios: [
         "A prioridade aqui é evitar o início das aglomerações no complexo — por ser um dos pontos turísticos mais visitados do Japão, próximo do horário do almoço começa a ficar muito cheio. Nossa recomendação é chegar antes da abertura das lojas da Nakamise e aproveitar com calma todos os pontos destacados abaixo. A partir das 09:00 (abertura das lojas) você começa a explorar as lojinhas, tanto de snacks quanto de souvenir. Após finalizar essa visita, você tem algumas opções.",
-        "Existem 3 pontos de interesse destacados abaixo — nossa recomendação seria visitar os 3, porém o tempo que vai passar em cada um depende de você. Kappabashi é enorme, não recomendo visitar todas as lojas.",
-        "Para ir à Tokyo Sky Tree você pode ir andando pelo Sumida Park, ou pegar o metrô (são duas estações de distância).",
+        "Existem 3 pontos de interesse destacados abaixo — nossa recomendação seria visitar os 3, porém o tempo que vai passar em cada um depende de você. Kappabashi fica a oeste do templo (sentido oposto ao Rio Sumida) e é enorme — trate como um desvio opcional, não recomendo visitar todas as lojas, e lembre que depois é preciso voltar em direção ao templo para seguir ao rio.",
+        "Para ir à Tokyo Sky Tree você pode ir andando pelo Sumida Park (~15 min), pegar a Tobu Skytree Line direto até a Estação Tokyo Skytree (sem baldeação, ~3 min), ou a Toei Asakusa Line até Oshiage (2 paradas — é a opção detalhada no deslocamento logo abaixo).",
         "Outra opção é voltar pro hotel e descansar antes de ir pra Tokyo Sky Tree.",
         "Sobre o almoço, recomendo sair de perto do complexo de Sensoji — as filas são gigantes.",
       ],
@@ -684,6 +687,8 @@ const DAY_1: DayContent = {
     ],
     gastronomia: {
       subtitulo: "Grande quantidade de lojas que vendem snacks de rua",
+      alerta:
+        "Restaurantes de mesa perto do Sensoji enfrentam filas grandes no horário de almoço (12h–14h) — vale se afastar um pouco do complexo antes de parar para comer.",
       itensLabel: "Snacks de rua · Nakamise-dori",
       itens: [
         {
@@ -695,16 +700,16 @@ const DAY_1: DayContent = {
           foto: "/images/nakamise-melon-pan-kagetsudo-2.jpg",
         },
         {
-          nome: "Ningyo-yaki (Kimuraya Honten)",
+          nome: "Ningyo-yaki morno (Kimuraya Honten)",
           descricao:
-            "Bolinho recheado de doce de feijão vermelho, moldado em formatos icônicos e vendido morno, recém-feito.",
+            "Bolinho recheado de doce de feijão vermelho, moldado em formatos icônicos e vendido morno, recém-feito — para comer na hora.",
           localizacao: "Kimuraya Honten — Nakamise-dori",
-          preco: "~500 (pacote)",
+          preco: "~500 (pacote pequeno)",
           foto: "/images/nakamise-ningyo-yaki-1.jpg",
         },
         {
-          nome: "Ningyo-yaki (Kimuraya Honten)",
-          descricao: "Vendido em pacotes — ótimo para levar de lembrança.",
+          nome: "Ningyo-yaki para presente (Kimuraya Honten)",
+          descricao: "Pacote de 10 unidades embalado — ótimo para levar de lembrança.",
           localizacao: "Kimuraya Honten — Nakamise-dori",
           preco: "~600 (pacote de 10)",
           foto: "/images/nakamise-ningyo-yaki-2b.jpg",
@@ -999,6 +1004,8 @@ const DAY_1: DayContent = {
         gastronomia: {
           intro:
             "A Tokyo Sky Tree está integrada ao shopping Tokyo Solamachi, que reúne diversas opções de restaurantes, praça de alimentação e um mercado no subsolo com alternativas para takeout.",
+          alerta:
+            "Hitsumabushi Bincho e Kaiten Sushi Toriton costumam ter fila no horário de jantar (a partir de ~18h) — chegar um pouco mais cedo ajuda a evitar espera.",
           restaurantesLabel: "Opções de refeição",
           restaurantes: [
             {
@@ -1156,13 +1163,13 @@ const DAY_2: DayContent = {
           "Tomica Shop",
           "Rilakkuma Store",
         ],
-        rating: 5,
+        prioridade: "imperdivel",
       },
       {
         title: "Marunouchi Naka-dori",
         description:
           "Rua arborizada com cafés e restaurantes que alimentam os escritórios financeiros da região.",
-        rating: 2,
+        prioridade: "opcional",
       },
     ],
     gastronomia: {
@@ -1224,31 +1231,31 @@ const DAY_2: DayContent = {
         title: "Otemon Gate",
         description:
           "Antigo portão principal do Castelo de Edo, usado pelos daimyō em suas visitas oficiais ao shogun. Destruído em bombardeio aéreo em 1945 e reconstruído em 1967 — hoje é a entrada principal dos jardins, o primeiro ponto do passeio.",
-        rating: 4,
+        prioridade: "recomendado",
       },
       {
         title: "Bansho (Casas de Guarda)",
         description:
           "Uma das três casas de guarda samurai que sobrevivem do Castelo de Edo — o Hyakunin Bansho abrigava quatro unidades de 120 guardas responsáveis pela proteção do recinto interno do castelo. Fica logo após a entrada por Otemon.",
-        rating: 3,
+        prioridade: "opcional",
       },
       {
         title: "Muralhas e Fossos Originais",
         description:
           "Trechos originais das muralhas de pedra e fossos que protegiam o Castelo de Edo, preservados desde o período feudal — visíveis ao longo de todo o caminho.",
-        rating: 3,
+        prioridade: "opcional",
       },
       {
         title: "Fujimi-yagura",
         description:
           "Torre de vigia construída em 1659, uma das poucas estruturas originais remanescentes do Castelo de Edo — depois que o incêndio de 1657 destruiu a torre principal, passou a funcionar como sua substituta simbólica. Não é possível entrar, mas dá para ver de fora, dentro dos jardins. Uma das construções mais fotogênicas do local.",
-        rating: 4,
+        prioridade: "recomendado",
       },
       {
         title: "Tenshudai",
         description:
           "Enorme base de pedra onde ficava a torre principal (tenshu) do Castelo de Edo — pode ser escalada, e é um dos pontos mais impressionantes dos jardins. Fica no extremo norte do complexo, o ponto mais distante da entrada — bom encerramento do passeio.",
-        rating: 4,
+        prioridade: "recomendado",
       },
     ],
   },
@@ -1373,26 +1380,26 @@ const DAY_3: DayContent = {
         title: "Parque de Yoyogi",
         description:
           "Você precisa entrar nele para acessar o Meiji Jingu — trata-se de uma enorme floresta com árvores extremamente altas, erguida do zero em homenagem à morte do imperador Meiji.",
-        rating: 5,
+        prioridade: "imperdivel",
       },
       {
         category: "Compras",
         title: "Omotesando",
         description:
           "Uma das maiores avenidas de boutiques e lojas de luxo de Tóquio, com diversos cafés e restaurantes importantes nas ruas ao redor da avenida principal — liga a saída do parque a Shibuya, seguindo para o sul.",
-        rating: 3,
+        prioridade: "opcional",
       },
       {
         title: "Estátua de Hachiko",
         description:
           "Estátua em homenagem ao cão que continuou esperando seu dono voltar para casa sem saber que ele havia falecido — deu origem ao filme \"Pra Sempre ao Seu Lado\". Fica bem na saída da Estação Shibuya.",
-        rating: 3,
+        prioridade: "opcional",
       },
       {
         title: "Shibuya Crossing",
         description:
           "O famoso cruzamento hexagonal de Shibuya, que fica caótico às 18h — ao lado da estátua de Hachiko, último ponto antes de seguir para Shinjuku.",
-        rating: 4,
+        prioridade: "recomendado",
       },
     ],
     gastronomia: {
@@ -1457,37 +1464,37 @@ const DAY_3: DayContent = {
         title: "Shinjuku Gyoen",
         description:
           "Um dos parques mais bonitos de Tóquio, misturando jardins japonês, francês e inglês — refúgio verde no meio do bairro mais denso da cidade. Melhor visitar logo na chegada, ainda com luz do dia (fica ao sul da estação, fecha à noite).",
-        rating: 4,
+        prioridade: "recomendado",
       },
       {
         title: "Prédio do Governo Metropolitano de Tóquio + Mirante",
         description:
           "Torres gêmeas projetadas por Kenzo Tange com mirante gratuito no 45º andar e vista panorâmica da cidade — em dias claros, dá para ver o Monte Fuji. Fica no lado oeste da estação; ideal chegar perto do fim da tarde para ver o pôr do sol.",
-        rating: 4,
+        prioridade: "recomendado",
       },
       {
         title: "Gato 3D Gigante",
         description:
           "Gato tridimensional gigante exibido em telão curvo no edifício Cross Shinjuku Vision, na saída leste da estação — uma das atrações mais fotografadas do bairro, já a caminho de Kabukicho.",
-        rating: 4,
+        prioridade: "recomendado",
       },
       {
         title: "Estátua do Godzilla",
         description:
           "Réplica em tamanho real na varanda do Hotel Gracery, símbolo do distrito de entretenimento de Kabukicho — pertinho do Gato 3D.",
-        rating: 4,
+        prioridade: "recomendado",
       },
       {
         title: "Kabukicho",
         description:
           "Maior distrito de entretenimento noturno de Tóquio, com neons, bares temáticos e vida noturna intensa.",
-        rating: 4,
+        prioridade: "recomendado",
       },
       {
         title: "Golden Gai",
         description:
           "Rede de vielas estreitas com mais de 200 bares minúsculos, a maioria com capacidade para menos de 10 pessoas — encostado em Kabukicho, último ponto da noite antes do onsen Thermae-Yu.",
-        rating: 5,
+        prioridade: "imperdivel",
       },
     ],
     gastronomia: {
@@ -1624,51 +1631,51 @@ const DAY_4: DayContent = {
         title: "Akihabara Radio Kaikan",
         description:
           "Action figures e um shopping com um pouco de tudo — logo na saída Electric Town da estação, o primeiro ponto do passeio.",
-        rating: 3,
+        prioridade: "opcional",
       },
       {
         category: "Compras",
         title: "Animate",
         description: "Uma das maiores redes de lojas de mangá do Japão.",
-        rating: 4,
+        prioridade: "recomendado",
       },
       {
         category: "Compras",
         title: "Mandarake Complex",
         description: "Mangá e action figures.",
-        rating: 4,
+        prioridade: "recomendado",
       },
       {
         category: "Compras",
         title: "Super Potato",
         description:
           "Loja retrô de videogames — nas proximidades também fica a Suruga-ya Anime & Hobby Store, com videogames e itens de anime.",
-        rating: 4,
+        prioridade: "recomendado",
       },
       {
         category: "Compras",
         title: "Hareruya 2",
         description: "Pokémon Trading Card Game.",
-        rating: 3,
+        prioridade: "opcional",
       },
       {
         category: "Compras",
         title: "Ark",
         description: "Peças de computador.",
-        rating: 3,
+        prioridade: "opcional",
       },
       {
         category: "Curiosidade",
         title: "Weird Vending Machine Corner",
         description: "Cantinho com máquinas de venda automática bizarras e inusitadas, um clássico despretensioso de Akihabara.",
-        rating: 2,
+        prioridade: "opcional",
       },
       {
         category: "Compras",
         title: "BIC Camera ou Yodobashi Camera",
         description:
           "Grandes lojas de eletrônicos — Yodobashi-Akiba fica do lado leste da estação (saída Showa-dori), um bom último ponto antes de seguir para o almoço.",
-        rating: 3,
+        prioridade: "opcional",
       },
     ],
     gastronomia: {
@@ -1718,10 +1725,10 @@ const DAY_4: DayContent = {
       { label: "Preço médio", valor: "~¥4.000–6.000 por pessoa" },
     ],
     pois: [
-      { title: "Osusumeya Kanda", rating: 5 },
-      { title: "Yakitori Izakaya Kanda-syouten", rating: 5 },
-      { title: "Izakaya Genki Kanda", rating: 5 },
-      { title: "Robatayaki HOTARU", rating: 5 },
+      { title: "Osusumeya Kanda", prioridade: "imperdivel" },
+      { title: "Yakitori Izakaya Kanda-syouten", prioridade: "imperdivel" },
+      { title: "Izakaya Genki Kanda", prioridade: "imperdivel" },
+      { title: "Robatayaki HOTARU", prioridade: "imperdivel" },
     ],
     gastronomia: {
       itens: [
@@ -1744,23 +1751,23 @@ const DAY_4: DayContent = {
             title: "Aranha Gigante de Louise Bourgeois",
             description:
               "A única no mundo preparada para terremotos, aos pés do Mori Tower — o primeiro ponto ao chegar em Roppongi Hills.",
-            rating: 3,
+            prioridade: "opcional",
           },
           {
             title: "Museu de Arte Moderna Mori",
             description: "Museu de arte contemporânea no topo do Mori Tower.",
-            rating: 4,
+            prioridade: "recomendado",
           },
           {
             title: "Mori Garden",
             description: "Jardim japonês tradicional aos pés do Mori Tower.",
-            rating: 3,
+            prioridade: "opcional",
           },
           {
             title: "Hinokicho Park",
             description:
               "Parque tranquilo no coração de Roppongi, a poucos minutos a pé do Mori Tower.",
-            rating: 2,
+            prioridade: "opcional",
           },
         ],
         gastronomia: {
@@ -1882,18 +1889,18 @@ const DAY_5: DayContent = {
         title: "Sannenzaka",
         description:
           "Ladeira histórica de casas tradicionais, logo na descida a partir do templo.",
-        rating: 4,
+        prioridade: "recomendado",
       },
       {
         title: "Ninenzaka",
         description: "Continuação de Sannenzaka, descendo rumo a Gion.",
-        rating: 4,
+        prioridade: "recomendado",
       },
       {
         title: "Café % Arabica Kyoto Higashiyama",
         description:
           "Cafeteria minimalista muito concorrida, a poucos passos da Pagode Yasaka — última parada antes de seguir para Gion.",
-        rating: 2,
+        prioridade: "opcional",
       },
     ],
     gastronomia: {
@@ -1950,12 +1957,12 @@ const DAY_5: DayContent = {
       {
         title: "Yasaka Shrine",
         description: "Santuário xintoísta símbolo de Gion.",
-        rating: 3,
+        prioridade: "opcional",
       },
       {
         title: "Pontocho",
         description: "Viela tradicional de restaurantes e gueixas.",
-        rating: 4,
+        prioridade: "recomendado",
       },
     ],
     gastronomia: {
@@ -2115,25 +2122,25 @@ const DAY_6: DayContent = {
         title: "Ryoan-ji",
         description:
           "Templo zen famoso pelo jardim de pedras — pega o mesmo ônibus/circuito de Kinkaku-ji, poucos minutos de distância.",
-        rating: 4,
+        prioridade: "recomendado",
       },
       {
         title: "Ninna-ji",
         description:
           "Templo histórico com belas cerejeiras, um pouco mais além de Ryoan-ji no mesmo circuito.",
-        rating: 2,
+        prioridade: "opcional",
       },
       {
         title: "Museu do Mangá de Kyoto",
         description:
           "Acervo com milhares de títulos de mangá — fica no centro de Kyoto (Karasuma-Oike), fora da rota de Kinkaku-ji: exige um deslocamento à parte (~20-30 min), não dá pra encaixar sem voltar ao centro.",
-        rating: 3,
+        prioridade: "opcional",
       },
       {
         title: "Nintendo Store Kyoto",
         description:
           "Loja oficial da Nintendo no Takashimaya, no centro de Kyoto — também fora da rota de Kinkaku-ji, exige o mesmo deslocamento ao centro do Museu do Mangá.",
-        rating: 3,
+        prioridade: "opcional",
       },
     ],
     gastronomia: {
@@ -2361,19 +2368,19 @@ const DAY_7: DayContent = {
       {
         title: "Edo Noren (Área Externa do Kokugikan)",
         description: "Vila gastronômica temática de sumô, na entrada do estádio.",
-        rating: 3,
+        prioridade: "opcional",
       },
       {
         title: "Santuário Nomi-no-Sukune",
         description:
           "Monumento com os nomes de todos os Yokozuna (Título máximo de lutador de Sumô) — pertinho do Kokugikan.",
-        rating: 2,
+        prioridade: "opcional",
       },
       {
         title: "Museu de Espadas",
         description:
           "Coleção de espadas samurai tradicionais, a alguns minutos a pé do estádio.",
-        rating: 3,
+        prioridade: "opcional",
       },
     ],
     gradeHorarios: {
@@ -2823,6 +2830,15 @@ function GastronomiaBlock({ gastronomia }: { gastronomia: Gastronomia }) {
         <p className="mt-3 text-sm leading-6 text-[#24211D]/78">
           {gastronomia.intro}
         </p>
+      )}
+
+      {gastronomia.alerta && (
+        <div className="mt-3 flex items-start gap-2.5 rounded-xl border border-amber-300/70 bg-amber-50 px-3.5 py-3">
+          <span className="mt-0.5 shrink-0 text-sm">⚠️</span>
+          <p className="text-xs leading-5 text-amber-800">
+            {gastronomia.alerta}
+          </p>
+        </div>
       )}
 
       {gastronomia.itens && gastronomia.itens.length > 0 && (
