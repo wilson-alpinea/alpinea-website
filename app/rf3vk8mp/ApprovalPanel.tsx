@@ -39,6 +39,8 @@ type Poi = {
 };
 
 type Gastronomia = {
+  // Sobrescreve o título padrão "Gastronomia" do card (ex.: "Snacks de Rua").
+  titulo?: string;
   subtitulo?: string;
   // Parágrafo curto de contexto (ex.: "está integrada ao shopping X, que
   // reúne diversas opções de restaurantes...") — mostrado acima da lista.
@@ -234,6 +236,9 @@ type Period = {
     passos: {
       titulo: string;
       foto?: string;
+      // CSS object-position custom para centralizar a miniatura em um
+      // ponto específico da foto (ex.: "50% 20%" para focar no topo).
+      fotoPosicao?: string;
       horario?: string;
       // Parágrafo curto explicando o ponto — mostrado abaixo do título.
       descricao?: string;
@@ -689,10 +694,10 @@ const DAY_1: DayContent = {
       },
     ],
     gastronomia: {
+      titulo: "Snacks de Rua",
       subtitulo: "Grande quantidade de lojas que vendem snacks de rua",
       alerta:
         "Restaurantes de mesa perto do Sensoji enfrentam filas grandes no horário de almoço (12h–14h) — vale se afastar um pouco do complexo antes de parar para comer.",
-      itensLabel: "Snacks de rua · Nakamise-dori",
       itens: [
         {
           nome: "Melon Pan (Kagetsudo)",
@@ -797,7 +802,11 @@ const DAY_1: DayContent = {
       passos: [
         { titulo: "Tembo Deck · 350 m", foto: "/images/skytree-tembo-deck-miniatura.png" },
         { titulo: "Tembo Galleria · 450 m (opcional)", foto: "/images/skytree-tembo-deck-aerea.jpg" },
-        { titulo: "Tokyo Solamachi", foto: "/images/solamachi-pokemon-center.jpg" },
+        {
+          titulo: "Tokyo Solamachi",
+          foto: "/images/solamachi-pokemon-center.jpg",
+          fotoPosicao: "50% 15%",
+        },
       ],
     },
     visaoAnotada: {
@@ -815,14 +824,14 @@ const DAY_1: DayContent = {
       titulo: "Skytree em Detalhes",
       imagens: [
         {
-          src: "/images/skytree-tembo-deck-aerea.jpg",
-          alt: "Vista aérea do Tembo Galleria da Tokyo Sky Tree, mostrando a estrutura do observatório superior",
-          legenda: "Tembo Galleria, visto de fora",
-        },
-        {
           src: "/images/skytree-tembo-deck-janela.jpg",
           alt: "Vista da cidade através das janelas do Tembo Deck da Tokyo Sky Tree",
           legenda: "Vista do Tembo Deck",
+        },
+        {
+          src: "/images/skytree-tembo-deck-aerea.jpg",
+          alt: "Vista aérea do Tembo Galleria da Tokyo Sky Tree, mostrando a estrutura do observatório superior",
+          legenda: "Tembo Galleria, visto de fora",
         },
       ],
       mapas: [
@@ -1007,7 +1016,7 @@ const DAY_1: DayContent = {
           intro:
             "A Tokyo Sky Tree está integrada ao shopping Tokyo Solamachi, que reúne diversas opções de restaurantes, praça de alimentação e um mercado no subsolo com alternativas para takeout.",
           alerta:
-            "Hitsumabushi Bincho e Kaiten Sushi Toriton costumam ter fila no horário de jantar (a partir de ~18h) — chegar um pouco mais cedo ajuda a evitar espera.",
+            "Kaiten Sushi Toriton costuma ter fila no horário de jantar (a partir de ~18h) — chegar um pouco mais cedo ajuda a evitar espera.",
           restaurantesLabel: "Opções de refeição",
           restaurantes: [
             {
@@ -2735,13 +2744,13 @@ function BanheirosProximosBlock({
   const [aberto, setAberto] = useState(false);
 
   return (
-    <div className="mb-5 rounded-2xl border border-[#DDD8CF] bg-[#FAF9F6]">
+    <div className="mb-5 rounded-2xl border border-orange-200 bg-orange-50/60">
       <button
         type="button"
         onClick={() => setAberto((v) => !v)}
-        className="flex w-full items-center gap-2.5 p-5 text-left"
+        className="flex w-full items-center gap-3 p-5 text-left"
       >
-        <IconToilet className="h-8 w-8 shrink-0 text-[#000000]" />
+        <IconToilet className="h-12 w-12 shrink-0 text-[#000000]" />
         <span className="min-w-0 flex-1 text-[10px] font-bold uppercase tracking-[0.15em] text-[#24211D]/55">
           Banheiros Públicos Mais Próximos
         </span>
@@ -2792,18 +2801,32 @@ function ResumoDiaBlock({
         <div className="flex shrink-0">
         {resumo.passos.map((passo, i) => (
           <div key={passo.titulo + i} className="flex shrink-0 items-start">
-            <div className="flex w-[72px] shrink-0 flex-col items-center text-center sm:w-20">
+            <div className="group flex w-[72px] shrink-0 cursor-default flex-col items-center text-center sm:w-20">
               {passo.foto ? (
                 passo.foto.includes("/images/icone-") ? (
-                  <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-white shadow-sm sm:h-14 sm:w-14">
+                  <div
+                    className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-full shadow-sm transition duration-200 group-hover:scale-110 group-hover:shadow-[0_0_0_3px_rgba(255,255,255,0.25)] sm:h-14 sm:w-14 ${
+                      passo.foto.includes("icone-gastronomia")
+                        ? "bg-amber-50"
+                        : passo.foto.includes("icone-hotel")
+                          ? "bg-[#E7F4E9]"
+                          : "bg-white"
+                    }`}
+                  >
                     <img
                       src={passo.foto}
                       alt={passo.titulo}
-                      className="h-8 w-8 object-contain sm:h-9 sm:w-9"
+                      className={
+                        passo.foto.includes("icone-gastronomia")
+                          ? "h-11 w-11 object-contain sm:h-12 sm:w-12"
+                          : passo.foto.includes("icone-hotel")
+                            ? "h-9 w-9 object-contain sm:h-10 sm:w-10"
+                            : "h-8 w-8 object-contain sm:h-9 sm:w-9"
+                      }
                     />
                   </div>
                 ) : (
-                  <div className="h-12 w-12 shrink-0 overflow-hidden rounded-full border-2 border-white shadow-sm sm:h-14 sm:w-14">
+                  <div className="h-12 w-12 shrink-0 overflow-hidden rounded-full border-2 border-white shadow-sm transition duration-200 group-hover:scale-110 group-hover:shadow-[0_0_0_3px_rgba(255,255,255,0.25)] sm:h-14 sm:w-14">
                     <img
                       src={passo.foto}
                       alt={passo.titulo}
@@ -2812,11 +2835,11 @@ function ResumoDiaBlock({
                   </div>
                 )
               ) : (
-                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-dashed border-white/25 text-white/40 sm:h-14 sm:w-14">
+                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-dashed border-white/25 text-white/40 transition duration-200 group-hover:scale-110 group-hover:border-white/50 group-hover:text-white/70 sm:h-14 sm:w-14">
                   <IconClock className="h-5 w-5" />
                 </div>
               )}
-              <p className="mt-2 text-[11px] font-semibold leading-tight text-white sm:text-xs">
+              <p className="mt-2 text-[11px] font-semibold leading-tight text-white transition duration-200 group-hover:text-white/80 sm:text-xs">
                 {passo.titulo}
               </p>
               {passo.horario && (
@@ -2871,7 +2894,7 @@ function GastronomiaBlock({ gastronomia }: { gastronomia: Gastronomia }) {
   return (
     <div className="mt-6 rounded-2xl border border-[#DDD8CF] bg-[#FAF9F6] p-4 sm:p-6">
       <p className="text-xs font-bold uppercase tracking-[0.2em] text-[#24211D]/68">
-        Gastronomia
+        {gastronomia.titulo ?? "Gastronomia"}
         {gastronomia.subtitulo && (
           <span className="ml-2 font-normal normal-case tracking-normal text-[#24211D]/65">
             ({gastronomia.subtitulo})
@@ -3373,9 +3396,9 @@ function DeslocamentoCard({ deslocamento }: { deslocamento: Deslocamento }) {
               style={{
                 width: 0,
                 height: 0,
-                borderTop: "6px solid transparent",
-                borderBottom: "6px solid transparent",
-                borderLeft: `10px solid ${deslocamento.linha.cor || "#B96432"}`,
+                borderTop: "10px solid transparent",
+                borderBottom: "10px solid transparent",
+                borderLeft: `16px solid ${deslocamento.linha.cor || "#B96432"}`,
               }}
             />
           </div>
@@ -3713,7 +3736,7 @@ function VisaoAnotadaBlock({
       <button
         type="button"
         onClick={() => setZoom({ src: visaoAnotada.imagem, alt: visaoAnotada.imagemAlt })}
-        className="group relative mx-auto block max-w-xl overflow-hidden rounded-2xl border border-[#DDD8CF] sm:max-w-2xl"
+        className="group relative block w-full overflow-hidden rounded-2xl border border-[#DDD8CF]"
       >
         <img
           src={visaoAnotada.imagem}
@@ -4051,6 +4074,14 @@ function PeriodBlock({
                               src={passo.foto}
                               alt={passo.titulo}
                               className="h-full w-full object-cover"
+                              style={
+                                passo.fotoPosicao
+                                  ? {
+                                      objectPosition: passo.fotoPosicao,
+                                      transform: "scale(1.6)",
+                                    }
+                                  : undefined
+                              }
                             />
                           </div>
                           <span className="absolute -bottom-1.5 -right-1.5 flex h-6 w-6 items-center justify-center rounded-full border-2 border-white bg-[#1B4A73] text-xs font-bold text-white shadow-sm">
@@ -4109,7 +4140,7 @@ function PeriodBlock({
                   outros.length > 0 && (
                     <div className="mb-5 grid grid-cols-2 gap-x-6 gap-y-4 rounded-2xl border border-[#DDD8CF] bg-[#FAF9F6] p-5 sm:grid-cols-4">
                       {outros.map((item) => (
-                        <div key={item.label}>
+                        <div key={item.label} className="text-center">
                           <p className="mb-1.5 text-[10px] font-bold uppercase tracking-[0.15em] text-[#24211D]/55">
                             {item.label}
                           </p>
@@ -4190,7 +4221,7 @@ function PeriodBlock({
             <div className="mb-5 rounded-2xl border border-[#BFDCF2] bg-[#EAF3FC] p-6 sm:p-7">
               <div className="mb-5 flex items-center gap-4">
                 <IconTicket className="h-20 w-20 shrink-0 text-[#2C6CA6]" />
-                <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#2C6CA6]/85">
+                <p className="text-base font-bold uppercase tracking-[0.2em] text-[#2C6CA6]/85 sm:text-lg">
                   Ingressos & Preços
                 </p>
               </div>
@@ -4214,16 +4245,18 @@ function PeriodBlock({
           )}
 
           {period.decisoes && period.decisoes.length > 0 && (
-            <div className="mb-5 rounded-2xl border border-emerald-200 bg-emerald-50 p-5">
-              <p className="mb-4 flex items-center gap-2 text-xs font-bold uppercase tracking-[0.2em] text-emerald-900">
+            <div className="mb-5 rounded-2xl border border-emerald-200 bg-emerald-50 p-5 sm:p-7">
+              <div className="mb-5 flex items-center gap-4">
                 <img
                   src="/images/icone-duvidas-frequentes.png"
                   alt=""
-                  className="h-4 w-4 object-contain"
+                  className="h-20 w-20 shrink-0 object-contain"
                   style={{ filter: "brightness(0) saturate(100%)" }}
                 />
-                Dúvidas Frequentes
-              </p>
+                <p className="text-base font-bold uppercase tracking-[0.2em] text-emerald-900 sm:text-lg">
+                  Dúvidas Frequentes
+                </p>
+              </div>
               <div className="grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-2">
                 {period.decisoes.map((d, i) => (
                   <div
@@ -4234,13 +4267,7 @@ function PeriodBlock({
                         : ""
                     }
                   >
-                    <p className="mb-1.5 flex items-center gap-2 text-xs font-bold uppercase tracking-[0.12em] text-emerald-900">
-                      <img
-                        src="/images/icone-ideia-sugestao.png"
-                        alt=""
-                        className="h-3.5 w-3.5 object-contain"
-                        style={{ filter: "brightness(0) saturate(100%)" }}
-                      />
+                    <p className="mb-1.5 text-xs font-bold uppercase tracking-[0.12em] text-emerald-900">
                       {d.titulo}
                     </p>
                     <p className="text-sm leading-6 text-emerald-950/75">
@@ -4313,7 +4340,7 @@ function PeriodBlock({
       )}
 
       {period.gastronomia && (
-        <NumberedStep number={passoRefeicao!} label="Refeição">
+        <NumberedStep number={passoRefeicao!} label="Gastronomia">
           <GastronomiaBlock gastronomia={period.gastronomia} />
         </NumberedStep>
       )}
