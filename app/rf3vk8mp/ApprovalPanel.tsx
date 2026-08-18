@@ -328,13 +328,13 @@ const DAY_1: DayContent = {
   ],
   resumoDia: {
     passos: [
-      { titulo: "Café da Manhã", horario: "08:00" },
-      { titulo: "Saída do Hotel", horario: "08:45", foto: "/images/lyf-mural-fachada.png" },
-      { titulo: "Templo Sensoji", horario: "09:45", foto: "/images/dia1-sensoji.png" },
-      { titulo: "Almoço", horario: "12:30", foto: "/images/nakamise-tanaka-soba.jpg" },
-      { titulo: "Tokyo Sky Tree", horario: "14:35", foto: "/images/dia1-skytree.png" },
-      { titulo: "Jantar", horario: "16:30", foto: "/images/Hitsumabushi.png" },
-      { titulo: "Retorno ao Hotel", horario: "19:00", foto: "/images/lyf-mural-fachada.png" },
+      { titulo: "Café da Manhã", horario: "08:00", foto: "/images/icone-gastronomia.png" },
+      { titulo: "Saída do Hotel", horario: "08:45", foto: "/images/icone-hotel2.png" },
+      { titulo: "Templo Sensoji", horario: "09:45", foto: "/images/sensoji-kaminarimon.png" },
+      { titulo: "Almoço", horario: "12:30", foto: "/images/icone-gastronomia.png" },
+      { titulo: "Tokyo Sky Tree", horario: "14:35", foto: "/images/skytree-tembo-deck-aerea.jpg" },
+      { titulo: "Jantar", horario: "16:30", foto: "/images/icone-gastronomia.png" },
+      { titulo: "Retorno ao Hotel", horario: "19:00", foto: "/images/icone-hotel2.png" },
     ],
   },
   gradeHorarios: {
@@ -797,7 +797,7 @@ const DAY_1: DayContent = {
     },
     visaoAnotada: {
       titulo: "Tokyo Sky Tree",
-      imagem: "/images/dia1-skytree-visao-anotada-v2.png",
+      imagem: "/images/raiox-skytree2.png",
       imagemAlt: "Infográfico da Tokyo Sky Tree com altura e observatórios (Tembo Deck e Tembo Galleria)",
       nota: "634 m de altura total, concluída em 2012 — a torre de transmissão e observação mais alta do Japão.",
       fundo: "/images/raiox-skytree-bg.jpg",
@@ -2733,13 +2733,23 @@ function ResumoDiaBlock({
           <div key={passo.titulo + i} className="flex gap-4">
             <div className="flex flex-col items-center">
               {passo.foto ? (
-                <div className="h-16 w-16 shrink-0 overflow-hidden rounded-full border-2 border-white shadow-sm sm:h-[76px] sm:w-[76px]">
-                  <img
-                    src={passo.foto}
-                    alt={passo.titulo}
-                    className="h-full w-full object-cover"
-                  />
-                </div>
+                passo.foto.includes("/images/icone-") ? (
+                  <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full border-2 border-white bg-[#F8FAF9] shadow-sm sm:h-[76px] sm:w-[76px]">
+                    <img
+                      src={passo.foto}
+                      alt={passo.titulo}
+                      className="h-8 w-8 object-contain sm:h-10 sm:w-10"
+                    />
+                  </div>
+                ) : (
+                  <div className="h-16 w-16 shrink-0 overflow-hidden rounded-full border-2 border-white shadow-sm sm:h-[76px] sm:w-[76px]">
+                    <img
+                      src={passo.foto}
+                      alt={passo.titulo}
+                      className="h-full w-full object-cover"
+                    />
+                  </div>
+                )
               ) : (
                 <div className="flex h-16 w-16 shrink-0 items-center justify-center rounded-full border border-dashed border-[#2C6CA6]/35 text-[#2C6CA6]/50 sm:h-[76px] sm:w-[76px]">
                   <IconClock className="h-6 w-6" />
@@ -3516,11 +3526,13 @@ function VisaoAnotadaBlock({
           </div>
         ) : (
           <div
-            className="mb-5 rounded-2xl bg-black bg-cover bg-center px-6 py-5 text-center"
+            className={`mb-5 flex min-h-[240px] w-full flex-col rounded-2xl bg-black bg-cover bg-center px-6 py-6 text-center sm:min-h-[300px] ${
+              visaoAnotada.fundo ? "justify-between" : "justify-center"
+            }`}
             style={
               visaoAnotada.fundo
                 ? {
-                    backgroundImage: `linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)), url(${visaoAnotada.fundo})`,
+                    backgroundImage: `linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.55)), url(${visaoAnotada.fundo})`,
                   }
                 : undefined
             }
@@ -3529,7 +3541,7 @@ function VisaoAnotadaBlock({
               Raio-X Alpinea{visaoAnotada.titulo && ` — ${visaoAnotada.titulo}`}
             </p>
             {visaoAnotada.fundo ? (
-              <div className="my-4" />
+              <div />
             ) : (
               <img
                 src="/images/icone-raiox-alpinea.png"
