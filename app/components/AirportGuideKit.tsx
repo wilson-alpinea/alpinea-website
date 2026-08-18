@@ -388,22 +388,24 @@ export function ImmigrationArrivalGuide({ displayClassName }: { displayClassName
           Ao pousar, siga as placas <span className="text-[#24211D]">Arrivals (到着)</span>{" "}
           até os guichês de imigração.
         </p>
-        <a
-          href="#foto-arrivals-placa"
-          className="group relative mx-auto block aspect-[16/9] w-full max-w-xs cursor-zoom-in overflow-hidden rounded-2xl"
-        >
-          <Image
-            src="/images/visao-nova-placa-arrivals.png"
-            alt="Placa de sinalização do aeroporto indicando Arrivals (到着), em japonês, inglês, coreano e chinês"
-            fill
-            className="object-contain"
-          />
-          <span className="absolute inset-0 flex items-center justify-center bg-black/0 opacity-0 transition group-hover:bg-black/30 group-hover:opacity-100">
-            <span className="flex h-9 w-9 items-center justify-center rounded-full bg-black/70 text-white">
-              <IconZoom className="h-4 w-4" />
+        <div className="mx-auto w-full max-w-xs rounded-2xl bg-black p-5">
+          <a
+            href="#foto-arrivals-placa"
+            className="group relative block aspect-[16/9] w-full cursor-zoom-in overflow-hidden rounded-lg"
+          >
+            <Image
+              src="/images/visao-nova-placa-arrivals.png"
+              alt="Placa de sinalização do aeroporto indicando Arrivals (到着), em japonês, inglês, coreano e chinês"
+              fill
+              className="object-contain"
+            />
+            <span className="absolute inset-0 flex items-center justify-center bg-black/0 opacity-0 transition group-hover:bg-black/30 group-hover:opacity-100">
+              <span className="flex h-9 w-9 items-center justify-center rounded-full bg-black/70 text-white">
+                <IconZoom className="h-4 w-4" />
+              </span>
             </span>
-          </span>
-        </a>
+          </a>
+        </div>
       </div>
 
       <div className="space-y-5">
