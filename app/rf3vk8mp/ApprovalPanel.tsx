@@ -3374,7 +3374,7 @@ function DeslocamentoCard({ deslocamento }: { deslocamento: Deslocamento }) {
             aparecem como círculos com letra+número da linha sobre o traço
             grosso, nome em romaji acima e nome em japonês na vertical
             abaixo — mesmo padrão dos mapas oficiais de metrô de Tóquio. */}
-        <div className="col-start-2 row-start-1 row-span-2 flex h-full min-w-[32px] flex-1 flex-col justify-start pt-10 sm:min-w-[64px]">
+        <div className="col-start-2 row-start-1 flex min-w-[32px] flex-1 flex-col justify-start pt-10 sm:min-w-[64px]">
           {deslocamento.estacoesIntermediarias &&
             deslocamento.estacoesIntermediarias.length > 0 && (
               <div className="relative h-0 w-full">
@@ -3454,11 +3454,14 @@ function DeslocamentoCard({ deslocamento }: { deslocamento: Deslocamento }) {
                 })}
               </div>
             )}
+        </div>
 
-          {/* Mapa da estação (chegada) — ocupa o espaço vazio abaixo do
-              traço, centralizado. Prioriza o mapa do destino (é onde o
-              cliente está chegando); usa o da origem se for o único
-              disponível. */}
+        {/* Mapa da estação (chegada) — mesma linha/altura/base dos cards
+            de saída (row-start-2), pra formar uma fileira única e
+            uniforme com eles. Prioriza o mapa do destino (é onde o
+            cliente está chegando); usa o da origem se for o único
+            disponível. */}
+        <div className="col-start-2 row-start-2 flex h-full min-w-[32px] flex-1 flex-col self-stretch">
           {(() => {
             const mapa = deslocamento.estacaoDestino.mapa
               ? deslocamento.estacaoDestino
@@ -3475,7 +3478,7 @@ function DeslocamentoCard({ deslocamento }: { deslocamento: Deslocamento }) {
                     alt: mapa.mapaAlt ?? `Mapa da ${mapa.nome}`,
                   })
                 }
-                className="group relative mx-auto mt-6 block h-56 w-full overflow-hidden rounded-xl border border-[#DDD8CF] bg-white shadow-sm sm:h-64"
+                className="group relative mt-3 block h-full w-full flex-1 overflow-hidden rounded-xl border border-[#DDD8CF] bg-white shadow-sm"
               >
                 <img
                   src={mapa.mapa}
