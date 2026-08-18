@@ -32,14 +32,14 @@ type RadarDimension = {
 };
 
 const RADAR_DIMENSIONS: RadarDimension[] = [
-  { lines: ["Cultura &", "História"], score: 9, icon: "cultura" },
-  { lines: ["Gastronomia"], score: 7, icon: "gastronomia" },
-  { lines: ["Natureza &", "Aventura"], score: 2, icon: "natureza" },
-  { lines: ["Entretenimento"], score: 9, icon: "entretenimento" },
-  { lines: ["Compras"], score: 5, icon: "compras" },
+  { lines: ["Cultura &", "História"], score: 8, icon: "cultura" },
+  { lines: ["Gastronomia"], score: 8, icon: "gastronomia" },
+  { lines: ["Natureza &", "Aventura"], score: 4, icon: "natureza" },
+  { lines: ["Entretenimento"], score: 6, icon: "entretenimento" },
+  { lines: ["Compras"], score: 6, icon: "compras" },
   {
     lines: ["Bem-Estar,", "Relaxamento", "& Esportes"],
-    score: 4,
+    score: 5,
     icon: "bemestar",
   },
 ];
@@ -217,9 +217,9 @@ export default function AprovacaoRoteiroPage() {
 
       <header className="fixed left-0 right-0 top-0 z-50 flex items-center justify-between bg-black/70 px-6 py-5 backdrop-blur-2xl md:px-16">
         <img
-          src="/images/alpinea-ajisai-final-logo-branco.png"
-          alt="Alpinea — Empresa do Grupo Ajisai"
-          className="h-[60px] w-auto object-contain md:h-[72px]"
+          src="/images/AJISAI-LOGO.avif"
+          alt="Ajisai"
+          className="h-10 w-auto object-contain md:h-11"
         />
         <span className="rounded-full border border-white bg-white/[0.06] px-4 py-2 text-center text-xs uppercase tracking-[0.2em] text-white">
           ID 10029481
