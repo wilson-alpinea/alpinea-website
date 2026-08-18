@@ -618,6 +618,8 @@ const DAY_1: DayContent = {
         distancia: "~4 min a pé (300 m) até o Kaminarimon",
         saida: "Saída 1",
         foto: "/images/asakusa-station-entrance.webp",
+        mapa: "/images/mapa-asakusa-station.png",
+        mapaAlt: "Mapa da Estação Asakusa",
       },
       opcoes: [
         {
@@ -885,6 +887,8 @@ const DAY_1: DayContent = {
         nomeJapones: "押上（スカイツリー前）駅",
         saida: "Saída B3, ligação direta e subterrânea com a Tokyo Solamachi",
         foto: "/images/oshiage-station-entrance.jpeg",
+        mapa: "/images/mapa-oshiage-station.png",
+        mapaAlt: "Mapa da Estação Oshiage",
       },
       opcoes: [
         {
@@ -2801,15 +2805,15 @@ function ResumoDiaBlock({
       <p className="mb-5 text-xs font-bold uppercase tracking-[0.25em] text-white">
         Resumo do Dia
       </p>
-      <div className="flex justify-center overflow-x-auto pb-1">
-        <div className="flex shrink-0">
+      <div className="overflow-x-auto pb-1">
+        <div className="flex w-max shrink-0 mx-auto">
         {resumo.passos.map((passo, i) => (
           <div key={passo.titulo + i} className="flex shrink-0 items-start">
-            <div className="group flex shrink-0 cursor-default flex-col items-center px-1 text-center">
+            <div className="group flex shrink-0 cursor-default flex-col items-center px-0.5 text-center">
               {passo.foto ? (
                 passo.foto.includes("/images/icone-") ? (
                   <div
-                    className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-full shadow-sm transition duration-200 group-hover:scale-110 group-hover:shadow-[0_0_0_3px_rgba(255,255,255,0.25)] sm:h-14 sm:w-14 ${
+                    className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full shadow-sm transition duration-200 group-hover:scale-110 group-hover:shadow-[0_0_0_3px_rgba(255,255,255,0.25)] sm:h-11 sm:w-11 ${
                       passo.foto.includes("icone-gastronomia")
                         ? "bg-amber-50"
                         : passo.foto.includes("icone-hotel")
@@ -2822,15 +2826,15 @@ function ResumoDiaBlock({
                       alt={passo.titulo}
                       className={
                         passo.foto.includes("icone-gastronomia")
-                          ? "h-11 w-11 object-contain sm:h-12 sm:w-12"
+                          ? "h-9 w-9 object-contain sm:h-10 sm:w-10"
                           : passo.foto.includes("icone-hotel")
-                            ? "h-9 w-9 object-contain sm:h-10 sm:w-10"
-                            : "h-8 w-8 object-contain sm:h-9 sm:w-9"
+                            ? "h-7 w-7 object-contain sm:h-8 sm:w-8"
+                            : "h-7 w-7 object-contain sm:h-7 sm:w-7"
                       }
                     />
                   </div>
                 ) : (
-                  <div className="h-12 w-12 shrink-0 overflow-hidden rounded-full border-2 border-white shadow-sm transition duration-200 group-hover:scale-110 group-hover:shadow-[0_0_0_3px_rgba(255,255,255,0.25)] sm:h-14 sm:w-14">
+                  <div className="h-10 w-10 shrink-0 overflow-hidden rounded-full border-2 border-white shadow-sm transition duration-200 group-hover:scale-110 group-hover:shadow-[0_0_0_3px_rgba(255,255,255,0.25)] sm:h-11 sm:w-11">
                     <img
                       src={passo.foto}
                       alt={passo.titulo}
@@ -2839,21 +2843,21 @@ function ResumoDiaBlock({
                   </div>
                 )
               ) : (
-                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full border border-dashed border-white/25 text-white/40 transition duration-200 group-hover:scale-110 group-hover:border-white/50 group-hover:text-white/70 sm:h-14 sm:w-14">
-                  <IconClock className="h-5 w-5" />
+                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-dashed border-white/25 text-white/40 transition duration-200 group-hover:scale-110 group-hover:border-white/50 group-hover:text-white/70 sm:h-11 sm:w-11">
+                  <IconClock className="h-4 w-4" />
                 </div>
               )}
-              <p className="mt-2 whitespace-nowrap text-xs font-semibold leading-tight text-white transition duration-200 group-hover:text-white/80 sm:text-sm">
+              <p className="mt-1.5 whitespace-nowrap text-[11px] font-semibold leading-tight text-white transition duration-200 group-hover:text-white/80 sm:text-xs">
                 {passo.titulo}
               </p>
               {passo.horario && (
-                <p className="mt-0.5 whitespace-nowrap text-[11px] font-medium tracking-wide text-white/55 sm:text-xs">
+                <p className="mt-0.5 whitespace-nowrap text-[10px] font-medium tracking-wide text-white/55">
                   {passo.horario}
                 </p>
               )}
             </div>
             {i < resumo.passos.length - 1 && (
-              <span className="mt-6 h-[2px] w-6 shrink-0 rounded-full bg-white/20 sm:mt-7 sm:w-6" />
+              <span className="mt-5 h-[2px] w-3 shrink-0 rounded-full bg-white/20 sm:mt-5 sm:w-4" />
             )}
           </div>
         ))}
@@ -3372,9 +3376,9 @@ function DeslocamentoCard({ deslocamento }: { deslocamento: Deslocamento }) {
             </button>
           )}
         </div>
-        <div className="col-start-1 row-start-2 flex w-32 min-w-0 flex-col items-center sm:w-40">
+        <div className="col-start-1 row-start-2 flex h-full w-32 min-w-0 flex-col items-center self-stretch sm:w-40">
           {deslocamento.estacaoOrigem.saida && (
-            <div className="mt-3 flex w-full flex-col items-center gap-1 break-words rounded-xl border-2 border-emerald-400 bg-emerald-50 px-3 py-2.5 shadow-sm">
+            <div className="mt-3 flex w-full flex-1 flex-col items-center justify-center gap-1 break-words rounded-xl border-2 border-emerald-400 bg-emerald-50 px-3 py-2.5 shadow-sm">
               <img
                 src="/images/icone-saida2.png"
                 alt=""
@@ -3532,9 +3536,9 @@ function DeslocamentoCard({ deslocamento }: { deslocamento: Deslocamento }) {
             </button>
           )}
         </div>
-        <div className="col-start-3 row-start-2 flex w-32 min-w-0 flex-col items-center sm:w-40">
+        <div className="col-start-3 row-start-2 flex h-full w-32 min-w-0 flex-col items-center self-stretch sm:w-40">
           {deslocamento.estacaoDestino.saida && (
-            <div className="mt-3 flex w-full flex-col items-center gap-1 break-words rounded-xl border-2 border-emerald-400 bg-emerald-50 px-3 py-2.5 shadow-sm">
+            <div className="mt-3 flex w-full flex-1 flex-col items-center justify-center gap-1 break-words rounded-xl border-2 border-emerald-400 bg-emerald-50 px-3 py-2.5 shadow-sm">
               <img
                 src="/images/icone-saida2.png"
                 alt=""
@@ -4158,8 +4162,8 @@ function PeriodBlock({
               <IconClock className="h-9 w-9 shrink-0 text-[#B96432] sm:h-10 sm:w-10" />
             </div>
           </div>
-          <div className="mt-6 flex justify-center overflow-x-auto pb-1">
-            <div className="flex shrink-0">
+          <div className="mt-6 overflow-x-auto pb-1">
+            <div className="mx-auto flex w-max shrink-0">
             {(() => {
               let numero = 0;
               return period.percursoEssencial!.passos.map((passo, i) => {
