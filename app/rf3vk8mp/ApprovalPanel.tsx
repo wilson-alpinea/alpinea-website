@@ -2788,7 +2788,8 @@ function ResumoDiaBlock({
       <p className="mb-5 text-xs font-bold uppercase tracking-[0.25em] text-white">
         Resumo do Dia
       </p>
-      <div className="flex overflow-x-auto pb-1">
+      <div className="flex justify-center overflow-x-auto pb-1">
+        <div className="flex shrink-0">
         {resumo.passos.map((passo, i) => (
           <div key={passo.titulo + i} className="flex shrink-0 items-start">
             <div className="flex w-[72px] shrink-0 flex-col items-center text-center sm:w-20">
@@ -2825,10 +2826,11 @@ function ResumoDiaBlock({
               )}
             </div>
             {i < resumo.passos.length - 1 && (
-              <span className="mt-6 h-[2px] w-4 shrink-0 rounded-full bg-white/20 sm:mt-7 sm:w-6" />
+              <span className="mt-6 h-[2px] w-6 shrink-0 rounded-full bg-white/20 sm:mt-7 sm:w-6" />
             )}
           </div>
         ))}
+        </div>
       </div>
     </div>
   );
@@ -3344,7 +3346,7 @@ function DeslocamentoCard({ deslocamento }: { deslocamento: Deslocamento }) {
               </div>
             )}
           <div
-            className="relative h-2 w-full rounded-full"
+            className="relative h-1.5 w-full"
             style={{ background: deslocamento.linha.cor || "#B96432" }}
           >
             {deslocamento.estacoesIntermediarias?.map((estacao, i) => {
@@ -3371,9 +3373,9 @@ function DeslocamentoCard({ deslocamento }: { deslocamento: Deslocamento }) {
               style={{
                 width: 0,
                 height: 0,
-                borderTop: "8px solid transparent",
-                borderBottom: "8px solid transparent",
-                borderLeft: `13px solid ${deslocamento.linha.cor || "#B96432"}`,
+                borderTop: "6px solid transparent",
+                borderBottom: "6px solid transparent",
+                borderLeft: `10px solid ${deslocamento.linha.cor || "#B96432"}`,
               }}
             />
           </div>
@@ -3608,7 +3610,7 @@ function VisaoAnotadaBlock({
               Raio-X Alpinea{visaoAnotada.titulo && ` — ${visaoAnotada.titulo}`}
             </p>
             {visaoAnotada.fundo ? (
-              <div />
+              <div className="mx-auto my-4 h-px w-16 bg-white/40" />
             ) : (
               <img
                 src="/images/icone-raiox-alpinea.png"
@@ -3984,12 +3986,12 @@ function PeriodBlock({
                     : "object-top"
               }`}
             />
-            <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-black/50 to-transparent" />
-            <p className="absolute inset-x-5 bottom-14 text-[10px] font-bold uppercase tracking-[0.3em] text-white/70 sm:inset-x-10">
+            <div className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-black/85 via-black/35 to-transparent" />
+            <p className="absolute inset-x-5 bottom-14 text-[10px] font-bold uppercase tracking-[0.3em] text-white/80 [text-shadow:0_1px_6px_rgba(0,0,0,0.6)] sm:inset-x-10">
               Atração
             </p>
             <h3
-              className={`${displayClassName} absolute inset-x-5 bottom-4 font-medium leading-snug text-white sm:inset-x-10 ${
+              className={`${displayClassName} absolute inset-x-5 bottom-4 font-medium leading-snug text-white [text-shadow:0_2px_10px_rgba(0,0,0,0.55)] sm:inset-x-10 ${
                 period.atracaoPrincipalCompacta
                   ? "text-lg md:text-xl"
                   : "text-2xl md:text-3xl"
@@ -4021,7 +4023,7 @@ function PeriodBlock({
             <p className="text-xs font-bold uppercase tracking-[0.25em] text-[#000000]">
               Percurso essencial
             </p>
-            <div className="flex items-center gap-3 text-right">
+            <div className="flex items-center gap-3 rounded-xl border border-amber-200/70 bg-amber-50 px-4 py-2.5 text-right">
               <div>
                 <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#B96432]">
                   Tempo estimado de visitação
@@ -4033,7 +4035,8 @@ function PeriodBlock({
               <IconClock className="h-9 w-9 shrink-0 text-[#B96432] sm:h-10 sm:w-10" />
             </div>
           </div>
-          <div className="mt-6 flex overflow-x-auto pb-1">
+          <div className="mt-6 flex justify-center overflow-x-auto pb-1">
+            <div className="flex shrink-0">
             {(() => {
               let numero = 0;
               return period.percursoEssencial!.passos.map((passo, i) => {
@@ -4075,6 +4078,7 @@ function PeriodBlock({
                 );
               });
             })()}
+            </div>
           </div>
           <p className="mt-4 text-xs leading-5 text-[#000000]/60">
             O que dá pra fazer sem pressa. Os detalhes de cada ponto vêm a seguir — comece por aqui.
@@ -5575,7 +5579,7 @@ export function ApprovalPanel({
           }}
         >
         <div className="border-b border-[#DDD8CF] px-6 py-7 text-center sm:px-10">
-          <p className="mx-auto mb-5 inline-block rounded-full border border-[#DDD8CF] px-5 py-2 text-xs uppercase tracking-[0.3em] text-[#24211D]/85">
+          <p className="mx-auto mb-5 inline-block rounded-full bg-black px-5 py-2 text-xs uppercase tracking-[0.3em] text-white">
             Roteiro de 7 dias
           </p>
           <h2 className={`${displayClassName} text-2xl font-medium text-[#24211D] md:text-3xl`}>
