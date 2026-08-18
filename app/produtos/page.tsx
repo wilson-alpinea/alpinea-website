@@ -643,7 +643,7 @@ export default function ProdutosPage() {
           </div>
         </div>
 
-        <div className="mx-auto mt-16 max-w-4xl">
+        <div className="mx-auto mt-16 max-w-5xl">
           <p className="text-center text-[10px] uppercase tracking-[0.2em] text-white/40">
             Veja funcionando
           </p>
@@ -652,11 +652,24 @@ export default function ProdutosPage() {
           >
             Demonstração do Roteiro Personalizado
           </h3>
-          <VideoPlaceholder
-            titulo="Demonstração do Roteiro Personalizado"
-            descricao="Navegação real pelo painel — dia a dia, atrações, deslocamento e logística."
-            className="mx-auto mt-6"
-          />
+          <p className="mx-auto mt-3 max-w-xl text-center text-sm font-light leading-6 text-white/55">
+            Duas versões — escolha a que preferir: a rápida dura só 1:46, a
+            completa mostra o painel com todos os detalhes.
+          </p>
+          <div className="mx-auto mt-8 grid max-w-4xl gap-8 md:grid-cols-2">
+            <DemoVideo
+              src="/videos/roteiro-personalizado-short.mp4"
+              poster="/videos/roteiro-personalizado-short-poster.jpg"
+              label="Versão Rápida · 1:46"
+              descricao="Visão geral direto ao ponto, em menos de 2 minutos."
+            />
+            <DemoVideo
+              src="/videos/roteiro-personalizado-detalhado.mp4"
+              poster="/videos/roteiro-personalizado-detalhado-poster.jpg"
+              label="Versão Completa · 8:08"
+              descricao="Navegação real pelo painel — dia a dia, atrações, deslocamento e logística."
+            />
+          </div>
         </div>
       </section>
 
@@ -737,7 +750,7 @@ export default function ProdutosPage() {
                 alt={IMAGENS_PRODUTO.guia.alt}
                 fill
                 sizes="(min-width: 768px) 32rem, 100vw"
-                className="object-cover"
+                className="object-cover object-top"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/5 to-transparent" />
             </div>
@@ -1234,9 +1247,10 @@ export default function ProdutosPage() {
                 </div>
                 <Link
                   href="/pacotes#personalizado"
-                  className="mt-5 block rounded-full border border-white/15 px-5 py-3 text-center text-[11px] font-semibold uppercase tracking-[0.2em] text-white transition hover:border-white/40"
+                  className="mt-5 block rounded-full px-5 py-3 text-center text-[11px] font-semibold uppercase tracking-[0.2em] text-[#0A2540] transition hover:brightness-95"
+                  style={{ backgroundColor: "#9FD4EE" }}
                 >
-                  Adicionar ao meu pacote →
+                  Adicionar ao meu pacote
                 </Link>
               </div>
             ))}
@@ -1286,6 +1300,43 @@ function IconPlay({ className }: { className?: string }) {
     <svg viewBox="0 0 24 24" fill="currentColor" className={className}>
       <path d="M8 5.14v13.72c0 .8.87 1.29 1.56.87l10.99-6.86a1 1 0 0 0 0-1.7L9.56 4.27A1 1 0 0 0 8 5.14Z" />
     </svg>
+  );
+}
+
+// Vídeo real de demonstração — player nativo com poster, sem autoplay
+// (carrega só metadata até o clique, pra não pesar a página).
+function DemoVideo({
+  src,
+  poster,
+  label,
+  descricao,
+}: {
+  src: string;
+  poster: string;
+  label: string;
+  descricao?: string;
+}) {
+  return (
+    <div>
+      <div className="relative aspect-video w-full overflow-hidden rounded-2xl border border-white/10 bg-black">
+        <video
+          controls
+          preload="metadata"
+          poster={poster}
+          className="h-full w-full object-cover"
+        >
+          <source src={src} type="video/mp4" />
+        </video>
+      </div>
+      <p className="mt-3 text-center text-[10px] uppercase tracking-[0.2em] text-[#6ec3d9]">
+        {label}
+      </p>
+      {descricao && (
+        <p className="mx-auto mt-1 max-w-xs text-center text-xs leading-5 text-white/50">
+          {descricao}
+        </p>
+      )}
+    </div>
   );
 }
 
