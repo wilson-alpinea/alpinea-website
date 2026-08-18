@@ -656,7 +656,7 @@ export default function ProdutosPage() {
             Duas versões — escolha a que preferir: a rápida dura só 1:46, a
             completa mostra o painel com todos os detalhes.
           </p>
-          <div className="mx-auto mt-8 max-w-3xl">
+          <div className="mx-auto mt-8 w-full">
             <DemoVideo
               src="/videos/roteiro-personalizado-short.mp4"
               poster="/videos/roteiro-personalizado-short-poster.jpg"
@@ -666,7 +666,7 @@ export default function ProdutosPage() {
           </div>
 
           <div className="mx-auto mt-10 max-w-sm">
-            <p className="text-center text-[10px] uppercase tracking-[0.2em] text-white/35">
+            <p className="text-center text-sm uppercase tracking-[0.2em] text-white/50">
               Quer ver mais?
             </p>
             <div className="mt-3">
