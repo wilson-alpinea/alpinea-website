@@ -424,8 +424,8 @@ export default function PacotesJapaoPage() {
             </div>
           </div>
 
-          <div className="relative -mt-20 px-6 pb-14 sm:-mt-24 md:-mt-28 md:px-16 md:pb-20">
-            <div className="mx-auto max-w-6xl">
+          <div className="relative -mt-20 px-6 pb-14 sm:-mt-24 md:-mt-28 md:px-10 md:pb-20">
+            <div className="mx-auto max-w-7xl">
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
               {DIFERENCIAIS_AEREO.map((item) => (
                 <div
@@ -439,7 +439,7 @@ export default function PacotesJapaoPage() {
                       <item.Icon className="h-16 w-16" />
                     )}
                   </span>
-                  <h3 className={`${display.className} mt-5 text-lg font-semibold text-[#0A2540]`}>
+                  <h3 className={`${display.className} mt-5 text-lg font-semibold text-[#2f80c9]`}>
                     {item.titulo}
                   </h3>
                   <p className="mt-2 text-[15px] font-normal leading-6 text-[#0A2540]/80">

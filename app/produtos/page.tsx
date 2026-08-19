@@ -137,9 +137,9 @@ const SERVICOS_AVULSOS: {
     precoBRL: 150,
   },
   {
-    nome: "Transfer com Motorista Privado",
+    nome: "Motorista Privado",
     icone: "🚗",
-    descricao: "Traslados exclusivos, sem compartilhar veículo com outros grupos. Para até 4 pessoas.",
+    descricao: "Traslados exclusivos com motorista particular, sem compartilhar veículo com outros grupos. Para até 4 pessoas.",
     precoBRL: 0,
     precoUSD: 700,
     porDia: true,

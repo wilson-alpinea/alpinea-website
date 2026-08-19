@@ -1,11 +1,17 @@
 "use client";
 
 import Image from "next/image";
+import { Bodoni_Moda } from "next/font/google";
 import { createPortal } from "react-dom";
 import { useEffect, useMemo, useState, type FormEvent } from "react";
 import { useCart } from "./CartContext";
 import { useCambioUSD, brlParaUSDLabel, formatBRL } from "../hooks/useCambioUSD";
 import { CambioLabel } from "./CambioLabel";
+
+const display = Bodoni_Moda({
+  subsets: ["latin"],
+  weight: ["400", "500", "600"],
+});
 
 function IconCheck({ className }: { className?: string }) {
   return (
@@ -195,7 +201,7 @@ const OPCOES = [
   {
     key: "transporte",
     categoria: "essencial",
-    label: "Transporte",
+    label: "Transporte Privado",
     icone: "🚐",
     descricao: "Transfers e deslocamentos do roteiro",
     detalhe:
@@ -251,9 +257,9 @@ const OPCOES = [
   {
     key: "motorista",
     categoria: "opcional",
-    label: "Transfer com Motorista Privado",
+    label: "Motorista Privado",
     icone: "🚗",
-    descricao: "Traslados exclusivos — US$ 700/dia para até 4 pessoas",
+    descricao: "Traslados exclusivos com motorista particular — US$ 700/dia para até 4 pessoas",
     detalhe:
       "Traslados exclusivos com motorista particular, sem compartilhar veículo com outros grupos — ideal para famílias com bagagem extra, crianças pequenas ou quem prefere mais privacidade e flexibilidade de horário. US$ 700 por dia, cobrindo até 4 pessoas; grupos maiores recebem veículos adicionais, cobrados proporcionalmente.",
     calcPreco: (ctx: PrecoCtx) =>
@@ -309,9 +315,9 @@ const OPCOES = [
     categoria: "opcional",
     label: "Transfer de Ônibus Aeroporto ↔ Centro de Tóquio",
     icone: "🚌",
-    descricao: "Ida e volta entre o aeroporto e o centro de Tóquio",
+    descricao: "Aeroporto → Centro de Tóquio (chegada) e Centro de Tóquio → Aeroporto (saída)",
     detalhe:
-      "Transfer de ônibus entre o aeroporto (Narita ou Haneda) e o centro de Tóquio, ida e volta. Valor sob consulta, conforme aeroporto e horário do voo.",
+      "Transfer de ônibus entre o aeroporto (Narita ou Haneda) e o centro de Tóquio, nos dois sentidos: do aeroporto até o centro na chegada, e do centro até o aeroporto na saída. Valor sob consulta, conforme aeroporto e horário do voo.",
     calcPreco: () => 0,
   },
   {
@@ -402,7 +408,7 @@ function NumberStepper({
 }) {
   return (
     <label className="flex h-full flex-col">
-      <span className="mb-2 flex min-h-[2.2em] items-end text-[10px] uppercase leading-tight tracking-[0.2em] text-white/40">
+      <span className="mb-2 flex min-h-[2.2em] items-end text-[10px] uppercase leading-tight tracking-[0.2em] text-[#0A2540]/50">
         {label}
       </span>
       <div className="flex items-center gap-2">
@@ -410,18 +416,18 @@ function NumberStepper({
           type="button"
           onClick={() => onChange(Math.max(min, value - 1))}
           aria-label={`Diminuir — ${label}`}
-          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-white/15 text-white transition hover:border-white/40"
+          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-black/15 text-[#0A2540] transition hover:border-black/30"
         >
           −
         </button>
-        <span className="flex h-10 flex-1 items-center justify-center whitespace-nowrap rounded-lg border border-white/15 bg-black/30 px-1 text-center text-sm text-white">
+        <span className="flex h-10 flex-1 items-center justify-center whitespace-nowrap rounded-lg border border-black/15 bg-black/[0.03] px-1 text-center text-sm text-[#0A2540]">
           {formatValue ? formatValue(value) : value}
         </span>
         <button
           type="button"
           onClick={() => onChange(Math.min(max, value + 1))}
           aria-label={`Aumentar — ${label}`}
-          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-white/15 text-white transition hover:border-white/40"
+          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-black/15 text-[#0A2540] transition hover:border-black/30"
         >
           +
         </button>
@@ -505,7 +511,7 @@ export function CustomPackageCard() {
         className={`flex h-full cursor-pointer flex-col gap-2 rounded-xl border px-4 py-3 text-left transition ${
           ativo
             ? "border-[#2f80c9]/50 bg-[#2f80c9]/10"
-            : "border-white/10 bg-black/20 hover:border-white/25"
+            : "border-black/10 bg-black/[0.02] hover:border-black/20"
         }`}
       >
         <div className="flex items-start gap-3">
@@ -513,12 +519,12 @@ export function CustomPackageCard() {
             className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border text-[10px] transition ${
               ativo
                 ? "border-[#2f80c9] bg-[#2f80c9] text-white"
-                : "border-white/25 text-transparent"
+                : "border-black/25 text-transparent"
             }`}
           >
             <IconCheck className="h-3 w-3" />
           </span>
-          <span className="min-w-0 flex-1 text-sm font-medium text-white">
+          <span className="min-w-0 flex-1 text-sm font-medium text-[#0A2540]">
             {opcao.icone} {opcao.label}
           </span>
           <button
@@ -528,13 +534,13 @@ export function CustomPackageCard() {
               setOpcaoAberta(opcao);
             }}
             aria-label={`Ver detalhes — ${opcao.label}`}
-            className="flex shrink-0 items-center gap-1 rounded-full border border-white/15 px-2 py-1 text-[9px] uppercase tracking-[0.1em] text-white/50 transition hover:border-white/40 hover:text-white"
+            className="flex shrink-0 items-center gap-1 rounded-full border border-black/15 px-2 py-1 text-[9px] uppercase tracking-[0.1em] text-[#0A2540]/50 transition hover:border-black/35 hover:text-[#0A2540]"
           >
             <IconDocument className="h-3 w-3" />
             Ver detalhes
           </button>
         </div>
-        <span className="block flex-1 pl-8 text-xs leading-5 text-white/40">
+        <span className="block flex-1 pl-8 text-xs leading-5 text-[#0A2540]/50">
           {opcao.descricao}
         </span>
       </div>
@@ -653,32 +659,40 @@ export function CustomPackageCard() {
 
   return (
     <>
-    <div className="flex flex-col overflow-hidden rounded-2xl border border-white/10 bg-white/[0.025] p-6 sm:rounded-[2rem] md:p-8">
+    <div className="flex flex-col overflow-hidden rounded-2xl border border-black/10 bg-white p-6 shadow-sm sm:rounded-[2rem] md:p-8">
       <p className="text-[10px] uppercase tracking-[0.2em] text-[#e0916a]">
         Personalizado
       </p>
 
       <form onSubmit={handleSubmit} className="mt-5 space-y-6">
-        <div className="flex flex-wrap items-center justify-between gap-4 border-b border-white/10 pb-6">
+        <div className="flex flex-wrap items-center justify-between gap-4 border-b border-black/10 pb-6">
           <div>
-            <p className="text-[10px] uppercase tracking-[0.2em] text-white/40">
+            <p className="text-[10px] uppercase tracking-[0.2em] text-[#0A2540]/50">
               Total estimado
             </p>
-            <p className="mt-1 text-2xl font-semibold text-white">
+            <p
+              className={`${display.className} mt-1 text-4xl font-semibold`}
+              style={{ color: "#1f6f9c" }}
+            >
               {total > 0 ? brlParaUSDLabel(total, cambio) : "Sob consulta"}
             </p>
             {total > 0 && (
-              <p className="mt-0.5 text-sm font-medium text-white/60">ou {formatBRL(total)}</p>
+              <p className="mt-1 text-sm font-medium text-[#0A2540]/60">ou {formatBRL(total)}</p>
             )}
-            {total > 0 && <CambioLabel cambio={cambio} className="mt-1 text-[11px] text-white/40" />}
+            <p className="mt-1 text-xs uppercase tracking-[0.15em] text-[#0A2540]/45">
+              Por pessoa · Quarto {tipoQuarto}
+            </p>
+            {total > 0 && (
+              <CambioLabel cambio={cambio} className="mt-1 text-[11px] text-[#0A2540]/45" />
+            )}
             {taxaGrupo > 0 && (
-              <p className="mt-1 text-[11px] leading-5 text-white/50">
+              <p className="mt-1 text-[11px] leading-5 text-[#0A2540]/55">
                 Inclui taxa de grupo: R$ {taxaGrupo.toLocaleString("pt-BR")} (
                 {passageirosExtras} {passageirosExtras === 1 ? "passageiro" : "passageiros"}{" "}
                 acima de {LIMITE_PESSOAS_SEM_TAXA})
               </p>
             )}
-            <p className="mt-1 text-[11px] leading-5 text-white/40">
+            <p className="mt-1 text-[11px] leading-5 text-[#0A2540]/45">
               Valor calculado conforme os itens selecionados acima — a Ajisai
               confirma o preço final por consulta.
             </p>
@@ -704,14 +718,14 @@ export function CustomPackageCard() {
 
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-6">
           <label className="flex h-full flex-col">
-            <span className="mb-2 flex min-h-[2.2em] items-end text-[10px] uppercase leading-tight tracking-[0.2em] text-white/40">
+            <span className="mb-2 flex min-h-[2.2em] items-end text-[10px] uppercase leading-tight tracking-[0.2em] text-[#0A2540]/50">
               Data preferida
             </span>
             <input
               type="date"
               value={data}
               onChange={(e) => setData(e.target.value)}
-              className="h-10 w-full rounded-lg border border-white/15 bg-black/30 px-3 text-sm text-white outline-none [color-scheme:dark] focus:border-white/40"
+              className="h-10 w-full rounded-lg border border-black/15 bg-black/[0.03] px-3 text-sm text-[#0A2540] outline-none [color-scheme:light] focus:border-black/30"
             />
           </label>
 
@@ -734,7 +748,7 @@ export function CustomPackageCard() {
           />
 
           <label className="flex h-full flex-col">
-            <span className="mb-2 flex min-h-[2.2em] items-end text-[10px] uppercase leading-tight tracking-[0.2em] text-white/40">
+            <span className="mb-2 flex min-h-[2.2em] items-end text-[10px] uppercase leading-tight tracking-[0.2em] text-[#0A2540]/50">
               Categoria do hotel
             </span>
             <select
@@ -742,10 +756,10 @@ export function CustomPackageCard() {
               onChange={(e) =>
                 setCategoriaHotel(e.target.value as (typeof CATEGORIAS_HOTEL)[number])
               }
-              className="h-10 w-full rounded-lg border border-white/15 bg-black/30 px-3 text-sm text-white outline-none focus:border-white/40"
+              className="h-10 w-full rounded-lg border border-black/15 bg-black/[0.03] px-3 text-sm text-[#0A2540] outline-none focus:border-black/30"
             >
               {CATEGORIAS_HOTEL.map((c) => (
-                <option key={c} value={c} className="bg-black">
+                <option key={c} value={c}>
                   {c}
                 </option>
               ))}
@@ -753,16 +767,16 @@ export function CustomPackageCard() {
           </label>
 
           <label className="flex h-full flex-col">
-            <span className="mb-2 flex min-h-[2.2em] items-end text-[10px] uppercase leading-tight tracking-[0.2em] text-white/40">
+            <span className="mb-2 flex min-h-[2.2em] items-end text-[10px] uppercase leading-tight tracking-[0.2em] text-[#0A2540]/50">
               Tipo de quarto
             </span>
             <select
               value={tipoQuarto}
               onChange={(e) => setTipoQuarto(e.target.value as (typeof TIPOS_QUARTO)[number])}
-              className="h-10 w-full rounded-lg border border-white/15 bg-black/30 px-3 text-sm text-white outline-none focus:border-white/40"
+              className="h-10 w-full rounded-lg border border-black/15 bg-black/[0.03] px-3 text-sm text-[#0A2540] outline-none focus:border-black/30"
             >
               {TIPOS_QUARTO.map((t) => (
-                <option key={t} value={t} className="bg-black">
+                <option key={t} value={t}>
                   {t}
                 </option>
               ))}
@@ -770,16 +784,16 @@ export function CustomPackageCard() {
           </label>
 
           <label className="flex h-full flex-col">
-            <span className="mb-2 flex min-h-[2.2em] items-end text-[10px] uppercase leading-tight tracking-[0.2em] text-white/40">
+            <span className="mb-2 flex min-h-[2.2em] items-end text-[10px] uppercase leading-tight tracking-[0.2em] text-[#0A2540]/50">
               Classe do voo
             </span>
             <select
               value={classeAereo}
               onChange={(e) => setClasseAereo(e.target.value as (typeof CLASSES_AEREO)[number])}
-              className="h-10 w-full rounded-lg border border-white/15 bg-black/30 px-3 text-sm text-white outline-none focus:border-white/40"
+              className="h-10 w-full rounded-lg border border-black/15 bg-black/[0.03] px-3 text-sm text-[#0A2540] outline-none focus:border-black/30"
             >
               {CLASSES_AEREO.map((c) => (
-                <option key={c} value={c} className="bg-black">
+                <option key={c} value={c}>
                   {c}
                 </option>
               ))}
@@ -788,8 +802,8 @@ export function CustomPackageCard() {
         </div>
 
         {pessoas > LIMITE_PESSOAS_SEM_TAXA && (
-          <div className="rounded-xl border border-amber-400/30 bg-amber-400/[0.08] p-4">
-            <p className="text-sm font-medium leading-6 text-amber-300">
+          <div className="rounded-xl border border-amber-400/40 bg-amber-400/10 p-4">
+            <p className="text-sm font-medium leading-6 text-amber-700">
               Grupos acima de {LIMITE_PESSOAS_SEM_TAXA} pessoas têm taxa adicional de R${" "}
               {TAXA_POR_PASSAGEIRO_EXTRA.toLocaleString("pt-BR")} por passageiro excedente —
               já incluída no total estimado abaixo.
@@ -798,9 +812,9 @@ export function CustomPackageCard() {
         )}
 
         <div>
-          <span className="mb-2 block text-[10px] uppercase tracking-[0.2em] text-white/40">
+          <span className="mb-2 block text-[10px] uppercase tracking-[0.2em] text-[#0A2540]/50">
             Perfil dos passageiros{" "}
-            <span className="normal-case tracking-normal text-white/25">(opcional)</span>
+            <span className="normal-case tracking-normal text-[#0A2540]/30">(opcional)</span>
           </span>
           <div className="grid grid-cols-1 gap-5 sm:grid-cols-3">
             <NumberStepper
@@ -829,10 +843,10 @@ export function CustomPackageCard() {
 
         <div className="space-y-6">
           <div>
-            <span className="mb-2 block text-[10px] uppercase tracking-[0.2em] text-white/40">
+            <span className="mb-2 block text-[10px] uppercase tracking-[0.2em] text-[#0A2540]/50">
               Monte seu pacote
             </span>
-            <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.15em] text-[#6ec3d9]">
+            <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.15em] text-[#2f80c9]">
               Essenciais
             </p>
             <div className="grid grid-cols-1 items-stretch gap-2.5 sm:grid-cols-2">
@@ -841,7 +855,7 @@ export function CustomPackageCard() {
           </div>
 
           <div>
-            <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.15em] text-white/40">
+            <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.15em] text-[#0A2540]/45">
               Opcionais
             </p>
             <div className="grid grid-cols-1 items-stretch gap-2.5 sm:grid-cols-2">
@@ -851,7 +865,7 @@ export function CustomPackageCard() {
         </div>
 
         <div>
-          <span className="mb-2 block text-[10px] uppercase tracking-[0.2em] text-white/40">
+          <span className="mb-2 block text-[10px] uppercase tracking-[0.2em] text-[#0A2540]/50">
             Destinos
           </span>
           <div className="grid grid-cols-3 gap-2.5 sm:grid-cols-6">
@@ -866,7 +880,7 @@ export function CustomPackageCard() {
                   className={`group relative aspect-square overflow-hidden rounded-xl border text-left transition ${
                     ativo
                       ? "border-[#2f80c9] shadow-[0_0_0_1px_rgba(47,128,201,0.5)]"
-                      : "border-white/10 hover:border-white/30"
+                      : "border-black/10 hover:border-black/25"
                   }`}
                 >
                   {destino.imagem ? (
@@ -901,7 +915,7 @@ export function CustomPackageCard() {
               <button
                 type="button"
                 onClick={() => setMostrarTodosDestinos(true)}
-                className="group relative flex aspect-square flex-col items-center justify-center gap-1 rounded-xl border border-dashed border-white/20 bg-white/[0.03] text-white/60 transition hover:border-white/40 hover:bg-white/[0.06] hover:text-white"
+                className="group relative flex aspect-square flex-col items-center justify-center gap-1 rounded-xl border border-dashed border-black/20 bg-black/[0.02] text-[#0A2540]/60 transition hover:border-black/35 hover:bg-black/[0.05] hover:text-[#0A2540]"
               >
                 <span className="text-lg font-semibold">+{destinosOcultos}</span>
                 <span className="text-[10px] uppercase tracking-[0.1em]">Ver mais</span>
@@ -913,7 +927,7 @@ export function CustomPackageCard() {
             <button
               type="button"
               onClick={() => setMostrarTodosDestinos(false)}
-              className="mt-3 text-[11px] uppercase tracking-[0.15em] text-white/40 underline-offset-4 transition hover:text-white/70 hover:underline"
+              className="mt-3 text-[11px] uppercase tracking-[0.15em] text-[#0A2540]/50 underline-offset-4 transition hover:text-[#0A2540] hover:underline"
             >
               Ver menos destinos
             </button>
@@ -921,7 +935,7 @@ export function CustomPackageCard() {
         </div>
 
         <label className="block">
-          <span className="mb-2 block text-[10px] uppercase tracking-[0.2em] text-white/40">
+          <span className="mb-2 block text-[10px] uppercase tracking-[0.2em] text-[#0A2540]/50">
             O que você gostaria de incluir? (opcional)
           </span>
           <textarea
@@ -929,7 +943,7 @@ export function CustomPackageCard() {
             onChange={(e) => setObservacoes(e.target.value)}
             rows={3}
             placeholder="Ex: passeio noturno em Ginza, compras em Ginza, jantar especial..."
-            className="w-full rounded-lg border border-white/15 bg-black/30 px-3 py-2.5 text-sm text-white outline-none placeholder:text-white/25 focus:border-white/40"
+            className="w-full rounded-lg border border-black/15 bg-black/[0.03] px-3 py-2.5 text-sm text-[#0A2540] outline-none placeholder:text-[#0A2540]/30 focus:border-black/30"
           />
         </label>
       </form>
