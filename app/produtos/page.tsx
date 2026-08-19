@@ -635,20 +635,19 @@ export default function ProdutosPage() {
 
           <div className="flex justify-center">
             <a
-              href="/images/dashmobile-ajisai.jpg"
+              href="/images/mock-roteiro-iphone.png"
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Ver painel do roteiro em tamanho maior"
-              className="group relative w-[240px] rounded-[40px] border border-white/15 bg-black p-3 shadow-2xl md:w-[280px]"
+              className="group relative w-[240px] overflow-hidden rounded-[36px] shadow-2xl transition duration-500 hover:-translate-y-1 hover:shadow-[0_25px_60px_rgba(110,195,217,0.25)] md:w-[280px]"
             >
-              <div className="absolute left-1/2 top-5 z-10 h-4 w-20 -translate-x-1/2 rounded-full bg-black" />
-              <div className="relative aspect-[1320/2257] w-full overflow-hidden rounded-[28px] bg-black">
+              <div className="relative aspect-[1024/1536] w-full">
                 <Image
-                  src="/images/dashmobile-ajisai.jpg"
+                  src="/images/mock-roteiro-iphone.png"
                   alt="Painel Ajisai — roteiro diário, atrações e logística organizados"
                   fill
                   sizes="280px"
-                  className="object-cover transition duration-700 group-hover:scale-[1.03]"
+                  className="object-contain transition duration-700 group-hover:scale-[1.03]"
                 />
               </div>
             </a>

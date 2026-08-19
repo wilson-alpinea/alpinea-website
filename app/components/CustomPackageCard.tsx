@@ -559,6 +559,17 @@ export function CustomPackageCard() {
         <span className="block flex-1 pl-8 text-xs leading-5 text-[#0A2540]/50">
           {opcao.descricao}
         </span>
+        {opcao.key === "roteiro" && (
+          <div className="pl-8" onClick={(e) => e.stopPropagation()}>
+            <video
+              src="/videos/roteiro-personalizado-short.mp4"
+              poster="/videos/roteiro-personalizado-short-poster.jpg"
+              controls
+              playsInline
+              className="mt-1 w-full max-w-[220px] rounded-lg border border-black/10"
+            />
+          </div>
+        )}
       </div>
     );
   }
@@ -676,7 +687,7 @@ export function CustomPackageCard() {
   return (
     <>
     <div className="flex flex-col overflow-hidden rounded-2xl border border-black/10 bg-white p-6 shadow-sm sm:rounded-[2rem] md:p-8">
-      <p className="text-[10px] uppercase tracking-[0.2em] text-[#e0916a]">
+      <p className={`${display.className} text-3xl font-semibold uppercase tracking-[0.08em] text-black md:text-4xl`}>
         Personalizado
       </p>
 
@@ -990,13 +1001,24 @@ export function CustomPackageCard() {
               {opcaoAberta.icone} {opcaoAberta.label}
             </p>
             {opcaoAberta.key === "roteiro" && (
-              <video
-                src="/videos/roteiro-personalizado-short.mp4"
-                poster="/videos/roteiro-personalizado-short-poster.jpg"
-                controls
-                playsInline
-                className="mt-3 w-full rounded-xl border border-white/10"
-              />
+              <div className="mt-3 flex flex-col gap-3 sm:flex-row">
+                <video
+                  src="/videos/roteiro-personalizado-short.mp4"
+                  poster="/videos/roteiro-personalizado-short-poster.jpg"
+                  controls
+                  playsInline
+                  className="w-full flex-1 rounded-xl border border-white/10"
+                />
+                <div className="relative mx-auto aspect-[1024/1536] w-full max-w-[140px] shrink-0 overflow-hidden rounded-2xl border border-white/10 sm:mx-0">
+                  <Image
+                    src="/images/mock-roteiro-iphone.png"
+                    alt="Painel Ajisai — roteiro diário personalizado"
+                    fill
+                    sizes="140px"
+                    className="object-cover"
+                  />
+                </div>
+              </div>
             )}
             {opcaoAberta.key === "transporte" && (
               <div className="mt-3 grid grid-cols-2 gap-3">

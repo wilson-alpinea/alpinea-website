@@ -691,7 +691,7 @@ export function PackageDetailModal({
             {RECURSOS_ROTEIRO.map((r) => (
               <div
                 key={r.label}
-                className="rounded-xl border border-white/10 bg-white/[0.03] p-3 text-center"
+                className="rounded-xl border border-white/10 bg-white/[0.03] p-3 text-center transition duration-300 hover:-translate-y-0.5 hover:border-[#6ec3d9]/40 hover:bg-white/[0.06] hover:shadow-[0_10px_24px_rgba(0,0,0,0.3)]"
               >
                 <p className="text-lg">{r.icon}</p>
                 <p className="mt-1.5 text-[11px] font-medium leading-4 text-white/70">{r.label}</p>
@@ -868,41 +868,6 @@ export function PackageDetailModal({
                 participantes estejam em condições físicas adequadas para
                 melhor aproveitamento da viagem.
               </p>
-            </div>
-          </div>
-
-          <div className="mt-8 border-t border-white/10 pt-6">
-            <div className="rounded-2xl border border-[#6ec3d9]/20 bg-[#6ec3d9]/[0.04] p-5">
-              <p className="text-center text-xs font-semibold uppercase tracking-[0.25em]" style={{ color: "#6ec3d9" }}>
-                Ajisai Garantia
-              </p>
-              <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-3">
-                <p className="text-center text-xs font-light leading-5 text-white/60">
-                  Agência de Turismo registrada no Cadastur
-                </p>
-                <p className="text-center text-xs font-light leading-5 text-white/60">
-                  Responsabilidade solidária da agência em toda a viagem
-                </p>
-                <p className="text-center text-xs font-light leading-5 text-white/60">
-                  Suporte quase 24h via WhatsApp durante a viagem
-                </p>
-              </div>
-              <div className="mt-5 flex flex-row flex-wrap items-center justify-center gap-6">
-                <Image
-                  src="/images/badge-cadastur.png"
-                  alt="Cadastur — Agência de Turismo registrada"
-                  width={1254}
-                  height={1254}
-                  className="h-auto w-full max-w-[110px]"
-                />
-                <Image
-                  src="/images/badge-reclameaqui.png"
-                  alt="Verificado no Reclame Aqui"
-                  width={1536}
-                  height={1024}
-                  className="h-auto w-full max-w-[110px]"
-                />
-              </div>
             </div>
           </div>
 
