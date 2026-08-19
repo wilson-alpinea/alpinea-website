@@ -389,45 +389,60 @@ export default function PacotesJapaoPage() {
         </section>
 
         {/* ── DIFERENCIAIS AJISAI · PASSAGENS AÉREAS ── */}
-        <section className="border-t border-white/10 bg-black px-6 py-14 md:px-16 md:py-20">
-          <div className="mx-auto max-w-5xl">
-            <p className="text-center text-[10px] uppercase tracking-[0.2em] text-white/40">
-              Passagem comprada com a Ajisai
-            </p>
-            <h2
-              className={`${display.className} mt-2 text-center text-2xl font-medium leading-tight text-white md:text-4xl`}
-            >
-              Diferenciais Ajisai para Passagens Aéreas
-            </h2>
-            <p className="mx-auto mt-3 max-w-2xl text-center text-sm font-light leading-6 text-white/55">
-              O mesmo suporte que você encontra dentro de cada pacote, na
-              seção Aéreo/Passagem Aérea — aqui resumido em um único lugar.
-            </p>
+        <div className="border-t border-white/10 bg-black">
+          <div className="relative h-[420px] w-full overflow-hidden sm:h-[500px] md:h-[600px]">
+            <Image
+              src="/images/hero-passagens-aereas.jpg"
+              alt="Cabine de primeira classe — viagem aérea Ajisai"
+              fill
+              sizes="100vw"
+              priority
+              className="object-cover object-[68%_18%]"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black via-black/25 to-black/5" />
+            <div className="absolute inset-0 flex flex-col items-center justify-center px-6 text-center">
+              <p className="text-[10px] uppercase tracking-[0.2em] text-white/70">
+                Passagem comprada com a Ajisai
+              </p>
+              <h2
+                className={`${display.className} mt-2 max-w-3xl text-2xl font-medium leading-tight text-white md:text-4xl`}
+              >
+                Diferenciais Ajisai para Passagens Aéreas
+              </h2>
+              <p className="mx-auto mt-3 max-w-2xl text-sm font-light leading-6 text-white/80">
+                O mesmo suporte que você encontra dentro de cada pacote, na
+                seção Aéreo/Passagem Aérea — aqui resumido em um único lugar.
+              </p>
+            </div>
+          </div>
 
-            <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="relative -mt-20 px-6 pb-14 sm:-mt-24 md:-mt-28 md:px-16 md:pb-20">
+            <div className="mx-auto max-w-5xl">
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
               {DIFERENCIAIS_AEREO.map((item) => (
                 <div
                   key={item.titulo}
                   className="rounded-2xl border border-black/5 bg-[#FAF7F2] p-6 text-center shadow-sm md:p-8"
                 >
-                  <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-[#6ec3d9]/15 text-[#2f80c9]">
+                  <span className="mx-auto flex h-24 w-24 items-center justify-center rounded-full bg-[#6ec3d9]/20 text-[#2f80c9]">
                     {item.imagem ? (
-                      <Image src={item.imagem} alt="" width={40} height={40} className="h-7 w-7 object-contain" />
+                      <Image src={item.imagem} alt="" width={80} height={80} className="h-14 w-14 object-contain" />
                     ) : (
-                      <item.Icon className="h-5 w-5" />
+                      <item.Icon className="h-10 w-10" />
                     )}
                   </span>
-                  <h3 className={`${display.className} mt-4 text-lg font-medium text-[#0A2540]`}>
+                  <h3 className={`${display.className} mt-5 text-lg font-semibold text-[#0A2540]`}>
                     {item.titulo}
                   </h3>
-                  <p className="mt-2 text-sm font-light leading-6 text-[#0A2540]/65">
+                  <p className="mt-2 text-[15px] font-normal leading-6 text-[#0A2540]/80">
                     {item.texto}
                   </p>
                 </div>
               ))}
             </div>
+            </div>
           </div>
-        </section>
+        </div>
 
         {/* ── DIVISÃO 1 · PACOTES DE CARAVANA ── */}
         <section
@@ -466,10 +481,13 @@ export default function PacotesJapaoPage() {
               ))}
             </ul>
 
-            <div className="mb-8 flex justify-center md:mb-10 md:justify-start">
-              <span className="inline-flex max-w-full flex-wrap items-center justify-center gap-2 rounded-full border border-[#6ec3d9]/50 bg-[#6ec3d9]/15 px-5 py-2 text-center text-[11px] font-semibold uppercase tracking-[0.2em] text-[#6ec3d9] md:text-xs">
-                <IconClock className="h-3.5 w-3.5 shrink-0" />
-                Datas aproximadas — datas e valores sujeitos a alteração conforme disponibilidade e câmbio
+            <div className="mb-8 md:mb-10">
+              <span className="inline-flex items-start gap-2 rounded-lg border border-[#6ec3d9]/40 bg-[#6ec3d9]/10 px-4 py-2.5 text-left text-[13px] leading-snug text-[#6ec3d9]">
+                <IconClock className="mt-0.5 h-4 w-4 shrink-0" />
+                <span>
+                  <span className="font-semibold">Datas aproximadas</span> — datas e valores
+                  sujeitos a alteração conforme disponibilidade e câmbio
+                </span>
               </span>
             </div>
 
@@ -530,10 +548,13 @@ export default function PacotesJapaoPage() {
               ))}
             </ul>
 
-            <div className="mb-8 flex justify-center md:mb-10 md:justify-start">
-              <span className="inline-flex max-w-full flex-wrap items-center justify-center gap-2 rounded-full border border-[#6ec3d9]/50 bg-[#6ec3d9]/15 px-5 py-2 text-center text-[11px] font-semibold uppercase tracking-[0.2em] text-[#6ec3d9] md:text-xs">
-                <IconClock className="h-3.5 w-3.5 shrink-0" />
-                Datas aproximadas — datas e valores sujeitos a alteração conforme disponibilidade e câmbio
+            <div className="mb-8 md:mb-10">
+              <span className="inline-flex items-start gap-2 rounded-lg border border-[#6ec3d9]/40 bg-[#6ec3d9]/10 px-4 py-2.5 text-left text-[13px] leading-snug text-[#6ec3d9]">
+                <IconClock className="mt-0.5 h-4 w-4 shrink-0" />
+                <span>
+                  <span className="font-semibold">Datas aproximadas</span> — datas e valores
+                  sujeitos a alteração conforme disponibilidade e câmbio
+                </span>
               </span>
             </div>
 

@@ -72,13 +72,13 @@ export function PackageCard({
             setOpen(true);
           }
         }}
-        className="flex cursor-pointer flex-col overflow-hidden rounded-2xl border border-white/10 bg-white/[0.025] p-6 transition hover:border-white/25 hover:bg-white/[0.04] sm:rounded-[2rem]"
+        className="flex cursor-pointer flex-col overflow-hidden rounded-2xl border border-black/10 bg-white p-6 shadow-sm transition hover:-translate-y-0.5 hover:border-black/20 hover:shadow-md sm:rounded-[2rem]"
       >
         <div className="flex-1">
           <div className="flex flex-wrap items-center gap-2.5">
             <p
               className="text-[10px] uppercase tracking-[0.2em]"
-              style={{ color: "#6ec3d9" }}
+              style={{ color: "#1f6f9c" }}
             >
               {categoria}
             </p>
@@ -91,17 +91,20 @@ export function PackageCard({
               </span>
             )}
           </div>
-          <h3 className={`${display.className} mt-1.5 text-2xl font-medium text-white`}>
+          <h3 className={`${display.className} mt-1.5 text-2xl font-medium text-[#0A2540]`}>
             {nome}
           </h3>
-          <p className="mt-1.5 text-sm font-light leading-6 text-white/55">{tagline}</p>
+          <p className="mt-1.5 text-sm font-light leading-6 text-[#0A2540]/60">{tagline}</p>
 
-          <p className="mt-4 text-sm font-light leading-6 text-white/60">{descricao}</p>
+          <p className="mt-4 text-sm font-light leading-6 text-[#0A2540]/65">{descricao}</p>
 
           <ul className="mt-5 space-y-2.5">
             {destaques.map((item) => (
-              <li key={item} className="flex items-start gap-2.5 text-sm leading-5 text-white/65">
-                <span className="mt-0.5 shrink-0" style={{ color: "#6ec3d9" }}>
+              <li
+                key={item}
+                className="flex items-start gap-2.5 text-sm leading-5 text-[#0A2540]/75"
+              >
+                <span className="mt-0.5 shrink-0" style={{ color: "#2f80c9" }}>
                   <IconCheck className="h-3.5 w-3.5" />
                 </span>
                 {item}
@@ -112,7 +115,7 @@ export function PackageCard({
 
         {variantes.length > 1 && (
           <div className="mt-6">
-            <p className="mb-3 text-xs font-semibold uppercase tracking-[0.2em] text-white">
+            <p className="mb-3 text-xs font-semibold uppercase tracking-[0.2em] text-[#0A2540]">
               {varianteHint}
             </p>
             <div className="flex flex-wrap gap-3">
@@ -128,8 +131,8 @@ export function PackageCard({
                     }}
                     className={`rounded-full border px-7 py-3.5 text-base font-semibold uppercase tracking-[0.1em] transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-[1.06] active:scale-95 ${
                       ativo
-                        ? "border-transparent text-white shadow-[0_10px_26px_rgba(0,0,0,0.4)]"
-                        : "border-white/20 text-white/60 hover:border-white/50 hover:text-white hover:shadow-[0_10px_24px_rgba(0,0,0,0.3)]"
+                        ? "border-transparent text-white shadow-[0_10px_26px_rgba(0,0,0,0.25)]"
+                        : "border-black/15 text-[#0A2540]/60 hover:border-black/30 hover:text-[#0A2540] hover:shadow-[0_10px_24px_rgba(0,0,0,0.12)]"
                     }`}
                     style={ativo ? { backgroundColor: "#2f80c9" } : undefined}
                   >
@@ -141,19 +144,20 @@ export function PackageCard({
           </div>
         )}
 
-        <div className="mt-6 border-t border-white/10 pt-5">
+        <div className="mt-6 border-t border-black/10 pt-5">
           {variante && (
             <>
-              <p className="text-xs font-medium uppercase tracking-[0.15em] text-white/45">
+              <p className="text-xs font-medium uppercase tracking-[0.15em] text-[#0A2540]/50">
                 {variante.datas}
               </p>
               <PrecoPacote
                 variante={variante}
-                precoClassName={`${display.className} mt-1 text-4xl font-semibold text-white`}
+                theme="light"
+                precoClassName={`${display.className} mt-1 text-4xl font-semibold text-[#0A2540]`}
               />
             </>
           )}
-          {rodape && <p className="mt-2 text-[11px] leading-5 text-white/40">{rodape}</p>}
+          {rodape && <p className="mt-2 text-[11px] leading-5 text-[#0A2540]/45">{rodape}</p>}
 
           <span
             className="mt-5 flex w-full items-center justify-center gap-2 rounded-full px-5 py-3.5 text-center text-[11px] font-semibold uppercase tracking-[0.2em] text-white shadow-[0_10px_30px_rgba(0,0,0,0.35)] transition duration-300"

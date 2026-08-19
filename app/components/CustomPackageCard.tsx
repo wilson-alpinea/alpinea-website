@@ -144,9 +144,21 @@ const PRECO_INGRESSO_DISNEY_UNIVERSAL_USD_PAX = 83; // ≈ JPY 12000/pax (ingres
 // passou — US$ 6.000 fixo, nativo em dólar — convertido pra reais com a
 // cotação do dia antes de entrar no total, igual guia/motorista/wifi/
 // ingressos acima.
-const CLASSES_AEREO = ["Economy", "Business"] as const;
+//
+// First Class: pesquisado em cima da Qatar Airways (First Class só existe
+// nos voos com A380, que em 2026 NÃO cobre a rota GRU↔Japão — só
+// Londres/Bangkok e, sazonalmente, Cingapura/Sydney/Paris a partir de
+// Doha). Não existe tarifa oficial pra essa rota específica, então usei
+// como referência a faixa de mercado pra itinerários ultra-longos com dois
+// trechos igualmente longos (ex.: Sydney↔Londres via Doha, que a Qatar
+// cobra ida e volta entre US$ 10.000 e US$ 15.000 — fonte: Simple Flying,
+// maio/2026) — ponto médio US$ 12.500 — com margem de 40% aplicada por
+// pedido seu: 12.500 × 1,4 = US$ 17.500. AJUSTE assim que tiver uma
+// cotação real da rota.
+const CLASSES_AEREO = ["Economy", "Business", "First Class"] as const;
 const PRECO_AEREO_ECONOMY_BRL = 8000;
 const PRECO_AEREO_BUSINESS_USD = 6000;
+const PRECO_AEREO_FIRST_USD = 17500;
 
 // Preços por item — aéreo, câmbio e serviços adicionais têm valor fixo por
 // viagem; hotel, transporte, guia, JR Pass, seguro viagem e motorista
@@ -155,18 +167,23 @@ const PRECO_AEREO_BUSINESS_USD = 6000;
 const OPCOES = [
   {
     key: "aereo",
+    categoria: "essencial",
     label: "Aéreo",
     icone: "✈️",
-    descricao: "Passagem internacional ida e volta — Economy ou Business",
+    descricao: "Passagem internacional ida e volta — Economy, Business ou First Class",
     detalhe:
-      "Bilhete aéreo internacional de ida e volta, com a Ajisai buscando as melhores opções de conexão disponíveis para as datas escolhidas. Inclui bagagem conforme a franquia da companhia aérea selecionada. Disponível em Economy ou Business.\n\nDiferenciais Ajisai para quem compra a passagem com a gente:\n\nConcierge no Aeroporto de Guarulhos — equipe especializada apoia todos os passageiros no balcão de check-in, esclarece dúvidas, resolve reserva de assento e intermedia com a companhia aérea. Acesso direto à gerência das companhias no aeroporto — fundamental em cancelamento, remarcação e direitos do passageiro.\n\nProtocolo pré-embarque (Visit Japan Web) — um membro da equipe Ajisai preenche o VJW com os dados do passageiro, cria e cadastra a conta e envia pronta pra você, substituindo o papelado na chegada ao Japão. Inclui sessão dedicada ao aéreo, explicando o itinerário e tirando dúvidas antes do embarque.\n\nMonitoramento de viagem — central de WhatsApp com equipe emergencial Ajisai, funcionando quase 24 horas por dia, cobrindo conexões, gestão de reserva antes da viagem e imprevistos durante a viagem. Atendimento humano, com apoio de tradutor por telefone quando necessário.\n\nResponsabilidade da Agência — passagem emitida pela Ajisai tem responsabilidade solidária da agência e negociação direta com as companhias aéreas, muito além do que dá pra resolver sozinho numa reserva comprada por conta própria — mais proteção e prioridade, mesmo pelo mesmo preço.",
-    calcPreco: (ctx: PrecoCtx) =>
-      ctx.classeAereo === "Business"
-        ? Math.round(PRECO_AEREO_BUSINESS_USD * ctx.cambioCotacao)
-        : PRECO_AEREO_ECONOMY_BRL,
+      "Bilhete aéreo internacional de ida e volta, com a Ajisai buscando as melhores opções de conexão disponíveis para as datas escolhidas. Inclui bagagem conforme a franquia da companhia aérea selecionada. Disponível em Economy, Business ou First Class.\n\nDiferenciais Ajisai para quem compra a passagem com a gente:\n\nConcierge no Aeroporto de Guarulhos — equipe especializada apoia todos os passageiros no balcão de check-in, esclarece dúvidas, resolve reserva de assento e intermedia com a companhia aérea. Acesso direto à gerência das companhias no aeroporto — fundamental em cancelamento, remarcação e direitos do passageiro.\n\nProtocolo pré-embarque (Visit Japan Web) — um membro da equipe Ajisai preenche o VJW com os dados do passageiro, cria e cadastra a conta e envia pronta pra você, substituindo o papelado na chegada ao Japão. Inclui sessão dedicada ao aéreo, explicando o itinerário e tirando dúvidas antes do embarque.\n\nMonitoramento de viagem — central de WhatsApp com equipe emergencial Ajisai, funcionando quase 24 horas por dia, cobrindo conexões, gestão de reserva antes da viagem e imprevistos durante a viagem. Atendimento humano, com apoio de tradutor por telefone quando necessário.\n\nResponsabilidade da Agência — passagem emitida pela Ajisai tem responsabilidade solidária da agência e negociação direta com as companhias aéreas, muito além do que dá pra resolver sozinho numa reserva comprada por conta própria — mais proteção e prioridade, mesmo pelo mesmo preço.",
+    calcPreco: (ctx: PrecoCtx) => {
+      if (ctx.classeAereo === "First Class")
+        return Math.round(PRECO_AEREO_FIRST_USD * ctx.cambioCotacao);
+      if (ctx.classeAereo === "Business")
+        return Math.round(PRECO_AEREO_BUSINESS_USD * ctx.cambioCotacao);
+      return PRECO_AEREO_ECONOMY_BRL;
+    },
   },
   {
     key: "hotel",
+    categoria: "essencial",
     label: "Hotel",
     icone: "🏨",
     descricao: "Hospedagem selecionada durante toda a viagem",
@@ -177,6 +194,7 @@ const OPCOES = [
   },
   {
     key: "transporte",
+    categoria: "essencial",
     label: "Transporte",
     icone: "🚐",
     descricao: "Transfers e deslocamentos do roteiro",
@@ -186,6 +204,7 @@ const OPCOES = [
   },
   {
     key: "guia",
+    categoria: "essencial",
     label: "Guia",
     icone: "🧭",
     descricao: "Guia turístico acompanhando o roteiro — US$ 350/dia a cada 4 pessoas",
@@ -201,6 +220,7 @@ const OPCOES = [
   },
   {
     key: "jrpass",
+    categoria: "opcional",
     label: "JR Pass",
     icone: "🚄",
     descricao: "Passe ferroviário com deslocamentos ilimitados de trem-bala",
@@ -210,6 +230,7 @@ const OPCOES = [
   },
   {
     key: "seguro",
+    categoria: "opcional",
     label: "Seguro Viagem",
     icone: "🛡️",
     descricao: "Cobertura médica e assistência durante toda a viagem",
@@ -219,6 +240,7 @@ const OPCOES = [
   },
   {
     key: "cambio",
+    categoria: "opcional",
     label: "Câmbio no Brasil",
     icone: "💴",
     descricao: "Retirada de ienes com câmbio comercial antes do embarque",
@@ -228,6 +250,7 @@ const OPCOES = [
   },
   {
     key: "motorista",
+    categoria: "opcional",
     label: "Transfer com Motorista Privado",
     icone: "🚗",
     descricao: "Traslados exclusivos — US$ 700/dia para até 4 pessoas",
@@ -242,16 +265,38 @@ const OPCOES = [
       ),
   },
   {
-    key: "servicos",
-    label: "Serviços Adicionais",
-    icone: "✨",
-    descricao: "Reservas, concierge e experiências sob medida",
+    key: "reservasRestaurantes",
+    categoria: "opcional",
+    label: "Reservas de Restaurantes",
+    icone: "🍽️",
+    descricao: "Reservas em restaurantes concorridos durante a viagem",
     detalhe:
-      "Reservas de restaurantes concorridos, concierge durante a viagem e experiências sob medida (ingressos especiais, eventos sazonais, atividades personalizadas) — sob consulta conforme o interesse do grupo.",
-    calcPreco: () => 2500,
+      "Reservas em restaurantes concorridos ao longo do roteiro, conforme o interesse do grupo — sob consulta.",
+    calcPreco: () => 0,
+  },
+  {
+    key: "concierge",
+    categoria: "opcional",
+    label: "Concierge Durante a Viagem",
+    icone: "🛎️",
+    descricao: "Suporte dedicado para pedidos e imprevistos no roteiro",
+    detalhe:
+      "Concierge dedicado durante toda a viagem, para pedidos, ajustes de roteiro e imprevistos — sob consulta conforme o interesse do grupo.",
+    calcPreco: () => 0,
+  },
+  {
+    key: "experienciasSobMedida",
+    categoria: "opcional",
+    label: "Experiências Sob Medida",
+    icone: "✨",
+    descricao: "Ingressos especiais, eventos sazonais e atividades personalizadas",
+    detalhe:
+      "Experiências sob medida — ingressos especiais, eventos sazonais e atividades personalizadas — conforme o interesse do grupo. Sob consulta.",
+    calcPreco: () => 0,
   },
   {
     key: "roteiro",
+    categoria: "essencial",
     label: "Roteiro Personalizado",
     icone: "📱",
     descricao: "Painel digital Ajisai com o roteiro sob medida do seu grupo",
@@ -261,6 +306,7 @@ const OPCOES = [
   },
   {
     key: "transferOnibus",
+    categoria: "opcional",
     label: "Transfer de Ônibus Aeroporto ↔ Centro de Tóquio",
     icone: "🚌",
     descricao: "Ida e volta entre o aeroporto e o centro de Tóquio",
@@ -270,6 +316,7 @@ const OPCOES = [
   },
   {
     key: "wifi",
+    categoria: "opcional",
     label: "Wi-fi",
     icone: "📶",
     descricao: "Conexão disponível durante todo o roteiro",
@@ -280,6 +327,7 @@ const OPCOES = [
   },
   {
     key: "ingressos",
+    categoria: "opcional",
     label: "Ingressos para Atrações: Disney e Universal",
     icone: "🎟️",
     descricao: "Ingresso avulso, por pessoa",
@@ -295,7 +343,7 @@ type OpcaoKey = (typeof OPCOES)[number]["key"];
 // Itens essenciais vêm pré-selecionados; os complementares (JR Pass, seguro
 // viagem, câmbio, motorista privado) ficam disponíveis pra adicionar sob
 // demanda.
-const ITENS_PADRAO: OpcaoKey[] = ["aereo", "hotel", "transporte", "guia", "servicos", "roteiro"];
+const ITENS_PADRAO: OpcaoKey[] = ["aereo", "hotel", "transporte", "guia", "roteiro"];
 
 // Os 20 destinos mais procurados do Japão pra turismo de lazer — mistura de
 // grandes cidades, cultura tradicional, natureza e praia/ilhas. Só Tokyo,
@@ -307,7 +355,7 @@ const DESTINOS = [
   { key: "osaka", nome: "Osaka", imagem: "/images/osaka-castle.png" },
   { key: "hokkaido", nome: "Hokkaido (Sapporo)", imagem: "/images/sapporo.jpg" },
   { key: "okinawa", nome: "Okinawa", imagem: "/images/okinawa.jpg" },
-  { key: "hiroshima", nome: "Hiroshima", imagem: null },
+  { key: "hiroshima", nome: "Hiroshima", imagem: "/images/hiroshima.jpg" },
   { key: "nara", nome: "Nara", imagem: null },
   { key: "hakone", nome: "Hakone", imagem: "/images/fuji.JPG" },
   { key: "nikko", nome: "Nikko", imagem: "/images/nikko.jpg" },
@@ -318,7 +366,7 @@ const DESTINOS = [
   { key: "fukuoka", nome: "Fukuoka", imagem: "/images/fukuoka.jpg" },
   { key: "kobe", nome: "Kobe", imagem: "/images/kobe.jpg" },
   { key: "yokohama", nome: "Yokohama", imagem: "/images/yokohama.jpg" },
-  { key: "miyajima", nome: "Miyajima", imagem: "/images/miyajima.webp" },
+  { key: "miyajima", nome: "Miyajima", imagem: "/images/miyajima.jpg" },
   { key: "nagano", nome: "Nagano", imagem: "/images/nagano.webp" },
   { key: "ishigaki", nome: "Ishigaki", imagem: "/images/ishigaki.jpg" },
   { key: "yakushima", nome: "Yakushima", imagem: "/images/yakushima.jpg" },
@@ -404,6 +452,7 @@ export function CustomPackageCard() {
     () => new Set(),
   );
   const [observacoes, setObservacoes] = useState("");
+  const [mostrarTodosDestinos, setMostrarTodosDestinos] = useState(false);
   const [adicionado, setAdicionado] = useState(false);
   const [opcaoAberta, setOpcaoAberta] = useState<(typeof OPCOES)[number] | null>(null);
   const [mounted, setMounted] = useState(false);
@@ -428,6 +477,69 @@ export function CustomPackageCard() {
     () => OPCOES.filter((o) => selecionados.has(o.key)),
     [selecionados],
   );
+
+  const opcoesEssenciais = useMemo(
+    () => OPCOES.filter((o) => o.categoria === "essencial"),
+    [],
+  );
+  const opcoesOpcionais = useMemo(
+    () => OPCOES.filter((o) => o.categoria === "opcional"),
+    [],
+  );
+
+  function renderOpcaoCard(opcao: (typeof OPCOES)[number]) {
+    const ativo = selecionados.has(opcao.key);
+    return (
+      <div
+        key={opcao.key}
+        role="button"
+        tabIndex={0}
+        onClick={() => toggleOpcao(opcao.key)}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            toggleOpcao(opcao.key);
+          }
+        }}
+        aria-pressed={ativo}
+        className={`flex h-full cursor-pointer flex-col gap-2 rounded-xl border px-4 py-3 text-left transition ${
+          ativo
+            ? "border-[#2f80c9]/50 bg-[#2f80c9]/10"
+            : "border-white/10 bg-black/20 hover:border-white/25"
+        }`}
+      >
+        <div className="flex items-start gap-3">
+          <span
+            className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border text-[10px] transition ${
+              ativo
+                ? "border-[#2f80c9] bg-[#2f80c9] text-white"
+                : "border-white/25 text-transparent"
+            }`}
+          >
+            <IconCheck className="h-3 w-3" />
+          </span>
+          <span className="min-w-0 flex-1 text-sm font-medium text-white">
+            {opcao.icone} {opcao.label}
+          </span>
+          <button
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              setOpcaoAberta(opcao);
+            }}
+            aria-label={`Ver detalhes — ${opcao.label}`}
+            className="flex shrink-0 items-center gap-1 rounded-full border border-white/15 px-2 py-1 text-[9px] uppercase tracking-[0.1em] text-white/50 transition hover:border-white/40 hover:text-white"
+          >
+            <IconDocument className="h-3 w-3" />
+            Ver detalhes
+          </button>
+        </div>
+        <span className="block flex-1 pl-8 text-xs leading-5 text-white/40">
+          {opcao.descricao}
+        </span>
+      </div>
+    );
+  }
 
   const passageirosExtras = Math.max(0, pessoas - LIMITE_PESSOAS_SEM_TAXA);
   const taxaGrupo = passageirosExtras * TAXA_POR_PASSAGEIRO_EXTRA;
@@ -462,6 +574,10 @@ export function CustomPackageCard() {
       return next;
     });
   }
+
+  const DESTINOS_TOP5 = 5;
+  const destinosVisiveis = mostrarTodosDestinos ? DESTINOS : DESTINOS.slice(0, DESTINOS_TOP5);
+  const destinosOcultos = DESTINOS.length - DESTINOS_TOP5;
 
   const nomesDestinos = useMemo(
     () => DESTINOS.filter((d) => destinosSelecionados.has(d.key)).map((d) => d.nome),
@@ -621,7 +737,7 @@ export function CustomPackageCard() {
             >
               {CLASSES_AEREO.map((c) => (
                 <option key={c} value={c} className="bg-black">
-                  {c === "Economy" ? "Economy" : "Business"}
+                  {c}
                 </option>
               ))}
             </select>
@@ -668,64 +784,26 @@ export function CustomPackageCard() {
           </div>
         </div>
 
-        <div>
-          <span className="mb-2 block text-[10px] uppercase tracking-[0.2em] text-white/40">
-            Monte seu pacote
-          </span>
-          <div className="grid grid-cols-1 items-stretch gap-2.5 sm:grid-cols-2">
-            {OPCOES.map((opcao) => {
-              const ativo = selecionados.has(opcao.key);
-              return (
-                <div
-                  key={opcao.key}
-                  role="button"
-                  tabIndex={0}
-                  onClick={() => toggleOpcao(opcao.key)}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" || e.key === " ") {
-                      e.preventDefault();
-                      toggleOpcao(opcao.key);
-                    }
-                  }}
-                  aria-pressed={ativo}
-                  className={`flex h-full cursor-pointer flex-col gap-2 rounded-xl border px-4 py-3 text-left transition ${
-                    ativo
-                      ? "border-[#2f80c9]/50 bg-[#2f80c9]/10"
-                      : "border-white/10 bg-black/20 hover:border-white/25"
-                  }`}
-                >
-                  <div className="flex items-start gap-3">
-                    <span
-                      className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border text-[10px] transition ${
-                        ativo
-                          ? "border-[#2f80c9] bg-[#2f80c9] text-white"
-                          : "border-white/25 text-transparent"
-                      }`}
-                    >
-                      <IconCheck className="h-3 w-3" />
-                    </span>
-                    <span className="min-w-0 flex-1 text-sm font-medium text-white">
-                      {opcao.icone} {opcao.label}
-                    </span>
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setOpcaoAberta(opcao);
-                      }}
-                      aria-label={`Ver detalhes — ${opcao.label}`}
-                      className="flex shrink-0 items-center gap-1 rounded-full border border-white/15 px-2 py-1 text-[9px] uppercase tracking-[0.1em] text-white/50 transition hover:border-white/40 hover:text-white"
-                    >
-                      <IconDocument className="h-3 w-3" />
-                      Ver detalhes
-                    </button>
-                  </div>
-                  <span className="block flex-1 pl-8 text-xs leading-5 text-white/40">
-                    {opcao.descricao}
-                  </span>
-                </div>
-              );
-            })}
+        <div className="space-y-6">
+          <div>
+            <span className="mb-2 block text-[10px] uppercase tracking-[0.2em] text-white/40">
+              Monte seu pacote
+            </span>
+            <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.15em] text-[#6ec3d9]">
+              Essenciais
+            </p>
+            <div className="grid grid-cols-1 items-stretch gap-2.5 sm:grid-cols-2">
+              {opcoesEssenciais.map((opcao) => renderOpcaoCard(opcao))}
+            </div>
+          </div>
+
+          <div>
+            <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.15em] text-white/40">
+              Opcionais
+            </p>
+            <div className="grid grid-cols-1 items-stretch gap-2.5 sm:grid-cols-2">
+              {opcoesOpcionais.map((opcao) => renderOpcaoCard(opcao))}
+            </div>
           </div>
         </div>
 
@@ -734,7 +812,7 @@ export function CustomPackageCard() {
             Destinos
           </span>
           <div className="grid grid-cols-3 gap-2.5 sm:grid-cols-6">
-            {DESTINOS.map((destino) => {
+            {destinosVisiveis.map((destino) => {
               const ativo = destinosSelecionados.has(destino.key);
               return (
                 <button
@@ -775,7 +853,28 @@ export function CustomPackageCard() {
                 </button>
               );
             })}
+
+            {!mostrarTodosDestinos && destinosOcultos > 0 && (
+              <button
+                type="button"
+                onClick={() => setMostrarTodosDestinos(true)}
+                className="group relative flex aspect-square flex-col items-center justify-center gap-1 rounded-xl border border-dashed border-white/20 bg-white/[0.03] text-white/60 transition hover:border-white/40 hover:bg-white/[0.06] hover:text-white"
+              >
+                <span className="text-lg font-semibold">+{destinosOcultos}</span>
+                <span className="text-[10px] uppercase tracking-[0.1em]">Ver mais</span>
+              </button>
+            )}
           </div>
+
+          {mostrarTodosDestinos && (
+            <button
+              type="button"
+              onClick={() => setMostrarTodosDestinos(false)}
+              className="mt-3 text-[11px] uppercase tracking-[0.15em] text-white/40 underline-offset-4 transition hover:text-white/70 hover:underline"
+            >
+              Ver menos destinos
+            </button>
+          )}
         </div>
 
         <label className="block">
