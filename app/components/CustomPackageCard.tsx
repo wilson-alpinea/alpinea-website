@@ -353,8 +353,8 @@ function NumberStepper({
   formatValue?: (value: number) => string;
 }) {
   return (
-    <label className="block">
-      <span className="mb-2 block text-[10px] uppercase tracking-[0.2em] text-white/40">
+    <label className="flex h-full flex-col">
+      <span className="mb-2 flex min-h-[2.2em] items-end text-[10px] uppercase leading-tight tracking-[0.2em] text-white/40">
         {label}
       </span>
       <div className="flex items-center gap-2">
@@ -366,7 +366,7 @@ function NumberStepper({
         >
           −
         </button>
-        <span className="flex-1 rounded-lg border border-white/15 bg-black/30 py-2.5 text-center text-sm text-white">
+        <span className="flex h-10 flex-1 items-center justify-center whitespace-nowrap rounded-lg border border-white/15 bg-black/30 px-1 text-center text-sm text-white">
           {formatValue ? formatValue(value) : value}
         </span>
         <button
@@ -543,16 +543,16 @@ export function CustomPackageCard() {
       </p>
 
       <form onSubmit={handleSubmit} className="mt-5 space-y-6">
-        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 md:grid-cols-6">
-          <label className="block">
-            <span className="mb-2 block text-[10px] uppercase tracking-[0.2em] text-white/40">
+        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-6">
+          <label className="flex h-full flex-col">
+            <span className="mb-2 flex min-h-[2.2em] items-end text-[10px] uppercase leading-tight tracking-[0.2em] text-white/40">
               Data preferida
             </span>
             <input
               type="date"
               value={data}
               onChange={(e) => setData(e.target.value)}
-              className="w-full rounded-lg border border-white/15 bg-black/30 px-3 py-2.5 text-sm text-white outline-none [color-scheme:dark] focus:border-white/40"
+              className="h-10 w-full rounded-lg border border-white/15 bg-black/30 px-3 text-sm text-white outline-none [color-scheme:dark] focus:border-white/40"
             />
           </label>
 
@@ -574,8 +574,8 @@ export function CustomPackageCard() {
             formatValue={(v) => `${v} ${v === 1 ? "pessoa" : "pessoas"}`}
           />
 
-          <label className="block">
-            <span className="mb-2 block text-[10px] uppercase tracking-[0.2em] text-white/40">
+          <label className="flex h-full flex-col">
+            <span className="mb-2 flex min-h-[2.2em] items-end text-[10px] uppercase leading-tight tracking-[0.2em] text-white/40">
               Categoria do hotel
             </span>
             <select
@@ -583,7 +583,7 @@ export function CustomPackageCard() {
               onChange={(e) =>
                 setCategoriaHotel(e.target.value as (typeof CATEGORIAS_HOTEL)[number])
               }
-              className="w-full rounded-lg border border-white/15 bg-black/30 px-3 py-2.5 text-sm text-white outline-none focus:border-white/40"
+              className="h-10 w-full rounded-lg border border-white/15 bg-black/30 px-3 text-sm text-white outline-none focus:border-white/40"
             >
               {CATEGORIAS_HOTEL.map((c) => (
                 <option key={c} value={c} className="bg-black">
@@ -593,14 +593,14 @@ export function CustomPackageCard() {
             </select>
           </label>
 
-          <label className="block">
-            <span className="mb-2 block text-[10px] uppercase tracking-[0.2em] text-white/40">
+          <label className="flex h-full flex-col">
+            <span className="mb-2 flex min-h-[2.2em] items-end text-[10px] uppercase leading-tight tracking-[0.2em] text-white/40">
               Tipo de quarto
             </span>
             <select
               value={tipoQuarto}
               onChange={(e) => setTipoQuarto(e.target.value as (typeof TIPOS_QUARTO)[number])}
-              className="w-full rounded-lg border border-white/15 bg-black/30 px-3 py-2.5 text-sm text-white outline-none focus:border-white/40"
+              className="h-10 w-full rounded-lg border border-white/15 bg-black/30 px-3 text-sm text-white outline-none focus:border-white/40"
             >
               {TIPOS_QUARTO.map((t) => (
                 <option key={t} value={t} className="bg-black">
@@ -610,14 +610,14 @@ export function CustomPackageCard() {
             </select>
           </label>
 
-          <label className="block">
-            <span className="mb-2 block text-[10px] uppercase tracking-[0.2em] text-white/40">
+          <label className="flex h-full flex-col">
+            <span className="mb-2 flex min-h-[2.2em] items-end text-[10px] uppercase leading-tight tracking-[0.2em] text-white/40">
               Classe do voo
             </span>
             <select
               value={classeAereo}
               onChange={(e) => setClasseAereo(e.target.value as (typeof CLASSES_AEREO)[number])}
-              className="w-full rounded-lg border border-white/15 bg-black/30 px-3 py-2.5 text-sm text-white outline-none focus:border-white/40"
+              className="h-10 w-full rounded-lg border border-white/15 bg-black/30 px-3 text-sm text-white outline-none focus:border-white/40"
             >
               {CLASSES_AEREO.map((c) => (
                 <option key={c} value={c} className="bg-black">
@@ -672,7 +672,7 @@ export function CustomPackageCard() {
           <span className="mb-2 block text-[10px] uppercase tracking-[0.2em] text-white/40">
             Monte seu pacote
           </span>
-          <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-2">
+          <div className="grid grid-cols-1 items-stretch gap-2.5 sm:grid-cols-2">
             {OPCOES.map((opcao) => {
               const ativo = selecionados.has(opcao.key);
               return (
@@ -688,41 +688,41 @@ export function CustomPackageCard() {
                     }
                   }}
                   aria-pressed={ativo}
-                  className={`flex cursor-pointer items-start gap-3 rounded-xl border px-4 py-3 text-left transition ${
+                  className={`flex h-full cursor-pointer flex-col gap-2 rounded-xl border px-4 py-3 text-left transition ${
                     ativo
                       ? "border-[#2f80c9]/50 bg-[#2f80c9]/10"
                       : "border-white/10 bg-black/20 hover:border-white/25"
                   }`}
                 >
-                  <span
-                    className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border text-[10px] transition ${
-                      ativo
-                        ? "border-[#2f80c9] bg-[#2f80c9] text-white"
-                        : "border-white/25 text-transparent"
-                    }`}
-                  >
-                    <IconCheck className="h-3 w-3" />
-                  </span>
-                  <span className="min-w-0 flex-1">
-                    <span className="text-sm font-medium text-white">
+                  <div className="flex items-start gap-3">
+                    <span
+                      className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border text-[10px] transition ${
+                        ativo
+                          ? "border-[#2f80c9] bg-[#2f80c9] text-white"
+                          : "border-white/25 text-transparent"
+                      }`}
+                    >
+                      <IconCheck className="h-3 w-3" />
+                    </span>
+                    <span className="min-w-0 flex-1 text-sm font-medium text-white">
                       {opcao.icone} {opcao.label}
                     </span>
-                    <span className="mt-0.5 block text-xs leading-5 text-white/40">
-                      {opcao.descricao}
-                    </span>
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setOpcaoAberta(opcao);
+                      }}
+                      aria-label={`Ver detalhes — ${opcao.label}`}
+                      className="flex shrink-0 items-center gap-1 rounded-full border border-white/15 px-2 py-1 text-[9px] uppercase tracking-[0.1em] text-white/50 transition hover:border-white/40 hover:text-white"
+                    >
+                      <IconDocument className="h-3 w-3" />
+                      Ver detalhes
+                    </button>
+                  </div>
+                  <span className="block flex-1 pl-8 text-xs leading-5 text-white/40">
+                    {opcao.descricao}
                   </span>
-                  <button
-                    type="button"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setOpcaoAberta(opcao);
-                    }}
-                    aria-label={`Ver detalhes — ${opcao.label}`}
-                    className="mt-0.5 flex shrink-0 items-center gap-1 rounded-full border border-white/15 px-2 py-1 text-[9px] uppercase tracking-[0.1em] text-white/50 transition hover:border-white/40 hover:text-white"
-                  >
-                    <IconDocument className="h-3 w-3" />
-                    Ver detalhes
-                  </button>
                 </div>
               );
             })}
