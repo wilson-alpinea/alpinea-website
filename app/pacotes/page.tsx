@@ -252,24 +252,28 @@ const DIFERENCIAIS_AEREO = [
     texto:
       "Equipe especializada apoia todos os passageiros no balcão de check-in — resolve reserva de assento, remarcação em cancelamento involuntário e direitos em atrasos, com acesso direto à gerência das companhias aéreas.",
     Icon: IconConcierge,
+    imagem: "/images/icone-diferencial-1.png",
   },
   {
     titulo: "Protocolo pré-embarque (Visit Japan Web)",
     texto:
       "Nossa equipe preenche e cadastra o Visit Japan Web (VJW) com os dados do passageiro e envia pronto pra você — sem papelada na chegada ao Japão — além de uma sessão dedicada pra explicar o itinerário antes do embarque.",
     Icon: IconQrCode,
+    imagem: "/images/icone-diferencial-2.png",
   },
   {
     titulo: "Monitoramento de viagem",
     texto:
       "Central de WhatsApp com equipe emergencial Ajisai, funcionando quase 24 horas por dia — conexões, imprevistos e gestão de reserva, com atendimento humano e apoio de tradutor quando necessário.",
     Icon: IconWhatsApp,
+    imagem: "/images/icone-diferencial-3.png",
   },
   {
     titulo: "Responsabilidade da Agência",
     texto:
       "Passagem emitida pela Ajisai tem responsabilidade solidária da agência e negociação direta com as companhias aéreas — mais proteção e prioridade do que comprar uma passagem avulsa, mesmo pelo mesmo preço.",
     Icon: IconScale,
+    imagem: "/images/icone-diferencial-4.png",
   },
 ];
 
@@ -404,15 +408,19 @@ export default function PacotesJapaoPage() {
               {DIFERENCIAIS_AEREO.map((item) => (
                 <div
                   key={item.titulo}
-                  className="rounded-2xl border border-white/10 bg-white/[0.02] p-6 text-center md:p-8"
+                  className="rounded-2xl border border-black/5 bg-[#FAF7F2] p-6 text-center shadow-sm md:p-8"
                 >
-                  <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-[#6ec3d9]/10 text-[#6ec3d9]">
-                    <item.Icon className="h-5 w-5" />
+                  <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-[#6ec3d9]/15 text-[#2f80c9]">
+                    {item.imagem ? (
+                      <Image src={item.imagem} alt="" width={40} height={40} className="h-7 w-7 object-contain" />
+                    ) : (
+                      <item.Icon className="h-5 w-5" />
+                    )}
                   </span>
-                  <h3 className={`${display.className} mt-4 text-lg font-medium text-white`}>
+                  <h3 className={`${display.className} mt-4 text-lg font-medium text-[#0A2540]`}>
                     {item.titulo}
                   </h3>
-                  <p className="mt-2 text-sm font-light leading-6 text-white/55">
+                  <p className="mt-2 text-sm font-light leading-6 text-[#0A2540]/65">
                     {item.texto}
                   </p>
                 </div>
