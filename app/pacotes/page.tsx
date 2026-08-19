@@ -400,8 +400,8 @@ export default function PacotesJapaoPage() {
               className="object-cover object-[68%_18%]"
             />
             <div className="absolute inset-0 bg-black/40" />
-            <div className="absolute inset-0 bg-gradient-to-t from-black via-black/45 to-black/10" />
-            <div className="absolute inset-0 flex flex-col items-center justify-center px-6 text-center">
+            <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-black/5" />
+            <div className="absolute inset-0 flex flex-col items-center justify-end px-6 pb-28 text-center sm:pb-32 md:pb-36">
               <p
                 className="text-[10px] uppercase tracking-[0.2em] text-white"
                 style={{ textShadow: "0 2px 10px rgba(0,0,0,0.7)" }}

@@ -26,15 +26,15 @@ export function PrecoPacote({
   const corTextoTerciario = isLight ? "text-[#0A2540]/45" : "text-white/40";
   const corTextoParcela = isLight ? "text-[#0A2540]/70" : "text-white/70";
   const corPrecoDestaque = isLight ? "#1f6f9c" : "#6ec3d9";
-  const corParcelaDestaque = isLight ? "#1f7a52" : "#4cbf8a";
-  const corBadgeDatas = isLight ? "text-amber-700" : "text-amber-300";
+  const corParcelaDestaque = isLight ? "#c96a3c" : "#e0916a";
+  const corBadgeDatas = isLight ? "text-emerald-700" : "text-emerald-300";
 
   if (variante.precoUSD != null) {
     const parcela = formatUSD(variante.precoUSD / 12);
     return (
       <>
         <p
-          className={`mb-2 inline-flex items-center gap-1.5 rounded-full border border-amber-400/25 bg-amber-400/10 px-2.5 py-1 text-[10px] font-medium uppercase tracking-[0.1em] ${corBadgeDatas}`}
+          className={`mb-2 inline-flex items-center gap-1.5 rounded-full border border-emerald-400/30 bg-emerald-400/10 px-2.5 py-1 text-[10px] font-medium uppercase tracking-[0.1em] ${corBadgeDatas}`}
         >
           Datas aproximadas — sujeitas a alteração
         </p>

@@ -655,10 +655,53 @@ export function CustomPackageCard() {
     <>
     <div className="flex flex-col overflow-hidden rounded-2xl border border-white/10 bg-white/[0.025] p-6 sm:rounded-[2rem] md:p-8">
       <p className="text-[10px] uppercase tracking-[0.2em] text-[#e0916a]">
-        Sob medida
+        Personalizado
       </p>
 
       <form onSubmit={handleSubmit} className="mt-5 space-y-6">
+        <div className="flex flex-wrap items-center justify-between gap-4 border-b border-white/10 pb-6">
+          <div>
+            <p className="text-[10px] uppercase tracking-[0.2em] text-white/40">
+              Total estimado
+            </p>
+            <p className="mt-1 text-2xl font-semibold text-white">
+              {total > 0 ? brlParaUSDLabel(total, cambio) : "Sob consulta"}
+            </p>
+            {total > 0 && (
+              <p className="mt-0.5 text-sm font-medium text-white/60">ou {formatBRL(total)}</p>
+            )}
+            {total > 0 && <CambioLabel cambio={cambio} className="mt-1 text-[11px] text-white/40" />}
+            {taxaGrupo > 0 && (
+              <p className="mt-1 text-[11px] leading-5 text-white/50">
+                Inclui taxa de grupo: R$ {taxaGrupo.toLocaleString("pt-BR")} (
+                {passageirosExtras} {passageirosExtras === 1 ? "passageiro" : "passageiros"}{" "}
+                acima de {LIMITE_PESSOAS_SEM_TAXA})
+              </p>
+            )}
+            <p className="mt-1 text-[11px] leading-5 text-white/40">
+              Valor calculado conforme os itens selecionados acima — a Ajisai
+              confirma o preço final por consulta.
+            </p>
+          </div>
+
+          <button
+            type="submit"
+            disabled={!cambio}
+            className="flex items-center justify-center gap-2 rounded-full px-5 py-3.5 text-center text-[11px] font-semibold uppercase tracking-[0.2em] text-white shadow-[0_10px_30px_rgba(0,0,0,0.35)] transition duration-300 hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0 sm:px-8"
+            style={{ backgroundColor: adicionado ? "#2f9e6e" : "#2f80c9" }}
+          >
+            {adicionado ? (
+              <>
+                <IconCheck className="h-4 w-4" /> Adicionado ao carrinho
+              </>
+            ) : (
+              <>
+                <IconCart className="h-4 w-4" /> Adicionar ao carrinho
+              </>
+            )}
+          </button>
+        </div>
+
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-6">
           <label className="flex h-full flex-col">
             <span className="mb-2 flex min-h-[2.2em] items-end text-[10px] uppercase leading-tight tracking-[0.2em] text-white/40">
@@ -889,49 +932,6 @@ export function CustomPackageCard() {
             className="w-full rounded-lg border border-white/15 bg-black/30 px-3 py-2.5 text-sm text-white outline-none placeholder:text-white/25 focus:border-white/40"
           />
         </label>
-
-        <div className="flex flex-wrap items-center justify-between gap-4 border-t border-white/10 pt-5">
-          <div>
-            <p className="text-[10px] uppercase tracking-[0.2em] text-white/40">
-              Total estimado
-            </p>
-            <p className="mt-1 text-2xl font-semibold text-white">
-              {total > 0 ? brlParaUSDLabel(total, cambio) : "Sob consulta"}
-            </p>
-            {total > 0 && (
-              <p className="mt-0.5 text-sm font-medium text-white/60">ou {formatBRL(total)}</p>
-            )}
-            {total > 0 && <CambioLabel cambio={cambio} className="mt-1 text-[11px] text-white/40" />}
-            {taxaGrupo > 0 && (
-              <p className="mt-1 text-[11px] leading-5 text-white/50">
-                Inclui taxa de grupo: R$ {taxaGrupo.toLocaleString("pt-BR")} (
-                {passageirosExtras} {passageirosExtras === 1 ? "passageiro" : "passageiros"}{" "}
-                acima de {LIMITE_PESSOAS_SEM_TAXA})
-              </p>
-            )}
-            <p className="mt-1 text-[11px] leading-5 text-white/40">
-              Valor calculado conforme os itens selecionados acima — a Ajisai
-              confirma o preço final por consulta.
-            </p>
-          </div>
-
-          <button
-            type="submit"
-            disabled={!cambio}
-            className="flex items-center justify-center gap-2 rounded-full px-5 py-3.5 text-center text-[11px] font-semibold uppercase tracking-[0.2em] text-white shadow-[0_10px_30px_rgba(0,0,0,0.35)] transition duration-300 hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0 sm:px-8"
-            style={{ backgroundColor: adicionado ? "#2f9e6e" : "#2f80c9" }}
-          >
-            {adicionado ? (
-              <>
-                <IconCheck className="h-4 w-4" /> Adicionado ao carrinho
-              </>
-            ) : (
-              <>
-                <IconCart className="h-4 w-4" /> Adicionar ao carrinho
-              </>
-            )}
-          </button>
-        </div>
       </form>
     </div>
 
