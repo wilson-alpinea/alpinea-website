@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
+import Image from "next/image";
 import { Bodoni_Moda } from "next/font/google";
 import { useCart, type CartItem } from "./CartContext";
 import type { PackageVariant } from "./packageTypes";
@@ -28,6 +29,76 @@ const ITINERARIO_CITY_BORDER: Record<string, string> = {
   Nachikatsuura: "rgba(150,172,120,0.45)",
   "Fujiyoshida/Fujikawaguchiko": "rgba(110,195,217,0.45)",
 };
+
+// Foto ilustrativa por cidade, usada como thumbnail nos cards do roteiro dia
+// a dia — reaproveita fotos reais já publicadas no site (sem imagem nova).
+const CIDADE_IMAGEM: Record<string, string> = {
+  Tokyo: "/images/tokyo.jpg",
+  Kyoto: "/images/kyoto-maiko-street.png",
+  Osaka: "/images/osaka-castle.png",
+  Nara: "/images/nara.jpg",
+  Nachikatsuura: "/images/nachifalls2.png",
+  "Fujiyoshida/Fujikawaguchiko": "/images/fuji.JPG",
+};
+
+// Recursos gerais do roteiro, exibidos como resumo logo abaixo do herói —
+// mesmo conteúdo já descrito no Roteiro Digital, só que em formato de
+// destaque rápido (ícone + rótulo curto).
+const RECURSOS_ROTEIRO = [
+  { icon: "🕐", label: "Melhores horários de visita" },
+  { icon: "🚇", label: "Rotas e deslocamento otimizados" },
+  { icon: "🎫", label: "Ingressos e reservas quando necessário" },
+  { icon: "🍽️", label: "Sugestões de gastronomia local" },
+];
+
+// O mesmo resumo do Roteiro Digital (ver INCLUSOES_PADRAO → "Roteiro
+// Digital"), reorganizado em grade de ícones — equivalente ao bloco "tudo
+// pensado para você" do roteiro de referência.
+const TUDO_PENSADO = [
+  { icon: "📋", title: "Roteiro Detalhado", text: "Dia a dia com atrações, ordem de visita e tempo estimado." },
+  { icon: "🚇", title: "Deslocamentos", text: "Linha de trem/metrô recomendada e tempo de trajeto entre pontos." },
+  { icon: "🎫", title: "Ingressos e Reservas", text: "O que precisa ser reservado com antecedência, já sinalizado." },
+  { icon: "🍽️", title: "Gastronomia", text: "Sugestões de refeições próximas a cada parada do dia." },
+  { icon: "💡", title: "Dicas Locais", text: "Orientações práticas para aproveitar melhor cada atração." },
+  { icon: "🕐", title: "Guia de Horários", text: "Melhor horário de visita, evitando picos de fila e lotação." },
+];
+
+// Heurística leve para gerar as etiquetas (ícone + rótulo) de cada dia do
+// roteiro, a partir do próprio texto já escrito acima — não inventa nada
+// novo, só destaca o que já está descrito em cada dia.
+function tagsDoRoteiro(d: DiaRoteiro): { icon: string; label: string }[] {
+  const t = d.texto.toLowerCase();
+  const tit = d.titulo.toLowerCase();
+  const tags: { icon: string; label: string }[] = [];
+
+  if (tit.includes("chegada")) tags.push({ icon: "🛬", label: "Traslado: aeroporto → hotel" });
+  if (tit.includes("embarque") || t.includes("aeroporto para o voo") || t.includes("retorno ao brasil"))
+    tags.push({ icon: "🛫", label: "Traslado: hotel → aeroporto" });
+  if (t.includes("trem-bala") || t.includes("shinkansen"))
+    tags.push({ icon: "🚆", label: "Transporte: Shinkansen" });
+  if (tit.includes("bate-volta")) tags.push({ icon: "🔁", label: "Bate e volta no mesmo dia" });
+  if (t.includes("dia livre") || tit.includes("dia livre"))
+    tags.push({ icon: "💡", label: "Dia livre — sugestões inclusas" });
+  if (
+    t.includes("skytree") ||
+    t.includes("kinkaku") ||
+    t.includes("kiyomizu") ||
+    t.includes("fushimi") ||
+    t.includes("castelo") ||
+    t.includes("aquário") ||
+    t.includes("todai-ji") ||
+    t.includes("cachoeira") ||
+    t.includes("nachi") ||
+    t.includes("monte fuji") ||
+    t.includes("kawaguchi") ||
+    t.includes("disney") ||
+    t.includes("teamlab")
+  )
+    tags.push({ icon: "🎫", label: "Ingressos inclusos" });
+
+  if (tags.length === 0) tags.push({ icon: "🚇", label: "Deslocamento local incluso" });
+  return tags.slice(0, 3);
+}
 
 const ITINERARIOS: Record<string, ItinerarioStop[]> = {
   "7d": [
@@ -586,11 +657,24 @@ export function PackageDetailModal({
           ref={scrollRef}
           className="flex-1 overflow-x-hidden overflow-y-auto px-5 py-6 md:px-8 md:py-8"
         >
-          <h2 className={`${display.className} text-2xl font-medium text-white md:text-3xl`}>
-            {nome}
-          </h2>
-          <p className="mt-1.5 text-sm font-light leading-6 text-white/55">{tagline}</p>
-          <p className="mt-4 text-sm font-light leading-6 text-white/65">{descricao}</p>
+          <div className="relative -mx-5 -mt-6 aspect-[16/9] w-[calc(100%+2.5rem)] overflow-hidden md:-mx-8 md:-mt-8 md:w-[calc(100%+4rem)]">
+            <Image
+              src={imagem}
+              alt={nome}
+              fill
+              sizes="(max-width: 768px) 100vw, 768px"
+              className="object-cover"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-black/10" />
+            <div className="absolute inset-x-0 bottom-0 px-5 pb-5 md:px-8 md:pb-7">
+              <h2 className={`${display.className} text-2xl font-medium text-white drop-shadow md:text-3xl`}>
+                {nome}
+              </h2>
+              <p className="mt-1.5 text-sm font-light leading-6 text-white/80 drop-shadow">{tagline}</p>
+            </div>
+          </div>
+
+          <p className="mt-5 text-sm font-light leading-6 text-white/65">{descricao}</p>
 
           <ul className="mt-5 space-y-2.5">
             {destaques.map((item) => (
@@ -602,6 +686,18 @@ export function PackageDetailModal({
               </li>
             ))}
           </ul>
+
+          <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
+            {RECURSOS_ROTEIRO.map((r) => (
+              <div
+                key={r.label}
+                className="rounded-xl border border-white/10 bg-white/[0.03] p-3 text-center"
+              >
+                <p className="text-lg">{r.icon}</p>
+                <p className="mt-1.5 text-[11px] font-medium leading-4 text-white/70">{r.label}</p>
+              </div>
+            ))}
+          </div>
 
           <div className="mt-8 border-t border-white/10 pt-6">
             <h3 className={`${display.className} text-lg font-medium text-white`}>Itinerário</h3>
@@ -632,25 +728,48 @@ export function PackageDetailModal({
                   Roteiro dia a dia
                 </p>
                 <div className="space-y-3">
-                  {ROTEIROS_DETALHADOS[variante.id].map((d) => (
-                    <div
-                      key={d.dia}
-                      className="flex gap-3 rounded-xl border border-white/10 bg-white/[0.03] p-3.5"
-                    >
-                      <span
-                        className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-semibold text-white"
-                        style={{ backgroundColor: ITINERARIO_CITY_BORDER[d.cidade] ?? "#2f80c9" }}
+                  {ROTEIROS_DETALHADOS[variante.id].map((d) => {
+                    const foto = CIDADE_IMAGEM[d.cidade];
+                    return (
+                      <div
+                        key={d.dia}
+                        className="flex gap-3 rounded-xl border border-white/10 bg-white/[0.03] p-3.5"
                       >
-                        {d.dia}
-                      </span>
-                      <div className="min-w-0">
-                        <p className="text-sm font-medium text-white">{d.titulo}</p>
-                        <p className="mt-1 text-xs font-light leading-5 text-white/50">
-                          {d.texto}
-                        </p>
+                        {foto && (
+                          <div className="relative hidden h-16 w-16 shrink-0 overflow-hidden rounded-lg sm:block">
+                            <Image src={foto} alt={d.cidade} fill sizes="64px" className="object-cover" />
+                          </div>
+                        )}
+                        <div className="min-w-0 flex-1">
+                          <div className="flex items-start gap-2.5">
+                            <span
+                              className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-semibold text-white"
+                              style={{ backgroundColor: ITINERARIO_CITY_BORDER[d.cidade] ?? "#2f80c9" }}
+                            >
+                              {d.dia}
+                            </span>
+                            <div className="min-w-0">
+                              <p className="text-sm font-medium text-white">{d.titulo}</p>
+                              <p className="mt-1 text-xs font-light leading-5 text-white/50">
+                                {d.texto}
+                              </p>
+                            </div>
+                          </div>
+                          <div className="mt-2.5 flex flex-wrap gap-1.5 pl-9">
+                            {tagsDoRoteiro(d).map((tag) => (
+                              <span
+                                key={tag.label}
+                                className="inline-flex items-center gap-1 rounded-full border border-white/10 bg-white/[0.04] px-2 py-0.5 text-[10px] font-medium text-white/60"
+                              >
+                                <span aria-hidden>{tag.icon}</span>
+                                {tag.label}
+                              </span>
+                            ))}
+                          </div>
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
 
                 {REFEICOES_INCLUSAS[variante.id] && (
@@ -693,6 +812,22 @@ export function PackageDetailModal({
               hospedagem, deslocamentos e os principais pontos de cada data,
               disponível pelo celular durante toda a viagem.
             </p>
+
+            <p className="mb-4 mt-8 text-center text-xs uppercase tracking-[0.35em] text-white/40">
+              Tudo pensado para você
+            </p>
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+              {TUDO_PENSADO.map((item) => (
+                <div
+                  key={item.title}
+                  className="rounded-xl border border-white/10 bg-white/[0.03] p-3.5 text-center"
+                >
+                  <p className="text-xl">{item.icon}</p>
+                  <p className="mt-1.5 text-xs font-medium text-white">{item.title}</p>
+                  <p className="mt-1 text-[11px] font-light leading-4 text-white/45">{item.text}</p>
+                </div>
+              ))}
+            </div>
           </div>
 
           <div className="mt-8 border-t border-white/10 pt-6">
@@ -733,6 +868,41 @@ export function PackageDetailModal({
                 participantes estejam em condições físicas adequadas para
                 melhor aproveitamento da viagem.
               </p>
+            </div>
+          </div>
+
+          <div className="mt-8 border-t border-white/10 pt-6">
+            <div className="rounded-2xl border border-[#6ec3d9]/20 bg-[#6ec3d9]/[0.04] p-5">
+              <p className="text-center text-xs font-semibold uppercase tracking-[0.25em]" style={{ color: "#6ec3d9" }}>
+                Ajisai Garantia
+              </p>
+              <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-3">
+                <p className="text-center text-xs font-light leading-5 text-white/60">
+                  Agência de Turismo registrada no Cadastur
+                </p>
+                <p className="text-center text-xs font-light leading-5 text-white/60">
+                  Responsabilidade solidária da agência em toda a viagem
+                </p>
+                <p className="text-center text-xs font-light leading-5 text-white/60">
+                  Suporte quase 24h via WhatsApp durante a viagem
+                </p>
+              </div>
+              <div className="mt-5 flex flex-row flex-wrap items-center justify-center gap-6">
+                <Image
+                  src="/images/badge-cadastur.png"
+                  alt="Cadastur — Agência de Turismo registrada"
+                  width={1254}
+                  height={1254}
+                  className="h-auto w-full max-w-[110px]"
+                />
+                <Image
+                  src="/images/badge-reclameaqui.png"
+                  alt="Verificado no Reclame Aqui"
+                  width={1536}
+                  height={1024}
+                  className="h-auto w-full max-w-[110px]"
+                />
+              </div>
             </div>
           </div>
 
