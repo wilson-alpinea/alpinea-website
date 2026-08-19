@@ -149,7 +149,7 @@ export function PackageCard({
               </p>
               <PrecoPacote
                 variante={variante}
-                precoClassName={`${display.className} mt-1 text-3xl font-medium text-white`}
+                precoClassName={`${display.className} mt-1 text-4xl font-semibold text-white`}
               />
             </>
           )}

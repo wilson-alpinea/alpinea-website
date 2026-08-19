@@ -36,12 +36,18 @@ const PRODUTOS: Record<
   },
   caravana: {
     nome: "Caravana",
-    precoBRL: 38000,
+    // Preço "a partir de" — menor valor entre os pacotes Sakura de 7 dias
+    // (Sakura 2 - Maio 2027), já em dólar fixo (ver /pacotes).
+    precoBRL: null,
+    precoUSD: 4280,
     href: "/pacotes#pacotes",
   },
   individual: {
     nome: "Individual ou Pequenos Grupos",
-    precoBRL: 38000,
+    // Preço "a partir de" — menor valor entre os pacotes Sakura de 7 dias
+    // (Sakura 2 - Maio 2027), já em dólar fixo (ver /pacotes).
+    precoBRL: null,
+    precoUSD: 2490,
     href: "/pacotes#individuais",
   },
   personalizado: {
@@ -53,8 +59,10 @@ const PRODUTOS: Record<
     nome: "Guia Turístico Avulso",
     // Diária cotada nativamente em dólar (não é conversão de um valor em
     // reais) — precoUSD tem prioridade sobre precoBRL no cálculo do preço.
+    // US$ 350/dia, cobre até 4 pessoas (mesmo valor usado no calculador do
+    // Pacote Personalizado — ver DIARIA_GUIA_USD em CustomPackageCard.tsx).
     precoBRL: null,
-    precoUSD: 300,
+    precoUSD: 350,
     href: "#guia",
   },
 };
@@ -103,6 +111,9 @@ const SERVICOS_AVULSOS: {
   icone: string;
   descricao: string;
   precoBRL: number;
+  /** Valor nativo em dólar — quando presente, tem prioridade sobre
+   * precoBRL no cálculo (mesmo padrão de PRODUTOS acima). */
+  precoUSD?: number;
   porDia?: boolean;
 }[] = [
   {
@@ -128,8 +139,9 @@ const SERVICOS_AVULSOS: {
   {
     nome: "Transfer com Motorista Privado",
     icone: "🚗",
-    descricao: "Traslados exclusivos, sem compartilhar veículo com outros grupos.",
-    precoBRL: 350,
+    descricao: "Traslados exclusivos, sem compartilhar veículo com outros grupos. Para até 4 pessoas.",
+    precoBRL: 0,
+    precoUSD: 700,
     porDia: true,
   },
   {
@@ -256,8 +268,8 @@ const LINHAS: {
     label: "A partir de",
     valores: {
       roteiro: "R$ 1.500",
-      caravana: "R$ 38.000",
-      individual: "R$ 38.000",
+      caravana: "US$ 4.280",
+      individual: "US$ 2.490",
       personalizado: "Sob consulta",
     },
   },
@@ -804,7 +816,9 @@ export default function ProdutosPage() {
                     {precoBRLProdutoLabel(PRODUTOS.guia)}
                   </p>
                 )}
-                <p className="mt-1 text-[11px] text-white/40">por dia de acompanhamento</p>
+                <p className="mt-1 text-[11px] text-white/40">
+                  por dia de acompanhamento, para até 4 pessoas
+                </p>
                 <CambioLabel cambio={cambio} className="mt-1 text-[11px] text-white/40" />
               </div>
               <button
@@ -1245,11 +1259,18 @@ export default function ProdutosPage() {
                     A partir de
                   </p>
                   <p className={`${display.className} mt-1 text-xl font-medium text-white`}>
-                    {brlParaUSDLabel(servico.precoBRL, cambio)}
+                    {servico.precoUSD != null
+                      ? formatUSD(servico.precoUSD)
+                      : brlParaUSDLabel(servico.precoBRL, cambio)}
                     {servico.porDia ? "/dia" : ""}
                   </p>
                   <p className="mt-0.5 text-xs font-medium text-white/50">
-                    ou {formatBRL(servico.precoBRL)}
+                    ou{" "}
+                    {servico.precoUSD != null
+                      ? cambio
+                        ? formatBRL(servico.precoUSD * cambio.cotacao)
+                        : "…"
+                      : formatBRL(servico.precoBRL)}
                     {servico.porDia ? "/dia" : ""}
                   </p>
                 </div>

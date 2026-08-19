@@ -1,20 +1,13 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { COTACAO_FALLBACK, type Cambio } from "../lib/currency";
 
-export type Cambio = {
-  cotacao: number;
-  data: string | null;
-  fonte: string;
-  fallback: boolean;
-};
-
-const COTACAO_FALLBACK: Cambio = {
-  cotacao: 5.3,
-  data: null,
-  fonte: "estimativa — cotação indisponível",
-  fallback: true,
-};
+export type { Cambio } from "../lib/currency";
+// Funções puras de formatação — vivem em ../lib/currency (sem "use
+// client") pra poderem ser chamadas também de código que roda no
+// servidor. Re-exportadas aqui só pra não quebrar os imports existentes.
+export { formatUSD, formatBRL, brlParaUSDLabel } from "../lib/currency";
 
 // Cache simples em memória (módulo) — evita que cada card de preço na
 // mesma página dispare sua própria requisição pra /api/cambio; todos
@@ -55,25 +48,4 @@ export function useCambioUSD(): Cambio | null {
   }, []);
 
   return cambio;
-}
-
-// "US$ X.XXX" (convenção brasileira) em vez do "$X,XXX" padrão do
-// Intl/en-US — evita ambiguidade com outros símbolos de dólar e casa com o
-// "R$" usado no resto do site.
-export function formatUSD(valor: number): string {
-  return `US$ ${Math.round(valor).toLocaleString("en-US")}`;
-}
-
-// Converte um valor em reais pra dólar usando a cotação carregada — "…"
-// enquanto a cotação ainda não chegou (evita mostrar um valor errado por
-// um instante).
-export function brlParaUSDLabel(valorBRL: number, cambio: Cambio | null): string {
-  if (!cambio) return "…";
-  return formatUSD(valorBRL / cambio.cotacao);
-}
-
-// "R$ X.XXX" no formato brasileiro — usado ao lado do preço em dólar, já
-// que o valor de referência interno de todo preço é sempre em reais.
-export function formatBRL(valor: number): string {
-  return `R$ ${Math.round(valor).toLocaleString("pt-BR")}`;
 }

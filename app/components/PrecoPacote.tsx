@@ -21,7 +21,12 @@ export function PrecoPacote({
     const parcela = formatUSD(variante.precoUSD / 12);
     return (
       <>
-        <p className={precoClassName}>{formatUSD(variante.precoUSD)}</p>
+        <p className="mb-2 inline-flex items-center gap-1.5 rounded-full border border-amber-400/25 bg-amber-400/10 px-2.5 py-1 text-[10px] font-medium uppercase tracking-[0.1em] text-amber-300">
+          Datas aproximadas — sujeitas a alteração
+        </p>
+        <p className={precoClassName} style={{ color: "#6ec3d9" }}>
+          {formatUSD(variante.precoUSD)}
+        </p>
         {cambio && (
           <p className="mt-1 text-sm font-medium text-white/60">
             ou {formatBRL(variante.precoUSD * cambio.cotacao)}
@@ -30,7 +35,7 @@ export function PrecoPacote({
         <p className="mt-1 text-xs uppercase tracking-[0.15em] text-white/40">
           Por pessoa · Quarto Individual
         </p>
-        <p className="mt-1 text-sm font-medium text-white/70">
+        <p className="mt-2 text-base font-semibold" style={{ color: "#e0916a" }}>
           ou em até 12x de {parcela} + Juros Mensais
         </p>
         {variante.personalizadoUSD != null && (

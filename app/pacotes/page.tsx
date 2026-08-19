@@ -5,7 +5,7 @@ import { CartProvider } from "../components/CartContext";
 import { CartWidget } from "../components/CartWidget";
 import { PackageCard, type PackageVariant } from "../components/PackageCard";
 import { CustomPackageCard } from "../components/CustomPackageCard";
-import { formatUSD } from "../hooks/useCambioUSD";
+import { formatUSD } from "../lib/currency";
 
 // Mesma fonte de destaque usada nas demais páginas do site.
 const display = Bodoni_Moda({
@@ -250,20 +250,26 @@ const DIFERENCIAIS_AEREO = [
   {
     titulo: "Concierge no Aeroporto de Guarulhos",
     texto:
-      "Apoio presencial na partida de voos internacionais — check-in, remarcação em cancelamento involuntário e direitos básicos em atrasos.",
+      "Equipe especializada apoia todos os passageiros no balcão de check-in — resolve reserva de assento, remarcação em cancelamento involuntário e direitos em atrasos, com acesso direto à gerência das companhias aéreas.",
     Icon: IconConcierge,
   },
   {
     titulo: "Protocolo pré-embarque (Visit Japan Web)",
     texto:
-      "Assistente dedicado ajuda com os QR codes de imigração/alfândega e revisa o itinerário com você antes do voo.",
+      "Nossa equipe preenche e cadastra o Visit Japan Web (VJW) com os dados do passageiro e envia pronto pra você — sem papelada na chegada ao Japão — além de uma sessão dedicada pra explicar o itinerário antes do embarque.",
     Icon: IconQrCode,
   },
   {
     titulo: "Monitoramento de viagem",
     texto:
-      "Grupo de WhatsApp com nossa equipe emergencial durante a viagem — horário comercial, seg. a sex., 9h–18h de Brasília.",
+      "Central de WhatsApp com equipe emergencial Ajisai, funcionando quase 24 horas por dia — conexões, imprevistos e gestão de reserva, com atendimento humano e apoio de tradutor quando necessário.",
     Icon: IconWhatsApp,
+  },
+  {
+    titulo: "Responsabilidade da Agência",
+    texto:
+      "Passagem emitida pela Ajisai tem responsabilidade solidária da agência e negociação direta com as companhias aéreas — mais proteção e prioridade do que comprar uma passagem avulsa, mesmo pelo mesmo preço.",
+    Icon: IconScale,
   },
 ];
 
@@ -394,7 +400,7 @@ export default function PacotesJapaoPage() {
               seção Aéreo/Passagem Aérea — aqui resumido em um único lugar.
             </p>
 
-            <div className="mt-10 grid gap-6 sm:grid-cols-3">
+            <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
               {DIFERENCIAIS_AEREO.map((item) => (
                 <div
                   key={item.titulo}
@@ -771,6 +777,26 @@ function IconQrCode({ className }: { className?: string }) {
       <rect x="14" y="3" width="7" height="7" rx="1" />
       <rect x="3" y="14" width="7" height="7" rx="1" />
       <path d="M14 14h3v3h-3zM20 14v3M14 20h3M20 20v.01" />
+    </svg>
+  );
+}
+
+function IconScale({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.75"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      <path d="M12 3v18" />
+      <path d="M7 21h10" />
+      <path d="M5 7h5M14 7h5" />
+      <path d="M5 7 2.5 12a2.5 2.5 0 0 0 5 0L5 7Z" />
+      <path d="M19 7 16.5 12a2.5 2.5 0 0 0 5 0L19 7Z" />
     </svg>
   );
 }

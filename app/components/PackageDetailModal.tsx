@@ -285,7 +285,7 @@ const INCLUSOES_PADRAO = [
     title: "Passagem Aérea",
     text: "Ida e volta, com as melhores opções de conexão para o Japão.",
     detalhe:
-      "Bilhete aéreo de ida e volta ao Japão, com a Ajisai buscando as melhores opções de conexão disponíveis para as datas do roteiro. Já inclui 1 bagagem despachada de até 23kg e 1 bagagem de mão por pessoa, conforme a companhia aérea selecionada.\n\nDiferenciais Ajisai para quem compra a passagem com a gente: concierge presencial no Aeroporto de Guarulhos na partida (apoio no balcão de check-in, remarcação em caso de cancelamento involuntário e direitos básicos em atrasos — alimentação acima de 3h, hospedagem acima de 8h); protocolo pré-embarque com assistente dedicado para o Visit Japan Web (VJW) e revisão final do itinerário; e monitoramento da viagem, com grupo de WhatsApp emergencial disponível em horário comercial (seg. a sex., 9h–18h de Brasília), com prioridade para menores desacompanhados e passageiros acima de 65 anos.",
+      "Bilhete aéreo de ida e volta ao Japão, com a Ajisai buscando as melhores opções de conexão disponíveis para as datas do roteiro. Já inclui 1 bagagem despachada de até 23kg e 1 bagagem de mão por pessoa, conforme a companhia aérea selecionada.\n\nDiferenciais Ajisai para quem compra a passagem com a gente:\n\nConcierge no Aeroporto de Guarulhos — equipe especializada apoia todos os passageiros no balcão de check-in, esclarece dúvidas, resolve reserva de assento e intermedia com a companhia aérea. Tem acesso direto à gerência das companhias no aeroporto — fundamental em cancelamento, remarcação e direitos do passageiro (alimentação em atrasos acima de 3h, hospedagem acima de 8h). Nas caravanas, pode contar ainda com representante da própria Ajisai no embarque.\n\nProtocolo pré-embarque (Visit Japan Web) — um membro da equipe Ajisai preenche o VJW com os dados do passageiro, cria e cadastra a conta e envia pronta pra você, substituindo o papelado na chegada ao Japão. Inclui também uma sessão dedicada ao aéreo, com explicação do itinerário e esclarecimento de dúvidas antes do embarque.\n\nMonitoramento de viagem — central de WhatsApp com equipe emergencial Ajisai, funcionando quase 24 horas por dia, cobrindo problemas de conexão, gestão de reserva antes da viagem e imprevistos durante a viagem. Atendimento humano, com apoio de tradutor por telefone quando necessário, e prioridade para menores desacompanhados e passageiros acima de 65 anos.\n\nResponsabilidade da Agência — passagem emitida pela Ajisai tem responsabilidade solidária da agência e negociação direta com as companhias aéreas, muito além do que dá pra resolver sozinho numa reserva comprada por conta própria — mais proteção e prioridade, mesmo pelo mesmo preço.",
   },
   {
     title: "Seguro Viagem",
@@ -806,7 +806,7 @@ export function PackageDetailModal({
                 </p>
                 <PrecoPacote
                   variante={variante}
-                  precoClassName={`${display.className} mt-1 text-3xl font-medium text-white`}
+                  precoClassName={`${display.className} mt-1 text-4xl font-semibold text-white`}
                 />
               </div>
             )}

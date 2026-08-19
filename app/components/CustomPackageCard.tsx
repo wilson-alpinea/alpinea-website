@@ -92,6 +92,11 @@ type PrecoCtx = {
   categoriaHotel: (typeof CATEGORIAS_HOTEL)[number];
   tipoQuarto: (typeof TIPOS_QUARTO)[number];
   classeAereo: (typeof CLASSES_AEREO)[number];
+  /** Cotação do dia (R$ por US$) — usada só pelos itens com valor fixo em
+   * dólar (aéreo Business, guia, motorista privado, wi-fi, ingressos), pra
+   * converter pro BRL antes de somar no total (todo o resto do calculador é
+   * nativamente em reais — ver "total" no componente). */
+  cambioCotacao: number;
 };
 
 // Diária de hotel por categoria — usada pra calcular o total do pacote
@@ -115,25 +120,33 @@ const FATOR_QUARTO: Record<(typeof TIPOS_QUARTO)[number], number> = {
 
 const DIARIA_TRANSPORTE = 150;
 // Guia: US$ 350/dia a cada 4 pessoas — grupos maiores precisam de mais de
-// um guia, cobrado proporcionalmente.
-const DIARIA_GUIA = 350;
+// um guia, cobrado proporcionalmente. Valor nativo em dólar — convertido
+// pra reais com a cotação do dia antes de entrar no total (ver calcPreco
+// abaixo e cambioCotacao em PrecoCtx).
+const DIARIA_GUIA_USD = 350;
 const GUIA_TAMANHO_GRUPO = 4;
 const DIARIA_JR_PASS = 180;
 const DIARIA_SEGURO_VIAGEM = 35;
 // Motorista privado: US$ 700/dia, cobre até 4 pessoas — mesma lógica de
-// grupo do guia.
-const DIARIA_MOTORISTA_PRIVADO = 700;
+// grupo do guia, também nativo em dólar.
+const DIARIA_MOTORISTA_PRIVADO_USD = 700;
 const MOTORISTA_TAMANHO_GRUPO = 4;
 const PRECO_CAMBIO_BRASIL = 150;
 // Wi-fi e ingressos Disney/Universal: valores de referência da planilha
-// "Simulação de Orçamento v2.1" (JPY convertido) — não foram passados
-// valores explícitos por você para esses dois itens.
-const DIARIA_WIFI_PAX = 7; // ≈ JPY 1000/dia/pax
-const PRECO_INGRESSO_DISNEY_UNIVERSAL_PAX = 83; // ≈ JPY 12000/pax (ingresso avulso)
+// "Simulação de Orçamento v2.1" (JPY convertido pra dólar) — não foram
+// passados valores explícitos por você para esses dois itens. Também
+// nativos em dólar.
+const DIARIA_WIFI_USD_PAX = 7; // ≈ JPY 1000/dia/pax
+const PRECO_INGRESSO_DISNEY_UNIVERSAL_USD_PAX = 83; // ≈ JPY 12000/pax (ingresso avulso)
 
+// Aéreo: Economy segue o valor de referência original (nativo em reais,
+// como todo o resto do calculador). Business é o valor exato que você
+// passou — US$ 6.000 fixo, nativo em dólar — convertido pra reais com a
+// cotação do dia antes de entrar no total, igual guia/motorista/wifi/
+// ingressos acima.
 const CLASSES_AEREO = ["Economy", "Business"] as const;
-const PRECO_AEREO_ECONOMY = 8000;
-const PRECO_AEREO_BUSINESS = 6000;
+const PRECO_AEREO_ECONOMY_BRL = 8000;
+const PRECO_AEREO_BUSINESS_USD = 6000;
 
 // Preços por item — aéreo, câmbio e serviços adicionais têm valor fixo por
 // viagem; hotel, transporte, guia, JR Pass, seguro viagem e motorista
@@ -146,9 +159,11 @@ const OPCOES = [
     icone: "✈️",
     descricao: "Passagem internacional ida e volta — Economy ou Business",
     detalhe:
-      "Bilhete aéreo internacional de ida e volta, com a Ajisai buscando as melhores opções de conexão disponíveis para as datas escolhidas. Inclui bagagem conforme a franquia da companhia aérea selecionada. Disponível em Economy ou Business.\n\nDiferenciais Ajisai para quem compra a passagem com a gente: concierge presencial no Aeroporto de Guarulhos na partida (apoio no check-in, remarcação em caso de cancelamento involuntário e direitos básicos em atrasos); protocolo pré-embarque com assistente dedicado para o Visit Japan Web (VJW) e revisão do itinerário; e monitoramento da viagem com grupo de WhatsApp emergencial (horário comercial, seg. a sex., 9h–18h de Brasília).",
+      "Bilhete aéreo internacional de ida e volta, com a Ajisai buscando as melhores opções de conexão disponíveis para as datas escolhidas. Inclui bagagem conforme a franquia da companhia aérea selecionada. Disponível em Economy ou Business.\n\nDiferenciais Ajisai para quem compra a passagem com a gente:\n\nConcierge no Aeroporto de Guarulhos — equipe especializada apoia todos os passageiros no balcão de check-in, esclarece dúvidas, resolve reserva de assento e intermedia com a companhia aérea. Acesso direto à gerência das companhias no aeroporto — fundamental em cancelamento, remarcação e direitos do passageiro.\n\nProtocolo pré-embarque (Visit Japan Web) — um membro da equipe Ajisai preenche o VJW com os dados do passageiro, cria e cadastra a conta e envia pronta pra você, substituindo o papelado na chegada ao Japão. Inclui sessão dedicada ao aéreo, explicando o itinerário e tirando dúvidas antes do embarque.\n\nMonitoramento de viagem — central de WhatsApp com equipe emergencial Ajisai, funcionando quase 24 horas por dia, cobrindo conexões, gestão de reserva antes da viagem e imprevistos durante a viagem. Atendimento humano, com apoio de tradutor por telefone quando necessário.\n\nResponsabilidade da Agência — passagem emitida pela Ajisai tem responsabilidade solidária da agência e negociação direta com as companhias aéreas, muito além do que dá pra resolver sozinho numa reserva comprada por conta própria — mais proteção e prioridade, mesmo pelo mesmo preço.",
     calcPreco: (ctx: PrecoCtx) =>
-      ctx.classeAereo === "Business" ? PRECO_AEREO_BUSINESS : PRECO_AEREO_ECONOMY,
+      ctx.classeAereo === "Business"
+        ? Math.round(PRECO_AEREO_BUSINESS_USD * ctx.cambioCotacao)
+        : PRECO_AEREO_ECONOMY_BRL,
   },
   {
     key: "hotel",
@@ -177,7 +192,12 @@ const OPCOES = [
     detalhe:
       "Guia particular fluente em português, dedicado ao seu grupo, acompanhando pontos-chave do roteiro — ajuda com trajetos, horários e como evitar filas nas atrações. US$ 350 por dia a cada 4 pessoas; grupos maiores recebem guias adicionais, cobrados proporcionalmente.",
     calcPreco: (ctx: PrecoCtx) =>
-      DIARIA_GUIA * ctx.dias * Math.max(1, Math.ceil(ctx.pessoas / GUIA_TAMANHO_GRUPO)),
+      Math.round(
+        DIARIA_GUIA_USD *
+          ctx.dias *
+          Math.max(1, Math.ceil(ctx.pessoas / GUIA_TAMANHO_GRUPO)) *
+          ctx.cambioCotacao,
+      ),
   },
   {
     key: "jrpass",
@@ -214,7 +234,12 @@ const OPCOES = [
     detalhe:
       "Traslados exclusivos com motorista particular, sem compartilhar veículo com outros grupos — ideal para famílias com bagagem extra, crianças pequenas ou quem prefere mais privacidade e flexibilidade de horário. US$ 700 por dia, cobrindo até 4 pessoas; grupos maiores recebem veículos adicionais, cobrados proporcionalmente.",
     calcPreco: (ctx: PrecoCtx) =>
-      DIARIA_MOTORISTA_PRIVADO * ctx.dias * Math.max(1, Math.ceil(ctx.pessoas / MOTORISTA_TAMANHO_GRUPO)),
+      Math.round(
+        DIARIA_MOTORISTA_PRIVADO_USD *
+          ctx.dias *
+          Math.max(1, Math.ceil(ctx.pessoas / MOTORISTA_TAMANHO_GRUPO)) *
+          ctx.cambioCotacao,
+      ),
   },
   {
     key: "servicos",
@@ -250,7 +275,8 @@ const OPCOES = [
     descricao: "Conexão disponível durante todo o roteiro",
     detalhe:
       "Pocket Wi-Fi ou eSIM 5G com conexão de dados disponível durante todo o roteiro, para todo o grupo.",
-    calcPreco: (ctx: PrecoCtx) => Math.round(DIARIA_WIFI_PAX * ctx.dias * ctx.pessoas),
+    calcPreco: (ctx: PrecoCtx) =>
+      Math.round(DIARIA_WIFI_USD_PAX * ctx.dias * ctx.pessoas * ctx.cambioCotacao),
   },
   {
     key: "ingressos",
@@ -260,7 +286,7 @@ const OPCOES = [
     detalhe:
       "Ingresso para Tokyo Disney Resort ou Universal Studios Japan, por pessoa.",
     calcPreco: (ctx: PrecoCtx) =>
-      Math.round(PRECO_INGRESSO_DISNEY_UNIVERSAL_PAX * ctx.pessoas),
+      Math.round(PRECO_INGRESSO_DISNEY_UNIVERSAL_USD_PAX * ctx.pessoas * ctx.cambioCotacao),
   },
 ] as const;
 
@@ -385,8 +411,17 @@ export function CustomPackageCard() {
   useEffect(() => setMounted(true), []);
 
   const precoCtx = useMemo<PrecoCtx>(
-    () => ({ dias, pessoas, categoriaHotel, tipoQuarto, classeAereo }),
-    [dias, pessoas, categoriaHotel, tipoQuarto, classeAereo],
+    () => ({
+      dias,
+      pessoas,
+      categoriaHotel,
+      tipoQuarto,
+      classeAereo,
+      // Mesmo fallback usado internamente por useCambioUSD enquanto a
+      // cotação do dia ainda não carregou.
+      cambioCotacao: cambio?.cotacao ?? 5.3,
+    }),
+    [dias, pessoas, categoriaHotel, tipoQuarto, classeAereo, cambio],
   );
 
   const itensSelecionados = useMemo(
