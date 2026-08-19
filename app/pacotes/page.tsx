@@ -425,7 +425,7 @@ export default function PacotesJapaoPage() {
           </div>
 
           <div className="relative -mt-20 px-6 pb-14 sm:-mt-24 md:-mt-28 md:px-16 md:pb-20">
-            <div className="mx-auto max-w-5xl">
+            <div className="mx-auto max-w-6xl">
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
               {DIFERENCIAIS_AEREO.map((item) => (
                 <div
