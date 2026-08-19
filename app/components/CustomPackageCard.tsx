@@ -560,7 +560,7 @@ export function CustomPackageCard() {
           {opcao.descricao}
         </span>
         {opcao.key === "roteiro" && (
-          <div className="pl-8" onClick={(e) => e.stopPropagation()}>
+          <div className="flex justify-center pl-8" onClick={(e) => e.stopPropagation()}>
             <video
               src="/videos/roteiro-personalizado-short.mp4"
               poster="/videos/roteiro-personalizado-short-poster.jpg"

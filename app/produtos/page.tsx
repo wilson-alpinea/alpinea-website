@@ -639,14 +639,14 @@ export default function ProdutosPage() {
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Ver painel do roteiro em tamanho maior"
-              className="group relative w-[240px] overflow-hidden rounded-[36px] shadow-2xl transition duration-500 hover:-translate-y-1 hover:shadow-[0_25px_60px_rgba(110,195,217,0.25)] md:w-[280px]"
+              className="group relative w-[320px] overflow-hidden rounded-[36px] shadow-2xl transition duration-500 hover:-translate-y-1 hover:shadow-[0_25px_60px_rgba(110,195,217,0.25)] md:w-[400px]"
             >
               <div className="relative aspect-[1024/1536] w-full">
                 <Image
                   src="/images/mock-roteiro-iphone.png"
                   alt="Painel Ajisai — roteiro diário, atrações e logística organizados"
                   fill
-                  sizes="280px"
+                  sizes="400px"
                   className="object-contain transition duration-700 group-hover:scale-[1.03]"
                 />
               </div>

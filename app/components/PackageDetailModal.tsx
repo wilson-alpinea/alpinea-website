@@ -103,7 +103,8 @@ function tagsDoRoteiro(d: DiaRoteiro): { icon: string; label: string }[] {
 const ITINERARIOS: Record<string, ItinerarioStop[]> = {
   "7d": [
     { city: "Tokyo", dias: 3 },
-    { city: "Kyoto", dias: 3 },
+    { city: "Kyoto", dias: 2 },
+    { city: "Osaka", dias: 1 },
     { city: "Tokyo", dias: 1 },
   ],
   "15d": [
@@ -127,26 +128,26 @@ type DiaRoteiro = { dia: number; titulo: string; texto: string; cidade: string }
 const ROTEIRO_7D: DiaRoteiro[] = [
   {
     dia: 1,
-    titulo: "Chegada em Tóquio",
-    texto: "Desembarque no Aeroporto de Narita ou Haneda e traslado ao hotel. Restante do dia livre para descanso.",
+    titulo: "Tóquio — Sensoji, Skytree & Solamachi",
+    texto: "Desembarque no Aeroporto de Narita ou Haneda e traslado ao hotel. Templo Senso-ji e a tradicional Nakamise-dori, seguido de subida à Tokyo Skytree e passeio pelo complexo Tokyo Solamachi, aos pés da torre.",
     cidade: "Tokyo",
   },
   {
     dia: 2,
-    titulo: "Tóquio — Asakusa & Skytree",
-    texto: "Templo Senso-ji e a tradicional Nakamise-dori, seguido de subida à Tokyo Skytree para uma vista panorâmica da cidade.",
+    titulo: "Tóquio — Meiji Jingu & Shinjuku",
+    texto: "Santuário Meiji Jingu, em meio à floresta no coração de Tóquio, seguido de tempo livre em Shinjuku — compras, gastronomia e mirante gratuito.",
     cidade: "Tokyo",
   },
   {
     dia: 3,
     titulo: "Tóquio — Harajuku & Shibuya",
-    texto: "Santuário Meiji, passeio por Takeshita-dori em Harajuku e passagem pelo icônico cruzamento de Shibuya.",
+    texto: "Passeio por Takeshita-dori em Harajuku e passagem pelo icônico cruzamento de Shibuya.",
     cidade: "Tokyo",
   },
   {
     dia: 4,
-    titulo: "Tóquio → Kyoto",
-    texto: "Deslocamento em trem-bala (Shinkansen) até Kyoto. Chegada e caminhada noturna pelo distrito histórico de Gion.",
+    titulo: "Tóquio → Kyoto — Kiyomizu-dera & Gion",
+    texto: "Deslocamento em trem-bala (Shinkansen) até Kyoto. Templo Kiyomizu-dera, com vista elevada sobre a cidade, descida pelas ruas históricas de Sannenzaka e Ninenzaka, e caminhada pelo distrito histórico de Gion.",
     cidade: "Kyoto",
   },
   {
@@ -157,14 +158,14 @@ const ROTEIRO_7D: DiaRoteiro[] = [
   },
   {
     dia: 6,
-    titulo: "Kyoto — Kiyomizu-dera & Arashiyama",
-    texto: "Templo Kiyomizu-dera, com vista elevada sobre a cidade, e o Bosque de Bambu de Arashiyama.",
-    cidade: "Kyoto",
+    titulo: "Kyoto → Osaka — Castelo & Dotonbori",
+    texto: "Deslocamento até Osaka. Castelo de Osaka e seu jardim, seguido de Dotombori, região de compras e gastronomia.",
+    cidade: "Osaka",
   },
   {
     dia: 7,
     titulo: "Retorno a Tóquio & embarque",
-    texto: "Deslocamento de volta a Tóquio, tempo livre para compras e traslado ao aeroporto para o voo de retorno.",
+    texto: "Deslocamento de volta a Tóquio, dia livre para compras e passeios finais, com traslado ao aeroporto para o voo de retorno ao Brasil.",
     cidade: "Tokyo",
   },
 ];
@@ -520,6 +521,22 @@ function IconX({ className }: { className?: string }) {
   );
 }
 
+function IconChevron({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      <polyline points="6 9 12 15 18 9" />
+    </svg>
+  );
+}
+
 export function PackageDetailModal({
   divisao,
   categoria,
@@ -558,6 +575,7 @@ export function PackageDetailModal({
   const [inclusaoAberta, setInclusaoAberta] = useState<(typeof INCLUSOES_PADRAO)[number] | null>(
     null,
   );
+  const [faqAberta, setFaqAberta] = useState<string | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   function selecionarVariante(id: string) {
@@ -698,6 +716,23 @@ export function PackageDetailModal({
               </div>
             ))}
           </div>
+
+          {(nome.startsWith("Primavera 1") || nome.startsWith("Primavera 2")) && (
+            <div className="mt-8 overflow-hidden rounded-2xl border border-white/10">
+              <Image
+                src={
+                  nome.startsWith("Primavera 1")
+                    ? "/images/roteiro-primavera1-sakura.png"
+                    : "/images/roteiro-primavera2.png"
+                }
+                alt={`Roteiro ilustrado dia a dia — ${nome}`}
+                width={1774}
+                height={887}
+                sizes="(max-width: 768px) 100vw, 768px"
+                className="h-auto w-full"
+              />
+            </div>
+          )}
 
           <div className="mt-8 border-t border-white/10 pt-6">
             <h3 className={`${display.className} text-lg font-medium text-white`}>Itinerário</h3>
@@ -875,16 +910,17 @@ export function PackageDetailModal({
             <h3 className={`${display.className} text-lg font-medium text-white`}>
               Perguntas frequentes
             </h3>
-            <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
+            <div className="mt-4 space-y-2.5">
               {FAQ_PADRAO.map((item) => {
                 const destaque = item.pergunta === "O que é um hotel 4 estrelas?";
+                const aberta = faqAberta === item.pergunta;
                 return (
                   <div
                     key={item.pergunta}
                     className={
                       destaque
-                        ? "rounded-xl border p-3.5 transition"
-                        : "rounded-xl border border-white/10 bg-white/[0.03] p-3.5 transition hover:border-white/25 hover:bg-white/[0.06]"
+                        ? "overflow-hidden rounded-xl border transition"
+                        : "overflow-hidden rounded-xl border border-white/10 bg-white/[0.03] transition hover:border-white/25 hover:bg-white/[0.06]"
                     }
                     style={
                       destaque
@@ -892,13 +928,29 @@ export function PackageDetailModal({
                         : undefined
                     }
                   >
-                    <p
-                      className="text-sm font-medium text-white"
-                      style={destaque ? { color: "#eab308" } : undefined}
+                    <button
+                      type="button"
+                      onClick={() => setFaqAberta(aberta ? null : item.pergunta)}
+                      aria-expanded={aberta}
+                      className="flex w-full items-center justify-between gap-3 p-3.5 text-left"
                     >
-                      {item.pergunta}
-                    </p>
-                    <p className="mt-1 text-xs font-light leading-5 text-white/50">{item.resposta}</p>
+                      <p
+                        className="text-sm font-medium text-white"
+                        style={destaque ? { color: "#eab308" } : undefined}
+                      >
+                        {item.pergunta}
+                      </p>
+                      <IconChevron
+                        className={`h-4 w-4 shrink-0 text-white/40 transition-transform duration-200 ${
+                          aberta ? "rotate-180" : ""
+                        }`}
+                      />
+                    </button>
+                    {aberta && (
+                      <p className="px-3.5 pb-3.5 text-xs font-light leading-5 text-white/50">
+                        {item.resposta}
+                      </p>
+                    )}
                   </div>
                 );
               })}

@@ -454,11 +454,16 @@ export default function PacotesJapaoPage() {
             >
               Como funcionam os pacotes Ajisai
             </h3>
-            <VideoPlaceholder
-              titulo="Como funcionam os pacotes Ajisai"
-              descricao="Vídeo explicativo sobre as opções de pacote e como escolher a certa."
-              className="mx-auto mt-6"
-            />
+            <div className="relative mx-auto mt-6 aspect-video w-full overflow-hidden rounded-2xl border border-white/10 bg-black">
+              <video
+                controls
+                preload="metadata"
+                poster="/videos/pacotes-explicacao-poster.jpg"
+                className="h-full w-full object-cover"
+              >
+                <source src="/videos/pacotes-explicacao.mp4" type="video/mp4" />
+              </video>
+            </div>
           </div>
         </section>
 
