@@ -371,7 +371,7 @@ export default function PacotesJapaoPage() {
             ))}
           </div>
 
-          <div className="mx-auto mt-14 max-w-3xl">
+          <div className="mx-auto mt-14 max-w-6xl">
             <p className="text-center text-[10px] uppercase tracking-[0.2em] text-white/40">
               Veja funcionando
             </p>
@@ -399,17 +399,25 @@ export default function PacotesJapaoPage() {
               priority
               className="object-cover object-[68%_18%]"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-black via-black/25 to-black/5" />
+            <div className="absolute inset-0 bg-black/40" />
+            <div className="absolute inset-0 bg-gradient-to-t from-black via-black/45 to-black/10" />
             <div className="absolute inset-0 flex flex-col items-center justify-center px-6 text-center">
-              <p className="text-[10px] uppercase tracking-[0.2em] text-white/70">
+              <p
+                className="text-[10px] uppercase tracking-[0.2em] text-white"
+                style={{ textShadow: "0 2px 10px rgba(0,0,0,0.7)" }}
+              >
                 Passagem comprada com a Ajisai
               </p>
               <h2
                 className={`${display.className} mt-2 max-w-3xl text-2xl font-medium leading-tight text-white md:text-4xl`}
+                style={{ textShadow: "0 2px 14px rgba(0,0,0,0.7)" }}
               >
                 Diferenciais Ajisai para Passagens Aéreas
               </h2>
-              <p className="mx-auto mt-3 max-w-2xl text-sm font-light leading-6 text-white/80">
+              <p
+                className="mx-auto mt-3 max-w-2xl text-sm font-light leading-6 text-white"
+                style={{ textShadow: "0 2px 10px rgba(0,0,0,0.7)" }}
+              >
                 O mesmo suporte que você encontra dentro de cada pacote, na
                 seção Aéreo/Passagem Aérea — aqui resumido em um único lugar.
               </p>
@@ -426,9 +434,9 @@ export default function PacotesJapaoPage() {
                 >
                   <span className="mx-auto flex h-24 w-24 items-center justify-center rounded-full bg-[#6ec3d9]/20 text-[#2f80c9]">
                     {item.imagem ? (
-                      <Image src={item.imagem} alt="" width={80} height={80} className="h-14 w-14 object-contain" />
+                      <Image src={item.imagem} alt="" width={96} height={96} className="h-20 w-20 object-contain" />
                     ) : (
-                      <item.Icon className="h-10 w-10" />
+                      <item.Icon className="h-16 w-16" />
                     )}
                   </span>
                   <h3 className={`${display.className} mt-5 text-lg font-semibold text-[#0A2540]`}>
