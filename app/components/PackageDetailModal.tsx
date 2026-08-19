@@ -555,7 +555,7 @@ export function PackageDetailModal({
           onClick={onClose}
         >
       <div
-        className="relative flex h-[100dvh] w-full flex-col overflow-x-hidden bg-[#0a0a0a] text-white md:h-auto md:max-h-[88vh] md:max-w-2xl md:overflow-hidden md:rounded-[28px] md:border md:border-white/10"
+        className="relative flex h-[100dvh] w-full flex-col overflow-x-hidden bg-[#0a0a0a] text-white md:h-auto md:max-h-[92vh] md:max-w-4xl md:overflow-hidden md:rounded-[28px] md:border md:border-white/10"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="sticky top-0 z-10 flex shrink-0 items-center justify-between border-b border-white/10 bg-[#0a0a0a]/95 px-5 py-4 backdrop-blur-sm md:px-8">
@@ -699,7 +699,7 @@ export function PackageDetailModal({
             <h3 className={`${display.className} text-lg font-medium text-white`}>
               O que está incluso
             </h3>
-            <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
+            <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3">
               {inclusoes.map((item) => (
                 <button
                   key={item.title}
