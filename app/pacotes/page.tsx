@@ -5,6 +5,7 @@ import { CartProvider } from "../components/CartContext";
 import { CartWidget } from "../components/CartWidget";
 import { PackageCard, type PackageVariant } from "../components/PackageCard";
 import { CustomPackageCard } from "../components/CustomPackageCard";
+import { CarouselScroller } from "../components/CarouselScroller";
 import { formatUSD } from "../lib/currency";
 
 // Mesma fonte de destaque usada nas demais páginas do site.
@@ -223,23 +224,96 @@ const divisoes = [
   },
 ];
 
-// Mesmos 3 pilares de confiança usados em /ajisairoteiros — nota do Google
-// (4,8 · +180 avaliações) também replicada da mesma página.
-const DIFERENCIAIS = [
+// Seção "Viaje com a Ajisai" — mesmo conteúdo/design usado em
+// /ajisairoteiros (carrossel "Por que a Ajisai" + prova social com
+// avaliações reais do Google), só com os badges Cadastur/Reclame Aqui
+// adicionados no final.
+const avatarColors = [
+  "#7c4fd1",
+  "#6ec3d9",
+  "#d9a66d",
+  "#5b9bd5",
+  "#e0916a",
+  "#8fb7d9",
+];
+
+const googleReviews = [
   {
-    titulo: "Operação especializada em Japão",
-    texto: "Atendimento no Brasil e suporte especializado para sua viagem.",
-    Icon: IconGlobe,
+    name: "Caio Paiva de Lima",
+    context: "Cancelamento de voo de última hora",
+    text: "Excelente experiência com a AjisaiWork! Nos auxiliaram no retorno do Japão ao Brasil após um cancelamento de voo de última hora, com atendimento 24h, segurança e agilidade num momento de estresse. Empresa de confiança e extremamente recomendada!",
   },
   {
-    titulo: "Compra segura",
-    texto: "Contrato, condições da viagem e pagamentos formalizados.",
-    Icon: IconShieldCheck,
+    name: "José Andrade",
+    context: "Passagens, trens e hotéis",
+    text: "Tivemos a feliz oportunidade de utilizar os serviços da AjisaiWork e a equipe me proporcionou uma viagem tranquila, segura e prazerosa. Ficamos satisfeitos com o auxílio na reserva de passagens de avião, trens e hotéis. Foi fantástico!",
   },
   {
-    titulo: "Suporte antes do embarque",
-    texto: "Orientação desde a reserva até a preparação para a viagem.",
-    Icon: IconHeadset,
+    name: "Cristina Álvares",
+    context: "Viagem em período de instabilidade aérea",
+    text: "Fomos para o Japão com o apoio total da Ajisai. O período era complicado, pela Emirates via Dubai, em um momento incerto pela guerra. A Ajisai tinha opções com outras cias aéreas caso necessário. Atendimento 24hs todos os dias, durante todo o período da viagem. Excelente!",
+  },
+  {
+    name: "SBC & International Friends",
+    context: "Acompanhamento de uma senhora de 77 anos",
+    text: "Nossa maior preocupação era um voo tranquilo desde o check-in em São Paulo até o destino final — minha mãe, uma senhora de 77 anos, viajava conosco. A experiência com a Ajisai foi melhor que esperávamos, com atenção especial do início ao fim da viagem.",
+  },
+  {
+    name: "Conrado Areco Borelli",
+    context: "Suporte completo, do primeiro contato ao embarque",
+    text: "Contamos com o suporte da AjisaiWork na compra dos bilhetes de ida e volta ao Japão — atendimento solícito e eficiente. Do 1º contato via WhatsApp até o embarque, estiveram sempre disponíveis, independente do fuso horário. Recomendamos de coração.",
+  },
+  {
+    name: "Katia Ito",
+    context: "Passagens para um grupo grande",
+    text: "Recomendo a AjisaiWork, que conheci pelo canal Tudo Sobre Japão Notícias. Atenderam com rapidez desde o início, buscando passagens para um grupo grande com ótimo custo-benefício, com equipe no aeroporto para ajudar com o despacho das bagagens.",
+  },
+  {
+    name: "Henrique Kishida",
+    context: "Suporte contínuo após a chegada ao Japão",
+    text: "Desde o primeiro contato, tem sido uma ótima empresa. Todos muito simpáticos e atenciosos. Cheguei ao Japão e o suporte continua: mandam mensagens para checar como foi a viagem e como está a adaptação ao novo país. Até o momento fico muito feliz com minha escolha.",
+  },
+  {
+    name: "Bruno Lima",
+    context: "Do preenchimento online ao embarque",
+    text: "Foram muito atenciosos, do início ao fim. Sempre que eu estava com dúvidas, eles me explicavam tudo com bastante clareza e atenção, quase no mesmo momento em que eu perguntava. Me auxiliaram desde o preenchimento online até o momento de embarque e desembarque.",
+  },
+  {
+    name: "Lenox",
+    context: "Viagem completa, ida e volta",
+    text: "Adorei tudo. O pessoal da Ajisai é muito atencioso e prestativo. Minha viagem foi maravilhosa, correu tudo muito bem na ida, durante e na volta da viagem. Recomendo 100%.",
+  },
+  {
+    name: "Marília Mesquita",
+    context: "Acompanhamento durante toda a viagem",
+    text: "Excelente atendimento e acompanhamento durante toda a viagem. Todos os profissionais são ótimos.",
+  },
+];
+
+const whyAjisai = [
+  {
+    label: "Experiência",
+    title: "+12 anos",
+    text: "Mais de uma década de vivência no Japão, entre gastronomia, hotelaria, cultura, logística e relações locais.",
+    Icon: IconClock,
+  },
+  {
+    label: "Curadoria",
+    title: "Exclusividade de Serviços",
+    text: "Curadoria de restaurantes, hotelaria e consumo desenvolvida a partir de experiência própria, fluência no idioma e uma rede construída ao longo de mais de uma década no Japão.",
+    Icon: IconGem,
+  },
+  {
+    label: "Conexão Brasil–Japão",
+    title: "Referência na conexão",
+    text: "Entre os 3 maiores emissores de passagens aéreas dessa rota no mundo, unimos conhecimento operacional à curadoria de experiências privadas.",
+    Icon: IconExchange,
+  },
+  {
+    label: "Presença real no Japão",
+    title: "Operação própria",
+    text: "Nossa operação própria no Japão permite atendimento sem intermediários, com maior flexibilidade, controle e proximidade dos melhores parceiros locais.",
+    Icon: IconPin,
   },
 ];
 
@@ -616,43 +690,170 @@ export default function PacotesJapaoPage() {
           </div>
         </section>
 
-        {/* ── VIAJE COM A AJISAI ── */}
-        <section className="border-t border-white/10 bg-[#050505] px-6 py-16 md:px-16 md:py-24">
-          <div className="mx-auto max-w-5xl text-center">
-            <h2 className={`${display.className} text-3xl font-medium leading-tight md:text-4xl`}>
-              Viaje com a Ajisai
-            </h2>
+        {/* ── POR QUE A AJISAI ── */}
+        <section className="border-t-2 border-[#b79ce6]/30 bg-white/[0.02] px-6 py-20 md:px-16 md:py-32">
+          <div className="mx-auto max-w-7xl">
+            <div className="mb-10 flex justify-center md:mb-14">
+              <img
+                src="/images/AJISAI-LOGO.avif"
+                alt="Ajisai"
+                className="h-10 w-auto object-contain opacity-95 md:h-14"
+              />
+            </div>
+            <div className="mb-10 max-w-3xl md:mb-16">
+              <p className="mb-6 text-xs uppercase tracking-[0.3em] text-white/40 md:tracking-[0.45em]">
+                Por que escolher a Ajisai
+              </p>
+              <h2
+                className={`${display.className} text-3xl font-medium leading-tight md:text-5xl`}
+              >
+                O acesso no Japão não se compra. Se constrói ao longo de anos.
+              </h2>
 
-            <div className="mt-5 flex items-center justify-center gap-1 text-[#b79ce6]">
-              {Array.from({ length: 5 }).map((_, i) => (
-                <IconStarFilled key={i} className="h-4 w-4" />
-              ))}
-              <span className="ml-2 text-base font-semibold text-white">
-                4,8 de 5,0 no Google ·{" "}
-                <span className="text-[#6ec3d9]">+180 avaliações</span>
-              </span>
+              <div className="mt-6 flex items-center gap-3">
+                <div className="flex items-center gap-0.5 text-[#b79ce6]">
+                  {Array.from({ length: 5 }).map((_, index) => (
+                    <IconStarFilled key={index} className="h-4 w-4" />
+                  ))}
+                </div>
+                <p className="text-sm font-light text-white/60">
+                  <span className="font-medium text-white">4,8 de 5,0</span> no
+                  Google · +180 avaliações
+                </p>
+              </div>
             </div>
 
-            <div className="mt-10 grid gap-6 sm:grid-cols-3 md:mt-14">
-              {DIFERENCIAIS.map((item) => (
+            <CarouselScroller itemCount={whyAjisai.length} desktopColumns={4}>
+              {whyAjisai.map((item) => (
                 <div
-                  key={item.titulo}
-                  className="rounded-2xl border border-white/10 bg-white/[0.02] p-6 text-center md:p-8"
+                  key={item.title}
+                  className="flex w-[72vw] flex-shrink-0 snap-start [scroll-snap-stop:always] flex-col items-center text-center md:w-auto"
                 >
-                  <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-[#6ec3d9]/10 text-[#6ec3d9]">
+                  <span className="mb-5 flex h-12 w-12 items-center justify-center rounded-full bg-[#b79ce6]/12 text-[#b79ce6]">
                     <item.Icon className="h-5 w-5" />
                   </span>
-                  <h3 className={`${display.className} mt-4 text-lg font-medium text-white`}>
-                    {item.titulo}
+                  <p className="mb-2 text-[11px] uppercase tracking-[0.25em] text-white/35">
+                    {item.label}
+                  </p>
+                  <h3
+                    className={`${display.className} flex min-h-[3.5rem] items-center justify-center text-lg font-medium text-white md:min-h-[3.8rem] md:text-xl`}
+                  >
+                    {item.title}
                   </h3>
-                  <p className="mt-2 text-sm font-light leading-6 text-white/55">
-                    {item.texto}
+                  <p className="mt-3 text-sm font-light leading-7 text-white/50">
+                    {item.text}
                   </p>
                 </div>
               ))}
+            </CarouselScroller>
+          </div>
+        </section>
+
+        {/* ── SOCIAL PROOF — AVALIAÇÕES DO GOOGLE ── */}
+        <section className="border-t border-white/10 bg-black px-6 py-20 md:px-16 md:py-32">
+          <div className="mx-auto max-w-7xl">
+            <div className="mb-14 grid grid-cols-1 items-center gap-10 md:mb-20 md:grid-cols-2 md:gap-16">
+              <div>
+                <p className="mb-6 text-xs uppercase tracking-[0.3em] text-white/40 md:tracking-[0.45em]">
+                  Quem viajou com a Ajisai
+                </p>
+                <h2
+                  className={`${display.className} text-3xl font-medium leading-tight md:text-4xl`}
+                >
+                  Tudo é feito com muito carinho e atenção aos detalhes para
+                  atender aos nossos clientes mais exigentes
+                </h2>
+
+                <div className="mt-6 space-y-3 md:mt-8 md:space-y-4">
+                  <div className="flex items-center gap-4 rounded-2xl border border-white/10 bg-white/[0.03] p-4 sm:rounded-[1.5rem] md:p-6">
+                    <p
+                      className={`${display.className} text-5xl font-medium leading-none text-white md:text-6xl`}
+                    >
+                      4,8
+                    </p>
+                    <div>
+                      <div className="flex items-center gap-1 text-[#b79ce6]">
+                        {Array.from({ length: 5 }).map((_, index) => (
+                          <IconStarFilled key={index} className="h-4 w-4" />
+                        ))}
+                      </div>
+                      <p className="mt-2 text-xs font-light text-white/55 md:text-sm">
+                        de 5,0 no Google ·{" "}
+                        <span className="text-white">+180 avaliações</span>
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-4 rounded-2xl border border-emerald-500/15 bg-emerald-500/[0.04] p-4 sm:rounded-[1.5rem] md:p-6">
+                    <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-emerald-500/15 text-emerald-400 md:h-14 md:w-14">
+                      <IconShieldCheck className="h-6 w-6 md:h-7 md:w-7" />
+                    </span>
+                    <div>
+                      <p className="text-sm font-medium text-white md:text-base">
+                        Verificada pelo Reclame AQUI
+                      </p>
+                      <p className="mt-1 text-xs text-white/50 md:text-sm">
+                        Aprovada em todas as checagens de segurança
+                      </p>
+                      <p className="mt-1 text-[10px] uppercase tracking-[0.15em] text-emerald-400/70">
+                        Última verificação · Mar/2026
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="relative aspect-[2/3] overflow-hidden rounded-2xl md:rounded-[2rem]">
+                <Image
+                  src="/images/kyoto-maiko-street.png"
+                  alt="Viajante Ajisai caminhando por rua tradicional em Kyoto, com pagode ao fundo"
+                  fill
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                  className="object-cover"
+                />
+              </div>
             </div>
 
-            <div className="mt-10 flex flex-row flex-wrap items-center justify-center gap-6 md:mt-12">
+            <CarouselScroller
+              itemCount={googleReviews.length}
+              desktopColumns={3}
+              desktopScroll
+            >
+              {googleReviews.map((review, index) => (
+                <div
+                  key={review.name}
+                  className="flex min-h-[380px] w-[80vw] flex-shrink-0 snap-start [scroll-snap-stop:always] flex-col rounded-2xl border border-white/10 bg-white/[0.03] p-5 sm:rounded-[2rem] sm:p-8 md:w-[31%] md:shrink-0"
+                >
+                  <div className="mb-4 flex items-center gap-0.5 text-[#b79ce6]">
+                    {Array.from({ length: 5 }).map((_, starIndex) => (
+                      <IconStarFilled key={starIndex} className="h-3.5 w-3.5" />
+                    ))}
+                  </div>
+                  <p className="flex-1 text-sm font-light leading-7 text-white/60">
+                    &ldquo;{review.text}&rdquo;
+                  </p>
+                  <div className="mt-6 flex items-center gap-3 border-t border-white/10 pt-4">
+                    <span
+                      className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-xs font-medium text-white"
+                      style={{
+                        backgroundColor: avatarColors[index % avatarColors.length],
+                      }}
+                      aria-hidden
+                    >
+                      {review.name.charAt(0).toUpperCase()}
+                    </span>
+                    <div>
+                      <p className="text-sm font-medium text-white">{review.name}</p>
+                      <p className="mt-0.5 text-xs text-white/35">
+                        {review.context} · Avaliação no Google
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </CarouselScroller>
+
+            <div className="mt-14 flex flex-row flex-wrap items-center justify-center gap-6 md:mt-20">
               <Image
                 src="/images/badge-cadastur.png"
                 alt="Cadastur — Agência de Turismo registrada"
@@ -742,6 +943,59 @@ function IconStarFilled({ className }: { className?: string }) {
   return (
     <svg viewBox="0 0 24 24" fill="currentColor" className={className}>
       <path d="M12 3l2.5 6 6.5.6-5 4.3 1.5 6.4L12 17l-5.5 3.3L8 13.9l-5-4.3L9.5 9.6 12 3Z" />
+    </svg>
+  );
+}
+
+function IconGem({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.75"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      <path d="M6 3h12l3 5.5L12 21 3 8.5 6 3Z" />
+      <path d="M3 8.5h18" />
+      <path d="M9 3l3 5.5-3 12.5" />
+      <path d="M15 3l-3 5.5 3 12.5" />
+    </svg>
+  );
+}
+
+function IconExchange({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.75"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      <path d="M6 7h12M14 3l4 4-4 4" />
+      <path d="M18 17H6m4 4-4-4 4-4" />
+    </svg>
+  );
+}
+
+function IconPin({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.75"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      <path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21Z" />
+      <circle cx="12" cy="9.5" r="2.3" />
     </svg>
   );
 }

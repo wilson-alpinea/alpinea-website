@@ -144,6 +144,12 @@ const PRECO_CAMBIO_BRASIL = 150;
 // nativos em dólar.
 const DIARIA_WIFI_USD_PAX = 7; // ≈ JPY 1000/dia/pax
 const PRECO_INGRESSO_DISNEY_UNIVERSAL_USD_PAX = 83; // ≈ JPY 12000/pax (ingresso avulso)
+// Reserva de restaurantes high-end: pacote fechado de 7 reservas em
+// restaurantes categoria Michelin/Tabelog Awards (ou equivalente), valor
+// fixo até 3 pessoas — não escala por dia nem por pessoa dentro do limite.
+const PRECO_RESTAURANTES_HIGHEND_USD = 1000;
+const RESTAURANTES_HIGHEND_QTD = 7;
+const RESTAURANTES_HIGHEND_LIMITE_PESSOAS = 3;
 
 // Aéreo: Economy segue o valor de referência original (nativo em reais,
 // como todo o resto do calculador). Business é o valor exato que você
@@ -205,7 +211,7 @@ const OPCOES = [
     icone: "🚐",
     descricao: "Transfers e deslocamentos do roteiro",
     detalhe:
-      "Transfers e deslocamentos previstos no roteiro dia a dia — do aeroporto ao hotel, entre cidades e até as atrações, conforme a logística definida no seu Roteiro Digital.",
+      "Transfers e deslocamentos previstos no roteiro dia a dia — do aeroporto ao hotel, entre cidades e até as atrações, conforme a logística definida no seu Roteiro Digital.\n\nOs veículos variam conforme o tamanho do grupo e a categoria contratada — os dois modelos mais usados são a Toyota Alphard e a Toyota Hiace.\n\nToyota Alphard — minivan premium, bancos de couro tipo poltrona (captain seats) na segunda fila, cabine mais silenciosa e acabamento de categoria superior. Por causa das poltronas reclináveis, o porta-malas é menor — ideal pra grupos de até 4 pessoas com bagagem média.\n\nToyota Hiace — van maior, com bancos mais simples, mas bagageiro bem mais amplo. Vale mais a pena pra grupos maiores ou com bastante bagagem (malas grandes, equipamento extra), mesmo com o acabamento interno menos luxuoso.\n\nOu seja: a Alphard custa mais por causa do conforto e categoria do veículo, não por ser maior — na prática ela carrega menos bagagem que a Hiace. A Ajisai indica o modelo mais adequado conforme grupo e volume de mala na hora da cotação.",
     calcPreco: (ctx: PrecoCtx) => DIARIA_TRANSPORTE * ctx.dias,
   },
   {
@@ -241,7 +247,7 @@ const OPCOES = [
     icone: "🛡️",
     descricao: "Cobertura médica e assistência durante toda a viagem",
     detalhe:
-      "Cobertura médico-hospitalar e assistência durante toda a duração da viagem contratada. Passageiros a partir de 85 anos entram sob consulta, já que a maioria das seguradoras aplica condições diferenciadas para essa faixa etária.",
+      "Cobertura médico-hospitalar e assistência durante toda a duração da viagem contratada. Passageiros a partir de 85 anos entram sob consulta, já que a maioria das seguradoras aplica condições diferenciadas para essa faixa etária.\n\nApólice padrão Ajisai para o Japão — referência de mercado para o destino:\n\nDespesas Médicas e Hospitalares (DMH): mínimo de US$ 30 mil, com opção de upgrade para US$ 60 mil (recomendado para gestantes, idosos e quem tem doença preexistente). O sistema de saúde japonês é excelente, mas turista paga 100% do custo — sem seguro, uma internação simples pode passar de dezenas de milhares de dólares.\n\nBagagem extraviada ou danificada: cobertura mínima de US$ 750.\n\nCancelamento de viagem: reembolso por cancelamento por motivo de saúde, imprevisto familiar ou problema de documentação.\n\nTraslado médico e repatriação sanitária, em casos graves.\n\nCentral de assistência 24h em português, com acionamento por telefone ou WhatsApp.\n\nValores e seguradora exatos dependem da idade e do perfil dos passageiros — a Ajisai cota a apólice ideal junto às principais seguradoras do mercado antes da confirmação.",
     calcPreco: (ctx: PrecoCtx) => DIARIA_SEGURO_VIAGEM * ctx.dias,
   },
   {
@@ -279,6 +285,16 @@ const OPCOES = [
     detalhe:
       "Reservas em restaurantes concorridos ao longo do roteiro, conforme o interesse do grupo — sob consulta.",
     calcPreco: () => 0,
+  },
+  {
+    key: "restaurantesHighEnd",
+    categoria: "opcional",
+    label: "Reserva de Restaurantes High-End",
+    icone: "🍾",
+    descricao: `${RESTAURANTES_HIGHEND_QTD} restaurantes Michelin/Tabelog Awards — US$ ${PRECO_RESTAURANTES_HIGHEND_USD} até ${RESTAURANTES_HIGHEND_LIMITE_PESSOAS} pessoas`,
+    detalhe:
+      `Pacote fechado de ${RESTAURANTES_HIGHEND_QTD} reservas em restaurantes de alto padrão — categoria Estrela Michelin, Tabelog Awards ou equivalente — nas cidades do seu roteiro. A Ajisai cuida de toda a articulação: muitos desses lugares têm poucas mesas por noite e não aceitam reserva direta de estrangeiros sem contato local.\n\nValor fixo de US$ ${PRECO_RESTAURANTES_HIGHEND_USD}, para grupos de até ${RESTAURANTES_HIGHEND_LIMITE_PESSOAS} pessoas. Grupos maiores, consulte.`,
+    calcPreco: (ctx: PrecoCtx) => Math.round(PRECO_RESTAURANTES_HIGHEND_USD * ctx.cambioCotacao),
   },
   {
     key: "concierge",
@@ -349,7 +365,7 @@ type OpcaoKey = (typeof OPCOES)[number]["key"];
 // Itens essenciais vêm pré-selecionados; os complementares (JR Pass, seguro
 // viagem, câmbio, motorista privado) ficam disponíveis pra adicionar sob
 // demanda.
-const ITENS_PADRAO: OpcaoKey[] = ["aereo", "hotel", "transporte", "guia", "roteiro"];
+const ITENS_PADRAO: OpcaoKey[] = ["aereo", "hotel", "roteiro"];
 
 // Os 20 destinos mais procurados do Japão pra turismo de lazer — mistura de
 // grandes cidades, cultura tradicional, natureza e praia/ilhas. Só Tokyo,
@@ -895,7 +911,7 @@ export function CustomPackageCard() {
                     <div className="absolute inset-0 bg-gradient-to-br from-[#1c2b45] to-[#0a0f1c]" />
                   )}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent" />
-                  <span className="absolute bottom-1.5 left-2 right-2 text-xs font-medium leading-tight text-white">
+                  <span className="absolute bottom-1.5 left-2 right-2 text-center text-xs font-medium leading-tight text-white">
                     {destino.nome}
                   </span>
                   <span
@@ -924,13 +940,15 @@ export function CustomPackageCard() {
           </div>
 
           {mostrarTodosDestinos && (
-            <button
-              type="button"
-              onClick={() => setMostrarTodosDestinos(false)}
-              className="mt-3 text-[11px] uppercase tracking-[0.15em] text-[#0A2540]/50 underline-offset-4 transition hover:text-[#0A2540] hover:underline"
-            >
-              Ver menos destinos
-            </button>
+            <div className="mt-4 flex justify-center">
+              <button
+                type="button"
+                onClick={() => setMostrarTodosDestinos(false)}
+                className="inline-flex items-center gap-2 rounded-full border border-[#2f80c9]/40 bg-[#2f80c9]/10 px-6 py-2.5 text-center text-xs font-semibold uppercase tracking-[0.15em] text-[#2f80c9] transition hover:bg-[#2f80c9]/20"
+              >
+                <span aria-hidden="true">↑</span> Ver menos destinos
+              </button>
+            </div>
           )}
         </div>
 
@@ -971,6 +989,47 @@ export function CustomPackageCard() {
             <p className="pr-8 text-base font-medium text-white">
               {opcaoAberta.icone} {opcaoAberta.label}
             </p>
+            {opcaoAberta.key === "roteiro" && (
+              <video
+                src="/videos/roteiro-personalizado-short.mp4"
+                poster="/videos/roteiro-personalizado-short-poster.jpg"
+                controls
+                playsInline
+                className="mt-3 w-full rounded-xl border border-white/10"
+              />
+            )}
+            {opcaoAberta.key === "transporte" && (
+              <div className="mt-3 grid grid-cols-2 gap-3">
+                <div>
+                  <div className="relative aspect-[3/2] overflow-hidden rounded-xl border border-white/10 bg-black">
+                    <Image
+                      src="/images/toyota-alphard.jpg"
+                      alt="Toyota Alphard"
+                      fill
+                      sizes="200px"
+                      className="object-cover"
+                    />
+                  </div>
+                  <p className="mt-1.5 text-center text-[10px] uppercase tracking-[0.1em] text-white/50">
+                    Toyota Alphard
+                  </p>
+                </div>
+                <div>
+                  <div className="relative aspect-[3/2] overflow-hidden rounded-xl border border-white/10 bg-black">
+                    <Image
+                      src="/images/toyota-hiace.jpg"
+                      alt="Toyota Hiace"
+                      fill
+                      sizes="200px"
+                      className="object-cover"
+                    />
+                  </div>
+                  <p className="mt-1.5 text-center text-[10px] uppercase tracking-[0.1em] text-white/50">
+                    Toyota Hiace
+                  </p>
+                </div>
+              </div>
+            )}
             <p className="mt-3 whitespace-pre-line text-sm font-light leading-6 text-white/65">
               {opcaoAberta.detalhe}
             </p>
