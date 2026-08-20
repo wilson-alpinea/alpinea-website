@@ -446,11 +446,13 @@ export default function PacotesJapaoPage() {
           </div>
 
           <div className="mx-auto mt-14 max-w-6xl">
-            <p className="text-center text-[10px] uppercase tracking-[0.2em] text-white/40">
-              Veja funcionando
+            <p className="text-center">
+              <span className="inline-block rounded-full bg-[#6ec3d9]/15 px-4 py-1.5 text-[11px] font-semibold uppercase tracking-[0.2em] text-[#6ec3d9]">
+                Veja funcionando
+              </span>
             </p>
             <h3
-              className={`${display.className} mt-2 text-center text-xl font-medium text-white md:text-2xl`}
+              className={`${display.className} mt-3 text-center text-3xl font-medium text-white md:text-4xl`}
             >
               Como funcionam os pacotes Ajisai
             </h3>

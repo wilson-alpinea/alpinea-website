@@ -283,14 +283,19 @@ const REFEICOES_INCLUSAS: Record<string, { cafe: number; almoco: number; jantar:
 // "Cidades" — Tóquio alterna entre duas fotos (Sensoji/Kaminarimon e
 // Skytree) pra não repetir a mesma imagem quando aparece mais de uma vez
 // no mesmo roteiro (ex.: Tóquio no início e no fim do 7d).
-const CIDADE_ICONE_TOKYO = ["/images/icon-tokyo1.png", "/images/icon-tokyo2.png"];
-const CIDADE_ICONE: Record<string, string> = {
-  Kyoto: "/images/icon-kyoto.jpg",
-  Osaka: "/images/icon-osaka.png",
+type CidadeIcone = { src: string; scale?: number; position?: string };
+
+const CIDADE_ICONE_TOKYO: CidadeIcone[] = [
+  { src: "/images/icon-tokyo1.png", scale: 2.2, position: "50% 42%" },
+  { src: "/images/icon-tokyo2.png" },
+];
+const CIDADE_ICONE: Record<string, CidadeIcone> = {
+  Kyoto: { src: "/images/icon-kyoto.jpg" },
+  Osaka: { src: "/images/icon-osaka.png", scale: 1.3 },
 };
 
 function ItinerarioFlow({ stops }: { stops: ItinerarioStop[] }) {
-  const circleSize = 56;
+  const circleSize = 76;
   const arrowWidth = 28;
   const labelWidth = 96;
   let tokyoCount = 0;
@@ -302,7 +307,7 @@ function ItinerarioFlow({ stops }: { stops: ItinerarioStop[] }) {
     // rótulo era mais largo que o círculo (nomes de cidade compostos).
     <div className="flex flex-wrap items-start justify-center gap-y-8">
       {stops.map((stop, i) => {
-        const iconSrc =
+        const icone =
           stop.city === "Tokyo"
             ? CIDADE_ICONE_TOKYO[tokyoCount++ % CIDADE_ICONE_TOKYO.length]
             : CIDADE_ICONE[stop.city];
@@ -318,13 +323,17 @@ function ItinerarioFlow({ stops }: { stops: ItinerarioStop[] }) {
                 backgroundColor: ITINERARIO_CITY_BORDER[stop.city] ?? "rgba(255,255,255,0.3)",
               }}
             >
-              {iconSrc && (
+              {icone && (
                 <Image
-                  src={iconSrc}
+                  src={icone.src}
                   alt={stop.city}
                   fill
                   sizes={`${circleSize}px`}
                   className="object-cover"
+                  style={{
+                    transform: icone.scale ? `scale(${icone.scale})` : undefined,
+                    objectPosition: icone.position,
+                  }}
                 />
               )}
             </div>
