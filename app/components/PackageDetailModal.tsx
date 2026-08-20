@@ -286,7 +286,7 @@ const REFEICOES_INCLUSAS: Record<string, { cafe: number; almoco: number; jantar:
 type CidadeIcone = { src: string; scale?: number; position?: string };
 
 const CIDADE_ICONE_TOKYO: CidadeIcone[] = [
-  { src: "/images/icon-tokyo1.png", scale: 2.2, position: "50% 42%" },
+  { src: "/images/icon-tokyo1.png", scale: 1.5, position: "50% 40%" },
   { src: "/images/icon-tokyo2.png" },
 ];
 const CIDADE_ICONE: Record<string, CidadeIcone> = {
