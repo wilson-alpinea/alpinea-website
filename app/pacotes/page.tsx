@@ -454,16 +454,33 @@ export default function PacotesJapaoPage() {
             >
               Como funcionam os pacotes Ajisai
             </h3>
-            <div className="relative mx-auto mt-6 aspect-video w-full overflow-hidden rounded-2xl border border-white/10 bg-black">
-              <video
-                controls
-                preload="metadata"
-                poster="/videos/pacotes-explicacao-poster.jpg"
-                className="h-full w-full object-cover"
-              >
-                <source src="/videos/pacotes-explicacao.mp4" type="video/mp4" />
-              </video>
+            <div className="mx-auto mt-6 max-w-4xl overflow-hidden rounded-xl border border-white/15 bg-[#1c1c1e] shadow-2xl">
+              <div className="flex items-center gap-2 border-b border-white/10 bg-[#2a2a2c] px-4 py-2.5">
+                <span className="h-2.5 w-2.5 rounded-full bg-[#ff5f57]" />
+                <span className="h-2.5 w-2.5 rounded-full bg-[#febc2e]" />
+                <span className="h-2.5 w-2.5 rounded-full bg-[#28c840]" />
+                <div className="mx-auto flex items-center gap-1.5 rounded-md bg-black/30 px-4 py-1 text-[10px] text-white/45">
+                  ajisaiwork.com/pacotes
+                </div>
+              </div>
+              <div className="relative aspect-video w-full bg-black">
+                <span className="pointer-events-none absolute left-3 top-3 z-10 inline-flex items-center gap-1.5 rounded-full bg-black/70 px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.15em] text-white backdrop-blur-sm">
+                  <IconPlay className="h-2.5 w-2.5 text-[#6ec3d9]" />
+                  Vídeo explicativo · 5:18
+                </span>
+                <video
+                  controls
+                  preload="metadata"
+                  poster="/videos/pacotes-explicacao-poster.jpg"
+                  className="h-full w-full object-cover"
+                >
+                  <source src="/videos/pacotes-explicacao.mp4" type="video/mp4" />
+                </video>
+              </div>
             </div>
+            <p className="mx-auto mt-3 max-w-4xl text-center text-[10px] uppercase tracking-[0.2em] text-white/40">
+              Gravação de tela — navegação real pelo site
+            </p>
           </div>
         </section>
 

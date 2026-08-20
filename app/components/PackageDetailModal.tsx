@@ -279,10 +279,21 @@ const REFEICOES_INCLUSAS: Record<string, { cafe: number; almoco: number; jantar:
   "15d": { cafe: 14, almoco: 10, jantar: 2 },
 };
 
+// Foto em zoom por cidade, usada como preenchimento das bolinhas do fluxo
+// "Cidades" — Tóquio alterna entre duas fotos (Sensoji/Kaminarimon e
+// Skytree) pra não repetir a mesma imagem quando aparece mais de uma vez
+// no mesmo roteiro (ex.: Tóquio no início e no fim do 7d).
+const CIDADE_ICONE_TOKYO = ["/images/icon-tokyo1.png", "/images/icon-tokyo2.png"];
+const CIDADE_ICONE: Record<string, string> = {
+  Kyoto: "/images/icon-kyoto.jpg",
+  Osaka: "/images/icon-osaka.png",
+};
+
 function ItinerarioFlow({ stops }: { stops: ItinerarioStop[] }) {
   const circleSize = 56;
   const arrowWidth = 28;
   const labelWidth = 96;
+  let tokyoCount = 0;
 
   return (
     // Cada parada (círculo + rótulo) fica num único bloco flex, pra não
@@ -290,18 +301,33 @@ function ItinerarioFlow({ stops }: { stops: ItinerarioStop[] }) {
     // duas linhas flex-wrap independentes e podiam desalinhar quando o
     // rótulo era mais largo que o círculo (nomes de cidade compostos).
     <div className="flex flex-wrap items-start justify-center gap-y-8">
-      {stops.map((stop, i) => (
+      {stops.map((stop, i) => {
+        const iconSrc =
+          stop.city === "Tokyo"
+            ? CIDADE_ICONE_TOKYO[tokyoCount++ % CIDADE_ICONE_TOKYO.length]
+            : CIDADE_ICONE[stop.city];
+        return (
         <div key={i} className="flex items-start">
           <div className="flex flex-col items-center" style={{ width: labelWidth }}>
             <div
-              className="shrink-0 rounded-full border"
+              className="relative shrink-0 overflow-hidden rounded-full border"
               style={{
                 width: circleSize,
                 height: circleSize,
                 borderColor: ITINERARIO_CITY_BORDER[stop.city] ?? "rgba(255,255,255,0.3)",
                 backgroundColor: ITINERARIO_CITY_BORDER[stop.city] ?? "rgba(255,255,255,0.3)",
               }}
-            />
+            >
+              {iconSrc && (
+                <Image
+                  src={iconSrc}
+                  alt={stop.city}
+                  fill
+                  sizes={`${circleSize}px`}
+                  className="object-cover"
+                />
+              )}
+            </div>
             <div className="mt-3 text-center">
               <p className="break-words text-[9px] uppercase leading-tight tracking-[0.02em] text-white/70">
                 {stop.city.split("/").map((part, idx, arr) => (
@@ -335,7 +361,8 @@ function ItinerarioFlow({ stops }: { stops: ItinerarioStop[] }) {
             </svg>
           )}
         </div>
-      ))}
+        );
+      })}
     </div>
   );
 }
@@ -537,6 +564,25 @@ function IconChevron({ className }: { className?: string }) {
   );
 }
 
+function IconZoom({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      <circle cx="11" cy="11" r="7" />
+      <line x1="21" y1="21" x2="16.2" y2="16.2" />
+      <line x1="11" y1="8" x2="11" y2="14" />
+      <line x1="8" y1="11" x2="14" y2="11" />
+    </svg>
+  );
+}
+
 export function PackageDetailModal({
   divisao,
   categoria,
@@ -576,6 +622,8 @@ export function PackageDetailModal({
     null,
   );
   const [faqAberta, setFaqAberta] = useState<string | null>(null);
+  const [faqSecaoAberta, setFaqSecaoAberta] = useState(false);
+  const [roteiroImagemZoom, setRoteiroImagemZoom] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   function selecionarVariante(id: string) {
@@ -717,23 +765,6 @@ export function PackageDetailModal({
             ))}
           </div>
 
-          {(nome.startsWith("Primavera 1") || nome.startsWith("Primavera 2")) && (
-            <div className="mt-8 overflow-hidden rounded-2xl border border-white/10">
-              <Image
-                src={
-                  nome.startsWith("Primavera 1")
-                    ? "/images/roteiro-primavera1-sakura.png"
-                    : "/images/roteiro-primavera2.png"
-                }
-                alt={`Roteiro ilustrado dia a dia — ${nome}`}
-                width={1774}
-                height={887}
-                sizes="(max-width: 768px) 100vw, 768px"
-                className="h-auto w-full"
-              />
-            </div>
-          )}
-
           <div className="mt-8 border-t border-white/10 pt-6">
             <h3 className={`${display.className} text-lg font-medium text-white`}>Itinerário</h3>
 
@@ -750,6 +781,32 @@ export function PackageDetailModal({
                     Roteiro de {variante.label}
                   </span>
                 </p>
+
+                {(nome.startsWith("Primavera 1") || nome.startsWith("Primavera 2")) && (
+                  <button
+                    type="button"
+                    onClick={() => setRoteiroImagemZoom(true)}
+                    aria-label="Ampliar roteiro ilustrado"
+                    className="group relative mb-6 block w-full overflow-hidden rounded-2xl border border-white/10"
+                  >
+                    <Image
+                      src={
+                        nome.startsWith("Primavera 1")
+                          ? "/images/roteiro-primavera1-sakura.png"
+                          : "/images/roteiro-primavera2.png"
+                      }
+                      alt={`Roteiro ilustrado dia a dia — ${nome}`}
+                      width={1774}
+                      height={887}
+                      sizes="(max-width: 768px) 100vw, 768px"
+                      className="h-auto w-full"
+                    />
+                    <span className="pointer-events-none absolute bottom-3 right-3 flex h-8 w-8 items-center justify-center rounded-full bg-black/70 text-white backdrop-blur-sm transition group-hover:bg-black/85">
+                      <IconZoom className="h-4 w-4" />
+                    </span>
+                  </button>
+                )}
+
                 <p className="mb-5 text-center text-xs uppercase tracking-[0.35em] text-white/40">
                   Cidades
                 </p>
@@ -807,37 +864,6 @@ export function PackageDetailModal({
                   })}
                 </div>
 
-                {REFEICOES_INCLUSAS[variante.id] && (
-                  <div className="mt-5 grid grid-cols-3 gap-3">
-                    <div className="rounded-xl border border-white/10 bg-white/[0.03] p-3 text-center">
-                      <p className="text-lg">☕</p>
-                      <p className="mt-1 text-sm font-semibold text-white">
-                        {REFEICOES_INCLUSAS[variante.id].cafe}
-                      </p>
-                      <p className="text-[10px] uppercase tracking-[0.1em] text-white/40">
-                        Café da manhã
-                      </p>
-                    </div>
-                    <div className="rounded-xl border border-white/10 bg-white/[0.03] p-3 text-center">
-                      <p className="text-lg">🍽️</p>
-                      <p className="mt-1 text-sm font-semibold text-white">
-                        {REFEICOES_INCLUSAS[variante.id].almoco}
-                      </p>
-                      <p className="text-[10px] uppercase tracking-[0.1em] text-white/40">
-                        Almoço
-                      </p>
-                    </div>
-                    <div className="rounded-xl border border-white/10 bg-white/[0.03] p-3 text-center">
-                      <p className="text-lg">🍶</p>
-                      <p className="mt-1 text-sm font-semibold text-white">
-                        {REFEICOES_INCLUSAS[variante.id].jantar}
-                      </p>
-                      <p className="text-[10px] uppercase tracking-[0.1em] text-white/40">
-                        Jantar
-                      </p>
-                    </div>
-                  </div>
-                )}
               </div>
             )}
 
@@ -907,9 +933,22 @@ export function PackageDetailModal({
           </div>
 
           <div className="mt-8 border-t border-white/10 pt-6">
-            <h3 className={`${display.className} text-lg font-medium text-white`}>
-              Perguntas frequentes
-            </h3>
+            <button
+              type="button"
+              onClick={() => setFaqSecaoAberta((v) => !v)}
+              aria-expanded={faqSecaoAberta}
+              className="flex w-full items-center justify-between gap-3"
+            >
+              <h3 className={`${display.className} text-lg font-medium text-white`}>
+                Perguntas frequentes
+              </h3>
+              <IconChevron
+                className={`h-4 w-4 shrink-0 text-white/40 transition-transform duration-200 ${
+                  faqSecaoAberta ? "rotate-180" : ""
+                }`}
+              />
+            </button>
+            {faqSecaoAberta && (
             <div className="mt-4 space-y-2.5">
               {FAQ_PADRAO.map((item) => {
                 const destaque = item.pergunta === "O que é um hotel 4 estrelas?";
@@ -955,6 +994,7 @@ export function PackageDetailModal({
                 );
               })}
             </div>
+            )}
           </div>
 
           <div className="mt-8 border-t border-white/10 pt-6">
@@ -1054,6 +1094,38 @@ export function PackageDetailModal({
               <p className="mt-3 whitespace-pre-line text-sm font-light leading-6 text-white/65">
                 {inclusaoAberta.detalhe}
               </p>
+            </div>
+          </div>,
+          document.body,
+        )}
+
+      {roteiroImagemZoom &&
+        createPortal(
+          <div
+            className="fixed inset-0 z-[150] flex items-center justify-center bg-black/95 p-4 backdrop-blur-sm md:p-10"
+            onClick={() => setRoteiroImagemZoom(false)}
+          >
+            <button
+              type="button"
+              onClick={() => setRoteiroImagemZoom(false)}
+              aria-label="Fechar"
+              className="absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full border border-white/15 text-white/70 transition hover:border-white/40 hover:text-white"
+            >
+              <IconX className="h-4 w-4" />
+            </button>
+            <div className="relative max-h-full max-w-full overflow-auto" onClick={(e) => e.stopPropagation()}>
+              <Image
+                src={
+                  nome.startsWith("Primavera 1")
+                    ? "/images/roteiro-primavera1-sakura.png"
+                    : "/images/roteiro-primavera2.png"
+                }
+                alt={`Roteiro ilustrado dia a dia — ${nome}`}
+                width={1774}
+                height={887}
+                sizes="100vw"
+                className="h-auto w-full rounded-xl md:w-auto md:max-w-none"
+              />
             </div>
           </div>,
           document.body,
