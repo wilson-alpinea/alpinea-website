@@ -41,19 +41,12 @@ const CIDADE_IMAGEM: Record<string, string> = {
   "Fujiyoshida/Fujikawaguchiko": "/images/fuji.JPG",
 };
 
-// Recursos gerais do roteiro, exibidos como resumo logo abaixo do herói —
-// mesmo conteúdo já descrito no Roteiro Digital, só que em formato de
-// destaque rápido (ícone + rótulo curto).
-const RECURSOS_ROTEIRO = [
-  { icon: "🕐", label: "Melhores horários de visita" },
-  { icon: "🚇", label: "Rotas e deslocamento otimizados" },
-  { icon: "🎫", label: "Ingressos e reservas quando necessário" },
-  { icon: "🍽️", label: "Sugestões de gastronomia local" },
-];
-
 // O mesmo resumo do Roteiro Digital (ver INCLUSOES_PADRAO → "Roteiro
 // Digital"), reorganizado em grade de ícones — equivalente ao bloco "tudo
-// pensado para você" do roteiro de referência.
+// pensado para você" do roteiro de referência. O item "Deslocamentos" é
+// sobrescrito em tempo de render para Pacotes de Caravana (ônibus privativo
+// do grupo), já que o texto abaixo descreve o modelo do Roteiro
+// Personalizado (linha de trem/metrô) — ver renderTudoPensadoItem.
 const TUDO_PENSADO = [
   { icon: "📋", title: "Roteiro Detalhado", text: "Dia a dia com atrações, ordem de visita e tempo estimado." },
   { icon: "🚇", title: "Deslocamentos", text: "Linha de trem/metrô recomendada e tempo de trajeto entre pontos." },
@@ -61,6 +54,15 @@ const TUDO_PENSADO = [
   { icon: "🍽️", title: "Gastronomia", text: "Sugestões de refeições próximas a cada parada do dia." },
   { icon: "💡", title: "Dicas Locais", text: "Orientações práticas para aproveitar melhor cada atração." },
   { icon: "🕐", title: "Guia de Horários", text: "Melhor horário de visita, evitando picos de fila e lotação." },
+];
+
+// O que fica de fora do pacote — mesma informação já confirmada no FAQ
+// padrão ("Refeições?"), só reorganizada em lista curta pro quadro
+// Incluso/Não incluso.
+const NAO_INCLUSO = [
+  "Almoços e jantares, salvo indicação no roteiro",
+  "Despesas pessoais e compras",
+  "Passeios e ingressos fora do roteiro previsto",
 ];
 
 // Heurística leve para gerar as etiquetas (ícone + rótulo) de cada dia do
@@ -283,15 +285,15 @@ const REFEICOES_INCLUSAS: Record<string, { cafe: number; almoco: number; jantar:
 // "Cidades" — Tóquio alterna entre duas fotos (Sensoji/Kaminarimon e
 // Skytree) pra não repetir a mesma imagem quando aparece mais de uma vez
 // no mesmo roteiro (ex.: Tóquio no início e no fim do 7d).
-type CidadeIcone = { src: string; scale?: number; position?: string };
-
-const CIDADE_ICONE_TOKYO: CidadeIcone[] = [
-  { src: "/images/icon-tokyo1.png", scale: 1.5, position: "50% 40%" },
-  { src: "/images/icon-tokyo2.png" },
-];
-const CIDADE_ICONE: Record<string, CidadeIcone> = {
-  Kyoto: { src: "/images/icon-kyoto.jpg" },
-  Osaka: { src: "/images/icon-osaka.png", scale: 1.3 },
+// Os arquivos de origem já vêm recortados (crop) bem próximos da atração —
+// evitar zoom via CSS (transform: scale) aqui, porque o Next/Image já serve
+// uma versão pequena (do tamanho da bolinha) e escalar isso por CSS deixa a
+// imagem borrada. Qualquer ajuste de enquadramento deve ser feito recortando
+// o arquivo de origem de novo, não com scale/object-position.
+const CIDADE_ICONE_TOKYO = ["/images/icon-tokyo1.png", "/images/icon-tokyo2.png"];
+const CIDADE_ICONE: Record<string, string> = {
+  Kyoto: "/images/icon-kyoto.jpg",
+  Osaka: "/images/icon-osaka.png",
 };
 
 function ItinerarioFlow({ stops }: { stops: ItinerarioStop[] }) {
@@ -307,7 +309,7 @@ function ItinerarioFlow({ stops }: { stops: ItinerarioStop[] }) {
     // rótulo era mais largo que o círculo (nomes de cidade compostos).
     <div className="flex flex-wrap items-start justify-center gap-y-8">
       {stops.map((stop, i) => {
-        const icone =
+        const iconSrc =
           stop.city === "Tokyo"
             ? CIDADE_ICONE_TOKYO[tokyoCount++ % CIDADE_ICONE_TOKYO.length]
             : CIDADE_ICONE[stop.city];
@@ -323,17 +325,13 @@ function ItinerarioFlow({ stops }: { stops: ItinerarioStop[] }) {
                 backgroundColor: ITINERARIO_CITY_BORDER[stop.city] ?? "rgba(255,255,255,0.3)",
               }}
             >
-              {icone && (
+              {iconSrc && (
                 <Image
-                  src={icone.src}
+                  src={iconSrc}
                   alt={stop.city}
                   fill
                   sizes={`${circleSize}px`}
                   className="object-cover"
-                  style={{
-                    transform: icone.scale ? `scale(${icone.scale})` : undefined,
-                    objectPosition: icone.position,
-                  }}
                 />
               )}
             </div>
@@ -385,13 +383,13 @@ const INCLUSOES_PADRAO = [
   },
   {
     title: "Hotel",
-    text: "Hospedagem selecionada, em localizações estratégicas para o roteiro.",
+    text: "Hotéis de 3 a 4 estrelas, com café da manhã e localização estratégica para o roteiro. Quartos individuais ou duplos.",
     detalhe:
       "Acomodação de 3 a 4 estrelas, selecionada por localização e conforto, sempre com curadoria Ajisai (exemplo de padrão: Daiwa Roynet). Hotéis 4 estrelas têm padrão internacional de conforto — quartos bem equipados, café da manhã incluso, localização estratégica e recepção 24h — sem as amenidades adicionais de um 5 estrelas. Preço padrão considera quarto individual; quarto duplo (compartilhado) disponível mediante consulta.",
   },
   {
     title: "Passagem Aérea",
-    text: "Ida e volta, com as melhores opções de conexão para o Japão.",
+    text: "Ida e volta em classe econômica, com bagagem despachada de até 23kg incluída.",
     detalhe:
       "Bilhete aéreo de ida e volta ao Japão, com a Ajisai buscando as melhores opções de conexão disponíveis para as datas do roteiro. Já inclui 1 bagagem despachada de até 23kg e 1 bagagem de mão por pessoa, conforme a companhia aérea selecionada.\n\nDiferenciais Ajisai para quem compra a passagem com a gente:\n\nConcierge no Aeroporto de Guarulhos — equipe especializada apoia todos os passageiros no balcão de check-in, esclarece dúvidas, resolve reserva de assento e intermedia com a companhia aérea. Tem acesso direto à gerência das companhias no aeroporto — fundamental em cancelamento, remarcação e direitos do passageiro (alimentação em atrasos acima de 3h, hospedagem acima de 8h). Nas caravanas, pode contar ainda com representante da própria Ajisai no embarque.\n\nProtocolo pré-embarque (Visit Japan Web) — um membro da equipe Ajisai preenche o VJW com os dados do passageiro, cria e cadastra a conta e envia pronta pra você, substituindo o papelado na chegada ao Japão. Inclui também uma sessão dedicada ao aéreo, com explicação do itinerário e esclarecimento de dúvidas antes do embarque.\n\nMonitoramento de viagem — central de WhatsApp com equipe emergencial Ajisai, funcionando quase 24 horas por dia, cobrindo problemas de conexão, gestão de reserva antes da viagem e imprevistos durante a viagem. Atendimento humano, com apoio de tradutor por telefone quando necessário, e prioridade para menores desacompanhados e passageiros acima de 65 anos.\n\nResponsabilidade da Agência — passagem emitida pela Ajisai tem responsabilidade solidária da agência e negociação direta com as companhias aéreas, muito além do que dá pra resolver sozinho numa reserva comprada por conta própria — mais proteção e prioridade, mesmo pelo mesmo preço.",
   },
@@ -573,6 +571,23 @@ function IconChevron({ className }: { className?: string }) {
   );
 }
 
+function IconTicket({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.75"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+    >
+      <path d="M3 8.5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v1.5a2 2 0 0 0 0 4v1.5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V14a2 2 0 0 0 0-4Z" />
+      <line x1="10" y1="6.5" x2="10" y2="17.5" strokeDasharray="2.2 2.2" />
+    </svg>
+  );
+}
+
 function IconZoom({ className }: { className?: string }) {
   return (
     <svg
@@ -749,7 +764,46 @@ export function PackageDetailModal({
             </div>
           </div>
 
-          <p className="mt-5 text-sm font-light leading-6 text-white/65">{descricao}</p>
+          {variantes.length > 1 && (
+            <div className="mt-6 rounded-2xl border border-white/10 bg-white/[0.03] p-4">
+              <p className="mb-3 text-center text-xs font-semibold uppercase tracking-[0.2em] text-white">
+                Escolha sua experiência
+              </p>
+              <div className="flex flex-wrap justify-center gap-2.5">
+                {variantes.map((v) => {
+                  const ativo = v.id === selecionada;
+                  return (
+                    <button
+                      key={v.id}
+                      type="button"
+                      onClick={() => selecionarVariante(v.id)}
+                      className={`rounded-full border px-5 py-2 text-sm font-semibold uppercase tracking-[0.08em] transition-all duration-200 ease-out hover:-translate-y-0.5 active:scale-95 ${
+                        ativo
+                          ? "border-transparent text-white shadow-[0_8px_20px_rgba(0,0,0,0.35)]"
+                          : "border-white/20 text-white/60 hover:border-white/50 hover:text-white"
+                      }`}
+                      style={ativo ? { backgroundColor: "#2f80c9" } : undefined}
+                    >
+                      {v.label}
+                    </button>
+                  );
+                })}
+              </div>
+              {variante && (
+                <div className="mt-4 text-center">
+                  <p className="text-[11px] font-medium uppercase tracking-[0.15em] text-white/45">
+                    {variante.datas}
+                  </p>
+                  <PrecoPacote
+                    variante={variante}
+                    precoClassName={`${display.className} mt-1 text-2xl font-semibold text-white`}
+                  />
+                </div>
+              )}
+            </div>
+          )}
+
+          <p className="mt-6 text-sm font-light leading-6 text-white/65">{descricao}</p>
 
           <ul className="mt-5 space-y-2.5">
             {destaques.map((item) => (
@@ -761,18 +815,6 @@ export function PackageDetailModal({
               </li>
             ))}
           </ul>
-
-          <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
-            {RECURSOS_ROTEIRO.map((r) => (
-              <div
-                key={r.label}
-                className="rounded-xl border border-white/10 bg-white/[0.03] p-3 text-center transition duration-300 hover:-translate-y-0.5 hover:border-[#6ec3d9]/40 hover:bg-white/[0.06] hover:shadow-[0_10px_24px_rgba(0,0,0,0.3)]"
-              >
-                <p className="text-lg">{r.icon}</p>
-                <p className="mt-1.5 text-[11px] font-medium leading-4 text-white/70">{r.label}</p>
-              </div>
-            ))}
-          </div>
 
           <div className="mt-8 border-t border-white/10 pt-6">
             <h3 className={`${display.className} text-lg font-medium text-white`}>Itinerário</h3>
@@ -887,16 +929,25 @@ export function PackageDetailModal({
               Tudo pensado para você
             </p>
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-              {TUDO_PENSADO.map((item) => (
-                <div
-                  key={item.title}
-                  className="rounded-xl border border-white/10 bg-white/[0.03] p-3.5 text-center"
-                >
-                  <p className="text-xl">{item.icon}</p>
-                  <p className="mt-1.5 text-xs font-medium text-white">{item.title}</p>
-                  <p className="mt-1 text-[11px] font-light leading-4 text-white/45">{item.text}</p>
-                </div>
-              ))}
+              {TUDO_PENSADO.map((item) => {
+                const isDeslocamento = item.title === "Deslocamentos";
+                const overrideCaravana = isDeslocamento && divisao === "Pacotes de Caravana";
+                const icon = overrideCaravana ? "🚌" : item.icon;
+                const title = overrideCaravana ? "Transporte Privativo" : item.title;
+                const text = overrideCaravana
+                  ? "Deslocamentos planejados em veículo exclusivo para o grupo, nos dias previstos no programa."
+                  : item.text;
+                return (
+                  <div
+                    key={item.title}
+                    className="rounded-xl border border-white/10 bg-white/[0.03] p-3.5 text-center"
+                  >
+                    <p className="text-xl">{icon}</p>
+                    <p className="mt-1.5 text-xs font-medium text-white">{title}</p>
+                    <p className="mt-1 text-[11px] font-light leading-4 text-white/45">{text}</p>
+                  </div>
+                );
+              })}
             </div>
           </div>
 
@@ -904,28 +955,50 @@ export function PackageDetailModal({
             <h3 className={`${display.className} text-lg font-medium text-white`}>
               O que está incluso
             </h3>
-            <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3">
-              {inclusoes.map((item) => (
-                <button
-                  key={item.title}
-                  type="button"
-                  onClick={() => setInclusaoAberta(item)}
-                  className="rounded-xl border border-white/10 bg-white/[0.03] p-3.5 text-left transition hover:border-white/25 hover:bg-white/[0.06]"
-                >
-                  <p className="flex items-center gap-2 text-sm font-medium text-white">
-                    {item.title}
-                    {item.opcional && (
-                      <span className="rounded-full bg-[#6ec3d9]/15 px-2 py-0.5 text-[9px] font-semibold uppercase tracking-[0.08em] text-[#6ec3d9]">
-                        Opcional
+            <div className="mt-4 grid grid-cols-1 gap-6 sm:grid-cols-2">
+              <div>
+                <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.2em] text-emerald-400">
+                  Incluso
+                </p>
+                <div className="space-y-2">
+                  {inclusoes.map((item) => (
+                    <button
+                      key={item.title}
+                      type="button"
+                      onClick={() => setInclusaoAberta(item)}
+                      className="flex w-full items-center justify-between gap-2 rounded-lg border border-white/10 bg-white/[0.03] px-3.5 py-2.5 text-left transition hover:border-white/25 hover:bg-white/[0.06]"
+                    >
+                      <span className="flex min-w-0 items-center gap-2 text-sm text-white">
+                        <IconCheck className="h-3.5 w-3.5 shrink-0 text-emerald-400" />
+                        <span className="truncate">{item.title}</span>
+                        {item.opcional && (
+                          <span className="shrink-0 rounded-full bg-[#6ec3d9]/15 px-2 py-0.5 text-[9px] font-semibold uppercase tracking-[0.08em] text-[#6ec3d9]">
+                            Opcional
+                          </span>
+                        )}
                       </span>
-                    )}
-                  </p>
-                  <p className="mt-1 text-xs font-light leading-5 text-white/50">{item.text}</p>
-                  <p className="mt-2 text-[10px] uppercase tracking-[0.15em] text-[#6ec3d9]">
-                    Saiba mais →
-                  </p>
-                </button>
-              ))}
+                      <IconChevron className="h-3.5 w-3.5 shrink-0 -rotate-90 text-white/30" />
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.2em] text-white/35">
+                  Não incluso
+                </p>
+                <div className="space-y-2">
+                  {NAO_INCLUSO.map((text) => (
+                    <div
+                      key={text}
+                      className="flex items-center gap-2 rounded-lg border border-white/10 bg-white/[0.02] px-3.5 py-2.5 text-sm text-white/45"
+                    >
+                      <IconX className="h-3 w-3 shrink-0 text-white/25" />
+                      {text}
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
 
             <div className="mt-4 rounded-xl border border-amber-400/20 bg-amber-400/[0.05] p-3.5">
@@ -1060,11 +1133,11 @@ export function PackageDetailModal({
           >
             {adicionado ? (
               <>
-                <IconCheck className="h-4 w-4" /> Adicionado ao carrinho
+                <IconCheck className="h-4 w-4" /> Reserva adicionada
               </>
             ) : (
               <>
-                <IconCart className="h-4 w-4" /> Adicionar ao carrinho
+                <IconTicket className="h-4 w-4" /> Reservar minha vaga
               </>
             )}
           </button>
