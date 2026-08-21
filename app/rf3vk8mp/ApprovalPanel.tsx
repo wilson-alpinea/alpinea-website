@@ -1,6 +1,12 @@
 "use client";
 
-import { useRef, useState, type ReactElement } from "react";
+import {
+  useRef,
+  useState,
+  type ReactElement,
+  type WheelEvent as ReactWheelEvent,
+  type PointerEvent as ReactPointerEvent,
+} from "react";
 import Image from "next/image";
 import { NaritaGuideContent } from "../components/NaritaGuideContent";
 
@@ -1038,7 +1044,7 @@ const DAY_1: DayContent = {
               nome: "Hitsumabushi Bincho",
               descricao: "Enguia · hitsumabushi",
               localizacao: "6º andar",
-              preco: "~¥6.000",
+              preco: "~6.000",
               horario: "11:00–21:00",
               foto: "/images/Hitsumabushi.png",
             },
@@ -1046,7 +1052,7 @@ const DAY_1: DayContent = {
               nome: "Kaiten Sushi Toriton",
               descricao: "Sushi de esteira · prático",
               localizacao: "6º andar",
-              preco: "~¥6.000",
+              preco: "~6.000",
               horario: "11:00–22:00",
               foto: "/images/Toriton.png",
             },
@@ -1935,7 +1941,7 @@ const DAY_4: DayContent = {
       { titulo: "Saída do Hotel", horario: "09:15", foto: "/images/icone-hotel2.png" },
       { titulo: "Akihabara Electric Town", horario: "09:45", foto: "/images/akihabara-miniatura.png" },
       { titulo: "Almoço", horario: "12:30", foto: "/images/icone-gastronomia.png" },
-      { titulo: "Passeio por Kanda", horario: "14:15", foto: "/images/kanda-miniatura.png" },
+      { titulo: "Passeio por Kanda", horario: "13:45", foto: "/images/kanda-miniatura.png" },
       { titulo: "Jantar no Izakaya", horario: "19:00", foto: "/images/dia7-izakaya-kanda-v2.png" },
       { titulo: "Vida Noturna em Roppongi", horario: "21:30", foto: "/images/roppongi-miniatura.png" },
     ],
@@ -1966,11 +1972,11 @@ const DAY_4: DayContent = {
         tag: "Refeição",
       },
       {
-        horario: "14:00",
+        horario: "13:30",
         evento: "Deslocamento até Kanda (poucos minutos, trem local)",
         tag: "Deslocamento",
       },
-      { horario: "14:15", evento: "Passeio por Kanda", tag: "Atração" },
+      { horario: "13:45", evento: "Passeio por Kanda", tag: "Atração" },
       {
         horario: "19:00",
         evento: "Jantar num izakaya autêntico em Kanda",
@@ -1996,7 +2002,7 @@ const DAY_4: DayContent = {
   },
   manha: {
     percursoEssencial: {
-      duracao: "~2h20 (≈30 min · 2,1 km a pé)",
+      duracao: "~2h20 (Akihabara Electric Town)",
       passos: [
         {
           titulo: "Akihabara Radio Kaikan",
@@ -2036,13 +2042,13 @@ const DAY_4: DayContent = {
         },
         {
           titulo: "Hareruya 2",
-          foto: "/images/placeholder-em-producao.png",
+          foto: "/images/hareruya-2.png",
           horario: "~11:35",
           descricao: "Pokémon Trading Card Game.",
         },
         {
           titulo: "Weird Vending Machine Corner",
-          foto: "/images/placeholder-em-producao.png",
+          foto: "/images/weird-vending-machine-corner.png",
           horario: "~11:50",
           descricao: "Cantinho com máquinas de venda automática bizarras e inusitadas, um clássico despretensioso de Akihabara.",
         },
@@ -2072,9 +2078,16 @@ const DAY_4: DayContent = {
         nome: "Estação Kyobashi",
         nomeJapones: "京橋駅",
         distancia: "~1 min a pé do hotel",
+        saida: "Saída 6",
+        foto: "/images/Kyobashi_Station_entrance_7_20170813.jpg",
       },
       linha: { codigo: "G10", nome: "Tokyo Metro Ginza Line", cor: "#F39700", logo: "/images/tokyometro-mark.png" },
-      estacaoDestino: { nome: "Estação Akihabara", nomeJapones: "秋葉原駅" },
+      estacaoDestino: {
+        nome: "Estação Akihabara",
+        nomeJapones: "秋葉原駅",
+        saida: "Saída Electric Town",
+        foto: "/images/akihabara-station.jpg",
+      },
       opcoes: [
         {
           meio: "Metrô",
@@ -2111,8 +2124,13 @@ const DAY_4: DayContent = {
     atracaoPrincipalImagem: "/images/dia7-akihabara.png",
     detalhesPraticos: [
       { label: "Horário das lojas", valor: "~10h–20h (maioria)" },
-      { label: "Melhor horário", valor: "Manhã, antes das aglomerações" },
-      { label: "Pagamento", valor: "Muitas lojas aceitam cartão" },
+      { label: "Pagamento", valor: "Grandes lojas aceitam cartão; leve dinheiro para as menores" },
+      {
+        label: "Melhor horário",
+        horarioDestaque: "10h–11h30",
+        valor:
+          "Logo na abertura das lojas — o movimento na região vai aumentando ao longo do dia e fica bem mais intenso à tarde/noite. Um bom horário para sair para o almoço é por volta de 12h30, antes do pico do horário de almoço local.",
+      },
     ],
     mapaVisaoGeral: {
       imagem: "/images/akihabara-tempo-de-deslocamento.png",
@@ -2126,6 +2144,7 @@ const DAY_4: DayContent = {
         description:
           "Action figures e um shopping com um pouco de tudo — logo na saída Electric Town da estação, o primeiro ponto do passeio.",
         prioridade: "opcional",
+        ordem: 1,
         imagem: "/images/day2-radiokaikan.png",
         imagemAlt: "Fachada da Akihabara Radio Kaikan",
       },
@@ -2135,6 +2154,7 @@ const DAY_4: DayContent = {
         description:
           "Loja oficial da Bandai Spirits dedicada às linhas premium de action figures e colecionáveis (Figuarts, Chogokin) — peças de alta qualidade voltadas para colecionadores.",
         prioridade: "recomendado",
+        ordem: 2,
         imagem: "/images/day2-tamashii-nations.png",
         imagemAlt: "Vitrine de action figures na Tamashii Nations Store Tokyo",
       },
@@ -2143,6 +2163,7 @@ const DAY_4: DayContent = {
         title: "Animate",
         description: "Uma das maiores redes de lojas de mangá do Japão.",
         prioridade: "recomendado",
+        ordem: 3,
         imagem: "/images/day2-animate.png",
         imagemAlt: "Fachada da loja Animate em Akihabara",
       },
@@ -2151,6 +2172,7 @@ const DAY_4: DayContent = {
         title: "Mandarake Complex",
         description: "Mangá e action figures.",
         prioridade: "recomendado",
+        ordem: 4,
         imagem: "/images/day2-mandarake-complex.png",
         imagemAlt: "Interior da Mandarake Complex em Akihabara",
       },
@@ -2160,6 +2182,7 @@ const DAY_4: DayContent = {
         description:
           "Rede tradicional de usados — mangás, DVDs/Blu-rays de anime, action figures e CDs, com preços mais em conta que as lojas de produto novo.",
         prioridade: "opcional",
+        ordem: 5,
         imagem: "/images/day2-surugaya.jpg",
         imagemAlt: "Fachada da Suruga-ya Specialty Store em Akihabara",
       },
@@ -2168,6 +2191,7 @@ const DAY_4: DayContent = {
         title: "Super Potato",
         description: "Loja retrô de videogames.",
         prioridade: "recomendado",
+        ordem: 6,
         imagem: "/images/day2-superpotato.png",
         imagemAlt: "Interior da loja retrô Super Potato em Akihabara",
       },
@@ -2176,12 +2200,18 @@ const DAY_4: DayContent = {
         title: "Hareruya 2",
         description: "Pokémon Trading Card Game.",
         prioridade: "opcional",
+        ordem: 7,
+        imagem: "/images/hareruya-2.png",
+        imagemAlt: "Fachada da Hareruya 2, loja especializada em Pokémon Trading Card Game",
       },
       {
         category: "Curiosidade",
         title: "Weird Vending Machine Corner",
         description: "Cantinho com máquinas de venda automática bizarras e inusitadas, um clássico despretensioso de Akihabara.",
         prioridade: "opcional",
+        ordem: 8,
+        imagem: "/images/weird-vending-machine-corner.png",
+        imagemAlt: "Máquinas de venda automática no Weird Vending Machine Corner de Akihabara",
       },
       {
         category: "Compras",
@@ -2189,6 +2219,7 @@ const DAY_4: DayContent = {
         description:
           "Grandes lojas de eletrônicos — Yodobashi-Akiba fica do lado leste da estação (saída Showa-dori), um bom último ponto antes de seguir para o almoço.",
         prioridade: "opcional",
+        ordem: 9,
         imagem: "/images/day2-yodobashi-akiba.png",
         imagemAlt: "Fachada da Yodobashi-Akiba",
       },
@@ -2201,18 +2232,21 @@ const DAY_4: DayContent = {
           nome: "Jotou Curry Akihabara ten",
           descricao: "Curry japonês — casa tradicional da região, com balcão no térreo e mesas no subsolo.",
           localizacao: "Sotokanda, Chiyoda-ku — ~2 min a pé da Estação Suehirocho",
+          preco: "~900–1.100",
           foto: "/images/joto-curry-akihabara.png",
         },
         {
           nome: "Tonkatsu Wakou Yodobashi Akiba ten",
           descricao: "Tonkatsu (costeleta de porco empanada) — filial da tradicional rede Wako, dentro do complexo da Yodobashi-Akiba.",
           localizacao: "Dentro do edifício Yodobashi-Akiba",
+          preco: "~1.500–2.500",
           foto: "/images/wako-tonkatsu-akihabara.png",
         },
         {
           nome: "Kyushu Jangara Ramen (Akihabara Honten)",
           descricao: "Ramen estilo Kyushu (Hakata) — a casa principal da rede, conhecida também por opções veganas.",
           localizacao: "Sotokanda, Chiyoda-ku — ~6 min a pé da Estação Akihabara",
+          preco: "~1.000–1.500",
           foto: "/images/kyushu-jangara.png",
         },
       ],
@@ -2224,18 +2258,18 @@ const DAY_4: DayContent = {
   tarde: {
     label: "Tarde",
     percursoEssencial: {
-      duracao: "~4h45 (Kanda) + noite em Roppongi (opcional)",
+      duracao: "~5h15 (Kanda) + noite em Roppongi (opcional)",
       passos: [
         {
           titulo: "Chegada em Kanda",
           foto: "/images/placeholder-em-producao.png",
-          horario: "14:15",
+          horario: "13:45",
           descricao: "Bairro tradicional vizinho a Akihabara, conhecido pelos izakayas e por uma vida noturna mais local.",
         },
         {
           titulo: "Passeio pelas ruas tradicionais",
           foto: "/images/placeholder-em-producao.png",
-          horario: "~15:00",
+          horario: "~14:15",
           descricao: "Exploração livre da região antes do jantar — roteiro detalhado em produção.",
         },
         {
@@ -3890,7 +3924,7 @@ function ResumoDiaBlock({
         <div className="flex w-max shrink-0 mx-auto">
         {resumo.passos.map((passo, i) => (
           <div key={passo.titulo + i} className="flex shrink-0 items-start">
-            <div className="group flex shrink-0 cursor-default flex-col items-center px-0.5 text-center">
+            <div className="group flex w-20 shrink-0 cursor-default flex-col items-center text-center sm:w-24">
               {passo.foto ? (
                 passo.foto.includes("/images/icone-") ? (
                   <div
@@ -3928,7 +3962,7 @@ function ResumoDiaBlock({
                   <IconClock className="h-4 w-4" />
                 </div>
               )}
-              <p className="mt-1.5 whitespace-nowrap text-[11px] font-semibold leading-tight text-white transition duration-200 group-hover:text-white/80 sm:text-xs">
+              <p className="mt-1.5 line-clamp-2 text-[11px] font-semibold leading-tight text-white transition duration-200 group-hover:text-white/80 sm:text-xs">
                 {passo.titulo}
               </p>
               {passo.horario && (
@@ -4720,6 +4754,147 @@ function DeslocamentoCard({ deslocamento }: { deslocamento: Deslocamento }) {
   );
 }
 
+// Modal de zoom real (não só "caber na tela") — usado em mapas densos
+// (plantas de estação, rotas) onde o texto é pequeno demais pra ler só
+// ajustando à largura da tela. Roda/scroll ou os botões +/- aumentam a
+// escala de verdade; arrastar (mouse ou toque) navega pela imagem ampliada.
+function ZoomableImageModal({
+  src,
+  alt,
+  caption,
+  onClose,
+}: {
+  src: string;
+  alt: string;
+  caption?: string;
+  onClose: () => void;
+}) {
+  const [scale, setScale] = useState(1);
+  const [pos, setPos] = useState({ x: 0, y: 0 });
+  const dragging = useRef<{ x: number; y: number; startPos: { x: number; y: number } } | null>(null);
+  const [isDragging, setIsDragging] = useState(false);
+
+  const MIN_SCALE = 1;
+  const MAX_SCALE = 4;
+
+  function setClampedScale(next: number) {
+    const s = Math.min(MAX_SCALE, Math.max(MIN_SCALE, next));
+    setScale(s);
+    if (s === MIN_SCALE) setPos({ x: 0, y: 0 });
+    return s;
+  }
+
+  function handleWheel(e: ReactWheelEvent) {
+    e.preventDefault();
+    setClampedScale(scale + (e.deltaY < 0 ? 0.4 : -0.4));
+  }
+
+  function handleDoubleClick() {
+    if (scale > 1) {
+      setScale(1);
+      setPos({ x: 0, y: 0 });
+    } else {
+      setClampedScale(2.5);
+    }
+  }
+
+  function handlePointerDown(e: ReactPointerEvent) {
+    if (scale <= 1) return;
+    (e.target as HTMLElement).setPointerCapture(e.pointerId);
+    dragging.current = { x: e.clientX, y: e.clientY, startPos: pos };
+    setIsDragging(true);
+  }
+  function handlePointerMove(e: ReactPointerEvent) {
+    if (!dragging.current) return;
+    const dx = e.clientX - dragging.current.x;
+    const dy = e.clientY - dragging.current.y;
+    setPos({ x: dragging.current.startPos.x + dx, y: dragging.current.startPos.y + dy });
+  }
+  function handlePointerUp() {
+    dragging.current = null;
+    setIsDragging(false);
+  }
+
+  return (
+    <div
+      className="fixed inset-0 z-[100] flex flex-col items-center justify-center gap-3 bg-black/90 p-4 backdrop-blur-sm sm:p-8"
+      onClick={onClose}
+    >
+      <button
+        type="button"
+        onClick={(e) => {
+          e.stopPropagation();
+          onClose();
+        }}
+        className="absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white transition hover:bg-white/20 sm:right-6 sm:top-6"
+        aria-label="Fechar"
+      >
+        <IconX className="h-5 w-5" />
+      </button>
+
+      <div
+        className="relative flex h-[70vh] w-full max-w-4xl items-center justify-center overflow-hidden rounded-2xl sm:h-[75vh]"
+        onClick={(e) => e.stopPropagation()}
+        onWheel={handleWheel}
+        onDoubleClick={handleDoubleClick}
+        onPointerDown={handlePointerDown}
+        onPointerMove={handlePointerMove}
+        onPointerUp={handlePointerUp}
+        onPointerLeave={handlePointerUp}
+        style={{ touchAction: scale > 1 ? "none" : "pan-y" }}
+      >
+        <img
+          src={src}
+          alt={alt}
+          draggable={false}
+          onClick={(e) => {
+            e.stopPropagation();
+            if (scale <= 1) setClampedScale(2.5);
+          }}
+          className="max-h-full max-w-full select-none rounded-2xl bg-white object-contain"
+          style={{
+            transform: `translate(${pos.x}px, ${pos.y}px) scale(${scale})`,
+            transition: isDragging ? "none" : "transform 150ms ease-out",
+            cursor: scale > 1 ? "grab" : "zoom-in",
+          }}
+        />
+      </div>
+
+      <div
+        className="flex items-center gap-3 rounded-full bg-white/10 px-3 py-2"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <button
+          type="button"
+          onClick={() => setClampedScale(scale - 0.5)}
+          disabled={scale <= MIN_SCALE}
+          className="flex h-9 w-9 items-center justify-center rounded-full bg-white/15 text-lg font-bold leading-none text-white transition hover:bg-white/25 disabled:opacity-30"
+          aria-label="Diminuir zoom"
+        >
+          −
+        </button>
+        <span className="min-w-[3.5rem] text-center text-xs font-semibold text-white/85">
+          {Math.round(scale * 100)}%
+        </span>
+        <button
+          type="button"
+          onClick={() => setClampedScale(scale + 0.5)}
+          disabled={scale >= MAX_SCALE}
+          className="flex h-9 w-9 items-center justify-center rounded-full bg-white/15 text-lg font-bold leading-none text-white transition hover:bg-white/25 disabled:opacity-30"
+          aria-label="Aumentar zoom"
+        >
+          +
+        </button>
+      </div>
+      {caption && (
+        <p className="max-w-2xl px-4 text-center text-xs font-semibold uppercase tracking-[0.15em] text-white/85">
+          {caption}
+        </p>
+      )}
+    </div>
+  );
+}
+
 function MapaAndaresBlock({
   mapaAndares,
 }: {
@@ -4783,32 +4958,12 @@ function MapaAndaresBlock({
       )}
 
       {zoom && (
-        <div
-          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/85 p-4 backdrop-blur-sm sm:p-8"
-          onClick={() => setZoom(false)}
-        >
-          <button
-            type="button"
-            onClick={() => setZoom(false)}
-            className="absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white transition hover:bg-white/20 sm:right-6 sm:top-6"
-            aria-label="Fechar"
-          >
-            <IconX className="h-5 w-5" />
-          </button>
-          <div
-            className="relative max-h-full max-w-full overflow-hidden rounded-2xl"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <img
-              src={atual.imagem}
-              alt={atual.imagemAlt}
-              className="max-h-[85vh] max-w-[95vw] rounded-2xl bg-white object-contain"
-            />
-            <p className="mt-3 text-center text-xs font-semibold uppercase tracking-[0.15em] text-white/85">
-              {atual.imagemAlt}
-            </p>
-          </div>
-        </div>
+        <ZoomableImageModal
+          src={atual.imagem}
+          alt={atual.imagemAlt}
+          caption={atual.imagemAlt}
+          onClose={() => setZoom(false)}
+        />
       )}
     </div>
   );
@@ -4846,25 +5001,11 @@ function MapaVisaoGeralBlock({
       )}
 
       {zoom && (
-        <div
-          className="fixed inset-0 z-[100] flex items-start justify-center overflow-y-auto bg-black/85 p-4 backdrop-blur-sm sm:p-8"
-          onClick={() => setZoom(false)}
-        >
-          <button
-            type="button"
-            onClick={() => setZoom(false)}
-            className="absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white transition hover:bg-white/20 sm:right-6 sm:top-6"
-            aria-label="Fechar"
-          >
-            <IconX className="h-5 w-5" />
-          </button>
-          <img
-            src={mapa.imagem}
-            alt={mapa.imagemAlt}
-            className="max-h-[90vh] max-w-[95vw] rounded-2xl object-contain"
-            onClick={(e) => e.stopPropagation()}
-          />
-        </div>
+        <ZoomableImageModal
+          src={mapa.imagem}
+          alt={mapa.imagemAlt}
+          onClose={() => setZoom(false)}
+        />
       )}
     </div>
   );
@@ -4908,15 +5049,7 @@ function VisaoAnotadaBlock({
             <p className={`${displayClassName} text-2xl font-medium text-white md:text-3xl`}>
               Raio-X Alpinea{visaoAnotada.titulo && ` — ${visaoAnotada.titulo}`}
             </p>
-            {visaoAnotada.fundo ? (
-              <div className="mx-auto my-4 h-px w-16 bg-white/40" />
-            ) : (
-              <img
-                src="/images/icone-raiox-alpinea.png"
-                alt=""
-                className="mx-auto my-4 h-16 w-16 object-contain"
-              />
-            )}
+            <div className="mx-auto my-4 h-px w-16 bg-white/40" />
             {visaoAnotada.comentarios && visaoAnotada.comentarios.length > 0 && (
               <div className="mx-auto max-w-2xl text-left">
                 <div className="space-y-3">
