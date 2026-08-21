@@ -2350,19 +2350,38 @@ const DAY_4: DayContent = {
       nota: "Mapa de trajeto a pé em produção.",
     },
     pois: [
-      { title: "Osusumeya Kanda", prioridade: "imperdivel" },
-      { title: "Yakitori Izakaya Kanda-syouten", prioridade: "imperdivel" },
-      { title: "Izakaya Genki Kanda", prioridade: "imperdivel" },
-      { title: "Robatayaki HOTARU", prioridade: "imperdivel" },
+      {
+        title: "Kanda Nishiguchi Motsuyaki Nonki",
+        description: "Motsuyaki (espetinhos de miúdos grelhados) — ~2 min a pé da saída oeste da Estação Kanda.",
+        prioridade: "recomendado",
+        imagem: "/images/nonki-kanda.png",
+        imagemAlt: "Prato de motsuyaki do Kanda Nishiguchi Motsuyaki Nonki",
+      },
+      {
+        title: "Kanda Uokin",
+        description: "Izakaya de frutos do mar, conhecida pelos pratos fartos de sashimi e peixe fresco.",
+        prioridade: "recomendado",
+        imagem: "/images/uokin.png",
+        imagemAlt: "Prato de sashimi do Kanda Uokin",
+      },
+      {
+        title: "Kanda Shoten",
+        description: "Izakaya de bairro com sashimi e boa seleção de sakês — clima local e despretensioso.",
+        prioridade: "recomendado",
+        imagem: "/images/kanda-shouten.png",
+        imagemAlt: "Prato de sashimi e sakês do Kanda Shoten",
+      },
+      {
+        category: "Cultura",
+        title: "Livrarias de Jinbocho",
+        description:
+          "Bairro vizinho a Kanda, famoso por concentrar dezenas de sebos e livrarias tradicionais — o maior distrito de livros usados do Japão.",
+        prioridade: "opcional",
+        imagem: "/images/jinbocho.png",
+        imagemAlt: "Fachada de livraria tradicional em Jinbocho",
+      },
     ],
     gastronomia: {
-      itens: [
-        { nome: "Yakitori", descricao: "Espetinhos de frango grelhados no carvão, clássico de todo izakaya." },
-        { nome: "Karaage", descricao: "Frango frito marinado em molho de soja e gengibre." },
-        { nome: "Sashimi Moriawase", descricao: "Seleção de sashimis variados do dia." },
-        { nome: "Motsu Nikomi", descricao: "Ensopado de vísceras de porco cozidas lentamente com missô ou molho de soja." },
-        { nome: "Tamagoyaki", descricao: "Omelete japonesa levemente adocicada, enrolada em camadas." },
-      ],
       restaurantesLabel: "Izakayas recomendados",
       restaurantes: [
         {
@@ -2381,11 +2400,6 @@ const DAY_4: DayContent = {
           foto: "/images/kanda-shouten.png",
         },
       ],
-      mapa: {
-        titulo: "Mapa — Izakayas em Kanda",
-        imagem: "/images/placeholder-em-producao.png",
-        imagemAlt: "Mapa dos izakayas de Kanda — em produção",
-      },
     },
     galeria: {
       titulo: "Kanda & Roppongi em Detalhes",
@@ -2427,14 +2441,6 @@ const DAY_4: DayContent = {
             prioridade: "opcional",
           },
         ],
-        gastronomia: {
-          itens: [
-            {
-              nome: "Tonkatsu",
-              descricao: "Sugestão: Butagumi Shokudou ou Imakatsu Roppongi.",
-            },
-          ],
-        },
       },
     ],
   },
