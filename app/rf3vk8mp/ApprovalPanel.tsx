@@ -161,6 +161,11 @@ type Deslocamento = {
   // número da linha, nome em japonês e em romaji). Só preenchido pra
   // trechos de trem/metrô sem baldeação confirmados.
   estacoesIntermediarias?: { nome: string; nomeJapones?: string; numero?: string }[];
+  // Marca que a opção recomendada exige baldeação (troca de linha no meio
+  // do trajeto) — troca o rótulo "sem baldeação" do cabeçalho do card por
+  // "com baldeação". Sem isso, o card assume "sem baldeação" (trajeto numa
+  // linha só) — só marque true quando houver baldeação confirmada.
+  baldeacao?: boolean;
   opcoes: OpcaoDeslocamento[];
   recomendacao?: string;
   // Mapa grande (print real) do trajeto a pé da saída da estação até a
@@ -2082,6 +2087,7 @@ const DAY_4: DayContent = {
         foto: "/images/Kyobashi_Station_entrance_7_20170813.jpg",
       },
       linha: { codigo: "G10", nome: "Tokyo Metro Ginza Line", cor: "#F39700", logo: "/images/tokyometro-mark.png" },
+      baldeacao: true,
       estacaoDestino: {
         nome: "Estação Akihabara",
         nomeJapones: "秋葉原駅",
@@ -2225,7 +2231,6 @@ const DAY_4: DayContent = {
       },
     ],
     gastronomia: {
-      itens: [{ nome: "Curry Japonês" }],
       restaurantesLabel: "Opções de refeição",
       restaurantes: [
         {
@@ -2252,7 +2257,11 @@ const DAY_4: DayContent = {
       ],
     },
     banheirosProximos: [
-      { local: "A definir", nota: "Informação de banheiros próximos a ser adicionada." },
+      {
+        local: "Estação Akihabara (JR / Tokyo Metro)",
+        endereco: "Dentro da própria estação, perto das catracas",
+        nota: "Disponível nos dois lados da estação (saída Electric Town e saída Showa-dori) — a opção mais prática enquanto estiver circulando pela região.",
+      },
     ],
   },
   tarde: {
@@ -2282,16 +2291,31 @@ const DAY_4: DayContent = {
     },
     visaoAnotada: {
       titulo: "Izakayas em Kanda",
-      imagem: "/images/placeholder-em-producao.png",
-      imagemAlt: "Infográfico anotado dos izakayas de Kanda — em produção",
+      imagem: "/images/visaogeral-kanda.png",
+      imagemAlt: "Localização dos izakayas recomendados nas proximidades da Estação Kanda",
       comentarios: [
-        "Infográfico anotado desta área ainda em produção — em breve mostraremos aqui a localização de cada izakaya recomendado.",
+        "A passagem por Kanda é propositalmente mais tranquila — um respiro depois do ritmo intenso de Akihabara. Separamos 3 opções de izakaya que normalmente recebem bem estrangeiros, todas a poucos minutos da estação.",
+        "Kanda não é um bairro turístico — a ideia aqui é te aproximar de como os trabalhadores da região se encontram no fim do dia, nos izakayas ao redor da estação de metrô. Vale visitar mais de um se quiser, e depois voltar ao hotel para descansar até a hora de seguir para a balada em Roppongi.",
       ],
       pontos: [
-        { titulo: "Osusumeya Kanda", descricao: "Detalhes em produção.", foto: "/images/placeholder-em-producao.png", ordem: 1 },
-        { titulo: "Yakitori Izakaya Kanda-syouten", descricao: "Detalhes em produção.", foto: "/images/placeholder-em-producao.png", ordem: 2 },
-        { titulo: "Izakaya Genki Kanda", descricao: "Detalhes em produção.", foto: "/images/placeholder-em-producao.png", ordem: 3 },
-        { titulo: "Robatayaki HOTARU", descricao: "Detalhes em produção.", foto: "/images/placeholder-em-producao.png", ordem: 4 },
+        {
+          titulo: "Kanda Nishiguchi Motsuyaki Nonki",
+          descricao: "Motsuyaki (espetinhos de miúdos grelhados) — ~2 min a pé da saída oeste da Estação Kanda.",
+          foto: "/images/nonki-kanda.png",
+          ordem: 1,
+        },
+        {
+          titulo: "Kanda Uokin",
+          descricao: "Izakaya de frutos do mar, conhecida pelos pratos fartos de sashimi e peixe fresco.",
+          foto: "/images/uokin.png",
+          ordem: 2,
+        },
+        {
+          titulo: "Kanda Shoten",
+          descricao: "Izakaya de bairro com sashimi e boa seleção de sakês — clima local e despretensioso.",
+          foto: "/images/kanda-shouten.png",
+          ordem: 3,
+        },
       ],
     },
     regiao: {
@@ -2299,20 +2323,15 @@ const DAY_4: DayContent = {
       descricao:
         "Bairro tradicional de Chiyoda, vizinho a Akihabara — conhecido pelos izakayas e por uma vida noturna mais local, longe do circuito turístico.",
     },
-    decisoes: [
-      {
-        titulo: "Qual izakaya escolher?",
-        resposta: "Todas as opções listadas são recomendadas — a escolha final depende de disponibilidade e reserva no dia.",
-      },
-      {
-        titulo: "Se não conseguir reserva",
-        resposta: "Kanda tem diversos izakayas tradicionais nas redondezas além dos listados — vale caminhar pela região em busca de vaga.",
-      },
-    ],
     deslocamento: {
       estacaoOrigem: { nome: "Estação Akihabara", nomeJapones: "秋葉原駅" },
       linha: { codigo: "JY", nome: "JR Yamanote / Keihin-Tohoku Line", cor: "#8FAADC", logo: "/images/jr-logo.webp" },
-      estacaoDestino: { nome: "Estação Kanda", nomeJapones: "神田駅" },
+      estacaoDestino: {
+        nome: "Estação Kanda",
+        nomeJapones: "神田駅",
+        mapa: "/images/kanda-station-map.png",
+        mapaAlt: "Mapa da Estação Kanda (1F e 2F)",
+      },
       opcoes: [
         {
           meio: "Trem JR",
@@ -2341,13 +2360,12 @@ const DAY_4: DayContent = {
     atracaoPrincipalImagem: "/images/dia7-izakaya-kanda-v2.png",
     detalhesPraticos: [
       { label: "Melhor horário", valor: "A partir das 18h" },
-      { label: "Reserva", valor: "Recomendada nos fins de semana" },
       { label: "Preço médio", valor: "~¥4.000–6.000 por pessoa" },
     ],
     mapaVisaoGeral: {
-      imagem: "/images/placeholder-em-producao.png",
-      imagemAlt: "Visão geral do trajeto a pé em Kanda — em produção",
-      nota: "Mapa de trajeto a pé em produção.",
+      imagem: "/images/visaogeral-kanda.png",
+      imagemAlt: "Visão geral da região da Estação Kanda com os izakayas recomendados",
+      nota: "Localização dos izakayas recomendados nas proximidades da Estação Kanda.",
     },
     pois: [
       {
@@ -2408,7 +2426,11 @@ const DAY_4: DayContent = {
       ],
     },
     banheirosProximos: [
-      { local: "A definir", nota: "Informação de banheiros próximos a ser adicionada." },
+      {
+        local: "Estação Kanda (JR)",
+        endereco: "Dentro da própria estação, perto das catracas",
+        nota: "A opção mais prática nas imediações — a maioria dos izakayas da região é pequena e pode não ter banheiro para clientes.",
+      },
     ],
     subAtracoes: [
       {
@@ -3434,9 +3456,7 @@ const DAY_7: DayContent = {
     deslocamento: {
       estacaoOrigem: { nome: "Estação Ningyocho", nomeJapones: "人形町駅" },
       linha: { codigo: "A14", nome: "Toei Asakusa Line", cor: "#D04E3C", logo: "/images/toei-mark.png" },
-      estacoesIntermediarias: [
-        { nome: "Higashi-Nihombashi", nomeJapones: "東日本橋", numero: "A15" },
-      ],
+      baldeacao: true,
       estacaoDestino: { nome: "Estação Ryogoku", nomeJapones: "両国駅" },
       opcoes: [
         {
@@ -3660,7 +3680,7 @@ function PriorityBadge({ prioridade }: { prioridade: NonNullable<Poi["prioridade
       ? "border-[#B96432] bg-[#B96432] text-white"
       : prioridade === "recomendado"
         ? "border-[#B96432]/40 bg-[#B96432]/10 text-[#B96432]"
-        : "border-[#24211D]/20 bg-transparent text-[#24211D]/50";
+        : "border-[#D04E3C]/40 bg-[#D04E3C]/10 text-[#D04E3C]";
   return (
     <span
       className={`rounded-full border px-2 py-0.5 text-[9px] font-bold uppercase tracking-[0.15em] ${style}`}
@@ -3743,11 +3763,6 @@ function PoiCard({ index, poi }: { index: number; poi: Poi }) {
           {poi.bairro && (
             <span className={`rounded-full border px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide ${s.badge}`}>
               {poi.bairro}
-            </span>
-          )}
-          {poi.category && (
-            <span className="rounded-full border border-[#B69463] bg-[#F7F2E9] px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-[#7B6038]">
-              {poi.category}
             </span>
           )}
           <span className={`text-sm font-semibold ${s.text}`}>
@@ -4431,7 +4446,7 @@ function DeslocamentoCard({ deslocamento }: { deslocamento: Deslocamento }) {
           return <Icon className="h-9 w-9 shrink-0 sm:h-10 sm:w-10" />;
         })()}
         {deslocamento.linha.logo && `${deslocamento.linha.codigo} · `}
-        {deslocamento.linha.nome} · sem baldeação
+        {deslocamento.linha.nome} · {deslocamento.baldeacao ? "com baldeação" : "sem baldeação"}
       </p>
       {/* Grid (não flex) pra origem/destino: cada lado é dividido em duas
           linhas de grid — "info" (foto/nome/distância/mapa) e "saída"
@@ -5055,7 +5070,7 @@ function VisaoAnotadaBlock({
             <p className={`${displayClassName} text-2xl font-medium text-white md:text-3xl`}>
               Raio-X Alpinea{visaoAnotada.titulo && ` — ${visaoAnotada.titulo}`}
             </p>
-            <div className="mx-auto my-4 h-px w-16 bg-white/40" />
+            <div className="mx-auto my-4 h-px w-24 bg-white/40" />
             {visaoAnotada.comentarios && visaoAnotada.comentarios.length > 0 && (
               <div className="mx-auto max-w-2xl text-left">
                 <div className="space-y-3">
