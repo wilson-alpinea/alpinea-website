@@ -1077,6 +1077,16 @@ const DAY_2: DayContent = {
     "À tarde visitamos os Jardins do Leste do Palácio Imperial (Imperial Palace East Gardens), de entrada gratuita e a poucos minutos a pé da Tokyo Station.",
     "Como é nosso último dia, seguimos direto para o aeroporto depois dos jardins — sem mais compromissos.",
   ],
+  resumoDia: {
+    passos: [
+      { titulo: "Café da Manhã", horario: "08:30", foto: "/images/icone-gastronomia.png" },
+      { titulo: "Saída do Hotel", horario: "09:15", foto: "/images/icone-hotel2.png" },
+      { titulo: "Tokyo Character Street e Dragonball Store", horario: "09:30", foto: "/images/dia2-tokyostation.png" },
+      { titulo: "Almoço", horario: "12:00", foto: "/images/icone-gastronomia.png" },
+      { titulo: "Imperial Palace East Gardens", horario: "13:15", foto: "/images/imperial-palace-east-gardens.png" },
+      { titulo: "Deslocamento ao Aeroporto", horario: "16:30", foto: "/images/placeholder-em-producao.png" },
+    ],
+  },
   gradeHorarios: {
     titulo: "Mapa por Horário",
     itens: [
@@ -1124,7 +1134,86 @@ const DAY_2: DayContent = {
     mensagem:
       "O voo de volta decola às 00:05 (já dia 12) pelo Aeroporto de Haneda (HND). Após os Jardins do Palácio Imperial, retorne ao hotel, busque a bagagem e siga com folga para o aeroporto, com tempo para o check-in internacional.",
   },
+  diaEmNumeros: {
+    atracoes: "2 atrações principais",
+    caminhada: "A definir",
+    transporte: "A pé (sem trem)",
+    linhasMetro: "Nenhuma — trajetos a pé",
+    ritmo: "Leve",
+    saida: "09:15",
+    retorno: "Segue direto para o aeroporto (16:30)",
+  },
   manha: {
+    percursoEssencial: {
+      duracao: "~2h (Tokyo Character Street e Marunouchi)",
+      passos: [
+        {
+          titulo: "Dragonball Store",
+          foto: "/images/dia2-tokyostation.png",
+          horario: "09:30",
+          descricao: "Dentro do complexo da estação (Tokyo Station First Avenue), na Tokyo Character Street.",
+        },
+        {
+          titulo: "Jump Shop",
+          foto: "/images/placeholder-em-producao.png",
+          horario: "~09:50",
+          descricao: "Loja oficial da Shueisha, na mesma Tokyo Character Street.",
+        },
+        {
+          titulo: "Pokémon Store",
+          foto: "/images/placeholder-em-producao.png",
+          horario: "~10:05",
+          descricao: "Loja oficial de Pokémon.",
+        },
+        {
+          titulo: "Kirby Café",
+          foto: "/images/placeholder-em-producao.png",
+          horario: "~10:20",
+          descricao: "Café temático de Kirby.",
+        },
+        {
+          titulo: "Ghibli Shop",
+          foto: "/images/placeholder-em-producao.png",
+          horario: "~10:35",
+          descricao: "Loja oficial do Studio Ghibli.",
+        },
+        {
+          titulo: "Tomica Shop",
+          foto: "/images/placeholder-em-producao.png",
+          horario: "~10:50",
+          descricao: "Loja de miniaturas Tomica.",
+        },
+        {
+          titulo: "Rilakkuma Store",
+          foto: "/images/placeholder-em-producao.png",
+          horario: "~11:05",
+          descricao: "Loja oficial de Rilakkuma.",
+        },
+        {
+          titulo: "Marunouchi Naka-dori",
+          foto: "/images/placeholder-em-producao.png",
+          horario: "11:30",
+          descricao: "Rua arborizada com cafés e restaurantes que alimentam os escritórios financeiros da região.",
+        },
+      ],
+    },
+    visaoAnotada: {
+      titulo: "Tokyo Character Street",
+      imagem: "/images/placeholder-em-producao.png",
+      imagemAlt: "Infográfico anotado da Tokyo Character Street — em produção",
+      comentarios: [
+        "Infográfico anotado desta área ainda em produção — em breve mostraremos aqui o mapa completo da Tokyo Character Street.",
+      ],
+      pontos: [
+        { titulo: "Dragonball Store", descricao: "Loja oficial de Dragon Ball.", foto: "/images/dia2-tokyostation.png", ordem: 1 },
+        { titulo: "Jump Shop", descricao: "Loja oficial da Shueisha.", foto: "/images/placeholder-em-producao.png", ordem: 2 },
+        { titulo: "Pokémon Store", descricao: "Loja oficial de Pokémon.", foto: "/images/placeholder-em-producao.png", ordem: 3 },
+        { titulo: "Kirby Café", descricao: "Café temático de Kirby.", foto: "/images/placeholder-em-producao.png", ordem: 4 },
+        { titulo: "Ghibli Shop", descricao: "Loja oficial do Studio Ghibli.", foto: "/images/placeholder-em-producao.png", ordem: 5 },
+        { titulo: "Tomica Shop", descricao: "Loja de miniaturas Tomica.", foto: "/images/placeholder-em-producao.png", ordem: 6 },
+        { titulo: "Rilakkuma Store", descricao: "Loja oficial de Rilakkuma.", foto: "/images/placeholder-em-producao.png", ordem: 7 },
+      ],
+    },
     regiao: {
       nome: "Marunouchi",
       descricao:
@@ -1168,6 +1257,11 @@ const DAY_2: DayContent = {
       { label: "Melhor horário", valor: "Manhã, antes das aglomerações" },
       { label: "Pagamento", valor: "Cartão aceito na maioria das lojas" },
     ],
+    mapaVisaoGeral: {
+      imagem: "/images/placeholder-em-producao.png",
+      imagemAlt: "Visão geral do trajeto a pé em Marunouchi — em produção",
+      nota: "Mapa de trajeto a pé em produção.",
+    },
     pois: [
       {
         category: "Compras",
@@ -1200,9 +1294,75 @@ const DAY_2: DayContent = {
             "Melão que só existe no Japão — mais suculento que o nosso, e esverdeado em vez de amarelo.",
         },
       ],
+      restaurantesLabel: "Opções de refeição",
+      restaurantes: [
+        {
+          nome: "A definir",
+          descricao: "Sugestões de restaurante para o almoço leve em Marunouchi em produção.",
+          foto: "/images/placeholder-em-producao.png",
+        },
+      ],
+      mapa: {
+        titulo: "Mapa — Refeições em Marunouchi",
+        imagem: "/images/placeholder-em-producao.png",
+        imagemAlt: "Mapa de restaurantes em Marunouchi — em produção",
+      },
     },
+    banheirosProximos: [
+      { local: "A definir", nota: "Informação de banheiros próximos a ser adicionada." },
+    ],
   },
   tarde: {
+    percursoEssencial: {
+      duracao: "~2h15 (Imperial Palace East Gardens)",
+      passos: [
+        {
+          titulo: "Otemon Gate",
+          foto: "/images/placeholder-em-producao.png",
+          horario: "13:15",
+          descricao: "Antigo portão principal do Castelo de Edo — hoje a entrada principal dos jardins.",
+        },
+        {
+          titulo: "Bansho (Casas de Guarda)",
+          foto: "/images/placeholder-em-producao.png",
+          horario: "~13:45",
+          descricao: "Uma das três casas de guarda samurai que sobrevivem do Castelo de Edo.",
+        },
+        {
+          titulo: "Muralhas e Fossos Originais",
+          foto: "/images/placeholder-em-producao.png",
+          horario: "~14:15",
+          descricao: "Trechos originais das muralhas de pedra e fossos que protegiam o Castelo de Edo.",
+        },
+        {
+          titulo: "Fujimi-yagura",
+          foto: "/images/placeholder-em-producao.png",
+          horario: "~14:45",
+          descricao: "Torre de vigia construída em 1659 — uma das construções mais fotogênicas do local.",
+        },
+        {
+          titulo: "Tenshudai",
+          foto: "/images/placeholder-em-producao.png",
+          horario: "15:15",
+          descricao: "Enorme base de pedra onde ficava a torre principal do Castelo de Edo.",
+        },
+      ],
+    },
+    visaoAnotada: {
+      titulo: "Imperial Palace East Gardens",
+      imagem: "/images/placeholder-em-producao.png",
+      imagemAlt: "Infográfico anotado dos Jardins do Palácio Imperial — em produção",
+      comentarios: [
+        "Infográfico anotado desta área ainda em produção — em breve mostraremos aqui os pontos-chave dos jardins com fotos reais.",
+      ],
+      pontos: [
+        { titulo: "Otemon Gate", descricao: "Antigo portão principal do Castelo de Edo.", foto: "/images/placeholder-em-producao.png", ordem: 1 },
+        { titulo: "Bansho (Casas de Guarda)", descricao: "Uma das três casas de guarda samurai remanescentes.", foto: "/images/placeholder-em-producao.png", ordem: 2 },
+        { titulo: "Muralhas e Fossos Originais", descricao: "Trechos originais das muralhas de pedra e fossos.", foto: "/images/placeholder-em-producao.png", ordem: 3 },
+        { titulo: "Fujimi-yagura", descricao: "Torre de vigia construída em 1659.", foto: "/images/placeholder-em-producao.png", ordem: 4 },
+        { titulo: "Tenshudai", descricao: "Base de pedra onde ficava a torre principal do castelo.", foto: "/images/placeholder-em-producao.png", ordem: 5 },
+      ],
+    },
     regiao: {
       nome: "Chiyoda",
       descricao:
@@ -1245,6 +1405,17 @@ const DAY_2: DayContent = {
       { label: "Fechado", valor: "Segundas e sextas-feiras" },
       { label: "Melhor horário", valor: "Logo na abertura, às 9h" },
     ],
+    mapaVisaoGeral: {
+      imagem: "/images/placeholder-em-producao.png",
+      imagemAlt: "Visão geral do trajeto a pé nos Jardins do Palácio Imperial — em produção",
+      nota: "Mapa de trajeto a pé em produção.",
+    },
+    decisoes: [
+      {
+        titulo: "E se os jardins estiverem fechados?",
+        resposta: "Os jardins fecham às segundas e sextas-feiras — como esse é o último dia do roteiro (10/05, sábado), não há conflito, mas vale confirmar o calendário oficial antes da viagem.",
+      },
+    ],
     pois: [
       {
         title: "Otemon Gate",
@@ -1277,6 +1448,15 @@ const DAY_2: DayContent = {
         prioridade: "recomendado",
       },
     ],
+    galeria: {
+      titulo: "Imperial Palace East Gardens em Detalhes",
+      imagens: [
+        { src: "/images/placeholder-em-producao.png", alt: "Galeria dos Jardins do Palácio Imperial — em produção", legenda: "Em produção" },
+      ],
+    },
+    banheirosProximos: [
+      { local: "A definir", nota: "Informação de banheiros próximos a ser adicionada." },
+    ],
   },
 };
 
@@ -1289,6 +1469,18 @@ const DAY_3: DayContent = {
     "O superdistrito de Shibuya é um dos bairros mais famosos, principalmente pela Shibuya Crossing e pela impressionante floresta erguida do zero que tem no centro o maior templo Shintoísta do mundo. Nessa região encontraremos Harajuku, o epicentro da cultura Lolita, Kawaii e Jovem do Japão, bem como a luxuosa avenida de Omotesando.",
     "À tarde seguimos para Shinjuku, bairro que mistura o Japão corporativo com o mais boêmio — do mirante gratuito do Prédio do Governo Metropolitano ao caos neon de Kabukicho, passando pelas vielas de Golden Gai. Relaxamos no onsen urbano Thermae-Yu antes de seguir para a estação e pegar o trem noturno rumo a Kyoto.",
   ],
+  resumoDia: {
+    passos: [
+      { titulo: "Café da Manhã", horario: "08:30", foto: "/images/icone-gastronomia.png" },
+      { titulo: "Saída do Hotel", horario: "09:15", foto: "/images/icone-hotel2.png" },
+      { titulo: "Meiji Jingu e Parque de Yoyogi", horario: "10:00", foto: "/images/dia3-meijijingu.png" },
+      { titulo: "Shibuya Crossing", horario: "12:00", foto: "/images/placeholder-em-producao.png" },
+      { titulo: "Almoço", horario: "13:00", foto: "/images/icone-gastronomia.png" },
+      { titulo: "Shinjuku — Mirante e Kabukicho", horario: "14:45", foto: "/images/draft-shinjuku.png" },
+      { titulo: "Bares em Golden Gai", horario: "19:00", foto: "/images/placeholder-em-producao.png" },
+      { titulo: "Onsen Thermae-Yu", horario: "21:00", foto: "/images/thermae-yu.png" },
+    ],
+  },
   gradeHorarios: {
     titulo: "Mapa por Horário",
     itens: [
@@ -1339,7 +1531,65 @@ const DAY_3: DayContent = {
     ],
     nota: "Horários estimados considerando saída do lyf Ginza Tokyo (Kyobashi) — ajuste conforme seu ritmo.",
   },
+  diaEmNumeros: {
+    atracoes: "3 atrações principais",
+    caminhada: "A definir",
+    transporte: "~23 min de trem no total",
+    linhasMetro: "2 linhas, sem baldeações",
+    ritmo: "Intenso",
+    saida: "09:15",
+    retorno: "Segue para o trem noturno (~23:00)",
+  },
   manha: {
+    percursoEssencial: {
+      duracao: "~2h (Meiji Jingu, Yoyogi, Omotesando e Shibuya)",
+      passos: [
+        {
+          titulo: "Meiji Jingu",
+          foto: "/images/dia3-meijijingu.png",
+          horario: "10:00",
+          descricao: "O maior santuário xintoísta de Tóquio, cercado pela floresta erguida do zero em homenagem ao Imperador Meiji.",
+        },
+        {
+          titulo: "Parque de Yoyogi",
+          foto: "/images/placeholder-em-producao.png",
+          horario: "~10:20",
+          descricao: "Você precisa entrar nele para acessar o Meiji Jingu — uma enorme floresta com árvores extremamente altas.",
+        },
+        {
+          titulo: "Omotesando",
+          foto: "/images/placeholder-em-producao.png",
+          horario: "~11:00",
+          descricao: "Uma das maiores avenidas de boutiques e lojas de luxo de Tóquio — liga a saída do parque a Shibuya.",
+        },
+        {
+          titulo: "Estátua de Hachiko",
+          foto: "/images/placeholder-em-producao.png",
+          horario: "~11:45",
+          descricao: "Estátua em homenagem ao cão que continuou esperando seu dono voltar para casa — bem na saída da Estação Shibuya.",
+        },
+        {
+          titulo: "Shibuya Crossing",
+          foto: "/images/placeholder-em-producao.png",
+          horario: "12:00",
+          descricao: "O famoso cruzamento hexagonal de Shibuya, ao lado da estátua de Hachiko.",
+        },
+      ],
+    },
+    visaoAnotada: {
+      titulo: "Meiji Jingu & Yoyogi",
+      imagem: "/images/placeholder-em-producao.png",
+      imagemAlt: "Infográfico anotado de Meiji Jingu e Yoyogi — em produção",
+      comentarios: [
+        "Infográfico anotado desta área ainda em produção — em breve mostraremos aqui os pontos-chave do superdistrito de Shibuya com fotos reais.",
+      ],
+      pontos: [
+        { titulo: "Parque de Yoyogi", descricao: "Enorme floresta erguida do zero em homenagem à morte do imperador Meiji.", foto: "/images/placeholder-em-producao.png", ordem: 1 },
+        { titulo: "Omotesando", descricao: "Uma das maiores avenidas de boutiques e lojas de luxo de Tóquio.", foto: "/images/placeholder-em-producao.png", ordem: 2 },
+        { titulo: "Estátua de Hachiko", descricao: "Homenagem ao cão que deu origem ao filme \"Pra Sempre ao Seu Lado\".", foto: "/images/placeholder-em-producao.png", ordem: 3 },
+        { titulo: "Shibuya Crossing", descricao: "O famoso cruzamento hexagonal de Shibuya.", foto: "/images/placeholder-em-producao.png", ordem: 4 },
+      ],
+    },
     regiao: {
       nome: "Superdistrito de Shibuya",
       descricao:
@@ -1394,6 +1644,17 @@ const DAY_3: DayContent = {
       { label: "Horário", valor: "Nascer ao pôr do sol (~5h–18h em maio)" },
       { label: "Melhor horário", valor: "Logo na abertura, antes dos grupos de turismo" },
     ],
+    mapaVisaoGeral: {
+      imagem: "/images/placeholder-em-producao.png",
+      imagemAlt: "Visão geral do trajeto a pé em Shibuya/Yoyogi — em produção",
+      nota: "Mapa de trajeto a pé em produção.",
+    },
+    decisoes: [
+      {
+        titulo: "Vale entrar no Jardim Interior do Meiji Jingu?",
+        resposta: "O terreno principal do santuário já é gratuito e é a experiência essencial — o Jardim Interior (¥500) é uma extensão menor, opcional para quem tiver tempo de sobra.",
+      },
+    ],
     pois: [
       {
         title: "Parque de Yoyogi",
@@ -1428,10 +1689,83 @@ const DAY_3: DayContent = {
           descricao: "Sushi de esteira, considerado por muitos o melhor de Tóquio.",
         },
       ],
+      restaurantesLabel: "Opções de refeição",
+      restaurantes: [
+        {
+          nome: "Kaitenzushi Ginza Onodera",
+          descricao: "Sushi de esteira, considerado por muitos o melhor de Tóquio.",
+          foto: "/images/placeholder-em-producao.png",
+        },
+      ],
+      mapa: {
+        titulo: "Mapa — Refeições em Shibuya",
+        imagem: "/images/placeholder-em-producao.png",
+        imagemAlt: "Mapa de restaurantes em Shibuya — em produção",
+      },
     },
+    banheirosProximos: [
+      { local: "A definir", nota: "Informação de banheiros próximos a ser adicionada." },
+    ],
   },
   tarde: {
     label: "Tarde",
+    percursoEssencial: {
+      duracao: "~4h15 (Shinjuku e Kabukicho)",
+      passos: [
+        {
+          titulo: "Shinjuku Gyoen",
+          foto: "/images/placeholder-em-producao.png",
+          horario: "14:45",
+          descricao: "Um dos parques mais bonitos de Tóquio, misturando jardins japonês, francês e inglês.",
+        },
+        {
+          titulo: "Prédio do Governo Metropolitano + Mirante",
+          foto: "/images/placeholder-em-producao.png",
+          horario: "~16:30",
+          descricao: "Mirante gratuito no 45º andar com vista panorâmica da cidade — ideal perto do pôr do sol.",
+        },
+        {
+          titulo: "Gato 3D Gigante",
+          foto: "/images/placeholder-em-producao.png",
+          horario: "~17:15",
+          descricao: "Gato tridimensional gigante exibido em telão curvo no edifício Cross Shinjuku Vision.",
+        },
+        {
+          titulo: "Estátua do Godzilla",
+          foto: "/images/placeholder-em-producao.png",
+          horario: "~17:30",
+          descricao: "Réplica em tamanho real na varanda do Hotel Gracery, pertinho do Gato 3D.",
+        },
+        {
+          titulo: "Kabukicho",
+          foto: "/images/placeholder-em-producao.png",
+          horario: "~18:00",
+          descricao: "Maior distrito de entretenimento noturno de Tóquio, com neons e vida noturna intensa.",
+        },
+        {
+          titulo: "Golden Gai",
+          foto: "/images/placeholder-em-producao.png",
+          horario: "19:00",
+          descricao: "Rede de vielas estreitas com mais de 200 bares minúsculos, encostado em Kabukicho.",
+        },
+      ],
+    },
+    visaoAnotada: {
+      titulo: "Shinjuku — Mirante & Kabukicho",
+      imagem: "/images/placeholder-em-producao.png",
+      imagemAlt: "Infográfico anotado de Shinjuku — em produção",
+      comentarios: [
+        "Infográfico anotado desta área ainda em produção — em breve mostraremos aqui os pontos-chave de Shinjuku com fotos reais.",
+      ],
+      pontos: [
+        { titulo: "Shinjuku Gyoen", descricao: "Um dos parques mais bonitos de Tóquio.", foto: "/images/placeholder-em-producao.png", ordem: 1 },
+        { titulo: "Prédio do Governo Metropolitano + Mirante", descricao: "Mirante gratuito com vista panorâmica da cidade.", foto: "/images/placeholder-em-producao.png", ordem: 2 },
+        { titulo: "Gato 3D Gigante", descricao: "Uma das atrações mais fotografadas do bairro.", foto: "/images/placeholder-em-producao.png", ordem: 3 },
+        { titulo: "Estátua do Godzilla", descricao: "Símbolo do distrito de entretenimento de Kabukicho.", foto: "/images/placeholder-em-producao.png", ordem: 4 },
+        { titulo: "Kabukicho", descricao: "Maior distrito de entretenimento noturno de Tóquio.", foto: "/images/placeholder-em-producao.png", ordem: 5 },
+        { titulo: "Golden Gai", descricao: "Rede de vielas estreitas com mais de 200 bares minúsculos.", foto: "/images/placeholder-em-producao.png", ordem: 6 },
+      ],
+    },
     regiao: {
       nome: "Shinjuku",
       descricao:
@@ -1478,6 +1812,17 @@ const DAY_3: DayContent = {
       { label: "Melhor horário", valor: "A partir das 17h–18h, quando os letreiros de neon acendem" },
     ],
     atracaoPrincipalFoco: "center",
+    mapaVisaoGeral: {
+      imagem: "/images/placeholder-em-producao.png",
+      imagemAlt: "Visão geral do trajeto a pé em Shinjuku — em produção",
+      nota: "Mapa de trajeto a pé em produção.",
+    },
+    decisoes: [
+      {
+        titulo: "Vale subir no mirante do Governo Metropolitano?",
+        resposta: "A entrada é gratuita e a vista é comparável à de mirantes pagos como o da Tokyo Sky Tree — recomendado, especialmente perto do pôr do sol.",
+      },
+    ],
     pois: [
       {
         title: "Shinjuku Gyoen",
@@ -1524,7 +1869,29 @@ const DAY_3: DayContent = {
             "Cada bar tem uma curadoria própria de temática e trilha sonora — vale entrar em mais de um.",
         },
       ],
+      restaurantesLabel: "Opções na região",
+      restaurantes: [
+        {
+          nome: "A definir",
+          descricao: "Sugestões de restaurante em Shinjuku em produção.",
+          foto: "/images/placeholder-em-producao.png",
+        },
+      ],
+      mapa: {
+        titulo: "Mapa — Refeições em Shinjuku",
+        imagem: "/images/placeholder-em-producao.png",
+        imagemAlt: "Mapa de restaurantes em Shinjuku — em produção",
+      },
     },
+    galeria: {
+      titulo: "Shinjuku em Detalhes",
+      imagens: [
+        { src: "/images/placeholder-em-producao.png", alt: "Galeria de Shinjuku — em produção", legenda: "Em produção" },
+      ],
+    },
+    banheirosProximos: [
+      { local: "A definir", nota: "Informação de banheiros próximos a ser adicionada." },
+    ],
     subAtracoes: [
       {
         label: "Tarde",
@@ -1554,6 +1921,17 @@ const DAY_4: DayContent = {
     "À tarde seguimos para Kanda, bairro vizinho conhecido pelos izakayas e por uma vida noturna mais local, longe do circuito turístico, para jantar num izakaya autêntico.",
     "À noite fechamos o dia em Roppongi, um dos principais polos de vida noturna de Tóquio, com baladas e bares badalados.",
   ],
+  resumoDia: {
+    passos: [
+      { titulo: "Café da Manhã", horario: "08:30", foto: "/images/icone-gastronomia.png" },
+      { titulo: "Saída do Hotel", horario: "09:15", foto: "/images/icone-hotel2.png" },
+      { titulo: "Akihabara Electric Town", horario: "09:45", foto: "/images/dia7-akihabara.png" },
+      { titulo: "Almoço", horario: "12:30", foto: "/images/icone-gastronomia.png" },
+      { titulo: "Passeio por Kanda", horario: "14:15", foto: "/images/placeholder-em-producao.png" },
+      { titulo: "Jantar no Izakaya", horario: "19:00", foto: "/images/dia7-izakaya-kanda-v2.png" },
+      { titulo: "Vida Noturna em Roppongi", horario: "21:30", foto: "/images/dia4-roppongi.png" },
+    ],
+  },
   gradeHorarios: {
     titulo: "Mapa por Horário",
     itens: [
@@ -1599,7 +1977,87 @@ const DAY_4: DayContent = {
     ],
     nota: "Horários estimados considerando saída do lyf Ginza Tokyo (Kyobashi) — ajuste conforme seu ritmo.",
   },
+  diaEmNumeros: {
+    atracoes: "3 atrações principais",
+    caminhada: "A definir",
+    transporte: "~13 min de trem no total",
+    linhasMetro: "3 linhas, 1 baldeação",
+    ritmo: "Moderado",
+    saida: "09:15",
+    retorno: "A definir",
+  },
   manha: {
+    percursoEssencial: {
+      duracao: "~2h45",
+      passos: [
+        {
+          titulo: "Akihabara Radio Kaikan",
+          foto: "/images/placeholder-em-producao.png",
+          horario: "09:45",
+          descricao: "Action figures e um shopping com um pouco de tudo — logo na saída Electric Town da estação, o primeiro ponto do passeio.",
+        },
+        {
+          titulo: "Animate",
+          foto: "/images/placeholder-em-producao.png",
+          horario: "~10:05",
+          descricao: "Uma das maiores redes de lojas de mangá do Japão.",
+        },
+        {
+          titulo: "Mandarake Complex",
+          foto: "/images/placeholder-em-producao.png",
+          horario: "~10:25",
+          descricao: "Mangá e action figures.",
+        },
+        {
+          titulo: "Super Potato",
+          foto: "/images/placeholder-em-producao.png",
+          horario: "~10:45",
+          descricao: "Loja retrô de videogames — nas proximidades também fica a Suruga-ya Anime & Hobby Store, com videogames e itens de anime.",
+        },
+        {
+          titulo: "Hareruya 2",
+          foto: "/images/placeholder-em-producao.png",
+          horario: "~11:05",
+          descricao: "Pokémon Trading Card Game.",
+        },
+        {
+          titulo: "Ark",
+          foto: "/images/placeholder-em-producao.png",
+          horario: "~11:25",
+          descricao: "Peças de computador.",
+        },
+        {
+          titulo: "Weird Vending Machine Corner",
+          foto: "/images/placeholder-em-producao.png",
+          horario: "~11:45",
+          descricao: "Cantinho com máquinas de venda automática bizarras e inusitadas, um clássico despretensioso de Akihabara.",
+        },
+        {
+          titulo: "BIC Camera ou Yodobashi Camera",
+          foto: "/images/placeholder-em-producao.png",
+          horario: "~12:05",
+          descricao: "Grandes lojas de eletrônicos — Yodobashi-Akiba fica do lado leste da estação (saída Showa-dori), um bom último ponto antes de seguir para o almoço.",
+        },
+      ],
+    },
+    visaoAnotada: {
+      titulo: "Akihabara Electric Town",
+      imagem: "/images/placeholder-em-producao.png",
+      imagemAlt: "Infográfico anotado de Akihabara Electric Town — em produção",
+      comentarios: [
+        "Infográfico anotado desta área ainda em produção — em breve mostraremos aqui os pontos-chave de Akihabara com fotos reais e a sequência de visita recomendada.",
+      ],
+      pontos: [
+        { titulo: "Akihabara Radio Kaikan", descricao: "Action figures e um shopping com um pouco de tudo — logo na saída Electric Town da estação.", foto: "/images/placeholder-em-producao.png", ordem: 1 },
+        { titulo: "Animate", descricao: "Uma das maiores redes de lojas de mangá do Japão.", foto: "/images/placeholder-em-producao.png", ordem: 2 },
+        { titulo: "Mandarake Complex", descricao: "Mangá e action figures.", foto: "/images/placeholder-em-producao.png", ordem: 3 },
+        { titulo: "Super Potato", descricao: "Loja retrô de videogames.", foto: "/images/placeholder-em-producao.png", ordem: 4 },
+        { titulo: "Hareruya 2", descricao: "Pokémon Trading Card Game.", foto: "/images/placeholder-em-producao.png", ordem: 5 },
+        { titulo: "Ark", descricao: "Peças de computador.", foto: "/images/placeholder-em-producao.png", ordem: 6 },
+        { titulo: "Weird Vending Machine Corner", descricao: "Máquinas de venda automática bizarras e inusitadas.", foto: "/images/placeholder-em-producao.png", ordem: 7 },
+        { titulo: "BIC Camera ou Yodobashi Camera", descricao: "Grandes lojas de eletrônicos.", foto: "/images/placeholder-em-producao.png", ordem: 8 },
+      ],
+    },
     regiao: {
       nome: "Akihabara",
       descricao:
@@ -1644,6 +2102,11 @@ const DAY_4: DayContent = {
       { label: "Melhor horário", valor: "Manhã, antes das aglomerações" },
       { label: "Pagamento", valor: "Muitas lojas aceitam cartão" },
     ],
+    mapaVisaoGeral: {
+      imagem: "/images/placeholder-em-producao.png",
+      imagemAlt: "Visão geral do trajeto a pé em Akihabara — em produção",
+      nota: "Mapa de trajeto a pé em produção.",
+    },
     pois: [
       {
         category: "Compras",
@@ -1699,15 +2162,78 @@ const DAY_4: DayContent = {
     ],
     gastronomia: {
       itens: [{ nome: "Curry Japonês" }],
+      restaurantesLabel: "Opções de refeição",
+      restaurantes: [
+        {
+          nome: "A definir",
+          descricao: "Sugestões de restaurante para o almoço em Akihabara em produção.",
+          foto: "/images/placeholder-em-producao.png",
+        },
+      ],
+      mapa: {
+        titulo: "Mapa — Refeições em Akihabara",
+        imagem: "/images/placeholder-em-producao.png",
+        imagemAlt: "Mapa de restaurantes em Akihabara — em produção",
+      },
     },
+    banheirosProximos: [
+      { local: "A definir", nota: "Informação de banheiros próximos a ser adicionada." },
+    ],
   },
   tarde: {
     label: "Tarde",
+    percursoEssencial: {
+      duracao: "~4h45 (Kanda) + noite em Roppongi (opcional)",
+      passos: [
+        {
+          titulo: "Chegada em Kanda",
+          foto: "/images/placeholder-em-producao.png",
+          horario: "14:15",
+          descricao: "Bairro tradicional vizinho a Akihabara, conhecido pelos izakayas e por uma vida noturna mais local.",
+        },
+        {
+          titulo: "Passeio pelas ruas tradicionais",
+          foto: "/images/placeholder-em-producao.png",
+          horario: "~15:00",
+          descricao: "Exploração livre da região antes do jantar — roteiro detalhado em produção.",
+        },
+        {
+          titulo: "Jantar no izakaya escolhido",
+          foto: "/images/dia7-izakaya-kanda-v2.png",
+          horario: "19:00",
+          descricao: "Jantar num izakaya autêntico em Kanda, longe do circuito turístico.",
+        },
+      ],
+    },
+    visaoAnotada: {
+      titulo: "Izakayas em Kanda",
+      imagem: "/images/placeholder-em-producao.png",
+      imagemAlt: "Infográfico anotado dos izakayas de Kanda — em produção",
+      comentarios: [
+        "Infográfico anotado desta área ainda em produção — em breve mostraremos aqui a localização de cada izakaya recomendado.",
+      ],
+      pontos: [
+        { titulo: "Osusumeya Kanda", descricao: "Detalhes em produção.", foto: "/images/placeholder-em-producao.png", ordem: 1 },
+        { titulo: "Yakitori Izakaya Kanda-syouten", descricao: "Detalhes em produção.", foto: "/images/placeholder-em-producao.png", ordem: 2 },
+        { titulo: "Izakaya Genki Kanda", descricao: "Detalhes em produção.", foto: "/images/placeholder-em-producao.png", ordem: 3 },
+        { titulo: "Robatayaki HOTARU", descricao: "Detalhes em produção.", foto: "/images/placeholder-em-producao.png", ordem: 4 },
+      ],
+    },
     regiao: {
       nome: "Kanda",
       descricao:
         "Bairro tradicional de Chiyoda, vizinho a Akihabara — conhecido pelos izakayas e por uma vida noturna mais local, longe do circuito turístico.",
     },
+    decisoes: [
+      {
+        titulo: "Qual izakaya escolher?",
+        resposta: "Todas as opções listadas são recomendadas — a escolha final depende de disponibilidade e reserva no dia.",
+      },
+      {
+        titulo: "Se não conseguir reserva",
+        resposta: "Kanda tem diversos izakayas tradicionais nas redondezas além dos listados — vale caminhar pela região em busca de vaga.",
+      },
+    ],
     deslocamento: {
       estacaoOrigem: { nome: "Estação Akihabara", nomeJapones: "秋葉原駅" },
       linha: { codigo: "JY", nome: "JR Yamanote / Keihin-Tohoku Line", cor: "#8FAADC", logo: "/images/jr-logo.webp" },
@@ -1743,6 +2269,11 @@ const DAY_4: DayContent = {
       { label: "Reserva", valor: "Recomendada nos fins de semana" },
       { label: "Preço médio", valor: "~¥4.000–6.000 por pessoa" },
     ],
+    mapaVisaoGeral: {
+      imagem: "/images/placeholder-em-producao.png",
+      imagemAlt: "Visão geral do trajeto a pé em Kanda — em produção",
+      nota: "Mapa de trajeto a pé em produção.",
+    },
     pois: [
       { title: "Osusumeya Kanda", prioridade: "imperdivel" },
       { title: "Yakitori Izakaya Kanda-syouten", prioridade: "imperdivel" },
@@ -1757,7 +2288,28 @@ const DAY_4: DayContent = {
         { nome: "Motsu Nikomi", descricao: "Ensopado de vísceras de porco cozidas lentamente com missô ou molho de soja." },
         { nome: "Tamagoyaki", descricao: "Omelete japonesa levemente adocicada, enrolada em camadas." },
       ],
+      restaurantesLabel: "Izakayas recomendados",
+      restaurantes: [
+        { nome: "Osusumeya Kanda", descricao: "Detalhes em produção.", foto: "/images/placeholder-em-producao.png" },
+        { nome: "Yakitori Izakaya Kanda-syouten", descricao: "Detalhes em produção.", foto: "/images/placeholder-em-producao.png" },
+        { nome: "Izakaya Genki Kanda", descricao: "Detalhes em produção.", foto: "/images/placeholder-em-producao.png" },
+        { nome: "Robatayaki HOTARU", descricao: "Detalhes em produção.", foto: "/images/placeholder-em-producao.png" },
+      ],
+      mapa: {
+        titulo: "Mapa — Izakayas em Kanda",
+        imagem: "/images/placeholder-em-producao.png",
+        imagemAlt: "Mapa dos izakayas de Kanda — em produção",
+      },
     },
+    galeria: {
+      titulo: "Kanda & Roppongi em Detalhes",
+      imagens: [
+        { src: "/images/placeholder-em-producao.png", alt: "Galeria de Kanda e Roppongi — em produção", legenda: "Em produção" },
+      ],
+    },
+    banheirosProximos: [
+      { local: "A definir", nota: "Informação de banheiros próximos a ser adicionada." },
+    ],
     subAtracoes: [
       {
         label: "Noite",
@@ -1810,6 +2362,16 @@ const DAY_5: DayContent = {
   contexto: [
     "Se Tóquio é sinônimo de modernidade e tecnologia mesclada à parte cultural, Kyoto é um patrimônio histórico. Nesses dois dias iremos visitar 3 dos principais pontos turísticos do Japão: Kiyomizu-dera + Gion, Kinkaku-ji e Fushimi-Inari Taisha.",
   ],
+  resumoDia: {
+    passos: [
+      { titulo: "Café da Manhã", horario: "08:00", foto: "/images/icone-gastronomia.png" },
+      { titulo: "Saída do Hotel", horario: "08:45", foto: "/images/icone-hotel2.png" },
+      { titulo: "Templo Kiyomizu-dera", horario: "09:30", foto: "/images/dia5-kiyomizudera.jpg" },
+      { titulo: "Chá e Doces Tradicionais", horario: "12:00", foto: "/images/icone-gastronomia.png" },
+      { titulo: "Distrito de Gion", horario: "14:00", foto: "/images/dia5-gion-v2.png" },
+      { titulo: "Jantar Kaiseki ou Obanzai", horario: "19:00", foto: "/images/icone-gastronomia.png" },
+    ],
+  },
   gradeHorarios: {
     titulo: "Mapa por Horário",
     itens: [
@@ -1859,7 +2421,58 @@ const DAY_5: DayContent = {
     ],
     nota: "Horários estimados considerando saída do Daiwa Roynet Hotel Kyoto-Ekimae (em frente à Kyoto Station) — ajuste conforme seu ritmo.",
   },
+  diaEmNumeros: {
+    atracoes: "2 atrações principais",
+    caminhada: "A definir",
+    transporte: "~20 min de ônibus no total",
+    linhasMetro: "1 linha de ônibus, sem baldeação",
+    ritmo: "Moderado",
+    saida: "08:45",
+    retorno: "A definir",
+  },
   manha: {
+    percursoEssencial: {
+      duracao: "~2h30 (Kiyomizu-dera, Sannenzaka e Ninenzaka)",
+      passos: [
+        {
+          titulo: "Templo Kiyomizu-dera",
+          foto: "/images/dia5-kiyomizudera.jpg",
+          horario: "09:30",
+          descricao: "Um dos templos mais icônicos do Japão, aos pés das colinas de Higashiyama.",
+        },
+        {
+          titulo: "Sannenzaka",
+          foto: "/images/placeholder-em-producao.png",
+          horario: "~11:00",
+          descricao: "Ladeira histórica de casas tradicionais, logo na descida a partir do templo.",
+        },
+        {
+          titulo: "Ninenzaka",
+          foto: "/images/placeholder-em-producao.png",
+          horario: "~11:20",
+          descricao: "Continuação de Sannenzaka, descendo rumo a Gion.",
+        },
+        {
+          titulo: "Café % Arabica Kyoto Higashiyama",
+          foto: "/images/placeholder-em-producao.png",
+          horario: "12:00",
+          descricao: "Cafeteria minimalista muito concorrida, a poucos passos da Pagode Yasaka.",
+        },
+      ],
+    },
+    visaoAnotada: {
+      titulo: "Kiyomizu-dera & Higashiyama",
+      imagem: "/images/placeholder-em-producao.png",
+      imagemAlt: "Infográfico anotado de Kiyomizu-dera e Higashiyama — em produção",
+      comentarios: [
+        "Infográfico anotado desta área ainda em produção — em breve mostraremos aqui os pontos-chave do templo com fotos reais.",
+      ],
+      pontos: [
+        { titulo: "Sannenzaka", descricao: "Ladeira histórica de casas tradicionais.", foto: "/images/placeholder-em-producao.png", ordem: 1 },
+        { titulo: "Ninenzaka", descricao: "Continuação de Sannenzaka, descendo rumo a Gion.", foto: "/images/placeholder-em-producao.png", ordem: 2 },
+        { titulo: "Café % Arabica Kyoto Higashiyama", descricao: "Cafeteria minimalista muito concorrida.", foto: "/images/placeholder-em-producao.png", ordem: 3 },
+      ],
+    },
     regiao: {
       nome: "Higashiyama",
       descricao:
@@ -1903,6 +2516,17 @@ const DAY_5: DayContent = {
       { label: "Horário", valor: "6h–18h (aprox., varia por temporada)" },
       { label: "Melhor horário", valor: "Logo na abertura, 6h" },
     ],
+    mapaVisaoGeral: {
+      imagem: "/images/placeholder-em-producao.png",
+      imagemAlt: "Visão geral do trajeto a pé em Higashiyama — em produção",
+      nota: "Mapa de trajeto a pé em produção.",
+    },
+    decisoes: [
+      {
+        titulo: "Vale chegar antes da abertura?",
+        resposta: "Kiyomizu-dera é um dos templos mais visitados de Kyoto — chegar por volta das 6h–7h ajuda a evitar as aglomerações do meio da manhã e dos grupos de turismo.",
+      },
+    ],
     pois: [
       {
         title: "Sannenzaka",
@@ -1928,10 +2552,61 @@ const DAY_5: DayContent = {
         { nome: "Yatsuhashi" },
         { nome: "Dengaku" },
       ],
+      restaurantesLabel: "Opções de refeição",
+      restaurantes: [
+        {
+          nome: "A definir",
+          descricao: "Sugestões de casa de chá em Higashiyama em produção.",
+          foto: "/images/placeholder-em-producao.png",
+        },
+      ],
+      mapa: {
+        titulo: "Mapa — Refeições em Higashiyama",
+        imagem: "/images/placeholder-em-producao.png",
+        imagemAlt: "Mapa de restaurantes em Higashiyama — em produção",
+      },
     },
+    banheirosProximos: [
+      { local: "A definir", nota: "Informação de banheiros próximos a ser adicionada." },
+    ],
   },
   tarde: {
     label: "Tarde",
+    percursoEssencial: {
+      duracao: "~5h (Gion, Yasaka Shrine e Pontocho)",
+      passos: [
+        {
+          titulo: "Yasaka Shrine",
+          foto: "/images/placeholder-em-producao.png",
+          horario: "14:00",
+          descricao: "Santuário xintoísta símbolo de Gion.",
+        },
+        {
+          titulo: "Pontocho",
+          foto: "/images/placeholder-em-producao.png",
+          horario: "~17:00",
+          descricao: "Viela tradicional de restaurantes e gueixas, às margens do rio Kamo.",
+        },
+        {
+          titulo: "Jantar Kaiseki ou Obanzai",
+          foto: "/images/icone-gastronomia.png",
+          horario: "19:00",
+          descricao: "Jantar tradicional em Gion.",
+        },
+      ],
+    },
+    visaoAnotada: {
+      titulo: "Distrito de Gion",
+      imagem: "/images/placeholder-em-producao.png",
+      imagemAlt: "Infográfico anotado do distrito de Gion — em produção",
+      comentarios: [
+        "Infográfico anotado desta área ainda em produção — em breve mostraremos aqui os pontos-chave de Gion com fotos reais.",
+      ],
+      pontos: [
+        { titulo: "Yasaka Shrine", descricao: "Santuário xintoísta símbolo de Gion.", foto: "/images/placeholder-em-producao.png", ordem: 1 },
+        { titulo: "Pontocho", descricao: "Viela tradicional de restaurantes e gueixas.", foto: "/images/placeholder-em-producao.png", ordem: 2 },
+      ],
+    },
     regiao: {
       nome: "Gion",
       descricao:
@@ -1972,6 +2647,17 @@ const DAY_5: DayContent = {
       { label: "Melhor horário", valor: "Fim de tarde, início da noite" },
       { label: "Pontocho", valor: "Restaurantes abrem a partir das 17h–18h" },
     ],
+    mapaVisaoGeral: {
+      imagem: "/images/placeholder-em-producao.png",
+      imagemAlt: "Visão geral do trajeto a pé em Gion — em produção",
+      nota: "Mapa de trajeto a pé em produção.",
+    },
+    decisoes: [
+      {
+        titulo: "Onde jantar em Gion?",
+        resposta: "Kaiseki entrega a experiência gastronômica mais refinada; obanzai (cozinha caseira de Kyoto) é uma alternativa mais informal e acessível — ambas encontradas em Pontocho.",
+      },
+    ],
     pois: [
       {
         title: "Yasaka Shrine",
@@ -1986,7 +2672,29 @@ const DAY_5: DayContent = {
     ],
     gastronomia: {
       itens: [{ nome: "Kaiseki" }, { nome: "Obanzai" }],
+      restaurantesLabel: "Opções de refeição",
+      restaurantes: [
+        {
+          nome: "A definir",
+          descricao: "Sugestões de restaurante kaiseki/obanzai em Gion em produção.",
+          foto: "/images/placeholder-em-producao.png",
+        },
+      ],
+      mapa: {
+        titulo: "Mapa — Refeições em Gion",
+        imagem: "/images/placeholder-em-producao.png",
+        imagemAlt: "Mapa de restaurantes em Gion — em produção",
+      },
     },
+    galeria: {
+      titulo: "Gion em Detalhes",
+      imagens: [
+        { src: "/images/placeholder-em-producao.png", alt: "Galeria de Gion — em produção", legenda: "Em produção" },
+      ],
+    },
+    banheirosProximos: [
+      { local: "A definir", nota: "Informação de banheiros próximos a ser adicionada." },
+    ],
   },
 };
 
@@ -1998,6 +2706,16 @@ const DAY_6: DayContent = {
   contexto: [
     "No segundo dia em Kyoto, começamos cedo no Santuário Fushimi Inari para aproveitar o famoso corredor de milhares de torii antes das aglomerações. À tarde seguimos para o Kinkaku-ji, o Pavilhão Dourado, e aproveitamos para conhecer outros templos e cafés da região norte da cidade.",
   ],
+  resumoDia: {
+    passos: [
+      { titulo: "Café da Manhã", horario: "07:30", foto: "/images/icone-gastronomia.png" },
+      { titulo: "Saída do Hotel", horario: "08:00", foto: "/images/icone-hotel2.png" },
+      { titulo: "Fushimi Inari Taisha", horario: "08:15", foto: "/images/dia6-fushimiinari.png" },
+      { titulo: "Almoço", horario: "11:00", foto: "/images/icone-gastronomia.png" },
+      { titulo: "Kinkaku-ji", horario: "13:00", foto: "/images/dia6-kinkakuji.png" },
+      { titulo: "Jantar", horario: "19:00", foto: "/images/icone-gastronomia.png" },
+    ],
+  },
   gradeHorarios: {
     titulo: "Mapa por Horário",
     itens: [
@@ -2043,7 +2761,52 @@ const DAY_6: DayContent = {
     ],
     nota: "Horários estimados considerando saída do Daiwa Roynet Hotel Kyoto-Ekimae (em frente à Kyoto Station) — chegar cedo em Fushimi Inari é o que mais compensa nesse dia.",
   },
+  diaEmNumeros: {
+    atracoes: "2 atrações principais",
+    caminhada: "A definir",
+    transporte: "~50 min de trem/ônibus no total",
+    linhasMetro: "2 linhas, sem baldeações",
+    ritmo: "Moderado",
+    saida: "08:00",
+    retorno: "A definir",
+  },
   manha: {
+    percursoEssencial: {
+      duracao: "~2h (corredor de torii e arredores)",
+      passos: [
+        {
+          titulo: "Torii de entrada",
+          foto: "/images/placeholder-em-producao.png",
+          horario: "08:15",
+          descricao: "Entrada principal do santuário, aos pés da montanha sagrada Inari.",
+        },
+        {
+          titulo: "Senbon Torii",
+          foto: "/images/placeholder-em-producao.png",
+          horario: "~08:30",
+          descricao: "O famoso corredor de milhares de torii vermelhos, o cartão-postal do santuário.",
+        },
+        {
+          titulo: "Yotsutsuji (mirante)",
+          foto: "/images/placeholder-em-producao.png",
+          horario: "~09:15",
+          descricao: "Ponto intermediário na subida com vista sobre Kyoto — boa opção de retorno para quem não quiser subir até o topo.",
+        },
+      ],
+    },
+    visaoAnotada: {
+      titulo: "Fushimi Inari Taisha",
+      imagem: "/images/placeholder-em-producao.png",
+      imagemAlt: "Infográfico anotado do Santuário Fushimi Inari — em produção",
+      comentarios: [
+        "Infográfico anotado desta área ainda em produção — em breve mostraremos aqui os pontos-chave do santuário com fotos reais.",
+      ],
+      pontos: [
+        { titulo: "Torii de entrada", descricao: "Entrada principal do santuário.", foto: "/images/placeholder-em-producao.png", ordem: 1 },
+        { titulo: "Senbon Torii", descricao: "O famoso corredor de milhares de torii vermelhos.", foto: "/images/placeholder-em-producao.png", ordem: 2 },
+        { titulo: "Yotsutsuji (mirante)", descricao: "Ponto intermediário na subida com vista sobre Kyoto.", foto: "/images/placeholder-em-producao.png", ordem: 3 },
+      ],
+    },
     regiao: {
       nome: "Fushimi",
       descricao:
@@ -2088,13 +2851,77 @@ const DAY_6: DayContent = {
       { label: "Horário", valor: "Aberto 24h" },
       { label: "Melhor horário", valor: "Antes das 9h, para evitar aglomerações" },
     ],
+    mapaVisaoGeral: {
+      imagem: "/images/placeholder-em-producao.png",
+      imagemAlt: "Visão geral do trajeto a pé em Fushimi Inari — em produção",
+      nota: "Mapa de trajeto a pé em produção.",
+    },
+    decisoes: [
+      {
+        titulo: "Preciso subir até o topo da montanha?",
+        resposta: "Não — a experiência principal (Senbon Torii) já acontece nos primeiros minutos de caminhada. Subir até o topo leva ~2h ida e volta e é opcional, recomendado só para quem gosta de trilha.",
+      },
+    ],
     pois: [],
     gastronomia: {
       itens: [{ nome: "Inari-zushi" }, { nome: "Kitsune Udon" }],
+      restaurantesLabel: "Opções de refeição",
+      restaurantes: [
+        {
+          nome: "A definir",
+          descricao: "Sugestões de restaurante perto de Fushimi Inari em produção.",
+          foto: "/images/placeholder-em-producao.png",
+        },
+      ],
+      mapa: {
+        titulo: "Mapa — Refeições em Fushimi",
+        imagem: "/images/placeholder-em-producao.png",
+        imagemAlt: "Mapa de restaurantes em Fushimi — em produção",
+      },
     },
+    banheirosProximos: [
+      { local: "A definir", nota: "Informação de banheiros próximos a ser adicionada." },
+    ],
   },
   tarde: {
     label: "Tarde",
+    percursoEssencial: {
+      duracao: "~5h30 (Kinkaku-ji e arredores)",
+      passos: [
+        {
+          titulo: "Kinkaku-ji",
+          foto: "/images/dia6-kinkakuji.png",
+          horario: "13:00",
+          descricao: "O Pavilhão Dourado, um dos templos mais fotografados do Japão.",
+        },
+        {
+          titulo: "Ryoan-ji",
+          foto: "/images/placeholder-em-producao.png",
+          horario: "~14:30",
+          descricao: "Templo zen famoso pelo jardim de pedras, poucos minutos de distância.",
+        },
+        {
+          titulo: "Ninna-ji",
+          foto: "/images/placeholder-em-producao.png",
+          horario: "~15:15",
+          descricao: "Templo histórico com belas cerejeiras, no mesmo circuito.",
+        },
+      ],
+    },
+    visaoAnotada: {
+      titulo: "Kinkaku-ji (Kitayama)",
+      imagem: "/images/placeholder-em-producao.png",
+      imagemAlt: "Infográfico anotado de Kinkaku-ji — em produção",
+      comentarios: [
+        "Infográfico anotado desta área ainda em produção — em breve mostraremos aqui os pontos-chave do templo com fotos reais.",
+      ],
+      pontos: [
+        { titulo: "Ryoan-ji", descricao: "Templo zen famoso pelo jardim de pedras.", foto: "/images/placeholder-em-producao.png", ordem: 1 },
+        { titulo: "Ninna-ji", descricao: "Templo histórico com belas cerejeiras.", foto: "/images/placeholder-em-producao.png", ordem: 2 },
+        { titulo: "Museu do Mangá de Kyoto", descricao: "Acervo com milhares de títulos de mangá, no centro de Kyoto.", foto: "/images/placeholder-em-producao.png", ordem: 3 },
+        { titulo: "Nintendo Store Kyoto", descricao: "Loja oficial da Nintendo no Takashimaya.", foto: "/images/placeholder-em-producao.png", ordem: 4 },
+      ],
+    },
     regiao: {
       nome: "Kinkaku-ji (Kitayama)",
       descricao:
@@ -2136,6 +2963,17 @@ const DAY_6: DayContent = {
       { label: "Pagamento", valor: "Somente dinheiro na bilheteria" },
       { label: "Melhor horário", valor: "Logo na abertura, antes dos ônibus de turismo" },
     ],
+    mapaVisaoGeral: {
+      imagem: "/images/placeholder-em-producao.png",
+      imagemAlt: "Visão geral do trajeto a pé em Kinkaku-ji — em produção",
+      nota: "Mapa de trajeto a pé em produção.",
+    },
+    decisoes: [
+      {
+        titulo: "Vale o desvio até o Museu do Mangá e a Nintendo Store?",
+        resposta: "Ambos ficam fora da rota de Kinkaku-ji, no centro de Kyoto — exigem um deslocamento à parte (~20–30 min). Vale considerar só se sobrar tempo ou se for prioridade do grupo.",
+      },
+    ],
     pois: [
       {
         title: "Ryoan-ji",
@@ -2164,7 +3002,29 @@ const DAY_6: DayContent = {
     ],
     gastronomia: {
       itens: [{ nome: "Unagi-don", descricao: "Enguia grelhada sobre arroz." }],
+      restaurantesLabel: "Opções de refeição",
+      restaurantes: [
+        {
+          nome: "A definir",
+          descricao: "Sugestões de restaurante de unagi em produção.",
+          foto: "/images/placeholder-em-producao.png",
+        },
+      ],
+      mapa: {
+        titulo: "Mapa — Refeições em Kinkaku-ji",
+        imagem: "/images/placeholder-em-producao.png",
+        imagemAlt: "Mapa de restaurantes em Kinkaku-ji — em produção",
+      },
     },
+    galeria: {
+      titulo: "Kinkaku-ji em Detalhes",
+      imagens: [
+        { src: "/images/placeholder-em-producao.png", alt: "Galeria de Kinkaku-ji — em produção", legenda: "Em produção" },
+      ],
+    },
+    banheirosProximos: [
+      { local: "A definir", nota: "Informação de banheiros próximos a ser adicionada." },
+    ],
   },
   transporte: {
     linha: "Shinkansen Kyoto–Tokyo",
@@ -2185,6 +3045,16 @@ const DAY_7: DayContent = {
     "O ingresso vale para o dia inteiro no Kokugikan, em Ryogoku: as lutas das categorias inferiores começam já às 8h40, mas o grande destaque — a cerimônia de entrada e as lutas da divisão principal (Makuuchi) — só acontece a partir das 15h45, indo até por volta das 18h.",
     "Recomendamos chegar ao Kokugikan no início da tarde, por volta das 14h30, a tempo da cerimônia de entrada da segunda divisão e para garantir um bom lugar antes do início da divisão principal.",
   ],
+  resumoDia: {
+    passos: [
+      { titulo: "Café da Manhã", horario: "08:30", foto: "/images/icone-gastronomia.png" },
+      { titulo: "Saída do Hotel", horario: "09:15", foto: "/images/icone-hotel2.png" },
+      { titulo: "Passeio por Ningyocho", horario: "09:45", foto: "/images/ningyocho.png" },
+      { titulo: "Almoço", horario: "12:30", foto: "/images/icone-gastronomia.png" },
+      { titulo: "Chegada ao Kokugikan", horario: "14:30", foto: "/images/draft-sumo.png" },
+      { titulo: "Jantar com Chanko Nabe", horario: "18:00", foto: "/images/icone-gastronomia.png" },
+    ],
+  },
   gradeHorarios: {
     titulo: "Mapa por Horário",
     itens: [
@@ -2236,7 +3106,73 @@ const DAY_7: DayContent = {
     ],
     nota: "Horários estimados considerando saída do remm Tokyo Kyobashi — o ingresso do Kokugikan vale para o dia inteiro, mas o horário recomendado de chegada é 14h30.",
   },
+  diaEmNumeros: {
+    atracoes: "2 atrações principais",
+    caminhada: "A definir",
+    transporte: "~15 min de trem no total",
+    linhasMetro: "2 linhas, 1 baldeação",
+    ritmo: "Moderado",
+    saida: "09:15",
+    retorno: "A definir",
+  },
   manha: {
+    percursoEssencial: {
+      duracao: "~1h35 (Ningyocho)",
+      passos: [
+        {
+          titulo: "Shigemori Eishindo",
+          foto: "/images/ningyoyaki.jpg",
+          horario: "09:50",
+          descricao: "Fundada em 1917, é a casa mais tradicional de ningyoyaki de Ningyocho.",
+        },
+        {
+          titulo: "Início da Amazake Yokocho",
+          foto: "/images/amazake-yokocho.webp",
+          horario: "10:10",
+          descricao: "Viela de cerca de 400 metros que leva até o Teatro Meiji-za.",
+        },
+        {
+          titulo: "Toritada",
+          foto: "/images/toritada.png",
+          horario: "10:15",
+          descricao: "Avícola fundada em 1911, tradicional em Amazake Yokocho.",
+        },
+        {
+          titulo: "Hikokuro",
+          foto: "/images/gyokueido-hikokuro.png",
+          horario: "10:35",
+          descricao: "Gyokueido Hikokuro, casa de doces japoneses fundada em 1576 em Kyoto.",
+        },
+        {
+          titulo: "Edo Rakugo Karakuri Yagura",
+          foto: "/images/ningyocho.png",
+          horario: "11:00",
+          descricao: "Torre-relógio karakuri ao lado do Suitengu.",
+        },
+        {
+          titulo: "Suitengu",
+          foto: "/images/suitengu.webp",
+          horario: "11:20–11:45",
+          descricao: "Santuário xintoísta fundado em 1818 — referência nacional em orações por parto seguro.",
+        },
+      ],
+    },
+    visaoAnotada: {
+      titulo: "Ningyocho",
+      imagem: "/images/placeholder-em-producao.png",
+      imagemAlt: "Infográfico anotado de Ningyocho — em produção",
+      comentarios: [
+        "Infográfico anotado desta área ainda em produção — em breve mostraremos aqui os pontos-chave de Ningyocho com o mapa da caminhada completo.",
+      ],
+      pontos: [
+        { titulo: "Shigemori Eishindo", descricao: "Casa mais tradicional de ningyoyaki de Ningyocho.", foto: "/images/ningyoyaki.jpg", ordem: 1 },
+        { titulo: "Amazake Yokocho", descricao: "Viela de cerca de 400 metros com doçarias e izakayas.", foto: "/images/amazake-yokocho.webp", ordem: 2 },
+        { titulo: "Toritada", descricao: "Avícola tradicional fundada em 1911.", foto: "/images/toritada.png", ordem: 3 },
+        { titulo: "Hikokuro", descricao: "Casa de doces japoneses fundada em 1576.", foto: "/images/gyokueido-hikokuro.png", ordem: 4 },
+        { titulo: "Edo Rakugo Karakuri Yagura", descricao: "Torre-relógio karakuri ao lado do Suitengu.", foto: "/images/ningyocho.png", ordem: 5 },
+        { titulo: "Suitengu", descricao: "Santuário xintoísta fundado em 1818.", foto: "/images/suitengu.webp", ordem: 6 },
+      ],
+    },
     regiao: {
       nome: "Ningyocho",
       descricao:
@@ -2277,6 +3213,11 @@ const DAY_7: DayContent = {
     },
     atracaoPrincipal: "09:45 — Chegada a Ningyocho",
     atracaoPrincipalImagem: "/images/ningyocho.png",
+    mapaVisaoGeral: {
+      imagem: "/images/placeholder-em-producao.png",
+      imagemAlt: "Visão geral do trajeto a pé em Ningyocho — em produção",
+      nota: "Mapa de trajeto a pé em produção.",
+    },
     pois: [],
     subAtracoes: [
       {
@@ -2337,10 +3278,62 @@ const DAY_7: DayContent = {
             "Janela reservada logo após o Suitengu, antes do deslocamento para o Kokugikan — restaurante a confirmar com a equipe Alpinea.",
         },
       ],
+      restaurantesLabel: "Opções de refeição",
+      restaurantes: [
+        {
+          nome: "A definir",
+          descricao: "Restaurante em Ningyocho a confirmar com a equipe Alpinea.",
+          foto: "/images/placeholder-em-producao.png",
+        },
+      ],
+      mapa: {
+        titulo: "Mapa — Refeições em Ningyocho",
+        imagem: "/images/placeholder-em-producao.png",
+        imagemAlt: "Mapa de restaurantes em Ningyocho — em produção",
+      },
     },
+    banheirosProximos: [
+      { local: "A definir", nota: "Informação de banheiros próximos a ser adicionada." },
+    ],
   },
   tarde: {
     label: "Tarde",
+    percursoEssencial: {
+      duracao: "~30 min (arredores do Kokugikan) + torneio até 18h",
+      passos: [
+        {
+          titulo: "Edo Noren",
+          foto: "/images/placeholder-em-producao.png",
+          horario: "~14:35",
+          descricao: "Vila gastronômica temática de sumô, na entrada do estádio.",
+        },
+        {
+          titulo: "Santuário Nomi-no-Sukune",
+          foto: "/images/placeholder-em-producao.png",
+          horario: "~14:45",
+          descricao: "Monumento com os nomes de todos os Yokozuna — pertinho do Kokugikan.",
+        },
+        {
+          titulo: "Museu de Espadas",
+          foto: "/images/placeholder-em-producao.png",
+          horario: "~14:55",
+          descricao: "Coleção de espadas samurai tradicionais, a alguns minutos a pé do estádio.",
+        },
+      ],
+    },
+    visaoAnotada: {
+      titulo: "Kokugikan — Arredores",
+      imagem: "/images/placeholder-em-producao.png",
+      imagemAlt: "Infográfico anotado dos arredores do Kokugikan — em produção",
+      comentarios: [
+        "Infográfico anotado desta área ainda em produção — em breve mostraremos aqui os pontos-chave dos arredores do Kokugikan com fotos reais.",
+      ],
+      pontos: [
+        { titulo: "Edo Noren", descricao: "Vila gastronômica temática de sumô.", foto: "/images/placeholder-em-producao.png", ordem: 1 },
+        { titulo: "Santuário Nomi-no-Sukune", descricao: "Monumento com os nomes de todos os Yokozuna.", foto: "/images/placeholder-em-producao.png", ordem: 2 },
+        { titulo: "Museu de Espadas", descricao: "Coleção de espadas samurai tradicionais.", foto: "/images/placeholder-em-producao.png", ordem: 3 },
+      ],
+    },
     regiao: {
       nome: "Ryogoku",
       descricao:
@@ -2382,6 +3375,17 @@ const DAY_7: DayContent = {
       { label: "Cadeira", valor: "~¥3.500–8.500" },
       { label: "Box tatami (por pessoa)", valor: "~¥8.000–15.000" },
       { label: "Melhor horário", valor: "Chegar às 14h30, para acompanhar a 2ª divisão" },
+    ],
+    mapaVisaoGeral: {
+      imagem: "/images/placeholder-em-producao.png",
+      imagemAlt: "Visão geral do trajeto a pé nos arredores do Kokugikan — em produção",
+      nota: "Mapa de trajeto a pé em produção.",
+    },
+    decisoes: [
+      {
+        titulo: "Qual tipo de ingresso escolher?",
+        resposta: "Entrada geral (a partir de ¥2.200) é a opção mais econômica; cadeira numerada (~¥3.500–8.500) garante lugar reservado; box tatami (~¥8.000–15.000 por pessoa, dividido entre até 4 pessoas) é a experiência mais tradicional, sentado no estilo japonês.",
+      },
     ],
     pois: [
       {
@@ -2437,7 +3441,29 @@ const DAY_7: DayContent = {
             "Ensopado altamente calórico que os lutadores de Sumô comem diariamente pra conseguir manter o peso.",
         },
       ],
+      restaurantesLabel: "Opções de refeição",
+      restaurantes: [
+        {
+          nome: "A definir",
+          descricao: "Sugestões de restaurante de chanko nabe em Ryogoku em produção.",
+          foto: "/images/placeholder-em-producao.png",
+        },
+      ],
+      mapa: {
+        titulo: "Mapa — Refeições em Ryogoku",
+        imagem: "/images/placeholder-em-producao.png",
+        imagemAlt: "Mapa de restaurantes em Ryogoku — em produção",
+      },
     },
+    galeria: {
+      titulo: "Kokugikan em Detalhes",
+      imagens: [
+        { src: "/images/placeholder-em-producao.png", alt: "Galeria do Kokugikan — em produção", legenda: "Em produção" },
+      ],
+    },
+    banheirosProximos: [
+      { local: "A definir", nota: "Informação de banheiros próximos a ser adicionada." },
+    ],
   },
 };
 
