@@ -160,6 +160,13 @@ type Deslocamento = {
   // Mapa grande (print real) do trajeto a pé da saída da estação até a
   // atração — separado das fotos de estação, que ficam só no guia do hotel.
   mapaChegada?: { imagem: string; imagemAlt: string; nota?: string };
+  // Mapas oficiais dos andares da estação de chegada (ex.: 1F/2F/3F) — o
+  // primeiro da lista aparece grande; os demais viram cards horizontais
+  // abaixo que trocam a imagem principal ao clicar. Clicável para zoom.
+  mapaAndares?: {
+    titulo?: string;
+    mapas: { andar: string; imagem: string; imagemAlt: string }[];
+  };
 };
 
 type Period = {
@@ -1917,19 +1924,20 @@ const DAY_4: DayContent = {
   date: "06 Mai",
   hotel: "Tokyo 1",
   contexto: [
-    "Neste dia começamos por Akihabara, epicentro da cultura de Animes & Mangá, Videogames e Artigos Eletrônicos.",
-    "À tarde seguimos para Kanda, bairro vizinho conhecido pelos izakayas e por uma vida noturna mais local, longe do circuito turístico, para jantar num izakaya autêntico.",
-    "À noite fechamos o dia em Roppongi, um dos principais polos de vida noturna de Tóquio, com baladas e bares badalados.",
+    "No dia de hoje teremos 3 atrações principais: Akihabara, Kanda e Roppongi.",
+    "Akihabara é o centro da cultura de anime & mangá, é onde estão a maior concentração de lojas especializadas desde livrarias, lojas que vendem action figure a lojas que vendem produtos que tem importante intersecção com o tema como por exemplo Trading Card Games. Além do território e anime e mangá, Akihabara também possui uma enorme concentração de lojas que vendem eletrônicos, desde videogames, peças de computador e linha branca de eletrodomésticos.",
+    "Depois do passeio em Akihabara, vamos visitar o bairro de Kanda, que não é um bairro turístico. Nesse bairro vamos visitar um izakaya autêntico que é frequentado pelos trabalhadores e moradores da região.",
+    "Por fim, encerramos o dia visitando o bairro de Roppongi, um dos dois bairros de maior concentração de baladas e PUBs de Tokyo, e iremos visitar uma balada a sua escolha, R3 Club Lounge ou V2 Tokyo.",
   ],
   resumoDia: {
     passos: [
       { titulo: "Café da Manhã", horario: "08:30", foto: "/images/icone-gastronomia.png" },
       { titulo: "Saída do Hotel", horario: "09:15", foto: "/images/icone-hotel2.png" },
-      { titulo: "Akihabara Electric Town", horario: "09:45", foto: "/images/dia7-akihabara.png" },
+      { titulo: "Akihabara Electric Town", horario: "09:45", foto: "/images/akihabara-miniatura.png" },
       { titulo: "Almoço", horario: "12:30", foto: "/images/icone-gastronomia.png" },
-      { titulo: "Passeio por Kanda", horario: "14:15", foto: "/images/placeholder-em-producao.png" },
+      { titulo: "Passeio por Kanda", horario: "14:15", foto: "/images/kanda-miniatura.png" },
       { titulo: "Jantar no Izakaya", horario: "19:00", foto: "/images/dia7-izakaya-kanda-v2.png" },
-      { titulo: "Vida Noturna em Roppongi", horario: "21:30", foto: "/images/dia4-roppongi.png" },
+      { titulo: "Vida Noturna em Roppongi", horario: "21:30", foto: "/images/roppongi-miniatura.png" },
     ],
   },
   gradeHorarios: {
@@ -1988,53 +1996,59 @@ const DAY_4: DayContent = {
   },
   manha: {
     percursoEssencial: {
-      duracao: "~2h45",
+      duracao: "~2h20 (≈30 min · 2,1 km a pé)",
       passos: [
         {
           titulo: "Akihabara Radio Kaikan",
-          foto: "/images/placeholder-em-producao.png",
+          foto: "/images/day2-radiokaikan.png",
           horario: "09:45",
           descricao: "Action figures e um shopping com um pouco de tudo — logo na saída Electric Town da estação, o primeiro ponto do passeio.",
         },
         {
+          titulo: "Tamashii Nations Store Tokyo",
+          foto: "/images/day2-tamashii-nations.png",
+          horario: "~10:00",
+          descricao: "Loja oficial da Bandai Spirits com as linhas premium de action figures e colecionáveis (Figuarts, Chogokin) — peças voltadas para colecionadores.",
+        },
+        {
           titulo: "Animate",
-          foto: "/images/placeholder-em-producao.png",
-          horario: "~10:05",
+          foto: "/images/day2-animate.png",
+          horario: "~10:20",
           descricao: "Uma das maiores redes de lojas de mangá do Japão.",
         },
         {
           titulo: "Mandarake Complex",
-          foto: "/images/placeholder-em-producao.png",
-          horario: "~10:25",
+          foto: "/images/day2-mandarake-complex.png",
+          horario: "~10:40",
           descricao: "Mangá e action figures.",
         },
         {
+          titulo: "Suruga-ya Anime & Hobby Store",
+          foto: "/images/day2-surugaya.jpg",
+          horario: "~11:00",
+          descricao: "Rede tradicional de usados — mangás, DVDs/Blu-rays de anime, action figures e CDs, com preços mais em conta que as lojas de produto novo.",
+        },
+        {
           titulo: "Super Potato",
-          foto: "/images/placeholder-em-producao.png",
-          horario: "~10:45",
-          descricao: "Loja retrô de videogames — nas proximidades também fica a Suruga-ya Anime & Hobby Store, com videogames e itens de anime.",
+          foto: "/images/day2-superpotato.png",
+          horario: "~11:20",
+          descricao: "Loja retrô de videogames.",
         },
         {
           titulo: "Hareruya 2",
           foto: "/images/placeholder-em-producao.png",
-          horario: "~11:05",
+          horario: "~11:35",
           descricao: "Pokémon Trading Card Game.",
-        },
-        {
-          titulo: "Ark",
-          foto: "/images/placeholder-em-producao.png",
-          horario: "~11:25",
-          descricao: "Peças de computador.",
         },
         {
           titulo: "Weird Vending Machine Corner",
           foto: "/images/placeholder-em-producao.png",
-          horario: "~11:45",
+          horario: "~11:50",
           descricao: "Cantinho com máquinas de venda automática bizarras e inusitadas, um clássico despretensioso de Akihabara.",
         },
         {
           titulo: "BIC Camera ou Yodobashi Camera",
-          foto: "/images/placeholder-em-producao.png",
+          foto: "/images/day2-yodobashi-akiba.png",
           horario: "~12:05",
           descricao: "Grandes lojas de eletrônicos — Yodobashi-Akiba fica do lado leste da estação (saída Showa-dori), um bom último ponto antes de seguir para o almoço.",
         },
@@ -2042,20 +2056,10 @@ const DAY_4: DayContent = {
     },
     visaoAnotada: {
       titulo: "Akihabara Electric Town",
-      imagem: "/images/placeholder-em-producao.png",
-      imagemAlt: "Infográfico anotado de Akihabara Electric Town — em produção",
+      imagem: "/images/raiox-akihabara.png",
+      imagemAlt: "Raio-X Alpinea de Akihabara com os pontos de interesse numerados do passeio",
       comentarios: [
-        "Infográfico anotado desta área ainda em produção — em breve mostraremos aqui os pontos-chave de Akihabara com fotos reais e a sequência de visita recomendada.",
-      ],
-      pontos: [
-        { titulo: "Akihabara Radio Kaikan", descricao: "Action figures e um shopping com um pouco de tudo — logo na saída Electric Town da estação.", foto: "/images/placeholder-em-producao.png", ordem: 1 },
-        { titulo: "Animate", descricao: "Uma das maiores redes de lojas de mangá do Japão.", foto: "/images/placeholder-em-producao.png", ordem: 2 },
-        { titulo: "Mandarake Complex", descricao: "Mangá e action figures.", foto: "/images/placeholder-em-producao.png", ordem: 3 },
-        { titulo: "Super Potato", descricao: "Loja retrô de videogames.", foto: "/images/placeholder-em-producao.png", ordem: 4 },
-        { titulo: "Hareruya 2", descricao: "Pokémon Trading Card Game.", foto: "/images/placeholder-em-producao.png", ordem: 5 },
-        { titulo: "Ark", descricao: "Peças de computador.", foto: "/images/placeholder-em-producao.png", ordem: 6 },
-        { titulo: "Weird Vending Machine Corner", descricao: "Máquinas de venda automática bizarras e inusitadas.", foto: "/images/placeholder-em-producao.png", ordem: 7 },
-        { titulo: "BIC Camera ou Yodobashi Camera", descricao: "Grandes lojas de eletrônicos.", foto: "/images/placeholder-em-producao.png", ordem: 8 },
+        "Percurso circular saindo da Estação Akihabara: primeiro passamos pelas lojas mais próximas da saída Electric Town (Radio Kaikan, Tamashii Nations), seguimos para o coração da região de eletrônicos e colecionáveis (Animate, Mandarake, Suruga-ya, Super Potato) e fechamos o loop voltando para perto da estação, terminando na Yodobashi-Akiba antes do almoço.",
       ],
     },
     regiao: {
@@ -2078,8 +2082,8 @@ const DAY_4: DayContent = {
           Icon: IconMetro,
           recomendado: true,
           detalhes: [
-            "Ginza Line até Ueno-hirokoji (~8 min) + baldeação a pé até a Hibiya Line (1 estação, ~3 min).",
-            "Uma baldeação simples, bem sinalizada.",
+            "Ginza Line (G10 → G15) até Ueno-hirokoji + baldeação a pé até a Estação Naka-okachimachi (Hibiya Line, H17) + 1 parada até Akihabara (H16).",
+            "Uma baldeação simples, bem sinalizada — Ueno-hirokoji e Naka-okachimachi fazem parte do mesmo complexo de estações interligadas (junto com Ueno-okachimachi, do Toei Oedo Line).",
           ],
         },
         {
@@ -2093,7 +2097,15 @@ const DAY_4: DayContent = {
         },
       ],
       recomendacao:
-        "Do lyf Ginza Tokyo, o trajeto até Akihabara é de cerca de 11 minutos: Ginza Line até Ueno-hirokoji e uma baldeação curta a pé para a Hibiya Line.",
+        "Do lyf Ginza Tokyo, o trajeto até Akihabara é de cerca de 11 minutos: Ginza Line (G10 → G15, Ueno-hirokoji) e uma baldeação curta a pé até a Naka-okachimachi (H17), seguindo 1 parada na Hibiya Line até Akihabara (H16).",
+      mapaAndares: {
+        titulo: "Mapa da Estação Akihabara",
+        mapas: [
+          { andar: "1F", imagem: "/images/mapa-estacao-akiharaba-1F.png", imagemAlt: "Mapa do 1º andar da Estação Akihabara" },
+          { andar: "2F", imagem: "/images/mapa-estacao-akihabara-2F.png", imagemAlt: "Mapa do 2º andar da Estação Akihabara" },
+          { andar: "3F", imagem: "/images/mapa-estacao-akihabara-3F.png", imagemAlt: "Mapa do 3º andar da Estação Akihabara" },
+        ],
+      },
     },
     atracaoPrincipal: "Akihabara Electric Town",
     atracaoPrincipalImagem: "/images/dia7-akihabara.png",
@@ -2103,9 +2115,9 @@ const DAY_4: DayContent = {
       { label: "Pagamento", valor: "Muitas lojas aceitam cartão" },
     ],
     mapaVisaoGeral: {
-      imagem: "/images/placeholder-em-producao.png",
-      imagemAlt: "Visão geral do trajeto a pé em Akihabara — em produção",
-      nota: "Mapa de trajeto a pé em produção.",
+      imagem: "/images/akihabara-tempo-de-deslocamento.png",
+      imagemAlt: "Trajeto a pé conectando os pontos de interesse de Akihabara Electric Town",
+      nota: "≈30 min · 2,1 km — trajeto completo a pé conectando os pontos de interesse do período, sem pressa de fazer tudo na ordem: ajuste conforme o ritmo do grupo.",
     },
     pois: [
       {
@@ -2114,36 +2126,55 @@ const DAY_4: DayContent = {
         description:
           "Action figures e um shopping com um pouco de tudo — logo na saída Electric Town da estação, o primeiro ponto do passeio.",
         prioridade: "opcional",
+        imagem: "/images/day2-radiokaikan.png",
+        imagemAlt: "Fachada da Akihabara Radio Kaikan",
+      },
+      {
+        category: "Compras",
+        title: "Tamashii Nations Store Tokyo",
+        description:
+          "Loja oficial da Bandai Spirits dedicada às linhas premium de action figures e colecionáveis (Figuarts, Chogokin) — peças de alta qualidade voltadas para colecionadores.",
+        prioridade: "recomendado",
+        imagem: "/images/day2-tamashii-nations.png",
+        imagemAlt: "Vitrine de action figures na Tamashii Nations Store Tokyo",
       },
       {
         category: "Compras",
         title: "Animate",
         description: "Uma das maiores redes de lojas de mangá do Japão.",
         prioridade: "recomendado",
+        imagem: "/images/day2-animate.png",
+        imagemAlt: "Fachada da loja Animate em Akihabara",
       },
       {
         category: "Compras",
         title: "Mandarake Complex",
         description: "Mangá e action figures.",
         prioridade: "recomendado",
+        imagem: "/images/day2-mandarake-complex.png",
+        imagemAlt: "Interior da Mandarake Complex em Akihabara",
+      },
+      {
+        category: "Compras",
+        title: "Suruga-ya Anime & Hobby Store",
+        description:
+          "Rede tradicional de usados — mangás, DVDs/Blu-rays de anime, action figures e CDs, com preços mais em conta que as lojas de produto novo.",
+        prioridade: "opcional",
+        imagem: "/images/day2-surugaya.jpg",
+        imagemAlt: "Fachada da Suruga-ya Specialty Store em Akihabara",
       },
       {
         category: "Compras",
         title: "Super Potato",
-        description:
-          "Loja retrô de videogames — nas proximidades também fica a Suruga-ya Anime & Hobby Store, com videogames e itens de anime.",
+        description: "Loja retrô de videogames.",
         prioridade: "recomendado",
+        imagem: "/images/day2-superpotato.png",
+        imagemAlt: "Interior da loja retrô Super Potato em Akihabara",
       },
       {
         category: "Compras",
         title: "Hareruya 2",
         description: "Pokémon Trading Card Game.",
-        prioridade: "opcional",
-      },
-      {
-        category: "Compras",
-        title: "Ark",
-        description: "Peças de computador.",
         prioridade: "opcional",
       },
       {
@@ -2158,6 +2189,8 @@ const DAY_4: DayContent = {
         description:
           "Grandes lojas de eletrônicos — Yodobashi-Akiba fica do lado leste da estação (saída Showa-dori), um bom último ponto antes de seguir para o almoço.",
         prioridade: "opcional",
+        imagem: "/images/day2-yodobashi-akiba.png",
+        imagemAlt: "Fachada da Yodobashi-Akiba",
       },
     ],
     gastronomia: {
@@ -2165,16 +2198,24 @@ const DAY_4: DayContent = {
       restaurantesLabel: "Opções de refeição",
       restaurantes: [
         {
-          nome: "A definir",
-          descricao: "Sugestões de restaurante para o almoço em Akihabara em produção.",
-          foto: "/images/placeholder-em-producao.png",
+          nome: "Jotou Curry Akihabara ten",
+          descricao: "Curry japonês — casa tradicional da região, com balcão no térreo e mesas no subsolo.",
+          localizacao: "Sotokanda, Chiyoda-ku — ~2 min a pé da Estação Suehirocho",
+          foto: "/images/joto-curry-akihabara.png",
+        },
+        {
+          nome: "Tonkatsu Wakou Yodobashi Akiba ten",
+          descricao: "Tonkatsu (costeleta de porco empanada) — filial da tradicional rede Wako, dentro do complexo da Yodobashi-Akiba.",
+          localizacao: "Dentro do edifício Yodobashi-Akiba",
+          foto: "/images/wako-tonkatsu-akihabara.png",
+        },
+        {
+          nome: "Kyushu Jangara Ramen (Akihabara Honten)",
+          descricao: "Ramen estilo Kyushu (Hakata) — a casa principal da rede, conhecida também por opções veganas.",
+          localizacao: "Sotokanda, Chiyoda-ku — ~6 min a pé da Estação Akihabara",
+          foto: "/images/kyushu-jangara.png",
         },
       ],
-      mapa: {
-        titulo: "Mapa — Refeições em Akihabara",
-        imagem: "/images/placeholder-em-producao.png",
-        imagemAlt: "Mapa de restaurantes em Akihabara — em produção",
-      },
     },
     banheirosProximos: [
       { local: "A definir", nota: "Informação de banheiros próximos a ser adicionada." },
@@ -2245,7 +2286,7 @@ const DAY_4: DayContent = {
           Icon: IconMetro,
           recomendado: true,
           detalhes: [
-            "Uma estação de distância, sem baldeação.",
+            "Uma estação de distância, sem baldeação — Akihabara (JY03) até Kanda (JY02).",
             "Alternativa: ~15 min a pé, se preferir caminhar.",
           ],
         },
@@ -2290,10 +2331,21 @@ const DAY_4: DayContent = {
       ],
       restaurantesLabel: "Izakayas recomendados",
       restaurantes: [
-        { nome: "Osusumeya Kanda", descricao: "Detalhes em produção.", foto: "/images/placeholder-em-producao.png" },
-        { nome: "Yakitori Izakaya Kanda-syouten", descricao: "Detalhes em produção.", foto: "/images/placeholder-em-producao.png" },
-        { nome: "Izakaya Genki Kanda", descricao: "Detalhes em produção.", foto: "/images/placeholder-em-producao.png" },
-        { nome: "Robatayaki HOTARU", descricao: "Detalhes em produção.", foto: "/images/placeholder-em-producao.png" },
+        {
+          nome: "Kanda Nishiguchi Motsuyaki Nonki",
+          descricao: "Izakaya tradicional especializada em motsuyaki (espetinhos de miúdos grelhados) — ~2 min a pé da saída oeste da Estação Kanda.",
+          foto: "/images/nonki-kanda.png",
+        },
+        {
+          nome: "Kanda Uokin",
+          descricao: "Izakaya de frutos do mar, conhecida pelos pratos fartos de sashimi e peixe fresco.",
+          foto: "/images/uokin.png",
+        },
+        {
+          nome: "Kanda Shoten",
+          descricao: "Izakaya de bairro com sashimi e boa seleção de sakês — clima local e despretensioso.",
+          foto: "/images/kanda-shouten.png",
+        },
       ],
       mapa: {
         titulo: "Mapa — Izakayas em Kanda",
@@ -2827,7 +2879,7 @@ const DAY_6: DayContent = {
           Icon: IconMetro,
           recomendado: true,
           detalhes: [
-            "Linha direta (JR Nara Line, trem local), sem baldeação.",
+            "Linha direta (JR Nara Line, trem local), sem baldeação — Kyoto Station (D01) até Inari (D03), passando por Tofukuji (D02).",
             "A estação Inari fica literalmente na entrada do santuário.",
           ],
         },
@@ -2842,7 +2894,7 @@ const DAY_6: DayContent = {
         },
       ],
       recomendacao:
-        "Do Daiwa Roynet Hotel Kyoto-Ekimae, em frente à Kyoto Station, o trem local da JR Nara Line leva cerca de 5 minutos até a Estação Inari — que fica na entrada do santuário. Importante: apenas trens locais param em Inari, expressos não param.",
+        "Do Daiwa Roynet Hotel Kyoto-Ekimae, em frente à Kyoto Station (D01), o trem local da JR Nara Line leva cerca de 5 minutos até a Estação Inari (D03) — que fica na entrada do santuário. Importante: apenas trens locais param em Inari, expressos não param.",
     },
     atracaoPrincipal: "Fushimi-Inari Taisha",
     atracaoPrincipalImagem: "/images/dia6-fushimiinari.png",
@@ -3194,7 +3246,7 @@ const DAY_7: DayContent = {
           Icon: IconMetro,
           recomendado: true,
           detalhes: [
-            "Linha direta (Toei Asakusa Line), sem baldeação — apenas 2 estações.",
+            "Linha direta (Toei Asakusa Line), sem baldeação — Takaracho (A12) → Ningyocho (A14), passando por Nihombashi (A13).",
             "Embarque a ~1 min a pé do hotel.",
           ],
         },
@@ -3342,6 +3394,9 @@ const DAY_7: DayContent = {
     deslocamento: {
       estacaoOrigem: { nome: "Estação Ningyocho", nomeJapones: "人形町駅" },
       linha: { codigo: "A14", nome: "Toei Asakusa Line", cor: "#D04E3C", logo: "/images/toei-mark.png" },
+      estacoesIntermediarias: [
+        { nome: "Higashi-Nihombashi", nomeJapones: "東日本橋", numero: "A15" },
+      ],
       estacaoDestino: { nome: "Estação Ryogoku", nomeJapones: "両国駅" },
       opcoes: [
         {
@@ -3350,7 +3405,7 @@ const DAY_7: DayContent = {
           Icon: IconMetro,
           recomendado: true,
           detalhes: [
-            "Toei Asakusa Line até Asakusabashi (~5 min) + baldeação para a JR Sobu Line até Ryogoku (~5 min).",
+            "Toei Asakusa Line até Asakusabashi (A16, ~5 min, passando por Higashi-Nihombashi A15) + baldeação para a JR Sobu Line até Ryogoku (~5 min).",
             "Kokugikan fica a ~1 min a pé da saída da estação.",
           ],
         },
@@ -4629,6 +4684,10 @@ function DeslocamentoCard({ deslocamento }: { deslocamento: Deslocamento }) {
         </div>
       )}
 
+      {deslocamento.mapaAndares && (
+        <MapaAndaresBlock mapaAndares={deslocamento.mapaAndares} />
+      )}
+
       {zoomMapa && (
         <div
           className="fixed inset-0 z-[100] flex items-center justify-center bg-black/85 p-4 backdrop-blur-sm sm:p-8"
@@ -4653,6 +4712,100 @@ function DeslocamentoCard({ deslocamento }: { deslocamento: Deslocamento }) {
             />
             <p className="mt-3 text-center text-xs font-semibold uppercase tracking-[0.15em] text-white/85">
               {zoomMapa.alt}
+            </p>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function MapaAndaresBlock({
+  mapaAndares,
+}: {
+  mapaAndares: NonNullable<Deslocamento["mapaAndares"]>;
+}) {
+  const [selected, setSelected] = useState(0);
+  const [zoom, setZoom] = useState(false);
+  const atual = mapaAndares.mapas[selected];
+  const outros = mapaAndares.mapas
+    .map((m, i) => ({ ...m, index: i }))
+    .filter((m) => m.index !== selected);
+
+  return (
+    <div className="mt-5">
+      {mapaAndares.titulo && (
+        <p className="mb-3 text-xs font-bold uppercase tracking-[0.25em] text-[#24211D]/55">
+          {mapaAndares.titulo}
+        </p>
+      )}
+      <button
+        type="button"
+        onClick={() => setZoom(true)}
+        className="group relative block w-full overflow-hidden rounded-2xl border border-[#DDD8CF] bg-white"
+      >
+        <img
+          src={atual.imagem}
+          alt={atual.imagemAlt}
+          className="block h-auto w-full transition duration-300 group-hover:scale-[1.01]"
+        />
+        <span className="absolute left-3 top-3 flex h-8 w-8 items-center justify-center rounded-full bg-black text-sm font-bold text-white shadow-md ring-2 ring-white/70">
+          {atual.andar}
+        </span>
+        <div className="absolute inset-0 flex items-center justify-center bg-black/0 transition duration-300 group-hover:bg-black/15">
+          <span className="flex h-9 w-9 scale-75 items-center justify-center rounded-full bg-white/90 text-[#000000] opacity-0 shadow-md transition duration-300 group-hover:scale-100 group-hover:opacity-100">
+            <IconZoom className="h-4 w-4" />
+          </span>
+        </div>
+      </button>
+
+      {outros.length > 0 && (
+        <div className={`mt-3 grid grid-cols-1 gap-3 sm:grid-cols-${Math.min(outros.length, 3)}`}>
+          {outros.map((m) => (
+            <button
+              key={m.andar}
+              type="button"
+              onClick={() => setSelected(m.index)}
+              className="group flex items-center gap-3 overflow-hidden rounded-xl border border-[#DDD8CF] bg-[#FDFCF9] p-3 text-left transition hover:border-[#2C6CA6]/50 hover:bg-[#EAF3FC]"
+            >
+              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#F2F1ED] text-sm font-bold text-[#24211D]/70 transition group-hover:bg-[#2C6CA6] group-hover:text-white">
+                {m.andar}
+              </span>
+              <span className="min-w-0 text-xs font-medium text-[#24211D]/80">
+                Ver mapa do {m.andar}
+              </span>
+              <span className="ml-auto shrink-0 text-lg text-[#24211D]/40 transition group-hover:text-[#2C6CA6]">
+                →
+              </span>
+            </button>
+          ))}
+        </div>
+      )}
+
+      {zoom && (
+        <div
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/85 p-4 backdrop-blur-sm sm:p-8"
+          onClick={() => setZoom(false)}
+        >
+          <button
+            type="button"
+            onClick={() => setZoom(false)}
+            className="absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white transition hover:bg-white/20 sm:right-6 sm:top-6"
+            aria-label="Fechar"
+          >
+            <IconX className="h-5 w-5" />
+          </button>
+          <div
+            className="relative max-h-full max-w-full overflow-hidden rounded-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <img
+              src={atual.imagem}
+              alt={atual.imagemAlt}
+              className="max-h-[85vh] max-w-[95vw] rounded-2xl bg-white object-contain"
+            />
+            <p className="mt-3 text-center text-xs font-semibold uppercase tracking-[0.15em] text-white/85">
+              {atual.imagemAlt}
             </p>
           </div>
         </div>
