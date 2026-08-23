@@ -1309,9 +1309,9 @@ const DAY_2: DayContent = {
       { label: "Pagamento", valor: "Cartão aceito na maioria das lojas" },
     ],
     mapaVisaoGeral: {
-      imagem: "/images/placeholder-em-producao.png",
-      imagemAlt: "Visão geral do trajeto a pé em Marunouchi — em produção",
-      nota: "Mapa de trajeto a pé em produção.",
+      imagem: "/images/visaogeral-tokyostation.png",
+      imagemAlt: "Mapa de Tokyo Station e Marunouchi com Nijubashi Bridge e o Jardim do Palácio Imperial nas proximidades",
+      nota: "Localização de Tokyo Station e Marunouchi em relação à entrada dos Jardins do Palácio Imperial.",
     },
     pois: [
       {
@@ -1401,17 +1401,11 @@ const DAY_2: DayContent = {
     },
     visaoAnotada: {
       titulo: "Imperial Palace East Gardens",
-      imagem: "/images/placeholder-em-producao.png",
-      imagemAlt: "Infográfico anotado dos Jardins do Palácio Imperial — em produção",
+      imagem: "/images/raiox-tokyostation.png",
+      imagemAlt: "Raio-X Alpinea da região do Palácio Imperial com Jardim do Palácio (皇居東御苑), Nijubashi Bridge, Ninomaru Garden, Kita-no-maru Park e Tokyo Station",
       comentarios: [
-        "Infográfico anotado desta área ainda em produção — em breve mostraremos aqui os pontos-chave dos jardins com fotos reais.",
-      ],
-      pontos: [
-        { titulo: "Otemon Gate", descricao: "Antigo portão principal do Castelo de Edo.", foto: "/images/placeholder-em-producao.png", ordem: 1 },
-        { titulo: "Bansho (Casas de Guarda)", descricao: "Uma das três casas de guarda samurai remanescentes.", foto: "/images/placeholder-em-producao.png", ordem: 2 },
-        { titulo: "Muralhas e Fossos Originais", descricao: "Trechos originais das muralhas de pedra e fossos.", foto: "/images/placeholder-em-producao.png", ordem: 3 },
-        { titulo: "Fujimi-yagura", descricao: "Torre de vigia construída em 1659.", foto: "/images/placeholder-em-producao.png", ordem: 4 },
-        { titulo: "Tenshudai", descricao: "Base de pedra onde ficava a torre principal do castelo.", foto: "/images/placeholder-em-producao.png", ordem: 5 },
+        "Vista aérea de toda a região do Palácio Imperial: o Jardim do Palácio (皇居東御苑, os East Gardens) fica logo a nordeste do Nijubashi Bridge e do próprio Palácio, com o Ninomaru Garden e o Museu Nacional de Arte Moderna nas bordas do fosso.",
+        "A caminhada desde Tokyo Station atravessa Marunouchi rumo ao Nijubashi Bridge — de lá, é só contornar o fosso até a entrada dos jardins. Mais ao norte, Kita-no-maru Park e a Chidorigafuchi Green Way completam o grande cinturão verde que envolve o Palácio.",
       ],
     },
     regiao: {
@@ -1457,9 +1451,9 @@ const DAY_2: DayContent = {
       { label: "Melhor horário", valor: "Logo na abertura, às 9h" },
     ],
     mapaVisaoGeral: {
-      imagem: "/images/placeholder-em-producao.png",
-      imagemAlt: "Visão geral do trajeto a pé nos Jardins do Palácio Imperial — em produção",
-      nota: "Mapa de trajeto a pé em produção.",
+      imagem: "/images/visaogeral-tokyostation.png",
+      imagemAlt: "Mapa do Jardim do Palácio Imperial com Nijubashi Bridge, Ninomaru Garden e Tokyo Station nas proximidades",
+      nota: "Localização da entrada dos Jardins do Palácio Imperial em relação a Tokyo Station e Marunouchi.",
     },
     decisoes: [
       {
@@ -1628,17 +1622,12 @@ const DAY_3: DayContent = {
       ],
     },
     visaoAnotada: {
-      titulo: "Meiji Jingu & Yoyogi",
-      imagem: "/images/placeholder-em-producao.png",
-      imagemAlt: "Infográfico anotado de Meiji Jingu e Yoyogi — em produção",
+      titulo: "Meiji Jingu",
+      imagem: "/images/raiox-meiji-jingu.png",
+      imagemAlt: "Raio-X Alpinea do Meiji Jingu com o Santuário Principal, Jardim Interior, Casa do Tesouro, Museu e as estações Harajuku e Yoyogi",
       comentarios: [
-        "Infográfico anotado desta área ainda em produção — em breve mostraremos aqui os pontos-chave do superdistrito de Shibuya com fotos reais.",
-      ],
-      pontos: [
-        { titulo: "Parque de Yoyogi", descricao: "Enorme floresta erguida do zero em homenagem à morte do imperador Meiji.", foto: "/images/placeholder-em-producao.png", ordem: 1 },
-        { titulo: "Omotesando", descricao: "Uma das maiores avenidas de boutiques e lojas de luxo de Tóquio.", foto: "/images/placeholder-em-producao.png", ordem: 2 },
-        { titulo: "Estátua de Hachiko", descricao: "Homenagem ao cão que deu origem ao filme \"Pra Sempre ao Seu Lado\".", foto: "/images/placeholder-em-producao.png", ordem: 3 },
-        { titulo: "Shibuya Crossing", descricao: "O famoso cruzamento hexagonal de Shibuya.", foto: "/images/placeholder-em-producao.png", ordem: 4 },
+        "Vista aérea do terreno do santuário: a entrada principal fica junto à Estação Harajuku, de onde parte o Minami-sando (参道, a alameda de acesso) cortando a floresta até o Minami Shinmon (南神門) e o Santuário Principal (本殿). No caminho, a Casa do Tesouro (宝物殿) e o Museu ficam a poucos passos um do outro, e o Togo Shrine é um santuário menor nos arredores.",
+        "O Parque de Yoyogi fica colado ao terreno do santuário, do lado oeste, com a Estação Yoyogi bem em frente — uma boa saída alternativa à Harajuku, dependendo de para onde for em seguida.",
       ],
     },
     regiao: {
@@ -1802,19 +1791,12 @@ const DAY_3: DayContent = {
       ],
     },
     visaoAnotada: {
-      titulo: "Shinjuku — Mirante & Kabukicho",
-      imagem: "/images/placeholder-em-producao.png",
-      imagemAlt: "Infográfico anotado de Shinjuku — em produção",
+      titulo: "Shinjuku à Noite — Kabukicho",
+      imagem: "/images/raiox-shinjuku.png",
+      imagemAlt: "Raio-X Alpinea de Kabukicho à noite com Godzilla Head, Cross Shinjuku Vision, Thermae-Yu e Shinjuku Golden-Gai",
       comentarios: [
-        "Infográfico anotado desta área ainda em produção — em breve mostraremos aqui os pontos-chave de Shinjuku com fotos reais.",
-      ],
-      pontos: [
-        { titulo: "Shinjuku Gyoen", descricao: "Um dos parques mais bonitos de Tóquio.", foto: "/images/placeholder-em-producao.png", ordem: 1 },
-        { titulo: "Prédio do Governo Metropolitano + Mirante", descricao: "Mirante gratuito com vista panorâmica da cidade.", foto: "/images/placeholder-em-producao.png", ordem: 2 },
-        { titulo: "Gato 3D Gigante", descricao: "Uma das atrações mais fotografadas do bairro.", foto: "/images/placeholder-em-producao.png", ordem: 3 },
-        { titulo: "Estátua do Godzilla", descricao: "Símbolo do distrito de entretenimento de Kabukicho.", foto: "/images/placeholder-em-producao.png", ordem: 4 },
-        { titulo: "Kabukicho", descricao: "Maior distrito de entretenimento noturno de Tóquio.", foto: "/images/placeholder-em-producao.png", ordem: 5 },
-        { titulo: "Golden Gai", descricao: "Rede de vielas estreitas com mais de 200 bares minúsculos.", foto: "/images/placeholder-em-producao.png", ordem: 6 },
+        "Vista noturna do quarteirão de Kabukicho: a cabeça do Godzilla (Godzilla Head) fica no topo do Hotel Gracery, bem na entrada do bairro — dá pra ver de longe. A poucos passos, o Cross Shinjuku Vision é o telão curvo onde aparece o gato 3D gigante, na saída leste da estação.",
+        "Do outro lado do quarteirão, o Thermae-Yu (onsen urbano) e o Shinjuku Golden-Gai (rede de vielas com bares minúsculos) ficam a uma curta caminhada um do outro — todo esse trecho é percorrível a pé, sem pressa, entre uma atração e outra.",
       ],
     },
     regiao: {
@@ -1938,6 +1920,13 @@ const DAY_3: DayContent = {
       titulo: "Shinjuku em Detalhes",
       imagens: [
         { src: "/images/placeholder-em-producao.png", alt: "Galeria de Shinjuku — em produção", legenda: "Em produção" },
+      ],
+      mapas: [
+        {
+          titulo: "Raio-X Alpinea — Shinjuku Gyoen",
+          imagem: "/images/raiox-shinjuku-gyoen.png",
+          imagemAlt: "Raio-X Alpinea de Shinjuku Gyoen com Portão Shinjuku, Portão Okido, Portão Sendagaya, Jardim Japonês, Estufa Grande, Lago Superior/Médio/Inferior e Jardim de Roseiras",
+        },
       ],
     },
     banheirosProximos: [
@@ -2672,15 +2661,11 @@ const DAY_5: DayContent = {
     },
     visaoAnotada: {
       titulo: "Kiyomizu-dera & Higashiyama",
-      imagem: "/images/placeholder-em-producao.png",
-      imagemAlt: "Infográfico anotado de Kiyomizu-dera e Higashiyama — em produção",
+      imagem: "/images/raiox-kiyomizu-higashiyama.png",
+      imagemAlt: "Raio-X Alpinea de Kiyomizu-dera e Higashiyama com Nio-mon Gate, Sannenzaka, Ninenzaka, % Arabica, Hokan-ji e a região de Gion ao fundo",
       comentarios: [
-        "Infográfico anotado desta área ainda em produção — em breve mostraremos aqui os pontos-chave do templo com fotos reais.",
-      ],
-      pontos: [
-        { titulo: "Sannenzaka", descricao: "Ladeira histórica de casas tradicionais.", foto: "/images/placeholder-em-producao.png", ordem: 1 },
-        { titulo: "Ninenzaka", descricao: "Continuação de Sannenzaka, descendo rumo a Gion.", foto: "/images/placeholder-em-producao.png", ordem: 2 },
-        { titulo: "Café % Arabica Kyoto Higashiyama", descricao: "Cafeteria minimalista muito concorrida.", foto: "/images/placeholder-em-producao.png", ordem: 3 },
+        "Vista aérea de Higashiyama: a subida começa no Nio-mon Gate do Kiyomizu-dera e desce pelas ladeiras históricas de Sannenzaka e Ninenzaka, passando pela Pagode de Yasaka (Hokan-ji) e pelo % Arabica Kyoto — o café minimalista sempre com fila, bem no meio do trajeto.",
+        "Seguindo para o norte, as mesmas ladeiras levam direto a Gion: Kenninji, Yasaka Shrine, Maruyama Park e Chionin Temple aparecem logo no início do bairro seguinte, com o Pontocho Alley já às margens do Rio Kamo.",
       ],
     },
     regiao: {
@@ -2727,9 +2712,9 @@ const DAY_5: DayContent = {
       { label: "Melhor horário", valor: "Logo na abertura, 6h" },
     ],
     mapaVisaoGeral: {
-      imagem: "/images/placeholder-em-producao.png",
-      imagemAlt: "Visão geral do trajeto a pé em Higashiyama — em produção",
-      nota: "Mapa de trajeto a pé em produção.",
+      imagem: "/images/visaogeral-kyoto1.png",
+      imagemAlt: "Mapa com Kiyomizu-dera, Ninenzaka, % Arabica e a região de Gion nas proximidades",
+      nota: "Localização de Kiyomizu-dera e das ladeiras de Sannenzaka/Ninenzaka em relação a Gion, logo ao norte.",
     },
     decisoes: [
       {
@@ -2807,14 +2792,11 @@ const DAY_5: DayContent = {
     },
     visaoAnotada: {
       titulo: "Distrito de Gion",
-      imagem: "/images/placeholder-em-producao.png",
-      imagemAlt: "Infográfico anotado do distrito de Gion — em produção",
+      imagem: "/images/raiox-kiyomizu-higashiyama.png",
+      imagemAlt: "Raio-X Alpinea de Gion com Yasaka Shrine, Chionin Temple, Maruyama Park, Pontocho Alley e a ligação com Higashiyama pelas ladeiras",
       comentarios: [
-        "Infográfico anotado desta área ainda em produção — em breve mostraremos aqui os pontos-chave de Gion com fotos reais.",
-      ],
-      pontos: [
-        { titulo: "Yasaka Shrine", descricao: "Santuário xintoísta símbolo de Gion.", foto: "/images/placeholder-em-producao.png", ordem: 1 },
-        { titulo: "Pontocho", descricao: "Viela tradicional de restaurantes e gueixas.", foto: "/images/placeholder-em-producao.png", ordem: 2 },
+        "O mesmo raio-x de Higashiyama mostra Gion logo ao norte: o Santuário de Yasaka marca a entrada do bairro, com o Chionin Temple e o Maruyama Park (famoso pelas cerejeiras) nos arredores.",
+        "Pontocho Alley fica do outro lado, já às margens do Rio Kamo — a viela tradicional de restaurantes e casas de chá, atravessada pela Sanjo-ohashi e pela Shijo-ohashi.",
       ],
     },
     regiao: {
@@ -2858,9 +2840,9 @@ const DAY_5: DayContent = {
       { label: "Pontocho", valor: "Restaurantes abrem a partir das 17h–18h" },
     ],
     mapaVisaoGeral: {
-      imagem: "/images/placeholder-em-producao.png",
-      imagemAlt: "Visão geral do trajeto a pé em Gion — em produção",
-      nota: "Mapa de trajeto a pé em produção.",
+      imagem: "/images/kyoto-visao-geral.png",
+      imagemAlt: "Mapa de Gion com Pontocho Alley, Yasaka Shrine e a ligação a pé com Kiyomizu-dera",
+      nota: "Localização de Pontocho e Yasaka Shrine em relação a Kiyomizu-dera, ao sul.",
     },
     decisoes: [
       {
@@ -3006,15 +2988,11 @@ const DAY_6: DayContent = {
     },
     visaoAnotada: {
       titulo: "Fushimi Inari Taisha",
-      imagem: "/images/placeholder-em-producao.png",
-      imagemAlt: "Infográfico anotado do Santuário Fushimi Inari — em produção",
+      imagem: "/images/raiox-fushimiinari.png",
+      imagemAlt: "Raio-X Alpinea do Santuário Fushimi Inari com o Portão Principal, Salão Principal, corredor de torii, Yotsuji e o Monte Inari",
       comentarios: [
-        "Infográfico anotado desta área ainda em produção — em breve mostraremos aqui os pontos-chave do santuário com fotos reais.",
-      ],
-      pontos: [
-        { titulo: "Torii de entrada", descricao: "Entrada principal do santuário.", foto: "/images/placeholder-em-producao.png", ordem: 1 },
-        { titulo: "Senbon Torii", descricao: "O famoso corredor de milhares de torii vermelhos.", foto: "/images/placeholder-em-producao.png", ordem: 2 },
-        { titulo: "Yotsutsuji (mirante)", descricao: "Ponto intermediário na subida com vista sobre Kyoto.", foto: "/images/placeholder-em-producao.png", ordem: 3 },
+        "Da Estação Fushimi Inari, o Portão Principal (Rōmon) leva direto ao Salão Principal (Honden) do santuário — é ali que começa o corredor de torii vermelhos, subindo a encosta até o cruzamento de Yotsuji, o ponto intermediário mais comum para quem não vai até o topo.",
+        "Quem seguir além de Yotsuji encontra santuários menores (Kumataka, Ganrikisha, Mitsurugi) e cachoeiras (Kobogataki, Aokigataki, Shiragiku) no caminho até o cume do Monte Inari, a 233 m de altitude — um trajeto de trilha, bem diferente do corredor de torii mais movimentado da base.",
       ],
     },
     regiao: {
@@ -3062,9 +3040,9 @@ const DAY_6: DayContent = {
       { label: "Melhor horário", valor: "Antes das 9h, para evitar aglomerações" },
     ],
     mapaVisaoGeral: {
-      imagem: "/images/placeholder-em-producao.png",
-      imagemAlt: "Visão geral do trajeto a pé em Fushimi Inari — em produção",
-      nota: "Mapa de trajeto a pé em produção.",
+      imagem: "/images/fushimi-inari-taisha-visaogeral.png",
+      imagemAlt: "Mapa de Fushimi Inari-taisha com Fushimi Inari Yotsuji, Mount Inari, Kobogataki Falls e santuários menores no entorno",
+      nota: "Localização do santuário principal e do caminho de torii que sobe o Monte Inari.",
     },
     decisoes: [
       {
@@ -3120,16 +3098,11 @@ const DAY_6: DayContent = {
     },
     visaoAnotada: {
       titulo: "Kinkaku-ji (Kitayama)",
-      imagem: "/images/placeholder-em-producao.png",
-      imagemAlt: "Infográfico anotado de Kinkaku-ji — em produção",
+      imagem: "/images/raiox-kinkakuji.png",
+      imagemAlt: "Raio-X Alpinea de Kinkaku-ji com Shariden Kinkaku, Kyōko-chi Pond, Ginga-sen, Ryūmon Falls, White Snake Tomb, Fudō-do Temple, General Gate e Entrance",
       comentarios: [
-        "Infográfico anotado desta área ainda em produção — em breve mostraremos aqui os pontos-chave do templo com fotos reais.",
-      ],
-      pontos: [
-        { titulo: "Ryoan-ji", descricao: "Templo zen famoso pelo jardim de pedras.", foto: "/images/placeholder-em-producao.png", ordem: 1 },
-        { titulo: "Ninna-ji", descricao: "Templo histórico com belas cerejeiras.", foto: "/images/placeholder-em-producao.png", ordem: 2 },
-        { titulo: "Museu do Mangá de Kyoto", descricao: "Acervo com milhares de títulos de mangá, no centro de Kyoto.", foto: "/images/placeholder-em-producao.png", ordem: 3 },
-        { titulo: "Nintendo Store Kyoto", descricao: "Loja oficial da Nintendo no Takashimaya.", foto: "/images/placeholder-em-producao.png", ordem: 4 },
+        "O Shariden Kinkaku (Pavilhão Dourado) fica à beira do Kyōko-chi Pond — a caminhada começa no Entrance, ao sul, passa pelo General Gate e chega ao pavilhão, com o lago refletindo a fachada dourada logo à frente.",
+        "O circuito segue subindo pela mata atrás do pavilhão, passando pelo Ginga-sen (Galaxy's Spring) e pela pequena Ryūmon Falls, até o White Snake Tomb — e desce do outro lado até o Fudō-do Temple, já perto da saída.",
       ],
     },
     regiao: {
@@ -3174,9 +3147,9 @@ const DAY_6: DayContent = {
       { label: "Melhor horário", valor: "Logo na abertura, antes dos ônibus de turismo" },
     ],
     mapaVisaoGeral: {
-      imagem: "/images/placeholder-em-producao.png",
-      imagemAlt: "Visão geral do trajeto a pé em Kinkaku-ji — em produção",
-      nota: "Mapa de trajeto a pé em produção.",
+      imagem: "/images/kinkakuji-visaogeral.png",
+      imagemAlt: "Mapa de Kinkaku-ji com Shariden Kinkaku, Kyōko-chi Pond, General Gate e Entrance",
+      nota: "Localização do Pavilhão Dourado e do circuito de caminhada dentro do templo.",
     },
     decisoes: [
       {
@@ -3369,18 +3342,11 @@ const DAY_7: DayContent = {
     },
     visaoAnotada: {
       titulo: "Ningyocho",
-      imagem: "/images/placeholder-em-producao.png",
-      imagemAlt: "Infográfico anotado de Ningyocho — em produção",
+      imagem: "/images/raiox-ningyocho.png",
+      imagemAlt: "Raio-X Alpinea de Ningyocho com Ningyocho Station, Amazake Yokocho, Ningyocho Mechanic Clock, Nihonbashi e Suitengu Shrine",
       comentarios: [
-        "Infográfico anotado desta área ainda em produção — em breve mostraremos aqui os pontos-chave de Ningyocho com o mapa da caminhada completo.",
-      ],
-      pontos: [
-        { titulo: "Shigemori Eishindo", descricao: "Casa mais tradicional de ningyoyaki de Ningyocho.", foto: "/images/ningyoyaki.jpg", ordem: 1 },
-        { titulo: "Amazake Yokocho", descricao: "Viela de cerca de 400 metros com doçarias e izakayas.", foto: "/images/amazake-yokocho.webp", ordem: 2 },
-        { titulo: "Toritada", descricao: "Avícola tradicional fundada em 1911.", foto: "/images/toritada.png", ordem: 3 },
-        { titulo: "Hikokuro", descricao: "Casa de doces japoneses fundada em 1576.", foto: "/images/gyokueido-hikokuro.png", ordem: 4 },
-        { titulo: "Edo Rakugo Karakuri Yagura", descricao: "Torre-relógio karakuri ao lado do Suitengu.", foto: "/images/ningyocho.png", ordem: 5 },
-        { titulo: "Suitengu", descricao: "Santuário xintoísta fundado em 1818.", foto: "/images/suitengu.webp", ordem: 6 },
+        "Da Ningyocho Station, a rua principal desce reta até o Suitengu, marcado pelo torii vermelho no fim do quarteirão — é o mesmo trajeto da Amazake Yokocho, com suas doçarias e izakayas, e da torre do relógio karakuri (Ningyocho Mechanic Clock) bem no meio do caminho.",
+        "Nas ruas ao redor ficam santuários menores como Matsushima e Chanoki, além do Ōkannon-ji Temple — e, a leste, já dá para ver o distrito de Nihonbashi, próxima parada do trajeto financeiro de Tóquio.",
       ],
     },
     regiao: {
@@ -3533,15 +3499,11 @@ const DAY_7: DayContent = {
     },
     visaoAnotada: {
       titulo: "Kokugikan — Arredores",
-      imagem: "/images/placeholder-em-producao.png",
-      imagemAlt: "Infográfico anotado dos arredores do Kokugikan — em produção",
+      imagem: "/images/raiox-ryogoku.png",
+      imagemAlt: "Raio-X Alpinea dos arredores do Kokugikan com Ryōgoku Kokugikan, Museu Edo-Tokyo, Ryōgoku Edo NOREN, The Japanese Sword Museum e Yokoamicho Park",
       comentarios: [
-        "Infográfico anotado desta área ainda em produção — em breve mostraremos aqui os pontos-chave dos arredores do Kokugikan com fotos reais.",
-      ],
-      pontos: [
-        { titulo: "Edo Noren", descricao: "Vila gastronômica temática de sumô.", foto: "/images/placeholder-em-producao.png", ordem: 1 },
-        { titulo: "Santuário Nomi-no-Sukune", descricao: "Monumento com os nomes de todos os Yokozuna.", foto: "/images/placeholder-em-producao.png", ordem: 2 },
-        { titulo: "Museu de Espadas", descricao: "Coleção de espadas samurai tradicionais.", foto: "/images/placeholder-em-producao.png", ordem: 3 },
+        "O Ryōgoku Kokugikan fica lado a lado com o Museu Edo-Tokyo, e a vila gastronômica Ryōgoku Edo NOREN ocupa o térreo bem na saída da estação — tudo dentro do mesmo quarteirão, sem necessidade de deslocamento.",
+        "Do outro lado da rua, o The Japanese Sword Museum e o tradicional Jardim Kyu Yasuda ficam a poucos minutos a pé, com o Yokoamicho Park (famoso pelas cerejeiras) fazendo a transição para o bairro residencial de Yokoami.",
       ],
     },
     regiao: {
@@ -3588,9 +3550,9 @@ const DAY_7: DayContent = {
       { label: "Melhor horário", valor: "Chegar às 14h30, para acompanhar a 2ª divisão" },
     ],
     mapaVisaoGeral: {
-      imagem: "/images/placeholder-em-producao.png",
-      imagemAlt: "Visão geral do trajeto a pé nos arredores do Kokugikan — em produção",
-      nota: "Mapa de trajeto a pé em produção.",
+      imagem: "/images/visaogeral-ryogoku.png",
+      imagemAlt: "Mapa dos arredores do Kokugikan com Ryōgoku Kokugikan, Museu Edo-Tokyo, Ryōgoku Edo NOREN, Yokoamicho Park e o Museu da Espada Japonesa",
+      nota: "Localização do Kokugikan em relação ao Museu Edo-Tokyo, ao Yokoamicho Park e à vila gastronômica Ryōgoku Edo NOREN.",
     },
     decisoes: [
       {
