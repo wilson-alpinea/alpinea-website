@@ -39,9 +39,16 @@ type Poi = {
   // Foto real do ponto — só preenchida quando existe imagem de verdade.
   imagem?: string;
   imagemAlt?: string;
+  // object-position CSS para corrigir enquadramento de fotos com o
+  // assunto principal fora do centro (ex.: "50% 20%"). Sem isso, usa o
+  // padrão "center".
+  imagemPosicao?: string;
   // Galeria com mais de uma foto real — quando presente, tem prioridade
   // sobre imagem/imagemAlt e abre com navegação (‹ ›) no zoom.
   imagens?: { src: string; alt: string }[];
+  // Horário de funcionamento — só preenchido quando verificado (ex.: site
+  // oficial da loja). Sem isso, não aparece nada no card.
+  horario?: string;
 };
 
 type Gastronomia = {
@@ -104,6 +111,10 @@ type SubAtracao = {
   imagem?: string;
   foco?: "top" | "center" | "bottom";
   descricao?: string;
+  // Card de deslocamento (estação/linha/opções) — usado quando a
+  // sub-atração exige sair do período principal (ex.: ir de Akihabara até
+  // o izakaya em Kanda). Mesmo componente/dado usado em Period.
+  deslocamento?: Deslocamento;
   // Diagrama tipo "Raio-X Alpinea" (mapa de andares, infográfico) — quando
   // presente, substitui o headliner de foto padrão, em tamanho natural e
   // sem recorte.
@@ -113,8 +124,30 @@ type SubAtracao = {
   poisLabel?: string;
   pois?: Poi[];
   gastronomia?: Gastronomia;
+  // Mapa aberto (print real) com a visão geral do trajeto a pé dentro da
+  // sub-atração — mesmo padrão do `mapaVisaoGeral` de Period, mostrado
+  // logo antes da grade de POIs.
+  mapaVisaoGeral?: { imagem: string; imagemAlt: string; nota?: string };
+  banheirosProximos?: Period["banheirosProximos"];
+  // Card de aviso em destaque (vermelho) — ex.: documento obrigatório na
+  // entrada de uma balada. Mesmo componente usado no aviso de dia inteiro.
+  alerta?: AlertaSugerido;
+  // Tabela comparativa (ex.: duas opções de balada lado a lado) — linhas em
+  // texto simples, estrelas (1–5) ou "intensidade" (bolinha colorida + rótulo).
+  comparacao?: ComparacaoTabela;
   opcional?: boolean;
   compacta?: boolean;
+};
+
+type ComparacaoTabela = {
+  titulo?: string;
+  colunas: [string, string];
+  linhas: {
+    label: string;
+    valores?: [string, string];
+    estrelas?: [number, number];
+    intensidade?: [{ nivel: string; cor: string }, { nivel: string; cor: string }];
+  }[];
 };
 
 type LinhaBadge = {
@@ -1937,7 +1970,7 @@ const DAY_4: DayContent = {
   contexto: [
     "No dia de hoje teremos 3 atrações principais: Akihabara, Kanda e Roppongi.",
     "Akihabara é o centro da cultura de anime & mangá, é onde estão a maior concentração de lojas especializadas desde livrarias, lojas que vendem action figure a lojas que vendem produtos que tem importante intersecção com o tema como por exemplo Trading Card Games. Além do território e anime e mangá, Akihabara também possui uma enorme concentração de lojas que vendem eletrônicos, desde videogames, peças de computador e linha branca de eletrodomésticos.",
-    "Depois do passeio em Akihabara, vamos visitar o bairro de Kanda, que não é um bairro turístico. Nesse bairro vamos visitar um izakaya autêntico que é frequentado pelos trabalhadores e moradores da região.",
+    "O dia inteiro — manhã e tarde — é dedicado a Akihabara, sem pressa de cumprir um roteiro apertado. A única saída do bairro é à noite, para jantar num izakaya autêntico em Kanda, bairro vizinho e não turístico, frequentado pelos trabalhadores e moradores da região.",
     "Por fim, encerramos o dia visitando o bairro de Roppongi, um dos dois bairros de maior concentração de baladas e PUBs de Tokyo, e iremos visitar uma balada a sua escolha, R3 Club Lounge ou V2 Tokyo.",
   ],
   resumoDia: {
@@ -1945,9 +1978,9 @@ const DAY_4: DayContent = {
       { titulo: "Café da Manhã", horario: "08:30", foto: "/images/icone-gastronomia.png" },
       { titulo: "Saída do Hotel", horario: "09:15", foto: "/images/icone-hotel2.png" },
       { titulo: "Akihabara Electric Town", horario: "09:45", foto: "/images/akihabara-miniatura.png" },
-      { titulo: "Almoço", horario: "12:30", foto: "/images/icone-gastronomia.png" },
-      { titulo: "Passeio por Kanda", horario: "13:45", foto: "/images/kanda-miniatura.png" },
-      { titulo: "Jantar no Izakaya", horario: "19:00", foto: "/images/dia7-izakaya-kanda-v2.png" },
+      { titulo: "Almoço", horario: "12:00", foto: "/images/icone-gastronomia.png" },
+      { titulo: "Continuação em Akihabara", horario: "13:30", foto: "/images/akihabara-miniatura.png" },
+      { titulo: "Jantar no Izakaya (Kanda)", horario: "19:00", foto: "/images/dia7-izakaya-kanda-v2.png" },
       { titulo: "Vida Noturna em Roppongi", horario: "21:30", foto: "/images/roppongi-miniatura.png" },
     ],
   },
@@ -1972,16 +2005,20 @@ const DAY_4: DayContent = {
         tag: "Atração",
       },
       {
-        horario: "12:30",
+        horario: "12:00",
         evento: "Almoço com curry japonês em Akihabara",
         tag: "Refeição",
       },
       {
         horario: "13:30",
-        evento: "Deslocamento até Kanda (poucos minutos, trem local)",
+        evento: "Continuação do circuito em Akihabara, sem pressa",
+        tag: "Atração",
+      },
+      {
+        horario: "18:30",
+        evento: "Deslocamento até Kanda para o jantar (poucos minutos, trem local)",
         tag: "Deslocamento",
       },
-      { horario: "13:45", evento: "Passeio por Kanda", tag: "Atração" },
       {
         horario: "19:00",
         evento: "Jantar num izakaya autêntico em Kanda",
@@ -2007,7 +2044,7 @@ const DAY_4: DayContent = {
   },
   manha: {
     percursoEssencial: {
-      duracao: "~2h20 (Akihabara Electric Town)",
+      duracao: "~2h45 (Akihabara — manhã)",
       passos: [
         {
           titulo: "Akihabara Radio Kaikan",
@@ -2018,50 +2055,26 @@ const DAY_4: DayContent = {
         {
           titulo: "Tamashii Nations Store Tokyo",
           foto: "/images/day2-tamashii-nations.png",
-          horario: "~10:00",
+          horario: "~10:15",
           descricao: "Loja oficial da Bandai Spirits com as linhas premium de action figures e colecionáveis (Figuarts, Chogokin) — peças voltadas para colecionadores.",
         },
         {
           titulo: "Animate",
           foto: "/images/day2-animate.png",
-          horario: "~10:20",
+          horario: "~10:45",
           descricao: "Uma das maiores redes de lojas de mangá do Japão.",
         },
         {
           titulo: "Mandarake Complex",
           foto: "/images/day2-mandarake-complex.png",
-          horario: "~10:40",
+          horario: "~11:15",
           descricao: "Mangá e action figures.",
         },
         {
           titulo: "Suruga-ya Anime & Hobby Store",
           foto: "/images/day2-surugaya.jpg",
-          horario: "~11:00",
+          horario: "~11:45",
           descricao: "Rede tradicional de usados — mangás, DVDs/Blu-rays de anime, action figures e CDs, com preços mais em conta que as lojas de produto novo.",
-        },
-        {
-          titulo: "Super Potato",
-          foto: "/images/day2-superpotato.png",
-          horario: "~11:20",
-          descricao: "Loja retrô de videogames.",
-        },
-        {
-          titulo: "Hareruya 2",
-          foto: "/images/hareruya-2.png",
-          horario: "~11:35",
-          descricao: "Pokémon Trading Card Game.",
-        },
-        {
-          titulo: "Weird Vending Machine Corner",
-          foto: "/images/weird-vending-machine-corner.png",
-          horario: "~11:50",
-          descricao: "Cantinho com máquinas de venda automática bizarras e inusitadas, um clássico despretensioso de Akihabara.",
-        },
-        {
-          titulo: "BIC Camera ou Yodobashi Camera",
-          foto: "/images/day2-yodobashi-akiba.png",
-          horario: "~12:05",
-          descricao: "Grandes lojas de eletrônicos — Yodobashi-Akiba fica do lado leste da estação (saída Showa-dori), um bom último ponto antes de seguir para o almoço.",
         },
       ],
     },
@@ -2070,7 +2083,10 @@ const DAY_4: DayContent = {
       imagem: "/images/raiox-akihabara.png",
       imagemAlt: "Raio-X Alpinea de Akihabara com os pontos de interesse numerados do passeio",
       comentarios: [
-        "Percurso circular saindo da Estação Akihabara: primeiro passamos pelas lojas mais próximas da saída Electric Town (Radio Kaikan, Tamashii Nations), seguimos para o coração da região de eletrônicos e colecionáveis (Animate, Mandarake, Suruga-ya, Super Potato) e fechamos o loop voltando para perto da estação, terminando na Yodobashi-Akiba antes do almoço.",
+        "Embora o número de lojas para visitar não seja muito grande, é importante seguir a ordem recomendada ou olhar o mapa e definir a ordem que preferir — pode não parecer, mas como algumas lojas têm vários andares, ao final da tarde você vai estar bem cansado de subir escadas e se deslocar de loja em loja.",
+        "Separamos uma variedade grande de lojas — mangá/anime, videogames, action figures e uma galeria com bastante diversidade entre si.",
+        "A Yodobashi-Akiba é opcional: é uma grande loja de departamento de eletrônicos, com andares dedicados a temas diferentes.",
+        "A Weird Vending Machine Corner foi incluída como curiosidade, já que você mencionou ter trabalhado com esse tipo de máquina — vale dar uma passada em frente e ver se algo chama sua atenção. A maioria das máquinas está quebrada, e há várias vendendo produtos bizarros que não se encontram em mais nenhum outro lugar. Tome cuidado com espaços apertados e com poeira/sujeira, já que o local também funciona como ponto de descarte de máquinas antigas.",
       ],
     },
     regiao: {
@@ -2130,18 +2146,22 @@ const DAY_4: DayContent = {
     atracaoPrincipalImagem: "/images/dia7-akihabara.png",
     detalhesPraticos: [
       { label: "Horário das lojas", valor: "~10h–20h (maioria)" },
-      { label: "Pagamento", valor: "Grandes lojas aceitam cartão; leve dinheiro para as menores" },
+      {
+        label: "Pagamento",
+        valor:
+          "Leve dinheiro — boa parte das lojas menores não aceita cartão, e mesmo nas que aceitam, o desconto do imposto (tax-free) costuma valer só para compras em dinheiro.",
+      },
       {
         label: "Melhor horário",
         horarioDestaque: "10h–11h30",
         valor:
-          "Logo na abertura das lojas — o movimento na região vai aumentando ao longo do dia e fica bem mais intenso à tarde/noite. Um bom horário para sair para o almoço é por volta de 12h30, antes do pico do horário de almoço local.",
+          "Logo na abertura das lojas — o movimento na região vai aumentando ao longo do dia. O circuito termina por volta de 12h: um bom horário para almoçar logo em seguida, já que o pico do almoço local costuma ser entre 12h e 13h. O circuito continua durante toda a tarde também, sem pressa.",
       },
     ],
     mapaVisaoGeral: {
       imagem: "/images/akihabara-tempo-de-deslocamento.png",
       imagemAlt: "Trajeto a pé conectando os pontos de interesse de Akihabara Electric Town",
-      nota: "≈30 min · 2,1 km — trajeto completo a pé conectando os pontos de interesse do período, sem pressa de fazer tudo na ordem: ajuste conforme o ritmo do grupo.",
+      nota: "≈30 min · 2,1 km — trajeto completo a pé conectando os 9 pontos de interesse do dia inteiro em Akihabara (manhã e tarde), sem pressa de fazer tudo na ordem: ajuste conforme o ritmo do grupo.",
     },
     pois: [
       {
@@ -2153,6 +2173,7 @@ const DAY_4: DayContent = {
         ordem: 1,
         imagem: "/images/day2-radiokaikan.png",
         imagemAlt: "Fachada da Akihabara Radio Kaikan",
+        horario: "10h–20h",
       },
       {
         category: "Compras",
@@ -2163,6 +2184,7 @@ const DAY_4: DayContent = {
         ordem: 2,
         imagem: "/images/day2-tamashii-nations.png",
         imagemAlt: "Vitrine de action figures na Tamashii Nations Store Tokyo",
+        horario: "10h–20h",
       },
       {
         category: "Compras",
@@ -2172,6 +2194,7 @@ const DAY_4: DayContent = {
         ordem: 3,
         imagem: "/images/day2-animate.png",
         imagemAlt: "Fachada da loja Animate em Akihabara",
+        horario: "10h–21h",
       },
       {
         category: "Compras",
@@ -2181,6 +2204,7 @@ const DAY_4: DayContent = {
         ordem: 4,
         imagem: "/images/day2-mandarake-complex.png",
         imagemAlt: "Interior da Mandarake Complex em Akihabara",
+        horario: "12h–20h",
       },
       {
         category: "Compras",
@@ -2191,43 +2215,7 @@ const DAY_4: DayContent = {
         ordem: 5,
         imagem: "/images/day2-surugaya.jpg",
         imagemAlt: "Fachada da Suruga-ya Specialty Store em Akihabara",
-      },
-      {
-        category: "Compras",
-        title: "Super Potato",
-        description: "Loja retrô de videogames.",
-        prioridade: "recomendado",
-        ordem: 6,
-        imagem: "/images/day2-superpotato.png",
-        imagemAlt: "Interior da loja retrô Super Potato em Akihabara",
-      },
-      {
-        category: "Compras",
-        title: "Hareruya 2",
-        description: "Pokémon Trading Card Game.",
-        prioridade: "opcional",
-        ordem: 7,
-        imagem: "/images/hareruya-2.png",
-        imagemAlt: "Fachada da Hareruya 2, loja especializada em Pokémon Trading Card Game",
-      },
-      {
-        category: "Curiosidade",
-        title: "Weird Vending Machine Corner",
-        description: "Cantinho com máquinas de venda automática bizarras e inusitadas, um clássico despretensioso de Akihabara.",
-        prioridade: "opcional",
-        ordem: 8,
-        imagem: "/images/weird-vending-machine-corner.png",
-        imagemAlt: "Máquinas de venda automática no Weird Vending Machine Corner de Akihabara",
-      },
-      {
-        category: "Compras",
-        title: "BIC Camera ou Yodobashi Camera",
-        description:
-          "Grandes lojas de eletrônicos — Yodobashi-Akiba fica do lado leste da estação (saída Showa-dori), um bom último ponto antes de seguir para o almoço.",
-        prioridade: "opcional",
-        ordem: 9,
-        imagem: "/images/day2-yodobashi-akiba.png",
-        imagemAlt: "Fachada da Yodobashi-Akiba",
+        horario: "11h–21h (10h nos fins de semana)",
       },
     ],
     gastronomia: {
@@ -2238,6 +2226,7 @@ const DAY_4: DayContent = {
           descricao: "Curry japonês — casa tradicional da região, com balcão no térreo e mesas no subsolo.",
           localizacao: "Sotokanda, Chiyoda-ku — ~2 min a pé da Estação Suehirocho",
           preco: "~900–1.100",
+          horario: "11h–22h30",
           foto: "/images/joto-curry-akihabara.png",
         },
         {
@@ -2245,6 +2234,7 @@ const DAY_4: DayContent = {
           descricao: "Tonkatsu (costeleta de porco empanada) — filial da tradicional rede Wako, dentro do complexo da Yodobashi-Akiba.",
           localizacao: "Dentro do edifício Yodobashi-Akiba",
           preco: "~1.500–2.500",
+          horario: "11h–23h",
           foto: "/images/wako-tonkatsu-akihabara.png",
         },
         {
@@ -2252,6 +2242,7 @@ const DAY_4: DayContent = {
           descricao: "Ramen estilo Kyushu (Hakata) — a casa principal da rede, conhecida também por opções veganas.",
           localizacao: "Sotokanda, Chiyoda-ku — ~6 min a pé da Estação Akihabara",
           preco: "~1.000–1.500",
+          horario: "11h–22h",
           foto: "/images/kyushu-jangara.png",
         },
       ],
@@ -2267,189 +2258,294 @@ const DAY_4: DayContent = {
   tarde: {
     label: "Tarde",
     percursoEssencial: {
-      duracao: "~5h15 (Kanda) + noite em Roppongi (opcional)",
+      duracao: "~3h (Akihabara — tarde, continuação)",
       passos: [
         {
-          titulo: "Chegada em Kanda",
-          foto: "/images/placeholder-em-producao.png",
-          horario: "13:45",
-          descricao: "Bairro tradicional vizinho a Akihabara, conhecido pelos izakayas e por uma vida noturna mais local.",
+          titulo: "Super Potato",
+          foto: "/images/day2-superpotato.png",
+          horario: "13:30",
+          descricao: "Loja retrô de videogames.",
         },
         {
-          titulo: "Passeio pelas ruas tradicionais",
-          foto: "/images/placeholder-em-producao.png",
+          titulo: "Hareruya 2",
+          foto: "/images/hareruya-2.png",
           horario: "~14:15",
-          descricao: "Exploração livre da região antes do jantar — roteiro detalhado em produção.",
+          descricao: "Pokémon Trading Card Game.",
         },
         {
-          titulo: "Jantar no izakaya escolhido",
-          foto: "/images/dia7-izakaya-kanda-v2.png",
-          horario: "19:00",
-          descricao: "Jantar num izakaya autêntico em Kanda, longe do circuito turístico.",
-        },
-      ],
-    },
-    visaoAnotada: {
-      titulo: "Izakayas em Kanda",
-      imagem: "/images/visaogeral-kanda.png",
-      imagemAlt: "Localização dos izakayas recomendados nas proximidades da Estação Kanda",
-      comentarios: [
-        "A passagem por Kanda é propositalmente mais tranquila — um respiro depois do ritmo intenso de Akihabara. Separamos 3 opções de izakaya que normalmente recebem bem estrangeiros, todas a poucos minutos da estação.",
-        "Kanda não é um bairro turístico — a ideia aqui é te aproximar de como os trabalhadores da região se encontram no fim do dia, nos izakayas ao redor da estação de metrô. Vale visitar mais de um se quiser, e depois voltar ao hotel para descansar até a hora de seguir para a balada em Roppongi.",
-      ],
-      pontos: [
-        {
-          titulo: "Kanda Nishiguchi Motsuyaki Nonki",
-          descricao: "Motsuyaki (espetinhos de miúdos grelhados) — ~2 min a pé da saída oeste da Estação Kanda.",
-          foto: "/images/nonki-kanda.png",
-          ordem: 1,
+          titulo: "Weird Vending Machine Corner",
+          foto: "/images/weird-vending-machine-corner.png",
+          horario: "~15:00",
+          descricao: "Cantinho com máquinas de venda automática bizarras e inusitadas, um clássico despretensioso de Akihabara.",
         },
         {
-          titulo: "Kanda Uokin",
-          descricao: "Izakaya de frutos do mar, conhecida pelos pratos fartos de sashimi e peixe fresco.",
-          foto: "/images/uokin.png",
-          ordem: 2,
-        },
-        {
-          titulo: "Kanda Shoten",
-          descricao: "Izakaya de bairro com sashimi e boa seleção de sakês — clima local e despretensioso.",
-          foto: "/images/kanda-shouten.png",
-          ordem: 3,
+          titulo: "BIC Camera ou Yodobashi Camera",
+          foto: "/images/day2-yodobashi-akiba.png",
+          horario: "~15:30",
+          descricao: "Grandes lojas de eletrônicos — Yodobashi-Akiba fica do lado leste da estação (saída Showa-dori), um bom fechamento para o circuito antes de descansar no hotel.",
         },
       ],
     },
     regiao: {
-      nome: "Kanda",
+      nome: "Akihabara",
       descricao:
-        "Bairro tradicional de Chiyoda, vizinho a Akihabara — conhecido pelos izakayas e por uma vida noturna mais local, longe do circuito turístico.",
+        "Continuação da tarde no mesmo bairro da manhã, sem pressa — fechando o restante do circuito antes de sair à noite para o jantar em Kanda.",
     },
-    deslocamento: {
-      estacaoOrigem: { nome: "Estação Akihabara", nomeJapones: "秋葉原駅" },
-      linha: { codigo: "JY", nome: "JR Yamanote / Keihin-Tohoku Line", cor: "#8FAADC", logo: "/images/jr-logo.webp" },
-      estacaoDestino: {
-        nome: "Estação Kanda",
-        nomeJapones: "神田駅",
-        mapa: "/images/kanda-station-map.png",
-        mapaAlt: "Mapa da Estação Kanda (1F e 2F)",
-      },
-      opcoes: [
-        {
-          meio: "Trem JR",
-          tempo: "≈2 min",
-          Icon: IconMetro,
-          recomendado: true,
-          detalhes: [
-            "Uma estação de distância, sem baldeação — Akihabara (JY03) até Kanda (JY02).",
-            "Alternativa: ~15 min a pé, se preferir caminhar.",
-          ],
-        },
-        {
-          meio: "A pé",
-          tempo: "≈15 min",
-          Icon: IconWalk,
-          detalhes: [
-            "Trajeto simples e plano entre os dois bairros.",
-            "Boa opção se quiser ver as ruas no caminho.",
-          ],
-        },
-      ],
-      recomendacao:
-        "Akihabara e Kanda são bairros vizinhos — uma estação de trem (~2 min) ou uma caminhada tranquila de ~15 min.",
-    },
-    atracaoPrincipal: "Izakaya em Kanda (酒場なごみ堂)",
-    atracaoPrincipalImagem: "/images/dia7-izakaya-kanda-v2.png",
+    atracaoPrincipal: "Akihabara Electric Town — continuação (tarde)",
     detalhesPraticos: [
-      { label: "Melhor horário", valor: "A partir das 18h" },
-      { label: "Preço médio", valor: "~¥4.000–6.000 por pessoa" },
+      {
+        label: "Depois do circuito",
+        valor:
+          "Fim de tarde livre para descansar no hotel antes de sair para o jantar em Kanda, por volta das 18h30.",
+      },
     ],
-    mapaVisaoGeral: {
-      imagem: "/images/visaogeral-kanda.png",
-      imagemAlt: "Visão geral da região da Estação Kanda com os izakayas recomendados",
-      nota: "Localização dos izakayas recomendados nas proximidades da Estação Kanda.",
-    },
     pois: [
       {
-        title: "Kanda Nishiguchi Motsuyaki Nonki",
-        description: "Motsuyaki (espetinhos de miúdos grelhados) — ~2 min a pé da saída oeste da Estação Kanda.",
+        category: "Compras",
+        title: "Super Potato",
+        description: "Loja retrô de videogames.",
         prioridade: "recomendado",
-        imagem: "/images/nonki-kanda.png",
-        imagemAlt: "Prato de motsuyaki do Kanda Nishiguchi Motsuyaki Nonki",
+        ordem: 6,
+        imagem: "/images/day2-superpotato.png",
+        imagemAlt: "Interior da loja retrô Super Potato em Akihabara",
+        horario: "11h–22h (10h nos fins de semana)",
       },
       {
-        title: "Kanda Uokin",
-        description: "Izakaya de frutos do mar, conhecida pelos pratos fartos de sashimi e peixe fresco.",
-        prioridade: "recomendado",
-        imagem: "/images/uokin.png",
-        imagemAlt: "Prato de sashimi do Kanda Uokin",
-      },
-      {
-        title: "Kanda Shoten",
-        description: "Izakaya de bairro com sashimi e boa seleção de sakês — clima local e despretensioso.",
-        prioridade: "recomendado",
-        imagem: "/images/kanda-shouten.png",
-        imagemAlt: "Prato de sashimi e sakês do Kanda Shoten",
-      },
-      {
-        category: "Cultura",
-        title: "Livrarias de Jinbocho",
-        description:
-          "Bairro vizinho a Kanda, famoso por concentrar dezenas de sebos e livrarias tradicionais — o maior distrito de livros usados do Japão.",
+        category: "Compras",
+        title: "Hareruya 2",
+        description: "Pokémon Trading Card Game.",
         prioridade: "opcional",
-        imagem: "/images/jinbocho.png",
-        imagemAlt: "Fachada de livraria tradicional em Jinbocho",
+        ordem: 7,
+        imagem: "/images/hareruya-2.png",
+        imagemAlt: "Fachada da Hareruya 2, loja especializada em Pokémon Trading Card Game",
+        horario: "10h–22h",
+      },
+      {
+        category: "Curiosidade",
+        title: "Weird Vending Machine Corner",
+        description: "Cantinho com máquinas de venda automática bizarras e inusitadas, um clássico despretensioso de Akihabara.",
+        prioridade: "opcional",
+        ordem: 8,
+        imagem: "/images/weird-vending-machine-corner.png",
+        imagemAlt: "Máquinas de venda automática no Weird Vending Machine Corner de Akihabara",
+        imagemPosicao: "center bottom",
+        horario: "Acessível a qualquer hora (máquinas na rua, sem loja formal)",
+      },
+      {
+        category: "Compras",
+        title: "BIC Camera ou Yodobashi Camera",
+        description:
+          "Grandes lojas de eletrônicos — Yodobashi-Akiba fica do lado leste da estação (saída Showa-dori), um bom último ponto antes de descansar no hotel.",
+        prioridade: "opcional",
+        ordem: 9,
+        imagem: "/images/day2-yodobashi-akiba.png",
+        imagemAlt: "Fachada da Yodobashi-Akiba",
+        horario: "9h30–22h",
       },
     ],
-    gastronomia: {
-      restaurantesLabel: "Izakayas recomendados",
-      restaurantes: [
-        {
-          nome: "Kanda Nishiguchi Motsuyaki Nonki",
-          descricao: "Izakaya tradicional especializada em motsuyaki (espetinhos de miúdos grelhados) — ~2 min a pé da saída oeste da Estação Kanda.",
-          foto: "/images/nonki-kanda.png",
-        },
-        {
-          nome: "Kanda Uokin",
-          descricao: "Izakaya de frutos do mar, conhecida pelos pratos fartos de sashimi e peixe fresco.",
-          foto: "/images/uokin.png",
-        },
-        {
-          nome: "Kanda Shoten",
-          descricao: "Izakaya de bairro com sashimi e boa seleção de sakês — clima local e despretensioso.",
-          foto: "/images/kanda-shouten.png",
-        },
-      ],
-    },
-    galeria: {
-      titulo: "Kanda & Roppongi em Detalhes",
-      imagens: [
-        { src: "/images/placeholder-em-producao.png", alt: "Galeria de Kanda e Roppongi — em produção", legenda: "Em produção" },
-      ],
-    },
     banheirosProximos: [
       {
-        local: "Estação Kanda (JR)",
+        local: "Estação Akihabara (JR / Tokyo Metro)",
         endereco: "Dentro da própria estação, perto das catracas",
-        nota: "A opção mais prática nas imediações — a maioria dos izakayas da região é pequena e pode não ter banheiro para clientes.",
+        nota: "Disponível nos dois lados da estação (saída Electric Town e saída Showa-dori) — a opção mais prática enquanto estiver circulando pela região.",
       },
     ],
     subAtracoes: [
       {
+        label: "Jantar",
+        titulo: "Izakaya em Kanda",
+        descricao:
+          "Depois de um dia inteiro em Akihabara, a única saída do bairro é à noite: um jantar num izakaya autêntico em Kanda, bairro vizinho e não turístico, a partir das 18h — ~¥4.000–6.000 por pessoa.",
+        deslocamento: {
+          estacaoOrigem: {
+            nome: "Estação Akihabara",
+            nomeJapones: "秋葉原駅",
+            foto: "/images/akihabara-station.jpg",
+          },
+          linha: { codigo: "JY", nome: "JR Yamanote / Keihin-Tohoku Line", cor: "#8FAADC", logo: "/images/jr-logo.webp" },
+          estacaoDestino: {
+            nome: "Estação Kanda",
+            nomeJapones: "神田駅",
+            foto: "/images/kanda-station.png",
+            mapa: "/images/kanda-station-map.png",
+            mapaAlt: "Mapa da Estação Kanda (1F e 2F)",
+          },
+          opcoes: [
+            {
+              meio: "Trem JR",
+              tempo: "≈2 min",
+              Icon: IconMetro,
+              recomendado: true,
+              detalhes: [
+                "Uma estação de distância, sem baldeação — Akihabara (JY03) até Kanda (JY02).",
+                "Alternativa: ~15 min a pé, se preferir caminhar.",
+              ],
+            },
+            {
+              meio: "A pé",
+              tempo: "≈15 min",
+              Icon: IconWalk,
+              detalhes: [
+                "Trajeto simples e plano entre os dois bairros.",
+                "Boa opção se quiser ver as ruas no caminho.",
+              ],
+            },
+          ],
+          recomendacao:
+            "Akihabara e Kanda são bairros vizinhos — uma estação de trem (~2 min) ou uma caminhada tranquila de ~15 min. Bom horário para sair do circuito de Akihabara: por volta das 18h30, para o jantar às 19h.",
+        },
+        visaoAnotada: {
+          titulo: "Izakayas em Kanda",
+          imagem: "/images/raiox-kanda.png",
+          imagemAlt: "Raio-X Alpinea de Kanda com os 3 izakayas recomendados numerados nas proximidades da Estação Kanda",
+          comentarios: [
+            "A passagem por Kanda é propositalmente mais tranquila — um respiro depois do dia inteiro em Akihabara. Separamos 3 opções de izakaya que normalmente recebem bem estrangeiros, todas a poucos minutos da estação.",
+            "Kanda não é um bairro turístico — a ideia aqui é te aproximar de como os trabalhadores da região se encontram no fim do dia, nos izakayas ao redor da estação de metrô. Vale visitar mais de um se quiser.",
+          ],
+        },
+        poisLabel: "Izakayas recomendados",
+        pois: [
+          {
+            title: "Kanda Nishiguchi Motsuyaki Nonki",
+            description: "Motsuyaki (espetinhos de miúdos grelhados) — ~2 min a pé da saída oeste da Estação Kanda.",
+            prioridade: "recomendado",
+            imagem: "/images/nonki-kanda.png",
+            imagemAlt: "Prato de motsuyaki do Kanda Nishiguchi Motsuyaki Nonki",
+          },
+          {
+            title: "Kanda Uokin",
+            description: "Izakaya de frutos do mar, conhecida pelos pratos fartos de sashimi e peixe fresco.",
+            prioridade: "recomendado",
+            imagem: "/images/uokin.png",
+            imagemAlt: "Prato de sashimi do Kanda Uokin",
+          },
+          {
+            title: "Kanda Shoten",
+            description: "Izakaya de bairro com sashimi e boa seleção de sakês — clima local e despretensioso.",
+            prioridade: "recomendado",
+            imagem: "/images/kanda-shouten.png",
+            imagemAlt: "Prato de sashimi e sakês do Kanda Shoten",
+          },
+          {
+            category: "Cultura",
+            title: "Livrarias de Jinbocho",
+            description:
+              "Bairro vizinho a Kanda, famoso por concentrar dezenas de sebos e livrarias tradicionais — o maior distrito de livros usados do Japão.",
+            prioridade: "opcional",
+            imagem: "/images/jinbocho.png",
+            imagemAlt: "Fachada de livraria tradicional em Jinbocho",
+          },
+        ],
+        banheirosProximos: [
+          {
+            local: "Estação Kanda (JR)",
+            endereco: "Dentro da própria estação, perto das catracas",
+            nota: "A opção mais prática nas imediações — a maioria dos izakayas da região é pequena e pode não ter banheiro para clientes.",
+          },
+        ],
+      },
+      {
         label: "Noite",
         titulo: "R3 Club Lounge ou V2 Tokyo (Roppongi)",
-        imagem: "/images/dia4-roppongi.png",
         descricao:
           "Bairro badalado de Tóquio que reúne o Mori Tower, seus museus e jardins, e a vida noturna de Roppongi — principal polo de baladas e bares da cidade.",
+        deslocamento: {
+          estacaoOrigem: { nome: "Estação Kanda", nomeJapones: "神田駅" },
+          linha: { codigo: "G13→G09", nome: "Tokyo Metro Ginza Line", cor: "#F39700", logo: "/images/tokyometro-mark.png" },
+          baldeacao: true,
+          estacaoDestino: {
+            nome: "Estação Roppongi",
+            nomeJapones: "六本木駅",
+            foto: "/images/roppongi-station.png",
+            mapa: "/images/roppongi-station-map.png",
+            mapaAlt: "Mapa da Estação Roppongi (Hibiya Line e Toei Oedo Line)",
+          },
+          opcoes: [
+            {
+              meio: "Metrô",
+              tempo: "≈26 min",
+              Icon: IconMetro,
+              recomendado: true,
+              detalhes: [
+                "Ginza Line (G13 → G09, Ginza) + baldeação para a Hibiya Line até Roppongi (H04) — ~10 min nesse trecho.",
+                "¥210 · 1 baldeação.",
+              ],
+            },
+            {
+              meio: "Táxi / Carro",
+              tempo: "≈15–20 min",
+              Icon: IconCar,
+              detalhes: [
+                "Trajeto direto, sem baldeação — boa opção à noite, depois do jantar.",
+                "Sujeito a trânsito, mas mais tranquilo do que pegar trem tarde da noite.",
+              ],
+            },
+          ],
+          recomendacao:
+            "De Kanda, o trajeto até Roppongi é de cerca de 26 minutos: Ginza Line até Ginza (7 min) e baldeação para a Hibiya Line até Roppongi (10 min) — ¥210.",
+        },
+        visaoAnotada: {
+          titulo: "Roppongi",
+          imagem: "/images/raiox-roppongi.png",
+          imagemAlt: "Raio-X Alpinea de Roppongi com Mori Tower, Tokyo Midtown, TV Asahi, a Estação Roppongi e os pontos de vida noturna numerados",
+          comentarios: [
+            "Vista aérea do cruzamento central de Roppongi: o Mori Tower (Roppongi Hills) com o TV Asahi ao lado, o Tokyo Midtown do outro lado da avenida, e a Estação Roppongi (linhas Hibiya e Oedo) bem no meio, a poucos passos das duas baladas.",
+            "V2TOKYO e R3 Club Lounge são as duas opções de balada da noite — a poucos minutos a pé uma da outra. A escultura Maman, de Louise Bourgeois, fica aos pés do Mori Tower, no 66 Plaza.",
+          ],
+        },
+        alerta: {
+          titulo: "Documento Obrigatório",
+          horario: "Leve o passaporte físico",
+          mensagem:
+            "Baladas em Roppongi exigem identificação com foto na entrada — para estrangeiros, o passaporte físico é a opção aceita (foto no celular ou cópia não costumam servir). A idade mínima no Japão é 20 anos, sem exceções.",
+        },
+        comparacao: {
+          titulo: "Comparação Rápida",
+          colunas: ["R3 Club Lounge", "V2 TOKYO"],
+          linhas: [
+            { label: "Perfil", valores: ["Lounge + nightlife adulto", "Nightclub grande"] },
+            {
+              label: "Intensidade",
+              intensidade: [
+                { nivel: "Média", cor: "#F5C244" },
+                { nivel: "Alta", cor: "#E8548C" },
+              ],
+            },
+            { label: "Ambiente", valores: ["Sofisticado/social", "Festa/espetáculo"] },
+            { label: "Melhor horário", valores: ["20h30–00h", "23h30–03h"] },
+            { label: "Conversar", estrelas: [4, 1] },
+            { label: "Dançar", estrelas: [3, 5] },
+            { label: "Público internacional", estrelas: [5, 5] },
+            { label: "Público japonês", estrelas: [3, 4] },
+            { label: "Experiência sem inglês", estrelas: [4, 3] },
+            { label: "Casal", estrelas: [5, 3] },
+            { label: "30–50 anos", estrelas: [5, 3] },
+            { label: "20–35 anos", estrelas: [4, 5] },
+            { label: "Primeira noite em Tokyo", estrelas: [5, 4] },
+            { label: "VIP", valores: ["Mais intimista", 'Mais "show/bottle service"'] },
+            { label: "Sensação premium", valores: ["Lounge premium", "Club premium"] },
+          ],
+        },
+        mapaVisaoGeral: {
+          imagem: "/images/visaogeral2-roppongi.png",
+          imagemAlt: "Trajeto a pé conectando as baladas de Roppongi ao Mori Tower e ao Museu de Arte Mori",
+          nota: "≈20 min · 1,2 km — trajeto a pé completo pela área de Roppongi Hills, sem pressa de fazer tudo na ordem.",
+        },
         pois: [
           {
             title: "Aranha Gigante de Louise Bourgeois",
             description:
               "A única no mundo preparada para terremotos, aos pés do Mori Tower — o primeiro ponto ao chegar em Roppongi Hills.",
             prioridade: "opcional",
+            imagem: "/images/aranha-gigante.jpg",
+            imagemAlt: "Escultura Maman, de Louise Bourgeois, aos pés do Mori Tower em Roppongi Hills",
           },
           {
             title: "Museu de Arte Moderna Mori",
             description: "Museu de arte contemporânea no topo do Mori Tower.",
             prioridade: "recomendado",
+            imagem: "/images/museu-de-arte-mori.png",
+            imagemAlt: "Escadaria de acesso ao Mori Art Museum, no topo do Mori Tower",
           },
           {
             title: "Mori Garden",
@@ -3715,6 +3811,7 @@ function PoiCard({ index, poi }: { index: number; poi: Poi }) {
             <img
               src={imagens[0].src}
               alt={imagens[0].alt}
+              style={poi.imagemPosicao ? { objectPosition: poi.imagemPosicao } : undefined}
               className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
             />
             <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent" />
@@ -3768,7 +3865,7 @@ function PoiCard({ index, poi }: { index: number; poi: Poi }) {
           <span className={`text-sm font-semibold ${s.text}`}>
             {poi.title}
           </span>
-          {poi.prioridade ? (
+          {poi.prioridade === "opcional" ? (
             <PriorityBadge prioridade={poi.prioridade} />
           ) : (
             typeof poi.rating === "number" && (
@@ -3782,6 +3879,12 @@ function PoiCard({ index, poi }: { index: number; poi: Poi }) {
         {poi.description && (
           <p className={`text-xs leading-5 ${s.muted}`}>
             {poi.description}
+          </p>
+        )}
+        {poi.horario && (
+          <p className={`flex items-center gap-1 text-[11px] font-medium ${s.muted}`}>
+            <IconClock className="h-3 w-3 shrink-0" />
+            {poi.horario}
           </p>
         )}
         {poi.lista && (
@@ -4398,6 +4501,66 @@ function AlertaBlock({ alerta }: { alerta: AlertaSugerido }) {
         {alerta.mensagem}
       </p>
     </div>
+  );
+}
+
+function ComparacaoTabelaBlock({ comparacao }: { comparacao: ComparacaoTabela }) {
+  return (
+    <div className="mb-8 overflow-hidden rounded-2xl bg-black p-5 sm:p-7">
+      <p className="mb-5 text-lg font-medium text-white sm:text-xl">
+        {comparacao.titulo ?? "Comparação Rápida"}
+      </p>
+      <div className="overflow-x-auto">
+        <div className="grid min-w-[420px] grid-cols-[1.3fr_1fr_1fr] gap-x-3 gap-y-4">
+          <div />
+          <p className="border-b border-white/20 pb-2 text-sm font-bold text-white">
+            {comparacao.colunas[0]}
+          </p>
+          <p className="border-b border-white/20 pb-2 text-sm font-bold text-white">
+            {comparacao.colunas[1]}
+          </p>
+          {comparacao.linhas.map((linha) => (
+            <div key={linha.label} className="contents">
+              <p className="self-center text-xs leading-5 text-white/60">{linha.label}</p>
+              {linha.estrelas ? (
+                <>
+                  <ComparacaoEstrelas value={linha.estrelas[0]} />
+                  <ComparacaoEstrelas value={linha.estrelas[1]} />
+                </>
+              ) : linha.intensidade ? (
+                <>
+                  <ComparacaoIntensidade nivel={linha.intensidade[0].nivel} cor={linha.intensidade[0].cor} />
+                  <ComparacaoIntensidade nivel={linha.intensidade[1].nivel} cor={linha.intensidade[1].cor} />
+                </>
+              ) : (
+                <>
+                  <p className="text-sm leading-5 text-white/90">{linha.valores?.[0]}</p>
+                  <p className="text-sm leading-5 text-white/90">{linha.valores?.[1]}</p>
+                </>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ComparacaoEstrelas({ value }: { value: number }) {
+  return (
+    <span className="self-center text-sm tracking-tight text-amber-400">
+      {"★".repeat(value)}
+      <span className="text-white/20">{"★".repeat(5 - value)}</span>
+    </span>
+  );
+}
+
+function ComparacaoIntensidade({ nivel, cor }: { nivel: string; cor: string }) {
+  return (
+    <span className="flex items-center gap-1.5 self-center text-sm text-white/90">
+      <span className="h-2.5 w-2.5 shrink-0 rounded-full" style={{ backgroundColor: cor }} />
+      {nivel}
+    </span>
   );
 }
 
@@ -5904,6 +6067,12 @@ function SubAtracaoBlock({
         )}
       </div>
 
+      {subAtracao.deslocamento && (
+        <div className="mb-6">
+          <DeslocamentoCard deslocamento={subAtracao.deslocamento} />
+        </div>
+      )}
+
       {subAtracao.visaoAnotada ? (
         <>
           <h3
@@ -6003,6 +6172,16 @@ function SubAtracaoBlock({
         </>
       )}
 
+      {subAtracao.alerta && <AlertaBlock alerta={subAtracao.alerta} />}
+
+      {subAtracao.comparacao && (
+        <ComparacaoTabelaBlock comparacao={subAtracao.comparacao} />
+      )}
+
+      {subAtracao.mapaVisaoGeral && (
+        <MapaVisaoGeralBlock mapa={subAtracao.mapaVisaoGeral} />
+      )}
+
       {subAtracao.pois && subAtracao.pois.length > 0 && (
         <>
           <p className="mb-5 text-xs text-[#24211D]/65">
@@ -6018,6 +6197,10 @@ function SubAtracaoBlock({
 
       {subAtracao.gastronomia && (
         <GastronomiaBlock gastronomia={subAtracao.gastronomia} />
+      )}
+
+      {subAtracao.banheirosProximos && subAtracao.banheirosProximos.length > 0 && (
+        <BanheirosProximosBlock itens={subAtracao.banheirosProximos} />
       )}
     </div>
   );
