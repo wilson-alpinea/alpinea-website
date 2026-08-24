@@ -1414,12 +1414,57 @@ const DAY_2: DayContent = {
             "Melão que só existe no Japão — mais suculento que o nosso, e esverdeado em vez de amarelo.",
         },
       ],
-      restaurantesLabel: "Opções de refeição",
-      restaurantes: [
+      curadoriaLabel: "Opções selecionadas — Almoço leve (~12h)",
+      curadoria: [
         {
-          nome: "A definir",
-          descricao: "Sugestões de restaurante para o almoço leve em Marunouchi em produção.",
-          foto: "/images/placeholder-em-producao.png",
+          nome: "Niboshi to Nihonshu Sugidama",
+          papel: "Mais prático (na rota)",
+          categoria: "Ramen (caldo de niboshi)",
+          descricao:
+            "Ramen de caldo de niboshi (sardinha-seca), casa premiada — a 5 min a pé da Saída Norte de Marunouchi da Tokyo Station.",
+          notaTabelog: "3.64",
+          numAvaliacoes: "634 avaliações",
+          faixaPreco: "¥1.000–1.999 no almoço",
+          distancia: "~5 min a pé da Tokyo Station (Saída Norte de Marunouchi) / 2 min da Estação Otemachi",
+          foreignFriendly:
+            "Médio — sem cardápio em inglês confirmado, mas prato simples de pedir; reserva online pelo Tabelog.",
+          horario: "seg–sex 11h–15h30 e 17h–23h · fins de semana 11h–17h (só almoço)",
+          reserva: "Recomendada para menus fechados — reserva online",
+          pagamento: "Cartão, IC card e QR code aceitos",
+          linkTabelog: "https://tabelog.com/en/tokyo/A1302/A130201/13303589/",
+        },
+        {
+          nome: "Sumiyaki Unafuji — Tokyo Midtown Yaesu",
+          papel: "Experiência mais especial",
+          categoria: "Unagi (enguia grelhada na brasa)",
+          descricao:
+            "Enguia grelhada na técnica \"jiyaki\" de alta temperatura, filial de uma casa premiada de Nagoya — conexão subterrânea direta com a Tokyo Station.",
+          notaTabelog: "3.67",
+          numAvaliacoes: "1.363 avaliações",
+          faixaPreco: "¥6.000–7.999 no almoço (jantar sai mais caro — vá no horário de almoço)",
+          distancia: "~233 m da Tokyo Station, por passagem subterrânea",
+          foreignFriendly:
+            "Alto — reserva online, ampla gama de pagamentos digitais internacionais (Alipay, WeChat Pay).",
+          horario: "11h–23h, todos os dias (último pedido 22h)",
+          reserva: "Obrigatória — reserva online",
+          pagamento: "Cartão, Suica, PayPay, Alipay, WeChat Pay e outros aceitos",
+          linkTabelog: "https://tabelog.com/en/tokyo/A1302/A130201/13279890/",
+        },
+        {
+          nome: "Soba to Tempura Ishiraku — Otemachi Park Building",
+          papel: "Melhor custo-benefício",
+          categoria: "Soba + Tempura",
+          descricao:
+            "Combinação clássica de soba com tempura na hora, cardápio multilíngue (inglês) — opção rápida e leve antes dos Jardins do Palácio Imperial.",
+          notaTabelog: "3.40",
+          numAvaliacoes: "154 avaliações",
+          faixaPreco: "¥1.000–1.999 no almoço",
+          distancia: "1 min a pé da Saída C6a da Estação Otemachi",
+          foreignFriendly: "Alto — cardápio em inglês confirmado.",
+          horario: "seg–sex 11h–23h (último pedido 22h) — fechado sáb/dom/feriados",
+          reserva: "Reserva online disponível, não obrigatória",
+          pagamento: "Cartão, IC card e QR code (inclusive Alipay/WeChat Pay) aceitos",
+          linkTabelog: "https://tabelog.com/en/tokyo/A1302/A130201/13213124/",
         },
       ],
       mapa: {
@@ -1851,22 +1896,22 @@ const DAY_3: DayContent = {
             "Só dinheiro e sem reserva — leve ienes em espécie e conte com um tempo de espera na fila.",
         },
         {
-          nome: "Omotesando Ukai Tei",
+          nome: "Yakiniku Ushigoro Omotesando ten",
           papel: "Experiência mais especial",
-          categoria: "Teppanyaki / Wagyu",
+          categoria: "Yakiniku (carne grelhada na mesa)",
           descricao:
-            "Teppanyaki de luxo com carnes premium grelhadas à sua frente, em salão com fachada de casa tradicional japonesa — selecionado para o Tabelog 100 de Steak/Teppanyaki 2025.",
-          notaTabelog: "3.70",
-          numAvaliacoes: "1.101 avaliações",
-          faixaPreco: "¥10.000–14.999 no almoço",
-          distancia: "~5 min a pé da Estação Omotesando / 3 min da Estação Meiji-Jingumae",
+            "Cortes selecionados de wagyu grelhados na própria mesa, com menu de almoço muito mais em conta que o jantar — selecionado para o Tabelog 100 de Yakiniku 2022–2025.",
+          notaTabelog: "3.62",
+          numAvaliacoes: "1.306 avaliações",
+          faixaPreco: "¥3.000–3.999 no almoço",
+          distancia: "~5 min a pé da Saída B2 da Estação Omotesando",
           foreignFriendly:
-            "Alto — listado em inglês no Tabelog com reserva online em inglês; teppanyaki de luxo tradicionalmente muito procurado por visitantes internacionais.",
+            "Alto — listado em inglês no Tabelog com reserva online; rede bem avaliada e conhecida internacionalmente.",
           horario:
-            "12h–16h e 17h30–22h (fins de semana e feriados abre 11h30) — fechado às quartas-feiras",
-          reserva: "Obrigatória — reserva online, sem necessidade de ligação",
-          pagamento: "Cartão aceito (Visa, Master, JCB, Amex, Diners) — taxa de serviço de 13%",
-          linkTabelog: "https://tabelog.com/en/tokyo/A1306/A130601/13044361/",
+            "seg–sex 17h–23h30 (fins de semana e feriados também abre 11h30) — último pedido 22h30",
+          reserva: "Recomendada — reserva online",
+          pagamento: "Cartão aceito (Visa, Master, JCB, Amex, Diners) — sem IC card nem QR code",
+          linkTabelog: "https://tabelog.com/en/tokyo/A1306/A130602/13252182/",
         },
         {
           nome: "Sushi Ginza Onodera Musuko Shibuya ten",
@@ -2136,21 +2181,23 @@ const DAY_3: DayContent = {
           linkTabelog: "https://tabelog.com/en/tokyo/A1304/A130401/13264309/",
         },
         {
-          nome: "Yakiniku Ushigoro Shinjuku sanchome ten",
-          papel: "Experiência mais especial",
-          categoria: "Yakiniku (wagyu grelhado na mesa)",
+          nome: "Nakizakana Shinjuku ten hanare",
+          papel: "Experiência mais especial (frutos do mar)",
+          categoria: "Izakaya de frutos do mar",
           descricao:
-            "Wagyu premium grelhado na própria mesa, ambiente moderno pensado para ocasiões especiais — selecionado para o Tabelog 100 de Yakiniku 2025.",
-          notaTabelog: "3.67",
-          numAvaliacoes: "1.491 avaliações",
-          faixaPreco: "¥10.000–14.999 no jantar",
-          distancia: "Saída B9 da Estação Shinjuku-sanchome — poucos minutos a pé de Golden Gai",
+            "Peixe fresco entregue diariamente por pescadores parceiros, com vários modos de preparo à escolha — foge do padrão carne/ramen dos outros dois dias já preenchidos.",
+          notaTabelog: "3.57",
+          numAvaliacoes: "815 avaliações",
+          faixaPreco: "¥5.000–7.999 no jantar",
+          distancia:
+            "Nishi-Shinjuku, ~3 min a pé da Saída Sul da Estação Shinjuku — trajeto curto de trem ou táxi até Golden Gai (não é a pé)",
           foreignFriendly:
-            "Alto — reserva online 24h, listado em inglês no Tabelog e em plataformas internacionais (TakeMe).",
-          horario: "seg–sex 17h–23h30 (dom/feriados também abre ao meio-dia) — último pedido 22h30",
+            "Alto — reserva online pelo Tabelog, pagamento em IC card e QR code aceito, boa presença em plataformas internacionais de reserva.",
+          horario:
+            "seg–sex 17h–23h (fins de semana e feriados abre 16h) — último pedido 22h",
           reserva: "Obrigatória — reserva online",
-          pagamento: "Cartão aceito (Visa, Master, JCB, Amex, Diners) — sem IC card nem QR code",
-          linkTabelog: "https://tabelog.com/en/tokyo/A1304/A130401/13258565/",
+          pagamento: "Cartão, IC card e QR code (PayPay, d Barai, Rakuten Pay, au PAY) aceitos",
+          linkTabelog: "https://tabelog.com/en/tokyo/A1304/A130401/13180803/",
         },
         {
           nome: "Sugoi Niboshi Ramen Nagi — Golden Gai honkan",
@@ -2613,7 +2660,7 @@ const DAY_4: DayContent = {
             nome: "Estação Kanda",
             nomeJapones: "神田駅",
             saida: "Saída Oeste (Nishiguchi)",
-            foto: "/images/kanda-station.png",
+            foto: "/images/kanda-station-entrance.png",
             mapa: "/images/kanda-station-map.png",
             mapaAlt: "Mapa da Estação Kanda (1F e 2F)",
           },
@@ -2701,6 +2748,7 @@ const DAY_4: DayContent = {
             nome: "Estação Kanda",
             nomeJapones: "神田駅",
             saida: "Saída Oeste (Nishiguchi)",
+            foto: "/images/kanda-station-entrance.png",
           },
           linha: { codigo: "G13→G09", nome: "Tokyo Metro Ginza Line", cor: "#F39700", logo: "/images/tokyometro-mark.png" },
           baldeacao: true,
@@ -2955,7 +3003,10 @@ const DAY_5: DayContent = {
         { nome: "Museu Sanjusangendo-mae", nomeJapones: "博物館三十三間堂前" },
         { nome: "Higashiyama-Shichijo", nomeJapones: "東山七条" },
       ],
-      estacaoDestino: { nome: "Parada Gojozaka ou Kiyomizu-michi" },
+      estacaoDestino: {
+        nome: "Parada Gojozaka ou Kiyomizu-michi",
+        foto: "/images/gojozaka-bus-stop.png",
+      },
       opcoes: [
         {
           meio: "Ônibus",
@@ -3032,12 +3083,58 @@ const DAY_5: DayContent = {
         { nome: "Yatsuhashi" },
         { nome: "Dengaku" },
       ],
-      restaurantesLabel: "Opções de refeição",
-      restaurantes: [
+      curadoriaLabel: "Opções selecionadas — Chá e doces (~12h)",
+      curadoria: [
         {
-          nome: "A definir",
-          descricao: "Sugestões de casa de chá em Higashiyama em produção.",
-          foto: "/images/placeholder-em-producao.png",
+          nome: "Kiyomizu Junsei Okabeya",
+          papel: "Mais prático (na saída do templo)",
+          categoria: "Tofu dengaku (tradicional desde 1902)",
+          descricao:
+            "Casa histórica de tofu dengaku bem em frente ao Kiyomizu-dera — cardápio multilíngue, ideal pra fazer a pausa assim que descer do templo.",
+          notaTabelog: "3.41",
+          numAvaliacoes: "289 avaliações",
+          faixaPreco: "¥2.000–3.999 por pessoa",
+          distancia: "Em frente ao Templo Kiyomizu-dera",
+          foreignFriendly: "Alto — cardápio multilíngue confirmado (inclusive inglês), 400 lugares.",
+          horario: "11h–16h (último pedido 15h), todos os dias",
+          reserva: "Obrigatória — reservar com 1 dia de antecedência",
+          pagamento: "Cartão, IC card e QR code (inclusive Alipay/WeChat Pay) aceitos",
+          linkTabelog: "https://tabelog.com/en/kyoto/A2601/A260301/26001215/",
+        },
+        {
+          nome: "MACCHA HOUSE Maccha-kan — Sannenzaka",
+          papel: "Melhor custo-benefício",
+          categoria: "Matcha (doces e bebidas)",
+          descricao:
+            "Especializada em sobremesas de matcha, com terraço aberto — direto na descida de Sannenzaka, sem precisar sair do caminho.",
+          notaTabelog: "3.43",
+          numAvaliacoes: "182 avaliações",
+          faixaPreco: "¥1.000–1.999 por pessoa",
+          distancia: "Na própria Sannenzaka, a poucos minutos do templo",
+          foreignFriendly:
+            "Médio — sem cardápio em inglês confirmado, mas cardápio simples e visual de doces.",
+          horario: "11h–18h (último pedido 17h30), todos os dias",
+          reserva: "Não aceita reservas — só balcão (96 lugares, incluindo terraço)",
+          pagamento: "Cartão, IC card e QR code aceitos",
+          linkTabelog: "https://tabelog.com/en/kyoto/A2601/A260301/26030960/",
+        },
+        {
+          nome: "Rengetsu Jaya",
+          papel: "Experiência mais especial",
+          categoria: "Yudofu (tofu quente) e kaiseki leve",
+          descricao:
+            "Casa centenária de yudofu e yuba, com harmonização de sakês locais — mais refeição completa que lanche, perto do Chion-in a caminho de Gion.",
+          notaTabelog: "3.39",
+          numAvaliacoes: "154 avaliações",
+          faixaPreco: "¥3.000–4.999 por pessoa",
+          distancia: "~5 min a pé da Estação Higashiyama, perto do portão norte do Chion-in",
+          foreignFriendly:
+            "Alto — reserva por telefone com suporte, pagamentos internacionais (Alipay/WeChat Pay) aceitos.",
+          horario:
+            "seg, qui–dom 11h–14h30 e 17h–21h (fechado terça e quarta) — funciona até acabar o estoque do dia",
+          reserva: "Recomendada — por telefone",
+          pagamento: "Cartão, IC card e QR code (inclusive Alipay/WeChat Pay) aceitos",
+          linkTabelog: "https://tabelog.com/en/kyoto/A2601/A260301/26000952/",
         },
       ],
       mapa: {
@@ -3129,7 +3226,7 @@ const DAY_5: DayContent = {
       { label: "Fotografia", valor: "Multa de ¥10.000 por fotografar em ruas privadas designadas de Gion — detalhes abaixo" },
       {
         label: "Melhor horário",
-        horarioDestaque: "Fim de tarde",
+        horarioDestaque: "17h–18h",
         valor:
           "É quando Gion ganha o clima do início da noite, com as casas de chá abrindo as portas e menos grupos de turismo do que durante o dia — bom encaixe com o jantar em Pontocho, marcado para as 19h.",
       },
@@ -3163,12 +3260,56 @@ const DAY_5: DayContent = {
     ],
     gastronomia: {
       itens: [{ nome: "Kaiseki" }, { nome: "Obanzai" }],
-      restaurantesLabel: "Opções de refeição",
-      restaurantes: [
+      curadoriaLabel: "Opções selecionadas — Jantar (~19h)",
+      curadoria: [
         {
-          nome: "A definir",
-          descricao: "Sugestões de restaurante kaiseki/obanzai em Gion em produção.",
-          foto: "/images/placeholder-em-producao.png",
+          nome: "Toobanzai Marutakeebisu Mamehachi — Pontocho",
+          papel: "Melhor custo-benefício",
+          categoria: "Obanzai e tofu",
+          descricao:
+            "Mais de 100 anos de tradição em cozinha de tofu e obanzai caseiro, direto em Pontocho — equipe multilíngue (inglês).",
+          notaTabelog: "3.43",
+          numAvaliacoes: "257 avaliações",
+          faixaPreco: "¥3.000–4.999 no jantar",
+          distancia: "~5 min a pé da Estação Gion-Shijo, dentro de Pontocho",
+          foreignFriendly: "Alto — equipe multilíngue (inglês) confirmada.",
+          horario: "17h–22h (último pedido 21h30), todos os dias",
+          reserva: "Obrigatória — reserva online",
+          pagamento: "Cartão e QR code (inclusive Alipay) aceitos",
+          linkTabelog: "https://tabelog.com/en/kyoto/A2601/A260201/26021180/",
+        },
+        {
+          nome: "Pontocho Suishin Honten",
+          papel: "Mais prático (ambiente tradicional)",
+          categoria: "Obanzai e vegetais de Kyoto",
+          descricao:
+            "Pratos de vegetais de Kyoto e obanzai numa machiya tradicional — casa grande (105 lugares), boa opção pra grupo sem espera.",
+          notaTabelog: "3.31",
+          numAvaliacoes: "143 avaliações",
+          faixaPreco: "¥5.000–7.999 no jantar",
+          distancia: "~5 min a pé da Estação Higashiyama-Sanjo, dentro de Pontocho",
+          foreignFriendly: "Médio — descrita como atendendo bem famílias, casais e turistas.",
+          horario: "17h–23h (último pedido 22h30), todos os dias",
+          reserva: "Recomendada — reserva online",
+          pagamento: "Cartão aceito — sem IC card nem QR code",
+          linkTabelog: "https://tabelog.com/en/kyoto/A2601/A260301/26003336/",
+        },
+        {
+          nome: "Kyoryori Pontocho Fumiya",
+          papel: "Experiência mais especial",
+          categoria: "Kaiseki (culinária de Kyoto)",
+          descricao:
+            "Kaiseki tradicional com vista para o Rio Kamo, dois números depois do Pontocho Kaburenjo — a opção mais refinada das três.",
+          notaTabelog: "3.43",
+          numAvaliacoes: "330 avaliações",
+          faixaPreco: "¥8.000–9.999 no jantar",
+          distancia: "~5 min a pé das Estações Gion-Shijo, Kawaramachi ou Sanjo, dentro de Pontocho",
+          foreignFriendly: "Médio — sem confirmação de cardápio em inglês.",
+          horario: "17h–23h (último pedido de comida 22h), todos os dias",
+          reserva: "Obrigatória — reserva online",
+          pagamento: "Somente dinheiro — não aceita cartão, IC card nem QR code",
+          alerta: "Só dinheiro — leve ienes em espécie (taxa de serviço de 10% no jantar).",
+          linkTabelog: "https://tabelog.com/en/kyoto/A2601/A260301/26002618/",
         },
       ],
       mapa: {
@@ -3381,12 +3522,52 @@ const DAY_6: DayContent = {
     pois: [],
     gastronomia: {
       itens: [{ nome: "Inari-zushi" }, { nome: "Kitsune Udon" }],
-      restaurantesLabel: "Opções de refeição",
-      restaurantes: [
+      curadoriaLabel: "Opções selecionadas — Almoço rápido (~11h)",
+      curadoria: [
         {
-          nome: "A definir",
-          descricao: "Sugestões de restaurante perto de Fushimi Inari em produção.",
-          foto: "/images/placeholder-em-producao.png",
+          nome: "Nezame-ya (祢ざめ家)",
+          papel: "Experiência mais especial",
+          categoria: "Inari-zushi (casa tradicional desde 1540)",
+          descricao:
+            "Bem em frente à entrada do santuário — casa quase 500 anos mais velha que o próprio complexo de torii, famosa pelo inari-zushi tradicional.",
+          notaTabelog: "3.45",
+          numAvaliacoes: "392 avaliações",
+          faixaPreco: "¥1.000–1.999",
+          distancia: "Em frente à entrada do santuário / ~2 min a pé da Estação Inari (JR Nara Line)",
+          foreignFriendly: "Médio — site em inglês disponível, mas sem confirmação de atendimento em inglês no local.",
+          horario: "10h–16h30, todos os dias (fechamento irregular ocasional)",
+          pagamento: "Somente dinheiro — não aceita cartão nem pagamento digital",
+          linkTabelog: "https://tabelog.com/en/kyoto/A2601/A260601/26003540/",
+        },
+        {
+          nome: "Kendon-ya (けんどん屋)",
+          papel: "Melhor custo-benefício",
+          categoria: "Kitsune Udon (macarrão artesanal)",
+          descricao:
+            "Udon feito à mão na hora, com o clássico kitsune (tofu frito) — casa pequena e simples, a poucos minutos a pé do santuário.",
+          notaTabelog: "3.53",
+          numAvaliacoes: "313 avaliações",
+          faixaPreco: "Até ¥999–1.999",
+          distancia: "~5 min a pé da Estação Fushimi Inari (Keihan)",
+          foreignFriendly: "Médio — cardápio multilíngue (inglês) disponível.",
+          horario: "seg, ter, qui–dom 11h–18h — fechado às quartas",
+          pagamento: "Somente dinheiro — não aceita cartão nem pagamento digital",
+          linkTabelog: "https://tabelog.com/en/kyoto/A2601/A260601/26003538/",
+        },
+        {
+          nome: "Inafuku (稲福)",
+          papel: "Mais prático (para viagem)",
+          categoria: "Inari-zushi para levar",
+          descricao:
+            "Inari-zushi portátil com gergelim e bardana, ideal para comer andando pelo corredor de torii — também serve codorna grelhada.",
+          notaTabelog: "3.34",
+          numAvaliacoes: "183 avaliações",
+          faixaPreco: "¥1.000–1.999",
+          distancia: "~3 min a pé da Estação Inari (JR Nara Line)",
+          foreignFriendly: "Alto — cardápio multilíngue (inglês, chinês simplificado, coreano), equipe com algum inglês.",
+          horario: "9h–17h (último pedido 16h30) — fechado às terças",
+          pagamento: "Dinheiro e PayPay — não aceita cartão de crédito",
+          linkTabelog: "https://tabelog.com/en/kyoto/A2601/A260601/26006258/",
         },
       ],
       mapa: {
@@ -3550,12 +3731,50 @@ const DAY_6: DayContent = {
     ],
     gastronomia: {
       itens: [{ nome: "Unagi-don", descricao: "Enguia grelhada sobre arroz." }],
-      restaurantesLabel: "Opções de refeição",
-      restaurantes: [
+      curadoriaLabel: "Opções selecionadas — Jantar com unagi (~19h)",
+      curadoria: [
         {
-          nome: "A definir",
-          descricao: "Sugestões de restaurante de unagi em produção.",
-          foto: "/images/placeholder-em-producao.png",
+          nome: "Unasho Kinkakuji-ten (鰻匠 金閣寺店)",
+          papel: "Mais prático (na rota)",
+          categoria: "Unagi (enguia grelhada no carvão)",
+          descricao:
+            "Especializada em unagi grelhada no carvão, a mais próxima do Kinkaku-ji entre as opções da região — ex-\"Doi Katsuman\", renomeada.",
+          notaTabelog: "3.10",
+          numAvaliacoes: "27 avaliações",
+          faixaPreco: "¥3.000–3.999",
+          distancia: "~5 min a pé do Kinkaku-ji",
+          foreignFriendly: "Alto — cardápio em inglês confirmado, ampla gama de pagamentos digitais.",
+          horario: "11h–20h, todos os dias (último pedido 19h)",
+          pagamento: "Cartão, IC card e QR code (PayPay, d払い, Rakuten Pay, au PAY) aceitos",
+          linkTabelog: "https://tabelog.com/en/kyoto/A2601/A260501/26040795/",
+        },
+        {
+          nome: "Masa-katsu (まさ活)",
+          papel: "Melhor custo-benefício",
+          categoria: "Unagi (enguia grelhada)",
+          descricao:
+            "Opção mais em conta da região para unagi-don, na mesma área de Kitano Hakubaicho — perto do Kinkaku-ji.",
+          notaTabelog: "3.08",
+          numAvaliacoes: "25 avaliações",
+          faixaPreco: "¥1.000–1.999",
+          distancia: "Região de Kitano Hakubaicho, próximo ao Kinkaku-ji",
+          foreignFriendly: "Médio — cardápio multilíngue (inglês) disponível; reserva só online.",
+          horario: "sáb–dom 11h–22h (aberto no fim de semana) — fechado às quartas",
+          pagamento: "Somente dinheiro — não aceita cartão nem pagamento digital",
+          linkTabelog: "https://tabelog.com/en/kyoto/A2601/A260501/26014823/",
+        },
+        {
+          nome: "Unagi no Naruse — Kinkaku-ji-ten (鰻の成瀬 金閣寺店)",
+          papel: "Opção diferente (rede especializada)",
+          categoria: "Unagi (rede nacional especializada, unadon a partir de ¥1.600)",
+          descricao:
+            "Filial (aberta em mar/2026) da maior rede especializada em unagi do Japão, com mais de 150 lojas — padrão de qualidade consistente a preço mais baixo que a média. Bem perto do Kinkaku-ji.",
+          faixaPreco: "A partir de ¥1.600 (unadon)",
+          distancia: "Próximo ao Kinkaku-ji (Kinugasa-kaido)",
+          foreignFriendly: "Não confirmado — loja nova, recomendamos confirmar cardápio/atendimento em inglês antes de ir.",
+          horario: "Não confirmado para esta loja específica — recomendamos checar por telefone ou site antes de ir.",
+          alerta:
+            "Loja recém-aberta (mar/2026), ainda com poucas avaliações no Tabelog — confirme horário de funcionamento no dia, já que os dados públicos são escassos.",
         },
       ],
       mapa: {
@@ -3847,12 +4066,55 @@ const DAY_7: DayContent = {
             "Janela reservada logo após o Suitengu, antes do deslocamento para o Kokugikan — restaurante a confirmar com a equipe Alpinea.",
         },
       ],
-      restaurantesLabel: "Opções de refeição",
-      restaurantes: [
+      curadoriaLabel: "Opções selecionadas — Almoço (12h30–13h45)",
+      curadoria: [
         {
-          nome: "A definir",
-          descricao: "Restaurante em Ningyocho a confirmar com a equipe Alpinea.",
-          foto: "/images/placeholder-em-producao.png",
+          nome: "Tamahide (玉ひで)",
+          papel: "Experiência mais especial",
+          categoria: "Oyakodon (berço do prato, desde 1760)",
+          descricao:
+            "Casa com mais de 250 anos, criadora do oyakodon — receita de família mantida em segredo. A 1 min a pé da Estação Ningyocho.",
+          notaTabelog: "3.49",
+          numAvaliacoes: "1.792 avaliações",
+          faixaPreco: "¥2.000–2.999 no almoço",
+          distancia: "1 min a pé da Estação Ningyocho",
+          foreignFriendly: "Médio — site em inglês/chinês/coreano disponível, sem confirmação de cardápio em inglês.",
+          horario: "seg–sáb e feriados 11h30–13h30 · dom 11h30–13h30 (só almoço)",
+          pagamento: "Cartão, IC card e QR code (inclusive Alipay/WeChat Pay) aceitos",
+          alerta:
+            "Costuma formar fila — chegue com folga dado o horário limitado antes do deslocamento ao Kokugikan; atendimento só até 13h30.",
+          linkTabelog: "https://tabelog.com/en/tokyo/A1302/A130204/13003073/",
+        },
+        {
+          nome: "Oga Wa (おが和)",
+          papel: "Melhor custo-benefício",
+          categoria: "Yakitori-jū (arroz com frango grelhado)",
+          descricao:
+            "Casa tradicional de yakitori famosa pelo \"yakitori-jū\" — arroz coberto de frango grelhado glaceado, ótimo para viagem.",
+          notaTabelog: "3.69",
+          numAvaliacoes: "1.429 avaliações",
+          faixaPreco: "¥1.000–1.999 no almoço",
+          distancia: "Em Ningyocho, poucos minutos da Estação Ningyocho",
+          foreignFriendly: "Médio — reconhecida no Tabelog 100, reserva só online.",
+          horario: "seg–sex 11h25–13h30 e 17h30–21h30 — fechada sáb/dom",
+          pagamento: "PayPay aceito — não aceita cartão nem dinheiro eletrônico",
+          alerta: "Também costuma ter fila — considere pedir para viagem se o tempo estiver curto.",
+          linkTabelog: "https://tabelog.com/en/tokyo/A1302/A130204/13063782/",
+        },
+        {
+          nome: "Yoshoku Koharuken (洋食 小春軒)",
+          papel: "Mais prático (sem fila garantida)",
+          categoria: "Yoshoku (cozinha ocidental à japonesa) — Katsudon",
+          descricao:
+            "Casa centenária de yoshoku, famosa pelo katsudon exclusivo da casa — selecionada duas vezes entre os 100 melhores yoshoku do Tabelog.",
+          notaTabelog: "3.49",
+          numAvaliacoes: "1.149 avaliações",
+          faixaPreco: "¥1.000–1.999",
+          distancia: "1 min a pé da Estação Ningyocho",
+          foreignFriendly: "Médio — página em inglês no Tabelog, sem confirmação de cardápio em inglês.",
+          horario: "seg–sex 11h–13h30 e 17h–20h · sáb 11h–13h30 — fechado dom/feriados",
+          pagamento: "Dinheiro e cartões de transporte (Suica etc.) — não aceita cartão de crédito nem QR code",
+          linkTabelog: "https://tabelog.com/en/tokyo/A1302/A130204/13003031/",
         },
       ],
       mapa: {
@@ -4033,12 +4295,52 @@ const DAY_7: DayContent = {
             "Ensopado altamente calórico que os lutadores de Sumô comem diariamente pra conseguir manter o peso.",
         },
       ],
-      restaurantesLabel: "Opções de refeição",
-      restaurantes: [
+      curadoriaLabel: "Opções selecionadas — Jantar com chanko nabe (~18h)",
+      curadoria: [
         {
-          nome: "A definir",
-          descricao: "Sugestões de restaurante de chanko nabe em Ryogoku em produção.",
-          foto: "/images/placeholder-em-producao.png",
+          nome: "Chanko Kirishima — Ryogoku Edo NOREN (両国江戸NOREN店)",
+          papel: "Experiência mais especial",
+          categoria: "Chanko Nabe (dirigida por ex-Ozeki Kirishima)",
+          descricao:
+            "Casa do ex-Ozeki (vice-campeão) de sumô Kirishima, dentro do complexo gastronômico Ryogoku Edo NOREN — a 1 min a pé do Kokugikan.",
+          notaTabelog: "3.44",
+          numAvaliacoes: "324 avaliações",
+          faixaPreco: "¥5.000–5.999 no jantar",
+          distancia: "1 min a pé do Kokugikan (dentro do Ryogoku Edo NOREN)",
+          foreignFriendly: "Alto — cardápio multilíngue (inglês, chinês, coreano), reserva online sem telefone.",
+          horario: "11h–15h e 17h–22h — fechada às quartas",
+          pagamento: "Cartão, IC card e QR code (PayPay, au PAY) aceitos",
+          linkTabelog: "https://tabelog.com/en/tokyo/A1312/A131201/13202196/",
+        },
+        {
+          nome: "Ami Ryogoku (安美 両国)",
+          papel: "Melhor custo-benefício",
+          categoria: "Chanko Nabe (receita de heya/estábulo de sumô)",
+          descricao:
+            "Chanko nabe autêntico, receita passada por um estábulo (heya) de sumô — a um passo da Estação Ryogoku, aberta todos os dias.",
+          notaTabelog: "3.47",
+          numAvaliacoes: "513 avaliações",
+          faixaPreco: "¥1.000–1.999 no almoço / a partir de ¥6.000 no jantar em grupo — pratos avulsos ficam abaixo disso",
+          distancia: "1 min a pé da Estação Ryogoku",
+          foreignFriendly: "Alto — cardápio multilíngue em inglês, reserva online.",
+          horario: "11h–0h, todos os dias (último pedido 23h30)",
+          pagamento: "Cartão, IC card (Suica) e QR code (PayPay, nanaco, WAON) aceitos",
+          linkTabelog: "https://tabelog.com/en/tokyo/A1312/A131201/13025866/",
+        },
+        {
+          nome: "Chanko Dojo Honten (ちゃんこ道場本店)",
+          papel: "Mais prático (na rota)",
+          categoria: "Chanko Nabe (9 tipos, com frutos do mar de Toyosu)",
+          descricao:
+            "Nove variedades de chanko nabe com ingredientes frescos direto do mercado de Toyosu — a 1 min a pé da Estação Ryogoku.",
+          notaTabelog: "3.35",
+          numAvaliacoes: "127 avaliações",
+          faixaPreco: "¥1.000–1.999 no almoço / ¥4.000–4.999 no jantar",
+          distancia: "1 min a pé da Estação Ryogoku",
+          foreignFriendly: "Médio — página em inglês no Tabelog, reserva online.",
+          horario: "seg, ter, sex–dom 11h30–14h e 17h–23h · qua–qui só jantar 17h–23h",
+          pagamento: "Cartão, IC card, Edy, iD, QUICPay e QR code (inclusive Alipay/WeChat Pay) aceitos",
+          linkTabelog: "https://tabelog.com/en/tokyo/A1312/A131201/13038737/",
         },
       ],
       mapa: {
@@ -5294,7 +5596,7 @@ function DeslocamentoCard({ deslocamento }: { deslocamento: Deslocamento }) {
             )}
           <div
             className="relative h-1.5 w-full"
-            style={{ background: deslocamento.linha.cor || "#B96432" }}
+            style={{ background: "#B96432" }}
           >
             {deslocamento.estacoesIntermediarias?.map((estacao, i) => {
               const pct =
@@ -5322,7 +5624,7 @@ function DeslocamentoCard({ deslocamento }: { deslocamento: Deslocamento }) {
                 height: 0,
                 borderTop: "10px solid transparent",
                 borderBottom: "10px solid transparent",
-                borderLeft: `16px solid ${deslocamento.linha.cor || "#B96432"}`,
+                borderLeft: "16px solid #B96432",
               }}
             />
           </div>
