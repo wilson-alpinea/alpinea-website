@@ -167,8 +167,9 @@ type SubAtracao = {
   // Card de aviso em destaque (vermelho) — ex.: documento obrigatório na
   // entrada de uma balada. Mesmo componente usado no aviso de dia inteiro.
   alerta?: AlertaSugerido;
-  // Tabela comparativa (ex.: duas opções de balada lado a lado) — linhas em
-  // texto simples, estrelas (1–5) ou "intensidade" (bolinha colorida + rótulo).
+  // Tabela comparativa (ex.: duas opções de balada lado a lado) — linhas
+  // agrupadas em seções, cada uma em texto simples, estrelas (1–5) ou
+  // pontos (escala contínua, ex.: energia da noite).
   comparacao?: ComparacaoTabela;
   opcional?: boolean;
   compacta?: boolean;
@@ -177,12 +178,27 @@ type SubAtracao = {
 type ComparacaoTabela = {
   titulo?: string;
   colunas: [string, string];
-  linhas: {
-    label: string;
-    valores?: [string, string];
-    estrelas?: [number, number];
-    intensidade?: [{ nivel: string; cor: string }, { nivel: string; cor: string }];
+  // Selo curto no topo de cada coluna (ex.: "Melhor para uma noite
+  // sofisticada") — resume o veredito antes mesmo da tabela.
+  badges?: [string, string];
+  // Frase de conclusão por coluna — a resposta direta a "qual escolher",
+  // exibida logo abaixo dos selos, antes do grid de critérios.
+  conclusao?: [string, string];
+  grupos: {
+    titulo: string;
+    linhas: {
+      label: string;
+      valores?: [string, string];
+      estrelas?: [number, number];
+      // Escala em pontos preenchidos (1–5) — só para métricas com escala
+      // contínua natural (ex.: energia da noite). Substitui a antiga
+      // "intensidade" (bolinha + rótulo textual).
+      pontos?: [number, number];
+    }[];
   }[];
+  // Bloco final — o que muda em relação à vida noturna ocidental (documento
+  // na entrada, horário de pico, idioma, comportamento esperado etc.).
+  rodape?: { titulo: string; itens: string[] };
 };
 
 type LinhaBadge = {
@@ -2802,29 +2818,92 @@ const DAY_4: DayContent = {
         comparacao: {
           titulo: "Comparação Rápida",
           colunas: ["R3 Club Lounge", "V2 TOKYO"],
-          linhas: [
-            { label: "Perfil", valores: ["Lounge + nightlife adulto", "Nightclub grande"] },
+          badges: ["Melhor para uma noite sofisticada", "Melhor para festa & dancefloor"],
+          conclusao: [
+            "R3 → escolha se você valoriza drinks, conversa, ambiente premium e uma noite mais adulta.",
+            "V2 → escolha se você quer pista, energia, multidão e uma experiência de nightclub até tarde.",
+          ],
+          grupos: [
             {
-              label: "Intensidade",
-              intensidade: [
-                { nivel: "Média", cor: "#F5C244" },
-                { nivel: "Alta", cor: "#E8548C" },
+              titulo: "Experiência",
+              linhas: [
+                { label: "Tipo de experiência", valores: ["Lounge + nightlife adulto", "Nightclub grande"] },
+                { label: "Energia da noite", pontos: [3, 5] },
+                { label: "Vibe / atmosfera", valores: ["Sofisticado/social", "Festa/espetáculo"] },
+                { label: "Horário ideal de chegada", valores: ["20h30–22h30", "23h30 em diante"] },
               ],
             },
-            { label: "Ambiente", valores: ["Sofisticado/social", "Festa/espetáculo"] },
-            { label: "Melhor horário", valores: ["20h30–00h", "23h30–03h"] },
-            { label: "Conversar", estrelas: [4, 1] },
-            { label: "Dançar", estrelas: [3, 5] },
-            { label: "Público internacional", estrelas: [5, 5] },
-            { label: "Público japonês", estrelas: [3, 4] },
-            { label: "Experiência sem inglês", estrelas: [4, 3] },
-            { label: "Casal", estrelas: [5, 3] },
-            { label: "30–50 anos", estrelas: [5, 3] },
-            { label: "20–35 anos", estrelas: [4, 5] },
-            { label: "Primeira noite em Tokyo", estrelas: [5, 4] },
-            { label: "VIP", valores: ["Mais intimista", 'Mais "show/bottle service"'] },
-            { label: "Sensação premium", valores: ["Lounge premium", "Club premium"] },
+            {
+              titulo: "Público & Social",
+              linhas: [
+                { label: "Socializar / conversar", estrelas: [4, 1] },
+                { label: "Dancefloor", estrelas: [3, 5] },
+                {
+                  label: "Mix local × internacional",
+                  valores: ["Maioria internacional, com japoneses no bar/mesas", "Internacional + local, mix mais equilibrado"],
+                },
+                { label: "Bom para casal", estrelas: [5, 3] },
+                {
+                  label: "Experiência solo",
+                  valores: ["Boa — clima de bar/lounge favorece puxar conversa", "Boa para curtir a pista, menos natural pra conversar"],
+                },
+                { label: "Faixa etária predominante", valores: ["30–50 anos", "20–35 anos"] },
+              ],
+            },
+            {
+              titulo: "Para o Estrangeiro",
+              linhas: [
+                { label: "Facilidade para estrangeiros", estrelas: [5, 5] },
+                {
+                  label: "Barreira de idioma",
+                  valores: [
+                    "Fácil — equipe acostumada a receber estrangeiros",
+                    "Razoavelmente fácil — ambiente mais alto, comunicação mais gestual",
+                  ],
+                },
+                {
+                  label: "Dress code",
+                  valores: ["Smart casual a upscale — sem rigidez extrema", "Fashionable / clubwear — evite chinelo e moletom"],
+                },
+                {
+                  label: "Entrar sem reserva",
+                  valores: [
+                    "Costuma dar — grupos grandes saem na frente reservando",
+                    "Pode ter fila em horário de pico — reservar mesa evita",
+                  ],
+                },
+                { label: "Primeira experiência de nightlife em Tóquio", estrelas: [5, 4] },
+                {
+                  label: "Comparável a",
+                  valores: [
+                    "Rooftop lounge sofisticado de Nova York ou members club de Londres, sem a mesma exclusividade",
+                    "Megaclub de Ibiza ou Miami, em formato mais compacto",
+                  ],
+                },
+              ],
+            },
+            {
+              titulo: "Premium",
+              linhas: [
+                { label: "Experiência VIP", valores: ["Mais intimista", 'Mais "show/bottle service"'] },
+                {
+                  label: "Bottle service / mesa",
+                  valores: ["Disponível — foco maior em drinks e ambiente", "Ponto forte da casa — mesas com vista da pista e do show"],
+                },
+                { label: "Nível de exclusividade", valores: ["Lounge premium", "Club premium"] },
+              ],
+            },
           ],
+          rodape: {
+            titulo: "O que muda em relação à nightlife ocidental",
+            itens: [
+              "Documento: passaporte físico é obrigatório na entrada — foto no celular ou cópia não costumam ser aceitas. Idade mínima 20 anos, sem exceções.",
+              "Horário de pico: diferente do padrão ocidental (23h–1h), em Tóquio o movimento geralmente só decola depois da 1h — chegar mais cedo garante ambiente mais tranquilo e menos fila.",
+              "Idioma: inglês básico é comum entre a equipe nas casas mais turísticas de Roppongi, mas frases simples em japonês (ou o tradutor do celular) ajudam bastante.",
+              "Comportamento: gorjeta não é praticada nem esperada; a aproximação social costuma ser mais gradual do que em baladas ocidentais.",
+              "Mesas/bottle service: reservar com antecedência (via hotel/concierge) evita fila e garante lugar, especialmente em casas maiores como a V2.",
+            ],
+          },
         },
         mapaVisaoGeral: {
           imagem: "/images/visaogeral2-roppongi.png",
@@ -5410,56 +5489,113 @@ function ComparacaoTabelaBlock({ comparacao }: { comparacao: ComparacaoTabela })
       <p className="mb-5 text-lg font-medium text-white sm:text-xl">
         {comparacao.titulo ?? "Comparação Rápida"}
       </p>
+
       <div className="overflow-x-auto">
-        <div className="grid min-w-[420px] grid-cols-[1.3fr_1fr_1fr] gap-x-3 gap-y-4">
+        <div className="grid min-w-[460px] grid-cols-[1.3fr_1fr_1fr] gap-x-3">
+          {comparacao.badges && (
+            <>
+              <div />
+              {comparacao.badges.map((badge, i) => (
+                <span
+                  key={i}
+                  className="mb-3 inline-block w-fit rounded-full px-2.5 py-1 text-[10px] font-bold uppercase leading-tight tracking-[0.1em] text-white"
+                  style={{ backgroundColor: "#2C6CA6" }}
+                >
+                  {badge}
+                </span>
+              ))}
+            </>
+          )}
+
+          {comparacao.conclusao && (
+            <>
+              <div />
+              {comparacao.conclusao.map((texto, i) => (
+                <p key={i} className="mb-5 text-[13px] leading-5 text-white/85">
+                  {texto}
+                </p>
+              ))}
+            </>
+          )}
+
+          <div className="col-span-3 mb-1 border-b border-white/20" />
+          <p className="pb-2 pt-3 text-sm font-bold text-white">{comparacao.colunas[0]}</p>
+          <p className="pb-2 pt-3 text-sm font-bold text-white">{comparacao.colunas[1]}</p>
           <div />
-          <p className="border-b border-white/20 pb-2 text-sm font-bold text-white">
-            {comparacao.colunas[0]}
-          </p>
-          <p className="border-b border-white/20 pb-2 text-sm font-bold text-white">
-            {comparacao.colunas[1]}
-          </p>
-          {comparacao.linhas.map((linha) => (
-            <div key={linha.label} className="contents">
-              <p className="self-center text-xs leading-5 text-white/60">{linha.label}</p>
-              {linha.estrelas ? (
-                <>
-                  <ComparacaoEstrelas value={linha.estrelas[0]} />
-                  <ComparacaoEstrelas value={linha.estrelas[1]} />
-                </>
-              ) : linha.intensidade ? (
-                <>
-                  <ComparacaoIntensidade nivel={linha.intensidade[0].nivel} cor={linha.intensidade[0].cor} />
-                  <ComparacaoIntensidade nivel={linha.intensidade[1].nivel} cor={linha.intensidade[1].cor} />
-                </>
-              ) : (
-                <>
-                  <p className="text-sm leading-5 text-white/90">{linha.valores?.[0]}</p>
-                  <p className="text-sm leading-5 text-white/90">{linha.valores?.[1]}</p>
-                </>
-              )}
+
+          {comparacao.grupos.map((grupo, gi) => (
+            <div key={grupo.titulo} className="contents">
+              <p
+                className={`col-span-3 mb-3 text-[10px] font-bold uppercase tracking-[0.2em] text-white/40 ${
+                  gi === 0 ? "mt-1" : "mt-5 border-t border-white/10 pt-4"
+                }`}
+              >
+                {grupo.titulo}
+              </p>
+              {grupo.linhas.map((linha) => (
+                <div key={linha.label} className="contents">
+                  <p className="self-center pb-3 text-xs leading-5 text-white/60">{linha.label}</p>
+                  {linha.estrelas ? (
+                    <>
+                      <ComparacaoEstrelas value={linha.estrelas[0]} />
+                      <ComparacaoEstrelas value={linha.estrelas[1]} />
+                    </>
+                  ) : linha.pontos ? (
+                    <>
+                      <ComparacaoPontos value={linha.pontos[0]} />
+                      <ComparacaoPontos value={linha.pontos[1]} />
+                    </>
+                  ) : (
+                    <>
+                      <p className="self-center pb-3 text-sm leading-5 text-white/90">{linha.valores?.[0]}</p>
+                      <p className="self-center pb-3 text-sm leading-5 text-white/90">{linha.valores?.[1]}</p>
+                    </>
+                  )}
+                </div>
+              ))}
             </div>
           ))}
         </div>
       </div>
+
+      {comparacao.rodape && (
+        <div className="mt-6 rounded-xl border border-white/15 bg-white/[0.04] p-4 sm:p-5">
+          <p className="mb-3 text-[10px] font-bold uppercase tracking-[0.2em] text-white/45">
+            {comparacao.rodape.titulo}
+          </p>
+          <ul className="space-y-2">
+            {comparacao.rodape.itens.map((item, i) => (
+              <li key={i} className="flex gap-2 text-[13px] leading-5 text-white/80">
+                <span className="mt-2 h-1 w-1 shrink-0 rounded-full bg-white/40" />
+                {item}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
     </div>
   );
 }
 
 function ComparacaoEstrelas({ value }: { value: number }) {
   return (
-    <span className="self-center text-sm tracking-tight text-amber-400">
+    <span className="self-center pb-3 text-sm tracking-tight text-amber-400">
       {"★".repeat(value)}
       <span className="text-white/20">{"★".repeat(5 - value)}</span>
     </span>
   );
 }
 
-function ComparacaoIntensidade({ nivel, cor }: { nivel: string; cor: string }) {
+function ComparacaoPontos({ value }: { value: number }) {
   return (
-    <span className="flex items-center gap-1.5 self-center text-sm text-white/90">
-      <span className="h-2.5 w-2.5 shrink-0 rounded-full" style={{ backgroundColor: cor }} />
-      {nivel}
+    <span className="flex items-center gap-1 self-center pb-3">
+      {Array.from({ length: 5 }, (_, i) => (
+        <span
+          key={i}
+          className="h-2.5 w-2.5 shrink-0 rounded-full"
+          style={{ backgroundColor: i < value ? "#2C6CA6" : "rgba(255,255,255,0.15)" }}
+        />
+      ))}
     </span>
   );
 }
@@ -8280,7 +8416,10 @@ export function ApprovalPanel({
                       {d.date.split(" ")[1]}
                     </span>
                     {DIA_SEMANA[d.date] && (
-                      <span className="mt-0.5 text-[9px] uppercase tracking-[0.15em] text-[#24211D]/45">
+                      <span
+                        className="mt-0.5 text-[9px] uppercase tracking-[0.15em]"
+                        style={{ color: "#2C6CA6" }}
+                      >
                         {DIA_SEMANA[d.date]}
                       </span>
                     )}
