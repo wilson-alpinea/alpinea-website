@@ -1750,25 +1750,25 @@ const DAY_3: DayContent = {
         },
         {
           titulo: "Parque de Yoyogi",
-          foto: "/images/placeholder-em-producao.png",
+          foto: "/images/yoyogi-park.png",
           horario: "~10:20",
           descricao: "Você precisa entrar nele para acessar o Meiji Jingu — uma enorme floresta com árvores extremamente altas.",
         },
         {
           titulo: "Omotesando",
-          foto: "/images/placeholder-em-producao.png",
+          foto: "/images/omotesando.png",
           horario: "~11:00",
           descricao: "Uma das maiores avenidas de boutiques e lojas de luxo de Tóquio — liga a saída do parque a Shibuya.",
         },
         {
           titulo: "Estátua de Hachiko",
-          foto: "/images/placeholder-em-producao.png",
+          foto: "/images/hachiko-statue.png",
           horario: "~11:45",
           descricao: "Estátua em homenagem ao cão que continuou esperando seu dono voltar para casa — bem na saída da Estação Shibuya.",
         },
         {
           titulo: "Shibuya Crossing",
-          foto: "/images/placeholder-em-producao.png",
+          foto: "/images/shibuya-crossing.png",
           horario: "12:00",
           descricao: "O famoso cruzamento hexagonal de Shibuya, ao lado da estátua de Hachiko.",
         },
@@ -1781,6 +1781,54 @@ const DAY_3: DayContent = {
       comentarios: [
         "Vista aérea do terreno do santuário: a entrada principal fica junto à Estação Harajuku, de onde parte o Minami-sando (参道, a alameda de acesso) cortando a floresta até o Minami Shinmon (南神門) e o Santuário Principal (本殿). No caminho, a Casa do Tesouro (宝物殿) e o Museu ficam a poucos passos um do outro, e o Togo Shrine é um santuário menor nos arredores.",
         "O Parque de Yoyogi fica colado ao terreno do santuário, do lado oeste, com a Estação Yoyogi bem em frente — uma boa saída alternativa à Harajuku, dependendo de para onde for em seguida.",
+        "Existem 5 pontos de interesse destacados abaixo, na ordem em que aparecem caminhando pelo Minami-sando a partir da Estação Harajuku — priorize o Kazaridaru (2) logo no início do trajeto, porque depois de meia-manhã fica difícil tirar foto sem gente na frente.",
+      ],
+      pontos: [
+        {
+          cor: "#C81D25",
+          titulo: "Ōtorii",
+          nomeJapones: "大鳥居",
+          descricao:
+            "O grande torii de entrada do santuário, um dos maiores torii de madeira do Japão — feito de cipreste hinoki de mais de 1.500 anos, importado de Taiwan. Marca a passagem do mundano para o terreno sagrado, logo no início do Minami-sando.",
+          foto: "/images/meiji-jingu-otorii.png",
+          ordem: 1,
+        },
+        {
+          cor: "#D97A1F",
+          titulo: "Kazaridaru",
+          nomeJapones: "飾り樽",
+          descricao:
+            "Parede de barris de saquê (kazaridaru) doados anualmente por destilarias de todo o Japão, em oferenda ao imperador Meiji. Do outro lado da alameda fica a parede espelhada de barris de vinho da Borgonha, símbolo da abertura do Japão ao Ocidente durante o período Meiji. Priorize passar por aqui primeiro — depois de meia-manhã enche de gente e fica difícil fotografar.",
+          foto: "/images/meiji-jingu-kazaridaru.png",
+          ordem: 2,
+        },
+        {
+          cor: "#1E6FB8",
+          titulo: "Minami Shinmon",
+          nomeJapones: "南神門",
+          descricao:
+            "Portão sul do santuário — a entrada para o pátio interno onde fica o salão principal de orações. É o último portão antes do Gehaiden.",
+          foto: "/images/meiji-jingu-minami-shinmon.png",
+          ordem: 3,
+        },
+        {
+          cor: "#3F8F3F",
+          titulo: "Gehaiden",
+          nomeJapones: "外拝殿",
+          descricao:
+            "Salão externo de orações do Santuário Principal, onde os visitantes fazem sua reverência: duas reverências, duas palmas, uma reverência final (nirei-nihakushu-ichirei). É o ponto mais movimentado e o coração da visita ao Meiji Jingu.",
+          foto: "/images/meiji-jingu-gehaiden.png",
+          ordem: 4,
+        },
+        {
+          cor: "#6B3FA0",
+          titulo: "Meoto Kusu",
+          nomeJapones: "夫婦楠",
+          descricao:
+            "Duas árvores de cânfora (kusunoki) plantadas lado a lado no pátio principal, entrelaçadas por uma corda sagrada (shimenawa) — símbolo de união e harmonia conjugal, muito procurado por casais que visitam o santuário.",
+          foto: "/images/meiji-jingu-meotokusu.png",
+          ordem: 5,
+        },
       ],
     },
     regiao: {
@@ -1852,9 +1900,10 @@ const DAY_3: DayContent = {
       },
     ],
     mapaVisaoGeral: {
-      imagem: "/images/placeholder-em-producao.png",
-      imagemAlt: "Visão geral do trajeto a pé em Shibuya/Yoyogi — em produção",
-      nota: "Mapa de trajeto a pé em produção.",
+      imagem: "/images/meiji-jingu-mapa-trajeto.png",
+      imagemAlt:
+        "Mapa do terreno do Meiji Jingu com o trajeto a pé desde o Ichino Torii (Harajuku) até o Santuário Principal, passando pelo Nino Torii, os Barris de Saquê, a Ponte Shinkyo e o Gehaiden",
+      nota: "Trajeto a pé desde a Estação Harajuku: Ichino Torii → Ponte Shinkyo → Nino Torii → Barris de Saquê (Kazaridaru) → Minami Shinmon → Gehaiden e Meoto Kusu.",
     },
     decisoes: [
       {
@@ -1868,6 +1917,8 @@ const DAY_3: DayContent = {
         description:
           "Você precisa entrar nele para acessar o Meiji Jingu — trata-se de uma enorme floresta com árvores extremamente altas, erguida do zero em homenagem à morte do imperador Meiji.",
         prioridade: "imperdivel",
+        imagem: "/images/yoyogi-park.png",
+        imagemAlt: "Lago do Parque de Yoyogi cercado por árvores em tons de outono, com chafariz ao fundo",
       },
       {
         category: "Compras",
@@ -1875,18 +1926,24 @@ const DAY_3: DayContent = {
         description:
           "Uma das maiores avenidas de boutiques e lojas de luxo de Tóquio, com diversos cafés e restaurantes importantes nas ruas ao redor da avenida principal — liga a saída do parque a Shibuya, seguindo para o sul.",
         prioridade: "opcional",
+        imagem: "/images/omotesando.png",
+        imagemAlt: "Fachada de vidro da loja Dior em Omotesando, com pedestres atravessando a faixa em primeiro plano",
       },
       {
         title: "Estátua de Hachiko",
         description:
           "Estátua em homenagem ao cão que continuou esperando seu dono voltar para casa sem saber que ele havia falecido — deu origem ao filme \"Pra Sempre ao Seu Lado\". Fica bem na saída da Estação Shibuya.",
         prioridade: "opcional",
+        imagem: "/images/hachiko-statue.png",
+        imagemAlt: "Estátua de bronze do cão Hachiko, na saída da Estação Shibuya",
       },
       {
         title: "Shibuya Crossing",
         description:
           "O famoso cruzamento hexagonal de Shibuya, que fica caótico às 18h — ao lado da estátua de Hachiko, último ponto antes de seguir para Shinjuku.",
         prioridade: "recomendado",
+        imagem: "/images/shibuya-crossing.png",
+        imagemAlt: "Vista aérea do cruzamento de Shibuya iluminado à noite, com pedestres atravessando em todas as direções",
       },
     ],
     gastronomia: {
@@ -1976,39 +2033,45 @@ const DAY_3: DayContent = {
       passos: [
         {
           titulo: "Shinjuku Gyoen",
-          foto: "/images/placeholder-em-producao.png",
+          foto: "/images/shinjuku-gyoen.png",
           horario: "14:45",
           descricao: "Um dos parques mais bonitos de Tóquio, misturando jardins japonês, francês e inglês.",
         },
         {
           titulo: "Prédio do Governo Metropolitano + Mirante",
-          foto: "/images/placeholder-em-producao.png",
+          foto: "/images/tokyo-metropolitan-government-building.png",
           horario: "~16:30",
           descricao: "Mirante gratuito no 45º andar com vista panorâmica da cidade — ideal perto do pôr do sol.",
         },
         {
           titulo: "Gato 3D Gigante",
-          foto: "/images/placeholder-em-producao.png",
+          foto: "/images/gato-3d-shinjuku.png",
           horario: "~17:15",
           descricao: "Gato tridimensional gigante exibido em telão curvo no edifício Cross Shinjuku Vision.",
         },
         {
           titulo: "Estátua do Godzilla",
-          foto: "/images/placeholder-em-producao.png",
+          foto: "/images/godzilla-head-shinjuku.png",
           horario: "~17:30",
           descricao: "Réplica em tamanho real na varanda do Hotel Gracery, pertinho do Gato 3D.",
         },
         {
           titulo: "Kabukicho",
-          foto: "/images/placeholder-em-producao.png",
+          foto: "/images/kabukicho.png",
           horario: "~18:00",
           descricao: "Maior distrito de entretenimento noturno de Tóquio, com neons e vida noturna intensa.",
         },
         {
           titulo: "Golden Gai",
-          foto: "/images/placeholder-em-producao.png",
+          foto: "/images/golden-gai.png",
           horario: "19:00",
           descricao: "Rede de vielas estreitas com mais de 200 bares minúsculos, encostado em Kabukicho.",
+        },
+        {
+          titulo: "Onsen Thermae-Yu",
+          foto: "/images/thermae-yu.png",
+          horario: "21:00",
+          descricao: "Onsen urbano aberto 24h no coração de Kabukicho, ao lado do Golden Gai — fecha a noite antes do trem noturno para Kyoto.",
         },
       ],
     },
@@ -2109,36 +2172,55 @@ const DAY_3: DayContent = {
         description:
           "Um dos parques mais bonitos de Tóquio, misturando jardins japonês, francês e inglês — refúgio verde no meio do bairro mais denso da cidade. Melhor visitar logo na chegada, ainda com luz do dia (fica ao sul da estação, fecha à noite).",
         prioridade: "recomendado",
+        imagem: "/images/shinjuku-gyoen.png",
+        imagemAlt: "Lago do Shinjuku Gyoen no outono, com a torre do Prédio do Governo Metropolitano ao fundo",
       },
       {
         title: "Prédio do Governo Metropolitano de Tóquio + Mirante",
         description:
           "Torres gêmeas projetadas por Kenzo Tange com mirante gratuito no 45º andar e vista panorâmica da cidade — em dias claros, dá para ver o Monte Fuji. Fica no lado oeste da estação; ideal chegar perto do fim da tarde para ver o pôr do sol.",
         prioridade: "recomendado",
+        imagem: "/images/tokyo-metropolitan-government-building.png",
+        imagemAlt: "Vista de baixo das torres gêmeas do Prédio do Governo Metropolitano de Tóquio",
       },
       {
         title: "Gato 3D Gigante",
         description:
           "Gato tridimensional gigante exibido em telão curvo no edifício Cross Shinjuku Vision, na saída leste da estação — uma das atrações mais fotografadas do bairro, já a caminho de Kabukicho.",
         prioridade: "recomendado",
+        imagem: "/images/gato-3d-shinjuku.png",
+        imagemAlt: "Gato tridimensional gigante no telão curvo do Cross Shinjuku Vision",
       },
       {
         title: "Estátua do Godzilla",
         description:
           "Réplica em tamanho real na varanda do Hotel Gracery, símbolo do distrito de entretenimento de Kabukicho — pertinho do Gato 3D.",
         prioridade: "recomendado",
+        imagem: "/images/godzilla-head-shinjuku.png",
+        imagemAlt: "Cabeça do Godzilla na varanda do Hotel Gracery, em Kabukicho",
       },
       {
         title: "Kabukicho",
         description:
           "Maior distrito de entretenimento noturno de Tóquio, com neons, bares temáticos e vida noturna intensa.",
         prioridade: "recomendado",
+        imagem: "/images/kabukicho.png",
+        imagemAlt: "Arco de neon vermelho na entrada de Kabukicho Ichibangai, com movimento de pedestres à noite",
       },
       {
         title: "Golden Gai",
         description:
           "Rede de vielas estreitas com mais de 200 bares minúsculos, a maioria com capacidade para menos de 10 pessoas — encostado em Kabukicho, último ponto da noite antes do onsen Thermae-Yu.",
         prioridade: "imperdivel",
+        imagem: "/images/golden-gai.png",
+        imagemAlt: "Viela estreita do Golden Gai à noite, com lanternas e placas iluminadas dos bares",
+      },
+      {
+        title: "Onsen Thermae-Yu",
+        description:
+          "Onsen urbano aberto 24 horas no coração de Kabukicho, ao lado do Golden Gai — água termal natural trazida diariamente de Nakaizu, com banhos internos e ao ar livre, banho carbonatado e saunas. Fecha a noite antes do trem noturno rumo a Kyoto.",
+        prioridade: "imperdivel",
+        imagem: "/images/thermae-yu.png",
       },
     ],
     gastronomia: {
@@ -2245,13 +2327,6 @@ const DAY_3: DayContent = {
       imagens: [
         { src: "/images/placeholder-em-producao.png", alt: "Galeria de Shinjuku — em produção", legenda: "Em produção" },
       ],
-      mapas: [
-        {
-          titulo: "Raio-X Alpinea — Shinjuku Gyoen",
-          imagem: "/images/raiox-shinjuku-gyoen.png",
-          imagemAlt: "Raio-X Alpinea de Shinjuku Gyoen com Portão Shinjuku, Portão Okido, Portão Sendagaya, Jardim Japonês, Estufa Grande, Lago Superior/Médio/Inferior e Jardim de Roseiras",
-        },
-      ],
     },
     banheirosProximos: [
       {
@@ -2268,11 +2343,34 @@ const DAY_3: DayContent = {
     subAtracoes: [
       {
         label: "Tarde",
+        titulo: "Shinjuku Gyoen",
+        imagem: "/images/shinjuku-gyoen.png",
+        foco: "center",
+        descricao:
+          "Um dos parques mais bonitos de Tóquio, misturando jardins japonês, francês e inglês — refúgio verde no meio do bairro mais denso da cidade.",
+        visaoAnotada: {
+          titulo: "Shinjuku Gyoen",
+          imagem: "/images/raiox-shinjuku-gyoen.png",
+          imagemAlt: "Raio-X Alpinea de Shinjuku Gyoen com Portão Shinjuku, Portão Okido, Portão Sendagaya, Jardim Japonês, Estufa Grande, Lago Superior/Médio/Inferior e Jardim de Roseiras",
+          comentarios: [
+            "Vista aérea do parque: os três portões de entrada ficam nas bordas — Shinjuku (nordeste, o mais próximo da estação), Okido (norte) e Sendagaya (sul, perto do Museu Nacional de Arte Moderna). Do lado leste fica o Jardim Japonês tradicional, com os lagos Superior, Médio e Inferior conectados por pontes; no centro, o gramado do estilo francês formal com o Jardim de Roseiras; e a Estufa Grande (Grand Greenhouse) fica próxima ao Portão Shinjuku.",
+            "Com apenas ~2h reservadas no roteiro, vale entrar pelo Portão Shinjuku (o mais próximo da estação) e focar no Jardim Japonês — é o trecho mais fotogênico e mais rápido de cobrir a pé.",
+          ],
+        },
+      },
+      {
+        label: "Tarde",
         titulo: "Thermae-Yu",
         imagem: "/images/thermae-yu.png",
         foco: "center",
         descricao:
           "Onsen urbano aberto 24 horas no coração de Kabukicho, ao lado do Golden Gai — água termal natural trazida diariamente de Nakaizu (famosa pelas propriedades para a pele), com banhos internos e ao ar livre, banho carbonatado, saunas e, na temporada quente, deck na cobertura.",
+        alerta: {
+          titulo: "Tatuagem e Documento",
+          horario: "Leve o passaporte físico se tiver tatuagem",
+          mensagem:
+            "A política do Thermae-Yu é restritiva com japoneses tatuados, mas estrangeiros com tatuagem pequena podem entrar apresentando o passaporte físico e comprando um adesivo/curativo impermeável para cobri-la na recepção (~¥310). Tatuagens grandes podem ser recusadas — vale confirmar a política vigente antes de ir.",
+        },
       },
     ],
   },
