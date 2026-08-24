@@ -51,6 +51,35 @@ type Poi = {
   horario?: string;
 };
 
+// Restaurante pesquisado e curado segundo o "PROMPT MESTRE — PESQUISA DE
+// RESTAURANTES E COMIDA LOCAL" — usado nas 3 opções finais de cada refeição
+// (a partir do Dia 3). Todo campo vem de pesquisa real (Tabelog-first) —
+// nunca inventado; quando um dado não é verificável, o texto explicita
+// "Não confirmado" em vez de omitir silenciosamente.
+type RestauranteCurado = {
+  nome: string;
+  // Papel dentro do trio de opções, ex.: "Melhor custo-benefício",
+  // "Mais local/autêntico", "Mais prático/rota".
+  papel: string;
+  categoria: string;
+  // 1–2 frases: o que pedir / por que essa opção específica — nunca genérico.
+  descricao: string;
+  foto?: string;
+  // Nota do Tabelog (ex.: "3.54"). Ausente = não encontrado/não aplicável.
+  notaTabelog?: string;
+  numAvaliacoes?: string;
+  faixaPreco: string;
+  distancia: string;
+  foreignFriendly: string;
+  horario: string;
+  nivelFila?: string;
+  reserva?: string;
+  pagamento?: string;
+  linkTabelog?: string;
+  // Aviso pontual — só quando genuinamente relevante (ex.: só dinheiro).
+  alerta?: string;
+};
+
 type Gastronomia = {
   // Sobrescreve o título padrão "Gastronomia" do card (ex.: "Snacks de Rua").
   titulo?: string;
@@ -78,6 +107,12 @@ type Gastronomia = {
   }[];
   // Mapa clicável (zoom) com a localização dos restaurantes.
   mapa?: { titulo?: string; imagem: string; imagemAlt: string };
+  // Rótulo acima do grid de opções curadas (ex.: "Opções selecionadas — Almoço").
+  curadoriaLabel?: string;
+  // As 3 opções finais de uma refeição, pesquisadas e formatadas segundo o
+  // PROMPT MESTRE — PESQUISA DE RESTAURANTES E COMIDA LOCAL. Quando presente,
+  // aparece em vez do grid simples de `restaurantes`.
+  curadoria?: RestauranteCurado[];
 };
 
 type Regiao = {
@@ -349,6 +384,15 @@ type Period = {
       | "descanso";
     itens: { local: string; endereco?: string; nota?: string }[];
   };
+  // Horário de funcionamento loja a loja — usado sempre que o período cita
+  // lojas específicas por nome no roteiro (ex.: Akihabara). Cada loja citada
+  // tem seu próprio horário de abertura/fechamento — nunca uma faixa
+  // agregada tipo "~10h–20h (maioria)". Card sempre aberto, sem accordion.
+  horarioLojas?: {
+    nome: string;
+    // ex.: "Abertura 10h · Fechamento 20h" ou "10h–22h (10h aos fins de semana)"
+    horario: string;
+  }[];
 };
 
 type TransporteSugerido = {
@@ -1597,7 +1641,7 @@ const DAY_3: DayContent = {
       { horario: "12:00", evento: "Shibuya Crossing e Estátua de Hachiko" },
       {
         horario: "13:00",
-        evento: "Almoço no Kaitenzushi Ginza Onodera",
+        evento: "Almoço em Shibuya/Omotesando (3 opções selecionadas)",
         tag: "Refeição",
       },
       {
@@ -1705,6 +1749,7 @@ const DAY_3: DayContent = {
         nome: "Estação Omotesando",
         nomeJapones: "表参道駅",
         saida: "Saída A2 (Omotesando Hills)",
+        foto: "/images/omotesando-station-entrance.png",
         mapa: "/images/omotesando-station-map.png",
         mapaAlt: "Mapa da Estação Omotesando (Ginza Line, Hanzomon Line e Chiyoda Line)",
       },
@@ -1737,12 +1782,12 @@ const DAY_3: DayContent = {
     detalhesPraticos: [
       { label: "Entrada (terreno principal)", valor: "Gratuita" },
       { label: "Jardim Interior", valor: "¥500" },
-      { label: "Horário", valor: "Nascer ao pôr do sol (~5h–18h em maio)" },
+      { label: "Horário", valor: "5h–18h10 (horário oficial de maio)" },
       {
         label: "Melhor horário",
-        horarioDestaque: "Logo na abertura",
+        horarioDestaque: "5h–7h",
         valor:
-          "O Minami-sando é mais tranquilo nas primeiras horas — grupos de turismo e visitantes de ônibus chegam a partir do meio da manhã, e o caminho sob a floresta some em movimento nos fins de semana.",
+          "Logo na abertura, às 5h — o Minami-sando é mais tranquilo nas primeiras horas. Grupos de turismo e visitantes de ônibus chegam a partir do meio da manhã, e o caminho sob a floresta some em movimento nos fins de semana.",
       },
     ],
     mapaVisaoGeral: {
@@ -1784,18 +1829,62 @@ const DAY_3: DayContent = {
       },
     ],
     gastronomia: {
-      itens: [
+      curadoriaLabel: "Opções selecionadas — Almoço (~13h)",
+      curadoria: [
         {
-          nome: "Kaitenzushi Ginza Onodera",
-          descricao: "Sushi de esteira, considerado por muitos o melhor de Tóquio.",
+          nome: "Harajuku Gyoza Ro",
+          papel: "Mais local e autêntico",
+          categoria: "Gyoza (guioza japonês)",
+          descricao:
+            "Casa tradicional de guioza desde 1953, parada clássica de moradores e visitantes — peça o combo frito + cozido no vapor com broto de soja salteado.",
+          faixaPreco: "¥1.000–2.000 por pessoa",
+          distancia:
+            "~5 min a pé da Estação Meiji-Jingumae (Saída 7) — no caminho entre o Meiji Jingu e Omotesando",
+          foreignFriendly:
+            "Médio — sem cardápio em inglês confirmado, mas prato simples e visual, fácil de pedir por gestos; ponto conhecido internacionalmente (citado por guias como Time Out).",
+          horario: "11h30–22h, todos os dias",
+          nivelFila: "Fila comum no horário de almoço — casa pequena, com 60 lugares no balcão",
+          reserva: "Não aceita reservas — só balcão, por ordem de chegada",
+          pagamento: "Somente dinheiro — não aceita cartão, IC card nem QR code",
+          linkTabelog: "https://tabelog.com/en/tokyo/A1306/A130601/13001284/",
+          alerta:
+            "Só dinheiro e sem reserva — leve ienes em espécie e conte com um tempo de espera na fila.",
         },
-      ],
-      restaurantesLabel: "Opções de refeição",
-      restaurantes: [
         {
-          nome: "Kaitenzushi Ginza Onodera",
-          descricao: "Sushi de esteira, considerado por muitos o melhor de Tóquio.",
-          foto: "/images/placeholder-em-producao.png",
+          nome: "Omotesando Ukai Tei",
+          papel: "Experiência mais especial",
+          categoria: "Teppanyaki / Wagyu",
+          descricao:
+            "Teppanyaki de luxo com carnes premium grelhadas à sua frente, em salão com fachada de casa tradicional japonesa — selecionado para o Tabelog 100 de Steak/Teppanyaki 2025.",
+          notaTabelog: "3.70",
+          numAvaliacoes: "1.101 avaliações",
+          faixaPreco: "¥10.000–14.999 no almoço",
+          distancia: "~5 min a pé da Estação Omotesando / 3 min da Estação Meiji-Jingumae",
+          foreignFriendly:
+            "Alto — listado em inglês no Tabelog com reserva online em inglês; teppanyaki de luxo tradicionalmente muito procurado por visitantes internacionais.",
+          horario:
+            "12h–16h e 17h30–22h (fins de semana e feriados abre 11h30) — fechado às quartas-feiras",
+          reserva: "Obrigatória — reserva online, sem necessidade de ligação",
+          pagamento: "Cartão aceito (Visa, Master, JCB, Amex, Diners) — taxa de serviço de 13%",
+          linkTabelog: "https://tabelog.com/en/tokyo/A1306/A130601/13044361/",
+        },
+        {
+          nome: "Sushi Ginza Onodera Musuko Shibuya ten",
+          papel: "Mais prático (na rota)",
+          categoria: "Kaitenzushi (sushi de esteira premium)",
+          descricao:
+            "Sushi de esteira do grupo Ginza Onodera (marca com estrela Michelin) — peixe pressionado à mão, na hora, com pratos exclusivos da unidade de Shibuya.",
+          notaTabelog: "3.48",
+          numAvaliacoes: "478 avaliações",
+          faixaPreco: "¥8.000–9.999 por pessoa (listado a partir de ¥4.000)",
+          distancia:
+            "~2 min a pé da Saída A5b da Estação Shibuya — a poucos passos de onde o circuito da manhã termina",
+          foreignFriendly:
+            "Alto — reportagem da Nikkei Asia descreve a unidade como voltada para receber turistas estrangeiros; reserva online em inglês pelo Tabelog.",
+          horario: "11h–22h30 (último pedido 22h), todos os dias",
+          reserva: "Recomendada — reserva online pelo Tabelog",
+          pagamento: "Cartão, IC card e QR code (PayPay) aceitos",
+          linkTabelog: "https://tabelog.com/en/tokyo/A1303/A130301/13294625/",
         },
       ],
       mapa: {
@@ -1881,6 +1970,7 @@ const DAY_3: DayContent = {
         nome: "Estação Shibuya",
         nomeJapones: "渋谷駅",
         saida: "Catraca Hachiko",
+        foto: "/images/shibuya-station-entrance.png",
         mapa: "/images/shibuya-station-map.png",
         mapaAlt: "Mapa da Estação Shibuya (Ginza Line, Hanzomon Line e JR)",
       },
@@ -1893,6 +1983,7 @@ const DAY_3: DayContent = {
         nome: "Estação Shinjuku",
         nomeJapones: "新宿駅",
         saida: "Saída Sul Nova (New South Exit)",
+        foto: "/images/shinjuku-station-entrance.png",
       },
       opcoes: [
         {
@@ -1990,19 +2081,94 @@ const DAY_3: DayContent = {
       },
     ],
     gastronomia: {
+      alerta:
+        "Golden Gai tem ~280 bares minúsculos (4–10 lugares cada) — muitos não recebem estrangeiros ou cobram taxa de mesa/otsumami (aperitivo obrigatório) além do valor da bebida. Os bares abaixo foram selecionados justamente por serem abertamente foreign-friendly. Leve dinheiro: vários não aceitam cartão.",
+      itensLabel: "Bares selecionados em Golden Gai — foreign-friendly",
       itens: [
         {
-          nome: "Bar temático em Golden Gai",
+          nome: "Albatross G",
           descricao:
-            "Cada bar tem uma curadoria própria de temática e trilha sonora — vale entrar em mais de um.",
+            "Clássico de 3 andares (com terraço no 3º) para começar a noite — staff e cardápio em inglês, drinks autorais. Cover ¥500.",
+          localizacao: "19h–5h",
+        },
+        {
+          nome: "Bar Araku",
+          descricao:
+            "Dono australiano, espaço maior que a média de Golden Gai (com sofás, não só banquinhos), boa seleção de whisky. Sem cover.",
+          localizacao: "19h–4h",
+        },
+        {
+          nome: "Cambiare",
+          descricao:
+            "Ambientado no filme de terror \"Suspiria\" (1977) — e serve pizza, incomum para os padrões de Golden Gai. Algum inglês falado. Sem cover.",
+          localizacao: "seg–qui 18h–2h · sex–sáb 18h–5h",
+        },
+        {
+          nome: "Bar Asyl",
+          descricao:
+            "Intimista, 7 lugares, dono fala inglês — whisky japonês e licor de ameixa caseiro. A experiência mais \"Golden Gai clássico\" da lista. Sem cover.",
+          localizacao: "20h–5h",
+        },
+        {
+          nome: "TOTO Bar Shinjuku",
+          descricao:
+            "Bar de sakês com seleção rotativa por província, harmonizados com petiscos sazonais de frutos do mar — bom para quem quer comer algo além de bebida. Inglês limitado. Cover ¥500.",
+          localizacao: "18h–3h",
         },
       ],
-      restaurantesLabel: "Opções na região",
-      restaurantes: [
+      curadoriaLabel: "Opções selecionadas — Jantar antes dos bares (~19h)",
+      curadoria: [
         {
-          nome: "A definir",
-          descricao: "Sugestões de restaurante em Shinjuku em produção.",
-          foto: "/images/placeholder-em-producao.png",
+          nome: "Katsu Pulipo",
+          papel: "Melhor nota (mais aclamado)",
+          categoria: "Tonkatsu (costeleta de porco empanada)",
+          descricao:
+            "Tonkatsu premiado, no coração do Kabukicho — selecionado para o Tabelog 100 Best Tonkatsu em 2022, 2024 e 2026.",
+          notaTabelog: "3.90",
+          numAvaliacoes: "1.389 avaliações",
+          faixaPreco: "¥8.000–9.999 no jantar",
+          distancia: "Dentro do Kabukicho — ~3 min a pé da Saída Leste da Estação Shinjuku",
+          foreignFriendly:
+            "Alto — reserva online em inglês (inclusive via KKday e TakeMe), ampla presença em guias internacionais.",
+          horario: "18h–23h (último pedido de comida 21h30) — fechado no fim/início de ano",
+          reserva: "Obrigatória — 1 bebida mínima por pessoa no jantar",
+          pagamento: "Cartão, IC card e QR code (PayPay, Rakuten Pay) aceitos",
+          linkTabelog: "https://tabelog.com/en/tokyo/A1304/A130401/13264309/",
+        },
+        {
+          nome: "Yakiniku Ushigoro Shinjuku sanchome ten",
+          papel: "Experiência mais especial",
+          categoria: "Yakiniku (wagyu grelhado na mesa)",
+          descricao:
+            "Wagyu premium grelhado na própria mesa, ambiente moderno pensado para ocasiões especiais — selecionado para o Tabelog 100 de Yakiniku 2025.",
+          notaTabelog: "3.67",
+          numAvaliacoes: "1.491 avaliações",
+          faixaPreco: "¥10.000–14.999 no jantar",
+          distancia: "Saída B9 da Estação Shinjuku-sanchome — poucos minutos a pé de Golden Gai",
+          foreignFriendly:
+            "Alto — reserva online 24h, listado em inglês no Tabelog e em plataformas internacionais (TakeMe).",
+          horario: "seg–sex 17h–23h30 (dom/feriados também abre ao meio-dia) — último pedido 22h30",
+          reserva: "Obrigatória — reserva online",
+          pagamento: "Cartão aceito (Visa, Master, JCB, Amex, Diners) — sem IC card nem QR code",
+          linkTabelog: "https://tabelog.com/en/tokyo/A1304/A130401/13258565/",
+        },
+        {
+          nome: "Sugoi Niboshi Ramen Nagi — Golden Gai honkan",
+          papel: "Mais prático (direto no Golden Gai)",
+          categoria: "Ramen (niboshi/sardinha-seca)",
+          descricao:
+            "A loja original da rede Nagi, dentro do próprio Golden Gai — casa de nascimento do ramen de niboshi que deu fama internacional à marca.",
+          notaTabelog: "3.64",
+          numAvaliacoes: "3.485 avaliações",
+          faixaPreco: "¥1.000–1.999 por pessoa",
+          distancia: "Dentro do Golden Gai (2F) — ~3 min a pé da Estação Shinjuku-sanchome, Saída E2",
+          foreignFriendly:
+            "Médio — sem cardápio em inglês confirmado, mas rede conhecida internacionalmente, prato simples de pedir.",
+          horario: "Aberto 24h, todos os dias",
+          nivelFila: "Fila comum — balcão com só 10 lugares em L, muito procurado",
+          reserva: "Não aceita reservas — só balcão",
+          pagamento: "Dinheiro, IC card e QR code aceitos",
+          linkTabelog: "https://tabelog.com/en/tokyo/A1304/A130401/13054766/",
         },
       ],
       mapa: {
@@ -2136,8 +2302,9 @@ const DAY_4: DayContent = {
     retorno: "A definir",
   },
   manha: {
+    label: "Manhã + Tarde",
     percursoEssencial: {
-      duracao: "~2h45 (Akihabara — manhã)",
+      duracao: "~5h45 (Akihabara — dia inteiro, manhã e tarde)",
       passos: [
         {
           titulo: "Akihabara Radio Kaikan",
@@ -2168,6 +2335,30 @@ const DAY_4: DayContent = {
           foto: "/images/day2-surugaya.jpg",
           horario: "~11:45",
           descricao: "Rede tradicional de usados — mangás, DVDs/Blu-rays de anime, action figures e CDs, com preços mais em conta que as lojas de produto novo.",
+        },
+        {
+          titulo: "Super Potato",
+          foto: "/images/day2-superpotato.png",
+          horario: "13:30",
+          descricao: "Loja retrô de videogames.",
+        },
+        {
+          titulo: "Hareruya 2",
+          foto: "/images/hareruya-2.png",
+          horario: "~14:15",
+          descricao: "Pokémon Trading Card Game.",
+        },
+        {
+          titulo: "Weird Vending Machine Corner",
+          foto: "/images/weird-vending-machine-corner.png",
+          horario: "~15:00",
+          descricao: "Cantinho com máquinas de venda automática bizarras e inusitadas, um clássico despretensioso de Akihabara.",
+        },
+        {
+          titulo: "BIC Camera ou Yodobashi Camera",
+          foto: "/images/day2-yodobashi-akiba.png",
+          horario: "~15:30",
+          descricao: "Grandes lojas de eletrônicos — Yodobashi-Akiba fica do lado leste da estação (saída Showa-dori), um bom fechamento para o circuito antes de descansar no hotel.",
         },
       ],
     },
@@ -2238,7 +2429,7 @@ const DAY_4: DayContent = {
     atracaoPrincipal: "Akihabara Electric Town",
     atracaoPrincipalImagem: "/images/dia7-akihabara.png",
     detalhesPraticos: [
-      { label: "Horário das lojas", valor: "~10h–20h (maioria)" },
+      { label: "Horário das lojas", valor: "Varia por loja — ver detalhamento abaixo" },
       {
         label: "Pagamento",
         valor:
@@ -2255,6 +2446,16 @@ const DAY_4: DayContent = {
         valor:
           "Logo na abertura das lojas — o movimento na região vai aumentando ao longo do dia. O circuito termina por volta de 12h: um bom horário para almoçar logo em seguida, já que o pico do almoço local costuma ser entre 12h e 13h. O circuito continua durante toda a tarde também, sem pressa.",
       },
+    ],
+    horarioLojas: [
+      { nome: "Akihabara Radio Kaikan", horario: "Abertura 10h · Fechamento 20h" },
+      { nome: "Tamashii Nations Store Tokyo", horario: "Abertura 10h · Fechamento 20h" },
+      { nome: "Animate", horario: "Abertura 10h · Fechamento 21h" },
+      { nome: "Mandarake Complex", horario: "Abertura 12h · Fechamento 20h" },
+      { nome: "Suruga-ya Anime & Hobby Store", horario: "Abertura 11h · Fechamento 21h (10h nos fins de semana)" },
+      { nome: "Super Potato", horario: "Abertura 11h · Fechamento 22h (10h nos fins de semana)" },
+      { nome: "Hareruya 2", horario: "Abertura 10h · Fechamento 22h" },
+      { nome: "BIC Camera / Yodobashi-Akiba", horario: "Abertura 9h30 · Fechamento 22h" },
     ],
     mapaVisaoGeral: {
       imagem: "/images/akihabara-tempo-de-deslocamento.png",
@@ -2315,89 +2516,6 @@ const DAY_4: DayContent = {
         imagemAlt: "Fachada da Suruga-ya Specialty Store em Akihabara",
         horario: "11h–21h (10h nos fins de semana)",
       },
-    ],
-    gastronomia: {
-      restaurantesLabel: "Opções de refeição",
-      restaurantes: [
-        {
-          nome: "Jotou Curry Akihabara ten",
-          descricao: "Curry japonês — casa tradicional da região, com balcão no térreo e mesas no subsolo.",
-          localizacao: "Sotokanda, Chiyoda-ku — ~2 min a pé da Estação Suehirocho",
-          preco: "~900–1.100",
-          horario: "11h–22h30",
-          foto: "/images/joto-curry-akihabara.png",
-        },
-        {
-          nome: "Tonkatsu Wakou Yodobashi Akiba ten",
-          descricao: "Tonkatsu (costeleta de porco empanada) — filial da tradicional rede Wako, dentro do complexo da Yodobashi-Akiba.",
-          localizacao: "Dentro do edifício Yodobashi-Akiba",
-          preco: "~1.500–2.500",
-          horario: "11h–23h",
-          foto: "/images/wako-tonkatsu-akihabara.png",
-        },
-        {
-          nome: "Kyushu Jangara Ramen (Akihabara Honten)",
-          descricao: "Ramen estilo Kyushu (Hakata) — a casa principal da rede, conhecida também por opções veganas.",
-          localizacao: "Sotokanda, Chiyoda-ku — ~6 min a pé da Estação Akihabara",
-          preco: "~1.000–1.500",
-          horario: "11h–22h",
-          foto: "/images/kyushu-jangara.png",
-        },
-      ],
-    },
-    banheirosProximos: [
-      {
-        local: "Estação Akihabara (JR / Tokyo Metro)",
-        endereco: "Dentro da própria estação, perto das catracas",
-        nota: "Disponível nos dois lados da estação (saída Electric Town e saída Showa-dori) — a opção mais prática enquanto estiver circulando pela região.",
-      },
-    ],
-  },
-  tarde: {
-    label: "Tarde",
-    percursoEssencial: {
-      duracao: "~3h (Akihabara — tarde, continuação)",
-      passos: [
-        {
-          titulo: "Super Potato",
-          foto: "/images/day2-superpotato.png",
-          horario: "13:30",
-          descricao: "Loja retrô de videogames.",
-        },
-        {
-          titulo: "Hareruya 2",
-          foto: "/images/hareruya-2.png",
-          horario: "~14:15",
-          descricao: "Pokémon Trading Card Game.",
-        },
-        {
-          titulo: "Weird Vending Machine Corner",
-          foto: "/images/weird-vending-machine-corner.png",
-          horario: "~15:00",
-          descricao: "Cantinho com máquinas de venda automática bizarras e inusitadas, um clássico despretensioso de Akihabara.",
-        },
-        {
-          titulo: "BIC Camera ou Yodobashi Camera",
-          foto: "/images/day2-yodobashi-akiba.png",
-          horario: "~15:30",
-          descricao: "Grandes lojas de eletrônicos — Yodobashi-Akiba fica do lado leste da estação (saída Showa-dori), um bom fechamento para o circuito antes de descansar no hotel.",
-        },
-      ],
-    },
-    regiao: {
-      nome: "Akihabara · Tokyo",
-      descricao:
-        "Continuação da tarde no mesmo bairro da manhã, sem pressa — fechando o restante do circuito antes de sair à noite para o jantar em Kanda.",
-    },
-    atracaoPrincipal: "Akihabara Electric Town — continuação (tarde)",
-    detalhesPraticos: [
-      {
-        label: "Depois do circuito",
-        valor:
-          "Fim de tarde livre para descansar no hotel antes de sair para o jantar em Kanda, por volta das 18h30.",
-      },
-    ],
-    pois: [
       {
         category: "Compras",
         title: "Super Potato",
@@ -2441,6 +2559,35 @@ const DAY_4: DayContent = {
         horario: "9h30–22h",
       },
     ],
+    gastronomia: {
+      restaurantesLabel: "Opções de refeição",
+      restaurantes: [
+        {
+          nome: "Jotou Curry Akihabara ten",
+          descricao: "Curry japonês — casa tradicional da região, com balcão no térreo e mesas no subsolo.",
+          localizacao: "Sotokanda, Chiyoda-ku — ~2 min a pé da Estação Suehirocho",
+          preco: "~900–1.100",
+          horario: "11h–22h30",
+          foto: "/images/joto-curry-akihabara.png",
+        },
+        {
+          nome: "Tonkatsu Wakou Yodobashi Akiba ten",
+          descricao: "Tonkatsu (costeleta de porco empanada) — filial da tradicional rede Wako, dentro do complexo da Yodobashi-Akiba.",
+          localizacao: "Dentro do edifício Yodobashi-Akiba",
+          preco: "~1.500–2.500",
+          horario: "11h–23h",
+          foto: "/images/wako-tonkatsu-akihabara.png",
+        },
+        {
+          nome: "Kyushu Jangara Ramen (Akihabara Honten)",
+          descricao: "Ramen estilo Kyushu (Hakata) — a casa principal da rede, conhecida também por opções veganas.",
+          localizacao: "Sotokanda, Chiyoda-ku — ~6 min a pé da Estação Akihabara",
+          preco: "~1.000–1.500",
+          horario: "11h–22h",
+          foto: "/images/kyushu-jangara.png",
+        },
+      ],
+    },
     banheirosProximos: [
       {
         local: "Estação Akihabara (JR / Tokyo Metro)",
@@ -2650,18 +2797,22 @@ const DAY_4: DayContent = {
             description: "Museu de arte contemporânea no topo do Mori Tower.",
             prioridade: "recomendado",
             imagem: "/images/museu-de-arte-mori.png",
-            imagemAlt: "Escadaria de acesso ao Mori Art Museum, no topo do Mori Tower",
+            imagemAlt: "Escadas rolantes de acesso ao Mori Art Museum, com o letreiro do museu no topo do Mori Tower",
           },
           {
             title: "Mori Garden",
             description: "Jardim japonês tradicional aos pés do Mori Tower.",
             prioridade: "opcional",
+            imagem: "/images/mori-garden.png",
+            imagemAlt: "Lago do Mori Garden com cerejeiras floridas e o Mori Tower ao fundo, em Roppongi Hills",
           },
           {
             title: "Hinokicho Park",
             description:
               "Parque tranquilo no coração de Roppongi, a poucos minutos a pé do Mori Tower.",
             prioridade: "opcional",
+            imagem: "/images/hinokicho-park.png",
+            imagemAlt: "Escultura moderna de metal no gramado do Hinokicho Park, em Roppongi",
           },
         ],
       },
@@ -2793,6 +2944,7 @@ const DAY_5: DayContent = {
       estacaoOrigem: {
         nome: "Kyoto Station (saída Karasuma)",
         distancia: "~1 min a pé do hotel",
+        foto: "/images/kyoto-station-entrance.png",
         mapa: "/images/kyoto-station-map.png",
         mapaAlt: "Mapa da Estação de Kyoto (portões, plataformas JR e Shinkansen)",
       },
@@ -3163,6 +3315,7 @@ const DAY_6: DayContent = {
         nome: "Kyoto Station",
         distancia: "~1 min a pé do hotel",
         saida: "Saída Central (Karasuma-guchi)",
+        foto: "/images/kyoto-station-entrance.png",
         mapa: "/images/kyoto-station-map.png",
         mapaAlt: "Mapa da Estação de Kyoto (portões, plataformas JR e Shinkansen)",
       },
@@ -3172,6 +3325,7 @@ const DAY_6: DayContent = {
         nome: "Estação Inari",
         nomeJapones: "稲荷駅",
         saida: "Saída única",
+        foto: "/images/inari-station-entrance.png",
       },
       opcoes: [
         {
@@ -3301,6 +3455,7 @@ const DAY_6: DayContent = {
       estacaoOrigem: {
         nome: "Kyoto Station",
         saida: "Saída Central (Karasuma-guchi)",
+        foto: "/images/kyoto-station-entrance.png",
         mapa: "/images/kyoto-station-map.png",
         mapaAlt: "Mapa da Estação de Kyoto (portões, plataformas JR e Shinkansen)",
       },
@@ -3311,7 +3466,10 @@ const DAY_6: DayContent = {
         { nome: "Nishinokyo-Enmachi", nomeJapones: "西ノ京円町" },
         { nome: "Kitano-Hakubaicho", nomeJapones: "北野白梅町" },
       ],
-      estacaoDestino: { nome: "Parada Kinkakuji-michi" },
+      estacaoDestino: {
+        nome: "Parada Kinkakuji-michi",
+        foto: "/images/kinkakuji-michi-bus-stop.png",
+      },
       opcoes: [
         {
           meio: "Trem + Ônibus",
@@ -3344,9 +3502,9 @@ const DAY_6: DayContent = {
       { label: "Pagamento", valor: "Somente dinheiro na bilheteria" },
       {
         label: "Melhor horário",
-        horarioDestaque: "Logo na abertura",
+        horarioDestaque: "9h–10h",
         valor:
-          "Os ônibus de excursão costumam chegar a partir do meio da manhã — nas primeiras horas dá pra fotografar o pavilhão refletido no lago sem gente na frente.",
+          "Logo na abertura, às 9h — os ônibus de excursão costumam chegar a partir do meio da manhã, e nas primeiras horas dá pra fotografar o pavilhão refletido no lago sem gente na frente.",
       },
     ],
     mapaVisaoGeral: {
@@ -3577,6 +3735,7 @@ const DAY_7: DayContent = {
         nome: "Estação Ningyocho",
         nomeJapones: "人形町駅",
         saida: "Saída A2",
+        foto: "/images/ningyocho-station-entrance.png",
         mapa: "/images/ningyocho-station-map.png",
         mapaAlt: "Mapa da Estação Ningyocho/Suitengumae (Hibiya Line e Toei Asakusa Line)",
       },
@@ -3758,6 +3917,7 @@ const DAY_7: DayContent = {
         nome: "Estação Ningyocho",
         nomeJapones: "人形町駅",
         saida: "Saída A2",
+        foto: "/images/ningyocho-station-entrance.png",
         mapa: "/images/ningyocho-station-map.png",
         mapaAlt: "Mapa da Estação Ningyocho/Suitengumae (Hibiya Line e Toei Asakusa Line)",
       },
@@ -3768,6 +3928,7 @@ const DAY_7: DayContent = {
         nome: "Estação Ryogoku",
         nomeJapones: "両国駅",
         saida: "Saída Oeste (Nishi-guchi)",
+        foto: "/images/ryogoku-station-entrance.png",
       },
       opcoes: [
         {
@@ -4290,15 +4451,25 @@ function InfoOperacionalBlock({
 }) {
   const [aberto, setAberto] = useState(false);
   const Icon = INFO_OPERACIONAL_ICONS[info.icone];
+  // Cards de "regras" carregam risco real (multa, restrição) — destacados em
+  // vermelho, diferente dos demais temas (acessibilidade, bagagem etc.), que
+  // seguem o laranja neutro padrão.
+  const isRegra = info.icone === "regras";
 
   return (
-    <div className="mb-5 rounded-2xl border border-orange-200 bg-orange-50/60">
+    <div
+      className={`mb-5 rounded-2xl border ${
+        isRegra ? "border-red-200 bg-red-50/60" : "border-orange-200 bg-orange-50/60"
+      }`}
+    >
       <button
         type="button"
         onClick={() => setAberto((v) => !v)}
         className="flex w-full items-center gap-4 p-5 text-left sm:p-7"
       >
-        <Icon className="h-20 w-20 shrink-0 text-[#000000]" />
+        <Icon
+          className={`h-24 w-24 shrink-0 ${isRegra ? "text-red-600" : "text-[#000000]"}`}
+        />
         <span className="min-w-0 flex-1 text-base font-bold uppercase tracking-[0.2em] text-[#24211D]/70 sm:text-lg">
           {info.titulo}
         </span>
@@ -4331,6 +4502,39 @@ function InfoOperacionalBlock({
           ))}
         </div>
       )}
+    </div>
+  );
+}
+
+// Card de horário loja a loja — sempre aberto (sem accordion), já que essa
+// é justamente a informação que o usuário quer ver de cara, sem precisar
+// clicar. Cada loja citada no roteiro aparece com seu próprio horário.
+function HorarioLojasBlock({
+  itens,
+}: {
+  itens: NonNullable<Period["horarioLojas"]>;
+}) {
+  return (
+    <div className="mb-5 rounded-2xl border border-orange-200 bg-orange-50/60 p-5 sm:p-7">
+      <div className="mb-4 flex items-center gap-4">
+        <IconClock className="h-20 w-20 shrink-0 text-[#000000]" />
+        <span className="min-w-0 flex-1 text-base font-bold uppercase tracking-[0.2em] text-[#24211D]/70 sm:text-lg">
+          Horário das Lojas
+        </span>
+      </div>
+      <div className="space-y-3">
+        {itens.map((b, i) => (
+          <div
+            key={b.nome}
+            className={`flex items-center justify-between gap-4 ${
+              i > 0 ? "border-t border-[#DDD8CF] pt-3" : ""
+            }`}
+          >
+            <p className="text-sm font-semibold text-[#24211D]">{b.nome}</p>
+            <p className="shrink-0 text-right text-xs text-[#24211D]/70">{b.horario}</p>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
@@ -4438,6 +4642,7 @@ function GastronomiaBlock({ gastronomia }: { gastronomia: Gastronomia }) {
   const [zoom, setZoom] = useState(false);
   const [zoomedFoto, setZoomedFoto] = useState<{ src: string; alt: string; endereco?: string } | null>(null);
   const temRestaurantes = gastronomia.restaurantes && gastronomia.restaurantes.length > 0;
+  const temCuradoria = gastronomia.curadoria && gastronomia.curadoria.length > 0;
 
   return (
     <div className="mt-6 rounded-2xl border border-[#DDD8CF] bg-[#FAF9F6] p-4 sm:p-6">
@@ -4613,6 +4818,98 @@ function GastronomiaBlock({ gastronomia }: { gastronomia: Gastronomia }) {
         </>
       )}
 
+      {temCuradoria && (
+        <>
+          {gastronomia.curadoriaLabel && (
+            <p className="mt-5 text-[11px] font-bold uppercase tracking-[0.15em] text-[#24211D]/45">
+              {gastronomia.curadoriaLabel}
+            </p>
+          )}
+          <div className={`grid grid-cols-1 gap-4 sm:grid-cols-3 ${gastronomia.curadoriaLabel ? "mt-2" : "mt-4"}`}>
+            {gastronomia.curadoria!.map((r) => (
+              <div
+                key={r.nome}
+                className="flex flex-col overflow-hidden rounded-2xl border border-[#DDD8CF] bg-[#FDFCF9]"
+              >
+                {r.foto && (
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setZoomedFoto({ src: r.foto!, alt: r.nome, endereco: r.distancia })
+                    }
+                    className="group relative block aspect-[4/3] w-full overflow-hidden"
+                  >
+                    <img
+                      src={r.foto}
+                      alt={r.nome}
+                      className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
+                    />
+                    <span className="absolute left-2 top-2 rounded-full bg-[#B96432] px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-white shadow">
+                      {r.papel}
+                    </span>
+                    <div className="absolute inset-0 flex items-center justify-center bg-black/0 transition duration-300 group-hover:bg-black/25">
+                      <span className="flex h-8 w-8 scale-75 items-center justify-center rounded-full bg-white/90 text-[#000000] opacity-0 shadow-md transition duration-300 group-hover:scale-100 group-hover:opacity-100">
+                        <IconZoom className="h-4 w-4" />
+                      </span>
+                    </div>
+                  </button>
+                )}
+                <div className="flex flex-1 flex-col p-4">
+                  {!r.foto && (
+                    <span className="mb-2 inline-block w-fit rounded-full bg-[#B96432] px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-white">
+                      {r.papel}
+                    </span>
+                  )}
+                  <p className="text-sm font-semibold text-[#24211D]">{r.nome}</p>
+                  <p className="text-[11px] font-medium uppercase tracking-wide text-[#24211D]/45">
+                    {r.categoria}
+                  </p>
+                  <p className="mt-1.5 text-xs leading-5 text-[#24211D]/78">
+                    {r.descricao}
+                  </p>
+
+                  <div className="mt-3 space-y-1 border-t border-[#DDD8CF] pt-3 text-[11px] leading-5 text-[#24211D]/65">
+                    {r.notaTabelog && (
+                      <p>
+                        ⭐ {r.notaTabelog} no Tabelog
+                        {r.numAvaliacoes ? ` (${r.numAvaliacoes})` : ""}
+                      </p>
+                    )}
+                    <p>¥ {r.faixaPreco}</p>
+                    <p>📍 {r.distancia}</p>
+                    <p>🕒 {r.horario}</p>
+                    <p>🌐 {r.foreignFriendly}</p>
+                    {r.nivelFila && <p>⏳ {r.nivelFila}</p>}
+                    {r.reserva && <p>📅 {r.reserva}</p>}
+                    {r.pagamento && <p>💳 {r.pagamento}</p>}
+                  </div>
+
+                  {r.alerta && (
+                    <div className="mt-3 flex items-start gap-2 rounded-lg border border-amber-300/70 bg-amber-50 px-2.5 py-2">
+                      <span className="mt-0.5 shrink-0 text-xs">⚠️</span>
+                      <p className="text-[11px] leading-4 text-amber-800">
+                        {r.alerta}
+                      </p>
+                    </div>
+                  )}
+
+                  {r.linkTabelog && (
+                    <a
+                      href={r.linkTabelog}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="mt-3 inline-flex items-center gap-1 text-[11px] font-semibold text-[#2C6CA6] hover:underline"
+                    >
+                      Ver no Tabelog →
+                    </a>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </>
+      )}
+
       {gastronomia.mapa ? (
         <>
           <button
@@ -4748,12 +5045,12 @@ function TransporteBlock({
   transporte: TransporteSugerido;
 }) {
   return (
-    <div className="mb-8 rounded-2xl border-2 border-emerald-300/60 bg-emerald-50 p-5 sm:p-6">
-      <div className="mb-3 flex items-center gap-2.5">
-        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-emerald-600 text-white">
-          <IconShinkansen className="h-4 w-4" />
+    <div className="mb-8 rounded-2xl border-2 border-red-300/60 bg-red-50 p-5 sm:p-6">
+      <div className="mb-3 flex items-center gap-4">
+        <span className="flex h-20 w-20 shrink-0 items-center justify-center rounded-full bg-red-600 text-white">
+          <IconShinkansen className="h-12 w-12" />
         </span>
-        <p className="text-xs font-bold uppercase tracking-[0.25em] text-emerald-700">
+        <p className="text-xs font-bold uppercase tracking-[0.25em] text-red-700">
           Sugestão de Transporte
         </p>
       </div>
@@ -6186,6 +6483,9 @@ function PeriodBlock({
             </div>
           )}
 
+          {period.horarioLojas && period.horarioLojas.length > 0 && (
+            <HorarioLojasBlock itens={period.horarioLojas} />
+          )}
           {period.banheirosProximos && period.banheirosProximos.length > 0 && (
             <BanheirosProximosBlock itens={period.banheirosProximos} />
           )}
