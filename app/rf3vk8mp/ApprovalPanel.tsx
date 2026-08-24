@@ -2243,9 +2243,9 @@ const DAY_3: DayContent = {
     ],
     atracaoPrincipalFoco: "center",
     mapaVisaoGeral: {
-      imagem: "/images/raiox-shinjuku-gyoen.png",
-      imagemAlt: "Raio-X Alpinea de Shinjuku Gyoen com Portão Shinjuku, Portão Okido, Portão Sendagaya, Jardim Japonês, Estufa Grande, Lago Superior/Médio/Inferior e Jardim de Roseiras",
-      nota: "Visão geral do Shinjuku Gyoen, primeira parada da tarde — mais detalhes na seção Shinjuku Gyoen, logo abaixo.",
+      imagem: "/images/placeholder-em-producao.png",
+      imagemAlt: "Visão geral do trajeto a pé em Shinjuku — em produção",
+      nota: "Mapa de trajeto a pé em produção.",
     },
     decisoes: [
       {
@@ -8041,7 +8041,7 @@ const HOTEIS: HotelInfo[] = [
       },
       {
         label: "Farmácia",
-        nome: "Ain Pharmacy Kyoto Ekimae",
+        nome: "Honoka Pharmacy (antiga Ain Pharmacy)",
         detalhe: "No mesmo quarteirão, Yamazaki Medical Bldg B1F",
         Icon: IconCross,
       },
@@ -8073,6 +8073,23 @@ const HOTEIS: HotelInfo[] = [
       imagemAlt: "Mapa dos arredores do Daiwa Roynet Hotel Kyoto-Ekimae PREMIER, com Honoka Pharmacy, LAWSON Kyoto Station, Koseikai Takeda Hospital e a Saída Karasuma da Kyoto Station",
       nota: "Localização do hotel em relação à Kyoto Station (saída Karasuma), à farmácia, à conveniência e ao hospital de referência listados acima.",
       pontos: [],
+      rotas: [
+        {
+          label: "Kyoto Station (Saída Karasuma)",
+          imagem: "/images/daiwa-roynet-rota-karasuma-exit.jpg",
+          imagemAlt: "Rota a pé do hotel até a Saída Karasuma da Kyoto Station",
+        },
+        {
+          label: "Lawson",
+          imagem: "/images/daiwa-roynet-rota-lawson.jpg",
+          imagemAlt: "Rota a pé do hotel até o Lawson Karasuma Shichijo (~3 min, 210 m)",
+        },
+        {
+          label: "Koseikai Takeda Hospital",
+          imagem: "/images/daiwa-roynet-rota-koseikai-hospital.jpg",
+          imagemAlt: "Rota a pé do hotel até o Koseikai Takeda Hospital",
+        },
+      ],
     },
   },
   {
