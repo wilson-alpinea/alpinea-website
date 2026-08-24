@@ -330,6 +330,25 @@ type Period = {
     endereco?: string;
     nota?: string;
   }[];
+  // Card 3 genérico de apoio operacional — usado no lugar de
+  // `banheirosProximos` quando o tema mais útil para a atração não for
+  // banheiro (acessibilidade, bagagem, ponto de encontro, reserva/ingresso,
+  // regras, plano de chuva, onde descansar). Mesmo layout/comportamento
+  // (accordion), com título e ícone configuráveis. Usar OU
+  // `banheirosProximos` OU `infoOperacional` — não os dois.
+  infoOperacional?: {
+    titulo: string;
+    icone:
+      | "acessibilidade"
+      | "bagagem"
+      | "encontro"
+      | "entrada"
+      | "reserva"
+      | "regras"
+      | "chuva"
+      | "descanso";
+    itens: { local: string; endereco?: string; nota?: string }[];
+  };
 };
 
 type TransporteSugerido = {
@@ -1266,9 +1285,9 @@ const DAY_2: DayContent = {
       ],
     },
     regiao: {
-      nome: "Marunouchi",
+      nome: "Marunouchi · Tokyo",
       descricao:
-        "Marunouchi é, desde os tempos feudais, um dos pilares da economia japonesa. Fica nessa região a estação central de trem do Japão, Tokyo Station, que junto da estação de Shinagawa são as únicas com acesso ao trem-bala em Tóquio. Nos arredores da estação você encontrará a sede de praticamente todos os bancos, seguradoras e boa parte das grandes empresas japonesas — o local funciona como a Wall Street ou a Faria Lima do Japão.",
+        "Um dos pilares da economia japonesa desde os tempos feudais — aqui fica Tokyo Station, que ao lado de Shinagawa são as únicas estações da capital com acesso direto ao trem-bala. Nos arredores estão as sedes de bancos, seguradoras e grandes empresas japonesas: o distrito funciona como a Wall Street do Japão.",
     },
     deslocamento: {
       estacaoOrigem: {
@@ -1304,9 +1323,15 @@ const DAY_2: DayContent = {
     atracaoPrincipal: "Tokyo Station",
     atracaoPrincipalImagem: "/images/dia2-tokyostation.png",
     detalhesPraticos: [
-      { label: "Tokyo Character Street", valor: "~10h–20h30" },
-      { label: "Melhor horário", valor: "Manhã, antes das aglomerações" },
+      { label: "Tokyo Character Street", valor: "10h–20h30" },
+      { label: "Localização", valor: "B1, First Avenue (Tokyo Station)" },
       { label: "Pagamento", valor: "Cartão aceito na maioria das lojas" },
+      {
+        label: "Melhor horário",
+        horarioDestaque: "10h",
+        valor:
+          "Logo na abertura — o corredor é estreito e lota rápido com o movimento normal da estação a partir do meio da manhã.",
+      },
     ],
     mapaVisaoGeral: {
       imagem: "/images/visaogeral-tokyostation.png",
@@ -1359,9 +1384,16 @@ const DAY_2: DayContent = {
         imagemAlt: "Mapa de restaurantes em Marunouchi — em produção",
       },
     },
-    banheirosProximos: [
-      { local: "A definir", nota: "Informação de banheiros próximos a ser adicionada." },
-    ],
+    infoOperacional: {
+      titulo: "Como Chegar ao First Avenue",
+      icone: "entrada",
+      itens: [
+        {
+          local: "Saída Yaesu Central Gate (subsolo)",
+          nota: "A mais próxima da Character Street, Ramen Street e Okashi Land — dá pra chegar direto das plataformas, sem passar pela catraca de saída da estação.",
+        },
+      ],
+    },
   },
   tarde: {
     percursoEssencial: {
@@ -1409,9 +1441,9 @@ const DAY_2: DayContent = {
       ],
     },
     regiao: {
-      nome: "Chiyoda",
+      nome: "Chiyoda · Tokyo",
       descricao:
-        "Bairro central onde fica o Palácio Imperial, residência da família imperial japonesa, erguido sobre as ruínas do antigo Castelo de Edo — a poucos minutos a pé de Tokyo Station.",
+        "Bairro central onde fica o Palácio Imperial, residência da família imperial japonesa, erguido sobre as ruínas do antigo Castelo de Edo. Os East Gardens (皇居東御苑) são a única parte do terreno aberta ao público sem necessidade de reserva — entrada gratuita pelo portão Otemon, a poucos minutos a pé de Tokyo Station.",
     },
     deslocamento: {
       estacaoOrigem: { nome: "Tokyo Station (saída Marunouchi)" },
@@ -1448,7 +1480,12 @@ const DAY_2: DayContent = {
       { label: "Entrada", valor: "Gratuita" },
       { label: "Horário", valor: "9h–18h (maio)" },
       { label: "Fechado", valor: "Segundas e sextas-feiras" },
-      { label: "Melhor horário", valor: "Logo na abertura, às 9h" },
+      {
+        label: "Melhor horário",
+        horarioDestaque: "9h",
+        valor:
+          "Logo na abertura — os grupos de turismo chegam a partir das 10h30, e a entrada fecha 30 min antes do horário de fechamento.",
+      },
     ],
     mapaVisaoGeral: {
       imagem: "/images/visaogeral-tokyostation.png",
@@ -1500,7 +1537,18 @@ const DAY_2: DayContent = {
       ],
     },
     banheirosProximos: [
-      { local: "A definir", nota: "Informação de banheiros próximos a ser adicionada." },
+      {
+        local: "Área de descanso do Honmaru",
+        nota: "A maior e mais completa do parque, no gramado do antigo Honmaru — banheiro ao lado.",
+      },
+      {
+        local: "Área de descanso do Ninomaru",
+        nota: "Sem atendente, mas com banheiro nas proximidades e máquinas de bebida — perto do Jardim Ninomaru.",
+      },
+      {
+        local: "Prédio administrativo, perto do Otemon",
+        nota: "O mais próximo da entrada — o quiosque logo depois do portão Otemon não tem banheiro próprio, o mais perto fica a ~120 m, neste prédio.",
+      },
     ],
   },
 };
@@ -1631,9 +1679,9 @@ const DAY_3: DayContent = {
       ],
     },
     regiao: {
-      nome: "Superdistrito de Shibuya",
+      nome: "Harajuku/Yoyogi · Tokyo",
       descricao:
-        "Aqui iremos explorar o superdistrito de Shibuya, que compreende as áreas de Yoyogi, Omotesando e Harajuku.",
+        "Área verde entre Harajuku e Yoyogi, onde a floresta plantada em homenagem ao Imperador Meiji cerca o santuário xintoísta mais visitado de Tokyo. Do outro lado do Parque de Yoyogi começa Omotesando, a avenida de grifes e boutiques que liga a região a Shibuya, seguindo para o sul.",
     },
     deslocamento: {
       estacaoOrigem: {
@@ -1657,6 +1705,8 @@ const DAY_3: DayContent = {
         nome: "Estação Omotesando",
         nomeJapones: "表参道駅",
         saida: "Saída A2 (Omotesando Hills)",
+        mapa: "/images/omotesando-station-map.png",
+        mapaAlt: "Mapa da Estação Omotesando (Ginza Line, Hanzomon Line e Chiyoda Line)",
       },
       opcoes: [
         {
@@ -1688,7 +1738,12 @@ const DAY_3: DayContent = {
       { label: "Entrada (terreno principal)", valor: "Gratuita" },
       { label: "Jardim Interior", valor: "¥500" },
       { label: "Horário", valor: "Nascer ao pôr do sol (~5h–18h em maio)" },
-      { label: "Melhor horário", valor: "Logo na abertura, antes dos grupos de turismo" },
+      {
+        label: "Melhor horário",
+        horarioDestaque: "Logo na abertura",
+        valor:
+          "O Minami-sando é mais tranquilo nas primeiras horas — grupos de turismo e visitantes de ônibus chegam a partir do meio da manhã, e o caminho sob a floresta some em movimento nos fins de semana.",
+      },
     ],
     mapaVisaoGeral: {
       imagem: "/images/placeholder-em-producao.png",
@@ -1750,7 +1805,18 @@ const DAY_3: DayContent = {
       },
     },
     banheirosProximos: [
-      { local: "A definir", nota: "Informação de banheiros próximos a ser adicionada." },
+      {
+        local: "Ao longo do Minami-sando",
+        nota: "Dois pontos com banheiro multifuncional/acessível espalhados pelo caminho principal entre a entrada (perto da Estação Harajuku) e o Santuário Principal.",
+      },
+      {
+        local: "Subsolo do Kagura-den",
+        nota: "Banheiro multifuncional/acessível no pavilhão usado para música sagrada e cerimônias, bem perto do pátio do Santuário Principal.",
+      },
+      {
+        local: "Dentro do Jardim Interior (Meiji Jingu Gyoen)",
+        nota: "Só acessível para quem pagar a entrada do jardim (¥500) — não serve como opção rápida para quem ficar só no terreno principal.",
+      },
     ],
   },
   tarde: {
@@ -1806,15 +1872,17 @@ const DAY_3: DayContent = {
       ],
     },
     regiao: {
-      nome: "Shinjuku",
+      nome: "Shinjuku · Tokyo",
       descricao:
-        "Bairro que reúne o maior terminal ferroviário do mundo, arranha-céus corporativos, o distrito de entretenimento de Kabukicho e algumas das vielas mais icônicas de Tóquio — um contraste denso entre o Japão corporativo e o mais boêmio.",
+        "Bairro que reúne o maior terminal ferroviário do mundo, arranha-céus corporativos, o distrito de entretenimento de Kabukicho e algumas das vielas mais icônicas de Tóquio — um contraste denso entre o Japão corporativo do dia e o lado mais boêmio que toma conta das ruas assim que escurece.",
     },
     deslocamento: {
       estacaoOrigem: {
         nome: "Estação Shibuya",
         nomeJapones: "渋谷駅",
         saida: "Catraca Hachiko",
+        mapa: "/images/shibuya-station-map.png",
+        mapaAlt: "Mapa da Estação Shibuya (Ginza Line, Hanzomon Line e JR)",
       },
       linha: { codigo: "JY", nome: "JR Yamanote Line", cor: "#8FAADC", logo: "/images/jr-logo.webp" },
       estacoesIntermediarias: [
@@ -1849,6 +1917,14 @@ const DAY_3: DayContent = {
       ],
       recomendacao:
         "De Shibuya até Shinjuku são cerca de 7 minutos de trem pela JR Yamanote Line, sem baldeação — a mesma linha usada em quase todo o trecho central de Tóquio.",
+      mapaAndares: {
+        titulo: "Mapa da Estação Shinjuku",
+        mapas: [
+          { andar: "B1F", imagem: "/images/shinjuku-station-map-b1f.png", imagemAlt: "Mapa do subsolo (B1F) da Estação Shinjuku — catracas e portões" },
+          { andar: "1F", imagem: "/images/shinjuku-station-map-1f.png", imagemAlt: "Mapa do 1º andar (1F) da Estação Shinjuku — plataformas JR" },
+          { andar: "Portões", imagem: "/images/shinjuku-station-map-gates.png", imagemAlt: "Mapa dos portões Sul/Sudeste e Koshu-kaido/Nova Saída Sul da Estação Shinjuku" },
+        ],
+      },
     },
     atracaoPrincipal: "Bairro de Shinjuku",
     atracaoPrincipalImagem: "/images/draft-shinjuku.png",
@@ -1856,7 +1932,12 @@ const DAY_3: DayContent = {
       { label: "Mirante do Governo Metropolitano", valor: "Gratuito · ~9h30–22h" },
       { label: "Golden Gai", valor: "Maioria dos bares abre após 20h" },
       { label: "Thermae-Yu", valor: "Aberto 24h" },
-      { label: "Melhor horário", valor: "A partir das 17h–18h, quando os letreiros de neon acendem" },
+      {
+        label: "Melhor horário",
+        horarioDestaque: "17h–18h",
+        valor:
+          "É o intervalo em que os letreiros de neon de Kabukicho acendem contra o céu ainda claro — melhor momento para fotos antes de seguir para o jantar e a vida noturna.",
+      },
     ],
     atracaoPrincipalFoco: "center",
     mapaVisaoGeral: {
@@ -1944,7 +2025,16 @@ const DAY_3: DayContent = {
       ],
     },
     banheirosProximos: [
-      { local: "A definir", nota: "Informação de banheiros próximos a ser adicionada." },
+      {
+        local: "Banheiro público da Estação Seibu-Shinjuku",
+        endereco: "1-30 Kabukicho — bem no centro do bairro",
+        nota: "Aberto 24h, é a opção mais rápida durante a noite em Kabukicho.",
+      },
+      {
+        local: "Shiki no Michi (viela de pedestres)",
+        endereco: "Colado ao Golden Gai",
+        nota: "Os bares minúsculos do Golden Gai raramente têm banheiro próprio — este é o ponto de apoio mais próximo enquanto o grupo estiver nas vielas.",
+      },
     ],
     subAtracoes: [
       {
@@ -2093,9 +2183,9 @@ const DAY_4: DayContent = {
       ],
     },
     regiao: {
-      nome: "Akihabara",
+      nome: "Akihabara · Tokyo",
       descricao:
-        "Bairro de Chiyoda conhecido como o centro mundial da cultura otaku, com lojas de eletrônicos, anime, mangá e videogame concentradas em poucas quadras.",
+        "Bairro de Chiyoda que virou epicentro mundial da cultura otaku — lojas de eletrônicos, anime, mangá e videogame concentradas em poucas quadras ao redor da estação, entre vitrines de colecionador e torres cobertas de neon. O circuito do dia inteiro cabe a pé, sem pressa de seguir uma ordem fixa.",
     },
     deslocamento: {
       estacaoOrigem: {
@@ -2152,7 +2242,12 @@ const DAY_4: DayContent = {
       {
         label: "Pagamento",
         valor:
-          "Leve dinheiro — boa parte das lojas menores não aceita cartão, e mesmo nas que aceitam, o desconto do imposto (tax-free) costuma valer só para compras em dinheiro.",
+          "Leve dinheiro — boa parte das lojas menores e de usados em Akihabara não aceita cartão.",
+      },
+      {
+        label: "Tax-free",
+        valor:
+          "A partir de nov/2026 o sistema mudou: paga-se o preço cheio na loja (mínimo ¥5.000 em compras no mesmo dia/estabelecimento) e o reembolso do imposto só é processado na saída do país, num terminal alfandegário do aeroporto ou pelo Visit Japan Web — não há mais desconto no caixa.",
       },
       {
         label: "Melhor horário",
@@ -2290,7 +2385,7 @@ const DAY_4: DayContent = {
       ],
     },
     regiao: {
-      nome: "Akihabara",
+      nome: "Akihabara · Tokyo",
       descricao:
         "Continuação da tarde no mesmo bairro da manhã, sem pressa — fechando o restante do circuito antes de sair à noite para o jantar em Kanda.",
     },
@@ -2363,6 +2458,7 @@ const DAY_4: DayContent = {
           estacaoOrigem: {
             nome: "Estação Akihabara",
             nomeJapones: "秋葉原駅",
+            saida: "Saída Electric Town",
             foto: "/images/akihabara-station.jpg",
           },
           linha: { codigo: "JY", nome: "JR Yamanote / Keihin-Tohoku Line", cor: "#8FAADC", logo: "/images/jr-logo.webp" },
@@ -2454,7 +2550,11 @@ const DAY_4: DayContent = {
         descricao:
           "Bairro badalado de Tóquio que reúne o Mori Tower, seus museus e jardins, e a vida noturna de Roppongi — principal polo de baladas e bares da cidade.",
         deslocamento: {
-          estacaoOrigem: { nome: "Estação Kanda", nomeJapones: "神田駅" },
+          estacaoOrigem: {
+            nome: "Estação Kanda",
+            nomeJapones: "神田駅",
+            saida: "Saída Oeste (Nishiguchi)",
+          },
           linha: { codigo: "G13→G09", nome: "Tokyo Metro Ginza Line", cor: "#F39700", logo: "/images/tokyometro-mark.png" },
           baldeacao: true,
           estacaoDestino: {
@@ -2685,16 +2785,24 @@ const DAY_5: DayContent = {
       ],
     },
     regiao: {
-      nome: "Higashiyama",
+      nome: "Higashiyama · Kyoto",
       descricao:
-        "Bairro aos pés das colinas do leste de Kyoto, preservado desde o período Edo — reúne o Kiyomizu-dera e as ladeiras históricas de Ninenzaka e Sannenzaka.",
+        "Bairro aos pés das colinas do leste de Kyoto, preservado desde o período Edo — reúne o Kiyomizu-dera e as ladeiras históricas de Ninenzaka e Sannenzaka, com casas de madeira, lojas tradicionais e vista para a cidade lá embaixo. É o ponto de partida natural para seguir a pé até Gion, logo ao norte.",
     },
     deslocamento: {
       estacaoOrigem: {
         nome: "Kyoto Station (saída Karasuma)",
         distancia: "~1 min a pé do hotel",
+        mapa: "/images/kyoto-station-map.png",
+        mapaAlt: "Mapa da Estação de Kyoto (portões, plataformas JR e Shinkansen)",
       },
-      linha: { codigo: "100", nome: "Kyoto City Bus 100 / 206", cor: "#2E7D32" },
+      linha: { codigo: "206", nome: "Kyoto City Bus 100 / 206", cor: "#2E7D32" },
+      estacoesIntermediarias: [
+        { nome: "Karasuma-Shichijo", nomeJapones: "烏丸七条" },
+        { nome: "Shichijo Keihan-mae", nomeJapones: "七条京阪前" },
+        { nome: "Museu Sanjusangendo-mae", nomeJapones: "博物館三十三間堂前" },
+        { nome: "Higashiyama-Shichijo", nomeJapones: "東山七条" },
+      ],
       estacaoDestino: { nome: "Parada Gojozaka ou Kiyomizu-michi" },
       opcoes: [
         {
@@ -2725,7 +2833,16 @@ const DAY_5: DayContent = {
     detalhesPraticos: [
       { label: "Entrada", valor: "¥500 (adultos)" },
       { label: "Horário", valor: "6h–18h (aprox., varia por temporada)" },
-      { label: "Melhor horário", valor: "Logo na abertura, 6h" },
+      {
+        label: "Acesso",
+        valor: "Ladeiras íngremes e degraus de pedra desde o Nio-mon até o salão principal — sem alternativa plana, calçado confortável é essencial.",
+      },
+      {
+        label: "Melhor horário",
+        horarioDestaque: "6h–7h",
+        valor:
+          "Logo na abertura — Kiyomizu-dera é um dos templos mais visitados de Kyoto, e os ônibus de excursão e grupos de turismo começam a chegar em massa a partir do meio da manhã.",
+      },
     ],
     mapaVisaoGeral: {
       imagem: "/images/visaogeral-kyoto1.png",
@@ -2778,7 +2895,11 @@ const DAY_5: DayContent = {
       },
     },
     banheirosProximos: [
-      { local: "A definir", nota: "Informação de banheiros próximos a ser adicionada." },
+      {
+        local: "Banheiro público do terreno do Kiyomizu-dera",
+        endereco: "Zona sudoeste do complexo (清水寺境内南西)",
+        nota: "Duas alas separadas: uma masculina/feminina e outra feminina + multiuso (acessível) — dentro do próprio terreno do templo, sem precisar sair para buscar banheiro.",
+      },
     ],
   },
   tarde: {
@@ -2816,9 +2937,9 @@ const DAY_5: DayContent = {
       ],
     },
     regiao: {
-      nome: "Gion",
+      nome: "Gion · Kyoto",
       descricao:
-        "O distrito de gueixas mais famoso do Japão, com casas de chá tradicionais, o Santuário Yasaka e a viela de Pontocho às margens do rio Kamo.",
+        "O distrito de gueixas mais famoso do Japão, com casas de chá tradicionais ao longo de ruas de pedra, o Santuário Yasaka marcando a entrada e a viela de Pontocho, às margens do rio Kamo, do outro lado do bairro. Preserva desde o período Edo o ambiente ligado às gueixas (geiko) e às aprendizes (maiko).",
     },
     deslocamento: {
       estacaoOrigem: { nome: "Kiyomizu-dera / Sannenzaka" },
@@ -2852,8 +2973,14 @@ const DAY_5: DayContent = {
     atracaoPrincipalImagem: "/images/dia5-gion-v2.png",
     detalhesPraticos: [
       { label: "Yasaka Shrine", valor: "Entrada gratuita, aberto 24h" },
-      { label: "Melhor horário", valor: "Fim de tarde, início da noite" },
       { label: "Pontocho", valor: "Restaurantes abrem a partir das 17h–18h" },
+      { label: "Fotografia", valor: "Multa de ¥10.000 por fotografar em ruas privadas designadas de Gion — detalhes abaixo" },
+      {
+        label: "Melhor horário",
+        horarioDestaque: "Fim de tarde",
+        valor:
+          "É quando Gion ganha o clima do início da noite, com as casas de chá abrindo as portas e menos grupos de turismo do que durante o dia — bom encaixe com o jantar em Pontocho, marcado para as 19h.",
+      },
     ],
     mapaVisaoGeral: {
       imagem: "/images/kyoto-visao-geral.png",
@@ -2864,6 +2991,10 @@ const DAY_5: DayContent = {
       {
         titulo: "Onde jantar em Gion?",
         resposta: "Kaiseki entrega a experiência gastronômica mais refinada; obanzai (cozinha caseira de Kyoto) é uma alternativa mais informal e acessível — ambas encontradas em Pontocho.",
+      },
+      {
+        titulo: "Como voltar para o hotel à noite?",
+        resposta: "O ônibus de volta não é o mesmo da ida: de Shijo Kawaramachi (~3 min a pé de Pontocho, atravessando a Shijo-ohashi) sai o ônibus 4, direto até Kyoto Station em ~15 min, sem baldeação. À noite, depois do jantar, táxi costuma ser a opção mais prática — o trajeto é rápido (~15 min) e evita depender do horário dos ônibus.",
       },
     ],
     pois: [
@@ -2900,9 +3031,20 @@ const DAY_5: DayContent = {
         { src: "/images/placeholder-em-producao.png", alt: "Galeria de Gion — em produção", legenda: "Em produção" },
       ],
     },
-    banheirosProximos: [
-      { local: "A definir", nota: "Informação de banheiros próximos a ser adicionada." },
-    ],
+    infoOperacional: {
+      titulo: "Regras importantes em Gion",
+      icone: "regras",
+      itens: [
+        {
+          local: "Ruas privadas designadas",
+          nota: "Um conselho de moradores e comerciantes locais proibiu fotografar geiko e maiko (ou entrar sem permissão) em ruas privadas específicas de Gion — multa de ¥10.000 por infração, resposta a casos de perseguição e abordagem de turistas.",
+        },
+        {
+          local: "Hanamikoji Street (via pública)",
+          nota: "A restrição não vale para as ruas públicas principais, mas é sempre educado pedir permissão antes de fotografar qualquer pessoa — geiko e maiko estão a caminho do trabalho, não posando para turistas.",
+        },
+      ],
+    },
   },
 };
 
@@ -3012,14 +3154,17 @@ const DAY_6: DayContent = {
       ],
     },
     regiao: {
-      nome: "Fushimi",
+      nome: "Fushimi · Kyoto",
       descricao:
-        "Bairro ao sul de Kyoto, historicamente ligado à produção de saquê — hoje conhecido principalmente pelos milhares de torii do Santuário Fushimi Inari.",
+        "Bairro ao sul de Kyoto, historicamente ligado à produção de saquê — hoje conhecido principalmente pelos milhares de torii vermelhos que sobem o Monte Inari a partir do Santuário Fushimi Inari, sede de mais de 30 mil santuários espalhados pelo Japão dedicados à divindade Inari.",
     },
     deslocamento: {
       estacaoOrigem: {
         nome: "Kyoto Station",
         distancia: "~1 min a pé do hotel",
+        saida: "Saída Central (Karasuma-guchi)",
+        mapa: "/images/kyoto-station-map.png",
+        mapaAlt: "Mapa da Estação de Kyoto (portões, plataformas JR e Shinkansen)",
       },
       linha: { codigo: "JR", nome: "JR Nara Line", cor: "#00A650", logo: "/images/jr-logo.webp" },
       estacoesIntermediarias: [{ nome: "Tofukuji", nomeJapones: "東福寺", numero: "D02" }],
@@ -3057,7 +3202,16 @@ const DAY_6: DayContent = {
     detalhesPraticos: [
       { label: "Entrada", valor: "Gratuita" },
       { label: "Horário", valor: "Aberto 24h" },
-      { label: "Melhor horário", valor: "Antes das 9h, para evitar aglomerações" },
+      {
+        label: "Barracas de comida",
+        valor: "Funcionam só durante o dia (aprox. 8h–17h) — fora desse horário o santuário continua aberto, mas sem opções de comida no trajeto.",
+      },
+      {
+        label: "Melhor horário",
+        horarioDestaque: "Antes das 9h",
+        valor:
+          "O Senbon Torii fica tomado de grupos de turismo a partir do meio da manhã — chegando cedo, dá pra fotografar o corredor de torii praticamente vazio.",
+      },
     ],
     mapaVisaoGeral: {
       imagem: "/images/fushimi-inari-taisha-visaogeral.png",
@@ -3088,7 +3242,20 @@ const DAY_6: DayContent = {
       },
     },
     banheirosProximos: [
-      { local: "A definir", nota: "Informação de banheiros próximos a ser adicionada." },
+      {
+        local: "Em frente ao Rōmon (portão principal)",
+        nota: "Primeiro banheiro do percurso, logo na entrada — fica bem movimentado, cercado pelas barracas de comida.",
+      },
+      {
+        local: "Perto do Okusha Hohaijo",
+        endereco: "Logo depois do Senbon Torii",
+        nota: "Bem menos concorrido que o da entrada — bom ponto de apoio depois de atravessar o corredor de torii, antes de decidir se sobe mais.",
+      },
+      {
+        local: "Gozentani Hohaijo",
+        endereco: "Além do Yotsutsuji, mais acima na montanha",
+        nota: "Só relevante para quem seguir além do Yotsutsuji rumo ao topo do Monte Inari — depois desse ponto as opções ficam mais escassas.",
+      },
     ],
   },
   tarde: {
@@ -3126,13 +3293,24 @@ const DAY_6: DayContent = {
       ],
     },
     regiao: {
-      nome: "Kinkaku-ji (Kitayama)",
+      nome: "Kitayama · Kyoto",
       descricao:
-        "Região arborizada ao norte de Kyoto, onde fica o Pavilhão Dourado — um dos templos mais fotografados do Japão.",
+        "Região arborizada ao norte de Kyoto, onde fica o Kinkaku-ji (Pavilhão Dourado) — um dos templos mais fotografados do Japão, com as folhas de ouro do Shariden refletidas no Kyōko-chi Pond. O circuito de visita é curto e todo ao ar livre, num único sentido pelo jardim.",
     },
     deslocamento: {
-      estacaoOrigem: { nome: "Kyoto Station" },
-      linha: { codigo: "101", nome: "Kyoto City Bus 101 / 205", cor: "#2E7D32" },
+      estacaoOrigem: {
+        nome: "Kyoto Station",
+        saida: "Saída Central (Karasuma-guchi)",
+        mapa: "/images/kyoto-station-map.png",
+        mapaAlt: "Mapa da Estação de Kyoto (portões, plataformas JR e Shinkansen)",
+      },
+      linha: { codigo: "205", nome: "Kyoto City Bus 205", cor: "#2E7D32" },
+      estacoesIntermediarias: [
+        { nome: "Nishioji-Shichijo", nomeJapones: "西大路七条" },
+        { nome: "Nishioji-Shijo", nomeJapones: "西大路四条" },
+        { nome: "Nishinokyo-Enmachi", nomeJapones: "西ノ京円町" },
+        { nome: "Kitano-Hakubaicho", nomeJapones: "北野白梅町" },
+      ],
       estacaoDestino: { nome: "Parada Kinkakuji-michi" },
       opcoes: [
         {
@@ -3141,7 +3319,7 @@ const DAY_6: DayContent = {
           Icon: IconBus,
           recomendado: true,
           detalhes: [
-            "JR Nara Line de volta a Kyoto Station (~5 min) + ônibus 101 ou 205 até Kinkakuji-michi (~40 min).",
+            "JR Nara Line de volta a Kyoto Station (~5 min) + ônibus 205 até Kinkakuji-michi (~40 min) — o 101 que aparece em guias antigos não atende mais esse trecho.",
             "Compre o Kyoto City Bus one-day pass se ainda não tiver.",
           ],
         },
@@ -3156,7 +3334,7 @@ const DAY_6: DayContent = {
         },
       ],
       recomendacao:
-        "Fushimi Inari e Kinkaku-ji ficam em lados opostos de Kyoto — o caminho mais prático é retornar a Kyoto Station e seguir de ônibus (101 ou 205), cerca de 45 a 50 minutos no total. De táxi, o trajeto direto cai para 16 a 20 minutos.",
+        "Fushimi Inari e Kinkaku-ji ficam em lados opostos de Kyoto — o caminho mais prático é retornar a Kyoto Station e seguir de ônibus 205, cerca de 45 a 50 minutos no total. De táxi, o trajeto direto cai para 16 a 20 minutos.",
     },
     atracaoPrincipal: "Kinkaku-ji",
     atracaoPrincipalImagem: "/images/dia6-kinkakuji.png",
@@ -3164,7 +3342,12 @@ const DAY_6: DayContent = {
       { label: "Entrada", valor: "¥500 (adultos)" },
       { label: "Horário", valor: "9h–17h, todos os dias" },
       { label: "Pagamento", valor: "Somente dinheiro na bilheteria" },
-      { label: "Melhor horário", valor: "Logo na abertura, antes dos ônibus de turismo" },
+      {
+        label: "Melhor horário",
+        horarioDestaque: "Logo na abertura",
+        valor:
+          "Os ônibus de excursão costumam chegar a partir do meio da manhã — nas primeiras horas dá pra fotografar o pavilhão refletido no lago sem gente na frente.",
+      },
     ],
     mapaVisaoGeral: {
       imagem: "/images/kinkakuji-visaogeral.png",
@@ -3175,6 +3358,10 @@ const DAY_6: DayContent = {
       {
         titulo: "Vale o desvio até o Museu do Mangá e a Nintendo Store?",
         resposta: "Ambos ficam fora da rota de Kinkaku-ji, no centro de Kyoto — exigem um deslocamento à parte (~20–30 min). Vale considerar só se sobrar tempo ou se for prioridade do grupo.",
+      },
+      {
+        titulo: "Como voltar para o hotel no fim do dia?",
+        resposta: "O mesmo ônibus 205 faz o caminho de volta — embarque na parada Kinkakuji-michi do lado oposto da rua, sentido Kyoto Station (~40–45 min, sem baldeação). De táxi, o trajeto direto cai para cerca de 20 minutos, uma boa opção para encerrar o dia sem pressa.",
       },
     ],
     pois: [
@@ -3226,7 +3413,10 @@ const DAY_6: DayContent = {
       ],
     },
     banheirosProximos: [
-      { local: "A definir", nota: "Informação de banheiros próximos a ser adicionada." },
+      {
+        local: "Banheiro público dentro do terreno do templo",
+        nota: "Fica ao longo do circuito de visita, que é curto e de sentido único — não é preciso sair do terreno para encontrar um banheiro.",
+      },
     ],
   },
   transporte: {
@@ -3370,7 +3560,7 @@ const DAY_7: DayContent = {
       ],
     },
     regiao: {
-      nome: "Ningyocho",
+      nome: "Ningyocho · Tokyo",
       descricao:
         "Bairro do shitamachi de Tóquio, erguido sobre um brejo aterrado no início do período Edo. Ganhou o apelido de \"cidade das bonecas\" por abrigar teatros de kabuki e bunraku e os artesãos que faziam as bonecas usadas nos espetáculos — a produção migrou para Asakusa ainda no século 19, mas o nome ficou.",
     },
@@ -3387,6 +3577,8 @@ const DAY_7: DayContent = {
         nome: "Estação Ningyocho",
         nomeJapones: "人形町駅",
         saida: "Saída A2",
+        mapa: "/images/ningyocho-station-map.png",
+        mapaAlt: "Mapa da Estação Ningyocho/Suitengumae (Hibiya Line e Toei Asakusa Line)",
       },
       opcoes: [
         {
@@ -3414,6 +3606,23 @@ const DAY_7: DayContent = {
     },
     atracaoPrincipal: "09:45 — Chegada a Ningyocho",
     atracaoPrincipalImagem: "/images/ningyocho.png",
+    detalhesPraticos: [
+      {
+        label: "Comércio tradicional",
+        valor: "Boa parte das lojas centenárias de Ningyocho e da Amazake Yokocho prefere dinheiro — nem todas aceitam cartão.",
+      },
+      { label: "Suitengu", valor: "Terreno aberto 8h–17h · escritório de amuletos até 15h30 (com exceções)" },
+      {
+        label: "Amazake Yokocho",
+        valor: "Viela de ~400 m entre lojas tradicionais e o Teatro Meiji-za, no meio do circuito a pé.",
+      },
+      {
+        label: "Melhor horário",
+        horarioDestaque: "09h45–12h30",
+        valor:
+          "Janela reservada da manhã, com o bairro ainda tranquilo antes do movimento de almoço — dá tempo de terminar no Suitengu e seguir para o almoço das 12h30 sem pressa, antes do deslocamento à tarde para o Kokugikan.",
+      },
+    ],
     mapaVisaoGeral: {
       imagem: "/images/placeholder-em-producao.png",
       imagemAlt: "Visão geral do trajeto a pé em Ningyocho — em produção",
@@ -3494,7 +3703,15 @@ const DAY_7: DayContent = {
       },
     },
     banheirosProximos: [
-      { local: "A definir", nota: "Informação de banheiros próximos a ser adicionada." },
+      {
+        local: "Estação Ningyocho (A14, Toei Asakusa Line)",
+        nota: "Banheiro multifuncional dentro da própria estação — mesma saída A2 usada na chegada.",
+      },
+      {
+        local: "Centro Comunitário de Ningyocho (人形町区民館)",
+        endereco: "6º andar",
+        nota: "Banheiro acessível \"para todos\", aberto ao público — opção de apoio no meio do circuito a pé.",
+      },
     ],
   },
   tarde: {
@@ -3532,12 +3749,18 @@ const DAY_7: DayContent = {
       ],
     },
     regiao: {
-      nome: "Ryogoku",
+      nome: "Ryogoku · Tokyo",
       descricao:
-        "Ryogoku é o bairro onde fica o estádio nacional de sumô Kokugikan, centro do sumô com infraestrutura de gastronomia e temática de sumô nas ruas.",
+        "Bairro às margens do Rio Sumida onde fica o Kokugikan, o estádio nacional de sumô — coração do esporte em Tóquio, com estábulos de lutadores (heya), restaurantes de chanko nabe e uma vila gastronômica temática, a Ryōgoku Edo NOREN, bem na entrada da estação.",
     },
     deslocamento: {
-      estacaoOrigem: { nome: "Estação Ningyocho", nomeJapones: "人形町駅" },
+      estacaoOrigem: {
+        nome: "Estação Ningyocho",
+        nomeJapones: "人形町駅",
+        saida: "Saída A2",
+        mapa: "/images/ningyocho-station-map.png",
+        mapaAlt: "Mapa da Estação Ningyocho/Suitengumae (Hibiya Line e Toei Asakusa Line)",
+      },
       linha: { codigo: "A14", nome: "Toei Asakusa Line", cor: "#D04E3C", logo: "/images/toei-mark.png" },
       estacoesIntermediarias: [{ nome: "Asakusabashi", nomeJapones: "浅草橋", numero: "A16" }],
       baldeacao: true,
@@ -3577,7 +3800,12 @@ const DAY_7: DayContent = {
       { label: "Entrada geral (no dia)", valor: "A partir de ¥2.200" },
       { label: "Cadeira", valor: "~¥3.500–8.500" },
       { label: "Box tatami (por pessoa)", valor: "~¥8.000–15.000" },
-      { label: "Melhor horário", valor: "Chegar às 14h30, para acompanhar a 2ª divisão" },
+      {
+        label: "Melhor horário",
+        horarioDestaque: "14h30",
+        valor:
+          "É quando começa a cerimônia de entrada da 2ª divisão (Jūryō) — a partir daí o nível das lutas sobe, culminando na divisão principal (Makuuchi) às 15h45, sem precisar sentar pela manhã inteira para acompanhar as categorias inferiores.",
+      },
     ],
     mapaVisaoGeral: {
       imagem: "/images/visaogeral-ryogoku.png",
@@ -3664,9 +3892,24 @@ const DAY_7: DayContent = {
         { src: "/images/placeholder-em-producao.png", alt: "Galeria do Kokugikan — em produção", legenda: "Em produção" },
       ],
     },
-    banheirosProximos: [
-      { local: "A definir", nota: "Informação de banheiros próximos a ser adicionada." },
-    ],
+    infoOperacional: {
+      titulo: "Regras da Associação de Sumô no Kokugikan",
+      icone: "regras",
+      itens: [
+        {
+          local: "Bagagem",
+          nota: "Malas grandes que ultrapassem o espaço do próprio assento não são permitidas — só carrinhos de bebê, que ficam na recepção.",
+        },
+        {
+          local: "Comida e bebida",
+          nota: "Proibido entrar com garrafas, latas ou caixas térmicas — mas dá pra comprar chanko nabe e outras opções dentro do próprio Kokugikan.",
+        },
+        {
+          local: "Fotografia",
+          nota: "Flash e luzes são proibidos durante as lutas, tratados como ato de interferência pela Associação de Sumô.",
+        },
+      ],
+    },
   },
 };
 
@@ -4010,6 +4253,72 @@ function BanheirosProximosBlock({
       {aberto && (
         <div className="space-y-3.5 px-5 pb-5">
           {itens.map((b, i) => (
+            <div key={b.local} className={i > 0 ? "border-t border-[#DDD8CF] pt-3.5" : ""}>
+              <p className="text-sm font-semibold text-[#24211D]">{b.local}</p>
+              {b.endereco && (
+                <p className="mt-0.5 text-xs text-[#24211D]/60">{b.endereco}</p>
+              )}
+              {b.nota && (
+                <p className="mt-1 text-xs leading-5 text-[#24211D]/70">{b.nota}</p>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+const INFO_OPERACIONAL_ICONS: Record<
+  NonNullable<Period["infoOperacional"]>["icone"],
+  (props: { className?: string }) => ReactElement
+> = {
+  acessibilidade: IconAccessible,
+  bagagem: IconSuitcase,
+  encontro: IconMeetingPoint,
+  entrada: IconDoorEnter,
+  reserva: IconTicket,
+  regras: IconAlertTriangle,
+  chuva: IconUmbrella,
+  descanso: IconBench,
+};
+
+function InfoOperacionalBlock({
+  info,
+}: {
+  info: NonNullable<Period["infoOperacional"]>;
+}) {
+  const [aberto, setAberto] = useState(false);
+  const Icon = INFO_OPERACIONAL_ICONS[info.icone];
+
+  return (
+    <div className="mb-5 rounded-2xl border border-orange-200 bg-orange-50/60">
+      <button
+        type="button"
+        onClick={() => setAberto((v) => !v)}
+        className="flex w-full items-center gap-4 p-5 text-left sm:p-7"
+      >
+        <Icon className="h-20 w-20 shrink-0 text-[#000000]" />
+        <span className="min-w-0 flex-1 text-base font-bold uppercase tracking-[0.2em] text-[#24211D]/70 sm:text-lg">
+          {info.titulo}
+        </span>
+        <svg
+          viewBox="0 0 24 24"
+          className={`h-4 w-4 shrink-0 text-[#24211D]/45 transition-transform duration-200 ${
+            aberto ? "rotate-180" : ""
+          }`}
+          fill="none"
+          stroke="currentColor"
+          strokeWidth={2}
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <path d="M6 9l6 6 6-6" />
+        </svg>
+      </button>
+      {aberto && (
+        <div className="space-y-3.5 px-5 pb-5">
+          {info.itens.map((b, i) => (
             <div key={b.local} className={i > 0 ? "border-t border-[#DDD8CF] pt-3.5" : ""}>
               <p className="text-sm font-semibold text-[#24211D]">{b.local}</p>
               {b.endereco && (
@@ -5880,6 +6189,9 @@ function PeriodBlock({
           {period.banheirosProximos && period.banheirosProximos.length > 0 && (
             <BanheirosProximosBlock itens={period.banheirosProximos} />
           )}
+          {period.infoOperacional && period.infoOperacional.itens.length > 0 && (
+            <InfoOperacionalBlock info={period.infoOperacional} />
+          )}
 
           {period.gradeHorarios && (
             <GradeHorariosBlock grade={period.gradeHorarios} />
@@ -6469,6 +6781,59 @@ function IconTicket({ className }: { className?: string }) {
       alt=""
       className={`${className ?? ""} object-contain`}
     />
+  );
+}
+
+function IconAccessible({ className }: { className?: string }) {
+  return (
+    <svg {...iconProps(className)}>
+      <circle cx="12" cy="4" r="1.6" fill="currentColor" stroke="none" />
+      <path d="M10.5 8.5v3.5l-3.5 2M10.5 8.5h6M10.5 8.5l1.5 5 4.5 1.5M12 12l3.5 8" />
+      <circle cx="9" cy="18" r="3" />
+    </svg>
+  );
+}
+
+function IconBench({ className }: { className?: string }) {
+  return (
+    <svg {...iconProps(className)}>
+      <line x1="3" y1="11" x2="21" y2="11" />
+      <line x1="4" y1="11" x2="4" y2="19" />
+      <line x1="20" y1="11" x2="20" y2="19" />
+      <line x1="6" y1="7" x2="6" y2="11" />
+      <line x1="18" y1="7" x2="18" y2="11" />
+      <line x1="6" y1="7" x2="18" y2="7" />
+    </svg>
+  );
+}
+
+function IconUmbrella({ className }: { className?: string }) {
+  return (
+    <svg {...iconProps(className)}>
+      <path d="M3 12a9 9 0 0 1 18 0Z" />
+      <line x1="12" y1="12" x2="12" y2="20" />
+      <path d="M12 20a2 2 0 0 1-4 0" />
+      <line x1="12" y1="3" x2="12" y2="5" />
+    </svg>
+  );
+}
+
+function IconMeetingPoint({ className }: { className?: string }) {
+  return (
+    <svg {...iconProps(className)}>
+      <path d="M12 21s-6.5-5.6-6.5-11A6.5 6.5 0 0 1 18.5 10c0 5.4-6.5 11-6.5 11Z" />
+      <circle cx="12" cy="10" r="2.2" />
+    </svg>
+  );
+}
+
+function IconDoorEnter({ className }: { className?: string }) {
+  return (
+    <svg {...iconProps(className)}>
+      <path d="M6 3h9v18H6" />
+      <path d="M15 3l3 1v16l-3 1" />
+      <line x1="10" y1="12" x2="10.01" y2="12" />
+    </svg>
   );
 }
 
