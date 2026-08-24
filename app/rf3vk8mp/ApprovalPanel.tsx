@@ -1438,6 +1438,7 @@ const DAY_2: DayContent = {
           categoria: "Ramen (caldo de niboshi)",
           descricao:
             "Ramen de caldo de niboshi (sardinha-seca), casa premiada — a 5 min a pé da Saída Norte de Marunouchi da Tokyo Station.",
+          foto: "/images/niboshi-sugidama.png",
           notaTabelog: "3.64",
           numAvaliacoes: "634 avaliações",
           faixaPreco: "¥1.000–1.999 no almoço",
@@ -1455,6 +1456,7 @@ const DAY_2: DayContent = {
           categoria: "Unagi (enguia grelhada na brasa)",
           descricao:
             "Enguia grelhada na técnica \"jiyaki\" de alta temperatura, filial de uma casa premiada de Nagoya — conexão subterrânea direta com a Tokyo Station.",
+          foto: "/images/sumiyaki-unafuji.png",
           notaTabelog: "3.67",
           numAvaliacoes: "1.363 avaliações",
           faixaPreco: "¥6.000–7.999 no almoço (jantar sai mais caro — vá no horário de almoço)",
@@ -1472,6 +1474,7 @@ const DAY_2: DayContent = {
           categoria: "Soba + Tempura",
           descricao:
             "Combinação clássica de soba com tempura na hora, cardápio multilíngue (inglês) — opção rápida e leve antes dos Jardins do Palácio Imperial.",
+          foto: "/images/soba-tempura-ishiraku.png",
           notaTabelog: "3.40",
           numAvaliacoes: "154 avaliações",
           faixaPreco: "¥1.000–1.999 no almoço",
@@ -1955,6 +1958,7 @@ const DAY_3: DayContent = {
           categoria: "Gyoza (guioza japonês)",
           descricao:
             "Casa tradicional de guioza desde 1953, parada clássica de moradores e visitantes — peça o combo frito + cozido no vapor com broto de soja salteado.",
+          foto: "/images/harajuku-gyoza-ro.png",
           faixaPreco: "¥1.000–2.000 por pessoa",
           distancia:
             "~5 min a pé da Estação Meiji-Jingumae (Saída 7) — no caminho entre o Meiji Jingu e Omotesando",
@@ -1974,6 +1978,7 @@ const DAY_3: DayContent = {
           categoria: "Yakiniku (carne grelhada na mesa)",
           descricao:
             "Cortes selecionados de wagyu grelhados na própria mesa, com menu de almoço muito mais em conta que o jantar — selecionado para o Tabelog 100 de Yakiniku 2022–2025.",
+          foto: "/images/yakiniku-ushigoro-omotesando.png",
           notaTabelog: "3.62",
           numAvaliacoes: "1.306 avaliações",
           faixaPreco: "¥3.000–3.999 no almoço",
@@ -1992,6 +1997,7 @@ const DAY_3: DayContent = {
           categoria: "Kaitenzushi (sushi de esteira premium)",
           descricao:
             "Sushi de esteira do grupo Ginza Onodera (marca com estrela Michelin) — peixe pressionado à mão, na hora, com pratos exclusivos da unidade de Shibuya.",
+          foto: "/images/sushi-onodera-musuko-shibuya.png",
           notaTabelog: "3.48",
           numAvaliacoes: "478 avaliações",
           faixaPreco: "¥8.000–9.999 por pessoa (listado a partir de ¥4.000)",
@@ -2267,6 +2273,7 @@ const DAY_3: DayContent = {
           categoria: "Tonkatsu (costeleta de porco empanada)",
           descricao:
             "Tonkatsu premiado, no coração do Kabukicho — selecionado para o Tabelog 100 Best Tonkatsu em 2022, 2024 e 2026.",
+          foto: "/images/katsu-pulipo.png",
           notaTabelog: "3.90",
           numAvaliacoes: "1.389 avaliações",
           faixaPreco: "¥8.000–9.999 no jantar",
@@ -2284,6 +2291,7 @@ const DAY_3: DayContent = {
           categoria: "Izakaya de frutos do mar",
           descricao:
             "Peixe fresco entregue diariamente por pescadores parceiros, com vários modos de preparo à escolha — foge do padrão carne/ramen dos outros dois dias já preenchidos.",
+          foto: "/images/nakizakana-shinjuku.png",
           notaTabelog: "3.57",
           numAvaliacoes: "815 avaliações",
           faixaPreco: "¥5.000–7.999 no jantar",
@@ -2303,6 +2311,7 @@ const DAY_3: DayContent = {
           categoria: "Ramen (niboshi/sardinha-seca)",
           descricao:
             "A loja original da rede Nagi, dentro do próprio Golden Gai — casa de nascimento do ramen de niboshi que deu fama internacional à marca.",
+          foto: "/images/sugoi-niboshi-ramen-nagi.png",
           notaTabelog: "3.64",
           numAvaliacoes: "3.485 avaliações",
           faixaPreco: "¥1.000–1.999 por pessoa",
@@ -3268,6 +3277,7 @@ const DAY_5: DayContent = {
           categoria: "Tofu dengaku (tradicional desde 1902)",
           descricao:
             "Casa histórica de tofu dengaku bem em frente ao Kiyomizu-dera — cardápio multilíngue, ideal pra fazer a pausa assim que descer do templo.",
+          foto: "/images/kiyomizu-junsei-okabeya.png",
           notaTabelog: "3.41",
           numAvaliacoes: "289 avaliações",
           faixaPreco: "¥2.000–3.999 por pessoa",
@@ -3284,6 +3294,7 @@ const DAY_5: DayContent = {
           categoria: "Matcha (doces e bebidas)",
           descricao:
             "Especializada em sobremesas de matcha, com terraço aberto — direto na descida de Sannenzaka, sem precisar sair do caminho.",
+          foto: "/images/maccha-house-sannenzaka.png",
           notaTabelog: "3.43",
           numAvaliacoes: "182 avaliações",
           faixaPreco: "¥1.000–1.999 por pessoa",
@@ -3301,6 +3312,7 @@ const DAY_5: DayContent = {
           categoria: "Yudofu (tofu quente) e kaiseki leve",
           descricao:
             "Casa centenária de yudofu e yuba, com harmonização de sakês locais — mais refeição completa que lanche, perto do Chion-in a caminho de Gion.",
+          foto: "/images/rengetsu-jaya.png",
           notaTabelog: "3.39",
           numAvaliacoes: "154 avaliações",
           faixaPreco: "¥3.000–4.999 por pessoa",
@@ -3445,6 +3457,7 @@ const DAY_5: DayContent = {
           categoria: "Obanzai e tofu",
           descricao:
             "Mais de 100 anos de tradição em cozinha de tofu e obanzai caseiro, direto em Pontocho — equipe multilíngue (inglês).",
+          foto: "/images/toobanzai-mamehachi-pontocho.png",
           notaTabelog: "3.43",
           numAvaliacoes: "257 avaliações",
           faixaPreco: "¥3.000–4.999 no jantar",
@@ -3461,6 +3474,7 @@ const DAY_5: DayContent = {
           categoria: "Obanzai e vegetais de Kyoto",
           descricao:
             "Pratos de vegetais de Kyoto e obanzai numa machiya tradicional — casa grande (105 lugares), boa opção pra grupo sem espera.",
+          foto: "/images/pontocho-suishin-honten.png",
           notaTabelog: "3.31",
           numAvaliacoes: "143 avaliações",
           faixaPreco: "¥5.000–7.999 no jantar",
@@ -3477,6 +3491,7 @@ const DAY_5: DayContent = {
           categoria: "Kaiseki (culinária de Kyoto)",
           descricao:
             "Kaiseki tradicional com vista para o Rio Kamo, dois números depois do Pontocho Kaburenjo — a opção mais refinada das três.",
+          foto: "/images/kyoryori-pontocho-fumiya.png",
           notaTabelog: "3.43",
           numAvaliacoes: "330 avaliações",
           faixaPreco: "¥8.000–9.999 no jantar",
@@ -3707,6 +3722,7 @@ const DAY_6: DayContent = {
           categoria: "Inari-zushi (casa tradicional desde 1540)",
           descricao:
             "Bem em frente à entrada do santuário — casa quase 500 anos mais velha que o próprio complexo de torii, famosa pelo inari-zushi tradicional.",
+          foto: "/images/nezameya-inarizushi.png",
           notaTabelog: "3.45",
           numAvaliacoes: "392 avaliações",
           faixaPreco: "¥1.000–1.999",
@@ -3722,6 +3738,7 @@ const DAY_6: DayContent = {
           categoria: "Kitsune Udon (macarrão artesanal)",
           descricao:
             "Udon feito à mão na hora, com o clássico kitsune (tofu frito) — casa pequena e simples, a poucos minutos a pé do santuário.",
+          foto: "/images/kendon-ya-fushimi.png",
           notaTabelog: "3.53",
           numAvaliacoes: "313 avaliações",
           faixaPreco: "Até ¥999–1.999",
@@ -3737,6 +3754,7 @@ const DAY_6: DayContent = {
           categoria: "Inari-zushi para levar",
           descricao:
             "Inari-zushi portátil com gergelim e bardana, ideal para comer andando pelo corredor de torii — também serve codorna grelhada.",
+          foto: "/images/inafuku-fushimi.png",
           notaTabelog: "3.34",
           numAvaliacoes: "183 avaliações",
           faixaPreco: "¥1.000–1.999",
@@ -3916,6 +3934,7 @@ const DAY_6: DayContent = {
           categoria: "Unagi (enguia grelhada no carvão)",
           descricao:
             "Especializada em unagi grelhada no carvão, a mais próxima do Kinkaku-ji entre as opções da região — ex-\"Doi Katsuman\", renomeada.",
+          foto: "/images/unasho-kinkakuji.png",
           notaTabelog: "3.10",
           numAvaliacoes: "27 avaliações",
           faixaPreco: "¥3.000–3.999",
@@ -3931,6 +3950,7 @@ const DAY_6: DayContent = {
           categoria: "Unagi (enguia grelhada)",
           descricao:
             "Opção mais em conta da região para unagi-don, na mesma área de Kitano Hakubaicho — perto do Kinkaku-ji.",
+          foto: "/images/masakatsu-kinkakuji.png",
           notaTabelog: "3.08",
           numAvaliacoes: "25 avaliações",
           faixaPreco: "¥1.000–1.999",
@@ -3946,6 +3966,7 @@ const DAY_6: DayContent = {
           categoria: "Unagi (rede nacional especializada, unadon a partir de ¥1.600)",
           descricao:
             "Filial (aberta em mar/2026) da maior rede especializada em unagi do Japão, com mais de 150 lojas — padrão de qualidade consistente a preço mais baixo que a média. Bem perto do Kinkaku-ji.",
+          foto: "/images/unagi-naruse-kinkakuji.png",
           faixaPreco: "A partir de ¥1.600 (unadon)",
           distancia: "Próximo ao Kinkaku-ji (Kinugasa-kaido)",
           foreignFriendly: "Não confirmado — loja nova, recomendamos confirmar cardápio/atendimento em inglês antes de ir.",
@@ -4251,6 +4272,7 @@ const DAY_7: DayContent = {
           categoria: "Oyakodon (berço do prato, desde 1760)",
           descricao:
             "Casa com mais de 250 anos, criadora do oyakodon — receita de família mantida em segredo. A 1 min a pé da Estação Ningyocho.",
+          foto: "/images/tamahide-ningyocho.png",
           notaTabelog: "3.49",
           numAvaliacoes: "1.792 avaliações",
           faixaPreco: "¥2.000–2.999 no almoço",
@@ -4268,6 +4290,7 @@ const DAY_7: DayContent = {
           categoria: "Yakitori-jū (arroz com frango grelhado)",
           descricao:
             "Casa tradicional de yakitori famosa pelo \"yakitori-jū\" — arroz coberto de frango grelhado glaceado, ótimo para viagem.",
+          foto: "/images/ogawa-ningyocho.png",
           notaTabelog: "3.69",
           numAvaliacoes: "1.429 avaliações",
           faixaPreco: "¥1.000–1.999 no almoço",
@@ -4284,6 +4307,7 @@ const DAY_7: DayContent = {
           categoria: "Yoshoku (cozinha ocidental à japonesa) — Katsudon",
           descricao:
             "Casa centenária de yoshoku, famosa pelo katsudon exclusivo da casa — selecionada duas vezes entre os 100 melhores yoshoku do Tabelog.",
+          foto: "/images/yoshoku-koharuken.png",
           notaTabelog: "3.49",
           numAvaliacoes: "1.149 avaliações",
           faixaPreco: "¥1.000–1.999",
@@ -4480,6 +4504,7 @@ const DAY_7: DayContent = {
           categoria: "Chanko Nabe (dirigida por ex-Ozeki Kirishima)",
           descricao:
             "Casa do ex-Ozeki (vice-campeão) de sumô Kirishima, dentro do complexo gastronômico Ryogoku Edo NOREN — a 1 min a pé do Kokugikan.",
+          foto: "/images/chanko-kirishima-ryogoku.png",
           notaTabelog: "3.44",
           numAvaliacoes: "324 avaliações",
           faixaPreco: "¥5.000–5.999 no jantar",
@@ -4495,6 +4520,7 @@ const DAY_7: DayContent = {
           categoria: "Chanko Nabe (receita de heya/estábulo de sumô)",
           descricao:
             "Chanko nabe autêntico, receita passada por um estábulo (heya) de sumô — a um passo da Estação Ryogoku, aberta todos os dias.",
+          foto: "/images/ami-ryogoku.png",
           notaTabelog: "3.47",
           numAvaliacoes: "513 avaliações",
           faixaPreco: "¥1.000–1.999 no almoço / a partir de ¥6.000 no jantar em grupo — pratos avulsos ficam abaixo disso",
@@ -4510,6 +4536,7 @@ const DAY_7: DayContent = {
           categoria: "Chanko Nabe (9 tipos, com frutos do mar de Toyosu)",
           descricao:
             "Nove variedades de chanko nabe com ingredientes frescos direto do mercado de Toyosu — a 1 min a pé da Estação Ryogoku.",
+          foto: "/images/chanko-dojo-honten.png",
           notaTabelog: "3.35",
           numAvaliacoes: "127 avaliações",
           faixaPreco: "¥1.000–1.999 no almoço / ¥4.000–4.999 no jantar",
