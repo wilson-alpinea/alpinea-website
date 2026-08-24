@@ -107,13 +107,20 @@ type PrecoCtx = {
 
 // Diária de hotel por categoria — usada pra calcular o total do pacote
 // conforme categoria do hotel, tipo de quarto e quantidade de dias.
-// ATENÇÃO: valores fictícios, precisam ser confirmados/ajustados por você
-// antes de publicar (mesmo aviso que já vale pros preços fixos de
-// Caravana/Individual).
+// Calibrado com base em pesquisa de mercado (Tokyo, referência ago/2026):
+// 3 estrelas ~US$ 47–93/noite (business hotel), 4 estrelas ~US$ 100–200/noite
+// (mid-range), 5 estrelas ~US$ 300–500+/noite em propriedades de luxo de
+// verdade (ex.: Park Hyatt Tokyo, listado a partir de ~US$ 504/noite) —
+// fontes: japantripcost.com/blog/average-hotel-prices-tokyo-2026,
+// selfguidejapan.com/blog/japan-hotel-prices-2026, momondo.com (Park Hyatt
+// Tokyo). Convertido pra reais na cotação de referência (~R$ 5,15/US$) e
+// arredondado. Ainda uma média de mercado, não a diária negociada com cada
+// fornecedor específico — ajuste se tiver uma tabela de parceiros mais
+// precisa.
 const DIARIA_HOTEL: Record<(typeof CATEGORIAS_HOTEL)[number], number> = {
-  "3 estrelas": 250,
-  "4 estrelas": 400,
-  "5 estrelas": 700,
+  "3 estrelas": 400,
+  "4 estrelas": 800,
+  "5 estrelas": 2600,
 };
 
 // Fator por tipo de quarto — quarto compartilhado dilui o custo por pessoa.
@@ -731,10 +738,12 @@ export function CustomPackageCard() {
                 acima de {LIMITE_PESSOAS_SEM_TAXA})
               </p>
             )}
-            <p className="mt-1 text-[11px] leading-5 text-[#0A2540]/45">
-              Valor calculado conforme os itens selecionados acima — a Ajisai
-              confirma o preço final por consulta.
-            </p>
+            <div className="mt-3 rounded-xl border border-amber-300 bg-amber-50 px-3 py-2.5">
+              <p className="text-sm font-medium leading-5 text-amber-900">
+                Valor calculado conforme os itens selecionados acima — a
+                Ajisai confirma o preço final por consulta.
+              </p>
+            </div>
           </div>
 
           <button

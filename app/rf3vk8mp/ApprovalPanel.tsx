@@ -1195,25 +1195,45 @@ const DAY_1: DayContent = {
         gastronomia: {
           intro:
             "A Tokyo Sky Tree está integrada ao shopping Tokyo Solamachi, que reúne diversas opções de restaurantes, praça de alimentação e um mercado no subsolo com alternativas para takeout.",
-          alerta:
-            "Kaiten Sushi Toriton costuma ter fila no horário de jantar (a partir de ~18h) — chegar um pouco mais cedo ajuda a evitar espera.",
-          restaurantesLabel: "Opções de refeição",
-          restaurantes: [
+          curadoriaLabel: "Opções selecionadas — Refeição",
+          curadoria: [
             {
-              nome: "Hitsumabushi Bincho",
-              descricao: "Enguia · hitsumabushi",
-              localizacao: "6º andar",
-              preco: "~6.000",
-              horario: "11:00–21:00",
+              nome: "Hitsumabushi Nagoya Bincho",
+              papel: "Melhor custo-benefício",
+              categoria: "Hitsumabushi (enguia grelhada sobre arroz, estilo Nagoya)",
+              descricao:
+                "Rede especializada em hitsumabushi ao estilo Nagoya — enguia grelhada servida sobre arroz, tradicionalmente comida em 3 etapas diferentes (pura, com temperos, e com chá/caldo). Direto no 6º andar do Solamachi.",
               foto: "/images/Hitsumabushi.png",
+              economico: true,
+              notaTabelog: "3.47",
+              numAvaliacoes: "407 avaliações",
+              faixaPreco: "¥4.000–5.999 por pessoa",
+              distancia: "6º andar do Tokyo Solamachi",
+              foreignFriendly: "Alto — cardápio multilíngue (inglês, chinês simplificado, coreano) e equipe que atende em inglês/chinês.",
+              horario: "11h–22h (último pedido 21h)",
+              reserva: "Reservas limitadas — dias úteis 11h–20h (exceto 11h30), fins de semana/feriados só 15h–17h; sem reserva é por ordem de chegada.",
+              pagamento: "Cartão, IC card e QR code (inclusive Alipay/WeChat Pay) aceitos",
+              linkTabelog: "https://tabelog.com/en/tokyo/A1312/A131203/13141252/",
             },
             {
               nome: "Kaiten Sushi Toriton",
-              descricao: "Sushi de esteira · prático",
-              localizacao: "6º andar",
-              preco: "~6.000",
-              horario: "11:00–22:00",
+              papel: "Mais prático",
+              categoria: "Kaiten-zushi (sushi de esteira)",
+              descricao:
+                "Sushi de esteira rápido e informal, direto no 6º andar do Solamachi — boa opção para quem já andou o dia inteiro e quer algo prático sem sair do complexo.",
               foto: "/images/Toriton.png",
+              economico: true,
+              notaTabelog: "3.50",
+              numAvaliacoes: "1.154 avaliações",
+              faixaPreco: "¥3.000–4.999 no almoço · ¥4.000–5.999 no jantar",
+              distancia: "6º andar do Tokyo Solamachi",
+              foreignFriendly: "Alto — cardápio multilíngue em inglês.",
+              horario: "11h–22h (último pedido 21h30) — fechado 30/jun a 9/jul/2026 por obras",
+              reserva: "Não aceita reservas — só por ordem de chegada",
+              pagamento: "Cartão, IC card e QR code (inclusive Alipay/WeChat Pay) aceitos",
+              alerta:
+                "Costuma ter fila no jantar (a partir de ~18h) — chegar um pouco mais cedo ajuda a evitar espera.",
+              linkTabelog: "https://tabelog.com/en/tokyo/A1312/A131203/13141243/",
             },
           ],
           mapa: {
@@ -2209,9 +2229,9 @@ const DAY_3: DayContent = {
     ],
     atracaoPrincipalFoco: "center",
     mapaVisaoGeral: {
-      imagem: "/images/placeholder-em-producao.png",
-      imagemAlt: "Visão geral do trajeto a pé em Shinjuku — em produção",
-      nota: "Mapa de trajeto a pé em produção.",
+      imagem: "/images/raiox-shinjuku-gyoen.png",
+      imagemAlt: "Raio-X Alpinea de Shinjuku Gyoen com Portão Shinjuku, Portão Okido, Portão Sendagaya, Jardim Japonês, Estufa Grande, Lago Superior/Médio/Inferior e Jardim de Roseiras",
+      nota: "Visão geral do Shinjuku Gyoen, primeira parada da tarde — mais detalhes na seção Shinjuku Gyoen, logo abaixo.",
     },
     decisoes: [
       {
@@ -4191,7 +4211,7 @@ const DAY_7: DayContent = {
       comentarios: [
         "Da Ningyocho Station, a rua principal desce reta até o Suitengu, marcado pelo torii vermelho no fim do quarteirão — é o mesmo trajeto da Amazake Yokocho, com suas doçarias e izakayas, e da torre do relógio karakuri (Ningyocho Mechanic Clock) bem no meio do caminho.",
         "Nas ruas ao redor ficam santuários menores como Matsushima e Chanoki, além do Ōkannon-ji Temple — e, a leste, já dá para ver o distrito de Nihonbashi, próxima parada do trajeto financeiro de Tóquio.",
-        "Existem 5 pontos de interesse destacados abaixo, na ordem em que aparecem caminhando da Estação Ningyocho até o Suitengu — a parada final do circuito.",
+        "Existem 6 pontos de interesse destacados abaixo, na ordem em que aparecem caminhando da Estação Ningyocho até o Suitengu — a parada final do circuito.",
       ],
       pontos: [
         {
@@ -4228,6 +4248,13 @@ const DAY_7: DayContent = {
             "Torre-relógio karakuri ao lado do Suitengu, próxima a Nihonbashi-Ningyocho 2-chome — a cada hora cheia (das 11h às 19h), as cortinas se abrem e um boneco contador de rakugo narra, por 2 a 3 minutos, a história de como o bairro ganhou seu nome. A outra torre de Ningyocho, com tema dos machibikeshi (bombeiros de Edo), está temporariamente removida por causa das obras do metrô — por isso não entra como parada garantida.",
           foto: "/images/ningyocho.png",
           ordem: 5,
+        },
+        {
+          titulo: "Suitengu",
+          descricao:
+            "Santuário xintoísta fundado em 1818 pelo senhor feudal de Kurume — referência nacional em orações por parto seguro e proteção infantil. A tradição nasceu de uma faixa de barriga feita com o cordão do sino do templo, usada por uma gestante no período Edo. A estátua Kodakara Inu, de uma cadela com seu filhote, é o símbolo do santuário.",
+          foto: "/images/suitengu.webp",
+          ordem: 6,
         },
       ],
     },
@@ -4302,16 +4329,6 @@ const DAY_7: DayContent = {
       nota: "Mapa de trajeto a pé em produção.",
     },
     pois: [],
-    subAtracoes: [
-      {
-        label: "11:20–11:45",
-        titulo: "Suitengu",
-        imagem: "/images/suitengu.webp",
-        compacta: true,
-        descricao:
-          "Santuário xintoísta fundado em 1818 pelo senhor feudal de Kurume — referência nacional em orações por parto seguro e proteção infantil. A tradição nasceu de uma faixa de barriga feita com o cordão do sino do templo, usada por uma gestante no período Edo. A estátua Kodakara Inu, de uma cadela com seu filhote, é o símbolo do santuário.",
-      },
-    ],
     gastronomia: {
       subtitulo: "Almoço · 12:30–13:45",
       itens: [
@@ -5427,13 +5444,11 @@ function GastronomiaBlock({ gastronomia }: { gastronomia: Gastronomia }) {
                       alt={r.nome}
                       className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
                     />
-                    <span
-                      className={`absolute left-2 top-2 rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-white shadow ${
-                        r.economico ? "bg-emerald-600" : "bg-[#B96432]"
-                      }`}
-                    >
-                      {r.papel}
-                    </span>
+                    {r.papel.toLowerCase().includes("custo-benefício") && (
+                      <span className="absolute left-2 top-2 rounded-full bg-emerald-600 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-white shadow">
+                        {r.papel}
+                      </span>
+                    )}
                     <div className="absolute inset-0 flex items-center justify-center bg-black/0 transition duration-300 group-hover:bg-black/25">
                       <span className="flex h-8 w-8 scale-75 items-center justify-center rounded-full bg-white/90 text-[#000000] opacity-0 shadow-md transition duration-300 group-hover:scale-100 group-hover:opacity-100">
                         <IconZoom className="h-4 w-4" />
@@ -5442,12 +5457,8 @@ function GastronomiaBlock({ gastronomia }: { gastronomia: Gastronomia }) {
                   </button>
                 )}
                 <div className="flex flex-1 flex-col p-4">
-                  {!r.foto && (
-                    <span
-                      className={`mb-2 inline-block w-fit rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-white ${
-                        r.economico ? "bg-emerald-600" : "bg-[#B96432]"
-                      }`}
-                    >
+                  {!r.foto && r.papel.toLowerCase().includes("custo-benefício") && (
+                    <span className="mb-2 inline-block w-fit rounded-full bg-emerald-600 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-white">
                       {r.papel}
                     </span>
                   )}

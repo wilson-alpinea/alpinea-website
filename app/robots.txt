@@ -7,7 +7,20 @@ export default function robots(): MetadataRoute.Robots {
       allow: "/",
       // Banco de conteúdo interno e CRM (ferramentas internas dos
       // colaboradores) — não devem ser indexados nem rastreados.
-      disallow: ["/database", "/crm"],
+      //
+      // Páginas de roteiro individual (link privado por cliente, pasta com
+      // nome alfanumérico aleatório) — camada extra além do noindex/nofollow
+      // já configurado no metadata de cada página. Atualizar esta lista ao
+      // criar um novo roteiro.
+      disallow: [
+        "/database",
+        "/crm",
+        "/69u4mazc",
+        "/d8y697yq",
+        "/lpfyslh1",
+        "/rf3vk8mp",
+        "/vdz7qm2k",
+      ],
     },
 
     sitemap: "https://www.alpinea.io/sitemap.xml",
