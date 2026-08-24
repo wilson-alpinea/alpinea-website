@@ -1,12 +1,14 @@
 "use client";
 
 import {
+  useEffect,
   useRef,
   useState,
   type ReactElement,
   type WheelEvent as ReactWheelEvent,
   type PointerEvent as ReactPointerEvent,
 } from "react";
+import { createPortal } from "react-dom";
 import Image from "next/image";
 import { NaritaGuideContent } from "../components/NaritaGuideContent";
 
@@ -1341,49 +1343,49 @@ const DAY_2: DayContent = {
       passos: [
         {
           titulo: "Dragonball Store",
-          foto: "/images/dia2-tokyostation.png",
+          foto: "/images/marunouchi-dragonball-store.png",
           horario: "09:30",
           descricao: "Dentro do complexo da estação (Tokyo Station First Avenue), na Tokyo Character Street.",
         },
         {
           titulo: "Jump Shop",
-          foto: "/images/placeholder-em-producao.png",
+          foto: "/images/marunouchi-jump-shop.png",
           horario: "~09:50",
           descricao: "Loja oficial da Shueisha, na mesma Tokyo Character Street.",
         },
         {
           titulo: "Pokémon Store",
-          foto: "/images/placeholder-em-producao.png",
+          foto: "/images/marunouchi-pokemon-store.png",
           horario: "~10:05",
           descricao: "Loja oficial de Pokémon.",
         },
         {
           titulo: "Kirby Café",
-          foto: "/images/placeholder-em-producao.png",
+          foto: "/images/marunouchi-kirby-cafe.png",
           horario: "~10:20",
           descricao: "Café temático de Kirby.",
         },
         {
           titulo: "Ghibli Shop",
-          foto: "/images/placeholder-em-producao.png",
+          foto: "/images/marunouchi-ghibli-shop.png",
           horario: "~10:35",
           descricao: "Loja oficial do Studio Ghibli.",
         },
         {
           titulo: "Tomica Shop",
-          foto: "/images/placeholder-em-producao.png",
+          foto: "/images/marunouchi-tomica-shop.png",
           horario: "~10:50",
           descricao: "Loja de miniaturas Tomica.",
         },
         {
           titulo: "Rilakkuma Store",
-          foto: "/images/placeholder-em-producao.png",
+          foto: "/images/marunouchi-rilakkuma-store.png",
           horario: "~11:05",
           descricao: "Loja oficial de Rilakkuma.",
         },
         {
           titulo: "Marunouchi Naka-dori",
-          foto: "/images/placeholder-em-producao.png",
+          foto: "/images/marunouchi-naka-dori.png",
           horario: "11:30",
           descricao: "Rua arborizada com cafés e restaurantes que alimentam os escritórios financeiros da região.",
         },
@@ -1391,19 +1393,17 @@ const DAY_2: DayContent = {
     },
     visaoAnotada: {
       titulo: "Tokyo Character Street",
-      imagem: "/images/placeholder-em-producao.png",
-      imagemAlt: "Infográfico anotado da Tokyo Character Street — em produção",
-      comentarios: [
-        "Infográfico anotado desta área ainda em produção — em breve mostraremos aqui o mapa completo da Tokyo Character Street.",
-      ],
+      imagem: "/images/dia2-tokyostation.png",
+      imagemAlt: "Tokyo Station, onde fica a Tokyo Character Street",
+      simples: true,
       pontos: [
-        { titulo: "Dragonball Store", descricao: "Loja oficial de Dragon Ball.", foto: "/images/dia2-tokyostation.png", ordem: 1 },
-        { titulo: "Jump Shop", descricao: "Loja oficial da Shueisha.", foto: "/images/placeholder-em-producao.png", ordem: 2 },
-        { titulo: "Pokémon Store", descricao: "Loja oficial de Pokémon.", foto: "/images/placeholder-em-producao.png", ordem: 3 },
-        { titulo: "Kirby Café", descricao: "Café temático de Kirby.", foto: "/images/placeholder-em-producao.png", ordem: 4 },
-        { titulo: "Ghibli Shop", descricao: "Loja oficial do Studio Ghibli.", foto: "/images/placeholder-em-producao.png", ordem: 5 },
-        { titulo: "Tomica Shop", descricao: "Loja de miniaturas Tomica.", foto: "/images/placeholder-em-producao.png", ordem: 6 },
-        { titulo: "Rilakkuma Store", descricao: "Loja oficial de Rilakkuma.", foto: "/images/placeholder-em-producao.png", ordem: 7 },
+        { titulo: "Dragonball Store", descricao: "Loja oficial de Dragon Ball.", foto: "/images/marunouchi-dragonball-store.png", ordem: 1 },
+        { titulo: "Jump Shop", descricao: "Loja oficial da Shueisha.", foto: "/images/marunouchi-jump-shop.png", ordem: 2 },
+        { titulo: "Pokémon Store", descricao: "Loja oficial de Pokémon.", foto: "/images/marunouchi-pokemon-store.png", ordem: 3 },
+        { titulo: "Kirby Café", descricao: "Café temático de Kirby.", foto: "/images/marunouchi-kirby-cafe.png", ordem: 4 },
+        { titulo: "Ghibli Shop", descricao: "Loja oficial do Studio Ghibli.", foto: "/images/marunouchi-ghibli-shop.png", ordem: 5 },
+        { titulo: "Tomica Shop", descricao: "Loja de miniaturas Tomica.", foto: "/images/marunouchi-tomica-shop.png", ordem: 6 },
+        { titulo: "Rilakkuma Store", descricao: "Loja oficial de Rilakkuma.", foto: "/images/marunouchi-rilakkuma-store.png", ordem: 7 },
       ],
     },
     regiao: {
@@ -1574,31 +1574,31 @@ const DAY_2: DayContent = {
       passos: [
         {
           titulo: "Otemon Gate",
-          foto: "/images/placeholder-em-producao.png",
+          foto: "/images/imperial-palace-otemon-gate.jpg",
           horario: "13:15",
           descricao: "Antigo portão principal do Castelo de Edo — hoje a entrada principal dos jardins.",
         },
         {
           titulo: "Bansho (Casas de Guarda)",
-          foto: "/images/placeholder-em-producao.png",
+          foto: "/images/imperial-palace-bansho.jpg",
           horario: "~13:45",
           descricao: "Uma das três casas de guarda samurai que sobrevivem do Castelo de Edo.",
         },
         {
           titulo: "Muralhas e Fossos Originais",
-          foto: "/images/placeholder-em-producao.png",
+          foto: "/images/imperial-palace-muralhas.jpg",
           horario: "~14:15",
           descricao: "Trechos originais das muralhas de pedra e fossos que protegiam o Castelo de Edo.",
         },
         {
           titulo: "Fujimi-yagura",
-          foto: "/images/placeholder-em-producao.png",
+          foto: "/images/imperial-palace-fujimi-yagura.jpg",
           horario: "~14:45",
           descricao: "Torre de vigia construída em 1659 — uma das construções mais fotogênicas do local.",
         },
         {
           titulo: "Tenshudai",
-          foto: "/images/placeholder-em-producao.png",
+          foto: "/images/imperial-palace-tenshudai.jpg",
           horario: "15:15",
           descricao: "Enorme base de pedra onde ficava a torre principal do Castelo de Edo.",
         },
@@ -1677,36 +1677,50 @@ const DAY_2: DayContent = {
         description:
           "Antigo portão principal do Castelo de Edo, usado pelos daimyō em suas visitas oficiais ao shogun. Destruído em bombardeio aéreo em 1945 e reconstruído em 1967 — hoje é a entrada principal dos jardins, o primeiro ponto do passeio.",
         prioridade: "recomendado",
+        imagem: "/images/imperial-palace-otemon-gate.jpg",
+        imagemAlt: "Otemon Gate, entrada principal dos Jardins do Palácio Imperial",
       },
       {
         title: "Bansho (Casas de Guarda)",
         description:
           "Uma das três casas de guarda samurai que sobrevivem do Castelo de Edo — o Hyakunin Bansho abrigava quatro unidades de 120 guardas responsáveis pela proteção do recinto interno do castelo. Fica logo após a entrada por Otemon.",
         prioridade: "opcional",
+        imagem: "/images/imperial-palace-bansho.jpg",
+        imagemAlt: "Bansho, casa de guarda samurai do Castelo de Edo",
       },
       {
         title: "Muralhas e Fossos Originais",
         description:
           "Trechos originais das muralhas de pedra e fossos que protegiam o Castelo de Edo, preservados desde o período feudal — visíveis ao longo de todo o caminho.",
         prioridade: "opcional",
+        imagem: "/images/imperial-palace-muralhas.jpg",
+        imagemAlt: "Muralhas e fossos originais do Castelo de Edo",
       },
       {
         title: "Fujimi-yagura",
         description:
           "Torre de vigia construída em 1659, uma das poucas estruturas originais remanescentes do Castelo de Edo — depois que o incêndio de 1657 destruiu a torre principal, passou a funcionar como sua substituta simbólica. Não é possível entrar, mas dá para ver de fora, dentro dos jardins. Uma das construções mais fotogênicas do local.",
         prioridade: "recomendado",
+        imagem: "/images/imperial-palace-fujimi-yagura.jpg",
+        imagemAlt: "Fujimi-yagura, torre de vigia do Castelo de Edo",
       },
       {
         title: "Tenshudai",
         description:
           "Enorme base de pedra onde ficava a torre principal (tenshu) do Castelo de Edo — pode ser escalada, e é um dos pontos mais impressionantes dos jardins. Fica no extremo norte do complexo, o ponto mais distante da entrada — bom encerramento do passeio.",
         prioridade: "recomendado",
+        imagem: "/images/imperial-palace-tenshudai.jpg",
+        imagemAlt: "Tenshudai, base de pedra da torre principal do Castelo de Edo",
       },
     ],
     galeria: {
       titulo: "Imperial Palace East Gardens em Detalhes",
       imagens: [
-        { src: "/images/placeholder-em-producao.png", alt: "Galeria dos Jardins do Palácio Imperial — em produção", legenda: "Em produção" },
+        { src: "/images/imperial-palace-otemon-gate.jpg", alt: "Otemon Gate, entrada principal dos Jardins do Palácio Imperial", legenda: "Otemon Gate" },
+        { src: "/images/imperial-palace-bansho.jpg", alt: "Bansho, casa de guarda samurai do Castelo de Edo", legenda: "Bansho (Casas de Guarda)" },
+        { src: "/images/imperial-palace-muralhas.jpg", alt: "Muralhas e fossos originais do Castelo de Edo", legenda: "Muralhas e Fossos Originais" },
+        { src: "/images/imperial-palace-fujimi-yagura.jpg", alt: "Fujimi-yagura, torre de vigia do Castelo de Edo", legenda: "Fujimi-yagura" },
+        { src: "/images/imperial-palace-tenshudai.jpg", alt: "Tenshudai, base de pedra da torre principal do Castelo de Edo", legenda: "Tenshudai" },
       ],
     },
     banheirosProximos: [
@@ -2401,12 +2415,6 @@ const DAY_3: DayContent = {
         imagem: "/images/placeholder-em-producao.png",
         imagemAlt: "Mapa de restaurantes em Shinjuku — em produção",
       },
-    },
-    galeria: {
-      titulo: "Shinjuku em Detalhes",
-      imagens: [
-        { src: "/images/placeholder-em-producao.png", alt: "Galeria de Shinjuku — em produção", legenda: "Em produção" },
-      ],
     },
     banheirosProximos: [
       {
@@ -3213,19 +3221,19 @@ const DAY_5: DayContent = {
         },
         {
           titulo: "Sannenzaka",
-          foto: "/images/placeholder-em-producao.png",
+          foto: "/images/higashiyama-sannenzaka.jpg",
           horario: "~11:00",
           descricao: "Ladeira histórica de casas tradicionais, logo na descida a partir do templo.",
         },
         {
           titulo: "Ninenzaka",
-          foto: "/images/placeholder-em-producao.png",
+          foto: "/images/higashiyama-ninenzaka.jpg",
           horario: "~11:20",
           descricao: "Continuação de Sannenzaka, descendo rumo a Gion.",
         },
         {
           titulo: "Café % Arabica Kyoto Higashiyama",
-          foto: "/images/placeholder-em-producao.png",
+          foto: "/images/higashiyama-arabica-kyoto.jpg",
           horario: "12:00",
           descricao: "Cafeteria minimalista muito concorrida, a poucos passos da Pagode Yasaka.",
         },
@@ -3321,17 +3329,23 @@ const DAY_5: DayContent = {
         description:
           "Ladeira histórica de casas tradicionais, logo na descida a partir do templo.",
         prioridade: "recomendado",
+        imagem: "/images/higashiyama-sannenzaka.jpg",
+        imagemAlt: "Ladeira histórica de Sannenzaka, em Higashiyama",
       },
       {
         title: "Ninenzaka",
         description: "Continuação de Sannenzaka, descendo rumo a Gion.",
         prioridade: "recomendado",
+        imagem: "/images/higashiyama-ninenzaka.jpg",
+        imagemAlt: "Ladeira histórica de Ninenzaka, em Higashiyama",
       },
       {
         title: "Café % Arabica Kyoto Higashiyama",
         description:
           "Cafeteria minimalista muito concorrida, a poucos passos da Pagode Yasaka — última parada antes de seguir para Gion.",
         prioridade: "opcional",
+        imagem: "/images/higashiyama-arabica-kyoto.jpg",
+        imagemAlt: "Café % Arabica Kyoto Higashiyama",
       },
     ],
     gastronomia: {
@@ -3420,13 +3434,19 @@ const DAY_5: DayContent = {
       passos: [
         {
           titulo: "Yasaka Shrine",
-          foto: "/images/placeholder-em-producao.png",
+          foto: "/images/gion-yasaka-shrine.jpg",
           horario: "14:00",
           descricao: "Santuário xintoísta símbolo de Gion.",
         },
         {
+          titulo: "Rio Kamo",
+          foto: "/images/gion-rio-kamo.jpg",
+          horario: "~16:00",
+          descricao: "Rio que corta Gion — margem tradicional de passeio, com os restaurantes de Pontocho debruçados sobre a água.",
+        },
+        {
           titulo: "Pontocho",
-          foto: "/images/placeholder-em-producao.png",
+          foto: "/images/gion-pontocho.jpg",
           horario: "~17:00",
           descricao: "Viela tradicional de restaurantes e gueixas, às margens do rio Kamo.",
         },
@@ -3513,11 +3533,23 @@ const DAY_5: DayContent = {
         title: "Yasaka Shrine",
         description: "Santuário xintoísta símbolo de Gion.",
         prioridade: "opcional",
+        imagem: "/images/gion-yasaka-shrine.jpg",
+        imagemAlt: "Yasaka Shrine, santuário xintoísta símbolo de Gion",
+      },
+      {
+        title: "Rio Kamo",
+        description:
+          "Rio que corta Gion — margem tradicional de passeio, com os restaurantes de Pontocho debruçados sobre a água, atravessado pela Sanjo-ohashi e pela Shijo-ohashi.",
+        prioridade: "opcional",
+        imagem: "/images/gion-rio-kamo.jpg",
+        imagemAlt: "Margem do Rio Kamo em Gion, à noite",
       },
       {
         title: "Pontocho",
         description: "Viela tradicional de restaurantes e gueixas.",
         prioridade: "recomendado",
+        imagem: "/images/gion-pontocho.jpg",
+        imagemAlt: "Viela tradicional de Pontocho, em Gion",
       },
     ],
     gastronomia: {
@@ -3698,7 +3730,7 @@ const DAY_6: DayContent = {
         },
         {
           titulo: "Yotsutsuji (mirante)",
-          foto: "/images/placeholder-em-producao.png",
+          foto: "/images/fushimi-yotsutsuji.jpg",
           horario: "~09:15",
           descricao: "Ponto intermediário na subida com vista sobre Kyoto — boa opção de retorno para quem não quiser subir até o topo.",
         },
@@ -3786,7 +3818,32 @@ const DAY_6: DayContent = {
         resposta: "Não — a experiência principal (Senbon Torii) já acontece nos primeiros minutos de caminhada. Subir até o topo leva ~2h ida e volta e é opcional, recomendado só para quem gosta de trilha.",
       },
     ],
-    pois: [],
+    pois: [
+      {
+        title: "Yotsutsuji (四ツ辻)",
+        description:
+          "Cruzamento a meio caminho da subida do Monte Inari, com o mirante mais famoso do circuito depois do Senbon Torii — vista aberta sobre Kyoto entre a torii vermelha e as árvores, especialmente bonita perto do pôr do sol. É onde o trajeto se divide: seguir em frente rumo ao topo ou voltar pelo mesmo caminho.",
+        prioridade: "recomendado",
+        imagem: "/images/fushimi-yotsutsuji.jpg",
+        imagemAlt: "Vista de Kyoto ao pôr do sol através de um torii vermelho, no mirante de Yotsutsuji",
+      },
+      {
+        title: "Shin-ike / Kumataka-sha (新池・熊鷹社)",
+        description:
+          "Pequeno lago cercado pela mata densa do Monte Inari, com o santuário Kumataka-sha às margens — um respiro mais tranquilo e menos fotografado do circuito, com a vegetação refletida na água. Fica além do Yotsutsuji, para quem seguir subindo.",
+        prioridade: "opcional",
+        imagem: "/images/fushimi-shinike-kumatakasha.jpg",
+        imagemAlt: "Lago Shin-ike cercado pela floresta do Monte Inari, com o santuário Kumataka-sha à margem",
+      },
+      {
+        title: "Mitsurugisha / Chōjagamine (御剣社・長者ヶ峰)",
+        description:
+          "Santuário menor em meio à mata, um pouco mais acima na subida do Monte Inari — um dos pontos ao longo do trajeto de trilha para quem seguir além do Yotsutsuji rumo ao topo.",
+        prioridade: "opcional",
+        imagem: "/images/fushimi-mitsurugisha.jpg",
+        imagemAlt: "Pequeno santuário com torii vermelho em meio à floresta, no Monte Inari",
+      },
+    ],
     gastronomia: {
       itens: [{ nome: "Inari-zushi" }, { nome: "Kitsune Udon" }],
       curadoriaLabel: "Opções selecionadas — Almoço rápido (~11h)",
@@ -3878,13 +3935,13 @@ const DAY_6: DayContent = {
         },
         {
           titulo: "Ryoan-ji",
-          foto: "/images/placeholder-em-producao.png",
+          foto: "/images/kinkakuji-ryoanji.jpg",
           horario: "~14:30",
           descricao: "Templo zen famoso pelo jardim de pedras, poucos minutos de distância.",
         },
         {
           titulo: "Ninna-ji",
-          foto: "/images/placeholder-em-producao.png",
+          foto: "/images/kinkakuji-ninnaji.jpg",
           horario: "~15:15",
           descricao: "Templo histórico com belas cerejeiras, no mesmo circuito.",
         },
@@ -3981,24 +4038,32 @@ const DAY_6: DayContent = {
         description:
           "Templo zen famoso pelo jardim de pedras — pega o mesmo ônibus/circuito de Kinkaku-ji, poucos minutos de distância.",
         prioridade: "recomendado",
+        imagem: "/images/kinkakuji-ryoanji.jpg",
+        imagemAlt: "Jardim de pedras do templo zen Ryoan-ji, em Kyoto",
       },
       {
         title: "Ninna-ji",
         description:
           "Templo histórico com belas cerejeiras, um pouco mais além de Ryoan-ji no mesmo circuito.",
         prioridade: "opcional",
+        imagem: "/images/kinkakuji-ninnaji.jpg",
+        imagemAlt: "Templo histórico de Ninna-ji, em Kyoto",
       },
       {
         title: "Museu do Mangá de Kyoto",
         description:
           "Acervo com milhares de títulos de mangá — fica no centro de Kyoto (Karasuma-Oike), fora da rota de Kinkaku-ji: exige um deslocamento à parte (~20-30 min), não dá pra encaixar sem voltar ao centro.",
         prioridade: "opcional",
+        imagem: "/images/kyoto-manga-museum.jpg",
+        imagemAlt: "Museu do Mangá de Kyoto",
       },
       {
         title: "Nintendo Store Kyoto",
         description:
           "Loja oficial da Nintendo no Takashimaya, no centro de Kyoto — também fora da rota de Kinkaku-ji, exige o mesmo deslocamento ao centro do Museu do Mangá.",
         prioridade: "opcional",
+        imagem: "/images/nintendo-store-kyoto.jpg",
+        imagemAlt: "Nintendo Store Kyoto, no Takashimaya",
       },
     ],
     gastronomia: {
@@ -4098,7 +4163,7 @@ const DAY_7: DayContent = {
       { titulo: "Saída do Hotel", horario: "09:15", foto: "/images/icone-hotel2.png" },
       { titulo: "Passeio por Ningyocho", horario: "09:45", foto: "/images/ningyocho.png" },
       { titulo: "Almoço", horario: "12:30", foto: "/images/icone-gastronomia.png" },
-      { titulo: "Chegada ao Kokugikan", horario: "14:30", foto: "/images/draft-sumo.png" },
+      { titulo: "Chegada ao Kokugikan", horario: "14:30", foto: "/images/kokugikan-ryogoku-sumo.jpg" },
       { titulo: "Jantar com Chanko Nabe", horario: "18:00", foto: "/images/icone-gastronomia.png" },
     ],
   },
@@ -4494,7 +4559,7 @@ const DAY_7: DayContent = {
         "De Ningyocho até Ryogoku são cerca de 10 minutos: Toei Asakusa Line até Asakusabashi, com uma baldeação curta para a JR Sobu Line até Ryogoku — o Kokugikan fica a 1 minuto a pé da estação.",
     },
     atracaoPrincipal: "Ryogoku Kokugikan - Grand Sumo Tournament 2027",
-    atracaoPrincipalImagem: "/images/draft-sumo.png",
+    atracaoPrincipalImagem: "/images/kokugikan-ryogoku-sumo.jpg",
     atracaoPrincipalFoco: "center",
     detalhesPraticos: [
       { label: "Entrada geral (no dia)", valor: "A partir de ¥2.200" },
@@ -4634,7 +4699,11 @@ const DAY_7: DayContent = {
     galeria: {
       titulo: "Kokugikan em Detalhes",
       imagens: [
-        { src: "/images/placeholder-em-producao.png", alt: "Galeria do Kokugikan — em produção", legenda: "Em produção" },
+        {
+          src: "/images/kokugikan-mapa-assentos.jpg",
+          alt: "Diagrama dos tipos de assento do Kokugikan — Isu-seki (cadeiras, 2F), Tamari-seki/Suna-kaburi (primeira fileira, saída da arena) e Masuseki (cabines de almofada, 1F)",
+          legenda: "Tipos de assento: Isu-seki, Tamari-seki (Suna-kaburi) e Masuseki",
+        },
       ],
     },
     infoOperacional: {
@@ -5235,7 +5304,6 @@ function DiaEmNumerosBlock({
 }
 
 function GastronomiaBlock({ gastronomia }: { gastronomia: Gastronomia }) {
-  const [zoom, setZoom] = useState(false);
   const [zoomedFoto, setZoomedFoto] = useState<{ src: string; alt: string; endereco?: string } | null>(null);
   const temRestaurantes = gastronomia.restaurantes && gastronomia.restaurantes.length > 0;
   const temCuradoria = gastronomia.curadoria && gastronomia.curadoria.length > 0;
@@ -5274,88 +5342,6 @@ function GastronomiaBlock({ gastronomia }: { gastronomia: Gastronomia }) {
             {gastronomia.alerta}
           </p>
         </div>
-      )}
-
-      {gastronomia.itens && gastronomia.itens.length > 0 && (
-        <>
-          {gastronomia.itensLabel && (
-            <p className="mt-4 text-[11px] font-bold uppercase tracking-[0.15em] text-[#24211D]/45">
-              {gastronomia.itensLabel}
-            </p>
-          )}
-          {gastronomia.itens.some((item) => item.foto) ? (
-            <div className={`grid grid-cols-2 gap-3 sm:grid-cols-3 ${gastronomia.itensLabel ? "mt-2" : "mt-4"}`}>
-              {gastronomia.itens.map((item, i) =>
-                item.foto ? (
-                  <div
-                    key={`${item.nome}-${i}`}
-                    className="overflow-hidden rounded-2xl border border-[#DDD8CF] bg-[#FDFCF9]"
-                  >
-                    <button
-                      type="button"
-                      onClick={() =>
-                        setZoomedFoto({ src: item.foto!, alt: item.nome, endereco: item.localizacao })
-                      }
-                      className="group relative block aspect-square w-full overflow-hidden"
-                    >
-                      <img
-                        src={item.foto}
-                        alt={item.nome}
-                        className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
-                      />
-                      <div className="absolute inset-0 flex items-center justify-center bg-black/0 transition duration-300 group-hover:bg-black/25">
-                        <span className="flex h-8 w-8 scale-75 items-center justify-center rounded-full bg-white/90 text-[#000000] opacity-0 shadow-md transition duration-300 group-hover:scale-100 group-hover:opacity-100">
-                          <IconZoom className="h-4 w-4" />
-                        </span>
-                      </div>
-                    </button>
-                    <div className="p-3">
-                      <p className="text-xs font-semibold text-[#24211D]">
-                        {item.nome}
-                      </p>
-                      {item.descricao && (
-                        <p className="mt-0.5 text-[11px] leading-4 text-[#24211D]/70">
-                          {item.descricao}
-                        </p>
-                      )}
-                      {(item.localizacao || item.preco) && (
-                        <div className="mt-1.5 space-y-1 border-t border-[#DDD8CF] pt-1.5 text-[10px] leading-4 text-[#24211D]/55">
-                          {item.localizacao && <p>📍 {item.localizacao}</p>}
-                          {item.preco && <p>¥ {item.preco}</p>}
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                ) : (
-                  <div
-                    key={`${item.nome}-${i}`}
-                    className="flex flex-col justify-center rounded-2xl border border-dashed border-[#DDD8CF] bg-[#FDFCF9] p-3"
-                  >
-                    <p className="text-xs font-semibold text-[#24211D]">
-                      {item.nome}
-                    </p>
-                    {item.descricao && (
-                      <p className="mt-0.5 text-[11px] leading-4 text-[#24211D]/70">
-                        {item.descricao}
-                      </p>
-                    )}
-                  </div>
-                )
-              )}
-            </div>
-          ) : (
-            <ul className="mt-3 space-y-1.5">
-              {gastronomia.itens.map((item, i) => (
-                <li key={`${item.nome}-${i}`} className="text-sm leading-6 text-[#24211D]/85">
-                  <span className="font-semibold text-[#24211D]/95">{item.nome}</span>
-                  {item.descricao && (
-                    <span className="text-[#24211D]/75"> — {item.descricao}</span>
-                  )}
-                </li>
-              ))}
-            </ul>
-          )}
-        </>
       )}
 
       {temRestaurantes && (
@@ -5512,57 +5498,6 @@ function GastronomiaBlock({ gastronomia }: { gastronomia: Gastronomia }) {
         </>
       )}
 
-      {gastronomia.mapa ? (
-        <>
-          <button
-            type="button"
-            onClick={() => setZoom(true)}
-            className="mt-4 flex w-full items-center gap-4 rounded-2xl border border-[#BFDCF2] bg-[#EAF3FC] p-4 text-left transition hover:border-[#2C6CA6]/50"
-          >
-            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-white text-[#2C6CA6]">
-              <IconMap className="h-5 w-5" />
-            </span>
-            <span className="min-w-0">
-              <span className="block text-sm font-medium text-[#1B4A73]">
-                {gastronomia.mapa.titulo ?? "Mapa de restaurantes"}
-              </span>
-              <span className="block text-xs text-[#2C6CA6]/70">
-                Toque para ampliar
-              </span>
-            </span>
-            <span className="ml-auto shrink-0 text-lg text-[#2C6CA6]/60">
-              →
-            </span>
-          </button>
-
-          {zoom && (
-            <div
-              className="fixed inset-0 z-[100] flex items-start justify-center overflow-y-auto bg-black/85 p-4 backdrop-blur-sm sm:p-8"
-              onClick={() => setZoom(false)}
-            >
-              <button
-                type="button"
-                onClick={() => setZoom(false)}
-                className="absolute right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white transition hover:bg-white/20 sm:right-6 sm:top-6"
-                aria-label="Fechar"
-              >
-                <IconX className="h-5 w-5" />
-              </button>
-              <img
-                src={gastronomia.mapa.imagem}
-                alt={gastronomia.mapa.imagemAlt}
-                className="max-h-[90vh] max-w-[95vw] rounded-2xl object-contain"
-                onClick={(e) => e.stopPropagation()}
-              />
-            </div>
-          )}
-        </>
-      ) : (
-        <p className="mt-3 border-t border-[#DDD8CF] pt-3 text-xs leading-5 text-[#24211D]/68">
-          Mapeamento de opções de restaurantes nos arredores da atração
-          principal
-        </p>
-      )}
 
       {zoomedFoto && (
         <div
@@ -6218,6 +6153,17 @@ function ZoomableImageModal({
   const MIN_SCALE = 1;
   const MAX_SCALE = 4;
 
+  // Fecha com Esc — precisa do listener aqui porque o modal é renderizado
+  // via portal (fora da árvore normal), então o teclado não passa por um
+  // onKeyDown de container pai.
+  useEffect(() => {
+    function handleKeyDown(e: KeyboardEvent) {
+      if (e.key === "Escape") onClose();
+    }
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [onClose]);
+
   function setClampedScale(next: number) {
     const s = Math.min(MAX_SCALE, Math.max(MIN_SCALE, next));
     setScale(s);
@@ -6256,7 +6202,7 @@ function ZoomableImageModal({
     setIsDragging(false);
   }
 
-  return (
+  return createPortal(
     <div
       className="fixed inset-0 z-[100] flex flex-col items-center justify-center gap-3 bg-black/90 p-4 backdrop-blur-sm sm:p-8"
       onClick={onClose}
@@ -6332,7 +6278,8 @@ function ZoomableImageModal({
           {caption}
         </p>
       )}
-    </div>
+    </div>,
+    document.body
   );
 }
 
@@ -6424,13 +6371,11 @@ function MapaVisaoGeralBlock({
         onClick={() => setZoom(true)}
         className="group relative block w-full overflow-hidden rounded-2xl border border-[#DDD8CF]"
       >
-        <div className="relative aspect-[21/9]">
-          <img
-            src={mapa.imagem}
-            alt={mapa.imagemAlt}
-            className="absolute inset-0 h-full w-full object-cover transition duration-300 group-hover:scale-[1.02]"
-          />
-        </div>
+        <img
+          src={mapa.imagem}
+          alt={mapa.imagemAlt}
+          className="block h-auto max-h-[70vh] w-full object-contain transition duration-300 group-hover:scale-[1.02]"
+        />
         <div className="absolute inset-0 flex items-center justify-center bg-black/0 transition duration-300 group-hover:bg-black/25">
           <span className="flex h-9 w-9 scale-75 items-center justify-center rounded-full bg-white/90 text-[#000000] opacity-0 shadow-md transition duration-300 group-hover:scale-100 group-hover:opacity-100">
             <IconZoom className="h-4 w-4" />
