@@ -78,6 +78,9 @@ type RestauranteCurado = {
   linkTabelog?: string;
   // Aviso pontual — só quando genuinamente relevante (ex.: só dinheiro).
   alerta?: string;
+  // Marca a opção como econômica/budget-friendly — troca a cor do badge
+  // para verde claro, destacando-a das demais no trio.
+  economico?: boolean;
 };
 
 type Gastronomia = {
@@ -399,6 +402,10 @@ type Period = {
       | "chuva"
       | "descanso";
     itens: { local: string; endereco?: string; nota?: string }[];
+    // Quando true, o card já abre com o conteúdo visível e sem a seta de
+    // accordion — usado quando a mensagem é curta o bastante pra sempre
+    // valer a pena mostrar de cara.
+    semExpandir?: boolean;
   };
   // Horário de funcionamento loja a loja — usado sempre que o período cita
   // lojas específicas por nome no roteiro (ex.: Akihabara). Cada loja citada
@@ -891,25 +898,60 @@ const DAY_1: DayContent = {
           foto: "/images/nakamise-asakusa-menchi.jpg",
         },
       ],
-      restaurantesLabel: "Opções de refeição",
-      restaurantes: [
+      curadoriaLabel: "Opções selecionadas — Almoço (~12h30)",
+      curadoria: [
         {
-          nome: "Tanaka Soba Ten Asakusa Ten",
-          descricao: "Ramen tradicional",
-          localizacao: "1-1-8 Asakusa, Taito-ku — Saída 6 da Estação Asakusa",
+          nome: "Tanaka Soba Ten Asakusa ten",
+          papel: "Mais prático (na rota)",
+          categoria: "Chuka Soba (ramen chinês tradicional)",
+          descricao:
+            "Ramen chinês tradicional num balcão simples e rápido, a 2 min a pé da estação — clássico local, sem frescura, ideal pra comer rápido logo depois do Sensoji.",
           foto: "/images/nakamise-tanaka-soba.jpg",
+          notaTabelog: "3.51",
+          numAvaliacoes: "439 avaliações",
+          faixaPreco: "¥1.000–1.999 por pessoa",
+          distancia: "~2 min a pé da Estação Asakusa (Tobu/Metro/Toei)",
+          foreignFriendly: "Médio — sem cardápio em inglês confirmado, mas prato simples de pedir; bom para quem vai sozinho (só balcão).",
+          horario: "seg–sex 11h–15h45 e 17h–21h · fins de semana e feriados 11h–21h",
+          reserva: "Não aceita reservas — só balcão",
+          pagamento: "Somente dinheiro e IC card — não aceita cartão de crédito nem QR code",
+          linkTabelog: "https://tabelog.com/en/tokyo/A1311/A131102/13224895/",
+          economico: true,
         },
         {
-          nome: "Sushi Zanmai Asakusa Kaminari Mon Ten",
-          descricao: "Sushi de balcão",
-          localizacao: "1-3-6 Asakusa, Taito-ku — ~50 m do Kaminarimon",
+          nome: "Sushi Zanmai Asakusa Kaminari Mon ten",
+          papel: "Melhor custo-benefício",
+          categoria: "Sushi (rede nacional, do leilão recorde de atum)",
+          descricao:
+            "Rede famosa pelo lance recorde no leilão de ano-novo do mercado de peixes — sushi tradicional (balcão ou mesa, não é esteira), com preço de almoço surpreendentemente acessível.",
           foto: "/images/nakamise-sushi-zanmai.jpg",
+          notaTabelog: "3.08",
+          numAvaliacoes: "179 avaliações",
+          faixaPreco: "¥1.000–1.999 no almoço (jantar sai mais caro — ¥3.000–3.999)",
+          distancia: "~1 min a pé da Estação Asakusa (Tokyo Metro Ginza Line)",
+          foreignFriendly: "Alto — reserva online, cardápio multilíngue (inglês, chinês, coreano), ampla gama de pagamentos.",
+          horario: "seg–sex 11h–22h · fins de semana e feriados 10h–22h (último pedido 21h30)",
+          reserva: "Recomendada — reserva online",
+          pagamento: "Cartão, IC card e QR code (inclusive Alipay/WeChat Pay) aceitos",
+          linkTabelog: "https://tabelog.com/en/tokyo/A1311/A131102/13130042/",
+          economico: true,
         },
         {
           nome: "Asakusa Amai",
-          descricao: "Tempura",
-          localizacao: "1-20-7 Asakusa, Taito-ku",
+          papel: "Experiência mais especial",
+          categoria: "Tempura",
+          descricao:
+            "Tempura à mesa num salão mais tranquilo, com cardápio multilíngue — opção de refeição mais completa e sentada entre as três, ideal pra quem prefere não comer no balcão.",
           foto: "/images/nakamise-asakusa-amai-tempura.jpg",
+          notaTabelog: "3.44",
+          numAvaliacoes: "211 avaliações",
+          faixaPreco: "¥1.000–1.999 no almoço (jantar ¥4.000–4.999)",
+          distancia: "~3 min a pé da Estação Asakusa (Tobu Isesaki Line)",
+          foreignFriendly: "Alto — cardápio multilíngue (inglês) confirmado.",
+          horario: "seg–sex 11h30–14h30 e 17h30–21h · fins de semana 11h30–15h e 17h30–21h",
+          reserva: "Aceita reserva só para o jantar — almoço é só por ordem de chegada",
+          pagamento: "Cartão (Visa, Master, JCB, Amex, Diners) e IC card aceitos — sem QR code",
+          linkTabelog: "https://tabelog.com/en/tokyo/A1311/A131102/13245561/",
         },
       ],
     },
@@ -1439,6 +1481,7 @@ const DAY_2: DayContent = {
           descricao:
             "Ramen de caldo de niboshi (sardinha-seca), casa premiada — a 5 min a pé da Saída Norte de Marunouchi da Tokyo Station.",
           foto: "/images/niboshi-sugidama.png",
+          economico: true,
           notaTabelog: "3.64",
           numAvaliacoes: "634 avaliações",
           faixaPreco: "¥1.000–1.999 no almoço",
@@ -1475,6 +1518,7 @@ const DAY_2: DayContent = {
           descricao:
             "Combinação clássica de soba com tempura na hora, cardápio multilíngue (inglês) — opção rápida e leve antes dos Jardins do Palácio Imperial.",
           foto: "/images/soba-tempura-ishiraku.png",
+          economico: true,
           notaTabelog: "3.40",
           numAvaliacoes: "154 avaliações",
           faixaPreco: "¥1.000–1.999 no almoço",
@@ -1495,6 +1539,7 @@ const DAY_2: DayContent = {
     infoOperacional: {
       titulo: "Como Chegar ao First Avenue",
       icone: "entrada",
+      semExpandir: true,
       itens: [
         {
           local: "Saída Yaesu Central Gate (subsolo)",
@@ -1971,6 +2016,7 @@ const DAY_3: DayContent = {
           linkTabelog: "https://tabelog.com/en/tokyo/A1306/A130601/13001284/",
           alerta:
             "Só dinheiro e sem reserva — leve ienes em espécie e conte com um tempo de espera na fila.",
+          economico: true,
         },
         {
           nome: "Yakiniku Ushigoro Omotesando ten",
@@ -1979,6 +2025,7 @@ const DAY_3: DayContent = {
           descricao:
             "Cortes selecionados de wagyu grelhados na própria mesa, com menu de almoço muito mais em conta que o jantar — selecionado para o Tabelog 100 de Yakiniku 2022–2025.",
           foto: "/images/yakiniku-ushigoro-omotesando.png",
+          economico: true,
           notaTabelog: "3.62",
           numAvaliacoes: "1.306 avaliações",
           faixaPreco: "¥3.000–3.999 no almoço",
@@ -2188,6 +2235,7 @@ const DAY_3: DayContent = {
         prioridade: "recomendado",
         imagem: "/images/tokyo-metropolitan-government-building.png",
         imagemAlt: "Vista de baixo das torres gêmeas do Prédio do Governo Metropolitano de Tóquio",
+        imagemPosicao: "top",
       },
       {
         title: "Gato 3D Gigante",
@@ -2220,6 +2268,7 @@ const DAY_3: DayContent = {
         prioridade: "imperdivel",
         imagem: "/images/golden-gai.png",
         imagemAlt: "Viela estreita do Golden Gai à noite, com lanternas e placas iluminadas dos bares",
+        imagemPosicao: "top",
       },
       {
         title: "Onsen Thermae-Yu",
@@ -2287,11 +2336,12 @@ const DAY_3: DayContent = {
         },
         {
           nome: "Nakizakana Shinjuku ten hanare",
-          papel: "Experiência mais especial (frutos do mar)",
+          papel: "Experiência mais especial",
           categoria: "Izakaya de frutos do mar",
           descricao:
             "Peixe fresco entregue diariamente por pescadores parceiros, com vários modos de preparo à escolha — foge do padrão carne/ramen dos outros dois dias já preenchidos.",
           foto: "/images/nakizakana-shinjuku.png",
+          economico: true,
           notaTabelog: "3.57",
           numAvaliacoes: "815 avaliações",
           faixaPreco: "¥5.000–7.999 no jantar",
@@ -2307,11 +2357,12 @@ const DAY_3: DayContent = {
         },
         {
           nome: "Sugoi Niboshi Ramen Nagi — Golden Gai honkan",
-          papel: "Mais prático (direto no Golden Gai)",
+          papel: "Mais prático",
           categoria: "Ramen (niboshi/sardinha-seca)",
           descricao:
             "A loja original da rede Nagi, dentro do próprio Golden Gai — casa de nascimento do ramen de niboshi que deu fama internacional à marca.",
           foto: "/images/sugoi-niboshi-ramen-nagi.png",
+          economico: true,
           notaTabelog: "3.64",
           numAvaliacoes: "3.485 avaliações",
           faixaPreco: "¥1.000–1.999 por pessoa",
@@ -3273,11 +3324,12 @@ const DAY_5: DayContent = {
       curadoria: [
         {
           nome: "Kiyomizu Junsei Okabeya",
-          papel: "Mais prático (na saída do templo)",
+          papel: "Mais prático",
           categoria: "Tofu dengaku (tradicional desde 1902)",
           descricao:
             "Casa histórica de tofu dengaku bem em frente ao Kiyomizu-dera — cardápio multilíngue, ideal pra fazer a pausa assim que descer do templo.",
           foto: "/images/kiyomizu-junsei-okabeya.png",
+          economico: true,
           notaTabelog: "3.41",
           numAvaliacoes: "289 avaliações",
           faixaPreco: "¥2.000–3.999 por pessoa",
@@ -3295,6 +3347,7 @@ const DAY_5: DayContent = {
           descricao:
             "Especializada em sobremesas de matcha, com terraço aberto — direto na descida de Sannenzaka, sem precisar sair do caminho.",
           foto: "/images/maccha-house-sannenzaka.png",
+          economico: true,
           notaTabelog: "3.43",
           numAvaliacoes: "182 avaliações",
           faixaPreco: "¥1.000–1.999 por pessoa",
@@ -3458,6 +3511,7 @@ const DAY_5: DayContent = {
           descricao:
             "Mais de 100 anos de tradição em cozinha de tofu e obanzai caseiro, direto em Pontocho — equipe multilíngue (inglês).",
           foto: "/images/toobanzai-mamehachi-pontocho.png",
+          economico: true,
           notaTabelog: "3.43",
           numAvaliacoes: "257 avaliações",
           faixaPreco: "¥3.000–4.999 no jantar",
@@ -3470,11 +3524,12 @@ const DAY_5: DayContent = {
         },
         {
           nome: "Pontocho Suishin Honten",
-          papel: "Mais prático (ambiente tradicional)",
+          papel: "Mais prático",
           categoria: "Obanzai e vegetais de Kyoto",
           descricao:
             "Pratos de vegetais de Kyoto e obanzai numa machiya tradicional — casa grande (105 lugares), boa opção pra grupo sem espera.",
           foto: "/images/pontocho-suishin-honten.png",
+          economico: true,
           notaTabelog: "3.31",
           numAvaliacoes: "143 avaliações",
           faixaPreco: "¥5.000–7.999 no jantar",
@@ -3739,6 +3794,7 @@ const DAY_6: DayContent = {
           descricao:
             "Udon feito à mão na hora, com o clássico kitsune (tofu frito) — casa pequena e simples, a poucos minutos a pé do santuário.",
           foto: "/images/kendon-ya-fushimi.png",
+          economico: true,
           notaTabelog: "3.53",
           numAvaliacoes: "313 avaliações",
           faixaPreco: "Até ¥999–1.999",
@@ -3755,6 +3811,7 @@ const DAY_6: DayContent = {
           descricao:
             "Inari-zushi portátil com gergelim e bardana, ideal para comer andando pelo corredor de torii — também serve codorna grelhada.",
           foto: "/images/inafuku-fushimi.png",
+          economico: true,
           notaTabelog: "3.34",
           numAvaliacoes: "183 avaliações",
           faixaPreco: "¥1.000–1.999",
@@ -3951,6 +4008,7 @@ const DAY_6: DayContent = {
           descricao:
             "Opção mais em conta da região para unagi-don, na mesma área de Kitano Hakubaicho — perto do Kinkaku-ji.",
           foto: "/images/masakatsu-kinkakuji.png",
+          economico: true,
           notaTabelog: "3.08",
           numAvaliacoes: "25 avaliações",
           faixaPreco: "¥1.000–1.999",
@@ -3962,11 +4020,12 @@ const DAY_6: DayContent = {
         },
         {
           nome: "Unagi no Naruse — Kinkaku-ji-ten (鰻の成瀬 金閣寺店)",
-          papel: "Opção diferente (rede especializada)",
+          papel: "Opção diferente",
           categoria: "Unagi (rede nacional especializada, unadon a partir de ¥1.600)",
           descricao:
             "Filial (aberta em mar/2026) da maior rede especializada em unagi do Japão, com mais de 150 lojas — padrão de qualidade consistente a preço mais baixo que a média. Bem perto do Kinkaku-ji.",
           foto: "/images/unagi-naruse-kinkakuji.png",
+          economico: true,
           faixaPreco: "A partir de ¥1.600 (unadon)",
           distancia: "Próximo ao Kinkaku-ji (Kinugasa-kaido)",
           foreignFriendly: "Não confirmado — loja nova, recomendamos confirmar cardápio/atendimento em inglês antes de ir.",
@@ -4132,6 +4191,44 @@ const DAY_7: DayContent = {
       comentarios: [
         "Da Ningyocho Station, a rua principal desce reta até o Suitengu, marcado pelo torii vermelho no fim do quarteirão — é o mesmo trajeto da Amazake Yokocho, com suas doçarias e izakayas, e da torre do relógio karakuri (Ningyocho Mechanic Clock) bem no meio do caminho.",
         "Nas ruas ao redor ficam santuários menores como Matsushima e Chanoki, além do Ōkannon-ji Temple — e, a leste, já dá para ver o distrito de Nihonbashi, próxima parada do trajeto financeiro de Tóquio.",
+        "Existem 5 pontos de interesse destacados abaixo, na ordem em que aparecem caminhando da Estação Ningyocho até o Suitengu — a parada final do circuito.",
+      ],
+      pontos: [
+        {
+          titulo: "Shigemori Eishindo",
+          descricao:
+            "Fundada em 1917, é a casa mais tradicional de ningyoyaki de Ningyocho — bolinhos fofos em formato de rosto ou dos sete deuses da sorte, recheados de pasta de feijão azuki. Vende em média 3 mil unidades por dia, chegando a 10 mil em dias de pico.",
+          foto: "/images/ningyoyaki.jpg",
+          ordem: 1,
+        },
+        {
+          titulo: "Início da Amazake Yokocho",
+          descricao:
+            "Viela de cerca de 400 metros que leva até o Teatro Meiji-za, batizada em homenagem a uma loja de amazake (saquê doce) que ficava na entrada, no início da era Meiji. Sobreviveu ao Grande Terremoto de Kanto e reúne até hoje doçarias, izakayas e lojas de artesanato tradicionais.",
+          foto: "/images/amazake-yokocho.webp",
+          ordem: 2,
+        },
+        {
+          titulo: "Toritada",
+          descricao:
+            "Avícola fundada em 1911, tradicional em Amazake Yokocho — trabalha com as três principais raças de frango do Japão e pato fresco. Seu tamagoyaki (omelete enrolada) é o item mais pedido, famoso por durar bem e virar lembrancinha.",
+          foto: "/images/toritada.png",
+          ordem: 3,
+        },
+        {
+          titulo: "Hikokuro",
+          descricao:
+            "Gyokueido Hikokuro, casa de doces japoneses fundada em 1576 em Kyoto, com filial em Nihonbashi desde 1954. Marcas registradas: o torayaki, massa fofa recheada com feijão azuki graúdo de Hokkaido, e a warabi mochi, elástica e macia, finalizada com kinako (farinha de soja torrada).",
+          foto: "/images/gyokueido-hikokuro.png",
+          ordem: 4,
+        },
+        {
+          titulo: "Edo Rakugo Karakuri Yagura",
+          descricao:
+            "Torre-relógio karakuri ao lado do Suitengu, próxima a Nihonbashi-Ningyocho 2-chome — a cada hora cheia (das 11h às 19h), as cortinas se abrem e um boneco contador de rakugo narra, por 2 a 3 minutos, a história de como o bairro ganhou seu nome. A outra torre de Ningyocho, com tema dos machibikeshi (bombeiros de Edo), está temporariamente removida por causa das obras do metrô — por isso não entra como parada garantida.",
+          foto: "/images/ningyocho.png",
+          ordem: 5,
+        },
       ],
     },
     regiao: {
@@ -4207,46 +4304,6 @@ const DAY_7: DayContent = {
     pois: [],
     subAtracoes: [
       {
-        label: "09:50",
-        titulo: "Shigemori Eishindo",
-        imagem: "/images/ningyoyaki.jpg",
-        compacta: true,
-        descricao:
-          "Fundada em 1917, é a casa mais tradicional de ningyoyaki de Ningyocho — bolinhos fofos em formato de rosto ou dos sete deuses da sorte, recheados de pasta de feijão azuki. Vende em média 3 mil unidades por dia, chegando a 10 mil em dias de pico.",
-      },
-      {
-        label: "10:10",
-        titulo: "Início da Amazake Yokocho",
-        imagem: "/images/amazake-yokocho.webp",
-        compacta: true,
-        descricao:
-          "Viela de cerca de 400 metros que leva até o Teatro Meiji-za, batizada em homenagem a uma loja de amazake (saquê doce) que ficava na entrada, no início da era Meiji. Sobreviveu ao Grande Terremoto de Kanto e reúne até hoje doçarias, izakayas e lojas de artesanato tradicionais.",
-      },
-      {
-        label: "10:15",
-        titulo: "Toritada",
-        imagem: "/images/toritada.png",
-        compacta: true,
-        descricao:
-          "Avícola fundada em 1911, tradicional em Amazake Yokocho — trabalha com as três principais raças de frango do Japão e pato fresco. Seu tamagoyaki (omelete enrolada) é o item mais pedido, famoso por durar bem e virar lembrancinha.",
-      },
-      {
-        label: "10:35",
-        titulo: "Hikokuro",
-        imagem: "/images/gyokueido-hikokuro.png",
-        compacta: true,
-        descricao:
-          "Gyokueido Hikokuro, casa de doces japoneses fundada em 1576 em Kyoto, com filial em Nihonbashi desde 1954. Marcas registradas: o torayaki, massa fofa recheada com feijão azuki graúdo de Hokkaido, e a warabi mochi, elástica e macia, finalizada com kinako (farinha de soja torrada).",
-      },
-      {
-        label: "11:00",
-        titulo: "Edo Rakugo Karakuri Yagura",
-        imagem: "/images/ningyocho.png",
-        compacta: true,
-        descricao:
-          "Torre-relógio karakuri ao lado do Suitengu, próxima a Nihonbashi-Ningyocho 2-chome — a cada hora cheia (das 11h às 19h), as cortinas se abrem e um boneco contador de rakugo narra, por 2 a 3 minutos, a história de como o bairro ganhou seu nome. A outra torre de Ningyocho, com tema dos machibikeshi (bombeiros de Edo), está temporariamente removida por causa das obras do metrô — por isso não entra como parada garantida.",
-      },
-      {
         label: "11:20–11:45",
         titulo: "Suitengu",
         imagem: "/images/suitengu.webp",
@@ -4291,6 +4348,7 @@ const DAY_7: DayContent = {
           descricao:
             "Casa tradicional de yakitori famosa pelo \"yakitori-jū\" — arroz coberto de frango grelhado glaceado, ótimo para viagem.",
           foto: "/images/ogawa-ningyocho.png",
+          economico: true,
           notaTabelog: "3.69",
           numAvaliacoes: "1.429 avaliações",
           faixaPreco: "¥1.000–1.999 no almoço",
@@ -4303,11 +4361,12 @@ const DAY_7: DayContent = {
         },
         {
           nome: "Yoshoku Koharuken (洋食 小春軒)",
-          papel: "Mais prático (sem fila garantida)",
+          papel: "Mais prático",
           categoria: "Yoshoku (cozinha ocidental à japonesa) — Katsudon",
           descricao:
             "Casa centenária de yoshoku, famosa pelo katsudon exclusivo da casa — selecionada duas vezes entre os 100 melhores yoshoku do Tabelog.",
           foto: "/images/yoshoku-koharuken.png",
+          economico: true,
           notaTabelog: "3.49",
           numAvaliacoes: "1.149 avaliações",
           faixaPreco: "¥1.000–1.999",
@@ -4521,6 +4580,7 @@ const DAY_7: DayContent = {
           descricao:
             "Chanko nabe autêntico, receita passada por um estábulo (heya) de sumô — a um passo da Estação Ryogoku, aberta todos os dias.",
           foto: "/images/ami-ryogoku.png",
+          economico: true,
           notaTabelog: "3.47",
           numAvaliacoes: "513 avaliações",
           faixaPreco: "¥1.000–1.999 no almoço / a partir de ¥6.000 no jantar em grupo — pratos avulsos ficam abaixo disso",
@@ -4537,6 +4597,7 @@ const DAY_7: DayContent = {
           descricao:
             "Nove variedades de chanko nabe com ingredientes frescos direto do mercado de Toyosu — a 1 min a pé da Estação Ryogoku.",
           foto: "/images/chanko-dojo-honten.png",
+          economico: true,
           notaTabelog: "3.35",
           numAvaliacoes: "127 avaliações",
           faixaPreco: "¥1.000–1.999 no almoço / ¥4.000–4.999 no jantar",
@@ -4955,12 +5016,13 @@ function InfoOperacionalBlock({
 }: {
   info: NonNullable<Period["infoOperacional"]>;
 }) {
-  const [aberto, setAberto] = useState(false);
+  const [abertoState, setAberto] = useState(false);
   const Icon = INFO_OPERACIONAL_ICONS[info.icone];
   // Cards de "regras" carregam risco real (multa, restrição) — destacados em
   // vermelho, diferente dos demais temas (acessibilidade, bagagem etc.), que
   // seguem o laranja neutro padrão.
   const isRegra = info.icone === "regras";
+  const aberto = info.semExpandir || abertoState;
 
   return (
     <div
@@ -4968,31 +5030,42 @@ function InfoOperacionalBlock({
         isRegra ? "border-red-200 bg-red-50/60" : "border-orange-200 bg-orange-50/60"
       }`}
     >
-      <button
-        type="button"
-        onClick={() => setAberto((v) => !v)}
-        className="flex w-full items-center gap-4 p-5 text-left sm:p-7"
-      >
-        <Icon
-          className={`h-24 w-24 shrink-0 ${isRegra ? "text-red-600" : "text-[#000000]"}`}
-        />
-        <span className="min-w-0 flex-1 text-base font-bold uppercase tracking-[0.2em] text-[#24211D]/70 sm:text-lg">
-          {info.titulo}
-        </span>
-        <svg
-          viewBox="0 0 24 24"
-          className={`h-4 w-4 shrink-0 text-[#24211D]/45 transition-transform duration-200 ${
-            aberto ? "rotate-180" : ""
-          }`}
-          fill="none"
-          stroke="currentColor"
-          strokeWidth={2}
-          strokeLinecap="round"
-          strokeLinejoin="round"
+      {info.semExpandir ? (
+        <div className="flex w-full items-center gap-4 p-5 text-left sm:p-7">
+          <Icon
+            className={`h-20 w-20 shrink-0 ${isRegra ? "text-red-600" : "text-[#000000]"}`}
+          />
+          <span className="min-w-0 flex-1 text-base font-bold uppercase tracking-[0.2em] text-[#24211D]/70 sm:text-lg">
+            {info.titulo}
+          </span>
+        </div>
+      ) : (
+        <button
+          type="button"
+          onClick={() => setAberto((v) => !v)}
+          className="flex w-full items-center gap-4 p-5 text-left sm:p-7"
         >
-          <path d="M6 9l6 6 6-6" />
-        </svg>
-      </button>
+          <Icon
+            className={`h-20 w-20 shrink-0 ${isRegra ? "text-red-600" : "text-[#000000]"}`}
+          />
+          <span className="min-w-0 flex-1 text-base font-bold uppercase tracking-[0.2em] text-[#24211D]/70 sm:text-lg">
+            {info.titulo}
+          </span>
+          <svg
+            viewBox="0 0 24 24"
+            className={`h-4 w-4 shrink-0 text-[#24211D]/45 transition-transform duration-200 ${
+              aberto ? "rotate-180" : ""
+            }`}
+            fill="none"
+            stroke="currentColor"
+            strokeWidth={2}
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <path d="M6 9l6 6 6-6" />
+          </svg>
+        </button>
+      )}
       {aberto && (
         <div className="space-y-3.5 px-5 pb-5">
           {info.itens.map((b, i) => (
@@ -5335,7 +5408,11 @@ function GastronomiaBlock({ gastronomia }: { gastronomia: Gastronomia }) {
             {gastronomia.curadoria!.map((r) => (
               <div
                 key={r.nome}
-                className="flex flex-col overflow-hidden rounded-2xl border border-[#DDD8CF] bg-[#FDFCF9]"
+                className={`flex flex-col overflow-hidden rounded-2xl border ${
+                  r.economico
+                    ? "border-emerald-200 bg-emerald-50/40"
+                    : "border-[#DDD8CF] bg-[#FDFCF9]"
+                }`}
               >
                 {r.foto && (
                   <button
@@ -5350,7 +5427,11 @@ function GastronomiaBlock({ gastronomia }: { gastronomia: Gastronomia }) {
                       alt={r.nome}
                       className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
                     />
-                    <span className="absolute left-2 top-2 rounded-full bg-[#B96432] px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-white shadow">
+                    <span
+                      className={`absolute left-2 top-2 rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-white shadow ${
+                        r.economico ? "bg-emerald-600" : "bg-[#B96432]"
+                      }`}
+                    >
                       {r.papel}
                     </span>
                     <div className="absolute inset-0 flex items-center justify-center bg-black/0 transition duration-300 group-hover:bg-black/25">
@@ -5362,7 +5443,11 @@ function GastronomiaBlock({ gastronomia }: { gastronomia: Gastronomia }) {
                 )}
                 <div className="flex flex-1 flex-col p-4">
                   {!r.foto && (
-                    <span className="mb-2 inline-block w-fit rounded-full bg-[#B96432] px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-white">
+                    <span
+                      className={`mb-2 inline-block w-fit rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-white ${
+                        r.economico ? "bg-emerald-600" : "bg-[#B96432]"
+                      }`}
+                    >
                       {r.papel}
                     </span>
                   )}
