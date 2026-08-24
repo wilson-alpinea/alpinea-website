@@ -1640,6 +1640,8 @@ const DAY_3: DayContent = {
         nome: "Estação Kyobashi",
         nomeJapones: "京橋駅",
         distancia: "~1 min a pé do hotel",
+        saida: "Saída 6",
+        foto: "/images/Kyobashi_Station_entrance_7_20170813.jpg",
       },
       linha: { codigo: "G10", nome: "Tokyo Metro Ginza Line", cor: "#F39700", logo: "/images/tokyometro-mark.png" },
       estacoesIntermediarias: [
@@ -1651,7 +1653,11 @@ const DAY_3: DayContent = {
         { nome: "Aoyama-itchome", nomeJapones: "青山一丁目", numero: "G04" },
         { nome: "Gaiemmae", nomeJapones: "外苑前", numero: "G03" },
       ],
-      estacaoDestino: { nome: "Estação Omotesando", nomeJapones: "表参道駅" },
+      estacaoDestino: {
+        nome: "Estação Omotesando",
+        nomeJapones: "表参道駅",
+        saida: "Saída A2 (Omotesando Hills)",
+      },
       opcoes: [
         {
           meio: "Metrô",
@@ -1805,13 +1811,21 @@ const DAY_3: DayContent = {
         "Bairro que reúne o maior terminal ferroviário do mundo, arranha-céus corporativos, o distrito de entretenimento de Kabukicho e algumas das vielas mais icônicas de Tóquio — um contraste denso entre o Japão corporativo e o mais boêmio.",
     },
     deslocamento: {
-      estacaoOrigem: { nome: "Estação Shibuya", nomeJapones: "渋谷駅" },
+      estacaoOrigem: {
+        nome: "Estação Shibuya",
+        nomeJapones: "渋谷駅",
+        saida: "Catraca Hachiko",
+      },
       linha: { codigo: "JY", nome: "JR Yamanote Line", cor: "#8FAADC", logo: "/images/jr-logo.webp" },
       estacoesIntermediarias: [
         { nome: "Harajuku", nomeJapones: "原宿", numero: "JY19" },
         { nome: "Yoyogi", nomeJapones: "代々木", numero: "JY18" },
       ],
-      estacaoDestino: { nome: "Estação Shinjuku", nomeJapones: "新宿駅" },
+      estacaoDestino: {
+        nome: "Estação Shinjuku",
+        nomeJapones: "新宿駅",
+        saida: "Saída Sul Nova (New South Exit)",
+      },
       opcoes: [
         {
           meio: "Trem JR",
@@ -2355,6 +2369,7 @@ const DAY_4: DayContent = {
           estacaoDestino: {
             nome: "Estação Kanda",
             nomeJapones: "神田駅",
+            saida: "Saída Oeste (Nishiguchi)",
             foto: "/images/kanda-station.png",
             mapa: "/images/kanda-station-map.png",
             mapaAlt: "Mapa da Estação Kanda (1F e 2F)",
@@ -2445,6 +2460,7 @@ const DAY_4: DayContent = {
           estacaoDestino: {
             nome: "Estação Roppongi",
             nomeJapones: "六本木駅",
+            saida: "Saída 7",
             foto: "/images/roppongi-station.png",
             mapa: "/images/roppongi-station-map.png",
             mapaAlt: "Mapa da Estação Roppongi (Hibiya Line e Toei Oedo Line)",
@@ -3007,7 +3023,11 @@ const DAY_6: DayContent = {
       },
       linha: { codigo: "JR", nome: "JR Nara Line", cor: "#00A650", logo: "/images/jr-logo.webp" },
       estacoesIntermediarias: [{ nome: "Tofukuji", nomeJapones: "東福寺", numero: "D02" }],
-      estacaoDestino: { nome: "Estação Inari", nomeJapones: "稲荷駅" },
+      estacaoDestino: {
+        nome: "Estação Inari",
+        nomeJapones: "稲荷駅",
+        saida: "Saída única",
+      },
       opcoes: [
         {
           meio: "Trem JR",
@@ -3359,10 +3379,15 @@ const DAY_7: DayContent = {
         nome: "Estação Takaracho",
         nomeJapones: "宝町駅",
         distancia: "~1 min a pé do remm Tokyo Kyobashi",
+        saida: "Saída A7",
       },
       linha: { codigo: "A12", nome: "Toei Asakusa Line", cor: "#D04E3C", logo: "/images/toei-mark.png" },
       estacoesIntermediarias: [{ nome: "Nihombashi", nomeJapones: "日本橋", numero: "A13" }],
-      estacaoDestino: { nome: "Estação Ningyocho", nomeJapones: "人形町駅" },
+      estacaoDestino: {
+        nome: "Estação Ningyocho",
+        nomeJapones: "人形町駅",
+        saida: "Saída A2",
+      },
       opcoes: [
         {
           meio: "Metrô",
@@ -3514,8 +3539,13 @@ const DAY_7: DayContent = {
     deslocamento: {
       estacaoOrigem: { nome: "Estação Ningyocho", nomeJapones: "人形町駅" },
       linha: { codigo: "A14", nome: "Toei Asakusa Line", cor: "#D04E3C", logo: "/images/toei-mark.png" },
+      estacoesIntermediarias: [{ nome: "Asakusabashi", nomeJapones: "浅草橋", numero: "A16" }],
       baldeacao: true,
-      estacaoDestino: { nome: "Estação Ryogoku", nomeJapones: "両国駅" },
+      estacaoDestino: {
+        nome: "Estação Ryogoku",
+        nomeJapones: "両国駅",
+        saida: "Saída Oeste (Nishi-guchi)",
+      },
       opcoes: [
         {
           meio: "Metrô + JR",
