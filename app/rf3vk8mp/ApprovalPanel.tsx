@@ -3501,7 +3501,7 @@ const DAY_5: DayContent = {
         "Kiyomizu-dera e Gion são vizinhos — a caminhada de 15 a 20 minutos por Sannenzaka e Ninenzaka é parte da experiência, com lojas e casas de chá tradicionais no caminho.",
     },
     atracaoPrincipal: "Distrito de Gion",
-    atracaoPrincipalImagem: "/images/dia5-gion-v2.png",
+    atracaoPrincipalImagem: "/images/dia5-gion-v3.jpg",
     detalhesPraticos: [
       { label: "Yasaka Shrine", valor: "Entrada gratuita, aberto 24h" },
       { label: "Pontocho", valor: "Restaurantes abrem a partir das 17h–18h" },
@@ -6669,12 +6669,16 @@ function GaleriaBlock({
         {galeria.imagens.map((img, i) => (
           <div
             key={img.src}
-            className="flex flex-col overflow-hidden rounded-2xl border border-[#DDD8CF] bg-[#FDFCF9]"
+            className={`flex flex-col overflow-hidden rounded-2xl border border-[#DDD8CF] bg-[#FDFCF9] ${
+              galeria.imagens.length === 1 ? "sm:col-span-2" : ""
+            }`}
           >
             <button
               type="button"
               onClick={() => setZoom({ src: img.src, alt: img.alt })}
-              className="group relative block aspect-[4/3] w-full shrink-0 overflow-hidden"
+              className={`group relative block w-full shrink-0 overflow-hidden ${
+                galeria.imagens.length === 1 ? "aspect-[16/9]" : "aspect-[4/3]"
+              }`}
             >
               <img
                 src={img.src}
@@ -6687,9 +6691,11 @@ function GaleriaBlock({
                   <IconZoom className="h-4 w-4" />
                 </span>
               </div>
-              <span className="absolute left-3 top-3 flex h-8 w-8 items-center justify-center rounded-full bg-black text-sm font-bold text-white shadow-md ring-2 ring-white/70">
-                {i + 1}
-              </span>
+              {galeria.imagens.length > 1 && (
+                <span className="absolute left-3 top-3 flex h-8 w-8 items-center justify-center rounded-full bg-black text-sm font-bold text-white shadow-md ring-2 ring-white/70">
+                  {i + 1}
+                </span>
+              )}
             </button>
             {img.legenda && (
               <div className="p-5">
@@ -8005,6 +8011,7 @@ const HOTEIS: HotelInfo[] = [
   {
     cidade: "Kyoto",
     nome: "Daiwa Roynet Hotel Kyoto-Ekimae PREMIER",
+    fotoHero: "/images/daiwa-roynet-fotohero.jpg",
     bairro: "Karasuma-guchi, em frente à Kyoto Station",
     endereco: "707-2 Higashishiokojicho, Karasuma-dori, Shimogyo-ku, Kyoto 600-8216",
     enderecoJapones: "〒600-8216 京都府京都市下京区東塩小路町707-2",
@@ -8062,14 +8069,16 @@ const HOTEIS: HotelInfo[] = [
       },
     ],
     mapa: {
-      imagem: "/images/daiwa-roynet-fachada-real.png",
-      imagemAlt: "Fachada do Daiwa Roynet Hotel Kyoto-Ekimae PREMIER",
+      imagem: "/images/daiwa-roynet-mapa-arredores.jpg",
+      imagemAlt: "Mapa dos arredores do Daiwa Roynet Hotel Kyoto-Ekimae PREMIER, com Honoka Pharmacy, LAWSON Kyoto Station, Koseikai Takeda Hospital e a Saída Karasuma da Kyoto Station",
+      nota: "Localização do hotel em relação à Kyoto Station (saída Karasuma), à farmácia, à conveniência e ao hospital de referência listados acima.",
       pontos: [],
     },
   },
   {
     cidade: "Tokyo 2",
     nome: "remm Tokyo Kyobashi",
+    fotoHero: "/images/remm-tokyo-kyobashi-fotohero.jpg",
     bairro: "Kyobashi, Chuo-ku",
     endereco: "2-6-21 Kyobashi, Chuo-ku, Tokyo 104-0031",
     enderecoJapones: "〒104-0031 東京都中央区京橋2-6-21",
