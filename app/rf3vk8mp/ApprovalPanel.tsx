@@ -8938,9 +8938,11 @@ export function ApprovalPanel({
               <>
                 <Icon
                   className={
-                    label === "Trem Bala (Shinkansen)" || label === "Ônibus"
+                    label === "Trem Bala (Shinkansen)"
                       ? "h-20 w-20"
-                      : "h-14 w-14"
+                      : label === "Ônibus"
+                        ? "h-[4.5rem] w-[4.5rem]"
+                        : "h-14 w-14"
                   }
                 />
                 {label}
@@ -8977,7 +8979,13 @@ export function ApprovalPanel({
               key={label}
               className="flex min-h-[112px] flex-col items-center justify-center gap-2.5 rounded-xl border border-[#F0DFA8] bg-[#FDF8E9] px-3 py-4 text-center text-xs leading-5 text-[#24211D]/75"
             >
-              <Icon className="h-20 w-20" />
+              <Icon
+                className={
+                  label === "Emergência Médica / Ativação de Sinistro"
+                    ? "h-[4.5rem] w-[4.5rem]"
+                    : "h-20 w-20"
+                }
+              />
               {label}
             </div>
           ))}
