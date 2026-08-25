@@ -1,4 +1,4 @@
-import type { ReactElement } from "react";
+import type { ReactElement, ReactNode } from "react";
 import Image from "next/image";
 
 // ── Kit visual compartilhado pelas páginas do banco de conteúdo (guias de
@@ -1166,6 +1166,116 @@ export function FlowTag({
         <p className="text-sm font-medium text-[#24211D]">{label}</p>
         {subtitle && <p className="text-xs text-[#B96432]/70">{subtitle}</p>}
       </div>
+    </div>
+  );
+}
+
+// ── Design system único de "card informativo" ──────────────────────────
+//
+// Um só componente para todo card do tipo [ÍCONE | CONTEÚDO] usado no
+// projeto — informações iniciais, melhor horário, dúvidas frequentes,
+// regras/alertas, dicas ("Recomendação Ajisai"), avisos e checklists.
+// Referência visual aprovada: cards do dia do Kokugikan (app/rf3vk8mp).
+//
+// variant define a cor semântica; size define a escala (lg = cards de
+// destaque no roteiro, com caixa de ícone grande; sm = dicas/avisos dentro
+// dos guias internos, mais compactos). Os tokens abaixo são a ÚNICA fonte
+// de cor/tipografia — não duplicar valores de cor em outros componentes.
+export type ContentCardVariant = "neutral" | "info" | "success" | "warning" | "operational";
+
+export const CONTENT_CARD_TOKENS: Record<
+  ContentCardVariant,
+  { border: string; bg: string; icon: string; eyebrow: string; headline: string; text: string }
+> = {
+  neutral: {
+    border: "border-[#DDD8CF]",
+    bg: "bg-[#FAF9F6]",
+    icon: "text-[#24211D]",
+    eyebrow: "text-[#24211D]/70",
+    headline: "text-[#24211D]",
+    text: "text-[#24211D]/78",
+  },
+  info: {
+    border: "border-[#BFDCF2]",
+    bg: "bg-[#EAF3FC]",
+    icon: "text-[#2C6CA6]",
+    eyebrow: "text-[#2C6CA6]/85",
+    headline: "text-[#1B4A73]",
+    text: "text-[#1B4A73]/85",
+  },
+  success: {
+    border: "border-emerald-200",
+    bg: "bg-emerald-50",
+    icon: "text-emerald-700",
+    eyebrow: "text-emerald-900",
+    headline: "text-emerald-950",
+    text: "text-emerald-950/78",
+  },
+  warning: {
+    border: "border-red-200",
+    bg: "bg-red-50/60",
+    icon: "text-red-600",
+    eyebrow: "text-red-700",
+    headline: "text-red-900",
+    text: "text-[#24211D]/85",
+  },
+  // Uso operacional/logístico (banheiros, horário de lojas, bagagem, regras
+  // de acesso) — mesma família laranja já usada nesses cards no roteiro.
+  operational: {
+    border: "border-orange-200",
+    bg: "bg-orange-50/60",
+    icon: "text-[#000000]",
+    eyebrow: "text-[#24211D]/70",
+    headline: "text-[#24211D]",
+    text: "text-[#24211D]/78",
+  },
+};
+
+export function ContentCard({
+  variant = "neutral",
+  icon: Icon,
+  eyebrow,
+  headline,
+  size = "lg",
+  className = "",
+  children,
+}: {
+  variant?: ContentCardVariant;
+  icon: (props: { className?: string }) => ReactElement;
+  eyebrow: string;
+  headline?: string;
+  size?: "lg" | "sm";
+  className?: string;
+  children?: ReactNode;
+}) {
+  const v = CONTENT_CARD_TOKENS[variant];
+  const iconBox = size === "lg" ? "h-20 w-20" : "h-11 w-11";
+  const iconGlyph = size === "lg" ? "h-12 w-12" : "h-5 w-5";
+  const eyebrowSize = size === "lg" ? "text-base sm:text-lg" : "text-xs";
+  const headlineSize = size === "lg" ? "text-3xl sm:text-4xl" : "text-xl md:text-2xl";
+
+  return (
+    <div className={`rounded-2xl border ${v.border} ${v.bg} p-5 sm:p-7 ${className}`}>
+      <div className={`flex items-center gap-4 ${headline || children ? "mb-5" : ""}`}>
+        <span className={`flex ${iconBox} shrink-0 items-center justify-center`}>
+          <Icon className={`${iconGlyph} ${v.icon}`} />
+        </span>
+        <p
+          className={`min-w-0 flex-1 font-bold uppercase tracking-[0.2em] ${eyebrowSize} ${v.eyebrow}`}
+        >
+          {eyebrow}
+        </p>
+      </div>
+      {headline && (
+        <p className={`font-semibold leading-tight ${headlineSize} ${v.headline}`}>{headline}</p>
+      )}
+      {children && (
+        <div
+          className={`${headline ? "mt-1.5" : ""} text-sm leading-6 sm:text-base sm:leading-7 ${v.text}`}
+        >
+          {children}
+        </div>
+      )}
     </div>
   );
 }

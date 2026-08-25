@@ -3,12 +3,14 @@ import {
   SectionMarker,
   TableOfContents,
   SubStepHeading,
+  ContentCard,
   IconBulb,
   IconClock,
   IconCard,
   IconMap,
   IconDocument,
   IconCheck,
+  IconWarning,
 } from "./AirportGuideKit";
 
 // Conteúdo completo do guia de Costumes & Etiqueta no Japão — mesmo padrão
@@ -18,21 +20,17 @@ import {
 
 function TipBox({ title, children }: { title?: string; children: React.ReactNode }) {
   return (
-    <div className="rounded-2xl border border-[#173B45]/15 bg-[#173B45]/[0.08] p-5 sm:p-6">
-      <p className="mb-3 flex items-center gap-2 text-xs uppercase tracking-[0.2em] text-[#173B45]">
-        <IconBulb className="h-3.5 w-3.5" />
-        {title ?? "Recomendação Ajisai"}
-      </p>
-      <div className="text-sm leading-7 text-[#24211D]/85">{children}</div>
-    </div>
+    <ContentCard variant="success" icon={IconBulb} eyebrow={title ?? "Recomendação Ajisai"} size="sm">
+      {children}
+    </ContentCard>
   );
 }
 
 function AlertBox({ children }: { children: React.ReactNode }) {
   return (
-    <div className="rounded-2xl border border-amber-300/70 bg-amber-50 p-5 sm:p-6">
-      <p className="text-sm leading-7 text-amber-900">{children}</p>
-    </div>
+    <ContentCard variant="warning" icon={IconWarning} eyebrow="Atenção" size="sm">
+      {children}
+    </ContentCard>
   );
 }
 

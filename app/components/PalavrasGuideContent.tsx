@@ -2,6 +2,7 @@ import {
   InternalGuideHeader,
   SectionMarker,
   TableOfContents,
+  ContentCard,
   IconBulb,
   IconMap,
   IconClock,
@@ -49,16 +50,9 @@ function PhraseCard({
 
 function TipBox({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div className="rounded-2xl border border-[#173B45]/15 bg-[#173B45]/[0.08] p-6 sm:p-8">
-      <p className="mb-4 flex items-center gap-2 text-xs uppercase tracking-[0.25em] text-[#173B45]">
-        <IconBulb className="h-3.5 w-3.5" />
-        Recomendação Ajisai
-      </p>
-      <h3 className="text-xl font-medium text-[#24211D] md:text-2xl">{title}</h3>
-      <div className="mt-4 space-y-3 text-sm leading-7 text-[#24211D]/88 md:text-base md:leading-8">
-        {children}
-      </div>
-    </div>
+    <ContentCard variant="success" icon={IconBulb} eyebrow="Recomendação Ajisai" headline={title} size="sm">
+      {children}
+    </ContentCard>
   );
 }
 

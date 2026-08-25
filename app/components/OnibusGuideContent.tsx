@@ -2,6 +2,7 @@ import {
   InternalGuideHeader,
   SectionMarker,
   TableOfContents,
+  ContentCard,
   IconBulb,
   IconMap,
   IconClock,
@@ -16,27 +17,24 @@ import {
 // reutilizado tanto na página interna (banco de conteúdo, /database/onibus)
 // quanto embutido no painel do cliente (app/rf3vk8mp). Editar aqui atualiza
 // os dois lugares.
+//
+// TipBox/AlertBox/ChecklistCard são wrappers finos sobre o ContentCard
+// (design system único de cards informativos, em AirportGuideKit) — mantidos
+// aqui só para não precisar alterar todos os pontos de uso abaixo.
 
 function TipBox({ title, children }: { title: string; children: React.ReactNode }) {
   return (
-    <div className="rounded-2xl border border-[#173B45]/15 bg-[#173B45]/[0.08] p-6 sm:p-8">
-      <p className="mb-4 flex items-center gap-2 text-xs uppercase tracking-[0.25em] text-[#173B45]">
-        <IconBulb className="h-3.5 w-3.5" />
-        Recomendação Ajisai
-      </p>
-      <h3 className="text-xl font-medium text-[#24211D] md:text-2xl">{title}</h3>
-      <div className="mt-4 space-y-3 text-sm leading-7 text-[#24211D]/88 md:text-base md:leading-8">
-        {children}
-      </div>
-    </div>
+    <ContentCard variant="success" icon={IconBulb} eyebrow="Recomendação Ajisai" headline={title} size="sm">
+      {children}
+    </ContentCard>
   );
 }
 
 function AlertBox({ children }: { children: React.ReactNode }) {
   return (
-    <div className="rounded-2xl border border-amber-300/70 bg-amber-50 p-5 sm:p-6">
-      <p className="text-sm leading-7 text-amber-900">{children}</p>
-    </div>
+    <ContentCard variant="warning" icon={IconWarning} eyebrow="Atenção" size="sm">
+      {children}
+    </ContentCard>
   );
 }
 

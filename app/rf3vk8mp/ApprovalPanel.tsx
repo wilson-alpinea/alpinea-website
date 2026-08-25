@@ -10,6 +10,7 @@ import {
 } from "react";
 import { createPortal } from "react-dom";
 import Image from "next/image";
+import { ContentCard } from "../components/AirportGuideKit";
 import { NaritaGuideContent } from "../components/NaritaGuideContent";
 import { TremGuideContent } from "../components/TremGuideContent";
 import { CostumesGuideContent } from "../components/CostumesGuideContent";
@@ -5002,12 +5003,7 @@ function PoiCard({ index, poi }: { index: number; poi: Poi }) {
             ))}
           </div>
         )}
-        {poi.alerta && (
-          <div className="mt-1.5 flex items-start gap-2 rounded-lg border border-amber-300/70 bg-amber-50 px-2.5 py-2">
-            <span className="mt-0.5 shrink-0 text-xs">⚠️</span>
-            <p className="text-[11px] leading-4 text-amber-800">{poi.alerta}</p>
-          </div>
-        )}
+        {poi.alerta && <InlineAlert text={poi.alerta} />}
       </div>
 
       {zoomIndex !== null && imagens[zoomIndex] && (
@@ -5401,14 +5397,7 @@ function GastronomiaBlock({ gastronomia }: { gastronomia: Gastronomia }) {
         </p>
       )}
 
-      {gastronomia.alerta && (
-        <div className="mt-3 flex items-start gap-2.5 rounded-xl border border-amber-300/70 bg-amber-50 px-3.5 py-3">
-          <span className="mt-0.5 shrink-0 text-sm">⚠️</span>
-          <p className="text-xs leading-5 text-amber-800">
-            {gastronomia.alerta}
-          </p>
-        </div>
-      )}
+      {gastronomia.alerta && <InlineAlert text={gastronomia.alerta} />}
 
       {temRestaurantes && (
         <>
@@ -5538,14 +5527,7 @@ function GastronomiaBlock({ gastronomia }: { gastronomia: Gastronomia }) {
                     {r.pagamento && <p>💳 {r.pagamento}</p>}
                   </div>
 
-                  {r.alerta && (
-                    <div className="mt-3 flex items-start gap-2 rounded-lg border border-amber-300/70 bg-amber-50 px-2.5 py-2">
-                      <span className="mt-0.5 shrink-0 text-xs">⚠️</span>
-                      <p className="text-[11px] leading-4 text-amber-800">
-                        {r.alerta}
-                      </p>
-                    </div>
-                  )}
+                  {r.alerta && <InlineAlert text={r.alerta} />}
 
                   {r.linkTabelog && (
                     <a
@@ -5688,19 +5670,28 @@ function IconClock({ className }: { className?: string }) {
 
 function AlertaBlock({ alerta }: { alerta: AlertaSugerido }) {
   return (
-    <div className="mb-8 rounded-2xl border-2 border-red-300/60 bg-red-50 p-5 sm:p-6">
-      <div className="mb-3 flex items-center gap-2.5">
-        <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-red-600 text-white">
-          <IconAlertTriangle className="h-4 w-4" />
-        </span>
-        <p className="text-xs font-bold uppercase tracking-[0.25em] text-red-700">
-          {alerta.titulo}
-        </p>
-      </div>
-      <p className="text-lg font-semibold text-[#24211D]">{alerta.horario}</p>
-      <p className="mt-3 text-sm leading-6 text-[#24211D]/90">
+    <div className="mb-8">
+      <ContentCard
+        variant="warning"
+        icon={IconAlertTriangle}
+        eyebrow={alerta.titulo}
+        headline={alerta.horario}
+      >
         {alerta.mensagem}
-      </p>
+      </ContentCard>
+    </div>
+  );
+}
+
+// Aviso compacto usado DENTRO de outro card (poi, restaurante, seção de
+// gastronomia) — mesma cor semântica do ContentCard variant="warning", só
+// que em escala menor e sem o eyebrow, já que aqui o card-pai já dá
+// contexto. Substitui os antigos avisos com emoji "⚠️".
+function InlineAlert({ text }: { text: string }) {
+  return (
+    <div className="mt-1.5 flex items-start gap-2 rounded-lg border border-red-200 bg-red-50/60 px-2.5 py-2">
+      <IconAlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0 text-red-600" />
+      <p className="text-[11px] leading-4 text-red-800">{text}</p>
     </div>
   );
 }
