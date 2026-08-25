@@ -341,7 +341,7 @@ const OPCOES = [
     icone: "📱",
     descricao: "Painel digital Ajisai com o roteiro sob medida do seu grupo",
     detalhe:
-      "Roteiro Digital Ajisai personalizado dia a dia — atrações, deslocamento, refeições e informações práticas dos aeroportos, montado sob medida para o seu grupo e acessível pelo navegador do celular durante toda a viagem. Incluso em todo Pacote Personalizado.\n\nPreço-base de R$ 1.500 cobre roteiros de até 15 dias; cada dia adicional soma R$ 120 — mesma regra do Roteiro Ajisai vendido avulso.",
+      "Roteiro Digital Ajisai personalizado dia a dia — atrações, deslocamento, refeições e informações práticas dos aeroportos, montado sob medida para o seu grupo e acessível pelo navegador do celular durante toda a viagem. Incluso em todo Pacote Personalizado.",
     calcPreco: (ctx: PrecoCtx) =>
       ROTEIRO_PRECO_BASE + Math.max(0, ctx.dias - ROTEIRO_BASE_DIAS) * ROTEIRO_PRECO_DIA_EXTRA,
   },

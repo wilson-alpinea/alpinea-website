@@ -444,14 +444,6 @@ export default function ProdutosPage() {
               className="h-10 w-auto object-contain md:h-11"
             />
           </Link>
-          <div className="flex items-center gap-5 text-[11px] uppercase tracking-[0.2em] text-white/60">
-            <Link href="/ajisairoteiros" className="transition hover:text-white">
-              Roteiro
-            </Link>
-            <Link href="/pacotes" className="transition hover:text-white">
-              Pacotes
-            </Link>
-          </div>
         </div>
       </header>
 
