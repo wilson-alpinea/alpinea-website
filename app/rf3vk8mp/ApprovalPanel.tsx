@@ -7651,7 +7651,7 @@ function IconMetro({ className }: { className?: string }) {
 function IconBus({ className }: { className?: string }) {
   return (
     <img
-      src="/images/icone-onibus.png"
+      src="/images/icone-onibus-v2.png"
       alt=""
       className={`${className ?? ""} object-contain`}
     />
@@ -7729,7 +7729,7 @@ function IconWords({ className }: { className?: string }) {
 function IconInsurance({ className }: { className?: string }) {
   return (
     <img
-      src="/images/icone-seguro-viagem.png"
+      src="/images/icone-seguro-viagem-v2.png"
       alt=""
       className={`${className ?? ""} object-contain`}
     />
@@ -7739,7 +7739,7 @@ function IconInsurance({ className }: { className?: string }) {
 function IconMedicalEmergency({ className }: { className?: string }) {
   return (
     <img
-      src="/images/icone-emergencia-medica.png"
+      src="/images/icone-emergencia-medica-v2.png"
       alt=""
       className={`${className ?? ""} object-contain`}
     />
@@ -7758,7 +7758,7 @@ const INFO_CARDS = [
 ];
 
 const SERVICOS_ADICIONAIS_CARDS = [
-  { label: "Seguro Viagem", Icon: IconInsurance },
+  { label: "Apólice Seguro Viagem", Icon: IconInsurance },
   { label: "Emergência Médica / Ativação de Sinistro", Icon: IconMedicalEmergency },
 ];
 
@@ -8938,7 +8938,9 @@ export function ApprovalPanel({
               <>
                 <Icon
                   className={
-                    label === "Trem Bala (Shinkansen)" ? "h-20 w-20" : "h-14 w-14"
+                    label === "Trem Bala (Shinkansen)" || label === "Ônibus"
+                      ? "h-20 w-20"
+                      : "h-14 w-14"
                   }
                 />
                 {label}
@@ -8975,7 +8977,7 @@ export function ApprovalPanel({
               key={label}
               className="flex min-h-[112px] flex-col items-center justify-center gap-2.5 rounded-xl border border-[#F0DFA8] bg-[#FDF8E9] px-3 py-4 text-center text-xs leading-5 text-[#24211D]/75"
             >
-              <Icon className="h-14 w-14" />
+              <Icon className="h-20 w-20" />
               {label}
             </div>
           ))}

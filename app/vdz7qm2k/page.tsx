@@ -184,6 +184,32 @@ export const metadata: Metadata = {
       follow: false,
     },
   },
+  // Sobrescreve o openGraph/twitter padrão do layout raiz (marca Alpinea) —
+  // esta é a página que o cliente abre e encaminha no WhatsApp, então o
+  // preview de link precisa mostrar a marca Ajisai, não a Alpinea.
+  openGraph: {
+    title: "Seu Roteiro Personalizado | Ajisai",
+    description:
+      "Roteiro digital da sua viagem ao Japão — hospedagens, passeios, deslocamentos e recomendações organizados dia a dia pela Ajisai.",
+    siteName: "Ajisai",
+    images: [
+      {
+        url: "/images/og-ajisai-roteiro.png",
+        width: 1200,
+        height: 630,
+        alt: "Ajisai — Roteiro Personalizado",
+      },
+    ],
+    locale: "pt_BR",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Seu Roteiro Personalizado | Ajisai",
+    description:
+      "Roteiro digital da sua viagem ao Japão, organizado dia a dia pela Ajisai.",
+    images: ["/images/og-ajisai-roteiro.png"],
+  },
 };
 
 export default function AprovacaoRoteiroPage() {

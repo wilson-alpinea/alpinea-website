@@ -18,6 +18,32 @@ export const metadata = {
   title: "Ajisai | Pacotes de Viagem para o Japão",
   description:
     "Pacotes de viagem para o Japão com a curadoria Ajisai: Caravana (grupo fechado), Individual ou Pequenos Grupos e Pacotes Personalizados sob medida. Monte seu carrinho e finalize direto no WhatsApp.",
+  // Sobrescreve o openGraph/twitter padrão do layout raiz (marca Alpinea,
+  // voltado à home) — o link desta página precisa de um preview específico
+  // pra pacotes, não o card genérico do site inteiro.
+  openGraph: {
+    title: "Ajisai | Pacotes de Viagem para o Japão",
+    description:
+      "Caravana em grupo fechado, Individual ou Pequenos Grupos e Pacotes Personalizados sob medida — conheça os pacotes de viagem para o Japão com a curadoria Ajisai.",
+    siteName: "Ajisai",
+    images: [
+      {
+        url: "/images/caravana-2-hero.png",
+        width: 1200,
+        height: 630,
+        alt: "Pacotes de Viagem Ajisai para o Japão",
+      },
+    ],
+    locale: "pt_BR",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Ajisai | Pacotes de Viagem para o Japão",
+    description:
+      "Pacotes de viagem para o Japão com a curadoria Ajisai — Caravana, Individual ou Pequenos Grupos e Personalizado.",
+    images: ["/images/caravana-2-hero.png"],
+  },
 };
 
 // Preços fixos em dólar (valores definitivos passados pelo cliente) —
@@ -697,17 +723,6 @@ export default function PacotesJapaoPage() {
                 Viaje em qualquer data, com um roteiro sob medida e
                 adicionais que você preferir.
               </p>
-            </div>
-
-            <div className="relative mb-8 aspect-[16/10] overflow-hidden rounded-2xl md:mb-10 md:rounded-[2rem]">
-              <Image
-                src={BANNER_PERSONALIZADO.src}
-                alt={BANNER_PERSONALIZADO.alt}
-                fill
-                sizes="100vw"
-                className="object-cover"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/5 to-transparent" />
             </div>
 
             <CustomPackageCard />

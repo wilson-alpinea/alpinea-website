@@ -23,7 +23,7 @@ const WHATSAPP_NUMBER = "5511930300101";
 
 type ProdutoKey = "roteiro" | "caravana" | "individual" | "personalizado" | "guia";
 
-// Usado no recomendador, na tela de qualificação e para montar a mensagem
+// Usado na tela de qualificação e para montar a mensagem
 // final do WhatsApp — uma única fonte de verdade para nome/preço.
 const PRODUTOS: Record<
   ProdutoKey,
@@ -65,18 +65,6 @@ const PRODUTOS: Record<
     precoUSD: 350,
     href: "#guia",
   },
-};
-
-// Descrição de uma linha mostrada no resultado do recomendador — resume o
-// que o produto entrega, sem repetir os bullets já usados nos cards.
-const DESCRICOES_CURTAS: Record<ProdutoKey, string> = {
-  roteiro:
-    "Planejamos sua viagem em detalhes. Você faz as reservas e viaja por conta própria.",
-  caravana: "Viaje em grupo, com data e roteiro já definidos pela Ajisai.",
-  individual:
-    "Viagem pronta, nas suas datas, com guia particular dedicado ao seu grupo.",
-  personalizado: "Roteiro, hotéis e logística inteiramente criados para você.",
-  guia: "Você já tem o roteiro — a Ajisai fornece um guia particular para o(s) dia(s) que escolher.",
 };
 
 // Mesmas fotos já usadas em /pacotes para cada divisão — reaproveitadas
@@ -359,9 +347,6 @@ export default function ProdutosPage() {
     return `ou ${formatBRL(produto.precoBRL)}`;
   }
 
-  const [estagio, setEstagio] = useState<"perguntas" | "resultado" | "qualificacao">(
-    "perguntas",
-  );
   const [qualProduto, setQualProduto] = useState<ProdutoKey | null>(null);
   const [nome, setNome] = useState("");
   const [periodo, setPeriodo] = useState("");
@@ -370,54 +355,17 @@ export default function ProdutosPage() {
   const [primeiraViagem, setPrimeiraViagem] = useState<"sim" | "nao" | "">("");
   const [enviado, setEnviado] = useState(false);
 
-  const [recStep, setRecStep] = useState<1 | 2 | 3>(1);
-  const [recResultado, setRecResultado] = useState<ProdutoKey | null>(null);
-
-  // Entrada direta (ex: CTA do Roteiro Personalizado) — pula o recomendador
-  // e vai direto para a qualificação, já com o produto marcado.
+  // Entrada direta (CTA de cada produto) — vai direto para a qualificação,
+  // já com o produto marcado.
   function escolherProduto(produto: ProdutoKey) {
     setQualProduto(produto);
-    setEstagio("qualificacao");
     setEnviado(false);
     requestAnimationFrame(() => {
       document.getElementById("recomendador")?.scrollIntoView({ behavior: "smooth", block: "start" });
     });
   }
 
-  function responderRecomendador(passo: 1 | 2 | 3, resposta: string) {
-    if (passo === 1) {
-      if (resposta === "sim") {
-        setRecResultado("roteiro");
-        setEstagio("resultado");
-        return;
-      }
-      setRecStep(2);
-      return;
-    }
-    if (passo === 2) {
-      if (resposta === "sim") {
-        setRecResultado("caravana");
-        setEstagio("resultado");
-        return;
-      }
-      setRecStep(3);
-      return;
-    }
-    setRecResultado(resposta === "estruturado" ? "individual" : "personalizado");
-    setEstagio("resultado");
-  }
-
-  // Do resultado do recomendador para a qualificação — o produto recomendado
-  // já vem marcado, sem pedir de novo.
-  function continuarParaQualificacao() {
-    if (recResultado) setQualProduto(recResultado);
-    setEstagio("qualificacao");
-  }
-
   function trocarProduto() {
-    setEstagio("perguntas");
-    setRecStep(1);
-    setRecResultado(null);
     setQualProduto(null);
     setEnviado(false);
   }
@@ -961,7 +909,7 @@ export default function ProdutosPage() {
         </div>
       </section>
 
-      {/* ── RECOMENDADOR → RESULTADO → QUALIFICAÇÃO → WHATSAPP (fluxo único) ── */}
+      {/* ── QUALIFICAÇÃO → WHATSAPP ── */}
       <section id="recomendador" className="border-b border-white/10 bg-black px-6 py-16 md:px-16 md:py-24">
         <div className="mx-auto max-w-2xl">
           {enviado ? (
@@ -979,120 +927,6 @@ export default function ProdutosPage() {
               >
                 Fazer outra solicitação
               </button>
-            </div>
-          ) : estagio === "perguntas" ? (
-            <div className="text-center">
-              <p className="text-[10px] uppercase tracking-[0.2em] text-[#6ec3d9]">
-                Ainda não sabe qual escolher?
-              </p>
-              <h2
-                className={`${display.className} mt-3 text-3xl font-medium leading-tight text-white md:text-4xl`}
-              >
-                Encontre sua opção em 30 segundos
-              </h2>
-
-              <div className="mt-10 rounded-2xl border border-white/10 bg-white/[0.02] p-8 text-left md:p-10">
-                <p className="text-[10px] uppercase tracking-[0.2em] text-white/40">
-                  Pergunta {recStep} de 3
-                </p>
-                <p className="mt-3 text-lg font-medium leading-snug text-white">
-                  {recStep === 1 &&
-                    "Você quer fazer as reservas da viagem por conta própria?"}
-                  {recStep === 2 && "Prefere viajar em grupo com outras pessoas?"}
-                  {recStep === 3 &&
-                    "Quer escolher um pacote já estruturado ou criar a viagem do zero?"}
-                </p>
-                <div className="mt-7 flex flex-col gap-3 sm:flex-row sm:justify-center">
-                  {recStep < 3 ? (
-                    <>
-                      <button
-                        type="button"
-                        onClick={() => responderRecomendador(recStep, "sim")}
-                        className="rounded-full border border-white/20 px-8 py-3 text-[11px] font-semibold uppercase tracking-[0.2em] text-white/80 transition hover:border-white/50 hover:text-white"
-                      >
-                        Sim
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => responderRecomendador(recStep, "nao")}
-                        className="rounded-full border border-white/20 px-8 py-3 text-[11px] font-semibold uppercase tracking-[0.2em] text-white/80 transition hover:border-white/50 hover:text-white"
-                      >
-                        Não
-                      </button>
-                    </>
-                  ) : (
-                    <>
-                      <button
-                        type="button"
-                        onClick={() => responderRecomendador(3, "estruturado")}
-                        className="rounded-full border border-white/20 px-6 py-3 text-[11px] font-semibold uppercase tracking-[0.2em] text-white/80 transition hover:border-white/50 hover:text-white"
-                      >
-                        Pacote estruturado
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => responderRecomendador(3, "zero")}
-                        className="rounded-full border border-white/20 px-6 py-3 text-[11px] font-semibold uppercase tracking-[0.2em] text-white/80 transition hover:border-white/50 hover:text-white"
-                      >
-                        Criar do zero
-                      </button>
-                    </>
-                  )}
-                </div>
-              </div>
-            </div>
-          ) : estagio === "resultado" && recResultado ? (
-            <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-8 text-center md:p-10">
-              <div
-                className={`relative mx-auto mb-6 overflow-hidden rounded-2xl ${
-                  recResultado === "roteiro" ? "aspect-[16/10] max-w-[220px]" : "aspect-[16/10]"
-                }`}
-              >
-                <Image
-                  src={IMAGENS_PRODUTO[recResultado].src}
-                  alt={IMAGENS_PRODUTO[recResultado].alt}
-                  fill
-                  sizes="(min-width: 640px) 42rem, 100vw"
-                  className={`object-cover ${
-                    recResultado === "roteiro" ? "object-center" : "object-top"
-                  }`}
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/5 to-transparent" />
-              </div>
-              <p className="text-[10px] uppercase tracking-[0.2em] text-white/40">
-                Sua melhor opção é
-              </p>
-              <p className={`${display.className} mt-2 text-3xl font-medium text-white`}>
-                {PRODUTOS[recResultado].nome}
-              </p>
-              <p className="mx-auto mt-3 max-w-sm text-sm leading-6 text-white/60">
-                {DESCRICOES_CURTAS[recResultado]}
-              </p>
-              <p className="mt-3 text-sm font-medium text-white/70">
-                {precoProdutoLabel(PRODUTOS[recResultado], true)}
-              </p>
-              {precoBRLProdutoLabel(PRODUTOS[recResultado]) && (
-                <p className="mt-0.5 text-xs text-white/45">
-                  {precoBRLProdutoLabel(PRODUTOS[recResultado])}
-                </p>
-              )}
-              <div className="mt-7 flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
-                <button
-                  type="button"
-                  onClick={continuarParaQualificacao}
-                  className="rounded-full px-6 py-3.5 text-center text-[11px] font-semibold uppercase tracking-[0.2em] text-white transition duration-300 hover:-translate-y-0.5"
-                  style={{ backgroundColor: "#2f80c9" }}
-                >
-                  Continuar →
-                </button>
-                <button
-                  type="button"
-                  onClick={trocarProduto}
-                  className="text-xs uppercase tracking-[0.2em] text-white/40 underline underline-offset-4 transition hover:text-white"
-                >
-                  Refazer perguntas
-                </button>
-              </div>
             </div>
           ) : (
             <>

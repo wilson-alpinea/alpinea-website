@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { Bodoni_Moda } from "next/font/google";
 import { ContactCTA } from "./ContactCTA";
-import { useCambioUSD, formatUSD } from "../hooks/useCambioUSD";
+import { useCambioUSD, formatUSD, formatBRL } from "../hooks/useCambioUSD";
 import { CambioLabel } from "./CambioLabel";
 
 const display = Bodoni_Moda({
@@ -81,6 +81,10 @@ export function PriceCalculator({
     cambio == null
       ? "…"
       : formatUSD(price / cambio.cotacao + taxaPassageirosUSD);
+  // Mesmo total, mas em reais — taxa de passageiros nasce em dólar, então
+  // precisa ser convertida pra reais antes de somar ao preço-base.
+  const totalBRLLabel =
+    cambio == null ? "…" : formatBRL(price + taxaPassageirosUSD * cambio.cotacao);
 
   return (
     <>
@@ -220,6 +224,9 @@ export function PriceCalculator({
                 className={`${display.className} mt-2 text-5xl font-medium leading-none text-[#b79ce6] md:text-6xl`}
               >
                 {totalLabel}
+              </p>
+              <p className="mt-1 text-sm font-medium text-white/50">
+                ou {totalBRLLabel}
               </p>
               <CambioLabel cambio={cambio} className="mt-2 text-[11px] text-white/30" />
               <p className="mt-3 text-xs text-white/30">
