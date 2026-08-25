@@ -7726,6 +7726,26 @@ function IconWords({ className }: { className?: string }) {
   );
 }
 
+function IconInsurance({ className }: { className?: string }) {
+  return (
+    <img
+      src="/images/icone-seguro-viagem.png"
+      alt=""
+      className={`${className ?? ""} object-contain`}
+    />
+  );
+}
+
+function IconMedicalEmergency({ className }: { className?: string }) {
+  return (
+    <img
+      src="/images/icone-emergencia-medica.png"
+      alt=""
+      className={`${className ?? ""} object-contain`}
+    />
+  );
+}
+
 const INFO_CARDS = [
   { label: "Aeroporto DXB", Icon: IconPlane, view: "dxb" as const },
   { label: "Aeroporto NRT (Narita)", Icon: IconPlane, view: "narita" as const },
@@ -7735,6 +7755,11 @@ const INFO_CARDS = [
   { label: "Câmbio", Icon: IconExchange, view: "cambio" as const },
   { label: "Costumes", Icon: IconCustoms, view: "costumes" as const },
   { label: "Palavras Comuns", Icon: IconWords, view: "palavras" as const },
+];
+
+const SERVICOS_ADICIONAIS_CARDS = [
+  { label: "Seguro Viagem", Icon: IconInsurance },
+  { label: "Emergência Médica / Ativação de Sinistro", Icon: IconMedicalEmergency },
 ];
 
 function IconFork({ className }: { className?: string }) {
@@ -8921,6 +8946,23 @@ export function ApprovalPanel({
               </div>
             );
           })}
+        </div>
+
+        <div className="flex flex-wrap items-center gap-2.5 px-6 pt-8 sm:px-10">
+          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#24211D]/60">
+            Serviços Adicionais Contratados
+          </p>
+        </div>
+        <div className="grid grid-cols-2 gap-3 border-b border-[#DDD8CF] px-6 pb-6 pt-3 sm:px-10">
+          {SERVICOS_ADICIONAIS_CARDS.map(({ label, Icon }) => (
+            <div
+              key={label}
+              className="flex min-h-[112px] flex-col items-center justify-center gap-2.5 rounded-xl border border-[#F0DFA8] bg-[#FDF8E9] px-3 py-4 text-center text-xs leading-5 text-[#24211D]/75"
+            >
+              <Icon className="h-14 w-14" />
+              {label}
+            </div>
+          ))}
         </div>
 
         <div ref={contentRef} className="scroll-mt-6 px-6 py-8 sm:px-10 sm:py-10">
