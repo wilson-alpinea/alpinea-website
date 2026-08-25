@@ -1731,12 +1731,6 @@ const DAY_2: DayContent = {
       imagemAlt: "Mapa do Jardim do Palácio Imperial com Nijubashi Bridge, Ninomaru Garden e Tokyo Station nas proximidades",
       nota: "Localização da entrada dos Jardins do Palácio Imperial em relação a Tokyo Station e Marunouchi.",
     },
-    decisoes: [
-      {
-        titulo: "E se os jardins estiverem fechados?",
-        resposta: "Os jardins fecham às segundas e sextas-feiras — como esse é o último dia do roteiro (10/05, sábado), não há conflito, mas vale confirmar o calendário oficial antes da viagem.",
-      },
-    ],
     pois: [
       {
         title: "Otemon Gate",
@@ -3599,15 +3593,6 @@ const DAY_5: DayContent = {
           horario: "19:00",
           descricao: "Jantar tradicional em Gion.",
         },
-      ],
-    },
-    visaoAnotada: {
-      titulo: "Distrito de Gion",
-      imagem: "/images/raiox-kiyomizu-higashiyama.png",
-      imagemAlt: "Raio-X Alpinea de Gion com Yasaka Shrine, Chionin Temple, Maruyama Park, Pontocho Alley e a ligação com Higashiyama pelas ladeiras",
-      comentarios: [
-        "O mesmo raio-x de Higashiyama mostra Gion logo ao norte: o Santuário de Yasaka marca a entrada do bairro, com o Chionin Temple e o Maruyama Park (famoso pelas cerejeiras) nos arredores.",
-        "Pontocho Alley fica do outro lado, já às margens do Rio Kamo — a viela tradicional de restaurantes e casas de chá, atravessada pela Sanjo-ohashi e pela Shijo-ohashi.",
       ],
     },
     regiao: {
@@ -6744,7 +6729,7 @@ function ComentariosSecao({ comentarios }: { comentarios: string[] }) {
         <button
           type="button"
           onClick={() => setExpandido((v) => !v)}
-          className="text-xs font-bold uppercase tracking-[0.15em] text-white/60 underline decoration-white/30 underline-offset-4 transition hover:text-white/90"
+          className="mt-1 inline-block rounded-full bg-[#2C6CA6] px-5 py-2 text-xs font-bold uppercase tracking-[0.3em] text-white transition hover:bg-[#245a8c]"
         >
           {expandido ? "Ler menos" : "Ler leitura completa"}
         </button>
@@ -7431,16 +7416,9 @@ function PeriodBlock({
                   Dúvidas Frequentes
                 </p>
               </div>
-              <div className="grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-2">
-                {period.decisoes.map((d, i) => (
-                  <div
-                    key={d.titulo}
-                    className={
-                      i % 2 === 0
-                        ? "sm:border-r sm:border-emerald-200/80 sm:pr-6"
-                        : ""
-                    }
-                  >
+              <div className="space-y-5">
+                {period.decisoes.map((d) => (
+                  <div key={d.titulo}>
                     <p className="mb-1.5 text-xs font-bold uppercase tracking-[0.15em] text-emerald-900">
                       {d.titulo}
                     </p>
