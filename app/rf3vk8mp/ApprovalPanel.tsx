@@ -58,6 +58,9 @@ type Poi = {
   // Horário de funcionamento — só preenchido quando verificado (ex.: site
   // oficial da loja). Sem isso, não aparece nada no card.
   horario?: string;
+  // Aviso pontual em destaque no card (ex.: documento obrigatório na
+  // entrada) — mesmo padrão do `alerta` de RestauranteCurado.
+  alerta?: string;
 };
 
 // Restaurante pesquisado e curado segundo o "PROMPT MESTRE — PESQUISA DE
@@ -1826,8 +1829,9 @@ const DAY_3: DayContent = {
     retorno: "Segue para o trem noturno (~23:00)",
   },
   manha: {
+    label: "Manhã + Tarde",
     percursoEssencial: {
-      duracao: "~2h (Meiji Jingu, Yoyogi, Omotesando e Shibuya)",
+      duracao: "~6h15 (Meiji Jingu, Yoyogi, Omotesando, Shibuya, Shinjuku e Kabukicho)",
       passos: [
         {
           titulo: "Meiji Jingu",
@@ -1858,6 +1862,48 @@ const DAY_3: DayContent = {
           foto: "/images/shibuya-crossing.png",
           horario: "12:00",
           descricao: "O famoso cruzamento hexagonal de Shibuya, ao lado da estátua de Hachiko.",
+        },
+        {
+          titulo: "Shinjuku Gyoen",
+          foto: "/images/shinjuku-gyoen.png",
+          horario: "14:45",
+          descricao: "Um dos parques mais bonitos de Tóquio, misturando jardins japonês, francês e inglês.",
+        },
+        {
+          titulo: "Prédio do Governo Metropolitano + Mirante",
+          foto: "/images/tokyo-metropolitan-government-building.png",
+          horario: "~16:30",
+          descricao: "Mirante gratuito no 45º andar com vista panorâmica da cidade — ideal perto do pôr do sol.",
+        },
+        {
+          titulo: "Gato 3D Gigante",
+          foto: "/images/gato-3d-shinjuku.png",
+          horario: "~17:15",
+          descricao: "Gato tridimensional gigante exibido em telão curvo no edifício Cross Shinjuku Vision.",
+        },
+        {
+          titulo: "Estátua do Godzilla",
+          foto: "/images/godzilla-head-shinjuku.png",
+          horario: "~17:30",
+          descricao: "Réplica em tamanho real na varanda do Hotel Gracery, pertinho do Gato 3D.",
+        },
+        {
+          titulo: "Kabukicho",
+          foto: "/images/kabukicho.png",
+          horario: "~18:00",
+          descricao: "Maior distrito de entretenimento noturno de Tóquio, com neons e vida noturna intensa.",
+        },
+        {
+          titulo: "Golden Gai",
+          foto: "/images/golden-gai.png",
+          horario: "19:00",
+          descricao: "Rede de vielas estreitas com mais de 200 bares minúsculos, encostado em Kabukicho.",
+        },
+        {
+          titulo: "Onsen Thermae-Yu",
+          foto: "/images/thermae-yu.png",
+          horario: "21:00",
+          descricao: "Onsen urbano aberto 24h no coração de Kabukicho, ao lado do Golden Gai — fecha a noite antes do trem noturno para Kyoto.",
         },
       ],
     },
@@ -2117,353 +2163,253 @@ const DAY_3: DayContent = {
         nota: "Só acessível para quem pagar a entrada do jardim (¥500) — não serve como opção rápida para quem ficar só no terreno principal.",
       },
     ],
-  },
-  tarde: {
-    label: "Tarde",
-    percursoEssencial: {
-      duracao: "~4h15 (Shinjuku e Kabukicho)",
-      passos: [
-        {
-          titulo: "Shinjuku Gyoen",
-          foto: "/images/shinjuku-gyoen.png",
-          horario: "14:45",
-          descricao: "Um dos parques mais bonitos de Tóquio, misturando jardins japonês, francês e inglês.",
-        },
-        {
-          titulo: "Prédio do Governo Metropolitano + Mirante",
-          foto: "/images/tokyo-metropolitan-government-building.png",
-          horario: "~16:30",
-          descricao: "Mirante gratuito no 45º andar com vista panorâmica da cidade — ideal perto do pôr do sol.",
-        },
-        {
-          titulo: "Gato 3D Gigante",
-          foto: "/images/gato-3d-shinjuku.png",
-          horario: "~17:15",
-          descricao: "Gato tridimensional gigante exibido em telão curvo no edifício Cross Shinjuku Vision.",
-        },
-        {
-          titulo: "Estátua do Godzilla",
-          foto: "/images/godzilla-head-shinjuku.png",
-          horario: "~17:30",
-          descricao: "Réplica em tamanho real na varanda do Hotel Gracery, pertinho do Gato 3D.",
-        },
-        {
-          titulo: "Kabukicho",
-          foto: "/images/kabukicho.png",
-          horario: "~18:00",
-          descricao: "Maior distrito de entretenimento noturno de Tóquio, com neons e vida noturna intensa.",
-        },
-        {
-          titulo: "Golden Gai",
-          foto: "/images/golden-gai.png",
-          horario: "19:00",
-          descricao: "Rede de vielas estreitas com mais de 200 bares minúsculos, encostado em Kabukicho.",
-        },
-        {
-          titulo: "Onsen Thermae-Yu",
-          foto: "/images/thermae-yu.png",
-          horario: "21:00",
-          descricao: "Onsen urbano aberto 24h no coração de Kabukicho, ao lado do Golden Gai — fecha a noite antes do trem noturno para Kyoto.",
-        },
-      ],
-    },
-    visaoAnotada: {
-      titulo: "Shinjuku à Noite — Kabukicho",
-      imagem: "/images/raiox-shinjuku.png",
-      imagemAlt: "Raio-X Alpinea de Kabukicho à noite com Godzilla Head, Cross Shinjuku Vision, Thermae-Yu e Shinjuku Golden-Gai",
-      comentarios: [
-        "Vista noturna do quarteirão de Kabukicho: a cabeça do Godzilla (Godzilla Head) fica no topo do Hotel Gracery, bem na entrada do bairro — dá pra ver de longe. A poucos passos, o Cross Shinjuku Vision é o telão curvo onde aparece o gato 3D gigante, na saída leste da estação.",
-        "Do outro lado do quarteirão, o Thermae-Yu (onsen urbano) e o Shinjuku Golden-Gai (rede de vielas com bares minúsculos) ficam a uma curta caminhada um do outro — todo esse trecho é percorrível a pé, sem pressa, entre uma atração e outra.",
-      ],
-    },
-    visaoAnotadaSecundaria: {
-      titulo: "Shinjuku Gyoen",
-      imagem: "/images/raiox-shinjuku-gyoen.png",
-      imagemAlt: "Raio-X Alpinea de Shinjuku Gyoen com Portão Shinjuku, Portão Okido, Portão Sendagaya, Jardim Japonês, Estufa Grande, Lago Superior/Médio/Inferior e Jardim de Roseiras",
-      comentarios: [
-        "Vista aérea do parque: os três portões de entrada ficam nas bordas — Shinjuku (nordeste, o mais próximo da estação), Okido (norte) e Sendagaya (sul, perto do Museu Nacional de Arte Moderna). Do lado leste fica o Jardim Japonês tradicional, com os lagos Superior, Médio e Inferior conectados por pontes; no centro, o gramado do estilo francês formal com o Jardim de Roseiras; e a Estufa Grande (Grand Greenhouse) fica próxima ao Portão Shinjuku.",
-        "Com apenas ~2h reservadas no roteiro, vale entrar pelo Portão Shinjuku (o mais próximo da estação) e focar no Jardim Japonês — é o trecho mais fotogênico e mais rápido de cobrir a pé.",
-      ],
-    },
-    regiao: {
-      nome: "Shinjuku · Tokyo",
-      descricao:
-        "Bairro que reúne o maior terminal ferroviário do mundo, arranha-céus corporativos, o distrito de entretenimento de Kabukicho e algumas das vielas mais icônicas de Tóquio — um contraste denso entre o Japão corporativo do dia e o lado mais boêmio que toma conta das ruas assim que escurece.",
-    },
-    deslocamento: {
-      estacaoOrigem: {
-        nome: "Estação Shibuya",
-        nomeJapones: "渋谷駅",
-        saida: "Catraca Hachiko",
-        foto: "/images/shibuya-station-entrance.png",
-        mapa: "/images/shibuya-station-map.png",
-        mapaAlt: "Mapa da Estação Shibuya (Ginza Line, Hanzomon Line e JR)",
-      },
-      linha: { codigo: "JY", nome: "JR Yamanote Line", cor: "#8FAADC", logo: "/images/jr-logo.webp" },
-      estacoesIntermediarias: [
-        { nome: "Harajuku", nomeJapones: "原宿", numero: "JY19" },
-        { nome: "Yoyogi", nomeJapones: "代々木", numero: "JY18" },
-      ],
-      estacaoDestino: {
-        nome: "Estação Shinjuku",
-        nomeJapones: "新宿駅",
-        saida: "Saída Sul Nova (New South Exit)",
-        foto: "/images/shinjuku-station-entrance.png",
-      },
-      opcoes: [
-        {
-          meio: "Trem JR",
-          tempo: "≈7 min",
-          Icon: IconMetro,
-          recomendado: true,
-          detalhes: [
-            "Linha direta (Yamanote Line), sem baldeação.",
-            "Embarque na mesma estação onde termina o passeio por Shibuya Crossing.",
-          ],
-        },
-        {
-          meio: "Táxi / Carro",
-          tempo: "≈15–20 min",
-          Icon: IconCar,
-          detalhes: [
-            "Sujeito a trânsito no início da tarde.",
-            "Porta a porta, sem caminhada até a estação.",
-          ],
-        },
-      ],
-      recomendacao:
-        "De Shibuya até Shinjuku são cerca de 7 minutos de trem pela JR Yamanote Line, sem baldeação — a mesma linha usada em quase todo o trecho central de Tóquio.",
-      mapaAndares: {
-        titulo: "Mapa da Estação Shinjuku",
-        mapas: [
-          { andar: "B1F", imagem: "/images/shinjuku-station-map-b1f.png", imagemAlt: "Mapa do subsolo (B1F) da Estação Shinjuku — catracas e portões" },
-          { andar: "1F", imagem: "/images/shinjuku-station-map-1f.png", imagemAlt: "Mapa do 1º andar (1F) da Estação Shinjuku — plataformas JR" },
-          { andar: "Portões", imagem: "/images/shinjuku-station-map-gates.png", imagemAlt: "Mapa dos portões Sul/Sudeste e Koshu-kaido/Nova Saída Sul da Estação Shinjuku" },
-        ],
-      },
-    },
-    atracaoPrincipal: "Bairro de Shinjuku",
-    atracaoPrincipalImagem: "/images/draft-shinjuku.png",
-    detalhesPraticos: [
-      { label: "Mirante do Governo Metropolitano", valor: "Gratuito · ~9h30–22h" },
-      { label: "Golden Gai", valor: "Maioria dos bares abre após 20h" },
-      { label: "Thermae-Yu", valor: "Aberto 24h" },
-      {
-        label: "Melhor horário",
-        horarioDestaque: "17h–18h",
-        valor:
-          "É o intervalo em que os letreiros de neon de Kabukicho acendem contra o céu ainda claro — melhor momento para fotos antes de seguir para o jantar e a vida noturna.",
-      },
-    ],
-    atracaoPrincipalFoco: "center",
-    mapaVisaoGeral: {
-      imagem: "/images/placeholder-em-producao.png",
-      imagemAlt: "Visão geral do trajeto a pé em Shinjuku — em produção",
-      nota: "Mapa de trajeto a pé em produção.",
-    },
-    decisoes: [
-      {
-        titulo: "Vale subir no mirante do Governo Metropolitano?",
-        resposta: "A entrada é gratuita e a vista é comparável à de mirantes pagos como o da Tokyo Sky Tree — recomendado, especialmente perto do pôr do sol.",
-      },
-    ],
-    pois: [
-      {
-        title: "Shinjuku Gyoen",
-        description:
-          "Um dos parques mais bonitos de Tóquio, misturando jardins japonês, francês e inglês — refúgio verde no meio do bairro mais denso da cidade. Melhor visitar logo na chegada, ainda com luz do dia (fica ao sul da estação, fecha à noite).",
-        prioridade: "recomendado",
-        imagem: "/images/shinjuku-gyoen.png",
-        imagemAlt: "Lago do Shinjuku Gyoen no outono, com a torre do Prédio do Governo Metropolitano ao fundo",
-      },
-      {
-        title: "Prédio do Governo Metropolitano de Tóquio + Mirante",
-        description:
-          "Torres gêmeas projetadas por Kenzo Tange com mirante gratuito no 45º andar e vista panorâmica da cidade — em dias claros, dá para ver o Monte Fuji. Fica no lado oeste da estação; ideal chegar perto do fim da tarde para ver o pôr do sol.",
-        prioridade: "recomendado",
-        imagem: "/images/tokyo-metropolitan-government-building.png",
-        imagemAlt: "Vista de baixo das torres gêmeas do Prédio do Governo Metropolitano de Tóquio",
-        imagemPosicao: "top",
-      },
-      {
-        title: "Gato 3D Gigante",
-        description:
-          "Gato tridimensional gigante exibido em telão curvo no edifício Cross Shinjuku Vision, na saída leste da estação — uma das atrações mais fotografadas do bairro, já a caminho de Kabukicho.",
-        prioridade: "recomendado",
-        imagem: "/images/gato-3d-shinjuku.png",
-        imagemAlt: "Gato tridimensional gigante no telão curvo do Cross Shinjuku Vision",
-      },
-      {
-        title: "Estátua do Godzilla",
-        description:
-          "Réplica em tamanho real na varanda do Hotel Gracery, símbolo do distrito de entretenimento de Kabukicho — pertinho do Gato 3D.",
-        prioridade: "recomendado",
-        imagem: "/images/godzilla-head-shinjuku.png",
-        imagemAlt: "Cabeça do Godzilla na varanda do Hotel Gracery, em Kabukicho",
-      },
-      {
-        title: "Kabukicho",
-        description:
-          "Maior distrito de entretenimento noturno de Tóquio, com neons, bares temáticos e vida noturna intensa.",
-        prioridade: "recomendado",
-        imagem: "/images/kabukicho.png",
-        imagemAlt: "Arco de neon vermelho na entrada de Kabukicho Ichibangai, com movimento de pedestres à noite",
-      },
-      {
-        title: "Golden Gai",
-        description:
-          "Rede de vielas estreitas com mais de 200 bares minúsculos, a maioria com capacidade para menos de 10 pessoas — encostado em Kabukicho, último ponto da noite antes do onsen Thermae-Yu.",
-        prioridade: "imperdivel",
-        imagem: "/images/golden-gai.png",
-        imagemAlt: "Viela estreita do Golden Gai à noite, com lanternas e placas iluminadas dos bares",
-        imagemPosicao: "top",
-      },
-      {
-        title: "Onsen Thermae-Yu",
-        description:
-          "Onsen urbano aberto 24 horas no coração de Kabukicho, ao lado do Golden Gai — água termal natural trazida diariamente de Nakaizu, com banhos internos e ao ar livre, banho carbonatado e saunas. Fecha a noite antes do trem noturno rumo a Kyoto.",
-        prioridade: "imperdivel",
-        imagem: "/images/thermae-yu.png",
-      },
-    ],
-    gastronomia: {
-      alerta:
-        "Golden Gai tem ~280 bares minúsculos (4–10 lugares cada) — muitos não recebem estrangeiros ou cobram taxa de mesa/otsumami (aperitivo obrigatório) além do valor da bebida. Os bares abaixo foram selecionados justamente por serem abertamente foreign-friendly. Leve dinheiro: vários não aceitam cartão.",
-      itensLabel: "Bares selecionados em Golden Gai — foreign-friendly",
-      itens: [
-        {
-          nome: "Albatross G",
-          descricao:
-            "Clássico de 3 andares (com terraço no 3º) para começar a noite — staff e cardápio em inglês, drinks autorais. Cover ¥500.",
-          localizacao: "19h–5h",
-        },
-        {
-          nome: "Bar Araku",
-          descricao:
-            "Dono australiano, espaço maior que a média de Golden Gai (com sofás, não só banquinhos), boa seleção de whisky. Sem cover.",
-          localizacao: "19h–4h",
-        },
-        {
-          nome: "Cambiare",
-          descricao:
-            "Ambientado no filme de terror \"Suspiria\" (1977) — e serve pizza, incomum para os padrões de Golden Gai. Algum inglês falado. Sem cover.",
-          localizacao: "seg–qui 18h–2h · sex–sáb 18h–5h",
-        },
-        {
-          nome: "Bar Asyl",
-          descricao:
-            "Intimista, 7 lugares, dono fala inglês — whisky japonês e licor de ameixa caseiro. A experiência mais \"Golden Gai clássico\" da lista. Sem cover.",
-          localizacao: "20h–5h",
-        },
-        {
-          nome: "TOTO Bar Shinjuku",
-          descricao:
-            "Bar de sakês com seleção rotativa por província, harmonizados com petiscos sazonais de frutos do mar — bom para quem quer comer algo além de bebida. Inglês limitado. Cover ¥500.",
-          localizacao: "18h–3h",
-        },
-      ],
-      curadoriaLabel: "Opções selecionadas — Jantar antes dos bares (~19h)",
-      curadoria: [
-        {
-          nome: "Katsu Pulipo",
-          papel: "Melhor nota (mais aclamado)",
-          categoria: "Tonkatsu (costeleta de porco empanada)",
-          descricao:
-            "Tonkatsu premiado, no coração do Kabukicho — selecionado para o Tabelog 100 Best Tonkatsu em 2022, 2024 e 2026.",
-          foto: "/images/katsu-pulipo.png",
-          notaTabelog: "3.90",
-          numAvaliacoes: "1.389 avaliações",
-          faixaPreco: "¥8.000–9.999 no jantar",
-          distancia: "Dentro do Kabukicho — ~3 min a pé da Saída Leste da Estação Shinjuku",
-          foreignFriendly:
-            "Alto — reserva online em inglês (inclusive via KKday e TakeMe), ampla presença em guias internacionais.",
-          horario: "18h–23h (último pedido de comida 21h30) — fechado no fim/início de ano",
-          reserva: "Obrigatória — 1 bebida mínima por pessoa no jantar",
-          pagamento: "Cartão, IC card e QR code (PayPay, Rakuten Pay) aceitos",
-          linkTabelog: "https://tabelog.com/en/tokyo/A1304/A130401/13264309/",
-        },
-        {
-          nome: "Nakizakana Shinjuku ten hanare",
-          papel: "Experiência mais especial",
-          categoria: "Izakaya de frutos do mar",
-          descricao:
-            "Peixe fresco entregue diariamente por pescadores parceiros, com vários modos de preparo à escolha — foge do padrão carne/ramen dos outros dois dias já preenchidos.",
-          foto: "/images/nakizakana-shinjuku.png",
-          economico: true,
-          notaTabelog: "3.57",
-          numAvaliacoes: "815 avaliações",
-          faixaPreco: "¥5.000–7.999 no jantar",
-          distancia:
-            "Nishi-Shinjuku, ~3 min a pé da Saída Sul da Estação Shinjuku — trajeto curto de trem ou táxi até Golden Gai (não é a pé)",
-          foreignFriendly:
-            "Alto — reserva online pelo Tabelog, pagamento em IC card e QR code aceito, boa presença em plataformas internacionais de reserva.",
-          horario:
-            "seg–sex 17h–23h (fins de semana e feriados abre 16h) — último pedido 22h",
-          reserva: "Obrigatória — reserva online",
-          pagamento: "Cartão, IC card e QR code (PayPay, d Barai, Rakuten Pay, au PAY) aceitos",
-          linkTabelog: "https://tabelog.com/en/tokyo/A1304/A130401/13180803/",
-        },
-        {
-          nome: "Sugoi Niboshi Ramen Nagi — Golden Gai honkan",
-          papel: "Mais prático",
-          categoria: "Ramen (niboshi/sardinha-seca)",
-          descricao:
-            "A loja original da rede Nagi, dentro do próprio Golden Gai — casa de nascimento do ramen de niboshi que deu fama internacional à marca.",
-          foto: "/images/sugoi-niboshi-ramen-nagi.png",
-          economico: true,
-          notaTabelog: "3.64",
-          numAvaliacoes: "3.485 avaliações",
-          faixaPreco: "¥1.000–1.999 por pessoa",
-          distancia: "Dentro do Golden Gai (2F) — ~3 min a pé da Estação Shinjuku-sanchome, Saída E2",
-          foreignFriendly:
-            "Médio — sem cardápio em inglês confirmado, mas rede conhecida internacionalmente, prato simples de pedir.",
-          horario: "Aberto 24h, todos os dias",
-          nivelFila: "Fila comum — balcão com só 10 lugares em L, muito procurado",
-          reserva: "Não aceita reservas — só balcão",
-          pagamento: "Dinheiro, IC card e QR code aceitos",
-          linkTabelog: "https://tabelog.com/en/tokyo/A1304/A130401/13054766/",
-        },
-      ],
-      mapa: {
-        titulo: "Mapa — Refeições em Shinjuku",
-        imagem: "/images/placeholder-em-producao.png",
-        imagemAlt: "Mapa de restaurantes em Shinjuku — em produção",
-      },
-    },
-    banheirosProximos: [
-      {
-        local: "Banheiro público da Estação Seibu-Shinjuku",
-        endereco: "1-30 Kabukicho — bem no centro do bairro",
-        nota: "Aberto 24h, é a opção mais rápida durante a noite em Kabukicho.",
-      },
-      {
-        local: "Shiki no Michi (viela de pedestres)",
-        endereco: "Colado ao Golden Gai",
-        nota: "Os bares minúsculos do Golden Gai raramente têm banheiro próprio — este é o ponto de apoio mais próximo enquanto o grupo estiver nas vielas.",
-      },
-    ],
     subAtracoes: [
       {
         label: "Tarde",
-        titulo: "Shinjuku Gyoen",
-        imagem: "/images/shinjuku-gyoen.png",
-        foco: "center",
+        titulo: "Shinjuku",
         descricao:
-          "Um dos parques mais bonitos de Tóquio, misturando jardins japonês, francês e inglês — refúgio verde no meio do bairro mais denso da cidade.",
-      },
-      {
-        label: "Tarde",
-        titulo: "Thermae-Yu",
-        imagem: "/images/thermae-yu.png",
-        foco: "center",
-        descricao:
-          "Onsen urbano aberto 24 horas no coração de Kabukicho, ao lado do Golden Gai — água termal natural trazida diariamente de Nakaizu (famosa pelas propriedades para a pele), com banhos internos e ao ar livre, banho carbonatado, saunas e, na temporada quente, deck na cobertura.",
-        alerta: {
-          titulo: "Tatuagem e Documento",
-          horario: "Leve o passaporte físico se tiver tatuagem",
-          mensagem:
-            "A política do Thermae-Yu é restritiva com japoneses tatuados, mas estrangeiros com tatuagem pequena podem entrar apresentando o passaporte físico e comprando um adesivo/curativo impermeável para cobri-la na recepção (~¥310). Tatuagens grandes podem ser recusadas — vale confirmar a política vigente antes de ir.",
+          "Bairro que reúne o maior terminal ferroviário do mundo, arranha-céus corporativos, o distrito de entretenimento de Kabukicho e algumas das vielas mais icônicas de Tóquio — um contraste denso entre o Japão corporativo do dia e o lado mais boêmio que toma conta das ruas assim que escurece.",
+        deslocamento: {
+          estacaoOrigem: {
+            nome: "Estação Shibuya",
+            nomeJapones: "渋谷駅",
+            saida: "Catraca Hachiko",
+            foto: "/images/shibuya-station-entrance.png",
+            mapa: "/images/shibuya-station-map.png",
+            mapaAlt: "Mapa da Estação Shibuya (Ginza Line, Hanzomon Line e JR)",
+          },
+          linha: { codigo: "JY", nome: "JR Yamanote Line", cor: "#8FAADC", logo: "/images/jr-logo.webp" },
+          estacoesIntermediarias: [
+            { nome: "Harajuku", nomeJapones: "原宿", numero: "JY19" },
+            { nome: "Yoyogi", nomeJapones: "代々木", numero: "JY18" },
+          ],
+          estacaoDestino: {
+            nome: "Estação Shinjuku",
+            nomeJapones: "新宿駅",
+            saida: "Saída Sul Nova (New South Exit)",
+            foto: "/images/shinjuku-station-entrance.png",
+          },
+          opcoes: [
+            {
+              meio: "Trem JR",
+              tempo: "≈7 min",
+              Icon: IconMetro,
+              recomendado: true,
+              detalhes: [
+                "Linha direta (Yamanote Line), sem baldeação.",
+                "Embarque na mesma estação onde termina o passeio por Shibuya Crossing.",
+              ],
+            },
+            {
+              meio: "Táxi / Carro",
+              tempo: "≈15–20 min",
+              Icon: IconCar,
+              detalhes: [
+                "Sujeito a trânsito no início da tarde.",
+                "Porta a porta, sem caminhada até a estação.",
+              ],
+            },
+          ],
+          recomendacao:
+            "De Shibuya até Shinjuku são cerca de 7 minutos de trem pela JR Yamanote Line, sem baldeação — a mesma linha usada em quase todo o trecho central de Tóquio.",
+          mapaAndares: {
+            titulo: "Mapa da Estação Shinjuku",
+            mapas: [
+              { andar: "B1F", imagem: "/images/shinjuku-station-map-b1f.png", imagemAlt: "Mapa do subsolo (B1F) da Estação Shinjuku — catracas e portões" },
+              { andar: "1F", imagem: "/images/shinjuku-station-map-1f.png", imagemAlt: "Mapa do 1º andar (1F) da Estação Shinjuku — plataformas JR" },
+              { andar: "Portões", imagem: "/images/shinjuku-station-map-gates.png", imagemAlt: "Mapa dos portões Sul/Sudeste e Koshu-kaido/Nova Saída Sul da Estação Shinjuku" },
+            ],
+          },
         },
+        visaoAnotada: {
+          titulo: "Shinjuku à Noite — Kabukicho",
+          imagem: "/images/raiox-shinjuku.png",
+          imagemAlt: "Raio-X Alpinea de Kabukicho à noite com Godzilla Head, Cross Shinjuku Vision, Thermae-Yu e Shinjuku Golden-Gai",
+          comentarios: [
+            "Vista noturna do quarteirão de Kabukicho: a cabeça do Godzilla (Godzilla Head) fica no topo do Hotel Gracery, bem na entrada do bairro — dá pra ver de longe. A poucos passos, o Cross Shinjuku Vision é o telão curvo onde aparece o gato 3D gigante, na saída leste da estação.",
+            "Do outro lado do quarteirão, o Thermae-Yu (onsen urbano) e o Shinjuku Golden-Gai (rede de vielas com bares minúsculos) ficam a uma curta caminhada um do outro — todo esse trecho é percorrível a pé, sem pressa, entre uma atração e outra.",
+          ],
+          nota:
+        "Melhor horário para fotos: 17h–18h, quando os letreiros de neon acendem contra o céu ainda claro — ideal antes de seguir para o jantar e a vida noturna. O mirante do Governo Metropolitano é gratuito, com vista comparável à de mirantes pagos como o da Tokyo Sky Tree — vale subir perto do pôr do sol.",
+        },
+        poisLabel: "Pontos de Interesse",
+        pois: [
+          {
+            title: "Shinjuku Gyoen",
+            description:
+              "Um dos parques mais bonitos de Tóquio, misturando jardins japonês, francês e inglês — refúgio verde no meio do bairro mais denso da cidade. Melhor visitar logo na chegada, ainda com luz do dia (fica ao sul da estação, fecha à noite).",
+            prioridade: "recomendado",
+            imagem: "/images/shinjuku-gyoen.png",
+            imagemAlt: "Lago do Shinjuku Gyoen no outono, com a torre do Prédio do Governo Metropolitano ao fundo",
+          },
+          {
+            title: "Prédio do Governo Metropolitano de Tóquio + Mirante",
+            description:
+              "Torres gêmeas projetadas por Kenzo Tange com mirante gratuito (~9h30–22h) no 45º andar e vista panorâmica da cidade — em dias claros, dá para ver o Monte Fuji. Fica no lado oeste da estação; ideal chegar perto do fim da tarde para ver o pôr do sol.",
+            prioridade: "recomendado",
+            imagem: "/images/tokyo-metropolitan-government-building.png",
+            imagemAlt: "Vista de baixo das torres gêmeas do Prédio do Governo Metropolitano de Tóquio",
+            imagemPosicao: "top",
+          },
+          {
+            title: "Gato 3D Gigante",
+            description:
+              "Gato tridimensional gigante exibido em telão curvo no edifício Cross Shinjuku Vision, na saída leste da estação — uma das atrações mais fotografadas do bairro, já a caminho de Kabukicho.",
+            prioridade: "recomendado",
+            imagem: "/images/gato-3d-shinjuku.png",
+            imagemAlt: "Gato tridimensional gigante no telão curvo do Cross Shinjuku Vision",
+          },
+          {
+            title: "Estátua do Godzilla",
+            description:
+              "Réplica em tamanho real na varanda do Hotel Gracery, símbolo do distrito de entretenimento de Kabukicho — pertinho do Gato 3D.",
+            prioridade: "recomendado",
+            imagem: "/images/godzilla-head-shinjuku.png",
+            imagemAlt: "Cabeça do Godzilla na varanda do Hotel Gracery, em Kabukicho",
+          },
+          {
+            title: "Kabukicho",
+            description:
+              "Maior distrito de entretenimento noturno de Tóquio, com neons, bares temáticos e vida noturna intensa.",
+            prioridade: "recomendado",
+            imagem: "/images/kabukicho.png",
+            imagemAlt: "Arco de neon vermelho na entrada de Kabukicho Ichibangai, com movimento de pedestres à noite",
+          },
+          {
+            title: "Golden Gai",
+            description:
+              "Rede de vielas estreitas com mais de 200 bares minúsculos, a maioria com capacidade para menos de 10 pessoas (maioria abre após 20h) — encostado em Kabukicho, último ponto da noite antes do onsen Thermae-Yu.",
+            prioridade: "imperdivel",
+            imagem: "/images/golden-gai.png",
+            imagemAlt: "Viela estreita do Golden Gai à noite, com lanternas e placas iluminadas dos bares",
+            imagemPosicao: "top",
+          },
+          {
+            title: "Onsen Thermae-Yu",
+            description:
+              "Onsen urbano aberto 24 horas no coração de Kabukicho, ao lado do Golden Gai — água termal natural trazida diariamente de Nakaizu, com banhos internos e ao ar livre, banho carbonatado e saunas. Fecha a noite antes do trem noturno rumo a Kyoto.",
+            prioridade: "imperdivel",
+            imagem: "/images/thermae-yu.png",
+            alerta:
+              "Documento obrigatório na entrada: leve o passaporte físico (cópia ou foto no celular normalmente não são aceitas). Para quem tem tatuagem, o passaporte também é usado para liberar, na recepção, o adesivo impermeável de cobertura (~¥310) — tatuagens grandes podem ser recusadas, vale confirmar a política vigente antes de ir.",
+          },
+        ],
+        gastronomia: {
+          alerta:
+            "Golden Gai tem ~280 bares minúsculos (4–10 lugares cada) — muitos não recebem estrangeiros ou cobram taxa de mesa/otsumami (aperitivo obrigatório) além do valor da bebida. Os bares abaixo foram selecionados justamente por serem abertamente foreign-friendly. Leve dinheiro: vários não aceitam cartão.",
+          itensLabel: "Bares selecionados em Golden Gai — foreign-friendly",
+          itens: [
+            {
+              nome: "Albatross G",
+              descricao:
+                "Clássico de 3 andares (com terraço no 3º) para começar a noite — staff e cardápio em inglês, drinks autorais. Cover ¥500.",
+              localizacao: "19h–5h",
+            },
+            {
+              nome: "Bar Araku",
+              descricao:
+                "Dono australiano, espaço maior que a média de Golden Gai (com sofás, não só banquinhos), boa seleção de whisky. Sem cover.",
+              localizacao: "19h–4h",
+            },
+            {
+              nome: "Cambiare",
+              descricao:
+                "Ambientado no filme de terror \"Suspiria\" (1977) — e serve pizza, incomum para os padrões de Golden Gai. Algum inglês falado. Sem cover.",
+              localizacao: "seg–qui 18h–2h · sex–sáb 18h–5h",
+            },
+            {
+              nome: "Bar Asyl",
+              descricao:
+                "Intimista, 7 lugares, dono fala inglês — whisky japonês e licor de ameixa caseiro. A experiência mais \"Golden Gai clássico\" da lista. Sem cover.",
+              localizacao: "20h–5h",
+            },
+            {
+              nome: "TOTO Bar Shinjuku",
+              descricao:
+                "Bar de sakês com seleção rotativa por província, harmonizados com petiscos sazonais de frutos do mar — bom para quem quer comer algo além de bebida. Inglês limitado. Cover ¥500.",
+              localizacao: "18h–3h",
+            },
+          ],
+          curadoriaLabel: "Opções selecionadas — Jantar antes dos bares (~19h)",
+          curadoria: [
+            {
+              nome: "Katsu Pulipo",
+              papel: "Melhor nota (mais aclamado)",
+              categoria: "Tonkatsu (costeleta de porco empanada)",
+              descricao:
+                "Tonkatsu premiado, no coração do Kabukicho — selecionado para o Tabelog 100 Best Tonkatsu em 2022, 2024 e 2026.",
+              foto: "/images/katsu-pulipo.png",
+              notaTabelog: "3.90",
+              numAvaliacoes: "1.389 avaliações",
+              faixaPreco: "¥8.000–9.999 no jantar",
+              distancia: "Dentro do Kabukicho — ~3 min a pé da Saída Leste da Estação Shinjuku",
+              foreignFriendly:
+                "Alto — reserva online em inglês (inclusive via KKday e TakeMe), ampla presença em guias internacionais.",
+              horario: "18h–23h (último pedido de comida 21h30) — fechado no fim/início de ano",
+              reserva: "Obrigatória — 1 bebida mínima por pessoa no jantar",
+              pagamento: "Cartão, IC card e QR code (PayPay, Rakuten Pay) aceitos",
+              linkTabelog: "https://tabelog.com/en/tokyo/A1304/A130401/13264309/",
+            },
+            {
+              nome: "Nakizakana Shinjuku ten hanare",
+              papel: "Experiência mais especial",
+              categoria: "Izakaya de frutos do mar",
+              descricao:
+                "Peixe fresco entregue diariamente por pescadores parceiros, com vários modos de preparo à escolha — foge do padrão carne/ramen dos outros dois dias já preenchidos.",
+              foto: "/images/nakizakana-shinjuku.png",
+              economico: true,
+              notaTabelog: "3.57",
+              numAvaliacoes: "815 avaliações",
+              faixaPreco: "¥5.000–7.999 no jantar",
+              distancia:
+                "Nishi-Shinjuku, ~3 min a pé da Saída Sul da Estação Shinjuku — trajeto curto de trem ou táxi até Golden Gai (não é a pé)",
+              foreignFriendly:
+                "Alto — reserva online pelo Tabelog, pagamento em IC card e QR code aceito, boa presença em plataformas internacionais de reserva.",
+              horario:
+                "seg–sex 17h–23h (fins de semana e feriados abre 16h) — último pedido 22h",
+              reserva: "Obrigatória — reserva online",
+              pagamento: "Cartão, IC card e QR code (PayPay, d Barai, Rakuten Pay, au PAY) aceitos",
+              linkTabelog: "https://tabelog.com/en/tokyo/A1304/A130401/13180803/",
+            },
+            {
+              nome: "Sugoi Niboshi Ramen Nagi — Golden Gai honkan",
+              papel: "Mais prático",
+              categoria: "Ramen (niboshi/sardinha-seca)",
+              descricao:
+                "A loja original da rede Nagi, dentro do próprio Golden Gai — casa de nascimento do ramen de niboshi que deu fama internacional à marca.",
+              foto: "/images/sugoi-niboshi-ramen-nagi.png",
+              economico: true,
+              notaTabelog: "3.64",
+              numAvaliacoes: "3.485 avaliações",
+              faixaPreco: "¥1.000–1.999 por pessoa",
+              distancia: "Dentro do Golden Gai (2F) — ~3 min a pé da Estação Shinjuku-sanchome, Saída E2",
+              foreignFriendly:
+                "Médio — sem cardápio em inglês confirmado, mas rede conhecida internacionalmente, prato simples de pedir.",
+              horario: "Aberto 24h, todos os dias",
+              nivelFila: "Fila comum — balcão com só 10 lugares em L, muito procurado",
+              reserva: "Não aceita reservas — só balcão",
+              pagamento: "Dinheiro, IC card e QR code aceitos",
+              linkTabelog: "https://tabelog.com/en/tokyo/A1304/A130401/13054766/",
+            },
+          ],
+          mapa: {
+            titulo: "Mapa — Refeições em Shinjuku",
+            imagem: "/images/placeholder-em-producao.png",
+            imagemAlt: "Mapa de restaurantes em Shinjuku — em produção",
+          },
+        },
+        banheirosProximos: [
+          {
+            local: "Banheiro público da Estação Seibu-Shinjuku",
+            endereco: "1-30 Kabukicho — bem no centro do bairro",
+            nota: "Aberto 24h, é a opção mais rápida durante a noite em Kabukicho.",
+          },
+          {
+            local: "Shiki no Michi (viela de pedestres)",
+            endereco: "Colado ao Golden Gai",
+            nota: "Os bares minúsculos do Golden Gai raramente têm banheiro próprio — este é o ponto de apoio mais próximo enquanto o grupo estiver nas vielas.",
+          },
+        ],
       },
     ],
   },
@@ -4984,6 +4930,12 @@ function PoiCard({ index, poi }: { index: number; poi: Poi }) {
                 {item}
               </span>
             ))}
+          </div>
+        )}
+        {poi.alerta && (
+          <div className="mt-1.5 flex items-start gap-2 rounded-lg border border-amber-300/70 bg-amber-50 px-2.5 py-2">
+            <span className="mt-0.5 shrink-0 text-xs">⚠️</span>
+            <p className="text-[11px] leading-4 text-amber-800">{poi.alerta}</p>
           </div>
         )}
       </div>
