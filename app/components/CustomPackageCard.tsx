@@ -1022,23 +1022,14 @@ export function CustomPackageCard() {
               {opcaoAberta.icone} {opcaoAberta.label}
             </p>
             {opcaoAberta.key === "roteiro" && (
-              <div className="mt-3 flex flex-col gap-3 sm:flex-row">
+              <div className="mt-3">
                 <video
                   src="/videos/roteiro-personalizado-short.mp4"
                   poster="/videos/roteiro-personalizado-short-poster.jpg"
                   controls
                   playsInline
-                  className="w-full flex-1 rounded-xl border border-white/10"
+                  className="w-full rounded-xl border border-white/10"
                 />
-                <div className="relative mx-auto aspect-[1024/1536] w-full max-w-[140px] shrink-0 overflow-hidden rounded-2xl border border-white/10 sm:mx-0">
-                  <Image
-                    src="/images/mock-roteiro-iphone.png"
-                    alt="Painel Ajisai — roteiro diário personalizado"
-                    fill
-                    sizes="140px"
-                    className="object-cover"
-                  />
-                </div>
               </div>
             )}
             {opcaoAberta.key === "transporte" && (
@@ -1076,6 +1067,17 @@ export function CustomPackageCard() {
             <p className="mt-3 whitespace-pre-line text-sm font-light leading-6 text-white/65">
               {opcaoAberta.detalhe}
             </p>
+            {opcaoAberta.key === "roteiro" && (
+              <div className="relative mx-auto mt-4 aspect-[1024/1536] w-full max-w-[140px] overflow-hidden rounded-2xl border border-white/10">
+                <Image
+                  src="/images/mock-roteiro-iphone.png"
+                  alt="Painel Ajisai — roteiro diário personalizado"
+                  fill
+                  sizes="140px"
+                  className="object-cover"
+                />
+              </div>
+            )}
           </div>
         </div>,
         document.body,

@@ -310,6 +310,36 @@ const LINHAS_CONCORRENCIA: { label: string; valores: Record<ConcorrenteKey, stri
   },
 ];
 
+// Diferenciais Ajisai específicos pra quem compra a passagem aérea com a
+// gente — mesmo conteúdo usado no popup "Passagem Aérea" de cada pacote e
+// na opção "Aéreo" do Pacote Personalizado.
+const DIFERENCIAIS_AEREO = [
+  {
+    titulo: "Concierge no Aeroporto de Guarulhos",
+    texto:
+      "Equipe especializada apoia todos os passageiros no balcão de check-in — resolve reserva de assento, remarcação em cancelamento involuntário e direitos em atrasos, com acesso direto à gerência das companhias aéreas.",
+    imagem: "/images/icone-diferencial-1.png",
+  },
+  {
+    titulo: "Protocolo pré-embarque (Visit Japan Web)",
+    texto:
+      "Nossa equipe preenche e cadastra o Visit Japan Web (VJW) com os dados do passageiro e envia pronto pra você — sem papelada na chegada ao Japão — além de uma sessão dedicada pra explicar o itinerário antes do embarque.",
+    imagem: "/images/icone-diferencial-2.png",
+  },
+  {
+    titulo: "Monitoramento de viagem",
+    texto:
+      "Central de WhatsApp com equipe emergencial Ajisai, funcionando quase 24 horas por dia — conexões, imprevistos e gestão de reserva, com atendimento humano e apoio de tradutor quando necessário.",
+    imagem: "/images/icone-diferencial-3.png",
+  },
+  {
+    titulo: "Responsabilidade da Agência",
+    texto:
+      "Passagem emitida pela Ajisai tem responsabilidade solidária da agência e negociação direta com as companhias aéreas — mais proteção e prioridade do que comprar uma passagem avulsa, mesmo pelo mesmo preço.",
+    imagem: "/images/icone-diferencial-4.png",
+  },
+];
+
 function ValorConcorrencia({ valor }: { valor: string }) {
   if (valor === "X") {
     return <IconCheck className="mx-auto h-4 w-4 text-[#6ec3d9]" />;
@@ -520,6 +550,65 @@ export default function ProdutosPage() {
           />
         </div>
       </section>
+
+      {/* ── DIFERENCIAIS AJISAI · PASSAGENS AÉREAS ── */}
+      <div className="border-b border-white/10 bg-black">
+        <div className="relative h-[420px] w-full overflow-hidden sm:h-[500px] md:h-[600px]">
+          <Image
+            src="/images/hero-passagens-aereas.jpg"
+            alt="Cabine de primeira classe — viagem aérea Ajisai"
+            fill
+            sizes="100vw"
+            className="object-cover object-[68%_18%]"
+          />
+          <div className="absolute inset-0 bg-black/40" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-black/5" />
+          <div className="absolute inset-0 flex flex-col items-center justify-end px-6 pb-28 text-center sm:pb-32 md:pb-36">
+            <p
+              className="text-[10px] uppercase tracking-[0.2em] text-white"
+              style={{ textShadow: "0 2px 10px rgba(0,0,0,0.7)" }}
+            >
+              Passagem comprada com a Ajisai
+            </p>
+            <h2
+              className={`${display.className} mt-2 max-w-3xl text-2xl font-medium leading-tight text-white md:text-4xl`}
+              style={{ textShadow: "0 2px 14px rgba(0,0,0,0.7)" }}
+            >
+              Diferenciais Ajisai para Passagens Aéreas
+            </h2>
+            <p
+              className="mx-auto mt-3 max-w-2xl text-sm font-light leading-6 text-white"
+              style={{ textShadow: "0 2px 10px rgba(0,0,0,0.7)" }}
+            >
+              O mesmo suporte que você encontra dentro de cada produto, na
+              seção Aéreo/Passagem Aérea — aqui resumido em um único lugar.
+            </p>
+          </div>
+        </div>
+
+        <div className="relative -mt-20 px-6 pb-14 sm:-mt-24 md:-mt-28 md:px-10 md:pb-20">
+          <div className="mx-auto max-w-7xl">
+            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
+              {DIFERENCIAIS_AEREO.map((item) => (
+                <div
+                  key={item.titulo}
+                  className="rounded-2xl border border-black/5 bg-[#FAF7F2] p-6 text-center shadow-sm md:p-8"
+                >
+                  <span className="mx-auto flex h-24 w-24 items-center justify-center rounded-full bg-[#6ec3d9]/20 text-[#2f80c9]">
+                    <Image src={item.imagem} alt="" width={96} height={96} className="h-20 w-20 object-contain" />
+                  </span>
+                  <h3 className={`${display.className} mt-5 text-lg font-semibold text-[#2f80c9]`}>
+                    {item.titulo}
+                  </h3>
+                  <p className="mt-2 text-[15px] font-normal leading-6 text-[#0A2540]/80">
+                    {item.texto}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
 
       {/* ── ROTEIRO PERSONALIZADO — DEMONSTRAÇÃO ── */}
       <section id="roteiro" className="border-b border-white/10 bg-[#050505] px-6 py-16 md:px-16 md:py-24">

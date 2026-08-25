@@ -59,10 +59,19 @@ const TUDO_PENSADO = [
 // O que fica de fora do pacote — mesma informação já confirmada no FAQ
 // padrão ("Refeições?"), só reorganizada em lista curta pro quadro
 // Incluso/Não incluso.
-const NAO_INCLUSO = [
+const NAO_INCLUSO_BASE = [
   "Almoços e jantares, salvo indicação no roteiro",
   "Despesas pessoais e compras",
   "Passeios e ingressos fora do roteiro previsto",
+];
+
+// Guia Turístico e Transfer só vêm inclusos por padrão nas Caravanas (saída
+// em grupo fechado) — nos Pacotes Individuais/Personalizados são itens à
+// parte, então entram na coluna "Não incluso" (e não mais na coluna
+// "Incluso" com selo de opcional).
+const NAO_INCLUSO_AVULSO = [
+  "Guia turístico (disponível como opcional à parte)",
+  "Transfer aeroporto-hotel (disponível como opcional à parte)",
 ];
 
 // Heurística leve para gerar as etiquetas (ícone + rótulo) de cada dia do
@@ -673,11 +682,18 @@ export function PackageDetailModal({
   const variante = variantes.find((v) => v.id === selecionada) ?? variantes[0];
 
   // Guia e transfer são padrão (não opcionais) nos Pacotes de Caravana —
-  // já vêm inclusos no grupo fechado, ao contrário das demais divisões.
-  const inclusoes =
-    divisao === "Pacotes de Caravana"
-      ? INCLUSOES_PADRAO.map((item) => ({ ...item, opcional: false }))
-      : INCLUSOES_PADRAO;
+  // já vêm inclusos no grupo fechado. Nas demais divisões (Individual ou
+  // Pequenos Grupos, Personalizado) esses dois itens saem da coluna
+  // "Incluso" e passam para "Não incluso", já que só a Caravana os inclui.
+  const isCaravana = divisao === "Pacotes de Caravana";
+  const inclusoes = isCaravana
+    ? INCLUSOES_PADRAO.map((item) => ({ ...item, opcional: false }))
+    : INCLUSOES_PADRAO.filter(
+        (item) => item.title !== "Guia Turístico" && item.title !== "Transfer",
+      );
+  const naoIncluso = isCaravana
+    ? NAO_INCLUSO_BASE
+    : [...NAO_INCLUSO_BASE, ...NAO_INCLUSO_AVULSO];
 
   function handleAdd() {
     if (!variante) return;
@@ -988,7 +1004,7 @@ export function PackageDetailModal({
                   Não incluso
                 </p>
                 <div className="space-y-2">
-                  {NAO_INCLUSO.map((text) => (
+                  {naoIncluso.map((text) => (
                     <div
                       key={text}
                       className="flex items-center gap-2 rounded-lg border border-white/10 bg-white/[0.02] px-3.5 py-2.5 text-sm text-white/45"
