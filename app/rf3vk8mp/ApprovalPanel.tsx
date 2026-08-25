@@ -11,6 +11,8 @@ import {
 import { createPortal } from "react-dom";
 import Image from "next/image";
 import { NaritaGuideContent } from "../components/NaritaGuideContent";
+import { TremGuideContent } from "../components/TremGuideContent";
+import { CostumesGuideContent } from "../components/CostumesGuideContent";
 
 // Painel interativo do roteiro personalizado — mesma lógica visual do Painel
 // Interativo usado em /ajisairoteiros (pílulas, abas de dia, tipografia
@@ -331,6 +333,9 @@ type Period = {
       // Foto extra (ex.: um detalhe escondido) — mostrada como miniatura
       // em destaque sobre o canto da foto principal, clicável pra zoom.
       fotoExtra?: { src: string; alt: string };
+      // CSS object-position custom (ex.: "center 20%") pra evitar cortar a
+      // fachada/placa da loja no crop 4:3 — sem isso, usa o centro padrão.
+      fotoPosicao?: string;
       // Posição na sequência de visita recomendada (percursoEssencial) —
       // é o número mostrado no card (numeração única, igual à do Percurso
       // Essencial e dos cards de Pontos de Interesse). Sem isso, o card
@@ -339,6 +344,11 @@ type Period = {
       ordem?: number;
     }[];
   };
+  // Segundo Raio-X Alpinea do período — mostrado logo abaixo do primeiro
+  // (visaoAnotada), antes de Pontos de Interesse. Usado quando o período
+  // cobre duas áreas bem distintas que merecem cada uma seu próprio mapa
+  // anotado (ex.: Shinjuku à noite + Shinjuku Gyoen à tarde).
+  visaoAnotadaSecundaria?: Period["visaoAnotada"];
   // Resposta rápida a "o que eu faço agora?" — resumo do percurso a pé
   // recomendado dentro da atração, antes de qualquer detalhe. Mostrado
   // logo após o hero, antes do diagrama anotado.
@@ -1402,8 +1412,8 @@ const DAY_2: DayContent = {
         { titulo: "Pokémon Store", descricao: "Loja oficial de Pokémon.", foto: "/images/marunouchi-pokemon-store.png", ordem: 3 },
         { titulo: "Kirby Café", descricao: "Café temático de Kirby.", foto: "/images/marunouchi-kirby-cafe.png", ordem: 4 },
         { titulo: "Ghibli Shop", descricao: "Loja oficial do Studio Ghibli.", foto: "/images/marunouchi-ghibli-shop.png", ordem: 5 },
-        { titulo: "Tomica Shop", descricao: "Loja de miniaturas Tomica.", foto: "/images/marunouchi-tomica-shop.png", ordem: 6 },
-        { titulo: "Rilakkuma Store", descricao: "Loja oficial de Rilakkuma.", foto: "/images/marunouchi-rilakkuma-store.png", ordem: 7 },
+        { titulo: "Tomica Shop", descricao: "Loja de miniaturas Tomica.", foto: "/images/marunouchi-tomica-shop.png", fotoPosicao: "center 15%", ordem: 6 },
+        { titulo: "Rilakkuma Store", descricao: "Loja oficial de Rilakkuma.", foto: "/images/marunouchi-rilakkuma-store.png", fotoPosicao: "center 20%", ordem: 7 },
       ],
     },
     regiao: {
@@ -1713,16 +1723,6 @@ const DAY_2: DayContent = {
         imagemAlt: "Tenshudai, base de pedra da torre principal do Castelo de Edo",
       },
     ],
-    galeria: {
-      titulo: "Imperial Palace East Gardens em Detalhes",
-      imagens: [
-        { src: "/images/imperial-palace-otemon-gate.jpg", alt: "Otemon Gate, entrada principal dos Jardins do Palácio Imperial", legenda: "Otemon Gate" },
-        { src: "/images/imperial-palace-bansho.jpg", alt: "Bansho, casa de guarda samurai do Castelo de Edo", legenda: "Bansho (Casas de Guarda)" },
-        { src: "/images/imperial-palace-muralhas.jpg", alt: "Muralhas e fossos originais do Castelo de Edo", legenda: "Muralhas e Fossos Originais" },
-        { src: "/images/imperial-palace-fujimi-yagura.jpg", alt: "Fujimi-yagura, torre de vigia do Castelo de Edo", legenda: "Fujimi-yagura" },
-        { src: "/images/imperial-palace-tenshudai.jpg", alt: "Tenshudai, base de pedra da torre principal do Castelo de Edo", legenda: "Tenshudai" },
-      ],
-    },
     banheirosProximos: [
       {
         local: "Área de descanso do Honmaru",
@@ -2171,6 +2171,15 @@ const DAY_3: DayContent = {
         "Do outro lado do quarteirão, o Thermae-Yu (onsen urbano) e o Shinjuku Golden-Gai (rede de vielas com bares minúsculos) ficam a uma curta caminhada um do outro — todo esse trecho é percorrível a pé, sem pressa, entre uma atração e outra.",
       ],
     },
+    visaoAnotadaSecundaria: {
+      titulo: "Shinjuku Gyoen",
+      imagem: "/images/raiox-shinjuku-gyoen.png",
+      imagemAlt: "Raio-X Alpinea de Shinjuku Gyoen com Portão Shinjuku, Portão Okido, Portão Sendagaya, Jardim Japonês, Estufa Grande, Lago Superior/Médio/Inferior e Jardim de Roseiras",
+      comentarios: [
+        "Vista aérea do parque: os três portões de entrada ficam nas bordas — Shinjuku (nordeste, o mais próximo da estação), Okido (norte) e Sendagaya (sul, perto do Museu Nacional de Arte Moderna). Do lado leste fica o Jardim Japonês tradicional, com os lagos Superior, Médio e Inferior conectados por pontes; no centro, o gramado do estilo francês formal com o Jardim de Roseiras; e a Estufa Grande (Grand Greenhouse) fica próxima ao Portão Shinjuku.",
+        "Com apenas ~2h reservadas no roteiro, vale entrar pelo Portão Shinjuku (o mais próximo da estação) e focar no Jardim Japonês — é o trecho mais fotogênico e mais rápido de cobrir a pé.",
+      ],
+    },
     regiao: {
       nome: "Shinjuku · Tokyo",
       descricao:
@@ -2436,15 +2445,6 @@ const DAY_3: DayContent = {
         foco: "center",
         descricao:
           "Um dos parques mais bonitos de Tóquio, misturando jardins japonês, francês e inglês — refúgio verde no meio do bairro mais denso da cidade.",
-        visaoAnotada: {
-          titulo: "Shinjuku Gyoen",
-          imagem: "/images/raiox-shinjuku-gyoen.png",
-          imagemAlt: "Raio-X Alpinea de Shinjuku Gyoen com Portão Shinjuku, Portão Okido, Portão Sendagaya, Jardim Japonês, Estufa Grande, Lago Superior/Médio/Inferior e Jardim de Roseiras",
-          comentarios: [
-            "Vista aérea do parque: os três portões de entrada ficam nas bordas — Shinjuku (nordeste, o mais próximo da estação), Okido (norte) e Sendagaya (sul, perto do Museu Nacional de Arte Moderna). Do lado leste fica o Jardim Japonês tradicional, com os lagos Superior, Médio e Inferior conectados por pontes; no centro, o gramado do estilo francês formal com o Jardim de Roseiras; e a Estufa Grande (Grand Greenhouse) fica próxima ao Portão Shinjuku.",
-            "Com apenas ~2h reservadas no roteiro, vale entrar pelo Portão Shinjuku (o mais próximo da estação) e focar no Jardim Japonês — é o trecho mais fotogênico e mais rápido de cobrir a pé.",
-          ],
-        },
       },
       {
         label: "Tarde",
@@ -2643,6 +2643,17 @@ const DAY_4: DayContent = {
         saida: "Saída Electric Town",
         foto: "/images/akihabara-station.jpg",
       },
+      // Estações da Ginza Line entre Kyobashi (G10) e o ponto de baldeação
+      // Ueno-hirokoji (G15) — de lá, troca a pé pra Naka-okachimachi (Hibiya
+      // Line, H17) e segue 1 parada até Akihabara (H16), sem mais estações
+      // no meio desse segundo trecho.
+      estacoesIntermediarias: [
+        { nome: "Nihombashi", nomeJapones: "日本橋駅", numero: "G11" },
+        { nome: "Mitsukoshimae", nomeJapones: "三越前駅", numero: "G12" },
+        { nome: "Kanda", nomeJapones: "神田駅", numero: "G13" },
+        { nome: "Suehirocho", nomeJapones: "末広町駅", numero: "G14" },
+        { nome: "Ueno-hirokoji (baldeação)", nomeJapones: "上野広小路駅", numero: "G15" },
+      ],
       opcoes: [
         {
           meio: "Metrô",
@@ -2809,31 +2820,60 @@ const DAY_4: DayContent = {
       },
     ],
     gastronomia: {
-      restaurantesLabel: "Opções de refeição",
-      restaurantes: [
+      curadoriaLabel: "Opções selecionadas — Refeição",
+      curadoria: [
         {
           nome: "Jotou Curry Akihabara ten",
-          descricao: "Curry japonês — casa tradicional da região, com balcão no térreo e mesas no subsolo.",
-          localizacao: "Sotokanda, Chiyoda-ku — ~2 min a pé da Estação Suehirocho",
-          preco: "~900–1.100",
-          horario: "11h–22h30",
+          papel: "Mais tradicional",
+          categoria: "Curry japonês",
+          descricao:
+            "Casa tradicional da região, com balcão no térreo e mesas no subsolo — curry japonês simples e caseiro, servido rápido.",
           foto: "/images/joto-curry-akihabara.png",
+          notaTabelog: "3.28",
+          numAvaliacoes: "289 avaliações",
+          faixaPreco: "¥1.000–1.999 (almoço e jantar)",
+          distancia: "~2 min a pé da Estação Suehirocho (Tokyo Metro Ginza Line)",
+          foreignFriendly: "Baixo — sem cardápio em inglês confirmado, mas prato simples de pedir (curry com cortes à escolha).",
+          horario: "seg–sex 11h–22h · sáb–dom 11h–20h",
+          reserva: "Não aceita reservas",
+          pagamento: "Somente dinheiro — não aceita cartão, IC card nem QR code",
+          linkTabelog: "https://tabelog.com/en/tokyo/A1311/A131101/13197290/",
+          alerta: "Só dinheiro — leve ienes em espécie.",
         },
         {
           nome: "Tonkatsu Wakou Yodobashi Akiba ten",
-          descricao: "Tonkatsu (costeleta de porco empanada) — filial da tradicional rede Wako, dentro do complexo da Yodobashi-Akiba.",
-          localizacao: "Dentro do edifício Yodobashi-Akiba",
-          preco: "~1.500–2.500",
-          horario: "11h–23h",
+          papel: "Melhor custo-benefício",
+          categoria: "Tonkatsu (costeleta de porco empanada)",
+          descricao:
+            "Filial da tradicional rede Wako, dentro do complexo da Yodobashi-Akiba — ampla gama de pagamentos e fácil de pedir por foto no cardápio.",
           foto: "/images/wako-tonkatsu-akihabara.png",
+          notaTabelog: "3.08",
+          numAvaliacoes: "79 avaliações",
+          faixaPreco: "¥1.000–2.999 (almoço e jantar)",
+          distancia: "~1 min a pé da Estação Akihabara (79 m)",
+          foreignFriendly: "Alto — dentro do complexo Yodobashi-Akiba, ampla gama de pagamentos aceitos.",
+          horario: "11h–23h (último pedido 22h)",
+          reserva: "Não aceita reservas",
+          pagamento: "Cartão (Visa, Master, JCB, Amex, Diners), IC card (Suica), Rakuten Edy, iD, QUICPay e QR code (PayPay, d払い, Rakuten Pay, au PAY) aceitos",
+          linkTabelog: "https://tabelog.com/en/tokyo/A1310/A131001/13268426/",
+          economico: true,
         },
         {
           nome: "Kyushu Jangara Ramen (Akihabara Honten)",
-          descricao: "Ramen estilo Kyushu (Hakata) — a casa principal da rede, conhecida também por opções veganas.",
-          localizacao: "Sotokanda, Chiyoda-ku — ~6 min a pé da Estação Akihabara",
-          preco: "~1.000–1.500",
-          horario: "11h–22h",
+          papel: "Mais popular (a mais avaliada)",
+          categoria: "Ramen estilo Kyushu (Hakata)",
+          descricao:
+            "A casa principal da rede, conhecida internacionalmente e também por opções veganas — a mais avaliada das três, com fila ocasional no horário de pico.",
           foto: "/images/kyushu-jangara.png",
+          notaTabelog: "3.47",
+          numAvaliacoes: "643 avaliações",
+          faixaPreco: "¥1.000–1.999 (almoço e jantar)",
+          distancia: "~3 min a pé da Estação Suehirocho (Saída 3, Ginza Line) — também ~6–8 min da Estação Akihabara",
+          foreignFriendly: "Médio — cartão e IC card aceitos (sem QR code); rede bem conhecida internacionalmente, com opções veganas.",
+          horario: "11h–22h (último pedido 21h45)",
+          reserva: "Não aceita reservas",
+          pagamento: "Cartão (Visa, Master) e IC card (ex.: Suica) aceitos — sem QR code",
+          linkTabelog: "https://tabelog.com/en/tokyo/A1310/A131001/13000344/",
         },
       ],
     },
@@ -3502,6 +3542,7 @@ const DAY_5: DayContent = {
     },
     atracaoPrincipal: "Distrito de Gion",
     atracaoPrincipalImagem: "/images/dia5-gion-v3.jpg",
+    atracaoPrincipalFoco: "center",
     detalhesPraticos: [
       { label: "Yasaka Shrine", valor: "Entrada gratuita, aberto 24h" },
       { label: "Pontocho", valor: "Restaurantes abrem a partir das 17h–18h" },
@@ -3617,12 +3658,6 @@ const DAY_5: DayContent = {
         imagemAlt: "Mapa de restaurantes em Gion — em produção",
       },
     },
-    galeria: {
-      titulo: "Gion em Detalhes",
-      imagens: [
-        { src: "/images/placeholder-em-producao.png", alt: "Galeria de Gion — em produção", legenda: "Em produção" },
-      ],
-    },
     infoOperacional: {
       titulo: "Regras importantes em Gion",
       icone: "regras",
@@ -3718,13 +3753,12 @@ const DAY_6: DayContent = {
       passos: [
         {
           titulo: "Torii de entrada",
-          foto: "/images/placeholder-em-producao.png",
           horario: "08:15",
           descricao: "Entrada principal do santuário, aos pés da montanha sagrada Inari.",
         },
         {
           titulo: "Senbon Torii",
-          foto: "/images/placeholder-em-producao.png",
+          foto: "/images/dia6-fushimiinari.png",
           horario: "~08:30",
           descricao: "O famoso corredor de milhares de torii vermelhos, o cartão-postal do santuário.",
         },
@@ -4149,12 +4183,6 @@ const DAY_6: DayContent = {
         imagemAlt: "Mapa de restaurantes em Kinkaku-ji — em produção",
       },
     },
-    galeria: {
-      titulo: "Kinkaku-ji em Detalhes",
-      imagens: [
-        { src: "/images/placeholder-em-producao.png", alt: "Galeria de Kinkaku-ji — em produção", legenda: "Em produção" },
-      ],
-    },
     banheirosProximos: [
       {
         local: "Banheiro público dentro do terreno do templo",
@@ -4503,29 +4531,10 @@ const DAY_7: DayContent = {
   },
   tarde: {
     label: "Tarde",
-    percursoEssencial: {
-      duracao: "~30 min (arredores do Kokugikan) + torneio até 18h",
-      passos: [
-        {
-          titulo: "Edo Noren",
-          foto: "/images/placeholder-em-producao.png",
-          horario: "~14:35",
-          descricao: "Vila gastronômica temática de sumô, na entrada do estádio.",
-        },
-        {
-          titulo: "Santuário Nomi-no-Sukune",
-          foto: "/images/placeholder-em-producao.png",
-          horario: "~14:45",
-          descricao: "Monumento com os nomes de todos os Yokozuna — pertinho do Kokugikan.",
-        },
-        {
-          titulo: "Museu de Espadas",
-          foto: "/images/placeholder-em-producao.png",
-          horario: "~14:55",
-          descricao: "Coleção de espadas samurai tradicionais, a alguns minutos a pé do estádio.",
-        },
-      ],
-    },
+    // Sem percursoEssencial aqui de propósito — o "percurso" da tarde é o
+    // próprio estádio (entrar e assistir ao torneio), não um circuito a pé
+    // pelos arredores. Edo Noren, Santuário Nomi-no-Sukune e Museu de
+    // Espadas já aparecem como pois opcionais logo abaixo, sem duplicar.
     visaoAnotada: {
       titulo: "Kokugikan — Arredores",
       imagem: "/images/raiox-ryogoku.png",
@@ -5142,9 +5151,15 @@ function InfoOperacionalBlock({
     >
       {info.semExpandir ? (
         <div className="flex w-full items-center gap-4 p-5 text-left sm:p-7">
-          <Icon
-            className={`h-20 w-20 shrink-0 ${isRegra ? "text-red-600" : "text-[#000000]"}`}
-          />
+          {/* h-20 w-20 casa com a caixa dos ícones em PNG (Informações
+              Iniciais, Melhor Horário) — mas esses ícones em SVG ocupam o
+              viewBox quase de ponta a ponta, sem a margem interna que os
+              PNGs já trazem embutida. Por isso o glyph em si fica menor
+              (h-12), centralizado na mesma caixa h-20, pra ter o mesmo peso
+              visual dos outros cards. */}
+          <span className="flex h-20 w-20 shrink-0 items-center justify-center">
+            <Icon className={`h-12 w-12 ${isRegra ? "text-red-600" : "text-[#000000]"}`} />
+          </span>
           <span className="min-w-0 flex-1 text-base font-bold uppercase tracking-[0.2em] text-[#24211D]/70 sm:text-lg">
             {info.titulo}
           </span>
@@ -5155,9 +5170,9 @@ function InfoOperacionalBlock({
           onClick={() => setAberto((v) => !v)}
           className="flex w-full items-center gap-4 p-5 text-left sm:p-7"
         >
-          <Icon
-            className={`h-20 w-20 shrink-0 ${isRegra ? "text-red-600" : "text-[#000000]"}`}
-          />
+          <span className="flex h-20 w-20 shrink-0 items-center justify-center">
+            <Icon className={`h-12 w-12 ${isRegra ? "text-red-600" : "text-[#000000]"}`} />
+          </span>
           <span className="min-w-0 flex-1 text-base font-bold uppercase tracking-[0.2em] text-[#24211D]/70 sm:text-lg">
             {info.titulo}
           </span>
@@ -5911,8 +5926,8 @@ function DeslocamentoCard({ deslocamento }: { deslocamento: Deslocamento }) {
               </div>
             )}
           <div
-            className="relative h-1.5 w-full"
-            style={{ background: "#B96432" }}
+            className="relative h-2 w-full"
+            style={{ background: deslocamento.linha.cor || "#B96432" }}
           >
             {deslocamento.estacoesIntermediarias?.map((estacao, i) => {
               const pct =
@@ -5933,14 +5948,18 @@ function DeslocamentoCard({ deslocamento }: { deslocamento: Deslocamento }) {
                 </span>
               );
             })}
+            {/* Ponta da seta — triângulo CSS nítido (bordas retas, sem
+                nenhum arredondamento), maior e mais grosso que o traço pra
+                ler como uma seta de verdade, não como um "alfinete" preso
+                numa linha fina. */}
             <span
               className="absolute -right-px top-1/2 -translate-y-1/2"
               style={{
                 width: 0,
                 height: 0,
-                borderTop: "10px solid transparent",
-                borderBottom: "10px solid transparent",
-                borderLeft: "16px solid #B96432",
+                borderTop: "13px solid transparent",
+                borderBottom: "13px solid transparent",
+                borderLeft: `22px solid ${deslocamento.linha.cor || "#B96432"}`,
               }}
             />
           </div>
@@ -6588,6 +6607,7 @@ function VisaoAnotadaBlock({
                     src={ponto.foto}
                     alt={ponto.titulo}
                     className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
+                    style={ponto.fotoPosicao ? { objectPosition: ponto.fotoPosicao } : undefined}
                   />
                   <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/25 via-transparent to-transparent" />
                   <div className="absolute inset-0 flex items-center justify-center bg-black/0 transition duration-300 group-hover:bg-black/25">
@@ -7140,6 +7160,13 @@ function PeriodBlock({
         />
       )}
 
+      {period.visaoAnotadaSecundaria && (
+        <VisaoAnotadaBlock
+          visaoAnotada={period.visaoAnotadaSecundaria}
+          displayClassName={displayClassName}
+        />
+      )}
+
       {period.galeria && <GaleriaBlock galeria={period.galeria} />}
 
       {period.pois.length > 0 && (
@@ -7575,11 +7602,11 @@ function IconWords({ className }: { className?: string }) {
 const INFO_CARDS = [
   { label: "Aeroporto DXB", Icon: IconPlane },
   { label: "Aeroporto NRT (Narita)", Icon: IconPlane, view: "narita" as const },
-  { label: "Metrô", Icon: IconMetro },
+  { label: "Metrô", Icon: IconMetro, view: "trem" as const },
   { label: "Ônibus", Icon: IconBus },
   { label: "Trem Bala (Shinkansen)", Icon: IconShinkansen },
   { label: "Câmbio", Icon: IconExchange },
-  { label: "Costumes", Icon: IconCustoms },
+  { label: "Costumes", Icon: IconCustoms, view: "costumes" as const },
   { label: "Palavras Comuns", Icon: IconWords },
 ];
 
@@ -8189,6 +8216,28 @@ const HOTEIS: HotelInfo[] = [
       imagem: "/images/remm-fachada-real.png",
       imagemAlt: "Fachada do remm Tokyo Kyobashi",
       pontos: [],
+      rotas: [
+        {
+          label: "Estação Kyobashi",
+          imagem: "/images/remm-rota-estacao-kyobashi.png",
+          imagemAlt: "Rota a pé da Estação Kyobashi até o remm Tokyo Kyobashi",
+        },
+        {
+          label: "7-Eleven",
+          imagem: "/images/remm-rota-7eleven.png",
+          imagemAlt: "Localização do 7-Eleven em relação ao remm Tokyo Kyobashi",
+        },
+        {
+          label: "Kameda Kyobashi Clinic",
+          imagem: "/images/remm-rota-kameda-clinic.png",
+          imagemAlt: "Rota a pé até a Kameda Kyobashi Clinic",
+        },
+        {
+          label: "St. Luke's International Hospital",
+          imagem: "/images/remm-rota-st-luke-hospital.png",
+          imagemAlt: "Rota a pé até o St. Luke's International Hospital",
+        },
+      ],
     },
   },
 ];
@@ -8521,7 +8570,7 @@ export function ApprovalPanel({
 }) {
   const [activeDay, setActiveDay] = useState(1);
   const [hotelCity, setHotelCity] = useState(0);
-  const [viewMode, setViewMode] = useState<"dia" | "hotel" | "narita">("dia");
+  const [viewMode, setViewMode] = useState<"dia" | "hotel" | "narita" | "trem" | "costumes">("dia");
   const contentRef = useRef<HTMLDivElement>(null);
   const daysMenuRef = useRef<HTMLDivElement>(null);
 
@@ -8748,6 +8797,24 @@ export function ApprovalPanel({
                   laterais, diferente do resto do conteúdo (Dia 1, Dia 2...). */}
               <div className="-mx-6 overflow-hidden rounded-2xl sm:-mx-10">
                 <NaritaGuideContent displayClassName={displayClassName} internal={false} />
+              </div>
+            </>
+          ) : viewMode === "trem" ? (
+            <>
+              <p className="mb-5 inline-block rounded-full border border-[#000000]/20 bg-[#F8FAF9] px-5 py-2 text-xs uppercase tracking-[0.3em] text-[#000000]">
+                Metrô e Trens no Japão
+              </p>
+              <div className="-mx-6 overflow-hidden rounded-2xl sm:-mx-10">
+                <TremGuideContent displayClassName={displayClassName} internal={false} />
+              </div>
+            </>
+          ) : viewMode === "costumes" ? (
+            <>
+              <p className="mb-5 inline-block rounded-full border border-[#000000]/20 bg-[#F8FAF9] px-5 py-2 text-xs uppercase tracking-[0.3em] text-[#000000]">
+                Costumes & Etiqueta
+              </p>
+              <div className="-mx-6 overflow-hidden rounded-2xl sm:-mx-10">
+                <CostumesGuideContent displayClassName={displayClassName} internal={false} />
               </div>
             </>
           ) : viewMode === "hotel" ? (
