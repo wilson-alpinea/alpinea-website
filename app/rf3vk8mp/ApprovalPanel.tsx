@@ -833,6 +833,7 @@ const DAY_1: DayContent = {
           "Avenida com lojas que vendem artigos de cozinha desde utensílios domésticos, louças, comida cenográfica — fica a oeste do templo, vale visitar antes de seguir para o lado do rio.",
         grupo: "Se houver tempo · nos arredores",
         prioridade: "opcional",
+        ordem: 1,
         imagem: "/images/kappabashi.png",
         imagemAlt: "Loja de utensílios de cozinha em Kappabashi Kitchen Town",
       },
@@ -842,6 +843,7 @@ const DAY_1: DayContent = {
           "Parque as margens do Rio Sumida que corta a parte leste da cidade de Tokyo, vista para a Tokyo Sky Tree",
         grupo: "Se houver tempo · nos arredores",
         prioridade: "opcional",
+        ordem: 2,
         imagem: "/images/sumida-park.png",
         imagemAlt: "Margem do Rio Sumida no Sumida Park, com cerejeiras floridas",
       },
@@ -852,6 +854,7 @@ const DAY_1: DayContent = {
           "Uma das Top5 melhores fabricantes de faca profissional do Japão, também tem equipe dedicada de afiador profissional para facas de alta complexidade — fica perto do Sumida Park, do lado do rio.",
         grupo: "Se houver tempo · nos arredores",
         prioridade: "opcional",
+        ordem: 3,
         imagem: "/images/masamoto-sohonten.png",
         imagemAlt: "Vitrine de facas profissionais na Masamoto Sohonten",
       },
@@ -1147,6 +1150,7 @@ const DAY_1: DayContent = {
         description:
           "Dentro do próprio Tembo Deck, piso 345 — menu degustação sazonal que mistura técnica francesa com ingredientes japoneses inspirados na culinária de Edo. Almoço ~¥6.200–8.500, jantar ~¥15.000–19.200 por pessoa (fora o ingresso da torre). Reserva recomendada.",
         prioridade: "opcional",
+        ordem: 1,
         imagem: "/images/skytree-sky-restaurant-musashi.jpg",
         imagemAlt: "Interior do Sky Restaurant 634 (Musashi), no piso 345 da Tokyo Sky Tree",
       },
@@ -1156,6 +1160,7 @@ const DAY_1: DayContent = {
         description:
           "Cafeteria informal do Tembo Deck (piso 340, com mesas — a versão do piso 350 é só balcão) — bebidas autorais, lanches leves e sobremesas temáticas com vista para a cidade.",
         prioridade: "opcional",
+        ordem: 2,
         imagem: "/images/skytree-cafe.jpg",
         imagemAlt: "Balcão do Skytree Cafe, no piso 340 da Tokyo Sky Tree",
       },
@@ -1181,6 +1186,7 @@ const DAY_1: DayContent = {
             description:
               "Loja oficial da Shueisha com produtos das séries da Weekly Shonen Jump — One Piece, Naruto, Dragon Ball e outras.",
             prioridade: "opcional",
+            ordem: 1,
             imagem: "/images/solamachi-jump-shop.jpg",
             imagemAlt: "Vitrine da Jump Shop no Tokyo Solamachi, 4º andar",
           },
@@ -1190,6 +1196,7 @@ const DAY_1: DayContent = {
             description:
               "Uma das maiores Pokémon Centers do Japão — pelúcias, action figures e itens exclusivos da região, no East Yard.",
             prioridade: "opcional",
+            ordem: 2,
             imagem: "/images/solamachi-pokemon-center.jpg",
             imagemAlt: "Interior do Pokémon Center Skytree Town, 4º andar",
           },
@@ -1199,6 +1206,7 @@ const DAY_1: DayContent = {
             description:
               "Loja oficial do Studio Ghibli — produtos de Totoro, A Viagem de Chihiro e outros clássicos do estúdio.",
             prioridade: "opcional",
+            ordem: 3,
             imagem: "/images/solamachi-donguri-republic.jpg",
             imagemAlt: "Vitrine da Donguri Republic (Studio Ghibli) no Tokyo Solamachi, 2º andar",
           },
@@ -1208,6 +1216,7 @@ const DAY_1: DayContent = {
             description:
               "Loja oficial da linha Gundam — roupas, acessórios e modelos (Gunpla) inspirados na franquia.",
             prioridade: "opcional",
+            ordem: 4,
             imagem: "/images/solamachi-strict-g.jpg",
             imagemAlt: "Vitrine da STRICT-G (Gundam) no Tokyo Solamachi, 4º andar",
           },
@@ -1493,12 +1502,14 @@ const DAY_2: DayContent = {
           "Rilakkuma Store",
         ],
         prioridade: "imperdivel",
+        ordem: 1,
       },
       {
         title: "Marunouchi Naka-dori",
         description:
           "Rua arborizada com cafés e restaurantes que alimentam os escritórios financeiros da região.",
         prioridade: "opcional",
+        ordem: 2,
       },
     ],
     gastronomia: {
@@ -1695,6 +1706,7 @@ const DAY_2: DayContent = {
         description:
           "Antigo portão principal do Castelo de Edo, usado pelos daimyō em suas visitas oficiais ao shogun. Destruído em bombardeio aéreo em 1945 e reconstruído em 1967 — hoje é a entrada principal dos jardins, o primeiro ponto do passeio.",
         prioridade: "recomendado",
+        ordem: 1,
         imagem: "/images/imperial-palace-otemon-gate.jpg",
         imagemAlt: "Otemon Gate, entrada principal dos Jardins do Palácio Imperial",
       },
@@ -1703,6 +1715,7 @@ const DAY_2: DayContent = {
         description:
           "Uma das três casas de guarda samurai que sobrevivem do Castelo de Edo — o Hyakunin Bansho abrigava quatro unidades de 120 guardas responsáveis pela proteção do recinto interno do castelo. Fica logo após a entrada por Otemon.",
         prioridade: "opcional",
+        ordem: 2,
         imagem: "/images/imperial-palace-bansho.jpg",
         imagemAlt: "Bansho, casa de guarda samurai do Castelo de Edo",
       },
@@ -1711,6 +1724,7 @@ const DAY_2: DayContent = {
         description:
           "Trechos originais das muralhas de pedra e fossos que protegiam o Castelo de Edo, preservados desde o período feudal — visíveis ao longo de todo o caminho.",
         prioridade: "opcional",
+        ordem: 3,
         imagem: "/images/imperial-palace-muralhas.jpg",
         imagemAlt: "Muralhas e fossos originais do Castelo de Edo",
       },
@@ -1719,6 +1733,7 @@ const DAY_2: DayContent = {
         description:
           "Torre de vigia construída em 1659, uma das poucas estruturas originais remanescentes do Castelo de Edo — depois que o incêndio de 1657 destruiu a torre principal, passou a funcionar como sua substituta simbólica. Não é possível entrar, mas dá para ver de fora, dentro dos jardins. Uma das construções mais fotogênicas do local.",
         prioridade: "recomendado",
+        ordem: 4,
         imagem: "/images/imperial-palace-fujimi-yagura.jpg",
         imagemAlt: "Fujimi-yagura, torre de vigia do Castelo de Edo",
       },
@@ -1727,6 +1742,7 @@ const DAY_2: DayContent = {
         description:
           "Enorme base de pedra onde ficava a torre principal (tenshu) do Castelo de Edo — pode ser escalada, e é um dos pontos mais impressionantes dos jardins. Fica no extremo norte do complexo, o ponto mais distante da entrada — bom encerramento do passeio.",
         prioridade: "recomendado",
+        ordem: 5,
         imagem: "/images/imperial-palace-tenshudai.jpg",
         imagemAlt: "Tenshudai, base de pedra da torre principal do Castelo de Edo",
       },
@@ -2050,6 +2066,7 @@ const DAY_3: DayContent = {
         description:
           "Você precisa entrar nele para acessar o Meiji Jingu — trata-se de uma enorme floresta com árvores extremamente altas, erguida do zero em homenagem à morte do imperador Meiji.",
         prioridade: "imperdivel",
+        ordem: 1,
         imagem: "/images/yoyogi-park.png",
         imagemAlt: "Lago do Parque de Yoyogi cercado por árvores em tons de outono, com chafariz ao fundo",
       },
@@ -2059,6 +2076,7 @@ const DAY_3: DayContent = {
         description:
           "Uma das maiores avenidas de boutiques e lojas de luxo de Tóquio, com diversos cafés e restaurantes importantes nas ruas ao redor da avenida principal — liga a saída do parque a Shibuya, seguindo para o sul.",
         prioridade: "opcional",
+        ordem: 2,
         imagem: "/images/omotesando.png",
         imagemAlt: "Fachada de vidro da loja Dior em Omotesando, com pedestres atravessando a faixa em primeiro plano",
       },
@@ -2067,6 +2085,7 @@ const DAY_3: DayContent = {
         description:
           "Estátua em homenagem ao cão que continuou esperando seu dono voltar para casa sem saber que ele havia falecido — deu origem ao filme \"Pra Sempre ao Seu Lado\". Fica bem na saída da Estação Shibuya.",
         prioridade: "opcional",
+        ordem: 3,
         imagem: "/images/hachiko-statue.png",
         imagemAlt: "Estátua de bronze do cão Hachiko, na saída da Estação Shibuya",
       },
@@ -2075,6 +2094,7 @@ const DAY_3: DayContent = {
         description:
           "O famoso cruzamento hexagonal de Shibuya, que fica caótico às 18h — ao lado da estátua de Hachiko, último ponto antes de seguir para Shinjuku.",
         prioridade: "recomendado",
+        ordem: 4,
         imagem: "/images/shibuya-crossing.png",
         imagemAlt: "Vista aérea do cruzamento de Shibuya iluminado à noite, com pedestres atravessando em todas as direções",
       },
@@ -2239,6 +2259,7 @@ const DAY_3: DayContent = {
             description:
               "Um dos parques mais bonitos de Tóquio, misturando jardins japonês, francês e inglês — refúgio verde no meio do bairro mais denso da cidade. Melhor visitar logo na chegada, ainda com luz do dia (fica ao sul da estação, fecha à noite).",
             prioridade: "recomendado",
+            ordem: 1,
             imagem: "/images/shinjuku-gyoen.png",
             imagemAlt: "Lago do Shinjuku Gyoen no outono, com a torre do Prédio do Governo Metropolitano ao fundo",
           },
@@ -2247,6 +2268,7 @@ const DAY_3: DayContent = {
             description:
               "Torres gêmeas projetadas por Kenzo Tange com mirante gratuito (~9h30–22h) no 45º andar e vista panorâmica da cidade — em dias claros, dá para ver o Monte Fuji. Fica no lado oeste da estação; ideal chegar perto do fim da tarde para ver o pôr do sol.",
             prioridade: "recomendado",
+            ordem: 2,
             imagem: "/images/tokyo-metropolitan-government-building.png",
             imagemAlt: "Vista de baixo das torres gêmeas do Prédio do Governo Metropolitano de Tóquio",
             imagemPosicao: "top",
@@ -2256,6 +2278,7 @@ const DAY_3: DayContent = {
             description:
               "Gato tridimensional gigante exibido em telão curvo no edifício Cross Shinjuku Vision, na saída leste da estação — uma das atrações mais fotografadas do bairro, já a caminho de Kabukicho.",
             prioridade: "recomendado",
+            ordem: 3,
             imagem: "/images/gato-3d-shinjuku.png",
             imagemAlt: "Gato tridimensional gigante no telão curvo do Cross Shinjuku Vision",
           },
@@ -2264,6 +2287,7 @@ const DAY_3: DayContent = {
             description:
               "Réplica em tamanho real na varanda do Hotel Gracery, símbolo do distrito de entretenimento de Kabukicho — pertinho do Gato 3D.",
             prioridade: "recomendado",
+            ordem: 4,
             imagem: "/images/godzilla-head-shinjuku.png",
             imagemAlt: "Cabeça do Godzilla na varanda do Hotel Gracery, em Kabukicho",
           },
@@ -2272,6 +2296,7 @@ const DAY_3: DayContent = {
             description:
               "Maior distrito de entretenimento noturno de Tóquio, com neons, bares temáticos e vida noturna intensa.",
             prioridade: "recomendado",
+            ordem: 5,
             imagem: "/images/kabukicho.png",
             imagemAlt: "Arco de neon vermelho na entrada de Kabukicho Ichibangai, com movimento de pedestres à noite",
           },
@@ -2280,6 +2305,7 @@ const DAY_3: DayContent = {
             description:
               "Rede de vielas estreitas com mais de 200 bares minúsculos, a maioria com capacidade para menos de 10 pessoas (maioria abre após 20h) — encostado em Kabukicho, último ponto da noite antes do onsen Thermae-Yu.",
             prioridade: "imperdivel",
+            ordem: 6,
             imagem: "/images/golden-gai.png",
             imagemAlt: "Viela estreita do Golden Gai à noite, com lanternas e placas iluminadas dos bares",
             imagemPosicao: "top",
@@ -2289,6 +2315,7 @@ const DAY_3: DayContent = {
             description:
               "Onsen urbano aberto 24 horas no coração de Kabukicho, ao lado do Golden Gai — água termal natural trazida diariamente de Nakaizu, com banhos internos e ao ar livre, banho carbonatado e saunas. Fecha a noite antes do trem noturno rumo a Kyoto.",
             prioridade: "imperdivel",
+            ordem: 7,
             imagem: "/images/thermae-yu.png",
             alerta:
               "Documento obrigatório na entrada: leve o passaporte físico (cópia ou foto no celular normalmente não são aceitas). Para quem tem tatuagem, o passaporte também é usado para liberar, na recepção, o adesivo impermeável de cobertura (~¥310) — tatuagens grandes podem ser recusadas, vale confirmar a política vigente antes de ir.",
@@ -2896,6 +2923,7 @@ const DAY_4: DayContent = {
             title: "Kanda Nishiguchi Motsuyaki Nonki",
             description: "Motsuyaki (espetinhos de miúdos grelhados) — ~2 min a pé da saída oeste da Estação Kanda.",
             prioridade: "recomendado",
+            ordem: 1,
             imagem: "/images/nonki-kanda.png",
             imagemAlt: "Prato de motsuyaki do Kanda Nishiguchi Motsuyaki Nonki",
           },
@@ -2903,6 +2931,7 @@ const DAY_4: DayContent = {
             title: "Kanda Uokin",
             description: "Izakaya de frutos do mar, conhecida pelos pratos fartos de sashimi e peixe fresco.",
             prioridade: "recomendado",
+            ordem: 2,
             imagem: "/images/uokin.png",
             imagemAlt: "Prato de sashimi do Kanda Uokin",
           },
@@ -2910,6 +2939,7 @@ const DAY_4: DayContent = {
             title: "Kanda Shoten",
             description: "Izakaya de bairro com sashimi e boa seleção de sakês — clima local e despretensioso.",
             prioridade: "recomendado",
+            ordem: 3,
             imagem: "/images/kanda-shouten.png",
             imagemAlt: "Prato de sashimi e sakês do Kanda Shoten",
           },
@@ -2919,6 +2949,7 @@ const DAY_4: DayContent = {
             description:
               "Bairro vizinho a Kanda, famoso por concentrar dezenas de sebos e livrarias tradicionais — o maior distrito de livros usados do Japão.",
             prioridade: "opcional",
+            ordem: 4,
             imagem: "/images/jinbocho.png",
             imagemAlt: "Fachada de livraria tradicional em Jinbocho",
           },
@@ -3093,6 +3124,7 @@ const DAY_4: DayContent = {
             description:
               "A única no mundo preparada para terremotos, aos pés do Mori Tower — o primeiro ponto ao chegar em Roppongi Hills.",
             prioridade: "opcional",
+            ordem: 1,
             imagem: "/images/aranha-gigante.jpg",
             imagemAlt: "Escultura Maman, de Louise Bourgeois, aos pés do Mori Tower em Roppongi Hills",
           },
@@ -3100,6 +3132,7 @@ const DAY_4: DayContent = {
             title: "Museu de Arte Moderna Mori",
             description: "Museu de arte contemporânea no topo do Mori Tower.",
             prioridade: "recomendado",
+            ordem: 2,
             imagem: "/images/museu-de-arte-mori.png",
             imagemAlt: "Escadas rolantes de acesso ao Mori Art Museum, com o letreiro do museu no topo do Mori Tower",
           },
@@ -3107,6 +3140,7 @@ const DAY_4: DayContent = {
             title: "Mori Garden",
             description: "Jardim japonês tradicional aos pés do Mori Tower.",
             prioridade: "opcional",
+            ordem: 3,
             imagem: "/images/mori-garden.png",
             imagemAlt: "Lago do Mori Garden com cerejeiras floridas e o Mori Tower ao fundo, em Roppongi Hills",
           },
@@ -3115,6 +3149,7 @@ const DAY_4: DayContent = {
             description:
               "Parque tranquilo no coração de Roppongi, a poucos minutos a pé do Mori Tower.",
             prioridade: "opcional",
+            ordem: 4,
             imagem: "/images/hinokicho-park.png",
             imagemAlt: "Escultura moderna de metal no gramado do Hinokicho Park, em Roppongi",
           },
@@ -3320,6 +3355,7 @@ const DAY_5: DayContent = {
         description:
           "Ladeira histórica de casas tradicionais, logo na descida a partir do templo.",
         prioridade: "recomendado",
+        ordem: 1,
         imagem: "/images/higashiyama-sannenzaka.jpg",
         imagemAlt: "Ladeira histórica de Sannenzaka, em Higashiyama",
       },
@@ -3327,6 +3363,7 @@ const DAY_5: DayContent = {
         title: "Ninenzaka",
         description: "Continuação de Sannenzaka, descendo rumo a Gion.",
         prioridade: "recomendado",
+        ordem: 2,
         imagem: "/images/higashiyama-ninenzaka.jpg",
         imagemAlt: "Ladeira histórica de Ninenzaka, em Higashiyama",
       },
@@ -3335,6 +3372,7 @@ const DAY_5: DayContent = {
         description:
           "Cafeteria minimalista muito concorrida, a poucos passos da Pagode Yasaka — última parada antes de seguir para Gion.",
         prioridade: "opcional",
+        ordem: 3,
         imagem: "/images/higashiyama-arabica-kyoto.jpg",
         imagemAlt: "Café % Arabica Kyoto Higashiyama",
       },
@@ -3525,6 +3563,7 @@ const DAY_5: DayContent = {
         title: "Yasaka Shrine",
         description: "Santuário xintoísta símbolo de Gion.",
         prioridade: "opcional",
+        ordem: 1,
         imagem: "/images/gion-yasaka-shrine.jpg",
         imagemAlt: "Yasaka Shrine, santuário xintoísta símbolo de Gion",
       },
@@ -3533,6 +3572,7 @@ const DAY_5: DayContent = {
         description:
           "Rio que corta Gion — margem tradicional de passeio, com os restaurantes de Pontocho debruçados sobre a água, atravessado pela Sanjo-ohashi e pela Shijo-ohashi.",
         prioridade: "opcional",
+        ordem: 2,
         imagem: "/images/gion-rio-kamo.jpg",
         imagemAlt: "Margem do Rio Kamo em Gion, à noite",
       },
@@ -3540,6 +3580,7 @@ const DAY_5: DayContent = {
         title: "Pontocho",
         description: "Viela tradicional de restaurantes e gueixas.",
         prioridade: "recomendado",
+        ordem: 3,
         imagem: "/images/gion-pontocho.jpg",
         imagemAlt: "Viela tradicional de Pontocho, em Gion",
       },
@@ -3809,6 +3850,7 @@ const DAY_6: DayContent = {
         description:
           "Cruzamento a meio caminho da subida do Monte Inari, com o mirante mais famoso do circuito depois do Senbon Torii — vista aberta sobre Kyoto entre a torii vermelha e as árvores, especialmente bonita perto do pôr do sol. É onde o trajeto se divide: seguir em frente rumo ao topo ou voltar pelo mesmo caminho.",
         prioridade: "recomendado",
+        ordem: 1,
         imagem: "/images/fushimi-yotsutsuji.jpg",
         imagemAlt: "Vista de Kyoto ao pôr do sol através de um torii vermelho, no mirante de Yotsutsuji",
       },
@@ -3817,6 +3859,7 @@ const DAY_6: DayContent = {
         description:
           "Pequeno lago cercado pela mata densa do Monte Inari, com o santuário Kumataka-sha às margens — um respiro mais tranquilo e menos fotografado do circuito, com a vegetação refletida na água. Fica além do Yotsutsuji, para quem seguir subindo.",
         prioridade: "opcional",
+        ordem: 2,
         imagem: "/images/fushimi-shinike-kumatakasha.jpg",
         imagemAlt: "Lago Shin-ike cercado pela floresta do Monte Inari, com o santuário Kumataka-sha à margem",
       },
@@ -3825,6 +3868,7 @@ const DAY_6: DayContent = {
         description:
           "Santuário menor em meio à mata, um pouco mais acima na subida do Monte Inari — um dos pontos ao longo do trajeto de trilha para quem seguir além do Yotsutsuji rumo ao topo.",
         prioridade: "opcional",
+        ordem: 3,
         imagem: "/images/fushimi-mitsurugisha.jpg",
         imagemAlt: "Pequeno santuário com torii vermelho em meio à floresta, no Monte Inari",
       },
@@ -4023,6 +4067,7 @@ const DAY_6: DayContent = {
         description:
           "O ângulo clássico do Pavilhão Dourado, com a fachada refletida no Kyōko-chi Pond — a foto mais icônica do templo, logo na entrada do circuito.",
         prioridade: "recomendado",
+        ordem: 1,
         imagem: "/images/kinkakuji-reflection-kyokochi.jpg",
         imagemAlt: "Vista clássica do Kinkaku-ji refletido no Kyōko-chi Pond",
       },
@@ -4031,6 +4076,7 @@ const DAY_6: DayContent = {
         description:
           "Vista mais próxima do pavilhão pela lateral do lago, seguindo o circuito — dá pra ver melhor os detalhes da fachada dourada e dos telhados.",
         prioridade: "recomendado",
+        ordem: 2,
         imagem: "/images/kinkakuji-close-view-lateral.jpg",
         imagemAlt: "Vista lateral e mais próxima do Kinkaku-ji, pela margem do lago",
       },
@@ -4039,6 +4085,7 @@ const DAY_6: DayContent = {
         description:
           "Vista elevada do pavilhão a partir do Sekkatei, a casa de chá no ponto mais alto do circuito — o fênix dourado (hōō) no topo do telhado fica bem visível daqui.",
         prioridade: "recomendado",
+        ordem: 3,
         imagem: "/images/kinkakuji-elevated-view-sekkatei.jpg",
         imagemAlt: "Fênix dourado (hōō) no topo do telhado do Kinkaku-ji, visto do Sekkatei",
       },
@@ -4047,6 +4094,7 @@ const DAY_6: DayContent = {
         description:
           "Templo zen famoso pelo jardim de pedras — pega o mesmo ônibus/circuito de Kinkaku-ji, poucos minutos de distância.",
         prioridade: "recomendado",
+        ordem: 4,
         imagem: "/images/kinkakuji-ryoanji.jpg",
         imagemAlt: "Jardim de pedras do templo zen Ryoan-ji, em Kyoto",
       },
@@ -4055,6 +4103,7 @@ const DAY_6: DayContent = {
         description:
           "Templo histórico com belas cerejeiras, um pouco mais além de Ryoan-ji no mesmo circuito.",
         prioridade: "opcional",
+        ordem: 5,
         imagem: "/images/kinkakuji-ninnaji.jpg",
         imagemAlt: "Templo histórico de Ninna-ji, em Kyoto",
       },
@@ -4063,6 +4112,7 @@ const DAY_6: DayContent = {
         description:
           "Acervo com milhares de títulos de mangá — fica no centro de Kyoto (Karasuma-Oike), fora da rota de Kinkaku-ji: exige um deslocamento à parte (~20-30 min), não dá pra encaixar sem voltar ao centro.",
         prioridade: "opcional",
+        ordem: 6,
         imagem: "/images/kyoto-manga-museum.jpg",
         imagemAlt: "Museu do Mangá de Kyoto",
       },
@@ -4071,6 +4121,7 @@ const DAY_6: DayContent = {
         description:
           "Loja oficial da Nintendo no Takashimaya, no centro de Kyoto — também fora da rota de Kinkaku-ji, exige o mesmo deslocamento ao centro do Museu do Mangá.",
         prioridade: "opcional",
+        ordem: 7,
         imagem: "/images/nintendo-store-kyoto.jpg",
         imagemAlt: "Nintendo Store Kyoto, no Takashimaya",
       },
@@ -4572,18 +4623,27 @@ const DAY_7: DayContent = {
         title: "Edo Noren (Área Externa do Kokugikan)",
         description: "Vila gastronômica temática de sumô, na entrada do estádio.",
         prioridade: "opcional",
+        ordem: 1,
+        imagem: "/images/edo-noren-ryogoku.png",
+        imagemAlt: "Interior do Ryōgoku Edo NOREN, réplica de um dohyō (ringue de sumô) cercada por lojas e restaurantes temáticos ao estilo de vila antiga",
       },
       {
         title: "Santuário Nomi-no-Sukune",
         description:
           "Monumento com os nomes de todos os Yokozuna (Título máximo de lutador de Sumô) — pertinho do Kokugikan.",
         prioridade: "opcional",
+        ordem: 2,
+        imagem: "/images/santuario-nomi-no-sukune.png",
+        imagemAlt: "Estátua de pedra de um lutador de sumô no Santuário Nomi-no-Sukune, cercada por árvores",
       },
       {
         title: "Museu de Espadas",
         description:
           "Coleção de espadas samurai tradicionais, a alguns minutos a pé do estádio.",
         prioridade: "opcional",
+        ordem: 3,
+        imagem: "/images/museu-espadas-ryogoku.png",
+        imagemAlt: "Espadas samurai (katana) tradicionais em exibição no Museu de Espadas de Ryogoku",
       },
     ],
     gradeHorarios: {
