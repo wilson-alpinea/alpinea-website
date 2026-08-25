@@ -2299,6 +2299,7 @@ const DAY_3: DayContent = {
             ordem: 5,
             imagem: "/images/kabukicho.png",
             imagemAlt: "Arco de neon vermelho na entrada de Kabukicho Ichibangai, com movimento de pedestres à noite",
+            imagemPosicao: "top",
           },
           {
             title: "Golden Gai",
@@ -2308,7 +2309,7 @@ const DAY_3: DayContent = {
             ordem: 6,
             imagem: "/images/golden-gai.png",
             imagemAlt: "Viela estreita do Golden Gai à noite, com lanternas e placas iluminadas dos bares",
-            imagemPosicao: "top",
+            imagemPosicao: "center 40%",
           },
           {
             title: "Onsen Thermae-Yu",
@@ -3846,11 +3847,20 @@ const DAY_6: DayContent = {
     ],
     pois: [
       {
+        title: "Torii de Entrada",
+        description:
+          "O grande torii vermelho na entrada do santuário, com o Salão Principal (Honden) visível ao fundo — primeiro ponto do santuário, antes do início do corredor de Senbon Torii.",
+        prioridade: "imperdivel",
+        ordem: 1,
+        imagem: "/images/dia6-fushimiinari-entrada.png",
+        imagemAlt: "Grande torii vermelho na entrada do Santuário Fushimi Inari, com o Salão Principal ao fundo",
+      },
+      {
         title: "Yotsutsuji (四ツ辻)",
         description:
           "Cruzamento a meio caminho da subida do Monte Inari, com o mirante mais famoso do circuito depois do Senbon Torii — vista aberta sobre Kyoto entre a torii vermelha e as árvores, especialmente bonita perto do pôr do sol. É onde o trajeto se divide: seguir em frente rumo ao topo ou voltar pelo mesmo caminho.",
         prioridade: "recomendado",
-        ordem: 1,
+        ordem: 2,
         imagem: "/images/fushimi-yotsutsuji.jpg",
         imagemAlt: "Vista de Kyoto ao pôr do sol através de um torii vermelho, no mirante de Yotsutsuji",
       },
@@ -3859,7 +3869,7 @@ const DAY_6: DayContent = {
         description:
           "Pequeno lago cercado pela mata densa do Monte Inari, com o santuário Kumataka-sha às margens — um respiro mais tranquilo e menos fotografado do circuito, com a vegetação refletida na água. Fica além do Yotsutsuji, para quem seguir subindo.",
         prioridade: "opcional",
-        ordem: 2,
+        ordem: 3,
         imagem: "/images/fushimi-shinike-kumatakasha.jpg",
         imagemAlt: "Lago Shin-ike cercado pela floresta do Monte Inari, com o santuário Kumataka-sha à margem",
       },
@@ -3868,7 +3878,7 @@ const DAY_6: DayContent = {
         description:
           "Santuário menor em meio à mata, um pouco mais acima na subida do Monte Inari — um dos pontos ao longo do trajeto de trilha para quem seguir além do Yotsutsuji rumo ao topo.",
         prioridade: "opcional",
-        ordem: 3,
+        ordem: 4,
         imagem: "/images/fushimi-mitsurugisha.jpg",
         imagemAlt: "Pequeno santuário com torii vermelho em meio à floresta, no Monte Inari",
       },
