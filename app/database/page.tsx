@@ -1,6 +1,15 @@
 import { Bodoni_Moda } from "next/font/google";
 import type { Metadata } from "next";
-import { IconPlane, IconTrain, IconStar } from "../components/AirportGuideKit";
+import {
+  IconPlane,
+  IconPlaneLanding,
+  IconTrain,
+  IconStar,
+  IconDocument,
+  IconRoute,
+  IconMap,
+  IconExchange,
+} from "../components/AirportGuideKit";
 
 const display = Bodoni_Moda({
   subsets: ["latin"],
@@ -41,6 +50,41 @@ const categorias = [
     titulo: "Costumes & Etiqueta no Japão",
     resumo: "Filas, sapatos, restaurantes, templos, onsen, cumprimentos e o que observar no dia a dia da viagem.",
     Icon: IconStar,
+    disponivel: true,
+  },
+  {
+    href: "/database/palavras",
+    titulo: "Palavras e Expressões Úteis",
+    resumo: "Japonês de sobrevivência — as palavras e frases que realmente aparecem no dia a dia da viagem.",
+    Icon: IconDocument,
+    disponivel: true,
+  },
+  {
+    href: "/database/shinkansen",
+    titulo: "Shinkansen com JR Pass",
+    resumo: "Qual trem usar, como reservar, embarcar e encontrar vagão e assento — Tokyo, Kyoto e Osaka.",
+    Icon: IconRoute,
+    disponivel: true,
+  },
+  {
+    href: "/database/dxb",
+    titulo: "Conexão em Dubai (DXB)",
+    resumo: "GRU → DXB → NRT via Emirates — como seguir Connections, achar o portão e embarcar sem sair do aeroporto.",
+    Icon: IconPlaneLanding,
+    disponivel: true,
+  },
+  {
+    href: "/database/onibus",
+    titulo: "Ônibus em Kyoto",
+    resumo: "Número da linha, direção e pontos A/B/C/D — como encontrar o ônibus certo mesmo quando o nome da parada se repete.",
+    Icon: IconMap,
+    disponivel: true,
+  },
+  {
+    href: "/database/cambio",
+    titulo: "Onde Trocar Dinheiro",
+    resumo: "Casas de câmbio recomendadas em Tokyo (Ginza, Shinjuku) e Kyoto (Kyoto Station).",
+    Icon: IconExchange,
     disponivel: true,
   },
 ];

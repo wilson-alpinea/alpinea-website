@@ -13,6 +13,11 @@ import Image from "next/image";
 import { NaritaGuideContent } from "../components/NaritaGuideContent";
 import { TremGuideContent } from "../components/TremGuideContent";
 import { CostumesGuideContent } from "../components/CostumesGuideContent";
+import { PalavrasGuideContent } from "../components/PalavrasGuideContent";
+import { ShinkansenGuideContent } from "../components/ShinkansenGuideContent";
+import { DXBGuideContent } from "../components/DXBGuideContent";
+import { OnibusGuideContent } from "../components/OnibusGuideContent";
+import { CambioGuideContent } from "../components/CambioGuideContent";
 
 // Painel interativo do roteiro personalizado — mesma lógica visual do Painel
 // Interativo usado em /ajisairoteiros (pílulas, abas de dia, tipografia
@@ -7600,14 +7605,14 @@ function IconWords({ className }: { className?: string }) {
 }
 
 const INFO_CARDS = [
-  { label: "Aeroporto DXB", Icon: IconPlane },
+  { label: "Aeroporto DXB", Icon: IconPlane, view: "dxb" as const },
   { label: "Aeroporto NRT (Narita)", Icon: IconPlane, view: "narita" as const },
   { label: "Metrô", Icon: IconMetro, view: "trem" as const },
-  { label: "Ônibus", Icon: IconBus },
-  { label: "Trem Bala (Shinkansen)", Icon: IconShinkansen },
-  { label: "Câmbio", Icon: IconExchange },
+  { label: "Ônibus", Icon: IconBus, view: "onibus" as const },
+  { label: "Trem Bala (Shinkansen)", Icon: IconShinkansen, view: "shinkansen" as const },
+  { label: "Câmbio", Icon: IconExchange, view: "cambio" as const },
   { label: "Costumes", Icon: IconCustoms, view: "costumes" as const },
-  { label: "Palavras Comuns", Icon: IconWords },
+  { label: "Palavras Comuns", Icon: IconWords, view: "palavras" as const },
 ];
 
 function IconFork({ className }: { className?: string }) {
@@ -8570,7 +8575,18 @@ export function ApprovalPanel({
 }) {
   const [activeDay, setActiveDay] = useState(1);
   const [hotelCity, setHotelCity] = useState(0);
-  const [viewMode, setViewMode] = useState<"dia" | "hotel" | "narita" | "trem" | "costumes">("dia");
+  const [viewMode, setViewMode] = useState<
+    | "dia"
+    | "hotel"
+    | "narita"
+    | "trem"
+    | "costumes"
+    | "palavras"
+    | "shinkansen"
+    | "dxb"
+    | "onibus"
+    | "cambio"
+  >("dia");
   const contentRef = useRef<HTMLDivElement>(null);
   const daysMenuRef = useRef<HTMLDivElement>(null);
 
@@ -8786,7 +8802,34 @@ export function ApprovalPanel({
         </div>
 
         <div ref={contentRef} className="scroll-mt-6 px-6 py-8 sm:px-10 sm:py-10">
-          {viewMode === "narita" ? (
+          {viewMode === "dxb" ? (
+            <>
+              <p className="mb-5 inline-block rounded-full border border-[#000000]/20 bg-[#F8FAF9] px-5 py-2 text-xs uppercase tracking-[0.3em] text-[#000000]">
+                Conexão em Dubai (DXB)
+              </p>
+              <div className="-mx-6 overflow-hidden rounded-2xl sm:-mx-10">
+                <DXBGuideContent displayClassName={displayClassName} internal={false} />
+              </div>
+            </>
+          ) : viewMode === "onibus" ? (
+            <>
+              <p className="mb-5 inline-block rounded-full border border-[#000000]/20 bg-[#F8FAF9] px-5 py-2 text-xs uppercase tracking-[0.3em] text-[#000000]">
+                Ônibus em Kyoto
+              </p>
+              <div className="-mx-6 overflow-hidden rounded-2xl sm:-mx-10">
+                <OnibusGuideContent displayClassName={displayClassName} internal={false} />
+              </div>
+            </>
+          ) : viewMode === "cambio" ? (
+            <>
+              <p className="mb-5 inline-block rounded-full border border-[#000000]/20 bg-[#F8FAF9] px-5 py-2 text-xs uppercase tracking-[0.3em] text-[#000000]">
+                Onde Trocar Dinheiro
+              </p>
+              <div className="-mx-6 overflow-hidden rounded-2xl sm:-mx-10">
+                <CambioGuideContent displayClassName={displayClassName} internal={false} />
+              </div>
+            </>
+          ) : viewMode === "narita" ? (
             <>
               <p className="mb-5 inline-block rounded-full border border-[#000000]/20 bg-[#F8FAF9] px-5 py-2 text-xs uppercase tracking-[0.3em] text-[#000000]">
                 Aeroporto de Narita (NRT)
@@ -8815,6 +8858,24 @@ export function ApprovalPanel({
               </p>
               <div className="-mx-6 overflow-hidden rounded-2xl sm:-mx-10">
                 <CostumesGuideContent displayClassName={displayClassName} internal={false} />
+              </div>
+            </>
+          ) : viewMode === "palavras" ? (
+            <>
+              <p className="mb-5 inline-block rounded-full border border-[#000000]/20 bg-[#F8FAF9] px-5 py-2 text-xs uppercase tracking-[0.3em] text-[#000000]">
+                Palavras e Expressões Úteis
+              </p>
+              <div className="-mx-6 overflow-hidden rounded-2xl sm:-mx-10">
+                <PalavrasGuideContent displayClassName={displayClassName} internal={false} />
+              </div>
+            </>
+          ) : viewMode === "shinkansen" ? (
+            <>
+              <p className="mb-5 inline-block rounded-full border border-[#000000]/20 bg-[#F8FAF9] px-5 py-2 text-xs uppercase tracking-[0.3em] text-[#000000]">
+                Trem Bala (Shinkansen)
+              </p>
+              <div className="-mx-6 overflow-hidden rounded-2xl sm:-mx-10">
+                <ShinkansenGuideContent displayClassName={displayClassName} internal={false} />
               </div>
             </>
           ) : viewMode === "hotel" ? (

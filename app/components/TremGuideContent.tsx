@@ -1,3 +1,4 @@
+import Image from "next/image";
 import {
   InternalGuideHeader,
   SectionMarker,
@@ -93,8 +94,6 @@ export function TremGuideContent({
         displayClassName={displayClassName}
         eyebrow="Anexo com Informação Detalhada - Metrô e Trens no Japão"
         title="Metrô e Trens no Japão"
-        heroImage="/images/trem-hero-tipos.png"
-        heroAlt="Painel com os 5 tipos de trem no Japão — Local, Rapid, Semi Express, Express e Limited Express — com fotos dos trens, letreiros de destino e paineis de partida, além de exemplos de trens Limited Express: JR Narita Express, Odakyu Romancecar GSE, Keisei Skyliner, Tobu Spacia X e Seibu Laview"
         subtitle="Tipos de trem, IC Card, transferências, etiqueta e as particularidades de Tokyo, Kyoto e Osaka — a base de qualquer deslocamento durante a viagem."
         internal={internal}
       />
@@ -149,6 +148,16 @@ export function TremGuideContent({
             Dentro da mesma linha, nem todo trem para em todas as estações — o nome do
             trem (mostrado no painel da plataforma e no próprio trem) indica isso.
           </p>
+          <div className="overflow-hidden rounded-2xl border border-[#DDD8CF]">
+            <Image
+              src="/images/trem-hero-tipos.png"
+              alt="Painel com os 5 tipos de trem no Japão — Local, Rapid, Semi Express, Express e Limited Express — com fotos dos trens, letreiros de destino e paineis de partida, além de exemplos de trens Limited Express: JR Narita Express, Odakyu Romancecar GSE, Keisei Skyliner, Tobu Spacia X e Seibu Laview"
+              width={1536}
+              height={1024}
+              className="h-auto w-full"
+              sizes="(min-width: 1024px) 1024px, 100vw"
+            />
+          </div>
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             <TrainTypeCard
               nome="Local"
