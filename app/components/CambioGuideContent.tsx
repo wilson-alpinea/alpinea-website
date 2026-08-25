@@ -7,6 +7,7 @@ import {
   IconExchange,
   IconMap,
   IconStar,
+  IconPin,
   IconDocument,
 } from "./AirportGuideKit";
 
@@ -20,6 +21,7 @@ function ExchangeCard({
   nome,
   bairro,
   local,
+  endereco,
   avaliacao,
   numAvaliacoes,
   descricao,
@@ -29,6 +31,7 @@ function ExchangeCard({
   nome: string;
   bairro: string;
   local?: string;
+  endereco: string;
   avaliacao: string;
   numAvaliacoes: string;
   descricao: string;
@@ -59,6 +62,10 @@ function ExchangeCard({
       </div>
       {local && <p className="mt-2 text-xs uppercase tracking-[0.08em] text-[#24211D]/50">{local}</p>}
       <p className="mt-3 text-sm leading-6 text-[#24211D]/78">{descricao}</p>
+      <p className="mt-3 flex items-start gap-1.5 border-t border-[#DDD8CF] pt-3 text-xs leading-5 text-[#24211D]/60">
+        <IconPin className="mt-0.5 h-3.5 w-3.5 shrink-0" />
+        <span>{endereco}</span>
+      </p>
     </div>
   );
 }
@@ -105,6 +112,7 @@ export function CambioGuideContent({
               nome="Ginza Exchange"
               bairro="Ginza 8-chome"
               local="Numa rua lateral discreta de Ginza"
+              endereco="Sunwood Building 1F, 8-5-18 Ginza, Chuo-ku, Tokyo 104-0061"
               avaliacao="4,7/5"
               numAvaliacoes="mais de 200 avaliações"
               tag="Recomendação principal"
@@ -114,6 +122,7 @@ export function CambioGuideContent({
             <ExchangeCard
               nome="Global Exchange Ginza"
               bairro="Ginza"
+              endereco="Kinko Building 1F, 6-12-17 Ginza, Chuo-ku, Tokyo 104-0061"
               avaliacao="4,6/5"
               numAvaliacoes="175 avaliações"
               tag="Alternativa"
@@ -133,6 +142,8 @@ export function CambioGuideContent({
             <ExchangeCard
               nome="Interbank / Ninja Money Exchange"
               bairro="Shinjuku"
+              local="Na rua Omoide Yokocho, perto da saída oeste da estação"
+              endereco="1-2-12 Nishi-Shinjuku, Shinjuku-ku, Tokyo 160-0023"
               avaliacao="4,7/5"
               numAvaliacoes="mais de 1.000 avaliações"
               tag="Excelente alternativa"
@@ -143,6 +154,7 @@ export function CambioGuideContent({
               nome="Viewcard Currency Exchange Center"
               bairro="Shinjuku Station"
               local="Dentro da JR Shinjuku Station, junto ao New South Gate"
+              endereco="5-24-55 Sendagaya, Shibuya-ku, Tokyo 151-0051 (dentro do JR EAST Travel Service Center)"
               avaliacao="4,7/5"
               numAvaliacoes="mais de 300 avaliações"
               tag="Máxima conveniência"
@@ -160,6 +172,7 @@ export function CambioGuideContent({
               nome="Travelex Kyoto Nishiguchi"
               bairro="Kyoto Station"
               local="Dentro da Kyoto Station, no 2º andar"
+              endereco="JR Kyoto Station, corredor norte-sul do 2º andar, Higashishiokojicho, Shimogyo-ku, Kyoto 600-8216"
               avaliacao="4,1/5"
               numAvaliacoes="cerca de 260 avaliações"
               tag="Recomendação principal"

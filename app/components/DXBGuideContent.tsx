@@ -11,6 +11,7 @@ import {
   IconCheck,
   IconWarning,
   IconDocument,
+  IconX,
 } from "./AirportGuideKit";
 
 // Conteúdo completo do guia de conexão em Dubai (DXB) — GRU → DXB → NRT via
@@ -65,7 +66,7 @@ function DontList({ items }: { items: string[] }) {
           key={item}
           className="flex items-start gap-3 rounded-xl border border-red-200 bg-red-50/60 px-4 py-3"
         >
-          <span className="mt-0.5 text-red-500">✗</span>
+          <IconX className="mt-0.5 h-4 w-4 shrink-0 text-red-600" />
           <p className="text-sm leading-6 text-[#24211D]/85">{item}</p>
         </div>
       ))}

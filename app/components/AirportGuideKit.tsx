@@ -155,6 +155,16 @@ export function IconCheck({ className }: { className?: string }) {
   );
 }
 
+export function IconX({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <circle cx="12" cy="12" r="9" />
+      <line x1="9" y1="9" x2="15" y2="15" />
+      <line x1="15" y1="9" x2="9" y2="15" />
+    </svg>
+  );
+}
+
 export function IconArrowLeft({ className }: { className?: string }) {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" className={className}>
@@ -170,6 +180,15 @@ export function IconMap({ className }: { className?: string }) {
       <path d="M9 3 3 5v16l6-2 6 2 6-2V3l-6 2-6-2Z" />
       <path d="M9 3v16" />
       <path d="M15 5v16" />
+    </svg>
+  );
+}
+
+export function IconPin({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21Z" />
+      <circle cx="12" cy="9.5" r="2.3" />
     </svg>
   );
 }
@@ -915,8 +934,9 @@ export function RestaurantMini({
     <div className="rounded-2xl border border-[#DDD8CF] bg-[#F8FAF9] p-5">
       <p className="text-sm font-medium text-[#24211D] md:text-base">{name}</p>
       <p className="mt-1 text-xs leading-5 text-[#d9a66d] md:text-sm">{detail}</p>
-      <p className="mt-3 border-t border-[#DDD8CF] pt-3 text-[11px] leading-5 text-[#24211D]/70 md:text-xs">
-        📍 {location}
+      <p className="mt-3 flex items-center gap-1.5 border-t border-[#DDD8CF] pt-3 text-[11px] leading-5 text-[#24211D]/70 md:text-xs">
+        <IconPin className="h-3 w-3 shrink-0" />
+        <span>{location}</span>
       </p>
     </div>
   );

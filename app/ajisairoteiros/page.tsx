@@ -2298,9 +2298,18 @@ function RestaurantBlock({
       </p>
 
       <div className="mt-3 space-y-1 border-t border-white/10 pt-3 text-[11px] leading-5 text-white/45 md:text-xs">
-        <p>📍 {location}</p>
-        <p>¥ {price}</p>
-        <p>🕒 {hours}</p>
+        <p className="flex items-center gap-1.5">
+          <IconPin className="h-3 w-3 shrink-0" />
+          <span>{location}</span>
+        </p>
+        <p className="flex items-center gap-1.5">
+          <span className="w-3 shrink-0 text-center text-[10px] font-semibold">¥</span>
+          <span>{price}</span>
+        </p>
+        <p className="flex items-center gap-1.5">
+          <IconClock className="h-3 w-3 shrink-0" />
+          <span>{hours}</span>
+        </p>
       </div>
     </article>
   );

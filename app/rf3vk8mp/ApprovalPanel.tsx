@@ -10,7 +10,7 @@ import {
 } from "react";
 import { createPortal } from "react-dom";
 import Image from "next/image";
-import { ContentCard } from "../components/AirportGuideKit";
+import { ContentCard, IconStar as IconStarKit } from "../components/AirportGuideKit";
 import { NaritaGuideContent } from "../components/NaritaGuideContent";
 import { TremGuideContent } from "../components/TremGuideContent";
 import { CostumesGuideContent } from "../components/CostumesGuideContent";
@@ -5442,10 +5442,25 @@ function GastronomiaBlock({ gastronomia }: { gastronomia: Gastronomia }) {
                     </p>
                   )}
                   {(r.localizacao || r.preco || r.horario) && (
-                    <div className="mt-3 space-y-1 border-t border-[#DDD8CF] pt-3 text-[11px] leading-5 text-[#24211D]/60">
-                      {r.localizacao && <p>📍 {r.localizacao}</p>}
-                      {r.preco && <p>¥ {r.preco}</p>}
-                      {r.horario && <p>🕒 {r.horario}</p>}
+                    <div className="mt-3 space-y-1.5 border-t border-[#DDD8CF] pt-3 text-[11px] leading-5 text-[#24211D]/60">
+                      {r.localizacao && (
+                        <p className="flex items-center gap-1.5">
+                          <IconPin className="h-3 w-3 shrink-0" />
+                          <span>{r.localizacao}</span>
+                        </p>
+                      )}
+                      {r.preco && (
+                        <p className="flex items-center gap-1.5">
+                          <span className="w-3 shrink-0 text-center text-[10px] font-semibold">¥</span>
+                          <span>{r.preco}</span>
+                        </p>
+                      )}
+                      {r.horario && (
+                        <p className="flex items-center gap-1.5">
+                          <IconClockOutline className="h-3 w-3 shrink-0" />
+                          <span>{r.horario}</span>
+                        </p>
+                      )}
                     </div>
                   )}
                 </div>
@@ -5511,20 +5526,50 @@ function GastronomiaBlock({ gastronomia }: { gastronomia: Gastronomia }) {
                     {r.descricao}
                   </p>
 
-                  <div className="mt-3 space-y-1 border-t border-[#DDD8CF] pt-3 text-[11px] leading-5 text-[#24211D]/65">
+                  <div className="mt-3 space-y-1.5 border-t border-[#DDD8CF] pt-3 text-[11px] leading-5 text-[#24211D]/65">
                     {r.notaTabelog && (
-                      <p>
-                        ⭐ {r.notaTabelog} no Tabelog
-                        {r.numAvaliacoes ? ` (${r.numAvaliacoes})` : ""}
+                      <p className="flex items-center gap-1.5">
+                        <IconStarKit className="h-3 w-3 shrink-0 text-[#B96432]" />
+                        <span>
+                          {r.notaTabelog} no Tabelog
+                          {r.numAvaliacoes ? ` (${r.numAvaliacoes})` : ""}
+                        </span>
                       </p>
                     )}
-                    <p>¥ {r.faixaPreco}</p>
-                    <p>📍 {r.distancia}</p>
-                    <p>🕒 {r.horario}</p>
-                    <p>🌐 {r.foreignFriendly}</p>
-                    {r.nivelFila && <p>⏳ {r.nivelFila}</p>}
-                    {r.reserva && <p>📅 {r.reserva}</p>}
-                    {r.pagamento && <p>💳 {r.pagamento}</p>}
+                    <p className="flex items-center gap-1.5">
+                      <span className="w-3 shrink-0 text-center text-[10px] font-semibold">¥</span>
+                      <span>{r.faixaPreco}</span>
+                    </p>
+                    <p className="flex items-center gap-1.5">
+                      <IconPin className="h-3 w-3 shrink-0" />
+                      <span>{r.distancia}</span>
+                    </p>
+                    <p className="flex items-center gap-1.5">
+                      <IconClockOutline className="h-3 w-3 shrink-0" />
+                      <span>{r.horario}</span>
+                    </p>
+                    <p className="flex items-center gap-1.5">
+                      <IconGlobe className="h-3 w-3 shrink-0" />
+                      <span>{r.foreignFriendly}</span>
+                    </p>
+                    {r.nivelFila && (
+                      <p className="flex items-center gap-1.5">
+                        <IconHourglass className="h-3 w-3 shrink-0" />
+                        <span>{r.nivelFila}</span>
+                      </p>
+                    )}
+                    {r.reserva && (
+                      <p className="flex items-center gap-1.5">
+                        <IconCalendar className="h-3 w-3 shrink-0" />
+                        <span>{r.reserva}</span>
+                      </p>
+                    )}
+                    {r.pagamento && (
+                      <p className="flex items-center gap-1.5">
+                        <IconCreditCardSmall className="h-3 w-3 shrink-0" />
+                        <span>{r.pagamento}</span>
+                      </p>
+                    )}
                   </div>
 
                   {r.alerta && <InlineAlert text={r.alerta} />}
@@ -7499,6 +7544,70 @@ function iconProps(className?: string) {
     strokeLinejoin: "round" as const,
     className,
   };
+}
+
+// Ícones pequenos usados nas linhas de fato do RestauranteCurado (preço,
+// distância, horário, idioma, fila, reserva, pagamento) — substituem os
+// emojis usados antes, pra manter um único estilo de ícone (linha, mesma
+// espessura) em vez de misturar emoji com SVG.
+function IconPin({ className }: { className?: string }) {
+  return (
+    <svg {...iconProps(className)}>
+      <path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21Z" />
+      <circle cx="12" cy="9.5" r="2.3" />
+    </svg>
+  );
+}
+
+function IconClockOutline({ className }: { className?: string }) {
+  return (
+    <svg {...iconProps(className)}>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M12 7v5l3.2 2" />
+    </svg>
+  );
+}
+
+function IconGlobe({ className }: { className?: string }) {
+  return (
+    <svg {...iconProps(className)}>
+      <circle cx="12" cy="12" r="9" />
+      <path d="M3 12h18" />
+      <path d="M12 3c2.6 2.6 4 5.8 4 9s-1.4 6.4-4 9c-2.6-2.6-4-5.8-4-9s1.4-6.4 4-9Z" />
+    </svg>
+  );
+}
+
+function IconHourglass({ className }: { className?: string }) {
+  return (
+    <svg {...iconProps(className)}>
+      <path d="M6 3h12" />
+      <path d="M6 21h12" />
+      <path d="M7 3c0 4.5 3 6 5 7.5C10 12 7 13.5 7 21" />
+      <path d="M17 3c0 4.5-3 6-5 7.5 2 1.5 5 3 5 10.5" />
+    </svg>
+  );
+}
+
+function IconCalendar({ className }: { className?: string }) {
+  return (
+    <svg {...iconProps(className)}>
+      <rect x="3.5" y="5" width="17" height="16" rx="2" />
+      <path d="M3.5 9.5h17" />
+      <path d="M8 3v4" />
+      <path d="M16 3v4" />
+    </svg>
+  );
+}
+
+function IconCreditCardSmall({ className }: { className?: string }) {
+  return (
+    <svg {...iconProps(className)}>
+      <rect x="2.5" y="5.5" width="19" height="13" rx="2" />
+      <path d="M2.5 10h19" />
+      <path d="M6 15h4" />
+    </svg>
+  );
 }
 
 function IconPlane({ className }: { className?: string }) {
