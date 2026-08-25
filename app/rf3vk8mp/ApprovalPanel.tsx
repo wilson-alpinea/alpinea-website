@@ -358,6 +358,12 @@ type Period = {
   // cobre duas áreas bem distintas que merecem cada uma seu próprio mapa
   // anotado (ex.: Shinjuku à noite + Shinjuku Gyoen à tarde).
   visaoAnotadaSecundaria?: Period["visaoAnotada"];
+  // Quando true, mostra o Raio-X Alpinea (visaoAnotada) logo no início do
+  // período — imediatamente abaixo da foto de capa (atracaoPrincipalImagem),
+  // antes até do percurso essencial — em vez da posição padrão, ao final
+  // da seção Atração. Usado quando o Raio-X funciona como uma introdução
+  // geral do dia/período, não como um mapa de apoio aos detalhes.
+  visaoAnotadaNoTopo?: boolean;
   // Resposta rápida a "o que eu faço agora?" — resumo do percurso a pé
   // recomendado dentro da atração, antes de qualquer detalhe. Mostrado
   // logo após o hero, antes do diagrama anotado.
@@ -1419,11 +1425,41 @@ const DAY_2: DayContent = {
         },
       ],
     },
+    visaoAnotadaNoTopo: true,
     visaoAnotada: {
-      titulo: "Tokyo Character Street",
+      titulo: "Marunouchi, Tokyo Station & Palácio Imperial",
       imagem: "/images/dia2-tokyostation.png",
       imagemAlt: "Tokyo Station, onde fica a Tokyo Character Street",
-      simples: true,
+      comentarios: [
+        "Chegamos ao último dia da viagem.",
+        "E hoje a programação é propositalmente muito mais leve.",
+        "Você ainda precisa fazer check-out, organizar as últimas compras, fechar as malas e, principalmente, seguir para o aeroporto com bastante antecedência. Não existe motivo para colocar uma programação pesada justamente no dia em que qualquer atraso pode transformar o final da viagem em uma experiência estressante.",
+        "Por isso, deixei apenas duas regiões muito próximas do seu hotel: Tokyo Station e o Palácio Imperial. As duas podem ser visitadas praticamente a pé, sem necessidade de ficar entrando e saindo de metrô ou ônibus.",
+        "Comece pela Tokyo Station: você tecnicamente já conhece a estação — foi daqui que você utilizou o Shinkansen durante a viagem — mas existe uma diferença enorme entre simplesmente utilizar a estação como ponto de transporte e realmente explorar seu complexo comercial.",
+        "A Tokyo Station é gigantesca e possui diversas áreas subterrâneas de lojas, restaurantes e serviços. Hoje vamos conhecer uma delas.",
+        "Tokyo Character Street: dentro do complexo da estação fica essa área praticamente inteira dedicada à cultura pop japonesa — várias lojas temáticas reunidas no mesmo corredor, com personagens de anime, mangá, games, televisão e algumas das maiores franquias japonesas.",
+        "E existe uma loja que você já tinha mencionado especificamente que queria conhecer: a Dragon Ball Store. No começo da viagem nós já passamos por uma JUMP SHOP, dedicada às séries publicadas pela Shonen Jump e que naturalmente também possui produtos de Dragon Ball. Aqui, porém, a proposta é diferente: você encontrará uma loja especificamente dedicada ao universo de Dragon Ball.",
+        "Além dela, existem várias outras lojas interessantes no mesmo complexo. Entre as principais, eu destacaria a JUMP SHOP, Pokémon Store, Donguri Republic (dedicada aos personagens do Studio Ghibli), além de outras lojas temáticas que deixei indicadas no roteiro.",
+        "Não precisa necessariamente visitar todas. Caminhe pela Character Street e entre naquelas que realmente chamarem sua atenção.",
+        "Existe uma vantagem enorme em fazer isso pela manhã: você está muito perto do hotel, e provavelmente vai comprar alguma coisa.",
+        "Por isso, existe uma estratégia que pode facilitar bastante o restante do dia: faça suas últimas compras e volte ao hotel antes do check-out. Assim você consegue colocar tudo aquilo que comprou hoje diretamente dentro das malas e organizar a bagagem uma última vez.",
+        "É muito melhor fazer isso agora do que passar o restante do dia carregando sacolas — ou chegar ao aeroporto tentando descobrir onde colocar as últimas compras. Depois, faça o check-out normalmente.",
+        "E as malas? Minha primeira opção seria simplesmente deixar as malas no próprio hotel depois do check-out. A maioria dos hotéis consegue guardar a bagagem dos hóspedes por algumas horas no dia da saída — confirme na recepção, deixe tudo ali e continue o passeio apenas com aquilo que realmente precisa carregar.",
+        "Existem também inúmeros coin lockers e serviços de armazenamento de bagagem na região da Tokyo Station, mas eu utilizaria isso apenas como plano B. Se o hotel puder guardar suas malas, não existe motivo para carregá-las até a estação, procurar um locker suficientemente grande e depois precisar retornar especificamente até ele. Quanto mais simples for a logística hoje, melhor.",
+        "Almoce com calma: depois disso, faça um almoço tranquilo. Marunouchi e a própria Tokyo Station possuem uma quantidade enorme de restaurantes, então hoje não existe necessidade de atravessar a cidade atrás de uma refeição específica. Escolha aquilo que estiver com vontade de comer e aproveite — é o último dia.",
+        "Depois do almoço: Palácio Imperial. Durante a tarde, se ainda houver tempo confortável antes de seguir para o aeroporto, caminhe em direção ao Palácio Imperial — a residência oficial do Imperador do Japão e o principal complexo da Família Imperial.",
+        "Uma coisa importante é entender que o Palácio Imperial não funciona como um castelo turístico convencional. Grande parte do complexo não é simplesmente aberta para você entrar e caminhar livremente.",
+        "Existem visitas específicas a determinadas áreas que seguem regras próprias e podem exigir inscrição ou participação em visitas organizadas. A disponibilidade também pode variar conforme o calendário oficial da Casa Imperial. Por isso, para hoje, não quero que sua programação dependa de uma reserva.",
+        "A parte que você pode conhecer com mais liberdade: no roteiro, deixei indicada a região acessível ao público, incluindo os East Gardens do Palácio Imperial e alguns dos pontos históricos dos antigos terrenos do Castelo de Edo.",
+        "Naturalmente, não é a mesma coisa que entrar nas áreas utilizadas pela Família Imperial. Mas você consegue entender muito melhor a escala do complexo e observar muralhas, fossos, portões, jardins e estruturas remanescentes do antigo Castelo de Edo.",
+        "E existe uma vantagem importante para hoje: você não precisa passar horas aqui. Faça uma caminhada, observe a região, tire algumas fotos e, quando sentir que já viu o suficiente, volte. Hoje não existe nenhuma obrigação de \"completar\" o Palácio Imperial.",
+        "Não transforme o último dia em uma corrida — essa talvez seja a recomendação mais importante de hoje.",
+        "Se perceber que está demorando mais do que esperava para organizar as malas, fazer check-out ou almoçar, corte alguma coisa. Se quiser ficar mais tempo fazendo compras na Tokyo Station, fique. Se estiver cansado e preferir simplesmente almoçar e voltar ao hotel, faça isso.",
+        "O Palácio Imperial está aqui justamente porque é uma visita interessante, rápida e próxima — não porque você precise obrigatoriamente encaixar mais uma atração antes de ir embora.",
+        "E depois disso, aeroporto: quando terminar, volte ao hotel, retire suas malas e comece o deslocamento para o aeroporto com bastante antecedência. Não deixe compras, organização de bagagem ou qualquer outra pendência importante para resolver depois desse momento.",
+        "O objetivo deste último dia é justamente o contrário. Depois de uma viagem inteira acordando cedo, pegando trens, ônibus, Shinkansen e atravessando diferentes regiões do Japão, hoje você não precisa correr para lugar nenhum.",
+        "Faça suas últimas compras, conheça um pouco de Marunouchi, dê uma última caminhada por Tóquio e encerre a viagem com calma. Depois disso, é buscar as malas e seguir para o aeroporto.",
+      ],
       pontos: [
         { titulo: "Dragonball Store", descricao: "Loja oficial de Dragon Ball.", foto: "/images/marunouchi-dragonball-store.png", ordem: 1 },
         { titulo: "Jump Shop", descricao: "Loja oficial da Shueisha.", foto: "/images/marunouchi-jump-shop.png", ordem: 2 },
@@ -1925,13 +1961,35 @@ const DAY_3: DayContent = {
       ],
     },
     visaoAnotada: {
-      titulo: "Meiji Jingu",
+      titulo: "Meiji Jingu, Harajuku & Shibuya",
       imagem: "/images/raiox-meiji-jingu.png",
       imagemAlt: "Raio-X Alpinea do Meiji Jingu com o Santuário Principal, Jardim Interior, Casa do Tesouro, Museu e as estações Harajuku e Yoyogi",
       comentarios: [
-        "Vista aérea do terreno do santuário: a entrada principal fica junto à Estação Harajuku, de onde parte o Minami-sando (参道, a alameda de acesso) cortando a floresta até o Minami Shinmon (南神門) e o Santuário Principal (本殿). No caminho, a Casa do Tesouro (宝物殿) e o Museu ficam a poucos passos um do outro, e o Togo Shrine é um santuário menor nos arredores.",
-        "O Parque de Yoyogi fica colado ao terreno do santuário, do lado oeste, com a Estação Yoyogi bem em frente — uma boa saída alternativa à Harajuku, dependendo de para onde for em seguida.",
-        "Existem 5 pontos de interesse destacados abaixo, na ordem em que aparecem caminhando pelo Minami-sando a partir da Estação Harajuku — priorize o Kazaridaru (2) logo no início do trajeto, porque depois de meia-manhã fica difícil tirar foto sem gente na frente.",
+        "Hoje entramos em uma das regiões mais centrais e conhecidas de Tóquio. É provavelmente uma das imagens mais associadas à cidade para quem visita o Japão pela primeira vez: Meiji Jingu, Harajuku, Omotesando e Shibuya estão todos relativamente próximos, mas cada área tem uma personalidade completamente diferente.",
+        "E existe um ponto importante para este dia: há muito mais coisa para fazer nessa região do que tempo disponível. A ideia, portanto, não é tentar conhecer tudo, mas entender o que realmente vale priorizar.",
+        "Meiji Jingu — comece o dia por aqui. Nossa primeira parada é o Meiji Jingu, um dos santuários xintoístas mais importantes de Tóquio.",
+        "Uma das coisas que mais impressiona aqui é a escala da floresta ao redor do santuário. As árvores são enormes e criam uma sensação muito vertical, quase como se você estivesse entrando em uma floresta completamente isolada da cidade.",
+        "E existe uma curiosidade interessante: essa floresta foi planejada e criada pelo homem. Ela começou a ser formada há pouco mais de 100 anos, após a morte do Imperador Meiji, como parte da criação do santuário dedicado a ele e à Imperatriz Shōken. Foram plantadas dezenas de milhares de árvores doadas de diferentes regiões do Japão, formando a floresta que existe hoje.",
+        "É justamente isso que torna a experiência tão interessante: poucos minutos antes você está no meio de uma das maiores metrópoles do planeta e, de repente, praticamente deixa de ouvir a cidade.",
+        "O horário realmente importa? Para conhecer o complexo, não é necessário chegar em um horário extremamente específico. Durante a manhã, a experiência normalmente continua bastante agradável.",
+        "Mas existe uma exceção importante se você quiser boas fotos: os barris de saquê (kazaridaru). Eles ficam ao longo do caminho de acesso ao santuário e são um dos pontos fotográficos mais conhecidos do Meiji Jingu. Do outro lado ficam também os famosos barris de vinho oferecidos ao santuário.",
+        "Se você quiser fotografar essa área praticamente vazia, chegue o mais próximo possível do horário de abertura. Conforme a manhã avança, grupos de turistas começam a passar constantemente por esse corredor e fica muito mais difícil conseguir uma fotografia limpa.",
+        "Na área principal do santuário isso é menos problemático. O espaço é amplo e, mesmo com visitantes, normalmente ainda é possível encontrar bons ângulos.",
+        "Fora a floresta, os barris e o complexo principal do santuário, não existe uma quantidade enorme de atrações individuais para visitar. A graça do Meiji Jingu está muito mais na experiência do lugar: caminhar pela floresta, observar a arquitetura e aproveitar o contraste com a Tóquio extremamente urbana que veremos logo depois.",
+        "Saindo do Meiji Jingu: depois do complexo, você entra em uma região completamente diferente. Harajuku e Omotesando ficam logo ao lado, e daqui em diante começam a aparecer tantas possibilidades que será necessário escolher o que faz mais sentido para você.",
+        "A Omotesando é uma grande avenida arborizada conhecida principalmente pela arquitetura e pelas lojas de marcas internacionais e de luxo. É uma região bonita para caminhar, mas possui um perfil bastante comercial.",
+        "Como compras não são necessariamente uma prioridade desta viagem, não considero necessário gastar muito tempo aqui. Vale conhecer a região, observar a avenida e seguir para aquilo que realmente desperte seu interesse. E daqui estamos praticamente conectados a Shibuya.",
+        "Entendendo Shibuya: uma coisa que pode gerar alguma confusão durante a viagem é encontrar placas escritas \"Shibuya City\" mesmo quando você aparentemente está em outro bairro.",
+        "Isso acontece porque Shibuya é um dos 23 special wards de Tóquio e engloba uma área muito maior do que apenas os arredores da estação e do famoso cruzamento. Harajuku e partes dessa região também pertencem administrativamente a Shibuya. Por isso, quando falamos em \"ir para Shibuya\" neste roteiro, estamos falando especificamente da região ao redor da Shibuya Station e do Shibuya Crossing.",
+        "Shibuya Crossing: naturalmente, vale conhecer o famoso cruzamento em frente à estação que se tornou um dos símbolos de Tóquio. Mas existe uma diferença enorme entre simplesmente conhecê-lo e tentar vê-lo no seu momento de maior movimento.",
+        "O fluxo aumenta bastante no final da tarde e começo da noite, especialmente durante os horários de pico. É quando você encontra aquela imagem clássica de uma multidão atravessando simultaneamente em várias direções. Só tenha em mente que quanto mais impressionante estiver o cruzamento, menos agradável tende a ser a experiência no nível da rua.",
+        "Nos horários mais movimentados, a região da estação fica extremamente congestionada. Dependendo do dia, o fluxo de pessoas começa praticamente dentro da própria estação e continua pelas saídas e calçadas ao redor — uma lógica parecida com a Estação da Sé em São Paulo no horário de pico: muita gente tentando circular simultaneamente e pouco espaço para simplesmente parar e observar.",
+        "Portanto, não existe obrigação de chegar exatamente no horário mais cheio. Se estiver passando pela região antes, aproveite Shibuya com mais tranquilidade.",
+        "Hachikō e outros pontos próximos: ao lado da estação fica também a pequena estátua de Hachikō, o famoso cão que continuou retornando à estação esperando por seu dono mesmo depois da morte dele. A estátua em si é bem menor do que muita gente imagina, mas a história transformou o local em um dos pontos mais conhecidos de Shibuya.",
+        "Existem ainda vários centros comerciais na região com lojas relacionadas à cultura pop japonesa, incluindo Pokémon Center, Nintendo Store e outras lojas especializadas. Não é necessário priorizá-las hoje, mas, se sobrar tempo ou vontade de entrar, saiba que existem várias opções muito próximas.",
+        "Uma recomendação especial: sushi de esteira. Se você tiver interesse em experimentar um sushi de esteira (kaiten-zushi), este é provavelmente o melhor momento da viagem para fazer isso — minha recomendação é o Kaiten Sushi Ginza Onodera, na região de Omotesando, um dos meus favoritos em Tóquio, com qualidade muito acima do que normalmente se imagina.",
+        "O único problema é justamente a popularidade: costuma formar bastante fila. Por isso, se decidir incluí-lo no dia, minha recomendação é chegar próximo do horário de abertura e retirar sua senha o quanto antes — isso evita perder uma parte significativa do dia simplesmente esperando por uma mesa.",
+        "Entre Meiji Jingu, Harajuku, Omotesando e Shibuya, você estará passando por uma das regiões com maior concentração de coisas para fazer em toda a viagem. Não tente encaixar tudo. Use o roteiro como base, escolha aquilo que mais chamar sua atenção e aproveite também para simplesmente caminhar e descobrir a região.",
       ],
       pontos: [
         {
@@ -2243,12 +2301,27 @@ const DAY_3: DayContent = {
           },
         },
         visaoAnotada: {
-          titulo: "Shinjuku à Noite — Kabukicho",
+          titulo: "Shinjuku & Kabukicho",
           imagem: "/images/raiox-shinjuku.png",
           imagemAlt: "Raio-X Alpinea de Kabukicho à noite com Godzilla Head, Cross Shinjuku Vision, Thermae-Yu e Shinjuku Golden-Gai",
           comentarios: [
-            "Vista noturna do quarteirão de Kabukicho: a cabeça do Godzilla (Godzilla Head) fica no topo do Hotel Gracery, bem na entrada do bairro — dá pra ver de longe. A poucos passos, o Cross Shinjuku Vision é o telão curvo onde aparece o gato 3D gigante, na saída leste da estação.",
-            "Do outro lado do quarteirão, o Thermae-Yu (onsen urbano) e o Shinjuku Golden-Gai (rede de vielas com bares minúsculos) ficam a uma curta caminhada um do outro — todo esse trecho é percorrível a pé, sem pressa, entre uma atração e outra.",
+            "Shinjuku é daqueles lugares em que, novamente, há muito mais coisa para fazer do que tempo disponível.",
+            "E hoje existe um fator adicional: no final do dia, minha recomendação é voltar ao hotel, pegar as malas e seguir para Kyoto de Shinkansen, o trem-bala japonês. Por isso, eu não gastaria uma parte muito grande do dia tentando conhecer tudo o que existe em Shinjuku.",
+            "A ideia aqui é escolher alguns pontos, conhecer a região mais interessante para você e preservar tempo suficiente para fazer a viagem até Kyoto sem correria.",
+            "Primeiro, entenda Shinjuku: é um dos principais centros de Tóquio e reúne áreas completamente diferentes dentro do mesmo distrito.",
+            "Na parte oeste fica o Tokyo Metropolitan Government Building, sede do Governo Metropolitano de Tóquio — aquele enorme complexo com duas torres que aparece no mapa e domina o skyline dessa parte da cidade. É possível visitar seus observatórios gratuitamente e ter uma bela vista de Tóquio; se estiver com tempo e vontade, é uma opção interessante, mas, para este roteiro, considero uma visita opcional.",
+            "Mais ao sul fica o Shinjuku Gyoen, um dos parques mais bonitos e importantes de Tóquio — enorme, com jardins de estilos diferentes e bastante espaço para caminhar. Justamente por isso, visitá-lo adequadamente pode consumir uma parte considerável do dia. Como você já terá passado pelo Meiji Jingu e sua área verde anteriormente, avalie na hora se realmente existe vontade de incluir outro grande parque no mesmo dia. Se quiser conhecer, vale a visita; caso contrário, não considero essencial encaixá-lo hoje.",
+            "As distâncias enganam: uma coisa importante ao olhar o mapa é perceber que, embora tudo apareça como \"Shinjuku\", as atrações não ficam necessariamente próximas umas das outras. O Tokyo Metropolitan Government Building está no lado oeste da estação, o Shinjuku Gyoen fica mais ao sul/sudeste, e Kabukicho, Godzilla e Golden Gai ficam no lado leste/nordeste. Tentar visitar tudo significa atravessar várias vezes uma das regiões mais movimentadas de Tóquio — para o tempo que temos hoje, eu priorizaria Kabukicho e seus arredores.",
+            "Kabukicho é o famoso distrito de entretenimento de Shinjuku e possui uma história bastante particular. Durante décadas, a região ficou associada à vida noturna, bares, clubes, estabelecimentos adultos e também à presença do crime organizado japonês — a relação de Kabukicho com a Yakuza faz parte da história do bairro e ajudou a construir boa parte da reputação que ele possui até hoje.",
+            "A região mudou bastante, porém. Atualmente, Kabukicho também é uma área extremamente turística, iluminada por enormes letreiros, hotéis, restaurantes, karaokês, cinemas e complexos de entretenimento. Isso não significa que todos os problemas desapareceram: ainda existem relatos de golpes, cobranças abusivas e abordagens de touts tentando levar turistas para determinados bares e estabelecimentos.",
+            "A regra aqui é bastante simples: não acompanhe pessoas que abordarem você na rua oferecendo bares, clubes ou serviços. Escolha você mesmo onde quer entrar. Para conhecer o bairro durante este roteiro, recomendo vir depois do almoço — você verá Kabukicho funcionando, mas em um momento muito mais tranquilo do que durante a madrugada.",
+            "Godzilla e Kabukicho: um dos pontos mais fáceis de reconhecer é a enorme cabeça do Godzilla, instalada no topo do Hotel Gracery Shinjuku. Ela aparece entre os prédios e acabou se tornando um dos símbolos modernos de Kabukicho. Não é uma atração que exige muito tempo: vale caminhar pela região, encontrar um bom ângulo, tirar algumas fotos e continuar explorando — a graça aqui é justamente observar o ambiente ao redor, uma Tóquio completamente diferente daquela vista no Meiji Jingu poucas horas antes.",
+            "Golden Gai: muito próximo dali fica o Shinjuku Golden Gai, uma pequena área formada por vielas estreitas e dezenas de minúsculos bares. É provavelmente um dos contrastes mais interessantes de Shinjuku: você sai dos enormes prédios, telas e letreiros de Kabukicho e entra em um labirinto de construções pequenas, algumas com espaço para pouquíssimas pessoas.",
+            "Durante o dia, boa parte dos bares estará fechada, porque o Golden Gai realmente ganha vida à noite. Mesmo assim, vale passar pelas vielas para conhecer a arquitetura e entender o lugar. Como hoje você precisa seguir para Kyoto, não planejaria ficar esperando a região começar a funcionar à noite — teremos outras experiências de bares e izakayas durante a viagem.",
+            "Quanto tempo ficar em Shinjuku? Minha recomendação é não transformar Shinjuku em um dia inteiro. Escolha aquilo que estiver com mais vontade de conhecer: se quiser parque, vá ao Shinjuku Gyoen; se quiser uma vista panorâmica, considere o Tokyo Metropolitan Government Building. Mas, entre as opções, eu priorizaria Kabukicho, Godzilla e uma passagem pelo Golden Gai.",
+            "E existe um horário que eu tentaria respeitar: por volta das 16h, idealmente você já deveria estar começando o caminho de volta para o hotel. Você ainda precisa buscar suas malas e seguir para a estação de onde partirá o Shinkansen. Dependendo do tamanho da bagagem, é possível fazer parte desse deslocamento caminhando; caso não queira carregar malas, um táxi para um trajeto curto também pode simplificar bastante a logística.",
+            "Por que não ficar até mais tarde? Porque hoje chegar cedo a Kyoto vale mais do que ganhar algumas horas extras em Shinjuku. Minha preferência seria fazer o deslocamento com tranquilidade, chegar a Kyoto, fazer o check-in, descansar e estar preparado para começar cedo no dia seguinte.",
+            "E isso será particularmente importante: em Tóquio, muitas atrações conseguem absorver relativamente bem grandes quantidades de visitantes; em Kyoto, o horário em que você chega a determinados lugares pode mudar completamente a experiência. Algumas horas fazem uma diferença enorme entre encontrar um lugar tranquilo e encontrar exatamente o mesmo lugar tomado por grupos de turistas.",
           ],
           nota:
         "Melhor horário para fotos: 17h–18h, quando os letreiros de neon acendem contra o céu ainda claro — ideal antes de seguir para o jantar e a vida noturna. O mirante do Governo Metropolitano é gratuito, com vista comparável à de mirantes pagos como o da Tokyo Sky Tree — vale subir perto do pôr do sol.",
@@ -3015,8 +3088,15 @@ const DAY_4: DayContent = {
           imagem: "/images/raiox-roppongi.png",
           imagemAlt: "Raio-X Alpinea de Roppongi com Mori Tower, Tokyo Midtown, TV Asahi, a Estação Roppongi e os pontos de vida noturna numerados",
           comentarios: [
-            "Vista aérea do cruzamento central de Roppongi: o Mori Tower (Roppongi Hills) com o TV Asahi ao lado, o Tokyo Midtown do outro lado da avenida, e a Estação Roppongi (linhas Hibiya e Oedo) bem no meio, a poucos passos das duas baladas.",
-            "V2TOKYO e R3 Club Lounge são as duas opções de balada da noite — a poucos minutos a pé uma da outra. A escultura Maman, de Louise Bourgeois, fica aos pés do Mori Tower, no 66 Plaza.",
+            "A ideia é vir para Roppongi depois de concluir as atividades do dia. Pelo roteiro, você deve terminar o fim de tarde/noite em Kanda e, de lá, seguir para esta região.",
+            "Embora o objetivo principal da noite sejam as baladas de Roppongi, vale chegar um pouco mais cedo e aproveitar para caminhar pelo bairro. No mapa, destacamos alguns dos principais pontos da região.",
+            "Você pode passar pela Mori Tower, no coração de Roppongi Hills, e conhecer um pouco dos arredores. Dependendo do horário em que chegar, algumas atrações já podem estar fechadas, mas a região por si só já vale a caminhada.",
+            "Outra opção é seguir até Tokyo Midtown, um grande complexo que reúne shopping, restaurantes, o Hinokicho Park e o Ritz-Carlton Tokyo. Roppongi é também uma importante região empresarial e financeira de Tóquio, então é interessante simplesmente caminhar por aqui e observar esse lado mais moderno e cosmopolita da cidade.",
+            "Se encontrar algum museu, exposição ou lugar que desperte seu interesse e já estiver fechado, considere voltar em outro dia com mais tempo.",
+            "Sobre as baladas: antes de sair, uma informação importante — não esqueça de levar seu passaporte. Ele pode ser solicitado na entrada das casas noturnas.",
+            "No guia, trouxemos um comparativo entre nossas duas principais recomendações: R3 Club Lounge e V2 Tokyo. Apesar de ficarem praticamente uma em frente à outra, elas possuem propostas e públicos diferentes. Você pode escolher aquela que mais combina com você ou, se quiser experimentar ambientes diferentes na mesma noite, começar em uma e depois seguir para a outra.",
+            "E não precisa se limitar às duas sugestões. Roppongi concentra diversas outras casas noturnas, muitas delas relativamente próximas umas das outras. Se estiver gostando da região, vale caminhar um pouco, observar o movimento e conhecer outras opções antes de decidir onde passar o restante da noite.",
+            "As duas casas destacadas no guia são nossas recomendações principais, mas encare-as como pontos de partida, não como uma obrigação. Roppongi é justamente um daqueles bairros em que você pode explorar a região e escolher o lugar que mais combina com o clima que procura naquela noite.",
           ],
         },
         alerta: {
@@ -3272,8 +3352,40 @@ const DAY_5: DayContent = {
       imagem: "/images/raiox-kiyomizu-higashiyama.png",
       imagemAlt: "Raio-X Alpinea de Kiyomizu-dera e Higashiyama com Nio-mon Gate, Sannenzaka, Ninenzaka, % Arabica, Hokan-ji e a região de Gion ao fundo",
       comentarios: [
-        "Vista aérea de Higashiyama: a subida começa no Nio-mon Gate do Kiyomizu-dera e desce pelas ladeiras históricas de Sannenzaka e Ninenzaka, passando pela Pagode de Yasaka (Hokan-ji) e pelo % Arabica Kyoto — o café minimalista sempre com fila, bem no meio do trajeto.",
-        "Seguindo para o norte, as mesmas ladeiras levam direto a Gion: Kenninji, Yasaka Shrine, Maruyama Park e Chionin Temple aparecem logo no início do bairro seguinte, com o Pontocho Alley já às margens do Rio Kamo.",
+        "Assim que você chegar a Kyoto, provavelmente vai perceber uma coisa imediatamente: Kyoto funciona de uma maneira completamente diferente de Tóquio.",
+        "Em Tóquio, praticamente qualquer região importante possui uma estação de metrô ou trem próxima. Algumas estações possuem dez, quinze, vinte saídas diferentes e você consegue atravessar boa parte da cidade utilizando somente os trilhos. Em Kyoto, essa lógica muda bastante.",
+        "Primeiro, entenda como se locomover em Kyoto: apesar de você estar hospedado próximo à Kyoto Station, que é uma estação enorme e extremamente bem conectada, grande parte das atrações que vamos visitar não fica convenientemente próxima de uma estação de trem ou metrô.",
+        "Kyoto possui metrô e várias linhas ferroviárias, mas a cobertura é muito menos abrangente do que em Tóquio. Em determinadas regiões, principalmente conforme você se afasta do centro, as distâncias entre estações e atrações ficam consideravelmente maiores.",
+        "Em alguns momentos você pode inclusive ter a sensação de ter saído completamente de uma grande cidade: bairros residenciais baixos, ruas tranquilas e estações pequenas cercadas praticamente apenas por casas. Por isso, o ônibus passa a ser muito mais importante em Kyoto.",
+        "Se ainda não fez isso, recomendo fortemente que leia o Guia de Ônibus de Kyoto que deixei nos cards deste roteiro. Ele está ali especificamente porque utilizar os ônibus daqui pode ser um pouco confuso para quem acabou de chegar. O sistema funciona bem e é barato, mas exige mais atenção do que o transporte de Tóquio.",
+        "Sempre que o deslocamento ficar excessivamente complicado, considere também pegar um táxi. Sei que buscamos manter um bom custo-benefício durante a viagem e, naturalmente, o ônibus será mais econômico. Mas existem trajetos em Kyoto em que o táxi pode economizar bastante tempo e simplificar muito o dia.",
+        "Em Kyoto, horário é estratégia: existe outra diferença fundamental entre Kyoto e Tóquio — o impacto do turismo excessivo é muito mais perceptível aqui.",
+        "Em Tóquio, talvez você tenha encontrado multidões em alguns lugares, mas, seguindo os horários que indiquei, provavelmente conseguiu evitar boa parte dos momentos mais complicados. Em Kyoto, isso passa a ser ainda mais importante.",
+        "Foi justamente por isso que organizei o roteiro colocando as atrações mais sensíveis à lotação logo no começo da manhã. Quando eu digo para chegar próximo ao horário de abertura, aqui não é apenas uma sugestão para \"evitar um pouco de fila\" — pode mudar completamente a experiência do lugar. E hoje isso começa pelo Kiyomizu-dera.",
+        "Kiyomizu-dera — vá direto para lá: ao sair do hotel pela manhã, minha recomendação é simples — vá primeiro ao Kiyomizu-dera e não se distraia pelo caminho. Isso é mais difícil do que parece.",
+        "Conforme você se aproxima do templo, começam a aparecer ruas tradicionais, pequenas lojas, construções antigas e vários lugares que naturalmente vão chamar sua atenção. Ignore-os por enquanto.",
+        "Nós vamos passar praticamente o dia inteiro nessa região e teremos tempo para voltar a essas ruas depois. A prioridade agora é aproveitar o Kiyomizu-dera enquanto ainda está relativamente tranquilo.",
+        "A entrada é paga, mas o ingresso é barato. Entre no complexo, caminhe pelos pavilhões e siga até os principais pontos de observação. O templo fica elevado na encosta de Higashiyama e possui uma das vistas mais bonitas de Kyoto.",
+        "Dependendo da época do ano e do horário em que você chegar, você ainda pode pegar aquela transição da primeira luz da manhã sobre a cidade. Além da arquitetura do próprio templo, a altura e a paisagem ao redor fazem muita diferença na experiência.",
+        "Não tenha pressa aqui. Caminhe pelo complexo, aproveite os mirantes e procure os ângulos em que você consegue observar e fotografar o famoso pavilhão principal e sua enorme varanda de madeira. Depois disso, aí sim podemos começar a explorar o bairro.",
+        "Sannenzaka & Ninenzaka: saindo do Kiyomizu-dera, você entra em uma das regiões históricas mais bonitas de Kyoto. As duas ruas que eu considero fundamentais aqui são Sannenzaka e Ninenzaka — aquelas famosas ruas inclinadas de pedra cercadas por machiya, as casas tradicionais de madeira de Kyoto.",
+        "E existe uma experiência interessante se você chegou realmente cedo: provavelmente vai conhecer essas ruas em dois momentos completamente diferentes. Primeiro, ainda praticamente vazias, com boa parte das lojas fechadas. Depois, conforme a manhã avança, as portas começam a abrir, aparecem cafés, lojas, doces, artesanato e cada vez mais pessoas circulando. Eu gosto das duas experiências.",
+        "Por isso, depois de visitar o templo, não existe necessidade de correr. Caminhe sem uma rota excessivamente rígida e aproveite Higashiyama.",
+        "Depois, pare para comer: depois de explorar Sannenzaka, Ninenzaka e as ruas ao redor, procure algum lugar para almoçar com calma. A partir daqui, o ritmo do dia pode ficar muito mais tranquilo.",
+        "Se você encontrar alguma atração, templo, loja ou rua nessa parte de Higashiyama que desperte seu interesse, pode aproveitar. Existem dezenas de pequenas coisas espalhadas pelo bairro e não existe necessidade de transformar todas elas em uma obrigação do roteiro. Depois do almoço, começamos gradualmente a seguir em direção a Gion.",
+        "Gion — o distrito das geiko e maiko: aqui entramos em outra das regiões mais famosas de Kyoto. Gion é um dos principais hanamachi, os tradicionais distritos de entretenimento onde trabalham as geiko e maiko.",
+        "Uma explicação rápida: em Kyoto, é comum utilizar o termo geiko para as profissionais que em outras regiões do Japão são geralmente chamadas de geisha. Já as maiko são aprendizes que ainda estão passando pelo longo processo de formação.",
+        "Você pode eventualmente cruzar com alguma delas se deslocando para um compromisso, especialmente conforme o dia avança. Mas existe uma regra extremamente importante: elas não são uma atração turística — estão trabalhando.",
+        "Não bloqueie o caminho, não tente pará-las, não toque nelas e não faça fotografias onde isso seja proibido ou sem respeitar as regras e a privacidade do local. Algumas ruas e propriedades de Gion possuem inclusive restrições específicas de acesso e fotografia — preste atenção à sinalização e permaneça nas áreas públicas permitidas.",
+        "A melhor maneira de conhecer Gion é simplesmente caminhar, observar a arquitetura e aproveitar a atmosfera do bairro.",
+        "Yasaka Shrine e arredores: uma das principais referências dessa região é o Yasaka Shrine, que funciona praticamente como uma ligação entre Gion e a área do Maruyama Park. Vale entrar, caminhar um pouco pelo complexo e depois continuar explorando os arredores.",
+        "Existem vários pequenos pontos interessantes nessa parte de Higashiyama. Alguns vão levar poucos minutos, outros talvez chamem sua atenção e façam você ficar um pouco mais. Você encontrará templos, pequenas ruas históricas, jardins e até trechos de bambu bem menores e muito menos famosos do que Arashiyama.",
+        "Aqui eu não criaria uma lista rígida de lugares que precisam ser \"completados\". Explore. Essa é uma das regiões de Kyoto em que sair um pouco do roteiro pode ser mais interessante do que simplesmente correr de atração em atração.",
+        "Termine o dia próximo ao Rio Kamo: conforme o final da tarde se aproxima, vá gradualmente em direção ao rio. Do outro lado você volta a encontrar uma Kyoto muito mais comercial e urbana, com lojas, restaurantes e algumas das principais áreas de entretenimento da cidade. Próximo dali fica também Pontocho, uma das vielas mais conhecidas de Kyoto, repleta de pequenos restaurantes e bares.",
+        "Minha recomendação é não encerrar o dia cedo demais. Espere anoitecer — a atmosfera ao redor do Kamo muda bastante quando as luzes dos restaurantes começam a aparecer. Dependendo da época do ano, você verá pessoas sentadas às margens do rio, casais caminhando e restaurantes funcionando nas construções tradicionais ao redor de Pontocho. É um ótimo contraponto para terminar um dia que começou ainda muito cedo no Kiyomizu-dera.",
+        "E para jantar? Você tem duas opções simples: aproveitar que já está na região de Gion, Pontocho e Kawaramachi e jantar por ali, onde existem inúmeras opções de restaurantes, ou voltar para o hotel e jantar próximo à Kyoto Station.",
+        "A própria estação possui vários restaurantes nos andares superiores e existem muitas outras opções nos quarteirões ao redor. Portanto, não existe necessidade de transformar o jantar em mais uma obrigação logística — escolha aquilo que estiver mais conveniente naquele momento.",
+        "Hoje parece um dia relativamente tranquilo no papel, porque não estamos tentando encaixar dezenas de atrações. Mas existe um detalhe importante: você começou muito cedo. Então aproveite para terminar a noite com calma e dormir cedo, porque amanhã acontece novamente a mesma coisa — em Kyoto, vamos usar as primeiras horas da manhã a nosso favor.",
       ],
     },
     regiao: {
@@ -3769,8 +3881,38 @@ const DAY_6: DayContent = {
       imagem: "/images/raiox-fushimiinari.png",
       imagemAlt: "Raio-X Alpinea do Santuário Fushimi Inari com o Portão Principal, Salão Principal, corredor de torii, Yotsuji e o Monte Inari",
       comentarios: [
-        "Da Estação Fushimi Inari, o Portão Principal (Rōmon) leva direto ao Salão Principal (Honden) do santuário — é ali que começa o corredor de torii vermelhos, subindo a encosta até o cruzamento de Yotsuji, o ponto intermediário mais comum para quem não vai até o topo.",
-        "Quem seguir além de Yotsuji encontra santuários menores (Kumataka, Ganrikisha, Mitsurugi) e cachoeiras (Kobogataki, Aokigataki, Shiragiku) no caminho até o cume do Monte Inari, a 233 m de altitude — um trajeto de trilha, bem diferente do corredor de torii mais movimentado da base.",
+        "Hoje vamos seguir praticamente a mesma estratégia do dia anterior: acordar cedo.",
+        "Só que existe uma diferença importante. O Fushimi Inari Taisha não possui propriamente um \"horário de abertura\" para a área principal da montanha — o complexo permanece acessível 24 horas por dia.",
+        "Portanto, quando eu digo para chegar cedo, significa realmente chegar nas primeiras horas da manhã, antes que o grande fluxo de visitantes comece. E aqui o horário faz uma diferença enorme.",
+        "Primeiro, entenda o que é Fushimi Inari: não é apenas um templo ou um único monumento. Na prática, estamos falando de um enorme complexo religioso construído ao longo da encosta do Monte Inari, formado pelo santuário principal, milhares de torii, pequenos santuários, altares, trilhas e diferentes pontos espalhados pela montanha.",
+        "Os famosos portais vermelhos que você vê nas fotografias são os torii. Eles aparecem em diferentes tamanhos ao longo do percurso e, em determinados trechos, ficam tão próximos uns dos outros que formam verdadeiros corredores pela montanha. É justamente isso que torna o lugar tão impressionante — e também explica por que chegar cedo é tão importante.",
+        "Não perca muito tempo na base: ao chegar, naturalmente vale conhecer o santuário principal, observar os edifícios e tirar algumas fotos. Mas minha recomendação é não ficar muito tempo aqui agora — você voltará para essa mesma região na descida e, nesse momento, poderá explorar a base com muito mais calma.",
+        "A prioridade pela manhã é outra: entre nos corredores de torii antes da multidão.",
+        "Os primeiros corredores são o ponto crítico: os primeiros trechos são os mais famosos e, consequentemente, os mais congestionados. É aqui que ficam alguns daqueles corredores extremamente densos de pequenos torii que aparecem em praticamente todas as fotografias do Fushimi Inari.",
+        "Quando estão vazios, são espetaculares. Quando estão lotados, a experiência muda completamente.",
+        "Como os caminhos são relativamente estreitos e existe fluxo de pessoas subindo, descendo e parando constantemente para fotografar, conforme a manhã avança alguns trechos podem ficar extremamente congestionados. Você não consegue simplesmente contornar a multidão — o caminho passa por dentro dos corredores.",
+        "Por isso, aproveite enquanto estiver vazio: tire suas fotos, faça seus vídeos e observe os detalhes. Mas depois continue subindo — não fique vinte minutos tentando conseguir dezenas de fotografias diferentes no mesmo corredor.",
+        "O segredo é avançar. Essa é provavelmente a dica mais importante que posso dar sobre Fushimi Inari: quanto mais você sobe, menos pessoas encontra.",
+        "Uma grande parte dos visitantes conhece apenas os primeiros corredores, tira algumas fotografias e começa a retornar. Quando você ultrapassa essa primeira concentração e avança pela montanha, o ambiente começa a mudar — os grupos diminuem, aparecem intervalos maiores entre as pessoas e você finalmente consegue caminhar com mais tranquilidade. É aí que, na minha opinião, Fushimi Inari começa a ficar realmente interessante.",
+        "Você precisa chegar ao topo? Não. E aqui eu falo também por experiência própria.",
+        "Anos atrás, tive exatamente essa curiosidade: \"Já que estou aqui, o que existe no topo da montanha?\" A resposta é: não existe uma grande atração esperando por você lá em cima.",
+        "Completar todo o circuito pode levar algumas horas, dependendo do ritmo e das paradas. O ponto mais alto possui estruturas religiosas e pequenos altares semelhantes a vários outros que você encontrará durante a subida, mas não existe um grande templo, monumento ou mirante final que justifique chegar ao topo apenas para \"completar\" o percurso.",
+        "Portanto, não trate o cume como objetivo obrigatório. Prefiro que você explore bem uma parte da montanha e volte quando sentir que a experiência já foi suficiente.",
+        "Onde vale a pena parar: conforme você sobe, preste atenção porque Fushimi Inari é muito mais do que apenas os corredores vermelhos. Existem pequenos santuários, estátuas, altares, áreas de floresta e caminhos secundários espalhados pelo percurso.",
+        "Você também começará a encontrar alguns pontos de onde é possível observar Kyoto do alto. Um dos mais conhecidos é a região de Yotsutsuji, aproximadamente no meio da subida. Para este roteiro, considero esse tipo de ponto muito mais interessante como objetivo do que necessariamente chegar ao topo do Monte Inari.",
+        "Se o tempo estiver bom, pare um pouco. Existem lugares para descansar e, chegando cedo, o ambiente tende a ser muito mais tranquilo. Se tiver comprado alguma coisa para comer ou beber antes de subir, pode ser um bom momento para fazer uma pequena pausa.",
+        "A vista lembra um pouco a experiência que tivemos no alto de Higashiyama no dia anterior, mas agora você estará observando Kyoto a partir de outra direção.",
+        "Explore também os caminhos menores: durante o percurso você encontrará pequenos desvios e áreas muito menos movimentadas — pequenos cursos d'água, altares escondidos entre as árvores, lagos e trechos em que a sensação é muito mais de estar caminhando por uma montanha do que visitando uma atração turística.",
+        "Não existe necessidade de seguir exclusivamente o fluxo principal. Se encontrar um caminho permitido que pareça interessante, vale explorar um pouco.",
+        "Na descida, mude o ritmo: quando decidir voltar, faça exatamente o contrário do que fizemos na subida. Agora não existe mais pressa.",
+        "Em alguns trechos, você poderá utilizar caminhos diferentes dos corredores pelos quais subiu, passando por áreas muito mais tranquilas e até por partes residenciais próximas ao complexo. Aproveite para observar esse outro lado da região.",
+        "Quando você finalmente retornar à base, provavelmente já terá passado um bom tempo desde sua chegada — e o cenário será completamente diferente. As lojas estarão abertas, haverá muito mais movimento e você poderá finalmente explorar aquilo que ignoramos no começo da manhã.",
+        "As raposas de Fushimi Inari: você vai perceber que existem raposas por todos os lados. Isso acontece porque as raposas, ou kitsune, são tradicionalmente consideradas mensageiras de Inari, a divindade à qual o santuário é dedicado.",
+        "Por isso você encontrará estátuas de raposas ao longo do complexo e vários souvenirs inspirados nelas nas lojas próximas à entrada. Se quiser levar alguma lembrança específica deste lugar, existem pequenos objetos, amuletos e souvenirs com kitsune que são bastante característicos do Fushimi Inari.",
+        "A estratégia para hoje, resumindo: chegue muito cedo, aproveite os primeiros corredores enquanto ainda estão vazios e avance rapidamente pela primeira parte da montanha.",
+        "Depois disso, diminua o ritmo. Explore os pequenos santuários, observe a floresta, pare nos mirantes e continue subindo enquanto estiver aproveitando a experiência. Não existe obrigação nenhuma de chegar ao topo.",
+        "Quando sentir que já viu o suficiente, comece a descida e deixe para conhecer com calma a base, as lojas e os souvenirs no final.",
+        "Fushimi Inari é um daqueles lugares em que duas pessoas podem visitar exatamente a mesma atração e ter experiências completamente diferentes simplesmente porque chegaram em horários diferentes. E é justamente por isso que estamos começando o dia tão cedo.",
       ],
     },
     regiao: {
@@ -3988,12 +4130,44 @@ const DAY_6: DayContent = {
       ],
     },
     visaoAnotada: {
-      titulo: "Kinkaku-ji (Kitayama)",
+      titulo: "Kinkaku-ji & Kitayama",
       imagem: "/images/raiox-kinkakuji.png",
       imagemAlt: "Raio-X Alpinea de Kinkaku-ji com Shariden Kinkaku, Kyōko-chi Pond, Ginga-sen, Ryūmon Falls, White Snake Tomb, Fudō-do Temple, General Gate e Entrance",
       comentarios: [
-        "O Shariden Kinkaku (Pavilhão Dourado) fica à beira do Kyōko-chi Pond — a caminhada começa no Entrance, ao sul, passa pelo General Gate e chega ao pavilhão, com o lago refletindo a fachada dourada logo à frente.",
-        "O circuito segue subindo pela mata atrás do pavilhão, passando pelo Ginga-sen (Galaxy's Spring) e pela pequena Ryūmon Falls, até o White Snake Tomb — e desce do outro lado até o Fudō-do Temple, já perto da saída.",
+        "Depois de começar o dia muito cedo no Fushimi Inari, seguimos para uma atração completamente diferente: o Kinkaku-ji, o famoso Pavilhão Dourado de Kyoto.",
+        "E aqui existe uma mudança importante na nossa estratégia. O Kinkaku-ji também recebe uma quantidade enorme de turistas, mas, diferentemente do Fushimi Inari, você não precisa organizar toda a visita em função de fugir da multidão. O horário importa, sim — mas por outro motivo.",
+        "Aqui, o protagonista é a luz: o Kinkaku-ji é revestido externamente por folhas de ouro e fica diante do Kyōko-chi, o lago que cria aquele famoso reflexo do pavilhão na água. Por isso, dependendo da posição do sol, das nuvens, do vento e até da superfície do lago naquele momento, a aparência do templo muda bastante.",
+        "Em determinados horários, a luz bate diretamente sobre as paredes douradas e o pavilhão parece muito mais intenso. Em outros, o reflexo na água pode ficar mais interessante. No final da tarde, por exemplo, a luz mais baixa pode criar um tom completamente diferente sobre o ouro — com céu aberto e boas condições, é uma imagem espetacular.",
+        "Portanto, não existe um único \"horário perfeito\" garantido. Aqui, o clima e a luz importam mais do que simplesmente chegar primeiro.",
+        "Por que a multidão incomoda menos? Existe uma razão muito simples: você não entra no Pavilhão Dourado.",
+        "O Kinkaku-ji fica do outro lado do lago e todo o percurso turístico acontece ao redor dele. Isso significa que, mesmo quando existe bastante gente, você continua conseguindo observar o pavilhão de uma distância confortável — uma situação completamente diferente dos corredores estreitos do Fushimi Inari.",
+        "Por isso, não precisa ter ansiedade para chegar, tirar uma fotografia rapidamente e sair. Faça o percurso com calma.",
+        "Os três ângulos que importam: ao longo da visita, você terá diferentes perspectivas do Kinkaku-ji, mas eu destacaria três momentos principais.",
+        "O primeiro é a famosa vista frontal, logo no início do percurso, com o pavilhão refletido no lago — é provavelmente a fotografia mais conhecida do Kinkaku-ji.",
+        "Depois, conforme você contorna o lago, terá ângulos laterais, que mostram melhor a arquitetura e a relação do pavilhão com o jardim.",
+        "Por fim, o caminho começa a subir e você passa a observar o complexo de uma posição mais elevada, criando uma perspectiva completamente diferente daquela primeira fotografia junto ao lago. Esses são, para mim, os três momentos mais importantes da visita.",
+        "Naturalmente, pare sempre que encontrar algum ângulo de que goste, mas não existe necessidade de passar horas procurando atrações escondidas dentro do complexo. O protagonista aqui é realmente o próprio Kinkaku-ji.",
+        "Aproveite para experimentar matchá: como esta parte do dia é mais tranquila, aproveite também para fazer uma pausa. Você encontrará várias opções de doces e sobremesas de matchá, o chá-verde em pó que aparece em sorvetes, doces, bebidas e praticamente todo tipo de sobremesa imaginável em Kyoto.",
+        "Essa região do Japão possui uma relação muito forte com o matchá, principalmente por causa de Uji, uma pequena cidade ao sul de Kyoto famosa pela produção de chá de altíssima qualidade. Então, se ainda não experimentou, este é um bom momento.",
+        "Pegue um sorvete, uma sobremesa ou alguma coisa feita com matchá e simplesmente aproveite a pausa. Depois de duas manhãs começando extremamente cedo, não precisamos transformar cada minuto do roteiro em uma atração turística.",
+        "Se quiser fazer uma refeição especial: unagi. Próximo ao Kinkaku-ji há restaurantes especializados em unagi, a enguia japonesa grelhada e normalmente servida sobre uma cama de arroz.",
+        "Uma das opções que deixei nas recomendações do dia é o Doi Katsuman. É um restaurante pequeno e a proposta é bastante simples, mas a qualidade do unagi é excelente.",
+        "Tenho inclusive pessoas na minha família que consideram o unagi daqui um dos melhores do Japão. Eu acho essa avaliação um pouco exagerada, mas posso confirmar uma coisa: é realmente muito bom.",
+        "Não é uma refeição barata. Considere algo na faixa de alguns milhares de ienes por pessoa, dependendo do prato escolhido. Mas, se você quiser investir um pouco mais em uma refeição japonesa tradicional e gosta de peixe, considero uma experiência que vale bastante a pena.",
+        "E depois do Kinkaku-ji? A partir daqui, temos uma decisão. Existem outras atrações que poderíamos encaixar em Kyoto.",
+        "Relativamente próximo ao Kinkaku-ji fica o Ryōan-ji, famoso pelo seu jardim zen de pedras. Existe também o Ninna-ji, outro grande complexo histórico da região.",
+        "Mais para o centro da cidade existem outras possibilidades, como o Kyoto International Manga Museum e a Nintendo KYOTO, a loja oficial da Nintendo na cidade.",
+        "Uma curiosidade interessante é que a Nintendo nasceu e continua sediada em Kyoto, não em Tóquio. O prédio da sede não é uma atração turística, mas essa ligação da empresa com a cidade continua muito presente.",
+        "O Manga Museum, por sua vez, possui um enorme acervo e funciona em um antigo prédio escolar. Particularmente, não considero uma atração essencial desta viagem, mas, se você tiver bastante interesse em mangá, pode ser uma opção.",
+        "O problema é que essas atrações não ficam todas próximas umas das outras. E lembre-se de que estamos na parte norte de Kyoto, onde os deslocamentos já começam a ser menos convenientes.",
+        "Minha recomendação: volte para Tóquio hoje. Considerando tudo o que já fizemos em Kyoto, eu voltaria para Tóquio no final do dia.",
+        "Não porque Kyoto tenha acabado — seria perfeitamente possível passar muitos outros dias explorando a cidade — mas porque, dentro das prioridades desta viagem, já cobrimos aquilo que considero mais importante.",
+        "Além disso, você acordou muito cedo ontem. Acordou muito cedo novamente hoje. Então não existe muita vantagem em adicionar várias atrações secundárias simplesmente porque ainda temos algumas horas disponíveis.",
+        "Aproveite o Kinkaku-ji, faça uma boa refeição, passe em mais algum lugar se realmente estiver com vontade e depois siga com calma para a Kyoto Station. De lá, pegue o Shinkansen de volta para Tóquio.",
+        "Ou fique mais uma noite: existe, porém, uma segunda opção perfeitamente viável. Se estiver gostando muito de Kyoto e quiser continuar explorando a cidade, você pode dormir aqui novamente e voltar para Tóquio na manhã seguinte.",
+        "O roteiro de amanhã não exige que você esteja em uma atração turística no momento exato da abertura, então existe alguma flexibilidade. Se escolher essa alternativa, apenas planeje bem o horário do Shinkansen e evite criar uma manhã excessivamente apertada.",
+        "Também recomendo organizar a reserva do trem com antecedência, principalmente se estiver viajando com bagagem ou quiser garantir lugares específicos.",
+        "Entre as duas opções, minha preferência continua sendo voltar para Tóquio hoje. Você chega com calma, volta ao hotel, descansa e começa o próximo dia já instalado na cidade. Depois de duas manhãs acordando praticamente junto com Kyoto, um pouco de descanso também faz parte do roteiro.",
       ],
     },
     regiao: {
@@ -4136,17 +4310,26 @@ const DAY_6: DayContent = {
         imagem: "/images/nintendo-store-kyoto.jpg",
         imagemAlt: "Nintendo Store Kyoto, no Takashimaya",
       },
+      {
+        title: "Castelo de Nijo",
+        description:
+          "Antiga residência dos xoguns Tokugawa em Kyoto, Patrimônio Mundial da UNESCO, com o Palácio Ninomaru e jardins amplos — fica mais central, entre Kinkaku-ji e a Kyoto Station, então também exige um deslocamento à parte.",
+        prioridade: "opcional",
+        ordem: 8,
+        imagem: "/images/nijo-castle-kyoto.jpg",
+        imagemAlt: "Castelo de Nijo em Kyoto, com cerejeiras em flor à frente do Palácio Ninomaru",
+      },
     ],
     gastronomia: {
       itens: [{ nome: "Unagi-don", descricao: "Enguia grelhada sobre arroz." }],
       curadoriaLabel: "Opções selecionadas — Jantar com unagi (~19h)",
       curadoria: [
         {
-          nome: "Unasho Kinkakuji-ten (鰻匠 金閣寺店)",
+          nome: "Unasho Kinkakuji-ten (鰻匠 金閣寺店) / Charcoal Grilled Eel Doikatsuman Kinkakuji Branch",
           papel: "Mais prático (na rota)",
           categoria: "Unagi (enguia grelhada no carvão)",
           descricao:
-            "Especializada em unagi grelhada no carvão, a mais próxima do Kinkaku-ji entre as opções da região — ex-\"Doi Katsuman\", renomeada.",
+            "Especializada em unagi grelhada no carvão, a mais próxima do Kinkaku-ji entre as opções da região. Renomeada de \"Doi Katsuman\" para \"Unasho\" em fev/2024, mas ainda aparece com o nome antigo — Charcoal Grilled Eel Doikatsuman Kinkakuji Branch — no Tripadvisor, SAVOR JAPAN, Wanderlog e KKday: é o mesmo lugar, mesmo endereço e mesma página do Tabelog.",
           foto: "/images/unasho-kinkakuji.png",
           notaTabelog: "3.10",
           numAvaliacoes: "27 avaliações",
@@ -4339,9 +4522,24 @@ const DAY_7: DayContent = {
       imagem: "/images/raiox-ningyocho.png",
       imagemAlt: "Raio-X Alpinea de Ningyocho com Ningyocho Station, Amazake Yokocho, Ningyocho Mechanic Clock, Nihonbashi e Suitengu Shrine",
       comentarios: [
-        "Da Ningyocho Station, a rua principal desce reta até o Suitengu, marcado pelo torii vermelho no fim do quarteirão — é o mesmo trajeto da Amazake Yokocho, com suas doçarias e izakayas, e da torre do relógio karakuri (Ningyocho Mechanic Clock) bem no meio do caminho.",
-        "Nas ruas ao redor ficam santuários menores como Matsushima e Chanoki, além do Ōkannon-ji Temple — e, a leste, já dá para ver o distrito de Nihonbashi, próxima parada do trajeto financeiro de Tóquio.",
-        "Existem 6 pontos de interesse destacados abaixo, na ordem em que aparecem caminhando da Estação Ningyocho até o Suitengu — a parada final do circuito.",
+        "Dependendo de como você organizou a volta de Kyoto, você pode ter chegado a Tóquio na noite anterior ou somente nesta manhã.",
+        "Hoje isso não é um grande problema, porque começaremos por uma região que não exige chegar extremamente cedo.",
+        "E antes de explicar o que fazer, vale entender por que coloquei Ningyocho neste roteiro.",
+        "O que é Ningyocho? O nome (人形町) significa literalmente algo próximo de \"bairro das bonecas\".",
+        "Durante o período Edo, essa região se desenvolveu como um importante centro de entretenimento popular, com teatros e apresentações. Artesãos ligados à produção de bonecos e marionetes também se estabeleceram por aqui, e essa história acabou permanecendo no próprio nome do bairro.",
+        "Hoje, porém, Ningyocho é interessante por outro motivo: é uma oportunidade de conhecer uma Tóquio muito menos turística.",
+        "Você não encontrará enormes atrações, arranha-céus ou multidões de estrangeiros. É um bairro relativamente pequeno, tradicional e muito fácil de explorar caminhando.",
+        "E foi justamente por isso que coloquei esta região no roteiro. Você comentou que gostaria de conhecer também lugares que fazem parte da vida cotidiana da cidade, e não somente os grandes pontos turísticos — Ningyocho cumpre muito bem esse papel.",
+        "Os relógios mecânicos: um dos símbolos curiosos do bairro são os relógios mecânicos de Ningyocho. Eles não são enormes e existem relógios desse tipo muito maiores em outras regiões do Japão, mas aqui eles fazem bastante sentido justamente pela história do bairro.",
+        "Em determinados horários, o mecanismo entra em funcionamento e pequenas figuras aparecem no relógio, criando uma espécie de apresentação com personagens relacionados à cultura tradicional de Edo. É uma atração simples, que dura poucos minutos, mas é bastante característica de Ningyocho.",
+        "Como esses mecanismos podem passar por manutenção — inclusive um deles pode estar indisponível durante sua viagem — confira no próprio roteiro as informações atualizadas de funcionamento e horários antes de esperar pela apresentação. Se coincidir com o momento em que você estiver passando, vale parar para assistir.",
+        "Aqui, a ideia é comer pelo caminho: uma das melhores coisas para fazer em Ningyocho é simplesmente andar e experimentar pequenas coisas.",
+        "A região possui várias lojas tradicionais especializadas em doces, biscoitos, senbei, ningyoyaki e outros pequenos alimentos japoneses. Alguns estabelecimentos estão aqui há muitas décadas e existem produtos que você dificilmente encontrará reunidos com essa concentração em outras partes do roteiro.",
+        "Minha sugestão é não escolher uma única loja. Entre em uma, compre alguma coisa pequena. Continue caminhando. Encontre outra que pareça interessante, experimente mais alguma coisa. Vá beliscando pelo caminho.",
+        "Não precisa transformar isso em uma grande experiência gastronômica. A graça está justamente em caminhar pelo bairro e experimentar aquilo que chamar sua atenção até chegar a hora do almoço.",
+        "Suitengu: na região fica também um conhecido santuário xintoísta de Tóquio. Depois de todos os templos e santuários que já vimos durante a viagem, não considero uma visita essencial — arquitetonicamente, provavelmente não será algo mais impressionante do que aquilo que você já conheceu em Kyoto.",
+        "Mas você estará praticamente ao lado. Então, se estiver passando pela região e quiser entrar, vale uma visita rápida. Caso contrário, pode seguir o passeio sem nenhuma preocupação.",
+        "Almoce em Ningyocho: minha recomendação é fazer o almoço ainda nesta região. Ningyocho possui vários restaurantes tradicionais interessantes e é um ótimo lugar para uma refeição antes de seguirmos para o principal compromisso do dia.",
       ],
       pontos: [
         {
@@ -4549,12 +4747,30 @@ const DAY_7: DayContent = {
     // pelos arredores. Edo Noren, Santuário Nomi-no-Sukune e Museu de
     // Espadas já aparecem como pois opcionais logo abaixo, sem duplicar.
     visaoAnotada: {
-      titulo: "Kokugikan — Arredores",
+      titulo: "Ryogoku",
       imagem: "/images/raiox-ryogoku.png",
       imagemAlt: "Raio-X Alpinea dos arredores do Kokugikan com Ryōgoku Kokugikan, Museu Edo-Tokyo, Ryōgoku Edo NOREN, The Japanese Sword Museum e Yokoamicho Park",
       comentarios: [
-        "O Ryōgoku Kokugikan fica lado a lado com o Museu Edo-Tokyo, e a vila gastronômica Ryōgoku Edo NOREN ocupa o térreo bem na saída da estação — tudo dentro do mesmo quarteirão, sem necessidade de deslocamento.",
-        "Do outro lado da rua, o The Japanese Sword Museum e o tradicional Jardim Kyu Yasuda ficam a poucos minutos a pé, com o Yokoamicho Park (famoso pelas cerejeiras) fazendo a transição para o bairro residencial de Yokoami.",
+        "Depois disso, vamos para Ryogoku. É ali que fica o Ryogoku Kokugikan, uma das casas mais importantes do sumô profissional japonês.",
+        "O deslocamento é relativamente curto, então procure chegar à região com antecedência em relação às lutas que queremos acompanhar.",
+        "Ryogoku — entrando no mundo do sumô: quando você chegar, provavelmente vai perceber imediatamente que o bairro possui uma relação completamente diferente com o esporte.",
+        "É comum encontrar referências ao sumô em restaurantes, monumentos, lojas e estabelecimentos da região — e não é raro cruzar com lutadores pelas ruas. Nos dias de torneio, naturalmente, tudo isso fica ainda mais evidente.",
+        "A programação do sumô começa cedo e vai aumentando de importância ao longo do dia. As divisões inferiores lutam primeiro e os principais lutadores aparecem mais tarde. Portanto, não precisa necessariamente permanecer dentro do estádio desde o começo da manhã.",
+        "A ideia é chegar com antecedência suficiente para conhecer o Kokugikan com calma, encontrar seu lugar e acompanhar a parte mais importante da programação sem correria.",
+        "Se sobrar tempo em Ryogoku, existem algumas coisas interessantes nos arredores. Uma delas é o Sumo Museum, localizado no próprio Ryōgoku Kokugikan — um museu pequeno, mas com objetos, gravuras e materiais relacionados à história do esporte. O acesso e funcionamento podem variar durante períodos de torneio, então consulte as informações atualizadas no roteiro.",
+        "Existe também o Japanese Sword Museum, dedicado à tradição das espadas japonesas. Não considero uma prioridade desta viagem, mas, se você tiver interesse específico em nihonto, pode ser uma visita interessante — uma oportunidade de observar de perto peças históricas e entender um pouco melhor a importância artesanal e cultural da espada no Japão.",
+        "Edo-Tokyo Museum: outra atração extremamente importante da região, e essa, particularmente, considero muito mais interessante.",
+        "O museu conta a transformação de Edo na metrópole que hoje conhecemos como Tóquio, utilizando reconstruções, objetos históricos e grandes maquetes para mostrar como a cidade se desenvolveu ao longo dos séculos — é um museu bastante visual e diferente de simplesmente caminhar por salas cheias de objetos em vitrines.",
+        "O edifício passou por uma longa reforma e, portanto, a possibilidade de visita dependerá da situação de funcionamento nas datas da sua viagem. Se estiver aberto, houver tempo disponível e você quiser acrescentar um museu ao dia, é minha principal recomendação nesta região.",
+        "Uma curiosidade: os Yokozuna. O título máximo que um lutador pode alcançar no sumô é Yokozuna — não é simplesmente uma divisão superior, mas uma distinção concedida apenas aos grandes campeões que atingem critérios excepcionais dentro do esporte.",
+        "Existe em Tóquio um monumento chamado Yokozuna Rikishi-hi, onde estão registrados os grandes lutadores que receberam esse título ao longo da história. Ele fica no Tomioka Hachimangu, não exatamente ao lado do Kokugikan, então eu não faria um deslocamento específico até lá hoje apenas para conhecê-lo — mas vale saber que existe, porque demonstra o peso histórico que o título de Yokozuna possui dentro da cultura japonesa.",
+        "E depois do sumô: chanko-nabe? Para terminar, existe uma experiência gastronômica que faz bastante sentido justamente em Ryogoku.",
+        "É um grande nabe, uma espécie de panela quente japonesa preparada com caldo, carnes, peixes, tofu e vegetais. Ele ficou famoso principalmente por sua associação com os lutadores de sumô, que tradicionalmente consomem refeições extremamente nutritivas e calóricas durante seus treinamentos.",
+        "E já deixo um aviso: é bastante comida. As opções que coloquei no roteiro tendem a servir refeições generosas, então não vá esperando um jantar particularmente leve.",
+        "Você também não precisa jantar em Ryogoku. Se estiver cansado ou simplesmente não estiver com fome depois do torneio, pode voltar para outra região e comer qualquer outra coisa.",
+        "Mas existe um motivo para eu ter colocado essa sugestão aqui: você encontrará chanko-nabe em outros lugares do Japão, naturalmente, mas em nenhum outro lugar essa refeição estará tão ligada ao contexto do dia quanto em Ryogoku.",
+        "Você acabou de assistir a um torneio de sumô, está no bairro historicamente associado ao esporte e provavelmente passou o dia inteiro vendo referências aos lutadores. Então, se tiver curiosidade, este é o momento.",
+        "Mais do que simplesmente jantar, é uma maneira de terminar o dia continuando a experiência cultural que começou dentro do Kokugikan.",
       ],
     },
     regiao: {
@@ -5243,7 +5459,7 @@ function HorarioLojasBlock({
 }) {
   return (
     <div className="mb-5 rounded-2xl border border-orange-200 bg-orange-50/60 p-5 sm:p-7">
-      <div className="mb-4 flex items-center gap-4">
+      <div className="mb-5 flex items-center gap-4">
         <IconClock className="h-20 w-20 shrink-0 text-[#000000]" />
         <span className="min-w-0 flex-1 text-base font-bold uppercase tracking-[0.2em] text-[#24211D]/70 sm:text-lg">
           Horário das Lojas
@@ -6503,6 +6719,40 @@ function MapaVisaoGeralBlock({
   );
 }
 
+// Corpo de comentários do card preto do Raio-X Alpinea. Quando o texto é
+// curto (2-3 parágrafos, como na maioria das seções), mostra tudo direto,
+// sem alterar a aparência de antes. Quando é uma leitura mais longa,
+// mostra só os 2 primeiros parágrafos e oferece "Ler leitura completa"
+// para expandir o resto — evita que o card fique gigante e quebre a
+// consistência visual com as demais seções do dia.
+function ComentariosSecao({ comentarios }: { comentarios: string[] }) {
+  const [expandido, setExpandido] = useState(false);
+  const LIMITE_VISIVEL = 2;
+  const precisaExpandir = comentarios.length > LIMITE_VISIVEL + 1;
+  const visiveis =
+    expandido || !precisaExpandir
+      ? comentarios
+      : comentarios.slice(0, LIMITE_VISIVEL);
+  return (
+    <div className="space-y-3">
+      {visiveis.map((c, i) => (
+        <p key={i} className="text-sm leading-6 text-white/80">
+          {c}
+        </p>
+      ))}
+      {precisaExpandir && (
+        <button
+          type="button"
+          onClick={() => setExpandido((v) => !v)}
+          className="text-xs font-bold uppercase tracking-[0.15em] text-white/60 underline decoration-white/30 underline-offset-4 transition hover:text-white/90"
+        >
+          {expandido ? "Ler menos" : "Ler leitura completa"}
+        </button>
+      )}
+    </div>
+  );
+}
+
 function VisaoAnotadaBlock({
   visaoAnotada,
   displayClassName,
@@ -6544,13 +6794,7 @@ function VisaoAnotadaBlock({
             <div className="mx-auto my-4 h-px w-24 bg-white/40" />
             {visaoAnotada.comentarios && visaoAnotada.comentarios.length > 0 && (
               <div className="mx-auto max-w-2xl text-left">
-                <div className="space-y-3">
-                  {visaoAnotada.comentarios.map((c, i) => (
-                    <p key={i} className="text-sm leading-6 text-white/80">
-                      {c}
-                    </p>
-                  ))}
-                </div>
+                <ComentariosSecao comentarios={visaoAnotada.comentarios} />
               </div>
             )}
           </div>
@@ -6621,13 +6865,7 @@ function VisaoAnotadaBlock({
               <p className="mb-2 text-[10px] font-bold uppercase tracking-[0.2em] text-white/50">
                 Principais Comentários da Seção
               </p>
-              <div className="space-y-3">
-                {visaoAnotada.comentarios.map((c, i) => (
-                  <p key={i} className="text-sm leading-6 text-white/80">
-                    {c}
-                  </p>
-                ))}
-              </div>
+              <ComentariosSecao comentarios={visaoAnotada.comentarios} />
             </div>
           )}
         </div>
@@ -6942,6 +7180,13 @@ function PeriodBlock({
         )}
       </div>
 
+      {period.visaoAnotada && period.visaoAnotadaNoTopo && (
+        <VisaoAnotadaBlock
+          visaoAnotada={period.visaoAnotada}
+          displayClassName={displayClassName}
+        />
+      )}
+
       {period.deslocamento && (
         <NumberedStep number={passoDeslocamento!} label="Deslocamento">
           <DeslocamentoCard deslocamento={period.deslocamento} />
@@ -7044,21 +7289,26 @@ function PeriodBlock({
                 const outros = period.detalhesPraticos!.filter(
                   (item) => item.label !== "Melhor horário"
                 );
+                const gridColsClass =
+                  outros.length >= 4
+                    ? "sm:grid-cols-4"
+                    : outros.length === 3
+                    ? "sm:grid-cols-3"
+                    : "sm:grid-cols-2";
                 return (
                   outros.length > 0 && (
                     <div className="mb-5 rounded-2xl border border-[#DDD8CF] bg-[#FAF9F6] p-5 sm:p-7">
                       <div className="mb-5 flex items-center gap-4">
-                        <img
-                          src="/images/icone-informacoes-iniciais.png"
-                          alt=""
-                          className="h-20 w-20 shrink-0 object-contain"
-                          style={{ filter: "brightness(0) saturate(100%)" }}
-                        />
+                        <span className="flex h-20 w-20 shrink-0 items-center justify-center">
+                          <IconInfoCircle className="h-12 w-12 text-[#8A7049]" />
+                        </span>
                         <p className="text-base font-bold uppercase tracking-[0.2em] text-[#24211D]/70 sm:text-lg">
                           Informações Iniciais
                         </p>
                       </div>
-                      <div className="grid grid-cols-2 gap-x-6 gap-y-4 sm:grid-cols-4">
+                      <div
+                        className={`grid grid-cols-2 gap-x-6 gap-y-4 ${gridColsClass}`}
+                      >
                         {outros.map((item) => (
                           <div key={item.label} className="text-center">
                             <p className="mb-1.5 text-[10px] font-bold uppercase tracking-[0.15em] text-[#24211D]/55">
@@ -7083,9 +7333,11 @@ function PeriodBlock({
                   item.horarioDestaque ? (
                     <div
                       key={item.label}
-                      className="mb-5 flex items-center gap-5 rounded-2xl border border-[#BFDCF2] bg-[#EAF3FC] p-6 sm:p-7"
+                      className="mb-5 flex items-center gap-4 rounded-2xl border border-[#BFDCF2] bg-[#EAF3FC] p-5 sm:p-7"
                     >
-                      <IconClock className="h-20 w-20 shrink-0 text-[#2C6CA6]" />
+                      <span className="flex h-20 w-20 shrink-0 items-center justify-center">
+                        <IconClockOutline className="h-12 w-12 text-[#2C6CA6]" />
+                      </span>
                       <div className="min-w-0 flex-1">
                         <p className="text-base font-bold uppercase tracking-[0.2em] text-[#2C6CA6]/85 sm:text-lg">
                           Melhor Horário
@@ -7123,7 +7375,9 @@ function PeriodBlock({
                       key={item.label}
                       className="mb-5 flex items-center gap-4 rounded-2xl border border-[#BFDCF2] bg-[#EAF3FC] p-5 sm:p-7"
                     >
-                      <IconClock className="h-20 w-20 shrink-0 text-[#2C6CA6]" />
+                      <span className="flex h-20 w-20 shrink-0 items-center justify-center">
+                        <IconClockOutline className="h-12 w-12 text-[#2C6CA6]" />
+                      </span>
                       <div>
                         <p className="text-base font-bold uppercase tracking-[0.2em] text-[#2C6CA6]/85 sm:text-lg">
                           Melhor Horário
@@ -7139,9 +7393,11 @@ function PeriodBlock({
           )}
 
           {period.listasPraticas && period.listasPraticas.length > 0 && (
-            <div className="mb-5 rounded-2xl border border-[#BFDCF2] bg-[#EAF3FC] p-6 sm:p-7">
+            <div className="mb-5 rounded-2xl border border-[#BFDCF2] bg-[#EAF3FC] p-5 sm:p-7">
               <div className="mb-5 flex items-center gap-4">
-                <IconTicket className="h-20 w-20 shrink-0 text-[#2C6CA6]" />
+                <span className="flex h-20 w-20 shrink-0 items-center justify-center">
+                  <IconTicketOutline className="h-12 w-12 text-[#2C6CA6]" />
+                </span>
                 <p className="text-base font-bold uppercase tracking-[0.2em] text-[#2C6CA6]/85 sm:text-lg">
                   Ingressos & Preços
                 </p>
@@ -7149,7 +7405,7 @@ function PeriodBlock({
               <div className="grid grid-cols-1 gap-5 sm:grid-cols-2">
                 {period.listasPraticas.map((lista) => (
                   <div key={lista.titulo}>
-                    <p className="mb-2 text-[10px] font-bold uppercase tracking-[0.2em] text-[#1B4A73]/70">
+                    <p className="mb-2 text-[10px] font-bold uppercase tracking-[0.15em] text-[#1B4A73]/70">
                       {lista.titulo}
                     </p>
                     <div className="space-y-1.5">
@@ -7168,12 +7424,9 @@ function PeriodBlock({
           {period.decisoes && period.decisoes.length > 0 && (
             <div className="mb-5 rounded-2xl border border-emerald-200 bg-emerald-50 p-5 sm:p-7">
               <div className="mb-5 flex items-center gap-4">
-                <img
-                  src="/images/icone-duvidas-frequentes.png"
-                  alt=""
-                  className="h-20 w-20 shrink-0 object-contain"
-                  style={{ filter: "brightness(0) saturate(100%)" }}
-                />
+                <span className="flex h-20 w-20 shrink-0 items-center justify-center">
+                  <IconQuestionBubble className="h-12 w-12 text-emerald-700" />
+                </span>
                 <p className="text-base font-bold uppercase tracking-[0.2em] text-emerald-900 sm:text-lg">
                   Dúvidas Frequentes
                 </p>
@@ -7188,7 +7441,7 @@ function PeriodBlock({
                         : ""
                     }
                   >
-                    <p className="mb-1.5 text-xs font-bold uppercase tracking-[0.12em] text-emerald-900">
+                    <p className="mb-1.5 text-xs font-bold uppercase tracking-[0.15em] text-emerald-900">
                       {d.titulo}
                     </p>
                     <p className="text-sm leading-6 text-emerald-950/75">
@@ -7216,7 +7469,7 @@ function PeriodBlock({
         </>
       </NumberedStep>
 
-      {period.visaoAnotada && (
+      {period.visaoAnotada && !period.visaoAnotadaNoTopo && (
         <VisaoAnotadaBlock
           visaoAnotada={period.visaoAnotada}
           displayClassName={displayClassName}
@@ -7318,13 +7571,15 @@ function PeriodBlock({
 function GradeHorariosBlock({ grade }: { grade: GradeHorarios }) {
   return (
     <div className="mb-6 rounded-2xl border border-[#DDD8CF] bg-[#FDFCF9] p-5 sm:p-7">
-      <div className="flex items-center gap-2.5">
-        <IconClock className="h-3.5 w-3.5 text-[#24211D]/50" />
-        <p className="text-xs font-bold uppercase tracking-[0.25em] text-[#24211D]/55">
+      <div className="mb-5 flex items-center gap-4">
+        <span className="flex h-20 w-20 shrink-0 items-center justify-center">
+          <IconCalendar className="h-12 w-12 text-[#000000]" />
+        </span>
+        <p className="min-w-0 flex-1 text-base font-bold uppercase tracking-[0.2em] text-[#24211D]/70 sm:text-lg">
           {grade.titulo ?? "Grade de Horários"}
         </p>
       </div>
-      <div className="mt-4">
+      <div>
         {grade.itens.map((item, i) => (
           <div
             key={item.evento}
@@ -7544,6 +7799,40 @@ function iconProps(className?: string) {
     strokeLinejoin: "round" as const,
     className,
   };
+}
+
+// SVG (currentColor) usados nos cards de "Atração" — substituem os PNGs com
+// filtro preto fixo (icone-informacoes-iniciais.png, icone-duvidas-
+// frequentes.png), que não conseguiam herdar a cor de cada card (dourado,
+// azul, verde). Referência visual aprovada: cards do dia do Kokugikan
+// (app/rf3vk8mp).
+function IconInfoCircle({ className }: { className?: string }) {
+  return (
+    <svg {...iconProps(className)}>
+      <circle cx="12" cy="12" r="9" />
+      <line x1="12" y1="11" x2="12" y2="16" />
+      <circle cx="12" cy="7.5" r="0.9" fill="currentColor" stroke="none" />
+    </svg>
+  );
+}
+
+function IconQuestionBubble({ className }: { className?: string }) {
+  return (
+    <svg {...iconProps(className)}>
+      <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5Z" />
+      <path d="M9.6 9.2a2.5 2.5 0 0 1 4.85.85c0 1.6-2.45 2-2.45 3.55" />
+      <circle cx="12" cy="16.6" r="0.1" fill="currentColor" strokeWidth="1.5" />
+    </svg>
+  );
+}
+
+function IconTicketOutline({ className }: { className?: string }) {
+  return (
+    <svg {...iconProps(className)}>
+      <path d="M3 9a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v1.5a1.5 1.5 0 0 0 0 3V15a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-1.5a1.5 1.5 0 0 0 0-3V9Z" />
+      <line x1="12" y1="7.5" x2="12" y2="16.5" strokeDasharray="2 2" />
+    </svg>
+  );
 }
 
 // Ícones pequenos usados nas linhas de fato do RestauranteCurado (preço,
