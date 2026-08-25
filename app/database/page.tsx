@@ -1,6 +1,6 @@
 import { Bodoni_Moda } from "next/font/google";
 import type { Metadata } from "next";
-import { IconPlane, IconTrain } from "../components/AirportGuideKit";
+import { IconPlane, IconTrain, IconStar } from "../components/AirportGuideKit";
 
 const display = Bodoni_Moda({
   subsets: ["latin"],
@@ -34,6 +34,13 @@ const categorias = [
     titulo: "Metrô e Trens no Japão",
     resumo: "Tipos de trem, IC Card, transferências, etiqueta e as particularidades de Tokyo, Kyoto e Osaka.",
     Icon: IconTrain,
+    disponivel: true,
+  },
+  {
+    href: "/database/costumes",
+    titulo: "Costumes & Etiqueta no Japão",
+    resumo: "Filas, sapatos, restaurantes, templos, onsen, cumprimentos e o que observar no dia a dia da viagem.",
+    Icon: IconStar,
     disponivel: true,
   },
 ];
