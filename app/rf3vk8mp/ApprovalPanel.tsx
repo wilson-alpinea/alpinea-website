@@ -8348,6 +8348,22 @@ const HOTEIS: HotelInfo[] = [
         Icon: IconCross,
       },
     ],
+    transporte: {
+      nota:
+        "As duas estações mais próximas do remm Tokyo Kyobashi são Kyobashi (Tokyo Metro Ginza Line) e Takaracho (Toei Asakusa Line) — cada uma faz parte de uma linha diferente. Dependendo do dia, o roteiro indica uma ou outra: preste atenção às instruções de cada deslocamento, porque usar a linha errada pode aumentar bastante o tempo de trajeto.",
+      estacoes: [
+        {
+          nome: "Estação Kyobashi",
+          imagem: "/images/kyobashi-station-logo.png",
+          imagemAlt: "Sinalização da Estação Kyobashi — G10, Tokyo Metro Ginza Line",
+        },
+        {
+          nome: "Estação Takaracho",
+          imagem: "/images/takaracho-station-logo.png",
+          imagemAlt: "Sinalização da Estação Takaracho — A12, Toei Asakusa Line",
+        },
+      ],
+    },
     informacoesUteis: [
       {
         label: "Bagagem",
@@ -8953,7 +8969,7 @@ export function ApprovalPanel({
             Serviços Adicionais Contratados
           </p>
         </div>
-        <div className="grid grid-cols-2 gap-3 border-b border-[#DDD8CF] px-6 pb-6 pt-3 sm:px-10">
+        <div className="grid grid-cols-2 gap-3 border-b border-[#DDD8CF] px-6 pb-6 pt-3 sm:grid-cols-4 sm:px-10">
           {SERVICOS_ADICIONAIS_CARDS.map(({ label, Icon }) => (
             <div
               key={label}
