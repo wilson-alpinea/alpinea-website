@@ -105,6 +105,25 @@ type PrecoCtx = {
   cambioCotacao: number;
 };
 
+// Todo preço do calculador do Personalizado precisa embutir imposto +
+// margem de lucro (pedido do Wilson, 25/ago/2026) — margem calculada por
+// cima do valor já com imposto: primeiro soma-se o imposto sobre o lucro
+// (15% — referência Lucro Presumido pra agência de viagem: IRPJ+CSLL na
+// base presumida de 32%, mais PIS/COFINS e ISS; ajuste aqui se sua
+// contabilidade usar uma alíquota efetiva diferente), depois 30% de
+// margem sobre esse valor. Fórmula: preço final = custo × 1,15 × 1,30.
+//
+// Os valores documentados em cada comentário abaixo (pesquisa de mercado,
+// custo do fornecedor etc.) continuam sendo o CUSTO puro — a constante
+// final já sai com o multiplicador aplicado, pra manter a fonte de cada
+// número auditável sem misturar custo com markup.
+const IMPOSTO_SOBRE_LUCRO = 1.15;
+const MARGEM_SOBRE_IMPOSTO = 1.3;
+const MULTIPLICADOR_PRECO_FINAL = IMPOSTO_SOBRE_LUCRO * MARGEM_SOBRE_IMPOSTO; // 1,495
+function comMargemEImposto(custo: number) {
+  return Math.round(custo * MULTIPLICADOR_PRECO_FINAL);
+}
+
 // Diária de hotel por categoria — usada pra calcular o total do pacote
 // conforme categoria do hotel, tipo de quarto e quantidade de dias.
 // Calibrado com base em pesquisa de mercado (Tokyo, referência ago/2026):
@@ -118,9 +137,9 @@ type PrecoCtx = {
 // fornecedor específico — ajuste se tiver uma tabela de parceiros mais
 // precisa.
 const DIARIA_HOTEL: Record<(typeof CATEGORIAS_HOTEL)[number], number> = {
-  "3 estrelas": 400,
-  "4 estrelas": 800,
-  "5 estrelas": 2600,
+  "3 estrelas": comMargemEImposto(400),
+  "4 estrelas": comMargemEImposto(800),
+  "5 estrelas": comMargemEImposto(2600),
 };
 
 // Fator por tipo de quarto — quarto compartilhado dilui o custo por pessoa.
@@ -131,30 +150,32 @@ const FATOR_QUARTO: Record<(typeof TIPOS_QUARTO)[number], number> = {
   Triplo: 0.5,
 };
 
-const DIARIA_TRANSPORTE = 150;
-// Guia: US$ 350/dia a cada 4 pessoas — grupos maiores precisam de mais de
-// um guia, cobrado proporcionalmente. Valor nativo em dólar — convertido
-// pra reais com a cotação do dia antes de entrar no total (ver calcPreco
-// abaixo e cambioCotacao em PrecoCtx).
-const DIARIA_GUIA_USD = 350;
+const DIARIA_TRANSPORTE = comMargemEImposto(150);
+// Guia: custo de US$ 350/dia a cada 4 pessoas — grupos maiores precisam de
+// mais de um guia, cobrado proporcionalmente. Valor nativo em dólar —
+// convertido pra reais com a cotação do dia antes de entrar no total (ver
+// calcPreco abaixo e cambioCotacao em PrecoCtx). Preço final já com
+// imposto+margem.
+const DIARIA_GUIA_USD = comMargemEImposto(350);
 const GUIA_TAMANHO_GRUPO = 4;
-const DIARIA_JR_PASS = 180;
-const DIARIA_SEGURO_VIAGEM = 35;
-// Motorista privado: US$ 700/dia, cobre até 4 pessoas — mesma lógica de
-// grupo do guia, também nativo em dólar.
-const DIARIA_MOTORISTA_PRIVADO_USD = 700;
+const DIARIA_JR_PASS = comMargemEImposto(180);
+const DIARIA_SEGURO_VIAGEM = comMargemEImposto(35);
+// Motorista privado: custo de US$ 700/dia, cobre até 4 pessoas — mesma
+// lógica de grupo do guia, também nativo em dólar. Preço final já com
+// imposto+margem.
+const DIARIA_MOTORISTA_PRIVADO_USD = comMargemEImposto(700);
 const MOTORISTA_TAMANHO_GRUPO = 4;
-const PRECO_CAMBIO_BRASIL = 150;
+const PRECO_CAMBIO_BRASIL = comMargemEImposto(150);
 // Wi-fi e ingressos Disney/Universal: valores de referência da planilha
 // "Simulação de Orçamento v2.1" (JPY convertido pra dólar) — não foram
 // passados valores explícitos por você para esses dois itens. Também
 // nativos em dólar.
-const DIARIA_WIFI_USD_PAX = 7; // ≈ JPY 1000/dia/pax
-const PRECO_INGRESSO_DISNEY_UNIVERSAL_USD_PAX = 83; // ≈ JPY 12000/pax (ingresso avulso)
+const DIARIA_WIFI_USD_PAX = comMargemEImposto(7); // ≈ JPY 1000/dia/pax (custo)
+const PRECO_INGRESSO_DISNEY_UNIVERSAL_USD_PAX = comMargemEImposto(83); // ≈ JPY 12000/pax (custo, ingresso avulso)
 // Reserva de restaurantes high-end: pacote fechado de 7 reservas em
 // restaurantes categoria Michelin/Tabelog Awards (ou equivalente), valor
 // fixo até 3 pessoas — não escala por dia nem por pessoa dentro do limite.
-const PRECO_RESTAURANTES_HIGHEND_USD = 1000;
+const PRECO_RESTAURANTES_HIGHEND_USD = comMargemEImposto(1000);
 const RESTAURANTES_HIGHEND_QTD = 7;
 const RESTAURANTES_HIGHEND_LIMITE_PESSOAS = 3;
 
@@ -164,10 +185,12 @@ const RESTAURANTES_HIGHEND_LIMITE_PESSOAS = 3;
 // hotel/transporte. A taxa por passageiro extra do roteiro standalone NÃO
 // é replicada aqui porque o pacote já cobra sua própria taxa de grupo
 // (TAXA_POR_PASSAGEIRO_EXTRA, abaixo) sobre o total — duplicar cobraria
-// duas vezes pelo mesmo grupo grande.
+// duas vezes pelo mesmo grupo grande. Preço final já com imposto+margem
+// (o produto standalone em /ajisairoteiros não foi alterado por este
+// pedido, que era específico do calculador do Personalizado).
 const ROTEIRO_BASE_DIAS = 15;
-const ROTEIRO_PRECO_BASE = 1500;
-const ROTEIRO_PRECO_DIA_EXTRA = 120;
+const ROTEIRO_PRECO_BASE = comMargemEImposto(1500);
+const ROTEIRO_PRECO_DIA_EXTRA = comMargemEImposto(120);
 
 // Aéreo: Economy segue o valor de referência original (nativo em reais,
 // como todo o resto do calculador). Business é o valor exato que você
@@ -185,10 +208,15 @@ const ROTEIRO_PRECO_DIA_EXTRA = 120;
 // maio/2026) — ponto médio US$ 12.500 — com margem de 40% aplicada por
 // pedido seu: 12.500 × 1,4 = US$ 17.500. AJUSTE assim que tiver uma
 // cotação real da rota.
+//
+// O First Class já sai com 40% de margem embutida (decisão anterior,
+// específica dessa classe) — por isso NÃO leva o multiplicador de margem
+// de novo aqui (senão dobraria a margem); leva só o imposto sobre o lucro,
+// pra ficar no mesmo padrão de carga tributária dos demais itens.
 const CLASSES_AEREO = ["Economy", "Business", "First Class"] as const;
-const PRECO_AEREO_ECONOMY_BRL = 8000;
-const PRECO_AEREO_BUSINESS_USD = 6000;
-const PRECO_AEREO_FIRST_USD = 17500;
+const PRECO_AEREO_ECONOMY_BRL = comMargemEImposto(8000);
+const PRECO_AEREO_BUSINESS_USD = comMargemEImposto(6000);
+const PRECO_AEREO_FIRST_USD = Math.round(17500 * IMPOSTO_SOBRE_LUCRO);
 
 // Preços por item — aéreo, câmbio e serviços adicionais têm valor fixo por
 // viagem; hotel, transporte, guia, JR Pass, seguro viagem e motorista
@@ -237,9 +265,9 @@ const OPCOES = [
     categoria: "essencial",
     label: "Guia",
     icone: "🧭",
-    descricao: "Guia turístico acompanhando o roteiro — US$ 350/dia a cada 4 pessoas",
+    descricao: `Guia turístico acompanhando o roteiro — US$ ${DIARIA_GUIA_USD}/dia a cada ${GUIA_TAMANHO_GRUPO} pessoas`,
     detalhe:
-      "Guia particular fluente em português, dedicado ao seu grupo, acompanhando pontos-chave do roteiro — ajuda com trajetos, horários e como evitar filas nas atrações. US$ 350 por dia a cada 4 pessoas; grupos maiores recebem guias adicionais, cobrados proporcionalmente.",
+      `Guia particular fluente em português, dedicado ao seu grupo, acompanhando pontos-chave do roteiro — ajuda com trajetos, horários e como evitar filas nas atrações. US$ ${DIARIA_GUIA_USD} por dia a cada ${GUIA_TAMANHO_GRUPO} pessoas; grupos maiores recebem guias adicionais, cobrados proporcionalmente.`,
     calcPreco: (ctx: PrecoCtx) =>
       Math.round(
         DIARIA_GUIA_USD *
@@ -283,9 +311,9 @@ const OPCOES = [
     categoria: "opcional",
     label: "Motorista Privado",
     icone: "🚗",
-    descricao: "Traslados exclusivos com motorista particular — US$ 700/dia para até 4 pessoas",
+    descricao: `Traslados exclusivos com motorista particular — US$ ${DIARIA_MOTORISTA_PRIVADO_USD}/dia para até ${MOTORISTA_TAMANHO_GRUPO} pessoas`,
     detalhe:
-      "Traslados exclusivos com motorista particular, sem compartilhar veículo com outros grupos — ideal para famílias com bagagem extra, crianças pequenas ou quem prefere mais privacidade e flexibilidade de horário. US$ 700 por dia, cobrindo até 4 pessoas; grupos maiores recebem veículos adicionais, cobrados proporcionalmente.",
+      `Traslados exclusivos com motorista particular, sem compartilhar veículo com outros grupos — ideal para famílias com bagagem extra, crianças pequenas ou quem prefere mais privacidade e flexibilidade de horário. US$ ${DIARIA_MOTORISTA_PRIVADO_USD} por dia, cobrindo até ${MOTORISTA_TAMANHO_GRUPO} pessoas; grupos maiores recebem veículos adicionais, cobrados proporcionalmente.`,
     calcPreco: (ctx: PrecoCtx) =>
       Math.round(
         DIARIA_MOTORISTA_PRIVADO_USD *
@@ -422,9 +450,10 @@ const MIN_PESSOAS = 1;
 const MAX_PESSOAS = 20;
 
 // Grupos acima de 3 pessoas têm custo adicional de logística (veículo maior,
-// guia/motorista ajustado etc.) — cobrado por passageiro excedente.
+// guia/motorista ajustado etc.) — cobrado por passageiro excedente. Preço
+// final já com imposto+margem.
 const LIMITE_PESSOAS_SEM_TAXA = 3;
-const TAXA_POR_PASSAGEIRO_EXTRA = 350;
+const TAXA_POR_PASSAGEIRO_EXTRA = comMargemEImposto(350);
 
 function NumberStepper({
   label,
