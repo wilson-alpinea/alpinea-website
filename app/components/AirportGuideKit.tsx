@@ -36,6 +36,26 @@ export function IconTrain({ className }: { className?: string }) {
   );
 }
 
+export function IconRoute({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <circle cx="6" cy="6" r="2.5" />
+      <circle cx="18" cy="18" r="2.5" />
+      <path d="M8.2 7.3C10 9.5 9 12 12 13.5s3 3.5 5 4.7" />
+    </svg>
+  );
+}
+
+export function IconWarning({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <path d="M12 3.5 22 20.5H2z" />
+      <line x1="12" y1="9.5" x2="12" y2="14.2" />
+      <circle cx="12" cy="17.3" r="0.9" fill="currentColor" stroke="none" />
+    </svg>
+  );
+}
+
 export function IconCar({ className }: { className?: string }) {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" className={className}>
@@ -957,6 +977,78 @@ export function ActionItem({
       </span>
       <p className="text-sm font-medium text-[#24211D] md:text-base">{title}</p>
       <p className="mt-2 text-sm leading-6 text-[#24211D]/78">{text}</p>
+    </div>
+  );
+}
+
+// Card em formato de cápsula usado na grade "Tipos de Trem" — mesmo padrão
+// visual das etiquetas de linha em mapas de metrô japoneses. `destaque`
+// marca o serviço mais relevante/rápido da fileira (ex.: Shinkansen).
+export function TrainTypeCard({
+  nome,
+  japones,
+  tag,
+  descricao,
+  destaque,
+}: {
+  nome: string;
+  japones: string;
+  tag?: string;
+  descricao: string;
+  destaque?: boolean;
+}) {
+  return (
+    <div
+      className={`flex h-full flex-col items-center rounded-[2.75rem] border-2 px-4 py-8 text-center ${
+        destaque ? "border-[#B96432] bg-[#F9F2ED]" : "border-[#173B45]/25 bg-[#F8FAF9]"
+      }`}
+    >
+      {tag && (
+        <span
+          className={`mb-3 rounded-full px-2.5 py-1 text-[9px] font-semibold uppercase tracking-[0.15em] ${
+            destaque ? "bg-[#B96432]/15 text-[#B96432]" : "bg-[#173B45]/12 text-[#173B45]"
+          }`}
+        >
+          {tag}
+        </span>
+      )}
+      <p className="text-sm font-semibold uppercase tracking-[0.06em] text-[#24211D]">{nome}</p>
+      <p className="mt-1 text-xs text-[#24211D]/50">{japones}</p>
+      <p className="mt-4 text-xs leading-5 text-[#24211D]/78">{descricao}</p>
+    </div>
+  );
+}
+
+// Caixa de atenção compatível com fundo escuro — usada diretamente sobre o
+// fundo preto das seções (fora dos cards claros), para avisos tipo "⚠️
+// ATENÇÃO" espalhados pelo guia de trem.
+export function WarningBox({ title, text }: { title?: string; text: string }) {
+  return (
+    <div className="flex items-start gap-4 rounded-2xl border border-[#c9862e]/30 bg-[#2b1d0d] p-5 sm:p-6">
+      <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#c9862e]/15 text-[#e0a758]">
+        <IconWarning className="h-4.5 w-4.5" />
+      </span>
+      <div>
+        {title && (
+          <p className="mb-1.5 text-xs uppercase tracking-[0.2em] text-[#e0a758]">{title}</p>
+        )}
+        <p className="text-sm leading-6 text-white/75 md:text-base md:leading-7">{text}</p>
+      </div>
+    </div>
+  );
+}
+
+// Bloco "Recomendação Ajisai" compatível com fundo escuro — mesmo padrão
+// usado no guia de aeroportos (bg-[#0f2340], borda azul), pra dicas da
+// equipe dentro de uma seção de fundo preto.
+export function DarkTipBox({ title, text }: { title?: string; text: string }) {
+  return (
+    <div className="rounded-2xl border border-[#5b9bd5]/15 bg-[#0f2340] p-6 sm:p-8">
+      <p className="mb-3 flex items-center gap-2 text-xs uppercase tracking-[0.25em] text-[#5b9bd5]">
+        <IconBulb className="h-3.5 w-3.5" />
+        {title ?? "Recomendação Ajisai"}
+      </p>
+      <p className="text-sm leading-7 text-white/70 md:text-base md:leading-8">{text}</p>
     </div>
   );
 }

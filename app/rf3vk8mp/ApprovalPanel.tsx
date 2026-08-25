@@ -4034,6 +4034,30 @@ const DAY_6: DayContent = {
     ],
     pois: [
       {
+        title: "Classic Kinkaku Reflection — Kyōko-chi",
+        description:
+          "O ângulo clássico do Pavilhão Dourado, com a fachada refletida no Kyōko-chi Pond — a foto mais icônica do templo, logo na entrada do circuito.",
+        prioridade: "recomendado",
+        imagem: "/images/kinkakuji-reflection-kyokochi.jpg",
+        imagemAlt: "Vista clássica do Kinkaku-ji refletido no Kyōko-chi Pond",
+      },
+      {
+        title: "Close Kinkaku View — lateral do lago",
+        description:
+          "Vista mais próxima do pavilhão pela lateral do lago, seguindo o circuito — dá pra ver melhor os detalhes da fachada dourada e dos telhados.",
+        prioridade: "recomendado",
+        imagem: "/images/kinkakuji-close-view-lateral.jpg",
+        imagemAlt: "Vista lateral e mais próxima do Kinkaku-ji, pela margem do lago",
+      },
+      {
+        title: "Elevated Kinkaku View — Sekkatei",
+        description:
+          "Vista elevada do pavilhão a partir do Sekkatei, a casa de chá no ponto mais alto do circuito — o fênix dourado (hōō) no topo do telhado fica bem visível daqui.",
+        prioridade: "recomendado",
+        imagem: "/images/kinkakuji-elevated-view-sekkatei.jpg",
+        imagemAlt: "Fênix dourado (hōō) no topo do telhado do Kinkaku-ji, visto do Sekkatei",
+      },
+      {
         title: "Ryoan-ji",
         description:
           "Templo zen famoso pelo jardim de pedras — pega o mesmo ônibus/circuito de Kinkaku-ji, poucos minutos de distância.",

@@ -1,6 +1,6 @@
 import { Bodoni_Moda } from "next/font/google";
 import type { Metadata } from "next";
-import { IconPlane } from "../components/AirportGuideKit";
+import { IconPlane, IconTrain } from "../components/AirportGuideKit";
 
 const display = Bodoni_Moda({
   subsets: ["latin"],
@@ -27,6 +27,13 @@ const categorias = [
     titulo: "Guia de Aeroportos",
     resumo: "Chegada, imigração, deslocamento e recomendações — Narita, Haneda e Kansai.",
     Icon: IconPlane,
+    disponivel: true,
+  },
+  {
+    href: "/database/trem",
+    titulo: "Metrô e Trens no Japão",
+    resumo: "Tipos de trem, IC Card, transferências, etiqueta e as particularidades de Tokyo, Kyoto e Osaka.",
+    Icon: IconTrain,
     disponivel: true,
   },
 ];
