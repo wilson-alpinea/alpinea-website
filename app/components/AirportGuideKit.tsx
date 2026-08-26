@@ -204,6 +204,74 @@ export function IconZoom({ className }: { className?: string }) {
   );
 }
 
+// Seta de trajeto/deslocamento (origem → destino) — usada em todos os cards
+// que representam um trajeto (estação → atração, aeroporto → hotel, ponto A
+// → ponto B). Desenhada como UMA ÚNICA forma vetorial sólida (haste
+// retangular + ponta triangular grande, sem bordas CSS improvisadas e sem
+// nenhum arredondamento), em vez de uma linha fina com um triângulo colado
+// na ponta. Único componente reutilizado em todo o site para esse padrão —
+// não crie variações locais: use este componente e varie só `color`,
+// `orientation` e o tamanho via `className`.
+export function TrajetoArrow({
+  color,
+  orientation = "horizontal",
+  className,
+}: {
+  color?: string;
+  orientation?: "horizontal" | "vertical";
+  className?: string;
+}) {
+  const isVertical = orientation === "vertical";
+  return (
+    <svg
+      viewBox={isVertical ? "0 0 30 400" : "0 0 400 30"}
+      preserveAspectRatio="none"
+      aria-hidden="true"
+      className={className}
+      style={color ? { color } : undefined}
+    >
+      <polygon
+        points={
+          isVertical
+            ? "11,0 11,375 2,375 15,400 28,375 19,375 19,0"
+            : "0,11 375,11 375,2 400,15 375,28 375,19 0,19"
+        }
+        fill="currentColor"
+      />
+    </svg>
+  );
+}
+
+// Ponta de seta isolada (sem haste) — usada só quando o traço já é desenhado
+// por outro elemento (ex.: barras/círculos de estações intermediárias
+// empilhadas) e apenas a ponta final precisa da forma triangular grande e
+// nítida do padrão de seta do site, em vez do triângulo CSS antigo.
+export function TrajetoArrowHead({
+  color,
+  orientation = "horizontal",
+  className,
+}: {
+  color?: string;
+  orientation?: "horizontal" | "vertical";
+  className?: string;
+}) {
+  const isVertical = orientation === "vertical";
+  return (
+    <svg
+      viewBox={isVertical ? "0 0 32 28" : "0 0 28 32"}
+      preserveAspectRatio="none"
+      aria-hidden="true"
+      className={className}
+      style={color ? { color } : undefined}
+    >
+      <polygon
+        points={isVertical ? "2,0 30,0 16,28" : "0,2 0,30 28,16"}
+        fill="currentColor"
+      />
+    </svg>
+  );
+}
+
 // ── Blocos de layout ──
 
 // Espaço reservado para um mapa que ainda precisa ser anexado ao guia.

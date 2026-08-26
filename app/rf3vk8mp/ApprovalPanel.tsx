@@ -10,7 +10,7 @@ import {
 } from "react";
 import { createPortal } from "react-dom";
 import Image from "next/image";
-import { ContentCard, IconStar as IconStarKit, IconWarning } from "../components/AirportGuideKit";
+import { ContentCard, IconStar as IconStarKit, IconWarning, TrajetoArrow, TrajetoArrowHead } from "../components/AirportGuideKit";
 import { NaritaGuideContent } from "../components/NaritaGuideContent";
 import { HanedaGuideContent } from "../components/HanedaGuideContent";
 import { TremGuideContent } from "../components/TremGuideContent";
@@ -27,7 +27,7 @@ import { CambioGuideContent } from "../components/CambioGuideContent";
 
 type Poi = {
   category?: string;
-  bairro?: "Sumida" | "Ryogoku";
+  bairro?: "Sumida" | "Ryogoku" | "Jinbocho";
   title: string;
   nomeJapones?: string;
   description?: string;
@@ -63,6 +63,11 @@ type Poi = {
   // Aviso pontual em destaque no card (ex.: documento obrigatório na
   // entrada) — mesmo padrão do `alerta` de RestauranteCurado.
   alerta?: string;
+  // Força o card a usar a paleta laranja de destaque, independente do
+  // `bairro` — usado para POIs que merecem atenção visual (ex.: fica em
+  // outro lado do bairro do que o resto do roteiro do dia), sem que isso
+  // implique mostrar um selo de bairro (que `bairro` mostraria).
+  estiloDestaque?: "laranja";
 };
 
 // Restaurante pesquisado e curado segundo o "PROMPT MESTRE — PESQUISA DE
@@ -279,6 +284,31 @@ type Deslocamento = {
     titulo?: string;
     mapas: { andar: string; imagem: string; imagemAlt: string }[];
   };
+  // Card extra com horários reais de saída (ônibus/trem) — usado quando o
+  // primeiro horário da manhã é sensível (ex.: chegar no templo na abertura)
+  // e vale mostrar a grade de horários em vez de só "confirme o horário".
+  gradeSaidas?: GradeSaidas;
+};
+
+type GradeSaidas = {
+  // Card de destaque com o primeiro horário recomendado (opcional) — usado
+  // quando faz sentido chamar atenção pra uma saída específica em vez de só
+  // listar a grade.
+  destaque?: {
+    titulo: string; // ex.: "Primeiro ônibus do dia (recomendado)"
+    linha: string; // ex.: "Ônibus 206"
+    subtitulo?: string; // ex.: "Via Kiyomizu-dera"
+    horario: string; // ex.: "05:31"
+    embarque?: string;
+    desembarque?: string;
+    tempo?: string;
+    tarifa?: string;
+    resultado?: string; // ex.: "Assim, você chega ao portão do templo por volta de 05:55–06:00..."
+  };
+  titulo?: string; // rótulo acima da tabela, ex.: "Próximas saídas da linha 206"
+  colunas: string[]; // cabeçalhos da tabela, ex.: ["Horário"] ou ["Saída Kyoto","Chegada Inari","Duração"]
+  linhas: string[][]; // valores de cada linha, na mesma ordem de `colunas`
+  nota?: string; // fonte/observação sobre os horários, exibida abaixo da tabela
 };
 
 type Period = {
@@ -450,6 +480,24 @@ type TransporteSugerido = {
   linha: string;
   tempo: string;
   recomendacao: string;
+  // Tabelas de horários reais de trens — usadas quando há uma ou mais janelas
+  // específicas de saída a considerar no dia (ex.: opções de manhã e opções
+  // à noite). Cada tabela pode ter seu próprio texto de contexto, cabeçalhos
+  // e nota de rodapé, já que os dois lados de uma viagem (ida/volta) costumam
+  // ter colunas diferentes (ex.: "JR Pass" na ida, "Observação" na volta).
+  tabelasHorarios?: TabelaHorarios[];
+};
+
+type TabelaHorarios = {
+  // Texto de contexto acima da tabela (ex.: explicação da regra do JR Pass,
+  // ou "algumas das melhores opções de Hikari são:").
+  descricao?: string;
+  // Rótulo/título da tabela em si, exibido em destaque acima do cabeçalho.
+  titulo?: string;
+  colunas: string[];
+  linhas: string[][];
+  // Nota de rodapé (ex.: fonte/data do timetable), exibida abaixo da tabela.
+  nota?: string;
 };
 
 type AlertaSugerido = {
@@ -2101,12 +2149,6 @@ const DAY_3: DayContent = {
         "Mapa do terreno do Meiji Jingu com o trajeto a pé desde o Ichino Torii (Harajuku) até o Santuário Principal, passando pelo Nino Torii, os Barris de Saquê, a Ponte Shinkyo e o Gehaiden",
       nota: "Trajeto a pé desde a Estação Harajuku: Ichino Torii → Ponte Shinkyo → Nino Torii → Barris de Saquê (Kazaridaru) → Minami Shinmon → Gehaiden e Meoto Kusu.",
     },
-    decisoes: [
-      {
-        titulo: "Vale entrar no Jardim Interior do Meiji Jingu?",
-        resposta: "O terreno principal do santuário já é gratuito e é a experiência essencial — o Jardim Interior (¥500) é uma extensão menor, opcional para quem tiver tempo de sobra.",
-      },
-    ],
     pois: [
       {
         title: "Parque de Yoyogi",
@@ -2196,6 +2238,7 @@ const DAY_3: DayContent = {
           categoria: "Kaitenzushi (sushi de esteira premium)",
           descricao:
             "Unidade original (honten) do grupo Ginza Onodera (marca com estrela Michelin), em Omotesando — peixe pressionado à mão, na hora, na esteira. É a unidade que fica na região de Omotesando/Jingumae, próxima ao final do circuito da manhã.",
+          foto: "/images/ginza-onodera-omotesando.webp",
           notaTabelog: "3.50",
           numAvaliacoes: "1.463 avaliações",
           faixaPreco: "¥8.000–9.999 por pessoa (listado a partir de ¥4.000)",
@@ -2324,6 +2367,8 @@ const DAY_3: DayContent = {
             ordem: 1,
             imagem: "/images/shinjuku-gyoen.webp",
             imagemAlt: "Lago do Shinjuku Gyoen no outono, com a torre do Prédio do Governo Metropolitano ao fundo",
+            estiloDestaque: "laranja",
+            alerta: "Ficam em lados opostos do bairro em comparação a Kabukicho.",
           },
           {
             title: "Prédio do Governo Metropolitano de Tóquio + Mirante",
@@ -2334,6 +2379,8 @@ const DAY_3: DayContent = {
             imagem: "/images/tokyo-metropolitan-government-building.webp",
             imagemAlt: "Vista de baixo das torres gêmeas do Prédio do Governo Metropolitano de Tóquio",
             imagemPosicao: "top",
+            estiloDestaque: "laranja",
+            alerta: "Ficam em lados opostos do bairro em comparação a Kabukicho.",
           },
           {
             title: "Gato 3D Gigante",
@@ -2508,6 +2555,24 @@ const DAY_3: DayContent = {
     tempo: "Hikari: ~2h40 (incluso no JR Pass)",
     recomendacao:
       "Recomendamos sair de Shinjuku por volta das 16h e pegar o Shinkansen no fim da tarde — sem esperar a noite virar em Shinjuku — para aproveitar o Kiyomizu-dera logo cedo no dia seguinte, antes das aglomerações.",
+    tabelasHorarios: [
+      {
+        descricao:
+          "Com o Japan Rail Pass, no Tokaido Shinkansen entre Tokyo e Kyoto, o cliente pode usar Hikari e Kodama sem pagar suplemento. O Nozomi exige a compra de um bilhete adicional específico para portadores do JR Pass.",
+        titulo: "Tokyo Station → Kyoto — opções depois das 16h",
+        colunas: ["Trem", "Saída Tokyo", "Chegada Kyoto", "Duração", "JR Pass"],
+        linhas: [
+          ["Hikari 651", "16:33", "19:12", "2h39", "✅ Incluso"],
+          ["Hikari 653", "17:33", "20:12", "2h39", "✅ Incluso"],
+          ["Hikari 655", "18:03", "20:54", "2h51", "✅ Incluso"],
+          ["Hikari 657", "18:33", "21:12", "2h39", "✅ Incluso"],
+          ["Hikari 659", "19:03", "21:49", "2h46", "✅ Incluso"],
+          ["Hikari 661", "19:30", "22:04", "2h34", "✅ Incluso"],
+          ["Hikari 663", "20:12", "23:01", "2h49", "✅ Incluso"],
+        ],
+        nota: "Os horários acima correspondem ao timetable de 2026; por exemplo, a JR confirma diretamente o Hikari 651, 16:33 → 19:12, e os horários posteriores aparecem no timetable de agosto de 2026.",
+      },
+    ],
   },
 };
 
@@ -2930,7 +2995,7 @@ const DAY_4: DayContent = {
         label: "Jantar",
         titulo: "Izakaya em Kanda",
         descricao:
-          "Depois de um dia inteiro em Akihabara, a única saída do bairro é à noite: um jantar num izakaya autêntico em Kanda, bairro vizinho e não turístico, a partir das 18h — ~¥4.000–6.000 por pessoa.",
+          "Depois de um dia inteiro em Akihabara, uma parada rápida em Kanda para beber e comer algo: um jantar num izakaya autêntico, bairro vizinho e não turístico, a partir das 18h — ~¥4.000–6.000 por pessoa.",
         deslocamento: {
           estacaoOrigem: {
             nome: "Estação Akihabara",
@@ -3008,6 +3073,7 @@ const DAY_4: DayContent = {
           },
           {
             category: "Cultura",
+            bairro: "Jinbocho",
             title: "Livrarias de Jinbocho",
             description:
               "Bairro vizinho a Kanda, famoso por concentrar dezenas de sebos e livrarias tradicionais — o maior distrito de livros usados do Japão.",
@@ -3015,6 +3081,7 @@ const DAY_4: DayContent = {
             ordem: 4,
             imagem: "/images/jinbocho.webp",
             imagemAlt: "Fachada de livraria tradicional em Jinbocho",
+            alerta: "Fica no bairro vizinho, não fica em Kanda.",
           },
         ],
         banheirosProximos: [
@@ -3418,6 +3485,32 @@ const DAY_5: DayContent = {
       ],
       recomendacao:
         "Do Daiwa Roynet Hotel Kyoto-Ekimae, em frente à Kyoto Station, o ônibus 100 ou 206 leva cerca de 20 minutos até Gojozaka ou Kiyomizu-michi — de lá são mais 10 minutos a pé subindo até o templo. Para chegar por volta das 6h30, logo na abertura, confirme o primeiro horário do ônibus nessa manhã — dependendo da frequência inicial, um táxi pode ser a opção mais confiável nesse horário tão cedo.",
+      gradeSaidas: {
+        destaque: {
+          titulo: "Primeiro ônibus do dia (recomendado)",
+          linha: "Ônibus 206",
+          subtitulo: "Via Kiyomizu-dera",
+          horario: "05:31",
+          embarque: "Plataforma D2 (Karasuma Exit)",
+          desembarque: "Gojozaka ou Kiyomizu-michi",
+          tempo: "15–20 min + 10 min de caminhada",
+          tarifa: "¥230",
+          resultado:
+            "Assim, você chega ao portão do templo por volta de 05:55–06:00, praticamente sem multidões.",
+        },
+        titulo: "Próximas saídas da linha 206",
+        colunas: ["Horário"],
+        linhas: [
+          ["05:31"],
+          ["06:11"],
+          ["06:20"],
+          ["06:32"],
+          ["06:39"],
+          ["06:52"],
+          ["06:58"],
+        ],
+        nota: "Horários de referência da linha 206 (Kyoto City Bus), com base no Kyoto City Info e outras fontes locais — confirme no painel da parada no dia, já que a frequência pode variar por temporada.",
+      },
     },
     atracaoPrincipal: "Templo Kiyomizu-dera",
     atracaoPrincipalImagem: "/images/dia5-kiyomizudera.webp",
@@ -3440,12 +3533,6 @@ const DAY_5: DayContent = {
       imagemAlt: "Mapa com Kiyomizu-dera, Ninenzaka, % Arabica e a região de Gion nas proximidades",
       nota: "Localização de Kiyomizu-dera e das ladeiras de Sannenzaka/Ninenzaka em relação a Gion, logo ao norte.",
     },
-    decisoes: [
-      {
-        titulo: "Vale chegar antes da abertura?",
-        resposta: "Kiyomizu-dera é um dos templos mais visitados de Kyoto — chegar por volta das 6h–7h ajuda a evitar as aglomerações do meio da manhã e dos grupos de turismo.",
-      },
-    ],
     pois: [
       {
         title: "Sannenzaka",
@@ -3837,6 +3924,7 @@ const DAY_6: DayContent = {
       passos: [
         {
           titulo: "Torii de entrada",
+          foto: "/images/fushimi-torii-entrada.webp",
           horario: "08:15",
           descricao: "Entrada principal do santuário, aos pés da montanha sagrada Inari.",
         },
@@ -3938,6 +4026,25 @@ const DAY_6: DayContent = {
       ],
       recomendacao:
         "Do Daiwa Roynet Hotel Kyoto-Ekimae, em frente à Kyoto Station (D01), o trem local da JR Nara Line leva cerca de 5 minutos até a Estação Inari (D03) — que fica na entrada do santuário. Importante: apenas trens locais param em Inari, expressos não param.",
+      gradeSaidas: {
+        titulo: "Trens locais JR Nara Line — Kyoto Station → Estação Inari",
+        colunas: ["Saída Kyoto", "Chegada Inari", "Duração"],
+        linhas: [
+          ["05:33", "05:39", "~6 min"],
+          ["05:51", "05:56", "~5 min"],
+          ["06:11", "06:17", "~6 min"],
+          ["06:22", "06:27", "~5 min"],
+          ["06:35", "06:40", "~5 min"],
+          ["06:48", "06:54", "~6 min"],
+          ["07:05", "07:12", "~7 min"],
+          ["07:15", "07:22", "~7 min"],
+          ["07:29", "07:35", "~6 min"],
+          ["07:40", "07:47", "~7 min"],
+          ["07:51", "07:57", "~6 min"],
+          ["07:55", "08:02", "~7 min"],
+        ],
+        nota: "Horários de trens locais da JR Nara Line — apenas trens locais param em Inari (D03); expressos não param. Confirme no quadro da estação no dia, já que a grade pode variar por temporada.",
+      },
     },
     atracaoPrincipal: "Fushimi-Inari Taisha",
     atracaoPrincipalImagem: "/images/dia6-fushimiinari.webp",
@@ -4085,7 +4192,7 @@ const DAY_6: DayContent = {
   tarde: {
     label: "Tarde",
     percursoEssencial: {
-      duracao: "~5h30 (Kinkaku-ji e arredores)",
+      duracao: "3h, no máximo (Kinkaku-ji e arredores)",
       passos: [
         {
           titulo: "Kinkaku-ji",
@@ -4369,6 +4476,30 @@ const DAY_6: DayContent = {
     tempo: "Hikari: ~2h40 (incluso no JR Pass)",
     recomendacao:
       "Diferente dos outros trechos, recomendamos pegar o trem ainda à noite, ao final deste dia, e não pela manhã seguinte — as lutas das categorias inferiores do Grand Sumo Tournament no dia 10 já começam às 8h40, e chegar em cima da hora vindo de Kyoto tiraria a opção de aproveitar o dia inteiro no Kokugikan.",
+    tabelasHorarios: [
+      {
+        descricao: "Algumas das melhores opções de Hikari são:",
+        titulo: "Kyoto → Tokyo — começo do dia",
+        colunas: ["Kyoto", "Tokyo", "Tempo aprox."],
+        linhas: [
+          ["06:25", "08:23", "1h58"],
+          ["07:18", "09:10", "1h52"],
+          ["07:42", "09:40", "1h58"],
+          ["08:33", "10:39", "2h06"],
+        ],
+      },
+      {
+        descricao:
+          "Para viajar depois de aproveitar o dia em Kyoto, a grade-base oficial oferece Hikari no período noturno, incluindo opções aproximadamente na faixa de:",
+        titulo: "Kyoto → Tokyo — final do dia",
+        colunas: ["Kyoto", "Tokyo", "Observação"],
+        linhas: [
+          ["19:50", "~21:48", "ótima opção"],
+          ["20:36", "~22:36", "mais tarde"],
+          ["20:59", "~22:59", "uma das últimas opções úteis"],
+        ],
+      },
+    ],
   },
 };
 
@@ -4455,7 +4586,7 @@ const DAY_7: DayContent = {
   },
   manha: {
     percursoEssencial: {
-      duracao: "~1h35 (Ningyocho)",
+      duracao: "~2h30 (Ningyocho)",
       passos: [
         {
           titulo: "Shigemori Eishindo",
@@ -4825,17 +4956,10 @@ const DAY_7: DayContent = {
     ],
     pois: [
       {
-        title: "Edo-Tokyo Museum",
-        description:
-          "Conta a transformação de Edo na metrópole que hoje conhecemos como Tóquio, usando reconstruções, objetos históricos e grandes maquetes — um museu bastante visual, diferente de simplesmente caminhar por salas de vitrines. O prédio passou por uma longa reforma, então a visita depende da situação de funcionamento nas datas da viagem — se estiver aberto e houver tempo disponível, é a principal recomendação de museu da região.",
-        prioridade: "recomendado",
-        ordem: 1,
-      },
-      {
         title: "Edo Noren (Área Externa do Kokugikan)",
         description: "Vila gastronômica temática de sumô, na entrada do estádio.",
         prioridade: "opcional",
-        ordem: 2,
+        ordem: 1,
         imagem: "/images/edo-noren-ryogoku.webp",
         imagemAlt: "Interior do Ryōgoku Edo NOREN, réplica de um dohyō (ringue de sumô) cercada por lojas e restaurantes temáticos ao estilo de vila antiga",
       },
@@ -4844,7 +4968,7 @@ const DAY_7: DayContent = {
         description:
           "Monumento com os nomes de todos os Yokozuna (Título máximo de lutador de Sumô) — pertinho do Kokugikan.",
         prioridade: "opcional",
-        ordem: 3,
+        ordem: 2,
         imagem: "/images/santuario-nomi-no-sukune.webp",
         imagemAlt: "Estátua de pedra de um lutador de sumô no Santuário Nomi-no-Sukune, cercada por árvores",
       },
@@ -4853,7 +4977,7 @@ const DAY_7: DayContent = {
         description:
           "Coleção de espadas samurai tradicionais, a alguns minutos a pé do estádio — não é uma prioridade da viagem, mas pode valer a visita para quem tiver interesse específico em nihonto.",
         prioridade: "opcional",
-        ordem: 4,
+        ordem: 3,
         imagem: "/images/museu-espadas-ryogoku.webp",
         imagemAlt: "Espadas samurai (katana) tradicionais em exibição no Museu de Espadas de Ryogoku",
       },
@@ -5054,9 +5178,22 @@ const BAIRRO_STYLES = {
     badge: "border-[#B96432]/30 bg-[#B96432]/10 text-[#B96432]",
     chip: "border-[#B96432]/25 bg-[#FDFCF9] text-[#B96432]",
   },
+  // Laranja — usado para destacar POIs que ficam fora do bairro principal do
+  // dia (ex.: Jinbocho, citado dentro do dia de Kanda, mas é um bairro à parte).
+  Jinbocho: {
+    border: "border-[#B96432]",
+    bg: "bg-[#F5E9DF]",
+    circle: "bg-[#B96432]",
+    text: "text-[#B96432]",
+    muted: "text-[#B96432]/70",
+    starMuted: "text-[#B96432]/25",
+    badge: "border-[#B96432]/30 bg-[#B96432]/10 text-[#B96432]",
+    chip: "border-[#B96432]/25 bg-[#FDFCF9] text-[#B96432]",
+  },
 } as const;
 
-function poiStyles(bairro?: Poi["bairro"]) {
+function poiStyles(bairro?: Poi["bairro"], estiloDestaque?: Poi["estiloDestaque"]) {
+  if (estiloDestaque === "laranja") return BAIRRO_STYLES.Ryogoku;
   return BAIRRO_STYLES[bairro ?? "Sumida"];
 }
 
@@ -5092,7 +5229,7 @@ function PriorityBadge({ prioridade }: { prioridade: NonNullable<Poi["prioridade
 }
 
 function PoiCard({ index, poi }: { index: number; poi: Poi }) {
-  const s = poiStyles(poi.bairro);
+  const s = poiStyles(poi.bairro, poi.estiloDestaque);
   const [zoomIndex, setZoomIndex] = useState<number | null>(null);
 
   const imagens: { src: string; alt: string }[] =
@@ -5581,6 +5718,7 @@ function DiaEmNumerosBlock({
 
 function GastronomiaBlock({ gastronomia }: { gastronomia: Gastronomia }) {
   const [zoomedFoto, setZoomedFoto] = useState<{ src: string; alt: string; endereco?: string } | null>(null);
+  const temItens = gastronomia.itens && gastronomia.itens.length > 0;
   const temRestaurantes = gastronomia.restaurantes && gastronomia.restaurantes.length > 0;
   const temCuradoria = gastronomia.curadoria && gastronomia.curadoria.length > 0;
 
@@ -5613,6 +5751,68 @@ function GastronomiaBlock({ gastronomia }: { gastronomia: Gastronomia }) {
       )}
 
       {gastronomia.alerta && <InlineAlert text={gastronomia.alerta} />}
+
+      {temItens && (
+        <>
+          {gastronomia.itensLabel && (
+            <p className="mt-5 text-[11px] font-bold uppercase tracking-[0.15em] text-[#24211D]/45">
+              {gastronomia.itensLabel}
+            </p>
+          )}
+          <div className={`grid grid-cols-2 gap-3 sm:grid-cols-4 ${gastronomia.itensLabel ? "mt-2" : "mt-4"}`}>
+            {gastronomia.itens!.map((item) => (
+              <div
+                key={item.nome}
+                className="overflow-hidden rounded-xl border border-[#DDD8CF] bg-[#FDFCF9]"
+              >
+                {item.foto && (
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setZoomedFoto({ src: item.foto!, alt: item.nome, endereco: item.localizacao })
+                    }
+                    className="group relative block aspect-square w-full overflow-hidden"
+                  >
+                    <img
+                      loading="lazy"
+                      src={item.foto}
+                      alt={item.nome}
+                      className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
+                    />
+                    <div className="absolute inset-0 flex items-center justify-center bg-black/0 transition duration-300 group-hover:bg-black/25">
+                      <span className="flex h-7 w-7 scale-75 items-center justify-center rounded-full bg-white/90 text-[#000000] opacity-0 shadow-md transition duration-300 group-hover:scale-100 group-hover:opacity-100">
+                        <IconZoom className="h-3.5 w-3.5" />
+                      </span>
+                    </div>
+                  </button>
+                )}
+                <div className="p-3">
+                  <p className="text-xs font-semibold leading-tight text-[#24211D]">{item.nome}</p>
+                  {item.descricao && (
+                    <p className="mt-1 text-[11px] leading-5 text-[#24211D]/65">{item.descricao}</p>
+                  )}
+                  {(item.localizacao || item.preco) && (
+                    <div className="mt-2 space-y-1 border-t border-[#DDD8CF] pt-2 text-[10px] leading-4 text-[#24211D]/55">
+                      {item.localizacao && (
+                        <p className="flex items-start gap-1">
+                          <IconPin className="mt-0.5 h-3 w-3 shrink-0" />
+                          <span>{item.localizacao}</span>
+                        </p>
+                      )}
+                      {item.preco && (
+                        <p className="flex items-center gap-1">
+                          <span className="w-3 shrink-0 text-center text-[10px] font-semibold">¥</span>
+                          <span>{item.preco}</span>
+                        </p>
+                      )}
+                    </div>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </>
+      )}
 
       {temRestaurantes && (
         <>
@@ -5765,10 +5965,6 @@ function GastronomiaBlock({ gastronomia }: { gastronomia: Gastronomia }) {
                       <IconClockOutline className="h-3 w-3 shrink-0" />
                       <span>{r.horario}</span>
                     </p>
-                    <p className="flex items-center gap-1.5">
-                      <IconGlobe className="h-3 w-3 shrink-0" />
-                      <span>{r.foreignFriendly}</span>
-                    </p>
                     {r.nivelFila && (
                       <p className="flex items-center gap-1.5">
                         <IconHourglass className="h-3 w-3 shrink-0" />
@@ -5908,6 +6104,50 @@ function TransporteBlock({
       <p className="mt-3 text-sm leading-6 text-[#24211D]/90">
         {transporte.recomendacao}
       </p>
+      {transporte.tabelasHorarios?.map((tabela, idx) => (
+        <div key={idx} className="mt-4">
+          {tabela.descricao && (
+            <p className="mb-2 text-sm leading-6 text-[#24211D]/90">{tabela.descricao}</p>
+          )}
+          {tabela.titulo && (
+            <p className="mb-2 text-xs font-bold uppercase tracking-wide text-red-700">
+              {tabela.titulo}
+            </p>
+          )}
+          <div className="overflow-x-auto rounded-lg border border-red-200 bg-white">
+            <table className="w-full min-w-[380px] text-left text-xs">
+              <thead>
+                <tr className="border-b border-red-200 bg-red-50/60 text-[10px] uppercase tracking-wide text-red-800">
+                  {tabela.colunas.map((c) => (
+                    <th key={c} className="px-3 py-2 font-bold">
+                      {c}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {tabela.linhas.map((linha, i) => (
+                  <tr key={i} className={i > 0 ? "border-t border-red-100" : undefined}>
+                    {linha.map((valor, j) => (
+                      <td
+                        key={j}
+                        className={`whitespace-nowrap px-3 py-2 ${
+                          j === 0 ? "font-semibold text-[#24211D]" : "text-[#24211D]/85"
+                        }`}
+                      >
+                        {valor}
+                      </td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          {tabela.nota && (
+            <p className="mt-2 text-[11px] leading-4 text-[#24211D]/60">{tabela.nota}</p>
+          )}
+        </div>
+      ))}
     </div>
   );
 }
@@ -6040,6 +6280,137 @@ function TransporteNaritaTokyoBlock({ variant }: { variant: "chegada" | "partida
             </div>
           ))}
         </div>
+
+        {variant === "chegada" && (
+          <div className="mt-4 space-y-3 rounded-lg bg-white/70 p-4">
+            <p className="text-xs font-bold uppercase tracking-[0.12em] text-[#3E5FA8]/80">
+              Como Comprar o Bilhete do Limousine Bus
+            </p>
+
+            <img
+              loading="lazy"
+              src="/images/narita-limousine-bus-balcao-terminal.webp"
+              alt="Balcão de venda de bilhetes do Airport Limousine Bus, com atendentes no saguão do terminal"
+              className="aspect-[16/10] w-full rounded-lg border border-[#CBD9F2] object-cover sm:aspect-[16/9]"
+            />
+            <p className="text-center text-xs text-[#24211D]/55">Bus Ticket Counter — balcão de venda dos bilhetes</p>
+
+            <img
+              loading="lazy"
+              src="/images/narita-limousine-bus-ponto-embarque.webp"
+              alt="Ponto de embarque do Airport Limousine Bus, com funcionários organizando as bagagens dos passageiros"
+              className="aspect-[16/10] w-full rounded-lg border border-[#CBD9F2] object-cover sm:aspect-[16/9]"
+            />
+            <p className="text-center text-xs text-[#24211D]/55">Ponto de embarque — funcionários cuidam das bagagens</p>
+
+            <div className="space-y-3">
+              <div className="flex items-start gap-3 rounded-lg border border-[#CBD9F2] bg-white p-3.5">
+                <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-[#3E5FA8]/40 text-xs font-medium text-[#3E5FA8]">
+                  1
+                </span>
+                <p className="text-sm leading-6 text-[#24211D]/85">
+                  Depois de desembarcar, ao passar pela Imigração, retirar as malas e passar pela
+                  Alfândega, você sai direto no{" "}
+                  <span className="font-semibold">Terminal 2, 1º andar (1F), International Arrivals
+                  Lobby</span> — sem precisar subir ou descer de andar. Os balcões de ônibus ficam
+                  no próprio saguão de desembarque, perto das áreas de chegada internacional A e B.
+                  Procure pelas placas <span className="font-semibold">BUS TICKETS / BUS TICKET
+                  COUNTER</span> ou pelo nome <span className="font-semibold">Airport Limousine /
+                  Limousine Bus</span>.
+                </p>
+              </div>
+
+              <div className="flex items-start gap-3 rounded-lg border border-[#CBD9F2] bg-white p-3.5">
+                <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-[#3E5FA8]/40 text-xs font-medium text-[#3E5FA8]">
+                  2
+                </span>
+                <p className="text-sm leading-6 text-[#24211D]/85">
+                  <span className="font-semibold">Onde comprar:</span> no Bus Ticket Counter, que
+                  funciona atualmente das <span className="font-semibold">06:30 às 23:00</span>{" "}
+                  aproximadamente. No balcão, informe ao atendente o destino — pode simplesmente
+                  mostrar no celular, por exemplo &ldquo;Airport Limousine Bus to Tokyo Station,
+                  please&rdquo;, ou o nome do hotel/ponto de desembarque do seu roteiro. O atendente
+                  confere os próximos ônibus disponíveis e indica o melhor horário.
+                </p>
+              </div>
+
+              <div className="flex items-start gap-3 rounded-lg border border-[#CBD9F2] bg-white p-3.5">
+                <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-[#3E5FA8]/40 text-xs font-medium text-[#3E5FA8]">
+                  3
+                </span>
+                <p className="text-sm leading-6 text-[#24211D]/85">
+                  <span className="font-semibold">Escolha o horário</span> com alguma folga — os
+                  bilhetes saem vinculados a uma saída específica, então considere o tempo de comprar
+                  o bilhete, ir até o ponto, entregar as malas e embarcar. A vantagem de comprar só
+                  depois da Imigração é não precisar se preocupar caso o voo atrase ou a Imigração
+                  demore mais que o previsto.
+                </p>
+              </div>
+
+              <div className="flex items-start gap-3 rounded-lg border border-[#CBD9F2] bg-white p-3.5">
+                <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-[#3E5FA8]/40 text-xs font-medium text-[#3E5FA8]">
+                  4
+                </span>
+                <p className="text-sm leading-6 text-[#24211D]/85">
+                  <span className="font-semibold">Confira o bilhete</span> antes de sair do balcão:
+                  DESTINATION (destino), DEPARTURE TIME (horário de saída) e BUS STOP / PLATFORM
+                  (número do ponto) — este último é especialmente importante, já que várias linhas
+                  com destinos diferentes saem do Terminal 2.
+                </p>
+              </div>
+
+              <div className="flex items-start gap-3 rounded-lg border border-[#CBD9F2] bg-white p-3.5">
+                <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-[#3E5FA8]/40 text-xs font-medium text-[#3E5FA8]">
+                  5
+                </span>
+                <p className="text-sm leading-6 text-[#24211D]/85">
+                  <span className="font-semibold">Vá para o ponto de ônibus</span> seguindo as placas
+                  BUS / BUS STOPS — as paradas ficam do lado de fora do Terminal 2, ainda no mesmo
+                  1F, sem precisar de elevador, escada ou trem. Saia pela porta indicada e procure o
+                  número do ponto impresso no bilhete.
+                </p>
+              </div>
+
+              <div className="flex items-start gap-3 rounded-lg border border-[#CBD9F2] bg-white p-3.5">
+                <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-[#3E5FA8]/40 text-xs font-medium text-[#3E5FA8]">
+                  6
+                </span>
+                <p className="text-sm leading-6 text-[#24211D]/85">
+                  <span className="font-semibold">Entregue as malas</span> ao funcionário no ponto,
+                  alguns minutos antes do horário — as malas grandes vão no bagageiro inferior do
+                  ônibus, e você recebe um comprovante/etiqueta de bagagem. Guarde essa etiqueta até
+                  retirar a mala no destino.
+                </p>
+              </div>
+
+              <div className="flex items-start gap-3 rounded-lg border border-[#CBD9F2] bg-white p-3.5">
+                <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-[#3E5FA8]/40 text-xs font-medium text-[#3E5FA8]">
+                  7
+                </span>
+                <p className="text-sm leading-6 text-[#24211D]/85">
+                  <span className="font-semibold">Embarque:</span> quando o ônibus chegar, confirme
+                  no painel frontal/lateral se o destino corresponde ao do seu bilhete, apresente o
+                  bilhete ou QR Code e embarque — os assentos são individuais.
+                </p>
+              </div>
+            </div>
+
+            <div className="grid gap-3 sm:grid-cols-2">
+              <ContentCard variant="warning" icon={IconAlertTriangle} eyebrow="Atenção" size="sm">
+                <p>
+                  Não desça para o B1F — é onde ficam as estações dos trens JR e Keisei. Os bilhetes
+                  de ônibus são vendidos no 1F, no mesmo andar do desembarque.
+                </p>
+              </ContentCard>
+              <ContentCard variant="warning" icon={IconAlertTriangle} eyebrow="Atenção" size="sm">
+                <p>
+                  Não confunda com o balcão identificado como LCB / Low Cost Bus — é um serviço
+                  diferente do Airport Limousine Bus.
+                </p>
+              </ContentCard>
+            </div>
+          </div>
+        )}
 
         {variant === "partida" && (
           <InlineAlert text="O ônibus está sujeito às condições do trânsito. No retorno a Narita, siga o horário de saída indicado no roteiro e evite utilizar um ônibus posterior ao recomendado." />
@@ -6243,26 +6614,24 @@ function TransporteHanedaTokyoBlock() {
         </div>
 
         <div className="mt-3 space-y-3 rounded-lg bg-white/70 p-4">
-          <p className="text-xs font-bold uppercase tracking-[0.12em] text-[#3E5FA8]/80">
-            Como Comprar a Passagem no T-CAT
-          </p>
-
-          <div className="flex gap-3">
-            <div className="h-16 w-16 shrink-0 overflow-hidden rounded-lg border border-[#CBD9F2] bg-white p-1">
-              <img
-                loading="lazy"
-                src="/images/tcat-logo-mascote.webp"
-                alt="Mascote do T-CAT (Tokyo City Air Terminal)"
-                className="h-full w-full object-contain"
-              />
-            </div>
+          <div className="flex items-center gap-2">
             <img
               loading="lazy"
-              src="/images/tcat-plataforma-limousine-bus.webp"
-              alt="Plataforma de embarque do Airport Limousine Bus no T-CAT, com ônibus e passageiros"
-              className="h-16 flex-1 rounded-lg border border-[#CBD9F2] object-cover"
+              src="/images/tcat-logo-mascote.webp"
+              alt="Mascote do T-CAT (Tokyo City Air Terminal)"
+              className="h-9 w-9 shrink-0 object-contain"
             />
+            <p className="text-xs font-bold uppercase tracking-[0.12em] text-[#3E5FA8]/80">
+              Como Comprar a Passagem no T-CAT
+            </p>
           </div>
+
+          <img
+            loading="lazy"
+            src="/images/tcat-plataforma-limousine-bus.webp"
+            alt="Plataforma de embarque do Airport Limousine Bus no T-CAT, com ônibus e passageiros"
+            className="aspect-[16/10] w-full rounded-lg border border-[#CBD9F2] object-cover sm:aspect-[16/9]"
+          />
 
           <p className="text-sm leading-6 text-[#24211D]/85">
             Ao entrar no <span className="font-semibold">T-CAT Main Building, 1º andar (1F)</span>,
@@ -6963,15 +7332,11 @@ function DeslocamentoCard({ deslocamento }: { deslocamento: Deslocamento }) {
               </div>
             )}
             <div className="flex w-full items-start gap-3">
-              <div className="flex w-6 shrink-0 items-center justify-center">
-                <span
-                  style={{
-                    width: 0,
-                    height: 0,
-                    borderLeft: "9px solid transparent",
-                    borderRight: "9px solid transparent",
-                    borderTop: `16px solid ${deslocamento.linha.cor || "#B96432"}`,
-                  }}
+              <div className="flex h-6 w-6 shrink-0 items-center justify-center">
+                <TrajetoArrowHead
+                  orientation="vertical"
+                  color={deslocamento.linha.cor || "#B96432"}
+                  className="h-full w-full"
                 />
               </div>
               <div className="flex-1" />
@@ -7122,7 +7487,7 @@ function DeslocamentoCard({ deslocamento }: { deslocamento: Deslocamento }) {
             aparecem como círculos com letra+número da linha sobre o traço
             grosso, nome em romaji acima e nome em japonês na vertical
             abaixo — mesmo padrão dos mapas oficiais de metrô de Tóquio. */}
-        <div className="col-start-2 row-start-1 flex min-w-[32px] flex-1 flex-col justify-start pt-10 sm:min-w-[64px]">
+        <div className="col-start-2 row-start-1 flex min-w-[32px] flex-1 flex-col justify-start pt-6 sm:min-w-[64px]">
           {deslocamento.estacoesIntermediarias &&
             deslocamento.estacoesIntermediarias.length > 0 && (
               <div className="relative hidden h-0 w-full sm:block">
@@ -7143,10 +7508,15 @@ function DeslocamentoCard({ deslocamento }: { deslocamento: Deslocamento }) {
                 })}
               </div>
             )}
-          <div
-            className="relative h-2 w-full"
-            style={{ background: deslocamento.linha.cor || "#B96432" }}
-          >
+          <div className="relative h-7 w-full">
+            {/* Seta de trajeto — mesmo componente/padrão geométrico usado em
+                todo o site (haste + ponta como uma única forma vetorial
+                sólida), não uma linha fina com triângulo colado. */}
+            <TrajetoArrow
+              orientation="horizontal"
+              color={deslocamento.linha.cor || "#B96432"}
+              className="absolute inset-0 h-full w-full"
+            />
             {deslocamento.estacoesIntermediarias?.map((estacao, i) => {
               const pct =
                 ((i + 1) /
@@ -7166,20 +7536,6 @@ function DeslocamentoCard({ deslocamento }: { deslocamento: Deslocamento }) {
                 </span>
               );
             })}
-            {/* Ponta da seta — triângulo CSS nítido (bordas retas, sem
-                nenhum arredondamento), maior e mais grosso que o traço pra
-                ler como uma seta de verdade, não como um "alfinete" preso
-                numa linha fina. */}
-            <span
-              className="absolute -right-px top-1/2 -translate-y-1/2"
-              style={{
-                width: 0,
-                height: 0,
-                borderTop: "13px solid transparent",
-                borderBottom: "13px solid transparent",
-                borderLeft: `22px solid ${deslocamento.linha.cor || "#B96432"}`,
-              }}
-            />
           </div>
           {deslocamento.estacoesIntermediarias &&
             deslocamento.estacoesIntermediarias.length > 0 && (
@@ -7351,6 +7707,113 @@ function DeslocamentoCard({ deslocamento }: { deslocamento: Deslocamento }) {
         <p className="mt-5 border-t border-[#DDD8CF] pt-4 text-sm leading-6 text-[#24211D]/80">
           {deslocamento.recomendacao}
         </p>
+      )}
+
+      {deslocamento.gradeSaidas && (
+        <div className="mt-5 border-t border-[#DDD8CF] pt-5">
+          {deslocamento.gradeSaidas.destaque && (
+            <div className="mb-5">
+              <p className="mb-2 text-xs font-bold uppercase tracking-[0.15em] text-[#24211D]/65">
+                {deslocamento.gradeSaidas.destaque.titulo}
+              </p>
+              <div className="rounded-xl border-2 border-emerald-400 bg-emerald-50 p-4">
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <p className="text-sm font-bold text-[#24211D]">
+                      {deslocamento.gradeSaidas.destaque.linha}
+                    </p>
+                    {deslocamento.gradeSaidas.destaque.subtitulo && (
+                      <p className="text-xs text-[#24211D]/65">
+                        {deslocamento.gradeSaidas.destaque.subtitulo}
+                      </p>
+                    )}
+                  </div>
+                  <span className="shrink-0 rounded-full bg-emerald-600 px-3 py-1 text-sm font-bold text-white">
+                    {deslocamento.gradeSaidas.destaque.horario}
+                  </span>
+                </div>
+                <div className="mt-3 grid grid-cols-2 gap-x-4 gap-y-2.5 text-xs sm:grid-cols-4">
+                  {deslocamento.gradeSaidas.destaque.embarque && (
+                    <div>
+                      <p className="font-medium uppercase tracking-wide text-[#24211D]/55">Embarque</p>
+                      <p className="mt-0.5 font-semibold text-[#24211D]">
+                        {deslocamento.gradeSaidas.destaque.embarque}
+                      </p>
+                    </div>
+                  )}
+                  {deslocamento.gradeSaidas.destaque.desembarque && (
+                    <div>
+                      <p className="font-medium uppercase tracking-wide text-[#24211D]/55">Desembarque</p>
+                      <p className="mt-0.5 font-semibold text-[#24211D]">
+                        {deslocamento.gradeSaidas.destaque.desembarque}
+                      </p>
+                    </div>
+                  )}
+                  {deslocamento.gradeSaidas.destaque.tempo && (
+                    <div>
+                      <p className="font-medium uppercase tracking-wide text-[#24211D]/55">Tempo</p>
+                      <p className="mt-0.5 font-semibold text-[#24211D]">
+                        {deslocamento.gradeSaidas.destaque.tempo}
+                      </p>
+                    </div>
+                  )}
+                  {deslocamento.gradeSaidas.destaque.tarifa && (
+                    <div>
+                      <p className="font-medium uppercase tracking-wide text-[#24211D]/55">Tarifa</p>
+                      <p className="mt-0.5 font-semibold text-[#24211D]">
+                        {deslocamento.gradeSaidas.destaque.tarifa}
+                      </p>
+                    </div>
+                  )}
+                </div>
+                {deslocamento.gradeSaidas.destaque.resultado && (
+                  <p className="mt-3 border-t border-emerald-200 pt-3 text-xs leading-5 text-[#24211D]/80">
+                    {deslocamento.gradeSaidas.destaque.resultado}
+                  </p>
+                )}
+              </div>
+            </div>
+          )}
+          {deslocamento.gradeSaidas.titulo && (
+            <p className="mb-2 text-xs font-bold uppercase tracking-[0.15em] text-[#24211D]/65">
+              {deslocamento.gradeSaidas.titulo}
+            </p>
+          )}
+          <div className="overflow-x-auto rounded-lg border border-[#DDD8CF]">
+            <table className="w-full min-w-[320px] text-left text-xs">
+              <thead>
+                <tr className="border-b border-[#DDD8CF] bg-[#F5F3EE] text-[10px] uppercase tracking-wide text-[#24211D]/65">
+                  {deslocamento.gradeSaidas.colunas.map((c) => (
+                    <th key={c} className="px-3 py-2 font-bold">
+                      {c}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {deslocamento.gradeSaidas.linhas.map((linha, i) => (
+                  <tr key={i} className={i > 0 ? "border-t border-[#DDD8CF]/70" : undefined}>
+                    {linha.map((valor, j) => (
+                      <td
+                        key={j}
+                        className={`whitespace-nowrap px-3 py-2 ${
+                          j === 0 ? "font-semibold text-[#24211D]" : "text-[#24211D]/80"
+                        }`}
+                      >
+                        {valor}
+                      </td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          {deslocamento.gradeSaidas.nota && (
+            <p className="mt-2 text-[11px] leading-4 text-[#24211D]/55">
+              {deslocamento.gradeSaidas.nota}
+            </p>
+          )}
+        </div>
       )}
 
       {deslocamento.mapaChegada && (

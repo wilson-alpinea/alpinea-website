@@ -96,11 +96,11 @@ export function TremGuideContent({
         items={[
           { Icon: IconMap, number: 1, label: "Metrô, JR e Trem Privado", href: "#trem-secao-1" },
           { Icon: IconTrain, number: 2, label: "Tipos de Trem", href: "#trem-secao-2" },
-          { Icon: IconBulb, number: 3, label: "A Regra Mais Importante", href: "#trem-secao-3" },
-          { Icon: IconCard, number: 4, label: "IC Card e Tarifas", href: "#trem-secao-4" },
-          { Icon: IconClock, number: 5, label: "Se Algo Der Errado", href: "#trem-secao-5" },
-          { Icon: IconMap, number: 6, label: "Transferências e Sinalização", href: "#trem-secao-6" },
-          { Icon: IconClock, number: 7, label: "Google Maps e Horários", href: "#trem-secao-7" },
+          { Icon: IconClock, number: 3, label: "O Google Maps É Seu Melhor Aliado", href: "#trem-secao-3" },
+          { Icon: IconBulb, number: 4, label: "A Regra Mais Importante", href: "#trem-secao-4" },
+          { Icon: IconCard, number: 5, label: "IC Card e Tarifas", href: "#trem-secao-5" },
+          { Icon: IconClock, number: 6, label: "Se Algo Der Errado", href: "#trem-secao-6" },
+          { Icon: IconMap, number: 7, label: "Transferências e Sinalização", href: "#trem-secao-7" },
           { Icon: IconCheck, number: 8, label: "Etiqueta no Trem", href: "#trem-secao-8" },
           { Icon: IconClock, number: 9, label: "Último Trem e Limited Express", href: "#trem-secao-9" },
           { Icon: IconMap, number: 10, label: "Particularidades — Kyoto, Osaka, Tokyo", href: "#trem-secao-10" },
@@ -190,9 +190,47 @@ export function TremGuideContent({
         </div>
       </section>
 
-      <section id="trem-secao-3" className="px-6 py-14 md:px-10 md:py-20">
+      <section
+        id="trem-secao-3"
+        className="border-t border-[#DDD8CF] bg-white px-6 py-14 md:px-10 md:py-20"
+      >
         <div className="mx-auto max-w-5xl space-y-6">
-          <SectionMarker number={3} label="A Regra Mais Importante" />
+          <SectionMarker number={3} label="O Google Maps É Seu Melhor Aliado" />
+          <div className="grid gap-8 md:grid-cols-[1fr_360px] md:items-start">
+            <div className="space-y-4 text-base font-light leading-8 text-[#24211D]/88">
+              <p>
+                O Google Maps é extremamente confiável para rotas de trem no Japão —
+                mostra plataforma, horário exato de partida e chegada, número de
+                baldeações e até o vagão mais próximo da saída de destino. No Japão ele
+                indica o número da plataforma e o horário, e você consegue identificar
+                facilmente qual trem é o certo pelo horário, por ser um dos países mais
+                pontuais do mundo.
+              </p>
+              <p>
+                Evite entrar num trem que chegou num horário diferente do que você
+                calculou no Google Maps — existe uma boa chance dele ser um tipo
+                diferente do que você precisa. Lembre-se que numa mesma estação passam de
+                3 a 4 trens diferentes que têm o mesmo destino final.
+              </p>
+            </div>
+            <div className="mx-auto w-full max-w-[360px] overflow-hidden rounded-[32px] border-[6px] border-[#1a1a1a] bg-[#1a1a1a] shadow-2xl">
+              <div className="relative aspect-[1055/1301] w-full overflow-hidden rounded-[22px]">
+                <Image
+                  src="/images/trem-google-maps-exemplo.webp"
+                  alt="Exemplo de rota de trem no Google Maps, do lyf Ginza Tokyo até o Templo Sensoji, mostrando horário, plataforma e linha"
+                  fill
+                  sizes="(min-width: 768px) 360px, 90vw"
+                  className="object-cover"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="trem-secao-4" className="px-6 py-14 md:px-10 md:py-20">
+        <div className="mx-auto max-w-5xl space-y-6">
+          <SectionMarker number={4} label="A Regra Mais Importante" />
           <p className="max-w-3xl text-base font-light leading-8 text-[#24211D]/88">
             Antes de embarcar, confira sempre estes 5 pontos — é o que evita 90% dos
             perrengues de trem no Japão:
@@ -210,11 +248,11 @@ export function TremGuideContent({
       </section>
 
       <section
-        id="trem-secao-4"
+        id="trem-secao-5"
         className="border-t border-[#DDD8CF] bg-white px-6 py-14 md:px-10 md:py-20"
       >
         <div className="mx-auto max-w-5xl space-y-6">
-          <SectionMarker number={4} label="IC Card, Tarifas e Ajustes" />
+          <SectionMarker number={5} label="IC Card, Tarifas e Ajustes" />
           <div className="space-y-4 text-base font-light leading-8 text-[#24211D]/88">
             <p>
               O IC Card (Suica ou Pasmo) é a forma mais prática de pagar qualquer trem,
@@ -231,9 +269,9 @@ export function TremGuideContent({
         </div>
       </section>
 
-      <section id="trem-secao-5" className="px-6 py-14 md:px-10 md:py-20">
+      <section id="trem-secao-6" className="px-6 py-14 md:px-10 md:py-20">
         <div className="mx-auto max-w-5xl space-y-6">
-          <SectionMarker number={5} label="Se Algo Der Errado" />
+          <SectionMarker number={6} label="Se Algo Der Errado" />
           <div className="space-y-4 text-base font-light leading-8 text-[#24211D]/88">
             <p>
               Pegou o trem errado ou passou da estação? Sem pânico — desça na próxima
@@ -246,11 +284,11 @@ export function TremGuideContent({
       </section>
 
       <section
-        id="trem-secao-6"
+        id="trem-secao-7"
         className="border-t border-[#DDD8CF] bg-white px-6 py-14 md:px-10 md:py-20"
       >
         <div className="mx-auto max-w-5xl space-y-6">
-          <SectionMarker number={6} label="Transferências e Sinalização" />
+          <SectionMarker number={7} label="Transferências e Sinalização" />
           <div className="space-y-4 text-base font-light leading-8 text-[#24211D]/88">
             <p>
               Estações maiores sinalizam transferências com placas coloridas por linha
@@ -258,20 +296,6 @@ export function TremGuideContent({
               número da estação (ex.: G10, H16) — útil mesmo sem ler japonês. Siga as
               placas até a plataforma da linha de destino; em complexos grandes
               (Shinjuku, Tokyo Station), a caminhada pode levar alguns minutos.
-            </p>
-          </div>
-        </div>
-      </section>
-
-      <section id="trem-secao-7" className="px-6 py-14 md:px-10 md:py-20">
-        <div className="mx-auto max-w-5xl space-y-6">
-          <SectionMarker number={7} label="Google Maps e Horários" />
-          <div className="space-y-4 text-base font-light leading-8 text-[#24211D]/88">
-            <p>
-              O Google Maps é extremamente confiável para rotas de trem no Japão —
-              mostra plataforma, horário exato de partida e chegada, número de
-              baldeações e até o vagão mais próximo da saída de destino. Os trens
-              japoneses são pontuais ao minuto, então vale confiar no horário mostrado.
             </p>
           </div>
         </div>

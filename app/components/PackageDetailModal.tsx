@@ -8,6 +8,7 @@ import { useCart, type CartItem } from "./CartContext";
 import type { PackageVariant } from "./packageTypes";
 import { PrecoPacote } from "./PrecoPacote";
 import { useCambioUSD, brlParaUSDLabel } from "../hooks/useCambioUSD";
+import { TrajetoArrowHead } from "./AirportGuideKit";
 
 const display = Bodoni_Moda({
   subsets: ["latin"],
@@ -364,17 +365,21 @@ function ItinerarioFlow({ stops }: { stops: ItinerarioStop[] }) {
             </div>
           </div>
           {i < stops.length - 1 && (
-            <svg
-              width={arrowWidth}
-              height="10"
-              viewBox="0 0 28 10"
-              fill="none"
-              className="mx-1 mt-6 shrink-0"
-              style={{ marginTop: circleSize / 2 - 5 }}
+            // Mesmo padrão de seta de trajeto do resto do site (haste sólida
+            // + ponta triangular grande, sem linha fina com triângulo
+            // colado) — só em escala compacta, já que aqui liga dois círculos
+            // pequenos em vez de dois cards de estação.
+            <div
+              className="mx-1 flex shrink-0 items-center"
+              style={{ width: arrowWidth, marginTop: circleSize / 2 - 7 }}
             >
-              <line x1="0" y1="5" x2="20" y2="5" stroke="rgba(255,255,255,0.3)" strokeWidth="1.5" />
-              <path d="M18 1 L26 5 L18 9" stroke="rgba(255,255,255,0.3)" strokeWidth="1.5" fill="none" />
-            </svg>
+              <span className="h-1 flex-1" style={{ background: "rgba(255,255,255,0.3)" }} />
+              <TrajetoArrowHead
+                orientation="horizontal"
+                color="rgba(255,255,255,0.3)"
+                className="h-3.5 w-2.5 shrink-0"
+              />
+            </div>
           )}
         </div>
         );
