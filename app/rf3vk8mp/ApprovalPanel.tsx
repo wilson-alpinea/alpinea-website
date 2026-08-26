@@ -10097,21 +10097,28 @@ export function ApprovalPanel({
         </div>
       </div>
 
-      {/* Botão fixo no rodapé — visível em qualquer ponto da rolagem, em
+      {/* Botão fixo lateral — visível em qualquer ponto da rolagem, em
           qualquer viewMode, pra voltar rápido ao menu principal (grade de
-          dias/hotéis/informações no topo do painel). */}
+          dias/hotéis/informações no topo do painel). Encostado na quina
+          direita, bem acima da borda inferior: fora da faixa onde o Safari
+          do iPhone "rouba" o primeiro toque pra reexibir a barra do
+          navegador, e fora do caminho onde o polegar costuma arrastar pra
+          rolar a página (o que também podia fazer o toque virar rolagem em
+          vez de clique). */}
       <button
         type="button"
         onClick={scrollToDaysMenu}
-        className="fixed inset-x-0 z-50 mx-auto flex w-fit items-center gap-2 rounded-full bg-black px-5 py-3 text-[11px] font-bold uppercase tracking-[0.15em] text-white shadow-[0_10px_30px_-8px_rgba(0,0,0,0.55)] transition hover:-translate-y-0.5"
-        style={{ bottom: "calc(1.25rem + env(safe-area-inset-bottom, 0px))" }}
+        className="fixed right-3 z-50 flex flex-col items-center gap-1 rounded-2xl bg-black px-2.5 py-2.5 text-white shadow-[0_10px_30px_-8px_rgba(0,0,0,0.55)] transition hover:-translate-x-0.5 sm:right-5"
+        style={{ bottom: "calc(6rem + env(safe-area-inset-bottom, 0px))" }}
       >
         <img
           src="/images/dragonball-4-star-tight.png"
           alt=""
-          className="h-6 w-6 shrink-0 rounded-full object-cover"
+          className="h-7 w-7 shrink-0 rounded-full object-cover"
         />
-        Voltar ao Menu Principal
+        <span className="text-[8px] font-bold uppercase leading-tight tracking-[0.1em]">
+          Menu
+        </span>
       </button>
     </>
   );
