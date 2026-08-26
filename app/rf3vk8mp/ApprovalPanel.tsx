@@ -9170,8 +9170,8 @@ const HOTEIS: HotelInfo[] = [
       },
       {
         label: "Farmácia",
-        nome: "Honoka Pharmacy (antiga Ain Pharmacy)",
-        detalhe: "No mesmo quarteirão, Yamazaki Medical Bldg B1F",
+        nome: "Matsumoto Kiyoshi — Kyoto Tower Sando",
+        detalhe: "1F do Kyoto Tower Sando, ao lado do hotel — Tax Free, aberta das 10h às 23h",
         Icon: IconCross,
       },
       {
@@ -9199,7 +9199,7 @@ const HOTEIS: HotelInfo[] = [
     ],
     mapa: {
       imagem: "/images/daiwa-roynet-mapa-arredores.jpg",
-      imagemAlt: "Mapa dos arredores do Daiwa Roynet Hotel Kyoto-Ekimae PREMIER, com Honoka Pharmacy, LAWSON Kyoto Station, Koseikai Takeda Hospital e a Saída Karasuma da Kyoto Station",
+      imagemAlt: "Mapa dos arredores do Daiwa Roynet Hotel Kyoto-Ekimae PREMIER, com Matsumoto Kiyoshi (Kyoto Tower Sando), LAWSON Kyoto Station, Koseikai Takeda Hospital e a Saída Karasuma da Kyoto Station",
       nota: "Localização do hotel em relação à Kyoto Station (saída Karasuma), à farmácia, à conveniência e ao hospital de referência listados acima.",
       pontos: [],
       rotas: [
@@ -9217,6 +9217,11 @@ const HOTEIS: HotelInfo[] = [
           label: "Koseikai Takeda Hospital",
           imagem: "/images/daiwa-roynet-rota-koseikai-hospital.jpg",
           imagemAlt: "Rota a pé do hotel até o Koseikai Takeda Hospital",
+        },
+        {
+          label: "Matsumoto Kiyoshi (farmácia)",
+          imagem: "/images/daiwa-roynet-rota-matsumoto-kiyoshi.png",
+          imagemAlt: "Rota a pé do hotel até a Matsumoto Kiyoshi — Kyoto Tower Sando (~3 min, 200 m)",
         },
       ],
     },
@@ -9257,8 +9262,8 @@ const HOTEIS: HotelInfo[] = [
       },
       {
         label: "Farmácia",
-        nome: "Matsumoto Kiyoshi Kyobashi Ekimae",
-        detalhe: "Na Estação Kyobashi",
+        nome: "Welcia — Tokyo Square Garden",
+        detalhe: "Tokyo Square Garden — mesmo prédio da Kameda Kyobashi Clinic",
         Icon: IconCross,
       },
       {
@@ -9330,6 +9335,11 @@ const HOTEIS: HotelInfo[] = [
           label: "St. Luke's International Hospital",
           imagem: "/images/remm-rota-st-luke-hospital.png",
           imagemAlt: "Rota a pé até o St. Luke's International Hospital",
+        },
+        {
+          label: "Welcia (farmácia)",
+          imagem: "/images/remm-rota-welcia.png",
+          imagemAlt: "Rota a pé do remm Tokyo Kyobashi até a Welcia — Tokyo Square Garden",
         },
       ],
     },
@@ -9652,7 +9662,7 @@ function HotelGuestGuide({ hotel }: { hotel: HotelInfo }) {
 const ROTAS_POR_ESSENCIAL: Record<string, string[]> = {
   "Estação": ["Estação Kyobashi", "Saída 6 (Estação Kyobashi)", "Estação Takaracho"],
   "Conveniência": ["7-Eleven", "Lawson"],
-  "Farmácia": ["Farmácia Welcia"],
+  "Farmácia": ["Farmácia Welcia", "Matsumoto Kiyoshi (farmácia)", "Welcia (farmácia)"],
   "Clínica": ["Kameda Kyobashi Clinic"],
   "Hospital": ["St. Luke's International Hospital"],
 };
