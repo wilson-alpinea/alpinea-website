@@ -6131,7 +6131,8 @@ type PassagemSegmento = {
   bagagem: string;
 };
 
-const PASSAGEM_TICKET_NUMBER = "176 2213785892-93";
+// Número do bilhete NÃO é armazenado nem exibido aqui — é dado confidencial
+// do cliente e não deve constar no painel.
 
 const PASSAGEM_IDA: PassagemSegmento[] = [
   {
@@ -6178,19 +6179,6 @@ const PASSAGEM_VOLTA: PassagemSegmento[] = [
     bagagem: "2 peças",
   },
 ];
-
-function calcularConexao(
-  chegada: { hora: string },
-  partida: { hora: string },
-): string {
-  const [ch, cm] = chegada.hora.split(":").map(Number);
-  const [ph, pm] = partida.hora.split(":").map(Number);
-  let minutos = ph * 60 + pm - (ch * 60 + cm);
-  if (minutos < 0) minutos += 24 * 60;
-  const h = Math.floor(minutos / 60);
-  const m = minutos % 60;
-  return m === 0 ? `${h}h` : `${h}h${String(m).padStart(2, "0")}`;
-}
 
 // Coordenadas em % (posição/tamanho relativos ao template de 1859×846px),
 // obtidas por análise programática (PIL/numpy/scipy) das caixas cinzas do
@@ -6408,90 +6396,78 @@ function PassagemEstilizadaBlock({
           </span>
         </div>
 
-        {/* Barra inferior direita — número do bilhete, ao lado do código de
-            barras decorativo do template. */}
-        <div
-          className="absolute flex items-center justify-center overflow-hidden px-1 text-center"
-          style={{
-            left: `${PASSAGEM_BARRA_DIREITA.left}%`,
-            top: `${PASSAGEM_BARRA_DIREITA.top}%`,
-            width: `${PASSAGEM_BARRA_DIREITA.width}%`,
-            height: `${PASSAGEM_BARRA_DIREITA.height}%`,
-          }}
-        >
-          <span className="w-full truncate text-[7px] font-semibold leading-tight text-[#4A3418] sm:text-[9px] md:text-[11px]">
-            Bilhete nº {PASSAGEM_TICKET_NUMBER}
-          </span>
-        </div>
+        {/* Barra inferior direita mantida em branco de propósito — dado
+            confidencial (nº do bilhete) não deve ser exibido no painel do
+            cliente. */}
       </div>
     </div>
   );
 }
 
-function PassagemBasicaBlock({
-  segmentos,
-  label,
-}: {
-  segmentos: PassagemSegmento[];
+// Direções exibidas na Versão Básica — rótulo/período fixos (datas já
+// conhecidas e conferidas contra o bilhete real) + nota final explicando
+// por qual aeroporto de Tóquio se chega/sai (Narita na ida, Haneda na
+// volta — dois aeroportos diferentes, conforme o bilhete real).
+const PASSAGEM_DIRECOES: {
   label: "IDA" | "VOLTA";
-}) {
+  periodo: string;
+  segmentos: PassagemSegmento[];
+  notaFinal: string;
+}[] = [
+  {
+    label: "IDA",
+    periodo: "03–04 Mai 2027",
+    segmentos: PASSAGEM_IDA,
+    notaFinal: "Chegada em Tóquio pelo Aeroporto de Narita (NRT), Terminal 2",
+  },
+  {
+    label: "VOLTA",
+    periodo: "12 Mai 2027",
+    segmentos: PASSAGEM_VOLTA,
+    notaFinal: "Saída de Tóquio pelo Aeroporto de Haneda (HND), Terminal 3",
+  },
+];
+
+function PassagemBasicaBlock() {
   return (
-    <div>
-      <p className="mb-4 text-center text-[10px] font-bold uppercase tracking-[0.3em] text-[#24211D]/60">
-        {label === "IDA" ? "Trecho de Ida" : "Trecho de Volta"}
-      </p>
-      <div className="space-y-3">
-        {segmentos.map((seg, i) => (
-          <div key={seg.numeroSegmento}>
-            <div className="rounded-2xl border border-[#DDD8CF] bg-[#F8FAF9] p-5 sm:p-6">
-              <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
-                <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#24211D]/50">
-                  Trecho {seg.numeroSegmento} · Voo {seg.voo} · {seg.classe}
-                </span>
-                <span className="text-[10px] font-medium text-[#24211D]/50">
-                  Bagagem: {seg.bagagem}
-                </span>
-              </div>
-              <div className="flex flex-wrap items-center justify-between gap-4">
-                <div className="text-left">
-                  <p className="text-2xl font-bold text-[#24211D] sm:text-3xl">{seg.origem.iata}</p>
-                  <p className="text-sm text-[#24211D]/70">
-                    {seg.origem.cidade}
-                    {seg.origem.terminal ? ` · Terminal ${seg.origem.terminal}` : ""}
-                  </p>
-                  <p className="mt-1 text-sm font-semibold text-[#24211D]">{seg.partida.hora}</p>
-                  <p className="text-xs text-[#24211D]/60">{seg.partida.data}</p>
-                </div>
-                <div className="flex flex-1 items-center justify-center gap-2 px-2 text-[#24211D]/30">
-                  <div className="h-px w-full bg-[#DDD8CF]" />
-                  <span className="shrink-0 text-lg">→</span>
-                  <div className="h-px w-full bg-[#DDD8CF]" />
-                </div>
-                <div className="text-right">
-                  <p className="text-2xl font-bold text-[#24211D] sm:text-3xl">{seg.destino.iata}</p>
-                  <p className="text-sm text-[#24211D]/70">
-                    {seg.destino.cidade}
-                    {seg.destino.terminal ? ` · Terminal ${seg.destino.terminal}` : ""}
-                  </p>
-                  <p className="mt-1 text-sm font-semibold text-[#24211D]">{seg.chegada.hora}</p>
-                  <p className="text-xs text-[#24211D]/60">{seg.chegada.data}</p>
-                </div>
-              </div>
+    <div className="rounded-2xl border border-[#DDD8CF] bg-[#F8FAF9] p-6 sm:p-8">
+      <div className="mb-6 flex items-center gap-4">
+        <img
+          src="/images/emirates-logo-v2.png"
+          alt="Emirates"
+          className="h-14 w-14 shrink-0 rounded-md object-contain sm:h-16 sm:w-16"
+        />
+        <div>
+          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#24211D]/50">
+            Companhia Aérea
+          </p>
+          <p className="text-base font-semibold text-[#24211D]">Emirates</p>
+        </div>
+      </div>
+      <div className="grid gap-4 sm:grid-cols-2">
+        {PASSAGEM_DIRECOES.map((direcao) => (
+          <div
+            key={direcao.label}
+            className="rounded-xl border border-[#DDD8CF] bg-white p-4 sm:p-5"
+          >
+            <p className="mb-3 text-[10px] font-bold uppercase tracking-[0.15em] text-[#24211D]/55">
+              {direcao.label} · {direcao.periodo}
+            </p>
+            <div className="space-y-1.5">
+              {direcao.segmentos.map((seg) => (
+                <p key={seg.numeroSegmento} className="text-sm text-[#24211D]/85">
+                  <span className="font-bold text-[#24211D]">{seg.voo}</span>
+                  {" · "}
+                  {seg.origem.iata} → {seg.destino.iata}
+                  {" · "}
+                  {seg.partida.hora} → {seg.chegada.hora}
+                </p>
+              ))}
             </div>
-            {i < segmentos.length - 1 && (
-              <div className="flex items-center justify-center py-3">
-                <span className="rounded-full border border-[#DDD8CF] bg-[#FDFCF9] px-4 py-1.5 text-[10px] font-semibold uppercase tracking-[0.15em] text-[#24211D]/60">
-                  Conexão em {segmentos[i].destino.cidade} ·{" "}
-                  {calcularConexao(segmentos[i].chegada, segmentos[i + 1].partida)}
-                </span>
-              </div>
-            )}
+            <p className="mt-3 text-xs text-[#24211D]/55">{direcao.notaFinal}</p>
           </div>
         ))}
       </div>
-      <p className="mt-4 text-center text-[10px] text-[#24211D]/50">
-        Bilhete nº {PASSAGEM_TICKET_NUMBER}
-      </p>
     </div>
   );
 }
@@ -6523,10 +6499,7 @@ function PassagemAereaBlock() {
           <PassagemEstilizadaBlock segmentos={PASSAGEM_VOLTA} label="VOLTA" />
         </div>
       ) : (
-        <div className="space-y-10">
-          <PassagemBasicaBlock segmentos={PASSAGEM_IDA} label="IDA" />
-          <PassagemBasicaBlock segmentos={PASSAGEM_VOLTA} label="VOLTA" />
-        </div>
+        <PassagemBasicaBlock />
       )}
     </div>
   );

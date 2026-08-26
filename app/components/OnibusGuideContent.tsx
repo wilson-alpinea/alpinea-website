@@ -3,6 +3,8 @@ import {
   SectionMarker,
   TableOfContents,
   ContentCard,
+  ImageCard,
+  PreviewModal,
   IconBulb,
   IconMap,
   IconClock,
@@ -186,6 +188,18 @@ export function OnibusGuideContent({
             <strong>número + destino + letra</strong> (ex.: "206 + Kyoto Station + A"), não
             apenas o número.
           </AlertBox>
+          <div className="mx-auto max-w-4xl">
+            <ImageCard
+              src="/images/guia-onibus-kyoto-pontos-abcd.png"
+              alt="Infográfico mostrando o mesmo ônibus 206 embarcando em dois pontos diferentes (A e D) da parada Kiyomizu-michi, cada um seguindo em um sentido — exemplo real do sistema de pontos A/B/C/D de Kyoto"
+              aspect="aspect-[3/2]"
+              zoomHref="#foto-guia-onibus-abcd"
+            />
+            <p className="mt-3 text-center text-xs uppercase tracking-[0.15em] text-[#24211D]/50">
+              Exemplo real: o ônibus 206 embarca no Ponto A (sentido Kinkakuji/Kitaoji) e também
+              no Ponto D (sentido Shijo Kawaramachi) — mesma parada, pontos diferentes
+            </p>
+          </div>
         </div>
       </section>
 
@@ -429,6 +443,14 @@ export function OnibusGuideContent({
           </TipBox>
         </div>
       </section>
+
+      <PreviewModal
+        id="foto-guia-onibus-abcd"
+        eyebrow="Guia Visual"
+        label="Guia para identificar o ônibus certo em Kyoto"
+        src="/images/guia-onibus-kyoto-pontos-abcd.png"
+        alt="Infográfico mostrando o mesmo ônibus 206 embarcando em dois pontos diferentes (A e D) da parada Kiyomizu-michi, cada um seguindo em um sentido — exemplo real do sistema de pontos A/B/C/D de Kyoto"
+      />
     </div>
   );
 }
