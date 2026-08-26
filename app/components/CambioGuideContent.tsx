@@ -27,6 +27,8 @@ function ExchangeCard({
   descricao,
   destaque,
   tag,
+  foto,
+  fotoAlt,
 }: {
   nome: string;
   bairro: string;
@@ -37,6 +39,8 @@ function ExchangeCard({
   descricao: string;
   destaque?: boolean;
   tag?: string;
+  foto?: string;
+  fotoAlt?: string;
 }) {
   return (
     <div
@@ -44,6 +48,16 @@ function ExchangeCard({
         destaque ? "border-[#173B45]/25 bg-[#173B45]/[0.05]" : "border-[#DDD8CF] bg-[#FDFCF9]"
       }`}
     >
+      {foto && (
+        <div className="mb-4 h-36 w-full overflow-hidden rounded-xl">
+          <img
+                loading="lazy"
+            src={foto}
+            alt={fotoAlt ?? nome}
+            className="h-full w-full object-cover"
+          />
+        </div>
+      )}
       <div className="flex items-start justify-between gap-3">
         <div>
           <p className="text-base font-semibold text-[#24211D]">{nome}</p>
@@ -118,6 +132,8 @@ export function CambioGuideContent({
               tag="Recomendação principal"
               destaque
               descricao="Indicação principal para câmbio em Ginza — bem avaliada e numa localização discreta, longe do movimento das ruas principais."
+              foto="/images/cambio-ginza-exchange.webp"
+              fotoAlt="Fachada da Sunwood Building, em Ginza, onde fica a Ginza Exchange"
             />
             <ExchangeCard
               nome="Global Exchange Ginza"
@@ -127,6 +143,8 @@ export function CambioGuideContent({
               numAvaliacoes="175 avaliações"
               tag="Alternativa"
               descricao="Boa alternativa em Ginza caso a Ginza Exchange não seja conveniente no momento — mas a Ginza Exchange continua sendo a primeira escolha."
+              foto="/images/cambio-global-exchange-ginza.webp"
+              fotoAlt="Fachada da Global Exchange, em Ginza"
             />
           </div>
         </div>
@@ -149,6 +167,8 @@ export function CambioGuideContent({
               tag="Excelente alternativa"
               destaque
               descricao="Especializada em câmbio e bastante conhecida por estrangeiros — uma das casas de câmbio mais avaliadas de Shinjuku."
+              foto="/images/cambio-ninja-exchange-shinjuku.webp"
+              fotoAlt="Fachada da Interbank / Ninja Money Exchange, em Shinjuku"
             />
             <ExchangeCard
               nome="Viewcard Currency Exchange Center"
@@ -159,6 +179,8 @@ export function CambioGuideContent({
               numAvaliacoes="mais de 300 avaliações"
               tag="Máxima conveniência"
               descricao="Fica dentro da própria estação de Shinjuku — ótima opção quando a prioridade é não sair do caminho durante a viagem."
+              foto="/images/cambio-viewcard-shinjuku.webp"
+              fotoAlt="Balcão da Viewcard Currency Exchange Center, dentro da JR Shinjuku Station"
             />
           </div>
         </div>
@@ -178,6 +200,8 @@ export function CambioGuideContent({
               tag="Recomendação principal"
               destaque
               descricao="Indicação mais simples para um cliente estrangeiro em Kyoto — listada pela própria central oficial de turismo da cidade entre as opções de câmbio ao redor da estação."
+              foto="/images/cambio-travelex-kyoto.webp"
+              fotoAlt="Balcão da Travelex, dentro da Kyoto Station"
             />
           </div>
         </div>

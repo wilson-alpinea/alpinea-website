@@ -9480,6 +9480,15 @@ function IconMedicalEmergency({ className }: { className?: string }) {
   );
 }
 
+function IconWhatsapp({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" className={className} fill="currentColor" aria-hidden="true">
+      <path d="M12.001 2C6.477 2 2 6.477 2 12c0 1.75.457 3.443 1.32 4.943L2 22l5.198-1.362A9.955 9.955 0 0 0 12.001 22C17.523 22 22 17.523 22 12S17.523 2 12.001 2zm0 18.05a8.033 8.033 0 0 1-4.42-1.318l-.317-.19-3.13.821.836-3.05-.207-.31A8.03 8.03 0 0 1 3.95 12c0-4.44 3.611-8.05 8.05-8.05 4.44 0 8.05 3.61 8.05 8.05 0 4.44-3.61 8.05-8.05 8.05z" />
+      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z" />
+    </svg>
+  );
+}
+
 const INFO_CARDS = [
   { label: "Aeroporto DXB", Icon: IconPlane, view: "dxb" as const },
   {
@@ -9503,8 +9512,17 @@ const INFO_CARDS = [
 ];
 
 const SERVICOS_ADICIONAIS_CARDS = [
-  { label: "Apólice Seguro Viagem", Icon: IconInsurance },
-  { label: "Emergência Médica / Ativação de Sinistro", Icon: IconMedicalEmergency },
+  {
+    label: "Apólice Seguro Viagem",
+    Icon: IconInsurance,
+    apoliceNumero: "E2-42/713583313-642",
+    documentoImagem: "/images/doc-seguro-viagem-voucher.webp",
+  },
+  {
+    label: "Emergência Médica / Ativação de Sinistro",
+    Icon: IconMedicalEmergency,
+    whatsapp: "18632014897",
+  },
 ];
 
 function IconFork({ className }: { className?: string }) {
@@ -10512,6 +10530,7 @@ export function ApprovalPanel({
   >("dia");
   const contentRef = useRef<HTMLDivElement>(null);
   const daysMenuRef = useRef<HTMLDivElement>(null);
+  const [zoomDocumentoSeguro, setZoomDocumentoSeguro] = useState(false);
 
   function scrollToContent() {
     requestAnimationFrame(() => {
@@ -10746,22 +10765,65 @@ export function ApprovalPanel({
           </p>
         </div>
         <div className="grid grid-cols-2 gap-3 border-b border-[#DDD8CF] px-6 pb-6 pt-3 sm:grid-cols-4 sm:px-10">
-          {SERVICOS_ADICIONAIS_CARDS.map(({ label, Icon }) => (
-            <div
-              key={label}
-              className="flex min-h-[112px] flex-col items-center justify-center gap-2.5 rounded-xl border border-[#F0DFA8] bg-[#FDF8E9] px-3 py-4 text-center text-xs leading-5 text-[#24211D]/75"
-            >
-              <Icon
-                className={
-                  label === "Emergência Médica / Ativação de Sinistro"
-                    ? "h-[4.5rem] w-[4.5rem]"
-                    : "h-20 w-20"
-                }
-              />
-              {label}
-            </div>
-          ))}
+          {SERVICOS_ADICIONAIS_CARDS.map(({ label, Icon, apoliceNumero, documentoImagem, whatsapp }) => {
+            const iconClassName =
+              label === "Emergência Médica / Ativação de Sinistro" ? "h-[4.5rem] w-[4.5rem]" : "h-20 w-20";
+            const cardContent = (
+              <>
+                <Icon className={iconClassName} />
+                <span>
+                  {label}
+                  {apoliceNumero && (
+                    <span className="mt-0.5 block text-[10px] font-bold uppercase tracking-[0.08em] text-[#C0392B]">
+                      Apólice: {apoliceNumero}
+                    </span>
+                  )}
+                </span>
+                {whatsapp && (
+                  <a
+                    href={`https://wa.me/${whatsapp}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={(e) => e.stopPropagation()}
+                    className="mt-1 flex items-center gap-1.5 rounded-full bg-[#25D366]/12 px-2.5 py-1 text-[10px] font-semibold text-[#128C4A] transition hover:bg-[#25D366]/20"
+                  >
+                    <IconWhatsapp className="h-3.5 w-3.5 shrink-0" />
+                    +{whatsapp.replace(/^1/, "1 ").replace(/(\d{3})(\d{3})(\d{4})$/, "$1 $2 $3")}
+                  </a>
+                )}
+              </>
+            );
+            if (documentoImagem) {
+              return (
+                <button
+                  key={label}
+                  type="button"
+                  onClick={() => setZoomDocumentoSeguro(true)}
+                  className="group flex min-h-[112px] cursor-pointer flex-col items-center justify-center gap-2.5 rounded-xl border border-[#F0DFA8] bg-[#FDF8E9] px-3 py-4 text-center text-xs leading-5 text-[#24211D]/75 transition duration-300 ease-out hover:-translate-y-0.5 hover:border-[#C0392B]/35 hover:shadow-[0_10px_30px_-15px_rgba(23,59,69,0.35)]"
+                >
+                  {cardContent}
+                </button>
+              );
+            }
+            return (
+              <div
+                key={label}
+                className="flex min-h-[112px] flex-col items-center justify-center gap-2.5 rounded-xl border border-[#F0DFA8] bg-[#FDF8E9] px-3 py-4 text-center text-xs leading-5 text-[#24211D]/75"
+              >
+                {cardContent}
+              </div>
+            );
+          })}
         </div>
+
+        {zoomDocumentoSeguro && (
+          <ZoomableImageModal
+            src="/images/doc-seguro-viagem-voucher.webp"
+            alt="Apólice do Seguro Viagem"
+            caption="Apólice do Seguro Viagem"
+            onClose={() => setZoomDocumentoSeguro(false)}
+          />
+        )}
 
         <div ref={contentRef} className="scroll-mt-6 px-6 py-8 sm:px-10 sm:py-10">
           {viewMode === "dxb" ? (

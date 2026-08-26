@@ -163,6 +163,22 @@ export function ShinkansenGuideContent({
               descricao="O mais rápido do Tokaido Shinkansen. Só pode ser usado com JR Pass comprando antecipadamente um Nozomi/Mizuho Ticket, com custo adicional."
             />
           </div>
+          <div className="grid gap-6 md:grid-cols-[360px_1fr] md:items-center">
+            <div className="overflow-hidden rounded-2xl border border-[#DDD8CF]">
+              <img
+                loading="lazy"
+                src="/images/shinkansen-bilheteria-sinalizacao.webp"
+                alt="Sinalização da bilheteria de Shinkansen (Shinkansen Tickets) numa estação JR"
+                className="h-full w-full object-cover"
+              />
+            </div>
+            <TipBox title="Procure a área com atendimento humano">
+              <p>
+                Chegando na estação, procure a área que tem atendimento humano para compra dos
+                tickets — os funcionários vão poder te ajudar a emitir a passagem certa.
+              </p>
+            </TipBox>
+          </div>
           <TipBox title="Para simplificar">
             <p>Se você possui JR Pass, procure sempre HIKARI.</p>
           </TipBox>
@@ -309,6 +325,14 @@ export function ShinkansenGuideContent({
       >
         <div className="mx-auto max-w-5xl space-y-6">
           <SectionMarker number={8} label="Monte Fuji, Bilheteria e Green Car" />
+          <div className="overflow-hidden rounded-2xl border border-[#DDD8CF]">
+            <img
+                loading="lazy"
+              src="/images/shinkansen-fuji.webp"
+              alt="Shinkansen passando com o Monte Fuji ao fundo"
+              className="h-56 w-full object-cover sm:h-72"
+            />
+          </div>
           <div className="grid gap-4 md:grid-cols-3">
             <div className="rounded-2xl border border-[#DDD8CF] bg-[#FDFCF9] p-5">
               <p className="text-sm font-semibold uppercase tracking-[0.15em] text-[#24211D]/70">
