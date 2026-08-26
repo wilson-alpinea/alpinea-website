@@ -10103,7 +10103,8 @@ export function ApprovalPanel({
       <button
         type="button"
         onClick={scrollToDaysMenu}
-        className="fixed inset-x-0 bottom-4 z-50 mx-auto flex w-fit items-center gap-2 rounded-full bg-black px-5 py-3 text-[11px] font-bold uppercase tracking-[0.15em] text-white shadow-[0_10px_30px_-8px_rgba(0,0,0,0.55)] transition hover:-translate-y-0.5 sm:bottom-6"
+        className="fixed inset-x-0 z-50 mx-auto flex w-fit items-center gap-2 rounded-full bg-black px-5 py-3 text-[11px] font-bold uppercase tracking-[0.15em] text-white shadow-[0_10px_30px_-8px_rgba(0,0,0,0.55)] transition hover:-translate-y-0.5"
+        style={{ bottom: "calc(1.25rem + env(safe-area-inset-bottom, 0px))" }}
       >
         <img
           src="/images/dragonball-4-star-tight.png"

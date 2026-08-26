@@ -247,7 +247,7 @@ export default function AprovacaoRoteiroPage() {
           alt="Alpinea — Empresa do Grupo Ajisai"
           className="h-7 w-auto object-contain sm:h-9 md:h-[60px] lg:h-[72px]"
         />
-        <span className="rounded-full border border-white bg-white/[0.06] px-4 py-2 text-center text-xs uppercase tracking-[0.2em] text-white">
+        <span className="rounded-full border border-white bg-white/[0.06] px-2.5 py-1 text-center text-[9px] uppercase tracking-[0.1em] text-white sm:px-3 sm:py-1.5 sm:text-[10px] sm:tracking-[0.15em] md:px-4 md:py-2 md:text-xs md:tracking-[0.2em]">
           ID 52130383
         </span>
       </header>
