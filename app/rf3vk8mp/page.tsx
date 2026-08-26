@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Bodoni_Moda } from "next/font/google";
-import { ApprovalPanel } from "./ApprovalPanel";
+import { ApprovalPanel, PassagemAereaSecao } from "./ApprovalPanel";
 
 // Página do roteiro personalizado — enviada individualmente para cada
 // cliente por uma URL não listada (chave alfanumérica de 8 dígitos, sem
@@ -316,60 +316,7 @@ export default function AprovacaoRoteiroPage() {
               </div>
             </div>
 
-            <div className="mt-6 flex items-center gap-3">
-              <img
-                src="/images/emirates-logo.png"
-                alt="Emirates"
-                className="h-24 w-auto rounded-md object-contain sm:h-28"
-              />
-              <div>
-                <p className="text-[11px] uppercase tracking-[0.2em] text-[#24211D]/65">
-                  Companhia Aérea
-                </p>
-                <p className="text-sm font-semibold text-[#24211D]">Emirates</p>
-              </div>
-            </div>
-
-            <div className="mt-5">
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                <div className="rounded-xl border border-[#DDD8CF] bg-[#FDFCF9] p-4">
-                  <p className="mb-2 text-[11px] font-bold uppercase tracking-[0.2em] text-[#24211D]/65">
-                    Ida · 03–04 Mai 2027
-                  </p>
-                  <div className="space-y-1.5 text-sm text-[#24211D]/90">
-                    <p>
-                      <span className="font-semibold text-[#24211D]">EK262</span>{" "}
-                      · GRU → DXB · 01:35 → 23:00
-                    </p>
-                    <p>
-                      <span className="font-semibold text-[#24211D]">EK318</span>{" "}
-                      · DXB → NRT · 23:40 → 17:35
-                    </p>
-                  </div>
-                  <p className="mt-2 text-xs text-[#24211D]/65">
-                    Chegada em Tokyo pelo Aeroporto de Narita (NRT), Terminal 2
-                  </p>
-                </div>
-                <div className="rounded-xl border border-[#DDD8CF] bg-[#FDFCF9] p-4">
-                  <p className="mb-2 text-[11px] font-bold uppercase tracking-[0.2em] text-[#24211D]/65">
-                    Volta · 12 Mai 2027
-                  </p>
-                  <div className="space-y-1.5 text-sm text-[#24211D]/90">
-                    <p>
-                      <span className="font-semibold text-[#24211D]">EK313</span>{" "}
-                      · HND → DXB · 00:05 → 06:25
-                    </p>
-                    <p>
-                      <span className="font-semibold text-[#24211D]">EK261</span>{" "}
-                      · DXB → GRU · 06:05 → 17:40
-                    </p>
-                  </div>
-                  <p className="mt-2 text-xs text-[#24211D]/65">
-                    Saída de Tokyo pelo Aeroporto de Haneda (HND), Terminal 3
-                  </p>
-                </div>
-              </div>
-            </div>
+            <PassagemAereaSecao />
 
             <div className="mt-8">
               <p className="mx-auto mb-1 block w-fit rounded-full border border-[#DDD8CF] px-5 py-2 text-center text-xs uppercase tracking-[0.3em] text-[#24211D]/85">

@@ -6233,12 +6233,10 @@ const PASSAGEM_BARRA_ESQUERDA = {
   dataHora: { left: 43.47, top: 74.35, width: 15.76, height: 10.28 },
 };
 
-const PASSAGEM_BARRA_DIREITA: PassagemCaixaPos = {
-  left: 67.24,
-  top: 69.86,
-  width: 21.63,
-  height: 11.23,
-};
+// Barra inferior direita do template (junto ao código de barras decorativo)
+// foi deixada em branco de propósito — não exibimos o número do bilhete no
+// painel do cliente, e não há outro dado do voo que caiba ali sem repetir
+// o que a barra da esquerda já mostra.
 
 function PassagemCampoBox({
   pos,
@@ -6428,79 +6426,85 @@ const PASSAGEM_DIRECOES: {
   },
 ];
 
-function PassagemBasicaBlock() {
+// Grade Ida/Volta em formato compacto — reproduz exatamente o card que já
+// existia em app/rf3vk8mp/page.tsx (seção "Dados do Cliente"), agora
+// movido para cá e alimentado pelos dados de PASSAGEM_IDA/PASSAGEM_VOLTA
+// (conferidos contra o bilhete real) em vez de texto fixo.
+function PassagemBasicaGrade() {
   return (
-    <div className="rounded-2xl border border-[#DDD8CF] bg-[#F8FAF9] p-6 sm:p-8">
-      <div className="mb-6 flex items-center gap-4">
-        <img
-          src="/images/emirates-logo-v2.png"
-          alt="Emirates"
-          className="h-14 w-14 shrink-0 rounded-md object-contain sm:h-16 sm:w-16"
-        />
-        <div>
-          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#24211D]/50">
-            Companhia Aérea
+    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+      {PASSAGEM_DIRECOES.map((direcao) => (
+        <div key={direcao.label} className="rounded-xl border border-[#DDD8CF] bg-[#FDFCF9] p-4">
+          <p className="mb-2 text-[11px] font-bold uppercase tracking-[0.2em] text-[#24211D]/65">
+            {direcao.label === "IDA" ? "Ida" : "Volta"} · {direcao.periodo}
           </p>
-          <p className="text-base font-semibold text-[#24211D]">Emirates</p>
-        </div>
-      </div>
-      <div className="grid gap-4 sm:grid-cols-2">
-        {PASSAGEM_DIRECOES.map((direcao) => (
-          <div
-            key={direcao.label}
-            className="rounded-xl border border-[#DDD8CF] bg-white p-4 sm:p-5"
-          >
-            <p className="mb-3 text-[10px] font-bold uppercase tracking-[0.15em] text-[#24211D]/55">
-              {direcao.label} · {direcao.periodo}
-            </p>
-            <div className="space-y-1.5">
-              {direcao.segmentos.map((seg) => (
-                <p key={seg.numeroSegmento} className="text-sm text-[#24211D]/85">
-                  <span className="font-bold text-[#24211D]">{seg.voo}</span>
-                  {" · "}
-                  {seg.origem.iata} → {seg.destino.iata}
-                  {" · "}
-                  {seg.partida.hora} → {seg.chegada.hora}
-                </p>
-              ))}
-            </div>
-            <p className="mt-3 text-xs text-[#24211D]/55">{direcao.notaFinal}</p>
+          <div className="space-y-1.5 text-sm text-[#24211D]/90">
+            {direcao.segmentos.map((seg) => (
+              <p key={seg.numeroSegmento}>
+                <span className="font-semibold text-[#24211D]">{seg.voo.replace(" ", "")}</span>
+                {" · "}
+                {seg.origem.iata} → {seg.destino.iata} · {seg.partida.hora} → {seg.chegada.hora}
+              </p>
+            ))}
           </div>
-        ))}
-      </div>
+          <p className="mt-2 text-xs text-[#24211D]/65">{direcao.notaFinal}</p>
+        </div>
+      ))}
     </div>
   );
 }
 
-function PassagemAereaBlock() {
-  const [versao, setVersao] = useState<"estilizada" | "basica">("estilizada");
+// Seção "Passagem Aérea" embutida na área "Dados do Cliente" da página
+// (app/rf3vk8mp/page.tsx) — substitui o card estático que já existia ali.
+// O cabeçalho com o logo da Emirates fica sempre visível; só a área de
+// detalhe do voo alterna entre a grade compacta (já existente, agora
+// "Versão Básica") e o ticket ilustrado sobre o template Emirates
+// ("Versão Estilizada"). Ambas usam os mesmos dados reais do bilhete.
+export function PassagemAereaSecao() {
+  const [versao, setVersao] = useState<"basica" | "estilizada">("basica");
   return (
     <div>
-      <div className="mb-8 flex justify-center gap-2">
-        {(["estilizada", "basica"] as const).map((v) => (
-          <button
-            key={v}
-            type="button"
-            onClick={() => setVersao(v)}
-            className={`rounded-full border px-5 py-2 text-xs font-bold uppercase tracking-[0.15em] transition ${
-              versao === v
-                ? "border-[#173B45] bg-[#173B45] text-white"
-                : "border-[#DDD8CF] bg-[#FDFCF9] text-[#24211D]/60 hover:border-[#173B45]/40"
-            }`}
-          >
-            {v === "estilizada" ? "Versão Estilizada" : "Versão Básica"}
-          </button>
-        ))}
+      <div className="mt-6 flex items-center gap-3">
+        <img
+          src="/images/emirates-logo.png"
+          alt="Emirates"
+          className="h-24 w-auto rounded-md object-contain sm:h-28"
+        />
+        <div>
+          <p className="text-[11px] uppercase tracking-[0.2em] text-[#24211D]/65">
+            Companhia Aérea
+          </p>
+          <p className="text-sm font-semibold text-[#24211D]">Emirates</p>
+        </div>
       </div>
 
-      {versao === "estilizada" ? (
-        <div className="space-y-14">
-          <PassagemEstilizadaBlock segmentos={PASSAGEM_IDA} label="IDA" />
-          <PassagemEstilizadaBlock segmentos={PASSAGEM_VOLTA} label="VOLTA" />
+      <div className="mt-5">
+        <div className="mb-4 flex gap-2">
+          {(["basica", "estilizada"] as const).map((v) => (
+            <button
+              key={v}
+              type="button"
+              onClick={() => setVersao(v)}
+              className={`rounded-full border px-4 py-1.5 text-[11px] font-bold uppercase tracking-[0.15em] transition ${
+                versao === v
+                  ? "border-[#173B45] bg-[#173B45] text-white"
+                  : "border-[#DDD8CF] bg-white text-[#24211D]/60 hover:border-[#173B45]/40"
+              }`}
+            >
+              {v === "estilizada" ? "Versão Estilizada" : "Versão Básica"}
+            </button>
+          ))}
         </div>
-      ) : (
-        <PassagemBasicaBlock />
-      )}
+
+        {versao === "basica" ? (
+          <PassagemBasicaGrade />
+        ) : (
+          <div className="space-y-10">
+            <PassagemEstilizadaBlock segmentos={PASSAGEM_IDA} label="IDA" />
+            <PassagemEstilizadaBlock segmentos={PASSAGEM_VOLTA} label="VOLTA" />
+          </div>
+        )}
+      </div>
     </div>
   );
 }
@@ -8577,7 +8581,6 @@ function IconMedicalEmergency({ className }: { className?: string }) {
 }
 
 const INFO_CARDS = [
-  { label: "Passagem Aérea", Icon: IconPlane, view: "passagem" as const },
   { label: "Aeroporto DXB", Icon: IconPlane, view: "dxb" as const },
   {
     label: "Aeroporto NRT (Narita)",
@@ -9585,7 +9588,6 @@ export function ApprovalPanel({
     | "hotel"
     | "narita"
     | "haneda"
-    | "passagem"
     | "trem"
     | "costumes"
     | "palavras"
@@ -9843,14 +9845,7 @@ export function ApprovalPanel({
         </div>
 
         <div ref={contentRef} className="scroll-mt-6 px-6 py-8 sm:px-10 sm:py-10">
-          {viewMode === "passagem" ? (
-            <>
-              <p className="mb-5 inline-block rounded-full border border-[#000000]/20 bg-[#F8FAF9] px-5 py-2 text-xs uppercase tracking-[0.3em] text-[#000000]">
-                Passagem Aérea
-              </p>
-              <PassagemAereaBlock />
-            </>
-          ) : viewMode === "dxb" ? (
+          {viewMode === "dxb" ? (
             <>
               <p className="mb-5 inline-block rounded-full border border-[#000000]/20 bg-[#F8FAF9] px-5 py-2 text-xs uppercase tracking-[0.3em] text-[#000000]">
                 Conexão em Dubai (DXB)
