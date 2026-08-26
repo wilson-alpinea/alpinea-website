@@ -508,13 +508,13 @@ const DAY_1: DayContent = {
   ],
   resumoDia: {
     passos: [
-      { titulo: "Café da Manhã", horario: "08:00", foto: "/images/icone-gastronomia.png" },
-      { titulo: "Saída do Hotel", horario: "08:45", foto: "/images/icone-hotel2.png" },
-      { titulo: "Templo Sensoji", horario: "09:45", foto: "/images/sensoji-kaminarimon.png" },
-      { titulo: "Almoço", horario: "12:30", foto: "/images/icone-gastronomia.png" },
-      { titulo: "Tokyo Sky Tree", horario: "14:35", foto: "/images/dia1-skytree-miniatura.png" },
-      { titulo: "Jantar", horario: "16:30", foto: "/images/icone-gastronomia.png" },
-      { titulo: "Retorno ao Hotel", horario: "19:00", foto: "/images/icone-hotel2.png" },
+      { titulo: "Café da Manhã", horario: "08:00", foto: "/images/icone-gastronomia.webp" },
+      { titulo: "Saída do Hotel", horario: "08:45", foto: "/images/icone-hotel2.webp" },
+      { titulo: "Templo Sensoji", horario: "09:45", foto: "/images/sensoji-kaminarimon.webp" },
+      { titulo: "Almoço", horario: "12:30", foto: "/images/icone-gastronomia.webp" },
+      { titulo: "Tokyo Sky Tree", horario: "14:35", foto: "/images/dia1-skytree-miniatura.webp" },
+      { titulo: "Jantar", horario: "16:30", foto: "/images/icone-gastronomia.webp" },
+      { titulo: "Retorno ao Hotel", horario: "19:00", foto: "/images/icone-hotel2.webp" },
     ],
   },
   gradeHorarios: {
@@ -590,56 +590,56 @@ const DAY_1: DayContent = {
       passos: [
         {
           titulo: "Kaminarimon",
-          foto: "/images/sensoji-kaminarimon.png",
+          foto: "/images/sensoji-kaminarimon.webp",
           horario: "09:20",
           descricao: "O icônico portão de entrada do Templo Senso-ji. Comece sua experiência em Asakusa.",
           destaque: "O enorme lanternão vermelho de 700 kg.",
         },
         {
           titulo: "Dragão sob a lanterna",
-          foto: "/images/kaminarimon-dragon.png",
+          foto: "/images/kaminarimon-dragon.webp",
           horario: "~09:25",
           descricao: "Observe o dragão esculpido na base da lanterna — símbolo de proteção e sabedoria.",
           destaque: "Detalhe pouco visto por quem passa rápido.",
         },
         {
           titulo: "Nakamise Street",
-          foto: "/images/sensoji-nakamise.png",
+          foto: "/images/sensoji-nakamise.webp",
           horario: "~09:30",
           descricao: "A tradicional rua de compras com mais de 90 lojas de souvenirs e guloseimas típicas.",
           destaque: "Experimente um ningyoyaki acabado de fazer.",
         },
         {
           titulo: "Hōzōmon",
-          foto: "/images/sensoji-hozomon.png",
+          foto: "/images/sensoji-hozomon.webp",
           horario: "~09:45",
           descricao: "O belíssimo portão interno com guardiões imponentes protegendo o templo.",
           destaque: "Um dos portões mais bonitos do Japão.",
         },
         {
           titulo: "Jōkoro",
-          foto: "/images/Jokoro.png",
+          foto: "/images/Jokoro.webp",
           horario: "~09:50",
           descricao: "Incensário de bronze onde os visitantes purificam corpo e mente com a fumaça sagrada.",
           destaque: "Passe a fumaça sobre você para boa sorte.",
         },
         {
           titulo: "Salão Principal",
-          foto: "/images/sensoji-kannondo.png",
+          foto: "/images/sensoji-kannondo.webp",
           horario: "~10:00",
           descricao: "O coração do Templo Senso-ji. Faça uma oração e aprecie a arquitetura centenária.",
           destaque: "A imagem de Kannon, deusa da compaixão, no altar principal.",
         },
         {
           titulo: "Omikuji",
-          foto: "/images/mikuji.png",
+          foto: "/images/mikuji.webp",
           horario: "~10:15",
           descricao: "Tire sua sorte! Os papeizinhos da fortuna podem trazer conselhos e boas energias.",
           destaque: "Se tirar má sorte, amarre o papel e deixe o azar para trás.",
         },
         {
           titulo: "Pagode de Cinco Andares",
-          foto: "/images/sensoji-pagode.png",
+          foto: "/images/sensoji-pagode.webp",
           horario: "~10:25",
           descricao: "A estrutura mais alta do complexo, símbolo de paz e harmonia.",
           destaque: "Ótimo ponto para fotos clássicas de Asakusa.",
@@ -652,14 +652,14 @@ const DAY_1: DayContent = {
         },
         {
           titulo: "Kappabashi (desvio opcional)",
-          foto: "/images/kappabashi.png",
+          foto: "/images/kappabashi.webp",
           horario: "~11:00",
           descricao: "A famosa \"Kitchen Town\", o paraíso dos utensílios de cozinha e artigos profissionais.",
           destaque: "Mais de 160 lojas — depois é preciso voltar em direção ao templo para seguir ao Rio Sumida, do lado oposto.",
         },
         {
           titulo: "Sumida Park",
-          foto: "/images/sumida-park.png",
+          foto: "/images/sumida-park.webp",
           horario: "~11:30",
           descricao: "≈15 min a pé partindo do templo, do lado leste — encerramento perfeito com vista para a Tokyo Skytree e o Rio Sumida.",
           destaque: "Ideal para um momento de descanso e fotos memoráveis.",
@@ -668,7 +668,7 @@ const DAY_1: DayContent = {
     },
     visaoAnotada: {
       titulo: "Templo Sensoji",
-      imagem: "/images/dia1-sensoji-visao-anotada-v2.png",
+      imagem: "/images/dia1-sensoji-visao-anotada-v2.webp",
       imagemAlt: "Vista aérea do complexo do Templo Sensoji com as partes principais destacadas",
       comentarios: [
         "A prioridade aqui é evitar o início das aglomerações no complexo — por ser um dos pontos turísticos mais visitados do Japão, próximo do horário do almoço começa a ficar muito cheio. Nossa recomendação é chegar antes da abertura das lojas da Nakamise e aproveitar com calma todos os pontos destacados abaixo. A partir das 09:00 (abertura das lojas) você começa a explorar as lojinhas, tanto de snacks quanto de souvenir. Após finalizar essa visita, você tem algumas opções.",
@@ -684,7 +684,7 @@ const DAY_1: DayContent = {
           nomeJapones: "雷門",
           descricao:
             "\"Portão do Trovão\" — entrada principal do templo, construído originalmente em 942. Marcado pela icônica lanterna vermelha gigante (chōchin) pendurada no centro.",
-          foto: "/images/sensoji-kaminarimon.png",
+          foto: "/images/sensoji-kaminarimon.webp",
           ordem: 1,
         },
         {
@@ -692,9 +692,9 @@ const DAY_1: DayContent = {
           nomeJapones: "雷門提灯の龍彫刻",
           descricao:
             "A maioria passa direto sem notar: embaixo da lanterna gigante do Kaminarimon há um dragão entalhado em madeira, considerado protetor do templo na tradição budista. A lanterna atual (3,9 m de altura, ~700 kg) foi doada em 1960 por Konosuke Matsushita, fundador da Panasonic, em agradecimento por ter se curado de uma doença após rezar no Sensoji — o nome \"Matsushita Electric\" ainda aparece gravado na base.",
-          foto: "/images/kaminarimon-dragon.png",
+          foto: "/images/kaminarimon-dragon.webp",
           fotoExtra: {
-            src: "/images/kaminari-dragon-lantern.png",
+            src: "/images/kaminari-dragon-lantern.webp",
             alt: "Lanterna do Kaminarimon vista de baixo, com a talha do dragão",
           },
           ordem: 2,
@@ -705,7 +705,7 @@ const DAY_1: DayContent = {
           nomeJapones: "仲見世通り",
           descricao:
             "Rua comercial de ~250 m entre o Kaminarimon e o Hōzōmon, com quase 90 lojinhas tradicionais de souvenires e snacks — uma das ruas de compras mais antigas do Japão, ativa desde o período Edo.",
-          foto: "/images/sensoji-nakamise.png",
+          foto: "/images/sensoji-nakamise.webp",
           ordem: 3,
         },
         {
@@ -714,7 +714,7 @@ const DAY_1: DayContent = {
           nomeJapones: "宝蔵門",
           descricao:
             "\"Portão do Tesouro\" — segundo portão do complexo, guarda relíquias do templo no piso superior e é flanqueado por duas estátuas guardiãs (Niō).",
-          foto: "/images/sensoji-hozomon.png",
+          foto: "/images/sensoji-hozomon.webp",
           ordem: 4,
         },
         {
@@ -722,7 +722,7 @@ const DAY_1: DayContent = {
           nomeJapones: "常香炉",
           descricao:
             "Grande incensário de bronze em frente ao Salão Principal — acenda um incenso, deposite no jokoro e leve a fumaça sobre o corpo, tradicionalmente pra atrair saúde e sabedoria (muita gente direciona pra cabeça).",
-          foto: "/images/Jokoro.png",
+          foto: "/images/Jokoro.webp",
           ordem: 5,
         },
         {
@@ -731,7 +731,7 @@ const DAY_1: DayContent = {
           nomeJapones: "本堂 / Kannondō",
           descricao:
             "Santuário principal do templo, onde fica a estátua de Kannon (Deusa da Misericórdia) que deu origem ao Sensoji — fundado em 628, o templo mais antigo de Tóquio.",
-          foto: "/images/sensoji-kannondo.png",
+          foto: "/images/sensoji-kannondo.webp",
           ordem: 6,
         },
         {
@@ -739,7 +739,7 @@ const DAY_1: DayContent = {
           nomeJapones: "おみくじ",
           descricao:
             "Papelzinho de sorte por ¥100: deposite a moeda, chacoalhe a caixa até sair um bastão numerado e pegue a gaveta correspondente. O Sensoji é famoso por sortear azar (kyō) com mais frequência que outros templos — se calhar de tirar, é tradição amarrar o papel num varal ali perto pra deixar a má sorte no templo.",
-          foto: "/images/mikuji.png",
+          foto: "/images/mikuji.webp",
           ordem: 7,
         },
         {
@@ -748,7 +748,7 @@ const DAY_1: DayContent = {
           nomeJapones: "五重塔",
           descricao:
             "Reconstrução do pagode original de 942 — cada um dos cinco andares representa um elemento budista (terra, água, fogo, vento, vazio). Guarda relíquias de Buda. Fica a caminho da saída oeste, logo depois do Omikuji — vale parar pra ver de perto.",
-          foto: "/images/sensoji-pagode.png",
+          foto: "/images/sensoji-pagode.webp",
           ordem: 8,
         },
       ],
@@ -764,9 +764,9 @@ const DAY_1: DayContent = {
         nomeJapones: "京橋駅",
         distancia: "~1 min a pé do hotel",
         saida: "Saída 6",
-        foto: "/images/Kyobashi_Station_entrance_7_20170813.jpg",
+        foto: "/images/Kyobashi_Station_entrance_7_20170813.webp",
       },
-      linha: { codigo: "G10", nome: "Tokyo Metro Ginza Line", cor: "#F39700", logo: "/images/tokyometro-mark.png" },
+      linha: { codigo: "G10", nome: "Tokyo Metro Ginza Line", cor: "#F39700", logo: "/images/tokyometro-mark.webp" },
       estacoesIntermediarias: [
         { nome: "Nihombashi", nomeJapones: "日本橋", numero: "G11" },
         { nome: "Mitsukoshimae", nomeJapones: "三越前", numero: "G12" },
@@ -783,7 +783,7 @@ const DAY_1: DayContent = {
         distancia: "~4 min a pé (300 m) até o Kaminarimon",
         saida: "Saída 1",
         foto: "/images/asakusa-station-entrance.webp",
-        mapa: "/images/mapa-asakusa-station.png",
+        mapa: "/images/mapa-asakusa-station.webp",
         mapaAlt: "Mapa da Estação Asakusa",
       },
       opcoes: [
@@ -810,13 +810,13 @@ const DAY_1: DayContent = {
         },
       ],
       mapaChegada: {
-        imagem: "/images/rota-asakusa-sensoji.png",
+        imagem: "/images/rota-asakusa-sensoji.webp",
         imagemAlt: "Rota a pé da Saída 1 da Estação Asakusa até o Kaminarimon (Templo Sensoji)",
         nota: "Saída 1 da Estação Asakusa até o Kaminarimon — ≈4 min a pé (300 m).",
       },
     },
     atracaoPrincipal: "Templo Sensoji Asakusa",
-    atracaoPrincipalImagem: "/images/dia1-sensoji.png",
+    atracaoPrincipalImagem: "/images/dia1-sensoji.webp",
     detalhesPraticos: [
       { label: "Entrada", valor: "Gratuita" },
       { label: "Salão principal", valor: "6h–17h" },
@@ -829,7 +829,7 @@ const DAY_1: DayContent = {
       },
     ],
     mapaVisaoGeral: {
-      imagem: "/images/dia1-manha-visao-geral-mapa.png",
+      imagem: "/images/dia1-manha-visao-geral-mapa.webp",
       imagemAlt:
         "Visão geral do trajeto a pé conectando Sensoji, Nakamise Street, Kappabashi Kitchen Town e Sumida Park",
       nota: "≈36 min · 2,5 km — trajeto completo a pé conectando os pontos de interesse do período, sem pressa de fazer tudo na ordem: ajuste conforme o ritmo do grupo.",
@@ -842,7 +842,7 @@ const DAY_1: DayContent = {
         grupo: "Se houver tempo · nos arredores",
         prioridade: "opcional",
         ordem: 1,
-        imagem: "/images/kappabashi.png",
+        imagem: "/images/kappabashi.webp",
         imagemAlt: "Loja de utensílios de cozinha em Kappabashi Kitchen Town",
       },
       {
@@ -852,7 +852,7 @@ const DAY_1: DayContent = {
         grupo: "Se houver tempo · nos arredores",
         prioridade: "opcional",
         ordem: 2,
-        imagem: "/images/sumida-park.png",
+        imagem: "/images/sumida-park.webp",
         imagemAlt: "Margem do Rio Sumida no Sumida Park, com cerejeiras floridas",
       },
       {
@@ -863,7 +863,7 @@ const DAY_1: DayContent = {
         grupo: "Se houver tempo · nos arredores",
         prioridade: "opcional",
         ordem: 3,
-        imagem: "/images/masamoto-sohonten.png",
+        imagem: "/images/masamoto-sohonten.webp",
         imagemAlt: "Vitrine de facas profissionais na Masamoto Sohonten",
       },
     ],
@@ -879,7 +879,7 @@ const DAY_1: DayContent = {
             "Pão doce crocante por fora, macio por dentro — uma das barracas mais tradicionais da Nakamise.",
           localizacao: "Kagetsudo — Nakamise-dori, perto do Kaminarimon",
           preco: "200",
-          foto: "/images/nakamise-melon-pan-kagetsudo-2.jpg",
+          foto: "/images/nakamise-melon-pan-kagetsudo-2.webp",
         },
         {
           nome: "Ningyo-yaki morno (Kimuraya Honten)",
@@ -887,14 +887,14 @@ const DAY_1: DayContent = {
             "Bolinho recheado de doce de feijão vermelho, moldado em formatos icônicos e vendido morno, recém-feito — para comer na hora.",
           localizacao: "Kimuraya Honten — Nakamise-dori",
           preco: "~500 (pacote pequeno)",
-          foto: "/images/nakamise-ningyo-yaki-1.jpg",
+          foto: "/images/nakamise-ningyo-yaki-1.webp",
         },
         {
           nome: "Ningyo-yaki para presente (Kimuraya Honten)",
           descricao: "Pacote de 10 unidades embalado — ótimo para levar de lembrança.",
           localizacao: "Kimuraya Honten — Nakamise-dori",
           preco: "~600 (pacote de 10)",
-          foto: "/images/nakamise-ningyo-yaki-2b.jpg",
+          foto: "/images/nakamise-ningyo-yaki-2b.webp",
         },
         {
           nome: "Kibi Dango (Asakusa Kibi Dango Azuma)",
@@ -902,7 +902,7 @@ const DAY_1: DayContent = {
             "Mochi macio, tradição de Asakusa desde o período Edo.",
           localizacao: "Asakusa Kibi Dango Azuma — Nakamise-dori",
           preco: "~350 (5 espetos)",
-          foto: "/images/nakamise-kibi-dango.jpg",
+          foto: "/images/nakamise-kibi-dango.webp",
         },
         {
           nome: "Senbei (Iriyama Senbei Seizojo)",
@@ -910,7 +910,7 @@ const DAY_1: DayContent = {
             "Cracker de arroz grelhado e temperado na hora, tradição centenária de Asakusa — dá pra ver o processo sendo feito na loja.",
           localizacao: "Iriyama Senbei Seizojo — Nakamise-dori",
           preco: "~150–300 (unidade)",
-          foto: "/images/nakamise-senbei-iriyama.jpg",
+          foto: "/images/nakamise-senbei-iriyama.webp",
         },
         {
           nome: "Senbei Gigante (Tako no Nakigoe)",
@@ -918,7 +918,7 @@ const DAY_1: DayContent = {
             "Cracker de arroz grelhado na hora com polvo inteiro prensado — do tamanho do rosto, vira atração à parte.",
           localizacao: "Tako no Nakigoe Asakusa — Nakamise-dori",
           preco: "~500–700",
-          foto: "/images/nakamise-senbei-gigante.jpg",
+          foto: "/images/nakamise-senbei-gigante.webp",
         },
         {
           nome: "Asakusa Menchi",
@@ -926,7 +926,7 @@ const DAY_1: DayContent = {
             "Croquete de carne empanado, crocante por fora e suculento por dentro — uma das filas mais disputadas da rua.",
           localizacao: "Asakusa Menchi — Nakamise-dori",
           preco: "~400",
-          foto: "/images/nakamise-asakusa-menchi.jpg",
+          foto: "/images/nakamise-asakusa-menchi.webp",
         },
       ],
       curadoriaLabel: "Opções selecionadas — Almoço (~12h30)",
@@ -937,7 +937,7 @@ const DAY_1: DayContent = {
           categoria: "Chuka Soba (ramen chinês tradicional)",
           descricao:
             "Ramen chinês tradicional num balcão simples e rápido, a 2 min a pé da estação — clássico local, sem frescura, ideal pra comer rápido logo depois do Sensoji.",
-          foto: "/images/nakamise-tanaka-soba.jpg",
+          foto: "/images/nakamise-tanaka-soba.webp",
           notaTabelog: "3.51",
           numAvaliacoes: "439 avaliações",
           faixaPreco: "¥1.000–1.999 por pessoa",
@@ -955,7 +955,7 @@ const DAY_1: DayContent = {
           categoria: "Sushi (rede nacional, do leilão recorde de atum)",
           descricao:
             "Rede famosa pelo lance recorde no leilão de ano-novo do mercado de peixes — sushi tradicional (balcão ou mesa, não é esteira), com preço de almoço surpreendentemente acessível.",
-          foto: "/images/nakamise-sushi-zanmai.jpg",
+          foto: "/images/nakamise-sushi-zanmai.webp",
           notaTabelog: "3.08",
           numAvaliacoes: "179 avaliações",
           faixaPreco: "¥1.000–1.999 no almoço (jantar sai mais caro — ¥3.000–3.999)",
@@ -973,7 +973,7 @@ const DAY_1: DayContent = {
           categoria: "Tempura",
           descricao:
             "Tempura à mesa num salão mais tranquilo, com cardápio multilíngue — opção de refeição mais completa e sentada entre as três, ideal pra quem prefere não comer no balcão.",
-          foto: "/images/nakamise-asakusa-amai-tempura.jpg",
+          foto: "/images/nakamise-asakusa-amai-tempura.webp",
           notaTabelog: "3.44",
           numAvaliacoes: "211 avaliações",
           faixaPreco: "¥1.000–1.999 no almoço (jantar ¥4.000–4.999)",
@@ -1009,21 +1009,21 @@ const DAY_1: DayContent = {
     percursoEssencial: {
       duracao: "1h30 (Deck) · 2h (com Galleria)",
       passos: [
-        { titulo: "Tembo Deck · 350 m", foto: "/images/skytree-tembo-deck-miniatura.png" },
-        { titulo: "Tembo Galleria · 450 m (opcional)", foto: "/images/skytree-tembo-deck-aerea.jpg" },
+        { titulo: "Tembo Deck · 350 m", foto: "/images/skytree-tembo-deck-miniatura.webp" },
+        { titulo: "Tembo Galleria · 450 m (opcional)", foto: "/images/skytree-tembo-deck-aerea.webp" },
         {
           titulo: "Tokyo Solamachi",
-          foto: "/images/solamachi-pokemon-center.jpg",
+          foto: "/images/solamachi-pokemon-center.webp",
           fotoPosicao: "50% 15%",
         },
       ],
     },
     visaoAnotada: {
       titulo: "Tokyo Sky Tree",
-      imagem: "/images/raiox-skytree2.png",
+      imagem: "/images/raiox-skytree2.webp",
       imagemAlt: "Infográfico da Tokyo Sky Tree com altura e observatórios (Tembo Deck e Tembo Galleria)",
       nota: "634 m de altura total, concluída em 2012 — a torre de transmissão e observação mais alta do Japão.",
-      fundo: "/images/raiox-skytree-bg.jpg",
+      fundo: "/images/raiox-skytree-bg.webp",
       comentarios: [
         "Considerando que você chegue num horário apropriado para subir antes do pôr do sol, a prioridade é se dirigir à bilheteria e comprar o ingresso. Existem 2 opções: uma que sobe até o observatório superior e outra até o observatório inferior — a diferença é mínima entre os dois. Uma diferença importante é que o espaço é muito mais reduzido no superior (recomendo evitar se for claustrofóbico). Alguns viajantes gostam de fazer uma refeição no Musashi ou comer algo no café e sentar para fazer esse lanche — fica a seu critério; em termos de qualidade de comida, na base da torre (Solamachi) a comida é melhor.",
         "O shopping Solamachi é enorme — deixei em destaque as lojas referentes a anime/mangá, mas tem dezenas de lojas de outros temas que podem ser interessantes de explorar.",
@@ -1033,12 +1033,12 @@ const DAY_1: DayContent = {
       titulo: "Skytree em Detalhes",
       imagens: [
         {
-          src: "/images/skytree-tembo-deck-janela.jpg",
+          src: "/images/skytree-tembo-deck-janela.webp",
           alt: "Vista da cidade através das janelas do Tembo Deck da Tokyo Sky Tree",
           legenda: "Vista do Tembo Deck",
         },
         {
-          src: "/images/skytree-tembo-deck-aerea.jpg",
+          src: "/images/skytree-tembo-deck-aerea.webp",
           alt: "Vista aérea do Tembo Galleria da Tokyo Sky Tree, mostrando a estrutura do observatório superior",
           legenda: "Tembo Galleria, visto de fora",
         },
@@ -1046,12 +1046,12 @@ const DAY_1: DayContent = {
       mapas: [
         {
           titulo: "Mapa — Tembo Deck (pisos 340–350)",
-          imagem: "/images/skytree-tembo-deck-mapa.png",
+          imagem: "/images/skytree-tembo-deck-mapa.webp",
           imagemAlt: "Mapa oficial do Tembo Deck (350 m) da Tokyo Sky Tree, pisos 340 a 350",
         },
         {
           titulo: "Mapa — Tembo Galleria (pisos 445–450)",
-          imagem: "/images/skytree-tembo-galleria-mapa.png",
+          imagem: "/images/skytree-tembo-galleria-mapa.webp",
           imagemAlt: "Mapa oficial do Tembo Galleria (450 m) da Tokyo Sky Tree, pisos 445 a 450",
         },
       ],
@@ -1089,8 +1089,8 @@ const DAY_1: DayContent = {
         nome: "Oshiage (Tokyo Skytree Station)",
         nomeJapones: "押上（スカイツリー前）駅",
         saida: "Saída B3, ligação direta e subterrânea com a Tokyo Solamachi",
-        foto: "/images/oshiage-station-entrance.jpeg",
-        mapa: "/images/mapa-oshiage-station.png",
+        foto: "/images/oshiage-station-entrance.webp",
+        mapa: "/images/mapa-oshiage-station.webp",
         mapaAlt: "Mapa da Estação Oshiage",
       },
       opcoes: [
@@ -1118,14 +1118,14 @@ const DAY_1: DayContent = {
       ],
     },
     atracaoPrincipal: "Tokyo Sky Tree",
-    atracaoPrincipalImagem: "/images/dia1-skytree.png",
+    atracaoPrincipalImagem: "/images/dia1-skytree.webp",
     detalhesPraticos: [
       {
         label: "Melhor horário",
         horarioDestaque: "16:30–18:30",
         valor:
           "Chegada ao complexo Tokyo Solamachi às 17:00, com subida à torre por volta das 18:15 — tempo certo para acompanhar o pôr do sol do topo.",
-        imagem: "/images/skytree-por-do-sol-fuji.jpg",
+        imagem: "/images/skytree-por-do-sol-fuji.webp",
         imagemAlt: "Tokyo Sky Tree ao pôr do sol, com o Monte Fuji visível ao fundo",
       },
       { label: "Tempo estimado", valor: "1–2 horas" },
@@ -1159,7 +1159,7 @@ const DAY_1: DayContent = {
           "Dentro do próprio Tembo Deck, piso 345 — menu degustação sazonal que mistura técnica francesa com ingredientes japoneses inspirados na culinária de Edo. Almoço ~¥6.200–8.500, jantar ~¥15.000–19.200 por pessoa (fora o ingresso da torre). Reserva recomendada.",
         prioridade: "opcional",
         ordem: 1,
-        imagem: "/images/skytree-sky-restaurant-musashi.jpg",
+        imagem: "/images/skytree-sky-restaurant-musashi.webp",
         imagemAlt: "Interior do Sky Restaurant 634 (Musashi), no piso 345 da Tokyo Sky Tree",
       },
       {
@@ -1169,7 +1169,7 @@ const DAY_1: DayContent = {
           "Cafeteria informal do Tembo Deck (piso 340, com mesas — a versão do piso 350 é só balcão) — bebidas autorais, lanches leves e sobremesas temáticas com vista para a cidade.",
         prioridade: "opcional",
         ordem: 2,
-        imagem: "/images/skytree-cafe.jpg",
+        imagem: "/images/skytree-cafe.webp",
         imagemAlt: "Balcão do Skytree Cafe, no piso 340 da Tokyo Sky Tree",
       },
     ],
@@ -1181,7 +1181,7 @@ const DAY_1: DayContent = {
           "O complexo aos pés da torre, do subsolo ao 31º andar — lojas, restaurantes, o Aquário de Sumida e o Planetário Konica Minolta TENKU. Elevadores de acesso ao aquário e ao jardim na cobertura ficam nas entradas do 3º andar. Outras lojas populares no complexo: Chiikawa Land, Kirby Cafe Tokyo e Ultraman World M78.",
         visaoAnotada: {
           titulo: "Mapa dos andares — Tokyo Solamachi",
-          imagem: "/images/solamachi-mapa-andares.png",
+          imagem: "/images/solamachi-mapa-andares.webp",
           imagemAlt: "Mapa oficial dos andares do complexo Tokyo Solamachi, do B3 ao 31º andar",
           nota: "As áreas e lojas podem estar sujeitas a alterações — conferir no local.",
           simples: true,
@@ -1195,7 +1195,7 @@ const DAY_1: DayContent = {
               "Loja oficial da Shueisha com produtos das séries da Weekly Shonen Jump — One Piece, Naruto, Dragon Ball e outras.",
             prioridade: "opcional",
             ordem: 1,
-            imagem: "/images/solamachi-jump-shop.jpg",
+            imagem: "/images/solamachi-jump-shop.webp",
             imagemAlt: "Vitrine da Jump Shop no Tokyo Solamachi, 4º andar",
           },
           {
@@ -1205,7 +1205,7 @@ const DAY_1: DayContent = {
               "Uma das maiores Pokémon Centers do Japão — pelúcias, action figures e itens exclusivos da região, no East Yard.",
             prioridade: "opcional",
             ordem: 2,
-            imagem: "/images/solamachi-pokemon-center.jpg",
+            imagem: "/images/solamachi-pokemon-center.webp",
             imagemAlt: "Interior do Pokémon Center Skytree Town, 4º andar",
           },
           {
@@ -1215,7 +1215,7 @@ const DAY_1: DayContent = {
               "Loja oficial do Studio Ghibli — produtos de Totoro, A Viagem de Chihiro e outros clássicos do estúdio.",
             prioridade: "opcional",
             ordem: 3,
-            imagem: "/images/solamachi-donguri-republic.jpg",
+            imagem: "/images/solamachi-donguri-republic.webp",
             imagemAlt: "Vitrine da Donguri Republic (Studio Ghibli) no Tokyo Solamachi, 2º andar",
           },
           {
@@ -1225,7 +1225,7 @@ const DAY_1: DayContent = {
               "Loja oficial da linha Gundam — roupas, acessórios e modelos (Gunpla) inspirados na franquia.",
             prioridade: "opcional",
             ordem: 4,
-            imagem: "/images/solamachi-strict-g.jpg",
+            imagem: "/images/solamachi-strict-g.webp",
             imagemAlt: "Vitrine da STRICT-G (Gundam) no Tokyo Solamachi, 4º andar",
           },
         ],
@@ -1240,7 +1240,7 @@ const DAY_1: DayContent = {
               categoria: "Hitsumabushi (enguia grelhada sobre arroz, estilo Nagoya)",
               descricao:
                 "Rede especializada em hitsumabushi ao estilo Nagoya — enguia grelhada servida sobre arroz, tradicionalmente comida em 3 etapas diferentes (pura, com temperos, e com chá/caldo). Direto no 6º andar do Solamachi.",
-              foto: "/images/Hitsumabushi.png",
+              foto: "/images/Hitsumabushi.webp",
               economico: true,
               notaTabelog: "3.47",
               numAvaliacoes: "407 avaliações",
@@ -1258,7 +1258,7 @@ const DAY_1: DayContent = {
               categoria: "Kaiten-zushi (sushi de esteira)",
               descricao:
                 "Sushi de esteira rápido e informal, direto no 6º andar do Solamachi — boa opção para quem já andou o dia inteiro e quer algo prático sem sair do complexo.",
-              foto: "/images/Toriton.png",
+              foto: "/images/Toriton.webp",
               economico: true,
               notaTabelog: "3.50",
               numAvaliacoes: "1.154 avaliações",
@@ -1275,7 +1275,7 @@ const DAY_1: DayContent = {
           ],
           mapa: {
             titulo: "Mapa — Solamachi Dining",
-            imagem: "/images/solamachi-dining-map.png",
+            imagem: "/images/solamachi-dining-map.webp",
             imagemAlt: "Mapa dos restaurantes do Tokyo Solamachi",
           },
         },
@@ -1308,12 +1308,12 @@ const DAY_2: DayContent = {
   ],
   resumoDia: {
     passos: [
-      { titulo: "Café da Manhã", horario: "08:30", foto: "/images/icone-gastronomia.png" },
-      { titulo: "Saída do Hotel", horario: "09:15", foto: "/images/icone-hotel2.png" },
-      { titulo: "Tokyo Character Street e Dragonball Store", horario: "09:30", foto: "/images/dia2-tokyostation.png" },
-      { titulo: "Almoço", horario: "12:00", foto: "/images/icone-gastronomia.png" },
-      { titulo: "Imperial Palace East Gardens", horario: "13:15", foto: "/images/imperial-palace-east-gardens.png" },
-      { titulo: "Deslocamento ao Aeroporto", horario: "16:30", foto: "/images/placeholder-em-producao.png" },
+      { titulo: "Café da Manhã", horario: "08:30", foto: "/images/icone-gastronomia.webp" },
+      { titulo: "Saída do Hotel", horario: "09:15", foto: "/images/icone-hotel2.webp" },
+      { titulo: "Tokyo Character Street e Dragonball Store", horario: "09:30", foto: "/images/dia2-tokyostation.webp" },
+      { titulo: "Almoço", horario: "12:00", foto: "/images/icone-gastronomia.webp" },
+      { titulo: "Imperial Palace East Gardens", horario: "13:15", foto: "/images/imperial-palace-east-gardens.webp" },
+      { titulo: "Deslocamento ao Aeroporto", horario: "16:30", foto: "/images/placeholder-em-producao.webp" },
     ],
   },
   gradeHorarios: {
@@ -1378,49 +1378,49 @@ const DAY_2: DayContent = {
       passos: [
         {
           titulo: "Dragonball Store",
-          foto: "/images/marunouchi-dragonball-store.png",
+          foto: "/images/marunouchi-dragonball-store.webp",
           horario: "09:30",
           descricao: "Dentro do complexo da estação (Tokyo Station First Avenue), na Tokyo Character Street.",
         },
         {
           titulo: "Jump Shop",
-          foto: "/images/marunouchi-jump-shop.png",
+          foto: "/images/marunouchi-jump-shop.webp",
           horario: "~09:50",
           descricao: "Loja oficial da Shueisha, na mesma Tokyo Character Street.",
         },
         {
           titulo: "Pokémon Store",
-          foto: "/images/marunouchi-pokemon-store.png",
+          foto: "/images/marunouchi-pokemon-store.webp",
           horario: "~10:05",
           descricao: "Loja oficial de Pokémon.",
         },
         {
           titulo: "Kirby Café",
-          foto: "/images/marunouchi-kirby-cafe.png",
+          foto: "/images/marunouchi-kirby-cafe.webp",
           horario: "~10:20",
           descricao: "Café temático de Kirby.",
         },
         {
           titulo: "Ghibli Shop",
-          foto: "/images/marunouchi-ghibli-shop.png",
+          foto: "/images/marunouchi-ghibli-shop.webp",
           horario: "~10:35",
           descricao: "Loja oficial do Studio Ghibli.",
         },
         {
           titulo: "Tomica Shop",
-          foto: "/images/marunouchi-tomica-shop.png",
+          foto: "/images/marunouchi-tomica-shop.webp",
           horario: "~10:50",
           descricao: "Loja de miniaturas Tomica.",
         },
         {
           titulo: "Rilakkuma Store",
-          foto: "/images/marunouchi-rilakkuma-store.png",
+          foto: "/images/marunouchi-rilakkuma-store.webp",
           horario: "~11:05",
           descricao: "Loja oficial de Rilakkuma.",
         },
         {
           titulo: "Marunouchi Naka-dori",
-          foto: "/images/marunouchi-naka-dori.png",
+          foto: "/images/marunouchi-naka-dori.webp",
           horario: "11:30",
           descricao: "Rua arborizada com cafés e restaurantes que alimentam os escritórios financeiros da região.",
         },
@@ -1429,7 +1429,7 @@ const DAY_2: DayContent = {
     visaoAnotadaNoTopo: true,
     visaoAnotada: {
       titulo: "Marunouchi, Tokyo Station & Palácio Imperial",
-      imagem: "/images/dia2-tokyostation.png",
+      imagem: "/images/dia2-tokyostation.webp",
       imagemAlt: "Tokyo Station, onde fica a Tokyo Character Street",
       comentarios: [
         "Chegamos ao último dia da viagem.",
@@ -1462,13 +1462,13 @@ const DAY_2: DayContent = {
         "Faça suas últimas compras, conheça um pouco de Marunouchi, dê uma última caminhada por Tóquio e encerre a viagem com calma. Depois disso, é buscar as malas e seguir para o aeroporto.",
       ],
       pontos: [
-        { titulo: "Dragonball Store", descricao: "Loja oficial de Dragon Ball.", foto: "/images/marunouchi-dragonball-store.png", ordem: 1 },
-        { titulo: "Jump Shop", descricao: "Loja oficial da Shueisha.", foto: "/images/marunouchi-jump-shop.png", ordem: 2 },
-        { titulo: "Pokémon Store", descricao: "Loja oficial de Pokémon.", foto: "/images/marunouchi-pokemon-store.png", ordem: 3 },
-        { titulo: "Kirby Café", descricao: "Café temático de Kirby.", foto: "/images/marunouchi-kirby-cafe.png", ordem: 4 },
-        { titulo: "Ghibli Shop", descricao: "Loja oficial do Studio Ghibli.", foto: "/images/marunouchi-ghibli-shop.png", ordem: 5 },
-        { titulo: "Tomica Shop", descricao: "Loja de miniaturas Tomica.", foto: "/images/marunouchi-tomica-shop.png", fotoPosicao: "center 15%", ordem: 6 },
-        { titulo: "Rilakkuma Store", descricao: "Loja oficial de Rilakkuma.", foto: "/images/marunouchi-rilakkuma-store.png", fotoPosicao: "center 20%", ordem: 7 },
+        { titulo: "Dragonball Store", descricao: "Loja oficial de Dragon Ball.", foto: "/images/marunouchi-dragonball-store.webp", ordem: 1 },
+        { titulo: "Jump Shop", descricao: "Loja oficial da Shueisha.", foto: "/images/marunouchi-jump-shop.webp", ordem: 2 },
+        { titulo: "Pokémon Store", descricao: "Loja oficial de Pokémon.", foto: "/images/marunouchi-pokemon-store.webp", ordem: 3 },
+        { titulo: "Kirby Café", descricao: "Café temático de Kirby.", foto: "/images/marunouchi-kirby-cafe.webp", ordem: 4 },
+        { titulo: "Ghibli Shop", descricao: "Loja oficial do Studio Ghibli.", foto: "/images/marunouchi-ghibli-shop.webp", ordem: 5 },
+        { titulo: "Tomica Shop", descricao: "Loja de miniaturas Tomica.", foto: "/images/marunouchi-tomica-shop.webp", fotoPosicao: "center 15%", ordem: 6 },
+        { titulo: "Rilakkuma Store", descricao: "Loja oficial de Rilakkuma.", foto: "/images/marunouchi-rilakkuma-store.webp", fotoPosicao: "center 20%", ordem: 7 },
       ],
     },
     regiao: {
@@ -1508,7 +1508,7 @@ const DAY_2: DayContent = {
         "O remm Tokyo Kyobashi fica a cerca de 8 a 10 minutos a pé da Tokyo Station (saída Yaesu) — não é necessário pegar metrô para esse trecho.",
     },
     atracaoPrincipal: "Tokyo Station",
-    atracaoPrincipalImagem: "/images/dia2-tokyostation.png",
+    atracaoPrincipalImagem: "/images/dia2-tokyostation.webp",
     detalhesPraticos: [
       { label: "Tokyo Character Street", valor: "10h–20h30" },
       { label: "Localização", valor: "B1, First Avenue (Tokyo Station)" },
@@ -1521,7 +1521,7 @@ const DAY_2: DayContent = {
       },
     ],
     mapaVisaoGeral: {
-      imagem: "/images/visaogeral-tokyostation.png",
+      imagem: "/images/visaogeral-tokyostation.webp",
       imagemAlt: "Mapa de Tokyo Station e Marunouchi com Nijubashi Bridge e o Jardim do Palácio Imperial nas proximidades",
       nota: "Localização de Tokyo Station e Marunouchi em relação à entrada dos Jardins do Palácio Imperial.",
     },
@@ -1567,7 +1567,7 @@ const DAY_2: DayContent = {
           categoria: "Ramen (caldo de niboshi)",
           descricao:
             "Ramen de caldo de niboshi (sardinha-seca), casa premiada — a 5 min a pé da Saída Norte de Marunouchi da Tokyo Station.",
-          foto: "/images/niboshi-sugidama.png",
+          foto: "/images/niboshi-sugidama.webp",
           economico: true,
           notaTabelog: "3.64",
           numAvaliacoes: "634 avaliações",
@@ -1586,7 +1586,7 @@ const DAY_2: DayContent = {
           categoria: "Unagi (enguia grelhada na brasa)",
           descricao:
             "Enguia grelhada na técnica \"jiyaki\" de alta temperatura, filial de uma casa premiada de Nagoya — conexão subterrânea direta com a Tokyo Station.",
-          foto: "/images/sumiyaki-unafuji.png",
+          foto: "/images/sumiyaki-unafuji.webp",
           notaTabelog: "3.67",
           numAvaliacoes: "1.363 avaliações",
           faixaPreco: "¥6.000–7.999 no almoço (jantar sai mais caro — vá no horário de almoço)",
@@ -1604,7 +1604,7 @@ const DAY_2: DayContent = {
           categoria: "Soba + Tempura",
           descricao:
             "Combinação clássica de soba com tempura na hora, cardápio multilíngue (inglês) — opção rápida e leve antes dos Jardins do Palácio Imperial.",
-          foto: "/images/soba-tempura-ishiraku.png",
+          foto: "/images/soba-tempura-ishiraku.webp",
           economico: true,
           notaTabelog: "3.40",
           numAvaliacoes: "154 avaliações",
@@ -1619,7 +1619,7 @@ const DAY_2: DayContent = {
       ],
       mapa: {
         titulo: "Mapa — Refeições em Marunouchi",
-        imagem: "/images/placeholder-em-producao.png",
+        imagem: "/images/placeholder-em-producao.webp",
         imagemAlt: "Mapa de restaurantes em Marunouchi — em produção",
       },
     },
@@ -1641,31 +1641,31 @@ const DAY_2: DayContent = {
       passos: [
         {
           titulo: "Otemon Gate",
-          foto: "/images/imperial-palace-otemon-gate.jpg",
+          foto: "/images/imperial-palace-otemon-gate.webp",
           horario: "13:15",
           descricao: "Antigo portão principal do Castelo de Edo — hoje a entrada principal dos jardins.",
         },
         {
           titulo: "Bansho (Casas de Guarda)",
-          foto: "/images/imperial-palace-bansho.jpg",
+          foto: "/images/imperial-palace-bansho.webp",
           horario: "~13:45",
           descricao: "Uma das três casas de guarda samurai que sobrevivem do Castelo de Edo.",
         },
         {
           titulo: "Muralhas e Fossos Originais",
-          foto: "/images/imperial-palace-muralhas.jpg",
+          foto: "/images/imperial-palace-muralhas.webp",
           horario: "~14:15",
           descricao: "Trechos originais das muralhas de pedra e fossos que protegiam o Castelo de Edo.",
         },
         {
           titulo: "Fujimi-yagura",
-          foto: "/images/imperial-palace-fujimi-yagura.jpg",
+          foto: "/images/imperial-palace-fujimi-yagura.webp",
           horario: "~14:45",
           descricao: "Torre de vigia construída em 1659 — uma das construções mais fotogênicas do local.",
         },
         {
           titulo: "Tenshudai",
-          foto: "/images/imperial-palace-tenshudai.jpg",
+          foto: "/images/imperial-palace-tenshudai.webp",
           horario: "15:15",
           descricao: "Enorme base de pedra onde ficava a torre principal do Castelo de Edo.",
         },
@@ -1673,7 +1673,7 @@ const DAY_2: DayContent = {
     },
     visaoAnotada: {
       titulo: "Imperial Palace East Gardens",
-      imagem: "/images/raiox-tokyostation.png",
+      imagem: "/images/raiox-tokyostation.webp",
       imagemAlt: "Raio-X Alpinea da região do Palácio Imperial com Jardim do Palácio (皇居東御苑), Nijubashi Bridge, Ninomaru Garden, Kita-no-maru Park e Tokyo Station",
       comentarios: [
         "Vista aérea de toda a região do Palácio Imperial: o Jardim do Palácio (皇居東御苑, os East Gardens) fica logo a nordeste do Nijubashi Bridge e do próprio Palácio, com o Ninomaru Garden e o Museu Nacional de Arte Moderna nas bordas do fosso.",
@@ -1714,7 +1714,7 @@ const DAY_2: DayContent = {
         "Da Tokyo Station até a entrada dos Jardins do Palácio Imperial (portão Otemon) são cerca de 10 minutos a pé — não é necessário transporte para esse trecho.",
     },
     atracaoPrincipal: "Imperial Palace East Gardens",
-    atracaoPrincipalImagem: "/images/imperial-palace-east-gardens.png",
+    atracaoPrincipalImagem: "/images/imperial-palace-east-gardens.webp",
     atracaoPrincipalFoco: "center",
     detalhesPraticos: [
       { label: "Entrada", valor: "Gratuita" },
@@ -1728,7 +1728,7 @@ const DAY_2: DayContent = {
       },
     ],
     mapaVisaoGeral: {
-      imagem: "/images/visaogeral-tokyostation.png",
+      imagem: "/images/visaogeral-tokyostation.webp",
       imagemAlt: "Mapa do Jardim do Palácio Imperial com Nijubashi Bridge, Ninomaru Garden e Tokyo Station nas proximidades",
       nota: "Localização da entrada dos Jardins do Palácio Imperial em relação a Tokyo Station e Marunouchi.",
     },
@@ -1739,7 +1739,7 @@ const DAY_2: DayContent = {
           "Antigo portão principal do Castelo de Edo, usado pelos daimyō em suas visitas oficiais ao shogun. Destruído em bombardeio aéreo em 1945 e reconstruído em 1967 — hoje é a entrada principal dos jardins, o primeiro ponto do passeio.",
         prioridade: "recomendado",
         ordem: 1,
-        imagem: "/images/imperial-palace-otemon-gate.jpg",
+        imagem: "/images/imperial-palace-otemon-gate.webp",
         imagemAlt: "Otemon Gate, entrada principal dos Jardins do Palácio Imperial",
       },
       {
@@ -1748,7 +1748,7 @@ const DAY_2: DayContent = {
           "Uma das três casas de guarda samurai que sobrevivem do Castelo de Edo — o Hyakunin Bansho abrigava quatro unidades de 120 guardas responsáveis pela proteção do recinto interno do castelo. Fica logo após a entrada por Otemon.",
         prioridade: "opcional",
         ordem: 2,
-        imagem: "/images/imperial-palace-bansho.jpg",
+        imagem: "/images/imperial-palace-bansho.webp",
         imagemAlt: "Bansho, casa de guarda samurai do Castelo de Edo",
       },
       {
@@ -1757,7 +1757,7 @@ const DAY_2: DayContent = {
           "Trechos originais das muralhas de pedra e fossos que protegiam o Castelo de Edo, preservados desde o período feudal — visíveis ao longo de todo o caminho.",
         prioridade: "opcional",
         ordem: 3,
-        imagem: "/images/imperial-palace-muralhas.jpg",
+        imagem: "/images/imperial-palace-muralhas.webp",
         imagemAlt: "Muralhas e fossos originais do Castelo de Edo",
       },
       {
@@ -1766,7 +1766,7 @@ const DAY_2: DayContent = {
           "Torre de vigia construída em 1659, uma das poucas estruturas originais remanescentes do Castelo de Edo — depois que o incêndio de 1657 destruiu a torre principal, passou a funcionar como sua substituta simbólica. Não é possível entrar, mas dá para ver de fora, dentro dos jardins. Uma das construções mais fotogênicas do local.",
         prioridade: "recomendado",
         ordem: 4,
-        imagem: "/images/imperial-palace-fujimi-yagura.jpg",
+        imagem: "/images/imperial-palace-fujimi-yagura.webp",
         imagemAlt: "Fujimi-yagura, torre de vigia do Castelo de Edo",
       },
       {
@@ -1775,7 +1775,7 @@ const DAY_2: DayContent = {
           "Enorme base de pedra onde ficava a torre principal (tenshu) do Castelo de Edo — pode ser escalada, e é um dos pontos mais impressionantes dos jardins. Fica no extremo norte do complexo, o ponto mais distante da entrada — bom encerramento do passeio.",
         prioridade: "recomendado",
         ordem: 5,
-        imagem: "/images/imperial-palace-tenshudai.jpg",
+        imagem: "/images/imperial-palace-tenshudai.webp",
         imagemAlt: "Tenshudai, base de pedra da torre principal do Castelo de Edo",
       },
     ],
@@ -1807,13 +1807,13 @@ const DAY_3: DayContent = {
   ],
   resumoDia: {
     passos: [
-      { titulo: "Café da Manhã", horario: "08:30", foto: "/images/icone-gastronomia.png" },
-      { titulo: "Saída do Hotel", horario: "09:15", foto: "/images/icone-hotel2.png" },
-      { titulo: "Meiji Jingu e Parque de Yoyogi", horario: "10:00", foto: "/images/dia3-meijijingu.png" },
-      { titulo: "Shibuya Crossing", horario: "12:00", foto: "/images/placeholder-em-producao.png" },
-      { titulo: "Almoço", horario: "13:00", foto: "/images/icone-gastronomia.png" },
-      { titulo: "Shinjuku — Mirante e Kabukicho", horario: "14:45", foto: "/images/draft-shinjuku.png" },
-      { titulo: "Retorno ao hotel e Shinkansen para Kyoto", horario: "16:00", foto: "/images/icone-hotel2.png" },
+      { titulo: "Café da Manhã", horario: "08:30", foto: "/images/icone-gastronomia.webp" },
+      { titulo: "Saída do Hotel", horario: "09:15", foto: "/images/icone-hotel2.webp" },
+      { titulo: "Meiji Jingu e Parque de Yoyogi", horario: "10:00", foto: "/images/dia3-meijijingu.webp" },
+      { titulo: "Shibuya Crossing", horario: "12:00", foto: "/images/placeholder-em-producao.webp" },
+      { titulo: "Almoço", horario: "13:00", foto: "/images/icone-gastronomia.webp" },
+      { titulo: "Shinjuku — Mirante e Kabukicho", horario: "14:45", foto: "/images/draft-shinjuku.webp" },
+      { titulo: "Retorno ao hotel e Shinkansen para Kyoto", horario: "16:00", foto: "/images/icone-hotel2.webp" },
     ],
   },
   gradeHorarios: {
@@ -1882,67 +1882,67 @@ const DAY_3: DayContent = {
       passos: [
         {
           titulo: "Meiji Jingu",
-          foto: "/images/dia3-meijijingu.png",
+          foto: "/images/dia3-meijijingu.webp",
           horario: "10:00",
           descricao: "O maior santuário xintoísta de Tóquio, cercado pela floresta erguida do zero em homenagem ao Imperador Meiji.",
         },
         {
           titulo: "Parque de Yoyogi",
-          foto: "/images/yoyogi-park.png",
+          foto: "/images/yoyogi-park.webp",
           horario: "~10:20",
           descricao: "Você precisa entrar nele para acessar o Meiji Jingu — uma enorme floresta com árvores extremamente altas.",
         },
         {
           titulo: "Omotesando",
-          foto: "/images/omotesando.png",
+          foto: "/images/omotesando.webp",
           horario: "~11:00",
           descricao: "Uma das maiores avenidas de boutiques e lojas de luxo de Tóquio — liga a saída do parque a Shibuya.",
         },
         {
           titulo: "Estátua de Hachiko",
-          foto: "/images/hachiko-statue.png",
+          foto: "/images/hachiko-statue.webp",
           horario: "~11:45",
           descricao: "Estátua em homenagem ao cão que continuou esperando seu dono voltar para casa — bem na saída da Estação Shibuya.",
         },
         {
           titulo: "Shibuya Crossing",
-          foto: "/images/shibuya-crossing.png",
+          foto: "/images/shibuya-crossing.webp",
           horario: "12:00",
           descricao: "O famoso cruzamento hexagonal de Shibuya, ao lado da estátua de Hachiko.",
         },
         {
           titulo: "Kabukicho",
-          foto: "/images/kabukicho.png",
+          foto: "/images/kabukicho.webp",
           horario: "14:45",
           descricao: "Maior distrito de entretenimento noturno de Tóquio — vá logo após o almoço, quando a região está bem mais tranquila que de madrugada.",
         },
         {
           titulo: "Estátua do Godzilla",
-          foto: "/images/godzilla-head-shinjuku.png",
+          foto: "/images/godzilla-head-shinjuku.webp",
           horario: "~15:00",
           descricao: "Réplica em tamanho real na varanda do Hotel Gracery, no coração de Kabukicho.",
         },
         {
           titulo: "Gato 3D Gigante",
-          foto: "/images/gato-3d-shinjuku.png",
+          foto: "/images/gato-3d-shinjuku.webp",
           horario: "~15:15",
           descricao: "Gato tridimensional gigante exibido em telão curvo no edifício Cross Shinjuku Vision, pertinho do Godzilla.",
         },
         {
           titulo: "Golden Gai (passagem)",
-          foto: "/images/golden-gai.png",
+          foto: "/images/golden-gai.webp",
           horario: "~15:30",
           descricao: "Rede de vielas estreitas com mais de 200 bares minúsculos — durante o dia a maioria está fechada, mas vale caminhar por elas para conhecer a arquitetura.",
         },
         {
           titulo: "Shinjuku Gyoen ou Prédio do Governo Metropolitano (escolha um)",
-          foto: "/images/tokyo-metropolitan-government-building.png",
+          foto: "/images/tokyo-metropolitan-government-building.webp",
           horario: "~15:45",
           descricao: "Se ainda houver vontade e tempo: parque (Shinjuku Gyoen) ou mirante gratuito no 45º andar do Prédio do Governo Metropolitano — nenhum dos dois é essencial hoje.",
         },
         {
           titulo: "Retorno ao hotel e Shinkansen para Kyoto",
-          foto: "/images/icone-hotel2.png",
+          foto: "/images/icone-hotel2.webp",
           horario: "16:00",
           descricao: "Busque as malas e siga para a estação — chegar cedo em Kyoto amanhã vale mais do que esticar a noite em Shinjuku.",
         },
@@ -1950,7 +1950,7 @@ const DAY_3: DayContent = {
     },
     visaoAnotada: {
       titulo: "Meiji Jingu, Harajuku & Shibuya",
-      imagem: "/images/raiox-meiji-jingu.png",
+      imagem: "/images/raiox-meiji-jingu.webp",
       imagemAlt: "Raio-X Alpinea do Meiji Jingu com o Santuário Principal, Jardim Interior, Casa do Tesouro, Museu e as estações Harajuku e Yoyogi",
       comentarios: [
         "Hoje entramos em uma das regiões mais centrais e conhecidas de Tóquio. É provavelmente uma das imagens mais associadas à cidade para quem visita o Japão pela primeira vez: Meiji Jingu, Harajuku, Omotesando e Shibuya estão todos relativamente próximos, mas cada área tem uma personalidade completamente diferente.",
@@ -1986,7 +1986,7 @@ const DAY_3: DayContent = {
           nomeJapones: "大鳥居",
           descricao:
             "O grande torii de entrada do santuário, um dos maiores torii de madeira do Japão — feito de cipreste hinoki de mais de 1.500 anos, importado de Taiwan. Marca a passagem do mundano para o terreno sagrado, logo no início do Minami-sando.",
-          foto: "/images/meiji-jingu-otorii.png",
+          foto: "/images/meiji-jingu-otorii.webp",
           ordem: 1,
         },
         {
@@ -1995,7 +1995,7 @@ const DAY_3: DayContent = {
           nomeJapones: "飾り樽",
           descricao:
             "Parede de barris de saquê (kazaridaru) doados anualmente por destilarias de todo o Japão, em oferenda ao imperador Meiji. Do outro lado da alameda fica a parede espelhada de barris de vinho da Borgonha, símbolo da abertura do Japão ao Ocidente durante o período Meiji. Priorize passar por aqui primeiro — depois de meia-manhã enche de gente e fica difícil fotografar.",
-          foto: "/images/meiji-jingu-kazaridaru.png",
+          foto: "/images/meiji-jingu-kazaridaru.webp",
           ordem: 2,
         },
         {
@@ -2004,7 +2004,7 @@ const DAY_3: DayContent = {
           nomeJapones: "南神門",
           descricao:
             "Portão sul do santuário — a entrada para o pátio interno onde fica o salão principal de orações. É o último portão antes do Gehaiden.",
-          foto: "/images/meiji-jingu-minami-shinmon.png",
+          foto: "/images/meiji-jingu-minami-shinmon.webp",
           ordem: 3,
         },
         {
@@ -2013,7 +2013,7 @@ const DAY_3: DayContent = {
           nomeJapones: "外拝殿",
           descricao:
             "Salão externo de orações do Santuário Principal, onde os visitantes fazem sua reverência: duas reverências, duas palmas, uma reverência final (nirei-nihakushu-ichirei). É o ponto mais movimentado e o coração da visita ao Meiji Jingu.",
-          foto: "/images/meiji-jingu-gehaiden.png",
+          foto: "/images/meiji-jingu-gehaiden.webp",
           ordem: 4,
         },
         {
@@ -2022,7 +2022,7 @@ const DAY_3: DayContent = {
           nomeJapones: "夫婦楠",
           descricao:
             "Duas árvores de cânfora (kusunoki) plantadas lado a lado no pátio principal, entrelaçadas por uma corda sagrada (shimenawa) — símbolo de união e harmonia conjugal, muito procurado por casais que visitam o santuário.",
-          foto: "/images/meiji-jingu-meotokusu.png",
+          foto: "/images/meiji-jingu-meotokusu.webp",
           ordem: 5,
         },
       ],
@@ -2038,9 +2038,9 @@ const DAY_3: DayContent = {
         nomeJapones: "京橋駅",
         distancia: "~1 min a pé do hotel",
         saida: "Saída 6",
-        foto: "/images/Kyobashi_Station_entrance_7_20170813.jpg",
+        foto: "/images/Kyobashi_Station_entrance_7_20170813.webp",
       },
-      linha: { codigo: "G10", nome: "Tokyo Metro Ginza Line", cor: "#F39700", logo: "/images/tokyometro-mark.png" },
+      linha: { codigo: "G10", nome: "Tokyo Metro Ginza Line", cor: "#F39700", logo: "/images/tokyometro-mark.webp" },
       estacoesIntermediarias: [
         { nome: "Ginza", nomeJapones: "銀座", numero: "G09" },
         { nome: "Shimbashi", nomeJapones: "新橋", numero: "G08" },
@@ -2054,8 +2054,8 @@ const DAY_3: DayContent = {
         nome: "Estação Omotesando",
         nomeJapones: "表参道駅",
         saida: "Saída A2 (Omotesando Hills)",
-        foto: "/images/omotesando-station-entrance.png",
-        mapa: "/images/omotesando-station-map.png",
+        foto: "/images/omotesando-station-entrance.webp",
+        mapa: "/images/omotesando-station-map.webp",
         mapaAlt: "Mapa da Estação Omotesando (Ginza Line, Hanzomon Line e Chiyoda Line)",
       },
       opcoes: [
@@ -2083,7 +2083,7 @@ const DAY_3: DayContent = {
         "Do lyf Ginza Tokyo, o trajeto até Omotesando é de cerca de 16 minutos de metrô pela Ginza Line, sem baldeação — a mesma linha que passa pela Estação Kyobashi, a menos de 1 minuto a pé do hotel.",
     },
     atracaoPrincipal: "Meiji Jingu",
-    atracaoPrincipalImagem: "/images/dia3-meijijingu.png",
+    atracaoPrincipalImagem: "/images/dia3-meijijingu.webp",
     detalhesPraticos: [
       { label: "Entrada (terreno principal)", valor: "Gratuita" },
       { label: "Jardim Interior", valor: "¥500" },
@@ -2096,7 +2096,7 @@ const DAY_3: DayContent = {
       },
     ],
     mapaVisaoGeral: {
-      imagem: "/images/meiji-jingu-mapa-trajeto.png",
+      imagem: "/images/meiji-jingu-mapa-trajeto.webp",
       imagemAlt:
         "Mapa do terreno do Meiji Jingu com o trajeto a pé desde o Ichino Torii (Harajuku) até o Santuário Principal, passando pelo Nino Torii, os Barris de Saquê, a Ponte Shinkyo e o Gehaiden",
       nota: "Trajeto a pé desde a Estação Harajuku: Ichino Torii → Ponte Shinkyo → Nino Torii → Barris de Saquê (Kazaridaru) → Minami Shinmon → Gehaiden e Meoto Kusu.",
@@ -2114,7 +2114,7 @@ const DAY_3: DayContent = {
           "Você precisa entrar nele para acessar o Meiji Jingu — trata-se de uma enorme floresta com árvores extremamente altas, erguida do zero em homenagem à morte do imperador Meiji.",
         prioridade: "imperdivel",
         ordem: 1,
-        imagem: "/images/yoyogi-park.png",
+        imagem: "/images/yoyogi-park.webp",
         imagemAlt: "Lago do Parque de Yoyogi cercado por árvores em tons de outono, com chafariz ao fundo",
       },
       {
@@ -2124,7 +2124,7 @@ const DAY_3: DayContent = {
           "Uma das maiores avenidas de boutiques e lojas de luxo de Tóquio, com diversos cafés e restaurantes importantes nas ruas ao redor da avenida principal — liga a saída do parque a Shibuya, seguindo para o sul.",
         prioridade: "opcional",
         ordem: 2,
-        imagem: "/images/omotesando.png",
+        imagem: "/images/omotesando.webp",
         imagemAlt: "Fachada de vidro da loja Dior em Omotesando, com pedestres atravessando a faixa em primeiro plano",
       },
       {
@@ -2133,7 +2133,7 @@ const DAY_3: DayContent = {
           "Estátua em homenagem ao cão que continuou esperando seu dono voltar para casa sem saber que ele havia falecido — deu origem ao filme \"Pra Sempre ao Seu Lado\". Fica bem na saída da Estação Shibuya.",
         prioridade: "opcional",
         ordem: 3,
-        imagem: "/images/hachiko-statue.png",
+        imagem: "/images/hachiko-statue.webp",
         imagemAlt: "Estátua de bronze do cão Hachiko, na saída da Estação Shibuya",
       },
       {
@@ -2142,7 +2142,7 @@ const DAY_3: DayContent = {
           "O famoso cruzamento hexagonal de Shibuya, que fica caótico às 18h — ao lado da estátua de Hachiko, último ponto antes de seguir para Shinjuku.",
         prioridade: "recomendado",
         ordem: 4,
-        imagem: "/images/shibuya-crossing.png",
+        imagem: "/images/shibuya-crossing.webp",
         imagemAlt: "Vista aérea do cruzamento de Shibuya iluminado à noite, com pedestres atravessando em todas as direções",
       },
     ],
@@ -2155,7 +2155,7 @@ const DAY_3: DayContent = {
           categoria: "Gyoza (guioza japonês)",
           descricao:
             "Casa tradicional de guioza desde 1953, parada clássica de moradores e visitantes — peça o combo frito + cozido no vapor com broto de soja salteado.",
-          foto: "/images/harajuku-gyoza-ro.png",
+          foto: "/images/harajuku-gyoza-ro.webp",
           faixaPreco: "¥1.000–2.000 por pessoa",
           distancia:
             "~5 min a pé da Estação Meiji-Jingumae (Saída 7) — no caminho entre o Meiji Jingu e Omotesando",
@@ -2176,7 +2176,7 @@ const DAY_3: DayContent = {
           categoria: "Yakiniku (carne grelhada na mesa)",
           descricao:
             "Cortes selecionados de wagyu grelhados na própria mesa, com menu de almoço muito mais em conta que o jantar — selecionado para o Tabelog 100 de Yakiniku 2022–2025.",
-          foto: "/images/yakiniku-ushigoro-omotesando.png",
+          foto: "/images/yakiniku-ushigoro-omotesando.webp",
           economico: true,
           notaTabelog: "3.62",
           numAvaliacoes: "1.306 avaliações",
@@ -2212,7 +2212,7 @@ const DAY_3: DayContent = {
       ],
       mapa: {
         titulo: "Mapa — Refeições em Shibuya",
-        imagem: "/images/placeholder-em-producao.png",
+        imagem: "/images/placeholder-em-producao.webp",
         imagemAlt: "Mapa de restaurantes em Shibuya — em produção",
       },
     },
@@ -2241,8 +2241,8 @@ const DAY_3: DayContent = {
             nome: "Estação Shibuya",
             nomeJapones: "渋谷駅",
             saida: "Catraca Hachiko",
-            foto: "/images/shibuya-station-entrance.png",
-            mapa: "/images/shibuya-station-map.png",
+            foto: "/images/shibuya-station-entrance.webp",
+            mapa: "/images/shibuya-station-map.webp",
             mapaAlt: "Mapa da Estação Shibuya (Ginza Line, Hanzomon Line e JR)",
           },
           linha: { codigo: "JY", nome: "JR Yamanote Line", cor: "#8FAADC", logo: "/images/jr-logo.webp" },
@@ -2254,7 +2254,7 @@ const DAY_3: DayContent = {
             nome: "Estação Shinjuku",
             nomeJapones: "新宿駅",
             saida: "Saída Sul Nova (New South Exit)",
-            foto: "/images/shinjuku-station-entrance.png",
+            foto: "/images/shinjuku-station-entrance.webp",
           },
           opcoes: [
             {
@@ -2282,15 +2282,15 @@ const DAY_3: DayContent = {
           mapaAndares: {
             titulo: "Mapa da Estação Shinjuku",
             mapas: [
-              { andar: "B1F", imagem: "/images/shinjuku-station-map-b1f.png", imagemAlt: "Mapa do subsolo (B1F) da Estação Shinjuku — catracas e portões" },
-              { andar: "1F", imagem: "/images/shinjuku-station-map-1f.png", imagemAlt: "Mapa do 1º andar (1F) da Estação Shinjuku — plataformas JR" },
-              { andar: "Portões", imagem: "/images/shinjuku-station-map-gates.png", imagemAlt: "Mapa dos portões Sul/Sudeste e Koshu-kaido/Nova Saída Sul da Estação Shinjuku" },
+              { andar: "B1F", imagem: "/images/shinjuku-station-map-b1f.webp", imagemAlt: "Mapa do subsolo (B1F) da Estação Shinjuku — catracas e portões" },
+              { andar: "1F", imagem: "/images/shinjuku-station-map-1f.webp", imagemAlt: "Mapa do 1º andar (1F) da Estação Shinjuku — plataformas JR" },
+              { andar: "Portões", imagem: "/images/shinjuku-station-map-gates.webp", imagemAlt: "Mapa dos portões Sul/Sudeste e Koshu-kaido/Nova Saída Sul da Estação Shinjuku" },
             ],
           },
         },
         visaoAnotada: {
           titulo: "Shinjuku & Kabukicho",
-          imagem: "/images/raiox-shinjuku.png",
+          imagem: "/images/raiox-shinjuku.webp",
           imagemAlt: "Raio-X Alpinea de Kabukicho à noite com Godzilla Head, Cross Shinjuku Vision, Thermae-Yu e Shinjuku Golden-Gai",
           comentarios: [
             "Shinjuku é daqueles lugares em que, novamente, há muito mais coisa para fazer do que tempo disponível.",
@@ -2322,7 +2322,7 @@ const DAY_3: DayContent = {
               "Um dos parques mais bonitos de Tóquio, misturando jardins japonês, francês e inglês — refúgio verde no meio do bairro mais denso da cidade. Como o dia já passou pelo Meiji Jingu e sua área verde, não é essencial encaixar outro grande parque hoje — vale só se preferir parque a mirante e não estiver com o tempo apertado.",
             prioridade: "opcional",
             ordem: 1,
-            imagem: "/images/shinjuku-gyoen.png",
+            imagem: "/images/shinjuku-gyoen.webp",
             imagemAlt: "Lago do Shinjuku Gyoen no outono, com a torre do Prédio do Governo Metropolitano ao fundo",
           },
           {
@@ -2331,7 +2331,7 @@ const DAY_3: DayContent = {
               "Torres gêmeas projetadas por Kenzo Tange com mirante gratuito (~9h30–22h) no 45º andar e vista panorâmica da cidade — em dias claros, dá para ver o Monte Fuji. Fica no lado oeste da estação; interessante se estiver com tempo e vontade, mas opcional neste roteiro.",
             prioridade: "opcional",
             ordem: 2,
-            imagem: "/images/tokyo-metropolitan-government-building.png",
+            imagem: "/images/tokyo-metropolitan-government-building.webp",
             imagemAlt: "Vista de baixo das torres gêmeas do Prédio do Governo Metropolitano de Tóquio",
             imagemPosicao: "top",
           },
@@ -2341,7 +2341,7 @@ const DAY_3: DayContent = {
               "Gato tridimensional gigante exibido em telão curvo no edifício Cross Shinjuku Vision, na saída leste da estação — uma das atrações mais fotografadas do bairro, já a caminho de Kabukicho.",
             prioridade: "recomendado",
             ordem: 3,
-            imagem: "/images/gato-3d-shinjuku.png",
+            imagem: "/images/gato-3d-shinjuku.webp",
             imagemAlt: "Gato tridimensional gigante no telão curvo do Cross Shinjuku Vision",
           },
           {
@@ -2350,7 +2350,7 @@ const DAY_3: DayContent = {
               "Réplica em tamanho real na varanda do Hotel Gracery, símbolo do distrito de entretenimento de Kabukicho — pertinho do Gato 3D.",
             prioridade: "recomendado",
             ordem: 4,
-            imagem: "/images/godzilla-head-shinjuku.png",
+            imagem: "/images/godzilla-head-shinjuku.webp",
             imagemAlt: "Cabeça do Godzilla na varanda do Hotel Gracery, em Kabukicho",
           },
           {
@@ -2359,7 +2359,7 @@ const DAY_3: DayContent = {
               "Maior distrito de entretenimento noturno de Tóquio, com neons, bares temáticos e vida noturna intensa.",
             prioridade: "recomendado",
             ordem: 5,
-            imagem: "/images/kabukicho.png",
+            imagem: "/images/kabukicho.webp",
             imagemAlt: "Arco de neon vermelho na entrada de Kabukicho Ichibangai, com movimento de pedestres à noite",
             imagemPosicao: "top",
           },
@@ -2369,7 +2369,7 @@ const DAY_3: DayContent = {
               "Rede de vielas estreitas com mais de 200 bares minúsculos, a maioria com capacidade para menos de 10 pessoas — vale caminhar pelas vielas à tarde para conhecer a arquitetura, mas a maioria dos bares só abre à noite (após 20h), quando o roteiro já recomenda estar a caminho da estação para o Shinkansen.",
             prioridade: "opcional",
             ordem: 6,
-            imagem: "/images/golden-gai.png",
+            imagem: "/images/golden-gai.webp",
             imagemAlt: "Viela estreita do Golden Gai à noite, com lanternas e placas iluminadas dos bares",
             imagemPosicao: "center 40%",
           },
@@ -2379,7 +2379,7 @@ const DAY_3: DayContent = {
               "Onsen urbano aberto 24 horas no coração de Kabukicho, ao lado do Golden Gai — água termal natural trazida diariamente de Nakaizu, com banhos internos e ao ar livre, banho carbonatado e saunas. Só cabe no dia se você decidir ficar mais uma noite em Tóquio em vez de seguir para Kyoto no fim da tarde, já que consome bem mais tempo do que o previsto pelo roteiro recomendado de hoje.",
             prioridade: "opcional",
             ordem: 7,
-            imagem: "/images/thermae-yu.png",
+            imagem: "/images/thermae-yu.webp",
             alerta:
               "Documento obrigatório na entrada: leve o passaporte físico (cópia ou foto no celular normalmente não são aceitas). Para quem tem tatuagem, o passaporte também é usado para liberar, na recepção, o adesivo impermeável de cobertura (~¥310) — tatuagens grandes podem ser recusadas, vale confirmar a política vigente antes de ir.",
           },
@@ -2428,7 +2428,7 @@ const DAY_3: DayContent = {
               categoria: "Tonkatsu (costeleta de porco empanada)",
               descricao:
                 "Tonkatsu premiado, no coração do Kabukicho — selecionado para o Tabelog 100 Best Tonkatsu em 2022, 2024 e 2026.",
-              foto: "/images/katsu-pulipo.png",
+              foto: "/images/katsu-pulipo.webp",
               notaTabelog: "3.90",
               numAvaliacoes: "1.389 avaliações",
               faixaPreco: "¥8.000–9.999 no jantar",
@@ -2446,7 +2446,7 @@ const DAY_3: DayContent = {
               categoria: "Izakaya de frutos do mar",
               descricao:
                 "Peixe fresco entregue diariamente por pescadores parceiros, com vários modos de preparo à escolha — foge do padrão carne/ramen dos outros dois dias já preenchidos.",
-              foto: "/images/nakizakana-shinjuku.png",
+              foto: "/images/nakizakana-shinjuku.webp",
               economico: true,
               notaTabelog: "3.57",
               numAvaliacoes: "815 avaliações",
@@ -2467,7 +2467,7 @@ const DAY_3: DayContent = {
               categoria: "Ramen (niboshi/sardinha-seca)",
               descricao:
                 "A loja original da rede Nagi, dentro do próprio Golden Gai — casa de nascimento do ramen de niboshi que deu fama internacional à marca.",
-              foto: "/images/sugoi-niboshi-ramen-nagi.png",
+              foto: "/images/sugoi-niboshi-ramen-nagi.webp",
               economico: true,
               notaTabelog: "3.64",
               numAvaliacoes: "3.485 avaliações",
@@ -2484,7 +2484,7 @@ const DAY_3: DayContent = {
           ],
           mapa: {
             titulo: "Mapa — Refeições em Shinjuku",
-            imagem: "/images/placeholder-em-producao.png",
+            imagem: "/images/placeholder-em-producao.webp",
             imagemAlt: "Mapa de restaurantes em Shinjuku — em produção",
           },
         },
@@ -2524,13 +2524,13 @@ const DAY_4: DayContent = {
   ],
   resumoDia: {
     passos: [
-      { titulo: "Café da Manhã", horario: "08:30", foto: "/images/icone-gastronomia.png" },
-      { titulo: "Saída do Hotel", horario: "09:15", foto: "/images/icone-hotel2.png" },
-      { titulo: "Akihabara Electric Town", horario: "09:45", foto: "/images/akihabara-miniatura.png" },
-      { titulo: "Almoço", horario: "12:00", foto: "/images/icone-gastronomia.png" },
-      { titulo: "Continuação em Akihabara", horario: "13:30", foto: "/images/akihabara-miniatura.png" },
-      { titulo: "Jantar no Izakaya (Kanda)", horario: "19:00", foto: "/images/dia7-izakaya-kanda-v2.png" },
-      { titulo: "Vida Noturna em Roppongi", horario: "21:30", foto: "/images/roppongi-miniatura.png" },
+      { titulo: "Café da Manhã", horario: "08:30", foto: "/images/icone-gastronomia.webp" },
+      { titulo: "Saída do Hotel", horario: "09:15", foto: "/images/icone-hotel2.webp" },
+      { titulo: "Akihabara Electric Town", horario: "09:45", foto: "/images/akihabara-miniatura.webp" },
+      { titulo: "Almoço", horario: "12:00", foto: "/images/icone-gastronomia.webp" },
+      { titulo: "Continuação em Akihabara", horario: "13:30", foto: "/images/akihabara-miniatura.webp" },
+      { titulo: "Jantar no Izakaya (Kanda)", horario: "19:00", foto: "/images/dia7-izakaya-kanda-v2.webp" },
+      { titulo: "Vida Noturna em Roppongi", horario: "21:30", foto: "/images/roppongi-miniatura.webp" },
     ],
   },
   gradeHorarios: {
@@ -2598,55 +2598,55 @@ const DAY_4: DayContent = {
       passos: [
         {
           titulo: "Akihabara Radio Kaikan",
-          foto: "/images/day2-radiokaikan.png",
+          foto: "/images/day2-radiokaikan.webp",
           horario: "09:45",
           descricao: "Action figures e um shopping com um pouco de tudo — logo na saída Electric Town da estação, o primeiro ponto do passeio.",
         },
         {
           titulo: "Tamashii Nations Store Tokyo",
-          foto: "/images/day2-tamashii-nations.png",
+          foto: "/images/day2-tamashii-nations.webp",
           horario: "~10:15",
           descricao: "Loja oficial da Bandai Spirits com as linhas premium de action figures e colecionáveis (Figuarts, Chogokin) — peças voltadas para colecionadores.",
         },
         {
           titulo: "Animate",
-          foto: "/images/day2-animate.png",
+          foto: "/images/day2-animate.webp",
           horario: "~10:45",
           descricao: "Uma das maiores redes de lojas de mangá do Japão.",
         },
         {
           titulo: "Mandarake Complex",
-          foto: "/images/day2-mandarake-complex.png",
+          foto: "/images/day2-mandarake-complex.webp",
           horario: "~11:15",
           descricao: "Mangá e action figures.",
         },
         {
           titulo: "Suruga-ya Anime & Hobby Store",
-          foto: "/images/day2-surugaya.jpg",
+          foto: "/images/day2-surugaya.webp",
           horario: "~11:45",
           descricao: "Rede tradicional de usados — mangás, DVDs/Blu-rays de anime, action figures e CDs, com preços mais em conta que as lojas de produto novo.",
         },
         {
           titulo: "Super Potato",
-          foto: "/images/day2-superpotato.png",
+          foto: "/images/day2-superpotato.webp",
           horario: "13:30",
           descricao: "Loja retrô de videogames.",
         },
         {
           titulo: "Hareruya 2",
-          foto: "/images/hareruya-2.png",
+          foto: "/images/hareruya-2.webp",
           horario: "~14:15",
           descricao: "Pokémon Trading Card Game.",
         },
         {
           titulo: "Weird Vending Machine Corner",
-          foto: "/images/weird-vending-machine-corner.png",
+          foto: "/images/weird-vending-machine-corner.webp",
           horario: "~15:00",
           descricao: "Cantinho com máquinas de venda automática bizarras e inusitadas, um clássico despretensioso de Akihabara.",
         },
         {
           titulo: "BIC Camera ou Yodobashi Camera",
-          foto: "/images/day2-yodobashi-akiba.png",
+          foto: "/images/day2-yodobashi-akiba.webp",
           horario: "~15:30",
           descricao: "Grandes lojas de eletrônicos — Yodobashi-Akiba fica do lado leste da estação (saída Showa-dori), um bom fechamento para o circuito antes de descansar no hotel.",
         },
@@ -2654,7 +2654,7 @@ const DAY_4: DayContent = {
     },
     visaoAnotada: {
       titulo: "Akihabara Electric Town",
-      imagem: "/images/raiox-akihabara.png",
+      imagem: "/images/raiox-akihabara.webp",
       imagemAlt: "Raio-X Alpinea de Akihabara com os pontos de interesse numerados do passeio",
       comentarios: [
         "Embora o número de lojas para visitar não seja muito grande, é importante seguir a ordem recomendada ou olhar o mapa e definir a ordem que preferir — pode não parecer, mas como algumas lojas têm vários andares, ao final da tarde você vai estar bem cansado de subir escadas e se deslocar de loja em loja.",
@@ -2674,15 +2674,15 @@ const DAY_4: DayContent = {
         nomeJapones: "京橋駅",
         distancia: "~1 min a pé do hotel",
         saida: "Saída 6",
-        foto: "/images/Kyobashi_Station_entrance_7_20170813.jpg",
+        foto: "/images/Kyobashi_Station_entrance_7_20170813.webp",
       },
-      linha: { codigo: "G10", nome: "Tokyo Metro Ginza Line", cor: "#F39700", logo: "/images/tokyometro-mark.png" },
+      linha: { codigo: "G10", nome: "Tokyo Metro Ginza Line", cor: "#F39700", logo: "/images/tokyometro-mark.webp" },
       baldeacao: true,
       estacaoDestino: {
         nome: "Estação Akihabara",
         nomeJapones: "秋葉原駅",
         saida: "Saída Electric Town",
-        foto: "/images/akihabara-station.jpg",
+        foto: "/images/akihabara-station.webp",
       },
       // Estações da Ginza Line entre Kyobashi (G10) e o ponto de baldeação
       // Ueno-hirokoji (G15) — de lá, troca a pé pra Naka-okachimachi (Hibiya
@@ -2721,14 +2721,14 @@ const DAY_4: DayContent = {
       mapaAndares: {
         titulo: "Mapa da Estação Akihabara",
         mapas: [
-          { andar: "1F", imagem: "/images/mapa-estacao-akiharaba-1F.png", imagemAlt: "Mapa do 1º andar da Estação Akihabara" },
-          { andar: "2F", imagem: "/images/mapa-estacao-akihabara-2F.png", imagemAlt: "Mapa do 2º andar da Estação Akihabara" },
-          { andar: "3F", imagem: "/images/mapa-estacao-akihabara-3F.png", imagemAlt: "Mapa do 3º andar da Estação Akihabara" },
+          { andar: "1F", imagem: "/images/mapa-estacao-akiharaba-1F.webp", imagemAlt: "Mapa do 1º andar da Estação Akihabara" },
+          { andar: "2F", imagem: "/images/mapa-estacao-akihabara-2F.webp", imagemAlt: "Mapa do 2º andar da Estação Akihabara" },
+          { andar: "3F", imagem: "/images/mapa-estacao-akihabara-3F.webp", imagemAlt: "Mapa do 3º andar da Estação Akihabara" },
         ],
       },
     },
     atracaoPrincipal: "Akihabara Electric Town",
-    atracaoPrincipalImagem: "/images/dia7-akihabara.png",
+    atracaoPrincipalImagem: "/images/dia7-akihabara.webp",
     detalhesPraticos: [
       { label: "Horário das lojas", valor: "Varia por loja — ver detalhamento abaixo" },
       {
@@ -2759,7 +2759,7 @@ const DAY_4: DayContent = {
       { nome: "BIC Camera / Yodobashi-Akiba", horario: "Abertura 9h30 · Fechamento 22h" },
     ],
     mapaVisaoGeral: {
-      imagem: "/images/akihabara-tempo-de-deslocamento.png",
+      imagem: "/images/akihabara-tempo-de-deslocamento.webp",
       imagemAlt: "Trajeto a pé conectando os pontos de interesse de Akihabara Electric Town",
       nota: "≈30 min · 2,1 km — trajeto completo a pé conectando os 9 pontos de interesse do dia inteiro em Akihabara (manhã e tarde), sem pressa de fazer tudo na ordem: ajuste conforme o ritmo do grupo.",
     },
@@ -2771,7 +2771,7 @@ const DAY_4: DayContent = {
           "Action figures e um shopping com um pouco de tudo — logo na saída Electric Town da estação, o primeiro ponto do passeio.",
         prioridade: "opcional",
         ordem: 1,
-        imagem: "/images/day2-radiokaikan.png",
+        imagem: "/images/day2-radiokaikan.webp",
         imagemAlt: "Fachada da Akihabara Radio Kaikan",
         horario: "10h–20h",
       },
@@ -2782,7 +2782,7 @@ const DAY_4: DayContent = {
           "Loja oficial da Bandai Spirits dedicada às linhas premium de action figures e colecionáveis (Figuarts, Chogokin) — peças de alta qualidade voltadas para colecionadores.",
         prioridade: "recomendado",
         ordem: 2,
-        imagem: "/images/day2-tamashii-nations.png",
+        imagem: "/images/day2-tamashii-nations.webp",
         imagemAlt: "Vitrine de action figures na Tamashii Nations Store Tokyo",
         horario: "10h–20h",
       },
@@ -2792,7 +2792,7 @@ const DAY_4: DayContent = {
         description: "Uma das maiores redes de lojas de mangá do Japão.",
         prioridade: "recomendado",
         ordem: 3,
-        imagem: "/images/day2-animate.png",
+        imagem: "/images/day2-animate.webp",
         imagemAlt: "Fachada da loja Animate em Akihabara",
         horario: "10h–21h",
       },
@@ -2802,7 +2802,7 @@ const DAY_4: DayContent = {
         description: "Mangá e action figures.",
         prioridade: "recomendado",
         ordem: 4,
-        imagem: "/images/day2-mandarake-complex.png",
+        imagem: "/images/day2-mandarake-complex.webp",
         imagemAlt: "Interior da Mandarake Complex em Akihabara",
         horario: "12h–20h",
       },
@@ -2813,7 +2813,7 @@ const DAY_4: DayContent = {
           "Rede tradicional de usados — mangás, DVDs/Blu-rays de anime, action figures e CDs, com preços mais em conta que as lojas de produto novo.",
         prioridade: "opcional",
         ordem: 5,
-        imagem: "/images/day2-surugaya.jpg",
+        imagem: "/images/day2-surugaya.webp",
         imagemAlt: "Fachada da Suruga-ya Specialty Store em Akihabara",
         horario: "11h–21h (10h nos fins de semana)",
       },
@@ -2823,7 +2823,7 @@ const DAY_4: DayContent = {
         description: "Loja retrô de videogames.",
         prioridade: "recomendado",
         ordem: 6,
-        imagem: "/images/day2-superpotato.png",
+        imagem: "/images/day2-superpotato.webp",
         imagemAlt: "Interior da loja retrô Super Potato em Akihabara",
         horario: "11h–22h (10h nos fins de semana)",
       },
@@ -2833,7 +2833,7 @@ const DAY_4: DayContent = {
         description: "Pokémon Trading Card Game.",
         prioridade: "opcional",
         ordem: 7,
-        imagem: "/images/hareruya-2.png",
+        imagem: "/images/hareruya-2.webp",
         imagemAlt: "Fachada da Hareruya 2, loja especializada em Pokémon Trading Card Game",
         horario: "10h–22h",
       },
@@ -2843,7 +2843,7 @@ const DAY_4: DayContent = {
         description: "Cantinho com máquinas de venda automática bizarras e inusitadas, um clássico despretensioso de Akihabara.",
         prioridade: "opcional",
         ordem: 8,
-        imagem: "/images/weird-vending-machine-corner.png",
+        imagem: "/images/weird-vending-machine-corner.webp",
         imagemAlt: "Máquinas de venda automática no Weird Vending Machine Corner de Akihabara",
         imagemPosicao: "center bottom",
         horario: "Acessível a qualquer hora (máquinas na rua, sem loja formal)",
@@ -2855,7 +2855,7 @@ const DAY_4: DayContent = {
           "Grandes lojas de eletrônicos — Yodobashi-Akiba fica do lado leste da estação (saída Showa-dori), um bom último ponto antes de descansar no hotel.",
         prioridade: "opcional",
         ordem: 9,
-        imagem: "/images/day2-yodobashi-akiba.png",
+        imagem: "/images/day2-yodobashi-akiba.webp",
         imagemAlt: "Fachada da Yodobashi-Akiba",
         horario: "9h30–22h",
       },
@@ -2869,7 +2869,7 @@ const DAY_4: DayContent = {
           categoria: "Curry japonês",
           descricao:
             "Casa tradicional da região, com balcão no térreo e mesas no subsolo — curry japonês simples e caseiro, servido rápido.",
-          foto: "/images/joto-curry-akihabara.png",
+          foto: "/images/joto-curry-akihabara.webp",
           notaTabelog: "3.28",
           numAvaliacoes: "289 avaliações",
           faixaPreco: "¥1.000–1.999 (almoço e jantar)",
@@ -2887,7 +2887,7 @@ const DAY_4: DayContent = {
           categoria: "Tonkatsu (costeleta de porco empanada)",
           descricao:
             "Filial da tradicional rede Wako, dentro do complexo da Yodobashi-Akiba — ampla gama de pagamentos e fácil de pedir por foto no cardápio.",
-          foto: "/images/wako-tonkatsu-akihabara.png",
+          foto: "/images/wako-tonkatsu-akihabara.webp",
           notaTabelog: "3.08",
           numAvaliacoes: "79 avaliações",
           faixaPreco: "¥1.000–2.999 (almoço e jantar)",
@@ -2905,7 +2905,7 @@ const DAY_4: DayContent = {
           categoria: "Ramen estilo Kyushu (Hakata)",
           descricao:
             "A casa principal da rede, conhecida internacionalmente e também por opções veganas — a mais avaliada das três, com fila ocasional no horário de pico.",
-          foto: "/images/kyushu-jangara.png",
+          foto: "/images/kyushu-jangara.webp",
           notaTabelog: "3.47",
           numAvaliacoes: "643 avaliações",
           faixaPreco: "¥1.000–1.999 (almoço e jantar)",
@@ -2936,15 +2936,15 @@ const DAY_4: DayContent = {
             nome: "Estação Akihabara",
             nomeJapones: "秋葉原駅",
             saida: "Saída Electric Town",
-            foto: "/images/akihabara-station.jpg",
+            foto: "/images/akihabara-station.webp",
           },
           linha: { codigo: "JY", nome: "JR Yamanote / Keihin-Tohoku Line", cor: "#8FAADC", logo: "/images/jr-logo.webp" },
           estacaoDestino: {
             nome: "Estação Kanda",
             nomeJapones: "神田駅",
             saida: "Saída Oeste (Nishiguchi)",
-            foto: "/images/kanda-station-entrance.png",
-            mapa: "/images/kanda-station-map.png",
+            foto: "/images/kanda-station-entrance.webp",
+            mapa: "/images/kanda-station-map.webp",
             mapaAlt: "Mapa da Estação Kanda (1F e 2F)",
           },
           opcoes: [
@@ -2973,7 +2973,7 @@ const DAY_4: DayContent = {
         },
         visaoAnotada: {
           titulo: "Izakayas em Kanda",
-          imagem: "/images/raiox-kanda.png",
+          imagem: "/images/raiox-kanda.webp",
           imagemAlt: "Raio-X Alpinea de Kanda com os 3 izakayas recomendados numerados nas proximidades da Estação Kanda",
           comentarios: [
             "A passagem por Kanda é propositalmente mais tranquila — um respiro depois do dia inteiro em Akihabara. Separamos 3 opções de izakaya que normalmente recebem bem estrangeiros, todas a poucos minutos da estação.",
@@ -2987,7 +2987,7 @@ const DAY_4: DayContent = {
             description: "Motsuyaki (espetinhos de miúdos grelhados) — ~2 min a pé da saída oeste da Estação Kanda.",
             prioridade: "recomendado",
             ordem: 1,
-            imagem: "/images/nonki-kanda.png",
+            imagem: "/images/nonki-kanda.webp",
             imagemAlt: "Prato de motsuyaki do Kanda Nishiguchi Motsuyaki Nonki",
           },
           {
@@ -2995,7 +2995,7 @@ const DAY_4: DayContent = {
             description: "Izakaya de frutos do mar, conhecida pelos pratos fartos de sashimi e peixe fresco.",
             prioridade: "recomendado",
             ordem: 2,
-            imagem: "/images/uokin.png",
+            imagem: "/images/uokin.webp",
             imagemAlt: "Prato de sashimi do Kanda Uokin",
           },
           {
@@ -3003,7 +3003,7 @@ const DAY_4: DayContent = {
             description: "Izakaya de bairro com sashimi e boa seleção de sakês — clima local e despretensioso.",
             prioridade: "recomendado",
             ordem: 3,
-            imagem: "/images/kanda-shouten.png",
+            imagem: "/images/kanda-shouten.webp",
             imagemAlt: "Prato de sashimi e sakês do Kanda Shoten",
           },
           {
@@ -3013,7 +3013,7 @@ const DAY_4: DayContent = {
               "Bairro vizinho a Kanda, famoso por concentrar dezenas de sebos e livrarias tradicionais — o maior distrito de livros usados do Japão.",
             prioridade: "opcional",
             ordem: 4,
-            imagem: "/images/jinbocho.png",
+            imagem: "/images/jinbocho.webp",
             imagemAlt: "Fachada de livraria tradicional em Jinbocho",
           },
         ],
@@ -3035,16 +3035,16 @@ const DAY_4: DayContent = {
             nome: "Estação Kanda",
             nomeJapones: "神田駅",
             saida: "Saída Oeste (Nishiguchi)",
-            foto: "/images/kanda-station-entrance.png",
+            foto: "/images/kanda-station-entrance.webp",
           },
-          linha: { codigo: "G13→G09", nome: "Tokyo Metro Ginza Line", cor: "#F39700", logo: "/images/tokyometro-mark.png" },
+          linha: { codigo: "G13→G09", nome: "Tokyo Metro Ginza Line", cor: "#F39700", logo: "/images/tokyometro-mark.webp" },
           baldeacao: true,
           estacaoDestino: {
             nome: "Estação Roppongi",
             nomeJapones: "六本木駅",
             saida: "Saída 7",
-            foto: "/images/roppongi-station.png",
-            mapa: "/images/roppongi-station-map.png",
+            foto: "/images/roppongi-station.webp",
+            mapa: "/images/roppongi-station-map.webp",
             mapaAlt: "Mapa da Estação Roppongi (Hibiya Line e Toei Oedo Line)",
           },
           opcoes: [
@@ -3073,7 +3073,7 @@ const DAY_4: DayContent = {
         },
         visaoAnotada: {
           titulo: "Roppongi",
-          imagem: "/images/raiox-roppongi.png",
+          imagem: "/images/raiox-roppongi.webp",
           imagemAlt: "Raio-X Alpinea de Roppongi com Mori Tower, Tokyo Midtown, TV Asahi, a Estação Roppongi e os pontos de vida noturna numerados",
           comentarios: [
             "A ideia é vir para Roppongi depois de concluir as atividades do dia. Pelo roteiro, você deve terminar o fim de tarde/noite em Kanda e, de lá, seguir para esta região.",
@@ -3184,7 +3184,7 @@ const DAY_4: DayContent = {
           },
         },
         mapaVisaoGeral: {
-          imagem: "/images/visaogeral2-roppongi.png",
+          imagem: "/images/visaogeral2-roppongi.webp",
           imagemAlt: "Trajeto a pé conectando as baladas de Roppongi ao Mori Tower e ao Museu de Arte Mori",
           nota: "≈20 min · 1,2 km — trajeto a pé completo pela área de Roppongi Hills, sem pressa de fazer tudo na ordem.",
         },
@@ -3195,7 +3195,7 @@ const DAY_4: DayContent = {
               "A única no mundo preparada para terremotos, aos pés do Mori Tower — o primeiro ponto ao chegar em Roppongi Hills.",
             prioridade: "opcional",
             ordem: 1,
-            imagem: "/images/aranha-gigante.jpg",
+            imagem: "/images/aranha-gigante.webp",
             imagemAlt: "Escultura Maman, de Louise Bourgeois, aos pés do Mori Tower em Roppongi Hills",
           },
           {
@@ -3203,7 +3203,7 @@ const DAY_4: DayContent = {
             description: "Museu de arte contemporânea no topo do Mori Tower.",
             prioridade: "recomendado",
             ordem: 2,
-            imagem: "/images/museu-de-arte-mori.png",
+            imagem: "/images/museu-de-arte-mori.webp",
             imagemAlt: "Escadas rolantes de acesso ao Mori Art Museum, com o letreiro do museu no topo do Mori Tower",
           },
           {
@@ -3211,7 +3211,7 @@ const DAY_4: DayContent = {
             description: "Jardim japonês tradicional aos pés do Mori Tower.",
             prioridade: "opcional",
             ordem: 3,
-            imagem: "/images/mori-garden.png",
+            imagem: "/images/mori-garden.webp",
             imagemAlt: "Lago do Mori Garden com cerejeiras floridas e o Mori Tower ao fundo, em Roppongi Hills",
           },
           {
@@ -3220,7 +3220,7 @@ const DAY_4: DayContent = {
               "Parque tranquilo no coração de Roppongi, a poucos minutos a pé do Mori Tower.",
             prioridade: "opcional",
             ordem: 4,
-            imagem: "/images/hinokicho-park.png",
+            imagem: "/images/hinokicho-park.webp",
             imagemAlt: "Escultura moderna de metal no gramado do Hinokicho Park, em Roppongi",
           },
         ],
@@ -3239,11 +3239,11 @@ const DAY_5: DayContent = {
   ],
   resumoDia: {
     passos: [
-      { titulo: "Saída do Hotel", horario: "06:00", foto: "/images/icone-hotel2.png" },
-      { titulo: "Templo Kiyomizu-dera", horario: "06:30", foto: "/images/dia5-kiyomizudera.jpg" },
-      { titulo: "Café da Manhã e Doces Tradicionais", horario: "09:00", foto: "/images/icone-gastronomia.png" },
-      { titulo: "Distrito de Gion", horario: "11:00", foto: "/images/dia5-gion-v2.png" },
-      { titulo: "Jantar Kaiseki ou Obanzai", horario: "19:00", foto: "/images/icone-gastronomia.png" },
+      { titulo: "Saída do Hotel", horario: "06:00", foto: "/images/icone-hotel2.webp" },
+      { titulo: "Templo Kiyomizu-dera", horario: "06:30", foto: "/images/dia5-kiyomizudera.webp" },
+      { titulo: "Café da Manhã e Doces Tradicionais", horario: "09:00", foto: "/images/icone-gastronomia.webp" },
+      { titulo: "Distrito de Gion", horario: "11:00", foto: "/images/dia5-gion-v2.webp" },
+      { titulo: "Jantar Kaiseki ou Obanzai", horario: "19:00", foto: "/images/icone-gastronomia.webp" },
     ],
   },
   gradeHorarios: {
@@ -3306,25 +3306,25 @@ const DAY_5: DayContent = {
       passos: [
         {
           titulo: "Templo Kiyomizu-dera",
-          foto: "/images/dia5-kiyomizudera.jpg",
+          foto: "/images/dia5-kiyomizudera.webp",
           horario: "06:30",
           descricao: "Um dos templos mais icônicos do Japão, aos pés das colinas de Higashiyama.",
         },
         {
           titulo: "Sannenzaka",
-          foto: "/images/higashiyama-sannenzaka.jpg",
+          foto: "/images/higashiyama-sannenzaka.webp",
           horario: "~08:00",
           descricao: "Ladeira histórica de casas tradicionais, logo na descida a partir do templo.",
         },
         {
           titulo: "Ninenzaka",
-          foto: "/images/higashiyama-ninenzaka.jpg",
+          foto: "/images/higashiyama-ninenzaka.webp",
           horario: "~08:20",
           descricao: "Continuação de Sannenzaka, descendo rumo a Gion.",
         },
         {
           titulo: "Café % Arabica Kyoto Higashiyama",
-          foto: "/images/higashiyama-arabica-kyoto.jpg",
+          foto: "/images/higashiyama-arabica-kyoto.webp",
           horario: "09:00",
           descricao: "Cafeteria minimalista muito concorrida, a poucos passos da Pagode Yasaka.",
         },
@@ -3332,7 +3332,7 @@ const DAY_5: DayContent = {
     },
     visaoAnotada: {
       titulo: "Kiyomizu-dera & Higashiyama",
-      imagem: "/images/raiox-kiyomizu-higashiyama.png",
+      imagem: "/images/raiox-kiyomizu-higashiyama.webp",
       imagemAlt: "Raio-X Alpinea de Kiyomizu-dera e Higashiyama com Nio-mon Gate, Sannenzaka, Ninenzaka, % Arabica, Hokan-ji e a região de Gion ao fundo",
       comentarios: [
         "Assim que você chegar a Kyoto, provavelmente vai perceber uma coisa imediatamente: Kyoto funciona de uma maneira completamente diferente de Tóquio.",
@@ -3380,8 +3380,8 @@ const DAY_5: DayContent = {
       estacaoOrigem: {
         nome: "Kyoto Station (saída Karasuma)",
         distancia: "~1 min a pé do hotel",
-        foto: "/images/kyoto-station-entrance.png",
-        mapa: "/images/kyoto-station-map.png",
+        foto: "/images/kyoto-station-entrance.webp",
+        mapa: "/images/kyoto-station-map.webp",
         mapaAlt: "Mapa da Estação de Kyoto (portões, plataformas JR e Shinkansen)",
       },
       linha: { codigo: "206", nome: "Kyoto City Bus 100 / 206", cor: "#2E7D32" },
@@ -3393,7 +3393,7 @@ const DAY_5: DayContent = {
       ],
       estacaoDestino: {
         nome: "Parada Gojozaka ou Kiyomizu-michi",
-        foto: "/images/gojozaka-bus-stop.png",
+        foto: "/images/gojozaka-bus-stop.webp",
       },
       opcoes: [
         {
@@ -3420,7 +3420,7 @@ const DAY_5: DayContent = {
         "Do Daiwa Roynet Hotel Kyoto-Ekimae, em frente à Kyoto Station, o ônibus 100 ou 206 leva cerca de 20 minutos até Gojozaka ou Kiyomizu-michi — de lá são mais 10 minutos a pé subindo até o templo. Para chegar por volta das 6h30, logo na abertura, confirme o primeiro horário do ônibus nessa manhã — dependendo da frequência inicial, um táxi pode ser a opção mais confiável nesse horário tão cedo.",
     },
     atracaoPrincipal: "Templo Kiyomizu-dera",
-    atracaoPrincipalImagem: "/images/dia5-kiyomizudera.jpg",
+    atracaoPrincipalImagem: "/images/dia5-kiyomizudera.webp",
     detalhesPraticos: [
       { label: "Entrada", valor: "¥500 (adultos)" },
       { label: "Horário", valor: "6h–18h (aprox., varia por temporada)" },
@@ -3436,7 +3436,7 @@ const DAY_5: DayContent = {
       },
     ],
     mapaVisaoGeral: {
-      imagem: "/images/visaogeral-kyoto1.png",
+      imagem: "/images/visaogeral-kyoto1.webp",
       imagemAlt: "Mapa com Kiyomizu-dera, Ninenzaka, % Arabica e a região de Gion nas proximidades",
       nota: "Localização de Kiyomizu-dera e das ladeiras de Sannenzaka/Ninenzaka em relação a Gion, logo ao norte.",
     },
@@ -3453,7 +3453,7 @@ const DAY_5: DayContent = {
           "Ladeira histórica de casas tradicionais, logo na descida a partir do templo.",
         prioridade: "recomendado",
         ordem: 1,
-        imagem: "/images/higashiyama-sannenzaka.jpg",
+        imagem: "/images/higashiyama-sannenzaka.webp",
         imagemAlt: "Ladeira histórica de Sannenzaka, em Higashiyama",
       },
       {
@@ -3461,7 +3461,7 @@ const DAY_5: DayContent = {
         description: "Continuação de Sannenzaka, descendo rumo a Gion.",
         prioridade: "recomendado",
         ordem: 2,
-        imagem: "/images/higashiyama-ninenzaka.jpg",
+        imagem: "/images/higashiyama-ninenzaka.webp",
         imagemAlt: "Ladeira histórica de Ninenzaka, em Higashiyama",
       },
       {
@@ -3470,7 +3470,7 @@ const DAY_5: DayContent = {
           "Cafeteria minimalista muito concorrida, a poucos passos da Pagode Yasaka — última parada antes de seguir para Gion.",
         prioridade: "opcional",
         ordem: 3,
-        imagem: "/images/higashiyama-arabica-kyoto.jpg",
+        imagem: "/images/higashiyama-arabica-kyoto.webp",
         imagemAlt: "Café % Arabica Kyoto Higashiyama",
       },
     ],
@@ -3488,7 +3488,7 @@ const DAY_5: DayContent = {
           categoria: "Tofu dengaku (tradicional desde 1902)",
           descricao:
             "Casa histórica de tofu dengaku bem em frente ao Kiyomizu-dera — cardápio multilíngue, ideal pra fazer a pausa assim que descer do templo.",
-          foto: "/images/kiyomizu-junsei-okabeya.png",
+          foto: "/images/kiyomizu-junsei-okabeya.webp",
           economico: true,
           notaTabelog: "3.41",
           numAvaliacoes: "289 avaliações",
@@ -3506,7 +3506,7 @@ const DAY_5: DayContent = {
           categoria: "Matcha (doces e bebidas)",
           descricao:
             "Especializada em sobremesas de matcha, com terraço aberto — direto na descida de Sannenzaka, sem precisar sair do caminho.",
-          foto: "/images/maccha-house-sannenzaka.png",
+          foto: "/images/maccha-house-sannenzaka.webp",
           economico: true,
           notaTabelog: "3.43",
           numAvaliacoes: "182 avaliações",
@@ -3525,7 +3525,7 @@ const DAY_5: DayContent = {
           categoria: "Yudofu (tofu quente) e kaiseki leve",
           descricao:
             "Casa centenária de yudofu e yuba, com harmonização de sakês locais — mais refeição completa que lanche, perto do Chion-in a caminho de Gion.",
-          foto: "/images/rengetsu-jaya.png",
+          foto: "/images/rengetsu-jaya.webp",
           notaTabelog: "3.39",
           numAvaliacoes: "154 avaliações",
           faixaPreco: "¥3.000–4.999 por pessoa",
@@ -3541,7 +3541,7 @@ const DAY_5: DayContent = {
       ],
       mapa: {
         titulo: "Mapa — Refeições em Higashiyama",
-        imagem: "/images/placeholder-em-producao.png",
+        imagem: "/images/placeholder-em-producao.webp",
         imagemAlt: "Mapa de restaurantes em Higashiyama — em produção",
       },
     },
@@ -3560,25 +3560,25 @@ const DAY_5: DayContent = {
       passos: [
         {
           titulo: "Yasaka Shrine",
-          foto: "/images/gion-yasaka-shrine.jpg",
+          foto: "/images/gion-yasaka-shrine.webp",
           horario: "14:00",
           descricao: "Santuário xintoísta símbolo de Gion.",
         },
         {
           titulo: "Rio Kamo",
-          foto: "/images/gion-rio-kamo.jpg",
+          foto: "/images/gion-rio-kamo.webp",
           horario: "~16:00",
           descricao: "Rio que corta Gion — margem tradicional de passeio, com os restaurantes de Pontocho debruçados sobre a água.",
         },
         {
           titulo: "Pontocho",
-          foto: "/images/gion-pontocho.jpg",
+          foto: "/images/gion-pontocho.webp",
           horario: "~17:00",
           descricao: "Viela tradicional de restaurantes e gueixas, às margens do rio Kamo.",
         },
         {
           titulo: "Jantar Kaiseki ou Obanzai",
-          foto: "/images/icone-gastronomia.png",
+          foto: "/images/icone-gastronomia.webp",
           horario: "19:00",
           descricao: "Jantar tradicional em Gion.",
         },
@@ -3618,7 +3618,7 @@ const DAY_5: DayContent = {
         "Kiyomizu-dera e Gion são vizinhos — a caminhada de 15 a 20 minutos por Sannenzaka e Ninenzaka é parte da experiência, com lojas e casas de chá tradicionais no caminho.",
     },
     atracaoPrincipal: "Distrito de Gion",
-    atracaoPrincipalImagem: "/images/dia5-gion-v3.jpg",
+    atracaoPrincipalImagem: "/images/dia5-gion-v3.webp",
     atracaoPrincipalFoco: "center",
     detalhesPraticos: [
       { label: "Yasaka Shrine", valor: "Entrada gratuita, aberto 24h" },
@@ -3632,7 +3632,7 @@ const DAY_5: DayContent = {
       },
     ],
     mapaVisaoGeral: {
-      imagem: "/images/kyoto-visao-geral.png",
+      imagem: "/images/kyoto-visao-geral.webp",
       imagemAlt: "Mapa de Gion com Pontocho Alley, Yasaka Shrine e a ligação a pé com Kiyomizu-dera",
       nota: "Localização de Pontocho e Yasaka Shrine em relação a Kiyomizu-dera, ao sul.",
     },
@@ -3652,7 +3652,7 @@ const DAY_5: DayContent = {
         description: "Santuário xintoísta símbolo de Gion.",
         prioridade: "opcional",
         ordem: 1,
-        imagem: "/images/gion-yasaka-shrine.jpg",
+        imagem: "/images/gion-yasaka-shrine.webp",
         imagemAlt: "Yasaka Shrine, santuário xintoísta símbolo de Gion",
       },
       {
@@ -3661,7 +3661,7 @@ const DAY_5: DayContent = {
           "Rio que corta Gion — margem tradicional de passeio, com os restaurantes de Pontocho debruçados sobre a água, atravessado pela Sanjo-ohashi e pela Shijo-ohashi.",
         prioridade: "opcional",
         ordem: 2,
-        imagem: "/images/gion-rio-kamo.jpg",
+        imagem: "/images/gion-rio-kamo.webp",
         imagemAlt: "Margem do Rio Kamo em Gion, à noite",
       },
       {
@@ -3669,7 +3669,7 @@ const DAY_5: DayContent = {
         description: "Viela tradicional de restaurantes e gueixas.",
         prioridade: "recomendado",
         ordem: 3,
-        imagem: "/images/gion-pontocho.jpg",
+        imagem: "/images/gion-pontocho.webp",
         imagemAlt: "Viela tradicional de Pontocho, em Gion",
       },
     ],
@@ -3683,7 +3683,7 @@ const DAY_5: DayContent = {
           categoria: "Obanzai e tofu",
           descricao:
             "Mais de 100 anos de tradição em cozinha de tofu e obanzai caseiro, direto em Pontocho — equipe multilíngue (inglês).",
-          foto: "/images/toobanzai-mamehachi-pontocho.png",
+          foto: "/images/toobanzai-mamehachi-pontocho.webp",
           economico: true,
           notaTabelog: "3.43",
           numAvaliacoes: "257 avaliações",
@@ -3701,7 +3701,7 @@ const DAY_5: DayContent = {
           categoria: "Obanzai e vegetais de Kyoto",
           descricao:
             "Pratos de vegetais de Kyoto e obanzai numa machiya tradicional — casa grande (105 lugares), boa opção pra grupo sem espera.",
-          foto: "/images/pontocho-suishin-honten.png",
+          foto: "/images/pontocho-suishin-honten.webp",
           economico: true,
           notaTabelog: "3.31",
           numAvaliacoes: "143 avaliações",
@@ -3719,7 +3719,7 @@ const DAY_5: DayContent = {
           categoria: "Kaiseki (culinária de Kyoto)",
           descricao:
             "Kaiseki tradicional com vista para o Rio Kamo, dois números depois do Pontocho Kaburenjo — a opção mais refinada das três.",
-          foto: "/images/kyoryori-pontocho-fumiya.png",
+          foto: "/images/kyoryori-pontocho-fumiya.webp",
           notaTabelog: "3.43",
           numAvaliacoes: "330 avaliações",
           faixaPreco: "¥8.000–9.999 no jantar",
@@ -3734,7 +3734,7 @@ const DAY_5: DayContent = {
       ],
       mapa: {
         titulo: "Mapa — Refeições em Gion",
-        imagem: "/images/placeholder-em-producao.png",
+        imagem: "/images/placeholder-em-producao.webp",
         imagemAlt: "Mapa de restaurantes em Gion — em produção",
       },
     },
@@ -3765,12 +3765,12 @@ const DAY_6: DayContent = {
   ],
   resumoDia: {
     passos: [
-      { titulo: "Café da Manhã", horario: "07:30", foto: "/images/icone-gastronomia.png" },
-      { titulo: "Saída do Hotel", horario: "08:00", foto: "/images/icone-hotel2.png" },
-      { titulo: "Fushimi Inari Taisha", horario: "08:15", foto: "/images/dia6-fushimiinari.png" },
-      { titulo: "Almoço", horario: "11:00", foto: "/images/icone-gastronomia.png" },
-      { titulo: "Kinkaku-ji", horario: "13:00", foto: "/images/dia6-kinkakuji.png" },
-      { titulo: "Jantar", horario: "19:00", foto: "/images/icone-gastronomia.png" },
+      { titulo: "Café da Manhã", horario: "07:30", foto: "/images/icone-gastronomia.webp" },
+      { titulo: "Saída do Hotel", horario: "08:00", foto: "/images/icone-hotel2.webp" },
+      { titulo: "Fushimi Inari Taisha", horario: "08:15", foto: "/images/dia6-fushimiinari.webp" },
+      { titulo: "Almoço", horario: "11:00", foto: "/images/icone-gastronomia.webp" },
+      { titulo: "Kinkaku-ji", horario: "13:00", foto: "/images/dia6-kinkakuji.webp" },
+      { titulo: "Jantar", horario: "19:00", foto: "/images/icone-gastronomia.webp" },
     ],
   },
   gradeHorarios: {
@@ -3842,13 +3842,13 @@ const DAY_6: DayContent = {
         },
         {
           titulo: "Senbon Torii",
-          foto: "/images/dia6-fushimiinari.png",
+          foto: "/images/dia6-fushimiinari.webp",
           horario: "~08:30",
           descricao: "O famoso corredor de milhares de torii vermelhos, o cartão-postal do santuário.",
         },
         {
           titulo: "Yotsutsuji (mirante)",
-          foto: "/images/fushimi-yotsutsuji.jpg",
+          foto: "/images/fushimi-yotsutsuji.webp",
           horario: "~09:15",
           descricao: "Ponto intermediário na subida com vista sobre Kyoto — boa opção de retorno para quem não quiser subir até o topo.",
         },
@@ -3856,7 +3856,7 @@ const DAY_6: DayContent = {
     },
     visaoAnotada: {
       titulo: "Fushimi Inari Taisha",
-      imagem: "/images/raiox-fushimiinari.png",
+      imagem: "/images/raiox-fushimiinari.webp",
       imagemAlt: "Raio-X Alpinea do Santuário Fushimi Inari com o Portão Principal, Salão Principal, corredor de torii, Yotsuji e o Monte Inari",
       comentarios: [
         "Hoje vamos seguir praticamente a mesma estratégia do dia anterior: acordar cedo.",
@@ -3903,8 +3903,8 @@ const DAY_6: DayContent = {
         nome: "Kyoto Station",
         distancia: "~1 min a pé do hotel",
         saida: "Saída Central (Karasuma-guchi)",
-        foto: "/images/kyoto-station-entrance.png",
-        mapa: "/images/kyoto-station-map.png",
+        foto: "/images/kyoto-station-entrance.webp",
+        mapa: "/images/kyoto-station-map.webp",
         mapaAlt: "Mapa da Estação de Kyoto (portões, plataformas JR e Shinkansen)",
       },
       linha: { codigo: "JR", nome: "JR Nara Line", cor: "#00A650", logo: "/images/jr-logo.webp" },
@@ -3913,7 +3913,7 @@ const DAY_6: DayContent = {
         nome: "Estação Inari",
         nomeJapones: "稲荷駅",
         saida: "Saída única",
-        foto: "/images/inari-station-entrance.png",
+        foto: "/images/inari-station-entrance.webp",
       },
       opcoes: [
         {
@@ -3940,7 +3940,7 @@ const DAY_6: DayContent = {
         "Do Daiwa Roynet Hotel Kyoto-Ekimae, em frente à Kyoto Station (D01), o trem local da JR Nara Line leva cerca de 5 minutos até a Estação Inari (D03) — que fica na entrada do santuário. Importante: apenas trens locais param em Inari, expressos não param.",
     },
     atracaoPrincipal: "Fushimi-Inari Taisha",
-    atracaoPrincipalImagem: "/images/dia6-fushimiinari.png",
+    atracaoPrincipalImagem: "/images/dia6-fushimiinari.webp",
     detalhesPraticos: [
       { label: "Entrada", valor: "Gratuita" },
       { label: "Horário", valor: "Aberto 24h" },
@@ -3956,7 +3956,7 @@ const DAY_6: DayContent = {
       },
     ],
     mapaVisaoGeral: {
-      imagem: "/images/fushimi-inari-taisha-visaogeral.png",
+      imagem: "/images/fushimi-inari-taisha-visaogeral.webp",
       imagemAlt: "Mapa de Fushimi Inari-taisha com Fushimi Inari Yotsuji, Mount Inari, Kobogataki Falls e santuários menores no entorno",
       nota: "Localização do santuário principal e do caminho de torii que sobe o Monte Inari.",
     },
@@ -3973,7 +3973,7 @@ const DAY_6: DayContent = {
           "O grande torii vermelho na entrada do santuário, com o Salão Principal (Honden) visível ao fundo — primeiro ponto do santuário, antes do início do corredor de Senbon Torii.",
         prioridade: "imperdivel",
         ordem: 1,
-        imagem: "/images/dia6-fushimiinari-entrada.png",
+        imagem: "/images/dia6-fushimiinari-entrada.webp",
         imagemAlt: "Grande torii vermelho na entrada do Santuário Fushimi Inari, com o Salão Principal ao fundo",
       },
       {
@@ -3982,7 +3982,7 @@ const DAY_6: DayContent = {
           "Cruzamento a meio caminho da subida do Monte Inari, com o mirante mais famoso do circuito depois do Senbon Torii — vista aberta sobre Kyoto entre a torii vermelha e as árvores, especialmente bonita perto do pôr do sol. É onde o trajeto se divide: seguir em frente rumo ao topo ou voltar pelo mesmo caminho.",
         prioridade: "recomendado",
         ordem: 2,
-        imagem: "/images/fushimi-yotsutsuji.jpg",
+        imagem: "/images/fushimi-yotsutsuji.webp",
         imagemAlt: "Vista de Kyoto ao pôr do sol através de um torii vermelho, no mirante de Yotsutsuji",
       },
       {
@@ -3991,7 +3991,7 @@ const DAY_6: DayContent = {
           "Pequeno lago cercado pela mata densa do Monte Inari, com o santuário Kumataka-sha às margens — um respiro mais tranquilo e menos fotografado do circuito, com a vegetação refletida na água. Fica além do Yotsutsuji, para quem seguir subindo.",
         prioridade: "opcional",
         ordem: 3,
-        imagem: "/images/fushimi-shinike-kumatakasha.jpg",
+        imagem: "/images/fushimi-shinike-kumatakasha.webp",
         imagemAlt: "Lago Shin-ike cercado pela floresta do Monte Inari, com o santuário Kumataka-sha à margem",
       },
       {
@@ -4000,7 +4000,7 @@ const DAY_6: DayContent = {
           "Santuário menor em meio à mata, um pouco mais acima na subida do Monte Inari — um dos pontos ao longo do trajeto de trilha para quem seguir além do Yotsutsuji rumo ao topo.",
         prioridade: "opcional",
         ordem: 4,
-        imagem: "/images/fushimi-mitsurugisha.jpg",
+        imagem: "/images/fushimi-mitsurugisha.webp",
         imagemAlt: "Pequeno santuário com torii vermelho em meio à floresta, no Monte Inari",
       },
     ],
@@ -4014,7 +4014,7 @@ const DAY_6: DayContent = {
           categoria: "Inari-zushi (casa tradicional desde 1540)",
           descricao:
             "Bem em frente à entrada do santuário — casa quase 500 anos mais velha que o próprio complexo de torii, famosa pelo inari-zushi tradicional.",
-          foto: "/images/nezameya-inarizushi.png",
+          foto: "/images/nezameya-inarizushi.webp",
           notaTabelog: "3.45",
           numAvaliacoes: "392 avaliações",
           faixaPreco: "¥1.000–1.999",
@@ -4030,7 +4030,7 @@ const DAY_6: DayContent = {
           categoria: "Kitsune Udon (macarrão artesanal)",
           descricao:
             "Udon feito à mão na hora, com o clássico kitsune (tofu frito) — casa pequena e simples, a poucos minutos a pé do santuário.",
-          foto: "/images/kendon-ya-fushimi.png",
+          foto: "/images/kendon-ya-fushimi.webp",
           economico: true,
           notaTabelog: "3.53",
           numAvaliacoes: "313 avaliações",
@@ -4047,7 +4047,7 @@ const DAY_6: DayContent = {
           categoria: "Inari-zushi para levar",
           descricao:
             "Inari-zushi portátil com gergelim e bardana, ideal para comer andando pelo corredor de torii — também serve codorna grelhada.",
-          foto: "/images/inafuku-fushimi.png",
+          foto: "/images/inafuku-fushimi.webp",
           economico: true,
           notaTabelog: "3.34",
           numAvaliacoes: "183 avaliações",
@@ -4061,7 +4061,7 @@ const DAY_6: DayContent = {
       ],
       mapa: {
         titulo: "Mapa — Refeições em Fushimi",
-        imagem: "/images/placeholder-em-producao.png",
+        imagem: "/images/placeholder-em-producao.webp",
         imagemAlt: "Mapa de restaurantes em Fushimi — em produção",
       },
     },
@@ -4089,19 +4089,19 @@ const DAY_6: DayContent = {
       passos: [
         {
           titulo: "Kinkaku-ji",
-          foto: "/images/dia6-kinkakuji.png",
+          foto: "/images/dia6-kinkakuji.webp",
           horario: "13:00",
           descricao: "O Pavilhão Dourado, um dos templos mais fotografados do Japão.",
         },
         {
           titulo: "Ryoan-ji",
-          foto: "/images/kinkakuji-ryoanji.jpg",
+          foto: "/images/kinkakuji-ryoanji.webp",
           horario: "~14:30",
           descricao: "Templo zen famoso pelo jardim de pedras, poucos minutos de distância.",
         },
         {
           titulo: "Ninna-ji",
-          foto: "/images/kinkakuji-ninnaji.jpg",
+          foto: "/images/kinkakuji-ninnaji.webp",
           horario: "~15:15",
           descricao: "Templo histórico com belas cerejeiras, no mesmo circuito.",
         },
@@ -4109,7 +4109,7 @@ const DAY_6: DayContent = {
     },
     visaoAnotada: {
       titulo: "Kinkaku-ji & Kitayama",
-      imagem: "/images/raiox-kinkakuji.png",
+      imagem: "/images/raiox-kinkakuji.webp",
       imagemAlt: "Raio-X Alpinea de Kinkaku-ji com Shariden Kinkaku, Kyōko-chi Pond, Ginga-sen, Ryūmon Falls, White Snake Tomb, Fudō-do Temple, General Gate e Entrance",
       comentarios: [
         "Depois de começar o dia muito cedo no Fushimi Inari, seguimos para uma atração completamente diferente: o Kinkaku-ji, o famoso Pavilhão Dourado de Kyoto.",
@@ -4157,8 +4157,8 @@ const DAY_6: DayContent = {
       estacaoOrigem: {
         nome: "Kyoto Station",
         saida: "Saída Central (Karasuma-guchi)",
-        foto: "/images/kyoto-station-entrance.png",
-        mapa: "/images/kyoto-station-map.png",
+        foto: "/images/kyoto-station-entrance.webp",
+        mapa: "/images/kyoto-station-map.webp",
         mapaAlt: "Mapa da Estação de Kyoto (portões, plataformas JR e Shinkansen)",
       },
       linha: { codigo: "205", nome: "Kyoto City Bus 205", cor: "#2E7D32" },
@@ -4170,7 +4170,7 @@ const DAY_6: DayContent = {
       ],
       estacaoDestino: {
         nome: "Parada Kinkakuji-michi",
-        foto: "/images/kinkakuji-michi-bus-stop.png",
+        foto: "/images/kinkakuji-michi-bus-stop.webp",
       },
       opcoes: [
         {
@@ -4197,7 +4197,7 @@ const DAY_6: DayContent = {
         "Fushimi Inari e Kinkaku-ji ficam em lados opostos de Kyoto — o caminho mais prático é retornar a Kyoto Station e seguir de ônibus 205, cerca de 45 a 50 minutos no total. De táxi, o trajeto direto cai para 16 a 20 minutos.",
     },
     atracaoPrincipal: "Kinkaku-ji",
-    atracaoPrincipalImagem: "/images/dia6-kinkakuji.png",
+    atracaoPrincipalImagem: "/images/dia6-kinkakuji.webp",
     detalhesPraticos: [
       { label: "Entrada", valor: "¥500 (adultos)" },
       { label: "Horário", valor: "9h–17h, todos os dias" },
@@ -4210,7 +4210,7 @@ const DAY_6: DayContent = {
       },
     ],
     mapaVisaoGeral: {
-      imagem: "/images/kinkakuji-visaogeral.png",
+      imagem: "/images/kinkakuji-visaogeral.webp",
       imagemAlt: "Mapa de Kinkaku-ji com Shariden Kinkaku, Kyōko-chi Pond, General Gate e Entrance",
       nota: "Localização do Pavilhão Dourado e do circuito de caminhada dentro do templo.",
     },
@@ -4231,7 +4231,7 @@ const DAY_6: DayContent = {
           "O ângulo clássico do Pavilhão Dourado, com a fachada refletida no Kyōko-chi Pond — a foto mais icônica do templo, logo na entrada do circuito.",
         prioridade: "recomendado",
         ordem: 1,
-        imagem: "/images/kinkakuji-reflection-kyokochi.jpg",
+        imagem: "/images/kinkakuji-reflection-kyokochi.webp",
         imagemAlt: "Vista clássica do Kinkaku-ji refletido no Kyōko-chi Pond",
       },
       {
@@ -4240,7 +4240,7 @@ const DAY_6: DayContent = {
           "Vista mais próxima do pavilhão pela lateral do lago, seguindo o circuito — dá pra ver melhor os detalhes da fachada dourada e dos telhados.",
         prioridade: "recomendado",
         ordem: 2,
-        imagem: "/images/kinkakuji-close-view-lateral.jpg",
+        imagem: "/images/kinkakuji-close-view-lateral.webp",
         imagemAlt: "Vista lateral e mais próxima do Kinkaku-ji, pela margem do lago",
       },
       {
@@ -4249,7 +4249,7 @@ const DAY_6: DayContent = {
           "Vista elevada do pavilhão a partir do Sekkatei, a casa de chá no ponto mais alto do circuito — o fênix dourado (hōō) no topo do telhado fica bem visível daqui.",
         prioridade: "recomendado",
         ordem: 3,
-        imagem: "/images/kinkakuji-elevated-view-sekkatei.jpg",
+        imagem: "/images/kinkakuji-elevated-view-sekkatei.webp",
         imagemAlt: "Fênix dourado (hōō) no topo do telhado do Kinkaku-ji, visto do Sekkatei",
       },
       {
@@ -4258,7 +4258,7 @@ const DAY_6: DayContent = {
           "Templo zen famoso pelo jardim de pedras — pega o mesmo ônibus/circuito de Kinkaku-ji, poucos minutos de distância.",
         prioridade: "recomendado",
         ordem: 4,
-        imagem: "/images/kinkakuji-ryoanji.jpg",
+        imagem: "/images/kinkakuji-ryoanji.webp",
         imagemAlt: "Jardim de pedras do templo zen Ryoan-ji, em Kyoto",
       },
       {
@@ -4267,7 +4267,7 @@ const DAY_6: DayContent = {
           "Templo histórico com belas cerejeiras, um pouco mais além de Ryoan-ji no mesmo circuito.",
         prioridade: "opcional",
         ordem: 5,
-        imagem: "/images/kinkakuji-ninnaji.jpg",
+        imagem: "/images/kinkakuji-ninnaji.webp",
         imagemAlt: "Templo histórico de Ninna-ji, em Kyoto",
       },
       {
@@ -4276,7 +4276,7 @@ const DAY_6: DayContent = {
           "Acervo com milhares de títulos de mangá — fica no centro de Kyoto (Karasuma-Oike), fora da rota de Kinkaku-ji: exige um deslocamento à parte (~20-30 min), não dá pra encaixar sem voltar ao centro.",
         prioridade: "opcional",
         ordem: 6,
-        imagem: "/images/kyoto-manga-museum.jpg",
+        imagem: "/images/kyoto-manga-museum.webp",
         imagemAlt: "Museu do Mangá de Kyoto",
       },
       {
@@ -4285,7 +4285,7 @@ const DAY_6: DayContent = {
           "Loja oficial da Nintendo no Takashimaya, no centro de Kyoto — também fora da rota de Kinkaku-ji, exige o mesmo deslocamento ao centro do Museu do Mangá.",
         prioridade: "opcional",
         ordem: 7,
-        imagem: "/images/nintendo-store-kyoto.jpg",
+        imagem: "/images/nintendo-store-kyoto.webp",
         imagemAlt: "Nintendo Store Kyoto, no Takashimaya",
       },
       {
@@ -4294,7 +4294,7 @@ const DAY_6: DayContent = {
           "Antiga residência dos xoguns Tokugawa em Kyoto, Patrimônio Mundial da UNESCO, com o Palácio Ninomaru e jardins amplos — fica mais central, entre Kinkaku-ji e a Kyoto Station, então também exige um deslocamento à parte.",
         prioridade: "opcional",
         ordem: 8,
-        imagem: "/images/nijo-castle-kyoto.jpg",
+        imagem: "/images/nijo-castle-kyoto.webp",
         imagemAlt: "Castelo de Nijo em Kyoto, com cerejeiras em flor à frente do Palácio Ninomaru",
       },
     ],
@@ -4308,7 +4308,7 @@ const DAY_6: DayContent = {
           categoria: "Unagi (enguia grelhada no carvão)",
           descricao:
             "Especializada em unagi grelhada no carvão, a mais próxima do Kinkaku-ji entre as opções da região. Renomeada de \"Doi Katsuman\" para \"Unasho\" em fev/2024, mas ainda aparece com o nome antigo — Charcoal Grilled Eel Doikatsuman Kinkakuji Branch — no Tripadvisor, SAVOR JAPAN, Wanderlog e KKday: é o mesmo lugar, mesmo endereço e mesma página do Tabelog.",
-          foto: "/images/unasho-kinkakuji.png",
+          foto: "/images/unasho-kinkakuji.webp",
           notaTabelog: "3.10",
           numAvaliacoes: "27 avaliações",
           faixaPreco: "¥3.000–3.999",
@@ -4324,7 +4324,7 @@ const DAY_6: DayContent = {
           categoria: "Unagi (enguia grelhada)",
           descricao:
             "Opção mais em conta da região para unagi-don, na mesma área de Kitano Hakubaicho — perto do Kinkaku-ji.",
-          foto: "/images/masakatsu-kinkakuji.png",
+          foto: "/images/masakatsu-kinkakuji.webp",
           economico: true,
           notaTabelog: "3.08",
           numAvaliacoes: "25 avaliações",
@@ -4341,7 +4341,7 @@ const DAY_6: DayContent = {
           categoria: "Unagi (rede nacional especializada, unadon a partir de ¥1.600)",
           descricao:
             "Filial (aberta em mar/2026) da maior rede especializada em unagi do Japão, com mais de 150 lojas — padrão de qualidade consistente a preço mais baixo que a média. Bem perto do Kinkaku-ji.",
-          foto: "/images/unagi-naruse-kinkakuji.png",
+          foto: "/images/unagi-naruse-kinkakuji.webp",
           economico: true,
           faixaPreco: "A partir de ¥1.600 (unadon)",
           distancia: "Próximo ao Kinkaku-ji (Kinugasa-kaido)",
@@ -4353,7 +4353,7 @@ const DAY_6: DayContent = {
       ],
       mapa: {
         titulo: "Mapa — Refeições em Kinkaku-ji",
-        imagem: "/images/placeholder-em-producao.png",
+        imagem: "/images/placeholder-em-producao.webp",
         imagemAlt: "Mapa de restaurantes em Kinkaku-ji — em produção",
       },
     },
@@ -4385,12 +4385,12 @@ const DAY_7: DayContent = {
   ],
   resumoDia: {
     passos: [
-      { titulo: "Café da Manhã", horario: "08:30", foto: "/images/icone-gastronomia.png" },
-      { titulo: "Saída do Hotel", horario: "09:15", foto: "/images/icone-hotel2.png" },
-      { titulo: "Passeio por Ningyocho", horario: "09:45", foto: "/images/ningyocho.png" },
-      { titulo: "Almoço", horario: "12:30", foto: "/images/icone-gastronomia.png" },
-      { titulo: "Chegada ao Kokugikan", horario: "14:30", foto: "/images/kokugikan-ryogoku-sumo.jpg" },
-      { titulo: "Jantar com Chanko Nabe", horario: "18:00", foto: "/images/icone-gastronomia.png" },
+      { titulo: "Café da Manhã", horario: "08:30", foto: "/images/icone-gastronomia.webp" },
+      { titulo: "Saída do Hotel", horario: "09:15", foto: "/images/icone-hotel2.webp" },
+      { titulo: "Passeio por Ningyocho", horario: "09:45", foto: "/images/ningyocho.webp" },
+      { titulo: "Almoço", horario: "12:30", foto: "/images/icone-gastronomia.webp" },
+      { titulo: "Chegada ao Kokugikan", horario: "14:30", foto: "/images/kokugikan-ryogoku-sumo.webp" },
+      { titulo: "Jantar com Chanko Nabe", horario: "18:00", foto: "/images/icone-gastronomia.webp" },
     ],
   },
   gradeHorarios: {
@@ -4459,7 +4459,7 @@ const DAY_7: DayContent = {
       passos: [
         {
           titulo: "Shigemori Eishindo",
-          foto: "/images/ningyoyaki.jpg",
+          foto: "/images/ningyoyaki.webp",
           horario: "09:50",
           descricao: "Fundada em 1917, é a casa mais tradicional de ningyoyaki de Ningyocho.",
         },
@@ -4471,19 +4471,19 @@ const DAY_7: DayContent = {
         },
         {
           titulo: "Toritada",
-          foto: "/images/toritada.png",
+          foto: "/images/toritada.webp",
           horario: "10:15",
           descricao: "Avícola fundada em 1911, tradicional em Amazake Yokocho.",
         },
         {
           titulo: "Hikokuro",
-          foto: "/images/gyokueido-hikokuro.png",
+          foto: "/images/gyokueido-hikokuro.webp",
           horario: "10:35",
           descricao: "Gyokueido Hikokuro, casa de doces japoneses fundada em 1576 em Kyoto.",
         },
         {
           titulo: "Edo Rakugo Karakuri Yagura",
-          foto: "/images/ningyocho.png",
+          foto: "/images/ningyocho.webp",
           horario: "11:00",
           descricao: "Torre-relógio karakuri ao lado do Suitengu.",
         },
@@ -4497,7 +4497,7 @@ const DAY_7: DayContent = {
     },
     visaoAnotada: {
       titulo: "Ningyocho",
-      imagem: "/images/raiox-ningyocho.png",
+      imagem: "/images/raiox-ningyocho.webp",
       imagemAlt: "Raio-X Alpinea de Ningyocho com Ningyocho Station, Amazake Yokocho, Ningyocho Mechanic Clock, Nihonbashi e Suitengu Shrine",
       comentarios: [
         "Dependendo de como você organizou a volta de Kyoto, você pode ter chegado a Tóquio na noite anterior ou somente nesta manhã.",
@@ -4524,7 +4524,7 @@ const DAY_7: DayContent = {
           titulo: "Shigemori Eishindo",
           descricao:
             "Fundada em 1917, é a casa mais tradicional de ningyoyaki de Ningyocho — bolinhos fofos em formato de rosto ou dos sete deuses da sorte, recheados de pasta de feijão azuki. Vende em média 3 mil unidades por dia, chegando a 10 mil em dias de pico.",
-          foto: "/images/ningyoyaki.jpg",
+          foto: "/images/ningyoyaki.webp",
           ordem: 1,
         },
         {
@@ -4538,21 +4538,21 @@ const DAY_7: DayContent = {
           titulo: "Toritada",
           descricao:
             "Avícola fundada em 1911, tradicional em Amazake Yokocho — trabalha com as três principais raças de frango do Japão e pato fresco. Seu tamagoyaki (omelete enrolada) é o item mais pedido, famoso por durar bem e virar lembrancinha.",
-          foto: "/images/toritada.png",
+          foto: "/images/toritada.webp",
           ordem: 3,
         },
         {
           titulo: "Hikokuro",
           descricao:
             "Gyokueido Hikokuro, casa de doces japoneses fundada em 1576 em Kyoto, com filial em Nihonbashi desde 1954. Marcas registradas: o torayaki, massa fofa recheada com feijão azuki graúdo de Hokkaido, e a warabi mochi, elástica e macia, finalizada com kinako (farinha de soja torrada).",
-          foto: "/images/gyokueido-hikokuro.png",
+          foto: "/images/gyokueido-hikokuro.webp",
           ordem: 4,
         },
         {
           titulo: "Edo Rakugo Karakuri Yagura",
           descricao:
             "Torre-relógio karakuri ao lado do Suitengu, próxima a Nihonbashi-Ningyocho 2-chome — a cada hora cheia (das 11h às 19h), as cortinas se abrem e um boneco contador de rakugo narra, por 2 a 3 minutos, a história de como o bairro ganhou seu nome. A outra torre de Ningyocho, com tema dos machibikeshi (bombeiros de Edo), está temporariamente removida por causa das obras do metrô — por isso não entra como parada garantida.",
-          foto: "/images/ningyocho.png",
+          foto: "/images/ningyocho.webp",
           ordem: 5,
         },
         {
@@ -4576,14 +4576,14 @@ const DAY_7: DayContent = {
         distancia: "~1 min a pé do remm Tokyo Kyobashi",
         saida: "Saída A7",
       },
-      linha: { codigo: "A12", nome: "Toei Asakusa Line", cor: "#D04E3C", logo: "/images/toei-mark.png" },
+      linha: { codigo: "A12", nome: "Toei Asakusa Line", cor: "#D04E3C", logo: "/images/toei-mark.webp" },
       estacoesIntermediarias: [{ nome: "Nihombashi", nomeJapones: "日本橋", numero: "A13" }],
       estacaoDestino: {
         nome: "Estação Ningyocho",
         nomeJapones: "人形町駅",
         saida: "Saída A2",
-        foto: "/images/ningyocho-station-entrance.png",
-        mapa: "/images/ningyocho-station-map.png",
+        foto: "/images/ningyocho-station-entrance.webp",
+        mapa: "/images/ningyocho-station-map.webp",
         mapaAlt: "Mapa da Estação Ningyocho/Suitengumae (Hibiya Line e Toei Asakusa Line)",
       },
       opcoes: [
@@ -4611,7 +4611,7 @@ const DAY_7: DayContent = {
         "Do remm Tokyo Kyobashi, o trajeto até Ningyocho é de cerca de 5 minutos de metrô pela Toei Asakusa Line, sem baldeação — apenas 2 estações a partir de Takaracho, a menos de 1 minuto a pé do hotel.",
     },
     atracaoPrincipal: "09:45 — Chegada a Ningyocho",
-    atracaoPrincipalImagem: "/images/ningyocho.png",
+    atracaoPrincipalImagem: "/images/ningyocho.webp",
     detalhesPraticos: [
       {
         label: "Comércio tradicional",
@@ -4630,7 +4630,7 @@ const DAY_7: DayContent = {
       },
     ],
     mapaVisaoGeral: {
-      imagem: "/images/placeholder-em-producao.png",
+      imagem: "/images/placeholder-em-producao.webp",
       imagemAlt: "Visão geral do trajeto a pé em Ningyocho — em produção",
       nota: "Mapa de trajeto a pé em produção.",
     },
@@ -4652,7 +4652,7 @@ const DAY_7: DayContent = {
           categoria: "Oyakodon (berço do prato, desde 1760)",
           descricao:
             "Casa com mais de 250 anos, criadora do oyakodon — receita de família mantida em segredo. A 1 min a pé da Estação Ningyocho.",
-          foto: "/images/tamahide-ningyocho.png",
+          foto: "/images/tamahide-ningyocho.webp",
           notaTabelog: "3.49",
           numAvaliacoes: "1.792 avaliações",
           faixaPreco: "¥2.000–2.999 no almoço",
@@ -4670,7 +4670,7 @@ const DAY_7: DayContent = {
           categoria: "Yakitori-jū (arroz com frango grelhado)",
           descricao:
             "Casa tradicional de yakitori famosa pelo \"yakitori-jū\" — arroz coberto de frango grelhado glaceado, ótimo para viagem.",
-          foto: "/images/ogawa-ningyocho.png",
+          foto: "/images/ogawa-ningyocho.webp",
           economico: true,
           notaTabelog: "3.69",
           numAvaliacoes: "1.429 avaliações",
@@ -4688,7 +4688,7 @@ const DAY_7: DayContent = {
           categoria: "Yoshoku (cozinha ocidental à japonesa) — Katsudon",
           descricao:
             "Casa centenária de yoshoku, famosa pelo katsudon exclusivo da casa — selecionada duas vezes entre os 100 melhores yoshoku do Tabelog.",
-          foto: "/images/yoshoku-koharuken.png",
+          foto: "/images/yoshoku-koharuken.webp",
           economico: true,
           notaTabelog: "3.49",
           numAvaliacoes: "1.149 avaliações",
@@ -4702,7 +4702,7 @@ const DAY_7: DayContent = {
       ],
       mapa: {
         titulo: "Mapa — Refeições em Ningyocho",
-        imagem: "/images/placeholder-em-producao.png",
+        imagem: "/images/placeholder-em-producao.webp",
         imagemAlt: "Mapa de restaurantes em Ningyocho — em produção",
       },
     },
@@ -4726,7 +4726,7 @@ const DAY_7: DayContent = {
     // Espadas já aparecem como pois opcionais logo abaixo, sem duplicar.
     visaoAnotada: {
       titulo: "Ryogoku",
-      imagem: "/images/raiox-ryogoku.png",
+      imagem: "/images/raiox-ryogoku.webp",
       imagemAlt: "Raio-X Alpinea dos arredores do Kokugikan com Ryōgoku Kokugikan, Museu Edo-Tokyo, Ryōgoku Edo NOREN, The Japanese Sword Museum e Yokoamicho Park",
       comentarios: [
         "Depois disso, vamos para Ryogoku. É ali que fica o Ryogoku Kokugikan, uma das casas mais importantes do sumô profissional japonês.",
@@ -4761,18 +4761,18 @@ const DAY_7: DayContent = {
         nome: "Estação Ningyocho",
         nomeJapones: "人形町駅",
         saida: "Saída A2",
-        foto: "/images/ningyocho-station-entrance.png",
-        mapa: "/images/ningyocho-station-map.png",
+        foto: "/images/ningyocho-station-entrance.webp",
+        mapa: "/images/ningyocho-station-map.webp",
         mapaAlt: "Mapa da Estação Ningyocho/Suitengumae (Hibiya Line e Toei Asakusa Line)",
       },
-      linha: { codigo: "A14", nome: "Toei Asakusa Line", cor: "#D04E3C", logo: "/images/toei-mark.png" },
+      linha: { codigo: "A14", nome: "Toei Asakusa Line", cor: "#D04E3C", logo: "/images/toei-mark.webp" },
       estacoesIntermediarias: [{ nome: "Asakusabashi", nomeJapones: "浅草橋", numero: "A16" }],
       baldeacao: true,
       estacaoDestino: {
         nome: "Estação Ryogoku",
         nomeJapones: "両国駅",
         saida: "Saída Oeste (Nishi-guchi)",
-        foto: "/images/ryogoku-station-entrance.png",
+        foto: "/images/ryogoku-station-entrance.webp",
       },
       opcoes: [
         {
@@ -4799,7 +4799,7 @@ const DAY_7: DayContent = {
         "De Ningyocho até Ryogoku são cerca de 10 minutos: Toei Asakusa Line até Asakusabashi, com uma baldeação curta para a JR Sobu Line até Ryogoku — o Kokugikan fica a 1 minuto a pé da estação.",
     },
     atracaoPrincipal: "Ryogoku Kokugikan - Grand Sumo Tournament 2027",
-    atracaoPrincipalImagem: "/images/kokugikan-ryogoku-sumo.jpg",
+    atracaoPrincipalImagem: "/images/kokugikan-ryogoku-sumo.webp",
     atracaoPrincipalFoco: "center",
     detalhesPraticos: [
       { label: "Entrada geral (no dia)", valor: "A partir de ¥2.200" },
@@ -4813,7 +4813,7 @@ const DAY_7: DayContent = {
       },
     ],
     mapaVisaoGeral: {
-      imagem: "/images/visaogeral-ryogoku.png",
+      imagem: "/images/visaogeral-ryogoku.webp",
       imagemAlt: "Mapa dos arredores do Kokugikan com Ryōgoku Kokugikan, Museu Edo-Tokyo, Ryōgoku Edo NOREN, Yokoamicho Park e o Museu da Espada Japonesa",
       nota: "Localização do Kokugikan em relação ao Museu Edo-Tokyo, ao Yokoamicho Park e à vila gastronômica Ryōgoku Edo NOREN.",
     },
@@ -4836,7 +4836,7 @@ const DAY_7: DayContent = {
         description: "Vila gastronômica temática de sumô, na entrada do estádio.",
         prioridade: "opcional",
         ordem: 2,
-        imagem: "/images/edo-noren-ryogoku.png",
+        imagem: "/images/edo-noren-ryogoku.webp",
         imagemAlt: "Interior do Ryōgoku Edo NOREN, réplica de um dohyō (ringue de sumô) cercada por lojas e restaurantes temáticos ao estilo de vila antiga",
       },
       {
@@ -4845,7 +4845,7 @@ const DAY_7: DayContent = {
           "Monumento com os nomes de todos os Yokozuna (Título máximo de lutador de Sumô) — pertinho do Kokugikan.",
         prioridade: "opcional",
         ordem: 3,
-        imagem: "/images/santuario-nomi-no-sukune.png",
+        imagem: "/images/santuario-nomi-no-sukune.webp",
         imagemAlt: "Estátua de pedra de um lutador de sumô no Santuário Nomi-no-Sukune, cercada por árvores",
       },
       {
@@ -4854,7 +4854,7 @@ const DAY_7: DayContent = {
           "Coleção de espadas samurai tradicionais, a alguns minutos a pé do estádio — não é uma prioridade da viagem, mas pode valer a visita para quem tiver interesse específico em nihonto.",
         prioridade: "opcional",
         ordem: 4,
-        imagem: "/images/museu-espadas-ryogoku.png",
+        imagem: "/images/museu-espadas-ryogoku.webp",
         imagemAlt: "Espadas samurai (katana) tradicionais em exibição no Museu de Espadas de Ryogoku",
       },
     ],
@@ -4901,7 +4901,7 @@ const DAY_7: DayContent = {
           categoria: "Chanko Nabe (dirigida por ex-Ozeki Kirishima)",
           descricao:
             "Casa do ex-Ozeki (vice-campeão) de sumô Kirishima, dentro do complexo gastronômico Ryogoku Edo NOREN — a 1 min a pé do Kokugikan.",
-          foto: "/images/chanko-kirishima-ryogoku.png",
+          foto: "/images/chanko-kirishima-ryogoku.webp",
           notaTabelog: "3.44",
           numAvaliacoes: "324 avaliações",
           faixaPreco: "¥5.000–5.999 no jantar",
@@ -4917,7 +4917,7 @@ const DAY_7: DayContent = {
           categoria: "Chanko Nabe (receita de heya/estábulo de sumô)",
           descricao:
             "Chanko nabe autêntico, receita passada por um estábulo (heya) de sumô — a um passo da Estação Ryogoku, aberta todos os dias.",
-          foto: "/images/ami-ryogoku.png",
+          foto: "/images/ami-ryogoku.webp",
           economico: true,
           notaTabelog: "3.47",
           numAvaliacoes: "513 avaliações",
@@ -4934,7 +4934,7 @@ const DAY_7: DayContent = {
           categoria: "Chanko Nabe (9 tipos, com frutos do mar de Toyosu)",
           descricao:
             "Nove variedades de chanko nabe com ingredientes frescos direto do mercado de Toyosu — a 1 min a pé da Estação Ryogoku.",
-          foto: "/images/chanko-dojo-honten.png",
+          foto: "/images/chanko-dojo-honten.webp",
           economico: true,
           notaTabelog: "3.35",
           numAvaliacoes: "127 avaliações",
@@ -4948,7 +4948,7 @@ const DAY_7: DayContent = {
       ],
       mapa: {
         titulo: "Mapa — Refeições em Ryogoku",
-        imagem: "/images/placeholder-em-producao.png",
+        imagem: "/images/placeholder-em-producao.webp",
         imagemAlt: "Mapa de restaurantes em Ryogoku — em produção",
       },
     },
@@ -4956,7 +4956,7 @@ const DAY_7: DayContent = {
       titulo: "Kokugikan em Detalhes",
       imagens: [
         {
-          src: "/images/kokugikan-mapa-assentos.jpg",
+          src: "/images/kokugikan-mapa-assentos.webp",
           alt: "Diagrama dos tipos de assento do Kokugikan — Isu-seki (cadeiras, 2F), Tamari-seki/Suna-kaburi (primeira fileira, saída da arena) e Masuseki (cabines de almofada, 1F)",
           legenda: "Tipos de assento: Isu-seki, Tamari-seki (Suna-kaburi) e Masuseki",
         },
@@ -5114,6 +5114,7 @@ function PoiCard({ index, poi }: { index: number; poi: Poi }) {
             className="group relative block aspect-[16/10] w-full overflow-hidden"
           >
             <img
+                loading="lazy"
               src={imagens[0].src}
               alt={imagens[0].alt}
               style={poi.imagemPosicao ? { objectPosition: poi.imagemPosicao } : undefined}
@@ -5142,7 +5143,8 @@ function PoiCard({ index, poi }: { index: number; poi: Poi }) {
                   onClick={() => setZoomIndex(i + 1)}
                   className="h-10 w-10 overflow-hidden rounded-lg border-2 border-white/85 shadow-md transition hover:scale-105"
                 >
-                  <img src={img.src} alt={img.alt} className="h-full w-full object-cover" />
+                  <img
+                loading="lazy" src={img.src} alt={img.alt} className="h-full w-full object-cover" />
                 </button>
               ))}
               {imagens.length > 3 && (
@@ -5253,6 +5255,7 @@ function PoiCard({ index, poi }: { index: number; poi: Poi }) {
             onClick={(e) => e.stopPropagation()}
           >
             <img
+                loading="lazy"
               src={imagens[zoomIndex].src}
               alt={imagens[zoomIndex].alt}
               className="max-h-[80vh] max-w-[92vw] rounded-2xl object-contain"
@@ -5444,9 +5447,9 @@ function HorarioLojasBlock({
 }) {
   return (
     <div className="mb-5 rounded-2xl border border-orange-200 bg-orange-50/60 p-5 sm:p-7">
-      <div className="mb-5 flex items-center gap-4">
-        <IconClock className="h-20 w-20 shrink-0 text-[#000000]" />
-        <span className="min-w-0 flex-1 text-base font-bold uppercase tracking-[0.2em] text-[#24211D]/70 sm:text-lg">
+      <div className="mb-5 flex items-center gap-3 sm:gap-4">
+        <IconClock className="h-14 w-14 shrink-0 text-[#000000] sm:h-20 sm:w-20" />
+        <span className="min-w-0 flex-1 text-sm font-bold uppercase tracking-[0.12em] text-[#24211D]/70 sm:text-lg sm:tracking-[0.2em]">
           Horário das Lojas
         </span>
       </div>
@@ -5454,12 +5457,12 @@ function HorarioLojasBlock({
         {itens.map((b, i) => (
           <div
             key={b.nome}
-            className={`flex items-center justify-between gap-4 ${
+            className={`flex flex-col gap-0.5 sm:flex-row sm:items-center sm:justify-between sm:gap-4 ${
               i > 0 ? "border-t border-[#DDD8CF] pt-3" : ""
             }`}
           >
-            <p className="text-sm font-semibold text-[#24211D]">{b.nome}</p>
-            <p className="shrink-0 text-right text-xs text-[#24211D]/70">{b.horario}</p>
+            <p className="min-w-0 text-sm font-semibold text-[#24211D] sm:flex-1">{b.nome}</p>
+            <p className="text-xs text-[#24211D]/70 sm:shrink-0 sm:text-right">{b.horario}</p>
           </div>
         ))}
       </div>
@@ -5494,6 +5497,7 @@ function ResumoDiaBlock({
                     }`}
                   >
                     <img
+                loading="lazy"
                       src={passo.foto}
                       alt={passo.titulo}
                       className={
@@ -5508,6 +5512,7 @@ function ResumoDiaBlock({
                 ) : (
                   <div className="h-10 w-10 shrink-0 overflow-hidden rounded-full border-2 border-white shadow-sm transition duration-200 group-hover:scale-110 group-hover:shadow-[0_0_0_3px_rgba(255,255,255,0.25)] sm:h-11 sm:w-11">
                     <img
+                loading="lazy"
                       src={passo.foto}
                       alt={passo.titulo}
                       className="h-full w-full object-cover"
@@ -5575,7 +5580,8 @@ function GastronomiaBlock({ gastronomia }: { gastronomia: Gastronomia }) {
     <div className="mt-6 rounded-2xl border border-[#DDD8CF] bg-[#FAF9F6] p-4 sm:p-6">
       <div className="mb-4 flex items-center gap-4">
         <img
-          src="/images/icone-gastronomia.png"
+                loading="lazy"
+          src="/images/icone-gastronomia.webp"
           alt=""
           className="h-20 w-20 shrink-0 object-contain"
           style={{ filter: "brightness(0) saturate(100%)" }}
@@ -5622,6 +5628,7 @@ function GastronomiaBlock({ gastronomia }: { gastronomia: Gastronomia }) {
                     className="group relative block aspect-square w-full overflow-hidden"
                   >
                     <img
+                loading="lazy"
                       src={r.foto}
                       alt={r.nome}
                       className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
@@ -5697,6 +5704,7 @@ function GastronomiaBlock({ gastronomia }: { gastronomia: Gastronomia }) {
                     className="group relative block aspect-[4/3] w-full overflow-hidden"
                   >
                     <img
+                loading="lazy"
                       src={r.foto}
                       alt={r.nome}
                       className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
@@ -5811,6 +5819,7 @@ function GastronomiaBlock({ gastronomia }: { gastronomia: Gastronomia }) {
             onClick={(e) => e.stopPropagation()}
           >
             <img
+                loading="lazy"
               src={zoomedFoto.src}
               alt={zoomedFoto.alt}
               className="max-h-[80vh] max-w-[92vw] rounded-2xl object-contain"
@@ -5851,6 +5860,7 @@ function ComprasExclusivasBlock({
           >
             {item.imagem ? (
               <img
+                loading="lazy"
                 src={item.imagem}
                 alt={item.nome}
                 className="aspect-square w-full object-cover"
@@ -5907,7 +5917,8 @@ function IconAlertTriangle({ className }: { className?: string }) {
 function IconClock({ className }: { className?: string }) {
   return (
     <img
-      src="/images/icone-relogio.png"
+                loading="lazy"
+      src="/images/icone-relogio.webp"
       alt=""
       className={`${className ?? ""} object-contain`}
     />
@@ -6550,7 +6561,8 @@ export function PassagemAereaSecao() {
     <div>
       <div className="mt-6 flex items-center gap-3">
         <img
-          src="/images/emirates-logo.png"
+                loading="lazy"
+          src="/images/emirates-logo.webp"
           alt="Emirates"
           className="h-24 w-auto rounded-md object-contain sm:h-28"
         />
@@ -6739,11 +6751,17 @@ function DeslocamentoCard({ deslocamento }: { deslocamento: Deslocamento }) {
           na mesma altura, mesmo quando um lado tem mais texto que o
           outro. A coluna central (traço + estações intermediárias) ocupa
           as duas linhas. */}
-      <div className="grid grid-cols-[auto_minmax(32px,1fr)_auto] items-start gap-3 text-center sm:gap-5">
-        <div className="col-start-1 row-start-1 flex w-32 min-w-0 flex-col items-center sm:w-40">
+      {/* Versão mobile: layout vertical (empilhado) em vez do grid de 3
+          colunas — abaixo de sm não há largura suficiente pro traço
+          horizontal com estações intermediárias, então aqui a linha
+          desce de cima pra baixo, com um marcador por estação e o nome
+          ao lado (em vez de rótulos girados). */}
+      <div className="flex flex-col items-center sm:hidden">
+        <div className="flex w-full max-w-[220px] flex-col items-center text-center">
           {deslocamento.estacaoOrigem.foto ? (
             <div className="mb-3 h-20 w-full overflow-hidden rounded-xl border border-[#DDD8CF] shadow-sm">
               <img
+                loading="lazy"
                 src={deslocamento.estacaoOrigem.foto}
                 alt={`Entrada da ${deslocamento.estacaoOrigem.nome}`}
                 className="h-full w-full object-cover"
@@ -6753,6 +6771,190 @@ function DeslocamentoCard({ deslocamento }: { deslocamento: Deslocamento }) {
             deslocamento.linha.logo && (
               <div className="mb-3 flex h-20 w-20 items-center justify-center">
                 <img
+                loading="lazy"
+                  src={deslocamento.linha.logo}
+                  alt={deslocamento.linha.nome}
+                  className="h-full w-full object-contain"
+                />
+              </div>
+            )
+          )}
+          <p className="text-sm font-semibold text-[#24211D]">
+            {deslocamento.estacaoOrigem.nome}
+          </p>
+          {deslocamento.estacaoOrigem.nomeJapones && (
+            <p className="text-base text-[#24211D]/55">
+              {deslocamento.estacaoOrigem.nomeJapones}
+            </p>
+          )}
+          {deslocamento.estacaoOrigem.distancia && (
+            <p className="mt-1 text-xs font-medium uppercase tracking-wide text-[#24211D]/65">
+              {deslocamento.estacaoOrigem.distancia}
+            </p>
+          )}
+          {deslocamento.estacaoOrigem.saida && (
+            <div className="mt-3 flex w-full flex-col items-center justify-center gap-1 break-words rounded-xl border-2 border-emerald-400 bg-emerald-50 px-3 py-2.5 shadow-sm">
+              <img
+                loading="lazy"
+                src="/images/icone-saida2.webp"
+                alt=""
+                className="h-16 w-16 object-contain"
+              />
+              <p className="text-xs font-bold uppercase leading-snug tracking-[0.04em] text-emerald-800">
+                {deslocamento.estacaoOrigem.saida}
+              </p>
+            </div>
+          )}
+        </div>
+
+        <div className="flex w-full flex-col items-center">
+          <span
+            className="h-6 w-1.5 rounded-full"
+            style={{ background: deslocamento.linha.cor || "#B96432" }}
+          />
+          {deslocamento.estacoesIntermediarias?.map((estacao) => (
+            <div
+              key={estacao.nome}
+              className="flex w-full max-w-[260px] items-stretch gap-3"
+            >
+              <div className="flex flex-col items-center">
+                <span
+                  className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full border-2 bg-white text-[10px] font-bold leading-none"
+                  style={{
+                    borderColor: deslocamento.linha.cor || "#B96432",
+                    color: deslocamento.linha.cor || "#B96432",
+                  }}
+                >
+                  {estacao.numero ?? "•"}
+                </span>
+                <span
+                  className="w-1.5 flex-1 rounded-full"
+                  style={{ background: deslocamento.linha.cor || "#B96432" }}
+                />
+              </div>
+              <div className="flex-1 pb-4 pt-0.5 text-left">
+                <p className="text-xs font-semibold text-[#24211D]">
+                  {estacao.nome}
+                </p>
+                {estacao.nomeJapones && (
+                  <p className="text-[11px] text-[#24211D]/60">
+                    {estacao.nomeJapones}
+                  </p>
+                )}
+              </div>
+            </div>
+          ))}
+          <span
+            style={{
+              width: 0,
+              height: 0,
+              borderLeft: "9px solid transparent",
+              borderRight: "9px solid transparent",
+              borderTop: `16px solid ${deslocamento.linha.cor || "#B96432"}`,
+            }}
+          />
+        </div>
+
+        {(() => {
+          const mapa = deslocamento.estacaoDestino.mapa
+            ? deslocamento.estacaoDestino
+            : deslocamento.estacaoOrigem.mapa
+              ? deslocamento.estacaoOrigem
+              : null;
+          if (!mapa?.mapa) return null;
+          return (
+            <button
+              type="button"
+              onClick={() =>
+                setZoomMapa({
+                  src: mapa.mapa!,
+                  alt: mapa.mapaAlt ?? `Mapa da ${mapa.nome}`,
+                })
+              }
+              className="group relative mb-4 block h-32 w-full max-w-[260px] overflow-hidden rounded-xl border border-[#DDD8CF] bg-white shadow-sm"
+            >
+              <img
+                loading="lazy"
+                src={mapa.mapa}
+                alt={mapa.mapaAlt ?? ""}
+                className="h-full w-full object-contain p-2"
+              />
+              <div className="absolute inset-0 flex items-center justify-center bg-black/0">
+                <span className="flex h-8 w-8 items-center justify-center rounded-full bg-white/95 text-[#000000] opacity-90 shadow-md">
+                  <IconZoom className="h-4 w-4" />
+                </span>
+              </div>
+            </button>
+          );
+        })()}
+
+        <div className="flex w-full max-w-[220px] flex-col items-center text-center">
+          {deslocamento.estacaoDestino.foto ? (
+            <div className="mb-3 h-20 w-full overflow-hidden rounded-xl border border-[#DDD8CF] shadow-sm">
+              <img
+                loading="lazy"
+                src={deslocamento.estacaoDestino.foto}
+                alt={`Entrada da ${deslocamento.estacaoDestino.nome}`}
+                className="h-full w-full object-cover"
+              />
+            </div>
+          ) : (
+            deslocamento.linha.logo && (
+              <div className="mb-3 flex h-20 w-20 items-center justify-center">
+                <img
+                loading="lazy"
+                  src={deslocamento.linha.logo}
+                  alt={deslocamento.linha.nome}
+                  className="h-full w-full object-contain"
+                />
+              </div>
+            )
+          )}
+          <p className="text-sm font-semibold text-[#24211D]">
+            {deslocamento.estacaoDestino.nome}
+          </p>
+          {deslocamento.estacaoDestino.nomeJapones && (
+            <p className="text-base text-[#24211D]/55">
+              {deslocamento.estacaoDestino.nomeJapones}
+            </p>
+          )}
+          {deslocamento.estacaoDestino.distancia && (
+            <p className="mt-1 text-xs font-medium uppercase tracking-wide text-[#24211D]/65">
+              {deslocamento.estacaoDestino.distancia}
+            </p>
+          )}
+          {deslocamento.estacaoDestino.saida && (
+            <div className="mt-3 flex w-full flex-col items-center justify-center gap-1 break-words rounded-xl border-2 border-emerald-400 bg-emerald-50 px-3 py-2.5 shadow-sm">
+              <img
+                loading="lazy"
+                src="/images/icone-saida2.webp"
+                alt=""
+                className="h-16 w-16 object-contain"
+              />
+              <p className="text-xs font-bold uppercase leading-snug tracking-[0.04em] text-emerald-800">
+                {deslocamento.estacaoDestino.saida}
+              </p>
+            </div>
+          )}
+        </div>
+      </div>
+
+      <div className="hidden grid-cols-[auto_minmax(32px,1fr)_auto] items-start gap-3 text-center sm:grid sm:gap-5">
+        <div className="col-start-1 row-start-1 flex w-32 min-w-0 flex-col items-center sm:w-40">
+          {deslocamento.estacaoOrigem.foto ? (
+            <div className="mb-3 h-20 w-full overflow-hidden rounded-xl border border-[#DDD8CF] shadow-sm">
+              <img
+                loading="lazy"
+                src={deslocamento.estacaoOrigem.foto}
+                alt={`Entrada da ${deslocamento.estacaoOrigem.nome}`}
+                className="h-full w-full object-cover"
+              />
+            </div>
+          ) : (
+            deslocamento.linha.logo && (
+              <div className="mb-3 flex h-20 w-20 items-center justify-center">
+                <img
+                loading="lazy"
                   src={deslocamento.linha.logo}
                   alt={deslocamento.linha.nome}
                   className="h-full w-full object-contain"
@@ -6778,7 +6980,8 @@ function DeslocamentoCard({ deslocamento }: { deslocamento: Deslocamento }) {
           {deslocamento.estacaoOrigem.saida && (
             <div className="mt-3 flex w-full flex-1 flex-col items-center justify-center gap-1 break-words rounded-xl border-2 border-emerald-400 bg-emerald-50 px-3 py-2.5 shadow-sm">
               <img
-                src="/images/icone-saida2.png"
+                loading="lazy"
+                src="/images/icone-saida2.webp"
                 alt=""
                 className="h-20 w-20 object-contain"
               />
@@ -6906,6 +7109,7 @@ function DeslocamentoCard({ deslocamento }: { deslocamento: Deslocamento }) {
                 className="group relative mt-3 block h-full w-full flex-1 overflow-hidden rounded-xl border border-[#DDD8CF] bg-white shadow-sm"
               >
                 <img
+                loading="lazy"
                   src={mapa.mapa}
                   alt={mapa.mapaAlt ?? ""}
                   className="h-full w-full object-contain p-2 transition duration-300 group-hover:scale-105"
@@ -6924,6 +7128,7 @@ function DeslocamentoCard({ deslocamento }: { deslocamento: Deslocamento }) {
           {deslocamento.estacaoDestino.foto ? (
             <div className="mb-3 h-20 w-full overflow-hidden rounded-xl border border-[#DDD8CF] shadow-sm">
               <img
+                loading="lazy"
                 src={deslocamento.estacaoDestino.foto}
                 alt={`Entrada da ${deslocamento.estacaoDestino.nome}`}
                 className="h-full w-full object-cover"
@@ -6933,6 +7138,7 @@ function DeslocamentoCard({ deslocamento }: { deslocamento: Deslocamento }) {
             deslocamento.linha.logo && (
               <div className="mb-3 flex h-20 w-20 items-center justify-center">
                 <img
+                loading="lazy"
                   src={deslocamento.linha.logo}
                   alt={deslocamento.linha.nome}
                   className="h-full w-full object-contain"
@@ -6958,7 +7164,8 @@ function DeslocamentoCard({ deslocamento }: { deslocamento: Deslocamento }) {
           {deslocamento.estacaoDestino.saida && (
             <div className="mt-3 flex w-full flex-1 flex-col items-center justify-center gap-1 break-words rounded-xl border-2 border-emerald-400 bg-emerald-50 px-3 py-2.5 shadow-sm">
               <img
-                src="/images/icone-saida2.png"
+                loading="lazy"
+                src="/images/icone-saida2.webp"
                 alt=""
                 className="h-20 w-20 object-contain"
               />
@@ -6969,27 +7176,6 @@ function DeslocamentoCard({ deslocamento }: { deslocamento: Deslocamento }) {
           )}
         </div>
       </div>
-
-      {/* No mobile a tela é estreita demais pros rótulos diagonais das
-          estações intermediárias (ficavam sobrepostos e podiam até
-          estourar a largura da página) — por isso, abaixo de sm, eles
-          somem e essa lista corrida substitui a informação, sem overlap
-          nem overflow horizontal. */}
-      {deslocamento.estacoesIntermediarias &&
-        deslocamento.estacoesIntermediarias.length > 0 && (
-          <p className="mt-4 text-xs leading-5 text-[#24211D]/70 sm:hidden">
-            <span className="font-semibold text-[#24211D]/85">
-              Paradas intermediárias:{" "}
-            </span>
-            {deslocamento.estacoesIntermediarias.map((estacao, i) => (
-              <span key={estacao.nome}>
-                {estacao.nome}
-                {estacao.nomeJapones ? ` (${estacao.nomeJapones})` : ""}
-                {i < deslocamento.estacoesIntermediarias!.length - 1 ? " → " : ""}
-              </span>
-            ))}
-          </p>
-        )}
 
       <div className="mt-6 grid gap-3 sm:grid-cols-2">
         {deslocamento.opcoes.map((opcao) => (
@@ -7071,6 +7257,7 @@ function DeslocamentoCard({ deslocamento }: { deslocamento: Deslocamento }) {
             onClick={(e) => e.stopPropagation()}
           >
             <img
+                loading="lazy"
               src={zoomMapa.src}
               alt={zoomMapa.alt}
               className="max-h-[80vh] max-w-[92vw] rounded-2xl bg-white object-contain"
@@ -7183,9 +7370,10 @@ function ZoomableImageModal({
         onPointerMove={handlePointerMove}
         onPointerUp={handlePointerUp}
         onPointerLeave={handlePointerUp}
-        style={{ touchAction: scale > 1 ? "none" : "pan-y" }}
+        style={{ touchAction: scale > 1 ? "none" : "pinch-zoom" }}
       >
         <img
+                loading="lazy"
           src={src}
           alt={alt}
           draggable={false}
@@ -7202,8 +7390,19 @@ function ZoomableImageModal({
         />
       </div>
 
+      {/* No mobile, controles de +/-/porcentagem somem — dar zoom com o
+          gesto de pinça é mais intuitivo que apertar botão, e é isso que
+          agora fica disponível (touchAction acima permite o pinch nativo
+          do celular). O aviso substitui os botões só até sm; a partir daí
+          (mouse/trackpad, sem gesto de pinça) os controles continuam. */}
+      <p
+        className="max-w-xs px-4 text-center text-xs font-medium text-white/70 sm:hidden"
+        onClick={(e) => e.stopPropagation()}
+      >
+        Use dois dedos para ampliar a imagem
+      </p>
       <div
-        className="flex items-center gap-3 rounded-full bg-white/10 px-3 py-2"
+        className="hidden items-center gap-3 rounded-full bg-white/10 px-3 py-2 sm:flex"
         onClick={(e) => e.stopPropagation()}
       >
         <button
@@ -7263,6 +7462,7 @@ function MapaAndaresBlock({
         className="group relative block w-full overflow-hidden rounded-2xl border border-[#DDD8CF] bg-white"
       >
         <img
+                loading="lazy"
           src={atual.imagem}
           alt={atual.imagemAlt}
           className="block h-auto w-full transition duration-300 group-hover:scale-[1.01]"
@@ -7327,6 +7527,7 @@ function MapaVisaoGeralBlock({
         className="group relative block w-full overflow-hidden rounded-2xl border border-[#DDD8CF]"
       >
         <img
+                loading="lazy"
           src={mapa.imagem}
           alt={mapa.imagemAlt}
           className="block h-auto max-h-[70vh] w-full object-contain transition duration-300 group-hover:scale-[1.02]"
@@ -7438,6 +7639,7 @@ function VisaoAnotadaBlock({
           className="group relative block w-full overflow-hidden rounded-2xl border border-[#DDD8CF]"
         >
           <img
+                loading="lazy"
             src={visaoAnotada.imagem}
             alt={visaoAnotada.imagemAlt}
             className="block h-auto w-full transition duration-300 group-hover:scale-[1.02]"
@@ -7468,6 +7670,7 @@ function VisaoAnotadaBlock({
               <IconX className="h-5 w-5" />
             </button>
             <img
+                loading="lazy"
               src={zoom.src}
               alt={zoom.alt}
               className="max-h-[90vh] max-w-[95vw] rounded-2xl object-contain"
@@ -7511,6 +7714,7 @@ function VisaoAnotadaBlock({
         className="group relative block w-full overflow-hidden rounded-2xl border border-[#DDD8CF]"
       >
         <img
+                loading="lazy"
           src={visaoAnotada.imagem}
           alt={visaoAnotada.imagemAlt}
           className="block h-auto w-full transition duration-300 group-hover:scale-[1.01]"
@@ -7538,6 +7742,7 @@ function VisaoAnotadaBlock({
                   className="group relative block aspect-[4/3] w-full overflow-hidden"
                 >
                   <img
+                loading="lazy"
                     src={ponto.foto}
                     alt={ponto.titulo}
                     className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
@@ -7568,6 +7773,7 @@ function VisaoAnotadaBlock({
                     className="absolute bottom-3 right-3 h-16 w-16 overflow-hidden rounded-xl border-[3px] border-[#B96432] shadow-lg ring-2 ring-white transition hover:scale-105"
                   >
                     <img
+                loading="lazy"
                       src={ponto.fotoExtra.src}
                       alt={ponto.fotoExtra.alt}
                       className="h-full w-full object-cover"
@@ -7611,6 +7817,7 @@ function VisaoAnotadaBlock({
             onClick={(e) => e.stopPropagation()}
           >
             <img
+                loading="lazy"
               src={zoom.src}
               alt={zoom.alt}
               className="max-h-[80vh] max-w-[92vw] rounded-2xl object-contain"
@@ -7659,6 +7866,7 @@ function GaleriaBlock({
               }`}
             >
               <img
+                loading="lazy"
                 src={img.src}
                 alt={img.alt}
                 className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
@@ -7728,6 +7936,7 @@ function GaleriaBlock({
             <IconX className="h-5 w-5" />
           </button>
           <img
+                loading="lazy"
             src={zoom.src}
             alt={zoom.alt}
             className="max-h-[90vh] max-w-[95vw] rounded-2xl object-contain"
@@ -7778,6 +7987,7 @@ function PeriodBlock({
         {period.atracaoPrincipalImagem ? (
           <>
             <img
+                loading="lazy"
               src={period.atracaoPrincipalImagem}
               alt={period.atracaoPrincipal}
               className={`absolute inset-0 h-full w-full object-cover ${
@@ -7857,6 +8067,7 @@ function PeriodBlock({
                         <div className="relative h-14 w-14 shrink-0 sm:h-16 sm:w-16">
                           <div className="h-full w-full overflow-hidden rounded-full border-2 border-white shadow-sm">
                             <img
+                loading="lazy"
                               src={passo.foto}
                               alt={passo.titulo}
                               className="h-full w-full object-cover"
@@ -7931,16 +8142,16 @@ function PeriodBlock({
                 return (
                   outros.length > 0 && (
                     <div className="mb-5 rounded-2xl border border-[#DDD8CF] bg-[#FAF9F6] p-5 sm:p-7">
-                      <div className="mb-5 flex items-center gap-4">
-                        <span className="flex h-20 w-20 shrink-0 items-center justify-center">
-                          <IconInfoCircle className="h-12 w-12 text-[#8A7049]" />
+                      <div className="mb-5 flex items-center gap-3 sm:gap-4">
+                        <span className="flex h-14 w-14 shrink-0 items-center justify-center sm:h-20 sm:w-20">
+                          <IconInfoCircle className="h-8 w-8 text-[#8A7049] sm:h-12 sm:w-12" />
                         </span>
-                        <p className="text-base font-bold uppercase tracking-[0.2em] text-[#24211D]/70 sm:text-lg">
+                        <p className="text-sm font-bold uppercase tracking-[0.12em] text-[#24211D]/70 sm:text-lg sm:tracking-[0.2em]">
                           Informações Iniciais
                         </p>
                       </div>
                       <div
-                        className={`grid grid-cols-2 gap-x-6 gap-y-4 ${gridColsClass}`}
+                        className={`grid grid-cols-1 gap-x-6 gap-y-4 ${gridColsClass}`}
                       >
                         {outros.map((item) => (
                           <div key={item.label} className="text-center">
@@ -7966,16 +8177,16 @@ function PeriodBlock({
                   item.horarioDestaque ? (
                     <div
                       key={item.label}
-                      className="mb-5 flex items-center gap-4 rounded-2xl border border-[#BFDCF2] bg-[#EAF3FC] p-5 sm:p-7"
+                      className="mb-5 flex items-center gap-3 rounded-2xl border border-[#BFDCF2] bg-[#EAF3FC] p-5 sm:gap-4 sm:p-7"
                     >
-                      <span className="flex h-20 w-20 shrink-0 items-center justify-center">
-                        <IconClockOutline className="h-12 w-12 text-[#2C6CA6]" />
+                      <span className="flex h-14 w-14 shrink-0 items-center justify-center sm:h-20 sm:w-20">
+                        <IconClockOutline className="h-8 w-8 text-[#2C6CA6] sm:h-12 sm:w-12" />
                       </span>
                       <div className="min-w-0 flex-1">
-                        <p className="text-base font-bold uppercase tracking-[0.2em] text-[#2C6CA6]/85 sm:text-lg">
+                        <p className="text-sm font-bold uppercase tracking-[0.12em] text-[#2C6CA6]/85 sm:text-lg sm:tracking-[0.2em]">
                           Melhor Horário
                         </p>
-                        <p className="mt-0.5 text-3xl font-semibold leading-tight text-[#1B4A73] sm:text-4xl">
+                        <p className="mt-0.5 text-2xl font-semibold leading-tight text-[#1B4A73] sm:text-4xl">
                           {item.horarioDestaque}
                         </p>
                         <p className="mt-1.5 text-sm leading-6 text-[#1B4A73]/80">
@@ -7991,6 +8202,7 @@ function PeriodBlock({
                           className="group relative hidden h-24 w-24 shrink-0 overflow-hidden rounded-xl shadow-sm sm:block"
                         >
                           <img
+                loading="lazy"
                             src={item.imagem}
                             alt={item.imagemAlt ?? ""}
                             className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
@@ -8006,13 +8218,13 @@ function PeriodBlock({
                   ) : (
                     <div
                       key={item.label}
-                      className="mb-5 flex items-center gap-4 rounded-2xl border border-[#BFDCF2] bg-[#EAF3FC] p-5 sm:p-7"
+                      className="mb-5 flex items-center gap-3 rounded-2xl border border-[#BFDCF2] bg-[#EAF3FC] p-5 sm:gap-4 sm:p-7"
                     >
-                      <span className="flex h-20 w-20 shrink-0 items-center justify-center">
-                        <IconClockOutline className="h-12 w-12 text-[#2C6CA6]" />
+                      <span className="flex h-14 w-14 shrink-0 items-center justify-center sm:h-20 sm:w-20">
+                        <IconClockOutline className="h-8 w-8 text-[#2C6CA6] sm:h-12 sm:w-12" />
                       </span>
-                      <div>
-                        <p className="text-base font-bold uppercase tracking-[0.2em] text-[#2C6CA6]/85 sm:text-lg">
+                      <div className="min-w-0 flex-1">
+                        <p className="text-sm font-bold uppercase tracking-[0.12em] text-[#2C6CA6]/85 sm:text-lg sm:tracking-[0.2em]">
                           Melhor Horário
                         </p>
                         <p className="text-sm font-semibold text-[#1B4A73]">
@@ -8183,6 +8395,7 @@ function PeriodBlock({
             <IconX className="h-5 w-5" />
           </button>
           <img
+                loading="lazy"
             src={zoom.src}
             alt={zoom.alt}
             className="max-h-[90vh] max-w-[95vw] rounded-2xl object-contain"
@@ -8308,6 +8521,7 @@ function SubAtracaoBlock({
           >
             {subAtracao.imagem ? (
               <img
+                loading="lazy"
                 src={subAtracao.imagem}
                 alt={subAtracao.titulo}
                 className={`absolute inset-0 h-full w-full object-cover ${
@@ -8345,6 +8559,7 @@ function SubAtracaoBlock({
             {subAtracao.imagem ? (
               <>
                 <img
+                loading="lazy"
                   src={subAtracao.imagem}
                   alt={subAtracao.titulo}
                   className={`absolute inset-0 h-full w-full object-cover ${
@@ -8528,7 +8743,8 @@ function IconCreditCardSmall({ className }: { className?: string }) {
 function IconPlane({ className }: { className?: string }) {
   return (
     <img
-      src="/images/icone-aeroporto.png"
+                loading="lazy"
+      src="/images/icone-aeroporto.webp"
       alt=""
       className={`${className ?? ""} object-contain`}
     />
@@ -8556,7 +8772,8 @@ function IconArrowUp({ className }: { className?: string }) {
 function IconMetro({ className }: { className?: string }) {
   return (
     <img
-      src="/images/icone-trem.png"
+                loading="lazy"
+      src="/images/icone-trem.webp"
       alt=""
       className={`${className ?? ""} object-contain`}
     />
@@ -8566,7 +8783,8 @@ function IconMetro({ className }: { className?: string }) {
 function IconBus({ className }: { className?: string }) {
   return (
     <img
-      src="/images/icone-onibus-v2.png"
+                loading="lazy"
+      src="/images/icone-onibus-v2.webp"
       alt=""
       className={`${className ?? ""} object-contain`}
     />
@@ -8576,7 +8794,8 @@ function IconBus({ className }: { className?: string }) {
 function IconCar({ className }: { className?: string }) {
   return (
     <img
-      src="/images/icone-taxi.png"
+                loading="lazy"
+      src="/images/icone-taxi.webp"
       alt=""
       className={`${className ?? ""} object-contain`}
     />
@@ -8586,7 +8805,8 @@ function IconCar({ className }: { className?: string }) {
 function IconWalk({ className }: { className?: string }) {
   return (
     <img
-      src="/images/icone-andando-a-pe.png"
+                loading="lazy"
+      src="/images/icone-andando-a-pe.webp"
       alt=""
       className={`${className ?? ""} object-contain`}
     />
@@ -8604,7 +8824,8 @@ function IconCheckSmall({ className }: { className?: string }) {
 function IconShinkansen({ className }: { className?: string }) {
   return (
     <img
-      src="/images/icone-trem-bala-shinkansen.png"
+                loading="lazy"
+      src="/images/icone-trem-bala-shinkansen.webp"
       alt=""
       className={`${className ?? ""} object-contain`}
     />
@@ -8614,7 +8835,8 @@ function IconShinkansen({ className }: { className?: string }) {
 function IconExchange({ className }: { className?: string }) {
   return (
     <img
-      src="/images/icone-cambio-dinheiro.png"
+                loading="lazy"
+      src="/images/icone-cambio-dinheiro.webp"
       alt=""
       className={`${className ?? ""} object-contain`}
     />
@@ -8624,7 +8846,8 @@ function IconExchange({ className }: { className?: string }) {
 function IconCustoms({ className }: { className?: string }) {
   return (
     <img
-      src="/images/icone-costumes.png"
+                loading="lazy"
+      src="/images/icone-costumes.webp"
       alt=""
       className={`${className ?? ""} object-contain`}
     />
@@ -8634,7 +8857,8 @@ function IconCustoms({ className }: { className?: string }) {
 function IconWords({ className }: { className?: string }) {
   return (
     <img
-      src="/images/icone-frases-palavras-comuns.png"
+                loading="lazy"
+      src="/images/icone-frases-palavras-comuns.webp"
       alt=""
       className={`${className ?? ""} object-contain`}
     />
@@ -8644,7 +8868,8 @@ function IconWords({ className }: { className?: string }) {
 function IconInsurance({ className }: { className?: string }) {
   return (
     <img
-      src="/images/icone-seguro-viagem-v2.png"
+                loading="lazy"
+      src="/images/icone-seguro-viagem-v2.webp"
       alt=""
       className={`${className ?? ""} object-contain`}
     />
@@ -8654,7 +8879,8 @@ function IconInsurance({ className }: { className?: string }) {
 function IconMedicalEmergency({ className }: { className?: string }) {
   return (
     <img
-      src="/images/icone-emergencia-medica-v2.png"
+                loading="lazy"
+      src="/images/icone-emergencia-medica-v2.webp"
       alt=""
       className={`${className ?? ""} object-contain`}
     />
@@ -8712,7 +8938,8 @@ function IconDumbbell({ className }: { className?: string }) {
 function IconStore({ className }: { className?: string }) {
   return (
     <img
-      src="/images/icone-compras.png"
+                loading="lazy"
+      src="/images/icone-compras.webp"
       alt=""
       className={`${className ?? ""} object-contain`}
     />
@@ -8806,7 +9033,8 @@ function IconMap({ className }: { className?: string }) {
 function IconToilet({ className }: { className?: string }) {
   return (
     <img
-      src="/images/icone-banheiro.png"
+                loading="lazy"
+      src="/images/icone-banheiro.webp"
       alt=""
       className={`${className ?? ""} object-contain`}
     />
@@ -8816,7 +9044,8 @@ function IconToilet({ className }: { className?: string }) {
 function IconTicket({ className }: { className?: string }) {
   return (
     <img
-      src="/images/icone-ingressos.png"
+                loading="lazy"
+      src="/images/icone-ingressos.webp"
       alt=""
       className={`${className ?? ""} object-contain`}
     />
@@ -8893,7 +9122,7 @@ type HotelNearby = {
 // e distância a pé em relação ao hotel.
 // Ponto marcado sobre um recorte real do mapa (screenshot), em porcentagem
 // (0-100) da imagem — x/y foram calibrados visualmente sobre a imagem em
-// public/images/lyf-mapa-arredores.png.
+// public/images/lyf-mapa-arredores.webp.
 type MapaPonto = {
   x: number;
   y: number;
@@ -8969,7 +9198,7 @@ const HOTEIS: HotelInfo[] = [
     site: "https://www.discoverasr.com/en/lyf/japan/lyf-ginza-tokyo",
     checkin: "A partir das 15h00",
     checkout: "Até às 11h00",
-    fotoHero: "/images/lyf-mural-fachada.png",
+    fotoHero: "/images/lyf-mural-fachada.webp",
     estrutura: [
       { label: "Wi-Fi grátis em todo o hotel", Icon: IconWifi },
       { label: "Recepção 24h", Icon: IconClock },
@@ -9017,12 +9246,12 @@ const HOTEIS: HotelInfo[] = [
       estacoes: [
         {
           nome: "Estação Kyobashi",
-          imagem: "/images/kyobashi-station-logo.png",
+          imagem: "/images/kyobashi-station-logo.webp",
           imagemAlt: "Sinalização da Estação Kyobashi — G10, Tokyo Metro Ginza Line",
         },
         {
           nome: "Estação Takaracho",
-          imagem: "/images/takaracho-station-logo.png",
+          imagem: "/images/takaracho-station-logo.webp",
           imagemAlt: "Sinalização da Estação Takaracho — A12, Toei Asakusa Line",
         },
       ],
@@ -9049,7 +9278,7 @@ const HOTEIS: HotelInfo[] = [
       },
     ],
     mapa: {
-      imagem: "/images/lyf-fachada-real.png",
+      imagem: "/images/lyf-fachada-real.webp",
       imagemAlt: "Fachada do lyf Ginza Tokyo",
       pontos: [
         {
@@ -9096,42 +9325,42 @@ const HOTEIS: HotelInfo[] = [
       rotas: [
         {
           label: "Estação Kyobashi",
-          imagem: "/images/lyf-rota-estacao-kyobashi.png",
+          imagem: "/images/lyf-rota-estacao-kyobashi.webp",
           imagemAlt: "Rota a pé da Estação Kyobashi até o lyf Ginza Tokyo",
         },
         {
           label: "Estação Takaracho",
-          imagem: "/images/lyf-rota-takaracho.png",
+          imagem: "/images/lyf-rota-takaracho.webp",
           imagemAlt: "Rota a pé da Estação Takaracho até o lyf Ginza Tokyo",
         },
         {
           label: "7-Eleven",
-          imagem: "/images/lyf-rota-seven-eleven.png",
+          imagem: "/images/lyf-rota-seven-eleven.webp",
           imagemAlt: "Rota a pé do 7-Eleven até o lyf Ginza Tokyo",
         },
         {
           label: "Lawson",
-          imagem: "/images/lyf-rota-lawson.png",
+          imagem: "/images/lyf-rota-lawson.webp",
           imagemAlt: "Rota a pé do Lawson até o lyf Ginza Tokyo",
         },
         {
           label: "Saída 6 (Estação Kyobashi)",
-          imagem: "/images/lyf-estacao-kyobashi-saida6.png",
+          imagem: "/images/lyf-estacao-kyobashi-saida6.webp",
           imagemAlt: "Vista de rua da Saída 6 da Estação Kyobashi",
         },
         {
           label: "Farmácia Welcia",
-          imagem: "/images/lyf-rota-welcia.png",
+          imagem: "/images/lyf-rota-welcia.webp",
           imagemAlt: "Rota a pé da Farmácia Welcia mais próxima até o lyf Ginza Tokyo",
         },
         {
           label: "St. Luke's International Hospital",
-          imagem: "/images/lyf-rota-st-lukes.png",
+          imagem: "/images/lyf-rota-st-lukes.webp",
           imagemAlt: "Rota de carro até o St. Luke's International Hospital",
         },
         {
           label: "Kameda Kyobashi Clinic",
-          imagem: "/images/lyf-rota-kameda-clinic.png",
+          imagem: "/images/lyf-rota-kameda-clinic.webp",
           imagemAlt: "Rota a pé até a Kameda Kyobashi Clinic",
         },
       ],
@@ -9140,7 +9369,7 @@ const HOTEIS: HotelInfo[] = [
   {
     cidade: "Kyoto",
     nome: "Daiwa Roynet Hotel Kyoto-Ekimae PREMIER",
-    fotoHero: "/images/daiwa-roynet-fotohero.jpg",
+    fotoHero: "/images/daiwa-roynet-fotohero.webp",
     bairro: "Karasuma-guchi, em frente à Kyoto Station",
     endereco: "707-2 Higashishiokojicho, Karasuma-dori, Shimogyo-ku, Kyoto 600-8216",
     enderecoJapones: "〒600-8216 京都府京都市下京区東塩小路町707-2",
@@ -9198,29 +9427,29 @@ const HOTEIS: HotelInfo[] = [
       },
     ],
     mapa: {
-      imagem: "/images/daiwa-roynet-mapa-arredores.jpg",
+      imagem: "/images/daiwa-roynet-mapa-arredores.webp",
       imagemAlt: "Mapa dos arredores do Daiwa Roynet Hotel Kyoto-Ekimae PREMIER, com Matsumoto Kiyoshi (Kyoto Tower Sando), LAWSON Kyoto Station, Koseikai Takeda Hospital e a Saída Karasuma da Kyoto Station",
       nota: "Localização do hotel em relação à Kyoto Station (saída Karasuma), à farmácia, à conveniência e ao hospital de referência listados acima.",
       pontos: [],
       rotas: [
         {
           label: "Kyoto Station (Saída Karasuma)",
-          imagem: "/images/daiwa-roynet-rota-karasuma-exit.jpg",
+          imagem: "/images/daiwa-roynet-rota-karasuma-exit.webp",
           imagemAlt: "Rota a pé do hotel até a Saída Karasuma da Kyoto Station",
         },
         {
           label: "Lawson",
-          imagem: "/images/daiwa-roynet-rota-lawson.jpg",
+          imagem: "/images/daiwa-roynet-rota-lawson.webp",
           imagemAlt: "Rota a pé do hotel até o Lawson Karasuma Shichijo (~3 min, 210 m)",
         },
         {
           label: "Koseikai Takeda Hospital",
-          imagem: "/images/daiwa-roynet-rota-koseikai-hospital.jpg",
+          imagem: "/images/daiwa-roynet-rota-koseikai-hospital.webp",
           imagemAlt: "Rota a pé do hotel até o Koseikai Takeda Hospital",
         },
         {
           label: "Matsumoto Kiyoshi (farmácia)",
-          imagem: "/images/daiwa-roynet-rota-matsumoto-kiyoshi.png",
+          imagem: "/images/daiwa-roynet-rota-matsumoto-kiyoshi.webp",
           imagemAlt: "Rota a pé do hotel até a Matsumoto Kiyoshi — Kyoto Tower Sando (~3 min, 200 m)",
         },
       ],
@@ -9229,7 +9458,7 @@ const HOTEIS: HotelInfo[] = [
   {
     cidade: "Tokyo 2",
     nome: "remm Tokyo Kyobashi",
-    fotoHero: "/images/remm-tokyo-kyobashi-fotohero.jpg",
+    fotoHero: "/images/remm-tokyo-kyobashi-fotohero.webp",
     bairro: "Kyobashi, Chuo-ku",
     endereco: "2-6-21 Kyobashi, Chuo-ku, Tokyo 104-0031",
     enderecoJapones: "〒104-0031 東京都中央区京橋2-6-21",
@@ -9285,12 +9514,12 @@ const HOTEIS: HotelInfo[] = [
       estacoes: [
         {
           nome: "Estação Kyobashi",
-          imagem: "/images/kyobashi-station-logo.png",
+          imagem: "/images/kyobashi-station-logo.webp",
           imagemAlt: "Sinalização da Estação Kyobashi — G10, Tokyo Metro Ginza Line",
         },
         {
           nome: "Estação Takaracho",
-          imagem: "/images/takaracho-station-logo.png",
+          imagem: "/images/takaracho-station-logo.webp",
           imagemAlt: "Sinalização da Estação Takaracho — A12, Toei Asakusa Line",
         },
       ],
@@ -9312,33 +9541,33 @@ const HOTEIS: HotelInfo[] = [
       },
     ],
     mapa: {
-      imagem: "/images/remm-fachada-real.png",
+      imagem: "/images/remm-fachada-real.webp",
       imagemAlt: "Fachada do remm Tokyo Kyobashi",
       pontos: [],
       rotas: [
         {
           label: "Estação Kyobashi",
-          imagem: "/images/remm-rota-estacao-kyobashi.png",
+          imagem: "/images/remm-rota-estacao-kyobashi.webp",
           imagemAlt: "Rota a pé da Estação Kyobashi até o remm Tokyo Kyobashi",
         },
         {
           label: "7-Eleven",
-          imagem: "/images/remm-rota-7eleven.png",
+          imagem: "/images/remm-rota-7eleven.webp",
           imagemAlt: "Localização do 7-Eleven em relação ao remm Tokyo Kyobashi",
         },
         {
           label: "Kameda Kyobashi Clinic",
-          imagem: "/images/remm-rota-kameda-clinic.png",
+          imagem: "/images/remm-rota-kameda-clinic.webp",
           imagemAlt: "Rota a pé até a Kameda Kyobashi Clinic",
         },
         {
           label: "St. Luke's International Hospital",
-          imagem: "/images/remm-rota-st-luke-hospital.png",
+          imagem: "/images/remm-rota-st-luke-hospital.webp",
           imagemAlt: "Rota a pé até o St. Luke's International Hospital",
         },
         {
           label: "Welcia (farmácia)",
-          imagem: "/images/remm-rota-welcia.png",
+          imagem: "/images/remm-rota-welcia.webp",
           imagemAlt: "Rota a pé do remm Tokyo Kyobashi até a Welcia — Tokyo Square Garden",
         },
       ],
@@ -9643,6 +9872,7 @@ function HotelGuestGuide({ hotel }: { hotel: HotelInfo }) {
             onClick={(e) => e.stopPropagation()}
           >
             <img
+                loading="lazy"
               src={rotaModal.items[rotaModal.index].imagem}
               alt={rotaModal.items[rotaModal.index].imagemAlt}
               className="max-h-[85vh] max-w-[92vw] rounded-2xl object-contain"
@@ -9731,8 +9961,12 @@ export function ApprovalPanel({
 
         <div
           ref={daysMenuRef}
-          className="flex flex-wrap items-start justify-center gap-x-5 gap-y-5 px-6 pt-6 sm:gap-x-7 sm:px-10"
+          className="flex items-start gap-x-4 overflow-x-auto px-6 pb-1 pt-6 [-webkit-overflow-scrolling:touch] sm:flex-wrap sm:justify-center sm:gap-x-7 sm:gap-y-5 sm:overflow-visible sm:px-10 sm:pb-0"
         >
+          {/* No mobile essa fileira vira rolagem horizontal (mesmo padrão já
+              usado no "Percurso Essencial") — com 9 dias, o flex-wrap
+              tomava várias linhas de altura antes do conteúdo aparecer. A
+              partir de sm volta ao grid com quebra de linha de sempre. */}
           {DAYS.map((d, index) => {
             const active = index === activeDay && viewMode === "dia";
             return (
@@ -9744,7 +9978,7 @@ export function ApprovalPanel({
                   setViewMode("dia");
                   scrollToContent();
                 }}
-                className="group flex flex-col items-center gap-2.5"
+                className="group flex shrink-0 flex-col items-center gap-2.5"
               >
                 <span
                   className={`relative flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-full font-bold transition-all duration-300 ${
@@ -10112,7 +10346,8 @@ export function ApprovalPanel({
         style={{ bottom: "calc(6rem + env(safe-area-inset-bottom, 0px))" }}
       >
         <img
-          src="/images/dragonball-4-star-tight.png"
+                loading="lazy"
+          src="/images/dragonball-4-star-tight.webp"
           alt=""
           className="h-7 w-7 shrink-0 rounded-full object-cover"
         />

@@ -45,12 +45,12 @@ const RADAR_DIMENSIONS: RadarDimension[] = [
 ];
 
 const DIMENSION_ICON_SRC: Record<DimensionIconKind, string> = {
-  cultura: "/images/icone-cultura.png",
-  gastronomia: "/images/icone-gastronomia.png",
-  natureza: "/images/icone-natureza.png",
-  entretenimento: "/images/icone-entretenimento.png",
-  compras: "/images/icone-compras.png",
-  bemestar: "/images/icone-bemestar-relaxamento.png",
+  cultura: "/images/icone-cultura.webp",
+  gastronomia: "/images/icone-gastronomia.webp",
+  natureza: "/images/icone-natureza.webp",
+  entretenimento: "/images/icone-entretenimento.webp",
+  compras: "/images/icone-compras.webp",
+  bemestar: "/images/icone-bemestar-relaxamento.webp",
 };
 
 function RadarChart({ dimensions }: { dimensions: RadarDimension[] }) {
@@ -194,7 +194,7 @@ export const metadata: Metadata = {
     siteName: "Ajisai",
     images: [
       {
-        url: "/images/og-ajisai-roteiro.png",
+        url: "/images/og-ajisai-roteiro.webp",
         width: 1200,
         height: 630,
         alt: "Ajisai — Roteiro Personalizado",
@@ -208,7 +208,7 @@ export const metadata: Metadata = {
     title: "Seu Roteiro Personalizado | Ajisai",
     description:
       "Roteiro digital da sua viagem ao Japão, organizado dia a dia pela Ajisai.",
-    images: ["/images/og-ajisai-roteiro.png"],
+    images: ["/images/og-ajisai-roteiro.webp"],
   },
 };
 
@@ -243,7 +243,7 @@ export default function AprovacaoRoteiroPage() {
 
       <header className="fixed left-0 right-0 top-0 z-50 flex items-center justify-between bg-black/70 px-6 py-5 backdrop-blur-2xl md:px-16">
         <img
-          src="/images/alpinea-ajisai-final-logo-branco.png"
+          src="/images/alpinea-ajisai-final-logo-branco.webp"
           alt="Alpinea — Empresa do Grupo Ajisai"
           className="h-7 w-auto object-contain sm:h-9 md:h-[60px] lg:h-[72px]"
         />
