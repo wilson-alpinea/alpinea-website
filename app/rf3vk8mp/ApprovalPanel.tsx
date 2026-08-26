@@ -12,6 +12,7 @@ import { createPortal } from "react-dom";
 import Image from "next/image";
 import { ContentCard, IconStar as IconStarKit } from "../components/AirportGuideKit";
 import { NaritaGuideContent } from "../components/NaritaGuideContent";
+import { HanedaGuideContent } from "../components/HanedaGuideContent";
 import { TremGuideContent } from "../components/TremGuideContent";
 import { CostumesGuideContent } from "../components/CostumesGuideContent";
 import { PalavrasGuideContent } from "../components/PalavrasGuideContent";
@@ -1360,7 +1361,7 @@ const DAY_2: DayContent = {
     titulo: "Alerta Aeroporto",
     horario: "Horário de Chegada Esperado no Aeroporto: 21:00",
     mensagem:
-      "O voo de volta decola às 00:05 (já dia 12) pelo Aeroporto de Haneda (HND). Após os Jardins do Palácio Imperial, retorne ao hotel, busque a bagagem e siga com folga para o aeroporto, com tempo para o check-in internacional.",
+      "O voo de volta decola às 00:05 (já dia 12) pelo Aeroporto de Haneda (HND) — voo EK313, terminal 3. Após os Jardins do Palácio Imperial, retorne ao hotel, busque a bagagem e siga com folga para o aeroporto, com tempo para o check-in internacional.",
   },
   diaEmNumeros: {
     atracoes: "2 atrações principais",
@@ -1529,7 +1530,7 @@ const DAY_2: DayContent = {
         category: "Compras",
         title: "Dragonball Store",
         description:
-          "Dentro do complexo da estação (Tokyo Station First Avenue), na Tokyo Character Street — corredor com mais de 10 lojas de outras franquias de anime.",
+          "Dentro do complexo da estação (Tokyo Station First Avenue), na Tokyo Character Street — corredor com mais de 10 lojas de outras franquias de anime. Não precisa visitar todas: caminhe pelo corredor e entre apenas nas que realmente chamarem sua atenção.",
         lista: [
           "Jump Shop",
           "Pokémon Store",
@@ -1538,7 +1539,7 @@ const DAY_2: DayContent = {
           "Tomica Shop",
           "Rilakkuma Store",
         ],
-        prioridade: "imperdivel",
+        prioridade: "recomendado",
         ordem: 1,
       },
       {
@@ -1802,7 +1803,7 @@ const DAY_3: DayContent = {
   hotel: "Tokyo 1",
   contexto: [
     "O superdistrito de Shibuya é um dos bairros mais famosos, principalmente pela Shibuya Crossing e pela impressionante floresta erguida do zero que tem no centro o maior templo Shintoísta do mundo. Nessa região encontraremos Harajuku, o epicentro da cultura Lolita, Kawaii e Jovem do Japão, bem como a luxuosa avenida de Omotesando.",
-    "À tarde seguimos para Shinjuku, bairro que mistura o Japão corporativo com o mais boêmio — do mirante gratuito do Prédio do Governo Metropolitano ao caos neon de Kabukicho, passando pelas vielas de Golden Gai. Relaxamos no onsen urbano Thermae-Yu antes de seguir para a estação e pegar o trem noturno rumo a Kyoto.",
+    "À tarde seguimos para Shinjuku, bairro que mistura o Japão corporativo com o mais boêmio — do mirante gratuito do Prédio do Governo Metropolitano ao caos neon de Kabukicho, passando pelas vielas de Golden Gai. Por volta das 16h já iniciamos o caminho de volta ao hotel para buscar as malas e seguir de Shinkansen rumo a Kyoto — chegar cedo lá amanhã vale mais do que esticar a noite em Shinjuku.",
   ],
   resumoDia: {
     passos: [
@@ -1812,8 +1813,7 @@ const DAY_3: DayContent = {
       { titulo: "Shibuya Crossing", horario: "12:00", foto: "/images/placeholder-em-producao.png" },
       { titulo: "Almoço", horario: "13:00", foto: "/images/icone-gastronomia.png" },
       { titulo: "Shinjuku — Mirante e Kabukicho", horario: "14:45", foto: "/images/draft-shinjuku.png" },
-      { titulo: "Bares em Golden Gai", horario: "19:00", foto: "/images/placeholder-em-producao.png" },
-      { titulo: "Onsen Thermae-Yu", horario: "21:00", foto: "/images/thermae-yu.png" },
+      { titulo: "Retorno ao hotel e Shinkansen para Kyoto", horario: "16:00", foto: "/images/icone-hotel2.png" },
     ],
   },
   gradeHorarios: {
@@ -1853,15 +1853,15 @@ const DAY_3: DayContent = {
         tag: "Atração",
       },
       {
-        horario: "19:00",
-        evento: "Bares em Golden Gai",
-        destaque: true,
-        tag: "Refeição",
+        horario: "16:00",
+        evento: "Retorno ao hotel para buscar as malas",
+        tag: "Deslocamento",
       },
-      { horario: "21:00", evento: "Onsen urbano Thermae-Yu" },
       {
-        horario: "23:00",
-        evento: "Deslocamento até a estação para o trem noturno rumo a Kyoto",
+        horario: "17:00",
+        evento: "Shinkansen rumo a Kyoto (Hikari, ~2h40, incluso no JR Pass)",
+        destaque: true,
+        tag: "Deslocamento",
       },
     ],
     nota: "Horários estimados considerando saída do lyf Ginza Tokyo (Kyobashi) — ajuste conforme seu ritmo.",
@@ -1873,7 +1873,7 @@ const DAY_3: DayContent = {
     linhasMetro: "2 linhas, sem baldeações",
     ritmo: "Intenso",
     saida: "09:15",
-    retorno: "Segue para o trem noturno (~23:00)",
+    retorno: "Segue de Shinkansen para Kyoto (~17:00)",
   },
   manha: {
     label: "Manhã + Tarde",
@@ -1911,46 +1911,40 @@ const DAY_3: DayContent = {
           descricao: "O famoso cruzamento hexagonal de Shibuya, ao lado da estátua de Hachiko.",
         },
         {
-          titulo: "Shinjuku Gyoen",
-          foto: "/images/shinjuku-gyoen.png",
+          titulo: "Kabukicho",
+          foto: "/images/kabukicho.png",
           horario: "14:45",
-          descricao: "Um dos parques mais bonitos de Tóquio, misturando jardins japonês, francês e inglês.",
-        },
-        {
-          titulo: "Prédio do Governo Metropolitano + Mirante",
-          foto: "/images/tokyo-metropolitan-government-building.png",
-          horario: "~16:30",
-          descricao: "Mirante gratuito no 45º andar com vista panorâmica da cidade — ideal perto do pôr do sol.",
-        },
-        {
-          titulo: "Gato 3D Gigante",
-          foto: "/images/gato-3d-shinjuku.png",
-          horario: "~17:15",
-          descricao: "Gato tridimensional gigante exibido em telão curvo no edifício Cross Shinjuku Vision.",
+          descricao: "Maior distrito de entretenimento noturno de Tóquio — vá logo após o almoço, quando a região está bem mais tranquila que de madrugada.",
         },
         {
           titulo: "Estátua do Godzilla",
           foto: "/images/godzilla-head-shinjuku.png",
-          horario: "~17:30",
-          descricao: "Réplica em tamanho real na varanda do Hotel Gracery, pertinho do Gato 3D.",
+          horario: "~15:00",
+          descricao: "Réplica em tamanho real na varanda do Hotel Gracery, no coração de Kabukicho.",
         },
         {
-          titulo: "Kabukicho",
-          foto: "/images/kabukicho.png",
-          horario: "~18:00",
-          descricao: "Maior distrito de entretenimento noturno de Tóquio, com neons e vida noturna intensa.",
+          titulo: "Gato 3D Gigante",
+          foto: "/images/gato-3d-shinjuku.png",
+          horario: "~15:15",
+          descricao: "Gato tridimensional gigante exibido em telão curvo no edifício Cross Shinjuku Vision, pertinho do Godzilla.",
         },
         {
-          titulo: "Golden Gai",
+          titulo: "Golden Gai (passagem)",
           foto: "/images/golden-gai.png",
-          horario: "19:00",
-          descricao: "Rede de vielas estreitas com mais de 200 bares minúsculos, encostado em Kabukicho.",
+          horario: "~15:30",
+          descricao: "Rede de vielas estreitas com mais de 200 bares minúsculos — durante o dia a maioria está fechada, mas vale caminhar por elas para conhecer a arquitetura.",
         },
         {
-          titulo: "Onsen Thermae-Yu",
-          foto: "/images/thermae-yu.png",
-          horario: "21:00",
-          descricao: "Onsen urbano aberto 24h no coração de Kabukicho, ao lado do Golden Gai — fecha a noite antes do trem noturno para Kyoto.",
+          titulo: "Shinjuku Gyoen ou Prédio do Governo Metropolitano (escolha um)",
+          foto: "/images/tokyo-metropolitan-government-building.png",
+          horario: "~15:45",
+          descricao: "Se ainda houver vontade e tempo: parque (Shinjuku Gyoen) ou mirante gratuito no 45º andar do Prédio do Governo Metropolitano — nenhum dos dois é essencial hoje.",
+        },
+        {
+          titulo: "Retorno ao hotel e Shinkansen para Kyoto",
+          foto: "/images/icone-hotel2.png",
+          horario: "16:00",
+          descricao: "Busque as malas e siga para a estação — chegar cedo em Kyoto amanhã vale mais do que esticar a noite em Shinjuku.",
         },
       ],
     },
@@ -2197,23 +2191,23 @@ const DAY_3: DayContent = {
           linkTabelog: "https://tabelog.com/en/tokyo/A1306/A130602/13252182/",
         },
         {
-          nome: "Sushi Ginza Onodera Musuko Shibuya ten",
+          nome: "Kaiten Sushi Ginza Onodera Honten",
           papel: "Mais prático (na rota)",
           categoria: "Kaitenzushi (sushi de esteira premium)",
           descricao:
-            "Sushi de esteira do grupo Ginza Onodera (marca com estrela Michelin) — peixe pressionado à mão, na hora, com pratos exclusivos da unidade de Shibuya.",
-          foto: "/images/sushi-onodera-musuko-shibuya.png",
-          notaTabelog: "3.48",
-          numAvaliacoes: "478 avaliações",
+            "Unidade original (honten) do grupo Ginza Onodera (marca com estrela Michelin), em Omotesando — peixe pressionado à mão, na hora, na esteira. É a unidade que fica na região de Omotesando/Jingumae, próxima ao final do circuito da manhã.",
+          notaTabelog: "3.50",
+          numAvaliacoes: "1.463 avaliações",
           faixaPreco: "¥8.000–9.999 por pessoa (listado a partir de ¥4.000)",
           distancia:
-            "~2 min a pé da Saída A5b da Estação Shibuya — a poucos passos de onde o circuito da manhã termina",
+            "~1–2 min a pé da Saída A1 da Estação Omotesando (entre Omotesando e Harajuku, mais perto de Omotesando)",
           foreignFriendly:
-            "Alto — reportagem da Nikkei Asia descreve a unidade como voltada para receber turistas estrangeiros; reserva online em inglês pelo Tabelog.",
-          horario: "11h–22h30 (último pedido 22h), todos os dias",
-          reserva: "Recomendada — reserva online pelo Tabelog",
-          pagamento: "Cartão, IC card e QR code (PayPay) aceitos",
-          linkTabelog: "https://tabelog.com/en/tokyo/A1303/A130301/13294625/",
+            "Alto — página do Tabelog disponível em inglês, chinês e coreano, com pagamento internacional aceito (UnionPay, Alipay, WeChat Pay); cardápio em inglês não confirmado.",
+          horario: "10h30–22h30, todos os dias (último pedido 21h30)",
+          reserva:
+            "Não disponível — apenas fila no local; em dias de alta demanda a casa pode parar de aceitar clientes antes das 21h30",
+          pagamento: "Cartão (Visa, Master, JCB, Amex, Diners, UnionPay), IC card e QR code (PayPay, Alipay, WeChat Pay) aceitos",
+          linkTabelog: "https://tabelog.com/en/tokyo/A1306/A130602/13264172/",
         },
       ],
       mapa: {
@@ -2318,15 +2312,15 @@ const DAY_3: DayContent = {
             "E isso será particularmente importante: em Tóquio, muitas atrações conseguem absorver relativamente bem grandes quantidades de visitantes; em Kyoto, o horário em que você chega a determinados lugares pode mudar completamente a experiência. Algumas horas fazem uma diferença enorme entre encontrar um lugar tranquilo e encontrar exatamente o mesmo lugar tomado por grupos de turistas.",
           ],
           nota:
-        "Melhor horário para fotos: 17h–18h, quando os letreiros de neon acendem contra o céu ainda claro — ideal antes de seguir para o jantar e a vida noturna. O mirante do Governo Metropolitano é gratuito, com vista comparável à de mirantes pagos como o da Tokyo Sky Tree — vale subir perto do pôr do sol.",
+        "O mirante do Prédio do Governo Metropolitano é gratuito, com vista comparável à de mirantes pagos como o da Tokyo Sky Tree — mas, para caber no retorno das 16h ao hotel, é preciso escolher entre ele e o Shinjuku Gyoen, não os dois.",
         },
         poisLabel: "Pontos de Interesse",
         pois: [
           {
             title: "Shinjuku Gyoen",
             description:
-              "Um dos parques mais bonitos de Tóquio, misturando jardins japonês, francês e inglês — refúgio verde no meio do bairro mais denso da cidade. Melhor visitar logo na chegada, ainda com luz do dia (fica ao sul da estação, fecha à noite).",
-            prioridade: "recomendado",
+              "Um dos parques mais bonitos de Tóquio, misturando jardins japonês, francês e inglês — refúgio verde no meio do bairro mais denso da cidade. Como o dia já passou pelo Meiji Jingu e sua área verde, não é essencial encaixar outro grande parque hoje — vale só se preferir parque a mirante e não estiver com o tempo apertado.",
+            prioridade: "opcional",
             ordem: 1,
             imagem: "/images/shinjuku-gyoen.png",
             imagemAlt: "Lago do Shinjuku Gyoen no outono, com a torre do Prédio do Governo Metropolitano ao fundo",
@@ -2334,8 +2328,8 @@ const DAY_3: DayContent = {
           {
             title: "Prédio do Governo Metropolitano de Tóquio + Mirante",
             description:
-              "Torres gêmeas projetadas por Kenzo Tange com mirante gratuito (~9h30–22h) no 45º andar e vista panorâmica da cidade — em dias claros, dá para ver o Monte Fuji. Fica no lado oeste da estação; ideal chegar perto do fim da tarde para ver o pôr do sol.",
-            prioridade: "recomendado",
+              "Torres gêmeas projetadas por Kenzo Tange com mirante gratuito (~9h30–22h) no 45º andar e vista panorâmica da cidade — em dias claros, dá para ver o Monte Fuji. Fica no lado oeste da estação; interessante se estiver com tempo e vontade, mas opcional neste roteiro.",
+            prioridade: "opcional",
             ordem: 2,
             imagem: "/images/tokyo-metropolitan-government-building.png",
             imagemAlt: "Vista de baixo das torres gêmeas do Prédio do Governo Metropolitano de Tóquio",
@@ -2372,8 +2366,8 @@ const DAY_3: DayContent = {
           {
             title: "Golden Gai",
             description:
-              "Rede de vielas estreitas com mais de 200 bares minúsculos, a maioria com capacidade para menos de 10 pessoas (maioria abre após 20h) — encostado em Kabukicho, último ponto da noite antes do onsen Thermae-Yu.",
-            prioridade: "imperdivel",
+              "Rede de vielas estreitas com mais de 200 bares minúsculos, a maioria com capacidade para menos de 10 pessoas — vale caminhar pelas vielas à tarde para conhecer a arquitetura, mas a maioria dos bares só abre à noite (após 20h), quando o roteiro já recomenda estar a caminho da estação para o Shinkansen.",
+            prioridade: "opcional",
             ordem: 6,
             imagem: "/images/golden-gai.png",
             imagemAlt: "Viela estreita do Golden Gai à noite, com lanternas e placas iluminadas dos bares",
@@ -2382,8 +2376,8 @@ const DAY_3: DayContent = {
           {
             title: "Onsen Thermae-Yu",
             description:
-              "Onsen urbano aberto 24 horas no coração de Kabukicho, ao lado do Golden Gai — água termal natural trazida diariamente de Nakaizu, com banhos internos e ao ar livre, banho carbonatado e saunas. Fecha a noite antes do trem noturno rumo a Kyoto.",
-            prioridade: "imperdivel",
+              "Onsen urbano aberto 24 horas no coração de Kabukicho, ao lado do Golden Gai — água termal natural trazida diariamente de Nakaizu, com banhos internos e ao ar livre, banho carbonatado e saunas. Só cabe no dia se você decidir ficar mais uma noite em Tóquio em vez de seguir para Kyoto no fim da tarde, já que consome bem mais tempo do que o previsto pelo roteiro recomendado de hoje.",
+            prioridade: "opcional",
             ordem: 7,
             imagem: "/images/thermae-yu.png",
             alerta:
@@ -2392,7 +2386,7 @@ const DAY_3: DayContent = {
         ],
         gastronomia: {
           alerta:
-            "Golden Gai tem ~280 bares minúsculos (4–10 lugares cada) — muitos não recebem estrangeiros ou cobram taxa de mesa/otsumami (aperitivo obrigatório) além do valor da bebida. Os bares abaixo foram selecionados justamente por serem abertamente foreign-friendly. Leve dinheiro: vários não aceitam cartão.",
+            "Esta seção vale para quem decidir ficar mais uma noite em Tóquio em vez de seguir para Kyoto no fim da tarde. Golden Gai tem ~280 bares minúsculos (4–10 lugares cada) — muitos não recebem estrangeiros ou cobram taxa de mesa/otsumami (aperitivo obrigatório) além do valor da bebida. Os bares abaixo foram selecionados justamente por serem abertamente foreign-friendly. Leve dinheiro: vários não aceitam cartão.",
           itensLabel: "Bares selecionados em Golden Gai — foreign-friendly",
           itens: [
             {
@@ -2426,7 +2420,7 @@ const DAY_3: DayContent = {
               localizacao: "18h–3h",
             },
           ],
-          curadoriaLabel: "Opções selecionadas — Jantar antes dos bares (~19h)",
+          curadoriaLabel: "Opções selecionadas — se ficar mais uma noite, jantar antes dos bares (~19h)",
           curadoria: [
             {
               nome: "Katsu Pulipo",
@@ -2513,7 +2507,7 @@ const DAY_3: DayContent = {
     linha: "Shinkansen Tokyo–Kyoto",
     tempo: "Hikari: ~2h40 (incluso no JR Pass)",
     recomendacao:
-      "Recomendamos pegar o trem para Kyoto ainda nesta noite, após o onsen Thermae-Yu, para aproveitar o Kiyomizu-dera logo cedo no dia seguinte, antes das aglomerações.",
+      "Recomendamos sair de Shinjuku por volta das 16h e pegar o Shinkansen no fim da tarde — sem esperar a noite virar em Shinjuku — para aproveitar o Kiyomizu-dera logo cedo no dia seguinte, antes das aglomerações.",
   },
 };
 
@@ -3245,11 +3239,10 @@ const DAY_5: DayContent = {
   ],
   resumoDia: {
     passos: [
-      { titulo: "Café da Manhã", horario: "08:00", foto: "/images/icone-gastronomia.png" },
-      { titulo: "Saída do Hotel", horario: "08:45", foto: "/images/icone-hotel2.png" },
-      { titulo: "Templo Kiyomizu-dera", horario: "09:30", foto: "/images/dia5-kiyomizudera.jpg" },
-      { titulo: "Chá e Doces Tradicionais", horario: "12:00", foto: "/images/icone-gastronomia.png" },
-      { titulo: "Distrito de Gion", horario: "14:00", foto: "/images/dia5-gion-v2.png" },
+      { titulo: "Saída do Hotel", horario: "06:00", foto: "/images/icone-hotel2.png" },
+      { titulo: "Templo Kiyomizu-dera", horario: "06:30", foto: "/images/dia5-kiyomizudera.jpg" },
+      { titulo: "Café da Manhã e Doces Tradicionais", horario: "09:00", foto: "/images/icone-gastronomia.png" },
+      { titulo: "Distrito de Gion", horario: "11:00", foto: "/images/dia5-gion-v2.png" },
       { titulo: "Jantar Kaiseki ou Obanzai", horario: "19:00", foto: "/images/icone-gastronomia.png" },
     ],
   },
@@ -3257,38 +3250,34 @@ const DAY_5: DayContent = {
     titulo: "Mapa por Horário",
     itens: [
       {
-        horario: "08:00",
-        evento: "Café da manhã no Daiwa Roynet Hotel Kyoto-Ekimae",
-      },
-      {
-        horario: "08:45",
+        horario: "06:00",
         evento: "Ônibus 100/206 até Kiyomizu-dera",
         tag: "Deslocamento",
       },
       {
-        horario: "09:15",
+        horario: "06:20",
         evento: "Desembarque e caminhada até o templo (~10 min subindo)",
         tag: "Deslocamento",
       },
       {
-        horario: "09:30",
+        horario: "06:30",
         evento: "Templo Kiyomizu-dera",
         destaque: true,
         tag: "Atração",
       },
-      { horario: "11:00", evento: "Ninenzaka e Sannenzaka" },
+      { horario: "08:00", evento: "Ninenzaka e Sannenzaka" },
       {
-        horario: "12:00",
-        evento: "Chá e doces tradicionais (matcha, yatsuhashi)",
+        horario: "09:00",
+        evento: "Café da manhã e doces tradicionais (matcha, yatsuhashi)",
         tag: "Refeição",
       },
       {
-        horario: "13:30",
+        horario: "10:30",
         evento: "Caminhada até Gion (~15–20 min pelas ladeiras históricas)",
         tag: "Deslocamento",
       },
       {
-        horario: "14:00",
+        horario: "11:00",
         evento: "Distrito de Gion, Yasaka Shrine e Pontocho",
         tag: "Atração",
       },
@@ -3308,7 +3297,7 @@ const DAY_5: DayContent = {
     transporte: "~20 min de ônibus no total",
     linhasMetro: "1 linha de ônibus, sem baldeação",
     ritmo: "Moderado",
-    saida: "08:45",
+    saida: "06:00",
     retorno: "A definir",
   },
   manha: {
@@ -3318,25 +3307,25 @@ const DAY_5: DayContent = {
         {
           titulo: "Templo Kiyomizu-dera",
           foto: "/images/dia5-kiyomizudera.jpg",
-          horario: "09:30",
+          horario: "06:30",
           descricao: "Um dos templos mais icônicos do Japão, aos pés das colinas de Higashiyama.",
         },
         {
           titulo: "Sannenzaka",
           foto: "/images/higashiyama-sannenzaka.jpg",
-          horario: "~11:00",
+          horario: "~08:00",
           descricao: "Ladeira histórica de casas tradicionais, logo na descida a partir do templo.",
         },
         {
           titulo: "Ninenzaka",
           foto: "/images/higashiyama-ninenzaka.jpg",
-          horario: "~11:20",
+          horario: "~08:20",
           descricao: "Continuação de Sannenzaka, descendo rumo a Gion.",
         },
         {
           titulo: "Café % Arabica Kyoto Higashiyama",
           foto: "/images/higashiyama-arabica-kyoto.jpg",
-          horario: "12:00",
+          horario: "09:00",
           descricao: "Cafeteria minimalista muito concorrida, a poucos passos da Pagode Yasaka.",
         },
       ],
@@ -3428,7 +3417,7 @@ const DAY_5: DayContent = {
         },
       ],
       recomendacao:
-        "Do Daiwa Roynet Hotel Kyoto-Ekimae, em frente à Kyoto Station, o ônibus 100 ou 206 leva cerca de 20 minutos até Gojozaka ou Kiyomizu-michi — de lá são mais 10 minutos a pé subindo até o templo. Chegar por volta das 9h ajuda a evitar as aglomerações do meio da manhã.",
+        "Do Daiwa Roynet Hotel Kyoto-Ekimae, em frente à Kyoto Station, o ônibus 100 ou 206 leva cerca de 20 minutos até Gojozaka ou Kiyomizu-michi — de lá são mais 10 minutos a pé subindo até o templo. Para chegar por volta das 6h30, logo na abertura, confirme o primeiro horário do ônibus nessa manhã — dependendo da frequência inicial, um táxi pode ser a opção mais confiável nesse horário tão cedo.",
     },
     atracaoPrincipal: "Templo Kiyomizu-dera",
     atracaoPrincipalImagem: "/images/dia5-kiyomizudera.jpg",
@@ -3820,7 +3809,11 @@ const DAY_6: DayContent = {
         destaque: true,
         tag: "Atração",
       },
-      { horario: "14:30", evento: "Ryoan-ji, Museu do Mangá e Nintendo Store" },
+      { horario: "14:30", evento: "Ryoan-ji e Ninna-ji (mesmo circuito de Kinkaku-ji)" },
+      {
+        horario: "15:15",
+        evento: "Museu do Mangá e Nintendo Store — opcional, exige desvio de ~20–30 min até o centro",
+      },
       {
         horario: "19:00",
         evento: "Jantar com unagi-don",
@@ -4495,10 +4488,10 @@ const DAY_7: DayContent = {
           descricao: "Torre-relógio karakuri ao lado do Suitengu.",
         },
         {
-          titulo: "Suitengu",
+          titulo: "Suitengu (opcional)",
           foto: "/images/suitengu.webp",
-          horario: "11:20–11:45",
-          descricao: "Santuário xintoísta fundado em 1818 — referência nacional em orações por parto seguro.",
+          horario: "~11:20",
+          descricao: "Santuário xintoísta fundado em 1818 — referência nacional em orações por parto seguro. Não é uma visita essencial; como fica bem no caminho, vale entrar rapidamente se estiver passando por perto, mas pode seguir o passeio sem essa parada.",
         },
       ],
     },
@@ -4832,10 +4825,17 @@ const DAY_7: DayContent = {
     ],
     pois: [
       {
+        title: "Edo-Tokyo Museum",
+        description:
+          "Conta a transformação de Edo na metrópole que hoje conhecemos como Tóquio, usando reconstruções, objetos históricos e grandes maquetes — um museu bastante visual, diferente de simplesmente caminhar por salas de vitrines. O prédio passou por uma longa reforma, então a visita depende da situação de funcionamento nas datas da viagem — se estiver aberto e houver tempo disponível, é a principal recomendação de museu da região.",
+        prioridade: "recomendado",
+        ordem: 1,
+      },
+      {
         title: "Edo Noren (Área Externa do Kokugikan)",
         description: "Vila gastronômica temática de sumô, na entrada do estádio.",
         prioridade: "opcional",
-        ordem: 1,
+        ordem: 2,
         imagem: "/images/edo-noren-ryogoku.png",
         imagemAlt: "Interior do Ryōgoku Edo NOREN, réplica de um dohyō (ringue de sumô) cercada por lojas e restaurantes temáticos ao estilo de vila antiga",
       },
@@ -4844,16 +4844,16 @@ const DAY_7: DayContent = {
         description:
           "Monumento com os nomes de todos os Yokozuna (Título máximo de lutador de Sumô) — pertinho do Kokugikan.",
         prioridade: "opcional",
-        ordem: 2,
+        ordem: 3,
         imagem: "/images/santuario-nomi-no-sukune.png",
         imagemAlt: "Estátua de pedra de um lutador de sumô no Santuário Nomi-no-Sukune, cercada por árvores",
       },
       {
         title: "Museu de Espadas",
         description:
-          "Coleção de espadas samurai tradicionais, a alguns minutos a pé do estádio.",
+          "Coleção de espadas samurai tradicionais, a alguns minutos a pé do estádio — não é uma prioridade da viagem, mas pode valer a visita para quem tiver interesse específico em nihonto.",
         prioridade: "opcional",
-        ordem: 3,
+        ordem: 4,
         imagem: "/images/museu-espadas-ryogoku.png",
         imagemAlt: "Espadas samurai (katana) tradicionais em exibição no Museu de Espadas de Ryogoku",
       },
@@ -4995,12 +4995,12 @@ const CHEGADA: DayContent = {
 
 const PARTIDA: DayContent = {
   day: 8,
-  badge: "NRT-DXB",
+  badge: "HND-DXB",
   city: "Partida",
   date: "12 Mai",
   travel: true,
   travelNote:
-    "Voo de volta decola às 00:05 pelo Aeroporto de Haneda (HND), logo após a virada do dia. Dia reservado para preparar a bagagem e seguir para o aeroporto — sem tempo útil para passeios.",
+    "Voo de volta decola às 00:05 pelo Aeroporto de Haneda (HND) — voo EK313, terminal 3 —, logo após a virada do dia. Dia reservado para preparar a bagagem e seguir para o aeroporto — sem tempo útil para passeios.",
 };
 
 // Dia da semana de cada data do roteiro (04–12 de maio de 2027), exibido
@@ -5938,6 +5938,175 @@ function InlineAlert({ text }: { text: string }) {
     <div className="mt-1.5 flex items-start gap-2 rounded-lg border border-red-200 bg-red-50/60 px-2.5 py-2">
       <IconAlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0 text-red-600" />
       <p className="text-[11px] leading-4 text-red-800">{text}</p>
+    </div>
+  );
+}
+
+// Bloco de transporte Narita ↔ Tóquio mostrado no dia de CHEGADA (a chegada
+// em Tóquio é sempre por Narita/NRT, confirmado pela passagem real) — duas
+// opções (Airport Limousine Bus e Narita Express) até o lyf Ginza Tokyo, com
+// a recomendação final da Alpinea. O variant "partida" fica pronto para uso
+// futuro, mas NÃO é usado hoje: a passagem real mostra que a volta embarca
+// pelo Aeroporto de Haneda (HND), não Narita — precisa de conteúdo próprio
+// para Haneda antes de ser habilitado no dia de partida.
+function TransporteNaritaTokyoBlock({ variant }: { variant: "chegada" | "partida" }) {
+  const rotaLabel =
+    variant === "chegada" ? "Chegada — Narita → lyf Ginza Tokyo" : "Volta — remm Tokyo Kyobashi → Narita";
+
+  return (
+    <div className="mb-8 space-y-5 rounded-2xl border border-[#DDD8CF] bg-[#FAF9F6] p-5 sm:p-8">
+      <div>
+        <p className="mb-2 flex items-center gap-2 text-xs font-bold uppercase tracking-[0.2em] text-[#24211D]/60">
+          <IconPlane className="h-4 w-4" />
+          Narita ↔ Tóquio
+        </p>
+        <h3 className="text-lg font-semibold text-[#24211D] sm:text-xl">Duas Opções de Transporte</h3>
+        <p className="mt-3 text-sm leading-6 text-[#24211D]/80">
+          Para o deslocamento entre o Aeroporto Internacional de Narita (NRT) e a região de
+          Ginza/Kyobashi, você possui duas excelentes alternativas: o Airport Limousine Bus e o
+          Narita Express (N&apos;EX). Ambas são seguras, confortáveis e adequadas para viajar com
+          malas. A escolha depende principalmente da preferência entre maior praticidade com a
+          bagagem ou maior previsibilidade no tempo de viagem.
+        </p>
+      </div>
+
+      {/* Opção 1 — Airport Limousine Bus (recomendada) */}
+      <div className="rounded-xl border-2 border-[#3E5FA8] bg-[#EDF3FC] p-5 sm:p-6">
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <p className="flex items-center gap-2 text-sm font-bold uppercase tracking-[0.12em] text-[#3E5FA8]">
+            <IconBus className="h-6 w-6" />
+            Opção 1 — Airport Limousine Bus
+          </p>
+          <span className="inline-flex items-center gap-1 rounded-full border border-[#3E5FA8]/40 bg-white px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-[0.15em] text-[#3E5FA8]">
+            <IconCheckSmall className="h-3 w-3" />
+            Recomendada pela Alpinea
+          </span>
+        </div>
+        <p className="mt-3 text-sm leading-6 text-[#24211D]/85">
+          O Airport Limousine Bus é a alternativa mais prática para quem está viajando com malas.
+          As bagagens maiores são entregues ao funcionário antes do embarque e transportadas no
+          compartimento inferior do ônibus. Você evita plataformas, escadas, corredores e a
+          necessidade de circular por grandes estações carregando as malas.
+        </p>
+
+        <div className="mt-4 rounded-lg bg-white/70 p-4">
+          <p className="text-xs font-bold uppercase tracking-[0.12em] text-[#3E5FA8]/80">{rotaLabel}</p>
+          <p className="mt-2 text-sm leading-6 text-[#24211D]/85">
+            {variant === "chegada"
+              ? "Narita Terminal 2 → Airport Limousine Bus → Tokyo Station/Yaesu → táxi curto → lyf Ginza Tokyo."
+              : "remm Tokyo Kyobashi → táxi curto → ponto do Airport Limousine Bus → Narita Terminal 2."}
+          </p>
+          <p className="mt-2 text-sm leading-6 text-[#24211D]/75">
+            {variant === "chegada"
+              ? "Ao chegar à região de Tokyo Station, basta retirar as malas e utilizar um táxi para o pequeno trecho final até o hotel."
+              : "Na volta, recomendamos sair com margem confortável de segurança, pois o tempo de viagem pode variar de acordo com as condições do trânsito."}
+          </p>
+        </div>
+
+        <p className="mt-4 text-xs font-bold uppercase tracking-[0.12em] text-[#3E5FA8]/80">
+          Por que recomendamos esta opção?
+        </p>
+        <div className="mt-2 space-y-1.5">
+          {[
+            "Menos esforço com as malas",
+            "Não é necessário circular pelas plataformas de Tokyo Station",
+            "Assentos confortáveis durante todo o percurso",
+            "Bagagens transportadas no compartimento inferior",
+            "Processo muito simples mesmo para quem não fala japonês",
+            "Excelente opção tanto na chegada quanto no retorno ao aeroporto",
+          ].map((d) => (
+            <div key={d} className="flex items-start gap-2">
+              <IconCheckSmall className="mt-0.5 h-3 w-3 shrink-0 text-[#3E5FA8]" />
+              <p className="text-xs leading-5 text-[#24211D]/75">{d}</p>
+            </div>
+          ))}
+        </div>
+
+        {variant === "partida" && (
+          <InlineAlert text="O ônibus está sujeito às condições do trânsito. No retorno a Narita, siga o horário de saída indicado no roteiro e evite utilizar um ônibus posterior ao recomendado." />
+        )}
+      </div>
+
+      {/* Opção 2 — Narita Express (N'EX) */}
+      <div className="rounded-xl border border-[#CBD9F2] bg-[#EDF3FC]/60 p-5 sm:p-6">
+        <p className="flex items-center gap-2 text-sm font-bold uppercase tracking-[0.12em] text-[#3E5FA8]/80">
+          <IconShinkansen className="h-6 w-6" />
+          Opção 2 — Narita Express (N&apos;EX)
+        </p>
+        <p className="mt-1 text-xs uppercase tracking-[0.1em] text-[#24211D]/55">Alternativa mais previsível</p>
+        <p className="mt-3 text-sm leading-6 text-[#24211D]/85">
+          O Narita Express, ou N&apos;EX, é o trem expresso da JR que conecta o Aeroporto de Narita
+          diretamente a Tokyo Station. Possui assentos reservados e áreas destinadas às bagagens,
+          sendo uma alternativa confortável para quem prefere viajar de trem.
+        </p>
+
+        <div className="mt-4 rounded-lg bg-white/70 p-4">
+          <p className="text-xs font-bold uppercase tracking-[0.12em] text-[#3E5FA8]/80">{rotaLabel}</p>
+          <p className="mt-2 text-sm leading-6 text-[#24211D]/85">
+            {variant === "chegada"
+              ? "Narita Terminal 2 → Narita Express → Tokyo Station → táxi curto → lyf Ginza Tokyo."
+              : "remm Tokyo Kyobashi → táxi curto → Tokyo Station → Narita Express → Narita Terminal 2."}
+          </p>
+        </div>
+
+        <p className="mt-4 text-sm leading-6 text-[#24211D]/80">
+          A principal vantagem do N&apos;EX é a previsibilidade: como o percurso é ferroviário, o
+          tempo de viagem não sofre influência do trânsito. Por outro lado, é necessário circular
+          por Tokyo Station, uma das maiores e mais movimentadas estações do Japão, além de
+          administrar a própria bagagem durante o deslocamento pela estação.
+        </p>
+
+        <p className="mt-4 text-xs font-bold uppercase tracking-[0.12em] text-[#3E5FA8]/80">Vantagens</p>
+        <div className="mt-2 space-y-1.5">
+          {[
+            "Ligação direta entre Tokyo Station e Narita",
+            "Assento reservado",
+            "Espaço para bagagens",
+            "Tempo de viagem bastante previsível",
+            "Não depende das condições do trânsito",
+          ].map((d) => (
+            <div key={d} className="flex items-start gap-2">
+              <IconCheckSmall className="mt-0.5 h-3 w-3 shrink-0 text-[#3E5FA8]/60" />
+              <p className="text-xs leading-5 text-[#24211D]/75">{d}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Recomendação final */}
+      <ContentCard variant="info" icon={IconStarKit} eyebrow="Recomendação Alpinea" size="sm">
+        <p>
+          Para este roteiro, nossa primeira opção é o Airport Limousine Bus, principalmente pela
+          facilidade para viajar com malas e pela experiência mais simples depois de um voo
+          internacional. O Narita Express permanece como excelente alternativa, principalmente
+          caso você prefira o trem ou queira eliminar a variável do trânsito.
+        </p>
+        <div className="mt-4 rounded-lg bg-white/70 p-4 text-center">
+          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#1B4A73]/70">
+            {variant === "chegada" ? "Chegada · 04/05" : "Retorno · 11/05 à noite"}
+          </p>
+          <p className="mt-2 text-sm font-medium leading-6 text-[#1B4A73]">
+            {variant === "chegada"
+              ? "Narita T2 → Airport Limousine Bus → táxi → lyf Ginza Tokyo"
+              : "remm Tokyo Kyobashi → táxi → Airport Limousine Bus → Narita T2"}
+          </p>
+        </div>
+      </ContentCard>
+
+      {variant === "partida" && (
+        <ContentCard variant="warning" icon={IconAlertTriangle} eyebrow="Atenção à Data do Voo de Volta" size="sm">
+          <p>
+            Seu voo está programado para 00:05 do dia 12/05. Portanto, você deverá sair do hotel e
+            seguir para o Aeroporto de Narita na noite do dia 11/05.
+          </p>
+          <p className="mt-3">
+            <span className="font-semibold">Dica Alpinea:</span> os horários específicos dos
+            transportes serão confirmados mais próximo da viagem. No retorno, será indicado um
+            horário de Limousine Bus que ofereça uma margem confortável para eventuais variações
+            no trânsito.
+          </p>
+        </ContentCard>
+      )}
     </div>
   );
 }
@@ -8015,7 +8184,18 @@ function IconMedicalEmergency({ className }: { className?: string }) {
 
 const INFO_CARDS = [
   { label: "Aeroporto DXB", Icon: IconPlane, view: "dxb" as const },
-  { label: "Aeroporto NRT (Narita)", Icon: IconPlane, view: "narita" as const },
+  {
+    label: "Aeroporto NRT (Narita)",
+    Icon: IconPlane,
+    view: "narita" as const,
+    subLabel: "CHEGADA",
+  },
+  {
+    label: "Aeroporto HND (Haneda)",
+    Icon: IconPlane,
+    view: "haneda" as const,
+    subLabel: "RETORNO",
+  },
   { label: "Metrô", Icon: IconMetro, view: "trem" as const },
   { label: "Ônibus", Icon: IconBus, view: "onibus" as const },
   { label: "Trem Bala (Shinkansen)", Icon: IconShinkansen, view: "shinkansen" as const },
@@ -9009,6 +9189,7 @@ export function ApprovalPanel({
     | "dia"
     | "hotel"
     | "narita"
+    | "haneda"
     | "trem"
     | "costumes"
     | "palavras"
@@ -9198,7 +9379,7 @@ export function ApprovalPanel({
           </p>
         </div>
         <div className="grid grid-cols-2 gap-3 border-b border-[#DDD8CF] px-6 pb-6 pt-3 sm:grid-cols-4 sm:px-10">
-          {INFO_CARDS.map(({ label, Icon, view }) => {
+          {INFO_CARDS.map(({ label, Icon, view, subLabel }) => {
             const cardClassName =
               "group flex min-h-[112px] cursor-pointer flex-col items-center justify-center gap-2.5 rounded-xl border border-[#DCE7F2] bg-[#F1F6FB] px-3 py-4 text-center text-xs leading-5 text-[#24211D]/75 transition duration-300 ease-out hover:-translate-y-0.5 hover:border-[#2C6CA6]/35 hover:bg-[#E9F1FA] hover:text-[#000000] hover:shadow-[0_10px_30px_-15px_rgba(23,59,69,0.35)]";
             const content = (
@@ -9212,7 +9393,14 @@ export function ApprovalPanel({
                         : "h-14 w-14"
                   }
                 />
-                {label}
+                <span>
+                  {label}
+                  {subLabel ? (
+                    <span className="mt-0.5 block text-[9px] font-bold uppercase tracking-[0.2em] text-[#C0392B]">
+                      {subLabel}
+                    </span>
+                  ) : null}
+                </span>
               </>
             );
             return view ? (
@@ -9299,6 +9487,15 @@ export function ApprovalPanel({
                 <NaritaGuideContent displayClassName={displayClassName} internal={false} />
               </div>
             </>
+          ) : viewMode === "haneda" ? (
+            <>
+              <p className="mb-5 inline-block rounded-full border border-[#000000]/20 bg-[#F8FAF9] px-5 py-2 text-xs uppercase tracking-[0.3em] text-[#000000]">
+                Aeroporto de Haneda (HND)
+              </p>
+              <div className="-mx-6 overflow-hidden rounded-2xl sm:-mx-10">
+                <HanedaGuideContent displayClassName={displayClassName} internal={false} />
+              </div>
+            </>
           ) : viewMode === "trem" ? (
             <>
               <p className="mb-5 inline-block rounded-full border border-[#000000]/20 bg-[#F8FAF9] px-5 py-2 text-xs uppercase tracking-[0.3em] text-[#000000]">
@@ -9343,14 +9540,17 @@ export function ApprovalPanel({
               <HotelGuestGuide hotel={HOTEIS[hotelCity]} />
             </>
           ) : current.travel ? (
-            <div className="rounded-2xl border border-[#DDD8CF] bg-[#FAF9F6] p-6 text-center sm:p-8">
-              <p className="text-xs font-bold uppercase tracking-[0.25em] text-[#24211D]/65">
-                {current.city} · {current.date}
-              </p>
-              <p className="mx-auto mt-3 max-w-md text-sm leading-6 text-[#24211D]/75">
-                {current.travelNote}
-              </p>
-            </div>
+            <>
+              <div className="mb-8 rounded-2xl border border-[#DDD8CF] bg-[#FAF9F6] p-6 text-center sm:p-8">
+                <p className="text-xs font-bold uppercase tracking-[0.25em] text-[#24211D]/65">
+                  {current.city} · {current.date}
+                </p>
+                <p className="mx-auto mt-3 max-w-md text-sm leading-6 text-[#24211D]/75">
+                  {current.travelNote}
+                </p>
+              </div>
+              {current.badge === "DXB-NRT" && <TransporteNaritaTokyoBlock variant="chegada" />}
+            </>
           ) : (
             <>
               <p className="mb-5 inline-block rounded-full border border-[#000000]/20 bg-[#F8FAF9] px-5 py-2 text-xs uppercase tracking-[0.3em] text-[#000000]">
