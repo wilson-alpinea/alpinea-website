@@ -6111,6 +6111,427 @@ function TransporteNaritaTokyoBlock({ variant }: { variant: "chegada" | "partida
   );
 }
 
+// =============================================================================
+// Passagem Aérea — dados reais extraídos diretamente dos e-tickets Emirates
+// enviados pelo cliente (bilhete 176 2213785892-93). Nenhum dado abaixo foi
+// inventado: cada campo (código IATA, voo, terminal, data, horário) veio de
+// uma captura de tela real da Emirates. Confirmado: a ida chega em Tóquio
+// por Narita (NRT) e a volta embarca por Haneda (HND) — dois aeroportos
+// diferentes na mesma cidade, exatamente como o bilhete real mostra.
+// =============================================================================
+
+type PassagemSegmento = {
+  numeroSegmento: string;
+  voo: string;
+  classe: string;
+  origem: { iata: string; cidade: string; terminal: string | null };
+  destino: { iata: string; cidade: string; terminal: string | null };
+  partida: { data: string; hora: string };
+  chegada: { data: string; hora: string };
+  bagagem: string;
+};
+
+const PASSAGEM_TICKET_NUMBER = "176 2213785892-93";
+
+const PASSAGEM_IDA: PassagemSegmento[] = [
+  {
+    numeroSegmento: "1 de 4",
+    voo: "EK 262",
+    classe: "Economy Saver",
+    origem: { iata: "GRU", cidade: "São Paulo", terminal: "3" },
+    destino: { iata: "DXB", cidade: "Dubai", terminal: "3" },
+    partida: { data: "03 Mai 2027", hora: "01:35" },
+    chegada: { data: "03 Mai 2027", hora: "23:00" },
+    bagagem: "2 peças",
+  },
+  {
+    numeroSegmento: "2 de 4",
+    voo: "EK 318",
+    classe: "Economy Saver",
+    origem: { iata: "DXB", cidade: "Dubai", terminal: "3" },
+    destino: { iata: "NRT", cidade: "Tóquio", terminal: "2" },
+    partida: { data: "04 Mai 2027", hora: "02:40" },
+    chegada: { data: "04 Mai 2027", hora: "17:35" },
+    bagagem: "2 peças",
+  },
+];
+
+const PASSAGEM_VOLTA: PassagemSegmento[] = [
+  {
+    numeroSegmento: "3 de 4",
+    voo: "EK 313",
+    classe: "Economy Saver",
+    origem: { iata: "HND", cidade: "Tóquio", terminal: "3" },
+    destino: { iata: "DXB", cidade: "Dubai", terminal: "3" },
+    partida: { data: "12 Mai 2027", hora: "00:05" },
+    chegada: { data: "12 Mai 2027", hora: "06:25" },
+    bagagem: "2 peças",
+  },
+  {
+    numeroSegmento: "4 de 4",
+    voo: "EK 261",
+    classe: "Economy Saver",
+    origem: { iata: "DXB", cidade: "Dubai", terminal: "3" },
+    destino: { iata: "GRU", cidade: "São Paulo", terminal: "3" },
+    partida: { data: "12 Mai 2027", hora: "09:05" },
+    chegada: { data: "12 Mai 2027", hora: "17:40" },
+    bagagem: "2 peças",
+  },
+];
+
+function calcularConexao(
+  chegada: { hora: string },
+  partida: { hora: string },
+): string {
+  const [ch, cm] = chegada.hora.split(":").map(Number);
+  const [ph, pm] = partida.hora.split(":").map(Number);
+  let minutos = ph * 60 + pm - (ch * 60 + cm);
+  if (minutos < 0) minutos += 24 * 60;
+  const h = Math.floor(minutos / 60);
+  const m = minutos % 60;
+  return m === 0 ? `${h}h` : `${h}h${String(m).padStart(2, "0")}`;
+}
+
+// Coordenadas em % (posição/tamanho relativos ao template de 1859×846px),
+// obtidas por análise programática (PIL/numpy/scipy) das caixas cinzas do
+// template — não foram estimadas a olho. Cada linha corresponde a um dos
+// dois trechos exibidos por página (esquerda = detalhe maior, direita =
+// réplica menor, no mesmo padrão visual do template original).
+type PassagemCaixaPos = { left: number; top: number; width: number; height: number };
+
+const PASSAGEM_CAIXAS_ESQUERDA: {
+  origem: PassagemCaixaPos;
+  destino: PassagemCaixaPos;
+  hora: PassagemCaixaPos;
+  data: PassagemCaixaPos;
+}[] = [
+  {
+    origem: { left: 15.87, top: 41.02, width: 7.64, height: 10.99 },
+    destino: { left: 39.54, top: 41.02, width: 7.42, height: 10.99 },
+    hora: { left: 51.4, top: 40.19, width: 7.8, height: 4.85 },
+    data: { left: 51.4, top: 47.28, width: 7.8, height: 4.85 },
+  },
+  {
+    origem: { left: 15.87, top: 59.46, width: 7.64, height: 10.87 },
+    destino: { left: 39.54, top: 59.34, width: 7.42, height: 10.99 },
+    hora: { left: 51.4, top: 58.63, width: 7.8, height: 4.85 },
+    data: { left: 51.37, top: 65.6, width: 7.85, height: 4.73 },
+  },
+];
+
+const PASSAGEM_CAIXAS_DIREITA: {
+  origem: PassagemCaixaPos;
+  destino: PassagemCaixaPos;
+  hora: PassagemCaixaPos;
+  data: PassagemCaixaPos;
+}[] = [
+  {
+    origem: { left: 63.96, top: 28.96, width: 5.22, height: 12.88 },
+    destino: { left: 75.04, top: 28.96, width: 4.79, height: 12.88 },
+    hora: { left: 83.32, top: 28.84, width: 5.27, height: 4.26 },
+    data: { left: 83.32, top: 35.7, width: 5.27, height: 4.26 },
+  },
+  {
+    origem: { left: 63.96, top: 51.3, width: 5.27, height: 12.88 },
+    destino: { left: 74.99, top: 51.3, width: 4.84, height: 12.88 },
+    hora: { left: 83.32, top: 51.42, width: 5.27, height: 4.26 },
+    data: { left: 83.32, top: 58.28, width: 5.27, height: 4.26 },
+  },
+];
+
+const PASSAGEM_BARRA_ESQUERDA = {
+  rotulo: { left: 19.37, top: 74.35, width: 10.22, height: 10.28 },
+  cidade: { left: 29.64, top: 74.35, width: 13.78, height: 10.28 },
+  dataHora: { left: 43.47, top: 74.35, width: 15.76, height: 10.28 },
+};
+
+const PASSAGEM_BARRA_DIREITA: PassagemCaixaPos = {
+  left: 67.24,
+  top: 69.86,
+  width: 21.63,
+  height: 11.23,
+};
+
+function PassagemCampoBox({
+  pos,
+  iata,
+  cidade,
+  small,
+}: {
+  pos: PassagemCaixaPos;
+  iata: string;
+  cidade: string;
+  small?: boolean;
+}) {
+  return (
+    <div
+      className="absolute flex flex-col items-center justify-center overflow-hidden px-0.5 text-center"
+      style={{
+        left: `${pos.left}%`,
+        top: `${pos.top}%`,
+        width: `${pos.width}%`,
+        height: `${pos.height}%`,
+      }}
+    >
+      <span
+        className={`w-full truncate font-bold leading-none text-[#4A3418] ${
+          small ? "text-[10px] sm:text-xs md:text-sm" : "text-xs sm:text-sm md:text-lg"
+        }`}
+      >
+        {iata}
+      </span>
+      <span
+        className={`mt-0.5 w-full truncate leading-tight text-[#6B5A42]/80 ${
+          small ? "text-[6px] sm:text-[8px]" : "text-[7px] sm:text-[9px] md:text-[10px]"
+        }`}
+      >
+        {cidade}
+      </span>
+    </div>
+  );
+}
+
+function PassagemCampoTexto({
+  pos,
+  texto,
+  small,
+}: {
+  pos: PassagemCaixaPos;
+  texto: string;
+  small?: boolean;
+}) {
+  return (
+    <div
+      className="absolute flex items-center justify-center overflow-hidden px-0.5 text-center"
+      style={{
+        left: `${pos.left}%`,
+        top: `${pos.top}%`,
+        width: `${pos.width}%`,
+        height: `${pos.height}%`,
+      }}
+    >
+      <span
+        className={`w-full truncate font-semibold leading-none text-[#4A3418] ${
+          small ? "text-[8px] sm:text-[10px] md:text-xs" : "text-[9px] sm:text-xs md:text-sm"
+        }`}
+      >
+        {texto}
+      </span>
+    </div>
+  );
+}
+
+function PassagemEstilizadaBlock({
+  segmentos,
+  label,
+}: {
+  segmentos: PassagemSegmento[];
+  label: "IDA" | "VOLTA";
+}) {
+  const ultimo = segmentos[segmentos.length - 1];
+  const voos = segmentos.map((s) => s.voo).join(" · ");
+  return (
+    <div className="mx-auto w-full max-w-3xl">
+      <p className="mb-1 text-center text-[10px] font-bold uppercase tracking-[0.3em] text-[#24211D]/60">
+        {label === "IDA" ? "Trecho de Ida" : "Trecho de Volta"}
+      </p>
+      <p className="mb-4 text-center text-xs text-[#24211D]/50">
+        {voos} · {segmentos[0]?.classe}
+      </p>
+      <div className="relative mx-auto w-full" style={{ aspectRatio: "1859 / 846" }}>
+        <img
+          src="/images/passagem-emirates-template.png"
+          alt="Modelo decorativo de passagem Emirates"
+          className="pointer-events-none absolute inset-0 h-full w-full select-none object-contain"
+          draggable={false}
+        />
+
+        {segmentos.slice(0, 2).map((seg, i) => {
+          const caixaE = PASSAGEM_CAIXAS_ESQUERDA[i];
+          const caixaD = PASSAGEM_CAIXAS_DIREITA[i];
+          if (!caixaE || !caixaD) return null;
+          return (
+            <div key={seg.numeroSegmento} className="contents">
+              <PassagemCampoBox pos={caixaE.origem} iata={seg.origem.iata} cidade={seg.origem.cidade} />
+              <PassagemCampoBox pos={caixaE.destino} iata={seg.destino.iata} cidade={seg.destino.cidade} />
+              <PassagemCampoTexto pos={caixaE.hora} texto={seg.partida.hora} />
+              <PassagemCampoTexto pos={caixaE.data} texto={seg.partida.data} />
+
+              <PassagemCampoBox pos={caixaD.origem} iata={seg.origem.iata} cidade={seg.origem.cidade} small />
+              <PassagemCampoBox pos={caixaD.destino} iata={seg.destino.iata} cidade={seg.destino.cidade} small />
+              <PassagemCampoTexto pos={caixaD.hora} texto={seg.partida.hora} small />
+              <PassagemCampoTexto pos={caixaD.data} texto={seg.partida.data} small />
+            </div>
+          );
+        })}
+
+        {/* Barra inferior esquerda — chegada final da etapa (não a conexão
+            intermediária em Dubai), conforme a regra de sempre mostrar o
+            destino final do trecho nessa barra. */}
+        <div
+          className="absolute flex items-center justify-center overflow-hidden px-1 text-center"
+          style={{
+            left: `${PASSAGEM_BARRA_ESQUERDA.rotulo.left}%`,
+            top: `${PASSAGEM_BARRA_ESQUERDA.rotulo.top}%`,
+            width: `${PASSAGEM_BARRA_ESQUERDA.rotulo.width}%`,
+            height: `${PASSAGEM_BARRA_ESQUERDA.rotulo.height}%`,
+          }}
+        >
+          <span className="w-full truncate text-[7px] font-bold uppercase leading-tight tracking-[0.1em] text-[#6B5A42]/70 sm:text-[9px]">
+            Chegada Final
+          </span>
+        </div>
+        <div
+          className="absolute flex items-center justify-center overflow-hidden px-1 text-center"
+          style={{
+            left: `${PASSAGEM_BARRA_ESQUERDA.cidade.left}%`,
+            top: `${PASSAGEM_BARRA_ESQUERDA.cidade.top}%`,
+            width: `${PASSAGEM_BARRA_ESQUERDA.cidade.width}%`,
+            height: `${PASSAGEM_BARRA_ESQUERDA.cidade.height}%`,
+          }}
+        >
+          <span className="w-full truncate text-[9px] font-bold leading-none text-[#4A3418] sm:text-xs md:text-sm">
+            {ultimo?.destino.cidade} ({ultimo?.destino.iata})
+          </span>
+        </div>
+        <div
+          className="absolute flex items-center justify-center overflow-hidden px-1 text-center"
+          style={{
+            left: `${PASSAGEM_BARRA_ESQUERDA.dataHora.left}%`,
+            top: `${PASSAGEM_BARRA_ESQUERDA.dataHora.top}%`,
+            width: `${PASSAGEM_BARRA_ESQUERDA.dataHora.width}%`,
+            height: `${PASSAGEM_BARRA_ESQUERDA.dataHora.height}%`,
+          }}
+        >
+          <span className="w-full truncate text-[8px] font-semibold leading-tight text-[#4A3418] sm:text-[10px] md:text-xs">
+            {ultimo?.chegada.data} · {ultimo?.chegada.hora}
+          </span>
+        </div>
+
+        {/* Barra inferior direita — número do bilhete, ao lado do código de
+            barras decorativo do template. */}
+        <div
+          className="absolute flex items-center justify-center overflow-hidden px-1 text-center"
+          style={{
+            left: `${PASSAGEM_BARRA_DIREITA.left}%`,
+            top: `${PASSAGEM_BARRA_DIREITA.top}%`,
+            width: `${PASSAGEM_BARRA_DIREITA.width}%`,
+            height: `${PASSAGEM_BARRA_DIREITA.height}%`,
+          }}
+        >
+          <span className="w-full truncate text-[7px] font-semibold leading-tight text-[#4A3418] sm:text-[9px] md:text-[11px]">
+            Bilhete nº {PASSAGEM_TICKET_NUMBER}
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function PassagemBasicaBlock({
+  segmentos,
+  label,
+}: {
+  segmentos: PassagemSegmento[];
+  label: "IDA" | "VOLTA";
+}) {
+  return (
+    <div>
+      <p className="mb-4 text-center text-[10px] font-bold uppercase tracking-[0.3em] text-[#24211D]/60">
+        {label === "IDA" ? "Trecho de Ida" : "Trecho de Volta"}
+      </p>
+      <div className="space-y-3">
+        {segmentos.map((seg, i) => (
+          <div key={seg.numeroSegmento}>
+            <div className="rounded-2xl border border-[#DDD8CF] bg-[#F8FAF9] p-5 sm:p-6">
+              <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
+                <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#24211D]/50">
+                  Trecho {seg.numeroSegmento} · Voo {seg.voo} · {seg.classe}
+                </span>
+                <span className="text-[10px] font-medium text-[#24211D]/50">
+                  Bagagem: {seg.bagagem}
+                </span>
+              </div>
+              <div className="flex flex-wrap items-center justify-between gap-4">
+                <div className="text-left">
+                  <p className="text-2xl font-bold text-[#24211D] sm:text-3xl">{seg.origem.iata}</p>
+                  <p className="text-sm text-[#24211D]/70">
+                    {seg.origem.cidade}
+                    {seg.origem.terminal ? ` · Terminal ${seg.origem.terminal}` : ""}
+                  </p>
+                  <p className="mt-1 text-sm font-semibold text-[#24211D]">{seg.partida.hora}</p>
+                  <p className="text-xs text-[#24211D]/60">{seg.partida.data}</p>
+                </div>
+                <div className="flex flex-1 items-center justify-center gap-2 px-2 text-[#24211D]/30">
+                  <div className="h-px w-full bg-[#DDD8CF]" />
+                  <span className="shrink-0 text-lg">→</span>
+                  <div className="h-px w-full bg-[#DDD8CF]" />
+                </div>
+                <div className="text-right">
+                  <p className="text-2xl font-bold text-[#24211D] sm:text-3xl">{seg.destino.iata}</p>
+                  <p className="text-sm text-[#24211D]/70">
+                    {seg.destino.cidade}
+                    {seg.destino.terminal ? ` · Terminal ${seg.destino.terminal}` : ""}
+                  </p>
+                  <p className="mt-1 text-sm font-semibold text-[#24211D]">{seg.chegada.hora}</p>
+                  <p className="text-xs text-[#24211D]/60">{seg.chegada.data}</p>
+                </div>
+              </div>
+            </div>
+            {i < segmentos.length - 1 && (
+              <div className="flex items-center justify-center py-3">
+                <span className="rounded-full border border-[#DDD8CF] bg-[#FDFCF9] px-4 py-1.5 text-[10px] font-semibold uppercase tracking-[0.15em] text-[#24211D]/60">
+                  Conexão em {segmentos[i].destino.cidade} ·{" "}
+                  {calcularConexao(segmentos[i].chegada, segmentos[i + 1].partida)}
+                </span>
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+      <p className="mt-4 text-center text-[10px] text-[#24211D]/50">
+        Bilhete nº {PASSAGEM_TICKET_NUMBER}
+      </p>
+    </div>
+  );
+}
+
+function PassagemAereaBlock() {
+  const [versao, setVersao] = useState<"estilizada" | "basica">("estilizada");
+  return (
+    <div>
+      <div className="mb-8 flex justify-center gap-2">
+        {(["estilizada", "basica"] as const).map((v) => (
+          <button
+            key={v}
+            type="button"
+            onClick={() => setVersao(v)}
+            className={`rounded-full border px-5 py-2 text-xs font-bold uppercase tracking-[0.15em] transition ${
+              versao === v
+                ? "border-[#173B45] bg-[#173B45] text-white"
+                : "border-[#DDD8CF] bg-[#FDFCF9] text-[#24211D]/60 hover:border-[#173B45]/40"
+            }`}
+          >
+            {v === "estilizada" ? "Versão Estilizada" : "Versão Básica"}
+          </button>
+        ))}
+      </div>
+
+      {versao === "estilizada" ? (
+        <div className="space-y-14">
+          <PassagemEstilizadaBlock segmentos={PASSAGEM_IDA} label="IDA" />
+          <PassagemEstilizadaBlock segmentos={PASSAGEM_VOLTA} label="VOLTA" />
+        </div>
+      ) : (
+        <div className="space-y-10">
+          <PassagemBasicaBlock segmentos={PASSAGEM_IDA} label="IDA" />
+          <PassagemBasicaBlock segmentos={PASSAGEM_VOLTA} label="VOLTA" />
+        </div>
+      )}
+    </div>
+  );
+}
+
 function ComparacaoTabelaBlock({ comparacao }: { comparacao: ComparacaoTabela }) {
   return (
     <div className="mb-8 overflow-hidden rounded-2xl bg-black p-5 sm:p-7">
@@ -8183,6 +8604,7 @@ function IconMedicalEmergency({ className }: { className?: string }) {
 }
 
 const INFO_CARDS = [
+  { label: "Passagem Aérea", Icon: IconPlane, view: "passagem" as const },
   { label: "Aeroporto DXB", Icon: IconPlane, view: "dxb" as const },
   {
     label: "Aeroporto NRT (Narita)",
@@ -9190,6 +9612,7 @@ export function ApprovalPanel({
     | "hotel"
     | "narita"
     | "haneda"
+    | "passagem"
     | "trem"
     | "costumes"
     | "palavras"
@@ -9447,7 +9870,14 @@ export function ApprovalPanel({
         </div>
 
         <div ref={contentRef} className="scroll-mt-6 px-6 py-8 sm:px-10 sm:py-10">
-          {viewMode === "dxb" ? (
+          {viewMode === "passagem" ? (
+            <>
+              <p className="mb-5 inline-block rounded-full border border-[#000000]/20 bg-[#F8FAF9] px-5 py-2 text-xs uppercase tracking-[0.3em] text-[#000000]">
+                Passagem Aérea
+              </p>
+              <PassagemAereaBlock />
+            </>
+          ) : viewMode === "dxb" ? (
             <>
               <p className="mb-5 inline-block rounded-full border border-[#000000]/20 bg-[#F8FAF9] px-5 py-2 text-xs uppercase tracking-[0.3em] text-[#000000]">
                 Conexão em Dubai (DXB)
