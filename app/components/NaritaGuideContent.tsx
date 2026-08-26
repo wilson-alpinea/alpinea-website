@@ -32,6 +32,8 @@ import {
   RestaurantMini,
   ActionItem,
   FlowDivider,
+  ContentCard,
+  IconWarning,
 } from "./AirportGuideKit";
 
 // Conteúdo completo do guia do Aeroporto de Narita (NRT) — extraído de
@@ -779,6 +781,20 @@ export function NaritaGuideContent({
         src="/images/ic-card-vending-machine.png"
         alt="Máquina de bebidas com leitor de IC card por aproximação"
       />
+      <PreviewModal
+        id="foto-narita-balcao-limousine"
+        eyebrow="Limousine Bus"
+        label="Bus Ticket Counter"
+        src="/images/narita-limousine-bus-balcao-terminal.webp"
+        alt="Balcão de venda de bilhetes do Airport Limousine Bus, com atendentes no saguão do terminal"
+      />
+      <PreviewModal
+        id="foto-narita-ponto-limousine"
+        eyebrow="Limousine Bus"
+        label="Ponto de Embarque"
+        src="/images/narita-limousine-bus-ponto-embarque.webp"
+        alt="Ponto de embarque do Airport Limousine Bus, com funcionários organizando as bagagens dos passageiros"
+      />
 
       {/* Deslocamento */}
       <section id="deslocamento" className="border-t border-[#DDD8CF] px-6 py-14 md:px-10 md:py-20">
@@ -897,6 +913,156 @@ export function NaritaGuideContent({
               normalmente recomendamos que seja pego um táxi para a parte final do
               trajeto.
             </p>
+
+            <div className="mt-8 space-y-5 border-t border-[#DDD8CF] pt-8">
+              <p className="text-sm font-medium uppercase tracking-[0.15em] text-[#24211D]/88">
+                Como Comprar o Bilhete do Limousine Bus
+              </p>
+
+              <div className="grid gap-4 sm:grid-cols-2">
+                <ImageCard
+                  src="/images/narita-limousine-bus-balcao-terminal.webp"
+                  alt="Balcão de venda de bilhetes do Airport Limousine Bus, com atendentes no saguão do terminal"
+                  label="Bus Ticket Counter"
+                  sublabel="Balcão de venda dos bilhetes"
+                  fit="cover"
+                  aspect="aspect-[4/3]"
+                  zoomHref="#foto-narita-balcao-limousine"
+                />
+                <ImageCard
+                  src="/images/narita-limousine-bus-ponto-embarque.webp"
+                  alt="Ponto de embarque do Airport Limousine Bus, com funcionários organizando as bagagens dos passageiros"
+                  label="Ponto de Embarque"
+                  sublabel="Funcionários cuidam das bagagens"
+                  fit="cover"
+                  aspect="aspect-[4/3]"
+                  zoomHref="#foto-narita-ponto-limousine"
+                />
+              </div>
+
+              <div className="space-y-4">
+                <div className="rounded-2xl border border-[#DDD8CF] bg-[#F8FAF9] p-5">
+                  <div className="flex items-start gap-4">
+                    <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-[#173B45]/40 text-xs font-medium text-[#173B45]">
+                      1
+                    </span>
+                    <p className="text-sm leading-6 text-[#24211D]/88 md:text-base">
+                      <span className="font-medium text-[#24211D]">Depois de desembarcar</span>, ao
+                      passar pela Imigração, retirar as malas e passar pela Alfândega, você sai
+                      direto no <span className="text-[#24211D]">Terminal 2, 1º andar (1F),
+                      International Arrivals Lobby</span> — sem precisar subir ou descer de andar.
+                      Os balcões de ônibus ficam no próprio saguão de desembarque, perto das áreas
+                      de chegada internacional A e B. Procure pelas placas{" "}
+                      <span className="text-[#24211D]">BUS TICKETS / BUS TICKET COUNTER</span> ou pelo
+                      nome <span className="text-[#24211D]">Airport Limousine / Limousine Bus</span>.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="rounded-2xl border border-[#DDD8CF] bg-[#F8FAF9] p-5">
+                  <div className="flex items-start gap-4">
+                    <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-[#173B45]/40 text-xs font-medium text-[#173B45]">
+                      2
+                    </span>
+                    <p className="text-sm leading-6 text-[#24211D]/88 md:text-base">
+                      <span className="font-medium text-[#24211D]">Onde comprar</span>: no Bus Ticket
+                      Counter, que funciona atualmente das{" "}
+                      <span className="text-[#24211D]">06:30 às 23:00</span> aproximadamente. No
+                      balcão, informe ao atendente o destino — pode simplesmente mostrar no celular,
+                      por exemplo &quot;Airport Limousine Bus to Tokyo Station, please&quot;, ou o nome do
+                      hotel/ponto de desembarque do seu roteiro. O atendente confere os próximos
+                      ônibus disponíveis e indica o melhor horário.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="rounded-2xl border border-[#DDD8CF] bg-[#F8FAF9] p-5">
+                  <div className="flex items-start gap-4">
+                    <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-[#173B45]/40 text-xs font-medium text-[#173B45]">
+                      3
+                    </span>
+                    <p className="text-sm leading-6 text-[#24211D]/88 md:text-base">
+                      <span className="font-medium text-[#24211D]">Escolha o horário</span> com
+                      alguma folga — os bilhetes saem vinculados a uma saída específica, então
+                      considere o tempo de comprar o bilhete, ir até o ponto, entregar as malas e
+                      embarcar. A vantagem de comprar só depois da Imigração é não precisar se
+                      preocupar caso o voo atrase ou a Imigração demore mais que o previsto.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="rounded-2xl border border-[#DDD8CF] bg-[#F8FAF9] p-5">
+                  <div className="flex items-start gap-4">
+                    <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-[#173B45]/40 text-xs font-medium text-[#173B45]">
+                      4
+                    </span>
+                    <p className="text-sm leading-6 text-[#24211D]/88 md:text-base">
+                      <span className="font-medium text-[#24211D]">Confira o bilhete</span> antes de
+                      sair do balcão: DESTINATION (destino), DEPARTURE TIME (horário de saída) e BUS
+                      STOP / PLATFORM (número do ponto) — este último é especialmente importante, já
+                      que várias linhas com destinos diferentes saem do Terminal 2.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="rounded-2xl border border-[#DDD8CF] bg-[#F8FAF9] p-5">
+                  <div className="flex items-start gap-4">
+                    <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-[#173B45]/40 text-xs font-medium text-[#173B45]">
+                      5
+                    </span>
+                    <p className="text-sm leading-6 text-[#24211D]/88 md:text-base">
+                      <span className="font-medium text-[#24211D]">Vá para o ponto de ônibus</span>{" "}
+                      seguindo as placas BUS / BUS STOPS — as paradas ficam do lado de fora do
+                      Terminal 2, ainda no mesmo 1F, sem precisar de elevador, escada ou trem. Saia
+                      pela porta indicada e procure o número do ponto impresso no bilhete.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="rounded-2xl border border-[#DDD8CF] bg-[#F8FAF9] p-5">
+                  <div className="flex items-start gap-4">
+                    <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-[#173B45]/40 text-xs font-medium text-[#173B45]">
+                      6
+                    </span>
+                    <p className="text-sm leading-6 text-[#24211D]/88 md:text-base">
+                      <span className="font-medium text-[#24211D]">Entregue as malas</span> ao
+                      funcionário no ponto, alguns minutos antes do horário — as malas grandes vão no
+                      bagageiro inferior do ônibus, e você recebe um comprovante/etiqueta de bagagem.
+                      Guarde essa etiqueta até retirar a mala no destino.
+                    </p>
+                  </div>
+                </div>
+
+                <div className="rounded-2xl border border-[#DDD8CF] bg-[#F8FAF9] p-5">
+                  <div className="flex items-start gap-4">
+                    <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-[#173B45]/40 text-xs font-medium text-[#173B45]">
+                      7
+                    </span>
+                    <p className="text-sm leading-6 text-[#24211D]/88 md:text-base">
+                      <span className="font-medium text-[#24211D]">Embarque</span>: quando o ônibus
+                      chegar, confirme no painel frontal/lateral se o destino corresponde ao do seu
+                      bilhete, apresente o bilhete ou QR Code e embarque — os assentos são
+                      individuais.
+                    </p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="grid gap-4 sm:grid-cols-2">
+                <ContentCard variant="warning" icon={IconWarning} eyebrow="Atenção" size="sm">
+                  <p>
+                    Não desça para o B1F — é onde ficam as estações dos trens JR e Keisei. Os
+                    bilhetes de ônibus são vendidos no 1F, no mesmo andar do desembarque.
+                  </p>
+                </ContentCard>
+                <ContentCard variant="warning" icon={IconWarning} eyebrow="Atenção" size="sm">
+                  <p>
+                    Não confunda com o balcão identificado como LCB / Low Cost Bus — é um serviço
+                    diferente do Airport Limousine Bus.
+                  </p>
+                </ContentCard>
+              </div>
+            </div>
           </div>
 
           <div id="deslocamento-taxi" className="mt-10 space-y-5 border-t border-[#DDD8CF] pt-8">

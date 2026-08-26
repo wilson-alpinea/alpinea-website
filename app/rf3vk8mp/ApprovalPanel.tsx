@@ -10,7 +10,7 @@ import {
 } from "react";
 import { createPortal } from "react-dom";
 import Image from "next/image";
-import { ContentCard, IconStar as IconStarKit } from "../components/AirportGuideKit";
+import { ContentCard, IconStar as IconStarKit, IconWarning } from "../components/AirportGuideKit";
 import { NaritaGuideContent } from "../components/NaritaGuideContent";
 import { HanedaGuideContent } from "../components/HanedaGuideContent";
 import { TremGuideContent } from "../components/TremGuideContent";
@@ -6239,6 +6239,96 @@ function TransporteHanedaTokyoBlock() {
               </p>
               <p className="text-sm font-semibold text-[#24211D]">No bagageiro do ônibus</p>
             </div>
+          </div>
+        </div>
+
+        <div className="mt-3 space-y-3 rounded-lg bg-white/70 p-4">
+          <p className="text-xs font-bold uppercase tracking-[0.12em] text-[#3E5FA8]/80">
+            Como Comprar a Passagem no T-CAT
+          </p>
+
+          <div className="flex gap-3">
+            <div className="h-16 w-16 shrink-0 overflow-hidden rounded-lg border border-[#CBD9F2] bg-white p-1">
+              <img
+                loading="lazy"
+                src="/images/tcat-logo-mascote.webp"
+                alt="Mascote do T-CAT (Tokyo City Air Terminal)"
+                className="h-full w-full object-contain"
+              />
+            </div>
+            <img
+              loading="lazy"
+              src="/images/tcat-plataforma-limousine-bus.webp"
+              alt="Plataforma de embarque do Airport Limousine Bus no T-CAT, com ônibus e passageiros"
+              className="h-16 flex-1 rounded-lg border border-[#CBD9F2] object-cover"
+            />
+          </div>
+
+          <p className="text-sm leading-6 text-[#24211D]/85">
+            Ao entrar no <span className="font-semibold">T-CAT Main Building, 1º andar (1F)</span>,
+            procure pelas indicações <span className="font-semibold">LIMOUSINE BUS</span>,{" "}
+            <span className="font-semibold">HANEDA AIRPORT</span> e{" "}
+            <span className="font-semibold">BUS TICKET</span> — o balcão de passagens, as máquinas
+            automáticas e a própria área de embarque ficam todos nesse mesmo andar.
+          </p>
+          <p className="text-sm leading-6 text-[#24211D]/85">
+            Você pode comprar no balcão do Airport Limousine Bus, em máquinas automáticas, ou
+            antecipadamente pela internet. Para quem usa o serviço pela primeira vez, o balcão é o
+            mais simples, pois o atendente confirma o terminal correto — diga{" "}
+            <span className="font-semibold">&ldquo;Haneda Airport, Terminal 3, please&rdquo;</span> ou
+            mostre no celular <span className="font-semibold">HANEDA AIRPORT — TERMINAL 3</span>.
+          </p>
+
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#3E5FA8]/70">
+                Tarifa Adulto
+              </p>
+              <p className="text-sm font-semibold text-[#24211D]">¥1.000</p>
+            </div>
+            <div>
+              <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#3E5FA8]/70">
+                Tarifa Criança (6–11 anos)
+              </p>
+              <p className="text-sm font-semibold text-[#24211D]">¥500</p>
+            </div>
+          </div>
+
+          <p className="text-sm leading-6 text-[#24211D]/85">
+            Aceita pagamento em dinheiro, cartão de crédito ou IC Card (Suica/Pasmo). Antes de sair
+            do balcão, confira no bilhete: <span className="font-semibold">DESTINATION</span>{" "}
+            (Haneda Airport), <span className="font-semibold">TERMINAL</span> e{" "}
+            <span className="font-semibold">DEPARTURE TIME</span> — Haneda tem três terminais, e o
+            mais importante é confirmar o terminal certo.
+          </p>
+          <p className="text-sm leading-6 text-[#24211D]/85">
+            O embarque é no próprio T-CAT Main Building, 1F — basta seguir as placas{" "}
+            <span className="font-semibold">HANEDA AIRPORT / LIMOUSINE BUS</span>, sem precisar sair
+            procurando um ponto na rua. Chegue alguns minutos antes do horário do bilhete, apresente-o
+            ao funcionário e entregue as malas grandes — elas vão no compartimento inferior do ônibus
+            e você recebe uma etiqueta/comprovante de bagagem. Mantenha com você, dentro do ônibus,
+            documentos, passaporte, dinheiro, medicamentos e outros objetos de valor.
+          </p>
+          <p className="text-sm leading-6 text-[#24211D]/85">
+            Ao chegar em Haneda, retire as malas do compartimento, tenha o comprovante em mãos e siga
+            para <span className="font-semibold">DEPARTURES / 出発</span> — depois, procure o balcão de
+            check-in da sua companhia aérea nos painéis do terminal.
+          </p>
+
+          <div className="grid gap-3 sm:grid-cols-2">
+            <ContentCard variant="warning" icon={IconWarning} eyebrow="Atenção" size="sm">
+              <p>
+                Confirme sempre qual terminal consta na sua passagem aérea antes de comprar o
+                bilhete — Haneda tem três terminais.
+              </p>
+            </ContentCard>
+            <ContentCard variant="warning" icon={IconWarning} eyebrow="Atenção" size="sm">
+              <p>
+                Os ≈25 minutos entre T-CAT e Haneda são uma estimativa — por ser transporte
+                rodoviário, trânsito pode aumentar o tempo. Mantenha uma margem confortável para um
+                voo internacional.
+              </p>
+            </ContentCard>
           </div>
         </div>
 
