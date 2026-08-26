@@ -5477,10 +5477,16 @@ function ResumoDiaBlock({
 }) {
   return (
     <div className="mb-10 rounded-2xl bg-black p-5 sm:p-6">
-      <p className="mb-5 text-xs font-bold uppercase tracking-[0.25em] text-white">
-        Resumo do Dia
-      </p>
-      <div className="overflow-x-auto pb-1">
+      <div className="mb-5 flex items-center justify-between gap-3">
+        <p className="text-xs font-bold uppercase tracking-[0.25em] text-white">
+          Resumo do Dia
+        </p>
+        <p className="shrink-0 text-[10px] font-medium text-white/45">
+          Arraste para o lado →
+        </p>
+      </div>
+      <div className="relative">
+        <div className="overflow-x-auto pb-1">
         <div className="flex w-max shrink-0 mx-auto">
         {resumo.passos.map((passo, i) => (
           <div key={passo.titulo + i} className="flex shrink-0 items-start">
@@ -5539,6 +5545,8 @@ function ResumoDiaBlock({
           </div>
         ))}
         </div>
+        </div>
+        <div className="pointer-events-none absolute inset-y-0 right-0 w-10 bg-gradient-to-l from-black to-transparent" />
       </div>
     </div>
   );
@@ -6807,52 +6815,78 @@ function DeslocamentoCard({ deslocamento }: { deslocamento: Deslocamento }) {
           )}
         </div>
 
+        {/* Trilho vertical: uma única coluna de largura fixa (w-6) contém o
+            conector inicial, os círculos das estações intermediárias, as
+            barras entre eles e a seta final — tudo alinhado no mesmo eixo
+            central, em vez de ter o conector inicial centralizado no
+            container inteiro (largura variável) enquanto os círculos ficam
+            à esquerda de uma coluna mais estreita, o que quebrava/desalinhava
+            a faixa. */}
         <div className="flex w-full flex-col items-center">
-          <span
-            className="h-6 w-1.5 rounded-full"
-            style={{ background: deslocamento.linha.cor || "#B96432" }}
-          />
-          {deslocamento.estacoesIntermediarias?.map((estacao) => (
-            <div
-              key={estacao.nome}
-              className="flex w-full max-w-[260px] items-stretch gap-3"
-            >
-              <div className="flex flex-col items-center">
+          <div className="flex w-full max-w-[260px] flex-col">
+            {deslocamento.estacoesIntermediarias &&
+            deslocamento.estacoesIntermediarias.length > 0 ? (
+              deslocamento.estacoesIntermediarias.map((estacao, i) => (
+                <div key={estacao.nome} className="flex w-full items-stretch gap-3">
+                  <div className="flex w-6 shrink-0 flex-col items-center">
+                    {i === 0 && (
+                      <span
+                        className="h-6 w-1.5 rounded-full"
+                        style={{ background: deslocamento.linha.cor || "#B96432" }}
+                      />
+                    )}
+                    <span
+                      className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full border-2 bg-white text-[10px] font-bold leading-none"
+                      style={{
+                        borderColor: deslocamento.linha.cor || "#B96432",
+                        color: deslocamento.linha.cor || "#B96432",
+                      }}
+                    >
+                      {estacao.numero ?? "•"}
+                    </span>
+                    <span
+                      className="w-1.5 flex-1 rounded-full"
+                      style={{ background: deslocamento.linha.cor || "#B96432" }}
+                    />
+                  </div>
+                  <div className="flex-1 pb-4 pt-0.5 text-left">
+                    <p className="text-xs font-semibold text-[#24211D]">
+                      {estacao.nome}
+                    </p>
+                    {estacao.nomeJapones && (
+                      <p className="text-[11px] text-[#24211D]/60">
+                        {estacao.nomeJapones}
+                      </p>
+                    )}
+                  </div>
+                </div>
+              ))
+            ) : (
+              <div className="flex w-full items-stretch gap-3">
+                <div className="flex w-6 shrink-0 flex-col items-center">
+                  <span
+                    className="h-10 w-1.5 rounded-full"
+                    style={{ background: deslocamento.linha.cor || "#B96432" }}
+                  />
+                </div>
+                <div className="flex-1" />
+              </div>
+            )}
+            <div className="flex w-full items-start gap-3">
+              <div className="flex w-6 shrink-0 items-center justify-center">
                 <span
-                  className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full border-2 bg-white text-[10px] font-bold leading-none"
                   style={{
-                    borderColor: deslocamento.linha.cor || "#B96432",
-                    color: deslocamento.linha.cor || "#B96432",
+                    width: 0,
+                    height: 0,
+                    borderLeft: "9px solid transparent",
+                    borderRight: "9px solid transparent",
+                    borderTop: `16px solid ${deslocamento.linha.cor || "#B96432"}`,
                   }}
-                >
-                  {estacao.numero ?? "•"}
-                </span>
-                <span
-                  className="w-1.5 flex-1 rounded-full"
-                  style={{ background: deslocamento.linha.cor || "#B96432" }}
                 />
               </div>
-              <div className="flex-1 pb-4 pt-0.5 text-left">
-                <p className="text-xs font-semibold text-[#24211D]">
-                  {estacao.nome}
-                </p>
-                {estacao.nomeJapones && (
-                  <p className="text-[11px] text-[#24211D]/60">
-                    {estacao.nomeJapones}
-                  </p>
-                )}
-              </div>
+              <div className="flex-1" />
             </div>
-          ))}
-          <span
-            style={{
-              width: 0,
-              height: 0,
-              borderLeft: "9px solid transparent",
-              borderRight: "9px solid transparent",
-              borderTop: `16px solid ${deslocamento.linha.cor || "#B96432"}`,
-            }}
-          />
+          </div>
         </div>
 
         {(() => {
@@ -8054,7 +8088,11 @@ function PeriodBlock({
               <IconClock className="h-9 w-9 shrink-0 text-[#B96432] sm:h-10 sm:w-10" />
             </div>
           </div>
-          <div className="mt-6 overflow-x-auto pb-1">
+          <p className="mt-4 text-right text-[10px] font-medium text-[#000000]/40">
+            Arraste para o lado →
+          </p>
+          <div className="relative mt-1">
+            <div className="overflow-x-auto pb-1">
             <div className="mx-auto flex w-max shrink-0">
             {(() => {
               let numero = 0;
@@ -8107,6 +8145,8 @@ function PeriodBlock({
               });
             })()}
             </div>
+            </div>
+            <div className="pointer-events-none absolute inset-y-0 right-0 w-10 bg-gradient-to-l from-[#F8FAF9] to-transparent" />
           </div>
           <p className="mt-4 text-xs leading-5 text-[#000000]/60">
             O que dá pra fazer sem pressa. Os detalhes de cada ponto vêm a seguir — comece por aqui.
@@ -9961,12 +10001,11 @@ export function ApprovalPanel({
 
         <div
           ref={daysMenuRef}
-          className="flex items-start gap-x-4 overflow-x-auto px-6 pb-1 pt-6 [-webkit-overflow-scrolling:touch] sm:flex-wrap sm:justify-center sm:gap-x-7 sm:gap-y-5 sm:overflow-visible sm:px-10 sm:pb-0"
+          className="flex flex-wrap items-start justify-center gap-x-5 gap-y-5 px-6 pt-6 sm:gap-x-7 sm:px-10"
         >
-          {/* No mobile essa fileira vira rolagem horizontal (mesmo padrão já
-              usado no "Percurso Essencial") — com 9 dias, o flex-wrap
-              tomava várias linhas de altura antes do conteúdo aparecer. A
-              partir de sm volta ao grid com quebra de linha de sempre. */}
+          {/* Os cards de dia ficam sempre visíveis (quebra de linha), sem
+              rolagem horizontal — o cliente precisa ver todas as opções de
+              uma vez, não descobrir que precisa arrastar pro lado. */}
           {DAYS.map((d, index) => {
             const active = index === activeDay && viewMode === "dia";
             return (
@@ -9978,7 +10017,7 @@ export function ApprovalPanel({
                   setViewMode("dia");
                   scrollToContent();
                 }}
-                className="group flex shrink-0 flex-col items-center gap-2.5"
+                className="group flex flex-col items-center gap-2.5"
               >
                 <span
                   className={`relative flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-full font-bold transition-all duration-300 ${
