@@ -6662,7 +6662,7 @@ function DeslocamentoCard({ deslocamento }: { deslocamento: Deslocamento }) {
         className={`flex items-center justify-center gap-2 text-center text-xs font-bold uppercase tracking-[0.15em] text-[#24211D]/65 ${
           deslocamento.estacoesIntermediarias &&
           deslocamento.estacoesIntermediarias.length > 0
-            ? "mb-16 sm:mb-20"
+            ? "mb-5 sm:mb-20"
             : "mb-5"
         }`}
       >
@@ -6738,7 +6738,7 @@ function DeslocamentoCard({ deslocamento }: { deslocamento: Deslocamento }) {
         <div className="col-start-2 row-start-1 flex min-w-[32px] flex-1 flex-col justify-start pt-10 sm:min-w-[64px]">
           {deslocamento.estacoesIntermediarias &&
             deslocamento.estacoesIntermediarias.length > 0 && (
-              <div className="relative h-0 w-full">
+              <div className="relative hidden h-0 w-full sm:block">
                 {deslocamento.estacoesIntermediarias.map((estacao, i) => {
                   const pct =
                     ((i + 1) /
@@ -6796,7 +6796,7 @@ function DeslocamentoCard({ deslocamento }: { deslocamento: Deslocamento }) {
           </div>
           {deslocamento.estacoesIntermediarias &&
             deslocamento.estacoesIntermediarias.length > 0 && (
-              <div className="relative h-16 w-full sm:h-20">
+              <div className="relative hidden h-16 w-full sm:block sm:h-20">
                 {deslocamento.estacoesIntermediarias.map((estacao, i) => {
                   if (!estacao.nomeJapones) return null;
                   const pct =
@@ -6909,6 +6909,27 @@ function DeslocamentoCard({ deslocamento }: { deslocamento: Deslocamento }) {
           )}
         </div>
       </div>
+
+      {/* No mobile a tela é estreita demais pros rótulos diagonais das
+          estações intermediárias (ficavam sobrepostos e podiam até
+          estourar a largura da página) — por isso, abaixo de sm, eles
+          somem e essa lista corrida substitui a informação, sem overlap
+          nem overflow horizontal. */}
+      {deslocamento.estacoesIntermediarias &&
+        deslocamento.estacoesIntermediarias.length > 0 && (
+          <p className="mt-4 text-xs leading-5 text-[#24211D]/70 sm:hidden">
+            <span className="font-semibold text-[#24211D]/85">
+              Paradas intermediárias:{" "}
+            </span>
+            {deslocamento.estacoesIntermediarias.map((estacao, i) => (
+              <span key={estacao.nome}>
+                {estacao.nome}
+                {estacao.nomeJapones ? ` (${estacao.nomeJapones})` : ""}
+                {i < deslocamento.estacoesIntermediarias!.length - 1 ? " → " : ""}
+              </span>
+            ))}
+          </p>
+        )}
 
       <div className="mt-6 grid gap-3 sm:grid-cols-2">
         {deslocamento.opcoes.map((opcao) => (

@@ -20,6 +20,10 @@ import {
   IconPlaneTakeoff,
   IconDocument,
   FlowDivider,
+  ActionItem,
+  IconWifi,
+  ContentCard,
+  IconWarning,
 } from "./AirportGuideKit";
 
 // Conteúdo completo do guia do Aeroporto de Haneda (HND) — extraído de
@@ -522,41 +526,417 @@ export function HanedaGuideContent({
         displayClassName={displayClassName}
       />
 
-      {/* Embarque — notas iniciais (fluxo completo ainda a estruturar, nos moldes do guia de Narita) */}
+      {/* Antes de sair do hotel */}
       <section id="secao-5" className="border-t border-[#DDD8CF] bg-[#F8FAF9] px-6 py-14 md:px-10 md:py-20">
         <div className="mx-auto max-w-3xl">
           <div className="mb-8">
-            <SectionMarker number={1} label="Notas Iniciais (a expandir)" />
+            <SectionMarker number={1} label="Antes de Sair do Hotel" />
           </div>
 
-          <h2 className={`${displayClassName} mb-6 text-2xl font-medium text-[#24211D] md:text-3xl`}>
-            Embarque em Haneda
+          <h2 className={`${displayClassName} mb-8 text-2xl font-medium text-[#24211D] md:text-3xl`}>
+            O Que Verificar Antes de Sair do Hotel?
           </h2>
 
           <p className="mb-8 text-base font-light leading-8 text-[#24211D]/88">
-            O fluxo completo de Embarque de Haneda ainda será estruturado nos mesmos
-            moldes do guia de Narita. Por ora, seguem duas notas específicas deste
-            aeroporto:
+            Se programe para sair do hotel pelo menos <span className="text-[#24211D]">3 horas antes</span> do
+            horário de embarque.
+          </p>
+
+          <div className="grid gap-4 sm:grid-cols-2">
+            <ActionItem
+              Icon={IconMap}
+              title="Confirmar o aeroporto"
+              text="Em Tóquio existem dois grandes aeroportos internacionais: Haneda e Narita — confirme qual consta na sua passagem antes de sair."
+            />
+            <ActionItem
+              Icon={IconPlaneTakeoff}
+              title="Terminal único"
+              text="Diferente de Narita, em Haneda todos os voos internacionais usam o Terminal 3 — não há risco de confundir terminal."
+            />
+            <ActionItem
+              Icon={IconWifi}
+              title="Pocket Wi-Fi"
+              text="Conferir se o Pocket Wi-Fi está com você, caso tenha optado por alugar."
+            />
+            <ActionItem
+              Icon={IconDocument}
+              title="Passaporte"
+              text="Conferir se o passaporte está com você."
+            />
+          </div>
+
+          <div className="mt-8 rounded-2xl border border-[#173B45]/15 bg-[#173B45]/[0.08] p-6 sm:p-8">
+            <p className="mb-5 flex items-center gap-2 text-xs uppercase tracking-[0.25em] text-[#173B45]">
+              <IconBulb className="h-3.5 w-3.5" />
+              Recomendação Alpinea
+            </p>
+            <h3 className={`${displayClassName} text-xl font-medium text-[#24211D] md:text-2xl`}>
+              Confira o Peso das Malas Antes de Sair
+            </h3>
+            <p className="mt-5 text-sm leading-7 text-[#24211D]/88 md:text-base md:leading-8">
+              Verifique se o peso das malas está de acordo com os limites da companhia
+              aérea antes de sair do hotel. Embora seja difícil ter uma balança à mão,
+              procure distribuir o peso uniformemente entre as malas.
+            </p>
+            <p className="mt-4 text-sm leading-7 text-[#24211D]/88 md:text-base md:leading-8">
+              Como referência (Emirates, rotas entre Japão e as Américas — sistema por
+              peça): a tarifa <span className="text-[#24211D]">Economy Saver</span> permite
+              <span className="text-[#24211D]"> 2 malas de até 23 kg cada</span>, com no
+              máximo <span className="text-[#24211D]">150 cm somando as três dimensões</span> por
+              mala (altura + largura + comprimento). Esses limites variam por tarifa e
+              companhia aérea — confirme sempre a política específica antes da viagem.
+            </p>
+          </div>
+
+          <div className="mt-6 rounded-2xl border border-[#173B45]/15 bg-[#173B45]/[0.08] p-6 sm:p-8">
+            <p className="mb-4 flex items-center gap-2 text-xs uppercase tracking-[0.25em] text-[#173B45]">
+              <IconBulb className="h-3.5 w-3.5" />
+              Recomendação Alpinea
+            </p>
+            <p className="text-sm leading-7 text-[#24211D]/88 md:text-base md:leading-8">
+              Se você pretende comprar no duty free, vale a pena pré-reservar online
+              pelo site da TIAT Duty Free antes de sair para o aeroporto. Assim, o
+              produto já fica separado para retirada no balcão pós-segurança do
+              Terminal 3, sem depender de encontrá-lo em estoque no dia do voo.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Qual meio de transporte escolher (embarque) */}
+      <section id="secao-6" className="border-t border-[#DDD8CF] px-6 py-14 md:px-10 md:py-20">
+        <div className="mx-auto max-w-3xl">
+          <div className="mb-8">
+            <SectionMarker number={2} label="Qual Meio de Transporte Escolher?" />
+          </div>
+
+          <h2 className={`${displayClassName} mb-8 text-2xl font-medium text-[#24211D] md:text-3xl`}>
+            Qual Meio de Transporte Escolher Até o Aeroporto?
+          </h2>
+
+          <p className="mb-6 text-base font-light leading-8 text-[#24211D]/88">
+            São as mesmas 3 opções da seção &quot;Deslocamento até Tóquio&quot;, na Chegada —
+            trem (Keikyu Line ou Tokyo Monorail), ônibus (Limousine Bus) e táxi/Uber —
+            com custos e tempos praticamente iguais no caminho de volta.
+          </p>
+
+          <div className="rounded-2xl border border-[#DDD8CF] bg-[#F8FAF9] p-6 sm:p-8">
+            <p className="text-sm leading-7 text-[#24211D]/88 md:text-base md:leading-8">
+              Diferente de Narita — onde a recomendação muda entre chegada e partida,
+              porque o trem exige lidar com escadas e catracas já com a bagagem mais
+              pesada — em Haneda o trajeto até o aeroporto é curto o suficiente (Keikyu
+              Line ou Tokyo Monorail, ambos com poucos minutos até estações centrais de
+              Tóquio) para que o <span className="text-[#24211D]">trem continue sendo uma boa opção
+              também na volta</span>. Ainda assim, quem estiver com muita bagagem ou preferir
+              não trocar de linha no caminho pode optar pelo Limousine Bus, com o mesmo
+              conforto de ida direta descrito na seção de Chegada.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Cheguei no aeroporto, e agora? */}
+      <section id="secao-7" className="border-t border-[#DDD8CF] bg-[#F8FAF9] px-6 py-14 md:px-10 md:py-20">
+        <div className="mx-auto max-w-3xl">
+          <div className="mb-8">
+            <SectionMarker number={3} label="Cheguei no Aeroporto, e Agora?" />
+          </div>
+
+          <h2 className={`${displayClassName} mb-8 text-2xl font-medium text-[#24211D] md:text-3xl`}>
+            Cheguei no Aeroporto, e Agora?
+          </h2>
+
+          <div className="space-y-5">
+            <div className="rounded-2xl border border-[#DDD8CF] bg-[#F8FAF9] p-5">
+              <div className="flex items-start gap-4">
+                <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-[#173B45]/40 text-xs font-medium text-[#173B45]">
+                  1
+                </span>
+                <p className="text-sm leading-6 text-[#24211D]/88 md:text-base">
+                  <span className="font-medium text-[#24211D]">Devolver o Pocket Wi-Fi</span> no
+                  guichê da locadora — em Haneda, fica no <span className="text-[#24211D]">3F, próximo
+                  aos guichês das companhias aéreas</span>.
+                </p>
+              </div>
+            </div>
+            <div className="flex items-start gap-4 rounded-2xl border border-[#DDD8CF] bg-[#F8FAF9] p-5">
+              <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-[#173B45]/40 text-xs font-medium text-[#173B45]">
+                2
+              </span>
+              <p className="text-sm leading-6 text-[#24211D]/88 md:text-base">
+                <span className="font-medium text-[#24211D]">Localizar o guichê de check-in</span> da
+                companhia aérea, no Terminal 3 — o check-in/despacho de mala normalmente
+                abre cerca de <span className="text-[#24211D]">3 horas antes</span> da partida do
+                voo.
+              </p>
+            </div>
+            <div className="flex items-start gap-4 rounded-2xl border border-[#DDD8CF] bg-[#F8FAF9] p-5">
+              <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-[#173B45]/40 text-xs font-medium text-[#173B45]">
+                3
+              </span>
+              <p className="text-sm leading-6 text-[#24211D]/88 md:text-base">
+                Se dirigir ao guichê e realizar o <span className="text-[#24211D]">check-in</span>.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Estou com fome */}
+      <section id="secao-8" className="border-t border-[#DDD8CF] px-6 py-14 md:px-10 md:py-20">
+        <div className="mx-auto max-w-3xl">
+          <div className="mb-8">
+            <SectionMarker number={4} label="Estou com Fome" />
+          </div>
+
+          <h2 className={`${displayClassName} mb-8 text-2xl font-medium text-[#24211D] md:text-3xl`}>
+            Devo Realizar a Refeição Fora ou Dentro da Área de Segurança?
+          </h2>
+
+          <p className="mb-8 text-base font-light leading-8 text-[#24211D]/88">
+            O Terminal 3 tem duas áreas de alimentação bem distintas: a réplica de rua
+            do período Edo (Edo Koji, 4F — ver seção &quot;Restaurantes&quot;, no início deste
+            guia), <span className="text-[#24211D]">antes da checagem de segurança</span>, e um
+            praça de alimentação menor no 3F, dentro da área &quot;Tokyo Sky Kitchen&quot;,{" "}
+            <span className="text-[#24211D]">já após a checagem de segurança</span> — esta
+            última é a que importa se você já fez o check-in e passou pela segurança.
+          </p>
+
+          <div className="grid gap-4 sm:grid-cols-2">
+            <RestaurantMini
+              name="Uogashi Nihon-ichi (魚がし日本一)"
+              detail="Sushi giratório estilo Edomae, feito na hora, a partir de ¥130 a peça — aberto 24 horas"
+              location="T3 · 3F, área Tokyo Sky Kitchen, pós-segurança"
+            />
+            <RestaurantMini
+              name="Rokurinsha (六厘舎)"
+              detail="Tsukemen (macarrão para mergulhar em caldo) de uma das casas mais conhecidas de Tóquio — aberto das 04:00 à 01:30"
+              location="T3 · 3F, área Tokyo Sky Kitchen, pós-segurança"
+            />
+            <RestaurantMini
+              name="Jinroku (甚六)"
+              detail="Comida japonesa variada — yakisoba ≈ ¥950"
+              location="T3 · 3F, área Tokyo Sky Kitchen, pós-segurança"
+            />
+            <RestaurantMini
+              name="Yuginbou (夢吟坊)"
+              detail="Udon"
+              location="T3 · 3F, área Tokyo Sky Kitchen, pós-segurança"
+            />
+          </div>
+
+          <div className="mt-8 rounded-2xl border border-[#173B45]/15 bg-[#173B45]/[0.08] p-6 sm:p-8">
+            <p className="mb-4 flex items-center gap-2 text-xs uppercase tracking-[0.25em] text-[#173B45]">
+              <IconBulb className="h-3.5 w-3.5" />
+              Recomendação Alpinea
+            </p>
+            <p className="text-sm leading-7 text-[#24211D]/88 md:text-base md:leading-8">
+              Vale para embarques de madrugada: o Uogashi Nihon-ichi funciona 24 horas e
+              o Rokurinsha fecha só entre 01:30 e 04:00 — ou seja, para praticamente
+              qualquer horário de voo saindo de Haneda, sempre há uma opção de refeição
+              quente disponível já dentro da área de embarque.
+            </p>
+          </div>
+
+          <p className="mt-6 text-sm leading-6 text-[#24211D]/74">
+            Horários de funcionamento podem mudar sem aviso — recomendamos confirmar
+            antes se a refeição fizer parte de um planejamento apertado.
+          </p>
+        </div>
+      </section>
+
+      {/* Checagem de segurança */}
+      <section id="secao-9" className="border-t border-[#DDD8CF] bg-[#F8FAF9] px-6 py-14 md:px-10 md:py-20">
+        <div className="mx-auto max-w-3xl">
+          <div className="mb-8">
+            <SectionMarker number={5} label="Checagem de Segurança e Entrada na Área de Segurança" />
+          </div>
+
+          <h2 className={`${displayClassName} mb-8 text-2xl font-medium text-[#24211D] md:text-3xl`}>
+            Checagem de Segurança e Entrada na Área de Segurança
+          </h2>
+
+          <div className="rounded-2xl border border-[#DDD8CF] bg-[#F8FAF9] p-6">
+            <p className="text-sm font-medium text-[#24211D] md:text-base">Smart Lanes</p>
+            <p className="mt-2 text-sm leading-6 text-[#24211D]/80">
+              Em alguns corredores (Smart Lanes) é utilizado um scanner de tomografia
+              que não exige que nada seja removido de dentro da mala — o escaneamento
+              ocorre de maneira quase instantânea. Nem sempre o serviço está
+              disponível, mas quando está, a passagem pela segurança leva menos de 5
+              minutos.
+            </p>
+          </div>
+
+          <div className="mt-8 space-y-1.5 rounded-2xl border border-[#DDD8CF] bg-[#F8FAF9] p-6 text-sm leading-6 text-[#24211D]/80">
+            <p>• É necessário remover o notebook da mala e colocá-lo na bandeja.</p>
+            <p>
+              • Não é possível embarcar com líquidos acima de 100 ml — se houver
+              alguma garrafa maior, é comum pedirem para abrir a mala e verificar.
+            </p>
+            <p>
+              • Exceção: bebidas, cosméticos e outros líquidos comprados no duty
+              free após a checagem de segurança podem ser levados sem essa
+              restrição.
+            </p>
+            <p>• Os demais itens proibidos comuns a qualquer aeroporto se aplicam normalmente.</p>
+          </div>
+
+          <div className="mt-10 space-y-5 border-t border-[#DDD8CF] pt-8">
+            <SubStepHeading number={1} title="Verificação de Passaporte" />
+            <p className="text-base font-light leading-8 text-[#24211D]/88">
+              Em alguns casos, nessa etapa o oficial retira do passaporte os
+              comprovantes e notas fiscais de compras feitas no Japão. Pode ser pedido
+              para conferir se você está portando algum dos itens citados nas notas,
+              assegurando que ele está de fato deixando o país — condição para a
+              isenção do imposto de consumo de <span className="text-[#24211D]">10%</span> (8%
+              para alimentos/bebidas não alcoólicas), que o não-residente não paga.
+            </p>
+
+            <div className="rounded-2xl border border-[#173B45]/15 bg-[#173B45]/[0.08] p-6 sm:p-8">
+              <p className="mb-4 flex items-center gap-2 text-xs uppercase tracking-[0.25em] text-[#173B45]">
+                <IconClock className="h-3.5 w-3.5" />
+                Atualização Importante
+              </p>
+              <p className="text-sm leading-7 text-[#24211D]/88 md:text-base md:leading-8">
+                A partir de <span className="text-[#24211D]">1º de novembro de 2026</span>, o Japão
+                substitui esse sistema em todo o país (Haneda incluso): você passa a
+                pagar o preço cheio (com imposto) na loja e só recebe o reembolso do
+                imposto de consumo em terminais/guichês dedicados no aeroporto, antes
+                de embarcar, via escaneamento do passaporte. Se sua viagem for depois
+                dessa data, reserve um tempo extra (recomenda-se 45–60 minutos a mais)
+                para esse processo de reembolso, já que o sistema ainda estará em
+                transição.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Pós-checagem de segurança */}
+      <section id="secao-10" className="border-t border-[#DDD8CF] px-6 py-14 md:px-10 md:py-20">
+        <div className="mx-auto max-w-3xl">
+          <div className="mb-8">
+            <SectionMarker number={6} label="Pós-Checagem de Segurança" />
+          </div>
+
+          <h2 className={`${displayClassName} mb-8 text-2xl font-medium text-[#24211D] md:text-3xl`}>
+            Pós-Checagem de Segurança
+          </h2>
+
+          <p className="mb-8 text-base font-light leading-8 text-[#24211D]/88">
+            Aqui você tem algumas opções sobre o que fazer antes do embarque — entre
+            as mais comuns, restaurantes, compras em duty free ou o lounge/sala VIP
+            de sua preferência.
           </p>
 
           <div className="space-y-4">
-            <div className="rounded-2xl border border-[#DDD8CF] bg-[#F8FAF9] p-6">
-              <p className="text-sm font-medium text-[#24211D] md:text-base">Checagem de Segurança — Smart Lanes</p>
-              <p className="mt-2 text-sm leading-6 text-[#24211D]/80">
-                Em alguns corredores (Smart Lanes) é utilizado um scanner de tomografia
-                que não exige que nada seja removido de dentro da mala — o escaneamento
-                ocorre de maneira quase instantânea. Nem sempre o serviço está
-                disponível, mas quando está, a passagem pela segurança leva menos de 5
-                minutos.
-              </p>
+            <p className="text-sm font-medium uppercase tracking-[0.15em] text-[#24211D]/88">Restaurantes</p>
+            <p className="text-base font-light leading-8 text-[#24211D]/88">
+              Ver a lista completa na seção &quot;Estou com Fome&quot;, logo acima — o food court
+              do Tokyo Sky Kitchen (3F) já está dentro da área pós-segurança.
+            </p>
+          </div>
+
+          <div className="mt-10 space-y-4 border-t border-[#DDD8CF] pt-8">
+            <p className="text-sm font-medium uppercase tracking-[0.15em] text-[#24211D]/88">Duty Free</p>
+            <p className="text-base font-light leading-8 text-[#24211D]/88">
+              Você pode <span className="text-[#24211D]">comprar diretamente</span> nas lojas de duty
+              free já dentro da área de embarque (pós-segurança) e sair com o produto
+              na hora. Se já tiver pré-reservado antes de sair do hotel (ver
+              recomendação na seção &quot;Antes de Sair do Hotel&quot;), a retirada é feita no{" "}
+              <span className="text-[#24211D]">balcão DUTY FREE PICK UP</span>, no{" "}
+              <span className="text-[#24211D]">Terminal 3, 3F, já na área pós-segurança</span> — o
+              balcão abre conforme o horário reservado na compra online. Confirme o
+              prazo limite de retirada no momento da reserva.
+            </p>
+          </div>
+
+          <div className="mt-10 space-y-4 border-t border-[#DDD8CF] pt-8">
+            <p className="text-sm font-medium uppercase tracking-[0.15em] text-[#24211D]/88">Lounges</p>
+
+            <p className="text-base font-light leading-8 text-[#24211D]/88">
+              As 4 salas do Terminal 3 ficam na área internacional de embarque
+              (pós-segurança), entre o 3F e o 4F:
+            </p>
+
+            <div className="grid gap-4 md:grid-cols-2">
+              <div className="rounded-2xl border border-[#DDD8CF] bg-[#F8FAF9] p-6">
+                <p className="text-sm font-medium text-[#24211D] md:text-base">Sky Lounge South — 3F</p>
+                <p className="mt-2 text-sm leading-6 text-[#24211D]/80">
+                  Aberta 24 horas. Buffet, bebidas alcoólicas e chuveiro — permanência
+                  máxima de 3 horas.{" "}
+                  <span className="text-[#24211D]">Aceita Priority Pass a qualquer horário.</span>
+                </p>
+              </div>
+              <div className="rounded-2xl border border-[#DDD8CF] bg-[#F8FAF9] p-6">
+                <p className="text-sm font-medium text-[#24211D] md:text-base">TIAT Lounge — 4F</p>
+                <p className="mt-2 text-sm leading-6 text-[#24211D]/80">
+                  Aberta 24 horas, com vista para a pista. Buffet, bebidas alcoólicas e
+                  chuveiro — permanência máxima de 3 horas.{" "}
+                  <span className="text-[#24211D]">Priority Pass só é aceito das 01:00 às 05:00.</span>
+                </p>
+              </div>
+              <div className="rounded-2xl border border-[#DDD8CF] bg-[#F8FAF9] p-6">
+                <p className="text-sm font-medium text-[#24211D] md:text-base">Sky Lounge — 4F</p>
+                <p className="mt-2 text-sm leading-6 text-[#24211D]/80">
+                  Aberta 24 horas. Bebidas não alcoólicas incluídas; lanches e álcool
+                  são pagos à parte. Acesso mediante cartão elegível.
+                </p>
+              </div>
+              <div className="rounded-2xl border border-[#DDD8CF] bg-[#F8FAF9] p-6">
+                <p className="text-sm font-medium text-[#24211D] md:text-base">The Centurion Lounge (Amex) — 4F</p>
+                <p className="mt-2 text-sm leading-6 text-[#24211D]/80">
+                  Funciona <span className="text-[#24211D]">apenas das 08:00 às 22:00</span> — fechada
+                  para quem embarca de madrugada. Buffet, bebidas alcoólicas e
+                  chuveiro, para portadores do Amex Centurion.
+                </p>
+              </div>
             </div>
-            <div className="rounded-2xl border border-[#DDD8CF] bg-[#F8FAF9] p-6">
-              <p className="text-sm font-medium text-[#24211D] md:text-base">Devolução do Pocket Wi-Fi</p>
-              <p className="mt-2 text-sm leading-6 text-[#24211D]/80">
-                O guichê de devolução fica no 3F, próximo aos guichês das companhias
-                aéreas.
+
+            <ContentCard variant="warning" icon={IconWarning} eyebrow="Atenção a Voos de Madrugada" size="sm">
+              <p>
+                Quem embarca de madrugada precisa saber: das 4 salas, só a{" "}
+                <span className="font-semibold">Sky Lounge South</span> aceita Priority Pass a
+                qualquer horário. A TIAT Lounge aceita Priority Pass apenas das 01:00
+                às 05:00, e a Centurion Lounge fecha às 22:00 — não é opção para quem
+                embarca depois desse horário.
               </p>
-            </div>
+            </ContentCard>
+          </div>
+
+          <div className="mt-8 rounded-2xl border border-[#173B45]/15 bg-[#173B45]/[0.08] p-6 sm:p-8">
+            <p className="mb-5 flex items-center gap-2 text-xs uppercase tracking-[0.25em] text-[#173B45]">
+              <IconBulb className="h-3.5 w-3.5" />
+              Recomendação Alpinea
+            </p>
+            <p className="text-sm leading-7 text-[#24211D]/88 md:text-base md:leading-8">
+              Para embarques de madrugada com acesso via Priority Pass, priorize a Sky
+              Lounge South (3F) — é a única aberta ao programa 24 horas, com buffet
+              completo, bebidas alcoólicas e chuveiro.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Antes do embarque */}
+      <section id="secao-11" className="border-t border-[#DDD8CF] bg-[#F8FAF9] px-6 py-14 md:px-10 md:py-20">
+        <div className="mx-auto max-w-3xl">
+          <div className="mb-8">
+            <SectionMarker number={7} label="Antes do Embarque" />
+          </div>
+
+          <h2 className={`${displayClassName} mb-6 text-2xl font-medium text-[#24211D] md:text-3xl`}>
+            Antes do Embarque
+          </h2>
+
+          <div className="max-w-xs">
+            <StatCard
+              Icon={IconClock}
+              label="Chegar ao portão"
+              value="30 min antes"
+              detail="Da abertura do embarque, para evitar qualquer imprevisto"
+              variant="highlight"
+            />
           </div>
         </div>
       </section>
