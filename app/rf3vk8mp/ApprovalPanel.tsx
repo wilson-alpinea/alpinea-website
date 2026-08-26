@@ -10022,7 +10022,9 @@ export function ApprovalPanel({
                 <span
                   className={`relative flex h-14 w-14 shrink-0 items-center justify-center overflow-hidden rounded-full font-bold transition-all duration-300 ${
                     d.badge
-                      ? "text-[9px] tracking-tight text-white [text-shadow:0_1px_3px_rgba(0,0,0,0.75)]"
+                      ? `text-[9px] tracking-tight text-white [text-shadow:0_1px_3px_rgba(0,0,0,0.75)] ${
+                          active ? "" : "hover:-translate-y-0.5 hover:!shadow-[0_0_0_2px_#DC2626]"
+                        }`
                       : active
                         ? "shadow-[0_0_0_2px_#000000]"
                         : "hover:-translate-y-0.5 hover:shadow-[0_0_0_2px_rgba(23,59,69,0.55)]"

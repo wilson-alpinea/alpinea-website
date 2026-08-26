@@ -24,6 +24,11 @@ import {
   IconWifi,
   ContentCard,
   IconWarning,
+  IconLuggage,
+  IconPin,
+  IconFork,
+  IconCheck,
+  IconCard,
 } from "./AirportGuideKit";
 
 // Conteúdo completo do guia do Aeroporto de Haneda (HND) — extraído de
@@ -102,10 +107,52 @@ export function HanedaGuideContent({
             ],
           },
           {
-            Icon: IconDocument,
-            number: 1,
-            label: "Notas Iniciais (a expandir)",
+            Icon: IconLuggage,
+            number: 5,
+            label: "Antes de Sair do Hotel",
             href: "#secao-5",
+            groupLabel: "Embarque",
+          },
+          {
+            Icon: IconTrain,
+            number: 6,
+            label: "Qual Meio de Transporte Escolher?",
+            href: "#secao-6",
+            groupLabel: "Embarque",
+          },
+          {
+            Icon: IconPin,
+            number: 7,
+            label: "Cheguei no Aeroporto, e Agora?",
+            href: "#secao-7",
+            groupLabel: "Embarque",
+          },
+          {
+            Icon: IconFork,
+            number: 8,
+            label: "Estou com Fome",
+            href: "#secao-8",
+            groupLabel: "Embarque",
+          },
+          {
+            Icon: IconCheck,
+            number: 9,
+            label: "Checagem de Segurança",
+            href: "#secao-9",
+            groupLabel: "Embarque",
+          },
+          {
+            Icon: IconCard,
+            number: 10,
+            label: "Pós-Checagem de Segurança",
+            href: "#secao-10",
+            groupLabel: "Embarque",
+          },
+          {
+            Icon: IconClock,
+            number: 11,
+            label: "Antes do Embarque",
+            href: "#secao-11",
             groupLabel: "Embarque",
           },
         ]}
