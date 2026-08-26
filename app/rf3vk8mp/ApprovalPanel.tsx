@@ -6111,6 +6111,316 @@ function TransporteNaritaTokyoBlock({ variant }: { variant: "chegada" | "partida
   );
 }
 
+// Bloco de transporte do dia de partida (HND-DXB) — hotel remm Tokyo
+// Kyobashi até o Terminal 3 do Aeroporto de Haneda. Conteúdo fornecido
+// integralmente pelo cliente/Alpinea (nenhum valor foi estimado ou
+// inventado aqui); mantém o mesmo "template" visual do bloco de
+// transporte Narita ↔ Tóquio (TransporteNaritaTokyoBlock) — cabeçalho,
+// cards de opção com badge de recomendação, cards de etapa e
+// recomendação final — só que com 3 opções em vez de 2, mais o
+// comparativo em tabela.
+function TransporteHanedaTokyoBlock() {
+  return (
+    <div className="mb-8 space-y-5 rounded-2xl border border-[#DDD8CF] bg-[#FAF9F6] p-5 sm:p-8">
+      <div>
+        <p className="mb-2 flex items-center gap-2 text-xs font-bold uppercase tracking-[0.2em] text-[#24211D]/60">
+          <IconPlane className="h-4 w-4" />
+          Tóquio ↔ Haneda
+        </p>
+        <h3 className="text-lg font-semibold text-[#24211D] sm:text-xl">
+          remm Tokyo Kyobashi → Haneda Airport T3
+        </h3>
+        <p className="mt-3 text-sm leading-6 text-[#24211D]/80">
+          Como você estará viajando com 3 malas grandes de aproximadamente 20 kg, recomendamos
+          priorizar opções que evitem caminhadas, escadas, catracas e deslocamentos por estações
+          com a bagagem. Abaixo estão as três opções, em nossa ordem de recomendação. Os valores
+          apresentados consideram uma margem conservadora de custo, para evitar surpresas durante
+          a viagem.
+        </p>
+      </div>
+
+      {/* Opção 1 — Táxi + Airport Limousine Bus (recomendada) */}
+      <div className="rounded-xl border-2 border-[#3E5FA8] bg-[#EDF3FC] p-5 sm:p-6">
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <p className="flex items-center gap-2 text-sm font-bold uppercase tracking-[0.12em] text-[#3E5FA8]">
+            <IconBus className="h-6 w-6" />
+            Opção 1 — Táxi + Airport Limousine Bus
+          </p>
+          <span className="inline-flex items-center gap-1 rounded-full border border-[#3E5FA8]/40 bg-white px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-[0.15em] text-[#3E5FA8]">
+            <IconCheckSmall className="h-3 w-3" />
+            Recomendada pela Alpinea
+          </span>
+        </div>
+        <p className="mt-1 text-xs uppercase tracking-[0.1em] text-[#24211D]/55">
+          Melhor equilíbrio entre conforto e custo
+        </p>
+        <p className="mt-3 text-sm leading-6 text-[#24211D]/85">
+          remm Tokyo Kyobashi → táxi → Tokyo City Air Terminal (T-CAT) → Airport Limousine Bus →
+          Haneda Airport Terminal 3.
+        </p>
+
+        <div className="mt-4 rounded-lg bg-white/70 p-4">
+          <p className="text-xs font-bold uppercase tracking-[0.12em] text-[#3E5FA8]/80">
+            Etapa 1 · Hotel → T-CAT
+          </p>
+          <p className="mt-2 text-sm leading-6 text-[#24211D]/85">
+            Peça na recepção do remm um táxi até a Tokyo City Air Terminal — T-CAT (東京シティエアターミナル).
+            Informe que você está viajando com 3 malas grandes, para que seja utilizado um veículo
+            com espaço adequado.
+          </p>
+          <div className="mt-3 grid grid-cols-3 gap-3">
+            <div>
+              <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#3E5FA8]/70">
+                Tempo
+              </p>
+              <p className="text-sm font-semibold text-[#24211D]">≈10–15 min</p>
+            </div>
+            <div>
+              <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#3E5FA8]/70">
+                Táxi
+              </p>
+              <p className="text-sm font-semibold text-[#24211D]">até ¥4.000</p>
+            </div>
+            <div>
+              <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#3E5FA8]/70">
+                Bagagem
+              </p>
+              <p className="text-sm font-semibold text-[#24211D]">No porta-malas</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-3 rounded-lg bg-white/70 p-4">
+          <p className="text-xs font-bold uppercase tracking-[0.12em] text-[#3E5FA8]/80">
+            Etapa 2 · T-CAT → Haneda T3
+          </p>
+          <p className="mt-2 text-sm leading-6 text-[#24211D]/85">
+            Ao chegar ao T-CAT, siga para o embarque do Airport Limousine Bus com destino a Haneda
+            Airport. Entregue as malas à equipe antes do embarque — elas ficam no compartimento
+            inferior do ônibus e são devolvidas no desembarque, já no Terminal 3.
+          </p>
+          <div className="mt-3 grid grid-cols-3 gap-3">
+            <div>
+              <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#3E5FA8]/70">
+                Tempo
+              </p>
+              <p className="text-sm font-semibold text-[#24211D]">≈25 min</p>
+            </div>
+            <div>
+              <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#3E5FA8]/70">
+                Tarifa
+              </p>
+              <p className="text-sm font-semibold text-[#24211D]">
+                ¥1.000/pessoa · ¥2.000 (2 pessoas)
+              </p>
+            </div>
+            <div>
+              <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#3E5FA8]/70">
+                Bagagem
+              </p>
+              <p className="text-sm font-semibold text-[#24211D]">No bagageiro do ônibus</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-4 rounded-lg bg-white/70 p-4 text-center">
+          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#3E5FA8]/70">
+            Tempo e Custo Total
+          </p>
+          <p className="mt-2 text-sm font-medium leading-6 text-[#24211D]">
+            ≈45–60 min (incluindo a troca e uma margem de espera pelo ônibus) · ¥3.500–6.000 para 2
+            pessoas
+          </p>
+          <p className="mt-1 text-xs leading-5 text-[#24211D]/60">
+            O limite superior considera uma margem conservadora para o táxi até o T-CAT.
+          </p>
+        </div>
+
+        <p className="mt-4 text-xs font-bold uppercase tracking-[0.12em] text-[#3E5FA8]/80">
+          Por que recomendamos esta opção?
+        </p>
+        <p className="mt-2 text-xs leading-5 text-[#24211D]/75">
+          Você utiliza o táxi justamente no trecho em que as malas seriam mais inconvenientes e,
+          depois, entrega toda a bagagem à equipe do Limousine Bus. É a melhor combinação entre
+          conforto, facilidade e custo.
+        </p>
+      </div>
+
+      {/* Opção 2 — Táxi direto para Haneda */}
+      <div className="rounded-xl border border-[#CBD9F2] bg-[#EDF3FC]/60 p-5 sm:p-6">
+        <p className="flex items-center gap-2 text-sm font-bold uppercase tracking-[0.12em] text-[#3E5FA8]/80">
+          <IconCar className="h-6 w-6" />
+          Opção 2 — Táxi Direto para Haneda
+        </p>
+        <p className="mt-1 text-xs uppercase tracking-[0.1em] text-[#24211D]/55">
+          Mais simples e confortável
+        </p>
+        <p className="mt-3 text-sm leading-6 text-[#24211D]/85">
+          Peça na recepção um táxi ou veículo maior diretamente para o Haneda Airport Terminal 3
+          (羽田空港 第3ターミナル). Informe antecipadamente que você possui 3 malas grandes de
+          aproximadamente 20 kg, pois um táxi convencional pode não ter espaço suficiente.
+        </p>
+        <div className="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
+          <div>
+            <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#3E5FA8]/70">
+              Tempo
+            </p>
+            <p className="text-sm font-semibold text-[#24211D]">≈25–40 min</p>
+          </div>
+          <div>
+            <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#3E5FA8]/70">
+              Custo
+            </p>
+            <p className="text-sm font-semibold text-[#24211D]">≈¥8.000–15.000/veículo</p>
+          </div>
+          <div>
+            <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#3E5FA8]/70">
+              Trocas
+            </p>
+            <p className="text-sm font-semibold text-[#24211D]">Nenhuma</p>
+          </div>
+          <div>
+            <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-[#3E5FA8]/70">
+              Caminhada
+            </p>
+            <p className="text-sm font-semibold text-[#24211D]">Praticamente zero</p>
+          </div>
+        </div>
+        <p className="mt-4 text-xs leading-5 text-[#24211D]/70">
+          O valor máximo considera uma margem conservadora para trânsito, pedágios, horário e a
+          necessidade de um veículo adequado à quantidade de bagagem.
+        </p>
+        <p className="mt-3 text-xs leading-5 text-[#24211D]/75">
+          <span className="font-semibold text-[#24211D]/85">Quando escolher:</span> é a melhor
+          alternativa caso você queira eliminar qualquer preocupação com conexões ou horários —
+          você sai da porta do hotel e desembarca diretamente na área de embarque do Terminal 3.
+        </p>
+      </div>
+
+      {/* Opção 3 — Trem via Takaracho */}
+      <div className="rounded-xl border border-[#DDD8CF] bg-white/60 p-5 sm:p-6">
+        <p className="flex items-center gap-2 text-sm font-bold uppercase tracking-[0.12em] text-[#24211D]/70">
+          <IconMetro className="h-6 w-6" />
+          Opção 3 — Trem via Takaracho
+        </p>
+        <p className="mt-1 text-xs uppercase tracking-[0.1em] text-[#24211D]/55">
+          Mais econômica · última opção com 3 malas grandes
+        </p>
+        <p className="mt-3 text-sm leading-6 text-[#24211D]/85">
+          A estação Takaracho (宝町) fica a aproximadamente 3 minutos a pé do hotel. Alguns
+          serviços da Toei Asakusa Line seguem diretamente pela Keikyu Airport Line até Haneda.
+        </p>
+
+        <div className="mt-4 rounded-lg bg-[#FAF9F6] p-4">
+          <p className="text-xs font-bold uppercase tracking-[0.12em] text-[#24211D]/60">
+            Etapa 1 · Hotel → Takaracho
+          </p>
+          <p className="mt-2 text-sm leading-6 text-[#24211D]/80">
+            Caminhada de aproximadamente 3 minutos, sem custo. Você deverá transportar
+            pessoalmente as 3 malas — dentro da estação, utilize os elevadores sempre que possível
+            para chegar à plataforma.
+          </p>
+        </div>
+        <div className="mt-3 rounded-lg bg-[#FAF9F6] p-4">
+          <p className="text-xs font-bold uppercase tracking-[0.12em] text-[#24211D]/60">
+            Etapa 2 · Takaracho → Haneda T3
+          </p>
+          <p className="mt-2 text-sm leading-6 text-[#24211D]/80">
+            Antes de embarcar, confirme no painel se o trem segue para 羽田空港 — Haneda Airport:
+            nem todos os trens que passam por Takaracho seguem até o aeroporto. Tempo no trem de
+            aproximadamente 30–40 minutos, ¥500–750 por pessoa (até ¥1.500 para 2 pessoas) — você
+            permanece responsável pelas malas durante todo o trajeto.
+          </p>
+        </div>
+
+        <div className="mt-4 rounded-lg bg-[#FAF9F6] p-4 text-center">
+          <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#24211D]/55">
+            Tempo e Custo Total
+          </p>
+          <p className="mt-2 text-sm font-medium leading-6 text-[#24211D]">
+            ≈40–55 min · até ¥1.500 para 2 pessoas
+          </p>
+        </div>
+
+        <p className="mt-4 text-xs leading-5 text-[#24211D]/70">
+          Apesar de ser a alternativa mais econômica, não recomendamos esta opção neste caso: com
+          três malas grandes, será necessário movimentar aproximadamente 60 kg de bagagem pela
+          calçada, entrada da estação, catracas, elevadores, plataforma e interior do trem.
+        </p>
+      </div>
+
+      {/* Comparativo */}
+      <div>
+        <p className="mb-3 text-xs font-bold uppercase tracking-[0.2em] text-[#24211D]/55">
+          Comparativo
+        </p>
+        <div className="overflow-x-auto rounded-xl border border-[#DDD8CF]">
+          <table className="w-full min-w-[480px] border-collapse text-sm">
+            <thead>
+              <tr className="bg-[#F1F0EC] text-left text-[10px] font-bold uppercase tracking-[0.1em] text-[#24211D]/60">
+                <th className="px-4 py-3">Opção</th>
+                <th className="px-4 py-3">Tempo Total</th>
+                <th className="px-4 py-3">Custo (2 pessoas)</th>
+                <th className="px-4 py-3">Bagagem</th>
+                <th className="px-4 py-3">Recomendação</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr className="border-t border-[#DDD8CF] bg-[#EDF3FC]/40">
+                <td className="px-4 py-3 font-semibold text-[#24211D]">Táxi + Limousine Bus</td>
+                <td className="px-4 py-3 text-[#24211D]/80">45–60 min</td>
+                <td className="px-4 py-3 text-[#24211D]/80">¥3.500–6.000</td>
+                <td className="px-4 py-3 text-[#24211D]/80">Fácil</td>
+                <td className="px-4 py-3 font-semibold text-[#3E5FA8]">Recomendada</td>
+              </tr>
+              <tr className="border-t border-[#DDD8CF]">
+                <td className="px-4 py-3 font-semibold text-[#24211D]">Táxi Direto</td>
+                <td className="px-4 py-3 text-[#24211D]/80">25–40 min</td>
+                <td className="px-4 py-3 text-[#24211D]/80">¥8.000–15.000</td>
+                <td className="px-4 py-3 text-[#24211D]/80">Muito fácil</td>
+                <td className="px-4 py-3 text-[#24211D]/70">Mais confortável</td>
+              </tr>
+              <tr className="border-t border-[#DDD8CF]">
+                <td className="px-4 py-3 font-semibold text-[#24211D]">Trem</td>
+                <td className="px-4 py-3 text-[#24211D]/80">40–55 min</td>
+                <td className="px-4 py-3 text-[#24211D]/80">até ¥1.500</td>
+                <td className="px-4 py-3 text-[#24211D]/80">Difícil</td>
+                <td className="px-4 py-3 text-[#24211D]/70">Mais econômica</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      {/* Recomendação final */}
+      <ContentCard variant="info" icon={IconStarKit} eyebrow="Recomendação Alpinea" size="sm">
+        <p>
+          <span className="font-semibold">1º · Táxi + Airport Limousine Bus.</span> Nossa
+          recomendação principal — evita completamente o transporte das malas por estações e
+          oferece excelente equilíbrio entre conforto e custo.
+        </p>
+        <p className="mt-3">
+          <span className="font-semibold">2º · Táxi direto para Haneda.</span> A alternativa mais
+          confortável e rápida — recomendada caso você prefira pagar um pouco mais para fazer todo
+          o percurso porta a porta.
+        </p>
+        <p className="mt-3">
+          <span className="font-semibold">3º · Trem via Takaracho.</span> A alternativa mais
+          barata, porém pouco conveniente com três malas grandes — recomendamos apenas caso
+          economia seja a prioridade.
+        </p>
+        <div className="mt-4 rounded-lg bg-white/70 p-4">
+          <p className="text-sm leading-6 text-[#1B4A73]">
+            <span className="font-semibold">Dica Alpinea:</span> independentemente da opção
+            escolhida, confirme sempre &ldquo;Haneda Airport Terminal 3 / 羽田空港 第3ターミナル&rdquo; como
+            destino. Horários e tarifas devem ser reconfirmados próximo à data da viagem.
+          </p>
+        </div>
+      </ContentCard>
+    </div>
+  );
+}
+
 // =============================================================================
 // Passagem Aérea — dados reais extraídos diretamente dos e-tickets Emirates
 // enviados pelo cliente (bilhete 176 2213785892-93). Nenhum dado abaixo foi
@@ -6180,229 +6490,7 @@ const PASSAGEM_VOLTA: PassagemSegmento[] = [
   },
 ];
 
-// Coordenadas em % (posição/tamanho relativos ao template de 1859×846px),
-// obtidas por análise programática (PIL/numpy/scipy) das caixas cinzas do
-// template — não foram estimadas a olho. Cada linha corresponde a um dos
-// dois trechos exibidos por página (esquerda = detalhe maior, direita =
-// réplica menor, no mesmo padrão visual do template original).
-type PassagemCaixaPos = { left: number; top: number; width: number; height: number };
-
-const PASSAGEM_CAIXAS_ESQUERDA: {
-  origem: PassagemCaixaPos;
-  destino: PassagemCaixaPos;
-  hora: PassagemCaixaPos;
-  data: PassagemCaixaPos;
-}[] = [
-  {
-    origem: { left: 15.87, top: 41.02, width: 7.64, height: 10.99 },
-    destino: { left: 39.54, top: 41.02, width: 7.42, height: 10.99 },
-    hora: { left: 51.4, top: 40.19, width: 7.8, height: 4.85 },
-    data: { left: 51.4, top: 47.28, width: 7.8, height: 4.85 },
-  },
-  {
-    origem: { left: 15.87, top: 59.46, width: 7.64, height: 10.87 },
-    destino: { left: 39.54, top: 59.34, width: 7.42, height: 10.99 },
-    hora: { left: 51.4, top: 58.63, width: 7.8, height: 4.85 },
-    data: { left: 51.37, top: 65.6, width: 7.85, height: 4.73 },
-  },
-];
-
-const PASSAGEM_CAIXAS_DIREITA: {
-  origem: PassagemCaixaPos;
-  destino: PassagemCaixaPos;
-  hora: PassagemCaixaPos;
-  data: PassagemCaixaPos;
-}[] = [
-  {
-    origem: { left: 63.96, top: 28.96, width: 5.22, height: 12.88 },
-    destino: { left: 75.04, top: 28.96, width: 4.79, height: 12.88 },
-    hora: { left: 83.32, top: 28.84, width: 5.27, height: 4.26 },
-    data: { left: 83.32, top: 35.7, width: 5.27, height: 4.26 },
-  },
-  {
-    origem: { left: 63.96, top: 51.3, width: 5.27, height: 12.88 },
-    destino: { left: 74.99, top: 51.3, width: 4.84, height: 12.88 },
-    hora: { left: 83.32, top: 51.42, width: 5.27, height: 4.26 },
-    data: { left: 83.32, top: 58.28, width: 5.27, height: 4.26 },
-  },
-];
-
-const PASSAGEM_BARRA_ESQUERDA = {
-  rotulo: { left: 19.37, top: 74.35, width: 10.22, height: 10.28 },
-  cidade: { left: 29.64, top: 74.35, width: 13.78, height: 10.28 },
-  dataHora: { left: 43.47, top: 74.35, width: 15.76, height: 10.28 },
-};
-
-// Barra inferior direita do template (junto ao código de barras decorativo)
-// foi deixada em branco de propósito — não exibimos o número do bilhete no
-// painel do cliente, e não há outro dado do voo que caiba ali sem repetir
-// o que a barra da esquerda já mostra.
-
-function PassagemCampoBox({
-  pos,
-  iata,
-  cidade,
-  small,
-}: {
-  pos: PassagemCaixaPos;
-  iata: string;
-  cidade: string;
-  small?: boolean;
-}) {
-  return (
-    <div
-      className="absolute flex flex-col items-center justify-center overflow-hidden px-0.5 text-center"
-      style={{
-        left: `${pos.left}%`,
-        top: `${pos.top}%`,
-        width: `${pos.width}%`,
-        height: `${pos.height}%`,
-      }}
-    >
-      <span
-        className={`w-full truncate font-bold leading-none text-[#4A3418] ${
-          small ? "text-[10px] sm:text-xs md:text-sm" : "text-xs sm:text-sm md:text-lg"
-        }`}
-      >
-        {iata}
-      </span>
-      <span
-        className={`mt-0.5 w-full truncate leading-tight text-[#6B5A42]/80 ${
-          small ? "text-[6px] sm:text-[8px]" : "text-[7px] sm:text-[9px] md:text-[10px]"
-        }`}
-      >
-        {cidade}
-      </span>
-    </div>
-  );
-}
-
-function PassagemCampoTexto({
-  pos,
-  texto,
-  small,
-}: {
-  pos: PassagemCaixaPos;
-  texto: string;
-  small?: boolean;
-}) {
-  return (
-    <div
-      className="absolute flex items-center justify-center overflow-hidden px-0.5 text-center"
-      style={{
-        left: `${pos.left}%`,
-        top: `${pos.top}%`,
-        width: `${pos.width}%`,
-        height: `${pos.height}%`,
-      }}
-    >
-      <span
-        className={`w-full truncate font-semibold leading-none text-[#4A3418] ${
-          small ? "text-[8px] sm:text-[10px] md:text-xs" : "text-[9px] sm:text-xs md:text-sm"
-        }`}
-      >
-        {texto}
-      </span>
-    </div>
-  );
-}
-
-function PassagemEstilizadaBlock({
-  segmentos,
-  label,
-}: {
-  segmentos: PassagemSegmento[];
-  label: "IDA" | "VOLTA";
-}) {
-  const ultimo = segmentos[segmentos.length - 1];
-  const voos = segmentos.map((s) => s.voo).join(" · ");
-  return (
-    <div className="mx-auto w-full max-w-3xl">
-      <p className="mb-1 text-center text-[10px] font-bold uppercase tracking-[0.3em] text-[#24211D]/60">
-        {label === "IDA" ? "Trecho de Ida" : "Trecho de Volta"}
-      </p>
-      <p className="mb-4 text-center text-xs text-[#24211D]/50">
-        {voos} · {segmentos[0]?.classe}
-      </p>
-      <div className="relative mx-auto w-full" style={{ aspectRatio: "1859 / 846" }}>
-        <img
-          src="/images/passagem-emirates-template.png"
-          alt="Modelo decorativo de passagem Emirates"
-          className="pointer-events-none absolute inset-0 h-full w-full select-none object-contain"
-          draggable={false}
-        />
-
-        {segmentos.slice(0, 2).map((seg, i) => {
-          const caixaE = PASSAGEM_CAIXAS_ESQUERDA[i];
-          const caixaD = PASSAGEM_CAIXAS_DIREITA[i];
-          if (!caixaE || !caixaD) return null;
-          return (
-            <div key={seg.numeroSegmento} className="contents">
-              <PassagemCampoBox pos={caixaE.origem} iata={seg.origem.iata} cidade={seg.origem.cidade} />
-              <PassagemCampoBox pos={caixaE.destino} iata={seg.destino.iata} cidade={seg.destino.cidade} />
-              <PassagemCampoTexto pos={caixaE.hora} texto={seg.partida.hora} />
-              <PassagemCampoTexto pos={caixaE.data} texto={seg.partida.data} />
-
-              <PassagemCampoBox pos={caixaD.origem} iata={seg.origem.iata} cidade={seg.origem.cidade} small />
-              <PassagemCampoBox pos={caixaD.destino} iata={seg.destino.iata} cidade={seg.destino.cidade} small />
-              <PassagemCampoTexto pos={caixaD.hora} texto={seg.partida.hora} small />
-              <PassagemCampoTexto pos={caixaD.data} texto={seg.partida.data} small />
-            </div>
-          );
-        })}
-
-        {/* Barra inferior esquerda — chegada final da etapa (não a conexão
-            intermediária em Dubai), conforme a regra de sempre mostrar o
-            destino final do trecho nessa barra. */}
-        <div
-          className="absolute flex items-center justify-center overflow-hidden px-1 text-center"
-          style={{
-            left: `${PASSAGEM_BARRA_ESQUERDA.rotulo.left}%`,
-            top: `${PASSAGEM_BARRA_ESQUERDA.rotulo.top}%`,
-            width: `${PASSAGEM_BARRA_ESQUERDA.rotulo.width}%`,
-            height: `${PASSAGEM_BARRA_ESQUERDA.rotulo.height}%`,
-          }}
-        >
-          <span className="w-full truncate text-[7px] font-bold uppercase leading-tight tracking-[0.1em] text-[#6B5A42]/70 sm:text-[9px]">
-            Chegada Final
-          </span>
-        </div>
-        <div
-          className="absolute flex items-center justify-center overflow-hidden px-1 text-center"
-          style={{
-            left: `${PASSAGEM_BARRA_ESQUERDA.cidade.left}%`,
-            top: `${PASSAGEM_BARRA_ESQUERDA.cidade.top}%`,
-            width: `${PASSAGEM_BARRA_ESQUERDA.cidade.width}%`,
-            height: `${PASSAGEM_BARRA_ESQUERDA.cidade.height}%`,
-          }}
-        >
-          <span className="w-full truncate text-[9px] font-bold leading-none text-[#4A3418] sm:text-xs md:text-sm">
-            {ultimo?.destino.cidade} ({ultimo?.destino.iata})
-          </span>
-        </div>
-        <div
-          className="absolute flex items-center justify-center overflow-hidden px-1 text-center"
-          style={{
-            left: `${PASSAGEM_BARRA_ESQUERDA.dataHora.left}%`,
-            top: `${PASSAGEM_BARRA_ESQUERDA.dataHora.top}%`,
-            width: `${PASSAGEM_BARRA_ESQUERDA.dataHora.width}%`,
-            height: `${PASSAGEM_BARRA_ESQUERDA.dataHora.height}%`,
-          }}
-        >
-          <span className="w-full truncate text-[8px] font-semibold leading-tight text-[#4A3418] sm:text-[10px] md:text-xs">
-            {ultimo?.chegada.data} · {ultimo?.chegada.hora}
-          </span>
-        </div>
-
-        {/* Barra inferior direita mantida em branco de propósito — dado
-            confidencial (nº do bilhete) não deve ser exibido no painel do
-            cliente. */}
-      </div>
-    </div>
-  );
-}
-
-// Direções exibidas na Versão Básica — rótulo/período fixos (datas já
+// Direções exibidas — rótulo/período fixos (datas já
 // conhecidas e conferidas contra o bilhete real) + nota final explicando
 // por qual aeroporto de Tóquio se chega/sai (Narita na ida, Haneda na
 // volta — dois aeroportos diferentes, conforme o bilhete real).
@@ -6456,12 +6544,8 @@ function PassagemBasicaGrade() {
 
 // Seção "Passagem Aérea" embutida na área "Dados do Cliente" da página
 // (app/rf3vk8mp/page.tsx) — substitui o card estático que já existia ali.
-// O cabeçalho com o logo da Emirates fica sempre visível; só a área de
-// detalhe do voo alterna entre a grade compacta (já existente, agora
-// "Versão Básica") e o ticket ilustrado sobre o template Emirates
-// ("Versão Estilizada"). Ambas usam os mesmos dados reais do bilhete.
+// Só a grade compacta (layout original) — sem alternância de versão.
 export function PassagemAereaSecao() {
-  const [versao, setVersao] = useState<"basica" | "estilizada">("basica");
   return (
     <div>
       <div className="mt-6 flex items-center gap-3">
@@ -6479,31 +6563,7 @@ export function PassagemAereaSecao() {
       </div>
 
       <div className="mt-5">
-        <div className="mb-4 flex gap-2">
-          {(["basica", "estilizada"] as const).map((v) => (
-            <button
-              key={v}
-              type="button"
-              onClick={() => setVersao(v)}
-              className={`rounded-full border px-4 py-1.5 text-[11px] font-bold uppercase tracking-[0.15em] transition ${
-                versao === v
-                  ? "border-[#173B45] bg-[#173B45] text-white"
-                  : "border-[#DDD8CF] bg-white text-[#24211D]/60 hover:border-[#173B45]/40"
-              }`}
-            >
-              {v === "estilizada" ? "Versão Estilizada" : "Versão Básica"}
-            </button>
-          ))}
-        </div>
-
-        {versao === "basica" ? (
-          <PassagemBasicaGrade />
-        ) : (
-          <div className="space-y-10">
-            <PassagemEstilizadaBlock segmentos={PASSAGEM_IDA} label="IDA" />
-            <PassagemEstilizadaBlock segmentos={PASSAGEM_VOLTA} label="VOLTA" />
-          </div>
-        )}
+        <PassagemBasicaGrade />
       </div>
     </div>
   );
@@ -9969,6 +10029,7 @@ export function ApprovalPanel({
                 </p>
               </div>
               {current.badge === "DXB-NRT" && <TransporteNaritaTokyoBlock variant="chegada" />}
+              {current.badge === "HND-DXB" && <TransporteHanedaTokyoBlock />}
             </>
           ) : (
             <>
