@@ -245,14 +245,14 @@ export default function AprovacaoRoteiroPage() {
         <img
           src="/images/alpinea-ajisai-final-logo-branco.png"
           alt="Alpinea — Empresa do Grupo Ajisai"
-          className="h-[60px] w-auto object-contain md:h-[72px]"
+          className="h-7 w-auto object-contain sm:h-9 md:h-[60px] lg:h-[72px]"
         />
         <span className="rounded-full border border-white bg-white/[0.06] px-4 py-2 text-center text-xs uppercase tracking-[0.2em] text-white">
           ID 52130383
         </span>
       </header>
 
-      <section className="px-5 pb-4 pt-36 md:px-16 md:pt-40">
+      <section className="px-5 pb-4 pt-28 md:px-16 md:pt-36 lg:pt-40">
         <div className="relative mx-auto max-w-4xl">
           {/* Glow via box-shadow direto no card — nunca "vaza" para dentro do
               fundo opaco, já que sombra CSS só pinta fora da caixa. */}
