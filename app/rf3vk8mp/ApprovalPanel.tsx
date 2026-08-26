@@ -1600,13 +1600,6 @@ const DAY_2: DayContent = {
     ],
     gastronomia: {
       subtitulo: "Grande quantidade de lojas que vendem snacks de rua",
-      itens: [
-        {
-          nome: "Musk Melon",
-          descricao:
-            "Melão que só existe no Japão — mais suculento que o nosso, e esverdeado em vez de amarelo.",
-        },
-      ],
       curadoriaLabel: "Opções selecionadas — Almoço leve (~12h)",
       curadoria: [
         {
@@ -3562,11 +3555,6 @@ const DAY_5: DayContent = {
       },
     ],
     gastronomia: {
-      itens: [
-        { nome: "Matcha de Uji" },
-        { nome: "Yatsuhashi" },
-        { nome: "Dengaku" },
-      ],
       curadoriaLabel: "Opções selecionadas — Chá e doces (~12h)",
       curadoria: [
         {
@@ -3761,7 +3749,6 @@ const DAY_5: DayContent = {
       },
     ],
     gastronomia: {
-      itens: [{ nome: "Kaiseki" }, { nome: "Obanzai" }],
       curadoriaLabel: "Opções selecionadas — Jantar (~19h)",
       curadoria: [
         {
@@ -4112,7 +4099,6 @@ const DAY_6: DayContent = {
       },
     ],
     gastronomia: {
-      itens: [{ nome: "Inari-zushi" }, { nome: "Kitsune Udon" }],
       curadoriaLabel: "Opções selecionadas — Almoço rápido (~11h)",
       curadoria: [
         {
@@ -4406,7 +4392,6 @@ const DAY_6: DayContent = {
       },
     ],
     gastronomia: {
-      itens: [{ nome: "Unagi-don", descricao: "Enguia grelhada sobre arroz." }],
       curadoriaLabel: "Opções selecionadas — Jantar com unagi (~19h)",
       curadoria: [
         {
@@ -5010,13 +4995,6 @@ const DAY_7: DayContent = {
       nota: "Horários aproximados válidos para os dias 1 a 12 do torneio, conforme a bilheteria oficial. O ingresso vale para o dia inteiro — o confronto de cada luta individual só é divulgado no dia anterior.",
     },
     gastronomia: {
-      itens: [
-        {
-          nome: "Chanko Nabe",
-          descricao:
-            "Ensopado altamente calórico que os lutadores de Sumô comem diariamente pra conseguir manter o peso.",
-        },
-      ],
       curadoriaLabel: "Opções selecionadas — Jantar com chanko nabe (~18h)",
       curadoria: [
         {
@@ -9516,7 +9494,13 @@ const SERVICOS_ADICIONAIS_CARDS = [
     label: "Apólice Seguro Viagem",
     Icon: IconInsurance,
     apoliceNumero: "E2-42/713583313-642",
-    documentoImagem: "/images/doc-seguro-viagem-voucher.webp",
+    documentoImagens: [
+      "/images/doc-seguro-viagem-voucher-1.webp",
+      "/images/doc-seguro-viagem-voucher-2.webp",
+      "/images/doc-seguro-viagem-voucher-3.webp",
+      "/images/doc-seguro-viagem-voucher-4.webp",
+      "/images/doc-seguro-viagem-voucher-5.webp",
+    ],
   },
   {
     label: "Emergência Médica / Ativação de Sinistro",
@@ -10765,7 +10749,7 @@ export function ApprovalPanel({
           </p>
         </div>
         <div className="grid grid-cols-2 gap-3 border-b border-[#DDD8CF] px-6 pb-6 pt-3 sm:grid-cols-4 sm:px-10">
-          {SERVICOS_ADICIONAIS_CARDS.map(({ label, Icon, apoliceNumero, documentoImagem, whatsapp }) => {
+          {SERVICOS_ADICIONAIS_CARDS.map(({ label, Icon, apoliceNumero, documentoImagens, whatsapp }) => {
             const iconClassName =
               label === "Emergência Médica / Ativação de Sinistro" ? "h-[4.5rem] w-[4.5rem]" : "h-20 w-20";
             const cardContent = (
@@ -10793,7 +10777,7 @@ export function ApprovalPanel({
                 )}
               </>
             );
-            if (documentoImagem) {
+            if (documentoImagens) {
               return (
                 <button
                   key={label}
@@ -10817,12 +10801,38 @@ export function ApprovalPanel({
         </div>
 
         {zoomDocumentoSeguro && (
-          <ZoomableImageModal
-            src="/images/doc-seguro-viagem-voucher.webp"
-            alt="Apólice do Seguro Viagem"
-            caption="Apólice do Seguro Viagem"
-            onClose={() => setZoomDocumentoSeguro(false)}
-          />
+          <div
+            className="fixed inset-0 z-[100] flex items-start justify-center overflow-y-auto bg-black/85 p-4 backdrop-blur-sm sm:p-8"
+            onClick={() => setZoomDocumentoSeguro(false)}
+          >
+            <button
+              type="button"
+              onClick={() => setZoomDocumentoSeguro(false)}
+              className="fixed right-4 top-4 flex h-10 w-10 items-center justify-center rounded-full bg-white/10 text-white transition hover:bg-white/20 sm:right-6 sm:top-6"
+              aria-label="Fechar"
+            >
+              <IconX className="h-5 w-5" />
+            </button>
+            <div
+              className="mx-auto flex w-full max-w-2xl flex-col gap-4 py-4"
+              onClick={(e) => e.stopPropagation()}
+            >
+              {SERVICOS_ADICIONAIS_CARDS.find((c) => c.documentoImagens)?.documentoImagens?.map(
+                (src, i) => (
+                  <img
+                    loading="lazy"
+                    key={src}
+                    src={src}
+                    alt={`Apólice do Seguro Viagem — página ${i + 1}`}
+                    className="w-full rounded-2xl bg-white object-contain shadow-lg"
+                  />
+                ),
+              )}
+              <p className="pb-4 text-center text-xs font-semibold uppercase tracking-[0.15em] text-white/85">
+                Apólice do Seguro Viagem
+              </p>
+            </div>
+          </div>
         )}
 
         <div ref={contentRef} className="scroll-mt-6 px-6 py-8 sm:px-10 sm:py-10">
