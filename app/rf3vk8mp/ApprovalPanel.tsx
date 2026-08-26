@@ -5,6 +5,7 @@ import {
   useRef,
   useState,
   type ReactElement,
+  type ReactNode,
   type WheelEvent as ReactWheelEvent,
   type PointerEvent as ReactPointerEvent,
 } from "react";
@@ -4753,13 +4754,6 @@ const DAY_7: DayContent = {
     pois: [],
     gastronomia: {
       subtitulo: "Almoço · 12:30–13:45",
-      itens: [
-        {
-          nome: "Almoço em Ningyocho",
-          descricao:
-            "Janela reservada logo após o Suitengu, antes do deslocamento para o Kokugikan — restaurante a confirmar com a equipe Alpinea.",
-        },
-      ],
       curadoriaLabel: "Opções selecionadas — Almoço (12h30–13h45)",
       curadoria: [
         {
@@ -5585,6 +5579,239 @@ function HorarioLojasBlock({
   );
 }
 
+// Carrossel mobile genérico para as "linhas do tempo" horizontais do
+// roteiro (Resumo do Dia, Percurso Essencial, e qualquer futura sequência
+// de passos com foto/ícone + horário). Resolve os dois problemas de UX
+// que existiam nas duas implementações antigas (cada uma com sua própria
+// cópia quase-idêntica do padrão):
+//   1) o carrossel não deixava óbvio que havia mais conteúdo fora da tela
+//      (só um "Arraste para o lado" minúsculo) e não tinha scroll-snap,
+//      indicador de posição nem setas;
+//   2) a linha conectando os marcadores era desenhada como vários
+//      segmentinhos independentes (um `<span>` entre cada par de cards)
+//      em vez de uma única linha contínua no mesmo eixo Y.
+// Aqui a linha é UM único elemento absoluto atravessando todo o trilho, e
+// cada card reserva uma "zona de marcador" de altura fixa (h-16) — como
+// essa altura é igual pra todos os cards (não depende do conteúdo de cada
+// um), o centro vertical de todo marcador cai automaticamente na mesma
+// coordenada, sem nenhum ajuste manual de offset por estação/passo.
+function StepTimelineCarousel<T extends { titulo: string; horario?: string }>({
+  passos,
+  variant,
+  fadeFromColor,
+  renderMarker,
+}: {
+  passos: T[];
+  variant: "dark" | "light";
+  // Cor de fundo do container que envolve o carrossel — usada só pro
+  // degradê de borda direita (indicando conteúdo cortado) se fundir sem
+  // costura com o fundo real do card, que muda conforme o contexto.
+  fadeFromColor: string;
+  renderMarker: (passo: T, index: number) => ReactNode;
+}) {
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const [scrollState, setScrollState] = useState({ atStart: true, atEnd: false, progress: 0 });
+
+  const updateScrollState = () => {
+    const el = scrollRef.current;
+    if (!el) return;
+    const maxScroll = el.scrollWidth - el.clientWidth;
+    if (maxScroll <= 1) {
+      setScrollState({ atStart: true, atEnd: true, progress: 0 });
+      return;
+    }
+    setScrollState({
+      atStart: el.scrollLeft <= 4,
+      atEnd: el.scrollLeft >= maxScroll - 4,
+      progress: Math.min(1, Math.max(0, el.scrollLeft / maxScroll)),
+    });
+  };
+
+  useEffect(() => {
+    updateScrollState();
+    const el = scrollRef.current;
+    if (!el) return;
+    const onScroll = () => updateScrollState();
+    el.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    return () => {
+      el.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [passos.length]);
+
+  const scrollByCard = (direction: 1 | -1) => {
+    const el = scrollRef.current;
+    if (!el) return;
+    const firstCard = el.querySelector<HTMLElement>("[data-step-card]");
+    const step = firstCard ? firstCard.offsetWidth + 32 : el.clientWidth * 0.6;
+    el.scrollBy({ left: direction * step, behavior: "smooth" });
+  };
+
+  const isDark = variant === "dark";
+  const canScroll = !(scrollState.atStart && scrollState.atEnd);
+  const hint = !canScroll
+    ? null
+    : scrollState.atStart
+      ? "DESLIZE PARA EXPLORAR →"
+      : scrollState.atEnd
+        ? "← DESLIZE PARA EXPLORAR"
+        : "← DESLIZE PARA EXPLORAR →";
+
+  const lineColor = isDark ? "rgba(255,255,255,0.22)" : "rgba(36,33,29,0.16)";
+  const arrowBtnClass = isDark
+    ? "bg-white/10 text-white hover:bg-white/20"
+    : "bg-white text-[#24211D] shadow-[0_4px_14px_-4px_rgba(0,0,0,0.25)] border border-[#DDD8CF] hover:bg-[#F5F3EE]";
+
+  return (
+    <div>
+      {hint && (
+        <p
+          className={`mb-3 text-center text-[11px] font-semibold uppercase tracking-[0.18em] ${
+            isDark ? "text-white/65" : "text-[#24211D]/55"
+          }`}
+        >
+          {hint}
+        </p>
+      )}
+      <div className="relative">
+        <div
+          ref={scrollRef}
+          className="overflow-x-auto [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          style={{ scrollSnapType: "x mandatory", WebkitOverflowScrolling: "touch" }}
+        >
+          <div className="relative flex w-max gap-8 pb-1 pr-8">
+            {/* Linha única contínua — não um segmento por passo. */}
+            <div
+              className="pointer-events-none absolute left-0 right-8 top-8 h-[2px]"
+              style={{ background: lineColor }}
+            />
+            {passos.map((passo, i) => (
+              <div
+                key={passo.titulo + i}
+                data-step-card
+                className="relative flex w-24 shrink-0 flex-col items-center text-center sm:w-28"
+                style={{ scrollSnapAlign: "start" }}
+              >
+                {/* Zona do marcador: altura fixa (h-16) igual em todo
+                    card — é isso que garante o mesmo eixo Y pra todos,
+                    em vez de alinhar "no olho" com margin/top por item. */}
+                <div className="relative z-10 flex h-16 w-full items-center justify-center">
+                  {renderMarker(passo, i)}
+                </div>
+                {passo.horario && (
+                  <p
+                    className={`mt-2 whitespace-nowrap text-[10px] font-medium uppercase tracking-[0.08em] ${
+                      isDark ? "text-white/55" : "text-[#B96432]"
+                    }`}
+                  >
+                    {passo.horario}
+                  </p>
+                )}
+                <p
+                  className={`mt-0.5 line-clamp-2 text-xs font-semibold leading-tight ${
+                    isDark ? "text-white" : "text-[#24211D]"
+                  }`}
+                >
+                  {passo.titulo}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+        {!scrollState.atEnd && (
+          <div
+            className="pointer-events-none absolute inset-y-0 right-0 w-10 bg-gradient-to-l to-transparent"
+            style={{ ["--tw-gradient-from" as string]: fadeFromColor }}
+          />
+        )}
+        {canScroll && (
+          <>
+            {/* Botão em si é a área de toque real (44x44, conforme
+                especificação) mas fica invisível — só o círculo interno
+                menor é visível, pra não parecer que "vaza" pro padding do
+                card ao ficar meio pra dentro, meio pra fora da borda. */}
+            <button
+              type="button"
+              aria-label="Anterior"
+              onClick={() => scrollByCard(-1)}
+              disabled={scrollState.atStart}
+              className="absolute left-0 top-8 flex h-11 w-11 -translate-x-1/2 -translate-y-1/2 items-center justify-center disabled:pointer-events-none disabled:opacity-0"
+            >
+              <span className={`flex h-8 w-8 items-center justify-center rounded-full text-base leading-none transition ${arrowBtnClass}`}>
+                ‹
+              </span>
+            </button>
+            <button
+              type="button"
+              aria-label="Próximo"
+              onClick={() => scrollByCard(1)}
+              disabled={scrollState.atEnd}
+              className="absolute right-0 top-8 flex h-11 w-11 translate-x-1/2 -translate-y-1/2 items-center justify-center disabled:pointer-events-none disabled:opacity-0"
+            >
+              <span className={`flex h-8 w-8 items-center justify-center rounded-full text-base leading-none transition ${arrowBtnClass}`}>
+                ›
+              </span>
+            </button>
+          </>
+        )}
+      </div>
+      {canScroll && (
+        <CarouselProgress count={passos.length} progress={scrollState.progress} isDark={isDark} />
+      )}
+    </div>
+  );
+}
+
+function CarouselProgress({
+  count,
+  progress,
+  isDark,
+}: {
+  count: number;
+  progress: number;
+  isDark: boolean;
+}) {
+  if (count <= 6) {
+    const activeIndex = Math.round(progress * (count - 1));
+    return (
+      <div className="mt-3 flex items-center justify-center gap-1.5">
+        {Array.from({ length: count }).map((_, i) => (
+          <span
+            key={i}
+            className="h-1.5 rounded-full transition-all duration-300"
+            style={{
+              width: i === activeIndex ? 18 : 6,
+              backgroundColor: isDark
+                ? i === activeIndex
+                  ? "rgba(255,255,255,0.85)"
+                  : "rgba(255,255,255,0.25)"
+                : i === activeIndex
+                  ? "rgba(36,33,29,0.7)"
+                  : "rgba(36,33,29,0.16)",
+            }}
+          />
+        ))}
+      </div>
+    );
+  }
+  const thumbPct = Math.max(15, 100 / count);
+  const travel = thumbPct >= 100 ? 0 : (100 / thumbPct - 1) * 100;
+  return (
+    <div
+      className={`mt-3 h-1 w-full overflow-hidden rounded-full ${
+        isDark ? "bg-white/15" : "bg-[#24211D]/10"
+      }`}
+    >
+      <div
+        className={`h-full rounded-full ${isDark ? "bg-white/70" : "bg-[#24211D]/45"}`}
+        style={{ width: `${thumbPct}%`, transform: `translateX(${progress * travel}%)` }}
+      />
+    </div>
+  );
+}
+
 function ResumoDiaBlock({
   resumo,
 }: {
@@ -5592,77 +5819,55 @@ function ResumoDiaBlock({
 }) {
   return (
     <div className="mb-10 rounded-2xl bg-black p-5 sm:p-6">
-      <div className="mb-5 flex items-center justify-between gap-3">
-        <p className="text-xs font-bold uppercase tracking-[0.25em] text-white">
-          Resumo do Dia
-        </p>
-        <p className="shrink-0 text-[10px] font-medium text-white/45">
-          Arraste para o lado →
-        </p>
-      </div>
-      <div className="relative">
-        <div className="overflow-x-auto pb-1">
-        <div className="flex w-max shrink-0 mx-auto">
-        {resumo.passos.map((passo, i) => (
-          <div key={passo.titulo + i} className="flex shrink-0 items-start">
-            <div className="group flex w-20 shrink-0 cursor-default flex-col items-center text-center sm:w-24">
-              {passo.foto ? (
-                passo.foto.includes("/images/icone-") ? (
-                  <div
-                    className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full shadow-sm transition duration-200 group-hover:scale-110 group-hover:shadow-[0_0_0_3px_rgba(255,255,255,0.25)] sm:h-11 sm:w-11 ${
-                      passo.foto.includes("icone-gastronomia")
-                        ? "bg-amber-50"
-                        : passo.foto.includes("icone-hotel")
-                          ? "bg-[#E7F4E9]"
-                          : "bg-white"
-                    }`}
-                  >
-                    <img
+      <p className="mb-5 text-xs font-bold uppercase tracking-[0.25em] text-white">
+        Resumo do Dia
+      </p>
+      <StepTimelineCarousel
+        passos={resumo.passos}
+        variant="dark"
+        fadeFromColor="#000000"
+        renderMarker={(passo) =>
+          passo.foto ? (
+            passo.foto.includes("/images/icone-") ? (
+              <div
+                className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-full shadow-sm ${
+                  passo.foto.includes("icone-gastronomia")
+                    ? "bg-amber-50"
+                    : passo.foto.includes("icone-hotel")
+                      ? "bg-[#E7F4E9]"
+                      : "bg-white"
+                }`}
+              >
+                <img
                 loading="lazy"
-                      src={passo.foto}
-                      alt={passo.titulo}
-                      className={
-                        passo.foto.includes("icone-gastronomia")
-                          ? "h-9 w-9 object-contain sm:h-10 sm:w-10"
-                          : passo.foto.includes("icone-hotel")
-                            ? "h-7 w-7 object-contain sm:h-8 sm:w-8"
-                            : "h-7 w-7 object-contain sm:h-7 sm:w-7"
-                      }
-                    />
-                  </div>
-                ) : (
-                  <div className="h-10 w-10 shrink-0 overflow-hidden rounded-full border-2 border-white shadow-sm transition duration-200 group-hover:scale-110 group-hover:shadow-[0_0_0_3px_rgba(255,255,255,0.25)] sm:h-11 sm:w-11">
-                    <img
+                  src={passo.foto}
+                  alt={passo.titulo}
+                  className={
+                    passo.foto.includes("icone-gastronomia")
+                      ? "h-10 w-10 object-contain"
+                      : passo.foto.includes("icone-hotel")
+                        ? "h-8 w-8 object-contain"
+                        : "h-7 w-7 object-contain"
+                  }
+                />
+              </div>
+            ) : (
+              <div className="h-11 w-11 shrink-0 overflow-hidden rounded-full border-2 border-white shadow-sm">
+                <img
                 loading="lazy"
-                      src={passo.foto}
-                      alt={passo.titulo}
-                      className="h-full w-full object-cover"
-                    />
-                  </div>
-                )
-              ) : (
-                <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full border border-dashed border-white/25 text-white/40 transition duration-200 group-hover:scale-110 group-hover:border-white/50 group-hover:text-white/70 sm:h-11 sm:w-11">
-                  <IconClock className="h-4 w-4" />
-                </div>
-              )}
-              <p className="mt-1.5 line-clamp-2 text-[11px] font-semibold leading-tight text-white transition duration-200 group-hover:text-white/80 sm:text-xs">
-                {passo.titulo}
-              </p>
-              {passo.horario && (
-                <p className="mt-0.5 whitespace-nowrap text-[10px] font-medium tracking-wide text-white/55">
-                  {passo.horario}
-                </p>
-              )}
+                  src={passo.foto}
+                  alt={passo.titulo}
+                  className="h-full w-full object-cover"
+                />
+              </div>
+            )
+          ) : (
+            <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-dashed border-white/25 text-white/40">
+              <IconClock className="h-4 w-4" />
             </div>
-            {i < resumo.passos.length - 1 && (
-              <span className="mt-5 h-[2px] w-3 shrink-0 rounded-full bg-white/20 sm:mt-5 sm:w-4" />
-            )}
-          </div>
-        ))}
-        </div>
-        </div>
-        <div className="pointer-events-none absolute inset-y-0 right-0 w-10 bg-gradient-to-l from-black to-transparent" />
-      </div>
+          )
+        }
+      />
     </div>
   );
 }
@@ -8619,65 +8824,50 @@ function PeriodBlock({
               <IconClock className="h-9 w-9 shrink-0 text-[#B96432] sm:h-10 sm:w-10" />
             </div>
           </div>
-          <p className="mt-4 text-right text-[10px] font-medium text-[#000000]/40">
-            Arraste para o lado →
-          </p>
-          <div className="relative mt-1">
-            <div className="overflow-x-auto pb-1">
-            <div className="mx-auto flex w-max shrink-0">
+          <div className="mt-4">
             {(() => {
               let numero = 0;
-              return period.percursoEssencial!.passos.map((passo, i) => {
+              const numerados = period.percursoEssencial!.passos.map((passo) => {
                 if (passo.foto) numero += 1;
-                return (
-                  <div key={passo.titulo} className="flex shrink-0 items-start">
-                    <div className="flex w-24 shrink-0 flex-col items-center text-center sm:w-28">
-                      {passo.foto ? (
-                        <div className="relative h-14 w-14 shrink-0 sm:h-16 sm:w-16">
-                          <div className="h-full w-full overflow-hidden rounded-full border-2 border-white shadow-sm">
-                            <img
-                loading="lazy"
-                              src={passo.foto}
-                              alt={passo.titulo}
-                              className="h-full w-full object-cover"
-                              style={
-                                passo.fotoPosicao
-                                  ? {
-                                      objectPosition: passo.fotoPosicao,
-                                      transform: "scale(1.6)",
-                                    }
-                                  : undefined
-                              }
-                            />
-                          </div>
-                          <span className="absolute -bottom-1.5 -right-1.5 flex h-6 w-6 items-center justify-center rounded-full border-2 border-white bg-[#1B4A73] text-xs font-bold text-white shadow-sm">
-                            {numero}
-                          </span>
-                        </div>
-                      ) : (
-                        <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full border border-dashed border-[#2C6CA6]/35 text-[#2C6CA6]/50 sm:h-16 sm:w-16">
-                          <IconWalk className="h-7 w-7" />
-                        </div>
-                      )}
-                      {passo.horario && (
-                        <p className="mt-2 text-[10px] font-medium uppercase tracking-[0.08em] text-[#B96432]">
-                          {passo.horario}
-                        </p>
-                      )}
-                      <p className="mt-0.5 text-xs font-semibold leading-tight text-[#000000]">
-                        {passo.titulo}
-                      </p>
-                    </div>
-                    {i < period.percursoEssencial!.passos.length - 1 && (
-                      <span className="mt-7 h-[2px] w-10 shrink-0 rounded-full bg-[#000000]/20 sm:mt-8 sm:w-12" />
-                    )}
-                  </div>
-                );
+                return { ...passo, __numero: numero };
               });
+              return (
+                <StepTimelineCarousel
+                  passos={numerados}
+                  variant="light"
+                  fadeFromColor="#F8FAF9"
+                  renderMarker={(passo) =>
+                    passo.foto ? (
+                      <div className="relative h-16 w-16 shrink-0">
+                        <div className="h-full w-full overflow-hidden rounded-full border-2 border-white shadow-sm">
+                          <img
+                loading="lazy"
+                            src={passo.foto}
+                            alt={passo.titulo}
+                            className="h-full w-full object-cover"
+                            style={
+                              passo.fotoPosicao
+                                ? {
+                                    objectPosition: passo.fotoPosicao,
+                                    transform: "scale(1.6)",
+                                  }
+                                : undefined
+                            }
+                          />
+                        </div>
+                        <span className="absolute -bottom-1.5 -right-1.5 flex h-6 w-6 items-center justify-center rounded-full border-2 border-white bg-[#1B4A73] text-xs font-bold text-white shadow-sm">
+                          {passo.__numero}
+                        </span>
+                      </div>
+                    ) : (
+                      <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full border border-dashed border-[#2C6CA6]/35 text-[#2C6CA6]/50">
+                        <IconWalk className="h-7 w-7" />
+                      </div>
+                    )
+                  }
+                />
+              );
             })()}
-            </div>
-            </div>
-            <div className="pointer-events-none absolute inset-y-0 right-0 w-10 bg-gradient-to-l from-[#F8FAF9] to-transparent" />
           </div>
           <p className="mt-4 text-xs leading-5 text-[#000000]/60">
             O que dá pra fazer sem pressa. Os detalhes de cada ponto vêm a seguir — comece por aqui.
