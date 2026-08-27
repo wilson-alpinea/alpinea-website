@@ -447,75 +447,62 @@ export default function ProdutosPage() {
         </div>
       </header>
 
-      {/* ── HERO — SELETOR DE 2 CAMINHOS ── */}
-      <section className="border-b border-white/10 bg-black px-6 pb-16 pt-32 text-center md:px-16 md:pb-24 md:pt-40">
-        <p className="mb-5 text-xs uppercase tracking-[0.35em] text-white/50">
-          Escolha como viajar
-        </p>
-        <h1
-          className={`${display.className} text-3xl font-medium leading-tight text-white sm:text-4xl md:text-6xl`}
-        >
-          Como você quer viajar pelo Japão?
-        </h1>
-        <p className="mx-auto mt-6 max-w-2xl text-sm font-light leading-6 text-white/60 md:text-base md:leading-7">
-          Escolha se prefere organizar sua viagem com nosso planejamento ou
-          deixar a organização com a Ajisai.
-        </p>
+      {/* ── HERO — PRODUTOS ── */}
+      <section className="border-b border-white/10 bg-black">
+        <div className="relative min-h-[640px] h-[82vh] w-full overflow-hidden md:min-h-[720px]">
+          <Image
+            src="/images/produtos-hero.jpg"
+            alt="Experiência de viagem no Japão com a Ajisai"
+            fill
+            priority
+            sizes="100vw"
+            className="object-cover object-center"
+          />
 
-        <div className="mx-auto mt-12 grid max-w-6xl gap-6 sm:grid-cols-2 md:mt-16 lg:grid-cols-3">
-          <a
-            href="#roteiro"
-            className="group flex flex-col rounded-2xl border border-white/10 bg-white/[0.02] p-8 text-left shadow-[0_0_30px_-14px_rgba(37,99,235,0.3)] transition hover:border-white/25 hover:bg-white/[0.04] md:p-10"
-          >
-            <p className="text-base font-semibold uppercase tracking-[0.12em] text-[#6ec3d9] md:text-lg">
-              Quero organizar minha viagem
-            </p>
-            <h2 className={`${display.className} mt-3 text-2xl font-medium text-white md:text-3xl`}>
-              Roteiro Personalizado
-            </h2>
-            <p className="mt-3 flex-1 text-sm font-light leading-6 text-white/55">
-              Recebo o planejamento completo e faço minhas próprias reservas.
-            </p>
-            <span className="mt-6 inline-flex items-center gap-1.5 text-xs uppercase tracking-[0.2em] text-white/50 transition group-hover:text-white">
-              Conhecer o Roteiro →
-            </span>
-          </a>
+          {/* Gradiente restrito ao rodapé para preservar a imagem */}
+          <div className="absolute inset-x-0 bottom-0 h-[30%] bg-gradient-to-t from-black via-black/55 to-transparent" />
 
-          <a
-            href="#pacotes-ajisai"
-            className="group flex flex-col rounded-2xl border border-white/10 bg-white/[0.02] p-8 text-left shadow-[0_0_30px_-14px_rgba(37,99,235,0.3)] transition hover:border-white/25 hover:bg-white/[0.04] md:p-10"
-          >
-            <p className="text-base font-semibold uppercase tracking-[0.12em] text-[#6ec3d9] md:text-lg">
-              Quero que a Ajisai organize
-            </p>
-            <h2 className={`${display.className} mt-3 text-2xl font-medium text-white md:text-3xl`}>
-              Pacotes de Viagem
-            </h2>
-            <p className="mt-3 flex-1 text-sm font-light leading-6 text-white/55">
-              A Ajisai cuida da organização e eu recebo a viagem pronta.
-            </p>
-            <span className="mt-6 inline-flex items-center gap-1.5 text-xs uppercase tracking-[0.2em] text-white/50 transition group-hover:text-white">
-              Ver opções →
-            </span>
-          </a>
+          <div className="absolute inset-x-0 bottom-0 px-6 pb-8 text-center md:px-16 md:pb-12">
+            <h1
+              className={`${display.className} text-3xl font-medium leading-tight text-white sm:text-4xl md:text-6xl`}
+              style={{ textShadow: "0 2px 18px rgba(0,0,0,0.72)" }}
+            >
+              Como você quer viajar pelo Japão?
+            </h1>
+          </div>
+        </div>
+      </section>
 
-          <a
-            href="#guia"
-            className="group flex flex-col rounded-2xl border border-white/10 bg-white/[0.02] p-8 text-left shadow-[0_0_30px_-14px_rgba(37,99,235,0.3)] transition hover:border-white/25 hover:bg-white/[0.04] sm:col-span-2 md:p-10 lg:col-span-1"
-          >
-            <p className="text-base font-semibold uppercase tracking-[0.12em] text-[#6ec3d9] md:text-lg">
-              Já tenho meu roteiro
-            </p>
-            <h2 className={`${display.className} mt-3 text-2xl font-medium text-white md:text-3xl`}>
-              Guia Turístico Avulso
-            </h2>
-            <p className="mt-3 flex-1 text-sm font-light leading-6 text-white/55">
-              Só preciso de um guia particular para um ou mais dias específicos.
-            </p>
-            <span className="mt-6 inline-flex items-center gap-1.5 text-xs uppercase tracking-[0.2em] text-white/50 transition group-hover:text-white">
-              Conhecer o Guia Avulso →
-            </span>
-          </a>
+      {/* ── CATÁLOGO DE PRODUTOS ── */}
+      <section className="border-b border-white/10 bg-black px-6 py-12 md:px-16 md:py-16">
+        <div className="mx-auto grid max-w-7xl grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6 md:gap-4">
+          {[
+            { nome: "Roteiro Personalizado", href: "/ajisairoteiros", icone: "/images/icone-roteiro-personalizado.png" },
+            { nome: "Pacote de Viagem", href: "/pacotes", icone: "/images/icone-pacote-viagem.png" },
+            { nome: "Passagem Aérea", href: "#passagens", icone: "/images/icone-passagem-aerea.png" },
+            { nome: "Hotéis", href: "#hoteis", icone: "/images/icone-hoteis.png" },
+            { nome: "Guia Turístico", href: "#guia", icone: "/images/icone-guia-turistico.png" },
+            { nome: "Transporte Privado", href: "#transporte", icone: "/images/icone-transporte-privado.png" },
+          ].map((produto) => (
+            <Link
+              key={produto.nome}
+              href={produto.href}
+              className="group flex min-h-[168px] flex-col items-center justify-center rounded-2xl border border-white/10 bg-white/[0.025] px-4 py-6 text-center transition duration-300 hover:-translate-y-1 hover:border-white/25 hover:bg-white/[0.05]"
+            >
+              <div className="relative h-14 w-14 md:h-16 md:w-16">
+                <Image
+                  src={produto.icone}
+                  alt=""
+                  fill
+                  sizes="64px"
+                  className="object-contain opacity-90 transition duration-300 group-hover:scale-105 group-hover:opacity-100"
+                />
+              </div>
+              <h2 className={`${display.className} mt-4 text-base font-medium leading-tight text-white md:text-lg`}>
+                {produto.nome}
+              </h2>
+            </Link>
+          ))}
         </div>
       </section>
 
