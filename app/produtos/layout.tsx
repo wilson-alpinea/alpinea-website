@@ -8,11 +8,11 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Ajisai | Produtos e Preços",
   description:
-    "Conheça os produtos Ajisai para sua viagem ao Japão — Roteiro Personalizado, Pacotes de Viagem, Passagens Aéreas, Hotéis, Guia Turístico e Transporte Privado.",
+    "Compare os produtos Ajisai para sua viagem ao Japão — Roteiro Personalizado, Caravana, Individual ou Pequenos Grupos e Pacote Personalizado — e veja o preço de cada um.",
   openGraph: {
     title: "Ajisai | Produtos e Preços",
     description:
-      "Escolha como viajar pelo Japão com a Ajisai: roteiro, pacotes, passagens aéreas, hotéis, guia turístico e transporte privado.",
+      "Compare os produtos Ajisai para sua viagem ao Japão e veja o preço de cada um: Roteiro Personalizado, Caravana, Individual ou Pequenos Grupos e Pacote Personalizado.",
     siteName: "Ajisai",
     images: [
       {
@@ -29,7 +29,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Ajisai | Produtos e Preços",
     description:
-      "Escolha como viajar pelo Japão com a Ajisai.",
+      "Compare os produtos Ajisai para sua viagem ao Japão e veja o preço de cada um.",
     images: ["/images/dashmobile-ajisai.jpg"],
   },
 };
