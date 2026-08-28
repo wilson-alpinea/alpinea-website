@@ -486,12 +486,11 @@ export default function ProdutosPage() {
           <div className="mx-auto grid max-w-7xl gap-4 sm:grid-cols-2 lg:grid-cols-3">
             <a
               href="#roteiro"
-              className="group flex min-h-[190px] flex-col rounded-2xl border border-white/10 bg-white/[0.02] p-6 text-left shadow-[0_0_30px_-14px_rgba(37,99,235,0.3)] transition hover:border-white/25 hover:bg-white/[0.04] md:min-h-[210px] md:p-8"
+              className="group relative flex min-h-[190px] flex-col overflow-hidden rounded-2xl border border-white/10 bg-white/[0.02] p-6 text-left shadow-[0_0_30px_-14px_rgba(37,99,235,0.3)] transition hover:border-white/25 hover:bg-white/[0.04] md:min-h-[210px] md:p-8"
             >
-              <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#6ec3d9]">
-                Quero organizar minha viagem
-              </p>
-              <h2 className={`${display.className} mt-3 text-2xl font-medium text-white md:text-3xl`}>
+              <Image src="/images/produtos/roteiro-personalizado.png" alt="" width={439} height={504} className="absolute right-6 top-5 h-14 w-14 object-contain opacity-90 md:right-8 md:top-7" />
+              <div className="h-4" aria-hidden="true" />
+              <h2 className={`${display.className} mt-3 pr-16 text-2xl font-medium text-white md:text-3xl`}>
                 Roteiro Personalizado
               </h2>
               <p className="mt-3 flex-1 text-sm font-light leading-6 text-white/55">
@@ -504,12 +503,11 @@ export default function ProdutosPage() {
 
             <a
               href="#pacotes-ajisai"
-              className="group flex min-h-[190px] flex-col rounded-2xl border border-white/10 bg-white/[0.02] p-6 text-left shadow-[0_0_30px_-14px_rgba(37,99,235,0.3)] transition hover:border-white/25 hover:bg-white/[0.04] md:min-h-[210px] md:p-8"
+              className="group relative flex min-h-[190px] flex-col overflow-hidden rounded-2xl border border-white/10 bg-white/[0.02] p-6 text-left shadow-[0_0_30px_-14px_rgba(37,99,235,0.3)] transition hover:border-white/25 hover:bg-white/[0.04] md:min-h-[210px] md:p-8"
             >
-              <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#6ec3d9]">
-                Quero que a Ajisai organize
-              </p>
-              <h2 className={`${display.className} mt-3 text-2xl font-medium text-white md:text-3xl`}>
+              <Image src="/images/produtos/pacote-de-viagem.png" alt="" width={350} height={532} className="absolute right-6 top-5 h-14 w-14 object-contain opacity-90 md:right-8 md:top-7" />
+              <div className="h-4" aria-hidden="true" />
+              <h2 className={`${display.className} mt-3 pr-16 text-2xl font-medium text-white md:text-3xl`}>
                 Pacote de Viagem
               </h2>
               <p className="mt-3 flex-1 text-sm font-light leading-6 text-white/55">
@@ -522,12 +520,11 @@ export default function ProdutosPage() {
 
             <a
               href="#passagens-aereas"
-              className="group flex min-h-[190px] flex-col rounded-2xl border border-white/10 bg-white/[0.02] p-6 text-left shadow-[0_0_30px_-14px_rgba(37,99,235,0.3)] transition hover:border-white/25 hover:bg-white/[0.04] md:min-h-[210px] md:p-8"
+              className="group relative flex min-h-[190px] flex-col overflow-hidden rounded-2xl border border-white/10 bg-white/[0.02] p-6 text-left shadow-[0_0_30px_-14px_rgba(37,99,235,0.3)] transition hover:border-white/25 hover:bg-white/[0.04] md:min-h-[210px] md:p-8"
             >
-              <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#6ec3d9]">
-                Quero comprar minha passagem
-              </p>
-              <h2 className={`${display.className} mt-3 text-2xl font-medium text-white md:text-3xl`}>
+              <Image src="/images/produtos/passagem-aerea.png" alt="" width={449} height={284} className="absolute right-6 top-5 h-14 w-14 object-contain opacity-90 md:right-8 md:top-7" />
+              <div className="h-4" aria-hidden="true" />
+              <h2 className={`${display.className} mt-3 pr-16 text-2xl font-medium text-white md:text-3xl`}>
                 Passagem Aérea
               </h2>
               <p className="mt-3 flex-1 text-sm font-light leading-6 text-white/55">
@@ -540,12 +537,11 @@ export default function ProdutosPage() {
 
             <a
               href="/pacotes#personalizado"
-              className="group flex min-h-[190px] flex-col rounded-2xl border border-white/10 bg-white/[0.02] p-6 text-left shadow-[0_0_30px_-14px_rgba(37,99,235,0.3)] transition hover:border-white/25 hover:bg-white/[0.04] md:min-h-[210px] md:p-8"
+              className="group relative flex min-h-[190px] flex-col overflow-hidden rounded-2xl border border-white/10 bg-white/[0.02] p-6 text-left shadow-[0_0_30px_-14px_rgba(37,99,235,0.3)] transition hover:border-white/25 hover:bg-white/[0.04] md:min-h-[210px] md:p-8"
             >
-              <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#6ec3d9]">
-                Quero reservar hospedagem
-              </p>
-              <h2 className={`${display.className} mt-3 text-2xl font-medium text-white md:text-3xl`}>
+              <Image src="/images/produtos/hoteis.png" alt="" width={435} height={366} className="absolute right-6 top-5 h-14 w-14 object-contain opacity-90 md:right-8 md:top-7" />
+              <div className="h-4" aria-hidden="true" />
+              <h2 className={`${display.className} mt-3 pr-16 text-2xl font-medium text-white md:text-3xl`}>
                 Hotéis
               </h2>
               <p className="mt-3 flex-1 text-sm font-light leading-6 text-white/55">
@@ -558,12 +554,11 @@ export default function ProdutosPage() {
 
             <a
               href="#guia"
-              className="group flex min-h-[190px] flex-col rounded-2xl border border-white/10 bg-white/[0.02] p-6 text-left shadow-[0_0_30px_-14px_rgba(37,99,235,0.3)] transition hover:border-white/25 hover:bg-white/[0.04] md:min-h-[210px] md:p-8"
+              className="group relative flex min-h-[190px] flex-col overflow-hidden rounded-2xl border border-white/10 bg-white/[0.02] p-6 text-left shadow-[0_0_30px_-14px_rgba(37,99,235,0.3)] transition hover:border-white/25 hover:bg-white/[0.04] md:min-h-[210px] md:p-8"
             >
-              <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#6ec3d9]">
-                Já tenho meu roteiro
-              </p>
-              <h2 className={`${display.className} mt-3 text-2xl font-medium text-white md:text-3xl`}>
+              <Image src="/images/produtos/guia-turistico.png" alt="" width={359} height={444} className="absolute right-6 top-5 h-14 w-14 object-contain opacity-90 md:right-8 md:top-7" />
+              <div className="h-4" aria-hidden="true" />
+              <h2 className={`${display.className} mt-3 pr-16 text-2xl font-medium text-white md:text-3xl`}>
                 Guia Turístico
               </h2>
               <p className="mt-3 flex-1 text-sm font-light leading-6 text-white/55">
@@ -578,9 +573,7 @@ export default function ProdutosPage() {
               href="/pacotes#personalizado"
               className="group flex min-h-[190px] flex-col rounded-2xl border border-white/10 bg-white/[0.02] p-6 text-left shadow-[0_0_30px_-14px_rgba(37,99,235,0.3)] transition hover:border-white/25 hover:bg-white/[0.04] md:min-h-[210px] md:p-8"
             >
-              <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#6ec3d9]">
-                Quero viajar com mais conforto
-              </p>
+              <div className="h-4" aria-hidden="true" />
               <h2 className={`${display.className} mt-3 text-2xl font-medium text-white md:text-3xl`}>
                 Transporte Privado
               </h2>
@@ -589,6 +582,23 @@ export default function ProdutosPage() {
               </p>
               <span className="mt-5 text-[11px] uppercase tracking-[0.18em] text-white/45 transition group-hover:text-white">
                 Ver transporte →
+              </span>
+            </a>
+
+            <a
+              href="#servicos-avulsos"
+              className="group relative flex min-h-[190px] flex-col overflow-hidden rounded-2xl border border-white/10 bg-white/[0.02] p-6 text-left shadow-[0_0_30px_-14px_rgba(37,99,235,0.3)] transition hover:border-white/25 hover:bg-white/[0.04] md:min-h-[210px] md:p-8"
+            >
+              <Image src="/images/produtos/servicos-adicionais.png" alt="" width={1254} height={1254} className="absolute right-6 top-5 h-14 w-14 object-contain opacity-90 md:right-8 md:top-7" />
+              <div className="h-4" aria-hidden="true" />
+              <h2 className={`${display.className} mt-3 pr-16 text-2xl font-medium text-white md:text-3xl`}>
+                Serviços adicionais
+              </h2>
+              <p className="mt-3 flex-1 text-sm font-light leading-6 text-white/55">
+                Seguro viagem, conectividade, reservas e outros complementos.
+              </p>
+              <span className="mt-5 text-[11px] uppercase tracking-[0.18em] text-white/45 transition group-hover:text-white">
+                Ver serviços →
               </span>
             </a>
           </div>
@@ -1213,7 +1223,7 @@ export default function ProdutosPage() {
       </section>
 
       {/* ── SERVIÇOS AVULSOS ── */}
-      <section className="border-b border-white/10 bg-[#050505] px-6 py-16 md:px-16 md:py-24">
+      <section id="servicos-avulsos" className="border-b border-white/10 bg-[#050505] px-6 py-16 md:px-16 md:py-24">
         <div className="mx-auto max-w-6xl">
           <div className="mx-auto max-w-2xl text-center">
             <p className="text-[10px] uppercase tracking-[0.2em] text-[#6ec3d9]">
