@@ -514,7 +514,7 @@ export default function ProdutosPage() {
                 iconHeight={504}
                 title="Roteiro Personalizado"
                 description="Receba um planejamento completo, criado para sua viagem, e faça suas próprias reservas."
-                cta="Conhecer o roteiro →"
+                cta="Conhecer o roteiro"
               />
               <ProductSelectorCard
                 href="#pacotes-ajisai"
@@ -523,7 +523,7 @@ export default function ProdutosPage() {
                 iconHeight={532}
                 title="Pacote de Viagem"
                 description="Escolha uma viagem já estruturada e deixe reservas e organização por nossa conta."
-                cta="Ver pacotes →"
+                cta="Ver pacotes"
               />
               <ProductSelectorCard
                 href="/pacotes#personalizado"
@@ -532,7 +532,7 @@ export default function ProdutosPage() {
                 iconHeight={1254}
                 title="Viagem Personalizada"
                 description="Criamos e organizamos sua viagem do zero, inteiramente de acordo com você."
-                cta="Criar minha viagem →"
+                cta="Criar minha viagem"
                 featured
               />
             </div>
@@ -549,7 +549,7 @@ export default function ProdutosPage() {
                 iconHeight={284}
                 title="Passagem Aérea"
                 description="Emissão de passagens com suporte antes, durante e depois da sua viagem."
-                cta="Ver passagens →"
+                cta="Ver passagens"
                 className="lg:col-span-2"
               />
               <ProductSelectorCard
@@ -559,7 +559,7 @@ export default function ProdutosPage() {
                 iconHeight={366}
                 title="Hotéis"
                 description="Curadoria e reserva de hotéis escolhidos pelo perfil e pela logística da sua viagem."
-                cta="Ver hotéis →"
+                cta="Ver hotéis"
                 className="lg:col-span-2"
               />
               <ProductSelectorCard
@@ -570,7 +570,7 @@ export default function ProdutosPage() {
                 title="Guia Turístico"
                 description="Acompanhamento particular no Japão para os dias e experiências que você escolher."
                 requirement="Requer Roteiro Personalizado"
-                cta="Conhecer o serviço →"
+                cta="Conhecer o serviço"
                 className="lg:col-span-2"
               />
               <ProductSelectorCard
@@ -581,7 +581,7 @@ export default function ProdutosPage() {
                 title="Transporte Privado"
                 description="Transfers e deslocamentos privativos com conforto e motorista particular."
                 requirement="Requer Roteiro Personalizado"
-                cta="Ver transporte →"
+                cta="Ver transporte"
                 className="lg:col-span-2 lg:col-start-2"
               />
               <ProductSelectorCard
@@ -591,7 +591,7 @@ export default function ProdutosPage() {
                 iconHeight={1254}
                 title="Serviços adicionais"
                 description="Seguro viagem, conectividade, ingressos e outros serviços para completar sua viagem."
-                cta="Ver serviços →"
+                cta="Ver serviços"
                 className="lg:col-span-2"
               />
             </div>
@@ -723,7 +723,12 @@ export default function ProdutosPage() {
 
             <ul className="mt-6 space-y-3">
               {ROTEIRO_DESTAQUES.map((item) => (
-                <li key={item} className="flex items-start gap-2.5 text-sm leading-6 text-white/65">
+                <li
+                  key={item}
+                  className={`flex items-start gap-2.5 text-sm leading-6 ${
+                    item.startsWith("Nós planejamos") ? "font-medium text-[#6ec3d9]" : "text-white/65"
+                  }`}
+                >
                   <IconCheck className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[#6ec3d9]" />
                   {item}
                 </li>
@@ -737,7 +742,7 @@ export default function ProdutosPage() {
                   {precoProdutoLabel(PRODUTOS.roteiro, false)}
                 </p>
                 {precoBRLProdutoLabel(PRODUTOS.roteiro) && (
-                  <p className="mt-0.5 text-sm font-medium text-white/60">
+                  <p className="mt-1 text-lg font-semibold leading-none text-[#9fd4ee]">
                     {precoBRLProdutoLabel(PRODUTOS.roteiro)}
                   </p>
                 )}
@@ -772,7 +777,7 @@ export default function ProdutosPage() {
               target="_blank"
               rel="noopener noreferrer"
               aria-label="Ver painel do roteiro em tamanho maior"
-              className="group relative w-[320px] overflow-hidden rounded-[36px] shadow-2xl transition duration-500 hover:-translate-y-1 hover:shadow-[0_25px_60px_rgba(110,195,217,0.25)] md:w-[400px]"
+              className="group relative w-[320px] overflow-visible rounded-[36px] shadow-2xl transition duration-500 hover:-translate-y-1 hover:shadow-[0_25px_60px_rgba(110,195,217,0.25)] md:w-[400px]"
             >
               <div className="relative aspect-[1024/1536] w-full">
                 <Image
@@ -780,7 +785,7 @@ export default function ProdutosPage() {
                   alt="Painel Ajisai — roteiro diário, atrações e logística organizados"
                   fill
                   sizes="400px"
-                  className="object-contain transition duration-700 group-hover:scale-[1.03]"
+                  className="object-contain transition duration-700 group-hover:scale-[1.015]"
                 />
               </div>
             </a>
@@ -1360,7 +1365,7 @@ function ProductSelectorCard({
         event.preventDefault();
         onClick();
       }}
-      className={`group relative flex min-h-[190px] flex-col overflow-hidden rounded-2xl border p-6 text-left transition md:min-h-[210px] md:p-8 ${
+      className={`group relative flex h-[350px] flex-col overflow-hidden rounded-2xl border p-6 text-left transition md:p-8 ${
         featured
           ? "border-[#6ec3d9]/45 bg-[#6ec3d9]/[0.055] shadow-[0_0_34px_-12px_rgba(110,195,217,0.42)] hover:border-[#6ec3d9]/70 hover:bg-[#6ec3d9]/[0.075]"
           : "border-white/10 bg-white/[0.02] shadow-[0_0_30px_-14px_rgba(37,99,235,0.3)] hover:border-white/25 hover:bg-white/[0.04]"
@@ -1385,7 +1390,7 @@ function ProductSelectorCard({
           {requirement}
         </span>
       )}
-      <span className="mt-5 text-[11px] uppercase tracking-[0.18em] text-white/45 transition group-hover:text-white">
+      <span className="mt-5 inline-flex w-fit items-center justify-center rounded-full bg-[#2f80c9] px-4 py-2.5 text-[10px] font-semibold uppercase tracking-[0.16em] text-white shadow-[0_8px_24px_rgba(47,128,201,0.22)] transition group-hover:bg-[#3b91dc] group-hover:shadow-[0_10px_28px_rgba(47,128,201,0.35)]">
         {cta}
       </span>
     </a>
@@ -1437,7 +1442,8 @@ function DemoVideo({
           controls
           preload="metadata"
           poster={poster}
-          className="h-full w-full object-cover"
+          playsInline
+          className="h-full w-full bg-black object-contain fullscreen:h-screen fullscreen:w-screen fullscreen:object-contain"
         >
           <source src={src} type="video/mp4" />
         </video>
