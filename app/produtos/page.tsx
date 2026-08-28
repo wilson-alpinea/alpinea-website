@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Bodoni_Moda } from "next/font/google";
@@ -384,6 +384,23 @@ export default function ProdutosPage() {
   const [passagens, setPassagens] = useState<"sim" | "nao" | "">("");
   const [primeiraViagem, setPrimeiraViagem] = useState<"sim" | "nao" | "">("");
   const [enviado, setEnviado] = useState(false);
+  const [roteiroModalOpen, setRoteiroModalOpen] = useState(false);
+
+  useEffect(() => {
+    if (!roteiroModalOpen) return;
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setRoteiroModalOpen(false);
+    };
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [roteiroModalOpen]);
 
   // Entrada direta (CTA de cada produto) — vai direto para a qualificação,
   // já com o produto marcado.
@@ -490,7 +507,8 @@ export default function ProdutosPage() {
 
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
               <ProductSelectorCard
-                href="#roteiro"
+                href="#roteiro-personalizado"
+                onClick={() => setRoteiroModalOpen(true)}
                 icon="/images/produtos/roteiro-personalizado.png"
                 iconWidth={439}
                 iconHeight={504}
@@ -551,6 +569,7 @@ export default function ProdutosPage() {
                 iconHeight={444}
                 title="Guia Turístico"
                 description="Acompanhamento particular no Japão para os dias e experiências que você escolher."
+                requirement="Requer Roteiro Personalizado"
                 cta="Conhecer o serviço →"
                 className="lg:col-span-2"
               />
@@ -561,6 +580,7 @@ export default function ProdutosPage() {
                 iconHeight={1024}
                 title="Transporte Privado"
                 description="Transfers e deslocamentos privativos com conforto e motorista particular."
+                requirement="Requer Roteiro Personalizado"
                 cta="Ver transporte →"
                 className="lg:col-span-2 lg:col-start-2"
               />
@@ -663,13 +683,34 @@ export default function ProdutosPage() {
       </div>
 
       {/* ── ROTEIRO PERSONALIZADO — DEMONSTRAÇÃO ── */}
-      <section id="roteiro" className="border-b border-white/10 bg-[#050505] px-6 py-16 md:px-16 md:py-24">
+      {roteiroModalOpen && (
+        <div
+          className="fixed inset-0 z-[90] flex items-end justify-center bg-black/85 p-0 backdrop-blur-sm md:items-center md:p-6"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="roteiro-modal-title"
+          onClick={() => setRoteiroModalOpen(false)}
+        >
+          <section
+            id="roteiro-personalizado"
+            className="relative max-h-[94vh] w-full max-w-7xl overflow-y-auto rounded-t-3xl border border-white/10 bg-[#050505] px-6 py-16 shadow-2xl md:rounded-3xl md:px-16 md:py-20"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <button
+              type="button"
+              onClick={() => setRoteiroModalOpen(false)}
+              aria-label="Fechar informações do Roteiro Personalizado"
+              className="sticky right-0 top-0 z-20 ml-auto flex h-10 w-10 items-center justify-center rounded-full border border-white/15 bg-black/70 text-2xl leading-none text-white/65 backdrop-blur transition hover:border-white/40 hover:text-white"
+            >
+              ×
+            </button>
         <div className="mx-auto grid max-w-6xl items-center gap-12 md:grid-cols-2">
           <div>
             <p className="text-[10px] uppercase tracking-[0.2em] text-[#6ec3d9]">
               Roteiro Personalizado
             </p>
             <h2
+              id="roteiro-modal-title"
               className={`${display.className} mt-3 text-3xl font-medium leading-tight text-white md:text-4xl`}
             >
               Isto não é uma lista de lugares para visitar.
@@ -704,7 +745,10 @@ export default function ProdutosPage() {
               </div>
               <button
                 type="button"
-                onClick={() => escolherProduto("roteiro")}
+                onClick={() => {
+                  setRoteiroModalOpen(false);
+                  escolherProduto("roteiro");
+                }}
                 className="rounded-full px-6 py-3.5 text-center text-[11px] font-semibold uppercase tracking-[0.2em] text-white shadow-[0_10px_30px_rgba(0,0,0,0.35)] transition duration-300 hover:-translate-y-0.5"
                 style={{ backgroundColor: "#2f80c9" }}
               >
@@ -779,7 +823,9 @@ export default function ProdutosPage() {
             </div>
           </div>
         </div>
-      </section>
+          </section>
+        </div>
+      )}
 
       {/* ── PACOTES AJISAI — 3 PRODUTOS ── */}
       <section id="pacotes-ajisai" className="border-b border-white/10 bg-black px-6 py-16 md:px-16 md:py-24">
@@ -1283,21 +1329,25 @@ export default function ProdutosPage() {
 
 function ProductSelectorCard({
   href,
+  onClick,
   icon,
   iconWidth,
   iconHeight,
   title,
   description,
+  requirement,
   cta,
   featured = false,
   className = "",
 }: {
   href: string;
+  onClick?: () => void;
   icon: string;
   iconWidth: number;
   iconHeight: number;
   title: string;
   description: string;
+  requirement?: string;
   cta: string;
   featured?: boolean;
   className?: string;
@@ -1305,6 +1355,11 @@ function ProductSelectorCard({
   return (
     <a
       href={href}
+      onClick={(event) => {
+        if (!onClick) return;
+        event.preventDefault();
+        onClick();
+      }}
       className={`group relative flex min-h-[190px] flex-col overflow-hidden rounded-2xl border p-6 text-left transition md:min-h-[210px] md:p-8 ${
         featured
           ? "border-[#6ec3d9]/45 bg-[#6ec3d9]/[0.055] shadow-[0_0_34px_-12px_rgba(110,195,217,0.42)] hover:border-[#6ec3d9]/70 hover:bg-[#6ec3d9]/[0.075]"
@@ -1325,6 +1380,11 @@ function ProductSelectorCard({
       <p className="mt-3 max-w-[34ch] flex-1 text-sm font-light leading-6 text-white/55">
         {description}
       </p>
+      {requirement && (
+        <span className="mt-4 w-fit rounded-full border border-red-400/40 bg-red-500/15 px-3 py-1.5 text-[9px] font-semibold uppercase tracking-[0.13em] text-red-300">
+          {requirement}
+        </span>
+      )}
       <span className="mt-5 text-[11px] uppercase tracking-[0.18em] text-white/45 transition group-hover:text-white">
         {cta}
       </span>
