@@ -449,34 +449,31 @@ export default function ProdutosPage() {
 
       {/* ── HERO — PRODUTOS ── */}
       <section className="relative border-b border-white/10 bg-black">
-        <div
-          className="relative w-full overflow-hidden
-                     h-[72svh] min-h-[540px] max-h-[700px]
-                     sm:h-[74svh] sm:min-h-[580px] sm:max-h-[760px]
-                     md:h-[70vh] md:min-h-[560px] md:max-h-[780px]
-                     lg:h-[74vh] lg:min-h-[600px] lg:max-h-[820px]
-                     2xl:h-[78vh] 2xl:min-h-[640px] 2xl:max-h-[880px]"
-        >
+        {/*
+          HERO RESPONSIVO SEM DEFORMAÇÃO
+          - Usa a imagem original /images/produtos-hero.png
+          - Mantém a proporção nativa 1402 x 1122
+          - Nunca amplia além de 1402px
+          - Em widescreen, sobra área preta nas laterais
+          - Em telas menores, reduz proporcionalmente
+          - Sem object-cover, sem vh, sem crop
+        */}
+        <div className="relative mx-auto w-full max-w-[1402px] overflow-hidden">
           <Image
-            src="/images/produtos-hero-inverno.png"
+            src="/images/produtos-hero.png"
             alt="Estrada coberta de neve diante do Monte Fuji no Japão"
-            fill
+            width={1402}
+            height={1122}
             priority
-            sizes="100vw"
-            className="object-cover object-[50%_0%]
-                       sm:object-[50%_0%]
-                       md:object-[50%_15%]
-                       lg:object-[50%_22%]
-                       xl:object-[50%_25%]
-                       2xl:object-[50%_28%]"
+            sizes="(min-width: 1402px) 1402px, 100vw"
+            className="block h-auto w-full"
           />
 
-          {/* Escurecimento apenas na base: mantém cerca de 90% da foto livre */}
-          <div className="pointer-events-none absolute inset-x-0 bottom-0 h-[34%] bg-gradient-to-t from-black via-black/55 to-transparent md:h-[30%]" />
+          <div className="pointer-events-none absolute inset-x-0 bottom-0 h-[28%] bg-gradient-to-t from-black via-black/45 to-transparent" />
 
-          <div className="absolute inset-x-0 bottom-0 z-10 flex justify-center px-5 pb-7 sm:px-8 sm:pb-9 md:px-12 md:pb-10 lg:pb-12">
+          <div className="absolute inset-x-0 bottom-0 z-10 flex justify-center px-5 pb-6 sm:px-8 sm:pb-8 md:px-12 md:pb-10">
             <h1
-              className={`${display.className} max-w-5xl text-center text-[clamp(2.15rem,9vw,3.4rem)] font-medium leading-[1.02] tracking-[-0.02em] text-white md:text-5xl lg:text-6xl`}
+              className={`${display.className} max-w-5xl text-center text-[clamp(2rem,6vw,4.25rem)] font-medium leading-[1.05] tracking-[-0.02em] text-white`}
               style={{ textShadow: "0 3px 18px rgba(0,0,0,0.72)" }}
             >
               Como você quer viajar pelo Japão?
