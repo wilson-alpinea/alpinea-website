@@ -385,14 +385,18 @@ export default function ProdutosPage() {
   const [primeiraViagem, setPrimeiraViagem] = useState<"sim" | "nao" | "">("");
   const [enviado, setEnviado] = useState(false);
   const [roteiroModalOpen, setRoteiroModalOpen] = useState(false);
+  const [pacotesModalOpen, setPacotesModalOpen] = useState(false);
 
   useEffect(() => {
-    if (!roteiroModalOpen) return;
+    if (!roteiroModalOpen && !pacotesModalOpen) return;
 
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") setRoteiroModalOpen(false);
+      if (event.key === "Escape") {
+        setRoteiroModalOpen(false);
+        setPacotesModalOpen(false);
+      }
     };
     window.addEventListener("keydown", handleKeyDown);
 
@@ -400,7 +404,7 @@ export default function ProdutosPage() {
       document.body.style.overflow = previousOverflow;
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [roteiroModalOpen]);
+  }, [roteiroModalOpen, pacotesModalOpen]);
 
   // Entrada direta (CTA de cada produto) — vai direto para a qualificação,
   // já com o produto marcado.
@@ -517,7 +521,8 @@ export default function ProdutosPage() {
                 cta="Conhecer o roteiro"
               />
               <ProductSelectorCard
-                href="#pacotes-ajisai"
+                href="/pacotes"
+                onClick={() => setPacotesModalOpen(true)}
                 icon="/images/produtos/pacote-de-viagem.png"
                 iconWidth={350}
                 iconHeight={532}
@@ -829,6 +834,51 @@ export default function ProdutosPage() {
           </div>
         </div>
           </section>
+        </div>
+      )}
+
+      {pacotesModalOpen && (
+        <div
+          className="fixed inset-0 z-[90] flex items-end justify-center bg-black/85 p-0 backdrop-blur-sm md:items-center md:p-6"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="pacotes-modal-title"
+          onClick={() => setPacotesModalOpen(false)}
+        >
+          <div
+            className="relative h-[96vh] w-full max-w-[1500px] overflow-hidden rounded-t-3xl border border-white/10 bg-black shadow-2xl md:h-[94vh] md:rounded-3xl"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <div className="absolute inset-x-0 top-0 z-20 flex h-14 items-center justify-between border-b border-white/10 bg-black/90 px-4 backdrop-blur-xl md:px-6">
+              <p
+                id="pacotes-modal-title"
+                className={`${display.className} text-lg font-medium text-white md:text-xl`}
+              >
+                Pacotes de Viagem
+              </p>
+              <div className="flex items-center gap-3">
+                <Link
+                  href="/pacotes"
+                  className="hidden text-[10px] font-semibold uppercase tracking-[0.15em] text-[#6ec3d9] transition hover:text-white sm:block"
+                >
+                  Abrir página completa
+                </Link>
+                <button
+                  type="button"
+                  onClick={() => setPacotesModalOpen(false)}
+                  aria-label="Fechar Pacotes de Viagem"
+                  className="flex h-9 w-9 items-center justify-center rounded-full border border-white/15 text-2xl leading-none text-white/65 transition hover:border-white/40 hover:text-white"
+                >
+                  ×
+                </button>
+              </div>
+            </div>
+            <iframe
+              src="/pacotes"
+              title="Conteúdo completo de Pacotes de Viagem"
+              className="h-full w-full border-0 pt-14"
+            />
+          </div>
         </div>
       )}
 
