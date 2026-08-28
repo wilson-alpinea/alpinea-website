@@ -448,153 +448,61 @@ export default function ProdutosPage() {
       </header>
 
       {/* ── HERO — PRODUTOS ── */}
-      <section className="relative border-b border-white/10 bg-black">
-        <div
-          className="relative w-full overflow-hidden
-                     h-[72svh] min-h-[540px] max-h-[700px]
-                     sm:h-[74svh] sm:min-h-[580px] sm:max-h-[760px]
-                     md:h-[70vh] md:min-h-[560px] md:max-h-[780px]
-                     lg:h-[74vh] lg:min-h-[600px] lg:max-h-[820px]
-                     2xl:h-[78vh] 2xl:min-h-[640px] 2xl:max-h-[880px]"
-        >
+      <section className="border-b border-white/10 bg-black">
+        <div className="relative w-full overflow-hidden aspect-[2048/900] md:aspect-[2048/900]">
           <Image
-            src="/images/produtos-hero-inverno.png"
-            alt="Estrada coberta de neve diante do Monte Fuji no Japão"
+            src="/images/produtos-hero.jpg"
+            alt="Experiência de viagem no Japão com a Ajisai"
             fill
             priority
             sizes="100vw"
-            className="object-cover object-[50%_0%]
-                       sm:object-[50%_0%]
-                       md:object-[50%_15%]
-                       lg:object-[50%_22%]
-                       xl:object-[50%_25%]
-                       2xl:object-[50%_28%]"
+            className="object-cover object-center"
           />
 
-          {/* Escurecimento apenas na base: mantém cerca de 90% da foto livre */}
-          <div className="pointer-events-none absolute inset-x-0 bottom-0 h-[34%] bg-gradient-to-t from-black via-black/55 to-transparent md:h-[30%]" />
+          {/* Gradiente restrito ao rodapé para preservar a imagem */}
+          <div className="absolute inset-x-0 bottom-0 h-[30%] bg-gradient-to-t from-black via-black/55 to-transparent" />
 
-          <div className="absolute inset-x-0 bottom-0 z-10 flex justify-center px-5 pb-7 sm:px-8 sm:pb-9 md:px-12 md:pb-10 lg:pb-12">
+          <div className="absolute inset-x-0 bottom-0 px-6 pb-8 text-center md:px-16 md:pb-12">
             <h1
-              className={`${display.className} max-w-5xl text-center text-[clamp(2.15rem,9vw,3.4rem)] font-medium leading-[1.02] tracking-[-0.02em] text-white md:text-5xl lg:text-6xl`}
-              style={{ textShadow: "0 3px 18px rgba(0,0,0,0.72)" }}
+              className={`${display.className} text-3xl font-medium leading-tight text-white sm:text-4xl md:text-6xl`}
+              style={{ textShadow: "0 2px 18px rgba(0,0,0,0.72)" }}
             >
               Como você quer viajar pelo Japão?
             </h1>
           </div>
         </div>
+      </section>
 
-        {/* ── SELETOR DE PRODUTOS ── */}
-        <div className="bg-black px-5 py-10 sm:px-6 sm:py-12 md:px-10 md:py-14 lg:px-16">
-          <div className="mx-auto grid max-w-7xl gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            <a
-              href="#roteiro"
-              className="group flex min-h-[190px] flex-col rounded-2xl border border-white/10 bg-white/[0.02] p-6 text-left shadow-[0_0_30px_-14px_rgba(37,99,235,0.3)] transition hover:border-white/25 hover:bg-white/[0.04] md:min-h-[210px] md:p-8"
+      {/* ── CATÁLOGO DE PRODUTOS ── */}
+      <section className="border-b border-white/10 bg-black px-6 py-12 md:px-16 md:py-16">
+        <div className="mx-auto grid max-w-7xl grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-6 md:gap-4">
+          {[
+            { nome: "Roteiro Personalizado", href: "/ajisairoteiros", icone: "/images/icone-roteiro-personalizado.png" },
+            { nome: "Pacote de Viagem", href: "/pacotes", icone: "/images/icone-pacote-viagem.png" },
+            { nome: "Passagem Aérea", href: "#passagens", icone: "/images/icone-passagem-aerea.png" },
+            { nome: "Hotéis", href: "#hoteis", icone: "/images/icone-hoteis.png" },
+            { nome: "Guia Turístico", href: "#guia", icone: "/images/icone-guia-turistico.png" },
+            { nome: "Transporte Privado", href: "#transporte", icone: "/images/icone-transporte-privado.png" },
+          ].map((produto) => (
+            <Link
+              key={produto.nome}
+              href={produto.href}
+              className="group flex min-h-[168px] flex-col items-center justify-center rounded-2xl border border-white/10 bg-white/[0.025] px-4 py-6 text-center transition duration-300 hover:-translate-y-1 hover:border-white/25 hover:bg-white/[0.05]"
             >
-              <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#6ec3d9]">
-                Quero organizar minha viagem
-              </p>
-              <h2 className={`${display.className} mt-3 text-2xl font-medium text-white md:text-3xl`}>
-                Roteiro Personalizado
+              <div className="relative h-14 w-14 md:h-16 md:w-16">
+                <Image
+                  src={produto.icone}
+                  alt=""
+                  fill
+                  sizes="64px"
+                  className="object-contain opacity-90 transition duration-300 group-hover:scale-105 group-hover:opacity-100"
+                />
+              </div>
+              <h2 className={`${display.className} mt-4 text-base font-medium leading-tight text-white md:text-lg`}>
+                {produto.nome}
               </h2>
-              <p className="mt-3 flex-1 text-sm font-light leading-6 text-white/55">
-                Recebo o planejamento completo e faço minhas próprias reservas.
-              </p>
-              <span className="mt-5 text-[11px] uppercase tracking-[0.18em] text-white/45 transition group-hover:text-white">
-                Conhecer o roteiro →
-              </span>
-            </a>
-
-            <a
-              href="#pacotes-ajisai"
-              className="group flex min-h-[190px] flex-col rounded-2xl border border-white/10 bg-white/[0.02] p-6 text-left shadow-[0_0_30px_-14px_rgba(37,99,235,0.3)] transition hover:border-white/25 hover:bg-white/[0.04] md:min-h-[210px] md:p-8"
-            >
-              <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#6ec3d9]">
-                Quero que a Ajisai organize
-              </p>
-              <h2 className={`${display.className} mt-3 text-2xl font-medium text-white md:text-3xl`}>
-                Pacote de Viagem
-              </h2>
-              <p className="mt-3 flex-1 text-sm font-light leading-6 text-white/55">
-                A Ajisai cuida da organização e você recebe a viagem estruturada.
-              </p>
-              <span className="mt-5 text-[11px] uppercase tracking-[0.18em] text-white/45 transition group-hover:text-white">
-                Ver opções →
-              </span>
-            </a>
-
-            <a
-              href="#passagens-aereas"
-              className="group flex min-h-[190px] flex-col rounded-2xl border border-white/10 bg-white/[0.02] p-6 text-left shadow-[0_0_30px_-14px_rgba(37,99,235,0.3)] transition hover:border-white/25 hover:bg-white/[0.04] md:min-h-[210px] md:p-8"
-            >
-              <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#6ec3d9]">
-                Quero comprar minha passagem
-              </p>
-              <h2 className={`${display.className} mt-3 text-2xl font-medium text-white md:text-3xl`}>
-                Passagem Aérea
-              </h2>
-              <p className="mt-3 flex-1 text-sm font-light leading-6 text-white/55">
-                Emissão com suporte da agência antes, durante e depois do embarque.
-              </p>
-              <span className="mt-5 text-[11px] uppercase tracking-[0.18em] text-white/45 transition group-hover:text-white">
-                Conhecer o serviço →
-              </span>
-            </a>
-
-            <a
-              href="/pacotes#personalizado"
-              className="group flex min-h-[190px] flex-col rounded-2xl border border-white/10 bg-white/[0.02] p-6 text-left shadow-[0_0_30px_-14px_rgba(37,99,235,0.3)] transition hover:border-white/25 hover:bg-white/[0.04] md:min-h-[210px] md:p-8"
-            >
-              <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#6ec3d9]">
-                Quero reservar hospedagem
-              </p>
-              <h2 className={`${display.className} mt-3 text-2xl font-medium text-white md:text-3xl`}>
-                Hotéis
-              </h2>
-              <p className="mt-3 flex-1 text-sm font-light leading-6 text-white/55">
-                Curadoria e reserva de hotéis alinhados ao perfil e à logística da viagem.
-              </p>
-              <span className="mt-5 text-[11px] uppercase tracking-[0.18em] text-white/45 transition group-hover:text-white">
-                Ver hospedagens →
-              </span>
-            </a>
-
-            <a
-              href="#guia"
-              className="group flex min-h-[190px] flex-col rounded-2xl border border-white/10 bg-white/[0.02] p-6 text-left shadow-[0_0_30px_-14px_rgba(37,99,235,0.3)] transition hover:border-white/25 hover:bg-white/[0.04] md:min-h-[210px] md:p-8"
-            >
-              <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#6ec3d9]">
-                Já tenho meu roteiro
-              </p>
-              <h2 className={`${display.className} mt-3 text-2xl font-medium text-white md:text-3xl`}>
-                Guia Turístico
-              </h2>
-              <p className="mt-3 flex-1 text-sm font-light leading-6 text-white/55">
-                Guia particular para um ou mais dias específicos da sua viagem.
-              </p>
-              <span className="mt-5 text-[11px] uppercase tracking-[0.18em] text-white/45 transition group-hover:text-white">
-                Conhecer o guia →
-              </span>
-            </a>
-
-            <a
-              href="/pacotes#personalizado"
-              className="group flex min-h-[190px] flex-col rounded-2xl border border-white/10 bg-white/[0.02] p-6 text-left shadow-[0_0_30px_-14px_rgba(37,99,235,0.3)] transition hover:border-white/25 hover:bg-white/[0.04] md:min-h-[210px] md:p-8"
-            >
-              <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#6ec3d9]">
-                Quero viajar com mais conforto
-              </p>
-              <h2 className={`${display.className} mt-3 text-2xl font-medium text-white md:text-3xl`}>
-                Transporte Privado
-              </h2>
-              <p className="mt-3 flex-1 text-sm font-light leading-6 text-white/55">
-                Transfers e deslocamentos exclusivos com motorista particular.
-              </p>
-              <span className="mt-5 text-[11px] uppercase tracking-[0.18em] text-white/45 transition group-hover:text-white">
-                Ver transporte →
-              </span>
-            </a>
-          </div>
+            </Link>
+          ))}
         </div>
       </section>
 
@@ -623,7 +531,7 @@ export default function ProdutosPage() {
       </section>
 
       {/* ── DIFERENCIAIS AJISAI · PASSAGENS AÉREAS ── */}
-      <div id="passagens-aereas" className="scroll-mt-24 border-b border-white/10 bg-black">
+      <div className="border-b border-white/10 bg-black">
         <div className="relative h-[420px] w-full overflow-hidden sm:h-[500px] md:h-[600px]">
           <Image
             src="/images/hero-passagens-aereas.jpg"
