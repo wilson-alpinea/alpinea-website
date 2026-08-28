@@ -483,125 +483,92 @@ export default function ProdutosPage() {
 
         {/* ── SELETOR DE PRODUTOS ── */}
         <div className="bg-black px-5 py-10 sm:px-6 sm:py-12 md:px-10 md:py-14 lg:px-16">
-          <div className="mx-auto grid max-w-7xl gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            <a
-              href="#roteiro"
-              className="group relative flex min-h-[190px] flex-col overflow-hidden rounded-2xl border border-white/10 bg-white/[0.02] p-6 text-left shadow-[0_0_30px_-14px_rgba(37,99,235,0.3)] transition hover:border-white/25 hover:bg-white/[0.04] md:min-h-[210px] md:p-8"
-            >
-              <Image src="/images/produtos/roteiro-personalizado.png" alt="" width={439} height={504} className="absolute right-6 top-5 h-14 w-14 object-contain opacity-90 md:right-8 md:top-7" />
-              <div className="h-4" aria-hidden="true" />
-              <h2 className={`${display.className} mt-3 pr-16 text-2xl font-medium text-white md:text-3xl`}>
-                Roteiro Personalizado
-              </h2>
-              <p className="mt-3 flex-1 text-sm font-light leading-6 text-white/55">
-                Recebo o planejamento completo e faço minhas próprias reservas.
-              </p>
-              <span className="mt-5 text-[11px] uppercase tracking-[0.18em] text-white/45 transition group-hover:text-white">
-                Conhecer o roteiro →
-              </span>
-            </a>
+          <div className="mx-auto max-w-7xl">
+            <h2 className={`${display.className} mb-6 text-2xl font-medium text-white md:text-3xl`}>
+              Como você quer organizar sua viagem?
+            </h2>
 
-            <a
-              href="#pacotes-ajisai"
-              className="group relative flex min-h-[190px] flex-col overflow-hidden rounded-2xl border border-white/10 bg-white/[0.02] p-6 text-left shadow-[0_0_30px_-14px_rgba(37,99,235,0.3)] transition hover:border-white/25 hover:bg-white/[0.04] md:min-h-[210px] md:p-8"
-            >
-              <Image src="/images/produtos/pacote-de-viagem.png" alt="" width={350} height={532} className="absolute right-6 top-5 h-14 w-14 object-contain opacity-90 md:right-8 md:top-7" />
-              <div className="h-4" aria-hidden="true" />
-              <h2 className={`${display.className} mt-3 pr-16 text-2xl font-medium text-white md:text-3xl`}>
-                Pacote de Viagem
-              </h2>
-              <p className="mt-3 flex-1 text-sm font-light leading-6 text-white/55">
-                A Ajisai cuida da organização e você recebe a viagem estruturada.
-              </p>
-              <span className="mt-5 text-[11px] uppercase tracking-[0.18em] text-white/45 transition group-hover:text-white">
-                Ver opções →
-              </span>
-            </a>
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              <ProductSelectorCard
+                href="#roteiro"
+                icon="/images/produtos/roteiro-personalizado.png"
+                iconWidth={439}
+                iconHeight={504}
+                title="Roteiro Personalizado"
+                description="Receba um planejamento completo, criado para sua viagem, e faça suas próprias reservas."
+                cta="Conhecer o roteiro →"
+              />
+              <ProductSelectorCard
+                href="#pacotes-ajisai"
+                icon="/images/produtos/pacote-de-viagem.png"
+                iconWidth={350}
+                iconHeight={532}
+                title="Pacote de Viagem"
+                description="Escolha uma viagem já estruturada e deixe reservas e organização por nossa conta."
+                cta="Ver pacotes →"
+              />
+              <ProductSelectorCard
+                href="/pacotes#personalizado"
+                icon="/images/produtos/viagem-personalizada.png"
+                iconWidth={1254}
+                iconHeight={1254}
+                title="Viagem Personalizada"
+                description="Criamos e organizamos sua viagem do zero, inteiramente de acordo com você."
+                cta="Criar minha viagem →"
+              />
+            </div>
 
-            <a
-              href="#passagens-aereas"
-              className="group relative flex min-h-[190px] flex-col overflow-hidden rounded-2xl border border-white/10 bg-white/[0.02] p-6 text-left shadow-[0_0_30px_-14px_rgba(37,99,235,0.3)] transition hover:border-white/25 hover:bg-white/[0.04] md:min-h-[210px] md:p-8"
-            >
-              <Image src="/images/produtos/passagem-aerea.png" alt="" width={449} height={284} className="absolute right-6 top-5 h-14 w-14 object-contain opacity-90 md:right-8 md:top-7" />
-              <div className="h-4" aria-hidden="true" />
-              <h2 className={`${display.className} mt-3 pr-16 text-2xl font-medium text-white md:text-3xl`}>
-                Passagem Aérea
-              </h2>
-              <p className="mt-3 flex-1 text-sm font-light leading-6 text-white/55">
-                Emissão com suporte da agência antes, durante e depois do embarque.
-              </p>
-              <span className="mt-5 text-[11px] uppercase tracking-[0.18em] text-white/45 transition group-hover:text-white">
-                Conhecer o serviço →
-              </span>
-            </a>
+            <h2 className={`${display.className} mb-6 mt-12 text-2xl font-medium text-white md:mt-16 md:text-3xl`}>
+              Complete sua viagem
+            </h2>
 
-            <a
-              href="/pacotes#personalizado"
-              className="group relative flex min-h-[190px] flex-col overflow-hidden rounded-2xl border border-white/10 bg-white/[0.02] p-6 text-left shadow-[0_0_30px_-14px_rgba(37,99,235,0.3)] transition hover:border-white/25 hover:bg-white/[0.04] md:min-h-[210px] md:p-8"
-            >
-              <Image src="/images/produtos/hoteis.png" alt="" width={435} height={366} className="absolute right-6 top-5 h-14 w-14 object-contain opacity-90 md:right-8 md:top-7" />
-              <div className="h-4" aria-hidden="true" />
-              <h2 className={`${display.className} mt-3 pr-16 text-2xl font-medium text-white md:text-3xl`}>
-                Hotéis
-              </h2>
-              <p className="mt-3 flex-1 text-sm font-light leading-6 text-white/55">
-                Curadoria e reserva de hotéis alinhados ao perfil e à logística da viagem.
-              </p>
-              <span className="mt-5 text-[11px] uppercase tracking-[0.18em] text-white/45 transition group-hover:text-white">
-                Ver hospedagens →
-              </span>
-            </a>
-
-            <a
-              href="#guia"
-              className="group relative flex min-h-[190px] flex-col overflow-hidden rounded-2xl border border-white/10 bg-white/[0.02] p-6 text-left shadow-[0_0_30px_-14px_rgba(37,99,235,0.3)] transition hover:border-white/25 hover:bg-white/[0.04] md:min-h-[210px] md:p-8"
-            >
-              <Image src="/images/produtos/guia-turistico.png" alt="" width={359} height={444} className="absolute right-6 top-5 h-14 w-14 object-contain opacity-90 md:right-8 md:top-7" />
-              <div className="h-4" aria-hidden="true" />
-              <h2 className={`${display.className} mt-3 pr-16 text-2xl font-medium text-white md:text-3xl`}>
-                Guia Turístico
-              </h2>
-              <p className="mt-3 flex-1 text-sm font-light leading-6 text-white/55">
-                Guia particular para um ou mais dias específicos da sua viagem.
-              </p>
-              <span className="mt-5 text-[11px] uppercase tracking-[0.18em] text-white/45 transition group-hover:text-white">
-                Conhecer o guia →
-              </span>
-            </a>
-
-            <a
-              href="/pacotes#personalizado"
-              className="group relative flex min-h-[190px] flex-col overflow-hidden rounded-2xl border border-white/10 bg-white/[0.02] p-6 text-left shadow-[0_0_30px_-14px_rgba(37,99,235,0.3)] transition hover:border-white/25 hover:bg-white/[0.04] md:min-h-[210px] md:p-8"
-            >
-              <Image src="/images/produtos/transporte-privado.png" alt="" width={1536} height={1024} className="absolute right-6 top-5 h-14 w-14 object-contain opacity-90 md:right-8 md:top-7" />
-              <div className="h-4" aria-hidden="true" />
-              <h2 className={`${display.className} mt-3 pr-16 text-2xl font-medium text-white md:text-3xl`}>
-                Transporte Privado
-              </h2>
-              <p className="mt-3 flex-1 text-sm font-light leading-6 text-white/55">
-                Transfers e deslocamentos exclusivos com motorista particular.
-              </p>
-              <span className="mt-5 text-[11px] uppercase tracking-[0.18em] text-white/45 transition group-hover:text-white">
-                Ver transporte →
-              </span>
-            </a>
-
-            <a
-              href="#servicos-avulsos"
-              className="group relative flex min-h-[190px] flex-col overflow-hidden rounded-2xl border border-white/10 bg-white/[0.02] p-6 text-left shadow-[0_0_30px_-14px_rgba(37,99,235,0.3)] transition hover:border-white/25 hover:bg-white/[0.04] md:min-h-[210px] md:p-8"
-            >
-              <Image src="/images/produtos/servicos-adicionais.png" alt="" width={1254} height={1254} className="absolute right-6 top-5 h-14 w-14 object-contain opacity-90 md:right-8 md:top-7" />
-              <div className="h-4" aria-hidden="true" />
-              <h2 className={`${display.className} mt-3 pr-16 text-2xl font-medium text-white md:text-3xl`}>
-                Serviços adicionais
-              </h2>
-              <p className="mt-3 flex-1 text-sm font-light leading-6 text-white/55">
-                Seguro viagem, conectividade, reservas e outros complementos.
-              </p>
-              <span className="mt-5 text-[11px] uppercase tracking-[0.18em] text-white/45 transition group-hover:text-white">
-                Ver serviços →
-              </span>
-            </a>
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              <ProductSelectorCard
+                href="#passagens-aereas"
+                icon="/images/produtos/passagem-aerea.png"
+                iconWidth={449}
+                iconHeight={284}
+                title="Passagem Aérea"
+                description="Emissão de passagens com suporte antes, durante e depois da sua viagem."
+                cta="Ver passagens →"
+              />
+              <ProductSelectorCard
+                href="/pacotes#personalizado"
+                icon="/images/produtos/hoteis.png"
+                iconWidth={435}
+                iconHeight={366}
+                title="Hotéis"
+                description="Curadoria e reserva de hotéis escolhidos pelo perfil e pela logística da sua viagem."
+                cta="Ver hotéis →"
+              />
+              <ProductSelectorCard
+                href="#guia"
+                icon="/images/produtos/guia-turistico.png"
+                iconWidth={359}
+                iconHeight={444}
+                title="Guia Turístico"
+                description="Acompanhamento particular no Japão para os dias e experiências que você escolher."
+                cta="Conhecer o serviço →"
+              />
+              <ProductSelectorCard
+                href="/pacotes#personalizado"
+                icon="/images/produtos/transporte-privado.png"
+                iconWidth={1536}
+                iconHeight={1024}
+                title="Transporte Privado"
+                description="Transfers e deslocamentos privativos com conforto e motorista particular."
+                cta="Ver transporte →"
+              />
+              <ProductSelectorCard
+                href="#servicos-avulsos"
+                icon="/images/produtos/servicos-adicionais.png"
+                iconWidth={1254}
+                iconHeight={1254}
+                title="Serviços adicionais"
+                description="Seguro viagem, conectividade, ingressos e outros serviços para completar sua viagem."
+                cta="Ver serviços →"
+              />
+            </div>
           </div>
         </div>
       </section>
@@ -1305,6 +1272,47 @@ export default function ProdutosPage() {
         </div>
       </footer>
     </main>
+  );
+}
+
+function ProductSelectorCard({
+  href,
+  icon,
+  iconWidth,
+  iconHeight,
+  title,
+  description,
+  cta,
+}: {
+  href: string;
+  icon: string;
+  iconWidth: number;
+  iconHeight: number;
+  title: string;
+  description: string;
+  cta: string;
+}) {
+  return (
+    <a
+      href={href}
+      className="group relative flex min-h-[190px] flex-col overflow-hidden rounded-2xl border border-white/10 bg-white/[0.02] p-6 text-left shadow-[0_0_30px_-14px_rgba(37,99,235,0.3)] transition hover:border-white/25 hover:bg-white/[0.04] md:min-h-[210px] md:p-8"
+    >
+      <Image
+        src={icon}
+        alt=""
+        width={iconWidth}
+        height={iconHeight}
+        className="absolute right-6 top-5 h-14 w-14 object-contain opacity-90 md:right-8 md:top-7"
+      />
+      <div className="h-4" aria-hidden="true" />
+      <h3 className={`${display.className} mt-3 pr-16 text-2xl font-medium text-white md:text-3xl`}>
+        {title}
+      </h3>
+      <p className="mt-3 flex-1 text-sm font-light leading-6 text-white/55">{description}</p>
+      <span className="mt-5 text-[11px] uppercase tracking-[0.18em] text-white/45 transition group-hover:text-white">
+        {cta}
+      </span>
+    </a>
   );
 }
 
