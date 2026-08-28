@@ -494,7 +494,6 @@ export default function ProdutosPage() {
                 icon="/images/produtos/roteiro-personalizado.png"
                 iconWidth={439}
                 iconHeight={504}
-                eyebrow="Planejamos, você reserva"
                 title="Roteiro Personalizado"
                 description="Receba um planejamento completo, criado para sua viagem, e faça suas próprias reservas."
                 cta="Conhecer o roteiro →"
@@ -504,7 +503,6 @@ export default function ProdutosPage() {
                 icon="/images/produtos/pacote-de-viagem.png"
                 iconWidth={350}
                 iconHeight={532}
-                eyebrow="Viagem já estruturada"
                 title="Pacote de Viagem"
                 description="Escolha uma viagem já estruturada e deixe reservas e organização por nossa conta."
                 cta="Ver pacotes →"
@@ -514,7 +512,6 @@ export default function ProdutosPage() {
                 icon="/images/produtos/viagem-personalizada.png"
                 iconWidth={1254}
                 iconHeight={1254}
-                eyebrow="Sob medida · Premium"
                 title="Viagem Personalizada"
                 description="Criamos e organizamos sua viagem do zero, inteiramente de acordo com você."
                 cta="Criar minha viagem →"
@@ -1289,7 +1286,6 @@ function ProductSelectorCard({
   icon,
   iconWidth,
   iconHeight,
-  eyebrow,
   title,
   description,
   cta,
@@ -1300,7 +1296,6 @@ function ProductSelectorCard({
   icon: string;
   iconWidth: number;
   iconHeight: number;
-  eyebrow?: string;
   title: string;
   description: string;
   cta: string;
@@ -1323,13 +1318,6 @@ function ProductSelectorCard({
         height={iconHeight}
         className="absolute right-6 top-5 h-14 w-14 object-contain opacity-90 md:right-8 md:top-7"
       />
-      {eyebrow && (
-        <span className={`absolute left-6 top-6 max-w-[calc(100%-7rem)] text-[10px] font-semibold uppercase tracking-[0.15em] md:left-8 md:top-8 ${
-          featured ? "text-[#9fd4ee]" : "text-white/45"
-        }`}>
-          {eyebrow}
-        </span>
-      )}
       <div className="h-4" aria-hidden="true" />
       <h3 className={`${display.className} mt-3 pr-16 text-2xl font-medium text-white md:text-3xl`}>
         {title}
