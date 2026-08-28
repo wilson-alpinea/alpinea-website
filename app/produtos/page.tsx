@@ -473,7 +473,7 @@ export default function ProdutosPage() {
 
           <div className="absolute inset-x-0 bottom-0 z-10 flex justify-center px-5 pb-6 sm:px-8 sm:pb-8 md:px-12 md:pb-10">
             <h1
-              className={`${display.className} max-w-5xl text-center text-[clamp(2rem,6vw,4.25rem)] font-medium leading-[1.05] tracking-[-0.02em] text-white`}
+              className={`${display.className} max-w-5xl text-center text-[clamp(1.8rem,5vw,3.6rem)] font-normal leading-[1.08] tracking-[-0.015em] text-white`}
               style={{ textShadow: "0 3px 18px rgba(0,0,0,0.72)" }}
             >
               Como você quer viajar pelo Japão?
@@ -494,6 +494,7 @@ export default function ProdutosPage() {
                 icon="/images/produtos/roteiro-personalizado.png"
                 iconWidth={439}
                 iconHeight={504}
+                eyebrow="Planejamos, você reserva"
                 title="Roteiro Personalizado"
                 description="Receba um planejamento completo, criado para sua viagem, e faça suas próprias reservas."
                 cta="Conhecer o roteiro →"
@@ -503,6 +504,7 @@ export default function ProdutosPage() {
                 icon="/images/produtos/pacote-de-viagem.png"
                 iconWidth={350}
                 iconHeight={532}
+                eyebrow="Viagem já estruturada"
                 title="Pacote de Viagem"
                 description="Escolha uma viagem já estruturada e deixe reservas e organização por nossa conta."
                 cta="Ver pacotes →"
@@ -512,9 +514,11 @@ export default function ProdutosPage() {
                 icon="/images/produtos/viagem-personalizada.png"
                 iconWidth={1254}
                 iconHeight={1254}
+                eyebrow="Sob medida · Premium"
                 title="Viagem Personalizada"
                 description="Criamos e organizamos sua viagem do zero, inteiramente de acordo com você."
                 cta="Criar minha viagem →"
+                featured
               />
             </div>
 
@@ -522,7 +526,7 @@ export default function ProdutosPage() {
               Complete sua viagem
             </h2>
 
-            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-6">
               <ProductSelectorCard
                 href="#passagens-aereas"
                 icon="/images/produtos/passagem-aerea.png"
@@ -531,6 +535,7 @@ export default function ProdutosPage() {
                 title="Passagem Aérea"
                 description="Emissão de passagens com suporte antes, durante e depois da sua viagem."
                 cta="Ver passagens →"
+                className="lg:col-span-2"
               />
               <ProductSelectorCard
                 href="/pacotes#personalizado"
@@ -540,6 +545,7 @@ export default function ProdutosPage() {
                 title="Hotéis"
                 description="Curadoria e reserva de hotéis escolhidos pelo perfil e pela logística da sua viagem."
                 cta="Ver hotéis →"
+                className="lg:col-span-2"
               />
               <ProductSelectorCard
                 href="#guia"
@@ -549,6 +555,7 @@ export default function ProdutosPage() {
                 title="Guia Turístico"
                 description="Acompanhamento particular no Japão para os dias e experiências que você escolher."
                 cta="Conhecer o serviço →"
+                className="lg:col-span-2"
               />
               <ProductSelectorCard
                 href="/pacotes#personalizado"
@@ -558,6 +565,7 @@ export default function ProdutosPage() {
                 title="Transporte Privado"
                 description="Transfers e deslocamentos privativos com conforto e motorista particular."
                 cta="Ver transporte →"
+                className="lg:col-span-2 lg:col-start-2"
               />
               <ProductSelectorCard
                 href="#servicos-avulsos"
@@ -567,6 +575,7 @@ export default function ProdutosPage() {
                 title="Serviços adicionais"
                 description="Seguro viagem, conectividade, ingressos e outros serviços para completar sua viagem."
                 cta="Ver serviços →"
+                className="lg:col-span-2"
               />
             </div>
           </div>
@@ -1280,22 +1289,32 @@ function ProductSelectorCard({
   icon,
   iconWidth,
   iconHeight,
+  eyebrow,
   title,
   description,
   cta,
+  featured = false,
+  className = "",
 }: {
   href: string;
   icon: string;
   iconWidth: number;
   iconHeight: number;
+  eyebrow?: string;
   title: string;
   description: string;
   cta: string;
+  featured?: boolean;
+  className?: string;
 }) {
   return (
     <a
       href={href}
-      className="group relative flex min-h-[190px] flex-col overflow-hidden rounded-2xl border border-white/10 bg-white/[0.02] p-6 text-left shadow-[0_0_30px_-14px_rgba(37,99,235,0.3)] transition hover:border-white/25 hover:bg-white/[0.04] md:min-h-[210px] md:p-8"
+      className={`group relative flex min-h-[190px] flex-col overflow-hidden rounded-2xl border p-6 text-left transition md:min-h-[210px] md:p-8 ${
+        featured
+          ? "border-[#6ec3d9]/45 bg-[#6ec3d9]/[0.055] shadow-[0_0_34px_-12px_rgba(110,195,217,0.42)] hover:border-[#6ec3d9]/70 hover:bg-[#6ec3d9]/[0.075]"
+          : "border-white/10 bg-white/[0.02] shadow-[0_0_30px_-14px_rgba(37,99,235,0.3)] hover:border-white/25 hover:bg-white/[0.04]"
+      } ${className}`}
     >
       <Image
         src={icon}
@@ -1304,11 +1323,20 @@ function ProductSelectorCard({
         height={iconHeight}
         className="absolute right-6 top-5 h-14 w-14 object-contain opacity-90 md:right-8 md:top-7"
       />
+      {eyebrow && (
+        <span className={`absolute left-6 top-6 max-w-[calc(100%-7rem)] text-[10px] font-semibold uppercase tracking-[0.15em] md:left-8 md:top-8 ${
+          featured ? "text-[#9fd4ee]" : "text-white/45"
+        }`}>
+          {eyebrow}
+        </span>
+      )}
       <div className="h-4" aria-hidden="true" />
       <h3 className={`${display.className} mt-3 pr-16 text-2xl font-medium text-white md:text-3xl`}>
         {title}
       </h3>
-      <p className="mt-3 flex-1 text-sm font-light leading-6 text-white/55">{description}</p>
+      <p className="mt-3 max-w-[34ch] flex-1 text-sm font-light leading-6 text-white/55">
+        {description}
+      </p>
       <span className="mt-5 text-[11px] uppercase tracking-[0.18em] text-white/45 transition group-hover:text-white">
         {cta}
       </span>
