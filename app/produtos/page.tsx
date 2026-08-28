@@ -571,10 +571,11 @@ export default function ProdutosPage() {
 
             <a
               href="/pacotes#personalizado"
-              className="group flex min-h-[190px] flex-col rounded-2xl border border-white/10 bg-white/[0.02] p-6 text-left shadow-[0_0_30px_-14px_rgba(37,99,235,0.3)] transition hover:border-white/25 hover:bg-white/[0.04] md:min-h-[210px] md:p-8"
+              className="group relative flex min-h-[190px] flex-col overflow-hidden rounded-2xl border border-white/10 bg-white/[0.02] p-6 text-left shadow-[0_0_30px_-14px_rgba(37,99,235,0.3)] transition hover:border-white/25 hover:bg-white/[0.04] md:min-h-[210px] md:p-8"
             >
+              <Image src="/images/produtos/transporte-privado.png" alt="" width={1536} height={1024} className="absolute right-6 top-5 h-14 w-14 object-contain opacity-90 md:right-8 md:top-7" />
               <div className="h-4" aria-hidden="true" />
-              <h2 className={`${display.className} mt-3 text-2xl font-medium text-white md:text-3xl`}>
+              <h2 className={`${display.className} mt-3 pr-16 text-2xl font-medium text-white md:text-3xl`}>
                 Transporte Privado
               </h2>
               <p className="mt-3 flex-1 text-sm font-light leading-6 text-white/55">
