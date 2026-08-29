@@ -104,7 +104,7 @@ const BANNER_CARAVANA = {
   alt: "Pacotes de Caravana",
 };
 const BANNER_INDIVIDUAL = {
-  src: "/images/icone-viagem-privativa.png",
+  src: "/images/individual-2-hero.png",
   alt: "Pacotes Privativos",
 };
 
@@ -415,7 +415,7 @@ export default async function PacotesJapaoPage({
                     alt=""
                     fill
                     sizes="(min-width: 640px) 33vw, 100vw"
-                    className={`${item.titulo === "Privativo" ? "object-contain p-5" : "object-cover object-top"} transition duration-500 group-hover:scale-105`}
+                    className="object-cover object-top transition duration-500 group-hover:scale-105"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/0 to-transparent" />
                 </div>

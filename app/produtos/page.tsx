@@ -535,9 +535,9 @@ export default function ProdutosPage() {
               <ProductSelectorCard
                 href="/viagem-personalizada"
                 onClick={() => setViagemModalOpen(true)}
-                icon="/images/produtos/viagem-personalizada.png"
-                iconWidth={1254}
-                iconHeight={1254}
+                icon="/images/produtos/viagem-personalizada-privada.png"
+                iconWidth={1536}
+                iconHeight={1024}
                 title="Viagem Personalizada"
                 description="Criamos e organizamos sua viagem do zero, inteiramente de acordo com você."
                 cta="Criar minha viagem"
