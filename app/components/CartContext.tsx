@@ -15,7 +15,7 @@ export type CartItem = {
   /** Identificador único da linha no carrinho (não do produto — o mesmo pacote pode entrar 2x com variantes diferentes). */
   id: string;
   /** Divisão de origem, exibida no carrinho. */
-  divisao: "Pacotes de Caravana" | "Individual ou Pequenos Grupos" | "Viagem Personalizada";
+  divisao: "Pacotes de Caravana" | "Privativo" | "Viagem Personalizada";
   /** Nome do pacote (ex: "Primavera 1 — Temporada de Cerejeiras 2027"). */
   nome: string;
   /** Linha secundária com a variante escolhida (ex: "7 dias" ou "12h, 20/04/2027"). */

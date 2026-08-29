@@ -12,6 +12,7 @@ export function PrecoPacote({
   variante,
   precoClassName,
   theme = "dark",
+  compact = false,
 }: {
   variante: PackageVariant;
   precoClassName: string;
@@ -19,6 +20,8 @@ export function PrecoPacote({
    * usado no card da grade, fundo branco/off-white; troca as cores de texto
    * secundário e do preço em destaque pra manter contraste legível. */
   theme?: "dark" | "light";
+  /** Remove parcelamento, badges e avisos repetidos na visualização resumida. */
+  compact?: boolean;
 }) {
   const cambio = useCambioUSD();
   const isLight = theme === "light";
@@ -33,11 +36,13 @@ export function PrecoPacote({
     const parcela = formatUSD(variante.precoUSD / 12);
     return (
       <>
-        <p
-          className={`mb-2 inline-flex items-center gap-1.5 rounded-full border border-emerald-400/30 bg-emerald-400/10 px-2.5 py-1 text-[10px] font-medium uppercase tracking-[0.1em] ${corBadgeDatas}`}
-        >
-          Datas aproximadas — sujeitas a alteração
-        </p>
+        {!compact && (
+          <p
+            className={`mb-2 inline-flex items-center gap-1.5 rounded-full border border-emerald-400/30 bg-emerald-400/10 px-2.5 py-1 text-[10px] font-medium uppercase tracking-[0.1em] ${corBadgeDatas}`}
+          >
+            Datas aproximadas — sujeitas a alteração
+          </p>
+        )}
         <p className={precoClassName} style={{ color: corPrecoDestaque }}>
           {formatUSD(variante.precoUSD)}
         </p>
@@ -49,10 +54,12 @@ export function PrecoPacote({
         <p className={`mt-1 text-xs uppercase tracking-[0.15em] ${corTextoTerciario}`}>
           Por pessoa · Quarto Individual
         </p>
-        <p className="mt-2 text-base font-semibold" style={{ color: corParcelaDestaque }}>
-          ou em até 12x de {parcela} + Juros Mensais
-        </p>
-        {variante.personalizadoUSD != null && (
+        {!compact && (
+          <p className="mt-2 text-base font-semibold" style={{ color: corParcelaDestaque }}>
+            ou em até 12x de {parcela} + Juros Mensais
+          </p>
+        )}
+        {!compact && variante.personalizadoUSD != null && (
           <p
             className="mt-2 rounded-lg border px-3 py-2 text-xs leading-5"
             style={{
@@ -78,7 +85,7 @@ export function PrecoPacote({
         <p className={`mt-1 text-xs uppercase tracking-[0.15em] ${corTextoTerciario}`}>
           Por pessoa · Quarto Individual
         </p>
-        {variante.parcelaLabel && (
+        {!compact && variante.parcelaLabel && (
           <p className={`mt-1 text-sm font-medium ${corTextoParcela}`}>{variante.parcelaLabel}</p>
         )}
       </>
@@ -96,9 +103,11 @@ export function PrecoPacote({
       <p className={`mt-1 text-xs uppercase tracking-[0.15em] ${corTextoTerciario}`}>
         Por pessoa · Quarto Individual
       </p>
-      <p className={`mt-1 text-sm font-medium ${corTextoParcela}`}>
-        ou em até 12x de {parcela} + Juros Mensais
-      </p>
+      {!compact && (
+        <p className={`mt-1 text-sm font-medium ${corTextoParcela}`}>
+          ou em até 12x de {parcela} + Juros Mensais
+        </p>
+      )}
       <CambioLabel cambio={cambio} className={`mt-1 text-[11px] ${corTextoTerciario}`} />
     </>
   );

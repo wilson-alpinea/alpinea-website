@@ -16,14 +16,14 @@ const display = Bodoni_Moda({
 export const metadata = {
   title: "Ajisai | Pacotes de Viagem para o Japão",
   description:
-    "Pacotes de viagem para o Japão com a curadoria Ajisai: Caravana em grupo fechado e opções para Individual ou Pequenos Grupos. Monte seu carrinho e finalize direto no WhatsApp.",
+    "Pacotes de viagem para o Japão com a curadoria Ajisai: Caravana em grupo com datas fixas ou Privativo para seu grupo, com roteiro-base e datas flexíveis.",
   // Sobrescreve o openGraph/twitter padrão do layout raiz (marca Alpinea,
   // voltado à home) — o link desta página precisa de um preview específico
   // pra pacotes, não o card genérico do site inteiro.
   openGraph: {
     title: "Ajisai | Pacotes de Viagem para o Japão",
     description:
-      "Caravana em grupo fechado e opções para Individual ou Pequenos Grupos — conheça os pacotes de viagem para o Japão com a curadoria Ajisai.",
+      "Caravana em grupo com datas fixas ou Privativo para seu grupo, com roteiro-base e datas flexíveis — conheça os pacotes Ajisai.",
     siteName: "Ajisai",
     images: [
       {
@@ -40,7 +40,7 @@ export const metadata = {
     card: "summary_large_image",
     title: "Ajisai | Pacotes de Viagem para o Japão",
     description:
-      "Pacotes de viagem para o Japão com a curadoria Ajisai — Caravana e opções para Individual ou Pequenos Grupos.",
+      "Pacotes de viagem para o Japão com a curadoria Ajisai — escolha entre Caravana e Privativo.",
     images: ["/images/caravana-2-hero.png"],
   },
 };
@@ -73,9 +73,7 @@ const variantesUSD = (
   },
 ];
 
-// Mesma coisa, mas pros pacotes Individual/Pequeno Grupo — cada variante
-// também carrega o preço da versão Personalizada do mesmo roteiro
-// (Individual × 1.5), exibido como opção adicional dentro do card.
+// Mesma coisa, mas para os pacotes Privativos.
 const variantesIndividualUSD = (
   preco7: number,
   datas7: string,
@@ -88,7 +86,6 @@ const variantesIndividualUSD = (
     datas: datas7,
     precoLabel: formatUSD(preco7),
     precoUSD: preco7,
-    personalizadoUSD: Math.round(preco7 * 1.5),
   },
   {
     id: "15d",
@@ -96,7 +93,6 @@ const variantesIndividualUSD = (
     datas: datas14,
     precoLabel: formatUSD(preco14),
     precoUSD: preco14,
-    personalizadoUSD: Math.round(preco14 * 1.5),
   },
 ];
 
@@ -108,7 +104,7 @@ const BANNER_CARAVANA = {
 };
 const BANNER_INDIVIDUAL = {
   src: "/images/individual-2-hero.png",
-  alt: "Individual ou Pequenos Grupos",
+  alt: "Pacotes Privativos",
 };
 
 // Fatos que valem para todos os pacotes da divisão (data fixa, guia
@@ -124,6 +120,22 @@ const BENEFICIOS_INDIVIDUAL = [
   "Guia particular, dedicado só ao seu grupo",
   "Roteiro pode ser ajustado ao seu ritmo e interesses",
   "Ideal para famílias, casais e grupos de amigos",
+];
+
+const INCLUSO_CARAVANA = [
+  "Hospedagem selecionada",
+  "Guia bilíngue acompanhando o grupo",
+  "Transportes previstos no roteiro",
+  "Experiências e visitas programadas",
+  "Suporte Ajisai durante a viagem",
+];
+
+const INCLUSO_PRIVATIVO = [
+  "Hospedagem selecionada",
+  "Guia particular para o seu grupo",
+  "Transportes previstos no roteiro",
+  "Experiências e visitas programadas",
+  "Suporte Ajisai durante a viagem",
 ];
 
 const pacotesCaravana = [
@@ -218,19 +230,19 @@ const pacotesIndividuais = [
 const divisoes = [
   {
     letra: "A",
-    titulo: "Pacotes de Caravana",
-    frase: "Quero viajar com outras pessoas",
+    titulo: "Caravana",
+    frase: "Grupo acompanhado · datas fixas",
     texto:
-      "Saída em grupo fechado, data única, guia compartilhado do início ao fim.",
+      "Você viaja com outros passageiros em uma saída definida, com roteiro e guia compartilhados do início ao fim.",
     href: "#pacotes",
     imagem: BANNER_CARAVANA.src,
   },
   {
     letra: "B",
-    titulo: "Individual ou Pequenos Grupos",
-    frase: "Quero viajar só com minha família ou amigos",
+    titulo: "Privativo",
+    frase: "Seu grupo · roteiro-base · datas flexíveis",
     texto:
-      "Datas flexíveis dentro da temporada e guia particular dedicado ao seu grupo.",
+      "Você viaja somente com seu grupo, escolhe as datas dentro da temporada e conta com guia particular.",
     href: "#individuais",
     imagem: BANNER_INDIVIDUAL.src,
   },
@@ -339,8 +351,8 @@ export default async function PacotesJapaoPage({
   const todosOsNomesDePacote = [
     "Primavera 1 — Temporada de Cerejeiras 2027 (Caravana)",
     "Primavera 2 — Maio 2027 (Caravana)",
-    "Primavera 1 — Temporada de Cerejeiras 2027 (Individual)",
-    "Primavera 2 — Maio 2027 (Individual)",
+    "Primavera 1 — Temporada de Cerejeiras 2027 (Privativo)",
+    "Primavera 2 — Maio 2027 (Privativo)",
   ];
 
   return (
@@ -437,14 +449,19 @@ export default async function PacotesJapaoPage({
           <div className="mx-auto mt-14 max-w-6xl">
             <p className="text-center">
               <span className="inline-block rounded-full bg-[#6ec3d9]/15 px-4 py-1.5 text-[11px] font-semibold uppercase tracking-[0.2em] text-[#6ec3d9]">
-                Veja funcionando
+                Decida com segurança
               </span>
             </p>
             <h3
               className={`${display.className} mt-3 text-center text-3xl font-medium text-white md:text-4xl`}
             >
-              Como funcionam os pacotes Ajisai
+              Não sabe qual pacote escolher?
             </h3>
+            <p className="mx-auto mt-3 max-w-2xl text-center text-sm font-light leading-6 text-white/55 md:text-base">
+              Em pouco mais de 5 minutos, você entende as diferenças entre
+              Caravana e Privativo e identifica qual modalidade combina com
+              a sua forma de viajar.
+            </p>
             <div className="mx-auto mt-6 max-w-4xl overflow-hidden rounded-xl border border-white/15 bg-[#1c1c1e] shadow-2xl">
               <div className="flex items-center gap-2 border-b border-white/10 bg-[#2a2a2c] px-4 py-2.5">
                 <span className="h-2.5 w-2.5 rounded-full bg-[#ff5f57]" />
@@ -463,7 +480,8 @@ export default async function PacotesJapaoPage({
                   controls
                   preload="metadata"
                   poster="/videos/pacotes-explicacao-poster.jpg"
-                  className="h-full w-full object-cover"
+                  playsInline
+                  className="h-full w-full bg-black object-contain fullscreen:h-screen fullscreen:w-screen fullscreen:object-contain"
                 >
                   <source src="/videos/pacotes-explicacao.mp4" type="video/mp4" />
                 </video>
@@ -471,6 +489,43 @@ export default async function PacotesJapaoPage({
             </div>
             <p className="mx-auto mt-3 max-w-4xl text-center text-[10px] uppercase tracking-[0.2em] text-white/40">
               Gravação de tela — navegação real pelo site
+            </p>
+
+            <div className="mx-auto mt-12 max-w-5xl overflow-x-auto rounded-2xl border border-white/10 bg-white/[0.025]">
+              <div className="grid min-w-[680px] grid-cols-[1.05fr_1fr_1fr] border-b border-white/10 bg-white/[0.04]">
+                <div className="px-5 py-4 text-[10px] font-semibold uppercase tracking-[0.18em] text-white/35">
+                  Compare
+                </div>
+                <div className="border-l border-white/10 px-5 py-4">
+                  <p className={`${display.className} text-xl font-medium text-white`}>Caravana</p>
+                  <p className="mt-1 text-xs text-[#6ec3d9]">Grupo e datas fixas</p>
+                </div>
+                <div className="border-l border-white/10 px-5 py-4">
+                  <p className={`${display.className} text-xl font-medium text-white`}>Privativo</p>
+                  <p className="mt-1 text-xs text-[#6ec3d9]">Seu grupo e datas flexíveis</p>
+                </div>
+              </div>
+              <div>
+                {[
+                  ["Com quem viaja", "Grupo de passageiros", "Somente com seu grupo"],
+                  ["Datas", "Saídas fixas", "Flexíveis dentro da temporada"],
+                  ["Roteiro", "Definido para a caravana", "Roteiro-base ajustável"],
+                  ["Personalização", "Essencial", "Ritmo e interesses do grupo"],
+                  ["Mais indicado para", "Quem busca convivência e custo-benefício", "Famílias, casais e amigos que querem privacidade"],
+                ].map(([criterio, caravana, privativo]) => (
+                  <div
+                    key={criterio}
+                    className="grid min-w-[680px] grid-cols-[1.05fr_1fr_1fr] border-b border-white/[0.07] last:border-b-0"
+                  >
+                    <p className="px-5 py-4 text-xs font-medium text-white/45">{criterio}</p>
+                    <p className="border-l border-white/[0.07] px-5 py-4 text-sm leading-6 text-white/70">{caravana}</p>
+                    <p className="border-l border-white/[0.07] px-5 py-4 text-sm leading-6 text-white/70">{privativo}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <p className="mt-3 text-center text-[10px] uppercase tracking-[0.15em] text-white/30 md:hidden">
+              Deslize para comparar
             </p>
           </div>
         </section>
@@ -483,7 +538,7 @@ export default async function PacotesJapaoPage({
           <div className="mx-auto max-w-7xl">
             <div className="mb-10 md:mb-14">
               <h2 className={`${display.className} text-3xl font-medium leading-tight md:text-5xl`}>
-                Pacotes de Caravana
+                Caravana
               </h2>
               <p className="mt-4 max-w-2xl text-sm font-light leading-6 text-white/55 md:text-base md:leading-7">
                 Para quem não deseja viajar somente com o próprio grupo — saída
@@ -535,6 +590,7 @@ export default async function PacotesJapaoPage({
                   imagem={pacote.imagem}
                   selo={pacote.selo}
                   variantes={pacote.variantes}
+                  inclusoes={INCLUSO_CARAVANA}
                   rodape="Por pessoa, em quarto individual. Vagas limitadas por grupo."
                 />
               ))}
@@ -550,7 +606,7 @@ export default async function PacotesJapaoPage({
           <div className="mx-auto max-w-7xl">
             <div className="mb-10 md:mb-14">
               <h2 className={`${display.className} text-3xl font-medium leading-tight md:text-5xl`}>
-                Individual ou Pequenos Grupos
+                Privativo
               </h2>
               <p className="mt-4 max-w-2xl text-sm font-light leading-6 text-white/55 md:text-base md:leading-7">
                 Para viajar apenas com quem você escolher — datas flexíveis
@@ -593,7 +649,7 @@ export default async function PacotesJapaoPage({
               {pacotesIndividuais.map((pacote) => (
                 <PackageCard
                   key={pacote.slug}
-                  divisao="Individual ou Pequenos Grupos"
+                  divisao="Privativo"
                   categoria={pacote.categoria}
                   nome={pacote.nome}
                   tagline={pacote.tagline}
@@ -601,6 +657,7 @@ export default async function PacotesJapaoPage({
                   destaques={pacote.destaques}
                   imagem={pacote.imagem}
                   variantes={pacote.variantes}
+                  inclusoes={INCLUSO_PRIVATIVO}
                   rodape="Por pessoa, em quarto individual. Datas dentro da temporada indicada."
                 />
               ))}
