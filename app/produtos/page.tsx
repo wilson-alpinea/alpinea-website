@@ -76,7 +76,7 @@ const IMAGENS_PRODUTO: Record<ProdutoKey, { src: string; alt: string }> = {
   },
   caravana: { src: "/images/caravana-hero.jpg", alt: "Pacotes de Caravana" },
   individual: {
-    src: "/images/individual-2-hero.png",
+    src: "/images/privado-hero.jpg",
     alt: "Individual ou Pequenos Grupos",
   },
   personalizado: {
