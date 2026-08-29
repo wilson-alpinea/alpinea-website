@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { Bodoni_Moda } from "next/font/google";
 import type { CartItem } from "./CartContext";
 import type { PackageVariant } from "./packageTypes";
@@ -20,6 +21,7 @@ export function PackageCard({
   nome,
   tagline,
   imagem,
+  icone,
   selo,
   variantes,
   rodape,
@@ -29,6 +31,7 @@ export function PackageCard({
   nome: string;
   tagline: string;
   imagem: string;
+  icone: string;
   selo?: string;
   variantes: PackageVariant[];
   rodape?: string;
@@ -49,10 +52,17 @@ export function PackageCard({
             setOpen(true);
           }
         }}
-        className="flex cursor-pointer flex-col overflow-hidden rounded-2xl border border-black/10 bg-white p-6 shadow-sm transition hover:-translate-y-0.5 hover:border-black/20 hover:shadow-md sm:rounded-[2rem]"
+        className="relative flex cursor-pointer flex-col overflow-hidden rounded-2xl border border-black/10 bg-white p-6 shadow-sm transition hover:-translate-y-0.5 hover:border-black/20 hover:shadow-md sm:rounded-[2rem]"
       >
+        <Image
+          src={icone}
+          alt=""
+          width={1254}
+          height={1254}
+          className="absolute right-5 top-5 h-20 w-20 object-contain md:right-6 md:top-6"
+        />
         <div>
-          <h3 className={`${display.className} text-2xl font-medium text-[#0A2540]`}>
+          <h3 className={`${display.className} pr-24 text-2xl font-medium text-[#0A2540]`}>
             {nome}
           </h3>
           {selo && (

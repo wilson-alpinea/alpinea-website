@@ -142,6 +142,7 @@ const pacotesCaravana = [
       "Hospedagem e passeios posicionados para os melhores pontos de hanami",
     ],
     imagem: BANNER_CARAVANA.src,
+    icone: "/images/pacotes/primavera-1-icone.png",
     imagemAlt: BANNER_CARAVANA.alt,
     accent: "#e6a6c7",
     selo: "🌸 Alta procura",
@@ -164,6 +165,7 @@ const pacotesCaravana = [
       "Menor fluxo turístico que a temporada de cerejeiras",
     ],
     imagem: BANNER_CARAVANA.src,
+    icone: "/images/pacotes/primavera-2-icone.png",
     imagemAlt: BANNER_CARAVANA.alt,
     accent: "#7fbf6e",
     variantes: variantesUSD(
@@ -187,6 +189,7 @@ const pacotesIndividuais = [
       "Datas flexíveis dentro da temporada de floração das cerejeiras",
     ],
     imagem: BANNER_INDIVIDUAL.src,
+    icone: "/images/pacotes/primavera-1-icone.png",
     imagemAlt: BANNER_INDIVIDUAL.alt,
     accent: "#e6a6c7",
     variantes: variantesIndividualUSD(
@@ -207,6 +210,7 @@ const pacotesIndividuais = [
       "Datas flexíveis dentro de maio, fora do pico de alta temporada",
     ],
     imagem: BANNER_INDIVIDUAL.src,
+    icone: "/images/pacotes/primavera-2-icone.png",
     imagemAlt: BANNER_INDIVIDUAL.alt,
     accent: "#7fbf6e",
     variantes: variantesIndividualUSD(
@@ -597,6 +601,7 @@ export default async function PacotesJapaoPage({
                   nome={pacote.nome}
                   tagline={pacote.tagline}
                   imagem={pacote.imagem}
+                  icone={pacote.icone}
                   selo={pacote.selo}
                   variantes={pacote.variantes}
                   rodape="Por pessoa, em quarto individual. Vagas limitadas por grupo."
@@ -676,6 +681,7 @@ export default async function PacotesJapaoPage({
                   nome={pacote.nome}
                   tagline={pacote.tagline}
                   imagem={pacote.imagem}
+                  icone={pacote.icone}
                   variantes={pacote.variantes}
                   rodape="Por pessoa, em quarto individual. Datas dentro da temporada indicada."
                 />
