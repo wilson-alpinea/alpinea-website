@@ -243,6 +243,15 @@ const divisoes = [
 // /ajisairoteiros (carrossel "Por que a Ajisai" + prova social com
 // avaliações reais do Google), só com os badges Cadastur/Reclame Aqui
 // adicionados no final.
+const avatarColors = [
+  "#7c4fd1",
+  "#6ec3d9",
+  "#d9a66d",
+  "#5b9bd5",
+  "#e0916a",
+  "#8fb7d9",
+];
+
 const googleReviews = [
   {
     name: "Caio Paiva de Lima",
@@ -736,7 +745,7 @@ export default async function PacotesJapaoPage({
         </section>
 
         {/* ── SOCIAL PROOF — AVALIAÇÕES DO GOOGLE ── */}
-        <section className="institutional-content border-t border-white/10 bg-black px-6 py-20 md:px-16 md:py-32">
+        <section className="institutional-content border-t border-white/10 bg-black px-6 pb-12 pt-20 md:px-16 md:pb-16 md:pt-32">
           <div className="mx-auto max-w-7xl">
             <div className="mb-14 grid grid-cols-1 items-center gap-10 md:mb-20 md:grid-cols-2 md:gap-16">
               <div>
@@ -805,42 +814,62 @@ export default async function PacotesJapaoPage({
               desktopColumns={3}
               desktopScroll
             >
-              {googleReviews.map((review) => (
+              {googleReviews.map((review, index) => (
                 <div
                   key={review.name}
-                  className="flex min-h-[380px] w-[80vw] flex-shrink-0 snap-start [scroll-snap-stop:always] flex-col border-l border-dotted border-white/55 bg-[#111111] py-1 pl-7 pr-5 md:w-[31%] md:shrink-0 md:pl-8 md:pr-7"
+                  className="flex min-h-[380px] w-[80vw] flex-shrink-0 snap-start [scroll-snap-stop:always] flex-col rounded-2xl border border-white/10 bg-transparent p-5 sm:rounded-[2rem] sm:p-8 md:w-[31%] md:shrink-0"
                 >
-                  <p className="mb-1 text-sm font-semibold text-white/80">
-                    Depoimento:
-                  </p>
-                  <p className="flex-1 text-[15px] font-semibold italic leading-[1.55] text-white/85">
+                  <div className="mb-4 flex items-center gap-0.5 text-[#b79ce6]">
+                    {Array.from({ length: 5 }).map((_, starIndex) => (
+                      <IconStarFilled key={starIndex} className="h-3.5 w-3.5" />
+                    ))}
+                  </div>
+                  <p
+                    className="flex-1 text-base font-semibold italic leading-[1.5] text-white/80"
+                    style={{ fontFamily: "Arial, Helvetica, sans-serif" }}
+                  >
                     &ldquo;{review.text}&rdquo;
                   </p>
-                  <div className="mt-6 border-t border-white/10 pt-4">
-                    <p className="text-sm font-semibold text-white">{review.name}</p>
-                    <p className="mt-1 text-xs leading-5 text-white/40">
-                      {review.context} · Avaliação no Google
-                    </p>
+                  <div className="mt-6 flex items-center gap-3 border-t border-white/10 pt-4">
+                    <span
+                      className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full text-xs font-medium text-white"
+                      style={{
+                        backgroundColor: avatarColors[index % avatarColors.length],
+                      }}
+                      aria-hidden
+                    >
+                      {review.name.charAt(0).toUpperCase()}
+                    </span>
+                    <div>
+                      <p className="text-sm font-medium text-white">{review.name}</p>
+                      <p className="mt-0.5 text-xs text-white/35">
+                        {review.context} · Avaliação no Google
+                      </p>
+                    </div>
                   </div>
                 </div>
               ))}
             </CarouselScroller>
 
-            <div className="mt-14 flex flex-row flex-wrap items-center justify-center gap-6 md:mt-20">
-              <Image
-                src="/images/badge-cadastur.png"
-                alt="Cadastur — Agência de Turismo registrada"
-                width={1254}
-                height={1254}
-                className="h-auto w-full max-w-[180px] sm:max-w-[200px]"
-              />
-              <Image
-                src="/images/badge-reclameaqui.png"
-                alt="Verificado no Reclame Aqui"
-                width={1536}
-                height={1024}
-                className="h-auto w-full max-w-[180px] sm:max-w-[200px]"
-              />
+            <div className="mt-10 flex flex-row flex-wrap items-center justify-center gap-8 md:mt-12 md:gap-10">
+              <div className="relative aspect-[2.327/1] w-full max-w-[220px] overflow-hidden sm:max-w-[260px]">
+                <Image
+                  src="/images/badge-cadastur.png"
+                  alt="Cadastur — Agência de Turismo registrada"
+                  width={1254}
+                  height={1254}
+                  className="absolute inset-x-0 top-0 h-auto w-full -translate-y-[28.5%]"
+                />
+              </div>
+              <div className="relative aspect-[4.59/1] w-full max-w-[400px] overflow-hidden sm:max-w-[500px]">
+                <Image
+                  src="/images/badge-reclameaqui.png"
+                  alt="Verificado no Reclame Aqui"
+                  width={1536}
+                  height={1024}
+                  className="absolute inset-x-0 top-0 h-auto w-full -translate-y-[35%]"
+                />
+              </div>
             </div>
           </div>
         </section>
