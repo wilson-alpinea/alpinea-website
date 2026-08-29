@@ -28,7 +28,7 @@ export const metadata = {
     siteName: "Ajisai",
     images: [
       {
-        url: "/images/caravana-2-hero.png",
+        url: "/images/caravana-hero.jpg",
         width: 1200,
         height: 630,
         alt: "Pacotes de Viagem Ajisai para o Japão",
@@ -42,7 +42,7 @@ export const metadata = {
     title: "Ajisai | Pacotes de Viagem para o Japão",
     description:
       "Pacotes de viagem para o Japão com a curadoria Ajisai — escolha entre Caravana e Privativo.",
-    images: ["/images/caravana-2-hero.png"],
+    images: ["/images/caravana-hero.jpg"],
   },
 };
 
@@ -100,7 +100,7 @@ const variantesIndividualUSD = (
 // Uma única foto representa cada divisão (em vez de uma por pacote) — usada
 // tanto no banner da seção quanto na miniatura do item no carrinho.
 const BANNER_CARAVANA = {
-  src: "/images/caravana-2-hero.png",
+  src: "/images/caravana-hero.jpg",
   alt: "Pacotes de Caravana",
 };
 const BANNER_INDIVIDUAL = {
@@ -409,13 +409,13 @@ export default async function PacotesJapaoPage({
                 href={item.href}
                 className="group flex h-full flex-col overflow-hidden rounded-2xl border border-white/10 bg-white/[0.02] text-center shadow-[0_0_30px_-14px_rgba(37,99,235,0.3)] transition hover:border-white/25 hover:bg-white/[0.04] sm:rounded-[1.5rem]"
               >
-                <div className="relative aspect-[16/10] w-full overflow-hidden">
+                <div className={`relative w-full overflow-hidden ${item.titulo === "Caravana" ? "aspect-[3/2]" : "aspect-[16/10]"}`}>
                   <Image
                     src={item.imagem}
                     alt=""
                     fill
                     sizes="(min-width: 640px) 33vw, 100vw"
-                    className="object-cover object-top transition duration-500 group-hover:scale-105"
+                    className={`${item.titulo === "Caravana" ? "object-cover object-center" : "object-cover object-top"} transition duration-500 group-hover:scale-105`}
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/0 to-transparent" />
                 </div>
@@ -549,13 +549,13 @@ export default async function PacotesJapaoPage({
               </p>
             </div>
 
-            <div className="relative mb-6 aspect-[16/10] overflow-hidden rounded-2xl md:mb-8 md:rounded-[2rem]">
+            <div className="relative mb-6 aspect-[3/2] overflow-hidden rounded-2xl md:mb-8 md:rounded-[2rem]">
               <Image
                 src={BANNER_CARAVANA.src}
                 alt={BANNER_CARAVANA.alt}
                 fill
                 sizes="100vw"
-                className="object-cover object-top"
+                className="object-cover object-center"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/5 to-transparent" />
             </div>

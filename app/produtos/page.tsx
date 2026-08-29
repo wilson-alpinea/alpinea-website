@@ -74,7 +74,7 @@ const IMAGENS_PRODUTO: Record<ProdutoKey, { src: string; alt: string }> = {
     src: "/images/dashmobile-ajisai.jpg",
     alt: "Painel do Roteiro Personalizado Ajisai",
   },
-  caravana: { src: "/images/caravana-2-hero.png", alt: "Pacotes de Caravana" },
+  caravana: { src: "/images/caravana-hero.jpg", alt: "Pacotes de Caravana" },
   individual: {
     src: "/images/individual-2-hero.png",
     alt: "Individual ou Pequenos Grupos",
