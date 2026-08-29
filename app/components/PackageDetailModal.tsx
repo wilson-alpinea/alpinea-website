@@ -42,21 +42,6 @@ const CIDADE_IMAGEM: Record<string, string> = {
   "Fujiyoshida/Fujikawaguchiko": "/images/fuji.JPG",
 };
 
-// O mesmo resumo do Roteiro Digital (ver INCLUSOES_PADRAO → "Roteiro
-// Digital"), reorganizado em grade de ícones — equivalente ao bloco "tudo
-// pensado para você" do roteiro de referência. O item "Deslocamentos" é
-// sobrescrito em tempo de render para Pacotes de Caravana (ônibus privativo
-// do grupo), já que o texto abaixo descreve o modelo do Roteiro
-// Personalizado (linha de trem/metrô) — ver renderTudoPensadoItem.
-const TUDO_PENSADO = [
-  { icon: "📋", title: "Roteiro Detalhado", text: "Dia a dia com atrações, ordem de visita e tempo estimado." },
-  { icon: "🚇", title: "Deslocamentos", text: "Linha de trem/metrô recomendada e tempo de trajeto entre pontos." },
-  { icon: "🎫", title: "Ingressos e Reservas", text: "O que precisa ser reservado com antecedência, já sinalizado." },
-  { icon: "🍽️", title: "Gastronomia", text: "Sugestões de refeições próximas a cada parada do dia." },
-  { icon: "💡", title: "Dicas Locais", text: "Orientações práticas para aproveitar melhor cada atração." },
-  { icon: "🕐", title: "Guia de Horários", text: "Melhor horário de visita, evitando picos de fila e lotação." },
-];
-
 // O que fica de fora do pacote — mesma informação já confirmada no FAQ
 // padrão ("Refeições?"), só reorganizada em lista curta pro quadro
 // Incluso/Não incluso.
@@ -286,11 +271,6 @@ const ROTEIROS_DETALHADOS: Record<string, DiaRoteiro[]> = {
 
 // Resumo de refeições inclusas — estimativa por duração, mesma ressalva do
 // roteiro acima (revisar antes de publicar).
-const REFEICOES_INCLUSAS: Record<string, { cafe: number; almoco: number; jantar: number }> = {
-  "7d": { cafe: 6, almoco: 4, jantar: 1 },
-  "15d": { cafe: 14, almoco: 10, jantar: 2 },
-};
-
 // Foto em zoom por cidade, usada como preenchimento das bolinhas do fluxo
 // "Cidades" — Tóquio alterna entre duas fotos (Sensoji/Kaminarimon e
 // Skytree) pra não repetir a mesma imagem quando aparece mais de uma vez
@@ -457,26 +437,6 @@ const FAQ_PADRAO = [
     pergunta: "Quarto individual ou duplo?",
     resposta: "Preço padrão por pessoa em quarto individual. Quarto duplo (compartilhado) disponível mediante consulta.",
   },
-  {
-    pergunta: "Bagagem está incluída na passagem?",
-    resposta: "Sim — 1 bagagem despachada e 1 de mão por pessoa, conforme a companhia aérea selecionada.",
-  },
-  {
-    pergunta: "Café da manhã?",
-    resposta: "Incluído em todos os hotéis do roteiro.",
-  },
-  {
-    pergunta: "Shinkansen?",
-    resposta: "Trechos de trem-bala previstos no roteiro estão inclusos.",
-  },
-  {
-    pergunta: "Ingressos das atrações?",
-    resposta: "Ingressos das atrações previstas no roteiro estão inclusos.",
-  },
-  {
-    pergunta: "Refeições?",
-    resposta: "Café da manhã incluso; almoços e jantares não inclusos, salvo indicação no roteiro.",
-  },
 ];
 
 function IconCheck({ className }: { className?: string }) {
@@ -492,62 +452,6 @@ function IconCheck({ className }: { className?: string }) {
     >
       <circle cx="12" cy="12" r="9" />
       <path d="M8.5 12.5l2.5 2.5 4.5-5" />
-    </svg>
-  );
-}
-
-function IconPlay({ className }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 24 24" fill="currentColor" className={className}>
-      <path d="M8 5.14v13.72c0 .8.87 1.29 1.56.87l10.99-6.86a1 1 0 0 0 0-1.7L9.56 4.27A1 1 0 0 0 8 5.14Z" />
-    </svg>
-  );
-}
-
-// Placeholder de vídeo — sem player/arquivo real ainda. Troque o miolo por
-// um <video>/embed quando o material estiver pronto; mantém o mesmo espaço
-// e legenda pra não quebrar o layout.
-function VideoPlaceholder({
-  titulo,
-  descricao,
-  className = "",
-}: {
-  titulo: string;
-  descricao?: string;
-  className?: string;
-}) {
-  return (
-    <div
-      className={`group relative aspect-video w-full overflow-hidden rounded-xl border border-white/10 bg-white/[0.03] ${className}`}
-    >
-      <div className="absolute inset-0 flex flex-col items-center justify-center gap-2.5 px-5 text-center">
-        <span className="flex h-11 w-11 items-center justify-center rounded-full border border-white/25 bg-white/10 backdrop-blur transition group-hover:scale-105 group-hover:bg-white/20">
-          <IconPlay className="h-4 w-4 translate-x-0.5 text-white" />
-        </span>
-        <p className="text-[9px] uppercase tracking-[0.2em] text-white/40">Vídeo em breve</p>
-        <p className="max-w-xs text-sm font-medium text-white">{titulo}</p>
-        {descricao && (
-          <p className="max-w-xs text-[11px] leading-4 text-white/50">{descricao}</p>
-        )}
-      </div>
-    </div>
-  );
-}
-
-function IconCart({ className }: { className?: string }) {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.75"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className={className}
-    >
-      <circle cx="9" cy="20" r="1.4" fill="currentColor" stroke="none" />
-      <circle cx="17" cy="20" r="1.4" fill="currentColor" stroke="none" />
-      <path d="M2.5 3h2.2l1.8 11a2 2 0 0 0 2 1.7h7.7a2 2 0 0 0 2-1.6l1.4-7.4H6.1" />
     </svg>
   );
 }
@@ -626,12 +530,9 @@ export function PackageDetailModal({
   categoria,
   nome,
   tagline,
-  descricao,
-  destaques,
   imagem,
   selo,
   variantes,
-  varianteHint = "Selecionar duração",
   varianteInicialId,
   rodape,
   onClose,
@@ -640,12 +541,9 @@ export function PackageDetailModal({
   categoria: string;
   nome: string;
   tagline: string;
-  descricao: string;
-  destaques: string[];
   imagem: string;
   selo?: string;
   variantes: PackageVariant[];
-  varianteHint?: string;
   /** Variante já escolhida no card, antes de abrir o detalhe — abre o modal com essa selecionada. */
   varianteInicialId?: string;
   rodape?: string;
@@ -655,7 +553,6 @@ export function PackageDetailModal({
   const cambio = useCambioUSD();
   const [selecionada, setSelecionada] = useState(varianteInicialId ?? variantes[0]?.id ?? "");
   const [adicionado, setAdicionado] = useState(false);
-  const [mounted, setMounted] = useState(false);
   const [inclusaoAberta, setInclusaoAberta] = useState<(typeof INCLUSOES_PADRAO)[number] | null>(
     null,
   );
@@ -668,8 +565,6 @@ export function PackageDetailModal({
     setSelecionada(id);
     scrollRef.current?.scrollTo({ top: 0, behavior: "smooth" });
   }
-
-  useEffect(() => setMounted(true), []);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -692,7 +587,29 @@ export function PackageDetailModal({
   // "Incluso" e passam para "Não incluso", já que só a Caravana os inclui.
   const isCaravana = divisao === "Pacotes de Caravana";
   const inclusoes = isCaravana
-    ? INCLUSOES_PADRAO.map((item) => ({ ...item, opcional: false }))
+    ? INCLUSOES_PADRAO.map((item) => {
+        if (item.title === "Guia Turístico") {
+          return {
+            ...item,
+            title: "Guia bilíngue",
+            text: "Guia bilíngue acompanhando a caravana nos pontos previstos do roteiro.",
+            detalhe:
+              "Guia bilíngue dedicado ao grupo da caravana, acompanhando os pontos previstos no programa e auxiliando com trajetos, horários e orientações locais.",
+            opcional: false,
+          };
+        }
+        if (item.title === "Transfer") {
+          return {
+            ...item,
+            title: "Transportes previstos no roteiro",
+            text: "Deslocamentos coletivos exclusivos da caravana nos trechos previstos no programa.",
+            detalhe:
+              "Transportes organizados para a caravana nos deslocamentos previstos no roteiro. O veículo atende o grupo da viagem e não corresponde a transporte privativo individual.",
+            opcional: false,
+          };
+        }
+        return { ...item, opcional: false };
+      })
     : INCLUSOES_PADRAO.filter(
         (item) => item.title !== "Guia Turístico" && item.title !== "Transfer",
       );
@@ -727,7 +644,7 @@ export function PackageDetailModal({
     }, 1200);
   }
 
-  if (!mounted) return null;
+  if (typeof document === "undefined") return null;
 
   return (
     <>
@@ -788,7 +705,7 @@ export function PackageDetailModal({
           {variantes.length > 1 && (
             <div className="mt-6 rounded-2xl border border-white/10 bg-white/[0.03] p-4">
               <p className="mb-3 text-center text-xs font-semibold uppercase tracking-[0.2em] text-white">
-                Escolha sua experiência
+                Escolha a duração
               </p>
               <div className="flex flex-wrap justify-center gap-2.5">
                 {variantes.map((v) => {
@@ -817,34 +734,38 @@ export function PackageDetailModal({
                   </p>
                   <PrecoPacote
                     variante={variante}
+                    compact
                     precoClassName={`${display.className} mt-1 text-2xl font-semibold text-white`}
                   />
+                  {rodape && <p className="mt-2 text-[11px] leading-5 text-white/40">{rodape}</p>}
                 </div>
               )}
+              <div className="mt-4 flex flex-wrap justify-center gap-2">
+                <span className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-white/65">
+                  {isCaravana ? "Caravana" : "Privativo"}
+                </span>
+                <span className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-white/65">
+                  {isCaravana ? "Guia bilíngue incluído" : "Guia opcional"}
+                </span>
+                <span className="rounded-full border border-[#6ec3d9]/25 bg-[#6ec3d9]/10 px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-[#9fd4ee]">
+                  Passagem aérea incluída
+                </span>
+              </div>
+              <button
+                type="button"
+                onClick={handleAdd}
+                disabled={variante?.precoBRL != null && !cambio}
+                className="mt-5 flex w-full items-center justify-center gap-2 rounded-full bg-[#2f80c9] px-5 py-3.5 text-[11px] font-semibold uppercase tracking-[0.2em] text-white transition hover:bg-[#3b91dc] disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                <IconTicket className="h-4 w-4" /> Reservar minha vaga
+              </button>
             </div>
           )}
 
-          <p className="mt-6 text-sm font-light leading-6 text-white/65">{descricao}</p>
-
-          <ul className="mt-5 space-y-2.5">
-            {destaques.map((item) => (
-              <li key={item} className="flex items-start gap-2.5 text-sm leading-5 text-white/70">
-                <span className="mt-0.5 shrink-0" style={{ color: "#6ec3d9" }}>
-                  <IconCheck className="h-3.5 w-3.5" />
-                </span>
-                {item}
-              </li>
-            ))}
-          </ul>
-
           <div className="mt-8 border-t border-white/10 pt-6">
-            <h3 className={`${display.className} text-lg font-medium text-white`}>Itinerário</h3>
-
-            <VideoPlaceholder
-              titulo="Demonstração do itinerário"
-              descricao="Navegação real pelo roteiro dia a dia, com atrações, deslocamento e logística."
-              className="mt-4"
-            />
+            <h3 className={`${display.className} text-lg font-medium text-white`}>
+              Visão geral do roteiro
+            </h3>
 
             {variante && ITINERARIOS[variante.id] && (
               <div className="mt-5">
@@ -920,7 +841,7 @@ export function PackageDetailModal({
                             </div>
                           </div>
                           <div className="mt-2.5 flex flex-wrap gap-1.5 pl-9">
-                            {tagsDoRoteiro(d).map((tag) => (
+                            {tagsDoRoteiro(d).slice(0, 3).map((tag) => (
                               <span
                                 key={tag.label}
                                 className="inline-flex items-center gap-1 rounded-full border border-white/10 bg-white/[0.04] px-2 py-0.5 text-[10px] font-medium text-white/60"
@@ -939,36 +860,14 @@ export function PackageDetailModal({
               </div>
             )}
 
-            <p className="mt-6 text-sm font-light leading-6 text-white/60">
-              Assim que a reserva é confirmada, você recebe o Roteiro Digital
-              Ajisai: a versão completa da programação dia a dia, com
-              hospedagem, deslocamentos e os principais pontos de cada data,
-              disponível pelo celular durante toda a viagem.
-            </p>
-
-            <p className="mb-4 mt-8 text-center text-xs uppercase tracking-[0.35em] text-white/40">
-              Tudo pensado para você
-            </p>
-            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-              {TUDO_PENSADO.map((item) => {
-                const isDeslocamento = item.title === "Deslocamentos";
-                const overrideCaravana = isDeslocamento && divisao === "Pacotes de Caravana";
-                const icon = overrideCaravana ? "🚌" : item.icon;
-                const title = overrideCaravana ? "Transporte Privativo" : item.title;
-                const text = overrideCaravana
-                  ? "Deslocamentos planejados em veículo exclusivo para o grupo, nos dias previstos no programa."
-                  : item.text;
-                return (
-                  <div
-                    key={item.title}
-                    className="rounded-xl border border-white/10 bg-white/[0.03] p-3.5 text-center"
-                  >
-                    <p className="text-xl">{icon}</p>
-                    <p className="mt-1.5 text-xs font-medium text-white">{title}</p>
-                    <p className="mt-1 text-[11px] font-light leading-4 text-white/45">{text}</p>
-                  </div>
-                );
-              })}
+            <div className="mt-6 rounded-xl border border-[#6ec3d9]/20 bg-[#6ec3d9]/[0.055] p-4">
+              <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[#6ec3d9]">
+                Roteiro Digital Ajisai
+              </p>
+              <p className="mt-2 text-sm font-light leading-6 text-white/60">
+                Após a confirmação, você recebe no celular a programação completa,
+                com atrações, horários, deslocamentos, refeições sugeridas e dicas locais.
+              </p>
             </div>
           </div>
 
@@ -1031,6 +930,41 @@ export function PackageDetailModal({
                 exigem esforço físico relativo — recomendamos que os
                 participantes estejam em condições físicas adequadas para
                 melhor aproveitamento da viagem.
+              </p>
+            </div>
+          </div>
+
+          <div className="mt-8 border-t border-white/10 pt-6">
+            <h3 className={`${display.className} text-lg font-medium text-white`}>
+              Como reservar e o que acontece depois
+            </h3>
+            <div className="mt-4 grid gap-3 sm:grid-cols-3">
+              {[
+                ["1", "Escolha a duração", "Selecione 7 ou 14 dias e confira as datas."],
+                ["2", "Reserve sua vaga", "Envie sua escolha para a equipe Ajisai."],
+                ["3", "Receba os próximos passos", "Confirmamos disponibilidade, condições e documentação."],
+              ].map(([numero, titulo, texto]) => (
+                <div key={numero} className="rounded-xl border border-white/10 bg-white/[0.03] p-4">
+                  <span className="flex h-7 w-7 items-center justify-center rounded-full bg-[#2f80c9] text-xs font-semibold text-white">
+                    {numero}
+                  </span>
+                  <p className="mt-3 text-sm font-medium text-white">{titulo}</p>
+                  <p className="mt-1 text-xs font-light leading-5 text-white/50">{texto}</p>
+                </div>
+              ))}
+            </div>
+            <div className="mt-4 rounded-xl border border-white/10 bg-white/[0.02] p-4 text-xs leading-6 text-white/50">
+              <p>
+                <span className="font-semibold text-white/70">Sinal e saldo:</span>{" "}
+                valores e vencimentos são apresentados antes da confirmação da reserva.
+              </p>
+              <p>
+                <span className="font-semibold text-white/70">Alteração e cancelamento:</span>{" "}
+                condições informadas por escrito conforme a tarifa e os fornecedores selecionados.
+              </p>
+              <p>
+                <span className="font-semibold text-white/70">Documentos, voos e hotéis:</span>{" "}
+                confirmações e prazos são enviados pela equipe nos próximos passos.
               </p>
             </div>
           </div>
@@ -1101,55 +1035,33 @@ export function PackageDetailModal({
           </div>
 
           <div className="mt-8 border-t border-white/10 pt-6">
-            {variantes.length > 1 && (
-              <>
-                <p className="mb-3 text-xs font-semibold uppercase tracking-[0.2em] text-white">
-                  {varianteHint}
-                </p>
-                <div className="flex flex-wrap gap-3">
-                  {variantes.map((v) => {
-                    const ativo = v.id === selecionada;
-                    return (
-                      <button
-                        key={v.id}
-                        type="button"
-                        onClick={() => selecionarVariante(v.id)}
-                        className={`rounded-full border px-7 py-3.5 text-base font-semibold uppercase tracking-[0.1em] transition-all duration-200 ease-out hover:-translate-y-0.5 hover:scale-[1.06] active:scale-95 ${
-                          ativo
-                            ? "border-transparent text-white shadow-[0_10px_26px_rgba(0,0,0,0.4)]"
-                            : "border-white/20 text-white/60 hover:border-white/50 hover:text-white hover:shadow-[0_10px_24px_rgba(0,0,0,0.3)]"
-                        }`}
-                        style={ativo ? { backgroundColor: "#2f80c9" } : undefined}
-                      >
-                        {v.label}
-                      </button>
-                    );
-                  })}
-                </div>
-              </>
-            )}
-
-            {variante && (
-              <div className="mt-6">
-                <p className="text-xs font-medium uppercase tracking-[0.15em] text-white/45">
-                  {variante.datas}
-                </p>
-                <PrecoPacote
-                  variante={variante}
-                  precoClassName={`${display.className} mt-1 text-4xl font-semibold text-white`}
-                />
-              </div>
-            )}
-            {rodape && <p className="mt-2 text-[11px] leading-5 text-white/40">{rodape}</p>}
+            <button
+              type="button"
+              onClick={handleAdd}
+              disabled={variante?.precoBRL != null && !cambio}
+              className="flex w-full items-center justify-center gap-2 rounded-full bg-[#2f80c9] px-5 py-3.5 text-[11px] font-semibold uppercase tracking-[0.2em] text-white transition hover:bg-[#3b91dc] disabled:cursor-not-allowed disabled:opacity-50"
+            >
+              <IconTicket className="h-4 w-4" /> Reservar minha vaga
+            </button>
           </div>
         </div>
 
-        <div className="shrink-0 border-t border-white/10 bg-[#0a0a0a] px-5 py-4 md:px-8">
+        <div className="flex shrink-0 items-center gap-4 border-t border-white/10 bg-[#0a0a0a] px-5 py-4 md:px-8">
+          {variante && (
+            <div className="hidden shrink-0 sm:block">
+              <p className="text-[9px] font-semibold uppercase tracking-[0.15em] text-white/35">
+                {variante.label}
+              </p>
+              <p className={`${display.className} text-xl font-semibold text-[#6ec3d9]`}>
+                {variante.precoLabel}
+              </p>
+            </div>
+          )}
           <button
             type="button"
             onClick={handleAdd}
             disabled={variante?.precoBRL != null && !cambio}
-            className="flex w-full items-center justify-center gap-2 rounded-full px-5 py-3.5 text-center text-[11px] font-semibold uppercase tracking-[0.2em] text-white shadow-[0_10px_30px_rgba(0,0,0,0.35)] transition duration-300 hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0"
+            className="flex min-w-0 flex-1 items-center justify-center gap-2 rounded-full px-5 py-3.5 text-center text-[11px] font-semibold uppercase tracking-[0.2em] text-white shadow-[0_10px_30px_rgba(0,0,0,0.35)] transition duration-300 hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0"
             style={{ backgroundColor: adicionado ? "#2f9e6e" : "#2f80c9" }}
           >
             {adicionado ? (

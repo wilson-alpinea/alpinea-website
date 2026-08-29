@@ -489,20 +489,24 @@ export default async function PacotesJapaoPage({
                 </div>
                 <div className="border-l border-white/10 px-5 py-4">
                   <p className={`${display.className} text-xl font-medium text-white`}>Caravana</p>
-                  <p className="mt-1 text-xs text-[#6ec3d9]">Grupo e datas fixas</p>
+                  <p className="mt-1 text-xs text-[#6ec3d9]">Turma de passageiros</p>
                 </div>
                 <div className="border-l border-white/10 px-5 py-4">
                   <p className={`${display.className} text-xl font-medium text-white`}>Privativo</p>
-                  <p className="mt-1 text-xs text-[#6ec3d9]">Seu grupo e datas flexíveis</p>
+                  <p className="mt-1 text-xs text-[#6ec3d9]">Somente com seu grupo</p>
                 </div>
               </div>
               <div>
                 {[
-                  ["Com quem viaja", "Grupo de passageiros", "Somente com seu grupo"],
-                  ["Datas", "Saídas fixas", "Flexíveis dentro da temporada"],
-                  ["Roteiro", "Definido para a caravana", "Roteiro-base ajustável"],
-                  ["Personalização", "Essencial", "Ritmo e interesses do grupo"],
-                  ["Mais indicado para", "Quem busca convivência e custo-benefício", "Famílias, casais e amigos que querem privacidade"],
+                  ["Com quem viaja", "Turma de passageiros", "Somente com seu grupo"],
+                  ["Datas", "Pré-definidas e não alteráveis", "Pré-definidas e não alteráveis"],
+                  ["Roteiro", "Pré-definido e não alterável", "Pré-definido e não alterável"],
+                  ["Personalização", "Tipo de quarto; hotéis já pré-definidos", "Tipo de quarto; hotéis já pré-definidos"],
+                  [
+                    "Mais indicado para",
+                    "Quem busca convivência com uma turma de viajantes",
+                    "Quem deseja adquirir um pacote fechado, mas viajar somente com sua família ou círculo pessoal",
+                  ],
                 ].map(([criterio, caravana, privativo]) => (
                   <div
                     key={criterio}
@@ -585,8 +589,6 @@ export default async function PacotesJapaoPage({
                   categoria={pacote.categoria}
                   nome={pacote.nome}
                   tagline={pacote.tagline}
-                  descricao={pacote.descricao}
-                  destaques={pacote.destaques}
                   imagem={pacote.imagem}
                   selo={pacote.selo}
                   variantes={pacote.variantes}
@@ -609,9 +611,9 @@ export default async function PacotesJapaoPage({
                 Privativo
               </h2>
               <p className="mt-4 max-w-2xl text-sm font-light leading-6 text-white/55 md:text-base md:leading-7">
-                Para viajar apenas com quem você escolher — datas flexíveis
-                dentro da temporada, com guia e transporte privado disponíveis
-                como opcionais.
+                Para viajar apenas com quem você escolher, em um pacote fechado
+                com datas e roteiro pré-definidos. Guia e transporte privado estão
+                disponíveis como opcionais.
               </p>
             </div>
 
@@ -649,7 +651,7 @@ export default async function PacotesJapaoPage({
                   Como funciona
                 </p>
                 <p className="mt-3 text-sm leading-7 text-white/65">
-                  Somente seu grupo · Datas flexíveis dentro da temporada · Guia e transporte opcionais · Roteiro-base ajustável ao seu ritmo
+                  Somente seu grupo · Datas pré-definidas · Guia e transporte opcionais · Roteiro pré-definido e não alterável
                 </p>
               </div>
             </div>
@@ -666,8 +668,6 @@ export default async function PacotesJapaoPage({
                   categoria={pacote.categoria}
                   nome={pacote.nome}
                   tagline={pacote.tagline}
-                  descricao={pacote.descricao}
-                  destaques={pacote.destaques}
                   imagem={pacote.imagem}
                   variantes={pacote.variantes}
                   rodape="Por pessoa, em quarto individual. Datas dentro da temporada indicada."

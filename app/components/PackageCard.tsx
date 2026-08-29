@@ -19,24 +19,18 @@ export function PackageCard({
   categoria,
   nome,
   tagline,
-  descricao,
-  destaques,
   imagem,
   selo,
   variantes,
-  varianteHint = "Selecionar duração",
   rodape,
 }: {
   divisao: CartItem["divisao"];
   categoria: string;
   nome: string;
   tagline: string;
-  descricao: string;
-  destaques: string[];
   imagem: string;
   selo?: string;
   variantes: PackageVariant[];
-  varianteHint?: string;
   rodape?: string;
 }) {
   const [open, setOpen] = useState(false);
@@ -128,12 +122,9 @@ export function PackageCard({
           categoria={categoria}
           nome={nome}
           tagline={tagline}
-          descricao={descricao}
-          destaques={destaques}
           imagem={imagem}
           selo={selo}
           variantes={variantes}
-          varianteHint={varianteHint}
           varianteInicialId={selecionada}
           rodape={rodape}
           onClose={() => setOpen(false)}
