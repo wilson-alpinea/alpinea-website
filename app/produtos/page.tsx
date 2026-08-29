@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Bodoni_Moda } from "next/font/google";
@@ -51,9 +51,9 @@ const PRODUTOS: Record<
     href: "/pacotes#individuais",
   },
   personalizado: {
-    nome: "Pacote Personalizado",
+    nome: "Viagem Personalizada",
     precoBRL: null,
-    href: "/pacotes#personalizado",
+    href: "/viagem-personalizada",
   },
   guia: {
     nome: "Guia Turístico Avulso",
@@ -81,7 +81,7 @@ const IMAGENS_PRODUTO: Record<ProdutoKey, { src: string; alt: string }> = {
   },
   personalizado: {
     src: "/images/personalizado-hero.png",
-    alt: "Pacotes Personalizados",
+    alt: "Viagem Personalizada",
   },
   guia: {
     src: "/images/guia-ajisai-campo.png",
@@ -189,7 +189,7 @@ const PACOTES_AJISAI: {
   },
   {
     key: "personalizado",
-    titulo: "Pacote Personalizado",
+    titulo: "Viagem Personalizada",
     frase: "Quero que a viagem seja criada para mim.",
     pontos: [
       "Datas escolhidas por você",
@@ -205,7 +205,7 @@ const COLUNAS: { key: Exclude<ProdutoKey, "guia">; titulo: string }[] = [
   { key: "roteiro", titulo: "Roteiro Personalizado" },
   { key: "caravana", titulo: "Caravana" },
   { key: "individual", titulo: "Individual / Pequenos Grupos" },
-  { key: "personalizado", titulo: "Pacote Personalizado" },
+  { key: "personalizado", titulo: "Viagem Personalizada" },
 ];
 
 // Colunas da tabela "Qual opção combina com você" — comparam estilos de
@@ -386,9 +386,10 @@ export default function ProdutosPage() {
   const [enviado, setEnviado] = useState(false);
   const [roteiroModalOpen, setRoteiroModalOpen] = useState(false);
   const [pacotesModalOpen, setPacotesModalOpen] = useState(false);
+  const [viagemModalOpen, setViagemModalOpen] = useState(false);
 
   useEffect(() => {
-    if (!roteiroModalOpen && !pacotesModalOpen) return;
+    if (!roteiroModalOpen && !pacotesModalOpen && !viagemModalOpen) return;
 
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
@@ -396,6 +397,7 @@ export default function ProdutosPage() {
       if (event.key === "Escape") {
         setRoteiroModalOpen(false);
         setPacotesModalOpen(false);
+        setViagemModalOpen(false);
       }
     };
     window.addEventListener("keydown", handleKeyDown);
@@ -404,7 +406,7 @@ export default function ProdutosPage() {
       document.body.style.overflow = previousOverflow;
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [roteiroModalOpen, pacotesModalOpen]);
+  }, [roteiroModalOpen, pacotesModalOpen, viagemModalOpen]);
 
   // Entrada direta (CTA de cada produto) — vai direto para a qualificação,
   // já com o produto marcado.
@@ -531,7 +533,8 @@ export default function ProdutosPage() {
                 cta="Ver pacotes"
               />
               <ProductSelectorCard
-                href="/pacotes#personalizado"
+                href="/viagem-personalizada"
+                onClick={() => setViagemModalOpen(true)}
                 icon="/images/produtos/viagem-personalizada.png"
                 iconWidth={1254}
                 iconHeight={1254}
@@ -558,7 +561,7 @@ export default function ProdutosPage() {
                 className="lg:col-span-2"
               />
               <ProductSelectorCard
-                href="/pacotes#personalizado"
+                href="/viagem-personalizada"
                 icon="/images/produtos/hoteis.png"
                 iconWidth={435}
                 iconHeight={366}
@@ -579,7 +582,7 @@ export default function ProdutosPage() {
                 className="lg:col-span-2"
               />
               <ProductSelectorCard
-                href="/pacotes#personalizado"
+                href="/viagem-personalizada"
                 icon="/images/produtos/transporte-privado.png"
                 iconWidth={1536}
                 iconHeight={1024}
@@ -876,6 +879,51 @@ export default function ProdutosPage() {
             <iframe
               src="/pacotes"
               title="Conteúdo completo de Pacotes de Viagem"
+              className="h-full w-full border-0 pt-14"
+            />
+          </div>
+        </div>
+      )}
+
+      {viagemModalOpen && (
+        <div
+          className="fixed inset-0 z-[90] flex items-end justify-center bg-black/85 p-0 backdrop-blur-sm md:items-center md:p-6"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="viagem-modal-title"
+          onClick={() => setViagemModalOpen(false)}
+        >
+          <div
+            className="relative h-[96vh] w-full max-w-[1500px] overflow-hidden rounded-t-3xl border border-[#6ec3d9]/30 bg-black shadow-[0_0_60px_-20px_rgba(110,195,217,0.45)] md:h-[94vh] md:rounded-3xl"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <div className="absolute inset-x-0 top-0 z-20 flex h-14 items-center justify-between border-b border-white/10 bg-black/90 px-4 backdrop-blur-xl md:px-6">
+              <p
+                id="viagem-modal-title"
+                className={`${display.className} text-lg font-medium text-white md:text-xl`}
+              >
+                Viagem Personalizada
+              </p>
+              <div className="flex items-center gap-3">
+                <Link
+                  href="/viagem-personalizada"
+                  className="hidden text-[10px] font-semibold uppercase tracking-[0.15em] text-[#6ec3d9] transition hover:text-white sm:block"
+                >
+                  Abrir página completa
+                </Link>
+                <button
+                  type="button"
+                  onClick={() => setViagemModalOpen(false)}
+                  aria-label="Fechar Viagem Personalizada"
+                  className="flex h-9 w-9 items-center justify-center rounded-full border border-white/15 text-2xl leading-none text-white/65 transition hover:border-white/40 hover:text-white"
+                >
+                  ×
+                </button>
+              </div>
+            </div>
+            <iframe
+              src="/viagem-personalizada"
+              title="Configurador completo de Viagem Personalizada"
               className="h-full w-full border-0 pt-14"
             />
           </div>
@@ -1312,7 +1360,7 @@ export default function ProdutosPage() {
             <p className="mt-4 text-sm font-light leading-6 text-white/55 md:text-base">
               Já tem passagem e hospedagem resolvidas? Adicione só o que
               falta ao seu roteiro — mesmos itens disponíveis no Pacote
-              Personalizado.
+              Viagem Personalizada.
             </p>
           </div>
 
@@ -1350,7 +1398,7 @@ export default function ProdutosPage() {
                   </p>
                 </div>
                 <Link
-                  href="/pacotes#personalizado"
+                  href="/viagem-personalizada"
                   className="mt-5 block rounded-full px-5 py-3 text-center text-[11px] font-semibold uppercase tracking-[0.2em] text-[#0A2540] transition hover:brightness-95"
                   style={{ backgroundColor: "#9FD4EE" }}
                 >
@@ -1360,6 +1408,10 @@ export default function ProdutosPage() {
             ))}
           </div>
         </div>
+      </section>
+
+      <section aria-label="Por que escolher a Ajisai" className="border-t border-white/10 bg-black">
+        <InstitutionalContent />
       </section>
 
       <footer className="bg-black px-8 pb-20 pt-16 text-white md:px-16 md:pb-20 md:pt-20">
@@ -1379,6 +1431,49 @@ export default function ProdutosPage() {
         </div>
       </footer>
     </main>
+  );
+}
+
+function InstitutionalContent() {
+  const iframeRef = useRef<HTMLIFrameElement>(null);
+  const observerRef = useRef<ResizeObserver | null>(null);
+  const [height, setHeight] = useState(1800);
+
+  useEffect(() => {
+    return () => observerRef.current?.disconnect();
+  }, []);
+
+  function syncHeight() {
+    const documentElement = iframeRef.current?.contentDocument?.documentElement;
+    if (!documentElement) return;
+
+    const updateHeight = () => {
+      const iframeDocument = iframeRef.current?.contentDocument;
+      if (!iframeDocument) return;
+      setHeight(
+        Math.max(
+          iframeDocument.documentElement.scrollHeight,
+          iframeDocument.body.scrollHeight,
+        ),
+      );
+    };
+
+    updateHeight();
+    observerRef.current?.disconnect();
+    observerRef.current = new ResizeObserver(updateHeight);
+    observerRef.current.observe(documentElement);
+  }
+
+  return (
+    <iframe
+      ref={iframeRef}
+      src="/pacotes?view=institutional"
+      title="Por que escolher a Ajisai e avaliações de clientes"
+      onLoad={syncHeight}
+      scrolling="no"
+      className="block w-full overflow-hidden border-0 bg-black"
+      style={{ height }}
+    />
   );
 }
 

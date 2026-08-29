@@ -4,7 +4,6 @@ import { ContactCTA } from "../components/ContactCTA";
 import { CartProvider } from "../components/CartContext";
 import { CartWidget } from "../components/CartWidget";
 import { PackageCard, type PackageVariant } from "../components/PackageCard";
-import { CustomPackageCard } from "../components/CustomPackageCard";
 import { CarouselScroller } from "../components/CarouselScroller";
 import { formatUSD } from "../lib/currency";
 
@@ -17,14 +16,14 @@ const display = Bodoni_Moda({
 export const metadata = {
   title: "Ajisai | Pacotes de Viagem para o Japão",
   description:
-    "Pacotes de viagem para o Japão com a curadoria Ajisai: Caravana (grupo fechado), Individual ou Pequenos Grupos e Pacotes Personalizados sob medida. Monte seu carrinho e finalize direto no WhatsApp.",
+    "Pacotes de viagem para o Japão com a curadoria Ajisai: Caravana em grupo fechado e opções para Individual ou Pequenos Grupos. Monte seu carrinho e finalize direto no WhatsApp.",
   // Sobrescreve o openGraph/twitter padrão do layout raiz (marca Alpinea,
   // voltado à home) — o link desta página precisa de um preview específico
   // pra pacotes, não o card genérico do site inteiro.
   openGraph: {
     title: "Ajisai | Pacotes de Viagem para o Japão",
     description:
-      "Caravana em grupo fechado, Individual ou Pequenos Grupos e Pacotes Personalizados sob medida — conheça os pacotes de viagem para o Japão com a curadoria Ajisai.",
+      "Caravana em grupo fechado e opções para Individual ou Pequenos Grupos — conheça os pacotes de viagem para o Japão com a curadoria Ajisai.",
     siteName: "Ajisai",
     images: [
       {
@@ -41,7 +40,7 @@ export const metadata = {
     card: "summary_large_image",
     title: "Ajisai | Pacotes de Viagem para o Japão",
     description:
-      "Pacotes de viagem para o Japão com a curadoria Ajisai — Caravana, Individual ou Pequenos Grupos e Personalizado.",
+      "Pacotes de viagem para o Japão com a curadoria Ajisai — Caravana e opções para Individual ou Pequenos Grupos.",
     images: ["/images/caravana-2-hero.png"],
   },
 };
@@ -110,10 +109,6 @@ const BANNER_CARAVANA = {
 const BANNER_INDIVIDUAL = {
   src: "/images/individual-2-hero.png",
   alt: "Individual ou Pequenos Grupos",
-};
-const BANNER_PERSONALIZADO = {
-  src: "/images/personalizado-hero.png",
-  alt: "Pacotes Personalizados",
 };
 
 // Fatos que valem para todos os pacotes da divisão (data fixa, guia
@@ -239,15 +234,6 @@ const divisoes = [
     href: "#individuais",
     imagem: BANNER_INDIVIDUAL.src,
   },
-  {
-    letra: "C",
-    titulo: "Pacotes Personalizados",
-    frase: "Quero tudo feito para mim",
-    texto:
-      "Viaje em qualquer data, com um roteiro sob medida e adicionais que você preferir.",
-    href: "#personalizado",
-    imagem: BANNER_PERSONALIZADO.src,
-  },
 ];
 
 // Seção "Viaje com a Ajisai" — mesmo conteúdo/design usado em
@@ -343,20 +329,31 @@ const whyAjisai = [
   },
 ];
 
-export default function PacotesJapaoPage() {
+export default async function PacotesJapaoPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ view?: string }>;
+}) {
+  const { view } = await searchParams;
+  const institutionalView = view === "institutional";
   const todosOsNomesDePacote = [
     "Primavera 1 — Temporada de Cerejeiras 2027 (Caravana)",
     "Primavera 2 — Maio 2027 (Caravana)",
     "Primavera 1 — Temporada de Cerejeiras 2027 (Individual)",
     "Primavera 2 — Maio 2027 (Individual)",
-    "Pacote Personalizado",
   ];
 
   return (
     <CartProvider>
-      <main className="min-h-screen overflow-x-hidden bg-black pb-16 text-white md:pb-0">
+      <main
+        className={`min-h-screen overflow-x-hidden bg-black pb-16 text-white md:pb-0 ${
+          institutionalView
+            ? "[&_.package-content]:hidden"
+            : "[&_.institutional-content]:hidden"
+        }`}
+      >
         {/* ── HEADER ── */}
-        <header className="fixed left-0 right-0 top-0 z-50 transform-gpu bg-black/10 backdrop-blur-2xl">
+        <header className="package-content fixed left-0 right-0 top-0 z-50 transform-gpu bg-black/10 backdrop-blur-2xl">
           <div className="mx-auto flex max-w-7xl items-center justify-between px-8 py-5 md:px-16">
             <img
               src="/images/AJISAI-LOGO.avif"
@@ -372,7 +369,7 @@ export default function PacotesJapaoPage() {
 
         {/* ── CTA FIXO MOBILE ── */}
         <div
-          className="fixed inset-x-0 bottom-0 z-40 transform-gpu border-t border-white/10 bg-black/[0.92] px-4 pt-2.5 backdrop-blur-xl md:hidden"
+          className="package-content fixed inset-x-0 bottom-0 z-40 transform-gpu border-t border-white/10 bg-black/[0.92] px-4 pt-2.5 backdrop-blur-xl md:hidden"
           style={{ paddingBottom: "max(0.55rem, env(safe-area-inset-bottom))" }}
         >
           <ContactCTA
@@ -392,7 +389,7 @@ export default function PacotesJapaoPage() {
         </div>
 
         {/* ── TÍTULO ── */}
-        <section className="border-b border-white/10 bg-black px-6 pb-14 pt-32 text-center md:px-16 md:pb-16 md:pt-40">
+        <section className="package-content border-b border-white/10 bg-black px-6 pb-14 pt-32 text-center md:px-16 md:pb-16 md:pt-40">
           <h1
             className={`${display.className} text-3xl font-medium leading-tight text-white sm:text-4xl md:text-6xl`}
           >
@@ -400,9 +397,9 @@ export default function PacotesJapaoPage() {
           </h1>
         </section>
 
-        {/* ── 3 DIVISÕES ── */}
-        <section className="border-b border-white/10 bg-[#050505] px-6 py-14 md:px-16 md:py-20">
-          <div className="mx-auto grid max-w-6xl gap-8 sm:grid-cols-3">
+        {/* ── 2 DIVISÕES ── */}
+        <section className="package-content border-b border-white/10 bg-[#050505] px-6 py-14 md:px-16 md:py-20">
+          <div className="mx-auto grid max-w-4xl gap-8 sm:grid-cols-2">
             {divisoes.map((item) => (
               <a
                 key={item.letra}
@@ -481,7 +478,7 @@ export default function PacotesJapaoPage() {
         {/* ── DIVISÃO 1 · PACOTES DE CARAVANA ── */}
         <section
           id="pacotes"
-          className="border-t border-white/10 bg-[#050505] px-5 py-12 md:bg-black md:px-16 md:py-24"
+          className="package-content border-t border-white/10 bg-[#050505] px-5 py-12 md:bg-black md:px-16 md:py-24"
         >
           <div className="mx-auto max-w-7xl">
             <div className="mb-10 md:mb-14">
@@ -548,7 +545,7 @@ export default function PacotesJapaoPage() {
         {/* ── DIVISÃO 2 · INDIVIDUAL OU PEQUENOS GRUPOS ── */}
         <section
           id="individuais"
-          className="border-t border-white/10 bg-black px-5 py-12 md:px-16 md:py-24"
+          className="package-content border-t border-white/10 bg-black px-5 py-12 md:px-16 md:py-24"
         >
           <div className="mx-auto max-w-7xl">
             <div className="mb-10 md:mb-14">
@@ -611,28 +608,8 @@ export default function PacotesJapaoPage() {
           </div>
         </section>
 
-        {/* ── DIVISÃO 3 · PACOTES PERSONALIZADOS ── */}
-        <section
-          id="personalizado"
-          className="border-t border-white/10 bg-white/[0.02] px-5 py-12 md:px-16 md:py-24"
-        >
-          <div className="mx-auto max-w-7xl">
-            <div className="mb-10 md:mb-14">
-              <h2 className={`${display.className} text-3xl font-medium leading-tight md:text-5xl`}>
-                Pacotes Personalizados
-              </h2>
-              <p className="mt-4 max-w-2xl text-sm font-light leading-6 text-white/55 md:text-base md:leading-7">
-                Viaje em qualquer data, com um roteiro sob medida e
-                adicionais que você preferir.
-              </p>
-            </div>
-
-            <CustomPackageCard />
-          </div>
-        </section>
-
         {/* ── POR QUE A AJISAI ── */}
-        <section className="border-t-2 border-[#b79ce6]/30 bg-white/[0.02] px-6 py-20 md:px-16 md:py-32">
+        <section className="institutional-content border-t-2 border-[#b79ce6]/30 bg-white/[0.02] px-6 py-20 md:px-16 md:py-32">
           <div className="mx-auto max-w-7xl">
             <div className="mb-10 flex justify-center md:mb-14">
               <img
@@ -691,7 +668,7 @@ export default function PacotesJapaoPage() {
         </section>
 
         {/* ── SOCIAL PROOF — AVALIAÇÕES DO GOOGLE ── */}
-        <section className="border-t border-white/10 bg-black px-6 py-20 md:px-16 md:py-32">
+        <section className="institutional-content border-t border-white/10 bg-black px-6 py-20 md:px-16 md:py-32">
           <div className="mx-auto max-w-7xl">
             <div className="mb-14 grid grid-cols-1 items-center gap-10 md:mb-20 md:grid-cols-2 md:gap-16">
               <div>
@@ -813,7 +790,7 @@ export default function PacotesJapaoPage() {
           </div>
         </section>
 
-        <footer className="border-t border-white/10 bg-black px-8 pb-20 pt-16 text-white md:px-16 md:pb-20 md:pt-20">
+        <footer className="package-content border-t border-white/10 bg-black px-8 pb-20 pt-16 text-white md:px-16 md:pb-20 md:pt-20">
           <div className="mx-auto flex max-w-2xl flex-col items-center gap-7 text-center">
             <img
               src="/images/AJISAI-LOGO.avif"

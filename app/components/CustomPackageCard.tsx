@@ -369,7 +369,7 @@ const OPCOES = [
     icone: "📱",
     descricao: "Painel digital Ajisai com o roteiro sob medida do seu grupo",
     detalhe:
-      "Roteiro Digital Ajisai personalizado dia a dia — atrações, deslocamento, refeições e informações práticas dos aeroportos, montado sob medida para o seu grupo e acessível pelo navegador do celular durante toda a viagem. Incluso em todo Pacote Personalizado.",
+      "Roteiro Digital Ajisai personalizado dia a dia — atrações, deslocamento, refeições e informações práticas dos aeroportos, montado sob medida para o seu grupo e acessível pelo navegador do celular durante toda a viagem. Incluso em toda Viagem Personalizada.",
     calcPreco: (ctx: PrecoCtx) =>
       ROTEIRO_PRECO_BASE + Math.max(0, ctx.dias - ROTEIRO_BASE_DIAS) * ROTEIRO_PRECO_DIA_EXTRA,
   },
@@ -706,8 +706,8 @@ export function CustomPackageCard() {
       : "Data a combinar";
 
     addItem({
-      divisao: "Personalizado",
-      nome: "Pacote Personalizado",
+      divisao: "Viagem Personalizada",
+      nome: "Viagem Personalizada",
       variante: `Data solicitada: ${dataFormatada}`,
       duracao: `${dias} dias`,
       periodo: dataFormatada,
@@ -736,7 +736,7 @@ export function CustomPackageCard() {
     <>
     <div className="flex flex-col overflow-hidden rounded-2xl border border-black/10 bg-white p-6 shadow-sm sm:rounded-[2rem] md:p-8">
       <p className={`${display.className} text-3xl font-semibold uppercase tracking-[0.08em] text-black md:text-4xl`}>
-        Personalizado
+        Viagem Personalizada
       </p>
 
       <form onSubmit={handleSubmit} className="mt-5 space-y-6">
