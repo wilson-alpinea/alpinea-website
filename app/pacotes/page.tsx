@@ -104,7 +104,7 @@ const BANNER_CARAVANA = {
   alt: "Pacotes de Caravana",
 };
 const BANNER_INDIVIDUAL = {
-  src: "/images/individual-2-hero.png",
+  src: "/images/icone-viagem-privativa.png",
   alt: "Pacotes Privativos",
 };
 
@@ -415,7 +415,7 @@ export default async function PacotesJapaoPage({
                     alt=""
                     fill
                     sizes="(min-width: 640px) 33vw, 100vw"
-                    className="object-cover object-top transition duration-500 group-hover:scale-105"
+                    className={`${item.titulo === "Privativo" ? "object-contain p-5" : "object-cover object-top"} transition duration-500 group-hover:scale-105`}
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/0 to-transparent" />
                 </div>
@@ -514,7 +514,14 @@ export default async function PacotesJapaoPage({
                   >
                     <p className="px-5 py-4 text-xs font-medium text-white/45">{criterio}</p>
                     <p className="border-l border-white/[0.07] px-5 py-4 text-sm leading-6 text-white/70">{caravana}</p>
-                    <p className="border-l border-white/[0.07] px-5 py-4 text-sm leading-6 text-white/70">{privativo}</p>
+                    <div className="border-l border-white/[0.07] px-5 py-4 text-sm leading-6 text-white/70">
+                      <p>{privativo}</p>
+                      {criterio === "Datas" && (
+                        <span className="mt-2.5 inline-flex rounded-full border border-red-400/40 bg-red-500/15 px-3 py-1.5 text-[9px] font-semibold uppercase leading-4 tracking-[0.1em] text-red-300">
+                          Possível alterar mediante pagamento de valor adicional
+                        </span>
+                      )}
+                    </div>
                   </div>
                 ))}
               </div>
