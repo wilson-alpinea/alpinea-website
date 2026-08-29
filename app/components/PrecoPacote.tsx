@@ -48,7 +48,8 @@ export function PrecoPacote({
         </p>
         {cambio && (
           <p className={`mt-1 text-sm font-medium ${corTextoSecundario}`}>
-            ou {formatBRL(variante.precoUSD * cambio.cotacao)}
+            {compact ? "aprox. " : "ou "}
+            {formatBRL(variante.precoUSD * cambio.cotacao)}
           </p>
         )}
         <p className={`mt-1 text-xs uppercase tracking-[0.15em] ${corTextoTerciario}`}>
@@ -71,7 +72,7 @@ export function PrecoPacote({
             Versão Personalizada deste roteiro: {formatUSD(variante.personalizadoUSD)}
           </p>
         )}
-        {cambio && (
+        {!compact && cambio && (
           <CambioLabel cambio={cambio} className={`mt-1 text-[11px] ${corTextoTerciario}`} />
         )}
       </>
@@ -98,7 +99,8 @@ export function PrecoPacote({
     <>
       <p className={precoClassName}>{brlParaUSDLabel(variante.precoBRL, cambio)}</p>
       <p className={`mt-1 text-sm font-medium ${corTextoSecundario}`}>
-        ou {formatBRL(variante.precoBRL)}
+        {compact ? "aprox. " : "ou "}
+        {formatBRL(variante.precoBRL)}
       </p>
       <p className={`mt-1 text-xs uppercase tracking-[0.15em] ${corTextoTerciario}`}>
         Por pessoa · Quarto Individual
@@ -108,7 +110,9 @@ export function PrecoPacote({
           ou em até 12x de {parcela} + Juros Mensais
         </p>
       )}
-      <CambioLabel cambio={cambio} className={`mt-1 text-[11px] ${corTextoTerciario}`} />
+      {!compact && (
+        <CambioLabel cambio={cambio} className={`mt-1 text-[11px] ${corTextoTerciario}`} />
+      )}
     </>
   );
 }

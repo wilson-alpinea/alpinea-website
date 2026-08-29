@@ -5,6 +5,7 @@ import { CartProvider } from "../components/CartContext";
 import { CartWidget } from "../components/CartWidget";
 import { PackageCard, type PackageVariant } from "../components/PackageCard";
 import { CarouselScroller } from "../components/CarouselScroller";
+import { PackageSectionNote } from "../components/PackageSectionNote";
 import { formatUSD } from "../lib/currency";
 
 // Mesma fonte de destaque usada nas demais páginas do site.
@@ -111,17 +112,6 @@ const BANNER_INDIVIDUAL = {
 // compartilhado, vagas limitadas...) ficam num único bloco por seção, em vez
 // de repetidos em cada card — só o que muda de pacote pra pacote (temporada,
 // clima, datas, preço) aparece dentro do card.
-const BENEFICIOS_CARAVANA = [
-  "Data de saída fixa, em grupo fechado",
-  "Guia bilíngue acompanhando a caravana do início ao fim",
-  "Vagas limitadas — reserva antecipada recomendada",
-];
-const BENEFICIOS_INDIVIDUAL = [
-  "Guia particular, dedicado só ao seu grupo",
-  "Roteiro pode ser ajustado ao seu ritmo e interesses",
-  "Ideal para famílias, casais e grupos de amigos",
-];
-
 const INCLUSO_CARAVANA = [
   "Hospedagem selecionada",
   "Guia bilíngue acompanhando o grupo",
@@ -132,17 +122,18 @@ const INCLUSO_CARAVANA = [
 
 const INCLUSO_PRIVATIVO = [
   "Hospedagem selecionada",
-  "Guia particular para o seu grupo",
-  "Transportes previstos no roteiro",
+  "Roteiro-base da temporada",
   "Experiências e visitas programadas",
   "Suporte Ajisai durante a viagem",
 ];
+
+const OPCIONAIS_PRIVATIVO = ["Guia particular", "Transporte privado"];
 
 const pacotesCaravana = [
   {
     slug: "caravana-cerejeiras",
     categoria: "Temporada de Cerejeiras",
-    nome: "Primavera 1 — Temporada de Cerejeiras 2027",
+    nome: "Primavera 1 — Cerejeiras 2027",
     tagline: "Saída em grupo fechado",
     descricao:
       "Direto na temporada de floração das cerejeiras — parques, templos e avenidas históricas no auge do hanami.",
@@ -156,9 +147,9 @@ const pacotesCaravana = [
     selo: "🌸 Alta procura",
     variantes: variantesUSD(
       4550,
-      "28 mar – 03 abr 2027 (aproximada)",
+      "28 mar — 03 abr 2027",
       8280,
-      "24 mar – 07 abr 2027 (aproximada)",
+      "24 mar — 07 abr 2027",
     ),
   },
   {
@@ -177,9 +168,9 @@ const pacotesCaravana = [
     accent: "#7fbf6e",
     variantes: variantesUSD(
       4280,
-      "08 – 14 mai 2027 (aproximada)",
+      "08 — 14 mai 2027",
       7980,
-      "08 – 22 mai 2027 (aproximada)",
+      "08 — 22 mai 2027",
     ),
   },
 ];
@@ -188,8 +179,8 @@ const pacotesIndividuais = [
   {
     slug: "individual-cerejeiras",
     categoria: "Temporada de Cerejeiras",
-    nome: "Primavera 1 — Temporada de Cerejeiras 2027",
-    tagline: "Datas flexíveis, guia dedicado só ao seu grupo",
+    nome: "Primavera 1 — Cerejeiras 2027",
+    tagline: "Datas flexíveis, viagem exclusiva para o seu grupo",
     descricao:
       "Viaje na temporada de floração das cerejeiras — parques, templos e avenidas históricas no auge do hanami, com liberdade para escolher suas datas dentro da florada.",
     destaques: [
@@ -200,16 +191,16 @@ const pacotesIndividuais = [
     accent: "#e6a6c7",
     variantes: variantesIndividualUSD(
       2790,
-      "Datas flexíveis (aproximadas) · mar–abr 2027",
+      "Datas flexíveis · mar–abr 2027",
       4980,
-      "Datas flexíveis (aproximadas) · mar–abr 2027",
+      "Datas flexíveis · mar–abr 2027",
     ),
   },
   {
     slug: "individual-maio",
     categoria: "Maio 2027",
     nome: "Primavera 2 — Maio 2027",
-    tagline: "Datas flexíveis, guia dedicado só ao seu grupo",
+    tagline: "Datas flexíveis, viagem exclusiva para o seu grupo",
     descricao:
       "Viaje em maio, fora do pico de alta temporada — clima ameno, menos turistas e liberdade para escolher suas datas dentro do mês.",
     destaques: [
@@ -220,9 +211,9 @@ const pacotesIndividuais = [
     accent: "#7fbf6e",
     variantes: variantesIndividualUSD(
       2490,
-      "Datas flexíveis (aproximadas) · maio 2027",
+      "Datas flexíveis · maio 2027",
       4480,
-      "Datas flexíveis (aproximadas) · maio 2027",
+      "Datas flexíveis · maio 2027",
     ),
   },
 ];
@@ -242,7 +233,7 @@ const divisoes = [
     titulo: "Privativo",
     frase: "Seu grupo · roteiro-base · datas flexíveis",
     texto:
-      "Você viaja somente com seu grupo, escolhe as datas dentro da temporada e conta com guia particular.",
+      "Você viaja somente com seu grupo e escolhe as datas dentro da temporada. Guia e transporte privado são opcionais.",
     href: "#individuais",
     imagem: BANNER_INDIVIDUAL.src,
   },
@@ -558,24 +549,33 @@ export default async function PacotesJapaoPage({
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/5 to-transparent" />
             </div>
 
-            <ul className="mb-8 flex flex-col gap-y-3 md:mb-10">
-              {BENEFICIOS_CARAVANA.map((item) => (
-                <li key={item} className="flex items-center gap-2.5 text-sm text-white/60 md:text-base">
-                  <IconCheck className="h-4 w-4 shrink-0 text-[#6ec3d9]" />
-                  {item}
-                </li>
-              ))}
-            </ul>
-
-            <div className="mb-8 md:mb-10">
-              <span className="inline-flex items-start gap-2 rounded-lg border border-[#6ec3d9]/40 bg-[#6ec3d9]/10 px-4 py-2.5 text-left text-[13px] leading-snug text-[#6ec3d9]">
-                <IconClock className="mt-0.5 h-4 w-4 shrink-0" />
-                <span>
-                  <span className="font-semibold">Datas aproximadas</span> — datas e valores
-                  sujeitos a alteração conforme disponibilidade e câmbio
-                </span>
-              </span>
+            <div className="mb-10 grid gap-4 md:mb-14 md:grid-cols-[1.35fr_1fr]">
+              <div className="rounded-2xl border border-white/10 bg-white/[0.025] p-5 md:p-6">
+                <h3 className={`${display.className} text-xl font-medium text-white md:text-2xl`}>
+                  O que está incluído na Caravana
+                </h3>
+                <ul className="mt-4 flex flex-wrap gap-x-5 gap-y-3">
+                  {INCLUSO_CARAVANA.map((item) => (
+                    <li key={item} className="flex items-center gap-2 text-sm text-white/60">
+                      <IconCheck className="h-4 w-4 shrink-0 text-[#6ec3d9]" />
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div className="rounded-2xl border border-[#6ec3d9]/20 bg-[#6ec3d9]/[0.055] p-5 md:p-6">
+                <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-[#6ec3d9]">
+                  Como funciona
+                </p>
+                <p className="mt-3 text-sm leading-7 text-white/65">
+                  Datas de saída definidas · Grupo fechado · Vagas limitadas · Roteiro programado
+                </p>
+              </div>
             </div>
+
+            <h3 className={`${display.className} mb-6 text-2xl font-medium text-white md:text-3xl`}>
+              Escolha sua viagem
+            </h3>
 
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
               {pacotesCaravana.map((pacote) => (
@@ -590,11 +590,11 @@ export default async function PacotesJapaoPage({
                   imagem={pacote.imagem}
                   selo={pacote.selo}
                   variantes={pacote.variantes}
-                  inclusoes={INCLUSO_CARAVANA}
                   rodape="Por pessoa, em quarto individual. Vagas limitadas por grupo."
                 />
               ))}
             </div>
+            <PackageSectionNote />
           </div>
         </section>
 
@@ -610,8 +610,8 @@ export default async function PacotesJapaoPage({
               </h2>
               <p className="mt-4 max-w-2xl text-sm font-light leading-6 text-white/55 md:text-base md:leading-7">
                 Para viajar apenas com quem você escolher — datas flexíveis
-                dentro da temporada e guia particular dedicado só ao seu
-                grupo.
+                dentro da temporada, com guia e transporte privado disponíveis
+                como opcionais.
               </p>
             </div>
 
@@ -626,24 +626,37 @@ export default async function PacotesJapaoPage({
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/5 to-transparent" />
             </div>
 
-            <ul className="mb-8 flex flex-col gap-y-3 md:mb-10">
-              {BENEFICIOS_INDIVIDUAL.map((item) => (
-                <li key={item} className="flex items-center gap-2.5 text-sm text-white/60 md:text-base">
-                  <IconCheck className="h-4 w-4 shrink-0 text-[#6ec3d9]" />
-                  {item}
-                </li>
-              ))}
-            </ul>
-
-            <div className="mb-8 md:mb-10">
-              <span className="inline-flex items-start gap-2 rounded-lg border border-[#6ec3d9]/40 bg-[#6ec3d9]/10 px-4 py-2.5 text-left text-[13px] leading-snug text-[#6ec3d9]">
-                <IconClock className="mt-0.5 h-4 w-4 shrink-0" />
-                <span>
-                  <span className="font-semibold">Datas aproximadas</span> — datas e valores
-                  sujeitos a alteração conforme disponibilidade e câmbio
-                </span>
-              </span>
+            <div className="mb-10 grid gap-4 md:mb-14 md:grid-cols-[1.35fr_1fr]">
+              <div className="rounded-2xl border border-white/10 bg-white/[0.025] p-5 md:p-6">
+                <h3 className={`${display.className} text-xl font-medium text-white md:text-2xl`}>
+                  O que está incluído no Privativo
+                </h3>
+                <ul className="mt-4 flex flex-wrap gap-x-5 gap-y-3">
+                  {INCLUSO_PRIVATIVO.map((item) => (
+                    <li key={item} className="flex items-center gap-2 text-sm text-white/60">
+                      <IconCheck className="h-4 w-4 shrink-0 text-[#6ec3d9]" />
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+                <p className="mt-4 border-t border-white/10 pt-4 text-xs text-white/45">
+                  <span className="font-semibold text-white/65">Opcionais:</span>{" "}
+                  {OPCIONAIS_PRIVATIVO.join(" · ")}
+                </p>
+              </div>
+              <div className="rounded-2xl border border-[#6ec3d9]/20 bg-[#6ec3d9]/[0.055] p-5 md:p-6">
+                <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-[#6ec3d9]">
+                  Como funciona
+                </p>
+                <p className="mt-3 text-sm leading-7 text-white/65">
+                  Somente seu grupo · Datas flexíveis dentro da temporada · Guia e transporte opcionais · Roteiro-base ajustável ao seu ritmo
+                </p>
+              </div>
             </div>
+
+            <h3 className={`${display.className} mb-6 text-2xl font-medium text-white md:text-3xl`}>
+              Escolha sua viagem
+            </h3>
 
             <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
               {pacotesIndividuais.map((pacote) => (
@@ -657,11 +670,11 @@ export default async function PacotesJapaoPage({
                   destaques={pacote.destaques}
                   imagem={pacote.imagem}
                   variantes={pacote.variantes}
-                  inclusoes={INCLUSO_PRIVATIVO}
                   rodape="Por pessoa, em quarto individual. Datas dentro da temporada indicada."
                 />
               ))}
             </div>
+            <PackageSectionNote />
           </div>
         </section>
 
