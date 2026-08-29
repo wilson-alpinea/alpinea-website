@@ -104,7 +104,7 @@ const BANNER_CARAVANA = {
   alt: "Pacotes de Caravana",
 };
 const BANNER_INDIVIDUAL = {
-  src: "/images/privado-hero.jpg",
+  src: "/images/privado-hero-v2.jpg",
   alt: "Pacotes Privativos",
 };
 

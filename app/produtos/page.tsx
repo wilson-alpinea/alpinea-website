@@ -76,7 +76,7 @@ const IMAGENS_PRODUTO: Record<ProdutoKey, { src: string; alt: string }> = {
   },
   caravana: { src: "/images/caravana-hero.jpg", alt: "Pacotes de Caravana" },
   individual: {
-    src: "/images/privado-hero.jpg",
+    src: "/images/privado-hero-v2.jpg",
     alt: "Individual ou Pequenos Grupos",
   },
   personalizado: {
@@ -411,11 +411,16 @@ export default function ProdutosPage() {
   // Entrada direta (CTA de cada produto) — vai direto para a qualificação,
   // já com o produto marcado.
   function escolherProduto(produto: ProdutoKey) {
-    setQualProduto(produto);
-    setEnviado(false);
-    requestAnimationFrame(() => {
-      document.getElementById("recomendador")?.scrollIntoView({ behavior: "smooth", block: "start" });
+    const produtoSelecionado = PRODUTOS[produto];
+    const text = encodeURIComponent(
+      `Olá! Tenho interesse em ${produtoSelecionado.nome} e gostaria de receber mais informações.`,
+    );
+
+    window.gtag?.("event", "whatsapp_click", {
+      form_name: "produtos_interesse_direto",
+      produto: produtoSelecionado.nome,
     });
+    window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${text}`, "_blank");
   }
 
   function trocarProduto() {
@@ -1200,7 +1205,7 @@ export default function ProdutosPage() {
       </section>
 
       {/* ── QUALIFICAÇÃO → WHATSAPP ── */}
-      <section id="recomendador" className="border-b border-white/10 bg-black px-6 py-16 md:px-16 md:py-24">
+      <section id="recomendador" className="hidden">
         <div className="mx-auto max-w-2xl">
           {enviado ? (
             <div className="flex flex-col items-center gap-4 py-6 text-center">
@@ -1521,7 +1526,13 @@ function ProductSelectorCard({
         alt=""
         width={iconWidth}
         height={iconHeight}
-        className="absolute right-6 top-5 h-14 w-14 object-contain opacity-90 md:right-8 md:top-7"
+        className={`absolute object-contain ${
+          title === "Transporte Privado"
+            ? "right-4 top-3 h-20 w-20 opacity-90 md:right-6 md:top-5"
+            : `right-6 top-5 h-14 w-14 md:right-8 md:top-7 ${
+                title === "Serviços adicionais" ? "brightness-0 invert" : "opacity-90"
+              }`
+        }`}
       />
       <div className="h-4" aria-hidden="true" />
       <h3 className={`${display.className} mt-3 pr-16 text-2xl font-medium text-white md:text-3xl`}>
