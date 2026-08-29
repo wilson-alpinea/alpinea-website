@@ -1521,7 +1521,11 @@ function ProductSelectorCard({
         alt=""
         width={iconWidth}
         height={iconHeight}
-        className="absolute right-6 top-5 h-14 w-14 object-contain opacity-90 md:right-8 md:top-7"
+        className={`absolute object-contain opacity-90 ${
+          title === "Viagem Personalizada"
+            ? "right-5 top-3 h-20 w-20 md:right-7 md:top-5"
+            : "right-6 top-5 h-14 w-14 md:right-8 md:top-7"
+        }`}
       />
       <div className="h-4" aria-hidden="true" />
       <h3 className={`${display.className} mt-3 pr-16 text-2xl font-medium text-white md:text-3xl`}>
