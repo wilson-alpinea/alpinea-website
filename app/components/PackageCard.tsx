@@ -55,15 +55,15 @@ export function PackageCard({
           <h3 className={`${display.className} text-2xl font-medium text-[#0A2540]`}>
             {nome}
           </h3>
-          {selo && (
-            <div className="mt-2 flex flex-wrap items-center gap-2.5">
+          <div className="mt-2 flex min-h-[25px] flex-wrap items-center gap-2.5">
+            {selo && (
               <span className="rounded-full border border-[#0A2540]/15 px-2.5 py-1 text-[9px] font-medium uppercase tracking-[0.12em] text-[#0A2540]/55">
                 {selo}
               </span>
-            </div>
-          )}
+            )}
+          </div>
           {variante && (
-            <p className="mt-3 text-xs font-medium uppercase tracking-[0.12em] text-[#0A2540]/50">
+            <p className="mt-2 text-xs font-medium uppercase tracking-[0.12em] text-[#0A2540]/50">
               {variante.datas}
             </p>
           )}

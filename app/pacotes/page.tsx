@@ -409,13 +409,13 @@ export default async function PacotesJapaoPage({
                 href={item.href}
                 className="group flex h-full flex-col overflow-hidden rounded-2xl border border-white/10 bg-white/[0.02] text-center shadow-[0_0_30px_-14px_rgba(37,99,235,0.3)] transition hover:border-white/25 hover:bg-white/[0.04] sm:rounded-[1.5rem]"
               >
-                <div className={`relative w-full overflow-hidden ${item.titulo === "Caravana" ? "aspect-[3/2]" : "aspect-video"}`}>
+                <div className="relative aspect-[3/2] w-full overflow-hidden">
                   <Image
                     src={item.imagem}
                     alt=""
                     fill
                     sizes="(min-width: 640px) 33vw, 100vw"
-                    className={`${item.titulo === "Caravana" ? "object-cover object-center" : "object-cover object-top"} transition duration-500 group-hover:scale-105`}
+                    className="object-cover object-center transition duration-500 group-hover:scale-105"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/0 to-transparent" />
                 </div>
@@ -825,8 +825,8 @@ export default async function PacotesJapaoPage({
                     ))}
                   </div>
                   <p
-                    className="flex-1 text-base font-semibold italic leading-[1.5] text-white/80"
-                    style={{ fontFamily: "Arial, Helvetica, sans-serif" }}
+                    className="flex-1 text-[17px] font-medium italic leading-[1.45] text-white/80"
+                    style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}
                   >
                     &ldquo;{review.text}&rdquo;
                   </p>
@@ -852,7 +852,7 @@ export default async function PacotesJapaoPage({
             </CarouselScroller>
 
             <div className="mt-10 flex flex-row flex-wrap items-center justify-center gap-8 md:mt-12 md:gap-10">
-              <div className="relative aspect-[2.327/1] w-full max-w-[220px] overflow-hidden sm:max-w-[260px]">
+              <div className="relative aspect-[2.327/1] w-full max-w-[280px] overflow-hidden sm:max-w-[340px]">
                 <Image
                   src="/images/badge-cadastur.png"
                   alt="Cadastur — Agência de Turismo registrada"
