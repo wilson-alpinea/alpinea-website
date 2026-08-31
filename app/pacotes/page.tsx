@@ -228,9 +228,10 @@ const divisoes = [
     titulo: "Caravana",
     subtitulo: "Viaje com outros participantes",
     diferenciais: [
-      "Datas fixas",
-      "Guia bilíngue acompanhando o grupo",
-      "Transporte do roteiro incluído",
+      "Pacote Completo (Hotel + Aéreo + Transporte)",
+      "Roteiro e Data Fixa",
+      "Guia que fala português",
+      "Funcionário Ajisai acompanhando o grupo em tempo real",
     ],
     desde: precoDesdeCaravana,
     href: "#pacotes",
@@ -241,9 +242,9 @@ const divisoes = [
     titulo: "Privativo",
     subtitulo: "Viaje apenas com quem você escolher",
     diferenciais: [
-      "Datas flexíveis dentro da temporada",
-      "Mesmo roteiro-base, somente para seu grupo",
-      "Guia e transporte disponíveis como opcionais",
+      "Pacote Completo (Hotel + Aéreo + Transporte)",
+      "Roteiro e Data Fixa",
+      "Guia que fala português e Transporte Opcional",
     ],
     desde: precoDesdeIndividual,
     href: "#individuais",
@@ -590,7 +591,7 @@ export default async function PacotesJapaoPage({
                 alt={BANNER_CARAVANA.alt}
                 fill
                 sizes="100vw"
-                className="object-cover object-center"
+                className="object-cover object-[center_85%]"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/5 to-transparent" />
             </div>
@@ -667,7 +668,7 @@ export default async function PacotesJapaoPage({
                 alt={BANNER_INDIVIDUAL.alt}
                 fill
                 sizes="100vw"
-                className="object-cover"
+                className="object-cover object-top"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/5 to-transparent" />
             </div>

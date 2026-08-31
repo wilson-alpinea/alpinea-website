@@ -416,7 +416,7 @@ export function CaravanaDetailModal({
               alt={nome}
               fill
               sizes="(max-width: 768px) 100vw, 768px"
-              className="object-cover"
+              className="object-cover object-[center_85%]"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-black/10" />
             <div className="absolute inset-x-0 bottom-0 px-5 pb-5 md:px-8 md:pb-7">
