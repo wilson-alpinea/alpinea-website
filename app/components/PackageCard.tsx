@@ -5,6 +5,7 @@ import { Bodoni_Moda } from "next/font/google";
 import type { CartItem } from "./CartContext";
 import type { PackageVariant } from "./packageTypes";
 import { PackageDetailModal } from "./PackageDetailModal";
+import { CaravanaDetailModal } from "./CaravanaDetailModal";
 import { PrecoPacote } from "./PrecoPacote";
 
 export type { PackageVariant } from "./packageTypes";
@@ -116,20 +117,34 @@ export function PackageCard({
         </div>
       </div>
 
-      {open && (
-        <PackageDetailModal
-          divisao={divisao}
-          categoria={categoria}
-          nome={nome}
-          tagline={tagline}
-          imagem={imagem}
-          selo={selo}
-          variantes={variantes}
-          varianteInicialId={selecionada}
-          rodape={rodape}
-          onClose={() => setOpen(false)}
-        />
-      )}
+      {open &&
+        (divisao === "Pacotes de Caravana" ? (
+          <CaravanaDetailModal
+            divisao={divisao}
+            categoria={categoria}
+            nome={nome}
+            tagline={tagline}
+            imagem={imagem}
+            selo={selo}
+            variantes={variantes}
+            varianteInicialId={selecionada}
+            rodape={rodape}
+            onClose={() => setOpen(false)}
+          />
+        ) : (
+          <PackageDetailModal
+            divisao={divisao}
+            categoria={categoria}
+            nome={nome}
+            tagline={tagline}
+            imagem={imagem}
+            selo={selo}
+            variantes={variantes}
+            varianteInicialId={selecionada}
+            rodape={rodape}
+            onClose={() => setOpen(false)}
+          />
+        ))}
     </>
   );
 }

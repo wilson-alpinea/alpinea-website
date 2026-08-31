@@ -20,9 +20,9 @@ const display = Bodoni_Moda({
 // cada pacote.
 // Fluxo de cidades por duração — mesmo padrão visual (bolinhas + etiqueta)
 // usado no TripDashboard da página de roteiros.
-type ItinerarioStop = { city: string; dias: number; bateVolta?: boolean };
+export type ItinerarioStop = { city: string; dias: number; bateVolta?: boolean };
 
-const ITINERARIO_CITY_BORDER: Record<string, string> = {
+export const ITINERARIO_CITY_BORDER: Record<string, string> = {
   Tokyo: "rgba(255,255,255,0.16)",
   Osaka: "rgba(196,148,110,0.45)",
   Kyoto: "rgba(118,150,168,0.45)",
@@ -33,7 +33,7 @@ const ITINERARIO_CITY_BORDER: Record<string, string> = {
 
 // Foto ilustrativa por cidade, usada como thumbnail nos cards do roteiro dia
 // a dia — reaproveita fotos reais já publicadas no site (sem imagem nova).
-const CIDADE_IMAGEM: Record<string, string> = {
+export const CIDADE_IMAGEM: Record<string, string> = {
   Tokyo: "/images/tokyo.jpg",
   Kyoto: "/images/kyoto-maiko-street.png",
   Osaka: "/images/osaka-castle.png",
@@ -45,7 +45,7 @@ const CIDADE_IMAGEM: Record<string, string> = {
 // O que fica de fora do pacote — mesma informação já confirmada no FAQ
 // padrão ("Refeições?"), só reorganizada em lista curta pro quadro
 // Incluso/Não incluso.
-const NAO_INCLUSO_BASE = [
+export const NAO_INCLUSO_BASE = [
   "Almoços e jantares, salvo indicação no roteiro",
   "Despesas pessoais e compras",
   "Passeios e ingressos fora do roteiro previsto",
@@ -55,7 +55,7 @@ const NAO_INCLUSO_BASE = [
 // em grupo fechado) — nos Pacotes Individuais/Personalizados são itens à
 // parte, então entram na coluna "Não incluso" (e não mais na coluna
 // "Incluso" com selo de opcional).
-const NAO_INCLUSO_AVULSO = [
+export const NAO_INCLUSO_AVULSO = [
   "Guia turístico (disponível como opcional à parte)",
   "Transfer aeroporto-hotel (disponível como opcional à parte)",
 ];
@@ -63,7 +63,7 @@ const NAO_INCLUSO_AVULSO = [
 // Heurística leve para gerar as etiquetas (ícone + rótulo) de cada dia do
 // roteiro, a partir do próprio texto já escrito acima — não inventa nada
 // novo, só destaca o que já está descrito em cada dia.
-function tagsDoRoteiro(d: DiaRoteiro): { icon: string; label: string }[] {
+export function tagsDoRoteiro(d: DiaRoteiro): { icon: string; label: string }[] {
   const t = d.texto.toLowerCase();
   const tit = d.titulo.toLowerCase();
   const tags: { icon: string; label: string }[] = [];
@@ -97,7 +97,7 @@ function tagsDoRoteiro(d: DiaRoteiro): { icon: string; label: string }[] {
   return tags.slice(0, 3);
 }
 
-const ITINERARIOS: Record<string, ItinerarioStop[]> = {
+export const ITINERARIOS: Record<string, ItinerarioStop[]> = {
   "7d": [
     { city: "Tokyo", dias: 3 },
     { city: "Kyoto", dias: 2 },
@@ -120,7 +120,7 @@ const ITINERARIOS: Record<string, ItinerarioStop[]> = {
 // você antes de publicar — datas exatas só são atribuídas na reserva.
 // cidade usa as mesmas chaves de ITINERARIO_CITY_BORDER, pra colorir a
 // bolinha do dia com a mesma cor da cidade no fluxo "Cidades" acima.
-type DiaRoteiro = { dia: number; titulo: string; texto: string; cidade: string };
+export type DiaRoteiro = { dia: number; titulo: string; texto: string; cidade: string };
 
 const ROTEIRO_7D: DiaRoteiro[] = [
   {
@@ -264,7 +264,7 @@ const ROTEIRO_15D: DiaRoteiro[] = [
   },
 ];
 
-const ROTEIROS_DETALHADOS: Record<string, DiaRoteiro[]> = {
+export const ROTEIROS_DETALHADOS: Record<string, DiaRoteiro[]> = {
   "7d": ROTEIRO_7D,
   "15d": ROTEIRO_15D,
 };
@@ -368,7 +368,7 @@ function ItinerarioFlow({ stops }: { stops: ItinerarioStop[] }) {
   );
 }
 
-const INCLUSOES_PADRAO = [
+export const INCLUSOES_PADRAO = [
   {
     title: "Roteiro Digital",
     text: "Itinerário dia a dia, com atrações, deslocamento, refeições e aeroportos, acessível durante toda a viagem.",
@@ -424,7 +424,7 @@ const INCLUSOES_PADRAO = [
 // Respostas padrão para as dúvidas comerciais mais comuns. ATENÇÃO: valores
 // de referência — precisam ser confirmados/ajustados por você antes de
 // publicar, igual combinamos com os preços.
-const FAQ_PADRAO = [
+export const FAQ_PADRAO = [
   {
     pergunta: "Qual categoria de hotel?",
     resposta: "Acomodação de 3 a 4 estrelas, selecionada por localização e conforto — sempre com curadoria Ajisai. Exemplo: Daiwa Roynet.",
@@ -439,7 +439,7 @@ const FAQ_PADRAO = [
   },
 ];
 
-function IconCheck({ className }: { className?: string }) {
+export function IconCheck({ className }: { className?: string }) {
   return (
     <svg
       viewBox="0 0 24 24"
@@ -456,7 +456,7 @@ function IconCheck({ className }: { className?: string }) {
   );
 }
 
-function IconX({ className }: { className?: string }) {
+export function IconX({ className }: { className?: string }) {
   return (
     <svg
       viewBox="0 0 24 24"
@@ -473,7 +473,7 @@ function IconX({ className }: { className?: string }) {
   );
 }
 
-function IconChevron({ className }: { className?: string }) {
+export function IconChevron({ className }: { className?: string }) {
   return (
     <svg
       viewBox="0 0 24 24"
@@ -489,7 +489,7 @@ function IconChevron({ className }: { className?: string }) {
   );
 }
 
-function IconTicket({ className }: { className?: string }) {
+export function IconTicket({ className }: { className?: string }) {
   return (
     <svg
       viewBox="0 0 24 24"
@@ -506,7 +506,7 @@ function IconTicket({ className }: { className?: string }) {
   );
 }
 
-function IconZoom({ className }: { className?: string }) {
+export function IconZoom({ className }: { className?: string }) {
   return (
     <svg
       viewBox="0 0 24 24"
