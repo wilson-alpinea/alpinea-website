@@ -6,8 +6,7 @@ import Image from "next/image";
 import { Bodoni_Moda } from "next/font/google";
 import { useCart, type CartItem } from "./CartContext";
 import type { PackageVariant } from "./packageTypes";
-import { PrecoPacote } from "./PrecoPacote";
-import { useCambioUSD, brlParaUSDLabel } from "../hooks/useCambioUSD";
+import { useCambioUSD, brlParaUSDLabel, formatBRL, formatUSD } from "../hooks/useCambioUSD";
 import {
   ITINERARIO_CITY_BORDER,
   CIDADE_IMAGEM,
@@ -85,6 +84,35 @@ function tituloSemCidade(titulo: string): string {
   const partes = titulo.split(" — ");
   return partes.length > 1 ? partes[partes.length - 1] : titulo;
 }
+
+// Preço em destaque do bloco de compra — sempre em dólar (Caravana usa
+// preço fixo em USD, ver variantesUSD em /pacotes).
+function precoPrincipal(variante: PackageVariant): string {
+  if (variante.precoUSD != null) return formatUSD(variante.precoUSD);
+  if (variante.precoBRL != null) return "…";
+  return variante.precoLabel;
+}
+
+// "aprox. R$ 23.576 por pessoa · quarto individual." — uma única linha
+// secundária, no lugar das duas linhas separadas que o PrecoPacote padrão
+// usa (preço em reais + "Por pessoa · Quarto Individual").
+function precoSecundario(
+  variante: PackageVariant,
+  cambio: ReturnType<typeof useCambioUSD>,
+): string {
+  if (variante.precoUSD != null) {
+    if (!cambio) return "Por pessoa · Quarto individual.";
+    return `aprox. ${formatBRL(variante.precoUSD * cambio.cotacao)} por pessoa · quarto individual.`;
+  }
+  if (variante.precoBRL != null) {
+    return `aprox. ${formatBRL(variante.precoBRL)} por pessoa · quarto individual.`;
+  }
+  return "Por pessoa · Quarto individual.";
+}
+
+// Argumentos de venda mostrados como selo, logo antes do CTA — não são
+// notas secundárias (ponto 3).
+const BENEFICIOS_PRINCIPAIS = ["Passagem aérea", "Hotel", "Guia bilíngue", "Transportes"];
 
 // FAQ_PADRAO (categoria de hotel) + dúvidas comerciais que hoje ficavam
 // espalhadas em "Como reservar" (sinal/saldo, cancelamento, documentos) —
@@ -232,6 +260,10 @@ export function CaravanaDetailModal({
   const [roteiroAberto, setRoteiroAberto] = useState(false);
   const [diasAbertos, setDiasAbertos] = useState<Set<number>>(new Set());
   const scrollRef = useRef<HTMLDivElement>(null);
+  const heroCtaRef = useRef<HTMLButtonElement>(null);
+  // Barra fixa do rodapé só aparece depois que o CTA principal (no bloco
+  // de preço do hero) sai da área visível — nunca os dois ao mesmo tempo.
+  const [heroCtaVisible, setHeroCtaVisible] = useState(true);
 
   function selecionarVariante(id: string) {
     setSelecionada(id);
@@ -265,6 +297,18 @@ export function CaravanaDetailModal({
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [onClose, inclusaoAberta, roteiroImagemZoom]);
+
+  useEffect(() => {
+    const root = scrollRef.current;
+    const target = heroCtaRef.current;
+    if (!root || !target) return;
+    const observer = new IntersectionObserver(([entry]) => setHeroCtaVisible(entry.isIntersecting), {
+      root,
+      threshold: 0,
+    });
+    observer.observe(target);
+    return () => observer.disconnect();
+  }, []);
 
   const variante = variantes.find((v) => v.id === selecionada) ?? variantes[0];
   const stops = variante ? ITINERARIOS[variante.id] : undefined;
@@ -366,7 +410,7 @@ export function CaravanaDetailModal({
           className="flex-1 overflow-x-hidden overflow-y-auto px-5 py-6 md:px-8 md:py-8"
         >
           {/* ── NÍVEL 1 · "ISSO É PARA MIM?" ── */}
-          <div className="relative -mx-5 -mt-6 aspect-[16/9] w-[calc(100%+2.5rem)] overflow-hidden md:-mx-8 md:-mt-8 md:w-[calc(100%+4rem)]">
+          <div className="relative -mx-5 -mt-6 aspect-[9/4] w-[calc(100%+2.5rem)] overflow-hidden md:-mx-8 md:-mt-8 md:w-[calc(100%+4rem)]">
             <Image
               src={imagem}
               alt={nome}
@@ -414,39 +458,44 @@ export function CaravanaDetailModal({
 
             {variante && (
               <div className="mt-4 text-center">
-                <p className="text-[11px] font-medium uppercase tracking-[0.15em] text-white/45">
-                  {variante.datas}
+                <p className="text-sm font-semibold text-white/90">
+                  {variante.label} · {variante.datas}
                 </p>
                 {stops && (
-                  <p className="mt-0.5 text-xs uppercase tracking-[0.12em] text-white/35">
-                    {variante.label} · {cidadesLinha(stops)}
+                  <p className="mt-1 text-xs uppercase tracking-[0.15em] text-white/40">
+                    {cidadesLinha(stops)}
                   </p>
                 )}
-                <div className="mt-2">
-                  <PrecoPacote
-                    variante={variante}
-                    compact
-                    precoClassName={`${display.className} text-3xl font-semibold text-white`}
-                  />
-                </div>
-                {rodape && <p className="mt-2 text-[10px] leading-4 text-white/30">{rodape}</p>}
+                <p className={`${display.className} mt-3 text-3xl font-semibold text-white`}>
+                  {precoPrincipal(variante)}
+                </p>
+                <p className="mt-1 text-xs font-medium text-white/45">
+                  {precoSecundario(variante, cambio)}
+                </p>
+                {rodape && <p className="mt-2 text-[10px] leading-4 text-white/25">{rodape}</p>}
               </div>
             )}
 
-            <div className="mt-5 flex flex-wrap justify-center gap-x-5 gap-y-2 text-xs font-medium text-white/70">
-              <span>✈️ Passagem aérea</span>
-              <span>🏨 Hotel</span>
-              <span>◎ Guia bilíngue</span>
-              <span>🚆 Transportes do roteiro</span>
+            <div className="mt-5 grid grid-cols-2 gap-2 sm:grid-cols-4">
+              {BENEFICIOS_PRINCIPAIS.map((label) => (
+                <div
+                  key={label}
+                  className="flex items-center justify-center gap-1.5 rounded-lg border border-emerald-400/25 bg-emerald-400/[0.07] px-2.5 py-2 text-center text-xs font-semibold text-white"
+                >
+                  <IconCheck className="h-3.5 w-3.5 shrink-0 text-emerald-400" />
+                  {label}
+                </div>
+              ))}
             </div>
 
             <button
+              ref={heroCtaRef}
               type="button"
               onClick={handleAdd}
               disabled={variante?.precoBRL != null && !cambio}
               className="mt-5 flex w-full items-center justify-center gap-2 rounded-full bg-[#2f80c9] px-5 py-3.5 text-[11px] font-semibold uppercase tracking-[0.2em] text-white transition hover:bg-[#3b91dc] disabled:cursor-not-allowed disabled:opacity-50"
             >
-              <IconTicket className="h-4 w-4" /> Reservar minha vaga
+              <IconTicket className="h-4 w-4" /> Solicitar minha vaga
             </button>
           </div>
 
@@ -495,7 +544,7 @@ export function CaravanaDetailModal({
                   aria-expanded={roteiroAberto}
                   className="inline-flex items-center gap-1.5 rounded-full border border-white/20 px-4 py-2 text-xs font-semibold uppercase tracking-[0.15em] text-white/70 transition hover:border-white/40 hover:text-white"
                 >
-                  {roteiroAberto ? "Ocultar roteiro dia a dia" : "Ver roteiro dia a dia"}
+                  {roteiroAberto ? "Ocultar roteiro completo" : "Ver roteiro completo"}
                   <IconChevron
                     className={`h-3.5 w-3.5 transition-transform duration-200 ${
                       roteiroAberto ? "rotate-180" : ""
@@ -550,9 +599,6 @@ export function CaravanaDetailModal({
             <h3 className={`${display.className} text-lg font-medium text-white`}>
               Antes de viajar
             </h3>
-            <p className="mt-1.5 text-xs font-medium uppercase tracking-[0.12em] text-white/35">
-              Ritmo moderado · Hotel 4 estrelas · Guia bilíngue · Grupo fechado
-            </p>
             <div className="mt-3 rounded-xl border border-white/10 bg-white/[0.03] p-3.5">
               <p className="text-xs font-semibold uppercase tracking-[0.15em] text-white/70">
                 🚶 Ritmo moderado
@@ -568,12 +614,12 @@ export function CaravanaDetailModal({
             <h3 className={`${display.className} text-lg font-medium text-white`}>
               Como reservar
             </h3>
-            <div className="mt-4 flex flex-wrap items-center justify-center gap-x-2 gap-y-1.5 text-center text-xs font-medium uppercase tracking-[0.08em] text-white/60">
-              <span>1 · Escolha a duração</span>
+            <div className="mt-4 flex flex-wrap items-center justify-center gap-x-2.5 gap-y-2 text-center text-sm font-semibold text-white/85">
+              <span>① Escolha a duração</span>
               <span className="text-white/25">→</span>
-              <span>2 · Solicite sua vaga</span>
+              <span>② Solicite sua vaga</span>
               <span className="text-white/25">→</span>
-              <span>3 · Receba a confirmação</span>
+              <span>③ Receba a confirmação</span>
             </div>
             <p className="mx-auto mt-3 max-w-md text-center text-xs font-light leading-5 text-white/45">
               Após o pedido, nossa equipe confirma disponibilidade, condições de pagamento e
@@ -632,37 +678,40 @@ export function CaravanaDetailModal({
           </div>
         </div>
 
-        {/* ── CTA ÚNICO + BARRA FIXA (a barra abaixo já resolve o resto da
-             página — sem repetir "Reservar minha vaga" entre as seções) ── */}
-        <div className="flex shrink-0 items-center gap-4 border-t border-white/10 bg-[#0a0a0a] px-5 py-4 md:px-8">
-          {variante && (
-            <div className="hidden shrink-0 sm:block">
-              <p className="text-[9px] font-semibold uppercase tracking-[0.15em] text-white/35">
-                {variante.label}
-              </p>
-              <p className={`${display.className} text-xl font-semibold text-[#6ec3d9]`}>
-                {variante.precoLabel}
-              </p>
-            </div>
-          )}
-          <button
-            type="button"
-            onClick={handleAdd}
-            disabled={variante?.precoBRL != null && !cambio}
-            className="flex min-w-0 flex-1 items-center justify-center gap-2 rounded-full px-5 py-3.5 text-center text-[11px] font-semibold uppercase tracking-[0.2em] text-white shadow-[0_10px_30px_rgba(0,0,0,0.35)] transition duration-300 hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0"
-            style={{ backgroundColor: adicionado ? "#2f9e6e" : "#2f80c9" }}
-          >
-            {adicionado ? (
-              <>
-                <IconCheck className="h-4 w-4" /> Reserva adicionada
-              </>
-            ) : (
-              <>
-                <IconTicket className="h-4 w-4" /> Reservar minha vaga
-              </>
+        {/* ── CTA sticky: só aparece depois que o botão do hero sai da
+             tela (ver heroCtaVisible/IntersectionObserver acima) — nunca os
+             dois "Solicitar minha vaga" visíveis ao mesmo tempo (ponto 10) ── */}
+        {!heroCtaVisible && (
+          <div className="flex shrink-0 items-center gap-4 border-t border-white/10 bg-[#0a0a0a] px-5 py-4 md:px-8">
+            {variante && (
+              <div className="hidden shrink-0 sm:block">
+                <p className="text-[9px] font-semibold uppercase tracking-[0.15em] text-white/35">
+                  {variante.label}
+                </p>
+                <p className={`${display.className} text-xl font-semibold text-[#6ec3d9]`}>
+                  {variante.precoLabel}
+                </p>
+              </div>
             )}
-          </button>
-        </div>
+            <button
+              type="button"
+              onClick={handleAdd}
+              disabled={variante?.precoBRL != null && !cambio}
+              className="flex min-w-0 flex-1 items-center justify-center gap-2 rounded-full px-5 py-3.5 text-center text-[11px] font-semibold uppercase tracking-[0.2em] text-white shadow-[0_10px_30px_rgba(0,0,0,0.35)] transition duration-300 hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0"
+              style={{ backgroundColor: adicionado ? "#2f9e6e" : "#2f80c9" }}
+            >
+              {adicionado ? (
+                <>
+                  <IconCheck className="h-4 w-4" /> Solicitação enviada
+                </>
+              ) : (
+                <>
+                  <IconTicket className="h-4 w-4" /> Solicitar minha vaga
+                </>
+              )}
+            </button>
+          </div>
+        )}
       </div>
         </div>,
         document.body,
