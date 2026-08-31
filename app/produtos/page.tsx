@@ -63,89 +63,9 @@ const PRODUTOS: Record<
     // Pacote Personalizado — ver DIARIA_GUIA_USD em CustomPackageCard.tsx).
     precoBRL: null,
     precoUSD: 350,
-    href: "#guia",
+    href: "/guia-turistico",
   },
 };
-
-// Mesmas fotos já usadas em /pacotes para cada divisão — reaproveitadas
-// aqui no resultado do recomendador para tornar a recomendação concreta.
-const IMAGENS_PRODUTO: Record<ProdutoKey, { src: string; alt: string }> = {
-  roteiro: {
-    src: "/images/dashmobile-ajisai.jpg",
-    alt: "Painel do Roteiro Personalizado Ajisai",
-  },
-  caravana: { src: "/images/caravana-hero.jpg", alt: "Pacotes de Caravana" },
-  individual: {
-    src: "/images/privado-hero-v2.jpg",
-    alt: "Individual ou Pequenos Grupos",
-  },
-  personalizado: {
-    src: "/images/personalizado-hero.png",
-    alt: "Viagem Personalizada",
-  },
-  guia: {
-    src: "/images/guia-ajisai-campo.png",
-    alt: "Guia Ajisai em campo, com bandeira e placa de identificação",
-  },
-};
-
-// Mesmos itens e preços de referência do calculador do Pacote
-// Personalizado (OPCOES, em CustomPackageCard.tsx) — mostrados aqui como
-// cards avulsos pra quem só quer adicionar um serviço pontual ao roteiro
-// já organizado por conta própria. porDia indica se o valor é por dia de
-// viagem ou fixo por viagem.
-const SERVICOS_AVULSOS: {
-  nome: string;
-  icone: string;
-  descricao: string;
-  precoBRL: number;
-  /** Valor nativo em dólar — quando presente, tem prioridade sobre
-   * precoBRL no cálculo (mesmo padrão de PRODUTOS acima). */
-  precoUSD?: number;
-  porDia?: boolean;
-}[] = [
-  {
-    nome: "JR Pass",
-    icone: "🚄",
-    descricao: "Passe ferroviário com deslocamentos ilimitados de trem-bala.",
-    precoBRL: 180,
-    porDia: true,
-  },
-  {
-    nome: "Seguro Viagem",
-    icone: "🛡️",
-    descricao: "Cobertura médica e assistência durante toda a viagem.",
-    precoBRL: 35,
-    porDia: true,
-  },
-  {
-    nome: "Câmbio no Brasil",
-    icone: "💴",
-    descricao: "Retirada de ienes com câmbio comercial antes do embarque.",
-    precoBRL: 150,
-  },
-  {
-    nome: "Motorista Privado",
-    icone: "🚗",
-    descricao: "Traslados exclusivos com motorista particular, sem compartilhar veículo com outros grupos. Para até 4 pessoas.",
-    precoBRL: 0,
-    precoUSD: 700,
-    porDia: true,
-  },
-  {
-    nome: "Transporte",
-    icone: "🚐",
-    descricao: "Transfers e deslocamentos do roteiro dia a dia.",
-    precoBRL: 150,
-    porDia: true,
-  },
-  {
-    nome: "Serviços Adicionais",
-    icone: "✨",
-    descricao: "Reservas, concierge e experiências sob medida.",
-    precoBRL: 2500,
-  },
-];
 
 // Espelha os 4 blocos do roteiro-vídeo descrito: perfil do dia, detalhe da
 // atração, hotéis/restaurantes/anexos e o "nós planejamos, você reserva".
@@ -155,204 +75,6 @@ const ROTEIRO_DESTAQUES = [
   "Hotéis, restaurantes, logística e anexos especiais organizados em um único painel.",
   "Nós planejamos. Você reserva e viaja por conta própria.",
 ];
-
-const PACOTES_AJISAI: {
-  key: ProdutoKey;
-  titulo: string;
-  frase: string;
-  pontos: string[];
-  ctaVer: string;
-}[] = [
-  {
-    key: "caravana",
-    titulo: "Caravana",
-    frase: "Quero viajar em grupo, com tudo organizado.",
-    pontos: [
-      "Datas e roteiro predefinidos",
-      "Grupo maior",
-      "Menor flexibilidade",
-      "Melhor custo-benefício",
-    ],
-    ctaVer: "Conhecer as caravanas →",
-  },
-  {
-    key: "individual",
-    titulo: "Individual ou Pequenos Grupos",
-    frase: "Quero uma viagem pronta, mas sem caravana.",
-    pontos: [
-      "Datas flexíveis",
-      "Viagem individual, casal, família ou pequeno grupo",
-      "Roteiro predefinido",
-      "Ajisai organiza a viagem",
-    ],
-    ctaVer: "Conhecer os pacotes →",
-  },
-  {
-    key: "personalizado",
-    titulo: "Viagem Personalizada",
-    frase: "Quero que a viagem seja criada para mim.",
-    pontos: [
-      "Datas escolhidas por você",
-      "Roteiro personalizado",
-      "Hotéis e logística personalizados",
-      "Ajisai organiza a viagem",
-    ],
-    ctaVer: "Conhecer o pacote personalizado →",
-  },
-];
-
-const COLUNAS: { key: Exclude<ProdutoKey, "guia">; titulo: string }[] = [
-  { key: "roteiro", titulo: "Roteiro Personalizado" },
-  { key: "caravana", titulo: "Caravana" },
-  { key: "individual", titulo: "Individual / Pequenos Grupos" },
-  { key: "personalizado", titulo: "Viagem Personalizada" },
-];
-
-// Colunas da tabela "Qual opção combina com você" — comparam estilos de
-// organização de viagem completa. O Guia Turístico Avulso é um serviço
-// avulso/complementar (não uma forma de organizar a viagem inteira), por
-// isso fica de fora dessa tabela e tem sua própria seção.
-const LINHAS: {
-  label: string;
-  valores: Record<Exclude<ProdutoKey, "guia">, boolean | string>;
-}[] = [
-  {
-    label: "Roteiro personalizado",
-    valores: { roteiro: true, caravana: false, individual: false, personalizado: true },
-  },
-  {
-    label: "Datas flexíveis",
-    valores: { roteiro: true, caravana: false, individual: true, personalizado: true },
-  },
-  {
-    label: "Cliente faz as reservas",
-    valores: { roteiro: true, caravana: false, individual: false, personalizado: false },
-  },
-  {
-    label: "Ajisai organiza a viagem",
-    valores: { roteiro: false, caravana: true, individual: true, personalizado: true },
-  },
-  {
-    label: "Viaja em grupo grande",
-    valores: { roteiro: false, caravana: true, individual: false, personalizado: false },
-  },
-  {
-    label: "Viagem privativa",
-    valores: { roteiro: true, caravana: false, individual: true, personalizado: true },
-  },
-  {
-    label: "Melhor para",
-    valores: {
-      roteiro: "Quem organiza sozinho",
-      caravana: "Custo-benefício",
-      individual: "Praticidade",
-      personalizado: "Personalização total",
-    },
-  },
-  {
-    // Valores aqui não são exibidos — a linha "A partir de" é renderizada
-    // com preço ao vivo em dólar (ver precoProdutoLabel no render da
-    // tabela), mantidos só como referência em reais pra leitura do código.
-    label: "A partir de",
-    valores: {
-      roteiro: "R$ 1.500",
-      caravana: "US$ 4.280",
-      individual: "US$ 2.490",
-      personalizado: "Sob consulta",
-    },
-  },
-];
-
-// Painel "Ajisai vs. o mercado" — comparativo de escopo levantado com base em
-// pesquisa de concorrentes. Nomes reais omitidos de propósito (Concorrente A
-// / Concorrente B) para não expor a fonte da pesquisa publicamente. Ajuste
-// as células conforme sua pesquisa for atualizada.
-type ConcorrenteKey = "ajisai" | "concorrenteA" | "concorrenteB";
-
-const COLUNAS_CONCORRENCIA: { key: ConcorrenteKey; titulo: string }[] = [
-  { key: "ajisai", titulo: "Ajisai" },
-  { key: "concorrenteA", titulo: "Concorrente A" },
-  { key: "concorrenteB", titulo: "Concorrente B" },
-];
-
-const LINHAS_CONCORRENCIA: { label: string; valores: Record<ConcorrenteKey, string> }[] = [
-  {
-    label: "Passagem aérea",
-    valores: { ajisai: "Opcional", concorrenteA: "Opcional", concorrenteB: "Opcional" },
-  },
-  {
-    label: "Hospedagem",
-    valores: { ajisai: "X", concorrenteA: "X", concorrenteB: "X" },
-  },
-  {
-    label: "JR Pass",
-    valores: { ajisai: "X", concorrenteA: "X", concorrenteB: "X" },
-  },
-  {
-    label: "Transporte privado",
-    valores: { ajisai: "X", concorrenteA: "X", concorrenteB: "Parcial" },
-  },
-  {
-    label: "Roteiro digital",
-    valores: { ajisai: "X", concorrenteA: "—", concorrenteB: "—" },
-  },
-  {
-    label: "Seguro viagem",
-    valores: { ajisai: "X", concorrenteA: "X", concorrenteB: "—" },
-  },
-  {
-    label: "Wi-Fi",
-    valores: { ajisai: "X", concorrenteA: "X", concorrenteB: "—" },
-  },
-  {
-    label: "Guia turístico em português",
-    valores: { ajisai: "X", concorrenteA: "X", concorrenteB: "Somente ES" },
-  },
-];
-
-// Diferenciais Ajisai específicos pra quem compra a passagem aérea com a
-// gente — mesmo conteúdo usado no popup "Passagem Aérea" de cada pacote e
-// na opção "Aéreo" do Pacote Personalizado.
-const DIFERENCIAIS_AEREO = [
-  {
-    titulo: "Concierge no Aeroporto de Guarulhos",
-    texto:
-      "Equipe especializada apoia todos os passageiros no balcão de check-in — resolve reserva de assento, remarcação em cancelamento involuntário e direitos em atrasos, com acesso direto à gerência das companhias aéreas.",
-    imagem: "/images/icone-diferencial-1.png",
-  },
-  {
-    titulo: "Protocolo pré-embarque (Visit Japan Web)",
-    texto:
-      "Nossa equipe preenche e cadastra o Visit Japan Web (VJW) com os dados do passageiro e envia pronto pra você — sem papelada na chegada ao Japão — além de uma sessão dedicada pra explicar o itinerário antes do embarque.",
-    imagem: "/images/icone-diferencial-2.png",
-  },
-  {
-    titulo: "Monitoramento de viagem",
-    texto:
-      "Central de WhatsApp com equipe emergencial Ajisai, funcionando quase 24 horas por dia — conexões, imprevistos e gestão de reserva, com atendimento humano e apoio de tradutor quando necessário.",
-    imagem: "/images/icone-diferencial-3.png",
-  },
-  {
-    titulo: "Responsabilidade da Agência",
-    texto:
-      "Passagem emitida pela Ajisai tem responsabilidade solidária da agência e negociação direta com as companhias aéreas — mais proteção e prioridade do que comprar uma passagem avulsa, mesmo pelo mesmo preço.",
-    imagem: "/images/icone-diferencial-4.png",
-  },
-];
-
-function ValorConcorrencia({ valor }: { valor: string }) {
-  if (valor === "X") {
-    return <IconCheck className="mx-auto h-4 w-4 text-[#6ec3d9]" />;
-  }
-  if (valor === "—") {
-    return <span className="text-white/20">—</span>;
-  }
-  if (valor === "Parcial" || valor.startsWith("Somente")) {
-    return <span className="text-xs font-medium text-amber-400/90">{valor}</span>;
-  }
-  return <span className="text-xs text-white/70">{valor}</span>;
-}
-
 export default function ProdutosPage() {
   const cambio = useCambioUSD();
 
@@ -387,9 +109,20 @@ export default function ProdutosPage() {
   const [roteiroModalOpen, setRoteiroModalOpen] = useState(false);
   const [pacotesModalOpen, setPacotesModalOpen] = useState(false);
   const [viagemModalOpen, setViagemModalOpen] = useState(false);
+  const [passagensModalOpen, setPassagensModalOpen] = useState(false);
+  const [guiaModalOpen, setGuiaModalOpen] = useState(false);
+  const [servicosModalOpen, setServicosModalOpen] = useState(false);
 
   useEffect(() => {
-    if (!roteiroModalOpen && !pacotesModalOpen && !viagemModalOpen) return;
+    if (
+      !roteiroModalOpen &&
+      !pacotesModalOpen &&
+      !viagemModalOpen &&
+      !passagensModalOpen &&
+      !guiaModalOpen &&
+      !servicosModalOpen
+    )
+      return;
 
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
@@ -398,6 +131,9 @@ export default function ProdutosPage() {
         setRoteiroModalOpen(false);
         setPacotesModalOpen(false);
         setViagemModalOpen(false);
+        setPassagensModalOpen(false);
+        setGuiaModalOpen(false);
+        setServicosModalOpen(false);
       }
     };
     window.addEventListener("keydown", handleKeyDown);
@@ -406,7 +142,14 @@ export default function ProdutosPage() {
       document.body.style.overflow = previousOverflow;
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [roteiroModalOpen, pacotesModalOpen, viagemModalOpen]);
+  }, [
+    roteiroModalOpen,
+    pacotesModalOpen,
+    viagemModalOpen,
+    passagensModalOpen,
+    guiaModalOpen,
+    servicosModalOpen,
+  ]);
 
   // Entrada direta (CTA de cada produto) — vai direto para a qualificação,
   // já com o produto marcado.
@@ -556,7 +299,8 @@ export default function ProdutosPage() {
 
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-6">
               <ProductSelectorCard
-                href="#passagens-aereas"
+                href="/passagens"
+                onClick={() => setPassagensModalOpen(true)}
                 icon="/images/produtos/passagem-aerea.png"
                 iconWidth={449}
                 iconHeight={284}
@@ -576,7 +320,8 @@ export default function ProdutosPage() {
                 className="lg:col-span-2"
               />
               <ProductSelectorCard
-                href="#guia"
+                href="/guia-turistico"
+                onClick={() => setGuiaModalOpen(true)}
                 icon="/images/produtos/guia-turistico.png"
                 iconWidth={359}
                 iconHeight={444}
@@ -598,7 +343,8 @@ export default function ProdutosPage() {
                 className="lg:col-span-2 lg:col-start-2"
               />
               <ProductSelectorCard
-                href="#servicos-avulsos"
+                href="/servicos-adicionais"
+                onClick={() => setServicosModalOpen(true)}
                 icon="/images/produtos/servicos-adicionais.png"
                 iconWidth={1254}
                 iconHeight={1254}
@@ -635,65 +381,6 @@ export default function ProdutosPage() {
           />
         </div>
       </section>
-
-      {/* ── DIFERENCIAIS AJISAI · PASSAGENS AÉREAS ── */}
-      <div id="passagens-aereas" className="scroll-mt-24 border-b border-white/10 bg-black">
-        <div className="relative h-[420px] w-full overflow-hidden sm:h-[500px] md:h-[600px]">
-          <Image
-            src="/images/hero-passagens-aereas.jpg"
-            alt="Cabine de primeira classe — viagem aérea Ajisai"
-            fill
-            sizes="100vw"
-            className="object-cover object-[68%_18%]"
-          />
-          <div className="absolute inset-0 bg-black/40" />
-          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-black/5" />
-          <div className="absolute inset-0 flex flex-col items-center justify-end px-6 pb-28 text-center sm:pb-32 md:pb-36">
-            <p
-              className="text-[10px] uppercase tracking-[0.2em] text-white"
-              style={{ textShadow: "0 2px 10px rgba(0,0,0,0.7)" }}
-            >
-              Passagem comprada com a Ajisai
-            </p>
-            <h2
-              className={`${display.className} mt-2 max-w-3xl text-2xl font-medium leading-tight text-white md:text-4xl`}
-              style={{ textShadow: "0 2px 14px rgba(0,0,0,0.7)" }}
-            >
-              Diferenciais Ajisai para Passagens Aéreas
-            </h2>
-            <p
-              className="mx-auto mt-3 max-w-2xl text-sm font-light leading-6 text-white"
-              style={{ textShadow: "0 2px 10px rgba(0,0,0,0.7)" }}
-            >
-              O mesmo suporte que você encontra dentro de cada produto, na
-              seção Aéreo/Passagem Aérea — aqui resumido em um único lugar.
-            </p>
-          </div>
-        </div>
-
-        <div className="relative -mt-20 px-6 pb-14 sm:-mt-24 md:-mt-28 md:px-10 md:pb-20">
-          <div className="mx-auto max-w-7xl">
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-              {DIFERENCIAIS_AEREO.map((item) => (
-                <div
-                  key={item.titulo}
-                  className="rounded-2xl border border-black/5 bg-[#FAF7F2] p-6 text-center shadow-sm md:p-8"
-                >
-                  <span className="mx-auto flex h-24 w-24 items-center justify-center rounded-full bg-[#6ec3d9]/20 text-[#2f80c9]">
-                    <Image src={item.imagem} alt="" width={96} height={96} className="h-20 w-20 object-contain" />
-                  </span>
-                  <h3 className={`${display.className} mt-5 text-lg font-semibold text-[#2f80c9]`}>
-                    {item.titulo}
-                  </h3>
-                  <p className="mt-2 text-[15px] font-normal leading-6 text-[#0A2540]/80">
-                    {item.texto}
-                  </p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
 
       {/* ── ROTEIRO PERSONALIZADO — DEMONSTRAÇÃO ── */}
       {roteiroModalOpen && (
@@ -935,274 +622,140 @@ export default function ProdutosPage() {
         </div>
       )}
 
-      {/* ── PACOTES AJISAI — 3 PRODUTOS ── */}
-      <section id="pacotes-ajisai" className="border-b border-white/10 bg-black px-6 py-16 md:px-16 md:py-24">
-        <div className="mx-auto max-w-6xl">
-          <div className="mx-auto max-w-2xl text-center">
-            <p className="text-[10px] uppercase tracking-[0.2em] text-[#6ec3d9]">
-              Pacotes de Viagem
-            </p>
-            <h2
-              className={`${display.className} mt-3 text-3xl font-medium leading-tight text-white md:text-4xl`}
-            >
-              A Ajisai organiza a viagem para você
-            </h2>
-            <p className="mt-4 text-sm font-light leading-6 text-white/55 md:text-base">
-              Três formas de viajar com tudo já estruturado — do grupo
-              fechado ao roteiro sob medida.
-            </p>
-          </div>
-
-          <div className="mt-12 grid gap-6 md:grid-cols-3">
-            {PACOTES_AJISAI.map((p) => (
-              <div
-                key={p.key}
-                className="flex flex-col rounded-2xl border border-white/10 bg-white/[0.02] p-6 shadow-[0_0_30px_-14px_rgba(37,99,235,0.3)] transition hover:border-white/25 hover:bg-white/[0.04] md:p-8"
+      {passagensModalOpen && (
+        <div
+          className="fixed inset-0 z-[90] flex items-end justify-center bg-black/85 p-0 backdrop-blur-sm md:items-center md:p-6"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="passagens-modal-title"
+          onClick={() => setPassagensModalOpen(false)}
+        >
+          <div
+            className="relative h-[96vh] w-full max-w-[1500px] overflow-hidden rounded-t-3xl border border-white/10 bg-black shadow-2xl md:h-[94vh] md:rounded-3xl"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <div className="absolute inset-x-0 top-0 z-20 flex h-14 items-center justify-between border-b border-white/10 bg-black/90 px-4 backdrop-blur-xl md:px-6">
+              <p
+                id="passagens-modal-title"
+                className={`${display.className} text-lg font-medium text-white md:text-xl`}
               >
-                <p className="text-[10px] uppercase tracking-[0.2em] text-[#6ec3d9]">{p.titulo}</p>
-                <h3 className={`${display.className} mt-2 text-xl font-medium text-white`}>
-                  {p.frase}
-                </h3>
-                <ul className="mt-5 flex-1 space-y-2.5">
-                  {p.pontos.map((ponto) => (
-                    <li
-                      key={ponto}
-                      className="flex items-start gap-2.5 text-sm leading-5 text-white/65"
-                    >
-                      <IconCheck className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[#6ec3d9]" />
-                      {ponto}
-                    </li>
-                  ))}
-                </ul>
-
-                <p className="mt-6 text-[10px] uppercase tracking-[0.2em] text-white/40">
-                  A partir de
-                </p>
-                <p className={`${display.className} mt-1 text-2xl font-medium text-white`}>
-                  {precoProdutoLabel(PRODUTOS[p.key], false)}
-                </p>
-                {precoBRLProdutoLabel(PRODUTOS[p.key]) && (
-                  <p className="mt-0.5 text-xs font-medium text-white/50">
-                    {precoBRLProdutoLabel(PRODUTOS[p.key])}
-                  </p>
-                )}
-
-                <div className="mt-5">
-                  <Link
-                    href={PRODUTOS[p.key].href}
-                    className="block rounded-full px-5 py-3 text-center text-[11px] font-semibold uppercase tracking-[0.2em] text-white transition duration-300 hover:-translate-y-0.5"
-                    style={{ backgroundColor: "#2f80c9" }}
-                  >
-                    {p.ctaVer}
-                  </Link>
-                </div>
+                Passagens Aéreas
+              </p>
+              <div className="flex items-center gap-3">
+                <Link
+                  href="/passagens"
+                  className="hidden text-[10px] font-semibold uppercase tracking-[0.15em] text-[#6ec3d9] transition hover:text-white sm:block"
+                >
+                  Abrir página completa
+                </Link>
+                <button
+                  type="button"
+                  onClick={() => setPassagensModalOpen(false)}
+                  aria-label="Fechar Passagens Aéreas"
+                  className="flex h-9 w-9 items-center justify-center rounded-full border border-white/15 text-2xl leading-none text-white/65 transition hover:border-white/40 hover:text-white"
+                >
+                  ×
+                </button>
               </div>
-            ))}
+            </div>
+            <iframe
+              src="/passagens"
+              title="Diferenciais Ajisai para Passagens Aéreas"
+              className="h-full w-full border-0 pt-14"
+            />
           </div>
         </div>
-      </section>
+      )}
 
-      {/* ── GUIA TURÍSTICO AVULSO ── */}
-      <section id="guia" className="border-b border-white/10 bg-[#050505] px-6 py-16 md:px-16 md:py-24">
-        <div className="mx-auto grid max-w-6xl items-stretch gap-12 md:grid-cols-2">
-          <div className="order-2 flex justify-center md:order-1">
-            <div className="relative aspect-[3/4] w-full max-w-lg overflow-hidden rounded-2xl border border-white/10 md:aspect-auto md:h-full md:min-h-[560px]">
-              <Image
-                src={IMAGENS_PRODUTO.guia.src}
-                alt={IMAGENS_PRODUTO.guia.alt}
-                fill
-                sizes="(min-width: 768px) 32rem, 100vw"
-                className="object-cover object-top"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/5 to-transparent" />
-            </div>
-          </div>
-
-          <div className="order-1 md:order-2">
-            <p className="text-[10px] uppercase tracking-[0.2em] text-[#6ec3d9]">
-              Guia Turístico Avulso
-            </p>
-            <h2
-              className={`${display.className} mt-3 text-3xl font-medium leading-tight text-white md:text-4xl`}
-            >
-              Já organizou a viagem — só falta quem conheça o caminho.
-            </h2>
-            <p className="mt-5 text-sm font-light leading-6 text-white/60 md:text-base md:leading-7">
-              Ideal para quem já tem passagens, hospedagem e roteiro próprio,
-              mas quer companhia local para um ou mais dias — sem contratar o
-              pacote inteiro.
-            </p>
-
-            <ul className="mt-6 space-y-3">
-              {[
-                "Guia particular fluente em português, dedicado só ao seu grupo",
-                "Contrate por dia — encaixa em qualquer roteiro já pronto",
-                "Conhece trajetos, horários e como evitar filas nos pontos que você já escolheu",
-                "Sem pacote fechado: você decide quais dias precisa de guia",
-              ].map((item) => (
-                <li key={item} className="flex items-start gap-2.5 text-sm leading-6 text-white/65">
-                  <IconCheck className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[#6ec3d9]" />
-                  {item}
-                </li>
-              ))}
-            </ul>
-
-            <div className="mt-8 flex flex-wrap items-center gap-6">
-              <div>
-                <p className="text-[10px] uppercase tracking-[0.2em] text-white/40">A partir de</p>
-                <p className={`${display.className} text-4xl font-medium text-white`}>
-                  {precoProdutoLabel(PRODUTOS.guia, false)}
-                </p>
-                {precoBRLProdutoLabel(PRODUTOS.guia) && (
-                  <p className="mt-0.5 text-sm font-medium text-white/60">
-                    {precoBRLProdutoLabel(PRODUTOS.guia)}
-                  </p>
-                )}
-                <p className="mt-1 text-[11px] text-white/40">
-                  por dia de acompanhamento, para até 4 pessoas
-                </p>
-                <CambioLabel cambio={cambio} className="mt-1 text-[11px] text-white/40" />
-              </div>
-              <button
-                type="button"
-                onClick={() => escolherProduto("guia")}
-                className="rounded-full px-6 py-3.5 text-center text-[11px] font-semibold uppercase tracking-[0.2em] text-white shadow-[0_10px_30px_rgba(0,0,0,0.35)] transition duration-300 hover:-translate-y-0.5"
-                style={{ backgroundColor: "#2f80c9" }}
+      {guiaModalOpen && (
+        <div
+          className="fixed inset-0 z-[90] flex items-end justify-center bg-black/85 p-0 backdrop-blur-sm md:items-center md:p-6"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="guia-modal-title"
+          onClick={() => setGuiaModalOpen(false)}
+        >
+          <div
+            className="relative h-[96vh] w-full max-w-[1500px] overflow-hidden rounded-t-3xl border border-white/10 bg-black shadow-2xl md:h-[94vh] md:rounded-3xl"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <div className="absolute inset-x-0 top-0 z-20 flex h-14 items-center justify-between border-b border-white/10 bg-black/90 px-4 backdrop-blur-xl md:px-6">
+              <p
+                id="guia-modal-title"
+                className={`${display.className} text-lg font-medium text-white md:text-xl`}
               >
-                Quero contratar um guia avulso →
-              </button>
+                Guia Turístico Avulso
+              </p>
+              <div className="flex items-center gap-3">
+                <Link
+                  href="/guia-turistico"
+                  className="hidden text-[10px] font-semibold uppercase tracking-[0.15em] text-[#6ec3d9] transition hover:text-white sm:block"
+                >
+                  Abrir página completa
+                </Link>
+                <button
+                  type="button"
+                  onClick={() => setGuiaModalOpen(false)}
+                  aria-label="Fechar Guia Turístico Avulso"
+                  className="flex h-9 w-9 items-center justify-center rounded-full border border-white/15 text-2xl leading-none text-white/65 transition hover:border-white/40 hover:text-white"
+                >
+                  ×
+                </button>
+              </div>
             </div>
+            <iframe
+              src="/guia-turistico"
+              title="Guia Turístico Avulso"
+              className="h-full w-full border-0 pt-14"
+            />
           </div>
         </div>
-      </section>
+      )}
 
-      {/* ── COMPARATIVO ── */}
-      <section className="border-b border-white/10 bg-[#050505] px-6 py-16 md:px-16 md:py-24">
-        <div className="mx-auto max-w-6xl">
-          <div className="mx-auto max-w-2xl text-center">
-            <p className="text-[10px] uppercase tracking-[0.2em] text-[#6ec3d9]">Comparativo</p>
-            <h2
-              className={`${display.className} mt-3 text-3xl font-medium leading-tight text-white md:text-4xl`}
-            >
-              Qual opção combina com você
-            </h2>
+      {servicosModalOpen && (
+        <div
+          className="fixed inset-0 z-[90] flex items-end justify-center bg-black/85 p-0 backdrop-blur-sm md:items-center md:p-6"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="servicos-modal-title"
+          onClick={() => setServicosModalOpen(false)}
+        >
+          <div
+            className="relative h-[96vh] w-full max-w-[1500px] overflow-hidden rounded-t-3xl border border-white/10 bg-black shadow-2xl md:h-[94vh] md:rounded-3xl"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <div className="absolute inset-x-0 top-0 z-20 flex h-14 items-center justify-between border-b border-white/10 bg-black/90 px-4 backdrop-blur-xl md:px-6">
+              <p
+                id="servicos-modal-title"
+                className={`${display.className} text-lg font-medium text-white md:text-xl`}
+              >
+                Serviços Adicionais
+              </p>
+              <div className="flex items-center gap-3">
+                <Link
+                  href="/servicos-adicionais"
+                  className="hidden text-[10px] font-semibold uppercase tracking-[0.15em] text-[#6ec3d9] transition hover:text-white sm:block"
+                >
+                  Abrir página completa
+                </Link>
+                <button
+                  type="button"
+                  onClick={() => setServicosModalOpen(false)}
+                  aria-label="Fechar Serviços Adicionais"
+                  className="flex h-9 w-9 items-center justify-center rounded-full border border-white/15 text-2xl leading-none text-white/65 transition hover:border-white/40 hover:text-white"
+                >
+                  ×
+                </button>
+              </div>
+            </div>
+            <iframe
+              src="/servicos-adicionais"
+              title="Serviços avulsos Ajisai"
+              className="h-full w-full border-0 pt-14"
+            />
           </div>
-
-          <div className="mt-10 overflow-x-auto">
-            <table className="w-full min-w-[720px] border-collapse text-sm">
-              <thead>
-                <tr>
-                  <th className="border-b border-white/10 px-3 py-3 text-left text-[10px] font-medium uppercase tracking-[0.1em] text-white/30" />
-                  {COLUNAS.map((c) => (
-                    <th
-                      key={c.key}
-                      className="border-b border-white/10 px-3 py-3 text-center text-[10px] font-medium uppercase tracking-[0.1em] text-white/70"
-                    >
-                      {c.titulo}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {LINHAS.map((linha) => (
-                  <tr key={linha.label} className="border-b border-white/5">
-                    <td className="px-3 py-3.5 text-xs text-white/55">{linha.label}</td>
-                    {COLUNAS.map((c) => {
-                      const valor = linha.valores[c.key];
-                      return (
-                        <td key={c.key} className="px-3 py-3.5 text-center">
-                          {linha.label === "A partir de" ? (
-                            <span className="text-xs text-white/70">
-                              {precoProdutoLabel(PRODUTOS[c.key], false)}
-                              {precoBRLProdutoLabel(PRODUTOS[c.key]) && (
-                                <span className="mt-0.5 block text-[10px] text-white/45">
-                                  {precoBRLProdutoLabel(PRODUTOS[c.key])}
-                                </span>
-                              )}
-                            </span>
-                          ) : typeof valor === "boolean" ? (
-                            valor ? (
-                              <IconCheck className="mx-auto h-4 w-4 text-[#6ec3d9]" />
-                            ) : (
-                              <span className="text-white/20">—</span>
-                            )
-                          ) : (
-                            <span className="text-xs text-white/70">{valor}</span>
-                          )}
-                        </td>
-                      );
-                    })}
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-          <CambioLabel cambio={cambio} className="mt-3 text-center text-[11px] text-white/40" />
         </div>
-      </section>
-
-      {/* ── AJISAI VS. O MERCADO ── */}
-      <section className="border-b border-white/10 bg-black px-6 py-16 md:px-16 md:py-24">
-        <div className="mx-auto max-w-5xl">
-          <div className="mx-auto max-w-2xl text-center">
-            <p className="text-[10px] uppercase tracking-[0.2em] text-[#6ec3d9]">
-              Ajisai vs. o mercado
-            </p>
-            <h2
-              className={`${display.className} mt-3 text-3xl font-medium leading-tight text-white md:text-4xl`}
-            >
-              O que realmente vem incluso
-            </h2>
-            <p className="mt-4 text-sm font-light leading-6 text-white/55 md:text-base">
-              Comparativo de escopo levantado com outras agências que também
-              vendem viagens para o Japão. Nomes omitidos por discrição.
-            </p>
-          </div>
-
-          <div className="mt-10 overflow-x-auto">
-            <table className="w-full min-w-[560px] border-collapse text-sm">
-              <thead>
-                <tr>
-                  <th className="border-b border-white/10 px-3 py-3 text-left text-[10px] font-medium uppercase tracking-[0.1em] text-white/30" />
-                  {COLUNAS_CONCORRENCIA.map((c) => (
-                    <th
-                      key={c.key}
-                      className={`border-b px-3 py-3 text-center text-[10px] font-medium uppercase tracking-[0.1em] ${
-                        c.key === "ajisai"
-                          ? "border-[#6ec3d9]/40 text-[#6ec3d9]"
-                          : "border-white/10 text-white/60"
-                      }`}
-                    >
-                      {c.titulo}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {LINHAS_CONCORRENCIA.map((linha) => (
-                  <tr key={linha.label} className="border-b border-white/5">
-                    <td className="px-3 py-3.5 text-xs text-white/55">{linha.label}</td>
-                    {COLUNAS_CONCORRENCIA.map((c) => (
-                      <td
-                        key={c.key}
-                        className={`px-3 py-3.5 text-center ${
-                          c.key === "ajisai" ? "bg-[#6ec3d9]/[0.04]" : ""
-                        }`}
-                      >
-                        <ValorConcorrencia valor={linha.valores[c.key]} />
-                      </td>
-                    ))}
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-          <p className="mt-3 text-center text-[11px] text-white/30">
-            Levantamento próprio, sujeito a atualização conforme os
-            concorrentes mudam de escopo.
-          </p>
-        </div>
-      </section>
+      )}
 
       {/* ── QUALIFICAÇÃO → WHATSAPP ── */}
       <section id="recomendador" className="hidden">
@@ -1347,71 +900,6 @@ export default function ProdutosPage() {
               )}
             </>
           )}
-        </div>
-      </section>
-
-      {/* ── SERVIÇOS AVULSOS ── */}
-      <section id="servicos-avulsos" className="border-b border-white/10 bg-[#050505] px-6 py-16 md:px-16 md:py-24">
-        <div className="mx-auto max-w-6xl">
-          <div className="mx-auto max-w-2xl text-center">
-            <p className="text-[10px] uppercase tracking-[0.2em] text-[#6ec3d9]">
-              Complementos
-            </p>
-            <h2
-              className={`${display.className} mt-3 text-3xl font-medium leading-tight text-white md:text-4xl`}
-            >
-              Serviços avulsos
-            </h2>
-            <p className="mt-4 text-sm font-light leading-6 text-white/55 md:text-base">
-              Já tem passagem e hospedagem resolvidas? Adicione só o que
-              falta ao seu roteiro — mesmos itens disponíveis no Pacote
-              Viagem Personalizada.
-            </p>
-          </div>
-
-          <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {SERVICOS_AVULSOS.map((servico) => (
-              <div
-                key={servico.nome}
-                className="flex flex-col rounded-2xl border border-white/10 bg-white/[0.02] p-6 shadow-[0_0_30px_-14px_rgba(37,99,235,0.3)] transition hover:border-white/25 hover:bg-white/[0.04]"
-              >
-                <p className="text-2xl">{servico.icone}</p>
-                <h3 className={`${display.className} mt-3 text-lg font-medium text-white`}>
-                  {servico.nome}
-                </h3>
-                <p className="mt-2 flex-1 text-sm font-light leading-6 text-white/55">
-                  {servico.descricao}
-                </p>
-                <div className="mt-5 border-t border-white/10 pt-4">
-                  <p className="text-[10px] uppercase tracking-[0.2em] text-white/40">
-                    A partir de
-                  </p>
-                  <p className={`${display.className} mt-1 text-xl font-medium text-white`}>
-                    {servico.precoUSD != null
-                      ? formatUSD(servico.precoUSD)
-                      : brlParaUSDLabel(servico.precoBRL, cambio)}
-                    {servico.porDia ? "/dia" : ""}
-                  </p>
-                  <p className="mt-0.5 text-xs font-medium text-white/50">
-                    ou{" "}
-                    {servico.precoUSD != null
-                      ? cambio
-                        ? formatBRL(servico.precoUSD * cambio.cotacao)
-                        : "…"
-                      : formatBRL(servico.precoBRL)}
-                    {servico.porDia ? "/dia" : ""}
-                  </p>
-                </div>
-                <Link
-                  href="/viagem-personalizada"
-                  className="mt-5 block rounded-full px-5 py-3 text-center text-[11px] font-semibold uppercase tracking-[0.2em] text-[#0A2540] transition hover:brightness-95"
-                  style={{ backgroundColor: "#9FD4EE" }}
-                >
-                  Adicionar ao meu pacote
-                </Link>
-              </div>
-            ))}
-          </div>
         </div>
       </section>
 
