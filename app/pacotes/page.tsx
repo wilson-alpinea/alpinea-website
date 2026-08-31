@@ -113,21 +113,18 @@ const BANNER_INDIVIDUAL = {
 // de repetidos em cada card — só o que muda de pacote pra pacote (temporada,
 // clima, datas, preço) aparece dentro do card.
 const INCLUSO_CARAVANA = [
+  "Passagem aérea incluída",
   "Hospedagem selecionada",
-  "Guia bilíngue acompanhando o grupo",
-  "Transportes previstos no roteiro",
   "Experiências e visitas programadas",
   "Suporte Ajisai durante a viagem",
 ];
 
 const INCLUSO_PRIVATIVO = [
+  "Passagem aérea incluída",
   "Hospedagem selecionada",
-  "Roteiro-base da temporada",
   "Experiências e visitas programadas",
   "Suporte Ajisai durante a viagem",
 ];
-
-const OPCIONAIS_PRIVATIVO = ["Guia particular", "Transporte privado"];
 
 const pacotesCaravana = [
   {
@@ -218,22 +215,37 @@ const pacotesIndividuais = [
   },
 ];
 
+const precoDesdeCaravana = Math.min(
+  ...pacotesCaravana.flatMap((p) => p.variantes.map((v) => v.precoUSD ?? Infinity)),
+);
+const precoDesdeIndividual = Math.min(
+  ...pacotesIndividuais.flatMap((p) => p.variantes.map((v) => v.precoUSD ?? Infinity)),
+);
+
 const divisoes = [
   {
     letra: "A",
     titulo: "Caravana",
-    frase: "Grupo acompanhado · datas fixas",
-    texto:
-      "Você viaja com outros passageiros em uma saída definida, com roteiro e guia compartilhados do início ao fim.",
+    subtitulo: "Viaje com outros participantes",
+    diferenciais: [
+      "Datas fixas",
+      "Guia bilíngue acompanhando o grupo",
+      "Transporte do roteiro incluído",
+    ],
+    desde: precoDesdeCaravana,
     href: "#pacotes",
     imagem: BANNER_CARAVANA.src,
   },
   {
     letra: "B",
     titulo: "Privativo",
-    frase: "Seu grupo · roteiro-base · datas flexíveis",
-    texto:
-      "Você viaja somente com seu grupo e escolhe as datas dentro da temporada. Guia e transporte privado são opcionais.",
+    subtitulo: "Viaje apenas com quem você escolher",
+    diferenciais: [
+      "Datas flexíveis dentro da temporada",
+      "Mesmo roteiro-base, somente para seu grupo",
+      "Guia e transporte disponíveis como opcionais",
+    ],
+    desde: precoDesdeIndividual,
     href: "#individuais",
     imagem: BANNER_INDIVIDUAL.src,
   },
@@ -400,14 +412,24 @@ export default async function PacotesJapaoPage({
           </h1>
         </section>
 
-        {/* ── 2 DIVISÕES ── */}
+        {/* ── COMO VOCÊ PREFERE VIAJAR ── */}
         <section className="package-content border-b border-white/10 bg-[#050505] px-6 py-14 md:px-16 md:py-20">
+          <div className="mx-auto mb-10 max-w-2xl text-center md:mb-14">
+            <span className="inline-block rounded-full bg-[#6ec3d9]/15 px-4 py-1.5 text-[11px] font-semibold uppercase tracking-[0.2em] text-[#6ec3d9]">
+              Escolha como viajar
+            </span>
+            <h2
+              className={`${display.className} mt-3 text-3xl font-medium text-white md:text-4xl`}
+            >
+              Como você prefere viajar?
+            </h2>
+          </div>
           <div className="mx-auto grid max-w-4xl gap-8 sm:grid-cols-2">
             {divisoes.map((item) => (
               <a
                 key={item.letra}
                 href={item.href}
-                className="group flex h-full flex-col overflow-hidden rounded-2xl border border-white/10 bg-white/[0.02] text-center shadow-[0_0_30px_-14px_rgba(37,99,235,0.3)] transition hover:border-white/25 hover:bg-white/[0.04] sm:rounded-[1.5rem]"
+                className="group flex h-full flex-col overflow-hidden rounded-2xl border border-white/10 bg-white/[0.02] shadow-[0_0_30px_-14px_rgba(37,99,235,0.3)] transition hover:border-white/25 hover:bg-white/[0.04] sm:rounded-[1.5rem]"
               >
                 <div className="relative aspect-[3/2] w-full overflow-hidden">
                   <Image
@@ -419,15 +441,28 @@ export default async function PacotesJapaoPage({
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/0 to-transparent" />
                 </div>
-                <div className="flex flex-1 flex-col items-center p-6 md:p-8">
-                  <h2 className={`${display.className} text-xl font-medium text-white md:text-2xl`}>
+                <div className="flex flex-1 flex-col p-6 md:p-8">
+                  <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-[#6ec3d9]">
                     {item.titulo}
-                  </h2>
-                  <p className="mt-2.5 text-sm italic text-[#6ec3d9]">
-                    &ldquo;{item.frase}&rdquo;
                   </p>
-                  <p className="mt-3 flex-1 text-sm font-light leading-6 text-white/55">
-                    {item.texto}
+                  <h3
+                    className={`${display.className} mt-1.5 text-xl font-medium text-white md:text-2xl`}
+                  >
+                    {item.subtitulo}
+                  </h3>
+                  <ul className="mt-4 space-y-2">
+                    {item.diferenciais.map((d) => (
+                      <li
+                        key={d}
+                        className="flex items-start gap-2 text-sm leading-5 text-white/65"
+                      >
+                        <IconCheck className="mt-0.5 h-4 w-4 shrink-0 text-[#6ec3d9]" />
+                        {d}
+                      </li>
+                    ))}
+                  </ul>
+                  <p className="mt-5 text-lg font-semibold text-white">
+                    A partir de {formatUSD(item.desde)}
                   </p>
                   <span className="mt-4 inline-flex items-center gap-1.5 text-xs uppercase tracking-[0.2em] text-white/50 transition group-hover:text-white">
                     Ver pacotes →
@@ -549,7 +584,7 @@ export default async function PacotesJapaoPage({
               </p>
             </div>
 
-            <div className="relative mb-6 aspect-[3/2] overflow-hidden rounded-2xl md:mb-8 md:rounded-[2rem]">
+            <div className="relative mb-6 aspect-[2/1] overflow-hidden rounded-2xl md:mb-8 md:rounded-[2rem]">
               <Image
                 src={BANNER_CARAVANA.src}
                 alt={BANNER_CARAVANA.alt}
@@ -560,28 +595,30 @@ export default async function PacotesJapaoPage({
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/5 to-transparent" />
             </div>
 
-            <div className="mb-10 grid gap-4 md:mb-14 md:grid-cols-[1.35fr_1fr]">
-              <div className="rounded-2xl border border-white/10 bg-white/[0.025] p-5 md:p-6">
-                <h3 className={`${display.className} text-xl font-medium text-white md:text-2xl`}>
-                  O que está incluído na Caravana
-                </h3>
-                <ul className="mt-4 flex flex-wrap gap-x-5 gap-y-3">
-                  {INCLUSO_CARAVANA.map((item) => (
-                    <li key={item} className="flex items-center gap-2 text-sm text-white/60">
-                      <IconCheck className="h-4 w-4 shrink-0 text-[#6ec3d9]" />
-                      {item}
-                    </li>
-                  ))}
-                </ul>
+            <div className="mb-10 rounded-2xl border border-white/10 bg-white/[0.025] p-5 md:mb-14 md:p-6">
+              <div className="flex flex-wrap gap-2">
+                {[
+                  "Grupo fechado",
+                  "Datas definidas",
+                  "Guia incluído",
+                  "Transportes incluídos",
+                ].map((tag) => (
+                  <span
+                    key={tag}
+                    className="rounded-full border border-[#6ec3d9]/25 bg-[#6ec3d9]/10 px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-[#9fd4ee]"
+                  >
+                    {tag}
+                  </span>
+                ))}
               </div>
-              <div className="rounded-2xl border border-[#6ec3d9]/20 bg-[#6ec3d9]/[0.055] p-5 md:p-6">
-                <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-[#6ec3d9]">
-                  Como funciona
-                </p>
-                <p className="mt-3 text-sm leading-7 text-white/65">
-                  Datas de saída definidas · Grupo fechado · Vagas limitadas · Roteiro programado
-                </p>
-              </div>
+              <ul className="mt-5 flex flex-wrap gap-x-6 gap-y-3">
+                {INCLUSO_CARAVANA.map((item) => (
+                  <li key={item} className="flex items-center gap-2 text-sm text-white/60">
+                    <IconCheck className="h-4 w-4 shrink-0 text-[#6ec3d9]" />
+                    {item}
+                  </li>
+                ))}
+              </ul>
             </div>
 
             <h3 className={`${display.className} mb-6 text-2xl font-medium text-white md:text-3xl`}>
@@ -618,13 +655,13 @@ export default async function PacotesJapaoPage({
                 Privativo
               </h2>
               <p className="mt-4 max-w-2xl text-sm font-light leading-6 text-white/55 md:text-base md:leading-7">
-                Para viajar apenas com quem você escolher, em um pacote fechado
-                com datas e roteiro pré-definidos. Guia e transporte privado estão
-                disponíveis como opcionais.
+                Viaje somente com o seu grupo, seguindo nossos roteiros de
+                temporada, com liberdade para escolher a data dentro do
+                período disponível.
               </p>
             </div>
 
-            <div className="relative mb-6 aspect-video overflow-hidden rounded-2xl md:mb-8 md:rounded-[2rem]">
+            <div className="relative mb-6 aspect-[2.4/1] overflow-hidden rounded-2xl md:mb-8 md:rounded-[2rem]">
               <Image
                 src={BANNER_INDIVIDUAL.src}
                 alt={BANNER_INDIVIDUAL.alt}
@@ -635,32 +672,30 @@ export default async function PacotesJapaoPage({
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/5 to-transparent" />
             </div>
 
-            <div className="mb-10 grid gap-4 md:mb-14 md:grid-cols-[1.35fr_1fr]">
-              <div className="rounded-2xl border border-white/10 bg-white/[0.025] p-5 md:p-6">
-                <h3 className={`${display.className} text-xl font-medium text-white md:text-2xl`}>
-                  O que está incluído no Privativo
-                </h3>
-                <ul className="mt-4 flex flex-wrap gap-x-5 gap-y-3">
-                  {INCLUSO_PRIVATIVO.map((item) => (
-                    <li key={item} className="flex items-center gap-2 text-sm text-white/60">
-                      <IconCheck className="h-4 w-4 shrink-0 text-[#6ec3d9]" />
-                      {item}
-                    </li>
-                  ))}
-                </ul>
-                <p className="mt-4 border-t border-white/10 pt-4 text-xs text-white/45">
-                  <span className="font-semibold text-white/65">Opcionais:</span>{" "}
-                  {OPCIONAIS_PRIVATIVO.join(" · ")}
-                </p>
+            <div className="mb-10 rounded-2xl border border-white/10 bg-white/[0.025] p-5 md:mb-14 md:p-6">
+              <div className="flex flex-wrap gap-2">
+                {[
+                  "Somente seu grupo",
+                  "Datas flexíveis",
+                  "Roteiro-base definido",
+                  "Guia e transporte opcionais",
+                ].map((tag) => (
+                  <span
+                    key={tag}
+                    className="rounded-full border border-[#6ec3d9]/25 bg-[#6ec3d9]/10 px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-[#9fd4ee]"
+                  >
+                    {tag}
+                  </span>
+                ))}
               </div>
-              <div className="rounded-2xl border border-[#6ec3d9]/20 bg-[#6ec3d9]/[0.055] p-5 md:p-6">
-                <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-[#6ec3d9]">
-                  Como funciona
-                </p>
-                <p className="mt-3 text-sm leading-7 text-white/65">
-                  Somente seu grupo · Datas pré-definidas · Guia e transporte opcionais · Roteiro pré-definido e não alterável
-                </p>
-              </div>
+              <ul className="mt-5 flex flex-wrap gap-x-6 gap-y-3">
+                {INCLUSO_PRIVATIVO.map((item) => (
+                  <li key={item} className="flex items-center gap-2 text-sm text-white/60">
+                    <IconCheck className="h-4 w-4 shrink-0 text-[#6ec3d9]" />
+                    {item}
+                  </li>
+                ))}
+              </ul>
             </div>
 
             <h3 className={`${display.className} mb-6 text-2xl font-medium text-white md:text-3xl`}>

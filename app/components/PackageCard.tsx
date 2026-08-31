@@ -104,6 +104,7 @@ export function PackageCard({
                 variante={variante}
                 theme="light"
                 compact
+                hideSecundario
                 precoClassName={`${display.className} mt-1 text-4xl font-semibold text-[#0A2540]`}
               />
             </>
@@ -112,7 +113,7 @@ export function PackageCard({
             className="mt-5 flex w-full items-center justify-center gap-2 rounded-full px-5 py-3.5 text-center text-[11px] font-semibold uppercase tracking-[0.2em] text-white transition duration-300"
             style={{ backgroundColor: "#2f80c9" }}
           >
-            Ver itinerário
+            Ver viagem
           </span>
         </div>
       </div>

@@ -13,6 +13,7 @@ export function PrecoPacote({
   precoClassName,
   theme = "dark",
   compact = false,
+  hideSecundario = false,
 }: {
   variante: PackageVariant;
   precoClassName: string;
@@ -22,6 +23,10 @@ export function PrecoPacote({
   theme?: "dark" | "light";
   /** Remove parcelamento, badges e avisos repetidos na visualização resumida. */
   compact?: boolean;
+  /** Esconde a linha secundária de conversão (aprox. R$...) — usada nos
+   * cards de temporada em /pacotes, onde a segunda moeda não ajuda a
+   * decisão entre pacotes e só ocupa espaço vertical. */
+  hideSecundario?: boolean;
 }) {
   const cambio = useCambioUSD();
   const isLight = theme === "light";
@@ -46,7 +51,7 @@ export function PrecoPacote({
         <p className={precoClassName} style={{ color: corPrecoDestaque }}>
           {formatUSD(variante.precoUSD)}
         </p>
-        {cambio && (
+        {!hideSecundario && cambio && (
           <p className={`mt-1 text-sm font-medium ${corTextoSecundario}`}>
             {compact ? "aprox. " : "ou "}
             {formatBRL(variante.precoUSD * cambio.cotacao)}
@@ -98,10 +103,12 @@ export function PrecoPacote({
   return (
     <>
       <p className={precoClassName}>{brlParaUSDLabel(variante.precoBRL, cambio)}</p>
-      <p className={`mt-1 text-sm font-medium ${corTextoSecundario}`}>
-        {compact ? "aprox. " : "ou "}
-        {formatBRL(variante.precoBRL)}
-      </p>
+      {!hideSecundario && (
+        <p className={`mt-1 text-sm font-medium ${corTextoSecundario}`}>
+          {compact ? "aprox. " : "ou "}
+          {formatBRL(variante.precoBRL)}
+        </p>
+      )}
       <p className={`mt-1 text-xs uppercase tracking-[0.15em] ${corTextoTerciario}`}>
         Por pessoa · Quarto Individual
       </p>
