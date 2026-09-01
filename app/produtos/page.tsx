@@ -209,7 +209,7 @@ export default function ProdutosPage() {
   }
 
   return (
-    <main className="min-h-screen overflow-x-hidden bg-black text-white">
+    <main className="min-h-screen overflow-x-hidden bg-white text-black">
       {/* ── HEADER ── */}
       <header className="fixed left-0 right-0 top-0 z-50 bg-black/10 backdrop-blur-2xl">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-8 py-5 md:px-16">
@@ -224,7 +224,7 @@ export default function ProdutosPage() {
       </header>
 
       {/* ── HERO — PRODUTOS ── */}
-      <section className="relative border-b border-white/10 bg-black">
+      <section className="relative border-b border-black/10 bg-white">
         {/*
           HERO RESPONSIVO SEM DEFORMAÇÃO
           - Usa a imagem original /images/produtos-hero.png
@@ -258,9 +258,9 @@ export default function ProdutosPage() {
         </div>
 
         {/* ── SELETOR DE PRODUTOS ── */}
-        <div className="bg-black px-5 py-10 sm:px-6 sm:py-12 md:px-10 md:py-14 lg:px-16">
+        <div className="bg-white px-5 py-10 sm:px-6 sm:py-12 md:px-10 md:py-14 lg:px-16">
           <div className="mx-auto max-w-7xl">
-            <h2 className={`${display.className} mb-6 text-2xl font-medium text-white md:text-3xl`}>
+            <h2 className={`${display.className} mb-6 text-2xl font-medium text-black md:text-3xl`}>
               Como você quer organizar sua viagem?
             </h2>
 
@@ -298,7 +298,7 @@ export default function ProdutosPage() {
               />
             </div>
 
-            <h2 className={`${display.className} mb-6 mt-12 text-2xl font-medium text-white md:mt-16 md:text-3xl`}>
+            <h2 className={`${display.className} mb-6 mt-12 text-2xl font-medium text-black md:mt-16 md:text-3xl`}>
               Complete sua viagem
             </h2>
 
@@ -365,17 +365,17 @@ export default function ProdutosPage() {
       </section>
 
       {/* ── VÍDEO — EXPLICAÇÃO DOS PRODUTOS ── */}
-      <section className="border-b border-white/10 bg-black px-6 py-16 md:px-16 md:py-24">
+      <section className="border-b border-black/10 bg-white px-6 py-16 md:px-16 md:py-24">
         <div className="mx-auto max-w-4xl text-center">
           <p className="text-[10px] uppercase tracking-[0.2em] text-[#6ec3d9]">
             Assista antes de escolher
           </p>
           <h2
-            className={`${display.className} mt-3 text-2xl font-medium text-white md:text-3xl`}
+            className={`${display.className} mt-3 text-2xl font-medium text-black md:text-3xl`}
           >
             Como funcionam os produtos Ajisai
           </h2>
-          <p className="mx-auto mt-4 max-w-2xl text-sm font-light leading-6 text-white/55">
+          <p className="mx-auto mt-4 max-w-2xl text-sm font-light leading-6 text-black/55">
             Em poucos minutos, entenda a diferença entre Roteiro Personalizado,
             Pacotes de Viagem e Guia Turístico Avulso — e qual encaixa melhor
             no seu jeito de viajar.
@@ -399,14 +399,14 @@ export default function ProdutosPage() {
         >
           <section
             id="roteiro-personalizado"
-            className="relative max-h-[94vh] w-full max-w-7xl overflow-y-auto rounded-t-3xl border border-white/10 bg-[#050505] px-6 py-16 shadow-2xl md:rounded-3xl md:px-16 md:py-20"
+            className="relative max-h-[94vh] w-full max-w-7xl overflow-y-auto rounded-t-3xl border border-black/10 bg-white px-6 py-16 shadow-2xl md:rounded-3xl md:px-16 md:py-20"
             onClick={(event) => event.stopPropagation()}
           >
             <button
               type="button"
               onClick={() => setRoteiroModalOpen(false)}
               aria-label="Fechar informações do Roteiro Personalizado"
-              className="sticky right-0 top-0 z-20 ml-auto flex h-10 w-10 items-center justify-center rounded-full border border-white/15 bg-black/70 text-2xl leading-none text-white/65 backdrop-blur transition hover:border-white/40 hover:text-white"
+              className="sticky right-0 top-0 z-20 ml-auto flex h-10 w-10 items-center justify-center rounded-full border border-black/15 bg-white/70 text-2xl leading-none text-black/65 backdrop-blur transition hover:border-black/40 hover:text-black"
             >
               ×
             </button>
@@ -417,11 +417,11 @@ export default function ProdutosPage() {
             </p>
             <h2
               id="roteiro-modal-title"
-              className={`${display.className} mt-3 text-3xl font-medium leading-tight text-white md:text-4xl`}
+              className={`${display.className} mt-3 text-3xl font-medium leading-tight text-black md:text-4xl`}
             >
               Isto não é uma lista de lugares para visitar.
             </h2>
-            <p className="mt-5 text-sm font-light leading-6 text-white/60 md:text-base md:leading-7">
+            <p className="mt-5 text-sm font-light leading-6 text-black/60 md:text-base md:leading-7">
               É um painel digital onde cada dia da sua viagem é planejado de
               acordo com o seu perfil — acessível pelo celular, do início ao
               fim da viagem.
@@ -432,7 +432,7 @@ export default function ProdutosPage() {
                 <li
                   key={item}
                   className={`flex items-start gap-2.5 text-sm leading-6 ${
-                    item.startsWith("Nós planejamos") ? "font-medium text-[#6ec3d9]" : "text-white/65"
+                    item.startsWith("Nós planejamos") ? "font-medium text-[#6ec3d9]" : "text-black/65"
                   }`}
                 >
                   <IconCheck className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[#6ec3d9]" />
@@ -443,8 +443,8 @@ export default function ProdutosPage() {
 
             <div className="mt-8 flex flex-wrap items-center gap-6">
               <div>
-                <p className="text-[10px] uppercase tracking-[0.2em] text-white/40">A partir de</p>
-                <p className={`${display.className} text-4xl font-medium text-white`}>
+                <p className="text-[10px] uppercase tracking-[0.2em] text-black/40">A partir de</p>
+                <p className={`${display.className} text-4xl font-medium text-black`}>
                   {precoProdutoLabel(PRODUTOS.roteiro, false)}
                 </p>
                 {precoBRLProdutoLabel(PRODUTOS.roteiro) && (
@@ -452,7 +452,7 @@ export default function ProdutosPage() {
                     {precoBRLProdutoLabel(PRODUTOS.roteiro)}
                   </p>
                 )}
-                <CambioLabel cambio={cambio} className="mt-1 text-[11px] text-white/40" />
+                <CambioLabel cambio={cambio} className="mt-1 text-[11px] text-black/40" />
               </div>
               <button
                 type="button"
@@ -471,7 +471,7 @@ export default function ProdutosPage() {
             </div>
             <Link
               href="/ajisairoteiros"
-              className="mt-5 inline-block text-xs uppercase tracking-[0.2em] text-white/40 underline underline-offset-4 transition hover:text-white"
+              className="mt-5 inline-block text-xs uppercase tracking-[0.2em] text-black/40 underline underline-offset-4 transition hover:text-black"
             >
               Ver o roteiro completo →
             </Link>
@@ -499,15 +499,15 @@ export default function ProdutosPage() {
         </div>
 
         <div className="mx-auto mt-16 max-w-5xl">
-          <p className="text-center text-[10px] uppercase tracking-[0.2em] text-white/40">
+          <p className="text-center text-[10px] uppercase tracking-[0.2em] text-black/40">
             Veja funcionando
           </p>
           <h3
-            className={`${display.className} mt-2 text-center text-xl font-medium text-white md:text-2xl`}
+            className={`${display.className} mt-2 text-center text-xl font-medium text-black md:text-2xl`}
           >
             Demonstração do Roteiro Personalizado
           </h3>
-          <p className="mx-auto mt-3 max-w-xl text-center text-sm font-light leading-6 text-white/55">
+          <p className="mx-auto mt-3 max-w-xl text-center text-sm font-light leading-6 text-black/55">
             Duas versões — escolha a que preferir: a rápida dura só 1:46, a
             completa mostra o painel com todos os detalhes.
           </p>
@@ -521,7 +521,7 @@ export default function ProdutosPage() {
           </div>
 
           <div className="mx-auto mt-10 max-w-sm">
-            <p className="text-center text-sm uppercase tracking-[0.2em] text-white/50">
+            <p className="text-center text-sm uppercase tracking-[0.2em] text-black/50">
               Quer ver mais?
             </p>
             <div className="mt-3">
@@ -547,20 +547,20 @@ export default function ProdutosPage() {
           onClick={() => setPacotesModalOpen(false)}
         >
           <div
-            className="relative h-[96vh] w-full max-w-[1500px] overflow-hidden rounded-t-3xl border border-white/10 bg-black shadow-2xl md:h-[94vh] md:rounded-3xl"
+            className="relative h-[96vh] w-full max-w-[1500px] overflow-hidden rounded-t-3xl border border-black/10 bg-white shadow-2xl md:h-[94vh] md:rounded-3xl"
             onClick={(event) => event.stopPropagation()}
           >
-            <div className="absolute inset-x-0 top-0 z-20 flex h-14 items-center justify-between border-b border-white/10 bg-black/90 px-4 backdrop-blur-xl md:px-6">
+            <div className="absolute inset-x-0 top-0 z-20 flex h-14 items-center justify-between border-b border-black/10 bg-white/90 px-4 backdrop-blur-xl md:px-6">
               <p
                 id="pacotes-modal-title"
-                className={`${display.className} text-lg font-medium text-white md:text-xl`}
+                className={`${display.className} text-lg font-medium text-black md:text-xl`}
               >
                 Pacotes de Viagem
               </p>
               <div className="flex items-center gap-3">
                 <Link
                   href="/pacotes"
-                  className="hidden text-[10px] font-semibold uppercase tracking-[0.15em] text-[#6ec3d9] transition hover:text-white sm:block"
+                  className="hidden text-[10px] font-semibold uppercase tracking-[0.15em] text-[#6ec3d9] transition hover:text-black sm:block"
                 >
                   Abrir página completa
                 </Link>
@@ -568,7 +568,7 @@ export default function ProdutosPage() {
                   type="button"
                   onClick={() => setPacotesModalOpen(false)}
                   aria-label="Fechar Pacotes de Viagem"
-                  className="flex h-9 w-9 items-center justify-center rounded-full border border-white/15 text-2xl leading-none text-white/65 transition hover:border-white/40 hover:text-white"
+                  className="flex h-9 w-9 items-center justify-center rounded-full border border-black/15 text-2xl leading-none text-black/65 transition hover:border-black/40 hover:text-black"
                 >
                   ×
                 </button>
@@ -592,20 +592,20 @@ export default function ProdutosPage() {
           onClick={() => setViagemModalOpen(false)}
         >
           <div
-            className="relative h-[96vh] w-full max-w-[1500px] overflow-hidden rounded-t-3xl border border-[#6ec3d9]/30 bg-black shadow-[0_0_60px_-20px_rgba(110,195,217,0.45)] md:h-[94vh] md:rounded-3xl"
+            className="relative h-[96vh] w-full max-w-[1500px] overflow-hidden rounded-t-3xl border border-[#6ec3d9]/30 bg-white shadow-[0_0_60px_-20px_rgba(110,195,217,0.45)] md:h-[94vh] md:rounded-3xl"
             onClick={(event) => event.stopPropagation()}
           >
-            <div className="absolute inset-x-0 top-0 z-20 flex h-14 items-center justify-between border-b border-white/10 bg-black/90 px-4 backdrop-blur-xl md:px-6">
+            <div className="absolute inset-x-0 top-0 z-20 flex h-14 items-center justify-between border-b border-black/10 bg-white/90 px-4 backdrop-blur-xl md:px-6">
               <p
                 id="viagem-modal-title"
-                className={`${display.className} text-lg font-medium text-white md:text-xl`}
+                className={`${display.className} text-lg font-medium text-black md:text-xl`}
               >
                 Viagem Personalizada
               </p>
               <div className="flex items-center gap-3">
                 <Link
                   href="/viagem-personalizada"
-                  className="hidden text-[10px] font-semibold uppercase tracking-[0.15em] text-[#6ec3d9] transition hover:text-white sm:block"
+                  className="hidden text-[10px] font-semibold uppercase tracking-[0.15em] text-[#6ec3d9] transition hover:text-black sm:block"
                 >
                   Abrir página completa
                 </Link>
@@ -613,7 +613,7 @@ export default function ProdutosPage() {
                   type="button"
                   onClick={() => setViagemModalOpen(false)}
                   aria-label="Fechar Viagem Personalizada"
-                  className="flex h-9 w-9 items-center justify-center rounded-full border border-white/15 text-2xl leading-none text-white/65 transition hover:border-white/40 hover:text-white"
+                  className="flex h-9 w-9 items-center justify-center rounded-full border border-black/15 text-2xl leading-none text-black/65 transition hover:border-black/40 hover:text-black"
                 >
                   ×
                 </button>
@@ -637,20 +637,20 @@ export default function ProdutosPage() {
           onClick={() => setPassagensModalOpen(false)}
         >
           <div
-            className="relative h-[96vh] w-full max-w-[1500px] overflow-hidden rounded-t-3xl border border-white/10 bg-black shadow-2xl md:h-[94vh] md:rounded-3xl"
+            className="relative h-[96vh] w-full max-w-[1500px] overflow-hidden rounded-t-3xl border border-black/10 bg-white shadow-2xl md:h-[94vh] md:rounded-3xl"
             onClick={(event) => event.stopPropagation()}
           >
-            <div className="absolute inset-x-0 top-0 z-20 flex h-14 items-center justify-between border-b border-white/10 bg-black/90 px-4 backdrop-blur-xl md:px-6">
+            <div className="absolute inset-x-0 top-0 z-20 flex h-14 items-center justify-between border-b border-black/10 bg-white/90 px-4 backdrop-blur-xl md:px-6">
               <p
                 id="passagens-modal-title"
-                className={`${display.className} text-lg font-medium text-white md:text-xl`}
+                className={`${display.className} text-lg font-medium text-black md:text-xl`}
               >
                 Passagens Aéreas
               </p>
               <div className="flex items-center gap-3">
                 <Link
                   href="/passagens"
-                  className="hidden text-[10px] font-semibold uppercase tracking-[0.15em] text-[#6ec3d9] transition hover:text-white sm:block"
+                  className="hidden text-[10px] font-semibold uppercase tracking-[0.15em] text-[#6ec3d9] transition hover:text-black sm:block"
                 >
                   Abrir página completa
                 </Link>
@@ -658,7 +658,7 @@ export default function ProdutosPage() {
                   type="button"
                   onClick={() => setPassagensModalOpen(false)}
                   aria-label="Fechar Passagens Aéreas"
-                  className="flex h-9 w-9 items-center justify-center rounded-full border border-white/15 text-2xl leading-none text-white/65 transition hover:border-white/40 hover:text-white"
+                  className="flex h-9 w-9 items-center justify-center rounded-full border border-black/15 text-2xl leading-none text-black/65 transition hover:border-black/40 hover:text-black"
                 >
                   ×
                 </button>
@@ -682,20 +682,20 @@ export default function ProdutosPage() {
           onClick={() => setGuiaModalOpen(false)}
         >
           <div
-            className="relative h-[96vh] w-full max-w-[1500px] overflow-hidden rounded-t-3xl border border-white/10 bg-black shadow-2xl md:h-[94vh] md:rounded-3xl"
+            className="relative h-[96vh] w-full max-w-[1500px] overflow-hidden rounded-t-3xl border border-black/10 bg-white shadow-2xl md:h-[94vh] md:rounded-3xl"
             onClick={(event) => event.stopPropagation()}
           >
-            <div className="absolute inset-x-0 top-0 z-20 flex h-14 items-center justify-between border-b border-white/10 bg-black/90 px-4 backdrop-blur-xl md:px-6">
+            <div className="absolute inset-x-0 top-0 z-20 flex h-14 items-center justify-between border-b border-black/10 bg-white/90 px-4 backdrop-blur-xl md:px-6">
               <p
                 id="guia-modal-title"
-                className={`${display.className} text-lg font-medium text-white md:text-xl`}
+                className={`${display.className} text-lg font-medium text-black md:text-xl`}
               >
                 Guia Turístico Avulso
               </p>
               <div className="flex items-center gap-3">
                 <Link
                   href="/guia-turistico"
-                  className="hidden text-[10px] font-semibold uppercase tracking-[0.15em] text-[#6ec3d9] transition hover:text-white sm:block"
+                  className="hidden text-[10px] font-semibold uppercase tracking-[0.15em] text-[#6ec3d9] transition hover:text-black sm:block"
                 >
                   Abrir página completa
                 </Link>
@@ -703,7 +703,7 @@ export default function ProdutosPage() {
                   type="button"
                   onClick={() => setGuiaModalOpen(false)}
                   aria-label="Fechar Guia Turístico Avulso"
-                  className="flex h-9 w-9 items-center justify-center rounded-full border border-white/15 text-2xl leading-none text-white/65 transition hover:border-white/40 hover:text-white"
+                  className="flex h-9 w-9 items-center justify-center rounded-full border border-black/15 text-2xl leading-none text-black/65 transition hover:border-black/40 hover:text-black"
                 >
                   ×
                 </button>
@@ -727,20 +727,20 @@ export default function ProdutosPage() {
           onClick={() => setServicosModalOpen(false)}
         >
           <div
-            className="relative h-[96vh] w-full max-w-[1500px] overflow-hidden rounded-t-3xl border border-white/10 bg-black shadow-2xl md:h-[94vh] md:rounded-3xl"
+            className="relative h-[96vh] w-full max-w-[1500px] overflow-hidden rounded-t-3xl border border-black/10 bg-white shadow-2xl md:h-[94vh] md:rounded-3xl"
             onClick={(event) => event.stopPropagation()}
           >
-            <div className="absolute inset-x-0 top-0 z-20 flex h-14 items-center justify-between border-b border-white/10 bg-black/90 px-4 backdrop-blur-xl md:px-6">
+            <div className="absolute inset-x-0 top-0 z-20 flex h-14 items-center justify-between border-b border-black/10 bg-white/90 px-4 backdrop-blur-xl md:px-6">
               <p
                 id="servicos-modal-title"
-                className={`${display.className} text-lg font-medium text-white md:text-xl`}
+                className={`${display.className} text-lg font-medium text-black md:text-xl`}
               >
                 Serviços Adicionais
               </p>
               <div className="flex items-center gap-3">
                 <Link
                   href="/servicos-adicionais"
-                  className="hidden text-[10px] font-semibold uppercase tracking-[0.15em] text-[#6ec3d9] transition hover:text-white sm:block"
+                  className="hidden text-[10px] font-semibold uppercase tracking-[0.15em] text-[#6ec3d9] transition hover:text-black sm:block"
                 >
                   Abrir página completa
                 </Link>
@@ -748,7 +748,7 @@ export default function ProdutosPage() {
                   type="button"
                   onClick={() => setServicosModalOpen(false)}
                   aria-label="Fechar Serviços Adicionais"
-                  className="flex h-9 w-9 items-center justify-center rounded-full border border-white/15 text-2xl leading-none text-white/65 transition hover:border-white/40 hover:text-white"
+                  className="flex h-9 w-9 items-center justify-center rounded-full border border-black/15 text-2xl leading-none text-black/65 transition hover:border-black/40 hover:text-black"
                 >
                   ×
                 </button>
@@ -768,16 +768,16 @@ export default function ProdutosPage() {
         <div className="mx-auto max-w-2xl">
           {enviado ? (
             <div className="flex flex-col items-center gap-4 py-6 text-center">
-              <p className="text-xs uppercase tracking-[0.3em] text-white/40">WhatsApp aberto</p>
-              <h2 className={`${display.className} text-2xl font-medium text-white`}>Quase lá.</h2>
-              <p className="max-w-xs text-sm leading-6 text-white/55">
+              <p className="text-xs uppercase tracking-[0.3em] text-black/40">WhatsApp aberto</p>
+              <h2 className={`${display.className} text-2xl font-medium text-black`}>Quase lá.</h2>
+              <p className="max-w-xs text-sm leading-6 text-black/55">
                 Finalize o envio da mensagem na aba do WhatsApp que abrimos
                 para você. A equipe Ajisai responde em breve.
               </p>
               <button
                 type="button"
                 onClick={trocarProduto}
-                className="mt-2 rounded-full border border-white/20 px-6 py-2.5 text-xs uppercase tracking-[0.25em] text-white/80 transition hover:border-white/50 hover:text-white"
+                className="mt-2 rounded-full border border-black/20 px-6 py-2.5 text-xs uppercase tracking-[0.25em] text-black/80 transition hover:border-black/50 hover:text-black"
               >
                 Fazer outra solicitação
               </button>
@@ -785,25 +785,25 @@ export default function ProdutosPage() {
           ) : (
             <>
               {qualProduto && (
-                <div className="mb-8 rounded-2xl border border-white/10 bg-white/[0.02] p-6 text-center md:p-7">
-                  <p className="text-[10px] uppercase tracking-[0.2em] text-white/40">
+                <div className="mb-8 rounded-2xl border border-black/10 bg-black/[0.02] p-6 text-center md:p-7">
+                  <p className="text-[10px] uppercase tracking-[0.2em] text-black/40">
                     Produto selecionado
                   </p>
-                  <p className={`${display.className} mt-1.5 text-xl font-medium text-white`}>
+                  <p className={`${display.className} mt-1.5 text-xl font-medium text-black`}>
                     {PRODUTOS[qualProduto].nome}
                   </p>
-                  <p className="mt-1 text-xs text-white/50">
+                  <p className="mt-1 text-xs text-black/50">
                     {precoProdutoLabel(PRODUTOS[qualProduto], true)}
                   </p>
                   {precoBRLProdutoLabel(PRODUTOS[qualProduto]) && (
-                    <p className="mt-0.5 text-[11px] text-white/40">
+                    <p className="mt-0.5 text-[11px] text-black/40">
                       {precoBRLProdutoLabel(PRODUTOS[qualProduto])}
                     </p>
                   )}
                   <button
                     type="button"
                     onClick={trocarProduto}
-                    className="mt-3 text-[11px] uppercase tracking-[0.15em] text-white/40 underline underline-offset-4 transition hover:text-white"
+                    className="mt-3 text-[11px] uppercase tracking-[0.15em] text-black/40 underline underline-offset-4 transition hover:text-black"
                   >
                     Trocar produto
                   </button>
@@ -814,11 +814,11 @@ export default function ProdutosPage() {
                 Fale com a Ajisai
               </p>
               <h2
-                className={`${display.className} mt-3 text-center text-3xl font-medium leading-tight text-white`}
+                className={`${display.className} mt-3 text-center text-3xl font-medium leading-tight text-black`}
               >
                 Conte um pouco sobre sua viagem
               </h2>
-              <p className="mt-3 text-center text-sm leading-6 text-white/55">
+              <p className="mt-3 text-center text-sm leading-6 text-black/55">
                 Três perguntas rápidas — assim nossa equipe já entra na
                 conversa sabendo exatamente o que você precisa.
               </p>
@@ -828,24 +828,24 @@ export default function ProdutosPage() {
                   value={nome}
                   onChange={(e) => setNome(e.target.value)}
                   placeholder="Seu nome"
-                  className="w-full rounded-lg border border-white/15 bg-black/30 px-3 py-2.5 text-sm text-white outline-none placeholder:text-white/30 focus:border-white/40 sm:col-span-2"
+                  className="w-full rounded-lg border border-black/15 bg-black/5 px-3 py-2.5 text-sm text-black outline-none placeholder:text-black/30 focus:border-black/40 sm:col-span-2"
                 />
                 <input
                   value={periodo}
                   onChange={(e) => setPeriodo(e.target.value)}
                   placeholder="Quando pretende viajar?"
-                  className="w-full rounded-lg border border-white/15 bg-black/30 px-3 py-2.5 text-sm text-white outline-none placeholder:text-white/30 focus:border-white/40"
+                  className="w-full rounded-lg border border-black/15 bg-black/5 px-3 py-2.5 text-sm text-black outline-none placeholder:text-black/30 focus:border-black/40"
                 />
                 <input
                   value={viajantes}
                   onChange={(e) => setViajantes(e.target.value)}
                   placeholder="Quantas pessoas viajarão?"
-                  className="w-full rounded-lg border border-white/15 bg-black/30 px-3 py-2.5 text-sm text-white outline-none placeholder:text-white/30 focus:border-white/40"
+                  className="w-full rounded-lg border border-black/15 bg-black/5 px-3 py-2.5 text-sm text-black outline-none placeholder:text-black/30 focus:border-black/40"
                 />
               </div>
 
               <div className="mt-5">
-                <p className="mb-2.5 text-[10px] uppercase tracking-[0.2em] text-white/40">
+                <p className="mb-2.5 text-[10px] uppercase tracking-[0.2em] text-black/40">
                   Já possui passagens aéreas?
                 </p>
                 <div className="flex gap-2.5">
@@ -857,7 +857,7 @@ export default function ProdutosPage() {
                       className={`rounded-full border px-6 py-2 text-[11px] font-medium uppercase tracking-[0.1em] transition ${
                         passagens === valor
                           ? "border-transparent text-white"
-                          : "border-white/20 text-white/60 hover:border-white/50 hover:text-white"
+                          : "border-black/20 text-black/60 hover:border-black/50 hover:text-black"
                       }`}
                       style={passagens === valor ? { backgroundColor: "#2f80c9" } : undefined}
                     >
@@ -868,7 +868,7 @@ export default function ProdutosPage() {
               </div>
 
               <div className="mt-5">
-                <p className="mb-2.5 text-[10px] uppercase tracking-[0.2em] text-white/40">
+                <p className="mb-2.5 text-[10px] uppercase tracking-[0.2em] text-black/40">
                   Primeira viagem ao Japão?
                 </p>
                 <div className="flex gap-2.5">
@@ -880,7 +880,7 @@ export default function ProdutosPage() {
                       className={`rounded-full border px-6 py-2 text-[11px] font-medium uppercase tracking-[0.1em] transition ${
                         primeiraViagem === valor
                           ? "border-transparent text-white"
-                          : "border-white/20 text-white/60 hover:border-white/50 hover:text-white"
+                          : "border-black/20 text-black/60 hover:border-black/50 hover:text-black"
                       }`}
                       style={primeiraViagem === valor ? { backgroundColor: "#2f80c9" } : undefined}
                     >
@@ -900,7 +900,7 @@ export default function ProdutosPage() {
                 Falar no WhatsApp →
               </button>
               {(!qualProduto || !nome) && (
-                <p className="mt-2 text-center text-[11px] text-white/35">
+                <p className="mt-2 text-center text-[11px] text-black/35">
                   Escolha um produto e informe seu nome para continuar.
                 </p>
               )}
@@ -914,21 +914,21 @@ export default function ProdutosPage() {
         <TransportePrivadoCalculator onClose={() => setTransporteModalOpen(false)} />
       )}
 
-      <section aria-label="Por que escolher a Ajisai" className="border-t border-white/10 bg-black">
+      <section aria-label="Por que escolher a Ajisai" className="border-t border-black/10 bg-white">
         <InstitutionalContent />
       </section>
 
-      <footer className="bg-black px-8 pb-20 pt-16 text-white md:px-16 md:pb-20 md:pt-20">
+      <footer className="bg-white px-8 pb-20 pt-16 text-black md:px-16 md:pb-20 md:pt-20">
         <div className="mx-auto flex max-w-2xl flex-col items-center gap-7 text-center">
           <img
             src="/images/AJISAI-LOGO.avif"
             alt="Ajisai"
-            className="h-11 w-auto object-contain md:h-12"
+            className="h-11 w-auto object-contain invert md:h-12"
           />
-          <p className="max-w-sm text-sm leading-relaxed text-white/50">
+          <p className="max-w-sm text-sm leading-relaxed text-black/50">
             Pacotes de viagem e roteiros personalizados para o Japão.
           </p>
-          <p className="text-[11px] leading-relaxed text-white/25">
+          <p className="text-[11px] leading-relaxed text-black/25">
             © 2026 AJISAIWORK JAPAN AGENCIA DE VIAGENS LTDA, Todos os Direitos
             Reservados — CNPJ: 43.544.605/0001-56
           </p>
@@ -975,7 +975,7 @@ function InstitutionalContent() {
       title="Por que escolher a Ajisai e avaliações de clientes"
       onLoad={syncHeight}
       scrolling="no"
-      className="block w-full overflow-hidden border-0 bg-black"
+      className="block w-full overflow-hidden border-0 bg-white"
       style={{ height }}
     />
   );
@@ -1017,7 +1017,7 @@ function ProductSelectorCard({
       className={`group relative flex h-[350px] flex-col overflow-hidden rounded-2xl border p-6 text-left transition md:p-8 ${
         featured
           ? "border-[#6ec3d9]/45 bg-[#6ec3d9]/[0.055] shadow-[0_0_34px_-12px_rgba(110,195,217,0.42)] hover:border-[#6ec3d9]/70 hover:bg-[#6ec3d9]/[0.075]"
-          : "border-white/10 bg-white/[0.02] shadow-[0_0_30px_-14px_rgba(37,99,235,0.3)] hover:border-white/25 hover:bg-white/[0.04]"
+          : "border-black/10 bg-black/[0.02] shadow-[0_0_30px_-14px_rgba(37,99,235,0.3)] hover:border-black/25 hover:bg-black/[0.04]"
       } ${className}`}
     >
       <Image
@@ -1027,21 +1027,21 @@ function ProductSelectorCard({
         height={iconHeight}
         className={`absolute object-contain ${
           title === "Transporte Privado"
-            ? "right-4 top-3 h-20 w-20 opacity-90 md:right-6 md:top-5"
+            ? "right-4 top-3 h-20 w-20 opacity-90 invert md:right-6 md:top-5"
             : `right-6 top-5 h-14 w-14 md:right-8 md:top-7 ${
-                title === "Serviços adicionais" ? "brightness-0 invert" : "opacity-90"
+                title === "Serviços adicionais" ? "brightness-0" : "opacity-90 invert"
               }`
         }`}
       />
       <div className="h-4" aria-hidden="true" />
-      <h3 className={`${display.className} mt-3 pr-16 text-2xl font-medium text-white md:text-3xl`}>
+      <h3 className={`${display.className} mt-3 pr-16 text-2xl font-medium text-black md:text-3xl`}>
         {title}
       </h3>
-      <p className="mt-3 max-w-[34ch] flex-1 text-sm font-light leading-6 text-white/55">
+      <p className="mt-3 max-w-[34ch] flex-1 text-sm font-light leading-6 text-black/55">
         {description}
       </p>
       {requirement && (
-        <span className="mt-4 w-fit rounded-full border border-red-400/40 bg-red-500/15 px-3 py-1.5 text-[9px] font-semibold uppercase tracking-[0.13em] text-red-300">
+        <span className="mt-4 w-fit rounded-full border border-red-400/40 bg-red-500/15 px-3 py-1.5 text-[9px] font-semibold uppercase tracking-[0.13em] text-red-700">
           {requirement}
         </span>
       )}
@@ -1092,7 +1092,7 @@ function DemoVideo({
 }) {
   return (
     <div>
-      <div className="relative aspect-video w-full overflow-hidden rounded-2xl border border-white/10 bg-black">
+      <div className="relative aspect-video w-full overflow-hidden rounded-2xl border border-black/10 bg-black">
         <video
           controls
           preload="metadata"
@@ -1107,7 +1107,7 @@ function DemoVideo({
         {label}
       </p>
       {descricao && (
-        <p className="mx-auto mt-1 max-w-xs text-center text-xs leading-5 text-white/50">
+        <p className="mx-auto mt-1 max-w-xs text-center text-xs leading-5 text-black/50">
           {descricao}
         </p>
       )}
@@ -1129,20 +1129,20 @@ function VideoPlaceholder({
 }) {
   return (
     <div
-      className={`group relative aspect-video w-full overflow-hidden rounded-2xl border border-white/10 bg-white/[0.02] ${className}`}
+      className={`group relative aspect-video w-full overflow-hidden rounded-2xl border border-black/10 bg-black/[0.02] ${className}`}
     >
       <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 px-6 text-center">
-        <span className="flex h-14 w-14 items-center justify-center rounded-full border border-white/25 bg-white/10 backdrop-blur transition group-hover:scale-105 group-hover:bg-white/20">
-          <IconPlay className="h-5 w-5 translate-x-0.5 text-white" />
+        <span className="flex h-14 w-14 items-center justify-center rounded-full border border-black/25 bg-black/10 backdrop-blur transition group-hover:scale-105 group-hover:bg-black/20">
+          <IconPlay className="h-5 w-5 translate-x-0.5 text-black" />
         </span>
-        <p className="text-[10px] uppercase tracking-[0.2em] text-white/40">
+        <p className="text-[10px] uppercase tracking-[0.2em] text-black/40">
           Vídeo em breve
         </p>
-        <p className={`${display.className} max-w-xs text-base font-medium text-white md:text-lg`}>
+        <p className={`${display.className} max-w-xs text-base font-medium text-black md:text-lg`}>
           {titulo}
         </p>
         {descricao && (
-          <p className="max-w-sm text-xs leading-5 text-white/50">{descricao}</p>
+          <p className="max-w-sm text-xs leading-5 text-black/50">{descricao}</p>
         )}
       </div>
     </div>

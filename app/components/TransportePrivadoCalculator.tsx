@@ -164,14 +164,14 @@ export function TransportePrivadoCalculator({ onClose }: { onClose: () => void }
       onClick={onClose}
     >
       <div
-        className="relative max-h-[92vh] w-full max-w-2xl overflow-y-auto rounded-t-3xl border border-white/10 bg-[#0a0a0a] p-6 sm:rounded-[2rem] sm:p-8"
+        className="relative max-h-[92vh] w-full max-w-2xl overflow-y-auto rounded-t-3xl border border-black/10 bg-white p-6 sm:rounded-[2rem] sm:p-8"
         onClick={(e) => e.stopPropagation()}
       >
         <button
           type="button"
           onClick={onClose}
           aria-label="Fechar calculadora de transporte privado"
-          className="absolute right-4 top-4 flex h-9 w-9 items-center justify-center rounded-full border border-white/15 text-lg text-white/60 transition hover:border-white/40 hover:text-white"
+          className="absolute right-4 top-4 flex h-9 w-9 items-center justify-center rounded-full border border-black/15 text-lg text-black/60 transition hover:border-black/40 hover:text-black"
         >
           <IconX className="h-4 w-4" />
         </button>
@@ -179,11 +179,11 @@ export function TransportePrivadoCalculator({ onClose }: { onClose: () => void }
         <p className="text-xs uppercase tracking-[0.3em] text-[#6ec3d9]">Calculadora</p>
         <h3
           id="transporte-privado-title"
-          className={`${display.className} mt-2 text-2xl font-medium text-white md:text-3xl`}
+          className={`${display.className} mt-2 text-2xl font-medium text-black md:text-3xl`}
         >
           Transporte Privado
         </h3>
-        <p className="mt-2 text-sm font-light leading-6 text-white/55">
+        <p className="mt-2 text-sm font-light leading-6 text-black/55">
           Motorista particular, sem compartilhar veículo com outros grupos —
           monte a logística da sua viagem e veja o investimento estimado, já
           com o Roteiro Personalizado incluso.
@@ -191,7 +191,7 @@ export function TransportePrivadoCalculator({ onClose }: { onClose: () => void }
 
         {/* ── CATEGORIA DE CARRO ── */}
         <div className="mt-7">
-          <p className="text-[10px] uppercase tracking-[0.2em] text-white/40">
+          <p className="text-[10px] uppercase tracking-[0.2em] text-black/40">
             Categoria do carro
           </p>
           <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
@@ -206,7 +206,7 @@ export function TransportePrivadoCalculator({ onClose }: { onClose: () => void }
                   className={`flex flex-col overflow-hidden rounded-2xl border text-left transition ${
                     ativo
                       ? "border-[#2f80c9]/60 bg-[#2f80c9]/10"
-                      : "border-white/10 bg-white/[0.02] hover:border-white/25"
+                      : "border-black/10 bg-black/[0.02] hover:border-black/25"
                   }`}
                 >
                   <div className="relative aspect-[3/2] w-full bg-white">
@@ -219,8 +219,8 @@ export function TransportePrivadoCalculator({ onClose }: { onClose: () => void }
                     />
                   </div>
                   <div className="p-3.5">
-                    <p className="text-sm font-medium text-white">{c.nome}</p>
-                    <p className="mt-1 text-xs leading-5 text-white/50">{c.tagline}</p>
+                    <p className="text-sm font-medium text-black">{c.nome}</p>
+                    <p className="mt-1 text-xs leading-5 text-black/50">{c.tagline}</p>
                     <p className="mt-2 text-xs font-semibold uppercase tracking-[0.1em] text-[#9fd4ee]">
                       {formatUSD(c.precoDiaUSD)}/dia
                     </p>
@@ -229,14 +229,14 @@ export function TransportePrivadoCalculator({ onClose }: { onClose: () => void }
               );
             })}
           </div>
-          <p className="mt-2 text-[11px] text-white/35">
+          <p className="mt-2 text-[11px] text-black/35">
             Para até {MOTORISTA_TAMANHO_GRUPO} pessoas por veículo.
           </p>
         </div>
 
         {/* ── CIDADES E DIAS COM MOTORISTA ── */}
-        <div className="mt-7 border-t border-white/10 pt-6">
-          <p className="text-[10px] uppercase tracking-[0.2em] text-white/40">
+        <div className="mt-7 border-t border-black/10 pt-6">
+          <p className="text-[10px] uppercase tracking-[0.2em] text-black/40">
             Cidades do roteiro e dias com motorista
           </p>
           <div className="mt-3 space-y-2">
@@ -246,7 +246,7 @@ export function TransportePrivadoCalculator({ onClose }: { onClose: () => void }
                 <div
                   key={d.key}
                   className={`rounded-xl border px-3.5 py-2.5 transition ${
-                    ativo ? "border-[#2f80c9]/50 bg-[#2f80c9]/10" : "border-white/10 bg-white/[0.02]"
+                    ativo ? "border-[#2f80c9]/50 bg-[#2f80c9]/10" : "border-black/10 bg-black/[0.02]"
                   }`}
                 >
                   <button
@@ -259,14 +259,14 @@ export function TransportePrivadoCalculator({ onClose }: { onClose: () => void }
                       className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full border text-[10px] transition ${
                         ativo
                           ? "border-[#2f80c9] bg-[#2f80c9] text-white"
-                          : "border-white/25 text-transparent"
+                          : "border-black/25 text-transparent"
                       }`}
                     >
                       <IconCheck className="h-3 w-3" />
                     </span>
-                    <span className="flex-1 text-sm text-white">{d.nome}</span>
+                    <span className="flex-1 text-sm text-black">{d.nome}</span>
                     {ativo && (
-                      <span className="text-xs text-white/50">
+                      <span className="text-xs text-black/50">
                         {cidadesSelecionadas[d.key]}{" "}
                         {cidadesSelecionadas[d.key] === 1 ? "dia" : "dias"}
                       </span>
@@ -290,7 +290,7 @@ export function TransportePrivadoCalculator({ onClose }: { onClose: () => void }
             {/* Outra cidade — cobre o restante fora do top 10 */}
             <div
               className={`rounded-xl border px-3.5 py-2.5 transition ${
-                outroAtivo ? "border-[#2f80c9]/50 bg-[#2f80c9]/10" : "border-white/10 bg-white/[0.02]"
+                outroAtivo ? "border-[#2f80c9]/50 bg-[#2f80c9]/10" : "border-black/10 bg-black/[0.02]"
               }`}
             >
               <button
@@ -303,17 +303,17 @@ export function TransportePrivadoCalculator({ onClose }: { onClose: () => void }
                   className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full border text-[10px] transition ${
                     outroAtivo
                       ? "border-[#2f80c9] bg-[#2f80c9] text-white"
-                      : "border-white/25 text-transparent"
+                      : "border-black/25 text-transparent"
                   }`}
                 >
                   <IconCheck className="h-3 w-3" />
                 </span>
-                <span className="flex-1 text-sm text-white">Outra cidade</span>
+                <span className="flex-1 text-sm text-black">Outra cidade</span>
               </button>
               {outroAtivo && (
                 <div className="mt-3 space-y-3 pl-8">
                   <label className="block max-w-xs">
-                    <span className="mb-1.5 block text-[10px] uppercase tracking-[0.2em] text-white/40">
+                    <span className="mb-1.5 block text-[10px] uppercase tracking-[0.2em] text-black/40">
                       Qual cidade?
                     </span>
                     <input
@@ -321,7 +321,7 @@ export function TransportePrivadoCalculator({ onClose }: { onClose: () => void }
                       value={outroNome}
                       onChange={(e) => setOutroNome(e.target.value)}
                       placeholder="Ex.: Hokkaido, Beppu…"
-                      className="w-full rounded-lg border border-white/15 bg-white/[0.03] px-3 py-2 text-sm text-white placeholder:text-white/25 outline-none focus:border-[#2f80c9]/60"
+                      className="w-full rounded-lg border border-black/15 bg-black/[0.03] px-3 py-2 text-sm text-black placeholder:text-black/25 outline-none focus:border-[#2f80c9]/60"
                     />
                   </label>
                   <div className="max-w-[200px]">
@@ -340,35 +340,35 @@ export function TransportePrivadoCalculator({ onClose }: { onClose: () => void }
         </div>
 
         {/* ── RESUMO: CIDADES + DIÁRIAS ── */}
-        <div className="mt-6 flex justify-center gap-6 border-t border-white/10 pt-6 text-center">
+        <div className="mt-6 flex justify-center gap-6 border-t border-black/10 pt-6 text-center">
           <div>
-            <p className={`${display.className} text-3xl font-medium text-white`}>
+            <p className={`${display.className} text-3xl font-medium text-black`}>
               {quantidadeCidades}
             </p>
-            <p className="mt-0.5 text-[10px] uppercase tracking-[0.15em] text-white/40">
+            <p className="mt-0.5 text-[10px] uppercase tracking-[0.15em] text-black/40">
               {quantidadeCidades === 1 ? "cidade" : "cidades"}
             </p>
           </div>
-          <div className="w-px bg-white/10" />
+          <div className="w-px bg-black/10" />
           <div>
-            <p className={`${display.className} text-3xl font-medium text-white`}>
+            <p className={`${display.className} text-3xl font-medium text-black`}>
               {quantidadeDiarias}
             </p>
-            <p className="mt-0.5 text-[10px] uppercase tracking-[0.15em] text-white/40">
+            <p className="mt-0.5 text-[10px] uppercase tracking-[0.15em] text-black/40">
               {quantidadeDiarias === 1 ? "diária de motorista" : "diárias de motorista"}
             </p>
           </div>
         </div>
 
         {/* ── TOTAL ── */}
-        <div className="mt-6 border-t border-white/10 pt-6 text-center">
+        <div className="mt-6 border-t border-black/10 pt-6 text-center">
           {quantidadeDiarias === 0 ? (
-            <p className="text-sm font-light text-white/45">
+            <p className="text-sm font-light text-black/45">
               Selecione ao menos uma cidade para calcular o investimento.
             </p>
           ) : (
             <>
-              <p className="text-sm font-light text-white/50">
+              <p className="text-sm font-light text-black/50">
                 Investimento estimado — Roteiro Personalizado + Transporte Privado
               </p>
               <p
@@ -376,9 +376,9 @@ export function TransportePrivadoCalculator({ onClose }: { onClose: () => void }
               >
                 {totalUSDLabel}
               </p>
-              <p className="mt-1 text-sm font-medium text-white/50">ou {totalBRLLabel}</p>
-              <CambioLabel cambio={cambio} className="mt-2 text-[11px] text-white/30" />
-              <p className="mt-3 text-xs text-white/30">
+              <p className="mt-1 text-sm font-medium text-black/50">ou {totalBRLLabel}</p>
+              <CambioLabel cambio={cambio} className="mt-2 text-[11px] text-black/30" />
+              <p className="mt-3 text-xs text-black/30">
                 Estimativa para {categoriaEscolhida.nome}, {quantidadeDiarias}{" "}
                 {quantidadeDiarias === 1 ? "diária" : "diárias"} de motorista em{" "}
                 {quantidadeCidades} {quantidadeCidades === 1 ? "cidade" : "cidades"}. Valor final
@@ -388,8 +388,18 @@ export function TransportePrivadoCalculator({ onClose }: { onClose: () => void }
           )}
         </div>
 
+        {/* ── DISCLAIMER: TRÂNSITO INTER-MUNICIPAL ── */}
+        <div className="mt-6 rounded-xl border border-black/15 bg-black/[0.03] p-4">
+          <p className="text-xs leading-5 text-black/60">
+            <span className="font-semibold text-black/80">Não incluso:</span> trânsito
+            inter-municipal (deslocamentos rodoviários de longa distância entre cidades, como
+            pedágios e horas extras de estrada). O valor calculado cobre motorista e veículo
+            dedicados dentro das cidades selecionadas.
+          </p>
+        </div>
+
         {/* ── DISCLAIMER: MOTORISTA BILÍNGUE ── */}
-        <div className="mt-6 rounded-xl border border-amber-400/25 bg-amber-400/[0.06] p-4">
+        <div className="mt-4 rounded-xl border border-amber-400/25 bg-amber-400/[0.06] p-4">
           <p className="text-xs leading-5 text-amber-200/80">
             <span className="font-semibold text-amber-200">
               Motorista bilíngue (português/inglês):
@@ -406,7 +416,7 @@ export function TransportePrivadoCalculator({ onClose }: { onClose: () => void }
           whatsappNumber="5511930300101"
           brand="Ajisai"
           label="Falar sobre meu transporte privado"
-          buttonClassName="mt-7 block w-full rounded-full bg-white px-6 py-4 text-center text-xs font-medium uppercase tracking-[0.25em] text-black transition hover:bg-white/90"
+          buttonClassName="mt-7 block w-full rounded-full bg-[#2f80c9] px-6 py-4 text-center text-xs font-medium uppercase tracking-[0.25em] text-black transition hover:bg-[#3b91dc]"
         />
       </div>
     </div>

@@ -84,8 +84,8 @@ function IconX({ className }: { className?: string }) {
   );
 }
 
-const CATEGORIAS_HOTEL = ["3 estrelas", "4 estrelas", "5 estrelas"] as const;
-const TIPOS_QUARTO = [
+export const CATEGORIAS_HOTEL = ["3 estrelas", "4 estrelas", "5 estrelas", "Elite"] as const;
+export const TIPOS_QUARTO = [
   "Individual",
   "Duplo (casal)",
   "Duplo (compartilhado)",
@@ -107,6 +107,11 @@ type PrecoCtx = {
    * resto do calculador é nativamente em reais — ver "total" no
    * componente). */
   cambioCotacao: number;
+  /** Ajuste de preço da diária de hotel conforme a(s) cidade(s) do
+   * roteiro — média dos multiplicadores das cidades selecionadas em
+   * "Destinos" (1 quando nenhuma está selecionada, ver
+   * CIDADE_MULTIPLICADOR_HOTEL). */
+  multiplicadorCidadeHotel: number;
 };
 
 // Todo preço do calculador do Personalizado precisa embutir imposto +
@@ -133,35 +138,78 @@ export function comMargemEImposto(custo: number) {
 // Calibrado com base em pesquisa de mercado (Tokyo, referência ago/2026):
 // 3 estrelas ~US$ 47–93/noite (business hotel), 4 estrelas ~US$ 100–200/noite
 // (mid-range), 5 estrelas ~US$ 300–500+/noite em propriedades de luxo de
-// verdade (ex.: Park Hyatt Tokyo, listado a partir de ~US$ 504/noite) —
-// fontes: japantripcost.com/blog/average-hotel-prices-tokyo-2026,
+// verdade (ex.: Park Hyatt Tokyo, listado a partir de ~US$ 504/noite),
+// Elite ~US$ 1.400+/noite em propriedades ultra-luxo (ex.: Aman Tokyo,
+// listado a partir de ~US$ 1.426/noite) — fontes:
+// japantripcost.com/blog/average-hotel-prices-tokyo-2026,
 // selfguidejapan.com/blog/japan-hotel-prices-2026, momondo.com (Park Hyatt
-// Tokyo). Convertido pra reais na cotação de referência (~R$ 5,15/US$) e
-// arredondado. Ainda uma média de mercado, não a diária negociada com cada
-// fornecedor específico — ajuste se tiver uma tabela de parceiros mais
-// precisa.
-const DIARIA_HOTEL: Record<(typeof CATEGORIAS_HOTEL)[number], number> = {
+// Tokyo e Aman Tokyo). Convertido pra reais na cotação de referência
+// (~R$ 5,15/US$) e arredondado. Ainda uma média de mercado, não a diária
+// negociada com cada fornecedor específico — ajuste se tiver uma tabela de
+// parceiros mais precisa.
+export const DIARIA_HOTEL: Record<(typeof CATEGORIAS_HOTEL)[number], number> = {
   "3 estrelas": comMargemEImposto(400),
   "4 estrelas": comMargemEImposto(800),
   "5 estrelas": comMargemEImposto(2600),
+  "Elite": comMargemEImposto(7500),
+};
+
+// Exemplos de propriedades por categoria, para o "Ver detalhes" do item
+// Hotel — referência de m² médio, tipo de quarto padrão e comodidades mais
+// comuns em cada faixa (pesquisa de mercado, Tokyo, ago/2026). Nomes de
+// hotéis são apenas exemplos ilustrativos da categoria, não parceiros
+// fixos — a Ajisai seleciona a propriedade conforme roteiro e disponibilidade.
+const EXEMPLOS_HOTEIS: Record<
+  (typeof CATEGORIAS_HOTEL)[number],
+  {
+    m2Medio: string;
+    tipoQuarto: string;
+    amenidades: { piscina: boolean; academia: boolean; sauna: boolean; restaurante: boolean };
+    exemplos: string[];
+  }
+> = {
+  "3 estrelas": {
+    m2Medio: "~23–25 m²",
+    tipoQuarto: "Quarto padrão compacto — cama + escrivaninha, banheiro integrado",
+    amenidades: { piscina: false, academia: false, sauna: false, restaurante: false },
+    exemplos: ["APA Hotel", "Mitsui Garden Hotel", "Richmond Hotel"],
+  },
+  "4 estrelas": {
+    m2Medio: "~30 m²",
+    tipoQuarto: "Quarto standard/superior — mais espaço de estar, amenidades de mid-range",
+    amenidades: { piscina: false, academia: true, sauna: false, restaurante: true },
+    exemplos: ["Hotel Gracery", "Shinagawa Prince Hotel", "Hilton Tokyo"],
+  },
+  "5 estrelas": {
+    m2Medio: "~36 m²+",
+    tipoQuarto: "Quarto de luxo/suíte — enxoval premium, área de estar separada",
+    amenidades: { piscina: true, academia: true, sauna: true, restaurante: true },
+    exemplos: ["Park Hyatt Tokyo", "Conrad Tokyo", "The Ritz-Carlton Tokyo"],
+  },
+  "Elite": {
+    m2Medio: "~70–80 m²+",
+    tipoQuarto: "Suíte ultra-luxo — living room, banheira separada, vista panorâmica",
+    amenidades: { piscina: true, academia: true, sauna: true, restaurante: true },
+    exemplos: ["Aman Tokyo", "Janu Tokyo", "Mandarin Oriental Tokyo"],
+  },
 };
 
 // Fator por tipo de quarto — quarto compartilhado dilui o custo por pessoa.
-const FATOR_QUARTO: Record<(typeof TIPOS_QUARTO)[number], number> = {
+export const FATOR_QUARTO: Record<(typeof TIPOS_QUARTO)[number], number> = {
   Individual: 1,
   "Duplo (casal)": 0.65,
   "Duplo (compartilhado)": 0.65,
   Triplo: 0.5,
 };
 
-const DIARIA_TRANSPORTE = comMargemEImposto(150);
+export const DIARIA_TRANSPORTE = comMargemEImposto(150);
 // Guia: custo de US$ 350/dia a cada 4 pessoas — grupos maiores precisam de
 // mais de um guia, cobrado proporcionalmente. Valor nativo em dólar —
 // convertido pra reais com a cotação do dia antes de entrar no total (ver
 // calcPreco abaixo e cambioCotacao em PrecoCtx). Preço final já com
 // imposto+margem.
-const DIARIA_GUIA_USD = comMargemEImposto(350);
-const GUIA_TAMANHO_GRUPO = 4;
+export const DIARIA_GUIA_USD = comMargemEImposto(350);
+export const GUIA_TAMANHO_GRUPO = 4;
 // Japan Rail Pass — vendido em faixas fixas de dias CORRIDOS (7, 14 ou 21),
 // não por diária do roteiro; preço não escala com ctx.dias. Pesquisa
 // set/2026: tarifa oficial vigente a partir de 01/out/2026 para compra via
@@ -170,31 +218,31 @@ const GUIA_TAMANHO_GRUPO = 4;
 // na cotação de referência USD/JPY ≈ 159,97 (xe.com, 01/set/2026). Nativo
 // em dólar — convertido pra reais com a cotação do dia, igual guia/
 // motorista/wifi/ingressos. Preço final já com imposto+margem.
-const JR_PASS_DIAS_OPCOES = [7, 14, 21] as const;
-const JR_PASS_PRECO_USD: Record<(typeof JR_PASS_DIAS_OPCOES)[number], number> = {
+export const JR_PASS_DIAS_OPCOES = [7, 14, 21] as const;
+export const JR_PASS_PRECO_USD: Record<(typeof JR_PASS_DIAS_OPCOES)[number], number> = {
   7: comMargemEImposto(331),
   14: comMargemEImposto(525),
   21: comMargemEImposto(656),
 };
-const DIARIA_SEGURO_VIAGEM = comMargemEImposto(35);
+export const DIARIA_SEGURO_VIAGEM = comMargemEImposto(35);
 // Motorista privado: custo de US$ 700/dia, cobre até 4 pessoas — mesma
 // lógica de grupo do guia, também nativo em dólar. Preço final já com
 // imposto+margem.
 export const DIARIA_MOTORISTA_PRIVADO_USD = comMargemEImposto(700);
 export const MOTORISTA_TAMANHO_GRUPO = 4;
-const PRECO_CAMBIO_BRASIL = comMargemEImposto(150);
+export const PRECO_CAMBIO_BRASIL = comMargemEImposto(150);
 // Wi-fi e ingressos Disney/Universal: valores de referência da planilha
 // "Simulação de Orçamento v2.1" (JPY convertido pra dólar) — não foram
 // passados valores explícitos por você para esses dois itens. Também
 // nativos em dólar.
-const DIARIA_WIFI_USD_PAX = comMargemEImposto(7); // ≈ JPY 1000/dia/pax (custo)
-const PRECO_INGRESSO_DISNEY_UNIVERSAL_USD_PAX = comMargemEImposto(83); // ≈ JPY 12000/pax (custo, ingresso avulso)
+export const DIARIA_WIFI_USD_PAX = comMargemEImposto(7); // ≈ JPY 1000/dia/pax (custo)
+export const PRECO_INGRESSO_DISNEY_UNIVERSAL_USD_PAX = comMargemEImposto(83); // ≈ JPY 12000/pax (custo, ingresso avulso)
 // Reserva de restaurantes high-end: pacote fechado de 7 reservas em
 // restaurantes categoria Michelin/Tabelog Awards (ou equivalente), valor
 // fixo até 3 pessoas — não escala por dia nem por pessoa dentro do limite.
-const PRECO_RESTAURANTES_HIGHEND_USD = comMargemEImposto(1000);
-const RESTAURANTES_HIGHEND_QTD = 7;
-const RESTAURANTES_HIGHEND_LIMITE_PESSOAS = 3;
+export const PRECO_RESTAURANTES_HIGHEND_USD = comMargemEImposto(1000);
+export const RESTAURANTES_HIGHEND_QTD = 7;
+export const RESTAURANTES_HIGHEND_LIMITE_PESSOAS = 3;
 
 // Roteiro Personalizado: mesma regra de preço do produto standalone
 // vendido em /ajisairoteiros (ver PriceCalculator.tsx) — preço-base fixo
@@ -230,10 +278,10 @@ export const ROTEIRO_PRECO_DIA_EXTRA = comMargemEImposto(120);
 // específica dessa classe) — por isso NÃO leva o multiplicador de margem
 // de novo aqui (senão dobraria a margem); leva só o imposto sobre o lucro,
 // pra ficar no mesmo padrão de carga tributária dos demais itens.
-const CLASSES_AEREO = ["Economy", "Business", "First Class"] as const;
-const PRECO_AEREO_ECONOMY_BRL = comMargemEImposto(8000);
-const PRECO_AEREO_BUSINESS_USD = comMargemEImposto(6000);
-const PRECO_AEREO_FIRST_USD = Math.round(17500 * IMPOSTO_SOBRE_LUCRO);
+export const CLASSES_AEREO = ["Economy", "Business", "First Class"] as const;
+export const PRECO_AEREO_ECONOMY_BRL = comMargemEImposto(8000);
+export const PRECO_AEREO_BUSINESS_USD = comMargemEImposto(6000);
+export const PRECO_AEREO_FIRST_USD = Math.round(17500 * IMPOSTO_SOBRE_LUCRO);
 
 // Preços por item — aéreo, câmbio e serviços adicionais têm valor fixo por
 // viagem; hotel, transporte, guia, JR Pass, seguro viagem e motorista
@@ -249,11 +297,13 @@ const OPCOES = [
     detalhe:
       "Bilhete aéreo internacional de ida e volta, com a Ajisai buscando as melhores opções de conexão disponíveis para as datas escolhidas. Inclui bagagem conforme a franquia da companhia aérea selecionada. Disponível em Economy, Business ou First Class.\n\nDiferenciais Ajisai para quem compra a passagem com a gente:\n\nConcierge no Aeroporto de Guarulhos — equipe especializada apoia todos os passageiros no balcão de check-in, esclarece dúvidas, resolve reserva de assento e intermedia com a companhia aérea. Acesso direto à gerência das companhias no aeroporto — fundamental em cancelamento, remarcação e direitos do passageiro.\n\nProtocolo pré-embarque (Visit Japan Web) — um membro da equipe Ajisai preenche o VJW com os dados do passageiro, cria e cadastra a conta e envia pronta pra você, substituindo o papelado na chegada ao Japão. Inclui sessão dedicada ao aéreo, explicando o itinerário e tirando dúvidas antes do embarque.\n\nMonitoramento de viagem — central de WhatsApp com equipe emergencial Ajisai, funcionando quase 24 horas por dia, cobrindo conexões, gestão de reserva antes da viagem e imprevistos durante a viagem. Atendimento humano, com apoio de tradutor por telefone quando necessário.\n\nResponsabilidade da Agência — passagem emitida pela Ajisai tem responsabilidade solidária da agência e negociação direta com as companhias aéreas, muito além do que dá pra resolver sozinho numa reserva comprada por conta própria — mais proteção e prioridade, mesmo pelo mesmo preço.",
     calcPreco: (ctx: PrecoCtx) => {
+      // Cada passageiro paga sua própria passagem — sem desconto por
+      // grupo (diferente do hotel, que dilui custo por quarto compartilhado).
       if (ctx.classeAereo === "First Class")
-        return Math.round(PRECO_AEREO_FIRST_USD * ctx.cambioCotacao);
+        return Math.round(PRECO_AEREO_FIRST_USD * ctx.cambioCotacao * ctx.pessoas);
       if (ctx.classeAereo === "Business")
-        return Math.round(PRECO_AEREO_BUSINESS_USD * ctx.cambioCotacao);
-      return PRECO_AEREO_ECONOMY_BRL;
+        return Math.round(PRECO_AEREO_BUSINESS_USD * ctx.cambioCotacao * ctx.pessoas);
+      return PRECO_AEREO_ECONOMY_BRL * ctx.pessoas;
     },
   },
   {
@@ -263,9 +313,14 @@ const OPCOES = [
     icone: "🏨",
     descricao: "Hospedagem selecionada durante toda a viagem",
     detalhe:
-      "Hospedagem selecionada por categoria (3 a 5 estrelas) e tipo de quarto, em localizações estratégicas para o roteiro escolhido — sempre com curadoria Ajisai. Café da manhã incluso.",
+      "Hospedagem selecionada por categoria (3 estrelas a Elite) e tipo de quarto, em localizações estratégicas para o roteiro escolhido — sempre com curadoria Ajisai. Café da manhã incluso.",
     calcPreco: (ctx: PrecoCtx) =>
-      Math.round(DIARIA_HOTEL[ctx.categoriaHotel] * ctx.dias * FATOR_QUARTO[ctx.tipoQuarto]),
+      Math.round(
+        DIARIA_HOTEL[ctx.categoriaHotel] *
+          ctx.dias *
+          FATOR_QUARTO[ctx.tipoQuarto] *
+          ctx.multiplicadorCidadeHotel,
+      ),
   },
   {
     key: "transporte",
@@ -461,6 +516,35 @@ export const DESTINOS = [
 
 type DestinoKey = (typeof DESTINOS)[number]["key"];
 
+// Ajuste de preço de hotel por cidade — mercados de hospedagem mais
+// concorridos (Tokyo, Kyoto e destinos turísticos densos como Hakone e
+// Ishigaki) custam mais que cidades menores/regionais. Ajuste relativo de
+// mercado, não uma tabela de diária negociada por cidade — pedido do
+// Wilson, 01/set/2026: "a cidade também deve influenciar a calculadora do
+// hotel", como um multiplicador simples sobre o preço por categoria.
+export const CIDADE_MULTIPLICADOR_HOTEL: Record<DestinoKey, number> = {
+  tokyo: 1.15,
+  kyoto: 1.1,
+  osaka: 1.0,
+  hokkaido: 0.95,
+  okinawa: 1.05,
+  hiroshima: 0.9,
+  nara: 0.9,
+  hakone: 1.05,
+  nikko: 0.9,
+  kanazawa: 0.9,
+  takayama: 0.85,
+  kamakura: 0.95,
+  nagoya: 0.9,
+  fukuoka: 0.9,
+  kobe: 0.95,
+  yokohama: 1.0,
+  miyajima: 0.9,
+  nagano: 0.85,
+  ishigaki: 1.05,
+  yakushima: 0.9,
+};
+
 const MIN_DIAS = 3;
 const MAX_DIAS = 30;
 
@@ -551,6 +635,17 @@ export function CustomPackageCard() {
 
   useEffect(() => setMounted(true), []);
 
+  // Média dos multiplicadores de cidade das cidades selecionadas em
+  // "Destinos" — 1 (sem ajuste) enquanto nenhuma cidade estiver marcada.
+  const multiplicadorCidadeHotel = useMemo(() => {
+    if (destinosSelecionados.size === 0) return 1;
+    let soma = 0;
+    destinosSelecionados.forEach((key) => {
+      soma += CIDADE_MULTIPLICADOR_HOTEL[key];
+    });
+    return soma / destinosSelecionados.size;
+  }, [destinosSelecionados]);
+
   const precoCtx = useMemo<PrecoCtx>(
     () => ({
       dias,
@@ -562,8 +657,18 @@ export function CustomPackageCard() {
       // Mesmo fallback usado internamente por useCambioUSD enquanto a
       // cotação do dia ainda não carregou.
       cambioCotacao: cambio?.cotacao ?? 5.3,
+      multiplicadorCidadeHotel,
     }),
-    [dias, pessoas, categoriaHotel, tipoQuarto, classeAereo, jrPassDias, cambio],
+    [
+      dias,
+      pessoas,
+      categoriaHotel,
+      tipoQuarto,
+      classeAereo,
+      jrPassDias,
+      cambio,
+      multiplicadorCidadeHotel,
+    ],
   );
 
   const itensSelecionados = useMemo(
@@ -965,6 +1070,9 @@ export function CustomPackageCard() {
           <span className="mb-2 block text-[10px] uppercase tracking-[0.2em] text-[#0A2540]/50">
             Destinos
           </span>
+          <p className="mb-2.5 text-xs text-[#0A2540]/50">
+            As cidades marcadas também ajustam o preço da diária de hotel.
+          </p>
           <div className="grid grid-cols-3 gap-2.5 sm:grid-cols-6">
             {destinosVisiveis.map((destino) => {
               const ativo = destinosSelecionados.has(destino.key);
@@ -1109,6 +1217,58 @@ export function CustomPackageCard() {
                           {formatUSD(JR_PASS_PRECO_USD[d])}
                         </span>
                       </button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+            {opcaoAberta.key === "hotel" && (
+              <div className="mt-3">
+                <p className="text-[10px] uppercase tracking-[0.2em] text-white/40">
+                  Exemplos de Propriedades
+                </p>
+                <div className="mt-2.5 grid grid-cols-1 gap-2.5 sm:grid-cols-2">
+                  {CATEGORIAS_HOTEL.map((cat) => {
+                    const info = EXEMPLOS_HOTEIS[cat];
+                    const ativo = cat === categoriaHotel;
+                    const amenidadeLabel: [keyof typeof info.amenidades, string][] = [
+                      ["piscina", "Piscina"],
+                      ["academia", "Academia"],
+                      ["sauna", "Sauna"],
+                      ["restaurante", "Restaurante"],
+                    ];
+                    return (
+                      <div
+                        key={cat}
+                        className={`rounded-xl border p-3 ${
+                          ativo ? "border-[#2f80c9] bg-[#2f80c9]/[0.06]" : "border-white/10 bg-white/[0.02]"
+                        }`}
+                      >
+                        <p className="text-xs font-semibold uppercase tracking-[0.08em] text-white">
+                          {cat}
+                        </p>
+                        <p className="mt-1 text-[11px] text-white/50">{info.exemplos.join(" · ")}</p>
+                        <p className="mt-2 text-[11px] text-white/65">
+                          <span className="text-white/40">m² médio:</span> {info.m2Medio}
+                        </p>
+                        <p className="mt-0.5 text-[11px] text-white/65">
+                          <span className="text-white/40">Quarto:</span> {info.tipoQuarto}
+                        </p>
+                        <div className="mt-2 flex flex-wrap gap-1.5">
+                          {amenidadeLabel.map(([key, label]) => (
+                            <span
+                              key={key}
+                              className={`rounded-full border px-2 py-0.5 text-[9px] uppercase tracking-[0.05em] ${
+                                info.amenidades[key]
+                                  ? "border-[#6ec3d9]/40 bg-[#6ec3d9]/[0.08] text-[#6ec3d9]"
+                                  : "border-white/10 text-white/30 line-through"
+                              }`}
+                            >
+                              {label}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
                     );
                   })}
                 </div>
