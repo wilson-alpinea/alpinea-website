@@ -515,12 +515,12 @@ export function CaravanaDetailModal({
                 <Image
                   src={
                     nome.startsWith("Primavera 1")
-                      ? "/images/roteiro-primavera1-sakura.png"
+                      ? "/images/pacote-7-dias.jpg"
                       : "/images/roteiro-primavera2.png"
                   }
                   alt={`Roteiro ilustrado dia a dia — ${nome}`}
-                  width={1774}
-                  height={887}
+                  width={nome.startsWith("Primavera 1") ? 1696 : 1774}
+                  height={nome.startsWith("Primavera 1") ? 2528 : 887}
                   sizes="(max-width: 768px) 100vw, 768px"
                   className="h-auto w-full"
                 />
@@ -619,11 +619,11 @@ export function CaravanaDetailModal({
               <span className="text-white/25">→</span>
               <span>② Solicite sua vaga</span>
               <span className="text-white/25">→</span>
-              <span>③ Receba a confirmação</span>
+              <span>③ Receba a confirmação com valores definitivos</span>
             </div>
             <p className="mx-auto mt-3 max-w-md text-center text-xs font-light leading-5 text-white/45">
-              Após o pedido, nossa equipe confirma disponibilidade, condições de pagamento e
-              documentação.
+              Após o pedido, nossa equipe confirma disponibilidade, valores definitivos,
+              condições de pagamento e documentação.
             </p>
           </div>
 
@@ -764,12 +764,12 @@ export function CaravanaDetailModal({
               <Image
                 src={
                   nome.startsWith("Primavera 1")
-                    ? "/images/roteiro-primavera1-sakura.png"
+                    ? "/images/pacote-7-dias.jpg"
                     : "/images/roteiro-primavera2.png"
                 }
                 alt={`Roteiro ilustrado dia a dia — ${nome}`}
-                width={1774}
-                height={887}
+                width={nome.startsWith("Primavera 1") ? 1696 : 1774}
+                height={nome.startsWith("Primavera 1") ? 2528 : 887}
                 sizes="100vw"
                 className="h-auto w-full rounded-xl md:w-auto md:max-w-none"
               />
