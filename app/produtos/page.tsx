@@ -316,6 +316,7 @@ export default function ProdutosPage() {
               />
               <ProductSelectorCard
                 href="/viagem-personalizada"
+                onClick={() => setViagemModalOpen(true)}
                 icon="/images/produtos/hoteis.png"
                 iconWidth={435}
                 iconHeight={366}
@@ -1017,7 +1018,7 @@ function ProductSelectorCard({
       className={`group relative flex h-[350px] flex-col overflow-hidden rounded-2xl border p-6 text-left transition md:p-8 ${
         featured
           ? "border-[#6ec3d9]/45 bg-[#6ec3d9]/[0.055] shadow-[0_0_34px_-12px_rgba(110,195,217,0.42)] hover:border-[#6ec3d9]/70 hover:bg-[#6ec3d9]/[0.075]"
-          : "border-black/10 bg-black/[0.02] shadow-[0_0_30px_-14px_rgba(37,99,235,0.3)] hover:border-black/25 hover:bg-black/[0.04]"
+          : "border-black/10 bg-black/[0.02] shadow-[0_18px_45px_-14px_rgba(37,99,235,0.55)] hover:border-black/25 hover:bg-black/[0.04] hover:shadow-[0_22px_55px_-12px_rgba(37,99,235,0.65)]"
       } ${className}`}
     >
       <Image

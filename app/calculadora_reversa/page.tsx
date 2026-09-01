@@ -31,7 +31,6 @@ import {
   ROTEIRO_PRECO_BASE,
   ROTEIRO_PRECO_DIA_EXTRA,
 } from "../components/CustomPackageCard";
-import { ContactCTA } from "../components/ContactCTA";
 import { useCambioUSD, formatBRL, formatUSD } from "../hooks/useCambioUSD";
 import { CambioLabel } from "../components/CambioLabel";
 
@@ -70,16 +69,37 @@ export default function CalculadoraReversaPage() {
     useState<(typeof TIPOS_QUARTO)[number]>("Duplo (casal)");
   const [cidade, setCidade] = useState<(typeof DESTINOS)[number]["key"]>("tokyo");
 
+  // Valor manual — sobrescreve o cálculo automático quando o time já tem
+  // uma cotação real (hotel negociado, tarifa aérea específica etc.),
+  // em vez de usar a tabela de referência de mercado.
+  const [hotelManual, setHotelManual] = useState(false);
+  const [hotelDiariaManual, setHotelDiariaManual] = useState(0);
+  const [aereoManual, setAereoManual] = useState(false);
+  const [aereoValorManual, setAereoValorManual] = useState(0);
+
+  // Selecao manual dos itens do pacote sugerido (o vendedor pode tirar um
+  // item antes de mandar pro cliente) e o timestamp de quando essa
+  // proposta foi montada, pra constar na mensagem enviada.
+  const [itensRemovidos, setItensRemovidos] = useState<Set<string>>(new Set());
+  const [geradoEm] = useState(() => new Date());
+
   const multiplicadorCidade = CIDADE_MULTIPLICADOR_HOTEL[cidade];
 
   const resultado = useMemo(() => {
     const precoRoteiro =
       ROTEIRO_PRECO_BASE + Math.max(0, dias - ROTEIRO_BASE_DIAS) * ROTEIRO_PRECO_DIA_EXTRA;
-    const precoAereoEconomy = PRECO_AEREO_ECONOMY_BRL * pessoas;
-    const precoAereoBusiness = Math.round(PRECO_AEREO_BUSINESS_USD * cambioCotacao * pessoas);
-    const precoAereoFirst = Math.round(PRECO_AEREO_FIRST_USD * cambioCotacao * pessoas);
+    const precoAereoEconomy = aereoManual
+      ? Math.round(aereoValorManual * pessoas)
+      : PRECO_AEREO_ECONOMY_BRL * pessoas;
+    const precoAereoBusiness = aereoManual
+      ? precoAereoEconomy
+      : Math.round(PRECO_AEREO_BUSINESS_USD * cambioCotacao * pessoas);
+    const precoAereoFirst = aereoManual
+      ? precoAereoEconomy
+      : Math.round(PRECO_AEREO_FIRST_USD * cambioCotacao * pessoas);
 
     function precoHotel(categoria: (typeof CATEGORIAS_HOTEL)[number]) {
+      if (hotelManual) return Math.round(hotelDiariaManual * dias);
       return Math.round(
         DIARIA_HOTEL[categoria] * dias * FATOR_QUARTO[tipoQuarto] * multiplicadorCidade,
       );
@@ -111,15 +131,18 @@ export default function CalculadoraReversaPage() {
       return gasto + valor <= orcamento;
     }
 
-    // 1) Upgrade de hotel, categoria por categoria (não pula nível)
-    for (const categoria of ["4 estrelas", "5 estrelas", "Elite"] as const) {
-      const precoAtual = precoHotel(categoriaHotelFinal);
-      const precoNovo = precoHotel(categoria);
-      const diferenca = precoNovo - precoAtual;
-      if (cabe(diferenca)) {
-        gasto += diferenca;
-        categoriaHotelFinal = categoria;
-      } else break;
+    // 1) Upgrade de hotel, categoria por categoria (não pula nível) — pulado
+    // quando a diária é manual, já que o valor não varia por categoria.
+    if (!hotelManual) {
+      for (const categoria of ["4 estrelas", "5 estrelas", "Elite"] as const) {
+        const precoAtual = precoHotel(categoriaHotelFinal);
+        const precoNovo = precoHotel(categoria);
+        const diferenca = precoNovo - precoAtual;
+        if (cabe(diferenca)) {
+          gasto += diferenca;
+          categoriaHotelFinal = categoria;
+        } else break;
+      }
     }
 
     // 2) Complementares essenciais (transporte, seguro, guia)
@@ -177,20 +200,22 @@ export default function CalculadoraReversaPage() {
       });
     }
 
-    // 5) Upgrade de classe do voo
-    for (const classe of ["Business", "First Class"] as const) {
-      const precoAtual =
-        classeAereoFinal === "Economy"
-          ? precoAereoEconomy
-          : classeAereoFinal === "Business"
-            ? precoAereoBusiness
-            : precoAereoFirst;
-      const precoNovo = classe === "Business" ? precoAereoBusiness : precoAereoFirst;
-      const diferenca = precoNovo - precoAtual;
-      if (cabe(diferenca)) {
-        gasto += diferenca;
-        classeAereoFinal = classe;
-      } else break;
+    // 5) Upgrade de classe do voo — pulado quando o valor da passagem é manual.
+    if (!aereoManual) {
+      for (const classe of ["Business", "First Class"] as const) {
+        const precoAtual =
+          classeAereoFinal === "Economy"
+            ? precoAereoEconomy
+            : classeAereoFinal === "Business"
+              ? precoAereoBusiness
+              : precoAereoFirst;
+        const precoNovo = classe === "Business" ? precoAereoBusiness : precoAereoFirst;
+        const diferenca = precoNovo - precoAtual;
+        if (cabe(diferenca)) {
+          gasto += diferenca;
+          classeAereoFinal = classe;
+        } else break;
+      }
     }
 
     // 6) Motorista Privado (upgrade sobre o transporte compartilhado)
@@ -247,7 +272,7 @@ export default function CalculadoraReversaPage() {
 
     // Atualiza os itens fixos de hotel/aéreo com a categoria/classe final
     incluidos[1] = {
-      label: `Aéreo — ${classeAereoFinal}`,
+      label: aereoManual ? "Aéreo — valor manual" : `Aéreo — ${classeAereoFinal}`,
       detalhe: `Passagem internacional ida e volta para ${pessoas} ${pessoas === 1 ? "pessoa" : "pessoas"}`,
       precoBRL:
         classeAereoFinal === "Economy"
@@ -257,7 +282,7 @@ export default function CalculadoraReversaPage() {
             : precoAereoFirst,
     };
     incluidos[2] = {
-      label: `Hotel — ${categoriaHotelFinal}`,
+      label: hotelManual ? "Hotel — valor manual" : `Hotel — ${categoriaHotelFinal}`,
       detalhe: `${dias} diárias · ${tipoQuarto} · ${DESTINOS.find((d) => d.key === cidade)?.nome ?? ""}`,
       precoBRL: precoHotel(categoriaHotelFinal),
     };
@@ -274,19 +299,67 @@ export default function CalculadoraReversaPage() {
       cabeNoOrcamento: orcamento >= precoMinimo,
       precoMinimo,
     };
-  }, [orcamento, dias, pessoas, tipoQuarto, cidade, multiplicadorCidade, cambioCotacao]);
+  }, [
+    orcamento,
+    dias,
+    pessoas,
+    tipoQuarto,
+    cidade,
+    multiplicadorCidade,
+    cambioCotacao,
+    hotelManual,
+    hotelDiariaManual,
+    aereoManual,
+    aereoValorManual,
+  ]);
 
   const pacoteSugeridoLabel = `Hotel ${resultado.categoriaHotelFinal} · Aéreo ${resultado.classeAereoFinal} · ${dias} dias · ${pessoas} ${pessoas === 1 ? "pessoa" : "pessoas"} · orçamento ${formatBRL(orcamento)}`;
+
+  function alternarItem(label: string) {
+    setItensRemovidos((atual) => {
+      const novo = new Set(atual);
+      if (novo.has(label)) novo.delete(label);
+      else novo.add(label);
+      return novo;
+    });
+  }
+
+  const itensSelecionados = resultado.incluidos.filter((item) => !itensRemovidos.has(item.label));
+  const totalSelecionado = itensSelecionados.reduce((soma, item) => soma + item.precoBRL, 0);
+  const saldoSelecionado = orcamento - totalSelecionado;
+
+  const geradoEmLabel = `${geradoEm.toLocaleDateString("pt-BR")} às ${geradoEm.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}`;
+
+  const mensagemWhatsapp = [
+    `Proposta Ajisai — ${pacoteSugeridoLabel}`,
+    "",
+    ...itensSelecionados.map((item) => `• ${item.label}: ${formatBRL(item.precoBRL)}`),
+    "",
+    `Total: ${formatBRL(totalSelecionado)}`,
+    cambio
+      ? `Câmbio do dia: US$ 1 = R$ ${cambio.cotacao.toFixed(2).replace(".", ",")}${cambio.data ? ` (PTAX Banco Central, ${cambio.data})` : ""}`
+      : "",
+    `Gerado em ${geradoEmLabel} — Ajisai`,
+  ]
+    .filter(Boolean)
+    .join("\n");
 
   return (
     <main className="min-h-screen bg-white px-5 py-12 text-[#0A2540] sm:px-8 md:px-16 md:py-16">
       <div className="mx-auto max-w-4xl">
-        <Link
-          href="/produtos"
-          className="text-[10px] uppercase tracking-[0.2em] text-black/40 underline underline-offset-4 transition hover:text-black"
-        >
-          ← Voltar para Produtos
-        </Link>
+        <div className="flex items-center justify-between gap-4">
+          <img
+            src="/images/ajisai-group-logo-crop.png"
+            alt="Ajisai · Alpinea"
+            className="h-9 w-auto object-contain md:h-11"
+          />
+          <Link
+            href="/produtos"
+            className="text-[10px] uppercase tracking-[0.2em] text-black/40 underline underline-offset-4 transition hover:text-black"
+          >
+            ← Voltar para Produtos
+          </Link>
+        </div>
 
         <p className="mt-6 text-[10px] uppercase tracking-[0.2em] text-[#6ec3d9]">
           Ferramenta interna — não listada no site
@@ -379,6 +452,74 @@ export default function CalculadoraReversaPage() {
           </label>
         </div>
 
+        {/* ── VALORES MANUAIS (OPCIONAL) ── */}
+        <div className="mt-4 grid gap-4 rounded-2xl border border-black/10 bg-black/[0.02] p-6 sm:grid-cols-2 md:p-8">
+          <p className="text-[10px] uppercase tracking-[0.2em] text-black/50 sm:col-span-2">
+            Valores manuais (opcional) — use quando já tiver uma cotação real de hotel ou aéreo,
+            em vez do valor de referência de mercado
+          </p>
+
+          <div>
+            <label className="flex items-center gap-2 text-xs font-medium text-[#0A2540]">
+              <input
+                type="checkbox"
+                checked={hotelManual}
+                onChange={(e) => setHotelManual(e.target.checked)}
+                className="h-4 w-4 rounded border-black/25 accent-[#2f80c9]"
+              />
+              Informar diária do hotel manualmente
+            </label>
+            {hotelManual && (
+              <label className="mt-2 flex flex-col">
+                <span className="mb-1.5 text-[10px] uppercase tracking-[0.2em] text-black/40">
+                  Diária do hotel (R$)
+                </span>
+                <input
+                  type="number"
+                  min={0}
+                  step={50}
+                  value={hotelDiariaManual}
+                  onChange={(e) => {
+                    const v = Number(e.target.value);
+                    if (!Number.isNaN(v)) setHotelDiariaManual(v);
+                  }}
+                  className="h-10 w-full rounded-lg border border-black/15 bg-black/[0.03] px-3 text-sm outline-none focus:border-black/30"
+                />
+              </label>
+            )}
+          </div>
+
+          <div>
+            <label className="flex items-center gap-2 text-xs font-medium text-[#0A2540]">
+              <input
+                type="checkbox"
+                checked={aereoManual}
+                onChange={(e) => setAereoManual(e.target.checked)}
+                className="h-4 w-4 rounded border-black/25 accent-[#2f80c9]"
+              />
+              Informar valor da passagem manualmente
+            </label>
+            {aereoManual && (
+              <label className="mt-2 flex flex-col">
+                <span className="mb-1.5 text-[10px] uppercase tracking-[0.2em] text-black/40">
+                  Passagem por pessoa (R$)
+                </span>
+                <input
+                  type="number"
+                  min={0}
+                  step={100}
+                  value={aereoValorManual}
+                  onChange={(e) => {
+                    const v = Number(e.target.value);
+                    if (!Number.isNaN(v)) setAereoValorManual(v);
+                  }}
+                  className="h-10 w-full rounded-lg border border-black/15 bg-black/[0.03] px-3 text-sm outline-none focus:border-black/30"
+                />
+              </label>
+            )}
+          </div>
+        </div>
+
         {/* ── RESULTADO ── */}
         <div className="mt-8 rounded-2xl border border-black/10 bg-black/[0.02] p-6 md:p-8">
           {!resultado.cabeNoOrcamento ? (
@@ -404,22 +545,42 @@ export default function CalculadoraReversaPage() {
               <h2 className={`${display.className} mt-2 text-2xl font-medium md:text-3xl`}>
                 Hotel {resultado.categoriaHotelFinal} · Aéreo {resultado.classeAereoFinal}
               </h2>
+              <p className="mt-1 text-[11px] text-black/35">
+                Ajisai · proposta gerada em {geradoEmLabel}
+              </p>
 
               <div className="mt-6 space-y-2.5">
-                {resultado.incluidos.map((item) => (
-                  <div
-                    key={item.label}
-                    className="flex items-start justify-between gap-4 border-b border-black/10 pb-2.5"
-                  >
-                    <div>
-                      <p className="text-sm font-medium">{item.label}</p>
-                      <p className="mt-0.5 text-xs text-black/50">{item.detalhe}</p>
-                    </div>
-                    <p className="whitespace-nowrap text-sm font-semibold">
-                      {formatBRL(item.precoBRL)}
-                    </p>
-                  </div>
-                ))}
+                {resultado.incluidos.map((item) => {
+                  const removido = itensRemovidos.has(item.label);
+                  return (
+                    <label
+                      key={item.label}
+                      className={`flex cursor-pointer items-start justify-between gap-4 border-b border-black/10 pb-2.5 transition ${
+                        removido ? "opacity-40" : ""
+                      }`}
+                    >
+                      <div className="flex items-start gap-3">
+                        <input
+                          type="checkbox"
+                          checked={!removido}
+                          onChange={() => alternarItem(item.label)}
+                          className="mt-1 h-4 w-4 shrink-0 rounded border-black/25 accent-[#2f80c9]"
+                        />
+                        <div>
+                          <p className={`text-sm font-medium ${removido ? "line-through" : ""}`}>
+                            {item.label}
+                          </p>
+                          <p className="mt-0.5 text-xs text-black/50">{item.detalhe}</p>
+                        </div>
+                      </div>
+                      <p
+                        className={`whitespace-nowrap text-sm font-semibold ${removido ? "line-through" : ""}`}
+                      >
+                        {formatBRL(item.precoBRL)}
+                      </p>
+                    </label>
+                  );
+                })}
               </div>
 
               <div className="mt-6 flex flex-wrap items-end justify-between gap-4 border-t border-black/10 pt-6">
@@ -428,7 +589,7 @@ export default function CalculadoraReversaPage() {
                     Total do pacote sugerido
                   </p>
                   <p className={`${display.className} mt-1 text-4xl font-medium text-[#2f80c9]`}>
-                    {formatBRL(resultado.gasto)}
+                    {formatBRL(totalSelecionado)}
                   </p>
                   <CambioLabel cambio={cambio} className="mt-1 text-[11px] text-black/30" />
                 </div>
@@ -438,10 +599,10 @@ export default function CalculadoraReversaPage() {
                   </p>
                   <p
                     className={`${display.className} mt-1 text-2xl font-medium ${
-                      resultado.saldo > 0 ? "text-black" : "text-black/40"
+                      saldoSelecionado > 0 ? "text-black" : "text-black/40"
                     }`}
                   >
-                    {formatBRL(resultado.saldo)}
+                    {formatBRL(saldoSelecionado)}
                   </p>
                 </div>
               </div>
@@ -452,16 +613,18 @@ export default function CalculadoraReversaPage() {
                 cotados à parte, sob consulta. Valor final sujeito a confirmação da Ajisai.
               </p>
 
-              <ContactCTA
-                mode="single"
-                channel="whatsapp"
-                whatsappNumber="5511930300101"
-                brand="Ajisai"
-                label="Falar sobre esse pacote"
-                buttonClassName="mt-7 block w-full rounded-full bg-[#2f80c9] px-6 py-4 text-center text-xs font-medium uppercase tracking-[0.25em] text-white transition hover:bg-[#3b91dc] sm:w-auto"
-                packageOptions={[pacoteSugeridoLabel]}
-                defaultPackage={pacoteSugeridoLabel}
-              />
+              <button
+                type="button"
+                onClick={() =>
+                  window.open(
+                    `https://wa.me/5511930300101?text=${encodeURIComponent(mensagemWhatsapp)}`,
+                    "_blank",
+                  )
+                }
+                className="mt-7 block w-full rounded-full bg-[#2f80c9] px-6 py-4 text-center text-xs font-medium uppercase tracking-[0.25em] text-white transition hover:bg-[#3b91dc] sm:w-auto"
+              >
+                Falar sobre esse pacote no WhatsApp
+              </button>
             </>
           )}
         </div>

@@ -13,6 +13,7 @@ import { formatUSD } from "../lib/currency";
 const display = Bodoni_Moda({
   subsets: ["latin"],
   weight: ["400", "500", "600"],
+  style: ["normal", "italic"],
 });
 
 export const metadata = {
@@ -864,8 +865,7 @@ export default async function PacotesJapaoPage({
                     ))}
                   </div>
                   <p
-                    className="flex-1 text-[17px] font-medium italic leading-[1.45] text-white/80"
-                    style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}
+                    className={`${display.className} flex-1 text-[17px] font-medium italic leading-[1.45] text-white/80`}
                   >
                     &ldquo;{review.text}&rdquo;
                   </p>
