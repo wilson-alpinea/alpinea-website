@@ -524,11 +524,11 @@ export function CaravanaDetailModal({
                 <Image
                   src={
                     nome.startsWith("Primavera 1")
-                      ? "/images/pacote-7-dias.jpg"
+                      ? "/images/pacote-7-dias-v2.jpg"
                       : "/images/roteiro-primavera2.png"
                   }
                   alt={`Roteiro ilustrado dia a dia — ${nome}`}
-                  width={nome.startsWith("Primavera 1") ? 1696 : 1774}
+                  width={nome.startsWith("Primavera 1") ? 1694 : 1774}
                   height={nome.startsWith("Primavera 1") ? 2528 : 887}
                   sizes="(max-width: 768px) 100vw, 768px"
                   className="h-auto w-full"
@@ -773,11 +773,11 @@ export function CaravanaDetailModal({
               <Image
                 src={
                   nome.startsWith("Primavera 1")
-                    ? "/images/pacote-7-dias.jpg"
+                    ? "/images/pacote-7-dias-v2.jpg"
                     : "/images/roteiro-primavera2.png"
                 }
                 alt={`Roteiro ilustrado dia a dia — ${nome}`}
-                width={nome.startsWith("Primavera 1") ? 1696 : 1774}
+                width={nome.startsWith("Primavera 1") ? 1694 : 1774}
                 height={nome.startsWith("Primavera 1") ? 2528 : 887}
                 sizes="100vw"
                 className="h-auto w-full rounded-xl md:w-auto md:max-w-none"
