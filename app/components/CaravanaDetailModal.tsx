@@ -112,7 +112,12 @@ function precoSecundario(
 
 // Argumentos de venda mostrados como selo, logo antes do CTA — não são
 // notas secundárias (ponto 3).
-const BENEFICIOS_PRINCIPAIS = ["Passagem aérea", "Hotel", "Guia bilíngue", "Transportes"];
+const BENEFICIOS_PRINCIPAIS: { label: string; icone: string | null }[] = [
+  { label: "Passagem aérea", icone: "/images/icone-decolagem.png" },
+  { label: "Hotel", icone: "/images/icone-hotel2.png" },
+  { label: "Guia bilíngue", icone: null },
+  { label: "Transportes", icone: "/images/icone-onibus-v2.png" },
+];
 
 // FAQ_PADRAO (categoria de hotel) + dúvidas comerciais que hoje ficavam
 // espalhadas em "Como reservar" (sinal/saldo, cancelamento, documentos) —
@@ -477,12 +482,16 @@ export function CaravanaDetailModal({
             )}
 
             <div className="mt-5 grid grid-cols-2 gap-2 sm:grid-cols-4">
-              {BENEFICIOS_PRINCIPAIS.map((label) => (
+              {BENEFICIOS_PRINCIPAIS.map(({ label, icone }) => (
                 <div
                   key={label}
                   className="flex items-center justify-center gap-1.5 rounded-lg border border-emerald-400/25 bg-emerald-400/[0.07] px-2.5 py-2 text-center text-xs font-semibold text-white"
                 >
-                  <IconCheck className="h-3.5 w-3.5 shrink-0 text-emerald-400" />
+                  {icone ? (
+                    <img src={icone} alt="" className="h-3.5 w-3.5 shrink-0 object-contain invert" />
+                  ) : (
+                    <IconCheck className="h-3.5 w-3.5 shrink-0 text-emerald-400" />
+                  )}
                   {label}
                 </div>
               ))}
