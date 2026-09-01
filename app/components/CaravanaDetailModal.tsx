@@ -523,13 +523,13 @@ export function CaravanaDetailModal({
               >
                 <Image
                   src={
-                    nome.startsWith("Primavera 1")
-                      ? "/images/pacote-7-dias-v2.jpg"
-                      : "/images/roteiro-primavera2.png"
+                    variante?.id === "15d"
+                      ? "/images/pacote-14-dias.jpg"
+                      : "/images/pacote-7-dias-v2.jpg"
                   }
-                  alt={`Roteiro ilustrado dia a dia — ${nome}`}
-                  width={nome.startsWith("Primavera 1") ? 1694 : 1774}
-                  height={nome.startsWith("Primavera 1") ? 2528 : 887}
+                  alt={`Roteiro ilustrado dia a dia — ${nome} — ${variante?.label ?? ""}`}
+                  width={variante?.id === "15d" ? 1184 : 1694}
+                  height={variante?.id === "15d" ? 3556 : 2528}
                   sizes="(max-width: 768px) 100vw, 768px"
                   className="h-auto w-full"
                 />
@@ -772,13 +772,13 @@ export function CaravanaDetailModal({
             <div className="relative max-h-full max-w-full overflow-auto" onClick={(e) => e.stopPropagation()}>
               <Image
                 src={
-                  nome.startsWith("Primavera 1")
-                    ? "/images/pacote-7-dias-v2.jpg"
-                    : "/images/roteiro-primavera2.png"
+                  variante?.id === "15d"
+                    ? "/images/pacote-14-dias.jpg"
+                    : "/images/pacote-7-dias-v2.jpg"
                 }
-                alt={`Roteiro ilustrado dia a dia — ${nome}`}
-                width={nome.startsWith("Primavera 1") ? 1694 : 1774}
-                height={nome.startsWith("Primavera 1") ? 2528 : 887}
+                alt={`Roteiro ilustrado dia a dia — ${nome} — ${variante?.label ?? ""}`}
+                width={variante?.id === "15d" ? 1184 : 1694}
+                height={variante?.id === "15d" ? 3556 : 2528}
                 sizes="100vw"
                 className="h-auto w-full rounded-xl md:w-auto md:max-w-none"
               />
