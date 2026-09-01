@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import { Bodoni_Moda } from "next/font/google";
 import { DIFERENCIAIS_AEREO } from "../lib/diferenciaisAereo";
 
@@ -43,11 +44,13 @@ export default function PassagensAereasPage() {
       {/* ── HEADER ── */}
       <header className="sticky top-0 z-50 border-b border-white/10 bg-black/90 backdrop-blur-xl">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4 md:px-10">
-          <img
-            src="/images/AJISAI-LOGO.avif"
-            alt="Ajisai"
-            className="h-9 w-auto object-contain md:h-10"
-          />
+          <Link href="/produtos">
+            <img
+              src="/images/AJISAI-LOGO.avif"
+              alt="Ajisai"
+              className="h-9 w-auto object-contain md:h-10"
+            />
+          </Link>
         </div>
       </header>
 

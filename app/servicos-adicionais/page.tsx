@@ -18,11 +18,13 @@ export default function ServicosAdicionaisPage() {
       {/* ── HEADER ── */}
       <header className="sticky top-0 z-50 border-b border-white/10 bg-black/90 backdrop-blur-xl">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-6 py-4 md:px-10">
-          <img
-            src="/images/AJISAI-LOGO.avif"
-            alt="Ajisai"
-            className="h-9 w-auto object-contain md:h-10"
-          />
+          <Link href="/produtos">
+            <img
+              src="/images/AJISAI-LOGO.avif"
+              alt="Ajisai"
+              className="h-9 w-auto object-contain md:h-10"
+            />
+          </Link>
         </div>
       </header>
 
@@ -83,6 +85,9 @@ export default function ServicosAdicionaisPage() {
                       : formatBRL(servico.precoBRL)}
                     {servico.porDia ? "/dia" : ""}
                   </p>
+                  {servico.notaPreco && (
+                    <p className="mt-1 text-[11px] italic text-white/40">{servico.notaPreco}</p>
+                  )}
                 </div>
                 <Link
                   href="/viagem-personalizada"

@@ -5,7 +5,7 @@ import { Bodoni_Moda } from "next/font/google";
 import { createPortal } from "react-dom";
 import { useEffect, useMemo, useState, type FormEvent } from "react";
 import { useCart } from "./CartContext";
-import { useCambioUSD, brlParaUSDLabel, formatBRL } from "../hooks/useCambioUSD";
+import { useCambioUSD, brlParaUSDLabel, formatBRL, formatUSD } from "../hooks/useCambioUSD";
 import { CambioLabel } from "./CambioLabel";
 
 const display = Bodoni_Moda({
@@ -98,10 +98,14 @@ type PrecoCtx = {
   categoriaHotel: (typeof CATEGORIAS_HOTEL)[number];
   tipoQuarto: (typeof TIPOS_QUARTO)[number];
   classeAereo: (typeof CLASSES_AEREO)[number];
+  /** Duração do JR Pass escolhida pelo cliente — passe tem preço fixo por
+   * faixa (7/14/21 dias corridos), não por diária do roteiro. */
+  jrPassDias: (typeof JR_PASS_DIAS_OPCOES)[number];
   /** Cotação do dia (R$ por US$) — usada só pelos itens com valor fixo em
-   * dólar (aéreo Business, guia, motorista privado, wi-fi, ingressos), pra
-   * converter pro BRL antes de somar no total (todo o resto do calculador é
-   * nativamente em reais — ver "total" no componente). */
+   * dólar (aéreo Business, guia, motorista privado, JR Pass, wi-fi,
+   * ingressos), pra converter pro BRL antes de somar no total (todo o
+   * resto do calculador é nativamente em reais — ver "total" no
+   * componente). */
   cambioCotacao: number;
 };
 
@@ -158,7 +162,20 @@ const DIARIA_TRANSPORTE = comMargemEImposto(150);
 // imposto+margem.
 const DIARIA_GUIA_USD = comMargemEImposto(350);
 const GUIA_TAMANHO_GRUPO = 4;
-const DIARIA_JR_PASS = comMargemEImposto(180);
+// Japan Rail Pass — vendido em faixas fixas de dias CORRIDOS (7, 14 ou 21),
+// não por diária do roteiro; preço não escala com ctx.dias. Pesquisa
+// set/2026: tarifa oficial vigente a partir de 01/out/2026 para compra via
+// agência fora do Japão — JPY 53.000 / 84.000 / 105.000 (fonte:
+// selfguidejapan.com/blog/japan-rail-pass-price-2026), convertida em dólar
+// na cotação de referência USD/JPY ≈ 159,97 (xe.com, 01/set/2026). Nativo
+// em dólar — convertido pra reais com a cotação do dia, igual guia/
+// motorista/wifi/ingressos. Preço final já com imposto+margem.
+const JR_PASS_DIAS_OPCOES = [7, 14, 21] as const;
+const JR_PASS_PRECO_USD: Record<(typeof JR_PASS_DIAS_OPCOES)[number], number> = {
+  7: comMargemEImposto(331),
+  14: comMargemEImposto(525),
+  21: comMargemEImposto(656),
+};
 const DIARIA_SEGURO_VIAGEM = comMargemEImposto(35);
 // Motorista privado: custo de US$ 700/dia, cobre até 4 pessoas — mesma
 // lógica de grupo do guia, também nativo em dólar. Preço final já com
@@ -281,10 +298,11 @@ const OPCOES = [
     categoria: "opcional",
     label: "JR Pass",
     icone: "🚄",
-    descricao: "Passe ferroviário com deslocamentos ilimitados de trem-bala",
+    descricao: "Passe ferroviário com deslocamentos ilimitados de trem-bala — escolha 7, 14 ou 21 dias em Ver detalhes",
     detalhe:
-      "Passe ferroviário JR válido por todo o período contratado, com deslocamentos ilimitados nas linhas JR (incluindo a maioria dos trens-bala/Shinkansen) — vale a pena principalmente em roteiros com várias cidades.",
-    calcPreco: (ctx: PrecoCtx) => DIARIA_JR_PASS * ctx.dias,
+      "Passe ferroviário JR, com deslocamentos ilimitados nas linhas JR (incluindo a maioria dos trens-bala/Shinkansen) — vale a pena principalmente em roteiros com várias cidades. Vendido em faixas fixas de dias corridos de validade (não por diária do roteiro): escolha abaixo a duração que melhor cobre os deslocamentos do seu grupo.",
+    calcPreco: (ctx: PrecoCtx) =>
+      Math.round(JR_PASS_PRECO_USD[ctx.jrPassDias] * ctx.cambioCotacao),
   },
   {
     key: "seguro",
@@ -525,6 +543,10 @@ export function CustomPackageCard() {
   const [mostrarTodosDestinos, setMostrarTodosDestinos] = useState(false);
   const [adicionado, setAdicionado] = useState(false);
   const [opcaoAberta, setOpcaoAberta] = useState<(typeof OPCOES)[number] | null>(null);
+  // JR Pass tem preço por faixa de dias (7/14/21), não por diária — o
+  // cliente precisa escolher; a escolha fica disponível em "Ver detalhes".
+  const [jrPassDias, setJrPassDias] =
+    useState<(typeof JR_PASS_DIAS_OPCOES)[number]>(7);
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => setMounted(true), []);
@@ -536,11 +558,12 @@ export function CustomPackageCard() {
       categoriaHotel,
       tipoQuarto,
       classeAereo,
+      jrPassDias,
       // Mesmo fallback usado internamente por useCambioUSD enquanto a
       // cotação do dia ainda não carregou.
       cambioCotacao: cambio?.cotacao ?? 5.3,
     }),
-    [dias, pessoas, categoriaHotel, tipoQuarto, classeAereo, cambio],
+    [dias, pessoas, categoriaHotel, tipoQuarto, classeAereo, jrPassDias, cambio],
   );
 
   const itensSelecionados = useMemo(
@@ -607,16 +630,13 @@ export function CustomPackageCard() {
         <span className="block flex-1 pl-8 text-xs leading-5 text-[#0A2540]/50">
           {opcao.descricao}
         </span>
-        {opcao.key === "roteiro" && (
-          <div className="flex justify-center pl-8" onClick={(e) => e.stopPropagation()}>
-            <video
-              src="/videos/roteiro-personalizado-short.mp4"
-              poster="/videos/roteiro-personalizado-short-poster.jpg"
-              controls
-              playsInline
-              className="mt-1 w-full max-w-[220px] rounded-lg border border-black/10"
-            />
-          </div>
+        {opcao.key === "jrpass" && ativo && (
+          <span
+            className="ml-8 inline-flex w-fit items-center gap-1.5 rounded-full border border-[#2f80c9]/30 bg-[#2f80c9]/[0.08] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.08em] text-[#2f80c9]"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {jrPassDias} dias · {formatUSD(JR_PASS_PRECO_USD[jrPassDias])}
+          </span>
         )}
       </div>
     );
@@ -1059,6 +1079,39 @@ export function CustomPackageCard() {
                   playsInline
                   className="w-full rounded-xl border border-white/10"
                 />
+              </div>
+            )}
+            {opcaoAberta.key === "jrpass" && (
+              <div className="mt-3">
+                <p className="text-[10px] uppercase tracking-[0.2em] text-white/40">
+                  Escolha a duração — o cliente precisa selecionar uma faixa
+                </p>
+                <div className="mt-2.5 grid grid-cols-3 gap-2">
+                  {JR_PASS_DIAS_OPCOES.map((d) => {
+                    const ativo = d === jrPassDias;
+                    return (
+                      <button
+                        key={d}
+                        type="button"
+                        onClick={() => {
+                          setJrPassDias(d);
+                          setSelecionados((prev) => new Set(prev).add("jrpass"));
+                        }}
+                        aria-pressed={ativo}
+                        className={`flex flex-col items-center gap-0.5 rounded-xl border px-2 py-2.5 transition ${
+                          ativo
+                            ? "border-[#2f80c9] bg-[#2f80c9]/15"
+                            : "border-white/15 bg-white/[0.03] hover:border-white/30"
+                        }`}
+                      >
+                        <span className="text-sm font-semibold text-white">{d} dias</span>
+                        <span className="text-[10px] text-white/50">
+                          {formatUSD(JR_PASS_PRECO_USD[d])}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
             )}
             {opcaoAberta.key === "transporte" && (

@@ -8,20 +8,15 @@ import { useCart, type CartItem } from "./CartContext";
 import type { PackageVariant } from "./packageTypes";
 import { useCambioUSD, brlParaUSDLabel, formatBRL, formatUSD } from "../hooks/useCambioUSD";
 import {
-  ITINERARIO_CITY_BORDER,
-  CIDADE_IMAGEM,
   ITINERARIOS,
-  ROTEIROS_DETALHADOS,
   INCLUSOES_PADRAO,
   FAQ_PADRAO,
-  tagsDoRoteiro,
   IconCheck,
   IconX,
   IconChevron,
   IconTicket,
   IconZoom,
   type ItinerarioStop,
-  type DiaRoteiro,
 } from "./PackageDetailModal";
 
 // Versão enxuta do PackageDetailModal, exclusiva para Pacotes de Caravana —
@@ -75,14 +70,6 @@ function resumoRoteiro(stops: ItinerarioStop[]): string {
     dia = fim + 1;
   }
   return partes.join(" → ");
-}
-
-// Título do dia sem o prefixo de cidade (já mostrado à parte no cabeçalho
-// do accordion) — "Tóquio — Sensoji, Skytree & Solamachi" vira só "Sensoji,
-// Skytree & Solamachi".
-function tituloSemCidade(titulo: string): string {
-  const partes = titulo.split(" — ");
-  return partes.length > 1 ? partes[partes.length - 1] : titulo;
 }
 
 // Preço em destaque do bloco de compra — sempre em dólar (Caravana usa
@@ -166,69 +153,6 @@ const FAQ_CARAVANA = [
   },
 ];
 
-function DiaAccordionRow({
-  dia,
-  aberta,
-  onToggle,
-}: {
-  dia: DiaRoteiro;
-  aberta: boolean;
-  onToggle: () => void;
-}) {
-  const foto = CIDADE_IMAGEM[dia.cidade];
-  return (
-    <div className="overflow-hidden rounded-xl border border-white/10 bg-white/[0.03] transition hover:border-white/20">
-      <button
-        type="button"
-        onClick={onToggle}
-        aria-expanded={aberta}
-        className="flex w-full items-center gap-3 p-3.5 text-left"
-      >
-        <span
-          className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-semibold text-white"
-          style={{ backgroundColor: ITINERARIO_CITY_BORDER[dia.cidade] ?? "#2f80c9" }}
-        >
-          {dia.dia}
-        </span>
-        {foto && (
-          <div className="relative hidden h-10 w-10 shrink-0 overflow-hidden rounded-lg sm:block">
-            <Image src={foto} alt="" fill sizes="40px" className="object-cover" />
-          </div>
-        )}
-        <span className="min-w-0 flex-1">
-          <span className="block text-[10px] uppercase tracking-[0.15em] text-white/40">
-            Dia {dia.dia} · {cidadeLabel(dia.cidade)}
-          </span>
-          <span className="block truncate text-sm font-medium text-white">
-            {tituloSemCidade(dia.titulo)}
-          </span>
-        </span>
-        <IconChevron
-          className={`h-4 w-4 shrink-0 text-white/40 transition-transform duration-200 ${
-            aberta ? "rotate-180" : ""
-          }`}
-        />
-      </button>
-      {aberta && (
-        <div className="px-3.5 pb-3.5 pl-14">
-          <p className="text-xs font-light leading-5 text-white/55">{dia.texto}</p>
-          <div className="mt-2 flex flex-wrap gap-1.5">
-            {tagsDoRoteiro(dia).map((tag) => (
-              <span
-                key={tag.label}
-                className="inline-flex items-center gap-1 rounded-full border border-white/10 bg-white/[0.04] px-2 py-0.5 text-[10px] font-medium text-white/60"
-              >
-                <span aria-hidden>{tag.icon}</span>
-                {tag.label}
-              </span>
-            ))}
-          </div>
-        </div>
-      )}
-    </div>
-  );
-}
-
 export function CaravanaDetailModal({
   divisao,
   categoria,
@@ -262,8 +186,6 @@ export function CaravanaDetailModal({
   const [faqAberta, setFaqAberta] = useState<string | null>(null);
   const [faqSecaoAberta, setFaqSecaoAberta] = useState(false);
   const [roteiroImagemZoom, setRoteiroImagemZoom] = useState(false);
-  const [roteiroAberto, setRoteiroAberto] = useState(false);
-  const [diasAbertos, setDiasAbertos] = useState<Set<number>>(new Set());
   const scrollRef = useRef<HTMLDivElement>(null);
   const heroCtaRef = useRef<HTMLButtonElement>(null);
   // Barra fixa do rodapé só aparece depois que o CTA principal (no bloco
@@ -272,18 +194,7 @@ export function CaravanaDetailModal({
 
   function selecionarVariante(id: string) {
     setSelecionada(id);
-    setRoteiroAberto(false);
-    setDiasAbertos(new Set());
     scrollRef.current?.scrollTo({ top: 0, behavior: "smooth" });
-  }
-
-  function toggleDia(dia: number) {
-    setDiasAbertos((atual) => {
-      const proximo = new Set(atual);
-      if (proximo.has(dia)) proximo.delete(dia);
-      else proximo.add(dia);
-      return proximo;
-    });
   }
 
   useEffect(() => {
@@ -317,7 +228,6 @@ export function CaravanaDetailModal({
 
   const variante = variantes.find((v) => v.id === selecionada) ?? variantes[0];
   const stops = variante ? ITINERARIOS[variante.id] : undefined;
-  const diasRoteiro = variante ? ROTEIROS_DETALHADOS[variante.id] : undefined;
 
   // Guia e transfer vêm inclusos por padrão na Caravana (grupo fechado) —
   // mesma regra do PackageDetailModal, só que aqui isCaravana é sempre
@@ -481,16 +391,16 @@ export function CaravanaDetailModal({
               </div>
             )}
 
-            <div className="mt-5 grid grid-cols-2 gap-2 sm:grid-cols-4">
+            <div className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-4">
               {BENEFICIOS_PRINCIPAIS.map(({ label, icone }) => (
                 <div
                   key={label}
-                  className="flex items-center justify-center gap-1.5 rounded-lg border border-emerald-400/25 bg-emerald-400/[0.07] px-2.5 py-2 text-center text-xs font-semibold text-white"
+                  className="flex items-center justify-center gap-2 rounded-xl border border-emerald-400/25 bg-emerald-400/[0.07] px-3.5 py-3.5 text-center text-sm font-semibold text-white"
                 >
                   {icone ? (
-                    <img src={icone} alt="" className="h-3.5 w-3.5 shrink-0 object-contain invert" />
+                    <img src={icone} alt="" className="h-5 w-5 shrink-0 object-contain invert" />
                   ) : (
-                    <IconCheck className="h-3.5 w-3.5 shrink-0 text-emerald-400" />
+                    <IconCheck className="h-5 w-5 shrink-0 text-emerald-400" />
                   )}
                   {label}
                 </div>
@@ -546,36 +456,6 @@ export function CaravanaDetailModal({
               </p>
             )}
 
-            {diasRoteiro && (
-              <div className="mt-5 text-center">
-                <button
-                  type="button"
-                  onClick={() => setRoteiroAberto((v) => !v)}
-                  aria-expanded={roteiroAberto}
-                  className="inline-flex items-center gap-1.5 rounded-full border border-white/20 px-4 py-2 text-xs font-semibold uppercase tracking-[0.15em] text-white/70 transition hover:border-white/40 hover:text-white"
-                >
-                  {roteiroAberto ? "Ocultar roteiro completo" : "Ver roteiro completo"}
-                  <IconChevron
-                    className={`h-3.5 w-3.5 transition-transform duration-200 ${
-                      roteiroAberto ? "rotate-180" : ""
-                    }`}
-                  />
-                </button>
-              </div>
-            )}
-
-            {roteiroAberto && diasRoteiro && (
-              <div className="mt-5 space-y-2.5">
-                {diasRoteiro.map((d) => (
-                  <DiaAccordionRow
-                    key={d.dia}
-                    dia={d}
-                    aberta={diasAbertos.has(d.dia)}
-                    onToggle={() => toggleDia(d.dia)}
-                  />
-                ))}
-              </div>
-            )}
           </div>
 
           {/* ── NÍVEL 3 · "QUERO CONFERIR OS DETALHES" ── */}

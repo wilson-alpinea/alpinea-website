@@ -808,59 +808,6 @@ export function PackageDetailModal({
               </div>
             )}
 
-            {variante && ROTEIROS_DETALHADOS[variante.id] && (
-              <div className="mt-8">
-                <p className="mb-4 text-center text-xs uppercase tracking-[0.35em] text-white/40">
-                  Roteiro dia a dia
-                </p>
-                <div className="space-y-3">
-                  {ROTEIROS_DETALHADOS[variante.id].map((d) => {
-                    const foto = CIDADE_IMAGEM[d.cidade];
-                    return (
-                      <div
-                        key={d.dia}
-                        className="flex gap-3 rounded-xl border border-white/10 bg-white/[0.03] p-3.5"
-                      >
-                        {foto && (
-                          <div className="relative hidden h-16 w-16 shrink-0 overflow-hidden rounded-lg sm:block">
-                            <Image src={foto} alt={d.cidade} fill sizes="64px" className="object-cover" />
-                          </div>
-                        )}
-                        <div className="min-w-0 flex-1">
-                          <div className="flex items-start gap-2.5">
-                            <span
-                              className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-xs font-semibold text-white"
-                              style={{ backgroundColor: ITINERARIO_CITY_BORDER[d.cidade] ?? "#2f80c9" }}
-                            >
-                              {d.dia}
-                            </span>
-                            <div className="min-w-0">
-                              <p className="text-sm font-medium text-white">{d.titulo}</p>
-                              <p className="mt-1 text-xs font-light leading-5 text-white/50">
-                                {d.texto}
-                              </p>
-                            </div>
-                          </div>
-                          <div className="mt-2.5 flex flex-wrap gap-1.5 pl-9">
-                            {tagsDoRoteiro(d).slice(0, 3).map((tag) => (
-                              <span
-                                key={tag.label}
-                                className="inline-flex items-center gap-1 rounded-full border border-white/10 bg-white/[0.04] px-2 py-0.5 text-[10px] font-medium text-white/60"
-                              >
-                                <span aria-hidden>{tag.icon}</span>
-                                {tag.label}
-                              </span>
-                            ))}
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-
-              </div>
-            )}
-
             <div className="mt-6 rounded-xl border border-[#6ec3d9]/20 bg-[#6ec3d9]/[0.055] p-4">
               <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[#6ec3d9]">
                 Roteiro Digital Ajisai

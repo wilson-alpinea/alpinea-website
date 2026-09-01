@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import { Bodoni_Moda } from "next/font/google";
 import { ContactCTA } from "../components/ContactCTA";
 import { CartProvider } from "../components/CartContext";
@@ -371,11 +372,13 @@ export default async function PacotesJapaoPage({
         {/* ── HEADER ── */}
         <header className="package-content fixed left-0 right-0 top-0 z-50 transform-gpu bg-black/10 backdrop-blur-2xl">
           <div className="mx-auto flex max-w-7xl items-center justify-between px-8 py-5 md:px-16">
-            <img
-              src="/images/AJISAI-LOGO.avif"
-              alt="Ajisai"
-              className="h-10 w-auto object-contain md:h-11"
-            />
+            <Link href="/produtos">
+              <img
+                src="/images/AJISAI-LOGO.avif"
+                alt="Ajisai"
+                className="h-10 w-auto object-contain md:h-11"
+              />
+            </Link>
 
             <div className="flex items-center gap-3 md:gap-5">
               <CartWidget />
@@ -520,7 +523,7 @@ export default async function PacotesJapaoPage({
 
             <div className="mx-auto mt-12 max-w-5xl overflow-x-auto rounded-2xl border border-white/10 bg-white/[0.025]">
               <div className="grid min-w-[680px] grid-cols-[1.05fr_1fr_1fr] border-b border-white/10 bg-white/[0.04]">
-                <div className="px-5 py-4 text-[10px] font-semibold uppercase tracking-[0.18em] text-white/35">
+                <div className="px-5 py-4 text-[10px] font-semibold uppercase tracking-[0.18em] text-white/50">
                   Compare
                 </div>
                 <div className="border-l border-white/10 px-5 py-4">
@@ -548,12 +551,12 @@ export default async function PacotesJapaoPage({
                     key={criterio}
                     className="grid min-w-[680px] grid-cols-[1.05fr_1fr_1fr] border-b border-white/[0.07] last:border-b-0"
                   >
-                    <p className="px-5 py-4 text-xs font-medium text-white/45">{criterio}</p>
-                    <p className="border-l border-white/[0.07] px-5 py-4 text-sm leading-6 text-white/70">{caravana}</p>
-                    <div className="border-l border-white/[0.07] px-5 py-4 text-sm leading-6 text-white/70">
+                    <p className="px-5 py-4 text-xs font-semibold text-white/60">{criterio}</p>
+                    <p className="border-l border-white/[0.07] px-5 py-4 text-sm leading-6 text-white">{caravana}</p>
+                    <div className="border-l border-white/[0.07] px-5 py-4 text-sm leading-6 text-white">
                       <p>{privativo}</p>
                       {criterio === "Datas" && (
-                        <span className="mt-2.5 inline-flex rounded-full border border-red-400/40 bg-red-500/15 px-3 py-1.5 text-[9px] font-semibold uppercase leading-4 tracking-[0.1em] text-red-300">
+                        <span className="mt-2.5 inline-flex rounded-full border border-red-400/60 bg-red-500/25 px-3 py-1.5 text-[9px] font-bold uppercase leading-4 tracking-[0.1em] text-red-50">
                           Possível alterar mediante pagamento de valor adicional
                         </span>
                       )}

@@ -2,8 +2,10 @@
 // Personalizado (OPCOES, em CustomPackageCard.tsx) — mostrados aqui como
 // cards avulsos pra quem só quer adicionar um serviço pontual ao roteiro
 // já organizado por conta própria. porDia indica se o valor é por dia de
-// viagem ou fixo por viagem. Conteúdo da página /servicos-adicionais,
-// aberta em popup a partir do card "Serviços adicionais" em /produtos.
+// viagem ou fixo por viagem. notaPreco é uma observação curta mostrada
+// logo abaixo do preço (ex.: parcela variável não incluída, ou instrução
+// de escolha). Conteúdo da página /servicos-adicionais, aberta em popup a
+// partir do card "Serviços adicionais" em /produtos.
 //
 // "Motorista Privado" foi retirado daqui (26/ago/2026) — o serviço agora
 // tem seção própria, com calculadora dedicada (categoria de carro, dias
@@ -19,13 +21,19 @@ export const SERVICOS_AVULSOS: {
    * precoBRL no cálculo (mesmo padrão de PRODUTOS em /produtos). */
   precoUSD?: number;
   porDia?: boolean;
+  notaPreco?: string;
 }[] = [
   {
     nome: "JR Pass",
     icone: "/images/icone-trem-bala-shinkansen.png",
-    descricao: "Passe ferroviário com deslocamentos ilimitados de trem-bala.",
-    precoBRL: 180,
-    porDia: true,
+    // Passe vendido em faixas fixas de 7/14/21 dias corridos, não por
+    // diária — mesma regra e preços de JR_PASS_PRECO_USD, em
+    // CustomPackageCard.tsx (01/set/2026). Mostrado aqui "a partir de" a
+    // faixa de 7 dias, a mais barata.
+    descricao: "Passe ferroviário com deslocamentos ilimitados de trem-bala. Vendido em faixas de 7, 14 ou 21 dias.",
+    precoBRL: 0,
+    precoUSD: 495,
+    notaPreco: "faixa de 7 dias — 14 ou 21 dias também disponíveis",
   },
   {
     nome: "Seguro Viagem",
@@ -41,11 +49,10 @@ export const SERVICOS_AVULSOS: {
     precoBRL: 150,
   },
   {
-    nome: "Transporte",
+    nome: "Transfer Aeroporto-Hotel",
     icone: "/images/icone-onibus-v2.png",
-    descricao: "Transfers e deslocamentos do roteiro dia a dia.",
+    descricao: "Traslado de ida e volta entre o aeroporto e o hotel.",
     precoBRL: 150,
-    porDia: true,
   },
   {
     nome: "eSIM",
@@ -60,9 +67,10 @@ export const SERVICOS_AVULSOS: {
     porDia: true,
   },
   {
-    nome: "Serviços Adicionais",
-    icone: "/images/icone-ideia-sugestao.png",
-    descricao: "Reservas, concierge e experiências sob medida.",
-    precoBRL: 2500,
+    nome: "Reserva de Restaurantes",
+    icone: "/images/icone-gastronomia.png",
+    descricao: "Pacote de 5 reservas em restaurantes concorridos, para até 3 pessoas. Para mais pessoas, consulte disponibilidade.",
+    precoBRL: 1500,
+    notaPreco: "+ valor dos restaurantes",
   },
 ];
