@@ -4,17 +4,19 @@ import { Bodoni_Moda } from "next/font/google";
 import { DIFERENCIAIS_AEREO } from "../lib/diferenciaisAereo";
 
 // Rede de companhias aéreas parceiras — pedido do Wilson, 01/set/2026.
-// Selos com o código IATA (sem logotipo oficial ainda — ver nota na seção).
+// Ícones das caudas recortados de uma referência com alpha real (não são
+// os logotipos oficiais de parceria) — trocar quando tiver os logos
+// homologados de cada companhia.
 const COMPANHIAS_HOMOLOGADAS = [
-  { nome: "Emirates", codigo: "EK" },
-  { nome: "Qatar Airways", codigo: "QR" },
-  { nome: "Air France", codigo: "AF" },
-  { nome: "KLM", codigo: "KL" },
+  { nome: "Emirates", codigo: "EK", icone: "/images/emirates-tail.png" },
+  { nome: "Qatar Airways", codigo: "QR", icone: "/images/qatar-airways-tail.png" },
+  { nome: "Air France", codigo: "AF", icone: "/images/air-france-tail.png" },
+  { nome: "KLM", codigo: "KL", icone: "/images/klm-tail.png" },
 ];
 const COMPANHIAS_SAZONAIS = [
-  { nome: "Lufthansa", codigo: "LH" },
-  { nome: "Swiss", codigo: "LX" },
-  { nome: "Ethiopian", codigo: "ET" },
+  { nome: "Lufthansa", codigo: "LH", icone: "/images/lufthansa-tail.png" },
+  { nome: "Swiss", codigo: "LX", icone: "/images/swiss-tail.png" },
+  { nome: "Ethiopian", codigo: "ET", icone: "/images/ethiopian-tail.png" },
 ];
 
 // Mesma fonte de destaque usada nas demais páginas do site.
@@ -146,8 +148,14 @@ export default function PassagensAereasPage() {
                       key={cia.nome}
                       className="flex flex-col items-center justify-center gap-2 rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-6 text-center"
                     >
-                      <span className="flex h-12 w-12 items-center justify-center rounded-full bg-[#6ec3d9]/15 text-sm font-semibold uppercase tracking-[0.02em] text-[#6ec3d9]">
-                        {cia.codigo}
+                      <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white p-2 shadow-sm">
+                        <Image
+                          src={cia.icone}
+                          alt={`${cia.nome} (${cia.codigo})`}
+                          width={96}
+                          height={96}
+                          className="h-full w-full object-contain"
+                        />
                       </span>
                       <span className="text-xs font-medium text-white">{cia.nome}</span>
                     </div>
@@ -165,8 +173,14 @@ export default function PassagensAereasPage() {
                       key={cia.nome}
                       className="flex flex-col items-center justify-center gap-2 rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-6 text-center"
                     >
-                      <span className="flex h-12 w-12 items-center justify-center rounded-full bg-white/10 text-sm font-semibold uppercase tracking-[0.02em] text-white/70">
-                        {cia.codigo}
+                      <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white p-2 shadow-sm">
+                        <Image
+                          src={cia.icone}
+                          alt={`${cia.nome} (${cia.codigo})`}
+                          width={96}
+                          height={96}
+                          className="h-full w-full object-contain"
+                        />
                       </span>
                       <span className="text-xs font-medium text-white">{cia.nome}</span>
                     </div>
@@ -175,9 +189,9 @@ export default function PassagensAereasPage() {
               </div>
 
               <p className="mx-auto mt-6 max-w-xl text-center text-[11px] leading-5 text-white/35">
-                Selos com o código IATA de cada companhia — assim que vocês tiverem os
-                logotipos oficiais de parceria (normalmente fornecidos pela própria
-                companhia aérea), é só enviar que eu troco pelos logos reais.
+                Ícones ilustrativos das caudas — assim que vocês tiverem os logotipos
+                oficiais de parceria (normalmente fornecidos pela própria companhia
+                aérea), é só enviar que eu troco pelos logos reais.
               </p>
             </div>
           </div>
