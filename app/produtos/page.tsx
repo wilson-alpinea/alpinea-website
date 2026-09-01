@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Bodoni_Moda } from "next/font/google";
 import { PriceCalculator } from "../components/PriceCalculator";
+import { TransportePrivadoCalculator } from "../components/TransportePrivadoCalculator";
 import { useCambioUSD, brlParaUSDLabel, formatBRL, formatUSD } from "../hooks/useCambioUSD";
 import { CambioLabel } from "../components/CambioLabel";
 
@@ -112,6 +113,7 @@ export default function ProdutosPage() {
   const [passagensModalOpen, setPassagensModalOpen] = useState(false);
   const [guiaModalOpen, setGuiaModalOpen] = useState(false);
   const [servicosModalOpen, setServicosModalOpen] = useState(false);
+  const [transporteModalOpen, setTransporteModalOpen] = useState(false);
 
   useEffect(() => {
     if (
@@ -120,7 +122,8 @@ export default function ProdutosPage() {
       !viagemModalOpen &&
       !passagensModalOpen &&
       !guiaModalOpen &&
-      !servicosModalOpen
+      !servicosModalOpen &&
+      !transporteModalOpen
     )
       return;
 
@@ -134,6 +137,7 @@ export default function ProdutosPage() {
         setPassagensModalOpen(false);
         setGuiaModalOpen(false);
         setServicosModalOpen(false);
+        setTransporteModalOpen(false);
       }
     };
     window.addEventListener("keydown", handleKeyDown);
@@ -149,6 +153,7 @@ export default function ProdutosPage() {
     passagensModalOpen,
     guiaModalOpen,
     servicosModalOpen,
+    transporteModalOpen,
   ]);
 
   // Entrada direta (CTA de cada produto) — vai direto para a qualificação,
@@ -333,13 +338,14 @@ export default function ProdutosPage() {
               />
               <ProductSelectorCard
                 href="/viagem-personalizada"
+                onClick={() => setTransporteModalOpen(true)}
                 icon="/images/produtos/transporte-privado.png"
                 iconWidth={1536}
                 iconHeight={1024}
                 title="Transporte Privado"
                 description="Transfers e deslocamentos privativos com conforto e motorista particular."
-                requirement="Requer Roteiro Personalizado"
-                cta="Ver transporte"
+                requirement="Inclui Roteiro Personalizado"
+                cta="Calcular meu transporte"
                 className="lg:col-span-2 lg:col-start-2"
               />
               <ProductSelectorCard
@@ -902,6 +908,11 @@ export default function ProdutosPage() {
           )}
         </div>
       </section>
+
+      {/* ── TRANSPORTE PRIVADO — CALCULADORA ── */}
+      {transporteModalOpen && (
+        <TransportePrivadoCalculator onClose={() => setTransporteModalOpen(false)} />
+      )}
 
       <section aria-label="Por que escolher a Ajisai" className="border-t border-white/10 bg-black">
         <InstitutionalContent />

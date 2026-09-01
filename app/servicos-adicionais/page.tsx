@@ -51,7 +51,13 @@ export default function ServicosAdicionaisPage() {
                 key={servico.nome}
                 className="flex flex-col rounded-2xl border border-white/10 bg-white/[0.02] p-6 shadow-[0_0_30px_-14px_rgba(37,99,235,0.3)] transition hover:border-white/25 hover:bg-white/[0.04]"
               >
-                <p className="text-2xl">{servico.icone}</p>
+                <img
+                  src={servico.icone}
+                  alt=""
+                  className={`h-9 w-9 object-contain ${
+                    servico.icone.endsWith(".svg") ? "" : "invert"
+                  }`}
+                />
                 <h3 className={`${display.className} mt-3 text-lg font-medium text-white`}>
                   {servico.nome}
                 </h3>
