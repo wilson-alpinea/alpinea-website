@@ -530,7 +530,8 @@ export function CaravanaDetailModal({
                   alt={`Roteiro ilustrado dia a dia — ${nome} — ${variante?.label ?? ""}`}
                   width={variante?.id === "15d" ? 1184 : 1694}
                   height={variante?.id === "15d" ? 3556 : 2528}
-                  sizes="(max-width: 768px) 100vw, 768px"
+                  sizes="100vw"
+                  quality={90}
                   className="h-auto w-full"
                 />
                 <span className="pointer-events-none absolute bottom-3 right-3 flex h-8 w-8 items-center justify-center rounded-full bg-black/70 text-white backdrop-blur-sm transition group-hover:bg-black/85">
@@ -780,6 +781,7 @@ export function CaravanaDetailModal({
                 width={variante?.id === "15d" ? 1184 : 1694}
                 height={variante?.id === "15d" ? 3556 : 2528}
                 sizes="100vw"
+                quality={95}
                 className="h-auto w-full rounded-xl md:w-auto md:max-w-none"
               />
             </div>

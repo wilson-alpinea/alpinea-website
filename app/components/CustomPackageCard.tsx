@@ -120,7 +120,7 @@ type PrecoCtx = {
 const IMPOSTO_SOBRE_LUCRO = 1.15;
 const MARGEM_SOBRE_IMPOSTO = 1.3;
 const MULTIPLICADOR_PRECO_FINAL = IMPOSTO_SOBRE_LUCRO * MARGEM_SOBRE_IMPOSTO; // 1,495
-function comMargemEImposto(custo: number) {
+export function comMargemEImposto(custo: number) {
   return Math.round(custo * MULTIPLICADOR_PRECO_FINAL);
 }
 
@@ -163,8 +163,8 @@ const DIARIA_SEGURO_VIAGEM = comMargemEImposto(35);
 // Motorista privado: custo de US$ 700/dia, cobre até 4 pessoas — mesma
 // lógica de grupo do guia, também nativo em dólar. Preço final já com
 // imposto+margem.
-const DIARIA_MOTORISTA_PRIVADO_USD = comMargemEImposto(700);
-const MOTORISTA_TAMANHO_GRUPO = 4;
+export const DIARIA_MOTORISTA_PRIVADO_USD = comMargemEImposto(700);
+export const MOTORISTA_TAMANHO_GRUPO = 4;
 const PRECO_CAMBIO_BRASIL = comMargemEImposto(150);
 // Wi-fi e ingressos Disney/Universal: valores de referência da planilha
 // "Simulação de Orçamento v2.1" (JPY convertido pra dólar) — não foram
@@ -188,9 +188,9 @@ const RESTAURANTES_HIGHEND_LIMITE_PESSOAS = 3;
 // duas vezes pelo mesmo grupo grande. Preço final já com imposto+margem
 // (o produto standalone em /ajisairoteiros não foi alterado por este
 // pedido, que era específico do calculador do Personalizado).
-const ROTEIRO_BASE_DIAS = 15;
-const ROTEIRO_PRECO_BASE = comMargemEImposto(1500);
-const ROTEIRO_PRECO_DIA_EXTRA = comMargemEImposto(120);
+export const ROTEIRO_BASE_DIAS = 15;
+export const ROTEIRO_PRECO_BASE = comMargemEImposto(1500);
+export const ROTEIRO_PRECO_DIA_EXTRA = comMargemEImposto(120);
 
 // Aéreo: Economy segue o valor de referência original (nativo em reais,
 // como todo o resto do calculador). Business é o valor exato que você
@@ -418,7 +418,7 @@ const ITENS_PADRAO: OpcaoKey[] = ["aereo", "hotel", "roteiro"];
 // grandes cidades, cultura tradicional, natureza e praia/ilhas. Só Tokyo,
 // Osaka, Kyoto e Hakone têm foto na biblioteca de imagens por enquanto; os
 // demais seguem com fundo sólido (só o nome) até você subir fotos reais.
-const DESTINOS = [
+export const DESTINOS = [
   { key: "tokyo", nome: "Tokyo", imagem: "/images/tokyo.jpg" },
   { key: "kyoto", nome: "Kyoto", imagem: "/images/kyoto-maiko-street.png" },
   { key: "osaka", nome: "Osaka", imagem: "/images/osaka-castle.png" },
@@ -455,7 +455,7 @@ const MAX_PESSOAS = 20;
 const LIMITE_PESSOAS_SEM_TAXA = 3;
 const TAXA_POR_PASSAGEIRO_EXTRA = comMargemEImposto(350);
 
-function NumberStepper({
+export function NumberStepper({
   label,
   value,
   onChange,
