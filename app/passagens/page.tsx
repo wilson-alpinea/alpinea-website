@@ -146,17 +146,15 @@ export default function PassagensAereasPage() {
                   {COMPANHIAS_HOMOLOGADAS.map((cia) => (
                     <div
                       key={cia.nome}
-                      className="flex flex-col items-center justify-center gap-2 rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-6 text-center"
+                      className="flex flex-col items-center justify-center gap-2 rounded-2xl bg-white/[0.03] px-4 py-6 text-center"
                     >
-                      <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white p-2 shadow-sm">
-                        <Image
-                          src={cia.icone}
-                          alt={`${cia.nome} (${cia.codigo})`}
-                          width={96}
-                          height={96}
-                          className="h-full w-full object-contain"
-                        />
-                      </span>
+                      <Image
+                        src={cia.icone}
+                        alt={`${cia.nome} (${cia.codigo})`}
+                        width={160}
+                        height={160}
+                        className="h-28 w-28 object-contain"
+                      />
                       <span className="text-xs font-medium text-white">{cia.nome}</span>
                     </div>
                   ))}
@@ -171,17 +169,15 @@ export default function PassagensAereasPage() {
                   {COMPANHIAS_SAZONAIS.map((cia) => (
                     <div
                       key={cia.nome}
-                      className="flex flex-col items-center justify-center gap-2 rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-6 text-center"
+                      className="flex flex-col items-center justify-center gap-2 rounded-2xl bg-white/[0.03] px-4 py-6 text-center"
                     >
-                      <span className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white p-2 shadow-sm">
-                        <Image
-                          src={cia.icone}
-                          alt={`${cia.nome} (${cia.codigo})`}
-                          width={96}
-                          height={96}
-                          className="h-full w-full object-contain"
-                        />
-                      </span>
+                      <Image
+                        src={cia.icone}
+                        alt={`${cia.nome} (${cia.codigo})`}
+                        width={160}
+                        height={160}
+                        className="h-28 w-28 object-contain"
+                      />
                       <span className="text-xs font-medium text-white">{cia.nome}</span>
                     </div>
                   ))}
