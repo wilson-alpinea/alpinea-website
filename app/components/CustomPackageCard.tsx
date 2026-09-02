@@ -87,7 +87,18 @@ function IconX({ className }: { className?: string }) {
 // Carrossel horizontal de fotos por categoria de hotel, no popup "Ver
 // detalhes" do Hotel. Sem foto ainda (info.fotos vazio) -> mostra
 // placeholders com o nome da categoria, ate as fotos reais entrarem.
-function FotoCarousel({ fotos, categoria }: { fotos: string[]; categoria: string }) {
+function FotoCarousel({
+  fotos,
+  categoria,
+  light = false,
+}: {
+  fotos: string[];
+  categoria: string;
+  // light = true quando o carrossel roda num card claro (popup avulso de
+  // Hoteis em /produtos), fora do tema escuro do resto da Viagem
+  // Personalizada.
+  light?: boolean;
+}) {
   const trilhoRef = useRef<HTMLDivElement>(null);
 
   function mover(direcao: -1 | 1) {
@@ -108,17 +119,23 @@ function FotoCarousel({ fotos, categoria }: { fotos: string[]; categoria: string
           typeof foto === "string" ? (
             <div
               key={foto}
-              className="relative aspect-[4/3] w-[220px] shrink-0 snap-start overflow-hidden rounded-xl border border-white/10 bg-black"
+              className={`relative aspect-[4/3] w-[220px] shrink-0 snap-start overflow-hidden rounded-xl border bg-black ${
+                light ? "border-black/10" : "border-white/10"
+              }`}
             >
               <Image src={foto} alt={`${categoria} — exemplo ${i + 1}`} fill sizes="220px" className="object-cover" />
             </div>
           ) : (
             <div
               key={i}
-              className="flex aspect-[4/3] w-[220px] shrink-0 snap-start flex-col items-center justify-center gap-1.5 rounded-xl border border-dashed border-white/15 bg-white/[0.03] text-center"
+              className={`flex aspect-[4/3] w-[220px] shrink-0 snap-start flex-col items-center justify-center gap-1.5 rounded-xl border border-dashed text-center ${
+                light ? "border-black/15 bg-black/[0.03]" : "border-white/15 bg-white/[0.03]"
+              }`}
             >
               <span className="text-xl opacity-40">📷</span>
-              <span className="px-4 text-[10px] uppercase tracking-[0.1em] text-white/30">
+              <span
+                className={`px-4 text-[10px] uppercase tracking-[0.1em] ${light ? "text-black/30" : "text-white/30"}`}
+              >
                 Foto em breve — {categoria}
               </span>
             </div>
@@ -141,6 +158,105 @@ function FotoCarousel({ fotos, categoria }: { fotos: string[]; categoria: string
       >
         ›
       </button>
+    </div>
+  );
+}
+
+// Linhas "Exemplos de Propriedades" por categoria de hotel (3 a Elite),
+// com o carrossel de fotos — usado tanto no popup "Ver detalhes" dentro da
+// Viagem Personalizada (tema escuro) quanto no popup avulso do card
+// "Hoteis" em /produtos (tema claro, light=true), sem duplicar o conteudo.
+export function HotelExemplosPropriedades({
+  categoriaAtiva,
+  light = false,
+}: {
+  categoriaAtiva?: (typeof CATEGORIAS_HOTEL)[number];
+  light?: boolean;
+}) {
+  const t = light
+    ? {
+        text: "text-black",
+        label: "text-black/40",
+        sub: "text-black/55",
+        info: "text-black/70",
+        infoLabel: "text-black/40",
+        border: "border-black/10",
+        bg: "bg-black/[0.02]",
+        offBorder: "border-black/10",
+        offText: "text-black/30",
+      }
+    : {
+        text: "text-white",
+        label: "text-white/40",
+        sub: "text-white/55",
+        info: "text-white/70",
+        infoLabel: "text-white/40",
+        border: "border-white/10",
+        bg: "bg-white/[0.02]",
+        offBorder: "border-white/10",
+        offText: "text-white/30",
+      };
+
+  return (
+    <div>
+      <p className={`text-[11px] uppercase tracking-[0.2em] ${t.label}`}>Exemplos de Propriedades</p>
+      <div className="mt-3 space-y-4">
+        {CATEGORIAS_HOTEL.map((cat) => {
+          const info = EXEMPLOS_HOTEIS[cat];
+          const ativo = cat === categoriaAtiva;
+          const amenidadeLabel: [keyof typeof info.amenidades, string][] = [
+            ["piscina", "Piscina"],
+            ["academia", "Academia"],
+            ["sauna", "Sauna"],
+            ["restaurante", "Restaurante"],
+          ];
+          return (
+            <div
+              key={cat}
+              className={`rounded-2xl border p-4 md:p-5 ${
+                ativo ? "border-[#2f80c9] bg-[#2f80c9]/[0.06]" : `${t.border} ${t.bg}`
+              }`}
+            >
+              <div className="flex flex-col gap-4 md:flex-row md:items-start">
+                <div className="md:w-[240px] md:shrink-0">
+                  <p className={`text-base font-semibold uppercase tracking-[0.08em] ${t.text}`}>
+                    {cat}
+                    {ativo && (
+                      <span className="ml-2 rounded-full bg-[#2f80c9]/20 px-2 py-0.5 text-[9px] font-medium normal-case tracking-normal text-[#6ec3d9]">
+                        selecionado
+                      </span>
+                    )}
+                  </p>
+                  <p className={`mt-1.5 text-xs ${t.sub}`}>{info.exemplos.join(" · ")}</p>
+                  <p className={`mt-3 text-xs ${t.info}`}>
+                    <span className={t.infoLabel}>m² médio:</span> {info.m2Medio}
+                  </p>
+                  <p className={`mt-1 text-xs ${t.info}`}>
+                    <span className={t.infoLabel}>Quarto:</span> {info.tipoQuarto}
+                  </p>
+                  <div className="mt-3 flex flex-wrap gap-1.5">
+                    {amenidadeLabel.map(([key, label]) => (
+                      <span
+                        key={key}
+                        className={`rounded-full border px-2 py-0.5 text-[9px] uppercase tracking-[0.05em] ${
+                          info.amenidades[key]
+                            ? "border-[#6ec3d9]/40 bg-[#6ec3d9]/[0.08] text-[#6ec3d9]"
+                            : `${t.offBorder} ${t.offText} line-through`
+                        }`}
+                      >
+                        {label}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+                <div className="min-w-0 flex-1">
+                  <FotoCarousel fotos={info.fotos} categoria={cat} light={light} />
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 }
@@ -220,7 +336,7 @@ export const DIARIA_HOTEL: Record<(typeof CATEGORIAS_HOTEL)[number], number> = {
 // comuns em cada faixa (pesquisa de mercado, Tokyo, ago/2026). Nomes de
 // hotéis são apenas exemplos ilustrativos da categoria, não parceiros
 // fixos — a Ajisai seleciona a propriedade conforme roteiro e disponibilidade.
-const EXEMPLOS_HOTEIS: Record<
+export const EXEMPLOS_HOTEIS: Record<
   (typeof CATEGORIAS_HOTEL)[number],
   {
     m2Medio: string;
@@ -1309,66 +1425,7 @@ export function CustomPackageCard({
             )}
             {opcaoAberta.key === "hotel" && (
               <div className="mt-4">
-                <p className="text-[11px] uppercase tracking-[0.2em] text-white/40">
-                  Exemplos de Propriedades
-                </p>
-                <div className="mt-3 space-y-4">
-                  {CATEGORIAS_HOTEL.map((cat) => {
-                    const info = EXEMPLOS_HOTEIS[cat];
-                    const ativo = cat === categoriaHotel;
-                    const amenidadeLabel: [keyof typeof info.amenidades, string][] = [
-                      ["piscina", "Piscina"],
-                      ["academia", "Academia"],
-                      ["sauna", "Sauna"],
-                      ["restaurante", "Restaurante"],
-                    ];
-                    return (
-                      <div
-                        key={cat}
-                        className={`rounded-2xl border p-4 md:p-5 ${
-                          ativo ? "border-[#2f80c9] bg-[#2f80c9]/[0.06]" : "border-white/10 bg-white/[0.02]"
-                        }`}
-                      >
-                        <div className="flex flex-col gap-4 md:flex-row md:items-start">
-                          <div className="md:w-[240px] md:shrink-0">
-                            <p className="text-base font-semibold uppercase tracking-[0.08em] text-white">
-                              {cat}
-                              {ativo && (
-                                <span className="ml-2 rounded-full bg-[#2f80c9]/20 px-2 py-0.5 text-[9px] font-medium normal-case tracking-normal text-[#6ec3d9]">
-                                  selecionado
-                                </span>
-                              )}
-                            </p>
-                            <p className="mt-1.5 text-xs text-white/55">{info.exemplos.join(" · ")}</p>
-                            <p className="mt-3 text-xs text-white/70">
-                              <span className="text-white/40">m² médio:</span> {info.m2Medio}
-                            </p>
-                            <p className="mt-1 text-xs text-white/70">
-                              <span className="text-white/40">Quarto:</span> {info.tipoQuarto}
-                            </p>
-                            <div className="mt-3 flex flex-wrap gap-1.5">
-                              {amenidadeLabel.map(([key, label]) => (
-                                <span
-                                  key={key}
-                                  className={`rounded-full border px-2 py-0.5 text-[9px] uppercase tracking-[0.05em] ${
-                                    info.amenidades[key]
-                                      ? "border-[#6ec3d9]/40 bg-[#6ec3d9]/[0.08] text-[#6ec3d9]"
-                                      : "border-white/10 text-white/30 line-through"
-                                  }`}
-                                >
-                                  {label}
-                                </span>
-                              ))}
-                            </div>
-                          </div>
-                          <div className="min-w-0 flex-1">
-                            <FotoCarousel fotos={info.fotos} categoria={cat} />
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
+                <HotelExemplosPropriedades categoriaAtiva={categoriaHotel} />
               </div>
             )}
             {opcaoAberta.key === "transporte" && (

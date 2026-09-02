@@ -8,6 +8,7 @@ import { PriceCalculator } from "../components/PriceCalculator";
 import { TransportePrivadoCalculator } from "../components/TransportePrivadoCalculator";
 import { useCambioUSD, brlParaUSDLabel, formatBRL, formatUSD } from "../hooks/useCambioUSD";
 import { CambioLabel } from "../components/CambioLabel";
+import { HotelExemplosPropriedades } from "../components/CustomPackageCard";
 
 const display = Bodoni_Moda({
   subsets: ["latin"],
@@ -114,9 +115,9 @@ export default function ProdutosPage() {
   const [guiaModalOpen, setGuiaModalOpen] = useState(false);
   const [servicosModalOpen, setServicosModalOpen] = useState(false);
   const [transporteModalOpen, setTransporteModalOpen] = useState(false);
-  // Quando aberto a partir do card "Hoteis", a Viagem Personalizada abre
-  // ja focada no popup de detalhes do Hotel (categorias/exemplos).
-  const [viagemModalFoco, setViagemModalFoco] = useState<"hotel" | null>(null);
+  // Hoteis abre um popup avulso e leve com os exemplos de propriedade por
+  // categoria — nao carrega a Viagem Personalizada (iframe) atras dele.
+  const [hoteisModalOpen, setHoteisModalOpen] = useState(false);
 
   useEffect(() => {
     if (
@@ -126,7 +127,8 @@ export default function ProdutosPage() {
       !passagensModalOpen &&
       !guiaModalOpen &&
       !servicosModalOpen &&
-      !transporteModalOpen
+      !transporteModalOpen &&
+      !hoteisModalOpen
     )
       return;
 
@@ -141,6 +143,7 @@ export default function ProdutosPage() {
         setGuiaModalOpen(false);
         setServicosModalOpen(false);
         setTransporteModalOpen(false);
+        setHoteisModalOpen(false);
       }
     };
     window.addEventListener("keydown", handleKeyDown);
@@ -157,6 +160,7 @@ export default function ProdutosPage() {
     guiaModalOpen,
     servicosModalOpen,
     transporteModalOpen,
+    hoteisModalOpen,
   ]);
 
   // Entrada direta (CTA de cada produto) — vai direto para a qualificação,
@@ -290,10 +294,7 @@ export default function ProdutosPage() {
               />
               <ProductSelectorCard
                 href="/viagem-personalizada"
-                onClick={() => {
-                  setViagemModalFoco(null);
-                  setViagemModalOpen(true);
-                }}
+                onClick={() => setViagemModalOpen(true)}
                 icon="/images/produtos/viagem-personalizada-icone-v2.png"
                 iconWidth={1254}
                 iconHeight={1254}
@@ -322,10 +323,7 @@ export default function ProdutosPage() {
               />
               <ProductSelectorCard
                 href="/viagem-personalizada?abrir=hotel"
-                onClick={() => {
-                  setViagemModalFoco("hotel");
-                  setViagemModalOpen(true);
-                }}
+                onClick={() => setHoteisModalOpen(true)}
                 icon="/images/produtos/hoteis.png"
                 iconWidth={435}
                 iconHeight={366}
@@ -630,7 +628,7 @@ export default function ProdutosPage() {
               </div>
             </div>
             <iframe
-              src={`/viagem-personalizada${viagemModalFoco ? `?abrir=${viagemModalFoco}` : ""}`}
+              src="/viagem-personalizada"
               title="Configurador completo de Viagem Personalizada"
               className="h-full w-full border-0 pt-14"
             />
@@ -922,6 +920,47 @@ export default function ProdutosPage() {
       {/* ── TRANSPORTE PRIVADO — CALCULADORA ── */}
       {transporteModalOpen && (
         <TransportePrivadoCalculator onClose={() => setTransporteModalOpen(false)} />
+      )}
+
+      {hoteisModalOpen && (
+        <div
+          className="fixed inset-0 z-[90] flex items-end justify-center bg-black/85 p-0 backdrop-blur-sm md:items-center md:p-6"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="hoteis-modal-title"
+          onClick={() => setHoteisModalOpen(false)}
+        >
+          <div
+            className="relative max-h-[92vh] w-full max-w-5xl overflow-y-auto rounded-t-3xl border border-black/10 bg-white shadow-2xl md:max-h-[88vh] md:rounded-3xl"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <div className="sticky top-0 z-20 flex h-14 items-center justify-between border-b border-black/10 bg-white/90 px-4 backdrop-blur-xl md:px-6">
+              <p
+                id="hoteis-modal-title"
+                className={`${display.className} text-lg font-medium text-black md:text-xl`}
+              >
+                Hotéis
+              </p>
+              <button
+                type="button"
+                onClick={() => setHoteisModalOpen(false)}
+                aria-label="Fechar Hotéis"
+                className="flex h-9 w-9 items-center justify-center rounded-full border border-black/15 text-2xl leading-none text-black/65 transition hover:border-black/40 hover:text-black"
+              >
+                ×
+              </button>
+            </div>
+            <div className="p-5 md:p-8">
+              <p className="max-w-2xl text-sm leading-relaxed text-black/60">
+                Curadoria e reserva de hotéis escolhidos pelo perfil e pela logística da sua
+                viagem — veja exemplos de propriedades por categoria.
+              </p>
+              <div className="mt-6">
+                <HotelExemplosPropriedades light />
+              </div>
+            </div>
+          </div>
+        </div>
       )}
 
       <section aria-label="Por que escolher a Ajisai" className="border-t border-black/10 bg-white">
