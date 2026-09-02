@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { Bodoni_Moda } from "next/font/google";
 import { createPortal } from "react-dom";
-import { useEffect, useMemo, useState, type FormEvent } from "react";
+import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
 import { useCart } from "./CartContext";
 import { useCambioUSD, brlParaUSDLabel, formatBRL, formatUSD } from "../hooks/useCambioUSD";
 import { CambioLabel } from "./CambioLabel";
@@ -81,6 +81,67 @@ function IconX({ className }: { className?: string }) {
       <line x1="5" y1="5" x2="19" y2="19" />
       <line x1="19" y1="5" x2="5" y2="19" />
     </svg>
+  );
+}
+
+// Carrossel horizontal de fotos por categoria de hotel, no popup "Ver
+// detalhes" do Hotel. Sem foto ainda (info.fotos vazio) -> mostra
+// placeholders com o nome da categoria, ate as fotos reais entrarem.
+function FotoCarousel({ fotos, categoria }: { fotos: string[]; categoria: string }) {
+  const trilhoRef = useRef<HTMLDivElement>(null);
+
+  function mover(direcao: -1 | 1) {
+    const el = trilhoRef.current;
+    if (!el) return;
+    el.scrollBy({ left: direcao * (el.clientWidth * 0.85), behavior: "smooth" });
+  }
+
+  const slots = fotos.length > 0 ? fotos : Array.from({ length: 5 });
+
+  return (
+    <div className="group/carousel relative">
+      <div
+        ref={trilhoRef}
+        className="flex gap-2.5 overflow-x-auto scroll-smooth pb-1 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
+      >
+        {slots.map((foto, i) =>
+          typeof foto === "string" ? (
+            <div
+              key={foto}
+              className="relative aspect-[4/3] w-[220px] shrink-0 snap-start overflow-hidden rounded-xl border border-white/10 bg-black"
+            >
+              <Image src={foto} alt={`${categoria} — exemplo ${i + 1}`} fill sizes="220px" className="object-cover" />
+            </div>
+          ) : (
+            <div
+              key={i}
+              className="flex aspect-[4/3] w-[220px] shrink-0 snap-start flex-col items-center justify-center gap-1.5 rounded-xl border border-dashed border-white/15 bg-white/[0.03] text-center"
+            >
+              <span className="text-xl opacity-40">📷</span>
+              <span className="px-4 text-[10px] uppercase tracking-[0.1em] text-white/30">
+                Foto em breve — {categoria}
+              </span>
+            </div>
+          ),
+        )}
+      </div>
+      <button
+        type="button"
+        onClick={() => mover(-1)}
+        aria-label="Fotos anteriores"
+        className="absolute left-1 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full border border-white/15 bg-black/70 text-white/70 opacity-0 backdrop-blur transition hover:text-white group-hover/carousel:opacity-100"
+      >
+        ‹
+      </button>
+      <button
+        type="button"
+        onClick={() => mover(1)}
+        aria-label="Proximas fotos"
+        className="absolute right-1 top-1/2 flex h-8 w-8 -translate-y-1/2 items-center justify-center rounded-full border border-white/15 bg-black/70 text-white/70 opacity-0 backdrop-blur transition hover:text-white group-hover/carousel:opacity-100"
+      >
+        ›
+      </button>
+    </div>
   );
 }
 
@@ -166,6 +227,10 @@ const EXEMPLOS_HOTEIS: Record<
     tipoQuarto: string;
     amenidades: { piscina: boolean; academia: boolean; sauna: boolean; restaurante: boolean };
     exemplos: string[];
+    // Fotos reais de cada categoria (5 por categoria, no carrossel do
+    // popup) — pendente: aguardando material fornecido pela Ajisai pra
+    // nao usar fotos de propriedades sem autorizacao. Vazio = placeholder.
+    fotos: string[];
   }
 > = {
   "3 estrelas": {
@@ -173,24 +238,28 @@ const EXEMPLOS_HOTEIS: Record<
     tipoQuarto: "Quarto padrão compacto — cama + escrivaninha, banheiro integrado",
     amenidades: { piscina: false, academia: false, sauna: false, restaurante: false },
     exemplos: ["APA Hotel", "Mitsui Garden Hotel", "Richmond Hotel"],
+    fotos: [],
   },
   "4 estrelas": {
     m2Medio: "~30 m²",
     tipoQuarto: "Quarto standard/superior — mais espaço de estar, amenidades de mid-range",
     amenidades: { piscina: false, academia: true, sauna: false, restaurante: true },
     exemplos: ["Hotel Gracery", "Shinagawa Prince Hotel", "Hilton Tokyo"],
+    fotos: [],
   },
   "5 estrelas": {
     m2Medio: "~36 m²+",
     tipoQuarto: "Quarto de luxo/suíte — enxoval premium, área de estar separada",
     amenidades: { piscina: true, academia: true, sauna: true, restaurante: true },
     exemplos: ["Park Hyatt Tokyo", "Conrad Tokyo", "The Ritz-Carlton Tokyo"],
+    fotos: [],
   },
   "Elite": {
     m2Medio: "~70–80 m²+",
     tipoQuarto: "Suíte ultra-luxo — living room, banheira separada, vista panorâmica",
     amenidades: { piscina: true, academia: true, sauna: true, restaurante: true },
     exemplos: ["Aman Tokyo", "Janu Tokyo", "Mandarin Oriental Tokyo"],
+    fotos: [],
   },
 };
 
@@ -1178,7 +1247,9 @@ export function CustomPackageCard({
           onClick={() => setOpcaoAberta(null)}
         >
           <div
-            className="relative w-full max-w-md rounded-[24px] border border-white/10 bg-[#0a0a0a] p-6 text-white"
+            className={`relative w-full rounded-[24px] border border-white/10 bg-[#0a0a0a] p-6 text-white ${
+              opcaoAberta.key === "hotel" ? "max-w-5xl max-h-[88vh] overflow-y-auto" : "max-w-md"
+            }`}
             onClick={(e) => e.stopPropagation()}
           >
             <button
@@ -1237,11 +1308,11 @@ export function CustomPackageCard({
               </div>
             )}
             {opcaoAberta.key === "hotel" && (
-              <div className="mt-3">
-                <p className="text-[10px] uppercase tracking-[0.2em] text-white/40">
+              <div className="mt-4">
+                <p className="text-[11px] uppercase tracking-[0.2em] text-white/40">
                   Exemplos de Propriedades
                 </p>
-                <div className="mt-2.5 grid grid-cols-1 gap-2.5 sm:grid-cols-2">
+                <div className="mt-3 space-y-4">
                   {CATEGORIAS_HOTEL.map((cat) => {
                     const info = EXEMPLOS_HOTEIS[cat];
                     const ativo = cat === categoriaHotel;
@@ -1254,33 +1325,45 @@ export function CustomPackageCard({
                     return (
                       <div
                         key={cat}
-                        className={`rounded-xl border p-3 ${
+                        className={`rounded-2xl border p-4 md:p-5 ${
                           ativo ? "border-[#2f80c9] bg-[#2f80c9]/[0.06]" : "border-white/10 bg-white/[0.02]"
                         }`}
                       >
-                        <p className="text-xs font-semibold uppercase tracking-[0.08em] text-white">
-                          {cat}
-                        </p>
-                        <p className="mt-1 text-[11px] text-white/50">{info.exemplos.join(" · ")}</p>
-                        <p className="mt-2 text-[11px] text-white/65">
-                          <span className="text-white/40">m² médio:</span> {info.m2Medio}
-                        </p>
-                        <p className="mt-0.5 text-[11px] text-white/65">
-                          <span className="text-white/40">Quarto:</span> {info.tipoQuarto}
-                        </p>
-                        <div className="mt-2 flex flex-wrap gap-1.5">
-                          {amenidadeLabel.map(([key, label]) => (
-                            <span
-                              key={key}
-                              className={`rounded-full border px-2 py-0.5 text-[9px] uppercase tracking-[0.05em] ${
-                                info.amenidades[key]
-                                  ? "border-[#6ec3d9]/40 bg-[#6ec3d9]/[0.08] text-[#6ec3d9]"
-                                  : "border-white/10 text-white/30 line-through"
-                              }`}
-                            >
-                              {label}
-                            </span>
-                          ))}
+                        <div className="flex flex-col gap-4 md:flex-row md:items-start">
+                          <div className="md:w-[240px] md:shrink-0">
+                            <p className="text-base font-semibold uppercase tracking-[0.08em] text-white">
+                              {cat}
+                              {ativo && (
+                                <span className="ml-2 rounded-full bg-[#2f80c9]/20 px-2 py-0.5 text-[9px] font-medium normal-case tracking-normal text-[#6ec3d9]">
+                                  selecionado
+                                </span>
+                              )}
+                            </p>
+                            <p className="mt-1.5 text-xs text-white/55">{info.exemplos.join(" · ")}</p>
+                            <p className="mt-3 text-xs text-white/70">
+                              <span className="text-white/40">m² médio:</span> {info.m2Medio}
+                            </p>
+                            <p className="mt-1 text-xs text-white/70">
+                              <span className="text-white/40">Quarto:</span> {info.tipoQuarto}
+                            </p>
+                            <div className="mt-3 flex flex-wrap gap-1.5">
+                              {amenidadeLabel.map(([key, label]) => (
+                                <span
+                                  key={key}
+                                  className={`rounded-full border px-2 py-0.5 text-[9px] uppercase tracking-[0.05em] ${
+                                    info.amenidades[key]
+                                      ? "border-[#6ec3d9]/40 bg-[#6ec3d9]/[0.08] text-[#6ec3d9]"
+                                      : "border-white/10 text-white/30 line-through"
+                                  }`}
+                                >
+                                  {label}
+                                </span>
+                              ))}
+                            </div>
+                          </div>
+                          <div className="min-w-0 flex-1">
+                            <FotoCarousel fotos={info.fotos} categoria={cat} />
+                          </div>
                         </div>
                       </div>
                     );
