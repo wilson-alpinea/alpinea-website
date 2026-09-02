@@ -139,21 +139,21 @@ export default function PassagensAereasPage() {
               </h2>
 
               <div className="mt-8">
-                <p className="text-center text-[11px] uppercase tracking-[0.15em] text-white/40">
+                <p className="text-center text-xs font-semibold uppercase tracking-[0.2em] text-[#6ec3d9]">
                   Parceiros homologados — Brasil ↔ Japão
                 </p>
                 <div className="mx-auto mt-4 grid max-w-3xl grid-cols-2 gap-4 sm:grid-cols-4">
                   {COMPANHIAS_HOMOLOGADAS.map((cia) => (
                     <div
                       key={cia.nome}
-                      className="flex flex-col items-center justify-center gap-2 rounded-2xl bg-white/[0.03] px-4 py-6 text-center"
+                      className="group flex flex-col items-center justify-center gap-2 rounded-2xl border border-white/5 bg-white/[0.03] px-4 py-6 text-center transition duration-300 hover:-translate-y-1 hover:border-[#6ec3d9]/30 hover:bg-white/[0.07] hover:shadow-[0_16px_40px_-16px_rgba(110,195,217,0.35)]"
                     >
                       <Image
                         src={cia.icone}
                         alt={`${cia.nome} (${cia.codigo})`}
                         width={160}
                         height={160}
-                        className="h-28 w-28 object-contain"
+                        className="h-28 w-28 object-contain transition duration-300 group-hover:scale-105"
                       />
                       <span className="text-xs font-medium text-white">{cia.nome}</span>
                     </div>
@@ -162,21 +162,21 @@ export default function PassagensAereasPage() {
               </div>
 
               <div className="mt-8">
-                <p className="text-center text-[11px] uppercase tracking-[0.15em] text-white/40">
+                <p className="text-center text-xs font-semibold uppercase tracking-[0.2em] text-[#6ec3d9]">
                   Parceiros sazonais
                 </p>
                 <div className="mx-auto mt-4 grid max-w-2xl grid-cols-3 gap-4">
                   {COMPANHIAS_SAZONAIS.map((cia) => (
                     <div
                       key={cia.nome}
-                      className="flex flex-col items-center justify-center gap-2 rounded-2xl bg-white/[0.03] px-4 py-6 text-center"
+                      className="group flex flex-col items-center justify-center gap-2 rounded-2xl border border-white/5 bg-white/[0.03] px-4 py-6 text-center transition duration-300 hover:-translate-y-1 hover:border-[#6ec3d9]/30 hover:bg-white/[0.07] hover:shadow-[0_16px_40px_-16px_rgba(110,195,217,0.35)]"
                     >
                       <Image
                         src={cia.icone}
                         alt={`${cia.nome} (${cia.codigo})`}
                         width={160}
                         height={160}
-                        className="h-28 w-28 object-contain"
+                        className="h-28 w-28 object-contain transition duration-300 group-hover:scale-105"
                       />
                       <span className="text-xs font-medium text-white">{cia.nome}</span>
                     </div>

@@ -15,7 +15,12 @@ export const metadata = {
     "Crie uma viagem ao Japão do zero, com roteiro, serviços e organização inteiramente sob medida.",
 };
 
-export default function ViagemPersonalizadaPage() {
+export default function ViagemPersonalizadaPage({
+  searchParams,
+}: {
+  searchParams?: { abrir?: string };
+}) {
+  const focoInicial = searchParams?.abrir === "hotel" ? "hotel" : undefined;
   return (
     <CartProvider>
       <main className="min-h-screen bg-black pb-16 text-white">
@@ -47,7 +52,7 @@ export default function ViagemPersonalizadaPage() {
               </p>
             </div>
 
-            <CustomPackageCard />
+            <CustomPackageCard focoInicial={focoInicial} />
           </div>
         </section>
       </main>

@@ -114,6 +114,9 @@ export default function ProdutosPage() {
   const [guiaModalOpen, setGuiaModalOpen] = useState(false);
   const [servicosModalOpen, setServicosModalOpen] = useState(false);
   const [transporteModalOpen, setTransporteModalOpen] = useState(false);
+  // Quando aberto a partir do card "Hoteis", a Viagem Personalizada abre
+  // ja focada no popup de detalhes do Hotel (categorias/exemplos).
+  const [viagemModalFoco, setViagemModalFoco] = useState<"hotel" | null>(null);
 
   useEffect(() => {
     if (
@@ -287,7 +290,10 @@ export default function ProdutosPage() {
               />
               <ProductSelectorCard
                 href="/viagem-personalizada"
-                onClick={() => setViagemModalOpen(true)}
+                onClick={() => {
+                  setViagemModalFoco(null);
+                  setViagemModalOpen(true);
+                }}
                 icon="/images/produtos/viagem-personalizada-icone-v2.png"
                 iconWidth={1254}
                 iconHeight={1254}
@@ -315,8 +321,11 @@ export default function ProdutosPage() {
                 className="lg:col-span-2"
               />
               <ProductSelectorCard
-                href="/viagem-personalizada"
-                onClick={() => setViagemModalOpen(true)}
+                href="/viagem-personalizada?abrir=hotel"
+                onClick={() => {
+                  setViagemModalFoco("hotel");
+                  setViagemModalOpen(true);
+                }}
                 icon="/images/produtos/hoteis.png"
                 iconWidth={435}
                 iconHeight={366}
@@ -621,7 +630,7 @@ export default function ProdutosPage() {
               </div>
             </div>
             <iframe
-              src="/viagem-personalizada"
+              src={`/viagem-personalizada${viagemModalFoco ? `?abrir=${viagemModalFoco}` : ""}`}
               title="Configurador completo de Viagem Personalizada"
               className="h-full w-full border-0 pt-14"
             />

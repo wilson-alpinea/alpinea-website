@@ -602,7 +602,14 @@ export function NumberStepper({
   );
 }
 
-export function CustomPackageCard() {
+export function CustomPackageCard({
+  focoInicial,
+}: {
+  // Abre direto o popup "Ver detalhes" de um item ao montar — usado pelo
+  // card "Hoteis" em /produtos pra levar direto pros exemplos de
+  // propriedade por categoria (Elite etc.), sem precisar navegar/clicar.
+  focoInicial?: "hotel";
+} = {}) {
   const { addItem } = useCart();
   const cambio = useCambioUSD();
   const [data, setData] = useState("");
@@ -633,7 +640,14 @@ export function CustomPackageCard() {
     useState<(typeof JR_PASS_DIAS_OPCOES)[number]>(7);
   const [mounted, setMounted] = useState(false);
 
-  useEffect(() => setMounted(true), []);
+  useEffect(() => {
+    if (focoInicial === "hotel") {
+      const item = OPCOES.find((o) => o.key === "hotel");
+      if (item) setOpcaoAberta(item);
+    }
+    setMounted(true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Média dos multiplicadores de cidade das cidades selecionadas em
   // "Destinos" — 1 (sem ajuste) enquanto nenhuma cidade estiver marcada.
