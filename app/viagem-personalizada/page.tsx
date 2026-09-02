@@ -15,12 +15,15 @@ export const metadata = {
     "Crie uma viagem ao Japão do zero, com roteiro, serviços e organização inteiramente sob medida.",
 };
 
-export default function ViagemPersonalizadaPage({
+export default async function ViagemPersonalizadaPage({
   searchParams,
 }: {
-  searchParams?: { abrir?: string };
+  // Next 16: searchParams chega como Promise numa Server Component —
+  // precisa aguardar antes de ler, senao "?abrir=hotel" nunca eh lido.
+  searchParams?: Promise<{ abrir?: string }>;
 }) {
-  const focoInicial = searchParams?.abrir === "hotel" ? "hotel" : undefined;
+  const params = await searchParams;
+  const focoInicial = params?.abrir === "hotel" ? "hotel" : undefined;
   return (
     <CartProvider>
       <main className="min-h-screen bg-black pb-16 text-white">
