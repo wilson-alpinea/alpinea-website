@@ -375,7 +375,7 @@ export default function ProdutosPage() {
       {/* ── VÍDEO — EXPLICAÇÃO DOS PRODUTOS ── */}
       <section className="border-b border-black/10 bg-white px-6 py-16 md:px-16 md:py-24">
         <div className="mx-auto max-w-4xl text-center">
-          <p className="text-[10px] uppercase tracking-[0.2em] text-[#6ec3d9]">
+          <p className="text-[10px] uppercase tracking-[0.2em] text-[#1c6ea8]">
             Assista antes de escolher
           </p>
           <h2
@@ -420,7 +420,7 @@ export default function ProdutosPage() {
             </button>
         <div className="mx-auto grid max-w-6xl items-center gap-12 md:grid-cols-2">
           <div>
-            <p className="text-[10px] uppercase tracking-[0.2em] text-[#6ec3d9]">
+            <p className="text-[10px] uppercase tracking-[0.2em] text-[#1c6ea8]">
               Roteiro Personalizado
             </p>
             <h2
@@ -440,10 +440,10 @@ export default function ProdutosPage() {
                 <li
                   key={item}
                   className={`flex items-start gap-2.5 text-sm leading-6 ${
-                    item.startsWith("Nós planejamos") ? "font-medium text-[#6ec3d9]" : "text-black/65"
+                    item.startsWith("Nós planejamos") ? "font-medium text-[#1c6ea8]" : "text-black/65"
                   }`}
                 >
-                  <IconCheck className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[#6ec3d9]" />
+                  <IconCheck className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[#1c6ea8]" />
                   {item}
                 </li>
               ))}
@@ -456,7 +456,7 @@ export default function ProdutosPage() {
                   {precoProdutoLabel(PRODUTOS.roteiro, false)}
                 </p>
                 {precoBRLProdutoLabel(PRODUTOS.roteiro) && (
-                  <p className="mt-1 text-lg font-semibold leading-none text-[#9fd4ee]">
+                  <p className="mt-1 text-lg font-semibold leading-none text-[#2f74ab]">
                     {precoBRLProdutoLabel(PRODUTOS.roteiro)}
                   </p>
                 )}
@@ -568,7 +568,7 @@ export default function ProdutosPage() {
               <div className="flex items-center gap-3">
                 <Link
                   href="/pacotes"
-                  className="hidden text-[10px] font-semibold uppercase tracking-[0.15em] text-[#6ec3d9] transition hover:text-black sm:block"
+                  className="hidden text-[10px] font-semibold uppercase tracking-[0.15em] text-[#1c6ea8] transition hover:text-black sm:block"
                 >
                   Abrir página completa
                 </Link>
@@ -613,7 +613,7 @@ export default function ProdutosPage() {
               <div className="flex items-center gap-3">
                 <Link
                   href="/viagem-personalizada"
-                  className="hidden text-[10px] font-semibold uppercase tracking-[0.15em] text-[#6ec3d9] transition hover:text-black sm:block"
+                  className="hidden text-[10px] font-semibold uppercase tracking-[0.15em] text-[#1c6ea8] transition hover:text-black sm:block"
                 >
                   Abrir página completa
                 </Link>
@@ -658,7 +658,7 @@ export default function ProdutosPage() {
               <div className="flex items-center gap-3">
                 <Link
                   href="/passagens"
-                  className="hidden text-[10px] font-semibold uppercase tracking-[0.15em] text-[#6ec3d9] transition hover:text-black sm:block"
+                  className="hidden text-[10px] font-semibold uppercase tracking-[0.15em] text-[#1c6ea8] transition hover:text-black sm:block"
                 >
                   Abrir página completa
                 </Link>
@@ -703,7 +703,7 @@ export default function ProdutosPage() {
               <div className="flex items-center gap-3">
                 <Link
                   href="/guia-turistico"
-                  className="hidden text-[10px] font-semibold uppercase tracking-[0.15em] text-[#6ec3d9] transition hover:text-black sm:block"
+                  className="hidden text-[10px] font-semibold uppercase tracking-[0.15em] text-[#1c6ea8] transition hover:text-black sm:block"
                 >
                   Abrir página completa
                 </Link>
@@ -748,7 +748,7 @@ export default function ProdutosPage() {
               <div className="flex items-center gap-3">
                 <Link
                   href="/servicos-adicionais"
-                  className="hidden text-[10px] font-semibold uppercase tracking-[0.15em] text-[#6ec3d9] transition hover:text-black sm:block"
+                  className="hidden text-[10px] font-semibold uppercase tracking-[0.15em] text-[#1c6ea8] transition hover:text-black sm:block"
                 >
                   Abrir página completa
                 </Link>
@@ -818,7 +818,7 @@ export default function ProdutosPage() {
                 </div>
               )}
 
-              <p className="text-center text-[10px] uppercase tracking-[0.2em] text-[#6ec3d9]">
+              <p className="text-center text-[10px] uppercase tracking-[0.2em] text-[#1c6ea8]">
                 Fale com a Ajisai
               </p>
               <h2
@@ -1152,7 +1152,7 @@ function DemoVideo({
           <source src={src} type="video/mp4" />
         </video>
       </div>
-      <p className="mt-3 text-center text-[10px] uppercase tracking-[0.2em] text-[#6ec3d9]">
+      <p className="mt-3 text-center text-[10px] uppercase tracking-[0.2em] text-[#1c6ea8]">
         {label}
       </p>
       {descricao && (
