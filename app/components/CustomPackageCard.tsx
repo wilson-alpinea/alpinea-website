@@ -1878,27 +1878,18 @@ export function CustomPackageCard({
               </p>
             </div>
 
-            {/* Extrato item a item — cada serviço selecionado com seu
-                próprio valor, igual a uma fatura, em vez de só o total. */}
+            {/* Extrato item a item — cada serviço incluído, sem valor
+                individual (o cliente só vê o preço final, no rodapé). */}
             <div className="divide-y divide-black/[0.06] px-6">
-              {itensSelecionados.map((opcao) => {
-                const valor = opcao.calcPreco(precoCtx);
-                return (
-                  <div key={opcao.key} className="flex items-center justify-between gap-4 py-3">
-                    <span className="flex min-w-0 items-center gap-2 text-sm text-[#0A2540]">
-                      <span className="shrink-0">{opcao.icone}</span>
-                      <span className="truncate">{descricaoItemFatura(opcao)}</span>
-                    </span>
-                    <span
-                      className={`shrink-0 text-sm font-medium tabular-nums ${
-                        valor > 0 ? "text-[#0A2540]" : "text-[#0A2540]/40"
-                      }`}
-                    >
-                      {valor > 0 ? brlParaUSDLabel(valor, cambio) : "Sob consulta"}
-                    </span>
-                  </div>
-                );
-              })}
+              {itensSelecionados.map((opcao) => (
+                <div key={opcao.key} className="flex items-center justify-between gap-4 py-3">
+                  <span className="flex min-w-0 items-center gap-2 text-sm text-[#0A2540]">
+                    <span className="shrink-0">{opcao.icone}</span>
+                    <span className="truncate">{descricaoItemFatura(opcao)}</span>
+                  </span>
+                  <IconCheck className="h-4 w-4 shrink-0 text-[#2f80c9]" />
+                </div>
+              ))}
               {taxaGrupo > 0 && (
                 <div className="flex items-center justify-between gap-4 py-3">
                   <span className="text-sm text-[#0A2540]/70">
@@ -1906,9 +1897,7 @@ export function CustomPackageCard({
                     {passageirosExtras === 1 ? "passageiro" : "passageiros"} acima de{" "}
                     {LIMITE_PESSOAS_SEM_TAXA})
                   </span>
-                  <span className="shrink-0 text-sm font-medium tabular-nums text-[#0A2540]">
-                    {brlParaUSDLabel(taxaGrupo, cambio)}
-                  </span>
+                  <IconCheck className="h-4 w-4 shrink-0 text-[#2f80c9]" />
                 </div>
               )}
             </div>
