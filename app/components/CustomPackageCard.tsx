@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { Bodoni_Moda } from "next/font/google";
 import { createPortal } from "react-dom";
-import { useEffect, useMemo, useRef, useState, type FormEvent } from "react";
+import { useEffect, useMemo, useRef, useState, type FormEvent, type ReactNode } from "react";
 import { useCart } from "./CartContext";
 import { useCambioUSD, brlParaUSDLabel, formatBRL, formatUSD } from "../hooks/useCambioUSD";
 import { CambioLabel } from "./CambioLabel";
@@ -297,6 +297,25 @@ export const TIPOS_QUARTO = [
   "Duplo (compartilhado)",
   "Triplo",
 ] as const;
+
+// Quantas pessoas cabem em cada tipo de quarto — usado só para exibir
+// quantos quartos o grupo vai precisar (o cálculo de preço em si usa
+// ctx.pessoas diretamente, ver FATOR_QUARTO/calcPreco do hotel).
+export const CAPACIDADE_QUARTO: Record<(typeof TIPOS_QUARTO)[number], number> = {
+  Individual: 1,
+  "Duplo (casal)": 2,
+  "Duplo (compartilhado)": 2,
+  Triplo: 3,
+};
+
+// Rótulo mais descritivo pro <select> de "Configuração dos quartos" —
+// deixa a capacidade explícita, pra não ficar ambíguo com "pessoas".
+export const TIPO_QUARTO_LABEL: Record<(typeof TIPOS_QUARTO)[number], string> = {
+  Individual: "Individual — 1 pessoa por quarto",
+  "Duplo (casal)": "Duplo (casal) — 2 pessoas, cama de casal",
+  "Duplo (compartilhado)": "Duplo (compartilhado) — 2 pessoas, camas separadas",
+  Triplo: "Triplo — 3 pessoas por quarto",
+};
 
 type PrecoCtx = {
   dias: number;
@@ -815,7 +834,9 @@ const OPCOES = [
   {
     key: "aereo",
     categoria: "essencial",
+    subcategoria: undefined,
     label: "Aéreo",
+    temDetalhes: true,
     icone: "✈️",
     descricao: "Passagem internacional ida e volta — Economy, Business ou First Class",
     detalhe:
@@ -833,7 +854,9 @@ const OPCOES = [
   {
     key: "hotel",
     categoria: "essencial",
+    subcategoria: undefined,
     label: "Hotel",
+    temDetalhes: true,
     icone: "🏨",
     descricao: "Hospedagem selecionada durante toda a viagem",
     detalhe:
@@ -843,13 +866,16 @@ const OPCOES = [
         DIARIA_HOTEL[ctx.categoriaHotel] *
           ctx.dias *
           FATOR_QUARTO[ctx.tipoQuarto] *
-          ctx.multiplicadorCidadeHotel,
+          ctx.multiplicadorCidadeHotel *
+          ctx.pessoas,
       ),
   },
   {
     key: "transporte",
     categoria: "essencial",
-    label: "Transporte Privado",
+    subcategoria: undefined,
+    label: "Transporte privado durante o roteiro",
+    temDetalhes: true,
     icone: "🚐",
     descricao: "Transfers e deslocamentos do roteiro",
     detalhe:
@@ -859,7 +885,9 @@ const OPCOES = [
   {
     key: "guia",
     categoria: "essencial",
+    subcategoria: undefined,
     label: "Guia",
+    temDetalhes: false,
     icone: "🧭",
     descricao: `Guia turístico acompanhando o roteiro — US$ ${DIARIA_GUIA_USD}/dia a cada ${GUIA_TAMANHO_GRUPO} pessoas`,
     detalhe:
@@ -875,9 +903,11 @@ const OPCOES = [
   {
     key: "jrpass",
     categoria: "opcional",
+    subcategoria: "Transporte e conveniência",
     label: "JR Pass",
+    temDetalhes: true,
     icone: "🚄",
-    descricao: "Passe ferroviário com deslocamentos ilimitados de trem-bala — escolha 7, 14 ou 21 dias em Ver detalhes",
+    descricao: "Passe ferroviário com deslocamentos ilimitados de trem-bala — escolha 7, 14 ou 21 dias em Saiba mais",
     detalhe:
       "Passe ferroviário JR, com deslocamentos ilimitados nas linhas JR (incluindo a maioria dos trens-bala/Shinkansen) — vale a pena principalmente em roteiros com várias cidades. Vendido em faixas fixas de dias corridos de validade (não por diária do roteiro): escolha abaixo a duração que melhor cobre os deslocamentos do seu grupo.",
     calcPreco: (ctx: PrecoCtx) =>
@@ -886,7 +916,9 @@ const OPCOES = [
   {
     key: "seguro",
     categoria: "opcional",
+    subcategoria: "Assistência",
     label: "Seguro Viagem",
+    temDetalhes: true,
     icone: "🛡️",
     descricao: "Cobertura médica e assistência durante toda a viagem",
     detalhe:
@@ -896,7 +928,9 @@ const OPCOES = [
   {
     key: "cambio",
     categoria: "opcional",
+    subcategoria: "Assistência",
     label: "Câmbio no Brasil",
+    temDetalhes: false,
     icone: "💴",
     descricao: "Retirada de ienes com câmbio comercial antes do embarque",
     detalhe:
@@ -906,7 +940,9 @@ const OPCOES = [
   {
     key: "motorista",
     categoria: "opcional",
-    label: "Motorista Privado",
+    subcategoria: "Transporte e conveniência",
+    label: "Motorista à disposição",
+    temDetalhes: true,
     icone: "🚗",
     descricao: `Traslados exclusivos com motorista particular — US$ ${DIARIA_MOTORISTA_PRIVADO_USD}/dia para até ${MOTORISTA_TAMANHO_GRUPO} pessoas`,
     detalhe:
@@ -922,7 +958,9 @@ const OPCOES = [
   {
     key: "reservasRestaurantes",
     categoria: "opcional",
+    subcategoria: "Experiências e reservas",
     label: "Reservas de Restaurantes",
+    temDetalhes: false,
     icone: "🍽️",
     descricao: "Reservas em restaurantes concorridos durante a viagem",
     detalhe:
@@ -932,7 +970,9 @@ const OPCOES = [
   {
     key: "restaurantesHighEnd",
     categoria: "opcional",
+    subcategoria: "Experiências e reservas",
     label: "Reserva de Restaurantes High-End",
+    temDetalhes: true,
     icone: "🍾",
     descricao: `${RESTAURANTES_HIGHEND_QTD} restaurantes Michelin/Tabelog Awards — US$ ${PRECO_RESTAURANTES_HIGHEND_USD} até ${RESTAURANTES_HIGHEND_LIMITE_PESSOAS} pessoas`,
     detalhe:
@@ -942,7 +982,9 @@ const OPCOES = [
   {
     key: "concierge",
     categoria: "opcional",
+    subcategoria: "Assistência",
     label: "Concierge Durante a Viagem",
+    temDetalhes: false,
     icone: "🛎️",
     descricao: "Suporte dedicado para pedidos e imprevistos no roteiro",
     detalhe:
@@ -952,7 +994,9 @@ const OPCOES = [
   {
     key: "experienciasSobMedida",
     categoria: "opcional",
+    subcategoria: "Experiências e reservas",
     label: "Experiências Sob Medida",
+    temDetalhes: false,
     icone: "✨",
     descricao: "Ingressos especiais, eventos sazonais e atividades personalizadas",
     detalhe:
@@ -962,7 +1006,9 @@ const OPCOES = [
   {
     key: "roteiro",
     categoria: "essencial",
+    subcategoria: undefined,
     label: "Roteiro Personalizado",
+    temDetalhes: true,
     icone: "📱",
     descricao: "Painel digital Ajisai com o roteiro sob medida do seu grupo",
     detalhe:
@@ -973,7 +1019,9 @@ const OPCOES = [
   {
     key: "transferOnibus",
     categoria: "opcional",
+    subcategoria: "Transporte e conveniência",
     label: "Transfer de Ônibus Aeroporto ↔ Centro de Tóquio",
+    temDetalhes: false,
     icone: "🚌",
     descricao: "Aeroporto → Centro de Tóquio (chegada) e Centro de Tóquio → Aeroporto (saída)",
     detalhe:
@@ -983,7 +1031,9 @@ const OPCOES = [
   {
     key: "wifi",
     categoria: "opcional",
+    subcategoria: "Transporte e conveniência",
     label: "Wi-fi",
+    temDetalhes: false,
     icone: "📶",
     descricao: "Conexão disponível durante todo o roteiro",
     detalhe:
@@ -994,7 +1044,9 @@ const OPCOES = [
   {
     key: "ingressos",
     categoria: "opcional",
+    subcategoria: "Experiências e reservas",
     label: "Ingressos para Atrações: Disney e Universal",
+    temDetalhes: false,
     icone: "🎟️",
     descricao: "Ingresso avulso, por pessoa",
     detalhe:
@@ -1016,26 +1068,26 @@ const ITENS_PADRAO: OpcaoKey[] = ["aereo", "hotel", "roteiro"];
 // Osaka, Kyoto e Hakone têm foto na biblioteca de imagens por enquanto; os
 // demais seguem com fundo sólido (só o nome) até você subir fotos reais.
 export const DESTINOS = [
-  { key: "tokyo", nome: "Tokyo", imagem: "/images/tokyo.jpg" },
-  { key: "kyoto", nome: "Kyoto", imagem: "/images/kyoto-maiko-street.png" },
-  { key: "osaka", nome: "Osaka", imagem: "/images/osaka-castle.png" },
-  { key: "hokkaido", nome: "Hokkaido (Sapporo)", imagem: "/images/sapporo.jpg" },
-  { key: "okinawa", nome: "Okinawa", imagem: "/images/okinawa.jpg" },
-  { key: "hiroshima", nome: "Hiroshima", imagem: "/images/hiroshima.jpg" },
-  { key: "nara", nome: "Nara", imagem: null },
-  { key: "hakone", nome: "Hakone", imagem: "/images/fuji.JPG" },
-  { key: "nikko", nome: "Nikko", imagem: "/images/nikko.jpg" },
-  { key: "kanazawa", nome: "Kanazawa", imagem: "/images/kanazawa.jpg" },
-  { key: "takayama", nome: "Takayama", imagem: "/images/takayama.jpg" },
-  { key: "kamakura", nome: "Kamakura", imagem: "/images/kamakura.jpg" },
-  { key: "nagoya", nome: "Nagoya", imagem: "/images/nagoya.webp" },
-  { key: "fukuoka", nome: "Fukuoka", imagem: "/images/fukuoka.jpg" },
-  { key: "kobe", nome: "Kobe", imagem: "/images/kobe.jpg" },
-  { key: "yokohama", nome: "Yokohama", imagem: "/images/yokohama.jpg" },
-  { key: "miyajima", nome: "Miyajima", imagem: "/images/miyajima.jpg" },
-  { key: "nagano", nome: "Nagano", imagem: "/images/nagano.webp" },
-  { key: "ishigaki", nome: "Ishigaki", imagem: "/images/ishigaki.jpg" },
-  { key: "yakushima", nome: "Yakushima", imagem: "/images/yakushima.jpg" },
+  { key: "tokyo", nome: "Tokyo", imagem: "/images/tokyo.jpg", principal: true },
+  { key: "kyoto", nome: "Kyoto", imagem: "/images/kyoto-maiko-street.png", principal: true },
+  { key: "osaka", nome: "Osaka", imagem: "/images/osaka-castle.png", principal: true },
+  { key: "hokkaido", nome: "Hokkaido (Sapporo)", imagem: "/images/sapporo.jpg", principal: false },
+  { key: "okinawa", nome: "Okinawa", imagem: "/images/okinawa.jpg", principal: false },
+  { key: "hiroshima", nome: "Hiroshima", imagem: "/images/hiroshima.jpg", principal: false },
+  { key: "nara", nome: "Nara", imagem: null, principal: false },
+  { key: "hakone", nome: "Hakone", imagem: "/images/fuji.JPG", principal: false },
+  { key: "nikko", nome: "Nikko", imagem: "/images/nikko.jpg", principal: false },
+  { key: "kanazawa", nome: "Kanazawa", imagem: "/images/kanazawa.jpg", principal: false },
+  { key: "takayama", nome: "Takayama", imagem: "/images/takayama.jpg", principal: false },
+  { key: "kamakura", nome: "Kamakura", imagem: "/images/kamakura.jpg", principal: false },
+  { key: "nagoya", nome: "Nagoya", imagem: "/images/nagoya.webp", principal: false },
+  { key: "fukuoka", nome: "Fukuoka", imagem: "/images/fukuoka.jpg", principal: false },
+  { key: "kobe", nome: "Kobe", imagem: "/images/kobe.jpg", principal: false },
+  { key: "yokohama", nome: "Yokohama", imagem: "/images/yokohama.jpg", principal: false },
+  { key: "miyajima", nome: "Miyajima", imagem: "/images/miyajima.jpg", principal: false },
+  { key: "nagano", nome: "Nagano", imagem: "/images/nagano.webp", principal: false },
+  { key: "ishigaki", nome: "Ishigaki", imagem: "/images/ishigaki.jpg", principal: false },
+  { key: "yakushima", nome: "Yakushima", imagem: "/images/yakushima.jpg", principal: false },
 ] as const;
 
 type DestinoKey = (typeof DESTINOS)[number]["key"];
@@ -1126,6 +1178,40 @@ export function NumberStepper({
   );
 }
 
+// Bloco numerado ("1. Sua viagem", "2. O que a Ajisai deve organizar?" etc.)
+// — dá a sensação de montar a viagem em etapas, sem virar um wizard que
+// troca de página (é só uma marcação visual dentro do mesmo formulário).
+function SecaoNumerada({
+  numero,
+  titulo,
+  subtitulo,
+  children,
+}: {
+  numero: number;
+  titulo: string;
+  subtitulo?: ReactNode;
+  children: ReactNode;
+}) {
+  return (
+    <div className="border-t border-black/10 pt-6 first:border-t-0 first:pt-0">
+      <div className="mb-4 flex items-baseline gap-3">
+        <span className={`${display.className} text-xl font-semibold leading-none text-[#2f80c9]`}>
+          {numero}
+        </span>
+        <div>
+          <h3 className="text-[13px] font-semibold uppercase tracking-[0.15em] text-[#0A2540]">
+            {titulo}
+          </h3>
+          {subtitulo && (
+            <p className="mt-0.5 text-xs font-light leading-5 text-[#0A2540]/50">{subtitulo}</p>
+          )}
+        </div>
+      </div>
+      {children}
+    </div>
+  );
+}
+
 export function CustomPackageCard({
   focoInicial,
 }: {
@@ -1154,6 +1240,10 @@ export function CustomPackageCard({
   const [destinosSelecionados, setDestinosSelecionados] = useState<Set<DestinoKey>>(
     () => new Set(),
   );
+  // Guarda a ordem de clique (Set não garante isso de forma legível pro
+  // uso que fazemos aqui) — vira a frase "Sua viagem: Tóquio → Kyoto →
+  // Osaka" acima do grid de destinos e no resumo final.
+  const [destinosOrdem, setDestinosOrdem] = useState<DestinoKey[]>([]);
   const [observacoes, setObservacoes] = useState("");
   const [mostrarTodosDestinos, setMostrarTodosDestinos] = useState(false);
   const [adicionado, setAdicionado] = useState(false);
@@ -1183,6 +1273,13 @@ export function CustomPackageCard({
     });
     return soma / destinosSelecionados.size;
   }, [destinosSelecionados]);
+
+  // Quantos quartos o grupo precisa, dado o tipo de quarto escolhido —
+  // só para exibição (o preço em si usa ctx.pessoas diretamente).
+  const quartosNecessarios = Math.max(
+    1,
+    Math.ceil(pessoas / CAPACIDADE_QUARTO[tipoQuarto]),
+  );
 
   const precoCtx = useMemo<PrecoCtx>(
     () => ({
@@ -1257,18 +1354,20 @@ export function CustomPackageCard({
           <span className="min-w-0 flex-1 text-sm font-medium text-[#0A2540]">
             {opcao.icone} {opcao.label}
           </span>
-          <button
-            type="button"
-            onClick={(e) => {
-              e.stopPropagation();
-              setOpcaoAberta(opcao);
-            }}
-            aria-label={`Ver detalhes — ${opcao.label}`}
-            className="flex shrink-0 items-center gap-1 rounded-full border border-black/15 px-2 py-1 text-[9px] uppercase tracking-[0.1em] text-[#0A2540]/50 transition hover:border-black/35 hover:text-[#0A2540]"
-          >
-            <IconDocument className="h-3 w-3" />
-            Ver detalhes
-          </button>
+          {opcao.temDetalhes && (
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                setOpcaoAberta(opcao);
+              }}
+              aria-label={`Saiba mais — ${opcao.label}`}
+              className="flex shrink-0 items-center gap-1 rounded-full border border-black/15 px-2 py-1 text-[9px] uppercase tracking-[0.1em] text-[#0A2540]/40 transition hover:border-black/35 hover:text-[#0A2540]"
+            >
+              <IconDocument className="h-3 w-3" />
+              Saiba mais
+            </button>
+          )}
         </div>
         <span className="block flex-1 pl-8 text-xs leading-5 text-[#0A2540]/50">
           {opcao.descricao}
@@ -1282,6 +1381,48 @@ export function CustomPackageCard({
           </span>
         )}
       </div>
+    );
+  }
+
+  function renderDestinoCard(destino: (typeof DESTINOS)[number]) {
+    const ativo = destinosSelecionados.has(destino.key);
+    return (
+      <button
+        key={destino.key}
+        type="button"
+        onClick={() => toggleDestino(destino.key)}
+        aria-pressed={ativo}
+        className={`group relative aspect-square overflow-hidden rounded-xl border text-left transition ${
+          ativo
+            ? "border-[#2f80c9] shadow-[0_0_0_1px_rgba(47,128,201,0.5)]"
+            : "border-black/10 hover:border-black/25"
+        }`}
+      >
+        {destino.imagem ? (
+          <Image
+            src={destino.imagem}
+            alt={destino.nome}
+            fill
+            sizes="140px"
+            className="object-cover transition duration-300 group-hover:scale-105"
+          />
+        ) : (
+          <div className="absolute inset-0 bg-gradient-to-br from-[#1c2b45] to-[#0a0f1c]" />
+        )}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent" />
+        <span className="absolute bottom-1.5 left-2 right-2 text-center text-xs font-medium leading-tight text-white">
+          {destino.nome}
+        </span>
+        <span
+          className={`absolute right-1.5 top-1.5 flex h-5 w-5 items-center justify-center rounded-full border text-[10px] transition ${
+            ativo
+              ? "border-[#2f80c9] bg-[#2f80c9] text-white"
+              : "border-white/40 bg-black/30 text-transparent"
+          }`}
+        >
+          <IconCheck className="h-3 w-3" />
+        </span>
+      </button>
     );
   }
 
@@ -1317,16 +1458,40 @@ export function CustomPackageCard({
       }
       return next;
     });
+    setDestinosOrdem((prev) =>
+      prev.includes(key) ? prev.filter((k) => k !== key) : [...prev, key],
+    );
   }
 
-  const DESTINOS_TOP5 = 5;
-  const destinosVisiveis = mostrarTodosDestinos ? DESTINOS : DESTINOS.slice(0, DESTINOS_TOP5);
-  const destinosOcultos = DESTINOS.length - DESTINOS_TOP5;
-
   const nomesDestinos = useMemo(
-    () => DESTINOS.filter((d) => destinosSelecionados.has(d.key)).map((d) => d.nome),
-    [destinosSelecionados],
+    () =>
+      destinosOrdem
+        .map((key) => DESTINOS.find((d) => d.key === key)?.nome)
+        .filter((nome): nome is NonNullable<typeof nome> => nome != null),
+    [destinosOrdem],
   );
+
+  // Destinos "Principais" (Tóquio/Kyoto/Osaka) sempre visíveis, e os
+  // demais dentro de "Outros destinos" — ver bloco 3 do formulário.
+  const destinosPrincipais = useMemo(() => DESTINOS.filter((d) => d.principal), []);
+  const destinosOutrosTodos = useMemo(() => DESTINOS.filter((d) => !d.principal), []);
+
+  const OUTROS_DESTINOS_PREVIEW = 5;
+  const destinosVisiveis = mostrarTodosDestinos
+    ? destinosOutrosTodos
+    : destinosOutrosTodos.slice(0, OUTROS_DESTINOS_PREVIEW);
+  const destinosOcultos = destinosOutrosTodos.length - OUTROS_DESTINOS_PREVIEW;
+
+
+  // Recomendação simples de curadoria: ~3 dias por região costuma dar
+  // tempo de experiência decente em cada cidade — valor de partida, fácil
+  // de recalibrar depois.
+  const DIAS_POR_REGIAO_RECOMENDADO = 3;
+  const recomendadoMaxDestinos = Math.max(
+    1,
+    Math.round(dias / DIAS_POR_REGIAO_RECOMENDADO),
+  );
+  const excedeuDestinosRecomendados = destinosSelecionados.size > recomendadoMaxDestinos;
 
   const detalhesPacote = useMemo(() => {
     const linhas: string[] = [];
@@ -1374,7 +1539,9 @@ export function CustomPackageCard({
       variante: `Data solicitada: ${dataFormatada}`,
       duracao: `${dias} dias`,
       periodo: dataFormatada,
-      acomodacao: `${pessoas} ${pessoas === 1 ? "pessoa" : "pessoas"} · ${tipoQuarto} · Hotel ${categoriaHotel}`,
+      acomodacao: `${pessoas} ${pessoas === 1 ? "pessoa" : "pessoas"} · ${quartosNecessarios} ${
+        quartosNecessarios === 1 ? "quarto" : "quartos"
+      } (${tipoQuarto}) · Hotel ${categoriaHotel}`,
       itens: itensSelecionados.map((o) => {
         if (o.key === "hotel") return { icone: o.icone, texto: `${o.label} — ${categoriaHotel}` };
         if (o.key === "aereo") return { icone: o.icone, texto: `${o.label} — ${classeAereo}` };
@@ -1403,256 +1570,179 @@ export function CustomPackageCard({
       </p>
 
       <form onSubmit={handleSubmit} className="mt-5 space-y-6">
-        <div className="flex flex-wrap items-center justify-between gap-4 border-b border-black/10 pb-6">
-          <div>
-            <p className="text-[10px] uppercase tracking-[0.2em] text-[#0A2540]/50">
-              Total estimado
-            </p>
-            <p
-              className={`${display.className} mt-1 text-4xl font-semibold`}
-              style={{ color: "#1f6f9c" }}
-            >
-              {total > 0 ? brlParaUSDLabel(total, cambio) : "Sob consulta"}
-            </p>
-            {total > 0 && (
-              <p className="mt-1 text-sm font-medium text-[#0A2540]/60">ou {formatBRL(total)}</p>
-            )}
-            <p className="mt-1 text-xs uppercase tracking-[0.15em] text-[#0A2540]/45">
-              Por pessoa · Quarto {tipoQuarto}
-            </p>
-            {total > 0 && (
-              <CambioLabel cambio={cambio} className="mt-1 text-[11px] text-[#0A2540]/45" />
-            )}
-            {taxaGrupo > 0 && (
-              <p className="mt-1 text-[11px] leading-5 text-[#0A2540]/55">
-                Inclui taxa de grupo: R$ {taxaGrupo.toLocaleString("pt-BR")} (
-                {passageirosExtras} {passageirosExtras === 1 ? "passageiro" : "passageiros"}{" "}
-                acima de {LIMITE_PESSOAS_SEM_TAXA})
+
+        <SecaoNumerada
+          numero={1}
+          titulo="Sua viagem"
+          subtitulo="Quando, quantas pessoas e como organizar a hospedagem."
+        >
+          <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-6">
+            <label className="flex h-full flex-col">
+              <span className="mb-2 flex min-h-[2.2em] items-end text-[10px] uppercase leading-tight tracking-[0.2em] text-[#0A2540]/50">
+                Data preferida
+              </span>
+              <input
+                type="date"
+                value={data}
+                onChange={(e) => setData(e.target.value)}
+                className="h-10 w-full rounded-lg border border-black/15 bg-black/[0.03] px-3 text-sm text-[#0A2540] outline-none [color-scheme:light] focus:border-black/30"
+              />
+            </label>
+
+            <NumberStepper
+              label="Quantidade de dias"
+              value={dias}
+              onChange={setDias}
+              min={MIN_DIAS}
+              max={MAX_DIAS}
+              formatValue={(v) => `${v} ${v === 1 ? "dia" : "dias"}`}
+            />
+
+            <NumberStepper
+              label="Número de pessoas"
+              value={pessoas}
+              onChange={setPessoas}
+              min={MIN_PESSOAS}
+              max={MAX_PESSOAS}
+              formatValue={(v) => `${v} ${v === 1 ? "pessoa" : "pessoas"}`}
+            />
+
+            <label className="flex h-full flex-col">
+              <span className="mb-2 flex min-h-[2.2em] items-end text-[10px] uppercase leading-tight tracking-[0.2em] text-[#0A2540]/50">
+                Categoria do hotel
+              </span>
+              <select
+                value={categoriaHotel}
+                onChange={(e) =>
+                  setCategoriaHotel(e.target.value as (typeof CATEGORIAS_HOTEL)[number])
+                }
+                className="h-10 w-full rounded-lg border border-black/15 bg-black/[0.03] px-3 text-sm text-[#0A2540] outline-none focus:border-black/30"
+              >
+                {CATEGORIAS_HOTEL.map((c) => (
+                  <option key={c} value={c}>
+                    {c}
+                  </option>
+                ))}
+              </select>
+            </label>
+
+            <label className="flex h-full flex-col">
+              <span className="mb-2 flex min-h-[2.2em] items-end text-[10px] uppercase leading-tight tracking-[0.2em] text-[#0A2540]/50">
+                Configuração dos quartos
+              </span>
+              <select
+                value={tipoQuarto}
+                onChange={(e) => setTipoQuarto(e.target.value as (typeof TIPOS_QUARTO)[number])}
+                className="h-10 w-full rounded-lg border border-black/15 bg-black/[0.03] px-3 text-sm text-[#0A2540] outline-none focus:border-black/30"
+              >
+                {TIPOS_QUARTO.map((t) => (
+                  <option key={t} value={t}>
+                    {TIPO_QUARTO_LABEL[t]}
+                  </option>
+                ))}
+              </select>
+              <span className="mt-1.5 text-[11px] leading-4 text-[#0A2540]/45">
+                → {quartosNecessarios} {quartosNecessarios === 1 ? "quarto" : "quartos"} para{" "}
+                {pessoas} {pessoas === 1 ? "pessoa" : "pessoas"}
+              </span>
+            </label>
+
+            <label className="flex h-full flex-col">
+              <span className="mb-2 flex min-h-[2.2em] items-end text-[10px] uppercase leading-tight tracking-[0.2em] text-[#0A2540]/50">
+                Classe do voo
+              </span>
+              <select
+                value={classeAereo}
+                onChange={(e) => setClasseAereo(e.target.value as (typeof CLASSES_AEREO)[number])}
+                className="h-10 w-full rounded-lg border border-black/15 bg-black/[0.03] px-3 text-sm text-[#0A2540] outline-none focus:border-black/30"
+              >
+                {CLASSES_AEREO.map((c) => (
+                  <option key={c} value={c}>
+                    {c}
+                  </option>
+                ))}
+              </select>
+            </label>
+          </div>
+
+          {pessoas > LIMITE_PESSOAS_SEM_TAXA && (
+            <div className="mt-5 rounded-xl border border-amber-400/40 bg-amber-400/10 p-4">
+              <p className="text-sm font-medium leading-6 text-amber-700">
+                Grupos acima de {LIMITE_PESSOAS_SEM_TAXA} pessoas têm taxa adicional de R${" "}
+                {TAXA_POR_PASSAGEIRO_EXTRA.toLocaleString("pt-BR")} por passageiro excedente —
+                já incluída no total estimado ao final.
               </p>
-            )}
-            <div className="mt-3 rounded-xl border border-amber-300 bg-amber-50 px-3 py-2.5">
-              <p className="text-sm font-medium leading-5 text-amber-900">
-                Valor calculado conforme os itens selecionados acima — a
-                Ajisai confirma o preço final por consulta.
-              </p>
+            </div>
+          )}
+
+          <div className="mt-6">
+            <span className="mb-1 block text-[10px] uppercase tracking-[0.2em] text-[#0A2540]/50">
+              Perfil do grupo{" "}
+              <span className="normal-case tracking-normal text-[#0A2540]/30">(opcional)</span>
+            </span>
+            <p className="mb-3 text-xs leading-5 text-[#0A2540]/50">
+              Ajuda a Ajisai a adaptar ritmo, acessibilidade e transporte do roteiro.
+            </p>
+            <div className="grid grid-cols-1 gap-5 sm:grid-cols-3">
+              <NumberStepper
+                label="Acima de 60 anos"
+                value={acima60}
+                onChange={setAcima60}
+                min={0}
+                max={pessoas}
+              />
+              <NumberStepper
+                label="Menores de idade (12–17 anos)"
+                value={menoresIdade}
+                onChange={setMenoresIdade}
+                min={0}
+                max={pessoas}
+              />
+              <NumberStepper
+                label="Crianças (até 11 anos)"
+                value={criancas}
+                onChange={setCriancas}
+                min={0}
+                max={pessoas}
+              />
             </div>
           </div>
+        </SecaoNumerada>
 
-          <button
-            type="submit"
-            disabled={!cambio}
-            className="flex items-center justify-center gap-2 rounded-full px-5 py-3.5 text-center text-[11px] font-semibold uppercase tracking-[0.2em] text-white shadow-[0_10px_30px_rgba(0,0,0,0.35)] transition duration-300 hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0 sm:px-8"
-            style={{ backgroundColor: adicionado ? "#2f9e6e" : "#2f80c9" }}
-          >
-            {adicionado ? (
-              <>
-                <IconCheck className="h-4 w-4" /> Adicionado ao carrinho
-              </>
-            ) : (
-              <>
-                <IconCart className="h-4 w-4" /> Adicionar ao carrinho
-              </>
-            )}
-          </button>
-        </div>
+        <SecaoNumerada
+          numero={2}
+          titulo="O que a Ajisai deve organizar?"
+          subtitulo="Os itens essenciais da viagem — já vêm pré-selecionados, desmarque o que não precisar."
+        >
+          <div className="grid grid-cols-1 items-stretch gap-2.5 sm:grid-cols-2">
+            {opcoesEssenciais.map((opcao) => renderOpcaoCard(opcao))}
+          </div>
+        </SecaoNumerada>
 
-        <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-6">
-          <label className="flex h-full flex-col">
-            <span className="mb-2 flex min-h-[2.2em] items-end text-[10px] uppercase leading-tight tracking-[0.2em] text-[#0A2540]/50">
-              Data preferida
-            </span>
-            <input
-              type="date"
-              value={data}
-              onChange={(e) => setData(e.target.value)}
-              className="h-10 w-full rounded-lg border border-black/15 bg-black/[0.03] px-3 text-sm text-[#0A2540] outline-none [color-scheme:light] focus:border-black/30"
-            />
-          </label>
-
-          <NumberStepper
-            label="Quantidade de dias"
-            value={dias}
-            onChange={setDias}
-            min={MIN_DIAS}
-            max={MAX_DIAS}
-            formatValue={(v) => `${v} ${v === 1 ? "dia" : "dias"}`}
-          />
-
-          <NumberStepper
-            label="Número de pessoas"
-            value={pessoas}
-            onChange={setPessoas}
-            min={MIN_PESSOAS}
-            max={MAX_PESSOAS}
-            formatValue={(v) => `${v} ${v === 1 ? "pessoa" : "pessoas"}`}
-          />
-
-          <label className="flex h-full flex-col">
-            <span className="mb-2 flex min-h-[2.2em] items-end text-[10px] uppercase leading-tight tracking-[0.2em] text-[#0A2540]/50">
-              Categoria do hotel
-            </span>
-            <select
-              value={categoriaHotel}
-              onChange={(e) =>
-                setCategoriaHotel(e.target.value as (typeof CATEGORIAS_HOTEL)[number])
-              }
-              className="h-10 w-full rounded-lg border border-black/15 bg-black/[0.03] px-3 text-sm text-[#0A2540] outline-none focus:border-black/30"
-            >
-              {CATEGORIAS_HOTEL.map((c) => (
-                <option key={c} value={c}>
-                  {c}
-                </option>
-              ))}
-            </select>
-          </label>
-
-          <label className="flex h-full flex-col">
-            <span className="mb-2 flex min-h-[2.2em] items-end text-[10px] uppercase leading-tight tracking-[0.2em] text-[#0A2540]/50">
-              Tipo de quarto
-            </span>
-            <select
-              value={tipoQuarto}
-              onChange={(e) => setTipoQuarto(e.target.value as (typeof TIPOS_QUARTO)[number])}
-              className="h-10 w-full rounded-lg border border-black/15 bg-black/[0.03] px-3 text-sm text-[#0A2540] outline-none focus:border-black/30"
-            >
-              {TIPOS_QUARTO.map((t) => (
-                <option key={t} value={t}>
-                  {t}
-                </option>
-              ))}
-            </select>
-          </label>
-
-          <label className="flex h-full flex-col">
-            <span className="mb-2 flex min-h-[2.2em] items-end text-[10px] uppercase leading-tight tracking-[0.2em] text-[#0A2540]/50">
-              Classe do voo
-            </span>
-            <select
-              value={classeAereo}
-              onChange={(e) => setClasseAereo(e.target.value as (typeof CLASSES_AEREO)[number])}
-              className="h-10 w-full rounded-lg border border-black/15 bg-black/[0.03] px-3 text-sm text-[#0A2540] outline-none focus:border-black/30"
-            >
-              {CLASSES_AEREO.map((c) => (
-                <option key={c} value={c}>
-                  {c}
-                </option>
-              ))}
-            </select>
-          </label>
-        </div>
-
-        {pessoas > LIMITE_PESSOAS_SEM_TAXA && (
-          <div className="rounded-xl border border-amber-400/40 bg-amber-400/10 p-4">
-            <p className="text-sm font-medium leading-6 text-amber-700">
-              Grupos acima de {LIMITE_PESSOAS_SEM_TAXA} pessoas têm taxa adicional de R${" "}
-              {TAXA_POR_PASSAGEIRO_EXTRA.toLocaleString("pt-BR")} por passageiro excedente —
-              já incluída no total estimado abaixo.
+        <SecaoNumerada
+          numero={3}
+          titulo="Para onde você quer ir?"
+          subtitulo="As cidades marcadas também ajustam o preço da diária de hotel."
+        >
+          {nomesDestinos.length > 0 && (
+            <p className="mb-4 text-sm font-medium leading-6 text-[#0A2540]">
+              Sua viagem:{" "}
+              <span className="text-[#2f80c9]">{nomesDestinos.join(" → ")}</span>
             </p>
-          </div>
-        )}
+          )}
 
-        <div>
-          <span className="mb-2 block text-[10px] uppercase tracking-[0.2em] text-[#0A2540]/50">
-            Perfil dos passageiros{" "}
-            <span className="normal-case tracking-normal text-[#0A2540]/30">(opcional)</span>
-          </span>
-          <div className="grid grid-cols-1 gap-5 sm:grid-cols-3">
-            <NumberStepper
-              label="Acima de 60 anos"
-              value={acima60}
-              onChange={setAcima60}
-              min={0}
-              max={pessoas}
-            />
-            <NumberStepper
-              label="Menores de idade (12–17 anos)"
-              value={menoresIdade}
-              onChange={setMenoresIdade}
-              min={0}
-              max={pessoas}
-            />
-            <NumberStepper
-              label="Crianças (até 11 anos)"
-              value={criancas}
-              onChange={setCriancas}
-              min={0}
-              max={pessoas}
-            />
-          </div>
-        </div>
-
-        <div className="space-y-6">
-          <div>
-            <span className="mb-2 block text-[10px] uppercase tracking-[0.2em] text-[#0A2540]/50">
-              Monte seu pacote
-            </span>
-            <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.15em] text-[#2f80c9]">
-              Essenciais
-            </p>
-            <div className="grid grid-cols-1 items-stretch gap-2.5 sm:grid-cols-2">
-              {opcoesEssenciais.map((opcao) => renderOpcaoCard(opcao))}
-            </div>
-          </div>
-
-          <div>
-            <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.15em] text-[#0A2540]/45">
-              Opcionais
-            </p>
-            <div className="grid grid-cols-1 items-stretch gap-2.5 sm:grid-cols-2">
-              {opcoesOpcionais.map((opcao) => renderOpcaoCard(opcao))}
-            </div>
-          </div>
-        </div>
-
-        <div>
-          <span className="mb-2 block text-[10px] uppercase tracking-[0.2em] text-[#0A2540]/50">
-            Destinos
-          </span>
-          <p className="mb-2.5 text-xs text-[#0A2540]/50">
-            As cidades marcadas também ajustam o preço da diária de hotel.
+          <p className="mb-2.5 text-[11px] font-semibold uppercase tracking-[0.15em] text-[#2f80c9]">
+            Principais
           </p>
           <div className="grid grid-cols-3 gap-2.5 sm:grid-cols-6">
-            {destinosVisiveis.map((destino) => {
-              const ativo = destinosSelecionados.has(destino.key);
-              return (
-                <button
-                  key={destino.key}
-                  type="button"
-                  onClick={() => toggleDestino(destino.key)}
-                  aria-pressed={ativo}
-                  className={`group relative aspect-square overflow-hidden rounded-xl border text-left transition ${
-                    ativo
-                      ? "border-[#2f80c9] shadow-[0_0_0_1px_rgba(47,128,201,0.5)]"
-                      : "border-black/10 hover:border-black/25"
-                  }`}
-                >
-                  {destino.imagem ? (
-                    <Image
-                      src={destino.imagem}
-                      alt={destino.nome}
-                      fill
-                      sizes="140px"
-                      className="object-cover transition duration-300 group-hover:scale-105"
-                    />
-                  ) : (
-                    <div className="absolute inset-0 bg-gradient-to-br from-[#1c2b45] to-[#0a0f1c]" />
-                  )}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/25 to-transparent" />
-                  <span className="absolute bottom-1.5 left-2 right-2 text-center text-xs font-medium leading-tight text-white">
-                    {destino.nome}
-                  </span>
-                  <span
-                    className={`absolute right-1.5 top-1.5 flex h-5 w-5 items-center justify-center rounded-full border text-[10px] transition ${
-                      ativo
-                        ? "border-[#2f80c9] bg-[#2f80c9] text-white"
-                        : "border-white/40 bg-black/30 text-transparent"
-                    }`}
-                  >
-                    <IconCheck className="h-3 w-3" />
-                  </span>
-                </button>
-              );
-            })}
+            {destinosPrincipais.map((destino) => renderDestinoCard(destino))}
+          </div>
+
+          <p className="mb-2.5 mt-6 text-[11px] font-semibold uppercase tracking-[0.15em] text-[#0A2540]/45">
+            Outros destinos
+          </p>
+          <div className="grid grid-cols-3 gap-2.5 sm:grid-cols-6">
+            {destinosVisiveis.map((destino) => renderDestinoCard(destino))}
 
             {!mostrarTodosDestinos && destinosOcultos > 0 && (
               <button
@@ -1677,20 +1767,135 @@ export function CustomPackageCard({
               </button>
             </div>
           )}
-        </div>
 
-        <label className="block">
-          <span className="mb-2 block text-[10px] uppercase tracking-[0.2em] text-[#0A2540]/50">
-            O que você gostaria de incluir? (opcional)
-          </span>
-          <textarea
-            value={observacoes}
-            onChange={(e) => setObservacoes(e.target.value)}
-            rows={3}
-            placeholder="Ex: passeio noturno em Ginza, compras em Ginza, jantar especial..."
-            className="w-full rounded-lg border border-black/15 bg-black/[0.03] px-3 py-2.5 text-sm text-[#0A2540] outline-none placeholder:text-[#0A2540]/30 focus:border-black/30"
-          />
-        </label>
+          {excedeuDestinosRecomendados && (
+            <div className="mt-5 rounded-xl border border-amber-400/40 bg-amber-400/10 p-4">
+              <p className="text-sm font-medium leading-6 text-amber-700">
+                Para {dias} {dias === 1 ? "dia" : "dias"} recomendamos até{" "}
+                {recomendadoMaxDestinos}{" "}
+                {recomendadoMaxDestinos === 1 ? "região" : "regiões"}. Muitos destinos podem
+                reduzir o tempo de experiência em cada cidade.
+              </p>
+            </div>
+          )}
+        </SecaoNumerada>
+
+        <SecaoNumerada
+          numero={4}
+          titulo="Quer complementar sua viagem?"
+          subtitulo="Extras opcionais, organizados por tipo — adicione só o que fizer sentido pra você."
+        >
+          <div className="space-y-6">
+            {(["Transporte e conveniência", "Experiências e reservas", "Assistência"] as const).map(
+              (subcategoria) => (
+                <div key={subcategoria}>
+                  <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.15em] text-[#0A2540]/45">
+                    {subcategoria}
+                  </p>
+                  <div className="grid grid-cols-1 items-stretch gap-2.5 sm:grid-cols-2">
+                    {opcoesOpcionais
+                      .filter((opcao) => opcao.subcategoria === subcategoria)
+                      .map((opcao) => renderOpcaoCard(opcao))}
+                  </div>
+                </div>
+              ),
+            )}
+          </div>
+
+          <label className="mt-6 block">
+            <span className="mb-2 block text-[10px] uppercase tracking-[0.2em] text-[#0A2540]/50">
+              O que você gostaria de incluir? (opcional)
+            </span>
+            <textarea
+              value={observacoes}
+              onChange={(e) => setObservacoes(e.target.value)}
+              rows={3}
+              placeholder="Ex: passeio noturno em Ginza, compras em Ginza, jantar especial..."
+              className="w-full rounded-lg border border-black/15 bg-black/[0.03] px-3 py-2.5 text-sm text-[#0A2540] outline-none placeholder:text-[#0A2540]/30 focus:border-black/30"
+            />
+          </label>
+        </SecaoNumerada>
+
+        <SecaoNumerada
+          numero={5}
+          titulo="Revisar viagem"
+          subtitulo="Confira a estimativa e adicione ao carrinho — a Ajisai confirma o preço final por consulta."
+        >
+          <div className="flex flex-col gap-6 rounded-2xl border border-black/10 bg-black/[0.02] p-6 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <p className="text-[10px] uppercase tracking-[0.2em] text-[#0A2540]/50">
+                Estimativa da viagem
+              </p>
+              <p
+                className={`${display.className} mt-1 text-4xl font-semibold`}
+                style={{ color: "#1f6f9c" }}
+              >
+                {total > 0 ? brlParaUSDLabel(total, cambio) : "Sob consulta"}
+              </p>
+              {total > 0 && pessoas > 0 && (
+                <p className="mt-1 text-sm font-medium text-[#0A2540]/60">
+                  {brlParaUSDLabel(total / pessoas, cambio)} por pessoa · ou{" "}
+                  {formatBRL(total)} total
+                </p>
+              )}
+              {total > 0 && (
+                <CambioLabel cambio={cambio} className="mt-1 text-[11px] text-[#0A2540]/45" />
+              )}
+              {taxaGrupo > 0 && (
+                <p className="mt-1 text-[11px] leading-5 text-[#0A2540]/55">
+                  Inclui taxa de grupo: R$ {taxaGrupo.toLocaleString("pt-BR")} (
+                  {passageirosExtras} {passageirosExtras === 1 ? "passageiro" : "passageiros"}{" "}
+                  acima de {LIMITE_PESSOAS_SEM_TAXA})
+                </p>
+              )}
+
+              <div className="mt-3 flex flex-wrap gap-x-3 gap-y-1">
+                {opcoesEssenciais.map((opcao) => {
+                  const ativo = selecionados.has(opcao.key);
+                  return (
+                    <span
+                      key={opcao.key}
+                      className={`text-xs font-medium ${
+                        ativo ? "text-[#0A2540]/70" : "text-[#0A2540]/30"
+                      }`}
+                    >
+                      {opcao.icone} {opcao.label} {ativo ? "✓" : "○"}
+                    </span>
+                  );
+                })}
+              </div>
+              <p className="mt-2 text-xs leading-5 text-[#0A2540]/50">
+                {dias} {dias === 1 ? "dia" : "dias"} · {pessoas}{" "}
+                {pessoas === 1 ? "viajante" : "viajantes"}
+                {nomesDestinos.length > 0 ? ` · ${nomesDestinos.join(" → ")}` : ""}
+              </p>
+
+              <div className="mt-3 rounded-xl border border-amber-300 bg-amber-50 px-3 py-2.5">
+                <p className="text-sm font-medium leading-5 text-amber-900">
+                  Valor calculado conforme os itens selecionados acima — a
+                  Ajisai confirma o preço final por consulta.
+                </p>
+              </div>
+            </div>
+
+            <button
+              type="submit"
+              disabled={!cambio}
+              className="flex shrink-0 items-center justify-center gap-2 rounded-full px-5 py-3.5 text-center text-[11px] font-semibold uppercase tracking-[0.2em] text-white shadow-[0_10px_30px_rgba(0,0,0,0.35)] transition duration-300 hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0 sm:px-8"
+              style={{ backgroundColor: adicionado ? "#2f9e6e" : "#2f80c9" }}
+            >
+              {adicionado ? (
+                <>
+                  <IconCheck className="h-4 w-4" /> Adicionado ao carrinho
+                </>
+              ) : (
+                <>
+                  <IconCart className="h-4 w-4" /> Adicionar ao carrinho
+                </>
+              )}
+            </button>
+          </div>
+        </SecaoNumerada>
       </form>
     </div>
 
