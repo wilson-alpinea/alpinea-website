@@ -837,6 +837,7 @@ const OPCOES = [
     subcategoria: undefined,
     label: "Aéreo",
     temDetalhes: true,
+    obrigatorio: false,
     icone: "✈️",
     descricao: "Passagem internacional ida e volta — Economy, Business ou First Class",
     detalhe:
@@ -857,6 +858,7 @@ const OPCOES = [
     subcategoria: undefined,
     label: "Hotel",
     temDetalhes: true,
+    obrigatorio: false,
     icone: "🏨",
     descricao: "Hospedagem selecionada durante toda a viagem",
     detalhe:
@@ -876,6 +878,7 @@ const OPCOES = [
     subcategoria: undefined,
     label: "Transporte privado durante o roteiro",
     temDetalhes: true,
+    obrigatorio: false,
     icone: "🚐",
     descricao: "Transfers e deslocamentos do roteiro",
     detalhe:
@@ -888,6 +891,7 @@ const OPCOES = [
     subcategoria: undefined,
     label: "Guia",
     temDetalhes: false,
+    obrigatorio: false,
     icone: "🧭",
     descricao: `Guia turístico acompanhando o roteiro — US$ ${DIARIA_GUIA_USD}/dia a cada ${GUIA_TAMANHO_GRUPO} pessoas`,
     detalhe:
@@ -906,6 +910,7 @@ const OPCOES = [
     subcategoria: "Transporte e conveniência",
     label: "JR Pass",
     temDetalhes: true,
+    obrigatorio: false,
     icone: "🚄",
     descricao: "Passe ferroviário com deslocamentos ilimitados de trem-bala — escolha 7, 14 ou 21 dias em Saiba mais",
     detalhe:
@@ -919,6 +924,7 @@ const OPCOES = [
     subcategoria: "Assistência",
     label: "Seguro Viagem",
     temDetalhes: true,
+    obrigatorio: false,
     icone: "🛡️",
     descricao: "Cobertura médica e assistência durante toda a viagem",
     detalhe:
@@ -931,6 +937,7 @@ const OPCOES = [
     subcategoria: "Assistência",
     label: "Câmbio no Brasil",
     temDetalhes: false,
+    obrigatorio: false,
     icone: "💴",
     descricao: "Retirada de ienes com câmbio comercial antes do embarque",
     detalhe:
@@ -943,6 +950,7 @@ const OPCOES = [
     subcategoria: "Transporte e conveniência",
     label: "Motorista à disposição",
     temDetalhes: true,
+    obrigatorio: false,
     icone: "🚗",
     descricao: `Traslados exclusivos com motorista particular — US$ ${DIARIA_MOTORISTA_PRIVADO_USD}/dia para até ${MOTORISTA_TAMANHO_GRUPO} pessoas`,
     detalhe:
@@ -961,6 +969,7 @@ const OPCOES = [
     subcategoria: "Experiências e reservas",
     label: "Reservas de Restaurantes",
     temDetalhes: false,
+    obrigatorio: false,
     icone: "🍽️",
     descricao: "Reservas em restaurantes concorridos durante a viagem",
     detalhe:
@@ -973,6 +982,7 @@ const OPCOES = [
     subcategoria: "Experiências e reservas",
     label: "Reserva de Restaurantes High-End",
     temDetalhes: true,
+    obrigatorio: false,
     icone: "🍾",
     descricao: `${RESTAURANTES_HIGHEND_QTD} restaurantes Michelin/Tabelog Awards — US$ ${PRECO_RESTAURANTES_HIGHEND_USD} até ${RESTAURANTES_HIGHEND_LIMITE_PESSOAS} pessoas`,
     detalhe:
@@ -985,6 +995,7 @@ const OPCOES = [
     subcategoria: "Assistência",
     label: "Concierge Durante a Viagem",
     temDetalhes: false,
+    obrigatorio: false,
     icone: "🛎️",
     descricao: "Suporte dedicado para pedidos e imprevistos no roteiro",
     detalhe:
@@ -997,6 +1008,7 @@ const OPCOES = [
     subcategoria: "Experiências e reservas",
     label: "Experiências Sob Medida",
     temDetalhes: false,
+    obrigatorio: false,
     icone: "✨",
     descricao: "Ingressos especiais, eventos sazonais e atividades personalizadas",
     detalhe:
@@ -1009,6 +1021,9 @@ const OPCOES = [
     subcategoria: undefined,
     label: "Roteiro Personalizado",
     temDetalhes: true,
+    // Roteiro Digital é a base de tudo que a Ajisai entrega — não dá pra
+    // desmarcar (pedido do Wilson, 03/set/2026).
+    obrigatorio: true,
     icone: "📱",
     descricao: "Painel digital Ajisai com o roteiro sob medida do seu grupo",
     detalhe:
@@ -1022,6 +1037,7 @@ const OPCOES = [
     subcategoria: "Transporte e conveniência",
     label: "Transfer de Ônibus Aeroporto ↔ Centro de Tóquio",
     temDetalhes: false,
+    obrigatorio: false,
     icone: "🚌",
     descricao: "Aeroporto → Centro de Tóquio (chegada) e Centro de Tóquio → Aeroporto (saída)",
     detalhe:
@@ -1034,6 +1050,7 @@ const OPCOES = [
     subcategoria: "Transporte e conveniência",
     label: "Wi-fi",
     temDetalhes: false,
+    obrigatorio: false,
     icone: "📶",
     descricao: "Conexão disponível durante todo o roteiro",
     detalhe:
@@ -1047,6 +1064,7 @@ const OPCOES = [
     subcategoria: "Experiências e reservas",
     label: "Ingressos para Atrações: Disney e Universal",
     temDetalhes: false,
+    obrigatorio: false,
     icone: "🎟️",
     descricao: "Ingresso avulso, por pessoa",
     detalhe:
@@ -1322,20 +1340,27 @@ export function CustomPackageCard({
 
   function renderOpcaoCard(opcao: (typeof OPCOES)[number]) {
     const ativo = selecionados.has(opcao.key);
+    const obrigatorio = opcao.obrigatorio;
     return (
       <div
         key={opcao.key}
-        role="button"
-        tabIndex={0}
-        onClick={() => toggleOpcao(opcao.key)}
-        onKeyDown={(e) => {
-          if (e.key === "Enter" || e.key === " ") {
-            e.preventDefault();
-            toggleOpcao(opcao.key);
-          }
-        }}
-        aria-pressed={ativo}
-        className={`flex h-full cursor-pointer flex-col gap-2 rounded-xl border px-4 py-3 text-left transition ${
+        role={obrigatorio ? undefined : "button"}
+        tabIndex={obrigatorio ? undefined : 0}
+        onClick={obrigatorio ? undefined : () => toggleOpcao(opcao.key)}
+        onKeyDown={
+          obrigatorio
+            ? undefined
+            : (e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  toggleOpcao(opcao.key);
+                }
+              }
+        }
+        aria-pressed={obrigatorio ? undefined : ativo}
+        className={`flex h-full flex-col gap-2 rounded-xl border px-4 py-3 text-left transition ${
+          obrigatorio ? "cursor-default" : "cursor-pointer"
+        } ${
           ativo
             ? "border-[#2f80c9]/50 bg-[#2f80c9]/10"
             : "border-black/10 bg-black/[0.02] hover:border-black/20"
@@ -1354,6 +1379,11 @@ export function CustomPackageCard({
           <span className="min-w-0 flex-1 text-sm font-medium text-[#0A2540]">
             {opcao.icone} {opcao.label}
           </span>
+          {obrigatorio && (
+            <span className="flex shrink-0 items-center gap-1 rounded-full border border-[#2f80c9]/30 bg-[#2f80c9]/10 px-2 py-1 text-[9px] font-semibold uppercase tracking-[0.1em] text-[#2f80c9]">
+              Incluso
+            </span>
+          )}
           {opcao.temDetalhes && (
             <button
               type="button"
@@ -1426,6 +1456,18 @@ export function CustomPackageCard({
     );
   }
 
+  // Descrição de cada item na lista discriminada do resumo (bloco 5) —
+  // mesma lógica de variante já usada ao montar o item pro carrinho.
+  function descricaoItemFatura(opcao: (typeof OPCOES)[number]): string {
+    if (opcao.key === "aereo") return `${opcao.label} — ${classeAereo}`;
+    if (opcao.key === "hotel")
+      return `${opcao.label} — ${categoriaHotel} · ${quartosNecessarios} ${
+        quartosNecessarios === 1 ? "quarto" : "quartos"
+      }`;
+    if (opcao.key === "jrpass") return `${opcao.label} — ${jrPassDias} dias`;
+    return opcao.label;
+  }
+
   const passageirosExtras = Math.max(0, pessoas - LIMITE_PESSOAS_SEM_TAXA);
   const taxaGrupo = passageirosExtras * TAXA_POR_PASSAGEIRO_EXTRA;
 
@@ -1437,6 +1479,9 @@ export function CustomPackageCard({
   );
 
   function toggleOpcao(key: OpcaoKey) {
+    // Itens obrigatórios (hoje só o Roteiro Digital) não podem ser
+    // desmarcados — mesmo se a chamada vier de outro lugar além do card.
+    if (OPCOES.find((o) => o.key === key)?.obrigatorio) return;
     setSelecionados((prev) => {
       const next = new Set(prev);
       if (next.has(key)) {
@@ -1821,79 +1866,98 @@ export function CustomPackageCard({
           titulo="Revisar viagem"
           subtitulo="Confira a estimativa e adicione ao carrinho — a Ajisai confirma o preço final por consulta."
         >
-          <div className="flex flex-col gap-6 rounded-2xl border border-black/10 bg-black/[0.02] p-6 sm:flex-row sm:items-center sm:justify-between">
-            <div>
+          <div className="overflow-hidden rounded-2xl border border-black/10 bg-white">
+            <div className="border-b border-black/10 bg-black/[0.02] px-6 py-4">
               <p className="text-[10px] uppercase tracking-[0.2em] text-[#0A2540]/50">
                 Estimativa da viagem
               </p>
-              <p
-                className={`${display.className} mt-1 text-4xl font-semibold`}
-                style={{ color: "#1f6f9c" }}
-              >
-                {total > 0 ? brlParaUSDLabel(total, cambio) : "Sob consulta"}
-              </p>
-              {total > 0 && pessoas > 0 && (
-                <p className="mt-1 text-sm font-medium text-[#0A2540]/60">
-                  {brlParaUSDLabel(total / pessoas, cambio)} por pessoa · ou{" "}
-                  {formatBRL(total)} total
-                </p>
-              )}
-              {total > 0 && (
-                <CambioLabel cambio={cambio} className="mt-1 text-[11px] text-[#0A2540]/45" />
-              )}
-              {taxaGrupo > 0 && (
-                <p className="mt-1 text-[11px] leading-5 text-[#0A2540]/55">
-                  Inclui taxa de grupo: R$ {taxaGrupo.toLocaleString("pt-BR")} (
-                  {passageirosExtras} {passageirosExtras === 1 ? "passageiro" : "passageiros"}{" "}
-                  acima de {LIMITE_PESSOAS_SEM_TAXA})
-                </p>
-              )}
-
-              <div className="mt-3 flex flex-wrap gap-x-3 gap-y-1">
-                {opcoesEssenciais.map((opcao) => {
-                  const ativo = selecionados.has(opcao.key);
-                  return (
-                    <span
-                      key={opcao.key}
-                      className={`text-xs font-medium ${
-                        ativo ? "text-[#0A2540]/70" : "text-[#0A2540]/30"
-                      }`}
-                    >
-                      {opcao.icone} {opcao.label} {ativo ? "✓" : "○"}
-                    </span>
-                  );
-                })}
-              </div>
-              <p className="mt-2 text-xs leading-5 text-[#0A2540]/50">
+              <p className="mt-1 text-xs leading-5 text-[#0A2540]/50">
                 {dias} {dias === 1 ? "dia" : "dias"} · {pessoas}{" "}
                 {pessoas === 1 ? "viajante" : "viajantes"}
                 {nomesDestinos.length > 0 ? ` · ${nomesDestinos.join(" → ")}` : ""}
               </p>
+            </div>
 
-              <div className="mt-3 rounded-xl border border-amber-300 bg-amber-50 px-3 py-2.5">
+            {/* Extrato item a item — cada serviço selecionado com seu
+                próprio valor, igual a uma fatura, em vez de só o total. */}
+            <div className="divide-y divide-black/[0.06] px-6">
+              {itensSelecionados.map((opcao) => {
+                const valor = opcao.calcPreco(precoCtx);
+                return (
+                  <div key={opcao.key} className="flex items-center justify-between gap-4 py-3">
+                    <span className="flex min-w-0 items-center gap-2 text-sm text-[#0A2540]">
+                      <span className="shrink-0">{opcao.icone}</span>
+                      <span className="truncate">{descricaoItemFatura(opcao)}</span>
+                    </span>
+                    <span
+                      className={`shrink-0 text-sm font-medium tabular-nums ${
+                        valor > 0 ? "text-[#0A2540]" : "text-[#0A2540]/40"
+                      }`}
+                    >
+                      {valor > 0 ? brlParaUSDLabel(valor, cambio) : "Sob consulta"}
+                    </span>
+                  </div>
+                );
+              })}
+              {taxaGrupo > 0 && (
+                <div className="flex items-center justify-between gap-4 py-3">
+                  <span className="text-sm text-[#0A2540]/70">
+                    Taxa de grupo ({passageirosExtras}{" "}
+                    {passageirosExtras === 1 ? "passageiro" : "passageiros"} acima de{" "}
+                    {LIMITE_PESSOAS_SEM_TAXA})
+                  </span>
+                  <span className="shrink-0 text-sm font-medium tabular-nums text-[#0A2540]">
+                    {brlParaUSDLabel(taxaGrupo, cambio)}
+                  </span>
+                </div>
+              )}
+            </div>
+
+            <div className="border-t border-black/10 bg-black/[0.02] px-6 py-5">
+              <div className="flex items-baseline justify-between gap-4">
+                <p className="text-xs font-semibold uppercase tracking-[0.15em] text-[#0A2540]/60">
+                  Total estimado
+                </p>
+                <p
+                  className={`${display.className} text-3xl font-semibold`}
+                  style={{ color: "#1f6f9c" }}
+                >
+                  {total > 0 ? brlParaUSDLabel(total, cambio) : "Sob consulta"}
+                </p>
+              </div>
+              {total > 0 && pessoas > 0 && (
+                <p className="mt-1 text-right text-sm font-medium text-[#0A2540]/60">
+                  ou {formatBRL(total)} · {brlParaUSDLabel(total / pessoas, cambio)} por pessoa
+                </p>
+              )}
+              {total > 0 && (
+                <CambioLabel cambio={cambio} className="mt-1 text-right text-[11px] text-[#0A2540]/45" />
+              )}
+
+              <div className="mt-4 rounded-xl border border-amber-300 bg-amber-50 px-3 py-2.5">
                 <p className="text-sm font-medium leading-5 text-amber-900">
                   Valor calculado conforme os itens selecionados acima — a
                   Ajisai confirma o preço final por consulta.
                 </p>
               </div>
-            </div>
 
-            <button
-              type="submit"
-              disabled={!cambio}
-              className="flex shrink-0 items-center justify-center gap-2 rounded-full px-5 py-3.5 text-center text-[11px] font-semibold uppercase tracking-[0.2em] text-white shadow-[0_10px_30px_rgba(0,0,0,0.35)] transition duration-300 hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0 sm:px-8"
-              style={{ backgroundColor: adicionado ? "#2f9e6e" : "#2f80c9" }}
-            >
-              {adicionado ? (
-                <>
-                  <IconCheck className="h-4 w-4" /> Adicionado ao carrinho
-                </>
-              ) : (
-                <>
-                  <IconCart className="h-4 w-4" /> Adicionar ao carrinho
-                </>
-              )}
-            </button>
+              <button
+                type="submit"
+                disabled={!cambio}
+                className="mt-4 flex w-full items-center justify-center gap-2 rounded-full px-5 py-3.5 text-center text-[11px] font-semibold uppercase tracking-[0.2em] text-white shadow-[0_10px_30px_rgba(0,0,0,0.35)] transition duration-300 hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0"
+                style={{ backgroundColor: adicionado ? "#2f9e6e" : "#2f80c9" }}
+              >
+                {adicionado ? (
+                  <>
+                    <IconCheck className="h-4 w-4" /> Adicionado ao carrinho
+                  </>
+                ) : (
+                  <>
+                    <IconCart className="h-4 w-4" /> Adicionar ao carrinho
+                  </>
+                )}
+              </button>
+            </div>
           </div>
         </SecaoNumerada>
       </form>
