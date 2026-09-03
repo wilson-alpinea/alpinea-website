@@ -839,6 +839,7 @@ const OPCOES = [
     temDetalhes: true,
     obrigatorio: false,
     icone: "✈️",
+    iconeImg: "/images/produtos/passagem-aerea.png",
     descricao: "Passagem internacional ida e volta — Economy, Business ou First Class",
     detalhe:
       "Bilhete aéreo internacional de ida e volta, com a Ajisai buscando as melhores opções de conexão disponíveis para as datas escolhidas. Inclui bagagem conforme a franquia da companhia aérea selecionada. Disponível em Economy, Business ou First Class.\n\nDiferenciais Ajisai para quem compra a passagem com a gente:\n\nConcierge no Aeroporto de Guarulhos — equipe especializada apoia todos os passageiros no balcão de check-in, esclarece dúvidas, resolve reserva de assento e intermedia com a companhia aérea. Acesso direto à gerência das companhias no aeroporto — fundamental em cancelamento, remarcação e direitos do passageiro.\n\nProtocolo pré-embarque (Visit Japan Web) — um membro da equipe Ajisai preenche o VJW com os dados do passageiro, cria e cadastra a conta e envia pronta pra você, substituindo o papelado na chegada ao Japão. Inclui sessão dedicada ao aéreo, explicando o itinerário e tirando dúvidas antes do embarque.\n\nMonitoramento de viagem — central de WhatsApp com equipe emergencial Ajisai, funcionando quase 24 horas por dia, cobrindo conexões, gestão de reserva antes da viagem e imprevistos durante a viagem. Atendimento humano, com apoio de tradutor por telefone quando necessário.\n\nResponsabilidade da Agência — passagem emitida pela Ajisai tem responsabilidade solidária da agência e negociação direta com as companhias aéreas, muito além do que dá pra resolver sozinho numa reserva comprada por conta própria — mais proteção e prioridade, mesmo pelo mesmo preço.",
@@ -860,6 +861,7 @@ const OPCOES = [
     temDetalhes: true,
     obrigatorio: false,
     icone: "🏨",
+    iconeImg: "/images/produtos/hoteis.png",
     descricao: "Hospedagem selecionada durante toda a viagem",
     detalhe:
       "Hospedagem selecionada por categoria (3 estrelas a Elite) e tipo de quarto, em localizações estratégicas para o roteiro escolhido — sempre com curadoria Ajisai. Café da manhã incluso.",
@@ -880,6 +882,7 @@ const OPCOES = [
     temDetalhes: true,
     obrigatorio: false,
     icone: "🚐",
+    iconeImg: "/images/produtos/transporte-privado.png",
     descricao: "Transfers e deslocamentos do roteiro",
     detalhe:
       "Transfers e deslocamentos previstos no roteiro dia a dia — do aeroporto ao hotel, entre cidades e até as atrações, conforme a logística definida no seu Roteiro Digital.\n\nOs veículos variam conforme o tamanho do grupo e a categoria contratada — os dois modelos mais usados são a Toyota Alphard e a Toyota Hiace.\n\nToyota Alphard — minivan premium, bancos de couro tipo poltrona (captain seats) na segunda fila, cabine mais silenciosa e acabamento de categoria superior. Por causa das poltronas reclináveis, o porta-malas é menor — ideal pra grupos de até 4 pessoas com bagagem média.\n\nToyota Hiace — van maior, com bancos mais simples, mas bagageiro bem mais amplo. Vale mais a pena pra grupos maiores ou com bastante bagagem (malas grandes, equipamento extra), mesmo com o acabamento interno menos luxuoso.\n\nOu seja: a Alphard custa mais por causa do conforto e categoria do veículo, não por ser maior — na prática ela carrega menos bagagem que a Hiace. A Ajisai indica o modelo mais adequado conforme grupo e volume de mala na hora da cotação.",
@@ -893,6 +896,7 @@ const OPCOES = [
     temDetalhes: false,
     obrigatorio: false,
     icone: "🧭",
+    iconeImg: "/images/produtos/guia-turistico.png",
     descricao: `Guia turístico acompanhando o roteiro — US$ ${DIARIA_GUIA_USD}/dia a cada ${GUIA_TAMANHO_GRUPO} pessoas`,
     detalhe:
       `Guia particular fluente em português, dedicado ao seu grupo, acompanhando pontos-chave do roteiro — ajuda com trajetos, horários e como evitar filas nas atrações. US$ ${DIARIA_GUIA_USD} por dia a cada ${GUIA_TAMANHO_GRUPO} pessoas; grupos maiores recebem guias adicionais, cobrados proporcionalmente.`,
@@ -912,6 +916,7 @@ const OPCOES = [
     temDetalhes: true,
     obrigatorio: false,
     icone: "🚄",
+    iconeImg: "/images/icone-trem-bala-shinkansen.png",
     descricao: "Passe ferroviário com deslocamentos ilimitados de trem-bala — escolha 7, 14 ou 21 dias em Saiba mais",
     detalhe:
       "Passe ferroviário JR, com deslocamentos ilimitados nas linhas JR (incluindo a maioria dos trens-bala/Shinkansen) — vale a pena principalmente em roteiros com várias cidades. Vendido em faixas fixas de dias corridos de validade (não por diária do roteiro): escolha abaixo a duração que melhor cobre os deslocamentos do seu grupo.",
@@ -926,6 +931,7 @@ const OPCOES = [
     temDetalhes: true,
     obrigatorio: false,
     icone: "🛡️",
+    iconeImg: "/images/icone-seguro-viagem-v2.png",
     descricao: "Cobertura médica e assistência durante toda a viagem",
     detalhe:
       "Cobertura médico-hospitalar e assistência durante toda a duração da viagem contratada. Passageiros a partir de 85 anos entram sob consulta, já que a maioria das seguradoras aplica condições diferenciadas para essa faixa etária.\n\nApólice padrão Ajisai para o Japão — referência de mercado para o destino:\n\nDespesas Médicas e Hospitalares (DMH): mínimo de US$ 30 mil, com opção de upgrade para US$ 60 mil (recomendado para gestantes, idosos e quem tem doença preexistente). O sistema de saúde japonês é excelente, mas turista paga 100% do custo — sem seguro, uma internação simples pode passar de dezenas de milhares de dólares.\n\nBagagem extraviada ou danificada: cobertura mínima de US$ 750.\n\nCancelamento de viagem: reembolso por cancelamento por motivo de saúde, imprevisto familiar ou problema de documentação.\n\nTraslado médico e repatriação sanitária, em casos graves.\n\nCentral de assistência 24h em português, com acionamento por telefone ou WhatsApp.\n\nValores e seguradora exatos dependem da idade e do perfil dos passageiros — a Ajisai cota a apólice ideal junto às principais seguradoras do mercado antes da confirmação.",
@@ -939,6 +945,7 @@ const OPCOES = [
     temDetalhes: false,
     obrigatorio: false,
     icone: "💴",
+    iconeImg: "/images/icone-cambio-dinheiro.png",
     descricao: "Retirada de ienes com câmbio comercial antes do embarque",
     detalhe:
       "Retirada de ienes em espécie ainda no Brasil, com cotação comercial fechada antes do embarque — evita depender só de caixas eletrônicos ou casas de câmbio no Japão nos primeiros dias de viagem.",
@@ -952,6 +959,7 @@ const OPCOES = [
     temDetalhes: true,
     obrigatorio: false,
     icone: "🚗",
+    iconeImg: "/images/icone-taxi.png",
     descricao: `Traslados exclusivos com motorista particular — US$ ${DIARIA_MOTORISTA_PRIVADO_USD}/dia para até ${MOTORISTA_TAMANHO_GRUPO} pessoas`,
     detalhe:
       `Traslados exclusivos com motorista particular, sem compartilhar veículo com outros grupos — ideal para famílias com bagagem extra, crianças pequenas ou quem prefere mais privacidade e flexibilidade de horário. US$ ${DIARIA_MOTORISTA_PRIVADO_USD} por dia, cobrindo até ${MOTORISTA_TAMANHO_GRUPO} pessoas; grupos maiores recebem veículos adicionais, cobrados proporcionalmente.`,
@@ -971,6 +979,7 @@ const OPCOES = [
     temDetalhes: false,
     obrigatorio: false,
     icone: "🍽️",
+    iconeImg: "/images/icone-gastronomia.png",
     descricao: "Reservas em restaurantes concorridos durante a viagem",
     detalhe:
       "Reservas em restaurantes concorridos ao longo do roteiro, conforme o interesse do grupo — sob consulta.",
@@ -984,6 +993,7 @@ const OPCOES = [
     temDetalhes: true,
     obrigatorio: false,
     icone: "🍾",
+    iconeImg: "/images/icone-gastronomia.png",
     descricao: `${RESTAURANTES_HIGHEND_QTD} restaurantes Michelin/Tabelog Awards — US$ ${PRECO_RESTAURANTES_HIGHEND_USD} até ${RESTAURANTES_HIGHEND_LIMITE_PESSOAS} pessoas`,
     detalhe:
       `Pacote fechado de ${RESTAURANTES_HIGHEND_QTD} reservas em restaurantes de alto padrão — categoria Estrela Michelin, Tabelog Awards ou equivalente — nas cidades do seu roteiro. A Ajisai cuida de toda a articulação: muitos desses lugares têm poucas mesas por noite e não aceitam reserva direta de estrangeiros sem contato local.\n\nValor fixo de US$ ${PRECO_RESTAURANTES_HIGHEND_USD}, para grupos de até ${RESTAURANTES_HIGHEND_LIMITE_PESSOAS} pessoas. Grupos maiores, consulte.`,
@@ -997,6 +1007,7 @@ const OPCOES = [
     temDetalhes: false,
     obrigatorio: false,
     icone: "🛎️",
+    iconeImg: "/images/icone-duvidas-frequentes.png",
     descricao: "Suporte dedicado para pedidos e imprevistos no roteiro",
     detalhe:
       "Concierge dedicado durante toda a viagem, para pedidos, ajustes de roteiro e imprevistos — sob consulta conforme o interesse do grupo.",
@@ -1010,6 +1021,7 @@ const OPCOES = [
     temDetalhes: false,
     obrigatorio: false,
     icone: "✨",
+    iconeImg: "/images/icone-entretenimento.png",
     descricao: "Ingressos especiais, eventos sazonais e atividades personalizadas",
     detalhe:
       "Experiências sob medida — ingressos especiais, eventos sazonais e atividades personalizadas — conforme o interesse do grupo. Sob consulta.",
@@ -1025,6 +1037,7 @@ const OPCOES = [
     // desmarcar (pedido do Wilson, 03/set/2026).
     obrigatorio: true,
     icone: "📱",
+    iconeImg: "/images/produtos/roteiro-personalizado.png",
     descricao: "Painel digital Ajisai com o roteiro sob medida do seu grupo",
     detalhe:
       "Roteiro Digital Ajisai personalizado dia a dia — atrações, deslocamento, refeições e informações práticas dos aeroportos, montado sob medida para o seu grupo e acessível pelo navegador do celular durante toda a viagem. Incluso em toda Viagem Personalizada.",
@@ -1039,6 +1052,7 @@ const OPCOES = [
     temDetalhes: false,
     obrigatorio: false,
     icone: "🚌",
+    iconeImg: "/images/icone-onibus-v2.png",
     descricao: "Aeroporto → Centro de Tóquio (chegada) e Centro de Tóquio → Aeroporto (saída)",
     detalhe:
       "Transfer de ônibus entre o aeroporto (Narita ou Haneda) e o centro de Tóquio, nos dois sentidos: do aeroporto até o centro na chegada, e do centro até o aeroporto na saída. Valor sob consulta, conforme aeroporto e horário do voo.",
@@ -1052,6 +1066,7 @@ const OPCOES = [
     temDetalhes: false,
     obrigatorio: false,
     icone: "📶",
+    iconeImg: "/images/icone-esim.svg",
     descricao: "Conexão disponível durante todo o roteiro",
     detalhe:
       "Pocket Wi-Fi ou eSIM 5G com conexão de dados disponível durante todo o roteiro, para todo o grupo.",
@@ -1066,6 +1081,7 @@ const OPCOES = [
     temDetalhes: false,
     obrigatorio: false,
     icone: "🎟️",
+    iconeImg: "/images/icone-ingressos.png",
     descricao: "Ingresso avulso, por pessoa",
     detalhe:
       "Ingresso para Tokyo Disney Resort ou Universal Studios Japan, por pessoa.",
@@ -1358,7 +1374,7 @@ export function CustomPackageCard({
               }
         }
         aria-pressed={obrigatorio ? undefined : ativo}
-        className={`flex h-full flex-col gap-2 rounded-xl border px-4 py-3 text-left transition ${
+        className={`relative flex h-full flex-col gap-2 rounded-xl border px-4 py-3 text-left transition ${
           obrigatorio ? "cursor-default" : "cursor-pointer"
         } ${
           ativo
@@ -1366,7 +1382,18 @@ export function CustomPackageCard({
             : "border-black/10 bg-black/[0.02] hover:border-black/20"
         }`}
       >
-        <div className="flex items-start gap-3">
+        {/* Ícone no canto superior direito — mesmo tamanho/posição/estilo
+            (opacity-90 + invert conforme a família do arquivo) usado nos
+            cards de produto em /produtos, adaptado a este card mais
+            compacto. */}
+        <Image
+          src={opcao.iconeImg}
+          alt=""
+          width={36}
+          height={36}
+          className={`absolute right-3 top-3 h-9 w-9 object-contain opacity-90 ${classeInverterIcone(opcao.iconeImg, "claro")}`}
+        />
+        <div className="flex items-start gap-3 pr-11">
           <span
             className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full border text-[10px] transition ${
               ativo
@@ -1377,7 +1404,7 @@ export function CustomPackageCard({
             <IconCheck className="h-3 w-3" />
           </span>
           <span className="min-w-0 flex-1 text-sm font-medium text-[#0A2540]">
-            {opcao.icone} {opcao.label}
+            {opcao.label}
           </span>
           {obrigatorio && (
             <span className="flex shrink-0 items-center gap-1 rounded-full border border-[#2f80c9]/30 bg-[#2f80c9]/10 px-2 py-1 text-[9px] font-semibold uppercase tracking-[0.1em] text-[#2f80c9]">
@@ -1412,6 +1439,13 @@ export function CustomPackageCard({
         )}
       </div>
     );
+  }
+
+  function classeInverterIcone(iconeImg: string, fundo: "claro" | "escuro") {
+    if (iconeImg.endsWith(".svg")) return "";
+    const brancoPorPadrao = iconeImg.includes("/produtos/");
+    const precisaInverter = fundo === "claro" ? brancoPorPadrao : !brancoPorPadrao;
+    return precisaInverter ? "invert" : "";
   }
 
   function renderDestinoCard(destino: (typeof DESTINOS)[number]) {
@@ -1884,7 +1918,13 @@ export function CustomPackageCard({
               {itensSelecionados.map((opcao) => (
                 <div key={opcao.key} className="flex items-center justify-between gap-4 py-3">
                   <span className="flex min-w-0 items-center gap-2 text-sm text-[#0A2540]">
-                    <span className="shrink-0">{opcao.icone}</span>
+                    <Image
+                      src={opcao.iconeImg}
+                      alt=""
+                      width={18}
+                      height={18}
+                      className={`h-[18px] w-[18px] shrink-0 object-contain opacity-90 ${classeInverterIcone(opcao.iconeImg, "claro")}`}
+                    />
                     <span className="truncate">{descricaoItemFatura(opcao)}</span>
                   </span>
                   <IconCheck className="h-4 w-4 shrink-0 text-[#2f80c9]" />
@@ -1973,8 +2013,15 @@ export function CustomPackageCard({
             >
               <IconX className="h-3.5 w-3.5" />
             </button>
-            <p className="pr-8 text-base font-medium text-white">
-              {opcaoAberta.icone} {opcaoAberta.label}
+            <p className="flex items-center gap-2.5 pr-8 text-base font-medium text-white">
+              <Image
+                src={opcaoAberta.iconeImg}
+                alt=""
+                width={24}
+                height={24}
+                className={`h-6 w-6 shrink-0 object-contain opacity-90 ${classeInverterIcone(opcaoAberta.iconeImg, "escuro")}`}
+              />
+              {opcaoAberta.label}
             </p>
             {opcaoAberta.key === "roteiro" && (
               <div className="mt-3">
