@@ -43,6 +43,12 @@ const display = Bodoni_Moda({
   weight: ["400", "500", "600"],
 });
 
+// Mês/quinzena de referência da tabela de preços do JR Pass usada em
+// JR_PASS_PRECO_USD / JR_PASS_PRECO_USD_GREEN (CustomPackageCard.tsx) —
+// atualizar aqui junto com os valores toda vez que o fornecedor mandar uma
+// tabela nova (tabela é renovada quinzenalmente).
+const JR_PASS_TABELA_VALIDADE = "01–15/set/2026";
+
 const MIN_DIAS = 3;
 const MAX_DIAS = 30;
 const MIN_PESSOAS = 1;
@@ -224,7 +230,7 @@ export default function CalculadoraReversaPage() {
       incluidos.push({
         chave: "jrpass",
         label: `JR Pass — ${jrPassDias} dias${jrPassClasse === "green" ? " · Green Car" : ""}`,
-        detalhe: `Passe ferroviário com trem-bala ilimitado${jrPassClasse === "green" ? ", classe Green Car" : ""}, por pessoa`,
+        detalhe: `Passe ferroviário com trem-bala ilimitado${jrPassClasse === "green" ? ", classe Green Car" : ""}, por pessoa · tabela ${JR_PASS_TABELA_VALIDADE}`,
         precoBRL: precoJrPass,
       });
     }
@@ -572,7 +578,7 @@ export default function CalculadoraReversaPage() {
               {formatUSD(
                 (jrPassClasse === "green" ? JR_PASS_PRECO_USD_GREEN : JR_PASS_PRECO_USD)[jrPassDias],
               )}{" "}
-              por pessoa · tabela do fornecedor válida 01–15/set/2026
+              por pessoa · tabela do fornecedor válida {JR_PASS_TABELA_VALIDADE}
             </span>
           </div>
 
