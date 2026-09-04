@@ -352,6 +352,14 @@ type ItemPacote = {
    * tipo de wi-fi) e nao pode servir de chave. Itens com label fixo nao
    * precisam declarar chave (o codigo usa o label como chave nesse caso). */
   chave?: string;
+  /** Se o item coube no orçamento pela regra automática (prioridade
+   * greedy) no momento em que a proposta foi calculada. Itens
+   * configurados pelo vendedor (JR Pass, wi-fi, ingressos, motorista
+   * etc.) SEMPRE aparecem na lista, mesmo quando não cabem — ficam
+   * desmarcados por padrão (não somem mais), e o vendedor pode marcar
+   * manualmente pra forçar a inclusão. Ausente = sempre recomendado
+   * (itens fixos: Roteiro, Aéreo, Hotel). */
+  recomendado?: boolean;
 };
 
 function chaveDoItem(item: ItemPacote) {
@@ -393,10 +401,15 @@ export default function CalculadoraReversaPage() {
   const [aereoManual, setAereoManual] = useState(false);
   const [aereoValorManual, setAereoValorManual] = useState(0);
 
-  // Selecao manual dos itens do pacote sugerido (o vendedor pode tirar um
-  // item antes de mandar pro cliente) e o timestamp de quando essa
-  // proposta foi montada, pra constar na mensagem enviada.
-  const [itensRemovidos, setItensRemovidos] = useState<Set<string>>(new Set());
+  // Alteração manual da seleção padrão dos itens do pacote sugerido: cada
+  // chave presente no set INVERTE o padrão automático (item.recomendado)
+  // daquele item — assim o vendedor tanto pode tirar um item recomendado
+  // quanto adicionar de volta um item que não coube no orçamento (JR
+  // Pass, wi-fi, ingressos, motorista etc. continuam sempre visíveis na
+  // lista, mesmo quando não recomendados — só ficam desmarcados por
+  // padrão). Também guarda o timestamp de quando a proposta foi montada,
+  // pra constar na mensagem enviada.
+  const [itensAlterados, setItensAlterados] = useState<Set<string>>(new Set());
   const [geradoEm] = useState(() => new Date());
 
   // Ajuste manual de valor - sobrescreve o preco calculado de um item
@@ -632,49 +645,51 @@ export default function CalculadoraReversaPage() {
 
     // 2) Complementares essenciais (transporte, seguro, guia)
     const precoTransporte = DIARIA_TRANSPORTE * dias;
-    if (cabe(precoTransporte)) {
-      gasto += precoTransporte;
-      incluidos.push({
-        label: "Transporte",
-        detalhe: `Transfers e deslocamentos do roteiro — ${dias} dias`,
-        precoBRL: precoTransporte,
-      });
-    }
+    const transporteRecomendado = cabe(precoTransporte);
+    if (transporteRecomendado) gasto += precoTransporte;
+    incluidos.push({
+      label: "Transporte",
+      detalhe: `Transfers e deslocamentos do roteiro — ${dias} dias`,
+      precoBRL: precoTransporte,
+      recomendado: transporteRecomendado,
+    });
 
     const precoSeguro = DIARIA_SEGURO_VIAGEM * dias * pessoas;
-    if (cabe(precoSeguro)) {
-      gasto += precoSeguro;
-      incluidos.push({
-        label: "Seguro Viagem",
-        detalhe: `Cobertura médica e assistência — ${dias} dias · ${pessoas} ${pessoas === 1 ? "pessoa" : "pessoas"}`,
-        precoBRL: precoSeguro,
-      });
-    }
+    const seguroRecomendado = cabe(precoSeguro);
+    if (seguroRecomendado) gasto += precoSeguro;
+    incluidos.push({
+      label: "Seguro Viagem",
+      detalhe: `Cobertura médica e assistência — ${dias} dias · ${pessoas} ${pessoas === 1 ? "pessoa" : "pessoas"}`,
+      precoBRL: precoSeguro,
+      recomendado: seguroRecomendado,
+    });
 
     const precoGuia = Math.round(
       DIARIA_GUIA_USD * dias * Math.max(1, Math.ceil(pessoas / GUIA_TAMANHO_GRUPO)) * cambioCotacao,
     );
-    if (cabe(precoGuia)) {
-      gasto += precoGuia;
-      incluidos.push({
-        label: "Guia Turístico",
-        detalhe: `US$ ${DIARIA_GUIA_USD}/dia a cada ${GUIA_TAMANHO_GRUPO} pessoas`,
-        precoBRL: precoGuia,
-      });
-    }
+    const guiaRecomendado = cabe(precoGuia);
+    if (guiaRecomendado) gasto += precoGuia;
+    incluidos.push({
+      label: "Guia Turístico",
+      detalhe: `US$ ${DIARIA_GUIA_USD}/dia a cada ${GUIA_TAMANHO_GRUPO} pessoas`,
+      precoBRL: precoGuia,
+      recomendado: guiaRecomendado,
+    });
 
     // 3) JR Pass — faixa de dias e classe escolhidas pelo vendedor; só
     // entra quantidade de gente que realmente compra o passe (editável,
     // pode ser menor que `pessoas`).
     const tabelaJrPass = jrPassClasse === "green" ? JR_PASS_PRECO_USD_GREEN : JR_PASS_PRECO_USD;
     const precoJrPass = Math.round(tabelaJrPass[jrPassDias] * cambioCotacao * jrPassPessoas);
-    if (jrPassPessoas > 0 && cabe(precoJrPass)) {
-      gasto += precoJrPass;
+    if (jrPassPessoas > 0) {
+      const jrPassRecomendado = cabe(precoJrPass);
+      if (jrPassRecomendado) gasto += precoJrPass;
       incluidos.push({
         chave: "jrpass",
         label: `JR Pass — ${jrPassDias} dias${jrPassClasse === "green" ? " · Green Car" : ""}`,
         detalhe: `Passe ferroviário com trem-bala ilimitado${jrPassClasse === "green" ? ", classe Green Car" : ""} · ${jrPassPessoas} de ${pessoas} viajante${pessoas === 1 ? "" : "s"} · tabela ${JR_PASS_TABELA_VALIDADE}`,
         precoBRL: precoJrPass,
+        recomendado: jrPassRecomendado,
       });
     }
 
@@ -685,8 +700,9 @@ export default function CalculadoraReversaPage() {
       wifiTipo === "esim"
         ? Math.round(DIARIA_ESIM_USD_PAX * dias * wifiPessoasOuUnidades * cambioCotacao)
         : Math.round(DIARIA_POCKET_WIFI_USD * dias * Math.max(0, wifiPessoasOuUnidades) * cambioCotacao);
-    if (wifiPessoasOuUnidades > 0 && cabe(precoWifi)) {
-      gasto += precoWifi;
+    if (wifiPessoasOuUnidades > 0) {
+      const wifiRecomendado = cabe(precoWifi);
+      if (wifiRecomendado) gasto += precoWifi;
       incluidos.push({
         chave: "wifi",
         label: wifiTipo === "esim" ? "eSIM" : "Pocket Wi-Fi",
@@ -695,6 +711,7 @@ export default function CalculadoraReversaPage() {
             ? `Conexão 5G direto no celular · ${wifiPessoasOuUnidades} de ${pessoas} viajante${pessoas === 1 ? "" : "s"} · ${dias} dias`
             : `${wifiPessoasOuUnidades} aparelho${wifiPessoasOuUnidades === 1 ? "" : "s"} compartilhado${wifiPessoasOuUnidades === 1 ? "" : "s"} (até ${WIFI_TAMANHO_GRUPO} pessoas por unidade) — ${dias} dias`,
         precoBRL: precoWifi,
+        recomendado: wifiRecomendado,
       });
     }
 
@@ -723,25 +740,25 @@ export default function CalculadoraReversaPage() {
         Math.max(1, Math.ceil(pessoas / MOTORISTA_TAMANHO_GRUPO)) *
         cambioCotacao,
     );
-    if (cabe(precoMotorista)) {
-      gasto += precoMotorista;
-      incluidos.push({
-        chave: "motorista",
-        label: "Motorista Privado",
-        detalhe: `US$ ${DIARIA_MOTORISTA_PRIVADO_USD}/dia para até ${MOTORISTA_TAMANHO_GRUPO} pessoas, sem compartilhar veículo`,
-        precoBRL: precoMotorista,
-      });
-    }
+    const motoristaRecomendado = cabe(precoMotorista);
+    if (motoristaRecomendado) gasto += precoMotorista;
+    incluidos.push({
+      chave: "motorista",
+      label: "Motorista Privado",
+      detalhe: `US$ ${DIARIA_MOTORISTA_PRIVADO_USD}/dia para até ${MOTORISTA_TAMANHO_GRUPO} pessoas, sem compartilhar veículo`,
+      precoBRL: precoMotorista,
+      recomendado: motoristaRecomendado,
+    });
 
     // 7) Câmbio no Brasil
-    if (cabe(PRECO_CAMBIO_BRASIL)) {
-      gasto += PRECO_CAMBIO_BRASIL;
-      incluidos.push({
-        label: "Câmbio no Brasil",
-        detalhe: "Retirada de ienes com câmbio comercial antes do embarque",
-        precoBRL: PRECO_CAMBIO_BRASIL,
-      });
-    }
+    const cambioRecomendado = cabe(PRECO_CAMBIO_BRASIL);
+    if (cambioRecomendado) gasto += PRECO_CAMBIO_BRASIL;
+    incluidos.push({
+      label: "Câmbio no Brasil",
+      detalhe: "Retirada de ienes com câmbio comercial antes do embarque",
+      precoBRL: PRECO_CAMBIO_BRASIL,
+      recomendado: cambioRecomendado,
+    });
 
     // 8) Ingressos e experiências — só entram os parques marcados pelo
     // vendedor (nenhum vem por padrão). Premier Access (Disney, por
@@ -768,28 +785,28 @@ export default function CalculadoraReversaPage() {
       const precoIngresso = Math.round(
         (ingresso.precoUSD + precoFastPassUSD) * pessoas * cambioCotacao,
       );
-      if (cabe(precoIngresso)) {
-        gasto += precoIngresso;
-        incluidos.push({
-          chave: `ingresso-${ingresso.key}`,
-          label: `Ingresso — ${ingresso.nome}${temFastPass ? ` + ${nomeFastPass}` : ""}`,
-          detalhe: `Ingresso de 1 dia, por pessoa${temFastPass ? ` + ${nomeFastPass} (fast pass pago)` : ""}`,
-          precoBRL: precoIngresso,
-        });
-      }
+      const ingressoRecomendado = cabe(precoIngresso);
+      if (ingressoRecomendado) gasto += precoIngresso;
+      incluidos.push({
+        chave: `ingresso-${ingresso.key}`,
+        label: `Ingresso — ${ingresso.nome}${temFastPass ? ` + ${nomeFastPass}` : ""}`,
+        detalhe: `Ingresso de 1 dia, por pessoa${temFastPass ? ` + ${nomeFastPass} (fast pass pago)` : ""}`,
+        precoBRL: precoIngresso,
+        recomendado: ingressoRecomendado,
+      });
     }
 
     // 9) Reserva de Restaurantes High-End
     if (pessoas <= RESTAURANTES_HIGHEND_LIMITE_PESSOAS) {
       const precoRestaurantes = Math.round(PRECO_RESTAURANTES_HIGHEND_USD * cambioCotacao);
-      if (cabe(precoRestaurantes)) {
-        gasto += precoRestaurantes;
-        incluidos.push({
-          label: "Reserva de Restaurantes High-End",
-          detalhe: `Pacote fechado — até ${RESTAURANTES_HIGHEND_LIMITE_PESSOAS} pessoas`,
-          precoBRL: precoRestaurantes,
-        });
-      }
+      const restaurantesRecomendado = cabe(precoRestaurantes);
+      if (restaurantesRecomendado) gasto += precoRestaurantes;
+      incluidos.push({
+        label: "Reserva de Restaurantes High-End",
+        detalhe: `Pacote fechado — até ${RESTAURANTES_HIGHEND_LIMITE_PESSOAS} pessoas`,
+        precoBRL: precoRestaurantes,
+        recomendado: restaurantesRecomendado,
+      });
     }
 
     // Atualiza os itens fixos de hotel/aéreo com a categoria/classe final
@@ -848,12 +865,24 @@ export default function CalculadoraReversaPage() {
   const pacoteSugeridoLabel = `Hotel ${resultado.categoriaHotelFinal} · Aéreo ${resultado.classeAereoFinal} · ${dias} dias · ${pessoas} ${pessoas === 1 ? "pessoa" : "pessoas"} · orçamento ${formatBRL(orcamento)}`;
 
   function alternarItem(chave: string) {
-    setItensRemovidos((atual) => {
+    setItensAlterados((atual) => {
       const novo = new Set(atual);
       if (novo.has(chave)) novo.delete(chave);
       else novo.add(chave);
       return novo;
     });
+  }
+
+  // item.recomendado ausente = sempre recomendado (itens fixos: Roteiro,
+  // Aéreo, Hotel). Um item está selecionado quando seu padrão
+  // (recomendado) não foi invertido pelo vendedor em itensAlterados —
+  // é assim que um item fora do orçamento (motorista, JR Pass etc.) pode
+  // ser marcado manualmente sem nunca sumir da lista.
+  function itemRecomendado(item: ItemPacote) {
+    return item.recomendado !== false;
+  }
+  function itemSelecionado(item: ItemPacote) {
+    return itemRecomendado(item) !== itensAlterados.has(chaveDoItem(item));
   }
 
   // Valor efetivo de um item: o ajuste manual, quando existir, sobrescreve
@@ -875,9 +904,7 @@ export default function CalculadoraReversaPage() {
     });
   }
 
-  const itensSelecionados = resultado.incluidos.filter(
-    (item) => !itensRemovidos.has(chaveDoItem(item)),
-  );
+  const itensSelecionados = resultado.incluidos.filter(itemSelecionado);
   const totalCalculado = itensSelecionados.reduce((soma, item) => soma + valorItem(item), 0);
   const totalSelecionado = totalManual ? totalValorManual : totalCalculado;
   const saldoSelecionado = orcamento - totalSelecionado;
