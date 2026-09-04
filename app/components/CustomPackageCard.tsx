@@ -1215,41 +1215,58 @@ export const CIDADE_MULTIPLICADOR_HOTEL: Record<DestinoKey, number> = {
   nagano: 0.85,
   ishigaki: 1.05,
   yakushima: 0.9,
-  // Cidades dos "Temas" da Calculadora Reversa (04/set/2026) — mesmo
-  // critério de ajuste relativo de mercado acima, não tarifa negociada.
-  // Fuji/Kawaguchiko: mercado de ryokan com vista pro Fuji vai de ~US$135
-  // (mid-range) a US$700+/noite no topo (Kawaguchiko Fufu) — tier
-  // parecido com Hakone (japanryokanguide.com/en/blog/best-ryokans-kawaguchiko).
+  // Cidades dos "Temas" da Calculadora Reversa (04/set/2026) — pesquisa
+  // individual de mercado por cidade (04/set/2026), mesmo critério de
+  // ajuste relativo acima (não é tarifa negociada por fornecedor).
+  // Fuji/Kawaguchiko: ryokan com vista pro Fuji ~US$135-230 mid-range,
+  // US$300-700+ no topo (Kawaguchiko Fufu) — tier parecido com Hakone.
+  // (japanryokanguide.com/en/blog/best-ryokans-kawaguchiko)
   fuji: 1.05,
-  // Niseko: resort de ski internacional, segmento ultra-luxo chega a
-  // US$2.000+/noite em temporada de neve (Park Hyatt Niseko Hanazono,
-  // Ritz-Carlton Reserve) — bem acima de Tokyo mesmo na alta temporada
-  // (thehotelguru.com/en-us/best-hotels-in/japan/niseko). Multiplicador
-  // médio no ano; pico de inverno na prática custa ainda mais.
+  // Niseko: resort de ski internacional, ultra-luxo chega a US$2.000+
+  // /noite em temporada (Park Hyatt Niseko Hanazono, Ritz-Carlton
+  // Reserve) — bem acima de Tokyo. Multiplicador médio no ano; pico de
+  // inverno na prática custa ainda mais.
+  // (thehotelguru.com/en-us/best-hotels-in/japan/niseko)
   niseko: 1.35,
-  // Hakuba: grande resort de ski nos Alpes Japoneses, premium mas sem o
-  // mesmo patamar internacional ultra-luxo de Niseko — estimativa
-  // relativa (mesmo tier de Hakone/Fuji).
-  hakuba: 1.05,
-  // Nozawa Onsen: ski + vila de onsen tradicional, resort de porte médio
-  // — estimativa relativa.
+  // Hakuba: mid-range já em US$150-220/noite (quarto), premium
+  // US$319-438 — patamar de Tokyo 4-5 estrelas mesmo na média do mercado,
+  // por oferta limitada num resort concorrido. Wilson confirmou "bem
+  // caro" (04/set/2026) — revisado pra cima da estimativa inicial.
+  // (thehotelguru.com/en-us/best-hotels-in/japan/hakuba)
+  hakuba: 1.2,
+  // Kamikochi: vale de acesso controlado (carro particular proibido lá
+  // dentro), oferta de hospedagem muito limitada — faixa de US$254 a
+  // US$1.087/noite, média de temporada alta ~US$506. Bem acima da
+  // estimativa inicial.
+  // (tripadvisor.com/Hotels-g12830931-Kamikochi_Matsumoto_Nagano_Prefecture_Koshinetsu_Chubu-Hotels.html)
+  kamikochi: 1.25,
+  // Nozawa Onsen: vila de ski + onsen tradicional, mais em conta que
+  // Kusatsu/Kinosaki (piso de ~¥5.000/pessoa) — estimativa relativa.
   nozawa: 1.0,
-  // Kusatsu: uma das águas termais mais famosas do Japão, mercado de
-  // ryokan estabelecido e concorrido — estimativa relativa.
-  kusatsu: 1.0,
-  // Kinosaki: cidade termal tradicional, demanda turística alta mas
-  // menos internacional que Kusatsu — estimativa relativa.
-  kinosaki: 0.95,
-  // Kamikochi: resort alpino remoto, oferta de hospedagem limitada
-  // (poucos lodges) — estimativa relativa.
-  kamikochi: 0.95,
-  // Koyasan: hospedagem em shukubo (templo) — mercado modesto apesar da
-  // experiência única — estimativa relativa, mesmo tier de Nikko/Kanazawa.
-  koyasan: 0.9,
-  // Motegi e Suzuka: cidades pequenas/regionais sem premium turístico
-  // amplo, mercado hoteleiro modesto — estimativa relativa.
-  motegi: 0.8,
+  // Kusatsu: ryokans premium cobram US$250-800/pessoa/noite com 2
+  // refeições, mid-range US$120-350/pessoa — um dos onsen mais
+  // concorridos do Japão, ajustado pra cima da estimativa inicial.
+  // (japanryokanguide.com/en/blog/best-ryokans-kusatsu)
+  kusatsu: 1.05,
+  // Kinosaki: perfil de preço parecido com Kusatsu (premium US$250-800+
+  // /pessoa, mid-range US$130-220/pessoa), mas cidade pequena e
+  // totalmente andável — mantido levemente abaixo de Kusatsu.
+  // (japanryokanguide.com/en/area/kinosaki)
+  kinosaki: 1.0,
+  // Koyasan: shukubo (templo) roda ¥15.000-25.000/pessoa/noite já com 2
+  // refeições — mercado modesto apesar da experiência única, revisado
+  // pra baixo da estimativa inicial.
+  // (osaka-escape.com/guides/koyasan-temple-stay)
+  koyasan: 0.85,
+  // Suzuka: hotéis a partir de US$26-30/noite — mercado de hotel de
+  // negócios comum, sem premium turístico.
+  // (expedia.com/Suzuka-Hotels.d602819.Travel-Guide-Hotels)
   suzuka: 0.8,
+  // Motegi: hotéis na cidade a partir de US$30-44/noite (o resort dentro
+  // do próprio circuito custa mais, ~US$205, mas não é a opção típica de
+  // hospedagem) — mercado rural modesto, mesmo tier de Suzuka.
+  // (tripadvisor.com/Hotels-g1121046-Motegi_machi_Haga_gun_Tochigi_Prefecture_Kanto-Hotels.html)
+  motegi: 0.8,
 };
 
 const MIN_DIAS = 3;

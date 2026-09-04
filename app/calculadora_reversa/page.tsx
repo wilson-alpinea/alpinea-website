@@ -186,6 +186,61 @@ const TEMAS: { key: TemaKey; nome: string; cidades: TemaCidade[] }[] = [
   },
 ];
 
+// Cidades onde o transporte público (trem/ônibus) não dá conta sozinho do
+// roteiro — pesquisa 04/set/2026, a pedido do Wilson ("avaliar quais
+// cidades precisam de motorista particular obrigatório devido a logística
+// de trem e ônibus ser insuficiente"). "obrigatorio" = sem carro/motorista
+// o roteiro não fecha (ilha com ônibus raro, resort de ski disperso,
+// acesso restrito etc.); "recomendado" = dá pra fazer de transporte
+// público, mas com bagagem/tempo/conforto prejudicados. Cidades fora
+// dessa lista têm trem/ônibus/metrô que cobrem bem o roteiro sozinhos
+// (inclusive Koyasan e Kinosaki, que apesar de remotas/pequenas têm
+// trem+funicular ou trem-bala dedicados e são andáveis por dentro).
+const CIDADE_MOTORISTA_NOTA: Partial<
+  Record<DestinoKey, { nivel: "obrigatorio" | "recomendado"; motivo: string }>
+> = {
+  yakushima: {
+    nivel: "obrigatorio",
+    motivo: "Ônibus local roda poucas vezes ao dia; trilhas e atrações ficam espalhadas pela ilha.",
+  },
+  motegi: {
+    nivel: "obrigatorio",
+    motivo: "Ônibus até o circuito só é confiável em dia de evento — fora disso o transporte público é muito limitado.",
+  },
+  kamikochi: {
+    nivel: "obrigatorio",
+    motivo: "Carro particular é proibido dentro do vale — mesmo com motorista contratado, o trecho final é de ônibus/táxi lançadeira a partir do portão (Sawando/Nakanoyu).",
+  },
+  ishigaki: {
+    nivel: "recomendado",
+    motivo: "Praias e pontos turísticos ficam espalhados pela ilha, com ônibus infrequente.",
+  },
+  fuji: {
+    nivel: "recomendado",
+    motivo: "Ônibus da Fujikyu cobrem os principais pontos, mas com frequência baixa entre os mirantes.",
+  },
+  suzuka: {
+    nivel: "recomendado",
+    motivo: "Shuttle até o circuito existe, mas com frequência reduzida fora de dias de evento.",
+  },
+  kusatsu: {
+    nivel: "recomendado",
+    motivo: "Acesso via ônibus a partir da estação de trem-bala, com frequência limitada — motorista facilita bastante com bagagem.",
+  },
+  niseko: {
+    nivel: "recomendado",
+    motivo: "Shuttle entre as vilas do resort funciona bem na temporada de neve; fora dela, transporte público é escasso e o aeroporto fica a ~2h30.",
+  },
+  hakuba: {
+    nivel: "recomendado",
+    motivo: "As vilas do resort ficam espalhadas, com ônibus local limitado — ~70 min de ônibus desde a estação de Nagano.",
+  },
+  okinawa: {
+    nivel: "recomendado",
+    motivo: "Monotrilho e ônibus cobrem Naha, mas as atrações do norte da ilha (Churaumi etc.) têm pouca cobertura de transporte público.",
+  },
+};
+
 const display = Bodoni_Moda({
   subsets: ["latin"],
   weight: ["400", "500", "600"],
@@ -505,6 +560,7 @@ export default function CalculadoraReversaPage() {
     if (cabe(precoMotorista)) {
       gasto += precoMotorista;
       incluidos.push({
+        chave: "motorista",
         label: "Motorista Privado",
         detalhe: `US$ ${DIARIA_MOTORISTA_PRIVADO_USD}/dia para até ${MOTORISTA_TAMANHO_GRUPO} pessoas, sem compartilhar veículo`,
         precoBRL: precoMotorista,
@@ -646,6 +702,18 @@ export default function CalculadoraReversaPage() {
   const totalCalculado = itensSelecionados.reduce((soma, item) => soma + valorItem(item), 0);
   const totalSelecionado = totalManual ? totalValorManual : totalCalculado;
   const saldoSelecionado = orcamento - totalSelecionado;
+
+  // Cidades marcadas que exigem motorista particular (transporte público
+  // insuficiente) mas cujo item "Motorista Privado" não está na proposta
+  // final — alerta pro vendedor não fechar um pacote sem transporte viável.
+  const motoristaNaProposta = itensSelecionados.some((item) => chaveDoItem(item) === "motorista");
+  const cidadesSemMotoristaObrigatorio = motoristaNaProposta
+    ? []
+    : Array.from(destinosSelecionados)
+        .map((key) => ({ key, nota: CIDADE_MOTORISTA_NOTA[key] }))
+        .filter((c): c is { key: DestinoKey; nota: NonNullable<(typeof CIDADE_MOTORISTA_NOTA)[DestinoKey]> } =>
+          c.nota?.nivel === "obrigatorio",
+        );
 
   const geradoEmLabel = `${geradoEm.toLocaleDateString("pt-BR")} às ${geradoEm.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}`;
 
@@ -813,12 +881,13 @@ export default function CalculadoraReversaPage() {
                 {TEMAS.find((t) => t.key === temaSelecionado)?.cidades.map((c) => {
                   const destino = DESTINOS.find((d) => d.key === c.key);
                   const marcado = destinosSelecionados.has(c.key);
+                  const notaMotorista = CIDADE_MOTORISTA_NOTA[c.key];
                   return (
                     <label
                       key={c.key}
                       className="grid cursor-pointer grid-cols-[minmax(140px,auto)_1fr] items-start gap-x-6 gap-y-1 border-t border-black/10 px-4 py-3"
                     >
-                      <span className="flex items-center gap-2 text-sm">
+                      <span className="flex flex-wrap items-center gap-2 text-sm">
                         <input
                           type="checkbox"
                           checked={marcado}
@@ -826,12 +895,28 @@ export default function CalculadoraReversaPage() {
                           className="h-4 w-4 shrink-0 rounded border-black/25 accent-[#2f80c9]"
                         />
                         {destino?.nome ?? c.key}
+                        {notaMotorista && (
+                          <span
+                            className={`rounded-full px-2 py-0.5 text-[9px] font-medium uppercase tracking-wide ${
+                              notaMotorista.nivel === "obrigatorio"
+                                ? "bg-red-100 text-red-700"
+                                : "bg-amber-100 text-amber-700"
+                            }`}
+                          >
+                            {notaMotorista.nivel === "obrigatorio" ? "Motorista obrigatório" : "Motorista recomendado"}
+                          </span>
+                        )}
                       </span>
                       <span className="text-xs leading-5 text-black/55">
                         <strong className="font-medium text-[#0A2540]">
                           {destino?.nome ?? c.key}
                         </strong>{" "}
                         — {c.destaque}
+                        {notaMotorista && (
+                          <span className="mt-0.5 block text-[11px] text-black/40">
+                            🚗 {notaMotorista.motivo}
+                          </span>
+                        )}
                       </span>
                     </label>
                   );
@@ -1068,6 +1153,25 @@ export default function CalculadoraReversaPage() {
               <p className="mt-1 text-[11px] text-black/35">
                 Ajisai · proposta gerada em {geradoEmLabel}
               </p>
+
+              {cidadesSemMotoristaObrigatorio.length > 0 && (
+                <div className="mt-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3">
+                  <p className="text-[10px] font-medium uppercase tracking-[0.15em] text-red-700">
+                    ⚠ Motorista particular obrigatório
+                  </p>
+                  <ul className="mt-1.5 space-y-1 text-xs leading-5 text-red-800">
+                    {cidadesSemMotoristaObrigatorio.map(({ key, nota }) => (
+                      <li key={key}>
+                        <strong>{DESTINOS.find((d) => d.key === key)?.nome ?? key}</strong> — {nota.motivo}
+                      </li>
+                    ))}
+                  </ul>
+                  <p className="mt-1.5 text-[11px] text-red-700/80">
+                    O item &quot;Motorista Privado&quot; não está nessa proposta — marque manualmente
+                    ou ajuste o orçamento pra incluir.
+                  </p>
+                </div>
+              )}
 
               <div className="mt-6 space-y-2.5">
                 {resultado.incluidos.map((item) => {
