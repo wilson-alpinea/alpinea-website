@@ -805,7 +805,31 @@ export const DIARIA_WIFI_USD_PAX = comMargemEImposto(7); // ≈ JPY 1000/dia/pax
 export const DIARIA_ESIM_USD_PAX = comMargemEImposto(4);
 export const DIARIA_POCKET_WIFI_USD = comMargemEImposto(7);
 export const WIFI_TAMANHO_GRUPO = 4;
-export const PRECO_INGRESSO_DISNEY_UNIVERSAL_USD_PAX = comMargemEImposto(83); // ≈ JPY 12000/pax (custo, ingresso avulso)
+export const PRECO_INGRESSO_DISNEY_UNIVERSAL_USD_PAX = comMargemEImposto(83); // ≈ JPY 12000/pax (custo, ingresso avulso) — usado só no calculador do Personalizado
+// Catálogo detalhado de ingressos da Calculadora Reversa — pesquisa
+// set/2026, custo puro em USD (convertido de JPY na cotação de referência
+// ~150 JPY/USD), 1 dia/adulto, antes de imposto+margem:
+// - Disneyland Tokyo e DisneySea: passaporte 1 dia com precificação
+//   variável por data, ¥7.900–¥10.900 (média ~¥9.400) — tourismattractions.net/japan/tokyo-disneyland-ticket-pricing-guide
+// - Disney Premier Access (fast pass pago, vendido por atração): ¥1.000–
+//   2.500/atração; pacote de 3-4 atrações principais ~¥7.000/pessoa —
+//   neverendingvoyage.com/tokyo-disney-premier-access
+// - Universal Studios Japan: Studio Pass 1 dia ¥9.000–12.500 (média
+//   ~¥10.750) — japan.asoventure.jp/en/article/usj-express-pass-guide-2026-worth-buying
+// - USJ Express Pass (fast pass pago, tier intermediário Express 4/7):
+//   ¥9.500–26.000 conforme temporada, referência ~¥14.000 — mesma fonte
+// - teamLab Tokyo (Planets/Borderless): ¥3.800–4.200 —
+//   japan-travel-kit.com/guides/attractions/teamlab-tokyo-tickets
+// - teamLab Kyoto (Biovortex): ¥3.800 — teamlab.art/e/kyoto
+// Todos com precificação dinâmica por data no fornecedor — valores aqui
+// são referência de mercado, não tarifa negociada.
+export const PRECO_INGRESSO_DISNEYLAND_TOKYO_USD_PAX = comMargemEImposto(63);
+export const PRECO_INGRESSO_DISNEYSEA_USD_PAX = comMargemEImposto(63);
+export const PRECO_DISNEY_PREMIER_ACCESS_USD_PAX = comMargemEImposto(47);
+export const PRECO_INGRESSO_USJ_USD_PAX = comMargemEImposto(72);
+export const PRECO_EXPRESS_PASS_USJ_USD_PAX = comMargemEImposto(90);
+export const PRECO_INGRESSO_TEAMLAB_TOKYO_USD_PAX = comMargemEImposto(27);
+export const PRECO_INGRESSO_TEAMLAB_KYOTO_USD_PAX = comMargemEImposto(25);
 // Reserva de restaurantes high-end: pacote fechado de 7 reservas em
 // restaurantes categoria Michelin/Tabelog Awards (ou equivalente), valor
 // fixo até 3 pessoas — não escala por dia nem por pessoa dentro do limite.

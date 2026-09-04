@@ -28,7 +28,13 @@ import {
   PRECO_CAMBIO_BRASIL,
   DIARIA_MOTORISTA_PRIVADO_USD,
   MOTORISTA_TAMANHO_GRUPO,
-  PRECO_INGRESSO_DISNEY_UNIVERSAL_USD_PAX,
+  PRECO_INGRESSO_DISNEYLAND_TOKYO_USD_PAX,
+  PRECO_INGRESSO_DISNEYSEA_USD_PAX,
+  PRECO_DISNEY_PREMIER_ACCESS_USD_PAX,
+  PRECO_INGRESSO_USJ_USD_PAX,
+  PRECO_EXPRESS_PASS_USJ_USD_PAX,
+  PRECO_INGRESSO_TEAMLAB_TOKYO_USD_PAX,
+  PRECO_INGRESSO_TEAMLAB_KYOTO_USD_PAX,
   PRECO_RESTAURANTES_HIGHEND_USD,
   RESTAURANTES_HIGHEND_LIMITE_PESSOAS,
   ROTEIRO_BASE_DIAS,
@@ -37,6 +43,19 @@ import {
 } from "../components/CustomPackageCard";
 import { useCambioUSD, formatBRL, formatUSD } from "../hooks/useCambioUSD";
 import { CambioLabel } from "../components/CambioLabel";
+
+type IngressoKey = "disneyland" | "disneysea" | "usj" | "teamlabTokyo" | "teamlabKyoto";
+
+// Catálogo de ingressos/experiências oferecidos na Calculadora Reversa —
+// cada um vira um candidato do preenchimento por orçamento quando marcado
+// pelo vendedor (ver ingressosSelecionados). Preços em CustomPackageCard.tsx.
+const CATALOGO_INGRESSOS: { key: IngressoKey; nome: string; precoUSD: number }[] = [
+  { key: "disneyland", nome: "Disneyland Tokyo", precoUSD: PRECO_INGRESSO_DISNEYLAND_TOKYO_USD_PAX },
+  { key: "disneysea", nome: "DisneySea Tokyo", precoUSD: PRECO_INGRESSO_DISNEYSEA_USD_PAX },
+  { key: "usj", nome: "Universal Studios Japan", precoUSD: PRECO_INGRESSO_USJ_USD_PAX },
+  { key: "teamlabTokyo", nome: "teamLab Tokyo", precoUSD: PRECO_INGRESSO_TEAMLAB_TOKYO_USD_PAX },
+  { key: "teamlabKyoto", nome: "teamLab Kyoto", precoUSD: PRECO_INGRESSO_TEAMLAB_KYOTO_USD_PAX },
+];
 
 const display = Bodoni_Moda({
   subsets: ["latin"],
@@ -123,6 +142,24 @@ export default function CalculadoraReversaPage() {
   // Wi-fi - eSIM (por pessoa) ou Pocket Wi-Fi (aparelho compartilhado,
   // cobre varias pessoas). Ambos escalam com a quantidade de dias.
   const [wifiTipo, setWifiTipo] = useState<"esim" | "pocket">("esim");
+
+  // Ingressos e experiências - o vendedor marca quais parques/experiências
+  // o cliente quer (nenhum vem pré-selecionado); cada um marcado entra como
+  // candidato do preenchimento por orçamento, igual aos outros
+  // complementares. Premier Access (Disney) e Express Pass (USJ) são
+  // acréscimos opcionais sobre o ingresso base.
+  const [ingressosSelecionados, setIngressosSelecionados] = useState<Set<IngressoKey>>(new Set());
+  const [disneyPremierAccess, setDisneyPremierAccess] = useState(false);
+  const [usjExpressPass, setUsjExpressPass] = useState(false);
+
+  function alternarIngresso(key: IngressoKey) {
+    setIngressosSelecionados((atual) => {
+      const novo = new Set(atual);
+      if (novo.has(key)) novo.delete(key);
+      else novo.add(key);
+      return novo;
+    });
+  }
 
   const multiplicadorCidade = CIDADE_MULTIPLICADOR_HOTEL[cidade];
 
@@ -302,17 +339,29 @@ export default function CalculadoraReversaPage() {
       });
     }
 
-    // 8) Ingressos Disney/Universal
-    const precoIngressos = Math.round(
-      PRECO_INGRESSO_DISNEY_UNIVERSAL_USD_PAX * pessoas * cambioCotacao,
-    );
-    if (cabe(precoIngressos)) {
-      gasto += precoIngressos;
-      incluidos.push({
-        label: "Ingressos Disney/Universal",
-        detalhe: "Ingresso avulso, por pessoa",
-        precoBRL: precoIngressos,
-      });
+    // 8) Ingressos e experiências — só entram os parques marcados pelo
+    // vendedor (nenhum vem por padrão); Premier Access/Express Pass somam
+    // ao ingresso base do parque correspondente quando marcados.
+    for (const ingresso of CATALOGO_INGRESSOS) {
+      if (!ingressosSelecionados.has(ingresso.key)) continue;
+      const ehDisney = ingresso.key === "disneyland" || ingresso.key === "disneysea";
+      const temFastPass = (ehDisney && disneyPremierAccess) || (ingresso.key === "usj" && usjExpressPass);
+      const precoFastPassUSD = ehDisney
+        ? PRECO_DISNEY_PREMIER_ACCESS_USD_PAX
+        : PRECO_EXPRESS_PASS_USJ_USD_PAX;
+      const nomeFastPass = ehDisney ? "Premier Access" : "Express Pass";
+      const precoIngresso = Math.round(
+        (ingresso.precoUSD + (temFastPass ? precoFastPassUSD : 0)) * pessoas * cambioCotacao,
+      );
+      if (cabe(precoIngresso)) {
+        gasto += precoIngresso;
+        incluidos.push({
+          chave: `ingresso-${ingresso.key}`,
+          label: `Ingresso — ${ingresso.nome}${temFastPass ? ` + ${nomeFastPass}` : ""}`,
+          detalhe: `Ingresso de 1 dia, por pessoa${temFastPass ? ` + ${nomeFastPass} (fast pass pago)` : ""}`,
+          precoBRL: precoIngresso,
+        });
+      }
     }
 
     // 9) Reserva de Restaurantes High-End
@@ -374,6 +423,9 @@ export default function CalculadoraReversaPage() {
     jrPassDias,
     jrPassClasse,
     wifiTipo,
+    ingressosSelecionados,
+    disneyPremierAccess,
+    usjExpressPass,
   ]);
 
   const pacoteSugeridoLabel = `Hotel ${resultado.categoriaHotelFinal} · Aéreo ${resultado.classeAereoFinal} · ${dias} dias · ${pessoas} ${pessoas === 1 ? "pessoa" : "pessoas"} · orçamento ${formatBRL(orcamento)}`;
@@ -607,6 +659,59 @@ export default function CalculadoraReversaPage() {
                 ? "Um eSIM por pessoa — tipo Airalo/Holafly, plano ilimitado"
                 : `Aparelho compartilhado — até ${WIFI_TAMANHO_GRUPO} pessoas por unidade`}
             </span>
+          </div>
+
+          <div className="sm:col-span-2">
+            <span className="mb-2 block text-[10px] uppercase tracking-[0.2em] text-black/50">
+              Ingressos e experiências
+            </span>
+            <div className="grid gap-2 sm:grid-cols-2">
+              {CATALOGO_INGRESSOS.map((ingresso) => (
+                <label
+                  key={ingresso.key}
+                  className="flex items-center gap-2 text-xs font-medium text-[#0A2540]"
+                >
+                  <input
+                    type="checkbox"
+                    checked={ingressosSelecionados.has(ingresso.key)}
+                    onChange={() => alternarIngresso(ingresso.key)}
+                    className="h-4 w-4 shrink-0 rounded border-black/25 accent-[#2f80c9]"
+                  />
+                  {ingresso.nome}
+                  <span className="text-[10px] font-normal text-black/35">
+                    {formatUSD(ingresso.precoUSD)}/pessoa
+                  </span>
+                </label>
+              ))}
+            </div>
+            {(ingressosSelecionados.has("disneyland") || ingressosSelecionados.has("disneysea")) && (
+              <label className="mt-3 flex items-center gap-2 text-xs font-medium text-[#0A2540]">
+                <input
+                  type="checkbox"
+                  checked={disneyPremierAccess}
+                  onChange={(e) => setDisneyPremierAccess(e.target.checked)}
+                  className="h-4 w-4 shrink-0 rounded border-black/25 accent-[#2f80c9]"
+                />
+                + Disney Premier Access (fast pass pago, pacote de atrações principais)
+                <span className="text-[10px] font-normal text-black/35">
+                  {formatUSD(PRECO_DISNEY_PREMIER_ACCESS_USD_PAX)}/pessoa
+                </span>
+              </label>
+            )}
+            {ingressosSelecionados.has("usj") && (
+              <label className="mt-2 flex items-center gap-2 text-xs font-medium text-[#0A2540]">
+                <input
+                  type="checkbox"
+                  checked={usjExpressPass}
+                  onChange={(e) => setUsjExpressPass(e.target.checked)}
+                  className="h-4 w-4 shrink-0 rounded border-black/25 accent-[#2f80c9]"
+                />
+                + USJ Express Pass (fast pass pago)
+                <span className="text-[10px] font-normal text-black/35">
+                  {formatUSD(PRECO_EXPRESS_PASS_USJ_USD_PAX)}/pessoa
+                </span>
+              </label>
+            )}
           </div>
         </div>
 
