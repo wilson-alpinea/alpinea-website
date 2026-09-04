@@ -57,6 +57,135 @@ const CATALOGO_INGRESSOS: { key: IngressoKey; nome: string; precoUSD: number }[]
   { key: "teamlabKyoto", nome: "teamLab Kyoto", precoUSD: PRECO_INGRESSO_TEAMLAB_KYOTO_USD_PAX },
 ];
 
+type DestinoKey = (typeof DESTINOS)[number]["key"];
+type TemaKey =
+  | "automobilismo"
+  | "gastronomia"
+  | "animeGames"
+  | "japaoTradicional"
+  | "naturezaPaisagens"
+  | "onsenRyokan"
+  | "luxoCompras"
+  | "esportesEventos"
+  | "parquesEntretenimento"
+  | "neveInverno";
+
+type TemaCidade = {
+  key: DestinoKey;
+  /** Texto de destaque mostrado ao lado da cidade quando o tema está
+   * selecionado — descreve o motivo da cidade estar nesse tema. */
+  destaque: string;
+  /** Vem marcada por padrão quando o tema é selecionado — cidades
+   * principais/multiuso do tema; as demais (secundárias, mais distantes
+   * ou de proposito único) ficam desmarcadas até o vendedor confirmar. */
+  padrao: boolean;
+};
+
+// Catálogo de Temas — cada um sugere um grupo de cidades (com destaque
+// próprio) pra montar rapidamente o roteiro e a cidade de referência do
+// hotel. Selecionar um tema marca as cidades "padrao" dele em
+// destinosSelecionados (o vendedor pode ajustar cidade por cidade depois);
+// "Sem Tema" limpa a seleção. Pedido do Wilson, 04/set/2026.
+const TEMAS: { key: TemaKey; nome: string; cidades: TemaCidade[] }[] = [
+  {
+    key: "automobilismo",
+    nome: "Automobilismo",
+    cidades: [
+      { key: "tokyo", destaque: "Cultura JDM e encontros automotivos — A PIT Autobacs · Nissan Crossing · Daikoku PA", padrao: true },
+      { key: "fuji", destaque: "Circuito e história do automobilismo — Fuji Speedway · Fuji Motorsports Museum", padrao: true },
+      { key: "nagoya", destaque: "História da indústria automobilística japonesa — Toyota Automobile Museum · Toyota Commemorative Museum", padrao: true },
+      { key: "motegi", destaque: "Honda e motorsports — Honda Collection Hall · Mobility Resort Motegi", padrao: false },
+      { key: "suzuka", destaque: "Um dos circuitos mais emblemáticos do Japão — Suzuka Circuit", padrao: false },
+    ],
+  },
+  {
+    key: "gastronomia",
+    nome: "Gastronomia",
+    cidades: [
+      { key: "tokyo", destaque: "Omakase, sushi, yakiniku, alta gastronomia e enorme variedade regional japonesa", padrao: true },
+      { key: "kyoto", destaque: "Kaiseki, cozinha Kyo-ryori, chá, tofu e restaurantes tradicionais", padrao: true },
+      { key: "osaka", destaque: "Cultura gastronômica mais informal — Dotonbori, takoyaki, okonomiyaki, kushikatsu e mercados", padrao: true },
+    ],
+  },
+  {
+    key: "animeGames",
+    nome: "Anime, Games & Cultura Pop",
+    cidades: [
+      { key: "tokyo", destaque: "Akihabara, Ikebukuro, Nakano Broadway, Pokémon Centers e lojas especializadas", padrao: true },
+      { key: "osaka", destaque: "Den Den Town, Nipponbashi e cultura pop concentrada em Namba", padrao: true },
+      { key: "nagoya", destaque: "Ghibli Park e grandes lojas de anime/games", padrao: false },
+      { key: "kyoto", destaque: "Nintendo Museum e Kyoto International Manga Museum", padrao: false },
+    ],
+  },
+  {
+    key: "japaoTradicional",
+    nome: "Japão Tradicional",
+    cidades: [
+      { key: "kyoto", destaque: "Templos, jardins, Gion, cerimônia do chá e arquitetura histórica", padrao: true },
+      { key: "nara", destaque: "Tōdai-ji, Kasuga Taisha, parque e patrimônio do período clássico japonês", padrao: true },
+      { key: "kanazawa", destaque: "Kenroku-en, bairros de gueixas e samurais, artesanato tradicional", padrao: false },
+      { key: "takayama", destaque: "Centro histórico, casas tradicionais e cultura de Hida", padrao: false },
+      { key: "koyasan", destaque: "Complexo monástico, Okunoin e hospedagem em templo", padrao: false },
+    ],
+  },
+  {
+    key: "naturezaPaisagens",
+    nome: "Natureza & Paisagens",
+    cidades: [
+      { key: "fuji", destaque: "Vistas do Monte Fuji, Chureito, Lago Kawaguchi e Oishi Park", padrao: true },
+      { key: "hakone", destaque: "Lago Ashi, Owakudani e paisagem montanhosa", padrao: true },
+      { key: "nikko", destaque: "Florestas, montanhas, lago Chuzenji e Kegon Falls", padrao: false },
+      { key: "kamikochi", destaque: "Alpes Japoneses, trilhas e paisagens de montanha", padrao: false },
+    ],
+  },
+  {
+    key: "onsenRyokan",
+    nome: "Onsen & Ryokan",
+    cidades: [
+      { key: "hakone", destaque: "Grande variedade de ryokans premium e onsen privados perto de Tokyo", padrao: true },
+      { key: "kinosaki", destaque: "Cidade termal tradicional com circuito de sete banhos públicos", padrao: false },
+      { key: "kusatsu", destaque: "Uma das águas termais mais famosas do Japão e o Yubatake", padrao: false },
+      { key: "fuji", destaque: "Ryokans e onsen com vistas para o Monte Fuji", padrao: false },
+    ],
+  },
+  {
+    key: "luxoCompras",
+    nome: "Luxo & Compras",
+    cidades: [
+      { key: "tokyo", destaque: "Ginza, Omotesando, Aoyama e departamentos de luxo; moda, relojoaria e design japonês", padrao: true },
+      { key: "kyoto", destaque: "Artesanato, cerâmica, quimonos, chá e produtos tradicionais de alto padrão", padrao: true },
+      { key: "osaka", destaque: "Shinsaibashi, Umeda e grandes lojas de luxo e departamentos", padrao: true },
+    ],
+  },
+  {
+    key: "esportesEventos",
+    nome: "Esportes & Eventos",
+    cidades: [
+      { key: "tokyo", destaque: "Sumô, baseball, futebol e grandes eventos em arenas e estádios", padrao: true },
+      { key: "osaka", destaque: "Baseball, futebol e eventos esportivos de grande porte", padrao: false },
+      { key: "nagoya", destaque: "Sumô, baseball e eventos no eixo Aichi/Nagoya", padrao: false },
+    ],
+  },
+  {
+    key: "parquesEntretenimento",
+    nome: "Parques & Entretenimento",
+    cidades: [
+      { key: "tokyo", destaque: "Tokyo Disneyland, Tokyo DisneySea e experiências de entretenimento imersivo", padrao: true },
+      { key: "osaka", destaque: "Universal Studios Japan e Super Nintendo World", padrao: true },
+      { key: "nagoya", destaque: "Ghibli Park", padrao: true },
+    ],
+  },
+  {
+    key: "neveInverno",
+    nome: "Neve & Inverno",
+    cidades: [
+      { key: "niseko", destaque: "Powder snow, resorts internacionais, ski e hotéis premium", padrao: true },
+      { key: "hakuba", destaque: "Grande área esquiável nos Alpes Japoneses, fácil combinação com Tokyo", padrao: false },
+      { key: "nozawa", destaque: "Ski combinado com vila tradicional e cultura de onsen", padrao: false },
+    ],
+  },
+];
+
 const display = Bodoni_Moda({
   subsets: ["latin"],
   weight: ["400", "500", "600"],
@@ -106,7 +235,14 @@ export default function CalculadoraReversaPage() {
   const [pessoas, setPessoas] = useState(2);
   const [tipoQuarto, setTipoQuarto] =
     useState<(typeof TIPOS_QUARTO)[number]>("Duplo (casal)");
-  const [cidade, setCidade] = useState<(typeof DESTINOS)[number]["key"]>("tokyo");
+  // Cidades do roteiro — multi-seleção (média dos multiplicadores de
+  // hotel das cidades marcadas, mesmo critério do calculador do
+  // Personalizado). "Temas" abaixo é um atalho que pré-marca esse set;
+  // o vendedor pode sempre ajustar cidade por cidade depois.
+  const [destinosSelecionados, setDestinosSelecionados] = useState<Set<DestinoKey>>(
+    () => new Set(["tokyo"]),
+  );
+  const [temaSelecionado, setTemaSelecionado] = useState<TemaKey | null>(null);
 
   // Valor manual — sobrescreve o cálculo automático quando o time já tem
   // uma cotação real (hotel negociado, tarifa aérea específica etc.),
@@ -161,7 +297,53 @@ export default function CalculadoraReversaPage() {
     });
   }
 
-  const multiplicadorCidade = CIDADE_MULTIPLICADOR_HOTEL[cidade];
+  function alternarDestino(key: DestinoKey) {
+    setDestinosSelecionados((atual) => {
+      const novo = new Set(atual);
+      if (novo.has(key)) novo.delete(key);
+      else novo.add(key);
+      return novo;
+    });
+  }
+
+  // Selecionar um tema marca as cidades "padrao" dele (substitui a
+  // seleção de cidades atual); "Sem Tema" (temaKey null) limpa o tema e
+  // volta pra Tokyo como cidade única, igual ao estado inicial da página.
+  // "Parques & Entretenimento" já vem com os ingressos correspondentes
+  // marcados na seção de Ingressos e experiências.
+  function selecionarTema(temaKey: TemaKey | null) {
+    setTemaSelecionado(temaKey);
+    if (temaKey === null) {
+      setDestinosSelecionados(new Set(["tokyo"]));
+      return;
+    }
+    const tema = TEMAS.find((t) => t.key === temaKey);
+    if (!tema) return;
+    setDestinosSelecionados(new Set(tema.cidades.filter((c) => c.padrao).map((c) => c.key)));
+    if (temaKey === "parquesEntretenimento") {
+      setIngressosSelecionados((atual) => {
+        const novo = new Set(atual);
+        novo.add("disneyland");
+        novo.add("disneysea");
+        novo.add("usj");
+        return novo;
+      });
+    }
+  }
+
+  // Média dos multiplicadores das cidades marcadas — mesmo critério do
+  // calculador do Personalizado (multiplicadorCidadeHotel, em
+  // CustomPackageCard.tsx); 1 (sem ajuste) se nenhuma cidade estiver marcada.
+  const multiplicadorCidade =
+    destinosSelecionados.size === 0
+      ? 1
+      : Array.from(destinosSelecionados).reduce(
+          (soma, key) => soma + CIDADE_MULTIPLICADOR_HOTEL[key],
+          0,
+        ) / destinosSelecionados.size;
+  const nomesDestinos = Array.from(destinosSelecionados)
+    .map((key) => DESTINOS.find((d) => d.key === key)?.nome ?? key)
+    .join(" · ");
 
   const resultado = useMemo(() => {
     const precoRoteiro =
@@ -392,7 +574,7 @@ export default function CalculadoraReversaPage() {
     incluidos[2] = {
       chave: "hotel",
       label: hotelManual ? "Hotel — valor manual" : `Hotel — ${categoriaHotelFinal}`,
-      detalhe: `${dias} diárias · ${tipoQuarto} · ${DESTINOS.find((d) => d.key === cidade)?.nome ?? ""}`,
+      detalhe: `${dias} diárias · ${tipoQuarto} · ${nomesDestinos || "—"}`,
       precoBRL: precoHotel(categoriaHotelFinal),
     };
 
@@ -413,8 +595,8 @@ export default function CalculadoraReversaPage() {
     dias,
     pessoas,
     tipoQuarto,
-    cidade,
     multiplicadorCidade,
+    nomesDestinos,
     cambioCotacao,
     hotelManual,
     hotelDiariaManual,
@@ -571,22 +753,97 @@ export default function CalculadoraReversaPage() {
             </select>
           </label>
 
-          <label className="flex h-full flex-col">
-            <span className="mb-2 flex min-h-[2.2em] items-end text-[10px] uppercase leading-tight tracking-[0.2em] text-black/50">
-              Cidade principal do roteiro
+          <div className="sm:col-span-2">
+            <span className="mb-2 block text-[10px] uppercase tracking-[0.2em] text-black/50">
+              Temas
             </span>
-            <select
-              value={cidade}
-              onChange={(e) => setCidade(e.target.value as (typeof DESTINOS)[number]["key"])}
-              className="h-10 w-full rounded-lg border border-black/15 bg-black/[0.03] px-3 text-sm outline-none focus:border-black/30"
-            >
-              {DESTINOS.map((d) => (
-                <option key={d.key} value={d.key}>
-                  {d.nome}
-                </option>
+            <div className="flex flex-wrap gap-2">
+              <button
+                type="button"
+                onClick={() => selecionarTema(null)}
+                className={`h-9 rounded-lg border px-3 text-xs transition ${
+                  temaSelecionado === null
+                    ? "border-[#2f80c9] bg-[#2f80c9]/10 font-medium text-[#2f80c9]"
+                    : "border-black/15 bg-black/[0.03] text-black/60 hover:border-black/30"
+                }`}
+              >
+                Sem tema
+              </button>
+              {TEMAS.map((tema) => (
+                <button
+                  key={tema.key}
+                  type="button"
+                  onClick={() => selecionarTema(tema.key)}
+                  className={`h-9 rounded-lg border px-3 text-xs transition ${
+                    temaSelecionado === tema.key
+                      ? "border-[#2f80c9] bg-[#2f80c9]/10 font-medium text-[#2f80c9]"
+                      : "border-black/15 bg-black/[0.03] text-black/60 hover:border-black/30"
+                  }`}
+                >
+                  {tema.nome}
+                </button>
               ))}
-            </select>
-          </label>
+            </div>
+
+            {temaSelecionado === null ? (
+              <label className="mt-4 flex flex-col sm:max-w-xs">
+                <span className="mb-2 flex min-h-[2.2em] items-end text-[10px] uppercase leading-tight tracking-[0.2em] text-black/50">
+                  Cidade principal do roteiro
+                </span>
+                <select
+                  value={Array.from(destinosSelecionados)[0] ?? "tokyo"}
+                  onChange={(e) =>
+                    setDestinosSelecionados(new Set([e.target.value as DestinoKey]))
+                  }
+                  className="h-10 w-full rounded-lg border border-black/15 bg-black/[0.03] px-3 text-sm outline-none focus:border-black/30"
+                >
+                  {DESTINOS.map((d) => (
+                    <option key={d.key} value={d.key}>
+                      {d.nome}
+                    </option>
+                  ))}
+                </select>
+              </label>
+            ) : (
+              <div className="mt-4 overflow-hidden rounded-xl border border-black/10">
+                <div className="grid grid-cols-[minmax(140px,auto)_1fr] gap-x-6 bg-black/[0.03] px-4 py-2 text-[10px] uppercase tracking-[0.15em] text-black/40">
+                  <span>Cidades recomendadas</span>
+                  <span>Destaques do tema</span>
+                </div>
+                {TEMAS.find((t) => t.key === temaSelecionado)?.cidades.map((c) => {
+                  const destino = DESTINOS.find((d) => d.key === c.key);
+                  const marcado = destinosSelecionados.has(c.key);
+                  return (
+                    <label
+                      key={c.key}
+                      className="grid cursor-pointer grid-cols-[minmax(140px,auto)_1fr] items-start gap-x-6 gap-y-1 border-t border-black/10 px-4 py-3"
+                    >
+                      <span className="flex items-center gap-2 text-sm">
+                        <input
+                          type="checkbox"
+                          checked={marcado}
+                          onChange={() => alternarDestino(c.key)}
+                          className="h-4 w-4 shrink-0 rounded border-black/25 accent-[#2f80c9]"
+                        />
+                        {destino?.nome ?? c.key}
+                      </span>
+                      <span className="text-xs leading-5 text-black/55">
+                        <strong className="font-medium text-[#0A2540]">
+                          {destino?.nome ?? c.key}
+                        </strong>{" "}
+                        — {c.destaque}
+                      </span>
+                    </label>
+                  );
+                })}
+              </div>
+            )}
+            <span className="mt-1.5 block text-[11px] text-black/40">
+              {destinosSelecionados.size === 0
+                ? "Nenhuma cidade selecionada — diária de hotel sem ajuste de mercado por cidade"
+                : `Ajuste de mercado do hotel: ${nomesDestinos} · multiplicador médio ${multiplicadorCidade.toFixed(2)}×`}
+            </span>
+          </div>
 
           <div className="sm:col-span-2">
             <span className="mb-2 block text-[10px] uppercase tracking-[0.2em] text-black/50">
