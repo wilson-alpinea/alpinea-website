@@ -51,10 +51,10 @@ type IngressoKey = "disneyland" | "disneysea" | "usj" | "teamlabTokyo" | "teamla
 // Catálogo de ingressos/experiências oferecidos na Calculadora Reversa —
 // cada um vira um candidato do preenchimento por orçamento quando marcado
 // pelo vendedor (ver ingressosSelecionados). Preços em CustomPackageCard.tsx.
-const CATALOGO_INGRESSOS: { key: IngressoKey; nome: string; precoUSD: number }[] = [
-  { key: "disneyland", nome: "Disneyland Tokyo", precoUSD: PRECO_INGRESSO_DISNEYLAND_TOKYO_USD_PAX },
-  { key: "disneysea", nome: "DisneySea Tokyo", precoUSD: PRECO_INGRESSO_DISNEYSEA_USD_PAX },
-  { key: "usj", nome: "Universal Studios Japan", precoUSD: PRECO_INGRESSO_USJ_USD_PAX },
+const CATALOGO_INGRESSOS: { key: IngressoKey; nome: string; precoUSD: number; icone?: string }[] = [
+  { key: "disneyland", nome: "Disneyland Tokyo", precoUSD: PRECO_INGRESSO_DISNEYLAND_TOKYO_USD_PAX, icone: "/images/ingressos/disneyland-logo.png" },
+  { key: "disneysea", nome: "DisneySea Tokyo", precoUSD: PRECO_INGRESSO_DISNEYSEA_USD_PAX, icone: "/images/ingressos/disneyland-logo.png" },
+  { key: "usj", nome: "Universal Studios Japan", precoUSD: PRECO_INGRESSO_USJ_USD_PAX, icone: "/images/ingressos/usj-logo.png" },
   { key: "teamlabTokyo", nome: "teamLab Tokyo", precoUSD: PRECO_INGRESSO_TEAMLAB_TOKYO_USD_PAX },
   { key: "teamlabKyoto", nome: "teamLab Kyoto", precoUSD: PRECO_INGRESSO_TEAMLAB_KYOTO_USD_PAX },
 ];
@@ -369,6 +369,7 @@ export default function CalculadoraReversaPage() {
   const [usjExpressPassTier, setUsjExpressPassTier] = useState<"nenhum" | "4" | "7" | "premium">(
     "nenhum",
   );
+  const [mostrarDetalhesUsjExpressPass, setMostrarDetalhesUsjExpressPass] = useState(false);
 
   function alternarIngresso(key: IngressoKey) {
     setIngressosSelecionados((atual) => {
@@ -867,14 +868,14 @@ export default function CalculadoraReversaPage() {
               <button
                 type="button"
                 onClick={() => selecionarTema(null)}
-                className={`flex h-9 items-center gap-1.5 rounded-lg border pl-2 pr-3 text-xs transition ${
+                className={`flex w-24 flex-col items-center gap-1.5 rounded-lg border px-2 py-3 text-center text-xs transition ${
                   temaSelecionado === null
                     ? "border-[#2f80c9] bg-[#2f80c9]/10 font-medium text-[#2f80c9]"
                     : "border-black/15 bg-black/[0.03] text-black/60 hover:border-black/30"
                 }`}
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src="/images/temas/01-sem-tema.png" alt="" className="h-5 w-5 shrink-0" />
+                <img src="/images/temas/01-sem-tema.png" alt="" className="h-10 w-10 shrink-0" />
                 Sem tema
               </button>
               {TEMAS.map((tema) => (
@@ -882,14 +883,14 @@ export default function CalculadoraReversaPage() {
                   key={tema.key}
                   type="button"
                   onClick={() => selecionarTema(tema.key)}
-                  className={`flex h-9 items-center gap-1.5 rounded-lg border pl-2 pr-3 text-xs transition ${
+                  className={`flex w-24 flex-col items-center gap-1.5 rounded-lg border px-2 py-3 text-center text-xs transition ${
                     temaSelecionado === tema.key
                       ? "border-[#2f80c9] bg-[#2f80c9]/10 font-medium text-[#2f80c9]"
                       : "border-black/15 bg-black/[0.03] text-black/60 hover:border-black/30"
                   }`}
                 >
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={tema.icone} alt="" className="h-5 w-5 shrink-0" />
+                  <img src={tema.icone} alt="" className="h-10 w-10 shrink-0" />
                   {tema.nome}
                 </button>
               ))}
@@ -955,12 +956,12 @@ export default function CalculadoraReversaPage() {
                         </strong>{" "}
                         — {c.destaque}
                         {notaMotorista && (
-                          <span className="mt-0.5 block text-[11px] text-black/40">
+                          <span className="mt-0.5 block text-[11px] font-medium text-red-600">
                             🚗 {notaMotorista.motivo}
                           </span>
                         )}
                         {c.notaIngresso && (
-                          <span className="mt-0.5 block text-[11px] text-black/40">
+                          <span className="mt-0.5 block text-[11px] font-medium text-red-600">
                             🎫 {c.notaIngresso}
                           </span>
                         )}
@@ -1066,6 +1067,10 @@ export default function CalculadoraReversaPage() {
                     onChange={() => alternarIngresso(ingresso.key)}
                     className="h-4 w-4 shrink-0 rounded border-black/25 accent-[#2f80c9]"
                   />
+                  {ingresso.icone && (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img src={ingresso.icone} alt="" className="h-5 w-5 shrink-0 rounded object-contain" />
+                  )}
                   {ingresso.nome}
                   <span className="text-[10px] font-normal text-black/35">
                     {formatUSD(ingresso.precoUSD)}/pessoa
@@ -1075,7 +1080,9 @@ export default function CalculadoraReversaPage() {
             </div>
             {(ingressosSelecionados.has("disneyland") || ingressosSelecionados.has("disneysea")) && (
               <div className="mt-3 rounded-lg border border-black/10 bg-black/[0.02] p-3">
-                <p className="text-xs font-medium text-[#0A2540]">
+                <p className="flex items-center gap-1.5 text-xs font-medium text-[#0A2540]">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src="/images/ingressos/disneyland-logo.png" alt="" className="h-5 w-5 shrink-0 object-contain" />
                   + Disney Premier Access (fast pass pago)
                 </p>
                 <p className="mt-0.5 text-[10px] text-black/40">
@@ -1102,31 +1109,54 @@ export default function CalculadoraReversaPage() {
             )}
             {ingressosSelecionados.has("usj") && (
               <div className="mt-3 rounded-lg border border-black/10 bg-black/[0.02] p-3">
-                <p className="text-xs font-medium text-[#0A2540]">
+                <p className="flex items-center gap-1.5 text-xs font-medium text-[#0A2540]">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src="/images/ingressos/usj-logo.png" alt="" className="h-5 w-5 shrink-0 rounded object-contain" />
                   + USJ Express Pass (fast pass pago)
                 </p>
-                <p className="mt-0.5 text-[10px] text-black/40">
-                  Cada tier cobre um número diferente de atrações e tem preço próprio.
+                <p className="mt-0.5 text-[10px] leading-4 text-black/40">
+                  <strong className="font-medium text-black/55">Express 4</strong> — fura-fila em 4 atrações (mix de clássicos, ex.: Jurassic World, Minion Mayhem, Harry Potter, Flying Dinosaur — o combo exato varia por temporada).{" "}
+                  <strong className="font-medium text-black/55">Express 7</strong> — fura-fila em 7 atrações, cobrindo mais opções do Wizarding World e headliners.{" "}
+                  <strong className="font-medium text-black/55">Premium</strong> — fura-fila em praticamente toda a linha de atrações do parque (13 a 16, dependendo da versão vendida no dia).
+                </p>
+                <p className="mt-1.5 rounded-md bg-amber-50 px-2 py-1.5 text-[10px] leading-4 text-amber-800">
+                  ⚠️ Super Nintendo World (Mario Kart: Bowser&apos;s Challenge, Yoshi&apos;s Adventure) <strong>não está incluído</strong> nos tiers Express 4 e Express 7 — a entrada na área é controlada por um sistema de senha grátis pelo app da USJ (capacidade limitada, esgota cedo em dias cheios). Só o tier <strong>Premium</strong> garante entrada na Nintendo World sem depender dessa senha.
                 </p>
                 <div className="mt-2 flex flex-wrap gap-2">
                   {(
                     [
-                      { key: "nenhum", label: "Sem Express Pass", preco: 0 },
-                      { key: "4", label: "Express 4", preco: PRECO_EXPRESS_PASS_USJ_4_USD_PAX },
-                      { key: "7", label: "Express 7", preco: PRECO_EXPRESS_PASS_USJ_7_USD_PAX },
-                      { key: "premium", label: "Premium", preco: PRECO_EXPRESS_PASS_USJ_PREMIUM_USD_PAX },
+                      { key: "nenhum", label: "Sem Express Pass", preco: 0, nintendoWorld: false, wizardingWorld: false },
+                      { key: "4", label: "Express 4", preco: PRECO_EXPRESS_PASS_USJ_4_USD_PAX, nintendoWorld: false, wizardingWorld: false },
+                      { key: "7", label: "Express 7", preco: PRECO_EXPRESS_PASS_USJ_7_USD_PAX, nintendoWorld: false, wizardingWorld: true },
+                      { key: "premium", label: "Premium", preco: PRECO_EXPRESS_PASS_USJ_PREMIUM_USD_PAX, nintendoWorld: true, wizardingWorld: true },
                     ] as const
                   ).map((tier) => (
                     <button
                       key={tier.key}
                       type="button"
                       onClick={() => setUsjExpressPassTier(tier.key)}
-                      className={`h-9 rounded-lg border px-3 text-xs transition ${
+                      className={`flex h-9 items-center gap-1.5 rounded-lg border px-3 text-xs transition ${
                         usjExpressPassTier === tier.key
                           ? "border-[#2f80c9] bg-[#2f80c9]/10 font-medium text-[#2f80c9]"
                           : "border-black/15 bg-black/[0.03] text-black/60 hover:border-black/30"
                       }`}
                     >
+                      {tier.nintendoWorld && (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img
+                          src="/images/ingressos/super-nintendo-world-logo.png"
+                          alt=""
+                          className="h-5 w-5 shrink-0 rounded object-contain"
+                        />
+                      )}
+                      {tier.wizardingWorld && (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img
+                          src="/images/ingressos/harry-potter-logo.png"
+                          alt=""
+                          className="h-5 w-5 shrink-0 object-contain"
+                        />
+                      )}
                       {tier.label}
                       {tier.preco > 0 && (
                         <span className="ml-1.5 text-[10px] font-normal text-black/35">
@@ -1136,6 +1166,28 @@ export default function CalculadoraReversaPage() {
                     </button>
                   ))}
                 </div>
+                {usjExpressPassTier === "premium" && (
+                  <p className="mt-1.5 flex items-center gap-1.5 text-[10px] leading-4 text-emerald-700">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src="/images/ingressos/super-nintendo-world-logo.png"
+                      alt=""
+                      className="h-4 w-4 shrink-0 rounded object-contain"
+                    />
+                    ✅ Este tier inclui entrada garantida na Super Nintendo World.
+                  </p>
+                )}
+                {(usjExpressPassTier === "7" || usjExpressPassTier === "premium") && (
+                  <p className="mt-1.5 flex items-center gap-1.5 text-[10px] leading-4 text-emerald-700">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src="/images/ingressos/harry-potter-logo.png"
+                      alt=""
+                      className="h-4 w-4 shrink-0 object-contain"
+                    />
+                    ✅ Este tier inclui atrações do The Wizarding World of Harry Potter.
+                  </p>
+                )}
               </div>
             )}
           </div>
