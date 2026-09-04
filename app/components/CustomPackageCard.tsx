@@ -754,19 +754,30 @@ export const DIARIA_TRANSPORTE = comMargemEImposto(150);
 export const DIARIA_GUIA_USD = comMargemEImposto(350);
 export const GUIA_TAMANHO_GRUPO = 4;
 // Japan Rail Pass — vendido em faixas fixas de dias CORRIDOS (7, 14 ou 21),
-// não por diária do roteiro; preço não escala com ctx.dias. Pesquisa
-// set/2026: tarifa oficial vigente a partir de 01/out/2026 para compra via
-// agência fora do Japão — JPY 53.000 / 84.000 / 105.000 (fonte:
-// selfguidejapan.com/blog/japan-rail-pass-price-2026), convertida em dólar
-// na cotação de referência USD/JPY ≈ 159,97 (xe.com, 01/set/2026). Nativo
-// em dólar — convertido pra reais com a cotação do dia, igual guia/
-// motorista/wifi/ingressos. Preço final já com imposto+margem.
+// não por diária do roteiro; preço não escala com ctx.dias. Custo do
+// fornecedor (AjisaiWork Japan Tour Operator, tabela "01 a 15 de Setembro
+// de 2026", adulto, em USD): comum (ordinary) 7/14/21 dias = 378,35 /
+// 606,05 / 756,70; classe green (luxo) = 530,15 / 832,60 / 1.059,15.
+// Tabela é renovada quinzenalmente pelo fornecedor — reajustar aqui a cada
+// atualização recebida. Nativo em dólar — convertido pra reais com a
+// cotação do dia, igual guia/motorista/wifi/ingressos. Preço final já com
+// imposto+margem.
 export const JR_PASS_DIAS_OPCOES = [7, 14, 21] as const;
 export const JR_PASS_PRECO_USD: Record<(typeof JR_PASS_DIAS_OPCOES)[number], number> = {
-  7: comMargemEImposto(331),
-  14: comMargemEImposto(525),
-  21: comMargemEImposto(656),
+  7: comMargemEImposto(378.35),
+  14: comMargemEImposto(606.05),
+  21: comMargemEImposto(756.7),
 };
+// Classe Green Car (luxo) — mesma tabela do fornecedor, coluna "Luxo (Green)".
+export const JR_PASS_PRECO_USD_GREEN: Record<(typeof JR_PASS_DIAS_OPCOES)[number], number> = {
+  7: comMargemEImposto(530.15),
+  14: comMargemEImposto(832.6),
+  21: comMargemEImposto(1059.15),
+};
+// Seguro Viagem: valor de referência por pessoa/dia — placeholder até
+// recebermos a tabela oficial do fornecedor (a tabela AjisaiWork enviada em
+// 04/set/2026 cobre só o JR Pass). Ajustar quando a tabela de seguro
+// chegar, mantendo a mesma regra de imposto+margem via comMargemEImposto.
 export const DIARIA_SEGURO_VIAGEM = comMargemEImposto(35);
 // Motorista privado: custo de US$ 700/dia, cobre até 4 pessoas — mesma
 // lógica de grupo do guia, também nativo em dólar. Preço final já com
@@ -779,6 +790,21 @@ export const PRECO_CAMBIO_BRASIL = comMargemEImposto(150);
 // passados valores explícitos por você para esses dois itens. Também
 // nativos em dólar.
 export const DIARIA_WIFI_USD_PAX = comMargemEImposto(7); // ≈ JPY 1000/dia/pax (custo)
+// eSIM e Pocket Wi-Fi — usados só na Calculadora Reversa, que deixa o
+// vendedor escolher o tipo de conexão (DIARIA_WIFI_USD_PAX acima continua
+// servindo o calculador do Personalizado, sem essa escolha). Custo do
+// eSIM: baseado nos planos "unlimited" (7-15 dias) da Airalo e Holafly pro
+// Japão, ~US$ 3,20-3,93/dia/pessoa dependendo da duração — pesquisa
+// set/2026 (travelsimasia.com/blogs/japan-guides/japan-esim-prices-2026).
+// Custo do Pocket Wi-Fi: faixa 4G/5G "standard/premium unlimited" de
+// mercado (Ninja Wifi, Japan Wireless e similares), ~US$ 5-8/dia por
+// aparelho — pesquisa set/2026
+// (japan-wireless.com/column/pocket-wifi-cost-in-japan-pricing-guide).
+// Pocket Wi-Fi é compartilhado: 1 aparelho cobre confortavelmente até
+// WIFI_TAMANHO_GRUPO pessoas, mesma lógica de grupo do guia/motorista.
+export const DIARIA_ESIM_USD_PAX = comMargemEImposto(4);
+export const DIARIA_POCKET_WIFI_USD = comMargemEImposto(7);
+export const WIFI_TAMANHO_GRUPO = 4;
 export const PRECO_INGRESSO_DISNEY_UNIVERSAL_USD_PAX = comMargemEImposto(83); // ≈ JPY 12000/pax (custo, ingresso avulso)
 // Reserva de restaurantes high-end: pacote fechado de 7 reservas em
 // restaurantes categoria Michelin/Tabelog Awards (ou equivalente), valor

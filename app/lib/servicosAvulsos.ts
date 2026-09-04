@@ -1,3 +1,5 @@
+import { JR_PASS_PRECO_USD } from "../components/CustomPackageCard";
+
 // Mesmos itens e preços de referência do calculador do Pacote
 // Personalizado (OPCOES, em CustomPackageCard.tsx) — mostrados aqui como
 // cards avulsos pra quem só quer adicionar um serviço pontual ao roteiro
@@ -27,12 +29,12 @@ export const SERVICOS_AVULSOS: {
     nome: "JR Pass",
     icone: "/images/icone-trem-bala-shinkansen.png",
     // Passe vendido em faixas fixas de 7/14/21 dias corridos, não por
-    // diária — mesma regra e preços de JR_PASS_PRECO_USD, em
-    // CustomPackageCard.tsx (01/set/2026). Mostrado aqui "a partir de" a
-    // faixa de 7 dias, a mais barata.
+    // diária — mesmo valor de JR_PASS_PRECO_USD[7], em CustomPackageCard.tsx
+    // (tabela do fornecedor AjisaiWork, atualizada 04/set/2026). Mostrado
+    // aqui "a partir de" a faixa de 7 dias, a mais barata.
     descricao: "Passe ferroviário com deslocamentos ilimitados de trem-bala. Vendido em faixas de 7, 14 ou 21 dias.",
     precoBRL: 0,
-    precoUSD: 495,
+    precoUSD: JR_PASS_PRECO_USD[7],
     notaPreco: "faixa de 7 dias — 14 ou 21 dias também disponíveis",
   },
   {

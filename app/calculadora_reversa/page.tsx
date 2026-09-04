@@ -19,8 +19,12 @@ import {
   DIARIA_GUIA_USD,
   GUIA_TAMANHO_GRUPO,
   DIARIA_SEGURO_VIAGEM,
+  JR_PASS_DIAS_OPCOES,
   JR_PASS_PRECO_USD,
-  DIARIA_WIFI_USD_PAX,
+  JR_PASS_PRECO_USD_GREEN,
+  DIARIA_ESIM_USD_PAX,
+  DIARIA_POCKET_WIFI_USD,
+  WIFI_TAMANHO_GRUPO,
   PRECO_CAMBIO_BRASIL,
   DIARIA_MOTORISTA_PRIVADO_USD,
   MOTORISTA_TAMANHO_GRUPO,
@@ -50,7 +54,17 @@ type ItemPacote = {
   label: string;
   detalhe: string;
   precoBRL: number;
+  /** Chave estável de identificação do item - usada em vez do label nos
+   * controles de selecao e ajuste manual, porque o label de alguns itens
+   * muda (categoria de hotel, classe do aereo, dias/classe do JR Pass,
+   * tipo de wi-fi) e nao pode servir de chave. Itens com label fixo nao
+   * precisam declarar chave (o codigo usa o label como chave nesse caso). */
+  chave?: string;
 };
+
+function chaveDoItem(item: ItemPacote) {
+  return item.chave ?? item.label;
+}
 
 // Ordem em que os itens entram no pacote sugerido, depois dos itens fixos
 // (Roteiro + Aéreo Economy + Hotel 3 estrelas). Cada passo só é aplicado se
@@ -83,6 +97,27 @@ export default function CalculadoraReversaPage() {
   const [itensRemovidos, setItensRemovidos] = useState<Set<string>>(new Set());
   const [geradoEm] = useState(() => new Date());
 
+  // Ajuste manual de valor - sobrescreve o preco calculado de um item
+  // especifico (ex.: negociacao pontual) sem perder o calculo automatico
+  // dos demais, que continua reagindo a orcamento/dias/pessoas. Chave por
+  // chaveDoItem(item), nao pelo objeto em si.
+  const [itemAjustes, setItemAjustes] = useState<Record<string, number>>({});
+  // Ajuste manual do total final - sobrescreve a soma dos itens
+  // selecionados quando o vendedor precisa fechar num valor redondo ou
+  // negociado, sem precisar editar item por item.
+  const [totalManual, setTotalManual] = useState(false);
+  const [totalValorManual, setTotalValorManual] = useState(0);
+
+  // JR Pass - faixa de dias e classe (Comum/Green) escolhidas; preco vem
+  // da tabela do fornecedor (AjisaiWork), nao escala com ctx.dias.
+  const [jrPassDias, setJrPassDias] =
+    useState<(typeof JR_PASS_DIAS_OPCOES)[number]>(7);
+  const [jrPassClasse, setJrPassClasse] = useState<"comum" | "green">("comum");
+
+  // Wi-fi - eSIM (por pessoa) ou Pocket Wi-Fi (aparelho compartilhado,
+  // cobre varias pessoas). Ambos escalam com a quantidade de dias.
+  const [wifiTipo, setWifiTipo] = useState<"esim" | "pocket">("esim");
+
   const multiplicadorCidade = CIDADE_MULTIPLICADOR_HOTEL[cidade];
 
   const resultado = useMemo(() => {
@@ -107,16 +142,19 @@ export default function CalculadoraReversaPage() {
 
     const incluidos: ItemPacote[] = [
       {
+        chave: "roteiro",
         label: "Roteiro Personalizado",
         detalhe: "Painel digital Ajisai com o roteiro sob medida do grupo",
         precoBRL: precoRoteiro,
       },
       {
+        chave: "aereo",
         label: "Aéreo — Economy",
         detalhe: `Passagem internacional ida e volta para ${pessoas} ${pessoas === 1 ? "pessoa" : "pessoas"}`,
         precoBRL: precoAereoEconomy,
       },
       {
+        chave: "hotel",
         label: "Hotel — 3 estrelas",
         detalhe: `${dias} diárias · ${tipoQuarto} · categoria mínima`,
         precoBRL: precoHotel("3 estrelas"),
@@ -156,12 +194,12 @@ export default function CalculadoraReversaPage() {
       });
     }
 
-    const precoSeguro = DIARIA_SEGURO_VIAGEM * dias;
+    const precoSeguro = DIARIA_SEGURO_VIAGEM * dias * pessoas;
     if (cabe(precoSeguro)) {
       gasto += precoSeguro;
       incluidos.push({
         label: "Seguro Viagem",
-        detalhe: `Cobertura médica e assistência — ${dias} dias`,
+        detalhe: `Cobertura médica e assistência — ${dias} dias · ${pessoas} ${pessoas === 1 ? "pessoa" : "pessoas"}`,
         precoBRL: precoSeguro,
       });
     }
@@ -178,24 +216,38 @@ export default function CalculadoraReversaPage() {
       });
     }
 
-    // 3) JR Pass (faixa de 7 dias como referência)
-    const precoJrPass = Math.round(JR_PASS_PRECO_USD[7] * cambioCotacao * pessoas);
+    // 3) JR Pass — faixa de dias e classe escolhidas pelo vendedor
+    const tabelaJrPass = jrPassClasse === "green" ? JR_PASS_PRECO_USD_GREEN : JR_PASS_PRECO_USD;
+    const precoJrPass = Math.round(tabelaJrPass[jrPassDias] * cambioCotacao * pessoas);
     if (cabe(precoJrPass)) {
       gasto += precoJrPass;
       incluidos.push({
-        label: "JR Pass — 7 dias",
-        detalhe: `Passe ferroviário com trem-bala ilimitado, por pessoa`,
+        chave: "jrpass",
+        label: `JR Pass — ${jrPassDias} dias${jrPassClasse === "green" ? " · Green Car" : ""}`,
+        detalhe: `Passe ferroviário com trem-bala ilimitado${jrPassClasse === "green" ? ", classe Green Car" : ""}, por pessoa`,
         precoBRL: precoJrPass,
       });
     }
 
-    // 4) Wi-fi
-    const precoWifi = Math.round(DIARIA_WIFI_USD_PAX * dias * pessoas * cambioCotacao);
+    // 4) Wi-fi — eSIM (por pessoa) ou Pocket Wi-Fi (aparelho compartilhado)
+    const precoWifi =
+      wifiTipo === "esim"
+        ? Math.round(DIARIA_ESIM_USD_PAX * dias * pessoas * cambioCotacao)
+        : Math.round(
+            DIARIA_POCKET_WIFI_USD *
+              dias *
+              Math.max(1, Math.ceil(pessoas / WIFI_TAMANHO_GRUPO)) *
+              cambioCotacao,
+          );
     if (cabe(precoWifi)) {
       gasto += precoWifi;
       incluidos.push({
-        label: "Wi-fi",
-        detalhe: `Conexão disponível durante todo o roteiro, para o grupo`,
+        chave: "wifi",
+        label: wifiTipo === "esim" ? "eSIM" : "Pocket Wi-Fi",
+        detalhe:
+          wifiTipo === "esim"
+            ? `Conexão 5G direto no celular, por pessoa — ${dias} dias`
+            : `Aparelho compartilhado (até ${WIFI_TAMANHO_GRUPO} pessoas por unidade) — ${dias} dias`,
         precoBRL: precoWifi,
       });
     }
@@ -272,6 +324,7 @@ export default function CalculadoraReversaPage() {
 
     // Atualiza os itens fixos de hotel/aéreo com a categoria/classe final
     incluidos[1] = {
+      chave: "aereo",
       label: aereoManual ? "Aéreo — valor manual" : `Aéreo — ${classeAereoFinal}`,
       detalhe: `Passagem internacional ida e volta para ${pessoas} ${pessoas === 1 ? "pessoa" : "pessoas"}`,
       precoBRL:
@@ -282,6 +335,7 @@ export default function CalculadoraReversaPage() {
             : precoAereoFirst,
     };
     incluidos[2] = {
+      chave: "hotel",
       label: hotelManual ? "Hotel — valor manual" : `Hotel — ${categoriaHotelFinal}`,
       detalhe: `${dias} diárias · ${tipoQuarto} · ${DESTINOS.find((d) => d.key === cidade)?.nome ?? ""}`,
       precoBRL: precoHotel(categoriaHotelFinal),
@@ -311,21 +365,46 @@ export default function CalculadoraReversaPage() {
     hotelDiariaManual,
     aereoManual,
     aereoValorManual,
+    jrPassDias,
+    jrPassClasse,
+    wifiTipo,
   ]);
 
   const pacoteSugeridoLabel = `Hotel ${resultado.categoriaHotelFinal} · Aéreo ${resultado.classeAereoFinal} · ${dias} dias · ${pessoas} ${pessoas === 1 ? "pessoa" : "pessoas"} · orçamento ${formatBRL(orcamento)}`;
 
-  function alternarItem(label: string) {
+  function alternarItem(chave: string) {
     setItensRemovidos((atual) => {
       const novo = new Set(atual);
-      if (novo.has(label)) novo.delete(label);
-      else novo.add(label);
+      if (novo.has(chave)) novo.delete(chave);
+      else novo.add(chave);
       return novo;
     });
   }
 
-  const itensSelecionados = resultado.incluidos.filter((item) => !itensRemovidos.has(item.label));
-  const totalSelecionado = itensSelecionados.reduce((soma, item) => soma + item.precoBRL, 0);
+  // Valor efetivo de um item: o ajuste manual, quando existir, sobrescreve
+  // o preco calculado automaticamente.
+  function valorItem(item: ItemPacote) {
+    const ajuste = itemAjustes[chaveDoItem(item)];
+    return ajuste ?? item.precoBRL;
+  }
+
+  function ajustarValorItem(item: ItemPacote, valor: number) {
+    setItemAjustes((atual) => ({ ...atual, [chaveDoItem(item)]: valor }));
+  }
+
+  function restaurarValorItem(item: ItemPacote) {
+    setItemAjustes((atual) => {
+      const novo = { ...atual };
+      delete novo[chaveDoItem(item)];
+      return novo;
+    });
+  }
+
+  const itensSelecionados = resultado.incluidos.filter(
+    (item) => !itensRemovidos.has(chaveDoItem(item)),
+  );
+  const totalCalculado = itensSelecionados.reduce((soma, item) => soma + valorItem(item), 0);
+  const totalSelecionado = totalManual ? totalValorManual : totalCalculado;
   const saldoSelecionado = orcamento - totalSelecionado;
 
   const geradoEmLabel = `${geradoEm.toLocaleDateString("pt-BR")} às ${geradoEm.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}`;
@@ -333,9 +412,9 @@ export default function CalculadoraReversaPage() {
   const mensagemWhatsapp = [
     `Proposta Ajisai — ${pacoteSugeridoLabel}`,
     "",
-    ...itensSelecionados.map((item) => `• ${item.label}: ${formatBRL(item.precoBRL)}`),
+    ...itensSelecionados.map((item) => `• ${item.label}: ${formatBRL(valorItem(item))}`),
     "",
-    `Total: ${formatBRL(totalSelecionado)}`,
+    `Total: ${formatBRL(totalSelecionado)}${totalManual ? " (ajustado manualmente)" : ""}`,
     cambio
       ? `Câmbio do dia: US$ 1 = R$ ${cambio.cotacao.toFixed(2).replace(".", ",")}${cambio.data ? ` (PTAX Banco Central, ${cambio.data})` : ""}`
       : "",
@@ -450,6 +529,79 @@ export default function CalculadoraReversaPage() {
               ))}
             </select>
           </label>
+
+          <div className="sm:col-span-2">
+            <span className="mb-2 block text-[10px] uppercase tracking-[0.2em] text-black/50">
+              JR Pass — validade e classe
+            </span>
+            <div className="flex flex-wrap gap-4">
+              <div className="flex gap-2">
+                {JR_PASS_DIAS_OPCOES.map((d) => (
+                  <button
+                    key={d}
+                    type="button"
+                    onClick={() => setJrPassDias(d)}
+                    className={`h-10 rounded-lg border px-4 text-sm transition ${
+                      jrPassDias === d
+                        ? "border-[#2f80c9] bg-[#2f80c9]/10 font-medium text-[#2f80c9]"
+                        : "border-black/15 bg-black/[0.03] text-black/60 hover:border-black/30"
+                    }`}
+                  >
+                    {d} dias
+                  </button>
+                ))}
+              </div>
+              <div className="flex gap-2">
+                {(["comum", "green"] as const).map((c) => (
+                  <button
+                    key={c}
+                    type="button"
+                    onClick={() => setJrPassClasse(c)}
+                    className={`h-10 rounded-lg border px-4 text-sm transition ${
+                      jrPassClasse === c
+                        ? "border-[#2f80c9] bg-[#2f80c9]/10 font-medium text-[#2f80c9]"
+                        : "border-black/15 bg-black/[0.03] text-black/60 hover:border-black/30"
+                    }`}
+                  >
+                    {c === "comum" ? "Comum (Ordinary)" : "Green Car"}
+                  </button>
+                ))}
+              </div>
+            </div>
+            <span className="mt-1.5 block text-[11px] text-black/40">
+              {formatUSD(
+                (jrPassClasse === "green" ? JR_PASS_PRECO_USD_GREEN : JR_PASS_PRECO_USD)[jrPassDias],
+              )}{" "}
+              por pessoa · tabela do fornecedor válida 01–15/set/2026
+            </span>
+          </div>
+
+          <div className="sm:col-span-2">
+            <span className="mb-2 block text-[10px] uppercase tracking-[0.2em] text-black/50">
+              Conexão de internet
+            </span>
+            <div className="flex gap-2">
+              {(["esim", "pocket"] as const).map((t) => (
+                <button
+                  key={t}
+                  type="button"
+                  onClick={() => setWifiTipo(t)}
+                  className={`h-10 rounded-lg border px-4 text-sm transition ${
+                    wifiTipo === t
+                      ? "border-[#2f80c9] bg-[#2f80c9]/10 font-medium text-[#2f80c9]"
+                      : "border-black/15 bg-black/[0.03] text-black/60 hover:border-black/30"
+                  }`}
+                >
+                  {t === "esim" ? "eSIM (por pessoa)" : "Pocket Wi-Fi (compartilhado)"}
+                </button>
+              ))}
+            </div>
+            <span className="mt-1.5 block text-[11px] text-black/40">
+              {wifiTipo === "esim"
+                ? "Um eSIM por pessoa — tipo Airalo/Holafly, plano ilimitado"
+                : `Aparelho compartilhado — até ${WIFI_TAMANHO_GRUPO} pessoas por unidade`}
+            </span>
+          </div>
         </div>
 
         {/* ── VALORES MANUAIS (OPCIONAL) ── */}
@@ -551,19 +703,22 @@ export default function CalculadoraReversaPage() {
 
               <div className="mt-6 space-y-2.5">
                 {resultado.incluidos.map((item) => {
-                  const removido = itensRemovidos.has(item.label);
+                  const chave = chaveDoItem(item);
+                  const removido = itensRemovidos.has(chave);
+                  const ajustado = itemAjustes[chave] !== undefined;
+                  const valor = valorItem(item);
                   return (
-                    <label
-                      key={item.label}
-                      className={`flex cursor-pointer items-start justify-between gap-4 border-b border-black/10 pb-2.5 transition ${
+                    <div
+                      key={chave}
+                      className={`flex items-start justify-between gap-4 border-b border-black/10 pb-2.5 transition ${
                         removido ? "opacity-40" : ""
                       }`}
                     >
-                      <div className="flex items-start gap-3">
+                      <label className="flex flex-1 cursor-pointer items-start gap-3">
                         <input
                           type="checkbox"
                           checked={!removido}
-                          onChange={() => alternarItem(item.label)}
+                          onChange={() => alternarItem(chave)}
                           className="mt-1 h-4 w-4 shrink-0 rounded border-black/25 accent-[#2f80c9]"
                         />
                         <div>
@@ -572,13 +727,34 @@ export default function CalculadoraReversaPage() {
                           </p>
                           <p className="mt-0.5 text-xs text-black/50">{item.detalhe}</p>
                         </div>
+                      </label>
+                      <div className="flex shrink-0 flex-col items-end gap-1">
+                        <div className="flex items-center gap-1.5">
+                          <span className="text-xs text-black/30">R$</span>
+                          <input
+                            type="number"
+                            disabled={removido}
+                            value={Math.round(valor)}
+                            onChange={(e) => {
+                              const v = Number(e.target.value);
+                              if (!Number.isNaN(v)) ajustarValorItem(item, v);
+                            }}
+                            className={`h-8 w-28 rounded-md border px-2 text-right text-sm font-semibold outline-none focus:border-[#2f80c9]/60 disabled:opacity-40 ${
+                              removido ? "line-through" : ""
+                            } ${ajustado ? "border-[#2f80c9]/50 bg-[#2f80c9]/5" : "border-black/15 bg-transparent"}`}
+                          />
+                        </div>
+                        {ajustado && (
+                          <button
+                            type="button"
+                            onClick={() => restaurarValorItem(item)}
+                            className="text-[10px] uppercase tracking-wide text-[#2f80c9] underline underline-offset-2"
+                          >
+                            restaurar automático
+                          </button>
+                        )}
                       </div>
-                      <p
-                        className={`whitespace-nowrap text-sm font-semibold ${removido ? "line-through" : ""}`}
-                      >
-                        {formatBRL(item.precoBRL)}
-                      </p>
-                    </label>
+                    </div>
                   );
                 })}
               </div>
@@ -588,9 +764,36 @@ export default function CalculadoraReversaPage() {
                   <p className="text-[10px] uppercase tracking-[0.2em] text-black/40">
                     Total do pacote sugerido
                   </p>
-                  <p className={`${display.className} mt-1 text-4xl font-medium text-[#2f80c9]`}>
-                    {formatBRL(totalSelecionado)}
-                  </p>
+                  {totalManual ? (
+                    <div className="mt-1 flex items-center gap-2">
+                      <span className={`${display.className} text-4xl font-medium text-[#2f80c9]`}>
+                        R$
+                      </span>
+                      <input
+                        type="number"
+                        value={totalValorManual}
+                        onChange={(e) => {
+                          const v = Number(e.target.value);
+                          if (!Number.isNaN(v)) setTotalValorManual(v);
+                        }}
+                        className={`${display.className} h-12 w-44 rounded-lg border border-[#2f80c9]/40 bg-[#2f80c9]/5 px-2 text-3xl font-medium text-[#2f80c9] outline-none`}
+                      />
+                    </div>
+                  ) : (
+                    <p className={`${display.className} mt-1 text-4xl font-medium text-[#2f80c9]`}>
+                      {formatBRL(totalSelecionado)}
+                    </p>
+                  )}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (!totalManual) setTotalValorManual(totalCalculado);
+                      setTotalManual((v) => !v);
+                    }}
+                    className="mt-1 text-[10px] uppercase tracking-wide text-black/40 underline underline-offset-2 hover:text-black/60"
+                  >
+                    {totalManual ? "usar total calculado" : "ajustar total manualmente"}
+                  </button>
                   <CambioLabel cambio={cambio} className="mt-1 text-[11px] text-black/30" />
                 </div>
                 <div className="text-right">
