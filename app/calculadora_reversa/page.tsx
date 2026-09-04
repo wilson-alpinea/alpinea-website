@@ -81,6 +81,15 @@ type TemaCidade = {
    * principais/multiuso do tema; as demais (secundárias, mais distantes
    * ou de proposito único) ficam desmarcadas até o vendedor confirmar. */
   padrao: boolean;
+  /** Aviso de que ingresso é obrigatório para assistir provas ao vivo
+   * nesse circuito, com as principais datas do ano e a dificuldade de
+   * compra do ingresso em uma escala de 0 (fácil, sempre disponível) a
+   * 10 (extremamente concorrido, esgota em minutas/horas). Fontes:
+   * suzukacircuit.jp/eng, mr-motegi.jp/eng, honda.racing (calendários
+   * oficiais Super Formula/MotoGP 2026), fiawec.com (WEC 2026),
+   * total-motorsport.com (demanda de ingressos F1 2026). Pesquisado
+   * 04/set/2026. */
+  notaIngresso?: string;
 };
 
 // Catálogo de Temas — cada um sugere um grupo de cidades (com destaque
@@ -95,10 +104,10 @@ const TEMAS: { key: TemaKey; nome: string; icone: string; cidades: TemaCidade[] 
     icone: "/images/temas/02-automobilismo.png",
     cidades: [
       { key: "tokyo", destaque: "Cultura JDM e encontros automotivos — A PIT Autobacs · Nissan Crossing · Daikoku PA", padrao: true },
-      { key: "fuji", destaque: "Circuito e história do automobilismo — Fuji Speedway · Fuji Motorsports Museum", padrao: true },
+      { key: "fuji", destaque: "Circuito e história do automobilismo — Fuji Speedway · Fuji Motorsports Museum", padrao: true, notaIngresso: "Ingresso obrigatório para assistir às provas. 2026: WEC 6 Hours of Fuji (25–27/set — dificuldade de compra 4/10) · Super Formula (18–19/jul e 10–11/out — dificuldade 2/10). Super GT e Super Taikyu também correm em Fuji; datas variam a cada ano — confirmar no calendário oficial (fujispeedway.co.jp)." },
       { key: "nagoya", destaque: "História da indústria automobilística japonesa — Toyota Automobile Museum · Toyota Commemorative Museum", padrao: true },
-      { key: "motegi", destaque: "Honda e motorsports — Honda Collection Hall · Mobility Resort Motegi", padrao: false },
-      { key: "suzuka", destaque: "Um dos circuitos mais emblemáticos do Japão — Suzuka Circuit", padrao: false },
+      { key: "motegi", destaque: "Honda e motorsports — Honda Collection Hall · Mobility Resort Motegi", padrao: false, notaIngresso: "Ingresso obrigatório para assistir às provas. 2026: MotoGP Japão (2–4/out — dificuldade de compra 5/10) · Super Formula (4–5/abr — dificuldade 2/10). Super GT também corre em Motegi; data varia a cada ano — confirmar no calendário oficial (mr-motegi.jp)." },
+      { key: "suzuka", destaque: "Um dos circuitos mais emblemáticos do Japão — Suzuka Circuit", padrao: false, notaIngresso: "Ingresso obrigatório para assistir às provas. 2026: F1 GP do Japão (27–29/mar — dificuldade de compra 8/10, ingressos premium esgotam meses antes) · Suzuka 8 Hours (3–5/jul — dificuldade 6/10) · Suzuka 1000km/Super GT (11–13/set — dificuldade 3/10) · Super Formula (23–24/mai e 21–22/nov — dificuldade 2/10)." },
     ],
   },
   {
@@ -907,7 +916,7 @@ export default function CalculadoraReversaPage() {
               </label>
             ) : (
               <div className="mt-4 overflow-hidden rounded-xl border border-black/10">
-                <div className="grid grid-cols-[minmax(140px,auto)_1fr] gap-x-6 bg-black/[0.03] px-4 py-2 text-[10px] uppercase tracking-[0.15em] text-black/40">
+                <div className="grid grid-cols-[minmax(140px,auto)_1fr] gap-x-6 bg-[#0A2540] px-4 py-2 text-[10px] uppercase tracking-[0.15em] text-white/70">
                   <span>Cidades recomendadas</span>
                   <span>Destaques do tema</span>
                 </div>
@@ -948,6 +957,11 @@ export default function CalculadoraReversaPage() {
                         {notaMotorista && (
                           <span className="mt-0.5 block text-[11px] text-black/40">
                             🚗 {notaMotorista.motivo}
+                          </span>
+                        )}
+                        {c.notaIngresso && (
+                          <span className="mt-0.5 block text-[11px] text-black/40">
+                            🎫 {c.notaIngresso}
                           </span>
                         )}
                       </span>
