@@ -30,9 +30,11 @@ import {
   MOTORISTA_TAMANHO_GRUPO,
   PRECO_INGRESSO_DISNEYLAND_TOKYO_USD_PAX,
   PRECO_INGRESSO_DISNEYSEA_USD_PAX,
-  PRECO_DISNEY_PREMIER_ACCESS_USD_PAX,
+  PRECO_DISNEY_PREMIER_ACCESS_POR_ATRACAO_USD_PAX,
   PRECO_INGRESSO_USJ_USD_PAX,
-  PRECO_EXPRESS_PASS_USJ_USD_PAX,
+  PRECO_EXPRESS_PASS_USJ_4_USD_PAX,
+  PRECO_EXPRESS_PASS_USJ_7_USD_PAX,
+  PRECO_EXPRESS_PASS_USJ_PREMIUM_USD_PAX,
   PRECO_INGRESSO_TEAMLAB_TOKYO_USD_PAX,
   PRECO_INGRESSO_TEAMLAB_KYOTO_USD_PAX,
   PRECO_RESTAURANTES_HIGHEND_USD,
@@ -86,10 +88,11 @@ type TemaCidade = {
 // hotel. Selecionar um tema marca as cidades "padrao" dele em
 // destinosSelecionados (o vendedor pode ajustar cidade por cidade depois);
 // "Sem Tema" limpa a seleção. Pedido do Wilson, 04/set/2026.
-const TEMAS: { key: TemaKey; nome: string; cidades: TemaCidade[] }[] = [
+const TEMAS: { key: TemaKey; nome: string; icone: string; cidades: TemaCidade[] }[] = [
   {
     key: "automobilismo",
     nome: "Automobilismo",
+    icone: "/images/temas/02-automobilismo.png",
     cidades: [
       { key: "tokyo", destaque: "Cultura JDM e encontros automotivos — A PIT Autobacs · Nissan Crossing · Daikoku PA", padrao: true },
       { key: "fuji", destaque: "Circuito e história do automobilismo — Fuji Speedway · Fuji Motorsports Museum", padrao: true },
@@ -101,6 +104,7 @@ const TEMAS: { key: TemaKey; nome: string; cidades: TemaCidade[] }[] = [
   {
     key: "gastronomia",
     nome: "Gastronomia",
+    icone: "/images/temas/03-gastronomia.png",
     cidades: [
       { key: "tokyo", destaque: "Omakase, sushi, yakiniku, alta gastronomia e enorme variedade regional japonesa", padrao: true },
       { key: "kyoto", destaque: "Kaiseki, cozinha Kyo-ryori, chá, tofu e restaurantes tradicionais", padrao: true },
@@ -110,6 +114,7 @@ const TEMAS: { key: TemaKey; nome: string; cidades: TemaCidade[] }[] = [
   {
     key: "animeGames",
     nome: "Anime, Games & Cultura Pop",
+    icone: "/images/temas/04-anime-games-cultura-pop.png",
     cidades: [
       { key: "tokyo", destaque: "Akihabara, Ikebukuro, Nakano Broadway, Pokémon Centers e lojas especializadas", padrao: true },
       { key: "osaka", destaque: "Den Den Town, Nipponbashi e cultura pop concentrada em Namba", padrao: true },
@@ -120,6 +125,7 @@ const TEMAS: { key: TemaKey; nome: string; cidades: TemaCidade[] }[] = [
   {
     key: "japaoTradicional",
     nome: "Japão Tradicional",
+    icone: "/images/temas/05-japao-tradicional.png",
     cidades: [
       { key: "kyoto", destaque: "Templos, jardins, Gion, cerimônia do chá e arquitetura histórica", padrao: true },
       { key: "nara", destaque: "Tōdai-ji, Kasuga Taisha, parque e patrimônio do período clássico japonês", padrao: true },
@@ -131,6 +137,7 @@ const TEMAS: { key: TemaKey; nome: string; cidades: TemaCidade[] }[] = [
   {
     key: "naturezaPaisagens",
     nome: "Natureza & Paisagens",
+    icone: "/images/temas/06-natureza-paisagens.png",
     cidades: [
       { key: "fuji", destaque: "Vistas do Monte Fuji, Chureito, Lago Kawaguchi e Oishi Park", padrao: true },
       { key: "hakone", destaque: "Lago Ashi, Owakudani e paisagem montanhosa", padrao: true },
@@ -141,6 +148,7 @@ const TEMAS: { key: TemaKey; nome: string; cidades: TemaCidade[] }[] = [
   {
     key: "onsenRyokan",
     nome: "Onsen & Ryokan",
+    icone: "/images/temas/07-onsen-ryokan.png",
     cidades: [
       { key: "hakone", destaque: "Grande variedade de ryokans premium e onsen privados perto de Tokyo", padrao: true },
       { key: "kinosaki", destaque: "Cidade termal tradicional com circuito de sete banhos públicos", padrao: false },
@@ -151,6 +159,7 @@ const TEMAS: { key: TemaKey; nome: string; cidades: TemaCidade[] }[] = [
   {
     key: "luxoCompras",
     nome: "Luxo & Compras",
+    icone: "/images/temas/08-luxo-compras.png",
     cidades: [
       { key: "tokyo", destaque: "Ginza, Omotesando, Aoyama e departamentos de luxo; moda, relojoaria e design japonês", padrao: true },
       { key: "kyoto", destaque: "Artesanato, cerâmica, quimonos, chá e produtos tradicionais de alto padrão", padrao: true },
@@ -160,6 +169,7 @@ const TEMAS: { key: TemaKey; nome: string; cidades: TemaCidade[] }[] = [
   {
     key: "esportesEventos",
     nome: "Esportes & Eventos",
+    icone: "/images/temas/09-esportes-eventos.png",
     cidades: [
       { key: "tokyo", destaque: "Sumô, baseball, futebol e grandes eventos em arenas e estádios", padrao: true },
       { key: "osaka", destaque: "Baseball, futebol e eventos esportivos de grande porte", padrao: false },
@@ -169,6 +179,7 @@ const TEMAS: { key: TemaKey; nome: string; cidades: TemaCidade[] }[] = [
   {
     key: "parquesEntretenimento",
     nome: "Parques & Entretenimento",
+    icone: "/images/temas/10-parques-entretenimento.png",
     cidades: [
       { key: "tokyo", destaque: "Tokyo Disneyland, Tokyo DisneySea e experiências de entretenimento imersivo", padrao: true },
       { key: "osaka", destaque: "Universal Studios Japan e Super Nintendo World", padrao: true },
@@ -178,6 +189,7 @@ const TEMAS: { key: TemaKey; nome: string; cidades: TemaCidade[] }[] = [
   {
     key: "neveInverno",
     nome: "Neve & Inverno",
+    icone: "/images/temas/11-neve-inverno.png",
     cidades: [
       { key: "niseko", destaque: "Powder snow, resorts internacionais, ski e hotéis premium", padrao: true },
       { key: "hakuba", destaque: "Grande área esquiável nos Alpes Japoneses, fácil combinação com Tokyo", padrao: false },
@@ -340,8 +352,14 @@ export default function CalculadoraReversaPage() {
   // complementares. Premier Access (Disney) e Express Pass (USJ) são
   // acréscimos opcionais sobre o ingresso base.
   const [ingressosSelecionados, setIngressosSelecionados] = useState<Set<IngressoKey>>(new Set());
-  const [disneyPremierAccess, setDisneyPremierAccess] = useState(false);
-  const [usjExpressPass, setUsjExpressPass] = useState(false);
+  // Premier Access é vendido por atração (preço médio ponderado das
+  // faixas reais ¥1.000-3.500/atração) — o vendedor escolhe a quantidade,
+  // não um pacote fechado. Express Pass da USJ tem 3 produtos oficiais
+  // com preços bem diferentes entre si.
+  const [premierAccessAtracoes, setPremierAccessAtracoes] = useState(0);
+  const [usjExpressPassTier, setUsjExpressPassTier] = useState<"nenhum" | "4" | "7" | "premium">(
+    "nenhum",
+  );
 
   function alternarIngresso(key: IngressoKey) {
     setIngressosSelecionados((atual) => {
@@ -578,18 +596,29 @@ export default function CalculadoraReversaPage() {
     }
 
     // 8) Ingressos e experiências — só entram os parques marcados pelo
-    // vendedor (nenhum vem por padrão); Premier Access/Express Pass somam
-    // ao ingresso base do parque correspondente quando marcados.
+    // vendedor (nenhum vem por padrão). Premier Access (Disney, por
+    // atração) e Express Pass (USJ, por tier — cada um com preço
+    // diferente) somam ao ingresso base do parque correspondente.
     for (const ingresso of CATALOGO_INGRESSOS) {
       if (!ingressosSelecionados.has(ingresso.key)) continue;
       const ehDisney = ingresso.key === "disneyland" || ingresso.key === "disneysea";
-      const temFastPass = (ehDisney && disneyPremierAccess) || (ingresso.key === "usj" && usjExpressPass);
-      const precoFastPassUSD = ehDisney
-        ? PRECO_DISNEY_PREMIER_ACCESS_USD_PAX
-        : PRECO_EXPRESS_PASS_USJ_USD_PAX;
-      const nomeFastPass = ehDisney ? "Premier Access" : "Express Pass";
+      let precoFastPassUSD = 0;
+      let nomeFastPass = "";
+      if (ehDisney && premierAccessAtracoes > 0) {
+        precoFastPassUSD = PRECO_DISNEY_PREMIER_ACCESS_POR_ATRACAO_USD_PAX * premierAccessAtracoes;
+        nomeFastPass = `Premier Access (${premierAccessAtracoes} ${premierAccessAtracoes === 1 ? "atração" : "atrações"})`;
+      } else if (ingresso.key === "usj" && usjExpressPassTier !== "nenhum") {
+        precoFastPassUSD =
+          usjExpressPassTier === "4"
+            ? PRECO_EXPRESS_PASS_USJ_4_USD_PAX
+            : usjExpressPassTier === "7"
+              ? PRECO_EXPRESS_PASS_USJ_7_USD_PAX
+              : PRECO_EXPRESS_PASS_USJ_PREMIUM_USD_PAX;
+        nomeFastPass = `Express Pass ${usjExpressPassTier === "premium" ? "Premium" : usjExpressPassTier}`;
+      }
+      const temFastPass = precoFastPassUSD > 0;
       const precoIngresso = Math.round(
-        (ingresso.precoUSD + (temFastPass ? precoFastPassUSD : 0)) * pessoas * cambioCotacao,
+        (ingresso.precoUSD + precoFastPassUSD) * pessoas * cambioCotacao,
       );
       if (cabe(precoIngresso)) {
         gasto += precoIngresso;
@@ -662,8 +691,8 @@ export default function CalculadoraReversaPage() {
     jrPassClasse,
     wifiTipo,
     ingressosSelecionados,
-    disneyPremierAccess,
-    usjExpressPass,
+    premierAccessAtracoes,
+    usjExpressPassTier,
   ]);
 
   const pacoteSugeridoLabel = `Hotel ${resultado.categoriaHotelFinal} · Aéreo ${resultado.classeAereoFinal} · ${dias} dias · ${pessoas} ${pessoas === 1 ? "pessoa" : "pessoas"} · orçamento ${formatBRL(orcamento)}`;
@@ -829,12 +858,14 @@ export default function CalculadoraReversaPage() {
               <button
                 type="button"
                 onClick={() => selecionarTema(null)}
-                className={`h-9 rounded-lg border px-3 text-xs transition ${
+                className={`flex h-9 items-center gap-1.5 rounded-lg border pl-2 pr-3 text-xs transition ${
                   temaSelecionado === null
                     ? "border-[#2f80c9] bg-[#2f80c9]/10 font-medium text-[#2f80c9]"
                     : "border-black/15 bg-black/[0.03] text-black/60 hover:border-black/30"
                 }`}
               >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src="/images/temas/01-sem-tema.png" alt="" className="h-5 w-5 shrink-0" />
                 Sem tema
               </button>
               {TEMAS.map((tema) => (
@@ -842,12 +873,14 @@ export default function CalculadoraReversaPage() {
                   key={tema.key}
                   type="button"
                   onClick={() => selecionarTema(tema.key)}
-                  className={`h-9 rounded-lg border px-3 text-xs transition ${
+                  className={`flex h-9 items-center gap-1.5 rounded-lg border pl-2 pr-3 text-xs transition ${
                     temaSelecionado === tema.key
                       ? "border-[#2f80c9] bg-[#2f80c9]/10 font-medium text-[#2f80c9]"
                       : "border-black/15 bg-black/[0.03] text-black/60 hover:border-black/30"
                   }`}
                 >
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={tema.icone} alt="" className="h-5 w-5 shrink-0" />
                   {tema.nome}
                 </button>
               ))}
@@ -1027,32 +1060,69 @@ export default function CalculadoraReversaPage() {
               ))}
             </div>
             {(ingressosSelecionados.has("disneyland") || ingressosSelecionados.has("disneysea")) && (
-              <label className="mt-3 flex items-center gap-2 text-xs font-medium text-[#0A2540]">
-                <input
-                  type="checkbox"
-                  checked={disneyPremierAccess}
-                  onChange={(e) => setDisneyPremierAccess(e.target.checked)}
-                  className="h-4 w-4 shrink-0 rounded border-black/25 accent-[#2f80c9]"
-                />
-                + Disney Premier Access (fast pass pago, pacote de atrações principais)
-                <span className="text-[10px] font-normal text-black/35">
-                  {formatUSD(PRECO_DISNEY_PREMIER_ACCESS_USD_PAX)}/pessoa
-                </span>
-              </label>
+              <div className="mt-3 rounded-lg border border-black/10 bg-black/[0.02] p-3">
+                <p className="text-xs font-medium text-[#0A2540]">
+                  + Disney Premier Access (fast pass pago)
+                </p>
+                <p className="mt-0.5 text-[10px] text-black/40">
+                  Vendido por atração (¥1.000 a ¥3.500 cada, conforme popularidade) — escolha
+                  quantas o cliente quer, não é um pacote fechado.
+                </p>
+                <div className="mt-2 max-w-xs">
+                  <NumberStepper
+                    label="Quantidade de atrações"
+                    value={premierAccessAtracoes}
+                    onChange={setPremierAccessAtracoes}
+                    min={0}
+                    max={8}
+                    formatValue={(v) =>
+                      v === 0
+                        ? "Sem Premier Access"
+                        : `${v} ${v === 1 ? "atração" : "atrações"} · ${formatUSD(
+                            v * PRECO_DISNEY_PREMIER_ACCESS_POR_ATRACAO_USD_PAX,
+                          )}/pessoa`
+                    }
+                  />
+                </div>
+              </div>
             )}
             {ingressosSelecionados.has("usj") && (
-              <label className="mt-2 flex items-center gap-2 text-xs font-medium text-[#0A2540]">
-                <input
-                  type="checkbox"
-                  checked={usjExpressPass}
-                  onChange={(e) => setUsjExpressPass(e.target.checked)}
-                  className="h-4 w-4 shrink-0 rounded border-black/25 accent-[#2f80c9]"
-                />
-                + USJ Express Pass (fast pass pago)
-                <span className="text-[10px] font-normal text-black/35">
-                  {formatUSD(PRECO_EXPRESS_PASS_USJ_USD_PAX)}/pessoa
-                </span>
-              </label>
+              <div className="mt-3 rounded-lg border border-black/10 bg-black/[0.02] p-3">
+                <p className="text-xs font-medium text-[#0A2540]">
+                  + USJ Express Pass (fast pass pago)
+                </p>
+                <p className="mt-0.5 text-[10px] text-black/40">
+                  Cada tier cobre um número diferente de atrações e tem preço próprio.
+                </p>
+                <div className="mt-2 flex flex-wrap gap-2">
+                  {(
+                    [
+                      { key: "nenhum", label: "Sem Express Pass", preco: 0 },
+                      { key: "4", label: "Express 4", preco: PRECO_EXPRESS_PASS_USJ_4_USD_PAX },
+                      { key: "7", label: "Express 7", preco: PRECO_EXPRESS_PASS_USJ_7_USD_PAX },
+                      { key: "premium", label: "Premium", preco: PRECO_EXPRESS_PASS_USJ_PREMIUM_USD_PAX },
+                    ] as const
+                  ).map((tier) => (
+                    <button
+                      key={tier.key}
+                      type="button"
+                      onClick={() => setUsjExpressPassTier(tier.key)}
+                      className={`h-9 rounded-lg border px-3 text-xs transition ${
+                        usjExpressPassTier === tier.key
+                          ? "border-[#2f80c9] bg-[#2f80c9]/10 font-medium text-[#2f80c9]"
+                          : "border-black/15 bg-black/[0.03] text-black/60 hover:border-black/30"
+                      }`}
+                    >
+                      {tier.label}
+                      {tier.preco > 0 && (
+                        <span className="ml-1.5 text-[10px] font-normal text-black/35">
+                          {formatUSD(tier.preco)}/pessoa
+                        </span>
+                      )}
+                    </button>
+                  ))}
+                </div>
+              </div>
             )}
           </div>
         </div>

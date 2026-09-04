@@ -811,13 +811,8 @@ export const PRECO_INGRESSO_DISNEY_UNIVERSAL_USD_PAX = comMargemEImposto(83); //
 // ~150 JPY/USD), 1 dia/adulto, antes de imposto+margem:
 // - Disneyland Tokyo e DisneySea: passaporte 1 dia com precificação
 //   variável por data, ¥7.900–¥10.900 (média ~¥9.400) — tourismattractions.net/japan/tokyo-disneyland-ticket-pricing-guide
-// - Disney Premier Access (fast pass pago, vendido por atração): ¥1.000–
-//   2.500/atração; pacote de 3-4 atrações principais ~¥7.000/pessoa —
-//   neverendingvoyage.com/tokyo-disney-premier-access
 // - Universal Studios Japan: Studio Pass 1 dia ¥9.000–12.500 (média
 //   ~¥10.750) — japan.asoventure.jp/en/article/usj-express-pass-guide-2026-worth-buying
-// - USJ Express Pass (fast pass pago, tier intermediário Express 4/7):
-//   ¥9.500–26.000 conforme temporada, referência ~¥14.000 — mesma fonte
 // - teamLab Tokyo (Planets/Borderless): ¥3.800–4.200 —
 //   japan-travel-kit.com/guides/attractions/teamlab-tokyo-tickets
 // - teamLab Kyoto (Biovortex): ¥3.800 — teamlab.art/e/kyoto
@@ -825,9 +820,22 @@ export const PRECO_INGRESSO_DISNEY_UNIVERSAL_USD_PAX = comMargemEImposto(83); //
 // são referência de mercado, não tarifa negociada.
 export const PRECO_INGRESSO_DISNEYLAND_TOKYO_USD_PAX = comMargemEImposto(63);
 export const PRECO_INGRESSO_DISNEYSEA_USD_PAX = comMargemEImposto(63);
-export const PRECO_DISNEY_PREMIER_ACCESS_USD_PAX = comMargemEImposto(47);
+// Disney Premier Access (fast pass pago) NÃO é um pacote único — é
+// vendido por atração, ¥1.000 (menos concorridas, ex. Monsters Inc.,
+// Haunted Mansion) a ¥2.000 (mais concorridas, ex. Frozen, Soaring,
+// Beauty and the Beast) e ¥2.500-3.500 pra shows/parades. Valor abaixo é
+// a MÉDIA ponderada dessas faixas (~¥1.700/atração) — o vendedor escolhe
+// quantas atrações o cliente quer, não um pacote fechado.
+// neverendingvoyage.com/tokyo-disney-premier-access
+export const PRECO_DISNEY_PREMIER_ACCESS_POR_ATRACAO_USD_PAX = comMargemEImposto(11);
 export const PRECO_INGRESSO_USJ_USD_PAX = comMargemEImposto(72);
-export const PRECO_EXPRESS_PASS_USJ_USD_PAX = comMargemEImposto(90);
+// USJ Express Pass tem 3 produtos oficiais com preços bem diferentes
+// entre si (variam por temporada — valores abaixo são o tier médio):
+// Express 4 ~¥13.000, Express 7 ~¥18.000, Premium ~¥45.000.
+// japan.asoventure.jp/en/article/usj-express-pass-guide-2026-worth-buying
+export const PRECO_EXPRESS_PASS_USJ_4_USD_PAX = comMargemEImposto(87);
+export const PRECO_EXPRESS_PASS_USJ_7_USD_PAX = comMargemEImposto(120);
+export const PRECO_EXPRESS_PASS_USJ_PREMIUM_USD_PAX = comMargemEImposto(300);
 export const PRECO_INGRESSO_TEAMLAB_TOKYO_USD_PAX = comMargemEImposto(27);
 export const PRECO_INGRESSO_TEAMLAB_KYOTO_USD_PAX = comMargemEImposto(25);
 // Reserva de restaurantes high-end: pacote fechado de 7 reservas em
