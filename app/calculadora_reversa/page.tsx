@@ -59,6 +59,64 @@ const CATALOGO_INGRESSOS: { key: IngressoKey; nome: string; precoUSD: number; ic
   { key: "teamlabKyoto", nome: "teamLab Kyoto", precoUSD: PRECO_INGRESSO_TEAMLAB_KYOTO_USD_PAX },
 ];
 
+// Catálogo de referência dos combos reais vendidos para o USJ Express Pass.
+// A USJ e revendedores (Klook, KKday etc.) vendem dezenas de combinações
+// diferentes de atrações a cada tier — o valor cobrado no calculadora é uma
+// média/estimativa por tier (PRECO_EXPRESS_PASS_USJ_*_USD_PAX), então este
+// catálogo serve só para o vendedor entender o que costuma vir incluso e
+// dar transparência sobre o que varia. Preços de referência em BRL vêm de
+// revenda (Klook, capturado 04/set/2026) — cobram markup sobre o oficial da
+// USJ, por isso divergem do custo interno usado no cálculo. Fonte: print
+// enviado pelo Wilson (listagem Klook) + usjexpresspass.com/guide (04/set/2026).
+const USJ_EXPRESS_PASS_DETALHES: {
+  tier: "4" | "7" | "premium";
+  atracoesTipicas: string[];
+  nintendoWorld: string;
+  wizardingWorld: string;
+  faixaPrecoReferenciaBRL: string;
+  observacao: string;
+}[] = [
+  {
+    tier: "4",
+    atracoesTipicas: [
+      "Combos com foco em Mario/Donkey Kong: Mine-Cart Madness (Mario Kart: Bowser's Challenge) + Donkey Kong Country: Mine-Cart Madness",
+      "Combos com Flying Dinosaur: Jurassic Park The Flying Dinosaur + JAWS/Backdrop/Theater",
+      "Combos sazonais: Halloween Horror Nights (Chainsaw Man, Resident Evil Requiem)",
+    ],
+    nintendoWorld:
+      "Só nos combos que citam Mine-Cart/Mario/Koopa's Challenge — não vem em todo Express 4 (ex.: combo “Adventure for all” não inclui)",
+    wizardingWorld: "Normalmente não incluso — checar o combo específico antes de vender",
+    faixaPrecoReferenciaBRL: "R$ 385 – 620/pessoa (revenda) — varia por combo, data e temporada",
+    observacao:
+      "É o tier mais fragmentado: cada operadora vende dezenas de combinações diferentes de 4 atrações, cada uma com nome e preço próprios.",
+  },
+  {
+    tier: "7",
+    atracoesTipicas: [
+      "Super Nintendo World completo: Mine-Cart Madness (Mario Kart) + Yoshi's Adventure",
+      "Jurassic Park The Flying Dinosaur",
+      "The Wizarding World of Harry Potter (Forbidden Journey ou Flight of the Hippogriff)",
+      "+ 2–3 atrações à escolha do cliente (Minion Mayhem, Space Fantasy etc.)",
+    ],
+    nintendoWorld: "Incluso — acesso garantido às duas atrações do Super Nintendo World",
+    wizardingWorld: "Incluso — pelo menos uma atração do Wizarding World",
+    faixaPrecoReferenciaBRL: "R$ 843 – 912/pessoa (revenda) — também vendido como “Express 8” quando soma 1 atração extra",
+    observacao: "É o tier de referência para quem quer Nintendo World + Harry Potter garantidos sem pagar o Premium.",
+  },
+  {
+    tier: "premium",
+    atracoesTipicas: [
+      "Todo o Super Nintendo World",
+      "Todo o Wizarding World of Harry Potter",
+      "Praticamente toda a linha principal do parque — até 13-16 atrações, sem necessidade de horário marcado",
+    ],
+    nintendoWorld: "Incluso — entrada garantida, sem depender da senha grátis do app",
+    wizardingWorld: "Incluso",
+    faixaPrecoReferenciaBRL: "R$ 1.569 – 3.235/pessoa (revenda) — Premium limitado x Premium Unlimited",
+    observacao: "Existe uma versão “Unlimited” (sem limite de repetições nas atrações) bem mais cara que a Premium padrão.",
+  },
+];
+
 type DestinoKey = (typeof DESTINOS)[number]["key"];
 type TemaKey =
   | "automobilismo"
@@ -97,6 +155,10 @@ type TemaCidade = {
 // hotel. Selecionar um tema marca as cidades "padrao" dele em
 // destinosSelecionados (o vendedor pode ajustar cidade por cidade depois);
 // "Sem Tema" limpa a seleção. Pedido do Wilson, 04/set/2026.
+// Máximo de temas que podem ficar ativos ao mesmo tempo (misturar temas
+// pra montar a viagem do cliente). Pedido do Wilson, 04/set/2026.
+const MAX_TEMAS_SIMULTANEOS = 3;
+
 const TEMAS: { key: TemaKey; nome: string; icone: string; cidades: TemaCidade[] }[] = [
   {
     key: "automobilismo",
@@ -318,7 +380,10 @@ export default function CalculadoraReversaPage() {
   const [destinosSelecionados, setDestinosSelecionados] = useState<Set<DestinoKey>>(
     () => new Set(["tokyo"]),
   );
-  const [temaSelecionado, setTemaSelecionado] = useState<TemaKey | null>(null);
+  // Até MAX_TEMAS_SIMULTANEOS temas podem ficar ativos ao mesmo tempo —
+  // permite montar uma viagem misturando temas (ex.: Automobilismo +
+  // Gastronomia). Pedido do Wilson, 04/set/2026.
+  const [temasSelecionados, setTemasSelecionados] = useState<Set<TemaKey>>(() => new Set());
 
   // Valor manual — sobrescreve o cálculo automático quando o time já tem
   // uma cotação real (hotel negociado, tarifa aérea específica etc.),
@@ -350,10 +415,26 @@ export default function CalculadoraReversaPage() {
   const [jrPassDias, setJrPassDias] =
     useState<(typeof JR_PASS_DIAS_OPCOES)[number]>(7);
   const [jrPassClasse, setJrPassClasse] = useState<"comum" | "green">("comum");
+  // Quantas pessoas do grupo efetivamente compram o JR Pass — começa igual
+  // a `pessoas`, mas é editável separadamente (ex.: crianças pequenas ou
+  // quem já tem passe não entram na conta).
+  const [jrPassPessoas, setJrPassPessoas] = useState(pessoas);
 
   // Wi-fi - eSIM (por pessoa) ou Pocket Wi-Fi (aparelho compartilhado,
   // cobre varias pessoas). Ambos escalam com a quantidade de dias.
   const [wifiTipo, setWifiTipo] = useState<"esim" | "pocket">("esim");
+  // Para eSIM: quantas pessoas usam eSIM próprio. Para Pocket Wi-Fi:
+  // quantos aparelhos estão sendo cobrados. Começa no valor padrão
+  // (pessoas / aparelhos calculados a partir de WIFI_TAMANHO_GRUPO) mas é
+  // editável — o vendedor pode ajustar se nem todo mundo precisa.
+  const [wifiPessoasOuUnidades, setWifiPessoasOuUnidades] = useState(pessoas);
+
+  function alternarWifiTipo(tipo: "esim" | "pocket") {
+    setWifiTipo(tipo);
+    setWifiPessoasOuUnidades(
+      tipo === "esim" ? pessoas : Math.max(1, Math.ceil(pessoas / WIFI_TAMANHO_GRUPO)),
+    );
+  }
 
   // Ingressos e experiências - o vendedor marca quais parques/experiências
   // o cliente quer (nenhum vem pré-selecionado); cada um marcado entra como
@@ -389,27 +470,45 @@ export default function CalculadoraReversaPage() {
     });
   }
 
-  // Selecionar um tema marca as cidades "padrao" dele (substitui a
-  // seleção de cidades atual); "Sem Tema" (temaKey null) limpa o tema e
-  // volta pra Tokyo como cidade única, igual ao estado inicial da página.
-  // "Parques & Entretenimento" já vem com os ingressos correspondentes
-  // marcados na seção de Ingressos e experiências.
-  function selecionarTema(temaKey: TemaKey | null) {
-    setTemaSelecionado(temaKey);
+  // Até 3 temas podem ficar ativos ao mesmo tempo (misturar Automobilismo +
+  // Gastronomia, por exemplo). Cada clique liga/desliga um tema; ao atingir
+  // o limite, um 4º clique é ignorado. As cidades marcadas viram a união
+  // das cidades "padrao" de todos os temas ativos — perde ajustes manuais
+  // de cidade feitos antes, igual já acontecia com 1 tema só. "Sem Tema"
+  // (temaKey null) limpa tudo e volta pra Tokyo, igual ao estado inicial.
+  // "Parques & Entretenimento" continua auto-marcando os ingressos
+  // correspondentes quando entra no conjunto de temas ativos.
+  function alternarTema(temaKey: TemaKey | null) {
     if (temaKey === null) {
+      setTemasSelecionados(new Set());
       setDestinosSelecionados(new Set(["tokyo"]));
       return;
     }
-    const tema = TEMAS.find((t) => t.key === temaKey);
-    if (!tema) return;
-    setDestinosSelecionados(new Set(tema.cidades.filter((c) => c.padrao).map((c) => c.key)));
-    if (temaKey === "parquesEntretenimento") {
+
+    const novo = new Set(temasSelecionados);
+    if (novo.has(temaKey)) {
+      novo.delete(temaKey);
+    } else if (novo.size < MAX_TEMAS_SIMULTANEOS) {
+      novo.add(temaKey);
+    } else {
+      return; // já tem 3 temas ativos — ignora até o vendedor desmarcar algum
+    }
+    setTemasSelecionados(novo);
+
+    const cidadesUniao = new Set<DestinoKey>();
+    novo.forEach((key) => {
+      const tema = TEMAS.find((t) => t.key === key);
+      tema?.cidades.filter((c) => c.padrao).forEach((c) => cidadesUniao.add(c.key));
+    });
+    setDestinosSelecionados(cidadesUniao.size > 0 ? cidadesUniao : new Set(["tokyo"]));
+
+    if (novo.has("parquesEntretenimento")) {
       setIngressosSelecionados((atual) => {
-        const novo = new Set(atual);
-        novo.add("disneyland");
-        novo.add("disneysea");
-        novo.add("usj");
-        return novo;
+        const novoIngressos = new Set(atual);
+        novoIngressos.add("disneyland");
+        novoIngressos.add("disneysea");
+        novoIngressos.add("usj");
+        return novoIngressos;
       });
     }
   }
@@ -427,6 +526,46 @@ export default function CalculadoraReversaPage() {
   const nomesDestinos = Array.from(destinosSelecionados)
     .map((key) => DESTINOS.find((d) => d.key === key)?.nome ?? key)
     .join(" · ");
+
+  // União das cidades de todos os temas ativos, com os destaques de cada
+  // tema que recomenda aquela cidade (uma cidade recomendada por 2 temas
+  // mostra os 2 destaques). notaIngresso vem do primeiro tema ativo que
+  // define esse aviso pra cidade (hoje só existe em Automobilismo).
+  const cidadesTemasAtivos = useMemo(() => {
+    const mapa = new Map<
+      DestinoKey,
+      { key: DestinoKey; destaques: { tema: string; texto: string }[]; notaIngresso?: string }
+    >();
+    temasSelecionados.forEach((temaKey) => {
+      const tema = TEMAS.find((t) => t.key === temaKey);
+      if (!tema) return;
+      tema.cidades.forEach((c) => {
+        const atual = mapa.get(c.key);
+        if (atual) {
+          atual.destaques.push({ tema: tema.nome, texto: c.destaque });
+          if (c.notaIngresso && !atual.notaIngresso) atual.notaIngresso = c.notaIngresso;
+        } else {
+          mapa.set(c.key, {
+            key: c.key,
+            destaques: [{ tema: tema.nome, texto: c.destaque }],
+            notaIngresso: c.notaIngresso,
+          });
+        }
+      });
+    });
+    return Array.from(mapa.values());
+  }, [temasSelecionados]);
+
+  // Estimativa de dias mínimos pra dar tempo de fazer tudo: 1 dia por
+  // cidade selecionada (base de deslocamento/city sightseeing) + 1 dia
+  // extra por parque de dia inteiro (Disney/USJ — teamLab é meio período
+  // e cabe dentro de um dia de cidade). É uma estimativa pra alertar o
+  // vendedor, não um cálculo de roteiro dia a dia.
+  const diasParquesDiaInteiro = (["disneyland", "disneysea", "usj"] as const).filter((k) =>
+    ingressosSelecionados.has(k),
+  ).length;
+  const diasMinimosSugeridos = Math.max(1, destinosSelecionados.size) + diasParquesDiaInteiro;
+  const diasInsuficientes = dias < diasMinimosSugeridos;
 
   const resultado = useMemo(() => {
     const precoRoteiro =
@@ -524,38 +663,37 @@ export default function CalculadoraReversaPage() {
       });
     }
 
-    // 3) JR Pass — faixa de dias e classe escolhidas pelo vendedor
+    // 3) JR Pass — faixa de dias e classe escolhidas pelo vendedor; só
+    // entra quantidade de gente que realmente compra o passe (editável,
+    // pode ser menor que `pessoas`).
     const tabelaJrPass = jrPassClasse === "green" ? JR_PASS_PRECO_USD_GREEN : JR_PASS_PRECO_USD;
-    const precoJrPass = Math.round(tabelaJrPass[jrPassDias] * cambioCotacao * pessoas);
-    if (cabe(precoJrPass)) {
+    const precoJrPass = Math.round(tabelaJrPass[jrPassDias] * cambioCotacao * jrPassPessoas);
+    if (jrPassPessoas > 0 && cabe(precoJrPass)) {
       gasto += precoJrPass;
       incluidos.push({
         chave: "jrpass",
         label: `JR Pass — ${jrPassDias} dias${jrPassClasse === "green" ? " · Green Car" : ""}`,
-        detalhe: `Passe ferroviário com trem-bala ilimitado${jrPassClasse === "green" ? ", classe Green Car" : ""}, por pessoa · tabela ${JR_PASS_TABELA_VALIDADE}`,
+        detalhe: `Passe ferroviário com trem-bala ilimitado${jrPassClasse === "green" ? ", classe Green Car" : ""} · ${jrPassPessoas} de ${pessoas} viajante${pessoas === 1 ? "" : "s"} · tabela ${JR_PASS_TABELA_VALIDADE}`,
         precoBRL: precoJrPass,
       });
     }
 
-    // 4) Wi-fi — eSIM (por pessoa) ou Pocket Wi-Fi (aparelho compartilhado)
+    // 4) Wi-fi — eSIM (por pessoa) ou Pocket Wi-Fi (aparelho compartilhado).
+    // wifiPessoasOuUnidades é editável: pessoas cobertas (eSIM) ou
+    // quantidade de aparelhos (Pocket Wi-Fi).
     const precoWifi =
       wifiTipo === "esim"
-        ? Math.round(DIARIA_ESIM_USD_PAX * dias * pessoas * cambioCotacao)
-        : Math.round(
-            DIARIA_POCKET_WIFI_USD *
-              dias *
-              Math.max(1, Math.ceil(pessoas / WIFI_TAMANHO_GRUPO)) *
-              cambioCotacao,
-          );
-    if (cabe(precoWifi)) {
+        ? Math.round(DIARIA_ESIM_USD_PAX * dias * wifiPessoasOuUnidades * cambioCotacao)
+        : Math.round(DIARIA_POCKET_WIFI_USD * dias * Math.max(0, wifiPessoasOuUnidades) * cambioCotacao);
+    if (wifiPessoasOuUnidades > 0 && cabe(precoWifi)) {
       gasto += precoWifi;
       incluidos.push({
         chave: "wifi",
         label: wifiTipo === "esim" ? "eSIM" : "Pocket Wi-Fi",
         detalhe:
           wifiTipo === "esim"
-            ? `Conexão 5G direto no celular, por pessoa — ${dias} dias`
-            : `Aparelho compartilhado (até ${WIFI_TAMANHO_GRUPO} pessoas por unidade) — ${dias} dias`,
+            ? `Conexão 5G direto no celular · ${wifiPessoasOuUnidades} de ${pessoas} viajante${pessoas === 1 ? "" : "s"} · ${dias} dias`
+            : `${wifiPessoasOuUnidades} aparelho${wifiPessoasOuUnidades === 1 ? "" : "s"} compartilhado${wifiPessoasOuUnidades === 1 ? "" : "s"} (até ${WIFI_TAMANHO_GRUPO} pessoas por unidade) — ${dias} dias`,
         precoBRL: precoWifi,
       });
     }
@@ -699,7 +837,9 @@ export default function CalculadoraReversaPage() {
     aereoValorManual,
     jrPassDias,
     jrPassClasse,
+    jrPassPessoas,
     wifiTipo,
+    wifiPessoasOuUnidades,
     ingressosSelecionados,
     premierAccessAtracoes,
     usjExpressPassTier,
@@ -781,7 +921,7 @@ export default function CalculadoraReversaPage() {
           />
           <Link
             href="/produtos"
-            className="text-[10px] uppercase tracking-[0.2em] text-black/40 underline underline-offset-4 transition hover:text-black"
+            className="rounded-lg border border-emerald-300 bg-emerald-50 px-3 py-1.5 text-[10px] font-medium uppercase tracking-[0.2em] text-emerald-700 transition hover:bg-emerald-100"
           >
             ← Voltar para Produtos
           </Link>
@@ -862,41 +1002,52 @@ export default function CalculadoraReversaPage() {
 
           <div className="sm:col-span-2">
             <span className="mb-2 block text-[10px] uppercase tracking-[0.2em] text-black/50">
-              Temas
+              Temas <span className="normal-case tracking-normal text-black/35">(selecione até {MAX_TEMAS_SIMULTANEOS} pra misturar)</span>
             </span>
             <div className="flex flex-wrap gap-2">
               <button
                 type="button"
-                onClick={() => selecionarTema(null)}
-                className={`flex w-24 flex-col items-center gap-1.5 rounded-lg border px-2 py-3 text-center text-xs transition ${
-                  temaSelecionado === null
+                onClick={() => alternarTema(null)}
+                className={`flex w-28 flex-col items-center gap-2 rounded-lg border px-2 py-3 text-center text-xs transition ${
+                  temasSelecionados.size === 0
                     ? "border-[#2f80c9] bg-[#2f80c9]/10 font-medium text-[#2f80c9]"
                     : "border-black/15 bg-black/[0.03] text-black/60 hover:border-black/30"
                 }`}
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src="/images/temas/01-sem-tema.png" alt="" className="h-10 w-10 shrink-0" />
+                <img src="/images/temas/01-sem-tema.png" alt="" className="h-16 w-16 shrink-0" />
                 Sem tema
               </button>
-              {TEMAS.map((tema) => (
-                <button
-                  key={tema.key}
-                  type="button"
-                  onClick={() => selecionarTema(tema.key)}
-                  className={`flex w-24 flex-col items-center gap-1.5 rounded-lg border px-2 py-3 text-center text-xs transition ${
-                    temaSelecionado === tema.key
-                      ? "border-[#2f80c9] bg-[#2f80c9]/10 font-medium text-[#2f80c9]"
-                      : "border-black/15 bg-black/[0.03] text-black/60 hover:border-black/30"
-                  }`}
-                >
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={tema.icone} alt="" className="h-10 w-10 shrink-0" />
-                  {tema.nome}
-                </button>
-              ))}
+              {TEMAS.map((tema) => {
+                const marcado = temasSelecionados.has(tema.key);
+                const desabilitado = !marcado && temasSelecionados.size >= MAX_TEMAS_SIMULTANEOS;
+                return (
+                  <button
+                    key={tema.key}
+                    type="button"
+                    onClick={() => alternarTema(tema.key)}
+                    disabled={desabilitado}
+                    className={`flex w-28 flex-col items-center gap-2 rounded-lg border px-2 py-3 text-center text-xs transition ${
+                      marcado
+                        ? "border-[#2f80c9] bg-[#2f80c9]/10 font-medium text-[#2f80c9]"
+                        : desabilitado
+                          ? "cursor-not-allowed border-black/10 bg-black/[0.02] text-black/30"
+                          : "border-black/15 bg-black/[0.03] text-black/60 hover:border-black/30"
+                    }`}
+                  >
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src={tema.icone}
+                      alt=""
+                      className={`h-16 w-16 shrink-0 ${desabilitado ? "opacity-40" : ""}`}
+                    />
+                    {tema.nome}
+                  </button>
+                );
+              })}
             </div>
 
-            {temaSelecionado === null ? (
+            {temasSelecionados.size === 0 ? (
               <label className="mt-4 flex flex-col sm:max-w-xs">
                 <span className="mb-2 flex min-h-[2.2em] items-end text-[10px] uppercase leading-tight tracking-[0.2em] text-black/50">
                   Cidade principal do roteiro
@@ -919,9 +1070,9 @@ export default function CalculadoraReversaPage() {
               <div className="mt-4 overflow-hidden rounded-xl border border-black/10">
                 <div className="grid grid-cols-[minmax(140px,auto)_1fr] gap-x-6 bg-[#0A2540] px-4 py-2 text-[10px] uppercase tracking-[0.15em] text-white/70">
                   <span>Cidades recomendadas</span>
-                  <span>Destaques do tema</span>
+                  <span>Destaques do{temasSelecionados.size > 1 ? "s temas" : " tema"}</span>
                 </div>
-                {TEMAS.find((t) => t.key === temaSelecionado)?.cidades.map((c) => {
+                {cidadesTemasAtivos.map((c) => {
                   const destino = DESTINOS.find((d) => d.key === c.key);
                   const marcado = destinosSelecionados.has(c.key);
                   const notaMotorista = CIDADE_MOTORISTA_NOTA[c.key];
@@ -951,10 +1102,17 @@ export default function CalculadoraReversaPage() {
                         )}
                       </span>
                       <span className="text-xs leading-5 text-black/55">
-                        <strong className="font-medium text-[#0A2540]">
-                          {destino?.nome ?? c.key}
-                        </strong>{" "}
-                        — {c.destaque}
+                        {c.destaques.map((d, i) => (
+                          <span key={i} className={i > 0 ? "mt-1 block" : "block"}>
+                            <strong className="font-medium text-[#0A2540]">
+                              {destino?.nome ?? c.key}
+                            </strong>
+                            {temasSelecionados.size > 1 && (
+                              <span className="text-black/35"> ({d.tema})</span>
+                            )}{" "}
+                            — {d.texto}
+                          </span>
+                        ))}
                         {notaMotorista && (
                           <span className="mt-0.5 block text-[11px] font-medium text-red-600">
                             🚗 {notaMotorista.motivo}
@@ -976,6 +1134,17 @@ export default function CalculadoraReversaPage() {
                 ? "Nenhuma cidade selecionada — diária de hotel sem ajuste de mercado por cidade"
                 : `Ajuste de mercado do hotel: ${nomesDestinos} · multiplicador médio ${multiplicadorCidade.toFixed(2)}×`}
             </span>
+            {diasInsuficientes && (
+              <p className="mt-2 rounded-md bg-red-50 px-3 py-2 text-[11px] font-medium leading-4 text-red-700">
+                ⚠️ Com {destinosSelecionados.size} cidade{destinosSelecionados.size === 1 ? "" : "s"}
+                {diasParquesDiaInteiro > 0
+                  ? ` e ${diasParquesDiaInteiro} parque${diasParquesDiaInteiro === 1 ? "" : "s"} de dia inteiro`
+                  : ""}{" "}
+                selecionados, o roteiro atual de {dias} dia{dias === 1 ? "" : "s"} tende a ficar
+                corrido. Sugestão: pelo menos {diasMinimosSugeridos} dias (estimativa) — considere
+                aumentar a duração da viagem ou reduzir cidades/atrações.
+              </p>
+            )}
           </div>
 
           <div className="sm:col-span-2">
@@ -1000,18 +1169,25 @@ export default function CalculadoraReversaPage() {
                 ))}
               </div>
               <div className="flex gap-2">
-                {(["comum", "green"] as const).map((c) => (
+                {(
+                  [
+                    { key: "comum", label: "Comum (Ordinary)", icone: "/images/ingressos/shinkansen-ordinary.png" },
+                    { key: "green", label: "Green Car", icone: "/images/ingressos/jr-green-car.png" },
+                  ] as const
+                ).map((c) => (
                   <button
-                    key={c}
+                    key={c.key}
                     type="button"
-                    onClick={() => setJrPassClasse(c)}
-                    className={`h-10 rounded-lg border px-4 text-sm transition ${
-                      jrPassClasse === c
+                    onClick={() => setJrPassClasse(c.key)}
+                    className={`flex h-10 items-center gap-2 rounded-lg border px-4 text-sm transition ${
+                      jrPassClasse === c.key
                         ? "border-[#2f80c9] bg-[#2f80c9]/10 font-medium text-[#2f80c9]"
                         : "border-black/15 bg-black/[0.03] text-black/60 hover:border-black/30"
                     }`}
                   >
-                    {c === "comum" ? "Comum (Ordinary)" : "Green Car"}
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={c.icone} alt="" className="h-6 w-6 shrink-0 rounded object-contain" />
+                    {c.label}
                   </button>
                 ))}
               </div>
@@ -1022,6 +1198,16 @@ export default function CalculadoraReversaPage() {
               )}{" "}
               por pessoa · tabela do fornecedor válida {JR_PASS_TABELA_VALIDADE}
             </span>
+            <div className="mt-2 max-w-xs">
+              <NumberStepper
+                label="Quantas pessoas usam o JR Pass"
+                value={jrPassPessoas}
+                onChange={setJrPassPessoas}
+                min={0}
+                max={pessoas}
+                formatValue={(v) => `${v} de ${pessoas} viajante${pessoas === 1 ? "" : "s"}`}
+              />
+            </div>
           </div>
 
           <div className="sm:col-span-2">
@@ -1033,7 +1219,7 @@ export default function CalculadoraReversaPage() {
                 <button
                   key={t}
                   type="button"
-                  onClick={() => setWifiTipo(t)}
+                  onClick={() => alternarWifiTipo(t)}
                   className={`h-10 rounded-lg border px-4 text-sm transition ${
                     wifiTipo === t
                       ? "border-[#2f80c9] bg-[#2f80c9]/10 font-medium text-[#2f80c9]"
@@ -1049,34 +1235,57 @@ export default function CalculadoraReversaPage() {
                 ? "Um eSIM por pessoa — tipo Airalo/Holafly, plano ilimitado"
                 : `Aparelho compartilhado — até ${WIFI_TAMANHO_GRUPO} pessoas por unidade`}
             </span>
+            <div className="mt-2 max-w-xs">
+              <NumberStepper
+                label={wifiTipo === "esim" ? "Quantas pessoas usam eSIM" : "Quantos aparelhos Pocket Wi-Fi"}
+                value={wifiPessoasOuUnidades}
+                onChange={setWifiPessoasOuUnidades}
+                min={0}
+                max={wifiTipo === "esim" ? pessoas : Math.max(1, pessoas)}
+                formatValue={(v) =>
+                  wifiTipo === "esim"
+                    ? `${v} de ${pessoas} viajante${pessoas === 1 ? "" : "s"}`
+                    : `${v} aparelho${v === 1 ? "" : "s"}`
+                }
+              />
+            </div>
           </div>
 
           <div className="sm:col-span-2">
             <span className="mb-2 block text-[10px] uppercase tracking-[0.2em] text-black/50">
               Ingressos e experiências
             </span>
-            <div className="grid gap-2 sm:grid-cols-2">
-              {CATALOGO_INGRESSOS.map((ingresso) => (
-                <label
-                  key={ingresso.key}
-                  className="flex items-center gap-2 text-xs font-medium text-[#0A2540]"
-                >
-                  <input
-                    type="checkbox"
-                    checked={ingressosSelecionados.has(ingresso.key)}
-                    onChange={() => alternarIngresso(ingresso.key)}
-                    className="h-4 w-4 shrink-0 rounded border-black/25 accent-[#2f80c9]"
-                  />
-                  {ingresso.icone && (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img src={ingresso.icone} alt="" className="h-5 w-5 shrink-0 rounded object-contain" />
-                  )}
-                  {ingresso.nome}
-                  <span className="text-[10px] font-normal text-black/35">
-                    {formatUSD(ingresso.precoUSD)}/pessoa
-                  </span>
-                </label>
-              ))}
+            <div className="flex flex-wrap gap-2">
+              {CATALOGO_INGRESSOS.map((ingresso) => {
+                const marcado = ingressosSelecionados.has(ingresso.key);
+                return (
+                  <label
+                    key={ingresso.key}
+                    className={`flex w-28 cursor-pointer flex-col items-center gap-2 rounded-lg border px-2 py-3 text-center text-xs transition ${
+                      marcado
+                        ? "border-[#2f80c9] bg-[#2f80c9]/10 font-medium text-[#2f80c9]"
+                        : "border-black/15 bg-black/[0.03] text-black/60 hover:border-black/30"
+                    }`}
+                  >
+                    <input
+                      type="checkbox"
+                      checked={marcado}
+                      onChange={() => alternarIngresso(ingresso.key)}
+                      className="sr-only"
+                    />
+                    {ingresso.icone ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img src={ingresso.icone} alt="" className="h-14 w-14 shrink-0 rounded object-contain" />
+                    ) : (
+                      <span className="flex h-14 w-14 items-center justify-center text-3xl">🎫</span>
+                    )}
+                    <span>{ingresso.nome}</span>
+                    <span className="text-[10px] font-normal text-black/35">
+                      {formatUSD(ingresso.precoUSD)}/pessoa
+                    </span>
+                  </label>
+                );
+              })}
             </div>
             {(ingressosSelecionados.has("disneyland") || ingressosSelecionados.has("disneysea")) && (
               <div className="mt-3 rounded-lg border border-black/10 bg-black/[0.02] p-3">
@@ -1135,31 +1344,37 @@ export default function CalculadoraReversaPage() {
                       key={tier.key}
                       type="button"
                       onClick={() => setUsjExpressPassTier(tier.key)}
-                      className={`flex h-9 items-center gap-1.5 rounded-lg border px-3 text-xs transition ${
+                      className={`flex w-28 flex-col items-center gap-2 rounded-lg border px-2 py-3 text-center text-xs transition ${
                         usjExpressPassTier === tier.key
                           ? "border-[#2f80c9] bg-[#2f80c9]/10 font-medium text-[#2f80c9]"
                           : "border-black/15 bg-black/[0.03] text-black/60 hover:border-black/30"
                       }`}
                     >
-                      {tier.nintendoWorld && (
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img
-                          src="/images/ingressos/super-nintendo-world-logo.png"
-                          alt=""
-                          className="h-5 w-5 shrink-0 rounded object-contain"
-                        />
+                      {(tier.nintendoWorld || tier.wizardingWorld) ? (
+                        <span className="flex h-14 items-center justify-center gap-1">
+                          {tier.nintendoWorld && (
+                            // eslint-disable-next-line @next/next/no-img-element
+                            <img
+                              src="/images/ingressos/super-nintendo-world-logo.png"
+                              alt=""
+                              className="h-12 w-12 shrink-0 rounded object-contain"
+                            />
+                          )}
+                          {tier.wizardingWorld && (
+                            // eslint-disable-next-line @next/next/no-img-element
+                            <img
+                              src="/images/ingressos/harry-potter-logo.png"
+                              alt=""
+                              className="h-12 w-12 shrink-0 object-contain"
+                            />
+                          )}
+                        </span>
+                      ) : (
+                        <span className="flex h-14 w-14 items-center justify-center text-3xl">🎟️</span>
                       )}
-                      {tier.wizardingWorld && (
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img
-                          src="/images/ingressos/harry-potter-logo.png"
-                          alt=""
-                          className="h-5 w-5 shrink-0 object-contain"
-                        />
-                      )}
-                      {tier.label}
+                      <span>{tier.label}</span>
                       {tier.preco > 0 && (
-                        <span className="ml-1.5 text-[10px] font-normal text-black/35">
+                        <span className="text-[10px] font-normal text-black/35">
                           {formatUSD(tier.preco)}/pessoa
                         </span>
                       )}
@@ -1187,6 +1402,43 @@ export default function CalculadoraReversaPage() {
                     />
                     ✅ Este tier inclui atrações do The Wizarding World of Harry Potter.
                   </p>
+                )}
+
+                <button
+                  type="button"
+                  onClick={() => setMostrarDetalhesUsjExpressPass((v) => !v)}
+                  className="mt-2 text-[10px] font-medium uppercase tracking-wide text-[#2f80c9] underline underline-offset-2"
+                >
+                  {mostrarDetalhesUsjExpressPass ? "Ocultar" : "Ver"} informação completa de cada pass
+                </button>
+
+                {mostrarDetalhesUsjExpressPass && (
+                  <div className="mt-2 space-y-2">
+                    {USJ_EXPRESS_PASS_DETALHES.map((d) => (
+                      <div key={d.tier} className="rounded-lg border border-black/10 bg-white p-2.5">
+                        <p className="text-[11px] font-medium text-[#0A2540]">
+                          Express {d.tier === "premium" ? "Premium" : d.tier}
+                        </p>
+                        <ul className="mt-1 list-disc pl-4 text-[10px] leading-4 text-black/55">
+                          {d.atracoesTipicas.map((a, i) => (
+                            <li key={i}>{a}</li>
+                          ))}
+                        </ul>
+                        <p className="mt-1 text-[10px] leading-4 text-black/55">
+                          🎮 Super Nintendo World: {d.nintendoWorld}
+                        </p>
+                        <p className="mt-0.5 text-[10px] leading-4 text-black/55">
+                          🪄 Wizarding World: {d.wizardingWorld}
+                        </p>
+                        <p className="mt-1 text-[10px] font-medium text-black/45">
+                          Preço de referência (revenda): {d.faixaPrecoReferenciaBRL}
+                        </p>
+                        <p className="mt-0.5 text-[10px] italic leading-4 text-black/40">
+                          {d.observacao}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
                 )}
               </div>
             )}
