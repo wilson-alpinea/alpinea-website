@@ -74,7 +74,7 @@ function categoriaDoItem(chave: string): CategoriaItem {
   if (chave.startsWith("ingresso-")) return "ingresso";
   if (chave === "Transporte") return "transporte";
   if (chave === "Guia Turístico") return "guia";
-  if (chave === "Câmbio no Brasil") return "cambio";
+  if (chave === "cambio" || chave === "Câmbio no Brasil") return "cambio";
   if (chave === "Reserva de Restaurantes High-End") return "restaurantes";
   return "outro";
 }

@@ -4,6 +4,8 @@ import Link from "next/link";
 import { Bodoni_Moda } from "next/font/google";
 import { useMemo, useState } from "react";
 import { gerarEBaixarPdf } from "./PacotePdf";
+import { useCambioIene, CIDADES_CAMBIO_IENE, type CidadeCambioIeneSlug } from "../hooks/useCambioIene";
+import { COTACAO_FALLBACK_BRL_POR_JPY } from "../lib/cambioIene";
 import {
   NumberStepper,
   DESTINOS,
@@ -473,6 +475,10 @@ type TemaCidade = {
 // pra montar a viagem do cliente). Pedido do Wilson, 04/set/2026.
 const MAX_TEMAS_SIMULTANEOS = 3;
 const MAX_CIDADES_ROTEIRO = 5;
+// Câmbio de ienes — spread da Alpinea sobre a cotação de papel-moeda do
+// melhorcambio.com, e piso mínimo pedido pelo Wilson (08/set/2026).
+const SPREAD_CAMBIO_IENE = 1.15;
+const CAMBIO_IENES_MINIMO = 100000;
 
 const TEMAS: { key: TemaKey; nome: string; icone: string; cidades: TemaCidade[] }[] = [
   {
@@ -874,6 +880,9 @@ export default function CalculadoraReversaPage() {
   const [extensoesSelecionadas, setExtensoesSelecionadas] = useState<Set<ExtensaoInternacionalKey>>(
     () => new Set(),
   );
+  const [cambioIeneCidade, setCambioIeneCidade] = useState<CidadeCambioIeneSlug>("sao-paulo");
+  const [quantidadeIenes, setQuantidadeIenes] = useState(CAMBIO_IENES_MINIMO);
+  const cambioIene = useCambioIene(cambioIeneCidade);
   // Até MAX_TEMAS_SIMULTANEOS temas podem ficar ativos ao mesmo tempo —
   // permite montar uma viagem misturando temas (ex.: Automobilismo +
   // Gastronomia). Pedido do Wilson, 04/set/2026.
@@ -1420,15 +1429,22 @@ export default function CalculadoraReversaPage() {
     });
 
     // 7) Câmbio no Brasil
-    const cambioRecomendado = cabe(PRECO_CAMBIO_BRASIL);
-    if (cambioRecomendado) gasto += PRECO_CAMBIO_BRASIL;
+    const cotacaoIeneAtual = cambioIene?.cotacaoBRLPorJPY ?? COTACAO_FALLBACK_BRL_POR_JPY;
+    const precoIenes = Math.round(quantidadeIenes * cotacaoIeneAtual * SPREAD_CAMBIO_IENE);
+    const nomeCidadeCambio =
+      CIDADES_CAMBIO_IENE.find((c) => c.slug === cambioIeneCidade)?.nome ?? cambioIeneCidade;
+    const precoCambioTotal = PRECO_CAMBIO_BRASIL + precoIenes;
+    const cambioRecomendado = cabe(precoCambioTotal);
+    if (cambioRecomendado) gasto += precoCambioTotal;
     incluidos.push({
+      chave: "cambio",
       label: "Câmbio no Brasil",
       detalhe: [
-        "Retirada de ienes em espécie ainda no Brasil, com cotação comercial fechada antes do embarque.",
+        `¥ ${quantidadeIenes.toLocaleString("pt-BR")} em espécie — cotação de ${nomeCidadeCambio} + spread de 15%.`,
+        "Retirada de ienes em espécie ainda no Brasil, com cotação fechada antes do embarque.",
         "Evita depender só de caixas eletrônicos ou casas de câmbio no Japão nos primeiros dias de viagem.",
       ],
-      precoBRL: PRECO_CAMBIO_BRASIL,
+      precoBRL: precoCambioTotal,
       recomendado: cambioRecomendado,
     });
 
@@ -1536,6 +1552,9 @@ export default function CalculadoraReversaPage() {
     nomesDestinos,
     extensoesSelecionadas,
     guiaDias,
+    cambioIene,
+    cambioIeneCidade,
+    quantidadeIenes,
     cambioCotacao,
     hotelManual,
     hotelDiariaManual,
@@ -2115,6 +2134,55 @@ export default function CalculadoraReversaPage() {
             </div>
             <span className="mt-1.5 block text-[11px] text-black/40">
               US$ {DIARIA_GUIA_USD}/dia a cada {GUIA_TAMANHO_GRUPO} pessoas
+            </span>
+          </div>
+
+          <div className="sm:col-span-2">
+            <span className="mb-2 block text-[10px] uppercase tracking-[0.2em] text-black/50">
+              Câmbio de ienes
+            </span>
+            <div className="flex flex-wrap items-end gap-3">
+              <label className="flex flex-col">
+                <span className="mb-1 text-[10px] uppercase tracking-wide text-black/40">Cidade</span>
+                <select
+                  value={cambioIeneCidade}
+                  onChange={(e) => setCambioIeneCidade(e.target.value as CidadeCambioIeneSlug)}
+                  className="h-10 w-40 rounded-lg border border-black/15 bg-black/[0.03] px-3 text-sm outline-none focus:border-black/30"
+                >
+                  {CIDADES_CAMBIO_IENE.map((c) => (
+                    <option key={c.slug} value={c.slug}>
+                      {c.nome}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <label className="flex flex-col">
+                <span className="mb-1 text-[10px] uppercase tracking-wide text-black/40">
+                  Quantidade de ienes (mín. ¥{CAMBIO_IENES_MINIMO.toLocaleString("pt-BR")})
+                </span>
+                <div className="flex items-center gap-2">
+                  <span className="text-sm text-black/40">¥</span>
+                  <input
+                    type="number"
+                    value={quantidadeIenes}
+                    step={10000}
+                    min={CAMBIO_IENES_MINIMO}
+                    onChange={(e) => {
+                      const v = Number(e.target.value);
+                      if (!Number.isNaN(v)) setQuantidadeIenes(v);
+                    }}
+                    onBlur={() => setQuantidadeIenes((v) => Math.max(CAMBIO_IENES_MINIMO, v))}
+                    className="h-10 w-32 rounded-lg border border-black/15 bg-black/[0.03] px-3 text-sm outline-none focus:border-black/30"
+                  />
+                </div>
+              </label>
+            </div>
+            <span className="mt-1.5 block text-[11px] text-black/40">
+              {!cambioIene
+                ? "Buscando cotação do iene…"
+                : cambioIene.fallback
+                  ? `Cotação estimada: R$ ${cambioIene.cotacaoBRLPorJPY.toFixed(4).replace(".", ",")} por iene — melhorcambio.com indisponível no momento.`
+                  : `Cotação: R$ ${cambioIene.cotacaoBRLPorJPY.toFixed(4).replace(".", ",")} por iene em ${CIDADES_CAMBIO_IENE.find((c) => c.slug === cambioIene.cidade)?.nome} (melhorcambio.com, papel moeda) + spread de 15%.`}
             </span>
           </div>
 
