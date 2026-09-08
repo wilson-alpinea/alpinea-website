@@ -33,7 +33,9 @@ import {
   PRECO_DISNEY_PREMIER_ACCESS_POR_ATRACAO_USD_PAX,
   PRECO_INGRESSO_USJ_USD_PAX,
   PRECO_EXPRESS_PASS_USJ_4_USD_PAX,
+  PRECO_EXPRESS_PASS_USJ_5_USD_PAX,
   PRECO_EXPRESS_PASS_USJ_7_USD_PAX,
+  PRECO_EXPRESS_PASS_USJ_8_USD_PAX,
   PRECO_EXPRESS_PASS_USJ_PREMIUM_USD_PAX,
   PRECO_INGRESSO_TEAMLAB_TOKYO_USD_PAX,
   PRECO_INGRESSO_TEAMLAB_KYOTO_USD_PAX,
@@ -43,7 +45,7 @@ import {
   ROTEIRO_PRECO_BASE,
   ROTEIRO_PRECO_DIA_EXTRA,
 } from "../components/CustomPackageCard";
-import { useCambioUSD, formatBRL, formatUSD } from "../hooks/useCambioUSD";
+import { useCambioUSD, formatBRL, formatUSD, brlParaUSDLabel } from "../hooks/useCambioUSD";
 import { CambioLabel } from "../components/CambioLabel";
 
 type IngressoKey = "disneyland" | "disneysea" | "usj" | "teamlabTokyo" | "teamlabKyoto";
@@ -55,8 +57,18 @@ const CATALOGO_INGRESSOS: { key: IngressoKey; nome: string; precoUSD: number; ic
   { key: "disneyland", nome: "Disneyland Tokyo", precoUSD: PRECO_INGRESSO_DISNEYLAND_TOKYO_USD_PAX, icone: "/images/ingressos/disneyland-logo.png" },
   { key: "disneysea", nome: "DisneySea Tokyo", precoUSD: PRECO_INGRESSO_DISNEYSEA_USD_PAX, icone: "/images/ingressos/disneyland-logo.png" },
   { key: "usj", nome: "Universal Studios Japan", precoUSD: PRECO_INGRESSO_USJ_USD_PAX, icone: "/images/ingressos/usj-logo.png" },
-  { key: "teamlabTokyo", nome: "teamLab Tokyo", precoUSD: PRECO_INGRESSO_TEAMLAB_TOKYO_USD_PAX },
-  { key: "teamlabKyoto", nome: "teamLab Kyoto", precoUSD: PRECO_INGRESSO_TEAMLAB_KYOTO_USD_PAX },
+  {
+    key: "teamlabTokyo",
+    nome: "teamLab Tokyo",
+    precoUSD: PRECO_INGRESSO_TEAMLAB_TOKYO_USD_PAX,
+    icone: "/images/ingressos/teamlab-logo.png",
+  },
+  {
+    key: "teamlabKyoto",
+    nome: "teamLab Kyoto",
+    precoUSD: PRECO_INGRESSO_TEAMLAB_KYOTO_USD_PAX,
+    icone: "/images/ingressos/teamlab-logo.png",
+  },
 ];
 
 // Catálogo de referência dos combos reais vendidos para o USJ Express Pass.
@@ -69,7 +81,7 @@ const CATALOGO_INGRESSOS: { key: IngressoKey; nome: string; precoUSD: number; ic
 // USJ, por isso divergem do custo interno usado no cálculo. Fonte: print
 // enviado pelo Wilson (listagem Klook) + usjexpresspass.com/guide (04/set/2026).
 const USJ_EXPRESS_PASS_DETALHES: {
-  tier: "4" | "7" | "premium";
+  tier: "4" | "5" | "7" | "8" | "premium";
   atracoesTipicas: string[];
   nintendoWorld: string;
   wizardingWorld: string;
@@ -91,6 +103,20 @@ const USJ_EXPRESS_PASS_DETALHES: {
       "É o tier mais fragmentado: cada operadora vende dezenas de combinações diferentes de 4 atrações, cada uma com nome e preço próprios.",
   },
   {
+    tier: "5",
+    atracoesTipicas: [
+      "Combo “Adventure Special”: Mario Kart Koopa's Challenge + Yoshi's Adventure + Flying Dinosaur + Despicable Me: Minion Mayhem + Hollywood Dream – The Ride",
+      "Combo “Race & Minecart Special”: Mario Kart Koopa's Challenge + Mine Cart Madness + Illumination's Villain-Con Minion Blast + Flying Dinosaur + Harry Potter and the Forbidden Journey",
+      "Combo “Race & Minion Special”: Mario Kart Koopa's Challenge + Illumination's Villain-Con Minion Blast + Despicable Me: Minion Mayhem + Harry Potter and the Forbidden Journey + escolha 1 entre JAWS/Jurassic Park",
+    ],
+    nintendoWorld:
+      "Depende do combo — “Race & Minecart Special” e “Race & Minion Special” incluem Minion Blast; nenhum dos três combos citados garante as duas atrações do Nintendo World ao mesmo tempo",
+    wizardingWorld: "Incluso só nos combos “Race & Minecart Special” e “Race & Minion Special”",
+    faixaPrecoReferenciaBRL: "Sem preço de revenda confirmado — preço interno é estimativa, ver aviso na calculadora",
+    observacao:
+      "Tier intermediário entre o 4 e o 7 — preço ainda não confirmado oficialmente (ver ⚠️ na calculadora).",
+  },
+  {
     tier: "7",
     atracoesTipicas: [
       "Super Nintendo World completo: Mine-Cart Madness (Mario Kart) + Yoshi's Adventure",
@@ -102,6 +128,20 @@ const USJ_EXPRESS_PASS_DETALHES: {
     wizardingWorld: "Incluso — pelo menos uma atração do Wizarding World",
     faixaPrecoReferenciaBRL: "R$ 843 – 912/pessoa (revenda) — também vendido como “Express 8” quando soma 1 atração extra",
     observacao: "É o tier de referência para quem quer Nintendo World + Harry Potter garantidos sem pagar o Premium.",
+  },
+  {
+    tier: "8",
+    atracoesTipicas: [
+      "Tudo do Express 7 (Super Nintendo World completo + Jurassic Park The Flying Dinosaur + Wizarding World)",
+      "+ Illumination's Villain-Con Minion Blast (a atração extra que diferencia do Express 7)",
+      "+ escolha 1 entre Flying Dinosaur / Despicable Me: Minion Mayhem / Hollywood Dream – The Ride",
+      "+ escolha 1 entre Jurassic Park The Ride / JAWS",
+    ],
+    nintendoWorld: "Incluso — acesso garantido às atrações do Super Nintendo World + Minion Blast",
+    wizardingWorld: "Incluso — Harry Potter and the Forbidden Journey garantido",
+    faixaPrecoReferenciaBRL: "Sem preço de revenda confirmado — preço interno é estimativa, ver aviso na calculadora",
+    observacao:
+      "É basicamente o Express 7 + Minion Blast — mesma base do 7, preço ainda não confirmado oficialmente (ver ⚠️ na calculadora).",
   },
   {
     tier: "premium",
@@ -116,6 +156,174 @@ const USJ_EXPRESS_PASS_DETALHES: {
     observacao: "Existe uma versão “Unlimited” (sem limite de repetições nas atrações) bem mais cara que a Premium padrão.",
   },
 ];
+
+// Tabela comparativa completa dos combos de Express Pass do USJ — dados
+// vindos de prints do Klook enviados pelo Wilson (04/set/2026), cobrindo
+// os principais combos vendidos hoje pra cada tier (a USJ e revendedores
+// trocam esses combos por temporada, então isso é uma fotografia do que
+// estava disponível na data acima — confirmar disponibilidade e nome
+// exato do combo antes de vender). "Escolha 1" = o cliente escolhe uma
+// atração entre as marcadas com o mesmo grupo, dentro daquele combo.
+type UsjComboCelula = true | undefined | { grupo: string } | { texto: string };
+
+type UsjTabelaComparativa = {
+  titulo: string;
+  colunas: string[];
+  linhas: { atracao: string; valores: UsjComboCelula[] }[];
+  notas: string[];
+};
+
+const USJ_TABELAS_COMPARATIVAS: UsjTabelaComparativa[] = [
+  {
+    titulo: "Express 7 & 8",
+    colunas: [
+      "Express 7 — Minecart & Selection",
+      "Express 8 — Minion & Minecart Special",
+      "Express 8 — Minicart & Flying Dinosaur Special",
+    ],
+    linhas: [
+      { atracao: "Entrada com horário marcado no Super Nintendo World", valores: [true, true, true] },
+      { atracao: "Mario Kart: Koopa's Challenge", valores: [true, true, true] },
+      { atracao: "Yoshi's Adventure", valores: [true, true, true] },
+      { atracao: "Mine Cart Madness", valores: [true, true, true] },
+      { atracao: "Illumination's Villain-Con Minion Blast", valores: [undefined, true, true] },
+      { atracao: "The Flying Dinosaur", valores: [{ grupo: "A" }, { grupo: "A" }, { grupo: "A" }] },
+      { atracao: "Despicable Me: Minion Mayhem", valores: [{ grupo: "A" }, { grupo: "A" }, { grupo: "A" }] },
+      { atracao: "Hollywood Dream – The Ride", valores: [{ grupo: "A" }, { grupo: "A" }, { grupo: "A" }] },
+      { atracao: "Jurassic Park – The Ride", valores: [{ grupo: "B" }, { grupo: "B" }, { grupo: "B" }] },
+      { atracao: "JAWS", valores: [{ grupo: "B" }, { grupo: "B" }, { grupo: "B" }] },
+      { atracao: "Harry Potter and the Forbidden Journey", valores: [true, true, true] },
+    ],
+    notas: [
+      "Escolha 1 (grupo A): The Flying Dinosaur, Despicable Me: Minion Mayhem ou Hollywood Dream – The Ride.",
+      "Escolha 1 (grupo B): Jurassic Park – The Ride ou JAWS.",
+      "Express 8 = Express 7 + Illumination's Villain-Con Minion Blast.",
+    ],
+  },
+  {
+    titulo: "Express 5",
+    colunas: ["Adventure Special", "Race & Minecart Special", "Race & Minion Special"],
+    linhas: [
+      { atracao: "Entrada com horário marcado no Super Nintendo World", valores: [true, true, true] },
+      { atracao: "Mario Kart: Koopa's Challenge", valores: [true, true, true] },
+      { atracao: "Yoshi's Adventure", valores: [true, undefined, undefined] },
+      { atracao: "Mine Cart Madness", valores: [undefined, true, undefined] },
+      { atracao: "Illumination's Villain-Con Minion Blast", valores: [undefined, true, true] },
+      { atracao: "The Flying Dinosaur", valores: [true, true, undefined] },
+      { atracao: "Despicable Me: Minion Mayhem", valores: [true, undefined, true] },
+      { atracao: "Hollywood Dream – The Ride", valores: [true, undefined, undefined] },
+      { atracao: "Harry Potter and the Forbidden Journey", valores: [undefined, true, true] },
+      { atracao: "JAWS", valores: [undefined, undefined, { grupo: "C" }] },
+      { atracao: "Jurassic Park – The Ride", valores: [undefined, undefined, { grupo: "C" }] },
+    ],
+    notas: ["Escolha 1 (grupo C): JAWS ou Jurassic Park – The Ride (só no combo Race & Minion Special)."],
+  },
+  {
+    titulo: "Express 4 — inclusive Area Timed Entry (Parte 1)",
+    colunas: ["Minion & Theatre", "Race & Theatre", "Race & JAWS"],
+    linhas: [
+      { atracao: "Entrada com horário marcado no Super Nintendo World", valores: [true, true, true] },
+      { atracao: "Yoshi's Adventure", valores: [true, true, undefined] },
+      { atracao: "Illumination's Villain-Con Minion Blast", valores: [true, undefined, undefined] },
+      { atracao: "Mario Kart: Koopa's Challenge", valores: [undefined, true, true] },
+      { atracao: "JAWS", valores: [{ grupo: "D" }, undefined, { grupo: "E" }] },
+      { atracao: "Detective Conan 4-D Live Show: Jewel Under the Starry Sky", valores: [{ grupo: "D" }, undefined, undefined] },
+      { atracao: "Jurassic Park – The Ride", valores: [undefined, undefined, { grupo: "E" }] },
+      { atracao: "Despicable Me: Minion Mayhem", valores: [true, undefined, true] },
+      { atracao: "Harry Potter and the Forbidden Journey", valores: [undefined, true, true] },
+    ],
+    notas: [
+      "Escolha 1 (grupo D): JAWS ou Detective Conan 4-D Live Show: Jewel Under the Starry Sky (combo Minion & Theatre).",
+      "Escolha 1 (grupo E): JAWS ou Jurassic Park – The Ride (combo Race & JAWS).",
+    ],
+  },
+  {
+    titulo: "Express 4 — inclusive Area Timed Entry (Parte 2)",
+    colunas: [
+      "Minecart & JAWS",
+      "Minecart & Jurassic Park",
+      "Minion & Hollywood Dream The Ride",
+      "One More Race & Flying Dinosaur",
+      "Theatre & Flying Dinosaur",
+    ],
+    linhas: [
+      { atracao: "Entrada com horário marcado no Super Nintendo World", valores: [true, true, true, true, true] },
+      { atracao: "Mario Kart: Koopa's Challenge", valores: [true, undefined, undefined, { texto: "✓ 2x" }, true] },
+      { atracao: "Mine Cart Madness", valores: [true, true, true, undefined, undefined] },
+      { atracao: "Yoshi's Adventure", valores: [undefined, true, undefined, undefined, undefined] },
+      { atracao: "Hollywood Dream – The Ride: Backdrop", valores: [undefined, undefined, undefined, undefined, true] },
+      { atracao: "Harry Potter and the Forbidden Journey", valores: [{ grupo: "F" }, { grupo: "G" }, true, true, { grupo: "H" }] },
+      { atracao: "JAWS", valores: [{ grupo: "F" }, undefined, undefined, undefined, undefined] },
+      { atracao: "Jurassic Park – The Ride", valores: [undefined, { grupo: "G" }, undefined, undefined, undefined] },
+      { atracao: "The Flying Dinosaur", valores: [undefined, undefined, undefined, true, undefined] },
+      { atracao: "Hollywood Dream – The Ride", valores: [undefined, undefined, undefined, undefined, { grupo: "H" }] },
+      { atracao: "Despicable Me: Minion Mayhem", valores: [undefined, true, true, undefined, undefined] },
+      { atracao: "Detective Conan 4-D Live Show: Jewel Under the Starry Sky", valores: [undefined, undefined, undefined, undefined, true] },
+    ],
+    notas: [
+      "Escolha 1 (grupo F): Harry Potter and the Forbidden Journey ou JAWS (combo Minecart & JAWS).",
+      "Escolha 1 (grupo G): Harry Potter and the Forbidden Journey ou Jurassic Park – The Ride (combo Minecart & Jurassic Park).",
+      "Escolha 1 (grupo H): Harry Potter and the Forbidden Journey ou Hollywood Dream – The Ride (combo Theatre & Flying Dinosaur).",
+      "No combo One More Race & Flying Dinosaur, Mario Kart: Koopa's Challenge vale 2 corridas.",
+    ],
+  },
+  {
+    titulo: "Express 4 — sem Area Timed Entry",
+    colunas: ["Backdrop & Flying Dinosaur", "Thrills MAX", "Classic & Show"],
+    linhas: [
+      { atracao: "Flight of the Hippogriff", valores: [true, undefined, undefined] },
+      { atracao: "Hollywood Dream – The Ride: Backdrop", valores: [true, true, undefined] },
+      { atracao: "The Flying Dinosaur", valores: [true, true, undefined] },
+      { atracao: "Hollywood Dream – The Ride", valores: [undefined, true, undefined] },
+      { atracao: "Harry Potter and the Forbidden Journey", valores: [true, undefined, { grupo: "I" }] },
+      { atracao: "Jurassic Park – The Ride", valores: [undefined, undefined, { grupo: "I" }] },
+      { atracao: "JAWS", valores: [undefined, undefined, true] },
+      { atracao: "Universal Monsters Live: Rock and Roll Show", valores: [undefined, undefined, true] },
+      { atracao: "WaterWorld", valores: [undefined, undefined, true] },
+    ],
+    notas: [
+      "Escolha 1 (grupo I): Harry Potter and the Forbidden Journey ou Jurassic Park – The Ride (combo Classic & Show).",
+      "Este tier não inclui a entrada com horário marcado no Super Nintendo World — é vendido separadamente.",
+      "No combo Thrills MAX, depois das atrações acima o cliente ainda escolhe mais 1 entre Jurassic Park – The Ride, The Flying Dinosaur e Hollywood Dream – The Ride.",
+    ],
+  },
+  {
+    titulo: "Express 4 — Halloween Horror Nights",
+    colunas: [
+      "Halloween Set — Chainsaw Man: The Chaos 4-D",
+      "Halloween Set — Resident Evil Requiem: The Dive",
+      "Halloween Set — Factory of Fear: Zombie Tour",
+    ],
+    linhas: [
+      { atracao: "Jurassic Park – The Ride: In the Dark", valores: [true, true, undefined] },
+      { atracao: "Factory of Fear: Zombie Tour", valores: [true, undefined, true] },
+      { atracao: "Resident Evil Requiem: The Dive", valores: [undefined, true, true] },
+      { atracao: "Hollywood Dream – The Ride", valores: [true, true, undefined] },
+      { atracao: "Chainsaw Man: The Chaos 4-D", valores: [true, undefined, undefined] },
+      { atracao: "Sadako's Curse: Dark Horror Ride", valores: [undefined, true, undefined] },
+      { atracao: "Harry Potter and the Forbidden Journey", valores: [undefined, undefined, true] },
+      { atracao: "JAWS: Red Alert", valores: [undefined, undefined, true] },
+    ],
+    notas: ["Disponível só durante o evento sazonal Halloween Horror Nights (geralmente set–nov)."],
+  },
+];
+
+function CelulaUsjTabela({ celula }: { celula: UsjComboCelula }) {
+  if (celula === true) {
+    return <span className="font-semibold text-emerald-600">✓</span>;
+  }
+  if (celula && "texto" in celula) {
+    return <span className="font-semibold text-emerald-600">{celula.texto}</span>;
+  }
+  if (celula && "grupo" in celula) {
+    return (
+      <span className="inline-block rounded bg-amber-100 px-1.5 py-0.5 text-[10px] font-medium text-amber-800">
+        Escolha 1 · {celula.grupo}
+      </span>
+    );
+  }
+  return <span className="text-black/20">—</span>;
+}
 
 type DestinoKey = (typeof DESTINOS)[number]["key"];
 type TemaKey =
@@ -398,6 +606,11 @@ export default function CalculadoraReversaPage() {
   // em vez de usar a tabela de referência de mercado.
   const [hotelManual, setHotelManual] = useState(false);
   const [hotelDiariaManual, setHotelDiariaManual] = useState(0);
+  // Categoria do hotel quando a diária é manual — a diária não varia por
+  // categoria nesse modo (é o valor real que o vendedor já tem), mas a
+  // categoria ainda entra no rótulo da proposta e na mensagem final.
+  const [hotelCategoriaManual, setHotelCategoriaManual] =
+    useState<(typeof CATEGORIAS_HOTEL)[number]>("3 estrelas");
   const [aereoManual, setAereoManual] = useState(false);
   const [aereoValorManual, setAereoValorManual] = useState(0);
 
@@ -460,10 +673,11 @@ export default function CalculadoraReversaPage() {
   // não um pacote fechado. Express Pass da USJ tem 3 produtos oficiais
   // com preços bem diferentes entre si.
   const [premierAccessAtracoes, setPremierAccessAtracoes] = useState(0);
-  const [usjExpressPassTier, setUsjExpressPassTier] = useState<"nenhum" | "4" | "7" | "premium">(
-    "nenhum",
-  );
+  const [usjExpressPassTier, setUsjExpressPassTier] = useState<
+    "nenhum" | "4" | "5" | "7" | "8" | "premium"
+  >("nenhum");
   const [mostrarDetalhesUsjExpressPass, setMostrarDetalhesUsjExpressPass] = useState(false);
+  const [mostrarTabelaComparativaUsj, setMostrarTabelaComparativaUsj] = useState(false);
 
   function alternarIngresso(key: IngressoKey) {
     setIngressosSelecionados((atual) => {
@@ -622,7 +836,12 @@ export default function CalculadoraReversaPage() {
     ];
 
     let gasto = incluidos.reduce((soma, item) => soma + item.precoBRL, 0);
-    let categoriaHotelFinal: (typeof CATEGORIAS_HOTEL)[number] = "3 estrelas";
+    // No modo manual a diária não varia por categoria — a categoria final é
+    // a que o vendedor escolheu manualmente (hotelCategoriaManual), não
+    // necessariamente "3 estrelas".
+    let categoriaHotelFinal: (typeof CATEGORIAS_HOTEL)[number] = hotelManual
+      ? hotelCategoriaManual
+      : "3 estrelas";
     let classeAereoFinal: (typeof CLASSES_AEREO)[number] = "Economy";
 
     function cabe(valor: number) {
@@ -776,9 +995,13 @@ export default function CalculadoraReversaPage() {
         precoFastPassUSD =
           usjExpressPassTier === "4"
             ? PRECO_EXPRESS_PASS_USJ_4_USD_PAX
-            : usjExpressPassTier === "7"
-              ? PRECO_EXPRESS_PASS_USJ_7_USD_PAX
-              : PRECO_EXPRESS_PASS_USJ_PREMIUM_USD_PAX;
+            : usjExpressPassTier === "5"
+              ? PRECO_EXPRESS_PASS_USJ_5_USD_PAX
+              : usjExpressPassTier === "7"
+                ? PRECO_EXPRESS_PASS_USJ_7_USD_PAX
+                : usjExpressPassTier === "8"
+                  ? PRECO_EXPRESS_PASS_USJ_8_USD_PAX
+                  : PRECO_EXPRESS_PASS_USJ_PREMIUM_USD_PAX;
         nomeFastPass = `Express Pass ${usjExpressPassTier === "premium" ? "Premium" : usjExpressPassTier}`;
       }
       const temFastPass = precoFastPassUSD > 0;
@@ -823,7 +1046,9 @@ export default function CalculadoraReversaPage() {
     };
     incluidos[2] = {
       chave: "hotel",
-      label: hotelManual ? "Hotel — valor manual" : `Hotel — ${categoriaHotelFinal}`,
+      label: hotelManual
+        ? `Hotel — ${categoriaHotelFinal} (valor manual)`
+        : `Hotel — ${categoriaHotelFinal}`,
       detalhe: `${dias} diárias · ${tipoQuarto} · ${nomesDestinos || "—"}`,
       precoBRL: precoHotel(categoriaHotelFinal),
     };
@@ -850,6 +1075,7 @@ export default function CalculadoraReversaPage() {
     cambioCotacao,
     hotelManual,
     hotelDiariaManual,
+    hotelCategoriaManual,
     aereoManual,
     aereoValorManual,
     jrPassDias,
@@ -1304,7 +1530,12 @@ export default function CalculadoraReversaPage() {
                       // eslint-disable-next-line @next/next/no-img-element
                       <img src={ingresso.icone} alt="" className="h-14 w-14 shrink-0 rounded object-contain" />
                     ) : (
-                      <span className="flex h-14 w-14 items-center justify-center text-3xl">🎫</span>
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src="/images/icone-ingressos.png"
+                        alt=""
+                        className="h-14 w-14 shrink-0 object-contain"
+                      />
                     )}
                     <span>{ingresso.nome}</span>
                     <span className="text-[10px] font-normal text-black/35">
@@ -1350,41 +1581,45 @@ export default function CalculadoraReversaPage() {
                   <img src="/images/ingressos/usj-logo.png" alt="" className="h-5 w-5 shrink-0 rounded object-contain" />
                   + USJ Express Pass (fast pass pago)
                 </p>
-                <p className="mt-0.5 text-[10px] leading-4 text-black/40">
+                <p className="mt-0.5 text-xs leading-5 text-black/40">
                   <strong className="font-medium text-black/55">Express 4</strong> — fura-fila em 4 atrações (mix de clássicos, ex.: Jurassic World, Minion Mayhem, Harry Potter, Flying Dinosaur — o combo exato varia por temporada).{" "}
+                  <strong className="font-medium text-black/55">Express 5</strong> — fura-fila em 5 atrações, meio-termo entre o 4 e o 7.{" "}
                   <strong className="font-medium text-black/55">Express 7</strong> — fura-fila em 7 atrações, cobrindo mais opções do Wizarding World e headliners.{" "}
+                  <strong className="font-medium text-black/55">Express 8</strong> — o Express 7 + 1 atração extra (geralmente Minion Blast).{" "}
                   <strong className="font-medium text-black/55">Premium</strong> — fura-fila em praticamente toda a linha de atrações do parque (13 a 16, dependendo da versão vendida no dia).
                 </p>
-                <p className="mt-1.5 rounded-md bg-amber-50 px-2 py-1.5 text-[10px] leading-4 text-amber-800">
-                  ⚠️ Super Nintendo World (Mario Kart: Bowser&apos;s Challenge, Yoshi&apos;s Adventure) <strong>não está incluído</strong> nos tiers Express 4 e Express 7 — a entrada na área é controlada por um sistema de senha grátis pelo app da USJ (capacidade limitada, esgota cedo em dias cheios). Só o tier <strong>Premium</strong> garante entrada na Nintendo World sem depender dessa senha.
+                <p className="mt-1.5 rounded-md bg-amber-50 px-2 py-1.5 text-xs leading-5 text-amber-800">
+                  ⚠️ Super Nintendo World (Mario Kart: Koopa&apos;s Challenge, Yoshi&apos;s Adventure) e o Wizarding World (Harry Potter) <strong>variam por combo específico</strong> dentro de cada tier — a entrada garantida na área do Nintendo World sem depender da senha grátis do app da USJ só vem em combos que citam isso explicitamente. Veja a tabela comparativa completa abaixo pra confirmar exatamente o que entra em cada combo antes de vender.
                 </p>
                 <div className="mt-2 flex flex-wrap gap-2">
                   {(
                     [
-                      { key: "nenhum", label: "Sem Express Pass", preco: 0, nintendoWorld: false, wizardingWorld: false },
-                      { key: "4", label: "Express 4", preco: PRECO_EXPRESS_PASS_USJ_4_USD_PAX, nintendoWorld: false, wizardingWorld: false },
-                      { key: "7", label: "Express 7", preco: PRECO_EXPRESS_PASS_USJ_7_USD_PAX, nintendoWorld: false, wizardingWorld: true },
-                      { key: "premium", label: "Premium", preco: PRECO_EXPRESS_PASS_USJ_PREMIUM_USD_PAX, nintendoWorld: true, wizardingWorld: true },
+                      { key: "nenhum", label: "Sem Express Pass", preco: 0, nintendoWorld: false, wizardingWorld: false, estimado: false },
+                      { key: "4", label: "Express 4", preco: PRECO_EXPRESS_PASS_USJ_4_USD_PAX, nintendoWorld: false, wizardingWorld: false, estimado: false },
+                      { key: "5", label: "Express 5", preco: PRECO_EXPRESS_PASS_USJ_5_USD_PAX, nintendoWorld: false, wizardingWorld: false, estimado: true },
+                      { key: "7", label: "Express 7", preco: PRECO_EXPRESS_PASS_USJ_7_USD_PAX, nintendoWorld: true, wizardingWorld: true, estimado: false },
+                      { key: "8", label: "Express 8", preco: PRECO_EXPRESS_PASS_USJ_8_USD_PAX, nintendoWorld: true, wizardingWorld: true, estimado: true },
+                      { key: "premium", label: "Premium", preco: PRECO_EXPRESS_PASS_USJ_PREMIUM_USD_PAX, nintendoWorld: true, wizardingWorld: true, estimado: false },
                     ] as const
                   ).map((tier) => (
                     <button
                       key={tier.key}
                       type="button"
                       onClick={() => setUsjExpressPassTier(tier.key)}
-                      className={`flex w-28 flex-col items-center gap-2 rounded-lg border px-2 py-3 text-center text-xs transition ${
+                      className={`flex w-36 flex-col items-center gap-2 rounded-lg border px-2 py-3 text-center text-xs transition ${
                         usjExpressPassTier === tier.key
                           ? "border-[#2f80c9] bg-[#2f80c9]/10 font-medium text-[#2f80c9]"
                           : "border-black/15 bg-black/[0.03] text-black/60 hover:border-black/30"
                       }`}
                     >
                       {(tier.nintendoWorld || tier.wizardingWorld) ? (
-                        <span className="flex h-14 items-center justify-center gap-1">
+                        <span className="flex h-16 items-center justify-center gap-1.5">
                           {tier.nintendoWorld && (
                             // eslint-disable-next-line @next/next/no-img-element
                             <img
                               src="/images/ingressos/super-nintendo-world-logo.png"
                               alt=""
-                              className="h-12 w-12 shrink-0 rounded object-contain"
+                              className="h-14 w-14 shrink-0 rounded object-contain"
                             />
                           )}
                           {tier.wizardingWorld && (
@@ -1392,12 +1627,17 @@ export default function CalculadoraReversaPage() {
                             <img
                               src="/images/ingressos/harry-potter-logo.png"
                               alt=""
-                              className="h-12 w-12 shrink-0 object-contain"
+                              className="h-11 w-20 shrink-0 object-contain"
                             />
                           )}
                         </span>
                       ) : (
-                        <span className="flex h-14 w-14 items-center justify-center text-3xl">🎟️</span>
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img
+                          src="/images/icone-ingressos.png"
+                          alt=""
+                          className="h-16 w-16 shrink-0 object-contain"
+                        />
                       )}
                       <span>{tier.label}</span>
                       {tier.preco > 0 && (
@@ -1405,27 +1645,38 @@ export default function CalculadoraReversaPage() {
                           {formatUSD(tier.preco)}/pessoa
                         </span>
                       )}
+                      {tier.estimado && (
+                        <span className="rounded-full bg-red-100 px-1.5 py-0.5 text-[9px] font-medium uppercase tracking-wide text-red-700">
+                          confirmar preço
+                        </span>
+                      )}
                     </button>
                   ))}
                 </div>
-                {usjExpressPassTier === "premium" && (
-                  <p className="mt-1.5 flex items-center gap-1.5 text-[10px] leading-4 text-emerald-700">
+                {(usjExpressPassTier === "5" || usjExpressPassTier === "8") && (
+                  <p className="mt-1.5 rounded-md bg-red-50 px-2 py-1.5 text-xs leading-5 text-red-700">
+                    ⚠️ Preço deste tier ainda é uma estimativa (Express 5 e Express 8 não têm custo
+                    oficial confirmado) — confirme o valor antes de fechar com o cliente.
+                  </p>
+                )}
+                {(usjExpressPassTier === "7" || usjExpressPassTier === "8" || usjExpressPassTier === "premium") && (
+                  <p className="mt-1.5 flex items-center gap-2 text-xs leading-5 text-emerald-700">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src="/images/ingressos/super-nintendo-world-logo.png"
                       alt=""
-                      className="h-4 w-4 shrink-0 rounded object-contain"
+                      className="h-6 w-6 shrink-0 rounded object-contain"
                     />
                     ✅ Este tier inclui entrada garantida na Super Nintendo World.
                   </p>
                 )}
-                {(usjExpressPassTier === "7" || usjExpressPassTier === "premium") && (
-                  <p className="mt-1.5 flex items-center gap-1.5 text-[10px] leading-4 text-emerald-700">
+                {(usjExpressPassTier === "7" || usjExpressPassTier === "8" || usjExpressPassTier === "premium") && (
+                  <p className="mt-1.5 flex items-center gap-2 text-xs leading-5 text-emerald-700">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src="/images/ingressos/harry-potter-logo.png"
                       alt=""
-                      className="h-4 w-4 shrink-0 object-contain"
+                      className="h-6 w-10 shrink-0 object-contain"
                     />
                     ✅ Este tier inclui atrações do The Wizarding World of Harry Potter.
                   </p>
@@ -1434,37 +1685,97 @@ export default function CalculadoraReversaPage() {
                 <button
                   type="button"
                   onClick={() => setMostrarDetalhesUsjExpressPass((v) => !v)}
-                  className="mt-2 text-[10px] font-medium uppercase tracking-wide text-[#2f80c9] underline underline-offset-2"
+                  className="mt-2 text-xs font-medium uppercase tracking-wide text-[#2f80c9] underline underline-offset-2"
                 >
                   {mostrarDetalhesUsjExpressPass ? "Ocultar" : "Ver"} informação completa de cada pass
                 </button>
 
                 {mostrarDetalhesUsjExpressPass && (
-                  <div className="mt-2 space-y-2">
+                  <div className="mt-3 space-y-3">
                     {USJ_EXPRESS_PASS_DETALHES.map((d) => (
-                      <div key={d.tier} className="rounded-lg border border-black/10 bg-white p-2.5">
-                        <p className="text-[11px] font-medium text-[#0A2540]">
+                      <div key={d.tier} className="rounded-lg border border-black/10 bg-white p-4">
+                        <p className="text-sm font-semibold text-[#0A2540]">
                           Express {d.tier === "premium" ? "Premium" : d.tier}
                         </p>
-                        <ul className="mt-1 list-disc pl-4 text-[10px] leading-4 text-black/55">
+                        <ul className="mt-1.5 list-disc space-y-0.5 pl-5 text-xs leading-5 text-black/60">
                           {d.atracoesTipicas.map((a, i) => (
                             <li key={i}>{a}</li>
                           ))}
                         </ul>
-                        <p className="mt-1 text-[10px] leading-4 text-black/55">
+                        <p className="mt-2 text-xs leading-5 text-black/60">
                           🎮 Super Nintendo World: {d.nintendoWorld}
                         </p>
-                        <p className="mt-0.5 text-[10px] leading-4 text-black/55">
+                        <p className="mt-1 text-xs leading-5 text-black/60">
                           🪄 Wizarding World: {d.wizardingWorld}
                         </p>
-                        <p className="mt-1 text-[10px] font-medium text-black/45">
+                        <p className="mt-2 text-xs font-medium text-black/55">
                           Preço de referência (revenda): {d.faixaPrecoReferenciaBRL}
                         </p>
-                        <p className="mt-0.5 text-[10px] italic leading-4 text-black/40">
+                        <p className="mt-1 text-xs italic leading-5 text-black/45">
                           {d.observacao}
                         </p>
                       </div>
                     ))}
+                  </div>
+                )}
+
+                <button
+                  type="button"
+                  onClick={() => setMostrarTabelaComparativaUsj((v) => !v)}
+                  className="mt-3 text-xs font-medium uppercase tracking-wide text-[#2f80c9] underline underline-offset-2"
+                >
+                  {mostrarTabelaComparativaUsj ? "Ocultar" : "Ver"} tabela comparativa completa (atração por combo)
+                </button>
+
+                {mostrarTabelaComparativaUsj && (
+                  <div className="mt-3 space-y-5">
+                    {USJ_TABELAS_COMPARATIVAS.map((tabela) => (
+                      <div key={tabela.titulo} className="rounded-lg border border-black/10 bg-white p-4">
+                        <p className="text-sm font-semibold text-[#0A2540]">{tabela.titulo}</p>
+                        <div className="mt-2 overflow-x-auto">
+                          <table className="w-full min-w-[560px] border-collapse text-xs">
+                            <thead>
+                              <tr>
+                                <th className="border-b border-black/10 py-1.5 pr-2 text-left font-medium text-black/50">
+                                  Atração / área
+                                </th>
+                                {tabela.colunas.map((coluna) => (
+                                  <th
+                                    key={coluna}
+                                    className="border-b border-black/10 px-2 py-1.5 text-center font-medium text-black/50"
+                                  >
+                                    {coluna}
+                                  </th>
+                                ))}
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {tabela.linhas.map((linha) => (
+                                <tr key={linha.atracao} className="border-b border-black/5">
+                                  <td className="py-1.5 pr-2 text-black/70">{linha.atracao}</td>
+                                  {linha.valores.map((valor, i) => (
+                                    <td key={i} className="px-2 py-1.5 text-center">
+                                      <CelulaUsjTabela celula={valor} />
+                                    </td>
+                                  ))}
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                        {tabela.notas.length > 0 && (
+                          <ul className="mt-2 space-y-0.5 text-[11px] leading-4 text-black/45">
+                            {tabela.notas.map((nota, i) => (
+                              <li key={i}>· {nota}</li>
+                            ))}
+                          </ul>
+                        )}
+                      </div>
+                    ))}
+                    <p className="text-[11px] italic leading-4 text-black/40">
+                      Fonte: prints do Klook enviados pelo Wilson (04/set/2026) — combos e nomes mudam por
+                      temporada e operadora, confirmar disponibilidade exata antes de vender.
+                    </p>
                   </div>
                 )}
               </div>
@@ -1473,55 +1784,93 @@ export default function CalculadoraReversaPage() {
         </div>
 
         {/* ── VALORES MANUAIS (OPCIONAL) ── */}
-        <div className="mt-4 grid gap-4 rounded-2xl border border-black/10 bg-black/[0.02] p-6 sm:grid-cols-2 md:p-8">
-          <p className="text-[10px] uppercase tracking-[0.2em] text-black/50 sm:col-span-2">
+        <div className="mt-4 grid gap-4 rounded-2xl border border-red-200 bg-red-50/50 p-6 sm:grid-cols-2 md:p-8">
+          <p className="text-[10px] font-medium uppercase tracking-[0.2em] text-red-700 sm:col-span-2">
             Valores manuais (opcional) — use quando já tiver uma cotação real de hotel ou aéreo,
             em vez do valor de referência de mercado
           </p>
 
           <div>
-            <label className="flex items-center gap-2 text-xs font-medium text-[#0A2540]">
-              <input
-                type="checkbox"
-                checked={hotelManual}
-                onChange={(e) => setHotelManual(e.target.checked)}
-                className="h-4 w-4 rounded border-black/25 accent-[#2f80c9]"
+            <label className="flex items-center gap-3 text-xs font-medium text-red-900">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/images/icone-hotel2.png"
+                alt=""
+                className="h-10 w-10 shrink-0 object-contain"
               />
-              Informar diária do hotel manualmente
+              <span className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  checked={hotelManual}
+                  onChange={(e) => setHotelManual(e.target.checked)}
+                  className="h-4 w-4 rounded border-red-300 accent-red-600"
+                />
+                Informar diária do hotel manualmente
+              </span>
             </label>
             {hotelManual && (
-              <label className="mt-2 flex flex-col">
-                <span className="mb-1.5 text-[10px] uppercase tracking-[0.2em] text-black/40">
-                  Diária do hotel (R$)
-                </span>
-                <input
-                  type="number"
-                  min={0}
-                  step={50}
-                  value={hotelDiariaManual}
-                  onChange={(e) => {
-                    const v = Number(e.target.value);
-                    if (!Number.isNaN(v)) setHotelDiariaManual(v);
-                  }}
-                  className="h-10 w-full rounded-lg border border-black/15 bg-black/[0.03] px-3 text-sm outline-none focus:border-black/30"
-                />
-              </label>
+              <div className="mt-2 flex flex-col gap-2 sm:flex-row">
+                <label className="flex flex-1 flex-col">
+                  <span className="mb-1.5 text-[10px] uppercase tracking-[0.2em] text-red-700/70">
+                    Diária do hotel (R$)
+                  </span>
+                  <input
+                    type="number"
+                    min={0}
+                    step={50}
+                    value={hotelDiariaManual}
+                    onChange={(e) => {
+                      const v = Number(e.target.value);
+                      if (!Number.isNaN(v)) setHotelDiariaManual(v);
+                    }}
+                    className="h-10 w-full rounded-lg border border-red-200 bg-white px-3 text-sm outline-none focus:border-red-400"
+                  />
+                </label>
+                <label className="flex flex-1 flex-col">
+                  <span className="mb-1.5 text-[10px] uppercase tracking-[0.2em] text-red-700/70">
+                    Categoria do hotel
+                  </span>
+                  <select
+                    value={hotelCategoriaManual}
+                    onChange={(e) =>
+                      setHotelCategoriaManual(
+                        e.target.value as (typeof CATEGORIAS_HOTEL)[number],
+                      )
+                    }
+                    className="h-10 w-full rounded-lg border border-red-200 bg-white px-3 text-sm outline-none focus:border-red-400"
+                  >
+                    {CATEGORIAS_HOTEL.map((categoria) => (
+                      <option key={categoria} value={categoria}>
+                        {categoria}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+              </div>
             )}
           </div>
 
           <div>
-            <label className="flex items-center gap-2 text-xs font-medium text-[#0A2540]">
-              <input
-                type="checkbox"
-                checked={aereoManual}
-                onChange={(e) => setAereoManual(e.target.checked)}
-                className="h-4 w-4 rounded border-black/25 accent-[#2f80c9]"
+            <label className="flex items-center gap-3 text-xs font-medium text-red-900">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src="/images/icone-passagem-aerea.png"
+                alt=""
+                className="h-10 w-10 shrink-0 object-contain"
               />
-              Informar valor da passagem manualmente
+              <span className="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  checked={aereoManual}
+                  onChange={(e) => setAereoManual(e.target.checked)}
+                  className="h-4 w-4 rounded border-red-300 accent-red-600"
+                />
+                Informar valor da passagem manualmente
+              </span>
             </label>
             {aereoManual && (
               <label className="mt-2 flex flex-col">
-                <span className="mb-1.5 text-[10px] uppercase tracking-[0.2em] text-black/40">
+                <span className="mb-1.5 text-[10px] uppercase tracking-[0.2em] text-red-700/70">
                   Passagem por pessoa (R$)
                 </span>
                 <input
@@ -1533,7 +1882,7 @@ export default function CalculadoraReversaPage() {
                     const v = Number(e.target.value);
                     if (!Number.isNaN(v)) setAereoValorManual(v);
                   }}
-                  className="h-10 w-full rounded-lg border border-black/15 bg-black/[0.03] px-3 text-sm outline-none focus:border-black/30"
+                  className="h-10 w-full rounded-lg border border-red-200 bg-white px-3 text-sm outline-none focus:border-red-400"
                 />
               </label>
             )}
@@ -1565,7 +1914,20 @@ export default function CalculadoraReversaPage() {
               <h2 className={`${display.className} mt-2 text-2xl font-medium md:text-3xl`}>
                 Hotel {resultado.categoriaHotelFinal} · Aéreo {resultado.classeAereoFinal}
               </h2>
-              <p className="mt-1 text-[11px] text-black/35">
+
+              <div className="mt-3 flex flex-wrap gap-2">
+                <span className="rounded-full bg-[#0A2540] px-3 py-1 text-xs font-semibold text-white">
+                  {dias} {dias === 1 ? "dia" : "dias"}
+                </span>
+                <span className="rounded-full bg-[#0A2540] px-3 py-1 text-xs font-semibold text-white">
+                  {tipoQuarto}
+                </span>
+                <span className="rounded-full bg-[#0A2540] px-3 py-1 text-xs font-semibold text-white">
+                  {pessoas} {pessoas === 1 ? "pessoa" : "pessoas"}
+                </span>
+              </div>
+
+              <p className="mt-2 text-[11px] text-black/35">
                 Ajisai · proposta gerada em {geradoEmLabel}
               </p>
 
@@ -1588,10 +1950,17 @@ export default function CalculadoraReversaPage() {
                 </div>
               )}
 
+              {Object.keys(itemAjustes).length > 0 && (
+                <p className="mt-4 flex items-center gap-1.5 text-[11px] text-emerald-700">
+                  <span className="inline-block h-2 w-2 rounded-full bg-emerald-500" />
+                  Valores em verde foram alterados manualmente
+                </p>
+              )}
+
               <div className="mt-6 space-y-2.5">
                 {resultado.incluidos.map((item) => {
                   const chave = chaveDoItem(item);
-                  const removido = itensRemovidos.has(chave);
+                  const removido = !itemSelecionado(item);
                   const ajustado = itemAjustes[chave] !== undefined;
                   const valor = valorItem(item);
                   return (
@@ -1628,14 +1997,21 @@ export default function CalculadoraReversaPage() {
                             }}
                             className={`h-8 w-28 rounded-md border px-2 text-right text-sm font-semibold outline-none focus:border-[#2f80c9]/60 disabled:opacity-40 ${
                               removido ? "line-through" : ""
-                            } ${ajustado ? "border-[#2f80c9]/50 bg-[#2f80c9]/5" : "border-black/15 bg-transparent"}`}
+                            } ${
+                              ajustado
+                                ? "border-emerald-500/50 bg-emerald-500/5 text-emerald-700"
+                                : "border-black/15 bg-transparent"
+                            }`}
                           />
                         </div>
+                        <span className="text-[10px] text-black/35">
+                          {brlParaUSDLabel(valor, cambio)}
+                        </span>
                         {ajustado && (
                           <button
                             type="button"
                             onClick={() => restaurarValorItem(item)}
-                            className="text-[10px] uppercase tracking-wide text-[#2f80c9] underline underline-offset-2"
+                            className="text-[10px] uppercase tracking-wide text-emerald-600 underline underline-offset-2"
                           >
                             restaurar automático
                           </button>
@@ -1671,6 +2047,7 @@ export default function CalculadoraReversaPage() {
                       {formatBRL(totalSelecionado)}
                     </p>
                   )}
+                  <p className="text-sm text-black/40">{brlParaUSDLabel(totalSelecionado, cambio)}</p>
                   <button
                     type="button"
                     onClick={() => {
@@ -1694,6 +2071,7 @@ export default function CalculadoraReversaPage() {
                   >
                     {formatBRL(saldoSelecionado)}
                   </p>
+                  <p className="text-xs text-black/35">{brlParaUSDLabel(saldoSelecionado, cambio)}</p>
                 </div>
               </div>
 

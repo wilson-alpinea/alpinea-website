@@ -834,7 +834,16 @@ export const PRECO_INGRESSO_USJ_USD_PAX = comMargemEImposto(72);
 // Express 4 ~¥13.000, Express 7 ~¥18.000, Premium ~¥45.000.
 // japan.asoventure.jp/en/article/usj-express-pass-guide-2026-worth-buying
 export const PRECO_EXPRESS_PASS_USJ_4_USD_PAX = comMargemEImposto(87);
+// ⚠️ ESTIMATIVA — Express 5 e Express 8 não têm preço oficial/custo
+// confirmado ainda (só temos a lista de atrações incluídas, vinda de
+// prints do Klook enviados pelo Wilson em 04/set/2026). Custo estimado por
+// interpolação entre o Express 4 (4 atrações, custo 87) e o Express 7 (7
+// atrações, custo 120) — Express 5 fica no meio, Express 8 é o Express 7 +
+// 1 atração extra (Minion Blast). SUBSTITUIR pelo custo real assim que o
+// Wilson confirmar (ver nota "confirmar preço" nos botões da calculadora).
+export const PRECO_EXPRESS_PASS_USJ_5_USD_PAX = comMargemEImposto(100);
 export const PRECO_EXPRESS_PASS_USJ_7_USD_PAX = comMargemEImposto(120);
+export const PRECO_EXPRESS_PASS_USJ_8_USD_PAX = comMargemEImposto(130);
 export const PRECO_EXPRESS_PASS_USJ_PREMIUM_USD_PAX = comMargemEImposto(300);
 export const PRECO_INGRESSO_TEAMLAB_TOKYO_USD_PAX = comMargemEImposto(27);
 export const PRECO_INGRESSO_TEAMLAB_KYOTO_USD_PAX = comMargemEImposto(25);
