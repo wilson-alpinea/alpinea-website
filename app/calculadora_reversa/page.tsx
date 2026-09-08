@@ -332,18 +332,26 @@ function CelulaUsjTabela({ celula }: { celula: UsjComboCelula }) {
 
 type DestinoKey = (typeof DESTINOS)[number]["key"];
 
-type TemporadaKey = "primavera" | "julho" | "outono" | "baixa";
+type TemporadaKey = "sakura" | "primavera" | "julho" | "outono" | "inverno" | "baixa";
 
-// 4 janelas de temporada pedidas pelo Wilson (08/set/2026). "Baixa" é o
-// baseline (multiplicador 1.0 em toda cidade pesquisada) — os outros 3
-// multiplicadores são o quanto a diária média sobe em relação a esse
-// baseline.
+// 6 janelas de temporada — 4 pedidas originalmente (08/set/2026) + 2 novas
+// (Primavera e Inverno, pedidas no mesmo dia, com o antigo card
+// "Primavera" renomeado pra "Sakura (Cerejeiras)" pra não confundir com o
+// novo). "Baixa" é o baseline (multiplicador 1.0 em toda cidade
+// pesquisada) — os outros multiplicadores são o quanto a diária média sobe
+// em relação a esse baseline.
 const TEMPORADAS: { key: TemporadaKey; nome: string; periodo: string; icone: string }[] = [
   {
-    key: "primavera",
-    nome: "Alta temporada — Primavera",
+    key: "sakura",
+    nome: "Sakura (Cerejeiras)",
     periodo: "florada das cerejeiras · final de mar. a início de abr.",
     icone: "/images/temporada/01-primavera.png",
+  },
+  {
+    key: "primavera",
+    nome: "Primavera",
+    periodo: "flores + Golden Week · meados de abr. a fim de mai.",
+    icone: "/images/temporada/05-primavera.png",
   },
   {
     key: "julho",
@@ -358,6 +366,12 @@ const TEMPORADAS: { key: TemporadaKey; nome: string; periodo: string; icone: str
     icone: "/images/temporada/03-outono.png",
   },
   {
+    key: "inverno",
+    nome: "Inverno",
+    periodo: "neve e Ano Novo · dez. a fev.",
+    icone: "/images/temporada/06-inverno.png",
+  },
+  {
     key: "baixa",
     nome: "Fora de alta temporada",
     periodo: "restante do ano",
@@ -367,31 +381,45 @@ const TEMPORADAS: { key: TemporadaKey; nome: string; periodo: string; icone: str
 
 // Multiplicador de diária de hotel por cidade e temporada — pesquisa de
 // mercado real (ADR/RevPAR de cadeias e agregadores, JNTO/STR/HotelBank,
-// comparações Golden Week 2026 etc.), feita em 08/set/2026 a pedido do
-// Wilson. Cobre as 10 maiores cidades da lista de destinos + Niseko
-// (destino de inverno caro, citado explicitamente pelo Wilson). Cidades
-// fora dessa tabela (Nara, Hakone, Nikko etc.) usam 1.0 em qualquer
-// temporada — mercados pequenos/pouco usados, que o Wilson pediu pra não
-// pesquisar agora.
+// comparações Golden Week 2026 etc.). "sakura", "julho", "outono" e
+// "baixa" foram pesquisados em 08/set/2026; "primavera" e "inverno" foram
+// adicionados no mesmo dia (ver comentário no topo do patch que introduziu
+// isso, com as fontes). Cobre as 10 maiores cidades da lista de destinos +
+// Niseko (destino de inverno caro, citado explicitamente pelo Wilson).
+// Cidades fora dessa tabela (Nara, Hakone, Nikko etc.) usam 1.0 em
+// qualquer temporada — mercados pequenos/pouco usados, que o Wilson pediu
+// pra não pesquisar agora.
 //
-// Nota importante sobre Niseko: é um destino de esqui — o inverno
-// (dez.–mar.) é a alta temporada REAL, com picos de 2× a 4× sobre a
-// temporada verde (verão), bem acima de qualquer um dos 4 multiplicadores
-// abaixo. Nenhuma das 4 categorias pedidas cobre o inverno, então
-// "Fora de alta temporada" para Niseko SUBESTIMA MUITO o preço de
-// dez.–mar. — sinalizado também na nota exibida na tela.
+// "primavera" (novo) = resto da primavera + Golden Week (meados de abr. a
+// fim de mai.), DEPOIS da janela de "sakura". Dado de mercado (HotelBank,
+// Golden Week 2026): abril/maio como um todo sobem mais que a própria
+// semana de feriado, e o efeito é mais forte em destinos de turismo
+// doméstico (Okinawa, Hokkaido) do que na semana da sakura, que puxa mais
+// turista internacional pra Kyoto/Tokyo/Osaka — por isso Okinawa e
+// Hokkaido aqui ficam ACIMA do valor de "sakura", ao contrário das cidades
+// de sakura clássica.
+//
+// "inverno" (novo) = dez.–fev. Pra a maioria das cidades é temporada mais
+// fraca (jan. pós-Ano-Novo é citado como o mês mais barato do ano no
+// mercado japonês), com uma leve alta média por causa do pico de
+// Natal/Ano Novo — por isso ficou só um pouco acima de 1.0 na maioria das
+// cidades. Exceção: Hokkaido/Niseko, onde dez.–fev. é a temporada de neve
+// e a alta temporada REAL (turismo de esqui) — Niseko usa um valor bem
+// mais alto, dentro da faixa de 2×–4× sobre a temporada verde já
+// sinalizada neste arquivo; o Ano Novo especificamente em Niseko pode
+// passar disso ainda mais.
 const TEMPORADA_MULTIPLICADOR_HOTEL: Partial<Record<DestinoKey, Record<TemporadaKey, number>>> = {
-  tokyo: { primavera: 1.45, julho: 1.1, outono: 1.3, baixa: 1.0 },
-  yokohama: { primavera: 1.25, julho: 1.05, outono: 1.15, baixa: 1.0 },
-  kyoto: { primavera: 1.85, julho: 1.15, outono: 1.75, baixa: 1.0 },
-  osaka: { primavera: 1.4, julho: 1.1, outono: 1.2, baixa: 1.0 },
-  nagoya: { primavera: 1.1, julho: 1.05, outono: 1.12, baixa: 1.0 },
-  kobe: { primavera: 1.08, julho: 1.05, outono: 1.1, baixa: 1.0 },
-  hiroshima: { primavera: 1.15, julho: 1.1, outono: 1.2, baixa: 1.0 },
-  fukuoka: { primavera: 1.12, julho: 1.1, outono: 1.12, baixa: 1.0 },
-  hokkaido: { primavera: 1.12, julho: 1.15, outono: 1.05, baixa: 1.0 },
-  okinawa: { primavera: 1.1, julho: 1.4, outono: 1.03, baixa: 1.0 },
-  niseko: { primavera: 0.85, julho: 1.08, outono: 1.1, baixa: 1.0 },
+  tokyo: { sakura: 1.45, primavera: 1.35, julho: 1.1, outono: 1.3, inverno: 1.1, baixa: 1.0 },
+  yokohama: { sakura: 1.25, primavera: 1.2, julho: 1.05, outono: 1.15, inverno: 1.05, baixa: 1.0 },
+  kyoto: { sakura: 1.85, primavera: 1.6, julho: 1.15, outono: 1.75, inverno: 1.15, baixa: 1.0 },
+  osaka: { sakura: 1.4, primavera: 1.3, julho: 1.1, outono: 1.2, inverno: 1.05, baixa: 1.0 },
+  nagoya: { sakura: 1.1, primavera: 1.1, julho: 1.05, outono: 1.12, inverno: 1.0, baixa: 1.0 },
+  kobe: { sakura: 1.08, primavera: 1.08, julho: 1.05, outono: 1.1, inverno: 1.0, baixa: 1.0 },
+  hiroshima: { sakura: 1.15, primavera: 1.15, julho: 1.1, outono: 1.2, inverno: 1.0, baixa: 1.0 },
+  fukuoka: { sakura: 1.12, primavera: 1.15, julho: 1.1, outono: 1.12, inverno: 1.0, baixa: 1.0 },
+  hokkaido: { sakura: 1.12, primavera: 1.2, julho: 1.15, outono: 1.05, inverno: 1.55, baixa: 1.0 },
+  okinawa: { sakura: 1.1, primavera: 1.35, julho: 1.4, outono: 1.03, inverno: 0.85, baixa: 1.0 },
+  niseko: { sakura: 0.85, primavera: 0.85, julho: 1.08, outono: 1.1, inverno: 2.8, baixa: 1.0 },
 };
 
 type ExtensaoInternacionalKey = "coreiaDoSul" | "china";
@@ -1834,12 +1862,12 @@ export default function CalculadoraReversaPage() {
                 </button>
               ))}
             </div>
-            {destinosSelecionados.includes("niseko") && (
+            {destinosSelecionados.includes("niseko") && temporada !== "inverno" && (
               <p className="mt-1.5 max-w-md text-[11px] leading-4 text-amber-600">
-                ⚠️ Niseko é destino de esqui — o inverno (dez.–mar., fora das 4 opções acima) é a
-                alta temporada real, com diárias de 2× a 4× a temporada verde. Nenhum dos cards
-                de Temporada cobre isso; para viagem de inverno em Niseko, ajuste a diária de
-                hotel manualmente.
+                ⚠️ Niseko é destino de esqui — dez.–fev. é a alta temporada real (turismo de
+                neve), com diárias bem acima da temporada verde (Ano Novo pode passar disso
+                ainda mais). Selecione o card &quot;Inverno&quot; para refletir isso no preço, ou
+                ajuste a diária de hotel manualmente.
               </p>
             )}
 
