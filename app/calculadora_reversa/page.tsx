@@ -1075,15 +1075,37 @@ export default function CalculadoraReversaPage() {
       return precoAereoEconomy;
     }
 
-    function precoHotel(categoria: (typeof CATEGORIAS_HOTEL)[number]) {
+    function precoHotel(
+      categoria: (typeof CATEGORIAS_HOTEL)[number],
+      multTemporada: number = multiplicadorTemporada,
+    ) {
       if (hotelManual) return Math.round(hotelDiariaManual * dias);
       return Math.round(
-        DIARIA_HOTEL[categoria] *
-          dias *
-          FATOR_QUARTO[tipoQuarto] *
-          multiplicadorCidade *
-          multiplicadorTemporada,
+        DIARIA_HOTEL[categoria] * dias * FATOR_QUARTO[tipoQuarto] * multiplicadorCidade * multTemporada,
       );
+    }
+
+    // Simula em qual categoria de hotel o preenchimento automático pararia
+    // com um multiplicador de temporada diferente do real — usado só pra
+    // comparar com "fora de alta temporada" (multiplicador 1) e avisar
+    // quando a alta temporada obriga a rebaixar a categoria pra caber no
+    // orçamento.
+    function categoriaHotelComMultiplicador(multTemporada: number) {
+      if (hotelManual) return hotelCategoriaManual;
+      let categoria: (typeof CATEGORIAS_HOTEL)[number] = "3 estrelas";
+      let gastoSimulado = precoRoteiro + precoAereoEconomy + precoHotel("3 estrelas", multTemporada);
+      const indiceMaximoHotel = CATEGORIAS_HOTEL.indexOf(hotelCategoriaMaxima);
+      for (const cat of ["4 estrelas", "5 estrelas", "Elite"] as const) {
+        if (CATEGORIAS_HOTEL.indexOf(cat) > indiceMaximoHotel) break;
+        const precoAtual = precoHotel(categoria, multTemporada);
+        const precoNovo = precoHotel(cat, multTemporada);
+        const diferenca = precoNovo - precoAtual;
+        if (gastoSimulado + diferenca <= orcamento) {
+          gastoSimulado += diferenca;
+          categoria = cat;
+        } else break;
+      }
+      return categoria;
     }
 
     const incluidos: ItemPacote[] = [
@@ -1142,6 +1164,19 @@ export default function CalculadoraReversaPage() {
         } else break;
       }
     }
+
+    // Categoria que o preenchimento automático alcançaria fora de alta
+    // temporada (multiplicador 1), pro mesmo orçamento — só calculado
+    // quando faz diferença (fora do modo manual, e fora de "baixa", já que
+    // aí o multiplicador real já é 1).
+    const categoriaHotelForaDeTemporada =
+      !hotelManual && temporada !== "baixa" ? categoriaHotelComMultiplicador(1) : categoriaHotelFinal;
+    const avisoCategoriaTemporada =
+      !hotelManual &&
+      temporada !== "baixa" &&
+      CATEGORIAS_HOTEL.indexOf(categoriaHotelFinal) < CATEGORIAS_HOTEL.indexOf(categoriaHotelForaDeTemporada)
+        ? `Categoria de hotel ajustada de ${categoriaHotelForaDeTemporada} para ${categoriaHotelFinal} para caber no orçamento nesta temporada.`
+        : null;
 
     // 2) Complementares essenciais (transporte, seguro, guia)
     const precoTransporte = DIARIA_TRANSPORTE * dias;
@@ -1379,6 +1414,7 @@ export default function CalculadoraReversaPage() {
       saldo,
       categoriaHotelFinal,
       classeAereoFinal,
+      avisoCategoriaTemporada,
       cabeNoOrcamento: orcamento >= precoMinimo,
       precoMinimo,
     };
@@ -1389,6 +1425,7 @@ export default function CalculadoraReversaPage() {
     tipoQuarto,
     multiplicadorCidade,
     multiplicadorTemporada,
+    temporada,
     nomesDestinos,
     cambioCotacao,
     hotelManual,
@@ -2355,6 +2392,12 @@ export default function CalculadoraReversaPage() {
               <h2 className={`${display.className} mt-2 text-2xl font-medium md:text-3xl`}>
                 Hotel {resultado.categoriaHotelFinal} · Aéreo {resultado.classeAereoFinal}
               </h2>
+
+              {resultado.avisoCategoriaTemporada && (
+                <p className="mt-2 max-w-md text-xs leading-4 text-amber-600">
+                  ⚠️ {resultado.avisoCategoriaTemporada}
+                </p>
+              )}
 
               <div className="mt-3 flex flex-wrap gap-2">
                 <span className="rounded-full bg-[#0A2540] px-3 py-1 text-xs font-semibold text-white">
