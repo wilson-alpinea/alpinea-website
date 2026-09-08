@@ -335,26 +335,30 @@ type TemporadaKey = "primavera" | "julho" | "outono" | "baixa";
 // baseline (multiplicador 1.0 em toda cidade pesquisada) — os outros 3
 // multiplicadores são o quanto a diária média sobe em relação a esse
 // baseline.
-const TEMPORADAS: { key: TemporadaKey; nome: string; periodo: string }[] = [
+const TEMPORADAS: { key: TemporadaKey; nome: string; periodo: string; icone: string }[] = [
   {
     key: "primavera",
     nome: "Alta temporada — Primavera",
     periodo: "florada das cerejeiras · final de mar. a início de abr.",
+    icone: "/images/temporada/01-primavera.png",
   },
   {
     key: "julho",
     nome: "Férias escolares — Julho",
     periodo: "julho (fim das chuvas/verão japonês)",
+    icone: "/images/temporada/02-julho.png",
   },
   {
     key: "outono",
     nome: "Outono",
     periodo: "folhas de outono · meados de out. a meados de nov.",
+    icone: "/images/temporada/03-outono.png",
   },
   {
     key: "baixa",
     nome: "Fora de alta temporada",
     periodo: "restante do ano",
+    icone: "/images/temporada/04-baixa.png",
   },
 ];
 
@@ -1771,12 +1775,14 @@ export default function CalculadoraReversaPage() {
                   key={t.key}
                   type="button"
                   onClick={() => setTemporada(t.key)}
-                  className={`flex w-40 flex-col items-start gap-0.5 rounded-lg border px-3 py-2 text-left text-xs transition ${
+                  className={`flex w-32 flex-col items-center gap-2 rounded-lg border px-2 py-3 text-center text-xs transition ${
                     temporada === t.key
                       ? "border-[#2f80c9] bg-[#2f80c9]/10 font-medium text-[#2f80c9]"
                       : "border-black/15 bg-black/[0.03] text-black/60 hover:border-black/30"
                   }`}
                 >
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={t.icone} alt="" className="h-20 w-20 shrink-0" />
                   <span>{t.nome}</span>
                   <span className="text-[10px] font-normal normal-case tracking-normal text-black/40">
                     {t.periodo}
