@@ -1265,18 +1265,28 @@ export default function CalculadoraReversaPage() {
           </Link>
         </div>
 
-        <p className="mt-6 text-[10px] uppercase tracking-[0.2em] text-[#6ec3d9]">
-          Ferramenta interna — não listada no site
-        </p>
-        <h1 className={`${display.className} mt-2 text-3xl font-medium md:text-4xl`}>
-          Calculadora Reversa
-        </h1>
-        <p className="mt-3 max-w-2xl text-sm font-light leading-6 text-black/55">
-          Informe o orçamento máximo do cliente e a calculadora monta, dentro
-          desse valor, a melhor combinação possível de hotel, aéreo e
-          serviços — começando pelo essencial e priorizando os upgrades de
-          maior impacto na experiência.
-        </p>
+        <div className="mt-6 flex items-start justify-between gap-6">
+          <div>
+            <p className="text-[10px] uppercase tracking-[0.2em] text-[#6ec3d9]">
+              Ferramenta interna — não listada no site
+            </p>
+            <h1 className={`${display.className} mt-2 text-3xl font-medium md:text-4xl`}>
+              Calculadora Reversa
+            </h1>
+            <p className="mt-3 max-w-2xl text-sm font-light leading-6 text-black/55">
+              Informe o orçamento máximo do cliente e a calculadora monta, dentro
+              desse valor, a melhor combinação possível de hotel, aéreo e
+              serviços — começando pelo essencial e priorizando os upgrades de
+              maior impacto na experiência.
+            </p>
+          </div>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            src="/images/mascote-bmc.png"
+            alt=""
+            className="hidden w-28 shrink-0 select-none object-contain sm:block md:w-36"
+          />
+        </div>
 
         {/* ── ENTRADAS ── */}
         <div className="mt-8 grid gap-4 rounded-2xl border border-black/10 bg-black/[0.02] p-6 sm:grid-cols-2 md:p-8">
