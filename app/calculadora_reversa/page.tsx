@@ -2009,14 +2009,14 @@ export default function CalculadoraReversaPage() {
                     key={extensao.key}
                     type="button"
                     onClick={() => alternarExtensao(extensao.key)}
-                    className={`flex w-32 flex-col items-center gap-2 rounded-lg border px-2 py-3 text-center text-xs transition ${
+                    className={`flex w-32 flex-col items-center gap-2 rounded-lg border px-1 py-3 text-center text-xs transition ${
                       marcado
                         ? "border-[#2f80c9] bg-[#2f80c9]/10 font-medium text-[#2f80c9]"
                         : "border-black/15 bg-black/[0.03] text-black/60 hover:border-black/30"
                     }`}
                   >
                     {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={extensao.icone} alt="" className="h-20 w-20 shrink-0 object-contain" />
+                    <img src={extensao.icone} alt="" className="h-24 w-28 shrink-0 object-contain" />
                     <span>{extensao.nome}</span>
                     <span className="text-[10px] font-normal normal-case tracking-normal text-black/40">
                       +{extensao.dias} dias · {extensao.cidades.map((c) => c.nome).join(" + ")}
