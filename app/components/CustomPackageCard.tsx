@@ -888,8 +888,9 @@ export const ROTEIRO_PRECO_DIA_EXTRA = comMargemEImposto(120);
 // específica dessa classe) — por isso NÃO leva o multiplicador de margem
 // de novo aqui (senão dobraria a margem); leva só o imposto sobre o lucro,
 // pra ficar no mesmo padrão de carga tributária dos demais itens.
-export const CLASSES_AEREO = ["Economy", "Business", "First Class"] as const;
+export const CLASSES_AEREO = ["Economy", "Premium Economy", "Business", "First Class"] as const;
 export const PRECO_AEREO_ECONOMY_BRL = comMargemEImposto(8000);
+export const PRECO_AEREO_PREMIUM_ECONOMY_USD = comMargemEImposto(3200);
 export const PRECO_AEREO_BUSINESS_USD = comMargemEImposto(6000);
 export const PRECO_AEREO_FIRST_USD = Math.round(17500 * IMPOSTO_SOBRE_LUCRO);
 
@@ -917,6 +918,8 @@ const OPCOES = [
         return Math.round(PRECO_AEREO_FIRST_USD * ctx.cambioCotacao * ctx.pessoas);
       if (ctx.classeAereo === "Business")
         return Math.round(PRECO_AEREO_BUSINESS_USD * ctx.cambioCotacao * ctx.pessoas);
+      if (ctx.classeAereo === "Premium Economy")
+        return Math.round(PRECO_AEREO_PREMIUM_ECONOMY_USD * ctx.cambioCotacao * ctx.pessoas);
       return PRECO_AEREO_ECONOMY_BRL * ctx.pessoas;
     },
   },

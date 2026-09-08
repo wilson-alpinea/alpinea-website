@@ -13,6 +13,7 @@ import {
   DIARIA_HOTEL,
   CLASSES_AEREO,
   PRECO_AEREO_ECONOMY_BRL,
+  PRECO_AEREO_PREMIUM_ECONOMY_USD,
   PRECO_AEREO_BUSINESS_USD,
   PRECO_AEREO_FIRST_USD,
   DIARIA_TRANSPORTE,
@@ -41,6 +42,7 @@ import {
   PRECO_INGRESSO_TEAMLAB_KYOTO_USD_PAX,
   PRECO_RESTAURANTES_HIGHEND_USD,
   RESTAURANTES_HIGHEND_LIMITE_PESSOAS,
+  RESTAURANTES_HIGHEND_QTD,
   ROTEIRO_BASE_DIAS,
   ROTEIRO_PRECO_BASE,
   ROTEIRO_PRECO_DIA_EXTRA,
@@ -574,6 +576,59 @@ function chaveDoItem(item: ItemPacote) {
   return item.chave ?? item.label;
 }
 
+// "Botão de volume" — desliza entre um teto mínimo (nível base) e máximo
+// (nível mais alto) de uma lista de opções ordenadas. Usado pra limitar até
+// onde o preenchimento automático por orçamento pode subir a categoria do
+// hotel ou a classe do voo, sem precisar de um dropdown (pedido do Wilson:
+// "isso deve vir como se fosse um botão de volume").
+function VolumeSlider<T extends string>({
+  label,
+  opcoes,
+  value,
+  onChange,
+  nota,
+}: {
+  label: string;
+  opcoes: readonly T[];
+  value: T;
+  onChange: (v: T) => void;
+  nota?: string;
+}) {
+  const indice = Math.max(0, opcoes.indexOf(value));
+  return (
+    <div className="flex h-full flex-col">
+      <span className="mb-2 flex min-h-[2.2em] items-end text-[10px] uppercase leading-tight tracking-[0.2em] text-black/50">
+        {label}
+      </span>
+      <div className="flex items-center gap-3 rounded-lg border border-black/15 bg-black/[0.03] px-3 h-10">
+        <span aria-hidden className="text-xs text-black/30">
+          🔈
+        </span>
+        <input
+          type="range"
+          min={0}
+          max={opcoes.length - 1}
+          step={1}
+          value={indice}
+          onChange={(e) => onChange(opcoes[Number(e.target.value)])}
+          className="h-1.5 flex-1 cursor-pointer accent-[#2f80c9]"
+        />
+        <span aria-hidden className="text-sm text-black/30">
+          🔊
+        </span>
+      </div>
+      <div className="mt-1.5 flex justify-between gap-1 text-[9px] uppercase tracking-wide text-black/35">
+        {opcoes.map((o) => (
+          <span key={o} className={o === value ? "font-semibold text-[#2f80c9]" : ""}>
+            {o}
+          </span>
+        ))}
+      </div>
+      {nota && <span className="mt-1 text-[11px] leading-4 text-black/40">{nota}</span>}
+    </div>
+  );
+}
+
 // Ordem em que os itens entram no pacote sugerido, depois dos itens fixos
 // (Roteiro + Aéreo Economy + Hotel 3 estrelas). Cada passo só é aplicado se
 // couber no saldo restante do orçamento — greedy, nessa ordem de prioridade.
@@ -613,6 +668,17 @@ export default function CalculadoraReversaPage() {
     useState<(typeof CATEGORIAS_HOTEL)[number]>("3 estrelas");
   const [aereoManual, setAereoManual] = useState(false);
   const [aereoValorManual, setAereoValorManual] = useState(0);
+
+  // Teto manual de upgrade — "botão de volume" que limita até onde o
+  // preenchimento automático por orçamento pode subir a categoria do
+  // hotel / a classe do voo. Por padrão fica no máximo (Elite / First
+  // Class), ou seja, comportamento idêntico ao anterior; o vendedor só
+  // mexe quando quer reservar orçamento pra outros itens (ex.: JR Pass)
+  // mesmo sobrando dinheiro pra um upgrade de hotel ou aéreo.
+  const [hotelCategoriaMaxima, setHotelCategoriaMaxima] =
+    useState<(typeof CATEGORIAS_HOTEL)[number]>("Elite");
+  const [classeAereoMaxima, setClasseAereoMaxima] =
+    useState<(typeof CLASSES_AEREO)[number]>("First Class");
 
   // Alteração manual da seleção padrão dos itens do pacote sugerido: cada
   // chave presente no set INVERTE o padrão automático (item.recomendado)
@@ -800,12 +866,22 @@ export default function CalculadoraReversaPage() {
     const precoAereoEconomy = aereoManual
       ? Math.round(aereoValorManual * pessoas)
       : PRECO_AEREO_ECONOMY_BRL * pessoas;
+    const precoAereoPremiumEconomy = aereoManual
+      ? precoAereoEconomy
+      : Math.round(PRECO_AEREO_PREMIUM_ECONOMY_USD * cambioCotacao * pessoas);
     const precoAereoBusiness = aereoManual
       ? precoAereoEconomy
       : Math.round(PRECO_AEREO_BUSINESS_USD * cambioCotacao * pessoas);
     const precoAereoFirst = aereoManual
       ? precoAereoEconomy
       : Math.round(PRECO_AEREO_FIRST_USD * cambioCotacao * pessoas);
+
+    function precoClasseAereo(classe: (typeof CLASSES_AEREO)[number]) {
+      if (classe === "First Class") return precoAereoFirst;
+      if (classe === "Business") return precoAereoBusiness;
+      if (classe === "Premium Economy") return precoAereoPremiumEconomy;
+      return precoAereoEconomy;
+    }
 
     function precoHotel(categoria: (typeof CATEGORIAS_HOTEL)[number]) {
       if (hotelManual) return Math.round(hotelDiariaManual * dias);
@@ -818,13 +894,14 @@ export default function CalculadoraReversaPage() {
       {
         chave: "roteiro",
         label: "Roteiro Personalizado",
-        detalhe: "Painel digital Ajisai com o roteiro sob medida do grupo",
+        detalhe:
+          "Painel digital Ajisai com o roteiro dia a dia — atrações, deslocamentos, refeições e informações práticas dos aeroportos, sob medida para o grupo e acessível pelo celular durante toda a viagem.",
         precoBRL: precoRoteiro,
       },
       {
         chave: "aereo",
         label: "Aéreo — Economy",
-        detalhe: `Passagem internacional ida e volta para ${pessoas} ${pessoas === 1 ? "pessoa" : "pessoas"}`,
+        detalhe: `Passagem internacional ida e volta para ${pessoas} ${pessoas === 1 ? "pessoa" : "pessoas"}, com bagagem despachada incluída conforme a franquia da companhia aérea`,
         precoBRL: precoAereoEconomy,
       },
       {
@@ -851,7 +928,9 @@ export default function CalculadoraReversaPage() {
     // 1) Upgrade de hotel, categoria por categoria (não pula nível) — pulado
     // quando a diária é manual, já que o valor não varia por categoria.
     if (!hotelManual) {
+      const indiceMaximoHotel = CATEGORIAS_HOTEL.indexOf(hotelCategoriaMaxima);
       for (const categoria of ["4 estrelas", "5 estrelas", "Elite"] as const) {
+        if (CATEGORIAS_HOTEL.indexOf(categoria) > indiceMaximoHotel) break;
         const precoAtual = precoHotel(categoriaHotelFinal);
         const precoNovo = precoHotel(categoria);
         const diferenca = precoNovo - precoAtual;
@@ -868,7 +947,7 @@ export default function CalculadoraReversaPage() {
     if (transporteRecomendado) gasto += precoTransporte;
     incluidos.push({
       label: "Transporte",
-      detalhe: `Transfers e deslocamentos do roteiro — ${dias} dias`,
+      detalhe: `Transfers e deslocamentos privados do roteiro (aeroporto, entre cidades e até as atrações) em van dedicada — Toyota Alphard ou Hiace, conforme tamanho do grupo/bagagem, sem compartilhar veículo com outros grupos — ${dias} dias. Não inclui o transfer de ônibus (limousine bus) aeroporto ↔ centro de Tóquio, cotado à parte.`,
       precoBRL: precoTransporte,
       recomendado: transporteRecomendado,
     });
@@ -878,7 +957,7 @@ export default function CalculadoraReversaPage() {
     if (seguroRecomendado) gasto += precoSeguro;
     incluidos.push({
       label: "Seguro Viagem",
-      detalhe: `Cobertura médica e assistência — ${dias} dias · ${pessoas} ${pessoas === 1 ? "pessoa" : "pessoas"}`,
+      detalhe: `Cobertura médico-hospitalar (mínimo US$ 30 mil, com upgrade para US$ 60 mil), bagagem extraviada, cancelamento de viagem e assistência 24h em português — ${dias} dias · ${pessoas} ${pessoas === 1 ? "pessoa" : "pessoas"}`,
       precoBRL: precoSeguro,
       recomendado: seguroRecomendado,
     });
@@ -890,7 +969,7 @@ export default function CalculadoraReversaPage() {
     if (guiaRecomendado) gasto += precoGuia;
     incluidos.push({
       label: "Guia Turístico",
-      detalhe: `US$ ${DIARIA_GUIA_USD}/dia a cada ${GUIA_TAMANHO_GRUPO} pessoas`,
+      detalhe: `Guia particular fluente em português acompanhando o roteiro, ajuda com trajetos, horários e filas — US$ ${DIARIA_GUIA_USD}/dia a cada ${GUIA_TAMANHO_GRUPO} pessoas`,
       precoBRL: precoGuia,
       recomendado: guiaRecomendado,
     });
@@ -906,7 +985,7 @@ export default function CalculadoraReversaPage() {
       incluidos.push({
         chave: "jrpass",
         label: `JR Pass — ${jrPassDias} dias${jrPassClasse === "green" ? " · Green Car" : ""}`,
-        detalhe: `Passe ferroviário com trem-bala ilimitado${jrPassClasse === "green" ? ", classe Green Car" : ""} · ${jrPassPessoas} de ${pessoas} viajante${pessoas === 1 ? "" : "s"} · tabela ${JR_PASS_TABELA_VALIDADE}`,
+        detalhe: `Passe ferroviário JR, com deslocamentos ilimitados nas linhas JR — incluindo a maioria dos trens-bala (Shinkansen)${jrPassClasse === "green" ? ", classe Green Car" : ""} — durante ${jrPassDias} dias corridos de validade · ${jrPassPessoas} de ${pessoas} viajante${pessoas === 1 ? "" : "s"} · tabela ${JR_PASS_TABELA_VALIDADE}`,
         precoBRL: precoJrPass,
         recomendado: jrPassRecomendado,
       });
@@ -927,8 +1006,8 @@ export default function CalculadoraReversaPage() {
         label: wifiTipo === "esim" ? "eSIM" : "Pocket Wi-Fi",
         detalhe:
           wifiTipo === "esim"
-            ? `Conexão 5G direto no celular · ${wifiPessoasOuUnidades} de ${pessoas} viajante${pessoas === 1 ? "" : "s"} · ${dias} dias`
-            : `${wifiPessoasOuUnidades} aparelho${wifiPessoasOuUnidades === 1 ? "" : "s"} compartilhado${wifiPessoasOuUnidades === 1 ? "" : "s"} (até ${WIFI_TAMANHO_GRUPO} pessoas por unidade) — ${dias} dias`,
+            ? `eSIM com conexão 5G direto no celular de cada viajante, sem aparelho extra pra carregar · ${wifiPessoasOuUnidades} de ${pessoas} viajante${pessoas === 1 ? "" : "s"} · ${dias} dias`
+            : `Pocket Wi-Fi — aparelho físico compartilhado entre o grupo · ${wifiPessoasOuUnidades} aparelho${wifiPessoasOuUnidades === 1 ? "" : "s"} (até ${WIFI_TAMANHO_GRUPO} pessoas por unidade) — ${dias} dias`,
         precoBRL: precoWifi,
         recomendado: wifiRecomendado,
       });
@@ -936,14 +1015,11 @@ export default function CalculadoraReversaPage() {
 
     // 5) Upgrade de classe do voo — pulado quando o valor da passagem é manual.
     if (!aereoManual) {
-      for (const classe of ["Business", "First Class"] as const) {
-        const precoAtual =
-          classeAereoFinal === "Economy"
-            ? precoAereoEconomy
-            : classeAereoFinal === "Business"
-              ? precoAereoBusiness
-              : precoAereoFirst;
-        const precoNovo = classe === "Business" ? precoAereoBusiness : precoAereoFirst;
+      const indiceMaximoAereo = CLASSES_AEREO.indexOf(classeAereoMaxima);
+      for (const classe of ["Premium Economy", "Business", "First Class"] as const) {
+        if (CLASSES_AEREO.indexOf(classe) > indiceMaximoAereo) break;
+        const precoAtual = precoClasseAereo(classeAereoFinal);
+        const precoNovo = precoClasseAereo(classe);
         const diferenca = precoNovo - precoAtual;
         if (cabe(diferenca)) {
           gasto += diferenca;
@@ -964,7 +1040,7 @@ export default function CalculadoraReversaPage() {
     incluidos.push({
       chave: "motorista",
       label: "Motorista Privado",
-      detalhe: `US$ ${DIARIA_MOTORISTA_PRIVADO_USD}/dia para até ${MOTORISTA_TAMANHO_GRUPO} pessoas, sem compartilhar veículo`,
+      detalhe: `Motorista particular à disposição do grupo, sem compartilhar veículo — mais privacidade e flexibilidade de horário que o transporte padrão do roteiro. US$ ${DIARIA_MOTORISTA_PRIVADO_USD}/dia para até ${MOTORISTA_TAMANHO_GRUPO} pessoas`,
       precoBRL: precoMotorista,
       recomendado: motoristaRecomendado,
     });
@@ -974,7 +1050,8 @@ export default function CalculadoraReversaPage() {
     if (cambioRecomendado) gasto += PRECO_CAMBIO_BRASIL;
     incluidos.push({
       label: "Câmbio no Brasil",
-      detalhe: "Retirada de ienes com câmbio comercial antes do embarque",
+      detalhe:
+        "Retirada de ienes em espécie ainda no Brasil, com cotação comercial fechada antes do embarque — evita depender só de caixas eletrônicos ou casas de câmbio no Japão nos primeiros dias de viagem.",
       precoBRL: PRECO_CAMBIO_BRASIL,
       recomendado: cambioRecomendado,
     });
@@ -1013,7 +1090,7 @@ export default function CalculadoraReversaPage() {
       incluidos.push({
         chave: `ingresso-${ingresso.key}`,
         label: `Ingresso — ${ingresso.nome}${temFastPass ? ` + ${nomeFastPass}` : ""}`,
-        detalhe: `Ingresso de 1 dia, por pessoa${temFastPass ? ` + ${nomeFastPass} (fast pass pago)` : ""}`,
+        detalhe: `Ingresso de 1 dia, por pessoa${temFastPass ? ` + ${nomeFastPass} — fast pass pago à parte, pula fila nas atrações participantes` : ""}`,
         precoBRL: precoIngresso,
         recomendado: ingressoRecomendado,
       });
@@ -1026,7 +1103,7 @@ export default function CalculadoraReversaPage() {
       if (restaurantesRecomendado) gasto += precoRestaurantes;
       incluidos.push({
         label: "Reserva de Restaurantes High-End",
-        detalhe: `Pacote fechado — até ${RESTAURANTES_HIGHEND_LIMITE_PESSOAS} pessoas`,
+        detalhe: `Pacote fechado de ${RESTAURANTES_HIGHEND_QTD} reservas em restaurantes Michelin/Tabelog Awards ou equivalente — até ${RESTAURANTES_HIGHEND_LIMITE_PESSOAS} pessoas`,
         precoBRL: precoRestaurantes,
         recomendado: restaurantesRecomendado,
       });
@@ -1036,13 +1113,8 @@ export default function CalculadoraReversaPage() {
     incluidos[1] = {
       chave: "aereo",
       label: aereoManual ? "Aéreo — valor manual" : `Aéreo — ${classeAereoFinal}`,
-      detalhe: `Passagem internacional ida e volta para ${pessoas} ${pessoas === 1 ? "pessoa" : "pessoas"}`,
-      precoBRL:
-        classeAereoFinal === "Economy"
-          ? precoAereoEconomy
-          : classeAereoFinal === "Business"
-            ? precoAereoBusiness
-            : precoAereoFirst,
+      detalhe: `Passagem internacional ida e volta para ${pessoas} ${pessoas === 1 ? "pessoa" : "pessoas"}, com bagagem despachada incluída conforme a franquia da companhia aérea`,
+      precoBRL: precoClasseAereo(classeAereoFinal),
     };
     incluidos[2] = {
       chave: "hotel",
@@ -1076,6 +1148,8 @@ export default function CalculadoraReversaPage() {
     hotelManual,
     hotelDiariaManual,
     hotelCategoriaManual,
+    hotelCategoriaMaxima,
+    classeAereoMaxima,
     aereoManual,
     aereoValorManual,
     jrPassDias,
@@ -1252,6 +1326,34 @@ export default function CalculadoraReversaPage() {
               ))}
             </select>
           </label>
+
+          <VolumeSlider
+            label="Categoria máxima de hotel"
+            opcoes={CATEGORIAS_HOTEL}
+            value={hotelCategoriaMaxima}
+            onChange={setHotelCategoriaMaxima}
+            nota={
+              hotelManual
+                ? "Diária manual — este teto não se aplica"
+                : hotelCategoriaMaxima === "Elite"
+                  ? "Sem limite — sobe o máximo que o orçamento permitir"
+                  : `Preenchimento automático não passa de ${hotelCategoriaMaxima}, mesmo sobrando orçamento`
+            }
+          />
+
+          <VolumeSlider
+            label="Classe máxima do voo"
+            opcoes={CLASSES_AEREO}
+            value={classeAereoMaxima}
+            onChange={setClasseAereoMaxima}
+            nota={
+              aereoManual
+                ? "Valor manual — este teto não se aplica"
+                : classeAereoMaxima === "First Class"
+                  ? "Sem limite — sobe o máximo que o orçamento permitir"
+                  : `Preenchimento automático não passa de ${classeAereoMaxima}, mesmo sobrando orçamento`
+            }
+          />
 
           <div className="sm:col-span-2">
             <span className="mb-2 block text-[10px] uppercase tracking-[0.2em] text-black/50">
@@ -1982,6 +2084,11 @@ export default function CalculadoraReversaPage() {
                             {item.label}
                           </p>
                           <p className="mt-0.5 text-xs text-black/50">{item.detalhe}</p>
+                          {removido && !itemRecomendado(item) && (
+                            <p className="mt-0.5 text-[10px] font-medium uppercase tracking-wide text-amber-600">
+                              Fora do orçamento — marque a caixa para incluir mesmo assim
+                            </p>
+                          )}
                         </div>
                       </label>
                       <div className="flex shrink-0 flex-col items-end gap-1">
