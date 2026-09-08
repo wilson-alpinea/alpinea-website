@@ -1108,6 +1108,11 @@ export default function CalculadoraReversaPage() {
       return categoria;
     }
 
+    // Seguro Viagem é item fixo/obrigatório no pacote — igual Roteiro,
+    // Aéreo e Hotel — pedido do Wilson, 08/set/2026: "no pacote final,
+    // seguro viagem deve ser obrigatorio igual roteiro personalizado".
+    const precoSeguro = DIARIA_SEGURO_VIAGEM * dias * pessoas;
+
     const incluidos: ItemPacote[] = [
       {
         chave: "roteiro",
@@ -1133,6 +1138,16 @@ export default function CalculadoraReversaPage() {
         label: "Hotel — 3 estrelas",
         detalhe: [`${dias} diárias`, tipoQuarto, "Categoria mínima"],
         precoBRL: precoHotel("3 estrelas"),
+      },
+      {
+        chave: "seguro",
+        label: "Seguro Viagem",
+        detalhe: [
+          "Cobertura médico-hospitalar (mínimo US$ 30 mil, com upgrade para US$ 60 mil).",
+          "Bagagem extraviada, cancelamento de viagem e assistência 24h em português.",
+          `${dias} dias · ${pessoas} ${pessoas === 1 ? "pessoa" : "pessoas"}`,
+        ],
+        precoBRL: precoSeguro,
       },
     ];
 
@@ -1192,20 +1207,6 @@ export default function CalculadoraReversaPage() {
       ],
       precoBRL: precoTransporte,
       recomendado: transporteRecomendado,
-    });
-
-    const precoSeguro = DIARIA_SEGURO_VIAGEM * dias * pessoas;
-    const seguroRecomendado = cabe(precoSeguro);
-    if (seguroRecomendado) gasto += precoSeguro;
-    incluidos.push({
-      label: "Seguro Viagem",
-      detalhe: [
-        "Cobertura médico-hospitalar (mínimo US$ 30 mil, com upgrade para US$ 60 mil).",
-        "Bagagem extraviada, cancelamento de viagem e assistência 24h em português.",
-        `${dias} dias · ${pessoas} ${pessoas === 1 ? "pessoa" : "pessoas"}`,
-      ],
-      precoBRL: precoSeguro,
-      recomendado: seguroRecomendado,
     });
 
     const precoGuia = Math.round(
@@ -1405,7 +1406,7 @@ export default function CalculadoraReversaPage() {
       precoBRL: precoHotel(categoriaHotelFinal),
     };
 
-    const precoMinimo = precoRoteiro + precoAereoEconomy + precoHotel("3 estrelas");
+    const precoMinimo = precoRoteiro + precoAereoEconomy + precoHotel("3 estrelas") + precoSeguro;
     const saldo = orcamento - gasto;
 
     return {
@@ -1521,7 +1522,7 @@ export default function CalculadoraReversaPage() {
     .join("\n");
 
   return (
-    <main className="min-h-screen bg-white px-5 py-12 text-[#0A2540] sm:px-8 md:px-16 md:py-16">
+    <main className="min-h-screen bg-white px-5 pt-12 pb-32 text-[#0A2540] sm:px-8 md:px-16 md:pt-16 md:pb-36">
       <div className="mx-auto max-w-4xl">
         <div className="flex items-center justify-between gap-4">
           <img
@@ -1648,6 +1649,39 @@ export default function CalculadoraReversaPage() {
 
           <div className="sm:col-span-2">
             <span className="mb-2 block text-[10px] uppercase tracking-[0.2em] text-black/50">
+              Temporada
+            </span>
+            <div className="flex flex-wrap gap-2">
+              {TEMPORADAS.map((t) => (
+                <button
+                  key={t.key}
+                  type="button"
+                  onClick={() => setTemporada(t.key)}
+                  className={`flex w-32 flex-col items-center gap-2 rounded-lg border px-2 py-3 text-center text-xs transition ${
+                    temporada === t.key
+                      ? "border-[#2f80c9] bg-[#2f80c9]/10 font-medium text-[#2f80c9]"
+                      : "border-black/15 bg-black/[0.03] text-black/60 hover:border-black/30"
+                  }`}
+                >
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={t.icone} alt="" className="h-20 w-20 shrink-0" />
+                  <span>{t.nome}</span>
+                  <span className="text-[10px] font-normal normal-case tracking-normal text-black/40">
+                    {t.periodo}
+                  </span>
+                </button>
+              ))}
+            </div>
+            {destinosSelecionados.includes("niseko") && (
+              <p className="mt-1.5 max-w-md text-[11px] leading-4 text-amber-600">
+                ⚠️ Niseko é destino de esqui — o inverno (dez.–mar., fora das 4 opções acima) é a
+                alta temporada real, com diárias de 2× a 4× a temporada verde. Nenhum dos cards
+                de Temporada cobre isso; para viagem de inverno em Niseko, ajuste a diária de
+                hotel manualmente.
+              </p>
+            )}
+
+            <span className="mb-2 mt-6 block text-[10px] uppercase tracking-[0.2em] text-black/50">
               Temas <span className="normal-case tracking-normal text-black/35">(selecione até {MAX_TEMAS_SIMULTANEOS} pra misturar)</span>
             </span>
             <div className="flex flex-wrap gap-2">
@@ -1803,38 +1837,6 @@ export default function CalculadoraReversaPage() {
                 : `Ajuste de mercado do hotel: ${nomesDestinos} · cidade ${multiplicadorCidade.toFixed(2)}× · temporada ${multiplicadorTemporada.toFixed(2)}×`}
             </span>
 
-            <span className="mb-2 mt-4 block text-[10px] uppercase tracking-[0.2em] text-black/50">
-              Temporada
-            </span>
-            <div className="flex flex-wrap gap-2">
-              {TEMPORADAS.map((t) => (
-                <button
-                  key={t.key}
-                  type="button"
-                  onClick={() => setTemporada(t.key)}
-                  className={`flex w-32 flex-col items-center gap-2 rounded-lg border px-2 py-3 text-center text-xs transition ${
-                    temporada === t.key
-                      ? "border-[#2f80c9] bg-[#2f80c9]/10 font-medium text-[#2f80c9]"
-                      : "border-black/15 bg-black/[0.03] text-black/60 hover:border-black/30"
-                  }`}
-                >
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={t.icone} alt="" className="h-20 w-20 shrink-0" />
-                  <span>{t.nome}</span>
-                  <span className="text-[10px] font-normal normal-case tracking-normal text-black/40">
-                    {t.periodo}
-                  </span>
-                </button>
-              ))}
-            </div>
-            {destinosSelecionados.includes("niseko") && (
-              <p className="mt-1.5 max-w-md text-[11px] leading-4 text-amber-600">
-                ⚠️ Niseko é destino de esqui — o inverno (dez.–mar., fora das 4 opções acima) é a
-                alta temporada real, com diárias de 2× a 4× a temporada verde. Nenhum dos cards
-                de Temporada cobre isso; para viagem de inverno em Niseko, ajuste a diária de
-                hotel manualmente.
-              </p>
-            )}
             {diasInsuficientes && (
               <p className="mt-2 rounded-md bg-red-50 px-3 py-2 text-[11px] font-medium leading-4 text-red-700">
                 ⚠️ Com {destinosSelecionados.length} cidade{destinosSelecionados.length === 1 ? "" : "s"}
@@ -2379,7 +2381,8 @@ export default function CalculadoraReversaPage() {
               </p>
               <p className="mx-auto mt-3 max-w-md text-sm text-black/55">
                 Com {formatBRL(orcamento)}, ainda falta {formatBRL(resultado.precoMinimo - orcamento)}{" "}
-                para cobrir Roteiro Personalizado + Aéreo Economy + Hotel 3 estrelas para{" "}
+                para cobrir Roteiro Personalizado + Aéreo Economy + Hotel 3 estrelas + Seguro Viagem{" "}
+                para{" "}
                 {pessoas} {pessoas === 1 ? "pessoa" : "pessoas"} em {dias} dias. Aumente o
                 orçamento ou reduza dias/pessoas.
               </p>
@@ -2588,6 +2591,45 @@ export default function CalculadoraReversaPage() {
               </button>
             </>
           )}
+        </div>
+      </div>
+
+      {/* ── BARRA FIXA: total + saldo sempre visíveis ── */}
+      <div className="fixed inset-x-0 bottom-0 z-50 border-t border-black/10 bg-white/95 px-5 py-3 shadow-[0_-4px_16px_rgba(10,37,64,0.10)] backdrop-blur sm:px-8">
+        <div className="mx-auto flex max-w-4xl flex-wrap items-center justify-between gap-x-6 gap-y-2">
+          <div>
+            <p className="text-[9px] uppercase tracking-[0.2em] text-black/40">
+              Total do pacote sugerido
+            </p>
+            <p className={`${display.className} text-xl font-medium text-[#2f80c9] sm:text-2xl`}>
+              {resultado.cabeNoOrcamento ? formatBRL(totalSelecionado) : "—"}
+            </p>
+          </div>
+          <div className="text-right">
+            <p className="text-[9px] uppercase tracking-[0.2em] text-black/40">
+              Saldo restante
+            </p>
+            <p
+              className={`${display.className} text-lg font-medium sm:text-xl ${
+                !resultado.cabeNoOrcamento || saldoSelecionado > 0 ? "text-black" : "text-black/40"
+              }`}
+            >
+              {resultado.cabeNoOrcamento ? formatBRL(saldoSelecionado) : "—"}
+            </p>
+          </div>
+          <button
+            type="button"
+            disabled={!resultado.cabeNoOrcamento}
+            onClick={() =>
+              window.open(
+                `https://wa.me/5511930300101?text=${encodeURIComponent(mensagemWhatsapp)}`,
+                "_blank",
+              )
+            }
+            className="rounded-full bg-[#2f80c9] px-5 py-2.5 text-[10px] font-medium uppercase tracking-[0.2em] text-white transition hover:bg-[#3b91dc] disabled:cursor-not-allowed disabled:opacity-40"
+          >
+            WhatsApp
+          </button>
         </div>
       </div>
     </main>
