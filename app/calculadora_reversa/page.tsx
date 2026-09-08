@@ -2879,23 +2879,23 @@ export default function CalculadoraReversaPage() {
       </div>
 
       {/* ── BARRA FIXA: total + saldo sempre visíveis ── */}
-      <div className="fixed inset-x-0 bottom-0 z-50 border-t border-black/10 bg-white/95 px-5 py-3 shadow-[0_-4px_16px_rgba(10,37,64,0.10)] backdrop-blur sm:px-8">
+      <div className="fixed inset-x-0 bottom-0 z-50 border-t border-white/10 bg-[#0a0a0a]/97 px-5 py-3 shadow-[0_-4px_16px_rgba(0,0,0,0.35)] backdrop-blur sm:px-8">
         <div className="mx-auto flex max-w-4xl flex-wrap items-center justify-between gap-x-6 gap-y-2">
           <div>
-            <p className="text-[9px] uppercase tracking-[0.2em] text-black/40">
+            <p className="text-[9px] uppercase tracking-[0.2em] text-white/40">
               Total do pacote sugerido
             </p>
-            <p className={`${display.className} text-xl font-medium text-[#2f80c9] sm:text-2xl`}>
+            <p className={`${display.className} text-xl font-medium text-[#5b9bd9] sm:text-2xl`}>
               {resultado.cabeNoOrcamento ? formatBRL(totalSelecionado) : "—"}
             </p>
           </div>
           <div className="text-right">
-            <p className="text-[9px] uppercase tracking-[0.2em] text-black/40">
+            <p className="text-[9px] uppercase tracking-[0.2em] text-white/40">
               Saldo restante
             </p>
             <p
               className={`${display.className} text-lg font-medium sm:text-xl ${
-                !resultado.cabeNoOrcamento || saldoSelecionado > 0 ? "text-black" : "text-black/40"
+                !resultado.cabeNoOrcamento || saldoSelecionado > 0 ? "text-white" : "text-white/40"
               }`}
             >
               {resultado.cabeNoOrcamento ? formatBRL(saldoSelecionado) : "—"}
@@ -2908,7 +2908,7 @@ export default function CalculadoraReversaPage() {
               onClick={handleGerarPdf}
               aria-label="Gerar PDF da proposta"
               title="Gerar PDF da proposta"
-              className="flex h-9 w-9 items-center justify-center rounded-full border border-[#2f80c9]/40 text-[#2f80c9] transition hover:bg-[#2f80c9]/5 disabled:cursor-not-allowed disabled:opacity-40"
+              className="flex h-9 w-9 items-center justify-center rounded-full border border-[#5b9bd9]/50 text-[#5b9bd9] transition hover:bg-[#5b9bd9]/10 disabled:cursor-not-allowed disabled:opacity-40"
             >
               <IconPdf className="h-4 w-4" />
             </button>
