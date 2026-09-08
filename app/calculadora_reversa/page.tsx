@@ -391,6 +391,45 @@ const TEMPORADA_MULTIPLICADOR_HOTEL: Partial<Record<DestinoKey, Record<Temporada
   niseko: { primavera: 0.85, julho: 1.08, outono: 1.1, baixa: 1.0 },
 };
 
+type ExtensaoInternacionalKey = "coreiaDoSul" | "china";
+
+// Extensões internacionais — dias adicionais FORA do Japão, somados ao
+// total da viagem quando o vendedor ativa o card (não dividem os dias já
+// definidos no roteiro do Japão). Multiplicador de hotel pesquisado em
+// 08/set/2026 (ADR de hotéis 5 estrelas/flagship — Four Seasons, Ritz-
+// Carlton, Mandarin Oriental, Peninsula — comparados à mesma base usada
+// pelas cidades do Japão, Osaka = 1.00): Seoul 0.80, Beijing 0.90,
+// Shanghai 0.85. Confiança média/baixa (sem relatório STR/CBRE pago
+// disponível) — revisar quando houver dado de reserva real. Usa a mesma
+// categoria final de hotel do resto do pacote (CATEGORIAS_HOTEL) e o
+// mesmo tipo de quarto. Transporte, seguro e guia dessa extensão ainda
+// não entram no cálculo — cotados à parte por enquanto.
+const EXTENSOES_INTERNACIONAIS: {
+  key: ExtensaoInternacionalKey;
+  nome: string;
+  icone: string;
+  dias: number;
+  cidades: { nome: string; dias: number; multiplicadorHotel: number }[];
+}[] = [
+  {
+    key: "coreiaDoSul",
+    nome: "Coréia do Sul",
+    icone: "/images/paises/coreia-do-sul.png",
+    dias: 3,
+    cidades: [{ nome: "Seoul", dias: 3, multiplicadorHotel: 0.8 }],
+  },
+  {
+    key: "china",
+    nome: "China",
+    icone: "/images/paises/china.png",
+    dias: 4,
+    cidades: [
+      { nome: "Beijing", dias: 2, multiplicadorHotel: 0.9 },
+      { nome: "Shanghai", dias: 2, multiplicadorHotel: 0.85 },
+    ],
+  },
+];
+
 type TemaKey =
   | "roteiroClassico"
   | "automobilismo"
@@ -811,6 +850,12 @@ export default function CalculadoraReversaPage() {
   // Temporada da viagem — ajusta a diária de hotel por cidade (pesquisa de
   // mercado). Pedido do Wilson, 08/set/2026.
   const [temporada, setTemporada] = useState<TemporadaKey>("baixa");
+  // Extensões internacionais (Coréia do Sul / China) — pedido do Wilson,
+  // 08/set/2026. Independentes do roteiro do Japão: podem ficar ativas
+  // junto com qualquer Tema/seleção de cidades.
+  const [extensoesSelecionadas, setExtensoesSelecionadas] = useState<Set<ExtensaoInternacionalKey>>(
+    () => new Set(),
+  );
   // Até MAX_TEMAS_SIMULTANEOS temas podem ficar ativos ao mesmo tempo —
   // permite montar uma viagem misturando temas (ex.: Automobilismo +
   // Gastronomia). Pedido do Wilson, 04/set/2026.
@@ -935,6 +980,15 @@ export default function CalculadoraReversaPage() {
       if (atual.length >= MAX_CIDADES_ROTEIRO) return atual;
       const proxima = DESTINOS.find((d) => !atual.includes(d.key))?.key;
       return proxima ? [...atual, proxima] : atual;
+    });
+  }
+
+  function alternarExtensao(key: ExtensaoInternacionalKey) {
+    setExtensoesSelecionadas((atual) => {
+      const novo = new Set(atual);
+      if (novo.has(key)) novo.delete(key);
+      else novo.add(key);
+      return novo;
     });
   }
 
@@ -1193,6 +1247,34 @@ export default function CalculadoraReversaPage() {
         ? `Categoria de hotel ajustada de ${categoriaHotelForaDeTemporada} para ${categoriaHotelFinal} para caber no orçamento nesta temporada.`
         : null;
 
+    // 1.5) Extensões internacionais (Coréia do Sul / China) — dias somam
+    // ao total da viagem, hotel calculado à parte na mesma categoria final
+    // do restante do pacote. Item fixo assim que o card é ativado (não
+    // passa pelo preenchimento automático por orçamento).
+    extensoesSelecionadas.forEach((key) => {
+      const extensao = EXTENSOES_INTERNACIONAIS.find((e) => e.key === key);
+      if (!extensao) return;
+      const precoExtensao = extensao.cidades.reduce(
+        (soma, cidade) =>
+          soma +
+          Math.round(
+            DIARIA_HOTEL[categoriaHotelFinal] * cidade.dias * FATOR_QUARTO[tipoQuarto] * cidade.multiplicadorHotel,
+          ),
+        0,
+      );
+      gasto += precoExtensao;
+      incluidos.push({
+        chave: `extensao-${extensao.key}`,
+        label: `Hotel — Extensão ${extensao.nome} (${extensao.cidades.map((c) => c.nome).join(" + ")})`,
+        detalhe: [
+          `+${extensao.dias} dias · ${tipoQuarto}`,
+          `Categoria ${categoriaHotelFinal} (mesma do restante do pacote)`,
+          "Transporte, seguro e demais itens dessa extensão cotados à parte, por enquanto.",
+        ],
+        precoBRL: precoExtensao,
+      });
+    });
+
     // 2) Complementares essenciais (transporte, seguro, guia)
     const precoTransporte = DIARIA_TRANSPORTE * dias;
     const transporteRecomendado = cabe(precoTransporte);
@@ -1428,6 +1510,7 @@ export default function CalculadoraReversaPage() {
     multiplicadorTemporada,
     temporada,
     nomesDestinos,
+    extensoesSelecionadas,
     cambioCotacao,
     hotelManual,
     hotelDiariaManual,
@@ -1730,16 +1813,19 @@ export default function CalculadoraReversaPage() {
             </div>
 
             {temasSelecionados.size === 0 ? (
-              <div className="mt-4 flex flex-col sm:max-w-xs">
+              <div className="mt-4">
                 <span className="mb-2 flex min-h-[2.2em] items-end text-[10px] uppercase leading-tight tracking-[0.2em] text-black/50">
                   Cidades do roteiro{" "}
                   <span className="normal-case tracking-normal text-black/35">
                     (até {MAX_CIDADES_ROTEIRO})
                   </span>
                 </span>
-                <div className="flex flex-col gap-2">
+                <div className="flex flex-wrap gap-2">
                   {destinosSelecionados.map((cidade, indice) => (
-                    <div key={indice} className="flex items-center gap-2">
+                    <div
+                      key={indice}
+                      className="relative flex w-32 flex-col items-center justify-center gap-1 rounded-lg border border-black/15 bg-black/[0.03] px-2 py-3"
+                    >
                       <CidadeCombobox
                         value={cidade}
                         onChange={(key) => substituirDestinoManual(indice, key)}
@@ -1750,7 +1836,7 @@ export default function CalculadoraReversaPage() {
                           type="button"
                           onClick={() => removerDestinoManual(indice)}
                           aria-label="Remover cidade"
-                          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-black/15 text-sm text-black/40 transition hover:border-red-300 hover:text-red-500"
+                          className="absolute -right-1.5 -top-1.5 flex h-5 w-5 items-center justify-center rounded-full border border-black/15 bg-white text-[10px] text-black/40 transition hover:border-red-300 hover:text-red-500"
                         >
                           ×
                         </button>
@@ -1761,9 +1847,10 @@ export default function CalculadoraReversaPage() {
                     <button
                       type="button"
                       onClick={adicionarDestinoManual}
-                      className="flex h-10 items-center justify-center gap-1 rounded-lg border border-dashed border-black/20 text-sm text-black/50 transition hover:border-[#2f80c9]/50 hover:text-[#2f80c9]"
+                      className="flex w-32 flex-col items-center justify-center gap-1 rounded-lg border border-dashed border-black/20 px-2 py-3 text-center text-xs text-black/50 transition hover:border-[#2f80c9]/50 hover:text-[#2f80c9]"
                     >
-                      + Adicionar cidade
+                      <span className="text-lg leading-none">+</span>
+                      <span>Adicionar cidade</span>
                     </button>
                   )}
                 </div>
@@ -1831,6 +1918,35 @@ export default function CalculadoraReversaPage() {
                 })}
               </div>
             )}
+            <span className="mb-2 mt-4 block text-[10px] uppercase tracking-[0.2em] text-black/50">
+              Extensão internacional{" "}
+              <span className="normal-case tracking-normal text-black/35">(opcional — soma dias ao total da viagem)</span>
+            </span>
+            <div className="flex flex-wrap gap-2">
+              {EXTENSOES_INTERNACIONAIS.map((extensao) => {
+                const marcado = extensoesSelecionadas.has(extensao.key);
+                return (
+                  <button
+                    key={extensao.key}
+                    type="button"
+                    onClick={() => alternarExtensao(extensao.key)}
+                    className={`flex w-32 flex-col items-center gap-2 rounded-lg border px-2 py-3 text-center text-xs transition ${
+                      marcado
+                        ? "border-[#2f80c9] bg-[#2f80c9]/10 font-medium text-[#2f80c9]"
+                        : "border-black/15 bg-black/[0.03] text-black/60 hover:border-black/30"
+                    }`}
+                  >
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={extensao.icone} alt="" className="h-20 w-20 shrink-0 object-contain" />
+                    <span>{extensao.nome}</span>
+                    <span className="text-[10px] font-normal normal-case tracking-normal text-black/40">
+                      +{extensao.dias} dias · {extensao.cidades.map((c) => c.nome).join(" + ")}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+
             <span className="mt-1.5 block text-[11px] text-black/40">
               {destinosSelecionados.length === 0
                 ? "Nenhuma cidade selecionada — diária de hotel sem ajuste de mercado por cidade"
