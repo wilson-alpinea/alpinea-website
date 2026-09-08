@@ -581,6 +581,11 @@ function chaveDoItem(item: ItemPacote) {
 // onde o preenchimento automático por orçamento pode subir a categoria do
 // hotel ou a classe do voo, sem precisar de um dropdown (pedido do Wilson:
 // "isso deve vir como se fosse um botão de volume").
+// "Botão de volume" — barra horizontal de segmentos clicáveis, como o
+// controle de volume de uma TV/som (não um slider nativo, que passava
+// despercebido). Clicar em qualquer segmento define o teto naquele nível;
+// os segmentos até ali (inclusive) acendem, os seguintes ficam apagados —
+// leitura visual imediata de "quanto está liberado".
 function VolumeSlider<T extends string>({
   label,
   opcoes,
@@ -600,20 +605,26 @@ function VolumeSlider<T extends string>({
       <span className="mb-2 flex min-h-[2.2em] items-end text-[10px] uppercase leading-tight tracking-[0.2em] text-black/50">
         {label}
       </span>
-      <div className="flex items-center gap-3 rounded-lg border border-black/15 bg-black/[0.03] px-3 h-10">
-        <span aria-hidden className="text-xs text-black/30">
+      <div className="flex items-center gap-2 rounded-lg border border-black/15 bg-black/[0.03] px-3 h-12">
+        <span aria-hidden className="shrink-0 text-xs text-black/30">
           🔈
         </span>
-        <input
-          type="range"
-          min={0}
-          max={opcoes.length - 1}
-          step={1}
-          value={indice}
-          onChange={(e) => onChange(opcoes[Number(e.target.value)])}
-          className="h-1.5 flex-1 cursor-pointer accent-[#2f80c9]"
-        />
-        <span aria-hidden className="text-sm text-black/30">
+        <div className="flex flex-1 items-center gap-1">
+          {opcoes.map((o, i) => (
+            <button
+              key={o}
+              type="button"
+              onClick={() => onChange(o)}
+              aria-label={o}
+              aria-pressed={i <= indice}
+              className={`h-6 flex-1 rounded-sm transition ${
+                i <= indice ? "bg-[#2f80c9]" : "bg-black/10 hover:bg-black/20"
+              }`}
+              style={{ height: `${14 + i * 6}px` }}
+            />
+          ))}
+        </div>
+        <span aria-hidden className="shrink-0 text-sm text-black/30">
           🔊
         </span>
       </div>
@@ -1534,15 +1545,15 @@ export default function CalculadoraReversaPage() {
                     key={c.key}
                     type="button"
                     onClick={() => setJrPassClasse(c.key)}
-                    className={`flex h-10 items-center gap-2 rounded-lg border px-4 text-sm transition ${
+                    className={`flex w-28 flex-col items-center gap-1.5 rounded-lg border px-2 py-3 text-center text-xs transition ${
                       jrPassClasse === c.key
                         ? "border-[#2f80c9] bg-[#2f80c9]/10 font-medium text-[#2f80c9]"
                         : "border-black/15 bg-black/[0.03] text-black/60 hover:border-black/30"
                     }`}
                   >
                     {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={c.icone} alt="" className="h-6 w-6 shrink-0 rounded object-contain" />
-                    {c.label}
+                    <img src={c.icone} alt="" className="h-10 w-10 shrink-0 object-contain" />
+                    <span>{c.label}</span>
                   </button>
                 ))}
               </div>
@@ -1651,7 +1662,7 @@ export default function CalculadoraReversaPage() {
               <div className="mt-3 rounded-lg border border-black/10 bg-black/[0.02] p-3">
                 <p className="flex items-center gap-1.5 text-xs font-medium text-[#0A2540]">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src="/images/ingressos/disneyland-logo.png" alt="" className="h-5 w-5 shrink-0 object-contain" />
+                  <img src="/images/ingressos/disneyland-logo.png" alt="" className="h-9 w-9 shrink-0 object-contain" />
                   + Disney Premier Access (fast pass pago)
                 </p>
                 <p className="mt-0.5 text-[10px] text-black/40">
@@ -1680,7 +1691,7 @@ export default function CalculadoraReversaPage() {
               <div className="mt-3 rounded-lg border border-black/10 bg-black/[0.02] p-3">
                 <p className="flex items-center gap-1.5 text-xs font-medium text-[#0A2540]">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src="/images/ingressos/usj-logo.png" alt="" className="h-5 w-5 shrink-0 rounded object-contain" />
+                  <img src="/images/ingressos/usj-logo.png" alt="" className="h-9 w-9 shrink-0 rounded object-contain" />
                   + USJ Express Pass (fast pass pago)
                 </p>
                 <p className="mt-0.5 text-xs leading-5 text-black/40">
@@ -2134,37 +2145,37 @@ export default function CalculadoraReversaPage() {
                   <p className="text-[10px] uppercase tracking-[0.2em] text-black/40">
                     Total do pacote sugerido
                   </p>
-                  {totalManual ? (
-                    <div className="mt-1 flex items-center gap-2">
-                      <span className={`${display.className} text-4xl font-medium text-[#2f80c9]`}>
-                        R$
-                      </span>
-                      <input
-                        type="number"
-                        value={totalValorManual}
-                        onChange={(e) => {
-                          const v = Number(e.target.value);
-                          if (!Number.isNaN(v)) setTotalValorManual(v);
-                        }}
-                        className={`${display.className} h-12 w-44 rounded-lg border border-[#2f80c9]/40 bg-[#2f80c9]/5 px-2 text-3xl font-medium text-[#2f80c9] outline-none`}
-                      />
-                    </div>
-                  ) : (
-                    <p className={`${display.className} mt-1 text-4xl font-medium text-[#2f80c9]`}>
-                      {formatBRL(totalSelecionado)}
-                    </p>
-                  )}
+                  <div className="mt-1 flex items-center gap-2">
+                    <span className={`${display.className} text-4xl font-medium text-[#2f80c9]`}>
+                      R$
+                    </span>
+                    <input
+                      type="number"
+                      value={Math.round(totalManual ? totalValorManual : totalCalculado)}
+                      onChange={(e) => {
+                        const v = Number(e.target.value);
+                        if (!Number.isNaN(v)) {
+                          setTotalValorManual(v);
+                          setTotalManual(true);
+                        }
+                      }}
+                      className={`${display.className} h-12 w-44 rounded-lg border px-2 text-3xl font-medium text-[#2f80c9] outline-none focus:border-[#2f80c9]/60 ${
+                        totalManual
+                          ? "border-[#2f80c9]/40 bg-[#2f80c9]/5"
+                          : "border-black/15 bg-transparent"
+                      }`}
+                    />
+                  </div>
                   <p className="text-sm text-black/40">{brlParaUSDLabel(totalSelecionado, cambio)}</p>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      if (!totalManual) setTotalValorManual(totalCalculado);
-                      setTotalManual((v) => !v);
-                    }}
-                    className="mt-1 text-[10px] uppercase tracking-wide text-black/40 underline underline-offset-2 hover:text-black/60"
-                  >
-                    {totalManual ? "usar total calculado" : "ajustar total manualmente"}
-                  </button>
+                  {totalManual && (
+                    <button
+                      type="button"
+                      onClick={() => setTotalManual(false)}
+                      className="mt-1 text-[10px] uppercase tracking-wide text-black/40 underline underline-offset-2 hover:text-black/60"
+                    >
+                      usar total calculado automaticamente
+                    </button>
+                  )}
                   <CambioLabel cambio={cambio} className="mt-1 text-[11px] text-black/30" />
                 </div>
                 <div className="text-right">
