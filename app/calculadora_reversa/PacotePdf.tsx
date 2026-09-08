@@ -299,6 +299,7 @@ export function PacotePdfDocument(props: PacotePdfProps) {
     <Document title={`Proposta Ajisai - ${tituloPacote}`} author="Ajisai · Alpinea">
       {/* ── PÁGINA 1 — RESUMO DO PACOTE ── */}
       <Page size="A4" style={styles.page}>
+        {/* eslint-disable-next-line jsx-a11y/alt-text -- Image aqui é do @react-pdf/renderer, não HTML/next-image; não aceita alt */}
         <Image src={LOGO_DATA_URI} style={styles.logo} />
         <Text style={styles.eyebrow}>Proposta de viagem personalizada</Text>
         <Text style={styles.h1}>{tituloPacote}</Text>

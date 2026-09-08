@@ -745,7 +745,13 @@ export const FATOR_QUARTO: Record<(typeof TIPOS_QUARTO)[number], number> = {
   Triplo: 0.5,
 };
 
-export const DIARIA_TRANSPORTE = comMargemEImposto(150);
+// Van dedicada (Toyota Alphard/Hiace) com motorista, sem compartilhar
+// veículo — recalibrado em 08/set/2026 a pedido do Wilson ("valores estao
+// totalmente incompativeis com a realidade"): pesquisa de mercado indicou
+// ¥40.000-70.000/dia (~US$265-465) por uma van particular com motorista no
+// Japão; Wilson confirmou R$1.500/dia como valor final (custo base 1000,
+// já com a margem padrão da Alpinea).
+export const DIARIA_TRANSPORTE = comMargemEImposto(1000);
 // Guia: custo de US$ 350/dia a cada 4 pessoas — grupos maiores precisam de
 // mais de um guia, cobrado proporcionalmente. Valor nativo em dólar —
 // convertido pra reais com a cotação do dia antes de entrar no total (ver

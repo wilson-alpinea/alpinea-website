@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { Bodoni_Moda } from "next/font/google";
 import { useMemo, useState } from "react";
+import { gerarEBaixarPdf } from "./PacotePdf";
 import {
   NumberStepper,
   DESTINOS,
@@ -831,6 +832,23 @@ function CidadeCombobox({
 // Upgrades de categoria de hotel e classe do voo são os itens de maior
 // impacto na experiência (perfil de cliente de alta/altíssima renda), por
 // isso entram antes dos complementares.
+function IconPdf({ className = "h-4 w-4" }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden="true">
+      <path
+        d="M6 2.75h8.379a1 1 0 0 1 .707.293l3.871 3.871a1 1 0 0 1 .293.707V19.5A1.75 1.75 0 0 1 17.5 21.25h-11.5A1.75 1.75 0 0 1 4.25 19.5v-15A1.75 1.75 0 0 1 6 2.75Z"
+        stroke="currentColor"
+        strokeWidth="1.4"
+        strokeLinejoin="round"
+      />
+      <path d="M14 2.75V6.5a1 1 0 0 0 1 1h3.75" stroke="currentColor" strokeWidth="1.4" strokeLinejoin="round" />
+      <text x="12" y="16.5" textAnchor="middle" fontSize="6.2" fontWeight="700" fill="currentColor" stroke="none">
+        PDF
+      </text>
+    </svg>
+  );
+}
+
 export default function CalculadoraReversaPage() {
   const cambio = useCambioUSD();
   const cambioCotacao = cambio?.cotacao ?? 5.3;
@@ -895,6 +913,7 @@ export default function CalculadoraReversaPage() {
   // pra constar na mensagem enviada.
   const [itensAlterados, setItensAlterados] = useState<Set<string>>(new Set());
   const [geradoEm] = useState(() => new Date());
+  const [gerandoPdf, setGerandoPdf] = useState(false);
 
   // Ajuste manual de valor - sobrescreve o preco calculado de um item
   // especifico (ex.: negociacao pontual) sem perder o calculo automatico
@@ -916,6 +935,7 @@ export default function CalculadoraReversaPage() {
   // a `pessoas`, mas é editável separadamente (ex.: crianças pequenas ou
   // quem já tem passe não entram na conta).
   const [jrPassPessoas, setJrPassPessoas] = useState(pessoas);
+  const [guiaDias, setGuiaDias] = useState(dias);
 
   // Wi-fi - eSIM (por pessoa) ou Pocket Wi-Fi (aparelho compartilhado,
   // cobre varias pessoas). Ambos escalam com a quantidade de dias.
@@ -1292,20 +1312,24 @@ export default function CalculadoraReversaPage() {
     });
 
     const precoGuia = Math.round(
-      DIARIA_GUIA_USD * dias * Math.max(1, Math.ceil(pessoas / GUIA_TAMANHO_GRUPO)) * cambioCotacao,
+      DIARIA_GUIA_USD * guiaDias * Math.max(1, Math.ceil(pessoas / GUIA_TAMANHO_GRUPO)) * cambioCotacao,
     );
-    const guiaRecomendado = cabe(precoGuia);
-    if (guiaRecomendado) gasto += precoGuia;
-    incluidos.push({
-      label: "Guia Turístico",
-      detalhe: [
-        "Guia particular fluente em português acompanhando o roteiro.",
-        "Ajuda com trajetos, horários e filas.",
-        `US$ ${DIARIA_GUIA_USD}/dia a cada ${GUIA_TAMANHO_GRUPO} pessoas`,
-      ],
-      precoBRL: precoGuia,
-      recomendado: guiaRecomendado,
-    });
+    if (guiaDias > 0) {
+      const guiaRecomendado = cabe(precoGuia);
+      if (guiaRecomendado) gasto += precoGuia;
+      incluidos.push({
+        chave: "guia",
+        label: "Guia Turístico",
+        detalhe: [
+          "Guia particular fluente em português acompanhando o roteiro.",
+          "Ajuda com trajetos, horários e filas.",
+          `US$ ${DIARIA_GUIA_USD}/dia a cada ${GUIA_TAMANHO_GRUPO} pessoas`,
+          `${guiaDias} de ${dias} dia${dias === 1 ? "" : "s"} da viagem`,
+        ],
+        precoBRL: precoGuia,
+        recomendado: guiaRecomendado,
+      });
+    }
 
     // 3) JR Pass — faixa de dias e classe escolhidas pelo vendedor; só
     // entra quantidade de gente que realmente compra o passe (editável,
@@ -1511,6 +1535,7 @@ export default function CalculadoraReversaPage() {
     temporada,
     nomesDestinos,
     extensoesSelecionadas,
+    guiaDias,
     cambioCotacao,
     hotelManual,
     hotelDiariaManual,
@@ -1529,7 +1554,10 @@ export default function CalculadoraReversaPage() {
     usjExpressPassTier,
   ]);
 
-  const pacoteSugeridoLabel = `Hotel ${resultado.categoriaHotelFinal} · Aéreo ${resultado.classeAereoFinal} · ${dias} dias · ${pessoas} ${pessoas === 1 ? "pessoa" : "pessoas"} · orçamento ${formatBRL(orcamento)}`;
+  const extensoesLabel = EXTENSOES_INTERNACIONAIS.filter((extensao) => extensoesSelecionadas.has(extensao.key))
+    .map((extensao) => `+ ${extensao.dias} dias ${extensao.nome}`)
+    .join(" · ");
+  const pacoteSugeridoLabel = `Hotel ${resultado.categoriaHotelFinal} · Aéreo ${resultado.classeAereoFinal} · ${dias} dias · ${pessoas} ${pessoas === 1 ? "pessoa" : "pessoas"}${extensoesLabel ? ` · ${extensoesLabel}` : ""} · orçamento ${formatBRL(orcamento)}`;
 
   function alternarItem(chave: string) {
     setItensAlterados((atual) => {
@@ -1589,6 +1617,38 @@ export default function CalculadoraReversaPage() {
         );
 
   const geradoEmLabel = `${geradoEm.toLocaleDateString("pt-BR")} às ${geradoEm.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}`;
+
+  async function handleGerarPdf() {
+    setGerandoPdf(true);
+    try {
+      await gerarEBaixarPdf({
+        tituloPacote: pacoteSugeridoLabel,
+        dias,
+        tipoQuarto,
+        pessoas,
+        geradoEmLabel,
+        cambioLabel: cambio
+          ? cambio.fallback
+            ? `Câmbio estimado: US$ 1 = R$ ${cambio.cotacao.toFixed(2).replace(".", ",")} — cotação do Banco Central indisponível no momento.`
+            : `Câmbio do dia: US$ 1 = R$ ${cambio.cotacao.toFixed(2).replace(".", ",")}${cambio.data ? ` (PTAX Banco Central, ${cambio.data})` : " (PTAX Banco Central)"}`
+          : "Cotação do dia indisponível",
+        itens: itensSelecionados.map((item) => ({
+          chave: chaveDoItem(item),
+          label: item.label,
+          detalhe: item.detalhe,
+          precoBRL: valorItem(item),
+        })),
+        totalBRL: totalSelecionado,
+        orcamentoBRL: orcamento,
+        saldoBRL: saldoSelecionado,
+      });
+    } catch (erro) {
+      console.error("Falha ao gerar PDF da proposta:", erro);
+      window.alert("Não foi possível gerar o PDF agora. Tente novamente em alguns segundos.");
+    } finally {
+      setGerandoPdf(false);
+    }
+  }
 
   const mensagemWhatsapp = [
     `Proposta Ajisai — ${pacoteSugeridoLabel}`,
@@ -2037,6 +2097,25 @@ export default function CalculadoraReversaPage() {
                 formatValue={(v) => `${v} de ${pessoas} viajante${pessoas === 1 ? "" : "s"}`}
               />
             </div>
+          </div>
+
+          <div className="sm:col-span-2">
+            <span className="mb-2 block text-[10px] uppercase tracking-[0.2em] text-black/50">
+              Guia Turístico
+            </span>
+            <div className="max-w-xs">
+              <NumberStepper
+                label="Quantos dias o cliente quer guia"
+                value={guiaDias}
+                onChange={setGuiaDias}
+                min={0}
+                max={dias}
+                formatValue={(v) => (v === 0 ? "Sem guia" : `${v} de ${dias} dia${dias === 1 ? "" : "s"}`)}
+              />
+            </div>
+            <span className="mt-1.5 block text-[11px] text-black/40">
+              US$ {DIARIA_GUIA_USD}/dia a cada {GUIA_TAMANHO_GRUPO} pessoas
+            </span>
           </div>
 
           <div className="sm:col-span-2">
@@ -2528,6 +2607,16 @@ export default function CalculadoraReversaPage() {
                 <span className="rounded-full bg-[#0A2540] px-3 py-1 text-xs font-semibold text-white">
                   {pessoas} {pessoas === 1 ? "pessoa" : "pessoas"}
                 </span>
+                {EXTENSOES_INTERNACIONAIS.filter((extensao) => extensoesSelecionadas.has(extensao.key)).map(
+                  (extensao) => (
+                    <span
+                      key={extensao.key}
+                      className="rounded-full bg-emerald-600 px-3 py-1 text-xs font-semibold text-white"
+                    >
+                      + {extensao.dias} dias · {extensao.nome}
+                    </span>
+                  ),
+                )}
               </div>
 
               <p className="mt-2 text-[11px] text-black/35">
@@ -2693,18 +2782,29 @@ export default function CalculadoraReversaPage() {
                 cotados à parte, sob consulta. Valor final sujeito a confirmação da Ajisai.
               </p>
 
-              <button
-                type="button"
-                onClick={() =>
-                  window.open(
-                    `https://wa.me/5511930300101?text=${encodeURIComponent(mensagemWhatsapp)}`,
-                    "_blank",
-                  )
-                }
-                className="mt-7 block w-full rounded-full bg-[#2f80c9] px-6 py-4 text-center text-xs font-medium uppercase tracking-[0.25em] text-white transition hover:bg-[#3b91dc] sm:w-auto"
-              >
-                Falar sobre esse pacote no WhatsApp
-              </button>
+              <div className="mt-7 flex flex-wrap gap-3">
+                <button
+                  type="button"
+                  onClick={() =>
+                    window.open(
+                      `https://wa.me/5511930300101?text=${encodeURIComponent(mensagemWhatsapp)}`,
+                      "_blank",
+                    )
+                  }
+                  className="block rounded-full bg-[#2f80c9] px-6 py-4 text-center text-xs font-medium uppercase tracking-[0.25em] text-white transition hover:bg-[#3b91dc]"
+                >
+                  Falar sobre esse pacote no WhatsApp
+                </button>
+                <button
+                  type="button"
+                  onClick={handleGerarPdf}
+                  disabled={gerandoPdf}
+                  className="flex items-center gap-2 rounded-full border border-[#2f80c9]/40 px-6 py-4 text-center text-xs font-medium uppercase tracking-[0.25em] text-[#2f80c9] transition hover:bg-[#2f80c9]/5 disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  <IconPdf className="h-4 w-4" />
+                  {gerandoPdf ? "Gerando PDF…" : "Gerar PDF da proposta"}
+                </button>
+              </div>
             </>
           )}
         </div>
@@ -2733,19 +2833,31 @@ export default function CalculadoraReversaPage() {
               {resultado.cabeNoOrcamento ? formatBRL(saldoSelecionado) : "—"}
             </p>
           </div>
-          <button
-            type="button"
-            disabled={!resultado.cabeNoOrcamento}
-            onClick={() =>
-              window.open(
-                `https://wa.me/5511930300101?text=${encodeURIComponent(mensagemWhatsapp)}`,
-                "_blank",
-              )
-            }
-            className="rounded-full bg-[#2f80c9] px-5 py-2.5 text-[10px] font-medium uppercase tracking-[0.2em] text-white transition hover:bg-[#3b91dc] disabled:cursor-not-allowed disabled:opacity-40"
-          >
-            WhatsApp
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              disabled={!resultado.cabeNoOrcamento || gerandoPdf}
+              onClick={handleGerarPdf}
+              aria-label="Gerar PDF da proposta"
+              title="Gerar PDF da proposta"
+              className="flex h-9 w-9 items-center justify-center rounded-full border border-[#2f80c9]/40 text-[#2f80c9] transition hover:bg-[#2f80c9]/5 disabled:cursor-not-allowed disabled:opacity-40"
+            >
+              <IconPdf className="h-4 w-4" />
+            </button>
+            <button
+              type="button"
+              disabled={!resultado.cabeNoOrcamento}
+              onClick={() =>
+                window.open(
+                  `https://wa.me/5511930300101?text=${encodeURIComponent(mensagemWhatsapp)}`,
+                  "_blank",
+                )
+              }
+              className="rounded-full bg-[#2f80c9] px-5 py-2.5 text-[10px] font-medium uppercase tracking-[0.2em] text-white transition hover:bg-[#3b91dc] disabled:cursor-not-allowed disabled:opacity-40"
+            >
+              WhatsApp
+            </button>
+          </div>
         </div>
       </div>
     </main>
