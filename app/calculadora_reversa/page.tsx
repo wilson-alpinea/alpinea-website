@@ -1382,14 +1382,14 @@ export default function CalculadoraReversaPage() {
               <button
                 type="button"
                 onClick={() => alternarTema(null)}
-                className={`flex w-28 flex-col items-center gap-2 rounded-lg border px-2 py-3 text-center text-xs transition ${
+                className={`flex w-32 flex-col items-center gap-2 rounded-lg border px-2 py-3 text-center text-xs transition ${
                   temasSelecionados.size === 0
                     ? "border-[#2f80c9] bg-[#2f80c9]/10 font-medium text-[#2f80c9]"
                     : "border-black/15 bg-black/[0.03] text-black/60 hover:border-black/30"
                 }`}
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src="/images/temas/01-sem-tema.png" alt="" className="h-16 w-16 shrink-0" />
+                <img src="/images/temas/01-sem-tema.png" alt="" className="h-20 w-20 shrink-0" />
                 Sem tema
               </button>
               {TEMAS.map((tema) => {
@@ -1401,7 +1401,7 @@ export default function CalculadoraReversaPage() {
                     type="button"
                     onClick={() => alternarTema(tema.key)}
                     disabled={desabilitado}
-                    className={`flex w-28 flex-col items-center gap-2 rounded-lg border px-2 py-3 text-center text-xs transition ${
+                    className={`flex w-32 flex-col items-center gap-2 rounded-lg border px-2 py-3 text-center text-xs transition ${
                       marcado
                         ? "border-[#2f80c9] bg-[#2f80c9]/10 font-medium text-[#2f80c9]"
                         : desabilitado
@@ -1413,7 +1413,7 @@ export default function CalculadoraReversaPage() {
                     <img
                       src={tema.icone}
                       alt=""
-                      className={`h-16 w-16 shrink-0 ${desabilitado ? "opacity-40" : ""}`}
+                      className={`h-20 w-20 shrink-0 ${desabilitado ? "opacity-40" : ""}`}
                     />
                     {tema.nome}
                   </button>
@@ -1649,7 +1649,7 @@ export default function CalculadoraReversaPage() {
                     />
                     {ingresso.icone ? (
                       // eslint-disable-next-line @next/next/no-img-element
-                      <img src={ingresso.icone} alt="" className="h-14 w-14 shrink-0 rounded object-contain" />
+                      <img src={ingresso.icone} alt="" className="h-16 w-auto max-w-full shrink-0 object-contain" />
                     ) : (
                       // eslint-disable-next-line @next/next/no-img-element
                       <img
@@ -1670,7 +1670,7 @@ export default function CalculadoraReversaPage() {
               <div className="mt-3 rounded-lg border border-black/10 bg-black/[0.02] p-3">
                 <p className="flex items-center gap-1.5 text-xs font-medium text-[#0A2540]">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src="/images/ingressos/disneyland-logo.png" alt="" className="h-9 w-9 shrink-0 object-contain" />
+                  <img src="/images/ingressos/disneyland-logo.png" alt="" className="h-10 w-auto max-w-[7rem] shrink-0 object-contain" />
                   + Disney Premier Access (fast pass pago)
                 </p>
                 <p className="mt-0.5 text-[10px] text-black/40">
@@ -1699,7 +1699,7 @@ export default function CalculadoraReversaPage() {
               <div className="mt-3 rounded-lg border border-black/10 bg-black/[0.02] p-3">
                 <p className="flex items-center gap-1.5 text-xs font-medium text-[#0A2540]">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src="/images/ingressos/usj-logo.png" alt="" className="h-9 w-9 shrink-0 rounded object-contain" />
+                  <img src="/images/ingressos/usj-logo.png" alt="" className="h-10 w-auto max-w-[7rem] shrink-0 object-contain" />
                   + USJ Express Pass (fast pass pago)
                 </p>
                 <p className="mt-0.5 text-xs leading-5 text-black/40">
