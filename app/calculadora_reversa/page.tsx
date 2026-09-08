@@ -329,6 +329,7 @@ function CelulaUsjTabela({ celula }: { celula: UsjComboCelula }) {
 
 type DestinoKey = (typeof DESTINOS)[number]["key"];
 type TemaKey =
+  | "roteiroClassico"
   | "automobilismo"
   | "gastronomia"
   | "animeGames"
@@ -368,8 +369,21 @@ type TemaCidade = {
 // Máximo de temas que podem ficar ativos ao mesmo tempo (misturar temas
 // pra montar a viagem do cliente). Pedido do Wilson, 04/set/2026.
 const MAX_TEMAS_SIMULTANEOS = 3;
+const MAX_CIDADES_ROTEIRO = 5;
 
 const TEMAS: { key: TemaKey; nome: string; icone: string; cidades: TemaCidade[] }[] = [
+  {
+    key: "roteiroClassico",
+    nome: "Roteiro Clássico (Recomendado)",
+    icone: "/images/temas/00-roteiro-classico.png",
+    cidades: [
+      { key: "tokyo", destaque: "Capital e porta de entrada do Japão — base clássica de qualquer primeira viagem", padrao: true },
+      { key: "osaka", destaque: "Gastronomia informal, Dotonbori e proximidade com Kyoto", padrao: true },
+      { key: "kyoto", destaque: "Templos, tradição e cultura japonesa clássica", padrao: true },
+      { key: "fuji", destaque: "Vista do Monte Fuji — entra automaticamente em roteiros de mais de 10 dias", padrao: false },
+      { key: "hakone", destaque: "Onsen e vistas do Fuji a caminho de Tokyo — entra automaticamente em roteiros de mais de 10 dias", padrao: false },
+    ],
+  },
   {
     key: "automobilismo",
     nome: "Automobilismo",
@@ -554,7 +568,7 @@ const MAX_ORCAMENTO_BRL = 2000000;
 
 type ItemPacote = {
   label: string;
-  detalhe: string;
+  detalhe: string[];
   precoBRL: number;
   /** Chave estável de identificação do item - usada em vez do label nos
    * controles de selecao e ajuste manual, porque o label de alguns itens
@@ -640,6 +654,75 @@ function VolumeSlider<T extends string>({
   );
 }
 
+// Combobox de cidade — input de texto com busca + lista filtrada, em vez de
+// um <select> nativo (a lista de DESTINOS passa de 30 cidades e rolar um
+// dropdown pra achar uma é ruim; digitar e filtrar é bem mais rápido).
+// onMouseDown com preventDefault nas opções evita que o blur do input feche
+// a lista antes do clique registrar (truque padrão de combobox).
+function CidadeCombobox({
+  value,
+  onChange,
+  todasSelecionadas,
+}: {
+  value: DestinoKey;
+  onChange: (key: DestinoKey) => void;
+  /** Cidades já usadas por outras linhas do roteiro — ficam de fora das
+   * opções, exceto a da própria linha (senão ela sumiria da lista). */
+  todasSelecionadas: DestinoKey[];
+}) {
+  const [aberto, setAberto] = useState(false);
+  const [busca, setBusca] = useState("");
+  const nomeAtual = DESTINOS.find((d) => d.key === value)?.nome ?? value;
+  const opcoes = DESTINOS.filter(
+    (d) =>
+      (d.key === value || !todasSelecionadas.includes(d.key)) &&
+      d.nome.toLowerCase().includes(busca.trim().toLowerCase()),
+  );
+
+  return (
+    <div className="relative w-full">
+      <input
+        type="text"
+        value={aberto ? busca : nomeAtual}
+        onChange={(e) => setBusca(e.target.value)}
+        onFocus={(e) => {
+          setBusca("");
+          setAberto(true);
+          e.target.select();
+        }}
+        onBlur={() => setTimeout(() => setAberto(false), 120)}
+        placeholder="Digite pra buscar uma cidade…"
+        className="h-10 w-full rounded-lg border border-black/15 bg-black/[0.03] px-3 text-sm outline-none focus:border-black/30"
+      />
+      {aberto && (
+        <div className="absolute left-0 right-0 top-full z-20 mt-1 max-h-56 overflow-y-auto rounded-lg border border-black/15 bg-white shadow-lg">
+          {opcoes.length === 0 ? (
+            <p className="px-3 py-2 text-sm text-black/40">Nenhuma cidade encontrada</p>
+          ) : (
+            opcoes.map((d) => (
+              <button
+                key={d.key}
+                type="button"
+                onMouseDown={(e) => e.preventDefault()}
+                onClick={() => {
+                  onChange(d.key);
+                  setBusca("");
+                  setAberto(false);
+                }}
+                className={`block w-full px-3 py-2 text-left text-sm transition hover:bg-[#2f80c9]/10 ${
+                  d.key === value ? "bg-[#2f80c9]/10 font-medium text-[#2f80c9]" : "text-black/70"
+                }`}
+              >
+                {d.nome}
+              </button>
+            ))
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
 // Ordem em que os itens entram no pacote sugerido, depois dos itens fixos
 // (Roteiro + Aéreo Economy + Hotel 3 estrelas). Cada passo só é aplicado se
 // couber no saldo restante do orçamento — greedy, nessa ordem de prioridade.
@@ -659,8 +742,8 @@ export default function CalculadoraReversaPage() {
   // hotel das cidades marcadas, mesmo critério do calculador do
   // Personalizado). "Temas" abaixo é um atalho que pré-marca esse set;
   // o vendedor pode sempre ajustar cidade por cidade depois.
-  const [destinosSelecionados, setDestinosSelecionados] = useState<Set<DestinoKey>>(
-    () => new Set(["tokyo"]),
+  const [destinosSelecionados, setDestinosSelecionados] = useState<DestinoKey[]>(
+    () => ["tokyo"],
   );
   // Até MAX_TEMAS_SIMULTANEOS temas podem ficar ativos ao mesmo tempo —
   // permite montar uma viagem misturando temas (ex.: Automobilismo +
@@ -766,11 +849,26 @@ export default function CalculadoraReversaPage() {
   }
 
   function alternarDestino(key: DestinoKey) {
+    setDestinosSelecionados((atual) =>
+      atual.includes(key) ? atual.filter((k) => k !== key) : [...atual, key],
+    );
+  }
+
+  // Seletor manual de cidades (sem Tema ativo) — até MAX_CIDADES_ROTEIRO
+  // slots posicionais, cada um com seu próprio <select>.
+  function substituirDestinoManual(indice: number, novaCidade: DestinoKey) {
+    setDestinosSelecionados((atual) => atual.map((k, i) => (i === indice ? novaCidade : k)));
+  }
+
+  function removerDestinoManual(indice: number) {
+    setDestinosSelecionados((atual) => atual.filter((_, i) => i !== indice));
+  }
+
+  function adicionarDestinoManual() {
     setDestinosSelecionados((atual) => {
-      const novo = new Set(atual);
-      if (novo.has(key)) novo.delete(key);
-      else novo.add(key);
-      return novo;
+      if (atual.length >= MAX_CIDADES_ROTEIRO) return atual;
+      const proxima = DESTINOS.find((d) => !atual.includes(d.key))?.key;
+      return proxima ? [...atual, proxima] : atual;
     });
   }
 
@@ -785,7 +883,7 @@ export default function CalculadoraReversaPage() {
   function alternarTema(temaKey: TemaKey | null) {
     if (temaKey === null) {
       setTemasSelecionados(new Set());
-      setDestinosSelecionados(new Set(["tokyo"]));
+      setDestinosSelecionados(["tokyo"]);
       return;
     }
 
@@ -799,12 +897,19 @@ export default function CalculadoraReversaPage() {
     }
     setTemasSelecionados(novo);
 
-    const cidadesUniao = new Set<DestinoKey>();
+    const cidadesUniao: DestinoKey[] = [];
     novo.forEach((key) => {
       const tema = TEMAS.find((t) => t.key === key);
-      tema?.cidades.filter((c) => c.padrao).forEach((c) => cidadesUniao.add(c.key));
+      // Roteiro Clássico soma Fuji e Hakone automaticamente quando o
+      // roteiro passa de 10 dias — pedido do Wilson, 08/set/2026.
+      const ehRoteiroClassicoLongo = key === "roteiroClassico" && dias > 10;
+      tema?.cidades
+        .filter((c) => c.padrao || (ehRoteiroClassicoLongo && (c.key === "fuji" || c.key === "hakone")))
+        .forEach((c) => {
+          if (!cidadesUniao.includes(c.key)) cidadesUniao.push(c.key);
+        });
     });
-    setDestinosSelecionados(cidadesUniao.size > 0 ? cidadesUniao : new Set(["tokyo"]));
+    setDestinosSelecionados(cidadesUniao.length > 0 ? cidadesUniao : ["tokyo"]);
 
     if (novo.has("parquesEntretenimento")) {
       setIngressosSelecionados((atual) => {
@@ -821,13 +926,13 @@ export default function CalculadoraReversaPage() {
   // calculador do Personalizado (multiplicadorCidadeHotel, em
   // CustomPackageCard.tsx); 1 (sem ajuste) se nenhuma cidade estiver marcada.
   const multiplicadorCidade =
-    destinosSelecionados.size === 0
+    destinosSelecionados.length === 0
       ? 1
-      : Array.from(destinosSelecionados).reduce(
+      : destinosSelecionados.reduce(
           (soma, key) => soma + CIDADE_MULTIPLICADOR_HOTEL[key],
           0,
-        ) / destinosSelecionados.size;
-  const nomesDestinos = Array.from(destinosSelecionados)
+        ) / destinosSelecionados.length;
+  const nomesDestinos = destinosSelecionados
     .map((key) => DESTINOS.find((d) => d.key === key)?.nome ?? key)
     .join(" · ");
 
@@ -868,7 +973,7 @@ export default function CalculadoraReversaPage() {
   const diasParquesDiaInteiro = (["disneyland", "disneysea", "usj"] as const).filter((k) =>
     ingressosSelecionados.has(k),
   ).length;
-  const diasMinimosSugeridos = Math.max(1, destinosSelecionados.size) + diasParquesDiaInteiro;
+  const diasMinimosSugeridos = Math.max(1, destinosSelecionados.length) + diasParquesDiaInteiro;
   const diasInsuficientes = dias < diasMinimosSugeridos;
 
   const resultado = useMemo(() => {
@@ -905,20 +1010,26 @@ export default function CalculadoraReversaPage() {
       {
         chave: "roteiro",
         label: "Roteiro Personalizado",
-        detalhe:
-          "Painel digital Ajisai com o roteiro dia a dia — atrações, deslocamentos, refeições e informações práticas dos aeroportos, sob medida para o grupo e acessível pelo celular durante toda a viagem.",
+        detalhe: [
+          "Painel digital Ajisai com o roteiro dia a dia.",
+          "Atrações, deslocamentos, refeições e informações práticas dos aeroportos.",
+          "Sob medida para o grupo e acessível pelo celular durante toda a viagem.",
+        ],
         precoBRL: precoRoteiro,
       },
       {
         chave: "aereo",
         label: "Aéreo — Economy",
-        detalhe: `Passagem internacional ida e volta para ${pessoas} ${pessoas === 1 ? "pessoa" : "pessoas"}, com bagagem despachada incluída conforme a franquia da companhia aérea`,
+        detalhe: [
+          `Passagem internacional ida e volta para ${pessoas} ${pessoas === 1 ? "pessoa" : "pessoas"}.`,
+          "Bagagem despachada incluída conforme a franquia da companhia aérea.",
+        ],
         precoBRL: precoAereoEconomy,
       },
       {
         chave: "hotel",
         label: "Hotel — 3 estrelas",
-        detalhe: `${dias} diárias · ${tipoQuarto} · categoria mínima`,
+        detalhe: [`${dias} diárias`, tipoQuarto, "Categoria mínima"],
         precoBRL: precoHotel("3 estrelas"),
       },
     ];
@@ -958,7 +1069,12 @@ export default function CalculadoraReversaPage() {
     if (transporteRecomendado) gasto += precoTransporte;
     incluidos.push({
       label: "Transporte",
-      detalhe: `Transfers e deslocamentos privados do roteiro (aeroporto, entre cidades e até as atrações) em van dedicada — Toyota Alphard ou Hiace, conforme tamanho do grupo/bagagem, sem compartilhar veículo com outros grupos — ${dias} dias. Não inclui o transfer de ônibus (limousine bus) aeroporto ↔ centro de Tóquio, cotado à parte.`,
+      detalhe: [
+        "Transfers e deslocamentos privados do roteiro (aeroporto, entre cidades e até as atrações).",
+        "Van dedicada — Toyota Alphard ou Hiace, conforme tamanho do grupo/bagagem.",
+        `Sem compartilhar veículo com outros grupos — ${dias} dias.`,
+        "Não inclui o transfer de ônibus (limousine bus) aeroporto ↔ centro de Tóquio, cotado à parte.",
+      ],
       precoBRL: precoTransporte,
       recomendado: transporteRecomendado,
     });
@@ -968,7 +1084,11 @@ export default function CalculadoraReversaPage() {
     if (seguroRecomendado) gasto += precoSeguro;
     incluidos.push({
       label: "Seguro Viagem",
-      detalhe: `Cobertura médico-hospitalar (mínimo US$ 30 mil, com upgrade para US$ 60 mil), bagagem extraviada, cancelamento de viagem e assistência 24h em português — ${dias} dias · ${pessoas} ${pessoas === 1 ? "pessoa" : "pessoas"}`,
+      detalhe: [
+        "Cobertura médico-hospitalar (mínimo US$ 30 mil, com upgrade para US$ 60 mil).",
+        "Bagagem extraviada, cancelamento de viagem e assistência 24h em português.",
+        `${dias} dias · ${pessoas} ${pessoas === 1 ? "pessoa" : "pessoas"}`,
+      ],
       precoBRL: precoSeguro,
       recomendado: seguroRecomendado,
     });
@@ -980,7 +1100,11 @@ export default function CalculadoraReversaPage() {
     if (guiaRecomendado) gasto += precoGuia;
     incluidos.push({
       label: "Guia Turístico",
-      detalhe: `Guia particular fluente em português acompanhando o roteiro, ajuda com trajetos, horários e filas — US$ ${DIARIA_GUIA_USD}/dia a cada ${GUIA_TAMANHO_GRUPO} pessoas`,
+      detalhe: [
+        "Guia particular fluente em português acompanhando o roteiro.",
+        "Ajuda com trajetos, horários e filas.",
+        `US$ ${DIARIA_GUIA_USD}/dia a cada ${GUIA_TAMANHO_GRUPO} pessoas`,
+      ],
       precoBRL: precoGuia,
       recomendado: guiaRecomendado,
     });
@@ -996,7 +1120,12 @@ export default function CalculadoraReversaPage() {
       incluidos.push({
         chave: "jrpass",
         label: `JR Pass — ${jrPassDias} dias${jrPassClasse === "green" ? " · Green Car" : ""}`,
-        detalhe: `Passe ferroviário JR, com deslocamentos ilimitados nas linhas JR — incluindo a maioria dos trens-bala (Shinkansen)${jrPassClasse === "green" ? ", classe Green Car" : ""} — durante ${jrPassDias} dias corridos de validade · ${jrPassPessoas} de ${pessoas} viajante${pessoas === 1 ? "" : "s"} · tabela ${JR_PASS_TABELA_VALIDADE}`,
+        detalhe: [
+          "Passe ferroviário JR, com deslocamentos ilimitados nas linhas JR.",
+          `Incluindo a maioria dos trens-bala (Shinkansen)${jrPassClasse === "green" ? ", classe Green Car" : ""}.`,
+          `Durante ${jrPassDias} dias corridos de validade.`,
+          `${jrPassPessoas} de ${pessoas} viajante${pessoas === 1 ? "" : "s"} · tabela ${JR_PASS_TABELA_VALIDADE}`,
+        ],
         precoBRL: precoJrPass,
         recomendado: jrPassRecomendado,
       });
@@ -1017,8 +1146,16 @@ export default function CalculadoraReversaPage() {
         label: wifiTipo === "esim" ? "eSIM" : "Pocket Wi-Fi",
         detalhe:
           wifiTipo === "esim"
-            ? `eSIM com conexão 5G direto no celular de cada viajante, sem aparelho extra pra carregar · ${wifiPessoasOuUnidades} de ${pessoas} viajante${pessoas === 1 ? "" : "s"} · ${dias} dias`
-            : `Pocket Wi-Fi — aparelho físico compartilhado entre o grupo · ${wifiPessoasOuUnidades} aparelho${wifiPessoasOuUnidades === 1 ? "" : "s"} (até ${WIFI_TAMANHO_GRUPO} pessoas por unidade) — ${dias} dias`,
+            ? [
+                "eSIM com conexão 5G direto no celular de cada viajante.",
+                "Sem aparelho extra pra carregar.",
+                `${wifiPessoasOuUnidades} de ${pessoas} viajante${pessoas === 1 ? "" : "s"} · ${dias} dias`,
+              ]
+            : [
+                "Pocket Wi-Fi — aparelho físico compartilhado entre o grupo.",
+                `${wifiPessoasOuUnidades} aparelho${wifiPessoasOuUnidades === 1 ? "" : "s"} (até ${WIFI_TAMANHO_GRUPO} pessoas por unidade).`,
+                `${dias} dias`,
+              ],
         precoBRL: precoWifi,
         recomendado: wifiRecomendado,
       });
@@ -1051,7 +1188,11 @@ export default function CalculadoraReversaPage() {
     incluidos.push({
       chave: "motorista",
       label: "Motorista Privado",
-      detalhe: `Motorista particular à disposição do grupo, sem compartilhar veículo — mais privacidade e flexibilidade de horário que o transporte padrão do roteiro. US$ ${DIARIA_MOTORISTA_PRIVADO_USD}/dia para até ${MOTORISTA_TAMANHO_GRUPO} pessoas`,
+      detalhe: [
+        "Motorista particular à disposição do grupo, sem compartilhar veículo.",
+        "Mais privacidade e flexibilidade de horário que o transporte padrão do roteiro.",
+        `US$ ${DIARIA_MOTORISTA_PRIVADO_USD}/dia para até ${MOTORISTA_TAMANHO_GRUPO} pessoas`,
+      ],
       precoBRL: precoMotorista,
       recomendado: motoristaRecomendado,
     });
@@ -1061,8 +1202,10 @@ export default function CalculadoraReversaPage() {
     if (cambioRecomendado) gasto += PRECO_CAMBIO_BRASIL;
     incluidos.push({
       label: "Câmbio no Brasil",
-      detalhe:
-        "Retirada de ienes em espécie ainda no Brasil, com cotação comercial fechada antes do embarque — evita depender só de caixas eletrônicos ou casas de câmbio no Japão nos primeiros dias de viagem.",
+      detalhe: [
+        "Retirada de ienes em espécie ainda no Brasil, com cotação comercial fechada antes do embarque.",
+        "Evita depender só de caixas eletrônicos ou casas de câmbio no Japão nos primeiros dias de viagem.",
+      ],
       precoBRL: PRECO_CAMBIO_BRASIL,
       recomendado: cambioRecomendado,
     });
@@ -1101,7 +1244,12 @@ export default function CalculadoraReversaPage() {
       incluidos.push({
         chave: `ingresso-${ingresso.key}`,
         label: `Ingresso — ${ingresso.nome}${temFastPass ? ` + ${nomeFastPass}` : ""}`,
-        detalhe: `Ingresso de 1 dia, por pessoa${temFastPass ? ` + ${nomeFastPass} — fast pass pago à parte, pula fila nas atrações participantes` : ""}`,
+        detalhe: [
+          "Ingresso de 1 dia, por pessoa.",
+          ...(temFastPass
+            ? [`+ ${nomeFastPass} — fast pass pago à parte.`, "Pula fila nas atrações participantes."]
+            : []),
+        ],
         precoBRL: precoIngresso,
         recomendado: ingressoRecomendado,
       });
@@ -1114,7 +1262,10 @@ export default function CalculadoraReversaPage() {
       if (restaurantesRecomendado) gasto += precoRestaurantes;
       incluidos.push({
         label: "Reserva de Restaurantes High-End",
-        detalhe: `Pacote fechado de ${RESTAURANTES_HIGHEND_QTD} reservas em restaurantes Michelin/Tabelog Awards ou equivalente — até ${RESTAURANTES_HIGHEND_LIMITE_PESSOAS} pessoas`,
+        detalhe: [
+          `Pacote fechado de ${RESTAURANTES_HIGHEND_QTD} reservas em restaurantes Michelin/Tabelog Awards ou equivalente.`,
+          `Até ${RESTAURANTES_HIGHEND_LIMITE_PESSOAS} pessoas.`,
+        ],
         precoBRL: precoRestaurantes,
         recomendado: restaurantesRecomendado,
       });
@@ -1124,7 +1275,10 @@ export default function CalculadoraReversaPage() {
     incluidos[1] = {
       chave: "aereo",
       label: aereoManual ? "Aéreo — valor manual" : `Aéreo — ${classeAereoFinal}`,
-      detalhe: `Passagem internacional ida e volta para ${pessoas} ${pessoas === 1 ? "pessoa" : "pessoas"}, com bagagem despachada incluída conforme a franquia da companhia aérea`,
+      detalhe: [
+        `Passagem internacional ida e volta para ${pessoas} ${pessoas === 1 ? "pessoa" : "pessoas"}.`,
+        "Bagagem despachada incluída conforme a franquia da companhia aérea.",
+      ],
       precoBRL: precoClasseAereo(classeAereoFinal),
     };
     incluidos[2] = {
@@ -1132,7 +1286,7 @@ export default function CalculadoraReversaPage() {
       label: hotelManual
         ? `Hotel — ${categoriaHotelFinal} (valor manual)`
         : `Hotel — ${categoriaHotelFinal}`,
-      detalhe: `${dias} diárias · ${tipoQuarto} · ${nomesDestinos || "—"}`,
+      detalhe: [`${dias} diárias`, tipoQuarto, nomesDestinos || "—"],
       precoBRL: precoHotel(categoriaHotelFinal),
     };
 
@@ -1226,7 +1380,7 @@ export default function CalculadoraReversaPage() {
   const motoristaNaProposta = itensSelecionados.some((item) => chaveDoItem(item) === "motorista");
   const cidadesSemMotoristaObrigatorio = motoristaNaProposta
     ? []
-    : Array.from(destinosSelecionados)
+    : destinosSelecionados
         .map((key) => ({ key, nota: CIDADE_MOTORISTA_NOTA[key] }))
         .filter((c): c is { key: DestinoKey; nota: NonNullable<(typeof CIDADE_MOTORISTA_NOTA)[DestinoKey]> } =>
           c.nota?.nivel === "obrigatorio",
@@ -1255,7 +1409,7 @@ export default function CalculadoraReversaPage() {
           <img
             src="/images/ajisai-group-logo-crop.png"
             alt="Ajisai · Alpinea"
-            className="h-9 w-auto object-contain md:h-11"
+            className="h-12 w-auto object-contain md:h-16"
           />
           <Link
             href="/produtos"
@@ -1385,7 +1539,7 @@ export default function CalculadoraReversaPage() {
                 className={`flex w-32 flex-col items-center gap-2 rounded-lg border px-2 py-3 text-center text-xs transition ${
                   temasSelecionados.size === 0
                     ? "border-[#2f80c9] bg-[#2f80c9]/10 font-medium text-[#2f80c9]"
-                    : "border-black/15 bg-black/[0.03] text-black/60 hover:border-black/30"
+                    : "border-red-200 bg-red-50 text-red-700/70 hover:border-red-300"
                 }`}
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -1406,7 +1560,9 @@ export default function CalculadoraReversaPage() {
                         ? "border-[#2f80c9] bg-[#2f80c9]/10 font-medium text-[#2f80c9]"
                         : desabilitado
                           ? "cursor-not-allowed border-black/10 bg-black/[0.02] text-black/30"
-                          : "border-black/15 bg-black/[0.03] text-black/60 hover:border-black/30"
+                          : tema.key === "roteiroClassico"
+                            ? "border-emerald-200 bg-emerald-50 text-emerald-700/80 hover:border-emerald-300"
+                            : "border-black/15 bg-black/[0.03] text-black/60 hover:border-black/30"
                     }`}
                   >
                     {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -1422,24 +1578,44 @@ export default function CalculadoraReversaPage() {
             </div>
 
             {temasSelecionados.size === 0 ? (
-              <label className="mt-4 flex flex-col sm:max-w-xs">
+              <div className="mt-4 flex flex-col sm:max-w-xs">
                 <span className="mb-2 flex min-h-[2.2em] items-end text-[10px] uppercase leading-tight tracking-[0.2em] text-black/50">
-                  Cidade principal do roteiro
+                  Cidades do roteiro{" "}
+                  <span className="normal-case tracking-normal text-black/35">
+                    (até {MAX_CIDADES_ROTEIRO})
+                  </span>
                 </span>
-                <select
-                  value={Array.from(destinosSelecionados)[0] ?? "tokyo"}
-                  onChange={(e) =>
-                    setDestinosSelecionados(new Set([e.target.value as DestinoKey]))
-                  }
-                  className="h-10 w-full rounded-lg border border-black/15 bg-black/[0.03] px-3 text-sm outline-none focus:border-black/30"
-                >
-                  {DESTINOS.map((d) => (
-                    <option key={d.key} value={d.key}>
-                      {d.nome}
-                    </option>
+                <div className="flex flex-col gap-2">
+                  {destinosSelecionados.map((cidade, indice) => (
+                    <div key={indice} className="flex items-center gap-2">
+                      <CidadeCombobox
+                        value={cidade}
+                        onChange={(key) => substituirDestinoManual(indice, key)}
+                        todasSelecionadas={destinosSelecionados}
+                      />
+                      {destinosSelecionados.length > 1 && (
+                        <button
+                          type="button"
+                          onClick={() => removerDestinoManual(indice)}
+                          aria-label="Remover cidade"
+                          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-black/15 text-sm text-black/40 transition hover:border-red-300 hover:text-red-500"
+                        >
+                          ×
+                        </button>
+                      )}
+                    </div>
                   ))}
-                </select>
-              </label>
+                  {destinosSelecionados.length < MAX_CIDADES_ROTEIRO && (
+                    <button
+                      type="button"
+                      onClick={adicionarDestinoManual}
+                      className="flex h-10 items-center justify-center gap-1 rounded-lg border border-dashed border-black/20 text-sm text-black/50 transition hover:border-[#2f80c9]/50 hover:text-[#2f80c9]"
+                    >
+                      + Adicionar cidade
+                    </button>
+                  )}
+                </div>
+              </div>
             ) : (
               <div className="mt-4 overflow-hidden rounded-xl border border-black/10">
                 <div className="grid grid-cols-[minmax(140px,auto)_1fr] gap-x-6 bg-[#0A2540] px-4 py-2 text-[10px] uppercase tracking-[0.15em] text-white/70">
@@ -1448,7 +1624,7 @@ export default function CalculadoraReversaPage() {
                 </div>
                 {cidadesTemasAtivos.map((c) => {
                   const destino = DESTINOS.find((d) => d.key === c.key);
-                  const marcado = destinosSelecionados.has(c.key);
+                  const marcado = destinosSelecionados.includes(c.key);
                   const notaMotorista = CIDADE_MOTORISTA_NOTA[c.key];
                   return (
                     <label
@@ -1504,13 +1680,13 @@ export default function CalculadoraReversaPage() {
               </div>
             )}
             <span className="mt-1.5 block text-[11px] text-black/40">
-              {destinosSelecionados.size === 0
+              {destinosSelecionados.length === 0
                 ? "Nenhuma cidade selecionada — diária de hotel sem ajuste de mercado por cidade"
                 : `Ajuste de mercado do hotel: ${nomesDestinos} · multiplicador médio ${multiplicadorCidade.toFixed(2)}×`}
             </span>
             {diasInsuficientes && (
               <p className="mt-2 rounded-md bg-red-50 px-3 py-2 text-[11px] font-medium leading-4 text-red-700">
-                ⚠️ Com {destinosSelecionados.size} cidade{destinosSelecionados.size === 1 ? "" : "s"}
+                ⚠️ Com {destinosSelecionados.length} cidade{destinosSelecionados.length === 1 ? "" : "s"}
                 {diasParquesDiaInteiro > 0
                   ? ` e ${diasParquesDiaInteiro} parque${diasParquesDiaInteiro === 1 ? "" : "s"} de dia inteiro`
                   : ""}{" "}
@@ -1526,44 +1702,54 @@ export default function CalculadoraReversaPage() {
               JR Pass — validade e classe
             </span>
             <div className="flex flex-wrap gap-4">
-              <div className="flex gap-2">
-                {JR_PASS_DIAS_OPCOES.map((d) => (
-                  <button
-                    key={d}
-                    type="button"
-                    onClick={() => setJrPassDias(d)}
-                    className={`flex w-28 flex-col items-center justify-center gap-1.5 rounded-lg border px-2 py-3 text-center text-sm transition ${
-                      jrPassDias === d
-                        ? "border-[#2f80c9] bg-[#2f80c9]/10 font-medium text-[#2f80c9]"
-                        : "border-black/15 bg-black/[0.03] text-black/60 hover:border-black/30"
-                    }`}
-                  >
-                    {d} dias
-                  </button>
-                ))}
+              <div className="rounded-xl border border-black/10 bg-black/[0.02] p-3">
+                <span className="mb-2 block text-[9px] uppercase tracking-[0.15em] text-black/40">
+                  Validade
+                </span>
+                <div className="flex gap-2">
+                  {JR_PASS_DIAS_OPCOES.map((d) => (
+                    <button
+                      key={d}
+                      type="button"
+                      onClick={() => setJrPassDias(d)}
+                      className={`flex w-28 flex-col items-center justify-center gap-1.5 rounded-lg border px-2 py-3 text-center text-sm transition ${
+                        jrPassDias === d
+                          ? "border-[#2f80c9] bg-[#2f80c9]/10 font-medium text-[#2f80c9]"
+                          : "border-black/15 bg-white text-black/60 hover:border-black/30"
+                      }`}
+                    >
+                      {d} dias
+                    </button>
+                  ))}
+                </div>
               </div>
-              <div className="flex gap-2">
-                {(
-                  [
-                    { key: "comum", label: "Comum (Ordinary)", icone: "/images/ingressos/shinkansen-ordinary.png" },
-                    { key: "green", label: "Green Car", icone: "/images/ingressos/jr-green-car.png" },
-                  ] as const
-                ).map((c) => (
-                  <button
-                    key={c.key}
-                    type="button"
-                    onClick={() => setJrPassClasse(c.key)}
-                    className={`flex w-28 flex-col items-center gap-1.5 rounded-lg border px-2 py-3 text-center text-xs transition ${
-                      jrPassClasse === c.key
-                        ? "border-[#2f80c9] bg-[#2f80c9]/10 font-medium text-[#2f80c9]"
-                        : "border-black/15 bg-black/[0.03] text-black/60 hover:border-black/30"
-                    }`}
-                  >
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={c.icone} alt="" className="h-10 w-10 shrink-0 object-contain" />
-                    <span>{c.label}</span>
-                  </button>
-                ))}
+              <div className="rounded-xl border border-black/10 bg-black/[0.02] p-3">
+                <span className="mb-2 block text-[9px] uppercase tracking-[0.15em] text-black/40">
+                  Classe
+                </span>
+                <div className="flex gap-2">
+                  {(
+                    [
+                      { key: "comum", label: "Comum (Ordinary)", icone: "/images/ingressos/shinkansen-ordinary.png" },
+                      { key: "green", label: "Green Car", icone: "/images/ingressos/jr-green-car.png" },
+                    ] as const
+                  ).map((c) => (
+                    <button
+                      key={c.key}
+                      type="button"
+                      onClick={() => setJrPassClasse(c.key)}
+                      className={`flex w-28 flex-col items-center gap-1.5 rounded-lg border px-2 py-3 text-center text-xs transition ${
+                        jrPassClasse === c.key
+                          ? "border-[#2f80c9] bg-[#2f80c9]/10 font-medium text-[#2f80c9]"
+                          : "border-black/15 bg-white text-black/60 hover:border-black/30"
+                      }`}
+                    >
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={c.icone} alt="" className="h-10 w-10 shrink-0 object-contain" />
+                      <span>{c.label}</span>
+                    </button>
+                  ))}
+                </div>
               </div>
             </div>
             <span className="mt-1.5 block text-[11px] text-black/40">
@@ -1806,9 +1992,19 @@ export default function CalculadoraReversaPage() {
                 <button
                   type="button"
                   onClick={() => setMostrarDetalhesUsjExpressPass((v) => !v)}
-                  className="mt-2 text-xs font-medium uppercase tracking-wide text-[#2f80c9] underline underline-offset-2"
+                  className={`mt-3 flex items-center gap-1.5 rounded-lg border px-3 py-2 text-xs font-semibold uppercase tracking-wide transition ${
+                    mostrarDetalhesUsjExpressPass
+                      ? "border-[#2f80c9] bg-[#2f80c9]/10 text-[#2f80c9]"
+                      : "border-[#2f80c9]/40 text-[#2f80c9] hover:bg-[#2f80c9]/5"
+                  }`}
                 >
                   {mostrarDetalhesUsjExpressPass ? "Ocultar" : "Ver"} informação completa de cada pass
+                  <span
+                    aria-hidden
+                    className={`transition-transform ${mostrarDetalhesUsjExpressPass ? "rotate-180" : ""}`}
+                  >
+                    ▾
+                  </span>
                 </button>
 
                 {mostrarDetalhesUsjExpressPass && (
@@ -1843,9 +2039,19 @@ export default function CalculadoraReversaPage() {
                 <button
                   type="button"
                   onClick={() => setMostrarTabelaComparativaUsj((v) => !v)}
-                  className="mt-3 text-xs font-medium uppercase tracking-wide text-[#2f80c9] underline underline-offset-2"
+                  className={`mt-3 flex items-center gap-1.5 rounded-lg border px-3 py-2 text-xs font-semibold uppercase tracking-wide transition ${
+                    mostrarTabelaComparativaUsj
+                      ? "border-[#2f80c9] bg-[#2f80c9]/10 text-[#2f80c9]"
+                      : "border-[#2f80c9]/40 text-[#2f80c9] hover:bg-[#2f80c9]/5"
+                  }`}
                 >
                   {mostrarTabelaComparativaUsj ? "Ocultar" : "Ver"} tabela comparativa completa (atração por combo)
+                  <span
+                    aria-hidden
+                    className={`transition-transform ${mostrarTabelaComparativaUsj ? "rotate-180" : ""}`}
+                  >
+                    ▾
+                  </span>
                 </button>
 
                 {mostrarTabelaComparativaUsj && (
@@ -2102,7 +2308,11 @@ export default function CalculadoraReversaPage() {
                           <p className={`text-sm font-medium ${removido ? "line-through" : ""}`}>
                             {item.label}
                           </p>
-                          <p className="mt-0.5 text-xs text-black/50">{item.detalhe}</p>
+                          {item.detalhe.map((linha, i) => (
+                            <p key={i} className="mt-0.5 text-xs text-black/50">
+                              {linha}
+                            </p>
+                          ))}
                           {removido && !itemRecomendado(item) && (
                             <p className="mt-0.5 text-[10px] font-medium uppercase tracking-wide text-amber-600">
                               Fora do orçamento — marque a caixa para incluir mesmo assim
