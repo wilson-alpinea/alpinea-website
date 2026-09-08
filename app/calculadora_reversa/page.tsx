@@ -328,6 +328,65 @@ function CelulaUsjTabela({ celula }: { celula: UsjComboCelula }) {
 }
 
 type DestinoKey = (typeof DESTINOS)[number]["key"];
+
+type TemporadaKey = "primavera" | "julho" | "outono" | "baixa";
+
+// 4 janelas de temporada pedidas pelo Wilson (08/set/2026). "Baixa" é o
+// baseline (multiplicador 1.0 em toda cidade pesquisada) — os outros 3
+// multiplicadores são o quanto a diária média sobe em relação a esse
+// baseline.
+const TEMPORADAS: { key: TemporadaKey; nome: string; periodo: string }[] = [
+  {
+    key: "primavera",
+    nome: "Alta temporada — Primavera",
+    periodo: "florada das cerejeiras · final de mar. a início de abr.",
+  },
+  {
+    key: "julho",
+    nome: "Férias escolares — Julho",
+    periodo: "julho (fim das chuvas/verão japonês)",
+  },
+  {
+    key: "outono",
+    nome: "Outono",
+    periodo: "folhas de outono · meados de out. a meados de nov.",
+  },
+  {
+    key: "baixa",
+    nome: "Fora de alta temporada",
+    periodo: "restante do ano",
+  },
+];
+
+// Multiplicador de diária de hotel por cidade e temporada — pesquisa de
+// mercado real (ADR/RevPAR de cadeias e agregadores, JNTO/STR/HotelBank,
+// comparações Golden Week 2026 etc.), feita em 08/set/2026 a pedido do
+// Wilson. Cobre as 10 maiores cidades da lista de destinos + Niseko
+// (destino de inverno caro, citado explicitamente pelo Wilson). Cidades
+// fora dessa tabela (Nara, Hakone, Nikko etc.) usam 1.0 em qualquer
+// temporada — mercados pequenos/pouco usados, que o Wilson pediu pra não
+// pesquisar agora.
+//
+// Nota importante sobre Niseko: é um destino de esqui — o inverno
+// (dez.–mar.) é a alta temporada REAL, com picos de 2× a 4× sobre a
+// temporada verde (verão), bem acima de qualquer um dos 4 multiplicadores
+// abaixo. Nenhuma das 4 categorias pedidas cobre o inverno, então
+// "Fora de alta temporada" para Niseko SUBESTIMA MUITO o preço de
+// dez.–mar. — sinalizado também na nota exibida na tela.
+const TEMPORADA_MULTIPLICADOR_HOTEL: Partial<Record<DestinoKey, Record<TemporadaKey, number>>> = {
+  tokyo: { primavera: 1.45, julho: 1.1, outono: 1.3, baixa: 1.0 },
+  yokohama: { primavera: 1.25, julho: 1.05, outono: 1.15, baixa: 1.0 },
+  kyoto: { primavera: 1.85, julho: 1.15, outono: 1.75, baixa: 1.0 },
+  osaka: { primavera: 1.4, julho: 1.1, outono: 1.2, baixa: 1.0 },
+  nagoya: { primavera: 1.1, julho: 1.05, outono: 1.12, baixa: 1.0 },
+  kobe: { primavera: 1.08, julho: 1.05, outono: 1.1, baixa: 1.0 },
+  hiroshima: { primavera: 1.15, julho: 1.1, outono: 1.2, baixa: 1.0 },
+  fukuoka: { primavera: 1.12, julho: 1.1, outono: 1.12, baixa: 1.0 },
+  hokkaido: { primavera: 1.12, julho: 1.15, outono: 1.05, baixa: 1.0 },
+  okinawa: { primavera: 1.1, julho: 1.4, outono: 1.03, baixa: 1.0 },
+  niseko: { primavera: 0.85, julho: 1.08, outono: 1.1, baixa: 1.0 },
+};
+
 type TemaKey =
   | "roteiroClassico"
   | "automobilismo"
@@ -692,7 +751,7 @@ function CidadeCombobox({
         }}
         onBlur={() => setTimeout(() => setAberto(false), 120)}
         placeholder="Digite pra buscar uma cidade…"
-        className="h-10 w-full rounded-lg border border-black/15 bg-black/[0.03] px-3 text-sm outline-none focus:border-black/30"
+        className="h-10 w-full rounded-lg border border-black/15 bg-black/[0.03] px-3 text-center text-sm outline-none focus:border-black/30"
       />
       {aberto && (
         <div className="absolute left-0 right-0 top-full z-20 mt-1 max-h-56 overflow-y-auto rounded-lg border border-black/15 bg-white shadow-lg">
@@ -745,6 +804,9 @@ export default function CalculadoraReversaPage() {
   const [destinosSelecionados, setDestinosSelecionados] = useState<DestinoKey[]>(
     () => ["tokyo"],
   );
+  // Temporada da viagem — ajusta a diária de hotel por cidade (pesquisa de
+  // mercado). Pedido do Wilson, 08/set/2026.
+  const [temporada, setTemporada] = useState<TemporadaKey>("baixa");
   // Até MAX_TEMAS_SIMULTANEOS temas podem ficar ativos ao mesmo tempo —
   // permite montar uma viagem misturando temas (ex.: Automobilismo +
   // Gastronomia). Pedido do Wilson, 04/set/2026.
@@ -936,6 +998,16 @@ export default function CalculadoraReversaPage() {
     .map((key) => DESTINOS.find((d) => d.key === key)?.nome ?? key)
     .join(" · ");
 
+  // Média dos multiplicadores de temporada das cidades marcadas — cidades
+  // fora de TEMPORADA_MULTIPLICADOR_HOTEL entram como 1.0 (sem pesquisa).
+  const multiplicadorTemporada =
+    destinosSelecionados.length === 0
+      ? 1
+      : destinosSelecionados.reduce(
+          (soma, key) => soma + (TEMPORADA_MULTIPLICADOR_HOTEL[key]?.[temporada] ?? 1),
+          0,
+        ) / destinosSelecionados.length;
+
   // União das cidades de todos os temas ativos, com os destaques de cada
   // tema que recomenda aquela cidade (uma cidade recomendada por 2 temas
   // mostra os 2 destaques). notaIngresso vem do primeiro tema ativo que
@@ -1002,7 +1074,11 @@ export default function CalculadoraReversaPage() {
     function precoHotel(categoria: (typeof CATEGORIAS_HOTEL)[number]) {
       if (hotelManual) return Math.round(hotelDiariaManual * dias);
       return Math.round(
-        DIARIA_HOTEL[categoria] * dias * FATOR_QUARTO[tipoQuarto] * multiplicadorCidade,
+        DIARIA_HOTEL[categoria] *
+          dias *
+          FATOR_QUARTO[tipoQuarto] *
+          multiplicadorCidade *
+          multiplicadorTemporada,
       );
     }
 
@@ -1308,6 +1384,7 @@ export default function CalculadoraReversaPage() {
     pessoas,
     tipoQuarto,
     multiplicadorCidade,
+    multiplicadorTemporada,
     nomesDestinos,
     cambioCotacao,
     hotelManual,
@@ -1682,8 +1759,39 @@ export default function CalculadoraReversaPage() {
             <span className="mt-1.5 block text-[11px] text-black/40">
               {destinosSelecionados.length === 0
                 ? "Nenhuma cidade selecionada — diária de hotel sem ajuste de mercado por cidade"
-                : `Ajuste de mercado do hotel: ${nomesDestinos} · multiplicador médio ${multiplicadorCidade.toFixed(2)}×`}
+                : `Ajuste de mercado do hotel: ${nomesDestinos} · cidade ${multiplicadorCidade.toFixed(2)}× · temporada ${multiplicadorTemporada.toFixed(2)}×`}
             </span>
+
+            <span className="mb-2 mt-4 block text-[10px] uppercase tracking-[0.2em] text-black/50">
+              Temporada
+            </span>
+            <div className="flex flex-wrap gap-2">
+              {TEMPORADAS.map((t) => (
+                <button
+                  key={t.key}
+                  type="button"
+                  onClick={() => setTemporada(t.key)}
+                  className={`flex w-40 flex-col items-start gap-0.5 rounded-lg border px-3 py-2 text-left text-xs transition ${
+                    temporada === t.key
+                      ? "border-[#2f80c9] bg-[#2f80c9]/10 font-medium text-[#2f80c9]"
+                      : "border-black/15 bg-black/[0.03] text-black/60 hover:border-black/30"
+                  }`}
+                >
+                  <span>{t.nome}</span>
+                  <span className="text-[10px] font-normal normal-case tracking-normal text-black/40">
+                    {t.periodo}
+                  </span>
+                </button>
+              ))}
+            </div>
+            {destinosSelecionados.includes("niseko") && (
+              <p className="mt-1.5 max-w-md text-[11px] leading-4 text-amber-600">
+                ⚠️ Niseko é destino de esqui — o inverno (dez.–mar., fora das 4 opções acima) é a
+                alta temporada real, com diárias de 2× a 4× a temporada verde. Nenhum dos cards
+                de Temporada cobre isso; para viagem de inverno em Niseko, ajuste a diária de
+                hotel manualmente.
+              </p>
+            )}
             {diasInsuficientes && (
               <p className="mt-2 rounded-md bg-red-50 px-3 py-2 text-[11px] font-medium leading-4 text-red-700">
                 ⚠️ Com {destinosSelecionados.length} cidade{destinosSelecionados.length === 1 ? "" : "s"}
@@ -1712,7 +1820,7 @@ export default function CalculadoraReversaPage() {
                       key={d}
                       type="button"
                       onClick={() => setJrPassDias(d)}
-                      className={`flex w-28 flex-col items-center justify-center gap-1.5 rounded-lg border px-2 py-3 text-center text-sm transition ${
+                      className={`flex h-24 w-28 flex-col items-center justify-center gap-1.5 rounded-lg border px-2 text-center text-sm transition ${
                         jrPassDias === d
                           ? "border-[#2f80c9] bg-[#2f80c9]/10 font-medium text-[#2f80c9]"
                           : "border-black/15 bg-white text-black/60 hover:border-black/30"
@@ -1738,7 +1846,7 @@ export default function CalculadoraReversaPage() {
                       key={c.key}
                       type="button"
                       onClick={() => setJrPassClasse(c.key)}
-                      className={`flex w-28 flex-col items-center gap-1.5 rounded-lg border px-2 py-3 text-center text-xs transition ${
+                      className={`flex h-24 w-28 flex-col items-center justify-center gap-1.5 rounded-lg border px-2 text-center text-xs transition ${
                         jrPassClasse === c.key
                           ? "border-[#2f80c9] bg-[#2f80c9]/10 font-medium text-[#2f80c9]"
                           : "border-black/15 bg-white text-black/60 hover:border-black/30"
