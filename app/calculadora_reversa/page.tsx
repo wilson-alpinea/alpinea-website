@@ -1753,7 +1753,7 @@ export default function CalculadoraReversaPage() {
           />
           <label className="flex h-full flex-col sm:col-span-2">
             <span className="mb-2 text-[10px] uppercase tracking-[0.2em] text-black/50">
-              Orçamento máximo (R$)
+              1. Orçamento máximo (R$)
             </span>
             <input
               type="number"
@@ -1775,7 +1775,7 @@ export default function CalculadoraReversaPage() {
           </label>
 
           <NumberStepper
-            label="Quantidade de dias"
+            label="2. Quantidade de dias"
             value={dias}
             onChange={setDias}
             min={MIN_DIAS}
@@ -1784,7 +1784,7 @@ export default function CalculadoraReversaPage() {
           />
 
           <NumberStepper
-            label="Número de pessoas"
+            label="3. Número de pessoas"
             value={pessoas}
             onChange={setPessoas}
             min={MIN_PESSOAS}
@@ -1794,7 +1794,7 @@ export default function CalculadoraReversaPage() {
 
           <label className="flex h-full flex-col">
             <span className="mb-2 flex min-h-[2.2em] items-end text-[10px] uppercase leading-tight tracking-[0.2em] text-black/50">
-              Tipo de quarto
+              4. Tipo de quarto
             </span>
             <select
               value={tipoQuarto}
@@ -1810,7 +1810,7 @@ export default function CalculadoraReversaPage() {
           </label>
 
           <VolumeSlider
-            label="Categoria máxima de hotel"
+            label="5. Categoria máxima de hotel"
             opcoes={CATEGORIAS_HOTEL}
             value={hotelCategoriaMaxima}
             onChange={setHotelCategoriaMaxima}
@@ -1824,7 +1824,7 @@ export default function CalculadoraReversaPage() {
           />
 
           <VolumeSlider
-            label="Classe máxima do voo"
+            label="6. Classe máxima do voo"
             opcoes={CLASSES_AEREO}
             value={classeAereoMaxima}
             onChange={setClasseAereoMaxima}
@@ -1839,7 +1839,7 @@ export default function CalculadoraReversaPage() {
 
           <div className="sm:col-span-2">
             <span className="mb-2 block text-[10px] uppercase tracking-[0.2em] text-black/50">
-              Temporada
+              7. Temporada
             </span>
             <div className="flex flex-wrap gap-2">
               {TEMPORADAS.map((t) => (
@@ -1872,7 +1872,7 @@ export default function CalculadoraReversaPage() {
             )}
 
             <span className="mb-2 mt-6 block text-[10px] uppercase tracking-[0.2em] text-black/50">
-              Temas <span className="normal-case tracking-normal text-black/35">(selecione até {MAX_TEMAS_SIMULTANEOS} pra misturar)</span>
+              8. Temas <span className="normal-case tracking-normal text-black/35">(selecione até {MAX_TEMAS_SIMULTANEOS} pra misturar)</span>
             </span>
             <div className="flex flex-wrap gap-2">
               <button
@@ -1922,7 +1922,7 @@ export default function CalculadoraReversaPage() {
             {temasSelecionados.size === 0 ? (
               <div className="mt-4">
                 <span className="mb-2 flex min-h-[2.2em] items-end text-[10px] uppercase leading-tight tracking-[0.2em] text-black/50">
-                  Cidades do roteiro{" "}
+                  9. Cidades do roteiro{" "}
                   <span className="normal-case tracking-normal text-black/35">
                     (até {MAX_CIDADES_ROTEIRO})
                   </span>
@@ -1965,7 +1965,7 @@ export default function CalculadoraReversaPage() {
             ) : (
               <div className="mt-4 overflow-hidden rounded-xl border border-black/10">
                 <div className="grid grid-cols-[minmax(140px,auto)_1fr] gap-x-6 bg-[#0A2540] px-4 py-2 text-[10px] uppercase tracking-[0.15em] text-white/70">
-                  <span>Cidades recomendadas</span>
+                  <span>9. Cidades recomendadas</span>
                   <span>Destaques do{temasSelecionados.size > 1 ? "s temas" : " tema"}</span>
                 </div>
                 {cidadesTemasAtivos.map((c) => {
@@ -2026,7 +2026,7 @@ export default function CalculadoraReversaPage() {
               </div>
             )}
             <span className="mb-2 mt-4 block text-[10px] uppercase tracking-[0.2em] text-black/50">
-              Extensão internacional{" "}
+              10. Extensão internacional{" "}
               <span className="normal-case tracking-normal text-black/35">(opcional — soma dias ao total da viagem)</span>
             </span>
             <div className="flex flex-wrap gap-2">
@@ -2075,7 +2075,7 @@ export default function CalculadoraReversaPage() {
 
           <div className="sm:col-span-2">
             <span className="mb-2 block text-[10px] uppercase tracking-[0.2em] text-black/50">
-              JR Pass — validade e classe
+              11. JR Pass — validade e classe
             </span>
             <div className="flex flex-wrap gap-4">
               <div className="rounded-xl border border-black/10 bg-black/[0.02] p-3">
@@ -2148,7 +2148,7 @@ export default function CalculadoraReversaPage() {
 
           <div className="sm:col-span-2">
             <span className="mb-2 block text-[10px] uppercase tracking-[0.2em] text-black/50">
-              Guia Turístico
+              12. Guia Turístico
             </span>
             <div className="max-w-xs">
               <NumberStepper
@@ -2167,7 +2167,7 @@ export default function CalculadoraReversaPage() {
 
           <div className="sm:col-span-2">
             <span className="mb-2 block text-[10px] uppercase tracking-[0.2em] text-black/50">
-              Câmbio de ienes
+              13. Câmbio de ienes
             </span>
             <div className="flex flex-wrap items-end gap-3">
               <label className="flex flex-col">
@@ -2216,7 +2216,7 @@ export default function CalculadoraReversaPage() {
 
           <div className="sm:col-span-2">
             <span className="mb-2 block text-[10px] uppercase tracking-[0.2em] text-black/50">
-              Conexão de internet
+              14. Conexão de internet
             </span>
             <div className="flex gap-2">
               {(["esim", "pocket"] as const).map((t) => (
@@ -2257,7 +2257,7 @@ export default function CalculadoraReversaPage() {
 
           <div className="sm:col-span-2">
             <span className="mb-2 block text-[10px] uppercase tracking-[0.2em] text-black/50">
-              Ingressos e experiências
+              15. Ingressos e experiências
             </span>
             <div className="flex flex-wrap gap-2">
               {CATALOGO_INGRESSOS.map((ingresso) => {
