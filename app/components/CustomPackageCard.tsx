@@ -1307,6 +1307,27 @@ const MAX_PESSOAS = 20;
 const LIMITE_PESSOAS_SEM_TAXA = 3;
 const TAXA_POR_PASSAGEIRO_EXTRA = comMargemEImposto(350);
 
+// Extrai o "N. " do início de um label numerado ("1. Orçamento", "9.
+// Cidades do roteiro") e desenha o número como bolinha preta com fonte
+// branca, mantendo o resto do texto normal em seguida. Labels sem número
+// reconhecido (ex.: "Quantos dias o cliente quer guia", labels de outras
+// páginas que usam NumberStepper/VolumeSlider) caem no texto puro.
+export function LabelNumerado({ texto }: { texto: string }) {
+  const m = /^(\d+)\.\s*([\s\S]*)$/.exec(texto);
+  if (!m) return <>{texto}</>;
+  return (
+    <>
+      <span
+        aria-hidden
+        className="mr-1.5 inline-flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-black text-[9px] font-semibold leading-none text-white"
+      >
+        {m[1]}
+      </span>
+      {m[2]}
+    </>
+  );
+}
+
 export function NumberStepper({
   label,
   value,
@@ -1325,7 +1346,7 @@ export function NumberStepper({
   return (
     <label className="flex h-full flex-col">
       <span className="mb-2 flex min-h-[2.2em] items-end text-[10px] uppercase leading-tight tracking-[0.2em] text-[#0A2540]/50">
-        {label}
+        <LabelNumerado texto={label} />
       </span>
       <div className="flex items-center gap-2">
         <button

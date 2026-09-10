@@ -8,6 +8,7 @@ import { useCambioIene, CIDADES_CAMBIO_IENE, type CidadeCambioIeneSlug } from ".
 import { COTACAO_FALLBACK_BRL_POR_JPY } from "../lib/cambioIene";
 import {
   NumberStepper,
+  LabelNumerado,
   DESTINOS,
   CIDADE_MULTIPLICADOR_HOTEL,
   CATEGORIAS_HOTEL,
@@ -754,11 +755,11 @@ function VolumeSlider<T extends string>({
   return (
     <div className="flex h-full flex-col">
       <span className="mb-2 flex min-h-[2.2em] items-end text-[10px] uppercase leading-tight tracking-[0.2em] text-black/50">
-        {label}
+        <LabelNumerado texto={label} />
       </span>
       <div className="flex items-center gap-2 rounded-lg border border-black/15 bg-black/[0.03] px-3 h-12">
-        <span aria-hidden className="shrink-0 text-xs text-black/30">
-          🔈
+        <span aria-hidden className="shrink-0 text-base font-semibold text-black/30">
+          −
         </span>
         <div className="flex flex-1 items-center gap-1">
           {opcoes.map((o, i) => (
@@ -775,8 +776,8 @@ function VolumeSlider<T extends string>({
             />
           ))}
         </div>
-        <span aria-hidden className="shrink-0 text-sm text-black/30">
-          🔊
+        <span aria-hidden className="shrink-0 text-base font-semibold text-black/30">
+          +
         </span>
       </div>
       <div className="mt-1.5 flex justify-between gap-1 text-[9px] uppercase tracking-wide text-black/35">
@@ -829,8 +830,15 @@ function CidadeCombobox({
         }}
         onBlur={() => setTimeout(() => setAberto(false), 120)}
         placeholder="Digite pra buscar uma cidade…"
-        className="h-10 w-full rounded-lg border border-black/15 bg-black/[0.03] px-3 text-center text-sm outline-none focus:border-black/30"
+        title="Clique para trocar a cidade"
+        className="h-10 w-full cursor-pointer rounded-lg border border-black/15 bg-black/[0.03] px-3 pr-7 text-center text-sm outline-none focus:border-black/30"
       />
+      <span
+        aria-hidden
+        className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-[9px] text-black/35"
+      >
+        ▾
+      </span>
       {aberto && (
         <div className="absolute left-0 right-0 top-full z-20 mt-1 max-h-56 overflow-y-auto rounded-lg border border-black/15 bg-white shadow-lg">
           {opcoes.length === 0 ? (
@@ -1192,7 +1200,7 @@ export default function CalculadoraReversaPage() {
     ) {
       if (hotelManual) return Math.round(hotelDiariaManual * dias);
       return Math.round(
-        DIARIA_HOTEL[categoria] * dias * FATOR_QUARTO[tipoQuarto] * multiplicadorCidade * multTemporada,
+        DIARIA_HOTEL[categoria] * dias * FATOR_QUARTO[tipoQuarto] * multiplicadorCidade * multTemporada * pessoas,
       );
     }
 
@@ -1315,7 +1323,11 @@ export default function CalculadoraReversaPage() {
         (soma, cidade) =>
           soma +
           Math.round(
-            DIARIA_HOTEL[categoriaHotelFinal] * cidade.dias * FATOR_QUARTO[tipoQuarto] * cidade.multiplicadorHotel,
+            DIARIA_HOTEL[categoriaHotelFinal] *
+              cidade.dias *
+              FATOR_QUARTO[tipoQuarto] *
+              cidade.multiplicadorHotel *
+              pessoas,
           ),
         0,
       );
@@ -1752,8 +1764,8 @@ export default function CalculadoraReversaPage() {
             className="absolute bottom-full right-6 hidden w-28 translate-y-6 select-none object-contain sm:block md:w-36 md:right-10"
           />
           <label className="flex h-full flex-col sm:col-span-2">
-            <span className="mb-2 text-[10px] uppercase tracking-[0.2em] text-black/50">
-              1. Orçamento máximo (R$)
+            <span className="mb-2 flex items-center text-[10px] uppercase tracking-[0.2em] text-black/50">
+              <LabelNumerado texto="1. Orçamento máximo (R$)" />
             </span>
             <input
               type="number"
@@ -1794,7 +1806,7 @@ export default function CalculadoraReversaPage() {
 
           <label className="flex h-full flex-col">
             <span className="mb-2 flex min-h-[2.2em] items-end text-[10px] uppercase leading-tight tracking-[0.2em] text-black/50">
-              4. Tipo de quarto
+              <LabelNumerado texto="4. Tipo de quarto" />
             </span>
             <select
               value={tipoQuarto}
@@ -1838,8 +1850,8 @@ export default function CalculadoraReversaPage() {
           />
 
           <div className="sm:col-span-2">
-            <span className="mb-2 block text-[10px] uppercase tracking-[0.2em] text-black/50">
-              7. Temporada
+            <span className="mb-2 flex items-center text-[10px] uppercase tracking-[0.2em] text-black/50">
+              <LabelNumerado texto="7. Temporada" />
             </span>
             <div className="flex flex-wrap gap-2">
               {TEMPORADAS.map((t) => (
@@ -1871,8 +1883,8 @@ export default function CalculadoraReversaPage() {
               </p>
             )}
 
-            <span className="mb-2 mt-6 block text-[10px] uppercase tracking-[0.2em] text-black/50">
-              8. Temas <span className="normal-case tracking-normal text-black/35">(selecione até {MAX_TEMAS_SIMULTANEOS} pra misturar)</span>
+            <span className="mb-2 mt-6 flex items-center text-[10px] uppercase tracking-[0.2em] text-black/50">
+              <LabelNumerado texto="8. Temas" /> <span className="normal-case tracking-normal text-black/35">(selecione até {MAX_TEMAS_SIMULTANEOS} pra misturar)</span>
             </span>
             <div className="flex flex-wrap gap-2">
               <button
@@ -1922,7 +1934,7 @@ export default function CalculadoraReversaPage() {
             {temasSelecionados.size === 0 ? (
               <div className="mt-4">
                 <span className="mb-2 flex min-h-[2.2em] items-end text-[10px] uppercase leading-tight tracking-[0.2em] text-black/50">
-                  9. Cidades do roteiro{" "}
+                  <LabelNumerado texto="9. Cidades do roteiro" />{" "}
                   <span className="normal-case tracking-normal text-black/35">
                     (até {MAX_CIDADES_ROTEIRO})
                   </span>
@@ -1965,7 +1977,7 @@ export default function CalculadoraReversaPage() {
             ) : (
               <div className="mt-4 overflow-hidden rounded-xl border border-black/10">
                 <div className="grid grid-cols-[minmax(140px,auto)_1fr] gap-x-6 bg-[#0A2540] px-4 py-2 text-[10px] uppercase tracking-[0.15em] text-white/70">
-                  <span>9. Cidades recomendadas</span>
+                  <span className="flex items-center"><LabelNumerado texto="9. Cidades recomendadas" /></span>
                   <span>Destaques do{temasSelecionados.size > 1 ? "s temas" : " tema"}</span>
                 </div>
                 {cidadesTemasAtivos.map((c) => {
@@ -2025,8 +2037,8 @@ export default function CalculadoraReversaPage() {
                 })}
               </div>
             )}
-            <span className="mb-2 mt-4 block text-[10px] uppercase tracking-[0.2em] text-black/50">
-              10. Extensão internacional{" "}
+            <span className="mb-2 mt-4 flex items-center text-[10px] uppercase tracking-[0.2em] text-black/50">
+              <LabelNumerado texto="10. Extensão internacional" />{" "}
               <span className="normal-case tracking-normal text-black/35">(opcional — soma dias ao total da viagem)</span>
             </span>
             <div className="flex flex-wrap gap-2">
@@ -2074,8 +2086,8 @@ export default function CalculadoraReversaPage() {
           </div>
 
           <div className="sm:col-span-2">
-            <span className="mb-2 block text-[10px] uppercase tracking-[0.2em] text-black/50">
-              11. JR Pass — validade e classe
+            <span className="mb-2 flex items-center text-[10px] uppercase tracking-[0.2em] text-black/50">
+              <LabelNumerado texto="11. JR Pass — validade e classe" />
             </span>
             <div className="flex flex-wrap gap-4">
               <div className="rounded-xl border border-black/10 bg-black/[0.02] p-3">
@@ -2147,8 +2159,8 @@ export default function CalculadoraReversaPage() {
           </div>
 
           <div className="sm:col-span-2">
-            <span className="mb-2 block text-[10px] uppercase tracking-[0.2em] text-black/50">
-              12. Guia Turístico
+            <span className="mb-2 flex items-center text-[10px] uppercase tracking-[0.2em] text-black/50">
+              <LabelNumerado texto="12. Guia Turístico" />
             </span>
             <div className="max-w-xs">
               <NumberStepper
@@ -2166,8 +2178,8 @@ export default function CalculadoraReversaPage() {
           </div>
 
           <div className="sm:col-span-2">
-            <span className="mb-2 block text-[10px] uppercase tracking-[0.2em] text-black/50">
-              13. Câmbio de ienes
+            <span className="mb-2 flex items-center text-[10px] uppercase tracking-[0.2em] text-black/50">
+              <LabelNumerado texto="13. Câmbio de ienes" />
             </span>
             <div className="flex flex-wrap items-end gap-3">
               <label className="flex flex-col">
@@ -2215,8 +2227,8 @@ export default function CalculadoraReversaPage() {
           </div>
 
           <div className="sm:col-span-2">
-            <span className="mb-2 block text-[10px] uppercase tracking-[0.2em] text-black/50">
-              14. Conexão de internet
+            <span className="mb-2 flex items-center text-[10px] uppercase tracking-[0.2em] text-black/50">
+              <LabelNumerado texto="14. Conexão de internet" />
             </span>
             <div className="flex gap-2">
               {(["esim", "pocket"] as const).map((t) => (
@@ -2256,8 +2268,8 @@ export default function CalculadoraReversaPage() {
           </div>
 
           <div className="sm:col-span-2">
-            <span className="mb-2 block text-[10px] uppercase tracking-[0.2em] text-black/50">
-              15. Ingressos e experiências
+            <span className="mb-2 flex items-center text-[10px] uppercase tracking-[0.2em] text-black/50">
+              <LabelNumerado texto="15. Ingressos e experiências" />
             </span>
             <div className="flex flex-wrap gap-2">
               {CATALOGO_INGRESSOS.map((ingresso) => {

@@ -18,6 +18,9 @@ export const TIPO_INTERACAO_LABEL: Record<string, string> = {
   reuniao: "Reunião",
   proposta: "Proposta enviada",
   mudanca_estagio: "Mudança de estágio",
+  // Gerado automaticamente quando um cliente externo preenche e envia a
+  // calculadora self-service (ver app/api/viagem-personalizada-selfservice).
+  simulacao: "Simulação (self-service)",
 };
 
 // Cor por tipo de interação — usada no ícone e no rótulo do histórico.
@@ -30,4 +33,5 @@ export const TIPO_INTERACAO_COR: Record<string, string> = {
   reuniao: "#7c4fd1",
   proposta: "#1F8A8C",
   mudanca_estagio: "#1C3A5E",
+  simulacao: "#6ec3d9",
 };
