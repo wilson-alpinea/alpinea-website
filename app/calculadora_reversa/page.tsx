@@ -10,6 +10,7 @@ import { COTACAO_FALLBACK_BRL_POR_JPY } from "../lib/cambioIene";
 import {
   NumberStepper,
   LabelNumerado,
+  BotaoOcultarCampo,
   DESTINOS,
   CIDADE_MULTIPLICADOR_HOTEL,
   CATEGORIAS_HOTEL,
@@ -971,50 +972,59 @@ function VolumeSlider<T extends string>({
   value,
   onChange,
   nota,
+  oculto,
+  onToggleOculto,
 }: {
   label: string;
   opcoes: readonly T[];
   value: T;
   onChange: (v: T) => void;
   nota?: string;
+  oculto?: boolean;
+  onToggleOculto?: () => void;
 }) {
   const indice = Math.max(0, opcoes.indexOf(value));
   return (
     <div className="flex h-full flex-col">
       <span className="mb-2 flex min-h-[2.2em] items-end text-[10px] uppercase leading-tight tracking-[0.2em] text-black/50">
         <LabelNumerado texto={label} />
+        {onToggleOculto && <BotaoOcultarCampo oculto={oculto} onToggle={onToggleOculto} />}
       </span>
-      <div className="flex items-center gap-2 rounded-lg border border-black/15 bg-black/[0.03] px-3 h-12">
-        <span aria-hidden className="shrink-0 text-base font-semibold text-black/30">
-          −
-        </span>
-        <div className="flex flex-1 items-center gap-1">
-          {opcoes.map((o, i) => (
-            <button
-              key={o}
-              type="button"
-              onClick={() => onChange(o)}
-              aria-label={o}
-              aria-pressed={i <= indice}
-              className={`h-6 flex-1 rounded-sm transition ${
-                i <= indice ? "bg-[#2f80c9]" : "bg-black/10 hover:bg-black/20"
-              }`}
-              style={{ height: `${14 + i * 6}px` }}
-            />
-          ))}
-        </div>
-        <span aria-hidden className="shrink-0 text-base font-semibold text-black/30">
-          +
-        </span>
-      </div>
-      <div className="mt-1.5 flex justify-between gap-1 text-[9px] uppercase tracking-wide text-black/35">
-        {opcoes.map((o) => (
-          <span key={o} className={o === value ? "font-semibold text-[#2f80c9]" : ""}>
-            {o}
-          </span>
-        ))}
-      </div>
-      {nota && <span className="mt-1 text-[11px] leading-4 text-black/40">{nota}</span>}
+      {!oculto && (
+        <>
+          <div className="flex items-center gap-2 rounded-lg border border-black/15 bg-black/[0.03] px-3 h-12">
+            <span aria-hidden className="shrink-0 text-base font-semibold text-black/30">
+              −
+            </span>
+            <div className="flex flex-1 items-center gap-1">
+              {opcoes.map((o, i) => (
+                <button
+                  key={o}
+                  type="button"
+                  onClick={() => onChange(o)}
+                  aria-label={o}
+                  aria-pressed={i <= indice}
+                  className={`h-6 flex-1 rounded-sm transition ${
+                    i <= indice ? "bg-[#2f80c9]" : "bg-black/10 hover:bg-black/20"
+                  }`}
+                  style={{ height: `${14 + i * 6}px` }}
+                />
+              ))}
+            </div>
+            <span aria-hidden className="shrink-0 text-base font-semibold text-black/30">
+              +
+            </span>
+          </div>
+          <div className="mt-1.5 flex justify-between gap-1 text-[9px] uppercase tracking-wide text-black/35">
+            {opcoes.map((o) => (
+              <span key={o} className={o === value ? "font-semibold text-[#2f80c9]" : ""}>
+                {o}
+              </span>
+            ))}
+          </div>
+          {nota && <span className="mt-1 text-[11px] leading-4 text-black/40">{nota}</span>}
+        </>
+      )}
     </div>
   );
 }
@@ -1303,6 +1313,21 @@ export default function CalculadoraReversaPage() {
       const novo = new Set(atual);
       if (novo.has(key)) novo.delete(key);
       else novo.add(key);
+      return novo;
+    });
+  }
+
+  // Campos ocultos (colapsados) por número de seção — pedido do Wilson,
+  // 10/set/2026: cada campo/seção ganha um botão de olho que esconde o
+  // conteúdo, pra facilitar tirar prints de tela sem expor seções
+  // irrelevantes ou sensíveis pro cliente. O cabeçalho numerado continua
+  // visível (é onde fica o botão pra reverter), só o corpo da seção some.
+  const [camposOcultos, setCamposOcultos] = useState<Set<number>>(new Set());
+  function alternarCampoOculto(numero: number) {
+    setCamposOcultos((atual) => {
+      const novo = new Set(atual);
+      if (novo.has(numero)) novo.delete(numero);
+      else novo.add(numero);
       return novo;
     });
   }
@@ -2139,23 +2164,31 @@ export default function CalculadoraReversaPage() {
           <label className="flex h-full flex-col sm:col-span-2">
             <span className="mb-2 flex items-center text-[10px] uppercase tracking-[0.2em] text-black/50">
               <LabelNumerado texto="1. Orçamento máximo (R$)" />
+              <BotaoOcultarCampo
+                oculto={camposOcultos.has(1)}
+                onToggle={() => alternarCampoOculto(1)}
+              />
             </span>
-            <input
-              type="number"
-              min={MIN_ORCAMENTO_BRL}
-              max={MAX_ORCAMENTO_BRL}
-              step={500}
-              value={orcamento}
-              onChange={(e) => {
-                const v = Number(e.target.value);
-                if (!Number.isNaN(v)) setOrcamento(v);
-              }}
-              className="h-12 w-full rounded-lg border border-black/15 bg-black/[0.03] px-4 text-lg font-medium outline-none focus:border-black/30"
-            />
-            {cambio && (
-              <span className="mt-1.5 text-[11px] text-black/40">
-                ≈ {formatUSD(orcamento / cambioCotacao)}
-              </span>
+            {!camposOcultos.has(1) && (
+              <>
+                <input
+                  type="number"
+                  min={MIN_ORCAMENTO_BRL}
+                  max={MAX_ORCAMENTO_BRL}
+                  step={500}
+                  value={orcamento}
+                  onChange={(e) => {
+                    const v = Number(e.target.value);
+                    if (!Number.isNaN(v)) setOrcamento(v);
+                  }}
+                  className="h-12 w-full rounded-lg border border-black/15 bg-black/[0.03] px-4 text-lg font-medium outline-none focus:border-black/30"
+                />
+                {cambio && (
+                  <span className="mt-1.5 text-[11px] text-black/40">
+                    ≈ {formatUSD(orcamento / cambioCotacao)}
+                  </span>
+                )}
+              </>
             )}
           </label>
 
@@ -2166,6 +2199,8 @@ export default function CalculadoraReversaPage() {
             min={MIN_DIAS}
             max={MAX_DIAS}
             formatValue={(v) => `${v} dias`}
+            oculto={camposOcultos.has(2)}
+            onToggleOculto={() => alternarCampoOculto(2)}
           />
 
           <NumberStepper
@@ -2175,23 +2210,31 @@ export default function CalculadoraReversaPage() {
             min={MIN_PESSOAS}
             max={MAX_PESSOAS}
             formatValue={(v) => `${v} ${v === 1 ? "pessoa" : "pessoas"}`}
+            oculto={camposOcultos.has(3)}
+            onToggleOculto={() => alternarCampoOculto(3)}
           />
 
           <label className="flex h-full flex-col">
             <span className="mb-2 flex min-h-[2.2em] items-end text-[10px] uppercase leading-tight tracking-[0.2em] text-black/50">
               <LabelNumerado texto="4. Tipo de quarto" />
+              <BotaoOcultarCampo
+                oculto={camposOcultos.has(4)}
+                onToggle={() => alternarCampoOculto(4)}
+              />
             </span>
-            <select
-              value={tipoQuarto}
-              onChange={(e) => setTipoQuarto(e.target.value as (typeof TIPOS_QUARTO)[number])}
-              className="h-10 w-full rounded-lg border border-black/15 bg-black/[0.03] px-3 text-sm outline-none focus:border-black/30"
-            >
-              {TIPOS_QUARTO.map((t) => (
-                <option key={t} value={t}>
-                  {t}
-                </option>
-              ))}
-            </select>
+            {!camposOcultos.has(4) && (
+              <select
+                value={tipoQuarto}
+                onChange={(e) => setTipoQuarto(e.target.value as (typeof TIPOS_QUARTO)[number])}
+                className="h-10 w-full rounded-lg border border-black/15 bg-black/[0.03] px-3 text-sm outline-none focus:border-black/30"
+              >
+                {TIPOS_QUARTO.map((t) => (
+                  <option key={t} value={t}>
+                    {t}
+                  </option>
+                ))}
+              </select>
+            )}
           </label>
 
           <VolumeSlider
@@ -2206,6 +2249,8 @@ export default function CalculadoraReversaPage() {
                   ? "Sem limite — sobe o máximo que o orçamento permitir"
                   : `Preenchimento automático não passa de ${hotelCategoriaMaxima}, mesmo sobrando orçamento`
             }
+            oculto={camposOcultos.has(5)}
+            onToggleOculto={() => alternarCampoOculto(5)}
           />
 
           <VolumeSlider
@@ -2220,12 +2265,20 @@ export default function CalculadoraReversaPage() {
                   ? "Sem limite — sobe o máximo que o orçamento permitir"
                   : `Preenchimento automático não passa de ${classeAereoMaxima}, mesmo sobrando orçamento`
             }
+            oculto={camposOcultos.has(6)}
+            onToggleOculto={() => alternarCampoOculto(6)}
           />
 
           <div className="sm:col-span-2">
             <span className="mb-2 flex items-center text-[10px] uppercase tracking-[0.2em] text-black/50">
               <LabelNumerado texto="7. Temporada" />
+              <BotaoOcultarCampo
+                oculto={camposOcultos.has(7)}
+                onToggle={() => alternarCampoOculto(7)}
+              />
             </span>
+            {!camposOcultos.has(7) && (
+            <>
             <div className="flex flex-wrap gap-2">
               {TEMPORADAS.map((t) => (
                 <button
@@ -2255,10 +2308,17 @@ export default function CalculadoraReversaPage() {
                 ajuste a diária de hotel manualmente.
               </p>
             )}
+            </>
+            )}
 
             <span className="mb-2 mt-6 flex items-center text-[10px] uppercase tracking-[0.2em] text-black/50">
               <LabelNumerado texto="8. Temas" /> <span className="normal-case tracking-normal text-black/35">(selecione até {MAX_TEMAS_SIMULTANEOS} pra misturar)</span>
+              <BotaoOcultarCampo
+                oculto={camposOcultos.has(8)}
+                onToggle={() => alternarCampoOculto(8)}
+              />
             </span>
+            {!camposOcultos.has(8) && (
             <div className="flex flex-wrap gap-2">
               <button
                 type="button"
@@ -2303,6 +2363,7 @@ export default function CalculadoraReversaPage() {
                 );
               })}
             </div>
+            )}
 
             {temasSelecionados.size === 0 ? (
               <div className="mt-4">
@@ -2311,7 +2372,12 @@ export default function CalculadoraReversaPage() {
                   <span className="normal-case tracking-normal text-black/35">
                     (até {MAX_CIDADES_ROTEIRO})
                   </span>
+                  <BotaoOcultarCampo
+                    oculto={camposOcultos.has(9)}
+                    onToggle={() => alternarCampoOculto(9)}
+                  />
                 </span>
+                {!camposOcultos.has(9) && (
                 <div className="flex flex-wrap gap-2">
                   {destinosSelecionados.map((cidade, indice) => (
                     <div
@@ -2346,14 +2412,21 @@ export default function CalculadoraReversaPage() {
                     </button>
                   )}
                 </div>
+                )}
               </div>
             ) : (
               <div className="mt-4 overflow-hidden rounded-xl border border-black/10">
                 <div className="grid grid-cols-[minmax(140px,auto)_1fr] gap-x-6 bg-[#0A2540] px-4 py-2 text-[10px] uppercase tracking-[0.15em] text-white/70">
-                  <span className="flex items-center"><LabelNumerado texto="9. Cidades recomendadas" /></span>
+                  <span className="flex items-center">
+                    <LabelNumerado texto="9. Cidades recomendadas" />
+                    <BotaoOcultarCampo
+                      oculto={camposOcultos.has(9)}
+                      onToggle={() => alternarCampoOculto(9)}
+                    />
+                  </span>
                   <span>Destaques do{temasSelecionados.size > 1 ? "s temas" : " tema"}</span>
                 </div>
-                {cidadesTemasAtivos.map((c) => {
+                {!camposOcultos.has(9) && cidadesTemasAtivos.map((c) => {
                   const destino = DESTINOS.find((d) => d.key === c.key);
                   const marcado = destinosSelecionados.includes(c.key);
                   const notaMotorista = CIDADE_MOTORISTA_NOTA[c.key];
@@ -2413,7 +2486,13 @@ export default function CalculadoraReversaPage() {
             <span className="mb-2 mt-4 flex items-center text-[10px] uppercase tracking-[0.2em] text-black/50">
               <LabelNumerado texto="10. Extensão internacional" />{" "}
               <span className="normal-case tracking-normal text-black/35">(opcional — soma dias ao total da viagem)</span>
+              <BotaoOcultarCampo
+                oculto={camposOcultos.has(10)}
+                onToggle={() => alternarCampoOculto(10)}
+              />
             </span>
+            {!camposOcultos.has(10) && (
+            <>
             <div className="flex flex-wrap gap-2">
               {EXTENSOES_INTERNACIONAIS.map((extensao) => {
                 const marcado = extensoesSelecionadas.has(extensao.key);
@@ -2469,7 +2548,7 @@ export default function CalculadoraReversaPage() {
                                   : "border-black/15 bg-white hover:border-black/30"
                               }`}
                             >
-                              <span aria-hidden className="block text-xs leading-none tracking-[1px] text-amber-400">
+                              <span aria-hidden className="block text-base leading-none tracking-[1.5px] text-[#2f80c9]">
                                 {"★".repeat(parseInt(categoria, 10))}
                               </span>
                               <span
@@ -2559,12 +2638,20 @@ export default function CalculadoraReversaPage() {
                 aumentar a duração da viagem ou reduzir cidades/atrações.
               </p>
             )}
+            </>
+            )}
           </div>
 
           <div className="sm:col-span-2">
             <span className="mb-2 flex items-center text-[10px] uppercase tracking-[0.2em] text-black/50">
               <LabelNumerado texto="11. JR Pass — validade e classe" />
+              <BotaoOcultarCampo
+                oculto={camposOcultos.has(11)}
+                onToggle={() => alternarCampoOculto(11)}
+              />
             </span>
+            {!camposOcultos.has(11) && (
+            <>
             <div className="flex flex-wrap gap-4">
               <div className="rounded-xl border border-black/10 bg-black/[0.02] p-3">
                 <span className="mb-2 block text-[9px] uppercase tracking-[0.15em] text-black/40">
@@ -2632,12 +2719,20 @@ export default function CalculadoraReversaPage() {
                 formatValue={(v) => `${v} de ${pessoas} viajante${pessoas === 1 ? "" : "s"}`}
               />
             </div>
+            </>
+            )}
           </div>
 
           <div className="sm:col-span-2">
             <span className="mb-2 flex items-center text-[10px] uppercase tracking-[0.2em] text-black/50">
               <LabelNumerado texto="12. Guia Turístico" />
+              <BotaoOcultarCampo
+                oculto={camposOcultos.has(12)}
+                onToggle={() => alternarCampoOculto(12)}
+              />
             </span>
+            {!camposOcultos.has(12) && (
+            <>
             <div className="max-w-xs">
               <NumberStepper
                 label="Quantos dias o cliente quer guia"
@@ -2651,12 +2746,20 @@ export default function CalculadoraReversaPage() {
             <span className="mt-1.5 block text-[11px] text-black/40">
               US$ {DIARIA_GUIA_USD}/dia a cada {GUIA_TAMANHO_GRUPO} pessoas
             </span>
+            </>
+            )}
           </div>
 
           <div className="sm:col-span-2">
             <span className="mb-2 flex items-center text-[10px] uppercase tracking-[0.2em] text-black/50">
               <LabelNumerado texto="13. Câmbio de ienes" />
+              <BotaoOcultarCampo
+                oculto={camposOcultos.has(13)}
+                onToggle={() => alternarCampoOculto(13)}
+              />
             </span>
+            {!camposOcultos.has(13) && (
+            <>
             <div className="flex flex-wrap items-end gap-3">
               <label className="flex flex-col">
                 <span className="mb-1 text-[10px] uppercase tracking-wide text-black/40">Cidade</span>
@@ -2700,12 +2803,20 @@ export default function CalculadoraReversaPage() {
                   ? `Cotação estimada: R$ ${cambioIene.cotacaoBRLPorJPY.toFixed(4).replace(".", ",")} por iene — melhorcambio.com indisponível no momento.`
                   : `Cotação: R$ ${cambioIene.cotacaoBRLPorJPY.toFixed(4).replace(".", ",")} por iene em ${CIDADES_CAMBIO_IENE.find((c) => c.slug === cambioIene.cidade)?.nome} (melhorcambio.com, papel moeda) + spread de 15%.`}
             </span>
+            </>
+            )}
           </div>
 
           <div className="sm:col-span-2">
             <span className="mb-2 flex items-center text-[10px] uppercase tracking-[0.2em] text-black/50">
               <LabelNumerado texto="14. Conexão de internet" />
+              <BotaoOcultarCampo
+                oculto={camposOcultos.has(14)}
+                onToggle={() => alternarCampoOculto(14)}
+              />
             </span>
+            {!camposOcultos.has(14) && (
+            <>
             <div className="flex gap-2">
               {(["esim", "pocket"] as const).map((t) => (
                 <button
@@ -2741,12 +2852,20 @@ export default function CalculadoraReversaPage() {
                 }
               />
             </div>
+            </>
+            )}
           </div>
 
           <div className="sm:col-span-2">
             <span className="mb-2 flex items-center text-[10px] uppercase tracking-[0.2em] text-black/50">
               <LabelNumerado texto="15. Ingressos e experiências" />
+              <BotaoOcultarCampo
+                oculto={camposOcultos.has(15)}
+                onToggle={() => alternarCampoOculto(15)}
+              />
             </span>
+            {!camposOcultos.has(15) && (
+            <>
             <div className="flex flex-wrap gap-2">
               {CATALOGO_INGRESSOS.map((ingresso) => {
                 const marcado = ingressosSelecionados.has(ingresso.key);
@@ -3045,12 +3164,20 @@ export default function CalculadoraReversaPage() {
                 )}
               </div>
             )}
+            </>
+            )}
           </div>
 
           <div className="sm:col-span-2">
             <span className="mb-2 flex items-center text-[10px] uppercase tracking-[0.2em] text-black/50">
               <LabelNumerado texto="16. Serviços adicionais" />
+              <BotaoOcultarCampo
+                oculto={camposOcultos.has(16)}
+                onToggle={() => alternarCampoOculto(16)}
+              />
             </span>
+            {!camposOcultos.has(16) && (
+            <>
             <div className="flex flex-wrap gap-2">
               {CATALOGO_SERVICOS_ADICIONAIS.map((servico) => {
                 const marcado = servicosAdicionaisSelecionados.has(servico.key);
@@ -3084,6 +3211,8 @@ export default function CalculadoraReversaPage() {
                   (s) => s.descricao,
                 ).join(" ")}
               </p>
+            )}
+            </>
             )}
           </div>
         </div>
@@ -3227,29 +3356,43 @@ export default function CalculadoraReversaPage() {
                 </p>
               )}
 
-              <div className="mt-3 flex flex-wrap gap-2">
-                <span className="rounded-full bg-[#0A2540] px-3 py-1 text-xs font-semibold text-white">
-                  {dias} {dias === 1 ? "dia" : "dias"}
-                </span>
-                <span className="rounded-full bg-[#0A2540] px-3 py-1 text-xs font-semibold text-white">
-                  {tipoQuarto}
-                </span>
-                <span className="rounded-full bg-[#0A2540] px-3 py-1 text-xs font-semibold text-white">
-                  {pessoas} {pessoas === 1 ? "pessoa" : "pessoas"}
-                </span>
-                {EXTENSOES_INTERNACIONAIS.filter((extensao) => extensoesSelecionadas.has(extensao.key)).map(
-                  (extensao) => (
-                    <span
-                      key={extensao.key}
-                      className="rounded-full bg-emerald-600 px-3 py-1 text-xs font-semibold text-white"
-                    >
-                      + {extensao.dias} dias · {extensao.nome}
-                    </span>
-                  ),
-                )}
+              <div className="mt-5 flex flex-wrap overflow-hidden rounded-xl border border-black/10 bg-white shadow-[0_1px_2px_rgba(10,37,64,0.04)]">
+                {[
+                  { label: "Duração", valor: `${dias} ${dias === 1 ? "dia" : "dias"}` },
+                  { label: "Acomodação", valor: tipoQuarto },
+                  {
+                    label: "Viajantes",
+                    valor: `${pessoas} ${pessoas === 1 ? "pessoa" : "pessoas"}`,
+                  },
+                ].map((item, i) => (
+                  <div
+                    key={item.label}
+                    className={`min-w-[120px] flex-1 px-5 py-3.5 ${i > 0 ? "border-l border-black/10" : ""}`}
+                  >
+                    <p className="text-[9px] uppercase tracking-[0.2em] text-black/35">{item.label}</p>
+                    <p className="mt-1 text-sm font-medium text-[#0A2540]">{item.valor}</p>
+                  </div>
+                ))}
               </div>
 
-              <p className="mt-2 text-[11px] text-black/35">
+              {extensoesSelecionadas.size > 0 && (
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {EXTENSOES_INTERNACIONAIS.filter((extensao) => extensoesSelecionadas.has(extensao.key)).map(
+                    (extensao) => (
+                      <span
+                        key={extensao.key}
+                        className="inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 py-1 pl-1.5 pr-3 text-[11px] font-medium text-emerald-700"
+                      >
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img src={extensao.icone} alt="" className="h-4 w-5 shrink-0 rounded-sm object-contain" />
+                        Extensão {extensao.nome} · +{extensao.dias} dias
+                      </span>
+                    ),
+                  )}
+                </div>
+              )}
+
+              <p className="mt-3 text-[11px] text-black/35">
                 Ajisai · proposta gerada em {geradoEmLabel}
               </p>
 

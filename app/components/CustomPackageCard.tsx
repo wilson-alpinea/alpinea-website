@@ -1328,6 +1328,76 @@ const TAXA_POR_PASSAGEIRO_EXTRA = comMargemEImposto(350);
 // branca, mantendo o resto do texto normal em seguida. Labels sem número
 // reconhecido (ex.: "Quantos dias o cliente quer guia", labels de outras
 // páginas que usam NumberStepper/VolumeSlider) caem no texto puro.
+// Ícones de olho aberto/fechado — usados pelo botão de ocultar/mostrar
+// campo (ver camposOcultos em calculadora_reversa/page.tsx e o parâmetro
+// oculto/onToggleOculto abaixo, em NumberStepper).
+export function IconEye({ className = "h-4 w-4" }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden="true">
+      <path
+        d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinejoin="round"
+      />
+      <circle cx="12" cy="12" r="3" stroke="currentColor" strokeWidth="1.5" />
+    </svg>
+  );
+}
+
+export function IconEyeOff({ className = "h-4 w-4" }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden="true">
+      <path
+        d="M9.9 4.24A10.94 10.94 0 0 1 12 4c6.5 0 10 7 10 7a15.6 15.6 0 0 1-2.16 3.19M6.6 6.6C3.8 8.4 2 11.5 2 11.5s3.5 6.5 10 6.5c1.4 0 2.6-.24 3.7-.66"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M9.9 9.9a3 3 0 0 0 4.2 4.2"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path d="M3 3l18 18" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+// Botão de olho — some/reaparece o corpo de um campo ou seção numerada,
+// mantendo o cabeçalho (com o próprio botão) sempre visível. Compartilhado
+// por LabelNumerado (via NumberStepper/VolumeSlider) e usado solto nos
+// cabeçalhos de seção em calculadora_reversa/page.tsx.
+export function BotaoOcultarCampo({
+  oculto,
+  onToggle,
+}: {
+  oculto?: boolean;
+  onToggle: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={(e) => {
+        e.preventDefault();
+        onToggle();
+      }}
+      aria-label={oculto ? "Mostrar campo" : "Ocultar campo (para print de tela)"}
+      title={oculto ? "Mostrar" : "Ocultar — para print de tela"}
+      className={`ml-auto flex h-6 w-6 shrink-0 items-center justify-center rounded-full border normal-case tracking-normal transition ${
+        oculto
+          ? "border-[#2f80c9]/40 bg-[#2f80c9]/10 text-[#2f80c9]"
+          : "border-black/15 text-black/35 hover:border-black/30 hover:text-black/60"
+      }`}
+    >
+      {oculto ? <IconEyeOff className="h-3.5 w-3.5" /> : <IconEye className="h-3.5 w-3.5" />}
+    </button>
+  );
+}
+
 export function LabelNumerado({ texto }: { texto: string }) {
   const m = /^(\d+)\.\s*([\s\S]*)$/.exec(texto);
   if (!m) return <>{texto}</>;
@@ -1351,6 +1421,8 @@ export function NumberStepper({
   min,
   max,
   formatValue,
+  oculto,
+  onToggleOculto,
 }: {
   label: string;
   value: number;
@@ -1358,33 +1430,43 @@ export function NumberStepper({
   min: number;
   max: number;
   formatValue?: (value: number) => string;
+  /** Quando true, esconde os controles abaixo do rótulo (colapsado, pra
+   * print de tela) — só faz efeito junto com onToggleOculto. */
+  oculto?: boolean;
+  /** Presente = mostra o botão de olho no rótulo. Ausente = NumberStepper
+   * se comporta como antes, sem opção de ocultar (outras páginas que usam
+   * este componente não são afetadas). */
+  onToggleOculto?: () => void;
 }) {
   return (
     <label className="flex h-full flex-col">
       <span className="mb-2 flex min-h-[2.2em] items-end text-[10px] uppercase leading-tight tracking-[0.2em] text-[#0A2540]/50">
         <LabelNumerado texto={label} />
+        {onToggleOculto && <BotaoOcultarCampo oculto={oculto} onToggle={onToggleOculto} />}
       </span>
-      <div className="flex items-center gap-2">
-        <button
-          type="button"
-          onClick={() => onChange(Math.max(min, value - 1))}
-          aria-label={`Diminuir — ${label}`}
-          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-black/15 text-[#0A2540] transition hover:border-black/30"
-        >
-          −
-        </button>
-        <span className="flex h-10 flex-1 items-center justify-center whitespace-nowrap rounded-lg border border-black/15 bg-black/[0.03] px-1 text-center text-sm text-[#0A2540]">
-          {formatValue ? formatValue(value) : value}
-        </span>
-        <button
-          type="button"
-          onClick={() => onChange(Math.min(max, value + 1))}
-          aria-label={`Aumentar — ${label}`}
-          className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-black/15 text-[#0A2540] transition hover:border-black/30"
-        >
-          +
-        </button>
-      </div>
+      {!oculto && (
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => onChange(Math.max(min, value - 1))}
+            aria-label={`Diminuir — ${label}`}
+            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-black/15 text-[#0A2540] transition hover:border-black/30"
+          >
+            −
+          </button>
+          <span className="flex h-10 flex-1 items-center justify-center whitespace-nowrap rounded-lg border border-black/15 bg-black/[0.03] px-1 text-center text-sm text-[#0A2540]">
+            {formatValue ? formatValue(value) : value}
+          </span>
+          <button
+            type="button"
+            onClick={() => onChange(Math.min(max, value + 1))}
+            aria-label={`Aumentar — ${label}`}
+            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-black/15 text-[#0A2540] transition hover:border-black/30"
+          >
+            +
+          </button>
+        </div>
+      )}
     </label>
   );
 }
