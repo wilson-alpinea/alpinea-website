@@ -117,6 +117,7 @@ const CATALOGO_SERVICOS_ADICIONAIS: {
     nome: "Transporte de Malas Inter-Municipal",
     descricao:
       "Takkyubin — a mala é despachada no hotel de origem e chega no hotel da próxima cidade no dia seguinte, sem o cliente precisar carregá-la no Shinkansen. Por mala, por trecho entre cidades.",
+    icone: "/images/icone-transporte-malas.png",
   },
   {
     key: "cambioBrasil",
@@ -686,6 +687,10 @@ const EXTENSOES_INTERNACIONAIS: {
         // (chinadiscovery.com) no canto inferior direito — recortada pra
         // remover a marca, mantendo o skyline completo (Oriental Pearl
         // Tower, WFC, Shanghai Tower, Garden Bridge) enquadrado.
+        // Enquadramento ajustado (10/set/2026): "center" cortava a ponta
+        // da antena da Oriental Pearl Tower; puxado um pouco pra cima
+        // mantém a torre inteira com o skyline completo no quadro.
+        posicaoImagem: "center 15%",
         pontos: ["Yu Garden", "Old City", "Nanjing Road", "The Bund", "Lujiazui", "Shanghai Tower", "Bund iluminado à noite"],
         conceito: "Da Shanghai tradicional ao skyline futurista de Pudong.",
       },
@@ -696,8 +701,11 @@ const EXTENSOES_INTERNACIONAIS: {
         imagem: "/images/paises/roteiro/shanghai-dia2-wukang-road.jpg",
         // Foto vertical do prédio (Wukang Mansion/Normandie Apartments) —
         // puxa pro topo pra manter a fachada arredondada característica
-        // visível em vez de cortar só o nível da rua.
-        posicaoImagem: "top",
+        // visível em vez de cortar só o nível da rua. Ajustado
+        // (10/set/2026): "top" deixava sobrando muito céu vazio acima do
+        // prédio; descendo um pouco mostra a fachada arredondada +
+        // varandas inteiras, sem entrar na rua/carros embaixo.
+        posicaoImagem: "center 20%",
         pontos: [
           "Wukang Road",
           "Former French Concession",
@@ -3219,7 +3227,7 @@ export default function CalculadoraReversaPage() {
                 return (
                   <label
                     key={servico.key}
-                    className={`flex w-40 flex-col items-center gap-2 rounded-lg border px-3 py-3 text-center text-xs transition ${
+                    className={`flex w-28 flex-col items-center gap-2 rounded-lg border px-2 py-3 text-center text-xs transition ${
                       desabilitado
                         ? "cursor-not-allowed border-black/10 bg-black/[0.02] text-black/30"
                         : marcado
