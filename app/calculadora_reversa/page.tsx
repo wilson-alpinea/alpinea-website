@@ -449,21 +449,56 @@ const PRECO_VOO_TOQUIO_SEOUL_USD_PAX = comMargemEImposto(210);
 const PRECO_VOO_TOQUIO_PEQUIM_USD_PAX = comMargemEImposto(280);
 const PRECO_TREM_PEQUIM_XANGAI_USD_PAX = comMargemEImposto(85);
 
+type ExtensaoCidadeKey = "seoul" | "beijing" | "shanghai";
+
+// Diária de hotel por categoria, pesquisada DIRETAMENTE por cidade de
+// extensão (Seoul/Beijing/Shanghai) — substitui a abordagem anterior de
+// "multiplicador relativo a Tóquio", que só tinha sido calibrada contra
+// ADR de hotéis flagship 5 estrelas e, aplicada aos outros tiers,
+// subestimava fortemente o 4 estrelas de Seoul. Pedido do Wilson,
+// 10/set/2026 ("preços não estão baratos demais?"). Valores em US$/noite,
+// pesquisados em 10/set/2026 (Booking/Trip.com/HotelsCombined/Kayak/
+// Momondo/Agoda), convertidos pra reais pela cotação do dia
+// (cambioCotacao), não por uma cotação fixa: Seoul — 3★ ~US$55–90 (ex.:
+// Lotte City Hotel Guro, uso US$75); 4★ ~US$200–450 (ex.: Westin Josun
+// Seoul ~US$377–445, uso US$350 pra evitar picos de data); 5★ ~US$500–800
+// (ex.: Four Seasons Seoul ~US$567+, uso US$600). Beijing — 3★ ~US$35–90
+// (uso US$65); 4★ ~US$120–250 (ex.: JW Marriott Beijing ~US$162, uso
+// US$170); 5★ ~US$500–700 (ex.: Bulgari Beijing ~US$604, uso US$600).
+// Shanghai — 3★ ~US$30–110 (uso US$70); 4★ ~US$110–200 (ex.: The Westin
+// Bund Center ~US$106–199, uso US$150); 5★ ~US$300–500 (ex.: The
+// Peninsula Shanghai ~US$334, uso US$380 — mais perto do Mandarin
+// Oriental Pudong, mesma categoria). Confiança média (tarifa hoteleira
+// varia por antecedência/temporada) — revisar quando houver dado de
+// reserva real ou tabela de parceiros.
+const DIARIA_HOTEL_EXTENSAO_USD: Record<ExtensaoCidadeKey, Record<CategoriaHotelExtensao, number>> = {
+  seoul: {
+    "3 estrelas": comMargemEImposto(75),
+    "4 estrelas": comMargemEImposto(350),
+    "5 estrelas": comMargemEImposto(600),
+  },
+  beijing: {
+    "3 estrelas": comMargemEImposto(65),
+    "4 estrelas": comMargemEImposto(170),
+    "5 estrelas": comMargemEImposto(600),
+  },
+  shanghai: {
+    "3 estrelas": comMargemEImposto(70),
+    "4 estrelas": comMargemEImposto(150),
+    "5 estrelas": comMargemEImposto(380),
+  },
+};
+
 // Extensões internacionais — dias adicionais FORA do Japão, somados ao
 // total da viagem quando o vendedor ativa o card (não dividem os dias já
-// definidos no roteiro do Japão). Multiplicador de hotel pesquisado em
-// 08/set/2026 (ADR de hotéis 5 estrelas/flagship — Four Seasons, Ritz-
-// Carlton, Mandarin Oriental, Peninsula — comparados à mesma base usada
-// pelas cidades do Japão, Osaka = 1.00): Seoul 0.80, Beijing 0.90,
-// Shanghai 0.85. Confiança média/baixa (sem relatório STR/CBRE pago
-// disponível) — revisar quando houver dado de reserva real. Categoria de
-// hotel agora é selecionável por extensão (3/4/5 estrelas, independente
-// da categoria do resto do pacote) — ver extensaoCategoriaHotel. O
-// deslocamento (voo/trem) de cada trecho entra no cálculo somado ao
-// hotel; assume-se trecho ONE-WAY (o cliente segue viagem/retorna direto
-// da última cidade da extensão, sem voltar ao Japão antes do voo
-// internacional de volta). Seguro e guia dessa extensão ainda não entram
-// no cálculo — cotados à parte por enquanto.
+// definidos no roteiro do Japão). Categoria de hotel é selecionável por
+// extensão (3/4/5 estrelas, independente da categoria do resto do
+// pacote) — ver extensaoCategoriaHotel. O deslocamento (voo/trem) de cada
+// trecho entra no cálculo somado ao hotel; assume-se trecho ONE-WAY (o
+// cliente segue viagem/retorna direto da última cidade da extensão, sem
+// voltar ao Japão antes do voo internacional de volta). Seguro e guia
+// dessa extensão ainda não entram no cálculo — cotados à parte por
+// enquanto.
 // Roteiro dia a dia de cada dia de uma extensão internacional — vira os
 // cards com imagem que aparecem ao marcar o país em "10. Extensão
 // internacional" (pedido do Wilson, 10/set/2026, no mesmo espírito visual
@@ -492,7 +527,7 @@ const EXTENSOES_INTERNACIONAIS: {
   nome: string;
   icone: string;
   dias: number;
-  cidades: { nome: string; dias: number; multiplicadorHotel: number }[];
+  cidades: { key: ExtensaoCidadeKey; nome: string; dias: number }[];
   deslocamento: TrechoDeslocamentoExtensao[];
   roteiro: DiaRoteiroExtensao[];
 }[] = [
@@ -501,7 +536,7 @@ const EXTENSOES_INTERNACIONAIS: {
     nome: "Coréia do Sul",
     icone: "/images/paises/coreia-do-sul.png",
     dias: 3,
-    cidades: [{ nome: "Seoul", dias: 3, multiplicadorHotel: 0.8 }],
+    cidades: [{ key: "seoul", nome: "Seoul", dias: 3 }],
     deslocamento: [{ label: "Voo Tóquio → Seoul (econômica)", precoUSDPax: PRECO_VOO_TOQUIO_SEOUL_USD_PAX }],
     roteiro: [
       {
@@ -526,10 +561,11 @@ const EXTENSOES_INTERNACIONAIS: {
         titulo: "Centro + Skyline",
         imagem: "/images/paises/roteiro/seoul-dia2-nseoultower.jpg",
         // Foto original é vertical (torre + beiral de telhado tradicional) —
-        // o corte padrão "center" pegava só uma faixa desfocada no meio da
-        // torre. Puxando pro topo mantém a antena/mirante da torre e o
-        // telhado visíveis, que são o assunto reconhecível da foto.
-        posicaoImagem: "top",
+        // testado com recortes reais: "top" puro cortava a torre no meio
+        // do mirante. 35% verticaliza melhor, mostrando a torre inteira
+        // (base ao mirante/antena) como assunto principal, com o telhado
+        // como elemento secundário à direita.
+        posicaoImagem: "center 35%",
         pontos: ["Namdaemun Market", "Myeongdong", "Namsan Park", "N Seoul Tower", "Itaewon ou Euljiro à noite"],
         conceito: "Centro de Seoul, mercados, vida urbana e uma das melhores vistas panorâmicas da cidade.",
       },
@@ -538,6 +574,10 @@ const EXTENSOES_INTERNACIONAIS: {
         dia: 3,
         titulo: "Seoul Moderna",
         imagem: "/images/paises/roteiro/seoul-dia3-starfield.jpg",
+        // Puxa pro topo pra manter o letreiro em coreano "별마당 도서관"
+        // (Starfield Library) visível — o corte central cortava o nome
+        // fora e mostrava só prateleiras + escada rolante.
+        posicaoImagem: "center 10%",
         pontos: ["Bongeunsa Temple", "COEX", "Starfield Library", "Gangnam", "Seongsu-dong", "Seoul Forest", "Han River"],
         conceito: "O contraste entre templos tradicionais e a Seoul contemporânea, criativa e tecnológica.",
       },
@@ -549,8 +589,8 @@ const EXTENSOES_INTERNACIONAIS: {
     icone: "/images/paises/china.png",
     dias: 4,
     cidades: [
-      { nome: "Beijing", dias: 2, multiplicadorHotel: 0.9 },
-      { nome: "Shanghai", dias: 2, multiplicadorHotel: 0.85 },
+      { key: "beijing", nome: "Beijing", dias: 2 },
+      { key: "shanghai", nome: "Shanghai", dias: 2 },
     ],
     deslocamento: [
       { label: "Voo Tóquio → Pequim (econômica)", precoUSDPax: PRECO_VOO_TOQUIO_PEQUIM_USD_PAX },
@@ -587,7 +627,11 @@ const EXTENSOES_INTERNACIONAIS: {
         cidade: "Shanghai",
         dia: 1,
         titulo: "Shanghai Clássica + Futurista",
-        imagem: null,
+        imagem: "/images/paises/roteiro/shanghai-dia1-the-bund.jpg",
+        // Foto original tinha marca d'água de um site concorrente
+        // (chinadiscovery.com) no canto inferior direito — recortada pra
+        // remover a marca, mantendo o skyline completo (Oriental Pearl
+        // Tower, WFC, Shanghai Tower, Garden Bridge) enquadrado.
         pontos: ["Yu Garden", "Old City", "Nanjing Road", "The Bund", "Lujiazui", "Shanghai Tower", "Bund iluminado à noite"],
         conceito: "Da Shanghai tradicional ao skyline futurista de Pudong.",
       },
@@ -1509,7 +1553,11 @@ export default function CalculadoraReversaPage() {
         (soma, cidade) =>
           soma +
           Math.round(
-            DIARIA_HOTEL[categoria] * cidade.dias * FATOR_QUARTO[tipoQuarto] * cidade.multiplicadorHotel * pessoas,
+            DIARIA_HOTEL_EXTENSAO_USD[cidade.key][categoria] *
+              cidade.dias *
+              FATOR_QUARTO[tipoQuarto] *
+              pessoas *
+              cambioCotacao,
           ),
         0,
       );
@@ -3235,7 +3283,7 @@ export default function CalculadoraReversaPage() {
                 cotados à parte, sob consulta. Valor final sujeito a confirmação da Ajisai.
               </p>
 
-              <div className="mt-7 flex flex-wrap gap-3">
+              <div className="mt-7 flex flex-col gap-3">
                 <button
                   type="button"
                   onClick={() =>
@@ -3244,27 +3292,29 @@ export default function CalculadoraReversaPage() {
                       "_blank",
                     )
                   }
-                  className="block rounded-full bg-[#2f80c9] px-6 py-4 text-center text-xs font-medium uppercase tracking-[0.25em] text-white transition hover:bg-[#3b91dc]"
+                  className="w-full rounded-full bg-[#2f80c9] px-6 py-4 text-center text-xs font-medium uppercase tracking-[0.25em] text-white transition hover:bg-[#3b91dc]"
                 >
                   Falar sobre esse pacote no WhatsApp
                 </button>
-                <button
-                  type="button"
-                  onClick={handleGerarPdf}
-                  disabled={gerandoPdf}
-                  className="flex items-center gap-2 rounded-full border border-[#2f80c9]/40 px-6 py-4 text-center text-xs font-medium uppercase tracking-[0.25em] text-[#2f80c9] transition hover:bg-[#2f80c9]/5 disabled:cursor-not-allowed disabled:opacity-50"
-                >
-                  <IconPdf className="h-4 w-4" />
-                  {gerandoPdf ? "Gerando PDF…" : "Gerar PDF da proposta"}
-                </button>
-                <button
-                  type="button"
-                  onClick={handleGerarTexto}
-                  className="flex items-center gap-2 rounded-full border border-[#2f80c9]/40 px-6 py-4 text-center text-xs font-medium uppercase tracking-[0.25em] text-[#2f80c9] transition hover:bg-[#2f80c9]/5"
-                >
-                  <IconDoc className="h-4 w-4" />
-                  Gerar texto editável (Word)
-                </button>
+                <div className="grid grid-cols-2 gap-3">
+                  <button
+                    type="button"
+                    onClick={handleGerarPdf}
+                    disabled={gerandoPdf}
+                    className="flex items-center justify-center gap-2 rounded-full border border-[#2f80c9]/40 px-4 py-3.5 text-center text-[11px] font-medium uppercase tracking-[0.15em] text-[#2f80c9] transition hover:bg-[#2f80c9]/5 disabled:cursor-not-allowed disabled:opacity-50"
+                  >
+                    <IconPdf className="h-4 w-4 shrink-0" />
+                    <span>{gerandoPdf ? "Gerando…" : "PDF da proposta"}</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleGerarTexto}
+                    className="flex items-center justify-center gap-2 rounded-full border border-[#2f80c9]/40 px-4 py-3.5 text-center text-[11px] font-medium uppercase tracking-[0.15em] text-[#2f80c9] transition hover:bg-[#2f80c9]/5"
+                  >
+                    <IconDoc className="h-4 w-4 shrink-0" />
+                    <span>Texto editável (Word)</span>
+                  </button>
+                </div>
               </div>
             </>
           )}
