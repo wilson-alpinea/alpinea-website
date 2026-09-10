@@ -853,6 +853,22 @@ export const PRECO_EXPRESS_PASS_USJ_8_USD_PAX = comMargemEImposto(130);
 export const PRECO_EXPRESS_PASS_USJ_PREMIUM_USD_PAX = comMargemEImposto(300);
 export const PRECO_INGRESSO_TEAMLAB_TOKYO_USD_PAX = comMargemEImposto(27);
 export const PRECO_INGRESSO_TEAMLAB_KYOTO_USD_PAX = comMargemEImposto(25);
+
+// Transporte de malas inter-municipal ("takkyubin", serviço de courier
+// hotel-a-hotel operado por transportadoras japonesas como Yamato
+// Transport/Kuroneko Yamato) — envia a mala com antecedência entre
+// hotéis de cidades diferentes (ex.: Tóquio → Kyoto), chegando no dia
+// seguinte, sem o cliente precisar carregá-la no Shinkansen. Pesquisado
+// em 10/set/2026: mala de até 140cm (soma das 3 dimensões) entre regiões
+// Kanto↔Kansai (ex.: Tóquio↔Kyoto/Osaka, o trecho mais comum do roteiro)
+// ≈ JPY 2.800/mala/trecho (tabela oficial Yamato) — fontes:
+// kuronekoyamato.co.jp, japanauthentic.com/blog/japan-luggage-forwarding-
+// yamato-guide, tokyocheapo.com/travel/luggage-delivery-services. Outras
+// regiões (Hokkaido, Kyushu, Okinawa) custam mais e demoram mais —
+// usado aqui só como referência do trecho mais comum. Convertido pra
+// dólar na cotação de referência (~150 JPY/US$): ≈ US$19/mala/trecho.
+// Entrega no dia seguinte — não é serviço no mesmo dia.
+export const PRECO_MALA_INTERMUNICIPAL_USD = comMargemEImposto(19);
 // Reserva de restaurantes high-end: pacote fechado de 7 reservas em
 // restaurantes categoria Michelin/Tabelog Awards (ou equivalente), valor
 // fixo até 3 pessoas — não escala por dia nem por pessoa dentro do limite.
@@ -1319,7 +1335,7 @@ export function LabelNumerado({ texto }: { texto: string }) {
     <>
       <span
         aria-hidden
-        className="mr-1.5 inline-grid h-5 w-5 shrink-0 place-items-center rounded-full bg-black text-[11px] font-semibold leading-none tabular-nums text-white"
+        className="mr-2 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-black text-xs font-semibold leading-none tabular-nums text-white"
       >
         {m[1]}
       </span>

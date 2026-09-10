@@ -45,6 +45,7 @@ import {
   PRECO_EXPRESS_PASS_USJ_PREMIUM_USD_PAX,
   PRECO_INGRESSO_TEAMLAB_TOKYO_USD_PAX,
   PRECO_INGRESSO_TEAMLAB_KYOTO_USD_PAX,
+  PRECO_MALA_INTERMUNICIPAL_USD,
   PRECO_RESTAURANTES_HIGHEND_USD,
   RESTAURANTES_HIGHEND_LIMITE_PESSOAS,
   RESTAURANTES_HIGHEND_QTD,
@@ -76,6 +77,36 @@ const CATALOGO_INGRESSOS: { key: IngressoKey; nome: string; precoUSD: number; ic
     nome: "teamLab Kyoto",
     precoUSD: PRECO_INGRESSO_TEAMLAB_KYOTO_USD_PAX,
     icone: "/images/ingressos/teamlab-logo.png",
+  },
+];
+
+type ServicoAdicionalKey = "malasIntermunicipal";
+
+// Catálogo de serviços adicionais/avulsos que ainda não tinham item
+// próprio na Calculadora Reversa — pedido do Wilson, 10/set/2026, no
+// mesmo espírito visual/funcional do catálogo de Ingressos acima
+// (card com ícone + nome + preço, marcação vira candidato do
+// preenchimento por orçamento). Auditado contra a lista de "Serviços
+// avulsos" (SERVICOS_AVULSOS, em app/lib/servicosAvulsos.ts) — todos os
+// outros itens de lá (JR Pass, Seguro Viagem, Câmbio no Brasil, eSIM,
+// Reserva de Restaurantes) já têm seção própria na calculadora; só o
+// transporte de malas era novo. Preço "porTrecho": true significa que
+// multiplica pelo número de trechos entre cidades do roteiro
+// (destinosSelecionados.length - 1, mínimo 1) além de pessoas.
+const CATALOGO_SERVICOS_ADICIONAIS: {
+  key: ServicoAdicionalKey;
+  nome: string;
+  descricao: string;
+  precoUSD: number;
+  porTrecho?: boolean;
+}[] = [
+  {
+    key: "malasIntermunicipal",
+    nome: "Transporte de Malas Inter-Municipal",
+    descricao:
+      "Takkyubin — a mala é despachada no hotel de origem e chega no hotel da próxima cidade no dia seguinte, sem o cliente precisar carregá-la no Shinkansen. Por mala, por trecho entre cidades.",
+    precoUSD: PRECO_MALA_INTERMUNICIPAL_USD,
+    porTrecho: true,
   },
 ];
 
@@ -1107,6 +1138,22 @@ function IconDoc({ className = "h-4 w-4" }: { className?: string }) {
   );
 }
 
+// Ícone de mala (linha simples, mesmo peso de traço dos outros ícones
+// inline da página) — usado no card de "Transporte de Malas
+// Inter-Municipal" enquanto não existe um ícone próprio no mesmo estilo
+// dos demais em /public/images/icone-*.png. Trocar por um ícone da
+// mesma identidade visual quando o Wilson tiver um pronto.
+function IconMala({ className = "h-9 w-9" }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden="true">
+      <rect x="3.5" y="8" width="17" height="12.5" rx="2" stroke="currentColor" strokeWidth="1.4" />
+      <path d="M9 8V5.75A1.75 1.75 0 0 1 10.75 4h2.5A1.75 1.75 0 0 1 15 5.75V8" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+      <path d="M9.5 11v6.5M14.5 11v6.5" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" />
+      <path d="M3.5 13h17" stroke="currentColor" strokeWidth="1.2" />
+    </svg>
+  );
+}
+
 export default function CalculadoraReversaPage() {
   const cambio = useCambioUSD();
   const cambioCotacao = cambio?.cotacao ?? 5.3;
@@ -1236,9 +1283,23 @@ export default function CalculadoraReversaPage() {
   >("nenhum");
   const [mostrarDetalhesUsjExpressPass, setMostrarDetalhesUsjExpressPass] = useState(false);
   const [mostrarTabelaComparativaUsj, setMostrarTabelaComparativaUsj] = useState(false);
+  // Serviços adicionais (ex.: transporte de malas inter-municipal) — mesmo
+  // padrão de seleção dos ingressos. Pedido do Wilson, 10/set/2026.
+  const [servicosAdicionaisSelecionados, setServicosAdicionaisSelecionados] = useState<
+    Set<ServicoAdicionalKey>
+  >(new Set());
 
   function alternarIngresso(key: IngressoKey) {
     setIngressosSelecionados((atual) => {
+      const novo = new Set(atual);
+      if (novo.has(key)) novo.delete(key);
+      else novo.add(key);
+      return novo;
+    });
+  }
+
+  function alternarServicoAdicional(key: ServicoAdicionalKey) {
+    setServicosAdicionaisSelecionados((atual) => {
       const novo = new Set(atual);
       if (novo.has(key)) novo.delete(key);
       else novo.add(key);
@@ -1791,6 +1852,32 @@ export default function CalculadoraReversaPage() {
       });
     }
 
+    // 8.5) Serviços adicionais (ex.: transporte de malas inter-municipal)
+    // — mesmo padrão dos ingressos: marcado pelo vendedor, entra como
+    // candidato do preenchimento por orçamento. "porTrecho" multiplica
+    // pelo número de trechos entre cidades do roteiro (destinos - 1,
+    // mínimo 1) além de pessoas.
+    const trechosEntreCidades = Math.max(1, destinosSelecionados.length - 1);
+    for (const servico of CATALOGO_SERVICOS_ADICIONAIS) {
+      if (!servicosAdicionaisSelecionados.has(servico.key)) continue;
+      const multiplicadorTrecho = servico.porTrecho ? trechosEntreCidades : 1;
+      const precoServico = Math.round(servico.precoUSD * pessoas * multiplicadorTrecho * cambioCotacao);
+      const servicoRecomendado = cabe(precoServico);
+      if (servicoRecomendado) gasto += precoServico;
+      incluidos.push({
+        chave: `servico-${servico.key}`,
+        label: servico.nome,
+        detalhe: [
+          servico.descricao,
+          servico.porTrecho
+            ? `${pessoas} ${pessoas === 1 ? "mala" : "malas"} × ${trechosEntreCidades} ${trechosEntreCidades === 1 ? "trecho" : "trechos"} entre cidades.`
+            : `${pessoas} ${pessoas === 1 ? "pessoa" : "pessoas"}.`,
+        ],
+        precoBRL: precoServico,
+        recomendado: servicoRecomendado,
+      });
+    }
+
     // 9) Reserva de Restaurantes High-End
     if (pessoas <= RESTAURANTES_HIGHEND_LIMITE_PESSOAS) {
       const precoRestaurantes = Math.round(PRECO_RESTAURANTES_HIGHEND_USD * cambioCotacao);
@@ -1871,6 +1958,8 @@ export default function CalculadoraReversaPage() {
     ingressosSelecionados,
     premierAccessAtracoes,
     usjExpressPassTier,
+    servicosAdicionaisSelecionados,
+    destinosSelecionados,
   ]);
 
   const extensoesLabel = EXTENSOES_INTERNACIONAIS.filter((extensao) => extensoesSelecionadas.has(extensao.key))
@@ -2955,6 +3044,46 @@ export default function CalculadoraReversaPage() {
                   </div>
                 )}
               </div>
+            )}
+          </div>
+
+          <div className="sm:col-span-2">
+            <span className="mb-2 flex items-center text-[10px] uppercase tracking-[0.2em] text-black/50">
+              <LabelNumerado texto="16. Serviços adicionais" />
+            </span>
+            <div className="flex flex-wrap gap-2">
+              {CATALOGO_SERVICOS_ADICIONAIS.map((servico) => {
+                const marcado = servicosAdicionaisSelecionados.has(servico.key);
+                return (
+                  <label
+                    key={servico.key}
+                    className={`flex w-40 cursor-pointer flex-col items-center gap-2 rounded-lg border px-3 py-3 text-center text-xs transition ${
+                      marcado
+                        ? "border-[#2f80c9] bg-[#2f80c9]/10 font-medium text-[#2f80c9]"
+                        : "border-black/15 bg-black/[0.03] text-black/60 hover:border-black/30"
+                    }`}
+                  >
+                    <input
+                      type="checkbox"
+                      checked={marcado}
+                      onChange={() => alternarServicoAdicional(servico.key)}
+                      className="sr-only"
+                    />
+                    <IconMala className={`h-9 w-9 shrink-0 ${marcado ? "text-[#2f80c9]" : "text-black/45"}`} />
+                    <span>{servico.nome}</span>
+                    <span className="text-[10px] font-normal text-black/35">
+                      {formatUSD(servico.precoUSD)}/mala{servico.porTrecho ? "/trecho" : ""}
+                    </span>
+                  </label>
+                );
+              })}
+            </div>
+            {servicosAdicionaisSelecionados.size > 0 && (
+              <p className="mt-2 text-[11px] leading-4 text-black/40">
+                {CATALOGO_SERVICOS_ADICIONAIS.filter((s) => servicosAdicionaisSelecionados.has(s.key)).map(
+                  (s) => s.descricao,
+                ).join(" ")}
+              </p>
             )}
           </div>
         </div>
