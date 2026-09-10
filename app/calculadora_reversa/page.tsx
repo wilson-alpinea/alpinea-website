@@ -50,6 +50,7 @@ import {
   ROTEIRO_BASE_DIAS,
   ROTEIRO_PRECO_BASE,
   ROTEIRO_PRECO_DIA_EXTRA,
+  comMargemEImposto,
 } from "../components/CustomPackageCard";
 import { useCambioUSD, formatBRL, formatUSD, brlParaUSDLabel } from "../hooks/useCambioUSD";
 import { CambioLabel } from "../components/CambioLabel";
@@ -61,7 +62,7 @@ type IngressoKey = "disneyland" | "disneysea" | "usj" | "teamlabTokyo" | "teamla
 // pelo vendedor (ver ingressosSelecionados). Preços em CustomPackageCard.tsx.
 const CATALOGO_INGRESSOS: { key: IngressoKey; nome: string; precoUSD: number; icone?: string }[] = [
   { key: "disneyland", nome: "Disneyland Tokyo", precoUSD: PRECO_INGRESSO_DISNEYLAND_TOKYO_USD_PAX, icone: "/images/ingressos/disneyland-logo.png" },
-  { key: "disneysea", nome: "DisneySea Tokyo", precoUSD: PRECO_INGRESSO_DISNEYSEA_USD_PAX, icone: "/images/ingressos/disneyland-logo.png" },
+  { key: "disneysea", nome: "DisneySea Tokyo", precoUSD: PRECO_INGRESSO_DISNEYSEA_USD_PAX, icone: "/images/ingressos/disneysea-logo.png" },
   { key: "usj", nome: "Universal Studios Japan", precoUSD: PRECO_INGRESSO_USJ_USD_PAX, icone: "/images/ingressos/usj-logo.png" },
   {
     key: "teamlabTokyo",
@@ -356,7 +357,7 @@ const TEMPORADAS: { key: TemporadaKey; nome: string; periodo: string; icone: str
   },
   {
     key: "julho",
-    nome: "Férias escolares — Julho",
+    nome: "Férias Escolares (Julho)",
     periodo: "julho (fim das chuvas/verão japonês)",
     icone: "/images/temporada/02-julho.png",
   },
@@ -425,6 +426,28 @@ const TEMPORADA_MULTIPLICADOR_HOTEL: Partial<Record<DestinoKey, Record<Temporada
 
 type ExtensaoInternacionalKey = "coreiaDoSul" | "china";
 
+// Categorias de hotel selecionáveis para uma extensão internacional —
+// pacotes de 3/4/5 estrelas (pedido do Wilson, 10/set/2026). Sem "Elite":
+// as extensões são um add-on ao pacote principal do Japão, não o destino
+// central da proposta, então o teto de categoria fica em 5 estrelas.
+const CATEGORIAS_HOTEL_EXTENSAO = ["3 estrelas", "4 estrelas", "5 estrelas"] as const;
+type CategoriaHotelExtensao = (typeof CATEGORIAS_HOTEL_EXTENSAO)[number];
+
+// Deslocamento (voo/trem) entre o Japão e/ou entre as cidades de uma
+// extensão internacional. Preços de referência em classe econômica,
+// pesquisados em 10/set/2026 (Kayak/Skyscanner/Momondo/Trip.com/
+// TravelChinaGuide, trecho de ida): Tóquio → Seoul ≈ US$ 210/pax (faixa
+// US$ 115–350 conforme cia aérea e antecedência); Tóquio → Pequim ≈
+// US$ 280/pax (faixa US$ 160–450); Pequim → Xangai de trem-bala 2ª
+// classe ≈ US$ 85/pax (CNY 576) — preferido ao voo doméstico (≈
+// US$ 180/pax) por ser mais previsível, central-a-central e com menos
+// tempo de deslocamento até o aeroporto. Confiança média (tarifa aérea
+// varia bastante por antecedência/temporada) — revisar quando houver
+// cotação real de emissão.
+const PRECO_VOO_TOQUIO_SEOUL_USD_PAX = comMargemEImposto(210);
+const PRECO_VOO_TOQUIO_PEQUIM_USD_PAX = comMargemEImposto(280);
+const PRECO_TREM_PEQUIM_XANGAI_USD_PAX = comMargemEImposto(85);
+
 // Extensões internacionais — dias adicionais FORA do Japão, somados ao
 // total da viagem quando o vendedor ativa o card (não dividem os dias já
 // definidos no roteiro do Japão). Multiplicador de hotel pesquisado em
@@ -432,16 +455,40 @@ type ExtensaoInternacionalKey = "coreiaDoSul" | "china";
 // Carlton, Mandarin Oriental, Peninsula — comparados à mesma base usada
 // pelas cidades do Japão, Osaka = 1.00): Seoul 0.80, Beijing 0.90,
 // Shanghai 0.85. Confiança média/baixa (sem relatório STR/CBRE pago
-// disponível) — revisar quando houver dado de reserva real. Usa a mesma
-// categoria final de hotel do resto do pacote (CATEGORIAS_HOTEL) e o
-// mesmo tipo de quarto. Transporte, seguro e guia dessa extensão ainda
-// não entram no cálculo — cotados à parte por enquanto.
+// disponível) — revisar quando houver dado de reserva real. Categoria de
+// hotel agora é selecionável por extensão (3/4/5 estrelas, independente
+// da categoria do resto do pacote) — ver extensaoCategoriaHotel. O
+// deslocamento (voo/trem) de cada trecho entra no cálculo somado ao
+// hotel; assume-se trecho ONE-WAY (o cliente segue viagem/retorna direto
+// da última cidade da extensão, sem voltar ao Japão antes do voo
+// internacional de volta). Seguro e guia dessa extensão ainda não entram
+// no cálculo — cotados à parte por enquanto.
+// Roteiro dia a dia de cada dia de uma extensão internacional — vira os
+// cards com imagem que aparecem ao marcar o país em "10. Extensão
+// internacional" (pedido do Wilson, 10/set/2026, no mesmo espírito visual
+// dos cards de Temas/Cidades recomendadas). `imagem: null` quando ainda
+// não temos uma foto própria pra esse dia — o card mostra um placeholder
+// em vez de imagem até a foto entrar.
+type DiaRoteiroExtensao = {
+  cidade: string;
+  dia: number;
+  titulo: string;
+  imagem: string | null;
+  pontos: string[];
+  conceito: string;
+  observacao?: string;
+};
+
+type TrechoDeslocamentoExtensao = { label: string; precoUSDPax: number };
+
 const EXTENSOES_INTERNACIONAIS: {
   key: ExtensaoInternacionalKey;
   nome: string;
   icone: string;
   dias: number;
   cidades: { nome: string; dias: number; multiplicadorHotel: number }[];
+  deslocamento: TrechoDeslocamentoExtensao[];
+  roteiro: DiaRoteiroExtensao[];
 }[] = [
   {
     key: "coreiaDoSul",
@@ -449,6 +496,41 @@ const EXTENSOES_INTERNACIONAIS: {
     icone: "/images/paises/coreia-do-sul.png",
     dias: 3,
     cidades: [{ nome: "Seoul", dias: 3, multiplicadorHotel: 0.8 }],
+    deslocamento: [{ label: "Voo Tóquio → Seoul (econômica)", precoUSDPax: PRECO_VOO_TOQUIO_SEOUL_USD_PAX }],
+    roteiro: [
+      {
+        cidade: "Seoul",
+        dia: 1,
+        titulo: "Seoul Histórica",
+        imagem: "/images/paises/roteiro/seoul-dia1-gyeongbokgung.jpg",
+        pontos: [
+          "Gwanghwamun Square",
+          "Gyeongbokgung Palace",
+          "Bukchon Hanok Village",
+          "Insadong",
+          "Ikseon-dong",
+          "Gwangjang Market",
+          "Cheonggyecheon",
+        ],
+        conceito: "Palácios, arquitetura tradicional coreana, bairros históricos e gastronomia local.",
+      },
+      {
+        cidade: "Seoul",
+        dia: 2,
+        titulo: "Centro + Skyline",
+        imagem: "/images/paises/roteiro/seoul-dia2-nseoultower.jpg",
+        pontos: ["Namdaemun Market", "Myeongdong", "Namsan Park", "N Seoul Tower", "Itaewon ou Euljiro à noite"],
+        conceito: "Centro de Seoul, mercados, vida urbana e uma das melhores vistas panorâmicas da cidade.",
+      },
+      {
+        cidade: "Seoul",
+        dia: 3,
+        titulo: "Seoul Moderna",
+        imagem: "/images/paises/roteiro/seoul-dia3-starfield.jpg",
+        pontos: ["Bongeunsa Temple", "COEX", "Starfield Library", "Gangnam", "Seongsu-dong", "Seoul Forest", "Han River"],
+        conceito: "O contraste entre templos tradicionais e a Seoul contemporânea, criativa e tecnológica.",
+      },
+    ],
   },
   {
     key: "china",
@@ -458,6 +540,61 @@ const EXTENSOES_INTERNACIONAIS: {
     cidades: [
       { nome: "Beijing", dias: 2, multiplicadorHotel: 0.9 },
       { nome: "Shanghai", dias: 2, multiplicadorHotel: 0.85 },
+    ],
+    deslocamento: [
+      { label: "Voo Tóquio → Pequim (econômica)", precoUSDPax: PRECO_VOO_TOQUIO_PEQUIM_USD_PAX },
+      { label: "Trem-bala Pequim → Xangai (2ª classe)", precoUSDPax: PRECO_TREM_PEQUIM_XANGAI_USD_PAX },
+    ],
+    roteiro: [
+      {
+        cidade: "Beijing",
+        dia: 1,
+        titulo: "China Imperial",
+        imagem: "/images/paises/roteiro/beijing-dia1-temple-of-heaven.jpg",
+        pontos: [
+          "Temple of Heaven",
+          "Tiananmen Square",
+          "Forbidden City",
+          "Jingshan Park",
+          "Shichahai / Houhai",
+          "Hutongs",
+          "Jantar de Peking Duck",
+        ],
+        conceito: "O coração histórico e imperial da China.",
+      },
+      {
+        cidade: "Beijing",
+        dia: 2,
+        titulo: "Grande Muralha",
+        imagem: "/images/paises/roteiro/beijing-dia2-great-wall.jpg",
+        pontos: ["Mutianyu Great Wall", "Summer Palace", "Wangfujing à noite"],
+        conceito:
+          "Grande Muralha pela manhã e um dos mais importantes complexos imperiais de Beijing à tarde.",
+        observacao: "Recomendar motorista/transfer privado para o dia da Grande Muralha.",
+      },
+      {
+        cidade: "Shanghai",
+        dia: 1,
+        titulo: "Shanghai Clássica + Futurista",
+        imagem: null,
+        pontos: ["Yu Garden", "Old City", "Nanjing Road", "The Bund", "Lujiazui", "Shanghai Tower", "Bund iluminado à noite"],
+        conceito: "Da Shanghai tradicional ao skyline futurista de Pudong.",
+      },
+      {
+        cidade: "Shanghai",
+        dia: 2,
+        titulo: "French Concession",
+        imagem: null,
+        pontos: [
+          "Wukang Road",
+          "Former French Concession",
+          "Anfu Road",
+          "Jing'an Temple",
+          "Xintiandi",
+          "Huangpu River Cruise à noite",
+        ],
+        conceito: "Arquitetura histórica, ruas arborizadas, cafés, bairros sofisticados e Shanghai vista do rio.",
+      },
     ],
   },
 ];
@@ -916,6 +1053,12 @@ export default function CalculadoraReversaPage() {
   const [extensoesSelecionadas, setExtensoesSelecionadas] = useState<Set<ExtensaoInternacionalKey>>(
     () => new Set(),
   );
+  // Categoria de hotel de cada extensão (pacote 3/4/5 estrelas), escolhida
+  // de forma independente da categoria do resto do pacote. Pedido do
+  // Wilson, 10/set/2026. Padrão em "4 estrelas" — meio-termo.
+  const [extensaoCategoriaHotel, setExtensaoCategoriaHotel] = useState<
+    Record<ExtensaoInternacionalKey, CategoriaHotelExtensao>
+  >({ coreiaDoSul: "4 estrelas", china: "4 estrelas" });
   const [cambioIeneCidade, setCambioIeneCidade] = useState<CidadeCambioIeneSlug>("sao-paulo");
   const [quantidadeIenes, setQuantidadeIenes] = useState(CAMBIO_IENES_MINIMO);
   const cambioIene = useCambioIene(cambioIeneCidade);
@@ -1055,6 +1198,10 @@ export default function CalculadoraReversaPage() {
       else novo.add(key);
       return novo;
     });
+  }
+
+  function definirCategoriaExtensao(key: ExtensaoInternacionalKey, categoria: CategoriaHotelExtensao) {
+    setExtensaoCategoriaHotel((atual) => ({ ...atual, [key]: categoria }));
   }
 
   // Até 3 temas podem ficar ativos ao mesmo tempo (misturar Automobilismo +
@@ -1313,32 +1460,60 @@ export default function CalculadoraReversaPage() {
         : null;
 
     // 1.5) Extensões internacionais (Coréia do Sul / China) — dias somam
-    // ao total da viagem, hotel calculado à parte na mesma categoria final
-    // do restante do pacote. Item fixo assim que o card é ativado (não
-    // passa pelo preenchimento automático por orçamento).
-    extensoesSelecionadas.forEach((key) => {
-      const extensao = EXTENSOES_INTERNACIONAIS.find((e) => e.key === key);
-      if (!extensao) return;
-      const precoExtensao = extensao.cidades.reduce(
+    // ao total da viagem. Categoria de hotel (3/4/5 estrelas) escolhida de
+    // forma independente por extensão, mais o deslocamento (voo/trem) de
+    // cada trecho. Item fixo assim que o card é ativado (não passa pelo
+    // preenchimento automático por orçamento). precosExtensaoPorCategoria
+    // guarda o preço das 3 categorias pra cada extensão selecionada, pra
+    // UI mostrar os 3 pacotes lado a lado antes do vendedor escolher.
+    function precoHotelExtensao(
+      extensao: (typeof EXTENSOES_INTERNACIONAIS)[number],
+      categoria: CategoriaHotelExtensao,
+    ) {
+      return extensao.cidades.reduce(
         (soma, cidade) =>
           soma +
           Math.round(
-            DIARIA_HOTEL[categoriaHotelFinal] *
-              cidade.dias *
-              FATOR_QUARTO[tipoQuarto] *
-              cidade.multiplicadorHotel *
-              pessoas,
+            DIARIA_HOTEL[categoria] * cidade.dias * FATOR_QUARTO[tipoQuarto] * cidade.multiplicadorHotel * pessoas,
           ),
         0,
       );
+    }
+    function precoDeslocamentoExtensao(extensao: (typeof EXTENSOES_INTERNACIONAIS)[number]) {
+      return extensao.deslocamento.reduce(
+        (soma, trecho) => soma + Math.round(trecho.precoUSDPax * cambioCotacao * pessoas),
+        0,
+      );
+    }
+
+    const precosExtensaoPorCategoria = {} as Record<
+      ExtensaoInternacionalKey,
+      Record<CategoriaHotelExtensao, { hotel: number; deslocamento: number; total: number }>
+    >;
+
+    extensoesSelecionadas.forEach((key) => {
+      const extensao = EXTENSOES_INTERNACIONAIS.find((e) => e.key === key);
+      if (!extensao) return;
+      const deslocamento = precoDeslocamentoExtensao(extensao);
+      const porCategoria = {} as Record<CategoriaHotelExtensao, { hotel: number; deslocamento: number; total: number }>;
+      CATEGORIAS_HOTEL_EXTENSAO.forEach((categoria) => {
+        const hotel = precoHotelExtensao(extensao, categoria);
+        porCategoria[categoria] = { hotel, deslocamento, total: hotel + deslocamento };
+      });
+      precosExtensaoPorCategoria[key] = porCategoria;
+
+      const categoriaEscolhida = extensaoCategoriaHotel[key];
+      const precoExtensao = porCategoria[categoriaEscolhida].total;
       gasto += precoExtensao;
       incluidos.push({
         chave: `extensao-${extensao.key}`,
-        label: `Hotel — Extensão ${extensao.nome} (${extensao.cidades.map((c) => c.nome).join(" + ")})`,
+        label: `Extensão ${extensao.nome} — ${categoriaEscolhida} (${extensao.cidades.map((c) => c.nome).join(" + ")})`,
         detalhe: [
-          `+${extensao.dias} dias · ${tipoQuarto}`,
-          `Categoria ${categoriaHotelFinal} (mesma do restante do pacote)`,
-          "Transporte, seguro e demais itens dessa extensão cotados à parte, por enquanto.",
+          `Hotel ${categoriaEscolhida} · +${extensao.dias} dias · ${tipoQuarto} — ${formatBRL(porCategoria[categoriaEscolhida].hotel)}`,
+          ...extensao.deslocamento.map(
+            (trecho) => `${trecho.label} — ${formatBRL(Math.round(trecho.precoUSDPax * cambioCotacao * pessoas))}`,
+          ),
+          "Seguro e guia dessa extensão cotados à parte, por enquanto.",
         ],
         precoBRL: precoExtensao,
       });
@@ -1580,6 +1755,7 @@ export default function CalculadoraReversaPage() {
       avisoCategoriaTemporada,
       cabeNoOrcamento: orcamento >= precoMinimo,
       precoMinimo,
+      precosExtensaoPorCategoria,
     };
   }, [
     orcamento,
@@ -1591,6 +1767,7 @@ export default function CalculadoraReversaPage() {
     temporada,
     nomesDestinos,
     extensoesSelecionadas,
+    extensaoCategoriaHotel,
     guiaDias,
     cambioIene,
     cambioIeneCidade,
@@ -1754,15 +1931,7 @@ export default function CalculadoraReversaPage() {
         </p>
 
         {/* ── ENTRADAS ── */}
-        <div className="relative mt-8 grid gap-4 rounded-2xl border border-black/10 bg-black/[0.02] p-6 sm:grid-cols-2 md:p-8">
-          {/* Mascote "sentado" na borda superior do card — pedido do Wilson,
-              08/set/2026: corpo acima da borda, pernas cruzando por cima dela. */}
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src="/images/mascote-bmc.png"
-            alt=""
-            className="absolute bottom-full right-6 hidden w-28 translate-y-6 select-none object-contain sm:block md:w-36 md:right-10"
-          />
+        <div className="mt-8 grid gap-4 rounded-2xl border border-black/10 bg-black/[0.02] p-6 sm:grid-cols-2 md:p-8">
           <label className="flex h-full flex-col sm:col-span-2">
             <span className="mb-2 flex items-center text-[10px] uppercase tracking-[0.2em] text-black/50">
               <LabelNumerado texto="1. Orçamento máximo (R$)" />
@@ -2066,6 +2235,105 @@ export default function CalculadoraReversaPage() {
               })}
             </div>
 
+            {extensoesSelecionadas.size > 0 && (
+              <div className="mt-4 space-y-5">
+                {EXTENSOES_INTERNACIONAIS.filter((extensao) => extensoesSelecionadas.has(extensao.key)).map(
+                  (extensao) => (
+                    <div key={extensao.key}>
+                      <div className="mb-2 flex items-center gap-2 rounded-lg bg-[#0A2540] px-4 py-2 text-[10px] uppercase tracking-[0.15em] text-white/70">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img src={extensao.icone} alt="" className="h-5 w-6 shrink-0 object-contain" />
+                        <span>Roteiro dia a dia — {extensao.nome}</span>
+                      </div>
+
+                      <span className="mb-1.5 block text-[9px] uppercase tracking-[0.15em] text-black/40">
+                        Pacote da extensão — hotel {tipoQuarto} + deslocamento
+                        {extensao.cidades.map((c) => ` · ${c.nome}`).join("")}
+                      </span>
+                      <div className="mb-4 grid gap-2 sm:grid-cols-3">
+                        {CATEGORIAS_HOTEL_EXTENSAO.map((categoria) => {
+                          const precos = resultado.precosExtensaoPorCategoria[extensao.key]?.[categoria];
+                          const selecionado = extensaoCategoriaHotel[extensao.key] === categoria;
+                          return (
+                            <button
+                              key={categoria}
+                              type="button"
+                              onClick={() => definirCategoriaExtensao(extensao.key, categoria)}
+                              className={`rounded-xl border px-3 py-2.5 text-left transition ${
+                                selecionado
+                                  ? "border-[#2f80c9] bg-[#2f80c9]/10"
+                                  : "border-black/15 bg-white hover:border-black/30"
+                              }`}
+                            >
+                              <span
+                                className={`block text-xs font-medium ${
+                                  selecionado ? "text-[#2f80c9]" : "text-black/70"
+                                }`}
+                              >
+                                {categoria}
+                              </span>
+                              <span className="mt-0.5 block text-sm font-semibold text-black">
+                                {precos ? formatBRL(precos.total) : "—"}
+                              </span>
+                              <span className="mt-0.5 block text-[10px] text-black/40">
+                                {precos
+                                  ? `Hotel ${formatBRL(precos.hotel)} + deslocamento ${formatBRL(precos.deslocamento)}`
+                                  : ""}
+                              </span>
+                            </button>
+                          );
+                        })}
+                      </div>
+                      <div className="mb-3 flex flex-wrap gap-x-4 gap-y-0.5 text-[10px] text-black/40">
+                        {extensao.deslocamento.map((trecho) => (
+                          <span key={trecho.label}>✈ {trecho.label}</span>
+                        ))}
+                      </div>
+
+                      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                        {extensao.roteiro.map((diaInfo) => (
+                          <div
+                            key={`${extensao.key}-${diaInfo.cidade}-${diaInfo.dia}`}
+                            className="overflow-hidden rounded-xl border border-black/10 bg-white"
+                          >
+                            {diaInfo.imagem ? (
+                              // eslint-disable-next-line @next/next/no-img-element
+                              <img
+                                src={diaInfo.imagem}
+                                alt=""
+                                className="h-28 w-full rounded-t-xl object-cover"
+                              />
+                            ) : (
+                              <div className="flex h-28 w-full items-center justify-center rounded-t-xl bg-black/5 text-center text-[10px] uppercase tracking-wide text-black/30">
+                                Imagem pendente
+                              </div>
+                            )}
+                            <div className="p-3">
+                              <p className="text-[9px] uppercase tracking-[0.15em] text-[#2f80c9]">
+                                {extensao.cidades.length > 1 ? `${diaInfo.cidade} · ` : ""}Dia {diaInfo.dia}
+                              </p>
+                              <p className="mt-0.5 text-sm font-medium text-black">{diaInfo.titulo}</p>
+                              <ul className="mt-2 space-y-0.5 text-[11px] leading-4 text-black/60">
+                                {diaInfo.pontos.map((ponto) => (
+                                  <li key={ponto}>• {ponto}</li>
+                                ))}
+                              </ul>
+                              <p className="mt-2 text-[11px] italic leading-4 text-black/45">{diaInfo.conceito}</p>
+                              {diaInfo.observacao && (
+                                <p className="mt-2 rounded-md bg-amber-50 px-2 py-1 text-[10px] font-medium leading-4 text-amber-700">
+                                  ⚠️ {diaInfo.observacao}
+                                </p>
+                              )}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  ),
+                )}
+              </div>
+            )}
+
             <span className="mt-1.5 block text-[11px] text-black/40">
               {destinosSelecionados.length === 0
                 ? "Nenhuma cidade selecionada — diária de hotel sem ajuste de mercado por cidade"
@@ -2291,7 +2559,13 @@ export default function CalculadoraReversaPage() {
                     />
                     {ingresso.icone ? (
                       // eslint-disable-next-line @next/next/no-img-element
-                      <img src={ingresso.icone} alt="" className="h-16 w-auto max-w-full shrink-0 object-contain" />
+                      <img
+                        src={ingresso.icone}
+                        alt=""
+                        className={`w-auto max-w-full shrink-0 object-contain ${
+                          ingresso.key.startsWith("teamlab") ? "h-9" : "h-16"
+                        }`}
+                      />
                     ) : (
                       // eslint-disable-next-line @next/next/no-img-element
                       <img
