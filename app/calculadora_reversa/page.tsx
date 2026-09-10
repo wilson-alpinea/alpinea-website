@@ -81,33 +81,55 @@ const CATALOGO_INGRESSOS: { key: IngressoKey; nome: string; precoUSD: number; ic
   },
 ];
 
-type ServicoAdicionalKey = "malasIntermunicipal";
+type ServicoAdicionalKey = "malasIntermunicipal" | "cambioBrasil" | "restaurantesHighEnd";
 
-// Catálogo de serviços adicionais/avulsos que ainda não tinham item
-// próprio na Calculadora Reversa — pedido do Wilson, 10/set/2026, no
-// mesmo espírito visual/funcional do catálogo de Ingressos acima
-// (card com ícone + nome + preço, marcação vira candidato do
-// preenchimento por orçamento). Auditado contra a lista de "Serviços
-// avulsos" (SERVICOS_AVULSOS, em app/lib/servicosAvulsos.ts) — todos os
-// outros itens de lá (JR Pass, Seguro Viagem, Câmbio no Brasil, eSIM,
-// Reserva de Restaurantes) já têm seção própria na calculadora; só o
-// transporte de malas era novo. Preço "porTrecho": true significa que
-// multiplica pelo número de trechos entre cidades do roteiro
-// (destinosSelecionados.length - 1, mínimo 1) além de pessoas.
+// Catálogo de serviços adicionais/avulsos mostrados como cards na seção 16
+// — mesmo espírito visual/funcional do catálogo de Ingressos acima (card
+// com ícone + nome + preço, marcação vira candidato do preenchimento por
+// orçamento). Auditado contra a lista de "Serviços avulsos"
+// (SERVICOS_AVULSOS, em app/lib/servicosAvulsos.ts) em 10/set/2026.
+//
+// Câmbio no Brasil e Reserva de Restaurantes High-End eram itens
+// automáticos (entravam sozinhos em todo pacote, sem opção de tirar) —
+// viraram cards opcionais aqui a pedido do Wilson, 10/set/2026, pro
+// vendedor decidir por proposta. Transporte de Malas já era opcional.
+// Seguro Viagem e JR Pass continuam de fora deste catálogo: Seguro é
+// obrigatório em todo pacote (pedido do Wilson, 08/set/2026 — ver
+// comentário em "Seguro Viagem é item fixo/obrigatório" mais abaixo) e JR
+// Pass já tem seção própria (11). eSIM/Pocket Wi-Fi têm a seção 14.
+//
+// Cada item tem sua própria fórmula de preço (calculada onde é usado, não
+// aqui no catálogo — os formatos são diferentes demais pra generalizar):
+// malas é por pessoa × trecho entre cidades; câmbio é um valor fixo (taxa
+// de serviço) somado ao valor dos ienes configurado na seção 13; e
+// restaurantes é um pacote fechado, só disponível até
+// RESTAURANTES_HIGHEND_LIMITE_PESSOAS pessoas.
 const CATALOGO_SERVICOS_ADICIONAIS: {
   key: ServicoAdicionalKey;
   nome: string;
   descricao: string;
-  precoUSD: number;
-  porTrecho?: boolean;
+  /** Caminho de imagem do ícone (mesmo usado em /servicos-adicionais).
+   * Ausente = usa o ícone local IconMala como fallback. */
+  icone?: string;
 }[] = [
   {
     key: "malasIntermunicipal",
     nome: "Transporte de Malas Inter-Municipal",
     descricao:
       "Takkyubin — a mala é despachada no hotel de origem e chega no hotel da próxima cidade no dia seguinte, sem o cliente precisar carregá-la no Shinkansen. Por mala, por trecho entre cidades.",
-    precoUSD: PRECO_MALA_INTERMUNICIPAL_USD,
-    porTrecho: true,
+  },
+  {
+    key: "cambioBrasil",
+    nome: "Câmbio no Brasil",
+    descricao:
+      "Retirada de ienes em espécie ainda no Brasil, com cotação fechada antes do embarque — evita depender só de caixas eletrônicos ou casas de câmbio no Japão nos primeiros dias de viagem. Valor configurado na seção 13 (cidade e quantidade de ienes).",
+    icone: "/images/icone-cambio-dinheiro.png",
+  },
+  {
+    key: "restaurantesHighEnd",
+    nome: "Reserva de Restaurantes High-End",
+    descricao: `Pacote fechado de ${RESTAURANTES_HIGHEND_QTD} reservas em restaurantes Michelin/Tabelog Awards ou equivalente. Disponível para até ${RESTAURANTES_HIGHEND_LIMITE_PESSOAS} pessoas.`,
+    icone: "/images/icone-gastronomia.png",
   },
 ];
 
@@ -1812,26 +1834,6 @@ export default function CalculadoraReversaPage() {
       recomendado: motoristaRecomendado,
     });
 
-    // 7) Câmbio no Brasil
-    const cotacaoIeneAtual = cambioIene?.cotacaoBRLPorJPY ?? COTACAO_FALLBACK_BRL_POR_JPY;
-    const precoIenes = Math.round(quantidadeIenes * cotacaoIeneAtual * SPREAD_CAMBIO_IENE);
-    const nomeCidadeCambio =
-      CIDADES_CAMBIO_IENE.find((c) => c.slug === cambioIeneCidade)?.nome ?? cambioIeneCidade;
-    const precoCambioTotal = PRECO_CAMBIO_BRASIL + precoIenes;
-    const cambioRecomendado = cabe(precoCambioTotal);
-    if (cambioRecomendado) gasto += precoCambioTotal;
-    incluidos.push({
-      chave: "cambio",
-      label: "Câmbio no Brasil",
-      detalhe: [
-        `¥ ${quantidadeIenes.toLocaleString("pt-BR")} em espécie — cotação de ${nomeCidadeCambio} + spread de 15%.`,
-        "Retirada de ienes em espécie ainda no Brasil, com cotação fechada antes do embarque.",
-        "Evita depender só de caixas eletrônicos ou casas de câmbio no Japão nos primeiros dias de viagem.",
-      ],
-      precoBRL: precoCambioTotal,
-      recomendado: cambioRecomendado,
-    });
-
     // 8) Ingressos e experiências — só entram os parques marcados pelo
     // vendedor (nenhum vem por padrão). Premier Access (Disney, por
     // atração) e Express Pass (USJ, por tier — cada um com preço
@@ -1877,38 +1879,62 @@ export default function CalculadoraReversaPage() {
       });
     }
 
-    // 8.5) Serviços adicionais (ex.: transporte de malas inter-municipal)
-    // — mesmo padrão dos ingressos: marcado pelo vendedor, entra como
-    // candidato do preenchimento por orçamento. "porTrecho" multiplica
-    // pelo número de trechos entre cidades do roteiro (destinos - 1,
-    // mínimo 1) além de pessoas.
-    const trechosEntreCidades = Math.max(1, destinosSelecionados.length - 1);
-    for (const servico of CATALOGO_SERVICOS_ADICIONAIS) {
-      if (!servicosAdicionaisSelecionados.has(servico.key)) continue;
-      const multiplicadorTrecho = servico.porTrecho ? trechosEntreCidades : 1;
-      const precoServico = Math.round(servico.precoUSD * pessoas * multiplicadorTrecho * cambioCotacao);
-      const servicoRecomendado = cabe(precoServico);
-      if (servicoRecomendado) gasto += precoServico;
+    // 8.5) Serviços adicionais opcionais (seção 16) — marcados pelo
+    // vendedor, cada um vira candidato do preenchimento por orçamento.
+    // Câmbio no Brasil e Reserva de Restaurantes High-End eram itens
+    // automáticos (entravam em todo pacote) e viraram opcionais aqui a
+    // pedido do Wilson, 10/set/2026. Cada um tem sua própria fórmula de
+    // preço, calculada aqui (formatos diferentes demais pra generalizar
+    // num loop único, ao contrário de Ingressos acima).
+    if (servicosAdicionaisSelecionados.has("malasIntermunicipal")) {
+      const trechosEntreCidades = Math.max(1, destinosSelecionados.length - 1);
+      const precoMalas = Math.round(
+        PRECO_MALA_INTERMUNICIPAL_USD * pessoas * trechosEntreCidades * cambioCotacao,
+      );
+      const malasRecomendado = cabe(precoMalas);
+      if (malasRecomendado) gasto += precoMalas;
       incluidos.push({
-        chave: `servico-${servico.key}`,
-        label: servico.nome,
+        chave: "servico-malasIntermunicipal",
+        label: "Transporte de Malas Inter-Municipal",
         detalhe: [
-          servico.descricao,
-          servico.porTrecho
-            ? `${pessoas} ${pessoas === 1 ? "mala" : "malas"} × ${trechosEntreCidades} ${trechosEntreCidades === 1 ? "trecho" : "trechos"} entre cidades.`
-            : `${pessoas} ${pessoas === 1 ? "pessoa" : "pessoas"}.`,
+          "Takkyubin — a mala é despachada no hotel de origem e chega no hotel da próxima cidade no dia seguinte, sem o cliente precisar carregá-la no Shinkansen.",
+          `${pessoas} ${pessoas === 1 ? "mala" : "malas"} × ${trechosEntreCidades} ${trechosEntreCidades === 1 ? "trecho" : "trechos"} entre cidades.`,
         ],
-        precoBRL: precoServico,
-        recomendado: servicoRecomendado,
+        precoBRL: precoMalas,
+        recomendado: malasRecomendado,
       });
     }
 
-    // 9) Reserva de Restaurantes High-End
-    if (pessoas <= RESTAURANTES_HIGHEND_LIMITE_PESSOAS) {
+    if (servicosAdicionaisSelecionados.has("cambioBrasil")) {
+      const cotacaoIeneAtual = cambioIene?.cotacaoBRLPorJPY ?? COTACAO_FALLBACK_BRL_POR_JPY;
+      const precoIenes = Math.round(quantidadeIenes * cotacaoIeneAtual * SPREAD_CAMBIO_IENE);
+      const nomeCidadeCambio =
+        CIDADES_CAMBIO_IENE.find((c) => c.slug === cambioIeneCidade)?.nome ?? cambioIeneCidade;
+      const precoCambioTotal = PRECO_CAMBIO_BRASIL + precoIenes;
+      const cambioRecomendado = cabe(precoCambioTotal);
+      if (cambioRecomendado) gasto += precoCambioTotal;
+      incluidos.push({
+        chave: "servico-cambioBrasil",
+        label: "Câmbio no Brasil",
+        detalhe: [
+          `¥ ${quantidadeIenes.toLocaleString("pt-BR")} em espécie — cotação de ${nomeCidadeCambio} + spread de 15%.`,
+          "Retirada de ienes em espécie ainda no Brasil, com cotação fechada antes do embarque.",
+          "Evita depender só de caixas eletrônicos ou casas de câmbio no Japão nos primeiros dias de viagem.",
+        ],
+        precoBRL: precoCambioTotal,
+        recomendado: cambioRecomendado,
+      });
+    }
+
+    if (
+      servicosAdicionaisSelecionados.has("restaurantesHighEnd") &&
+      pessoas <= RESTAURANTES_HIGHEND_LIMITE_PESSOAS
+    ) {
       const precoRestaurantes = Math.round(PRECO_RESTAURANTES_HIGHEND_USD * cambioCotacao);
       const restaurantesRecomendado = cabe(precoRestaurantes);
       if (restaurantesRecomendado) gasto += precoRestaurantes;
       incluidos.push({
+        chave: "servico-restaurantesHighEnd",
         label: "Reserva de Restaurantes High-End",
         detalhe: [
           `Pacote fechado de ${RESTAURANTES_HIGHEND_QTD} reservas em restaurantes Michelin/Tabelog Awards ou equivalente.`,
@@ -3181,26 +3207,52 @@ export default function CalculadoraReversaPage() {
             <div className="flex flex-wrap gap-2">
               {CATALOGO_SERVICOS_ADICIONAIS.map((servico) => {
                 const marcado = servicosAdicionaisSelecionados.has(servico.key);
+                const desabilitado =
+                  servico.key === "restaurantesHighEnd" &&
+                  pessoas > RESTAURANTES_HIGHEND_LIMITE_PESSOAS;
+                const precoLabel =
+                  servico.key === "malasIntermunicipal"
+                    ? `${formatUSD(PRECO_MALA_INTERMUNICIPAL_USD)}/mala/trecho`
+                    : servico.key === "cambioBrasil"
+                      ? `${formatBRL(PRECO_CAMBIO_BRASIL)} + valor dos ienes`
+                      : `${formatUSD(PRECO_RESTAURANTES_HIGHEND_USD)} · até ${RESTAURANTES_HIGHEND_LIMITE_PESSOAS} pessoas`;
                 return (
                   <label
                     key={servico.key}
-                    className={`flex w-40 cursor-pointer flex-col items-center gap-2 rounded-lg border px-3 py-3 text-center text-xs transition ${
-                      marcado
-                        ? "border-[#2f80c9] bg-[#2f80c9]/10 font-medium text-[#2f80c9]"
-                        : "border-black/15 bg-black/[0.03] text-black/60 hover:border-black/30"
+                    className={`flex w-40 flex-col items-center gap-2 rounded-lg border px-3 py-3 text-center text-xs transition ${
+                      desabilitado
+                        ? "cursor-not-allowed border-black/10 bg-black/[0.02] text-black/30"
+                        : marcado
+                          ? "cursor-pointer border-[#2f80c9] bg-[#2f80c9]/10 font-medium text-[#2f80c9]"
+                          : "cursor-pointer border-black/15 bg-black/[0.03] text-black/60 hover:border-black/30"
                     }`}
                   >
                     <input
                       type="checkbox"
-                      checked={marcado}
+                      checked={marcado && !desabilitado}
+                      disabled={desabilitado}
                       onChange={() => alternarServicoAdicional(servico.key)}
                       className="sr-only"
                     />
-                    <IconMala className={`h-9 w-9 shrink-0 ${marcado ? "text-[#2f80c9]" : "text-black/45"}`} />
+                    {servico.icone ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img
+                        src={servico.icone}
+                        alt=""
+                        className={`h-9 w-9 shrink-0 object-contain ${desabilitado ? "opacity-40" : ""}`}
+                      />
+                    ) : (
+                      <IconMala
+                        className={`h-9 w-9 shrink-0 ${marcado ? "text-[#2f80c9]" : "text-black/45"}`}
+                      />
+                    )}
                     <span>{servico.nome}</span>
-                    <span className="text-[10px] font-normal text-black/35">
-                      {formatUSD(servico.precoUSD)}/mala{servico.porTrecho ? "/trecho" : ""}
-                    </span>
+                    <span className="text-[10px] font-normal text-black/35">{precoLabel}</span>
+                    {desabilitado && (
+                      <span className="text-[9px] font-medium uppercase tracking-wide text-red-500">
+                        Grupo grande — consultar
+                      </span>
+                    )}
                   </label>
                 );
               })}
@@ -3356,7 +3408,7 @@ export default function CalculadoraReversaPage() {
                 </p>
               )}
 
-              <div className="mt-5 flex flex-wrap overflow-hidden rounded-xl border border-black/10 bg-white shadow-[0_1px_2px_rgba(10,37,64,0.04)]">
+              <div className="mt-5 grid grid-cols-3 gap-2.5 sm:gap-3">
                 {[
                   { label: "Duração", valor: `${dias} ${dias === 1 ? "dia" : "dias"}` },
                   { label: "Acomodação", valor: tipoQuarto },
@@ -3364,13 +3416,13 @@ export default function CalculadoraReversaPage() {
                     label: "Viajantes",
                     valor: `${pessoas} ${pessoas === 1 ? "pessoa" : "pessoas"}`,
                   },
-                ].map((item, i) => (
+                ].map((item) => (
                   <div
                     key={item.label}
-                    className={`min-w-[120px] flex-1 px-5 py-3.5 ${i > 0 ? "border-l border-black/10" : ""}`}
+                    className="rounded-xl border border-black/10 bg-white px-2.5 py-3.5 text-center shadow-[0_1px_2px_rgba(10,37,64,0.04)] sm:px-4"
                   >
-                    <p className="text-[9px] uppercase tracking-[0.2em] text-black/35">{item.label}</p>
-                    <p className="mt-1 text-sm font-medium text-[#0A2540]">{item.valor}</p>
+                    <p className="text-[9px] uppercase tracking-[0.2em] text-black/55">{item.label}</p>
+                    <p className="mt-1.5 text-sm font-semibold text-[#0A2540] sm:text-base">{item.valor}</p>
                   </div>
                 ))}
               </div>
