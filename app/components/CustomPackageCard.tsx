@@ -1319,7 +1319,7 @@ export function LabelNumerado({ texto }: { texto: string }) {
     <>
       <span
         aria-hidden
-        className="mr-1.5 inline-flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-black text-[9px] font-semibold leading-none text-white"
+        className="mr-1.5 inline-grid h-5 w-5 shrink-0 place-items-center rounded-full bg-black text-[11px] font-semibold leading-none tabular-nums text-white"
       >
         {m[1]}
       </span>
