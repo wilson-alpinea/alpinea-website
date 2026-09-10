@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Bodoni_Moda } from "next/font/google";
 import { useMemo, useState } from "react";
 import { gerarEBaixarPdf } from "./PacotePdf";
+import { gerarEBaixarTexto } from "./PacoteTexto";
 import { useCambioIene, CIDADES_CAMBIO_IENE, type CidadeCambioIeneSlug } from "../hooks/useCambioIene";
 import { COTACAO_FALLBACK_BRL_POR_JPY } from "../lib/cambioIene";
 import {
@@ -474,6 +475,11 @@ type DiaRoteiroExtensao = {
   dia: number;
   titulo: string;
   imagem: string | null;
+  // Ponto focal do corte (object-position em CSS) — só precisa ser
+  // definido quando o padrão "center" corta o assunto principal da foto
+  // de um jeito ruim (ex.: uma torre alta virando só uma faixa de luz
+  // desfocada quando o card é baixo e largo). Padrão: "center".
+  posicaoImagem?: string;
   pontos: string[];
   conceito: string;
   observacao?: string;
@@ -519,6 +525,11 @@ const EXTENSOES_INTERNACIONAIS: {
         dia: 2,
         titulo: "Centro + Skyline",
         imagem: "/images/paises/roteiro/seoul-dia2-nseoultower.jpg",
+        // Foto original é vertical (torre + beiral de telhado tradicional) —
+        // o corte padrão "center" pegava só uma faixa desfocada no meio da
+        // torre. Puxando pro topo mantém a antena/mirante da torre e o
+        // telhado visíveis, que são o assunto reconhecível da foto.
+        posicaoImagem: "top",
         pontos: ["Namdaemun Market", "Myeongdong", "Namsan Park", "N Seoul Tower", "Itaewon ou Euljiro à noite"],
         conceito: "Centro de Seoul, mercados, vida urbana e uma das melhores vistas panorâmicas da cidade.",
       },
@@ -584,7 +595,11 @@ const EXTENSOES_INTERNACIONAIS: {
         cidade: "Shanghai",
         dia: 2,
         titulo: "French Concession",
-        imagem: null,
+        imagem: "/images/paises/roteiro/shanghai-dia2-wukang-road.jpg",
+        // Foto vertical do prédio (Wukang Mansion/Normandie Apartments) —
+        // puxa pro topo pra manter a fachada arredondada característica
+        // visível em vez de cortar só o nível da rua.
+        posicaoImagem: "top",
         pontos: [
           "Wukang Road",
           "Former French Concession",
@@ -1023,6 +1038,26 @@ function IconPdf({ className = "h-4 w-4" }: { className?: string }) {
       <path d="M14 2.75V6.5a1 1 0 0 0 1 1h3.75" stroke="currentColor" strokeWidth="1.4" strokeLinejoin="round" />
       <text x="12" y="16.5" textAnchor="middle" fontSize="6.2" fontWeight="700" fill="currentColor" stroke="none">
         PDF
+      </text>
+    </svg>
+  );
+}
+
+// Ícone do arquivo de texto editável (.doc) — mesmo desenho de página do
+// IconPdf, só troca o rótulo, pra ficar visualmente parelho ao botão de
+// PDF. Pedido do Wilson, 10/set/2026.
+function IconDoc({ className = "h-4 w-4" }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" className={className} aria-hidden="true">
+      <path
+        d="M6 2.75h8.379a1 1 0 0 1 .707.293l3.871 3.871a1 1 0 0 1 .293.707V19.5A1.75 1.75 0 0 1 17.5 21.25h-11.5A1.75 1.75 0 0 1 4.25 19.5v-15A1.75 1.75 0 0 1 6 2.75Z"
+        stroke="currentColor"
+        strokeWidth="1.4"
+        strokeLinejoin="round"
+      />
+      <path d="M14 2.75V6.5a1 1 0 0 0 1 1h3.75" stroke="currentColor" strokeWidth="1.4" strokeLinejoin="round" />
+      <text x="12" y="16.5" textAnchor="middle" fontSize="5.6" fontWeight="700" fill="currentColor" stroke="none">
+        DOC
       </text>
     </svg>
   );
@@ -1886,6 +1921,38 @@ export default function CalculadoraReversaPage() {
     }
   }
 
+  // Arquivo de texto editável (.doc) da proposta — mesmos dados do PDF,
+  // pra quando o vendedor precisa editar o texto antes de mandar pro
+  // cliente (ajustar valor negociado, remover item, mudar o tom).
+  function handleGerarTexto() {
+    try {
+      gerarEBaixarTexto({
+        tituloPacote: pacoteSugeridoLabel,
+        dias,
+        tipoQuarto,
+        pessoas,
+        geradoEmLabel,
+        cambioLabel: cambio
+          ? cambio.fallback
+            ? `Câmbio estimado: US$ 1 = R$ ${cambio.cotacao.toFixed(2).replace(".", ",")} — cotação do Banco Central indisponível no momento.`
+            : `Câmbio do dia: US$ 1 = R$ ${cambio.cotacao.toFixed(2).replace(".", ",")}${cambio.data ? ` (PTAX Banco Central, ${cambio.data})` : " (PTAX Banco Central)"}`
+          : "Cotação do dia indisponível",
+        itens: itensSelecionados.map((item) => ({
+          chave: chaveDoItem(item),
+          label: item.label,
+          detalhe: item.detalhe,
+          precoBRL: valorItem(item),
+        })),
+        totalBRL: totalSelecionado,
+        orcamentoBRL: orcamento,
+        saldoBRL: saldoSelecionado,
+      });
+    } catch (erro) {
+      console.error("Falha ao gerar arquivo de texto da proposta:", erro);
+      window.alert("Não foi possível gerar o arquivo de texto agora. Tente novamente em alguns segundos.");
+    }
+  }
+
   const mensagemWhatsapp = [
     `Proposta Ajisai — ${pacoteSugeridoLabel}`,
     "",
@@ -2265,8 +2332,11 @@ export default function CalculadoraReversaPage() {
                                   : "border-black/15 bg-white hover:border-black/30"
                               }`}
                             >
+                              <span aria-hidden className="block text-xs leading-none tracking-[1px] text-amber-400">
+                                {"★".repeat(parseInt(categoria, 10))}
+                              </span>
                               <span
-                                className={`block text-xs font-medium ${
+                                className={`mt-1 block text-xs font-medium ${
                                   selecionado ? "text-[#2f80c9]" : "text-black/70"
                                 }`}
                               >
@@ -2301,10 +2371,11 @@ export default function CalculadoraReversaPage() {
                               <img
                                 src={diaInfo.imagem}
                                 alt=""
-                                className="h-28 w-full rounded-t-xl object-cover"
+                                className="h-36 w-full rounded-t-xl object-cover"
+                                style={{ objectPosition: diaInfo.posicaoImagem ?? "center" }}
                               />
                             ) : (
-                              <div className="flex h-28 w-full items-center justify-center rounded-t-xl bg-black/5 text-center text-[10px] uppercase tracking-wide text-black/30">
+                              <div className="flex h-36 w-full items-center justify-center rounded-t-xl bg-black/5 text-center text-[10px] uppercase tracking-wide text-black/30">
                                 Imagem pendente
                               </div>
                             )}
@@ -3186,6 +3257,14 @@ export default function CalculadoraReversaPage() {
                   <IconPdf className="h-4 w-4" />
                   {gerandoPdf ? "Gerando PDF…" : "Gerar PDF da proposta"}
                 </button>
+                <button
+                  type="button"
+                  onClick={handleGerarTexto}
+                  className="flex items-center gap-2 rounded-full border border-[#2f80c9]/40 px-6 py-4 text-center text-xs font-medium uppercase tracking-[0.25em] text-[#2f80c9] transition hover:bg-[#2f80c9]/5"
+                >
+                  <IconDoc className="h-4 w-4" />
+                  Gerar texto editável (Word)
+                </button>
               </div>
             </>
           )}
@@ -3225,6 +3304,16 @@ export default function CalculadoraReversaPage() {
               className="flex h-9 w-9 items-center justify-center rounded-full border border-[#5b9bd9]/50 text-[#5b9bd9] transition hover:bg-[#5b9bd9]/10 disabled:cursor-not-allowed disabled:opacity-40"
             >
               <IconPdf className="h-4 w-4" />
+            </button>
+            <button
+              type="button"
+              disabled={!resultado.cabeNoOrcamento}
+              onClick={handleGerarTexto}
+              aria-label="Gerar texto editável (Word) da proposta"
+              title="Gerar texto editável (Word) da proposta"
+              className="flex h-9 w-9 items-center justify-center rounded-full border border-[#5b9bd9]/50 text-[#5b9bd9] transition hover:bg-[#5b9bd9]/10 disabled:cursor-not-allowed disabled:opacity-40"
+            >
+              <IconDoc className="h-4 w-4" />
             </button>
             <button
               type="button"
