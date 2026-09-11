@@ -701,11 +701,12 @@ const EXTENSOES_INTERNACIONAIS: {
         imagem: "/images/paises/roteiro/shanghai-dia2-wukang-road.jpg",
         // Foto vertical do prédio (Wukang Mansion/Normandie Apartments) —
         // puxa pro topo pra manter a fachada arredondada característica
-        // visível em vez de cortar só o nível da rua. Ajustado
-        // (10/set/2026): "top" deixava sobrando muito céu vazio acima do
-        // prédio; descendo um pouco mostra a fachada arredondada +
-        // varandas inteiras, sem entrar na rua/carros embaixo.
-        posicaoImagem: "center 20%",
+        // visível em vez de cortar só o nível da rua. Ajustado de novo
+        // (11/set/2026): "center 20%" ainda sobrava céu vazio demais
+        // acima do prédio (Wilson apontou que o enquadramento continuava
+        // ruim); em 30% o céu quase desaparece e a fachada arredondada +
+        // varandas aparecem inteiras, sem entrar na rua/carros embaixo.
+        posicaoImagem: "center 30%",
         pontos: [
           "Wukang Road",
           "Former French Concession",
@@ -3781,8 +3782,8 @@ export default function CalculadoraReversaPage() {
                   à vista/parcelado (30% de entrada + parcelas, limitado pela data
                   da viagem). É só simulação pra apresentação — o checkout real de
                   pagamento é etapa futura, ainda não existe. */}
-              <div className="mt-5 rounded-2xl border border-black/10 bg-white p-5">
-                <p className="text-[10px] uppercase tracking-[0.2em] text-black/40">
+              <div className="mt-5 rounded-2xl border border-[#0A2540]/15 bg-[#0A2540]/[0.035] p-5">
+                <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#0A2540]">
                   Simulação de pagamento
                 </p>
                 <p className="mt-1 text-[11px] leading-5 text-black/40">
@@ -3792,12 +3793,12 @@ export default function CalculadoraReversaPage() {
 
                 <div className="mt-4 flex flex-col gap-5">
                   <div>
-                    <p className="flex items-center gap-1.5 text-xs font-medium text-black/70">
+                    <p className="flex items-center gap-2 text-xs font-medium text-black/70">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
                         src="/images/icone-cartao-credito.png"
                         alt=""
-                        className="h-5 w-5 shrink-0 object-contain"
+                        className="h-9 w-9 shrink-0 object-contain"
                       />
                       Cartão de crédito
                     </p>
@@ -3822,12 +3823,12 @@ export default function CalculadoraReversaPage() {
                   </div>
 
                   <div className="border-t border-black/10 pt-4">
-                    <p className="flex items-center gap-1.5 text-xs font-medium text-black/70">
+                    <p className="flex items-center gap-2 text-xs font-medium text-black/70">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
                         src="/images/icone-pix.png"
                         alt=""
-                        className="h-5 w-5 shrink-0 object-contain"
+                        className="h-9 w-9 shrink-0 object-contain"
                       />
                       PIX
                     </p>
