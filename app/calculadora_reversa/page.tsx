@@ -962,6 +962,25 @@ const MAX_PESSOAS = 20;
 const MIN_ORCAMENTO_BRL = 5000;
 const MAX_ORCAMENTO_BRL = 2000000;
 
+// Simulação de parcelamento (cartão e PIX) — pedido do Wilson, 10/set/2026.
+// Confirmado com ele (11/set/2026): usar a fórmula de amortização Price
+// (juros compostos), não multiplicação simples — PMT = PV × i / (1 − (1+i)⁻ⁿ).
+const TAXA_MAQUINA_CARTAO = 0.0355; // 3.55% fixo da maquininha, sobre o valor financiado
+const TAXA_JUROS_CARTAO_MES = 0.0169; // 1,69% a.m. — custo de parcelar no cartão
+const OPCOES_PARCELAS_CARTAO = [1, 4, 10, 12] as const;
+
+const ENTRADA_PIX_PCT = 0.3; // 30% de entrada no PIX parcelado
+const TAXA_JUROS_PIX_MES = 0.0149; // 1,49% a.m.
+const OPCOES_PARCELAS_PIX = [4, 10, 12] as const;
+
+// Valor de cada parcela pela Tabela Price (juros compostos), dado o valor
+// financiado, a taxa mensal e a quantidade de parcelas. Com 1 parcela não
+// há período de financiamento, então o valor não é composto.
+function calcularParcelaPrice(valorFinanciado: number, taxaMensal: number, parcelas: number) {
+  if (parcelas <= 1) return valorFinanciado;
+  return (valorFinanciado * taxaMensal) / (1 - Math.pow(1 + taxaMensal, -parcelas));
+}
+
 type ItemPacote = {
   label: string;
   detalhe: string[];
@@ -1201,6 +1220,30 @@ export default function CalculadoraReversaPage() {
   const [orcamento, setOrcamento] = useState(60000);
   const [dias, setDias] = useState(10);
   const [pessoas, setPessoas] = useState(2);
+  // Idade por passageiro — pedido do Wilson, 10/set/2026: o seguro viagem
+  // deveria custar diferente por faixa etária (principalmente 60+). Por
+  // enquanto isso é só a interface de captura das idades; o cálculo do
+  // seguro (precoSeguro, mais abaixo) continua no valor fixo atual até o
+  // Wilson passar a tabela real de multiplicadores por faixa da
+  // seguradora — decisão dele, pra não inventar preço num caso real.
+  const [idadesPassageiros, setIdadesPassageiros] = useState<number[]>([35, 35]);
+  function alterarPessoasEIdades(novoValor: number) {
+    setPessoas(novoValor);
+    setIdadesPassageiros((atual) =>
+      novoValor > atual.length
+        ? [...atual, ...Array(novoValor - atual.length).fill(35)]
+        : atual.slice(0, novoValor),
+    );
+  }
+  function alterarIdadePassageiro(indice: number, idade: number) {
+    setIdadesPassageiros((atual) => atual.map((v, i) => (i === indice ? idade : v)));
+  }
+
+  // Data estimada da viagem — pedido do Wilson, 10/set/2026: precisa saber
+  // a data pra limitar o parcelamento do PIX (não passar do prazo até a
+  // viagem). Formato yyyy-mm-dd (input type="date"); vazio = sem limite
+  // (mostra até 12x).
+  const [dataViagemEstimada, setDataViagemEstimada] = useState("");
   const [tipoQuarto, setTipoQuarto] =
     useState<(typeof TIPOS_QUARTO)[number]>("Duplo (casal)");
   // Cidades do roteiro — multi-seleção (média dos multiplicadores de
@@ -1268,6 +1311,11 @@ export default function CalculadoraReversaPage() {
   const [itensAlterados, setItensAlterados] = useState<Set<string>>(new Set());
   const [geradoEm] = useState(() => new Date());
   const [gerandoPdf, setGerandoPdf] = useState(false);
+  // Pedido do Wilson, 10/set/2026: "Orçamento de Referência" no PDF/Word
+  // gerou confusão na apresentação pro cliente — com esse checkbox
+  // marcado, o PDF/Word deixam de mostrar essa linha e o "Saldo",
+  // mostrando só o total do pacote sugerido (e o valor por passageiro).
+  const [ocultarOrcamentoNaProposta, setOcultarOrcamentoNaProposta] = useState(false);
 
   // Ajuste manual de valor - sobrescreve o preco calculado de um item
   // especifico (ex.: negociacao pontual) sem perder o calculo automatico
@@ -1572,6 +1620,11 @@ export default function CalculadoraReversaPage() {
     // Seguro Viagem é item fixo/obrigatório no pacote — igual Roteiro,
     // Aéreo e Hotel — pedido do Wilson, 08/set/2026: "no pacote final,
     // seguro viagem deve ser obrigatorio igual roteiro personalizado".
+    // Preço por faixa etária (idadesPassageiros, principalmente 60+) ainda
+    // NÃO está aplicado aqui — pedido do Wilson, 10/set/2026, mas decidiu
+    // (11/set/2026) subir só a interface de captura de idade por
+    // passageiro por ora e manter esse valor fixo até ele passar a
+    // tabela real de multiplicadores da seguradora.
     const precoSeguro = DIARIA_SEGURO_VIAGEM * dias * pessoas;
 
     const incluidos: ItemPacote[] = [
@@ -1604,7 +1657,11 @@ export default function CalculadoraReversaPage() {
         chave: "seguro",
         label: "Seguro Viagem",
         detalhe: [
-          "Cobertura médico-hospitalar (mínimo US$ 30 mil, com upgrade para US$ 60 mil).",
+          // Removida a menção a upgrade pra US$ 60 mil (10/set/2026,
+          // pedido do Wilson) — não é garantido e geralmente sai mais
+          // caro; mantém só o padrão de US$ 20 mil, deixando espaço pra
+          // surpreender o cliente com cobertura melhor na emissão.
+          "Cobertura médico-hospitalar (US$ 20 mil).",
           "Bagagem extraviada, cancelamento de viagem e assistência 24h em português.",
           `${dias} dias · ${pessoas} ${pessoas === 1 ? "pessoa" : "pessoas"}`,
         ],
@@ -2071,6 +2128,39 @@ export default function CalculadoraReversaPage() {
   const totalSelecionado = totalManual ? totalValorManual : totalCalculado;
   const saldoSelecionado = orcamento - totalSelecionado;
 
+  // Simulação de parcelamento — cartão (1x/4x/10x/12x, Tabela Price) e PIX
+  // (à vista, ou parcelado com 30% de entrada + parcelas iguais, limitado
+  // pelos meses até a data estimada da viagem). Pedido do Wilson,
+  // 10/set/2026 — só para simulação/apresentação, o checkout real de
+  // pagamento é etapa futura.
+  const simulacaoCartao = useMemo(() => {
+    const valorFinanciado = totalSelecionado * (1 + TAXA_MAQUINA_CARTAO);
+    return OPCOES_PARCELAS_CARTAO.map((parcelas) => {
+      const valorParcela = calcularParcelaPrice(valorFinanciado, TAXA_JUROS_CARTAO_MES, parcelas);
+      return { parcelas, valorParcela, valorTotal: valorParcela * parcelas };
+    });
+  }, [totalSelecionado]);
+
+  const mesesAteViagem = useMemo(() => {
+    if (!dataViagemEstimada) return null;
+    const viagem = new Date(`${dataViagemEstimada}T00:00:00`);
+    if (Number.isNaN(viagem.getTime())) return null;
+    const diffDias = (viagem.getTime() - geradoEm.getTime()) / (1000 * 60 * 60 * 24);
+    return diffDias / 30.44;
+  }, [dataViagemEstimada, geradoEm]);
+
+  const parcelasMaxPix =
+    mesesAteViagem === null ? 12 : Math.max(0, Math.min(12, Math.floor(mesesAteViagem)));
+
+  const simulacaoPix = useMemo(() => {
+    const entrada = totalSelecionado * ENTRADA_PIX_PCT;
+    const valorFinanciado = totalSelecionado - entrada;
+    return OPCOES_PARCELAS_PIX.filter((parcelas) => parcelas <= parcelasMaxPix).map((parcelas) => {
+      const valorParcela = calcularParcelaPrice(valorFinanciado, TAXA_JUROS_PIX_MES, parcelas);
+      return { parcelas, entrada, valorParcela, valorTotal: entrada + valorParcela * parcelas };
+    });
+  }, [totalSelecionado, parcelasMaxPix]);
+
   // Cidades marcadas que exigem motorista particular (transporte público
   // insuficiente) mas cujo item "Motorista Privado" não está na proposta
   // final — alerta pro vendedor não fechar um pacote sem transporte viável.
@@ -2108,6 +2198,7 @@ export default function CalculadoraReversaPage() {
         totalBRL: totalSelecionado,
         orcamentoBRL: orcamento,
         saldoBRL: saldoSelecionado,
+        ocultarOrcamentoReferencia: ocultarOrcamentoNaProposta,
       });
     } catch (erro) {
       console.error("Falha ao gerar PDF da proposta:", erro);
@@ -2142,6 +2233,7 @@ export default function CalculadoraReversaPage() {
         totalBRL: totalSelecionado,
         orcamentoBRL: orcamento,
         saldoBRL: saldoSelecionado,
+        ocultarOrcamentoReferencia: ocultarOrcamentoNaProposta,
       });
     } catch (erro) {
       console.error("Falha ao gerar arquivo de texto da proposta:", erro);
@@ -2240,13 +2332,51 @@ export default function CalculadoraReversaPage() {
           <NumberStepper
             label="3. Número de pessoas"
             value={pessoas}
-            onChange={setPessoas}
+            onChange={alterarPessoasEIdades}
             min={MIN_PESSOAS}
             max={MAX_PESSOAS}
             formatValue={(v) => `${v} ${v === 1 ? "pessoa" : "pessoas"}`}
             oculto={camposOcultos.has(3)}
             onToggleOculto={() => alternarCampoOculto(3)}
           />
+
+          <div className="flex h-full flex-col sm:col-span-2">
+            <span className="mb-2 flex items-center text-[10px] uppercase tracking-[0.2em] text-black/50">
+              <LabelNumerado texto="Idade dos passageiros (seguro viagem)" />
+              <BotaoOcultarCampo
+                oculto={camposOcultos.has(17)}
+                onToggle={() => alternarCampoOculto(17)}
+              />
+            </span>
+            {!camposOcultos.has(17) && (
+              <>
+                <div className="grid grid-cols-4 gap-2 sm:grid-cols-6 md:grid-cols-8">
+                  {idadesPassageiros.map((idade, i) => (
+                    <label key={i} className="flex flex-col">
+                      <span className="mb-1 text-[9px] uppercase tracking-wide text-black/40">
+                        Passageiro {i + 1}
+                      </span>
+                      <input
+                        type="number"
+                        min={0}
+                        max={110}
+                        value={idade}
+                        onChange={(e) => {
+                          const v = Number(e.target.value);
+                          if (!Number.isNaN(v)) alterarIdadePassageiro(i, v);
+                        }}
+                        className="h-10 w-full rounded-lg border border-black/15 bg-black/[0.03] px-2 text-sm outline-none focus:border-black/30"
+                      />
+                    </label>
+                  ))}
+                </div>
+                <p className="mt-1.5 text-[11px] text-black/40">
+                  Usado pra faixa etária do seguro viagem — preço por faixa (principalmente 60+)
+                  ainda não está automatizado, aguardando tabela da seguradora.
+                </p>
+              </>
+            )}
+          </div>
 
           <label className="flex h-full flex-col">
             <span className="mb-2 flex min-h-[2.2em] items-end text-[10px] uppercase leading-tight tracking-[0.2em] text-black/50">
@@ -3227,7 +3357,7 @@ export default function CalculadoraReversaPage() {
                 return (
                   <label
                     key={servico.key}
-                    className={`flex w-28 flex-col items-center gap-2 rounded-lg border px-2 py-3 text-center text-xs transition ${
+                    className={`flex w-32 flex-col items-center gap-2 rounded-lg border px-2 py-3 text-center text-xs transition ${
                       desabilitado
                         ? "cursor-not-allowed border-black/10 bg-black/[0.02] text-black/30"
                         : marcado
@@ -3247,15 +3377,25 @@ export default function CalculadoraReversaPage() {
                       <img
                         src={servico.icone}
                         alt=""
-                        className={`h-9 w-9 shrink-0 object-contain ${desabilitado ? "opacity-40" : ""}`}
+                        className={`h-20 w-20 shrink-0 object-contain ${desabilitado ? "opacity-40" : ""}`}
                       />
                     ) : (
                       <IconMala
-                        className={`h-9 w-9 shrink-0 ${marcado ? "text-[#2f80c9]" : "text-black/45"}`}
+                        className={`h-20 w-20 shrink-0 ${marcado ? "text-[#2f80c9]" : "text-black/45"}`}
                       />
                     )}
                     <span>{servico.nome}</span>
-                    <span className="text-[10px] font-normal text-black/35">{precoLabel}</span>
+                    {/* Mini card de preço — cor própria (âmbar) pra se
+                        destacar do card em volta, com asterisco de "preço
+                        inicial" (nota completa no rodapé da seção).
+                        Pedido do Wilson, 10/set/2026. */}
+                    <span
+                      className={`rounded-md px-2 py-1 text-[10px] font-semibold leading-tight ${
+                        desabilitado ? "bg-black/5 text-black/30" : "bg-amber-50 text-amber-700"
+                      }`}
+                    >
+                      *{precoLabel}
+                    </span>
                     {desabilitado && (
                       <span className="text-[9px] font-medium uppercase tracking-wide text-red-500">
                         Grupo grande — consultar
@@ -3265,8 +3405,9 @@ export default function CalculadoraReversaPage() {
                 );
               })}
             </div>
+            <p className="mt-2 text-[10px] leading-4 text-black/35">* preço inicial — pode variar conforme grupo, trecho e disponibilidade.</p>
             {servicosAdicionaisSelecionados.size > 0 && (
-              <p className="mt-2 text-[11px] leading-4 text-black/40">
+              <p className="mt-1 text-[11px] leading-4 text-black/40">
                 {CATALOGO_SERVICOS_ADICIONAIS.filter((s) => servicosAdicionaisSelecionados.has(s.key)).map(
                   (s) => s.descricao,
                 ).join(" ")}
@@ -3583,6 +3724,10 @@ export default function CalculadoraReversaPage() {
                     />
                   </div>
                   <p className="text-sm text-black/40">{brlParaUSDLabel(totalSelecionado, cambio)}</p>
+                  <p className="mt-0.5 text-xs text-black/45">
+                    {formatBRL(pessoas > 0 ? totalSelecionado / pessoas : totalSelecionado)} por
+                    passageiro ({pessoas} {pessoas === 1 ? "pessoa" : "pessoas"})
+                  </p>
                   {totalManual && (
                     <button
                       type="button"
@@ -3615,7 +3760,110 @@ export default function CalculadoraReversaPage() {
                 cotados à parte, sob consulta. Valor final sujeito a confirmação da Ajisai.
               </p>
 
-              <div className="mt-7 flex flex-col gap-3">
+              {/* Simulação de parcelamento — pedido do Wilson, 10/set/2026: mostrar
+                  1x/4x/10x/12x no cartão (Tabela Price, juros compostos) e o PIX
+                  à vista/parcelado (30% de entrada + parcelas, limitado pela data
+                  da viagem). É só simulação pra apresentação — o checkout real de
+                  pagamento é etapa futura, ainda não existe. */}
+              <div className="mt-5 rounded-2xl border border-black/10 bg-white p-5">
+                <p className="text-[10px] uppercase tracking-[0.2em] text-black/40">
+                  Simulação de pagamento
+                </p>
+                <p className="mt-1 text-[11px] leading-5 text-black/40">
+                  Simulação pra apresentação ao cliente — não é um checkout, valores sujeitos
+                  a confirmação na emissão.
+                </p>
+
+                <div className="mt-4 grid gap-5 sm:grid-cols-2">
+                  <div>
+                    <p className="text-xs font-medium text-black/70">Cartão de crédito</p>
+                    <p className="mt-0.5 text-[10px] text-black/35">
+                      maquininha {(TAXA_MAQUINA_CARTAO * 100).toFixed(2).replace(".", ",")}% +
+                      juros de {(TAXA_JUROS_CARTAO_MES * 100).toFixed(2).replace(".", ",")}%
+                      a.m. por parcela
+                    </p>
+                    <div className="mt-2.5 space-y-1.5">
+                      {simulacaoCartao.map((op) => (
+                        <div key={op.parcelas} className="flex items-center justify-between text-sm">
+                          <span className="w-8 text-black/55">{op.parcelas}x</span>
+                          <span className="font-medium text-[#0A2540]">
+                            {formatBRL(op.valorParcela)}
+                          </span>
+                          <span className="text-[11px] text-black/35">
+                            total {formatBRL(op.valorTotal)}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div>
+                    <p className="text-xs font-medium text-black/70">PIX</p>
+                    <label className="mt-1 flex flex-wrap items-center gap-2 text-[11px] text-black/45">
+                      Data estimada da viagem
+                      <input
+                        type="date"
+                        value={dataViagemEstimada}
+                        onChange={(e) => setDataViagemEstimada(e.target.value)}
+                        className="h-7 rounded-md border border-black/15 bg-black/[0.03] px-2 text-[11px] outline-none focus:border-black/30"
+                      />
+                    </label>
+
+                    <div className="mt-2.5 flex items-center justify-between text-sm">
+                      <span className="text-black/55">à vista</span>
+                      <span className="font-medium text-[#0A2540]">
+                        {formatBRL(totalSelecionado)}
+                      </span>
+                    </div>
+
+                    {simulacaoPix.length > 0 ? (
+                      <div className="mt-2 space-y-1.5 border-t border-black/10 pt-2">
+                        <p className="text-[10px] text-black/35">
+                          parcelado — entrada de {formatBRL(simulacaoPix[0].entrada)} (30%) +
+                          parcelas a {(TAXA_JUROS_PIX_MES * 100).toFixed(2).replace(".", ",")}%
+                          a.m.
+                        </p>
+                        {simulacaoPix.map((op) => (
+                          <div key={op.parcelas} className="flex items-center justify-between text-sm">
+                            <span className="w-8 text-black/55">{op.parcelas}x</span>
+                            <span className="font-medium text-[#0A2540]">
+                              {formatBRL(op.valorParcela)}
+                            </span>
+                            <span className="text-[11px] text-black/35">
+                              total {formatBRL(op.valorTotal)}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      dataViagemEstimada && (
+                        <p className="mt-2 text-[11px] text-black/35">
+                          Viagem muito próxima — sem prazo pra parcelar no PIX, só à vista.
+                        </p>
+                      )
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              <label className="mt-5 flex items-start gap-2.5 rounded-lg border border-black/10 bg-black/[0.02] px-3.5 py-3 text-xs text-black/60">
+                <input
+                  type="checkbox"
+                  checked={ocultarOrcamentoNaProposta}
+                  onChange={(e) => setOcultarOrcamentoNaProposta(e.target.checked)}
+                  className="mt-0.5 h-4 w-4 shrink-0 accent-[#2f80c9]"
+                />
+                <span>
+                  Ocultar &quot;Orçamento de referência&quot; e &quot;Saldo&quot; no PDF e no
+                  Word da proposta
+                  <span className="block text-[11px] text-black/40">
+                    útil na apresentação manual pro cliente — mostra só o total do pacote e o
+                    valor por passageiro, sem o número de referência que costuma confundir.
+                  </span>
+                </span>
+              </label>
+
+              <div className="mt-5 flex flex-col gap-3">
                 <button
                   type="button"
                   onClick={() =>
@@ -3663,6 +3911,11 @@ export default function CalculadoraReversaPage() {
             <p className={`${display.className} text-xl font-medium text-[#5b9bd9] sm:text-2xl`}>
               {resultado.cabeNoOrcamento ? formatBRL(totalSelecionado) : "—"}
             </p>
+            {resultado.cabeNoOrcamento && (
+              <p className="text-[10px] text-white/35">
+                {formatBRL(pessoas > 0 ? totalSelecionado / pessoas : totalSelecionado)}/pessoa
+              </p>
+            )}
           </div>
           <div className="text-right">
             <p className="text-[9px] uppercase tracking-[0.2em] text-white/40">

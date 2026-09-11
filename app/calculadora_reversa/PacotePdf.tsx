@@ -37,6 +37,11 @@ export type PacotePdfProps = {
   totalBRL: number;
   orcamentoBRL: number;
   saldoBRL: number;
+  // Pedido do Wilson, 10/set/2026: apresentar o "Orçamento de referência"
+  // pro cliente gerou confusão na apresentação — com esse campo marcado,
+  // o PDF/Word deixam de mostrar "Orçamento de referência" e "Saldo",
+  // mostrando só o total do pacote (e o valor por passageiro).
+  ocultarOrcamentoReferencia?: boolean;
 };
 
 function formatBRLSimples(valor: number) {
@@ -292,8 +297,20 @@ function Rodape() {
 }
 
 export function PacotePdfDocument(props: PacotePdfProps) {
-  const { tituloPacote, dias, tipoQuarto, pessoas, geradoEmLabel, cambioLabel, itens, totalBRL, orcamentoBRL, saldoBRL } =
-    props;
+  const {
+    tituloPacote,
+    dias,
+    tipoQuarto,
+    pessoas,
+    geradoEmLabel,
+    cambioLabel,
+    itens,
+    totalBRL,
+    orcamentoBRL,
+    saldoBRL,
+    ocultarOrcamentoReferencia,
+  } = props;
+  const valorPorPassageiroBRL = pessoas > 0 ? totalBRL / pessoas : totalBRL;
 
   return (
     <Document title={`Proposta Ajisai - ${tituloPacote}`} author="Ajisai · Alpinea">
@@ -328,15 +345,23 @@ export function PacotePdfDocument(props: PacotePdfProps) {
           <View>
             <Text style={styles.totalsLabel}>Total do pacote sugerido</Text>
             <Text style={styles.totalsValue}>{formatBRLSimples(totalBRL)}</Text>
+            <Text style={{ fontSize: 9, color: "#6b7688", marginTop: 2 }}>
+              {formatBRLSimples(valorPorPassageiroBRL)} por passageiro ({pessoas}{" "}
+              {pessoas === 1 ? "pessoa" : "pessoas"})
+            </Text>
           </View>
-          <View>
-            <Text style={styles.totalsLabel}>Orçamento de referência</Text>
-            <Text style={{ fontSize: 11, marginTop: 2 }}>{formatBRLSimples(orcamentoBRL)}</Text>
-          </View>
-          <View>
-            <Text style={styles.totalsLabel}>Saldo</Text>
-            <Text style={{ fontSize: 11, marginTop: 2 }}>{formatBRLSimples(saldoBRL)}</Text>
-          </View>
+          {!ocultarOrcamentoReferencia && (
+            <>
+              <View>
+                <Text style={styles.totalsLabel}>Orçamento de referência</Text>
+                <Text style={{ fontSize: 11, marginTop: 2 }}>{formatBRLSimples(orcamentoBRL)}</Text>
+              </View>
+              <View>
+                <Text style={styles.totalsLabel}>Saldo</Text>
+                <Text style={{ fontSize: 11, marginTop: 2 }}>{formatBRLSimples(saldoBRL)}</Text>
+              </View>
+            </>
+          )}
         </View>
         <Text style={{ fontSize: 7.5, color: "#9aa3b2", marginTop: 8 }}>
           Itens sem preço fixo (concierge, experiências sob medida, transfer de ônibus, reservas de

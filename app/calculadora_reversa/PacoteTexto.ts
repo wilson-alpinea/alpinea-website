@@ -47,6 +47,28 @@ export function gerarEBaixarTexto(props: PacotePdfProps) {
     )
     .join("");
 
+  const valorPorPassageiroBRL = props.pessoas > 0 ? props.totalBRL / props.pessoas : props.totalBRL;
+
+  // Pedido do Wilson, 10/set/2026: com ocultarOrcamentoReferencia marcado
+  // na calculadora, a linha de "Orçamento do cliente" (a referência) e o
+  // "Saldo restante" saem do arquivo — mostra só o total do pacote e o
+  // valor por passageiro, evitando a confusão que o orçamento de
+  // referência gerava na apresentação pro cliente.
+  const linhaOrcamentoReferencia = props.ocultarOrcamentoReferencia
+    ? ""
+    : `
+    <tr>
+      <td style="padding:6px 10px;font-weight:bold;">Orçamento do cliente</td>
+      <td style="padding:6px 10px;text-align:right;">${formatBRLSimples(props.orcamentoBRL)}</td>
+    </tr>`;
+  const linhaSaldo = props.ocultarOrcamentoReferencia
+    ? ""
+    : `
+    <tr>
+      <td style="padding:6px 10px;font-weight:bold;">Saldo restante</td>
+      <td style="padding:6px 10px;text-align:right;">${formatBRLSimples(props.saldoBRL)}</td>
+    </tr>`;
+
   const html = `<!DOCTYPE html>
 <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">
 <head>
@@ -82,19 +104,19 @@ export function gerarEBaixarTexto(props: PacotePdfProps) {
     ${linhasItens}
   </table>
 
-  <table style="margin-top:12px;">
-    <tr>
-      <td style="padding:6px 10px;font-weight:bold;">Orçamento do cliente</td>
-      <td style="padding:6px 10px;text-align:right;">${formatBRLSimples(props.orcamentoBRL)}</td>
-    </tr>
+  <table style="margin-top:12px;">${linhaOrcamentoReferencia}
     <tr>
       <td style="padding:6px 10px;font-weight:bold;">Total do pacote</td>
       <td style="padding:6px 10px;text-align:right;">${formatBRLSimples(props.totalBRL)}</td>
     </tr>
     <tr>
-      <td style="padding:6px 10px;font-weight:bold;">Saldo restante</td>
-      <td style="padding:6px 10px;text-align:right;">${formatBRLSimples(props.saldoBRL)}</td>
-    </tr>
+      <td style="padding:6px 10px;color:#555555;">Valor por passageiro (${props.pessoas} ${
+        props.pessoas === 1 ? "pessoa" : "pessoas"
+      })</td>
+      <td style="padding:6px 10px;text-align:right;color:#555555;">${formatBRLSimples(
+        valorPorPassageiroBRL,
+      )}</td>
+    </tr>${linhaSaldo}
   </table>
 
   <p style="margin-top:20px;font-size:10px;color:#888888;">
