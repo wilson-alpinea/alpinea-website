@@ -2340,44 +2340,6 @@ export default function CalculadoraReversaPage() {
             onToggleOculto={() => alternarCampoOculto(3)}
           />
 
-          <div className="flex h-full flex-col sm:col-span-2">
-            <span className="mb-2 flex items-center text-[10px] uppercase tracking-[0.2em] text-black/50">
-              <LabelNumerado texto="Idade dos passageiros (seguro viagem)" />
-              <BotaoOcultarCampo
-                oculto={camposOcultos.has(17)}
-                onToggle={() => alternarCampoOculto(17)}
-              />
-            </span>
-            {!camposOcultos.has(17) && (
-              <>
-                <div className="grid grid-cols-4 gap-2 sm:grid-cols-6 md:grid-cols-8">
-                  {idadesPassageiros.map((idade, i) => (
-                    <label key={i} className="flex flex-col">
-                      <span className="mb-1 text-[9px] uppercase tracking-wide text-black/40">
-                        Passageiro {i + 1}
-                      </span>
-                      <input
-                        type="number"
-                        min={0}
-                        max={110}
-                        value={idade}
-                        onChange={(e) => {
-                          const v = Number(e.target.value);
-                          if (!Number.isNaN(v)) alterarIdadePassageiro(i, v);
-                        }}
-                        className="h-10 w-full rounded-lg border border-black/15 bg-black/[0.03] px-2 text-sm outline-none focus:border-black/30"
-                      />
-                    </label>
-                  ))}
-                </div>
-                <p className="mt-1.5 text-[11px] text-black/40">
-                  Usado pra faixa etária do seguro viagem — preço por faixa (principalmente 60+)
-                  ainda não está automatizado, aguardando tabela da seguradora.
-                </p>
-              </>
-            )}
-          </div>
-
           <label className="flex h-full flex-col">
             <span className="mb-2 flex min-h-[2.2em] items-end text-[10px] uppercase leading-tight tracking-[0.2em] text-black/50">
               <LabelNumerado texto="4. Tipo de quarto" />
@@ -3416,6 +3378,60 @@ export default function CalculadoraReversaPage() {
             </>
             )}
           </div>
+
+          <div className="sm:col-span-2">
+            <span className="mb-2 flex items-center text-[10px] uppercase tracking-[0.2em] text-black/50">
+              <LabelNumerado texto="17. Seguro viagem — idade dos passageiros" />
+              <BotaoOcultarCampo
+                oculto={camposOcultos.has(17)}
+                onToggle={() => alternarCampoOculto(17)}
+              />
+            </span>
+            {!camposOcultos.has(17) && (
+              <>
+                <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 md:grid-cols-6">
+                  {idadesPassageiros.map((idade, i) => (
+                    <div key={i} className="rounded-lg border border-black/15 bg-black/[0.03] px-3 py-2.5">
+                      <span className="mb-1 block text-[9px] uppercase tracking-wide text-black/40">
+                        Passageiro {i + 1}
+                      </span>
+                      <div className="flex items-center gap-1.5">
+                        <input
+                          type="number"
+                          min={0}
+                          max={110}
+                          value={idade}
+                          onChange={(e) => {
+                            const v = Number(e.target.value);
+                            if (!Number.isNaN(v)) alterarIdadePassageiro(i, v);
+                          }}
+                          className="h-9 w-14 rounded-md border border-black/15 bg-white px-2 text-sm outline-none focus:border-black/30"
+                        />
+                        <span className="text-xs text-black/45">
+                          {idade === 1 ? "ano" : "anos"}
+                        </span>
+                      </div>
+                      {/* Pedido do Wilson, 11/set/2026: além de digitar, dá pra
+                          selecionar a idade arrastando numa barra de rolagem. */}
+                      <input
+                        type="range"
+                        min={0}
+                        max={110}
+                        value={idade}
+                        onChange={(e) => alterarIdadePassageiro(i, Number(e.target.value))}
+                        className="mt-2 h-1.5 w-full accent-[#2f80c9]"
+                        aria-label={`Idade do passageiro ${i + 1}`}
+                      />
+                    </div>
+                  ))}
+                </div>
+                <p className="mt-2 text-[11px] leading-4 text-black/40">
+                  Usado pra faixa etária do seguro viagem — preço por faixa (principalmente 60+)
+                  ainda não está automatizado, aguardando tabela da seguradora.
+                </p>
+              </>
+            )}
+          </div>
         </div>
 
         {/* ── VALORES MANUAIS (OPCIONAL) ── */}
@@ -3774,9 +3790,17 @@ export default function CalculadoraReversaPage() {
                   a confirmação na emissão.
                 </p>
 
-                <div className="mt-4 grid gap-5 sm:grid-cols-2">
+                <div className="mt-4 flex flex-col gap-5">
                   <div>
-                    <p className="text-xs font-medium text-black/70">Cartão de crédito</p>
+                    <p className="flex items-center gap-1.5 text-xs font-medium text-black/70">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src="/images/icone-cartao-credito.png"
+                        alt=""
+                        className="h-5 w-5 shrink-0 object-contain"
+                      />
+                      Cartão de crédito
+                    </p>
                     <p className="mt-0.5 text-[10px] text-black/35">
                       maquininha {(TAXA_MAQUINA_CARTAO * 100).toFixed(2).replace(".", ",")}% +
                       juros de {(TAXA_JUROS_CARTAO_MES * 100).toFixed(2).replace(".", ",")}%
@@ -3797,8 +3821,16 @@ export default function CalculadoraReversaPage() {
                     </div>
                   </div>
 
-                  <div>
-                    <p className="text-xs font-medium text-black/70">PIX</p>
+                  <div className="border-t border-black/10 pt-4">
+                    <p className="flex items-center gap-1.5 text-xs font-medium text-black/70">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src="/images/icone-pix.png"
+                        alt=""
+                        className="h-5 w-5 shrink-0 object-contain"
+                      />
+                      PIX
+                    </p>
                     <label className="mt-1 flex flex-wrap items-center gap-2 text-[11px] text-black/45">
                       Data estimada da viagem
                       <input
@@ -3846,7 +3878,7 @@ export default function CalculadoraReversaPage() {
                 </div>
               </div>
 
-              <label className="mt-5 flex items-start gap-2.5 rounded-lg border border-black/10 bg-black/[0.02] px-3.5 py-3 text-xs text-black/60">
+              <label className="mt-5 flex items-start gap-2.5 rounded-lg border border-[#2f80c9]/25 bg-[#2f80c9]/[0.06] px-3.5 py-3 text-xs text-[#0A2540]">
                 <input
                   type="checkbox"
                   checked={ocultarOrcamentoNaProposta}
