@@ -2407,6 +2407,35 @@ export default function CalculadoraReversaPage() {
             onToggleOculto={() => alternarCampoOculto(6)}
           />
 
+          {/* Pedido do Wilson, 11/set/2026: subir esse campo pro espaço em
+              branco ao lado da Classe do voo — antes só existia dentro do
+              card de PIX na simulação de pagamento lá embaixo. Mesmo
+              estado (dataViagemEstimada), então os dois campos ficam
+              sincronizados. Input nativo type="date": dá pra clicar no
+              calendário ou digitar a data direto. */}
+          <div className="flex h-full flex-col">
+            <span className="mb-2 flex items-center text-[10px] uppercase tracking-[0.2em] text-black/50">
+              Data estimada da viagem
+              <BotaoOcultarCampo
+                oculto={camposOcultos.has(18)}
+                onToggle={() => alternarCampoOculto(18)}
+              />
+            </span>
+            {!camposOcultos.has(18) && (
+              <>
+                <input
+                  type="date"
+                  value={dataViagemEstimada}
+                  onChange={(e) => setDataViagemEstimada(e.target.value)}
+                  className="h-10 w-full rounded-lg border border-black/15 bg-black/[0.03] px-3 text-sm outline-none focus:border-black/30"
+                />
+                <span className="mt-1.5 text-[11px] text-black/40">
+                  Usada pra limitar o parcelamento do PIX até a data da viagem.
+                </span>
+              </>
+            )}
+          </div>
+
           <div className="sm:col-span-2">
             <span className="mb-2 flex items-center text-[10px] uppercase tracking-[0.2em] text-black/50">
               <LabelNumerado texto="7. Temporada" />
@@ -3010,7 +3039,7 @@ export default function CalculadoraReversaPage() {
                 return (
                   <label
                     key={ingresso.key}
-                    className={`flex w-28 cursor-pointer flex-col items-center gap-2 rounded-lg border px-2 py-3 text-center text-xs transition ${
+                    className={`flex w-28 cursor-pointer flex-col items-center gap-1.5 rounded-lg border px-2 py-3 text-center text-xs transition ${
                       marcado
                         ? "border-[#2f80c9] bg-[#2f80c9]/10 font-medium text-[#2f80c9]"
                         : "border-black/15 bg-black/[0.03] text-black/60 hover:border-black/30"
@@ -3022,24 +3051,36 @@ export default function CalculadoraReversaPage() {
                       onChange={() => alternarIngresso(ingresso.key)}
                       className="sr-only"
                     />
-                    {ingresso.icone ? (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img
-                        src={ingresso.icone}
-                        alt=""
-                        className={`w-auto max-w-full shrink-0 object-contain ${
-                          ingresso.key.startsWith("teamlab") ? "h-9" : "h-16"
-                        }`}
-                      />
-                    ) : (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img
-                        src="/images/icone-ingressos.png"
-                        alt=""
-                        className="h-14 w-14 shrink-0 object-contain"
-                      />
-                    )}
-                    <span>{ingresso.nome}</span>
+                    {/* Alinhamento — pedido do Wilson, 11/set/2026: os logos têm
+                        proporções bem diferentes entre si (retrato, redondo,
+                        faixa larga), então sem uma caixa de altura fixa cada
+                        ícone empurrava nome/preço pra uma altura diferente.
+                        Essa caixa fixa centraliza qualquer logo no mesmo
+                        espaço, alinhando todos os cards. */}
+                    <div className="flex h-16 w-full shrink-0 items-center justify-center">
+                      {ingresso.icone ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img
+                          src={ingresso.icone}
+                          alt=""
+                          className="max-h-16 w-auto max-w-full object-contain"
+                        />
+                      ) : (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img
+                          src="/images/icone-ingressos.png"
+                          alt=""
+                          className="h-14 w-14 object-contain"
+                        />
+                      )}
+                    </div>
+                    {/* Reserva altura de 2 linhas pra nomes de 1 linha (ex.:
+                        "teamLab Tokyo") ficarem alinhados com os de 2 linhas
+                        (ex.: "Universal Studios Japan") — sem isso o preço
+                        embaixo saía em alturas diferentes por card. */}
+                    <span className="flex min-h-[2rem] w-full items-center justify-center leading-tight">
+                      {ingresso.nome}
+                    </span>
                     <span className="text-[10px] font-normal text-black/35">
                       {formatUSD(ingresso.precoUSD)}/pessoa
                     </span>
@@ -3358,7 +3399,13 @@ export default function CalculadoraReversaPage() {
                         className={`h-20 w-20 shrink-0 ${marcado ? "text-[#2f80c9]" : "text-black/45"}`}
                       />
                     )}
-                    <span>{servico.nome}</span>
+                    {/* Reserva altura de 2 linhas — pedido do Wilson,
+                        11/set/2026: nomes de 1 linha ("Câmbio no Brasil")
+                        deixavam o preço abaixo em altura diferente dos de
+                        2 linhas ("Reserva de Restaurantes High-End"). */}
+                    <span className="flex min-h-[2rem] w-full items-center justify-center leading-tight">
+                      {servico.nome}
+                    </span>
                     {/* Mini card de preço — cor própria (âmbar) pra se
                         destacar do card em volta, com asterisco de "preço
                         inicial" (nota completa no rodapé da seção).
@@ -3898,7 +3945,7 @@ export default function CalculadoraReversaPage() {
                 </div>
               </div>
 
-              <label className="mt-5 flex items-start gap-2.5 rounded-lg border border-[#2f80c9]/25 bg-[#2f80c9]/[0.06] px-3.5 py-3 text-xs text-[#0A2540]">
+              <label className="mt-5 flex items-start gap-2.5 rounded-lg border border-red-200 bg-red-50 px-3.5 py-3 text-xs text-[#0A2540]">
                 <input
                   type="checkbox"
                   checked={ocultarOrcamentoNaProposta}
