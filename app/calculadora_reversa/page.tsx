@@ -1120,12 +1120,23 @@ function CidadeCombobox({
         title="Clique para trocar a cidade"
         className="h-10 w-full cursor-pointer rounded-lg border border-black/15 bg-black/[0.03] px-3 pr-7 text-center text-sm outline-none focus:border-black/30"
       />
-      <span
+      {/* Pedido do Wilson, 11/set/2026: o "▾" antigo (9px, cinza claro)
+          não deixava claro que esse campo abre uma lista — trocado por um
+          chevron SVG maior e mais escuro, igual afordance de um <select>. */}
+      <svg
         aria-hidden
-        className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-[9px] text-black/35"
+        viewBox="0 0 20 20"
+        fill="none"
+        className="pointer-events-none absolute right-2.5 top-1/2 h-4 w-4 -translate-y-1/2 text-black/55"
       >
-        ▾
-      </span>
+        <path
+          d="M5.5 7.5L10 12l4.5-4.5"
+          stroke="currentColor"
+          strokeWidth="1.75"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </svg>
       {aberto && (
         <div className="absolute left-0 right-0 top-full z-20 mt-1 max-h-56 overflow-y-auto rounded-lg border border-black/15 bg-white shadow-lg">
           {opcoes.length === 0 ? (
@@ -2381,7 +2392,7 @@ export default function CalculadoraReversaPage() {
           />
 
           <VolumeSlider
-            label="6. Classe máxima do voo"
+            label="6. Classe desejada do voo"
             opcoes={CLASSES_AEREO}
             value={classeAereoMaxima}
             onChange={setClasseAereoMaxima}
@@ -3791,30 +3802,35 @@ export default function CalculadoraReversaPage() {
                   a confirmação na emissão.
                 </p>
 
-                <div className="mt-4 flex flex-col gap-5">
-                  <div>
-                    <p className="flex items-center gap-2 text-xs font-medium text-black/70">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src="/images/icone-cartao-credito.png"
-                        alt=""
-                        className="h-9 w-9 shrink-0 object-contain"
-                      />
-                      Cartão de crédito
-                    </p>
-                    <p className="mt-0.5 text-[10px] text-black/35">
-                      maquininha {(TAXA_MAQUINA_CARTAO * 100).toFixed(2).replace(".", ",")}% +
-                      juros de {(TAXA_JUROS_CARTAO_MES * 100).toFixed(2).replace(".", ",")}%
-                      a.m. por parcela
-                    </p>
-                    <div className="mt-2.5 space-y-1.5">
+                <div className="mt-5 flex flex-col gap-4">
+                  {/* Cartão de crédito */}
+                  <div className="rounded-xl border border-[#0A2540]/10 bg-white p-4 shadow-[0_1px_2px_rgba(10,37,64,0.04)] sm:p-5">
+                    <div className="flex items-center gap-3.5">
+                      <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-[#2f80c9]/10">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src="/images/icone-cartao-credito.png"
+                          alt=""
+                          className="h-10 w-10 object-contain"
+                        />
+                      </span>
+                      <div>
+                        <p className="text-sm font-semibold text-[#0A2540]">Cartão de crédito</p>
+                        <p className="mt-0.5 text-[10px] text-black/40">
+                          maquininha {(TAXA_MAQUINA_CARTAO * 100).toFixed(2).replace(".", ",")}% +
+                          juros de {(TAXA_JUROS_CARTAO_MES * 100).toFixed(2).replace(".", ",")}%
+                          a.m. por parcela
+                        </p>
+                      </div>
+                    </div>
+                    <div className="mt-4 divide-y divide-black/[0.06] border-t border-black/[0.06]">
                       {simulacaoCartao.map((op) => (
-                        <div key={op.parcelas} className="flex items-center justify-between text-sm">
-                          <span className="w-8 text-black/55">{op.parcelas}x</span>
-                          <span className="font-medium text-[#0A2540]">
+                        <div key={op.parcelas} className="flex items-center gap-3 py-2.5">
+                          <span className="w-9 shrink-0 text-sm text-black/45">{op.parcelas}x</span>
+                          <span className="flex-1 text-base font-semibold text-[#0A2540]">
                             {formatBRL(op.valorParcela)}
                           </span>
-                          <span className="text-[11px] text-black/35">
+                          <span className="shrink-0 text-[11px] text-black/35">
                             total {formatBRL(op.valorTotal)}
                           </span>
                         </div>
@@ -3822,55 +3838,58 @@ export default function CalculadoraReversaPage() {
                     </div>
                   </div>
 
-                  <div className="border-t border-black/10 pt-4">
-                    <p className="flex items-center gap-2 text-xs font-medium text-black/70">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src="/images/icone-pix.png"
-                        alt=""
-                        className="h-9 w-9 shrink-0 object-contain"
-                      />
-                      PIX
-                    </p>
-                    <label className="mt-1 flex flex-wrap items-center gap-2 text-[11px] text-black/45">
-                      Data estimada da viagem
-                      <input
-                        type="date"
-                        value={dataViagemEstimada}
-                        onChange={(e) => setDataViagemEstimada(e.target.value)}
-                        className="h-7 rounded-md border border-black/15 bg-black/[0.03] px-2 text-[11px] outline-none focus:border-black/30"
-                      />
-                    </label>
+                  {/* PIX */}
+                  <div className="rounded-xl border border-[#0A2540]/10 bg-white p-4 shadow-[0_1px_2px_rgba(10,37,64,0.04)] sm:p-5">
+                    <div className="flex flex-wrap items-center justify-between gap-3">
+                      <div className="flex items-center gap-3.5">
+                        <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-[#2f80c9]/10">
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img src="/images/icone-pix.png" alt="" className="h-10 w-10 object-contain" />
+                        </span>
+                        <p className="text-sm font-semibold text-[#0A2540]">PIX</p>
+                      </div>
+                      <label className="flex items-center gap-2 text-[11px] text-black/45">
+                        Data estimada da viagem
+                        <input
+                          type="date"
+                          value={dataViagemEstimada}
+                          onChange={(e) => setDataViagemEstimada(e.target.value)}
+                          className="h-8 rounded-md border border-black/15 bg-black/[0.03] px-2 text-[11px] outline-none focus:border-black/30"
+                        />
+                      </label>
+                    </div>
 
-                    <div className="mt-2.5 flex items-center justify-between text-sm">
-                      <span className="text-black/55">à vista</span>
-                      <span className="font-medium text-[#0A2540]">
+                    <div className="mt-4 flex items-center justify-between rounded-lg bg-[#2f80c9]/5 px-3.5 py-3">
+                      <span className="text-sm text-[#0A2540]/70">à vista</span>
+                      <span className="text-base font-semibold text-[#0A2540]">
                         {formatBRL(totalSelecionado)}
                       </span>
                     </div>
 
                     {simulacaoPix.length > 0 ? (
-                      <div className="mt-2 space-y-1.5 border-t border-black/10 pt-2">
+                      <div className="mt-3">
                         <p className="text-[10px] text-black/35">
                           parcelado — entrada de {formatBRL(simulacaoPix[0].entrada)} (30%) +
                           parcelas a {(TAXA_JUROS_PIX_MES * 100).toFixed(2).replace(".", ",")}%
                           a.m.
                         </p>
-                        {simulacaoPix.map((op) => (
-                          <div key={op.parcelas} className="flex items-center justify-between text-sm">
-                            <span className="w-8 text-black/55">{op.parcelas}x</span>
-                            <span className="font-medium text-[#0A2540]">
-                              {formatBRL(op.valorParcela)}
-                            </span>
-                            <span className="text-[11px] text-black/35">
-                              total {formatBRL(op.valorTotal)}
-                            </span>
-                          </div>
-                        ))}
+                        <div className="mt-1.5 divide-y divide-black/[0.06] border-t border-black/[0.06]">
+                          {simulacaoPix.map((op) => (
+                            <div key={op.parcelas} className="flex items-center gap-3 py-2.5">
+                              <span className="w-9 shrink-0 text-sm text-black/45">{op.parcelas}x</span>
+                              <span className="flex-1 text-base font-semibold text-[#0A2540]">
+                                {formatBRL(op.valorParcela)}
+                              </span>
+                              <span className="shrink-0 text-[11px] text-black/35">
+                                total {formatBRL(op.valorTotal)}
+                              </span>
+                            </div>
+                          ))}
+                        </div>
                       </div>
                     ) : (
                       dataViagemEstimada && (
-                        <p className="mt-2 text-[11px] text-black/35">
+                        <p className="mt-3 text-[11px] text-black/35">
                           Viagem muito próxima — sem prazo pra parcelar no PIX, só à vista.
                         </p>
                       )
