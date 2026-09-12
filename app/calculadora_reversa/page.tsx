@@ -2346,11 +2346,12 @@ export default function CalculadoraReversaPage() {
         </p>
 
         {/* Pedido do Wilson, 11/set/2026: função master "Hide Todos /
-            Mostrar Todos os Campos" no começo da página, com ícone 250%
-            maior que o botão de olho individual (14px → 49px), já que
-            ocultar um campo agora o faz desaparecer por completo (sem
-            botão de olho individual pra restaurar) — o mestre é o único
-            jeito de trazer os campos ocultos de volta. Junto, um aviso em
+            Mostrar Todos os Campos" no começo da página (12/set: ícone e
+            botão reduzidos e com preenchimento azul da marca em vez de
+            cinza), já que ocultar um campo agora o faz desaparecer por
+            completo (sem botão de olho individual pra restaurar) — o
+            mestre é o único jeito de trazer os campos ocultos de volta.
+            Junto, um aviso em
             amarelo mostra quantos campos estão ocultos no momento. */}
         <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
           <button
@@ -2363,16 +2364,16 @@ export default function CalculadoraReversaPage() {
             }`}
           >
             <span
-              className={`flex h-[84px] w-[84px] shrink-0 items-center justify-center rounded-full border ${
+              className={`flex h-14 w-14 shrink-0 items-center justify-center rounded-full border ${
                 todosCamposOcultos
-                  ? "border-[#2f80c9]/40 bg-[#2f80c9]/10 text-[#2f80c9]"
-                  : "border-black/15 text-black/45"
+                  ? "border-[#2f80c9] bg-[#2f80c9] text-white"
+                  : "border-[#2f80c9]/25 bg-[#2f80c9]/10 text-[#2f80c9]"
               }`}
             >
               {todosCamposOcultos ? (
-                <IconEyeOff className="h-[49px] w-[49px]" />
+                <IconEyeOff className="h-8 w-8" />
               ) : (
-                <IconEye className="h-[49px] w-[49px]" />
+                <IconEye className="h-8 w-8" />
               )}
             </span>
             <span>
