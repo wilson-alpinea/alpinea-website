@@ -1438,14 +1438,19 @@ export function NumberStepper({
    * este componente não são afetadas). */
   onToggleOculto?: () => void;
 }) {
+  // Pedido do Wilson, 11/set/2026: ocultar um campo deve fazer o campo
+  // inteiro sumir (rótulo incluso), não só os controles — por isso, se
+  // estiver oculto, o componente inteiro não renderiza nada. Restaurar
+  // volta a ser feito pelo botão mestre "Mostrar todos", já que o botão
+  // de olho deste campo some junto com ele.
+  if (oculto) return null;
   return (
     <label className="flex h-full flex-col">
       <span className="mb-2 flex min-h-[2.2em] items-end text-[10px] uppercase leading-tight tracking-[0.2em] text-[#0A2540]/50">
         <LabelNumerado texto={label} />
         {onToggleOculto && <BotaoOcultarCampo oculto={oculto} onToggle={onToggleOculto} />}
       </span>
-      {!oculto && (
-        <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2">
           <button
             type="button"
             onClick={() => onChange(Math.max(min, value - 1))}
@@ -1466,7 +1471,6 @@ export function NumberStepper({
             +
           </button>
         </div>
-      )}
     </label>
   );
 }

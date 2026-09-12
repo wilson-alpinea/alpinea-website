@@ -11,6 +11,8 @@ import {
   NumberStepper,
   LabelNumerado,
   BotaoOcultarCampo,
+  IconEye,
+  IconEyeOff,
   DESTINOS,
   CIDADE_MULTIPLICADOR_HOTEL,
   CATEGORIAS_HOTEL,
@@ -1034,47 +1036,48 @@ function VolumeSlider<T extends string>({
   onToggleOculto?: () => void;
 }) {
   const indice = Math.max(0, opcoes.indexOf(value));
+  // Pedido do Wilson, 11/set/2026: ocultar um campo deve fazer o campo
+  // inteiro sumir (rótulo incluso), não só a barra — por isso, se estiver
+  // oculto, o componente inteiro não renderiza nada. Restaurar volta a
+  // ser feito pelo botão mestre "Mostrar todos".
+  if (oculto) return null;
   return (
     <div className="flex h-full flex-col">
       <span className="mb-2 flex min-h-[2.2em] items-end text-[10px] uppercase leading-tight tracking-[0.2em] text-black/50">
         <LabelNumerado texto={label} />
         {onToggleOculto && <BotaoOcultarCampo oculto={oculto} onToggle={onToggleOculto} />}
       </span>
-      {!oculto && (
-        <>
-          <div className="flex items-center gap-2 rounded-lg border border-black/15 bg-black/[0.03] px-3 h-12">
-            <span aria-hidden className="shrink-0 text-base font-semibold text-black/30">
-              −
-            </span>
-            <div className="flex flex-1 items-center gap-1">
-              {opcoes.map((o, i) => (
-                <button
-                  key={o}
-                  type="button"
-                  onClick={() => onChange(o)}
-                  aria-label={o}
-                  aria-pressed={i <= indice}
-                  className={`h-6 flex-1 rounded-sm transition ${
-                    i <= indice ? "bg-[#2f80c9]" : "bg-black/10 hover:bg-black/20"
-                  }`}
-                  style={{ height: `${14 + i * 6}px` }}
-                />
-              ))}
-            </div>
-            <span aria-hidden className="shrink-0 text-base font-semibold text-black/30">
-              +
-            </span>
-          </div>
-          <div className="mt-1.5 flex justify-between gap-1 text-[9px] uppercase tracking-wide text-black/35">
-            {opcoes.map((o) => (
-              <span key={o} className={o === value ? "font-semibold text-[#2f80c9]" : ""}>
-                {o}
-              </span>
-            ))}
-          </div>
-          {nota && <span className="mt-1 text-[11px] leading-4 text-black/40">{nota}</span>}
-        </>
-      )}
+      <div className="flex items-center gap-2 rounded-lg border border-black/15 bg-black/[0.03] px-3 h-12">
+        <span aria-hidden className="shrink-0 text-base font-semibold text-black/30">
+          −
+        </span>
+        <div className="flex flex-1 items-center gap-1">
+          {opcoes.map((o, i) => (
+            <button
+              key={o}
+              type="button"
+              onClick={() => onChange(o)}
+              aria-label={o}
+              aria-pressed={i <= indice}
+              className={`h-6 flex-1 rounded-sm transition ${
+                i <= indice ? "bg-[#2f80c9]" : "bg-black/10 hover:bg-black/20"
+              }`}
+              style={{ height: `${14 + i * 6}px` }}
+            />
+          ))}
+        </div>
+        <span aria-hidden className="shrink-0 text-base font-semibold text-black/30">
+          +
+        </span>
+      </div>
+      <div className="mt-1.5 flex justify-between gap-1 text-[9px] uppercase tracking-wide text-black/35">
+        {opcoes.map((o) => (
+          <span key={o} className={o === value ? "font-semibold text-[#2f80c9]" : ""}>
+            {o}
+          </span>
+        ))}
+      </div>
+      {nota && <span className="mt-1 text-[11px] leading-4 text-black/40">{nota}</span>}
     </div>
   );
 }
@@ -1256,6 +1259,15 @@ export default function CalculadoraReversaPage() {
   // viagem). Formato yyyy-mm-dd (input type="date"); vazio = sem limite
   // (mostra até 12x).
   const [dataViagemEstimada, setDataViagemEstimada] = useState("");
+
+  // Forma de pagamento escolhida na simulação — pedido do Wilson,
+  // 11/set/2026: um tickbox pra marcar qual opção o cliente prefere, com
+  // uma confirmação escrita embaixo (útil na apresentação: fecha a
+  // reunião já com a forma de pagamento registrada, sem ambiguidade).
+  const [formaPagamentoEscolhida, setFormaPagamentoEscolhida] = useState<{
+    metodo: "cartao" | "pixVista" | "pixParcelado";
+    parcelas: number;
+  } | null>(null);
   const [tipoQuarto, setTipoQuarto] =
     useState<(typeof TIPOS_QUARTO)[number]>("Duplo (casal)");
   // Cidades do roteiro — multi-seleção (média dos multiplicadores de
@@ -1419,6 +1431,24 @@ export default function CalculadoraReversaPage() {
       if (novo.has(numero)) novo.delete(numero);
       else novo.add(numero);
       return novo;
+    });
+  }
+
+  // Todos os números de campo com botão de olho individual (1 por seção;
+  // o 9 é usado pelas duas variações — com/sem temas — mas é um só campo).
+  // Pedido do Wilson, 11/set/2026: botão mestre no topo da página pra
+  // ocultar/mostrar todos de uma vez, já que ocultar um campo agora o faz
+  // desaparecer por completo (sem botão de olho individual pra restaurar).
+  const TODOS_CAMPOS_OCULTAVEIS = [
+    1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18,
+  ];
+  const todosCamposOcultos = TODOS_CAMPOS_OCULTAVEIS.every((n) => camposOcultos.has(n));
+  function alternarTodosCamposOcultos() {
+    setCamposOcultos((atual) => {
+      if (TODOS_CAMPOS_OCULTAVEIS.every((n) => atual.has(n))) {
+        return new Set();
+      }
+      return new Set(TODOS_CAMPOS_OCULTAVEIS);
     });
   }
 
@@ -2173,6 +2203,24 @@ export default function CalculadoraReversaPage() {
     });
   }, [totalSelecionado, parcelasMaxPix]);
 
+  // Texto da confirmação da forma de pagamento escolhida (tickbox acima).
+  const descricaoFormaPagamentoEscolhida = useMemo(() => {
+    if (!formaPagamentoEscolhida) return null;
+    if (formaPagamentoEscolhida.metodo === "cartao") {
+      const op = simulacaoCartao.find((o) => o.parcelas === formaPagamentoEscolhida.parcelas);
+      if (!op) return null;
+      return op.parcelas === 1
+        ? `Cartão de crédito à vista (1x) de ${formatBRL(op.valorParcela)}.`
+        : `Cartão de crédito em ${op.parcelas}x de ${formatBRL(op.valorParcela)} — total ${formatBRL(op.valorTotal)}.`;
+    }
+    if (formaPagamentoEscolhida.metodo === "pixVista") {
+      return `PIX à vista de ${formatBRL(totalSelecionado)}.`;
+    }
+    const op = simulacaoPix.find((o) => o.parcelas === formaPagamentoEscolhida.parcelas);
+    if (!op) return null;
+    return `PIX parcelado — entrada de ${formatBRL(op.entrada)} (30%) + ${op.parcelas}x de ${formatBRL(op.valorParcela)} — total ${formatBRL(op.valorTotal)}.`;
+  }, [formaPagamentoEscolhida, simulacaoCartao, simulacaoPix, totalSelecionado]);
+
   // Cidades marcadas que exigem motorista particular (transporte público
   // insuficiente) mas cujo item "Motorista Privado" não está na proposta
   // final — alerta pro vendedor não fechar um pacote sem transporte viável.
@@ -2297,16 +2345,69 @@ export default function CalculadoraReversaPage() {
           maior impacto na experiência.
         </p>
 
+        {/* Pedido do Wilson, 11/set/2026: função master "Hide Todos /
+            Mostrar Todos os Campos" no começo da página, com ícone 250%
+            maior que o botão de olho individual (14px → 49px), já que
+            ocultar um campo agora o faz desaparecer por completo (sem
+            botão de olho individual pra restaurar) — o mestre é o único
+            jeito de trazer os campos ocultos de volta. Junto, um aviso em
+            amarelo mostra quantos campos estão ocultos no momento. */}
+        <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <button
+            type="button"
+            onClick={alternarTodosCamposOcultos}
+            className={`flex items-center gap-4 self-start rounded-2xl border px-5 py-3 text-left transition ${
+              todosCamposOcultos
+                ? "border-[#2f80c9]/40 bg-[#2f80c9]/10"
+                : "border-black/15 bg-black/[0.02] hover:border-black/30"
+            }`}
+          >
+            <span
+              className={`flex h-[84px] w-[84px] shrink-0 items-center justify-center rounded-full border ${
+                todosCamposOcultos
+                  ? "border-[#2f80c9]/40 bg-[#2f80c9]/10 text-[#2f80c9]"
+                  : "border-black/15 text-black/45"
+              }`}
+            >
+              {todosCamposOcultos ? (
+                <IconEyeOff className="h-[49px] w-[49px]" />
+              ) : (
+                <IconEye className="h-[49px] w-[49px]" />
+              )}
+            </span>
+            <span>
+              <span className="block text-sm font-semibold uppercase tracking-[0.1em] text-[#0A2540]">
+                {todosCamposOcultos ? "Mostrar Todos os Campos" : "Hide Todos os Campos"}
+              </span>
+              <span className="mt-0.5 block text-[11px] leading-4 text-black/45">
+                {todosCamposOcultos
+                  ? "Restaura todos os campos ocultos de uma vez"
+                  : "Oculta todos os campos de uma vez — útil pra print de tela"}
+              </span>
+            </span>
+          </button>
+
+          {camposOcultos.size > 0 && (
+            <p className="flex items-center gap-2 self-start rounded-xl border border-amber-300 bg-amber-50 px-4 py-2.5 text-[12px] font-medium text-amber-800 sm:self-auto">
+              <span aria-hidden>⚠️</span>
+              {camposOcultos.size} campo{camposOcultos.size === 1 ? "" : "s"} oculto
+              {camposOcultos.size === 1 ? "" : "s"}
+            </p>
+          )}
+        </div>
+
         {/* ── ENTRADAS ── */}
         <div className="mt-8 grid gap-4 rounded-2xl border border-black/10 bg-black/[0.02] p-6 sm:grid-cols-2 md:p-8">
           <label className="flex h-full flex-col sm:col-span-2">
-            <span className="mb-2 flex items-center text-[10px] uppercase tracking-[0.2em] text-black/50">
-              <LabelNumerado texto="1. Orçamento máximo (R$)" />
-              <BotaoOcultarCampo
-                oculto={camposOcultos.has(1)}
-                onToggle={() => alternarCampoOculto(1)}
-              />
-            </span>
+            {/* Pedido do Wilson, 11/set/2026: ao ocultar, o campo inteiro
+                (rótulo + botão de olho incluídos) some — não só o input.
+                Restaurar é só pelo botão mestre "Mostrar todos" no topo. */}
+            {!camposOcultos.has(1) && (
+              <span className="mb-2 flex items-center text-[10px] uppercase tracking-[0.2em] text-black/50">
+                <LabelNumerado texto="1. Orçamento máximo (R$)" />
+                <BotaoOcultarCampo oculto={false} onToggle={() => alternarCampoOculto(1)} />
+              </span>
+            )}
             {!camposOcultos.has(1) && (
               <>
                 <input
@@ -2353,13 +2454,12 @@ export default function CalculadoraReversaPage() {
           />
 
           <label className="flex h-full flex-col">
-            <span className="mb-2 flex min-h-[2.2em] items-end text-[10px] uppercase leading-tight tracking-[0.2em] text-black/50">
-              <LabelNumerado texto="4. Tipo de quarto" />
-              <BotaoOcultarCampo
-                oculto={camposOcultos.has(4)}
-                onToggle={() => alternarCampoOculto(4)}
-              />
-            </span>
+            {!camposOcultos.has(4) && (
+              <span className="mb-2 flex min-h-[2.2em] items-end text-[10px] uppercase leading-tight tracking-[0.2em] text-black/50">
+                <LabelNumerado texto="4. Tipo de quarto" />
+                <BotaoOcultarCampo oculto={false} onToggle={() => alternarCampoOculto(4)} />
+              </span>
+            )}
             {!camposOcultos.has(4) && (
               <select
                 value={tipoQuarto}
@@ -2374,6 +2474,37 @@ export default function CalculadoraReversaPage() {
               </select>
             )}
           </label>
+
+          {/* Pedido do Wilson, 11/set/2026: subir esse campo pro espaço em
+              branco ao lado do Tipo de quarto — antes só existia dentro do
+              card de PIX na simulação de pagamento lá embaixo. Mesmo
+              estado (dataViagemEstimada), então os dois campos ficam
+              sincronizados. Input nativo type="date": dá pra clicar no
+              calendário ou digitar a data direto. Reordenado (11/set/2026)
+              pra ficar ao lado de "Tipo de quarto" em vez de "Classe do
+              voo", deixando os dois sliders de volume (5 e 6) juntos na
+              linha de baixo. */}
+          <div className="flex h-full flex-col">
+            {!camposOcultos.has(18) && (
+              <span className="mb-2 flex items-center text-[10px] uppercase tracking-[0.2em] text-black/50">
+                Data estimada da viagem
+                <BotaoOcultarCampo oculto={false} onToggle={() => alternarCampoOculto(18)} />
+              </span>
+            )}
+            {!camposOcultos.has(18) && (
+              <>
+                <input
+                  type="date"
+                  value={dataViagemEstimada}
+                  onChange={(e) => setDataViagemEstimada(e.target.value)}
+                  className="h-10 w-full rounded-lg border border-black/15 bg-black/[0.03] px-3 text-sm outline-none focus:border-black/30"
+                />
+                <span className="mt-1.5 text-[11px] text-black/40">
+                  Usada pra limitar o parcelamento do PIX até a data da viagem.
+                </span>
+              </>
+            )}
+          </div>
 
           <VolumeSlider
             label="5. Categoria máxima de hotel"
@@ -2407,43 +2538,13 @@ export default function CalculadoraReversaPage() {
             onToggleOculto={() => alternarCampoOculto(6)}
           />
 
-          {/* Pedido do Wilson, 11/set/2026: subir esse campo pro espaço em
-              branco ao lado da Classe do voo — antes só existia dentro do
-              card de PIX na simulação de pagamento lá embaixo. Mesmo
-              estado (dataViagemEstimada), então os dois campos ficam
-              sincronizados. Input nativo type="date": dá pra clicar no
-              calendário ou digitar a data direto. */}
-          <div className="flex h-full flex-col">
-            <span className="mb-2 flex items-center text-[10px] uppercase tracking-[0.2em] text-black/50">
-              Data estimada da viagem
-              <BotaoOcultarCampo
-                oculto={camposOcultos.has(18)}
-                onToggle={() => alternarCampoOculto(18)}
-              />
-            </span>
-            {!camposOcultos.has(18) && (
-              <>
-                <input
-                  type="date"
-                  value={dataViagemEstimada}
-                  onChange={(e) => setDataViagemEstimada(e.target.value)}
-                  className="h-10 w-full rounded-lg border border-black/15 bg-black/[0.03] px-3 text-sm outline-none focus:border-black/30"
-                />
-                <span className="mt-1.5 text-[11px] text-black/40">
-                  Usada pra limitar o parcelamento do PIX até a data da viagem.
-                </span>
-              </>
-            )}
-          </div>
-
           <div className="sm:col-span-2">
-            <span className="mb-2 flex items-center text-[10px] uppercase tracking-[0.2em] text-black/50">
-              <LabelNumerado texto="7. Temporada" />
-              <BotaoOcultarCampo
-                oculto={camposOcultos.has(7)}
-                onToggle={() => alternarCampoOculto(7)}
-              />
-            </span>
+            {!camposOcultos.has(7) && (
+              <span className="mb-2 flex items-center text-[10px] uppercase tracking-[0.2em] text-black/50">
+                <LabelNumerado texto="7. Temporada" />
+                <BotaoOcultarCampo oculto={false} onToggle={() => alternarCampoOculto(7)} />
+              </span>
+            )}
             {!camposOcultos.has(7) && (
             <>
             <div className="flex flex-wrap gap-2">
@@ -2478,13 +2579,12 @@ export default function CalculadoraReversaPage() {
             </>
             )}
 
-            <span className="mb-2 mt-6 flex items-center text-[10px] uppercase tracking-[0.2em] text-black/50">
-              <LabelNumerado texto="8. Temas" /> <span className="normal-case tracking-normal text-black/35">(selecione até {MAX_TEMAS_SIMULTANEOS} pra misturar)</span>
-              <BotaoOcultarCampo
-                oculto={camposOcultos.has(8)}
-                onToggle={() => alternarCampoOculto(8)}
-              />
-            </span>
+            {!camposOcultos.has(8) && (
+              <span className="mb-2 mt-6 flex items-center text-[10px] uppercase tracking-[0.2em] text-black/50">
+                <LabelNumerado texto="8. Temas" /> <span className="normal-case tracking-normal text-black/35">(selecione até {MAX_TEMAS_SIMULTANEOS} pra misturar)</span>
+                <BotaoOcultarCampo oculto={false} onToggle={() => alternarCampoOculto(8)} />
+              </span>
+            )}
             {!camposOcultos.has(8) && (
             <div className="flex flex-wrap gap-2">
               <button
@@ -2532,7 +2632,15 @@ export default function CalculadoraReversaPage() {
             </div>
             )}
 
-            {temasSelecionados.size === 0 ? (
+            {/* Pedido do Wilson, 11/set/2026: ocultar um campo deve fazer o
+                campo inteiro sumir (rótulo incluso), não só o conteúdo —
+                por isso o campo 9 inteiro (as duas variações, com/sem
+                temas selecionados) fica dentro desse `!camposOcultos.has(9)`
+                em vez de só a lista de cidades. Restaurar volta a ser feito
+                pelo botão mestre "Mostrar todos", já que o próprio botão de
+                olho some junto com o campo. */}
+            {!camposOcultos.has(9) && (
+            temasSelecionados.size === 0 ? (
               <div className="mt-4">
                 <span className="mb-2 flex min-h-[2.2em] items-end text-[10px] uppercase leading-tight tracking-[0.2em] text-black/50">
                   <LabelNumerado texto="9. Cidades do roteiro" />{" "}
@@ -2649,15 +2757,15 @@ export default function CalculadoraReversaPage() {
                   );
                 })}
               </div>
+            )
             )}
-            <span className="mb-2 mt-4 flex items-center text-[10px] uppercase tracking-[0.2em] text-black/50">
-              <LabelNumerado texto="10. Extensão internacional" />{" "}
-              <span className="normal-case tracking-normal text-black/35">(opcional — soma dias ao total da viagem)</span>
-              <BotaoOcultarCampo
-                oculto={camposOcultos.has(10)}
-                onToggle={() => alternarCampoOculto(10)}
-              />
-            </span>
+            {!camposOcultos.has(10) && (
+              <span className="mb-2 mt-4 flex items-center text-[10px] uppercase tracking-[0.2em] text-black/50">
+                <LabelNumerado texto="10. Extensão internacional" />{" "}
+                <span className="normal-case tracking-normal text-black/35">(opcional — soma dias ao total da viagem)</span>
+                <BotaoOcultarCampo oculto={false} onToggle={() => alternarCampoOculto(10)} />
+              </span>
+            )}
             {!camposOcultos.has(10) && (
             <>
             <div className="flex flex-wrap gap-2">
@@ -2810,13 +2918,12 @@ export default function CalculadoraReversaPage() {
           </div>
 
           <div className="sm:col-span-2">
-            <span className="mb-2 flex items-center text-[10px] uppercase tracking-[0.2em] text-black/50">
-              <LabelNumerado texto="11. JR Pass — validade e classe" />
-              <BotaoOcultarCampo
-                oculto={camposOcultos.has(11)}
-                onToggle={() => alternarCampoOculto(11)}
-              />
-            </span>
+            {!camposOcultos.has(11) && (
+              <span className="mb-2 flex items-center text-[10px] uppercase tracking-[0.2em] text-black/50">
+                <LabelNumerado texto="11. JR Pass — validade e classe" />
+                <BotaoOcultarCampo oculto={false} onToggle={() => alternarCampoOculto(11)} />
+              </span>
+            )}
             {!camposOcultos.has(11) && (
             <>
             <div className="flex flex-wrap gap-4">
@@ -2891,13 +2998,12 @@ export default function CalculadoraReversaPage() {
           </div>
 
           <div className="sm:col-span-2">
-            <span className="mb-2 flex items-center text-[10px] uppercase tracking-[0.2em] text-black/50">
-              <LabelNumerado texto="12. Guia Turístico" />
-              <BotaoOcultarCampo
-                oculto={camposOcultos.has(12)}
-                onToggle={() => alternarCampoOculto(12)}
-              />
-            </span>
+            {!camposOcultos.has(12) && (
+              <span className="mb-2 flex items-center text-[10px] uppercase tracking-[0.2em] text-black/50">
+                <LabelNumerado texto="12. Guia Turístico" />
+                <BotaoOcultarCampo oculto={false} onToggle={() => alternarCampoOculto(12)} />
+              </span>
+            )}
             {!camposOcultos.has(12) && (
             <>
             <div className="max-w-xs">
@@ -2918,13 +3024,12 @@ export default function CalculadoraReversaPage() {
           </div>
 
           <div className="sm:col-span-2">
-            <span className="mb-2 flex items-center text-[10px] uppercase tracking-[0.2em] text-black/50">
-              <LabelNumerado texto="13. Câmbio de ienes" />
-              <BotaoOcultarCampo
-                oculto={camposOcultos.has(13)}
-                onToggle={() => alternarCampoOculto(13)}
-              />
-            </span>
+            {!camposOcultos.has(13) && (
+              <span className="mb-2 flex items-center text-[10px] uppercase tracking-[0.2em] text-black/50">
+                <LabelNumerado texto="13. Câmbio de ienes" />
+                <BotaoOcultarCampo oculto={false} onToggle={() => alternarCampoOculto(13)} />
+              </span>
+            )}
             {!camposOcultos.has(13) && (
             <>
             <div className="flex flex-wrap items-end gap-3">
@@ -2975,13 +3080,12 @@ export default function CalculadoraReversaPage() {
           </div>
 
           <div className="sm:col-span-2">
-            <span className="mb-2 flex items-center text-[10px] uppercase tracking-[0.2em] text-black/50">
-              <LabelNumerado texto="14. Conexão de internet" />
-              <BotaoOcultarCampo
-                oculto={camposOcultos.has(14)}
-                onToggle={() => alternarCampoOculto(14)}
-              />
-            </span>
+            {!camposOcultos.has(14) && (
+              <span className="mb-2 flex items-center text-[10px] uppercase tracking-[0.2em] text-black/50">
+                <LabelNumerado texto="14. Conexão de internet" />
+                <BotaoOcultarCampo oculto={false} onToggle={() => alternarCampoOculto(14)} />
+              </span>
+            )}
             {!camposOcultos.has(14) && (
             <>
             <div className="flex gap-2">
@@ -3024,13 +3128,12 @@ export default function CalculadoraReversaPage() {
           </div>
 
           <div className="sm:col-span-2">
-            <span className="mb-2 flex items-center text-[10px] uppercase tracking-[0.2em] text-black/50">
-              <LabelNumerado texto="15. Ingressos e experiências" />
-              <BotaoOcultarCampo
-                oculto={camposOcultos.has(15)}
-                onToggle={() => alternarCampoOculto(15)}
-              />
-            </span>
+            {!camposOcultos.has(15) && (
+              <span className="mb-2 flex items-center text-[10px] uppercase tracking-[0.2em] text-black/50">
+                <LabelNumerado texto="15. Ingressos e experiências" />
+                <BotaoOcultarCampo oculto={false} onToggle={() => alternarCampoOculto(15)} />
+              </span>
+            )}
             {!camposOcultos.has(15) && (
             <>
             <div className="flex flex-wrap gap-2">
@@ -3348,13 +3451,12 @@ export default function CalculadoraReversaPage() {
           </div>
 
           <div className="sm:col-span-2">
-            <span className="mb-2 flex items-center text-[10px] uppercase tracking-[0.2em] text-black/50">
-              <LabelNumerado texto="16. Serviços adicionais" />
-              <BotaoOcultarCampo
-                oculto={camposOcultos.has(16)}
-                onToggle={() => alternarCampoOculto(16)}
-              />
-            </span>
+            {!camposOcultos.has(16) && (
+              <span className="mb-2 flex items-center text-[10px] uppercase tracking-[0.2em] text-black/50">
+                <LabelNumerado texto="16. Serviços adicionais" />
+                <BotaoOcultarCampo oculto={false} onToggle={() => alternarCampoOculto(16)} />
+              </span>
+            )}
             {!camposOcultos.has(16) && (
             <>
             <div className="flex flex-wrap gap-2">
@@ -3439,13 +3541,12 @@ export default function CalculadoraReversaPage() {
           </div>
 
           <div className="sm:col-span-2">
-            <span className="mb-2 flex items-center text-[10px] uppercase tracking-[0.2em] text-black/50">
-              <LabelNumerado texto="17. Seguro viagem — idade dos passageiros" />
-              <BotaoOcultarCampo
-                oculto={camposOcultos.has(17)}
-                onToggle={() => alternarCampoOculto(17)}
-              />
-            </span>
+            {!camposOcultos.has(17) && (
+              <span className="mb-2 flex items-center text-[10px] uppercase tracking-[0.2em] text-black/50">
+                <LabelNumerado texto="17. Seguro viagem — idade dos passageiros" />
+                <BotaoOcultarCampo oculto={false} onToggle={() => alternarCampoOculto(17)} />
+              </span>
+            )}
             {!camposOcultos.has(17) && (
               <>
                 <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 md:grid-cols-6">
@@ -3871,17 +3972,36 @@ export default function CalculadoraReversaPage() {
                       </div>
                     </div>
                     <div className="mt-4 divide-y divide-black/[0.06] border-t border-black/[0.06]">
-                      {simulacaoCartao.map((op) => (
-                        <div key={op.parcelas} className="flex items-center gap-3 py-2.5">
-                          <span className="w-9 shrink-0 text-sm text-black/45">{op.parcelas}x</span>
-                          <span className="flex-1 text-base font-semibold text-[#0A2540]">
-                            {formatBRL(op.valorParcela)}
-                          </span>
-                          <span className="shrink-0 text-[11px] text-black/35">
-                            total {formatBRL(op.valorTotal)}
-                          </span>
-                        </div>
-                      ))}
+                      {simulacaoCartao.map((op) => {
+                        const selecionado =
+                          formaPagamentoEscolhida?.metodo === "cartao" &&
+                          formaPagamentoEscolhida.parcelas === op.parcelas;
+                        return (
+                          <label
+                            key={op.parcelas}
+                            className={`-mx-2 flex cursor-pointer items-center gap-3 rounded-lg px-2 py-2.5 transition ${
+                              selecionado ? "bg-[#2f80c9]/[0.07]" : "hover:bg-black/[0.02]"
+                            }`}
+                          >
+                            <input
+                              type="radio"
+                              name="formaPagamento"
+                              checked={selecionado}
+                              onChange={() =>
+                                setFormaPagamentoEscolhida({ metodo: "cartao", parcelas: op.parcelas })
+                              }
+                              className="h-4 w-4 shrink-0 accent-[#2f80c9]"
+                            />
+                            <span className="w-9 shrink-0 text-sm text-black/45">{op.parcelas}x</span>
+                            <span className="flex-1 text-base font-semibold text-[#0A2540]">
+                              {formatBRL(op.valorParcela)}
+                            </span>
+                            <span className="shrink-0 text-[11px] text-black/35">
+                              total {formatBRL(op.valorTotal)}
+                            </span>
+                          </label>
+                        );
+                      })}
                     </div>
                   </div>
 
@@ -3906,12 +4026,25 @@ export default function CalculadoraReversaPage() {
                       </label>
                     </div>
 
-                    <div className="mt-4 flex items-center justify-between rounded-lg bg-[#2f80c9]/5 px-3.5 py-3">
-                      <span className="text-sm text-[#0A2540]/70">à vista</span>
+                    <label
+                      className={`mt-4 flex cursor-pointer items-center gap-3 rounded-lg px-3.5 py-3 transition ${
+                        formaPagamentoEscolhida?.metodo === "pixVista"
+                          ? "bg-[#2f80c9]/[0.12]"
+                          : "bg-[#2f80c9]/5 hover:bg-[#2f80c9]/[0.08]"
+                      }`}
+                    >
+                      <input
+                        type="radio"
+                        name="formaPagamento"
+                        checked={formaPagamentoEscolhida?.metodo === "pixVista"}
+                        onChange={() => setFormaPagamentoEscolhida({ metodo: "pixVista", parcelas: 1 })}
+                        className="h-4 w-4 shrink-0 accent-[#2f80c9]"
+                      />
+                      <span className="flex-1 text-sm text-[#0A2540]/70">à vista</span>
                       <span className="text-base font-semibold text-[#0A2540]">
                         {formatBRL(totalSelecionado)}
                       </span>
-                    </div>
+                    </label>
 
                     {simulacaoPix.length > 0 ? (
                       <div className="mt-3">
@@ -3921,17 +4054,39 @@ export default function CalculadoraReversaPage() {
                           a.m.
                         </p>
                         <div className="mt-1.5 divide-y divide-black/[0.06] border-t border-black/[0.06]">
-                          {simulacaoPix.map((op) => (
-                            <div key={op.parcelas} className="flex items-center gap-3 py-2.5">
-                              <span className="w-9 shrink-0 text-sm text-black/45">{op.parcelas}x</span>
-                              <span className="flex-1 text-base font-semibold text-[#0A2540]">
-                                {formatBRL(op.valorParcela)}
-                              </span>
-                              <span className="shrink-0 text-[11px] text-black/35">
-                                total {formatBRL(op.valorTotal)}
-                              </span>
-                            </div>
-                          ))}
+                          {simulacaoPix.map((op) => {
+                            const selecionado =
+                              formaPagamentoEscolhida?.metodo === "pixParcelado" &&
+                              formaPagamentoEscolhida.parcelas === op.parcelas;
+                            return (
+                              <label
+                                key={op.parcelas}
+                                className={`-mx-2 flex cursor-pointer items-center gap-3 rounded-lg px-2 py-2.5 transition ${
+                                  selecionado ? "bg-[#2f80c9]/[0.07]" : "hover:bg-black/[0.02]"
+                                }`}
+                              >
+                                <input
+                                  type="radio"
+                                  name="formaPagamento"
+                                  checked={selecionado}
+                                  onChange={() =>
+                                    setFormaPagamentoEscolhida({
+                                      metodo: "pixParcelado",
+                                      parcelas: op.parcelas,
+                                    })
+                                  }
+                                  className="h-4 w-4 shrink-0 accent-[#2f80c9]"
+                                />
+                                <span className="w-9 shrink-0 text-sm text-black/45">{op.parcelas}x</span>
+                                <span className="flex-1 text-base font-semibold text-[#0A2540]">
+                                  {formatBRL(op.valorParcela)}
+                                </span>
+                                <span className="shrink-0 text-[11px] text-black/35">
+                                  total {formatBRL(op.valorTotal)}
+                                </span>
+                              </label>
+                            );
+                          })}
                         </div>
                       </div>
                     ) : (
@@ -3942,6 +4097,27 @@ export default function CalculadoraReversaPage() {
                       )
                     )}
                   </div>
+                </div>
+
+                {/* Confirmação escrita da forma de pagamento marcada acima —
+                    pedido do Wilson, 11/set/2026: fecha a apresentação com
+                    a opção escolhida já registrada por escrito, sem
+                    ambiguidade de qual das simulações valeu. */}
+                <div
+                  className={`mt-4 rounded-lg border px-3.5 py-3 text-xs ${
+                    formaPagamentoEscolhida
+                      ? "border-emerald-200 bg-emerald-50 text-emerald-800"
+                      : "border-black/10 bg-black/[0.02] text-black/40"
+                  }`}
+                >
+                  {formaPagamentoEscolhida && descricaoFormaPagamentoEscolhida ? (
+                    <>
+                      <span className="font-semibold">Forma de pagamento selecionada: </span>
+                      {descricaoFormaPagamentoEscolhida}
+                    </>
+                  ) : (
+                    "Nenhuma forma de pagamento marcada ainda — selecione uma opção acima."
+                  )}
                 </div>
               </div>
 
