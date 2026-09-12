@@ -1141,7 +1141,13 @@ function CidadeCombobox({
         />
       </svg>
       {aberto && (
-        <div className="absolute left-0 right-0 top-full z-20 mt-1 max-h-56 overflow-y-auto rounded-lg border border-black/15 bg-white shadow-lg">
+        // Pedido do Wilson, 12/set/2026: a lista tinha só a largura do
+        // próprio cartão de cidade (128px) — ao abrir por cima do campo
+        // seguinte ("10. Extensão internacional", logo abaixo), cobria só
+        // uma parte do texto e deixava um pedaço "cortado" aparecendo do
+        // lado. Lista mais larga (min 14rem) e z-index mais alto cobrem o
+        // texto por baixo de forma limpa, sem pedaço sobrando à mostra.
+        <div className="absolute left-0 top-full z-30 mt-1 max-h-56 w-56 max-w-[80vw] overflow-y-auto rounded-lg border border-black/15 bg-white shadow-lg">
           {opcoes.length === 0 ? (
             <p className="px-3 py-2 text-sm text-black/40">Nenhuma cidade encontrada</p>
           ) : (
@@ -2351,9 +2357,9 @@ export default function CalculadoraReversaPage() {
             cinza), já que ocultar um campo agora o faz desaparecer por
             completo (sem botão de olho individual pra restaurar) — o
             mestre é o único jeito de trazer os campos ocultos de volta.
-            Junto, um aviso em
-            amarelo mostra quantos campos estão ocultos no momento. */}
-        <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            O aviso de quantos campos estão ocultos mora na barra fixa
+            inferior (pedido do Wilson, 12/set/2026), não aqui. */}
+        <div className="mt-8">
           <button
             type="button"
             onClick={alternarTodosCamposOcultos}
@@ -2387,14 +2393,6 @@ export default function CalculadoraReversaPage() {
               </span>
             </span>
           </button>
-
-          {camposOcultos.size > 0 && (
-            <p className="flex items-center gap-2 self-start rounded-xl border border-amber-300 bg-amber-50 px-4 py-2.5 text-[12px] font-medium text-amber-800 sm:self-auto">
-              <span aria-hidden>⚠️</span>
-              {camposOcultos.size} campo{camposOcultos.size === 1 ? "" : "s"} oculto
-              {camposOcultos.size === 1 ? "" : "s"}
-            </p>
-          )}
         </div>
 
         {/* ── ENTRADAS ── */}
@@ -4179,6 +4177,17 @@ export default function CalculadoraReversaPage() {
 
       {/* ── BARRA FIXA: total + saldo sempre visíveis ── */}
       <div className="fixed inset-x-0 bottom-0 z-50 border-t border-white/10 bg-[#0a0a0a]/97 px-5 py-3 shadow-[0_-4px_16px_rgba(0,0,0,0.35)] backdrop-blur sm:px-8">
+        {/* Pedido do Wilson, 12/set/2026: o aviso de campos ocultos mora
+            aqui, dentro da barra fixa, não solto no topo da página. */}
+        {camposOcultos.size > 0 && (
+          <div className="mx-auto mb-2 flex max-w-4xl">
+            <p className="flex items-center gap-2 rounded-lg border border-amber-400/30 bg-amber-400/10 px-3 py-1.5 text-[11px] font-medium text-amber-300">
+              <span aria-hidden>⚠️</span>
+              {camposOcultos.size} campo{camposOcultos.size === 1 ? "" : "s"} oculto
+              {camposOcultos.size === 1 ? "" : "s"}
+            </p>
+          </div>
+        )}
         <div className="mx-auto flex max-w-4xl flex-wrap items-center justify-between gap-x-6 gap-y-2">
           <div>
             <p className="text-[9px] uppercase tracking-[0.2em] text-white/40">
