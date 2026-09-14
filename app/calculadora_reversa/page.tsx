@@ -62,7 +62,14 @@ import {
   ROTEIRO_PRECO_DIA_EXTRA,
   comMargemEImposto,
 } from "../components/CustomPackageCard";
-import { useCambioUSD, formatBRL, formatUSD, brlParaUSDLabel } from "../hooks/useCambioUSD";
+import {
+  useCambioUSD,
+  formatBRL,
+  formatUSD,
+  formatValor,
+  brlParaUSDLabel,
+  type MoedaExibicao,
+} from "../hooks/useCambioUSD";
 import { CambioLabel } from "../components/CambioLabel";
 
 type IngressoKey = "disneyland" | "disneysea" | "usj" | "teamlabTokyo" | "teamlabKyoto";
@@ -131,20 +138,24 @@ const CATALOGO_SERVICOS_ADICIONAIS: {
     nome: "Transporte de Malas Inter-Municipal",
     descricao:
       "Takkyubin — a mala é despachada no hotel de origem e chega no hotel da próxima cidade no dia seguinte, sem o cliente precisar carregá-la no Shinkansen. Por mala, por trecho entre cidades.",
-    icone: "/images/icone-transporte-malas.png",
+    // Ícone próprio — pedido do Wilson, 14/set/2026: "novos icones para os
+    // serviços adicionais". Antes reaproveitava icone-transporte-malas.png
+    // (compartilhado com outras páginas do site) — trocado por um arquivo
+    // dedicado pra não afetar essas outras páginas.
+    icone: "/images/icone-servico-malas-intermunicipal.png",
   },
   {
     key: "cambioBrasil",
     nome: "Câmbio no Brasil",
     descricao:
       "Retirada de ienes em espécie ainda no Brasil, com cotação fechada antes do embarque — evita depender só de caixas eletrônicos ou casas de câmbio no Japão nos primeiros dias de viagem. Valor configurado na seção 13 (cidade e quantidade de ienes).",
-    icone: "/images/icone-cambio-dinheiro.png",
+    icone: "/images/icone-servico-cambio-brasil.png",
   },
   {
     key: "restaurantesHighEnd",
     nome: "Reserva de Restaurantes High-End",
     descricao: `Pacote fechado de ${RESTAURANTES_HIGHEND_QTD} reservas em restaurantes Michelin/Tabelog Awards ou equivalente. Disponível para até ${RESTAURANTES_HIGHEND_LIMITE_PESSOAS} pessoas.`,
-    icone: "/images/icone-gastronomia.png",
+    icone: "/images/icone-servico-restaurantes-highend.png",
   },
   // 4 itens abaixo — pedido do Wilson, 14/set/2026, questionando o aviso
   // "itens sem preço fixo (concierge, experiências sob medida, transfer de
@@ -161,26 +172,28 @@ const CATALOGO_SERVICOS_ADICIONAIS: {
     nome: "Transfer de Ônibus (Limousine Bus)",
     descricao:
       "Aeroporto ↔ hotel em Tóquio, ida e volta, por pessoa — alternativa/complemento à van privada (item “Transporte”), que não inclui esse trajeto.",
-    icone: "/images/icone-transporte-malas.png",
+    icone: "/images/icone-servico-transfer-onibus.png",
   },
   {
     key: "reservaRestaurante",
     nome: "Reserva de Restaurante",
     descricao:
       "Reserva avulsa em restaurante fora do pacote High-End (não Michelin/Tabelog Awards) — o trabalho do concierge de conseguir mesa em local concorrido.",
-    icone: "/images/icone-gastronomia.png",
+    icone: "/images/icone-servico-reserva-restaurante.png",
   },
   {
     key: "experienciaSobMedida",
     nome: "Experiência Sob Medida",
     descricao:
       "Taxa de curadoria do concierge pra pesquisar, negociar e agendar uma experiência fora do catálogo padrão (ex.: cerimônia do chá particular, acesso exclusivo). O custo da experiência em si é cotado à parte.",
+    icone: "/images/icone-servico-experiencia-sob-medida.png",
   },
   {
     key: "concierge",
     nome: "Concierge Dedicado",
     descricao:
       "Suporte e tradução sob demanda por WhatsApp/telefone durante toda a viagem, por dia.",
+    icone: "/images/icone-servico-concierge.png",
   },
 ];
 
@@ -1359,6 +1372,22 @@ export default function CalculadoraReversaPage() {
   const [cambioIeneCidade, setCambioIeneCidade] = useState<CidadeCambioIeneSlug>("sao-paulo");
   const [quantidadeIenes, setQuantidadeIenes] = useState(CAMBIO_IENES_MINIMO);
   const cambioIene = useCambioIene(cambioIeneCidade);
+  // Moeda de exibição — pedido do Wilson, 14/set/2026: "criar botões para
+  // transformar tudo em BRL, USD ou IENE". Afeta todos os valores
+  // mostrados pro vendedor (tela, PDF, Word, mensagem de WhatsApp) — o
+  // valor de referência interno de cada preço continua sempre em reais;
+  // os campos que o vendedor digita (orçamento, ajustes manuais de
+  // item/total) também continuam sempre em reais, é só a exibição que
+  // muda. brlPorJPY reaproveita a cotação de iene já buscada pra seção
+  // "Câmbio no Brasil" (useCambioIene) como referência de conversão.
+  const [moedaExibicao, setMoedaExibicao] = useState<MoedaExibicao>("BRL");
+  const brlPorJPY = cambioIene?.cotacaoBRLPorJPY ?? COTACAO_FALLBACK_BRL_POR_JPY;
+  function formatMoeda(valorBRL: number): string {
+    return formatValor(valorBRL, moedaExibicao, cambioCotacao, brlPorJPY);
+  }
+  function formatMoedaDeUSD(valorUSD: number): string {
+    return formatMoeda(valorUSD * cambioCotacao);
+  }
   // Até MAX_TEMAS_SIMULTANEOS temas podem ficar ativos ao mesmo tempo —
   // permite montar uma viagem misturando temas (ex.: Automobilismo +
   // Gastronomia). Pedido do Wilson, 04/set/2026.
@@ -1933,9 +1962,9 @@ export default function CalculadoraReversaPage() {
         chave: `extensao-${extensao.key}`,
         label: `Extensão ${extensao.nome} — ${categoriaEscolhida} (${extensao.cidades.map((c) => c.nome).join(" + ")})`,
         detalhe: [
-          `Hotel ${categoriaEscolhida} · +${extensao.dias} dias · ${tipoQuarto} — ${formatBRL(porCategoria[categoriaEscolhida].hotel)}`,
+          `Hotel ${categoriaEscolhida} · +${extensao.dias} dias · ${tipoQuarto} — ${formatMoeda(porCategoria[categoriaEscolhida].hotel)}`,
           ...extensao.deslocamento.map(
-            (trecho) => `${trecho.label} — ${formatBRL(Math.round(trecho.precoUSDPax * cambioCotacao * pessoas))}`,
+            (trecho) => `${trecho.label} — ${formatMoeda(Math.round(trecho.precoUSDPax * cambioCotacao * pessoas))}`,
           ),
           "Seguro e guia dessa extensão cotados à parte, por enquanto.",
         ],
@@ -2300,6 +2329,7 @@ export default function CalculadoraReversaPage() {
     cambioIeneCidade,
     quantidadeIenes,
     cambioCotacao,
+    moedaExibicao,
     hotelManual,
     hotelDiariaManual,
     hotelCategoriaManual,
@@ -2418,16 +2448,16 @@ export default function CalculadoraReversaPage() {
       const op = simulacaoCartao.find((o) => o.parcelas === formaPagamentoEscolhida.parcelas);
       if (!op) return null;
       return op.parcelas === 1
-        ? `Cartão de crédito à vista (1x) de ${formatBRL(op.valorParcela)}.`
-        : `Cartão de crédito em ${op.parcelas}x de ${formatBRL(op.valorParcela)} — total ${formatBRL(op.valorTotal)}.`;
+        ? `Cartão de crédito à vista (1x) de ${formatMoeda(op.valorParcela)}.`
+        : `Cartão de crédito em ${op.parcelas}x de ${formatMoeda(op.valorParcela)} — total ${formatMoeda(op.valorTotal)}.`;
     }
     if (formaPagamentoEscolhida.metodo === "pixVista") {
-      return `PIX à vista de ${formatBRL(totalSelecionado)}.`;
+      return `PIX à vista de ${formatMoeda(totalSelecionado)}.`;
     }
     const op = simulacaoPix.find((o) => o.parcelas === formaPagamentoEscolhida.parcelas);
     if (!op) return null;
-    return `PIX parcelado — entrada de ${formatBRL(op.entrada)} (30%) + ${op.parcelas}x de ${formatBRL(op.valorParcela)} — total ${formatBRL(op.valorTotal)}.`;
-  }, [formaPagamentoEscolhida, simulacaoCartao, simulacaoPix, totalSelecionado]);
+    return `PIX parcelado — entrada de ${formatMoeda(op.entrada)} (30%) + ${op.parcelas}x de ${formatMoeda(op.valorParcela)} — total ${formatMoeda(op.valorTotal)}.`;
+  }, [formaPagamentoEscolhida, simulacaoCartao, simulacaoPix, totalSelecionado, moedaExibicao, cambioCotacao, brlPorJPY]);
 
   // Cidades marcadas que exigem motorista particular (transporte público
   // insuficiente) mas cujo item "Motorista Privado" não está na proposta
@@ -2466,6 +2496,9 @@ export default function CalculadoraReversaPage() {
         totalBRL: totalSelecionado,
         orcamentoBRL: orcamento,
         saldoBRL: saldoSelecionado,
+        moedaExibicao,
+        cambioCotacao,
+        brlPorJPY,
       });
     } catch (erro) {
       console.error("Falha ao gerar PDF da proposta:", erro);
@@ -2500,6 +2533,9 @@ export default function CalculadoraReversaPage() {
         totalBRL: totalSelecionado,
         orcamentoBRL: orcamento,
         saldoBRL: saldoSelecionado,
+        moedaExibicao,
+        cambioCotacao,
+        brlPorJPY,
       });
     } catch (erro) {
       console.error("Falha ao gerar arquivo de texto da proposta:", erro);
@@ -2510,9 +2546,9 @@ export default function CalculadoraReversaPage() {
   const mensagemWhatsapp = [
     `Proposta Ajisai — ${pacoteSugeridoLabel}`,
     "",
-    ...itensSelecionados.map((item) => `• ${item.label}: ${formatBRL(valorItem(item))}`),
+    ...itensSelecionados.map((item) => `• ${item.label}: ${formatMoeda(valorItem(item))}`),
     "",
-    `Total: ${formatBRL(totalSelecionado)}${totalManual ? " (ajustado manualmente)" : ""}`,
+    `Total: ${formatMoeda(totalSelecionado)}${totalManual ? " (ajustado manualmente)" : ""}`,
     cambio
       ? `Câmbio do dia: US$ 1 = R$ ${cambio.cotacao.toFixed(2).replace(".", ",")}${cambio.data ? ` (PTAX Banco Central, ${cambio.data})` : ""}`
       : "",
@@ -2566,6 +2602,44 @@ export default function CalculadoraReversaPage() {
             um botão pra restaurar só aquele um (sem precisar mostrar
             todos de novo). */}
         <div className="mt-8 flex flex-wrap items-start gap-3">
+          {/* Pedido do Wilson, 14/set/2026: "criar botões para transformar
+              tudo em BRL, USD ou IENE" — controla a moeda de exibição de
+              todos os valores da calculadora (tela, PDF, Word, WhatsApp).
+              Os campos que o vendedor digita (orçamento, ajustes manuais)
+              continuam sempre em reais. Mesmo padrão visual do botão
+              "Ocultar Todos os Campos" ao lado. */}
+          <div className="flex items-center gap-4 self-start rounded-2xl border border-black/15 bg-black/[0.02] px-5 py-3">
+            <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full border border-[#2f80c9]/25 bg-[#2f80c9]/10 text-lg font-bold text-[#2f80c9]">
+              {moedaExibicao === "BRL" ? "R$" : moedaExibicao === "USD" ? "US$" : "¥"}
+            </span>
+            <span>
+              <span className="block text-sm font-semibold uppercase tracking-[0.1em] text-[#0A2540]">
+                Moeda de exibição
+              </span>
+              <span className="mt-1.5 flex gap-1.5">
+                {(
+                  [
+                    { key: "BRL", label: "R$" },
+                    { key: "USD", label: "US$" },
+                    { key: "JPY", label: "¥" },
+                  ] as const
+                ).map((m) => (
+                  <button
+                    key={m.key}
+                    type="button"
+                    onClick={() => setMoedaExibicao(m.key)}
+                    className={`rounded-full border px-2.5 py-1 text-[11px] font-semibold transition ${
+                      moedaExibicao === m.key
+                        ? "border-[#2f80c9] bg-[#2f80c9] text-white"
+                        : "border-black/15 bg-white text-black/55 hover:border-black/30"
+                    }`}
+                  >
+                    {m.label}
+                  </button>
+                ))}
+              </span>
+            </span>
+          </div>
           <button
             type="button"
             onClick={alternarTodosCamposOcultos}
@@ -2701,7 +2775,7 @@ export default function CalculadoraReversaPage() {
                 />
                 {cambio && (
                   <span className="mt-1.5 text-[11px] text-black/40">
-                    ≈ {formatUSD(orcamento / cambioCotacao)}
+                    ≈ {moedaExibicao === "BRL" ? formatUSD(orcamento / cambioCotacao) : formatMoeda(orcamento)}
                   </span>
                 )}
               </>
@@ -3170,11 +3244,11 @@ export default function CalculadoraReversaPage() {
                                 {categoria}
                               </span>
                               <span className="mt-0.5 block text-sm font-semibold text-black">
-                                {precos ? formatBRL(precos.total) : "—"}
+                                {precos ? formatMoeda(precos.total) : "—"}
                               </span>
                               <span className="mt-0.5 block text-[10px] text-black/40">
                                 {precos
-                                  ? `Hotel ${formatBRL(precos.hotel)} + deslocamento ${formatBRL(precos.deslocamento)}`
+                                  ? `Hotel ${formatMoeda(precos.hotel)} + deslocamento ${formatMoeda(precos.deslocamento)}`
                                   : ""}
                               </span>
                             </button>
@@ -3314,7 +3388,7 @@ export default function CalculadoraReversaPage() {
               </div>
             </div>
             <span className="mt-1.5 block text-[11px] text-black/40">
-              {formatUSD(
+              {formatMoedaDeUSD(
                 (jrPassClasse === "green" ? JR_PASS_PRECO_USD_GREEN : JR_PASS_PRECO_USD)[jrPassDias],
               )}{" "}
               por pessoa · tabela do fornecedor válida {JR_PASS_TABELA_VALIDADE}
@@ -3533,7 +3607,7 @@ export default function CalculadoraReversaPage() {
                         formato/peso, cor azul da marca (preço fixo, sem
                         variação — por isso sem asterisco). */}
                     <span className="rounded-md bg-[#2f80c9]/10 px-2 py-1 text-[11px] font-semibold leading-tight text-[#2f80c9]">
-                      {formatUSD(ingresso.precoUSD)}/pessoa
+                      {formatMoedaDeUSD(ingresso.precoUSD)}/pessoa
                     </span>
                   </label>
                 );
@@ -3560,7 +3634,7 @@ export default function CalculadoraReversaPage() {
                     formatValue={(v) =>
                       v === 0
                         ? "Sem Premier Access"
-                        : `${v} ${v === 1 ? "atração" : "atrações"} · ${formatUSD(
+                        : `${v} ${v === 1 ? "atração" : "atrações"} · ${formatMoedaDeUSD(
                             v * PRECO_DISNEY_PREMIER_ACCESS_POR_ATRACAO_USD_PAX,
                           )}/pessoa`
                     }
@@ -3636,7 +3710,7 @@ export default function CalculadoraReversaPage() {
                       <span>{tier.label}</span>
                       {tier.preco > 0 && (
                         <span className="rounded-md bg-[#2f80c9]/10 px-2 py-1 text-[11px] font-semibold leading-tight text-[#2f80c9]">
-                          {formatUSD(tier.preco)}/pessoa
+                          {formatMoedaDeUSD(tier.preco)}/pessoa
                         </span>
                       )}
                       {tier.estimado && (
@@ -3826,18 +3900,18 @@ export default function CalculadoraReversaPage() {
                 // aos 3 que já existiam.
                 const precoLabel =
                   servico.key === "malasIntermunicipal"
-                    ? `${formatUSD(PRECO_MALA_INTERMUNICIPAL_USD)}/mala/trecho`
+                    ? `${formatMoedaDeUSD(PRECO_MALA_INTERMUNICIPAL_USD)}/mala/trecho`
                     : servico.key === "cambioBrasil"
-                      ? `${formatBRL(PRECO_CAMBIO_BRASIL)} + valor dos ienes`
+                      ? `${formatMoeda(PRECO_CAMBIO_BRASIL)} + valor dos ienes`
                       : servico.key === "restaurantesHighEnd"
-                        ? `${formatUSD(PRECO_RESTAURANTES_HIGHEND_USD)} · até ${RESTAURANTES_HIGHEND_LIMITE_PESSOAS} pessoas`
+                        ? `${formatMoedaDeUSD(PRECO_RESTAURANTES_HIGHEND_USD)} · até ${RESTAURANTES_HIGHEND_LIMITE_PESSOAS} pessoas`
                         : servico.key === "transferOnibus"
-                          ? `${formatUSD(PRECO_TRANSFER_ONIBUS_USD_PAX)}/pessoa · ida e volta`
+                          ? `${formatMoedaDeUSD(PRECO_TRANSFER_ONIBUS_USD_PAX)}/pessoa · ida e volta`
                           : servico.key === "reservaRestaurante"
-                            ? `${formatUSD(PRECO_RESERVA_RESTAURANTE_USD)}/reserva`
+                            ? `${formatMoedaDeUSD(PRECO_RESERVA_RESTAURANTE_USD)}/reserva`
                             : servico.key === "experienciaSobMedida"
-                              ? `${formatUSD(PRECO_EXPERIENCIA_SOB_MEDIDA_USD)}/experiência`
-                              : `${formatUSD(DIARIA_CONCIERGE_USD)}/dia`;
+                              ? `${formatMoedaDeUSD(PRECO_EXPERIENCIA_SOB_MEDIDA_USD)}/experiência`
+                              : `${formatMoedaDeUSD(DIARIA_CONCIERGE_USD)}/dia`;
                 return (
                   <label
                     key={servico.key}
@@ -4077,10 +4151,10 @@ export default function CalculadoraReversaPage() {
                 Orçamento insuficiente
               </p>
               <p className={`${display.className} mt-2 text-2xl font-medium`}>
-                Itens essenciais mínimos custam {formatBRL(resultado.precoMinimo)}
+                Itens essenciais mínimos custam {formatMoeda(resultado.precoMinimo)}
               </p>
               <p className="mx-auto mt-3 max-w-md text-sm text-black/55">
-                Com {formatBRL(orcamento)}, ainda falta {formatBRL(resultado.precoMinimo - orcamento)}{" "}
+                Com {formatMoeda(orcamento)}, ainda falta {formatMoeda(resultado.precoMinimo - orcamento)}{" "}
                 para cobrir Roteiro Personalizado + Aéreo Economy + Hotel 3 estrelas + Seguro Viagem{" "}
                 para{" "}
                 {pessoas} {pessoas === 1 ? "pessoa" : "pessoas"} em {dias} dias. Aumente o
@@ -4268,9 +4342,11 @@ export default function CalculadoraReversaPage() {
                       }`}
                     />
                   </div>
-                  <p className="text-sm text-black/40">{brlParaUSDLabel(totalSelecionado, cambio)}</p>
+                  <p className="text-sm text-black/40">
+                    {moedaExibicao === "BRL" ? brlParaUSDLabel(totalSelecionado, cambio) : formatBRL(totalSelecionado)}
+                  </p>
                   <p className="mt-0.5 text-xs text-black/45">
-                    {formatBRL(pessoas > 0 ? totalSelecionado / pessoas : totalSelecionado)} por
+                    {formatMoeda(pessoas > 0 ? totalSelecionado / pessoas : totalSelecionado)} por
                     passageiro ({pessoas} {pessoas === 1 ? "pessoa" : "pessoas"})
                   </p>
                   {totalManual && (
@@ -4293,9 +4369,11 @@ export default function CalculadoraReversaPage() {
                       saldoSelecionado > 0 ? "text-black" : "text-black/40"
                     }`}
                   >
-                    {formatBRL(saldoSelecionado)}
+                    {formatMoeda(saldoSelecionado)}
                   </p>
-                  <p className="text-xs text-black/35">{brlParaUSDLabel(saldoSelecionado, cambio)}</p>
+                  <p className="text-xs text-black/35">
+                    {moedaExibicao === "BRL" ? brlParaUSDLabel(saldoSelecionado, cambio) : formatBRL(saldoSelecionado)}
+                  </p>
                 </div>
               </div>
 
@@ -4372,10 +4450,10 @@ export default function CalculadoraReversaPage() {
                             />
                             <span className="w-9 shrink-0 text-sm text-black/45">{op.parcelas}x</span>
                             <span className="flex-1 text-base font-semibold text-[#0A2540]">
-                              {formatBRL(op.valorParcela)}
+                              {formatMoeda(op.valorParcela)}
                             </span>
                             <span className="shrink-0 text-[11px] text-black/35">
-                              total {formatBRL(op.valorTotal)}
+                              total {formatMoeda(op.valorTotal)}
                             </span>
                           </label>
                         );
@@ -4420,14 +4498,14 @@ export default function CalculadoraReversaPage() {
                       />
                       <span className="flex-1 text-sm text-[#0A2540]/70">à vista</span>
                       <span className="text-base font-semibold text-[#0A2540]">
-                        {formatBRL(totalSelecionado)}
+                        {formatMoeda(totalSelecionado)}
                       </span>
                     </label>
 
                     {simulacaoPix.length > 0 ? (
                       <div className="mt-3">
                         <p className="text-[10px] text-black/35">
-                          parcelado — entrada de {formatBRL(simulacaoPix[0].entrada)} (30%) +
+                          parcelado — entrada de {formatMoeda(simulacaoPix[0].entrada)} (30%) +
                           parcelas a {(TAXA_JUROS_PIX_MES * 100).toFixed(2).replace(".", ",")}%
                           a.m.
                         </p>
@@ -4457,10 +4535,10 @@ export default function CalculadoraReversaPage() {
                                 />
                                 <span className="w-9 shrink-0 text-sm text-black/45">{op.parcelas}x</span>
                                 <span className="flex-1 text-base font-semibold text-[#0A2540]">
-                                  {formatBRL(op.valorParcela)}
+                                  {formatMoeda(op.valorParcela)}
                                 </span>
                                 <span className="shrink-0 text-[11px] text-black/35">
-                                  total {formatBRL(op.valorTotal)}
+                                  total {formatMoeda(op.valorTotal)}
                                 </span>
                               </label>
                             );
@@ -4562,11 +4640,11 @@ export default function CalculadoraReversaPage() {
               Total do pacote sugerido
             </p>
             <p className={`${display.className} text-xl font-medium text-[#5b9bd9] sm:text-2xl`}>
-              {resultado.cabeNoOrcamento ? formatBRL(totalSelecionado) : "—"}
+              {resultado.cabeNoOrcamento ? formatMoeda(totalSelecionado) : "—"}
             </p>
             {resultado.cabeNoOrcamento && (
               <p className="text-[10px] text-white/35">
-                {formatBRL(pessoas > 0 ? totalSelecionado / pessoas : totalSelecionado)}/pessoa
+                {formatMoeda(pessoas > 0 ? totalSelecionado / pessoas : totalSelecionado)}/pessoa
               </p>
             )}
           </div>
@@ -4579,7 +4657,7 @@ export default function CalculadoraReversaPage() {
                 !resultado.cabeNoOrcamento || saldoSelecionado > 0 ? "text-white" : "text-white/40"
               }`}
             >
-              {resultado.cabeNoOrcamento ? formatBRL(saldoSelecionado) : "—"}
+              {resultado.cabeNoOrcamento ? formatMoeda(saldoSelecionado) : "—"}
             </p>
           </div>
           <div className="flex items-center gap-2">

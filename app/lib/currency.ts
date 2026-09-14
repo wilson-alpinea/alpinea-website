@@ -40,3 +40,32 @@ export function brlParaUSDLabel(valorBRL: number, cambio: Cambio | null): string
 export function formatBRL(valor: number): string {
   return `R$ ${Math.round(valor).toLocaleString("pt-BR")}`;
 }
+
+// Moeda de exibição escolhida pelo vendedor — pedido do Wilson, 14/set/2026:
+// "criar botões para transformar tudo em BRL, USD ou IENE". O valor de
+// referência interno de todo preço continua sempre em reais (BRL); isso
+// aqui só controla em que moeda ele é mostrado (tela, PDF, Word,
+// WhatsApp).
+export type MoedaExibicao = "BRL" | "USD" | "JPY";
+
+// "¥ X.XXX" — sem casas decimais (o iene não tem subunidade de uso
+// corrente), com separador de milhar no padrão japonês.
+export function formatJPY(valor: number): string {
+  return `¥ ${Math.round(valor).toLocaleString("ja-JP")}`;
+}
+
+// Converte um valor cujo valor de referência interno é sempre em reais
+// (BRL) pra moeda de exibição escolhida. cambioCotacao = reais por dólar
+// (useCambioUSD, PTAX do Banco Central); brlPorJPY = reais por iene
+// (useCambioIene — mesma cotação já usada na seção "Câmbio no Brasil" da
+// calculadora, reaproveitada aqui só como referência de conversão).
+export function formatValor(
+  valorBRL: number,
+  moeda: MoedaExibicao,
+  cambioCotacao: number,
+  brlPorJPY: number,
+): string {
+  if (moeda === "USD") return formatUSD(valorBRL / cambioCotacao);
+  if (moeda === "JPY") return formatJPY(valorBRL / brlPorJPY);
+  return formatBRL(valorBRL);
+}

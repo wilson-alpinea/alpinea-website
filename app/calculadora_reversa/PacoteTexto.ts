@@ -4,10 +4,7 @@ import type { PacotePdfProps } from "./PacotePdf";
 // tinha nenhum logo antes). Reaproveita o mesmo base64 já usado no PDF
 // em vez de duplicar os ~62KB de dados aqui.
 import { LOGO_DATA_URI } from "./PacotePdf";
-
-function formatBRLSimples(valor: number) {
-  return `R$ ${Math.round(valor).toLocaleString("pt-BR")}`;
-}
+import { formatValor } from "../lib/currency";
 
 function escapeHtml(texto: string) {
   return texto.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
@@ -31,6 +28,14 @@ function slugify(texto: string) {
 // editar o texto da proposta antes de mandar pro cliente — ajustar um
 // valor negociado, remover um item, mudar o tom da mensagem.
 export function gerarEBaixarTexto(props: PacotePdfProps) {
+  // Pedido do Wilson, 14/set/2026: "criar botões para transformar tudo em
+  // BRL, USD ou IENE" — mesma conversão usada na tela e no PDF (o valor
+  // de referência de cada item continua sempre em reais).
+  const formatPreco = (valor: number) =>
+    formatValor(valor, props.moedaExibicao, props.cambioCotacao, props.brlPorJPY);
+  const nomeMoeda =
+    props.moedaExibicao === "USD" ? "Dólar (US$)" : props.moedaExibicao === "JPY" ? "Iene (¥)" : null;
+
   const linhasItens = props.itens
     .map(
       (item) => `
@@ -45,7 +50,7 @@ export function gerarEBaixarTexto(props: PacotePdfProps) {
                 : ""
             }
           </td>
-          <td style="padding:8px 10px;border-bottom:1px solid #ddd;text-align:right;white-space:nowrap;vertical-align:top;">${formatBRLSimples(
+          <td style="padding:8px 10px;border-bottom:1px solid #ddd;text-align:right;white-space:nowrap;vertical-align:top;">${formatPreco(
             item.precoBRL,
           )}</td>
         </tr>`,
@@ -88,6 +93,7 @@ export function gerarEBaixarTexto(props: PacotePdfProps) {
   <img src="${LOGO_DATA_URI}" alt="Ajisai" style="width:165px;height:auto;margin-bottom:10px;" />
   <h1>Proposta Ajisai — ${escapeHtml(props.tituloPacote)}</h1>
   <p style="color:#666666;">Gerado em ${escapeHtml(props.geradoEmLabel)} · ${escapeHtml(props.cambioLabel)}</p>
+  ${nomeMoeda ? `<p style="color:#888888;font-size:10px;">Valores exibidos em ${nomeMoeda} — conversão de referência, sujeita à cotação do dia.</p>` : ""}
 
   <h2>Resumo</h2>
   <p>${props.dias} dias · ${escapeHtml(props.tipoQuarto)} · ${props.pessoas} ${
@@ -102,13 +108,13 @@ export function gerarEBaixarTexto(props: PacotePdfProps) {
   <table style="margin-top:12px;">${linhaOrcamentoReferencia}
     <tr>
       <td style="padding:6px 10px;font-weight:bold;">Total do pacote</td>
-      <td style="padding:6px 10px;text-align:right;">${formatBRLSimples(props.totalBRL)}</td>
+      <td style="padding:6px 10px;text-align:right;">${formatPreco(props.totalBRL)}</td>
     </tr>
     <tr>
       <td style="padding:6px 10px;color:#555555;">Valor por passageiro (${props.pessoas} ${
         props.pessoas === 1 ? "pessoa" : "pessoas"
       })</td>
-      <td style="padding:6px 10px;text-align:right;color:#555555;">${formatBRLSimples(
+      <td style="padding:6px 10px;text-align:right;color:#555555;">${formatPreco(
         valorPorPassageiroBRL,
       )}</td>
     </tr>${linhaSaldo}

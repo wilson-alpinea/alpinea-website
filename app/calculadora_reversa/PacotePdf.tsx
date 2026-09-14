@@ -1,6 +1,7 @@
 "use client";
 
 import { Document, Page, Text, View, StyleSheet, Image, Link, pdf } from "@react-pdf/renderer";
+import { formatValor, type MoedaExibicao } from "../lib/currency";
 
 // PDF de proposta enviado ao cliente — pedido do Wilson, 08/set/2026:
 // "adicionar um icone para gerar um PDF que vai conter todos os detalhes
@@ -51,11 +52,15 @@ export type PacotePdfProps = {
   // o PDF/Word deixam de mostrar "Orçamento de referência" e "Saldo",
   // mostrando só o total do pacote (e o valor por passageiro).
   ocultarOrcamentoReferencia?: boolean;
+  // Moeda de exibição — pedido do Wilson, 14/set/2026: "criar botões para
+  // transformar tudo em BRL, USD ou IENE". O valor de referência interno
+  // de cada item (precoBRL/totalBRL) continua sempre em reais; esses 3
+  // campos são só a taxa de conversão pra exibir no documento na moeda
+  // escolhida pelo vendedor na tela da calculadora.
+  moedaExibicao: MoedaExibicao;
+  cambioCotacao: number;
+  brlPorJPY: number;
 };
-
-function formatBRLSimples(valor: number) {
-  return `R$ ${Math.round(valor).toLocaleString("pt-BR")}`;
-}
 
 // Categoriza um item pela `chave` estável (não pelo label, que muda de
 // texto conforme categoria/classe/dias escolhidos) — mesmo critério usado
@@ -340,12 +345,20 @@ export function PacotePdfDocument(props: PacotePdfProps) {
     cambioLabel,
     itens,
     totalBRL,
+    moedaExibicao,
+    cambioCotacao,
+    brlPorJPY,
     // orcamentoBRL, saldoBRL e ocultarOrcamentoReferencia não são mais
     // exibidos (ver comentário 14/set/2026 acima) — deixados no tipo
     // PacotePdfProps por compatibilidade com quem chama, mas não
     // desestruturados aqui pra não sobrar variável sem uso.
   } = props;
   const valorPorPassageiroBRL = pessoas > 0 ? totalBRL / pessoas : totalBRL;
+  // Pedido do Wilson, 14/set/2026: "criar botões para transformar tudo em
+  // BRL, USD ou IENE" — mesma conversão usada na tela, aplicada aqui no
+  // PDF (o valor de referência de cada item continua sempre em reais).
+  const formatPreco = (valor: number) => formatValor(valor, moedaExibicao, cambioCotacao, brlPorJPY);
+  const nomeMoeda = moedaExibicao === "USD" ? "Dólar (US$)" : moedaExibicao === "JPY" ? "Iene (¥)" : null;
 
   return (
     <Document title={`Proposta Ajisai - ${tituloPacote}`} author="Ajisai · Alpinea">
@@ -362,6 +375,11 @@ export function PacotePdfDocument(props: PacotePdfProps) {
         </View>
         <Text style={styles.metaText}>Ajisai · proposta gerada em {geradoEmLabel}</Text>
         <Text style={styles.metaText}>{cambioLabel}</Text>
+        {nomeMoeda && (
+          <Text style={styles.metaText}>
+            Valores exibidos em {nomeMoeda} — conversão de referência, sujeita à cotação do dia.
+          </Text>
+        )}
 
         <Text style={styles.h2}>Itens inclusos</Text>
         {itens.map((item) => (
@@ -372,16 +390,16 @@ export function PacotePdfDocument(props: PacotePdfProps) {
                 <Text key={i} style={styles.itemDetalhe}>{linha}</Text>
               ))}
             </View>
-            <Text style={styles.itemPreco}>{formatBRLSimples(item.precoBRL)}</Text>
+            <Text style={styles.itemPreco}>{formatPreco(item.precoBRL)}</Text>
           </View>
         ))}
 
         <View style={styles.totalsBox}>
           <View>
             <Text style={styles.totalsLabel}>Total do pacote sugerido</Text>
-            <Text style={styles.totalsValue}>{formatBRLSimples(totalBRL)}</Text>
+            <Text style={styles.totalsValue}>{formatPreco(totalBRL)}</Text>
             <Text style={{ fontSize: 9, color: "#6b7688", marginTop: 2 }}>
-              {formatBRLSimples(valorPorPassageiroBRL)} por passageiro ({pessoas}{" "}
+              {formatPreco(valorPorPassageiroBRL)} por passageiro ({pessoas}{" "}
               {pessoas === 1 ? "pessoa" : "pessoas"})
             </Text>
           </View>
