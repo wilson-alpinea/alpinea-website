@@ -274,12 +274,26 @@ const styles = StyleSheet.create({
     bottom: 24,
     left: 40,
     right: 40,
-    fontSize: 7,
-    color: "#9aa3b2",
-    textAlign: "center",
     borderTopWidth: 0.5,
     borderTopColor: "#dcdfe4",
     paddingTop: 8,
+  },
+  // Pedido do Wilson, 14/set/2026: "isso aqui está horrivel, parece
+  // serviço mal feito, organize em 2 linhas separadas" — antes era uma
+  // frase única e comprida (razão social + CNPJ das duas empresas + site)
+  // que quebrava no meio de uma palavra, de forma acidental. Agora são 2
+  // linhas fixas e intencionais: razões sociais/CNPJs em cima, site embaixo.
+  footerLinha1: {
+    fontSize: 7,
+    color: "#9aa3b2",
+    textAlign: "center",
+    lineHeight: 1.5,
+  },
+  footerLinha2: {
+    fontSize: 7,
+    color: "#9aa3b2",
+    textAlign: "center",
+    marginTop: 2,
   },
   pageNumber: {
     position: "absolute",
@@ -299,14 +313,18 @@ function Rodape() {
           Agências de Viagens LTDA) conferido no rodapé do próprio site
           (alpinea.io), igual ao da Ajisai (43.544.605/0001-56 —
           AjisaiWork Japan Agência de Viagens LTDA, já usado aqui e em
-          /produtos). */}
-      <Text
-        style={styles.footer}
-        render={() =>
-          "Ajisai · Alpinea — AjisaiWork Japan Agência de Viagens LTDA (CNPJ 43.544.605/0001-56) e Alpinea Agências de Viagens LTDA (CNPJ 66.491.067/0001-84) — www.alpinea.io"
-        }
-        fixed
-      />
+          /produtos). Pedido do Wilson, mesma data, depois de ver o
+          resultado: "isso aqui está horrivel ... organize em 2 linhas
+          separadas" — a frase única quebrava sozinha, no meio de uma
+          palavra; agora são 2 linhas fixas dentro de um View próprio
+          (position:absolute só no wrapper, não em cada linha). */}
+      <View style={styles.footer} fixed>
+        <Text style={styles.footerLinha1}>
+          Ajisai · Alpinea — AjisaiWork Japan Agência de Viagens LTDA (CNPJ 43.544.605/0001-56) e Alpinea
+          Agências de Viagens LTDA (CNPJ 66.491.067/0001-84)
+        </Text>
+        <Text style={styles.footerLinha2}>www.alpinea.io</Text>
+      </View>
       <Text style={styles.pageNumber} render={({ pageNumber, totalPages }) => `${pageNumber} / ${totalPages}`} fixed />
     </>
   );

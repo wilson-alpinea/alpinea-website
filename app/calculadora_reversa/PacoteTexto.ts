@@ -122,10 +122,15 @@ export function gerarEBaixarTexto(props: PacotePdfProps) {
 
   <!-- Pedido do Wilson, 14/set/2026: "no pdf e word tem que constar os
        dois cnpjs da ajisai de da alpinea" — mesmo texto e mesma fonte
-       (rodapé do site alpinea.io) usados no rodapé do PDF (PacotePdf.tsx). -->
-  <p style="margin-top:14px;padding-top:8px;border-top:0.5px solid #dcdfe4;font-size:9px;color:#9aa3b2;text-align:center;">
+       (rodapé do site alpinea.io) usados no rodapé do PDF (PacotePdf.tsx).
+       Depois, mesma data: "isso aqui está horrivel ... organize em 2
+       linhas separadas" — razões sociais/CNPJs numa linha, site embaixo,
+       igual ao PDF, em vez de um parágrafo só que quebrava sozinho. -->
+  <p style="margin-top:14px;padding-top:8px;border-top:0.5px solid #dcdfe4;font-size:9px;color:#9aa3b2;text-align:center;line-height:1.5;">
     Ajisai · Alpinea — AjisaiWork Japan Agência de Viagens LTDA (CNPJ 43.544.605/0001-56) e Alpinea
-    Agências de Viagens LTDA (CNPJ 66.491.067/0001-84) — www.alpinea.io
+    Agências de Viagens LTDA (CNPJ 66.491.067/0001-84)
+    <br />
+    www.alpinea.io
   </p>
 </body>
 </html>`;
