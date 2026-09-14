@@ -2826,61 +2826,48 @@ export default function CalculadoraReversaPage() {
                 <LabelNumerado texto="7. Café da manhã" />
                 <BotaoOcultarCampo oculto={false} onToggle={() => alternarCampoOculto(7)} />
               </span>
+              {/* Pedido do Wilson, 14/set/2026: "todos os cards no 7, 8 e 9
+                  devem ter o mesmo tamanho de icone, de card e de texto
+                  [...] usar o 9 como referencia" — trocado o layout de
+                  botão horizontal (flex-1, ícone de 36px inline) pelo
+                  mesmo card vertical w-32 com ícone de 80px usado em
+                  Temporada (8) e Temas (9). O ícone "Sem" deixou de ser um
+                  risco desenhado à mão sobre o ícone acinzentado (Wilson,
+                  mesma data, sobre a versão anterior: "esse risco em cima
+                  ficou péssimo") — agora é um ícone próprio, sinal de
+                  proibido de verdade (círculo + diagonal), mesmo padrão
+                  visual do "Sem tema" em Temas. */}
               <div className="flex flex-wrap gap-2">
                 <button
                   type="button"
                   onClick={() => setComCafeDaManha(true)}
-                  className={`flex-1 rounded-lg border px-4 py-3 text-left text-xs transition ${
+                  className={`flex w-32 flex-col items-center gap-2 rounded-lg border px-2 py-3 text-center text-xs transition ${
                     comCafeDaManha
                       ? "border-[#2f80c9] bg-[#2f80c9]/10 font-medium text-[#2f80c9]"
                       : "border-black/15 bg-black/[0.03] text-black/60 hover:border-black/30"
                   }`}
                 >
-                  {/* Ícone enviado pelo Wilson, 14/set/2026 — xícara +
-                      croissant, traço simples, sem marca. Pedido do
-                      Wilson, mesma data: "só um tem icone? porque icone é
-                      minusculo?" — aumentado de 20px pra 36px, e o card
-                      "Sem" ganhou o mesmo ícone riscado (uma linha
-                      diagonal por cima), em vez de ficar sem nada. */}
-                  <span className="flex items-center gap-2.5 text-sm">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src="/images/icone-cafe-da-manha.png"
-                      alt=""
-                      className="h-9 w-9 shrink-0 object-contain"
-                    />
-                    Com café da manhã
-                  </span>
-                  <span className="mt-0.5 block text-[10px] font-normal normal-case tracking-normal text-black/40">
-                    Buffet incluso no hotel — adicional varia por categoria
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src="/images/com-cafe-da-manha.png" alt="" className="h-20 w-20 shrink-0" />
+                  <span>Com café da manhã</span>
+                  <span className="text-[10px] font-normal normal-case tracking-normal text-black/40">
+                    Buffet incluso — adicional varia por categoria
                   </span>
                 </button>
                 <button
                   type="button"
                   onClick={() => setComCafeDaManha(false)}
-                  className={`flex-1 rounded-lg border px-4 py-3 text-left text-xs transition ${
+                  className={`flex w-32 flex-col items-center gap-2 rounded-lg border px-2 py-3 text-center text-xs transition ${
                     !comCafeDaManha
                       ? "border-[#2f80c9] bg-[#2f80c9]/10 font-medium text-[#2f80c9]"
                       : "border-black/15 bg-black/[0.03] text-black/60 hover:border-black/30"
                   }`}
                 >
-                  <span className="flex items-center gap-2.5 text-sm">
-                    <span className="relative inline-flex h-9 w-9 shrink-0 items-center justify-center">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src="/images/icone-cafe-da-manha.png"
-                        alt=""
-                        className="h-9 w-9 shrink-0 object-contain opacity-40 grayscale"
-                      />
-                      <span
-                        aria-hidden
-                        className="absolute left-[3px] top-1/2 h-[1.5px] w-[calc(100%-6px)] -translate-y-1/2 -rotate-45 rounded-full bg-black/50"
-                      />
-                    </span>
-                    Sem café da manhã
-                  </span>
-                  <span className="mt-0.5 block text-[10px] font-normal normal-case tracking-normal text-black/40">
-                    Diária "room only" — refeição por conta do hóspede
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src="/images/sem-cafe-da-manha.png" alt="" className="h-20 w-20 shrink-0" />
+                  <span>Sem café da manhã</span>
+                  <span className="text-[10px] font-normal normal-case tracking-normal text-black/40">
+                    Diária &quot;room only&quot;
                   </span>
                 </button>
               </div>
