@@ -1439,11 +1439,17 @@ export function LabelNumerado({ texto }: { texto: string }) {
   if (!m) return <>{texto}</>;
   return (
     <>
+      {/* Esfera numerada — pedido do Wilson, 14/set/2026: "esferas tem que
+          ser maiores e numeros centralizados, estao tortos atualmente".
+          Aumentada de 24px pra 28px e trocada de flex pra grid
+          place-items-center, que centraliza o texto com mais precisão que
+          inline-flex (o "torto" era o número puxado pro canto em vez do
+          centro exato do círculo, mais visível nos números de 2 dígitos). */}
       <span
         aria-hidden
-        className="mr-2 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-black text-xs font-semibold leading-none tabular-nums text-white"
+        className="mr-2 grid h-7 w-7 shrink-0 place-items-center rounded-full bg-black text-[13px] font-semibold leading-none tabular-nums text-white"
       >
-        {m[1]}
+        <span className="translate-y-[0.5px]">{m[1]}</span>
       </span>
       {m[2]}
     </>

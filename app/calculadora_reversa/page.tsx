@@ -2203,7 +2203,15 @@ export default function CalculadoraReversaPage() {
   const extensoesLabel = EXTENSOES_INTERNACIONAIS.filter((extensao) => extensoesSelecionadas.has(extensao.key))
     .map((extensao) => `+ ${extensao.dias} dias ${extensao.nome}`)
     .join(" · ");
-  const pacoteSugeridoLabel = `Hotel ${resultado.categoriaHotelFinal} · Aéreo ${resultado.classeAereoFinal} · ${dias} dias · ${pessoas} ${pessoas === 1 ? "pessoa" : "pessoas"}${extensoesLabel ? ` · ${extensoesLabel}` : ""} · orçamento ${formatBRL(orcamento)}`;
+  // Pedido do Wilson, 14/set/2026: "valor do orçamento nao deve aparecer em
+  // nenhum documento como pdf e word editavel" — esse label vira o título
+  // do PDF, do Word e da mensagem de WhatsApp (todos client-facing), então
+  // o valor do orçamento não pode entrar aqui, nem escondido dentro do
+  // título. Achado em 14/set/2026: o bloco "Orçamento de referência"/"Saldo"
+  // já tinha sido removido do corpo do PDF/Word, mas esse título continuava
+  // vazando o orçamento (" · orçamento R$ X") — bug separado, corrigido
+  // agora removendo o trecho do template em vez de só ocultar no render.
+  const pacoteSugeridoLabel = `Hotel ${resultado.categoriaHotelFinal} · Aéreo ${resultado.classeAereoFinal} · ${dias} dias · ${pessoas} ${pessoas === 1 ? "pessoa" : "pessoas"}${extensoesLabel ? ` · ${extensoesLabel}` : ""}`;
 
   function alternarItem(chave: string) {
     setItensAlterados((atual) => {
