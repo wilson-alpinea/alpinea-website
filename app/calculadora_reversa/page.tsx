@@ -405,31 +405,34 @@ const TEMPORADAS: { key: TemporadaKey; nome: string; periodo: string; icone: str
   {
     key: "sakura",
     nome: "Sakura (Cerejeiras)",
-    periodo: "florada das cerejeiras · final de mar. a início de abr.",
+    // Pedido do Wilson, 14/set/2026: "somente os meses, nada de descricao
+    // excessiva" — tirado o texto explicativo ("florada das cerejeiras",
+    // "flores + Golden Week" etc.), fica só a janela de meses.
+    periodo: "final de mar. a início de abr.",
     icone: "/images/temporada/01-primavera.png",
   },
   {
     key: "primavera",
     nome: "Primavera",
-    periodo: "flores + Golden Week · meados de abr. a fim de mai.",
+    periodo: "meados de abr. a fim de mai.",
     icone: "/images/temporada/05-primavera.png",
   },
   {
     key: "julho",
     nome: "Férias Escolares (Julho)",
-    periodo: "julho (fim das chuvas/verão japonês)",
+    periodo: "julho",
     icone: "/images/temporada/02-julho.png",
   },
   {
     key: "outono",
     nome: "Outono",
-    periodo: "folhas de outono · meados de out. a meados de nov.",
+    periodo: "meados de out. a meados de nov.",
     icone: "/images/temporada/03-outono.png",
   },
   {
     key: "inverno",
     nome: "Inverno",
-    periodo: "neve e Ano Novo · dez. a fev.",
+    periodo: "dez. a fev.",
     icone: "/images/temporada/06-inverno.png",
   },
   {
