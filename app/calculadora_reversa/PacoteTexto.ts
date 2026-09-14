@@ -1,4 +1,9 @@
 import type { PacotePdfProps } from "./PacotePdf";
+// Logo Ajisai no cabeçalho do Word — pedido do Wilson, 14/set/2026:
+// "trocar para logo da ajisai nos pdfs e words editaveis" (o Word não
+// tinha nenhum logo antes). Reaproveita o mesmo base64 já usado no PDF
+// em vez de duplicar os ~62KB de dados aqui.
+import { LOGO_DATA_URI } from "./PacotePdf";
 
 function formatBRLSimples(valor: number) {
   return `R$ ${Math.round(valor).toLocaleString("pt-BR")}`;
@@ -49,25 +54,14 @@ export function gerarEBaixarTexto(props: PacotePdfProps) {
 
   const valorPorPassageiroBRL = props.pessoas > 0 ? props.totalBRL / props.pessoas : props.totalBRL;
 
-  // Pedido do Wilson, 10/set/2026: com ocultarOrcamentoReferencia marcado
-  // na calculadora, a linha de "Orçamento do cliente" (a referência) e o
-  // "Saldo restante" saem do arquivo — mostra só o total do pacote e o
-  // valor por passageiro, evitando a confusão que o orçamento de
-  // referência gerava na apresentação pro cliente.
-  const linhaOrcamentoReferencia = props.ocultarOrcamentoReferencia
-    ? ""
-    : `
-    <tr>
-      <td style="padding:6px 10px;font-weight:bold;">Orçamento do cliente</td>
-      <td style="padding:6px 10px;text-align:right;">${formatBRLSimples(props.orcamentoBRL)}</td>
-    </tr>`;
-  const linhaSaldo = props.ocultarOrcamentoReferencia
-    ? ""
-    : `
-    <tr>
-      <td style="padding:6px 10px;font-weight:bold;">Saldo restante</td>
-      <td style="padding:6px 10px;text-align:right;">${formatBRLSimples(props.saldoBRL)}</td>
-    </tr>`;
+  // Pedido do Wilson, 14/set/2026: "valor do orçamento nao deve aparecer
+  // em nenhum documento como pdf e word editavel" — "Orçamento do
+  // cliente" e "Saldo restante" nunca mais aparecem no Word,
+  // incondicionalmente (antes dependia do checkbox
+  // ocultarOrcamentoReferencia; agora esse é sempre o comportamento).
+  // Mostra só o total do pacote e o valor por passageiro.
+  const linhaOrcamentoReferencia = "";
+  const linhaSaldo = "";
 
   const html = `<!DOCTYPE html>
 <html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:w="urn:schemas-microsoft-com:office:word" xmlns="http://www.w3.org/TR/REC-html40">
@@ -91,6 +85,7 @@ export function gerarEBaixarTexto(props: PacotePdfProps) {
   </style>
 </head>
 <body>
+  <img src="${LOGO_DATA_URI}" alt="Ajisai" style="width:165px;height:auto;margin-bottom:10px;" />
   <h1>Proposta Ajisai — ${escapeHtml(props.tituloPacote)}</h1>
   <p style="color:#666666;">Gerado em ${escapeHtml(props.geradoEmLabel)} · ${escapeHtml(props.cambioLabel)}</p>
 

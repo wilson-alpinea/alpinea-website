@@ -1350,10 +1350,11 @@ export default function CalculadoraReversaPage() {
   const [geradoEm] = useState(() => new Date());
   const [gerandoPdf, setGerandoPdf] = useState(false);
   // Pedido do Wilson, 10/set/2026: "Orçamento de Referência" no PDF/Word
-  // gerou confusão na apresentação pro cliente — com esse checkbox
-  // marcado, o PDF/Word deixam de mostrar essa linha e o "Saldo",
-  // mostrando só o total do pacote sugerido (e o valor por passageiro).
-  const [ocultarOrcamentoNaProposta, setOcultarOrcamentoNaProposta] = useState(false);
+  // gerava confusão na apresentação pro cliente — inicialmente um
+  // checkbox opcional pra ocultar. Pedido do Wilson, 14/set/2026: "valor
+  // do orçamento nao deve aparecer em nenhum documento como pdf e word
+  // editavel" — virou comportamento fixo (ver PacotePdf.tsx/
+  // PacoteTexto.ts), então o checkbox saiu daqui.
 
   // Ajuste manual de valor - sobrescreve o preco calculado de um item
   // especifico (ex.: negociacao pontual) sem perder o calculo automatico
@@ -1449,7 +1450,11 @@ export default function CalculadoraReversaPage() {
   }
 
   // Todos os números de campo com botão de olho individual (1 por seção;
-  // o 9 é usado pelas duas variações — com/sem temas — mas é um só campo).
+  // o 10 é usado pelas duas variações — com/sem temas — mas é um só campo).
+  // Renumerados em 14/set/2026 pra ficar sequencial na ordem visual da
+  // página (o campo "Café da manhã" entrou como 7, entre a categoria de
+  // hotel/classe do voo e "Temporada" — todo o resto que vinha depois
+  // subiu 1 número).
   // Pedido do Wilson, 11/set/2026: botão mestre no topo da página pra
   // ocultar/mostrar todos de uma vez, já que ocultar um campo agora o faz
   // desaparecer por completo (sem botão de olho individual pra restaurar).
@@ -1758,7 +1763,7 @@ export default function CalculadoraReversaPage() {
     // categoria final do hotel (por isso calculado só depois do upgrade
     // de hotel acima). Pedido do Wilson, 14/set/2026. Segue o mesmo
     // padrão dos outros itens configurados pelo vendedor (motorista,
-    // ingressos etc.): sempre aparece na lista quando o toggle "19. Café
+    // ingressos etc.): sempre aparece na lista quando o toggle "7. Café
     // da manhã" está ligado, mesmo se não couber no orçamento — fica
     // desmarcado por padrão nesse caso, e o vendedor pode forçar a
     // inclusão manualmente.
@@ -2299,7 +2304,6 @@ export default function CalculadoraReversaPage() {
         totalBRL: totalSelecionado,
         orcamentoBRL: orcamento,
         saldoBRL: saldoSelecionado,
-        ocultarOrcamentoReferencia: ocultarOrcamentoNaProposta,
       });
     } catch (erro) {
       console.error("Falha ao gerar PDF da proposta:", erro);
@@ -2334,7 +2338,6 @@ export default function CalculadoraReversaPage() {
         totalBRL: totalSelecionado,
         orcamentoBRL: orcamento,
         saldoBRL: saldoSelecionado,
-        ocultarOrcamentoReferencia: ocultarOrcamentoNaProposta,
       });
     } catch (erro) {
       console.error("Falha ao gerar arquivo de texto da proposta:", erro);
@@ -2519,13 +2522,13 @@ export default function CalculadoraReversaPage() {
               voo", deixando os dois sliders de volume (5 e 6) juntos na
               linha de baixo. */}
           <div className="flex h-full flex-col">
-            {!camposOcultos.has(18) && (
+            {!camposOcultos.has(19) && (
               <span className="mb-2 flex items-center text-[10px] uppercase tracking-[0.2em] text-black/50">
                 Data estimada da viagem
-                <BotaoOcultarCampo oculto={false} onToggle={() => alternarCampoOculto(18)} />
+                <BotaoOcultarCampo oculto={false} onToggle={() => alternarCampoOculto(19)} />
               </span>
             )}
-            {!camposOcultos.has(18) && (
+            {!camposOcultos.has(19) && (
               <>
                 <input
                   type="date"
@@ -2577,11 +2580,11 @@ export default function CalculadoraReversaPage() {
               mesmo padrão visual do resto da calculadora — adicional por
               pessoa/dia varia por categoria de hotel (ver
               ADICIONAL_CAFE_MANHA_POR_PESSOA_DIA). */}
-          {!camposOcultos.has(19) && (
+          {!camposOcultos.has(7) && (
             <div className="sm:col-span-2">
               <span className="mb-2 flex items-center text-[10px] uppercase tracking-[0.2em] text-black/50">
-                <LabelNumerado texto="19. Café da manhã" />
-                <BotaoOcultarCampo oculto={false} onToggle={() => alternarCampoOculto(19)} />
+                <LabelNumerado texto="7. Café da manhã" />
+                <BotaoOcultarCampo oculto={false} onToggle={() => alternarCampoOculto(7)} />
               </span>
               <div className="flex flex-wrap gap-2">
                 <button
@@ -2593,7 +2596,17 @@ export default function CalculadoraReversaPage() {
                       : "border-black/15 bg-black/[0.03] text-black/60 hover:border-black/30"
                   }`}
                 >
-                  <span className="block text-sm">☕ Com café da manhã</span>
+                  {/* Ícone enviado pelo Wilson, 14/set/2026 — xícara +
+                      croissant, traço simples, sem marca. */}
+                  <span className="flex items-center gap-2 text-sm">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img
+                      src="/images/icone-cafe-da-manha.png"
+                      alt=""
+                      className="h-5 w-5 shrink-0 object-contain"
+                    />
+                    Com café da manhã
+                  </span>
                   <span className="mt-0.5 block text-[10px] font-normal normal-case tracking-normal text-black/40">
                     Buffet incluso no hotel — adicional varia por categoria
                   </span>
@@ -2617,13 +2630,13 @@ export default function CalculadoraReversaPage() {
           )}
 
           <div className="sm:col-span-2">
-            {!camposOcultos.has(7) && (
+            {!camposOcultos.has(8) && (
               <span className="mb-2 flex items-center text-[10px] uppercase tracking-[0.2em] text-black/50">
-                <LabelNumerado texto="7. Temporada" />
-                <BotaoOcultarCampo oculto={false} onToggle={() => alternarCampoOculto(7)} />
+                <LabelNumerado texto="8. Temporada" />
+                <BotaoOcultarCampo oculto={false} onToggle={() => alternarCampoOculto(8)} />
               </span>
             )}
-            {!camposOcultos.has(7) && (
+            {!camposOcultos.has(8) && (
             <>
             <div className="flex flex-wrap gap-2">
               {TEMPORADAS.map((t) => (
@@ -2657,13 +2670,13 @@ export default function CalculadoraReversaPage() {
             </>
             )}
 
-            {!camposOcultos.has(8) && (
+            {!camposOcultos.has(9) && (
               <span className="mb-2 mt-6 flex items-center text-[10px] uppercase tracking-[0.2em] text-black/50">
-                <LabelNumerado texto="8. Temas" /> <span className="normal-case tracking-normal text-black/35">(selecione até {MAX_TEMAS_SIMULTANEOS} pra misturar)</span>
-                <BotaoOcultarCampo oculto={false} onToggle={() => alternarCampoOculto(8)} />
+                <LabelNumerado texto="9. Temas" /> <span className="normal-case tracking-normal text-black/35">(selecione até {MAX_TEMAS_SIMULTANEOS} pra misturar)</span>
+                <BotaoOcultarCampo oculto={false} onToggle={() => alternarCampoOculto(9)} />
               </span>
             )}
-            {!camposOcultos.has(8) && (
+            {!camposOcultos.has(9) && (
             <div className="flex flex-wrap gap-2">
               <button
                 type="button"
@@ -2712,25 +2725,25 @@ export default function CalculadoraReversaPage() {
 
             {/* Pedido do Wilson, 11/set/2026: ocultar um campo deve fazer o
                 campo inteiro sumir (rótulo incluso), não só o conteúdo —
-                por isso o campo 9 inteiro (as duas variações, com/sem
-                temas selecionados) fica dentro desse `!camposOcultos.has(9)`
+                por isso o campo 10 inteiro (as duas variações, com/sem
+                temas selecionados) fica dentro desse `!camposOcultos.has(10)`
                 em vez de só a lista de cidades. Restaurar volta a ser feito
                 pelo botão mestre "Mostrar todos", já que o próprio botão de
                 olho some junto com o campo. */}
-            {!camposOcultos.has(9) && (
+            {!camposOcultos.has(10) && (
             temasSelecionados.size === 0 ? (
               <div className="mt-4">
                 <span className="mb-2 flex min-h-[2.2em] items-end text-[10px] uppercase leading-tight tracking-[0.2em] text-black/50">
-                  <LabelNumerado texto="9. Cidades do roteiro" />{" "}
+                  <LabelNumerado texto="10. Cidades do roteiro" />{" "}
                   <span className="normal-case tracking-normal text-black/35">
                     (até {MAX_CIDADES_ROTEIRO})
                   </span>
                   <BotaoOcultarCampo
-                    oculto={camposOcultos.has(9)}
-                    onToggle={() => alternarCampoOculto(9)}
+                    oculto={camposOcultos.has(10)}
+                    onToggle={() => alternarCampoOculto(10)}
                   />
                 </span>
-                {!camposOcultos.has(9) && (
+                {!camposOcultos.has(10) && (
                 <div className="flex flex-wrap gap-2">
                   {destinosSelecionados.map((cidade, indice) => (
                     <div
@@ -2771,15 +2784,15 @@ export default function CalculadoraReversaPage() {
               <div className="mt-4 overflow-hidden rounded-xl border border-black/10">
                 <div className="grid grid-cols-[minmax(140px,auto)_1fr] gap-x-6 bg-[#0A2540] px-4 py-2 text-[10px] uppercase tracking-[0.15em] text-white/70">
                   <span className="flex items-center">
-                    <LabelNumerado texto="9. Cidades recomendadas" />
+                    <LabelNumerado texto="10. Cidades recomendadas" />
                     <BotaoOcultarCampo
-                      oculto={camposOcultos.has(9)}
-                      onToggle={() => alternarCampoOculto(9)}
+                      oculto={camposOcultos.has(10)}
+                      onToggle={() => alternarCampoOculto(10)}
                     />
                   </span>
                   <span>Destaques do{temasSelecionados.size > 1 ? "s temas" : " tema"}</span>
                 </div>
-                {!camposOcultos.has(9) && cidadesTemasAtivos.map((c) => {
+                {!camposOcultos.has(10) && cidadesTemasAtivos.map((c) => {
                   const destino = DESTINOS.find((d) => d.key === c.key);
                   const marcado = destinosSelecionados.includes(c.key);
                   const notaMotorista = CIDADE_MOTORISTA_NOTA[c.key];
@@ -2837,14 +2850,14 @@ export default function CalculadoraReversaPage() {
               </div>
             )
             )}
-            {!camposOcultos.has(10) && (
+            {!camposOcultos.has(11) && (
               <span className="mb-2 mt-4 flex items-center text-[10px] uppercase tracking-[0.2em] text-black/50">
-                <LabelNumerado texto="10. Extensão internacional" />{" "}
+                <LabelNumerado texto="11. Extensão internacional" />{" "}
                 <span className="normal-case tracking-normal text-black/35">(opcional — soma dias ao total da viagem)</span>
-                <BotaoOcultarCampo oculto={false} onToggle={() => alternarCampoOculto(10)} />
+                <BotaoOcultarCampo oculto={false} onToggle={() => alternarCampoOculto(11)} />
               </span>
             )}
-            {!camposOcultos.has(10) && (
+            {!camposOcultos.has(11) && (
             <>
             <div className="flex flex-wrap gap-2">
               {EXTENSOES_INTERNACIONAIS.map((extensao) => {
@@ -2996,13 +3009,13 @@ export default function CalculadoraReversaPage() {
           </div>
 
           <div className="sm:col-span-2">
-            {!camposOcultos.has(11) && (
+            {!camposOcultos.has(12) && (
               <span className="mb-2 flex items-center text-[10px] uppercase tracking-[0.2em] text-black/50">
-                <LabelNumerado texto="11. JR Pass — validade e classe" />
-                <BotaoOcultarCampo oculto={false} onToggle={() => alternarCampoOculto(11)} />
+                <LabelNumerado texto="12. JR Pass — validade e classe" />
+                <BotaoOcultarCampo oculto={false} onToggle={() => alternarCampoOculto(12)} />
               </span>
             )}
-            {!camposOcultos.has(11) && (
+            {!camposOcultos.has(12) && (
             <>
             <div className="flex flex-wrap gap-4">
               <div className="rounded-xl border border-black/10 bg-black/[0.02] p-3">
@@ -3076,13 +3089,13 @@ export default function CalculadoraReversaPage() {
           </div>
 
           <div className="sm:col-span-2">
-            {!camposOcultos.has(12) && (
+            {!camposOcultos.has(13) && (
               <span className="mb-2 flex items-center text-[10px] uppercase tracking-[0.2em] text-black/50">
-                <LabelNumerado texto="12. Guia Turístico" />
-                <BotaoOcultarCampo oculto={false} onToggle={() => alternarCampoOculto(12)} />
+                <LabelNumerado texto="13. Guia Turístico" />
+                <BotaoOcultarCampo oculto={false} onToggle={() => alternarCampoOculto(13)} />
               </span>
             )}
-            {!camposOcultos.has(12) && (
+            {!camposOcultos.has(13) && (
             <>
             <div className="max-w-xs">
               <NumberStepper
@@ -3102,13 +3115,13 @@ export default function CalculadoraReversaPage() {
           </div>
 
           <div className="sm:col-span-2">
-            {!camposOcultos.has(13) && (
+            {!camposOcultos.has(14) && (
               <span className="mb-2 flex items-center text-[10px] uppercase tracking-[0.2em] text-black/50">
-                <LabelNumerado texto="13. Câmbio de ienes" />
-                <BotaoOcultarCampo oculto={false} onToggle={() => alternarCampoOculto(13)} />
+                <LabelNumerado texto="14. Câmbio de ienes" />
+                <BotaoOcultarCampo oculto={false} onToggle={() => alternarCampoOculto(14)} />
               </span>
             )}
-            {!camposOcultos.has(13) && (
+            {!camposOcultos.has(14) && (
             <>
             <div className="flex flex-wrap items-end gap-3">
               <label className="flex flex-col">
@@ -3158,13 +3171,13 @@ export default function CalculadoraReversaPage() {
           </div>
 
           <div className="sm:col-span-2">
-            {!camposOcultos.has(14) && (
+            {!camposOcultos.has(15) && (
               <span className="mb-2 flex items-center text-[10px] uppercase tracking-[0.2em] text-black/50">
-                <LabelNumerado texto="14. Conexão de internet" />
-                <BotaoOcultarCampo oculto={false} onToggle={() => alternarCampoOculto(14)} />
+                <LabelNumerado texto="15. Conexão de internet" />
+                <BotaoOcultarCampo oculto={false} onToggle={() => alternarCampoOculto(15)} />
               </span>
             )}
-            {!camposOcultos.has(14) && (
+            {!camposOcultos.has(15) && (
             <>
             <div className="flex gap-2">
               {(["esim", "pocket"] as const).map((t) => (
@@ -3206,13 +3219,13 @@ export default function CalculadoraReversaPage() {
           </div>
 
           <div className="sm:col-span-2">
-            {!camposOcultos.has(15) && (
+            {!camposOcultos.has(16) && (
               <span className="mb-2 flex items-center text-[10px] uppercase tracking-[0.2em] text-black/50">
-                <LabelNumerado texto="15. Ingressos e experiências" />
-                <BotaoOcultarCampo oculto={false} onToggle={() => alternarCampoOculto(15)} />
+                <LabelNumerado texto="16. Ingressos e experiências" />
+                <BotaoOcultarCampo oculto={false} onToggle={() => alternarCampoOculto(16)} />
               </span>
             )}
-            {!camposOcultos.has(15) && (
+            {!camposOcultos.has(16) && (
             <>
             <div className="flex flex-wrap gap-2">
               {CATALOGO_INGRESSOS.map((ingresso) => {
@@ -3262,7 +3275,14 @@ export default function CalculadoraReversaPage() {
                     <span className="flex min-h-[2rem] w-full items-center justify-center leading-tight">
                       {ingresso.nome}
                     </span>
-                    <span className="text-[10px] font-normal text-black/35">
+                    {/* Pedido do Wilson, 14/set/2026: "cada preço está de
+                        um jeito, e mal dá pra ler o preço" — preço em
+                        texto cinza-claro 10px era pouco legível e
+                        destoava do badge âmbar usado em "Serviços
+                        adicionais". Unificado num badge com o mesmo
+                        formato/peso, cor azul da marca (preço fixo, sem
+                        variação — por isso sem asterisco). */}
+                    <span className="rounded-md bg-[#2f80c9]/10 px-2 py-1 text-[11px] font-semibold leading-tight text-[#2f80c9]">
                       {formatUSD(ingresso.precoUSD)}/pessoa
                     </span>
                   </label>
@@ -3365,7 +3385,7 @@ export default function CalculadoraReversaPage() {
                       )}
                       <span>{tier.label}</span>
                       {tier.preco > 0 && (
-                        <span className="text-[10px] font-normal text-black/35">
+                        <span className="rounded-md bg-[#2f80c9]/10 px-2 py-1 text-[11px] font-semibold leading-tight text-[#2f80c9]">
                           {formatUSD(tier.preco)}/pessoa
                         </span>
                       )}
@@ -3529,13 +3549,13 @@ export default function CalculadoraReversaPage() {
           </div>
 
           <div className="sm:col-span-2">
-            {!camposOcultos.has(16) && (
+            {!camposOcultos.has(17) && (
               <span className="mb-2 flex items-center text-[10px] uppercase tracking-[0.2em] text-black/50">
-                <LabelNumerado texto="16. Serviços adicionais" />
-                <BotaoOcultarCampo oculto={false} onToggle={() => alternarCampoOculto(16)} />
+                <LabelNumerado texto="17. Serviços adicionais" />
+                <BotaoOcultarCampo oculto={false} onToggle={() => alternarCampoOculto(17)} />
               </span>
             )}
-            {!camposOcultos.has(16) && (
+            {!camposOcultos.has(17) && (
             <>
             <div className="flex flex-wrap gap-2">
               {CATALOGO_SERVICOS_ADICIONAIS.map((servico) => {
@@ -3591,7 +3611,7 @@ export default function CalculadoraReversaPage() {
                         inicial" (nota completa no rodapé da seção).
                         Pedido do Wilson, 10/set/2026. */}
                     <span
-                      className={`rounded-md px-2 py-1 text-[10px] font-semibold leading-tight ${
+                      className={`rounded-md px-2 py-1 text-[11px] font-semibold leading-tight ${
                         desabilitado ? "bg-black/5 text-black/30" : "bg-amber-50 text-amber-700"
                       }`}
                     >
@@ -3619,13 +3639,13 @@ export default function CalculadoraReversaPage() {
           </div>
 
           <div className="sm:col-span-2">
-            {!camposOcultos.has(17) && (
+            {!camposOcultos.has(18) && (
               <span className="mb-2 flex items-center text-[10px] uppercase tracking-[0.2em] text-black/50">
-                <LabelNumerado texto="17. Seguro viagem — idade dos passageiros" />
-                <BotaoOcultarCampo oculto={false} onToggle={() => alternarCampoOculto(17)} />
+                <LabelNumerado texto="18. Seguro viagem — idade dos passageiros" />
+                <BotaoOcultarCampo oculto={false} onToggle={() => alternarCampoOculto(18)} />
               </span>
             )}
-            {!camposOcultos.has(17) && (
+            {!camposOcultos.has(18) && (
               <>
                 <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 md:grid-cols-6">
                   {idadesPassageiros.map((idade, i) => (
@@ -4199,22 +4219,11 @@ export default function CalculadoraReversaPage() {
                 </div>
               </div>
 
-              <label className="mt-5 flex items-start gap-2.5 rounded-lg border border-red-200 bg-red-50 px-3.5 py-3 text-xs text-[#0A2540]">
-                <input
-                  type="checkbox"
-                  checked={ocultarOrcamentoNaProposta}
-                  onChange={(e) => setOcultarOrcamentoNaProposta(e.target.checked)}
-                  className="mt-0.5 h-4 w-4 shrink-0 accent-[#2f80c9]"
-                />
-                <span>
-                  Ocultar &quot;Orçamento de referência&quot; e &quot;Saldo&quot; no PDF e no
-                  Word da proposta
-                  <span className="block text-[11px] text-black/40">
-                    útil na apresentação manual pro cliente — mostra só o total do pacote e o
-                    valor por passageiro, sem o número de referência que costuma confundir.
-                  </span>
-                </span>
-              </label>
+              {/* Pedido do Wilson, 14/set/2026: "valor do orçamento nao
+                  deve aparecer em nenhum documento como pdf e word
+                  editavel" — o checkbox opcional saiu; agora o PDF e o
+                  Word nunca mostram "Orçamento de referência"/"Saldo",
+                  sempre (ver PacotePdf.tsx e PacoteTexto.ts). */}
 
               <div className="mt-5 flex flex-col gap-3">
                 <button
