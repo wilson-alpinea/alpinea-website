@@ -1474,6 +1474,37 @@ export default function CalculadoraReversaPage() {
     });
   }
 
+  // Nome de cada campo pro painel "Campos ocultos" (ver abaixo) — pedido
+  // do Wilson, 14/set/2026: "ao dar hide o campo desaparece, precisa ter
+  // alguma coisa facil de ativar novamente fora do formulario" +
+  // "coloque algo para reativar os campos do lado desse botao" (o botão
+  // mestre). Como o campo some por completo (rótulo incluso, sem botão
+  // de olho individual), o único jeito de saber o que está oculto e
+  // restaurar um de cada vez é por aqui.
+  const NOME_CAMPO_OCULTAVEL: Record<number, string> = {
+    1: "Orçamento máximo (R$)",
+    2: "Quantidade de dias",
+    3: "Número de pessoas",
+    4: "Tipo de quarto",
+    5: "Categoria máxima de hotel",
+    6: "Classe desejada do voo",
+    7: "Café da manhã",
+    8: "Temporada",
+    9: "Temas",
+    10: "Cidades do roteiro",
+    11: "Extensão internacional",
+    12: "JR Pass — validade e classe",
+    13: "Guia Turístico",
+    14: "Câmbio de ienes",
+    15: "Conexão de internet",
+    16: "Ingressos e experiências",
+    17: "Serviços adicionais",
+    18: "Seguro viagem — idade dos passageiros",
+    19: "Data estimada da viagem",
+  };
+  const [painelCamposOcultosAberto, setPainelCamposOcultosAberto] = useState(false);
+  const camposOcultosOrdenados = Array.from(camposOcultos).sort((a, b) => a - b);
+
   function alternarDestino(key: DestinoKey) {
     setDestinosSelecionados((atual) =>
       atual.includes(key) ? atual.filter((k) => k !== key) : [...atual, key],
@@ -2399,8 +2430,14 @@ export default function CalculadoraReversaPage() {
             completo (sem botão de olho individual pra restaurar) — o
             mestre é o único jeito de trazer os campos ocultos de volta.
             O aviso de quantos campos estão ocultos mora na barra fixa
-            inferior (pedido do Wilson, 12/set/2026), não aqui. */}
-        <div className="mt-8">
+            inferior (pedido do Wilson, 12/set/2026), não aqui.
+            14/set/2026: "precisa ter alguma coisa facil de ativar
+            novamente fora do formulario" + "coloque algo para reativar
+            os campos do lado desse botao" — botão "Campos ocultos" ao
+            lado do mestre, abre um painel listando cada campo oculto com
+            um botão pra restaurar só aquele um (sem precisar mostrar
+            todos de novo). */}
+        <div className="mt-8 flex flex-wrap items-start gap-3">
           <button
             type="button"
             onClick={alternarTodosCamposOcultos}
@@ -2434,6 +2471,78 @@ export default function CalculadoraReversaPage() {
               </span>
             </span>
           </button>
+
+          {camposOcultos.size > 0 && (
+            <div className="relative self-start">
+              <button
+                type="button"
+                onClick={() => setPainelCamposOcultosAberto((v) => !v)}
+                className={`flex h-14 items-center gap-2 self-start rounded-2xl border px-4 text-left transition ${
+                  painelCamposOcultosAberto
+                    ? "border-amber-400 bg-amber-50"
+                    : "border-amber-300 bg-amber-50/60 hover:border-amber-400"
+                }`}
+              >
+                <span aria-hidden className="text-base leading-none">⚠️</span>
+                <span>
+                  <span className="block text-xs font-semibold uppercase tracking-[0.08em] text-amber-800">
+                    {camposOcultos.size} campo{camposOcultos.size === 1 ? "" : "s"} oculto
+                    {camposOcultos.size === 1 ? "" : "s"}
+                  </span>
+                  <span className="mt-0.5 block text-[10px] text-amber-700/70">
+                    clique pra restaurar um por um
+                  </span>
+                </span>
+                <svg
+                  aria-hidden
+                  viewBox="0 0 20 20"
+                  fill="none"
+                  className={`ml-1 h-3.5 w-3.5 shrink-0 text-amber-700/60 transition-transform ${
+                    painelCamposOcultosAberto ? "rotate-180" : ""
+                  }`}
+                >
+                  <path d="M5.5 7.5L10 12l4.5-4.5" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </button>
+
+              {painelCamposOcultosAberto && (
+                <div className="absolute left-0 top-full z-30 mt-1.5 w-72 max-w-[85vw] overflow-hidden rounded-xl border border-black/10 bg-white shadow-xl">
+                  <div className="flex items-center justify-between border-b border-black/10 bg-black/[0.02] px-3 py-2">
+                    <span className="text-[10px] font-semibold uppercase tracking-[0.1em] text-black/50">
+                      Campos ocultos
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setCamposOcultos(new Set());
+                        setPainelCamposOcultosAberto(false);
+                      }}
+                      className="text-[10px] font-medium uppercase tracking-[0.08em] text-[#2f80c9] hover:underline"
+                    >
+                      Mostrar todos
+                    </button>
+                  </div>
+                  <ul className="max-h-72 overflow-y-auto py-1">
+                    {camposOcultosOrdenados.map((n) => (
+                      <li key={n}>
+                        <button
+                          type="button"
+                          onClick={() => alternarCampoOculto(n)}
+                          className="flex w-full items-center gap-2.5 px-3 py-2 text-left text-xs text-black/70 transition hover:bg-[#2f80c9]/5"
+                        >
+                          <IconEyeOff className="h-4 w-4 shrink-0 text-black/35" />
+                          <span className="flex-1 truncate">{NOME_CAMPO_OCULTAVEL[n] ?? `Campo ${n}`}</span>
+                          <span className="shrink-0 text-[10px] font-medium uppercase tracking-wide text-[#2f80c9]">
+                            mostrar
+                          </span>
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+          )}
         </div>
 
         {/* ── ENTRADAS ── */}
@@ -3248,7 +3357,14 @@ export default function CalculadoraReversaPage() {
             )}
             {!camposOcultos.has(16) && (
             <>
-            <div className="flex flex-wrap gap-2">
+            {/* items-stretch força todos os cards da linha a terem a mesma
+                altura; dentro de cada card, o bloco de ícone+nome cresce
+                (flex-1) e empurra o preço pra base — assim o preço fica
+                sempre na mesma altura em todos os cards, independente do
+                nome ter 1 ou 2 linhas. Pedido do Wilson, 14/set/2026:
+                "cards devem todos ter o mesmo tamanho e os preços devem
+                sempre estar alinhados horizontalmente". */}
+            <div className="flex flex-wrap items-stretch gap-2">
               {CATALOGO_INGRESSOS.map((ingresso) => {
                 const marcado = ingressosSelecionados.has(ingresso.key);
                 return (
@@ -3266,36 +3382,34 @@ export default function CalculadoraReversaPage() {
                       onChange={() => alternarIngresso(ingresso.key)}
                       className="sr-only"
                     />
-                    {/* Alinhamento — pedido do Wilson, 11/set/2026: os logos têm
-                        proporções bem diferentes entre si (retrato, redondo,
-                        faixa larga), então sem uma caixa de altura fixa cada
-                        ícone empurrava nome/preço pra uma altura diferente.
-                        Essa caixa fixa centraliza qualquer logo no mesmo
-                        espaço, alinhando todos os cards. */}
-                    <div className="flex h-16 w-full shrink-0 items-center justify-center">
-                      {ingresso.icone ? (
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img
-                          src={ingresso.icone}
-                          alt=""
-                          className="max-h-16 w-auto max-w-full object-contain"
-                        />
-                      ) : (
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img
-                          src="/images/icone-ingressos.png"
-                          alt=""
-                          className="h-14 w-14 object-contain"
-                        />
-                      )}
+                    <div className="flex w-full flex-1 flex-col items-center justify-center gap-1.5">
+                      {/* Alinhamento — pedido do Wilson, 11/set/2026: os logos têm
+                          proporções bem diferentes entre si (retrato, redondo,
+                          faixa larga), então sem uma caixa de altura fixa cada
+                          ícone empurrava nome/preço pra uma altura diferente.
+                          Essa caixa fixa centraliza qualquer logo no mesmo
+                          espaço, alinhando todos os cards. */}
+                      <div className="flex h-16 w-full shrink-0 items-center justify-center">
+                        {ingresso.icone ? (
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img
+                            src={ingresso.icone}
+                            alt=""
+                            className="max-h-16 w-auto max-w-full object-contain"
+                          />
+                        ) : (
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img
+                            src="/images/icone-ingressos.png"
+                            alt=""
+                            className="h-14 w-14 object-contain"
+                          />
+                        )}
+                      </div>
+                      <span className="flex min-h-[2rem] w-full items-center justify-center leading-tight">
+                        {ingresso.nome}
+                      </span>
                     </div>
-                    {/* Reserva altura de 2 linhas pra nomes de 1 linha (ex.:
-                        "teamLab Tokyo") ficarem alinhados com os de 2 linhas
-                        (ex.: "Universal Studios Japan") — sem isso o preço
-                        embaixo saía em alturas diferentes por card. */}
-                    <span className="flex min-h-[2rem] w-full items-center justify-center leading-tight">
-                      {ingresso.nome}
-                    </span>
                     {/* Pedido do Wilson, 14/set/2026: "cada preço está de
                         um jeito, e mal dá pra ler o preço" — preço em
                         texto cinza-claro 10px era pouco legível e
@@ -3578,7 +3692,14 @@ export default function CalculadoraReversaPage() {
             )}
             {!camposOcultos.has(17) && (
             <>
-            <div className="flex flex-wrap gap-2">
+            {/* items-stretch força todos os cards da linha a terem a mesma
+                altura; dentro de cada card, o bloco de ícone+nome cresce
+                (flex-1) e empurra o preço pra base — assim o preço fica
+                sempre na mesma altura em todos os cards, independente do
+                nome ter 1 ou 2 linhas. Pedido do Wilson, 14/set/2026:
+                "cards devem todos ter o mesmo tamanho e os preços devem
+                sempre estar alinhados horizontalmente". */}
+            <div className="flex flex-wrap items-stretch gap-2">
               {CATALOGO_SERVICOS_ADICIONAIS.map((servico) => {
                 const marcado = servicosAdicionaisSelecionados.has(servico.key);
                 const desabilitado =
@@ -3608,25 +3729,27 @@ export default function CalculadoraReversaPage() {
                       onChange={() => alternarServicoAdicional(servico.key)}
                       className="sr-only"
                     />
-                    {servico.icone ? (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img
-                        src={servico.icone}
-                        alt=""
-                        className={`h-20 w-20 shrink-0 object-contain ${desabilitado ? "opacity-40" : ""}`}
-                      />
-                    ) : (
-                      <IconMala
-                        className={`h-20 w-20 shrink-0 ${marcado ? "text-[#2f80c9]" : "text-black/45"}`}
-                      />
-                    )}
-                    {/* Reserva altura de 2 linhas — pedido do Wilson,
-                        11/set/2026: nomes de 1 linha ("Câmbio no Brasil")
-                        deixavam o preço abaixo em altura diferente dos de
-                        2 linhas ("Reserva de Restaurantes High-End"). */}
-                    <span className="flex min-h-[2rem] w-full items-center justify-center leading-tight">
-                      {servico.nome}
-                    </span>
+                    <div className="flex w-full flex-1 flex-col items-center justify-center gap-2">
+                      {servico.icone ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img
+                          src={servico.icone}
+                          alt=""
+                          className={`h-20 w-20 shrink-0 object-contain ${desabilitado ? "opacity-40" : ""}`}
+                        />
+                      ) : (
+                        <IconMala
+                          className={`h-20 w-20 shrink-0 ${marcado ? "text-[#2f80c9]" : "text-black/45"}`}
+                        />
+                      )}
+                      {/* Reserva altura de 2 linhas — pedido do Wilson,
+                          11/set/2026: nomes de 1 linha ("Câmbio no Brasil")
+                          deixavam o preço abaixo em altura diferente dos de
+                          2 linhas ("Reserva de Restaurantes High-End"). */}
+                      <span className="flex min-h-[2rem] w-full items-center justify-center leading-tight">
+                        {servico.nome}
+                      </span>
+                    </div>
                     {/* Mini card de preço — cor própria (âmbar) pra se
                         destacar do card em volta, com asterisco de "preço
                         inicial" (nota completa no rodapé da seção).
