@@ -379,6 +379,42 @@ export const DIARIA_HOTEL: Record<(typeof CATEGORIAS_HOTEL)[number], number> = {
   "Elite": comMargemEImposto(7500),
 };
 
+// Adicional de café da manhã por pessoa/dia, por categoria de hotel —
+// pedido do Wilson, 14/set/2026: "gerar variavel de hotel com refeicao e
+// sem (café da manha)". A diária de DIARIA_HOTEL acima é "room only"
+// (sem refeição); este valor é o que se soma por pessoa/dia quando o
+// café da manhã é incluído no pacote (campo "19. Café da manhã" na
+// calculadora — alterna incluso/não incluso).
+//
+// Pesquisa de mercado (set/2026), preço de café da manhã pago à parte
+// (quando não incluso na diária):
+// - 3 estrelas (business hotel — APA, Toyoko Inn, Dormy Inn): a maioria
+//   já inclui de graça, mas quando é pago fica em ¥1.500–2.000 (ex.:
+//   Dormy Inn) — usado ¥1.800 como referência.
+// - 4 estrelas (mid-range internacional — Hilton, Marriott, ANA Crowne
+//   Plaza): buffet completo gira em torno de ¥3.500–5.000 — usado
+//   ¥4.500.
+// - 5 estrelas (luxo — Park Hyatt, Ritz-Carlton, Conrad, Four Seasons):
+//   buffet de hotel de luxo em Tóquio gira em torno de ¥6.000–8.000 (ex.:
+//   Park Hyatt Tokyo, citado em torno de US$35/pessoa em relatos de
+//   hóspedes) — usado ¥7.500.
+// - Elite (ultra-luxo — Aman, Peninsula, Mandarin Oriental): faixa
+//   ¥8.000–12.000+/pessoa nessas propriedades — usado ¥12.000.
+// Convertido pra reais na cotação de referência (~R$5,15/US$, USD/JPY
+// ~153,7 em set/2026 → ~R$0,0335/¥) e arredondado antes da margem. Ainda
+// uma média de mercado por categoria, não o valor negociado com cada
+// hotel específico — ajuste se tiver uma tabela de parceiros mais
+// precisa.
+export const ADICIONAL_CAFE_MANHA_POR_PESSOA_DIA: Record<
+  (typeof CATEGORIAS_HOTEL)[number],
+  number
+> = {
+  "3 estrelas": comMargemEImposto(60),
+  "4 estrelas": comMargemEImposto(150),
+  "5 estrelas": comMargemEImposto(250),
+  "Elite": comMargemEImposto(400),
+};
+
 // Os 10 principais destinos do Japao pra turismo de alta renda — usados no
 // seletor de cidade do popup de Hoteis. Mesmas chaves de DestinoKey (ver
 // DESTINOS mais abaixo) pra reaproveitar nome de exibicao e o

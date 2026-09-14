@@ -19,6 +19,7 @@ import {
   TIPOS_QUARTO,
   FATOR_QUARTO,
   DIARIA_HOTEL,
+  ADICIONAL_CAFE_MANHA_POR_PESSOA_DIA,
   CLASSES_AEREO,
   PRECO_AEREO_ECONOMY_BRL,
   PRECO_AEREO_PREMIUM_ECONOMY_USD,
@@ -1276,6 +1277,13 @@ export default function CalculadoraReversaPage() {
   } | null>(null);
   const [tipoQuarto, setTipoQuarto] =
     useState<(typeof TIPOS_QUARTO)[number]>("Duplo (casal)");
+  // Café da manhã incluso ou não — pedido do Wilson, 14/set/2026: "gerar
+  // variavel de hotel com refeicao e sem (café da manha)". Padrão ligado
+  // (perfil de cliente alto/altíssima renda costuma esperar o café da
+  // manhã incluso); o vendedor desliga pra cotar "room only" e ver a
+  // economia. Adicional por pessoa/dia varia por categoria de hotel — ver
+  // ADICIONAL_CAFE_MANHA_POR_PESSOA_DIA.
+  const [comCafeDaManha, setComCafeDaManha] = useState(true);
   // Cidades do roteiro — multi-seleção (média dos multiplicadores de
   // hotel das cidades marcadas, mesmo critério do calculador do
   // Personalizado). "Temas" abaixo é um atalho que pré-marca esse set;
@@ -1446,7 +1454,7 @@ export default function CalculadoraReversaPage() {
   // ocultar/mostrar todos de uma vez, já que ocultar um campo agora o faz
   // desaparecer por completo (sem botão de olho individual pra restaurar).
   const TODOS_CAMPOS_OCULTAVEIS = [
-    1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18,
+    1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
   ];
   const todosCamposOcultos = TODOS_CAMPOS_OCULTAVEIS.every((n) => camposOcultos.has(n));
   function alternarTodosCamposOcultos() {
@@ -1744,6 +1752,32 @@ export default function CalculadoraReversaPage() {
           categoriaHotelFinal = categoria;
         } else break;
       }
+    }
+
+    // 1.5) Café da manhã — adicional por pessoa/dia, varia conforme a
+    // categoria final do hotel (por isso calculado só depois do upgrade
+    // de hotel acima). Pedido do Wilson, 14/set/2026. Segue o mesmo
+    // padrão dos outros itens configurados pelo vendedor (motorista,
+    // ingressos etc.): sempre aparece na lista quando o toggle "19. Café
+    // da manhã" está ligado, mesmo se não couber no orçamento — fica
+    // desmarcado por padrão nesse caso, e o vendedor pode forçar a
+    // inclusão manualmente.
+    if (comCafeDaManha) {
+      const precoCafeDaManha = Math.round(
+        ADICIONAL_CAFE_MANHA_POR_PESSOA_DIA[categoriaHotelFinal] * dias * pessoas,
+      );
+      const cafeDaManhaRecomendado = cabe(precoCafeDaManha);
+      if (cafeDaManhaRecomendado) gasto += precoCafeDaManha;
+      incluidos.push({
+        chave: "cafeDaManha",
+        label: `Café da manhã incluso — Hotel ${categoriaHotelFinal}`,
+        detalhe: [
+          "Buffet de café da manhã servido no próprio hotel.",
+          `${dias} diárias · ${pessoas} ${pessoas === 1 ? "pessoa" : "pessoas"}`,
+        ],
+        precoBRL: precoCafeDaManha,
+        recomendado: cafeDaManhaRecomendado,
+      });
     }
 
     // Categoria que o preenchimento automático alcançaria fora de alta
@@ -2111,6 +2145,7 @@ export default function CalculadoraReversaPage() {
     hotelDiariaManual,
     hotelCategoriaManual,
     hotelCategoriaMaxima,
+    comCafeDaManha,
     classeAereoMaxima,
     aereoManual,
     aereoValorManual,
@@ -2536,6 +2571,50 @@ export default function CalculadoraReversaPage() {
             oculto={camposOcultos.has(6)}
             onToggleOculto={() => alternarCampoOculto(6)}
           />
+
+          {/* Pedido do Wilson, 14/set/2026: "gerar variavel de hotel com
+              refeicao e sem (café da manha)". Toggle de duas opções, no
+              mesmo padrão visual do resto da calculadora — adicional por
+              pessoa/dia varia por categoria de hotel (ver
+              ADICIONAL_CAFE_MANHA_POR_PESSOA_DIA). */}
+          {!camposOcultos.has(19) && (
+            <div className="sm:col-span-2">
+              <span className="mb-2 flex items-center text-[10px] uppercase tracking-[0.2em] text-black/50">
+                <LabelNumerado texto="19. Café da manhã" />
+                <BotaoOcultarCampo oculto={false} onToggle={() => alternarCampoOculto(19)} />
+              </span>
+              <div className="flex flex-wrap gap-2">
+                <button
+                  type="button"
+                  onClick={() => setComCafeDaManha(true)}
+                  className={`flex-1 rounded-lg border px-4 py-3 text-left text-xs transition ${
+                    comCafeDaManha
+                      ? "border-[#2f80c9] bg-[#2f80c9]/10 font-medium text-[#2f80c9]"
+                      : "border-black/15 bg-black/[0.03] text-black/60 hover:border-black/30"
+                  }`}
+                >
+                  <span className="block text-sm">☕ Com café da manhã</span>
+                  <span className="mt-0.5 block text-[10px] font-normal normal-case tracking-normal text-black/40">
+                    Buffet incluso no hotel — adicional varia por categoria
+                  </span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setComCafeDaManha(false)}
+                  className={`flex-1 rounded-lg border px-4 py-3 text-left text-xs transition ${
+                    !comCafeDaManha
+                      ? "border-[#2f80c9] bg-[#2f80c9]/10 font-medium text-[#2f80c9]"
+                      : "border-black/15 bg-black/[0.03] text-black/60 hover:border-black/30"
+                  }`}
+                >
+                  <span className="block text-sm">Sem café da manhã</span>
+                  <span className="mt-0.5 block text-[10px] font-normal normal-case tracking-normal text-black/40">
+                    Diária "room only" — refeição por conta do hóspede
+                  </span>
+                </button>
+              </div>
+            </div>
+          )}
 
           <div className="sm:col-span-2">
             {!camposOcultos.has(7) && (
