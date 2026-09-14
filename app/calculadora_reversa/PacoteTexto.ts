@@ -119,6 +119,14 @@ export function gerarEBaixarTexto(props: PacotePdfProps) {
     restaurantes fora do pacote high-end) não entram nesse cálculo — cotados à parte, sob
     consulta. Valor final sujeito a confirmação da Ajisai.
   </p>
+
+  <!-- Pedido do Wilson, 14/set/2026: "no pdf e word tem que constar os
+       dois cnpjs da ajisai de da alpinea" — mesmo texto e mesma fonte
+       (rodapé do site alpinea.io) usados no rodapé do PDF (PacotePdf.tsx). -->
+  <p style="margin-top:14px;padding-top:8px;border-top:0.5px solid #dcdfe4;font-size:9px;color:#9aa3b2;text-align:center;">
+    Ajisai · Alpinea — AjisaiWork Japan Agência de Viagens LTDA (CNPJ 43.544.605/0001-56) e Alpinea
+    Agências de Viagens LTDA (CNPJ 66.491.067/0001-84) — www.alpinea.io
+  </p>
 </body>
 </html>`;
 

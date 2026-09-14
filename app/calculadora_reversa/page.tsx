@@ -2425,7 +2425,7 @@ export default function CalculadoraReversaPage() {
             </span>
             <span>
               <span className="block text-sm font-semibold uppercase tracking-[0.1em] text-[#0A2540]">
-                {todosCamposOcultos ? "Mostrar Todos os Campos" : "Hide Todos os Campos"}
+                {todosCamposOcultos ? "Mostrar Todos os Campos" : "Ocultar Todos os Campos"}
               </span>
               <span className="mt-0.5 block text-[11px] leading-4 text-black/45">
                 {todosCamposOcultos
@@ -2600,13 +2600,17 @@ export default function CalculadoraReversaPage() {
                   }`}
                 >
                   {/* Ícone enviado pelo Wilson, 14/set/2026 — xícara +
-                      croissant, traço simples, sem marca. */}
-                  <span className="flex items-center gap-2 text-sm">
+                      croissant, traço simples, sem marca. Pedido do
+                      Wilson, mesma data: "só um tem icone? porque icone é
+                      minusculo?" — aumentado de 20px pra 36px, e o card
+                      "Sem" ganhou o mesmo ícone riscado (uma linha
+                      diagonal por cima), em vez de ficar sem nada. */}
+                  <span className="flex items-center gap-2.5 text-sm">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img
                       src="/images/icone-cafe-da-manha.png"
                       alt=""
-                      className="h-5 w-5 shrink-0 object-contain"
+                      className="h-9 w-9 shrink-0 object-contain"
                     />
                     Com café da manhã
                   </span>
@@ -2623,7 +2627,21 @@ export default function CalculadoraReversaPage() {
                       : "border-black/15 bg-black/[0.03] text-black/60 hover:border-black/30"
                   }`}
                 >
-                  <span className="block text-sm">Sem café da manhã</span>
+                  <span className="flex items-center gap-2.5 text-sm">
+                    <span className="relative inline-flex h-9 w-9 shrink-0 items-center justify-center">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src="/images/icone-cafe-da-manha.png"
+                        alt=""
+                        className="h-9 w-9 shrink-0 object-contain opacity-40 grayscale"
+                      />
+                      <span
+                        aria-hidden
+                        className="absolute left-[3px] top-1/2 h-[1.5px] w-[calc(100%-6px)] -translate-y-1/2 -rotate-45 rounded-full bg-black/50"
+                      />
+                    </span>
+                    Sem café da manhã
+                  </span>
                   <span className="mt-0.5 block text-[10px] font-normal normal-case tracking-normal text-black/40">
                     Diária "room only" — refeição por conta do hóspede
                   </span>

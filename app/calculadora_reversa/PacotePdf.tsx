@@ -293,10 +293,17 @@ const styles = StyleSheet.create({
 function Rodape() {
   return (
     <>
+      {/* Pedido do Wilson, 14/set/2026: "no pdf e word tem que constar
+          os dois cnpjs da ajisai de da alpinea" — antes só tinha o CNPJ
+          da Ajisai. CNPJ da Alpinea (66.491.067/0001-84 — Alpinea
+          Agências de Viagens LTDA) conferido no rodapé do próprio site
+          (alpinea.io), igual ao da Ajisai (43.544.605/0001-56 —
+          AjisaiWork Japan Agência de Viagens LTDA, já usado aqui e em
+          /produtos). */}
       <Text
         style={styles.footer}
         render={() =>
-          "Ajisai · Alpinea — AJISAIWORK JAPAN AGENCIA DE VIAGENS LTDA — CNPJ 43.544.605/0001-56 — www.alpinea.io"
+          "Ajisai · Alpinea — AjisaiWork Japan Agência de Viagens LTDA (CNPJ 43.544.605/0001-56) e Alpinea Agências de Viagens LTDA (CNPJ 66.491.067/0001-84) — www.alpinea.io"
         }
         fixed
       />
