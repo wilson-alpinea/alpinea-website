@@ -912,6 +912,49 @@ export const PRECO_RESTAURANTES_HIGHEND_USD = comMargemEImposto(1000);
 export const RESTAURANTES_HIGHEND_QTD = 7;
 export const RESTAURANTES_HIGHEND_LIMITE_PESSOAS = 3;
 
+// Pedido do Wilson, 14/set/2026, sobre o aviso "itens sem preço fixo
+// (concierge, experiências sob medida, transfer de ônibus, reservas de
+// restaurantes fora do pacote high-end)": "quem disse que nao tem preço?
+// [...] é pra incluir os preços e discriminar nas linhas deles dentro do
+// valor final" — os 4 itens do aviso viram cards precificados no catálogo
+// de Serviços Adicionais, junto com os 3 que já existiam lá.
+//
+// Transfer de ônibus (Limousine Bus) aeroporto↔hotel — ida e volta, por
+// pessoa. É o transfer que o item "Transporte" (van privada) já deixava
+// explicitamente de fora. Tarifa oficial Narita→centro de Tóquio ≈ ¥3.600
+// (Haneda é mais barato, ~¥1.200 — usamos a tarifa de Narita como
+// referência por ser a mais cara/comum nos voos internacionais) —
+// livejapan.com/en/in-tokyo/in-pref-chiba/in-narita/article-a0003305,
+// trip.com/guide/transport/haneda-airport-limousine-bus.html. Ida e volta:
+// ¥3.600 × 2 = ¥7.200/pessoa, convertido na cotação de referência ~150
+// JPY/US$ igual aos outros itens nativos em dólar.
+export const PRECO_TRANSFER_ONIBUS_USD_PAX = comMargemEImposto(48);
+// Reserva de restaurante avulsa (fora do pacote high-end Michelin/Tabelog)
+// — 1 reserva. ⚠️ ESTIMATIVA: não existe preço de mercado público pra esse
+// serviço específico (é o trabalho do concierge de conseguir mesa, não uma
+// tarifa do restaurante) — baseado na faixa "pay-per-request" de serviços
+// de concierge em geral (US$50-300/tarefa avulsa), usando a ponta mais
+// baixa por ser uma reserva simples — approvedexperiences.com/blog/
+// concierge-service-pricing. Confirmar/ajustar com o Wilson.
+export const PRECO_RESERVA_RESTAURANTE_USD = comMargemEImposto(60);
+// Experiência sob medida — taxa de curadoria/coordenação por experiência
+// (o concierge pesquisa, negocia e agenda algo fora do catálogo padrão —
+// cerimônia do chá particular, acesso exclusivo, etc.). Cobre só o
+// trabalho de montar a experiência; o custo da experiência em si (entrada,
+// guia especializado etc.) é cotado à parte, por ser específico de cada
+// pedido. ⚠️ ESTIMATIVA — mesma base "pay-per-request" acima, ponta mais
+// alta por exigir mais pesquisa/negociação que uma reserva de restaurante.
+// Confirmar/ajustar com o Wilson.
+export const PRECO_EXPERIENCIA_SOB_MEDIDA_USD = comMargemEImposto(180);
+// Concierge dedicado durante a viagem (WhatsApp/telefone, suporte e
+// tradução sob demanda) — por dia, mesma lógica de diária do
+// guia/motorista acima. ⚠️ ESTIMATIVA: sem preço de mercado específico pra
+// "concierge de viagem" no Japão — estimado a partir da faixa de retainer
+// mensal de serviços de concierge em geral (US$1.000-5.000/mês) dividida
+// por ~30 dias — approvedexperiences.com/blog/concierge-service-pricing.
+// Confirmar/ajustar com o Wilson.
+export const DIARIA_CONCIERGE_USD = comMargemEImposto(35);
+
 // Roteiro Personalizado: mesma regra de preço do produto standalone
 // vendido em /ajisairoteiros (ver PriceCalculator.tsx) — preço-base fixo
 // até 15 dias, + valor por dia extra acima disso. Nativo em reais, igual

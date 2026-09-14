@@ -393,10 +393,18 @@ export function PacotePdfDocument(props: PacotePdfProps) {
               comportamento). Prop mantida por compatibilidade, mas não
               tem mais efeito aqui — sempre oculto. */}
         </View>
+        {/* Pedido do Wilson, 14/set/2026, sobre a versão antiga desse aviso
+            ("itens sem preço fixo... não entram nesse cálculo"): "quem
+            disse que nao tem preço? [...] é pra incluir os preços e
+            discriminar nas linhas deles dentro do valor final" —
+            concierge, experiência sob medida, transfer de ônibus e
+            reserva de restaurante agora são itens precificados, com preço
+            de referência, e aparecem na lista de itens inclusos acima
+            quando o vendedor marca. */}
         <Text style={{ fontSize: 7.5, color: "#9aa3b2", marginTop: 8 }}>
-          Itens sem preço fixo (concierge, experiências sob medida, transfer de ônibus, reservas de
-          restaurantes fora do pacote high-end) não entram nesse cálculo — cotados à parte, sob
-          consulta. Valor final sujeito a confirmação da Ajisai.
+          Concierge, experiências sob medida, transfer de ônibus e reservas de restaurante avulsas
+          já têm preço de referência e entram no total quando incluídos na proposta — ajustados
+          conforme o pedido do cliente. Valor final sujeito a confirmação da Ajisai.
         </Text>
 
         <Rodape />

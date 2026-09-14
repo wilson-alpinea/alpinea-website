@@ -53,6 +53,10 @@ import {
   PRECO_RESTAURANTES_HIGHEND_USD,
   RESTAURANTES_HIGHEND_LIMITE_PESSOAS,
   RESTAURANTES_HIGHEND_QTD,
+  PRECO_TRANSFER_ONIBUS_USD_PAX,
+  PRECO_RESERVA_RESTAURANTE_USD,
+  PRECO_EXPERIENCIA_SOB_MEDIDA_USD,
+  DIARIA_CONCIERGE_USD,
   ROTEIRO_BASE_DIAS,
   ROTEIRO_PRECO_BASE,
   ROTEIRO_PRECO_DIA_EXTRA,
@@ -84,7 +88,14 @@ const CATALOGO_INGRESSOS: { key: IngressoKey; nome: string; precoUSD: number; ic
   },
 ];
 
-type ServicoAdicionalKey = "malasIntermunicipal" | "cambioBrasil" | "restaurantesHighEnd";
+type ServicoAdicionalKey =
+  | "malasIntermunicipal"
+  | "cambioBrasil"
+  | "restaurantesHighEnd"
+  | "transferOnibus"
+  | "reservaRestaurante"
+  | "experienciaSobMedida"
+  | "concierge";
 
 // Catálogo de serviços adicionais/avulsos mostrados como cards na seção 16
 // — mesmo espírito visual/funcional do catálogo de Ingressos acima (card
@@ -134,6 +145,42 @@ const CATALOGO_SERVICOS_ADICIONAIS: {
     nome: "Reserva de Restaurantes High-End",
     descricao: `Pacote fechado de ${RESTAURANTES_HIGHEND_QTD} reservas em restaurantes Michelin/Tabelog Awards ou equivalente. Disponível para até ${RESTAURANTES_HIGHEND_LIMITE_PESSOAS} pessoas.`,
     icone: "/images/icone-gastronomia.png",
+  },
+  // 4 itens abaixo — pedido do Wilson, 14/set/2026, questionando o aviso
+  // "itens sem preço fixo (concierge, experiências sob medida, transfer de
+  // ônibus, reservas de restaurantes fora do pacote high-end)": "quem
+  // disse que nao tem preço? [...] é pra incluir os preços e discriminar
+  // nas linhas deles dentro do valor final". Preços de referência/estimados
+  // — ver comentário de cada constante em CustomPackageCard.tsx. Quando o
+  // valor exato de um pedido específico (reserva, experiência) for
+  // diferente do valor de referência, o vendedor ajusta manualmente o
+  // preço do item já dentro da proposta (mesmo recurso usado em todos os
+  // outros itens da lista).
+  {
+    key: "transferOnibus",
+    nome: "Transfer de Ônibus (Limousine Bus)",
+    descricao:
+      "Aeroporto ↔ hotel em Tóquio, ida e volta, por pessoa — alternativa/complemento à van privada (item “Transporte”), que não inclui esse trajeto.",
+    icone: "/images/icone-transporte-malas.png",
+  },
+  {
+    key: "reservaRestaurante",
+    nome: "Reserva de Restaurante",
+    descricao:
+      "Reserva avulsa em restaurante fora do pacote High-End (não Michelin/Tabelog Awards) — o trabalho do concierge de conseguir mesa em local concorrido.",
+    icone: "/images/icone-gastronomia.png",
+  },
+  {
+    key: "experienciaSobMedida",
+    nome: "Experiência Sob Medida",
+    descricao:
+      "Taxa de curadoria do concierge pra pesquisar, negociar e agendar uma experiência fora do catálogo padrão (ex.: cerimônia do chá particular, acesso exclusivo). O custo da experiência em si é cotado à parte.",
+  },
+  {
+    key: "concierge",
+    nome: "Concierge Dedicado",
+    descricao:
+      "Suporte e tradução sob demanda por WhatsApp/telefone durante toda a viagem, por dia.",
   },
 ];
 
@@ -2131,6 +2178,79 @@ export default function CalculadoraReversaPage() {
       });
     }
 
+    // 4 itens abaixo — pedido do Wilson, 14/set/2026: "é pra incluir os
+    // preços e discriminar nas linhas deles dentro do valor final" (ver
+    // comentário no catálogo, acima, e nas constantes em
+    // CustomPackageCard.tsx). Transfer de ônibus escala por pessoa (ida e
+    // volta); concierge escala por dia do roteiro; reserva de restaurante
+    // e experiência sob medida entram como 1 unidade de referência — o
+    // vendedor ajusta manualmente o valor final do item quando o pedido
+    // real do cliente tiver uma quantidade diferente (mesmo recurso usado
+    // em qualquer item da lista).
+    if (servicosAdicionaisSelecionados.has("transferOnibus")) {
+      const precoTransferOnibus = Math.round(PRECO_TRANSFER_ONIBUS_USD_PAX * pessoas * cambioCotacao);
+      const transferOnibusRecomendado = cabe(precoTransferOnibus);
+      if (transferOnibusRecomendado) gasto += precoTransferOnibus;
+      incluidos.push({
+        chave: "servico-transferOnibus",
+        label: "Transfer de Ônibus (Limousine Bus)",
+        detalhe: [
+          "Aeroporto ↔ hotel em Tóquio, ida e volta — não incluso no item “Transporte” (van privada).",
+          `${pessoas} ${pessoas === 1 ? "pessoa" : "pessoas"}.`,
+        ],
+        precoBRL: precoTransferOnibus,
+        recomendado: transferOnibusRecomendado,
+      });
+    }
+
+    if (servicosAdicionaisSelecionados.has("reservaRestaurante")) {
+      const precoReservaRestaurante = Math.round(PRECO_RESERVA_RESTAURANTE_USD * cambioCotacao);
+      const reservaRestauranteRecomendado = cabe(precoReservaRestaurante);
+      if (reservaRestauranteRecomendado) gasto += precoReservaRestaurante;
+      incluidos.push({
+        chave: "servico-reservaRestaurante",
+        label: "Reserva de Restaurante",
+        detalhe: [
+          "Reserva avulsa fora do pacote High-End — 1 reserva de referência.",
+          "Ajuste o valor manualmente se o cliente pedir mais de uma reserva.",
+        ],
+        precoBRL: precoReservaRestaurante,
+        recomendado: reservaRestauranteRecomendado,
+      });
+    }
+
+    if (servicosAdicionaisSelecionados.has("experienciaSobMedida")) {
+      const precoExperienciaSobMedida = Math.round(PRECO_EXPERIENCIA_SOB_MEDIDA_USD * cambioCotacao);
+      const experienciaSobMedidaRecomendado = cabe(precoExperienciaSobMedida);
+      if (experienciaSobMedidaRecomendado) gasto += precoExperienciaSobMedida;
+      incluidos.push({
+        chave: "servico-experienciaSobMedida",
+        label: "Experiência Sob Medida",
+        detalhe: [
+          "Taxa de curadoria (pesquisa, negociação e agendamento) — 1 experiência de referência.",
+          "Custo da experiência em si (entrada, guia especializado etc.) cotado à parte.",
+        ],
+        precoBRL: precoExperienciaSobMedida,
+        recomendado: experienciaSobMedidaRecomendado,
+      });
+    }
+
+    if (servicosAdicionaisSelecionados.has("concierge")) {
+      const precoConcierge = Math.round(DIARIA_CONCIERGE_USD * dias * cambioCotacao);
+      const conciergeRecomendado = cabe(precoConcierge);
+      if (conciergeRecomendado) gasto += precoConcierge;
+      incluidos.push({
+        chave: "servico-concierge",
+        label: "Concierge Dedicado",
+        detalhe: [
+          "Suporte e tradução sob demanda por WhatsApp/telefone durante toda a viagem.",
+          `${dias} ${dias === 1 ? "dia" : "dias"}.`,
+        ],
+        precoBRL: precoConcierge,
+        recomendado: conciergeRecomendado,
+      });
+    }
+
     // Atualiza os itens fixos de hotel/aéreo com a categoria/classe final
     incluidos[1] = {
       chave: "aereo",
@@ -3713,12 +3833,24 @@ export default function CalculadoraReversaPage() {
                 const desabilitado =
                   servico.key === "restaurantesHighEnd" &&
                   pessoas > RESTAURANTES_HIGHEND_LIMITE_PESSOAS;
+                // Pedido do Wilson, 14/set/2026: os 4 itens novos (antes
+                // descritos como "sem preço fixo" no aviso do rodapé)
+                // agora também mostram preço de referência no card, igual
+                // aos 3 que já existiam.
                 const precoLabel =
                   servico.key === "malasIntermunicipal"
                     ? `${formatUSD(PRECO_MALA_INTERMUNICIPAL_USD)}/mala/trecho`
                     : servico.key === "cambioBrasil"
                       ? `${formatBRL(PRECO_CAMBIO_BRASIL)} + valor dos ienes`
-                      : `${formatUSD(PRECO_RESTAURANTES_HIGHEND_USD)} · até ${RESTAURANTES_HIGHEND_LIMITE_PESSOAS} pessoas`;
+                      : servico.key === "restaurantesHighEnd"
+                        ? `${formatUSD(PRECO_RESTAURANTES_HIGHEND_USD)} · até ${RESTAURANTES_HIGHEND_LIMITE_PESSOAS} pessoas`
+                        : servico.key === "transferOnibus"
+                          ? `${formatUSD(PRECO_TRANSFER_ONIBUS_USD_PAX)}/pessoa · ida e volta`
+                          : servico.key === "reservaRestaurante"
+                            ? `${formatUSD(PRECO_RESERVA_RESTAURANTE_USD)}/reserva`
+                            : servico.key === "experienciaSobMedida"
+                              ? `${formatUSD(PRECO_EXPERIENCIA_SOB_MEDIDA_USD)}/experiência`
+                              : `${formatUSD(DIARIA_CONCIERGE_USD)}/dia`;
                 return (
                   <label
                     key={servico.key}
@@ -4180,10 +4312,19 @@ export default function CalculadoraReversaPage() {
                 </div>
               </div>
 
+              {/* Pedido do Wilson, 14/set/2026, sobre a versão antiga desse
+                  aviso ("itens sem preço fixo... não entram nesse
+                  cálculo"): "quem disse que nao tem preço? [...] é pra
+                  incluir os preços e discriminar nas linhas deles dentro
+                  do valor final" — concierge, experiência sob medida,
+                  transfer de ônibus e reserva de restaurante agora são
+                  cards precificados na seção 17 (Serviços adicionais), com
+                  o mesmo preço de referência usado no cálculo. */}
               <p className="mt-4 text-[11px] leading-5 text-black/40">
-                Itens sem preço fixo (concierge, experiências sob medida, transfer de ônibus,
-                reservas de restaurantes fora do pacote high-end) não entram nesse cálculo —
-                cotados à parte, sob consulta. Valor final sujeito a confirmação da Ajisai.
+                Concierge, experiências sob medida, transfer de ônibus e reservas de restaurante
+                avulsas já têm preço de referência e entram no total quando marcados em
+                &quot;Serviços adicionais&quot; — ajuste o valor manualmente se o pedido do
+                cliente for diferente do padrão. Valor final sujeito a confirmação da Ajisai.
               </p>
 
               {/* Simulação de parcelamento — pedido do Wilson, 10/set/2026: mostrar
