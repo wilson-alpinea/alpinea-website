@@ -1440,16 +1440,20 @@ export function LabelNumerado({ texto }: { texto: string }) {
   return (
     <>
       {/* Esfera numerada — pedido do Wilson, 14/set/2026: "esferas tem que
-          ser maiores e numeros centralizados, estao tortos atualmente".
-          Aumentada de 24px pra 28px e trocada de flex pra grid
-          place-items-center, que centraliza o texto com mais precisão que
-          inline-flex (o "torto" era o número puxado pro canto em vez do
-          centro exato do círculo, mais visível nos números de 2 dígitos). */}
+          ser maiores e numeros centralizados, estao tortos atualmente", e
+          depois de uma 1ª tentativa (grid + translate-y manual) continuar
+          torto: "bolinha segue torta, numero é centralizado tando
+          horizontalmente quanto verticalmente". O translate-y manual era
+          o próprio bug — um nudge arbitrário puxando o número pra baixo.
+          Removido: agora é só flexbox centralizando de verdade nos dois
+          eixos (items-center + justify-center), sem nenhum ajuste manual
+          de posição — o span interno só existe pra zerar line-height
+          (leading-none) sem afetar a caixa do círculo. */}
       <span
         aria-hidden
-        className="mr-2 grid h-7 w-7 shrink-0 place-items-center rounded-full bg-black text-[13px] font-semibold leading-none tabular-nums text-white"
+        className="mr-2 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-black text-[13px] font-semibold text-white"
       >
-        <span className="translate-y-[0.5px]">{m[1]}</span>
+        <span className="leading-none tabular-nums">{m[1]}</span>
       </span>
       {m[2]}
     </>
