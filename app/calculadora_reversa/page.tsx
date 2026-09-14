@@ -4303,15 +4303,22 @@ export default function CalculadoraReversaPage() {
             </p>
           </div>
           <div className="flex items-center gap-2">
+            {/* Pedido do Wilson, 14/set/2026: "os icones sao bons, mas
+                como saber qual é txt e qual pdf?" — os dois botões eram
+                círculos só com ícone (o "PDF"/"DOC" desenhado dentro do
+                ícone é pequeno demais pra ler nesse tamanho). Virou
+                pílula com rótulo de texto ao lado do ícone, sem depender
+                de hover/tooltip pra diferenciar. */}
             <button
               type="button"
               disabled={!resultado.cabeNoOrcamento || gerandoPdf}
               onClick={handleGerarPdf}
               aria-label="Gerar PDF da proposta"
               title="Gerar PDF da proposta"
-              className="flex h-9 w-9 items-center justify-center rounded-full border border-[#5b9bd9]/50 text-[#5b9bd9] transition hover:bg-[#5b9bd9]/10 disabled:cursor-not-allowed disabled:opacity-40"
+              className="flex h-9 items-center gap-1.5 rounded-full border border-[#5b9bd9]/50 px-3 text-[10px] font-medium uppercase tracking-[0.1em] text-[#5b9bd9] transition hover:bg-[#5b9bd9]/10 disabled:cursor-not-allowed disabled:opacity-40"
             >
-              <IconPdf className="h-4 w-4" />
+              <IconPdf className="h-4 w-4 shrink-0" />
+              <span>PDF</span>
             </button>
             <button
               type="button"
@@ -4319,9 +4326,10 @@ export default function CalculadoraReversaPage() {
               onClick={handleGerarTexto}
               aria-label="Gerar texto editável (Word) da proposta"
               title="Gerar texto editável (Word) da proposta"
-              className="flex h-9 w-9 items-center justify-center rounded-full border border-[#5b9bd9]/50 text-[#5b9bd9] transition hover:bg-[#5b9bd9]/10 disabled:cursor-not-allowed disabled:opacity-40"
+              className="flex h-9 items-center gap-1.5 rounded-full border border-[#5b9bd9]/50 px-3 text-[10px] font-medium uppercase tracking-[0.1em] text-[#5b9bd9] transition hover:bg-[#5b9bd9]/10 disabled:cursor-not-allowed disabled:opacity-40"
             >
-              <IconDoc className="h-4 w-4" />
+              <IconDoc className="h-4 w-4 shrink-0" />
+              <span>Word</span>
             </button>
             <button
               type="button"
