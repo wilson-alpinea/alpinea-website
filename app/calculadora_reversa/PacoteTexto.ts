@@ -92,7 +92,9 @@ export function gerarEBaixarTexto(props: PacotePdfProps) {
 <body>
   <img src="${LOGO_DATA_URI}" alt="Ajisai" style="width:165px;height:auto;margin-bottom:10px;" />
   <h1>Proposta Ajisai — ${escapeHtml(props.tituloPacote)}</h1>
-  <p style="color:#666666;">Gerado em ${escapeHtml(props.geradoEmLabel)} · ${escapeHtml(props.cambioLabel)}</p>
+  ${props.nomeCliente ? `<p style="color:#666666;">Proposta para ${escapeHtml(props.nomeCliente)}</p>` : ""}
+  <p style="color:#666666;">Gerado em ${escapeHtml(props.geradoEmLabel)} · ${escapeHtml(props.cambioLabel)}${props.consultor ? ` · Consultor: ${escapeHtml(props.consultor)}` : ""}</p>
+  ${props.validadeLabel ? `<p style="color:#666666;">Proposta válida até ${escapeHtml(props.validadeLabel)}</p>` : ""}
   ${nomeMoeda ? `<p style="color:#888888;font-size:10px;">Valores exibidos em ${nomeMoeda} — conversão de referência, sujeita à cotação do dia.</p>` : ""}
 
   <h2>Resumo</h2>

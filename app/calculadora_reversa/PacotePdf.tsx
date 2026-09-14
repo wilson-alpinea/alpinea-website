@@ -60,6 +60,13 @@ export type PacotePdfProps = {
   moedaExibicao: MoedaExibicao;
   cambioCotacao: number;
   brlPorJPY: number;
+  // Bloco administrativo da proposta — pedido do Wilson, 14/set/2026.
+  // Client-facing (aparecem no PDF/Word) — diferente de "Observações
+  // internas" e "Margem", que ficam só na tela da calculadora e nunca
+  // entram aqui.
+  nomeCliente?: string;
+  consultor?: string;
+  validadeLabel?: string;
 };
 
 // Categoriza um item pela `chave` estável (não pelo label, que muda de
@@ -348,6 +355,9 @@ export function PacotePdfDocument(props: PacotePdfProps) {
     moedaExibicao,
     cambioCotacao,
     brlPorJPY,
+    nomeCliente,
+    consultor,
+    validadeLabel,
     // orcamentoBRL, saldoBRL e ocultarOrcamentoReferencia não são mais
     // exibidos (ver comentário 14/set/2026 acima) — deixados no tipo
     // PacotePdfProps por compatibilidade com quem chama, mas não
@@ -368,12 +378,17 @@ export function PacotePdfDocument(props: PacotePdfProps) {
         <Image src={LOGO_DATA_URI} style={styles.logo} />
         <Text style={styles.eyebrow}>Proposta de viagem personalizada</Text>
         <Text style={styles.h1}>{tituloPacote}</Text>
+        {nomeCliente && <Text style={styles.metaText}>Proposta para {nomeCliente}</Text>}
         <View style={styles.tagsRow}>
           <Text style={styles.tag}>{dias} {dias === 1 ? "dia" : "dias"}</Text>
           <Text style={styles.tag}>{tipoQuarto}</Text>
           <Text style={styles.tag}>{pessoas} {pessoas === 1 ? "pessoa" : "pessoas"}</Text>
         </View>
-        <Text style={styles.metaText}>Ajisai · proposta gerada em {geradoEmLabel}</Text>
+        <Text style={styles.metaText}>
+          Ajisai · proposta gerada em {geradoEmLabel}
+          {consultor ? ` · Consultor: ${consultor}` : ""}
+        </Text>
+        {validadeLabel && <Text style={styles.metaText}>Proposta válida até {validadeLabel}</Text>}
         <Text style={styles.metaText}>{cambioLabel}</Text>
         {nomeMoeda && (
           <Text style={styles.metaText}>

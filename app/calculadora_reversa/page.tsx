@@ -555,6 +555,84 @@ type ExtensaoInternacionalKey = "coreiaDoSul" | "china";
 const CATEGORIAS_HOTEL_EXTENSAO = ["3 estrelas", "4 estrelas", "5 estrelas"] as const;
 type CategoriaHotelExtensao = (typeof CATEGORIAS_HOTEL_EXTENSAO)[number];
 
+// Bagagem — pedido do Wilson, 14/set/2026: "falta um campo importante:
+// bagagem [...] pode alterar passagem, transporte e takkyubin". Por
+// enquanto só informativo (aparece no detalhe do item Aéreo e no
+// PDF/Word) — não muda o preço do aéreo, porque taxa de 2ª mala/item
+// grande varia demais por companhia aérea pra ter uma fórmula confiável.
+const BAGAGEM_OPCOES = [
+  { key: "cabine", nome: "Somente bagagem de mão" },
+  { key: "uma", nome: "1 mala despachada" },
+  { key: "duas", nome: "2 malas despachadas" },
+  { key: "grande", nome: "2 malas + item grande/especial" },
+] as const;
+type BagagemKey = (typeof BAGAGEM_OPCOES)[number]["key"];
+
+// Flexibilidade das datas — pedido do Wilson, 14/set/2026: "algo muito
+// simples: Datas fixas | ±3 dias | ±7 dias | Flexível [...] permite
+// informar ao cliente algo como 'com ±3 dias conseguimos reduzir
+// aproximadamente R$ X no aéreo'". Não muda o cálculo real — é só uma
+// nota consultiva pro vendedor, com percentual ⚠️ ESTIMADO de variação
+// tarifária observada ao redor de datas fixas vs. flexíveis (não é uma
+// cotação real; confirmar/ajustar com o Wilson).
+const FLEXIBILIDADE_DATAS = [
+  { key: "fixas", nome: "Datas fixas" },
+  { key: "tres", nome: "± 3 dias" },
+  { key: "sete", nome: "± 7 dias" },
+  { key: "flexivel", nome: "Flexível" },
+] as const;
+type FlexibilidadeDatasKey = (typeof FLEXIBILIDADE_DATAS)[number]["key"];
+const ECONOMIA_FLEXIBILIDADE_PCT: Record<FlexibilidadeDatasKey, number> = {
+  fixas: 0,
+  tres: 0.08,
+  sete: 0.15,
+  flexivel: 0.22,
+};
+
+// Mês estimado → sugestão de Temporada — pedido do Wilson, 14/set/2026:
+// "temporada também deveria ser derivada das datas [...] quanto menos o
+// atendente precisar informar duas vezes a mesma informação, melhor".
+// Mapeamento mês-a-mês (granularidade grosseira, já que o campo é só
+// "mês", não uma data exata) a partir das janelas já definidas em
+// TEMPORADAS acima. Continua 100% editável depois — isso só pré-seleciona.
+const MESES_NOME = [
+  "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho",
+  "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro",
+] as const;
+const MES_PARA_TEMPORADA: Record<number, TemporadaKey> = {
+  1: "inverno",
+  2: "inverno",
+  3: "sakura",
+  4: "sakura",
+  5: "primavera",
+  6: "baixa",
+  7: "julho",
+  8: "baixa",
+  9: "baixa",
+  10: "outono",
+  11: "outono",
+  12: "inverno",
+};
+
+// Origem do voo — pedido do Wilson, 14/set/2026: "provavelmente o campo
+// mais importante que está faltando [...] altera muito o aéreo. Se 90%
+// dos clientes saem de GRU, deixe São Paulo / GRU pré-selecionado."
+// ⚠️ ESTIMATIVA — ajustePercentual é um percentual aproximado sobre o
+// preço aéreo de referência (que já é calculado a partir de GRU, o hub
+// com mais opções diretas/poucas conexões pro Japão). As outras origens
+// normalmente exigem um trecho doméstico ou conexão adicional até um hub
+// internacional — o percentual reflete isso, mas não é uma cotação real
+// por origem. Ajustar com o Wilson assim que houver dado de tarifário
+// real por cidade.
+const ORIGENS_VOO = [
+  { key: "saoPaulo", nome: "São Paulo / GRU", ajustePercentual: 0 },
+  { key: "rio", nome: "Rio de Janeiro / GIG", ajustePercentual: 0.05 },
+  { key: "brasilia", nome: "Brasília / BSB", ajustePercentual: 0.08 },
+  { key: "portoAlegre", nome: "Porto Alegre / POA", ajustePercentual: 0.1 },
+  { key: "outra", nome: "Outra cidade", ajustePercentual: 0.12 },
+] as const;
+type OrigemVooKey = (typeof ORIGENS_VOO)[number]["key"];
+
 // Deslocamento (voo/trem) entre o Japão e/ou entre as cidades de uma
 // extensão internacional. Preços de referência em classe econômica,
 // pesquisados em 10/set/2026 (Kayak/Skyscanner/Momondo/Trip.com/
@@ -1405,6 +1483,25 @@ export default function CalculadoraReversaPage() {
     useState<(typeof CATEGORIAS_HOTEL)[number]>("3 estrelas");
   const [aereoManual, setAereoManual] = useState(false);
   const [aereoValorManual, setAereoValorManual] = useState(0);
+  // Origem do voo — pedido do Wilson, 14/set/2026. São Paulo/GRU
+  // pré-selecionado (maioria dos clientes). Não se aplica quando o aéreo
+  // é valor manual (o vendedor já digita o preço real cotado).
+  const [origemVoo, setOrigemVoo] = useState<OrigemVooKey>("saoPaulo");
+  const [bagagem, setBagagem] = useState<BagagemKey>("uma");
+  const [flexibilidadeDatas, setFlexibilidadeDatas] = useState<FlexibilidadeDatasKey>("fixas");
+  const [mesEstimado, setMesEstimado] = useState<number | null>(null);
+  // Bloco administrativo da proposta — pedido do Wilson, 14/set/2026.
+  // nomeCliente/consultorResponsavel/validadeProposta são client-facing
+  // (entram no PDF/Word); observacoesInternas/margemNota são só desta
+  // tela — nunca passados pro PacotePdfProps.
+  const [nomeCliente, setNomeCliente] = useState("");
+  const [consultorResponsavel, setConsultorResponsavel] = useState("");
+  const [validadeProposta, setValidadeProposta] = useState("");
+  const [observacoesInternas, setObservacoesInternas] = useState("");
+  const [margemNota, setMargemNota] = useState("");
+  // Progressive disclosure do Câmbio de Ienes — pedido do Wilson,
+  // 14/set/2026 (ver comentário na seção 14 abaixo).
+  const [cambioIeneExpandido, setCambioIeneExpandido] = useState(false);
 
   // Teto manual de upgrade — "botão de volume" que limita até onde o
   // preenchimento automático por orçamento pode subir a categoria do
@@ -1735,18 +1832,22 @@ export default function CalculadoraReversaPage() {
   const resultado = useMemo(() => {
     const precoRoteiro =
       ROTEIRO_PRECO_BASE + Math.max(0, dias - ROTEIRO_BASE_DIAS) * ROTEIRO_PRECO_DIA_EXTRA;
+    // Ajuste por origem do voo — pedido do Wilson, 14/set/2026. Não se
+    // aplica no modo manual (o valor já é o preço real cotado pra aquela
+    // origem específica).
+    const ajusteOrigemVoo = 1 + (ORIGENS_VOO.find((o) => o.key === origemVoo)?.ajustePercentual ?? 0);
     const precoAereoEconomy = aereoManual
       ? Math.round(aereoValorManual * pessoas)
-      : PRECO_AEREO_ECONOMY_BRL * pessoas;
+      : Math.round(PRECO_AEREO_ECONOMY_BRL * pessoas * ajusteOrigemVoo);
     const precoAereoPremiumEconomy = aereoManual
       ? precoAereoEconomy
-      : Math.round(PRECO_AEREO_PREMIUM_ECONOMY_USD * cambioCotacao * pessoas);
+      : Math.round(PRECO_AEREO_PREMIUM_ECONOMY_USD * cambioCotacao * pessoas * ajusteOrigemVoo);
     const precoAereoBusiness = aereoManual
       ? precoAereoEconomy
-      : Math.round(PRECO_AEREO_BUSINESS_USD * cambioCotacao * pessoas);
+      : Math.round(PRECO_AEREO_BUSINESS_USD * cambioCotacao * pessoas * ajusteOrigemVoo);
     const precoAereoFirst = aereoManual
       ? precoAereoEconomy
-      : Math.round(PRECO_AEREO_FIRST_USD * cambioCotacao * pessoas);
+      : Math.round(PRECO_AEREO_FIRST_USD * cambioCotacao * pessoas * ajusteOrigemVoo);
 
     function precoClasseAereo(classe: (typeof CLASSES_AEREO)[number]) {
       if (classe === "First Class") return precoAereoFirst;
@@ -1982,7 +2083,14 @@ export default function CalculadoraReversaPage() {
         "Transfers e deslocamentos privados do roteiro (aeroporto, entre cidades e até as atrações).",
         "Van dedicada — Toyota Alphard ou Hiace, conforme tamanho do grupo/bagagem.",
         `Sem compartilhar veículo com outros grupos — ${dias} dias.`,
-        "Não inclui o transfer de ônibus (limousine bus) aeroporto ↔ centro de Tóquio, cotado à parte.",
+        // Pedido do Wilson, 14/set/2026: "falta transfer aeroporto [...]
+        // Transporte público | Transfer compartilhado | Transfer privado
+        // [...] deveria ser fácil de entender" — esse item JÁ É o transfer
+        // privado (aeroporto ↔ hotel incluso na van dedicada). Deixado
+        // explícito aqui, com referência cruzada às outras 2 opções, em
+        // vez de criar um campo/cálculo novo pra uma decisão que a
+        // calculadora já resolve.
+        "Esse item já é o transfer privado aeroporto ↔ hotel (incluso na van dedicada acima). Alternativa mais econômica/compartilhada: \"Transfer de Ônibus\" nos Serviços Adicionais. Upgrade pra motorista exclusivo dedicado: \"Motorista Privado\" abaixo.",
       ],
       precoBRL: precoTransporte,
       recomendado: transporteRecomendado,
@@ -2089,7 +2197,7 @@ export default function CalculadoraReversaPage() {
       label: "Motorista Privado",
       detalhe: [
         "Motorista particular à disposição do grupo, sem compartilhar veículo.",
-        "Mais privacidade e flexibilidade de horário que o transporte padrão do roteiro.",
+        "Upgrade sobre o item \"Transporte\" — mais privacidade e flexibilidade de horário/roteiro que a van dedicada padrão.",
         `US$ ${DIARIA_MOTORISTA_PRIVADO_USD}/dia para até ${MOTORISTA_TAMANHO_GRUPO} pessoas`,
       ],
       precoBRL: precoMotorista,
@@ -2285,8 +2393,14 @@ export default function CalculadoraReversaPage() {
       chave: "aereo",
       label: aereoManual ? "Aéreo — valor manual" : `Aéreo — ${classeAereoFinal}`,
       detalhe: [
-        `Passagem internacional ida e volta para ${pessoas} ${pessoas === 1 ? "pessoa" : "pessoas"}.`,
-        "Bagagem despachada incluída conforme a franquia da companhia aérea.",
+        `Passagem internacional ida e volta para ${pessoas} ${pessoas === 1 ? "pessoa" : "pessoas"}, saindo de ${ORIGENS_VOO.find((o) => o.key === origemVoo)?.nome ?? "São Paulo / GRU"}.`,
+        bagagem === "cabine"
+          ? "Somente bagagem de mão — sem despacho de mala."
+          : bagagem === "uma"
+            ? "1 mala despachada incluída na franquia padrão da companhia aérea."
+            : bagagem === "duas"
+              ? "2 malas despachadas — confirmar com a companhia aérea se a 2ª mala tem taxa extra."
+              : "2 malas despachadas + item grande/especial — confirmar taxa extra com a companhia aérea.",
       ],
       precoBRL: precoClasseAereo(classeAereoFinal),
     };
@@ -2330,6 +2444,8 @@ export default function CalculadoraReversaPage() {
     quantidadeIenes,
     cambioCotacao,
     moedaExibicao,
+    origemVoo,
+    bagagem,
     hotelManual,
     hotelDiariaManual,
     hotelCategoriaManual,
@@ -2499,6 +2615,11 @@ export default function CalculadoraReversaPage() {
         moedaExibicao,
         cambioCotacao,
         brlPorJPY,
+        nomeCliente: nomeCliente.trim() || undefined,
+        consultor: consultorResponsavel.trim() || undefined,
+        validadeLabel: validadeProposta
+          ? new Date(`${validadeProposta}T00:00:00`).toLocaleDateString("pt-BR")
+          : undefined,
       });
     } catch (erro) {
       console.error("Falha ao gerar PDF da proposta:", erro);
@@ -2536,6 +2657,11 @@ export default function CalculadoraReversaPage() {
         moedaExibicao,
         cambioCotacao,
         brlPorJPY,
+        nomeCliente: nomeCliente.trim() || undefined,
+        consultor: consultorResponsavel.trim() || undefined,
+        validadeLabel: validadeProposta
+          ? new Date(`${validadeProposta}T00:00:00`).toLocaleDateString("pt-BR")
+          : undefined,
       });
     } catch (erro) {
       console.error("Falha ao gerar arquivo de texto da proposta:", erro);
@@ -2545,6 +2671,7 @@ export default function CalculadoraReversaPage() {
 
   const mensagemWhatsapp = [
     `Proposta Ajisai — ${pacoteSugeridoLabel}`,
+    nomeCliente.trim() ? `Para: ${nomeCliente.trim()}` : "",
     "",
     ...itensSelecionados.map((item) => `• ${item.label}: ${formatMoeda(valorItem(item))}`),
     "",
@@ -2804,6 +2931,49 @@ export default function CalculadoraReversaPage() {
             onToggleOculto={() => alternarCampoOculto(3)}
           />
 
+          {/* Pedido do Wilson, 14/set/2026: "adicionar flexibilidade das
+              datas". Sem número próprio — vive junto da seção 2 (dias).
+              Puramente consultivo: não altera gasto/saldo, só mostra uma
+              estimativa de economia no aéreo. */}
+          {!camposOcultos.has(2) && (
+            <div className="sm:col-span-2 -mt-2">
+              <label className="flex flex-col">
+                <span className="mb-1 text-[10px] uppercase tracking-wide text-black/40">
+                  Flexibilidade das datas
+                </span>
+                <div className="flex flex-wrap gap-1.5">
+                  {FLEXIBILIDADE_DATAS.map((f) => (
+                    <button
+                      key={f.key}
+                      type="button"
+                      onClick={() => setFlexibilidadeDatas(f.key)}
+                      className={`rounded-full border px-3 py-1.5 text-xs font-medium transition ${
+                        flexibilidadeDatas === f.key
+                          ? "border-[#2f80c9] bg-[#2f80c9] text-white"
+                          : "border-black/15 bg-white text-black/55 hover:border-black/30"
+                      }`}
+                    >
+                      {f.nome}
+                    </button>
+                  ))}
+                </div>
+                {flexibilidadeDatas !== "fixas" &&
+                  (() => {
+                    const precoAereoAtual = resultado.incluidos.find((i) => i.chave === "aereo")?.precoBRL ?? 0;
+                    const economia = Math.round(precoAereoAtual * ECONOMIA_FLEXIBILIDADE_PCT[flexibilidadeDatas]);
+                    if (economia <= 0) return null;
+                    return (
+                      <span className="mt-1.5 text-[11px] text-black/40">
+                        Com {FLEXIBILIDADE_DATAS.find((f) => f.key === flexibilidadeDatas)?.nome.toLowerCase()}, o
+                        aéreo pode reduzir em até ~{formatMoeda(economia)} — estimativa, sujeita à
+                        disponibilidade real nas datas.
+                      </span>
+                    );
+                  })()}
+              </label>
+            </div>
+          )}
+
           <label className="flex h-full flex-col">
             {!camposOcultos.has(4) && (
               <span className="mb-2 flex min-h-[2.2em] items-end text-[10px] uppercase leading-tight tracking-[0.2em] text-black/50">
@@ -2889,6 +3059,68 @@ export default function CalculadoraReversaPage() {
             onToggleOculto={() => alternarCampoOculto(6)}
           />
 
+          {/* Pedido do Wilson, 14/set/2026: "adicionar Origem do voo [...]
+              provavelmente o campo mais importante que está faltando [...]
+              altera muito o aéreo". Campo simples, sem número próprio
+              (evita renumerar as seções 7-19) — vive junto da seção 6,
+              já que só afeta o preço do aéreo. */}
+          {!camposOcultos.has(6) && (
+            <div className="sm:col-span-2 -mt-2">
+              <label className="flex flex-col">
+                <span className="mb-1 text-[10px] uppercase tracking-wide text-black/40">
+                  Origem do voo
+                </span>
+                <select
+                  value={origemVoo}
+                  onChange={(e) => setOrigemVoo(e.target.value as OrigemVooKey)}
+                  disabled={aereoManual}
+                  className="h-10 w-56 rounded-lg border border-black/15 bg-black/[0.03] px-3 text-sm outline-none focus:border-black/30 disabled:opacity-50"
+                >
+                  {ORIGENS_VOO.map((o) => (
+                    <option key={o.key} value={o.key}>
+                      {o.nome}
+                    </option>
+                  ))}
+                </select>
+                <span className="mt-1 text-[11px] text-black/40">
+                  {aereoManual
+                    ? "Valor manual — origem não se aplica"
+                    : origemVoo === "saoPaulo"
+                      ? "Referência — sem ajuste no aéreo"
+                      : `Ajuste estimado de +${Math.round((ORIGENS_VOO.find((o) => o.key === origemVoo)?.ajustePercentual ?? 0) * 100)}% no aéreo (conexão/trecho doméstico até um hub internacional) — confirmar com tarifa real.`}
+                </span>
+              </label>
+            </div>
+          )}
+
+          {/* Pedido do Wilson, 14/set/2026: "falta um campo importante:
+              bagagem". Mesmo padrão do campo Origem do voo acima — sem
+              número próprio, vive junto da seção 6 (aéreo). */}
+          {!camposOcultos.has(6) && (
+            <div className="sm:col-span-2 -mt-2">
+              <label className="flex flex-col">
+                <span className="mb-1 text-[10px] uppercase tracking-wide text-black/40">Bagagem</span>
+                <select
+                  value={bagagem}
+                  onChange={(e) => setBagagem(e.target.value as BagagemKey)}
+                  className="h-10 w-64 rounded-lg border border-black/15 bg-black/[0.03] px-3 text-sm outline-none focus:border-black/30"
+                >
+                  {BAGAGEM_OPCOES.map((b) => (
+                    <option key={b.key} value={b.key}>
+                      {b.nome}
+                    </option>
+                  ))}
+                </select>
+                {(bagagem === "duas" || bagagem === "grande") && (
+                  <span className="mt-1 text-[11px] text-black/40">
+                    Confirmar com a companhia aérea se a 2ª mala/item grande tem taxa extra. Entre
+                    cidades, considere o item &quot;Transporte de Malas Inter-Municipal&quot; (seção 17).
+                  </span>
+                )}
+              </label>
+            </div>
+          )}
+
           {/* Pedido do Wilson, 14/set/2026: "gerar variavel de hotel com
               refeicao e sem (café da manha)". Toggle de duas opções, no
               mesmo padrão visual do resto da calculadora — adicional por
@@ -2957,6 +3189,31 @@ export default function CalculadoraReversaPage() {
             )}
             {!camposOcultos.has(8) && (
             <>
+            {/* Pedido do Wilson, 14/set/2026: "temporada também deveria
+                ser derivada das datas". Campo opcional — quando
+                preenchido, só pré-seleciona a Temporada abaixo (que
+                continua 100% editável na mão). */}
+            <label className="mb-3 flex max-w-xs flex-col">
+              <span className="mb-1 text-[10px] uppercase tracking-wide text-black/40">
+                Mês estimado da viagem (opcional — sugere a temporada abaixo)
+              </span>
+              <select
+                value={mesEstimado ?? ""}
+                onChange={(e) => {
+                  const v = e.target.value ? Number(e.target.value) : null;
+                  setMesEstimado(v);
+                  if (v) setTemporada(MES_PARA_TEMPORADA[v]);
+                }}
+                className="h-10 w-full rounded-lg border border-black/15 bg-black/[0.03] px-3 text-sm outline-none focus:border-black/30"
+              >
+                <option value="">Ainda não definido</option>
+                {MESES_NOME.map((nome, i) => (
+                  <option key={nome} value={i + 1}>
+                    {nome}
+                  </option>
+                ))}
+              </select>
+            </label>
             <div className="flex flex-wrap gap-2">
               {TEMPORADAS.map((t) => (
                 <button
@@ -3442,49 +3699,68 @@ export default function CalculadoraReversaPage() {
             )}
             {!camposOcultos.has(14) && (
             <>
-            <div className="flex flex-wrap items-end gap-3">
-              <label className="flex flex-col">
-                <span className="mb-1 text-[10px] uppercase tracking-wide text-black/40">Cidade</span>
-                <select
-                  value={cambioIeneCidade}
-                  onChange={(e) => setCambioIeneCidade(e.target.value as CidadeCambioIeneSlug)}
-                  className="h-10 w-40 rounded-lg border border-black/15 bg-black/[0.03] px-3 text-sm outline-none focus:border-black/30"
-                >
-                  {CIDADES_CAMBIO_IENE.map((c) => (
-                    <option key={c.slug} value={c.slug}>
-                      {c.nome}
-                    </option>
-                  ))}
-                </select>
-              </label>
-              <label className="flex flex-col">
-                <span className="mb-1 text-[10px] uppercase tracking-wide text-black/40">
-                  Quantidade de ienes (mín. ¥{CAMBIO_IENES_MINIMO.toLocaleString("pt-BR")})
-                </span>
-                <div className="flex items-center gap-2">
-                  <span className="text-sm text-black/40">¥</span>
-                  <input
-                    type="number"
-                    value={quantidadeIenes}
-                    step={10000}
-                    min={CAMBIO_IENES_MINIMO}
-                    onChange={(e) => {
-                      const v = Number(e.target.value);
-                      if (!Number.isNaN(v)) setQuantidadeIenes(v);
-                    }}
-                    onBlur={() => setQuantidadeIenes((v) => Math.max(CAMBIO_IENES_MINIMO, v))}
-                    className="h-10 w-32 rounded-lg border border-black/15 bg-black/[0.03] px-3 text-sm outline-none focus:border-black/30"
-                  />
-                </div>
-              </label>
-            </div>
-            <span className="mt-1.5 block text-[11px] text-black/40">
-              {!cambioIene
-                ? "Buscando cotação do iene…"
-                : cambioIene.fallback
-                  ? `Cotação estimada: R$ ${cambioIene.cotacaoBRLPorJPY.toFixed(4).replace(".", ",")} por iene — melhorcambio.com indisponível no momento.`
-                  : `Cotação: R$ ${cambioIene.cotacaoBRLPorJPY.toFixed(4).replace(".", ",")} por iene em ${CIDADES_CAMBIO_IENE.find((c) => c.slug === cambioIene.cidade)?.nome} (melhorcambio.com, papel moeda) + spread de 15%.`}
-            </span>
+            {/* Pedido do Wilson, 14/set/2026: "câmbio de ienes deveria ir
+                pra 'Serviços opcionais' [...] não deveria interromper o
+                fluxo principal [...] use progressive disclosure". Fica
+                colapsado por padrão — abre sozinho se o serviço "Câmbio
+                no Brasil" (seção 17) já estiver marcado, ou se o vendedor
+                clicar pra configurar. */}
+            {!(cambioIeneExpandido || servicosAdicionaisSelecionados.has("cambioBrasil")) ? (
+              <button
+                type="button"
+                onClick={() => setCambioIeneExpandido(true)}
+                className="flex items-center gap-2 rounded-lg border border-dashed border-black/20 px-3 py-2 text-xs text-black/45 transition hover:border-black/35 hover:text-black/60"
+              >
+                <span aria-hidden className="text-sm leading-none">+</span>
+                Configurar câmbio de ienes (opcional)
+              </button>
+            ) : (
+              <>
+              <div className="flex flex-wrap items-end gap-3">
+                <label className="flex flex-col">
+                  <span className="mb-1 text-[10px] uppercase tracking-wide text-black/40">Cidade</span>
+                  <select
+                    value={cambioIeneCidade}
+                    onChange={(e) => setCambioIeneCidade(e.target.value as CidadeCambioIeneSlug)}
+                    className="h-10 w-40 rounded-lg border border-black/15 bg-black/[0.03] px-3 text-sm outline-none focus:border-black/30"
+                  >
+                    {CIDADES_CAMBIO_IENE.map((c) => (
+                      <option key={c.slug} value={c.slug}>
+                        {c.nome}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                <label className="flex flex-col">
+                  <span className="mb-1 text-[10px] uppercase tracking-wide text-black/40">
+                    Quantidade de ienes (mín. ¥{CAMBIO_IENES_MINIMO.toLocaleString("pt-BR")})
+                  </span>
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm text-black/40">¥</span>
+                    <input
+                      type="number"
+                      value={quantidadeIenes}
+                      step={10000}
+                      min={CAMBIO_IENES_MINIMO}
+                      onChange={(e) => {
+                        const v = Number(e.target.value);
+                        if (!Number.isNaN(v)) setQuantidadeIenes(v);
+                      }}
+                      onBlur={() => setQuantidadeIenes((v) => Math.max(CAMBIO_IENES_MINIMO, v))}
+                      className="h-10 w-32 rounded-lg border border-black/15 bg-black/[0.03] px-3 text-sm outline-none focus:border-black/30"
+                    />
+                  </div>
+                </label>
+              </div>
+              <span className="mt-1.5 block text-[11px] text-black/40">
+                {!cambioIene
+                  ? "Buscando cotação do iene…"
+                  : cambioIene.fallback
+                    ? `Cotação estimada: R$ ${cambioIene.cotacaoBRLPorJPY.toFixed(4).replace(".", ",")} por iene — melhorcambio.com indisponível no momento.`
+                    : `Cotação: R$ ${cambioIene.cotacaoBRLPorJPY.toFixed(4).replace(".", ",")} por iene em ${CIDADES_CAMBIO_IENE.find((c) => c.slug === cambioIene.cidade)?.nome} (melhorcambio.com, papel moeda) + spread de 15%.`}
+              </span>
+              </>
+            )}
             </>
             )}
           </div>
@@ -4582,6 +4858,87 @@ export default function CalculadoraReversaPage() {
                   editavel" — o checkbox opcional saiu; agora o PDF e o
                   Word nunca mostram "Orçamento de referência"/"Saldo",
                   sempre (ver PacotePdf.tsx e PacoteTexto.ts). */}
+
+              {/* Pedido do Wilson, 14/set/2026: "falta um pequeno bloco
+                  administrativo da proposta [...] Nome do cliente,
+                  Consultor, Validade da proposta, Observações internas e
+                  talvez Margem. O cliente não precisa ver margem; mas
+                  para a operação de vocês isso é fundamental." Nome do
+                  cliente/consultor/validade entram no PDF/Word (comuns
+                  numa proposta comercial); Observações internas e Margem
+                  ficam só nesta tela — nunca são passados pro PDF/Word/
+                  WhatsApp (ver PacotePdfProps: esses 2 campos nem existem
+                  lá). Sem backend próprio ainda — como todo o resto dessa
+                  calculadora, esses campos vivem só nesta sessão do
+                  navegador, não são salvos em banco de dados. */}
+              <div className="mt-6 rounded-xl border border-black/10 bg-black/[0.02] p-4">
+                <p className="mb-3 text-[10px] uppercase tracking-[0.2em] text-black/50">
+                  Dados da proposta (opcional)
+                </p>
+                <div className="grid gap-3 sm:grid-cols-2">
+                  <label className="flex flex-col">
+                    <span className="mb-1 text-[10px] uppercase tracking-wide text-black/40">
+                      Nome do cliente
+                    </span>
+                    <input
+                      type="text"
+                      value={nomeCliente}
+                      onChange={(e) => setNomeCliente(e.target.value)}
+                      placeholder="ex.: Família Almeida"
+                      className="h-10 w-full rounded-lg border border-black/15 bg-white px-3 text-sm outline-none focus:border-black/30"
+                    />
+                  </label>
+                  <label className="flex flex-col">
+                    <span className="mb-1 text-[10px] uppercase tracking-wide text-black/40">
+                      Consultor responsável
+                    </span>
+                    <input
+                      type="text"
+                      value={consultorResponsavel}
+                      onChange={(e) => setConsultorResponsavel(e.target.value)}
+                      placeholder="ex.: Wilson"
+                      className="h-10 w-full rounded-lg border border-black/15 bg-white px-3 text-sm outline-none focus:border-black/30"
+                    />
+                  </label>
+                  <label className="flex flex-col">
+                    <span className="mb-1 text-[10px] uppercase tracking-wide text-black/40">
+                      Validade da proposta
+                    </span>
+                    <input
+                      type="date"
+                      value={validadeProposta}
+                      onChange={(e) => setValidadeProposta(e.target.value)}
+                      className="h-10 w-full rounded-lg border border-black/15 bg-white px-3 text-sm outline-none focus:border-black/30"
+                    />
+                  </label>
+                  <label className="flex flex-col">
+                    <span className="mb-1 text-[10px] uppercase tracking-wide text-black/40">
+                      Margem/observação de negociação{" "}
+                      <span className="normal-case tracking-normal text-black/30">— interno, não aparece no PDF/Word</span>
+                    </span>
+                    <input
+                      type="text"
+                      value={margemNota}
+                      onChange={(e) => setMargemNota(e.target.value)}
+                      placeholder="ex.: margem reduzida 5% pra fechar"
+                      className="h-10 w-full rounded-lg border border-amber-300 bg-amber-50/40 px-3 text-sm outline-none focus:border-amber-400"
+                    />
+                  </label>
+                  <label className="flex flex-col sm:col-span-2">
+                    <span className="mb-1 text-[10px] uppercase tracking-wide text-black/40">
+                      Observações internas{" "}
+                      <span className="normal-case tracking-normal text-black/30">— interno, não aparece no PDF/Word</span>
+                    </span>
+                    <textarea
+                      value={observacoesInternas}
+                      onChange={(e) => setObservacoesInternas(e.target.value)}
+                      rows={2}
+                      placeholder="ex.: cliente sensível a preço, já negociou 2x antes"
+                      className="w-full resize-none rounded-lg border border-amber-300 bg-amber-50/40 px-3 py-2 text-sm outline-none focus:border-amber-400"
+                    />
+                  </label>
+                </div>
+              </div>
 
               <div className="mt-5 flex flex-col gap-3">
                 <button
