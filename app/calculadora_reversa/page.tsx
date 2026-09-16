@@ -2917,9 +2917,9 @@ export default function CalculadoraReversaPage() {
       <div className="mx-auto max-w-4xl">
         <div className="flex items-center justify-between gap-4">
           <img
-            src="/images/ajisai-group-logo-crop.png"
+            src="/images/AJISAI-LOGO.avif"
             alt="Ajisai · Alpinea"
-            className="h-12 w-auto object-contain md:h-16"
+            className="h-12 w-auto object-contain invert md:h-16"
           />
           <Link
             href="/produtos"

@@ -1249,8 +1249,14 @@ function ProductSelectorCard({
               // /servicos-adicionais — arte já escura, feita pra fundo
               // claro, então não precisa do invert/brightness-0 usado nos
               // ícones antigos de /images/produtos (esses sim, arte clara
-              // pensada pra fundo escuro).
-              title === "JR Pass" || title === "Câmbio" || title === "Seguro Viagem"
+              // pensada pra fundo escuro). Ajisai Shopping (ícone enviado
+              // pelo Wilson, 16/set/2026) é a mesma convenção — arte escura
+              // — e entrou aqui pelo mesmo motivo, corrigindo um bug onde
+              // o ícone ficava invisível (invert numa arte já escura).
+              title === "JR Pass" ||
+              title === "Câmbio" ||
+              title === "Seguro Viagem" ||
+              title === "Ajisai Shopping"
               ? "right-6 top-5 h-14 w-14 opacity-80 md:right-8 md:top-7"
               : `right-6 top-5 h-14 w-14 md:right-8 md:top-7 ${
                   title === "Serviços adicionais" ? "brightness-0" : "opacity-90 invert"
