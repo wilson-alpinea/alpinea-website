@@ -2728,14 +2728,24 @@ export default function CalculadoraReversaPage() {
             lado do mestre, abre um painel listando cada campo oculto com
             um botão pra restaurar só aquele um (sem precisar mostrar
             todos de novo). */}
-        <div className="mt-8 flex flex-wrap items-start gap-3">
+        <div className="mt-8 flex flex-col gap-3">
+          {/* Pedido do Wilson, 16/set/2026: "ajustar esses cards para ter o
+              mesmo tamanho e que tenha o mesmo tamanho horizontal com o
+              restante da página" — antes os 2 cards ficavam num flex-wrap
+              sem largura definida (cada um do tamanho do próprio
+              conteúdo, sobrando espaço vazio à direita). Agora um grid de
+              2 colunas iguais, mesma largura total da caixa "ENTRADAS"
+              logo abaixo — e como grid estica as células pra mesma altura
+              por padrão, os 2 cards ficam com o mesmo tamanho
+              automaticamente. */}
+          <div className="grid gap-3 sm:grid-cols-2">
           {/* Pedido do Wilson, 14/set/2026: "criar botões para transformar
               tudo em BRL, USD ou IENE" — controla a moeda de exibição de
               todos os valores da calculadora (tela, PDF, Word, WhatsApp).
               Os campos que o vendedor digita (orçamento, ajustes manuais)
               continuam sempre em reais. Mesmo padrão visual do botão
               "Ocultar Todos os Campos" ao lado. */}
-          <div className="flex items-center gap-4 self-start rounded-2xl border border-black/15 bg-black/[0.02] px-5 py-3">
+          <div className="flex h-full items-center gap-4 rounded-2xl border border-black/15 bg-black/[0.02] px-5 py-3">
             <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full border border-[#2f80c9]/25 bg-[#2f80c9]/10 text-lg font-bold text-[#2f80c9]">
               {moedaExibicao === "BRL" ? "R$" : moedaExibicao === "USD" ? "US$" : "¥"}
             </span>
@@ -2770,7 +2780,7 @@ export default function CalculadoraReversaPage() {
           <button
             type="button"
             onClick={alternarTodosCamposOcultos}
-            className={`flex items-center gap-4 self-start rounded-2xl border px-5 py-3 text-left transition ${
+            className={`flex h-full items-center gap-4 rounded-2xl border px-5 py-3 text-left transition ${
               todosCamposOcultos
                 ? "border-[#2f80c9]/40 bg-[#2f80c9]/10"
                 : "border-black/15 bg-black/[0.02] hover:border-black/30"
@@ -2800,6 +2810,7 @@ export default function CalculadoraReversaPage() {
               </span>
             </span>
           </button>
+          </div>
 
           {camposOcultos.size > 0 && (
             <div className="relative self-start">
