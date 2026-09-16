@@ -2749,10 +2749,17 @@ export default function CalculadoraReversaPage() {
             <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full border border-[#2f80c9]/25 bg-[#2f80c9]/10 text-lg font-bold text-[#2f80c9]">
               {moedaExibicao === "BRL" ? "R$" : moedaExibicao === "USD" ? "US$" : "¥"}
             </span>
-            <span>
+            <span className="flex-1">
               <span className="block text-sm font-semibold uppercase tracking-[0.1em] text-[#0A2540]">
                 Moeda de exibição
               </span>
+              {/* Pedido do Wilson, 16/set/2026: "os botões de moeda devem
+                  ocupar todo o espaço do card, distribuir melhor" — antes
+                  os 3 botões só tinham o tamanho do próprio texto e
+                  sobrava bastante espaço vazio à direita, principalmente
+                  agora que o card ficou mais largo (mesma largura do
+                  resto da página). flex-1 em cada botão faz os 3
+                  dividirem igualmente a largura disponível. */}
               <span className="mt-1.5 flex gap-1.5">
                 {(
                   [
@@ -2765,7 +2772,7 @@ export default function CalculadoraReversaPage() {
                     key={m.key}
                     type="button"
                     onClick={() => setMoedaExibicao(m.key)}
-                    className={`rounded-full border px-2.5 py-1 text-[11px] font-semibold transition ${
+                    className={`flex-1 rounded-full border px-2.5 py-1.5 text-center text-[11px] font-semibold transition ${
                       moedaExibicao === m.key
                         ? "border-[#2f80c9] bg-[#2f80c9] text-white"
                         : "border-black/15 bg-white text-black/55 hover:border-black/30"
@@ -2813,11 +2820,11 @@ export default function CalculadoraReversaPage() {
           </div>
 
           {camposOcultos.size > 0 && (
-            <div className="relative self-start">
+            <div className="relative">
               <button
                 type="button"
                 onClick={() => setPainelCamposOcultosAberto((v) => !v)}
-                className={`flex h-14 items-center gap-2 self-start rounded-2xl border px-4 text-left transition ${
+                className={`flex h-14 w-full items-center gap-2 rounded-2xl border px-4 text-left transition ${
                   painelCamposOcultosAberto
                     ? "border-amber-400 bg-amber-50"
                     : "border-amber-300 bg-amber-50/60 hover:border-amber-400"
@@ -2837,7 +2844,7 @@ export default function CalculadoraReversaPage() {
                   aria-hidden
                   viewBox="0 0 20 20"
                   fill="none"
-                  className={`ml-1 h-3.5 w-3.5 shrink-0 text-amber-700/60 transition-transform ${
+                  className={`ml-auto h-3.5 w-3.5 shrink-0 text-amber-700/60 transition-transform ${
                     painelCamposOcultosAberto ? "rotate-180" : ""
                   }`}
                 >
