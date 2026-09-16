@@ -40,10 +40,9 @@ export const SERVICOS_AVULSOS: {
     nome: "eSIM",
     icone: "/images/icone-esim.svg",
     // Mesmo custo-base do item "Wi-fi" do calculador do Personalizado
-    // (DIARIA_WIFI_USD_PAX, em CustomPackageCard.tsx — ≈ JPY 1000/dia/pax),
-    // já que lá o eSIM 5G é oferecido como alternativa de mesmo custo ao
-    // Pocket Wi-Fi.
-    descricao: "Conexão de dados 5G direto no celular, sem retirar nem devolver aparelho — alternativa ao Pocket Wi-Fi.",
+    // (DIARIA_WIFI_USD_PAX, em CustomPackageCard.tsx — ≈ JPY 1000/dia/pax).
+    // Pocket Wi-Fi foi removido do catálogo — pedido do Wilson, 16/set/2026.
+    descricao: "Conexão de dados 5G direto no celular, sem precisar retirar nem devolver aparelho.",
     precoBRL: 0,
     precoUSD: 7,
     porDia: true,

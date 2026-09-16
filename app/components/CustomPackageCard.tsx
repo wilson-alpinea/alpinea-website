@@ -795,6 +795,12 @@ export const DIARIA_TRANSPORTE = comMargemEImposto(1000);
 // imposto+margem.
 export const DIARIA_GUIA_USD = comMargemEImposto(350);
 export const GUIA_TAMANHO_GRUPO = 4;
+// Guia estrangeiro (português limitado ou inglês) — opção mais barata que o
+// guia brasileiro acima, pedido do Wilson, 16/set/2026: "deixar duas opções
+// de guia, guia brasileiro e guia estrangeiro". Valor final já escolhido
+// por ele (não é custo puro — ao contrário de DIARIA_GUIA_USD, não passa
+// por comMargemEImposto).
+export const DIARIA_GUIA_ESTRANGEIRO_USD = 350;
 // Japan Rail Pass — vendido em faixas fixas de dias CORRIDOS (7, 14 ou 21),
 // não por diária do roteiro; preço não escala com ctx.dias. Custo do
 // fornecedor (AjisaiWork Japan Tour Operator, tabela "01 a 15 de Setembro
@@ -832,21 +838,15 @@ export const PRECO_CAMBIO_BRASIL = comMargemEImposto(150);
 // passados valores explícitos por você para esses dois itens. Também
 // nativos em dólar.
 export const DIARIA_WIFI_USD_PAX = comMargemEImposto(7); // ≈ JPY 1000/dia/pax (custo)
-// eSIM e Pocket Wi-Fi — usados só na Calculadora Reversa, que deixa o
-// vendedor escolher o tipo de conexão (DIARIA_WIFI_USD_PAX acima continua
-// servindo o calculador do Personalizado, sem essa escolha). Custo do
-// eSIM: baseado nos planos "unlimited" (7-15 dias) da Airalo e Holafly pro
+// eSIM — usado só na Calculadora Reversa (DIARIA_WIFI_USD_PAX acima
+// continua servindo o calculador do Personalizado). Custo do eSIM:
+// baseado nos planos "unlimited" (7-15 dias) da Airalo e Holafly pro
 // Japão, ~US$ 3,20-3,93/dia/pessoa dependendo da duração — pesquisa
 // set/2026 (travelsimasia.com/blogs/japan-guides/japan-esim-prices-2026).
-// Custo do Pocket Wi-Fi: faixa 4G/5G "standard/premium unlimited" de
-// mercado (Ninja Wifi, Japan Wireless e similares), ~US$ 5-8/dia por
-// aparelho — pesquisa set/2026
-// (japan-wireless.com/column/pocket-wifi-cost-in-japan-pricing-guide).
-// Pocket Wi-Fi é compartilhado: 1 aparelho cobre confortavelmente até
-// WIFI_TAMANHO_GRUPO pessoas, mesma lógica de grupo do guia/motorista.
+// Pocket Wi-Fi foi removido do catálogo — pedido do Wilson, 16/set/2026:
+// "não vamos mais trabalhar com pocket wifi, pode remover da
+// calculadora, pagina de produtos e roteiros".
 export const DIARIA_ESIM_USD_PAX = comMargemEImposto(4);
-export const DIARIA_POCKET_WIFI_USD = comMargemEImposto(7);
-export const WIFI_TAMANHO_GRUPO = 4;
 export const PRECO_INGRESSO_DISNEY_UNIVERSAL_USD_PAX = comMargemEImposto(83); // ≈ JPY 12000/pax (custo, ingresso avulso) — usado só no calculador do Personalizado
 // Catálogo detalhado de ingressos da Calculadora Reversa — pesquisa
 // set/2026, custo puro em USD (convertido de JPY na cotação de referência
@@ -1239,8 +1239,8 @@ const OPCOES = [
     icone: "📶",
     iconeImg: "/images/icone-esim.svg",
     descricao: "Conexão disponível durante todo o roteiro",
-    detalhe:
-      "Pocket Wi-Fi ou eSIM 5G com conexão de dados disponível durante todo o roteiro, para todo o grupo.",
+    // Pocket Wi-Fi removido do texto — pedido do Wilson, 16/set/2026.
+    detalhe: "eSIM 5G com conexão de dados disponível pra cada viajante durante todo o roteiro.",
     calcPreco: (ctx: PrecoCtx) =>
       Math.round(DIARIA_WIFI_USD_PAX * ctx.dias * ctx.pessoas * ctx.cambioCotacao),
   },

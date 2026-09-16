@@ -147,8 +147,9 @@ const EXPLICACOES_ITEM: Record<CategoriaItem, { texto: string; videoUrl: string 
     videoUrl: null,
   },
   wifi: {
+    // Pocket Wi-Fi removido — pedido do Wilson, 16/set/2026.
     texto:
-      "Conexão de internet móvel durante toda a viagem — eSIM direto no celular de cada viajante (sem aparelho extra) ou Pocket Wi-Fi, um aparelho físico compartilhado entre o grupo, conforme a opção contratada.",
+      "Conexão de internet móvel durante toda a viagem — eSIM direto no celular de cada viajante, sem aparelho extra pra carregar ou devolver.",
     videoUrl: null,
   },
   motorista: {

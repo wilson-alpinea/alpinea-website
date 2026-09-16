@@ -28,14 +28,13 @@ import {
   PRECO_AEREO_FIRST_USD,
   DIARIA_TRANSPORTE,
   DIARIA_GUIA_USD,
+  DIARIA_GUIA_ESTRANGEIRO_USD,
   GUIA_TAMANHO_GRUPO,
   DIARIA_SEGURO_VIAGEM,
   JR_PASS_DIAS_OPCOES,
   JR_PASS_PRECO_USD,
   JR_PASS_PRECO_USD_GREEN,
   DIARIA_ESIM_USD_PAX,
-  DIARIA_POCKET_WIFI_USD,
-  WIFI_TAMANHO_GRUPO,
   PRECO_CAMBIO_BRASIL,
   DIARIA_MOTORISTA_PRIVADO_USD,
   MOTORISTA_TAMANHO_GRUPO,
@@ -118,7 +117,7 @@ type ServicoAdicionalKey =
 // Seguro Viagem e JR Pass continuam de fora deste catálogo: Seguro é
 // obrigatório em todo pacote (pedido do Wilson, 08/set/2026 — ver
 // comentário em "Seguro Viagem é item fixo/obrigatório" mais abaixo) e JR
-// Pass já tem seção própria (11). eSIM/Pocket Wi-Fi têm a seção 14.
+// Pass já tem seção própria (11). eSIM tem a seção 15.
 //
 // Cada item tem sua própria fórmula de preço (calculada onde é usado, não
 // aqui no catálogo — os formatos são diferentes demais pra generalizar):
@@ -593,6 +592,30 @@ const ECONOMIA_FLEXIBILIDADE_PCT: Record<FlexibilidadeDatasKey, number> = {
   sete: 0.15,
   flexivel: 0.22,
 };
+
+// Seguro Viagem por faixa etária — pedido do Wilson, 16/set/2026: "seguro
+// viagem limitado até 82 anos, até 60 anos usamos o valor atual, 60-65 é
+// o dobro, 66 a 70 é 2,5, 70 a 75 é o triplo, 75 a 80 é quatro vezes, 81 a
+// 84 é vezes cinco". Faixas tratadas sem sobreposição (o limite de cada
+// faixa abaixo é o teto real da faixa, o multiplicador seguinte já vale a
+// partir do ano seguinte) e limitadas a 82 anos — o "84" citado por ele no
+// fim do pedido parece inconsistente com o limite de 82 que ele mesmo
+// definiu; usando 82 como teto real. Ajustar com o Wilson se o critério de
+// faixa for outro. Acima do limite, o seguro não é precificado aqui — fica
+// sob consulta direta com a seguradora.
+const IDADE_LIMITE_SEGURO = 82;
+const FAIXAS_SEGURO_IDADE: { idadeMax: number; multiplicador: number }[] = [
+  { idadeMax: 60, multiplicador: 1 },
+  { idadeMax: 65, multiplicador: 2 },
+  { idadeMax: 70, multiplicador: 2.5 },
+  { idadeMax: 75, multiplicador: 3 },
+  { idadeMax: 80, multiplicador: 4 },
+  { idadeMax: IDADE_LIMITE_SEGURO, multiplicador: 5 },
+];
+function multiplicadorSeguroPorIdade(idade: number): number | null {
+  if (idade > IDADE_LIMITE_SEGURO) return null;
+  return FAIXAS_SEGURO_IDADE.find((f) => idade <= f.idadeMax)?.multiplicador ?? null;
+}
 
 // Mês estimado → sugestão de Temporada — pedido do Wilson, 14/set/2026:
 // "temporada também deveria ser derivada das datas [...] quanto menos o
@@ -1575,22 +1598,18 @@ export default function CalculadoraReversaPage() {
   // quem já tem passe não entram na conta).
   const [jrPassPessoas, setJrPassPessoas] = useState(pessoas);
   const [guiaDias, setGuiaDias] = useState(dias);
+  // Tipo de guia — pedido do Wilson, 16/set/2026: "deixar duas opções de
+  // guia, guia brasileiro e guia estrangeiro (Português limitado ou
+  // Inglês)".
+  const [guiaTipo, setGuiaTipo] = useState<"brasileiro" | "estrangeiro">("brasileiro");
 
-  // Wi-fi - eSIM (por pessoa) ou Pocket Wi-Fi (aparelho compartilhado,
-  // cobre varias pessoas). Ambos escalam com a quantidade de dias.
-  const [wifiTipo, setWifiTipo] = useState<"esim" | "pocket">("esim");
-  // Para eSIM: quantas pessoas usam eSIM próprio. Para Pocket Wi-Fi:
-  // quantos aparelhos estão sendo cobrados. Começa no valor padrão
-  // (pessoas / aparelhos calculados a partir de WIFI_TAMANHO_GRUPO) mas é
+  // Wi-fi - eSIM (por pessoa), escala com a quantidade de dias. Pocket
+  // Wi-Fi foi removido — pedido do Wilson, 16/set/2026: "não vamos mais
+  // trabalhar com pocket wifi, pode remover da calculadora, pagina de
+  // produtos e roteiros".
+  // Quantas pessoas usam eSIM próprio. Começa em `pessoas`, mas é
   // editável — o vendedor pode ajustar se nem todo mundo precisa.
   const [wifiPessoasOuUnidades, setWifiPessoasOuUnidades] = useState(pessoas);
-
-  function alternarWifiTipo(tipo: "esim" | "pocket") {
-    setWifiTipo(tipo);
-    setWifiPessoasOuUnidades(
-      tipo === "esim" ? pessoas : Math.max(1, Math.ceil(pessoas / WIFI_TAMANHO_GRUPO)),
-    );
-  }
 
   // Ingressos e experiências - o vendedor marca quais parques/experiências
   // o cliente quer (nenhum vem pré-selecionado); cada um marcado entra como
@@ -1925,12 +1944,25 @@ export default function CalculadoraReversaPage() {
     // Seguro Viagem é item fixo/obrigatório no pacote — igual Roteiro,
     // Aéreo e Hotel — pedido do Wilson, 08/set/2026: "no pacote final,
     // seguro viagem deve ser obrigatorio igual roteiro personalizado".
-    // Preço por faixa etária (idadesPassageiros, principalmente 60+) ainda
-    // NÃO está aplicado aqui — pedido do Wilson, 10/set/2026, mas decidiu
-    // (11/set/2026) subir só a interface de captura de idade por
-    // passageiro por ora e manter esse valor fixo até ele passar a
-    // tabela real de multiplicadores da seguradora.
-    const precoSeguro = DIARIA_SEGURO_VIAGEM * dias * pessoas;
+    // Preço por faixa etária (idadesPassageiros) — pedido do Wilson,
+    // 10/set/2026, tabela real de multiplicadores recebida em 16/set/2026
+    // (ver FAIXAS_SEGURO_IDADE acima). Cada passageiro paga
+    // DIARIA_SEGURO_VIAGEM × seu multiplicador de idade; passageiros acima
+    // do limite (82 anos) não entram na soma — ver avisoSeguroIdade abaixo.
+    const idadesConsideradas = Array.from({ length: pessoas }, (_, i) => idadesPassageiros[i] ?? 35);
+    const passageirosForaDeCobertura = idadesConsideradas.filter(
+      (idade) => idade > IDADE_LIMITE_SEGURO,
+    ).length;
+    const precoSeguro = Math.round(
+      idadesConsideradas.reduce(
+        (soma, idade) => soma + DIARIA_SEGURO_VIAGEM * dias * (multiplicadorSeguroPorIdade(idade) ?? 0),
+        0,
+      ),
+    );
+    const avisoSeguroIdade =
+      passageirosForaDeCobertura > 0
+        ? `${passageirosForaDeCobertura} ${passageirosForaDeCobertura === 1 ? "passageiro está" : "passageiros estão"} acima do limite de ${IDADE_LIMITE_SEGURO} anos do seguro viagem — não incluído no preço, cotar sob consulta direta com a seguradora.`
+        : null;
 
     const incluidos: ItemPacote[] = [
       {
@@ -1969,6 +2001,11 @@ export default function CalculadoraReversaPage() {
           "Cobertura médico-hospitalar (US$ 20 mil).",
           "Bagagem extraviada, cancelamento de viagem e assistência 24h em português.",
           `${dias} dias · ${pessoas} ${pessoas === 1 ? "pessoa" : "pessoas"}`,
+          // Pedido do Wilson, 16/set/2026: preço agora escala por faixa
+          // etária de cada passageiro (ver FAIXAS_SEGURO_IDADE).
+          idadesConsideradas.some((idade) => (multiplicadorSeguroPorIdade(idade) ?? 1) > 1)
+            ? "Preço já ajustado pela idade de cada passageiro (faixas 60+ pagam mais)."
+            : "Valor padrão — nenhum passageiro em faixa etária com ajuste (60+).",
         ],
         precoBRL: precoSeguro,
       },
@@ -2040,6 +2077,16 @@ export default function CalculadoraReversaPage() {
       temporada !== "baixa" &&
       CATEGORIAS_HOTEL.indexOf(categoriaHotelFinal) < CATEGORIAS_HOTEL.indexOf(categoriaHotelForaDeTemporada)
         ? `Categoria de hotel ajustada de ${categoriaHotelForaDeTemporada} para ${categoriaHotelFinal} para caber no orçamento nesta temporada.`
+        : null;
+
+    // Alerta de origem do voo fora de São Paulo/GRU — pedido do Wilson,
+    // 16/set/2026: "inserir alerta de origem fora de São Paulo quando
+    // ocorrer". Mesmo padrão visual do aviso de categoria de hotel acima.
+    const avisoOrigemVoo =
+      !aereoManual && ajusteOrigemVooBRL > 0
+        ? `Origem do voo: ${ORIGENS_VOO.find((o) => o.key === origemVoo)?.nome ?? origemVoo} — aéreo já inclui +${formatBRL(
+            Math.round(ajusteOrigemVooBRL / pessoas),
+          )}/pessoa (+${formatBRL(ajusteOrigemVooBRL)} no total) por não sair de São Paulo/GRU.`
         : null;
 
     // 1.5) Extensões internacionais (Coréia do Sul / China) — dias somam
@@ -2129,19 +2176,22 @@ export default function CalculadoraReversaPage() {
       recomendado: transporteRecomendado,
     });
 
+    const diariaGuiaUSD = guiaTipo === "brasileiro" ? DIARIA_GUIA_USD : DIARIA_GUIA_ESTRANGEIRO_USD;
     const precoGuia = Math.round(
-      DIARIA_GUIA_USD * guiaDias * Math.max(1, Math.ceil(pessoas / GUIA_TAMANHO_GRUPO)) * cambioCotacao,
+      diariaGuiaUSD * guiaDias * Math.max(1, Math.ceil(pessoas / GUIA_TAMANHO_GRUPO)) * cambioCotacao,
     );
     if (guiaDias > 0) {
       const guiaRecomendado = cabe(precoGuia);
       if (guiaRecomendado) gasto += precoGuia;
       incluidos.push({
         chave: "guia",
-        label: "Guia Turístico",
+        label: guiaTipo === "brasileiro" ? "Guia Turístico — Brasileiro" : "Guia Turístico — Estrangeiro",
         detalhe: [
-          "Guia particular fluente em português acompanhando o roteiro.",
+          guiaTipo === "brasileiro"
+            ? "Guia particular brasileiro, fluente em português, acompanhando o roteiro."
+            : "Guia particular estrangeiro (português limitado ou inglês) acompanhando o roteiro.",
           "Ajuda com trajetos, horários e filas.",
-          `US$ ${DIARIA_GUIA_USD}/dia a cada ${GUIA_TAMANHO_GRUPO} pessoas`,
+          `US$ ${diariaGuiaUSD}/dia a cada ${GUIA_TAMANHO_GRUPO} pessoas`,
           `${guiaDias} de ${dias} dia${dias === 1 ? "" : "s"} da viagem`,
         ],
         precoBRL: precoGuia,
@@ -2171,31 +2221,20 @@ export default function CalculadoraReversaPage() {
       });
     }
 
-    // 4) Wi-fi — eSIM (por pessoa) ou Pocket Wi-Fi (aparelho compartilhado).
-    // wifiPessoasOuUnidades é editável: pessoas cobertas (eSIM) ou
-    // quantidade de aparelhos (Pocket Wi-Fi).
-    const precoWifi =
-      wifiTipo === "esim"
-        ? Math.round(DIARIA_ESIM_USD_PAX * dias * wifiPessoasOuUnidades * cambioCotacao)
-        : Math.round(DIARIA_POCKET_WIFI_USD * dias * Math.max(0, wifiPessoasOuUnidades) * cambioCotacao);
+    // 4) Wi-fi — eSIM (por pessoa). Pocket Wi-Fi foi removido, pedido do
+    // Wilson, 16/set/2026.
+    const precoWifi = Math.round(DIARIA_ESIM_USD_PAX * dias * wifiPessoasOuUnidades * cambioCotacao);
     if (wifiPessoasOuUnidades > 0) {
       const wifiRecomendado = cabe(precoWifi);
       if (wifiRecomendado) gasto += precoWifi;
       incluidos.push({
         chave: "wifi",
-        label: wifiTipo === "esim" ? "eSIM" : "Pocket Wi-Fi",
-        detalhe:
-          wifiTipo === "esim"
-            ? [
-                "eSIM com conexão 5G direto no celular de cada viajante.",
-                "Sem aparelho extra pra carregar.",
-                `${wifiPessoasOuUnidades} de ${pessoas} viajante${pessoas === 1 ? "" : "s"} · ${dias} dias`,
-              ]
-            : [
-                "Pocket Wi-Fi — aparelho físico compartilhado entre o grupo.",
-                `${wifiPessoasOuUnidades} aparelho${wifiPessoasOuUnidades === 1 ? "" : "s"} (até ${WIFI_TAMANHO_GRUPO} pessoas por unidade).`,
-                `${dias} dias`,
-              ],
+        label: "eSIM",
+        detalhe: [
+          "eSIM com conexão 5G direto no celular de cada viajante.",
+          "Sem aparelho extra pra carregar.",
+          `${wifiPessoasOuUnidades} de ${pessoas} viajante${pessoas === 1 ? "" : "s"} · ${dias} dias`,
+        ],
         precoBRL: precoWifi,
         recomendado: wifiRecomendado,
       });
@@ -2456,6 +2495,8 @@ export default function CalculadoraReversaPage() {
       categoriaHotelFinal,
       classeAereoFinal,
       avisoCategoriaTemporada,
+      avisoOrigemVoo,
+      avisoSeguroIdade,
       cabeNoOrcamento: orcamento >= precoMinimo,
       precoMinimo,
       precosExtensaoPorCategoria,
@@ -2464,6 +2505,7 @@ export default function CalculadoraReversaPage() {
     orcamento,
     dias,
     pessoas,
+    idadesPassageiros,
     tipoQuarto,
     multiplicadorCidade,
     multiplicadorTemporada,
@@ -2472,6 +2514,7 @@ export default function CalculadoraReversaPage() {
     extensoesSelecionadas,
     extensaoCategoriaHotel,
     guiaDias,
+    guiaTipo,
     cambioIene,
     cambioIeneCidade,
     quantidadeIenes,
@@ -2490,7 +2533,6 @@ export default function CalculadoraReversaPage() {
     jrPassDias,
     jrPassClasse,
     jrPassPessoas,
-    wifiTipo,
     wifiPessoasOuUnidades,
     ingressosSelecionados,
     premierAccessAtracoes,
@@ -3749,7 +3791,32 @@ export default function CalculadoraReversaPage() {
             )}
             {!camposOcultos.has(13) && (
             <>
-            <div className="flex flex-wrap items-end gap-2">
+            {/* Pedido do Wilson, 16/set/2026: "deixar duas opções de guia,
+                guia brasileiro e guia estrangeiro (Português limitado ou
+                Inglês)". Mesmo padrão de pílulas usado no tipo de
+                internet (seção 15). */}
+            <div className="flex flex-wrap gap-2">
+              {(["brasileiro", "estrangeiro"] as const).map((t) => (
+                <button
+                  key={t}
+                  type="button"
+                  onClick={() => setGuiaTipo(t)}
+                  className={`h-10 rounded-lg border px-4 text-sm transition ${
+                    guiaTipo === t
+                      ? "border-[#2f80c9] bg-[#2f80c9]/10 font-medium text-[#2f80c9]"
+                      : "border-black/15 bg-black/[0.03] text-black/60 hover:border-black/30"
+                  }`}
+                >
+                  {t === "brasileiro" ? "Guia brasileiro" : "Guia estrangeiro"}
+                </button>
+              ))}
+            </div>
+            <span className="mt-1.5 block text-[11px] text-black/40">
+              {guiaTipo === "brasileiro"
+                ? "Fluente em português."
+                : "Português limitado ou inglês."}
+            </span>
+            <div className="mt-3 flex flex-wrap items-end gap-2">
               <div className="max-w-xs flex-1">
                 <NumberStepper
                   label="Quantos dias o cliente quer guia"
@@ -3778,7 +3845,8 @@ export default function CalculadoraReversaPage() {
               </button>
             </div>
             <span className="mt-1.5 block text-[11px] text-black/40">
-              US$ {DIARIA_GUIA_USD}/dia a cada {GUIA_TAMANHO_GRUPO} pessoas
+              US$ {guiaTipo === "brasileiro" ? DIARIA_GUIA_USD : DIARIA_GUIA_ESTRANGEIRO_USD}/dia a cada{" "}
+              {GUIA_TAMANHO_GRUPO} pessoas
             </span>
             </>
             )}
@@ -3868,39 +3936,19 @@ export default function CalculadoraReversaPage() {
             )}
             {!camposOcultos.has(15) && (
             <>
-            <div className="flex flex-wrap gap-2">
-              {(["esim", "pocket"] as const).map((t) => (
-                <button
-                  key={t}
-                  type="button"
-                  onClick={() => alternarWifiTipo(t)}
-                  className={`h-10 rounded-lg border px-4 text-sm transition ${
-                    wifiTipo === t
-                      ? "border-[#2f80c9] bg-[#2f80c9]/10 font-medium text-[#2f80c9]"
-                      : "border-black/15 bg-black/[0.03] text-black/60 hover:border-black/30"
-                  }`}
-                >
-                  {t === "esim" ? "eSIM (por pessoa)" : "Pocket Wi-Fi (compartilhado)"}
-                </button>
-              ))}
-            </div>
+            {/* Pocket Wi-Fi removido — pedido do Wilson, 16/set/2026: "não
+                vamos mais trabalhar com pocket wifi". Só eSIM agora. */}
             <span className="mt-1.5 block text-[11px] text-black/40">
-              {wifiTipo === "esim"
-                ? "Um eSIM por pessoa — tipo Airalo/Holafly, plano ilimitado"
-                : `Aparelho compartilhado — até ${WIFI_TAMANHO_GRUPO} pessoas por unidade`}
+              Um eSIM por pessoa — tipo Airalo/Holafly, plano ilimitado
             </span>
             <div className="mt-2 max-w-xs">
               <NumberStepper
-                label={wifiTipo === "esim" ? "Quantas pessoas usam eSIM" : "Quantos aparelhos Pocket Wi-Fi"}
+                label="Quantas pessoas usam eSIM"
                 value={wifiPessoasOuUnidades}
                 onChange={setWifiPessoasOuUnidades}
                 min={0}
-                max={wifiTipo === "esim" ? pessoas : Math.max(1, pessoas)}
-                formatValue={(v) =>
-                  wifiTipo === "esim"
-                    ? `${v} de ${pessoas} viajante${pessoas === 1 ? "" : "s"}`
-                    : `${v} aparelho${v === 1 ? "" : "s"}`
-                }
+                max={pessoas}
+                formatValue={(v) => `${v} de ${pessoas} viajante${pessoas === 1 ? "" : "s"}`}
               />
             </div>
             </>
@@ -4395,12 +4443,26 @@ export default function CalculadoraReversaPage() {
                         className="mt-2 h-1.5 w-full accent-[#2f80c9]"
                         aria-label={`Idade do passageiro ${i + 1}`}
                       />
+                      {/* Pedido do Wilson, 16/set/2026: tabela real de
+                          multiplicadores por faixa etária do seguro viagem. */}
+                      <span
+                        className={`mt-1.5 block text-[10px] font-medium ${
+                          multiplicadorSeguroPorIdade(idade) === null ? "text-red-600" : "text-black/40"
+                        }`}
+                      >
+                        {multiplicadorSeguroPorIdade(idade) === null
+                          ? `Acima de ${IDADE_LIMITE_SEGURO} anos — sob consulta`
+                          : multiplicadorSeguroPorIdade(idade) === 1
+                            ? "Seguro — valor padrão"
+                            : `Seguro — ${multiplicadorSeguroPorIdade(idade)}x o valor padrão`}
+                      </span>
                     </div>
                   ))}
                 </div>
                 <p className="mt-2 text-[11px] leading-4 text-black/40">
-                  Usado pra faixa etária do seguro viagem — preço por faixa (principalmente 60+)
-                  ainda não está automatizado, aguardando tabela da seguradora.
+                  Usado pra faixa etária do seguro viagem — até 60 anos, valor padrão; 61–65, 2x;
+                  66–70, 2,5x; 71–75, 3x; 76–80, 4x; 81–{IDADE_LIMITE_SEGURO}, 5x. Acima de{" "}
+                  {IDADE_LIMITE_SEGURO} anos não entra no preço automático — cotar sob consulta.
                 </p>
               </>
             )}
@@ -4543,6 +4605,18 @@ export default function CalculadoraReversaPage() {
               {resultado.avisoCategoriaTemporada && (
                 <p className="mt-2 max-w-md text-xs leading-4 text-amber-600">
                   ⚠️ {resultado.avisoCategoriaTemporada}
+                </p>
+              )}
+
+              {resultado.avisoOrigemVoo && (
+                <p className="mt-2 max-w-md text-xs leading-4 text-amber-600">
+                  ⚠️ {resultado.avisoOrigemVoo}
+                </p>
+              )}
+
+              {resultado.avisoSeguroIdade && (
+                <p className="mt-2 max-w-md text-xs leading-4 text-amber-600">
+                  ⚠️ {resultado.avisoSeguroIdade}
                 </p>
               )}
 
