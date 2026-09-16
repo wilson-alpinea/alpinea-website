@@ -1,5 +1,3 @@
-import { JR_PASS_PRECO_USD } from "../components/CustomPackageCard";
-
 // Mesmos itens e preços de referência do calculador do Pacote
 // Personalizado (OPCOES, em CustomPackageCard.tsx) — mostrados aqui como
 // cards avulsos pra quem só quer adicionar um serviço pontual ao roteiro
@@ -14,6 +12,13 @@ import { JR_PASS_PRECO_USD } from "../components/CustomPackageCard";
 // por cidade etc.) — ver TransportePrivadoCalculator.tsx, acionada pelo
 // card "Transporte Privado" em /produtos. Manter aqui duplicaria o
 // serviço com um preço fixo desatualizado em relação à calculadora.
+//
+// "JR Pass", "Seguro Viagem" e "Câmbio no Brasil" foram retirados daqui
+// (16/set/2026) — os três viraram cards principais na seção "Complete
+// sua viagem" de /produtos (mesmo template dos demais produtos), com
+// popup próprio (ServicoAvulsoModal). Preços seguem vindo das mesmas
+// constantes (JR_PASS_PRECO_USD, DIARIA_SEGURO_VIAGEM,
+// PRECO_CAMBIO_BRASIL, em CustomPackageCard.tsx) — sem duplicação.
 export const SERVICOS_AVULSOS: {
   nome: string;
   icone: string;
@@ -25,31 +30,6 @@ export const SERVICOS_AVULSOS: {
   porDia?: boolean;
   notaPreco?: string;
 }[] = [
-  {
-    nome: "JR Pass",
-    icone: "/images/icone-trem-bala-shinkansen.png",
-    // Passe vendido em faixas fixas de 7/14/21 dias corridos, não por
-    // diária — mesmo valor de JR_PASS_PRECO_USD[7], em CustomPackageCard.tsx
-    // (tabela do fornecedor AjisaiWork, atualizada 04/set/2026). Mostrado
-    // aqui "a partir de" a faixa de 7 dias, a mais barata.
-    descricao: "Passe ferroviário com deslocamentos ilimitados de trem-bala. Vendido em faixas de 7, 14 ou 21 dias.",
-    precoBRL: 0,
-    precoUSD: JR_PASS_PRECO_USD[7],
-    notaPreco: "faixa de 7 dias — 14 ou 21 dias também disponíveis",
-  },
-  {
-    nome: "Seguro Viagem",
-    icone: "/images/icone-seguro-viagem-v2.png",
-    descricao: "Cobertura médica e assistência durante toda a viagem.",
-    precoBRL: 35,
-    porDia: true,
-  },
-  {
-    nome: "Câmbio no Brasil",
-    icone: "/images/icone-cambio-dinheiro.png",
-    descricao: "Retirada de ienes com câmbio comercial antes do embarque.",
-    precoBRL: 150,
-  },
   {
     nome: "Transfer Aeroporto-Hotel",
     icone: "/images/icone-onibus-v2.png",

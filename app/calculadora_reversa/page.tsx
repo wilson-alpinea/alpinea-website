@@ -18,6 +18,7 @@ import {
   CATEGORIAS_HOTEL,
   TIPOS_QUARTO,
   FATOR_QUARTO,
+  CAPACIDADE_QUARTO,
   DIARIA_HOTEL,
   ADICIONAL_CAFE_MANHA_POR_PESSOA_DIA,
   CLASSES_AEREO,
@@ -556,15 +557,19 @@ const CATEGORIAS_HOTEL_EXTENSAO = ["3 estrelas", "4 estrelas", "5 estrelas"] as 
 type CategoriaHotelExtensao = (typeof CATEGORIAS_HOTEL_EXTENSAO)[number];
 
 // Bagagem — pedido do Wilson, 14/set/2026: "falta um campo importante:
-// bagagem [...] pode alterar passagem, transporte e takkyubin". Por
-// enquanto só informativo (aparece no detalhe do item Aéreo e no
-// PDF/Word) — não muda o preço do aéreo, porque taxa de 2ª mala/item
-// grande varia demais por companhia aérea pra ter uma fórmula confiável.
+// bagagem [...] pode alterar passagem, transporte e takkyubin". Inicialmente
+// só informativo; a pedido do Wilson, 16/set/2026 ("o modal de malas não
+// está mexendo nos valores de preço total, ajustar"), passou a somar um
+// ajuste estimado (por pessoa) ao preço do aéreo. ⚠️ ESTIMATIVA — a franquia
+// de bagagem já costuma cobrir a 1ª mala despachada na maioria das tarifas
+// internacionais, então "uma" fica sem ajuste; "duas"/"grande" somam um
+// valor aproximado de taxa de mala extra/item grande, que varia por
+// companhia aérea — confirmar com a tarifa real antes de fechar.
 const BAGAGEM_OPCOES = [
-  { key: "cabine", nome: "Somente bagagem de mão" },
-  { key: "uma", nome: "1 mala despachada" },
-  { key: "duas", nome: "2 malas despachadas" },
-  { key: "grande", nome: "2 malas + item grande/especial" },
+  { key: "cabine", nome: "Somente bagagem de mão", ajusteBRL: 0 },
+  { key: "uma", nome: "1 mala despachada", ajusteBRL: 0 },
+  { key: "duas", nome: "2 malas despachadas", ajusteBRL: 400 },
+  { key: "grande", nome: "2 malas + item grande/especial", ajusteBRL: 750 },
 ] as const;
 type BagagemKey = (typeof BAGAGEM_OPCOES)[number]["key"];
 
@@ -617,19 +622,31 @@ const MES_PARA_TEMPORADA: Record<number, TemporadaKey> = {
 // Origem do voo — pedido do Wilson, 14/set/2026: "provavelmente o campo
 // mais importante que está faltando [...] altera muito o aéreo. Se 90%
 // dos clientes saem de GRU, deixe São Paulo / GRU pré-selecionado."
-// ⚠️ ESTIMATIVA — ajustePercentual é um percentual aproximado sobre o
-// preço aéreo de referência (que já é calculado a partir de GRU, o hub
-// com mais opções diretas/poucas conexões pro Japão). As outras origens
-// normalmente exigem um trecho doméstico ou conexão adicional até um hub
-// internacional — o percentual reflete isso, mas não é uma cotação real
-// por origem. Ajustar com o Wilson assim que houver dado de tarifário
-// real por cidade.
+// Lista de cidades ampliada a pedido do Wilson, 16/set/2026 (print com as
+// origens mais comuns dos clientes). Modelo de ajuste trocado de percentual
+// pra valor fixo em reais (por pessoa, ida e volta) no mesmo dia — pedido
+// do Wilson, 16/set/2026: "quando origem for diferente de São Paulo GRU,
+// tem que adicionar 2000 reais para o valor da passagem ida e volta, para
+// destinos como Belém 3500, Foz do Iguaçu 3000 e Manaus 4000". Regra: toda
+// origem fora de GRU soma R$ 2.000, exceto as 3 exceções informadas por
+// ele. Ajustar com o Wilson se houver valor específico pras demais cidades.
 const ORIGENS_VOO = [
-  { key: "saoPaulo", nome: "São Paulo / GRU", ajustePercentual: 0 },
-  { key: "rio", nome: "Rio de Janeiro / GIG", ajustePercentual: 0.05 },
-  { key: "brasilia", nome: "Brasília / BSB", ajustePercentual: 0.08 },
-  { key: "portoAlegre", nome: "Porto Alegre / POA", ajustePercentual: 0.1 },
-  { key: "outra", nome: "Outra cidade", ajustePercentual: 0.12 },
+  { key: "saoPaulo", nome: "São Paulo / GRU", ajusteBRL: 0 },
+  { key: "rio", nome: "Rio de Janeiro / GIG", ajusteBRL: 2000 },
+  { key: "belem", nome: "Belém / BEL", ajusteBRL: 3500 },
+  { key: "beloHorizonte", nome: "Belo Horizonte / CNF", ajusteBRL: 2000 },
+  { key: "brasilia", nome: "Brasília / BSB", ajusteBRL: 2000 },
+  { key: "campoGrande", nome: "Campo Grande / CGR", ajusteBRL: 2000 },
+  { key: "cuiaba", nome: "Cuiabá / CGB", ajusteBRL: 2000 },
+  { key: "curitiba", nome: "Curitiba / CWB", ajusteBRL: 2000 },
+  { key: "fozDoIguacu", nome: "Foz do Iguaçu / IGU", ajusteBRL: 3000 },
+  { key: "goiania", nome: "Goiânia / GYN", ajusteBRL: 2000 },
+  { key: "londrina", nome: "Londrina / LDB", ajusteBRL: 2000 },
+  { key: "manaus", nome: "Manaus / MAO", ajusteBRL: 4000 },
+  { key: "maringa", nome: "Maringá / MGF", ajusteBRL: 2000 },
+  { key: "portoAlegre", nome: "Porto Alegre / POA", ajusteBRL: 2000 },
+  { key: "salvador", nome: "Salvador / SSA", ajusteBRL: 2000 },
+  { key: "outra", nome: "Outra cidade", ajusteBRL: 2000 },
 ] as const;
 type OrigemVooKey = (typeof ORIGENS_VOO)[number]["key"];
 
@@ -1418,6 +1435,11 @@ export default function CalculadoraReversaPage() {
   } | null>(null);
   const [tipoQuarto, setTipoQuarto] =
     useState<(typeof TIPOS_QUARTO)[number]>("Duplo (casal)");
+  // Quantos quartos o grupo precisa, dado o tipo de quarto escolhido — só
+  // para exibição (o preço do hotel usa "pessoas" diretamente via
+  // FATOR_QUARTO, não a quantidade de quartos). Mesmo cálculo já usado em
+  // CustomPackageCard.tsx (quartosNecessarios).
+  const quartosNecessarios = Math.max(1, Math.ceil(pessoas / CAPACIDADE_QUARTO[tipoQuarto]));
   // Café da manhã incluso ou não — pedido do Wilson, 14/set/2026: "gerar
   // variavel de hotel com refeicao e sem (café da manha)". Padrão ligado
   // (perfil de cliente alto/altíssima renda costuma esperar o café da
@@ -1832,22 +1854,33 @@ export default function CalculadoraReversaPage() {
   const resultado = useMemo(() => {
     const precoRoteiro =
       ROTEIRO_PRECO_BASE + Math.max(0, dias - ROTEIRO_BASE_DIAS) * ROTEIRO_PRECO_DIA_EXTRA;
-    // Ajuste por origem do voo — pedido do Wilson, 14/set/2026. Não se
-    // aplica no modo manual (o valor já é o preço real cotado pra aquela
-    // origem específica).
-    const ajusteOrigemVoo = 1 + (ORIGENS_VOO.find((o) => o.key === origemVoo)?.ajustePercentual ?? 0);
+    // Ajuste por origem do voo — pedido do Wilson, 14/set/2026, valor fixo
+    // por pessoa (ida e volta) a partir do pedido de 16/set/2026 (ver
+    // comentário em ORIGENS_VOO). Não se aplica no modo manual (o valor já
+    // é o preço real cotado pra aquela origem específica).
+    const ajusteOrigemVooBRL = aereoManual
+      ? 0
+      : Math.round((ORIGENS_VOO.find((o) => o.key === origemVoo)?.ajusteBRL ?? 0) * pessoas);
+    // Ajuste de bagagem — pedido do Wilson, 16/set/2026. Não se aplica no
+    // modo manual (o valor já é o preço real cotado, presumivelmente já
+    // considerando a bagagem combinada com o cliente/companhia aérea).
+    const ajusteBagagemBRL = aereoManual
+      ? 0
+      : Math.round((BAGAGEM_OPCOES.find((b) => b.key === bagagem)?.ajusteBRL ?? 0) * pessoas);
     const precoAereoEconomy = aereoManual
       ? Math.round(aereoValorManual * pessoas)
-      : Math.round(PRECO_AEREO_ECONOMY_BRL * pessoas * ajusteOrigemVoo);
+      : Math.round(PRECO_AEREO_ECONOMY_BRL * pessoas) + ajusteOrigemVooBRL + ajusteBagagemBRL;
     const precoAereoPremiumEconomy = aereoManual
       ? precoAereoEconomy
-      : Math.round(PRECO_AEREO_PREMIUM_ECONOMY_USD * cambioCotacao * pessoas * ajusteOrigemVoo);
+      : Math.round(PRECO_AEREO_PREMIUM_ECONOMY_USD * cambioCotacao * pessoas) +
+        ajusteOrigemVooBRL +
+        ajusteBagagemBRL;
     const precoAereoBusiness = aereoManual
       ? precoAereoEconomy
-      : Math.round(PRECO_AEREO_BUSINESS_USD * cambioCotacao * pessoas * ajusteOrigemVoo);
+      : Math.round(PRECO_AEREO_BUSINESS_USD * cambioCotacao * pessoas) + ajusteOrigemVooBRL + ajusteBagagemBRL;
     const precoAereoFirst = aereoManual
       ? precoAereoEconomy
-      : Math.round(PRECO_AEREO_FIRST_USD * cambioCotacao * pessoas * ajusteOrigemVoo);
+      : Math.round(PRECO_AEREO_FIRST_USD * cambioCotacao * pessoas) + ajusteOrigemVooBRL + ajusteBagagemBRL;
 
     function precoClasseAereo(classe: (typeof CLASSES_AEREO)[number]) {
       if (classe === "First Class") return precoAereoFirst;
@@ -2399,8 +2432,8 @@ export default function CalculadoraReversaPage() {
           : bagagem === "uma"
             ? "1 mala despachada incluída na franquia padrão da companhia aérea."
             : bagagem === "duas"
-              ? "2 malas despachadas — confirmar com a companhia aérea se a 2ª mala tem taxa extra."
-              : "2 malas despachadas + item grande/especial — confirmar taxa extra com a companhia aérea.",
+              ? `2 malas despachadas — já inclui ajuste estimado de ${formatBRL(BAGAGEM_OPCOES.find((b) => b.key === "duas")!.ajusteBRL)}/pessoa de taxa de 2ª mala (⚠️ estimativa, confirmar com a companhia aérea).`
+              : `2 malas despachadas + item grande/especial — já inclui ajuste estimado de ${formatBRL(BAGAGEM_OPCOES.find((b) => b.key === "grande")!.ajusteBRL)}/pessoa (⚠️ estimativa, confirmar com a companhia aérea).`,
       ],
       precoBRL: precoClasseAereo(classeAereoFinal),
     };
@@ -3012,6 +3045,18 @@ export default function CalculadoraReversaPage() {
                 ))}
               </select>
             )}
+            {/* Pedido do Wilson, 16/set/2026: "adicionar... quantidade de
+                quartos e tipo de quarto". O preço do hotel já usa pessoas
+                diretamente (não quartos — ver FATOR_QUARTO no useMemo
+                "resultado"), então isto é só informativo, mesmo padrão já
+                usado em CustomPackageCard.tsx (quartosNecessarios) — não
+                mexe na fórmula de preço em si. */}
+            {!camposOcultos.has(4) && (
+              <span className="mt-1.5 text-[11px] leading-4 text-black/40">
+                → {quartosNecessarios} {quartosNecessarios === 1 ? "quarto" : "quartos"} para{" "}
+                {pessoas} {pessoas === 1 ? "pessoa" : "pessoas"}
+              </span>
+            )}
           </label>
 
           {/* Pedido do Wilson, 11/set/2026: subir esse campo pro espaço em
@@ -3103,9 +3148,9 @@ export default function CalculadoraReversaPage() {
                 <span className="mt-1 text-[11px] text-black/40">
                   {aereoManual
                     ? "Valor manual — origem não se aplica"
-                    : origemVoo === "saoPaulo"
+                    : (ORIGENS_VOO.find((o) => o.key === origemVoo)?.ajusteBRL ?? 0) === 0
                       ? "Referência — sem ajuste no aéreo"
-                      : `Ajuste estimado de +${Math.round((ORIGENS_VOO.find((o) => o.key === origemVoo)?.ajustePercentual ?? 0) * 100)}% no aéreo (conexão/trecho doméstico até um hub internacional) — confirmar com tarifa real.`}
+                      : `+ ${formatBRL(ORIGENS_VOO.find((o) => o.key === origemVoo)?.ajusteBRL ?? 0)}/pessoa no aéreo (trecho doméstico até um hub internacional).`}
                 </span>
               </label>
             </div>
@@ -3121,7 +3166,8 @@ export default function CalculadoraReversaPage() {
                 <select
                   value={bagagem}
                   onChange={(e) => setBagagem(e.target.value as BagagemKey)}
-                  className="h-10 w-64 rounded-lg border border-black/15 bg-black/[0.03] px-3 text-sm outline-none focus:border-black/30"
+                  disabled={aereoManual}
+                  className="h-10 w-64 rounded-lg border border-black/15 bg-black/[0.03] px-3 text-sm outline-none focus:border-black/30 disabled:opacity-50"
                 >
                   {BAGAGEM_OPCOES.map((b) => (
                     <option key={b.key} value={b.key}>
@@ -3129,10 +3175,17 @@ export default function CalculadoraReversaPage() {
                     </option>
                   ))}
                 </select>
+                <span className="mt-1 text-[11px] text-black/40">
+                  {aereoManual
+                    ? "Valor manual — bagagem não se aplica"
+                    : bagagem === "cabine" || bagagem === "uma"
+                      ? "Referência — sem ajuste no aéreo"
+                      : `Ajuste estimado de +${formatBRL(BAGAGEM_OPCOES.find((b) => b.key === bagagem)!.ajusteBRL)}/pessoa no aéreo (taxa de mala extra/item grande) — confirmar com a companhia aérea.`}
+                </span>
                 {(bagagem === "duas" || bagagem === "grande") && (
                   <span className="mt-1 text-[11px] text-black/40">
-                    Confirmar com a companhia aérea se a 2ª mala/item grande tem taxa extra. Entre
-                    cidades, considere o item &quot;Transporte de Malas Inter-Municipal&quot; (seção 17).
+                    Entre cidades, considere também o item &quot;Transporte de Malas
+                    Inter-Municipal&quot; (seção 17).
                   </span>
                 )}
               </label>

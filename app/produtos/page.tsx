@@ -6,9 +6,22 @@ import Link from "next/link";
 import { Bodoni_Moda } from "next/font/google";
 import { PriceCalculator } from "../components/PriceCalculator";
 import { TransportePrivadoCalculator } from "../components/TransportePrivadoCalculator";
-import { useCambioUSD, brlParaUSDLabel, formatBRL, formatUSD } from "../hooks/useCambioUSD";
+import {
+  useCambioUSD,
+  brlParaUSDLabel,
+  formatBRL,
+  formatUSD,
+  type Cambio,
+} from "../hooks/useCambioUSD";
 import { CambioLabel } from "../components/CambioLabel";
-import { HotelExemplosPropriedades } from "../components/CustomPackageCard";
+import {
+  HotelExemplosPropriedades,
+  JR_PASS_PRECO_USD,
+  DIARIA_SEGURO_VIAGEM,
+  PRECO_CAMBIO_BRASIL,
+} from "../components/CustomPackageCard";
+import { HotelQuoteCalculator } from "../components/HotelQuoteCalculator";
+import { ContactCTA } from "../components/ContactCTA";
 
 const display = Bodoni_Moda({
   subsets: ["latin"],
@@ -118,6 +131,13 @@ export default function ProdutosPage() {
   // Hoteis abre um popup avulso e leve com os exemplos de propriedade por
   // categoria — nao carrega a Viagem Personalizada (iframe) atras dele.
   const [hoteisModalOpen, setHoteisModalOpen] = useState(false);
+  // Pedido do Wilson, 16/set/2026: "JR Pass, Cambio e Seguro Viagem
+  // retirar do serviços avulsos, devem virar cards principais [...] seguir
+  // mesmo template de layout" — mesmo padrão leve do popup de Hotéis (sem
+  // iframe), já que são serviços simples, sem página própria.
+  const [jrPassModalOpen, setJrPassModalOpen] = useState(false);
+  const [seguroViagemModalOpen, setSeguroViagemModalOpen] = useState(false);
+  const [cambioModalOpen, setCambioModalOpen] = useState(false);
 
   useEffect(() => {
     if (
@@ -128,7 +148,10 @@ export default function ProdutosPage() {
       !guiaModalOpen &&
       !servicosModalOpen &&
       !transporteModalOpen &&
-      !hoteisModalOpen
+      !hoteisModalOpen &&
+      !jrPassModalOpen &&
+      !seguroViagemModalOpen &&
+      !cambioModalOpen
     )
       return;
 
@@ -144,6 +167,9 @@ export default function ProdutosPage() {
         setServicosModalOpen(false);
         setTransporteModalOpen(false);
         setHoteisModalOpen(false);
+        setJrPassModalOpen(false);
+        setSeguroViagemModalOpen(false);
+        setCambioModalOpen(false);
       }
     };
     window.addEventListener("keydown", handleKeyDown);
@@ -160,6 +186,9 @@ export default function ProdutosPage() {
     guiaModalOpen,
     servicosModalOpen,
     transporteModalOpen,
+    jrPassModalOpen,
+    seguroViagemModalOpen,
+    cambioModalOpen,
     hoteisModalOpen,
   ]);
 
@@ -354,7 +383,7 @@ export default function ProdutosPage() {
                 description="Transfers e deslocamentos privativos com conforto e motorista particular."
                 requirement="Inclui Roteiro Personalizado"
                 cta="Calcular meu transporte"
-                className="lg:col-span-2 lg:col-start-2"
+                className="lg:col-span-2"
               />
               <ProductSelectorCard
                 href="/servicos-adicionais"
@@ -363,8 +392,48 @@ export default function ProdutosPage() {
                 iconWidth={1254}
                 iconHeight={1254}
                 title="Serviços adicionais"
-                description="Seguro viagem, conectividade, ingressos e outros serviços para completar sua viagem."
+                description="Conectividade, ingressos e outros serviços para completar sua viagem."
                 cta="Ver serviços"
+                className="lg:col-span-2"
+              />
+              {/* Pedido do Wilson, 16/set/2026: "JR Pass, Cambio e Seguro
+                  Viagem retirar do serviços avulsos, devem virar cards
+                  principais como esses listados na imagem, seguir mesmo
+                  template de layout" — mesmo componente ProductSelectorCard,
+                  mesmos preços de referência já usados no motor de preço
+                  (JR_PASS_PRECO_USD, DIARIA_SEGURO_VIAGEM,
+                  PRECO_CAMBIO_BRASIL, em CustomPackageCard.tsx). */}
+              <ProductSelectorCard
+                href="/servicos-adicionais"
+                onClick={() => setJrPassModalOpen(true)}
+                icon="/images/icone-trem-bala-shinkansen.png"
+                iconWidth={1536}
+                iconHeight={744}
+                title="JR Pass"
+                description="Passe ferroviário com deslocamentos ilimitados de trem-bala. Vendido em faixas de 7, 14 ou 21 dias."
+                cta="Ver JR Pass"
+                className="lg:col-span-2"
+              />
+              <ProductSelectorCard
+                href="/servicos-adicionais"
+                onClick={() => setCambioModalOpen(true)}
+                icon="/images/icone-cambio-dinheiro.png"
+                iconWidth={258}
+                iconHeight={320}
+                title="Câmbio"
+                description="Retirada de ienes com câmbio comercial antes do embarque."
+                cta="Ver câmbio"
+                className="lg:col-span-2 lg:col-start-2"
+              />
+              <ProductSelectorCard
+                href="/servicos-adicionais"
+                onClick={() => setSeguroViagemModalOpen(true)}
+                icon="/images/icone-seguro-viagem-v2.png"
+                iconWidth={1288}
+                iconHeight={1157}
+                title="Seguro Viagem"
+                description="Cobertura médica e assistência durante toda a viagem."
+                cta="Ver seguro viagem"
                 className="lg:col-span-2"
               />
             </div>
@@ -955,12 +1024,60 @@ export default function ProdutosPage() {
                 Curadoria e reserva de hotéis escolhidos pelo perfil e pela logística da sua
                 viagem — veja exemplos de propriedades por categoria.
               </p>
+              {/* Pedido do Wilson, 16/set/2026: "melhorar a parte de hotéis
+                  [...] quero algo similar a uma empresa que aluga hotéis
+                  como SIXT, o cliente escolhe a categoria, e precisa
+                  deixar opção pra escolher número de noites, datas e
+                  cidades e tipo de quarto para poder gerar orçamento
+                  inicial provisório" — inserido dentro do mesmo modal
+                  "Hotéis" já existente, acima dos exemplos de propriedade
+                  (que continuam disponíveis pra quem quiser só navegar). */}
               <div className="mt-6">
+                <HotelQuoteCalculator />
+              </div>
+              <div className="mt-8 border-t border-black/10 pt-6">
                 <HotelExemplosPropriedades light />
               </div>
             </div>
           </div>
         </div>
+      )}
+
+      {/* Pedido do Wilson, 16/set/2026: "JR Pass, Cambio e Seguro Viagem
+          retirar do serviços avulsos, devem virar cards principais [...]
+          seguir mesmo template de layout" — cada um ganha seu próprio
+          popup leve (mesmo padrão do Hotéis, sem iframe), com o preço de
+          referência e um CTA de WhatsApp já com o serviço pré-preenchido. */}
+      {jrPassModalOpen && (
+        <ServicoAvulsoModal
+          titulo="JR Pass"
+          descricao="Passe ferroviário com deslocamentos ilimitados de trem-bala. Vendido em faixas de 7, 14 ou 21 dias."
+          precoLabel={formatUSD(JR_PASS_PRECO_USD[7])}
+          precoBRLLabel={cambio ? formatBRL(JR_PASS_PRECO_USD[7] * cambio.cotacao) : null}
+          notaPreco="Faixa de 7 dias — 14 ou 21 dias também disponíveis, valor maior."
+          cambio={cambio}
+          onClose={() => setJrPassModalOpen(false)}
+        />
+      )}
+
+      {cambioModalOpen && (
+        <ServicoAvulsoModal
+          titulo="Câmbio no Brasil"
+          descricao="Retirada de ienes com câmbio comercial antes do embarque, sem precisar trocar dinheiro no Japão."
+          precoLabel={formatBRL(PRECO_CAMBIO_BRASIL)}
+          cambio={cambio}
+          onClose={() => setCambioModalOpen(false)}
+        />
+      )}
+
+      {seguroViagemModalOpen && (
+        <ServicoAvulsoModal
+          titulo="Seguro Viagem"
+          descricao="Cobertura médica e assistência durante toda a viagem, por pessoa/dia."
+          precoLabel={`${formatBRL(DIARIA_SEGURO_VIAGEM)}/dia`}
+          cambio={cambio}
+          onClose={() => setSeguroViagemModalOpen(false)}
+        />
       )}
 
       <section aria-label="Por que escolher a Ajisai" className="border-t border-black/10 bg-white">
@@ -1077,9 +1194,17 @@ function ProductSelectorCard({
         className={`absolute object-contain ${
           title === "Transporte Privado"
             ? "right-4 top-3 h-20 w-20 opacity-90 invert md:right-6 md:top-5"
-            : `right-6 top-5 h-14 w-14 md:right-8 md:top-7 ${
-                title === "Serviços adicionais" ? "brightness-0" : "opacity-90 invert"
-              }`
+            : // Pedido do Wilson, 16/set/2026: JR Pass/Câmbio/Seguro Viagem
+              // reaproveitam os mesmos ícones já usados em
+              // /servicos-adicionais — arte já escura, feita pra fundo
+              // claro, então não precisa do invert/brightness-0 usado nos
+              // ícones antigos de /images/produtos (esses sim, arte clara
+              // pensada pra fundo escuro).
+              title === "JR Pass" || title === "Câmbio" || title === "Seguro Viagem"
+              ? "right-6 top-5 h-14 w-14 opacity-80 md:right-8 md:top-7"
+              : `right-6 top-5 h-14 w-14 md:right-8 md:top-7 ${
+                  title === "Serviços adicionais" ? "brightness-0" : "opacity-90 invert"
+                }`
         }`}
       />
       <div className="h-4" aria-hidden="true" />
@@ -1098,6 +1223,88 @@ function ProductSelectorCard({
         {cta}
       </span>
     </a>
+  );
+}
+
+// Popup leve pra um serviço avulso simples (JR Pass, Câmbio, Seguro
+// Viagem) — mesmo padrão visual do popup de Hotéis, sem iframe, já que
+// esses serviços não têm (e não precisam de) página própria. Pedido do
+// Wilson, 16/set/2026: "JR Pass, Cambio e Seguro Viagem retirar do
+// serviços avulsos, devem virar cards principais [...] seguir mesmo
+// template de layout".
+function ServicoAvulsoModal({
+  titulo,
+  descricao,
+  precoLabel,
+  precoBRLLabel,
+  notaPreco,
+  cambio,
+  onClose,
+}: {
+  titulo: string;
+  descricao: string;
+  precoLabel: string;
+  /** "ou R$ X" — null quando o preço já nasce em reais (não precisa de
+   * uma segunda linha convertida). */
+  precoBRLLabel?: string | null;
+  notaPreco?: string;
+  cambio: Cambio | null;
+  onClose: () => void;
+}) {
+  return (
+    <div
+      className="fixed inset-0 z-[90] flex items-end justify-center bg-black/85 p-0 backdrop-blur-sm md:items-center md:p-6"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="servico-avulso-modal-title"
+      onClick={onClose}
+    >
+      <div
+        className="relative max-h-[92vh] w-full max-w-lg overflow-y-auto rounded-t-3xl border border-black/10 bg-white p-6 shadow-2xl sm:rounded-3xl md:p-8"
+        onClick={(event) => event.stopPropagation()}
+      >
+        <button
+          type="button"
+          onClick={onClose}
+          aria-label={`Fechar ${titulo}`}
+          className="absolute right-4 top-4 flex h-9 w-9 items-center justify-center rounded-full border border-black/15 text-2xl leading-none text-black/65 transition hover:border-black/40 hover:text-black"
+        >
+          ×
+        </button>
+
+        <p className="text-xs uppercase tracking-[0.3em] text-[#1c6ea8]">Serviço adicional</p>
+        <h3
+          id="servico-avulso-modal-title"
+          className={`${display.className} mt-2 text-2xl font-medium text-black md:text-3xl`}
+        >
+          {titulo}
+        </h3>
+        <p className="mt-3 text-sm font-light leading-6 text-black/60">{descricao}</p>
+
+        <div className="mt-6 border-t border-black/10 pt-6">
+          <p className="text-[10px] uppercase tracking-[0.2em] text-black/40">A partir de</p>
+          <p className={`${display.className} mt-1 text-3xl font-medium text-black`}>
+            {precoLabel}
+          </p>
+          {precoBRLLabel && (
+            <p className="mt-1 text-sm font-medium text-black/50">ou {precoBRLLabel}</p>
+          )}
+          {notaPreco && <p className="mt-1.5 text-[11px] text-black/40">{notaPreco}</p>}
+          <CambioLabel cambio={cambio} className="mt-2 text-[11px] text-black/35" />
+        </div>
+
+        <ContactCTA
+          mode="single"
+          channel="whatsapp"
+          whatsappNumber={WHATSAPP_NUMBER}
+          brand="Ajisai"
+          label={`Falar sobre ${titulo}`}
+          buttonClassName="mt-7 block w-full rounded-full bg-[#2f80c9] px-6 py-4 text-center text-xs font-medium uppercase tracking-[0.25em] text-white transition hover:bg-[#3b91dc]"
+          packageOptions={[titulo]}
+          defaultPackage={titulo}
+        />
+      </div>
+    </div>
   );
 }
 
