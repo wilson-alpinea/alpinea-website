@@ -164,32 +164,38 @@ export function TransportePrivadoCalculator({ onClose }: { onClose: () => void }
       onClick={onClose}
     >
       <div
-        className="relative max-h-[92vh] w-full max-w-2xl overflow-y-auto rounded-t-3xl border border-black/10 bg-white p-6 sm:rounded-[2rem] sm:p-8"
+        className="relative flex max-h-[92vh] w-full max-w-2xl flex-col rounded-t-3xl border border-black/10 bg-white sm:rounded-[2rem]"
         onClick={(e) => e.stopPropagation()}
       >
         <button
           type="button"
           onClick={onClose}
           aria-label="Fechar calculadora de transporte privado"
-          className="absolute right-4 top-4 flex h-9 w-9 items-center justify-center rounded-full border border-black/15 text-lg text-black/60 transition hover:border-black/40 hover:text-black"
+          className="absolute right-4 top-4 z-10 flex h-9 w-9 items-center justify-center rounded-full border border-black/15 bg-white text-lg text-black/60 transition hover:border-black/40 hover:text-black"
         >
           <IconX className="h-4 w-4" />
         </button>
 
-        <p className="text-xs uppercase tracking-[0.3em] text-[#6ec3d9]">Calculadora</p>
-        <h3
-          id="transporte-privado-title"
-          className={`${display.className} mt-2 text-2xl font-medium text-black md:text-3xl`}
-        >
-          Transporte Privado
-        </h3>
-        <p className="mt-2 text-sm font-light leading-6 text-black/55">
-          Motorista particular, sem compartilhar veículo com outros grupos —
-          monte a logística da sua viagem e veja o investimento estimado, já
-          com o Roteiro Personalizado incluso.
-        </p>
+        {/* ── CORPO ROLÁVEL ──
+            Pedido do Wilson, 16/set/2026: "o valor final deve estar fixo
+            na pagina, ao mudar variaveis" — o modal virou um flex-col com
+            só este bloco rolando; o total fica num rodapé fixo abaixo,
+            sempre visível enquanto a categoria/cidades são ajustadas. */}
+        <div className="overflow-y-auto p-6 sm:p-8">
+          <p className="text-xs uppercase tracking-[0.3em] text-[#6ec3d9]">Calculadora</p>
+          <h3
+            id="transporte-privado-title"
+            className={`${display.className} mt-2 text-2xl font-medium text-black md:text-3xl`}
+          >
+            Transporte Privado
+          </h3>
+          <p className="mt-2 text-sm font-light leading-6 text-black/55">
+            Motorista particular, sem compartilhar veículo com outros grupos —
+            monte a logística da sua viagem e veja o investimento estimado, já
+            com o Roteiro Personalizado incluso.
+          </p>
 
-        {/* ── CATEGORIA DE CARRO ── */}
+          {/* ── CATEGORIA DE CARRO ── */}
         <div className="mt-7">
           <p className="text-[10px] uppercase tracking-[0.2em] text-black/40">
             Categoria do carro
@@ -360,8 +366,38 @@ export function TransportePrivadoCalculator({ onClose }: { onClose: () => void }
           </div>
         </div>
 
-        {/* ── TOTAL ── */}
-        <div className="mt-6 border-t border-black/10 pt-6 text-center">
+          {/* ── DISCLAIMER: TRÂNSITO INTER-MUNICIPAL ── */}
+          <div className="mt-6 rounded-xl border border-black/15 bg-black/[0.03] p-4">
+            <p className="text-xs leading-5 text-black/60">
+              <span className="font-semibold text-black/80">Não incluso:</span> trânsito
+              inter-municipal (deslocamentos rodoviários de longa distância entre cidades, como
+              pedágios e horas extras de estrada). O valor calculado cobre motorista e veículo
+              dedicados dentro das cidades selecionadas.
+            </p>
+          </div>
+
+          {/* ── DISCLAIMER: MOTORISTA BILÍNGUE ──
+              Contraste corrigido, 16/set/2026 — o texto em âmbar claro
+              (text-amber-200) sobre fundo claro ficava quase ilegível;
+              alinhado ao mesmo padrão de aviso âmbar já usado em
+              /duvidas-frequentes (border-amber-300/bg-amber-50/text-amber-800). */}
+          <div className="mt-4 rounded-xl border border-amber-300 bg-amber-50/60 p-4">
+            <p className="text-xs leading-5 text-amber-800">
+              <span className="font-semibold text-amber-900">
+                Motorista bilíngue (português/inglês):
+              </span>{" "}
+              disponível mediante consulta, com valor adicional — a disponibilidade desse perfil é
+              bem menor que a de motoristas sem esse requisito. Recomendamos solicitar com grande
+              antecedência, idealmente 70 dias antes da viagem.
+            </p>
+          </div>
+        </div>
+
+        {/* ── RODAPÉ FIXO: TOTAL + CTA ──
+            Pedido do Wilson, 16/set/2026: "o valor final deve estar fixo
+            na pagina, ao mudar variaveis" — sai do fluxo rolável e vira um
+            rodapé sempre visível, com o CTA logo abaixo do valor. */}
+        <div className="shrink-0 border-t border-black/10 bg-white p-6 text-center sm:p-8 sm:pt-6">
           {quantidadeDiarias === 0 ? (
             <p className="text-sm font-light text-black/45">
               Selecione ao menos uma cidade para calcular o investimento.
@@ -386,38 +422,16 @@ export function TransportePrivadoCalculator({ onClose }: { onClose: () => void }
               </p>
             </>
           )}
-        </div>
 
-        {/* ── DISCLAIMER: TRÂNSITO INTER-MUNICIPAL ── */}
-        <div className="mt-6 rounded-xl border border-black/15 bg-black/[0.03] p-4">
-          <p className="text-xs leading-5 text-black/60">
-            <span className="font-semibold text-black/80">Não incluso:</span> trânsito
-            inter-municipal (deslocamentos rodoviários de longa distância entre cidades, como
-            pedágios e horas extras de estrada). O valor calculado cobre motorista e veículo
-            dedicados dentro das cidades selecionadas.
-          </p>
+          <ContactCTA
+            mode="single"
+            channel="whatsapp"
+            whatsappNumber="5511930300101"
+            brand="Ajisai"
+            label="Falar sobre meu transporte privado"
+            buttonClassName="mt-5 block w-full rounded-full bg-[#2f80c9] px-6 py-4 text-center text-xs font-medium uppercase tracking-[0.25em] text-black transition hover:bg-[#3b91dc]"
+          />
         </div>
-
-        {/* ── DISCLAIMER: MOTORISTA BILÍNGUE ── */}
-        <div className="mt-4 rounded-xl border border-amber-400/25 bg-amber-400/[0.06] p-4">
-          <p className="text-xs leading-5 text-amber-200/80">
-            <span className="font-semibold text-amber-200">
-              Motorista bilíngue (português/inglês):
-            </span>{" "}
-            disponível mediante consulta, com valor adicional — a disponibilidade desse perfil é
-            bem menor que a de motoristas sem esse requisito. Recomendamos solicitar com grande
-            antecedência, idealmente 70 dias antes da viagem.
-          </p>
-        </div>
-
-        <ContactCTA
-          mode="single"
-          channel="whatsapp"
-          whatsappNumber="5511930300101"
-          brand="Ajisai"
-          label="Falar sobre meu transporte privado"
-          buttonClassName="mt-7 block w-full rounded-full bg-[#2f80c9] px-6 py-4 text-center text-xs font-medium uppercase tracking-[0.25em] text-black transition hover:bg-[#3b91dc]"
-        />
       </div>
     </div>
   );

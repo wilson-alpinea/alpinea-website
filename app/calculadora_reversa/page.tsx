@@ -26,7 +26,6 @@ import {
   PRECO_AEREO_PREMIUM_ECONOMY_USD,
   PRECO_AEREO_BUSINESS_USD,
   PRECO_AEREO_FIRST_USD,
-  DIARIA_TRANSPORTE,
   DIARIA_GUIA_USD,
   DIARIA_GUIA_ESTRANGEIRO_USD,
   GUIA_TAMANHO_GRUPO,
@@ -171,7 +170,7 @@ const CATALOGO_SERVICOS_ADICIONAIS: {
     key: "transferOnibus",
     nome: "Transfer de Ônibus (Limousine Bus)",
     descricao:
-      "Aeroporto ↔ hotel em Tóquio, ida e volta, por pessoa — alternativa/complemento à van privada (item “Transporte”), que não inclui esse trajeto.",
+      "Aeroporto ↔ hotel em Tóquio, ida e volta, por pessoa — alternativa/complemento à van privada (item “Motorista Privado”), que não inclui esse trajeto.",
     icone: "/images/icone-servico-transfer-onibus.png",
   },
   {
@@ -1570,6 +1569,14 @@ export default function CalculadoraReversaPage() {
   const [itensAlterados, setItensAlterados] = useState<Set<string>>(new Set());
   const [geradoEm] = useState(() => new Date());
   const [gerandoPdf, setGerandoPdf] = useState(false);
+  // "REGISTRAR NO CRM" — pedido do Wilson, 16/set/2026: cria uma entrada
+  // de cliente/lead no CRM (Supabase) direto a partir dos dados já
+  // preenchidos aqui, sem duplicar digitação. Ver handleRegistrarCrm e
+  // /api/calculadora-reversa-crm/route.ts.
+  const [registrandoCrm, setRegistrandoCrm] = useState(false);
+  const [crmResultado, setCrmResultado] = useState<{ tipo: "sucesso" | "erro"; mensagem: string } | null>(
+    null,
+  );
   // Pedido do Wilson, 10/set/2026: "Orçamento de Referência" no PDF/Word
   // gerava confusão na apresentação pro cliente — inicialmente um
   // checkbox opcional pra ocultar. Pedido do Wilson, 14/set/2026: "valor
@@ -2153,29 +2160,18 @@ export default function CalculadoraReversaPage() {
       });
     });
 
-    // 2) Complementares essenciais (transporte, seguro, guia)
-    const precoTransporte = DIARIA_TRANSPORTE * dias;
-    const transporteRecomendado = cabe(precoTransporte);
-    if (transporteRecomendado) gasto += precoTransporte;
-    incluidos.push({
-      label: "Transporte",
-      detalhe: [
-        "Transfers e deslocamentos privados do roteiro (aeroporto, entre cidades e até as atrações).",
-        "Van dedicada — Toyota Alphard ou Hiace, conforme tamanho do grupo/bagagem.",
-        `Sem compartilhar veículo com outros grupos — ${dias} dias.`,
-        // Pedido do Wilson, 14/set/2026: "falta transfer aeroporto [...]
-        // Transporte público | Transfer compartilhado | Transfer privado
-        // [...] deveria ser fácil de entender" — esse item JÁ É o transfer
-        // privado (aeroporto ↔ hotel incluso na van dedicada). Deixado
-        // explícito aqui, com referência cruzada às outras 2 opções, em
-        // vez de criar um campo/cálculo novo pra uma decisão que a
-        // calculadora já resolve.
-        "Esse item já é o transfer privado aeroporto ↔ hotel (incluso na van dedicada acima). Alternativa mais econômica/compartilhada: \"Transfer de Ônibus\" nos Serviços Adicionais. Upgrade pra motorista exclusivo dedicado: \"Motorista Privado\" abaixo.",
-      ],
-      precoBRL: precoTransporte,
-      recomendado: transporteRecomendado,
-    });
-
+    // 2) Complementares essenciais (motorista privado, seguro, guia)
+    //
+    // Pedido do Wilson, 16/set/2026: "todo campo de transporte deve ser
+    // chamado de motorista privado [...] renomear e remover a
+    // duplicidade" — antes havia 2 itens (o "Transporte" base, sempre
+    // incluso, com preço em DIARIA_TRANSPORTE, e um upgrade opcional
+    // separado "Motorista Privado" com preço em DIARIA_MOTORISTA_PRIVADO_USD)
+    // que apareceriam com nomes iguais e preços diferentes se só o label
+    // fosse trocado. O item base "Transporte" foi removido; o único item
+    // de transporte que resta é "Motorista Privado" (mais abaixo, chave
+    // "motorista", mesmo preço já usado em /produtos no card "Transporte
+    // Privado" — TransportePrivadoCalculator.tsx).
     const diariaGuiaUSD = guiaTipo === "brasileiro" ? DIARIA_GUIA_USD : DIARIA_GUIA_ESTRANGEIRO_USD;
     const precoGuia = Math.round(
       diariaGuiaUSD * guiaDias * Math.max(1, Math.ceil(pessoas / GUIA_TAMANHO_GRUPO)) * cambioCotacao,
@@ -2255,7 +2251,9 @@ export default function CalculadoraReversaPage() {
       }
     }
 
-    // 6) Motorista Privado (upgrade sobre o transporte compartilhado)
+    // 6) Motorista Privado (único item de transporte da calculadora —
+    // ver comentário acima, na seção 2, sobre a fusão com o antigo item
+    // "Transporte")
     const precoMotorista = Math.round(
       DIARIA_MOTORISTA_PRIVADO_USD *
         dias *
@@ -2269,7 +2267,7 @@ export default function CalculadoraReversaPage() {
       label: "Motorista Privado",
       detalhe: [
         "Motorista particular à disposição do grupo, sem compartilhar veículo.",
-        "Upgrade sobre o item \"Transporte\" — mais privacidade e flexibilidade de horário/roteiro que a van dedicada padrão.",
+        "Mais privacidade e flexibilidade de horário/roteiro do que transporte compartilhado — não inclui o transfer aeroporto ↔ hotel (item à parte).",
         `US$ ${DIARIA_MOTORISTA_PRIVADO_USD}/dia para até ${MOTORISTA_TAMANHO_GRUPO} pessoas`,
       ],
       precoBRL: precoMotorista,
@@ -2404,7 +2402,7 @@ export default function CalculadoraReversaPage() {
         chave: "servico-transferOnibus",
         label: "Transfer de Ônibus (Limousine Bus)",
         detalhe: [
-          "Aeroporto ↔ hotel em Tóquio, ida e volta — não incluso no item “Transporte” (van privada).",
+          "Aeroporto ↔ hotel em Tóquio, ida e volta — não incluso no item “Motorista Privado” (van privada).",
           `${pessoas} ${pessoas === 1 ? "pessoa" : "pessoas"}.`,
         ],
         precoBRL: precoTransferOnibus,
@@ -2741,6 +2739,107 @@ export default function CalculadoraReversaPage() {
     } catch (erro) {
       console.error("Falha ao gerar arquivo de texto da proposta:", erro);
       window.alert("Não foi possível gerar o arquivo de texto agora. Tente novamente em alguns segundos.");
+    }
+  }
+
+  // Mapa chave-do-item → produto_secundario do CRM (ver lib/crm/produtos.ts
+  // no repo do Wilson — CHECK constraint da coluna produto_secundario).
+  // Só itens com correspondência clara entram; o resto (aéreo, hotel,
+  // seguro sempre presente, ingressos, wifi etc.) não tem produto do CRM
+  // equivalente e fica de fora.
+  function produtoSecundarioDoCrm(): string[] {
+    const mapa: Record<string, string> = {
+      jrpass: "jr_pass",
+      seguro: "seguro_viagem",
+      guia: "guia",
+      motorista: "motorista_particular",
+      "servico-restaurantesHighEnd": "reserva_restaurantes",
+      "servico-reservaRestaurante": "reserva_restaurantes",
+    };
+    const produtos = new Set<string>();
+    for (const item of itensSelecionados) {
+      const produto = mapa[chaveDoItem(item)];
+      if (produto) produtos.add(produto);
+    }
+    return Array.from(produtos);
+  }
+
+  // Resumo em texto de tudo que está na proposta — vira o campo
+  // "observações"/histórico do cliente no CRM (pedido do Wilson,
+  // 16/set/2026: "ajustar o CRM para que ele possua todos os dados que
+  // temos aqui na pagina de calculadora reversa").
+  function construirResumoCrm(): string {
+    const nomeTemporada = TEMPORADAS.find((t) => t.key === temporada)?.nome ?? temporada;
+    const nomeOrigem = ORIGENS_VOO.find((o) => o.key === origemVoo)?.nome ?? origemVoo;
+    const nomeBagagem = BAGAGEM_OPCOES.find((b) => b.key === bagagem)?.nome ?? bagagem;
+    const idadesLabel = idadesPassageiros.slice(0, pessoas).join(", ");
+
+    return [
+      `Proposta Ajisai — ${pacoteSugeridoLabel}`,
+      "",
+      "— Dados da viagem —",
+      `Duração: ${dias} dias · ${pessoas} ${pessoas === 1 ? "pessoa" : "pessoas"}`,
+      idadesLabel ? `Idades: ${idadesLabel}` : "",
+      `Quarto: ${tipoQuarto}`,
+      `Hotel: ${resultado.categoriaHotelFinal} · Aéreo: ${resultado.classeAereoFinal}`,
+      `Temporada: ${nomeTemporada}`,
+      `Origem do voo: ${nomeOrigem}`,
+      `Bagagem: ${nomeBagagem}`,
+      `Guia: ${guiaTipo === "brasileiro" ? "Brasileiro" : "Estrangeiro"} (${guiaDias} ${guiaDias === 1 ? "dia" : "dias"})`,
+      dataViagemEstimada
+        ? `Data estimada da viagem: ${new Date(`${dataViagemEstimada}T00:00:00`).toLocaleDateString("pt-BR")}`
+        : "",
+      "",
+      "— Itens da proposta —",
+      ...itensSelecionados.map((item) => `• ${item.label}: ${formatMoeda(valorItem(item))}`),
+      "",
+      `Total: ${formatMoeda(totalSelecionado)}${totalManual ? " (ajustado manualmente)" : ""}`,
+      `Orçamento informado: ${formatMoeda(orcamento)}`,
+      `Saldo: ${formatMoeda(saldoSelecionado)}`,
+      margemNota.trim() ? `Nota de margem: ${margemNota.trim()}` : "",
+      observacoesInternas.trim() ? `Observações internas: ${observacoesInternas.trim()}` : "",
+      `Gerado em ${geradoEmLabel} — Ajisai`,
+    ]
+      .filter(Boolean)
+      .join("\n");
+  }
+
+  async function handleRegistrarCrm() {
+    if (!nomeCliente.trim()) {
+      setCrmResultado({
+        tipo: "erro",
+        mensagem: "Preencha o nome do cliente em \"Dados da proposta\" antes de registrar no CRM.",
+      });
+      return;
+    }
+    setRegistrandoCrm(true);
+    setCrmResultado(null);
+    try {
+      const resposta = await fetch("/api/calculadora-reversa-crm", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          nome: nomeCliente.trim(),
+          consultor: consultorResponsavel.trim(),
+          valorProposta: totalSelecionado,
+          dataViagem: dataViagemEstimada || null,
+          produtoSecundario: produtoSecundarioDoCrm(),
+          resumoTexto: construirResumoCrm(),
+        }),
+      });
+      const dados = await resposta.json();
+      if (!resposta.ok || !dados.success) {
+        throw new Error(dados.error || "Não foi possível registrar no CRM agora.");
+      }
+      setCrmResultado({ tipo: "sucesso", mensagem: "Cliente registrado no CRM com sucesso." });
+    } catch (erro) {
+      console.error("Falha ao registrar no CRM (calculadora reversa):", erro);
+      setCrmResultado({
+        tipo: "erro",
+        mensagem: erro instanceof Error ? erro.message : "Não foi possível registrar no CRM agora.",
+      });
+    } finally {
+      setRegistrandoCrm(false);
     }
   }
 
@@ -5140,6 +5239,27 @@ export default function CalculadoraReversaPage() {
                     <span>Texto editável (Word)</span>
                   </button>
                 </div>
+
+                {/* Pedido do Wilson, 16/set/2026: "criar um campo novo na
+                    cor verde chamado REGISTRAR NO CRM [...] para que isso
+                    crie uma entrada no CRM de registro de novo cliente". */}
+                <button
+                  type="button"
+                  onClick={handleRegistrarCrm}
+                  disabled={registrandoCrm}
+                  className="flex w-full items-center justify-center gap-2 rounded-full bg-emerald-600 px-6 py-4 text-center text-xs font-medium uppercase tracking-[0.25em] text-white transition hover:bg-emerald-500 disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  <span>{registrandoCrm ? "Registrando…" : "Registrar no CRM"}</span>
+                </button>
+                {crmResultado && (
+                  <p
+                    className={`text-center text-xs font-medium ${
+                      crmResultado.tipo === "sucesso" ? "text-emerald-600" : "text-red-600"
+                    }`}
+                  >
+                    {crmResultado.mensagem}
+                  </p>
+                )}
               </div>
             </>
           )}
