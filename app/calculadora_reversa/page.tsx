@@ -3673,15 +3673,33 @@ export default function CalculadoraReversaPage() {
             )}
             {!camposOcultos.has(13) && (
             <>
-            <div className="max-w-xs">
-              <NumberStepper
-                label="Quantos dias o cliente quer guia"
-                value={guiaDias}
-                onChange={setGuiaDias}
-                min={0}
-                max={dias}
-                formatValue={(v) => (v === 0 ? "Sem guia" : `${v} de ${dias} dia${dias === 1 ? "" : "s"}`)}
-              />
+            <div className="flex flex-wrap items-end gap-2">
+              <div className="max-w-xs flex-1">
+                <NumberStepper
+                  label="Quantos dias o cliente quer guia"
+                  value={guiaDias}
+                  onChange={setGuiaDias}
+                  min={0}
+                  max={dias}
+                  formatValue={(v) => (v === 0 ? "Sem guia" : `${v} de ${dias} dia${dias === 1 ? "" : "s"}`)}
+                />
+              </div>
+              {/* Pedido do Wilson, 16/set/2026: "deixar uma opção sem guia
+                  fácil de selecionar" — antes só dava pra zerar clicando
+                  no "−" do stepper várias vezes até chegar em 0. Este
+                  botão zera direto, num clique só. */}
+              <button
+                type="button"
+                onClick={() => setGuiaDias(0)}
+                aria-pressed={guiaDias === 0}
+                className={`h-10 shrink-0 rounded-lg border px-3 text-xs font-medium transition ${
+                  guiaDias === 0
+                    ? "border-[#2f80c9] bg-[#2f80c9]/10 text-[#2f80c9]"
+                    : "border-black/15 text-black/55 hover:border-black/30"
+                }`}
+              >
+                Sem guia
+              </button>
             </div>
             <span className="mt-1.5 block text-[11px] text-black/40">
               US$ {DIARIA_GUIA_USD}/dia a cada {GUIA_TAMANHO_GRUPO} pessoas

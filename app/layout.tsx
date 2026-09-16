@@ -1,6 +1,6 @@
 import { GoogleAnalytics } from "@next/third-parties/google";
 import Script from "next/script";
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
@@ -73,6 +73,16 @@ export const metadata: Metadata = {
   icons: {
     icon: "/icon.png",
   },
+};
+
+// Sem essa configuracao, o Safari/Chrome mobile renderiza a pagina numa
+// largura virtual de ~980px (padrao) e mostra tudo encolhido, exigindo
+// scroll horizontal -- bug reportado pelo Wilson (16/set/2026, prints do
+// /calculadora_reversa no iPhone). width: device-width faz o layout usar
+// a largura real da tela em qualquer pagina do site.
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
 };
 
 export default function RootLayout({
