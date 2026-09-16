@@ -833,6 +833,11 @@ export const DIARIA_SEGURO_VIAGEM = comMargemEImposto(35);
 export const DIARIA_MOTORISTA_PRIVADO_USD = comMargemEImposto(700);
 export const MOTORISTA_TAMANHO_GRUPO = 4;
 export const PRECO_CAMBIO_BRASIL = comMargemEImposto(150);
+// Ajisai Shopping — serviço novo, pedido do Wilson, 16/set/2026: comissão
+// de 20% sobre o valor das compras acompanhadas (sem diária/valor fixo).
+// Compartilhado entre calculadora_reversa/page.tsx (cálculo do item na
+// proposta) e produtos/page.tsx (card + popup do serviço).
+export const COMISSAO_AJISAI_SHOPPING_PCT = 0.2;
 // Wi-fi e ingressos Disney/Universal: valores de referência da planilha
 // "Simulação de Orçamento v2.1" (JPY convertido pra dólar) — não foram
 // passados valores explícitos por você para esses dois itens. Também

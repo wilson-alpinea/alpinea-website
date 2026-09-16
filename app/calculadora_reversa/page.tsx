@@ -36,6 +36,7 @@ import {
   DIARIA_ESIM_USD_PAX,
   PRECO_CAMBIO_BRASIL,
   DIARIA_MOTORISTA_PRIVADO_USD,
+  COMISSAO_AJISAI_SHOPPING_PCT,
   MOTORISTA_TAMANHO_GRUPO,
   PRECO_INGRESSO_DISNEYLAND_TOKYO_USD_PAX,
   PRECO_INGRESSO_DISNEYSEA_USD_PAX,
@@ -101,7 +102,8 @@ type ServicoAdicionalKey =
   | "transferOnibus"
   | "reservaRestaurante"
   | "experienciaSobMedida"
-  | "concierge";
+  | "concierge"
+  | "ajisaiShopping";
 
 // Catálogo de serviços adicionais/avulsos mostrados como cards na seção 16
 // — mesmo espírito visual/funcional do catálogo de Ingressos acima (card
@@ -193,6 +195,18 @@ const CATALOGO_SERVICOS_ADICIONAIS: {
     descricao:
       "Suporte e tradução sob demanda por WhatsApp/telefone durante toda a viagem, por dia.",
     icone: "/images/icone-servico-concierge.png",
+  },
+  // Pedido do Wilson, 16/set/2026: "criar [...] um card novo de serviço
+  // chamado Ajisai Shopping, será um serviço de compra durante a viagem no
+  // japao" — comissão de 20% sobre o valor das compras (ver
+  // COMISSAO_AJISAI_SHOPPING_PCT), não uma diária ou valor fixo como os
+  // demais itens deste catálogo.
+  {
+    key: "ajisaiShopping",
+    nome: "Ajisai Shopping",
+    descricao:
+      "Acompanhamento pessoal em compras durante a viagem no Japão — negociação, tradução e apoio logístico nas lojas. Comissão de 20% sobre o valor das compras realizadas com o acompanhamento.",
+    icone: "/images/icone-servico-ajisai-shopping.png",
   },
 ];
 
@@ -615,6 +629,18 @@ function multiplicadorSeguroPorIdade(idade: number): number | null {
   if (idade > IDADE_LIMITE_SEGURO) return null;
   return FAIXAS_SEGURO_IDADE.find((f) => idade <= f.idadeMax)?.multiplicador ?? null;
 }
+
+// Ajisai Shopping — serviço novo, pedido do Wilson, 16/set/2026: "criar na
+// pagina de calculadora reversa e produtos um card novo de serviço chamado
+// Ajisai Shopping, será um serviço de compra durante a viagem no japao".
+// Precificação definida pelo Wilson: comissão de 20% sobre o valor das
+// compras acompanhadas pelo serviço — não há diária nem valor fixo, já que
+// o preço real só existe depois de o cliente comprar. O vendedor informa um
+// orçamento estimado de compras (campo próprio na seção 16) só pra ter um
+// valor de referência na proposta; o valor final é sempre "sob consulta"
+// até a viagem acontecer. Constante COMISSAO_AJISAI_SHOPPING_PCT importada
+// de CustomPackageCard.tsx — compartilhada com o card/popup em
+// produtos/page.tsx.
 
 // Mês estimado → sugestão de Temporada — pedido do Wilson, 14/set/2026:
 // "temporada também deveria ser derivada das datas [...] quanto menos o
@@ -1639,6 +1665,10 @@ export default function CalculadoraReversaPage() {
   const [servicosAdicionaisSelecionados, setServicosAdicionaisSelecionados] = useState<
     Set<ServicoAdicionalKey>
   >(new Set());
+  // Orçamento estimado de compras do Ajisai Shopping — só usado pra dar um
+  // valor de referência na proposta (comissão de 20% sobre esse número);
+  // ver COMISSAO_AJISAI_SHOPPING_PCT.
+  const [comprasOrcamentoEstimado, setComprasOrcamentoEstimado] = useState(0);
 
   function alternarIngresso(key: IngressoKey) {
     setIngressosSelecionados((atual) => {
@@ -2458,6 +2488,28 @@ export default function CalculadoraReversaPage() {
       });
     }
 
+    // Ajisai Shopping — comissão de 20% sobre o orçamento estimado de
+    // compras informado pelo vendedor (ver comentário em
+    // COMISSAO_AJISAI_SHOPPING_PCT). Sem orçamento informado, o item entra
+    // com valor de referência R$ 0 — "sob consulta" no detalhe.
+    if (servicosAdicionaisSelecionados.has("ajisaiShopping")) {
+      const precoAjisaiShopping = Math.round(comprasOrcamentoEstimado * COMISSAO_AJISAI_SHOPPING_PCT);
+      const ajisaiShoppingRecomendado = cabe(precoAjisaiShopping);
+      if (ajisaiShoppingRecomendado) gasto += precoAjisaiShopping;
+      incluidos.push({
+        chave: "servico-ajisaiShopping",
+        label: "Ajisai Shopping",
+        detalhe: [
+          "Acompanhamento pessoal em compras durante a viagem — negociação, tradução e apoio logístico nas lojas.",
+          comprasOrcamentoEstimado > 0
+            ? `Comissão de ${(COMISSAO_AJISAI_SHOPPING_PCT * 100).toFixed(0)}% sobre orçamento estimado de compras de ${formatMoeda(comprasOrcamentoEstimado)}.`
+            : `Comissão de ${(COMISSAO_AJISAI_SHOPPING_PCT * 100).toFixed(0)}% sobre o valor das compras — valor final sob consulta, conforme o que for efetivamente gasto na viagem.`,
+        ],
+        precoBRL: precoAjisaiShopping,
+        recomendado: ajisaiShoppingRecomendado,
+      });
+    }
+
     // Atualiza os itens fixos de hotel/aéreo com a categoria/classe final
     incluidos[1] = {
       chave: "aereo",
@@ -2536,6 +2588,7 @@ export default function CalculadoraReversaPage() {
     premierAccessAtracoes,
     usjExpressPassTier,
     servicosAdicionaisSelecionados,
+    comprasOrcamentoEstimado,
     destinosSelecionados,
   ]);
 
@@ -2755,6 +2808,7 @@ export default function CalculadoraReversaPage() {
       motorista: "motorista_particular",
       "servico-restaurantesHighEnd": "reserva_restaurantes",
       "servico-reservaRestaurante": "reserva_restaurantes",
+      "servico-ajisaiShopping": "acompanhamento_compras",
     };
     const produtos = new Set<string>();
     for (const item of itensSelecionados) {
@@ -4428,7 +4482,9 @@ export default function CalculadoraReversaPage() {
                             ? `${formatMoedaDeUSD(PRECO_RESERVA_RESTAURANTE_USD)}/reserva`
                             : servico.key === "experienciaSobMedida"
                               ? `${formatMoedaDeUSD(PRECO_EXPERIENCIA_SOB_MEDIDA_USD)}/experiência`
-                              : `${formatMoedaDeUSD(DIARIA_CONCIERGE_USD)}/dia`;
+                              : servico.key === "concierge"
+                                ? `${formatMoedaDeUSD(DIARIA_CONCIERGE_USD)}/dia`
+                                : `${(COMISSAO_AJISAI_SHOPPING_PCT * 100).toFixed(0)}% sobre compras`;
                 return (
                   <label
                     key={servico.key}
@@ -4489,6 +4545,31 @@ export default function CalculadoraReversaPage() {
               })}
             </div>
             <p className="mt-2 text-[10px] leading-4 text-black/35">* preço inicial — pode variar conforme grupo, trecho e disponibilidade.</p>
+            {servicosAdicionaisSelecionados.has("ajisaiShopping") && (
+              <div className="mt-3 max-w-xs">
+                <label className="block">
+                  <span className="mb-1.5 block text-[10px] uppercase tracking-[0.2em] text-black/40">
+                    Ajisai Shopping — orçamento estimado de compras (R$)
+                  </span>
+                  <input
+                    type="number"
+                    min={0}
+                    step={100}
+                    value={comprasOrcamentoEstimado || ""}
+                    onChange={(e) =>
+                      setComprasOrcamentoEstimado(Math.max(0, Number(e.target.value) || 0))
+                    }
+                    placeholder="ex.: 10000"
+                    className="w-full rounded-lg border border-black/15 bg-black/[0.03] px-3 py-2 text-sm text-black placeholder:text-black/25 outline-none focus:border-[#2f80c9]/60"
+                  />
+                </label>
+                <p className="mt-1 text-[10px] leading-4 text-black/35">
+                  Comissão de {(COMISSAO_AJISAI_SHOPPING_PCT * 100).toFixed(0)}% sobre esse valor — só
+                  uma referência pra proposta. Valor final sob consulta, conforme o que for
+                  efetivamente gasto na viagem.
+                </p>
+              </div>
+            )}
             {servicosAdicionaisSelecionados.size > 0 && (
               <p className="mt-1 text-[11px] leading-4 text-black/40">
                 {CATALOGO_SERVICOS_ADICIONAIS.filter((s) => servicosAdicionaisSelecionados.has(s.key)).map(

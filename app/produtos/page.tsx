@@ -19,6 +19,7 @@ import {
   JR_PASS_PRECO_USD,
   DIARIA_SEGURO_VIAGEM,
   PRECO_CAMBIO_BRASIL,
+  COMISSAO_AJISAI_SHOPPING_PCT,
 } from "../components/CustomPackageCard";
 import { HotelQuoteCalculator } from "../components/HotelQuoteCalculator";
 import { ContactCTA } from "../components/ContactCTA";
@@ -138,6 +139,24 @@ export default function ProdutosPage() {
   const [jrPassModalOpen, setJrPassModalOpen] = useState(false);
   const [seguroViagemModalOpen, setSeguroViagemModalOpen] = useState(false);
   const [cambioModalOpen, setCambioModalOpen] = useState(false);
+  // Pedido do Wilson, 16/set/2026: "criar na pagina de calculadora reversa
+  // e produtos um card novo de serviço chamado Ajisai Shopping" — mesmo
+  // padrão leve do popup de JR Pass/Câmbio/Seguro Viagem (ServicoAvulsoModal).
+  const [ajisaiShoppingModalOpen, setAjisaiShoppingModalOpen] = useState(false);
+
+  // Deep link ?abrir=hoteis — pedido do Wilson, 16/set/2026: "em hotel,
+  // colocar link para detalhes do serviço para que ele possa ver o que
+  // tem em cada categoria em detalhes" (no PDF/Word da proposta, ver
+  // EXPLICACOES_ITEM em PacotePdf.tsx). Lido direto de window.location
+  // em vez de useSearchParams (next/navigation) pra não exigir um
+  // Suspense boundary só por causa desse popup.
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("abrir") === "hoteis") {
+      setHoteisModalOpen(true);
+    }
+  }, []);
 
   useEffect(() => {
     if (
@@ -151,7 +170,8 @@ export default function ProdutosPage() {
       !hoteisModalOpen &&
       !jrPassModalOpen &&
       !seguroViagemModalOpen &&
-      !cambioModalOpen
+      !cambioModalOpen &&
+      !ajisaiShoppingModalOpen
     )
       return;
 
@@ -170,6 +190,7 @@ export default function ProdutosPage() {
         setJrPassModalOpen(false);
         setSeguroViagemModalOpen(false);
         setCambioModalOpen(false);
+        setAjisaiShoppingModalOpen(false);
       }
     };
     window.addEventListener("keydown", handleKeyDown);
@@ -189,6 +210,7 @@ export default function ProdutosPage() {
     jrPassModalOpen,
     seguroViagemModalOpen,
     cambioModalOpen,
+    ajisaiShoppingModalOpen,
     hoteisModalOpen,
   ]);
 
@@ -434,6 +456,23 @@ export default function ProdutosPage() {
                 title="Seguro Viagem"
                 description="Cobertura médica e assistência durante toda a viagem."
                 cta="Ver seguro viagem"
+                className="lg:col-span-2"
+              />
+              {/* Pedido do Wilson, 16/set/2026: "criar na pagina de
+                  calculadora reversa e produtos um card novo de serviço
+                  chamado Ajisai Shopping, será um serviço de compra
+                  durante a viagem no japao" — mesmo template dos cards
+                  acima, comissão de 20% sobre o valor das compras (não uma
+                  diária/valor fixo). */}
+              <ProductSelectorCard
+                href="/servicos-adicionais"
+                onClick={() => setAjisaiShoppingModalOpen(true)}
+                icon="/images/icone-servico-ajisai-shopping.png"
+                iconWidth={1254}
+                iconHeight={1254}
+                title="Ajisai Shopping"
+                description="Acompanhamento pessoal em compras durante a viagem no Japão, com negociação, tradução e apoio logístico nas lojas."
+                cta="Ver Ajisai Shopping"
                 className="lg:col-span-2"
               />
             </div>
@@ -1077,6 +1116,17 @@ export default function ProdutosPage() {
           precoLabel={`${formatBRL(DIARIA_SEGURO_VIAGEM)}/dia`}
           cambio={cambio}
           onClose={() => setSeguroViagemModalOpen(false)}
+        />
+      )}
+
+      {ajisaiShoppingModalOpen && (
+        <ServicoAvulsoModal
+          titulo="Ajisai Shopping"
+          descricao="Acompanhamento pessoal em compras durante a viagem no Japão — negociação, tradução e apoio logístico nas lojas, do início ao fim da experiência de compra."
+          precoLabel={`${(COMISSAO_AJISAI_SHOPPING_PCT * 100).toFixed(0)}% sobre as compras`}
+          notaPreco="Comissão sobre o valor das compras realizadas com o acompanhamento — sem diária fixa. Valor final sob consulta, conforme o que for efetivamente gasto na viagem."
+          cambio={cambio}
+          onClose={() => setAjisaiShoppingModalOpen(false)}
         />
       )}
 

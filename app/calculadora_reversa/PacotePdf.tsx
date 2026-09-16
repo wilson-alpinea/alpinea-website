@@ -105,7 +105,10 @@ function categoriaDoItem(chave: string): CategoriaItem {
   return "outro";
 }
 
-const EXPLICACOES_ITEM: Record<CategoriaItem, { texto: string; videoUrl: string | null }> = {
+const EXPLICACOES_ITEM: Record<
+  CategoriaItem,
+  { texto: string; videoUrl: string | null; linkUrl?: string; linkLabel?: string }
+> = {
   roteiro: {
     texto:
       "Roteiro dia a dia elaborado sob medida para o grupo, com atrações, deslocamentos, refeições e as informações práticas de aeroporto que vocês vão precisar. Fica disponível num painel digital Ajisai, acessível pelo celular durante toda a viagem — sem depender de papel ou de internet no exterior.",
@@ -115,16 +118,32 @@ const EXPLICACOES_ITEM: Record<CategoriaItem, { texto: string; videoUrl: string 
     texto:
       "Passagem aérea internacional de ida e volta, já incluindo a franquia de bagagem despachada da companhia. A classe pode variar entre Economy, Premium Economy, Business e First Class conforme o pacote escolhido — o valor exibido já reflete a classe confirmada nesta proposta.",
     videoUrl: null,
+    // Pedido do Wilson, 16/set/2026: "adicionar link na parte de passagem
+    // aerea para duvidas comuns, por exemplo mala, quais tamanhos, o que
+    // pode levar dentro e fora do aviao" — ver /duvidas-frequentes#bagagem.
+    linkUrl: `${SITE_URL}/duvidas-frequentes#bagagem`,
+    linkLabel: "Dúvidas sobre bagagem — tamanhos e o que pode levar",
   },
   hotel: {
     texto:
       "Hospedagem na categoria indicada (3 a 5 estrelas, ou Elite para propriedades super exclusivas), com diárias calculadas por cidade e por época do ano, no tipo de quarto escolhido pelo grupo. A Alpinea seleciona hotéis com localização, serviço e padrão compatíveis com o público de alto padrão que atendemos.",
     videoUrl: null,
+    // Pedido do Wilson, 16/set/2026: "em hotel, colocar link para
+    // detalhes do serviço para que ele possa ver o que tem em cada
+    // categoria em detalhes" — abre /produtos já com o card de hotéis
+    // expandido (ver ?abrir=hoteis em app/produtos/page.tsx).
+    linkUrl: `${SITE_URL}/produtos?abrir=hoteis`,
+    linkLabel: "Ver o que tem em cada categoria de hotel",
   },
   seguro: {
     texto:
       "Seguro viagem com cobertura médico-hospitalar (mínimo de US$ 30 mil, com opção de upgrade para US$ 60 mil), bagagem extraviada, cancelamento de viagem e assistência 24 horas em português — item obrigatório em todos os pacotes Ajisai.",
     videoUrl: null,
+    // Pedido do Wilson, 16/set/2026: "adicionar link para apolice padrao
+    // e condicoes de uso (depois envio os documentos, deixar
+    // placeholder)" — ver placeholder em /duvidas-frequentes#seguro-viagem.
+    linkUrl: `${SITE_URL}/duvidas-frequentes#seguro-viagem`,
+    linkLabel: "Apólice padrão e condições de uso",
   },
   extensao: {
     texto:
@@ -143,8 +162,13 @@ const EXPLICACOES_ITEM: Record<CategoriaItem, { texto: string; videoUrl: string 
   },
   jrpass: {
     texto:
-      "Passe ferroviário que dá direito a deslocamentos ilimitados nas linhas JR durante o período contratado, incluindo a maioria dos trens-bala (Shinkansen). É a forma mais prática de se locomover entre cidades no Japão.",
+      "Passe ferroviário que dá direito a deslocamentos ilimitados nas linhas JR durante o período contratado, incluindo a maioria dos trens-bala (Shinkansen). É a forma mais prática de se locomover entre cidades no Japão. Venda restrita a turistas estrangeiros (\"Temporary Visitor\") e a japoneses comprovadamente residentes no exterior — japoneses residentes no Japão não têm direito ao passe.",
     videoUrl: null,
+    // Pedido do Wilson, 16/set/2026: "em JR Pass, deixar link para termos
+    // e condições, deixar claro informações sobre condicoes de
+    // eligbilidade, por exemplo ser japonês etc".
+    linkUrl: `${SITE_URL}/duvidas-frequentes#jr-pass`,
+    linkLabel: "Termos e condições de elegibilidade",
   },
   wifi: {
     // Pocket Wi-Fi removido — pedido do Wilson, 16/set/2026.
@@ -201,6 +225,14 @@ const DIFERENCIAIS_AJISAI: { titulo: string; texto: string }[] = [
   },
 ];
 
+// Redesenho estético, pedido do Wilson, 16/set/2026: "melhorar tanto no
+// pdf e word a parte estetica do arquivo, hoje está meio feio, podemos
+// deixar mais bonito". Mesma paleta já usada no resto do site (azul
+// #2f80c9 de destaque, roxo #b79ce6 como contraponto, navy #0A2540 pra
+// texto de autoridade) — @react-pdf/renderer não tem box-shadow nem
+// gradiente, então o ganho vem de: barra de destaque sob o título, header
+// com borda colorida (em vez de navy neutro), zebra-striping nos itens,
+// caixas com borda lateral colorida em vez de só fundo cinza plano.
 const styles = StyleSheet.create({
   page: {
     paddingTop: 40,
@@ -210,32 +242,41 @@ const styles = StyleSheet.create({
     fontFamily: "Helvetica",
     color: "#0A2540",
   },
-  logo: { width: 110, height: 38.28, objectFit: "contain", marginBottom: 14 },
+  logo: { width: 110, height: 38.28, objectFit: "contain", marginBottom: 16 },
   eyebrow: {
     fontSize: 8,
+    fontFamily: "Helvetica-Bold",
     textTransform: "uppercase",
-    letterSpacing: 2,
-    color: "#6b7688",
-    marginBottom: 4,
+    letterSpacing: 2.5,
+    color: "#2f80c9",
+    marginBottom: 5,
   },
-  h1: { fontSize: 20, fontFamily: "Helvetica-Bold", marginBottom: 6 },
+  h1: { fontSize: 22, fontFamily: "Helvetica-Bold", marginBottom: 4, color: "#0A2540" },
+  headerRule: {
+    width: 42,
+    height: 3,
+    borderRadius: 2,
+    backgroundColor: "#2f80c9",
+    marginBottom: 12,
+  },
   h2: {
     fontSize: 13,
     fontFamily: "Helvetica-Bold",
-    marginTop: 18,
-    marginBottom: 8,
-    paddingBottom: 4,
-    borderBottomWidth: 1,
-    borderBottomColor: "#0A2540",
+    marginTop: 20,
+    marginBottom: 10,
+    paddingBottom: 5,
+    borderBottomWidth: 1.5,
+    borderBottomColor: "#2f80c9",
+    color: "#0A2540",
   },
   tagsRow: { flexDirection: "row", gap: 6, marginBottom: 6 },
   tag: {
-    backgroundColor: "#0A2540",
+    backgroundColor: "#2f80c9",
     color: "#ffffff",
     fontSize: 8,
     fontFamily: "Helvetica-Bold",
-    paddingVertical: 3,
-    paddingHorizontal: 7,
+    paddingVertical: 3.5,
+    paddingHorizontal: 8,
     borderRadius: 10,
   },
   metaText: { fontSize: 8, color: "#6b7688", marginBottom: 2 },
@@ -243,45 +284,64 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "flex-start",
-    paddingVertical: 7,
+    paddingVertical: 8,
+    paddingHorizontal: 6,
     borderBottomWidth: 0.5,
     borderBottomColor: "#dcdfe4",
   },
-  itemLabel: { fontFamily: "Helvetica-Bold", fontSize: 10, marginBottom: 2 },
+  itemRowAlt: { backgroundColor: "#f8fafc" },
+  itemLabel: { fontFamily: "Helvetica-Bold", fontSize: 10, marginBottom: 2, color: "#0A2540" },
   itemDetalhe: { fontSize: 8.5, color: "#4a5568", lineHeight: 1.4 },
-  itemPreco: { fontFamily: "Helvetica-Bold", fontSize: 10, marginLeft: 12 },
+  itemPreco: { fontFamily: "Helvetica-Bold", fontSize: 10, marginLeft: 12, color: "#0A2540" },
   totalsBox: {
-    marginTop: 14,
-    padding: 12,
+    marginTop: 16,
+    padding: 14,
     backgroundColor: "#f2f5f8",
-    borderRadius: 6,
+    borderRadius: 8,
+    borderLeftWidth: 4,
+    borderLeftColor: "#2f80c9",
     flexDirection: "row",
     justifyContent: "space-between",
+    alignItems: "center",
   },
   totalsLabel: { fontSize: 8, textTransform: "uppercase", letterSpacing: 1, color: "#6b7688" },
-  totalsValue: { fontSize: 16, fontFamily: "Helvetica-Bold", color: "#2f80c9", marginTop: 2 },
+  totalsValue: { fontSize: 18, fontFamily: "Helvetica-Bold", color: "#2f80c9", marginTop: 3 },
   explicacaoBloco: {
-    marginBottom: 12,
-    paddingBottom: 10,
+    marginBottom: 14,
+    paddingLeft: 11,
+    paddingBottom: 12,
+    borderLeftWidth: 2,
+    borderLeftColor: "#cfe1f2",
     borderBottomWidth: 0.5,
-    borderBottomColor: "#dcdfe4",
+    borderBottomColor: "#eef1f4",
   },
-  explicacaoTitulo: { fontFamily: "Helvetica-Bold", fontSize: 10.5, marginBottom: 3 },
+  explicacaoTitulo: { fontFamily: "Helvetica-Bold", fontSize: 10.5, marginBottom: 3, color: "#0A2540" },
   explicacaoTexto: { fontSize: 9, color: "#374151", lineHeight: 1.5 },
-  videoLink: { fontSize: 8.5, color: "#2f80c9", marginTop: 3 },
-  videoPlaceholder: { fontSize: 8.5, color: "#9aa3b2", marginTop: 3, fontStyle: "italic" },
+  videoLink: { fontSize: 8.5, color: "#2f80c9", marginTop: 4, fontFamily: "Helvetica-Bold" },
+  videoPlaceholder: { fontSize: 8.5, color: "#9aa3b2", marginTop: 4, fontStyle: "italic" },
+  saibaMaisLink: { fontSize: 8.5, color: "#7c5cbf", marginTop: 4, fontFamily: "Helvetica-Bold" },
   paragrafo: { fontSize: 9, color: "#374151", lineHeight: 1.5, marginBottom: 6 },
-  bullet: { flexDirection: "row", marginBottom: 4 },
-  bulletDot: { fontSize: 9, color: "#2f80c9", marginRight: 6 },
-  bulletTexto: { fontSize: 9, color: "#374151", lineHeight: 1.4, flex: 1 },
+  bullet: { flexDirection: "row", marginBottom: 6 },
+  bulletDot: { fontSize: 9, color: "#2f80c9", marginRight: 7 },
+  bulletTexto: { fontSize: 9, color: "#374151", lineHeight: 1.5, flex: 1 },
   diferencialBox: {
     marginBottom: 10,
-    padding: 10,
-    backgroundColor: "#f2f5f8",
-    borderRadius: 6,
+    padding: 12,
+    backgroundColor: "#f8fafc",
+    borderRadius: 8,
+    borderLeftWidth: 3,
+    borderLeftColor: "#b79ce6",
   },
   diferencialTitulo: { fontFamily: "Helvetica-Bold", fontSize: 10, marginBottom: 3, color: "#0A2540" },
   diferencialTexto: { fontSize: 8.5, color: "#4a5568", lineHeight: 1.4 },
+  contratoBox: {
+    marginTop: 16,
+    padding: 12,
+    backgroundColor: "#eef4fb",
+    borderRadius: 8,
+    borderLeftWidth: 3,
+    borderLeftColor: "#2f80c9",
+  },
   footer: {
     position: "absolute",
     bottom: 24,
@@ -379,6 +439,7 @@ export function PacotePdfDocument(props: PacotePdfProps) {
         <Image src={LOGO_DATA_URI} style={styles.logo} />
         <Text style={styles.eyebrow}>Proposta de viagem personalizada</Text>
         <Text style={styles.h1}>{tituloPacote}</Text>
+        <View style={styles.headerRule} />
         {nomeCliente && <Text style={styles.metaText}>Proposta para {nomeCliente}</Text>}
         <View style={styles.tagsRow}>
           <Text style={styles.tag}>{dias} {dias === 1 ? "dia" : "dias"}</Text>
@@ -398,12 +459,16 @@ export function PacotePdfDocument(props: PacotePdfProps) {
         )}
 
         <Text style={styles.h2}>Itens inclusos</Text>
-        {itens.map((item) => (
-          <View key={item.chave} style={styles.itemRow} wrap={false}>
+        {itens.map((item, i) => (
+          <View
+            key={item.chave}
+            style={i % 2 === 1 ? [styles.itemRow, styles.itemRowAlt] : styles.itemRow}
+            wrap={false}
+          >
             <View style={{ flex: 1 }}>
               <Text style={styles.itemLabel}>{item.label}</Text>
-              {item.detalhe.map((linha, i) => (
-                <Text key={i} style={styles.itemDetalhe}>{linha}</Text>
+              {item.detalhe.map((linha, j) => (
+                <Text key={j} style={styles.itemDetalhe}>{linha}</Text>
               ))}
             </View>
             <Text style={styles.itemPreco}>{formatPreco(item.precoBRL)}</Text>
@@ -476,6 +541,11 @@ export function PacotePdfDocument(props: PacotePdfProps) {
                 ) : (
                   <Text style={styles.videoPlaceholder}>Vídeo explicativo em breve</Text>
                 )}
+                {explicacao.linkUrl && explicacao.linkLabel && (
+                  <Link src={explicacao.linkUrl} style={styles.saibaMaisLink}>
+                    🔗 {explicacao.linkLabel}
+                  </Link>
+                )}
               </View>
             );
           },
@@ -496,7 +566,9 @@ export function PacotePdfDocument(props: PacotePdfProps) {
         </View>
         <View style={styles.bullet}>
           <Text style={styles.bulletDot}>•</Text>
-          <Text style={styles.bulletTexto}>Transferência internacional.</Text>
+          {/* Pedido do Wilson, 16/set/2026: "mudar para TED/PIX" (no lugar
+              de "Transferência internacional"). */}
+          <Text style={styles.bulletTexto}>TED/PIX.</Text>
         </View>
         <Text style={{ ...styles.paragrafo, marginTop: 6, fontSize: 8, color: "#6b7688" }}>
           Condições de entrada, parcelas e prazos são confirmadas individualmente com o time
@@ -588,6 +660,20 @@ export function PacotePdfDocument(props: PacotePdfProps) {
           </Link>
           .
         </Text>
+
+        {/* Pedido do Wilson, 16/set/2026: "no pdf e word editavel,
+            adicionar link pro contrato ao final do documento" — placeholder
+            até o Wilson enviar o arquivo real do contrato padrão. */}
+        <View style={styles.contratoBox} wrap={false}>
+          <Text style={styles.diferencialTitulo}>Contrato</Text>
+          <Text style={styles.diferencialTexto}>
+            O contrato de prestação de serviços completo desta proposta está disponível em:
+          </Text>
+          <Link src={`${SITE_URL}/documentos/contrato-padrao-ajisai.pdf`} style={styles.videoLink}>
+            📄 Ler o contrato completo
+          </Link>
+        </View>
+
         <Rodape />
       </Page>
     </Document>
