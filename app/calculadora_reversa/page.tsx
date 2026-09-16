@@ -3598,7 +3598,12 @@ export default function CalculadoraReversaPage() {
                 <span className="mb-2 block text-[9px] uppercase tracking-[0.15em] text-black/40">
                   Validade
                 </span>
-                <div className="flex gap-2">
+                {/* Pedido do Wilson, 16/set/2026 ("problema de centralização"
+                    no mobile): os 3 botões de 112px cada não cabiam na
+                    largura da tela sem quebrar linha (sem flex-wrap, a
+                    linha inteira — e a página — estourava e ficava
+                    deslocada/scrollável na horizontal). */}
+                <div className="flex flex-wrap gap-2">
                   {JR_PASS_DIAS_OPCOES.map((d) => (
                     <button
                       key={d}
@@ -3619,7 +3624,7 @@ export default function CalculadoraReversaPage() {
                 <span className="mb-2 block text-[9px] uppercase tracking-[0.15em] text-black/40">
                   Classe
                 </span>
-                <div className="flex gap-2">
+                <div className="flex flex-wrap gap-2">
                   {(
                     [
                       { key: "comum", label: "Comum (Ordinary)", icone: "/images/ingressos/shinkansen-ordinary.png" },
@@ -3792,7 +3797,7 @@ export default function CalculadoraReversaPage() {
             )}
             {!camposOcultos.has(15) && (
             <>
-            <div className="flex gap-2">
+            <div className="flex flex-wrap gap-2">
               {(["esim", "pocket"] as const).map((t) => (
                 <button
                   key={t}
