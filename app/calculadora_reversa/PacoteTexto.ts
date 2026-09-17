@@ -42,7 +42,7 @@ export function gerarEBaixarTexto(props: PacotePdfProps) {
     .map((item, i) => {
       const fundo = i % 2 === 1 ? "background-color:#f8fafc;" : "";
       return `
-        <tr>
+        <tr style="page-break-inside:avoid;">
           <td style="padding:9px 10px;border-bottom:1px solid #ddd;vertical-align:top;${fundo}">
             <p style="margin:0;font-weight:bold;color:#0A2540;">${escapeHtml(item.label)}</p>
             ${
@@ -128,7 +128,12 @@ export function gerarEBaixarTexto(props: PacotePdfProps) {
     ${linhasItens}
   </table>
 
-  <table style="margin-top:14px;background-color:#f2f5f8;border-left:4px solid #2f80c9;border-radius:6px;">${linhaOrcamentoReferencia}
+  <!-- Pedido do Wilson, 16/set/2026: "no pdf e word esta quebrando, tem
+       que ficar tudo numa pagina só" — a caixa de total quebrava entre
+       páginas no Word (label numa página, valor na seguinte).
+       page-break-inside:avoid pede pro Word tratar a tabela como um
+       bloco só, sem cortar as linhas no meio entre páginas. -->
+  <table style="margin-top:14px;background-color:#f2f5f8;border-left:4px solid #2f80c9;border-radius:6px;page-break-inside:avoid;">${linhaOrcamentoReferencia}
     <tr>
       <td style="padding:10px 14px;font-weight:bold;font-size:14px;color:#2f80c9;">Total do pacote</td>
       <td style="padding:10px 14px;text-align:right;font-weight:bold;font-size:14px;color:#2f80c9;">${formatPreco(props.totalBRL)}</td>
@@ -199,7 +204,7 @@ export function gerarEBaixarTexto(props: PacotePdfProps) {
   <!-- Pedido do Wilson, 16/set/2026: "no pdf e word editavel, adicionar
        link pro contrato ao final do documento" — mesmo placeholder do
        PDF, até o Wilson enviar o arquivo real do contrato padrão. -->
-  <table style="margin-top:16px;background-color:#eef4fb;border-left:3px solid #2f80c9;border-radius:6px;">
+  <table style="margin-top:16px;background-color:#eef4fb;border-left:3px solid #2f80c9;border-radius:6px;page-break-inside:avoid;">
     <tr>
       <td style="padding:12px 14px;">
         <p style="margin:0;font-weight:bold;color:#0A2540;">Contrato</p>

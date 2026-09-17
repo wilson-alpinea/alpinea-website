@@ -436,6 +436,15 @@ export default function ProdutosPage() {
                 cta="Ver JR Pass"
                 className="lg:col-span-2"
               />
+              {/* col-start-2 removido — pedido do Wilson, 16/set/2026: "na
+                  pagina de produtos o card de ajisai shopping esta
+                  totalmente desalinhado, ele deve ir pra fileira de cima".
+                  O col-start-2 centralizava a fileira quando só havia 2
+                  cards (Câmbio + Seguro Viagem); com o Ajisai Shopping como
+                  3º card, ele sobrava sozinho numa linha nova. Sem o
+                  offset, os 3 cards (Câmbio, Seguro Viagem, Ajisai
+                  Shopping) preenchem a fileira inteira, igual às fileiras
+                  acima. */}
               <ProductSelectorCard
                 href="/servicos-adicionais"
                 onClick={() => setCambioModalOpen(true)}
@@ -445,7 +454,7 @@ export default function ProdutosPage() {
                 title="Câmbio"
                 description="Retirada de ienes com câmbio comercial antes do embarque."
                 cta="Ver câmbio"
-                className="lg:col-span-2 lg:col-start-2"
+                className="lg:col-span-2"
               />
               <ProductSelectorCard
                 href="/servicos-adicionais"

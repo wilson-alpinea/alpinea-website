@@ -480,7 +480,14 @@ export function PacotePdfDocument(props: PacotePdfProps) {
           </View>
         ))}
 
-        <View style={styles.totalsBox}>
+        {/* Pedido do Wilson, 16/set/2026: "no pdf e word esta quebrando,
+            tem que ficar tudo numa pagina só" — a caixa de total estava
+            quebrando ao meio entre páginas (label numa página, valor na
+            seguinte). wrap={false} força o @react-pdf/renderer a tratar
+            essa View como um bloco indivisível: se não couber no resto da
+            página, o bloco inteiro pula pra próxima, mas nunca é cortado
+            no meio. */}
+        <View style={styles.totalsBox} wrap={false}>
           <View>
             <Text style={styles.totalsLabel}>Total do pacote sugerido</Text>
             <Text style={styles.totalsValue}>{formatPreco(totalBRL)}</Text>

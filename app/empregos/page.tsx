@@ -202,35 +202,59 @@ const DIFERENCIAIS = [
   },
 ];
 
-// ── Logos — texto por enquanto (Wilson ainda não enviou os arquivos PNG/
-// SVG; trocar por <img> assim que ele mandar). Duplicado 2x dentro do
-// componente Marquee pra criar o loop infinito sem buraco no CSS. ──
-const EMPRESAS_PARCEIRAS = ["Fujiarte", "Avance Authent", "Brexa", "UT Sumi-emu"];
-const CLIENTES_CORPORATIVOS = [
-  "Murata",
-  "Yamaha",
-  "Sony",
-  "Panasonic",
-  "Yokohama Tyres",
-  "Mitsubishi Denki",
-  "Fujifilm",
-  "Aisin",
-  "Subaru",
+// ── Logos. Pedido do Wilson, 17/set/2026: "na pagina de empregos, vamos
+// adicionar os logos que estao indicados no rodapé da pagina" — enviou os
+// 4 arquivos das empresas parceiras (Fujiarte, Avance Authent, Brexa, UT
+// Sumi-emu) e, no mesmo dia, 8 dos 9 logos dos clientes corporativos
+// (faltou só a Fujifilm, que continua em texto até ele mandar). Duplicado
+// 2x dentro do componente Marquee pra criar o loop infinito sem buraco no
+// CSS. ──
+type ItemMarquee = { nome: string; logo?: string };
+
+const EMPRESAS_PARCEIRAS: ItemMarquee[] = [
+  { nome: "Fujiarte", logo: "/images/logo-parceiro-fujiarte.png" },
+  { nome: "Avance Authent", logo: "/images/logo-parceiro-authent.png" },
+  { nome: "Brexa", logo: "/images/logo-parceiro-brexa.png" },
+  { nome: "UT Sumi-emu", logo: "/images/logo-parceiro-ut.png" },
+];
+const CLIENTES_CORPORATIVOS: ItemMarquee[] = [
+  { nome: "Murata", logo: "/images/logo-cliente-murata.png" },
+  { nome: "Yamaha", logo: "/images/logo-cliente-yamaha.png" },
+  { nome: "Sony", logo: "/images/logo-cliente-sony.png" },
+  { nome: "Panasonic", logo: "/images/logo-cliente-panasonic.png" },
+  { nome: "Yokohama Tyres", logo: "/images/logo-cliente-yokohama-tyres.png" },
+  { nome: "Mitsubishi Denki", logo: "/images/logo-cliente-mitsubishi-denki.png" },
+  { nome: "Fujifilm" },
+  { nome: "Aisin", logo: "/images/logo-cliente-aisin.png" },
+  { nome: "Subaru", logo: "/images/logo-cliente-subaru.png" },
 ];
 
-function Marquee({ itens }: { itens: string[] }) {
+function Marquee({ itens }: { itens: ItemMarquee[] }) {
   const lista = [...itens, ...itens];
   return (
     <div className="marquee-viewport">
       <div className="marquee-track">
-        {lista.map((nome, i) => (
-          <span
-            key={`${nome}-${i}`}
-            className="mx-4 shrink-0 rounded-full border border-black/10 bg-black/[0.02] px-6 py-3 text-sm font-medium uppercase tracking-[0.08em] text-black/55"
-          >
-            {nome}
-          </span>
-        ))}
+        {lista.map((item, i) =>
+          item.logo ? (
+            <div
+              key={`${item.nome}-${i}`}
+              className="mx-6 flex h-14 w-36 shrink-0 items-center justify-center"
+            >
+              <img
+                src={item.logo}
+                alt={item.nome}
+                className="max-h-8 w-auto object-contain md:max-h-9"
+              />
+            </div>
+          ) : (
+            <span
+              key={`${item.nome}-${i}`}
+              className="mx-4 shrink-0 rounded-full border border-black/10 bg-black/[0.02] px-6 py-3 text-sm font-medium uppercase tracking-[0.08em] text-black/55"
+            >
+              {item.nome}
+            </span>
+          ),
+        )}
       </div>
       <style jsx>{`
         .marquee-viewport {
