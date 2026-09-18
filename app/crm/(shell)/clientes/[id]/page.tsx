@@ -126,7 +126,7 @@ export default async function ClienteDetalhePage({
         <p className="mt-4 text-sm text-red-600">Não foi possível registrar a interação.</p>
       )}
       {sp.erro === "3" && (
-        <p className="mt-4 text-sm text-red-600">Não foi possível adicionar o arquivo. Preencha rótulo e link.</p>
+        <p className="mt-4 text-sm text-red-600">Não foi possível adicionar o arquivo. Preencha o link.</p>
       )}
       {sp.erro === "4" && (
         <p className="mt-4 text-sm text-red-600">Não foi possível registrar o pagamento. Preencha o valor.</p>
@@ -312,11 +312,15 @@ export default async function ClienteDetalhePage({
               </option>
             ))}
           </select>
+          {/* Pedido do Wilson, 18/set/2026 ("porque esse campo rotulo
+              existe?"): não é mais obrigatório — em branco, a action
+              addArquivo usa o nome do tipo escolhido como rótulo. Só
+              precisa ser preenchido pra diferenciar dois arquivos do
+              mesmo tipo (ex.: duas propostas). */}
           <input
             type="text"
             name="label"
-            required
-            placeholder="Rótulo — ex.: Roteiro Personalizado — Versão 1"
+            placeholder="Rótulo (opcional) — só p/ diferenciar do mesmo tipo"
             className="rounded-xl border border-black/15 bg-white px-3 py-2 text-sm text-black placeholder-black/30 outline-none transition focus:border-black/40"
           />
           <input

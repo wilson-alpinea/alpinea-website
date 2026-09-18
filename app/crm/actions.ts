@@ -6,7 +6,7 @@ import { createClient } from "@/lib/supabase/server";
 import { isEstagio, ESTAGIO_LABEL } from "@/lib/crm/estagios";
 import type { Estagio } from "@/lib/crm/types";
 import { isProdutoPrincipal, isProdutoSecundario } from "@/lib/crm/produtos";
-import { isTipoArquivo } from "@/lib/crm/arquivos";
+import { isTipoArquivo, TIPO_ARQUIVO_LABEL } from "@/lib/crm/arquivos";
 import { isCategoriaFornecedor } from "@/lib/crm/fornecedores";
 import { isTipoPagamento, isStatusPagamento } from "@/lib/crm/pagamentos";
 
@@ -223,18 +223,26 @@ function normalizarUrl(valor: string) {
 }
 
 export async function addArquivo(clienteId: string, formData: FormData) {
-  const label = String(formData.get("label") || "").trim();
+  const labelBruto = String(formData.get("label") || "").trim();
   const urlBruta = String(formData.get("url") || "").trim();
   const tipoBruto = String(formData.get("tipo") || "roteiro_draft");
+  const tipo = isTipoArquivo(tipoBruto) ? tipoBruto : "roteiro_draft";
 
-  if (!label || !urlBruta) {
+  if (!urlBruta) {
     redirect(`/crm/clientes/${clienteId}?erro=3`);
   }
+
+  // Pedido do Wilson, 18/set/2026 ("porque esse campo rotulo existe?"): o
+  // rótulo só é necessário pra diferenciar dois arquivos do MESMO tipo
+  // (ex.: duas "Proposta" — v1 e v2) — é o texto clicável mostrado no
+  // card, o tipo já aparece como selo acima dele. Pra não obrigar a
+  // digitar toda vez, se ficar em branco usa o nome do tipo escolhido.
+  const label = labelBruto || TIPO_ARQUIVO_LABEL[tipo];
 
   const supabase = await createClient();
   const { error } = await supabase.from("arquivos_cliente").insert({
     cliente_id: clienteId,
-    tipo: isTipoArquivo(tipoBruto) ? tipoBruto : "roteiro_draft",
+    tipo,
     label,
     url: normalizarUrl(urlBruta),
   });
