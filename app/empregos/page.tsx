@@ -205,10 +205,10 @@ const DIFERENCIAIS = [
 // ── Logos. Pedido do Wilson, 17/set/2026: "na pagina de empregos, vamos
 // adicionar os logos que estao indicados no rodapé da pagina" — enviou os
 // 4 arquivos das empresas parceiras (Fujiarte, Avance Authent, Brexa, UT
-// Sumi-emu) e, no mesmo dia, 8 dos 9 logos dos clientes corporativos
-// (faltou só a Fujifilm, que continua em texto até ele mandar). Duplicado
-// 2x dentro do componente Marquee pra criar o loop infinito sem buraco no
-// CSS. ──
+// Sumi-emu) e os 9 logos dos clientes corporativos, todos enviados em
+// 17/set/2026 (a Fujifilm veio por último — um print 3840×2160 recortado e
+// com o fundo branco tornado transparente aqui). Duplicado 2x dentro do
+// componente Marquee pra criar o loop infinito sem buraco no CSS. ──
 type ItemMarquee = { nome: string; logo?: string };
 
 const EMPRESAS_PARCEIRAS: ItemMarquee[] = [
@@ -224,7 +224,7 @@ const CLIENTES_CORPORATIVOS: ItemMarquee[] = [
   { nome: "Panasonic", logo: "/images/logo-cliente-panasonic.png" },
   { nome: "Yokohama Tyres", logo: "/images/logo-cliente-yokohama-tyres.png" },
   { nome: "Mitsubishi Denki", logo: "/images/logo-cliente-mitsubishi-denki.png" },
-  { nome: "Fujifilm" },
+  { nome: "Fujifilm", logo: "/images/logo-cliente-fujifilm.png" },
   { nome: "Aisin", logo: "/images/logo-cliente-aisin.png" },
   { nome: "Subaru", logo: "/images/logo-cliente-subaru.png" },
 ];

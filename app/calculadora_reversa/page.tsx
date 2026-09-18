@@ -2821,12 +2821,19 @@ export default function CalculadoraReversaPage() {
   // Resumo em texto de tudo que está na proposta — vira o campo
   // "observações"/histórico do cliente no CRM (pedido do Wilson,
   // 16/set/2026: "ajustar o CRM para que ele possua todos os dados que
-  // temos aqui na pagina de calculadora reversa").
+  // temos aqui na pagina de calculadora reversa"). Pedido do Wilson,
+  // 18/set/2026 ("você replicou todas as seções dessa calculadora no
+  // CRM?"): faltavam cidades do roteiro, forma de pagamento escolhida e
+  // validade da proposta — as extensões internacionais (Coreia/China) já
+  // entravam via pacoteSugeridoLabel, que reaproveita extensoesLabel.
   function construirResumoCrm(): string {
     const nomeTemporada = TEMPORADAS.find((t) => t.key === temporada)?.nome ?? temporada;
     const nomeOrigem = ORIGENS_VOO.find((o) => o.key === origemVoo)?.nome ?? origemVoo;
     const nomeBagagem = BAGAGEM_OPCOES.find((b) => b.key === bagagem)?.nome ?? bagagem;
     const idadesLabel = idadesPassageiros.slice(0, pessoas).join(", ");
+    const validadeLabel = validadeProposta
+      ? new Date(`${validadeProposta}T00:00:00`).toLocaleDateString("pt-BR")
+      : "";
 
     return [
       `Proposta Ajisai — ${pacoteSugeridoLabel}`,
@@ -2836,6 +2843,7 @@ export default function CalculadoraReversaPage() {
       idadesLabel ? `Idades: ${idadesLabel}` : "",
       `Quarto: ${tipoQuarto}`,
       `Hotel: ${resultado.categoriaHotelFinal} · Aéreo: ${resultado.classeAereoFinal}`,
+      nomesDestinos ? `Cidades do roteiro: ${nomesDestinos}` : "",
       `Temporada: ${nomeTemporada}`,
       `Origem do voo: ${nomeOrigem}`,
       `Bagagem: ${nomeBagagem}`,
@@ -2843,6 +2851,7 @@ export default function CalculadoraReversaPage() {
       dataViagemEstimada
         ? `Data estimada da viagem: ${new Date(`${dataViagemEstimada}T00:00:00`).toLocaleDateString("pt-BR")}`
         : "",
+      validadeLabel ? `Proposta válida até: ${validadeLabel}` : "",
       "",
       "— Itens da proposta —",
       ...itensSelecionados.map((item) => `• ${item.label}: ${formatMoeda(valorItem(item))}`),
@@ -2850,6 +2859,7 @@ export default function CalculadoraReversaPage() {
       `Total: ${formatMoeda(totalSelecionado)}${totalManual ? " (ajustado manualmente)" : ""}`,
       `Orçamento informado: ${formatMoeda(orcamento)}`,
       `Saldo: ${formatMoeda(saldoSelecionado)}`,
+      descricaoFormaPagamentoEscolhida ? `Forma de pagamento: ${descricaoFormaPagamentoEscolhida}` : "",
       margemNota.trim() ? `Nota de margem: ${margemNota.trim()}` : "",
       observacoesInternas.trim() ? `Observações internas: ${observacoesInternas.trim()}` : "",
       `Gerado em ${geradoEmLabel} — Ajisai`,
