@@ -15,7 +15,7 @@ const ORIGENS = [
 ];
 
 const inputClass =
-  "w-full rounded-xl border border-black/15 bg-white px-4 py-2.5 text-sm text-black placeholder-black/30 outline-none transition focus:border-black/40";
+  "w-full rounded-xl border border-black/10 bg-white px-4 py-2.5 text-sm text-black placeholder-black/30 outline-none transition focus:border-[#1C3A5E] focus:ring-2 focus:ring-[#1C3A5E]/10";
 const labelClass = "mb-1.5 block text-xs uppercase tracking-[0.15em] text-black/40";
 
 function ProdutoCard({
@@ -35,23 +35,25 @@ function ProdutoCard({
 }) {
   // Pedido do Wilson, 18/set/2026: ícones agora são os mesmos arquivos
   // (PNG) usados em /produtos e /calculadora_reversa — ver ProdutoIcons.tsx.
-  // Como são imagens (não SVG com stroke="currentColor" como antes), o
-  // estado selecionado usa opacidade em vez de cor pro "realce" do ícone.
+  // Pedido do Wilson, 18/set/2026 ("crm está feio visualmente"): o ícone
+  // não fica mais esmaecido em opacity-50 — vários ícones (eSIM, Câmbio,
+  // Seguro Viagem etc.) já são claros por natureza e praticamente somem
+  // nesse estado. Agora o ícone fica sempre com contraste normal, sobre
+  // um "chip" circular claro — a seleção é indicada pela cor do chip/borda
+  // do card, não pela opacidade do ícone.
   const icone = PRODUTO_ICONS[value];
   return (
     <label
       title={detalhe}
-      className="flex cursor-pointer flex-col items-center gap-2 rounded-xl border border-black/15 bg-white p-3 text-center transition has-[:checked]:border-[#1C3A5E] has-[:checked]:bg-[#1C3A5E]/[0.06] hover:border-black/30"
+      className="group flex cursor-pointer flex-col items-center gap-2.5 rounded-xl border border-black/8 bg-white p-3.5 text-center shadow-[0_1px_2px_rgba(0,0,0,0.03)] transition has-[:checked]:border-[#1C3A5E] has-[:checked]:bg-[#1C3A5E]/[0.05] has-[:checked]:shadow-[0_4px_14px_-6px_rgba(28,58,94,0.35)] hover:border-black/20 hover:shadow-[0_4px_14px_-8px_rgba(0,0,0,0.15)]"
     >
       <input type={type} name={name} value={value} defaultChecked={defaultChecked} className="peer sr-only" />
       {icone && (
-        <img
-          src={icone}
-          alt=""
-          className="h-6 w-6 object-contain opacity-50 transition peer-checked:opacity-100"
-        />
+        <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-black/[0.035] transition peer-checked:bg-[#1C3A5E]/10">
+          <img src={icone} alt="" className="h-6 w-6 object-contain" />
+        </span>
       )}
-      <span className="text-xs font-medium leading-tight text-black/70 transition peer-checked:text-black">
+      <span className="text-xs font-medium leading-tight text-black/70 transition peer-checked:font-semibold peer-checked:text-[#1C3A5E]">
         {label}
       </span>
     </label>
@@ -210,7 +212,7 @@ export function ClienteForm({
 
       <button
         type="submit"
-        className="w-full rounded-xl bg-[#1C3A5E] px-4 py-3 text-sm font-medium text-white transition hover:bg-[#254a73] sm:w-auto sm:px-8"
+        className="w-full rounded-xl bg-[#1C3A5E] px-4 py-3 text-sm font-medium text-white shadow-sm shadow-[#1C3A5E]/25 transition hover:bg-[#254a73] hover:shadow-md hover:shadow-[#1C3A5E]/30 sm:w-auto sm:px-8"
       >
         {submitLabel}
       </button>

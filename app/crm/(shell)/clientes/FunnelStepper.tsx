@@ -68,7 +68,7 @@ export function FunnelStepper({
   ];
 
   return (
-    <div className="overflow-x-auto rounded-2xl border border-black/10 bg-[#57534E]/[0.05] px-6 py-8 sm:px-10">
+    <div className="overflow-x-auto rounded-2xl border border-black/5 bg-white shadow-[0_1px_2px_rgba(0,0,0,0.04),0_16px_32px_-20px_rgba(0,0,0,0.15)] px-6 py-8 sm:px-10">
       <div className="flex min-w-[720px] items-start justify-between sm:min-w-0">
         {steps.map((step, i) => {
           const completo = i < currentIndex;
@@ -96,13 +96,16 @@ export function FunnelStepper({
 
           return (
             <div key={step.key} className="flex flex-1 items-center last:flex-none">
-              <div className="flex w-28 flex-col items-center gap-2 text-center sm:w-36">
+              <div className="flex w-28 flex-col items-center gap-2.5 text-center sm:w-36">
                 <span
-                  className="h-6 w-6 shrink-0 rounded-full"
+                  className="h-7 w-7 shrink-0 rounded-full"
                   style={{
                     background: preenchido ? cor : "#fff",
                     border: `3px solid ${cor}`,
-                    boxShadow: isAtual && !preenchido ? `0 0 0 6px ${cor}22` : undefined,
+                    boxShadow:
+                      isAtual && !preenchido
+                        ? `0 0 0 6px ${cor}22, 0 2px 6px rgba(0,0,0,0.12)`
+                        : `0 1px 3px rgba(0,0,0,0.1)`,
                   }}
                 />
                 <span className="text-xs font-semibold uppercase leading-tight tracking-[0.06em] text-black/75">
@@ -112,7 +115,7 @@ export function FunnelStepper({
               </div>
 
               {i < steps.length - 1 && (
-                <div className="flex h-6 flex-1 items-center justify-center px-1">
+                <div className="flex h-7 flex-1 items-center justify-center px-1">
                   <SetaDireita cor={i < currentIndex ? NAVY : "rgba(0,0,0,0.18)"} />
                 </div>
               )}

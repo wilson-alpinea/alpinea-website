@@ -8,7 +8,7 @@ const PRESETS = [
 
 const pillBase =
   "rounded-full border px-3.5 py-1.5 text-xs font-medium transition whitespace-nowrap";
-const pillInativo = "border-black/15 text-black/50 hover:border-black/30 hover:text-black";
+const pillInativo = "border-black/10 text-black/50 hover:border-black/30 hover:text-black";
 const pillAtivo = "border-[#1C3A5E] bg-[#1C3A5E] text-white";
 
 export function PeriodoSelector({
@@ -54,7 +54,7 @@ export function PeriodoSelector({
               name="de"
               defaultValue={de}
               required
-              className="w-full rounded-lg border border-black/15 bg-white px-2.5 py-1.5 text-xs text-black outline-none transition focus:border-black/40"
+              className="w-full rounded-lg border border-black/10 bg-white px-2.5 py-1.5 text-xs text-black outline-none transition focus:border-[#1C3A5E] focus:ring-2 focus:ring-[#1C3A5E]/10"
             />
           </label>
 
@@ -65,13 +65,13 @@ export function PeriodoSelector({
               name="ate"
               defaultValue={ate}
               required
-              className="w-full rounded-lg border border-black/15 bg-white px-2.5 py-1.5 text-xs text-black outline-none transition focus:border-black/40"
+              className="w-full rounded-lg border border-black/10 bg-white px-2.5 py-1.5 text-xs text-black outline-none transition focus:border-[#1C3A5E] focus:ring-2 focus:ring-[#1C3A5E]/10"
             />
           </label>
 
           <button
             type="submit"
-            className="w-full rounded-lg bg-[#1C3A5E] px-3 py-2 text-xs font-medium text-white transition hover:bg-[#254a73]"
+            className="w-full rounded-lg bg-[#1C3A5E] px-3 py-2 text-xs font-medium text-white shadow-sm shadow-[#1C3A5E]/25 transition hover:bg-[#254a73] hover:shadow-md hover:shadow-[#1C3A5E]/30"
           >
             Aplicar
           </button>

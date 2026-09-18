@@ -1,5 +1,6 @@
 "use client";
 
+import { Bodoni_Moda } from "next/font/google";
 import { useTransition } from "react";
 import {
   STATUS_PAGAMENTO,
@@ -13,8 +14,13 @@ import {
 import { alternarStatusPagamento } from "../../../actions";
 import type { Pagamento } from "@/lib/crm/types";
 
+const display = Bodoni_Moda({
+  subsets: ["latin"],
+  weight: ["400", "500", "600"],
+});
+
 const inputClass =
-  "w-full rounded-xl border border-black/15 bg-white px-3 py-2 text-sm text-black placeholder-black/30 outline-none transition focus:border-black/40";
+  "w-full rounded-xl border border-black/10 bg-white px-3 py-2 text-sm text-black placeholder-black/30 outline-none transition focus:border-[#1C3A5E] focus:ring-2 focus:ring-[#1C3A5E]/10";
 const labelClass = "mb-1.5 block text-[10px] uppercase tracking-[0.15em] text-black/40";
 
 function formatBRL(valor: number) {
@@ -53,24 +59,24 @@ export function FinanceiroSection({
   }
 
   return (
-    <div className="rounded-2xl border border-black/10 bg-[#57534E]/[0.05] p-6 md:p-8">
-      <h2 className="mb-4 text-lg font-medium text-black">Financeiro</h2>
+    <div className="rounded-2xl border border-black/5 bg-white shadow-[0_1px_2px_rgba(0,0,0,0.04),0_16px_32px_-20px_rgba(0,0,0,0.15)] p-6 md:p-8">
+      <h2 className={`${display.className} mb-4 text-lg font-medium text-black`}>Financeiro</h2>
 
       <div className="mb-6 grid grid-cols-3 gap-3">
-        <div className="rounded-xl border border-black/10 bg-white p-3 text-center">
+        <div className="rounded-xl border border-black/5 bg-[#FAF9F6] p-4 text-center">
           <p className="text-[10px] uppercase tracking-[0.12em] text-black/40">Total</p>
-          <p className="mt-1 text-sm font-semibold text-black">{formatBRL(totalGeral)}</p>
+          <p className={`${display.className} mt-1 text-lg font-medium text-black`}>{formatBRL(totalGeral)}</p>
         </div>
-        <div className="rounded-xl border border-black/10 bg-white p-3 text-center">
+        <div className="rounded-xl border border-black/5 bg-[#FAF9F6] p-4 text-center">
           <p className="text-[10px] uppercase tracking-[0.12em] text-black/40">Pago</p>
-          <p className="mt-1 text-sm font-semibold" style={{ color: STATUS_PAGAMENTO_COR.pago }}>
+          <p className={`${display.className} mt-1 text-lg font-medium`} style={{ color: STATUS_PAGAMENTO_COR.pago }}>
             {formatBRL(totalPago)}
           </p>
         </div>
-        <div className="rounded-xl border border-black/10 bg-white p-3 text-center">
+        <div className="rounded-xl border border-black/5 bg-[#FAF9F6] p-4 text-center">
           <p className="text-[10px] uppercase tracking-[0.12em] text-black/40">Pendente</p>
           <p
-            className="mt-1 text-sm font-semibold"
+            className={`${display.className} mt-1 text-lg font-medium`}
             style={{ color: STATUS_PAGAMENTO_COR.pendente }}
           >
             {formatBRL(totalPendente)}
@@ -88,7 +94,7 @@ export function FinanceiroSection({
             return (
               <li
                 key={p.id}
-                className="flex items-start justify-between gap-3 rounded-xl border border-black/10 bg-white p-3.5"
+                className="flex items-start justify-between gap-3 rounded-xl border border-black/5 bg-[#FAF9F6] p-3.5"
               >
                 <div className="min-w-0">
                   <div className="flex flex-wrap items-center gap-2">
@@ -124,7 +130,7 @@ export function FinanceiroSection({
                     type="button"
                     disabled={pending}
                     onClick={() => alternar(p.id, p.status)}
-                    className="whitespace-nowrap rounded-lg border border-black/15 px-2.5 py-1 text-[10px] uppercase tracking-[0.1em] text-black/60 transition hover:border-black/40 hover:text-black disabled:opacity-50"
+                    className="whitespace-nowrap rounded-lg border border-black/10 bg-white px-2.5 py-1 text-[10px] uppercase tracking-[0.1em] text-black/60 transition hover:border-[#1C3A5E]/40 hover:text-[#1C3A5E] disabled:opacity-50"
                   >
                     {p.status === "pago" ? "Marcar pendente" : "Marcar pago"}
                   </button>
@@ -220,7 +226,7 @@ export function FinanceiroSection({
         </div>
         <button
           type="submit"
-          className="w-full rounded-xl bg-[#1C3A5E] px-4 py-2.5 text-sm font-medium text-white transition hover:bg-[#254a73]"
+          className="w-full rounded-xl bg-[#1C3A5E] px-4 py-2.5 text-sm font-medium text-white shadow-sm shadow-[#1C3A5E]/25 transition hover:bg-[#254a73] hover:shadow-md hover:shadow-[#1C3A5E]/30"
         >
           Registrar pagamento
         </button>

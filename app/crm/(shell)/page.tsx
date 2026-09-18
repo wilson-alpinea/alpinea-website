@@ -26,7 +26,7 @@ function formatBRL(valor: number) {
 
 function KpiCard({ label, valor, sublabel }: { label: string; valor: string; sublabel?: string }) {
   return (
-    <div className="rounded-2xl border border-black/10 bg-[#57534E]/[0.05] p-6">
+    <div className="rounded-2xl border border-black/5 bg-white shadow-[0_1px_2px_rgba(0,0,0,0.04),0_16px_32px_-20px_rgba(0,0,0,0.15)] p-6">
       <p className="text-xs uppercase tracking-[0.2em] text-black/40">{label}</p>
       <p className={`${display.className} mt-3 text-3xl font-medium text-black`}>{valor}</p>
       {sublabel && <p className="mt-1 text-xs text-black/40">{sublabel}</p>}
@@ -135,7 +135,7 @@ export default async function CrmDashboardPage({
         </div>
         <Link
           href="/crm/clientes/novo"
-          className="rounded-full bg-[#1C3A5E] px-5 py-2.5 text-sm font-medium text-white transition hover:bg-[#254a73]"
+          className="rounded-full bg-[#1C3A5E] px-5 py-2.5 text-sm font-medium text-white shadow-sm shadow-[#1C3A5E]/25 transition hover:bg-[#254a73] hover:shadow-md hover:shadow-[#1C3A5E]/30"
         >
           + Novo cliente
         </Link>
@@ -157,7 +157,7 @@ export default async function CrmDashboardPage({
       </div>
 
       <div className="mt-6 grid gap-5 lg:grid-cols-5">
-        <div className="rounded-2xl border border-black/10 bg-[#57534E]/[0.05] p-6 lg:col-span-3">
+        <div className="rounded-2xl border border-black/5 bg-white shadow-[0_1px_2px_rgba(0,0,0,0.04),0_16px_32px_-20px_rgba(0,0,0,0.15)] p-6 lg:col-span-3">
           <div className="flex flex-wrap items-start justify-between gap-3">
             <div>
               <h2 className={`${display.className} text-lg font-medium text-black`}>
@@ -172,7 +172,7 @@ export default async function CrmDashboardPage({
           </div>
         </div>
 
-        <div className="rounded-2xl border border-black/10 bg-[#57534E]/[0.05] p-6 lg:col-span-2">
+        <div className="rounded-2xl border border-black/5 bg-white shadow-[0_1px_2px_rgba(0,0,0,0.04),0_16px_32px_-20px_rgba(0,0,0,0.15)] p-6 lg:col-span-2">
           <h2 className={`${display.className} text-lg font-medium text-black`}>
             Funil comercial
           </h2>

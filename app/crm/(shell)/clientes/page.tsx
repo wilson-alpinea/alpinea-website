@@ -58,7 +58,7 @@ export default async function ClientesPage({
         </div>
         <Link
           href="/crm/clientes/novo"
-          className="rounded-full bg-[#1C3A5E] px-5 py-2.5 text-sm font-medium text-white transition hover:bg-[#254a73]"
+          className="rounded-full bg-[#1C3A5E] px-5 py-2.5 text-sm font-medium text-white shadow-sm shadow-[#1C3A5E]/25 transition hover:bg-[#254a73] hover:shadow-md hover:shadow-[#1C3A5E]/30"
         >
           + Novo cliente
         </Link>
@@ -70,12 +70,12 @@ export default async function ClientesPage({
           name="q"
           defaultValue={busca}
           placeholder="Buscar por nome, e-mail ou telefone…"
-          className="min-w-[240px] flex-1 rounded-xl border border-black/15 bg-white px-4 py-2.5 text-sm text-black placeholder-black/30 outline-none transition focus:border-black/40"
+          className="min-w-[240px] flex-1 rounded-xl border border-black/10 bg-white px-4 py-2.5 text-sm text-black placeholder-black/30 outline-none transition focus:border-[#1C3A5E] focus:ring-2 focus:ring-[#1C3A5E]/10"
         />
         <select
           name="estagio"
           defaultValue={estagioFiltro}
-          className="rounded-xl border border-black/15 bg-white px-4 py-2.5 text-sm text-black outline-none transition focus:border-black/40"
+          className="rounded-xl border border-black/10 bg-white px-4 py-2.5 text-sm text-black outline-none transition focus:border-[#1C3A5E] focus:ring-2 focus:ring-[#1C3A5E]/10"
         >
           <option value="">Todos os estágios</option>
           {ESTAGIOS.map((e) => (
@@ -86,7 +86,7 @@ export default async function ClientesPage({
         </select>
         <button
           type="submit"
-          className="rounded-xl border border-black/15 px-5 py-2.5 text-sm text-black/70 transition hover:border-black/40 hover:text-black"
+          className="rounded-xl border border-black/10 bg-white px-5 py-2.5 text-sm text-black/70 transition hover:border-[#1C3A5E]/40 hover:text-[#1C3A5E]"
         >
           Filtrar
         </button>
@@ -102,7 +102,7 @@ export default async function ClientesPage({
 
       <div className="mt-8">
         {lista.length === 0 ? (
-          <div className="overflow-hidden rounded-2xl border border-black/10">
+          <div className="overflow-hidden rounded-2xl border border-black/5 bg-white shadow-[0_1px_2px_rgba(0,0,0,0.04),0_16px_32px_-20px_rgba(0,0,0,0.15)]">
             <p className="p-8 text-center text-sm text-black/40">
               Nenhum cliente encontrado.
             </p>

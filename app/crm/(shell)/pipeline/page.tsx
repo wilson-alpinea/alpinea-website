@@ -48,7 +48,7 @@ export default async function PipelinePage() {
         {ESTAGIOS.map((estagio) => {
           const clientesDoEstagio = lista.filter((c) => c.estagio === estagio.valor);
           return (
-            <div key={estagio.valor} className="flex flex-col rounded-2xl border border-black/10 bg-[#57534E]/[0.05]">
+            <div key={estagio.valor} className="flex flex-col rounded-2xl border border-black/5 bg-white shadow-[0_1px_2px_rgba(0,0,0,0.04),0_16px_32px_-20px_rgba(0,0,0,0.15)]">
               <div className="flex items-center justify-between gap-2 border-b border-black/10 px-3 py-3">
                 <div className="flex items-center gap-1.5">
                   <span

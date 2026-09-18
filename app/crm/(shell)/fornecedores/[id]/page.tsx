@@ -46,7 +46,7 @@ export default async function FornecedorDetalhePage({
     <div className="mx-auto max-w-2xl">
       <Link
         href="/crm/fornecedores"
-        className="text-xs uppercase tracking-[0.2em] text-black/40 transition hover:text-black"
+        className="text-xs uppercase tracking-[0.2em] text-black/40 transition hover:text-[#1C3A5E]"
       >
         ← Fornecedores
       </Link>
@@ -62,7 +62,7 @@ export default async function FornecedorDetalhePage({
         <p className="mt-4 text-sm text-red-600">Não foi possível salvar as alterações.</p>
       )}
 
-      <div className="mt-8 rounded-2xl border border-black/10 bg-[#57534E]/[0.05] p-6 md:p-8">
+      <div className="mt-8 rounded-2xl border border-black/5 bg-white shadow-[0_1px_2px_rgba(0,0,0,0.04),0_16px_32px_-20px_rgba(0,0,0,0.15)] p-6 md:p-8">
         <FornecedorForm
           action={updateFornecedorComId}
           fornecedor={fornecedor}

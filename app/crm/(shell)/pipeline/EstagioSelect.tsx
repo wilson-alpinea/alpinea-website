@@ -22,7 +22,7 @@ export function EstagioSelect({
         onChange={() => formRef.current?.requestSubmit()}
         className={
           className ??
-          "w-full rounded-lg border border-black/15 bg-white px-2.5 py-1.5 text-xs text-black/70 outline-none transition focus:border-black/40"
+          "w-full rounded-lg border border-black/10 bg-white px-2.5 py-1.5 text-xs text-black/70 outline-none transition focus:border-[#1C3A5E] focus:ring-2 focus:ring-[#1C3A5E]/10"
         }
       >
         {ESTAGIOS.map((e) => (

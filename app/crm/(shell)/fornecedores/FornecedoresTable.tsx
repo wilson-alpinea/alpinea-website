@@ -50,7 +50,7 @@ export function FornecedoresTable({ fornecedores }: { fornecedores: LinhaFornece
   return (
     <div>
       {selecionados.size > 0 && (
-        <div className="mb-3 flex items-center justify-between rounded-xl border border-black/10 bg-white px-4 py-2.5">
+        <div className="mb-3 flex items-center justify-between rounded-xl border border-black/5 bg-white px-4 py-2.5 shadow-[0_4px_14px_-8px_rgba(0,0,0,0.15)]">
           <span className="text-xs text-black/60">
             {selecionados.size} {selecionados.size === 1 ? "selecionado" : "selecionados"}
           </span>
@@ -65,10 +65,10 @@ export function FornecedoresTable({ fornecedores }: { fornecedores: LinhaFornece
         </div>
       )}
 
-      <div className="overflow-hidden rounded-2xl border border-black/10">
+      <div className="overflow-hidden rounded-2xl border border-black/5 bg-white shadow-[0_1px_2px_rgba(0,0,0,0.04),0_16px_32px_-20px_rgba(0,0,0,0.15)]">
         <table className="w-full text-left text-sm">
           <thead>
-            <tr className="border-b border-black/10 bg-[#57534E]/[0.05] text-xs uppercase tracking-[0.15em] text-black/40">
+            <tr className="border-b border-black/8 bg-[#FAF9F6] text-xs uppercase tracking-[0.15em] text-black/40">
               <th className="w-10 px-5 py-3">
                 <input
                   type="checkbox"
@@ -88,7 +88,7 @@ export function FornecedoresTable({ fornecedores }: { fornecedores: LinhaFornece
             {fornecedores.map((f) => (
               <tr
                 key={f.id}
-                className="border-b border-black/5 transition last:border-0 hover:bg-[#57534E]/[0.04]"
+                className="border-b border-black/5 transition last:border-0 hover:bg-[#FAF9F6]"
               >
                 <td className="px-5 py-4">
                   <input

@@ -2,7 +2,7 @@ import { CATEGORIAS_FORNECEDOR } from "@/lib/crm/fornecedores";
 import type { Fornecedor } from "@/lib/crm/types";
 
 const inputClass =
-  "w-full rounded-xl border border-black/15 bg-white px-4 py-2.5 text-sm text-black placeholder-black/30 outline-none transition focus:border-black/40";
+  "w-full rounded-xl border border-black/10 bg-white px-4 py-2.5 text-sm text-black placeholder-black/30 outline-none transition focus:border-[#1C3A5E] focus:ring-2 focus:ring-[#1C3A5E]/10";
 const labelClass = "mb-1.5 block text-xs uppercase tracking-[0.15em] text-black/40";
 
 export function FornecedorForm({
@@ -103,7 +103,7 @@ export function FornecedorForm({
 
       <button
         type="submit"
-        className="w-full rounded-xl bg-[#1C3A5E] px-4 py-3 text-sm font-medium text-white transition hover:bg-[#254a73] sm:w-auto sm:px-8"
+        className="w-full rounded-xl bg-[#1C3A5E] px-4 py-3 text-sm font-medium text-white shadow-sm shadow-[#1C3A5E]/25 transition hover:bg-[#254a73] hover:shadow-md hover:shadow-[#1C3A5E]/30 sm:w-auto sm:px-8"
       >
         {submitLabel}
       </button>

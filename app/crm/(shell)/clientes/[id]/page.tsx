@@ -96,7 +96,7 @@ export default async function ClienteDetalhePage({
 
   return (
     <div>
-      <Link href="/crm/clientes" className="text-xs uppercase tracking-[0.2em] text-black/40 transition hover:text-black">
+      <Link href="/crm/clientes" className="text-xs uppercase tracking-[0.2em] text-black/40 transition hover:text-[#1C3A5E]">
         ← Clientes
       </Link>
 
@@ -106,6 +106,7 @@ export default async function ClienteDetalhePage({
 
       <div className="mt-6 flex flex-wrap items-center justify-between gap-4">
         <div>
+          <p className="mb-1 text-[10px] uppercase tracking-[0.25em] text-[#1C3A5E]/70">Cliente</p>
           <h1 className={`${display.className} text-3xl font-medium text-black md:text-4xl`}>
             {cliente.nome}
           </h1>
@@ -114,7 +115,7 @@ export default async function ClienteDetalhePage({
           <EstagioSelect
             action={moveEstagioComId}
             estagioAtual={cliente.estagio}
-            className="w-full cursor-pointer rounded-full border border-black/15 bg-white px-4 py-1.5 text-xs uppercase tracking-[0.15em] text-black/70 outline-none transition focus:border-black/40"
+            className="w-full cursor-pointer rounded-full border border-black/10 bg-white px-4 py-1.5 text-xs uppercase tracking-[0.15em] text-black/70 outline-none transition focus:border-[#1C3A5E] focus:ring-2 focus:ring-[#1C3A5E]/10"
           />
         </div>
       </div>
@@ -133,7 +134,7 @@ export default async function ClienteDetalhePage({
       )}
 
       <div className="mt-8 grid gap-6 lg:grid-cols-5">
-        <div className="rounded-2xl border border-black/10 bg-[#57534E]/[0.05] p-6 md:p-8 lg:col-span-3">
+        <div className="rounded-2xl border border-black/5 bg-white shadow-[0_1px_2px_rgba(0,0,0,0.04),0_16px_32px_-20px_rgba(0,0,0,0.15)] p-6 md:p-8 lg:col-span-3">
           <h2 className={`${display.className} mb-6 text-lg font-medium text-black`}>
             Dados do cliente
           </h2>
@@ -146,7 +147,7 @@ export default async function ClienteDetalhePage({
         </div>
 
         <div className="space-y-6 lg:col-span-2">
-          <div className="rounded-2xl border border-black/10 bg-[#57534E]/[0.05] p-6">
+          <div className="rounded-2xl border border-black/5 bg-white shadow-[0_1px_2px_rgba(0,0,0,0.04),0_16px_32px_-20px_rgba(0,0,0,0.15)] p-6">
             <h2 className={`${display.className} mb-4 text-lg font-medium text-black`}>
               Nova interação
             </h2>
@@ -154,7 +155,7 @@ export default async function ClienteDetalhePage({
               <select
                 name="tipo"
                 defaultValue="nota"
-                className="w-full rounded-xl border border-black/15 bg-white px-4 py-2.5 text-sm text-black outline-none transition focus:border-black/40"
+                className="w-full rounded-xl border border-black/10 bg-white px-4 py-2.5 text-sm text-black outline-none transition focus:border-[#1C3A5E] focus:ring-2 focus:ring-[#1C3A5E]/10"
               >
                 {TIPOS_INTERACAO.map((t) => (
                   <option key={t.valor} value={t.valor}>
@@ -167,18 +168,18 @@ export default async function ClienteDetalhePage({
                 required
                 rows={3}
                 placeholder="O que foi conversado, enviado ou combinado…"
-                className="w-full rounded-xl border border-black/15 bg-white px-4 py-2.5 text-sm text-black placeholder-black/30 outline-none transition focus:border-black/40"
+                className="w-full rounded-xl border border-black/10 bg-white px-4 py-2.5 text-sm text-black placeholder-black/30 outline-none transition focus:border-[#1C3A5E] focus:ring-2 focus:ring-[#1C3A5E]/10"
               />
               <button
                 type="submit"
-                className="w-full rounded-xl bg-[#1C3A5E] px-4 py-2.5 text-sm font-medium text-white transition hover:bg-[#254a73]"
+                className="w-full rounded-xl bg-[#1C3A5E] px-4 py-2.5 text-sm font-medium text-white shadow-sm shadow-[#1C3A5E]/25 transition hover:bg-[#254a73] hover:shadow-md hover:shadow-[#1C3A5E]/30"
               >
                 Registrar
               </button>
             </form>
           </div>
 
-          <div className="rounded-2xl border border-black/10 bg-[#57534E]/[0.05] p-6">
+          <div className="rounded-2xl border border-black/5 bg-white shadow-[0_1px_2px_rgba(0,0,0,0.04),0_16px_32px_-20px_rgba(0,0,0,0.15)] p-6">
             <h2 className={`${display.className} mb-4 text-lg font-medium text-black`}>
               Histórico
             </h2>
@@ -252,7 +253,7 @@ export default async function ClienteDetalhePage({
         />
       </div>
 
-      <div className="mt-6 rounded-2xl border border-black/10 bg-[#57534E]/[0.05] p-6 md:p-8">
+      <div className="mt-6 rounded-2xl border border-black/5 bg-white shadow-[0_1px_2px_rgba(0,0,0,0.04),0_16px_32px_-20px_rgba(0,0,0,0.15)] p-6 md:p-8">
         <h2 className={`${display.className} mb-5 text-lg font-medium text-black`}>Arquivos</h2>
 
         {!arquivos || arquivos.length === 0 ? (
@@ -266,7 +267,7 @@ export default async function ClienteDetalhePage({
               return (
                 <div
                   key={a.id}
-                  className="flex items-start gap-3 rounded-xl border border-black/10 bg-white p-4"
+                  className="flex items-start gap-3 rounded-xl border border-black/5 bg-[#FAF9F6] p-4 transition hover:border-black/10"
                 >
                   <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#1C3A5E]/10 text-[#1C3A5E]">
                     <Icon className="h-4 w-4" />
@@ -304,7 +305,7 @@ export default async function ClienteDetalhePage({
           <select
             name="tipo"
             defaultValue="roteiro_draft"
-            className="rounded-xl border border-black/15 bg-white px-3 py-2 text-sm text-black outline-none transition focus:border-black/40"
+            className="rounded-xl border border-black/10 bg-white px-3 py-2 text-sm text-black outline-none transition focus:border-[#1C3A5E] focus:ring-2 focus:ring-[#1C3A5E]/10"
           >
             {TIPOS_ARQUIVO.map((t) => (
               <option key={t.valor} value={t.valor}>
@@ -321,18 +322,18 @@ export default async function ClienteDetalhePage({
             type="text"
             name="label"
             placeholder="Rótulo (opcional) — só p/ diferenciar do mesmo tipo"
-            className="rounded-xl border border-black/15 bg-white px-3 py-2 text-sm text-black placeholder-black/30 outline-none transition focus:border-black/40"
+            className="rounded-xl border border-black/10 bg-white px-3 py-2 text-sm text-black placeholder-black/30 outline-none transition focus:border-[#1C3A5E] focus:ring-2 focus:ring-[#1C3A5E]/10"
           />
           <input
             type="text"
             name="url"
             required
             placeholder="Link — ex.: lpfyslh1 ou https://…"
-            className="rounded-xl border border-black/15 bg-white px-3 py-2 text-sm text-black placeholder-black/30 outline-none transition focus:border-black/40"
+            className="rounded-xl border border-black/10 bg-white px-3 py-2 text-sm text-black placeholder-black/30 outline-none transition focus:border-[#1C3A5E] focus:ring-2 focus:ring-[#1C3A5E]/10"
           />
           <button
             type="submit"
-            className="rounded-xl bg-[#1C3A5E] px-4 py-2 text-sm font-medium text-white transition hover:bg-[#254a73]"
+            className="rounded-xl bg-[#1C3A5E] px-4 py-2 text-sm font-medium text-white shadow-sm shadow-[#1C3A5E]/25 transition hover:bg-[#254a73] hover:shadow-md hover:shadow-[#1C3A5E]/30"
           >
             Adicionar
           </button>
