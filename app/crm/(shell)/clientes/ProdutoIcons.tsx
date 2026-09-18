@@ -4,31 +4,47 @@
 // desenhados só pra esse formulário, sem nenhuma relação visual com os
 // ícones reais usados em /produtos e /calculadora_reversa. Trocado por um
 // mapa pros mesmos arquivos de ícone já usados nessas páginas (ou o mais
-// próximo semanticamente, quando o produto do CRM não tem card público
-// equivalente — ver observação em cada linha).
+// próximo semanticamente).
+//
+// Atualizado no mesmo dia pra taxonomia nova de lib/crm/produtos.ts
+// ("produto principal → roteiro personalizado, pacote de viagem, viagem
+// personalizada, serviço individual / produto secundario → todos os
+// serviços contratáveis individualmente"). Os valores antigos (chaves
+// mantidas em ProdutoPrincipal/ProdutoSecundario só por compatibilidade)
+// continuam mapeados aqui — não fazem mal ficar, mas não aparecem mais no
+// formulário (ver PRODUTOS_PRINCIPAIS/PRODUTOS_SECUNDARIOS).
 export const PRODUTO_ICONS: Record<string, string> = {
-  // Produto principal — "Roteiro Personalizado" e "Revisão de Roteiro" são
-  // a mesma família de produto (o roteiro em si), então reaproveitam o
-  // mesmo ícone de /produtos. "Caravana" reaproveita o ícone de "Pacote de
-  // Viagem" (viagem pré-estruturada, mesmo conceito). "Semi-Full Service" e
-  // "Full-Service" reaproveitam o ícone de "Viagem Personalizada" (viagem
-  // montada do zero pela Ajisai) — nenhum dos três tem um card público
-  // próprio, então usam o produto público mais parecido.
+  // Produto principal
   roteiro_personalizado: "/images/produtos/roteiro-personalizado.png",
+  pacote_viagem: "/images/produtos/pacote-de-viagem.png",
+  viagem_personalizada: "/images/produtos/viagem-personalizada-icone-v2.png",
+  // "Serviço Individual" não tem card próprio em /produtos — reaproveita o
+  // ícone de "Serviços adicionais", o mais próximo do conceito de "só um
+  // item avulso, sem pacote de viagem".
+  servico_individual: "/images/produtos/servicos-adicionais.png",
+
+  // Produto secundário — todos os serviços contratáveis individualmente,
+  // mesmos ícones de /produtos ("Complete sua viagem") ou de
+  // /servicos-adicionais (Transfer, eSIM, Reserva de Restaurantes — ver
+  // app/lib/servicosAvulsos.ts).
+  passagem_aerea: "/images/produtos/passagem-aerea.png",
+  hoteis: "/images/produtos/hoteis.png",
+  guia: "/images/produtos/guia-turistico.png",
+  transporte_privado: "/images/produtos/transporte-privado.png",
+  jr_pass: "/images/icone-trem-bala-shinkansen.png",
+  cambio: "/images/icone-cambio-dinheiro.png",
+  seguro_viagem: "/images/icone-seguro-viagem-v2.png",
+  ajisai_shopping: "/images/icone-servico-ajisai-shopping.png",
+  transfer_aeroporto_hotel: "/images/icone-onibus-v2.png",
+  esim: "/images/icone-esim.svg",
+  reserva_restaurantes: "/images/icone-gastronomia.png",
+
+  // Valores antigos — mantidos por compatibilidade (ver comentário acima).
   revisao_roteiro: "/images/produtos/roteiro-personalizado.png",
   caravana: "/images/produtos/pacote-de-viagem.png",
   semi_full_service: "/images/produtos/viagem-personalizada-icone-v2.png",
   full_service: "/images/produtos/viagem-personalizada-icone-v2.png",
-  // Produto secundário — os 5 primeiros são o mesmo ícone usado em
-  // /produtos e/ou /calculadora_reversa para o serviço equivalente.
-  // "Acompanhamento Presencial Restaurantes" não tem produto público
-  // equivalente (é acompanhamento do concierge, não a reserva em si) —
-  // reaproveita o ícone de Concierge Dedicado da calculadora reversa.
-  jr_pass: "/images/icone-trem-bala-shinkansen.png",
-  seguro_viagem: "/images/icone-seguro-viagem-v2.png",
-  guia: "/images/produtos/guia-turistico.png",
   motorista_particular: "/images/produtos/transporte-privado.png",
-  reserva_restaurantes: "/images/icone-servico-reserva-restaurante.png",
   acompanhamento_restaurantes: "/images/icone-servico-concierge.png",
   acompanhamento_compras: "/images/icone-servico-ajisai-shopping.png",
 };

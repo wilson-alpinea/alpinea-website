@@ -19,16 +19,22 @@ function isProdutoSecundarioValido(
   | "jr_pass"
   | "seguro_viagem"
   | "guia"
-  | "motorista_particular"
+  | "transporte_privado"
   | "reserva_restaurantes"
+  | "ajisai_shopping"
+  // Valores antigos — aceitos só para não quebrar nada que ainda envie a
+  // chave anterior (ver lib/crm/produtos.ts, 18/set/2026).
+  | "motorista_particular"
   | "acompanhamento_restaurantes"
   | "acompanhamento_compras" {
   return [
     "jr_pass",
     "seguro_viagem",
     "guia",
-    "motorista_particular",
+    "transporte_privado",
     "reserva_restaurantes",
+    "ajisai_shopping",
+    "motorista_particular",
     "acompanhamento_restaurantes",
     "acompanhamento_compras",
   ].includes(valor);

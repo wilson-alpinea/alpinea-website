@@ -2805,10 +2805,10 @@ export default function CalculadoraReversaPage() {
       jrpass: "jr_pass",
       seguro: "seguro_viagem",
       guia: "guia",
-      motorista: "motorista_particular",
+      motorista: "transporte_privado",
       "servico-restaurantesHighEnd": "reserva_restaurantes",
       "servico-reservaRestaurante": "reserva_restaurantes",
-      "servico-ajisaiShopping": "acompanhamento_compras",
+      "servico-ajisaiShopping": "ajisai_shopping",
     };
     const produtos = new Set<string>();
     for (const item of itensSelecionados) {
