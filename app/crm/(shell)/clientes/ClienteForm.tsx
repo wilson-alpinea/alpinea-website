@@ -33,15 +33,23 @@ function ProdutoCard({
   detalhe?: string;
   defaultChecked: boolean;
 }) {
-  const Icon = PRODUTO_ICONS[value];
+  // Pedido do Wilson, 18/set/2026: ícones agora são os mesmos arquivos
+  // (PNG) usados em /produtos e /calculadora_reversa — ver ProdutoIcons.tsx.
+  // Como são imagens (não SVG com stroke="currentColor" como antes), o
+  // estado selecionado usa opacidade em vez de cor pro "realce" do ícone.
+  const icone = PRODUTO_ICONS[value];
   return (
     <label
       title={detalhe}
       className="flex cursor-pointer flex-col items-center gap-2 rounded-xl border border-black/15 bg-white p-3 text-center transition has-[:checked]:border-[#1C3A5E] has-[:checked]:bg-[#1C3A5E]/[0.06] hover:border-black/30"
     >
       <input type={type} name={name} value={value} defaultChecked={defaultChecked} className="peer sr-only" />
-      {Icon && (
-        <Icon className="h-5 w-5 text-black/45 transition peer-checked:text-[#1C3A5E]" />
+      {icone && (
+        <img
+          src={icone}
+          alt=""
+          className="h-6 w-6 object-contain opacity-50 transition peer-checked:opacity-100"
+        />
       )}
       <span className="text-xs font-medium leading-tight text-black/70 transition peer-checked:text-black">
         {label}
