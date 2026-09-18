@@ -48,3 +48,41 @@ export const PRODUTO_ICONS: Record<string, string> = {
   acompanhamento_restaurantes: "/images/icone-servico-concierge.png",
   acompanhamento_compras: "/images/icone-servico-ajisai-shopping.png",
 };
+
+// Pedido do Wilson, 18/set/2026 ("os icones estao da mesma cor do fundo,
+// sem contraste"): checado pixel a pixel — os ícones de /produtos
+// ("Como você quer organizar sua viagem" + "Complete sua viagem") são
+// brancos puros (feitos pra ficar sobre o fundo escuro do site), e por
+// isso ficavam invisíveis sobre o chip claro do formulário. Já os ícones
+// de /servicos-adicionais e da calculadora (JR Pass, Câmbio, Seguro,
+// Ajisai Shopping, Transfer, Reserva de Restaurantes) são escuros. Esse
+// mapa diz qual chip cada ícone precisa pra ter contraste real — "claro"
+// (ícone branco) ganha chip azul-marinho sólido; "escuro" (ícone com
+// tinta própria) ganha chip claro.
+export type VarianteIcone = "claro" | "escuro";
+
+export const PRODUTO_ICON_VARIANTE: Record<string, VarianteIcone> = {
+  roteiro_personalizado: "claro",
+  pacote_viagem: "claro",
+  viagem_personalizada: "claro",
+  servico_individual: "claro",
+  passagem_aerea: "claro",
+  hoteis: "claro",
+  guia: "claro",
+  transporte_privado: "claro",
+  jr_pass: "escuro",
+  cambio: "escuro",
+  seguro_viagem: "escuro",
+  ajisai_shopping: "escuro",
+  transfer_aeroporto_hotel: "escuro",
+  esim: "escuro",
+  reserva_restaurantes: "escuro",
+  // Valores antigos
+  revisao_roteiro: "claro",
+  caravana: "claro",
+  semi_full_service: "claro",
+  full_service: "claro",
+  motorista_particular: "claro",
+  acompanhamento_restaurantes: "escuro",
+  acompanhamento_compras: "escuro",
+};

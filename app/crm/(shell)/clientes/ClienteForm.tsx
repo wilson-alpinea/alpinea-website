@@ -1,7 +1,7 @@
 import { ESTAGIOS } from "@/lib/crm/estagios";
 import { PRODUTOS_PRINCIPAIS, PRODUTOS_SECUNDARIOS } from "@/lib/crm/produtos";
 import type { Cliente } from "@/lib/crm/types";
-import { PRODUTO_ICONS } from "./ProdutoIcons";
+import { PRODUTO_ICONS, PRODUTO_ICON_VARIANTE } from "./ProdutoIcons";
 
 const ORIGENS = [
   "Instagram",
@@ -35,13 +35,21 @@ function ProdutoCard({
 }) {
   // Pedido do Wilson, 18/set/2026: ícones agora são os mesmos arquivos
   // (PNG) usados em /produtos e /calculadora_reversa — ver ProdutoIcons.tsx.
-  // Pedido do Wilson, 18/set/2026 ("crm está feio visualmente"): o ícone
-  // não fica mais esmaecido em opacity-50 — vários ícones (eSIM, Câmbio,
-  // Seguro Viagem etc.) já são claros por natureza e praticamente somem
-  // nesse estado. Agora o ícone fica sempre com contraste normal, sobre
-  // um "chip" circular claro — a seleção é indicada pela cor do chip/borda
-  // do card, não pela opacidade do ícone.
+  //
+  // Pedido do Wilson, 18/set/2026 ("os icones estao da mesma cor do
+  // fundo, sem contraste"): checado pixel a pixel — os ícones de
+  // /produtos são BRANCOS puros (desenhados pra ficar sobre o fundo
+  // escuro do site) e ficavam invisíveis sobre qualquer chip claro. A
+  // correção não é opacidade, é o chip certo pra cada ícone: ícone branco
+  // ("claro") ganha chip azul-marinho sólido — exatamente como aparece no
+  // site —, ícone com tinta própria ("escuro") ganha chip claro. Ver
+  // PRODUTO_ICON_VARIANTE em ProdutoIcons.tsx.
   const icone = PRODUTO_ICONS[value];
+  const variante = PRODUTO_ICON_VARIANTE[value] ?? "escuro";
+  const chipClaro =
+    "bg-[#1C3A5E] shadow-[0_2px_8px_-3px_rgba(28,58,94,0.6)] peer-checked:bg-[#12283f]";
+  const chipEscuro =
+    "border border-black/8 bg-[#FAF9F6] peer-checked:border-[#1C3A5E]/25 peer-checked:bg-white";
   return (
     <label
       title={detalhe}
@@ -49,8 +57,10 @@ function ProdutoCard({
     >
       <input type={type} name={name} value={value} defaultChecked={defaultChecked} className="peer sr-only" />
       {icone && (
-        <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-black/[0.035] transition peer-checked:bg-[#1C3A5E]/10">
-          <img src={icone} alt="" className="h-6 w-6 object-contain" />
+        <span
+          className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-full transition ${variante === "claro" ? chipClaro : chipEscuro}`}
+        >
+          <img src={icone} alt="" className="h-7 w-7 object-contain" />
         </span>
       )}
       <span className="text-xs font-medium leading-tight text-black/70 transition peer-checked:font-semibold peer-checked:text-[#1C3A5E]">
