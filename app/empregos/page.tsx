@@ -142,22 +142,16 @@ const SETORES: { key: SetorKey; nome: string; descricao: string }[] = [
 // marca que os ícones em SVG já tinham — uma imagem <img> comum não
 // consegue ser recolorida assim.
 const ICONE_SETOR_IMG: Partial<Record<SetorKey, string>> = {
+  automotivo: "/images/icon-setor-automotivo.png",
   eletronicos: "/images/icon-setor-eletronicos.png",
   alimenticio: "/images/icon-setor-alimenticio.png",
   materiais: "/images/icon-setor-materiais.png",
 };
 
+// Ícone de Automotivo (engrenagem + pistão) enviado pelo Wilson em 19/set/2026
+// pra completar o conjunto — antes era o único setor ainda com SVG inline
+// (um carrinho), enquanto os outros 3 já usavam a arte PNG nova dele.
 function IconSetor({ setor, className }: { setor: SetorKey; className?: string }) {
-  if (setor === "automotivo") {
-    return (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" className={className}>
-        <path d="M3 13l1.6-4.8A2 2 0 0 1 6.5 7h11a2 2 0 0 1 1.9 1.2L21 13" />
-        <path d="M3 13h18v4a1 1 0 0 1-1 1h-1a1 1 0 0 1-1-1v-1H6v1a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-4Z" />
-        <circle cx="7.5" cy="17.5" r="1.5" />
-        <circle cx="16.5" cy="17.5" r="1.5" />
-      </svg>
-    );
-  }
   const src = ICONE_SETOR_IMG[setor];
   return (
     <span
@@ -1096,8 +1090,8 @@ export default function EmpregosPage() {
                 onClick={() => irParaVagas({ setor: s.key })}
                 className="group flex flex-col items-start rounded-2xl border border-black/10 bg-black/[0.02] p-7 text-left transition hover:border-[#2f80c9]/50 hover:bg-[#2f80c9]/5"
               >
-                <span className="flex items-center justify-center text-[#2f80c9]">
-                  <IconSetor setor={s.key} className="h-11 w-11" />
+                <span className="flex w-full items-center justify-center text-[#2f80c9]">
+                  <IconSetor setor={s.key} className="h-16 w-16" />
                 </span>
                 <h3 className={`${display.className} mt-4 text-lg font-medium text-black`}>{s.nome}</h3>
                 <p className="mt-2 text-xs font-light leading-5 text-black/55">{s.descricao}</p>
@@ -1209,7 +1203,7 @@ export default function EmpregosPage() {
               return (
                 <div
                   key={vaga.id}
-                  className={`flex flex-col rounded-2xl border p-5 transition ${
+                  className={`relative flex flex-col overflow-hidden rounded-2xl border p-5 transition ${
                     marcada ? "border-[#2f80c9] bg-[#2f80c9]/5" : "border-black/10 bg-white hover:border-black/25"
                   }`}
                 >
@@ -1296,6 +1290,13 @@ export default function EmpregosPage() {
                       </svg>
                     </span>
                   </div>
+
+                  {/* Ícone do setor no canto inferior direito do card —
+                      pedido do Wilson, 19/set/2026. Decorativo (marca
+                      d'água), não intercepta clique. */}
+                  <span className="pointer-events-none absolute -bottom-2 -right-2 text-[#2f80c9]/10">
+                    <IconSetor setor={vaga.setor} className="h-16 w-16" />
+                  </span>
                 </div>
               );
             })}
