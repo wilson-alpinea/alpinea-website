@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Bodoni_Moda } from "next/font/google";
@@ -133,6 +133,20 @@ const SETORES: { key: SetorKey; nome: string; descricao: string }[] = [
   },
 ];
 
+// Ícones novos para eletrônicos, alimentício e materiais — pedido do
+// Wilson, 19/set/2026 ("novos icones para setores"), enviados como PNG
+// (chip, garfo+colher cruzados, caixa 3D). Automobilístico não veio com
+// ícone novo, então continua com o SVG desenhado à mão. Os PNGs entram via
+// CSS mask (currentColor como cor de fundo, a imagem como máscara) em vez
+// de <img>, pra manter o mesmo comportamento de herdar a cor azul da
+// marca que os ícones em SVG já tinham — uma imagem <img> comum não
+// consegue ser recolorida assim.
+const ICONE_SETOR_IMG: Partial<Record<SetorKey, string>> = {
+  eletronicos: "/images/icon-setor-eletronicos.png",
+  alimenticio: "/images/icon-setor-alimenticio.png",
+  materiais: "/images/icon-setor-materiais.png",
+};
+
 function IconSetor({ setor, className }: { setor: SetorKey; className?: string }) {
   if (setor === "automotivo") {
     return (
@@ -144,31 +158,24 @@ function IconSetor({ setor, className }: { setor: SetorKey; className?: string }
       </svg>
     );
   }
-  if (setor === "eletronicos") {
-    return (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" className={className}>
-        <rect x="7" y="7" width="10" height="10" rx="1.5" />
-        <rect x="10" y="10" width="4" height="4" rx="0.5" />
-        <path d="M9 3v2.5M12 3v2.5M15 3v2.5M9 18.5V21M12 18.5V21M15 18.5V21M3 9h2.5M3 12h2.5M3 15h2.5M18.5 9H21M18.5 12H21M18.5 15H21" />
-      </svg>
-    );
-  }
-  if (setor === "materiais") {
-    return (
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" className={className}>
-        <path d="M12 2.5 20.5 8 12 13.5 3.5 8 12 2.5Z" />
-        <path d="M3.5 8v8L12 21.5 20.5 16V8" />
-        <path d="M12 13.5v8" />
-      </svg>
-    );
-  }
+  const src = ICONE_SETOR_IMG[setor];
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" className={className}>
-      <path d="M6 3v6a3 3 0 0 0 3 3v9" />
-      <path d="M6 3v6M9 3v6" />
-      <path d="M17 3c-1.7 0-3 2-3 5s1.3 5 3 5" />
-      <path d="M17 3v18" />
-    </svg>
+    <span
+      aria-hidden
+      className={className}
+      style={{
+        display: "inline-block",
+        backgroundColor: "currentColor",
+        WebkitMaskImage: `url(${src})`,
+        maskImage: `url(${src})`,
+        WebkitMaskSize: "contain",
+        maskSize: "contain",
+        WebkitMaskRepeat: "no-repeat",
+        maskRepeat: "no-repeat",
+        WebkitMaskPosition: "center",
+        maskPosition: "center",
+      }}
+    />
   );
 }
 
@@ -179,7 +186,16 @@ function IconSetor({ setor, className }: { setor: SetorKey; className?: string }
 // idioma e perfil ficam de fora do objeto quando a fonte não trouxe esse
 // dado (fichas UT Suri-emu não têm essas duas informações). logo é
 // opcional (pedido do Wilson, 19/set/2026) — só entra quando ele manda o
-// arquivo da empresa; até lá o card mostra só o nome em texto. ──
+// arquivo da empresa; até lá o card mostra só o nome em texto.
+//
+// conducao/observacoes/fonteContrato — pedido do Wilson, 19/set/2026: "ao
+// clicar na vaga deve expandir os campos de detalhes que enviei
+// anteriormente". As fichas UT Suri-emu trazem um bloco de condições quase
+// idêntico em todas (moradia, seguro social, exame médico, financiamento
+// de passagem) — isso virou o bloco fixo CONDICOES_UT_SURIEMU abaixo, pra
+// não repetir o mesmo texto em cada vaga. Só entram em fonteContrato as
+// vagas cuja ficha eu de fato reli com esse bloco completo — não é
+// fabricado pras demais, que mostram só um convite pra falar no WhatsApp. ──
 type StatusVaga = "aberta" | "consulta";
 
 type Vaga = {
@@ -197,6 +213,23 @@ type Vaga = {
   idioma?: string;
   perfil?: string;
   logo?: string;
+  conducao?: string;
+  observacoes?: string;
+  fonteContrato?: "ut-suriemu";
+};
+
+// Bloco de condições padrão que se repete, com o mesmo texto, em toda
+// ficha "UT Suri-emu" já relida (moradia, seguro social/shakai hoken,
+// exame médico admissional/anual, financiamento de passagem aérea).
+const CONDICOES_UT_SURIEMU = {
+  moradia:
+    "Aluguel integral (aprox. 60 a 70% do valor do imóvel) + água, luz, gás e taxa da Associação Comunitária. Kit de futon fornecido pela empresa (cerca de ¥15.000, descontado no 1º pagamento).",
+  seguro:
+    "Desconto de aproximadamente 14% do salário bruto a partir do 1º mês (saúde com cobertura de 70%, aposentadoria, seguro-desemprego). Percentual pode variar conforme a legislação japonesa.",
+  exameMedico:
+    "Admissional e anual, gratuitos. Se for detectada alguma doença que impossibilite o serviço, a admissão pode não ser aprovada — não omitir informação na entrevista.",
+  financiamentoPassagem:
+    "Passagem aérea financiada pela empresa, com desconto a partir do 2º pagamento (parcelas de até ¥50 mil por mês).",
 };
 
 const VAGAS: Vaga[] = [
@@ -228,6 +261,7 @@ const VAGAS: Vaga[] = [
     contrato: "Contrato temporário (haken)",
     salario: "¥1.600/hora",
     status: "aberta",
+    logo: "/images/logo-cliente-aisin.png",
     idioma: "Básico (N4), preferência razoável (N3)",
     perfil: "Homens até 45 anos — precisa ter carro próprio e experiência em fábrica no Brasil ou no Japão",
   },
@@ -258,6 +292,7 @@ const VAGAS: Vaga[] = [
     contrato: "Contrato temporário (haken)",
     salario: "¥1.340–1.390/hora (até ¥1.560/hora conforme desempenho)",
     status: "aberta",
+    logo: "/images/logo-cliente-murata.png",
     idioma: "Não mandatório",
     perfil: "Homem, mulher ou casal até 50 anos",
   },
@@ -273,6 +308,7 @@ const VAGAS: Vaga[] = [
     contrato: "Contrato temporário (haken)",
     salario: "¥1.340/hora (até ¥1.560/hora conforme desempenho)",
     status: "aberta",
+    logo: "/images/logo-cliente-murata.png",
     idioma: "Não mandatório",
     perfil: "Homem, mulher ou casal até 50 anos",
   },
@@ -350,6 +386,9 @@ const VAGAS: Vaga[] = [
     contrato: "Contrato temporário (haken)",
     salario: "¥1.800–1.900/hora",
     status: "aberta",
+    logo: "/images/logo-cliente-subaru.png",
+    conducao: "Bicicleta (alugada pela empresa) — condução própria (carro/moto) possível, consultar a unidade.",
+    fonteContrato: "ut-suriemu",
   },
   {
     id: "subaru-ota",
@@ -363,6 +402,9 @@ const VAGAS: Vaga[] = [
     contrato: "Contrato temporário (haken)",
     salario: "¥1.800–1.900/hora",
     status: "aberta",
+    logo: "/images/logo-cliente-subaru.png",
+    conducao: "Bicicleta (alugada pela empresa) — condução própria (carro/moto) possível, consultar a unidade.",
+    fonteContrato: "ut-suriemu",
   },
   {
     id: "mitsubishi-fuso-toyama",
@@ -376,6 +418,8 @@ const VAGAS: Vaga[] = [
     contrato: "Contrato temporário (haken)",
     salario: "¥1.700/hora",
     status: "aberta",
+    conducao: "Vans/ônibus (gratuito), bicicleta (alugada pela empresa) ou a pé — condução própria (carro/moto) possível, consultar a unidade.",
+    fonteContrato: "ut-suriemu",
   },
   {
     id: "yamase-miyagi",
@@ -402,6 +446,7 @@ const VAGAS: Vaga[] = [
     contrato: "Contrato temporário (haken)",
     salario: "¥1.200–1.250/hora",
     status: "aberta",
+    logo: "/images/logo-cliente-fujifilm.png",
   },
   {
     id: "yokohama-gomu-aichi",
@@ -415,6 +460,10 @@ const VAGAS: Vaga[] = [
     contrato: "Contrato temporário (haken)",
     salario: "¥1.430/hora",
     status: "aberta",
+    logo: "/images/logo-cliente-yokohama-tyres.png",
+    conducao: "Vans/ônibus (gratuito), bicicleta (alugada pela empresa) ou a pé — condução própria (carro/moto) possível, consultar a unidade.",
+    observacoes: "Uniforme cobrado à parte, ¥6.450.",
+    fonteContrato: "ut-suriemu",
   },
   {
     id: "sony-aichi",
@@ -428,6 +477,7 @@ const VAGAS: Vaga[] = [
     contrato: "Contrato temporário (haken)",
     salario: "¥1.100/hora",
     status: "aberta",
+    logo: "/images/logo-cliente-sony.png",
   },
   {
     id: "mitsubishi-denki-himeji",
@@ -441,6 +491,7 @@ const VAGAS: Vaga[] = [
     contrato: "Contrato temporário (haken)",
     salario: "¥1.300/hora (extra ¥1.625/hora; noturno +¥325/hora)",
     status: "aberta",
+    logo: "/images/logo-cliente-mitsubishi-denki.png",
   },
   {
     id: "daihatsu-nakatsu",
@@ -471,6 +522,9 @@ const VAGAS: Vaga[] = [
     status: "aberta",
     idioma: "Básico (identificar avisos e placas de segurança)",
     perfil: "Homens até 50 anos (acima de 45 com experiência) — vagas femininas em negociação; requer visita à fábrica antes da alocação",
+    conducao: "Bicicleta (alugada pela empresa) ou a pé — condução própria (carro/moto) possível, consultar a unidade.",
+    observacoes: "Estacionamento por conta do funcionário, ¥2.200/mês.",
+    fonteContrato: "ut-suriemu",
   },
   {
     id: "gs-yuasa-ritto",
@@ -555,6 +609,10 @@ const VAGAS: Vaga[] = [
     contrato: "Contrato temporário (haken)",
     salario: "¥1.350/hora (extra ¥1.688/hora; noturno +¥338/hora)",
     status: "aberta",
+    logo: "/images/logo-cliente-fujifilm.png",
+    conducao: "Bicicleta (alugada pela empresa) ou a pé — condução própria de carro possível, consultar a unidade.",
+    observacoes: "Apartamentos Leopalace geralmente já incluem TV, cortina, mesa, ar-condicionado, máquina de lavar, geladeira e micro-ondas.",
+    fonteContrato: "ut-suriemu",
   },
   {
     id: "hino-jidousha-ota",
@@ -568,6 +626,9 @@ const VAGAS: Vaga[] = [
     contrato: "Contrato temporário (haken)",
     salario: "¥2.000/hora (extra ¥2.500/hora; noturno +¥500/hora)",
     status: "aberta",
+    conducao: "A pé — bicicleta própria possível, consultar a unidade.",
+    observacoes: "Refeitório na unidade com geladeira e micro-ondas.",
+    fonteContrato: "ut-suriemu",
   },
   {
     id: "hino-jidousha-hamura",
@@ -581,6 +642,9 @@ const VAGAS: Vaga[] = [
     contrato: "Contrato temporário (haken)",
     salario: "¥2.000/hora (extra ¥2.500/hora; noturno +¥500/hora)",
     status: "aberta",
+    conducao: "A pé — bicicleta própria possível, consultar a unidade.",
+    observacoes: "Refeitório com sistema de recarga (depósito-caução de ¥1.000); cada refeição custa em torno de ¥500.",
+    fonteContrato: "ut-suriemu",
   },
   {
     id: "kitz-ina-nagano",
@@ -594,6 +658,8 @@ const VAGAS: Vaga[] = [
     contrato: "Contrato temporário (haken)",
     salario: "¥1.200/hora (mulheres) ou ¥1.300/hora (homens)",
     status: "aberta",
+    conducao: "Vans/ônibus (gratuito), bicicleta (alugada pela empresa) ou a pé.",
+    fonteContrato: "ut-suriemu",
   },
   {
     id: "panasonic-gunma",
@@ -607,6 +673,9 @@ const VAGAS: Vaga[] = [
     contrato: "Contrato temporário (haken)",
     salario: "¥1.300–1.500/hora, conforme japonês e habilidades (até ¥1.600/hora em lift, até ¥1.900/hora em solda)",
     status: "aberta",
+    logo: "/images/logo-cliente-panasonic.png",
+    conducao: "Bicicleta (alugada pela empresa) ou a pé — condução própria (carro/moto) possível, consultar a unidade.",
+    fonteContrato: "ut-suriemu",
   },
 ];
 
@@ -709,41 +778,47 @@ const CLIENTES_CORPORATIVOS: ItemMarquee[] = [
   { nome: "Subaru", logo: "/images/logo-cliente-subaru.png" },
 ];
 
-function Marquee({ itens }: { itens: ItemMarquee[] }) {
+function LogoMarquee({ item }: { item: ItemMarquee }) {
+  // Só altura fixa (largura livre) + object-contain — pedido do Wilson,
+  // 19/set/2026, revertendo a caixa de largura fixa que eu tinha colocado
+  // antes: forçar toda logo pra uma largura igual criava um respiro
+  // horizontal enorme em volta de marcas mais "quadradas" (Fujiarte, UT),
+  // o carrossel de cima parecia ter buracos vazios. Como os arquivos já
+  // foram recortados (sem respiro interno em excesso), travar só a altura
+  // já deixa o peso visual parecido, sem sobrar espaço em branco.
+  return item.logo ? (
+    <div className="mx-6 flex h-14 shrink-0 items-center">
+      <img src={item.logo} alt={item.nome} className="h-9 w-auto object-contain md:h-10" />
+    </div>
+  ) : (
+    <span className="mx-4 shrink-0 rounded-full border border-black/10 bg-black/[0.02] px-6 py-3 text-sm font-medium uppercase tracking-[0.08em] text-black/55">
+      {item.nome}
+    </span>
+  );
+}
+
+// estatico — pedido do Wilson, 19/set/2026: "empresas parceiras pode ser
+// fixo são poucos logos". Com poucos itens, sem rolagem: fica centralizado
+// e parado, sem o loop infinito (que exigiria duplicar os itens e só faz
+// sentido com uma fileira comprida).
+function Marquee({ itens, estatico }: { itens: ItemMarquee[]; estatico?: boolean }) {
+  if (estatico) {
+    return (
+      <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-3">
+        {itens.map((item) => (
+          <LogoMarquee key={item.nome} item={item} />
+        ))}
+      </div>
+    );
+  }
+
   const lista = [...itens, ...itens];
   return (
     <div className="marquee-viewport">
       <div className="marquee-track">
-        {lista.map((item, i) =>
-          item.logo ? (
-            <div
-              key={`${item.nome}-${i}`}
-              className="mx-6 flex h-14 w-36 shrink-0 items-center justify-center"
-            >
-              {/* Caixa fixa (mesma altura E largura pra todo logo) +
-                  object-contain — pedido do Wilson, 19/set/2026: antes o
-                  <img> só travava a altura (max-h) e deixava a largura
-                  livre, então uma marca "quadrada" (Subaru) ou com bastante
-                  respiro dentro do próprio arquivo (Aisin, Murata — já
-                  recortados também) ficava com peso visual bem menor que
-                  uma wordmark larga (Panasonic, Sony). Com caixa fixa, todo
-                  logo ocupa a mesma área — larguras variam, mas o "peso"
-                  visual fica parecido. */}
-              <img
-                src={item.logo}
-                alt={item.nome}
-                className="h-9 w-28 object-contain md:h-10 md:w-32"
-              />
-            </div>
-          ) : (
-            <span
-              key={`${item.nome}-${i}`}
-              className="mx-4 shrink-0 rounded-full border border-black/10 bg-black/[0.02] px-6 py-3 text-sm font-medium uppercase tracking-[0.08em] text-black/55"
-            >
-              {item.nome}
-            </span>
-          ),
-        )}
+        {lista.map((item, i) => (
+          <LogoMarquee key={`${item.nome}-${i}`} item={item} />
+        ))}
       </div>
       <style jsx>{`
         .marquee-viewport {
@@ -774,6 +849,17 @@ export default function EmpregosPage() {
   const [setorFiltro, setSetorFiltro] = useState<SetorKey | "todos">("todos");
   const [regioesFiltro, setRegioesFiltro] = useState<Set<string>>(new Set());
   const [selecionadas, setSelecionadas] = useState<Set<string>>(new Set());
+  const [expandidas, setExpandidas] = useState<Set<string>>(new Set());
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    function aoRolar() {
+      setScrolled(window.scrollY > 40);
+    }
+    aoRolar();
+    window.addEventListener("scroll", aoRolar, { passive: true });
+    return () => window.removeEventListener("scroll", aoRolar);
+  }, []);
 
   function irParaVagas(ajustes?: { publico?: PublicoKey | "todos"; setor?: SetorKey | "todos" }) {
     if (ajustes?.publico !== undefined) setPublicoFiltro(ajustes.publico);
@@ -792,6 +878,16 @@ export default function EmpregosPage() {
 
   function alternarSelecao(id: string) {
     setSelecionadas((atual) => {
+      const novo = new Set(atual);
+      if (novo.has(id)) novo.delete(id);
+      else novo.add(id);
+      return novo;
+    });
+  }
+
+  // Expandir/colapsar detalhes do card — pedido do Wilson, 19/set/2026.
+  function alternarExpandida(id: string) {
+    setExpandidas((atual) => {
       const novo = new Set(atual);
       if (novo.has(id)) novo.delete(id);
       else novo.add(id);
@@ -824,10 +920,14 @@ export default function EmpregosPage() {
   return (
     <main className="min-h-screen overflow-x-hidden bg-white text-black">
       {/* ── HEADER ── */}
-      <header className="fixed left-0 right-0 top-0 z-50 bg-black/10 backdrop-blur-2xl">
+      <header
+        className={`fixed left-0 right-0 top-0 z-50 transition-colors duration-300 ${
+          scrolled ? "bg-black/10 backdrop-blur-2xl" : "bg-transparent"
+        }`}
+      >
         <div className="mx-auto flex max-w-7xl items-center justify-between px-8 py-5 md:px-16">
           <Link href="/">
-            <img src="/images/AJISAI-LOGO.avif" alt="Ajisai" className="h-10 w-auto object-contain md:h-11" />
+            <img src="/images/AJISAI-LOGO.avif" alt="Ajisai" className="h-10 w-auto object-contain invert md:h-11" />
           </Link>
           <a
             href={linkWhatsapp("Olá! Vim pela página de Empregos da Ajisai e queria saber mais.")}
@@ -843,7 +943,11 @@ export default function EmpregosPage() {
       {/* ── HERO. Foto de colagem (4 painéis — alimentício, automotivo/robótica,
           eletrônicos, logística) adicionada 19/set/2026 a pedido do Wilson,
           substituindo o fundo azul-marinho liso. Texto reposicionado no
-          rodapé da imagem, sobre um gradiente escuro pra manter a leitura. ── */}
+          rodapé da imagem. Ajustado no mesmo dia, olhando o site publicado:
+          hero mais alto e gradiente mais curto (só a faixa de baixo escurece)
+          pra deixar mais imagem à mostra, texto ainda mais colado na base, e
+          os botões "Ver vagas"/"Falar com a Ajisai" removidos daqui — o CTA
+          "Ver vagas" já existe no header fixo. ── */}
       <section className="relative overflow-hidden border-b border-black/10 bg-[#0A2540]">
         <div className="absolute inset-0">
           <Image
@@ -854,9 +958,9 @@ export default function EmpregosPage() {
             sizes="100vw"
             className="object-cover"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#0A2540] via-[#0A2540]/75 to-[#0A2540]/10" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#0A2540] from-5% via-[#0A2540]/45 via-35% to-transparent to-70%" />
         </div>
-        <div className="relative flex min-h-[540px] flex-col justify-end px-6 pb-12 pt-28 md:min-h-[660px] md:px-10 md:pb-16 md:pt-36">
+        <div className="relative flex min-h-[640px] flex-col justify-end px-6 pb-8 pt-28 md:min-h-[780px] md:px-10 md:pb-10 md:pt-36">
           <div className="mx-auto w-full max-w-4xl text-center">
             <p className="text-[10px] uppercase tracking-[0.25em] text-[#6ec3d9]">Ajisai Empregos</p>
             <h1 className={`${display.className} mt-4 text-[clamp(1.9rem,5vw,3.4rem)] font-medium leading-[1.1] text-white`}>
@@ -867,23 +971,6 @@ export default function EmpregosPage() {
               está no Brasil e quer vir para o Japão, ou para quem já está no Japão e quer mudar de
               emprego.
             </p>
-            <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-              <button
-                type="button"
-                onClick={() => irParaVagas()}
-                className="rounded-full bg-[#2f80c9] px-6 py-3.5 text-xs font-semibold uppercase tracking-[0.2em] text-white transition hover:bg-[#3b91dc]"
-              >
-                Ver vagas
-              </button>
-              <a
-                href={linkWhatsapp("Olá! Vim pela página de Empregos da Ajisai e queria saber mais.")}
-                target="_blank"
-                rel="noreferrer"
-                className="rounded-full border border-white/25 px-6 py-3.5 text-xs font-semibold uppercase tracking-[0.2em] text-white transition hover:border-white/50"
-              >
-                Falar com a Ajisai
-              </a>
-            </div>
           </div>
         </div>
       </section>
@@ -1064,64 +1151,151 @@ export default function EmpregosPage() {
           <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {vagasFiltradas.map((vaga) => {
               const marcada = selecionadas.has(vaga.id);
+              const expandida = expandidas.has(vaga.id);
+              const temDetalhe = Boolean(vaga.conducao || vaga.observacoes || vaga.fonteContrato);
               return (
-                <label
+                <div
                   key={vaga.id}
-                  className={`flex cursor-pointer flex-col rounded-2xl border p-5 transition ${
+                  className={`flex flex-col rounded-2xl border p-5 transition ${
                     marcada ? "border-[#2f80c9] bg-[#2f80c9]/5" : "border-black/10 bg-white hover:border-black/25"
                   }`}
                 >
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="flex flex-wrap items-center gap-1.5">
-                      <span className="rounded-full bg-black/[0.04] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.1em] text-black/50">
-                        {SETOR_NOME[vaga.setor]}
-                      </span>
-                      {/* Selo de status — pedido do Wilson, 19/set/2026: vagas
-                          "sob consulta" (processo de visto, sem embarque
-                          confirmado) ficam no catálogo, mas marcadas — só
-                          "aberta" fica sem selo, pra não poluir a maioria dos
-                          cards. */}
-                      {vaga.status === "consulta" && (
-                        <span className="rounded-full border border-amber-300 bg-amber-50 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.1em] text-amber-700">
-                          {STATUS_LABEL.consulta}
+                  {/* Corpo do card clicável — pedido do Wilson, 19/set/2026:
+                      "ao clicar na vaga deve expandir os campos de
+                      detalhes". A seleção pra candidatura continua só no
+                      checkbox (que interrompe a propagação do clique), pra
+                      não misturar as duas ações. */}
+                  <div
+                    role="button"
+                    tabIndex={0}
+                    onClick={() => alternarExpandida(vaga.id)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
+                        alternarExpandida(vaga.id);
+                      }
+                    }}
+                    className="flex cursor-pointer flex-col text-left"
+                  >
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="flex flex-wrap items-center gap-1.5">
+                        <span className="rounded-full bg-black/[0.04] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.1em] text-black/50">
+                          {SETOR_NOME[vaga.setor]}
                         </span>
-                      )}
-                    </div>
-                    {/* Logo da empresa no canto superior direito, quando
-                        disponível — pedido do Wilson, 19/set/2026. Enquanto
-                        ele não manda o arquivo, o card só mostra o nome em
-                        texto (linha abaixo). */}
-                    <div className="flex shrink-0 items-center gap-2">
-                      {vaga.logo && (
-                        <img
-                          src={vaga.logo}
-                          alt={vaga.empresa}
-                          className="h-6 max-w-[92px] object-contain"
+                        {/* Selo de status — pedido do Wilson, 19/set/2026: vagas
+                            "sob consulta" (processo de visto, sem embarque
+                            confirmado) ficam no catálogo, mas marcadas — só
+                            "aberta" fica sem selo, pra não poluir a maioria dos
+                            cards. */}
+                        {vaga.status === "consulta" && (
+                          <span className="rounded-full border border-amber-300 bg-amber-50 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.1em] text-amber-700">
+                            {STATUS_LABEL.consulta}
+                          </span>
+                        )}
+                      </div>
+                      {/* Logo da empresa no canto superior direito, quando
+                          disponível — pedido do Wilson, 19/set/2026. Enquanto
+                          ele não manda o arquivo, o card só mostra o nome em
+                          texto (linha abaixo). */}
+                      <div className="flex shrink-0 items-center gap-2" onClick={(e) => e.stopPropagation()}>
+                        {vaga.logo && (
+                          <img
+                            src={vaga.logo}
+                            alt={vaga.empresa}
+                            className="h-6 max-w-[92px] object-contain"
+                          />
+                        )}
+                        <input
+                          type="checkbox"
+                          checked={marcada}
+                          onChange={() => alternarSelecao(vaga.id)}
+                          className="h-4 w-4 shrink-0 accent-[#2f80c9]"
                         />
-                      )}
-                      <input
-                        type="checkbox"
-                        checked={marcada}
-                        onChange={() => alternarSelecao(vaga.id)}
-                        className="h-4 w-4 shrink-0 accent-[#2f80c9]"
-                      />
+                      </div>
                     </div>
+                    <p className="mt-3 text-[10px] font-semibold uppercase tracking-[0.12em] text-[#2f80c9]">
+                      {vaga.empresa}
+                    </p>
+                    <h3 className="mt-1 text-sm font-semibold text-black">{vaga.titulo}</h3>
+                    <p className="mt-1 text-xs text-black/50">
+                      {vaga.cidade}, {vaga.regiao} — Japão
+                    </p>
+                    <p className="mt-2 text-sm font-semibold text-black/80">{vaga.salario}</p>
+                    <div className="mt-2 space-y-1 text-[11px] leading-4 text-black/45">
+                      <p>{vaga.turno}</p>
+                      <p>{vaga.contrato}</p>
+                      {vaga.perfil && <p>Perfil: {vaga.perfil}</p>}
+                      {vaga.idioma && <p>Japonês: {vaga.idioma}</p>}
+                    </div>
+                    <span className="mt-3 inline-flex w-fit items-center gap-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-[#2f80c9]">
+                      {expandida ? "Ver menos" : "Ver mais detalhes"}
+                      <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2.5"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        className={`h-3 w-3 transition-transform ${expandida ? "rotate-180" : ""}`}
+                      >
+                        <path d="M6 9l6 6 6-6" />
+                      </svg>
+                    </span>
                   </div>
-                  <p className="mt-3 text-[10px] font-semibold uppercase tracking-[0.12em] text-[#2f80c9]">
-                    {vaga.empresa}
-                  </p>
-                  <h3 className="mt-1 text-sm font-semibold text-black">{vaga.titulo}</h3>
-                  <p className="mt-1 text-xs text-black/50">
-                    {vaga.cidade}, {vaga.regiao} — Japão
-                  </p>
-                  <p className="mt-2 text-sm font-semibold text-black/80">{vaga.salario}</p>
-                  <div className="mt-2 space-y-1 text-[11px] leading-4 text-black/45">
-                    <p>{vaga.turno}</p>
-                    <p>{vaga.contrato}</p>
-                    {vaga.perfil && <p>Perfil: {vaga.perfil}</p>}
-                    {vaga.idioma && <p>Japonês: {vaga.idioma}</p>}
-                  </div>
-                </label>
+
+                  {/* Detalhes expandidos — moradia, condução, seguro social,
+                      exame médico e financiamento de passagem, quando a
+                      ficha original tem esse bloco (CONDICOES_UT_SURIEMU).
+                      Pras demais vagas, mostra só o convite pro WhatsApp em
+                      vez de inventar dado que a fonte não trouxe. */}
+                  {expandida && (
+                    <div className="mt-4 space-y-2.5 border-t border-black/10 pt-4 text-[11px] leading-5 text-black/55">
+                      {vaga.conducao && (
+                        <p>
+                          <span className="font-semibold text-black/70">Condução ao trabalho: </span>
+                          {vaga.conducao}
+                        </p>
+                      )}
+                      {(vaga.fonteContrato === "ut-suriemu" || vaga.observacoes) && (
+                        <p>
+                          <span className="font-semibold text-black/70">Moradia: </span>
+                          {vaga.fonteContrato === "ut-suriemu" ? CONDICOES_UT_SURIEMU.moradia : ""}
+                          {vaga.observacoes && ` ${vaga.observacoes}`}
+                        </p>
+                      )}
+                      {vaga.fonteContrato === "ut-suriemu" && (
+                        <>
+                          <p>
+                            <span className="font-semibold text-black/70">Seguro social (shakai hoken): </span>
+                            {CONDICOES_UT_SURIEMU.seguro}
+                          </p>
+                          <p>
+                            <span className="font-semibold text-black/70">Exame médico: </span>
+                            {CONDICOES_UT_SURIEMU.exameMedico}
+                          </p>
+                          <p>
+                            <span className="font-semibold text-black/70">Passagem aérea: </span>
+                            {CONDICOES_UT_SURIEMU.financiamentoPassagem}
+                          </p>
+                        </>
+                      )}
+                      {!temDetalhe && (
+                        <p>Moradia, documentos e demais condições dessa vaga — fale com a gente pelo WhatsApp.</p>
+                      )}
+                      <a
+                        href={linkWhatsapp(
+                          `Olá! Tenho interesse na vaga ${vaga.titulo} — ${vaga.empresa}, ${vaga.cidade}/${vaga.regiao}. Podem me passar mais detalhes?`,
+                        )}
+                        target="_blank"
+                        rel="noreferrer"
+                        onClick={(e) => e.stopPropagation()}
+                        className="inline-flex w-fit items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.14em] text-[#2f80c9] hover:underline"
+                      >
+                        Perguntar sobre essa vaga →
+                      </a>
+                    </div>
+                  )}
+                </div>
               );
             })}
             {vagasFiltradas.length === 0 && (
@@ -1186,7 +1360,7 @@ export default function EmpregosPage() {
           <p className="text-center text-[10px] uppercase tracking-[0.2em] text-black/40">Empresas parceiras</p>
         </div>
         <div className="mt-5">
-          <Marquee itens={EMPRESAS_PARCEIRAS} />
+          <Marquee itens={EMPRESAS_PARCEIRAS} estatico />
         </div>
         <div className="mx-auto mt-10 max-w-6xl px-6 md:px-16">
           <p className="text-center text-[10px] uppercase tracking-[0.2em] text-black/40">
