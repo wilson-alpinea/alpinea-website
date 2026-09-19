@@ -1007,9 +1007,9 @@ export default function EmpregosPage() {
             sizes="100vw"
             className="object-cover"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#0A2540] from-5% via-[#0A2540]/45 via-35% to-transparent to-70%" />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#0A2540] from-15% via-[#0A2540]/75 via-45% to-[#0A2540]/10 to-90%" />
         </div>
-        <div className="relative flex min-h-[640px] flex-col justify-end px-6 pb-8 pt-28 md:min-h-[780px] md:px-10 md:pb-10 md:pt-36">
+        <div className="relative flex min-h-[520px] flex-col justify-end px-6 pb-8 pt-28 md:min-h-[640px] md:px-10 md:pb-10 md:pt-36">
           <div className="mx-auto w-full max-w-4xl text-center">
             <p className="text-[10px] uppercase tracking-[0.25em] text-[#6ec3d9]">Ajisai Empregos</p>
             <h1 className={`${display.className} mt-4 text-[clamp(1.9rem,5vw,3.4rem)] font-medium leading-[1.1] text-white`}>
@@ -1028,7 +1028,7 @@ export default function EmpregosPage() {
       <section className="border-b border-black/10 bg-white px-6 py-14 md:px-16 md:py-20">
         <div className="mx-auto max-w-6xl">
           <h2 className={`${display.className} text-2xl font-medium text-black md:text-3xl`}>
-            Qual é a sua situação?
+            Qual seu objetivo?
           </h2>
           <div className="mt-8 grid gap-4 sm:grid-cols-2">
             {PUBLICOS.map((p) => (
