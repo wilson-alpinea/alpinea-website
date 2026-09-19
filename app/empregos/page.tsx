@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { Bodoni_Moda } from "next/font/google";
 
@@ -82,15 +83,18 @@ function linkWhatsapp(mensagem: string) {
   return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(mensagem)}`;
 }
 
-// ── Os 2 tipos de serviço (público-alvo) ──
+// ── Os 2 tipos de serviço (público-alvo). Fotos adicionadas 19/set/2026 a
+// pedido do Wilson, que mandou as duas imagens + um print de referência
+// mostrando o layout desejado (foto no topo do card, texto embaixo). ──
 type PublicoKey = "brasil" | "japao";
-const PUBLICOS: { key: PublicoKey; nome: string; descricao: string; cta: string }[] = [
+const PUBLICOS: { key: PublicoKey; nome: string; descricao: string; cta: string; imagem: string }[] = [
   {
     key: "brasil",
     nome: "Emprego no Japão para quem está no Brasil",
     descricao:
       "Você está no Brasil e quer um emprego formal no Japão, com contrato, moradia e todo o processo de mudança organizado do início ao fim.",
     cta: "Ver vagas para quem vem do Brasil",
+    imagem: "/images/empregos-publico-brasil.jpg",
   },
   {
     key: "japao",
@@ -98,6 +102,7 @@ const PUBLICOS: { key: PublicoKey; nome: string; descricao: string; cta: string 
     descricao:
       "Você já mora e trabalha no Japão e quer uma vaga melhor — mais perto de casa, com salário maior ou em outro setor.",
     cta: "Ver vagas para quem já está no Japão",
+    imagem: "/images/empregos-publico-japao.jpg",
   },
 ];
 
@@ -870,13 +875,24 @@ export default function EmpregosPage() {
                 key={p.key}
                 type="button"
                 onClick={() => irParaVagas({ publico: p.key })}
-                className="group flex flex-col rounded-2xl border border-black/10 bg-black/[0.02] p-7 text-left transition hover:border-black/25 hover:bg-black/[0.04] md:p-8"
+                className="group flex flex-col overflow-hidden rounded-2xl border border-black/10 bg-white text-left transition hover:border-black/25 hover:shadow-[0_24px_48px_-28px_rgba(0,0,0,0.3)]"
               >
-                <h3 className={`${display.className} text-xl font-medium text-black md:text-2xl`}>{p.nome}</h3>
-                <p className="mt-3 flex-1 text-sm font-light leading-6 text-black/55">{p.descricao}</p>
-                <span className="mt-5 inline-flex w-fit items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.16em] text-[#2f80c9]">
-                  {p.cta} →
-                </span>
+                <div className="relative aspect-[4/3] w-full overflow-hidden bg-black/5">
+                  <Image
+                    src={p.imagem}
+                    alt={p.nome}
+                    fill
+                    sizes="(min-width: 640px) 50vw, 100vw"
+                    className="object-cover transition duration-500 group-hover:scale-[1.04]"
+                  />
+                </div>
+                <div className="flex flex-1 flex-col bg-black/[0.02] p-7 md:p-8">
+                  <h3 className={`${display.className} text-xl font-medium text-black md:text-2xl`}>{p.nome}</h3>
+                  <p className="mt-3 flex-1 text-sm font-light leading-6 text-black/55">{p.descricao}</p>
+                  <span className="mt-5 inline-flex w-fit items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.16em] text-[#2f80c9]">
+                    {p.cta} →
+                  </span>
+                </div>
               </button>
             ))}
           </div>
