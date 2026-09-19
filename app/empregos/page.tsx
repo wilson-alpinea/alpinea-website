@@ -1243,14 +1243,14 @@ export default function EmpregosPage() {
                 key={s.key}
                 type="button"
                 onClick={() => irParaVagas({ setor: s.key })}
-                className="group flex flex-col items-start rounded-2xl border border-black/10 bg-black/[0.02] p-7 text-left transition hover:border-[#2f80c9]/50 hover:bg-[#2f80c9]/5"
+                className="group flex h-[268px] flex-col items-center rounded-2xl border border-black/10 bg-black/[0.02] p-7 text-center transition hover:border-[#2f80c9]/50 hover:bg-[#2f80c9]/5"
               >
-                <span className="flex w-full items-center justify-center text-[#2f80c9]">
+                <span className="flex h-16 w-16 shrink-0 items-center justify-center text-[#2f80c9]">
                   <IconSetor setor={s.key} className="h-16 w-16" />
                 </span>
-                <h3 className={`${display.className} mt-4 text-lg font-medium text-black`}>{s.nome}</h3>
-                <p className="mt-2 text-xs font-light leading-5 text-black/55">{s.descricao}</p>
-                <span className="mt-4 text-[11px] font-semibold uppercase tracking-[0.16em] text-[#2f80c9]">
+                <h3 className={`${display.className} mt-4 shrink-0 text-lg font-medium text-black`}>{s.nome}</h3>
+                <p className="mt-2 line-clamp-3 flex-1 text-xs font-light leading-5 text-black/55">{s.descricao}</p>
+                <span className="mt-4 shrink-0 text-[11px] font-semibold uppercase tracking-[0.16em] text-[#2f80c9]">
                   Ver vagas →
                 </span>
               </button>
