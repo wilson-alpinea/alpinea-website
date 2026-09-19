@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, type FormEvent } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Bodoni_Moda } from "next/font/google";
@@ -716,6 +716,129 @@ const VAGAS: Vaga[] = [
   },
 ];
 
+// ── Análise da vaga (pop-up) — pedido do Wilson, 19/set/2026: comparar
+// salário e benefícios documentados de cada vaga contra o resto do
+// catálogo. Tudo calculado a partir do próprio array VAGAS (nunca número
+// inventado) — se um dia o texto de salário mudar de formato, o pior caso
+// é a vaga simplesmente não entrar na comparação (retorna null), nunca um
+// número errado.
+
+// Extrai o valor-base em ¥/hora do texto livre de `salario`, ignorando
+// bônus/extra/noturno/reajustes futuros (que sempre aparecem entre
+// parênteses, ou depois de "até" fora de parênteses — ex.: "¥1.400/hora,
+// com reajuste semestral... até ¥1.500/hora"). Quando há dois valores-base
+// (ex.: salário diferente por gênero na ficha da Kitz), usa a média dos
+// dois como valor representativo da vaga.
+function salarioBaseHora(salario: string): number | null {
+  const semParenteses = salario.replace(/\([^)]*\)/g, "");
+  const regex = /¥([\d.]+)(?:[–-]¥?([\d.]+))?\s*\/\s*hora/gi;
+  const valores: number[] = [];
+  let m: RegExpExecArray | null;
+  while ((m = regex.exec(semParenteses))) {
+    const antes = semParenteses.slice(Math.max(0, m.index - 15), m.index).toLowerCase();
+    if (antes.includes("até") || antes.includes("ate ")) continue;
+    const a = parseFloat(m[1].replace(/\./g, ""));
+    const b = m[2] ? parseFloat(m[2].replace(/\./g, "")) : null;
+    valores.push(b !== null ? (a + b) / 2 : a);
+  }
+  if (valores.length === 0) return null;
+  return valores.reduce((soma, v) => soma + v, 0) / valores.length;
+}
+
+// Quantos "blocos" de benefício a ficha documenta (0 a 5): condução ao
+// trabalho, moradia, e — só nas fichas UT Suri-emu, que sempre trazem o
+// mesmo bloco fixo (CONDICOES_UT_SURIEMU) — seguro social, exame médico e
+// passagem aérea juntos.
+function contarBeneficiosDocumentados(vaga: Vaga): number {
+  let n = 0;
+  if (vaga.conducao) n += 1;
+  if (vaga.fonteContrato === "ut-suriemu" || vaga.observacoes) n += 1;
+  if (vaga.fonteContrato === "ut-suriemu") n += 3;
+  return n;
+}
+
+const SALARIO_POR_SETOR: Partial<Record<SetorKey, { media: number; contagem: number }>> = (() => {
+  const somas: Partial<Record<SetorKey, { soma: number; contagem: number }>> = {};
+  for (const vaga of VAGAS) {
+    const base = salarioBaseHora(vaga.salario);
+    if (base === null) continue;
+    const atual = somas[vaga.setor] ?? { soma: 0, contagem: 0 };
+    atual.soma += base;
+    atual.contagem += 1;
+    somas[vaga.setor] = atual;
+  }
+  const resultado: Partial<Record<SetorKey, { media: number; contagem: number }>> = {};
+  (Object.keys(somas) as SetorKey[]).forEach((setor) => {
+    const { soma, contagem } = somas[setor]!;
+    resultado[setor] = { media: soma / contagem, contagem };
+  });
+  return resultado;
+})();
+
+const BENEFICIOS_MEDIA_CATALOGO = VAGAS.reduce((soma, v) => soma + contarBeneficiosDocumentados(v), 0) / VAGAS.length;
+
+function SetaComparativa({ positivo }: { positivo: boolean }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={`mt-0.5 h-3.5 w-3.5 shrink-0 ${positivo ? "text-emerald-600" : "text-amber-600"}`}
+    >
+      {positivo ? <path d="M12 19V5M5 12l7-7 7 7" /> : <path d="M12 5v14M5 12l7 7 7-7" />}
+    </svg>
+  );
+}
+
+// Só mostra uma comparação salarial quando há pelo menos 3 outras vagas do
+// mesmo setor com salário legível, pra não tirar conclusão de amostra
+// pequena — e só quando a diferença é grande o bastante (5%+) pra valer a
+// pena mostrar.
+function AnaliseVaga({ vaga }: { vaga: Vaga }) {
+  const baseVaga = salarioBaseHora(vaga.salario);
+  const statSetor = SALARIO_POR_SETOR[vaga.setor];
+  const podeCompararSalario = baseVaga !== null && !!statSetor && statSetor.contagem >= 3;
+  const diffPercentual = podeCompararSalario ? Math.round(((baseVaga! - statSetor!.media) / statSetor!.media) * 100) : null;
+  const mostraSalario = diffPercentual !== null && Math.abs(diffPercentual) >= 5;
+
+  const beneficios = contarBeneficiosDocumentados(vaga);
+  const diffBeneficios = beneficios - BENEFICIOS_MEDIA_CATALOGO;
+  const mostraBeneficios = Math.abs(diffBeneficios) >= 1;
+
+  if (!mostraSalario && !mostraBeneficios) return null;
+
+  return (
+    <div className="rounded-xl border border-[#2f80c9]/15 bg-[#2f80c9]/[0.04] p-4">
+      <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-[#2f80c9]">Análise da vaga</p>
+      <div className="mt-2.5 space-y-2">
+        {mostraSalario && (
+          <div className="flex items-start gap-2">
+            <SetaComparativa positivo={diffPercentual! > 0} />
+            <p className="text-xs leading-5 text-black/65">
+              Salário {diffPercentual! > 0 ? `${diffPercentual}% acima` : `${Math.abs(diffPercentual!)}% abaixo`} da
+              média de vagas de {SETOR_NOME[vaga.setor]} no catálogo (¥{Math.round(statSetor!.media).toLocaleString("pt-BR")}
+              /hora em média, {statSetor!.contagem} vagas comparadas).
+            </p>
+          </div>
+        )}
+        {mostraBeneficios && (
+          <div className="flex items-start gap-2">
+            <SetaComparativa positivo={diffBeneficios > 0} />
+            <p className="text-xs leading-5 text-black/65">
+              {diffBeneficios > 0
+                ? "Documenta mais detalhes de moradia, condução e benefícios do que a média das vagas do catálogo."
+                : "Documenta menos detalhes de moradia, condução e benefícios do que a média das vagas do catálogo — pergunte pelo WhatsApp."}
+            </p>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 // Regiões do filtro — derivadas das próprias vagas cadastradas, em vez de
 // uma lista mantida à parte, pra crescer automaticamente conforme o
 // Wilson for mandando mais fichas.
@@ -896,6 +1019,9 @@ export default function EmpregosPage() {
   const [selecionadas, setSelecionadas] = useState<Set<string>>(new Set());
   const [vagaAbertaId, setVagaAbertaId] = useState<string | null>(null);
   const [scrolled, setScrolled] = useState(false);
+  const [emailMailing, setEmailMailing] = useState("");
+  const [statusMailing, setStatusMailing] = useState<"idle" | "enviando" | "sucesso" | "erro">("idle");
+  const [erroMailing, setErroMailing] = useState("");
 
   useEffect(() => {
     function aoRolar() {
@@ -917,6 +1043,36 @@ export default function EmpregosPage() {
       document.body.style.overflow = original;
     };
   }, [vagaAbertaId]);
+
+  // Cadastro de e-mail no mailing de novas vagas — pedido do Wilson,
+  // 19/set/2026 ("Deseja ser notificado quando abrir novas vagas?" +
+  // "crie um codigo para ele registrar o email no mailing"). Grava em
+  // Supabase via app/api/empregos-mailing/route.ts (ver também a
+  // migração supabase/migrations/010_mailing_vagas.sql).
+  async function enviarEmailMailing(e: FormEvent) {
+    e.preventDefault();
+    if (statusMailing === "enviando") return;
+    setStatusMailing("enviando");
+    setErroMailing("");
+    try {
+      const resposta = await fetch("/api/empregos-mailing", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: emailMailing }),
+      });
+      const dados = await resposta.json().catch(() => ({}));
+      if (!resposta.ok) {
+        setErroMailing(dados.error || "Não foi possível registrar seu e-mail agora. Tente de novo.");
+        setStatusMailing("erro");
+        return;
+      }
+      setStatusMailing("sucesso");
+      setEmailMailing("");
+    } catch {
+      setErroMailing("Não foi possível registrar seu e-mail agora. Tente de novo.");
+      setStatusMailing("erro");
+    }
+  }
 
   function irParaVagas(ajustes?: { publico?: PublicoKey | "todos"; setor?: SetorKey | "todos" }) {
     if (ajustes?.publico !== undefined) setPublicoFiltro(ajustes.publico);
@@ -1011,8 +1167,7 @@ export default function EmpregosPage() {
         </div>
         <div className="relative flex min-h-[520px] flex-col justify-end px-6 pb-8 pt-28 md:min-h-[640px] md:px-10 md:pb-10 md:pt-36">
           <div className="mx-auto w-full max-w-4xl text-center">
-            <p className="text-[10px] uppercase tracking-[0.25em] text-[#6ec3d9]">Ajisai Empregos</p>
-            <h1 className={`${display.className} mt-4 text-[clamp(1.9rem,5vw,3.4rem)] font-medium leading-[1.1] text-white`}>
+            <h1 className={`${display.className} text-[clamp(1.9rem,5vw,3.4rem)] font-medium leading-[1.1] text-white`}>
               Emprego formal no Japão, do primeiro contato até a mudança
             </h1>
             <p className="mx-auto mt-5 max-w-2xl text-sm font-light leading-6 text-white/65 md:text-base">
@@ -1203,7 +1358,7 @@ export default function EmpregosPage() {
               return (
                 <div
                   key={vaga.id}
-                  className={`relative flex flex-col overflow-hidden rounded-2xl border p-5 transition ${
+                  className={`relative flex h-[430px] flex-col overflow-hidden rounded-2xl border p-5 transition ${
                     marcada ? "border-[#2f80c9] bg-[#2f80c9]/5" : "border-black/10 bg-white hover:border-black/25"
                   }`}
                 >
@@ -1212,7 +1367,11 @@ export default function EmpregosPage() {
                       segundo ajuste do mesmo dia) em vez de expandir dentro do
                       card. A seleção pra candidatura continua só no checkbox
                       (que interrompe a propagação do clique), pra não misturar
-                      as duas ações. */}
+                      as duas ações. Altura fixa (h-[430px]) — pedido do Wilson,
+                      19/set/2026, "todos os cards de vagas devem ter o mesmo
+                      tamanho": os campos que variam de tamanho (título,
+                      salário, turno, perfil) ficam com line-clamp e o texto
+                      completo continua disponível no pop-up de detalhes. */}
                   <div
                     role="button"
                     tabIndex={0}
@@ -1223,7 +1382,7 @@ export default function EmpregosPage() {
                         setVagaAbertaId(vaga.id);
                       }
                     }}
-                    className="flex cursor-pointer flex-col text-left"
+                    className="flex h-full cursor-pointer flex-col text-left"
                   >
                     <div className="flex items-start justify-between gap-3">
                       <div className="flex flex-wrap items-center gap-1.5">
@@ -1264,18 +1423,18 @@ export default function EmpregosPage() {
                     <p className="mt-3 text-[10px] font-semibold uppercase tracking-[0.12em] text-[#2f80c9]">
                       {vaga.empresa}
                     </p>
-                    <h3 className="mt-1 text-sm font-semibold text-black">{vaga.titulo}</h3>
+                    <h3 className="mt-1 line-clamp-2 text-sm font-semibold text-black">{vaga.titulo}</h3>
                     <p className="mt-1 text-xs text-black/50">
                       {vaga.cidade}, {vaga.regiao} — Japão
                     </p>
-                    <p className="mt-2 text-sm font-semibold text-black/80">{vaga.salario}</p>
-                    <div className="mt-2 space-y-1 text-[11px] leading-4 text-black/45">
-                      <p>{vaga.turno}</p>
-                      <p>{vaga.contrato}</p>
-                      {vaga.perfil && <p>Perfil: {vaga.perfil}</p>}
-                      {vaga.idioma && <p>Japonês: {vaga.idioma}</p>}
+                    <p className="mt-2 line-clamp-2 text-sm font-semibold text-black/80">{vaga.salario}</p>
+                    <div className="mt-2 flex-1 space-y-1 overflow-hidden text-[11px] leading-4 text-black/45">
+                      <p className="line-clamp-1">{vaga.turno}</p>
+                      <p className="line-clamp-1">{vaga.contrato}</p>
+                      {vaga.perfil && <p className="line-clamp-2">Perfil: {vaga.perfil}</p>}
+                      {vaga.idioma && <p className="line-clamp-1">Japonês: {vaga.idioma}</p>}
                     </div>
-                    <span className="mt-3 inline-flex w-fit items-center gap-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-[#2f80c9]">
+                    <span className="mt-3 inline-flex w-fit shrink-0 items-center gap-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-[#2f80c9]">
                       Ver mais detalhes
                       <svg
                         viewBox="0 0 24 24"
@@ -1293,9 +1452,11 @@ export default function EmpregosPage() {
 
                   {/* Ícone do setor no canto inferior direito do card —
                       pedido do Wilson, 19/set/2026. Decorativo (marca
-                      d'água), não intercepta clique. */}
-                  <span className="pointer-events-none absolute -bottom-2 -right-2 text-[#2f80c9]/10">
-                    <IconSetor setor={vaga.setor} className="h-16 w-16" />
+                      d'água), não intercepta clique. Reduzido e reposicionado
+                      no mesmo dia — tamanho maior cortava na borda direita
+                      do card. */}
+                  <span className="pointer-events-none absolute bottom-3 right-3 text-[#2f80c9]/10">
+                    <IconSetor setor={vaga.setor} className="h-11 w-11" />
                   </span>
                 </div>
               );
@@ -1360,6 +1521,14 @@ export default function EmpregosPage() {
               <p>{vagaAberta.contrato}</p>
               {vagaAberta.perfil && <p>Perfil: {vagaAberta.perfil}</p>}
               {vagaAberta.idioma && <p>Japonês: {vagaAberta.idioma}</p>}
+            </div>
+
+            {/* Análise da vaga — pedido do Wilson, 19/set/2026: comparar
+                salário e benefícios com o resto do catálogo. Some sozinha
+                quando a amostra é pequena demais ou a diferença é
+                irrelevante (ver AnaliseVaga). */}
+            <div className="mt-5">
+              <AnaliseVaga vaga={vagaAberta} />
             </div>
 
             <div className="mt-5 border-t border-black/10 pt-5">
@@ -1445,22 +1614,53 @@ export default function EmpregosPage() {
         </div>
       </section>
 
-      {/* ── CTA FINAL ── */}
+      {/* ── CTA FINAL — mailing de novas vagas ── */}
+      {/* Trocado de "Pronto para dar o próximo passo?" (CTA de WhatsApp)
+          pra um cadastro de e-mail — pedido do Wilson, 19/set/2026. O
+          WhatsApp continua disponível (header fixo + cada vaga no
+          catálogo já tem o próprio CTA), então aqui vira um link
+          secundário abaixo do formulário, sem duplicar o botão principal. */}
       <section className="bg-[#0A2540] px-6 py-16 text-center md:px-16 md:py-20">
         <h2 className={`${display.className} text-2xl font-medium text-white md:text-3xl`}>
-          Pronto para dar o próximo passo?
+          Deseja ser notificado quando abrir novas vagas?
         </h2>
         <p className="mx-auto mt-3 max-w-xl text-sm font-light leading-6 text-white/65">
-          Fale com o time da Ajisai pelo WhatsApp e comece agora sua candidatura.
+          Deixe seu e-mail e a Ajisai avisa você assim que novas vagas forem publicadas no catálogo.
         </p>
-        <a
-          href={linkWhatsapp("Olá! Vim pela página de Empregos da Ajisai e queria saber mais.")}
-          target="_blank"
-          rel="noreferrer"
-          className="mt-7 inline-block rounded-full bg-[#2f80c9] px-7 py-4 text-xs font-semibold uppercase tracking-[0.2em] text-white transition hover:bg-[#3b91dc]"
-        >
-          Falar com a Ajisai no WhatsApp
-        </a>
+        <form onSubmit={enviarEmailMailing} className="mx-auto mt-7 flex max-w-md flex-col gap-3 sm:flex-row">
+          <input
+            type="email"
+            required
+            value={emailMailing}
+            onChange={(e) => setEmailMailing(e.target.value)}
+            placeholder="seu@email.com"
+            className="w-full flex-1 rounded-full border border-white/15 bg-white/5 px-5 py-3.5 text-sm text-white placeholder:text-white/35 focus:border-[#6ec3d9] focus:outline-none"
+          />
+          <button
+            type="submit"
+            disabled={statusMailing === "enviando"}
+            className="shrink-0 rounded-full bg-[#2f80c9] px-6 py-3.5 text-xs font-semibold uppercase tracking-[0.18em] text-white transition hover:bg-[#3b91dc] disabled:cursor-not-allowed disabled:opacity-60"
+          >
+            {statusMailing === "enviando" ? "Enviando…" : "Quero ser avisado"}
+          </button>
+        </form>
+        {statusMailing === "sucesso" && (
+          <p className="mt-3 text-xs text-emerald-300">
+            Pronto! Você vai receber um aviso assim que novas vagas forem publicadas.
+          </p>
+        )}
+        {statusMailing === "erro" && <p className="mt-3 text-xs text-red-300">{erroMailing}</p>}
+        <p className="mt-6 text-xs text-white/40">
+          Prefere falar agora?{" "}
+          <a
+            href={linkWhatsapp("Olá! Vim pela página de Empregos da Ajisai e queria saber mais.")}
+            target="_blank"
+            rel="noreferrer"
+            className="text-[#6ec3d9] underline decoration-white/20 underline-offset-2 hover:text-white"
+          >
+            Fale com a Ajisai no WhatsApp
+          </a>
+        </p>
       </section>
 
       {/* ── FOOTER ── */}
