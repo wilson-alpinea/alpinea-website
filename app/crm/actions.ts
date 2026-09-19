@@ -4,7 +4,8 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { isEstagio, ESTAGIO_LABEL } from "@/lib/crm/estagios";
-import type { Estagio } from "@/lib/crm/types";
+import { isEstagioEntrega, ESTAGIO_ENTREGA_LABEL } from "@/lib/crm/estagiosEntrega";
+import type { Estagio, EstagioEntrega } from "@/lib/crm/types";
 import { isProdutoPrincipal, isProdutoSecundario } from "@/lib/crm/produtos";
 import { isTipoArquivo, TIPO_ARQUIVO_LABEL } from "@/lib/crm/arquivos";
 import { isCategoriaFornecedor } from "@/lib/crm/fornecedores";
@@ -40,13 +41,17 @@ function produtosSecundarios(formData: FormData) {
     .filter(isProdutoSecundario);
 }
 
-// Registra no histórico do cliente (interacoes) toda vez que o estágio
-// muda de fato — alimenta tanto o histórico quanto o funil visual.
+// Registra no histórico do cliente (interacoes) toda vez que o estágio de
+// VENDA muda de fato — alimenta tanto o histórico quanto o funil visual.
+// dataEvento é a data "oficial" informada pelo usuário (pedido do Wilson,
+// 19/set/2026: "falta deixar campo de data obrigatorio ao mudar cada
+// etapa") — distinta de created_at, que é só quando o registro foi salvo.
 async function registrarMudancaEstagio(
   supabase: Awaited<ReturnType<typeof createClient>>,
   clienteId: string,
   novoEstagio: Estagio,
   autorId: string | null,
+  dataEvento: string | null,
 ) {
   const { data: atual } = await supabase
     .from("clientes")
@@ -61,7 +66,36 @@ async function registrarMudancaEstagio(
     autor_id: autorId,
     tipo: "mudanca_estagio",
     estagio_destino: novoEstagio,
+    data_evento: dataEvento,
     conteudo: `Estágio alterado de "${ESTAGIO_LABEL[atual.estagio as Estagio]}" para "${ESTAGIO_LABEL[novoEstagio]}".`,
+  });
+}
+
+// Mesma ideia, mas para o fluxo paralelo de ENTREGA do serviço (pedido do
+// Wilson, 19/set/2026: "um novo fluxograma de entrega abaixo do de
+// vendas") — ver EstagioEntrega em lib/crm/types.ts.
+async function registrarMudancaEstagioEntrega(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  clienteId: string,
+  novoEstagio: EstagioEntrega,
+  autorId: string | null,
+  dataEvento: string | null,
+) {
+  const { data: atual } = await supabase
+    .from("clientes")
+    .select("estagio_entrega")
+    .eq("id", clienteId)
+    .maybeSingle();
+
+  if (!atual || atual.estagio_entrega === novoEstagio) return;
+
+  await supabase.from("interacoes").insert({
+    cliente_id: clienteId,
+    autor_id: autorId,
+    tipo: "mudanca_estagio_entrega",
+    estagio_entrega_destino: novoEstagio,
+    data_evento: dataEvento,
+    conteudo: `Etapa de entrega alterada de "${ESTAGIO_ENTREGA_LABEL[atual.estagio_entrega as EstagioEntrega]}" para "${ESTAGIO_ENTREGA_LABEL[novoEstagio]}".`,
   });
 }
 
@@ -106,17 +140,13 @@ export async function createCliente(formData: FormData) {
 
 export async function updateCliente(clienteId: string, formData: FormData) {
   const nome = String(formData.get("nome") || "").trim();
-  const estagioBruto = String(formData.get("estagio") || "");
-  const novoEstagio = isEstagio(estagioBruto) ? estagioBruto : undefined;
 
+  // O estágio (venda) e a etapa de entrega NÃO são mais alterados por este
+  // formulário — pedido do Wilson, 19/set/2026 ("falta deixar campo de data
+  // obrigatorio ao mudar cada etapa"): mudar de etapa sempre passa pelo
+  // EstagioSelect (que exige uma data), nunca pelo "Salvar alterações"
+  // genérico, senão a exigência de data seria facilmente contornada.
   const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (novoEstagio) {
-    await registrarMudancaEstagio(supabase, clienteId, novoEstagio, user?.id ?? null);
-  }
 
   const { error } = await supabase
     .from("clientes")
@@ -129,7 +159,6 @@ export async function updateCliente(clienteId: string, formData: FormData) {
       produto_principal: produtoPrincipalOuNull(formData.get("produto_principal")),
       produto_secundario: produtosSecundarios(formData),
       data_viagem: textoOuNull(formData.get("data_viagem")),
-      estagio: novoEstagio,
       observacoes: textoOuNull(formData.get("observacoes")),
     })
     .eq("id", clienteId);
@@ -148,14 +177,18 @@ export async function updateCliente(clienteId: string, formData: FormData) {
 
 export async function moveEstagio(clienteId: string, formData: FormData) {
   const novoEstagio = String(formData.get("estagio") || "");
-  if (!isEstagio(novoEstagio)) return;
+  // Data obrigatória — pedido do Wilson, 19/set/2026. O <input required>
+  // no EstagioSelect já bloqueia o envio sem data pelo HTML5, mas a action
+  // também recusa por segurança (ex.: JS desabilitado, form manipulado).
+  const dataEvento = textoOuNull(formData.get("data"));
+  if (!isEstagio(novoEstagio) || !dataEvento) return;
 
   const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
-  await registrarMudancaEstagio(supabase, clienteId, novoEstagio, user?.id ?? null);
+  await registrarMudancaEstagio(supabase, clienteId, novoEstagio, user?.id ?? null, dataEvento);
 
   const { error } = await supabase
     .from("clientes")
@@ -164,6 +197,36 @@ export async function moveEstagio(clienteId: string, formData: FormData) {
 
   if (error) {
     console.error("Erro ao mover estágio:", error);
+  }
+
+  revalidatePath("/crm/pipeline");
+  revalidatePath(`/crm/clientes/${clienteId}`);
+  revalidatePath("/crm/clientes");
+  revalidatePath("/crm");
+}
+
+// Análogo a moveEstagio, mas para o fluxograma de ENTREGA (pedido do
+// Wilson, 19/set/2026: "um novo fluxograma de entrega abaixo do de
+// vendas") — mesma exigência de data obrigatória.
+export async function moveEstagioEntrega(clienteId: string, formData: FormData) {
+  const novoEstagio = String(formData.get("estagio") || "");
+  const dataEvento = textoOuNull(formData.get("data"));
+  if (!isEstagioEntrega(novoEstagio) || !dataEvento) return;
+
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  await registrarMudancaEstagioEntrega(supabase, clienteId, novoEstagio, user?.id ?? null, dataEvento);
+
+  const { error } = await supabase
+    .from("clientes")
+    .update({ estagio_entrega: novoEstagio })
+    .eq("id", clienteId);
+
+  if (error) {
+    console.error("Erro ao mover etapa de entrega:", error);
   }
 
   revalidatePath("/crm/pipeline");

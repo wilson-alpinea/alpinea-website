@@ -5,11 +5,13 @@ import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
 import { TIPOS_INTERACAO, TIPO_INTERACAO_LABEL, TIPO_INTERACAO_COR } from "@/lib/crm/interacoes";
 import { TIPOS_ARQUIVO, TIPO_ARQUIVO_LABEL, type TipoArquivo } from "@/lib/crm/arquivos";
-import type { Estagio } from "@/lib/crm/types";
+import type { Estagio, EstagioEntrega } from "@/lib/crm/types";
+import { ESTAGIOS } from "@/lib/crm/estagios";
 import {
   updateCliente,
   addInteracao,
   moveEstagio,
+  moveEstagioEntrega,
   deleteInteracao,
   addArquivo,
   deleteArquivo,
@@ -19,6 +21,7 @@ import { EstagioSelect } from "../../pipeline/EstagioSelect";
 import { ARQUIVO_ICONS } from "../ArquivoIcons";
 import { INTERACAO_ICONS } from "../InteracaoIcons";
 import { FunnelStepper } from "../FunnelStepper";
+import { EntregaStepper } from "../EntregaStepper";
 import { FinanceiroSection } from "./FinanceiroSection";
 import { addPagamento, deletePagamento } from "../../../actions";
 import type { Pagamento } from "@/lib/crm/types";
@@ -58,19 +61,32 @@ export default async function ClienteDetalhePage({
 
   const { data: interacoes } = await supabase
     .from("interacoes")
-    .select("id, tipo, conteudo, created_at, autor_id, estagio_destino, perfis(nome, email)")
+    .select(
+      "id, tipo, conteudo, created_at, data_evento, autor_id, estagio_destino, estagio_entrega_destino, perfis(nome, email)",
+    )
     .eq("cliente_id", id)
     .order("created_at", { ascending: false });
 
   // Data em que o cliente entrou em cada estágio — construída a partir do
   // histórico de "mudanca_estagio" (mais recente primeiro, então o primeiro
-  // valor encontrado por estágio já é o mais atual).
+  // valor encontrado por estágio já é o mais atual). Prefere data_evento
+  // (a data "oficial" informada pelo usuário, pedido do Wilson,
+  // 19/set/2026) e cai para created_at em registros antigos, sem essa
+  // informação.
   const datasPorEstagio: Partial<Record<Estagio, string>> = {};
+  const datasPorEstagioEntrega: Partial<Record<EstagioEntrega, string>> = {};
   for (const i of interacoes ?? []) {
+    const data = i.data_evento ?? i.created_at;
     if (i.tipo === "mudanca_estagio" && i.estagio_destino) {
       const estagioDestino = i.estagio_destino as Estagio;
       if (!datasPorEstagio[estagioDestino]) {
-        datasPorEstagio[estagioDestino] = i.created_at;
+        datasPorEstagio[estagioDestino] = data;
+      }
+    }
+    if (i.tipo === "mudanca_estagio_entrega" && i.estagio_entrega_destino) {
+      const estagioEntregaDestino = i.estagio_entrega_destino as EstagioEntrega;
+      if (!datasPorEstagioEntrega[estagioEntregaDestino]) {
+        datasPorEstagioEntrega[estagioEntregaDestino] = data;
       }
     }
   }
@@ -90,6 +106,7 @@ export default async function ClienteDetalhePage({
   const updateClienteComId = updateCliente.bind(null, id);
   const addInteracaoComId = addInteracao.bind(null, id);
   const moveEstagioComId = moveEstagio.bind(null, id);
+  const moveEstagioEntregaComId = moveEstagioEntrega.bind(null, id);
   const addArquivoComId = addArquivo.bind(null, id);
   const addPagamentoComId = addPagamento.bind(null, id);
   const deletePagamentoComId = deletePagamento.bind(null, id);
@@ -104,6 +121,17 @@ export default async function ClienteDetalhePage({
         <FunnelStepper cliente={cliente} datasPorEstagio={datasPorEstagio} />
       </div>
 
+      {/* Fluxograma de ENTREGA do serviço — pedido do Wilson, 19/set/2026
+          ("um novo fluxograma de entrega abaixo do de vendas"): processo
+          paralelo ao funil de vendas acima, sem bifurcação ganho/perdido. */}
+      <div className="mt-4">
+        <EntregaStepper
+          cliente={cliente}
+          datasPorEstagioEntrega={datasPorEstagioEntrega}
+          action={moveEstagioEntregaComId}
+        />
+      </div>
+
       <div className="mt-6 flex flex-wrap items-center justify-between gap-4">
         <div>
           <p className="mb-1 text-[10px] uppercase tracking-[0.25em] text-[#1C3A5E]/70">Cliente</p>
@@ -114,6 +142,7 @@ export default async function ClienteDetalhePage({
         <div className="w-48">
           <EstagioSelect
             action={moveEstagioComId}
+            estagios={ESTAGIOS}
             estagioAtual={cliente.estagio}
             className="w-full cursor-pointer rounded-full border border-black/10 bg-white px-4 py-1.5 text-xs uppercase tracking-[0.15em] text-black/70 outline-none transition focus:border-[#1C3A5E] focus:ring-2 focus:ring-[#1C3A5E]/10"
           />
@@ -142,7 +171,6 @@ export default async function ClienteDetalhePage({
             action={updateClienteComId}
             cliente={cliente}
             submitLabel="Salvar alterações"
-            showEstagio
           />
         </div>
 

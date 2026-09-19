@@ -84,6 +84,7 @@ export default async function PipelinePage() {
                       </Link>
                       <EstagioSelect
                         action={moveEstagio.bind(null, c.id)}
+                        estagios={ESTAGIOS}
                         estagioAtual={c.estagio}
                       />
                     </div>

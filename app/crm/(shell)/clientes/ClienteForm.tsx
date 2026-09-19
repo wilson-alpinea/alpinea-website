@@ -1,4 +1,3 @@
-import { ESTAGIOS } from "@/lib/crm/estagios";
 import { PRODUTOS_PRINCIPAIS, PRODUTOS_SECUNDARIOS } from "@/lib/crm/produtos";
 import type { Cliente } from "@/lib/crm/types";
 import { PRODUTO_ICONS, PRODUTO_ICON_VARIANTE } from "./ProdutoIcons";
@@ -74,12 +73,10 @@ export function ClienteForm({
   action,
   cliente,
   submitLabel,
-  showEstagio = false,
 }: {
   action: (formData: FormData) => void;
   cliente?: Cliente;
   submitLabel: string;
-  showEstagio?: boolean;
 }) {
   const secundariosAtuais = new Set(cliente?.produto_secundario ?? []);
 
@@ -158,22 +155,11 @@ export function ClienteForm({
           />
         </div>
 
-        {showEstagio && (
-          <div>
-            <label className={labelClass}>Estágio</label>
-            <select
-              name="estagio"
-              defaultValue={cliente?.estagio ?? "novo_lead"}
-              className={inputClass}
-            >
-              {ESTAGIOS.map((e) => (
-                <option key={e.valor} value={e.valor}>
-                  {e.label}
-                </option>
-              ))}
-            </select>
-          </div>
-        )}
+        {/* O estágio (venda) e a etapa de entrega saíram deste formulário —
+            pedido do Wilson, 19/set/2026: mudar de etapa agora sempre exige
+            uma data e passa pelo EstagioSelect (funil de vendas e
+            fluxograma de entrega, na ficha do cliente), nunca pelo "Salvar
+            alterações" genérico. */}
 
         <div className="sm:col-span-2">
           <label className={labelClass}>Produto principal</label>
