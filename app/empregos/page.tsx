@@ -18,6 +18,64 @@ const display = Bodoni_Moda({
 // bot de WhatsApp e os testes (visão, foto) ficam para uma fase seguinte,
 // são sistemas à parte. Logos das empresas em texto por enquanto (Wilson
 // ainda não tem os arquivos PNG/SVG à mão).
+//
+// 19/set/2026: Wilson passou os primeiros lotes de vagas reais — duas
+// fontes diferentes:
+// (a) Avance RH/Corporation: um comunicado com a lista de empresas
+//     parceiras com vaga (com status "disponibilidade"/"sob consulta") +
+//     fichas "PROPOSTA DE TRABALHO" individuais por empresa. O comunicado
+//     foi atualizado por ele no mesmo dia (Daikin passou de disponível
+//     para "sob consulta"; Fuji Seat passou de "sob consulta" para
+//     disponível, mas só a unidade Higashiomi) — o código abaixo já
+//     reflete a versão mais recente.
+// (b) UT Suri-emu: fichas de contrato ("Sobre o Serviço/Salário/Turno…")
+//     de empresas grandes já conhecidas do carrossel de clientes
+//     corporativos mais abaixo (Subaru, Mitsubishi Fuso, Fuji Film, Sony,
+//     Yokohama Gomu/Tyres) — sem indicação de status "sob consulta", então
+//     tratadas como disponíveis. Essas fichas não trazem idioma exigido
+//     nem perfil de idade/sexo, então esses dois campos ficaram opcionais
+//     no tipo Vaga — o card só mostra a linha quando o dado existe.
+//
+// As vagas genéricas de placeholder foram substituídas pelas reais — ver
+// VAGAS logo abaixo. Decisões confirmadas com o Wilson via AskUserQuestion:
+// (1) mostrar o nome real da empresa no card (não só o tipo de fábrica);
+// (2) trazer tanto vagas com "disponibilidade" (embarque imediato/futuro)
+// quanto as "sob consulta" (processo de visto), cada uma com um selo de
+// status — vagas "suspensas" (Sankyu, Akebono Brake, no comunicado antigo,
+// nem citadas mais no atualizado) ficam de fora; (3) adicionar salário
+// (¥/h) e perfil aceito (idade/sexo, quando disponível) no card, além do
+// que já existia (setor, região, turno, contrato, idioma).
+//
+// Duas vagas do comunicado da Avance (Kousei Aluminum/Fukui e Shigeru
+// Kougyo/Gunma) ficaram de fora deste lote por não termos a ficha
+// detalhada (salário, horário) delas ainda — só o texto resumido do
+// comunicado. A vaga da Fuji Seat em Omihachiman também ficou de fora
+// porque o comunicado atualizado só lista a unidade Higashiomi como
+// disponível — perguntar ao Wilson se Omihachiman deve voltar ao
+// catálogo.
+//
+// 19/set/2026 (terceiro lote, mesmo dia): mais fichas UT Suri-emu
+// (Mitsubishi Denki, Daihatsu, Fruehauf, GS Yuasa) + o primeiro lote da
+// Fujiarte Co. Ltd. ("Condições de Contrato" — Inoac e Futaba Sangyou,
+// duas unidades cada). Duas fichas eram vagas já cadastradas (Daikin
+// Kusatsu e Yokohama Gomu Shinshiro, mesmos dados) — não duplicadas.
+// Daihatsu tem critério médico/físico detalhado na ficha (altura, IMC,
+// visão, uma lista de condições de saúde); no card ficou só "avaliação
+// médica e física admissional", sem listar as condições — não é
+// informação que deveria ir num card público. Inoac e Futaba: o
+// comunicado do Wilson (1/abr/2026) diz que, pra casal com filho menor de
+// idade, a vaga só é garantida para o marido e não há suporte (passagem)
+// para a família — isso é informação real de elegibilidade, então entrou
+// no campo perfil, mas de forma direta e sem valor de julgamento.
+//
+// 19/set/2026 (quarto lote, mesmo dia): mais fichas UT Suri-emu (Fuji Film
+// Kanagawa/Ashigara — unidade diferente da de Miyagi já cadastrada, Hino
+// Jidosha em Gunma e em Tokyo, Kitz, Panasonic). Cinco fichas eram vagas já
+// cadastradas com os mesmos dados (Mitsubishi Fuso Toyama, Yokohama Gomu
+// Shinshiro, Subaru Oizumi, Subaru Ota, Fruehauf Kanagawa) — não
+// duplicadas. A ficha da Kitz traz salário-base diferente por gênero
+// (mulher/homem) — mantive os dois valores no card tal como consta no
+// contrato, é informação real de remuneração, não uma escolha editorial.
 const WHATSAPP_NUMBER = "5511930300101";
 
 function linkWhatsapp(mensagem: string) {
@@ -43,8 +101,10 @@ const PUBLICOS: { key: PublicoKey; nome: string; descricao: string; cta: string 
   },
 ];
 
-// ── Setores ──
-type SetorKey = "automotivo" | "eletronicos" | "alimenticio";
+// ── Setores. "materiais" adicionado em 19/set/2026 junto com o primeiro
+// lote de vagas reais — cobre fábricas de vidro, borracha e afins que não
+// se encaixam nos outros 3 setores (ex.: Nitto Boseki, fibra de vidro). ──
+type SetorKey = "automotivo" | "eletronicos" | "alimenticio" | "materiais";
 const SETORES: { key: SetorKey; nome: string; descricao: string }[] = [
   {
     key: "automotivo",
@@ -60,6 +120,11 @@ const SETORES: { key: SetorKey; nome: string; descricao: string }[] = [
     key: "alimenticio",
     nome: "Alimentício",
     descricao: "Produção, embalagem e logística em fábricas de alimentos e bebidas.",
+  },
+  {
+    key: "materiais",
+    nome: "Materiais Industriais",
+    descricao: "Produção de peças e materiais industriais — vidro, borracha, plástico e afins.",
   },
 ];
 
@@ -83,6 +148,15 @@ function IconSetor({ setor, className }: { setor: SetorKey; className?: string }
       </svg>
     );
   }
+  if (setor === "materiais") {
+    return (
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" className={className}>
+        <path d="M12 2.5 20.5 8 12 13.5 3.5 8 12 2.5Z" />
+        <path d="M3.5 8v8L12 21.5 20.5 16V8" />
+        <path d="M12 13.5v8" />
+      </svg>
+    );
+  }
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" className={className}>
       <path d="M6 3v6a3 3 0 0 0 3 3v9" />
@@ -93,58 +167,455 @@ function IconSetor({ setor, className }: { setor: SetorKey; className?: string }
   );
 }
 
-// ── Regiões — polos industriais reais do Japão (não as cidades turísticas
-// usadas no resto do site) ──
-const REGIOES = [
-  "Aichi",
-  "Shizuoka",
-  "Gunma",
-  "Mie",
-  "Gifu",
-  "Kanagawa",
-  "Saitama",
-  "Ibaraki",
-  "Nagano",
-] as const;
-type RegiaoKey = (typeof REGIOES)[number];
+// ── Vagas reais — primeiro lote, 19/set/2026 (ver comentário no topo do
+// arquivo). status "consulta" = "embarque sob consulta" (processo de
+// visto, ainda não é vaga com data de embarque confirmada); "aberta" =
+// vaga com disponibilidade — embarque imediato ou futuro já confirmado.
+// idioma e perfil ficam de fora do objeto quando a fonte não trouxe esse
+// dado (fichas UT Suri-emu não têm essas duas informações). ──
+type StatusVaga = "aberta" | "consulta";
 
-// ── Vagas — dados GENÉRICOS de placeholder, pedido explícito do Wilson,
-// 16/set/2026 ("coloque vagas genericas só como placeholder por hora") —
-// o catálogo real (com integração ao vivo) chega numa fase seguinte, com
-// os arquivos que ele ainda vai enviar. Nomes de empresa aqui são
-// fictícios/genéricos de propósito — não usar nomes reais de clientes
-// corporativos nas vagas (ver carrossel de logos mais abaixo, esse sim
-// com os nomes reais que o Wilson passou).
 type Vaga = {
   id: string;
+  empresa: string;
   titulo: string;
   setor: SetorKey;
-  regiao: RegiaoKey;
+  regiao: string;
+  cidade: string;
   publico: PublicoKey[];
   turno: string;
   contrato: string;
-  idioma: string;
+  salario: string;
+  status: StatusVaga;
+  idioma?: string;
+  perfil?: string;
 };
 
-const VAGAS_PLACEHOLDER: Vaga[] = [
-  { id: "v1", titulo: "Operador de linha de montagem", setor: "automotivo", regiao: "Aichi", publico: ["brasil", "japao"], turno: "Diurno, escala 5x2", contrato: "CLT japonesa (seishain)", idioma: "N4 ou básico com intérprete" },
-  { id: "v2", titulo: "Auxiliar de produção automotiva", setor: "automotivo", regiao: "Shizuoka", publico: ["brasil"], turno: "Turno noturno", contrato: "Contrato temporário (haken)", idioma: "N5 ou nenhum" },
-  { id: "v3", titulo: "Inspetor de qualidade — autopeças", setor: "automotivo", regiao: "Gunma", publico: ["japao"], turno: "Diurno", contrato: "CLT japonesa (seishain)", idioma: "N3" },
-  { id: "v4", titulo: "Operador de solda robotizada", setor: "automotivo", regiao: "Mie", publico: ["brasil", "japao"], turno: "Turno rotativo", contrato: "Contrato temporário (haken)", idioma: "N4" },
-  { id: "v5", titulo: "Montador de placas eletrônicas", setor: "eletronicos", regiao: "Kanagawa", publico: ["brasil", "japao"], turno: "Diurno, escala 5x2", contrato: "Contrato temporário (haken)", idioma: "N5 ou nenhum" },
-  { id: "v6", titulo: "Técnico de controle de qualidade — componentes", setor: "eletronicos", regiao: "Nagano", publico: ["japao"], turno: "Diurno", contrato: "CLT japonesa (seishain)", idioma: "N3" },
-  { id: "v7", titulo: "Operador de sala limpa (semicondutores)", setor: "eletronicos", regiao: "Mie", publico: ["brasil"], turno: "Turno rotativo", contrato: "Contrato temporário (haken)", idioma: "N4" },
-  { id: "v8", titulo: "Auxiliar de montagem eletrônica", setor: "eletronicos", regiao: "Saitama", publico: ["brasil", "japao"], turno: "Turno noturno", contrato: "Contrato temporário (haken)", idioma: "N5 ou nenhum" },
-  { id: "v9", titulo: "Operador de produção alimentícia", setor: "alimenticio", regiao: "Ibaraki", publico: ["brasil", "japao"], turno: "Diurno, escala 5x2", contrato: "Contrato temporário (haken)", idioma: "N5 ou nenhum" },
-  { id: "v10", titulo: "Auxiliar de embalagem e logística", setor: "alimenticio", regiao: "Gifu", publico: ["brasil"], turno: "Turno noturno", contrato: "Contrato temporário (haken)", idioma: "N5 ou nenhum" },
-  { id: "v11", titulo: "Líder de linha — alimentos", setor: "alimenticio", regiao: "Aichi", publico: ["japao"], turno: "Diurno", contrato: "CLT japonesa (seishain)", idioma: "N3" },
-  { id: "v12", titulo: "Operador de forno industrial", setor: "alimenticio", regiao: "Shizuoka", publico: ["brasil", "japao"], turno: "Turno rotativo", contrato: "Contrato temporário (haken)", idioma: "N4" },
+const VAGAS: Vaga[] = [
+  // ── Avance RH/Corporation — comunicado + fichas individuais ──
+  {
+    id: "fuji-seat-higashiomi",
+    empresa: "Fuji Seat",
+    titulo: "Montagem e inspeção de bancos de carro",
+    setor: "automotivo",
+    regiao: "Shiga",
+    cidade: "Higashiomi",
+    publico: ["brasil"],
+    turno: "Turno alternado semanalmente (diurno/noturno), 5x2",
+    contrato: "Contrato temporário (haken)",
+    salario: "¥1.400/hora",
+    status: "aberta",
+    idioma: "Não mandatório",
+    perfil: "Homens até 45 anos",
+  },
+  {
+    id: "aisin-shinwa-toyama",
+    empresa: "Aisin Shinwa",
+    titulo: "Processamento e inspeção de autopeças",
+    setor: "automotivo",
+    regiao: "Toyama",
+    cidade: "Shimoniikawa Gun",
+    publico: ["brasil"],
+    turno: "Turno alternado semanalmente, 5x2",
+    contrato: "Contrato temporário (haken)",
+    salario: "¥1.600/hora",
+    status: "aberta",
+    idioma: "Básico (N4), preferência razoável (N3)",
+    perfil: "Homens até 45 anos — precisa ter carro próprio e experiência em fábrica no Brasil ou no Japão",
+  },
+  {
+    id: "marugo-gomu-okayama",
+    empresa: "Marugo Gomu",
+    titulo: "Vulcanização, acabamento e inspeção de mangueiras automotivas",
+    setor: "automotivo",
+    regiao: "Okayama",
+    cidade: "Oda Yakage-cho",
+    publico: ["brasil"],
+    turno: "Turno alternado semanalmente, 5x2",
+    contrato: "Contrato temporário (haken)",
+    salario: "¥1.250–1.530/hora, conforme a função",
+    status: "aberta",
+    idioma: "Não mandatório",
+    perfil: "Homens e mulheres até 50 anos",
+  },
+  {
+    id: "murata-izumo",
+    empresa: "Murata",
+    titulo: "Produção de componentes eletrônicos (condensador cerâmico)",
+    setor: "eletronicos",
+    regiao: "Shimane",
+    cidade: "Izumo",
+    publico: ["brasil"],
+    turno: "Turno fixo, diurno ou noturno, 4x2",
+    contrato: "Contrato temporário (haken)",
+    salario: "¥1.340–1.390/hora (até ¥1.560/hora conforme desempenho)",
+    status: "aberta",
+    idioma: "Não mandatório",
+    perfil: "Homem, mulher ou casal até 50 anos",
+  },
+  {
+    id: "murata-oda",
+    empresa: "Murata",
+    titulo: "Produção de componentes eletrônicos (condensador cerâmico)",
+    setor: "eletronicos",
+    regiao: "Shimane",
+    cidade: "Oda",
+    publico: ["brasil"],
+    turno: "Turno fixo, diurno ou noturno, 4x2",
+    contrato: "Contrato temporário (haken)",
+    salario: "¥1.340/hora (até ¥1.560/hora conforme desempenho)",
+    status: "aberta",
+    idioma: "Não mandatório",
+    perfil: "Homem, mulher ou casal até 50 anos",
+  },
+  {
+    id: "daikin-kusatsu",
+    empresa: "Daikin",
+    titulo: "Produção, montagem e inspeção de ar-condicionado",
+    setor: "eletronicos",
+    regiao: "Shiga",
+    cidade: "Kusatsu",
+    publico: ["brasil"],
+    turno: "Turno alternado semanalmente (diurno/noturno), 5x2 ou 4x2",
+    contrato: "Contrato temporário (haken)",
+    salario: "¥1.400/hora (até ¥1.650/hora conforme desempenho)",
+    status: "consulta",
+    idioma: "Básico (N4)",
+    perfil: "Homens e mulheres até 45 anos — previsão de vagas a partir de outubro/novembro",
+  },
+  {
+    id: "cs-nakatsugawa-gifu",
+    empresa: "CS Nakatsugawa",
+    titulo: "Produção e inspeção de sensores automotivos",
+    setor: "automotivo",
+    regiao: "Gifu",
+    cidade: "Nakatsugawa",
+    publico: ["brasil"],
+    turno: "Turno fixo ou alternado, 5x2 ou 6x1",
+    contrato: "Haken ou ukeoi, conforme a vaga",
+    salario: "¥1.400/hora",
+    status: "consulta",
+    idioma: "Preferencialmente com conhecimento de japonês",
+    perfil: "Homens até 55 anos, não fumante",
+  },
+  {
+    id: "ntk-kani-gifu",
+    empresa: "NTK Kani",
+    titulo: "Operação de máquina e inspeção de velas automotivas",
+    setor: "automotivo",
+    regiao: "Gifu",
+    cidade: "Kani",
+    publico: ["brasil"],
+    turno: "Turno alternado mensalmente, 5x2 ou 4x2",
+    contrato: "Contrato temporário (haken)",
+    salario: "¥1.300–1.400/hora, conforme o setor",
+    status: "consulta",
+    idioma: "Zero ou razoável (N3), a depender do setor",
+    perfil: "Homem, mulher ou casal até 45 anos",
+  },
+  {
+    id: "nitto-boseki-fukushima",
+    empresa: "Nitto Boseki",
+    titulo: "Produção de peças de fibra de vidro",
+    setor: "materiais",
+    regiao: "Fukushima",
+    cidade: "Fukushima",
+    publico: ["brasil"],
+    turno: "3 turnos (05:55–14:15 / 13:55–22:15 / 21:55–06:15)",
+    contrato: "Terceirizado (Out-Sourcing)",
+    salario: "¥1.300/hora",
+    status: "consulta",
+    idioma: "Básico (N4)",
+    perfil: "Homens até 50 anos — previsão de vagas a partir de setembro",
+  },
+  // ── UT Suri-emu — fichas de contrato por empresa ──
+  {
+    id: "subaru-oizumi",
+    empresa: "Subaru",
+    titulo: "Montagem, abastecimento e inspeção de veículos",
+    setor: "automotivo",
+    regiao: "Gunma",
+    cidade: "Oizumi",
+    publico: ["brasil"],
+    turno: "Turno alternado (diurno/noturno/sankoutai, conforme escala)",
+    contrato: "Contrato temporário (haken)",
+    salario: "¥1.800–1.900/hora",
+    status: "aberta",
+  },
+  {
+    id: "subaru-ota",
+    empresa: "Subaru",
+    titulo: "Montagem, abastecimento e inspeção de veículos",
+    setor: "automotivo",
+    regiao: "Gunma",
+    cidade: "Ota",
+    publico: ["brasil"],
+    turno: "Turno alternado (diurno/noturno), 5x2",
+    contrato: "Contrato temporário (haken)",
+    salario: "¥1.800–1.900/hora",
+    status: "aberta",
+  },
+  {
+    id: "mitsubishi-fuso-toyama",
+    empresa: "Mitsubishi Fuso",
+    titulo: "Produção de ônibus — inspeção, soldagem, pintura e montagem",
+    setor: "automotivo",
+    regiao: "Toyama",
+    cidade: "Toyama",
+    publico: ["brasil"],
+    turno: "Turno fixo ou alternado (diurno/noturno), 5x2",
+    contrato: "Contrato temporário (haken)",
+    salario: "¥1.700/hora",
+    status: "aberta",
+  },
+  {
+    id: "yamase-miyagi",
+    empresa: "Yamase Electronics",
+    titulo: "Montagem e inspeção de peças eletrônicas automotivas",
+    setor: "automotivo",
+    regiao: "Miyagi",
+    cidade: "Osaki",
+    publico: ["brasil"],
+    turno: "Turno fixo, diurno ou noturno, 5x2",
+    contrato: "Contrato temporário (haken)",
+    salario: "¥1.200/hora (até ¥1.250/hora após o 3º mês)",
+    status: "aberta",
+  },
+  {
+    id: "fujifilm-miyagi",
+    empresa: "Fuji Film",
+    titulo: "Montagem e inspeção de lentes de câmeras digitais",
+    setor: "eletronicos",
+    regiao: "Miyagi",
+    cidade: "Taiwa",
+    publico: ["brasil"],
+    turno: "Diurno fixo, 5x2",
+    contrato: "Contrato temporário (haken)",
+    salario: "¥1.200–1.250/hora",
+    status: "aberta",
+  },
+  {
+    id: "yokohama-gomu-aichi",
+    empresa: "Yokohama Gomu",
+    titulo: "Montagem de borracha e inspeção de pneus",
+    setor: "automotivo",
+    regiao: "Aichi",
+    cidade: "Shinshiro",
+    publico: ["brasil"],
+    turno: "Turno alternado (diurno/noturno), 4x2",
+    contrato: "Contrato temporário (haken)",
+    salario: "¥1.430/hora",
+    status: "aberta",
+  },
+  {
+    id: "sony-aichi",
+    empresa: "Sony",
+    titulo: "Montagem e inspeção de filmadoras e lentes digitais",
+    setor: "eletronicos",
+    regiao: "Aichi",
+    cidade: "Kohda",
+    publico: ["brasil"],
+    turno: "Diurno ou noturno fixo, 5x2",
+    contrato: "Contrato temporário (haken)",
+    salario: "¥1.100/hora",
+    status: "aberta",
+  },
+  {
+    id: "mitsubishi-denki-himeji",
+    empresa: "Mitsubishi Denki",
+    titulo: "Produção de alternadores automotivos",
+    setor: "automotivo",
+    regiao: "Hyogo",
+    cidade: "Himeji",
+    publico: ["brasil"],
+    turno: "Diurno fixo (8:30–17:00), noturno fixo (20:45–5:30) ou alternado, 5x2",
+    contrato: "Contrato temporário (haken)",
+    salario: "¥1.300/hora (extra ¥1.625/hora; noturno +¥325/hora)",
+    status: "aberta",
+  },
+  {
+    id: "daihatsu-nakatsu",
+    empresa: "Daihatsu",
+    titulo: "Montagem e inspeção de automóveis",
+    setor: "automotivo",
+    regiao: "Oita",
+    cidade: "Nakatsu",
+    publico: ["brasil"],
+    turno: "Turno alternado (diurno 6:30–15:10 / vespertino 18:30–2:40), 5x2",
+    contrato: "Contrato temporário (haken)",
+    salario: "¥1.800/hora (extra ¥2.250/hora; noturno +¥450/hora) + bônus de permanência de até ¥500.000 no primeiro ano e meio",
+    status: "aberta",
+    idioma: "Básico",
+    perfil: "18 a 39 anos (até 45 com experiência) — avaliação médica e física admissional",
+  },
+  {
+    id: "fruehauf-atsugi",
+    empresa: "Fruehauf",
+    titulo: "Montagem e pintura de carrocerias de caminhão",
+    setor: "automotivo",
+    regiao: "Kanagawa",
+    cidade: "Atsugi",
+    publico: ["brasil"],
+    turno: "Diurno fixo (8:05–17:00), 5x2 — sem turno noturno",
+    contrato: "Contrato temporário (haken)",
+    salario: "¥1.600/hora (extra ¥2.000/hora; noturno +¥400/hora)",
+    status: "aberta",
+    idioma: "Básico (identificar avisos e placas de segurança)",
+    perfil: "Homens até 50 anos (acima de 45 com experiência) — vagas femininas em negociação; requer visita à fábrica antes da alocação",
+  },
+  {
+    id: "gs-yuasa-ritto",
+    empresa: "GS Yuasa",
+    titulo: "Produção de baterias para veículos elétricos e híbridos",
+    setor: "automotivo",
+    regiao: "Shiga",
+    cidade: "Ritto",
+    publico: ["brasil"],
+    turno: "Turno alternado (diurno 9:00–21:00 / noturno 21:00–9:00), 4x2",
+    contrato: "Contrato temporário (haken)",
+    salario: "¥1.400/hora, com reajuste semestral por assiduidade até ¥1.500/hora",
+    status: "aberta",
+  },
+  // ── Fujiarte Co. Ltd. — fichas "Condições de Contrato" (Inoac e Futaba
+  // Sangyou, propostas atualizadas de 1/abr/2026) ──
+  {
+    id: "inoac-sakurai",
+    empresa: "Inoac Corporation",
+    titulo: "Produção de peças de aerofólio automotivo",
+    setor: "automotivo",
+    regiao: "Aichi",
+    cidade: "Anjo",
+    publico: ["brasil"],
+    turno: "Turno alternado (7:00–16:00 / 19:00–4:00), 5x2",
+    contrato: "Contrato temporário (haken)",
+    salario: "¥1.300/hora (após 3 meses, ¥1.400/hora) + moradia ¥55.000–60.000",
+    status: "aberta",
+    perfil: "Homens solteiros ou casais — para casal com filho menor de idade, a vaga é garantida só para o marido, sem suporte de passagem para a família",
+  },
+  {
+    id: "inoac-kira",
+    empresa: "Inoac Corporation",
+    titulo: "Fabricação de encosto de cabeça e apoio de copos automotivo",
+    setor: "automotivo",
+    regiao: "Aichi",
+    cidade: "Kira",
+    publico: ["brasil"],
+    turno: "Turno alternado (7:00–16:00 / 18:00–3:00), 5x2",
+    contrato: "Contrato temporário (haken)",
+    salario: "¥1.300/hora (após 3 meses, ¥1.400/hora) + moradia ¥45.000–65.000",
+    status: "aberta",
+    perfil: "Homens solteiros ou casais — para casal com filho menor de idade, a vaga é garantida só para o marido, sem suporte de passagem para a família",
+  },
+  {
+    id: "futaba-mutsumi",
+    empresa: "Futaba Sangyou",
+    titulo: "Fabricação de peças de chassi automotivo",
+    setor: "automotivo",
+    regiao: "Aichi",
+    cidade: "Okazaki",
+    publico: ["brasil"],
+    turno: "Turno alternado (8:00–16:45 / 20:00–4:45), 5x2",
+    contrato: "Contrato temporário (haken)",
+    salario: "¥1.550/hora (após 6 meses, ¥1.650/hora) + moradia ¥45.000–60.000",
+    status: "aberta",
+    perfil: "Homens solteiros ou casais com filhos — para casal com filho menor de idade, a vaga é garantida só para o marido, sem suporte de passagem para a família. Alocação entre Kota, Mutsumi e Okazaki definida só após a chegada ao Japão",
+  },
+  {
+    id: "futaba-kota",
+    empresa: "Futaba Sangyou",
+    titulo: "Fabricação de escapamento automotivo",
+    setor: "automotivo",
+    regiao: "Aichi",
+    cidade: "Kota",
+    publico: ["brasil"],
+    turno: "Turno alternado (8:00–16:45 / 20:00–4:45), 5x2",
+    contrato: "Contrato temporário (haken)",
+    salario: "¥1.550/hora (após 6 meses, ¥1.650/hora) + moradia ¥45.000–60.000",
+    status: "aberta",
+    perfil: "Homens solteiros ou casais com filhos — para casal com filho menor de idade, a vaga é garantida só para o marido, sem suporte de passagem para a família",
+  },
+  {
+    id: "fujifilm-kanagawa",
+    empresa: "Fuji Film",
+    titulo: "Embalamento de filmes instantâneos para câmeras fotográficas",
+    setor: "eletronicos",
+    regiao: "Kanagawa",
+    cidade: "Minami Ashigara",
+    publico: ["brasil"],
+    turno: "Diurno fixo (7:00–16:00) ou noturno fixo (19:00–4:00), 5x2 ou 4x2",
+    contrato: "Contrato temporário (haken)",
+    salario: "¥1.350/hora (extra ¥1.688/hora; noturno +¥338/hora)",
+    status: "aberta",
+  },
+  {
+    id: "hino-jidousha-ota",
+    empresa: "Hino Jidosha",
+    titulo: "Montagem e usinagem de peças de motor de caminhão",
+    setor: "automotivo",
+    regiao: "Gunma",
+    cidade: "Ota",
+    publico: ["brasil"],
+    turno: "Turno alternado (diurno 6:30–15:20 / noturno 17:15–2:05), 5x2",
+    contrato: "Contrato temporário (haken)",
+    salario: "¥2.000/hora (extra ¥2.500/hora; noturno +¥500/hora)",
+    status: "aberta",
+  },
+  {
+    id: "hino-jidousha-hamura",
+    empresa: "Hino Jidosha",
+    titulo: "Montagem, abastecimento e inspeção de veículos",
+    setor: "automotivo",
+    regiao: "Tokyo",
+    cidade: "Hamura",
+    publico: ["brasil"],
+    turno: "Turno alternado (diurno 6:30–15:20 / noturno 17:15–2:05), 5x2",
+    contrato: "Contrato temporário (haken)",
+    salario: "¥2.000/hora (extra ¥2.500/hora; noturno +¥500/hora)",
+    status: "aberta",
+  },
+  {
+    id: "kitz-ina-nagano",
+    empresa: "Kitz",
+    titulo: "Produção de válvulas de água — montagem, usinagem e inspeção",
+    setor: "materiais",
+    regiao: "Nagano",
+    cidade: "Ina",
+    publico: ["brasil"],
+    turno: "Diurno fixo (8:25–17:25) ou alternado (hayaban 5:00–13:20 / osoban 13:15–21:35), 5x2",
+    contrato: "Contrato temporário (haken)",
+    salario: "¥1.200/hora (mulheres) ou ¥1.300/hora (homens)",
+    status: "aberta",
+  },
+  {
+    id: "panasonic-gunma",
+    empresa: "Panasonic",
+    titulo: "Produção de eletrodomésticos — tratamento térmico, máquina e montagem",
+    setor: "eletronicos",
+    regiao: "Gunma",
+    cidade: "Oizumi",
+    publico: ["brasil"],
+    turno: "Diurno fixo (8:25–17:00), 5x2 — possibilidade de turno noturno conforme a necessidade",
+    contrato: "Contrato temporário (haken)",
+    salario: "¥1.300–1.500/hora, conforme japonês e habilidades (até ¥1.600/hora em lift, até ¥1.900/hora em solda)",
+    status: "aberta",
+  },
 ];
+
+// Regiões do filtro — derivadas das próprias vagas cadastradas, em vez de
+// uma lista mantida à parte, pra crescer automaticamente conforme o
+// Wilson for mandando mais fichas.
+const REGIOES = Array.from(new Set(VAGAS.map((v) => v.regiao))).sort((a, b) => a.localeCompare(b, "pt-BR"));
 
 const SETOR_NOME: Record<SetorKey, string> = {
   automotivo: "Automobilístico",
   eletronicos: "Componentes Eletrônicos",
   alimenticio: "Alimentício",
+  materiais: "Materiais Industriais",
+};
+
+const STATUS_LABEL: Record<StatusVaga, string> = {
+  aberta: "Embarque imediato/futuro",
+  consulta: "Sob consulta",
 };
 
 // ── Jornada do cliente — 5 etapas, conteúdo do e-mail do Wilson,
@@ -283,7 +754,7 @@ function Marquee({ itens }: { itens: ItemMarquee[] }) {
 export default function EmpregosPage() {
   const [publicoFiltro, setPublicoFiltro] = useState<PublicoKey | "todos">("todos");
   const [setorFiltro, setSetorFiltro] = useState<SetorKey | "todos">("todos");
-  const [regioesFiltro, setRegioesFiltro] = useState<Set<RegiaoKey>>(new Set());
+  const [regioesFiltro, setRegioesFiltro] = useState<Set<string>>(new Set());
   const [selecionadas, setSelecionadas] = useState<Set<string>>(new Set());
 
   function irParaVagas(ajustes?: { publico?: PublicoKey | "todos"; setor?: SetorKey | "todos" }) {
@@ -292,7 +763,7 @@ export default function EmpregosPage() {
     document.getElementById("vagas")?.scrollIntoView({ behavior: "smooth", block: "start" });
   }
 
-  function alternarRegiao(regiao: RegiaoKey) {
+  function alternarRegiao(regiao: string) {
     setRegioesFiltro((atual) => {
       const novo = new Set(atual);
       if (novo.has(regiao)) novo.delete(regiao);
@@ -311,7 +782,7 @@ export default function EmpregosPage() {
   }
 
   const vagasFiltradas = useMemo(() => {
-    return VAGAS_PLACEHOLDER.filter((vaga) => {
+    return VAGAS.filter((vaga) => {
       if (publicoFiltro !== "todos" && !vaga.publico.includes(publicoFiltro)) return false;
       if (setorFiltro !== "todos" && vaga.setor !== setorFiltro) return false;
       if (regioesFiltro.size > 0 && !regioesFiltro.has(vaga.regiao)) return false;
@@ -319,13 +790,13 @@ export default function EmpregosPage() {
     });
   }, [publicoFiltro, setorFiltro, regioesFiltro]);
 
-  const vagasSelecionadas = VAGAS_PLACEHOLDER.filter((v) => selecionadas.has(v.id));
+  const vagasSelecionadas = VAGAS.filter((v) => selecionadas.has(v.id));
 
   function mensagemCandidatura() {
     const linhas = [
       "Olá! Tenho interesse nas vagas abaixo (catálogo Ajisai Empregos):",
       "",
-      ...vagasSelecionadas.map((v) => `• ${v.titulo} — ${v.regiao} (${SETOR_NOME[v.setor]})`),
+      ...vagasSelecionadas.map((v) => `• ${v.titulo} — ${v.empresa}, ${v.cidade}/${v.regiao} (${SETOR_NOME[v.setor]})`),
       "",
       "Podem me passar os próximos passos?",
     ];
@@ -426,11 +897,11 @@ export default function EmpregosPage() {
         </div>
       </section>
 
-      {/* ── 3 CARDS DE SETOR ── */}
+      {/* ── CARDS DE SETOR ── */}
       <section className="border-b border-black/10 bg-white px-6 py-14 md:px-16 md:py-20">
         <div className="mx-auto max-w-6xl">
           <h2 className={`${display.className} text-2xl font-medium text-black md:text-3xl`}>Setores</h2>
-          <div className="mt-8 grid gap-4 sm:grid-cols-3">
+          <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {SETORES.map((s) => (
               <button
                 key={s.key}
@@ -460,14 +931,6 @@ export default function EmpregosPage() {
           <p className="mt-2 max-w-2xl text-sm font-light leading-6 text-black/55">
             Selecione a região e o setor para filtrar, marque quantas vagas quiser e aplique de uma
             vez — como um carrinho de compras.
-          </p>
-
-          {/* Aviso de placeholder — pedido do Wilson, 16/set/2026: "coloque
-              vagas genericas só como placeholder por hora". Fica visível
-              pro visitante pra não passar a impressão de vaga real aberta
-              antes do catálogo de verdade estar integrado. */}
-          <p className="mt-4 w-fit rounded-full border border-amber-300 bg-amber-50/70 px-4 py-1.5 text-[11px] font-medium text-amber-800">
-            ⚠️ Vagas de exemplo — o catálogo real será integrado em breve.
           </p>
 
           {/* Filtro por público */}
@@ -564,9 +1027,21 @@ export default function EmpregosPage() {
                   }`}
                 >
                   <div className="flex items-start justify-between gap-3">
-                    <span className="rounded-full bg-black/[0.04] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.1em] text-black/50">
-                      {SETOR_NOME[vaga.setor]}
-                    </span>
+                    <div className="flex flex-wrap items-center gap-1.5">
+                      <span className="rounded-full bg-black/[0.04] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.1em] text-black/50">
+                        {SETOR_NOME[vaga.setor]}
+                      </span>
+                      {/* Selo de status — pedido do Wilson, 19/set/2026: vagas
+                          "sob consulta" (processo de visto, sem embarque
+                          confirmado) ficam no catálogo, mas marcadas — só
+                          "aberta" fica sem selo, pra não poluir a maioria dos
+                          cards. */}
+                      {vaga.status === "consulta" && (
+                        <span className="rounded-full border border-amber-300 bg-amber-50 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.1em] text-amber-700">
+                          {STATUS_LABEL.consulta}
+                        </span>
+                      )}
+                    </div>
                     <input
                       type="checkbox"
                       checked={marcada}
@@ -574,19 +1049,26 @@ export default function EmpregosPage() {
                       className="mt-0.5 h-4 w-4 shrink-0 accent-[#2f80c9]"
                     />
                   </div>
-                  <h3 className="mt-3 text-sm font-semibold text-black">{vaga.titulo}</h3>
-                  <p className="mt-1 text-xs text-black/50">{vaga.regiao}, Japão</p>
-                  <div className="mt-3 space-y-1 text-[11px] leading-4 text-black/45">
+                  <p className="mt-3 text-[10px] font-semibold uppercase tracking-[0.12em] text-[#2f80c9]">
+                    {vaga.empresa}
+                  </p>
+                  <h3 className="mt-1 text-sm font-semibold text-black">{vaga.titulo}</h3>
+                  <p className="mt-1 text-xs text-black/50">
+                    {vaga.cidade}, {vaga.regiao} — Japão
+                  </p>
+                  <p className="mt-2 text-sm font-semibold text-black/80">{vaga.salario}</p>
+                  <div className="mt-2 space-y-1 text-[11px] leading-4 text-black/45">
                     <p>{vaga.turno}</p>
                     <p>{vaga.contrato}</p>
-                    <p>Japonês: {vaga.idioma}</p>
+                    {vaga.perfil && <p>Perfil: {vaga.perfil}</p>}
+                    {vaga.idioma && <p>Japonês: {vaga.idioma}</p>}
                   </div>
                 </label>
               );
             })}
             {vagasFiltradas.length === 0 && (
               <p className="col-span-full text-sm text-black/40">
-                Nenhuma vaga de exemplo com esses filtros — tente outra combinação de região e setor.
+                Nenhuma vaga com esses filtros — tente outra combinação de região e setor.
               </p>
             )}
           </div>
