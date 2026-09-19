@@ -232,6 +232,49 @@ const CONDICOES_UT_SURIEMU = {
     "Passagem aérea financiada pela empresa, com desconto a partir do 2º pagamento (parcelas de até ¥50 mil por mês).",
 };
 
+// Corpo de detalhes de uma vaga — condução, moradia, seguro social, exame
+// médico e financiamento de passagem, quando a ficha original tem esse
+// bloco (CONDICOES_UT_SURIEMU). Pras demais vagas, mostra só o convite pro
+// WhatsApp em vez de inventar dado que a fonte não trouxe. Usado dentro do
+// pop-up de detalhes (ver Modal de vaga, 19/set/2026).
+function DetalhesVaga({ vaga }: { vaga: Vaga }) {
+  const temDetalhe = Boolean(vaga.conducao || vaga.observacoes || vaga.fonteContrato);
+  return (
+    <div className="space-y-2.5 text-[13px] leading-6 text-black/60">
+      {vaga.conducao && (
+        <p>
+          <span className="font-semibold text-black/75">Condução ao trabalho: </span>
+          {vaga.conducao}
+        </p>
+      )}
+      {(vaga.fonteContrato === "ut-suriemu" || vaga.observacoes) && (
+        <p>
+          <span className="font-semibold text-black/75">Moradia: </span>
+          {vaga.fonteContrato === "ut-suriemu" ? CONDICOES_UT_SURIEMU.moradia : ""}
+          {vaga.observacoes && ` ${vaga.observacoes}`}
+        </p>
+      )}
+      {vaga.fonteContrato === "ut-suriemu" && (
+        <>
+          <p>
+            <span className="font-semibold text-black/75">Seguro social (shakai hoken): </span>
+            {CONDICOES_UT_SURIEMU.seguro}
+          </p>
+          <p>
+            <span className="font-semibold text-black/75">Exame médico: </span>
+            {CONDICOES_UT_SURIEMU.exameMedico}
+          </p>
+          <p>
+            <span className="font-semibold text-black/75">Passagem aérea: </span>
+            {CONDICOES_UT_SURIEMU.financiamentoPassagem}
+          </p>
+        </>
+      )}
+      {!temDetalhe && <p>Moradia, documentos e demais condições dessa vaga — fale com a gente pelo WhatsApp.</p>}
+    </div>
+  );
+}
+
 const VAGAS: Vaga[] = [
   // ── Avance RH/Corporation — comunicado + fichas individuais ──
   {
@@ -779,16 +822,24 @@ const CLIENTES_CORPORATIVOS: ItemMarquee[] = [
 ];
 
 function LogoMarquee({ item }: { item: ItemMarquee }) {
-  // Só altura fixa (largura livre) + object-contain — pedido do Wilson,
-  // 19/set/2026, revertendo a caixa de largura fixa que eu tinha colocado
-  // antes: forçar toda logo pra uma largura igual criava um respiro
-  // horizontal enorme em volta de marcas mais "quadradas" (Fujiarte, UT),
-  // o carrossel de cima parecia ter buracos vazios. Como os arquivos já
-  // foram recortados (sem respiro interno em excesso), travar só a altura
-  // já deixa o peso visual parecido, sem sobrar espaço em branco.
+  // Altura E largura máximas (sem caixa fixa) — ajustado 19/set/2026.
+  // Só altura fixa (w-auto) resolvia o "buraco vazio" mas criava o problema
+  // oposto: as marcas em formato de logotipo bem largo e baixo (Brexa, Sony,
+  // Panasonic — proporção de até 8:1) ficavam 6 a 8x mais largas que marcas
+  // em formato quase quadrado (Fujiarte, uT), parecendo "tamanhos totalmente
+  // diferentes". Travando altura MÁXIMA e largura MÁXIMA juntas (sem w-auto
+  // fixo, sem caixa/wrapper de tamanho forçado), o navegador escala cada
+  // logo pelo lado mais restritivo mantendo a proporção original — isso
+  // equilibra o peso visual dos logotipos largos sem sobrar espaço em
+  // branco ao redor dos logos mais quadrados (porque não existe uma caixa
+  // maior que o próprio logo escalado).
   return item.logo ? (
     <div className="mx-6 flex h-14 shrink-0 items-center">
-      <img src={item.logo} alt={item.nome} className="h-9 w-auto object-contain md:h-10" />
+      <img
+        src={item.logo}
+        alt={item.nome}
+        className="h-auto max-h-9 w-auto max-w-[108px] object-contain md:max-h-10 md:max-w-[128px]"
+      />
     </div>
   ) : (
     <span className="mx-4 shrink-0 rounded-full border border-black/10 bg-black/[0.02] px-6 py-3 text-sm font-medium uppercase tracking-[0.08em] text-black/55">
@@ -849,7 +900,7 @@ export default function EmpregosPage() {
   const [setorFiltro, setSetorFiltro] = useState<SetorKey | "todos">("todos");
   const [regioesFiltro, setRegioesFiltro] = useState<Set<string>>(new Set());
   const [selecionadas, setSelecionadas] = useState<Set<string>>(new Set());
-  const [expandidas, setExpandidas] = useState<Set<string>>(new Set());
+  const [vagaAbertaId, setVagaAbertaId] = useState<string | null>(null);
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
@@ -860,6 +911,18 @@ export default function EmpregosPage() {
     window.addEventListener("scroll", aoRolar, { passive: true });
     return () => window.removeEventListener("scroll", aoRolar);
   }, []);
+
+  // Pop-up de detalhes da vaga — pedido do Wilson, 19/set/2026 ("o detalhes
+  // devem abrir como pop up"), substituindo o expandir/colapsar inline no
+  // card. Trava o scroll do fundo enquanto o modal está aberto.
+  useEffect(() => {
+    if (!vagaAbertaId) return;
+    const original = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = original;
+    };
+  }, [vagaAbertaId]);
 
   function irParaVagas(ajustes?: { publico?: PublicoKey | "todos"; setor?: SetorKey | "todos" }) {
     if (ajustes?.publico !== undefined) setPublicoFiltro(ajustes.publico);
@@ -885,15 +948,7 @@ export default function EmpregosPage() {
     });
   }
 
-  // Expandir/colapsar detalhes do card — pedido do Wilson, 19/set/2026.
-  function alternarExpandida(id: string) {
-    setExpandidas((atual) => {
-      const novo = new Set(atual);
-      if (novo.has(id)) novo.delete(id);
-      else novo.add(id);
-      return novo;
-    });
-  }
+  const vagaAberta = useMemo(() => VAGAS.find((v) => v.id === vagaAbertaId) ?? null, [vagaAbertaId]);
 
   const vagasFiltradas = useMemo(() => {
     return VAGAS.filter((vaga) => {
@@ -1041,8 +1096,8 @@ export default function EmpregosPage() {
                 onClick={() => irParaVagas({ setor: s.key })}
                 className="group flex flex-col items-start rounded-2xl border border-black/10 bg-black/[0.02] p-7 text-left transition hover:border-[#2f80c9]/50 hover:bg-[#2f80c9]/5"
               >
-                <span className="flex h-12 w-12 items-center justify-center rounded-full bg-[#2f80c9]/10 text-[#2f80c9]">
-                  <IconSetor setor={s.key} className="h-6 w-6" />
+                <span className="flex items-center justify-center text-[#2f80c9]">
+                  <IconSetor setor={s.key} className="h-11 w-11" />
                 </span>
                 <h3 className={`${display.className} mt-4 text-lg font-medium text-black`}>{s.nome}</h3>
                 <p className="mt-2 text-xs font-light leading-5 text-black/55">{s.descricao}</p>
@@ -1151,8 +1206,6 @@ export default function EmpregosPage() {
           <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {vagasFiltradas.map((vaga) => {
               const marcada = selecionadas.has(vaga.id);
-              const expandida = expandidas.has(vaga.id);
-              const temDetalhe = Boolean(vaga.conducao || vaga.observacoes || vaga.fonteContrato);
               return (
                 <div
                   key={vaga.id}
@@ -1161,18 +1214,19 @@ export default function EmpregosPage() {
                   }`}
                 >
                   {/* Corpo do card clicável — pedido do Wilson, 19/set/2026:
-                      "ao clicar na vaga deve expandir os campos de
-                      detalhes". A seleção pra candidatura continua só no
-                      checkbox (que interrompe a propagação do clique), pra
-                      não misturar as duas ações. */}
+                      clicar na vaga abre os detalhes. Virou pop-up (19/set/2026,
+                      segundo ajuste do mesmo dia) em vez de expandir dentro do
+                      card. A seleção pra candidatura continua só no checkbox
+                      (que interrompe a propagação do clique), pra não misturar
+                      as duas ações. */}
                   <div
                     role="button"
                     tabIndex={0}
-                    onClick={() => alternarExpandida(vaga.id)}
+                    onClick={() => setVagaAbertaId(vaga.id)}
                     onKeyDown={(e) => {
                       if (e.key === "Enter" || e.key === " ") {
                         e.preventDefault();
-                        alternarExpandida(vaga.id);
+                        setVagaAbertaId(vaga.id);
                       }
                     }}
                     className="flex cursor-pointer flex-col text-left"
@@ -1228,7 +1282,7 @@ export default function EmpregosPage() {
                       {vaga.idioma && <p>Japonês: {vaga.idioma}</p>}
                     </div>
                     <span className="mt-3 inline-flex w-fit items-center gap-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-[#2f80c9]">
-                      {expandida ? "Ver menos" : "Ver mais detalhes"}
+                      Ver mais detalhes
                       <svg
                         viewBox="0 0 24 24"
                         fill="none"
@@ -1236,65 +1290,12 @@ export default function EmpregosPage() {
                         strokeWidth="2.5"
                         strokeLinecap="round"
                         strokeLinejoin="round"
-                        className={`h-3 w-3 transition-transform ${expandida ? "rotate-180" : ""}`}
+                        className="h-3 w-3"
                       >
-                        <path d="M6 9l6 6 6-6" />
+                        <path d="M9 6l6 6-6 6" />
                       </svg>
                     </span>
                   </div>
-
-                  {/* Detalhes expandidos — moradia, condução, seguro social,
-                      exame médico e financiamento de passagem, quando a
-                      ficha original tem esse bloco (CONDICOES_UT_SURIEMU).
-                      Pras demais vagas, mostra só o convite pro WhatsApp em
-                      vez de inventar dado que a fonte não trouxe. */}
-                  {expandida && (
-                    <div className="mt-4 space-y-2.5 border-t border-black/10 pt-4 text-[11px] leading-5 text-black/55">
-                      {vaga.conducao && (
-                        <p>
-                          <span className="font-semibold text-black/70">Condução ao trabalho: </span>
-                          {vaga.conducao}
-                        </p>
-                      )}
-                      {(vaga.fonteContrato === "ut-suriemu" || vaga.observacoes) && (
-                        <p>
-                          <span className="font-semibold text-black/70">Moradia: </span>
-                          {vaga.fonteContrato === "ut-suriemu" ? CONDICOES_UT_SURIEMU.moradia : ""}
-                          {vaga.observacoes && ` ${vaga.observacoes}`}
-                        </p>
-                      )}
-                      {vaga.fonteContrato === "ut-suriemu" && (
-                        <>
-                          <p>
-                            <span className="font-semibold text-black/70">Seguro social (shakai hoken): </span>
-                            {CONDICOES_UT_SURIEMU.seguro}
-                          </p>
-                          <p>
-                            <span className="font-semibold text-black/70">Exame médico: </span>
-                            {CONDICOES_UT_SURIEMU.exameMedico}
-                          </p>
-                          <p>
-                            <span className="font-semibold text-black/70">Passagem aérea: </span>
-                            {CONDICOES_UT_SURIEMU.financiamentoPassagem}
-                          </p>
-                        </>
-                      )}
-                      {!temDetalhe && (
-                        <p>Moradia, documentos e demais condições dessa vaga — fale com a gente pelo WhatsApp.</p>
-                      )}
-                      <a
-                        href={linkWhatsapp(
-                          `Olá! Tenho interesse na vaga ${vaga.titulo} — ${vaga.empresa}, ${vaga.cidade}/${vaga.regiao}. Podem me passar mais detalhes?`,
-                        )}
-                        target="_blank"
-                        rel="noreferrer"
-                        onClick={(e) => e.stopPropagation()}
-                        className="inline-flex w-fit items-center gap-1.5 text-[11px] font-semibold uppercase tracking-[0.14em] text-[#2f80c9] hover:underline"
-                      >
-                        Perguntar sobre essa vaga →
-                      </a>
-                    </div>
-                  )}
                 </div>
               );
             })}
@@ -1306,6 +1307,77 @@ export default function EmpregosPage() {
           </div>
         </div>
       </section>
+
+      {/* ── POP-UP DE DETALHES DA VAGA — pedido do Wilson, 19/set/2026
+          ("o detalhes devem abrir como pop up e bota INICIAR
+          CANDIDATURA"). Substitui o expandir/colapsar inline no card. */}
+      {vagaAberta && (
+        <div
+          className="fixed inset-0 z-[60] flex items-end justify-center bg-black/50 p-0 backdrop-blur-sm sm:items-center sm:p-6"
+          onClick={() => setVagaAbertaId(null)}
+        >
+          <div
+            role="dialog"
+            aria-modal="true"
+            onClick={(e) => e.stopPropagation()}
+            className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-t-3xl bg-white p-6 shadow-2xl sm:rounded-3xl sm:p-8"
+          >
+            <div className="flex items-start justify-between gap-3">
+              <div className="flex flex-wrap items-center gap-1.5">
+                <span className="rounded-full bg-black/[0.04] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.1em] text-black/50">
+                  {SETOR_NOME[vagaAberta.setor]}
+                </span>
+                {vagaAberta.status === "consulta" && (
+                  <span className="rounded-full border border-amber-300 bg-amber-50 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.1em] text-amber-700">
+                    {STATUS_LABEL.consulta}
+                  </span>
+                )}
+              </div>
+              <button
+                type="button"
+                onClick={() => setVagaAbertaId(null)}
+                aria-label="Fechar"
+                className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-black/40 transition hover:bg-black/5 hover:text-black/70"
+              >
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className="h-5 w-5">
+                  <path d="M6 6l12 12M18 6L6 18" />
+                </svg>
+              </button>
+            </div>
+
+            {vagaAberta.logo && (
+              <img src={vagaAberta.logo} alt={vagaAberta.empresa} className="mt-4 h-7 max-w-[120px] object-contain" />
+            )}
+            <p className="mt-3 text-[10px] font-semibold uppercase tracking-[0.12em] text-[#2f80c9]">{vagaAberta.empresa}</p>
+            <h3 className={`${display.className} mt-1 text-xl font-medium text-black`}>{vagaAberta.titulo}</h3>
+            <p className="mt-1 text-xs text-black/50">
+              {vagaAberta.cidade}, {vagaAberta.regiao} — Japão
+            </p>
+            <p className="mt-2 text-base font-semibold text-black/80">{vagaAberta.salario}</p>
+            <div className="mt-2 space-y-1 text-xs leading-5 text-black/50">
+              <p>{vagaAberta.turno}</p>
+              <p>{vagaAberta.contrato}</p>
+              {vagaAberta.perfil && <p>Perfil: {vagaAberta.perfil}</p>}
+              {vagaAberta.idioma && <p>Japonês: {vagaAberta.idioma}</p>}
+            </div>
+
+            <div className="mt-5 border-t border-black/10 pt-5">
+              <DetalhesVaga vaga={vagaAberta} />
+            </div>
+
+            <a
+              href={linkWhatsapp(
+                `Olá! Tenho interesse na vaga ${vagaAberta.titulo} — ${vagaAberta.empresa}, ${vagaAberta.cidade}/${vagaAberta.regiao}. Quero iniciar minha candidatura.`,
+              )}
+              target="_blank"
+              rel="noreferrer"
+              className="mt-6 flex w-full items-center justify-center rounded-full bg-[#2f80c9] px-6 py-3.5 text-xs font-semibold uppercase tracking-[0.18em] text-white transition hover:bg-[#3b91dc]"
+            >
+              Iniciar candidatura
+            </a>
+          </div>
+        </div>
+      )}
 
       {/* ── BARRA FIXA: carrinho de vagas ── */}
       {selecionadas.size > 0 && (
