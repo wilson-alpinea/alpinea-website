@@ -720,10 +720,19 @@ function Marquee({ itens }: { itens: ItemMarquee[] }) {
               key={`${item.nome}-${i}`}
               className="mx-6 flex h-14 w-36 shrink-0 items-center justify-center"
             >
+              {/* Caixa fixa (mesma altura E largura pra todo logo) +
+                  object-contain — pedido do Wilson, 19/set/2026: antes o
+                  <img> só travava a altura (max-h) e deixava a largura
+                  livre, então uma marca "quadrada" (Subaru) ou com bastante
+                  respiro dentro do próprio arquivo (Aisin, Murata — já
+                  recortados também) ficava com peso visual bem menor que
+                  uma wordmark larga (Panasonic, Sony). Com caixa fixa, todo
+                  logo ocupa a mesma área — larguras variam, mas o "peso"
+                  visual fica parecido. */}
               <img
                 src={item.logo}
                 alt={item.nome}
-                className="max-h-8 w-auto object-contain md:max-h-9"
+                className="h-9 w-28 object-contain md:h-10 md:w-32"
               />
             </div>
           ) : (
@@ -831,34 +840,50 @@ export default function EmpregosPage() {
         </div>
       </header>
 
-      {/* ── HERO ── */}
-      <section className="relative border-b border-black/10 bg-[#0A2540] pt-28 pb-16 md:pt-36 md:pb-24">
-        <div className="mx-auto max-w-4xl px-6 text-center md:px-10">
-          <p className="text-[10px] uppercase tracking-[0.25em] text-[#6ec3d9]">Ajisai Empregos</p>
-          <h1 className={`${display.className} mt-4 text-[clamp(1.9rem,5vw,3.4rem)] font-medium leading-[1.1] text-white`}>
-            Emprego formal no Japão, do primeiro contato até a mudança
-          </h1>
-          <p className="mx-auto mt-5 max-w-2xl text-sm font-light leading-6 text-white/65 md:text-base">
-            Vagas nos setores automobilístico, de componentes eletrônicos e alimentício — para quem
-            está no Brasil e quer vir para o Japão, ou para quem já está no Japão e quer mudar de
-            emprego.
-          </p>
-          <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-            <button
-              type="button"
-              onClick={() => irParaVagas()}
-              className="rounded-full bg-[#2f80c9] px-6 py-3.5 text-xs font-semibold uppercase tracking-[0.2em] text-white transition hover:bg-[#3b91dc]"
-            >
-              Ver vagas
-            </button>
-            <a
-              href={linkWhatsapp("Olá! Vim pela página de Empregos da Ajisai e queria saber mais.")}
-              target="_blank"
-              rel="noreferrer"
-              className="rounded-full border border-white/25 px-6 py-3.5 text-xs font-semibold uppercase tracking-[0.2em] text-white transition hover:border-white/50"
-            >
-              Falar com a Ajisai
-            </a>
+      {/* ── HERO. Foto de colagem (4 painéis — alimentício, automotivo/robótica,
+          eletrônicos, logística) adicionada 19/set/2026 a pedido do Wilson,
+          substituindo o fundo azul-marinho liso. Texto reposicionado no
+          rodapé da imagem, sobre um gradiente escuro pra manter a leitura. ── */}
+      <section className="relative overflow-hidden border-b border-black/10 bg-[#0A2540]">
+        <div className="absolute inset-0">
+          <Image
+            src="/images/empregos-hero-colagem.jpg"
+            alt="Trabalhadores em fábricas no Japão — linha alimentícia, automotiva, eletrônicos e logística"
+            fill
+            priority
+            sizes="100vw"
+            className="object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#0A2540] via-[#0A2540]/75 to-[#0A2540]/10" />
+        </div>
+        <div className="relative flex min-h-[540px] flex-col justify-end px-6 pb-12 pt-28 md:min-h-[660px] md:px-10 md:pb-16 md:pt-36">
+          <div className="mx-auto w-full max-w-4xl text-center">
+            <p className="text-[10px] uppercase tracking-[0.25em] text-[#6ec3d9]">Ajisai Empregos</p>
+            <h1 className={`${display.className} mt-4 text-[clamp(1.9rem,5vw,3.4rem)] font-medium leading-[1.1] text-white`}>
+              Emprego formal no Japão, do primeiro contato até a mudança
+            </h1>
+            <p className="mx-auto mt-5 max-w-2xl text-sm font-light leading-6 text-white/65 md:text-base">
+              Vagas nos setores automobilístico, de componentes eletrônicos e alimentício — para quem
+              está no Brasil e quer vir para o Japão, ou para quem já está no Japão e quer mudar de
+              emprego.
+            </p>
+            <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+              <button
+                type="button"
+                onClick={() => irParaVagas()}
+                className="rounded-full bg-[#2f80c9] px-6 py-3.5 text-xs font-semibold uppercase tracking-[0.2em] text-white transition hover:bg-[#3b91dc]"
+              >
+                Ver vagas
+              </button>
+              <a
+                href={linkWhatsapp("Olá! Vim pela página de Empregos da Ajisai e queria saber mais.")}
+                target="_blank"
+                rel="noreferrer"
+                className="rounded-full border border-white/25 px-6 py-3.5 text-xs font-semibold uppercase tracking-[0.2em] text-white transition hover:border-white/50"
+              >
+                Falar com a Ajisai
+              </a>
+            </div>
           </div>
         </div>
       </section>
