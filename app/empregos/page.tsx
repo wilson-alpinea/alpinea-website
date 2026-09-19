@@ -172,7 +172,9 @@ function IconSetor({ setor, className }: { setor: SetorKey; className?: string }
 // visto, ainda não é vaga com data de embarque confirmada); "aberta" =
 // vaga com disponibilidade — embarque imediato ou futuro já confirmado.
 // idioma e perfil ficam de fora do objeto quando a fonte não trouxe esse
-// dado (fichas UT Suri-emu não têm essas duas informações). ──
+// dado (fichas UT Suri-emu não têm essas duas informações). logo é
+// opcional (pedido do Wilson, 19/set/2026) — só entra quando ele manda o
+// arquivo da empresa; até lá o card mostra só o nome em texto. ──
 type StatusVaga = "aberta" | "consulta";
 
 type Vaga = {
@@ -189,6 +191,7 @@ type Vaga = {
   status: StatusVaga;
   idioma?: string;
   perfil?: string;
+  logo?: string;
 };
 
 const VAGAS: Vaga[] = [
@@ -280,6 +283,7 @@ const VAGAS: Vaga[] = [
     contrato: "Contrato temporário (haken)",
     salario: "¥1.400/hora (até ¥1.650/hora conforme desempenho)",
     status: "consulta",
+    logo: "/images/logo-cliente-daikin.png",
     idioma: "Básico (N4)",
     perfil: "Homens e mulheres até 45 anos — previsão de vagas a partir de outubro/novembro",
   },
@@ -1042,12 +1046,25 @@ export default function EmpregosPage() {
                         </span>
                       )}
                     </div>
-                    <input
-                      type="checkbox"
-                      checked={marcada}
-                      onChange={() => alternarSelecao(vaga.id)}
-                      className="mt-0.5 h-4 w-4 shrink-0 accent-[#2f80c9]"
-                    />
+                    {/* Logo da empresa no canto superior direito, quando
+                        disponível — pedido do Wilson, 19/set/2026. Enquanto
+                        ele não manda o arquivo, o card só mostra o nome em
+                        texto (linha abaixo). */}
+                    <div className="flex shrink-0 items-center gap-2">
+                      {vaga.logo && (
+                        <img
+                          src={vaga.logo}
+                          alt={vaga.empresa}
+                          className="h-6 max-w-[92px] object-contain"
+                        />
+                      )}
+                      <input
+                        type="checkbox"
+                        checked={marcada}
+                        onChange={() => alternarSelecao(vaga.id)}
+                        className="h-4 w-4 shrink-0 accent-[#2f80c9]"
+                      />
+                    </div>
                   </div>
                   <p className="mt-3 text-[10px] font-semibold uppercase tracking-[0.12em] text-[#2f80c9]">
                     {vaga.empresa}
