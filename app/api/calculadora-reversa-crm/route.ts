@@ -53,6 +53,8 @@ export async function POST(req: Request) {
     }
 
     const consultor = String(body.consultor || "").trim();
+    const telefone = String(body.telefone || "").trim();
+    const email = String(body.email || "").trim();
     const valorProposta = Number(body.valorProposta) || null;
     const dataViagem = String(body.dataViagem || "").trim();
     const resumoTexto = String(body.resumoTexto || "").trim();
@@ -67,6 +69,8 @@ export async function POST(req: Request) {
       .from("clientes")
       .insert({
         nome,
+        telefone: telefone || null,
+        email: email || null,
         origem: consultor
           ? `Calculadora Reversa (interno) — consultor: ${consultor}`
           : "Calculadora Reversa (interno)",

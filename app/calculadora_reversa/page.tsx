@@ -1565,6 +1565,9 @@ export default function CalculadoraReversaPage() {
   // (entram no PDF/Word); observacoesInternas/margemNota são só desta
   // tela — nunca passados pro PacotePdfProps.
   const [nomeCliente, setNomeCliente] = useState("");
+  // Identificação do lead (telefone/e-mail) — vai pro CRM em "Registrar no CRM".
+  const [telefoneCliente, setTelefoneCliente] = useState("");
+  const [emailCliente, setEmailCliente] = useState("");
   const [consultorResponsavel, setConsultorResponsavel] = useState("");
   const [validadeProposta, setValidadeProposta] = useState("");
   const [observacoesInternas, setObservacoesInternas] = useState("");
@@ -2884,6 +2887,8 @@ export default function CalculadoraReversaPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           nome: nomeCliente.trim(),
+          telefone: telefoneCliente.trim(),
+          email: emailCliente.trim(),
           consultor: consultorResponsavel.trim(),
           valorProposta: totalSelecionado,
           dataViagem: dataViagemEstimada || null,
@@ -2910,6 +2915,8 @@ export default function CalculadoraReversaPage() {
   const mensagemWhatsapp = [
     `Proposta Ajisai — ${pacoteSugeridoLabel}`,
     nomeCliente.trim() ? `Para: ${nomeCliente.trim()}` : "",
+    telefoneCliente.trim() ? `Telefone: ${telefoneCliente.trim()}` : "",
+    emailCliente.trim() ? `E-mail: ${emailCliente.trim()}` : "",
     "",
     ...itensSelecionados.map((item) => `• ${item.label}: ${formatMoeda(valorItem(item))}`),
     "",
@@ -4134,13 +4141,13 @@ export default function CalculadoraReversaPage() {
                 nome ter 1 ou 2 linhas. Pedido do Wilson, 14/set/2026:
                 "cards devem todos ter o mesmo tamanho e os preços devem
                 sempre estar alinhados horizontalmente". */}
-            <div className="flex flex-wrap items-stretch gap-2">
+            <div className="grid grid-cols-[repeat(auto-fill,8rem)] gap-2">
               {CATALOGO_INGRESSOS.map((ingresso) => {
                 const marcado = ingressosSelecionados.has(ingresso.key);
                 return (
                   <label
                     key={ingresso.key}
-                    className={`flex w-28 cursor-pointer flex-col items-center gap-1.5 rounded-lg border px-2 py-3 text-center text-xs transition ${
+                    className={`flex h-[13.5rem] w-32 cursor-pointer flex-col items-center gap-2 rounded-lg border px-2 py-3 text-center text-xs transition ${
                       marcado
                         ? "border-[#2f80c9] bg-[#2f80c9]/10 font-medium text-[#2f80c9]"
                         : "border-black/15 bg-black/[0.03] text-black/60 hover:border-black/30"
@@ -4152,14 +4159,14 @@ export default function CalculadoraReversaPage() {
                       onChange={() => alternarIngresso(ingresso.key)}
                       className="sr-only"
                     />
-                    <div className="flex w-full flex-1 flex-col items-center justify-center gap-1.5">
+                    <div className="flex w-full flex-1 flex-col items-center justify-center gap-2">
                       {/* Alinhamento — pedido do Wilson, 11/set/2026: os logos têm
                           proporções bem diferentes entre si (retrato, redondo,
                           faixa larga), então sem uma caixa de altura fixa cada
                           ícone empurrava nome/preço pra uma altura diferente.
                           Essa caixa fixa centraliza qualquer logo no mesmo
                           espaço, alinhando todos os cards. */}
-                      <div className="flex h-16 w-full shrink-0 items-center justify-center">
+                      <div className="flex h-20 w-full shrink-0 items-center justify-center">
                         {ingresso.icone ? (
                           // eslint-disable-next-line @next/next/no-img-element
                           <img
@@ -4187,7 +4194,7 @@ export default function CalculadoraReversaPage() {
                         adicionais". Unificado num badge com o mesmo
                         formato/peso, cor azul da marca (preço fixo, sem
                         variação — por isso sem asterisco). */}
-                    <span className="rounded-md bg-[#2f80c9]/10 px-2 py-1 text-[11px] font-semibold leading-tight text-[#2f80c9]">
+                    <span className="flex min-h-[2.5rem] w-full items-center justify-center rounded-md bg-[#2f80c9]/10 px-2 py-1 text-[11px] font-semibold leading-tight text-[#2f80c9]">
                       {formatMoedaDeUSD(ingresso.precoUSD)}/pessoa
                     </span>
                   </label>
@@ -4469,7 +4476,7 @@ export default function CalculadoraReversaPage() {
                 nome ter 1 ou 2 linhas. Pedido do Wilson, 14/set/2026:
                 "cards devem todos ter o mesmo tamanho e os preços devem
                 sempre estar alinhados horizontalmente". */}
-            <div className="flex flex-wrap items-stretch gap-2">
+            <div className="grid grid-cols-[repeat(auto-fill,8rem)] gap-2">
               {CATALOGO_SERVICOS_ADICIONAIS.map((servico) => {
                 const marcado = servicosAdicionaisSelecionados.has(servico.key);
                 const desabilitado =
@@ -4498,7 +4505,7 @@ export default function CalculadoraReversaPage() {
                 return (
                   <label
                     key={servico.key}
-                    className={`flex w-32 flex-col items-center gap-2 rounded-lg border px-2 py-3 text-center text-xs transition ${
+                    className={`flex h-[13.5rem] w-32 flex-col items-center gap-2 rounded-lg border px-2 py-3 text-center text-xs transition ${
                       desabilitado
                         ? "cursor-not-allowed border-black/10 bg-black/[0.02] text-black/30"
                         : marcado
@@ -4539,7 +4546,7 @@ export default function CalculadoraReversaPage() {
                         inicial" (nota completa no rodapé da seção).
                         Pedido do Wilson, 10/set/2026. */}
                     <span
-                      className={`rounded-md px-2 py-1 text-[11px] font-semibold leading-tight ${
+                      className={`flex min-h-[2.5rem] w-full items-center justify-center rounded-md px-2 py-1 text-[11px] font-semibold leading-tight ${
                         desabilitado ? "bg-black/5 text-black/30" : "bg-amber-50 text-amber-700"
                       }`}
                     >
@@ -5229,23 +5236,31 @@ export default function CalculadoraReversaPage() {
                   lá). Sem backend próprio ainda — como todo o resto dessa
                   calculadora, esses campos vivem só nesta sessão do
                   navegador, não são salvos em banco de dados. */}
+              <div className="mt-6 rounded-xl border border-sky-200 bg-sky-50 p-4">
+                <p className="mb-3 text-[10px] uppercase tracking-[0.2em] text-sky-800/70">
+                  Identificação do lead
+                </p>
+                <div className="grid gap-3 sm:grid-cols-3">
+                  <label className="flex flex-col">
+                    <span className="mb-1 text-[10px] uppercase tracking-wide text-black/40">Nome</span>
+                    <input type="text" value={nomeCliente} onChange={(e) => setNomeCliente(e.target.value)} placeholder="ex.: Família Almeida" className="h-10 w-full rounded-lg border border-sky-200 bg-white px-3 text-sm outline-none focus:border-sky-400" />
+                  </label>
+                  <label className="flex flex-col">
+                    <span className="mb-1 text-[10px] uppercase tracking-wide text-black/40">Telefone / WhatsApp</span>
+                    <input type="tel" value={telefoneCliente} onChange={(e) => setTelefoneCliente(e.target.value)} placeholder="ex.: +55 11 91234-5678" className="h-10 w-full rounded-lg border border-sky-200 bg-white px-3 text-sm outline-none focus:border-sky-400" />
+                  </label>
+                  <label className="flex flex-col">
+                    <span className="mb-1 text-[10px] uppercase tracking-wide text-black/40">E-mail</span>
+                    <input type="email" value={emailCliente} onChange={(e) => setEmailCliente(e.target.value)} placeholder="ex.: cliente@email.com" className="h-10 w-full rounded-lg border border-sky-200 bg-white px-3 text-sm outline-none focus:border-sky-400" />
+                  </label>
+                </div>
+              </div>
+
               <div className="mt-6 rounded-xl border border-black/10 bg-black/[0.02] p-4">
                 <p className="mb-3 text-[10px] uppercase tracking-[0.2em] text-black/50">
                   Dados da proposta (opcional)
                 </p>
                 <div className="grid gap-3 sm:grid-cols-2">
-                  <label className="flex flex-col">
-                    <span className="mb-1 text-[10px] uppercase tracking-wide text-black/40">
-                      Nome do cliente
-                    </span>
-                    <input
-                      type="text"
-                      value={nomeCliente}
-                      onChange={(e) => setNomeCliente(e.target.value)}
-                      placeholder="ex.: Família Almeida"
-                      className="h-10 w-full rounded-lg border border-black/15 bg-white px-3 text-sm outline-none focus:border-black/30"
-                    />
-                  </label>
                   <label className="flex flex-col">
                     <span className="mb-1 text-[10px] uppercase tracking-wide text-black/40">
                       Consultor responsável
