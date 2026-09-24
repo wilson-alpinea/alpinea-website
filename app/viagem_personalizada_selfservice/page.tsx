@@ -66,6 +66,15 @@ import {
   TEMPORADA_MULTIPLICADOR_HOTEL,
   MESES_NOME,
   MES_PARA_TEMPORADA,
+  FLEXIBILIDADE_DATAS,
+  TAXA_MAQUINA_CARTAO,
+  TAXA_JUROS_CARTAO_MES,
+  OPCOES_PARCELAS_CARTAO,
+  ENTRADA_PIX_PCT,
+  TAXA_JUROS_PIX_MES,
+  OPCOES_PARCELAS_PIX,
+  calcularParcelaPrice,
+  type FlexibilidadeDatasKey,
   ORIGENS_VOO,
   BAGAGEM_OPCOES,
   type TemporadaKey,
@@ -497,6 +506,12 @@ export default function ViagemPersonalizadaSelfServicePage() {
     });
   }
 
+  const [formaPagamento, setFormaPagamento] = useState<{
+    metodo: "cartao" | "pixVista" | "pixParcelado";
+    parcelas: number;
+  } | null>(null);
+  const [agora] = useState(() => Date.now());
+  const [flexibilidade, setFlexibilidade] = useState<FlexibilidadeDatasKey>("fixas");
   const [hotelMax, setHotelMax] = useState<CategoriaHotel>("Elite");
   const [classeMax, setClasseMax] = useState<ClasseAereo>("First Class");
   const [comCafe, setComCafe] = useState(true);
@@ -513,6 +528,9 @@ export default function ViagemPersonalizadaSelfServicePage() {
   const [usjTier, setUsjTier] = useState<UsjTierKey>("nenhum");
   const [servicos, setServicos] = useState<Set<ServicoKey>>(new Set());
 
+  const parquesDiaInteiro = (["disneyland", "disneysea", "usj"] as const).filter((k) => ingressos.has(k)).length;
+  const diasMinimosSugeridos = Math.max(1, cidades.length) + parquesDiaInteiro;
+  const diasInsuficientes = dias < diasMinimosSugeridos;
   const jrPessoasEfetivo = Math.min(jrPessoas, pessoas);
   const guiaDiasEfetivo = Math.min(guiaDias, dias);
   const motoristaDiasEfetivo = Math.min(motoristaDias, dias);
@@ -561,6 +579,30 @@ export default function ViagemPersonalizadaSelfServicePage() {
     () => cidades.map((c) => DESTINOS.find((d) => d.key === c)?.nome ?? c),
     [cidades],
   );
+
+  const totalPagamento = resultado?.total ?? 0;
+  const simulacaoCartao = useMemo(() => {
+    const financiado = totalPagamento * (1 + TAXA_MAQUINA_CARTAO);
+    return OPCOES_PARCELAS_CARTAO.map((parcelas) => {
+      const valorParcela = calcularParcelaPrice(financiado, TAXA_JUROS_CARTAO_MES, parcelas);
+      return { parcelas, valorParcela, valorTotal: valorParcela * parcelas };
+    });
+  }, [totalPagamento]);
+  const parcelasMaxPix = useMemo(() => {
+    if (!dataViagem) return 12;
+    const viagem = new Date(`${dataViagem}T00:00:00`);
+    if (Number.isNaN(viagem.getTime())) return 12;
+    const meses = (viagem.getTime() - agora) / (1000 * 60 * 60 * 24 * 30.44);
+    return Math.max(0, Math.min(12, Math.floor(meses)));
+  }, [dataViagem, agora]);
+  const simulacaoPix = useMemo(() => {
+    const entrada = totalPagamento * ENTRADA_PIX_PCT;
+    const financiado = totalPagamento - entrada;
+    return OPCOES_PARCELAS_PIX.filter((parcelas) => parcelas <= parcelasMaxPix).map((parcelas) => {
+      const valorParcela = calcularParcelaPrice(financiado, TAXA_JUROS_PIX_MES, parcelas);
+      return { parcelas, entrada, valorParcela, valorTotal: entrada + valorParcela * parcelas };
+    });
+  }, [totalPagamento, parcelasMaxPix]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -633,6 +675,7 @@ export default function ViagemPersonalizadaSelfServicePage() {
           classeAereo: resultadoCalculado.classeAereo,
           valorEstimado: resultadoCalculado.total,
           idades: idadesConsideradas,
+          flexibilidade: FLEXIBILIDADE_DATAS.find((f) => f.key === flexibilidade)?.nome ?? flexibilidade,
           temas: TEMAS.filter((t) => temasSelecionados.has(t.key)).map((t) => t.nome),
           hotelMax,
           classeMax,
@@ -654,6 +697,37 @@ export default function ViagemPersonalizadaSelfServicePage() {
   }
 
   if (status === "enviado" && resultado) {
+    let descricaoPagamento: string | null = null;
+    if (formaPagamento?.metodo === "cartao") {
+      const op = simulacaoCartao.find((o) => o.parcelas === formaPagamento.parcelas);
+      if (op) {
+        descricaoPagamento =
+          op.parcelas === 1
+            ? `Cartão de crédito à vista (1x) de ${formatBRL(op.valorParcela)}`
+            : `Cartão de crédito em ${op.parcelas}x de ${formatBRL(op.valorParcela)} (total ${formatBRL(op.valorTotal)})`;
+      }
+    } else if (formaPagamento?.metodo === "pixVista") {
+      descricaoPagamento = `PIX à vista de ${formatBRL(resultado.total)}`;
+    } else if (formaPagamento?.metodo === "pixParcelado") {
+      const op = simulacaoPix.find((o) => o.parcelas === formaPagamento.parcelas);
+      if (op) {
+        descricaoPagamento = `PIX parcelado — entrada de ${formatBRL(op.entrada)} + ${op.parcelas}x de ${formatBRL(op.valorParcela)} (total ${formatBRL(op.valorTotal)})`;
+      }
+    }
+    const mensagemWhatsapp = [
+      "Olá! Fiz uma simulação de viagem personalizada no site da Alpinea.",
+      `Nome: ${nome}`,
+      `Pacote: Hotel ${resultado.categoriaHotel} · Aéreo ${resultado.classeAereo} · ${dias} dias · ${pessoas} ${pessoas === 1 ? "pessoa" : "pessoas"}`,
+      nomesCidadesSelecionadas.length > 0 ? `Cidades: ${nomesCidadesSelecionadas.join(", ")}` : "",
+      `Total estimado: ${formatBRL(resultado.total)}`,
+      `Forma de pagamento: ${descricaoPagamento ?? "a definir com a equipe"}`,
+    ]
+      .filter(Boolean)
+      .join("\n");
+    const linhaOpcao = (selecionado: boolean) =>
+      `-mx-2 flex cursor-pointer items-center gap-3 rounded-lg px-2 py-2.5 transition ${
+        selecionado ? "bg-[#6ec3d9]/15" : "hover:bg-white/[0.04]"
+      }`;
     return (
       <main className="min-h-screen bg-black px-6 py-16 text-white md:px-16 md:py-24">
         <div className="mx-auto max-w-xl text-center">
@@ -744,13 +818,125 @@ export default function ViagemPersonalizadaSelfServicePage() {
             </p>
           </div>
 
+          <div className="mt-8 rounded-2xl border border-white/10 bg-white/[0.03] p-6 text-left md:p-8">
+            <p className="text-[10px] uppercase tracking-[0.2em] text-white/40">Forma de pagamento</p>
+            <p className="mt-1 text-[11px] leading-5 text-white/35">
+              Escolha como prefere pagar e envie pelo WhatsApp — nossa equipe processa o pedido a partir da sua
+              mensagem. Valores sujeitos a confirmação na emissão.
+            </p>
+
+            <div className="mt-5 rounded-xl border border-white/10 bg-white/[0.03] p-4">
+              <div className="flex items-center gap-3">
+                <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-white/90">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src="/images/icone-cartao-credito.png" alt="" className="h-7 w-7 object-contain" />
+                </span>
+                <p className="text-sm font-semibold text-white/85">Cartão de crédito</p>
+              </div>
+              <div className="mt-3 divide-y divide-white/[0.07] border-t border-white/[0.07]">
+                {simulacaoCartao.map((op) => {
+                  const sel = formaPagamento?.metodo === "cartao" && formaPagamento.parcelas === op.parcelas;
+                  return (
+                    <label key={op.parcelas} className={linhaOpcao(sel)}>
+                      <input
+                        type="radio"
+                        name="formaPagamento"
+                        checked={sel}
+                        onChange={() => setFormaPagamento({ metodo: "cartao", parcelas: op.parcelas })}
+                        className="h-4 w-4 shrink-0 accent-[#6ec3d9]"
+                      />
+                      <span className="w-9 shrink-0 text-sm text-white/45">{op.parcelas}x</span>
+                      <span className="flex-1 text-base font-semibold text-white">{formatBRL(op.valorParcela)}</span>
+                      <span className="shrink-0 text-[11px] text-white/35">total {formatBRL(op.valorTotal)}</span>
+                    </label>
+                  );
+                })}
+              </div>
+            </div>
+
+            <div className="mt-4 rounded-xl border border-white/10 bg-white/[0.03] p-4">
+              <div className="flex items-center gap-3">
+                <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-white/90">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src="/images/icone-pix.png" alt="" className="h-7 w-7 object-contain" />
+                </span>
+                <p className="text-sm font-semibold text-white/85">PIX</p>
+              </div>
+              <label
+                className={`mt-3 flex cursor-pointer items-center gap-3 rounded-lg px-3.5 py-3 transition ${
+                  formaPagamento?.metodo === "pixVista" ? "bg-[#6ec3d9]/20" : "bg-[#6ec3d9]/[0.07] hover:bg-[#6ec3d9]/[0.12]"
+                }`}
+              >
+                <input
+                  type="radio"
+                  name="formaPagamento"
+                  checked={formaPagamento?.metodo === "pixVista"}
+                  onChange={() => setFormaPagamento({ metodo: "pixVista", parcelas: 1 })}
+                  className="h-4 w-4 shrink-0 accent-[#6ec3d9]"
+                />
+                <span className="flex-1 text-sm text-white/70">à vista</span>
+                <span className="text-base font-semibold text-white">{formatBRL(resultado.total)}</span>
+              </label>
+              {simulacaoPix.length > 0 ? (
+                <div className="mt-3">
+                  <p className="text-[10px] text-white/35">
+                    parcelado — entrada de {formatBRL(simulacaoPix[0].entrada)} ({Math.round(ENTRADA_PIX_PCT * 100)}%) +
+                    parcelas
+                  </p>
+                  <div className="mt-1.5 divide-y divide-white/[0.07] border-t border-white/[0.07]">
+                    {simulacaoPix.map((op) => {
+                      const sel = formaPagamento?.metodo === "pixParcelado" && formaPagamento.parcelas === op.parcelas;
+                      return (
+                        <label key={op.parcelas} className={linhaOpcao(sel)}>
+                          <input
+                            type="radio"
+                            name="formaPagamento"
+                            checked={sel}
+                            onChange={() => setFormaPagamento({ metodo: "pixParcelado", parcelas: op.parcelas })}
+                            className="h-4 w-4 shrink-0 accent-[#6ec3d9]"
+                          />
+                          <span className="w-9 shrink-0 text-sm text-white/45">{op.parcelas}x</span>
+                          <span className="flex-1 text-base font-semibold text-white">{formatBRL(op.valorParcela)}</span>
+                          <span className="shrink-0 text-[11px] text-white/35">total {formatBRL(op.valorTotal)}</span>
+                        </label>
+                      );
+                    })}
+                  </div>
+                </div>
+              ) : (
+                dataViagem && (
+                  <p className="mt-3 text-[11px] text-white/35">
+                    Viagem muito próxima — sem prazo para parcelar no PIX, só à vista.
+                  </p>
+                )
+              )}
+            </div>
+
+            <div
+              className={`mt-4 rounded-lg border px-3.5 py-3 text-xs ${
+                descricaoPagamento
+                  ? "border-emerald-400/30 bg-emerald-400/10 text-emerald-300"
+                  : "border-white/10 bg-white/[0.02] text-white/40"
+              }`}
+            >
+              {descricaoPagamento ? (
+                <>
+                  <span className="font-semibold">Forma de pagamento selecionada: </span>
+                  {descricaoPagamento}.
+                </>
+              ) : (
+                "Nenhuma forma de pagamento marcada — você também pode definir direto com a equipe no WhatsApp."
+              )}
+            </div>
+          </div>
+
           <a
-            href="https://wa.me/5511930300101"
+            href={`https://wa.me/5511930300101?text=${encodeURIComponent(mensagemWhatsapp)}`}
             target="_blank"
             rel="noreferrer"
             className="mt-8 inline-flex items-center justify-center rounded-full bg-[#279E52] px-8 py-3 text-sm font-medium text-white transition hover:bg-[#1f7d41]"
           >
-            Falar agora no WhatsApp
+            Enviar pelo WhatsApp e finalizar
           </a>
         </div>
       </main>
@@ -1450,6 +1636,30 @@ export default function ViagemPersonalizadaSelfServicePage() {
               />
             </label>
 
+            <div className="sm:col-span-2 -mt-2">
+              <span className="mb-1.5 block text-[10px] uppercase tracking-wide text-white/40">Flexibilidade das datas</span>
+              <div className="flex flex-wrap gap-2">
+                {FLEXIBILIDADE_DATAS.map((f) => (
+                  <button
+                    key={f.key}
+                    type="button"
+                    onClick={() => setFlexibilidade(f.key)}
+                    aria-pressed={flexibilidade === f.key}
+                    className={`rounded-full border px-4 py-2 text-xs transition ${
+                      flexibilidade === f.key
+                        ? "border-[#6ec3d9] bg-[#6ec3d9]/15 font-medium text-[#6ec3d9]"
+                        : "border-white/15 text-white/60 hover:border-white/30"
+                    }`}
+                  >
+                    {f.nome}
+                  </button>
+                ))}
+              </div>
+              <p className="mt-1.5 text-[11px] text-white/35">
+                Datas flexíveis podem ajudar a encontrar tarifas melhores — nossa equipe avalia com você.
+              </p>
+            </div>
+
             <div className="sm:col-span-2">
               <span className="mb-2 block text-[10px] uppercase tracking-[0.2em] text-white/40">
                 <LabelNumerado texto="17. Seguro viagem — idade dos passageiros" />
@@ -1704,6 +1914,17 @@ export default function ViagemPersonalizadaSelfServicePage() {
               />
             </label>
           </div>
+
+          {diasInsuficientes && (
+            <p className="rounded-lg border border-amber-400/30 bg-amber-400/10 px-4 py-3 text-xs leading-5 text-amber-300">
+              Com {cidades.length} cidade{cidades.length === 1 ? "" : "s"}
+              {parquesDiaInteiro > 0
+                ? ` e ${parquesDiaInteiro} parque${parquesDiaInteiro === 1 ? "" : "s"} de dia inteiro`
+                : ""}{" "}
+              selecionados, um roteiro de {dias} dia{dias === 1 ? "" : "s"} tende a ficar corrido. Sugestão: pelo
+              menos {diasMinimosSugeridos} dias — considere aumentar a duração ou reduzir cidades/atrações.
+            </p>
+          )}
 
           {status === "erro" && (
             <p className="text-center text-sm text-red-400">{erro}</p>

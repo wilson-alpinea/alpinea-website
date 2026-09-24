@@ -491,3 +491,23 @@ export const EXTENSOES_INTERNACIONAIS: {
     ],
   },
 ];
+
+export const FLEXIBILIDADE_DATAS = [
+  { key: "fixas", nome: "Datas fixas" },
+  { key: "tres", nome: "± 3 dias" },
+  { key: "sete", nome: "± 7 dias" },
+  { key: "flexivel", nome: "Flexível" },
+] as const;
+export type FlexibilidadeDatasKey = (typeof FLEXIBILIDADE_DATAS)[number]["key"];
+
+// Simulação de pagamento (Tabela Price) — só valores finais são exibidos ao cliente.
+export const TAXA_MAQUINA_CARTAO = 0.0355;
+export const TAXA_JUROS_CARTAO_MES = 0.0169;
+export const OPCOES_PARCELAS_CARTAO = [1, 4, 10, 12] as const;
+export const ENTRADA_PIX_PCT = 0.3;
+export const TAXA_JUROS_PIX_MES = 0.0149;
+export const OPCOES_PARCELAS_PIX = [4, 10, 12] as const;
+export function calcularParcelaPrice(valorFinanciado: number, taxaMensal: number, parcelas: number) {
+  if (parcelas <= 1) return valorFinanciado;
+  return (valorFinanciado * taxaMensal) / (1 - Math.pow(1 + taxaMensal, -parcelas));
+}
