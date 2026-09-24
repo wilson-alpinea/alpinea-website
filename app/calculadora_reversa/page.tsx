@@ -3688,45 +3688,61 @@ export default function CalculadoraReversaPage() {
                   />
                 </span>
                 {!camposOcultos.has(10) && (
-                <div className="flex flex-wrap gap-2">
-                  {destinosSelecionados.map((cidade, indice) => (
-                    <div
-                      key={indice}
-                      className="relative flex w-32 flex-col items-center justify-center gap-1 rounded-lg border border-black/15 bg-white px-2 py-3"
-                    >
-                      <CidadeCombobox
-                        value={cidade}
-                        onChange={(key) => substituirDestinoManual(indice, key)}
-                        todasSelecionadas={destinosSelecionados}
-                      />
-                      {destinosSelecionados.length > 1 && (
-                        <button
-                          type="button"
-                          onClick={() => removerDestinoManual(indice)}
-                          aria-label="Remover cidade"
-                          className="absolute -right-1.5 -top-1.5 flex h-5 w-5 items-center justify-center rounded-full border border-black/15 bg-white text-[10px] text-black/60 transition hover:border-red-300 hover:text-red-500"
-                        >
-                          ×
-                        </button>
-                      )}
-                    </div>
-                  ))}
-                  {destinosSelecionados.length < MAX_CIDADES_ROTEIRO && (
-                    <button
-                      type="button"
-                      onClick={adicionarDestinoManual}
-                      className="flex w-32 flex-col items-center justify-center gap-1 rounded-lg border border-dashed border-black/20 px-2 py-3 text-center text-xs text-black/50 transition hover:border-[#2f80c9]/50 hover:text-[#2f80c9]"
-                    >
-                      <span className="text-lg leading-none">+</span>
-                      <span>Adicionar cidade</span>
-                    </button>
-                  )}
+                <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4">
+                  {DESTINOS.map((destino) => {
+                    const marcado = destinosSelecionados.includes(destino.key);
+                    const limiteAtingido = !marcado && destinosSelecionados.length >= MAX_CIDADES_ROTEIRO;
+                    const ultimaSelecionada = marcado && destinosSelecionados.length === 1;
+                    return (
+                      <button
+                        key={destino.key}
+                        type="button"
+                        disabled={limiteAtingido || ultimaSelecionada}
+                        title={
+                          limiteAtingido
+                            ? `Limite de ${MAX_CIDADES_ROTEIRO} cidades`
+                            : ultimaSelecionada
+                              ? "Mantenha ao menos 1 cidade"
+                              : undefined
+                        }
+                        onClick={() => alternarDestino(destino.key)}
+                        aria-pressed={marcado}
+                        className={`overflow-hidden rounded-xl border text-left transition disabled:cursor-not-allowed ${
+                          marcado
+                            ? "border-[#2f80c9] bg-[#2f80c9]/10 ring-1 ring-[#2f80c9]"
+                            : "border-black/10 bg-white hover:border-black/30 disabled:opacity-40"
+                        }`}
+                      >
+                        <div className="relative h-24 w-full bg-black/[0.06]">
+                          {destino.imagem ? (
+                            // eslint-disable-next-line @next/next/no-img-element
+                            <img
+                              src={destino.imagem}
+                              alt={destino.nome}
+                              loading="lazy"
+                              className="h-full w-full object-cover"
+                            />
+                          ) : (
+                            <div className="flex h-full w-full items-center justify-center text-2xl text-black/25">⛩</div>
+                          )}
+                          {marcado && (
+                            <span className="absolute right-1.5 top-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-[#2f80c9] text-[11px] text-white">
+                              ✓
+                            </span>
+                          )}
+                        </div>
+                        <div className={`px-2 py-2 text-xs ${marcado ? "font-medium text-[#2f80c9]" : "text-black/70"}`}>
+                          {destino.nome}
+                        </div>
+                      </button>
+                    );
+                  })}
                 </div>
                 )}
               </div>
             ) : (
               <div className="mt-4 overflow-hidden rounded-xl border border-black/10">
-                <div className="grid grid-cols-[minmax(140px,auto)_1fr] gap-x-6 bg-[#0A2540] px-4 py-2 text-[10px] uppercase tracking-[0.15em] text-white/70">
+                <div className="grid grid-cols-[minmax(140px,auto)_1fr_7.5rem] gap-x-6 bg-[#0A2540] px-4 py-2 text-[10px] uppercase tracking-[0.15em] text-white/70">
                   <span className="flex items-center">
                     <LabelNumerado texto="10. Cidades recomendadas" />
                     <BotaoOcultarCampo
@@ -3735,6 +3751,7 @@ export default function CalculadoraReversaPage() {
                     />
                   </span>
                   <span>Destaques do{temasSelecionados.size > 1 ? "s temas" : " tema"}</span>
+                  <span aria-hidden />
                 </div>
                 {!camposOcultos.has(10) && cidadesTemasAtivos.map((c) => {
                   const destino = DESTINOS.find((d) => d.key === c.key);
@@ -3743,7 +3760,7 @@ export default function CalculadoraReversaPage() {
                   return (
                     <label
                       key={c.key}
-                      className="grid cursor-pointer grid-cols-[minmax(140px,auto)_1fr] items-start gap-x-6 gap-y-1 border-t border-black/10 px-4 py-3"
+                      className="grid cursor-pointer grid-cols-[minmax(140px,auto)_1fr_7.5rem] items-center gap-x-6 gap-y-1 border-t border-black/10 px-4 py-3"
                     >
                       <span className="flex flex-wrap items-center gap-2 text-sm">
                         <input
@@ -3788,6 +3805,14 @@ export default function CalculadoraReversaPage() {
                           </span>
                         )}
                       </span>
+                      <div className="h-16 w-full overflow-hidden rounded-lg bg-black/[0.06]">
+                        {destino?.imagem ? (
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img src={destino.imagem} alt={destino.nome} loading="lazy" className="h-full w-full object-cover" />
+                        ) : (
+                          <div className="flex h-full w-full items-center justify-center text-xl text-black/25">⛩</div>
+                        )}
+                      </div>
                     </label>
                   );
                 })}
