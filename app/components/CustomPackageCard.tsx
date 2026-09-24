@@ -1300,14 +1300,14 @@ export const DESTINOS = [
   { key: "yakushima", nome: "Yakushima", imagem: "/images/yakushima.jpg", principal: false },
   // Adicionadas pra cobrir os "Temas" da Calculadora Reversa (04/set/2026)
   // — sem foto própria ainda (imagem: null, mesmo tratamento de "nara").
-  { key: "fuji", nome: "Fuji / Kawaguchiko", imagem: null, principal: false },
-  { key: "motegi", nome: "Motegi", imagem: null, principal: false },
-  { key: "suzuka", nome: "Suzuka", imagem: null, principal: false },
-  { key: "koyasan", nome: "Koyasan", imagem: null, principal: false },
-  { key: "kamikochi", nome: "Kamikochi", imagem: null, principal: false },
-  { key: "kinosaki", nome: "Kinosaki Onsen", imagem: null, principal: false },
-  { key: "kusatsu", nome: "Kusatsu Onsen", imagem: null, principal: false },
-  { key: "niseko", nome: "Niseko", imagem: null, principal: false },
+  { key: "fuji", nome: "Fuji / Kawaguchiko", imagem: "/images/fuji-chaba.png", principal: false },
+  { key: "motegi", nome: "Motegi", imagem: "/images/motegi.png", principal: false },
+  { key: "suzuka", nome: "Suzuka", imagem: "/images/suzuka.png", principal: false },
+  { key: "koyasan", nome: "Koyasan", imagem: "/images/koyasan-okunoin.png", principal: false },
+  { key: "kamikochi", nome: "Kamikochi", imagem: "/images/kamikochi.png", principal: false },
+  { key: "kinosaki", nome: "Kinosaki Onsen", imagem: "/images/kinosaki.png", principal: false },
+  { key: "kusatsu", nome: "Kusatsu Onsen", imagem: "/images/kusatsu.png", principal: false },
+  { key: "niseko", nome: "Niseko", imagem: "/images/niseko.png", principal: false },
   { key: "hakuba", nome: "Hakuba", imagem: null, principal: false },
   { key: "nozawa", nome: "Nozawa Onsen", imagem: null, principal: false },
 ] as const;
