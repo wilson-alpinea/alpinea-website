@@ -79,6 +79,15 @@ export async function POST(req: Request) {
     const valorEstimado = Number(body.valorEstimado) || null;
     const dataViagem = String(body.dataViagem || "").trim();
     const observacoesCliente = String(body.observacoes || "").trim();
+    const temas: string[] = Array.isArray(body.temas)
+      ? body.temas.slice(0, 5).map((x: unknown) => String(x).slice(0, 80))
+      : [];
+    const hotelMax = String(body.hotelMax || "").trim();
+    const classeMax = String(body.classeMax || "").trim();
+    const comCafe = body.comCafe === true;
+    const temporada = String(body.temporada || "").trim().slice(0, 80);
+    const origemVoo = String(body.origemVoo || "").trim().slice(0, 80);
+    const bagagem = String(body.bagagem || "").trim().slice(0, 80);
     const idades: number[] = Array.isArray(body.idades)
       ? body.idades.map(Number).filter((n: number) => Number.isFinite(n) && n >= 0 && n <= 120).slice(0, 12)
       : [];
@@ -105,6 +114,13 @@ export async function POST(req: Request) {
       ["Categoria de hotel sugerida", categoriaHotel || "Não informado"],
       ["Classe de voo sugerida", classeAereo || "Não informado"],
       ["Valor estimado do pacote", valorEstimado ? `R$ ${valorEstimado.toLocaleString("pt-BR")}` : "Não informado"],
+      ["Temas", temas.length ? temas.join(", ") : "Nenhum"],
+      ["Categoria máxima de hotel", hotelMax || "Não informado"],
+      ["Classe desejada do voo", classeMax || "Não informado"],
+      ["Café da manhã", comCafe ? "Sim" : "Não"],
+      ["Temporada", temporada || "Não informado"],
+      ["Origem do voo", origemVoo || "Não informado"],
+      ["Bagagem", bagagem || "Não informado"],
       ["Idades dos passageiros", idades.length ? idades.join(", ") : "Não informado"],
       [
         "Itens adicionais escolhidos",
