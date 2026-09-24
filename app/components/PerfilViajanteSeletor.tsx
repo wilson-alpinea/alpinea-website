@@ -1,5 +1,6 @@
 "use client";
 
+import { EXPLICACAO_CLIENTE_PERFIL } from "../lib/precificacaoPerfil";
 import {
   PERFIS_VIAJANTE,
   type PerfilViajanteKey,
@@ -14,6 +15,7 @@ export default function PerfilViajanteSeletor({
   onChange: (v: PerfilViajanteKey) => void;
 }) {
   return (
+    <>
     <div className="grid grid-cols-1 gap-2 sm:grid-cols-3">
       {PERFIS_VIAJANTE.map((p) => {
         const marcado = value === p.key;
@@ -50,5 +52,7 @@ export default function PerfilViajanteSeletor({
         );
       })}
     </div>
+    <p className="mt-2 text-[11px] text-black/60">{EXPLICACAO_CLIENTE_PERFIL[value]}</p>
+    </>
   );
 }

@@ -73,6 +73,11 @@ import {
 import { CambioLabel } from "../components/CambioLabel";
 import PerfilViajanteSeletor from "../components/PerfilViajanteSeletor";
 import {
+  calcularComponentesRitmo,
+  calcularFeePlanejamento,
+  EXPLICACAO_CLIENTE_PERFIL,
+} from "../lib/precificacaoPerfil";
+import {
   PERFIL_VIAJANTE_PADRAO,
   PERFIS_VIAJANTE,
   diasMinimosPorPerfil,
@@ -1919,8 +1924,25 @@ export default function CalculadoraReversaPage() {
   const diasInsuficientes = dias < diasMinimosSugeridos;
 
   const resultado = useMemo(() => {
-    const precoRoteiro =
-      ROTEIRO_PRECO_BASE + Math.max(0, dias - ROTEIRO_BASE_DIAS) * ROTEIRO_PRECO_DIA_EXTRA;
+    // Fee de planejamento = preço-base do roteiro × complexidade de cidades ×
+    // complexidade do ritmo (perfil do viajante) — ver app/lib/precificacaoPerfil.ts.
+    const precoRoteiro = calcularFeePlanejamento(
+      ROTEIRO_PRECO_BASE + Math.max(0, dias - ROTEIRO_BASE_DIAS) * ROTEIRO_PRECO_DIA_EXTRA,
+      perfilViajante,
+      destinosSelecionados.length,
+    );
+    // Custos variáveis por ritmo (ingressos gerais, transporte urbano,
+    // experiências/reservas, complexidade operacional). Itens já
+    // precificados um a um (parques, guia, motorista, JR Pass…) mantêm o
+    // preço real e não passam por multiplicador.
+    const ritmo = calcularComponentesRitmo({
+      perfil: perfilViajante,
+      dias,
+      pessoas,
+      cidadesQtd: destinosSelecionados.length,
+      parquesDiaInteiro: diasParquesDiaInteiro,
+      cotacaoUSD: cambioCotacao,
+    });
     // Ajuste por origem do voo — pedido do Wilson, 14/set/2026, valor fixo
     // por pessoa (ida e volta) a partir do pedido de 16/set/2026 (ver
     // comentário em ORIGENS_VOO). Não se aplica no modo manual (o valor já
@@ -1974,7 +1996,7 @@ export default function CalculadoraReversaPage() {
     function categoriaHotelComMultiplicador(multTemporada: number) {
       if (hotelManual) return hotelCategoriaManual;
       let categoria: (typeof CATEGORIAS_HOTEL)[number] = "3 estrelas";
-      let gastoSimulado = precoRoteiro + precoAereoEconomy + precoHotel("3 estrelas", multTemporada);
+      let gastoSimulado = precoRoteiro + ritmo.total + precoAereoEconomy + precoHotel("3 estrelas", multTemporada);
       const indiceMaximoHotel = CATEGORIAS_HOTEL.indexOf(hotelCategoriaMaxima);
       for (const cat of ["4 estrelas", "5 estrelas", "Elite"] as const) {
         if (CATEGORIAS_HOTEL.indexOf(cat) > indiceMaximoHotel) break;
@@ -2057,6 +2079,14 @@ export default function CalculadoraReversaPage() {
         ],
         precoBRL: precoSeguro,
       },
+      ...ritmo.linhas.map((l) => ({
+        chave: l.chave,
+        label: l.label,
+        detalhe: [
+          `Perfil ${PERFIS_VIAJANTE.find((x) => x.key === perfilViajante)?.nome ?? perfilViajante}: ${EXPLICACAO_CLIENTE_PERFIL[perfilViajante]}`,
+        ],
+        precoBRL: l.precoBRL,
+      })),
     ];
 
     let gasto = incluidos.reduce((soma, item) => soma + item.precoBRL, 0);
@@ -2546,7 +2576,7 @@ export default function CalculadoraReversaPage() {
       precoBRL: precoHotel(categoriaHotelFinal),
     };
 
-    const precoMinimo = precoRoteiro + precoAereoEconomy + precoHotel("3 estrelas") + precoSeguro;
+    const precoMinimo = precoRoteiro + ritmo.total + precoAereoEconomy + precoHotel("3 estrelas") + precoSeguro;
     const saldo = orcamento - gasto;
 
     return {
@@ -2561,8 +2591,12 @@ export default function CalculadoraReversaPage() {
       cabeNoOrcamento: orcamento >= precoMinimo,
       precoMinimo,
       precosExtensaoPorCategoria,
+      ritmoAdmin: ritmo.resultado,
     };
   }, [
+    perfilViajante,
+    destinosSelecionados,
+    diasParquesDiaInteiro,
     orcamento,
     dias,
     pessoas,
@@ -3610,6 +3644,27 @@ export default function CalculadoraReversaPage() {
                 </span>
               </span>
               <PerfilViajanteSeletor value={perfilViajante} onChange={setPerfilViajante} />
+              <details className="mt-3 rounded-lg border border-amber-300 bg-amber-50/40 p-3 text-[11px] text-black/70">
+                <summary className="cursor-pointer text-[10px] uppercase tracking-[0.15em] text-amber-800">
+                  Detalhamento do perfil — só admin (não vai pro cliente)
+                </summary>
+                <pre className="mt-2 overflow-x-auto whitespace-pre-wrap font-mono text-[10px] leading-4">
+                  {JSON.stringify(
+                    {
+                      travel_pace_index: resultado.ritmoAdmin.travel_pace_index,
+                      dias_ativos: resultado.ritmoAdmin.dias_ativos,
+                      atracoes_estimadas: resultado.ritmoAdmin.atracoes_estimadas,
+                      ...resultado.ritmoAdmin.admin,
+                    },
+                    (_k, v) => (typeof v === "number" ? Math.round(v * 100) / 100 : v),
+                    2,
+                  )}
+                </pre>
+                <p className="mt-2 text-black/50">
+                  Custos em USD (sem margem/imposto), base provisória em app/lib/precificacaoPerfil.ts. O fee de
+                  planejamento aparece já no item &quot;Roteiro Personalizado&quot;.
+                </p>
+              </details>
             </div>
 
             {/* Pedido do Wilson, 11/set/2026: ocultar um campo deve fazer o

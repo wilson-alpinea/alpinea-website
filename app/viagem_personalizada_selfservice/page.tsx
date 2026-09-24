@@ -89,6 +89,10 @@ import {
   type PerfilViajanteKey,
 } from "../lib/calculadoraCatalogoPublico";
 import PerfilViajanteSeletor from "../components/PerfilViajanteSeletor";
+import {
+  calcularComponentesRitmo,
+  calcularFeePlanejamento,
+} from "../lib/precificacaoPerfil";
 
 const display = Bodoni_Moda({ subsets: ["latin"], weight: ["400", "500", "600"] });
 
@@ -211,6 +215,7 @@ function calcularExtras(p: {
   extCategorias: Record<ExtensaoInternacionalKey, CategoriaHotelExtensao>;
   cotacaoIene: number;
   quantidadeIenes: number;
+  perfil: PerfilViajanteKey;
 }) {
   const { dias, pessoas, cambioCotacao: c } = p;
   const linhas: LinhaExtra[] = [];
@@ -313,6 +318,20 @@ function calcularExtras(p: {
     });
   }
 
+  // Ritmo do roteiro (perfil do viajante): só as categorias gerais que variam
+  // com o ritmo — itens já precificados acima (ingressos de parques, guia,
+  // motorista, JR Pass…) mantêm o preço real, sem multiplicador.
+  const parquesDiaInteiro = (["disneyland", "disneysea", "usj"] as const).filter((k) => p.ingressos.has(k)).length;
+  const ritmo = calcularComponentesRitmo({
+    perfil: p.perfil,
+    dias,
+    pessoas,
+    cidadesQtd: p.cidadesQtd,
+    parquesDiaInteiro,
+    cotacaoUSD: c,
+  });
+  for (const l of ritmo.linhas) linhas.push({ label: l.label, precoBRL: l.precoBRL });
+
   return { linhas, total: linhas.reduce((s, l) => s + l.precoBRL, 0), precoSeguro, avisoSeguro };
 }
 
@@ -352,12 +371,14 @@ function simular(params: {
   comCafe: boolean;
   temporada: TemporadaKey;
   ajusteAereoPorPessoa: number;
+  perfil: PerfilViajanteKey;
 }): Resultado {
   const { orcamento, dias, pessoas, tipoQuarto, cidades, cambioCotacao } = params;
   const extrasTotal = params.extras.reduce((s, l) => s + l.precoBRL, 0);
   const multCidadeBase = multiplicadorCidades(cidades);
   const multTemporada = multiplicadorTemporadaCidades(cidades, params.temporada);
-  const roteiro = precoRoteiro(dias);
+  // Fee de planejamento: preço-base do roteiro × complexidade de cidades × complexidade do ritmo (perfil).
+  const roteiro = calcularFeePlanejamento(precoRoteiro(dias), params.perfil, cidades.length);
   const seguro = params.precoSeguro;
   const ajusteAereo = params.ajusteAereoPorPessoa;
   const indiceHotelMax = CATEGORIAS_HOTEL.indexOf(params.hotelMax);
@@ -634,6 +655,7 @@ export default function ViagemPersonalizadaSelfServicePage() {
     extCategorias,
     cotacaoIene,
     quantidadeIenes,
+    perfil: perfilViajante,
   });
   const simulacaoAoVivo = simular({
     orcamento,
@@ -650,6 +672,7 @@ export default function ViagemPersonalizadaSelfServicePage() {
     comCafe,
     temporada,
     ajusteAereoPorPessoa: ajusteOrigem + ajusteBagagem,
+    perfil: perfilViajante,
   });
 
   // Nada além do orçamento pode ser editado até ele ser confirmado.
@@ -704,6 +727,7 @@ export default function ViagemPersonalizadaSelfServicePage() {
       extCategorias,
       cotacaoIene,
       quantidadeIenes,
+      perfil: perfilViajante,
     });
     const resultadoCalculado = simular({
       orcamento,
@@ -720,6 +744,7 @@ export default function ViagemPersonalizadaSelfServicePage() {
       comCafe,
       temporada,
       ajusteAereoPorPessoa: ajusteOrigem + ajusteBagagem,
+      perfil: perfilViajante,
     });
     setResultado(resultadoCalculado);
     setStatus("enviando");
