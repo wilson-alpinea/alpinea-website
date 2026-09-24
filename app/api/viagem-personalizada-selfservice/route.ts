@@ -79,6 +79,21 @@ export async function POST(req: Request) {
     const valorEstimado = Number(body.valorEstimado) || null;
     const dataViagem = String(body.dataViagem || "").trim();
     const observacoesCliente = String(body.observacoes || "").trim();
+    const idades: number[] = Array.isArray(body.idades)
+      ? body.idades.map(Number).filter((n: number) => Number.isFinite(n) && n >= 0 && n <= 120).slice(0, 12)
+      : [];
+    const extras: { label: string; precoBRL: number }[] = Array.isArray(body.extras)
+      ? body.extras
+          .slice(0, 30)
+          .map((e: { label?: unknown; precoBRL?: unknown }) => ({
+            label: String(e?.label || "").slice(0, 160),
+            precoBRL: Number(e?.precoBRL) || 0,
+          }))
+          .filter((e: { label: string }) => e.label)
+      : [];
+    const interesses: string[] = Array.isArray(body.interesses)
+      ? body.interesses.slice(0, 10).map((i: unknown) => String(i).slice(0, 80))
+      : [];
 
     const linhasResumo: [string, string][] = [
       ["Orçamento informado", orcamento ? `R$ ${orcamento.toLocaleString("pt-BR")}` : "Não informado"],
@@ -90,6 +105,14 @@ export async function POST(req: Request) {
       ["Categoria de hotel sugerida", categoriaHotel || "Não informado"],
       ["Classe de voo sugerida", classeAereo || "Não informado"],
       ["Valor estimado do pacote", valorEstimado ? `R$ ${valorEstimado.toLocaleString("pt-BR")}` : "Não informado"],
+      ["Idades dos passageiros", idades.length ? idades.join(", ") : "Não informado"],
+      [
+        "Itens adicionais escolhidos",
+        extras.length
+          ? extras.map((e) => `${e.label} (R$ ${e.precoBRL.toLocaleString("pt-BR")})`).join("; ")
+          : "Nenhum",
+      ],
+      ["Serviços de interesse (sob consulta)", interesses.length ? interesses.join(", ") : "Nenhum"],
       ["Observações do cliente", observacoesCliente || "Nenhuma"],
     ];
 

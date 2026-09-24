@@ -22,8 +22,27 @@ import {
   ROTEIRO_BASE_DIAS,
   ROTEIRO_PRECO_BASE,
   ROTEIRO_PRECO_DIA_EXTRA,
+  DIARIA_ESIM_USD_PAX,
+  PRECO_DISNEY_PREMIER_ACCESS_POR_ATRACAO_USD_PAX,
+  PRECO_MALA_INTERMUNICIPAL_USD,
+  PRECO_RESTAURANTES_HIGHEND_USD,
+  RESTAURANTES_HIGHEND_LIMITE_PESSOAS,
+  PRECO_TRANSFER_ONIBUS_USD_PAX,
+  PRECO_RESERVA_RESTAURANTE_USD,
+  PRECO_EXPERIENCIA_SOB_MEDIDA_USD,
+  DIARIA_CONCIERGE_USD,
 } from "../components/CustomPackageCard";
 import { useCambioUSD, formatBRL } from "../hooks/useCambioUSD";
+import {
+  INGRESSOS_PUBLICOS,
+  USJ_EXPRESS_PASS_PUBLICO,
+  SERVICOS_PUBLICOS,
+  IDADE_LIMITE_SEGURO,
+  multiplicadorSeguroPorIdade,
+  type IngressoKey,
+  type UsjTierKey,
+  type ServicoKey,
+} from "../lib/calculadoraCatalogoPublico";
 
 const display = Bodoni_Moda({ subsets: ["latin"], weight: ["400", "500", "600"] });
 
@@ -91,7 +110,89 @@ function precoAereoCalc(classe: ClasseAereo, pessoas: number, cambioCotacao: num
   return PRECO_AEREO_ECONOMY_BRL * pessoas;
 }
 
+type LinhaExtra = { label: string; precoBRL: number };
+
+// Itens opcionais escolhidos pelo cliente (eSIM, ingressos, serviços) +
+// seguro por idade. Entram como valor fixo no pacote: o preenchimento por
+// orçamento (hotel/voo) só usa o que sobra depois deles.
+function calcularExtras(p: {
+  dias: number;
+  pessoas: number;
+  cidadesQtd: number;
+  cambioCotacao: number;
+  idades: number[];
+  esimPessoas: number;
+  ingressos: Set<IngressoKey>;
+  premierAtracoes: number;
+  usjTier: UsjTierKey;
+  servicos: Set<ServicoKey>;
+}) {
+  const { dias, pessoas, cambioCotacao: c } = p;
+  const linhas: LinhaExtra[] = [];
+  const fora = p.idades.filter((i) => i > IDADE_LIMITE_SEGURO).length;
+  const precoSeguro = Math.round(
+    p.idades.reduce((soma, idade) => soma + DIARIA_SEGURO_VIAGEM * dias * (multiplicadorSeguroPorIdade(idade) ?? 0), 0),
+  );
+  const avisoSeguro =
+    fora > 0
+      ? `${fora} ${fora === 1 ? "passageiro está" : "passageiros estão"} acima do limite de ${IDADE_LIMITE_SEGURO} anos do seguro viagem — não incluído no preço; nossa equipe cota diretamente com a seguradora.`
+      : null;
+
+  if (p.esimPessoas > 0) {
+    linhas.push({
+      label: `eSIM (${p.esimPessoas} ${p.esimPessoas === 1 ? "pessoa" : "pessoas"})`,
+      precoBRL: Math.round(DIARIA_ESIM_USD_PAX * dias * p.esimPessoas * c),
+    });
+  }
+
+  for (const ing of INGRESSOS_PUBLICOS) {
+    if (!p.ingressos.has(ing.key)) continue;
+    const ehDisney = ing.key === "disneyland" || ing.key === "disneysea";
+    let fastUSD = 0;
+    let nomeFast = "";
+    if (ehDisney && p.premierAtracoes > 0) {
+      fastUSD = PRECO_DISNEY_PREMIER_ACCESS_POR_ATRACAO_USD_PAX * p.premierAtracoes;
+      nomeFast = `Premier Access (${p.premierAtracoes} ${p.premierAtracoes === 1 ? "atração" : "atrações"})`;
+    } else if (ing.key === "usj" && p.usjTier !== "nenhum") {
+      const t = USJ_EXPRESS_PASS_PUBLICO.find((x) => x.key === p.usjTier);
+      fastUSD = t?.precoUSD ?? 0;
+      nomeFast = t?.label ?? "";
+    }
+    linhas.push({
+      label: `Ingresso — ${ing.nome}${nomeFast ? ` + ${nomeFast}` : ""}`,
+      precoBRL: Math.round((ing.precoUSD + fastUSD) * pessoas * c),
+    });
+  }
+
+  if (p.servicos.has("malasIntermunicipal")) {
+    const trechos = Math.max(1, p.cidadesQtd - 1);
+    linhas.push({
+      label: `Transporte de malas inter-municipal (${pessoas} ${pessoas === 1 ? "mala" : "malas"} × ${trechos} ${trechos === 1 ? "trecho" : "trechos"})`,
+      precoBRL: Math.round(PRECO_MALA_INTERMUNICIPAL_USD * pessoas * trechos * c),
+    });
+  }
+  if (p.servicos.has("restaurantesHighEnd") && pessoas <= RESTAURANTES_HIGHEND_LIMITE_PESSOAS) {
+    linhas.push({ label: "Reserva de restaurantes high-end", precoBRL: Math.round(PRECO_RESTAURANTES_HIGHEND_USD * c) });
+  }
+  if (p.servicos.has("transferOnibus")) {
+    linhas.push({ label: "Transfer de ônibus (Limousine Bus)", precoBRL: Math.round(PRECO_TRANSFER_ONIBUS_USD_PAX * pessoas * c) });
+  }
+  if (p.servicos.has("reservaRestaurante")) {
+    linhas.push({ label: "Reserva de restaurante", precoBRL: Math.round(PRECO_RESERVA_RESTAURANTE_USD * c) });
+  }
+  if (p.servicos.has("experienciaSobMedida")) {
+    linhas.push({ label: "Experiência sob medida (curadoria)", precoBRL: Math.round(PRECO_EXPERIENCIA_SOB_MEDIDA_USD * c) });
+  }
+  if (p.servicos.has("concierge")) {
+    linhas.push({ label: `Concierge dedicado (${dias} dias)`, precoBRL: Math.round(DIARIA_CONCIERGE_USD * dias * c) });
+  }
+
+  return { linhas, total: linhas.reduce((s, l) => s + l.precoBRL, 0), precoSeguro, avisoSeguro };
+}
+
 type Resultado = {
+  extras: LinhaExtra[];
+  avisoSeguro: string | null;
   categoriaHotel: CategoriaHotel;
   classeAereo: ClasseAereo;
   precoRoteiro: number;
@@ -115,17 +216,21 @@ function simular(params: {
   tipoQuarto: TipoQuarto;
   cidades: DestinoKey[];
   cambioCotacao: number;
+  precoSeguro: number;
+  avisoSeguro: string | null;
+  extras: LinhaExtra[];
 }): Resultado {
   const { orcamento, dias, pessoas, tipoQuarto, cidades, cambioCotacao } = params;
+  const extrasTotal = params.extras.reduce((s, l) => s + l.precoBRL, 0);
   const multCidade = multiplicadorCidades(cidades);
   const roteiro = precoRoteiro(dias);
-  const seguro = DIARIA_SEGURO_VIAGEM * dias * pessoas;
+  const seguro = params.precoSeguro;
 
   let categoriaHotel: CategoriaHotel = CATEGORIAS_HOTEL[0];
   for (const cat of CATEGORIAS_HOTEL) {
     const hotel = precoHotelCalc(cat, dias, pessoas, tipoQuarto, multCidade);
     const aereo = precoAereoCalc("Economy", pessoas, cambioCotacao);
-    if (roteiro + seguro + hotel + aereo <= orcamento) {
+    if (roteiro + seguro + extrasTotal + hotel + aereo <= orcamento) {
       categoriaHotel = cat;
     } else {
       break;
@@ -136,7 +241,7 @@ function simular(params: {
   let classeAereo: ClasseAereo = CLASSES_AEREO[0];
   for (const classe of CLASSES_AEREO) {
     const aereo = precoAereoCalc(classe, pessoas, cambioCotacao);
-    if (roteiro + seguro + hotelEscolhido + aereo <= orcamento) {
+    if (roteiro + seguro + extrasTotal + hotelEscolhido + aereo <= orcamento) {
       classeAereo = classe;
     } else {
       break;
@@ -144,7 +249,7 @@ function simular(params: {
   }
 
   const aereoEscolhido = precoAereoCalc(classeAereo, pessoas, cambioCotacao);
-  const total = roteiro + seguro + hotelEscolhido + aereoEscolhido;
+  const total = roteiro + seguro + extrasTotal + hotelEscolhido + aereoEscolhido;
 
   return {
     categoriaHotel,
@@ -153,6 +258,8 @@ function simular(params: {
     precoHotel: hotelEscolhido,
     precoAereo: aereoEscolhido,
     precoSeguro: seguro,
+    extras: params.extras,
+    avisoSeguro: params.avisoSeguro,
     total,
     coube: total <= orcamento,
   };
@@ -173,6 +280,42 @@ export default function ViagemPersonalizadaSelfServicePage() {
   const [pessoas, setPessoas] = useState(2);
   const [tipoQuarto, setTipoQuarto] = useState<TipoQuarto>("Duplo (casal)");
   const [cidades, setCidades] = useState<DestinoKey[]>(["tokyo", "kyoto"]);
+
+  const [idades, setIdades] = useState<number[]>([]);
+  const [esimSelecionado, setEsimSelecionado] = useState<number | null>(null);
+  const [ingressos, setIngressos] = useState<Set<IngressoKey>>(new Set());
+  const [premierAtracoes, setPremierAtracoes] = useState(0);
+  const [usjTier, setUsjTier] = useState<UsjTierKey>("nenhum");
+  const [servicos, setServicos] = useState<Set<ServicoKey>>(new Set());
+
+  const idadesConsideradas = Array.from({ length: pessoas }, (_, i) => idades[i] ?? 35);
+  const esimPessoas = Math.min(esimSelecionado ?? pessoas, pessoas);
+
+  function definirIdade(i: number, valor: number) {
+    setIdades((atual) => {
+      const novo = [...atual];
+      while (novo.length <= i) novo.push(35);
+      novo[i] = Math.max(0, Math.min(120, valor));
+      return novo;
+    });
+  }
+  function alternarIngresso(k: IngressoKey) {
+    setIngressos((a) => {
+      const n = new Set(a);
+      if (n.has(k)) n.delete(k);
+      else n.add(k);
+      return n;
+    });
+  }
+  function alternarServico(k: ServicoKey) {
+    setServicos((a) => {
+      const n = new Set(a);
+      if (n.has(k)) n.delete(k);
+      else n.add(k);
+      return n;
+    });
+  }
+  const rotuloUSD = (usd: number) => formatBRL(Math.round(usd * cambioCotacao));
 
   const [status, setStatus] = useState<"form" | "enviando" | "enviado" | "erro">("form");
   const [erro, setErro] = useState("");
@@ -200,7 +343,29 @@ export default function ViagemPersonalizadaSelfServicePage() {
       return;
     }
 
-    const resultadoCalculado = simular({ orcamento, dias, pessoas, tipoQuarto, cidades, cambioCotacao });
+    const extrasCalculados = calcularExtras({
+      dias,
+      pessoas,
+      cidadesQtd: cidades.length,
+      cambioCotacao,
+      idades: idadesConsideradas,
+      esimPessoas,
+      ingressos,
+      premierAtracoes,
+      usjTier,
+      servicos,
+    });
+    const resultadoCalculado = simular({
+      orcamento,
+      dias,
+      pessoas,
+      tipoQuarto,
+      cidades,
+      cambioCotacao,
+      precoSeguro: extrasCalculados.precoSeguro,
+      avisoSeguro: extrasCalculados.avisoSeguro,
+      extras: extrasCalculados.linhas,
+    });
     setResultado(resultadoCalculado);
     setStatus("enviando");
     setErro("");
@@ -223,6 +388,9 @@ export default function ViagemPersonalizadaSelfServicePage() {
           categoriaHotel: resultadoCalculado.categoriaHotel,
           classeAereo: resultadoCalculado.classeAereo,
           valorEstimado: resultadoCalculado.total,
+          idades: idadesConsideradas,
+          extras: resultadoCalculado.extras,
+          interesses: SERVICOS_PUBLICOS.filter((sv) => sv.sobConsulta && servicos.has(sv.key)).map((sv) => sv.nome),
         }),
       });
       const json = await res.json();
@@ -281,11 +449,21 @@ export default function ViagemPersonalizadaSelfServicePage() {
                 <span>Seguro viagem</span>
                 <span>{formatBRL(resultado.precoSeguro)}</span>
               </div>
+              {resultado.extras.map((l) => (
+                <div key={l.label} className="flex justify-between gap-4 text-white/60">
+                  <span>{l.label}</span>
+                  <span className="shrink-0">{formatBRL(l.precoBRL)}</span>
+                </div>
+              ))}
               <div className="flex justify-between border-t border-white/10 pt-3 text-base font-medium text-white">
                 <span>Total estimado</span>
                 <span>{formatBRL(resultado.total)}</span>
               </div>
             </div>
+
+            {resultado.avisoSeguro && (
+              <p className="mt-4 text-xs leading-5 text-amber-400/90">{resultado.avisoSeguro}</p>
+            )}
 
             {!resultado.coube && (
               <p className="mt-4 text-xs leading-5 text-amber-400/90">
@@ -438,6 +616,202 @@ export default function ViagemPersonalizadaSelfServicePage() {
                 className="h-11 w-full rounded-lg border border-white/15 bg-white/[0.04] px-3 text-sm text-white outline-none focus:border-white/40 [color-scheme:dark]"
               />
             </label>
+
+            <div className="sm:col-span-2">
+              <span className="mb-2 block text-[10px] uppercase tracking-[0.2em] text-white/40">
+                <LabelNumerado texto="7. Seguro viagem — idade dos passageiros" />
+              </span>
+              <div className="flex flex-wrap gap-2">
+                {idadesConsideradas.map((idade, i) => (
+                  <div key={i} className="w-36 rounded-lg border border-white/15 bg-white/[0.04] p-3">
+                    <p className="text-[10px] uppercase tracking-wide text-white/40">Passageiro {i + 1}</p>
+                    <div className="mt-1.5 flex items-center gap-2">
+                      <input
+                        type="number"
+                        min={0}
+                        max={120}
+                        value={idade}
+                        onChange={(e) => {
+                          const v = Number(e.target.value);
+                          if (!Number.isNaN(v)) definirIdade(i, v);
+                        }}
+                        className="h-9 w-16 rounded-md border border-white/15 bg-white/[0.06] px-2 text-sm text-white outline-none focus:border-white/40"
+                      />
+                      <span className="text-xs text-white/50">anos</span>
+                    </div>
+                    <p className="mt-1.5 text-[10px] leading-4 text-white/35">
+                      {idade > IDADE_LIMITE_SEGURO
+                        ? `Acima de ${IDADE_LIMITE_SEGURO} anos — sob consulta`
+                        : (multiplicadorSeguroPorIdade(idade) ?? 1) > 1
+                          ? "Valor ajustado pela idade"
+                          : "Valor padrão"}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="sm:col-span-2 sm:max-w-xs">
+              <NumberStepper
+                label="8. Conexão de internet — eSIM"
+                value={esimPessoas}
+                onChange={setEsimSelecionado}
+                min={0}
+                max={pessoas}
+                formatValue={(v) => `${v} de ${pessoas} viajante${pessoas === 1 ? "" : "s"}`}
+              />
+              <p className="mt-1.5 text-[11px] text-white/35">Um eSIM por pessoa, plano ilimitado.</p>
+            </div>
+
+            <div className="sm:col-span-2">
+              <span className="mb-2 block text-[10px] uppercase tracking-[0.2em] text-white/40">
+                <LabelNumerado texto="9. Ingressos e experiências" />{" "}
+                <span className="normal-case tracking-normal text-white/35">(opcional)</span>
+              </span>
+              <div className="grid grid-cols-[repeat(auto-fill,8rem)] gap-2">
+                {INGRESSOS_PUBLICOS.map((ing) => {
+                  const marcado = ingressos.has(ing.key);
+                  return (
+                    <label
+                      key={ing.key}
+                      className={`flex h-[13.5rem] w-32 cursor-pointer flex-col items-center gap-2 rounded-lg border px-2 py-3 text-center text-xs transition ${
+                        marcado
+                          ? "border-[#6ec3d9] bg-[#6ec3d9]/15 font-medium text-[#6ec3d9]"
+                          : "border-white/15 bg-white/[0.04] text-white/60 hover:border-white/30"
+                      }`}
+                    >
+                      <input type="checkbox" checked={marcado} onChange={() => alternarIngresso(ing.key)} className="sr-only" />
+                      <div className="flex w-full flex-1 flex-col items-center justify-center gap-2">
+                        <div className="flex h-20 w-full shrink-0 items-center justify-center rounded-md bg-white/90 p-1">
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img src={ing.icone} alt="" className="max-h-16 w-auto max-w-full object-contain" />
+                        </div>
+                        <span className="flex min-h-[2rem] w-full items-center justify-center leading-tight">{ing.nome}</span>
+                      </div>
+                      <span className="flex min-h-[2.5rem] w-full items-center justify-center rounded-md bg-[#6ec3d9]/10 px-2 py-1 text-[11px] font-semibold leading-tight text-[#6ec3d9]">
+                        {rotuloUSD(ing.precoUSD)}/pessoa
+                      </span>
+                    </label>
+                  );
+                })}
+              </div>
+
+              {(ingressos.has("disneyland") || ingressos.has("disneysea")) && (
+                <div className="mt-3 rounded-lg border border-white/10 bg-white/[0.03] p-3">
+                  <p className="text-xs font-medium text-white/80">+ Disney Premier Access (fast pass pago)</p>
+                  <p className="mt-0.5 text-[11px] leading-4 text-white/40">
+                    Vendido por atração, conforme a popularidade — escolha quantas quiser.
+                  </p>
+                  <div className="mt-2 max-w-xs">
+                    <NumberStepper
+                      label="Quantidade de atrações"
+                      value={premierAtracoes}
+                      onChange={setPremierAtracoes}
+                      min={0}
+                      max={8}
+                      formatValue={(v) =>
+                        v === 0
+                          ? "Sem Premier Access"
+                          : `${v} ${v === 1 ? "atração" : "atrações"} · ${rotuloUSD(v * PRECO_DISNEY_PREMIER_ACCESS_POR_ATRACAO_USD_PAX)}/pessoa`
+                      }
+                    />
+                  </div>
+                </div>
+              )}
+
+              {ingressos.has("usj") && (
+                <div className="mt-3 rounded-lg border border-white/10 bg-white/[0.03] p-3">
+                  <p className="text-xs font-medium text-white/80">+ USJ Express Pass (fast pass pago)</p>
+                  <p className="mt-0.5 text-[11px] leading-4 text-white/40">
+                    Fura-fila em um número variável de atrações; o combo exato varia por temporada e nossa equipe
+                    confirma com você antes de fechar.
+                  </p>
+                  <div className="mt-2 flex flex-wrap gap-2">
+                    {USJ_EXPRESS_PASS_PUBLICO.map((t) => (
+                      <button
+                        key={t.key}
+                        type="button"
+                        onClick={() => setUsjTier(t.key)}
+                        aria-pressed={usjTier === t.key}
+                        className={`rounded-lg border px-3 py-2 text-center text-xs transition ${
+                          usjTier === t.key
+                            ? "border-[#6ec3d9] bg-[#6ec3d9]/15 font-medium text-[#6ec3d9]"
+                            : "border-white/15 text-white/60 hover:border-white/30"
+                        }`}
+                      >
+                        <span className="block">{t.label}</span>
+                        {t.precoUSD > 0 && <span className="block text-[10px] opacity-70">{rotuloUSD(t.precoUSD)}/pessoa</span>}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <div className="sm:col-span-2">
+              <span className="mb-2 block text-[10px] uppercase tracking-[0.2em] text-white/40">
+                <LabelNumerado texto="10. Serviços adicionais" />{" "}
+                <span className="normal-case tracking-normal text-white/35">(opcional)</span>
+              </span>
+              <div className="grid grid-cols-[repeat(auto-fill,8rem)] gap-2">
+                {SERVICOS_PUBLICOS.map((sv) => {
+                  const marcado = servicos.has(sv.key);
+                  const desabilitado = sv.key === "restaurantesHighEnd" && pessoas > RESTAURANTES_HIGHEND_LIMITE_PESSOAS;
+                  const precoLabel =
+                    sv.sobConsulta
+                      ? "Sob consulta"
+                      : sv.key === "malasIntermunicipal"
+                        ? `*${rotuloUSD(PRECO_MALA_INTERMUNICIPAL_USD)}/mala/trecho`
+                        : sv.key === "restaurantesHighEnd"
+                          ? `*${rotuloUSD(PRECO_RESTAURANTES_HIGHEND_USD)} · até ${RESTAURANTES_HIGHEND_LIMITE_PESSOAS} pessoas`
+                          : sv.key === "transferOnibus"
+                            ? `*${rotuloUSD(PRECO_TRANSFER_ONIBUS_USD_PAX)}/pessoa · ida e volta`
+                            : sv.key === "reservaRestaurante"
+                              ? `*${rotuloUSD(PRECO_RESERVA_RESTAURANTE_USD)}/reserva`
+                              : sv.key === "experienciaSobMedida"
+                                ? `*${rotuloUSD(PRECO_EXPERIENCIA_SOB_MEDIDA_USD)}/experiência`
+                                : `*${rotuloUSD(DIARIA_CONCIERGE_USD)}/dia`;
+                  return (
+                    <label
+                      key={sv.key}
+                      className={`flex h-[13.5rem] w-32 flex-col items-center gap-2 rounded-lg border px-2 py-3 text-center text-xs transition ${
+                        desabilitado
+                          ? "cursor-not-allowed border-white/10 bg-white/[0.02] text-white/30"
+                          : marcado
+                            ? "cursor-pointer border-[#6ec3d9] bg-[#6ec3d9]/15 font-medium text-[#6ec3d9]"
+                            : "cursor-pointer border-white/15 bg-white/[0.04] text-white/60 hover:border-white/30"
+                      }`}
+                    >
+                      <input
+                        type="checkbox"
+                        checked={marcado && !desabilitado}
+                        disabled={desabilitado}
+                        onChange={() => alternarServico(sv.key)}
+                        className="sr-only"
+                      />
+                      <div className="flex w-full flex-1 flex-col items-center justify-center gap-2">
+                        <div className="flex h-20 w-full shrink-0 items-center justify-center rounded-md bg-white/90 p-2">
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img src={sv.icone} alt="" className={`h-16 w-16 object-contain ${desabilitado ? "opacity-40" : ""}`} />
+                        </div>
+                        <span className="flex min-h-[2rem] w-full items-center justify-center leading-tight">{sv.nome}</span>
+                      </div>
+                      <span
+                        className={`flex min-h-[2.5rem] w-full items-center justify-center rounded-md px-2 py-1 text-[11px] font-semibold leading-tight ${
+                          desabilitado ? "bg-white/5 text-white/30" : "bg-amber-400/10 text-amber-300"
+                        }`}
+                      >
+                        {precoLabel}
+                      </span>
+                    </label>
+                  );
+                })}
+              </div>
+              <p className="mt-2 text-[10px] leading-4 text-white/35">
+                * preço inicial — pode variar conforme grupo, trecho e disponibilidade. Itens “sob consulta” são
+                cotados pela nossa equipe.
+              </p>
+            </div>
           </div>
 
           <div className="grid grid-cols-1 gap-5 rounded-2xl border border-white/10 bg-white/[0.03] p-6 sm:grid-cols-2 md:p-8">
