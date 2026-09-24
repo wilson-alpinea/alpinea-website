@@ -83,7 +83,12 @@ import {
   type IngressoKey,
   type UsjTierKey,
   type ServicoKey,
+  PERFIL_VIAJANTE_PADRAO,
+  PERFIS_VIAJANTE,
+  diasMinimosPorPerfil,
+  type PerfilViajanteKey,
 } from "../lib/calculadoraCatalogoPublico";
+import PerfilViajanteSeletor from "../components/PerfilViajanteSeletor";
 
 const display = Bodoni_Moda({ subsets: ["latin"], weight: ["400", "500", "600"] });
 
@@ -511,6 +516,7 @@ export default function ViagemPersonalizadaSelfServicePage() {
     parcelas: number;
   } | null>(null);
   const [agora] = useState(() => Date.now());
+  const [perfilViajante, setPerfilViajante] = useState<PerfilViajanteKey>(PERFIL_VIAJANTE_PADRAO);
   const [flexibilidade, setFlexibilidade] = useState<FlexibilidadeDatasKey>("fixas");
   const [hotelMax, setHotelMax] = useState<CategoriaHotel>("Elite");
   const [classeMax, setClasseMax] = useState<ClasseAereo>("First Class");
@@ -529,7 +535,7 @@ export default function ViagemPersonalizadaSelfServicePage() {
   const [servicos, setServicos] = useState<Set<ServicoKey>>(new Set());
 
   const parquesDiaInteiro = (["disneyland", "disneysea", "usj"] as const).filter((k) => ingressos.has(k)).length;
-  const diasMinimosSugeridos = Math.max(1, cidades.length) + parquesDiaInteiro;
+  const diasMinimosSugeridos = diasMinimosPorPerfil(perfilViajante, cidades.length, parquesDiaInteiro);
   const diasInsuficientes = dias < diasMinimosSugeridos;
   const jrPessoasEfetivo = Math.min(jrPessoas, pessoas);
   const guiaDiasEfetivo = Math.min(guiaDias, dias);
@@ -715,6 +721,7 @@ export default function ViagemPersonalizadaSelfServicePage() {
           classeAereo: resultadoCalculado.classeAereo,
           valorEstimado: resultadoCalculado.total,
           idades: idadesConsideradas,
+          perfilViajante: PERFIS_VIAJANTE.find((x) => x.key === perfilViajante)?.nome ?? perfilViajante,
           flexibilidade: FLEXIBILIDADE_DATAS.find((f) => f.key === flexibilidade)?.nome ?? flexibilidade,
           temas: TEMAS.filter((t) => temasSelecionados.has(t.key)).map((t) => t.nome),
           hotelMax,
@@ -766,7 +773,7 @@ export default function ViagemPersonalizadaSelfServicePage() {
       .join("\n");
     const linhaOpcao = (selecionado: boolean) =>
       `-mx-2 flex cursor-pointer items-center gap-3 rounded-lg px-2 py-2.5 transition ${
-        selecionado ? "bg-[#2f80c9]/15" : "hover:bg-black/[0.04]"
+        selecionado ? "bg-[#2f80c9]/15" : "hover:bg-white placeholder:text-black/40"
       }`;
     return (
       <main className="min-h-screen bg-white px-6 py-16 text-[#0A2540] md:px-16 md:py-24">
@@ -788,7 +795,7 @@ export default function ViagemPersonalizadaSelfServicePage() {
           </p>
 
           <div className="mt-10 rounded-2xl border border-black/10 bg-black/[0.03] p-6 text-left md:p-8">
-            <p className="text-[10px] uppercase tracking-[0.2em] text-black/40">Sugestão inicial</p>
+            <p className="text-[10px] uppercase tracking-[0.2em] text-black/60">Sugestão inicial</p>
             <p className={`${display.className} mt-2 text-2xl font-medium text-[#2f80c9]`}>
               Hotel {resultado.categoriaHotel} · Aéreo {resultado.classeAereo}
             </p>
@@ -836,7 +843,7 @@ export default function ViagemPersonalizadaSelfServicePage() {
               <p className="mt-4 text-xs leading-5 text-amber-600">{resultado.avisoCategoriaTemporada}</p>
             )}
             {ajusteOrigem > 0 && (
-              <p className="mt-4 text-xs leading-5 text-black/45">
+              <p className="mt-4 text-xs leading-5 text-black/60">
                 O aéreo já inclui {formatBRL(ajusteOrigem)}/pessoa por não sair de São Paulo/GRU.
               </p>
             )}
@@ -852,15 +859,15 @@ export default function ViagemPersonalizadaSelfServicePage() {
               </p>
             )}
 
-            <p className="mt-6 text-[11px] leading-5 text-black/35">
+            <p className="mt-6 text-[11px] leading-5 text-black/60">
               Estimativa automática, não uma proposta fechada — os valores finais dependem de
               datas, disponibilidade e curadoria da nossa equipe.
             </p>
           </div>
 
           <div className="mt-8 rounded-2xl border border-black/10 bg-black/[0.03] p-6 text-left md:p-8">
-            <p className="text-[10px] uppercase tracking-[0.2em] text-black/40">Forma de pagamento</p>
-            <p className="mt-1 text-[11px] leading-5 text-black/35">
+            <p className="text-[10px] uppercase tracking-[0.2em] text-black/60">Forma de pagamento</p>
+            <p className="mt-1 text-[11px] leading-5 text-black/60">
               Escolha como prefere pagar e envie pelo WhatsApp — nossa equipe processa o pedido a partir da sua
               mensagem. Valores sujeitos a confirmação na emissão.
             </p>
@@ -885,9 +892,9 @@ export default function ViagemPersonalizadaSelfServicePage() {
                         onChange={() => setFormaPagamento({ metodo: "cartao", parcelas: op.parcelas })}
                         className="h-4 w-4 shrink-0 accent-[#2f80c9]"
                       />
-                      <span className="w-9 shrink-0 text-sm text-black/45">{op.parcelas}x</span>
+                      <span className="w-9 shrink-0 text-sm text-black/60">{op.parcelas}x</span>
                       <span className="flex-1 text-base font-semibold text-[#0A2540]">{formatBRL(op.valorParcela)}</span>
-                      <span className="shrink-0 text-[11px] text-black/35">total {formatBRL(op.valorTotal)}</span>
+                      <span className="shrink-0 text-[11px] text-black/60">total {formatBRL(op.valorTotal)}</span>
                     </label>
                   );
                 })}
@@ -919,7 +926,7 @@ export default function ViagemPersonalizadaSelfServicePage() {
               </label>
               {simulacaoPix.length > 0 ? (
                 <div className="mt-3">
-                  <p className="text-[10px] text-black/35">
+                  <p className="text-[10px] text-black/60">
                     parcelado — entrada de {formatBRL(simulacaoPix[0].entrada)} ({Math.round(ENTRADA_PIX_PCT * 100)}%) +
                     parcelas
                   </p>
@@ -935,9 +942,9 @@ export default function ViagemPersonalizadaSelfServicePage() {
                             onChange={() => setFormaPagamento({ metodo: "pixParcelado", parcelas: op.parcelas })}
                             className="h-4 w-4 shrink-0 accent-[#2f80c9]"
                           />
-                          <span className="w-9 shrink-0 text-sm text-black/45">{op.parcelas}x</span>
+                          <span className="w-9 shrink-0 text-sm text-black/60">{op.parcelas}x</span>
                           <span className="flex-1 text-base font-semibold text-[#0A2540]">{formatBRL(op.valorParcela)}</span>
-                          <span className="shrink-0 text-[11px] text-black/35">total {formatBRL(op.valorTotal)}</span>
+                          <span className="shrink-0 text-[11px] text-black/60">total {formatBRL(op.valorTotal)}</span>
                         </label>
                       );
                     })}
@@ -945,7 +952,7 @@ export default function ViagemPersonalizadaSelfServicePage() {
                 </div>
               ) : (
                 dataViagem && (
-                  <p className="mt-3 text-[11px] text-black/35">
+                  <p className="mt-3 text-[11px] text-black/60">
                     Viagem muito próxima — sem prazo para parcelar no PIX, só à vista.
                   </p>
                 )
@@ -956,7 +963,7 @@ export default function ViagemPersonalizadaSelfServicePage() {
               className={`mt-4 rounded-lg border px-3.5 py-3 text-xs ${
                 descricaoPagamento
                   ? "border-emerald-200 bg-emerald-50 text-emerald-700"
-                  : "border-black/10 bg-black/[0.02] text-black/40"
+                  : "border-black/10 bg-black/[0.02] text-black/60"
               }`}
             >
               {descricaoPagamento ? (
@@ -998,7 +1005,7 @@ export default function ViagemPersonalizadaSelfServicePage() {
         </div>
 
         <div className="mb-10 text-center">
-          <p className="text-xs uppercase tracking-[0.3em] text-black/40">
+          <p className="text-xs uppercase tracking-[0.3em] text-black/60">
             Simulador de viagem personalizada
           </p>
           <h1 className={`${display.className} mt-3 text-3xl font-medium leading-tight md:text-4xl`}>
@@ -1026,7 +1033,7 @@ export default function ViagemPersonalizadaSelfServicePage() {
                   const v = Number(e.target.value);
                   if (!Number.isNaN(v)) setOrcamento(v);
                 }}
-                className="h-12 w-full rounded-lg border border-black/15 bg-black/[0.04] px-4 text-lg font-medium text-[#0A2540] outline-none focus:border-black/40"
+                className="h-12 w-full rounded-lg border border-black/15 bg-white placeholder:text-black/40 px-4 text-lg font-medium text-[#0A2540] outline-none focus:border-black/40"
               />
             </label>
 
@@ -1055,7 +1062,7 @@ export default function ViagemPersonalizadaSelfServicePage() {
               <select
                 value={tipoQuarto}
                 onChange={(e) => setTipoQuarto(e.target.value as TipoQuarto)}
-                className="h-11 w-full rounded-lg border border-black/15 bg-black/[0.04] px-3 text-sm text-[#0A2540] outline-none focus:border-black/40"
+                className="h-11 w-full rounded-lg border border-black/15 bg-white placeholder:text-black/40 px-3 text-sm text-[#0A2540] outline-none focus:border-black/40"
               >
                 {TIPOS_QUARTO.map((t) => (
                   <option key={t} value={t} className="bg-white">
@@ -1086,7 +1093,7 @@ export default function ViagemPersonalizadaSelfServicePage() {
                   </button>
                 ))}
               </div>
-              <p className="mt-1.5 text-[11px] text-black/35">
+              <p className="mt-1.5 text-[11px] text-black/60">
                 {hotelMax === "Elite"
                   ? "Sem limite — sobe o máximo que o orçamento permitir."
                   : `A simulação não passa de ${hotelMax}, mesmo sobrando orçamento.`}
@@ -1114,18 +1121,18 @@ export default function ViagemPersonalizadaSelfServicePage() {
                   </button>
                 ))}
               </div>
-              <p className="mt-1.5 text-[11px] text-black/35">
+              <p className="mt-1.5 text-[11px] text-black/60">
                 {classeMax === "First Class"
                   ? "Sem limite — sobe o máximo que o orçamento permitir."
                   : `A simulação não passa de ${classeMax}, mesmo sobrando orçamento.`}
               </p>
               <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
                 <label className="flex flex-col">
-                  <span className="mb-1 text-[10px] uppercase tracking-wide text-black/40">Origem do voo</span>
+                  <span className="mb-1 text-[10px] uppercase tracking-wide text-black/60">Origem do voo</span>
                   <select
                     value={origemVoo}
                     onChange={(e) => setOrigemVoo(e.target.value as OrigemVooKey)}
-                    className="h-10 w-full rounded-lg border border-black/15 bg-black/[0.04] px-3 text-sm text-[#0A2540] outline-none focus:border-black/40"
+                    className="h-10 w-full rounded-lg border border-black/15 bg-white placeholder:text-black/40 px-3 text-sm text-[#0A2540] outline-none focus:border-black/40"
                   >
                     {ORIGENS_VOO.map((o) => (
                       <option key={o.key} value={o.key} className="bg-white">
@@ -1133,18 +1140,18 @@ export default function ViagemPersonalizadaSelfServicePage() {
                       </option>
                     ))}
                   </select>
-                  <span className="mt-1 text-[11px] text-black/35">
+                  <span className="mt-1 text-[11px] text-black/60">
                     {ajusteOrigem === 0
                       ? "Referência — sem ajuste no aéreo."
                       : `+ ${formatBRL(ajusteOrigem)}/pessoa no aéreo (trecho doméstico até um hub internacional).`}
                   </span>
                 </label>
                 <label className="flex flex-col">
-                  <span className="mb-1 text-[10px] uppercase tracking-wide text-black/40">Bagagem</span>
+                  <span className="mb-1 text-[10px] uppercase tracking-wide text-black/60">Bagagem</span>
                   <select
                     value={bagagem}
                     onChange={(e) => setBagagem(e.target.value as BagagemKey)}
-                    className="h-10 w-full rounded-lg border border-black/15 bg-black/[0.04] px-3 text-sm text-[#0A2540] outline-none focus:border-black/40"
+                    className="h-10 w-full rounded-lg border border-black/15 bg-white placeholder:text-black/40 px-3 text-sm text-[#0A2540] outline-none focus:border-black/40"
                   >
                     {BAGAGEM_OPCOES.map((b) => (
                       <option key={b.key} value={b.key} className="bg-white">
@@ -1152,7 +1159,7 @@ export default function ViagemPersonalizadaSelfServicePage() {
                       </option>
                     ))}
                   </select>
-                  <span className="mt-1 text-[11px] text-black/35">
+                  <span className="mt-1 text-[11px] text-black/60">
                     {ajusteBagagem === 0
                       ? "Referência — sem ajuste no aéreo."
                       : `Ajuste estimado de +${formatBRL(ajusteBagagem)}/pessoa (taxa de mala extra) — confirmamos o valor exato com a companhia aérea.`}
@@ -1178,7 +1185,7 @@ export default function ViagemPersonalizadaSelfServicePage() {
                     className={`flex h-[13.5rem] w-32 flex-col items-center gap-2 rounded-lg border px-2 py-3 text-center text-xs transition ${
                       comCafe === o.v
                         ? "border-[#2f80c9] bg-[#2f80c9]/15 font-medium text-[#2f80c9]"
-                        : "border-black/15 bg-black/[0.04] text-black/60 hover:border-black/30"
+                        : "border-black/15 bg-white placeholder:text-black/40 text-black/60 hover:border-black/30"
                     }`}
                   >
                     <div className="flex h-20 w-full shrink-0 items-center justify-center rounded-md bg-white p-1">
@@ -1186,7 +1193,7 @@ export default function ViagemPersonalizadaSelfServicePage() {
                       <img src={o.img} alt="" className="h-16 w-16 object-contain" />
                     </div>
                     <span className="flex min-h-[2rem] w-full items-center justify-center leading-tight">{o.nome}</span>
-                    <span className="text-[10px] font-normal leading-tight text-black/40">{o.sub}</span>
+                    <span className="text-[10px] font-normal leading-tight text-black/60">{o.sub}</span>
                   </button>
                 ))}
               </div>
@@ -1197,7 +1204,7 @@ export default function ViagemPersonalizadaSelfServicePage() {
                 <LabelNumerado texto="8. Temporada" />
               </span>
               <label className="mb-3 flex max-w-xs flex-col">
-                <span className="mb-1 text-[10px] uppercase tracking-wide text-black/40">
+                <span className="mb-1 text-[10px] uppercase tracking-wide text-black/60">
                   Mês estimado da viagem (opcional — sugere a temporada)
                 </span>
                 <select
@@ -1207,7 +1214,7 @@ export default function ViagemPersonalizadaSelfServicePage() {
                     setMesEstimado(v);
                     if (v) setTemporada(MES_PARA_TEMPORADA[v]);
                   }}
-                  className="h-10 w-full rounded-lg border border-black/15 bg-black/[0.04] px-3 text-sm text-[#0A2540] outline-none focus:border-black/40"
+                  className="h-10 w-full rounded-lg border border-black/15 bg-white placeholder:text-black/40 px-3 text-sm text-[#0A2540] outline-none focus:border-black/40"
                 >
                   <option value="" className="bg-white">Ainda não definido</option>
                   {MESES_NOME.map((nome, i) => (
@@ -1227,7 +1234,7 @@ export default function ViagemPersonalizadaSelfServicePage() {
                     className={`flex h-[13.5rem] w-32 flex-col items-center gap-2 rounded-lg border px-2 py-3 text-center text-xs transition ${
                       temporada === t.key
                         ? "border-[#2f80c9] bg-[#2f80c9]/15 font-medium text-[#2f80c9]"
-                        : "border-black/15 bg-black/[0.04] text-black/60 hover:border-black/30"
+                        : "border-black/15 bg-white placeholder:text-black/40 text-black/60 hover:border-black/30"
                     }`}
                   >
                     <div className="flex h-20 w-full shrink-0 items-center justify-center rounded-md bg-white p-1">
@@ -1235,7 +1242,7 @@ export default function ViagemPersonalizadaSelfServicePage() {
                       <img src={t.icone} alt="" className="h-16 w-16 object-contain" />
                     </div>
                     <span className="flex min-h-[2rem] w-full items-center justify-center leading-tight">{t.nome}</span>
-                    <span className="text-[10px] font-normal leading-tight text-black/40">{t.periodo}</span>
+                    <span className="text-[10px] font-normal leading-tight text-black/60">{t.periodo}</span>
                   </button>
                 ))}
               </div>
@@ -1244,7 +1251,7 @@ export default function ViagemPersonalizadaSelfServicePage() {
             <div className="sm:col-span-2">
               <span className="mb-2 flex flex-wrap items-center text-[10px] uppercase tracking-[0.2em] text-black/50">
                 <LabelNumerado texto="9. Temas" />{" "}
-                <span className="ml-1.5 normal-case tracking-normal text-black/35">
+                <span className="ml-1.5 normal-case tracking-normal text-black/60">
                   (opcional — selecione até {MAX_TEMAS_SIMULTANEOS} pra misturar)
                 </span>
               </span>
@@ -1254,7 +1261,7 @@ export default function ViagemPersonalizadaSelfServicePage() {
                   onClick={() => alternarTema(null)}
                   aria-pressed={temasSelecionados.size === 0}
                   className={`flex h-[9.5rem] w-32 flex-col items-center gap-2 rounded-lg border px-2 py-3 text-center text-xs transition ${
-                    temasSelecionados.size === 0 ? "border-[#2f80c9] bg-[#2f80c9]/15 font-medium text-[#2f80c9]" : "border-black/15 bg-black/[0.04] text-black/60 hover:border-black/30"
+                    temasSelecionados.size === 0 ? "border-[#2f80c9] bg-[#2f80c9]/15 font-medium text-[#2f80c9]" : "border-black/15 bg-white placeholder:text-black/40 text-black/60 hover:border-black/30"
                   }`}
                 >
                   <div className="flex h-20 w-full shrink-0 items-center justify-center rounded-md bg-white p-1">
@@ -1277,8 +1284,8 @@ export default function ViagemPersonalizadaSelfServicePage() {
                         marcado
                           ? "border-[#2f80c9] bg-[#2f80c9]/15 font-medium text-[#2f80c9]"
                           : desabilitado
-                            ? "cursor-not-allowed border-black/10 bg-black/[0.02] text-black/30"
-                            : "border-black/15 bg-black/[0.04] text-black/60 hover:border-black/30"
+                            ? "cursor-not-allowed border-black/10 bg-black/[0.02] text-black/60"
+                            : "border-black/15 bg-white placeholder:text-black/40 text-black/60 hover:border-black/30"
                       }`}
                     >
                       <div className="flex h-20 w-full shrink-0 items-center justify-center rounded-md bg-white p-1">
@@ -1316,7 +1323,7 @@ export default function ViagemPersonalizadaSelfServicePage() {
                         <span className="text-xs leading-5 text-black/50">
                           {c.destaques.map((d, i) => (
                             <span key={i} className={i > 0 ? "mt-1 block" : "block"}>
-                              {temasSelecionados.size > 1 && <span className="text-black/35">({d.tema}) </span>}
+                              {temasSelecionados.size > 1 && <span className="text-black/60">({d.tema}) </span>}
                               {d.texto}
                             </span>
                           ))}
@@ -1330,8 +1337,18 @@ export default function ViagemPersonalizadaSelfServicePage() {
 
             <div className="sm:col-span-2">
               <span className="mb-2 flex flex-wrap items-center text-[10px] uppercase tracking-[0.2em] text-black/50">
-                <LabelNumerado texto="10. Cidades do roteiro" />{" "}
-                <span className="ml-1.5 normal-case tracking-normal text-black/35">
+                <LabelNumerado texto="10. Perfil do viajante" />{" "}
+                <span className="ml-1.5 normal-case tracking-normal text-black/60">
+                  (define o ritmo do roteiro)
+                </span>
+              </span>
+              <PerfilViajanteSeletor value={perfilViajante} onChange={setPerfilViajante} />
+            </div>
+
+            <div className="sm:col-span-2">
+              <span className="mb-2 flex flex-wrap items-center text-[10px] uppercase tracking-[0.2em] text-black/50">
+                <LabelNumerado texto="11. Cidades do roteiro" />{" "}
+                <span className="ml-1.5 normal-case tracking-normal text-black/60">
                   (até {MAX_CIDADES}, opcional)
                 </span>
               </span>
@@ -1386,8 +1403,8 @@ export default function ViagemPersonalizadaSelfServicePage() {
 
             <div className="sm:col-span-2">
               <span className="mb-2 flex flex-wrap items-center text-[10px] uppercase tracking-[0.2em] text-black/50">
-                <LabelNumerado texto="11. Extensão internacional" />{" "}
-                <span className="ml-1.5 normal-case tracking-normal text-black/35">(opcional — soma dias ao total da viagem)</span>
+                <LabelNumerado texto="12. Extensão internacional" />{" "}
+                <span className="ml-1.5 normal-case tracking-normal text-black/60">(opcional — soma dias ao total da viagem)</span>
               </span>
               <div className="grid grid-cols-[repeat(auto-fill,8rem)] gap-2">
                 {EXTENSOES_INTERNACIONAIS.map((ext) => {
@@ -1399,7 +1416,7 @@ export default function ViagemPersonalizadaSelfServicePage() {
                       onClick={() => alternarExtensao(ext.key)}
                       aria-pressed={marcado}
                       className={`flex h-[11.5rem] w-32 flex-col items-center gap-2 rounded-lg border px-2 py-3 text-center text-xs transition ${
-                        marcado ? "border-[#2f80c9] bg-[#2f80c9]/15 font-medium text-[#2f80c9]" : "border-black/15 bg-black/[0.04] text-black/60 hover:border-black/30"
+                        marcado ? "border-[#2f80c9] bg-[#2f80c9]/15 font-medium text-[#2f80c9]" : "border-black/15 bg-white placeholder:text-black/40 text-black/60 hover:border-black/30"
                       }`}
                     >
                       <div className="flex h-24 w-full shrink-0 items-center justify-center rounded-md bg-white p-1">
@@ -1407,7 +1424,7 @@ export default function ViagemPersonalizadaSelfServicePage() {
                         <img src={ext.icone} alt="" className="h-full w-full object-contain" />
                       </div>
                       <span className="leading-tight">{ext.nome}</span>
-                      <span className="text-[10px] font-normal leading-tight text-black/40">
+                      <span className="text-[10px] font-normal leading-tight text-black/60">
                         +{ext.dias} dias · {ext.cidades.map((c) => c.nome).join(" + ")}
                       </span>
                     </button>
@@ -1417,7 +1434,7 @@ export default function ViagemPersonalizadaSelfServicePage() {
 
               {EXTENSOES_INTERNACIONAIS.filter((ext) => extensoes.has(ext.key)).map((ext) => (
                 <div key={ext.key} className="mt-5">
-                  <p className="mb-2 text-[10px] uppercase tracking-[0.15em] text-black/40">
+                  <p className="mb-2 text-[10px] uppercase tracking-[0.15em] text-black/60">
                     Pacote da extensão {ext.nome} — hotel {tipoQuarto} + deslocamento
                   </p>
                   <div className="grid gap-2 sm:grid-cols-3">
@@ -1431,7 +1448,7 @@ export default function ViagemPersonalizadaSelfServicePage() {
                           onClick={() => setExtCategorias((a) => ({ ...a, [ext.key]: categoria }))}
                           aria-pressed={selecionado}
                           className={`rounded-xl border px-3 py-2.5 text-left transition ${
-                            selecionado ? "border-[#2f80c9] bg-[#2f80c9]/15" : "border-black/15 bg-black/[0.04] hover:border-black/30"
+                            selecionado ? "border-[#2f80c9] bg-[#2f80c9]/15" : "border-black/15 bg-white placeholder:text-black/40 hover:border-black/30"
                           }`}
                         >
                           <span aria-hidden className="block text-base leading-none tracking-[1.5px] text-[#2f80c9]">
@@ -1441,14 +1458,14 @@ export default function ViagemPersonalizadaSelfServicePage() {
                             {categoria}
                           </span>
                           <span className="mt-0.5 block text-sm font-semibold text-[#0A2540]">{formatBRL(precos.total)}</span>
-                          <span className="mt-0.5 block text-[10px] text-black/40">
+                          <span className="mt-0.5 block text-[10px] text-black/60">
                             Hotel {formatBRL(precos.hotel)} + deslocamento {formatBRL(precos.deslocamento)}
                           </span>
                         </button>
                       );
                     })}
                   </div>
-                  <div className="mt-3 flex flex-wrap gap-x-4 gap-y-0.5 text-[10px] text-black/40">
+                  <div className="mt-3 flex flex-wrap gap-x-4 gap-y-0.5 text-[10px] text-black/60">
                     {ext.deslocamento.map((trecho) => (
                       <span key={trecho.label}>✈ {trecho.label}</span>
                     ))}
@@ -1478,7 +1495,7 @@ export default function ViagemPersonalizadaSelfServicePage() {
                               <li key={ponto}>• {ponto}</li>
                             ))}
                           </ul>
-                          <p className="mt-2 text-[11px] italic leading-4 text-black/40">{dia.conceito}</p>
+                          <p className="mt-2 text-[11px] italic leading-4 text-black/60">{dia.conceito}</p>
                         </div>
                       </div>
                     ))}
@@ -1489,12 +1506,12 @@ export default function ViagemPersonalizadaSelfServicePage() {
 
             <div className="sm:col-span-2">
               <span className="mb-2 flex flex-wrap items-center text-[10px] uppercase tracking-[0.2em] text-black/50">
-                <LabelNumerado texto="12. JR Pass — validade e classe" />{" "}
-                <span className="ml-1.5 normal-case tracking-normal text-black/35">(opcional)</span>
+                <LabelNumerado texto="13. JR Pass — validade e classe" />{" "}
+                <span className="ml-1.5 normal-case tracking-normal text-black/60">(opcional)</span>
               </span>
               <div className="flex flex-wrap gap-4">
                 <div className="rounded-xl border border-black/10 bg-black/[0.03] p-3">
-                  <span className="mb-2 block text-[9px] uppercase tracking-[0.15em] text-black/40">Validade</span>
+                  <span className="mb-2 block text-[9px] uppercase tracking-[0.15em] text-black/60">Validade</span>
                   <div className="flex flex-wrap gap-2">
                     {JR_PASS_DIAS_OPCOES.map((d) => (
                       <button
@@ -1503,7 +1520,7 @@ export default function ViagemPersonalizadaSelfServicePage() {
                         onClick={() => setJrDias(d)}
                         aria-pressed={jrDias === d}
                         className={`flex h-20 w-28 items-center justify-center rounded-lg border px-2 text-center text-sm transition ${
-                          jrDias === d ? "border-[#2f80c9] bg-[#2f80c9]/15 font-medium text-[#2f80c9]" : "border-black/15 bg-black/[0.04] text-black/60 hover:border-black/30"
+                          jrDias === d ? "border-[#2f80c9] bg-[#2f80c9]/15 font-medium text-[#2f80c9]" : "border-black/15 bg-white placeholder:text-black/40 text-black/60 hover:border-black/30"
                         }`}
                       >
                         {d} dias
@@ -1512,7 +1529,7 @@ export default function ViagemPersonalizadaSelfServicePage() {
                   </div>
                 </div>
                 <div className="rounded-xl border border-black/10 bg-black/[0.03] p-3">
-                  <span className="mb-2 block text-[9px] uppercase tracking-[0.15em] text-black/40">Classe</span>
+                  <span className="mb-2 block text-[9px] uppercase tracking-[0.15em] text-black/60">Classe</span>
                   <div className="flex flex-wrap gap-2">
                     {(
                       [
@@ -1526,7 +1543,7 @@ export default function ViagemPersonalizadaSelfServicePage() {
                         onClick={() => setJrClasse(cl.key)}
                         aria-pressed={jrClasse === cl.key}
                         className={`flex h-20 w-28 flex-col items-center justify-center gap-1.5 rounded-lg border px-2 text-center text-xs transition ${
-                          jrClasse === cl.key ? "border-[#2f80c9] bg-[#2f80c9]/15 font-medium text-[#2f80c9]" : "border-black/15 bg-black/[0.04] text-black/60 hover:border-black/30"
+                          jrClasse === cl.key ? "border-[#2f80c9] bg-[#2f80c9]/15 font-medium text-[#2f80c9]" : "border-black/15 bg-white placeholder:text-black/40 text-black/60 hover:border-black/30"
                         }`}
                       >
                         {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -1537,7 +1554,7 @@ export default function ViagemPersonalizadaSelfServicePage() {
                   </div>
                 </div>
               </div>
-              <p className="mt-1.5 text-[11px] text-black/35">
+              <p className="mt-1.5 text-[11px] text-black/60">
                 {rotuloUSD((jrClasse === "green" ? JR_PASS_PRECO_USD_GREEN : JR_PASS_PRECO_USD)[jrDias])} por pessoa
               </p>
               <div className="mt-2 max-w-xs">
@@ -1554,8 +1571,8 @@ export default function ViagemPersonalizadaSelfServicePage() {
 
             <div className="sm:col-span-2">
               <span className="mb-2 flex flex-wrap items-center text-[10px] uppercase tracking-[0.2em] text-black/50">
-                <LabelNumerado texto="13. Guia turístico" />{" "}
-                <span className="ml-1.5 normal-case tracking-normal text-black/35">(opcional)</span>
+                <LabelNumerado texto="14. Guia turístico" />{" "}
+                <span className="ml-1.5 normal-case tracking-normal text-black/60">(opcional)</span>
               </span>
               <div className="flex flex-wrap gap-2">
                 {(["brasileiro", "estrangeiro"] as const).map((t) => (
@@ -1565,14 +1582,14 @@ export default function ViagemPersonalizadaSelfServicePage() {
                     onClick={() => setGuiaTipo(t)}
                     aria-pressed={guiaTipo === t}
                     className={`h-10 rounded-lg border px-4 text-sm transition ${
-                      guiaTipo === t ? "border-[#2f80c9] bg-[#2f80c9]/15 font-medium text-[#2f80c9]" : "border-black/15 bg-black/[0.04] text-black/60 hover:border-black/30"
+                      guiaTipo === t ? "border-[#2f80c9] bg-[#2f80c9]/15 font-medium text-[#2f80c9]" : "border-black/15 bg-white placeholder:text-black/40 text-black/60 hover:border-black/30"
                     }`}
                   >
                     {t === "brasileiro" ? "Guia brasileiro" : "Guia estrangeiro"}
                   </button>
                 ))}
               </div>
-              <p className="mt-1.5 text-[11px] text-black/35">
+              <p className="mt-1.5 text-[11px] text-black/60">
                 {guiaTipo === "brasileiro" ? "Fluente em português." : "Português limitado ou inglês."}
               </p>
               <div className="mt-3 flex flex-wrap items-end gap-2">
@@ -1597,7 +1614,7 @@ export default function ViagemPersonalizadaSelfServicePage() {
                   Sem guia
                 </button>
               </div>
-              <p className="mt-1.5 text-[11px] text-black/35">
+              <p className="mt-1.5 text-[11px] text-black/60">
                 {rotuloUSD(guiaTipo === "brasileiro" ? DIARIA_GUIA_USD : DIARIA_GUIA_ESTRANGEIRO_USD)}/dia a cada{" "}
                 {GUIA_TAMANHO_GRUPO} pessoas
               </p>
@@ -1605,14 +1622,14 @@ export default function ViagemPersonalizadaSelfServicePage() {
 
             <div className="sm:col-span-2 sm:max-w-xs">
               <NumberStepper
-                label="14. Motorista privado — dias"
+                label="15. Motorista privado — dias"
                 value={motoristaDiasEfetivo}
                 onChange={setMotoristaDias}
                 min={0}
                 max={dias}
                 formatValue={(v) => (v === 0 ? "Sem motorista" : `${v} de ${dias} dia${dias === 1 ? "" : "s"}`)}
               />
-              <p className="mt-1.5 text-[11px] text-black/35">
+              <p className="mt-1.5 text-[11px] text-black/60">
                 {rotuloUSD(DIARIA_MOTORISTA_PRIVADO_USD)}/dia para até {MOTORISTA_TAMANHO_GRUPO} pessoas — não inclui o
                 transfer aeroporto ↔ hotel.
               </p>
@@ -1620,8 +1637,8 @@ export default function ViagemPersonalizadaSelfServicePage() {
 
             <div className="sm:col-span-2">
               <span className="mb-2 flex flex-wrap items-center text-[10px] uppercase tracking-[0.2em] text-black/50">
-                <LabelNumerado texto="15. Câmbio de ienes" />{" "}
-                <span className="ml-1.5 normal-case tracking-normal text-black/35">(opcional)</span>
+                <LabelNumerado texto="16. Câmbio de ienes" />{" "}
+                <span className="ml-1.5 normal-case tracking-normal text-black/60">(opcional)</span>
               </span>
               {!(cambioExpandido || servicos.has("cambioBrasil")) ? (
                 <button
@@ -1639,11 +1656,11 @@ export default function ViagemPersonalizadaSelfServicePage() {
                 <>
                   <div className="flex flex-wrap items-end gap-3">
                     <label className="flex flex-col">
-                      <span className="mb-1 text-[10px] uppercase tracking-wide text-black/40">Cidade</span>
+                      <span className="mb-1 text-[10px] uppercase tracking-wide text-black/60">Cidade</span>
                       <select
                         value={cambioCidade}
                         onChange={(e) => setCambioCidade(e.target.value as CidadeCambioIeneSlug)}
-                        className="h-10 w-40 rounded-lg border border-black/15 bg-black/[0.04] px-3 text-sm text-[#0A2540] outline-none focus:border-black/40"
+                        className="h-10 w-40 rounded-lg border border-black/15 bg-white placeholder:text-black/40 px-3 text-sm text-[#0A2540] outline-none focus:border-black/40"
                       >
                         {CIDADES_CAMBIO_IENE.map((c) => (
                           <option key={c.slug} value={c.slug} className="bg-white">
@@ -1653,11 +1670,11 @@ export default function ViagemPersonalizadaSelfServicePage() {
                       </select>
                     </label>
                     <label className="flex flex-col">
-                      <span className="mb-1 text-[10px] uppercase tracking-wide text-black/40">
+                      <span className="mb-1 text-[10px] uppercase tracking-wide text-black/60">
                         Quantidade de ienes (mín. ¥{CAMBIO_IENES_MINIMO.toLocaleString("pt-BR")})
                       </span>
                       <div className="flex items-center gap-2">
-                        <span className="text-sm text-black/40">¥</span>
+                        <span className="text-sm text-black/60">¥</span>
                         <input
                           type="number"
                           value={quantidadeIenes}
@@ -1668,12 +1685,12 @@ export default function ViagemPersonalizadaSelfServicePage() {
                             if (!Number.isNaN(v)) setQuantidadeIenes(v);
                           }}
                           onBlur={() => setQuantidadeIenes((v) => Math.max(CAMBIO_IENES_MINIMO, v))}
-                          className="h-10 w-32 rounded-lg border border-black/15 bg-black/[0.04] px-3 text-sm text-[#0A2540] outline-none focus:border-black/40"
+                          className="h-10 w-32 rounded-lg border border-black/15 bg-white placeholder:text-black/40 px-3 text-sm text-[#0A2540] outline-none focus:border-black/40"
                         />
                       </div>
                     </label>
                   </div>
-                  <p className="mt-1.5 text-[11px] text-black/35">
+                  <p className="mt-1.5 text-[11px] text-black/60">
                     {servicos.has("cambioBrasil")
                       ? `Valor estimado: ${formatBRL(Math.round(PRECO_CAMBIO_BRASIL + quantidadeIenes * cotacaoIene * FATOR_CAMBIO_IENE))} (taxa de serviço + ienes em espécie).`
                       : "Marque “Câmbio no Brasil” em Serviços adicionais para incluir no pacote."}
@@ -1684,8 +1701,8 @@ export default function ViagemPersonalizadaSelfServicePage() {
 
             <label className="flex flex-col sm:col-span-2">
               <span className="mb-2 flex flex-wrap items-center text-[10px] uppercase tracking-[0.2em] text-black/50">
-                <LabelNumerado texto="16. Data prevista da viagem" />{" "}
-                <span className="ml-1.5 normal-case tracking-normal text-black/35">(opcional)</span>
+                <LabelNumerado texto="17. Data prevista da viagem" />{" "}
+                <span className="ml-1.5 normal-case tracking-normal text-black/60">(opcional)</span>
               </span>
               <input
                 type="date"
@@ -1698,12 +1715,12 @@ export default function ViagemPersonalizadaSelfServicePage() {
                     setTemporada(MES_PARA_TEMPORADA[mes]);
                   }
                 }}
-                className="h-11 w-full rounded-lg border border-black/15 bg-black/[0.04] px-3 text-sm text-[#0A2540] outline-none focus:border-black/40"
+                className="h-11 w-full rounded-lg border border-black/15 bg-white placeholder:text-black/40 px-3 text-sm text-[#0A2540] outline-none focus:border-black/40"
               />
             </label>
 
             <div className="sm:col-span-2 -mt-2">
-              <span className="mb-1.5 block text-[10px] uppercase tracking-wide text-black/40">Flexibilidade das datas</span>
+              <span className="mb-1.5 block text-[10px] uppercase tracking-wide text-black/60">Flexibilidade das datas</span>
               <div className="flex flex-wrap gap-2">
                 {FLEXIBILIDADE_DATAS.map((f) => (
                   <button
@@ -1721,19 +1738,19 @@ export default function ViagemPersonalizadaSelfServicePage() {
                   </button>
                 ))}
               </div>
-              <p className="mt-1.5 text-[11px] text-black/35">
+              <p className="mt-1.5 text-[11px] text-black/60">
                 Datas flexíveis podem ajudar a encontrar tarifas melhores — nossa equipe avalia com você.
               </p>
             </div>
 
             <div className="sm:col-span-2">
               <span className="mb-2 flex flex-wrap items-center text-[10px] uppercase tracking-[0.2em] text-black/50">
-                <LabelNumerado texto="17. Seguro viagem — idade dos passageiros" />
+                <LabelNumerado texto="18. Seguro viagem — idade dos passageiros" />
               </span>
               <div className="flex flex-wrap gap-2">
                 {idadesConsideradas.map((idade, i) => (
-                  <div key={i} className="w-36 rounded-lg border border-black/15 bg-black/[0.04] p-3">
-                    <p className="text-[10px] uppercase tracking-wide text-black/40">Passageiro {i + 1}</p>
+                  <div key={i} className="w-36 rounded-lg border border-black/15 bg-white placeholder:text-black/40 p-3">
+                    <p className="text-[10px] uppercase tracking-wide text-black/60">Passageiro {i + 1}</p>
                     <div className="mt-1.5 flex items-center gap-2">
                       <input
                         type="number"
@@ -1748,7 +1765,7 @@ export default function ViagemPersonalizadaSelfServicePage() {
                       />
                       <span className="text-xs text-black/50">anos</span>
                     </div>
-                    <p className="mt-1.5 text-[10px] leading-4 text-black/35">
+                    <p className="mt-1.5 text-[10px] leading-4 text-black/60">
                       {idade > IDADE_LIMITE_SEGURO
                         ? `Acima de ${IDADE_LIMITE_SEGURO} anos — sob consulta`
                         : (multiplicadorSeguroPorIdade(idade) ?? 1) > 1
@@ -1762,20 +1779,20 @@ export default function ViagemPersonalizadaSelfServicePage() {
 
             <div className="sm:col-span-2 sm:max-w-xs">
               <NumberStepper
-                label="18. Conexão de internet — eSIM"
+                label="19. Conexão de internet — eSIM"
                 value={esimPessoas}
                 onChange={setEsimSelecionado}
                 min={0}
                 max={pessoas}
                 formatValue={(v) => `${v} de ${pessoas} viajante${pessoas === 1 ? "" : "s"}`}
               />
-              <p className="mt-1.5 text-[11px] text-black/35">Um eSIM por pessoa, plano ilimitado.</p>
+              <p className="mt-1.5 text-[11px] text-black/60">Um eSIM por pessoa, plano ilimitado.</p>
             </div>
 
             <div className="sm:col-span-2">
               <span className="mb-2 flex flex-wrap items-center text-[10px] uppercase tracking-[0.2em] text-black/50">
-                <LabelNumerado texto="19. Ingressos e experiências" />{" "}
-                <span className="ml-1.5 normal-case tracking-normal text-black/35">(opcional)</span>
+                <LabelNumerado texto="20. Ingressos e experiências" />{" "}
+                <span className="ml-1.5 normal-case tracking-normal text-black/60">(opcional)</span>
               </span>
               <div className="grid grid-cols-[repeat(auto-fill,8rem)] gap-2">
                 {INGRESSOS_PUBLICOS.map((ing) => {
@@ -1786,7 +1803,7 @@ export default function ViagemPersonalizadaSelfServicePage() {
                       className={`flex h-[13.5rem] w-32 cursor-pointer flex-col items-center gap-2 rounded-lg border px-2 py-3 text-center text-xs transition ${
                         marcado
                           ? "border-[#2f80c9] bg-[#2f80c9]/15 font-medium text-[#2f80c9]"
-                          : "border-black/15 bg-black/[0.04] text-black/60 hover:border-black/30"
+                          : "border-black/15 bg-white placeholder:text-black/40 text-black/60 hover:border-black/30"
                       }`}
                     >
                       <input type="checkbox" checked={marcado} onChange={() => alternarIngresso(ing.key)} className="sr-only" />
@@ -1808,7 +1825,7 @@ export default function ViagemPersonalizadaSelfServicePage() {
               {(ingressos.has("disneyland") || ingressos.has("disneysea")) && (
                 <div className="mt-3 rounded-lg border border-black/10 bg-black/[0.03] p-3">
                   <p className="text-xs font-medium text-black/80">+ Disney Premier Access (fast pass pago)</p>
-                  <p className="mt-0.5 text-[11px] leading-4 text-black/40">
+                  <p className="mt-0.5 text-[11px] leading-4 text-black/60">
                     Vendido por atração, conforme a popularidade — escolha quantas quiser.
                   </p>
                   <div className="mt-2 max-w-xs">
@@ -1831,7 +1848,7 @@ export default function ViagemPersonalizadaSelfServicePage() {
               {ingressos.has("usj") && (
                 <div className="mt-3 rounded-lg border border-black/10 bg-black/[0.03] p-3">
                   <p className="text-xs font-medium text-black/80">+ USJ Express Pass (fast pass pago)</p>
-                  <p className="mt-0.5 text-[11px] leading-4 text-black/40">
+                  <p className="mt-0.5 text-[11px] leading-4 text-black/60">
                     Fura-fila em um número variável de atrações; o combo exato varia por temporada e nossa equipe
                     confirma com você antes de fechar.
                   </p>
@@ -1859,8 +1876,8 @@ export default function ViagemPersonalizadaSelfServicePage() {
 
             <div className="sm:col-span-2">
               <span className="mb-2 flex flex-wrap items-center text-[10px] uppercase tracking-[0.2em] text-black/50">
-                <LabelNumerado texto="20. Serviços adicionais" />{" "}
-                <span className="ml-1.5 normal-case tracking-normal text-black/35">(opcional)</span>
+                <LabelNumerado texto="21. Serviços adicionais" />{" "}
+                <span className="ml-1.5 normal-case tracking-normal text-black/60">(opcional)</span>
               </span>
               <div className="grid grid-cols-[repeat(auto-fill,8rem)] gap-2">
                 {SERVICOS_PUBLICOS.map((sv) => {
@@ -1887,10 +1904,10 @@ export default function ViagemPersonalizadaSelfServicePage() {
                       key={sv.key}
                       className={`flex h-[13.5rem] w-32 flex-col items-center gap-2 rounded-lg border px-2 py-3 text-center text-xs transition ${
                         desabilitado
-                          ? "cursor-not-allowed border-black/10 bg-black/[0.02] text-black/30"
+                          ? "cursor-not-allowed border-black/10 bg-black/[0.02] text-black/60"
                           : marcado
                             ? "cursor-pointer border-[#2f80c9] bg-[#2f80c9]/15 font-medium text-[#2f80c9]"
-                            : "cursor-pointer border-black/15 bg-black/[0.04] text-black/60 hover:border-black/30"
+                            : "cursor-pointer border-black/15 bg-white placeholder:text-black/40 text-black/60 hover:border-black/30"
                       }`}
                     >
                       <input
@@ -1909,7 +1926,7 @@ export default function ViagemPersonalizadaSelfServicePage() {
                       </div>
                       <span
                         className={`flex min-h-[2.5rem] w-full items-center justify-center rounded-md px-2 py-1 text-[11px] font-semibold leading-tight ${
-                          desabilitado ? "bg-black/5 text-black/30" : "bg-amber-50 text-amber-700"
+                          desabilitado ? "bg-black/5 text-black/60" : "bg-amber-50 text-amber-700"
                         }`}
                       >
                         {precoLabel}
@@ -1918,7 +1935,7 @@ export default function ViagemPersonalizadaSelfServicePage() {
                   );
                 })}
               </div>
-              <p className="mt-2 text-[10px] leading-4 text-black/35">
+              <p className="mt-2 text-[10px] leading-4 text-black/60">
                 * preço inicial — pode variar conforme grupo, trecho e disponibilidade. Itens “sob consulta” são
                 cotados pela nossa equipe.
               </p>
@@ -1926,12 +1943,12 @@ export default function ViagemPersonalizadaSelfServicePage() {
           </div>
 
           <div className="grid grid-cols-1 gap-5 rounded-2xl border border-black/10 bg-black/[0.03] p-6 sm:grid-cols-2 md:p-8">
-            <p className="text-[10px] uppercase tracking-[0.2em] text-black/40 sm:col-span-2">
+            <p className="text-[10px] uppercase tracking-[0.2em] text-black/60 sm:col-span-2">
               Seus dados, pra receber a simulação
             </p>
 
             <label className="flex flex-col">
-              <span className="mb-1.5 text-[10px] uppercase tracking-[0.2em] text-black/40">
+              <span className="mb-1.5 text-[10px] uppercase tracking-[0.2em] text-black/60">
                 Nome completo
               </span>
               <input
@@ -1939,12 +1956,12 @@ export default function ViagemPersonalizadaSelfServicePage() {
                 required
                 value={nome}
                 onChange={(e) => setNome(e.target.value)}
-                className="h-11 w-full rounded-lg border border-black/15 bg-black/[0.04] px-3 text-sm text-[#0A2540] outline-none focus:border-black/40"
+                className="h-11 w-full rounded-lg border border-black/15 bg-white placeholder:text-black/40 px-3 text-sm text-[#0A2540] outline-none focus:border-black/40"
               />
             </label>
 
             <label className="flex flex-col">
-              <span className="mb-1.5 text-[10px] uppercase tracking-[0.2em] text-black/40">
+              <span className="mb-1.5 text-[10px] uppercase tracking-[0.2em] text-black/60">
                 WhatsApp (ou e-mail abaixo)
               </span>
               <input
@@ -1952,31 +1969,31 @@ export default function ViagemPersonalizadaSelfServicePage() {
                 placeholder="+55 11 91234-5678"
                 value={whatsapp}
                 onChange={(e) => setWhatsapp(e.target.value)}
-                className="h-11 w-full rounded-lg border border-black/15 bg-black/[0.04] px-3 text-sm text-[#0A2540] outline-none focus:border-black/40"
+                className="h-11 w-full rounded-lg border border-black/15 bg-white placeholder:text-black/40 px-3 text-sm text-[#0A2540] outline-none focus:border-black/40"
               />
             </label>
 
             <label className="flex flex-col sm:col-span-2">
-              <span className="mb-1.5 text-[10px] uppercase tracking-[0.2em] text-black/40">
+              <span className="mb-1.5 text-[10px] uppercase tracking-[0.2em] text-black/60">
                 E-mail (ou WhatsApp ao lado)
               </span>
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="h-11 w-full rounded-lg border border-black/15 bg-black/[0.04] px-3 text-sm text-[#0A2540] outline-none focus:border-black/40"
+                className="h-11 w-full rounded-lg border border-black/15 bg-white placeholder:text-black/40 px-3 text-sm text-[#0A2540] outline-none focus:border-black/40"
               />
             </label>
 
             <label className="flex flex-col sm:col-span-2">
-              <span className="mb-1.5 text-[10px] uppercase tracking-[0.2em] text-black/40">
+              <span className="mb-1.5 text-[10px] uppercase tracking-[0.2em] text-black/60">
                 Observações (opcional)
               </span>
               <textarea
                 value={observacoes}
                 onChange={(e) => setObservacoes(e.target.value)}
                 rows={3}
-                className="w-full rounded-lg border border-black/15 bg-black/[0.04] px-3 py-2 text-sm text-[#0A2540] outline-none focus:border-black/40"
+                className="w-full rounded-lg border border-black/15 bg-white placeholder:text-black/40 px-3 py-2 text-sm text-[#0A2540] outline-none focus:border-black/40"
               />
             </label>
           </div>
@@ -1987,7 +2004,7 @@ export default function ViagemPersonalizadaSelfServicePage() {
               {parquesDiaInteiro > 0
                 ? ` e ${parquesDiaInteiro} parque${parquesDiaInteiro === 1 ? "" : "s"} de dia inteiro`
                 : ""}{" "}
-              selecionados, um roteiro de {dias} dia{dias === 1 ? "" : "s"} tende a ficar corrido. Sugestão: pelo
+              selecionados, um roteiro de {dias} dia{dias === 1 ? "" : "s"} tende a ficar corrido no perfil {PERFIS_VIAJANTE.find((x) => x.key === perfilViajante)?.nome}. Sugestão: pelo
               menos {diasMinimosSugeridos} dias — considere aumentar a duração ou reduzir cidades/atrações.
             </p>
           )}

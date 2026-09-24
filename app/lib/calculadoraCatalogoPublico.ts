@@ -511,3 +511,60 @@ export function calcularParcelaPrice(valorFinanciado: number, taxaMensal: number
   if (parcelas <= 1) return valorFinanciado;
   return (valorFinanciado * taxaMensal) / (1 - Math.pow(1 + taxaMensal, -parcelas));
 }
+
+// ── Perfil do viajante (ritmo do roteiro) ───────────────────────────────────
+// Não altera preço: define o ritmo do roteiro (pontos turísticos por dia) e
+// calibra o aviso de "roteiro corrido" (dias mínimos sugeridos por cidade).
+export type PerfilViajanteKey = "cadenciado" | "equilibrado" | "acelerado";
+
+export const PERFIL_VIAJANTE_PADRAO: PerfilViajanteKey = "equilibrado";
+
+export const PERFIS_VIAJANTE: {
+  key: PerfilViajanteKey;
+  nome: string;
+  pontosPorDia: string;
+  recomendado?: boolean;
+  imagem: string;
+  descricao: string;
+  destaques: string[];
+  /** Dias mínimos sugeridos por cidade do roteiro (estimativa). */
+  diasPorCidade: number;
+}[] = [
+  {
+    key: "cadenciado",
+    nome: "Cadenciado",
+    pontosPorDia: "1 ponto turístico principal por dia",
+    imagem: "/images/perfil-cadenciado.png",
+    descricao: "Amplo tempo livre, no mesmo bairro.",
+    destaques: ["Menor cobertura de cidades", "Menos deslocamentos"],
+    diasPorCidade: 1.5,
+  },
+  {
+    key: "equilibrado",
+    nome: "Equilibrado",
+    pontosPorDia: "2 pontos turísticos principais por dia",
+    recomendado: true,
+    imagem: "/images/perfil-equilibrado.png",
+    descricao: "1 pela manhã e 1 à tarde.",
+    destaques: ["Bom equilíbrio entre conhecer e descansar"],
+    diasPorCidade: 1,
+  },
+  {
+    key: "acelerado",
+    nome: "Acelerado",
+    pontosPorDia: "3 a 4 pontos turísticos principais por dia",
+    imagem: "/images/perfil-acelerado.png",
+    descricao: "Pouco tempo em cada ponto turístico.",
+    destaques: ["Maior cobertura", "Maior fadiga geral"],
+    diasPorCidade: 0.75,
+  },
+];
+
+export function diasMinimosPorPerfil(
+  perfil: PerfilViajanteKey,
+  cidades: number,
+  parquesDiaInteiro: number,
+): number {
+  const fator = PERFIS_VIAJANTE.find((p) => p.key === perfil)?.diasPorCidade ?? 1;
+  return Math.ceil(Math.max(1, cidades) * fator) + parquesDiaInteiro;
+}

@@ -80,6 +80,7 @@ export async function POST(req: Request) {
     const valorEstimado = Number(body.valorEstimado) || null;
     const dataViagem = String(body.dataViagem || "").trim();
     const observacoesCliente = String(body.observacoes || "").trim();
+    const perfilViajante = String(body.perfilViajante || "").trim().slice(0, 40);
     const flexibilidade = String(body.flexibilidade || "").trim().slice(0, 40);
     const temas: string[] = Array.isArray(body.temas)
       ? body.temas.slice(0, 5).map((x: unknown) => String(x).slice(0, 80))
@@ -116,6 +117,7 @@ export async function POST(req: Request) {
       ["Categoria de hotel sugerida", categoriaHotel || "Não informado"],
       ["Classe de voo sugerida", classeAereo || "Não informado"],
       ["Valor estimado do pacote", valorEstimado ? `R$ ${valorEstimado.toLocaleString("pt-BR")}` : "Não informado"],
+      ["Perfil do viajante", perfilViajante || "Não informado"],
       ["Flexibilidade das datas", flexibilidade || "Não informado"],
       ["Temas", temas.length ? temas.join(", ") : "Nenhum"],
       ["Categoria máxima de hotel", hotelMax || "Não informado"],

@@ -71,6 +71,13 @@ import {
   type MoedaExibicao,
 } from "../hooks/useCambioUSD";
 import { CambioLabel } from "../components/CambioLabel";
+import PerfilViajanteSeletor from "../components/PerfilViajanteSeletor";
+import {
+  PERFIL_VIAJANTE_PADRAO,
+  PERFIS_VIAJANTE,
+  diasMinimosPorPerfil,
+  type PerfilViajanteKey,
+} from "../lib/calculadoraCatalogoPublico";
 
 type IngressoKey = "disneyland" | "disneysea" | "usj" | "teamlabTokyo" | "teamlabKyoto";
 
@@ -1255,7 +1262,7 @@ function VolumeSlider<T extends string>({
         {onToggleOculto && <BotaoOcultarCampo oculto={oculto} onToggle={onToggleOculto} />}
       </span>
       <div className="flex items-center gap-2 rounded-lg border border-black/15 bg-black/[0.03] px-3 h-12">
-        <span aria-hidden className="shrink-0 text-base font-semibold text-black/30">
+        <span aria-hidden className="shrink-0 text-base font-semibold text-black/60">
           −
         </span>
         <div className="flex flex-1 items-center gap-1">
@@ -1273,18 +1280,18 @@ function VolumeSlider<T extends string>({
             />
           ))}
         </div>
-        <span aria-hidden className="shrink-0 text-base font-semibold text-black/30">
+        <span aria-hidden className="shrink-0 text-base font-semibold text-black/60">
           +
         </span>
       </div>
-      <div className="mt-1.5 flex justify-between gap-1 text-[9px] uppercase tracking-wide text-black/35">
+      <div className="mt-1.5 flex justify-between gap-1 text-[9px] uppercase tracking-wide text-black/60">
         {opcoes.map((o) => (
           <span key={o} className={o === value ? "font-semibold text-[#2f80c9]" : ""}>
             {o}
           </span>
         ))}
       </div>
-      {nota && <span className="mt-1 text-[11px] leading-4 text-black/40">{nota}</span>}
+      {nota && <span className="mt-1 text-[11px] leading-4 text-black/60">{nota}</span>}
     </div>
   );
 }
@@ -1356,7 +1363,7 @@ function CidadeCombobox({
         // texto por baixo de forma limpa, sem pedaço sobrando à mostra.
         <div className="absolute left-0 top-full z-30 mt-1 max-h-56 w-56 max-w-[80vw] overflow-y-auto rounded-lg border border-black/15 bg-white shadow-lg">
           {opcoes.length === 0 ? (
-            <p className="px-3 py-2 text-sm text-black/40">Nenhuma cidade encontrada</p>
+            <p className="px-3 py-2 text-sm text-black/60">Nenhuma cidade encontrada</p>
           ) : (
             opcoes.map((d) => (
               <button
@@ -1505,6 +1512,7 @@ export default function CalculadoraReversaPage() {
   // Temporada da viagem — ajusta a diária de hotel por cidade (pesquisa de
   // mercado). Pedido do Wilson, 08/set/2026.
   const [temporada, setTemporada] = useState<TemporadaKey>("baixa");
+  const [perfilViajante, setPerfilViajante] = useState<PerfilViajanteKey>(PERFIL_VIAJANTE_PADRAO);
   // Extensões internacionais (Coréia do Sul / China) — pedido do Wilson,
   // 08/set/2026. Independentes do roteiro do Japão: podem ficar ativas
   // junto com qualquer Tema/seleção de cidades.
@@ -1907,7 +1915,7 @@ export default function CalculadoraReversaPage() {
   const diasParquesDiaInteiro = (["disneyland", "disneysea", "usj"] as const).filter((k) =>
     ingressosSelecionados.has(k),
   ).length;
-  const diasMinimosSugeridos = Math.max(1, destinosSelecionados.length) + diasParquesDiaInteiro;
+  const diasMinimosSugeridos = diasMinimosPorPerfil(perfilViajante, destinosSelecionados.length, diasParquesDiaInteiro);
   const diasInsuficientes = dias < diasMinimosSugeridos;
 
   const resultado = useMemo(() => {
@@ -2847,6 +2855,7 @@ export default function CalculadoraReversaPage() {
       `Quarto: ${tipoQuarto}`,
       `Hotel: ${resultado.categoriaHotelFinal} · Aéreo: ${resultado.classeAereoFinal}`,
       nomesDestinos ? `Cidades do roteiro: ${nomesDestinos}` : "",
+      `Perfil do viajante: ${PERFIS_VIAJANTE.find((x) => x.key === perfilViajante)?.nome ?? perfilViajante}`,
       `Temporada: ${nomeTemporada}`,
       `Origem do voo: ${nomeOrigem}`,
       `Bagagem: ${nomeBagagem}`,
@@ -3066,7 +3075,7 @@ export default function CalculadoraReversaPage() {
               <span className="block text-sm font-semibold uppercase tracking-[0.1em] text-[#0A2540]">
                 {todosCamposOcultos ? "Mostrar Todos os Campos" : "Ocultar Todos os Campos"}
               </span>
-              <span className="mt-0.5 block text-[11px] leading-4 text-black/45">
+              <span className="mt-0.5 block text-[11px] leading-4 text-black/60">
                 {todosCamposOcultos
                   ? "Restaura todos os campos ocultos de uma vez"
                   : "Oculta todos os campos de uma vez — útil pra print de tela"}
@@ -3133,7 +3142,7 @@ export default function CalculadoraReversaPage() {
                           onClick={() => alternarCampoOculto(n)}
                           className="flex w-full items-center gap-2.5 px-3 py-2 text-left text-xs text-black/70 transition hover:bg-[#2f80c9]/5"
                         >
-                          <IconEyeOff className="h-4 w-4 shrink-0 text-black/35" />
+                          <IconEyeOff className="h-4 w-4 shrink-0 text-black/60" />
                           <span className="flex-1 truncate">{NOME_CAMPO_OCULTAVEL[n] ?? `Campo ${n}`}</span>
                           <span className="shrink-0 text-[10px] font-medium uppercase tracking-wide text-[#2f80c9]">
                             mostrar
@@ -3175,7 +3184,7 @@ export default function CalculadoraReversaPage() {
                   className="h-12 w-full rounded-lg border border-black/15 bg-black/[0.03] px-4 text-lg font-medium outline-none focus:border-black/30"
                 />
                 {cambio && (
-                  <span className="mt-1.5 text-[11px] text-black/40">
+                  <span className="mt-1.5 text-[11px] text-black/60">
                     ≈ {moedaExibicao === "BRL" ? formatUSD(orcamento / cambioCotacao) : formatMoeda(orcamento)}
                   </span>
                 )}
@@ -3212,7 +3221,7 @@ export default function CalculadoraReversaPage() {
           {!camposOcultos.has(2) && (
             <div className="sm:col-span-2 -mt-2">
               <label className="flex flex-col">
-                <span className="mb-1 text-[10px] uppercase tracking-wide text-black/40">
+                <span className="mb-1 text-[10px] uppercase tracking-wide text-black/60">
                   Flexibilidade das datas
                 </span>
                 <div className="flex flex-wrap gap-1.5">
@@ -3237,7 +3246,7 @@ export default function CalculadoraReversaPage() {
                     const economia = Math.round(precoAereoAtual * ECONOMIA_FLEXIBILIDADE_PCT[flexibilidadeDatas]);
                     if (economia <= 0) return null;
                     return (
-                      <span className="mt-1.5 text-[11px] text-black/40">
+                      <span className="mt-1.5 text-[11px] text-black/60">
                         Com {FLEXIBILIDADE_DATAS.find((f) => f.key === flexibilidadeDatas)?.nome.toLowerCase()}, o
                         aéreo pode reduzir em até ~{formatMoeda(economia)} — estimativa, sujeita à
                         disponibilidade real nas datas.
@@ -3275,7 +3284,7 @@ export default function CalculadoraReversaPage() {
                 usado em CustomPackageCard.tsx (quartosNecessarios) — não
                 mexe na fórmula de preço em si. */}
             {!camposOcultos.has(4) && (
-              <span className="mt-1.5 text-[11px] leading-4 text-black/40">
+              <span className="mt-1.5 text-[11px] leading-4 text-black/60">
                 → {quartosNecessarios} {quartosNecessarios === 1 ? "quarto" : "quartos"} para{" "}
                 {pessoas} {pessoas === 1 ? "pessoa" : "pessoas"}
               </span>
@@ -3306,7 +3315,7 @@ export default function CalculadoraReversaPage() {
                   onChange={(e) => setDataViagemEstimada(e.target.value)}
                   className="h-10 w-full rounded-lg border border-black/15 bg-black/[0.03] px-3 text-sm outline-none focus:border-black/30"
                 />
-                <span className="mt-1.5 text-[11px] text-black/40">
+                <span className="mt-1.5 text-[11px] text-black/60">
                   Usada pra limitar o parcelamento do PIX até a data da viagem.
                 </span>
               </>
@@ -3353,7 +3362,7 @@ export default function CalculadoraReversaPage() {
           {!camposOcultos.has(6) && (
             <div className="sm:col-span-2 -mt-2">
               <label className="flex flex-col">
-                <span className="mb-1 text-[10px] uppercase tracking-wide text-black/40">
+                <span className="mb-1 text-[10px] uppercase tracking-wide text-black/60">
                   Origem do voo
                 </span>
                 <select
@@ -3368,7 +3377,7 @@ export default function CalculadoraReversaPage() {
                     </option>
                   ))}
                 </select>
-                <span className="mt-1 text-[11px] text-black/40">
+                <span className="mt-1 text-[11px] text-black/60">
                   {aereoManual
                     ? "Valor manual — origem não se aplica"
                     : (ORIGENS_VOO.find((o) => o.key === origemVoo)?.ajusteBRL ?? 0) === 0
@@ -3385,7 +3394,7 @@ export default function CalculadoraReversaPage() {
           {!camposOcultos.has(6) && (
             <div className="sm:col-span-2 -mt-2">
               <label className="flex flex-col">
-                <span className="mb-1 text-[10px] uppercase tracking-wide text-black/40">Bagagem</span>
+                <span className="mb-1 text-[10px] uppercase tracking-wide text-black/60">Bagagem</span>
                 <select
                   value={bagagem}
                   onChange={(e) => setBagagem(e.target.value as BagagemKey)}
@@ -3398,7 +3407,7 @@ export default function CalculadoraReversaPage() {
                     </option>
                   ))}
                 </select>
-                <span className="mt-1 text-[11px] text-black/40">
+                <span className="mt-1 text-[11px] text-black/60">
                   {aereoManual
                     ? "Valor manual — bagagem não se aplica"
                     : bagagem === "cabine" || bagagem === "uma"
@@ -3406,7 +3415,7 @@ export default function CalculadoraReversaPage() {
                       : `Ajuste estimado de +${formatBRL(BAGAGEM_OPCOES.find((b) => b.key === bagagem)!.ajusteBRL)}/pessoa no aéreo (taxa de mala extra/item grande) — confirmar com a companhia aérea.`}
                 </span>
                 {(bagagem === "duas" || bagagem === "grande") && (
-                  <span className="mt-1 text-[11px] text-black/40">
+                  <span className="mt-1 text-[11px] text-black/60">
                     Entre cidades, considere também o item &quot;Transporte de Malas
                     Inter-Municipal&quot; (seção 17).
                   </span>
@@ -3450,7 +3459,7 @@ export default function CalculadoraReversaPage() {
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img src="/images/com-cafe-da-manha.png" alt="" className="h-20 w-20 shrink-0" />
                   <span>Com café da manhã</span>
-                  <span className="text-[10px] font-normal normal-case tracking-normal text-black/40">
+                  <span className="text-[10px] font-normal normal-case tracking-normal text-black/60">
                     Buffet incluso — adicional varia por categoria
                   </span>
                 </button>
@@ -3466,7 +3475,7 @@ export default function CalculadoraReversaPage() {
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img src="/images/sem-cafe-da-manha.png" alt="" className="h-20 w-20 shrink-0" />
                   <span>Sem café da manhã</span>
-                  <span className="text-[10px] font-normal normal-case tracking-normal text-black/40">
+                  <span className="text-[10px] font-normal normal-case tracking-normal text-black/60">
                     Diária &quot;room only&quot;
                   </span>
                 </button>
@@ -3488,7 +3497,7 @@ export default function CalculadoraReversaPage() {
                 preenchido, só pré-seleciona a Temporada abaixo (que
                 continua 100% editável na mão). */}
             <label className="mb-3 flex max-w-xs flex-col">
-              <span className="mb-1 text-[10px] uppercase tracking-wide text-black/40">
+              <span className="mb-1 text-[10px] uppercase tracking-wide text-black/60">
                 Mês estimado da viagem (opcional — sugere a temporada abaixo)
               </span>
               <select
@@ -3523,7 +3532,7 @@ export default function CalculadoraReversaPage() {
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img src={t.icone} alt="" className="h-20 w-20 shrink-0" />
                   <span>{t.nome}</span>
-                  <span className="text-[10px] font-normal normal-case tracking-normal text-black/40">
+                  <span className="text-[10px] font-normal normal-case tracking-normal text-black/60">
                     {t.periodo}
                   </span>
                 </button>
@@ -3542,7 +3551,7 @@ export default function CalculadoraReversaPage() {
 
             {!camposOcultos.has(9) && (
               <span className="mb-2 mt-6 flex items-center text-[10px] uppercase tracking-[0.2em] text-black/50">
-                <LabelNumerado texto="9. Temas" /> <span className="normal-case tracking-normal text-black/35">(selecione até {MAX_TEMAS_SIMULTANEOS} pra misturar)</span>
+                <LabelNumerado texto="9. Temas" /> <span className="normal-case tracking-normal text-black/60">(selecione até {MAX_TEMAS_SIMULTANEOS} pra misturar)</span>
                 <BotaoOcultarCampo oculto={false} onToggle={() => alternarCampoOculto(9)} />
               </span>
             )}
@@ -3574,7 +3583,7 @@ export default function CalculadoraReversaPage() {
                       marcado
                         ? "border-[#2f80c9] bg-[#2f80c9]/10 font-medium text-[#2f80c9]"
                         : desabilitado
-                          ? "cursor-not-allowed border-black/10 bg-black/[0.02] text-black/30"
+                          ? "cursor-not-allowed border-black/10 bg-black/[0.02] text-black/60"
                           : tema.key === "roteiroClassico"
                             ? "border-emerald-200 bg-emerald-50 text-emerald-700/80 hover:border-emerald-300"
                             : "border-black/15 bg-black/[0.03] text-black/60 hover:border-black/30"
@@ -3593,6 +3602,16 @@ export default function CalculadoraReversaPage() {
             </div>
             )}
 
+            <div className="mt-4">
+              <span className="mb-2 flex items-end text-[10px] uppercase leading-tight tracking-[0.2em] text-black/50">
+                <LabelNumerado texto="20. Perfil do viajante" />{" "}
+                <span className="ml-1.5 normal-case tracking-normal text-black/60">
+                  (define o ritmo do roteiro — não altera o preço)
+                </span>
+              </span>
+              <PerfilViajanteSeletor value={perfilViajante} onChange={setPerfilViajante} />
+            </div>
+
             {/* Pedido do Wilson, 11/set/2026: ocultar um campo deve fazer o
                 campo inteiro sumir (rótulo incluso), não só o conteúdo —
                 por isso o campo 10 inteiro (as duas variações, com/sem
@@ -3605,7 +3624,7 @@ export default function CalculadoraReversaPage() {
               <div className="mt-4">
                 <span className="mb-2 flex min-h-[2.2em] items-end text-[10px] uppercase leading-tight tracking-[0.2em] text-black/50">
                   <LabelNumerado texto="10. Cidades do roteiro" />{" "}
-                  <span className="normal-case tracking-normal text-black/35">
+                  <span className="normal-case tracking-normal text-black/60">
                     (até {MAX_CIDADES_ROTEIRO})
                   </span>
                   <BotaoOcultarCampo
@@ -3630,7 +3649,7 @@ export default function CalculadoraReversaPage() {
                           type="button"
                           onClick={() => removerDestinoManual(indice)}
                           aria-label="Remover cidade"
-                          className="absolute -right-1.5 -top-1.5 flex h-5 w-5 items-center justify-center rounded-full border border-black/15 bg-white text-[10px] text-black/40 transition hover:border-red-300 hover:text-red-500"
+                          className="absolute -right-1.5 -top-1.5 flex h-5 w-5 items-center justify-center rounded-full border border-black/15 bg-white text-[10px] text-black/60 transition hover:border-red-300 hover:text-red-500"
                         >
                           ×
                         </button>
@@ -3698,7 +3717,7 @@ export default function CalculadoraReversaPage() {
                               {destino?.nome ?? c.key}
                             </strong>
                             {temasSelecionados.size > 1 && (
-                              <span className="text-black/35"> ({d.tema})</span>
+                              <span className="text-black/60"> ({d.tema})</span>
                             )}{" "}
                             — {d.texto}
                           </span>
@@ -3723,7 +3742,7 @@ export default function CalculadoraReversaPage() {
             {!camposOcultos.has(11) && (
               <span className="mb-2 mt-4 flex items-center text-[10px] uppercase tracking-[0.2em] text-black/50">
                 <LabelNumerado texto="11. Extensão internacional" />{" "}
-                <span className="normal-case tracking-normal text-black/35">(opcional — soma dias ao total da viagem)</span>
+                <span className="normal-case tracking-normal text-black/60">(opcional — soma dias ao total da viagem)</span>
                 <BotaoOcultarCampo oculto={false} onToggle={() => alternarCampoOculto(11)} />
               </span>
             )}
@@ -3746,7 +3765,7 @@ export default function CalculadoraReversaPage() {
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img src={extensao.icone} alt="" className="h-24 w-28 shrink-0 object-contain" />
                     <span>{extensao.nome}</span>
-                    <span className="text-[10px] font-normal normal-case tracking-normal text-black/40">
+                    <span className="text-[10px] font-normal normal-case tracking-normal text-black/60">
                       +{extensao.dias} dias · {extensao.cidades.map((c) => c.nome).join(" + ")}
                     </span>
                   </button>
@@ -3765,7 +3784,7 @@ export default function CalculadoraReversaPage() {
                         <span>Roteiro dia a dia — {extensao.nome}</span>
                       </div>
 
-                      <span className="mb-1.5 block text-[9px] uppercase tracking-[0.15em] text-black/40">
+                      <span className="mb-1.5 block text-[9px] uppercase tracking-[0.15em] text-black/60">
                         Pacote da extensão — hotel {tipoQuarto} + deslocamento
                         {extensao.cidades.map((c) => ` · ${c.nome}`).join("")}
                       </span>
@@ -3797,7 +3816,7 @@ export default function CalculadoraReversaPage() {
                               <span className="mt-0.5 block text-sm font-semibold text-black">
                                 {precos ? formatMoeda(precos.total) : "—"}
                               </span>
-                              <span className="mt-0.5 block text-[10px] text-black/40">
+                              <span className="mt-0.5 block text-[10px] text-black/60">
                                 {precos
                                   ? `Hotel ${formatMoeda(precos.hotel)} + deslocamento ${formatMoeda(precos.deslocamento)}`
                                   : ""}
@@ -3806,7 +3825,7 @@ export default function CalculadoraReversaPage() {
                           );
                         })}
                       </div>
-                      <div className="mb-3 flex flex-wrap gap-x-4 gap-y-0.5 text-[10px] text-black/40">
+                      <div className="mb-3 flex flex-wrap gap-x-4 gap-y-0.5 text-[10px] text-black/60">
                         {extensao.deslocamento.map((trecho) => (
                           <span key={trecho.label}>✈ {trecho.label}</span>
                         ))}
@@ -3827,7 +3846,7 @@ export default function CalculadoraReversaPage() {
                                 style={{ objectPosition: diaInfo.posicaoImagem ?? "center" }}
                               />
                             ) : (
-                              <div className="flex h-36 w-full items-center justify-center rounded-t-xl bg-black/5 text-center text-[10px] uppercase tracking-wide text-black/30">
+                              <div className="flex h-36 w-full items-center justify-center rounded-t-xl bg-black/5 text-center text-[10px] uppercase tracking-wide text-black/60">
                                 Imagem pendente
                               </div>
                             )}
@@ -3841,7 +3860,7 @@ export default function CalculadoraReversaPage() {
                                   <li key={ponto}>• {ponto}</li>
                                 ))}
                               </ul>
-                              <p className="mt-2 text-[11px] italic leading-4 text-black/45">{diaInfo.conceito}</p>
+                              <p className="mt-2 text-[11px] italic leading-4 text-black/60">{diaInfo.conceito}</p>
                               {diaInfo.observacao && (
                                 <p className="mt-2 rounded-md bg-amber-50 px-2 py-1 text-[10px] font-medium leading-4 text-amber-700">
                                   ⚠️ {diaInfo.observacao}
@@ -3857,7 +3876,7 @@ export default function CalculadoraReversaPage() {
               </div>
             )}
 
-            <span className="mt-1.5 block text-[11px] text-black/40">
+            <span className="mt-1.5 block text-[11px] text-black/60">
               {destinosSelecionados.length === 0
                 ? "Nenhuma cidade selecionada — diária de hotel sem ajuste de mercado por cidade"
                 : `Ajuste de mercado do hotel: ${nomesDestinos} · cidade ${multiplicadorCidade.toFixed(2)}× · temporada ${multiplicadorTemporada.toFixed(2)}×`}
@@ -3870,7 +3889,7 @@ export default function CalculadoraReversaPage() {
                   ? ` e ${diasParquesDiaInteiro} parque${diasParquesDiaInteiro === 1 ? "" : "s"} de dia inteiro`
                   : ""}{" "}
                 selecionados, o roteiro atual de {dias} dia{dias === 1 ? "" : "s"} tende a ficar
-                corrido. Sugestão: pelo menos {diasMinimosSugeridos} dias (estimativa) — considere
+                corrido no perfil {PERFIS_VIAJANTE.find((x) => x.key === perfilViajante)?.nome}. Sugestão: pelo menos {diasMinimosSugeridos} dias (estimativa) — considere
                 aumentar a duração da viagem ou reduzir cidades/atrações.
               </p>
             )}
@@ -3889,7 +3908,7 @@ export default function CalculadoraReversaPage() {
             <>
             <div className="flex flex-wrap gap-4">
               <div className="rounded-xl border border-black/10 bg-black/[0.02] p-3">
-                <span className="mb-2 block text-[9px] uppercase tracking-[0.15em] text-black/40">
+                <span className="mb-2 block text-[9px] uppercase tracking-[0.15em] text-black/60">
                   Validade
                 </span>
                 {/* Pedido do Wilson, 16/set/2026 ("problema de centralização"
@@ -3915,7 +3934,7 @@ export default function CalculadoraReversaPage() {
                 </div>
               </div>
               <div className="rounded-xl border border-black/10 bg-black/[0.02] p-3">
-                <span className="mb-2 block text-[9px] uppercase tracking-[0.15em] text-black/40">
+                <span className="mb-2 block text-[9px] uppercase tracking-[0.15em] text-black/60">
                   Classe
                 </span>
                 <div className="flex flex-wrap gap-2">
@@ -3943,7 +3962,7 @@ export default function CalculadoraReversaPage() {
                 </div>
               </div>
             </div>
-            <span className="mt-1.5 block text-[11px] text-black/40">
+            <span className="mt-1.5 block text-[11px] text-black/60">
               {formatMoedaDeUSD(
                 (jrPassClasse === "green" ? JR_PASS_PRECO_USD_GREEN : JR_PASS_PRECO_USD)[jrPassDias],
               )}{" "}
@@ -3992,7 +4011,7 @@ export default function CalculadoraReversaPage() {
                 </button>
               ))}
             </div>
-            <span className="mt-1.5 block text-[11px] text-black/40">
+            <span className="mt-1.5 block text-[11px] text-black/60">
               {guiaTipo === "brasileiro"
                 ? "Fluente em português."
                 : "Português limitado ou inglês."}
@@ -4025,7 +4044,7 @@ export default function CalculadoraReversaPage() {
                 Sem guia
               </button>
             </div>
-            <span className="mt-1.5 block text-[11px] text-black/40">
+            <span className="mt-1.5 block text-[11px] text-black/60">
               US$ {guiaTipo === "brasileiro" ? DIARIA_GUIA_USD : DIARIA_GUIA_ESTRANGEIRO_USD}/dia a cada{" "}
               {GUIA_TAMANHO_GRUPO} pessoas
             </span>
@@ -4052,7 +4071,7 @@ export default function CalculadoraReversaPage() {
               <button
                 type="button"
                 onClick={() => setCambioIeneExpandido(true)}
-                className="flex items-center gap-2 rounded-lg border border-dashed border-black/20 px-3 py-2 text-xs text-black/45 transition hover:border-black/35 hover:text-black/60"
+                className="flex items-center gap-2 rounded-lg border border-dashed border-black/20 px-3 py-2 text-xs text-black/60 transition hover:border-black/35 hover:text-black/60"
               >
                 <span aria-hidden className="text-sm leading-none">+</span>
                 Configurar câmbio de ienes (opcional)
@@ -4061,7 +4080,7 @@ export default function CalculadoraReversaPage() {
               <>
               <div className="flex flex-wrap items-end gap-3">
                 <label className="flex flex-col">
-                  <span className="mb-1 text-[10px] uppercase tracking-wide text-black/40">Cidade</span>
+                  <span className="mb-1 text-[10px] uppercase tracking-wide text-black/60">Cidade</span>
                   <select
                     value={cambioIeneCidade}
                     onChange={(e) => setCambioIeneCidade(e.target.value as CidadeCambioIeneSlug)}
@@ -4075,11 +4094,11 @@ export default function CalculadoraReversaPage() {
                   </select>
                 </label>
                 <label className="flex flex-col">
-                  <span className="mb-1 text-[10px] uppercase tracking-wide text-black/40">
+                  <span className="mb-1 text-[10px] uppercase tracking-wide text-black/60">
                     Quantidade de ienes (mín. ¥{CAMBIO_IENES_MINIMO.toLocaleString("pt-BR")})
                   </span>
                   <div className="flex items-center gap-2">
-                    <span className="text-sm text-black/40">¥</span>
+                    <span className="text-sm text-black/60">¥</span>
                     <input
                       type="number"
                       value={quantidadeIenes}
@@ -4095,7 +4114,7 @@ export default function CalculadoraReversaPage() {
                   </div>
                 </label>
               </div>
-              <span className="mt-1.5 block text-[11px] text-black/40">
+              <span className="mt-1.5 block text-[11px] text-black/60">
                 {!cambioIene
                   ? "Buscando cotação do iene…"
                   : cambioIene.fallback
@@ -4119,7 +4138,7 @@ export default function CalculadoraReversaPage() {
             <>
             {/* Pocket Wi-Fi removido — pedido do Wilson, 16/set/2026: "não
                 vamos mais trabalhar com pocket wifi". Só eSIM agora. */}
-            <span className="mt-1.5 block text-[11px] text-black/40">
+            <span className="mt-1.5 block text-[11px] text-black/60">
               Um eSIM por pessoa — tipo Airalo/Holafly, plano ilimitado
             </span>
             <div className="mt-2 max-w-xs">
@@ -4219,7 +4238,7 @@ export default function CalculadoraReversaPage() {
                   <img src="/images/ingressos/disneyland-logo.png" alt="" className="h-10 w-auto max-w-[7rem] shrink-0 object-contain" />
                   + Disney Premier Access (fast pass pago)
                 </p>
-                <p className="mt-0.5 text-[10px] text-black/40">
+                <p className="mt-0.5 text-[10px] text-black/60">
                   Vendido por atração (¥1.000 a ¥3.500 cada, conforme popularidade) — escolha
                   quantas o cliente quer, não é um pacote fechado.
                 </p>
@@ -4248,7 +4267,7 @@ export default function CalculadoraReversaPage() {
                   <img src="/images/ingressos/usj-logo.png" alt="" className="h-10 w-auto max-w-[7rem] shrink-0 object-contain" />
                   + USJ Express Pass (fast pass pago)
                 </p>
-                <p className="mt-0.5 text-xs leading-5 text-black/40">
+                <p className="mt-0.5 text-xs leading-5 text-black/60">
                   <strong className="font-medium text-black/55">Express 4</strong> — fura-fila em 4 atrações (mix de clássicos, ex.: Jurassic World, Minion Mayhem, Harry Potter, Flying Dinosaur — o combo exato varia por temporada).{" "}
                   <strong className="font-medium text-black/55">Express 5</strong> — fura-fila em 5 atrações, meio-termo entre o 4 e o 7.{" "}
                   <strong className="font-medium text-black/55">Express 7</strong> — fura-fila em 7 atrações, cobrindo mais opções do Wizarding World e headliners.{" "}
@@ -4388,7 +4407,7 @@ export default function CalculadoraReversaPage() {
                         <p className="mt-2 text-xs font-medium text-black/55">
                           Preço de referência (revenda): {d.faixaPrecoReferenciaBRL}
                         </p>
-                        <p className="mt-1 text-xs italic leading-5 text-black/45">
+                        <p className="mt-1 text-xs italic leading-5 text-black/60">
                           {d.observacao}
                         </p>
                       </div>
@@ -4451,7 +4470,7 @@ export default function CalculadoraReversaPage() {
                           </table>
                         </div>
                         {tabela.notas.length > 0 && (
-                          <ul className="mt-2 space-y-0.5 text-[11px] leading-4 text-black/45">
+                          <ul className="mt-2 space-y-0.5 text-[11px] leading-4 text-black/60">
                             {tabela.notas.map((nota, i) => (
                               <li key={i}>· {nota}</li>
                             ))}
@@ -4459,7 +4478,7 @@ export default function CalculadoraReversaPage() {
                         )}
                       </div>
                     ))}
-                    <p className="text-[11px] italic leading-4 text-black/40">
+                    <p className="text-[11px] italic leading-4 text-black/60">
                       Fonte: prints do Klook enviados pelo Wilson (04/set/2026) — combos e nomes mudam por
                       temporada e operadora, confirmar disponibilidade exata antes de vender.
                     </p>
@@ -4518,7 +4537,7 @@ export default function CalculadoraReversaPage() {
                     key={servico.key}
                     className={`flex h-[13.5rem] w-32 flex-col items-center gap-2 rounded-lg border px-2 py-3 text-center text-xs transition ${
                       desabilitado
-                        ? "cursor-not-allowed border-black/10 bg-black/[0.02] text-black/30"
+                        ? "cursor-not-allowed border-black/10 bg-black/[0.02] text-black/60"
                         : marcado
                           ? "cursor-pointer border-[#2f80c9] bg-[#2f80c9]/10 font-medium text-[#2f80c9]"
                           : "cursor-pointer border-black/15 bg-black/[0.03] text-black/60 hover:border-black/30"
@@ -4541,7 +4560,7 @@ export default function CalculadoraReversaPage() {
                         />
                       ) : (
                         <IconMala
-                          className={`h-20 w-20 shrink-0 ${marcado ? "text-[#2f80c9]" : "text-black/45"}`}
+                          className={`h-20 w-20 shrink-0 ${marcado ? "text-[#2f80c9]" : "text-black/60"}`}
                         />
                       )}
                       {/* Reserva altura de 2 linhas — pedido do Wilson,
@@ -4558,7 +4577,7 @@ export default function CalculadoraReversaPage() {
                         Pedido do Wilson, 10/set/2026. */}
                     <span
                       className={`flex min-h-[2.5rem] w-full items-center justify-center rounded-md px-2 py-1 text-[11px] font-semibold leading-tight ${
-                        desabilitado ? "bg-black/5 text-black/30" : "bg-amber-50 text-amber-700"
+                        desabilitado ? "bg-black/5 text-black/60" : "bg-amber-50 text-amber-700"
                       }`}
                     >
                       *{precoLabel}
@@ -4572,11 +4591,11 @@ export default function CalculadoraReversaPage() {
                 );
               })}
             </div>
-            <p className="mt-2 text-[10px] leading-4 text-black/35">* preço inicial — pode variar conforme grupo, trecho e disponibilidade.</p>
+            <p className="mt-2 text-[10px] leading-4 text-black/60">* preço inicial — pode variar conforme grupo, trecho e disponibilidade.</p>
             {servicosAdicionaisSelecionados.has("ajisaiShopping") && (
               <div className="mt-3 max-w-xs">
                 <label className="block">
-                  <span className="mb-1.5 block text-[10px] uppercase tracking-[0.2em] text-black/40">
+                  <span className="mb-1.5 block text-[10px] uppercase tracking-[0.2em] text-black/60">
                     Ajisai Shopping — orçamento estimado de compras (R$)
                   </span>
                   <input
@@ -4591,7 +4610,7 @@ export default function CalculadoraReversaPage() {
                     className="w-full rounded-lg border border-black/15 bg-black/[0.03] px-3 py-2 text-sm text-black placeholder:text-black/25 outline-none focus:border-[#2f80c9]/60"
                   />
                 </label>
-                <p className="mt-1 text-[10px] leading-4 text-black/35">
+                <p className="mt-1 text-[10px] leading-4 text-black/60">
                   Comissão de {(COMISSAO_AJISAI_SHOPPING_PCT * 100).toFixed(0)}% sobre esse valor — só
                   uma referência pra proposta. Valor final sob consulta, conforme o que for
                   efetivamente gasto na viagem.
@@ -4599,7 +4618,7 @@ export default function CalculadoraReversaPage() {
               </div>
             )}
             {servicosAdicionaisSelecionados.size > 0 && (
-              <p className="mt-1 text-[11px] leading-4 text-black/40">
+              <p className="mt-1 text-[11px] leading-4 text-black/60">
                 {CATALOGO_SERVICOS_ADICIONAIS.filter((s) => servicosAdicionaisSelecionados.has(s.key)).map(
                   (s) => s.descricao,
                 ).join(" ")}
@@ -4621,7 +4640,7 @@ export default function CalculadoraReversaPage() {
                 <div className="grid grid-cols-2 gap-2 sm:grid-cols-4 md:grid-cols-6">
                   {idadesPassageiros.map((idade, i) => (
                     <div key={i} className="rounded-lg border border-black/15 bg-black/[0.03] px-3 py-2.5">
-                      <span className="mb-1 block text-[9px] uppercase tracking-wide text-black/40">
+                      <span className="mb-1 block text-[9px] uppercase tracking-wide text-black/60">
                         Passageiro {i + 1}
                       </span>
                       <div className="flex items-center gap-1.5">
@@ -4636,7 +4655,7 @@ export default function CalculadoraReversaPage() {
                           }}
                           className="h-9 w-14 rounded-md border border-black/15 bg-white px-2 text-sm outline-none focus:border-black/30"
                         />
-                        <span className="text-xs text-black/45">
+                        <span className="text-xs text-black/60">
                           {idade === 1 ? "ano" : "anos"}
                         </span>
                       </div>
@@ -4655,7 +4674,7 @@ export default function CalculadoraReversaPage() {
                           multiplicadores por faixa etária do seguro viagem. */}
                       <span
                         className={`mt-1.5 block text-[10px] font-medium ${
-                          multiplicadorSeguroPorIdade(idade) === null ? "text-red-600" : "text-black/40"
+                          multiplicadorSeguroPorIdade(idade) === null ? "text-red-600" : "text-black/60"
                         }`}
                       >
                         {multiplicadorSeguroPorIdade(idade) === null
@@ -4667,7 +4686,7 @@ export default function CalculadoraReversaPage() {
                     </div>
                   ))}
                 </div>
-                <p className="mt-2 text-[11px] leading-4 text-black/40">
+                <p className="mt-2 text-[11px] leading-4 text-black/60">
                   Usado pra faixa etária do seguro viagem — até 60 anos, valor padrão; 61–65, 2x;
                   66–70, 2,5x; 71–75, 3x; 76–80, 4x; 81–{IDADE_LIMITE_SEGURO}, 5x. Acima de{" "}
                   {IDADE_LIMITE_SEGURO} anos não entra no preço automático — cotar sob consulta.
@@ -4803,7 +4822,7 @@ export default function CalculadoraReversaPage() {
             </div>
           ) : (
             <>
-              <p className="text-[10px] uppercase tracking-[0.2em] text-black/40">
+              <p className="text-[10px] uppercase tracking-[0.2em] text-black/60">
                 Pacote sugerido
               </p>
               <h2 className={`${display.className} mt-2 text-2xl font-medium md:text-3xl`}>
@@ -4864,7 +4883,7 @@ export default function CalculadoraReversaPage() {
                 </div>
               )}
 
-              <p className="mt-3 text-[11px] text-black/35">
+              <p className="mt-3 text-[11px] text-black/60">
                 Ajisai · proposta gerada em {geradoEmLabel}
               </p>
 
@@ -4932,7 +4951,7 @@ export default function CalculadoraReversaPage() {
                       </label>
                       <div className="flex shrink-0 flex-col items-end gap-1">
                         <div className="flex items-center gap-1.5">
-                          <span className="text-xs text-black/30">R$</span>
+                          <span className="text-xs text-black/60">R$</span>
                           <input
                             type="number"
                             disabled={removido}
@@ -4950,7 +4969,7 @@ export default function CalculadoraReversaPage() {
                             }`}
                           />
                         </div>
-                        <span className="text-[10px] text-black/35">
+                        <span className="text-[10px] text-black/60">
                           {brlParaUSDLabel(valor, cambio)}
                         </span>
                         {ajustado && (
@@ -4970,7 +4989,7 @@ export default function CalculadoraReversaPage() {
 
               <div className="mt-6 flex flex-wrap items-end justify-between gap-4 border-t border-black/10 pt-6">
                 <div>
-                  <p className="text-[10px] uppercase tracking-[0.2em] text-black/40">
+                  <p className="text-[10px] uppercase tracking-[0.2em] text-black/60">
                     Total do pacote sugerido
                   </p>
                   <div className="mt-1 flex items-center gap-2">
@@ -4994,10 +5013,10 @@ export default function CalculadoraReversaPage() {
                       }`}
                     />
                   </div>
-                  <p className="text-sm text-black/40">
+                  <p className="text-sm text-black/60">
                     {moedaExibicao === "BRL" ? brlParaUSDLabel(totalSelecionado, cambio) : formatBRL(totalSelecionado)}
                   </p>
-                  <p className="mt-0.5 text-xs text-black/45">
+                  <p className="mt-0.5 text-xs text-black/60">
                     {formatMoeda(pessoas > 0 ? totalSelecionado / pessoas : totalSelecionado)} por
                     passageiro ({pessoas} {pessoas === 1 ? "pessoa" : "pessoas"})
                   </p>
@@ -5005,25 +5024,25 @@ export default function CalculadoraReversaPage() {
                     <button
                       type="button"
                       onClick={() => setTotalManual(false)}
-                      className="mt-1 text-[10px] uppercase tracking-wide text-black/40 underline underline-offset-2 hover:text-black/60"
+                      className="mt-1 text-[10px] uppercase tracking-wide text-black/60 underline underline-offset-2 hover:text-black/60"
                     >
                       usar total calculado automaticamente
                     </button>
                   )}
-                  <CambioLabel cambio={cambio} className="mt-1 text-[11px] text-black/30" />
+                  <CambioLabel cambio={cambio} className="mt-1 text-[11px] text-black/60" />
                 </div>
                 <div className="text-right">
-                  <p className="text-[10px] uppercase tracking-[0.2em] text-black/40">
+                  <p className="text-[10px] uppercase tracking-[0.2em] text-black/60">
                     Saldo restante do orçamento
                   </p>
                   <p
                     className={`${display.className} mt-1 text-2xl font-medium ${
-                      saldoSelecionado > 0 ? "text-black" : "text-black/40"
+                      saldoSelecionado > 0 ? "text-black" : "text-black/60"
                     }`}
                   >
                     {formatMoeda(saldoSelecionado)}
                   </p>
-                  <p className="text-xs text-black/35">
+                  <p className="text-xs text-black/60">
                     {moedaExibicao === "BRL" ? brlParaUSDLabel(saldoSelecionado, cambio) : formatBRL(saldoSelecionado)}
                   </p>
                 </div>
@@ -5037,7 +5056,7 @@ export default function CalculadoraReversaPage() {
                   transfer de ônibus e reserva de restaurante agora são
                   cards precificados na seção 17 (Serviços adicionais), com
                   o mesmo preço de referência usado no cálculo. */}
-              <p className="mt-4 text-[11px] leading-5 text-black/40">
+              <p className="mt-4 text-[11px] leading-5 text-black/60">
                 Concierge, experiências sob medida, transfer de ônibus e reservas de restaurante
                 avulsas já têm preço de referência e entram no total quando marcados em
                 &quot;Serviços adicionais&quot; — ajuste o valor manualmente se o pedido do
@@ -5053,7 +5072,7 @@ export default function CalculadoraReversaPage() {
                 <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#0A2540]">
                   Simulação de pagamento
                 </p>
-                <p className="mt-1 text-[11px] leading-5 text-black/40">
+                <p className="mt-1 text-[11px] leading-5 text-black/60">
                   Simulação pra apresentação ao cliente — não é um checkout, valores sujeitos
                   a confirmação na emissão.
                 </p>
@@ -5072,7 +5091,7 @@ export default function CalculadoraReversaPage() {
                       </span>
                       <div>
                         <p className="text-sm font-semibold text-[#0A2540]">Cartão de crédito</p>
-                        <p className="mt-0.5 text-[10px] text-black/40">
+                        <p className="mt-0.5 text-[10px] text-black/60">
                           maquininha {(TAXA_MAQUINA_CARTAO * 100).toFixed(2).replace(".", ",")}% +
                           juros de {(TAXA_JUROS_CARTAO_MES * 100).toFixed(2).replace(".", ",")}%
                           a.m. por parcela
@@ -5100,11 +5119,11 @@ export default function CalculadoraReversaPage() {
                               }
                               className="h-4 w-4 shrink-0 accent-[#2f80c9]"
                             />
-                            <span className="w-9 shrink-0 text-sm text-black/45">{op.parcelas}x</span>
+                            <span className="w-9 shrink-0 text-sm text-black/60">{op.parcelas}x</span>
                             <span className="flex-1 text-base font-semibold text-[#0A2540]">
                               {formatMoeda(op.valorParcela)}
                             </span>
-                            <span className="shrink-0 text-[11px] text-black/35">
+                            <span className="shrink-0 text-[11px] text-black/60">
                               total {formatMoeda(op.valorTotal)}
                             </span>
                           </label>
@@ -5123,7 +5142,7 @@ export default function CalculadoraReversaPage() {
                         </span>
                         <p className="text-sm font-semibold text-[#0A2540]">PIX</p>
                       </div>
-                      <label className="flex items-center gap-2 text-[11px] text-black/45">
+                      <label className="flex items-center gap-2 text-[11px] text-black/60">
                         Data estimada da viagem
                         <input
                           type="date"
@@ -5156,7 +5175,7 @@ export default function CalculadoraReversaPage() {
 
                     {simulacaoPix.length > 0 ? (
                       <div className="mt-3">
-                        <p className="text-[10px] text-black/35">
+                        <p className="text-[10px] text-black/60">
                           parcelado — entrada de {formatMoeda(simulacaoPix[0].entrada)} (30%) +
                           parcelas a {(TAXA_JUROS_PIX_MES * 100).toFixed(2).replace(".", ",")}%
                           a.m.
@@ -5185,11 +5204,11 @@ export default function CalculadoraReversaPage() {
                                   }
                                   className="h-4 w-4 shrink-0 accent-[#2f80c9]"
                                 />
-                                <span className="w-9 shrink-0 text-sm text-black/45">{op.parcelas}x</span>
+                                <span className="w-9 shrink-0 text-sm text-black/60">{op.parcelas}x</span>
                                 <span className="flex-1 text-base font-semibold text-[#0A2540]">
                                   {formatMoeda(op.valorParcela)}
                                 </span>
-                                <span className="shrink-0 text-[11px] text-black/35">
+                                <span className="shrink-0 text-[11px] text-black/60">
                                   total {formatMoeda(op.valorTotal)}
                                 </span>
                               </label>
@@ -5199,7 +5218,7 @@ export default function CalculadoraReversaPage() {
                       </div>
                     ) : (
                       dataViagemEstimada && (
-                        <p className="mt-3 text-[11px] text-black/35">
+                        <p className="mt-3 text-[11px] text-black/60">
                           Viagem muito próxima — sem prazo pra parcelar no PIX, só à vista.
                         </p>
                       )
@@ -5215,7 +5234,7 @@ export default function CalculadoraReversaPage() {
                   className={`mt-4 rounded-lg border px-3.5 py-3 text-xs ${
                     formaPagamentoEscolhida
                       ? "border-emerald-200 bg-emerald-50 text-emerald-800"
-                      : "border-black/10 bg-black/[0.02] text-black/40"
+                      : "border-black/10 bg-black/[0.02] text-black/60"
                   }`}
                 >
                   {formaPagamentoEscolhida && descricaoFormaPagamentoEscolhida ? (
@@ -5256,15 +5275,15 @@ export default function CalculadoraReversaPage() {
                 </p>
                 <div className="grid gap-3 sm:grid-cols-3">
                   <label className="flex flex-col">
-                    <span className="mb-1 text-[10px] uppercase tracking-wide text-black/40">Nome *</span>
+                    <span className="mb-1 text-[10px] uppercase tracking-wide text-black/60">Nome *</span>
                     <input type="text" value={nomeCliente} onChange={(e) => setNomeCliente(e.target.value)} placeholder="ex.: Família Almeida" className="h-10 w-full rounded-lg border border-sky-200 bg-white px-3 text-sm outline-none focus:border-sky-400" />
                   </label>
                   <label className="flex flex-col">
-                    <span className="mb-1 text-[10px] uppercase tracking-wide text-black/40">Telefone / WhatsApp (ou e-mail)</span>
+                    <span className="mb-1 text-[10px] uppercase tracking-wide text-black/60">Telefone / WhatsApp (ou e-mail)</span>
                     <input type="tel" value={telefoneCliente} onChange={(e) => setTelefoneCliente(e.target.value)} placeholder="ex.: +55 11 91234-5678" className="h-10 w-full rounded-lg border border-sky-200 bg-white px-3 text-sm outline-none focus:border-sky-400" />
                   </label>
                   <label className="flex flex-col">
-                    <span className="mb-1 text-[10px] uppercase tracking-wide text-black/40">E-mail (ou telefone)</span>
+                    <span className="mb-1 text-[10px] uppercase tracking-wide text-black/60">E-mail (ou telefone)</span>
                     <input type="email" value={emailCliente} onChange={(e) => setEmailCliente(e.target.value)} placeholder="ex.: cliente@email.com" className="h-10 w-full rounded-lg border border-sky-200 bg-white px-3 text-sm outline-none focus:border-sky-400" />
                   </label>
                 </div>
@@ -5276,7 +5295,7 @@ export default function CalculadoraReversaPage() {
                 </p>
                 <div className="grid gap-3 sm:grid-cols-2">
                   <label className="flex flex-col">
-                    <span className="mb-1 text-[10px] uppercase tracking-wide text-black/40">
+                    <span className="mb-1 text-[10px] uppercase tracking-wide text-black/60">
                       Consultor responsável
                     </span>
                     <input
@@ -5288,7 +5307,7 @@ export default function CalculadoraReversaPage() {
                     />
                   </label>
                   <label className="flex flex-col">
-                    <span className="mb-1 text-[10px] uppercase tracking-wide text-black/40">
+                    <span className="mb-1 text-[10px] uppercase tracking-wide text-black/60">
                       Validade da proposta
                     </span>
                     <input
@@ -5299,9 +5318,9 @@ export default function CalculadoraReversaPage() {
                     />
                   </label>
                   <label className="flex flex-col">
-                    <span className="mb-1 text-[10px] uppercase tracking-wide text-black/40">
+                    <span className="mb-1 text-[10px] uppercase tracking-wide text-black/60">
                       Margem/observação de negociação{" "}
-                      <span className="normal-case tracking-normal text-black/30">— interno, não aparece no PDF/Word</span>
+                      <span className="normal-case tracking-normal text-black/60">— interno, não aparece no PDF/Word</span>
                     </span>
                     <input
                       type="text"
@@ -5312,9 +5331,9 @@ export default function CalculadoraReversaPage() {
                     />
                   </label>
                   <label className="flex flex-col sm:col-span-2">
-                    <span className="mb-1 text-[10px] uppercase tracking-wide text-black/40">
+                    <span className="mb-1 text-[10px] uppercase tracking-wide text-black/60">
                       Observações internas{" "}
-                      <span className="normal-case tracking-normal text-black/30">— interno, não aparece no PDF/Word</span>
+                      <span className="normal-case tracking-normal text-black/60">— interno, não aparece no PDF/Word</span>
                     </span>
                     <textarea
                       value={observacoesInternas}
