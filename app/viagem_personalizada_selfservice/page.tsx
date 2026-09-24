@@ -604,6 +604,46 @@ export default function ViagemPersonalizadaSelfServicePage() {
     });
   }, [totalPagamento, parcelasMaxPix]);
 
+  const extrasAoVivo = calcularExtras({
+    dias,
+    pessoas,
+    cidadesQtd: cidades.length,
+    cambioCotacao,
+    idades: idadesConsideradas,
+    esimPessoas,
+    ingressos,
+    premierAtracoes,
+    usjTier,
+    servicos,
+    tipoQuarto,
+    jrPessoas: jrPessoasEfetivo,
+    jrDias,
+    jrClasse,
+    guiaDias: guiaDiasEfetivo,
+    guiaTipo,
+    motoristaDias: motoristaDiasEfetivo,
+    extensoes,
+    extCategorias,
+    cotacaoIene,
+    quantidadeIenes,
+  });
+  const simulacaoAoVivo = simular({
+    orcamento,
+    dias,
+    pessoas,
+    tipoQuarto,
+    cidades,
+    cambioCotacao,
+    precoSeguro: extrasAoVivo.precoSeguro,
+    avisoSeguro: extrasAoVivo.avisoSeguro,
+    extras: extrasAoVivo.linhas,
+    hotelMax,
+    classeMax,
+    comCafe,
+    temporada,
+    ajusteAereoPorPessoa: ajusteOrigem + ajusteBagagem,
+  });
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!nome.trim()) return;
@@ -726,114 +766,114 @@ export default function ViagemPersonalizadaSelfServicePage() {
       .join("\n");
     const linhaOpcao = (selecionado: boolean) =>
       `-mx-2 flex cursor-pointer items-center gap-3 rounded-lg px-2 py-2.5 transition ${
-        selecionado ? "bg-[#6ec3d9]/15" : "hover:bg-white/[0.04]"
+        selecionado ? "bg-[#2f80c9]/15" : "hover:bg-black/[0.04]"
       }`;
     return (
-      <main className="min-h-screen bg-black px-6 py-16 text-white md:px-16 md:py-24">
+      <main className="min-h-screen bg-white px-6 py-16 text-[#0A2540] md:px-16 md:py-24">
         <div className="mx-auto max-w-xl text-center">
           <Link href="/">
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src="/images/AJISAI-LOGO.avif"
               alt="Ajisai"
-              className="mx-auto h-11 w-auto object-contain"
+              className="mx-auto h-11 w-auto object-contain invert"
             />
           </Link>
           <h1 className={`${display.className} mt-8 text-3xl font-medium md:text-4xl`}>
             Sua simulação está pronta
           </h1>
-          <p className="mt-4 text-sm leading-7 text-white/60">
+          <p className="mt-4 text-sm leading-7 text-black/60">
             Recebemos seus dados — nossa equipe já pode acompanhar sua simulação e vai entrar em
             contato pelo WhatsApp em breve.
           </p>
 
-          <div className="mt-10 rounded-2xl border border-white/10 bg-white/[0.03] p-6 text-left md:p-8">
-            <p className="text-[10px] uppercase tracking-[0.2em] text-white/40">Sugestão inicial</p>
-            <p className={`${display.className} mt-2 text-2xl font-medium text-[#6ec3d9]`}>
+          <div className="mt-10 rounded-2xl border border-black/10 bg-black/[0.03] p-6 text-left md:p-8">
+            <p className="text-[10px] uppercase tracking-[0.2em] text-black/40">Sugestão inicial</p>
+            <p className={`${display.className} mt-2 text-2xl font-medium text-[#2f80c9]`}>
               Hotel {resultado.categoriaHotel} · Aéreo {resultado.classeAereo}
             </p>
-            <p className="mt-1 text-xs text-white/50">
+            <p className="mt-1 text-xs text-black/50">
               {dias} dias · {pessoas} {pessoas === 1 ? "pessoa" : "pessoas"}
               {nomesCidadesSelecionadas.length > 0 ? ` · ${nomesCidadesSelecionadas.join(", ")}` : ""}
             </p>
 
-            <div className="mt-6 space-y-2 border-t border-white/10 pt-6 text-sm">
-              <div className="flex justify-between text-white/60">
+            <div className="mt-6 space-y-2 border-t border-black/10 pt-6 text-sm">
+              <div className="flex justify-between text-black/60">
                 <span>Roteiro</span>
                 <span>{formatBRL(resultado.precoRoteiro)}</span>
               </div>
-              <div className="flex justify-between text-white/60">
+              <div className="flex justify-between text-black/60">
                 <span>Aéreo ({resultado.classeAereo})</span>
                 <span>{formatBRL(resultado.precoAereo)}</span>
               </div>
-              <div className="flex justify-between text-white/60">
+              <div className="flex justify-between text-black/60">
                 <span>Hotel ({resultado.categoriaHotel})</span>
                 <span>{formatBRL(resultado.precoHotel)}</span>
               </div>
               {resultado.precoCafe > 0 && (
-                <div className="flex justify-between text-white/60">
+                <div className="flex justify-between text-black/60">
                   <span>Café da manhã — Hotel {resultado.categoriaHotel}</span>
                   <span>{formatBRL(resultado.precoCafe)}</span>
                 </div>
               )}
-              <div className="flex justify-between text-white/60">
+              <div className="flex justify-between text-black/60">
                 <span>Seguro viagem</span>
                 <span>{formatBRL(resultado.precoSeguro)}</span>
               </div>
               {resultado.extras.map((l) => (
-                <div key={l.label} className="flex justify-between gap-4 text-white/60">
+                <div key={l.label} className="flex justify-between gap-4 text-black/60">
                   <span>{l.label}</span>
                   <span className="shrink-0">{formatBRL(l.precoBRL)}</span>
                 </div>
               ))}
-              <div className="flex justify-between border-t border-white/10 pt-3 text-base font-medium text-white">
+              <div className="flex justify-between border-t border-black/10 pt-3 text-base font-medium text-[#0A2540]">
                 <span>Total estimado</span>
                 <span>{formatBRL(resultado.total)}</span>
               </div>
             </div>
 
             {resultado.avisoCategoriaTemporada && (
-              <p className="mt-4 text-xs leading-5 text-amber-400/90">{resultado.avisoCategoriaTemporada}</p>
+              <p className="mt-4 text-xs leading-5 text-amber-600">{resultado.avisoCategoriaTemporada}</p>
             )}
             {ajusteOrigem > 0 && (
-              <p className="mt-4 text-xs leading-5 text-white/45">
+              <p className="mt-4 text-xs leading-5 text-black/45">
                 O aéreo já inclui {formatBRL(ajusteOrigem)}/pessoa por não sair de São Paulo/GRU.
               </p>
             )}
             {resultado.avisoSeguro && (
-              <p className="mt-4 text-xs leading-5 text-amber-400/90">{resultado.avisoSeguro}</p>
+              <p className="mt-4 text-xs leading-5 text-amber-600">{resultado.avisoSeguro}</p>
             )}
 
             {!resultado.coube && (
-              <p className="mt-4 text-xs leading-5 text-amber-400/90">
+              <p className="mt-4 text-xs leading-5 text-amber-600">
                 Esse é o pacote mais simples que oferecemos e ainda assim passa um pouco do
                 orçamento informado — nossa equipe pode ajudar a ajustar dias, pessoas ou destinos
                 pra caber melhor.
               </p>
             )}
 
-            <p className="mt-6 text-[11px] leading-5 text-white/35">
+            <p className="mt-6 text-[11px] leading-5 text-black/35">
               Estimativa automática, não uma proposta fechada — os valores finais dependem de
               datas, disponibilidade e curadoria da nossa equipe.
             </p>
           </div>
 
-          <div className="mt-8 rounded-2xl border border-white/10 bg-white/[0.03] p-6 text-left md:p-8">
-            <p className="text-[10px] uppercase tracking-[0.2em] text-white/40">Forma de pagamento</p>
-            <p className="mt-1 text-[11px] leading-5 text-white/35">
+          <div className="mt-8 rounded-2xl border border-black/10 bg-black/[0.03] p-6 text-left md:p-8">
+            <p className="text-[10px] uppercase tracking-[0.2em] text-black/40">Forma de pagamento</p>
+            <p className="mt-1 text-[11px] leading-5 text-black/35">
               Escolha como prefere pagar e envie pelo WhatsApp — nossa equipe processa o pedido a partir da sua
               mensagem. Valores sujeitos a confirmação na emissão.
             </p>
 
-            <div className="mt-5 rounded-xl border border-white/10 bg-white/[0.03] p-4">
+            <div className="mt-5 rounded-xl border border-black/10 bg-black/[0.03] p-4">
               <div className="flex items-center gap-3">
-                <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-white/90">
+                <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-white">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img src="/images/icone-cartao-credito.png" alt="" className="h-7 w-7 object-contain" />
                 </span>
-                <p className="text-sm font-semibold text-white/85">Cartão de crédito</p>
+                <p className="text-sm font-semibold text-black/85">Cartão de crédito</p>
               </div>
-              <div className="mt-3 divide-y divide-white/[0.07] border-t border-white/[0.07]">
+              <div className="mt-3 divide-y divide-black/[0.07] border-t border-black/[0.07]">
                 {simulacaoCartao.map((op) => {
                   const sel = formaPagamento?.metodo === "cartao" && formaPagamento.parcelas === op.parcelas;
                   return (
@@ -843,28 +883,28 @@ export default function ViagemPersonalizadaSelfServicePage() {
                         name="formaPagamento"
                         checked={sel}
                         onChange={() => setFormaPagamento({ metodo: "cartao", parcelas: op.parcelas })}
-                        className="h-4 w-4 shrink-0 accent-[#6ec3d9]"
+                        className="h-4 w-4 shrink-0 accent-[#2f80c9]"
                       />
-                      <span className="w-9 shrink-0 text-sm text-white/45">{op.parcelas}x</span>
-                      <span className="flex-1 text-base font-semibold text-white">{formatBRL(op.valorParcela)}</span>
-                      <span className="shrink-0 text-[11px] text-white/35">total {formatBRL(op.valorTotal)}</span>
+                      <span className="w-9 shrink-0 text-sm text-black/45">{op.parcelas}x</span>
+                      <span className="flex-1 text-base font-semibold text-[#0A2540]">{formatBRL(op.valorParcela)}</span>
+                      <span className="shrink-0 text-[11px] text-black/35">total {formatBRL(op.valorTotal)}</span>
                     </label>
                   );
                 })}
               </div>
             </div>
 
-            <div className="mt-4 rounded-xl border border-white/10 bg-white/[0.03] p-4">
+            <div className="mt-4 rounded-xl border border-black/10 bg-black/[0.03] p-4">
               <div className="flex items-center gap-3">
-                <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-white/90">
+                <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-white">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img src="/images/icone-pix.png" alt="" className="h-7 w-7 object-contain" />
                 </span>
-                <p className="text-sm font-semibold text-white/85">PIX</p>
+                <p className="text-sm font-semibold text-black/85">PIX</p>
               </div>
               <label
                 className={`mt-3 flex cursor-pointer items-center gap-3 rounded-lg px-3.5 py-3 transition ${
-                  formaPagamento?.metodo === "pixVista" ? "bg-[#6ec3d9]/20" : "bg-[#6ec3d9]/[0.07] hover:bg-[#6ec3d9]/[0.12]"
+                  formaPagamento?.metodo === "pixVista" ? "bg-[#2f80c9]/20" : "bg-[#2f80c9]/[0.07] hover:bg-[#2f80c9]/[0.12]"
                 }`}
               >
                 <input
@@ -872,18 +912,18 @@ export default function ViagemPersonalizadaSelfServicePage() {
                   name="formaPagamento"
                   checked={formaPagamento?.metodo === "pixVista"}
                   onChange={() => setFormaPagamento({ metodo: "pixVista", parcelas: 1 })}
-                  className="h-4 w-4 shrink-0 accent-[#6ec3d9]"
+                  className="h-4 w-4 shrink-0 accent-[#2f80c9]"
                 />
-                <span className="flex-1 text-sm text-white/70">à vista</span>
-                <span className="text-base font-semibold text-white">{formatBRL(resultado.total)}</span>
+                <span className="flex-1 text-sm text-black/70">à vista</span>
+                <span className="text-base font-semibold text-[#0A2540]">{formatBRL(resultado.total)}</span>
               </label>
               {simulacaoPix.length > 0 ? (
                 <div className="mt-3">
-                  <p className="text-[10px] text-white/35">
+                  <p className="text-[10px] text-black/35">
                     parcelado — entrada de {formatBRL(simulacaoPix[0].entrada)} ({Math.round(ENTRADA_PIX_PCT * 100)}%) +
                     parcelas
                   </p>
-                  <div className="mt-1.5 divide-y divide-white/[0.07] border-t border-white/[0.07]">
+                  <div className="mt-1.5 divide-y divide-black/[0.07] border-t border-black/[0.07]">
                     {simulacaoPix.map((op) => {
                       const sel = formaPagamento?.metodo === "pixParcelado" && formaPagamento.parcelas === op.parcelas;
                       return (
@@ -893,11 +933,11 @@ export default function ViagemPersonalizadaSelfServicePage() {
                             name="formaPagamento"
                             checked={sel}
                             onChange={() => setFormaPagamento({ metodo: "pixParcelado", parcelas: op.parcelas })}
-                            className="h-4 w-4 shrink-0 accent-[#6ec3d9]"
+                            className="h-4 w-4 shrink-0 accent-[#2f80c9]"
                           />
-                          <span className="w-9 shrink-0 text-sm text-white/45">{op.parcelas}x</span>
-                          <span className="flex-1 text-base font-semibold text-white">{formatBRL(op.valorParcela)}</span>
-                          <span className="shrink-0 text-[11px] text-white/35">total {formatBRL(op.valorTotal)}</span>
+                          <span className="w-9 shrink-0 text-sm text-black/45">{op.parcelas}x</span>
+                          <span className="flex-1 text-base font-semibold text-[#0A2540]">{formatBRL(op.valorParcela)}</span>
+                          <span className="shrink-0 text-[11px] text-black/35">total {formatBRL(op.valorTotal)}</span>
                         </label>
                       );
                     })}
@@ -905,7 +945,7 @@ export default function ViagemPersonalizadaSelfServicePage() {
                 </div>
               ) : (
                 dataViagem && (
-                  <p className="mt-3 text-[11px] text-white/35">
+                  <p className="mt-3 text-[11px] text-black/35">
                     Viagem muito próxima — sem prazo para parcelar no PIX, só à vista.
                   </p>
                 )
@@ -915,8 +955,8 @@ export default function ViagemPersonalizadaSelfServicePage() {
             <div
               className={`mt-4 rounded-lg border px-3.5 py-3 text-xs ${
                 descricaoPagamento
-                  ? "border-emerald-400/30 bg-emerald-400/10 text-emerald-300"
-                  : "border-white/10 bg-white/[0.02] text-white/40"
+                  ? "border-emerald-200 bg-emerald-50 text-emerald-700"
+                  : "border-black/10 bg-black/[0.02] text-black/40"
               }`}
             >
               {descricaoPagamento ? (
@@ -944,7 +984,7 @@ export default function ViagemPersonalizadaSelfServicePage() {
   }
 
   return (
-    <main className="min-h-screen bg-black px-6 py-16 text-white md:px-16 md:py-24">
+    <main className="min-h-screen bg-white px-6 pb-40 pt-16 text-[#0A2540] md:px-16 md:pb-44 md:pt-24">
       <div className="mx-auto max-w-2xl">
         <div className="mb-10 flex justify-center">
           <Link href="/">
@@ -952,28 +992,28 @@ export default function ViagemPersonalizadaSelfServicePage() {
             <img
               src="/images/AJISAI-LOGO.avif"
               alt="Ajisai"
-              className="h-10 w-auto object-contain md:h-11"
+              className="h-10 w-auto object-contain invert md:h-11"
             />
           </Link>
         </div>
 
         <div className="mb-10 text-center">
-          <p className="text-xs uppercase tracking-[0.3em] text-white/40">
+          <p className="text-xs uppercase tracking-[0.3em] text-black/40">
             Simulador de viagem personalizada
           </p>
           <h1 className={`${display.className} mt-3 text-3xl font-medium leading-tight md:text-4xl`}>
             Monte uma estimativa da sua viagem ao Japão
           </h1>
-          <p className="mx-auto mt-4 max-w-lg text-sm leading-7 text-white/55">
+          <p className="mx-auto mt-4 max-w-lg text-sm leading-7 text-black/55">
             Diga seu orçamento e o formato da viagem — mostramos, na hora, até onde ele rende em
             hotel e classe do voo. Depois é só confirmar seus dados que nossa equipe assume dali.
           </p>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-8">
-          <div className="grid grid-cols-1 gap-5 rounded-2xl border border-white/10 bg-white/[0.03] p-6 sm:grid-cols-2 md:p-8">
+        <form id="simulador" onSubmit={handleSubmit} className="space-y-8">
+          <div className="grid grid-cols-1 gap-5 rounded-2xl border border-black/10 bg-black/[0.03] p-6 sm:grid-cols-2 md:p-8">
             <label className="flex flex-col sm:col-span-2">
-              <span className="mb-2 text-[10px] uppercase tracking-[0.2em] text-white/40">
+              <span className="mb-2 text-[10px] uppercase tracking-[0.2em] text-black/40">
                 <LabelNumerado texto="1. Orçamento máximo (R$)" />
               </span>
               <input
@@ -986,7 +1026,7 @@ export default function ViagemPersonalizadaSelfServicePage() {
                   const v = Number(e.target.value);
                   if (!Number.isNaN(v)) setOrcamento(v);
                 }}
-                className="h-12 w-full rounded-lg border border-white/15 bg-white/[0.04] px-4 text-lg font-medium text-white outline-none focus:border-white/40"
+                className="h-12 w-full rounded-lg border border-black/15 bg-black/[0.04] px-4 text-lg font-medium text-[#0A2540] outline-none focus:border-black/40"
               />
             </label>
 
@@ -1009,16 +1049,16 @@ export default function ViagemPersonalizadaSelfServicePage() {
             />
 
             <label className="flex flex-col sm:col-span-2">
-              <span className="mb-2 text-[10px] uppercase tracking-[0.2em] text-white/40">
+              <span className="mb-2 text-[10px] uppercase tracking-[0.2em] text-black/40">
                 <LabelNumerado texto="4. Tipo de quarto" />
               </span>
               <select
                 value={tipoQuarto}
                 onChange={(e) => setTipoQuarto(e.target.value as TipoQuarto)}
-                className="h-11 w-full rounded-lg border border-white/15 bg-white/[0.04] px-3 text-sm text-white outline-none focus:border-white/40"
+                className="h-11 w-full rounded-lg border border-black/15 bg-black/[0.04] px-3 text-sm text-[#0A2540] outline-none focus:border-black/40"
               >
                 {TIPOS_QUARTO.map((t) => (
-                  <option key={t} value={t} className="bg-black">
+                  <option key={t} value={t} className="bg-white">
                     {TIPO_QUARTO_LABEL[t]}
                   </option>
                 ))}
@@ -1026,7 +1066,7 @@ export default function ViagemPersonalizadaSelfServicePage() {
             </label>
 
             <div className="sm:col-span-2">
-              <span className="mb-2 block text-[10px] uppercase tracking-[0.2em] text-white/40">
+              <span className="mb-2 block text-[10px] uppercase tracking-[0.2em] text-black/40">
                 <LabelNumerado texto="5. Categoria máxima de hotel" />
               </span>
               <div className="flex flex-wrap gap-2">
@@ -1038,15 +1078,15 @@ export default function ViagemPersonalizadaSelfServicePage() {
                     aria-pressed={hotelMax === cat}
                     className={`rounded-full border px-4 py-2 text-xs transition ${
                         hotelMax === cat
-                          ? "border-[#6ec3d9] bg-[#6ec3d9]/15 font-medium text-[#6ec3d9]"
-                          : "border-white/15 text-white/60 hover:border-white/30"
+                          ? "border-[#2f80c9] bg-[#2f80c9]/15 font-medium text-[#2f80c9]"
+                          : "border-black/15 text-black/60 hover:border-black/30"
                       }`}
                   >
                     {cat}
                   </button>
                 ))}
               </div>
-              <p className="mt-1.5 text-[11px] text-white/35">
+              <p className="mt-1.5 text-[11px] text-black/35">
                 {hotelMax === "Elite"
                   ? "Sem limite — sobe o máximo que o orçamento permitir."
                   : `A simulação não passa de ${hotelMax}, mesmo sobrando orçamento.`}
@@ -1054,7 +1094,7 @@ export default function ViagemPersonalizadaSelfServicePage() {
             </div>
 
             <div className="sm:col-span-2">
-              <span className="mb-2 block text-[10px] uppercase tracking-[0.2em] text-white/40">
+              <span className="mb-2 block text-[10px] uppercase tracking-[0.2em] text-black/40">
                 <LabelNumerado texto="6. Classe desejada do voo" />
               </span>
               <div className="flex flex-wrap gap-2">
@@ -1066,53 +1106,53 @@ export default function ViagemPersonalizadaSelfServicePage() {
                     aria-pressed={classeMax === cl}
                     className={`rounded-full border px-4 py-2 text-xs transition ${
                         classeMax === cl
-                          ? "border-[#6ec3d9] bg-[#6ec3d9]/15 font-medium text-[#6ec3d9]"
-                          : "border-white/15 text-white/60 hover:border-white/30"
+                          ? "border-[#2f80c9] bg-[#2f80c9]/15 font-medium text-[#2f80c9]"
+                          : "border-black/15 text-black/60 hover:border-black/30"
                       }`}
                   >
                     {cl}
                   </button>
                 ))}
               </div>
-              <p className="mt-1.5 text-[11px] text-white/35">
+              <p className="mt-1.5 text-[11px] text-black/35">
                 {classeMax === "First Class"
                   ? "Sem limite — sobe o máximo que o orçamento permitir."
                   : `A simulação não passa de ${classeMax}, mesmo sobrando orçamento.`}
               </p>
               <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
                 <label className="flex flex-col">
-                  <span className="mb-1 text-[10px] uppercase tracking-wide text-white/40">Origem do voo</span>
+                  <span className="mb-1 text-[10px] uppercase tracking-wide text-black/40">Origem do voo</span>
                   <select
                     value={origemVoo}
                     onChange={(e) => setOrigemVoo(e.target.value as OrigemVooKey)}
-                    className="h-10 w-full rounded-lg border border-white/15 bg-white/[0.04] px-3 text-sm text-white outline-none focus:border-white/40"
+                    className="h-10 w-full rounded-lg border border-black/15 bg-black/[0.04] px-3 text-sm text-[#0A2540] outline-none focus:border-black/40"
                   >
                     {ORIGENS_VOO.map((o) => (
-                      <option key={o.key} value={o.key} className="bg-black">
+                      <option key={o.key} value={o.key} className="bg-white">
                         {o.nome}
                       </option>
                     ))}
                   </select>
-                  <span className="mt-1 text-[11px] text-white/35">
+                  <span className="mt-1 text-[11px] text-black/35">
                     {ajusteOrigem === 0
                       ? "Referência — sem ajuste no aéreo."
                       : `+ ${formatBRL(ajusteOrigem)}/pessoa no aéreo (trecho doméstico até um hub internacional).`}
                   </span>
                 </label>
                 <label className="flex flex-col">
-                  <span className="mb-1 text-[10px] uppercase tracking-wide text-white/40">Bagagem</span>
+                  <span className="mb-1 text-[10px] uppercase tracking-wide text-black/40">Bagagem</span>
                   <select
                     value={bagagem}
                     onChange={(e) => setBagagem(e.target.value as BagagemKey)}
-                    className="h-10 w-full rounded-lg border border-white/15 bg-white/[0.04] px-3 text-sm text-white outline-none focus:border-white/40"
+                    className="h-10 w-full rounded-lg border border-black/15 bg-black/[0.04] px-3 text-sm text-[#0A2540] outline-none focus:border-black/40"
                   >
                     {BAGAGEM_OPCOES.map((b) => (
-                      <option key={b.key} value={b.key} className="bg-black">
+                      <option key={b.key} value={b.key} className="bg-white">
                         {b.nome}
                       </option>
                     ))}
                   </select>
-                  <span className="mt-1 text-[11px] text-white/35">
+                  <span className="mt-1 text-[11px] text-black/35">
                     {ajusteBagagem === 0
                       ? "Referência — sem ajuste no aéreo."
                       : `Ajuste estimado de +${formatBRL(ajusteBagagem)}/pessoa (taxa de mala extra) — confirmamos o valor exato com a companhia aérea.`}
@@ -1122,7 +1162,7 @@ export default function ViagemPersonalizadaSelfServicePage() {
             </div>
 
             <div className="sm:col-span-2">
-              <span className="mb-2 block text-[10px] uppercase tracking-[0.2em] text-white/40">
+              <span className="mb-2 block text-[10px] uppercase tracking-[0.2em] text-black/40">
                 <LabelNumerado texto="7. Café da manhã" />
               </span>
               <div className="grid grid-cols-[repeat(auto-fill,8rem)] gap-2">
@@ -1137,27 +1177,27 @@ export default function ViagemPersonalizadaSelfServicePage() {
                     aria-pressed={comCafe === o.v}
                     className={`flex h-[13.5rem] w-32 flex-col items-center gap-2 rounded-lg border px-2 py-3 text-center text-xs transition ${
                       comCafe === o.v
-                        ? "border-[#6ec3d9] bg-[#6ec3d9]/15 font-medium text-[#6ec3d9]"
-                        : "border-white/15 bg-white/[0.04] text-white/60 hover:border-white/30"
+                        ? "border-[#2f80c9] bg-[#2f80c9]/15 font-medium text-[#2f80c9]"
+                        : "border-black/15 bg-black/[0.04] text-black/60 hover:border-black/30"
                     }`}
                   >
-                    <div className="flex h-20 w-full shrink-0 items-center justify-center rounded-md bg-white/90 p-1">
+                    <div className="flex h-20 w-full shrink-0 items-center justify-center rounded-md bg-white p-1">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img src={o.img} alt="" className="h-16 w-16 object-contain" />
                     </div>
                     <span className="flex min-h-[2rem] w-full items-center justify-center leading-tight">{o.nome}</span>
-                    <span className="text-[10px] font-normal leading-tight text-white/40">{o.sub}</span>
+                    <span className="text-[10px] font-normal leading-tight text-black/40">{o.sub}</span>
                   </button>
                 ))}
               </div>
             </div>
 
             <div className="sm:col-span-2">
-              <span className="mb-2 block text-[10px] uppercase tracking-[0.2em] text-white/40">
+              <span className="mb-2 block text-[10px] uppercase tracking-[0.2em] text-black/40">
                 <LabelNumerado texto="8. Temporada" />
               </span>
               <label className="mb-3 flex max-w-xs flex-col">
-                <span className="mb-1 text-[10px] uppercase tracking-wide text-white/40">
+                <span className="mb-1 text-[10px] uppercase tracking-wide text-black/40">
                   Mês estimado da viagem (opcional — sugere a temporada)
                 </span>
                 <select
@@ -1167,11 +1207,11 @@ export default function ViagemPersonalizadaSelfServicePage() {
                     setMesEstimado(v);
                     if (v) setTemporada(MES_PARA_TEMPORADA[v]);
                   }}
-                  className="h-10 w-full rounded-lg border border-white/15 bg-white/[0.04] px-3 text-sm text-white outline-none focus:border-white/40"
+                  className="h-10 w-full rounded-lg border border-black/15 bg-black/[0.04] px-3 text-sm text-[#0A2540] outline-none focus:border-black/40"
                 >
-                  <option value="" className="bg-black">Ainda não definido</option>
+                  <option value="" className="bg-white">Ainda não definido</option>
                   {MESES_NOME.map((nome, i) => (
-                    <option key={nome} value={i + 1} className="bg-black">
+                    <option key={nome} value={i + 1} className="bg-white">
                       {nome}
                     </option>
                   ))}
@@ -1186,25 +1226,25 @@ export default function ViagemPersonalizadaSelfServicePage() {
                     aria-pressed={temporada === t.key}
                     className={`flex h-[13.5rem] w-32 flex-col items-center gap-2 rounded-lg border px-2 py-3 text-center text-xs transition ${
                       temporada === t.key
-                        ? "border-[#6ec3d9] bg-[#6ec3d9]/15 font-medium text-[#6ec3d9]"
-                        : "border-white/15 bg-white/[0.04] text-white/60 hover:border-white/30"
+                        ? "border-[#2f80c9] bg-[#2f80c9]/15 font-medium text-[#2f80c9]"
+                        : "border-black/15 bg-black/[0.04] text-black/60 hover:border-black/30"
                     }`}
                   >
-                    <div className="flex h-20 w-full shrink-0 items-center justify-center rounded-md bg-white/90 p-1">
+                    <div className="flex h-20 w-full shrink-0 items-center justify-center rounded-md bg-white p-1">
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img src={t.icone} alt="" className="h-16 w-16 object-contain" />
                     </div>
                     <span className="flex min-h-[2rem] w-full items-center justify-center leading-tight">{t.nome}</span>
-                    <span className="text-[10px] font-normal leading-tight text-white/40">{t.periodo}</span>
+                    <span className="text-[10px] font-normal leading-tight text-black/40">{t.periodo}</span>
                   </button>
                 ))}
               </div>
             </div>
 
             <div className="sm:col-span-2">
-              <span className="mb-2 block text-[10px] uppercase tracking-[0.2em] text-white/40">
+              <span className="mb-2 block text-[10px] uppercase tracking-[0.2em] text-black/40">
                 <LabelNumerado texto="9. Temas" />{" "}
-                <span className="normal-case tracking-normal text-white/35">
+                <span className="normal-case tracking-normal text-black/35">
                   (opcional — selecione até {MAX_TEMAS_SIMULTANEOS} pra misturar)
                 </span>
               </span>
@@ -1214,10 +1254,10 @@ export default function ViagemPersonalizadaSelfServicePage() {
                   onClick={() => alternarTema(null)}
                   aria-pressed={temasSelecionados.size === 0}
                   className={`flex h-[9.5rem] w-32 flex-col items-center gap-2 rounded-lg border px-2 py-3 text-center text-xs transition ${
-                    temasSelecionados.size === 0 ? "border-[#6ec3d9] bg-[#6ec3d9]/15 font-medium text-[#6ec3d9]" : "border-white/15 bg-white/[0.04] text-white/60 hover:border-white/30"
+                    temasSelecionados.size === 0 ? "border-[#2f80c9] bg-[#2f80c9]/15 font-medium text-[#2f80c9]" : "border-black/15 bg-black/[0.04] text-black/60 hover:border-black/30"
                   }`}
                 >
-                  <div className="flex h-20 w-full shrink-0 items-center justify-center rounded-md bg-white/90 p-1">
+                  <div className="flex h-20 w-full shrink-0 items-center justify-center rounded-md bg-white p-1">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img src="/images/temas/01-sem-tema.png" alt="" className="h-16 w-16 object-contain" />
                   </div>
@@ -1235,13 +1275,13 @@ export default function ViagemPersonalizadaSelfServicePage() {
                       aria-pressed={marcado}
                       className={`flex h-[9.5rem] w-32 flex-col items-center gap-2 rounded-lg border px-2 py-3 text-center text-xs transition ${
                         marcado
-                          ? "border-[#6ec3d9] bg-[#6ec3d9]/15 font-medium text-[#6ec3d9]"
+                          ? "border-[#2f80c9] bg-[#2f80c9]/15 font-medium text-[#2f80c9]"
                           : desabilitado
-                            ? "cursor-not-allowed border-white/10 bg-white/[0.02] text-white/30"
-                            : "border-white/15 bg-white/[0.04] text-white/60 hover:border-white/30"
+                            ? "cursor-not-allowed border-black/10 bg-black/[0.02] text-black/30"
+                            : "border-black/15 bg-black/[0.04] text-black/60 hover:border-black/30"
                       }`}
                     >
-                      <div className="flex h-20 w-full shrink-0 items-center justify-center rounded-md bg-white/90 p-1">
+                      <div className="flex h-20 w-full shrink-0 items-center justify-center rounded-md bg-white p-1">
                         {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img src={tema.icone} alt="" className={`h-16 w-16 object-contain ${desabilitado ? "opacity-40" : ""}`} />
                       </div>
@@ -1252,8 +1292,8 @@ export default function ViagemPersonalizadaSelfServicePage() {
               </div>
 
               {temasSelecionados.size > 0 && (
-                <div className="mt-4 overflow-hidden rounded-xl border border-white/10">
-                  <div className="bg-white/[0.06] px-4 py-2 text-[10px] uppercase tracking-[0.15em] text-white/60">
+                <div className="mt-4 overflow-hidden rounded-xl border border-black/10">
+                  <div className="bg-black/[0.06] px-4 py-2 text-[10px] uppercase tracking-[0.15em] text-black/60">
                     Cidades recomendadas — destaques do{temasSelecionados.size > 1 ? "s temas" : " tema"}
                   </div>
                   {cidadesTemasAtivos.map((c) => {
@@ -1262,21 +1302,21 @@ export default function ViagemPersonalizadaSelfServicePage() {
                     return (
                       <label
                         key={c.key}
-                        className="grid cursor-pointer grid-cols-[minmax(120px,auto)_1fr] items-start gap-x-4 border-t border-white/10 px-4 py-3"
+                        className="grid cursor-pointer grid-cols-[minmax(120px,auto)_1fr] items-start gap-x-4 border-t border-black/10 px-4 py-3"
                       >
-                        <span className="flex items-center gap-2 text-sm text-white/80">
+                        <span className="flex items-center gap-2 text-sm text-black/80">
                           <input
                             type="checkbox"
                             checked={marcado}
                             onChange={() => alternarCidade(c.key)}
-                            className="h-4 w-4 shrink-0 accent-[#6ec3d9]"
+                            className="h-4 w-4 shrink-0 accent-[#2f80c9]"
                           />
                           {destino?.nome ?? c.key}
                         </span>
-                        <span className="text-xs leading-5 text-white/50">
+                        <span className="text-xs leading-5 text-black/50">
                           {c.destaques.map((d, i) => (
                             <span key={i} className={i > 0 ? "mt-1 block" : "block"}>
-                              {temasSelecionados.size > 1 && <span className="text-white/35">({d.tema}) </span>}
+                              {temasSelecionados.size > 1 && <span className="text-black/35">({d.tema}) </span>}
                               {d.texto}
                             </span>
                           ))}
@@ -1289,9 +1329,9 @@ export default function ViagemPersonalizadaSelfServicePage() {
             </div>
 
             <div className="sm:col-span-2">
-              <span className="mb-2 block text-[10px] uppercase tracking-[0.2em] text-white/40">
+              <span className="mb-2 block text-[10px] uppercase tracking-[0.2em] text-black/40">
                 <LabelNumerado texto="10. Cidades do roteiro" />{" "}
-                <span className="normal-case tracking-normal text-white/35">
+                <span className="normal-case tracking-normal text-black/35">
                   (até {MAX_CIDADES}, opcional)
                 </span>
               </span>
@@ -1307,8 +1347,8 @@ export default function ViagemPersonalizadaSelfServicePage() {
                       aria-pressed={marcado}
                       className={`rounded-full border px-4 py-2 text-xs transition ${
                         marcado
-                          ? "border-[#6ec3d9] bg-[#6ec3d9]/15 font-medium text-[#6ec3d9]"
-                          : "border-white/15 text-white/60 hover:border-white/30"
+                          ? "border-[#2f80c9] bg-[#2f80c9]/15 font-medium text-[#2f80c9]"
+                          : "border-black/15 text-black/60 hover:border-black/30"
                       }`}
                     >
                       {destino?.nome ?? key}
@@ -1319,9 +1359,9 @@ export default function ViagemPersonalizadaSelfServicePage() {
             </div>
 
             <div className="sm:col-span-2">
-              <span className="mb-2 block text-[10px] uppercase tracking-[0.2em] text-white/40">
+              <span className="mb-2 block text-[10px] uppercase tracking-[0.2em] text-black/40">
                 <LabelNumerado texto="11. Extensão internacional" />{" "}
-                <span className="normal-case tracking-normal text-white/35">(opcional — soma dias ao total da viagem)</span>
+                <span className="normal-case tracking-normal text-black/35">(opcional — soma dias ao total da viagem)</span>
               </span>
               <div className="grid grid-cols-[repeat(auto-fill,8rem)] gap-2">
                 {EXTENSOES_INTERNACIONAIS.map((ext) => {
@@ -1333,15 +1373,15 @@ export default function ViagemPersonalizadaSelfServicePage() {
                       onClick={() => alternarExtensao(ext.key)}
                       aria-pressed={marcado}
                       className={`flex h-[11.5rem] w-32 flex-col items-center gap-2 rounded-lg border px-2 py-3 text-center text-xs transition ${
-                        marcado ? "border-[#6ec3d9] bg-[#6ec3d9]/15 font-medium text-[#6ec3d9]" : "border-white/15 bg-white/[0.04] text-white/60 hover:border-white/30"
+                        marcado ? "border-[#2f80c9] bg-[#2f80c9]/15 font-medium text-[#2f80c9]" : "border-black/15 bg-black/[0.04] text-black/60 hover:border-black/30"
                       }`}
                     >
-                      <div className="flex h-24 w-full shrink-0 items-center justify-center rounded-md bg-white/90 p-1">
+                      <div className="flex h-24 w-full shrink-0 items-center justify-center rounded-md bg-white p-1">
                         {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img src={ext.icone} alt="" className="h-full w-full object-contain" />
                       </div>
                       <span className="leading-tight">{ext.nome}</span>
-                      <span className="text-[10px] font-normal leading-tight text-white/40">
+                      <span className="text-[10px] font-normal leading-tight text-black/40">
                         +{ext.dias} dias · {ext.cidades.map((c) => c.nome).join(" + ")}
                       </span>
                     </button>
@@ -1351,7 +1391,7 @@ export default function ViagemPersonalizadaSelfServicePage() {
 
               {EXTENSOES_INTERNACIONAIS.filter((ext) => extensoes.has(ext.key)).map((ext) => (
                 <div key={ext.key} className="mt-5">
-                  <p className="mb-2 text-[10px] uppercase tracking-[0.15em] text-white/40">
+                  <p className="mb-2 text-[10px] uppercase tracking-[0.15em] text-black/40">
                     Pacote da extensão {ext.nome} — hotel {tipoQuarto} + deslocamento
                   </p>
                   <div className="grid gap-2 sm:grid-cols-3">
@@ -1365,24 +1405,24 @@ export default function ViagemPersonalizadaSelfServicePage() {
                           onClick={() => setExtCategorias((a) => ({ ...a, [ext.key]: categoria }))}
                           aria-pressed={selecionado}
                           className={`rounded-xl border px-3 py-2.5 text-left transition ${
-                            selecionado ? "border-[#6ec3d9] bg-[#6ec3d9]/15" : "border-white/15 bg-white/[0.04] hover:border-white/30"
+                            selecionado ? "border-[#2f80c9] bg-[#2f80c9]/15" : "border-black/15 bg-black/[0.04] hover:border-black/30"
                           }`}
                         >
-                          <span aria-hidden className="block text-base leading-none tracking-[1.5px] text-[#6ec3d9]">
+                          <span aria-hidden className="block text-base leading-none tracking-[1.5px] text-[#2f80c9]">
                             {"★".repeat(parseInt(categoria, 10))}
                           </span>
-                          <span className={`mt-1 block text-xs font-medium ${selecionado ? "text-[#6ec3d9]" : "text-white/70"}`}>
+                          <span className={`mt-1 block text-xs font-medium ${selecionado ? "text-[#2f80c9]" : "text-black/70"}`}>
                             {categoria}
                           </span>
-                          <span className="mt-0.5 block text-sm font-semibold text-white">{formatBRL(precos.total)}</span>
-                          <span className="mt-0.5 block text-[10px] text-white/40">
+                          <span className="mt-0.5 block text-sm font-semibold text-[#0A2540]">{formatBRL(precos.total)}</span>
+                          <span className="mt-0.5 block text-[10px] text-black/40">
                             Hotel {formatBRL(precos.hotel)} + deslocamento {formatBRL(precos.deslocamento)}
                           </span>
                         </button>
                       );
                     })}
                   </div>
-                  <div className="mt-3 flex flex-wrap gap-x-4 gap-y-0.5 text-[10px] text-white/40">
+                  <div className="mt-3 flex flex-wrap gap-x-4 gap-y-0.5 text-[10px] text-black/40">
                     {ext.deslocamento.map((trecho) => (
                       <span key={trecho.label}>✈ {trecho.label}</span>
                     ))}
@@ -1391,7 +1431,7 @@ export default function ViagemPersonalizadaSelfServicePage() {
                     {ext.roteiro.map((dia) => (
                       <div
                         key={`${ext.key}-${dia.cidade}-${dia.dia}`}
-                        className="overflow-hidden rounded-xl border border-white/10 bg-white/[0.03]"
+                        className="overflow-hidden rounded-xl border border-black/10 bg-black/[0.03]"
                       >
                         {dia.imagem ? (
                           // eslint-disable-next-line @next/next/no-img-element
@@ -1403,16 +1443,16 @@ export default function ViagemPersonalizadaSelfServicePage() {
                           />
                         ) : null}
                         <div className="p-3">
-                          <p className="text-[9px] uppercase tracking-[0.15em] text-[#6ec3d9]">
+                          <p className="text-[9px] uppercase tracking-[0.15em] text-[#2f80c9]">
                             {ext.cidades.length > 1 ? `${dia.cidade} · ` : ""}Dia {dia.dia}
                           </p>
-                          <p className="mt-0.5 text-sm font-medium text-white">{dia.titulo}</p>
-                          <ul className="mt-2 space-y-0.5 text-[11px] leading-4 text-white/55">
+                          <p className="mt-0.5 text-sm font-medium text-[#0A2540]">{dia.titulo}</p>
+                          <ul className="mt-2 space-y-0.5 text-[11px] leading-4 text-black/55">
                             {dia.pontos.map((ponto) => (
                               <li key={ponto}>• {ponto}</li>
                             ))}
                           </ul>
-                          <p className="mt-2 text-[11px] italic leading-4 text-white/40">{dia.conceito}</p>
+                          <p className="mt-2 text-[11px] italic leading-4 text-black/40">{dia.conceito}</p>
                         </div>
                       </div>
                     ))}
@@ -1422,13 +1462,13 @@ export default function ViagemPersonalizadaSelfServicePage() {
             </div>
 
             <div className="sm:col-span-2">
-              <span className="mb-2 block text-[10px] uppercase tracking-[0.2em] text-white/40">
+              <span className="mb-2 block text-[10px] uppercase tracking-[0.2em] text-black/40">
                 <LabelNumerado texto="12. JR Pass — validade e classe" />{" "}
-                <span className="normal-case tracking-normal text-white/35">(opcional)</span>
+                <span className="normal-case tracking-normal text-black/35">(opcional)</span>
               </span>
               <div className="flex flex-wrap gap-4">
-                <div className="rounded-xl border border-white/10 bg-white/[0.03] p-3">
-                  <span className="mb-2 block text-[9px] uppercase tracking-[0.15em] text-white/40">Validade</span>
+                <div className="rounded-xl border border-black/10 bg-black/[0.03] p-3">
+                  <span className="mb-2 block text-[9px] uppercase tracking-[0.15em] text-black/40">Validade</span>
                   <div className="flex flex-wrap gap-2">
                     {JR_PASS_DIAS_OPCOES.map((d) => (
                       <button
@@ -1437,7 +1477,7 @@ export default function ViagemPersonalizadaSelfServicePage() {
                         onClick={() => setJrDias(d)}
                         aria-pressed={jrDias === d}
                         className={`flex h-20 w-28 items-center justify-center rounded-lg border px-2 text-center text-sm transition ${
-                          jrDias === d ? "border-[#6ec3d9] bg-[#6ec3d9]/15 font-medium text-[#6ec3d9]" : "border-white/15 bg-white/[0.04] text-white/60 hover:border-white/30"
+                          jrDias === d ? "border-[#2f80c9] bg-[#2f80c9]/15 font-medium text-[#2f80c9]" : "border-black/15 bg-black/[0.04] text-black/60 hover:border-black/30"
                         }`}
                       >
                         {d} dias
@@ -1445,8 +1485,8 @@ export default function ViagemPersonalizadaSelfServicePage() {
                     ))}
                   </div>
                 </div>
-                <div className="rounded-xl border border-white/10 bg-white/[0.03] p-3">
-                  <span className="mb-2 block text-[9px] uppercase tracking-[0.15em] text-white/40">Classe</span>
+                <div className="rounded-xl border border-black/10 bg-black/[0.03] p-3">
+                  <span className="mb-2 block text-[9px] uppercase tracking-[0.15em] text-black/40">Classe</span>
                   <div className="flex flex-wrap gap-2">
                     {(
                       [
@@ -1460,18 +1500,18 @@ export default function ViagemPersonalizadaSelfServicePage() {
                         onClick={() => setJrClasse(cl.key)}
                         aria-pressed={jrClasse === cl.key}
                         className={`flex h-20 w-28 flex-col items-center justify-center gap-1.5 rounded-lg border px-2 text-center text-xs transition ${
-                          jrClasse === cl.key ? "border-[#6ec3d9] bg-[#6ec3d9]/15 font-medium text-[#6ec3d9]" : "border-white/15 bg-white/[0.04] text-white/60 hover:border-white/30"
+                          jrClasse === cl.key ? "border-[#2f80c9] bg-[#2f80c9]/15 font-medium text-[#2f80c9]" : "border-black/15 bg-black/[0.04] text-black/60 hover:border-black/30"
                         }`}
                       >
                         {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img src={cl.icone} alt="" className="h-8 w-8 shrink-0 rounded bg-white/90 object-contain p-0.5" />
+                        <img src={cl.icone} alt="" className="h-8 w-8 shrink-0 rounded bg-white object-contain p-0.5" />
                         <span>{cl.label}</span>
                       </button>
                     ))}
                   </div>
                 </div>
               </div>
-              <p className="mt-1.5 text-[11px] text-white/35">
+              <p className="mt-1.5 text-[11px] text-black/35">
                 {rotuloUSD((jrClasse === "green" ? JR_PASS_PRECO_USD_GREEN : JR_PASS_PRECO_USD)[jrDias])} por pessoa
               </p>
               <div className="mt-2 max-w-xs">
@@ -1487,9 +1527,9 @@ export default function ViagemPersonalizadaSelfServicePage() {
             </div>
 
             <div className="sm:col-span-2">
-              <span className="mb-2 block text-[10px] uppercase tracking-[0.2em] text-white/40">
+              <span className="mb-2 block text-[10px] uppercase tracking-[0.2em] text-black/40">
                 <LabelNumerado texto="13. Guia turístico" />{" "}
-                <span className="normal-case tracking-normal text-white/35">(opcional)</span>
+                <span className="normal-case tracking-normal text-black/35">(opcional)</span>
               </span>
               <div className="flex flex-wrap gap-2">
                 {(["brasileiro", "estrangeiro"] as const).map((t) => (
@@ -1499,14 +1539,14 @@ export default function ViagemPersonalizadaSelfServicePage() {
                     onClick={() => setGuiaTipo(t)}
                     aria-pressed={guiaTipo === t}
                     className={`h-10 rounded-lg border px-4 text-sm transition ${
-                      guiaTipo === t ? "border-[#6ec3d9] bg-[#6ec3d9]/15 font-medium text-[#6ec3d9]" : "border-white/15 bg-white/[0.04] text-white/60 hover:border-white/30"
+                      guiaTipo === t ? "border-[#2f80c9] bg-[#2f80c9]/15 font-medium text-[#2f80c9]" : "border-black/15 bg-black/[0.04] text-black/60 hover:border-black/30"
                     }`}
                   >
                     {t === "brasileiro" ? "Guia brasileiro" : "Guia estrangeiro"}
                   </button>
                 ))}
               </div>
-              <p className="mt-1.5 text-[11px] text-white/35">
+              <p className="mt-1.5 text-[11px] text-black/35">
                 {guiaTipo === "brasileiro" ? "Fluente em português." : "Português limitado ou inglês."}
               </p>
               <div className="mt-3 flex flex-wrap items-end gap-2">
@@ -1525,13 +1565,13 @@ export default function ViagemPersonalizadaSelfServicePage() {
                   onClick={() => setGuiaDias(0)}
                   aria-pressed={guiaDiasEfetivo === 0}
                   className={`h-10 shrink-0 rounded-lg border px-3 text-xs font-medium transition ${
-                    guiaDiasEfetivo === 0 ? "border-[#6ec3d9] bg-[#6ec3d9]/15 font-medium text-[#6ec3d9]" : "border-white/15 text-white/55 hover:border-white/30"
+                    guiaDiasEfetivo === 0 ? "border-[#2f80c9] bg-[#2f80c9]/15 font-medium text-[#2f80c9]" : "border-black/15 text-black/55 hover:border-black/30"
                   }`}
                 >
                   Sem guia
                 </button>
               </div>
-              <p className="mt-1.5 text-[11px] text-white/35">
+              <p className="mt-1.5 text-[11px] text-black/35">
                 {rotuloUSD(guiaTipo === "brasileiro" ? DIARIA_GUIA_USD : DIARIA_GUIA_ESTRANGEIRO_USD)}/dia a cada{" "}
                 {GUIA_TAMANHO_GRUPO} pessoas
               </p>
@@ -1546,16 +1586,16 @@ export default function ViagemPersonalizadaSelfServicePage() {
                 max={dias}
                 formatValue={(v) => (v === 0 ? "Sem motorista" : `${v} de ${dias} dia${dias === 1 ? "" : "s"}`)}
               />
-              <p className="mt-1.5 text-[11px] text-white/35">
+              <p className="mt-1.5 text-[11px] text-black/35">
                 {rotuloUSD(DIARIA_MOTORISTA_PRIVADO_USD)}/dia para até {MOTORISTA_TAMANHO_GRUPO} pessoas — não inclui o
                 transfer aeroporto ↔ hotel.
               </p>
             </div>
 
             <div className="sm:col-span-2">
-              <span className="mb-2 block text-[10px] uppercase tracking-[0.2em] text-white/40">
+              <span className="mb-2 block text-[10px] uppercase tracking-[0.2em] text-black/40">
                 <LabelNumerado texto="15. Câmbio de ienes" />{" "}
-                <span className="normal-case tracking-normal text-white/35">(opcional)</span>
+                <span className="normal-case tracking-normal text-black/35">(opcional)</span>
               </span>
               {!(cambioExpandido || servicos.has("cambioBrasil")) ? (
                 <button
@@ -1564,7 +1604,7 @@ export default function ViagemPersonalizadaSelfServicePage() {
                     setCambioExpandido(true);
                     setServicos((a) => new Set(a).add("cambioBrasil"));
                   }}
-                  className="flex items-center gap-2 rounded-lg border border-dashed border-white/25 px-3 py-2 text-xs text-white/50 transition hover:border-white/40 hover:text-white/70"
+                  className="flex items-center gap-2 rounded-lg border border-dashed border-black/25 px-3 py-2 text-xs text-black/50 transition hover:border-black/40 hover:text-black/70"
                 >
                   <span aria-hidden className="text-sm leading-none">+</span>
                   Incluir câmbio de ienes no Brasil
@@ -1573,25 +1613,25 @@ export default function ViagemPersonalizadaSelfServicePage() {
                 <>
                   <div className="flex flex-wrap items-end gap-3">
                     <label className="flex flex-col">
-                      <span className="mb-1 text-[10px] uppercase tracking-wide text-white/40">Cidade</span>
+                      <span className="mb-1 text-[10px] uppercase tracking-wide text-black/40">Cidade</span>
                       <select
                         value={cambioCidade}
                         onChange={(e) => setCambioCidade(e.target.value as CidadeCambioIeneSlug)}
-                        className="h-10 w-40 rounded-lg border border-white/15 bg-white/[0.04] px-3 text-sm text-white outline-none focus:border-white/40"
+                        className="h-10 w-40 rounded-lg border border-black/15 bg-black/[0.04] px-3 text-sm text-[#0A2540] outline-none focus:border-black/40"
                       >
                         {CIDADES_CAMBIO_IENE.map((c) => (
-                          <option key={c.slug} value={c.slug} className="bg-black">
+                          <option key={c.slug} value={c.slug} className="bg-white">
                             {c.nome}
                           </option>
                         ))}
                       </select>
                     </label>
                     <label className="flex flex-col">
-                      <span className="mb-1 text-[10px] uppercase tracking-wide text-white/40">
+                      <span className="mb-1 text-[10px] uppercase tracking-wide text-black/40">
                         Quantidade de ienes (mín. ¥{CAMBIO_IENES_MINIMO.toLocaleString("pt-BR")})
                       </span>
                       <div className="flex items-center gap-2">
-                        <span className="text-sm text-white/40">¥</span>
+                        <span className="text-sm text-black/40">¥</span>
                         <input
                           type="number"
                           value={quantidadeIenes}
@@ -1602,12 +1642,12 @@ export default function ViagemPersonalizadaSelfServicePage() {
                             if (!Number.isNaN(v)) setQuantidadeIenes(v);
                           }}
                           onBlur={() => setQuantidadeIenes((v) => Math.max(CAMBIO_IENES_MINIMO, v))}
-                          className="h-10 w-32 rounded-lg border border-white/15 bg-white/[0.04] px-3 text-sm text-white outline-none focus:border-white/40"
+                          className="h-10 w-32 rounded-lg border border-black/15 bg-black/[0.04] px-3 text-sm text-[#0A2540] outline-none focus:border-black/40"
                         />
                       </div>
                     </label>
                   </div>
-                  <p className="mt-1.5 text-[11px] text-white/35">
+                  <p className="mt-1.5 text-[11px] text-black/35">
                     {servicos.has("cambioBrasil")
                       ? `Valor estimado: ${formatBRL(Math.round(PRECO_CAMBIO_BRASIL + quantidadeIenes * cotacaoIene * FATOR_CAMBIO_IENE))} (taxa de serviço + ienes em espécie).`
                       : "Marque “Câmbio no Brasil” em Serviços adicionais para incluir no pacote."}
@@ -1617,9 +1657,9 @@ export default function ViagemPersonalizadaSelfServicePage() {
             </div>
 
             <label className="flex flex-col sm:col-span-2">
-              <span className="mb-2 text-[10px] uppercase tracking-[0.2em] text-white/40">
+              <span className="mb-2 text-[10px] uppercase tracking-[0.2em] text-black/40">
                 <LabelNumerado texto="16. Data prevista da viagem" />{" "}
-                <span className="normal-case tracking-normal text-white/35">(opcional)</span>
+                <span className="normal-case tracking-normal text-black/35">(opcional)</span>
               </span>
               <input
                 type="date"
@@ -1632,12 +1672,12 @@ export default function ViagemPersonalizadaSelfServicePage() {
                     setTemporada(MES_PARA_TEMPORADA[mes]);
                   }
                 }}
-                className="h-11 w-full rounded-lg border border-white/15 bg-white/[0.04] px-3 text-sm text-white outline-none focus:border-white/40 [color-scheme:dark]"
+                className="h-11 w-full rounded-lg border border-black/15 bg-black/[0.04] px-3 text-sm text-[#0A2540] outline-none focus:border-black/40"
               />
             </label>
 
             <div className="sm:col-span-2 -mt-2">
-              <span className="mb-1.5 block text-[10px] uppercase tracking-wide text-white/40">Flexibilidade das datas</span>
+              <span className="mb-1.5 block text-[10px] uppercase tracking-wide text-black/40">Flexibilidade das datas</span>
               <div className="flex flex-wrap gap-2">
                 {FLEXIBILIDADE_DATAS.map((f) => (
                   <button
@@ -1647,27 +1687,27 @@ export default function ViagemPersonalizadaSelfServicePage() {
                     aria-pressed={flexibilidade === f.key}
                     className={`rounded-full border px-4 py-2 text-xs transition ${
                       flexibilidade === f.key
-                        ? "border-[#6ec3d9] bg-[#6ec3d9]/15 font-medium text-[#6ec3d9]"
-                        : "border-white/15 text-white/60 hover:border-white/30"
+                        ? "border-[#2f80c9] bg-[#2f80c9]/15 font-medium text-[#2f80c9]"
+                        : "border-black/15 text-black/60 hover:border-black/30"
                     }`}
                   >
                     {f.nome}
                   </button>
                 ))}
               </div>
-              <p className="mt-1.5 text-[11px] text-white/35">
+              <p className="mt-1.5 text-[11px] text-black/35">
                 Datas flexíveis podem ajudar a encontrar tarifas melhores — nossa equipe avalia com você.
               </p>
             </div>
 
             <div className="sm:col-span-2">
-              <span className="mb-2 block text-[10px] uppercase tracking-[0.2em] text-white/40">
+              <span className="mb-2 block text-[10px] uppercase tracking-[0.2em] text-black/40">
                 <LabelNumerado texto="17. Seguro viagem — idade dos passageiros" />
               </span>
               <div className="flex flex-wrap gap-2">
                 {idadesConsideradas.map((idade, i) => (
-                  <div key={i} className="w-36 rounded-lg border border-white/15 bg-white/[0.04] p-3">
-                    <p className="text-[10px] uppercase tracking-wide text-white/40">Passageiro {i + 1}</p>
+                  <div key={i} className="w-36 rounded-lg border border-black/15 bg-black/[0.04] p-3">
+                    <p className="text-[10px] uppercase tracking-wide text-black/40">Passageiro {i + 1}</p>
                     <div className="mt-1.5 flex items-center gap-2">
                       <input
                         type="number"
@@ -1678,11 +1718,11 @@ export default function ViagemPersonalizadaSelfServicePage() {
                           const v = Number(e.target.value);
                           if (!Number.isNaN(v)) definirIdade(i, v);
                         }}
-                        className="h-9 w-16 rounded-md border border-white/15 bg-white/[0.06] px-2 text-sm text-white outline-none focus:border-white/40"
+                        className="h-9 w-16 rounded-md border border-black/15 bg-black/[0.06] px-2 text-sm text-[#0A2540] outline-none focus:border-black/40"
                       />
-                      <span className="text-xs text-white/50">anos</span>
+                      <span className="text-xs text-black/50">anos</span>
                     </div>
-                    <p className="mt-1.5 text-[10px] leading-4 text-white/35">
+                    <p className="mt-1.5 text-[10px] leading-4 text-black/35">
                       {idade > IDADE_LIMITE_SEGURO
                         ? `Acima de ${IDADE_LIMITE_SEGURO} anos — sob consulta`
                         : (multiplicadorSeguroPorIdade(idade) ?? 1) > 1
@@ -1703,13 +1743,13 @@ export default function ViagemPersonalizadaSelfServicePage() {
                 max={pessoas}
                 formatValue={(v) => `${v} de ${pessoas} viajante${pessoas === 1 ? "" : "s"}`}
               />
-              <p className="mt-1.5 text-[11px] text-white/35">Um eSIM por pessoa, plano ilimitado.</p>
+              <p className="mt-1.5 text-[11px] text-black/35">Um eSIM por pessoa, plano ilimitado.</p>
             </div>
 
             <div className="sm:col-span-2">
-              <span className="mb-2 block text-[10px] uppercase tracking-[0.2em] text-white/40">
+              <span className="mb-2 block text-[10px] uppercase tracking-[0.2em] text-black/40">
                 <LabelNumerado texto="19. Ingressos e experiências" />{" "}
-                <span className="normal-case tracking-normal text-white/35">(opcional)</span>
+                <span className="normal-case tracking-normal text-black/35">(opcional)</span>
               </span>
               <div className="grid grid-cols-[repeat(auto-fill,8rem)] gap-2">
                 {INGRESSOS_PUBLICOS.map((ing) => {
@@ -1719,19 +1759,19 @@ export default function ViagemPersonalizadaSelfServicePage() {
                       key={ing.key}
                       className={`flex h-[13.5rem] w-32 cursor-pointer flex-col items-center gap-2 rounded-lg border px-2 py-3 text-center text-xs transition ${
                         marcado
-                          ? "border-[#6ec3d9] bg-[#6ec3d9]/15 font-medium text-[#6ec3d9]"
-                          : "border-white/15 bg-white/[0.04] text-white/60 hover:border-white/30"
+                          ? "border-[#2f80c9] bg-[#2f80c9]/15 font-medium text-[#2f80c9]"
+                          : "border-black/15 bg-black/[0.04] text-black/60 hover:border-black/30"
                       }`}
                     >
                       <input type="checkbox" checked={marcado} onChange={() => alternarIngresso(ing.key)} className="sr-only" />
                       <div className="flex w-full flex-1 flex-col items-center justify-center gap-2">
-                        <div className="flex h-20 w-full shrink-0 items-center justify-center rounded-md bg-white/90 p-1">
+                        <div className="flex h-20 w-full shrink-0 items-center justify-center rounded-md bg-white p-1">
                           {/* eslint-disable-next-line @next/next/no-img-element */}
                           <img src={ing.icone} alt="" className="max-h-16 w-auto max-w-full object-contain" />
                         </div>
                         <span className="flex min-h-[2rem] w-full items-center justify-center leading-tight">{ing.nome}</span>
                       </div>
-                      <span className="flex min-h-[2.5rem] w-full items-center justify-center rounded-md bg-[#6ec3d9]/10 px-2 py-1 text-[11px] font-semibold leading-tight text-[#6ec3d9]">
+                      <span className="flex min-h-[2.5rem] w-full items-center justify-center rounded-md bg-[#2f80c9]/10 px-2 py-1 text-[11px] font-semibold leading-tight text-[#2f80c9]">
                         {rotuloUSD(ing.precoUSD)}/pessoa
                       </span>
                     </label>
@@ -1740,9 +1780,9 @@ export default function ViagemPersonalizadaSelfServicePage() {
               </div>
 
               {(ingressos.has("disneyland") || ingressos.has("disneysea")) && (
-                <div className="mt-3 rounded-lg border border-white/10 bg-white/[0.03] p-3">
-                  <p className="text-xs font-medium text-white/80">+ Disney Premier Access (fast pass pago)</p>
-                  <p className="mt-0.5 text-[11px] leading-4 text-white/40">
+                <div className="mt-3 rounded-lg border border-black/10 bg-black/[0.03] p-3">
+                  <p className="text-xs font-medium text-black/80">+ Disney Premier Access (fast pass pago)</p>
+                  <p className="mt-0.5 text-[11px] leading-4 text-black/40">
                     Vendido por atração, conforme a popularidade — escolha quantas quiser.
                   </p>
                   <div className="mt-2 max-w-xs">
@@ -1763,9 +1803,9 @@ export default function ViagemPersonalizadaSelfServicePage() {
               )}
 
               {ingressos.has("usj") && (
-                <div className="mt-3 rounded-lg border border-white/10 bg-white/[0.03] p-3">
-                  <p className="text-xs font-medium text-white/80">+ USJ Express Pass (fast pass pago)</p>
-                  <p className="mt-0.5 text-[11px] leading-4 text-white/40">
+                <div className="mt-3 rounded-lg border border-black/10 bg-black/[0.03] p-3">
+                  <p className="text-xs font-medium text-black/80">+ USJ Express Pass (fast pass pago)</p>
+                  <p className="mt-0.5 text-[11px] leading-4 text-black/40">
                     Fura-fila em um número variável de atrações; o combo exato varia por temporada e nossa equipe
                     confirma com você antes de fechar.
                   </p>
@@ -1778,8 +1818,8 @@ export default function ViagemPersonalizadaSelfServicePage() {
                         aria-pressed={usjTier === t.key}
                         className={`rounded-lg border px-3 py-2 text-center text-xs transition ${
                           usjTier === t.key
-                            ? "border-[#6ec3d9] bg-[#6ec3d9]/15 font-medium text-[#6ec3d9]"
-                            : "border-white/15 text-white/60 hover:border-white/30"
+                            ? "border-[#2f80c9] bg-[#2f80c9]/15 font-medium text-[#2f80c9]"
+                            : "border-black/15 text-black/60 hover:border-black/30"
                         }`}
                       >
                         <span className="block">{t.label}</span>
@@ -1792,9 +1832,9 @@ export default function ViagemPersonalizadaSelfServicePage() {
             </div>
 
             <div className="sm:col-span-2">
-              <span className="mb-2 block text-[10px] uppercase tracking-[0.2em] text-white/40">
+              <span className="mb-2 block text-[10px] uppercase tracking-[0.2em] text-black/40">
                 <LabelNumerado texto="20. Serviços adicionais" />{" "}
-                <span className="normal-case tracking-normal text-white/35">(opcional)</span>
+                <span className="normal-case tracking-normal text-black/35">(opcional)</span>
               </span>
               <div className="grid grid-cols-[repeat(auto-fill,8rem)] gap-2">
                 {SERVICOS_PUBLICOS.map((sv) => {
@@ -1821,10 +1861,10 @@ export default function ViagemPersonalizadaSelfServicePage() {
                       key={sv.key}
                       className={`flex h-[13.5rem] w-32 flex-col items-center gap-2 rounded-lg border px-2 py-3 text-center text-xs transition ${
                         desabilitado
-                          ? "cursor-not-allowed border-white/10 bg-white/[0.02] text-white/30"
+                          ? "cursor-not-allowed border-black/10 bg-black/[0.02] text-black/30"
                           : marcado
-                            ? "cursor-pointer border-[#6ec3d9] bg-[#6ec3d9]/15 font-medium text-[#6ec3d9]"
-                            : "cursor-pointer border-white/15 bg-white/[0.04] text-white/60 hover:border-white/30"
+                            ? "cursor-pointer border-[#2f80c9] bg-[#2f80c9]/15 font-medium text-[#2f80c9]"
+                            : "cursor-pointer border-black/15 bg-black/[0.04] text-black/60 hover:border-black/30"
                       }`}
                     >
                       <input
@@ -1835,7 +1875,7 @@ export default function ViagemPersonalizadaSelfServicePage() {
                         className="sr-only"
                       />
                       <div className="flex w-full flex-1 flex-col items-center justify-center gap-2">
-                        <div className="flex h-20 w-full shrink-0 items-center justify-center rounded-md bg-white/90 p-2">
+                        <div className="flex h-20 w-full shrink-0 items-center justify-center rounded-md bg-white p-2">
                           {/* eslint-disable-next-line @next/next/no-img-element */}
                           <img src={sv.icone} alt="" className={`h-16 w-16 object-contain ${desabilitado ? "opacity-40" : ""}`} />
                         </div>
@@ -1843,7 +1883,7 @@ export default function ViagemPersonalizadaSelfServicePage() {
                       </div>
                       <span
                         className={`flex min-h-[2.5rem] w-full items-center justify-center rounded-md px-2 py-1 text-[11px] font-semibold leading-tight ${
-                          desabilitado ? "bg-white/5 text-white/30" : "bg-amber-400/10 text-amber-300"
+                          desabilitado ? "bg-black/5 text-black/30" : "bg-amber-50 text-amber-700"
                         }`}
                       >
                         {precoLabel}
@@ -1852,20 +1892,20 @@ export default function ViagemPersonalizadaSelfServicePage() {
                   );
                 })}
               </div>
-              <p className="mt-2 text-[10px] leading-4 text-white/35">
+              <p className="mt-2 text-[10px] leading-4 text-black/35">
                 * preço inicial — pode variar conforme grupo, trecho e disponibilidade. Itens “sob consulta” são
                 cotados pela nossa equipe.
               </p>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 gap-5 rounded-2xl border border-white/10 bg-white/[0.03] p-6 sm:grid-cols-2 md:p-8">
-            <p className="text-[10px] uppercase tracking-[0.2em] text-white/40 sm:col-span-2">
+          <div className="grid grid-cols-1 gap-5 rounded-2xl border border-black/10 bg-black/[0.03] p-6 sm:grid-cols-2 md:p-8">
+            <p className="text-[10px] uppercase tracking-[0.2em] text-black/40 sm:col-span-2">
               Seus dados, pra receber a simulação
             </p>
 
             <label className="flex flex-col">
-              <span className="mb-1.5 text-[10px] uppercase tracking-[0.2em] text-white/40">
+              <span className="mb-1.5 text-[10px] uppercase tracking-[0.2em] text-black/40">
                 Nome completo
               </span>
               <input
@@ -1873,12 +1913,12 @@ export default function ViagemPersonalizadaSelfServicePage() {
                 required
                 value={nome}
                 onChange={(e) => setNome(e.target.value)}
-                className="h-11 w-full rounded-lg border border-white/15 bg-white/[0.04] px-3 text-sm text-white outline-none focus:border-white/40"
+                className="h-11 w-full rounded-lg border border-black/15 bg-black/[0.04] px-3 text-sm text-[#0A2540] outline-none focus:border-black/40"
               />
             </label>
 
             <label className="flex flex-col">
-              <span className="mb-1.5 text-[10px] uppercase tracking-[0.2em] text-white/40">
+              <span className="mb-1.5 text-[10px] uppercase tracking-[0.2em] text-black/40">
                 WhatsApp (ou e-mail abaixo)
               </span>
               <input
@@ -1886,37 +1926,37 @@ export default function ViagemPersonalizadaSelfServicePage() {
                 placeholder="+55 11 91234-5678"
                 value={whatsapp}
                 onChange={(e) => setWhatsapp(e.target.value)}
-                className="h-11 w-full rounded-lg border border-white/15 bg-white/[0.04] px-3 text-sm text-white outline-none focus:border-white/40"
+                className="h-11 w-full rounded-lg border border-black/15 bg-black/[0.04] px-3 text-sm text-[#0A2540] outline-none focus:border-black/40"
               />
             </label>
 
             <label className="flex flex-col sm:col-span-2">
-              <span className="mb-1.5 text-[10px] uppercase tracking-[0.2em] text-white/40">
+              <span className="mb-1.5 text-[10px] uppercase tracking-[0.2em] text-black/40">
                 E-mail (ou WhatsApp ao lado)
               </span>
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="h-11 w-full rounded-lg border border-white/15 bg-white/[0.04] px-3 text-sm text-white outline-none focus:border-white/40"
+                className="h-11 w-full rounded-lg border border-black/15 bg-black/[0.04] px-3 text-sm text-[#0A2540] outline-none focus:border-black/40"
               />
             </label>
 
             <label className="flex flex-col sm:col-span-2">
-              <span className="mb-1.5 text-[10px] uppercase tracking-[0.2em] text-white/40">
+              <span className="mb-1.5 text-[10px] uppercase tracking-[0.2em] text-black/40">
                 Observações (opcional)
               </span>
               <textarea
                 value={observacoes}
                 onChange={(e) => setObservacoes(e.target.value)}
                 rows={3}
-                className="w-full rounded-lg border border-white/15 bg-white/[0.04] px-3 py-2 text-sm text-white outline-none focus:border-white/40"
+                className="w-full rounded-lg border border-black/15 bg-black/[0.04] px-3 py-2 text-sm text-[#0A2540] outline-none focus:border-black/40"
               />
             </label>
           </div>
 
           {diasInsuficientes && (
-            <p className="rounded-lg border border-amber-400/30 bg-amber-400/10 px-4 py-3 text-xs leading-5 text-amber-300">
+            <p className="rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-xs leading-5 text-amber-700">
               Com {cidades.length} cidade{cidades.length === 1 ? "" : "s"}
               {parquesDiaInteiro > 0
                 ? ` e ${parquesDiaInteiro} parque${parquesDiaInteiro === 1 ? "" : "s"} de dia inteiro`
@@ -1927,18 +1967,53 @@ export default function ViagemPersonalizadaSelfServicePage() {
           )}
 
           {status === "erro" && (
-            <p className="text-center text-sm text-red-400">{erro}</p>
+            <p className="text-center text-sm text-red-600">{erro}</p>
           )}
 
           <button
             type="submit"
             disabled={status === "enviando"}
-            className="w-full rounded-full bg-white px-8 py-3.5 text-sm font-medium text-black transition hover:bg-white/90 disabled:opacity-60"
+            className="w-full rounded-full bg-[#2f80c9] px-8 py-4 text-xs font-medium uppercase tracking-[0.25em] text-white transition hover:bg-[#2a72b5] disabled:opacity-60"
           >
             {status === "enviando" ? "Calculando…" : "Ver minha simulação"}
           </button>
         </form>
       </div>
+
+        {/* Barra fixa — mesmo padrão da Calculadora Reversa: total sugerido sempre visível. */}
+        <div className="fixed inset-x-0 bottom-0 z-50 border-t border-white/10 bg-[#0a0a0a]/97 px-5 py-3 shadow-[0_-4px_16px_rgba(0,0,0,0.35)] backdrop-blur sm:px-8">
+          <div className="mx-auto flex max-w-2xl flex-wrap items-center justify-between gap-x-6 gap-y-2">
+            <div>
+              <p className="text-[9px] uppercase tracking-[0.2em] text-white/40">Total estimado do pacote</p>
+              <p className={`${display.className} text-xl font-medium text-[#5b9bd9] sm:text-2xl`}>
+                {formatBRL(simulacaoAoVivo.total)}
+              </p>
+              <p className="text-[10px] text-white/35">
+                {formatBRL(pessoas > 0 ? Math.round(simulacaoAoVivo.total / pessoas) : simulacaoAoVivo.total)}/pessoa
+              </p>
+            </div>
+            <div className="text-right">
+              <p className="text-[9px] uppercase tracking-[0.2em] text-white/40">
+                {simulacaoAoVivo.coube ? "Saldo restante" : "Acima do orçamento"}
+              </p>
+              <p
+                className={`${display.className} text-lg font-medium sm:text-xl ${
+                  simulacaoAoVivo.coube ? "text-white" : "text-amber-300"
+                }`}
+              >
+                {formatBRL(Math.abs(orcamento - simulacaoAoVivo.total))}
+              </p>
+            </div>
+            <button
+              type="submit"
+              form="simulador"
+              disabled={status === "enviando"}
+              className="rounded-full bg-[#2f80c9] px-6 py-2.5 text-[11px] font-medium uppercase tracking-[0.2em] text-white transition hover:bg-[#2a72b5] disabled:opacity-60"
+            >
+              {status === "enviando" ? "Calculando…" : "Ver minha simulação"}
+            </button>
+          </div>
+        </div>
     </main>
   );
 }
