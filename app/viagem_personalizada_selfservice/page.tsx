@@ -985,7 +985,7 @@ export default function ViagemPersonalizadaSelfServicePage() {
 
   return (
     <main className="min-h-screen bg-white px-6 pb-40 pt-16 text-[#0A2540] md:px-16 md:pb-44 md:pt-24">
-      <div className="mx-auto max-w-2xl">
+      <div className="mx-auto max-w-4xl">
         <div className="mb-10 flex justify-center">
           <Link href="/">
             {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -1013,7 +1013,7 @@ export default function ViagemPersonalizadaSelfServicePage() {
         <form id="simulador" onSubmit={handleSubmit} className="space-y-8">
           <div className="grid grid-cols-1 gap-5 rounded-2xl border border-black/10 bg-black/[0.03] p-6 sm:grid-cols-2 md:p-8">
             <label className="flex flex-col sm:col-span-2">
-              <span className="mb-2 text-[10px] uppercase tracking-[0.2em] text-black/40">
+              <span className="mb-2 flex flex-wrap items-center text-[10px] uppercase tracking-[0.2em] text-black/50">
                 <LabelNumerado texto="1. Orçamento máximo (R$)" />
               </span>
               <input
@@ -1049,7 +1049,7 @@ export default function ViagemPersonalizadaSelfServicePage() {
             />
 
             <label className="flex flex-col sm:col-span-2">
-              <span className="mb-2 text-[10px] uppercase tracking-[0.2em] text-black/40">
+              <span className="mb-2 flex flex-wrap items-center text-[10px] uppercase tracking-[0.2em] text-black/50">
                 <LabelNumerado texto="4. Tipo de quarto" />
               </span>
               <select
@@ -1066,7 +1066,7 @@ export default function ViagemPersonalizadaSelfServicePage() {
             </label>
 
             <div className="sm:col-span-2">
-              <span className="mb-2 block text-[10px] uppercase tracking-[0.2em] text-black/40">
+              <span className="mb-2 flex flex-wrap items-center text-[10px] uppercase tracking-[0.2em] text-black/50">
                 <LabelNumerado texto="5. Categoria máxima de hotel" />
               </span>
               <div className="flex flex-wrap gap-2">
@@ -1094,7 +1094,7 @@ export default function ViagemPersonalizadaSelfServicePage() {
             </div>
 
             <div className="sm:col-span-2">
-              <span className="mb-2 block text-[10px] uppercase tracking-[0.2em] text-black/40">
+              <span className="mb-2 flex flex-wrap items-center text-[10px] uppercase tracking-[0.2em] text-black/50">
                 <LabelNumerado texto="6. Classe desejada do voo" />
               </span>
               <div className="flex flex-wrap gap-2">
@@ -1162,7 +1162,7 @@ export default function ViagemPersonalizadaSelfServicePage() {
             </div>
 
             <div className="sm:col-span-2">
-              <span className="mb-2 block text-[10px] uppercase tracking-[0.2em] text-black/40">
+              <span className="mb-2 flex flex-wrap items-center text-[10px] uppercase tracking-[0.2em] text-black/50">
                 <LabelNumerado texto="7. Café da manhã" />
               </span>
               <div className="grid grid-cols-[repeat(auto-fill,8rem)] gap-2">
@@ -1193,7 +1193,7 @@ export default function ViagemPersonalizadaSelfServicePage() {
             </div>
 
             <div className="sm:col-span-2">
-              <span className="mb-2 block text-[10px] uppercase tracking-[0.2em] text-black/40">
+              <span className="mb-2 flex flex-wrap items-center text-[10px] uppercase tracking-[0.2em] text-black/50">
                 <LabelNumerado texto="8. Temporada" />
               </span>
               <label className="mb-3 flex max-w-xs flex-col">
@@ -1242,9 +1242,9 @@ export default function ViagemPersonalizadaSelfServicePage() {
             </div>
 
             <div className="sm:col-span-2">
-              <span className="mb-2 block text-[10px] uppercase tracking-[0.2em] text-black/40">
+              <span className="mb-2 flex flex-wrap items-center text-[10px] uppercase tracking-[0.2em] text-black/50">
                 <LabelNumerado texto="9. Temas" />{" "}
-                <span className="normal-case tracking-normal text-black/35">
+                <span className="ml-1.5 normal-case tracking-normal text-black/35">
                   (opcional — selecione até {MAX_TEMAS_SIMULTANEOS} pra misturar)
                 </span>
               </span>
@@ -1329,9 +1329,9 @@ export default function ViagemPersonalizadaSelfServicePage() {
             </div>
 
             <div className="sm:col-span-2">
-              <span className="mb-2 block text-[10px] uppercase tracking-[0.2em] text-black/40">
+              <span className="mb-2 flex flex-wrap items-center text-[10px] uppercase tracking-[0.2em] text-black/50">
                 <LabelNumerado texto="10. Cidades do roteiro" />{" "}
-                <span className="normal-case tracking-normal text-black/35">
+                <span className="ml-1.5 normal-case tracking-normal text-black/35">
                   (até {MAX_CIDADES}, opcional)
                 </span>
               </span>
@@ -1359,9 +1359,9 @@ export default function ViagemPersonalizadaSelfServicePage() {
             </div>
 
             <div className="sm:col-span-2">
-              <span className="mb-2 block text-[10px] uppercase tracking-[0.2em] text-black/40">
+              <span className="mb-2 flex flex-wrap items-center text-[10px] uppercase tracking-[0.2em] text-black/50">
                 <LabelNumerado texto="11. Extensão internacional" />{" "}
-                <span className="normal-case tracking-normal text-black/35">(opcional — soma dias ao total da viagem)</span>
+                <span className="ml-1.5 normal-case tracking-normal text-black/35">(opcional — soma dias ao total da viagem)</span>
               </span>
               <div className="grid grid-cols-[repeat(auto-fill,8rem)] gap-2">
                 {EXTENSOES_INTERNACIONAIS.map((ext) => {
@@ -1462,9 +1462,9 @@ export default function ViagemPersonalizadaSelfServicePage() {
             </div>
 
             <div className="sm:col-span-2">
-              <span className="mb-2 block text-[10px] uppercase tracking-[0.2em] text-black/40">
+              <span className="mb-2 flex flex-wrap items-center text-[10px] uppercase tracking-[0.2em] text-black/50">
                 <LabelNumerado texto="12. JR Pass — validade e classe" />{" "}
-                <span className="normal-case tracking-normal text-black/35">(opcional)</span>
+                <span className="ml-1.5 normal-case tracking-normal text-black/35">(opcional)</span>
               </span>
               <div className="flex flex-wrap gap-4">
                 <div className="rounded-xl border border-black/10 bg-black/[0.03] p-3">
@@ -1527,9 +1527,9 @@ export default function ViagemPersonalizadaSelfServicePage() {
             </div>
 
             <div className="sm:col-span-2">
-              <span className="mb-2 block text-[10px] uppercase tracking-[0.2em] text-black/40">
+              <span className="mb-2 flex flex-wrap items-center text-[10px] uppercase tracking-[0.2em] text-black/50">
                 <LabelNumerado texto="13. Guia turístico" />{" "}
-                <span className="normal-case tracking-normal text-black/35">(opcional)</span>
+                <span className="ml-1.5 normal-case tracking-normal text-black/35">(opcional)</span>
               </span>
               <div className="flex flex-wrap gap-2">
                 {(["brasileiro", "estrangeiro"] as const).map((t) => (
@@ -1593,9 +1593,9 @@ export default function ViagemPersonalizadaSelfServicePage() {
             </div>
 
             <div className="sm:col-span-2">
-              <span className="mb-2 block text-[10px] uppercase tracking-[0.2em] text-black/40">
+              <span className="mb-2 flex flex-wrap items-center text-[10px] uppercase tracking-[0.2em] text-black/50">
                 <LabelNumerado texto="15. Câmbio de ienes" />{" "}
-                <span className="normal-case tracking-normal text-black/35">(opcional)</span>
+                <span className="ml-1.5 normal-case tracking-normal text-black/35">(opcional)</span>
               </span>
               {!(cambioExpandido || servicos.has("cambioBrasil")) ? (
                 <button
@@ -1657,9 +1657,9 @@ export default function ViagemPersonalizadaSelfServicePage() {
             </div>
 
             <label className="flex flex-col sm:col-span-2">
-              <span className="mb-2 text-[10px] uppercase tracking-[0.2em] text-black/40">
+              <span className="mb-2 flex flex-wrap items-center text-[10px] uppercase tracking-[0.2em] text-black/50">
                 <LabelNumerado texto="16. Data prevista da viagem" />{" "}
-                <span className="normal-case tracking-normal text-black/35">(opcional)</span>
+                <span className="ml-1.5 normal-case tracking-normal text-black/35">(opcional)</span>
               </span>
               <input
                 type="date"
@@ -1701,7 +1701,7 @@ export default function ViagemPersonalizadaSelfServicePage() {
             </div>
 
             <div className="sm:col-span-2">
-              <span className="mb-2 block text-[10px] uppercase tracking-[0.2em] text-black/40">
+              <span className="mb-2 flex flex-wrap items-center text-[10px] uppercase tracking-[0.2em] text-black/50">
                 <LabelNumerado texto="17. Seguro viagem — idade dos passageiros" />
               </span>
               <div className="flex flex-wrap gap-2">
@@ -1747,9 +1747,9 @@ export default function ViagemPersonalizadaSelfServicePage() {
             </div>
 
             <div className="sm:col-span-2">
-              <span className="mb-2 block text-[10px] uppercase tracking-[0.2em] text-black/40">
+              <span className="mb-2 flex flex-wrap items-center text-[10px] uppercase tracking-[0.2em] text-black/50">
                 <LabelNumerado texto="19. Ingressos e experiências" />{" "}
-                <span className="normal-case tracking-normal text-black/35">(opcional)</span>
+                <span className="ml-1.5 normal-case tracking-normal text-black/35">(opcional)</span>
               </span>
               <div className="grid grid-cols-[repeat(auto-fill,8rem)] gap-2">
                 {INGRESSOS_PUBLICOS.map((ing) => {
@@ -1832,9 +1832,9 @@ export default function ViagemPersonalizadaSelfServicePage() {
             </div>
 
             <div className="sm:col-span-2">
-              <span className="mb-2 block text-[10px] uppercase tracking-[0.2em] text-black/40">
+              <span className="mb-2 flex flex-wrap items-center text-[10px] uppercase tracking-[0.2em] text-black/50">
                 <LabelNumerado texto="20. Serviços adicionais" />{" "}
-                <span className="normal-case tracking-normal text-black/35">(opcional)</span>
+                <span className="ml-1.5 normal-case tracking-normal text-black/35">(opcional)</span>
               </span>
               <div className="grid grid-cols-[repeat(auto-fill,8rem)] gap-2">
                 {SERVICOS_PUBLICOS.map((sv) => {
@@ -1982,7 +1982,7 @@ export default function ViagemPersonalizadaSelfServicePage() {
 
         {/* Barra fixa — mesmo padrão da Calculadora Reversa: total sugerido sempre visível. */}
         <div className="fixed inset-x-0 bottom-0 z-50 border-t border-white/10 bg-[#0a0a0a]/97 px-5 py-3 shadow-[0_-4px_16px_rgba(0,0,0,0.35)] backdrop-blur sm:px-8">
-          <div className="mx-auto flex max-w-2xl flex-wrap items-center justify-between gap-x-6 gap-y-2">
+          <div className="mx-auto flex max-w-4xl flex-wrap items-center justify-between gap-x-6 gap-y-2">
             <div>
               <p className="text-[9px] uppercase tracking-[0.2em] text-white/40">Total estimado do pacote</p>
               <p className={`${display.className} text-xl font-medium text-[#5b9bd9] sm:text-2xl`}>
