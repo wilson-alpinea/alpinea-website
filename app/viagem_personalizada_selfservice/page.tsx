@@ -773,7 +773,7 @@ export default function ViagemPersonalizadaSelfServicePage() {
       .join("\n");
     const linhaOpcao = (selecionado: boolean) =>
       `-mx-2 flex cursor-pointer items-center gap-3 rounded-lg px-2 py-2.5 transition ${
-        selecionado ? "bg-[#2f80c9]/15" : "hover:bg-white placeholder:text-black/40"
+        selecionado ? "bg-[#2f80c9]/15" : "hover:bg-black/[0.04]"
       }`;
     return (
       <main className="min-h-screen bg-white px-6 py-16 text-[#0A2540] md:px-16 md:py-24">
@@ -1365,7 +1365,7 @@ export default function ViagemPersonalizadaSelfServicePage() {
                       className={`overflow-hidden rounded-xl border text-left transition ${
                         marcado
                           ? "border-[#2f80c9] bg-[#2f80c9]/10 ring-1 ring-[#2f80c9]"
-                          : "border-black/10 bg-black/[0.03] hover:border-black/30"
+                          : "border-black/10 bg-white hover:border-black/30"
                       }`}
                     >
                       <div className="relative h-24 w-full bg-black/[0.06]">

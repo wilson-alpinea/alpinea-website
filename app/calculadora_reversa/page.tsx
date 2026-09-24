@@ -3055,7 +3055,7 @@ export default function CalculadoraReversaPage() {
             className={`flex h-full items-center gap-4 rounded-2xl border px-5 py-3 text-left transition ${
               todosCamposOcultos
                 ? "border-[#2f80c9]/40 bg-[#2f80c9]/10"
-                : "border-black/15 bg-black/[0.02] hover:border-black/30"
+                : "border-black/15 bg-white hover:border-black/30"
             }`}
           >
             <span
@@ -3453,7 +3453,7 @@ export default function CalculadoraReversaPage() {
                   className={`flex w-32 flex-col items-center gap-2 rounded-lg border px-2 py-3 text-center text-xs transition ${
                     comCafeDaManha
                       ? "border-[#2f80c9] bg-[#2f80c9]/10 font-medium text-[#2f80c9]"
-                      : "border-black/15 bg-black/[0.03] text-black/60 hover:border-black/30"
+                      : "border-black/15 bg-white text-black/60 hover:border-black/30"
                   }`}
                 >
                   {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -3469,7 +3469,7 @@ export default function CalculadoraReversaPage() {
                   className={`flex w-32 flex-col items-center gap-2 rounded-lg border px-2 py-3 text-center text-xs transition ${
                     !comCafeDaManha
                       ? "border-[#2f80c9] bg-[#2f80c9]/10 font-medium text-[#2f80c9]"
-                      : "border-black/15 bg-black/[0.03] text-black/60 hover:border-black/30"
+                      : "border-black/15 bg-white text-black/60 hover:border-black/30"
                   }`}
                 >
                   {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -3526,7 +3526,7 @@ export default function CalculadoraReversaPage() {
                   className={`flex w-32 flex-col items-center gap-2 rounded-lg border px-2 py-3 text-center text-xs transition ${
                     temporada === t.key
                       ? "border-[#2f80c9] bg-[#2f80c9]/10 font-medium text-[#2f80c9]"
-                      : "border-black/15 bg-black/[0.03] text-black/60 hover:border-black/30"
+                      : "border-black/15 bg-white text-black/60 hover:border-black/30"
                   }`}
                 >
                   {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -3586,7 +3586,7 @@ export default function CalculadoraReversaPage() {
                           ? "cursor-not-allowed border-black/10 bg-black/[0.02] text-black/60"
                           : tema.key === "roteiroClassico"
                             ? "border-emerald-200 bg-emerald-50 text-emerald-700/80 hover:border-emerald-300"
-                            : "border-black/15 bg-black/[0.03] text-black/60 hover:border-black/30"
+                            : "border-black/15 bg-white text-black/60 hover:border-black/30"
                     }`}
                   >
                     {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -3637,7 +3637,7 @@ export default function CalculadoraReversaPage() {
                   {destinosSelecionados.map((cidade, indice) => (
                     <div
                       key={indice}
-                      className="relative flex w-32 flex-col items-center justify-center gap-1 rounded-lg border border-black/15 bg-black/[0.03] px-2 py-3"
+                      className="relative flex w-32 flex-col items-center justify-center gap-1 rounded-lg border border-black/15 bg-white px-2 py-3"
                     >
                       <CidadeCombobox
                         value={cidade}
@@ -3759,7 +3759,7 @@ export default function CalculadoraReversaPage() {
                     className={`flex w-32 flex-col items-center gap-2 rounded-lg border px-1 py-3 text-center text-xs transition ${
                       marcado
                         ? "border-[#2f80c9] bg-[#2f80c9]/10 font-medium text-[#2f80c9]"
-                        : "border-black/15 bg-black/[0.03] text-black/60 hover:border-black/30"
+                        : "border-black/15 bg-white text-black/60 hover:border-black/30"
                     }`}
                   >
                     {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -4004,7 +4004,7 @@ export default function CalculadoraReversaPage() {
                   className={`h-10 rounded-lg border px-4 text-sm transition ${
                     guiaTipo === t
                       ? "border-[#2f80c9] bg-[#2f80c9]/10 font-medium text-[#2f80c9]"
-                      : "border-black/15 bg-black/[0.03] text-black/60 hover:border-black/30"
+                      : "border-black/15 bg-white text-black/60 hover:border-black/30"
                   }`}
                 >
                   {t === "brasileiro" ? "Guia brasileiro" : "Guia estrangeiro"}
@@ -4180,7 +4180,7 @@ export default function CalculadoraReversaPage() {
                     className={`flex h-[13.5rem] w-32 cursor-pointer flex-col items-center gap-2 rounded-lg border px-2 py-3 text-center text-xs transition ${
                       marcado
                         ? "border-[#2f80c9] bg-[#2f80c9]/10 font-medium text-[#2f80c9]"
-                        : "border-black/15 bg-black/[0.03] text-black/60 hover:border-black/30"
+                        : "border-black/15 bg-white text-black/60 hover:border-black/30"
                     }`}
                   >
                     <input
@@ -4295,7 +4295,7 @@ export default function CalculadoraReversaPage() {
                       className={`flex w-36 flex-col items-center gap-2 rounded-lg border px-2 py-3 text-center text-xs transition ${
                         usjExpressPassTier === tier.key
                           ? "border-[#2f80c9] bg-[#2f80c9]/10 font-medium text-[#2f80c9]"
-                          : "border-black/15 bg-black/[0.03] text-black/60 hover:border-black/30"
+                          : "border-black/15 bg-white text-black/60 hover:border-black/30"
                       }`}
                     >
                       {(tier.nintendoWorld || tier.wizardingWorld) ? (
@@ -4540,7 +4540,7 @@ export default function CalculadoraReversaPage() {
                         ? "cursor-not-allowed border-black/10 bg-black/[0.02] text-black/60"
                         : marcado
                           ? "cursor-pointer border-[#2f80c9] bg-[#2f80c9]/10 font-medium text-[#2f80c9]"
-                          : "cursor-pointer border-black/15 bg-black/[0.03] text-black/60 hover:border-black/30"
+                          : "cursor-pointer border-black/15 bg-white text-black/60 hover:border-black/30"
                     }`}
                   >
                     <input

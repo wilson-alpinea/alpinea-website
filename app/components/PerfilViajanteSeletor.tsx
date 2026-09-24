@@ -26,7 +26,7 @@ export default function PerfilViajanteSeletor({
             className={`relative flex flex-col items-center gap-2 rounded-xl border px-3 pb-4 pt-4 text-center transition ${
               marcado
                 ? "border-[#2f80c9] bg-[#2f80c9]/10 ring-1 ring-[#2f80c9]"
-                : "border-black/10 bg-black/[0.03] hover:border-black/30"
+                : "border-black/10 bg-white hover:border-black/30"
             }`}
           >
             {p.recomendado && (

@@ -1736,7 +1736,7 @@ export function CustomPackageCard({
         } ${
           ativo
             ? "border-[#2f80c9]/50 bg-[#2f80c9]/10"
-            : "border-black/10 bg-black/[0.02] hover:border-black/20"
+            : "border-black/10 bg-white hover:border-black/20"
         }`}
       >
         {/* Ícone no canto superior direito — mesmo tamanho/posição/estilo
