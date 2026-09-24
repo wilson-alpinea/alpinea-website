@@ -2879,6 +2879,17 @@ export default function CalculadoraReversaPage() {
       });
       return;
     }
+    if (!telefoneCliente.trim() && !emailCliente.trim()) {
+      setCrmResultado({
+        tipo: "erro",
+        mensagem: "Informe pelo menos o telefone ou o e-mail do lead antes de registrar no CRM.",
+      });
+      return;
+    }
+    if (emailCliente.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailCliente.trim())) {
+      setCrmResultado({ tipo: "erro", mensagem: "E-mail inválido." });
+      return;
+    }
     setRegistrandoCrm(true);
     setCrmResultado(null);
     try {
@@ -5238,19 +5249,22 @@ export default function CalculadoraReversaPage() {
                   navegador, não são salvos em banco de dados. */}
               <div className="mt-6 rounded-xl border border-sky-200 bg-sky-50 p-4">
                 <p className="mb-3 text-[10px] uppercase tracking-[0.2em] text-sky-800/70">
-                  Identificação do lead
+                  Identificação do lead{" "}
+                  <span className="normal-case tracking-normal text-sky-800/50">
+                    — nome obrigatório + telefone ou e-mail (pelo menos um) pra registrar no CRM
+                  </span>
                 </p>
                 <div className="grid gap-3 sm:grid-cols-3">
                   <label className="flex flex-col">
-                    <span className="mb-1 text-[10px] uppercase tracking-wide text-black/40">Nome</span>
+                    <span className="mb-1 text-[10px] uppercase tracking-wide text-black/40">Nome *</span>
                     <input type="text" value={nomeCliente} onChange={(e) => setNomeCliente(e.target.value)} placeholder="ex.: Família Almeida" className="h-10 w-full rounded-lg border border-sky-200 bg-white px-3 text-sm outline-none focus:border-sky-400" />
                   </label>
                   <label className="flex flex-col">
-                    <span className="mb-1 text-[10px] uppercase tracking-wide text-black/40">Telefone / WhatsApp</span>
+                    <span className="mb-1 text-[10px] uppercase tracking-wide text-black/40">Telefone / WhatsApp (ou e-mail)</span>
                     <input type="tel" value={telefoneCliente} onChange={(e) => setTelefoneCliente(e.target.value)} placeholder="ex.: +55 11 91234-5678" className="h-10 w-full rounded-lg border border-sky-200 bg-white px-3 text-sm outline-none focus:border-sky-400" />
                   </label>
                   <label className="flex flex-col">
-                    <span className="mb-1 text-[10px] uppercase tracking-wide text-black/40">E-mail</span>
+                    <span className="mb-1 text-[10px] uppercase tracking-wide text-black/40">E-mail (ou telefone)</span>
                     <input type="email" value={emailCliente} onChange={(e) => setEmailCliente(e.target.value)} placeholder="ex.: cliente@email.com" className="h-10 w-full rounded-lg border border-sky-200 bg-white px-3 text-sm outline-none focus:border-sky-400" />
                   </label>
                 </div>

@@ -55,6 +55,12 @@ export async function POST(req: Request) {
     const consultor = String(body.consultor || "").trim();
     const telefone = String(body.telefone || "").trim();
     const email = String(body.email || "").trim();
+    if (!telefone && !email) {
+      return NextResponse.json(
+        { error: "Informe pelo menos o telefone ou o e-mail do lead antes de registrar no CRM." },
+        { status: 400 },
+      );
+    }
     const valorProposta = Number(body.valorProposta) || null;
     const dataViagem = String(body.dataViagem || "").trim();
     const resumoTexto = String(body.resumoTexto || "").trim();
