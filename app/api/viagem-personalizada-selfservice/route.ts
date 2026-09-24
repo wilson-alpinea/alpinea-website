@@ -63,9 +63,9 @@ export async function POST(req: Request) {
     const email = String(body.email || "").trim();
     const whatsapp = String(body.whatsapp || "").trim();
 
-    if (!nome || (!email && !whatsapp)) {
+    if (!nome || !email || !whatsapp) {
       return NextResponse.json(
-        { error: "Nome e pelo menos um contato (e-mail ou WhatsApp) são obrigatórios." },
+        { error: "Nome, e-mail e WhatsApp são obrigatórios." },
         { status: 400 },
       );
     }

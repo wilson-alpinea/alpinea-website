@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Bodoni_Moda } from "next/font/google";
 import {
   NumberStepper,
@@ -430,7 +430,9 @@ export default function ViagemPersonalizadaSelfServicePage() {
   const [dataViagem, setDataViagem] = useState("");
   const [observacoes, setObservacoes] = useState("");
 
-  const [orcamento, setOrcamento] = useState(80000);
+  const [orcamento, setOrcamento] = useState(50000);
+  const [orcamentoConfirmado, setOrcamentoConfirmado] = useState(false);
+  const formRef = useRef<HTMLFormElement>(null);
   const [dias, setDias] = useState(10);
   const [pessoas, setPessoas] = useState(2);
   const [tipoQuarto, setTipoQuarto] = useState<TipoQuarto>("Duplo (casal)");
@@ -650,12 +652,33 @@ export default function ViagemPersonalizadaSelfServicePage() {
     ajusteAereoPorPessoa: ajusteOrigem + ajusteBagagem,
   });
 
+  // Nada além do orçamento pode ser editado até ele ser confirmado.
+  const orcamentoValido = orcamento >= MIN_ORCAMENTO && orcamento <= MAX_ORCAMENTO;
+  useEffect(() => {
+    const form = formRef.current;
+    if (!form) return;
+    const bloqueados: Element[] = [];
+    Array.from(form.children).forEach((filho, i) => {
+      if (i === 0) Array.from(filho.children).slice(1).forEach((c) => bloqueados.push(c));
+      else bloqueados.push(filho);
+    });
+    bloqueados.forEach((el) => {
+      if (orcamentoConfirmado) {
+        el.removeAttribute("inert");
+        el.classList.remove("pointer-events-none", "opacity-40");
+      } else {
+        el.setAttribute("inert", "");
+        el.classList.add("pointer-events-none", "opacity-40");
+      }
+    });
+  });
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!nome.trim()) return;
-    if (!whatsapp.trim() && !email.trim()) {
+    if (!orcamentoConfirmado) return;
+    if (!nome.trim() || !whatsapp.trim() || !email.trim()) {
       setStatus("erro");
-      setErro("Informe pelo menos o WhatsApp ou o e-mail para receber a simulação.");
+      setErro("Preencha nome, WhatsApp e e-mail para receber a simulação.");
       return;
     }
 
@@ -1017,7 +1040,7 @@ export default function ViagemPersonalizadaSelfServicePage() {
           </p>
         </div>
 
-        <form id="simulador" onSubmit={handleSubmit} className="space-y-8">
+        <form id="simulador" ref={formRef} onSubmit={handleSubmit} className="space-y-8">
           <div className="grid grid-cols-1 gap-5 rounded-2xl border border-black/10 bg-black/[0.03] p-6 sm:grid-cols-2 md:p-8">
             <label className="flex flex-col sm:col-span-2">
               <span className="mb-2 flex flex-wrap items-center text-[10px] uppercase tracking-[0.2em] text-black/50">
@@ -1033,8 +1056,29 @@ export default function ViagemPersonalizadaSelfServicePage() {
                   const v = Number(e.target.value);
                   if (!Number.isNaN(v)) setOrcamento(v);
                 }}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    e.preventDefault();
+                    if (orcamentoValido) setOrcamentoConfirmado(true);
+                  }
+                }}
                 className="h-12 w-full rounded-lg border border-black/15 bg-white placeholder:text-black/40 px-4 text-lg font-medium text-[#0A2540] outline-none focus:border-black/40"
               />
+              <div className="mt-2 flex flex-wrap items-center gap-3">
+                <button
+                  type="button"
+                  disabled={!orcamentoValido}
+                  onClick={() => setOrcamentoConfirmado(true)}
+                  className="h-10 rounded-lg bg-[#2f80c9] px-4 text-xs font-medium text-white transition hover:bg-[#2870b0] disabled:cursor-not-allowed disabled:opacity-40"
+                >
+                  {orcamentoConfirmado ? "Orçamento confirmado ✓" : "Confirmar orçamento"}
+                </button>
+                {!orcamentoConfirmado && (
+                  <span className="text-[11px] text-black/60">
+                    Confirme o orçamento para liberar os demais campos.
+                  </span>
+                )}
+              </div>
             </label>
 
             <NumberStepper
@@ -1621,6 +1665,7 @@ export default function ViagemPersonalizadaSelfServicePage() {
             </div>
 
             <div className="sm:col-span-2 sm:max-w-xs">
+              <div>
               <NumberStepper
                 label="15. Motorista privado — dias"
                 value={motoristaDiasEfetivo}
@@ -1629,6 +1674,7 @@ export default function ViagemPersonalizadaSelfServicePage() {
                 max={dias}
                 formatValue={(v) => (v === 0 ? "Sem motorista" : `${v} de ${dias} dia${dias === 1 ? "" : "s"}`)}
               />
+              </div>
               <p className="mt-1.5 text-[11px] text-black/60">
                 {rotuloUSD(DIARIA_MOTORISTA_PRIVADO_USD)}/dia para até {MOTORISTA_TAMANHO_GRUPO} pessoas — não inclui o
                 transfer aeroporto ↔ hotel.
@@ -1962,10 +2008,11 @@ export default function ViagemPersonalizadaSelfServicePage() {
 
             <label className="flex flex-col">
               <span className="mb-1.5 text-[10px] uppercase tracking-[0.2em] text-black/60">
-                WhatsApp (ou e-mail abaixo)
+                WhatsApp
               </span>
               <input
                 type="tel"
+                required
                 placeholder="+55 11 91234-5678"
                 value={whatsapp}
                 onChange={(e) => setWhatsapp(e.target.value)}
@@ -1975,10 +2022,11 @@ export default function ViagemPersonalizadaSelfServicePage() {
 
             <label className="flex flex-col sm:col-span-2">
               <span className="mb-1.5 text-[10px] uppercase tracking-[0.2em] text-black/60">
-                E-mail (ou WhatsApp ao lado)
+                E-mail
               </span>
               <input
                 type="email"
+                required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 className="h-11 w-full rounded-lg border border-black/15 bg-white placeholder:text-black/40 px-3 text-sm text-[#0A2540] outline-none focus:border-black/40"
