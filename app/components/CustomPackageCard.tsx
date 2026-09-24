@@ -1279,12 +1279,12 @@ const ITENS_PADRAO: OpcaoKey[] = ["aereo", "hotel", "roteiro"];
 // demais seguem com fundo sólido (só o nome) até você subir fotos reais.
 export const DESTINOS = [
   { key: "tokyo", nome: "Tokyo", imagem: "/images/tokyo.jpg", principal: true },
-  { key: "kyoto", nome: "Kyoto", imagem: "/images/kyoto-maiko-street.png", principal: true },
+  { key: "kyoto", nome: "Kyoto", imagem: "/images/kyoto-higashiyama.png", principal: true },
   { key: "osaka", nome: "Osaka", imagem: "/images/osaka-castle.png", principal: true },
   { key: "hokkaido", nome: "Hokkaido (Sapporo)", imagem: "/images/sapporo.jpg", principal: false },
   { key: "okinawa", nome: "Okinawa", imagem: "/images/okinawa.jpg", principal: false },
   { key: "hiroshima", nome: "Hiroshima", imagem: "/images/hiroshima.jpg", principal: false },
-  { key: "nara", nome: "Nara", imagem: null, principal: false },
+  { key: "nara", nome: "Nara", imagem: "/images/nara-todaiji.png", principal: false },
   { key: "hakone", nome: "Hakone", imagem: "/images/fuji.JPG", principal: false },
   { key: "nikko", nome: "Nikko", imagem: "/images/nikko.jpg", principal: false },
   { key: "kanazawa", nome: "Kanazawa", imagem: "/images/kanazawa.jpg", principal: false },
