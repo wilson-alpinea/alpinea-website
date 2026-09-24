@@ -1,3 +1,4 @@
+import { ehSelfService, TAG_SELF_SERVICE } from "@/lib/crm/origem";
 import { Bodoni_Moda } from "next/font/google";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -138,6 +139,11 @@ export default async function ClienteDetalhePage({
           <h1 className={`${display.className} text-3xl font-medium text-black md:text-4xl`}>
             {cliente.nome}
           </h1>
+          {ehSelfService(cliente.origem) && (
+            <span className="mt-1 inline-block rounded-full bg-sky-100 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-sky-700">
+              {TAG_SELF_SERVICE}
+            </span>
+          )}
         </div>
         <div className="w-48">
           <EstagioSelect

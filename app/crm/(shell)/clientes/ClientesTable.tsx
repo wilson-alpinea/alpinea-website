@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ESTAGIO_COR, ESTAGIO_LABEL } from "@/lib/crm/estagios";
 import { PRODUTO_PRINCIPAL_LABEL, type ProdutoPrincipal } from "@/lib/crm/produtos";
 import type { Estagio } from "@/lib/crm/types";
+import { ehSelfService, TAG_SELF_SERVICE } from "@/lib/crm/origem";
 import { deleteClientes } from "../../actions";
 
 type LinhaCliente = {
@@ -15,6 +16,7 @@ type LinhaCliente = {
   estagio: string;
   valor_proposta: number | null;
   produto_principal: string | null;
+  origem?: string | null;
   created_at: string;
 };
 
@@ -112,6 +114,11 @@ export function ClientesTable({ clientes }: { clientes: LinhaCliente[] }) {
                   <Link href={`/crm/clientes/${c.id}`} className="text-black hover:underline">
                     {c.nome}
                   </Link>
+                  {ehSelfService(c.origem) && (
+                    <span className="ml-2 inline-block rounded-full bg-sky-100 px-2 py-0.5 align-middle text-[9px] font-semibold uppercase tracking-wide text-sky-700">
+                      {TAG_SELF_SERVICE}
+                    </span>
+                  )}
                   <p className="mt-0.5 text-xs text-black/40">{c.email || c.telefone || "—"}</p>
                 </td>
                 <td className="hidden px-5 py-4 text-black/60 md:table-cell">

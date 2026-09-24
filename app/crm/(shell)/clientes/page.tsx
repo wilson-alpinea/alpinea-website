@@ -30,11 +30,11 @@ export default async function ClientesPage({
 
   let query = supabase
     .from("clientes")
-    .select("id, nome, email, telefone, estagio, valor_proposta, produto_principal, created_at")
+    .select("id, nome, email, telefone, estagio, valor_proposta, produto_principal, origem, created_at")
     .order("created_at", { ascending: false });
 
   if (busca) {
-    query = query.or(`nome.ilike.%${busca}%,email.ilike.%${busca}%,telefone.ilike.%${busca}%`);
+    query = query.or(`nome.ilike.%${busca}%,email.ilike.%${busca}%,telefone.ilike.%${busca}%,origem.ilike.%${busca}%`);
   }
   if (estagioFiltro) {
     query = query.eq("estagio", estagioFiltro);

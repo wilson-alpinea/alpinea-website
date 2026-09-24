@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createAdminClient } from "../../../lib/supabase/admin";
+import { TAG_SELF_SERVICE } from "../../../lib/crm/origem";
 
 export const runtime = "nodejs";
 
@@ -40,7 +41,7 @@ async function notificarPorEmail(params: {
         from: "Alpinea <contato@alpinea.io>",
         to: ["wilson@alpinea.io"],
         reply_to: params.email || undefined,
-        subject: `Nova simulação self-service — ${params.nome}`,
+        subject: `[${TAG_SELF_SERVICE}] Nova simulação — ${params.nome}`,
         text: params.resumoTexto,
         html: params.resumoHtml,
       }),
@@ -162,12 +163,12 @@ export async function POST(req: Request) {
         nome,
         email: email || null,
         telefone: whatsapp || null,
-        origem: "Calculadora self-service (/viagem_personalizada_selfservice)",
+        origem: `${TAG_SELF_SERVICE} — Calculadora (/viagem_personalizada_selfservice)`,
         produto_principal: "roteiro_personalizado",
         valor_proposta: valorEstimado,
         data_viagem: dataViagem || null,
         estagio: "novo_lead",
-        observacoes: resumoTexto,
+        observacoes: `[${TAG_SELF_SERVICE}]\n${resumoTexto}`,
       })
       .select("id")
       .single();
@@ -183,7 +184,7 @@ export async function POST(req: Request) {
     const { error: erroInteracao } = await supabase.from("interacoes").insert({
       cliente_id: cliente.id,
       tipo: "simulacao",
-      conteudo: resumoTexto,
+      conteudo: `[${TAG_SELF_SERVICE}]\n${resumoTexto}`,
     });
 
     if (erroInteracao) {
