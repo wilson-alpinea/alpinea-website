@@ -193,7 +193,12 @@ export default function ViagemPersonalizadaSelfServicePage() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!nome.trim() || !whatsapp.trim()) return;
+    if (!nome.trim()) return;
+    if (!whatsapp.trim() && !email.trim()) {
+      setStatus("erro");
+      setErro("Informe pelo menos o WhatsApp ou o e-mail para receber a simulação.");
+      return;
+    }
 
     const resultadoCalculado = simular({ orcamento, dias, pessoas, tipoQuarto, cidades, cambioCotacao });
     setResultado(resultadoCalculado);
@@ -455,11 +460,10 @@ export default function ViagemPersonalizadaSelfServicePage() {
 
             <label className="flex flex-col">
               <span className="mb-1.5 text-[10px] uppercase tracking-[0.2em] text-white/40">
-                WhatsApp
+                WhatsApp (ou e-mail abaixo)
               </span>
               <input
                 type="tel"
-                required
                 placeholder="+55 11 91234-5678"
                 value={whatsapp}
                 onChange={(e) => setWhatsapp(e.target.value)}
@@ -469,7 +473,7 @@ export default function ViagemPersonalizadaSelfServicePage() {
 
             <label className="flex flex-col sm:col-span-2">
               <span className="mb-1.5 text-[10px] uppercase tracking-[0.2em] text-white/40">
-                E-mail (opcional)
+                E-mail (ou WhatsApp ao lado)
               </span>
               <input
                 type="email"
