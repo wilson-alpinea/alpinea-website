@@ -1335,7 +1335,7 @@ export default function ViagemPersonalizadaSelfServicePage() {
                   (até {MAX_CIDADES}, opcional)
                 </span>
               </span>
-              <div className="flex flex-wrap gap-2">
+              <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4">
                 {cidadesDisponiveis.map((key) => {
                   const destino = DESTINOS.find((d) => d.key === key);
                   const marcado = cidades.includes(key);
@@ -1345,13 +1345,39 @@ export default function ViagemPersonalizadaSelfServicePage() {
                       type="button"
                       onClick={() => alternarCidade(key)}
                       aria-pressed={marcado}
-                      className={`rounded-full border px-4 py-2 text-xs transition ${
+                      className={`overflow-hidden rounded-xl border text-left transition ${
                         marcado
-                          ? "border-[#2f80c9] bg-[#2f80c9]/15 font-medium text-[#2f80c9]"
-                          : "border-black/15 text-black/60 hover:border-black/30"
+                          ? "border-[#2f80c9] bg-[#2f80c9]/10 ring-1 ring-[#2f80c9]"
+                          : "border-black/10 bg-black/[0.03] hover:border-black/30"
                       }`}
                     >
-                      {destino?.nome ?? key}
+                      <div className="relative h-24 w-full bg-black/[0.06]">
+                        {destino?.imagem ? (
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img
+                            src={destino.imagem}
+                            alt={destino.nome}
+                            loading="lazy"
+                            className="h-full w-full object-cover"
+                          />
+                        ) : (
+                          <div className="flex h-full w-full items-center justify-center text-2xl text-black/25">
+                            ⛩
+                          </div>
+                        )}
+                        {marcado && (
+                          <span className="absolute right-1.5 top-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-[#2f80c9] text-[11px] text-white">
+                            ✓
+                          </span>
+                        )}
+                      </div>
+                      <div
+                        className={`px-2 py-2 text-xs ${
+                          marcado ? "font-medium text-[#2f80c9]" : "text-black/70"
+                        }`}
+                      >
+                        {destino?.nome ?? key}
+                      </div>
                     </button>
                   );
                 })}
