@@ -1470,18 +1470,18 @@ export default function ViagemPersonalizadaSelfServicePage() {
                       <span key={trecho.label}>✈ {trecho.label}</span>
                     ))}
                   </div>
-                  <div className="mt-3 grid gap-3 sm:grid-cols-2">
+                  <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
                     {ext.roteiro.map((dia) => (
                       <div
                         key={`${ext.key}-${dia.cidade}-${dia.dia}`}
-                        className="overflow-hidden rounded-xl border border-black/10 bg-black/[0.03]"
+                        className="overflow-hidden rounded-xl border border-black/10 bg-white"
                       >
                         {dia.imagem ? (
                           // eslint-disable-next-line @next/next/no-img-element
                           <img
                             src={dia.imagem}
                             alt=""
-                            className="h-32 w-full object-cover"
+                            className="h-36 w-full rounded-t-xl object-cover"
                             style={{ objectPosition: dia.posicaoImagem ?? "center" }}
                           />
                         ) : null}
