@@ -17,6 +17,8 @@ import { CambioLabel } from "../components/CambioLabel";
 import {
   HotelExemplosPropriedades,
   JR_PASS_PRECO_USD,
+  JR_PASS_PRECO_USD_GREEN,
+  JR_PASS_DIAS_OPCOES,
   DIARIA_SEGURO_VIAGEM,
   PRECO_CAMBIO_BRASIL,
   COMISSAO_AJISAI_SHOPPING_PCT,
@@ -1091,22 +1093,18 @@ export default function ProdutosPage() {
         </div>
       )}
 
-      {/* Pedido do Wilson, 16/set/2026: "JR Pass, Cambio e Seguro Viagem
-          retirar do serviços avulsos, devem virar cards principais [...]
-          seguir mesmo template de layout" — cada um ganha seu próprio
-          popup leve (mesmo padrão do Hotéis, sem iframe), com o preço de
-          referência e um CTA de WhatsApp já com o serviço pré-preenchido. */}
-      {jrPassModalOpen && (
-        <ServicoAvulsoModal
-          titulo="JR Pass"
-          descricao="Passe ferroviário com deslocamentos ilimitados de trem-bala. Vendido em faixas de 7, 14 ou 21 dias."
-          precoLabel={formatUSD(JR_PASS_PRECO_USD[7])}
-          precoBRLLabel={cambio ? formatBRL(JR_PASS_PRECO_USD[7] * cambio.cotacao) : null}
-          notaPreco="Faixa de 7 dias — 14 ou 21 dias também disponíveis, valor maior."
-          cambio={cambio}
-          onClose={() => setJrPassModalOpen(false)}
-        />
-      )}
+      {/* Pedido do Wilson, 25/set/2026: "o pop-up está ocupando uma parte
+          muito pequena, ele tem que ocupar praticamente o mesmo espaço da
+          /produtos" + "ao clicar em JR Pass, eu preciso que nessa nova
+          página tenham todos os detalhes desde os tipos de JR Pass
+          disponiveis, dias, preços etc [...] Criteirios de eligibilidade
+          [...] Usar sites oficiais da JR" — JR Pass saiu do
+          ServicoAvulsoModal genérico (pequeno, max-w-lg) e ganhou o
+          próprio componente, no mesmo padrão de tamanho do modal
+          "Hotéis" (max-w-5xl, quase tela cheia). Câmbio, Seguro Viagem e
+          Ajisai Shopping continuam no popup pequeno — só o JR Pass foi
+          pedido maior/mais detalhado. */}
+      {jrPassModalOpen && <JrPassModal cambio={cambio} onClose={() => setJrPassModalOpen(false)} />}
 
       {cambioModalOpen && (
         <ServicoAvulsoModal
@@ -1291,12 +1289,252 @@ function ProductSelectorCard({
   );
 }
 
-// Popup leve pra um serviço avulso simples (JR Pass, Câmbio, Seguro
-// Viagem) — mesmo padrão visual do popup de Hotéis, sem iframe, já que
+// Tabela oficial do Japan Rail Pass, em ienes — só referência educativa
+// nesta seção (o preço que a Ajisai efetivamente cobra é o de
+// JR_PASS_PRECO_USD/JR_PASS_PRECO_USD_GREEN, tabela do fornecedor
+// AjisaiWork em dólar, a mesma usada na Calculadora Reversa). Capturado
+// em 25/set/2026 direto do site oficial japanrailpass.net: a tabela
+// vigente até 30/set/2026 (adulto) é Comum ¥50.000/80.000/100.000 e
+// Green ¥70.000/110.000/140.000 (7/14/21 dias); a partir de 1/out/2026
+// (japanrailpass.net/assets/pdf/JRP_Price_Changes_En.pdf) sobe para os
+// valores abaixo — como a mudança é em poucos dias, já uso a tabela nova
+// pra não desatualizar rápido.
+const JR_PASS_OFICIAL_JPY: Record<"comum" | "green", Record<(typeof JR_PASS_DIAS_OPCOES)[number], number>> = {
+  comum: { 7: 53000, 14: 84000, 21: 105000 },
+  green: { 7: 74000, 14: 116000, 21: 147000 },
+};
+
+function formatJPY(valor: number) {
+  return `¥${valor.toLocaleString("ja-JP")}`;
+}
+
+// Pop-up dedicado do JR Pass — bem maior que o ServicoAvulsoModal genérico
+// dos outros serviços avulsos, no mesmo padrão de tamanho do modal
+// "Hotéis" (max-w-5xl, cabeçalho fixo com título + fechar, conteúdo
+// rolável). Pedido do Wilson, 25/set/2026: "o pop-up está ocupando uma
+// parte muito pequena, ele tem que ocupar praticamente o mesmo espaço da
+// /produtos" + "tenham todos os detalhes desde os tipos de JR Pass
+// disponiveis, dias, preços etc" + "Criteirios de eligibilidade" +
+// "Usar sites oficiais da JR para capturar dados importantes". Critérios
+// de elegibilidade e regras de uso abaixo vieram de japanrailpass.net/en
+// (páginas "Eligibility for use" e "Conditions for use"), não inventados.
+function JrPassModal({ cambio, onClose }: { cambio: Cambio | null; onClose: () => void }) {
+  const TIPOS = [
+    {
+      key: "comum" as const,
+      classe: "Comum (Ordinary)",
+      icone: "/images/ingressos/shinkansen-ordinary.png",
+      precoUSD: JR_PASS_PRECO_USD,
+    },
+    {
+      key: "green" as const,
+      classe: "Green Car (luxo)",
+      icone: "/images/ingressos/jr-green-car.png",
+      precoUSD: JR_PASS_PRECO_USD_GREEN,
+    },
+  ];
+
+  const ELEGIBILIDADE = [
+    {
+      titulo: "Turista estrangeiro",
+      texto:
+        "Entrada no Japão com status de imigração \"Temporary Visitor\" para turismo, com estadia autorizada de 15 ou 90 dias — precisa do carimbo ou adesivo \"Temporary Visitor\" no passaporte.",
+    },
+    {
+      titulo: "Japonês residente no exterior",
+      texto:
+        "Também pode comprar, sob condições específicas — só pela modalidade de compra feita fora do Japão, antes da viagem.",
+    },
+    {
+      titulo: "Atenção ao carimbo",
+      texto:
+        "Portão eletrônico de imigração no aeroporto não carimba o passaporte — é preciso passar pelo balcão com atendente (ou pedir o carimbo manualmente) para conseguir trocar o passe depois.",
+    },
+    {
+      titulo: "Não vale para todo visto",
+      texto:
+        "Quem entra como \"Trainee\", \"Entertainer\" ou com \"Reentry Permit\" não pode usar o passe — mesmo já tendo comprado online, a troca é recusada sem o carimbo correto.",
+    },
+  ];
+
+  const REGRAS_DE_USO = [
+    {
+      titulo: "Cobertura",
+      texto:
+        "Shinkansen, trens expressos, expressos limitados e locais da JR, além de ônibus JR e do Tokyo Monorail — exceto os trens-bala Nozomi e Mizuho, que exigem bilhete separado.",
+    },
+    {
+      titulo: "Reservas de assento",
+      texto:
+        "Gratuitas, mas recomendadas — alguns trens não têm vagão sem reserva. Limite de 110 reservas por passe; cancelamento precisa ser feito antes do horário de partida.",
+    },
+    {
+      titulo: "Pessoal e intransferível",
+      texto:
+        "Vinculado a um passaporte específico — não dá pra comprar dois passes sobrepostos no mesmo passaporte, nem trocar de titular. O passaporte precisa estar sempre junto do passe.",
+    },
+    {
+      titulo: "Reembolso e validade",
+      texto:
+        "Reembolso só é possível antes da data de início de uso; depois de ativado, o período não pode ser estendido. Passe perdido ou roubado não tem reposição.",
+    },
+  ];
+
+  return (
+    <div
+      className="fixed inset-0 z-[90] flex items-end justify-center bg-black/85 p-0 backdrop-blur-sm md:items-center md:p-6"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="jr-pass-modal-title"
+      onClick={onClose}
+    >
+      <div
+        className="relative max-h-[92vh] w-full max-w-5xl overflow-y-auto rounded-t-3xl border border-black/10 bg-white shadow-2xl md:max-h-[88vh] md:rounded-3xl"
+        onClick={(event) => event.stopPropagation()}
+      >
+        <div className="sticky top-0 z-20 flex h-14 items-center justify-between border-b border-black/10 bg-white/90 px-4 backdrop-blur-xl md:px-6">
+          <p
+            id="jr-pass-modal-title"
+            className={`${display.className} text-lg font-medium text-black md:text-xl`}
+          >
+            JR Pass
+          </p>
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label="Fechar JR Pass"
+            className="flex h-9 w-9 items-center justify-center rounded-full border border-black/15 text-2xl leading-none text-black/65 transition hover:border-black/40 hover:text-black"
+          >
+            ×
+          </button>
+        </div>
+
+        <div className="p-5 md:p-8">
+          <p className="text-xs uppercase tracking-[0.3em] text-[#1c6ea8]">Japan Rail Pass</p>
+          <h3
+            className={`${display.className} mt-2 max-w-2xl text-2xl font-medium text-black md:text-3xl`}
+          >
+            Deslocamentos ilimitados de trem-bala em todo o Japão
+          </h3>
+          <p className="mt-3 max-w-2xl text-sm leading-relaxed text-black/60">
+            Passe ferroviário oficial dos seis grupos JR, vendido em faixas fixas de 7, 14 ou 21
+            dias corridos — cobre a maior parte da rede Shinkansen, trens expressos, locais,
+            ônibus JR e o Tokyo Monorail.
+          </p>
+
+          {/* Tipos e preços */}
+          <div className="mt-8 border-t border-black/10 pt-6">
+            <p className="text-[10px] uppercase tracking-[0.2em] text-black/40">Tipos e preços</p>
+            <div className="mt-4 grid gap-4 sm:grid-cols-2">
+              {TIPOS.map((tipo) => (
+                <div key={tipo.key} className="rounded-2xl border border-black/10 bg-black/[0.02] p-5">
+                  <div className="flex items-center gap-3">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={tipo.icone} alt="" className="h-10 w-10 shrink-0 object-contain" />
+                    <p className={`${display.className} text-base font-medium text-black`}>
+                      {tipo.classe}
+                    </p>
+                  </div>
+                  <div className="mt-4">
+                    {JR_PASS_DIAS_OPCOES.map((dias) => (
+                      <div
+                        key={dias}
+                        className="flex items-center justify-between border-t border-black/5 py-2.5 first:border-t-0 first:pt-0"
+                      >
+                        <span className="text-xs text-black/55">{dias} dias</span>
+                        <span className="text-right">
+                          <span className="block text-sm font-medium text-black">
+                            {formatUSD(tipo.precoUSD[dias])}
+                          </span>
+                          {cambio && (
+                            <span className="block text-[11px] text-black/40">
+                              {formatBRL(tipo.precoUSD[dias] * cambio.cotacao)}
+                            </span>
+                          )}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                  <p className="mt-3 border-t border-black/5 pt-3 text-[10px] leading-4 text-black/35">
+                    Tabela oficial JR (ienes, vigente a partir de 1/out/2026):{" "}
+                    {JR_PASS_DIAS_OPCOES.map((dias, index) => (
+                      <span key={dias}>
+                        {index > 0 && " · "}
+                        {dias}d {formatJPY(JR_PASS_OFICIAL_JPY[tipo.key][dias])}
+                      </span>
+                    ))}
+                  </p>
+                </div>
+              ))}
+            </div>
+            <p className="mt-3 text-[11px] leading-5 text-black/40">
+              Valor por pessoa, já com taxas e margem da Ajisai — calculado a partir da tabela do
+              fornecedor (renovada quinzenalmente) e convertido pela cotação do dia.
+            </p>
+            <CambioLabel cambio={cambio} className="mt-2 text-[11px] text-black/35" />
+          </div>
+
+          {/* Critérios de elegibilidade */}
+          <div className="mt-8 border-t border-black/10 pt-6">
+            <p className="text-[10px] uppercase tracking-[0.2em] text-black/40">
+              Critérios de elegibilidade
+            </p>
+            <div className="mt-4 grid gap-4 sm:grid-cols-2">
+              {ELEGIBILIDADE.map((item) => (
+                <div key={item.titulo} className="flex gap-3">
+                  <IconCheck className="mt-0.5 h-4 w-4 shrink-0 text-[#2f80c9]" />
+                  <div>
+                    <p className="text-xs font-medium text-black">{item.titulo}</p>
+                    <p className="mt-1 text-[11px] leading-5 text-black/50">{item.texto}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Regras de uso */}
+          <div className="mt-8 border-t border-black/10 pt-6">
+            <p className="text-[10px] uppercase tracking-[0.2em] text-black/40">Regras de uso</p>
+            <div className="mt-4 grid gap-4 sm:grid-cols-2">
+              {REGRAS_DE_USO.map((item) => (
+                <div key={item.titulo} className="flex gap-3">
+                  <IconCheck className="mt-0.5 h-4 w-4 shrink-0 text-[#2f80c9]" />
+                  <div>
+                    <p className="text-xs font-medium text-black">{item.titulo}</p>
+                    <p className="mt-1 text-[11px] leading-5 text-black/50">{item.texto}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <p className="mt-4 text-[11px] leading-5 text-black/35">
+              Fonte: sites oficiais do Japan Rail Pass (japanrailpass.net/en) — páginas de
+              elegibilidade, condições de uso e tabela de preços.
+            </p>
+          </div>
+
+          <ContactCTA
+            mode="single"
+            channel="whatsapp"
+            whatsappNumber={WHATSAPP_NUMBER}
+            brand="Ajisai"
+            label="Falar sobre JR Pass"
+            buttonClassName="mt-8 block w-full rounded-full bg-[#2f80c9] px-6 py-4 text-center text-xs font-medium uppercase tracking-[0.25em] text-white transition hover:bg-[#3b91dc]"
+            packageOptions={["JR Pass"]}
+            defaultPackage="JR Pass"
+          />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Popup leve pra um serviço avulso simples (Câmbio, Seguro Viagem, Ajisai
+// Shopping) — mesmo padrão visual do popup de Hotéis, sem iframe, já que
 // esses serviços não têm (e não precisam de) página própria. Pedido do
 // Wilson, 16/set/2026: "JR Pass, Cambio e Seguro Viagem retirar do
 // serviços avulsos, devem virar cards principais [...] seguir mesmo
-// template de layout".
+// template de layout". JR Pass saiu daqui em 25/set/2026 — ganhou o
+// próprio componente (JrPassModal), maior e mais detalhado.
 function ServicoAvulsoModal({
   titulo,
   descricao,
