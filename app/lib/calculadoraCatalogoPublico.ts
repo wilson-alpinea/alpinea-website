@@ -212,6 +212,45 @@ export const CAMBIO_IENES_MINIMO = 100000;
 // Fator interno de conversão usado no preço final do câmbio — não exibido.
 export const FATOR_CAMBIO_IENE = 1.15;
 
+// Câmbio de ienes — página pública /produtos (self-checkout). Pedido do
+// Wilson, 25/set/2026: "desenvolver um algoritmo que baseado na escolha da
+// cidade da pessoa, o sistema faz uma busca em tempo real em sites como
+// melhores câmbios, etc e adicionar uma margem de 20% sobre o valor e já
+// deixa o pedido pronto para checkout [...] deixar disponivel tanto compra
+// quanto venda de iene". Confirmado com o Wilson via AskUserQuestion,
+// 25/set/2026: essa margem de 20% é EXCLUSIVA dessa página pública — não
+// mexe no SPREAD_CAMBIO_IENE (1,15) usado internamente na Calculadora
+// Reversa, que continua servindo só a equipe (nem no FATOR_CAMBIO_IENE
+// acima, que também é só uso interno).
+//
+// Compra (cliente compra ienes da Ajisai): cotação de rua "compra" do
+// melhorcambio.com × 1,20 — cliente paga 20% a mais que a cotação de rua.
+// Venda (cliente vende ienes de volta pra Ajisai): cotação de rua "venda"
+// do melhorcambio.com × 0,80 — cliente recebe 20% a menos que a cotação de
+// rua. A Ajisai fica com a margem nos dois sentidos, sem revelar isso na
+// página (mesma regra já aplicada ao JR Pass e Seguro Viagem: nunca expor
+// margem/fornecedor em texto público).
+export const SPREAD_CAMBIO_IENE_PUBLICO_COMPRA = 1.2;
+export const SPREAD_CAMBIO_IENE_PUBLICO_VENDA = 0.8;
+
+// Mesmo mínimo já usado na Calculadora Reversa (CAMBIO_IENES_MINIMO acima)
+// — reexportado com nome mais específico só pra deixar claro, no
+// /produtos, que é o mesmo piso, não um novo valor.
+export const CAMBIO_IENES_MINIMO_PUBLICO = CAMBIO_IENES_MINIMO;
+
+// Moedas de transação aceitas no self-checkout de Câmbio — pedido do
+// Wilson, 25/set/2026: "deixar pelo menos 3 moedas disponiveis para
+// transação Real, Euro e Dolar". JPY não entra aqui de propósito — é a
+// moeda sendo comprada/vendida, não uma forma de pagamento. Ícones
+// enviados pelo Wilson no mesmo pedido.
+export type MoedaTransacaoCambio = "BRL" | "EUR" | "USD";
+
+export const MOEDAS_TRANSACAO_CAMBIO: { key: MoedaTransacaoCambio; nome: string; icone: string }[] = [
+  { key: "BRL", nome: "Real", icone: "/images/icone-moeda-real.png" },
+  { key: "EUR", nome: "Euro", icone: "/images/icone-moeda-euro.png" },
+  { key: "USD", nome: "Dólar", icone: "/images/icone-moeda-dolar.png" },
+];
+
 export const TEMAS: { key: TemaKey; nome: string; icone: string; cidades: TemaCidade[] }[] = [
   {
     key: "roteiroClassico",

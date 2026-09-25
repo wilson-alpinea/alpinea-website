@@ -20,6 +20,16 @@ export const COTACAO_FALLBACK: Cambio = {
   fallback: true,
 };
 
+// Fallback do euro — mesma lógica do COTACAO_FALLBACK acima, só usado se
+// /api/cambio-eur (PTAX Banco Central) falhar. Estimativa de 25/set/2026,
+// revisar periodicamente.
+export const COTACAO_FALLBACK_EUR: Cambio = {
+  cotacao: 6.1,
+  data: null,
+  fonte: "estimativa — cotação indisponível",
+  fallback: true,
+};
+
 // "US$ X.XXX" (convenção brasileira) em vez do "$X,XXX" padrão do
 // Intl/en-US — evita ambiguidade com outros símbolos de dólar e casa com o
 // "R$" usado no resto do site.
@@ -52,6 +62,13 @@ export type MoedaExibicao = "BRL" | "USD" | "JPY";
 // corrente), com separador de milhar no padrão japonês.
 export function formatJPY(valor: number): string {
   return `¥ ${Math.round(valor).toLocaleString("ja-JP")}`;
+}
+
+// "€ X.XXX" — separador de milhar no padrão europeu (de-DE), pra página de
+// Câmbio pública (Wilson, 25/set/2026: "deixar pelo menos 3 moedas
+// disponiveis para transação Real, Euro e Dolar").
+export function formatEUR(valor: number): string {
+  return `€ ${Math.round(valor).toLocaleString("de-DE")}`;
 }
 
 // Converte um valor cujo valor de referência interno é sempre em reais

@@ -18,9 +18,19 @@ export const CIDADES_CAMBIO_IENE = [
 
 export type CidadeCambioIeneSlug = (typeof CIDADES_CAMBIO_IENE)[number]["slug"];
 
+// Direção da operação — pedido do Wilson, 25/set/2026: "deixar disponivel
+// tanto compra quanto venda de iene" na página pública de Câmbio.
+// "compra" = cliente compra ienes da Ajisai (retirada antes do embarque);
+// "venda" = cliente vende de volta os ienes que sobraram da viagem.
+// Confirmado via WebFetch, 25/set/2026, que o melhorcambio.com tem as duas
+// páginas por cidade (/cotacao/compra/iene/<cidade> e /cotacao/venda/
+// iene/<cidade>), com valores diferentes.
+export type DirecaoCambioIene = "compra" | "venda";
+
 export type CambioIene = {
   cotacaoBRLPorJPY: number;
   cidade: CidadeCambioIeneSlug;
+  direcao: DirecaoCambioIene;
   fonte: string;
   fallback: boolean;
 };
@@ -29,12 +39,18 @@ export function cidadeCambioIeneValida(valor: string | null): valor is CidadeCam
   return CIDADES_CAMBIO_IENE.some((c) => c.slug === valor);
 }
 
-// Usado só se a raspagem falhar (site fora do ar, layout mudou e o regex
+// Usados só se a raspagem falhar (site fora do ar, layout mudou e o regex
 // não encontra mais o valor, etc.) — a tela nunca quebra, mas o valor
 // SEMPRE vem marcado como "fallback" pra nunca ser confundido com
-// cotação real. Baseado na cotação de papel-moeda em São Paulo observada
-// em 08/set/2026 (~R$ 0,037/JPY) — revisar periodicamente.
-export const COTACAO_FALLBACK_BRL_POR_JPY = 0.037;
+// cotação real.
+// Compra: papel-moeda em São Paulo observada em 08/set/2026 (~R$ 0,037/JPY).
+export const COTACAO_FALLBACK_BRL_POR_JPY_COMPRA = 0.037;
+// Venda: papel-moeda em São Paulo observada em 25/set/2026 (~R$ 0,0266/JPY,
+// confirmado via WebFetch em melhorcambio.com/cotacao/venda/iene/sao-paulo).
+export const COTACAO_FALLBACK_BRL_POR_JPY_VENDA = 0.0266;
+// Mantido por compatibilidade — usa o valor de "compra", que era o único
+// sentido que existia antes de 25/set/2026.
+export const COTACAO_FALLBACK_BRL_POR_JPY = COTACAO_FALLBACK_BRL_POR_JPY_COMPRA;
 
 // Extrai o valor de "papel moeda" (dinheiro físico) do HTML da página do
 // melhorcambio.com — não há API pública nem JSON estruturado lá, então

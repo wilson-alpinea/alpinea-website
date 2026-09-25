@@ -2,7 +2,9 @@ import { NextResponse } from "next/server";
 import {
   CidadeCambioIeneSlug,
   cidadeCambioIeneValida,
-  COTACAO_FALLBACK_BRL_POR_JPY,
+  COTACAO_FALLBACK_BRL_POR_JPY_COMPRA,
+  COTACAO_FALLBACK_BRL_POR_JPY_VENDA,
+  type DirecaoCambioIene,
   extrairCotacaoPapelMoeda,
 } from "../../lib/cambioIene";
 
@@ -13,12 +15,19 @@ export const runtime = "nodejs";
 // (mesmo critério usado em /api/cambio pro dólar).
 export const revalidate = 900;
 
+// Direção (compra/venda) — pedido do Wilson, 25/set/2026: "deixar
+// disponivel tanto compra quanto venda de iene" na página pública de
+// Câmbio. Cada direção é uma página separada no melhorcambio.com
+// (/cotacao/compra/iene/<cidade> e /cotacao/venda/iene/<cidade>), com
+// valor diferente — confirmado via WebFetch em 25/set/2026.
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const cidadeParam = searchParams.get("cidade");
   const cidade: CidadeCambioIeneSlug = cidadeCambioIeneValida(cidadeParam) ? cidadeParam : "sao-paulo";
+  const direcaoParam = searchParams.get("direcao");
+  const direcao: DirecaoCambioIene = direcaoParam === "venda" ? "venda" : "compra";
 
-  const url = `https://www.melhorcambio.com/cotacao/compra/iene/${cidade}`;
+  const url = `https://www.melhorcambio.com/cotacao/${direcao}/iene/${cidade}`;
 
   try {
     const resp = await fetch(url, {
@@ -42,15 +51,17 @@ export async function GET(request: Request) {
     return NextResponse.json({
       cotacaoBRLPorJPY: cotacao,
       cidade,
-      fonte: "melhorcambio.com — papel moeda",
+      direcao,
+      fonte: `melhorcambio.com — papel moeda (${direcao})`,
       fallback: false,
     });
   } catch (error) {
     console.error("Erro ao consultar cotação do iene no melhorcambio.com:", error);
 
     return NextResponse.json({
-      cotacaoBRLPorJPY: COTACAO_FALLBACK_BRL_POR_JPY,
+      cotacaoBRLPorJPY: direcao === "venda" ? COTACAO_FALLBACK_BRL_POR_JPY_VENDA : COTACAO_FALLBACK_BRL_POR_JPY_COMPRA,
       cidade,
+      direcao,
       fonte: "estimativa — melhorcambio.com indisponível ou fora do padrão esperado no momento",
       fallback: true,
     });
