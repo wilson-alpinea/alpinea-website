@@ -1664,6 +1664,31 @@ function JrPassModal({ cambio, onClose }: { cambio: Cambio | null; onClose: () =
 // idade — mesma fórmula usada na Calculadora Reversa e no self-service de
 // Viagem Personalizada) — não é o preço de nenhuma seguradora específica;
 // o plano e o valor final de cada uma são confirmados no fechamento.
+//
+// Ajuste 25/set/2026 (mesmo dia, pedido seguinte do Wilson): "incluir
+// informações essenciais dos tipos de seguro viagem disponivel em cada
+// uma das seguradoras e adicionar apolice e termos e condições de cada
+// um". `tiposPlano` e `termosUrl`/`termosNota` abaixo vieram de nova
+// pesquisa nos sites oficiais (25/set/2026):
+// - Affinity: categorias de plano confirmadas na página oficial
+//   (affinityseguroviagem.com.br) — Internacional/Nacional, Europa
+//   (Schengen), Anual, Estudante, Esportes, Cruzeiros, Corporativo. PDF
+//   de condições gerais linkado direto no rodapé do site oficial.
+// - MTA: mantive a faixa MTA 15/30/40/60/150 já confirmada (fonte
+//   Segurospromo) como os "tipos" — a My Travel Assist não nomeia planos
+//   por categoria de viagem como as outras duas, só por faixa de
+//   cobertura médica. PDF de condições gerais linkado no site oficial
+//   parceiro (travelassist.com.br), que é quem opera a venda da MTA.
+// - GTA: o site oficial não organiza os planos por nome/valor fixo, e
+//   sim por destino (EUA, Europa, Brasil, América Latina, Canadá, Outros
+//   destinos, Cruzeiros, Mundial, Copa do Mundo), por perfil (Lazer,
+//   Estudante, Cruzeiro, Multiviagem, Receptivo, Esporte profissional) e
+//   por faixa etária (até 64 / 65–85 / 86–89 anos) — usei exatamente essa
+//   classificação oficial, sem inventar nome de plano. As condições
+//   gerais da GTA também não são um PDF único: o site oficial lista uma
+//   página-índice com vários PDFs, um por resseguradora (IZA, Chubb,
+//   Sancor, Sompo) e por data de vigência — linkei essa página-índice e
+//   expliquei isso no texto, em vez de escolher um PDF arbitrariamente.
 const SEGURADORAS_VIAGEM = [
   {
     key: "affinity" as const,
@@ -1673,6 +1698,18 @@ const SEGURADORAS_VIAGEM = [
     descricao:
       "Plano de referência: 40 Essential — cobertura médica de US$ 40.000 e US$ 500 em bagagem extraviada.",
     observacao: "Não atende EUA/Canadá — para esses destinos a Affinity tem planos de cobertura maior.",
+    tiposPlano: [
+      "Internacional/Nacional",
+      "Europa (Schengen)",
+      "Anual (multiviagem)",
+      "Estudante",
+      "Esportes",
+      "Cruzeiros",
+      "Corporativo",
+    ],
+    termosUrl: "https://affinityseguroviagem.com.br/condicoes-gerais/afinity.pdf",
+    termosLabel: "Condições gerais (PDF)",
+    termosNota: null,
   },
   {
     key: "gta" as const,
@@ -1683,6 +1720,15 @@ const SEGURADORAS_VIAGEM = [
     descricao:
       "Global Travel Assistance — uma das seguradoras de viagem mais tradicionais do Brasil, com planos de US$ 36 mil a mais de US$ 300 mil em cobertura médica.",
     observacao: "Faixa de cobertura varia bastante por plano — confirmamos o plano exato no fechamento.",
+    tiposPlano: [
+      "Por destino: EUA, Europa, Brasil, América Latina, Canadá, Mundial, Cruzeiros",
+      "Por perfil: Lazer, Estudante, Cruzeiro, Multiviagem, Esporte profissional",
+      "Por idade: até 64 / 65–85 / 86–89 anos",
+    ],
+    termosUrl: "https://www.segurogta.com.br/2020/condicoes-gerais/",
+    termosLabel: "Índice de condições gerais",
+    termosNota:
+      "A GTA trabalha com mais de uma resseguradora (IZA, Chubb, Sancor, Sompo) — o PDF exato depende do plano e da data da cotação.",
   },
   {
     key: "mta" as const,
@@ -1692,6 +1738,10 @@ const SEGURADORAS_VIAGEM = [
     descricao:
       "My Travel Assist — planos internacionais de US$ 15 mil a US$ 150 mil em cobertura médica (MTA 15/30/40/60/150), com mais de 30 coberturas e assistências.",
     observacao: null,
+    tiposPlano: ["MTA 15", "MTA 30", "MTA 40", "MTA 60", "MTA 150"],
+    termosUrl: "https://www.travelassist.com.br/condicoes-gerais/my_travel_assist.pdf",
+    termosLabel: "Condições gerais (PDF)",
+    termosNota: null,
   },
 ];
 type SeguradoraKey = (typeof SEGURADORAS_VIAGEM)[number]["key"];
@@ -1867,11 +1917,18 @@ function SeguroViagemModal({ cambio, onClose }: { cambio: Cambio | null; onClose
                 <p className="text-[10px] uppercase tracking-[0.2em] text-black/40">Escolha a seguradora</p>
                 <div className="mt-4 grid gap-4 sm:grid-cols-3">
                   {SEGURADORAS_VIAGEM.map((s) => (
-                    <button
+                    <div
                       key={s.key}
-                      type="button"
+                      role="button"
+                      tabIndex={0}
                       onClick={() => setSeguradora(s.key)}
-                      className={`flex h-full flex-col rounded-2xl border p-5 text-left transition ${
+                      onKeyDown={(event) => {
+                        if (event.key === "Enter" || event.key === " ") {
+                          event.preventDefault();
+                          setSeguradora(s.key);
+                        }
+                      }}
+                      className={`flex h-full cursor-pointer flex-col rounded-2xl border p-5 text-left transition ${
                         seguradora === s.key
                           ? "border-[#2f80c9] bg-[#2f80c9]/5"
                           : "border-black/10 bg-white hover:border-black/25"
@@ -1896,7 +1953,40 @@ function SeguroViagemModal({ cambio, onClose }: { cambio: Cambio | null; onClose
                       {s.observacao && (
                         <p className="mt-2 text-[10px] leading-4 text-black/50">{s.observacao}</p>
                       )}
-                    </button>
+
+                      {/* Tipos de plano + condições gerais — pedido do
+                          Wilson, 25/set/2026: "incluir informações
+                          essenciais dos tipos de seguro viagem disponivel
+                          em cada uma das seguradoras e adicionar apolice
+                          e termos e condições de cada um". */}
+                      <div className="mt-3 border-t border-black/10 pt-3">
+                        <p className="text-[9px] uppercase tracking-[0.15em] text-black/40">
+                          Tipos de plano
+                        </p>
+                        <ul className="mt-1.5 flex flex-wrap gap-1.5">
+                          {s.tiposPlano.map((tipo) => (
+                            <li
+                              key={tipo}
+                              className="rounded-full border border-black/10 bg-black/[0.03] px-2.5 py-1 text-[10px] leading-none text-black/65"
+                            >
+                              {tipo}
+                            </li>
+                          ))}
+                        </ul>
+                        <a
+                          href={s.termosUrl}
+                          target="_blank"
+                          rel="noreferrer"
+                          onClick={(event) => event.stopPropagation()}
+                          className="mt-2.5 inline-flex items-center gap-1 text-[10px] font-medium text-[#1c6ea8] underline decoration-[#1c6ea8]/40 underline-offset-2 hover:text-[#2f80c9]"
+                        >
+                          {s.termosLabel} ↗
+                        </a>
+                        {s.termosNota && (
+                          <p className="mt-1.5 text-[10px] leading-4 text-black/40">{s.termosNota}</p>
+                        )}
+                      </div>
+                    </div>
                   ))}
                 </div>
                 <p className="mt-3 text-[11px] leading-5 text-black/40">
