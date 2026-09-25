@@ -512,6 +512,56 @@ export function calcularParcelaPrice(valorFinanciado: number, taxaMensal: number
   return (valorFinanciado * taxaMensal) / (1 - Math.pow(1 + taxaMensal, -parcelas));
 }
 
+// Simulação de forma de pagamento (cartão + PIX) — extraída da Calculadora
+// Reversa (app/calculadora_reversa/page.tsx, useMemo "simulacaoCartao" /
+// "simulacaoPix" / "mesesAteViagem") pra reaproveitar a mesma conta nas
+// páginas de self-checkout de /produtos (JR Pass, Seguro Viagem). Pedido do
+// Wilson, 25/set/2026: "adicionar formas de pagamento igual temos na
+// pagina de calculadora reversa". Não mexi no arquivo original — só
+// generalizei a mesma fórmula aqui pra reuso, com o mesmo resultado
+// numérico pros mesmos inputs.
+export type SimulacaoParcelaCartao = { parcelas: (typeof OPCOES_PARCELAS_CARTAO)[number]; valorParcela: number; valorTotal: number };
+export type SimulacaoParcelaPix = {
+  parcelas: (typeof OPCOES_PARCELAS_PIX)[number];
+  entrada: number;
+  valorParcela: number;
+  valorTotal: number;
+};
+
+export function calcularSimulacaoCartao(totalBRL: number): SimulacaoParcelaCartao[] {
+  const valorFinanciado = totalBRL * (1 + TAXA_MAQUINA_CARTAO);
+  return OPCOES_PARCELAS_CARTAO.map((parcelas) => {
+    const valorParcela = calcularParcelaPrice(valorFinanciado, TAXA_JUROS_CARTAO_MES, parcelas);
+    return { parcelas, valorParcela, valorTotal: valorParcela * parcelas };
+  });
+}
+
+/** Meses inteiros (0–12) entre hoje e a data da viagem — limita quantas
+ * parcelas de PIX fazem sentido (não dá pra parcelar mais do que o prazo
+ * até a viagem). `dataViagem` no formato "AAAA-MM-DD" (input type=date). */
+export function calcularParcelasMaxPix(dataViagem: string, hoje: Date = new Date()): number {
+  if (!dataViagem) return 12;
+  const viagem = new Date(`${dataViagem}T00:00:00`);
+  if (Number.isNaN(viagem.getTime())) return 12;
+  const diffDias = (viagem.getTime() - hoje.getTime()) / (1000 * 60 * 60 * 24);
+  const meses = diffDias / 30.44;
+  return Math.max(0, Math.min(12, Math.floor(meses)));
+}
+
+export function calcularSimulacaoPix(totalBRL: number, parcelasMaxPix: number): SimulacaoParcelaPix[] {
+  const entrada = totalBRL * ENTRADA_PIX_PCT;
+  const valorFinanciado = totalBRL - entrada;
+  return OPCOES_PARCELAS_PIX.filter((parcelas) => parcelas <= parcelasMaxPix).map((parcelas) => {
+    const valorParcela = calcularParcelaPrice(valorFinanciado, TAXA_JUROS_PIX_MES, parcelas);
+    return { parcelas, entrada, valorParcela, valorTotal: entrada + valorParcela * parcelas };
+  });
+}
+
+export type FormaPagamentoEscolhida =
+  | { metodo: "cartao"; parcelas: number }
+  | { metodo: "pixVista"; parcelas: 1 }
+  | { metodo: "pixParcelado"; parcelas: number };
+
 // ── Perfil do viajante (ritmo do roteiro) ───────────────────────────────────
 // Não altera preço: define o ritmo do roteiro (pontos turísticos por dia) e
 // calibra o aviso de "roteiro corrido" (dias mínimos sugeridos por cidade).

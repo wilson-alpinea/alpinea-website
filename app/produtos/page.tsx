@@ -30,7 +30,11 @@ import {
   multiplicadorSeguroPorIdade,
   TAXA_MAQUINA_CARTAO,
   TAXA_JUROS_CARTAO_MES,
-  calcularParcelaPrice,
+  TAXA_JUROS_PIX_MES,
+  calcularSimulacaoCartao,
+  calcularParcelasMaxPix,
+  calcularSimulacaoPix,
+  type FormaPagamentoEscolhida,
 } from "../lib/calculadoraCatalogoPublico";
 
 const display = Bodoni_Moda({
@@ -1331,6 +1335,189 @@ function formatJPY(valor: number) {
 // "Usar sites oficiais da JR para capturar dados importantes". Critérios
 // de elegibilidade e regras de uso abaixo vieram de japanrailpass.net/en
 // (páginas "Eligibility for use" e "Conditions for use"), não inventados.
+// Seção "Formas de pagamento" (cartão + Pix), reaproveitada nos dois
+// self-checkouts de /produtos (JR Pass e Seguro Viagem). Pedido do Wilson,
+// 25/set/2026: "adicionar formas de pagamento igual temos na pagina de
+// calculadora reversa (adicionar dados de pagamento também na pagina de
+// seguro viagem)". Mesmo visual/seleção da Calculadora Reversa
+// (app/calculadora_reversa/page.tsx, seção "Simulação de pagamento") —
+// não toquei nesse arquivo, só generalizei a mesma conta em
+// app/lib/calculadoraCatalogoPublico.ts (calcularSimulacaoCartao/
+// calcularSimulacaoPix/calcularParcelasMaxPix) pra reusar aqui.
+function FormasPagamento({
+  totalBRL,
+  dataViagem,
+  formaPagamento,
+  onEscolher,
+}: {
+  totalBRL: number | null;
+  /** Data de início da viagem (AAAA-MM-DD) — limita quantas parcelas de Pix fazem sentido. */
+  dataViagem: string;
+  formaPagamento: FormaPagamentoEscolhida | null;
+  onEscolher: (forma: FormaPagamentoEscolhida) => void;
+}) {
+  if (totalBRL === null || totalBRL <= 0) return null;
+
+  const simulacaoCartao = calcularSimulacaoCartao(totalBRL);
+  const parcelasMaxPix = calcularParcelasMaxPix(dataViagem);
+  const simulacaoPix = calcularSimulacaoPix(totalBRL, parcelasMaxPix);
+
+  return (
+    <div className="mt-8 border-t border-black/10 pt-6">
+      <p className="text-[10px] uppercase tracking-[0.2em] text-black/40">Formas de pagamento</p>
+      <p className="mt-1 text-[11px] leading-5 text-black/45">
+        Simulação pra referência — valores sujeitos a confirmação no fechamento.
+      </p>
+
+      <div className="mt-4 flex flex-col gap-4">
+        {/* Cartão de crédito */}
+        <div className="rounded-xl border border-black/10 bg-black/[0.02] p-4 sm:p-5">
+          <div className="flex items-center gap-3.5">
+            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#2f80c9]/10">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/images/icone-cartao-credito.png" alt="" className="h-7 w-7 object-contain" />
+            </span>
+            <div>
+              <p className="text-sm font-medium text-black">Cartão de crédito</p>
+              <p className="mt-0.5 text-[10px] text-black/50">
+                maquininha {(TAXA_MAQUINA_CARTAO * 100).toFixed(2).replace(".", ",")}% + juros de{" "}
+                {(TAXA_JUROS_CARTAO_MES * 100).toFixed(2).replace(".", ",")}% a.m. por parcela
+              </p>
+            </div>
+          </div>
+          <div className="mt-3 divide-y divide-black/[0.06] border-t border-black/[0.06]">
+            {simulacaoCartao.map((op) => {
+              const selecionado =
+                formaPagamento?.metodo === "cartao" && formaPagamento.parcelas === op.parcelas;
+              return (
+                <label
+                  key={op.parcelas}
+                  className={`-mx-2 flex cursor-pointer items-center gap-3 rounded-lg px-2 py-2.5 transition ${
+                    selecionado ? "bg-[#2f80c9]/[0.07]" : "hover:bg-black/[0.02]"
+                  }`}
+                >
+                  <input
+                    type="radio"
+                    name="formaPagamento"
+                    checked={selecionado}
+                    onChange={() => onEscolher({ metodo: "cartao", parcelas: op.parcelas })}
+                    className="h-4 w-4 shrink-0 accent-[#2f80c9]"
+                  />
+                  <span className="w-9 shrink-0 text-xs text-black/55">{op.parcelas}x</span>
+                  <span className="flex-1 text-sm font-medium text-black">
+                    {formatBRL(op.valorParcela)}
+                  </span>
+                  <span className="shrink-0 text-[11px] text-black/45">
+                    total {formatBRL(op.valorTotal)}
+                  </span>
+                </label>
+              );
+            })}
+          </div>
+        </div>
+
+        {/* Pix */}
+        <div className="rounded-xl border border-black/10 bg-black/[0.02] p-4 sm:p-5">
+          <div className="flex items-center gap-3.5">
+            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#2f80c9]/10">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/images/icone-pix.png" alt="" className="h-7 w-7 object-contain" />
+            </span>
+            <p className="text-sm font-medium text-black">Pix</p>
+          </div>
+
+          <label
+            className={`mt-3 flex cursor-pointer items-center gap-3 rounded-lg px-3.5 py-3 transition ${
+              formaPagamento?.metodo === "pixVista"
+                ? "bg-[#2f80c9]/[0.12]"
+                : "bg-[#2f80c9]/5 hover:bg-[#2f80c9]/[0.08]"
+            }`}
+          >
+            <input
+              type="radio"
+              name="formaPagamento"
+              checked={formaPagamento?.metodo === "pixVista"}
+              onChange={() => onEscolher({ metodo: "pixVista", parcelas: 1 })}
+              className="h-4 w-4 shrink-0 accent-[#2f80c9]"
+            />
+            <span className="flex-1 text-xs text-black/60">à vista</span>
+            <span className="text-sm font-medium text-black">{formatBRL(totalBRL)}</span>
+          </label>
+
+          {simulacaoPix.length > 0 ? (
+            <div className="mt-3">
+              <p className="text-[10px] text-black/50">
+                parcelado — entrada de {formatBRL(simulacaoPix[0].entrada)} (30%) + parcelas a{" "}
+                {(TAXA_JUROS_PIX_MES * 100).toFixed(2).replace(".", ",")}% a.m.
+              </p>
+              <div className="mt-1.5 divide-y divide-black/[0.06] border-t border-black/[0.06]">
+                {simulacaoPix.map((op) => {
+                  const selecionado =
+                    formaPagamento?.metodo === "pixParcelado" && formaPagamento.parcelas === op.parcelas;
+                  return (
+                    <label
+                      key={op.parcelas}
+                      className={`-mx-2 flex cursor-pointer items-center gap-3 rounded-lg px-2 py-2.5 transition ${
+                        selecionado ? "bg-[#2f80c9]/[0.07]" : "hover:bg-black/[0.02]"
+                      }`}
+                    >
+                      <input
+                        type="radio"
+                        name="formaPagamento"
+                        checked={selecionado}
+                        onChange={() => onEscolher({ metodo: "pixParcelado", parcelas: op.parcelas })}
+                        className="h-4 w-4 shrink-0 accent-[#2f80c9]"
+                      />
+                      <span className="w-9 shrink-0 text-xs text-black/55">{op.parcelas}x</span>
+                      <span className="flex-1 text-sm font-medium text-black">
+                        {formatBRL(op.valorParcela)}
+                      </span>
+                      <span className="shrink-0 text-[11px] text-black/45">
+                        total {formatBRL(op.valorTotal)}
+                      </span>
+                    </label>
+                  );
+                })}
+              </div>
+            </div>
+          ) : (
+            dataViagem && (
+              <p className="mt-3 text-[11px] text-black/45">
+                Viagem muito próxima — sem prazo pra parcelar no Pix, só à vista.
+              </p>
+            )
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/** Texto curto descrevendo a forma de pagamento escolhida — usado na
+ * mensagem de WhatsApp e no resumo do lead. Mesma lógica de
+ * `descricaoFormaPagamentoEscolhida` da Calculadora Reversa. */
+function descricaoFormaPagamento(
+  forma: FormaPagamentoEscolhida | null,
+  totalBRL: number | null,
+  dataViagem: string,
+): string {
+  if (!forma || totalBRL === null || totalBRL <= 0) return "";
+  if (forma.metodo === "cartao") {
+    const op = calcularSimulacaoCartao(totalBRL).find((o) => o.parcelas === forma.parcelas);
+    if (!op) return "";
+    return op.parcelas === 1
+      ? `Cartão de crédito à vista (1x) de ${formatBRL(op.valorParcela)}`
+      : `Cartão de crédito em ${op.parcelas}x de ${formatBRL(op.valorParcela)} (total ${formatBRL(op.valorTotal)})`;
+  }
+  if (forma.metodo === "pixVista") {
+    return `Pix à vista de ${formatBRL(totalBRL)}`;
+  }
+  const parcelasMaxPix = calcularParcelasMaxPix(dataViagem);
+  const op = calcularSimulacaoPix(totalBRL, parcelasMaxPix).find((o) => o.parcelas === forma.parcelas);
+  if (!op) return "";
+  return `Pix parcelado — entrada de ${formatBRL(op.entrada)} (30%) + ${op.parcelas}x de ${formatBRL(op.valorParcela)} (total ${formatBRL(op.valorTotal)})`;
+}
+
 function JrPassModal({ cambio, onClose }: { cambio: Cambio | null; onClose: () => void }) {
   // Pedido do Wilson, 25/set/2026: "não consigo selecionar o tipo e nem a
   // duração do JR Pass, lembre-se que é uma pagina self-service, também
@@ -1344,6 +1531,14 @@ function JrPassModal({ cambio, onClose }: { cambio: Cambio | null; onClose: () =
   const [diasSelecionados, setDiasSelecionados] = useState<(typeof JR_PASS_DIAS_OPCOES)[number] | null>(
     null,
   );
+  // Datas da viagem + forma de pagamento — pedido do Wilson, 25/set/2026:
+  // "falta adicionar a data de inicio e encerramento da viagem" e
+  // "adicionar formas de pagamento igual temos na pagina de calculadora
+  // reversa". Só entram na mensagem de WhatsApp (o JR Pass não tem
+  // checkout com lead no CRM, diferente do Seguro Viagem).
+  const [dataInicioViagem, setDataInicioViagem] = useState("");
+  const [dataFimViagem, setDataFimViagem] = useState("");
+  const [formaPagamento, setFormaPagamento] = useState<FormaPagamentoEscolhida | null>(null);
 
   const TIPOS = [
     {
@@ -1411,10 +1606,19 @@ function JrPassModal({ cambio, onClose }: { cambio: Cambio | null; onClose: () =
     tipoEscolhido && diasSelecionados ? tipoEscolhido.precoUSD[diasSelecionados] : null;
   const precoEscolhidoBRL = precoEscolhidoUSD !== null && cambio ? precoEscolhidoUSD * cambio.cotacao : null;
   const selecaoCompleta = !!tipoEscolhido && !!diasSelecionados;
+  const descricaoPagamentoEscolhido = descricaoFormaPagamento(
+    formaPagamento,
+    precoEscolhidoBRL,
+    dataInicioViagem,
+  );
   const mensagemWhatsapp = selecaoCompleta
     ? `Olá! Quero finalizar a compra do JR Pass — ${tipoEscolhido!.classe}, ${diasSelecionados} dias${
         precoEscolhidoBRL !== null ? ` (${formatBRL(precoEscolhidoBRL)})` : ""
-      }.`
+      }.${
+        dataInicioViagem && dataFimViagem
+          ? ` Viagem de ${formatarDataBR(dataInicioViagem)} a ${formatarDataBR(dataFimViagem)}.`
+          : ""
+      }${descricaoPagamentoEscolhido ? ` Forma de pagamento: ${descricaoPagamentoEscolhido}.` : ""}`
     : "";
 
   return (
@@ -1537,6 +1741,38 @@ function JrPassModal({ cambio, onClose }: { cambio: Cambio | null; onClose: () =
             <CambioLabel cambio={cambio} className="mt-2 text-[11px] text-black/35" />
           </div>
 
+          {/* Datas da viagem — pedido do Wilson, 25/set/2026: "falta
+              adicionar a data de inicio e encerramento da viagem". Mesmo
+              padrão de campo de data do Seguro Viagem; entram na mensagem
+              de WhatsApp pro time já saber o período. */}
+          <div className="mt-8 border-t border-black/10 pt-6">
+            <p className="text-[10px] uppercase tracking-[0.2em] text-black/40">Dados da viagem</p>
+            <div className="mt-4 grid gap-4 sm:max-w-md sm:grid-cols-2">
+              <label className="flex flex-col gap-1.5">
+                <span className="text-[10px] uppercase tracking-[0.15em] text-black/50">
+                  Início da viagem
+                </span>
+                <input
+                  type="date"
+                  value={dataInicioViagem}
+                  onChange={(e) => setDataInicioViagem(e.target.value)}
+                  className="rounded-lg border border-black/15 px-3 py-2.5 text-sm text-black focus:border-[#2f80c9] focus:outline-none"
+                />
+              </label>
+              <label className="flex flex-col gap-1.5">
+                <span className="text-[10px] uppercase tracking-[0.15em] text-black/50">
+                  Término da viagem
+                </span>
+                <input
+                  type="date"
+                  value={dataFimViagem}
+                  onChange={(e) => setDataFimViagem(e.target.value)}
+                  className="rounded-lg border border-black/15 px-3 py-2.5 text-sm text-black focus:border-[#2f80c9] focus:outline-none"
+                />
+              </label>
+            </div>
+          </div>
+
           {/* Critérios de elegibilidade */}
           <div className="mt-8 border-t border-black/10 pt-6">
             <p className="text-[10px] uppercase tracking-[0.2em] text-black/40">
@@ -1575,6 +1811,12 @@ function JrPassModal({ cambio, onClose }: { cambio: Cambio | null; onClose: () =
             </p>
           </div>
 
+          <FormasPagamento
+            totalBRL={precoEscolhidoBRL}
+            dataViagem={dataInicioViagem}
+            formaPagamento={formaPagamento}
+            onEscolher={setFormaPagamento}
+          />
         </div>
 
         {/* Rodapé fixo com a escolha atual — pedido do Wilson, 25/set/2026:
@@ -1602,6 +1844,9 @@ function JrPassModal({ cambio, onClose }: { cambio: Cambio | null; onClose: () =
                     {tipoEscolhido!.classe} · {diasSelecionados} dias
                     {precoEscolhidoUSD !== null && ` · ${formatUSD(precoEscolhidoUSD)}`}
                   </p>
+                  {descricaoPagamentoEscolhido && (
+                    <p className="mt-0.5 text-[11px] text-black/40">{descricaoPagamentoEscolhido}</p>
+                  )}
                 </>
               ) : (
                 <p className="text-xs text-black/45">
@@ -1746,6 +1991,15 @@ const SEGURADORAS_VIAGEM = [
 ];
 type SeguradoraKey = (typeof SEGURADORAS_VIAGEM)[number]["key"];
 
+/** "AAAA-MM-DD" (input type=date) → "DD/MM/AAAA", pra mensagens de WhatsApp
+ * e resumos legíveis. */
+function formatarDataBR(data: string): string {
+  if (!data) return "";
+  const [ano, mes, dia] = data.split("-");
+  if (!ano || !mes || !dia) return data;
+  return `${dia}/${mes}/${ano}`;
+}
+
 function diasEntreDatas(inicio: string, fim: string): number {
   if (!inicio || !fim) return 0;
   const dataInicio = new Date(`${inicio}T00:00:00`);
@@ -1754,6 +2008,49 @@ function diasEntreDatas(inicio: string, fim: string): number {
   if (!Number.isFinite(diffMs) || diffMs <= 0) return 0;
   return Math.max(1, Math.round(diffMs / (1000 * 60 * 60 * 24)));
 }
+
+// Roteiro do Seguro Viagem — Japão é obrigatório (é o produto do site),
+// mas o cliente pode incluir outros países da Ásia na mesma viagem. Pedido
+// do Wilson, 25/set/2026: "escolher pais, japão é o obrigatorio, mas
+// cliente pode colocar outros paises da Asia na lista, calcular como isso
+// afeta o preço e também o preço de cada subtipo de planos".
+//
+// Pesquisei se Affinity/GTA/MTA publicam preço por país — não publicam:
+// as 3 só geram cotação depois de rodar destino+datas+idade no site delas
+// (mesmo achado já registrado acima pra tabela de plano×preço). Não achei
+// nenhuma fonte confiável mostrando quanto cada seguradora cobra a mais
+// por incluir outro país da Ásia no roteiro, então NÃO fabriquei esse
+// número por seguradora nem por subtipo de plano (os "tipos de plano" de
+// cada seguradora, como Internacional/Europa/Anual da Affinity ou os
+// tiers MTA 15/30/40/60/150, são categorias qualitativas — nenhuma delas
+// tem tabela pública de preço por categoria).
+//
+// O que apliquei foi só o ajuste de REFERÊNCIA INTERNA da Ajisai: viagem
+// só pro Japão usa a tarifa diária padrão (DIARIA_SEGURO_VIAGEM); ao
+// incluir qualquer outro país, o roteiro deixa de ser "destino único" e
+// passa a precisar de cobertura ampliada (o que as 3 seguradoras chamam
+// de plano "Mundial"/multidestino em vez do plano de destino único) — por
+// isso a referência sobe um percentual fixo, do mesmo jeito que o resto
+// dessa tela já é só a estimativa interna da Ajisai (não o preço de
+// nenhuma seguradora). Isso fica bem explícito no texto da página; o
+// plano/subtipo e o valor exatos de cada seguradora continuam sendo
+// confirmados no fechamento, como já era.
+const PAISES_ASIA_ADICIONAIS = [
+  "Coreia do Sul",
+  "China",
+  "Taiwan",
+  "Hong Kong",
+  "Tailândia",
+  "Vietnã",
+  "Cingapura",
+  "Filipinas",
+  "Indonésia",
+  "Malásia",
+  "Índia",
+] as const;
+/** Ajuste de referência interna quando o roteiro inclui outro país além do
+ * Japão (deixa de ser "destino único") — ver comentário acima. */
+const MULTIPLICADOR_ROTEIRO_MULTIDESTINO = 1.12;
 
 // Pop-up dedicado do Seguro Viagem — mesmo tratamento dado ao JR Pass em
 // 25/set/2026: saiu do ServicoAvulsoModal pequeno, ganhou o próprio
@@ -1770,12 +2067,23 @@ function SeguroViagemModal({ cambio, onClose }: { cambio: Cambio | null; onClose
   const [idades, setIdades] = useState<(number | "")[]>([""]);
   const [dataInicio, setDataInicio] = useState("");
   const [dataFim, setDataFim] = useState("");
+  // Roteiro — Japão é fixo/obrigatório, cliente pode somar outros países
+  // da Ásia. Pedido do Wilson, 25/set/2026 (ver comentário completo em
+  // PAISES_ASIA_ADICIONAIS, acima).
+  const [paisesAdicionais, setPaisesAdicionais] = useState<string[]>([]);
+  const [formaPagamento, setFormaPagamento] = useState<FormaPagamentoEscolhida | null>(null);
   const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
   const [whatsapp, setWhatsapp] = useState("");
   const [observacoes, setObservacoes] = useState("");
   const [status, setStatus] = useState<"form" | "enviando" | "enviado" | "erro">("form");
   const [erro, setErro] = useState("");
+
+  function alternarPaisAdicional(pais: string) {
+    setPaisesAdicionais((atual) =>
+      atual.includes(pais) ? atual.filter((p) => p !== pais) : [...atual, pais],
+    );
+  }
 
   function ajustarNumViajantes(novo: number) {
     const seguro = Math.max(1, Math.min(8, novo));
@@ -1794,12 +2102,12 @@ function SeguroViagemModal({ cambio, onClose }: { cambio: Cambio | null; onClose
     (soma, idade) => soma + (multiplicadorSeguroPorIdade(idade) ?? 0),
     0,
   );
-  const valorReferenciaUSD = dias > 0 ? DIARIA_SEGURO_VIAGEM * dias * multiplicadorTotal : 0;
+  const roteiroSoJapao = paisesAdicionais.length === 0;
+  const multiplicadorDestino = roteiroSoJapao ? 1 : MULTIPLICADOR_ROTEIRO_MULTIDESTINO;
+  const valorReferenciaUSD =
+    dias > 0 ? DIARIA_SEGURO_VIAGEM * dias * multiplicadorTotal * multiplicadorDestino : 0;
   const valorReferenciaBRL = cambio ? valorReferenciaUSD * cambio.cotacao : null;
-  const parcela12x =
-    valorReferenciaBRL && valorReferenciaBRL > 0
-      ? calcularParcelaPrice(valorReferenciaBRL * (1 + TAXA_MAQUINA_CARTAO), TAXA_JUROS_CARTAO_MES, 12)
-      : null;
+  const descricaoPagamentoEscolhido = descricaoFormaPagamento(formaPagamento, valorReferenciaBRL, dataInicio);
 
   const formValido =
     !!seguradora &&
@@ -1825,7 +2133,9 @@ function SeguroViagemModal({ cambio, onClose }: { cambio: Cambio | null; onClose
           dataFim,
           dias,
           idades: idadesNumericas,
+          paises: ["Japão", ...paisesAdicionais],
           valorReferenciaBRL,
+          formaPagamento: descricaoPagamentoEscolhido || null,
           nome,
           email,
           whatsapp,
@@ -2029,6 +2339,53 @@ function SeguroViagemModal({ cambio, onClose }: { cambio: Cambio | null; onClose
                   </p>
                 )}
 
+                {/* Roteiro — Japão obrigatório, outros países da Ásia
+                    opcionais. Pedido do Wilson, 25/set/2026: "escolher
+                    pais, japão é o obrigatorio, mas cliente pode colocar
+                    outros paises da Asia na lista, calcular como isso
+                    afeta o preço" — ver comentário completo em
+                    PAISES_ASIA_ADICIONAIS sobre por que o efeito no preço
+                    é só um ajuste de referência interna da Ajisai (as 3
+                    seguradoras não publicam preço por país). */}
+                <div className="mt-5">
+                  <span className="mb-2 block text-[10px] uppercase tracking-[0.15em] text-black/50">
+                    Roteiro
+                  </span>
+                  <div className="flex flex-wrap gap-1.5">
+                    <span className="flex items-center gap-1.5 rounded-full border border-[#2f80c9] bg-[#2f80c9]/10 px-3 py-1.5 text-[11px] font-medium text-[#1c6ea8]">
+                      <IconCheck className="h-3 w-3" />
+                      Japão (obrigatório)
+                    </span>
+                    {PAISES_ASIA_ADICIONAIS.map((pais) => {
+                      const selecionado = paisesAdicionais.includes(pais);
+                      return (
+                        <button
+                          key={pais}
+                          type="button"
+                          onClick={() => alternarPaisAdicional(pais)}
+                          className={`rounded-full border px-3 py-1.5 text-[11px] transition ${
+                            selecionado
+                              ? "border-[#2f80c9] bg-[#2f80c9]/10 font-medium text-[#1c6ea8]"
+                              : "border-black/15 text-black/55 hover:border-black/30"
+                          }`}
+                        >
+                          {selecionado ? "✓ " : "+ "}
+                          {pais}
+                        </button>
+                      );
+                    })}
+                  </div>
+                  <p className="mt-2 text-[10px] leading-4 text-black/40">
+                    {roteiroSoJapao
+                      ? "Viagem só pro Japão — referência de preço abaixo usa a tarifa de destino único."
+                      : `Roteiro com mais ${paisesAdicionais.length} ${
+                          paisesAdicionais.length === 1 ? "país" : "países"
+                        } além do Japão — deixa de ser destino único, então a referência abaixo já soma um adicional interno da Ajisai (+${Math.round(
+                          (MULTIPLICADOR_ROTEIRO_MULTIDESTINO - 1) * 100,
+                        )}%) pra cobertura mundial/multidestino. O tipo de plano e o valor exatos são confirmados com a seguradora escolhida.`}
+                  </p>
+                </div>
+
                 <div className="mt-5 max-w-xs">
                   <span className="mb-2 block text-[10px] uppercase tracking-[0.15em] text-black/50">
                     Viajantes
@@ -2144,11 +2501,6 @@ function SeguroViagemModal({ cambio, onClose }: { cambio: Cambio | null; onClose
                     <p className="mt-1 text-sm font-medium text-black/50">
                       ou {formatUSD(valorReferenciaUSD)}
                     </p>
-                    {parcela12x && (
-                      <p className="mt-1.5 text-[11px] text-black/40">
-                        à vista no Pix, ou em até 12x de {formatBRL(parcela12x)} no cartão
-                      </p>
-                    )}
                     <CambioLabel cambio={cambio} className="mt-2 text-[11px] text-black/35" />
                   </>
                 ) : (
@@ -2157,6 +2509,13 @@ function SeguroViagemModal({ cambio, onClose }: { cambio: Cambio | null; onClose
                   </p>
                 )}
               </div>
+
+              <FormasPagamento
+                totalBRL={valorReferenciaBRL}
+                dataViagem={dataInicio}
+                formaPagamento={formaPagamento}
+                onEscolher={setFormaPagamento}
+              />
 
               {erro && <p className="mt-4 text-sm text-red-600">{erro}</p>}
             </>
@@ -2184,8 +2543,10 @@ function SeguroViagemModal({ cambio, onClose }: { cambio: Cambio | null; onClose
                     <p className="text-xs text-black/45">
                       {seguradoraEscolhida ? `${seguradoraEscolhida.nome} · ` : ""}
                       {formatUSD(valorReferenciaUSD)}
-                      {parcela12x && ` · até 12x de ${formatBRL(parcela12x)}`}
                     </p>
+                    {descricaoPagamentoEscolhido && (
+                      <p className="mt-0.5 text-[11px] text-black/40">{descricaoPagamentoEscolhido}</p>
+                    )}
                   </>
                 ) : (
                   <p className="text-xs text-black/45">

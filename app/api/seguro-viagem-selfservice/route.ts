@@ -99,7 +99,16 @@ export async function POST(req: Request) {
     const idades: number[] = Array.isArray(body.idades)
       ? body.idades.map(Number).filter((n: number) => Number.isFinite(n) && n >= 0 && n <= 120).slice(0, 12)
       : [];
+    // Roteiro (Japão + outros países da Ásia, opcional) — pedido do Wilson,
+    // 25/set/2026: "escolher pais, japão é o obrigatorio, mas cliente pode
+    // colocar outros paises da Asia na lista". Só entra no resumo do lead
+    // (não tem coluna própria em `clientes`, e não é isso que muda no
+    // schema — o roteiro fica registrado em texto, junto do resto).
+    const paises: string[] = Array.isArray(body.paises)
+      ? body.paises.map((p: unknown) => String(p).trim()).filter(Boolean).slice(0, 15)
+      : ["Japão"];
     const valorReferenciaBRL = Number(body.valorReferenciaBRL) || null;
+    const formaPagamento = String(body.formaPagamento || "").trim();
     const observacoesCliente = String(body.observacoes || "").trim();
 
     const seguradoraLabel: Record<(typeof SEGURADORAS_VALIDAS)[number], string> = {
@@ -110,6 +119,7 @@ export async function POST(req: Request) {
 
     const linhasResumo: [string, string][] = [
       ["Seguradora escolhida", seguradoraLabel[seguradora as (typeof SEGURADORAS_VALIDAS)[number]]],
+      ["Roteiro (países)", paises.length ? paises.join(", ") : "Japão"],
       ["Data de início da viagem", dataInicio || "Não informado"],
       ["Data de término da viagem", dataFim || "Não informado"],
       ["Dias de cobertura", dias ? String(dias) : "Não informado"],
@@ -119,6 +129,7 @@ export async function POST(req: Request) {
         "Valor de referência Ajisai",
         valorReferenciaBRL ? `R$ ${valorReferenciaBRL.toLocaleString("pt-BR")}` : "Não calculado",
       ],
+      ["Forma de pagamento escolhida", formaPagamento || "Não escolhida ainda"],
       ["Observações do cliente", observacoesCliente || "Nenhuma"],
     ];
 
