@@ -1581,19 +1581,26 @@ function JrPassModal({ cambio, onClose }: { cambio: Cambio | null; onClose: () =
             "também precisa haver no rodapé da pagina o preço da minha
             escolha e o que escolhi com o botão 'Finalizar Compra Via
             Whatsapp'". Fica fora da área rolável (acima é overflow-y-auto),
-            sempre visível enquanto o cliente decide tipo e duração. */}
-        <div className="shrink-0 border-t border-black/10 bg-white px-5 py-4 md:px-8">
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            sempre visível enquanto o cliente decide tipo e duração.
+            Redesenhado no mesmo dia, ainda 25/set/2026, a pedido do Wilson
+            ("modal que msotra peço não está bom, use o mesmo ou similar
+            que usamos na pagina de calculadora reversa no rodapé fixo") —
+            segue a mesma hierarquia visual da "barra fixa" da calculadora
+            reversa (label minúsculo, preço grande em destaque como âncora
+            visual, linha secundária discreta), adaptada pro tema claro
+            do /produtos em vez das cores escuras do original. */}
+        <div className="shrink-0 border-t border-black/10 bg-white px-5 py-4 shadow-[0_-4px_16px_rgba(0,0,0,0.06)] md:px-8">
+          <div className="mx-auto flex max-w-4xl flex-wrap items-center justify-between gap-x-6 gap-y-3">
             <div>
               {selecaoCompleta ? (
                 <>
                   <p className="text-[10px] uppercase tracking-[0.15em] text-black/40">Sua escolha</p>
-                  <p className="text-sm font-medium text-black">
-                    {tipoEscolhido!.classe} · {diasSelecionados} dias
+                  <p className={`${display.className} text-xl font-medium text-[#2f80c9] sm:text-2xl`}>
+                    {precoEscolhidoBRL !== null ? formatBRL(precoEscolhidoBRL) : "—"}
                   </p>
-                  <p className="text-xs text-black/50">
-                    {precoEscolhidoUSD !== null && formatUSD(precoEscolhidoUSD)}
-                    {precoEscolhidoBRL !== null && ` · ${formatBRL(precoEscolhidoBRL)}`}
+                  <p className="text-xs text-black/45">
+                    {tipoEscolhido!.classe} · {diasSelecionados} dias
+                    {precoEscolhidoUSD !== null && ` · ${formatUSD(precoEscolhidoUSD)}`}
                   </p>
                 </>
               ) : (
@@ -1802,10 +1809,10 @@ function SeguroViagemModal({ cambio, onClose }: { cambio: Cambio | null; onClose
       onClick={onClose}
     >
       <div
-        className="relative max-h-[92vh] w-full max-w-5xl overflow-y-auto rounded-t-3xl border border-black/10 bg-white shadow-2xl md:max-h-[88vh] md:rounded-3xl"
+        className="relative flex max-h-[92vh] w-full max-w-5xl flex-col overflow-hidden rounded-t-3xl border border-black/10 bg-white shadow-2xl md:max-h-[88vh] md:rounded-3xl"
         onClick={(event) => event.stopPropagation()}
       >
-        <div className="sticky top-0 z-20 flex h-14 items-center justify-between border-b border-black/10 bg-white/90 px-4 backdrop-blur-xl md:px-6">
+        <div className="flex h-14 shrink-0 items-center justify-between border-b border-black/10 bg-white/90 px-4 backdrop-blur-xl md:px-6">
           <p
             id="seguro-viagem-modal-title"
             className={`${display.className} text-lg font-medium text-black md:text-xl`}
@@ -1822,7 +1829,7 @@ function SeguroViagemModal({ cambio, onClose }: { cambio: Cambio | null; onClose
           </button>
         </div>
 
-        <div className="p-5 md:p-8">
+        <div className="overflow-y-auto p-5 md:p-8">
           {status === "enviado" ? (
             <div className="py-6 text-center">
               <p className="text-xs uppercase tracking-[0.3em] text-[#1c6ea8]">Pedido registrado</p>
@@ -1867,13 +1874,13 @@ function SeguroViagemModal({ cambio, onClose }: { cambio: Cambio | null; onClose
                       className={`flex h-full flex-col rounded-2xl border p-5 text-left transition ${
                         seguradora === s.key
                           ? "border-[#2f80c9] bg-[#2f80c9]/5"
-                          : "border-black/10 bg-black/[0.02] hover:border-black/25"
+                          : "border-black/10 bg-white hover:border-black/25"
                       }`}
                     >
                       <div className="flex items-center justify-between gap-3">
                         {s.logo ? (
                           // eslint-disable-next-line @next/next/no-img-element
-                          <img src={s.logo} alt={s.nome} className="h-7 w-auto max-w-[120px] object-contain" />
+                          <img src={s.logo} alt={s.nome} className="h-11 w-auto max-w-[160px] object-contain" />
                         ) : (
                           <p className={`${display.className} text-base font-medium text-black`}>{s.nome}</p>
                         )}
@@ -1885,9 +1892,9 @@ function SeguroViagemModal({ cambio, onClose }: { cambio: Cambio | null; onClose
                           {seguradora === s.key && <IconCheck className="h-3.5 w-3.5 text-white" />}
                         </span>
                       </div>
-                      <p className="mt-2 flex-1 text-[11px] leading-5 text-black/55">{s.descricao}</p>
+                      <p className="mt-3 flex-1 text-[11px] leading-5 text-black/70">{s.descricao}</p>
                       {s.observacao && (
-                        <p className="mt-2 text-[10px] leading-4 text-black/35">{s.observacao}</p>
+                        <p className="mt-2 text-[10px] leading-4 text-black/50">{s.observacao}</p>
                       )}
                     </button>
                   ))}
@@ -2062,22 +2069,59 @@ function SeguroViagemModal({ cambio, onClose }: { cambio: Cambio | null; onClose
               </div>
 
               {erro && <p className="mt-4 text-sm text-red-600">{erro}</p>}
+            </>
+          )}
+        </div>
 
+        {/* Rodapé fixo com o valor de referência e o botão de solicitar —
+            pedido do Wilson, 25/set/2026: "adicionar modal de preço no
+            rodapé na pagina de seguro viagem tambem", mesmo padrão da
+            "barra fixa" recém-aplicada no JrPassModal (label minúsculo +
+            preço grande em destaque + botão de ação), fica fora da área
+            rolável e some na tela de confirmação. */}
+        {status !== "enviado" && (
+          <div className="shrink-0 border-t border-black/10 bg-white px-5 py-4 shadow-[0_-4px_16px_rgba(0,0,0,0.06)] md:px-8">
+            <div className="mx-auto flex max-w-4xl flex-wrap items-center justify-between gap-x-6 gap-y-3">
+              <div>
+                {valorReferenciaBRL && valorReferenciaBRL > 0 ? (
+                  <>
+                    <p className="text-[10px] uppercase tracking-[0.15em] text-black/40">
+                      Valor de referência
+                    </p>
+                    <p className={`${display.className} text-xl font-medium text-[#2f80c9] sm:text-2xl`}>
+                      {formatBRL(valorReferenciaBRL)}
+                    </p>
+                    <p className="text-xs text-black/45">
+                      {seguradoraEscolhida ? `${seguradoraEscolhida.nome} · ` : ""}
+                      {formatUSD(valorReferenciaUSD)}
+                      {parcela12x && ` · até 12x de ${formatBRL(parcela12x)}`}
+                    </p>
+                  </>
+                ) : (
+                  <p className="text-xs text-black/45">
+                    Escolha a seguradora e preencha as datas da viagem para ver o valor de referência.
+                  </p>
+                )}
+              </div>
               <button
                 type="button"
                 onClick={enviar}
                 disabled={!formValido || status === "enviando"}
-                className="mt-6 block w-full rounded-full bg-[#2f80c9] px-6 py-4 text-center text-xs font-medium uppercase tracking-[0.25em] text-white transition hover:bg-[#3b91dc] disabled:cursor-not-allowed disabled:opacity-50"
+                className={`inline-flex shrink-0 items-center justify-center rounded-full px-6 py-3.5 text-center text-xs font-medium uppercase tracking-[0.2em] text-white transition ${
+                  formValido && status !== "enviando"
+                    ? "bg-[#2f80c9] hover:bg-[#3b91dc]"
+                    : "cursor-not-allowed bg-black/20"
+                }`}
               >
                 {status === "enviando" ? "Enviando…" : "Solicitar Seguro Viagem"}
               </button>
-              <p className="mt-3 text-center text-[11px] text-black/35">
-                Isso não confirma pagamento — sua equipe Ajisai entra em contato pelo WhatsApp pra fechar o
-                plano exato com a seguradora escolhida.
-              </p>
-            </>
-          )}
-        </div>
+            </div>
+            <p className="mt-2 text-[10px] leading-4 text-black/35">
+              Isso não confirma pagamento — sua equipe Ajisai entra em contato pelo WhatsApp pra fechar o
+              plano exato com a seguradora escolhida.
+            </p>
+          </div>
+        )}
       </div>
     </div>
   );
