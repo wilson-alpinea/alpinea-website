@@ -233,6 +233,16 @@ export const FATOR_CAMBIO_IENE = 1.15;
 export const SPREAD_CAMBIO_IENE_PUBLICO_COMPRA = 1.2;
 export const SPREAD_CAMBIO_IENE_PUBLICO_VENDA = 0.8;
 
+// Dólar turismo — página de JR Pass (self-checkout). Pedido do Wilson,
+// 25/set/2026: "na pagina de JR Pass, nós vamos usar o valor de dólar
+// turismo" (em vez do PTAX, usado no resto do site) + "adicionar spread
+// cambial também" — confirmado via AskUserQuestion: 20%, mesmo spread
+// já usado acima pro câmbio de ienes (mesma regra de nunca expor
+// margem/fornecedor em texto público). Cotação de base vem de
+// app/lib/cambioDolarTurismo.ts (melhorcambio.com, papel-moeda) — só o
+// JR Pass usa esse spread por enquanto.
+export const SPREAD_DOLAR_TURISMO_PUBLICO = 1.2;
+
 // Mesmo mínimo já usado na Calculadora Reversa (CAMBIO_IENES_MINIMO acima)
 // — reexportado com nome mais específico só pra deixar claro, no
 // /produtos, que é o mesmo piso, não um novo valor.

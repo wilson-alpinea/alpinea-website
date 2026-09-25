@@ -24,6 +24,7 @@ import {
   type Cambio,
 } from "../hooks/useCambioUSD";
 import { useCambioEUR, formatEUR } from "../hooks/useCambioEUR";
+import { useCambioDolarTurismo } from "../hooks/useCambioDolarTurismo";
 import { useCambioIene, CIDADES_CAMBIO_IENE, type CidadeCambioIeneSlug, type DirecaoCambioIene } from "../hooks/useCambioIene";
 import { CambioLabel } from "../components/CambioLabel";
 import {
@@ -49,6 +50,7 @@ import {
   calcularSimulacaoPix,
   SPREAD_CAMBIO_IENE_PUBLICO_COMPRA,
   SPREAD_CAMBIO_IENE_PUBLICO_VENDA,
+  SPREAD_DOLAR_TURISMO_PUBLICO,
   CAMBIO_IENES_MINIMO_PUBLICO,
   MOEDAS_TRANSACAO_CAMBIO,
   type FormaPagamentoEscolhida,
@@ -1144,7 +1146,7 @@ export default function ProdutosPage() {
           "Hotéis" (max-w-5xl, quase tela cheia). Câmbio, Seguro Viagem e
           Ajisai Shopping continuam no popup pequeno — só o JR Pass foi
           pedido maior/mais detalhado. */}
-      {jrPassModalOpen && <JrPassModal cambio={cambio} onClose={() => setJrPassModalOpen(false)} />}
+      {jrPassModalOpen && <JrPassModal onClose={() => setJrPassModalOpen(false)} />}
 
       {/* Pedido do Wilson, 25/set/2026: "vamos trabalhar agora na página de
           câmbio, primeiro de tudo deixar com o mesmo template visual que a
@@ -1867,7 +1869,24 @@ function TransporteModal({ cambio, onClose }: { cambio: Cambio | null; onClose: 
   );
 }
 
-function JrPassModal({ cambio, onClose }: { cambio: Cambio | null; onClose: () => void }) {
+function JrPassModal({ onClose }: { onClose: () => void }) {
+  // Pedido do Wilson, 25/set/2026: "na pagina de JR Pass, nós vamos usar
+  // o valor de dólar turismo" (em vez do PTAX usado no resto do site) +
+  // "adicionar spread cambial também" — confirmado via AskUserQuestion:
+  // 20%, mesmo spread já usado no câmbio público de ienes (nunca exposto
+  // em texto público). Ver app/lib/cambioDolarTurismo.ts pro contexto
+  // completo — só o JR Pass usa essa cotação, o resto do modal usa o
+  // mesmo padrão CambioLabel/Cambio de sempre, só que alimentado por
+  // essa fonte em vez do PTAX.
+  const cambioDolarTurismo = useCambioDolarTurismo();
+  const cambio: Cambio | null = cambioDolarTurismo
+    ? {
+        cotacao: cambioDolarTurismo.cotacao * SPREAD_DOLAR_TURISMO_PUBLICO,
+        data: cambioDolarTurismo.data,
+        fonte: "Dólar Turismo — melhorcambio.com",
+        fallback: cambioDolarTurismo.fallback,
+      }
+    : null;
   // Pedido do Wilson, 25/set/2026: "não consigo selecionar o tipo e nem a
   // duração do JR Pass, lembre-se que é uma pagina self-service, também
   // precisa haver no rodapé da pagina o preço da minha escolha e o que
@@ -1891,12 +1910,60 @@ function JrPassModal({ cambio, onClose }: { cambio: Cambio | null; onClose: () =
   // Número de pessoas — pedido do Wilson, 25/set/2026: "falta numero de
   // pessoas" (o JR Pass é vendido por pessoa — cada viajante precisa do
   // próprio passe). Mesmo padrão de stepper já usado em "Viajantes" no
-  // Seguro Viagem, sem campo de idade (o preço do JR Pass não varia por
-  // idade, só por classe/duração).
+  // Seguro Viagem.
   const [numeroPessoas, setNumeroPessoas] = useState(1);
   function ajustarNumeroPessoas(novo: number) {
-    setNumeroPessoas(Math.max(1, Math.min(12, novo)));
+    const seguro = Math.max(1, Math.min(12, novo));
+    setNumeroPessoas(seguro);
+    // Nunca deixa o número de crianças (nem a lista de idades) passar do
+    // número total de pessoas.
+    setNumeroCriancas((atual) => Math.min(atual, seguro));
+    setIdadesCriancas((atual) => atual.slice(0, seguro));
   }
+
+  // Preço de criança — pedido do Wilson, 25/set/2026: "quando é criança o
+  // cliente paga metade do valor, criança entre 6 a 12 anos incompletos"
+  // + "tem que ter um campo com numero de crianças e idade da criança
+  // para ser selecionada" — cada criança tem um seletor de idade próprio.
+  // Confirmado com a tabela oficial do fornecedor enviada no mesmo dia
+  // (Century Travel, "JRP-Tab-de-precos-16-a-30SEP26.pdf", nota 3): "Tarifas
+  // para crianças: entre 6 anos completos e 12 anos incompletos. Crianças
+  // menores de 6 anos não pagam, porém não tem direito a assento." — por
+  // isso são 3 faixas, não só desconto/sem desconto: <6 grátis, 6–11
+  // metade do preço, 12+ conta como adulto (preço cheio).
+  const IDADE_CRIANCA_JRPASS_GRATIS_MAX = 5; // menor de 6 anos = grátis
+  const IDADE_CRIANCA_JRPASS_MEIA_MIN = 6;
+  const IDADE_CRIANCA_JRPASS_MEIA_MAX = 11; // "12 incompletos"
+  function multiplicadorPorIdadeCrianca(idade: number): number {
+    if (idade <= IDADE_CRIANCA_JRPASS_GRATIS_MAX) return 0;
+    if (idade <= IDADE_CRIANCA_JRPASS_MEIA_MAX) return 0.5;
+    return 1;
+  }
+  const [numeroCriancas, setNumeroCriancas] = useState(0);
+  const [idadesCriancas, setIdadesCriancas] = useState<(number | "")[]>([]);
+  function ajustarNumeroCriancas(novo: number) {
+    const seguro = Math.max(0, Math.min(numeroPessoas, novo));
+    setNumeroCriancas(seguro);
+    setIdadesCriancas((atual) => {
+      const proximo = atual.slice(0, seguro);
+      while (proximo.length < seguro) proximo.push("");
+      return proximo;
+    });
+  }
+  const idadesCriancasPreenchidas = idadesCriancas.filter((idade): idade is number => typeof idade === "number");
+  const criancasGratis = idadesCriancasPreenchidas.filter((i) => i <= IDADE_CRIANCA_JRPASS_GRATIS_MAX).length;
+  const criancasComDesconto = idadesCriancasPreenchidas.filter(
+    (i) => i >= IDADE_CRIANCA_JRPASS_MEIA_MIN && i <= IDADE_CRIANCA_JRPASS_MEIA_MAX,
+  ).length;
+  const criancasComoAdulto = idadesCriancasPreenchidas.filter((i) => i > IDADE_CRIANCA_JRPASS_MEIA_MAX).length;
+  // Crianças com idade ainda não preenchida contam como preço cheio até o
+  // campo ser preenchido — evita mostrar um total menor do que o real
+  // antes da idade ser informada.
+  const somaMultiplicadorCriancas = idadesCriancas.reduce(
+    (soma: number, idade) => soma + (typeof idade === "number" ? multiplicadorPorIdadeCrianca(idade) : 1),
+    0,
+  );
+  const multiplicadorPessoas = numeroPessoas - numeroCriancas + somaMultiplicadorCriancas;
 
   const TIPOS = [
     {
@@ -1925,8 +1992,10 @@ function JrPassModal({ cambio, onClose }: { cambio: Cambio | null; onClose: () =
     },
     {
       titulo: "Japonês residente no exterior",
+      // Pedido do Wilson, 25/set/2026: "aqui é necessário adicionar,
+      // precisa ter pelo menos de 10 anos morando fora do país".
       texto:
-        "Também pode comprar, sob condições específicas — só pela modalidade de compra feita fora do Japão, antes da viagem.",
+        "Também pode comprar, sob condições específicas — precisa ter pelo menos 10 anos morando fora do Japão, e só pela modalidade de compra feita fora do país, antes da viagem.",
       icone: "/images/icone-elegibilidade-residente-exterior.png",
     },
     {
@@ -1979,21 +2048,29 @@ function JrPassModal({ cambio, onClose }: { cambio: Cambio | null; onClose: () =
   const precoEscolhidoUSD =
     tipoEscolhido && diasSelecionados ? tipoEscolhido.precoUSD[diasSelecionados] : null;
   const precoEscolhidoBRL = precoEscolhidoUSD !== null && cambio ? precoEscolhidoUSD * cambio.cotacao : null;
-  // Preço total (por pessoa × número de pessoas) — usado no rodapé, na
-  // simulação de forma de pagamento e na mensagem de WhatsApp, já que o
-  // passe é vendido individualmente e cada viajante precisa do próprio.
-  const precoTotalUSD = precoEscolhidoUSD !== null ? precoEscolhidoUSD * numeroPessoas : null;
-  const precoTotalBRL = precoEscolhidoBRL !== null ? precoEscolhidoBRL * numeroPessoas : null;
+  // Preço total (por pessoa × número de pessoas, já com o desconto de
+  // criança 6–11 anos aplicado via multiplicadorPessoas) — usado no
+  // rodapé, na simulação de forma de pagamento e na mensagem de
+  // WhatsApp, já que o passe é vendido individualmente e cada viajante
+  // precisa do próprio.
+  const precoTotalUSD = precoEscolhidoUSD !== null ? precoEscolhidoUSD * multiplicadorPessoas : null;
+  const precoTotalBRL = precoEscolhidoBRL !== null ? precoEscolhidoBRL * multiplicadorPessoas : null;
   const selecaoCompleta = !!tipoEscolhido && !!diasSelecionados;
   const descricaoPagamentoEscolhido = descricaoFormaPagamento(
     formaPagamento,
     precoTotalBRL,
     dataInicioViagem,
   );
+  const detalheCriancasTexto =
+    numeroCriancas > 0
+      ? ` (sendo ${numeroCriancas} ${numeroCriancas === 1 ? "criança" : "crianças"}${
+          criancasComDesconto > 0 ? `, ${criancasComDesconto} com meia-entrada 6-11 anos` : ""
+        })`
+      : "";
   const mensagemWhatsapp = selecaoCompleta
     ? `Olá! Quero finalizar a compra do JR Pass — ${tipoEscolhido!.classe}, ${diasSelecionados} dias, ${numeroPessoas} ${
         numeroPessoas === 1 ? "pessoa" : "pessoas"
-      }${
+      }${detalheCriancasTexto}${
         precoTotalBRL !== null ? ` (total ${formatBRL(precoTotalBRL)})` : ""
       }.${
         dataInicioViagem && dataFimViagem
@@ -2157,8 +2234,8 @@ function JrPassModal({ cambio, onClose }: { cambio: Cambio | null; onClose: () =
               numero de pessoas". O JR Pass é vendido por pessoa (cada
               viajante precisa do próprio passe), então o preço final no
               rodapé é o valor por pessoa (grade acima) × esse número.
-              Mesmo stepper do "Viajantes" do Seguro Viagem, sem campo de
-              idade — o preço do JR Pass não varia por idade. */}
+              Mesmo stepper do "Viajantes" do Seguro Viagem. Desconto de
+              criança (6–11 anos, metade do preço) é o bloco logo abaixo. */}
           <div className="mt-8 border-t border-black/10 pt-6">
             <p className="text-[10px] uppercase tracking-[0.2em] text-black/40">Número de pessoas</p>
             <div className="mt-4 flex max-w-xs items-center gap-2">
@@ -2186,6 +2263,110 @@ function JrPassModal({ cambio, onClose }: { cambio: Cambio | null; onClose: () =
               Cada viajante precisa do próprio passe — o preço no rodapé já é o total pras{" "}
               {numeroPessoas} {numeroPessoas === 1 ? "pessoa" : "pessoas"}.
             </p>
+
+            {/* Crianças com desconto — pedido do Wilson, 25/set/2026:
+                "quando é criança o cliente paga metade do valor, criança
+                entre 6 a 12 anos incompletos" + "tem que ter um campo com
+                numero de crianças e idade da criança para ser
+                selecionada" — stepper de quantas das pessoas acima são
+                crianças, e um seletor de idade por criança (mesmo padrão
+                da grade de idades do Seguro Viagem), pra confirmar se
+                cada uma cai mesmo na faixa 6–11 que dá direito à
+                meia-entrada. */}
+            <div className="mt-6 border-t border-black/10 pt-5">
+              <span className="mb-2 block text-[10px] uppercase tracking-[0.15em] text-black/50">
+                Crianças (opcional) — 6 a 11 anos pagam metade
+              </span>
+              <div className="flex max-w-xs items-center gap-2">
+                <button
+                  type="button"
+                  onClick={() => ajustarNumeroCriancas(numeroCriancas - 1)}
+                  aria-label="Diminuir número de crianças"
+                  className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-black/15 text-black transition hover:border-black/30"
+                >
+                  −
+                </button>
+                <span className="flex h-10 flex-1 items-center justify-center rounded-lg border border-black/15 bg-black/[0.02] text-sm text-black">
+                  {numeroCriancas} {numeroCriancas === 1 ? "criança" : "crianças"}
+                </span>
+                <button
+                  type="button"
+                  onClick={() => ajustarNumeroCriancas(numeroCriancas + 1)}
+                  aria-label="Aumentar número de crianças"
+                  disabled={numeroCriancas >= numeroPessoas}
+                  className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border text-black transition ${
+                    numeroCriancas >= numeroPessoas
+                      ? "cursor-not-allowed border-black/10 text-black/25"
+                      : "border-black/15 hover:border-black/30"
+                  }`}
+                >
+                  +
+                </button>
+              </div>
+
+              {numeroCriancas > 0 && (
+                <div className="mt-4 grid gap-3 sm:grid-cols-4">
+                  {idadesCriancas.map((idade, index) => {
+                    const multiplicador = typeof idade === "number" ? multiplicadorPorIdadeCrianca(idade) : null;
+                    const rotuloFaixa =
+                      multiplicador === 0
+                        ? "Grátis (menor de 6)"
+                        : multiplicador === 0.5
+                          ? "50% (6 a 11 anos)"
+                          : multiplicador === 1
+                            ? "Valor cheio (12+)"
+                            : null;
+                    return (
+                      <label key={index} className="flex flex-col gap-1.5">
+                        <span className="text-[10px] uppercase tracking-[0.15em] text-black/50">
+                          Idade — criança {index + 1}
+                        </span>
+                        <input
+                          type="number"
+                          min={0}
+                          max={17}
+                          value={idade}
+                          onChange={(e) => {
+                            const valor =
+                              e.target.value === "" ? "" : Math.max(0, Math.min(17, Number(e.target.value)));
+                            setIdadesCriancas((atual) => atual.map((v, i) => (i === index ? valor : v)));
+                          }}
+                          className="rounded-lg border border-black/15 px-3 py-2.5 text-sm text-black focus:border-[#2f80c9] focus:outline-none"
+                        />
+                        {rotuloFaixa && (
+                          <span
+                            className={`text-[10px] ${
+                              multiplicador === 0
+                                ? "text-emerald-700"
+                                : multiplicador === 0.5
+                                  ? "text-[#1c6ea8]"
+                                  : "text-black/40"
+                            }`}
+                          >
+                            {rotuloFaixa}
+                          </span>
+                        )}
+                      </label>
+                    );
+                  })}
+                </div>
+              )}
+
+              {/* Resumo das faixas — nota 3 da tabela do fornecedor
+                  (Century Travel, 25/set/2026): menor de 6 não paga, 6 a
+                  11 completa paga metade, 12+ conta como adulto. */}
+              {(criancasGratis > 0 || criancasComDesconto > 0 || criancasComoAdulto > 0) && (
+                <p className="mt-2 text-[11px] leading-5 text-black/40">
+                  {criancasGratis > 0 && `${criancasGratis} grátis (menor de 6 anos)`}
+                  {criancasGratis > 0 && (criancasComDesconto > 0 || criancasComoAdulto > 0) && " · "}
+                  {criancasComDesconto > 0 && `${criancasComDesconto} com 50% de desconto (6 a 11 anos)`}
+                  {criancasComDesconto > 0 && criancasComoAdulto > 0 && " · "}
+                  {criancasComoAdulto > 0 &&
+                    `${criancasComoAdulto} no valor cheio de adulto (12 anos ou mais)`}
+                  {" "}— já aplicado no total abaixo.
+                </p>
+              )}
+            </div>
           </div>
 
           {/* Critérios de elegibilidade */}
@@ -2260,8 +2441,12 @@ function JrPassModal({ cambio, onClose }: { cambio: Cambio | null; onClose: () =
                   <p className="text-xs text-black/45">
                     {tipoEscolhido!.classe} · {diasSelecionados} dias · {numeroPessoas}{" "}
                     {numeroPessoas === 1 ? "pessoa" : "pessoas"}
+                    {numeroCriancas > 0 &&
+                      ` (${numeroCriancas} ${numeroCriancas === 1 ? "criança" : "crianças"}${
+                        criancasComDesconto > 0 ? `, ${criancasComDesconto} c/ 50%` : ""
+                      })`}
                     {precoTotalUSD !== null && ` · ${formatUSD(precoTotalUSD)}`}
-                    {numeroPessoas > 1 && precoEscolhidoBRL !== null && (
+                    {numeroPessoas > 1 && numeroCriancas === 0 && precoEscolhidoBRL !== null && (
                       <> · {formatBRL(precoEscolhidoBRL)}/pessoa</>
                     )}
                   </p>

@@ -803,24 +803,34 @@ export const GUIA_TAMANHO_GRUPO = 4;
 export const DIARIA_GUIA_ESTRANGEIRO_USD = 350;
 // Japan Rail Pass — vendido em faixas fixas de dias CORRIDOS (7, 14 ou 21),
 // não por diária do roteiro; preço não escala com ctx.dias. Custo do
-// fornecedor (AjisaiWork Japan Tour Operator, tabela "01 a 15 de Setembro
-// de 2026", adulto, em USD): comum (ordinary) 7/14/21 dias = 378,35 /
-// 606,05 / 756,70; classe green (luxo) = 530,15 / 832,60 / 1.059,15.
-// Tabela é renovada quinzenalmente pelo fornecedor — reajustar aqui a cada
+// fornecedor atualizado 25/set/2026 (Century Travel - Tour Operator,
+// tabela "JRP-Tab-de-precos-16-a-30SEP26.pdf", válida de 16 a 30/set/2026,
+// adulto, em USD): comum (ordinary) 7/14/21 dias = 329,00 / 527,00 /
+// 658,00; classe green (luxo) = 461,00 / 724,00 / 921,00. Substitui a
+// tabela anterior (AjisaiWork, "01 a 15 de Setembro de 2026") — tabela é
+// renovada periodicamente pelo fornecedor, reajustar aqui a cada
 // atualização recebida. Nativo em dólar — convertido pra reais com a
-// cotação do dia, igual guia/motorista/wifi/ingressos. Preço final já com
-// imposto+margem.
+// cotação do dia (dólar turismo + spread, só na página de JR Pass — ver
+// app/lib/cambioDolarTurismo.ts), igual guia/motorista/wifi/ingressos.
+//
+// Spread próprio do JR Pass — pedido do Wilson, 25/set/2026: "reduzir o
+// spread, hoje estamos por volta de 40% sobre a tabela base, usar cerca
+// de 30%". Por isso o JR Pass NÃO usa mais comMargemEImposto (que aplica
+// ~49,5% — imposto 1,15 × margem 1,3, o padrão dos outros produtos) — usa
+// esse multiplicador próprio de 30% direto sobre a tabela do fornecedor
+// acima. Nunca exposto em texto público (mesma regra de sempre).
+const SPREAD_JR_PASS = 1.3;
 export const JR_PASS_DIAS_OPCOES = [7, 14, 21] as const;
 export const JR_PASS_PRECO_USD: Record<(typeof JR_PASS_DIAS_OPCOES)[number], number> = {
-  7: comMargemEImposto(378.35),
-  14: comMargemEImposto(606.05),
-  21: comMargemEImposto(756.7),
+  7: Math.round(329.0 * SPREAD_JR_PASS),
+  14: Math.round(527.0 * SPREAD_JR_PASS),
+  21: Math.round(658.0 * SPREAD_JR_PASS),
 };
 // Classe Green Car (luxo) — mesma tabela do fornecedor, coluna "Luxo (Green)".
 export const JR_PASS_PRECO_USD_GREEN: Record<(typeof JR_PASS_DIAS_OPCOES)[number], number> = {
-  7: comMargemEImposto(530.15),
-  14: comMargemEImposto(832.6),
-  21: comMargemEImposto(1059.15),
+  7: Math.round(461.0 * SPREAD_JR_PASS),
+  14: Math.round(724.0 * SPREAD_JR_PASS),
+  21: Math.round(921.0 * SPREAD_JR_PASS),
 };
 // Seguro Viagem: valor de referência por pessoa/dia — placeholder até
 // recebermos a tabela oficial do fornecedor (a tabela AjisaiWork enviada em
