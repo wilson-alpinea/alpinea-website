@@ -1555,26 +1555,33 @@ function JrPassModal({ cambio, onClose }: { cambio: Cambio | null; onClose: () =
     },
   ];
 
+  // Ícones enviados pelo Wilson, 25/set/2026 ("segue icones para esses 4
+  // cards"), um por critério de elegibilidade — substituem o ícone
+  // genérico de check azul que tinha antes.
   const ELEGIBILIDADE = [
     {
       titulo: "Turista estrangeiro",
       texto:
         "Entrada no Japão com status de imigração \"Temporary Visitor\" para turismo, com estadia autorizada de 15 ou 90 dias — precisa do carimbo ou adesivo \"Temporary Visitor\" no passaporte.",
+      icone: "/images/icone-elegibilidade-turista-estrangeiro.png",
     },
     {
       titulo: "Japonês residente no exterior",
       texto:
         "Também pode comprar, sob condições específicas — só pela modalidade de compra feita fora do Japão, antes da viagem.",
+      icone: "/images/icone-elegibilidade-residente-exterior.png",
     },
     {
       titulo: "Atenção ao carimbo",
       texto:
         "Portão eletrônico de imigração no aeroporto não carimba o passaporte — é preciso passar pelo balcão com atendente (ou pedir o carimbo manualmente) para conseguir trocar o passe depois.",
+      icone: "/images/icone-elegibilidade-carimbo.png",
     },
     {
       titulo: "Não vale para todo visto",
       texto:
         "Quem entra como \"Trainee\", \"Entertainer\" ou com \"Reentry Permit\" não pode usar o passe — mesmo já tendo comprado online, a troca é recusada sem o carimbo correto.",
+      icone: "/images/icone-elegibilidade-visto-invalido.png",
     },
   ];
 
@@ -1781,7 +1788,8 @@ function JrPassModal({ cambio, onClose }: { cambio: Cambio | null; onClose: () =
             <div className="mt-4 grid gap-4 sm:grid-cols-2">
               {ELEGIBILIDADE.map((item) => (
                 <div key={item.titulo} className="flex gap-3">
-                  <IconCheck className="mt-0.5 h-4 w-4 shrink-0 text-[#2f80c9]" />
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={item.icone} alt="" className="mt-0.5 h-8 w-8 shrink-0 object-contain" />
                   <div>
                     <p className="text-xs font-medium text-black">{item.titulo}</p>
                     <p className="mt-1 text-[11px] leading-5 text-black/50">{item.texto}</p>
@@ -1931,9 +1939,36 @@ function JrPassModal({ cambio, onClose }: { cambio: Cambio | null; onClose: () =
 //   por faixa etária (até 64 / 65–85 / 86–89 anos) — usei exatamente essa
 //   classificação oficial, sem inventar nome de plano. As condições
 //   gerais da GTA também não são um PDF único: o site oficial lista uma
-//   página-índice com vários PDFs, um por resseguradora (IZA, Chubb,
-//   Sancor, Sompo) e por data de vigência — linkei essa página-índice e
-//   expliquei isso no texto, em vez de escolher um PDF arbitrariamente.
+//   página-índice com vários PDFs, um por seguradora reguladora (IZA,
+//   Chubb, Sancor, Sompo) e por data de vigência — linkei essa
+//   página-índice e expliquei isso no texto, em vez de escolher um PDF
+//   arbitrariamente.
+//
+// Ajuste no mesmo dia, depois de o Wilson abrir os PDFs e estranhar
+// ("sabemi? ezze seguros? que diabos é isso? colocou material de
+// seguradoras concorrentes em vez de informacao do site oficial?"):
+// conferi de novo, abrindo os PDFs de verdade. Não é material de
+// concorrente — é o documento oficial certo, só que assinado pela
+// SEGURADORA REGULADORA (a empresa com registro na SUSEP que responde
+// pela apólice), que é uma empresa diferente da marca comercial de
+// assistência-viagem (GTA/MTA/Affinity não são seguradoras licenciadas
+// — são administradoras do programa de assistência, o seguro em si é
+// emitido por uma parceira regulada). Confirmado abrindo os PDFs:
+// - O PDF oficial da MTA (travelassist.com.br) é emitido pela EZZE
+//   Seguros S.A. (CNPJ 31.534.848/0001-24, SUSEP 15414.649792/2026-78)
+//   — "My Travel Assist"/"MTA" não aparece em nenhum lugar do documento.
+// - O índice de condições gerais da GTA lista PDFs históricos assinados
+//   por IZA, Chubb, Sancor e Sompo (nenhum "Sabemi" nessa lista, pelo
+//   menos até onde consegui ver) — qual seguradora aparece depende de
+//   qual PDF específico da lista o cliente abre.
+// - O PDF da Affinity é ainda mais estranho: em vez de mostrar um nome
+//   de seguradora de verdade, usa um placeholder literal
+//   "(SEGURADORA) SEGUROS S/A" — parece um modelo/template que a
+//   Affinity não preencheu direito no site oficial deles. Vale
+//   confirmar direto com a Affinity qual seguradora responde pela
+//   apólice antes de apresentar isso pra cliente.
+// Adicionei uma nota em cada card explicando isso (ver `termosNota`
+// abaixo), pra não parecer erro/concorrente pro cliente que clicar.
 const SEGURADORAS_VIAGEM = [
   {
     key: "affinity" as const,
@@ -1954,7 +1989,8 @@ const SEGURADORAS_VIAGEM = [
     ],
     termosUrl: "https://affinityseguroviagem.com.br/condicoes-gerais/afinity.pdf",
     termosLabel: "Condições gerais (PDF)",
-    termosNota: null,
+    termosNota:
+      "PDF oficial da Affinity. Repare que ele não nomeia a seguradora reguladora (usa um texto genérico no lugar) — confirmamos qual seguradora responde pela apólice antes de fechar.",
   },
   {
     key: "gta" as const,
@@ -1973,7 +2009,7 @@ const SEGURADORAS_VIAGEM = [
     termosUrl: "https://www.segurogta.com.br/2020/condicoes-gerais/",
     termosLabel: "Índice de condições gerais",
     termosNota:
-      "A GTA trabalha com mais de uma resseguradora (IZA, Chubb, Sancor, Sompo) — o PDF exato depende do plano e da data da cotação.",
+      "A GTA é a marca de assistência-viagem; a apólice em si é emitida por uma seguradora parceira (histórico: IZA, Chubb, Sancor, Sompo) — o PDF que abrir vem assinado por uma dessas, não pela GTA. É o documento certo, só tem outro nome.",
   },
   {
     key: "mta" as const,
@@ -1986,7 +2022,8 @@ const SEGURADORAS_VIAGEM = [
     tiposPlano: ["MTA 15", "MTA 30", "MTA 40", "MTA 60", "MTA 150"],
     termosUrl: "https://www.travelassist.com.br/condicoes-gerais/my_travel_assist.pdf",
     termosLabel: "Condições gerais (PDF)",
-    termosNota: null,
+    termosNota:
+      "MTA é a marca de assistência-viagem; a apólice em si é emitida pela EZZE Seguros S.A. — o PDF vem assinado pela EZZE, não pela MTA. É o documento certo, só tem outro nome.",
   },
 ];
 type SeguradoraKey = (typeof SEGURADORAS_VIAGEM)[number]["key"];
