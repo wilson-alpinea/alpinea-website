@@ -1183,7 +1183,7 @@ export default function ProdutosPage() {
           gateway de pagamento real no site — igual
           /viagem_personalizada_selfservice). */}
       {seguroViagemModalOpen && (
-        <SeguroViagemModal cambio={cambio} onClose={() => setSeguroViagemModalOpen(false)} />
+        <SeguroViagemModal onClose={() => setSeguroViagemModalOpen(false)} />
       )}
 
       {ajisaiShoppingModalOpen && (
@@ -2709,6 +2709,15 @@ function JrPassModal({ onClose }: { onClose: () => void }) {
                 Sem problema — pode mandar o documento pelo WhatsApp assim que tiver em mãos.
               </p>
             )}
+            {/* Selo de conexão segura — pedido do Wilson, 25/set/2026
+                ("adicionar SSL"), no mesmo pedido que trouxe CPF/endereço
+                pro Seguro Viagem. O site já roda inteiro em HTTPS/SSL
+                (certificado provisionado automaticamente pelo Vercel no
+                domínio alpinea.io) — isso só deixa esse cuidado visível
+                pro cliente bem ao lado do upload de documento. */}
+            <p className="mt-3 text-[11px] leading-5 text-black/40">
+              🔒 Conexão segura (SSL) — seu documento trafega e fica armazenado criptografado.
+            </p>
           </div>
 
           {/* Dados de contato — pedido do Wilson, 25/set/2026: "adicionar
@@ -3151,10 +3160,17 @@ const MULTIPLICADOR_ROTEIRO_MULTIDESTINO = 1.12;
 // /viagem_personalizada_selfservice: não existe gateway de pagamento no
 // site — o formulário grava um lead no CRM (tag SELF-SERVICE) e o time
 // fecha o pagamento de verdade pelo WhatsApp.
-function SeguroViagemModal({ cambio, onClose }: { cambio: Cambio | null; onClose: () => void }) {
+function SeguroViagemModal({ onClose }: { onClose: () => void }) {
   const [seguradora, setSeguradora] = useState<SeguradoraKey | null>(null);
   const [numViajantes, setNumViajantes] = useState(1);
   const [idades, setIdades] = useState<(number | "")[]>([""]);
+  // CPF e endereço de cada viajante — pedido do Wilson, 25/set/2026:
+  // "precisa ter cpf e endereco de cada um dos passageiros, pra ser
+  // preenchido na proxima etapa". Não é obrigatório aqui (não entra no
+  // formValido) — o cliente pode preencher agora ou deixar pra confirmar
+  // com a equipe na próxima etapa, antes da emissão da apólice.
+  const [cpfs, setCpfs] = useState<string[]>([""]);
+  const [enderecos, setEnderecos] = useState<string[]>([""]);
   const [dataInicio, setDataInicio] = useState("");
   const [dataFim, setDataFim] = useState("");
   // Roteiro — Japão é fixo/obrigatório, cliente pode somar outros países
@@ -3205,6 +3221,16 @@ function SeguroViagemModal({ cambio, onClose }: { cambio: Cambio | null; onClose
     const seguro = Math.max(1, Math.min(8, novo));
     setNumViajantes(seguro);
     setIdades((atual) => {
+      const proximo = atual.slice(0, seguro);
+      while (proximo.length < seguro) proximo.push("");
+      return proximo;
+    });
+    setCpfs((atual) => {
+      const proximo = atual.slice(0, seguro);
+      while (proximo.length < seguro) proximo.push("");
+      return proximo;
+    });
+    setEnderecos((atual) => {
       const proximo = atual.slice(0, seguro);
       while (proximo.length < seguro) proximo.push("");
       return proximo;
@@ -3270,6 +3296,11 @@ function SeguroViagemModal({ cambio, onClose }: { cambio: Cambio | null; onClose
           dataFim,
           dias,
           idades: idadesNumericas,
+          // CPF/endereço por viajante — opcionais aqui (pedido do Wilson:
+          // "pra ser preenchido na proxima etapa"); só mandamos os
+          // preenchidos, na mesma ordem dos viajantes.
+          cpfs: cpfs.map((c) => c.trim()),
+          enderecos: enderecos.map((e) => e.trim()),
           paises: ["Japão", ...paisesAdicionais],
           valorReferenciaBRL,
           formaPagamento: descricaoPagamentoEscolhido || null,
@@ -3371,6 +3402,117 @@ function SeguroViagemModal({ cambio, onClose }: { cambio: Cambio | null; onClose
                 A Ajisai trabalha hoje com três seguradoras parceiras — escolha a que preferir, preencha os
                 dados da viagem e do grupo, e nossa equipe confirma o plano exato e fecha com você.
               </p>
+
+              {/* Viajantes — pedido do Wilson, 25/set/2026: "o campo idade
+                  deve aparecer antes da escolha da seguradora, se o
+                  cliente tem 65 anos, deve ter só GTA" (idade agora vem
+                  antes da escolha de seguradora, pra já filtrar as
+                  opções corretamente). */}
+              <div className="mt-8 border-t border-black/10 pt-6">
+                <p className="text-[10px] uppercase tracking-[0.2em] text-black/40">Viajantes</p>
+                <div className="mt-5 max-w-xs">
+                  <span className="mb-2 block text-[10px] uppercase tracking-[0.15em] text-black/50">
+                    Viajantes
+                  </span>
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => ajustarNumViajantes(numViajantes - 1)}
+                      aria-label="Diminuir viajantes"
+                      className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-black/15 text-black transition hover:border-black/30"
+                    >
+                      −
+                    </button>
+                    <span className="flex h-10 flex-1 items-center justify-center rounded-lg border border-black/15 bg-black/[0.02] text-sm text-black">
+                      {numViajantes} {numViajantes === 1 ? "viajante" : "viajantes"}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => ajustarNumViajantes(numViajantes + 1)}
+                      aria-label="Aumentar viajantes"
+                      className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-black/15 text-black transition hover:border-black/30"
+                    >
+                      +
+                    </button>
+                  </div>
+                </div>
+
+                <div className="mt-4 flex flex-col gap-3">
+                  {idades.map((idade, index) => (
+                    <div key={index} className="rounded-lg border border-black/10 bg-black/[0.015] p-3">
+                      <p className="text-[10px] uppercase tracking-[0.15em] text-black/40">
+                        Viajante {index + 1}
+                      </p>
+                      <div className="mt-2 grid gap-3 sm:grid-cols-3">
+                        <label className="flex flex-col gap-1.5">
+                          <span className="text-[10px] uppercase tracking-[0.15em] text-black/50">Idade</span>
+                          <input
+                            type="number"
+                            min={0}
+                            max={120}
+                            value={idade}
+                            onChange={(e) => {
+                              const valor = e.target.value === "" ? "" : Math.max(0, Math.min(120, Number(e.target.value)));
+                              setIdades((atual) => atual.map((v, i) => (i === index ? valor : v)));
+                            }}
+                            className="rounded-lg border border-black/15 px-3 py-2.5 text-sm text-black focus:border-[#2f80c9] focus:outline-none"
+                          />
+                        </label>
+                        <label className="flex flex-col gap-1.5">
+                          <span className="text-[10px] uppercase tracking-[0.15em] text-black/50">
+                            CPF (opcional agora)
+                          </span>
+                          <input
+                            type="text"
+                            value={cpfs[index] ?? ""}
+                            onChange={(e) => {
+                              const valor = e.target.value;
+                              setCpfs((atual) => atual.map((v, i) => (i === index ? valor : v)));
+                            }}
+                            placeholder="000.000.000-00"
+                            className="rounded-lg border border-black/15 px-3 py-2.5 text-sm text-black focus:border-[#2f80c9] focus:outline-none"
+                          />
+                        </label>
+                        <label className="flex flex-col gap-1.5">
+                          <span className="text-[10px] uppercase tracking-[0.15em] text-black/50">
+                            Endereço (opcional agora)
+                          </span>
+                          <input
+                            type="text"
+                            value={enderecos[index] ?? ""}
+                            onChange={(e) => {
+                              const valor = e.target.value;
+                              setEnderecos((atual) => atual.map((v, i) => (i === index ? valor : v)));
+                            }}
+                            placeholder="Rua, número, cidade, CEP"
+                            className="rounded-lg border border-black/15 px-3 py-2.5 text-sm text-black focus:border-[#2f80c9] focus:outline-none"
+                          />
+                        </label>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <p className="mt-2 text-[11px] leading-5 text-black/40">
+                  CPF e endereço são necessários pra emitir a apólice — pode preencher agora ou deixar pra
+                  confirmar com a nossa equipe na próxima etapa.
+                </p>
+                {/* Selo de conexão segura — pedido do Wilson, 25/set/2026
+                    ("adicionar SSL"), junto do pedido de CPF/endereço. O
+                    site já roda inteiro em HTTPS/SSL (certificado
+                    provisionado automaticamente pelo Vercel no domínio
+                    alpinea.io) — isso só deixa esse cuidado visível pro
+                    cliente bem ao lado dos campos de dado sensível. */}
+                <p className="mt-1.5 text-[11px] leading-5 text-black/40">
+                  🔒 Conexão segura (SSL) — seus dados trafegam criptografados.
+                </p>
+                {idadesForaLimite > 0 && (
+                  <p className="mt-2 text-[11px] text-amber-700">
+                    {idadesForaLimite} {idadesForaLimite === 1 ? "viajante acima" : "viajantes acima"} de{" "}
+                    {IDADE_LIMITE_SEGURO} anos — fora da faixa de cálculo automático; cotamos direto com a
+                    seguradora.
+                  </p>
+                )}
+              </div>
 
               {/* Comparação das seguradoras */}
               <div className="mt-8 border-t border-black/10 pt-6">
@@ -3561,60 +3703,6 @@ function SeguroViagemModal({ cambio, onClose }: { cambio: Cambio | null; onClose
                   </p>
                 </div>
 
-                <div className="mt-5 max-w-xs">
-                  <span className="mb-2 block text-[10px] uppercase tracking-[0.15em] text-black/50">
-                    Viajantes
-                  </span>
-                  <div className="flex items-center gap-2">
-                    <button
-                      type="button"
-                      onClick={() => ajustarNumViajantes(numViajantes - 1)}
-                      aria-label="Diminuir viajantes"
-                      className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-black/15 text-black transition hover:border-black/30"
-                    >
-                      −
-                    </button>
-                    <span className="flex h-10 flex-1 items-center justify-center rounded-lg border border-black/15 bg-black/[0.02] text-sm text-black">
-                      {numViajantes} {numViajantes === 1 ? "viajante" : "viajantes"}
-                    </span>
-                    <button
-                      type="button"
-                      onClick={() => ajustarNumViajantes(numViajantes + 1)}
-                      aria-label="Aumentar viajantes"
-                      className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-black/15 text-black transition hover:border-black/30"
-                    >
-                      +
-                    </button>
-                  </div>
-                </div>
-
-                <div className="mt-4 grid gap-3 sm:grid-cols-4">
-                  {idades.map((idade, index) => (
-                    <label key={index} className="flex flex-col gap-1.5">
-                      <span className="text-[10px] uppercase tracking-[0.15em] text-black/50">
-                        Idade — viajante {index + 1}
-                      </span>
-                      <input
-                        type="number"
-                        min={0}
-                        max={120}
-                        value={idade}
-                        onChange={(e) => {
-                          const valor = e.target.value === "" ? "" : Math.max(0, Math.min(120, Number(e.target.value)));
-                          setIdades((atual) => atual.map((v, i) => (i === index ? valor : v)));
-                        }}
-                        className="rounded-lg border border-black/15 px-3 py-2.5 text-sm text-black focus:border-[#2f80c9] focus:outline-none"
-                      />
-                    </label>
-                  ))}
-                </div>
-                {idadesForaLimite > 0 && (
-                  <p className="mt-2 text-[11px] text-amber-700">
-                    {idadesForaLimite} {idadesForaLimite === 1 ? "viajante acima" : "viajantes acima"} de{" "}
-                    {IDADE_LIMITE_SEGURO} anos — fora da faixa de cálculo automático; cotamos direto com a
-                    seguradora.
-                  </p>
-                )}
               </div>
 
               {/* Passagem aérea — pedido do Wilson, 25/set/2026: "tem que
@@ -3807,15 +3895,9 @@ function SeguroViagemModal({ cambio, onClose }: { cambio: Cambio | null; onClose
                   Valor de referência Ajisai
                 </p>
                 {valorReferenciaBRL && valorReferenciaBRL > 0 ? (
-                  <>
-                    <p className={`${display.className} mt-1 text-3xl font-medium text-black`}>
-                      {formatBRL(valorReferenciaBRL)}
-                    </p>
-                    <p className="mt-1 text-sm font-medium text-black/50">
-                      ou {formatUSD(valorReferenciaUSD)}
-                    </p>
-                    <CambioLabel cambio={cambio} className="mt-2 text-[11px] text-black/35" />
-                  </>
+                  <p className={`${display.className} mt-1 text-3xl font-medium text-black`}>
+                    {formatBRL(valorReferenciaBRL)}
+                  </p>
                 ) : (
                   <p className="mt-1 text-sm text-black/50">
                     Preencha as datas da viagem e a idade de cada viajante para ver o valor de referência.
@@ -3853,10 +3935,9 @@ function SeguroViagemModal({ cambio, onClose }: { cambio: Cambio | null; onClose
                     <p className={`${display.className} text-xl font-medium text-[#2f80c9] sm:text-2xl`}>
                       {formatBRL(valorReferenciaBRL)}
                     </p>
-                    <p className="text-xs text-black/45">
-                      {seguradoraEscolhida ? `${seguradoraEscolhida.nome} · ` : ""}
-                      {formatUSD(valorReferenciaUSD)}
-                    </p>
+                    {seguradoraEscolhida && (
+                      <p className="text-xs text-black/45">{seguradoraEscolhida.nome}</p>
+                    )}
                     {descricaoPagamentoEscolhido && (
                       <p className="mt-0.5 text-[11px] text-black/40">{descricaoPagamentoEscolhido}</p>
                     )}

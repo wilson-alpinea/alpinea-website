@@ -9,7 +9,7 @@ import {
   type CriterioPontuacao,
   type NivelJapones,
 } from "../lib/candidaturaScoring";
-import { EXTENSOES_CURRICULO_ACEITAS } from "../lib/curriculoExtracao";
+import { EXTENSOES_CURRICULO_ACEITAS } from "../lib/curriculoConstantes";
 import { useEffect, useMemo, useState, type FormEvent } from "react";
 import Image from "next/image";
 import Link from "next/link";

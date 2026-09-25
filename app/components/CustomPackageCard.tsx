@@ -358,6 +358,19 @@ export function comMargemEImposto(custo: number) {
   return Math.round(custo * MULTIPLICADOR_PRECO_FINAL);
 }
 
+// Motorista Privado tem margem própria, menor que o padrão acima —
+// pedido do Wilson, 25/set/2026: "margem aqui deve ser de 40%". Mesmo
+// padrão do SPREAD_JR_PASS: multiplicador direto sobre o custo, sem
+// compor imposto+margem como comMargemEImposto. Usado tanto pela diária
+// genérica abaixo (DIARIA_MOTORISTA_PRIVADO_USD, usada no calculador do
+// Personalizado) quanto pelo catálogo de rotas/veículos em
+// app/lib/motoristaPrivadoRotas.ts (calculadora de Transporte Privado em
+// /produtos, calculadora reversa e self-service).
+const MULTIPLICADOR_MOTORISTA_PRIVADO = 1.4;
+export function comMargemMotoristaPrivado(custo: number) {
+  return Math.round(custo * MULTIPLICADOR_MOTORISTA_PRIVADO);
+}
+
 // Diária de hotel por categoria — usada pra calcular o total do pacote
 // conforme categoria do hotel, tipo de quarto e quantidade de dias.
 // Calibrado com base em pesquisa de mercado (Tokyo, referência ago/2026):
@@ -845,7 +858,7 @@ export const DIARIA_SEGURO_VIAGEM = comMargemEImposto(29);
 // Motorista privado: custo de US$ 700/dia, cobre até 4 pessoas — mesma
 // lógica de grupo do guia, também nativo em dólar. Preço final já com
 // imposto+margem.
-export const DIARIA_MOTORISTA_PRIVADO_USD = comMargemEImposto(700);
+export const DIARIA_MOTORISTA_PRIVADO_USD = comMargemMotoristaPrivado(700);
 export const MOTORISTA_TAMANHO_GRUPO = 4;
 export const PRECO_CAMBIO_BRASIL = comMargemEImposto(150);
 // Entrega no Aeroporto de Guarulhos — pedido do Wilson, 25/set/2026:

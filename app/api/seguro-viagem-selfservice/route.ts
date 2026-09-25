@@ -99,6 +99,18 @@ export async function POST(req: Request) {
     const idades: number[] = Array.isArray(body.idades)
       ? body.idades.map(Number).filter((n: number) => Number.isFinite(n) && n >= 0 && n <= 120).slice(0, 12)
       : [];
+    // CPF e endereço de cada viajante — pedido do Wilson, 25/set/2026:
+    // "precisa ter cpf e endereco de cada um dos passageiros, pra ser
+    // preenchido na proxima etapa". Opcionais: o cliente pode deixar em
+    // branco e confirmar com a equipe depois, antes da emissão da
+    // apólice — por isso só entram no resumo, sem coluna própria em
+    // `clientes`.
+    const cpfs: string[] = Array.isArray(body.cpfs)
+      ? body.cpfs.map((c: unknown) => String(c).trim()).slice(0, 12)
+      : [];
+    const enderecos: string[] = Array.isArray(body.enderecos)
+      ? body.enderecos.map((e: unknown) => String(e).trim()).slice(0, 12)
+      : [];
     // Roteiro (Japão + outros países da Ásia, opcional) — pedido do Wilson,
     // 25/set/2026: "escolher pais, japão é o obrigatorio, mas cliente pode
     // colocar outros paises da Asia na lista". Só entra no resumo do lead
@@ -149,6 +161,16 @@ export async function POST(req: Request) {
       ["Dias de cobertura", dias ? String(dias) : "Não informado"],
       ["Número de viajantes", idades.length ? String(idades.length) : "Não informado"],
       ["Idades dos viajantes", idades.length ? idades.join(", ") : "Não informado"],
+      [
+        "CPF dos viajantes",
+        cpfs.some(Boolean) ? cpfs.map((c, i) => `${i + 1}: ${c || "não informado"}`).join(" | ") : "A confirmar na próxima etapa",
+      ],
+      [
+        "Endereço dos viajantes",
+        enderecos.some(Boolean)
+          ? enderecos.map((e, i) => `${i + 1}: ${e || "não informado"}`).join(" | ")
+          : "A confirmar na próxima etapa",
+      ],
       [
         "Valor de referência Ajisai",
         valorReferenciaBRL ? `R$ ${valorReferenciaBRL.toLocaleString("pt-BR")}` : "Não calculado",

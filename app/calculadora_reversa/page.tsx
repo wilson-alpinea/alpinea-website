@@ -715,6 +715,23 @@ const ORIGENS_VOO = [
 ] as const;
 type OrigemVooKey = (typeof ORIGENS_VOO)[number]["key"];
 
+// Aeroporto de chegada no Japão — pedido do Wilson, 25/set/2026:
+// "selecionar qual a cidade de chegada no japao e aeroporto, Tokyo, Osaka,
+// Nagoya etc". Só informativo (sem ajuste de preço, diferente de
+// ORIGENS_VOO) — entra no resumo da proposta/CRM pra equipe planejar
+// receptivo/transfer de acordo com o aeroporto certo. Principais portas
+// de entrada internacionais do Japão.
+const AEROPORTOS_CHEGADA_JAPAO = [
+  { key: "tokyoNarita", nome: "Tóquio — Narita (NRT)" },
+  { key: "tokyoHaneda", nome: "Tóquio — Haneda (HND)" },
+  { key: "osaka", nome: "Osaka — Kansai (KIX)" },
+  { key: "nagoya", nome: "Nagoya — Chubu Centrair (NGO)" },
+  { key: "fukuoka", nome: "Fukuoka (FUK)" },
+  { key: "sapporo", nome: "Sapporo — New Chitose (CTS)" },
+  { key: "okinawa", nome: "Okinawa — Naha (OKA)" },
+] as const;
+type AeroportoChegadaKey = (typeof AEROPORTOS_CHEGADA_JAPAO)[number]["key"];
+
 // Deslocamento (voo/trem) entre o Japão e/ou entre as cidades de uma
 // extensão internacional. Preços de referência em classe econômica,
 // pesquisados em 10/set/2026 (Kayak/Skyscanner/Momondo/Trip.com/
@@ -1575,6 +1592,7 @@ export default function CalculadoraReversaPage() {
   // pré-selecionado (maioria dos clientes). Não se aplica quando o aéreo
   // é valor manual (o vendedor já digita o preço real cotado).
   const [origemVoo, setOrigemVoo] = useState<OrigemVooKey>("saoPaulo");
+  const [aeroportoChegada, setAeroportoChegada] = useState<AeroportoChegadaKey>("tokyoNarita");
   const [bagagem, setBagagem] = useState<BagagemKey>("uma");
   const [flexibilidadeDatas, setFlexibilidadeDatas] = useState<FlexibilidadeDatasKey>("fixas");
   const [mesEstimado, setMesEstimado] = useState<number | null>(null);
@@ -1750,7 +1768,7 @@ export default function CalculadoraReversaPage() {
   // ocultar/mostrar todos de uma vez, já que ocultar um campo agora o faz
   // desaparecer por completo (sem botão de olho individual pra restaurar).
   const TODOS_CAMPOS_OCULTAVEIS = [
-    1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 21,
+    1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21,
   ];
   const todosCamposOcultos = TODOS_CAMPOS_OCULTAVEIS.every((n) => camposOcultos.has(n));
   function alternarTodosCamposOcultos() {
@@ -1789,6 +1807,7 @@ export default function CalculadoraReversaPage() {
     17: "Serviços adicionais",
     18: "Seguro viagem — idade dos passageiros",
     19: "Data estimada da viagem",
+    20: "Perfil do viajante",
     21: "Motorista Privado",
   };
   const [painelCamposOcultosAberto, setPainelCamposOcultosAberto] = useState(false);
@@ -2577,7 +2596,7 @@ export default function CalculadoraReversaPage() {
       chave: "aereo",
       label: aereoManual ? "Aéreo — valor manual" : `Aéreo — ${classeAereoFinal}`,
       detalhe: [
-        `Passagem internacional ida e volta para ${pessoas} ${pessoas === 1 ? "pessoa" : "pessoas"}, saindo de ${ORIGENS_VOO.find((o) => o.key === origemVoo)?.nome ?? "São Paulo / GRU"}.`,
+        `Passagem internacional ida e volta para ${pessoas} ${pessoas === 1 ? "pessoa" : "pessoas"}, saindo de ${ORIGENS_VOO.find((o) => o.key === origemVoo)?.nome ?? "São Paulo / GRU"}, chegando em ${AEROPORTOS_CHEGADA_JAPAO.find((a) => a.key === aeroportoChegada)?.nome ?? "Tóquio / Narita (NRT)"}.`,
         bagagem === "cabine"
           ? "Somente bagagem de mão — sem despacho de mala."
           : bagagem === "uma"
@@ -2896,6 +2915,8 @@ export default function CalculadoraReversaPage() {
   function construirResumoCrm(): string {
     const nomeTemporada = TEMPORADAS.find((t) => t.key === temporada)?.nome ?? temporada;
     const nomeOrigem = ORIGENS_VOO.find((o) => o.key === origemVoo)?.nome ?? origemVoo;
+    const nomeAeroportoChegada =
+      AEROPORTOS_CHEGADA_JAPAO.find((a) => a.key === aeroportoChegada)?.nome ?? aeroportoChegada;
     const nomeBagagem = BAGAGEM_OPCOES.find((b) => b.key === bagagem)?.nome ?? bagagem;
     const idadesLabel = idadesPassageiros.slice(0, pessoas).join(", ");
     const validadeLabel = validadeProposta
@@ -2914,6 +2935,7 @@ export default function CalculadoraReversaPage() {
       `Perfil do viajante: ${PERFIS_VIAJANTE.find((x) => x.key === perfilViajante)?.nome ?? perfilViajante}`,
       `Temporada: ${nomeTemporada}`,
       `Origem do voo: ${nomeOrigem}`,
+      `Chegada no Japão: ${nomeAeroportoChegada}`,
       `Bagagem: ${nomeBagagem}`,
       `Guia: ${guiaTipo === "brasileiro" ? "Brasileiro" : "Estrangeiro"} (${guiaDias} ${guiaDias === 1 ? "dia" : "dias"})`,
       selecaoMotorista.itens.length > 0 ? `Motorista privado: ${resumoSelecaoMotorista(selecaoMotorista)}` : "",
@@ -3445,38 +3467,39 @@ export default function CalculadoraReversaPage() {
             </div>
           )}
 
-          {/* Pedido do Wilson, 14/set/2026: "falta um campo importante:
-              bagagem". Mesmo padrão do campo Origem do voo acima — sem
+          {/* Campo "Bagagem" removido da UI — pedido do Wilson,
+              25/set/2026: "remover esse campo". A opção fica travada em
+              "uma" (1 mala despachada, sem ajuste de preço — franquia
+              padrão), que era o valor default mesmo quando o campo
+              existia. Lógica/estado (`bagagem`, `BAGAGEM_OPCOES`,
+              `ajusteBagagemBRL`) mantidos, só sem seleção manual — mais
+              simples reverter se precisar no futuro. */}
+
+          {/* Chegada no Japão — pedido do Wilson, 25/set/2026:
+              "selecionar qual a cidade de chegada no japao e aeroporto,
+              Tokyo, Osaka, Nagoya etc". Só informativo (não afeta o
+              preço) — mesmo padrão do campo Origem do voo acima, sem
               número próprio, vive junto da seção 6 (aéreo). */}
           {!camposOcultos.has(6) && (
             <div className="sm:col-span-2 -mt-2">
               <label className="flex flex-col">
-                <span className="mb-1 text-[10px] uppercase tracking-wide text-black/60">Bagagem</span>
+                <span className="mb-1 text-[10px] uppercase tracking-wide text-black/60">
+                  Chegada no Japão
+                </span>
                 <select
-                  value={bagagem}
-                  onChange={(e) => setBagagem(e.target.value as BagagemKey)}
-                  disabled={aereoManual}
-                  className="h-10 w-64 rounded-lg border border-black/15 bg-black/[0.03] px-3 text-sm outline-none focus:border-black/30 disabled:opacity-50"
+                  value={aeroportoChegada}
+                  onChange={(e) => setAeroportoChegada(e.target.value as AeroportoChegadaKey)}
+                  className="h-10 w-64 rounded-lg border border-black/15 bg-black/[0.03] px-3 text-sm outline-none focus:border-black/30"
                 >
-                  {BAGAGEM_OPCOES.map((b) => (
-                    <option key={b.key} value={b.key}>
-                      {b.nome}
+                  {AEROPORTOS_CHEGADA_JAPAO.map((a) => (
+                    <option key={a.key} value={a.key}>
+                      {a.nome}
                     </option>
                   ))}
                 </select>
                 <span className="mt-1 text-[11px] text-black/60">
-                  {aereoManual
-                    ? "Valor manual — bagagem não se aplica"
-                    : bagagem === "cabine" || bagagem === "uma"
-                      ? "Referência — sem ajuste no aéreo"
-                      : `Ajuste estimado de +${formatBRL(BAGAGEM_OPCOES.find((b) => b.key === bagagem)!.ajusteBRL)}/pessoa no aéreo (taxa de mala extra/item grande) — confirmar com a companhia aérea.`}
+                  Define o aeroporto do transfer de chegada — confirmar com a companhia aérea real.
                 </span>
-                {(bagagem === "duas" || bagagem === "grande") && (
-                  <span className="mt-1 text-[11px] text-black/60">
-                    Entre cidades, considere também o item &quot;Transporte de Malas
-                    Inter-Municipal&quot; (seção 17).
-                  </span>
-                )}
               </label>
             </div>
           )}
@@ -3659,9 +3682,17 @@ export default function CalculadoraReversaPage() {
             </div>
             )}
 
+            {/* Corrigido 25/set/2026, pedido do Wilson: "o campo 20 nao
+                está colapsando ao clicar em ocultar campos e renumerar" —
+                o campo 20 nunca tinha sido ligado ao sistema de
+                ocultar/restaurar (faltava o guard `!camposOcultos.has(20)`
+                e o botão de olho — por isso "ocultar todos" sempre dizia
+                "19 campos ocultos", nunca contava esse). */}
+            {!camposOcultos.has(20) && (
             <div className="mt-4">
               <span className="mb-2 flex items-end text-[10px] uppercase leading-tight tracking-[0.2em] text-black/50">
                 <LabelNumerado texto="20. Perfil do viajante" />{" "}
+                <BotaoOcultarCampo oculto={false} onToggle={() => alternarCampoOculto(20)} />
                 <span className="ml-1.5 normal-case tracking-normal text-black/60">
                   (define o ritmo do roteiro — não altera o preço)
                 </span>
@@ -3689,6 +3720,7 @@ export default function CalculadoraReversaPage() {
                 </p>
               </details>
             </div>
+            )}
 
             {/* Pedido do Wilson, 11/set/2026: ocultar um campo deve fazer o
                 campo inteiro sumir (rótulo incluso), não só o conteúdo —
@@ -3739,11 +3771,16 @@ export default function CalculadoraReversaPage() {
                         <div className="relative h-24 w-full bg-black/[0.06]">
                           {destino.imagem ? (
                             // eslint-disable-next-line @next/next/no-img-element
+                            // Pedido do Wilson, 25/set/2026: "deixar
+                            // colorido só as selecionadas, as nao
+                            // selecionadas deixar em escala de cinza".
                             <img
                               src={destino.imagem}
                               alt={destino.nome}
                               loading="lazy"
-                              className="h-full w-full object-cover"
+                              className={`h-full w-full object-cover transition duration-300 ${
+                                marcado ? "" : "grayscale hover:grayscale-0"
+                              }`}
                             />
                           ) : (
                             <div className="flex h-full w-full items-center justify-center text-2xl text-black/25">⛩</div>

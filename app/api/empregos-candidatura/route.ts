@@ -2,7 +2,8 @@ import { NextResponse } from "next/server";
 import { randomUUID } from "crypto";
 import { createAdminClient } from "../../../lib/supabase/admin";
 import { encontrarVaga } from "../../lib/vagasCatalogo";
-import { extrairTextoCurriculo, TIPOS_CURRICULO_ACEITOS } from "../../lib/curriculoExtracao";
+import { extrairTextoCurriculo } from "../../lib/curriculoExtracao";
+import { TIPOS_CURRICULO_ACEITOS } from "../../lib/curriculoConstantes";
 import { calcularPontuacaoCandidatura, type RespostasTriagem, type CriterioPontuacao } from "../../lib/candidaturaScoring";
 
 export const runtime = "nodejs";

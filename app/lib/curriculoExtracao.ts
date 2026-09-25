@@ -3,6 +3,13 @@
 // alimentar o motor de pontuação (app/lib/candidaturaScoring.ts). Sem IA:
 // isso é só leitura de texto do arquivo, não interpretação de conteúdo.
 //
+// Só importar isto de código de servidor — puxa pdf-parse/mammoth
+// (Node-only, usam `fs`/`http`/`https`). As constantes de tipo aceito
+// (usadas também no Client Component app/empregos/page.tsx) ficam em
+// app/lib/curriculoConstantes.ts, sem essa dependência — corrige erro
+// de build no Vercel, 25/set/2026 ("Module not found: Can't resolve
+// 'fs'").
+//
 // Formatos aceitos: PDF (pdf-parse) e DOCX (mammoth). .doc antigo (Word
 // 97-2003) e imagem escaneada sem texto (PDF "imagem") não têm extração
 // confiável sem OCR/IA — nesses casos a extração retorna string vazia, e
@@ -37,9 +44,3 @@ export async function extrairTextoCurriculo(buffer: Buffer, nomeArquivo: string,
   return "";
 }
 
-export const TIPOS_CURRICULO_ACEITOS = [
-  "application/pdf",
-  "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-];
-
-export const EXTENSOES_CURRICULO_ACEITAS = ".pdf,.docx";
