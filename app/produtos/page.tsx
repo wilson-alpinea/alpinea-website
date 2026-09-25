@@ -1585,26 +1585,33 @@ function JrPassModal({ cambio, onClose }: { cambio: Cambio | null; onClose: () =
     },
   ];
 
+  // Ícones enviados pelo Wilson, 25/set/2026 ("icones para essa aprte",
+  // junto de um print da seção "Regras de uso") — substituem o
+  // IconCheck genérico que tinha antes, um por regra.
   const REGRAS_DE_USO = [
     {
       titulo: "Cobertura",
       texto:
         "Shinkansen, trens expressos, expressos limitados e locais da JR, além de ônibus JR e do Tokyo Monorail — exceto os trens-bala Nozomi e Mizuho, que exigem bilhete separado.",
+      icone: "/images/icone-regras-cobertura.png",
     },
     {
       titulo: "Reservas de assento",
       texto:
         "Gratuitas, mas recomendadas — alguns trens não têm vagão sem reserva. Limite de 110 reservas por passe; cancelamento precisa ser feito antes do horário de partida.",
+      icone: "/images/icone-regras-reservas-assento.png",
     },
     {
       titulo: "Pessoal e intransferível",
       texto:
         "Vinculado a um passaporte específico — não dá pra comprar dois passes sobrepostos no mesmo passaporte, nem trocar de titular. O passaporte precisa estar sempre junto do passe.",
+      icone: "/images/icone-regras-pessoal-intransferivel.png",
     },
     {
       titulo: "Reembolso e validade",
       texto:
         "Reembolso só é possível antes da data de início de uso; depois de ativado, o período não pode ser estendido. Passe perdido ou roubado não tem reposição.",
+      icone: "/images/icone-regras-reembolso-validade.png",
     },
   ];
 
@@ -1805,7 +1812,8 @@ function JrPassModal({ cambio, onClose }: { cambio: Cambio | null; onClose: () =
             <div className="mt-4 grid gap-4 sm:grid-cols-2">
               {REGRAS_DE_USO.map((item) => (
                 <div key={item.titulo} className="flex gap-3">
-                  <IconCheck className="mt-0.5 h-4 w-4 shrink-0 text-[#2f80c9]" />
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={item.icone} alt="" className="mt-0.5 h-8 w-8 shrink-0 object-contain" />
                   <div>
                     <p className="text-xs font-medium text-black">{item.titulo}</p>
                     <p className="mt-1 text-[11px] leading-5 text-black/50">{item.texto}</p>
