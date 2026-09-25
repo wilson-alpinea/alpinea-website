@@ -25,6 +25,13 @@ import {
 } from "../components/CustomPackageCard";
 import { HotelQuoteCalculator } from "../components/HotelQuoteCalculator";
 import { ContactCTA } from "../components/ContactCTA";
+import {
+  IDADE_LIMITE_SEGURO,
+  multiplicadorSeguroPorIdade,
+  TAXA_MAQUINA_CARTAO,
+  TAXA_JUROS_CARTAO_MES,
+  calcularParcelaPrice,
+} from "../lib/calculadoraCatalogoPublico";
 
 const display = Bodoni_Moda({
   subsets: ["latin"],
@@ -1116,14 +1123,20 @@ export default function ProdutosPage() {
         />
       )}
 
+      {/* Pedido do Wilson, 25/set/2026: "vamos fazer o mesmo para seguro
+          viagem, hoje trabalhamos com 3 empresas Affinity, GTA e MTA, o
+          cliente pode escolher qualquer 1 dos 3, pegar preços do site da
+          calculadora reversa, e ajustar pagina do seguro viagem para ter
+          todas as informacoes e campos necessarios para self-checkout" —
+          mesmo tratamento dado ao JR Pass: saiu do ServicoAvulsoModal
+          pequeno e ganhou o próprio componente grande (SeguroViagemModal),
+          agora com comparação das 3 seguradoras e formulário completo de
+          self-checkout (mesmo padrão confirmado com o Wilson via
+          AskUserQuestion: lead cai no CRM com tag SELF-SERVICE, sem
+          gateway de pagamento real no site — igual
+          /viagem_personalizada_selfservice). */}
       {seguroViagemModalOpen && (
-        <ServicoAvulsoModal
-          titulo="Seguro Viagem"
-          descricao="Cobertura médica e assistência durante toda a viagem, por pessoa/dia."
-          precoLabel={`${formatBRL(DIARIA_SEGURO_VIAGEM)}/dia`}
-          cambio={cambio}
-          onClose={() => setSeguroViagemModalOpen(false)}
-        />
+        <SeguroViagemModal cambio={cambio} onClose={() => setSeguroViagemModalOpen(false)} />
       )}
 
       {ajisaiShoppingModalOpen && (
@@ -1319,6 +1332,19 @@ function formatJPY(valor: number) {
 // de elegibilidade e regras de uso abaixo vieram de japanrailpass.net/en
 // (páginas "Eligibility for use" e "Conditions for use"), não inventados.
 function JrPassModal({ cambio, onClose }: { cambio: Cambio | null; onClose: () => void }) {
+  // Pedido do Wilson, 25/set/2026: "não consigo selecionar o tipo e nem a
+  // duração do JR Pass, lembre-se que é uma pagina self-service, também
+  // precisa haver no rodapé da pagina o preço da minha escolha e o que
+  // escolhi com o botão 'Finalizar Compra Via Whatsapp'" — a tabela de
+  // tipos e preços virou seletor de verdade (clique numa linha de dias
+  // escolhe classe + duração juntos) e ganhou uma barra fixa no rodapé
+  // do modal mostrando a escolha e o preço, com o CTA de WhatsApp já
+  // preenchido com a seleção.
+  const [classeSelecionada, setClasseSelecionada] = useState<"comum" | "green" | null>(null);
+  const [diasSelecionados, setDiasSelecionados] = useState<(typeof JR_PASS_DIAS_OPCOES)[number] | null>(
+    null,
+  );
+
   const TIPOS = [
     {
       key: "comum" as const,
@@ -1380,6 +1406,17 @@ function JrPassModal({ cambio, onClose }: { cambio: Cambio | null; onClose: () =
     },
   ];
 
+  const tipoEscolhido = TIPOS.find((t) => t.key === classeSelecionada) ?? null;
+  const precoEscolhidoUSD =
+    tipoEscolhido && diasSelecionados ? tipoEscolhido.precoUSD[diasSelecionados] : null;
+  const precoEscolhidoBRL = precoEscolhidoUSD !== null && cambio ? precoEscolhidoUSD * cambio.cotacao : null;
+  const selecaoCompleta = !!tipoEscolhido && !!diasSelecionados;
+  const mensagemWhatsapp = selecaoCompleta
+    ? `Olá! Quero finalizar a compra do JR Pass — ${tipoEscolhido!.classe}, ${diasSelecionados} dias${
+        precoEscolhidoBRL !== null ? ` (${formatBRL(precoEscolhidoBRL)})` : ""
+      }.`
+    : "";
+
   return (
     <div
       className="fixed inset-0 z-[90] flex items-end justify-center bg-black/85 p-0 backdrop-blur-sm md:items-center md:p-6"
@@ -1389,10 +1426,10 @@ function JrPassModal({ cambio, onClose }: { cambio: Cambio | null; onClose: () =
       onClick={onClose}
     >
       <div
-        className="relative max-h-[92vh] w-full max-w-5xl overflow-y-auto rounded-t-3xl border border-black/10 bg-white shadow-2xl md:max-h-[88vh] md:rounded-3xl"
+        className="relative flex max-h-[92vh] w-full max-w-5xl flex-col overflow-hidden rounded-t-3xl border border-black/10 bg-white shadow-2xl md:max-h-[88vh] md:rounded-3xl"
         onClick={(event) => event.stopPropagation()}
       >
-        <div className="sticky top-0 z-20 flex h-14 items-center justify-between border-b border-black/10 bg-white/90 px-4 backdrop-blur-xl md:px-6">
+        <div className="flex h-14 shrink-0 items-center justify-between border-b border-black/10 bg-white/90 px-4 backdrop-blur-xl md:px-6">
           <p
             id="jr-pass-modal-title"
             className={`${display.className} text-lg font-medium text-black md:text-xl`}
@@ -1409,7 +1446,7 @@ function JrPassModal({ cambio, onClose }: { cambio: Cambio | null; onClose: () =
           </button>
         </div>
 
-        <div className="p-5 md:p-8">
+        <div className="overflow-y-auto p-5 md:p-8">
           <p className="text-xs uppercase tracking-[0.3em] text-[#1c6ea8]">Japan Rail Pass</p>
           <h3
             className={`${display.className} mt-2 max-w-2xl text-2xl font-medium text-black md:text-3xl`}
@@ -1427,7 +1464,14 @@ function JrPassModal({ cambio, onClose }: { cambio: Cambio | null; onClose: () =
             <p className="text-[10px] uppercase tracking-[0.2em] text-black/40">Tipos e preços</p>
             <div className="mt-4 grid gap-4 sm:grid-cols-2">
               {TIPOS.map((tipo) => (
-                <div key={tipo.key} className="rounded-2xl border border-black/10 bg-black/[0.02] p-5">
+                <div
+                  key={tipo.key}
+                  className={`rounded-2xl border p-5 transition ${
+                    classeSelecionada === tipo.key
+                      ? "border-[#2f80c9] bg-[#2f80c9]/5"
+                      : "border-black/10 bg-black/[0.02]"
+                  }`}
+                >
                   <div className="flex items-center gap-3">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img src={tipo.icone} alt="" className="h-10 w-10 shrink-0 object-contain" />
@@ -1436,24 +1480,43 @@ function JrPassModal({ cambio, onClose }: { cambio: Cambio | null; onClose: () =
                     </p>
                   </div>
                   <div className="mt-4">
-                    {JR_PASS_DIAS_OPCOES.map((dias) => (
-                      <div
-                        key={dias}
-                        className="flex items-center justify-between border-t border-black/5 py-2.5 first:border-t-0 first:pt-0"
-                      >
-                        <span className="text-xs text-black/55">{dias} dias</span>
-                        <span className="text-right">
-                          <span className="block text-sm font-medium text-black">
-                            {formatUSD(tipo.precoUSD[dias])}
-                          </span>
-                          {cambio && (
-                            <span className="block text-[11px] text-black/40">
-                              {formatBRL(tipo.precoUSD[dias] * cambio.cotacao)}
+                    {JR_PASS_DIAS_OPCOES.map((dias) => {
+                      const selecionado = classeSelecionada === tipo.key && diasSelecionados === dias;
+                      return (
+                        <button
+                          key={dias}
+                          type="button"
+                          onClick={() => {
+                            setClasseSelecionada(tipo.key);
+                            setDiasSelecionados(dias);
+                          }}
+                          className="flex w-full items-center justify-between border-t border-black/5 py-2.5 text-left first:border-t-0 first:pt-0"
+                        >
+                          <span className="flex items-center gap-2 text-xs text-black/55">
+                            <span
+                              className={`flex h-4 w-4 shrink-0 items-center justify-center rounded-full border ${
+                                selecionado ? "border-[#2f80c9] bg-[#2f80c9]" : "border-black/20"
+                              }`}
+                            >
+                              {selecionado && <IconCheck className="h-2.5 w-2.5 text-white" />}
                             </span>
-                          )}
-                        </span>
-                      </div>
-                    ))}
+                            {dias} dias
+                          </span>
+                          <span className="text-right">
+                            <span
+                              className={`block text-sm font-medium ${selecionado ? "text-[#2f80c9]" : "text-black"}`}
+                            >
+                              {formatUSD(tipo.precoUSD[dias])}
+                            </span>
+                            {cambio && (
+                              <span className="block text-[11px] text-black/40">
+                                {formatBRL(tipo.precoUSD[dias] * cambio.cotacao)}
+                              </span>
+                            )}
+                          </span>
+                        </button>
+                      );
+                    })}
                   </div>
                   <p className="mt-3 border-t border-black/5 pt-3 text-[10px] leading-4 text-black/35">
                     Tabela oficial JR (ienes, vigente a partir de 1/out/2026):{" "}
@@ -1512,29 +1575,522 @@ function JrPassModal({ cambio, onClose }: { cambio: Cambio | null; onClose: () =
             </p>
           </div>
 
-          <ContactCTA
-            mode="single"
-            channel="whatsapp"
-            whatsappNumber={WHATSAPP_NUMBER}
-            brand="Ajisai"
-            label="Falar sobre JR Pass"
-            buttonClassName="mt-8 block w-full rounded-full bg-[#2f80c9] px-6 py-4 text-center text-xs font-medium uppercase tracking-[0.25em] text-white transition hover:bg-[#3b91dc]"
-            packageOptions={["JR Pass"]}
-            defaultPackage="JR Pass"
-          />
+        </div>
+
+        {/* Rodapé fixo com a escolha atual — pedido do Wilson, 25/set/2026:
+            "também precisa haver no rodapé da pagina o preço da minha
+            escolha e o que escolhi com o botão 'Finalizar Compra Via
+            Whatsapp'". Fica fora da área rolável (acima é overflow-y-auto),
+            sempre visível enquanto o cliente decide tipo e duração. */}
+        <div className="shrink-0 border-t border-black/10 bg-white px-5 py-4 md:px-8">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              {selecaoCompleta ? (
+                <>
+                  <p className="text-[10px] uppercase tracking-[0.15em] text-black/40">Sua escolha</p>
+                  <p className="text-sm font-medium text-black">
+                    {tipoEscolhido!.classe} · {diasSelecionados} dias
+                  </p>
+                  <p className="text-xs text-black/50">
+                    {precoEscolhidoUSD !== null && formatUSD(precoEscolhidoUSD)}
+                    {precoEscolhidoBRL !== null && ` · ${formatBRL(precoEscolhidoBRL)}`}
+                  </p>
+                </>
+              ) : (
+                <p className="text-xs text-black/45">
+                  Selecione o tipo (Comum ou Green Car) e a duração do passe acima.
+                </p>
+              )}
+            </div>
+            <a
+              href={
+                selecaoCompleta
+                  ? `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(mensagemWhatsapp)}`
+                  : undefined
+              }
+              target={selecaoCompleta ? "_blank" : undefined}
+              rel={selecaoCompleta ? "noreferrer" : undefined}
+              aria-disabled={!selecaoCompleta}
+              onClick={(event) => {
+                if (!selecaoCompleta) event.preventDefault();
+              }}
+              className={`inline-flex shrink-0 items-center justify-center rounded-full px-6 py-3.5 text-center text-xs font-medium uppercase tracking-[0.2em] text-white transition ${
+                selecaoCompleta
+                  ? "bg-[#2f80c9] hover:bg-[#3b91dc]"
+                  : "cursor-not-allowed bg-black/20"
+              }`}
+            >
+              Finalizar Compra Via WhatsApp
+            </a>
+          </div>
         </div>
       </div>
     </div>
   );
 }
 
-// Popup leve pra um serviço avulso simples (Câmbio, Seguro Viagem, Ajisai
-// Shopping) — mesmo padrão visual do popup de Hotéis, sem iframe, já que
+// As 3 seguradoras parceiras de hoje (Wilson, 25/set/2026: "hoje
+// trabalhamos com 3 empresas Affinity, GTA e MTA, o cliente pode escolher
+// qualquer 1 dos 3"). Dados de cobertura pesquisados nos sites oficiais
+// (affinityseguroviagem.com.br, gtaassist.com.br/segurogta.com.br,
+// mytravelassist.com.br) em 25/set/2026 — nenhum dos três expõe uma
+// tabela estática de plano×preço (o preço só sai depois de rodar a
+// cotação com destino/datas/idade no site deles), então aqui entram só
+// fatos que consegui confirmar com confiança:
+// - Affinity 40 Essential: cobertura e preço exatamente como o Wilson
+//   mandou print (25/set/2026) — US$ 40.000 em despesas médicas, US$ 500
+//   em bagagem, "não atende EUA/Canadá".
+// - MTA (My Travel Assist): a faixa de planos internacionais (MTA
+//   15/30/40/60/150, US$ 15 mil a US$ 150 mil) veio de uma matéria da
+//   Segurospromo sobre a seguradora — consistente com a nomenclatura do
+//   Affinity 40 (número do plano = cobertura em milhares de dólar).
+// - GTA (Global Travel Assistance): tentei o mesmo pros planos GTA, mas
+//   os nomes/valores que encontrei em fontes diferentes não bateram entre
+//   si (o site tem várias famílias de plano por região — Europa, EUA/
+//   Canadá, América Latina, Mundial — e cada busca voltou uma tabela
+//   diferente). Preferi não arriscar um plano/valor errado numa página
+//   de venda pra cliente de alta renda — fica só a faixa ampla que se
+//   repetiu em mais de uma fonte (US$ 36 mil a mais de US$ 300 mil,
+//   conforme o plano), sem fixar nome de plano específico.
+// O valor de referência mostrado no formulário (abaixo) é sempre o preço
+// interno da Ajisai (DIARIA_SEGURO_VIAGEM × dias × multiplicador de
+// idade — mesma fórmula usada na Calculadora Reversa e no self-service de
+// Viagem Personalizada) — não é o preço de nenhuma seguradora específica;
+// o plano e o valor final de cada uma são confirmados no fechamento.
+const SEGURADORAS_VIAGEM = [
+  {
+    key: "affinity" as const,
+    nome: "Affinity",
+    // Logo enviado pelo Wilson, 25/set/2026.
+    logo: "/images/Affinity-Logo.png",
+    descricao:
+      "Plano de referência: 40 Essential — cobertura médica de US$ 40.000 e US$ 500 em bagagem extraviada.",
+    observacao: "Não atende EUA/Canadá — para esses destinos a Affinity tem planos de cobertura maior.",
+  },
+  {
+    key: "gta" as const,
+    nome: "GTA",
+    // Logo enviado pelo Wilson, 25/set/2026 (mandou depois dos outros
+    // dois, no mesmo dia).
+    logo: "/images/GTA-Logo.png",
+    descricao:
+      "Global Travel Assistance — uma das seguradoras de viagem mais tradicionais do Brasil, com planos de US$ 36 mil a mais de US$ 300 mil em cobertura médica.",
+    observacao: "Faixa de cobertura varia bastante por plano — confirmamos o plano exato no fechamento.",
+  },
+  {
+    key: "mta" as const,
+    nome: "MTA",
+    // Logo enviado pelo Wilson, 25/set/2026.
+    logo: "/images/MTA-Logo.png",
+    descricao:
+      "My Travel Assist — planos internacionais de US$ 15 mil a US$ 150 mil em cobertura médica (MTA 15/30/40/60/150), com mais de 30 coberturas e assistências.",
+    observacao: null,
+  },
+];
+type SeguradoraKey = (typeof SEGURADORAS_VIAGEM)[number]["key"];
+
+function diasEntreDatas(inicio: string, fim: string): number {
+  if (!inicio || !fim) return 0;
+  const dataInicio = new Date(`${inicio}T00:00:00`);
+  const dataFim = new Date(`${fim}T00:00:00`);
+  const diffMs = dataFim.getTime() - dataInicio.getTime();
+  if (!Number.isFinite(diffMs) || diffMs <= 0) return 0;
+  return Math.max(1, Math.round(diffMs / (1000 * 60 * 60 * 24)));
+}
+
+// Pop-up dedicado do Seguro Viagem — mesmo tratamento dado ao JR Pass em
+// 25/set/2026: saiu do ServicoAvulsoModal pequeno, ganhou o próprio
+// componente no padrão de tamanho do modal "Hotéis" (max-w-5xl), com
+// comparação das 3 seguradoras e um formulário de self-checkout completo
+// (viajantes, idades, datas, contato). "Self-checkout" aqui é o mesmo
+// fluxo já confirmado com o Wilson (AskUserQuestion, 25/set/2026) do
+// /viagem_personalizada_selfservice: não existe gateway de pagamento no
+// site — o formulário grava um lead no CRM (tag SELF-SERVICE) e o time
+// fecha o pagamento de verdade pelo WhatsApp.
+function SeguroViagemModal({ cambio, onClose }: { cambio: Cambio | null; onClose: () => void }) {
+  const [seguradora, setSeguradora] = useState<SeguradoraKey | null>(null);
+  const [numViajantes, setNumViajantes] = useState(1);
+  const [idades, setIdades] = useState<(number | "")[]>([""]);
+  const [dataInicio, setDataInicio] = useState("");
+  const [dataFim, setDataFim] = useState("");
+  const [nome, setNome] = useState("");
+  const [email, setEmail] = useState("");
+  const [whatsapp, setWhatsapp] = useState("");
+  const [observacoes, setObservacoes] = useState("");
+  const [status, setStatus] = useState<"form" | "enviando" | "enviado" | "erro">("form");
+  const [erro, setErro] = useState("");
+
+  function ajustarNumViajantes(novo: number) {
+    const seguro = Math.max(1, Math.min(8, novo));
+    setNumViajantes(seguro);
+    setIdades((atual) => {
+      const proximo = atual.slice(0, seguro);
+      while (proximo.length < seguro) proximo.push("");
+      return proximo;
+    });
+  }
+
+  const idadesNumericas = idades.filter((i): i is number => typeof i === "number");
+  const idadesForaLimite = idadesNumericas.filter((i) => i > IDADE_LIMITE_SEGURO).length;
+  const dias = diasEntreDatas(dataInicio, dataFim);
+  const multiplicadorTotal = idadesNumericas.reduce(
+    (soma, idade) => soma + (multiplicadorSeguroPorIdade(idade) ?? 0),
+    0,
+  );
+  const valorReferenciaUSD = dias > 0 ? DIARIA_SEGURO_VIAGEM * dias * multiplicadorTotal : 0;
+  const valorReferenciaBRL = cambio ? valorReferenciaUSD * cambio.cotacao : null;
+  const parcela12x =
+    valorReferenciaBRL && valorReferenciaBRL > 0
+      ? calcularParcelaPrice(valorReferenciaBRL * (1 + TAXA_MAQUINA_CARTAO), TAXA_JUROS_CARTAO_MES, 12)
+      : null;
+
+  const formValido =
+    !!seguradora &&
+    nome.trim().length > 0 &&
+    /\S+@\S+\.\S+/.test(email) &&
+    whatsapp.trim().length >= 8 &&
+    !!dataInicio &&
+    !!dataFim &&
+    dias > 0 &&
+    idadesNumericas.length === numViajantes;
+
+  async function enviar() {
+    if (!formValido || status === "enviando") return;
+    setStatus("enviando");
+    setErro("");
+    try {
+      const resposta = await fetch("/api/seguro-viagem-selfservice", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          seguradora,
+          dataInicio,
+          dataFim,
+          dias,
+          idades: idadesNumericas,
+          valorReferenciaBRL,
+          nome,
+          email,
+          whatsapp,
+          observacoes,
+        }),
+      });
+      const dadosResposta = await resposta.json().catch(() => ({}));
+      if (!resposta.ok) {
+        setErro(dadosResposta.error || "Não foi possível registrar seu pedido agora. Tente de novo.");
+        setStatus("erro");
+        return;
+      }
+      setStatus("enviado");
+    } catch {
+      setErro("Não foi possível registrar seu pedido agora. Tente de novo.");
+      setStatus("erro");
+    }
+  }
+
+  const seguradoraEscolhida = SEGURADORAS_VIAGEM.find((s) => s.key === seguradora);
+  const mensagemWhatsapp = `Olá! Acabei de solicitar o Seguro Viagem (${
+    seguradoraEscolhida?.nome ?? ""
+  }) pelo site da Ajisai — meu nome é ${nome}.`;
+
+  return (
+    <div
+      className="fixed inset-0 z-[90] flex items-end justify-center bg-black/85 p-0 backdrop-blur-sm md:items-center md:p-6"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="seguro-viagem-modal-title"
+      onClick={onClose}
+    >
+      <div
+        className="relative max-h-[92vh] w-full max-w-5xl overflow-y-auto rounded-t-3xl border border-black/10 bg-white shadow-2xl md:max-h-[88vh] md:rounded-3xl"
+        onClick={(event) => event.stopPropagation()}
+      >
+        <div className="sticky top-0 z-20 flex h-14 items-center justify-between border-b border-black/10 bg-white/90 px-4 backdrop-blur-xl md:px-6">
+          <p
+            id="seguro-viagem-modal-title"
+            className={`${display.className} text-lg font-medium text-black md:text-xl`}
+          >
+            Seguro Viagem
+          </p>
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label="Fechar Seguro Viagem"
+            className="flex h-9 w-9 items-center justify-center rounded-full border border-black/15 text-2xl leading-none text-black/65 transition hover:border-black/40 hover:text-black"
+          >
+            ×
+          </button>
+        </div>
+
+        <div className="p-5 md:p-8">
+          {status === "enviado" ? (
+            <div className="py-6 text-center">
+              <p className="text-xs uppercase tracking-[0.3em] text-[#1c6ea8]">Pedido registrado</p>
+              <h3 className={`${display.className} mt-3 text-2xl font-medium text-black md:text-3xl`}>
+                Recebemos seu pedido de Seguro Viagem
+              </h3>
+              <p className="mx-auto mt-3 max-w-md text-sm leading-relaxed text-black/60">
+                Nossa equipe confirma o plano exato e o valor final direto com a{" "}
+                {seguradoraEscolhida?.nome ?? "seguradora escolhida"} e fecha com você pelo WhatsApp.
+              </p>
+              <a
+                href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(mensagemWhatsapp)}`}
+                target="_blank"
+                rel="noreferrer"
+                className="mt-6 inline-flex items-center justify-center rounded-full bg-[#2f80c9] px-6 py-3.5 text-xs font-medium uppercase tracking-[0.25em] text-white transition hover:bg-[#3b91dc]"
+              >
+                Continuar no WhatsApp
+              </a>
+            </div>
+          ) : (
+            <>
+              <p className="text-xs uppercase tracking-[0.3em] text-[#1c6ea8]">Seguro Viagem</p>
+              <h3
+                className={`${display.className} mt-2 max-w-2xl text-2xl font-medium text-black md:text-3xl`}
+              >
+                Cobertura médica e assistência para toda a viagem
+              </h3>
+              <p className="mt-3 max-w-2xl text-sm leading-relaxed text-black/60">
+                A Ajisai trabalha hoje com três seguradoras parceiras — escolha a que preferir, preencha os
+                dados da viagem e do grupo, e nossa equipe confirma o plano exato e fecha com você.
+              </p>
+
+              {/* Comparação das seguradoras */}
+              <div className="mt-8 border-t border-black/10 pt-6">
+                <p className="text-[10px] uppercase tracking-[0.2em] text-black/40">Escolha a seguradora</p>
+                <div className="mt-4 grid gap-4 sm:grid-cols-3">
+                  {SEGURADORAS_VIAGEM.map((s) => (
+                    <button
+                      key={s.key}
+                      type="button"
+                      onClick={() => setSeguradora(s.key)}
+                      className={`flex h-full flex-col rounded-2xl border p-5 text-left transition ${
+                        seguradora === s.key
+                          ? "border-[#2f80c9] bg-[#2f80c9]/5"
+                          : "border-black/10 bg-black/[0.02] hover:border-black/25"
+                      }`}
+                    >
+                      <div className="flex items-center justify-between gap-3">
+                        {s.logo ? (
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img src={s.logo} alt={s.nome} className="h-7 w-auto max-w-[120px] object-contain" />
+                        ) : (
+                          <p className={`${display.className} text-base font-medium text-black`}>{s.nome}</p>
+                        )}
+                        <span
+                          className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full border ${
+                            seguradora === s.key ? "border-[#2f80c9] bg-[#2f80c9]" : "border-black/20"
+                          }`}
+                        >
+                          {seguradora === s.key && <IconCheck className="h-3.5 w-3.5 text-white" />}
+                        </span>
+                      </div>
+                      <p className="mt-2 flex-1 text-[11px] leading-5 text-black/55">{s.descricao}</p>
+                      {s.observacao && (
+                        <p className="mt-2 text-[10px] leading-4 text-black/35">{s.observacao}</p>
+                      )}
+                    </button>
+                  ))}
+                </div>
+                <p className="mt-3 text-[11px] leading-5 text-black/40">
+                  Nenhuma das três seguradoras publica tabela fixa de plano e preço — o valor final depende
+                  de destino, datas e idade de cada viajante. O valor abaixo é a referência interna da
+                  Ajisai; o plano e o preço exatos são confirmados com a seguradora escolhida no fechamento.
+                </p>
+              </div>
+
+              {/* Formulário de self-checkout */}
+              <div className="mt-8 border-t border-black/10 pt-6">
+                <p className="text-[10px] uppercase tracking-[0.2em] text-black/40">Dados da viagem</p>
+                <div className="mt-4 grid gap-4 sm:grid-cols-2">
+                  <label className="flex flex-col gap-1.5">
+                    <span className="text-[10px] uppercase tracking-[0.15em] text-black/50">
+                      Início da viagem
+                    </span>
+                    <input
+                      type="date"
+                      value={dataInicio}
+                      onChange={(e) => setDataInicio(e.target.value)}
+                      className="rounded-lg border border-black/15 px-3 py-2.5 text-sm text-black focus:border-[#2f80c9] focus:outline-none"
+                    />
+                  </label>
+                  <label className="flex flex-col gap-1.5">
+                    <span className="text-[10px] uppercase tracking-[0.15em] text-black/50">
+                      Término da viagem
+                    </span>
+                    <input
+                      type="date"
+                      value={dataFim}
+                      onChange={(e) => setDataFim(e.target.value)}
+                      className="rounded-lg border border-black/15 px-3 py-2.5 text-sm text-black focus:border-[#2f80c9] focus:outline-none"
+                    />
+                  </label>
+                </div>
+                {dataInicio && dataFim && dias === 0 && (
+                  <p className="mt-2 text-[11px] text-red-600">
+                    A data de término precisa ser depois da data de início.
+                  </p>
+                )}
+
+                <div className="mt-5 max-w-xs">
+                  <span className="mb-2 block text-[10px] uppercase tracking-[0.15em] text-black/50">
+                    Viajantes
+                  </span>
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => ajustarNumViajantes(numViajantes - 1)}
+                      aria-label="Diminuir viajantes"
+                      className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-black/15 text-black transition hover:border-black/30"
+                    >
+                      −
+                    </button>
+                    <span className="flex h-10 flex-1 items-center justify-center rounded-lg border border-black/15 bg-black/[0.02] text-sm text-black">
+                      {numViajantes} {numViajantes === 1 ? "viajante" : "viajantes"}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => ajustarNumViajantes(numViajantes + 1)}
+                      aria-label="Aumentar viajantes"
+                      className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-black/15 text-black transition hover:border-black/30"
+                    >
+                      +
+                    </button>
+                  </div>
+                </div>
+
+                <div className="mt-4 grid gap-3 sm:grid-cols-4">
+                  {idades.map((idade, index) => (
+                    <label key={index} className="flex flex-col gap-1.5">
+                      <span className="text-[10px] uppercase tracking-[0.15em] text-black/50">
+                        Idade — viajante {index + 1}
+                      </span>
+                      <input
+                        type="number"
+                        min={0}
+                        max={120}
+                        value={idade}
+                        onChange={(e) => {
+                          const valor = e.target.value === "" ? "" : Math.max(0, Math.min(120, Number(e.target.value)));
+                          setIdades((atual) => atual.map((v, i) => (i === index ? valor : v)));
+                        }}
+                        className="rounded-lg border border-black/15 px-3 py-2.5 text-sm text-black focus:border-[#2f80c9] focus:outline-none"
+                      />
+                    </label>
+                  ))}
+                </div>
+                {idadesForaLimite > 0 && (
+                  <p className="mt-2 text-[11px] text-amber-700">
+                    {idadesForaLimite} {idadesForaLimite === 1 ? "viajante acima" : "viajantes acima"} de{" "}
+                    {IDADE_LIMITE_SEGURO} anos — fora da faixa de cálculo automático; cotamos direto com a
+                    seguradora.
+                  </p>
+                )}
+
+                <div className="mt-6 grid gap-4 sm:grid-cols-3">
+                  <label className="flex flex-col gap-1.5">
+                    <span className="text-[10px] uppercase tracking-[0.15em] text-black/50">
+                      Nome completo
+                    </span>
+                    <input
+                      type="text"
+                      value={nome}
+                      onChange={(e) => setNome(e.target.value)}
+                      className="rounded-lg border border-black/15 px-3 py-2.5 text-sm text-black focus:border-[#2f80c9] focus:outline-none"
+                    />
+                  </label>
+                  <label className="flex flex-col gap-1.5">
+                    <span className="text-[10px] uppercase tracking-[0.15em] text-black/50">E-mail</span>
+                    <input
+                      type="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      className="rounded-lg border border-black/15 px-3 py-2.5 text-sm text-black focus:border-[#2f80c9] focus:outline-none"
+                    />
+                  </label>
+                  <label className="flex flex-col gap-1.5">
+                    <span className="text-[10px] uppercase tracking-[0.15em] text-black/50">WhatsApp</span>
+                    <input
+                      type="tel"
+                      value={whatsapp}
+                      onChange={(e) => setWhatsapp(e.target.value)}
+                      placeholder="(11) 99999-9999"
+                      className="rounded-lg border border-black/15 px-3 py-2.5 text-sm text-black focus:border-[#2f80c9] focus:outline-none"
+                    />
+                  </label>
+                </div>
+
+                <label className="mt-4 flex flex-col gap-1.5">
+                  <span className="text-[10px] uppercase tracking-[0.15em] text-black/50">
+                    Observações (opcional)
+                  </span>
+                  <textarea
+                    value={observacoes}
+                    onChange={(e) => setObservacoes(e.target.value)}
+                    rows={2}
+                    placeholder="Condição de saúde pré-existente, prática de esportes na viagem, etc."
+                    className="rounded-lg border border-black/15 px-3 py-2.5 text-sm text-black focus:border-[#2f80c9] focus:outline-none"
+                  />
+                </label>
+              </div>
+
+              {/* Resumo de preço */}
+              <div className="mt-8 border-t border-black/10 pt-6">
+                <p className="text-[10px] uppercase tracking-[0.2em] text-black/40">
+                  Valor de referência Ajisai
+                </p>
+                {valorReferenciaBRL && valorReferenciaBRL > 0 ? (
+                  <>
+                    <p className={`${display.className} mt-1 text-3xl font-medium text-black`}>
+                      {formatBRL(valorReferenciaBRL)}
+                    </p>
+                    <p className="mt-1 text-sm font-medium text-black/50">
+                      ou {formatUSD(valorReferenciaUSD)}
+                    </p>
+                    {parcela12x && (
+                      <p className="mt-1.5 text-[11px] text-black/40">
+                        à vista no Pix, ou em até 12x de {formatBRL(parcela12x)} no cartão
+                      </p>
+                    )}
+                    <CambioLabel cambio={cambio} className="mt-2 text-[11px] text-black/35" />
+                  </>
+                ) : (
+                  <p className="mt-1 text-sm text-black/50">
+                    Preencha as datas da viagem e a idade de cada viajante para ver o valor de referência.
+                  </p>
+                )}
+              </div>
+
+              {erro && <p className="mt-4 text-sm text-red-600">{erro}</p>}
+
+              <button
+                type="button"
+                onClick={enviar}
+                disabled={!formValido || status === "enviando"}
+                className="mt-6 block w-full rounded-full bg-[#2f80c9] px-6 py-4 text-center text-xs font-medium uppercase tracking-[0.25em] text-white transition hover:bg-[#3b91dc] disabled:cursor-not-allowed disabled:opacity-50"
+              >
+                {status === "enviando" ? "Enviando…" : "Solicitar Seguro Viagem"}
+              </button>
+              <p className="mt-3 text-center text-[11px] text-black/35">
+                Isso não confirma pagamento — sua equipe Ajisai entra em contato pelo WhatsApp pra fechar o
+                plano exato com a seguradora escolhida.
+              </p>
+            </>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Popup leve pra um serviço avulso simples (Câmbio, Ajisai Shopping) —
+// mesmo padrão visual do popup de Hotéis, sem iframe, já que
 // esses serviços não têm (e não precisam de) página própria. Pedido do
 // Wilson, 16/set/2026: "JR Pass, Cambio e Seguro Viagem retirar do
 // serviços avulsos, devem virar cards principais [...] seguir mesmo
-// template de layout". JR Pass saiu daqui em 25/set/2026 — ganhou o
-// próprio componente (JrPassModal), maior e mais detalhado.
+// template de layout". JR Pass e Seguro Viagem saíram daqui em
+// 25/set/2026 — ganharam componente próprio (JrPassModal,
+// SeguroViagemModal), maiores e mais detalhados.
 function ServicoAvulsoModal({
   titulo,
   descricao,
