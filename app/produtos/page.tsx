@@ -1367,18 +1367,26 @@ function FormasPagamento({
   dataViagem,
   formaPagamento,
   onEscolher,
+  somenteAVista = false,
 }: {
   totalBRL: number | null;
   /** Data de início da viagem (AAAA-MM-DD) — limita quantas parcelas de Pix fazem sentido. */
   dataViagem: string;
   formaPagamento: FormaPagamentoEscolhida | null;
   onEscolher: (forma: FormaPagamentoEscolhida) => void;
+  /** Pedido do Wilson, 25/set/2026: "câmbio é sempre a vista" — desliga
+   * parcelamento (cartão e Pix) só pra esse produto; JR Pass e Seguro
+   * Viagem continuam com as opções normais (prop não passada = false). */
+  somenteAVista?: boolean;
 }) {
   if (totalBRL === null || totalBRL <= 0) return null;
 
-  const simulacaoCartao = calcularSimulacaoCartao(totalBRL);
+  const simulacaoCartaoCompleta = calcularSimulacaoCartao(totalBRL);
+  const simulacaoCartao = somenteAVista
+    ? simulacaoCartaoCompleta.filter((op) => op.parcelas === 1)
+    : simulacaoCartaoCompleta;
   const parcelasMaxPix = calcularParcelasMaxPix(dataViagem);
-  const simulacaoPix = calcularSimulacaoPix(totalBRL, parcelasMaxPix);
+  const simulacaoPix = somenteAVista ? [] : calcularSimulacaoPix(totalBRL, parcelasMaxPix);
 
   return (
     <div className="mt-8 border-t border-black/10 pt-6">
@@ -1398,8 +1406,9 @@ function FormasPagamento({
             <div>
               <p className="text-sm font-medium text-black">Cartão de crédito</p>
               <p className="mt-0.5 text-[10px] text-black/50">
-                maquininha {(TAXA_MAQUINA_CARTAO * 100).toFixed(2).replace(".", ",")}% + juros de{" "}
-                {(TAXA_JUROS_CARTAO_MES * 100).toFixed(2).replace(".", ",")}% a.m. por parcela
+                {somenteAVista
+                  ? `maquininha ${(TAXA_MAQUINA_CARTAO * 100).toFixed(2).replace(".", ",")}% — à vista`
+                  : `maquininha ${(TAXA_MAQUINA_CARTAO * 100).toFixed(2).replace(".", ",")}% + juros de ${(TAXA_JUROS_CARTAO_MES * 100).toFixed(2).replace(".", ",")}% a.m. por parcela`}
               </p>
             </div>
           </div>
@@ -1462,49 +1471,50 @@ function FormasPagamento({
             <span className="text-sm font-medium text-black">{formatBRL(totalBRL)}</span>
           </label>
 
-          {simulacaoPix.length > 0 ? (
-            <div className="mt-3">
-              <p className="text-[10px] text-black/50">
-                parcelado — entrada de {formatBRL(simulacaoPix[0].entrada)} (30%) + parcelas a{" "}
-                {(TAXA_JUROS_PIX_MES * 100).toFixed(2).replace(".", ",")}% a.m.
-              </p>
-              <div className="mt-1.5 divide-y divide-black/[0.06] border-t border-black/[0.06]">
-                {simulacaoPix.map((op) => {
-                  const selecionado =
-                    formaPagamento?.metodo === "pixParcelado" && formaPagamento.parcelas === op.parcelas;
-                  return (
-                    <label
-                      key={op.parcelas}
-                      className={`-mx-2 flex cursor-pointer items-center gap-3 rounded-lg px-2 py-2.5 transition ${
-                        selecionado ? "bg-[#2f80c9]/[0.07]" : "hover:bg-black/[0.02]"
-                      }`}
-                    >
-                      <input
-                        type="radio"
-                        name="formaPagamento"
-                        checked={selecionado}
-                        onChange={() => onEscolher({ metodo: "pixParcelado", parcelas: op.parcelas })}
-                        className="h-4 w-4 shrink-0 accent-[#2f80c9]"
-                      />
-                      <span className="w-9 shrink-0 text-xs text-black/55">{op.parcelas}x</span>
-                      <span className="flex-1 text-sm font-medium text-black">
-                        {formatBRL(op.valorParcela)}
-                      </span>
-                      <span className="shrink-0 text-[11px] text-black/45">
-                        total {formatBRL(op.valorTotal)}
-                      </span>
-                    </label>
-                  );
-                })}
+          {!somenteAVista &&
+            (simulacaoPix.length > 0 ? (
+              <div className="mt-3">
+                <p className="text-[10px] text-black/50">
+                  parcelado — entrada de {formatBRL(simulacaoPix[0].entrada)} (30%) + parcelas a{" "}
+                  {(TAXA_JUROS_PIX_MES * 100).toFixed(2).replace(".", ",")}% a.m.
+                </p>
+                <div className="mt-1.5 divide-y divide-black/[0.06] border-t border-black/[0.06]">
+                  {simulacaoPix.map((op) => {
+                    const selecionado =
+                      formaPagamento?.metodo === "pixParcelado" && formaPagamento.parcelas === op.parcelas;
+                    return (
+                      <label
+                        key={op.parcelas}
+                        className={`-mx-2 flex cursor-pointer items-center gap-3 rounded-lg px-2 py-2.5 transition ${
+                          selecionado ? "bg-[#2f80c9]/[0.07]" : "hover:bg-black/[0.02]"
+                        }`}
+                      >
+                        <input
+                          type="radio"
+                          name="formaPagamento"
+                          checked={selecionado}
+                          onChange={() => onEscolher({ metodo: "pixParcelado", parcelas: op.parcelas })}
+                          className="h-4 w-4 shrink-0 accent-[#2f80c9]"
+                        />
+                        <span className="w-9 shrink-0 text-xs text-black/55">{op.parcelas}x</span>
+                        <span className="flex-1 text-sm font-medium text-black">
+                          {formatBRL(op.valorParcela)}
+                        </span>
+                        <span className="shrink-0 text-[11px] text-black/45">
+                          total {formatBRL(op.valorTotal)}
+                        </span>
+                      </label>
+                    );
+                  })}
+                </div>
               </div>
-            </div>
-          ) : (
-            dataViagem && (
-              <p className="mt-3 text-[11px] text-black/45">
-                Viagem muito próxima — sem prazo pra parcelar no Pix, só à vista.
-              </p>
-            )
-          )}
+            ) : (
+              dataViagem && (
+                <p className="mt-3 text-[11px] text-black/45">
+                  Viagem muito próxima — sem prazo pra parcelar no Pix, só à vista.
+                </p>
+              )
+            ))}
         </div>
       </div>
     </div>
@@ -3085,6 +3095,7 @@ function CambioModal({ cambio, onClose }: { cambio: Cambio | null; onClose: () =
                 dataViagem=""
                 formaPagamento={formaPagamento}
                 onEscolher={setFormaPagamento}
+                somenteAVista
               />
 
               <p className="mt-6 text-[11px] leading-5 text-black/35">
