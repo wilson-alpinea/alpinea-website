@@ -1,21 +1,22 @@
 "use client";
 
 import { useState } from "react";
-import Image from "next/image";
 import { Bodoni_Moda } from "next/font/google";
 import { ContactCTA } from "./ContactCTA";
 import { useCambioUSD, formatUSD, formatBRL } from "../hooks/useCambioUSD";
 import { CambioLabel } from "./CambioLabel";
+import { MotoristaPrivadoPicker } from "./MotoristaPrivadoPicker";
 import {
-  comMargemEImposto,
-  DIARIA_MOTORISTA_PRIVADO_USD,
-  MOTORISTA_TAMANHO_GRUPO,
-  ROTEIRO_BASE_DIAS,
-  ROTEIRO_PRECO_BASE,
-  ROTEIRO_PRECO_DIA_EXTRA,
-  DESTINOS,
-  NumberStepper,
-} from "./CustomPackageCard";
+  SELECAO_MOTORISTA_VAZIA,
+  calcularTotalMotoristaUSD,
+  resumoSelecaoMotorista,
+  contarItensMotorista,
+  POLITICA_CANCELAMENTO_MOTORISTA,
+  ADICIONAL_MEET_GREET_USD,
+  ADICIONAL_CADEIRINHA_USD,
+  type SelecaoMotorista,
+} from "../lib/motoristaPrivadoRotas";
+import { ROTEIRO_PRECO_BASE } from "./CustomPackageCard";
 
 const display = Bodoni_Moda({
   subsets: ["latin"],
@@ -31,127 +32,36 @@ function IconX({ className }: { className?: string }) {
   );
 }
 
-function IconCheck({ className }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round" className={className}>
-      <circle cx="12" cy="12" r="9" />
-      <path d="M8.5 12.5l2.5 2.5 4.5-5" />
-    </svg>
-  );
-}
-
-// As 10 cidades mais procuradas do Japão pra turismo — mesma lista (e
-// mesma ordem de relevância) usada como referência em CustomPackageCard.tsx
-// (DESTINOS), só limitada às 10 primeiras pra não sobrecarregar o
-// seletor. Um campo "Outra cidade" cobre o restante sob demanda.
-const CIDADES_TOP10 = DESTINOS.slice(0, 10);
-
-const DIAS_PADRAO_POR_CIDADE = 2;
-const MIN_DIAS_CIDADE = 1;
-const MAX_DIAS_CIDADE = 14;
-
-// Adicional de custo da Alphard sobre a Hiace, por dia — pesquisa de
-// mercado (set/2026): charter privado de dia inteiro (~10h) em Tóquio
-// varia de JPY 40.000 a JPY 80.000 conforme veículo e trajeto (fonte:
-// mir768.com/en/post/how-much-does-a-private-car-cost-in-japan);
-// hirecarjapan.com cota a Alphard em ¥70.000–80.000/10h dentro de Tóquio;
-// já a tokyo-car-service.com cobra US$97/hora na Alphard contra US$107/
-// hora numa Hiace "Grand Cabin" — ou seja, o mercado NÃO tem um padrão
-// único de "Alphard sempre mais cara que a Hiace", varia por fornecedor e
-// configuração do veículo.
-//
-// Adotado adicional de custo de US$150/dia sobre a Hiace (≈21% acima do
-// custo-base de US$700/dia já usado no motorista privado da Viagem
-// Personalizada) — reflete o posicionamento que a própria Ajisai já usa no
-// texto do item "Transporte Privado" do calculador do Personalizado: a
-// Alphard é a categoria superior em conforto (bancos reclináveis tipo
-// poltrona, cabine mais silenciosa, acabamento premium), mesmo carregando
-// menos bagagem que a Hiace. Ajuste esta constante se houver tabela de
-// fornecedor mais precisa. Mesma fórmula de imposto+margem do resto do
-// site (ver comMargemEImposto, em CustomPackageCard.tsx).
-const ADICIONAL_ALPHARD_USD = comMargemEImposto(150);
-
-const CATEGORIAS_CARRO = [
-  {
-    id: "hiace" as const,
-    nome: "Toyota Hiace",
-    foto: "/images/carro-hiace.webp",
-    tagline: "Bagageiro amplo — ideal para grupos com mais bagagem",
-    precoDiaUSD: DIARIA_MOTORISTA_PRIVADO_USD,
-  },
-  {
-    id: "alphard" as const,
-    nome: "Toyota Alphard",
-    foto: "/images/carro-alphard.webp",
-    tagline: "Minivan premium — bancos reclináveis, cabine mais silenciosa",
-    precoDiaUSD: DIARIA_MOTORISTA_PRIVADO_USD + ADICIONAL_ALPHARD_USD,
-  },
-];
-
-type CategoriaId = (typeof CATEGORIAS_CARRO)[number]["id"];
-
+// Pedido do Wilson, 25/set/2026: "enriquecer nossa pagina de motorista
+// privado tanto na /produtos quanto calculadora reversa e self-service,
+// colocar mesma margem que já usamos hoje, os preços na tabela anexa são
+// preço de custo" + "adicionar coaster na /produtos". Depois de
+// perguntado, Wilson confirmou trocar o antigo modelo de "diária fixa
+// por cidade" (US$700/dia genérico, Hiace ou Alphard só) pelo catálogo
+// de rotas exatas do fornecedor DAIKICHI/HK TOURIST — agora com Alphard,
+// Hiace (10 e 14 lugares) e Coaster (18/21/29 lugares), preço exato por
+// rota/tour (ver app/lib/motoristaPrivadoRotas.ts). O antigo modelo por
+// cidades/dias saiu daqui; quem ainda usa a diária genérica é só o
+// builder completo de pacote em /viagem-personalizada
+// (CustomPackageCard.tsx, não tocado neste pedido).
 export function TransportePrivadoCalculator({ onClose }: { onClose: () => void }) {
   const cambio = useCambioUSD();
-  const [categoria, setCategoria] = useState<CategoriaId>("hiace");
-  const [cidadesSelecionadas, setCidadesSelecionadas] = useState<Record<string, number>>(
-    () => ({ tokyo: 3, kyoto: 2 }),
-  );
-  const [outroAtivo, setOutroAtivo] = useState(false);
-  const [outroNome, setOutroNome] = useState("");
-  const [outroDias, setOutroDias] = useState(DIAS_PADRAO_POR_CIDADE);
+  const [selecao, setSelecao] = useState<SelecaoMotorista>(SELECAO_MOTORISTA_VAZIA);
 
-  function toggleCidade(key: string) {
-    setCidadesSelecionadas((prev) => {
-      const next = { ...prev };
-      if (key in next) {
-        delete next[key];
-      } else {
-        next[key] = DIAS_PADRAO_POR_CIDADE;
-      }
-      return next;
-    });
-  }
-
-  function setDiasCidade(key: string, dias: number) {
-    setCidadesSelecionadas((prev) => ({ ...prev, [key]: dias }));
-  }
-
-  // "Quantidade de cidades" e "quantidade de diárias de motorista" são
-  // derivadas direto do seletor abaixo, em vez de campos separados — assim
-  // não há como o total de diárias destoar da soma dos dias por cidade.
-  const quantidadeCidades =
-    Object.keys(cidadesSelecionadas).length + (outroAtivo && outroNome.trim() ? 1 : 0);
-
-  const quantidadeDiarias =
-    Object.values(cidadesSelecionadas).reduce((soma, d) => soma + d, 0) +
-    (outroAtivo ? outroDias : 0);
-
-  const categoriaEscolhida = CATEGORIAS_CARRO.find((c) => c.id === categoria)!;
   const cambioCotacao = cambio?.cotacao ?? 5.3;
+  const quantidadeItens = contarItensMotorista(selecao);
+  const motoristaUSD = calcularTotalMotoristaUSD(selecao);
 
-  // Motorista particular — mesma regra de preço da calculadora da Viagem
-  // Personalizada (categoria Hiace = DIARIA_MOTORISTA_PRIVADO_USD, em
-  // CustomPackageCard.tsx). Assumido 1 veículo, até MOTORISTA_TAMANHO_GRUPO
-  // pessoas — sem seletor de passageiros aqui, consistente com a descrição
-  // já usada no site pro serviço ("Para até 4 pessoas").
-  const motoristaUSD = categoriaEscolhida.precoDiaUSD * quantidadeDiarias;
-
-  // Roteiro Personalizado — mesma regra de preço da calculadora da Viagem
-  // Personalizada (ROTEIRO_BASE_DIAS / ROTEIRO_PRECO_BASE /
-  // ROTEIRO_PRECO_DIA_EXTRA). O Transporte Privado exige Roteiro
-  // Personalizado (ver card "Transporte Privado" em /produtos), então o
-  // valor já vem embutido aqui em vez de cobrado à parte.
-  const roteiroBRL =
-    quantidadeDiarias > 0
-      ? ROTEIRO_PRECO_BASE +
-        Math.max(0, quantidadeDiarias - ROTEIRO_BASE_DIAS) * ROTEIRO_PRECO_DIA_EXTRA
-      : 0;
-
-  // Roteiro nasce em reais, motorista nasce em dólar — mesmo padrão de
-  // conversão usado em PriceCalculator.tsx.
-  const totalUSD = roteiroBRL / cambioCotacao + motoristaUSD;
-  const totalBRL = roteiroBRL + motoristaUSD * cambioCotacao;
-
+  // "Transporte Privado" exige Roteiro Personalizado (ver requisito no
+  // card em /produtos) — mesma regra do modelo antigo, só que agora o
+  // roteiro nasce em reais (ROTEIRO_PRECO_BASE) e é somado convertido em
+  // dólar, sem o adicional por dia extra (esse cálculo dependia de "dias
+  // de roteiro", que não existe mais nesse modelo por rota/tour — pra
+  // roteiros mais longos, a Calculadora Reversa segue sendo a ferramenta
+  // certa). Só entra quando há pelo menos 1 serviço selecionado.
+  const roteiroUSD = quantidadeItens > 0 ? ROTEIRO_PRECO_BASE / cambioCotacao : 0;
+  const totalUSD = motoristaUSD + roteiroUSD;
+  const totalBRL = totalUSD * cambioCotacao;
   const totalUSDLabel = cambio == null ? "…" : formatUSD(totalUSD);
   const totalBRLLabel = cambio == null ? "…" : formatBRL(totalBRL);
 
@@ -180,7 +90,7 @@ export function TransportePrivadoCalculator({ onClose }: { onClose: () => void }
             Pedido do Wilson, 16/set/2026: "o valor final deve estar fixo
             na pagina, ao mudar variaveis" — o modal virou um flex-col com
             só este bloco rolando; o total fica num rodapé fixo abaixo,
-            sempre visível enquanto a categoria/cidades são ajustadas. */}
+            sempre visível enquanto veículo/rotas são ajustados. */}
         <div className="overflow-y-auto p-6 sm:p-8">
           <p className="text-xs uppercase tracking-[0.3em] text-[#6ec3d9]">Calculadora</p>
           <h3
@@ -191,196 +101,40 @@ export function TransportePrivadoCalculator({ onClose }: { onClose: () => void }
           </h3>
           <p className="mt-2 text-sm font-light leading-6 text-black/55">
             Motorista particular, sem compartilhar veículo com outros grupos —
-            monte a logística da sua viagem e veja o investimento estimado, já
-            com o Roteiro Personalizado incluso.
+            escolha o veículo e as rotas/tours que precisa e veja o investimento exato,
+            direto da tabela do nosso fornecedor no Japão.
           </p>
 
-          {/* ── CATEGORIA DE CARRO ── */}
-        <div className="mt-7">
-          <p className="text-[10px] uppercase tracking-[0.2em] text-black/40">
-            Categoria do carro
-          </p>
-          <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
-            {CATEGORIAS_CARRO.map((c) => {
-              const ativo = c.id === categoria;
-              return (
-                <button
-                  key={c.id}
-                  type="button"
-                  onClick={() => setCategoria(c.id)}
-                  aria-pressed={ativo}
-                  className={`flex flex-col overflow-hidden rounded-2xl border text-left transition ${
-                    ativo
-                      ? "border-[#2f80c9]/60 bg-[#2f80c9]/10"
-                      : "border-black/10 bg-black/[0.02] hover:border-black/25"
-                  }`}
-                >
-                  <div className="relative aspect-[3/2] w-full bg-white">
-                    <Image
-                      src={c.foto}
-                      alt={c.nome}
-                      fill
-                      sizes="(max-width: 640px) 100vw, 320px"
-                      className="object-contain p-2"
-                    />
-                  </div>
-                  <div className="p-3.5">
-                    <p className="text-sm font-medium text-black">{c.nome}</p>
-                    <p className="mt-1 text-xs leading-5 text-black/50">{c.tagline}</p>
-                    <p className="mt-2 text-xs font-semibold uppercase tracking-[0.1em] text-[#9fd4ee]">
-                      {formatUSD(c.precoDiaUSD)}/dia
-                    </p>
-                  </div>
-                </button>
-              );
-            })}
+          <div className="mt-7">
+            <MotoristaPrivadoPicker selecao={selecao} onChange={setSelecao} cambioCotacao={cambioCotacao} />
           </div>
-          <p className="mt-2 text-[11px] text-black/35">
-            Para até {MOTORISTA_TAMANHO_GRUPO} pessoas por veículo.
-          </p>
-        </div>
-
-        {/* ── CIDADES E DIAS COM MOTORISTA ── */}
-        <div className="mt-7 border-t border-black/10 pt-6">
-          <p className="text-[10px] uppercase tracking-[0.2em] text-black/40">
-            Cidades do roteiro e dias com motorista
-          </p>
-          <div className="mt-3 space-y-2">
-            {CIDADES_TOP10.map((d) => {
-              const ativo = d.key in cidadesSelecionadas;
-              return (
-                <div
-                  key={d.key}
-                  className={`rounded-xl border px-3.5 py-2.5 transition ${
-                    ativo ? "border-[#2f80c9]/50 bg-[#2f80c9]/10" : "border-black/10 bg-black/[0.02]"
-                  }`}
-                >
-                  <button
-                    type="button"
-                    onClick={() => toggleCidade(d.key)}
-                    aria-pressed={ativo}
-                    className="flex w-full items-center gap-3 text-left"
-                  >
-                    <span
-                      className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full border text-[10px] transition ${
-                        ativo
-                          ? "border-[#2f80c9] bg-[#2f80c9] text-white"
-                          : "border-black/25 text-transparent"
-                      }`}
-                    >
-                      <IconCheck className="h-3 w-3" />
-                    </span>
-                    <span className="flex-1 text-sm text-black">{d.nome}</span>
-                    {ativo && (
-                      <span className="text-xs text-black/50">
-                        {cidadesSelecionadas[d.key]}{" "}
-                        {cidadesSelecionadas[d.key] === 1 ? "dia" : "dias"}
-                      </span>
-                    )}
-                  </button>
-                  {ativo && (
-                    <div className="mt-3 max-w-[200px] pl-8">
-                      <NumberStepper
-                        label={`Dias em ${d.nome}`}
-                        value={cidadesSelecionadas[d.key]}
-                        onChange={(v) => setDiasCidade(d.key, v)}
-                        min={MIN_DIAS_CIDADE}
-                        max={MAX_DIAS_CIDADE}
-                      />
-                    </div>
-                  )}
-                </div>
-              );
-            })}
-
-            {/* Outra cidade — cobre o restante fora do top 10 */}
-            <div
-              className={`rounded-xl border px-3.5 py-2.5 transition ${
-                outroAtivo ? "border-[#2f80c9]/50 bg-[#2f80c9]/10" : "border-black/10 bg-black/[0.02]"
-              }`}
-            >
-              <button
-                type="button"
-                onClick={() => setOutroAtivo((v) => !v)}
-                aria-pressed={outroAtivo}
-                className="flex w-full items-center gap-3 text-left"
-              >
-                <span
-                  className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full border text-[10px] transition ${
-                    outroAtivo
-                      ? "border-[#2f80c9] bg-[#2f80c9] text-white"
-                      : "border-black/25 text-transparent"
-                  }`}
-                >
-                  <IconCheck className="h-3 w-3" />
-                </span>
-                <span className="flex-1 text-sm text-black">Outra cidade</span>
-              </button>
-              {outroAtivo && (
-                <div className="mt-3 space-y-3 pl-8">
-                  <label className="block max-w-xs">
-                    <span className="mb-1.5 block text-[10px] uppercase tracking-[0.2em] text-black/40">
-                      Qual cidade?
-                    </span>
-                    <input
-                      type="text"
-                      value={outroNome}
-                      onChange={(e) => setOutroNome(e.target.value)}
-                      placeholder="Ex.: Hokkaido, Beppu…"
-                      className="w-full rounded-lg border border-black/15 bg-black/[0.03] px-3 py-2 text-sm text-black placeholder:text-black/25 outline-none focus:border-[#2f80c9]/60"
-                    />
-                  </label>
-                  <div className="max-w-[200px]">
-                    <NumberStepper
-                      label="Dias"
-                      value={outroDias}
-                      onChange={setOutroDias}
-                      min={MIN_DIAS_CIDADE}
-                      max={MAX_DIAS_CIDADE}
-                    />
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-
-        {/* ── RESUMO: CIDADES + DIÁRIAS ── */}
-        <div className="mt-6 flex justify-center gap-6 border-t border-black/10 pt-6 text-center">
-          <div>
-            <p className={`${display.className} text-3xl font-medium text-black`}>
-              {quantidadeCidades}
-            </p>
-            <p className="mt-0.5 text-[10px] uppercase tracking-[0.15em] text-black/40">
-              {quantidadeCidades === 1 ? "cidade" : "cidades"}
-            </p>
-          </div>
-          <div className="w-px bg-black/10" />
-          <div>
-            <p className={`${display.className} text-3xl font-medium text-black`}>
-              {quantidadeDiarias}
-            </p>
-            <p className="mt-0.5 text-[10px] uppercase tracking-[0.15em] text-black/40">
-              {quantidadeDiarias === 1 ? "diária de motorista" : "diárias de motorista"}
-            </p>
-          </div>
-        </div>
 
           {/* ── DISCLAIMER: TRÂNSITO INTER-MUNICIPAL ── */}
           <div className="mt-6 rounded-xl border border-black/15 bg-black/[0.03] p-4">
             <p className="text-xs leading-5 text-black/60">
               <span className="font-semibold text-black/80">Não incluso:</span> trânsito
-              inter-municipal (deslocamentos rodoviários de longa distância entre cidades, como
-              pedágios e horas extras de estrada). O valor calculado cobre motorista e veículo
-              dedicados dentro das cidades selecionadas.
+              inter-municipal de longa distância entre regiões (ex.: Tóquio↔Kansai por estrada).
+              Os valores acima já incluem imposto, estacionamento, pedágio (ETC) e combustível.
             </p>
           </div>
 
-          {/* ── DISCLAIMER: MOTORISTA BILÍNGUE ──
-              Contraste corrigido, 16/set/2026 — o texto em âmbar claro
-              (text-amber-200) sobre fundo claro ficava quase ilegível;
-              alinhado ao mesmo padrão de aviso âmbar já usado em
-              /duvidas-frequentes (border-amber-300/bg-amber-50/text-amber-800). */}
+          {/* ── ADICIONAIS OPCIONAIS ── */}
+          <div className="mt-4 rounded-xl border border-black/15 bg-black/[0.03] p-4">
+            <p className="text-xs leading-5 text-black/60">
+              <span className="font-semibold text-black/80">Adicionais opcionais</span> (sob
+              consulta, cobrados à parte): recepção com placa de identificação (Meet &amp; Greet) —{" "}
+              {formatUSD(ADICIONAL_MEET_GREET_USD)}; cadeirinha infantil — {formatUSD(ADICIONAL_CADEIRINHA_USD)}.
+            </p>
+          </div>
+
+          {/* ── POLÍTICA DE CANCELAMENTO ── */}
+          <div className="mt-4 rounded-xl border border-black/15 bg-black/[0.03] p-4">
+            <p className="text-xs leading-5 text-black/60">
+              <span className="font-semibold text-black/80">Cancelamento:</span> {POLITICA_CANCELAMENTO_MOTORISTA}
+            </p>
+          </div>
+
+          {/* ── DISCLAIMER: MOTORISTA BILÍNGUE ── */}
           <div className="mt-4 rounded-xl border border-amber-300 bg-amber-50/60 p-4">
             <p className="text-xs leading-5 text-amber-800">
               <span className="font-semibold text-amber-900">
@@ -393,14 +147,11 @@ export function TransportePrivadoCalculator({ onClose }: { onClose: () => void }
           </div>
         </div>
 
-        {/* ── RODAPÉ FIXO: TOTAL + CTA ──
-            Pedido do Wilson, 16/set/2026: "o valor final deve estar fixo
-            na pagina, ao mudar variaveis" — sai do fluxo rolável e vira um
-            rodapé sempre visível, com o CTA logo abaixo do valor. */}
+        {/* ── RODAPÉ FIXO: TOTAL + CTA ── */}
         <div className="shrink-0 border-t border-black/10 bg-white p-6 text-center sm:p-8 sm:pt-6">
-          {quantidadeDiarias === 0 ? (
+          {quantidadeItens === 0 ? (
             <p className="text-sm font-light text-black/45">
-              Selecione ao menos uma cidade para calcular o investimento.
+              Selecione ao menos uma rota ou tour para calcular o investimento.
             </p>
           ) : (
             <>
@@ -415,10 +166,8 @@ export function TransportePrivadoCalculator({ onClose }: { onClose: () => void }
               <p className="mt-1 text-sm font-medium text-black/50">ou {totalBRLLabel}</p>
               <CambioLabel cambio={cambio} className="mt-2 text-[11px] text-black/30" />
               <p className="mt-3 text-xs text-black/30">
-                Estimativa para {categoriaEscolhida.nome}, {quantidadeDiarias}{" "}
-                {quantidadeDiarias === 1 ? "diária" : "diárias"} de motorista em{" "}
-                {quantidadeCidades} {quantidadeCidades === 1 ? "cidade" : "cidades"}. Valor final
-                pode variar conforme a logística real do roteiro.
+                {resumoSelecaoMotorista(selecao)}. Valor final pode variar conforme adicionais e
+                logística real do roteiro.
               </p>
             </>
           )}

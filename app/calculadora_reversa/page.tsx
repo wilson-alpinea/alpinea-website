@@ -35,9 +35,7 @@ import {
   JR_PASS_PRECO_USD_GREEN,
   DIARIA_ESIM_USD_PAX,
   PRECO_CAMBIO_BRASIL,
-  DIARIA_MOTORISTA_PRIVADO_USD,
   COMISSAO_AJISAI_SHOPPING_PCT,
-  MOTORISTA_TAMANHO_GRUPO,
   PRECO_INGRESSO_DISNEYLAND_TOKYO_USD_PAX,
   PRECO_INGRESSO_DISNEYSEA_USD_PAX,
   PRECO_DISNEY_PREMIER_ACCESS_POR_ATRACAO_USD_PAX,
@@ -72,6 +70,13 @@ import {
 } from "../hooks/useCambioUSD";
 import { CambioLabel } from "../components/CambioLabel";
 import PerfilViajanteSeletor from "../components/PerfilViajanteSeletor";
+import { MotoristaPrivadoPicker } from "../components/MotoristaPrivadoPicker";
+import {
+  SELECAO_MOTORISTA_VAZIA,
+  calcularTotalMotoristaUSD,
+  resumoSelecaoMotorista,
+  type SelecaoMotorista,
+} from "../lib/motoristaPrivadoRotas";
 import {
   calcularComponentesRitmo,
   calcularFeePlanejamento,
@@ -1652,6 +1657,22 @@ export default function CalculadoraReversaPage() {
   // Inglês)".
   const [guiaTipo, setGuiaTipo] = useState<"brasileiro" | "estrangeiro">("brasileiro");
 
+  // Motorista Privado — catálogo de rotas exatas do fornecedor
+  // DAIKICHI/HK TOURIST (ver app/lib/motoristaPrivadoRotas.ts). Pedido do
+  // Wilson, 25/set/2026: "enriquecer nossa pagina de motorista privado
+  // tanto na /produtos quanto calculadora reversa e self-service [...] os
+  // preços na tabela anexa são preço de custo" — depois de perguntado,
+  // Wilson confirmou trocar a antiga estimativa de diária fixa
+  // (DIARIA_MOTORISTA_PRIVADO_USD × dias × grupo, sempre incluída
+  // automaticamente na proposta) pelo catálogo de rotas exatas, igual ao
+  // usado em /produtos e no self-service. Diferença importante: como não
+  // existe uma seleção padrão sensata de rotas (o vendedor precisa
+  // escolher veículo e trechos reais), o item só entra na proposta quando
+  // há pelo menos 1 rota/tour selecionado — antes entrava sempre, mesmo
+  // sem nenhuma ação do vendedor.
+  const [selecaoMotorista, setSelecaoMotorista] = useState<SelecaoMotorista>(SELECAO_MOTORISTA_VAZIA);
+  const [motoristaExpandido, setMotoristaExpandido] = useState(false);
+
   // Wi-fi - eSIM (por pessoa), escala com a quantidade de dias. Pocket
   // Wi-Fi foi removido — pedido do Wilson, 16/set/2026: "não vamos mais
   // trabalhar com pocket wifi, pode remover da calculadora, pagina de
@@ -1729,7 +1750,7 @@ export default function CalculadoraReversaPage() {
   // ocultar/mostrar todos de uma vez, já que ocultar um campo agora o faz
   // desaparecer por completo (sem botão de olho individual pra restaurar).
   const TODOS_CAMPOS_OCULTAVEIS = [
-    1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
+    1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 21,
   ];
   const todosCamposOcultos = TODOS_CAMPOS_OCULTAVEIS.every((n) => camposOcultos.has(n));
   function alternarTodosCamposOcultos() {
@@ -1768,6 +1789,7 @@ export default function CalculadoraReversaPage() {
     17: "Serviços adicionais",
     18: "Seguro viagem — idade dos passageiros",
     19: "Data estimada da viagem",
+    21: "Motorista Privado",
   };
   const [painelCamposOcultosAberto, setPainelCamposOcultosAberto] = useState(false);
   const camposOcultosOrdenados = Array.from(camposOcultos).sort((a, b) => a - b);
@@ -2324,26 +2346,25 @@ export default function CalculadoraReversaPage() {
 
     // 6) Motorista Privado (único item de transporte da calculadora —
     // ver comentário acima, na seção 2, sobre a fusão com o antigo item
-    // "Transporte")
-    const precoMotorista = Math.round(
-      DIARIA_MOTORISTA_PRIVADO_USD *
-        dias *
-        Math.max(1, Math.ceil(pessoas / MOTORISTA_TAMANHO_GRUPO)) *
-        cambioCotacao,
-    );
-    const motoristaRecomendado = cabe(precoMotorista);
-    if (motoristaRecomendado) gasto += precoMotorista;
-    incluidos.push({
-      chave: "motorista",
-      label: "Motorista Privado",
-      detalhe: [
-        "Motorista particular à disposição do grupo, sem compartilhar veículo.",
-        "Mais privacidade e flexibilidade de horário/roteiro do que transporte compartilhado — não inclui o transfer aeroporto ↔ hotel (item à parte).",
-        `US$ ${DIARIA_MOTORISTA_PRIVADO_USD}/dia para até ${MOTORISTA_TAMANHO_GRUPO} pessoas`,
-      ],
-      precoBRL: precoMotorista,
-      recomendado: motoristaRecomendado,
-    });
+    // "Transporte"). Preço exato por rota/tour selecionado pelo vendedor
+    // (ver comentário na declaração de `selecaoMotorista`, acima) — só
+    // entra na proposta quando há pelo menos 1 serviço escolhido.
+    if (selecaoMotorista.itens.length > 0) {
+      const precoMotorista = Math.round(calcularTotalMotoristaUSD(selecaoMotorista) * cambioCotacao);
+      const motoristaRecomendado = cabe(precoMotorista);
+      if (motoristaRecomendado) gasto += precoMotorista;
+      incluidos.push({
+        chave: "motorista",
+        label: "Motorista Privado",
+        detalhe: [
+          "Motorista particular à disposição do grupo, sem compartilhar veículo.",
+          "Mais privacidade e flexibilidade de horário/roteiro do que transporte compartilhado — não inclui o transfer aeroporto ↔ hotel (item à parte).",
+          resumoSelecaoMotorista(selecaoMotorista),
+        ],
+        precoBRL: precoMotorista,
+        recomendado: motoristaRecomendado,
+      });
+    }
 
     // 8) Ingressos e experiências — só entram os parques marcados pelo
     // vendedor (nenhum vem por padrão). Premier Access (Disney, por
@@ -2610,6 +2631,7 @@ export default function CalculadoraReversaPage() {
     extensaoCategoriaHotel,
     guiaDias,
     guiaTipo,
+    selecaoMotorista,
     cambioIene,
     cambioIeneCidade,
     quantidadeIenes,
@@ -2894,6 +2916,7 @@ export default function CalculadoraReversaPage() {
       `Origem do voo: ${nomeOrigem}`,
       `Bagagem: ${nomeBagagem}`,
       `Guia: ${guiaTipo === "brasileiro" ? "Brasileiro" : "Estrangeiro"} (${guiaDias} ${guiaDias === 1 ? "dia" : "dias"})`,
+      selecaoMotorista.itens.length > 0 ? `Motorista privado: ${resumoSelecaoMotorista(selecaoMotorista)}` : "",
       dataViagemEstimada
         ? `Data estimada da viagem: ${new Date(`${dataViagemEstimada}T00:00:00`).toLocaleDateString("pt-BR")}`
         : "",
@@ -4771,6 +4794,57 @@ export default function CalculadoraReversaPage() {
                   66–70, 2,5x; 71–75, 3x; 76–80, 4x; 81–{IDADE_LIMITE_SEGURO}, 5x. Acima de{" "}
                   {IDADE_LIMITE_SEGURO} anos não entra no preço automático — cotar sob consulta.
                 </p>
+              </>
+            )}
+          </div>
+
+          <div className="sm:col-span-2">
+            {!camposOcultos.has(21) && (
+              <span className="mb-2 flex items-center text-[10px] uppercase tracking-[0.2em] text-black/50">
+                <LabelNumerado texto="21. Motorista Privado" />
+                <BotaoOcultarCampo oculto={false} onToggle={() => alternarCampoOculto(21)} />
+              </span>
+            )}
+            {!camposOcultos.has(21) && (
+              <>
+              {/* Catálogo de rotas exatas do fornecedor DAIKICHI/HK
+                  TOURIST — mesmo componente usado em /produtos e no
+                  self-service (ver comentário na declaração de
+                  `selecaoMotorista`, acima). Progressive disclosure igual
+                  ao câmbio de ienes (seção 14): fica colapsado até o
+                  vendedor clicar ou já haver alguma rota escolhida. */}
+              {!(motoristaExpandido || selecaoMotorista.itens.length > 0) ? (
+                <button
+                  type="button"
+                  onClick={() => setMotoristaExpandido(true)}
+                  className="flex items-center gap-2 rounded-lg border border-dashed border-black/20 px-3 py-2 text-xs text-black/60 transition hover:border-black/35 hover:text-black/60"
+                >
+                  <span aria-hidden className="text-sm leading-none">+</span>
+                  Configurar motorista privado (opcional)
+                </button>
+              ) : (
+                <div className="rounded-xl border border-black/10 bg-black/[0.02] p-4">
+                  <MotoristaPrivadoPicker
+                    selecao={selecaoMotorista}
+                    onChange={setSelecaoMotorista}
+                    cambioCotacao={cambioCotacao}
+                  />
+                  {selecaoMotorista.itens.length === 0 && (
+                    <button
+                      type="button"
+                      onClick={() => setMotoristaExpandido(false)}
+                      className="mt-3 text-[11px] text-black/40 underline decoration-black/20 underline-offset-2 hover:text-black/60"
+                    >
+                      Cancelar
+                    </button>
+                  )}
+                </div>
+              )}
+              <p className="mt-1.5 text-[11px] leading-4 text-black/60">
+                Preço exato por veículo e rota/tour, direto da tabela do fornecedor — não inclui o
+                transfer aeroporto ↔ hotel (item à parte). Só entra na proposta quando há pelo
+                menos 1 serviço selecionado.
+              </p>
               </>
             )}
           </div>

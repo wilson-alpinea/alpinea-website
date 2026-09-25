@@ -1,5 +1,15 @@
 "use client";
 
+import { VAGAS, type Vaga, type PublicoKey, type SetorKey, type StatusVaga } from "../lib/vagasCatalogo";
+import {
+  PERGUNTAS_TRIAGEM,
+  NIVEIS_JAPONES,
+  NOTA_MINIMA_PROXIMA_ETAPA,
+  type RespostasTriagem,
+  type CriterioPontuacao,
+  type NivelJapones,
+} from "../lib/candidaturaScoring";
+import { EXTENSOES_CURRICULO_ACEITAS } from "../lib/curriculoExtracao";
 import { useEffect, useMemo, useState, type FormEvent } from "react";
 import Image from "next/image";
 import Link from "next/link";
@@ -86,7 +96,6 @@ function linkWhatsapp(mensagem: string) {
 // ── Os 2 tipos de serviço (público-alvo). Fotos adicionadas 19/set/2026 a
 // pedido do Wilson, que mandou as duas imagens + um print de referência
 // mostrando o layout desejado (foto no topo do card, texto embaixo). ──
-type PublicoKey = "brasil" | "japao";
 const PUBLICOS: { key: PublicoKey; nome: string; descricao: string; cta: string; imagem: string }[] = [
   {
     key: "brasil",
@@ -109,7 +118,6 @@ const PUBLICOS: { key: PublicoKey; nome: string; descricao: string; cta: string;
 // ── Setores. "materiais" adicionado em 19/set/2026 junto com o primeiro
 // lote de vagas reais — cobre fábricas de vidro, borracha e afins que não
 // se encaixam nos outros 3 setores (ex.: Nitto Boseki, fibra de vidro). ──
-type SetorKey = "automotivo" | "eletronicos" | "alimenticio" | "materiais";
 const SETORES: { key: SetorKey; nome: string; descricao: string }[] = [
   {
     key: "automotivo",
@@ -190,28 +198,6 @@ function IconSetor({ setor, className }: { setor: SetorKey; className?: string }
 // não repetir o mesmo texto em cada vaga. Só entram em fonteContrato as
 // vagas cuja ficha eu de fato reli com esse bloco completo — não é
 // fabricado pras demais, que mostram só um convite pra falar no WhatsApp. ──
-type StatusVaga = "aberta" | "consulta";
-
-type Vaga = {
-  id: string;
-  empresa: string;
-  titulo: string;
-  setor: SetorKey;
-  regiao: string;
-  cidade: string;
-  publico: PublicoKey[];
-  turno: string;
-  contrato: string;
-  salario: string;
-  status: StatusVaga;
-  idioma?: string;
-  perfil?: string;
-  logo?: string;
-  conducao?: string;
-  observacoes?: string;
-  fonteContrato?: "ut-suriemu";
-};
-
 // Bloco de condições padrão que se repete, com o mesmo texto, em toda
 // ficha "UT Suri-emu" já relida (moradia, seguro social/shakai hoken,
 // exame médico admissional/anual, financiamento de passagem aérea).
@@ -269,452 +255,6 @@ function DetalhesVaga({ vaga }: { vaga: Vaga }) {
   );
 }
 
-const VAGAS: Vaga[] = [
-  // ── Avance RH/Corporation — comunicado + fichas individuais ──
-  {
-    id: "fuji-seat-higashiomi",
-    empresa: "Fuji Seat",
-    titulo: "Montagem e inspeção de bancos de carro",
-    setor: "automotivo",
-    regiao: "Shiga",
-    cidade: "Higashiomi",
-    publico: ["brasil"],
-    turno: "Turno alternado semanalmente (diurno/noturno), 5x2",
-    contrato: "Contrato temporário (haken)",
-    salario: "¥1.400/hora",
-    status: "aberta",
-    idioma: "Não mandatório",
-    perfil: "Homens até 45 anos",
-  },
-  {
-    id: "aisin-shinwa-toyama",
-    empresa: "Aisin Shinwa",
-    titulo: "Processamento e inspeção de autopeças",
-    setor: "automotivo",
-    regiao: "Toyama",
-    cidade: "Shimoniikawa Gun",
-    publico: ["brasil"],
-    turno: "Turno alternado semanalmente, 5x2",
-    contrato: "Contrato temporário (haken)",
-    salario: "¥1.600/hora",
-    status: "aberta",
-    logo: "/images/logo-cliente-aisin.png",
-    idioma: "Básico (N4), preferência razoável (N3)",
-    perfil: "Homens até 45 anos — precisa ter carro próprio e experiência em fábrica no Brasil ou no Japão",
-  },
-  {
-    id: "marugo-gomu-okayama",
-    empresa: "Marugo Gomu",
-    titulo: "Vulcanização, acabamento e inspeção de mangueiras automotivas",
-    setor: "automotivo",
-    regiao: "Okayama",
-    cidade: "Oda Yakage-cho",
-    publico: ["brasil"],
-    turno: "Turno alternado semanalmente, 5x2",
-    contrato: "Contrato temporário (haken)",
-    salario: "¥1.250–1.530/hora, conforme a função",
-    status: "aberta",
-    idioma: "Não mandatório",
-    perfil: "Homens e mulheres até 50 anos",
-  },
-  {
-    id: "murata-izumo",
-    empresa: "Murata",
-    titulo: "Produção de componentes eletrônicos (condensador cerâmico)",
-    setor: "eletronicos",
-    regiao: "Shimane",
-    cidade: "Izumo",
-    publico: ["brasil"],
-    turno: "Turno fixo, diurno ou noturno, 4x2",
-    contrato: "Contrato temporário (haken)",
-    salario: "¥1.340–1.390/hora (até ¥1.560/hora conforme desempenho)",
-    status: "aberta",
-    logo: "/images/logo-cliente-murata.png",
-    idioma: "Não mandatório",
-    perfil: "Homem, mulher ou casal até 50 anos",
-  },
-  {
-    id: "murata-oda",
-    empresa: "Murata",
-    titulo: "Produção de componentes eletrônicos (condensador cerâmico)",
-    setor: "eletronicos",
-    regiao: "Shimane",
-    cidade: "Oda",
-    publico: ["brasil"],
-    turno: "Turno fixo, diurno ou noturno, 4x2",
-    contrato: "Contrato temporário (haken)",
-    salario: "¥1.340/hora (até ¥1.560/hora conforme desempenho)",
-    status: "aberta",
-    logo: "/images/logo-cliente-murata.png",
-    idioma: "Não mandatório",
-    perfil: "Homem, mulher ou casal até 50 anos",
-  },
-  {
-    id: "daikin-kusatsu",
-    empresa: "Daikin",
-    titulo: "Produção, montagem e inspeção de ar-condicionado",
-    setor: "eletronicos",
-    regiao: "Shiga",
-    cidade: "Kusatsu",
-    publico: ["brasil"],
-    turno: "Turno alternado semanalmente (diurno/noturno), 5x2 ou 4x2",
-    contrato: "Contrato temporário (haken)",
-    salario: "¥1.400/hora (até ¥1.650/hora conforme desempenho)",
-    status: "consulta",
-    logo: "/images/logo-cliente-daikin.png",
-    idioma: "Básico (N4)",
-    perfil: "Homens e mulheres até 45 anos — previsão de vagas a partir de outubro/novembro",
-  },
-  {
-    id: "cs-nakatsugawa-gifu",
-    empresa: "CS Nakatsugawa",
-    titulo: "Produção e inspeção de sensores automotivos",
-    setor: "automotivo",
-    regiao: "Gifu",
-    cidade: "Nakatsugawa",
-    publico: ["brasil"],
-    turno: "Turno fixo ou alternado, 5x2 ou 6x1",
-    contrato: "Haken ou ukeoi, conforme a vaga",
-    salario: "¥1.400/hora",
-    status: "consulta",
-    idioma: "Preferencialmente com conhecimento de japonês",
-    perfil: "Homens até 55 anos, não fumante",
-  },
-  {
-    id: "ntk-kani-gifu",
-    empresa: "NTK Kani",
-    titulo: "Operação de máquina e inspeção de velas automotivas",
-    setor: "automotivo",
-    regiao: "Gifu",
-    cidade: "Kani",
-    publico: ["brasil"],
-    turno: "Turno alternado mensalmente, 5x2 ou 4x2",
-    contrato: "Contrato temporário (haken)",
-    salario: "¥1.300–1.400/hora, conforme o setor",
-    status: "consulta",
-    idioma: "Zero ou razoável (N3), a depender do setor",
-    perfil: "Homem, mulher ou casal até 45 anos",
-  },
-  {
-    id: "nitto-boseki-fukushima",
-    empresa: "Nitto Boseki",
-    titulo: "Produção de peças de fibra de vidro",
-    setor: "materiais",
-    regiao: "Fukushima",
-    cidade: "Fukushima",
-    publico: ["brasil"],
-    turno: "3 turnos (05:55–14:15 / 13:55–22:15 / 21:55–06:15)",
-    contrato: "Terceirizado (Out-Sourcing)",
-    salario: "¥1.300/hora",
-    status: "consulta",
-    idioma: "Básico (N4)",
-    perfil: "Homens até 50 anos — previsão de vagas a partir de setembro",
-  },
-  // ── UT Suri-emu — fichas de contrato por empresa ──
-  {
-    id: "subaru-oizumi",
-    empresa: "Subaru",
-    titulo: "Montagem, abastecimento e inspeção de veículos",
-    setor: "automotivo",
-    regiao: "Gunma",
-    cidade: "Oizumi",
-    publico: ["brasil"],
-    turno: "Turno alternado (diurno/noturno/sankoutai, conforme escala)",
-    contrato: "Contrato temporário (haken)",
-    salario: "¥1.800–1.900/hora",
-    status: "aberta",
-    logo: "/images/logo-cliente-subaru.png",
-    conducao: "Bicicleta (alugada pela empresa) — condução própria (carro/moto) possível, consultar a unidade.",
-    fonteContrato: "ut-suriemu",
-  },
-  {
-    id: "subaru-ota",
-    empresa: "Subaru",
-    titulo: "Montagem, abastecimento e inspeção de veículos",
-    setor: "automotivo",
-    regiao: "Gunma",
-    cidade: "Ota",
-    publico: ["brasil"],
-    turno: "Turno alternado (diurno/noturno), 5x2",
-    contrato: "Contrato temporário (haken)",
-    salario: "¥1.800–1.900/hora",
-    status: "aberta",
-    logo: "/images/logo-cliente-subaru.png",
-    conducao: "Bicicleta (alugada pela empresa) — condução própria (carro/moto) possível, consultar a unidade.",
-    fonteContrato: "ut-suriemu",
-  },
-  {
-    id: "mitsubishi-fuso-toyama",
-    empresa: "Mitsubishi Fuso",
-    titulo: "Produção de ônibus — inspeção, soldagem, pintura e montagem",
-    setor: "automotivo",
-    regiao: "Toyama",
-    cidade: "Toyama",
-    publico: ["brasil"],
-    turno: "Turno fixo ou alternado (diurno/noturno), 5x2",
-    contrato: "Contrato temporário (haken)",
-    salario: "¥1.700/hora",
-    status: "aberta",
-    conducao: "Vans/ônibus (gratuito), bicicleta (alugada pela empresa) ou a pé — condução própria (carro/moto) possível, consultar a unidade.",
-    fonteContrato: "ut-suriemu",
-  },
-  {
-    id: "yamase-miyagi",
-    empresa: "Yamase Electronics",
-    titulo: "Montagem e inspeção de peças eletrônicas automotivas",
-    setor: "automotivo",
-    regiao: "Miyagi",
-    cidade: "Osaki",
-    publico: ["brasil"],
-    turno: "Turno fixo, diurno ou noturno, 5x2",
-    contrato: "Contrato temporário (haken)",
-    salario: "¥1.200/hora (até ¥1.250/hora após o 3º mês)",
-    status: "aberta",
-  },
-  {
-    id: "fujifilm-miyagi",
-    empresa: "Fuji Film",
-    titulo: "Montagem e inspeção de lentes de câmeras digitais",
-    setor: "eletronicos",
-    regiao: "Miyagi",
-    cidade: "Taiwa",
-    publico: ["brasil"],
-    turno: "Diurno fixo, 5x2",
-    contrato: "Contrato temporário (haken)",
-    salario: "¥1.200–1.250/hora",
-    status: "aberta",
-    logo: "/images/logo-cliente-fujifilm.png",
-  },
-  {
-    id: "yokohama-gomu-aichi",
-    empresa: "Yokohama Gomu",
-    titulo: "Montagem de borracha e inspeção de pneus",
-    setor: "automotivo",
-    regiao: "Aichi",
-    cidade: "Shinshiro",
-    publico: ["brasil"],
-    turno: "Turno alternado (diurno/noturno), 4x2",
-    contrato: "Contrato temporário (haken)",
-    salario: "¥1.430/hora",
-    status: "aberta",
-    logo: "/images/logo-cliente-yokohama-tyres.png",
-    conducao: "Vans/ônibus (gratuito), bicicleta (alugada pela empresa) ou a pé — condução própria (carro/moto) possível, consultar a unidade.",
-    observacoes: "Uniforme cobrado à parte, ¥6.450.",
-    fonteContrato: "ut-suriemu",
-  },
-  {
-    id: "sony-aichi",
-    empresa: "Sony",
-    titulo: "Montagem e inspeção de filmadoras e lentes digitais",
-    setor: "eletronicos",
-    regiao: "Aichi",
-    cidade: "Kohda",
-    publico: ["brasil"],
-    turno: "Diurno ou noturno fixo, 5x2",
-    contrato: "Contrato temporário (haken)",
-    salario: "¥1.100/hora",
-    status: "aberta",
-    logo: "/images/logo-cliente-sony.png",
-  },
-  {
-    id: "mitsubishi-denki-himeji",
-    empresa: "Mitsubishi Denki",
-    titulo: "Produção de alternadores automotivos",
-    setor: "automotivo",
-    regiao: "Hyogo",
-    cidade: "Himeji",
-    publico: ["brasil"],
-    turno: "Diurno fixo (8:30–17:00), noturno fixo (20:45–5:30) ou alternado, 5x2",
-    contrato: "Contrato temporário (haken)",
-    salario: "¥1.300/hora (extra ¥1.625/hora; noturno +¥325/hora)",
-    status: "aberta",
-    logo: "/images/logo-cliente-mitsubishi-denki.png",
-  },
-  {
-    id: "daihatsu-nakatsu",
-    empresa: "Daihatsu",
-    titulo: "Montagem e inspeção de automóveis",
-    setor: "automotivo",
-    regiao: "Oita",
-    cidade: "Nakatsu",
-    publico: ["brasil"],
-    turno: "Turno alternado (diurno 6:30–15:10 / vespertino 18:30–2:40), 5x2",
-    contrato: "Contrato temporário (haken)",
-    salario: "¥1.800/hora (extra ¥2.250/hora; noturno +¥450/hora) + bônus de permanência de até ¥500.000 no primeiro ano e meio",
-    status: "aberta",
-    idioma: "Básico",
-    perfil: "18 a 39 anos (até 45 com experiência) — avaliação médica e física admissional",
-  },
-  {
-    id: "fruehauf-atsugi",
-    empresa: "Fruehauf",
-    titulo: "Montagem e pintura de carrocerias de caminhão",
-    setor: "automotivo",
-    regiao: "Kanagawa",
-    cidade: "Atsugi",
-    publico: ["brasil"],
-    turno: "Diurno fixo (8:05–17:00), 5x2 — sem turno noturno",
-    contrato: "Contrato temporário (haken)",
-    salario: "¥1.600/hora (extra ¥2.000/hora; noturno +¥400/hora)",
-    status: "aberta",
-    idioma: "Básico (identificar avisos e placas de segurança)",
-    perfil: "Homens até 50 anos (acima de 45 com experiência) — vagas femininas em negociação; requer visita à fábrica antes da alocação",
-    conducao: "Bicicleta (alugada pela empresa) ou a pé — condução própria (carro/moto) possível, consultar a unidade.",
-    observacoes: "Estacionamento por conta do funcionário, ¥2.200/mês.",
-    fonteContrato: "ut-suriemu",
-  },
-  {
-    id: "gs-yuasa-ritto",
-    empresa: "GS Yuasa",
-    titulo: "Produção de baterias para veículos elétricos e híbridos",
-    setor: "automotivo",
-    regiao: "Shiga",
-    cidade: "Ritto",
-    publico: ["brasil"],
-    turno: "Turno alternado (diurno 9:00–21:00 / noturno 21:00–9:00), 4x2",
-    contrato: "Contrato temporário (haken)",
-    salario: "¥1.400/hora, com reajuste semestral por assiduidade até ¥1.500/hora",
-    status: "aberta",
-  },
-  // ── Fujiarte Co. Ltd. — fichas "Condições de Contrato" (Inoac e Futaba
-  // Sangyou, propostas atualizadas de 1/abr/2026) ──
-  {
-    id: "inoac-sakurai",
-    empresa: "Inoac Corporation",
-    titulo: "Produção de peças de aerofólio automotivo",
-    setor: "automotivo",
-    regiao: "Aichi",
-    cidade: "Anjo",
-    publico: ["brasil"],
-    turno: "Turno alternado (7:00–16:00 / 19:00–4:00), 5x2",
-    contrato: "Contrato temporário (haken)",
-    salario: "¥1.300/hora (após 3 meses, ¥1.400/hora) + moradia ¥55.000–60.000",
-    status: "aberta",
-    perfil: "Homens solteiros ou casais — para casal com filho menor de idade, a vaga é garantida só para o marido, sem suporte de passagem para a família",
-  },
-  {
-    id: "inoac-kira",
-    empresa: "Inoac Corporation",
-    titulo: "Fabricação de encosto de cabeça e apoio de copos automotivo",
-    setor: "automotivo",
-    regiao: "Aichi",
-    cidade: "Kira",
-    publico: ["brasil"],
-    turno: "Turno alternado (7:00–16:00 / 18:00–3:00), 5x2",
-    contrato: "Contrato temporário (haken)",
-    salario: "¥1.300/hora (após 3 meses, ¥1.400/hora) + moradia ¥45.000–65.000",
-    status: "aberta",
-    perfil: "Homens solteiros ou casais — para casal com filho menor de idade, a vaga é garantida só para o marido, sem suporte de passagem para a família",
-  },
-  {
-    id: "futaba-mutsumi",
-    empresa: "Futaba Sangyou",
-    titulo: "Fabricação de peças de chassi automotivo",
-    setor: "automotivo",
-    regiao: "Aichi",
-    cidade: "Okazaki",
-    publico: ["brasil"],
-    turno: "Turno alternado (8:00–16:45 / 20:00–4:45), 5x2",
-    contrato: "Contrato temporário (haken)",
-    salario: "¥1.550/hora (após 6 meses, ¥1.650/hora) + moradia ¥45.000–60.000",
-    status: "aberta",
-    perfil: "Homens solteiros ou casais com filhos — para casal com filho menor de idade, a vaga é garantida só para o marido, sem suporte de passagem para a família. Alocação entre Kota, Mutsumi e Okazaki definida só após a chegada ao Japão",
-  },
-  {
-    id: "futaba-kota",
-    empresa: "Futaba Sangyou",
-    titulo: "Fabricação de escapamento automotivo",
-    setor: "automotivo",
-    regiao: "Aichi",
-    cidade: "Kota",
-    publico: ["brasil"],
-    turno: "Turno alternado (8:00–16:45 / 20:00–4:45), 5x2",
-    contrato: "Contrato temporário (haken)",
-    salario: "¥1.550/hora (após 6 meses, ¥1.650/hora) + moradia ¥45.000–60.000",
-    status: "aberta",
-    perfil: "Homens solteiros ou casais com filhos — para casal com filho menor de idade, a vaga é garantida só para o marido, sem suporte de passagem para a família",
-  },
-  {
-    id: "fujifilm-kanagawa",
-    empresa: "Fuji Film",
-    titulo: "Embalamento de filmes instantâneos para câmeras fotográficas",
-    setor: "eletronicos",
-    regiao: "Kanagawa",
-    cidade: "Minami Ashigara",
-    publico: ["brasil"],
-    turno: "Diurno fixo (7:00–16:00) ou noturno fixo (19:00–4:00), 5x2 ou 4x2",
-    contrato: "Contrato temporário (haken)",
-    salario: "¥1.350/hora (extra ¥1.688/hora; noturno +¥338/hora)",
-    status: "aberta",
-    logo: "/images/logo-cliente-fujifilm.png",
-    conducao: "Bicicleta (alugada pela empresa) ou a pé — condução própria de carro possível, consultar a unidade.",
-    observacoes: "Apartamentos Leopalace geralmente já incluem TV, cortina, mesa, ar-condicionado, máquina de lavar, geladeira e micro-ondas.",
-    fonteContrato: "ut-suriemu",
-  },
-  {
-    id: "hino-jidousha-ota",
-    empresa: "Hino Jidosha",
-    titulo: "Montagem e usinagem de peças de motor de caminhão",
-    setor: "automotivo",
-    regiao: "Gunma",
-    cidade: "Ota",
-    publico: ["brasil"],
-    turno: "Turno alternado (diurno 6:30–15:20 / noturno 17:15–2:05), 5x2",
-    contrato: "Contrato temporário (haken)",
-    salario: "¥2.000/hora (extra ¥2.500/hora; noturno +¥500/hora)",
-    status: "aberta",
-    conducao: "A pé — bicicleta própria possível, consultar a unidade.",
-    observacoes: "Refeitório na unidade com geladeira e micro-ondas.",
-    fonteContrato: "ut-suriemu",
-  },
-  {
-    id: "hino-jidousha-hamura",
-    empresa: "Hino Jidosha",
-    titulo: "Montagem, abastecimento e inspeção de veículos",
-    setor: "automotivo",
-    regiao: "Tokyo",
-    cidade: "Hamura",
-    publico: ["brasil"],
-    turno: "Turno alternado (diurno 6:30–15:20 / noturno 17:15–2:05), 5x2",
-    contrato: "Contrato temporário (haken)",
-    salario: "¥2.000/hora (extra ¥2.500/hora; noturno +¥500/hora)",
-    status: "aberta",
-    conducao: "A pé — bicicleta própria possível, consultar a unidade.",
-    observacoes: "Refeitório com sistema de recarga (depósito-caução de ¥1.000); cada refeição custa em torno de ¥500.",
-    fonteContrato: "ut-suriemu",
-  },
-  {
-    id: "kitz-ina-nagano",
-    empresa: "Kitz",
-    titulo: "Produção de válvulas de água — montagem, usinagem e inspeção",
-    setor: "materiais",
-    regiao: "Nagano",
-    cidade: "Ina",
-    publico: ["brasil"],
-    turno: "Diurno fixo (8:25–17:25) ou alternado (hayaban 5:00–13:20 / osoban 13:15–21:35), 5x2",
-    contrato: "Contrato temporário (haken)",
-    salario: "¥1.200/hora (mulheres) ou ¥1.300/hora (homens)",
-    status: "aberta",
-    conducao: "Vans/ônibus (gratuito), bicicleta (alugada pela empresa) ou a pé.",
-    fonteContrato: "ut-suriemu",
-  },
-  {
-    id: "panasonic-gunma",
-    empresa: "Panasonic",
-    titulo: "Produção de eletrodomésticos — tratamento térmico, máquina e montagem",
-    setor: "eletronicos",
-    regiao: "Gunma",
-    cidade: "Oizumi",
-    publico: ["brasil"],
-    turno: "Diurno fixo (8:25–17:00), 5x2 — possibilidade de turno noturno conforme a necessidade",
-    contrato: "Contrato temporário (haken)",
-    salario: "¥1.300–1.500/hora, conforme japonês e habilidades (até ¥1.600/hora em lift, até ¥1.900/hora em solda)",
-    status: "aberta",
-    logo: "/images/logo-cliente-panasonic.png",
-    conducao: "Bicicleta (alugada pela empresa) ou a pé — condução própria (carro/moto) possível, consultar a unidade.",
-    fonteContrato: "ut-suriemu",
-  },
-];
 
 // ── Análise da vaga (pop-up) — pedido do Wilson, 19/set/2026: comparar
 // salário e benefícios documentados de cada vaga contra o resto do
@@ -1018,6 +558,7 @@ export default function EmpregosPage() {
   const [regioesFiltro, setRegioesFiltro] = useState<Set<string>>(new Set());
   const [selecionadas, setSelecionadas] = useState<Set<string>>(new Set());
   const [vagaAbertaId, setVagaAbertaId] = useState<string | null>(null);
+  const [candidaturaVagaId, setCandidaturaVagaId] = useState<string | null>(null);
   const [scrolled, setScrolled] = useState(false);
   const [emailMailing, setEmailMailing] = useState("");
   const [statusMailing, setStatusMailing] = useState<"idle" | "enviando" | "sucesso" | "erro">("idle");
@@ -1043,6 +584,18 @@ export default function EmpregosPage() {
       document.body.style.overflow = original;
     };
   }, [vagaAbertaId]);
+
+  // Modal de candidatura — pedido do Wilson, 25/set/2026 ("ao clicar em
+  // aplicar a vaga, deve abrir uma pagina para enviar as informações...").
+  // Mesmo travamento de scroll do pop-up de detalhes acima.
+  useEffect(() => {
+    if (!candidaturaVagaId) return;
+    const original = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = original;
+    };
+  }, [candidaturaVagaId]);
 
   // Cadastro de e-mail no mailing de novas vagas — pedido do Wilson,
   // 19/set/2026 ("Deseja ser notificado quando abrir novas vagas?" +
@@ -1099,6 +652,10 @@ export default function EmpregosPage() {
   }
 
   const vagaAberta = useMemo(() => VAGAS.find((v) => v.id === vagaAbertaId) ?? null, [vagaAbertaId]);
+  const vagaEmCandidatura = useMemo(
+    () => VAGAS.find((v) => v.id === candidaturaVagaId) ?? null,
+    [candidaturaVagaId],
+  );
 
   const vagasFiltradas = useMemo(() => {
     return VAGAS.filter((vaga) => {
@@ -1535,18 +1092,23 @@ export default function EmpregosPage() {
               <DetalhesVaga vaga={vagaAberta} />
             </div>
 
-            <a
-              href={linkWhatsapp(
-                `Olá! Tenho interesse na vaga ${vagaAberta.titulo} — ${vagaAberta.empresa}, ${vagaAberta.cidade}/${vagaAberta.regiao}. Quero iniciar minha candidatura.`,
-              )}
-              target="_blank"
-              rel="noreferrer"
+            <button
+              type="button"
+              onClick={() => {
+                const idVaga = vagaAberta.id;
+                setVagaAbertaId(null);
+                setCandidaturaVagaId(idVaga);
+              }}
               className="mt-6 flex w-full items-center justify-center rounded-full bg-[#2f80c9] px-6 py-3.5 text-xs font-semibold uppercase tracking-[0.18em] text-white transition hover:bg-[#3b91dc]"
             >
               Iniciar candidatura
-            </a>
+            </button>
           </div>
         </div>
+      )}
+
+      {vagaEmCandidatura && (
+        <CandidaturaModal vaga={vagaEmCandidatura} onFechar={() => setCandidaturaVagaId(null)} />
       )}
 
       {/* ── BARRA FIXA: carrinho de vagas ── */}
@@ -1677,5 +1239,414 @@ export default function EmpregosPage() {
         </div>
       </footer>
     </main>
+  );
+}
+
+// ── MODAL DE CANDIDATURA — pedido do Wilson, 25/set/2026: "ao clicar em
+// aplicar a vaga, deve abrir uma pagina para enviar as informações de
+// nome, sobrenome, email, telefone, curriculo e algumas perguntas
+// relevantes para cada vaga, depois deve haver um sistema que captura
+// essa informacao e valida se o lead é compativel com a vaga, deve haver
+// um percenteil 0-100% de compatibilidade [...] após match superior a
+// 80%, ele pode ir para a proxima etapa que será enviar uma foto do
+// candidato". Fluxo em 4 etapas: formulário → resultado da pontuação →
+// (só se >=80%) foto → concluído. Sem IA (decisão do Wilson): a
+// pontuação vem de app/lib/candidaturaScoring.ts e a checagem da foto de
+// app/lib/fotoChecagem.ts, ambos determinísticos.
+type EtapaCandidatura = "formulario" | "resultado" | "foto" | "concluido";
+
+function CandidaturaModal({ vaga, onFechar }: { vaga: Vaga; onFechar: () => void }) {
+  const [etapa, setEtapa] = useState<EtapaCandidatura>("formulario");
+  const [enviando, setEnviando] = useState(false);
+  const [erro, setErro] = useState("");
+
+  const [nome, setNome] = useState("");
+  const [sobrenome, setSobrenome] = useState("");
+  const [email, setEmail] = useState("");
+  const [telefone, setTelefone] = useState("");
+  const [idade, setIdade] = useState("");
+  const [curriculo, setCurriculo] = useState<File | null>(null);
+  const [respostas, setRespostas] = useState<RespostasTriagem>({
+    passaporte: "",
+    disponibilidadeEmbarque: "",
+    experienciaSetor: "",
+    nivelJapones: "",
+  });
+
+  const [candidaturaId, setCandidaturaId] = useState<string | null>(null);
+  const [pontuacao, setPontuacao] = useState(0);
+  const [criterios, setCriterios] = useState<CriterioPontuacao[]>([]);
+  const [aprovadoParaFoto, setAprovadoParaFoto] = useState(false);
+
+  const [foto, setFoto] = useState<File | null>(null);
+  const [checklist, setChecklist] = useState({
+    fundoClaro: false,
+    semBoneOuChapeu: false,
+    semOculosEscuros: false,
+    rostoVisivelCentralizado: false,
+  });
+
+  async function enviarFormulario(e: FormEvent) {
+    e.preventDefault();
+    if (enviando) return;
+    if (!nome || !sobrenome || !email || !telefone) {
+      setErro("Preencha nome, sobrenome, e-mail e telefone.");
+      return;
+    }
+    if (!curriculo) {
+      setErro("Envie seu currículo (PDF ou DOCX).");
+      return;
+    }
+    setEnviando(true);
+    setErro("");
+    try {
+      const form = new FormData();
+      form.append("vagaId", vaga.id);
+      form.append("nome", nome);
+      form.append("sobrenome", sobrenome);
+      form.append("email", email);
+      form.append("telefone", telefone);
+      if (idade) form.append("idade", idade);
+      form.append("respostas", JSON.stringify(respostas));
+      form.append("curriculo", curriculo);
+      const resposta = await fetch("/api/empregos-candidatura", { method: "POST", body: form });
+      const dados = await resposta.json().catch(() => ({}));
+      if (!resposta.ok) {
+        setErro(dados.error || "Não foi possível enviar sua candidatura agora. Tente novamente.");
+        setEnviando(false);
+        return;
+      }
+      setCandidaturaId(dados.candidaturaId);
+      setPontuacao(dados.pontuacao);
+      setCriterios(dados.criterios || []);
+      setAprovadoParaFoto(Boolean(dados.aprovadoParaFoto));
+      setEtapa("resultado");
+    } catch {
+      setErro("Não foi possível enviar sua candidatura agora. Tente novamente.");
+    } finally {
+      setEnviando(false);
+    }
+  }
+
+  async function enviarFoto(e: FormEvent) {
+    e.preventDefault();
+    if (enviando || !candidaturaId) return;
+    if (!foto) {
+      setErro("Envie sua foto.");
+      return;
+    }
+    setEnviando(true);
+    setErro("");
+    try {
+      const form = new FormData();
+      form.append("candidaturaId", candidaturaId);
+      form.append("foto", foto);
+      form.append("checklist", JSON.stringify(checklist));
+      const resposta = await fetch("/api/empregos-foto", { method: "POST", body: form });
+      const dados = await resposta.json().catch(() => ({}));
+      if (!resposta.ok) {
+        setErro(dados.error || "Não foi possível enviar sua foto agora. Tente novamente.");
+        setEnviando(false);
+        return;
+      }
+      setEtapa("concluido");
+    } catch {
+      setErro("Não foi possível enviar sua foto agora. Tente novamente.");
+    } finally {
+      setEnviando(false);
+    }
+  }
+
+  return (
+    <div
+      className="fixed inset-0 z-[70] flex items-end justify-center bg-black/50 p-0 backdrop-blur-sm sm:items-center sm:p-6"
+      onClick={onFechar}
+    >
+      <div
+        role="dialog"
+        aria-modal="true"
+        onClick={(e) => e.stopPropagation()}
+        className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-t-3xl bg-white p-6 shadow-2xl sm:rounded-3xl sm:p-8"
+      >
+        <div className="flex items-start justify-between gap-3">
+          <div>
+            <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-[#2f80c9]">{vaga.empresa}</p>
+            <h3 className={`${display.className} mt-1 text-xl font-medium text-black`}>{vaga.titulo}</h3>
+          </div>
+          <button
+            type="button"
+            onClick={onFechar}
+            aria-label="Fechar"
+            className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-black/40 transition hover:bg-black/5 hover:text-black/70"
+          >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className="h-5 w-5">
+              <path d="M6 6l12 12M18 6L6 18" />
+            </svg>
+          </button>
+        </div>
+
+        {etapa === "formulario" && (
+          <form onSubmit={enviarFormulario} className="mt-5 space-y-4">
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="text-[11px] font-medium text-black/50">Nome</label>
+                <input
+                  value={nome}
+                  onChange={(e) => setNome(e.target.value)}
+                  required
+                  className="mt-1 w-full rounded-xl border border-black/10 px-3 py-2.5 text-sm text-black outline-none focus:border-[#2f80c9]"
+                />
+              </div>
+              <div>
+                <label className="text-[11px] font-medium text-black/50">Sobrenome</label>
+                <input
+                  value={sobrenome}
+                  onChange={(e) => setSobrenome(e.target.value)}
+                  required
+                  className="mt-1 w-full rounded-xl border border-black/10 px-3 py-2.5 text-sm text-black outline-none focus:border-[#2f80c9]"
+                />
+              </div>
+            </div>
+            <div>
+              <label className="text-[11px] font-medium text-black/50">E-mail</label>
+              <input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                className="mt-1 w-full rounded-xl border border-black/10 px-3 py-2.5 text-sm text-black outline-none focus:border-[#2f80c9]"
+              />
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="text-[11px] font-medium text-black/50">Telefone (WhatsApp)</label>
+                <input
+                  value={telefone}
+                  onChange={(e) => setTelefone(e.target.value)}
+                  required
+                  className="mt-1 w-full rounded-xl border border-black/10 px-3 py-2.5 text-sm text-black outline-none focus:border-[#2f80c9]"
+                />
+              </div>
+              <div>
+                <label className="text-[11px] font-medium text-black/50">Idade</label>
+                <input
+                  type="number"
+                  min={16}
+                  max={75}
+                  value={idade}
+                  onChange={(e) => setIdade(e.target.value)}
+                  className="mt-1 w-full rounded-xl border border-black/10 px-3 py-2.5 text-sm text-black outline-none focus:border-[#2f80c9]"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="text-[11px] font-medium text-black/50">Currículo (PDF ou DOCX)</label>
+              <input
+                type="file"
+                accept={EXTENSOES_CURRICULO_ACEITAS}
+                onChange={(e) => setCurriculo(e.target.files?.[0] ?? null)}
+                required
+                className="mt-1 w-full rounded-xl border border-dashed border-black/15 px-3 py-2.5 text-xs text-black/60 outline-none file:mr-3 file:rounded-full file:border-0 file:bg-black/[0.04] file:px-3 file:py-1.5 file:text-xs file:font-medium file:text-black/70"
+              />
+            </div>
+
+            <div className="border-t border-black/10 pt-4">
+              <label className="text-[11px] font-medium text-black/50">Seu nível de japonês</label>
+              <select
+                value={respostas.nivelJapones}
+                onChange={(e) =>
+                  setRespostas((r) => ({ ...r, nivelJapones: e.target.value as NivelJapones | "" }))
+                }
+                required
+                className="mt-1 w-full rounded-xl border border-black/10 px-3 py-2.5 text-sm text-black outline-none focus:border-[#2f80c9]"
+              >
+                <option value="" disabled>
+                  Selecione
+                </option>
+                {NIVEIS_JAPONES.map((n) => (
+                  <option key={n.key} value={n.key}>
+                    {n.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {PERGUNTAS_TRIAGEM.map((p) => (
+              <div key={p.key}>
+                <p className="text-xs font-medium text-black/70">{p.pergunta}</p>
+                {p.ajuda && <p className="mt-0.5 text-[11px] text-black/40">{p.ajuda}</p>}
+                <div className="mt-2 flex gap-2">
+                  {(["sim", "nao"] as const).map((valor) => (
+                    <button
+                      key={valor}
+                      type="button"
+                      onClick={() => setRespostas((r) => ({ ...r, [p.key]: valor }))}
+                      className={`rounded-full px-4 py-1.5 text-xs font-medium transition ${
+                        respostas[p.key] === valor
+                          ? "bg-[#2f80c9] text-white"
+                          : "bg-black/[0.04] text-black/60 hover:bg-black/[0.08]"
+                      }`}
+                    >
+                      {valor === "sim" ? "Sim" : "Não"}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            ))}
+
+            {erro && <p className="text-xs text-red-500">{erro}</p>}
+
+            <button
+              type="submit"
+              disabled={enviando}
+              className="mt-2 flex w-full items-center justify-center rounded-full bg-[#2f80c9] px-6 py-3.5 text-xs font-semibold uppercase tracking-[0.18em] text-white transition hover:bg-[#3b91dc] disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              {enviando ? "Enviando…" : "Enviar candidatura"}
+            </button>
+          </form>
+        )}
+
+        {etapa === "resultado" && (
+          <div className="mt-5">
+            <div className="flex flex-col items-center gap-2 py-2">
+              <div
+                className="relative flex h-28 w-28 items-center justify-center rounded-full"
+                style={{
+                  background: `conic-gradient(#2f80c9 ${pontuacao * 3.6}deg, rgba(0,0,0,0.06) 0deg)`,
+                }}
+              >
+                <div className="flex h-[88px] w-[88px] items-center justify-center rounded-full bg-white">
+                  <span className={`${display.className} text-2xl font-medium text-black`}>{pontuacao}%</span>
+                </div>
+              </div>
+              <p className="text-center text-xs text-black/50">Compatibilidade com esta vaga</p>
+            </div>
+
+            <div className="mt-4 space-y-2.5 border-t border-black/10 pt-4">
+              {criterios.map((c) => (
+                <div key={c.chave} className="flex items-start justify-between gap-3">
+                  <div>
+                    <p className="text-xs font-medium text-black/70">{c.label}</p>
+                    <p className="mt-0.5 text-[11px] leading-4 text-black/40">{c.detalhe}</p>
+                  </div>
+                  <span className="shrink-0 text-xs font-semibold text-black/60">
+                    {c.pontosObtidos}/{c.pontosMaximos}
+                  </span>
+                </div>
+              ))}
+            </div>
+
+            {aprovadoParaFoto ? (
+              <div className="mt-6 rounded-2xl bg-[#2f80c9]/[0.06] p-4">
+                <p className="text-xs leading-5 text-black/70">
+                  Parabéns! Sua pontuação passou de {NOTA_MINIMA_PROXIMA_ETAPA}% — a próxima etapa é enviar uma foto
+                  para o processo seletivo.
+                </p>
+                <button
+                  type="button"
+                  onClick={() => setEtapa("foto")}
+                  className="mt-4 flex w-full items-center justify-center rounded-full bg-[#2f80c9] px-6 py-3.5 text-xs font-semibold uppercase tracking-[0.18em] text-white transition hover:bg-[#3b91dc]"
+                >
+                  Continuar para envio de foto
+                </button>
+              </div>
+            ) : (
+              <div className="mt-6 rounded-2xl bg-black/[0.03] p-4">
+                <p className="text-xs leading-5 text-black/70">
+                  Sua candidatura foi registrada e vai passar por uma revisão manual da nossa equipe — pontuações
+                  abaixo de {NOTA_MINIMA_PROXIMA_ETAPA}% não são descartadas automaticamente. Entraremos em contato se
+                  houver uma oportunidade compatível.
+                </p>
+                <button
+                  type="button"
+                  onClick={onFechar}
+                  className="mt-4 flex w-full items-center justify-center rounded-full bg-black px-6 py-3.5 text-xs font-semibold uppercase tracking-[0.18em] text-white transition hover:bg-black/80"
+                >
+                  Fechar
+                </button>
+              </div>
+            )}
+          </div>
+        )}
+
+        {etapa === "foto" && (
+          <form onSubmit={enviarFoto} className="mt-5 space-y-4">
+            <p className="text-xs leading-5 text-black/60">
+              Envie uma foto tipo 3x4 recente, com fundo claro/liso, boa iluminação e o rosto bem visível — sem boné,
+              chapéu ou óculos escuros.
+            </p>
+
+            <input
+              type="file"
+              accept="image/jpeg,image/png,image/webp"
+              onChange={(e) => setFoto(e.target.files?.[0] ?? null)}
+              required
+              className="w-full rounded-xl border border-dashed border-black/15 px-3 py-2.5 text-xs text-black/60 outline-none file:mr-3 file:rounded-full file:border-0 file:bg-black/[0.04] file:px-3 file:py-1.5 file:text-xs file:font-medium file:text-black/70"
+            />
+
+            <div className="space-y-2 border-t border-black/10 pt-4">
+              {[
+                { key: "fundoClaro" as const, label: "O fundo da foto é claro/liso" },
+                { key: "semBoneOuChapeu" as const, label: "Não estou usando boné ou chapéu" },
+                { key: "semOculosEscuros" as const, label: "Não estou usando óculos escuros" },
+                { key: "rostoVisivelCentralizado" as const, label: "Meu rosto está visível e centralizado" },
+              ].map((item) => (
+                <label key={item.key} className="flex items-center gap-2.5 text-xs text-black/70">
+                  <input
+                    type="checkbox"
+                    checked={checklist[item.key]}
+                    onChange={(e) => setChecklist((c) => ({ ...c, [item.key]: e.target.checked }))}
+                    required
+                    className="h-4 w-4 rounded border-black/20 text-[#2f80c9] focus:ring-[#2f80c9]"
+                  />
+                  {item.label}
+                </label>
+              ))}
+            </div>
+
+            {erro && <p className="text-xs text-red-500">{erro}</p>}
+
+            <button
+              type="submit"
+              disabled={enviando}
+              className="flex w-full items-center justify-center rounded-full bg-[#2f80c9] px-6 py-3.5 text-xs font-semibold uppercase tracking-[0.18em] text-white transition hover:bg-[#3b91dc] disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              {enviando ? "Enviando…" : "Enviar foto"}
+            </button>
+          </form>
+        )}
+
+        {etapa === "concluido" && (
+          <div className="mt-6 flex flex-col items-center gap-3 py-4 text-center">
+            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#2f80c9]/10">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="#2f80c9"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="h-6 w-6"
+              >
+                <path d="M20 6L9 17l-5-5" />
+              </svg>
+            </div>
+            <h4 className={`${display.className} text-lg font-medium text-black`}>Candidatura enviada!</h4>
+            <p className="max-w-xs text-xs leading-5 text-black/50">
+              Recebemos sua candidatura e sua foto. Nossa equipe vai revisar tudo e entrar em contato pelo e-mail ou
+              telefone informados.
+            </p>
+            <button
+              type="button"
+              onClick={onFechar}
+              className="mt-2 rounded-full bg-black px-6 py-3 text-xs font-semibold uppercase tracking-[0.18em] text-white transition hover:bg-black/80"
+            >
+              Fechar
+            </button>
+          </div>
+        )}
+      </div>
+    </div>
   );
 }

@@ -38,10 +38,16 @@ import {
   DIARIA_GUIA_USD,
   DIARIA_GUIA_ESTRANGEIRO_USD,
   GUIA_TAMANHO_GRUPO,
-  DIARIA_MOTORISTA_PRIVADO_USD,
-  MOTORISTA_TAMANHO_GRUPO,
   PRECO_CAMBIO_BRASIL,
 } from "../components/CustomPackageCard";
+import { MotoristaPrivadoPicker } from "../components/MotoristaPrivadoPicker";
+import {
+  SELECAO_MOTORISTA_VAZIA,
+  calcularTotalMotoristaUSD,
+  contarItensMotorista,
+  resumoSelecaoMotorista,
+  type SelecaoMotorista,
+} from "../lib/motoristaPrivadoRotas";
 import { useCambioIene, CIDADES_CAMBIO_IENE, type CidadeCambioIeneSlug } from "../hooks/useCambioIene";
 import { COTACAO_FALLBACK_BRL_POR_JPY } from "../lib/cambioIene";
 import { useCambioUSD, formatBRL } from "../hooks/useCambioUSD";
@@ -210,7 +216,7 @@ function calcularExtras(p: {
   jrClasse: "comum" | "green";
   guiaDias: number;
   guiaTipo: "brasileiro" | "estrangeiro";
-  motoristaDias: number;
+  selecaoMotorista: SelecaoMotorista;
   extensoes: Set<ExtensaoInternacionalKey>;
   extCategorias: Record<ExtensaoInternacionalKey, CategoriaHotelExtensao>;
   cotacaoIene: number;
@@ -300,12 +306,10 @@ function calcularExtras(p: {
     });
   }
 
-  if (p.motoristaDias > 0) {
+  if (p.selecaoMotorista.itens.length > 0) {
     linhas.push({
-      label: `Motorista privado (${p.motoristaDias} ${p.motoristaDias === 1 ? "dia" : "dias"})`,
-      precoBRL: Math.round(
-        DIARIA_MOTORISTA_PRIVADO_USD * p.motoristaDias * Math.max(1, Math.ceil(pessoas / MOTORISTA_TAMANHO_GRUPO)) * c,
-      ),
+      label: `Motorista privado — ${resumoSelecaoMotorista(p.selecaoMotorista)}`,
+      precoBRL: Math.round(calcularTotalMotoristaUSD(p.selecaoMotorista) * c),
     });
   }
 
@@ -465,7 +469,8 @@ export default function ViagemPersonalizadaSelfServicePage() {
   const [jrClasse, setJrClasse] = useState<"comum" | "green">("comum");
   const [guiaTipo, setGuiaTipo] = useState<"brasileiro" | "estrangeiro">("brasileiro");
   const [guiaDias, setGuiaDias] = useState(0);
-  const [motoristaDias, setMotoristaDias] = useState(0);
+  const [selecaoMotorista, setSelecaoMotorista] = useState<SelecaoMotorista>(SELECAO_MOTORISTA_VAZIA);
+  const [motoristaExpandido, setMotoristaExpandido] = useState(false);
   const [extensoes, setExtensoes] = useState<Set<ExtensaoInternacionalKey>>(new Set());
   const [extCategorias, setExtCategorias] = useState<Record<ExtensaoInternacionalKey, CategoriaHotelExtensao>>({
     coreiaDoSul: "4 estrelas",
@@ -562,7 +567,6 @@ export default function ViagemPersonalizadaSelfServicePage() {
   const diasInsuficientes = dias < diasMinimosSugeridos;
   const jrPessoasEfetivo = Math.min(jrPessoas, pessoas);
   const guiaDiasEfetivo = Math.min(guiaDias, dias);
-  const motoristaDiasEfetivo = Math.min(motoristaDias, dias);
   const idadesConsideradas = Array.from({ length: pessoas }, (_, i) => idades[i] ?? 35);
   const esimPessoas = Math.min(esimSelecionado ?? pessoas, pessoas);
 
@@ -650,7 +654,7 @@ export default function ViagemPersonalizadaSelfServicePage() {
     jrClasse,
     guiaDias: guiaDiasEfetivo,
     guiaTipo,
-    motoristaDias: motoristaDiasEfetivo,
+    selecaoMotorista,
     extensoes,
     extCategorias,
     cotacaoIene,
@@ -722,7 +726,7 @@ export default function ViagemPersonalizadaSelfServicePage() {
       jrClasse,
       guiaDias: guiaDiasEfetivo,
       guiaTipo,
-      motoristaDias: motoristaDiasEfetivo,
+      selecaoMotorista,
       extensoes,
       extCategorias,
       cotacaoIene,
@@ -1689,19 +1693,40 @@ export default function ViagemPersonalizadaSelfServicePage() {
               </p>
             </div>
 
-            <div className="sm:col-span-2 sm:max-w-xs">
-              <div>
-              <NumberStepper
-                label="15. Motorista privado — dias"
-                value={motoristaDiasEfetivo}
-                onChange={setMotoristaDias}
-                min={0}
-                max={dias}
-                formatValue={(v) => (v === 0 ? "Sem motorista" : `${v} de ${dias} dia${dias === 1 ? "" : "s"}`)}
-              />
-              </div>
+            <div className="sm:col-span-2">
+              <span className="mb-2 flex flex-wrap items-center text-[10px] uppercase tracking-[0.2em] text-black/50">
+                <LabelNumerado texto="15. Motorista privado" />{" "}
+                <span className="ml-1.5 normal-case tracking-normal text-black/60">(opcional)</span>
+              </span>
+              {!(motoristaExpandido || selecaoMotorista.itens.length > 0) ? (
+                <button
+                  type="button"
+                  onClick={() => setMotoristaExpandido(true)}
+                  className="flex items-center gap-2 rounded-lg border border-dashed border-black/25 px-3 py-2 text-xs text-black/50 transition hover:border-black/40 hover:text-black/70"
+                >
+                  <span aria-hidden className="text-sm leading-none">+</span>
+                  Incluir motorista privado
+                </button>
+              ) : (
+                <div className="rounded-xl border border-black/10 bg-white p-4">
+                  <MotoristaPrivadoPicker
+                    selecao={selecaoMotorista}
+                    onChange={setSelecaoMotorista}
+                    cambioCotacao={cambioCotacao}
+                  />
+                  {selecaoMotorista.itens.length === 0 && (
+                    <button
+                      type="button"
+                      onClick={() => setMotoristaExpandido(false)}
+                      className="mt-3 text-[11px] text-black/40 underline decoration-black/20 underline-offset-2 hover:text-black/60"
+                    >
+                      Cancelar
+                    </button>
+                  )}
+                </div>
+              )}
               <p className="mt-1.5 text-[11px] text-black/60">
-                {rotuloUSD(DIARIA_MOTORISTA_PRIVADO_USD)}/dia para até {MOTORISTA_TAMANHO_GRUPO} pessoas — não inclui o
+                Preço exato por rota/tour, direto da tabela do nosso fornecedor no Japão — não inclui o
                 transfer aeroporto ↔ hotel.
               </p>
             </div>
