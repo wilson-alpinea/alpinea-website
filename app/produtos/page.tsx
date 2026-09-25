@@ -1974,8 +1974,21 @@ function JrPassModal({ cambio, onClose }: { cambio: Cambio | null; onClose: () =
 //   Affinity não preencheu direito no site oficial deles. Vale
 //   confirmar direto com a Affinity qual seguradora responde pela
 //   apólice antes de apresentar isso pra cliente.
-// Adicionei uma nota em cada card explicando isso (ver `termosNota`
-// abaixo), pra não parecer erro/concorrente pro cliente que clicar.
+//
+// Decisão final do Wilson, mesmo dia, depois de ver os PDFs de novo:
+// "já pedi pra substituir isso pelas informacoes oficiais você nunca
+// deve usar material de empresas concorrentes" — regra clara,
+// independente da explicação técnica acima (marca vs. seguradora
+// reguladora): não expor nesta página nenhum documento assinado por
+// uma empresa diferente da marca escolhida pelo cliente. Removi os
+// links de "condições gerais" da GTA e da MTA (`termosUrl`/
+// `termosLabel` = null) — o `termosNota` de cada uma explica que o
+// documento completo é enviado junto com a apólice no fechamento, sem
+// linkar um PDF assinado pela seguradora parceira. Mantive o link da
+// Affinity: o PDF dela é hospedado no domínio oficial dela e não tem
+// nome nem logo de nenhuma outra empresa (só o placeholder genérico
+// "(SEGURADORA) SEGUROS S/A" — problema de template, não material de
+// concorrente).
 const SEGURADORAS_VIAGEM = [
   {
     key: "affinity" as const,
@@ -2013,10 +2026,10 @@ const SEGURADORAS_VIAGEM = [
       "Por perfil: Lazer, Estudante, Cruzeiro, Multiviagem, Esporte profissional",
       "Por idade: até 64 / 65–85 / 86–89 anos",
     ],
-    termosUrl: "https://www.segurogta.com.br/2020/condicoes-gerais/",
-    termosLabel: "Índice de condições gerais",
+    termosUrl: null,
+    termosLabel: null,
     termosNota:
-      "A GTA é a marca de assistência-viagem; a apólice em si é emitida por uma seguradora parceira (histórico: IZA, Chubb, Sancor, Sompo) — o PDF que abrir vem assinado por uma dessas, não pela GTA. É o documento certo, só tem outro nome.",
+      "Condições gerais completas — fornecidas junto com a apólice no fechamento. O documento oficial da GTA vem assinado por uma seguradora parceira (histórico: IZA, Chubb, Sancor, Sompo), por isso não linkamos aqui um PDF assinado por outra marca.",
   },
   {
     key: "mta" as const,
@@ -2027,10 +2040,10 @@ const SEGURADORAS_VIAGEM = [
       "My Travel Assist — planos internacionais de US$ 15 mil a US$ 150 mil em cobertura médica (MTA 15/30/40/60/150), com mais de 30 coberturas e assistências.",
     observacao: null,
     tiposPlano: ["MTA 15", "MTA 30", "MTA 40", "MTA 60", "MTA 150"],
-    termosUrl: "https://www.travelassist.com.br/condicoes-gerais/my_travel_assist.pdf",
-    termosLabel: "Condições gerais (PDF)",
+    termosUrl: null,
+    termosLabel: null,
     termosNota:
-      "MTA é a marca de assistência-viagem; a apólice em si é emitida pela EZZE Seguros S.A. — o PDF vem assinado pela EZZE, não pela MTA. É o documento certo, só tem outro nome.",
+      "Condições gerais completas — fornecidas junto com a apólice no fechamento. O documento oficial da MTA vem assinado pela seguradora parceira EZZE Seguros, por isso não linkamos aqui um PDF assinado por outra marca.",
   },
 ];
 type SeguradoraKey = (typeof SEGURADORAS_VIAGEM)[number]["key"];
@@ -2327,17 +2340,19 @@ function SeguroViagemModal({ cambio, onClose }: { cambio: Cambio | null; onClose
                             </li>
                           ))}
                         </ul>
-                        <a
-                          href={s.termosUrl}
-                          target="_blank"
-                          rel="noreferrer"
-                          onClick={(event) => event.stopPropagation()}
-                          className="mt-2.5 inline-flex items-center gap-1 text-[10px] font-medium text-[#1c6ea8] underline decoration-[#1c6ea8]/40 underline-offset-2 hover:text-[#2f80c9]"
-                        >
-                          {s.termosLabel} ↗
-                        </a>
+                        {s.termosUrl && (
+                          <a
+                            href={s.termosUrl}
+                            target="_blank"
+                            rel="noreferrer"
+                            onClick={(event) => event.stopPropagation()}
+                            className="mt-2.5 inline-flex items-center gap-1 text-[10px] font-medium text-[#1c6ea8] underline decoration-[#1c6ea8]/40 underline-offset-2 hover:text-[#2f80c9]"
+                          >
+                            {s.termosLabel} ↗
+                          </a>
+                        )}
                         {s.termosNota && (
-                          <p className="mt-1.5 text-[10px] leading-4 text-black/40">{s.termosNota}</p>
+                          <p className="mt-2 text-[10px] leading-4 text-black/40">{s.termosNota}</p>
                         )}
                       </div>
                     </div>
