@@ -975,7 +975,8 @@ type TemaKey =
   | "luxoCompras"
   | "esportesEventos"
   | "parquesEntretenimento"
-  | "neveInverno";
+  | "neveInverno"
+  | "praias";
 
 type TemaCidade = {
   key: DestinoKey;
@@ -1129,6 +1130,20 @@ const TEMAS: { key: TemaKey; nome: string; icone: string; cidades: TemaCidade[] 
       { key: "niseko", destaque: "Powder snow, resorts internacionais, ski e hotéis premium", padrao: true },
       { key: "hakuba", destaque: "Grande área esquiável nos Alpes Japoneses, fácil combinação com Tokyo", padrao: false },
       { key: "nozawa", destaque: "Ski combinado com vila tradicional e cultura de onsen", padrao: false },
+    ],
+  },
+  {
+    // Pedido do Wilson, 25/set/2026: "adicionar tema praias, okinawa e
+    // alguma outra cidade de praia importante". Ícone reaproveita a foto
+    // de Okinawa (não há ícone ilustrado dedicado ainda, ao contrário dos
+    // outros temas 00-11 — trocar por /images/temas/12-praias.png quando
+    // o Wilson tiver a arte).
+    key: "praias",
+    nome: "Praias",
+    icone: "/images/okinawa.jpg",
+    cidades: [
+      { key: "okinawa", destaque: "Praias de água clara em Naha e no norte da ilha (Churaumi), com boa infraestrutura turística", padrao: true },
+      { key: "ishigaki", destaque: "Ilha remota do arquipélago Yaeyama — praias e mar turquesa entre os mais bonitos do Japão (Kabira Bay)", padrao: true },
     ],
   },
 ];
@@ -1669,7 +1684,9 @@ export default function CalculadoraReversaPage() {
   // a `pessoas`, mas é editável separadamente (ex.: crianças pequenas ou
   // quem já tem passe não entram na conta).
   const [jrPassPessoas, setJrPassPessoas] = useState(pessoas);
-  const [guiaDias, setGuiaDias] = useState(dias);
+  // Default SEM GUIA — pedido do Wilson, 25/set/2026: "colocar default
+  // SEM GUIA". Antes começava já reservando o guia pra viagem inteira.
+  const [guiaDias, setGuiaDias] = useState(0);
   // Tipo de guia — pedido do Wilson, 16/set/2026: "deixar duas opções de
   // guia, guia brasileiro e guia estrangeiro (Português limitado ou
   // Inglês)".
@@ -2804,8 +2821,22 @@ export default function CalculadoraReversaPage() {
   async function handleGerarPdf() {
     setGerandoPdf(true);
     try {
+      // Roteiro básico sugerido (com fotos) no PDF — pedido do Wilson,
+      // 25/set/2026: "adicionar roteiro basico sugerido com imagens".
+      // @react-pdf/renderer não resolve caminho relativo de arquivo
+      // estático do Next (ex.: "/images/tokyo.jpg"), precisa de uma URL
+      // completa pra buscar a imagem — daí o prefixo do domínio do site.
+      const cidadesRoteiroPdf = destinosSelecionados
+        .map((key) => DESTINOS.find((d) => d.key === key))
+        .filter((d): d is (typeof DESTINOS)[number] => !!d)
+        .map((d) => ({
+          nome: d.nome,
+          imagemUrl: d.imagem ? `https://www.alpinea.io${d.imagem}` : null,
+        }));
+
       await gerarEBaixarPdf({
         tituloPacote: pacoteSugeridoLabel,
+        cidadesRoteiro: cidadesRoteiroPdf,
         dias,
         tipoQuarto,
         pessoas,

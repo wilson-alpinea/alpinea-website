@@ -4,7 +4,13 @@ import { createAdminClient } from "../../../lib/supabase/admin";
 import { encontrarVaga } from "../../lib/vagasCatalogo";
 import { extrairTextoCurriculo } from "../../lib/curriculoExtracao";
 import { TIPOS_CURRICULO_ACEITOS } from "../../lib/curriculoConstantes";
-import { calcularPontuacaoCandidatura, type RespostasTriagem, type CriterioPontuacao } from "../../lib/candidaturaScoring";
+import {
+  calcularPontuacaoCandidatura,
+  ASCENDENCIA_JAPONESA,
+  QUANDO_EMBARCAR,
+  type RespostasTriagem,
+  type CriterioPontuacao,
+} from "../../lib/candidaturaScoring";
 
 export const runtime = "nodejs";
 
@@ -81,11 +87,15 @@ export async function POST(req: Request) {
       disponibilidadeEmbarque: "",
       experienciaSetor: "",
       nivelJapones: "",
+      ascendencia: "",
+      quandoEmbarcar: "",
     };
     const respostasBrutas = form.get("respostas");
     if (typeof respostasBrutas === "string") {
       try {
         const parsed = JSON.parse(respostasBrutas);
+        const ascendenciasValidas = ASCENDENCIA_JAPONESA.map((a) => a.key);
+        const quandoEmbarcarValidos = QUANDO_EMBARCAR.map((q) => q.key);
         respostas = {
           passaporte: parsed.passaporte === "sim" || parsed.passaporte === "nao" ? parsed.passaporte : "",
           disponibilidadeEmbarque:
@@ -95,6 +105,8 @@ export async function POST(req: Request) {
           experienciaSetor:
             parsed.experienciaSetor === "sim" || parsed.experienciaSetor === "nao" ? parsed.experienciaSetor : "",
           nivelJapones: parsed.nivelJapones || "",
+          ascendencia: ascendenciasValidas.includes(parsed.ascendencia) ? parsed.ascendencia : "",
+          quandoEmbarcar: quandoEmbarcarValidos.includes(parsed.quandoEmbarcar) ? parsed.quandoEmbarcar : "",
         };
       } catch {
         // respostas malformadas — segue com valores vazios em vez de falhar a candidatura inteira
@@ -178,6 +190,9 @@ export async function POST(req: Request) {
       );
     }
 
+    const ascendenciaLabel = ASCENDENCIA_JAPONESA.find((a) => a.key === respostas.ascendencia)?.label;
+    const quandoEmbarcarLabel = QUANDO_EMBARCAR.find((q) => q.key === respostas.quandoEmbarcar)?.label;
+
     const resumoTexto = [
       "Nova candidatura — /empregos",
       "",
@@ -186,6 +201,8 @@ export async function POST(req: Request) {
       `E-mail: ${email}`,
       `Telefone: ${telefone}`,
       idade ? `Idade: ${idade}` : "Idade: não informada",
+      `Ascendência japonesa: ${ascendenciaLabel || "Não informada"}`,
+      `Quando gostaria de embarcar: ${quandoEmbarcarLabel || "Não informado"}`,
       `Pontuação: ${resultado.pontuacao}%${resultado.aprovadoParaFoto ? " (passou para a etapa de foto)" : ""}`,
       "",
       ...resultado.criterios.map((c: CriterioPontuacao) => `- ${c.label}: ${c.pontosObtidos}/${c.pontosMaximos} — ${c.detalhe}`),

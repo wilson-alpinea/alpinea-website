@@ -130,6 +130,16 @@ export function MotoristaPrivadoPicker({
               >
                 <div className="relative aspect-[3/2] w-full bg-white">
                   <Image src={v.foto} alt={v.nome} fill sizes="200px" className="object-contain p-2" />
+                  {/* Selo de capacidade sobre a foto — pedido do Wilson,
+                      25/set/2026: "deixar mais visual o numero de lugares,
+                      ideal que seja algo mais visual e impactante". Antes
+                      era só uma legenda cinza pequena embaixo do card. */}
+                  <div className="absolute right-1.5 top-1.5 flex items-center gap-1 rounded-full bg-[#0A2540] px-2 py-1 text-white shadow-sm">
+                    <svg viewBox="0 0 24 24" fill="currentColor" className="h-3 w-3 shrink-0">
+                      <path d="M12 12c2.7 0 8 1.34 8 4v2H4v-2c0-2.66 5.3-4 8-4Zm0-2a4 4 0 1 1 0-8 4 4 0 0 1 0 8Z" />
+                    </svg>
+                    <span className="text-xs font-bold leading-none">{v.assentos}</span>
+                  </div>
                 </div>
                 <div className="p-2.5">
                   <p className="text-xs font-medium text-black">{v.nome}</p>
@@ -170,14 +180,26 @@ export function MotoristaPrivadoPicker({
       </div>
 
       {/* ── ROTAS/TOURS, AGRUPADOS POR CATEGORIA ── */}
-      <div className="mt-4 space-y-6">
+      {/* Redesenhado a pedido do Wilson, 25/set/2026: "refazer essa parte, o
+          design está muito ruim, deixar algo mais intuitivo e selecionavel"
+          — lista antiga era muito fina/apagada (círculo minusculo, texto
+          cinza claro, pouco contraste entre selecionado/não selecionado).
+          Trocado por cards maiores com checkbox quadrado bem visível, mais
+          respiro, preço em destaque e toda a linha principal clicável. */}
+      <div className="mt-5 space-y-7">
         {categorias.map((cat) => {
           const rotasDaCategoria = rotasFiltradas.filter((r) => r.categoria === cat);
           if (rotasDaCategoria.length === 0) return null;
           return (
             <div key={cat}>
-              <p className="text-[10px] uppercase tracking-[0.2em] text-black/40">{LABEL_CATEGORIA[cat]}</p>
-              <div className="mt-2 space-y-1.5">
+              <div className="mb-2.5 flex items-center gap-2.5">
+                <span className="h-px flex-1 max-w-4 bg-black/15" />
+                <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-black/55">
+                  {LABEL_CATEGORIA[cat]}
+                </p>
+                <span className="h-px flex-1 bg-black/15" />
+              </div>
+              <div className="space-y-2">
                 {rotasDaCategoria.map((rota) => {
                   const qtd = quantidadeDe(rota.id);
                   const ativo = qtd > 0;
@@ -185,58 +207,67 @@ export function MotoristaPrivadoPicker({
                   return (
                     <div
                       key={rota.id}
-                      className={`rounded-xl border px-3.5 py-2.5 transition ${
-                        ativo ? "border-[#2f80c9]/50 bg-[#2f80c9]/10" : "border-black/10 bg-black/[0.02]"
+                      className={`overflow-hidden rounded-2xl border transition ${
+                        ativo
+                          ? "border-[#2f80c9] bg-[#2f80c9]/[0.07] shadow-sm shadow-[#2f80c9]/10"
+                          : "border-black/10 bg-white hover:border-black/25 hover:bg-black/[0.015]"
                       }`}
                     >
-                      <div className="flex items-center gap-3">
-                        <button
-                          type="button"
-                          onClick={() => ajustarQuantidade(rota.id, ativo ? -qtd : 1)}
-                          aria-pressed={ativo}
-                          aria-label={ativo ? `Remover ${rota.nome}` : `Adicionar ${rota.nome}`}
-                          className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full border text-[10px] transition ${
-                            ativo ? "border-[#2f80c9] bg-[#2f80c9] text-white" : "border-black/25 text-transparent"
+                      <button
+                        type="button"
+                        onClick={() => ajustarQuantidade(rota.id, ativo ? -qtd : 1)}
+                        aria-pressed={ativo}
+                        aria-label={ativo ? `Remover ${rota.nome}` : `Adicionar ${rota.nome}`}
+                        className="flex w-full items-center gap-3 px-4 py-3.5 text-left"
+                      >
+                        <span
+                          aria-hidden
+                          className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-md border-2 transition ${
+                            ativo ? "border-[#2f80c9] bg-[#2f80c9] text-white" : "border-black/20 bg-white text-transparent"
                           }`}
                         >
-                          <IconCheck className="h-3 w-3" />
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => ajustarQuantidade(rota.id, ativo ? -qtd : 1)}
-                          className="flex-1 text-left text-sm text-black"
-                        >
-                          {rota.nome}
+                          <IconCheck className="h-4 w-4" />
+                        </span>
+                        <span className="min-w-0 flex-1">
+                          <span className={`block text-sm font-medium leading-tight ${ativo ? "text-[#0A2540]" : "text-black/80"}`}>
+                            {rota.nome}
+                          </span>
                           {rota.minutosLivres != null && (
-                            <span className="ml-1.5 text-[10px] font-normal text-black/35">
-                              ({rota.minutosLivres} min inclusos)
+                            <span className="mt-1 inline-block rounded-full bg-black/[0.05] px-2 py-0.5 text-[10px] font-medium text-black/45">
+                              {rota.minutosLivres} min inclusos
                             </span>
                           )}
-                        </button>
-                        <span className="shrink-0 text-xs font-semibold text-black/60">{formatUSD(precoUnitario)}</span>
-                      </div>
+                        </span>
+                        <span className={`shrink-0 text-sm font-bold ${ativo ? "text-[#2f80c9]" : "text-black/55"}`}>
+                          {formatUSD(precoUnitario)}
+                        </span>
+                      </button>
                       {ativo && (
-                        <div className="mt-2.5 flex items-center gap-3 pl-8">
-                          <button
-                            type="button"
-                            onClick={() => ajustarQuantidade(rota.id, -1)}
-                            aria-label="Diminuir quantidade"
-                            className="flex h-7 w-7 items-center justify-center rounded-full border border-black/15 text-black/50 transition hover:border-black/35 hover:text-black"
-                          >
-                            <IconMinus className="h-3.5 w-3.5" />
-                          </button>
-                          <span className="min-w-[1.5rem] text-center text-sm font-medium text-black">{qtd}</span>
-                          <button
-                            type="button"
-                            onClick={() => ajustarQuantidade(rota.id, 1)}
-                            aria-label="Aumentar quantidade"
-                            className="flex h-7 w-7 items-center justify-center rounded-full border border-black/15 text-black/50 transition hover:border-black/35 hover:text-black"
-                          >
-                            <IconPlus className="h-3.5 w-3.5" />
-                          </button>
-                          <span className="text-xs text-black/40">
-                            {qtd > 1 ? `${qtd} × ${formatUSD(precoUnitario)} = ${formatUSD(precoUnitario * qtd)}` : "unidade"}
-                          </span>
+                        <div className="flex items-center justify-between gap-3 border-t border-[#2f80c9]/15 bg-white/60 px-4 py-2.5 pl-[3.25rem]">
+                          <div className="flex items-center gap-2.5">
+                            <button
+                              type="button"
+                              onClick={() => ajustarQuantidade(rota.id, -1)}
+                              aria-label="Diminuir quantidade"
+                              className="flex h-8 w-8 items-center justify-center rounded-full border border-black/15 bg-white text-black/50 transition hover:border-[#2f80c9]/50 hover:text-[#2f80c9]"
+                            >
+                              <IconMinus className="h-3.5 w-3.5" />
+                            </button>
+                            <span className="min-w-[1.75rem] text-center text-sm font-semibold text-[#0A2540]">{qtd}</span>
+                            <button
+                              type="button"
+                              onClick={() => ajustarQuantidade(rota.id, 1)}
+                              aria-label="Aumentar quantidade"
+                              className="flex h-8 w-8 items-center justify-center rounded-full border border-black/15 bg-white text-black/50 transition hover:border-[#2f80c9]/50 hover:text-[#2f80c9]"
+                            >
+                              <IconPlus className="h-3.5 w-3.5" />
+                            </button>
+                          </div>
+                          {qtd > 1 && (
+                            <span className="text-xs font-medium text-black/45">
+                              {qtd} × {formatUSD(precoUnitario)} = <span className="text-black/70">{formatUSD(precoUnitario * qtd)}</span>
+                            </span>
+                          )}
                         </div>
                       )}
                     </div>

@@ -801,19 +801,21 @@ export const FATOR_QUARTO: Record<(typeof TIPOS_QUARTO)[number], number> = {
 // Japão; Wilson confirmou R$1.500/dia como valor final (custo base 1000,
 // já com a margem padrão da Alpinea).
 export const DIARIA_TRANSPORTE = comMargemEImposto(1000);
-// Guia: custo de US$ 350/dia a cada 4 pessoas — grupos maiores precisam de
-// mais de um guia, cobrado proporcionalmente. Valor nativo em dólar —
+// Guia estrangeiro (português limitado ou inglês) — opção mais barata,
+// pedido do Wilson, 16/set/2026: "deixar duas opções de guia, guia
+// brasileiro e guia estrangeiro". Valor final já escolhido por ele (não é
+// custo puro, não passa por comMargemEImposto). Grupos maiores precisam
+// de mais de um guia, cobrado proporcionalmente — nativo em dólar,
 // convertido pra reais com a cotação do dia antes de entrar no total (ver
-// calcPreco abaixo e cambioCotacao em PrecoCtx). Preço final já com
-// imposto+margem.
-export const DIARIA_GUIA_USD = comMargemEImposto(350);
-export const GUIA_TAMANHO_GRUPO = 4;
-// Guia estrangeiro (português limitado ou inglês) — opção mais barata que o
-// guia brasileiro acima, pedido do Wilson, 16/set/2026: "deixar duas opções
-// de guia, guia brasileiro e guia estrangeiro". Valor final já escolhido
-// por ele (não é custo puro — ao contrário de DIARIA_GUIA_USD, não passa
-// por comMargemEImposto).
+// calcPreco abaixo e cambioCotacao em PrecoCtx).
 export const DIARIA_GUIA_ESTRANGEIRO_USD = 350;
+export const GUIA_TAMANHO_GRUPO = 4;
+// Guia brasileiro — pedido do Wilson, 25/set/2026: "guia brasileiro e 40%
+// mais caro a diaria" (referente ao guia estrangeiro acima). Direto sobre
+// DIARIA_GUIA_ESTRANGEIRO_USD, não mais via comMargemEImposto (que dava
+// ~49,5% a mais — próximo mas não os 40% exatos pedidos).
+const MULTIPLICADOR_GUIA_BRASILEIRO = 1.4;
+export const DIARIA_GUIA_USD = Math.round(DIARIA_GUIA_ESTRANGEIRO_USD * MULTIPLICADOR_GUIA_BRASILEIRO);
 // Japan Rail Pass — vendido em faixas fixas de dias CORRIDOS (7, 14 ou 21),
 // não por diária do roteiro; preço não escala com ctx.dias. Custo do
 // fornecedor atualizado 25/set/2026 (Century Travel - Tour Operator,

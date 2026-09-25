@@ -122,6 +122,12 @@ export async function POST(req: Request) {
     const valorReferenciaBRL = Number(body.valorReferenciaBRL) || null;
     const formaPagamento = String(body.formaPagamento || "").trim();
     const paisResidencia = String(body.paisResidencia || "").trim();
+    // País de destino — pedido do Wilson, 25/set/2026: "aqui em seguro
+    // viagem definir o pais de residencia e o pais de destino (brasil ou
+    // japao)". Já vem embutido como primeiro item de `paises` acima, mas
+    // registrado também como campo próprio pra ficar claro no resumo do
+    // lead, sem precisar abrir a lista de roteiro pra achar.
+    const paisDestino = String(body.paisDestino || "").trim();
     const observacoesCliente = String(body.observacoes || "").trim();
 
     // Passagem aérea — pedido do Wilson, 25/set/2026: "tem que adicionar
@@ -177,6 +183,7 @@ export async function POST(req: Request) {
       ],
       ["Forma de pagamento escolhida", formaPagamento || "Não escolhida ainda"],
       ["País de residência", paisResidencia || "Não informado"],
+      ["País de destino", paisDestino || "Não informado"],
       ["Passagem aérea", passagemResumo],
       ["Observações do cliente", observacoesCliente || "Nenhuma"],
     ];

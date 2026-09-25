@@ -1,6 +1,6 @@
 "use client";
 
-import { Document, Page, Text, View, StyleSheet, Image, Link, pdf } from "@react-pdf/renderer";
+import { Document, Page, Text, View, StyleSheet, Image, Link, Svg, Path, Circle, Rect, pdf } from "@react-pdf/renderer";
 import { formatValor, type MoedaExibicao } from "../lib/currency";
 
 // PDF de proposta enviado ao cliente — pedido do Wilson, 08/set/2026:
@@ -72,6 +72,16 @@ export type PacotePdfProps = {
   nomeCliente?: string;
   consultor?: string;
   validadeLabel?: string;
+  // Roteiro básico sugerido (com fotos) — pedido do Wilson, 25/set/2026:
+  // "adicionar roteiro basico sugerido com imagens" no PDF. Lista simples
+  // das cidades do roteiro (nome + foto, quando existir) — não é um
+  // dia-a-dia detalhado (isso já vive no painel digital do Roteiro
+  // Personalizado, ver EXPLICACOES_ITEM.roteiro), é só uma prévia visual
+  // de quais cidades fazem parte da viagem. `imagemUrl` já vem como URL
+  // completa (SITE_URL + caminho da foto em DESTINOS) — o
+  // @react-pdf/renderer não resolve caminho relativo de arquivo estático
+  // do Next, precisa de uma URL de verdade pra buscar a imagem.
+  cidadesRoteiro?: { nome: string; imagemUrl: string | null }[];
 };
 
 // Categoriza um item pela `chave` estável (não pelo label, que muda de
@@ -108,6 +118,121 @@ function categoriaDoItem(chave: string): CategoriaItem {
   if (chave === "cambio" || chave === "Câmbio no Brasil") return "cambio";
   if (chave === "Reserva de Restaurantes High-End") return "restaurantes";
   return "outro";
+}
+
+// Ícones pequenos por categoria de item — pedido do Wilson, 25/set/2026:
+// "usar mais icones pequenos". @react-pdf/renderer não suporta fontes de
+// ícone (Font Awesome etc.) nem imagens vetoriais externas — os ícones
+// abaixo são desenhados na mão com as primitivas de SVG do próprio
+// react-pdf (Svg/Path/Circle/Rect), num estilo linear simples e
+// monocromático (mesmo azul #2f80c9 de destaque do resto do documento),
+// só pra dar uma pista visual rápida da categoria do item — não
+// substituem o texto do item, que continua sendo a fonte de verdade.
+function tracosDoIcone(categoria: CategoriaItem) {
+  const props = { fill: "none", stroke: "#2f80c9", strokeWidth: 1.8, strokeLinecap: "round" as const, strokeLinejoin: "round" as const };
+  switch (categoria) {
+    case "roteiro":
+      return (
+        <>
+          <Path d="M12 21s-7-7.5-7-12a7 7 0 0 1 14 0c0 4.5-7 12-7 12z" {...props} />
+          <Circle cx={12} cy={9} r={2.3} {...props} />
+        </>
+      );
+    case "aereo":
+      return (
+        <>
+          <Path d="M22 2L11 13" {...props} />
+          <Path d="M22 2l-7 20-4-9-9-4 20-7z" {...props} />
+        </>
+      );
+    case "hotel":
+      return (
+        <>
+          <Path d="M3 11l9-8 9 8" {...props} />
+          <Path d="M5 10v10h14V10" {...props} />
+          <Path d="M10 20v-6h4v6" {...props} />
+        </>
+      );
+    case "seguro":
+      return (
+        <>
+          <Path d="M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6l8-4z" {...props} />
+          <Path d="M9 12l2 2 4-4" {...props} />
+        </>
+      );
+    case "extensao":
+      return (
+        <>
+          <Circle cx={12} cy={12} r={9} {...props} />
+          <Path d="M3 12h18" {...props} />
+          <Path d="M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18" {...props} />
+        </>
+      );
+    case "transporte":
+    case "motorista":
+      return (
+        <>
+          <Rect x={3} y={11} width={18} height={6} rx={2} {...props} />
+          <Path d="M5 11l2-5h10l2 5" {...props} />
+          <Circle cx={7.5} cy={18} r={1.4} {...props} />
+          <Circle cx={16.5} cy={18} r={1.4} {...props} />
+        </>
+      );
+    case "guia":
+      return (
+        <>
+          <Circle cx={12} cy={7} r={4} {...props} />
+          <Path d="M4 21v-2a8 8 0 0 1 16 0v2" {...props} />
+        </>
+      );
+    case "jrpass":
+      return (
+        <>
+          <Rect x={5} y={4} width={14} height={12} rx={2} {...props} />
+          <Circle cx={8.5} cy={13} r={1} {...props} />
+          <Circle cx={15.5} cy={13} r={1} {...props} />
+          <Path d="M5 12h14" {...props} />
+          <Path d="M8 20l-2 2M16 20l2 2" {...props} />
+        </>
+      );
+    case "wifi":
+      return (
+        <>
+          <Path d="M2 8.5a16 16 0 0 1 20 0" {...props} />
+          <Path d="M5.5 12a11 11 0 0 1 13 0" {...props} />
+          <Path d="M9 15.5a6 6 0 0 1 6 0" {...props} />
+          <Circle cx={12} cy={19} r={1.1} fill="#2f80c9" stroke="none" />
+        </>
+      );
+    case "cambio":
+      return (
+        <>
+          <Circle cx={12} cy={12} r={9} {...props} />
+          <Path d="M9 12h6M12 9v6" {...props} />
+        </>
+      );
+    case "ingresso":
+      return (
+        <Path d="M3 8a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v2a2 2 0 0 0 0 4v2a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-2a2 2 0 0 0 0-4V8z" {...props} />
+      );
+    case "restaurantes":
+      return (
+        <>
+          <Path d="M7 2v20M4 2v6a3 3 0 0 0 3 3M10 2v6a3 3 0 0 1-3 3" {...props} />
+          <Path d="M17 2s-2 2-2 6 2 4 2 4v10" {...props} />
+        </>
+      );
+    default:
+      return <Path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7l3-7z" {...props} />;
+  }
+}
+
+function IconeCategoria({ categoria }: { categoria: CategoriaItem }) {
+  return (
+    <Svg viewBox="0 0 24 24" style={styles.iconeCategoria}>
+      {tracosDoIcone(categoria)}
+    </Svg>
+  );
 }
 
 const EXPLICACOES_ITEM: Record<
@@ -285,19 +410,45 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   metaText: { fontSize: 8, color: "#6b7688", marginBottom: 2 },
-  itemRow: {
+  // Itens inclusos virou cartão de verdade em vez de linha com borda
+  // embaixo — pedido do Wilson, 25/set/2026: "usar mais cards no pdf tbm
+  // das selecoes da calculadora reversa" (depois de já ter pedido "o
+  // estetico pode ser melhor" pro documento como um todo). Borda
+  // completa + cantos arredondados + borda lateral azul (mesmo padrão já
+  // usado em totalsBox/diferencialBox/contratoBox), com espaço entre os
+  // cards em vez do zebra-striping anterior.
+  itemCard: {
     flexDirection: "row",
-    justifyContent: "space-between",
     alignItems: "flex-start",
-    paddingVertical: 8,
-    paddingHorizontal: 6,
-    borderBottomWidth: 0.5,
-    borderBottomColor: "#dcdfe4",
+    gap: 8,
+    padding: 10,
+    marginBottom: 7,
+    backgroundColor: "#ffffff",
+    borderWidth: 1,
+    borderColor: "#e3e7ed",
+    borderLeftWidth: 3,
+    borderLeftColor: "#2f80c9",
+    borderRadius: 7,
   },
-  itemRowAlt: { backgroundColor: "#f8fafc" },
+  iconeCategoria: { width: 15, height: 15, marginTop: 1.5 },
   itemLabel: { fontFamily: "Helvetica-Bold", fontSize: 10, marginBottom: 2, color: "#0A2540" },
   itemDetalhe: { fontSize: 8.5, color: "#4a5568", lineHeight: 1.4 },
   itemPreco: { fontFamily: "Helvetica-Bold", fontSize: 10, marginLeft: 12, color: "#0A2540" },
+  // Grid de cidades do "Roteiro básico sugerido" — pedido do Wilson,
+  // 25/set/2026: "adicionar roteiro basico sugerido com imagens".
+  cidadeGrid: { flexDirection: "row", flexWrap: "wrap", gap: 8, marginTop: 4, marginBottom: 6 },
+  cidadeCard: { width: 76, alignItems: "center" },
+  cidadeImg: { width: 76, height: 54, borderRadius: 6, objectFit: "cover", marginBottom: 3 },
+  cidadeImgPlaceholder: {
+    width: 76,
+    height: 54,
+    borderRadius: 6,
+    marginBottom: 3,
+    backgroundColor: "#eef1f4",
+    borderWidth: 1,
+    borderColor: "#dcdfe4",
+  },
+  cidadeNome: { fontSize: 7.5, fontFamily: "Helvetica-Bold", color: "#0A2540", textAlign: "center" },
   totalsBox: {
     marginTop: 16,
     padding: 14,
@@ -424,6 +575,7 @@ export function PacotePdfDocument(props: PacotePdfProps) {
     nomeCliente,
     consultor,
     validadeLabel,
+    cidadesRoteiro,
     // orcamentoBRL, saldoBRL e ocultarOrcamentoReferencia não são mais
     // exibidos (ver comentário 14/set/2026 acima) — deixados no tipo
     // PacotePdfProps por compatibilidade com quem chama, mas não
@@ -463,13 +615,33 @@ export function PacotePdfDocument(props: PacotePdfProps) {
           </Text>
         )}
 
+        {cidadesRoteiro && cidadesRoteiro.length > 0 && (
+          <View style={{ marginBottom: 6 }}>
+            <Text style={styles.h2}>Roteiro básico sugerido</Text>
+            <Text style={{ fontSize: 8, color: "#6b7688", marginBottom: 6 }}>
+              Cidades previstas nesta proposta — o dia a dia completo, com atrações e
+              deslocamentos, fica no painel digital do Roteiro Personalizado.
+            </Text>
+            <View style={styles.cidadeGrid}>
+              {cidadesRoteiro.map((c) => (
+                <View key={c.nome} style={styles.cidadeCard} wrap={false}>
+                  {c.imagemUrl ? (
+                    /* eslint-disable-next-line jsx-a11y/alt-text -- Image aqui é do @react-pdf/renderer, não aceita alt */
+                    <Image src={c.imagemUrl} style={styles.cidadeImg} />
+                  ) : (
+                    <View style={styles.cidadeImgPlaceholder} />
+                  )}
+                  <Text style={styles.cidadeNome}>{c.nome}</Text>
+                </View>
+              ))}
+            </View>
+          </View>
+        )}
+
         <Text style={styles.h2}>Itens inclusos</Text>
-        {itens.map((item, i) => (
-          <View
-            key={item.chave}
-            style={i % 2 === 1 ? [styles.itemRow, styles.itemRowAlt] : styles.itemRow}
-            wrap={false}
-          >
+        {itens.map((item) => (
+          <View key={item.chave} style={styles.itemCard} wrap={false}>
+            <IconeCategoria categoria={categoriaDoItem(item.chave)} />
             <View style={{ flex: 1 }}>
               <Text style={styles.itemLabel}>{item.label}</Text>
               {item.detalhe.map((linha, j) => (
@@ -544,7 +716,10 @@ export function PacotePdfDocument(props: PacotePdfProps) {
             const explicacao = EXPLICACOES_ITEM[categoria];
             return (
               <View key={categoria} style={styles.explicacaoBloco} wrap={false}>
-                <Text style={styles.explicacaoTitulo}>{labelExemplo}</Text>
+                <View style={{ flexDirection: "row", alignItems: "center", gap: 5, marginBottom: 3 }}>
+                  <IconeCategoria categoria={categoria} />
+                  <Text style={[styles.explicacaoTitulo, { marginBottom: 0 }]}>{labelExemplo}</Text>
+                </View>
                 <Text style={styles.explicacaoTexto}>{explicacao.texto}</Text>
                 {explicacao.videoUrl ? (
                   <Link src={explicacao.videoUrl} style={styles.videoLink}>

@@ -45,11 +45,48 @@ export type PerguntaTriagemKey =
   | "experienciaSetor"
   | "nivelJapones";
 
+// Ascendência japonesa e data desejada de embarque — pedido do Wilson,
+// 25/set/2026: "aqui ta faltando o pre-cadastro, anexar curriculo, nome
+// completo, idade, ascendencia, etc quando gostaria de embarcar etc".
+// Puramente informativo por enquanto — não entram na fórmula de
+// pontuação (que já foi desenhada e confirmada com o Wilson, ver
+// comentário no topo do arquivo); ficam visíveis pra equipe decidir na
+// revisão manual (ascendência japonesa pode abrir caminhos de visto
+// específicos no Japão, fora do escopo do motor determinístico aqui).
+export type AscendenciaJaponesa =
+  | "nenhuma"
+  | "nissei"
+  | "sansei"
+  | "yonsei"
+  | "conjugeDependente"
+  | "outro";
+
+export const ASCENDENCIA_JAPONESA: { key: AscendenciaJaponesa; label: string }[] = [
+  { key: "nenhuma", label: "Não tenho ascendência japonesa" },
+  { key: "nissei", label: "Nissei (filho/a de japonês/a)" },
+  { key: "sansei", label: "Sansei (neto/a de japonês/a)" },
+  { key: "yonsei", label: "Yonsei (bisneto/a de japonês/a)" },
+  { key: "conjugeDependente", label: "Cônjuge ou dependente de descendente" },
+  { key: "outro", label: "Outro / não sei" },
+];
+
+export type QuandoEmbarcar = "imediato" | "ate3Meses" | "ate6Meses" | "mais6Meses" | "aindaNaoSei";
+
+export const QUANDO_EMBARCAR: { key: QuandoEmbarcar; label: string }[] = [
+  { key: "imediato", label: "Imediatamente" },
+  { key: "ate3Meses", label: "Em até 3 meses" },
+  { key: "ate6Meses", label: "Em até 6 meses" },
+  { key: "mais6Meses", label: "Mais de 6 meses" },
+  { key: "aindaNaoSei", label: "Ainda não sei" },
+];
+
 export type RespostasTriagem = {
   passaporte: "sim" | "nao" | "";
   disponibilidadeEmbarque: "sim" | "nao" | "";
   experienciaSetor: "sim" | "nao" | "";
   nivelJapones: NivelJapones | "";
+  ascendencia: AscendenciaJaponesa | "";
+  quandoEmbarcar: QuandoEmbarcar | "";
 };
 
 export const PERGUNTAS_TRIAGEM: {

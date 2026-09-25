@@ -1650,6 +1650,11 @@ function TransporteModal({ cambio, onClose }: { cambio: Cambio | null; onClose: 
   const [formaPagamento, setFormaPagamento] = useState<FormaPagamentoEscolhida | null>(null);
   const [status, setStatus] = useState<"form" | "enviando" | "enviado" | "erro">("form");
   const [erro, setErro] = useState("");
+  // Termos e condições de contratação do motorista privado — pedido do
+  // Wilson, 25/set/2026: "criar termos e condicoes para aceite de
+  // contratacao de motorista privado em transporte privado". Mesmo
+  // padrão de tickbox obrigatório já usado no JR Pass (termosAceitos).
+  const [termosAceitos, setTermosAceitos] = useState(false);
 
   const cambioCotacao = cambio?.cotacao ?? 5.3;
   const quantidadeItens = contarItensMotorista(selecao);
@@ -1675,7 +1680,8 @@ function TransporteModal({ cambio, onClose }: { cambio: Cambio | null; onClose: 
     nome.trim().length > 0 &&
     /\S+@\S+\.\S+/.test(email) &&
     whatsapp.trim().length >= 8 &&
-    quantidadeItens > 0;
+    quantidadeItens > 0 &&
+    termosAceitos;
 
   async function enviar() {
     if (!formValido || status === "enviando") return;
@@ -1698,6 +1704,7 @@ function TransporteModal({ cambio, onClose }: { cambio: Cambio | null; onClose: 
           email,
           whatsapp,
           observacoes,
+          termosAceitos,
         }),
       });
       const dadosResposta = await resposta.json().catch(() => ({}));
@@ -1870,6 +1877,80 @@ function TransporteModal({ cambio, onClose }: { cambio: Cambio | null; onClose: 
                 formaPagamento={formaPagamento}
                 onEscolher={setFormaPagamento}
               />
+
+              {/* Termos e condições — pedido do Wilson, 25/set/2026: "criar
+                  termos e condicoes para aceite de contratacao de motorista
+                  privado em transporte privado". Mesmo padrão (caixa com
+                  scroll + tickbox obrigatório) já usado nos Termos do JR
+                  Pass acima. Conteúdo vem das próprias condições do
+                  fornecedor DAIKICHI/HK TOURIST já documentadas em
+                  app/lib/motoristaPrivadoRotas.ts (imposto/pedágio/combustível
+                  inclusos, hora extra por bloco de 30 min, cancelamento,
+                  adicionais opcionais, motorista bilíngue). */}
+              <div className="mt-8 border-t border-black/10 pt-6">
+                <p className="text-[10px] uppercase tracking-[0.2em] text-black/40">
+                  Termos e condições
+                </p>
+                <div className="mt-4 max-h-56 overflow-y-auto rounded-xl border border-black/10 bg-black/[0.02] p-4 text-[11px] leading-5 text-black/60">
+                  <p className="font-medium text-black/80">Fornecimento do serviço</p>
+                  <p className="mt-1">
+                    O motorista e o veículo são fornecidos por um parceiro especializado no Japão
+                    — a Alpinea atua como intermediária entre o cliente e esse fornecedor. O veículo
+                    é exclusivo do grupo contratante, sem compartilhamento com outros passageiros.
+                  </p>
+                  <p className="mt-3 font-medium text-black/80">O que está incluído</p>
+                  <p className="mt-1">
+                    Os valores já incluem imposto, estacionamento, pedágio (ETC) e combustível. Cada
+                    rota tem um tempo livre incluso (normalmente 90 min no trecho de chegada/pickup,
+                    30 min no trecho de partida, ou as 10 horas inteiras nos tours de dia inteiro) —
+                    ver detalhe de cada rota na calculadora acima.
+                  </p>
+                  <p className="mt-3 font-medium text-black/80">Hora extra</p>
+                  <p className="mt-1">
+                    Tempo de uso além do período já incluso na rota escolhida é cobrado em blocos de
+                    30 minutos (sempre arredondado pra cima), com tarifa específica por veículo e
+                    rota, cobrado à parte.
+                  </p>
+                  <p className="mt-3 font-medium text-black/80">Adicionais opcionais</p>
+                  <p className="mt-1">
+                    Recepção com placa de identificação (Meet &amp; Greet) e cadeirinha infantil
+                    estão disponíveis mediante consulta, com valor adicional — não estão incluídos
+                    no preço-base da rota.
+                  </p>
+                  <p className="mt-3 font-medium text-black/80">Motorista bilíngue</p>
+                  <p className="mt-1">
+                    Motorista com português ou inglês está disponível mediante consulta e valor
+                    adicional — disponibilidade limitada, recomendamos solicitar com grande
+                    antecedência (idealmente 70 dias antes da viagem). Sem essa solicitação expressa,
+                    o motorista fornecido fala japonês.
+                  </p>
+                  <p className="mt-3 font-medium text-black/80">Não incluído</p>
+                  <p className="mt-1">
+                    Trânsito inter-municipal de longa distância entre regiões (ex.: Tóquio↔Kansai
+                    por estrada) não está coberto pelas rotas/tours listados acima.
+                  </p>
+                  <p className="mt-3 font-medium text-black/80">Cancelamento</p>
+                  <p className="mt-1">{POLITICA_CANCELAMENTO_MOTORISTA}</p>
+                  <p className="mt-3 font-medium text-black/80">Pagamento e responsabilidade dos dados</p>
+                  <p className="mt-1">
+                    O valor final em reais é convertido pela cotação de câmbio do dia da confirmação.
+                    A exatidão dos dados informados (nome, telefone/WhatsApp, horários de voo e locais
+                    de embarque) é de responsabilidade do cliente — divergências podem prejudicar o
+                    pickup e não são de responsabilidade da Alpinea nem do fornecedor. Isso não
+                    confirma pagamento — nossa equipe entra em contato pelo WhatsApp pra fechar a
+                    logística antes de qualquer cobrança.
+                  </p>
+                </div>
+                <label className="mt-3 flex items-start gap-2.5 text-[11px] leading-5 text-black/60">
+                  <input
+                    type="checkbox"
+                    checked={termosAceitos}
+                    onChange={(e) => setTermosAceitos(e.target.checked)}
+                    className="mt-0.5 h-4 w-4 shrink-0 rounded border-black/25 text-[#2f80c9] focus:ring-[#2f80c9]"
+                  />
+                  Li e aceito os termos e condições de contratação do motorista privado acima.
+                </label>
+              </div>
 
               {erro && <p className="mt-4 text-sm text-red-600">{erro}</p>}
             </>
@@ -3195,6 +3276,13 @@ function SeguroViagemModal({ onClose }: { onClose: () => void }) {
   // abaixo) e outro país (bloqueado — seguro viagem internacional só
   // pode ser contratado por quem ainda está no Brasil antes de embarcar).
   const [moraEm, setMoraEm] = useState<"brasil" | "japao" | "outro" | null>(null);
+  // País de destino da viagem — pedido do Wilson, 25/set/2026: "aqui em
+  // seguro viagem definir o pais de residencia e o pais de destino
+  // (brasil ou japao)". Antes o destino vinha fixo como "Japão" no
+  // payload (paises: ["Japão", ...]), o que não cobria o caso de quem
+  // mora no Japão (moraEm === "japao") viajando de volta pro Brasil.
+  // Independente de "Onde você mora" — o vendedor escolhe os dois.
+  const [paisDestino, setPaisDestino] = useState<"brasil" | "japao" | null>(null);
   const [observacoes, setObservacoes] = useState("");
   const [status, setStatus] = useState<"form" | "enviando" | "enviado" | "erro">("form");
   const [erro, setErro] = useState("");
@@ -3259,6 +3347,9 @@ function SeguroViagemModal({ onClose }: { onClose: () => void }) {
   );
   const roteiroSoJapao = paisesAdicionais.length === 0;
   const multiplicadorDestino = roteiroSoJapao ? 1 : MULTIPLICADOR_ROTEIRO_MULTIDESTINO;
+  // Nome do país de destino escolhido, pra usar no payload e nos textos
+  // da seção "Roteiro" abaixo (antes vinha fixo "Japão").
+  const nomePaisDestino = paisDestino === "brasil" ? "Brasil" : "Japão";
   // Seguro Viagem é nativo em BRL (DIARIA_SEGURO_VIAGEM já sai em reais,
   // com imposto+margem — ver comentário em CustomPackageCard.tsx),
   // diferente de JR Pass/guia/motorista/câmbio-aeroporto que são nativos
@@ -3274,6 +3365,7 @@ function SeguroViagemModal({ onClose }: { onClose: () => void }) {
     !!seguradora &&
     !residenciaBloqueada &&
     (moraEm === "brasil" || moraEm === "japao") &&
+    !!paisDestino &&
     nome.trim().length > 0 &&
     /\S+@\S+\.\S+/.test(email) &&
     whatsapp.trim().length >= 8 &&
@@ -3301,7 +3393,8 @@ function SeguroViagemModal({ onClose }: { onClose: () => void }) {
           // preenchidos, na mesma ordem dos viajantes.
           cpfs: cpfs.map((c) => c.trim()),
           enderecos: enderecos.map((e) => e.trim()),
-          paises: ["Japão", ...paisesAdicionais],
+          paises: [nomePaisDestino, ...paisesAdicionais],
+          paisDestino: nomePaisDestino,
           valorReferenciaBRL,
           formaPagamento: descricaoPagamentoEscolhido || null,
           nome,
@@ -3671,7 +3764,7 @@ function SeguroViagemModal({ onClose }: { onClose: () => void }) {
                   <div className="flex flex-wrap gap-1.5">
                     <span className="flex items-center gap-1.5 rounded-full border border-[#2f80c9] bg-[#2f80c9]/10 px-3 py-1.5 text-[11px] font-medium text-[#1c6ea8]">
                       <IconCheck className="h-3 w-3" />
-                      Japão (obrigatório)
+                      {nomePaisDestino} (obrigatório)
                     </span>
                     {PAISES_ASIA_ADICIONAIS.map((pais) => {
                       const selecionado = paisesAdicionais.includes(pais);
@@ -3694,10 +3787,10 @@ function SeguroViagemModal({ onClose }: { onClose: () => void }) {
                   </div>
                   <p className="mt-2 text-[10px] leading-4 text-black/40">
                     {roteiroSoJapao
-                      ? "Viagem só pro Japão — referência de preço abaixo usa a tarifa de destino único."
+                      ? `Viagem só pro ${nomePaisDestino} — referência de preço abaixo usa a tarifa de destino único.`
                       : `Roteiro com mais ${paisesAdicionais.length} ${
                           paisesAdicionais.length === 1 ? "país" : "países"
-                        } além do Japão — deixa de ser destino único, então a referência abaixo já soma um adicional interno da Ajisai (+${Math.round(
+                        } além do ${nomePaisDestino} — deixa de ser destino único, então a referência abaixo já soma um adicional interno da Ajisai (+${Math.round(
                           (MULTIPLICADOR_ROTEIRO_MULTIDESTINO - 1) * 100,
                         )}%) pra cobertura mundial/multidestino. O tipo de plano e o valor exatos são confirmados com a seguradora escolhida.`}
                   </p>
@@ -3794,7 +3887,7 @@ function SeguroViagemModal({ onClose }: { onClose: () => void }) {
                   Wilson, 25/set/2026: "adicionar pais em que reside". */}
               <div className="mt-8 border-t border-black/10 pt-6">
                 <p className="text-[10px] uppercase tracking-[0.2em] text-black/40">Seus dados</p>
-                <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                   <label className="flex flex-col gap-1.5">
                     <span className="text-[10px] uppercase tracking-[0.15em] text-black/50">
                       Nome completo
@@ -3825,6 +3918,16 @@ function SeguroViagemModal({ onClose }: { onClose: () => void }) {
                       className="rounded-lg border border-black/15 px-3 py-2.5 text-sm text-black focus:border-[#2f80c9] focus:outline-none"
                     />
                   </label>
+                </div>
+
+                {/* País de residência + país de destino — pedido do
+                    Wilson, 25/set/2026: "aqui em seguro viagem definir o
+                    pais de residencia e o pais de destino (brasil ou
+                    japao)". Lado a lado pra deixar clara a diferença: uma
+                    coisa é onde o cliente mora, outra é pra onde ele está
+                    viajando (podem ser países diferentes ou opostos —
+                    ex.: quem mora no Japão geralmente viaja pro Brasil). */}
+                <div className="mt-4 grid gap-4 sm:grid-cols-2">
                   <div className="flex flex-col gap-1.5">
                     <span className="text-[10px] uppercase tracking-[0.15em] text-black/50">
                       Onde você mora
@@ -3832,7 +3935,10 @@ function SeguroViagemModal({ onClose }: { onClose: () => void }) {
                     <div className="flex flex-wrap gap-1.5">
                       <button
                         type="button"
-                        onClick={() => setMoraEm("brasil")}
+                        onClick={() => {
+                          setMoraEm("brasil");
+                          setPaisDestino((atual) => atual ?? "japao");
+                        }}
                         className={`rounded-lg border px-2.5 py-2.5 text-[11px] transition ${
                           moraEm === "brasil"
                             ? "border-[#2f80c9] bg-[#2f80c9]/10 font-medium text-[#1c6ea8]"
@@ -3843,7 +3949,10 @@ function SeguroViagemModal({ onClose }: { onClose: () => void }) {
                       </button>
                       <button
                         type="button"
-                        onClick={() => setMoraEm("japao")}
+                        onClick={() => {
+                          setMoraEm("japao");
+                          setPaisDestino((atual) => atual ?? "brasil");
+                        }}
                         className={`rounded-lg border px-2.5 py-2.5 text-[11px] transition ${
                           moraEm === "japao"
                             ? "border-[#2f80c9] bg-[#2f80c9]/10 font-medium text-[#1c6ea8]"
@@ -3862,6 +3971,35 @@ function SeguroViagemModal({ onClose }: { onClose: () => void }) {
                         }`}
                       >
                         Outro país
+                      </button>
+                    </div>
+                  </div>
+                  <div className="flex flex-col gap-1.5">
+                    <span className="text-[10px] uppercase tracking-[0.15em] text-black/50">
+                      País de destino
+                    </span>
+                    <div className="flex flex-wrap gap-1.5">
+                      <button
+                        type="button"
+                        onClick={() => setPaisDestino("brasil")}
+                        className={`rounded-lg border px-2.5 py-2.5 text-[11px] transition ${
+                          paisDestino === "brasil"
+                            ? "border-[#2f80c9] bg-[#2f80c9]/10 font-medium text-[#1c6ea8]"
+                            : "border-black/15 text-black/60 hover:border-black/30"
+                        }`}
+                      >
+                        Brasil
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setPaisDestino("japao")}
+                        className={`rounded-lg border px-2.5 py-2.5 text-[11px] transition ${
+                          paisDestino === "japao"
+                            ? "border-[#2f80c9] bg-[#2f80c9]/10 font-medium text-[#1c6ea8]"
+                            : "border-black/15 text-black/60 hover:border-black/30"
+                        }`}
+                      >
+                        Japão
                       </button>
                     </div>
                   </div>

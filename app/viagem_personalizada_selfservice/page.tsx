@@ -481,7 +481,6 @@ export default function ViagemPersonalizadaSelfServicePage() {
   const [cambioExpandido, setCambioExpandido] = useState(false);
   const cambioIene = useCambioIene(cambioCidade);
   const cotacaoIene = cambioIene?.cotacaoBRLPorJPY ?? COTACAO_FALLBACK_BRL_POR_JPY;
-  const cidadesDisponiveis = [...CIDADES_OFERECIDAS, ...cidades.filter((c) => !CIDADES_OFERECIDAS.includes(c))];
 
   const cidadesTemasAtivos = useMemo(() => {
     const mapa = new Map<DestinoKey, { key: DestinoKey; destaques: { tema: string; texto: string }[] }>();
@@ -1418,61 +1417,12 @@ export default function ViagemPersonalizadaSelfServicePage() {
               <PerfilViajanteSeletor value={perfilViajante} onChange={setPerfilViajante} />
             </div>
 
-            <div className="sm:col-span-2">
-              <span className="mb-2 flex flex-wrap items-center text-[10px] uppercase tracking-[0.2em] text-black/50">
-                <LabelNumerado texto="11. Cidades do roteiro" />{" "}
-                <span className="ml-1.5 normal-case tracking-normal text-black/60">
-                  (até {MAX_CIDADES}, opcional)
-                </span>
-              </span>
-              <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 md:grid-cols-4">
-                {cidadesDisponiveis.map((key) => {
-                  const destino = DESTINOS.find((d) => d.key === key);
-                  const marcado = cidades.includes(key);
-                  return (
-                    <button
-                      key={key}
-                      type="button"
-                      onClick={() => alternarCidade(key)}
-                      aria-pressed={marcado}
-                      className={`overflow-hidden rounded-xl border text-left transition ${
-                        marcado
-                          ? "border-[#2f80c9] bg-[#2f80c9]/10 ring-1 ring-[#2f80c9]"
-                          : "border-black/10 bg-white hover:border-black/30"
-                      }`}
-                    >
-                      <div className="relative h-24 w-full bg-black/[0.06]">
-                        {destino?.imagem ? (
-                          // eslint-disable-next-line @next/next/no-img-element
-                          <img
-                            src={destino.imagem}
-                            alt={destino.nome}
-                            loading="lazy"
-                            className="h-full w-full object-cover"
-                          />
-                        ) : (
-                          <div className="flex h-full w-full items-center justify-center text-2xl text-black/25">
-                            ⛩
-                          </div>
-                        )}
-                        {marcado && (
-                          <span className="absolute right-1.5 top-1.5 flex h-5 w-5 items-center justify-center rounded-full bg-[#2f80c9] text-[11px] text-white">
-                            ✓
-                          </span>
-                        )}
-                      </div>
-                      <div
-                        className={`px-2 py-2 text-xs ${
-                          marcado ? "font-medium text-[#2f80c9]" : "text-black/70"
-                        }`}
-                      >
-                        {destino?.nome ?? key}
-                      </div>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
+            {/* Campo "11. Cidades do roteiro" removido — pedido do
+                Wilson, 25/set/2026: "remover cidades da
+                viagem_personalizada_selfservice, deixr somente na
+                calculadora reserva". `cidades` fica no default
+                (["tokyo", "kyoto"]) — a equipe ajusta o roteiro exato
+                depois, na Calculadora Reversa (uso interno). */}
 
             <div className="sm:col-span-2">
               <span className="mb-2 flex flex-wrap items-center text-[10px] uppercase tracking-[0.2em] text-black/50">
@@ -1784,6 +1734,19 @@ export default function ViagemPersonalizadaSelfServicePage() {
                           className="h-10 w-32 rounded-lg border border-black/15 bg-white placeholder:text-black/40 px-3 text-sm text-[#0A2540] outline-none focus:border-black/40"
                         />
                       </div>
+                      {/* Sugestão de quantidade — pedido do Wilson, 25/set/2026:
+                          "colocar quantidade sugerida como opcao, 10mil ienes por dia
+                          sugerido". Botão preenche com ¥10.000 por dia de viagem
+                          (respeitando o mínimo de ¥{CAMBIO_IENES_MINIMO.toLocaleString()}). */}
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setQuantidadeIenes(Math.max(CAMBIO_IENES_MINIMO, dias * 10000))
+                        }
+                        className="mt-1.5 self-start text-[11px] text-[#0A2540]/70 underline decoration-dotted underline-offset-2 transition hover:text-[#0A2540]"
+                      >
+                        Usar sugestão: ¥{Math.max(CAMBIO_IENES_MINIMO, dias * 10000).toLocaleString("pt-BR")} (¥10.000/dia × {dias} dias)
+                      </button>
                     </label>
                   </div>
                   <p className="mt-1.5 text-[11px] text-black/60">

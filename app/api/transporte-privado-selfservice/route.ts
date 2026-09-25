@@ -97,6 +97,12 @@ export async function POST(req: Request) {
     const totalBRL = Number(body.totalBRL) || null;
     const formaPagamento = String(body.formaPagamento || "").trim();
     const observacoesCliente = String(body.observacoes || "").trim();
+    // Confirmação do tickbox de termos e condições — pedido do Wilson,
+    // 25/set/2026: "criar termos e condicoes para aceite de contratacao
+    // de motorista privado em transporte privado". O botão de enviar já
+    // fica desabilitado no front sem o aceite (ver formValido em
+    // TransporteModal); aqui só registra a confirmação pro CRM/auditoria.
+    const termosAceitos = Boolean(body.termosAceitos);
 
     const linhasResumo: [string, string][] = [
       ["Veículo", veiculo],
@@ -106,6 +112,7 @@ export async function POST(req: Request) {
       ["Total (US$)", `US$ ${totalUSD.toLocaleString("pt-BR")}`],
       ["Valor total (referência BRL)", totalBRL ? `R$ ${totalBRL.toLocaleString("pt-BR")}` : "Não calculado"],
       ["Forma de pagamento escolhida", formaPagamento || "Não escolhida ainda"],
+      ["Termos e condições aceitos", termosAceitos ? "Sim" : "Não confirmado"],
       ["Observações do cliente", observacoesCliente || "Nenhuma"],
     ];
 

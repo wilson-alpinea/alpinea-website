@@ -4,10 +4,14 @@ import { VAGAS, type Vaga, type PublicoKey, type SetorKey, type StatusVaga } fro
 import {
   PERGUNTAS_TRIAGEM,
   NIVEIS_JAPONES,
+  ASCENDENCIA_JAPONESA,
+  QUANDO_EMBARCAR,
   NOTA_MINIMA_PROXIMA_ETAPA,
   type RespostasTriagem,
   type CriterioPontuacao,
   type NivelJapones,
+  type AscendenciaJaponesa,
+  type QuandoEmbarcar,
 } from "../lib/candidaturaScoring";
 import { EXTENSOES_CURRICULO_ACEITAS } from "../lib/curriculoConstantes";
 import { useEffect, useMemo, useState, type FormEvent } from "react";
@@ -1271,6 +1275,8 @@ function CandidaturaModal({ vaga, onFechar }: { vaga: Vaga; onFechar: () => void
     disponibilidadeEmbarque: "",
     experienciaSetor: "",
     nivelJapones: "",
+    ascendencia: "",
+    quandoEmbarcar: "",
   });
 
   const [candidaturaId, setCandidaturaId] = useState<string | null>(null);
@@ -1470,6 +1476,53 @@ function CandidaturaModal({ vaga, onFechar }: { vaga: Vaga; onFechar: () => void
                   </option>
                 ))}
               </select>
+            </div>
+
+            {/* Ascendência japonesa + data desejada de embarque — pedido
+                do Wilson, 25/set/2026: "aqui ta faltando o pre-cadastro,
+                anexar curriculo, nome completo, idade, ascendencia, etc
+                quando gostaria de embarcar etc". */}
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="text-[11px] font-medium text-black/50">Ascendência japonesa</label>
+                <select
+                  value={respostas.ascendencia}
+                  onChange={(e) =>
+                    setRespostas((r) => ({ ...r, ascendencia: e.target.value as AscendenciaJaponesa | "" }))
+                  }
+                  required
+                  className="mt-1 w-full rounded-xl border border-black/10 px-3 py-2.5 text-sm text-black outline-none focus:border-[#2f80c9]"
+                >
+                  <option value="" disabled>
+                    Selecione
+                  </option>
+                  {ASCENDENCIA_JAPONESA.map((a) => (
+                    <option key={a.key} value={a.key}>
+                      {a.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className="text-[11px] font-medium text-black/50">Quando gostaria de embarcar?</label>
+                <select
+                  value={respostas.quandoEmbarcar}
+                  onChange={(e) =>
+                    setRespostas((r) => ({ ...r, quandoEmbarcar: e.target.value as QuandoEmbarcar | "" }))
+                  }
+                  required
+                  className="mt-1 w-full rounded-xl border border-black/10 px-3 py-2.5 text-sm text-black outline-none focus:border-[#2f80c9]"
+                >
+                  <option value="" disabled>
+                    Selecione
+                  </option>
+                  {QUANDO_EMBARCAR.map((q) => (
+                    <option key={q.key} value={q.key}>
+                      {q.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </div>
 
             {PERGUNTAS_TRIAGEM.map((p) => (
