@@ -1795,7 +1795,7 @@ function JrPassModal({ cambio, onClose }: { cambio: Cambio | null; onClose: () =
               {ELEGIBILIDADE.map((item) => (
                 <div key={item.titulo} className="flex gap-3">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={item.icone} alt="" className="mt-0.5 h-8 w-8 shrink-0 object-contain" />
+                  <img src={item.icone} alt="" className="mt-0.5 h-12 w-12 shrink-0 object-contain" />
                   <div>
                     <p className="text-xs font-medium text-black">{item.titulo}</p>
                     <p className="mt-1 text-[11px] leading-5 text-black/50">{item.texto}</p>
@@ -1812,7 +1812,7 @@ function JrPassModal({ cambio, onClose }: { cambio: Cambio | null; onClose: () =
               {REGRAS_DE_USO.map((item) => (
                 <div key={item.titulo} className="flex gap-3">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={item.icone} alt="" className="mt-0.5 h-8 w-8 shrink-0 object-contain" />
+                  <img src={item.icone} alt="" className="mt-0.5 h-12 w-12 shrink-0 object-contain" />
                   <div>
                     <p className="text-xs font-medium text-black">{item.titulo}</p>
                     <p className="mt-1 text-[11px] leading-5 text-black/50">{item.texto}</p>
