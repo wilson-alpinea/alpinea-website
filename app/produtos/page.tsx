@@ -5,7 +5,17 @@ import Image from "next/image";
 import Link from "next/link";
 import { Bodoni_Moda } from "next/font/google";
 import { PriceCalculator } from "../components/PriceCalculator";
-import { TransportePrivadoCalculator } from "../components/TransportePrivadoCalculator";
+import { MotoristaPrivadoPicker } from "../components/MotoristaPrivadoPicker";
+import {
+  SELECAO_MOTORISTA_VAZIA,
+  calcularTotalMotoristaUSD,
+  contarItensMotorista,
+  resumoSelecaoMotorista,
+  POLITICA_CANCELAMENTO_MOTORISTA,
+  ADICIONAL_MEET_GREET_USD,
+  ADICIONAL_CADEIRINHA_USD,
+  type SelecaoMotorista,
+} from "../lib/motoristaPrivadoRotas";
 import {
   useCambioUSD,
   brlParaUSDLabel,
@@ -24,6 +34,7 @@ import {
   DIARIA_SEGURO_VIAGEM,
   PRECO_CAMBIO_BRASIL,
   COMISSAO_AJISAI_SHOPPING_PCT,
+  ROTEIRO_PRECO_BASE,
 } from "../components/CustomPackageCard";
 import { HotelQuoteCalculator } from "../components/HotelQuoteCalculator";
 import { ContactCTA } from "../components/ContactCTA";
@@ -1054,9 +1065,20 @@ export default function ProdutosPage() {
         </div>
       </section>
 
-      {/* ── TRANSPORTE PRIVADO — CALCULADORA ── */}
+      {/* Pedido do Wilson, 25/set/2026: "enriquecer nossa pagina de
+          motorista privado tanto na /produtos quanto calculadora reversa e
+          self-service [...] adicionar coaster na /produtos" e depois,
+          vendo o resultado ainda no template antigo (deploy não tinha
+          publicado o commit novo ainda), "usar template atual igual
+          cambio, jr pass, etc" — confirmado via AskUserQuestion: fluxo
+          completo de self-checkout (formulário + Formas de Pagamento +
+          lead no CRM), não só um botão de WhatsApp. Transporte Privado
+          saiu do componente próprio TransportePrivadoCalculator.tsx
+          (arquivo removido) e virou TransporteModal aqui dentro, no
+          mesmo padrão grande (max-w-5xl) do JrPassModal/CambioModal/
+          SeguroViagemModal logo abaixo. */}
       {transporteModalOpen && (
-        <TransportePrivadoCalculator onClose={() => setTransporteModalOpen(false)} />
+        <TransporteModal cambio={cambio} onClose={() => setTransporteModalOpen(false)} />
       )}
 
       {hoteisModalOpen && (
@@ -1544,6 +1566,305 @@ function descricaoFormaPagamento(
   const op = calcularSimulacaoPix(totalBRL, parcelasMaxPix).find((o) => o.parcelas === forma.parcelas);
   if (!op) return "";
   return `Pix parcelado — entrada de ${formatBRL(op.entrada)} (30%) + ${op.parcelas}x de ${formatBRL(op.valorParcela)} (total ${formatBRL(op.valorTotal)})`;
+}
+
+// Pedido do Wilson, 25/set/2026 (com o PDF de preço de custo do
+// fornecedor DAIKICHI/HK TOURIST + foto do Coaster em anexo):
+// "enriquecer nossa pagina de motorista privado tanto na /produtos
+// quanto calculadora reversa e self-service, colocar mesma margem que já
+// usamos hoje, os preços na tabela anexa são preço de custo" +
+// "adicionar coaster na /produtos". Confirmado via AskUserQuestion:
+// trocar o antigo modelo de diária fixa por cidade pelo catálogo de
+// rotas exatas do fornecedor (Alphard, Hiace 10/14, Coaster 18/21/29 —
+// ver app/lib/motoristaPrivadoRotas.ts, componente compartilhado
+// MotoristaPrivadoPicker). Depois, vendo o resultado ainda no template
+// antigo (o deploy da Vercel não tinha publicado o commit novo ainda —
+// não era cache do navegador), Wilson pediu: "usar template atual igual
+// cambio, jr pass, etc" — confirmado via AskUserQuestion: fluxo completo
+// de self-checkout (formulário de contato + Formas de Pagamento + lead
+// no CRM com tag SELF-SERVICE), no mesmo padrão grande (max-w-5xl) do
+// CambioModal logo abaixo, em vez do antigo botão avulso de WhatsApp.
+function TransporteModal({ cambio, onClose }: { cambio: Cambio | null; onClose: () => void }) {
+  const [selecao, setSelecao] = useState<SelecaoMotorista>(SELECAO_MOTORISTA_VAZIA);
+  const [nome, setNome] = useState("");
+  const [email, setEmail] = useState("");
+  const [whatsapp, setWhatsapp] = useState("");
+  const [observacoes, setObservacoes] = useState("");
+  const [formaPagamento, setFormaPagamento] = useState<FormaPagamentoEscolhida | null>(null);
+  const [status, setStatus] = useState<"form" | "enviando" | "enviado" | "erro">("form");
+  const [erro, setErro] = useState("");
+
+  const cambioCotacao = cambio?.cotacao ?? 5.3;
+  const quantidadeItens = contarItensMotorista(selecao);
+  const motoristaUSD = calcularTotalMotoristaUSD(selecao);
+  // "Transporte Privado" exige Roteiro Personalizado (ver requisito no
+  // card em /produtos) — mesma regra do modelo antigo, só que agora o
+  // roteiro nasce em reais (ROTEIRO_PRECO_BASE) e é somado convertido em
+  // dólar. Só entra quando há pelo menos 1 serviço selecionado.
+  const roteiroUSD = quantidadeItens > 0 ? ROTEIRO_PRECO_BASE / cambioCotacao : 0;
+  const totalUSD = motoristaUSD + roteiroUSD;
+  const totalBRL = totalUSD * cambioCotacao;
+  const totalUSDLabel = quantidadeItens > 0 ? formatUSD(totalUSD) : null;
+  const totalBRLLabel = quantidadeItens > 0 ? formatBRL(totalBRL) : null;
+  const resumoSelecao = resumoSelecaoMotorista(selecao);
+
+  const descricaoPagamentoEscolhido = descricaoFormaPagamento(
+    formaPagamento,
+    quantidadeItens > 0 ? totalBRL : null,
+    "",
+  );
+
+  const formValido =
+    nome.trim().length > 0 &&
+    /\S+@\S+\.\S+/.test(email) &&
+    whatsapp.trim().length >= 8 &&
+    quantidadeItens > 0;
+
+  async function enviar() {
+    if (!formValido || status === "enviando") return;
+    setStatus("enviando");
+    setErro("");
+    try {
+      const resposta = await fetch("/api/transporte-privado-selfservice", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          veiculo: selecao.veiculo,
+          itens: selecao.itens,
+          resumo: resumoSelecao,
+          motoristaUSD,
+          roteiroUSD,
+          totalUSD,
+          totalBRL,
+          formaPagamento: descricaoPagamentoEscolhido || null,
+          nome,
+          email,
+          whatsapp,
+          observacoes,
+        }),
+      });
+      const dadosResposta = await resposta.json().catch(() => ({}));
+      if (!resposta.ok) {
+        setErro(dadosResposta.error || "Não foi possível registrar seu pedido agora. Tente de novo.");
+        setStatus("erro");
+        return;
+      }
+      setStatus("enviado");
+    } catch {
+      setErro("Não foi possível registrar seu pedido agora. Tente de novo.");
+      setStatus("erro");
+    }
+  }
+
+  const mensagemWhatsapp = `Olá! Acabei de solicitar meu transporte privado pelo site da Ajisai — ${resumoSelecao}. Meu nome é ${nome}.`;
+
+  return (
+    <div
+      className="fixed inset-0 z-[90] flex items-end justify-center bg-black/85 p-0 backdrop-blur-sm md:items-center md:p-6"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="transporte-modal-title"
+      onClick={onClose}
+    >
+      <div
+        className="relative flex max-h-[92vh] w-full max-w-5xl flex-col overflow-hidden rounded-t-3xl border border-black/10 bg-white shadow-2xl md:max-h-[88vh] md:rounded-3xl"
+        onClick={(event) => event.stopPropagation()}
+      >
+        <div className="flex h-14 shrink-0 items-center justify-between border-b border-black/10 bg-white/90 px-4 backdrop-blur-xl md:px-6">
+          <p
+            id="transporte-modal-title"
+            className={`${display.className} text-lg font-medium text-black md:text-xl`}
+          >
+            Transporte Privado
+          </p>
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label="Fechar Transporte Privado"
+            className="flex h-9 w-9 items-center justify-center rounded-full border border-black/15 text-2xl leading-none text-black/65 transition hover:border-black/40 hover:text-black"
+          >
+            ×
+          </button>
+        </div>
+
+        <div className="overflow-y-auto p-5 md:p-8">
+          {status === "enviado" ? (
+            <div className="py-6 text-center">
+              <p className="text-xs uppercase tracking-[0.3em] text-[#1c6ea8]">Pedido registrado</p>
+              <h3 className={`${display.className} mt-3 text-2xl font-medium text-black md:text-3xl`}>
+                Recebemos seu pedido de transporte privado
+              </h3>
+              <p className="mx-auto mt-3 max-w-md text-sm leading-relaxed text-black/60">
+                Nossa equipe confirma a logística e fecha os detalhes do motorista direto com você
+                pelo WhatsApp.
+              </p>
+              <a
+                href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(mensagemWhatsapp)}`}
+                target="_blank"
+                rel="noreferrer"
+                className="mt-6 inline-flex items-center justify-center rounded-full bg-[#2f80c9] px-6 py-3.5 text-xs font-medium uppercase tracking-[0.25em] text-white transition hover:bg-[#3b91dc]"
+              >
+                Continuar no WhatsApp
+              </a>
+            </div>
+          ) : (
+            <>
+              <p className="text-xs uppercase tracking-[0.3em] text-[#1c6ea8]">Calculadora</p>
+              <h3
+                className={`${display.className} mt-2 max-w-2xl text-2xl font-medium text-black md:text-3xl`}
+              >
+                Motorista particular, sem compartilhar veículo
+              </h3>
+              <p className="mt-3 max-w-2xl text-sm leading-relaxed text-black/60">
+                Escolha o veículo e as rotas/tours que precisa e veja o investimento exato, direto
+                da tabela do nosso fornecedor no Japão — já com o Roteiro Personalizado incluso.
+              </p>
+
+              <div className="mt-8 border-t border-black/10 pt-6">
+                <MotoristaPrivadoPicker selecao={selecao} onChange={setSelecao} cambioCotacao={cambioCotacao} />
+              </div>
+
+              {/* Importante — mesmos avisos do modelo anterior (trânsito
+                  inter-municipal, adicionais opcionais, cancelamento),
+                  sourceados de app/lib/motoristaPrivadoRotas.ts. */}
+              <div className="mt-8 border-t border-black/10 pt-6">
+                <p className="text-[10px] uppercase tracking-[0.2em] text-black/40">Importante</p>
+                <div className="mt-4 space-y-3">
+                  <p className="text-xs leading-5 text-black/60">
+                    <span className="font-semibold text-black/80">Não incluso:</span> trânsito
+                    inter-municipal de longa distância entre regiões (ex.: Tóquio↔Kansai por estrada).
+                    Os valores acima já incluem imposto, estacionamento, pedágio (ETC) e combustível.
+                  </p>
+                  <p className="text-xs leading-5 text-black/60">
+                    <span className="font-semibold text-black/80">Adicionais opcionais</span> (sob
+                    consulta, cobrados à parte): recepção com placa de identificação (Meet &amp;
+                    Greet) — {formatUSD(ADICIONAL_MEET_GREET_USD)}; cadeirinha infantil —{" "}
+                    {formatUSD(ADICIONAL_CADEIRINHA_USD)}.
+                  </p>
+                  <p className="text-xs leading-5 text-black/60">
+                    <span className="font-semibold text-black/80">Cancelamento:</span>{" "}
+                    {POLITICA_CANCELAMENTO_MOTORISTA}
+                  </p>
+                </div>
+                <div className="mt-4 rounded-xl border border-amber-300 bg-amber-50/60 p-4">
+                  <p className="text-xs leading-5 text-amber-800">
+                    <span className="font-semibold text-amber-900">
+                      Motorista bilíngue (português/inglês):
+                    </span>{" "}
+                    disponível mediante consulta, com valor adicional — a disponibilidade desse
+                    perfil é bem menor que a de motoristas sem esse requisito. Recomendamos
+                    solicitar com grande antecedência, idealmente 70 dias antes da viagem.
+                  </p>
+                </div>
+              </div>
+
+              {/* Dados de contato */}
+              <div className="mt-8 border-t border-black/10 pt-6">
+                <p className="text-[10px] uppercase tracking-[0.2em] text-black/40">Seus dados</p>
+                <div className="mt-4 grid gap-4 sm:grid-cols-3">
+                  <label className="flex flex-col gap-1.5">
+                    <span className="text-[10px] uppercase tracking-[0.15em] text-black/50">
+                      Nome completo
+                    </span>
+                    <input
+                      type="text"
+                      value={nome}
+                      onChange={(e) => setNome(e.target.value)}
+                      className="rounded-lg border border-black/15 px-3 py-2.5 text-sm text-black focus:border-[#2f80c9] focus:outline-none"
+                    />
+                  </label>
+                  <label className="flex flex-col gap-1.5">
+                    <span className="text-[10px] uppercase tracking-[0.15em] text-black/50">E-mail</span>
+                    <input
+                      type="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      className="rounded-lg border border-black/15 px-3 py-2.5 text-sm text-black focus:border-[#2f80c9] focus:outline-none"
+                    />
+                  </label>
+                  <label className="flex flex-col gap-1.5">
+                    <span className="text-[10px] uppercase tracking-[0.15em] text-black/50">WhatsApp</span>
+                    <input
+                      type="tel"
+                      value={whatsapp}
+                      onChange={(e) => setWhatsapp(e.target.value)}
+                      placeholder="(11) 99999-9999"
+                      className="rounded-lg border border-black/15 px-3 py-2.5 text-sm text-black focus:border-[#2f80c9] focus:outline-none"
+                    />
+                  </label>
+                </div>
+                <label className="mt-4 flex flex-col gap-1.5">
+                  <span className="text-[10px] uppercase tracking-[0.15em] text-black/50">
+                    Observações (opcional)
+                  </span>
+                  <textarea
+                    value={observacoes}
+                    onChange={(e) => setObservacoes(e.target.value)}
+                    rows={2}
+                    placeholder="Datas da viagem, horários de voo, preferência de veículo, etc."
+                    className="rounded-lg border border-black/15 px-3 py-2.5 text-sm text-black focus:border-[#2f80c9] focus:outline-none"
+                  />
+                </label>
+              </div>
+
+              <FormasPagamento
+                totalBRL={quantidadeItens > 0 ? totalBRL : null}
+                dataViagem=""
+                formaPagamento={formaPagamento}
+                onEscolher={setFormaPagamento}
+              />
+
+              {erro && <p className="mt-4 text-sm text-red-600">{erro}</p>}
+            </>
+          )}
+        </div>
+
+        {status !== "enviado" && (
+          <div className="shrink-0 border-t border-black/10 bg-white px-5 py-4 shadow-[0_-4px_16px_rgba(0,0,0,0.06)] md:px-8">
+            <div className="mx-auto flex max-w-4xl flex-wrap items-center justify-between gap-x-6 gap-y-3">
+              <div>
+                {totalUSDLabel ? (
+                  <>
+                    <p className="text-[10px] uppercase tracking-[0.15em] text-black/40">Sua escolha</p>
+                    <p className={`${display.className} text-xl font-medium text-[#2f80c9] sm:text-2xl`}>
+                      {totalUSDLabel}
+                    </p>
+                    <p className="text-xs text-black/45">
+                      {resumoSelecao}
+                      {totalBRLLabel && ` · ${totalBRLLabel}`}
+                    </p>
+                    {descricaoPagamentoEscolhido && (
+                      <p className="mt-0.5 text-[11px] text-black/40">{descricaoPagamentoEscolhido}</p>
+                    )}
+                  </>
+                ) : (
+                  <p className="text-xs text-black/45">
+                    Selecione ao menos uma rota ou tour para calcular o investimento.
+                  </p>
+                )}
+              </div>
+              <button
+                type="button"
+                onClick={enviar}
+                disabled={!formValido || status === "enviando"}
+                className={`inline-flex shrink-0 items-center justify-center rounded-full px-6 py-3.5 text-center text-xs font-medium uppercase tracking-[0.2em] text-white transition ${
+                  formValido && status !== "enviando"
+                    ? "bg-[#2f80c9] hover:bg-[#3b91dc]"
+                    : "cursor-not-allowed bg-black/20"
+                }`}
+              >
+                {status === "enviando" ? "Enviando…" : "Solicitar Transporte Privado"}
+              </button>
+            </div>
+            <p className="mt-2 text-[10px] leading-4 text-black/35">
+              Isso não confirma pagamento — sua equipe Ajisai entra em contato pelo WhatsApp pra
+              fechar a logística do seu transporte privado.
+            </p>
+          </div>
+        )}
+      </div>
+    </div>
+  );
 }
 
 function JrPassModal({ cambio, onClose }: { cambio: Cambio | null; onClose: () => void }) {
