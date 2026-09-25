@@ -1998,9 +1998,16 @@ const SEGURADORAS_VIAGEM = [
     descricao:
       "Plano de referência: 40 Essential — cobertura médica de US$ 40.000 e US$ 500 em bagagem extraviada.",
     observacao: "Não atende EUA/Canadá — para esses destinos a Affinity tem planos de cobertura maior.",
+    // "Europa (Schengen)" removido daqui — pedido do Wilson, 25/set/2026
+    // ("você lista tipos de seguro que não tem aplicacao para Japao e
+    // Asia, qual o racional?"): é uma faixa específica pra destinos do
+    // Espaço Schengen, não cobre Japão nem o resto da Ásia, então não
+    // faz sentido mostrar numa página de venda focada em Japão. Mantidos
+    // só os tipos que não são restritos a outra região (a Affinity não
+    // tem uma faixa "Ásia" própria — cobertura pra Japão entra no
+    // "Internacional/Nacional").
     tiposPlano: [
       "Internacional/Nacional",
-      "Europa (Schengen)",
       "Anual (multiviagem)",
       "Estudante",
       "Esportes",
@@ -2020,9 +2027,17 @@ const SEGURADORAS_VIAGEM = [
     logo: "/images/GTA-Logo.png",
     descricao:
       "Global Travel Assistance — uma das seguradoras de viagem mais tradicionais do Brasil, com planos de US$ 36 mil a mais de US$ 300 mil em cobertura médica.",
-    observacao: "Faixa de cobertura varia bastante por plano — confirmamos o plano exato no fechamento.",
+    observacao:
+      "Para Japão/Ásia o plano correto é o Mundial — a GTA não tem faixa própria pra esses destinos, e as faixas EUA/Europa/Brasil/América Latina/Canadá não se aplicam. Cobertura varia dentro do Mundial — confirmamos o plano exato no fechamento.",
+    // "Por destino" filtrado — pedido do Wilson, 25/set/2026 ("você
+    // lista tipos de seguro que não tem aplicacao para Japao e Asia,
+    // qual o racional?"): a lista completa da GTA (EUA, Europa, Brasil,
+    // América Latina, Canadá, Mundial, Cruzeiros) tinha 5 faixas que não
+    // cobrem Japão/Ásia. A GTA não vende uma faixa "Ásia" específica —
+    // pra esses destinos o cliente cai no Mundial por eliminação, então
+    // é a única faixa de destino que faz sentido mostrar aqui.
     tiposPlano: [
-      "Por destino: EUA, Europa, Brasil, América Latina, Canadá, Mundial, Cruzeiros",
+      "Por destino: Mundial (cobre Japão e Ásia)",
       "Por perfil: Lazer, Estudante, Cruzeiro, Multiviagem, Esporte profissional",
       "Por idade: até 64 / 65–85 / 86–89 anos",
     ],
