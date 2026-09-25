@@ -1749,8 +1749,7 @@ function JrPassModal({ cambio, onClose }: { cambio: Cambio | null; onClose: () =
               ))}
             </div>
             <p className="mt-3 text-[11px] leading-5 text-black/40">
-              Valor por pessoa, já com taxas e margem da Ajisai — calculado a partir da tabela do
-              fornecedor (renovada quinzenalmente) e convertido pela cotação do dia.
+              Valor por pessoa, já com taxas incluídas, convertido pela cotação do dia.
             </p>
             <CambioLabel cambio={cambio} className="mt-2 text-[11px] text-black/35" />
           </div>
