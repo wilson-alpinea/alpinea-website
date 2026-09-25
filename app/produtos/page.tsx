@@ -3165,9 +3165,35 @@ function SeguroViagemModal({ cambio, onClose }: { cambio: Cambio | null; onClose
   const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
   const [whatsapp, setWhatsapp] = useState("");
+  // País de residência — pedido do Wilson, 25/set/2026: "adicionar pais
+  // em que reside" (relevante pro seguro viagem — algumas seguradoras
+  // variam cobertura/elegibilidade conforme o país de residência do
+  // segurado, não só o destino da viagem).
+  // Onde mora — pedido do Wilson, 25/set/2026: "precisa colocar se ele
+  // mora no brasil ou mora em outro país, se o cliente mora em outro
+  // país, deve subir uma mensagem de que ele não pode contratar seguro
+  // viagem por já estar em outro país" + depois: "adicionar também o
+  // caminho de seguro viagem para quem mora no Japao, nesse caso só tem
+  // GTA disponivel". Três estados: Brasil (fluxo normal), Japão (só GTA
+  // — mesma restrição de quem tem 65+ anos, ver apenasGtaDisponivel mais
+  // abaixo) e outro país (bloqueado — seguro viagem internacional só
+  // pode ser contratado por quem ainda está no Brasil antes de embarcar).
+  const [moraEm, setMoraEm] = useState<"brasil" | "japao" | "outro" | null>(null);
   const [observacoes, setObservacoes] = useState("");
   const [status, setStatus] = useState<"form" | "enviando" | "enviado" | "erro">("form");
   const [erro, setErro] = useState("");
+
+  // Passagem aérea — pedido do Wilson, 25/set/2026: "tem que adicionar
+  // check-box se o cliente já comprou a passagem ou não, adicionar campo
+  // para dados da passagem como numero do voo e data de inicio e volta
+  // da passagem aerea, adicionar campo para emitir passagem aérea via
+  // ajisai". Não é obrigatório pro seguro em si — é informação extra que
+  // ajuda a equipe a fechar o atendimento.
+  const [passagemComprada, setPassagemComprada] = useState<"sim" | "nao" | null>(null);
+  const [numeroVoo, setNumeroVoo] = useState("");
+  const [dataIdaVoo, setDataIdaVoo] = useState("");
+  const [dataVoltaVoo, setDataVoltaVoo] = useState("");
+  const [emitirPassagemAjisai, setEmitirPassagemAjisai] = useState(false);
 
   function alternarPaisAdicional(pais: string) {
     setPaisesAdicionais((atual) =>
@@ -3187,6 +3213,19 @@ function SeguroViagemModal({ cambio, onClose }: { cambio: Cambio | null; onClose
 
   const idadesNumericas = idades.filter((i): i is number => typeof i === "number");
   const idadesForaLimite = idadesNumericas.filter((i) => i > IDADE_LIMITE_SEGURO).length;
+  // Recomendação de seguradora por idade — pedido do Wilson, 25/set/2026:
+  // "affinity e MTA até 64 anos, acima de 64 anos GTA tem melhor preço"
+  // (a própria GTA já tem faixa etária própria que passa dos 64 — ver
+  // "Por idade: até 64 / 65–85 / 86–89 anos" em SEGURADORAS_VIAGEM). Só
+  // uma sugestão visual — não força a escolha.
+  const IDADE_RECOMENDACAO_GTA = 64;
+  const algumViajanteAcimaDe64 = idadesNumericas.some((i) => i > IDADE_RECOMENDACAO_GTA);
+  // "Só GTA disponível" — combina as duas restrições pedidas pelo Wilson,
+  // 25/set/2026: viajante(s) acima de 64 anos ("se o cliente tem 65 anos,
+  // deve ter só GTA") e residente no Japão ("quem mora no Japao, nesse
+  // caso só tem GTA disponivel").
+  const apenasGtaDisponivel = algumViajanteAcimaDe64 || moraEm === "japao";
+  const residenciaBloqueada = moraEm === "outro";
   const dias = diasEntreDatas(dataInicio, dataFim);
   const multiplicadorTotal = idadesNumericas.reduce(
     (soma, idade) => soma + (multiplicadorSeguroPorIdade(idade) ?? 0),
@@ -3194,13 +3233,21 @@ function SeguroViagemModal({ cambio, onClose }: { cambio: Cambio | null; onClose
   );
   const roteiroSoJapao = paisesAdicionais.length === 0;
   const multiplicadorDestino = roteiroSoJapao ? 1 : MULTIPLICADOR_ROTEIRO_MULTIDESTINO;
-  const valorReferenciaUSD =
+  // Seguro Viagem é nativo em BRL (DIARIA_SEGURO_VIAGEM já sai em reais,
+  // com imposto+margem — ver comentário em CustomPackageCard.tsx),
+  // diferente de JR Pass/guia/motorista/câmbio-aeroporto que são nativos
+  // em dólar. Corrigido 25/set/2026 — antes multiplicava por
+  // cambio.cotacao como se fosse dólar, inflando o preço em ~5x (pedido
+  // do Wilson: "valores estao mto diferentes do seguro viagem da
+  // calculadora reversa... está muito fora").
+  const valorReferenciaBRL =
     dias > 0 ? DIARIA_SEGURO_VIAGEM * dias * multiplicadorTotal * multiplicadorDestino : 0;
-  const valorReferenciaBRL = cambio ? valorReferenciaUSD * cambio.cotacao : null;
   const descricaoPagamentoEscolhido = descricaoFormaPagamento(formaPagamento, valorReferenciaBRL, dataInicio);
 
   const formValido =
     !!seguradora &&
+    !residenciaBloqueada &&
+    (moraEm === "brasil" || moraEm === "japao") &&
     nome.trim().length > 0 &&
     /\S+@\S+\.\S+/.test(email) &&
     whatsapp.trim().length >= 8 &&
@@ -3229,7 +3276,20 @@ function SeguroViagemModal({ cambio, onClose }: { cambio: Cambio | null; onClose
           nome,
           email,
           whatsapp,
+          paisResidencia:
+            moraEm === "brasil"
+              ? "Brasil"
+              : moraEm === "japao"
+                ? "Japão (residente)"
+                : moraEm === "outro"
+                  ? "Outro país (fora do Brasil e do Japão)"
+                  : "",
           observacoes,
+          passagemComprada,
+          numeroVoo: passagemComprada === "sim" ? numeroVoo : "",
+          dataIdaVoo: passagemComprada === "sim" ? dataIdaVoo : "",
+          dataVoltaVoo: passagemComprada === "sim" ? dataVoltaVoo : "",
+          emitirPassagemAjisai: passagemComprada === "nao" ? emitirPassagemAjisai : false,
         }),
       });
       const dadosResposta = await resposta.json().catch(() => ({}));
@@ -3316,7 +3376,7 @@ function SeguroViagemModal({ cambio, onClose }: { cambio: Cambio | null; onClose
               <div className="mt-8 border-t border-black/10 pt-6">
                 <p className="text-[10px] uppercase tracking-[0.2em] text-black/40">Escolha a seguradora</p>
                 <div className="mt-4 grid gap-4 sm:grid-cols-3">
-                  {SEGURADORAS_VIAGEM.map((s) => (
+                  {SEGURADORAS_VIAGEM.filter((s) => !apenasGtaDisponivel || s.key === "gta").map((s) => (
                     <div
                       key={s.key}
                       role="button"
@@ -3349,6 +3409,19 @@ function SeguroViagemModal({ cambio, onClose }: { cambio: Cambio | null; onClose
                           {seguradora === s.key && <IconCheck className="h-3.5 w-3.5 text-white" />}
                         </span>
                       </div>
+                      {/* Recomendação por idade — pedido do Wilson,
+                          25/set/2026: "affinity e MTA até 64 anos, acima
+                          de 64 anos GTA tem melhor preço". */}
+                      {s.key === "gta" && algumViajanteAcimaDe64 && (
+                        <span className="mt-2 inline-flex w-fit items-center rounded-full bg-emerald-600/10 px-2.5 py-1 text-[10px] font-medium text-emerald-700">
+                          Recomendado — melhor preço para 65+ anos
+                        </span>
+                      )}
+                      {(s.key === "affinity" || s.key === "mta") && !algumViajanteAcimaDe64 && idadesNumericas.length > 0 && (
+                        <span className="mt-2 inline-flex w-fit items-center rounded-full bg-[#2f80c9]/10 px-2.5 py-1 text-[10px] font-medium text-[#1c6ea8]">
+                          Boa opção até 64 anos
+                        </span>
+                      )}
                       <p className="mt-3 flex-1 text-[11px] leading-5 text-black/70">{s.descricao}</p>
                       {s.observacao && (
                         <p className="mt-2 text-[10px] leading-4 text-black/50">{s.observacao}</p>
@@ -3391,6 +3464,16 @@ function SeguroViagemModal({ cambio, onClose }: { cambio: Cambio | null; onClose
                     </div>
                   ))}
                 </div>
+                {apenasGtaDisponivel && (
+                  <p className="mt-4 rounded-lg border border-emerald-200 bg-emerald-50 px-4 py-3 text-[11px] leading-5 text-emerald-800">
+                    Só a GTA está disponível para o seu caso
+                    {algumViajanteAcimaDe64 && moraEm === "japao"
+                      ? " — viajante(s) acima de 64 anos e residente no Japão."
+                      : algumViajanteAcimaDe64
+                        ? " — viajante(s) acima de 64 anos."
+                        : " — seguro viagem pra quem já mora no Japão."}
+                  </p>
+                )}
                 <p className="mt-3 text-[11px] leading-5 text-black/40">
                   Nenhuma das três seguradoras publica tabela fixa de plano e preço — o valor final depende
                   de destino, datas e idade de cada viajante. O valor abaixo é a referência interna da
@@ -3532,8 +3615,98 @@ function SeguroViagemModal({ cambio, onClose }: { cambio: Cambio | null; onClose
                     seguradora.
                   </p>
                 )}
+              </div>
 
-                <div className="mt-6 grid gap-4 sm:grid-cols-3">
+              {/* Passagem aérea — pedido do Wilson, 25/set/2026: "tem que
+                  adicionar check-box se o cliente já comprou a passagem
+                  ou não, adicionar campo para dados da passagem como
+                  numero do voo e data de inicio e volta da passagem
+                  aerea, adicionar campo para emitir passagem aérea via
+                  ajisai". */}
+              <div className="mt-8 border-t border-black/10 pt-6">
+                <p className="text-[10px] uppercase tracking-[0.2em] text-black/40">Passagem aérea</p>
+                <div className="mt-4 flex flex-wrap gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setPassagemComprada("sim")}
+                    className={`rounded-full border px-4 py-2 text-xs transition ${
+                      passagemComprada === "sim"
+                        ? "border-[#2f80c9] bg-[#2f80c9]/10 font-medium text-[#1c6ea8]"
+                        : "border-black/15 text-black/60 hover:border-black/30"
+                    }`}
+                  >
+                    Já comprei a passagem
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setPassagemComprada("nao")}
+                    className={`rounded-full border px-4 py-2 text-xs transition ${
+                      passagemComprada === "nao"
+                        ? "border-[#2f80c9] bg-[#2f80c9]/10 font-medium text-[#1c6ea8]"
+                        : "border-black/15 text-black/60 hover:border-black/30"
+                    }`}
+                  >
+                    Ainda não comprei
+                  </button>
+                </div>
+
+                {passagemComprada === "sim" && (
+                  <div className="mt-4 grid gap-4 sm:grid-cols-3">
+                    <label className="flex flex-col gap-1.5">
+                      <span className="text-[10px] uppercase tracking-[0.15em] text-black/50">
+                        Número do voo
+                      </span>
+                      <input
+                        type="text"
+                        value={numeroVoo}
+                        onChange={(e) => setNumeroVoo(e.target.value)}
+                        placeholder="ex.: JL0034"
+                        className="rounded-lg border border-black/15 px-3 py-2.5 text-sm text-black focus:border-[#2f80c9] focus:outline-none"
+                      />
+                    </label>
+                    <label className="flex flex-col gap-1.5">
+                      <span className="text-[10px] uppercase tracking-[0.15em] text-black/50">
+                        Data de ida
+                      </span>
+                      <input
+                        type="date"
+                        value={dataIdaVoo}
+                        onChange={(e) => setDataIdaVoo(e.target.value)}
+                        className="rounded-lg border border-black/15 px-3 py-2.5 text-sm text-black focus:border-[#2f80c9] focus:outline-none"
+                      />
+                    </label>
+                    <label className="flex flex-col gap-1.5">
+                      <span className="text-[10px] uppercase tracking-[0.15em] text-black/50">
+                        Data de volta
+                      </span>
+                      <input
+                        type="date"
+                        value={dataVoltaVoo}
+                        onChange={(e) => setDataVoltaVoo(e.target.value)}
+                        className="rounded-lg border border-black/15 px-3 py-2.5 text-sm text-black focus:border-[#2f80c9] focus:outline-none"
+                      />
+                    </label>
+                  </div>
+                )}
+
+                {passagemComprada === "nao" && (
+                  <label className="mt-4 flex items-start gap-2.5 text-[11px] leading-5 text-black/60">
+                    <input
+                      type="checkbox"
+                      checked={emitirPassagemAjisai}
+                      onChange={(e) => setEmitirPassagemAjisai(e.target.checked)}
+                      className="mt-0.5 h-4 w-4 shrink-0 rounded border-black/25 text-[#2f80c9] focus:ring-[#2f80c9]"
+                    />
+                    Quero que a Ajisai emita minha passagem aérea
+                  </label>
+                )}
+              </div>
+
+              {/* Seus dados — inclui país de residência, pedido do
+                  Wilson, 25/set/2026: "adicionar pais em que reside". */}
+              <div className="mt-8 border-t border-black/10 pt-6">
+                <p className="text-[10px] uppercase tracking-[0.2em] text-black/40">Seus dados</p>
+                <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
                   <label className="flex flex-col gap-1.5">
                     <span className="text-[10px] uppercase tracking-[0.15em] text-black/50">
                       Nome completo
@@ -3564,7 +3737,55 @@ function SeguroViagemModal({ cambio, onClose }: { cambio: Cambio | null; onClose
                       className="rounded-lg border border-black/15 px-3 py-2.5 text-sm text-black focus:border-[#2f80c9] focus:outline-none"
                     />
                   </label>
+                  <div className="flex flex-col gap-1.5">
+                    <span className="text-[10px] uppercase tracking-[0.15em] text-black/50">
+                      Onde você mora
+                    </span>
+                    <div className="flex flex-wrap gap-1.5">
+                      <button
+                        type="button"
+                        onClick={() => setMoraEm("brasil")}
+                        className={`rounded-lg border px-2.5 py-2.5 text-[11px] transition ${
+                          moraEm === "brasil"
+                            ? "border-[#2f80c9] bg-[#2f80c9]/10 font-medium text-[#1c6ea8]"
+                            : "border-black/15 text-black/60 hover:border-black/30"
+                        }`}
+                      >
+                        Brasil
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setMoraEm("japao")}
+                        className={`rounded-lg border px-2.5 py-2.5 text-[11px] transition ${
+                          moraEm === "japao"
+                            ? "border-[#2f80c9] bg-[#2f80c9]/10 font-medium text-[#1c6ea8]"
+                            : "border-black/15 text-black/60 hover:border-black/30"
+                        }`}
+                      >
+                        Japão
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setMoraEm("outro")}
+                        className={`rounded-lg border px-2.5 py-2.5 text-[11px] transition ${
+                          moraEm === "outro"
+                            ? "border-amber-600 bg-amber-50 font-medium text-amber-800"
+                            : "border-black/15 text-black/60 hover:border-black/30"
+                        }`}
+                      >
+                        Outro país
+                      </button>
+                    </div>
+                  </div>
                 </div>
+
+                {residenciaBloqueada && (
+                  <p className="mt-4 rounded-lg border border-amber-300 bg-amber-50 px-4 py-3 text-[11px] leading-5 text-amber-800">
+                    Esse seguro viagem é pra quem ainda está no Brasil antes de embarcar — como você já
+                    mora fora do Brasil e do Japão, não conseguimos emitir essa apólice por aqui. Fale com
+                    a gente pelo WhatsApp pra ver as opções disponíveis pra sua situação.
+                  </p>
+                )}
 
                 <label className="mt-4 flex flex-col gap-1.5">
                   <span className="text-[10px] uppercase tracking-[0.15em] text-black/50">

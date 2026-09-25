@@ -832,11 +832,16 @@ export const JR_PASS_PRECO_USD_GREEN: Record<(typeof JR_PASS_DIAS_OPCOES)[number
   14: Math.round(724.0 * SPREAD_JR_PASS),
   21: Math.round(921.0 * SPREAD_JR_PASS),
 };
-// Seguro Viagem: valor de referência por pessoa/dia — placeholder até
-// recebermos a tabela oficial do fornecedor (a tabela AjisaiWork enviada em
-// 04/set/2026 cobre só o JR Pass). Ajustar quando a tabela de seguro
-// chegar, mantendo a mesma regra de imposto+margem via comMargemEImposto.
-export const DIARIA_SEGURO_VIAGEM = comMargemEImposto(35);
+// Seguro Viagem: valor de referência por pessoa/dia. Nativo em REAIS (ao
+// contrário de guia/motorista/JR Pass/câmbio-aeroporto, que são nativos em
+// dólar) — confirmado pelo Wilson, 25/set/2026: "o custo diario de seguro
+// viagem até 64 anos é de cerca de 29 reais por dia" (custo puro, antes de
+// imposto+margem). NÃO multiplicar por cambioCotacao — os usos corretos
+// (calculadora_reversa.tsx e o calcPreco "seguro" logo abaixo) já tratam
+// este valor como BRL puro; o SeguroViagemModal em app/produtos/page.tsx
+// tinha um bug multiplicando por cambio.cotacao como se fosse dólar,
+// inflando o preço em ~5x — corrigido no mesmo commit.
+export const DIARIA_SEGURO_VIAGEM = comMargemEImposto(29);
 // Motorista privado: custo de US$ 700/dia, cobre até 4 pessoas — mesma
 // lógica de grupo do guia, também nativo em dólar. Preço final já com
 // imposto+margem.

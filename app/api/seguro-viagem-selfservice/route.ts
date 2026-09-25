@@ -109,7 +109,31 @@ export async function POST(req: Request) {
       : ["Japão"];
     const valorReferenciaBRL = Number(body.valorReferenciaBRL) || null;
     const formaPagamento = String(body.formaPagamento || "").trim();
+    const paisResidencia = String(body.paisResidencia || "").trim();
     const observacoesCliente = String(body.observacoes || "").trim();
+
+    // Passagem aérea — pedido do Wilson, 25/set/2026: "tem que adicionar
+    // check-box se o cliente já comprou a passagem ou não, adicionar
+    // campo para dados da passagem como numero do voo e data de inicio e
+    // volta da passagem aerea, adicionar campo para emitir passagem
+    // aérea via ajisai". Não tem coluna própria em `clientes` — fica no
+    // resumo do lead, junto do resto.
+    const passagemCompradaBruta = String(body.passagemComprada || "").trim();
+    const passagemComprada =
+      passagemCompradaBruta === "sim" || passagemCompradaBruta === "nao" ? passagemCompradaBruta : "";
+    const numeroVoo = String(body.numeroVoo || "").trim();
+    const dataIdaVoo = String(body.dataIdaVoo || "").trim();
+    const dataVoltaVoo = String(body.dataVoltaVoo || "").trim();
+    const emitirPassagemAjisai = !!body.emitirPassagemAjisai;
+
+    const passagemResumo =
+      passagemComprada === "sim"
+        ? `Já comprou${numeroVoo ? ` — voo ${numeroVoo}` : ""}${
+            dataIdaVoo || dataVoltaVoo ? ` (ida ${dataIdaVoo || "?"} / volta ${dataVoltaVoo || "?"})` : ""
+          }`
+        : passagemComprada === "nao"
+          ? `Ainda não comprou${emitirPassagemAjisai ? " — quer que a Ajisai emita" : ""}`
+          : "Não informado";
 
     const seguradoraLabel: Record<(typeof SEGURADORAS_VALIDAS)[number], string> = {
       affinity: "Affinity",
@@ -130,6 +154,8 @@ export async function POST(req: Request) {
         valorReferenciaBRL ? `R$ ${valorReferenciaBRL.toLocaleString("pt-BR")}` : "Não calculado",
       ],
       ["Forma de pagamento escolhida", formaPagamento || "Não escolhida ainda"],
+      ["País de residência", paisResidencia || "Não informado"],
+      ["Passagem aérea", passagemResumo],
       ["Observações do cliente", observacoesCliente || "Nenhuma"],
     ];
 
