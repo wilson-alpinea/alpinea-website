@@ -843,6 +843,13 @@ export const DIARIA_SEGURO_VIAGEM = comMargemEImposto(35);
 export const DIARIA_MOTORISTA_PRIVADO_USD = comMargemEImposto(700);
 export const MOTORISTA_TAMANHO_GRUPO = 4;
 export const PRECO_CAMBIO_BRASIL = comMargemEImposto(150);
+// Entrega no Aeroporto de Guarulhos — pedido do Wilson, 25/set/2026:
+// "custo de entrega para entrega no aeroporto de guarulhos de R$ 190.00
+// caso cliente opte por isso" (opção adicionada ao Câmbio no mesmo dia —
+// ver "aeroporto-guarulhos" em app/lib/cambioIene.ts). Valor final já
+// informado por ele em reais — não passa por comMargemEImposto (mesmo
+// critério de DIARIA_GUIA_ESTRANGEIRO_USD, acima).
+export const CUSTO_ENTREGA_AEROPORTO_CAMBIO = 190;
 // Ajisai Shopping — serviço novo, pedido do Wilson, 16/set/2026: comissão
 // de 20% sobre o valor das compras acompanhadas (sem diária/valor fixo).
 // Compartilhado entre calculadora_reversa/page.tsx (cálculo do item na

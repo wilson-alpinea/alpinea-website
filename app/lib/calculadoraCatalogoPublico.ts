@@ -609,7 +609,11 @@ export function calcularSimulacaoPix(totalBRL: number, parcelasMaxPix: number): 
 export type FormaPagamentoEscolhida =
   | { metodo: "cartao"; parcelas: number }
   | { metodo: "pixVista"; parcelas: 1 }
-  | { metodo: "pixParcelado"; parcelas: number };
+  | { metodo: "pixParcelado"; parcelas: number }
+  // TED — pedido do Wilson, 25/set/2026: "metodo de pagamento é só pix e
+  // ted" (Câmbio) + "só a vista metodo de pagamento" — transferência
+  // bancária tradicional, sempre à vista (não existe "TED parcelado").
+  | { metodo: "ted"; parcelas: 1 };
 
 // ── Perfil do viajante (ritmo do roteiro) ───────────────────────────────────
 // Não altera preço: define o ritmo do roteiro (pontos turísticos por dia) e

@@ -4,15 +4,24 @@
 // Ver app/api/cambio-iene/route.ts (busca a cotação) e
 // app/hooks/useCambioIene.ts (usa no cliente).
 
-// Cidades cobertas — confirmadas como páginas existentes no
-// melhorcambio.com em 08/set/2026 (melhorcambio.com/cotacao/compra/iene/
-// <slug>). Adicionar uma cidade nova aqui exige confirmar antes que a
-// página realmente existe lá.
+// Cidades cobertas — restrito a pedido do Wilson, 25/set/2026: "são
+// paulo, rj e curitiba apenas, adicionar opção de transação no
+// aeroporto" (removeu Belo Horizonte e Brasília da lista anterior).
+// slugs de cidade confirmados como páginas existentes no
+// melhorcambio.com (melhorcambio.com/cotacao/compra/iene/<slug>).
+// Adicionar uma cidade nova aqui exige confirmar antes que a página
+// realmente existe lá.
+//
+// "aeroporto-guarulhos" não é uma página própria no melhorcambio.com —
+// é só um local de retirada alternativo dentro de São Paulo (Aeroporto
+// de Guarulhos, principal porta de embarque internacional da Alpinea),
+// então a rota da API (app/api/cambio-iene/route.ts) usa a MESMA
+// cotação de "sao-paulo" por baixo dos panos pra esse slug — ver
+// comentário lá.
 export const CIDADES_CAMBIO_IENE = [
   { slug: "sao-paulo", nome: "São Paulo" },
+  { slug: "aeroporto-guarulhos", nome: "Aeroporto de Guarulhos (SP)" },
   { slug: "rio-de-janeiro", nome: "Rio de Janeiro" },
-  { slug: "belo-horizonte", nome: "Belo Horizonte" },
-  { slug: "brasilia", nome: "Brasília" },
   { slug: "curitiba", nome: "Curitiba" },
 ] as const;
 

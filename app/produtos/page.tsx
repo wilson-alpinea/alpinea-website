@@ -34,6 +34,7 @@ import {
   JR_PASS_DIAS_OPCOES,
   DIARIA_SEGURO_VIAGEM,
   PRECO_CAMBIO_BRASIL,
+  CUSTO_ENTREGA_AEROPORTO_CAMBIO,
   COMISSAO_AJISAI_SHOPPING_PCT,
   ROTEIRO_PRECO_BASE,
 } from "../components/CustomPackageCard";
@@ -1167,7 +1168,7 @@ export default function ProdutosPage() {
           app/lib/calculadoraCatalogoPublico.ts) e o mesmo padrão de
           self-checkout do Seguro Viagem (lead no CRM, tag SELF-SERVICE,
           sem gateway de pagamento no site). */}
-      {cambioModalOpen && <CambioModal cambio={cambio} onClose={() => setCambioModalOpen(false)} />}
+      {cambioModalOpen && <CambioModal onClose={() => setCambioModalOpen(false)} />}
 
       {/* Pedido do Wilson, 25/set/2026: "vamos fazer o mesmo para seguro
           viagem, hoje trabalhamos com 3 empresas Affinity, GTA e MTA, o
@@ -1392,6 +1393,7 @@ function FormasPagamento({
   formaPagamento,
   onEscolher,
   somenteAVista = false,
+  metodos = ["cartao", "pix"],
 }: {
   totalBRL: number | null;
   /** Data de início da viagem (AAAA-MM-DD) — limita quantas parcelas de Pix fazem sentido. */
@@ -1402,8 +1404,16 @@ function FormasPagamento({
    * parcelamento (cartão e Pix) só pra esse produto; JR Pass e Seguro
    * Viagem continuam com as opções normais (prop não passada = false). */
   somenteAVista?: boolean;
+  /** Quais blocos aparecem — pedido do Wilson, 25/set/2026: "metodo de
+   * pagamento é só pix e ted" (só pro Câmbio; os outros produtos continuam
+   * com o padrão ["cartao", "pix"]). */
+  metodos?: ("cartao" | "pix" | "ted")[];
 }) {
   if (totalBRL === null || totalBRL <= 0) return null;
+
+  const mostrarCartao = metodos.includes("cartao");
+  const mostrarPix = metodos.includes("pix");
+  const mostrarTed = metodos.includes("ted");
 
   const simulacaoCartaoCompleta = calcularSimulacaoCartao(totalBRL);
   const simulacaoCartao = somenteAVista
@@ -1421,6 +1431,7 @@ function FormasPagamento({
 
       <div className="mt-4 flex flex-col gap-4">
         {/* Cartão de crédito */}
+        {mostrarCartao && (
         <div className="rounded-xl border border-black/10 bg-black/[0.02] p-4 sm:p-5">
           <div className="flex items-center gap-3.5">
             <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#2f80c9]/10">
@@ -1466,8 +1477,10 @@ function FormasPagamento({
             })}
           </div>
         </div>
+        )}
 
         {/* Pix */}
+        {mostrarPix && (
         <div className="rounded-xl border border-black/10 bg-black/[0.02] p-4 sm:p-5">
           <div className="flex items-center gap-3.5">
             <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#2f80c9]/10">
@@ -1540,6 +1553,45 @@ function FormasPagamento({
               )
             ))}
         </div>
+        )}
+
+        {/* TED — pedido do Wilson, 25/set/2026: "metodo de pagamento é só
+            pix e ted" (só aparece quando `metodos` inclui "ted"; hoje só
+            o Câmbio passa isso). Sempre à vista — TED não parcela. */}
+        {mostrarTed && (
+        <div className="rounded-xl border border-black/10 bg-black/[0.02] p-4 sm:p-5">
+          <div className="flex items-center gap-3.5">
+            <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-[#2f80c9]/10">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/images/icone-pix.png" alt="" className="h-7 w-7 object-contain" />
+            </span>
+            <div>
+              <p className="text-sm font-medium text-black">TED</p>
+              <p className="mt-0.5 text-[10px] text-black/50">transferência bancária — à vista</p>
+            </div>
+          </div>
+          <label
+            className={`mt-3 flex cursor-pointer items-center gap-3 rounded-lg px-3.5 py-3 transition ${
+              formaPagamento?.metodo === "ted"
+                ? "bg-[#2f80c9]/[0.12]"
+                : "bg-[#2f80c9]/5 hover:bg-[#2f80c9]/[0.08]"
+            }`}
+          >
+            <input
+              type="radio"
+              name="formaPagamento"
+              checked={formaPagamento?.metodo === "ted"}
+              onChange={() => onEscolher({ metodo: "ted", parcelas: 1 })}
+              className="h-4 w-4 shrink-0 accent-[#2f80c9]"
+            />
+            <span className="flex-1 text-xs text-black/60">à vista</span>
+            <span className="text-sm font-medium text-black">{formatBRL(totalBRL)}</span>
+          </label>
+          <p className="mt-2 text-[10px] leading-4 text-black/40">
+            Dados bancários da Alpinea enviados pela equipe no fechamento pelo WhatsApp.
+          </p>
+        </div>
+        )}
       </div>
     </div>
   );
@@ -1563,6 +1615,9 @@ function descricaoFormaPagamento(
   }
   if (forma.metodo === "pixVista") {
     return `Pix à vista de ${formatBRL(totalBRL)}`;
+  }
+  if (forma.metodo === "ted") {
+    return `TED à vista de ${formatBRL(totalBRL)}`;
   }
   const parcelasMaxPix = calcularParcelasMaxPix(dataViagem);
   const op = calcularSimulacaoPix(totalBRL, parcelasMaxPix).find((o) => o.parcelas === forma.parcelas);
@@ -1907,6 +1962,86 @@ function JrPassModal({ onClose }: { onClose: () => void }) {
   const [dataInicioViagem, setDataInicioViagem] = useState("");
   const [dataFimViagem, setDataFimViagem] = useState("");
   const [formaPagamento, setFormaPagamento] = useState<FormaPagamentoEscolhida | null>(null);
+
+  // Dados de contato + CRM — pedido do Wilson, 25/set/2026: "adicionar
+  // nome, e-mail e telefone nessa página, registrar no CRM ao proceder
+  // para pagamento" — mesmo padrão de Câmbio/Seguro Viagem/Transporte
+  // Privado (ver /api/jrpass-selfservice).
+  const [nome, setNome] = useState("");
+  const [email, setEmail] = useState("");
+  const [whatsapp, setWhatsapp] = useState("");
+  const [observacoes, setObservacoes] = useState("");
+  const [status, setStatus] = useState<"form" | "enviando" | "enviado" | "erro">("form");
+  const [erro, setErro] = useState("");
+
+  // Documento (passaporte OU passagem) — pedido do Wilson, 25/set/2026:
+  // "precisa capturar a foto do passaporte do cliente, criar um
+  // validador de foto script simples de checagem" + depois "foto do
+  // passaporte ou foto da passagem, a o JR pass só pode ser emitido se
+  // ele estiver no Japao em até 90 dias" (qualquer um dos dois documentos
+  // comprova a janela de 90 dias) + "colocar opção de anexar documentos
+  // depois também" (daí documentoAdiado, que libera o botão de finalizar
+  // sem bloquear o cliente). Upload + OCR best-effort em
+  // /api/jrpass-documento — ver lib/ocr/validarDocumentoJrPass.ts pro
+  // motivo de nunca bloquear o cliente com base no resultado do OCR.
+  const [referenciaDocumento] = useState(() =>
+    typeof crypto !== "undefined" && "randomUUID" in crypto
+      ? crypto.randomUUID()
+      : `${Date.now()}-${Math.random().toString(36).slice(2)}`,
+  );
+  const [documentoTipo, setDocumentoTipo] = useState<"passaporte" | "passagem" | null>(null);
+  const [documentoNomeArquivo, setDocumentoNomeArquivo] = useState("");
+  const [documentoStatus, setDocumentoStatus] = useState<
+    "vazio" | "enviando" | "validado" | "incerto" | "erro"
+  >("vazio");
+  const [documentoErro, setDocumentoErro] = useState("");
+  const [documentoStoragePath, setDocumentoStoragePath] = useState<string | null>(null);
+  const [documentoValidacaoMotivo, setDocumentoValidacaoMotivo] = useState("");
+  const [documentoAdiado, setDocumentoAdiado] = useState(false);
+
+  async function lidarComArquivoDocumento(tipo: "passaporte" | "passagem", file: File) {
+    setDocumentoTipo(tipo);
+    setDocumentoAdiado(false);
+    setDocumentoNomeArquivo(file.name);
+    setDocumentoStatus("enviando");
+    setDocumentoErro("");
+    try {
+      const base64 = await new Promise<string>((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(String(reader.result));
+        reader.onerror = () => reject(new Error("Erro ao ler arquivo"));
+        reader.readAsDataURL(file);
+      });
+      const resposta = await fetch("/api/jrpass-documento", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          referencia: referenciaDocumento,
+          tipo,
+          arquivoBase64: base64,
+          contentType: file.type,
+        }),
+      });
+      const dados = await resposta.json().catch(() => ({}));
+      if (!resposta.ok) {
+        setDocumentoStatus("erro");
+        setDocumentoErro(dados.error || "Não foi possível enviar o documento agora.");
+        return;
+      }
+      setDocumentoStoragePath(dados.path || null);
+      setDocumentoValidacaoMotivo(dados.validacao?.motivo || "");
+      setDocumentoStatus(dados.validacao?.ok ? "validado" : "incerto");
+    } catch {
+      setDocumentoStatus("erro");
+      setDocumentoErro("Não foi possível enviar o documento agora — tente de novo ou anexe depois.");
+    }
+  }
+
+  // Termos e condições — pedido do Wilson, 25/set/2026: "temos que
+  // adicionar um tick box no termos e condições para finalizar o
+  // pagamento, tem que ser um scroll com os termos e condições de
+  // aceite do jr pASS".
+  const [termosAceitos, setTermosAceitos] = useState(false);
   // Número de pessoas — pedido do Wilson, 25/set/2026: "falta numero de
   // pessoas" (o JR Pass é vendido por pessoa — cada viajante precisa do
   // próprio passe). Mesmo padrão de stepper já usado em "Viajantes" no
@@ -2068,7 +2203,7 @@ function JrPassModal({ onClose }: { onClose: () => void }) {
         })`
       : "";
   const mensagemWhatsapp = selecaoCompleta
-    ? `Olá! Quero finalizar a compra do JR Pass — ${tipoEscolhido!.classe}, ${diasSelecionados} dias, ${numeroPessoas} ${
+    ? `Olá! Quero finalizar a compra do JR Pass${nome ? ` — meu nome é ${nome}` : ""} — ${tipoEscolhido!.classe}, ${diasSelecionados} dias, ${numeroPessoas} ${
         numeroPessoas === 1 ? "pessoa" : "pessoas"
       }${detalheCriancasTexto}${
         precoTotalBRL !== null ? ` (total ${formatBRL(precoTotalBRL)})` : ""
@@ -2078,6 +2213,63 @@ function JrPassModal({ onClose }: { onClose: () => void }) {
           : ""
       }${descricaoPagamentoEscolhido ? ` Forma de pagamento: ${descricaoPagamentoEscolhido}.` : ""}`
     : "";
+
+  // Pedido do Wilson, 25/set/2026: "adicionar nome, e-mail e telefone
+  // nessa página, registrar no CRM ao proceder para pagamento" — só
+  // libera o botão "Finalizar Compra" com seleção completa, contato
+  // válido, termos aceitos, e alguma decisão sobre o documento (anexado
+  // OU explicitamente adiado — nunca trava no resultado do OCR, só exige
+  // que o cliente tenha feito uma escolha).
+  const formValido =
+    selecaoCompleta &&
+    nome.trim().length > 0 &&
+    /\S+@\S+\.\S+/.test(email) &&
+    whatsapp.trim().length >= 8 &&
+    termosAceitos &&
+    (documentoAdiado || documentoStatus === "validado" || documentoStatus === "incerto");
+
+  async function enviar() {
+    if (!formValido || status === "enviando") return;
+    setStatus("enviando");
+    setErro("");
+    try {
+      const resposta = await fetch("/api/jrpass-selfservice", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          classe: tipoEscolhido?.classe,
+          dias: diasSelecionados,
+          numeroPessoas,
+          numeroCriancas,
+          idadesCriancas: idadesCriancasPreenchidas,
+          dataInicioViagem,
+          dataFimViagem,
+          precoTotalBRL,
+          precoTotalUSD,
+          formaPagamento: descricaoPagamentoEscolhido || null,
+          nome,
+          email,
+          whatsapp,
+          observacoes,
+          documentoTipo,
+          documentoStoragePath,
+          documentoValidacaoMotivo,
+          documentoAdiado,
+          termosAceitos,
+        }),
+      });
+      const dadosResposta = await resposta.json().catch(() => ({}));
+      if (!resposta.ok) {
+        setErro(dadosResposta.error || "Não foi possível registrar seu pedido agora. Tente de novo.");
+        setStatus("erro");
+        return;
+      }
+      setStatus("enviado");
+    } catch {
+      setErro("Não foi possível registrar seu pedido agora. Tente de novo.");
+      setStatus("erro");
+    }
+  }
 
   return (
     <div
@@ -2109,6 +2301,35 @@ function JrPassModal({ onClose }: { onClose: () => void }) {
         </div>
 
         <div className="overflow-y-auto p-5 md:p-8">
+          {status === "enviado" ? (
+            <div className="py-6 text-center">
+              <p className="text-xs uppercase tracking-[0.3em] text-[#1c6ea8]">Pedido registrado</p>
+              <h3 className={`${display.className} mt-3 text-2xl font-medium text-black md:text-3xl`}>
+                Recebemos seu pedido de JR Pass
+              </h3>
+              <p className="mx-auto mt-3 max-w-md text-sm leading-relaxed text-black/60">
+                Nossa equipe confere o documento enviado (ou aguarda o que você anexar depois),
+                confirma a elegibilidade e te manda o link de pagamento (Pix ou cartão) pelo
+                WhatsApp e por e-mail — junto com a explicação completa de como funciona a troca do
+                voucher pelo passe físico no Japão.
+              </p>
+              {documentoAdiado && (
+                <p className="mx-auto mt-3 max-w-md text-xs leading-relaxed text-amber-700">
+                  Você optou por anexar o documento (passaporte ou passagem) depois — pode mandar
+                  direto pelo WhatsApp assim que tiver em mãos.
+                </p>
+              )}
+              <a
+                href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(mensagemWhatsapp)}`}
+                target="_blank"
+                rel="noreferrer"
+                className="mt-6 inline-flex items-center justify-center rounded-full bg-[#2f80c9] px-6 py-3.5 text-xs font-medium uppercase tracking-[0.25em] text-white transition hover:bg-[#3b91dc]"
+              >
+                Continuar no WhatsApp
+              </a>
+            </div>
+          ) : (
+            <>
           <p className="text-xs uppercase tracking-[0.3em] text-[#1c6ea8]">Japan Rail Pass</p>
           <h3
             className={`${display.className} mt-2 max-w-2xl text-2xl font-medium text-black md:text-3xl`}
@@ -2409,12 +2630,213 @@ function JrPassModal({ onClose }: { onClose: () => void }) {
             </p>
           </div>
 
+          {/* Documento — pedido do Wilson, 25/set/2026: "precisa capturar a
+              foto do passaporte do cliente, criar um validador de foto
+              script simples de checagem" + "foto do passaporte ou foto da
+              passagem, a o JR pass só pode ser emitido se ele estiver no
+              Japao em até 90 dias" + "colocar opção de anexar documentos
+              depois também". */}
+          <div className="mt-8 border-t border-black/10 pt-6">
+            <p className="text-[10px] uppercase tracking-[0.2em] text-black/40">
+              Documento — passaporte ou passagem
+            </p>
+            <p className="mt-2 max-w-2xl text-[11px] leading-5 text-black/50">
+              O JR Pass só pode ser emitido pra quem já está no Japão (ou vai entrar) dentro da
+              janela de 90 dias — o carimbo de entrada no passaporte ou a data do voo na passagem
+              confirmam isso. Pode anexar um dos dois agora, ou deixar pra depois.
+            </p>
+            <div className="mt-4 flex flex-wrap gap-2">
+              {(["passaporte", "passagem"] as const).map((tipo) => (
+                <label
+                  key={tipo}
+                  className={`flex cursor-pointer items-center gap-2 rounded-full border px-4 py-2 text-xs transition ${
+                    documentoTipo === tipo
+                      ? "border-[#2f80c9] bg-[#2f80c9]/10 font-medium text-[#1c6ea8]"
+                      : "border-black/15 text-black/60 hover:border-black/30"
+                  }`}
+                >
+                  {tipo === "passaporte" ? "Foto do passaporte" : "Foto da passagem/itinerário"}
+                  <input
+                    type="file"
+                    accept="image/*,application/pdf"
+                    capture="environment"
+                    className="hidden"
+                    onChange={(e) => {
+                      const arquivo = e.target.files?.[0];
+                      if (arquivo) void lidarComArquivoDocumento(tipo, arquivo);
+                      e.target.value = "";
+                    }}
+                  />
+                </label>
+              ))}
+              <button
+                type="button"
+                onClick={() => {
+                  setDocumentoAdiado(true);
+                  setDocumentoStatus("vazio");
+                  setDocumentoTipo(null);
+                  setDocumentoNomeArquivo("");
+                }}
+                className={`rounded-full border px-4 py-2 text-xs transition ${
+                  documentoAdiado
+                    ? "border-black/40 bg-black/5 font-medium text-black"
+                    : "border-black/15 text-black/50 hover:border-black/30"
+                }`}
+              >
+                Anexar depois
+              </button>
+            </div>
+
+            {documentoStatus === "enviando" && (
+              <p className="mt-3 text-[11px] text-black/45">Enviando {documentoNomeArquivo}…</p>
+            )}
+            {documentoStatus === "validado" && (
+              <p className="mt-3 text-[11px] text-emerald-700">
+                Documento recebido — {documentoValidacaoMotivo || "conferência automática ok."}
+              </p>
+            )}
+            {documentoStatus === "incerto" && (
+              <p className="mt-3 text-[11px] text-amber-700">
+                Documento recebido — {documentoValidacaoMotivo || "não conseguimos confirmar automaticamente."}{" "}
+                Nossa equipe revisa manualmente antes da emissão.
+              </p>
+            )}
+            {documentoStatus === "erro" && (
+              <p className="mt-3 text-[11px] text-red-600">{documentoErro}</p>
+            )}
+            {documentoAdiado && (
+              <p className="mt-3 text-[11px] text-black/45">
+                Sem problema — pode mandar o documento pelo WhatsApp assim que tiver em mãos.
+              </p>
+            )}
+          </div>
+
+          {/* Dados de contato — pedido do Wilson, 25/set/2026: "adicionar
+              nome, e-mail e telefone nessa página, registrar no CRM ao
+              proceder para pagamento". */}
+          <div className="mt-8 border-t border-black/10 pt-6">
+            <p className="text-[10px] uppercase tracking-[0.2em] text-black/40">Seus dados</p>
+            <div className="mt-4 grid gap-4 sm:grid-cols-3">
+              <label className="flex flex-col gap-1.5">
+                <span className="text-[10px] uppercase tracking-[0.15em] text-black/50">
+                  Nome completo
+                </span>
+                <input
+                  type="text"
+                  value={nome}
+                  onChange={(e) => setNome(e.target.value)}
+                  className="rounded-lg border border-black/15 px-3 py-2.5 text-sm text-black focus:border-[#2f80c9] focus:outline-none"
+                />
+              </label>
+              <label className="flex flex-col gap-1.5">
+                <span className="text-[10px] uppercase tracking-[0.15em] text-black/50">E-mail</span>
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="rounded-lg border border-black/15 px-3 py-2.5 text-sm text-black focus:border-[#2f80c9] focus:outline-none"
+                />
+              </label>
+              <label className="flex flex-col gap-1.5">
+                <span className="text-[10px] uppercase tracking-[0.15em] text-black/50">WhatsApp</span>
+                <input
+                  type="tel"
+                  value={whatsapp}
+                  onChange={(e) => setWhatsapp(e.target.value)}
+                  placeholder="(11) 99999-9999"
+                  className="rounded-lg border border-black/15 px-3 py-2.5 text-sm text-black focus:border-[#2f80c9] focus:outline-none"
+                />
+              </label>
+            </div>
+            <label className="mt-4 flex flex-col gap-1.5">
+              <span className="text-[10px] uppercase tracking-[0.15em] text-black/50">
+                Observações (opcional)
+              </span>
+              <textarea
+                value={observacoes}
+                onChange={(e) => setObservacoes(e.target.value)}
+                rows={2}
+                placeholder="Nome exatamente como está no passaporte, se diferente do nome acima, etc."
+                className="rounded-lg border border-black/15 px-3 py-2.5 text-sm text-black focus:border-[#2f80c9] focus:outline-none"
+              />
+            </label>
+          </div>
+
           <FormasPagamento
             totalBRL={precoTotalBRL}
             dataViagem={dataInicioViagem}
             formaPagamento={formaPagamento}
             onEscolher={setFormaPagamento}
           />
+
+          {/* Termos e condições — pedido do Wilson, 25/set/2026: "temos
+              que adicionar um tick box no termos e condições para
+              finalizar o pagamento, tem que ser um scroll com os termos
+              e condições de aceite do jr pASS". Conteúdo vem das mesmas
+              fontes já usadas em Regras de uso/Critérios de elegibilidade
+              acima (sites oficiais JR) + tabela do fornecedor Century
+              Travel (cancelamento, reembolso, validade do voucher). */}
+          <div className="mt-8 border-t border-black/10 pt-6">
+            <p className="text-[10px] uppercase tracking-[0.2em] text-black/40">
+              Termos e condições
+            </p>
+            <div className="mt-4 max-h-56 overflow-y-auto rounded-xl border border-black/10 bg-black/[0.02] p-4 text-[11px] leading-5 text-black/60">
+              <p className="font-medium text-black/80">Emissão e elegibilidade</p>
+              <p className="mt-1">
+                O Japan Rail Pass é vendido como um voucher (Exchange Order), trocado pelo passe
+                físico só no Japão. Só pode ser emitido pra quem tem status de imigração
+                &quot;Temporary Visitor&quot; carimbado no passaporte — o portão eletrônico não
+                carimba, é preciso passar no balcão manual da imigração. Turistas estrangeiros têm
+                estadia autorizada de até 90 dias; japoneses residentes no exterior há pelo menos
+                10 anos podem comprar sob condições específicas, só pela modalidade de compra fora
+                do Japão, antes da viagem.
+              </p>
+              <p className="mt-3 font-medium text-black/80">Validade do voucher</p>
+              <p className="mt-1">
+                O voucher tem validade de 3 meses a partir da emissão pra ser trocado pelo passe
+                físico. O passe em si é pessoal e intransferível, vinculado a um passaporte
+                específico — o nome informado precisa ser idêntico ao do passaporte que será usado
+                na troca.
+              </p>
+              <p className="mt-3 font-medium text-black/80">Cancelamento e reembolso</p>
+              <p className="mt-1">
+                Cancelamento só é aceito dentro do mês de emissão do voucher, mediante taxa de
+                serviço de US$ 10 por cupom. Reembolso (quando ainda cabível) tem taxa de 15% do
+                valor do passe, com prazo máximo de 1 ano a partir da emissão. Se o voucher já foi
+                trocado pelo passe físico, ou em caso de perda ou roubo, não há reembolso nem
+                reposição.
+              </p>
+              <p className="mt-3 font-medium text-black/80">Uso do passe</p>
+              <p className="mt-1">
+                Cobre Shinkansen, trens expressos, expressos limitados e locais da JR, ônibus JR e
+                o Tokyo Monorail — exceto os trens-bala Nozomi e Mizuho, que exigem bilhete
+                especial à parte. Reservas de assento são gratuitas (limite de 110 por passe), mas
+                recomendadas.
+              </p>
+              <p className="mt-3 font-medium text-black/80">Pagamento e responsabilidade dos dados</p>
+              <p className="mt-1">
+                O valor final é convertido pela cotação de câmbio turismo de venda do dia da
+                compra. A Alpinea atua como intermediária entre o cliente e o fornecedor emissor —
+                a exatidão dos dados e documentos enviados (nome, passaporte, datas de viagem) é de
+                responsabilidade do cliente, já que divergências podem impedir a troca do voucher
+                no Japão.
+              </p>
+            </div>
+            <label className="mt-3 flex items-start gap-2.5 text-[11px] leading-5 text-black/60">
+              <input
+                type="checkbox"
+                checked={termosAceitos}
+                onChange={(e) => setTermosAceitos(e.target.checked)}
+                className="mt-0.5 h-4 w-4 shrink-0 rounded border-black/25 text-[#2f80c9] focus:ring-[#2f80c9]"
+              />
+              Li e aceito os termos e condições de emissão, cancelamento, reembolso e uso do JR
+              Pass acima.
+            </label>
+          </div>
+
+          {erro && <p className="mt-4 text-sm text-red-600">{erro}</p>}
+            </>
+          )}
         </div>
 
         {/* Rodapé fixo com a escolha atual — pedido do Wilson, 25/set/2026:
@@ -2428,60 +2850,65 @@ function JrPassModal({ onClose }: { onClose: () => void }) {
             segue a mesma hierarquia visual da "barra fixa" da calculadora
             reversa (label minúsculo, preço grande em destaque como âncora
             visual, linha secundária discreta), adaptada pro tema claro
-            do /produtos em vez das cores escuras do original. */}
-        <div className="shrink-0 border-t border-black/10 bg-white px-5 py-4 shadow-[0_-4px_16px_rgba(0,0,0,0.06)] md:px-8">
-          <div className="mx-auto flex max-w-4xl flex-wrap items-center justify-between gap-x-6 gap-y-3">
-            <div>
-              {selecaoCompleta ? (
-                <>
-                  <p className="text-[10px] uppercase tracking-[0.15em] text-black/40">Sua escolha</p>
-                  <p className={`${display.className} text-xl font-medium text-[#2f80c9] sm:text-2xl`}>
-                    {precoTotalBRL !== null ? formatBRL(precoTotalBRL) : "—"}
-                  </p>
-                  <p className="text-xs text-black/45">
-                    {tipoEscolhido!.classe} · {diasSelecionados} dias · {numeroPessoas}{" "}
-                    {numeroPessoas === 1 ? "pessoa" : "pessoas"}
-                    {numeroCriancas > 0 &&
-                      ` (${numeroCriancas} ${numeroCriancas === 1 ? "criança" : "crianças"}${
-                        criancasComDesconto > 0 ? `, ${criancasComDesconto} c/ 50%` : ""
-                      })`}
-                    {precoTotalUSD !== null && ` · ${formatUSD(precoTotalUSD)}`}
-                    {numeroPessoas > 1 && numeroCriancas === 0 && precoEscolhidoBRL !== null && (
-                      <> · {formatBRL(precoEscolhidoBRL)}/pessoa</>
+            do /produtos em vez das cores escuras do original.
+
+            Botão trocado de link direto de WhatsApp pra "Finalizar
+            Compra" de verdade — pedido do Wilson, 25/set/2026: "aqui o
+            finalizar compra vai gerar uma nova tela" + "adicionar nome,
+            e-mail e telefone nessa página, registrar no CRM ao proceder
+            para pagamento". Some no rodapé quando status vira "enviado"
+            (a tela de confirmação já ocupa o corpo do modal). */}
+        {status !== "enviado" && (
+          <div className="shrink-0 border-t border-black/10 bg-white px-5 py-4 shadow-[0_-4px_16px_rgba(0,0,0,0.06)] md:px-8">
+            <div className="mx-auto flex max-w-4xl flex-wrap items-center justify-between gap-x-6 gap-y-3">
+              <div>
+                {selecaoCompleta ? (
+                  <>
+                    <p className="text-[10px] uppercase tracking-[0.15em] text-black/40">Sua escolha</p>
+                    <p className={`${display.className} text-xl font-medium text-[#2f80c9] sm:text-2xl`}>
+                      {precoTotalBRL !== null ? formatBRL(precoTotalBRL) : "—"}
+                    </p>
+                    <p className="text-xs text-black/45">
+                      {tipoEscolhido!.classe} · {diasSelecionados} dias · {numeroPessoas}{" "}
+                      {numeroPessoas === 1 ? "pessoa" : "pessoas"}
+                      {numeroCriancas > 0 &&
+                        ` (${numeroCriancas} ${numeroCriancas === 1 ? "criança" : "crianças"}${
+                          criancasComDesconto > 0 ? `, ${criancasComDesconto} c/ 50%` : ""
+                        })`}
+                      {precoTotalUSD !== null && ` · ${formatUSD(precoTotalUSD)}`}
+                      {numeroPessoas > 1 && numeroCriancas === 0 && precoEscolhidoBRL !== null && (
+                        <> · {formatBRL(precoEscolhidoBRL)}/pessoa</>
+                      )}
+                    </p>
+                    {descricaoPagamentoEscolhido && (
+                      <p className="mt-0.5 text-[11px] text-black/40">{descricaoPagamentoEscolhido}</p>
                     )}
+                  </>
+                ) : (
+                  <p className="text-xs text-black/45">
+                    Selecione o tipo (Comum ou Green Car) e a duração do passe acima.
                   </p>
-                  {descricaoPagamentoEscolhido && (
-                    <p className="mt-0.5 text-[11px] text-black/40">{descricaoPagamentoEscolhido}</p>
-                  )}
-                </>
-              ) : (
-                <p className="text-xs text-black/45">
-                  Selecione o tipo (Comum ou Green Car) e a duração do passe acima.
-                </p>
-              )}
+                )}
+              </div>
+              <button
+                type="button"
+                onClick={enviar}
+                disabled={!formValido || status === "enviando"}
+                className={`inline-flex shrink-0 items-center justify-center rounded-full px-6 py-3.5 text-center text-xs font-medium uppercase tracking-[0.2em] text-white transition ${
+                  formValido && status !== "enviando"
+                    ? "bg-[#2f80c9] hover:bg-[#3b91dc]"
+                    : "cursor-not-allowed bg-black/20"
+                }`}
+              >
+                {status === "enviando" ? "Enviando…" : "Finalizar Compra"}
+              </button>
             </div>
-            <a
-              href={
-                selecaoCompleta
-                  ? `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(mensagemWhatsapp)}`
-                  : undefined
-              }
-              target={selecaoCompleta ? "_blank" : undefined}
-              rel={selecaoCompleta ? "noreferrer" : undefined}
-              aria-disabled={!selecaoCompleta}
-              onClick={(event) => {
-                if (!selecaoCompleta) event.preventDefault();
-              }}
-              className={`inline-flex shrink-0 items-center justify-center rounded-full px-6 py-3.5 text-center text-xs font-medium uppercase tracking-[0.2em] text-white transition ${
-                selecaoCompleta
-                  ? "bg-[#2f80c9] hover:bg-[#3b91dc]"
-                  : "cursor-not-allowed bg-black/20"
-              }`}
-            >
-              Finalizar Compra Via WhatsApp
-            </a>
+            <p className="mt-2 text-[10px] leading-4 text-black/35">
+              Isso não confirma pagamento — nossa equipe confirma a elegibilidade e envia o link de
+              pagamento (Pix ou cartão) pelo WhatsApp e por e-mail.
+            </p>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );
@@ -3260,10 +3687,12 @@ const ICONE_MOEDA_IENE = "/images/icone-moeda-iene.png";
 // moedas de pagamento (Real, Euro, Dólar). Self-checkout no mesmo padrão
 // do Seguro Viagem (lead no CRM com tag SELF-SERVICE via
 // /api/cambio-selfservice — sem gateway de pagamento real no site).
-function CambioModal({ cambio, onClose }: { cambio: Cambio | null; onClose: () => void }) {
+// Pedido do Wilson, 25/set/2026: "moeda de pagamento é só real" — não
+// recebe mais `cambio` (PTAX/USD) como prop porque não converte mais pra
+// dólar/euro; só usava isso pra mostrar o total em USD/EUR.
+function CambioModal({ onClose }: { onClose: () => void }) {
   const [direcao, setDirecao] = useState<DirecaoCambioIene>("compra");
   const [cidade, setCidade] = useState<CidadeCambioIeneSlug>("sao-paulo");
-  const [moedaTransacao, setMoedaTransacao] = useState<MoedaTransacaoCambio>("BRL");
   const [quantidadeIenes, setQuantidadeIenes] = useState(CAMBIO_IENES_MINIMO_PUBLICO);
   const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
@@ -3280,7 +3709,6 @@ function CambioModal({ cambio, onClose }: { cambio: Cambio | null; onClose: () =
   // cotação de rua — nunca mostrada ao cliente (mesma regra do JR Pass e
   // Seguro Viagem: nunca revelar margem/fornecedor em texto público).
   const cambioIene = useCambioIene(cidade, direcao);
-  const cambioEUR = useCambioEUR();
 
   const cotacaoRuaBRLporJPY = cambioIene?.cotacaoBRLPorJPY ?? null;
   const spreadPublico = direcao === "compra" ? SPREAD_CAMBIO_IENE_PUBLICO_COMPRA : SPREAD_CAMBIO_IENE_PUBLICO_VENDA;
@@ -3290,20 +3718,17 @@ function CambioModal({ cambio, onClose }: { cambio: Cambio | null; onClose: () =
   // usada no card/produto de Câmbio (PRECO_CAMBIO_BRASIL, em
   // CustomPackageCard.tsx), aplicada nas duas direções (a logística de
   // entregar ou recolher o dinheiro em espécie existe nos dois sentidos).
-  const totalBRL = valorIenesBRL !== null ? valorIenesBRL + PRECO_CAMBIO_BRASIL : null;
+  // Taxa extra de entrega no Aeroporto de Guarulhos — pedido do Wilson,
+  // 25/set/2026: "custo de entrega para entrega no aeroporto de
+  // guarulhos de R$ 190.00 caso cliente opte por isso" — só entra quando
+  // a cidade escolhida é a opção de aeroporto.
+  const taxaEntregaAeroporto = cidade === "aeroporto-guarulhos" ? CUSTO_ENTREGA_AEROPORTO_CAMBIO : 0;
+  const totalBRL =
+    valorIenesBRL !== null ? valorIenesBRL + PRECO_CAMBIO_BRASIL + taxaEntregaAeroporto : null;
 
-  const totalLabel =
-    totalBRL === null
-      ? null
-      : moedaTransacao === "BRL"
-        ? formatBRL(totalBRL)
-        : moedaTransacao === "USD"
-          ? cambio
-            ? formatUSD(totalBRL / cambio.cotacao)
-            : formatBRL(totalBRL)
-          : cambioEUR
-            ? formatEUR(totalBRL / cambioEUR.cotacao)
-            : formatBRL(totalBRL);
+  // Pedido do Wilson, 25/set/2026: "moeda de pagamento é só real" — o
+  // seletor de moeda (Real/Euro/Dólar) saiu; total sempre em BRL.
+  const totalLabel = totalBRL === null ? null : formatBRL(totalBRL);
 
   const cidadeNome = CIDADES_CAMBIO_IENE.find((c) => c.slug === cidade)?.nome ?? cidade;
   const direcaoLabel = direcao === "compra" ? "Compra de ienes" : "Venda de ienes";
@@ -3328,7 +3753,7 @@ function CambioModal({ cambio, onClose }: { cambio: Cambio | null; onClose: () =
         body: JSON.stringify({
           direcao,
           cidade,
-          moedaTransacao,
+          moedaTransacao: "BRL",
           quantidadeIenes,
           totalBRL,
           formaPagamento: descricaoPagamentoEscolhido || null,
@@ -3414,17 +3839,17 @@ function CambioModal({ cambio, onClose }: { cambio: Cambio | null; onClose: () =
                 Compra e venda de ienes antes e depois da viagem
               </h3>
               <p className="mt-3 max-w-2xl text-sm leading-relaxed text-black/60">
-                Retire ienes em espécie com cotação comercial antes de embarcar — ou devolva o que
-                sobrou da viagem — sem precisar trocar dinheiro no Japão. Cotação em tempo real por
-                cidade, com o pedido já pronto pra fechar pelo WhatsApp.
+                Retire ienes em espécie antes de embarcar — ou devolva o que sobrou da viagem — sem
+                precisar trocar dinheiro no Japão. Cotação em tempo real por cidade, com o pedido já
+                pronto pra fechar pelo WhatsApp.
               </p>
 
-              {/* Direção */}
+              {/* Direção — subtítulo "O que você quer fazer" removido a
+                  pedido do Wilson, 25/set/2026 ("remover esse subtitulo,
+                  é irrelevante"): os dois cards abaixo já são
+                  autoexplicativos. */}
               <div className="mt-8 border-t border-black/10 pt-6">
-                <p className="text-[10px] uppercase tracking-[0.2em] text-black/40">
-                  O que você quer fazer
-                </p>
-                <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                <div className="grid gap-3 sm:grid-cols-2">
                   <button
                     type="button"
                     onClick={() => setDirecao("compra")}
@@ -3479,7 +3904,9 @@ function CambioModal({ cambio, onClose }: { cambio: Cambio | null; onClose: () =
                 </div>
               </div>
 
-              {/* Quantidade + moeda de pagamento */}
+              {/* Quantidade — seletor de moeda de pagamento (Real/Euro/
+                  Dólar) removido a pedido do Wilson, 25/set/2026: "moeda
+                  de pagamento é só real". */}
               <div className="mt-8 border-t border-black/10 pt-6">
                 <p className="text-[10px] uppercase tracking-[0.2em] text-black/40">
                   Quantidade de ienes
@@ -3500,28 +3927,6 @@ function CambioModal({ cambio, onClose }: { cambio: Cambio | null; onClose: () =
                 <p className="mt-2 text-[11px] leading-5 text-black/40">
                   Mínimo de ¥{CAMBIO_IENES_MINIMO_PUBLICO.toLocaleString("pt-BR")}.
                 </p>
-
-                <p className="mt-6 text-[10px] uppercase tracking-[0.2em] text-black/40">
-                  Moeda de pagamento
-                </p>
-                <div className="mt-4 flex flex-wrap gap-3">
-                  {MOEDAS_TRANSACAO_CAMBIO.map((m) => (
-                    <button
-                      key={m.key}
-                      type="button"
-                      onClick={() => setMoedaTransacao(m.key)}
-                      className={`flex items-center gap-2 rounded-full border px-4 py-2.5 text-xs transition ${
-                        moedaTransacao === m.key
-                          ? "border-[#2f80c9] bg-[#2f80c9]/10 text-[#1c6ea8]"
-                          : "border-black/15 text-black/60 hover:border-black/30"
-                      }`}
-                    >
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src={m.icone} alt="" className="h-5 w-5 object-contain" />
-                      {m.nome}
-                    </button>
-                  ))}
-                </div>
               </div>
 
               {/* Resumo de preço */}
@@ -3534,12 +3939,11 @@ function CambioModal({ cambio, onClose }: { cambio: Cambio | null; onClose: () =
                     <p className={`${display.className} mt-1 text-3xl font-medium text-black`}>
                       {totalLabel}
                     </p>
-                    {moedaTransacao !== "BRL" && totalBRL !== null && (
-                      <p className="mt-1 text-sm font-medium text-black/50">ou {formatBRL(totalBRL)}</p>
-                    )}
                     <p className="mt-2 text-[11px] leading-5 text-black/40">
                       ¥{quantidadeIenes.toLocaleString("pt-BR")} em {cidadeNome}, já com taxas
-                      incluídas.
+                      incluídas
+                      {taxaEntregaAeroporto > 0 && ` (inclui taxa de entrega no aeroporto de ${formatBRL(taxaEntregaAeroporto)})`}
+                      .
                     </p>
                   </>
                 ) : (
@@ -3602,6 +4006,9 @@ function CambioModal({ cambio, onClose }: { cambio: Cambio | null; onClose: () =
                 formaPagamento={formaPagamento}
                 onEscolher={setFormaPagamento}
                 somenteAVista
+                // Pedido do Wilson, 25/set/2026: "metodo de pagamento é só
+                // pix e ted" — sem cartão de crédito no Câmbio.
+                metodos={["pix", "ted"]}
               />
 
               <p className="mt-6 text-[11px] leading-5 text-black/35">
