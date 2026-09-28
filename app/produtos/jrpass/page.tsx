@@ -430,12 +430,41 @@ export default function JrPassPage() {
     }
   }
 
+  // Altura real do rodapé fixo, medida ao vivo — corrige o bug (Wilson,
+  // 28/set/2026) de o rodapé tampar o fim da página quando a lista de
+  // pendências cresce e ele fica mais alto que um padding fixo chutado.
+  const rodapeRef = useRef<HTMLDivElement | null>(null);
+  const [alturaRodape, setAlturaRodape] = useState(0);
+
+  useEffect(() => {
+    const elemento = rodapeRef.current;
+    if (!elemento) {
+      setAlturaRodape(0);
+      return;
+    }
+    const observer = new ResizeObserver((entries) => {
+      setAlturaRodape(entries[0]?.contentRect.height ?? elemento.offsetHeight);
+    });
+    observer.observe(elemento);
+    return () => observer.disconnect();
+  }, [status]);
+
   return (
-    <main className="min-h-screen bg-white pb-32 text-black md:pb-36">
-      <div className="sticky top-0 z-30 flex h-14 shrink-0 items-center gap-3 border-b border-black/10 bg-white/90 px-4 backdrop-blur-xl md:px-8">
+    <main
+      className="min-h-screen bg-white pt-14 text-black"
+      style={status !== "enviado" ? { paddingBottom: alturaRodape + 24 } : undefined}
+    >
+      {/* Barra de voltar — pedido do Wilson, 28/set/2026: "essa parte deve
+          ser fixa, aonde o usuario for ele deve acompanhar" (era só
+          `sticky`, que só acompanha dentro do próprio container — virou
+          `fixed` de verdade, acompanhando o scroll da página inteira) +
+          "o fundo deve ser azul escuro, ajustar cores das letras para
+          branco" — mesmo azul-marinho da marca usado noutras páginas
+          (#0A2540, ver app/calculadora_reversa/page.tsx). */}
+      <div className="fixed inset-x-0 top-0 z-50 flex h-14 shrink-0 items-center gap-3 bg-[#0A2540] px-4 md:px-8">
         <Link
           href="/produtos"
-          className="flex items-center gap-1.5 text-xs font-medium uppercase tracking-[0.15em] text-black/60 transition hover:text-black"
+          className="flex items-center gap-1.5 text-xs font-medium uppercase tracking-[0.15em] text-white/70 transition hover:text-white"
         >
           <svg
             viewBox="0 0 24 24"
@@ -450,8 +479,8 @@ export default function JrPassPage() {
           </svg>
           Voltar
         </Link>
-        <span className="h-4 w-px bg-black/15" aria-hidden="true" />
-        <p className={`${display.className} text-lg font-medium text-black md:text-xl`}>JR Pass</p>
+        <span className="h-4 w-px bg-white/20" aria-hidden="true" />
+        <p className={`${display.className} text-lg font-medium text-white md:text-xl`}>JR Pass</p>
       </div>
 
       <div className="mx-auto max-w-5xl p-5 md:p-8">
@@ -498,7 +527,12 @@ export default function JrPassPage() {
 
           {/* Tipos e preços */}
           <div className="mt-8 border-t border-black/10 pt-6">
-            <p className="text-[10px] uppercase tracking-[0.2em] text-black/40">Tipos e preços</p>
+            <div className="flex items-center gap-2">
+              <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#2f80c9] text-[10px] font-semibold text-white">
+                1
+              </span>
+              <p className="text-[10px] uppercase tracking-[0.2em] text-black/40">Tipos e preços</p>
+            </div>
             <div className="mt-4 grid gap-4 sm:grid-cols-2">
               {TIPOS.map((tipo) => (
                 <div
@@ -578,7 +612,12 @@ export default function JrPassPage() {
               padrão de campo de data do Seguro Viagem; entram na mensagem
               de WhatsApp pro time já saber o período. */}
           <div className="mt-8 border-t border-black/10 pt-6">
-            <p className="text-[10px] uppercase tracking-[0.2em] text-black/40">Dados da viagem</p>
+            <div className="flex items-center gap-2">
+              <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#2f80c9] text-[10px] font-semibold text-white">
+                2
+              </span>
+              <p className="text-[10px] uppercase tracking-[0.2em] text-black/40">Dados da viagem</p>
+            </div>
             <div className="mt-4 grid gap-4 sm:max-w-md sm:grid-cols-2">
               <label className="flex flex-col gap-1.5">
                 <span className="text-[10px] uppercase tracking-[0.15em] text-black/50">
@@ -620,7 +659,12 @@ export default function JrPassPage() {
               Mesmo stepper do "Viajantes" do Seguro Viagem. Desconto de
               criança (6–11 anos, metade do preço) é o bloco logo abaixo. */}
           <div className="mt-8 border-t border-black/10 pt-6">
-            <p className="text-[10px] uppercase tracking-[0.2em] text-black/40">Número de pessoas</p>
+            <div className="flex items-center gap-2">
+              <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#2f80c9] text-[10px] font-semibold text-white">
+                3
+              </span>
+              <p className="text-[10px] uppercase tracking-[0.2em] text-black/40">Número de pessoas</p>
+            </div>
             <div className="mt-4 flex max-w-xs items-center gap-2">
               <button
                 type="button"
@@ -656,7 +700,7 @@ export default function JrPassPage() {
                 da grade de idades do Seguro Viagem), pra confirmar se
                 cada uma cai mesmo na faixa 6–11 que dá direito à
                 meia-entrada. */}
-            <div className="mt-6 border-t border-black/10 pt-5">
+            <div className="mt-6">
               <span className="mb-2 block text-[10px] uppercase tracking-[0.15em] text-black/50">
                 Crianças (opcional) — 6 a 11 anos pagam metade
               </span>
@@ -799,9 +843,12 @@ export default function JrPassPage() {
               Japao em até 90 dias" + "colocar opção de anexar documentos
               depois também". */}
           <div className="mt-8 border-t border-black/10 pt-6">
-            <p className="text-[10px] uppercase tracking-[0.2em] text-black/40">
-              Documento — passaporte ou passagem
-            </p>
+            <div className="flex items-center gap-2">
+              <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#2f80c9] text-[10px] font-semibold text-white">
+                4
+              </span>
+              <p className="text-[10px] uppercase tracking-[0.2em] text-black/40">Documento — passaporte ou passagem</p>
+            </div>
             <p className="mt-2 max-w-2xl text-[11px] leading-5 text-black/50">
               O JR Pass só pode ser emitido pra quem já está no Japão (ou vai entrar) dentro da
               janela de 90 dias — o carimbo de entrada no passaporte ou a data do voo na passagem
@@ -904,7 +951,12 @@ export default function JrPassPage() {
               nome, e-mail e telefone nessa página, registrar no CRM ao
               proceder para pagamento". */}
           <div className="mt-8 border-t border-black/10 pt-6">
-            <p className="text-[10px] uppercase tracking-[0.2em] text-black/40">Seus dados</p>
+            <div className="flex items-center gap-2">
+              <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#2f80c9] text-[10px] font-semibold text-white">
+                5
+              </span>
+              <p className="text-[10px] uppercase tracking-[0.2em] text-black/40">Seus dados</p>
+            </div>
             <div className="mt-4 grid gap-4 sm:grid-cols-3">
               <label className="flex flex-col gap-1.5">
                 <span className="text-[10px] uppercase tracking-[0.15em] text-black/50">
@@ -952,6 +1004,7 @@ export default function JrPassPage() {
           </div>
 
           <FormasPagamento
+            numeroPasso={6}
             totalBRL={precoTotalBRL}
             dataViagem={dataInicioViagem}
             formaPagamento={formaPagamento}
@@ -966,9 +1019,12 @@ export default function JrPassPage() {
               acima (sites oficiais JR) + tabela do fornecedor Century
               Travel (cancelamento, reembolso, validade do voucher). */}
           <div className="mt-8 border-t border-black/10 pt-6">
-            <p className="text-[10px] uppercase tracking-[0.2em] text-black/40">
-              Termos e condições
-            </p>
+            <div className="flex items-center gap-2">
+              <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#2f80c9] text-[10px] font-semibold text-white">
+                7
+              </span>
+              <p className="text-[10px] uppercase tracking-[0.2em] text-black/40">Termos e condições</p>
+            </div>
             <div
               ref={termosBoxRef}
               className="mt-4 max-h-56 overflow-y-auto rounded-xl border border-black/10 bg-black/[0.02] p-4 text-[11px] leading-5 text-black/60"
@@ -1063,7 +1119,10 @@ export default function JrPassPage() {
             para pagamento". Some no rodapé quando status vira "enviado"
             (a tela de confirmação já ocupa o corpo do modal). */}
         {status !== "enviado" && (
-          <div className="fixed inset-x-0 bottom-0 z-50 border-t border-black/10 bg-white px-5 py-4 shadow-[0_-4px_16px_rgba(0,0,0,0.06)] md:px-8">
+          <div
+            ref={rodapeRef}
+            className="fixed inset-x-0 bottom-0 z-50 border-t border-black/10 bg-white px-5 py-4 shadow-[0_-4px_16px_rgba(0,0,0,0.06)] md:px-8"
+          >
             <div className="mx-auto flex max-w-4xl flex-wrap items-center justify-between gap-x-6 gap-y-3">
               <div>
                 {selecaoCompleta ? (
@@ -1118,8 +1177,9 @@ export default function JrPassPage() {
               </div>
             )}
             <p className="mt-2 text-[10px] leading-4 text-black/35">
-              Isso não confirma pagamento — nossa equipe confirma a elegibilidade e envia o link de
-              pagamento (Pix ou cartão) pelo WhatsApp e por e-mail.
+              Ao finalizar, você é levado direto pra página de pagamento segura da Stone (Pix ou
+              cartão). Após a confirmação, nossa equipe faz a checagem final da elegibilidade e
+              envia as instruções de retirada do passe físico no Japão pelo WhatsApp e por e-mail.
             </p>
           </div>
         )}

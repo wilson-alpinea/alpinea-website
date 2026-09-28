@@ -1380,6 +1380,7 @@ export function FormasPagamento({
   onEscolher,
   somenteAVista = false,
   metodos = ["cartao", "pix"],
+  numeroPasso,
 }: {
   totalBRL: number | null;
   /** Data de início da viagem (AAAA-MM-DD) — limita quantas parcelas de Pix fazem sentido. */
@@ -1394,6 +1395,11 @@ export function FormasPagamento({
    * pagamento é só pix e ted" (só pro Câmbio; os outros produtos continuam
    * com o padrão ["cartao", "pix"]). */
   metodos?: ("cartao" | "pix" | "ted")[];
+  /** Numeração do passo (Wilson, 28/set/2026: "cada um dos passos até o
+   * final deve ter uma numeração clara e evidente") — só o JR Pass passa
+   * essa prop por enquanto; sem ela, o título aparece sem número (Câmbio,
+   * Seguro Viagem, Transporte Privado). */
+  numeroPasso?: number;
 }) {
   if (totalBRL === null || totalBRL <= 0) return null;
 
@@ -1410,7 +1416,16 @@ export function FormasPagamento({
 
   return (
     <div className="mt-8 border-t border-black/10 pt-6">
-      <p className="text-[10px] uppercase tracking-[0.2em] text-black/40">Formas de pagamento</p>
+      {numeroPasso !== undefined ? (
+        <div className="flex items-center gap-2">
+          <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#2f80c9] text-[10px] font-semibold text-white">
+            {numeroPasso}
+          </span>
+          <p className="text-[10px] uppercase tracking-[0.2em] text-black/40">Formas de pagamento</p>
+        </div>
+      ) : (
+        <p className="text-[10px] uppercase tracking-[0.2em] text-black/40">Formas de pagamento</p>
+      )}
       <p className="mt-1 text-[11px] leading-5 text-black/45">
         Simulação pra referência — valores sujeitos a confirmação no fechamento.
       </p>
