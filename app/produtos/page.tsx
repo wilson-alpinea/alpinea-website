@@ -2841,6 +2841,17 @@ function JrPassModal({ onClose }: { onClose: () => void }) {
                       : "border-black/15 text-black/60 hover:border-black/30"
                   }`}
                 >
+                  <Image
+                    src={
+                      tipo === "passaporte"
+                        ? "/images/produtos/jrpass-doc-passaporte.png"
+                        : "/images/produtos/jrpass-doc-passagem.png"
+                    }
+                    alt=""
+                    width={20}
+                    height={20}
+                    className="h-5 w-5"
+                  />
                   {tipo === "passaporte" ? "Foto do passaporte" : "Foto da passagem/itinerário"}
                   <input
                     type="file"
@@ -2863,12 +2874,19 @@ function JrPassModal({ onClose }: { onClose: () => void }) {
                   setDocumentoTipo(null);
                   setDocumentoNomeArquivo("");
                 }}
-                className={`rounded-full border px-4 py-2 text-xs transition ${
+                className={`flex items-center gap-2 rounded-full border px-4 py-2 text-xs transition ${
                   documentoAdiado
                     ? "border-black/40 bg-black/5 font-medium text-black"
                     : "border-black/15 text-black/50 hover:border-black/30"
                 }`}
               >
+                <Image
+                  src="/images/produtos/jrpass-doc-anexar-depois.png"
+                  alt=""
+                  width={20}
+                  height={20}
+                  className="h-5 w-5"
+                />
                 Anexar depois
               </button>
             </div>
