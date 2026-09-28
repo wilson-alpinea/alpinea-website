@@ -31,13 +31,15 @@
 // fluxo atual (lead no CRM + link manual por WhatsApp/e-mail) continua
 // funcionando exatamente como hoje.
 //
-// ⚠️ O formato exato de alguns campos abaixo (em especial a config de
-// parcelamento/juros repassados ao cliente no link de pagamento, que
-// pelo que a documentação pública indica é configurada direto no painel
-// da Pagar.me em vez de por chamada de API) foi montado a partir da
-// documentação pública da Pagar.me — só um teste real com a chave de
-// teste confirma 100%. Isso é normal em qualquer integração nova; ajusto
-// na hora se a primeira chamada de teste pedir um campo diferente.
+// Confirmado em 28/set/2026 com um teste real: a Pagar.me exige que
+// "payment_settings.credit_card_settings" e "payment_settings.pix_settings"
+// venham preenchidos (não vazios) sempre que "credit_card"/"pix" estiverem
+// em accepted_payment_methods — sem isso a API recusa com 400 ("'Credit
+// Card Settings' must not be empty." / "'Pix Settings' must not be
+// empty."). Os juros do parcelamento repassados ao cliente (decisão do
+// Wilson) são configurados por API mesmo, no campo
+// installments_setup.customer_fee = true — não é só ajuste de painel como
+// a gente suspeitava antes de testar.
 
 const PAGARME_API_BASE = "https://api.pagar.me/core/v5";
 
@@ -134,6 +136,36 @@ export async function criarCheckout(params: CriarCheckoutParams): Promise<Checko
       order_code: params.codigoInterno,
       payment_settings: {
         accepted_payment_methods: metodosAceitos,
+        // Obrigatório e não pode vir vazio quando "credit_card" está em
+        // accepted_payment_methods (erro 400 "'Credit Card Settings' must
+        // not be empty." confirmado em teste real). customer_fee: true é
+        // o que repassa o juro do parcelamento pro cliente, conforme
+        // decisão do Wilson (28/set/2026).
+        ...(params.aceitarCartao
+          ? {
+              credit_card_settings: {
+                operation_type: "auth_and_capture",
+                installments_setup: {
+                  amount: valorCentavos,
+                  max_installments: 12,
+                  interest_type: "simple",
+                  customer_fee: true,
+                },
+              },
+            }
+          : {}),
+        // Obrigatório e não pode vir vazio quando "pix" está em
+        // accepted_payment_methods (erro 400 "'Pix Settings' must not be
+        // empty." confirmado em teste real). 3600s (1h) é um prazo
+        // razoável pra pagar o Pix antes de expirar — sem regra do
+        // Wilson sobre isso até agora, ajusto se ele pedir outro valor.
+        ...(params.aceitarPix
+          ? {
+              pix_settings: {
+                expires_in: 3600,
+              },
+            }
+          : {}),
       },
       cart_settings: {
         items: [
