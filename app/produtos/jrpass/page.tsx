@@ -39,6 +39,33 @@ import {
   IconCheck,
 } from "../page";
 
+// Passos da compra — pedido do Wilson, 28/set/2026: "adicionar tambem os
+// passos para a compra (exemplo imagem 2)", com os 4 ícones que ele
+// enviou. Adaptado pro nosso fluxo (a compra acontece aqui no site, não
+// precisa buscar o passe presencialmente numa loja JR fora do Japão).
+const COMO_FUNCIONA = [
+  {
+    icone: "/images/produtos/jrpass-passo-1-pedido.png",
+    titulo: "Faça seu pedido",
+    texto: "Escolha o tipo de passe e finalize a compra aqui no site.",
+  },
+  {
+    icone: "/images/produtos/jrpass-passo-2-troca.png",
+    titulo: "Receba a Ordem de Troca",
+    texto: "Enviamos o voucher (Exchange Order) por e-mail e WhatsApp.",
+  },
+  {
+    icone: "/images/produtos/jrpass-passo-3-ativacao.png",
+    titulo: "Ative no Japão",
+    texto: "Troque o voucher pelo passe físico em um balcão JR na chegada.",
+  },
+  {
+    icone: "/images/produtos/jrpass-passo-4-viagens.png",
+    titulo: "Viaje sem limites",
+    texto: "Use o passe livremente na rede JR pelo número de dias contratado.",
+  },
+];
+
 export default function JrPassPage() {
   // Pedido do Wilson, 25/set/2026: "na pagina de JR Pass, nós vamos usar
   // o valor de dólar turismo" (em vez do PTAX usado no resto do site) +
@@ -75,8 +102,21 @@ export default function JrPassPage() {
   // reversa". Só entram na mensagem de WhatsApp (o JR Pass não tem
   // checkout com lead no CRM, diferente do Seguro Viagem).
   const [dataInicioViagem, setDataInicioViagem] = useState("");
-  const [dataFimViagem, setDataFimViagem] = useState("");
   const [formaPagamento, setFormaPagamento] = useState<FormaPagamentoEscolhida | null>(null);
+
+  // Data de encerramento — nunca é escolha livre: o JR Pass cobre
+  // sempre N dias corridos (7/14/21) a partir da data de ativação, então
+  // o fim é matematicamente início + (N-1) dias.
+  const dataFimViagemCalculada = (() => {
+    if (!dataInicioViagem || !diasSelecionados) return "";
+    const inicio = new Date(`${dataInicioViagem}T00:00:00`);
+    if (Number.isNaN(inicio.getTime())) return "";
+    inicio.setDate(inicio.getDate() + (diasSelecionados - 1));
+    const ano = inicio.getFullYear();
+    const mes = String(inicio.getMonth() + 1).padStart(2, "0");
+    const dia = String(inicio.getDate()).padStart(2, "0");
+    return `${ano}-${mes}-${dia}`;
+  })();
 
   // Dados de contato + CRM — pedido do Wilson, 25/set/2026: "adicionar
   // nome, e-mail e telefone nessa página, registrar no CRM ao proceder
@@ -334,8 +374,8 @@ export default function JrPassPage() {
       }${detalheCriancasTexto}${
         precoTotalBRL !== null ? ` (total ${formatBRL(precoTotalBRL)})` : ""
       }.${
-        dataInicioViagem && dataFimViagem
-          ? ` Viagem de ${formatarDataBR(dataInicioViagem)} a ${formatarDataBR(dataFimViagem)}.`
+        dataInicioViagem && dataFimViagemCalculada
+          ? ` Viagem de ${formatarDataBR(dataInicioViagem)} a ${formatarDataBR(dataFimViagemCalculada)}.`
           : ""
       }${descricaoPagamentoEscolhido ? ` Forma de pagamento: ${descricaoPagamentoEscolhido}.` : ""}`
     : "";
@@ -392,7 +432,7 @@ export default function JrPassPage() {
           numeroCriancas,
           idadesCriancas: idadesCriancasPreenchidas,
           dataInicioViagem,
-          dataFimViagem,
+          dataFimViagem: dataFimViagemCalculada,
           precoTotalBRL,
           precoTotalUSD,
           formaPagamento: descricaoPagamentoEscolhido || null,
@@ -513,17 +553,54 @@ export default function JrPassPage() {
             </div>
           ) : (
             <>
-          <p className="text-xs uppercase tracking-[0.3em] text-[#1c6ea8]">Japan Rail Pass</p>
-          <h3
-            className={`${display.className} mt-2 max-w-2xl text-2xl font-medium text-black md:text-3xl`}
-          >
-            Deslocamentos ilimitados de trem-bala em todo o Japão
-          </h3>
-          <p className="mt-3 max-w-2xl text-sm leading-relaxed text-black/60">
-            Passe ferroviário oficial dos seis grupos JR, vendido em faixas fixas de 7, 14 ou 21
-            dias corridos — cobre a maior parte da rede Shinkansen, trens expressos, locais,
-            ônibus JR e o Tokyo Monorail.
-          </p>
+          <div className="flex flex-col-reverse gap-6 sm:flex-row sm:items-start sm:justify-between sm:gap-8">
+            <div className="flex-1">
+              <p className="text-xs uppercase tracking-[0.3em] text-[#1c6ea8]">Japan Rail Pass</p>
+              <h3
+                className={`${display.className} mt-2 max-w-2xl text-2xl font-medium text-black md:text-3xl`}
+              >
+                Deslocamentos ilimitados de trem-bala em todo o Japão
+              </h3>
+              <p className="mt-3 max-w-2xl text-sm leading-relaxed text-black/60">
+                Passe ferroviário oficial dos seis grupos JR, vendido em faixas fixas de 7, 14 ou 21
+                dias corridos — cobre a maior parte da rede Shinkansen, trens expressos, locais,
+                ônibus JR e o Tokyo Monorail.
+              </p>
+            </div>
+            <Image
+              src="/images/produtos/jrpass-capa-oficial.png"
+              alt="Capa oficial do Japan Rail Pass"
+              width={1024}
+              height={1536}
+              className="mx-auto w-32 shrink-0 rounded-xl shadow-[0_12px_30px_rgba(0,0,0,0.18)] sm:mx-0 sm:w-40"
+            />
+          </div>
+
+          {/* Como funciona — pedido do Wilson, 28/set/2026: "adicionar
+              também os passos para a compra" (mesmo formato do site
+              oficial japanrailpass.net: pedido → recebe o voucher → ativa
+              no Japão → viaja ilimitado), com os 4 ícones que ele mandou,
+              adaptado pro nosso fluxo (compra aqui no site, não no site
+              oficial). Só uma explicação visual — não é um passo de
+              decisão, por isso sem numeração. */}
+          <div className="mt-8 rounded-2xl bg-[#eef6fb] p-5 sm:p-6">
+            <p className="text-center text-xs font-medium uppercase tracking-[0.15em] text-[#1c6ea8]">
+              Como funciona
+            </p>
+            <div className="mt-5 grid grid-cols-2 gap-6 sm:grid-cols-4 sm:gap-4">
+              {COMO_FUNCIONA.map((passo, index) => (
+                <div key={passo.titulo} className="flex flex-col items-center text-center">
+                  <p className="text-[10px] font-semibold uppercase tracking-[0.15em] text-[#2f80c9]">
+                    Passo {index + 1}
+                  </p>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={passo.icone} alt="" className="mt-2 h-14 w-14 object-contain" />
+                  <p className="mt-2 text-xs font-medium text-black">{passo.titulo}</p>
+                  <p className="mt-1 text-[11px] leading-4 text-black/50">{passo.texto}</p>
+                </div>
+              ))}
+            </div>
+          </div>
 
           {/* Tipos e preços */}
           <div className="mt-8 border-t border-black/10 pt-6">
@@ -621,33 +698,30 @@ export default function JrPassPage() {
             <div className="mt-4 grid gap-4 sm:max-w-md sm:grid-cols-2">
               <label className="flex flex-col gap-1.5">
                 <span className="text-[10px] uppercase tracking-[0.15em] text-black/50">
-                  Início da viagem
+                  Data de ida
                 </span>
                 <input
                   type="date"
                   value={dataInicioViagem}
                   min={hojeISO()}
-                  onChange={(e) => {
-                    const novoInicio = e.target.value;
-                    setDataInicioViagem(novoInicio);
-                    if (dataFimViagem && novoInicio && dataFimViagem < novoInicio) {
-                      setDataFimViagem("");
-                    }
-                  }}
+                  onChange={(e) => setDataInicioViagem(e.target.value)}
                   className="rounded-lg border border-black/15 px-3 py-2.5 text-sm text-black focus:border-[#2f80c9] focus:outline-none"
                 />
               </label>
               <label className="flex flex-col gap-1.5">
                 <span className="text-[10px] uppercase tracking-[0.15em] text-black/50">
-                  Término da viagem
+                  Data de encerramento
                 </span>
                 <input
-                  type="date"
-                  value={dataFimViagem}
-                  min={dataInicioViagem || hojeISO()}
-                  onChange={(e) => setDataFimViagem(e.target.value)}
-                  className="rounded-lg border border-black/15 px-3 py-2.5 text-sm text-black focus:border-[#2f80c9] focus:outline-none"
+                  type="text"
+                  disabled
+                  readOnly
+                  value={dataFimViagemCalculada ? formatarDataBR(dataFimViagemCalculada) : "—"}
+                  className="rounded-lg border border-black/10 bg-black/[0.03] px-3 py-2.5 text-sm text-black/50"
                 />
+                <span className="text-[10px] leading-4 text-black/40">
+                  Calculada automaticamente: início + duração do passe escolhida no passo 1.
+                </span>
               </label>
             </div>
           </div>
