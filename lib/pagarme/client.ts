@@ -77,7 +77,12 @@ export async function criarCheckout(params: CriarCheckoutParams): Promise<Checko
 
   const valorCentavos = Math.round(params.valorTotalBRL * 100);
 
-  const resposta = await fetch(`${PAGARME_API_BASE}/checkouts`, {
+  // Endpoint correto é /paymentlinks (o recurso "Link de pagamento" da
+  // Pagar.me) — não /checkouts, que não existe e devolve 404. Corrigido
+  // em 28/set/2026 depois do primeiro teste real: os logs do Vercel
+  // mostraram "Pagar.me recusou a criação do checkout (status 404)"
+  // contra api.pagar.me/core/v5/checkouts.
+  const resposta = await fetch(`${PAGARME_API_BASE}/paymentlinks`, {
     method: "POST",
     headers: {
       Authorization: authHeader(),
