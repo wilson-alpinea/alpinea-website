@@ -53,6 +53,34 @@ function authHeader(): string {
   return `Basic ${Buffer.from(`${secretKey}:`).toString("base64")}`;
 }
 
+// Lê o corpo da resposta como texto primeiro (nunca lança) e só então
+// tenta interpretar como JSON — corrigido em 28/set/2026 depois de um
+// 401 aparecer no log só como "{}": o `.json().catch(() => ({}))`
+// antigo descartava silenciosamente qualquer corpo que não fosse JSON
+// válido (texto simples, HTML, corpo vazio), escondendo a mensagem de
+// erro real que a Pagar.me manda.
+async function lerCorpoResposta(
+  resposta: Response,
+): Promise<{ dados: Record<string, unknown>; textoCru: string }> {
+  const textoCru = await resposta.text().catch(() => "");
+  try {
+    const parsed: unknown = textoCru ? JSON.parse(textoCru) : {};
+    const dados = parsed && typeof parsed === "object" ? (parsed as Record<string, unknown>) : {};
+    return { dados, textoCru };
+  } catch {
+    return { dados: {}, textoCru };
+  }
+}
+
+// Monta a mensagem de erro sempre incluindo o texto cru quando o JSON
+// não trouxe nada útil (objeto vazio) — assim o log nunca mais mostra só
+// "{}" sem contexto.
+function mensagemErroPagarme(resposta: Response, dados: Record<string, unknown>, textoCru: string): string {
+  const detalhe =
+    dados && Object.keys(dados).length > 0 ? JSON.stringify(dados) : textoCru || "(corpo vazio)";
+  return `status ${resposta.status} ${resposta.statusText}: ${detalhe}`;
+}
+
 export type CriarCheckoutParams = {
   // Código nosso pra casar o webhook de pagamento aprovado com o
   // registro certo em `pagamentos` — sempre o id (uuid) da linha já
@@ -122,14 +150,16 @@ export async function criarCheckout(params: CriarCheckoutParams): Promise<Checko
     }),
   });
 
-  const dados = await resposta.json().catch(() => ({}));
+  const { dados, textoCru } = await lerCorpoResposta(resposta);
   if (!resposta.ok) {
     throw new Error(
-      `Pagar.me recusou a criação do checkout (status ${resposta.status}): ${JSON.stringify(dados)}`,
+      `Pagar.me recusou a criação do checkout (${mensagemErroPagarme(resposta, dados, textoCru)})`,
     );
   }
   if (!dados || !dados.id || !dados.url) {
-    throw new Error(`Resposta inesperada da Pagar.me ao criar checkout: ${JSON.stringify(dados)}`);
+    throw new Error(
+      `Resposta inesperada da Pagar.me ao criar checkout: ${mensagemErroPagarme(resposta, dados, textoCru)}`,
+    );
   }
 
   return { id: String(dados.id), url: String(dados.url) };
@@ -146,10 +176,10 @@ export async function buscarPedido(pedidoId: string): Promise<{ status: string; 
     method: "GET",
     headers: { Authorization: authHeader() },
   });
-  const dados = await resposta.json().catch(() => ({}));
+  const { dados, textoCru } = await lerCorpoResposta(resposta);
   if (!resposta.ok) {
     throw new Error(
-      `Pagar.me recusou a consulta do pedido ${pedidoId} (status ${resposta.status}): ${JSON.stringify(dados)}`,
+      `Pagar.me recusou a consulta do pedido ${pedidoId} (${mensagemErroPagarme(resposta, dados, textoCru)})`,
     );
   }
   return { status: String(dados?.status || ""), raw: dados };
