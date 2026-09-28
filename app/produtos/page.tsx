@@ -2345,6 +2345,16 @@ function JrPassModal({ onClose }: { onClose: () => void }) {
         setStatus("erro");
         return;
       }
+      // Pagamento de verdade via Pagar.me (ver app/api/jrpass-
+      // selfservice + lib/pagarme/client.ts) — quando a integração está
+      // configurada, a API devolve o link do checkout hospedado da
+      // Pagar.me e o cliente é levado direto pra lá pra pagar. Sem a
+      // integração configurada, cai no fluxo antigo (tela "pedido
+      // registrado" + link manual por WhatsApp/e-mail).
+      if (dadosResposta?.checkoutUrl) {
+        window.location.href = dadosResposta.checkoutUrl;
+        return;
+      }
       setStatus("enviado");
     } catch {
       setErro("Não foi possível registrar seu pedido agora. Tente de novo.");

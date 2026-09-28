@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { createAdminClient } from "../../../lib/supabase/admin";
 import { TAG_SELF_SERVICE } from "../../../lib/crm/origem";
+import { criarCheckout, pagarmeConfigurado } from "../../../lib/pagarme/client";
 
 export const runtime = "nodejs";
 
@@ -11,13 +12,16 @@ export const runtime = "nodejs";
 // finalizar compra vai gerar uma nova tela que precisa [...] gerar dados
 // de pagamento, QR code do PIX e link de pagamento de cartao de credito"
 // — a geração de PIX/link de cartão de verdade depende de integrar um
-// gateway de pagamento (PSP), que ainda não existe no site (confirmado
-// com o Wilson via AskUserQuestion, 25/set/2026: ele escolheu "ainda não
-// tenho, sugira um" — pesquisa indicou Mercado Pago, mas a conta ainda
-// precisa ser criada por ele). Até isso existir, essa rota só registra o
-// lead completo (documento, crianças, termos aceitos) e avisa que o
-// link de pagamento vem por WhatsApp/e-mail — nunca finge uma cobrança
-// que não existe.
+// gateway de pagamento (PSP). Isso foi resolvido em 28/set/2026: Wilson
+// pediu a integração com a Stone/Pagar.me (ver lib/pagarme/client.ts pro
+// contexto completo da decisão — checkout hospedado, cartão + Pix, juros
+// repassados ao cliente, conta da Alpinea). Com PAGARME_SECRET_KEY
+// configurada, esta rota também cria o pedido de pagamento e devolve
+// `checkoutUrl` pro frontend redirecionar o cliente pra lá. SEM a
+// variável configurada, cai de volta no comportamento antigo: só
+// registra o lead completo (documento, crianças, termos aceitos) e avisa
+// que o link de pagamento vem por WhatsApp/e-mail — nunca finge uma
+// cobrança que não existe.
 //
 // Também dispara e-mail de confirmação PRO CLIENTE (não só pro time
 // interno, diferente de cambio-selfservice/seguro-viagem-selfservice) —
@@ -193,6 +197,51 @@ export async function POST(req: Request) {
       console.error("Erro ao gravar interação (jrpass-selfservice):", erroInteracao);
     }
 
+    // Pagamento de verdade via Pagar.me (ver lib/pagarme/client.ts) —
+    // só entra em ação com PAGARME_SECRET_KEY configurada e um valor
+    // total calculado; qualquer erro aqui é só logado, nunca derruba o
+    // pedido (o lead já foi salvo acima) — o cliente cai no fluxo antigo
+    // de link manual por WhatsApp/e-mail.
+    let checkoutUrl: string | null = null;
+    if (pagarmeConfigurado() && precoTotalBRL && precoTotalBRL > 0) {
+      try {
+        const { data: pagamentoPendente, error: erroPagamento } = await supabase
+          .from("pagamentos")
+          .insert({
+            cliente_id: cliente.id,
+            tipo_pagamento: "cartao_credito",
+            valor: precoTotalBRL,
+            status: "pendente",
+            gateway: "pagarme",
+            observacoes: `JR Pass — ${classe}, ${dias ? `${dias} dias` : "duração não informada"}`,
+          })
+          .select("id")
+          .single();
+
+        if (erroPagamento || !pagamentoPendente) {
+          console.error("Erro ao criar linha de pagamento pendente (jrpass-selfservice):", erroPagamento);
+        } else {
+          const checkout = await criarCheckout({
+            codigoInterno: pagamentoPendente.id,
+            itemNome: `JR Pass — ${classe}`,
+            itemDescricao: `${dias ? `${dias} dias` : "duração a confirmar"}, ${numeroPessoas} pessoa(s)`,
+            valorTotalBRL: precoTotalBRL,
+            aceitarCartao: true,
+            aceitarPix: true,
+          });
+
+          await supabase
+            .from("pagamentos")
+            .update({ gateway_pedido_id: checkout.id, gateway_checkout_url: checkout.url })
+            .eq("id", pagamentoPendente.id);
+
+          checkoutUrl = checkout.url;
+        }
+      } catch (erroCheckout) {
+        console.error("Erro ao criar checkout Pagar.me (jrpass-selfservice):", erroCheckout);
+      }
+    }
+
     // E-mail pro time interno — mesmo padrão dos outros self-checkouts.
     await enviarEmail({
       to: ["wilson@alpinea.io"],
@@ -257,7 +306,7 @@ export async function POST(req: Request) {
       });
     }
 
-    return NextResponse.json({ success: true, clienteId: cliente.id }, { status: 200 });
+    return NextResponse.json({ success: true, clienteId: cliente.id, checkoutUrl }, { status: 200 });
   } catch (error) {
     console.error("Erro no self-checkout de JR Pass:", error);
     return NextResponse.json(

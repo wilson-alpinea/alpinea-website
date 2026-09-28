@@ -21,6 +21,10 @@ export const TIPO_INTERACAO_LABEL: Record<string, string> = {
   // Gerado automaticamente quando um cliente externo preenche e envia a
   // calculadora self-service (ver app/api/viagem-personalizada-selfservice).
   simulacao: "Simulação (self-service)",
+  // Gerado automaticamente quando o gateway de pagamento (Pagar.me)
+  // confirma que um pedido self-checkout foi pago (ver
+  // app/api/webhooks/pagarme).
+  pagamento: "Pagamento confirmado",
 };
 
 // Cor por tipo de interação — usada no ícone e no rótulo do histórico.
@@ -34,4 +38,5 @@ export const TIPO_INTERACAO_COR: Record<string, string> = {
   proposta: "#1F8A8C",
   mudanca_estagio: "#1C3A5E",
   simulacao: "#6ec3d9",
+  pagamento: "#279E52",
 };
