@@ -149,6 +149,17 @@ export async function criarCheckout(params: CriarCheckoutParams): Promise<Checko
                   amount: valorCentavos,
                   max_installments: 12,
                   interest_type: "simple",
+                  // Obrigatório quando interest_type é informado (erro 400
+                  // "'Interest Rate' ..." confirmado em teste real) — a API
+                  // só aceita número inteiro, sem casas decimais (schema:
+                  // type "integer", format "int32"). Taxa decidida pelo
+                  // Wilson (28/set/2026): 3,99% ao mês, arredondado pra 4
+                  // (inteiro mais próximo, já que a API não aceita 3,99).
+                  interest_rate: 4,
+                  // Só a 1x (à vista) fica sem juros — a partir de 2x o
+                  // juro acima é repassado ao cliente, conforme decisão do
+                  // Wilson de repassar o juro do parcelamento.
+                  free_installments: 1,
                   customer_fee: true,
                 },
               },
