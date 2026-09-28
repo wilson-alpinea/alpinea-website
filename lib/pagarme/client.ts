@@ -17,7 +17,9 @@
 // redirecionamos o cliente pra lá — ele digita os dados de pagamento na
 // própria página segura da Pagar.me, nunca no nosso site. Quando o
 // pagamento é aprovado, a Pagar.me chama o nosso webhook (ver
-// app/api/webhooks/pagarme) e a gente confirma o pedido no CRM.
+// app/api/webhooks/pagarme) e a gente confirma o pedido no CRM,
+// correlacionando pelo campo `order_code` enviado na criação do link
+// (que vira o campo `code` do pedido resultante).
 //
 // Configuração necessária (Wilson): criar a conta Pagar.me com o CNPJ
 // da Alpinea, gerar a chave SECRETA em Pagar.me → Configurações →
@@ -90,7 +92,18 @@ export async function criarCheckout(params: CriarCheckoutParams): Promise<Checko
     },
     body: JSON.stringify({
       type: "order",
-      code: params.codigoInterno,
+      // Campo correto é "order_code" (confirmado na documentação da
+      // Pagar.me — o endpoint /paymentlinks não tem um campo "code" no
+      // corpo da requisição, só "order_code"). Corrigido em 28/set/2026:
+      // o campo errado ("code") era ignorado silenciosamente pela API —
+      // o link de pagamento era criado normalmente (por isso o checkout
+      // abria e o cliente conseguia pagar), mas o pedido resultante
+      // ficava sem o campo `code` preenchido, e é exatamente esse campo
+      // que app/api/webhooks/pagarme lê pra achar a linha certa em
+      // `pagamentos`. Resultado: pagamento aprovado, mas o webhook nunca
+      // conseguia correlacionar com o pedido — caía sempre no alerta
+      // "Webhook recebido sem conseguir identificar o pedido".
+      order_code: params.codigoInterno,
       payment_settings: {
         accepted_payment_methods: metodosAceitos,
       },

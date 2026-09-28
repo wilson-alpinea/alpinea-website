@@ -30,11 +30,18 @@ export const runtime = "nodejs";
 //    nossa chave secreta.
 //
 // Correlação pedido ↔️ cliente: ao criar o checkout (ver
-// app/api/jrpass-selfservice), mandamos pra Pagar.me um campo `code`
-// igual ao id (uuid) da linha já criada em `pagamentos` com status
-// "pendente". Se esse `code` vier de volta no payload do pedido, é ele
-// que usamos pra achar a linha certa — nunca o id do link de checkout
-// (que é um recurso diferente do id do pedido resultante).
+// app/api/jrpass-selfservice → lib/pagarme/client.ts), mandamos pra
+// Pagar.me um campo `order_code` igual ao id (uuid) da linha já criada
+// em `pagamentos` com status "pendente". A Pagar.me devolve esse valor
+// como `code` no pedido (Order) resultante — é esse `code` que lemos
+// abaixo pra achar a linha certa — nunca o id do link de checkout (que é
+// um recurso diferente do id do pedido resultante). Bug corrigido em
+// 28/set/2026: até então, o client.ts mandava o campo com o nome errado
+// ("code" em vez de "order_code") na criação do link — a API ignorava
+// esse campo desconhecido, o link era criado e o cliente conseguia
+// pagar normalmente, mas o pedido resultante ficava sem `code`, e todo
+// webhook de pagamento aprovado caía aqui embaixo sem achar
+// correlação.
 
 // Compara em tempo constante (evita vazar, por timing, quanto do
 // usuário/senha está certo) — só funciona com strings do mesmo
