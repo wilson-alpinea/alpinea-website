@@ -445,6 +445,18 @@ function simular(params: {
   };
 }
 
+/** Data de hoje em "AAAA-MM-DD" (hora local do navegador, não UTC) — usada
+ * como `min` do campo de data pra impedir selecionar dia no passado.
+ * Pedido do Wilson, 28/set/2026: "mesma regra para todos" os calendários
+ * do site (mesmo padrão já usado em app/produtos/page.tsx). */
+function hojeISO(): string {
+  const agora = new Date();
+  const ano = agora.getFullYear();
+  const mes = String(agora.getMonth() + 1).padStart(2, "0");
+  const dia = String(agora.getDate()).padStart(2, "0");
+  return `${ano}-${mes}-${dia}`;
+}
+
 export default function ViagemPersonalizadaSelfServicePage() {
   const cambio = useCambioUSD();
   const cambioCotacao = cambio?.cotacao ?? 5.3;
@@ -1766,6 +1778,7 @@ export default function ViagemPersonalizadaSelfServicePage() {
               <input
                 type="date"
                 value={dataViagem}
+                min={hojeISO()}
                 onChange={(e) => {
                   setDataViagem(e.target.value);
                   const mes = Number(e.target.value.split("-")[1]);

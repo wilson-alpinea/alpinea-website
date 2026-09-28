@@ -1655,6 +1655,17 @@ function TransporteModal({ cambio, onClose }: { cambio: Cambio | null; onClose: 
   // contratacao de motorista privado em transporte privado". Mesmo
   // padrão de tickbox obrigatório já usado no JR Pass (termosAceitos).
   const [termosAceitos, setTermosAceitos] = useState(false);
+  // Só libera o tickbox depois que o cliente rolar os termos até o fim —
+  // pedido do Wilson, 28/set/2026: "só pode clicar em li e aceito ao dar
+  // scroll em todo documento".
+  const [termosRolados, setTermosRolados] = useState(false);
+  const termosBoxRef = useRef<HTMLDivElement | null>(null);
+  useEffect(() => {
+    const el = termosBoxRef.current;
+    if (el && el.scrollHeight <= el.clientHeight + 4) {
+      setTermosRolados(true);
+    }
+  }, []);
 
   const cambioCotacao = cambio?.cotacao ?? 5.3;
   const quantidadeItens = contarItensMotorista(selecao);
@@ -1891,7 +1902,16 @@ function TransporteModal({ cambio, onClose }: { cambio: Cambio | null; onClose: 
                 <p className="text-[10px] uppercase tracking-[0.2em] text-black/40">
                   Termos e condições
                 </p>
-                <div className="mt-4 max-h-56 overflow-y-auto rounded-xl border border-black/10 bg-black/[0.02] p-4 text-[11px] leading-5 text-black/60">
+                <div
+                  ref={termosBoxRef}
+                  className="mt-4 max-h-56 overflow-y-auto rounded-xl border border-black/10 bg-black/[0.02] p-4 text-[11px] leading-5 text-black/60"
+                  onScroll={(e) => {
+                    const el = e.currentTarget;
+                    if (el.scrollTop + el.clientHeight >= el.scrollHeight - 4) {
+                      setTermosRolados(true);
+                    }
+                  }}
+                >
                   <p className="font-medium text-black/80">Fornecimento do serviço</p>
                   <p className="mt-1">
                     O motorista e o veículo são fornecidos por um parceiro especializado no Japão
@@ -1945,11 +1965,17 @@ function TransporteModal({ cambio, onClose }: { cambio: Cambio | null; onClose: 
                   <input
                     type="checkbox"
                     checked={termosAceitos}
+                    disabled={!termosRolados}
                     onChange={(e) => setTermosAceitos(e.target.checked)}
-                    className="mt-0.5 h-4 w-4 shrink-0 rounded border-black/25 text-[#2f80c9] focus:ring-[#2f80c9]"
+                    className="mt-0.5 h-4 w-4 shrink-0 rounded border-black/25 text-[#2f80c9] focus:ring-[#2f80c9] disabled:cursor-not-allowed disabled:opacity-40"
                   />
                   Li e aceito os termos e condições de contratação do motorista privado acima.
                 </label>
+                {!termosRolados && (
+                  <p className="mt-1.5 pl-[26px] text-[10px] text-black/35">
+                    Role o texto acima até o fim para habilitar o aceite.
+                  </p>
+                )}
               </div>
 
               {erro && <p className="mt-4 text-sm text-red-600">{erro}</p>}
@@ -2123,6 +2149,17 @@ function JrPassModal({ onClose }: { onClose: () => void }) {
   // pagamento, tem que ser um scroll com os termos e condições de
   // aceite do jr pASS".
   const [termosAceitos, setTermosAceitos] = useState(false);
+  // Só libera o tickbox depois que o cliente rolar os termos até o fim —
+  // pedido do Wilson, 28/set/2026: "só pode clicar em li e aceito ao dar
+  // scroll em todo documento".
+  const [termosRolados, setTermosRolados] = useState(false);
+  const termosBoxRef = useRef<HTMLDivElement | null>(null);
+  useEffect(() => {
+    const el = termosBoxRef.current;
+    if (el && el.scrollHeight <= el.clientHeight + 4) {
+      setTermosRolados(true);
+    }
+  }, []);
   // Número de pessoas — pedido do Wilson, 25/set/2026: "falta numero de
   // pessoas" (o JR Pass é vendido por pessoa — cada viajante precisa do
   // próprio passe). Mesmo padrão de stepper já usado em "Viajantes" no
@@ -2524,7 +2561,14 @@ function JrPassModal({ onClose }: { onClose: () => void }) {
                 <input
                   type="date"
                   value={dataInicioViagem}
-                  onChange={(e) => setDataInicioViagem(e.target.value)}
+                  min={hojeISO()}
+                  onChange={(e) => {
+                    const novoInicio = e.target.value;
+                    setDataInicioViagem(novoInicio);
+                    if (dataFimViagem && novoInicio && dataFimViagem < novoInicio) {
+                      setDataFimViagem("");
+                    }
+                  }}
                   className="rounded-lg border border-black/15 px-3 py-2.5 text-sm text-black focus:border-[#2f80c9] focus:outline-none"
                 />
               </label>
@@ -2535,6 +2579,7 @@ function JrPassModal({ onClose }: { onClose: () => void }) {
                 <input
                   type="date"
                   value={dataFimViagem}
+                  min={dataInicioViagem || hojeISO()}
                   onChange={(e) => setDataFimViagem(e.target.value)}
                   className="rounded-lg border border-black/15 px-3 py-2.5 text-sm text-black focus:border-[#2f80c9] focus:outline-none"
                 />
@@ -2880,7 +2925,16 @@ function JrPassModal({ onClose }: { onClose: () => void }) {
             <p className="text-[10px] uppercase tracking-[0.2em] text-black/40">
               Termos e condições
             </p>
-            <div className="mt-4 max-h-56 overflow-y-auto rounded-xl border border-black/10 bg-black/[0.02] p-4 text-[11px] leading-5 text-black/60">
+            <div
+              ref={termosBoxRef}
+              className="mt-4 max-h-56 overflow-y-auto rounded-xl border border-black/10 bg-black/[0.02] p-4 text-[11px] leading-5 text-black/60"
+              onScroll={(e) => {
+                const el = e.currentTarget;
+                if (el.scrollTop + el.clientHeight >= el.scrollHeight - 4) {
+                  setTermosRolados(true);
+                }
+              }}
+            >
               <p className="font-medium text-black/80">Emissão e elegibilidade</p>
               <p className="mt-1">
                 O Japan Rail Pass é vendido como um voucher (Exchange Order), trocado pelo passe
@@ -2926,12 +2980,18 @@ function JrPassModal({ onClose }: { onClose: () => void }) {
               <input
                 type="checkbox"
                 checked={termosAceitos}
+                disabled={!termosRolados}
                 onChange={(e) => setTermosAceitos(e.target.checked)}
-                className="mt-0.5 h-4 w-4 shrink-0 rounded border-black/25 text-[#2f80c9] focus:ring-[#2f80c9]"
+                className="mt-0.5 h-4 w-4 shrink-0 rounded border-black/25 text-[#2f80c9] focus:ring-[#2f80c9] disabled:cursor-not-allowed disabled:opacity-40"
               />
               Li e aceito os termos e condições de emissão, cancelamento, reembolso e uso do JR
               Pass acima.
             </label>
+            {!termosRolados && (
+              <p className="mt-1.5 pl-[26px] text-[10px] text-black/35">
+                Role o texto acima até o fim para habilitar o aceite.
+              </p>
+            )}
           </div>
 
           {erro && <p className="mt-4 text-sm text-red-600">{erro}</p>}
@@ -3180,6 +3240,19 @@ const SEGURADORAS_VIAGEM = [
   },
 ];
 type SeguradoraKey = (typeof SEGURADORAS_VIAGEM)[number]["key"];
+
+/** Data de hoje em "AAAA-MM-DD" (hora local do navegador, não UTC) — usada
+ * como `min` dos campos de data pra impedir selecionar dia no passado.
+ * Pedido do Wilson, 28/set/2026: "desabilitar dias no passado" no
+ * calendário de início/término da viagem (JR Pass, Seguro Viagem e
+ * ida/volta de voo do Transporte Privado). */
+function hojeISO(): string {
+  const agora = new Date();
+  const ano = agora.getFullYear();
+  const mes = String(agora.getMonth() + 1).padStart(2, "0");
+  const dia = String(agora.getDate()).padStart(2, "0");
+  return `${ano}-${mes}-${dia}`;
+}
 
 /** "AAAA-MM-DD" (input type=date) → "DD/MM/AAAA", pra mensagens de WhatsApp
  * e resumos legíveis. */
@@ -3737,7 +3810,14 @@ function SeguroViagemModal({ onClose }: { onClose: () => void }) {
                     <input
                       type="date"
                       value={dataInicio}
-                      onChange={(e) => setDataInicio(e.target.value)}
+                      min={hojeISO()}
+                      onChange={(e) => {
+                        const novoInicio = e.target.value;
+                        setDataInicio(novoInicio);
+                        if (dataFim && novoInicio && dataFim < novoInicio) {
+                          setDataFim("");
+                        }
+                      }}
                       className="rounded-lg border border-black/15 px-3 py-2.5 text-sm text-black focus:border-[#2f80c9] focus:outline-none"
                     />
                   </label>
@@ -3748,6 +3828,7 @@ function SeguroViagemModal({ onClose }: { onClose: () => void }) {
                     <input
                       type="date"
                       value={dataFim}
+                      min={dataInicio || hojeISO()}
                       onChange={(e) => setDataFim(e.target.value)}
                       className="rounded-lg border border-black/15 px-3 py-2.5 text-sm text-black focus:border-[#2f80c9] focus:outline-none"
                     />
@@ -3862,7 +3943,14 @@ function SeguroViagemModal({ onClose }: { onClose: () => void }) {
                       <input
                         type="date"
                         value={dataIdaVoo}
-                        onChange={(e) => setDataIdaVoo(e.target.value)}
+                        min={hojeISO()}
+                        onChange={(e) => {
+                          const novaIda = e.target.value;
+                          setDataIdaVoo(novaIda);
+                          if (dataVoltaVoo && novaIda && dataVoltaVoo < novaIda) {
+                            setDataVoltaVoo("");
+                          }
+                        }}
                         className="rounded-lg border border-black/15 px-3 py-2.5 text-sm text-black focus:border-[#2f80c9] focus:outline-none"
                       />
                     </label>
@@ -3873,6 +3961,7 @@ function SeguroViagemModal({ onClose }: { onClose: () => void }) {
                       <input
                         type="date"
                         value={dataVoltaVoo}
+                        min={dataIdaVoo || hojeISO()}
                         onChange={(e) => setDataVoltaVoo(e.target.value)}
                         className="rounded-lg border border-black/15 px-3 py-2.5 text-sm text-black focus:border-[#2f80c9] focus:outline-none"
                       />

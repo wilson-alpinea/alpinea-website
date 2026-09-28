@@ -1490,6 +1490,18 @@ function IconMala({ className = "h-9 w-9" }: { className?: string }) {
   );
 }
 
+/** Data de hoje em "AAAA-MM-DD" (hora local do navegador, não UTC) — usada
+ * como `min` dos campos de data pra impedir selecionar dia no passado.
+ * Pedido do Wilson, 28/set/2026: "mesma regra para todos" os calendários
+ * do site (mesmo padrão já usado em app/produtos/page.tsx). */
+function hojeISO(): string {
+  const agora = new Date();
+  const ano = agora.getFullYear();
+  const mes = String(agora.getMonth() + 1).padStart(2, "0");
+  const dia = String(agora.getDate()).padStart(2, "0");
+  return `${ano}-${mes}-${dia}`;
+}
+
 export default function CalculadoraReversaPage() {
   const cambio = useCambioUSD();
   const cambioCotacao = cambio?.cotacao ?? 5.3;
@@ -3422,6 +3434,7 @@ export default function CalculadoraReversaPage() {
                 <input
                   type="date"
                   value={dataViagemEstimada}
+                  min={hojeISO()}
                   onChange={(e) => setDataViagemEstimada(e.target.value)}
                   className="h-10 w-full rounded-lg border border-black/15 bg-black/[0.03] px-3 text-sm outline-none focus:border-black/30"
                 />
@@ -5369,6 +5382,7 @@ export default function CalculadoraReversaPage() {
                         <input
                           type="date"
                           value={dataViagemEstimada}
+                          min={hojeISO()}
                           onChange={(e) => setDataViagemEstimada(e.target.value)}
                           className="h-8 rounded-md border border-black/15 bg-black/[0.03] px-2 text-[11px] outline-none focus:border-black/30"
                         />
@@ -5535,6 +5549,7 @@ export default function CalculadoraReversaPage() {
                     <input
                       type="date"
                       value={validadeProposta}
+                      min={hojeISO()}
                       onChange={(e) => setValidadeProposta(e.target.value)}
                       className="h-10 w-full rounded-lg border border-black/15 bg-white px-3 text-sm outline-none focus:border-black/30"
                     />

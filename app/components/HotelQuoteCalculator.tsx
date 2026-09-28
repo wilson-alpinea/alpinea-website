@@ -48,6 +48,18 @@ const MAX_QUARTOS = 10;
 // Sem wrapper de modal próprio — pensado pra ser inserido dentro do modal
 // "Hotéis" que já existe em /produtos (mesmo overlay, mesmo botão de
 // fechar), em vez de abrir um modal por cima de outro modal.
+/** Data de hoje em "AAAA-MM-DD" (hora local do navegador, não UTC) — usada
+ * como `min` dos campos de data pra impedir selecionar dia no passado.
+ * Pedido do Wilson, 28/set/2026: "mesma regra para todos" os calendários
+ * do site (mesmo padrão já usado em app/produtos/page.tsx). */
+function hojeISO(): string {
+  const agora = new Date();
+  const ano = agora.getFullYear();
+  const mes = String(agora.getMonth() + 1).padStart(2, "0");
+  const dia = String(agora.getDate()).padStart(2, "0");
+  return `${ano}-${mes}-${dia}`;
+}
+
 export function HotelQuoteCalculator() {
   const cambio = useCambioUSD();
   const [categoria, setCategoria] = useState<(typeof CATEGORIAS_HOTEL)[number]>("4 estrelas");
@@ -227,6 +239,7 @@ export function HotelQuoteCalculator() {
               <input
                 type="date"
                 value={dataCheckin}
+                min={hojeISO()}
                 onChange={(e) => setDataCheckin(e.target.value)}
                 className="h-10 rounded-lg border border-black/15 bg-black/[0.03] px-3 text-sm text-black outline-none focus:border-[#2f80c9]/60"
               />

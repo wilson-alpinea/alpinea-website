@@ -81,6 +81,18 @@ type ToggleField = (key: ArrayField, value: string) => void;
 type ActiveField = keyof FormState | null;
 type SetActiveField = (key: ActiveField) => void;
 
+/** Data de hoje em "AAAA-MM-DD" (hora local do navegador, não UTC) — usada
+ * como `min` dos campos de data pra impedir selecionar dia no passado.
+ * Pedido do Wilson, 28/set/2026: "mesma regra para todos" os calendários
+ * do site (mesmo padrão já usado em app/produtos/page.tsx). */
+function hojeISO(): string {
+  const agora = new Date();
+  const ano = agora.getFullYear();
+  const mes = String(agora.getMonth() + 1).padStart(2, "0");
+  const dia = String(agora.getDate()).padStart(2, "0");
+  return `${ano}-${mes}-${dia}`;
+}
+
 function hasText(v: string) {
   return v.trim().length > 0;
 }
@@ -1070,6 +1082,7 @@ function StepViagem({
           >
             <DateInput
               value={data.dataInicio}
+              min={hojeISO()}
               onChange={(v) => {
                 set("dataInicio", v);
                 if (data.dataFim && v && data.dataFim < v) {
@@ -1090,7 +1103,7 @@ function StepViagem({
               onChange={(v) => set("dataFim", v)}
               onFocus={() => setActiveField("dataFim")}
               onBlur={() => setActiveField(null)}
-              min={data.dataInicio || undefined}
+              min={data.dataInicio || hojeISO()}
             />
           </FieldBlock>
         </div>

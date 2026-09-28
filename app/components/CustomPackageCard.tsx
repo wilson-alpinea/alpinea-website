@@ -166,6 +166,18 @@ function FotoCarousel({
 // com o carrossel de fotos — usado tanto no popup "Ver detalhes" dentro da
 // Viagem Personalizada (tema escuro) quanto no popup avulso do card
 // "Hoteis" em /produtos (tema claro, light=true), sem duplicar o conteudo.
+/** Data de hoje em "AAAA-MM-DD" (hora local do navegador, não UTC) — usada
+ * como `min` dos campos de data pra impedir selecionar dia no passado.
+ * Pedido do Wilson, 28/set/2026: "mesma regra para todos" os calendários
+ * do site (mesmo padrão já usado em app/produtos/page.tsx). */
+function hojeISO(): string {
+  const agora = new Date();
+  const ano = agora.getFullYear();
+  const mes = String(agora.getMonth() + 1).padStart(2, "0");
+  const dia = String(agora.getDate()).padStart(2, "0");
+  return `${ano}-${mes}-${dia}`;
+}
+
 export function HotelExemplosPropriedades({
   categoriaAtiva,
   light = false,
@@ -2057,6 +2069,7 @@ export function CustomPackageCard({
               <input
                 type="date"
                 value={data}
+                min={hojeISO()}
                 onChange={(e) => setData(e.target.value)}
                 className="h-10 w-full rounded-lg border border-black/15 bg-black/[0.03] px-3 text-sm text-[#0A2540] outline-none [color-scheme:light] focus:border-black/30"
               />
