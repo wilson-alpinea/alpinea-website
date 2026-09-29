@@ -43,11 +43,11 @@ async function enviarEmail(params: {
   subject: string;
   text: string;
   html: string;
-}) {
+}): Promise<{ ok: boolean; providerId: string | null }> {
   const apiKey = process.env.RESEND_API_KEY;
   if (!apiKey) {
     console.error("RESEND_API_KEY não configurada — pulando envio de e-mail (jrpass-selfservice).");
-    return;
+    return { ok: false, providerId: null };
   }
   try {
     const resendResponse = await fetch("https://api.resend.com/emails", {
@@ -65,12 +65,38 @@ async function enviarEmail(params: {
         html: params.html,
       }),
     });
+    const { dados } = await (async () => {
+      const textoCru = await resendResponse.text().catch(() => "");
+      try {
+        return { dados: textoCru ? (JSON.parse(textoCru) as Record<string, unknown>) : {} };
+      } catch {
+        return { dados: {} as Record<string, unknown> };
+      }
+    })();
     if (!resendResponse.ok) {
-      console.error("Erro Resend (jrpass-selfservice):", await resendResponse.text());
+      console.error("Erro Resend (jrpass-selfservice):", JSON.stringify(dados));
+      return { ok: false, providerId: null };
     }
+    return { ok: true, providerId: typeof dados.id === "string" ? dados.id : null };
   } catch (err) {
     console.error("Erro ao enviar e-mail (jrpass-selfservice):", err);
+    return { ok: false, providerId: null };
   }
+}
+
+// Versão do texto de Termos e Condições vigente — decidida pelo
+// servidor (nunca confiar em versão enviada pelo cliente), pra saber
+// exatamente qual redação o cliente aceitou em caso de disputa.
+// Atualizar esta constante sempre que o texto em
+// app/produtos/jrpass/page.tsx (seção "Termos e condições") mudar de
+// forma relevante. Versão atual: texto jurídico completo de 20
+// cláusulas + subcláusulas de chargeback, adotado em 29/set/2026.
+const TERMOS_VERSAO_JRPASS = "jrpass-termos-2026-09-29";
+
+function extrairIpDaRequisicao(req: Request): string | null {
+  const encaminhado = req.headers.get("x-forwarded-for");
+  if (encaminhado) return encaminhado.split(",")[0]!.trim();
+  return req.headers.get("x-real-ip");
 }
 
 export async function POST(req: Request) {
@@ -115,6 +141,16 @@ export async function POST(req: Request) {
     const documentoStoragePath = String(body.documentoStoragePath || "").trim();
     const documentoValidacaoMotivo = String(body.documentoValidacaoMotivo || "").trim();
     const documentoAdiado = !!body.documentoAdiado;
+
+    // Evidências de checkout pra eventual disputa de chargeback — ver
+    // migração 013_evidencias_checkout_jrpass.sql e o pedido do Wilson,
+    // 29/set/2026 ("Para realmente reduzir chargeback, o contrato
+    // sozinho não basta... timestamp + IP + versão dos termos +
+    // checkbox de aceite..."). timestamp vem de `created_at`
+    // (automático); versão dos termos é decidida pelo servidor, nunca
+    // pelo cliente.
+    const checkoutIp = extrairIpDaRequisicao(req);
+    const checkoutUserAgent = req.headers.get("user-agent");
 
     const documentoResumo = documentoAdiado
       ? "Cliente optou por anexar depois (via WhatsApp)"
@@ -176,6 +212,11 @@ export async function POST(req: Request) {
         valor_proposta: precoTotalBRL,
         estagio: "novo_lead",
         observacoes: `[${TAG_SELF_SERVICE}]\n${resumoTexto}`,
+        checkout_ip: checkoutIp,
+        checkout_user_agent: checkoutUserAgent,
+        termos_aceitos: true,
+        termos_versao: TERMOS_VERSAO_JRPASS,
+        termos_aceitos_em: new Date().toISOString(),
       })
       .select("id")
       .single();
@@ -298,12 +339,27 @@ export async function POST(req: Request) {
     `.trim();
 
     if (email) {
-      await enviarEmail({
+      const resultadoEmailCliente = await enviarEmail({
         to: [email],
         subject: "Recebemos seu pedido de JR Pass — próximos passos",
         text: textoEmissao,
         html: htmlEmissao,
       });
+
+      // Registro do envio (não do conteúdo) do e-mail de confirmação —
+      // "histórico de e-mails" como evidência de chargeback: prova de
+      // que o cliente foi avisado, com o id rastreável no Resend.
+      // Nunca derruba o pedido se essa atualização falhar.
+      const { error: erroAtualizarEmail } = await supabase
+        .from("clientes")
+        .update({
+          email_confirmacao_enviado: resultadoEmailCliente.ok,
+          email_confirmacao_provider_id: resultadoEmailCliente.providerId,
+        })
+        .eq("id", cliente.id);
+      if (erroAtualizarEmail) {
+        console.error("Erro ao registrar histórico do e-mail de confirmação (jrpass-selfservice):", erroAtualizarEmail);
+      }
     }
 
     return NextResponse.json({ success: true, clienteId: cliente.id, checkoutUrl }, { status: 200 });
