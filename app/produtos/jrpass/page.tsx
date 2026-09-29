@@ -84,7 +84,7 @@ export default function JrPassPage() {
     ? {
         cotacao: cambioDolarTurismo.cotacao * SPREAD_DOLAR_TURISMO_PUBLICO,
         data: cambioDolarTurismo.data,
-        fonte: "Dólar Turismo — melhorcambio.com",
+        fonte: "Dólar Turismo",
         fallback: cambioDolarTurismo.fallback,
       }
     : null;
@@ -732,7 +732,7 @@ export default function JrPassPage() {
               Valor por pessoa, já com taxas incluídas, convertido pela cotação do dia.
             </p>
             <div className="mt-1.5 inline-flex rounded-lg bg-[#eef6fb] px-3 py-1.5">
-              <CambioLabel cambio={cambio} className="text-[11px] text-[#1c6ea8]" />
+              <CambioLabel cambio={cambioDolarTurismo} className="text-[11px] text-[#1c6ea8]" />
             </div>
           </div>
 
