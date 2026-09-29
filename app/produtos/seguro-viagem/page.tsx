@@ -364,33 +364,43 @@ export default function SeguroViagemPage() {
           </div>
         ) : (
           <>
-            {/* Topo — foto enviada pelo Wilson em 29/set/2026 ("novo header
-                para seguro viagem"), no lugar do ícone provisório. Foto larga
-                (casal em Kyoto) vira banner em largura total do conteúdo; no
-                celular a proporção fica mais alta e o corte segue o casal
-                (object-position ~52% na horizontal), pra não sobrar só rua. */}
-            <div className="relative -mx-5 overflow-hidden sm:mx-0 sm:rounded-2xl">
-              <Image
-                src="/images/produtos/seguro-viagem-header.jpg"
-                alt="Casal caminhando por uma rua tradicional de Kyoto"
-                width={1600}
-                height={893}
-                priority
-                sizes="(min-width: 1024px) 960px, 100vw"
-                className="aspect-[4/3] w-full object-cover object-[52%_40%] sm:aspect-[16/7]"
-              />
-            </div>
-            <div className="mt-6">
-              <p className="text-xs uppercase tracking-[0.3em] text-[#1c6ea8]">Seguro Viagem</p>
-              <h3 className={`${display.className} mt-2 max-w-2xl text-2xl font-medium text-black md:text-3xl`}>
-                Cobertura médica e assistência para toda a viagem
-              </h3>
-              <p className="mt-3 max-w-2xl text-sm leading-relaxed text-black/75">
-                Trabalhamos com três seguradoras parceiras — Affinity, GTA e MTA. Escolha a sua, informe
-                quem viaja e as datas, e finalize a compra aqui mesmo: a apólice é emitida pela
-                seguradora e enviada por e-mail e WhatsApp.
-              </p>
-            </div>
+            {/* Banner hero — pedido do Wilson, 29/set/2026: título "dentro do
+                banner hero, algo na linha desse template" (referência: banner
+                com fundo escuro à esquerda, texto branco, foto aparecendo à
+                direita com degradê). A foto (casal em Kyoto, enviada no mesmo
+                dia) tem o casal no centro — por isso ela ocupa só a parte
+                direita do banner no desktop (~62%) e o degradê azul-marinho da
+                marca (#0A2540, mesmo da barra do topo) cobre a emenda; assim o
+                texto fica sobre o fundo liso e não em cima das pessoas. No
+                celular a foto fica em cima e o texto embaixo, com degradê
+                vertical ligando os dois. */}
+            <section className="relative -mx-5 overflow-hidden bg-[#0A2540] sm:mx-0 sm:rounded-2xl">
+              <div className="relative h-64 sm:absolute sm:inset-y-0 sm:right-0 sm:h-auto sm:w-[62%]">
+                <Image
+                  src="/images/produtos/seguro-viagem-header.jpg"
+                  alt="Casal caminhando por uma rua tradicional de Kyoto"
+                  fill
+                  priority
+                  sizes="(min-width: 640px) 660px, 100vw"
+                  className="object-cover object-[50%_35%]"
+                />
+                <div
+                  aria-hidden="true"
+                  className="absolute inset-0 bg-gradient-to-t from-[#0A2540] via-[#0A2540]/10 to-transparent sm:bg-gradient-to-r sm:from-[#0A2540] sm:via-[#0A2540]/0 sm:via-40% sm:to-transparent"
+                />
+              </div>
+              <div className="relative -mt-12 px-5 pb-8 sm:mt-0 sm:flex sm:min-h-[340px] sm:max-w-[46%] sm:flex-col sm:justify-center sm:px-10 sm:py-12 md:min-h-[380px]">
+                <p className="text-xs uppercase tracking-[0.3em] text-white/75">Seguro Viagem</p>
+                <h1 className={`${display.className} mt-3 text-3xl font-medium leading-tight text-white md:text-4xl`}>
+                  Cobertura médica e assistência para toda a viagem
+                </h1>
+              </div>
+            </section>
+            <p className="mt-6 max-w-2xl text-sm leading-relaxed text-black/75">
+              Trabalhamos com três seguradoras parceiras — Affinity, GTA e MTA. Escolha a sua, informe quem
+              viaja e as datas, e finalize a compra aqui mesmo: a apólice é emitida pela seguradora e enviada
+              por e-mail e WhatsApp.
+            </p>
 
             <div className="mt-8 rounded-2xl bg-[#eef6fb] p-5 sm:p-6">
               <p className="text-center text-xs font-medium uppercase tracking-[0.15em] text-[#1c6ea8]">
