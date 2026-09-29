@@ -427,7 +427,7 @@ export default function JrPassPage() {
     pendenciasFinalizar.push(
       termosRolados
         ? "Marque o aceite dos termos e condições do JR Pass."
-        : "Role os termos e condições do JR Pass até o fim pra poder aceitá-los.",
+        : "Leia os termos e condições do JR Pass até o fim pra poder aceitá-los.",
     );
   }
 
