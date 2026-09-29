@@ -578,11 +578,11 @@ export default function JrPassPage() {
               </p>
             </div>
             <Image
-              src="/images/produtos/jrpass-capa-oficial.png"
-              alt="Capa oficial do Japan Rail Pass"
-              width={1024}
-              height={1536}
-              className="mx-auto w-32 shrink-0 rounded-xl shadow-[0_12px_30px_rgba(0,0,0,0.18)] sm:mx-0 sm:w-40"
+              src="/images/produtos/jrpass-ticket-exemplo.png"
+              alt="Exemplo do passe físico Japan Rail Pass"
+              width={1536}
+              height={1024}
+              className="mx-auto w-56 shrink-0 rounded-xl shadow-[0_12px_30px_rgba(0,0,0,0.18)] sm:mx-0 sm:w-72"
             />
           </div>
 
