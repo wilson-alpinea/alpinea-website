@@ -2,6 +2,7 @@
 
 import { comMargemEImposto, IMPOSTO_SOBRE_LUCRO } from "../lib/margemPadrao";
 import { DIARIA_SEGURO_VIAGEM } from "../lib/precoSeguroViagem";
+import { PRECO_CAMBIO_BRASIL, CUSTO_ENTREGA_AEROPORTO_CAMBIO } from "../lib/precoCambioIene";
 import Image from "next/image";
 import { Bodoni_Moda } from "next/font/google";
 import { createPortal } from "react-dom";
@@ -875,14 +876,17 @@ export { DIARIA_SEGURO_VIAGEM };
 // imposto+margem.
 export const DIARIA_MOTORISTA_PRIVADO_USD = comMargemMotoristaPrivado(700);
 export const MOTORISTA_TAMANHO_GRUPO = 4;
-export const PRECO_CAMBIO_BRASIL = comMargemEImposto(150);
+// PRECO_CAMBIO_BRASIL e CUSTO_ENTREGA_AEROPORTO_CAMBIO moraram aqui até
+// 29/set/2026 — movidos pra app/lib/precoCambioIene.ts (servidor recalcula
+// o câmbio antes da cobrança Pix) e re-exportados sem mudança.
+export { PRECO_CAMBIO_BRASIL, CUSTO_ENTREGA_AEROPORTO_CAMBIO };
 // Entrega no Aeroporto de Guarulhos — pedido do Wilson, 25/set/2026:
 // "custo de entrega para entrega no aeroporto de guarulhos de R$ 190.00
 // caso cliente opte por isso" (opção adicionada ao Câmbio no mesmo dia —
 // ver "aeroporto-guarulhos" em app/lib/cambioIene.ts). Valor final já
 // informado por ele em reais — não passa por comMargemEImposto (mesmo
 // critério de DIARIA_GUIA_ESTRANGEIRO_USD, acima).
-export const CUSTO_ENTREGA_AEROPORTO_CAMBIO = 190;
+// (valor definido em app/lib/precoCambioIene.ts)
 // Ajisai Shopping — serviço novo, pedido do Wilson, 16/set/2026: comissão
 // de 20% sobre o valor das compras acompanhadas (sem diária/valor fixo).
 // Compartilhado entre calculadora_reversa/page.tsx (cálculo do item na

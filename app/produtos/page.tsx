@@ -23,14 +23,10 @@ import {
   formatUSD,
   type Cambio,
 } from "../hooks/useCambioUSD";
-import { useCambioEUR, formatEUR } from "../hooks/useCambioEUR";
-import { useCambioIene, CIDADES_CAMBIO_IENE, type CidadeCambioIeneSlug, type DirecaoCambioIene } from "../hooks/useCambioIene";
 import { CambioLabel } from "../components/CambioLabel";
 import {
   HotelExemplosPropriedades,
   JR_PASS_DIAS_OPCOES,
-  PRECO_CAMBIO_BRASIL,
-  CUSTO_ENTREGA_AEROPORTO_CAMBIO,
   COMISSAO_AJISAI_SHOPPING_PCT,
   ROTEIRO_PRECO_BASE,
 } from "../components/CustomPackageCard";
@@ -43,12 +39,7 @@ import {
   calcularSimulacaoCartao,
   calcularParcelasMaxPix,
   calcularSimulacaoPix,
-  SPREAD_CAMBIO_IENE_PUBLICO_COMPRA,
-  SPREAD_CAMBIO_IENE_PUBLICO_VENDA,
-  CAMBIO_IENES_MINIMO_PUBLICO,
-  MOEDAS_TRANSACAO_CAMBIO,
   type FormaPagamentoEscolhida,
-  type MoedaTransacaoCambio,
 } from "../lib/calculadoraCatalogoPublico";
 
 export const display = Bodoni_Moda({
@@ -167,7 +158,6 @@ export default function ProdutosPage() {
   // — ver comentário no card mais abaixo), por isso não tem mais estado de
   // modal aqui. Seguro Viagem seguiu o mesmo caminho em 29/set/2026
   // (/produtos/seguro-viagem).
-  const [cambioModalOpen, setCambioModalOpen] = useState(false);
   // Pedido do Wilson, 16/set/2026: "criar na pagina de calculadora reversa
   // e produtos um card novo de serviço chamado Ajisai Shopping" — mesmo
   // padrão leve do popup de JR Pass/Câmbio/Seguro Viagem (ServicoAvulsoModal).
@@ -197,7 +187,6 @@ export default function ProdutosPage() {
       !servicosModalOpen &&
       !transporteModalOpen &&
       !hoteisModalOpen &&
-      !cambioModalOpen &&
       !ajisaiShoppingModalOpen
     )
       return;
@@ -214,7 +203,6 @@ export default function ProdutosPage() {
         setServicosModalOpen(false);
         setTransporteModalOpen(false);
         setHoteisModalOpen(false);
-        setCambioModalOpen(false);
         setAjisaiShoppingModalOpen(false);
       }
     };
@@ -232,7 +220,6 @@ export default function ProdutosPage() {
     guiaModalOpen,
     servicosModalOpen,
     transporteModalOpen,
-    cambioModalOpen,
     ajisaiShoppingModalOpen,
     hoteisModalOpen,
   ]);
@@ -472,9 +459,12 @@ export default function ProdutosPage() {
                   offset, os 3 cards (Câmbio, Seguro Viagem, Ajisai
                   Shopping) preenchem a fileira inteira, igual às fileiras
                   acima. */}
+              {/* Câmbio também virou página própria — pedido do Wilson,
+                  29/set/2026: "agora faça o mesmo para cambio na pagina
+                  de produtos" + "cambio só tem PIX"
+                  (app/produtos/cambio/page.tsx, Pix pela Stone). */}
               <ProductSelectorCard
-                href="/servicos-adicionais"
-                onClick={() => setCambioModalOpen(true)}
+                href="/produtos/cambio"
                 icon="/images/icone-cambio-dinheiro.png"
                 iconWidth={258}
                 iconHeight={320}
@@ -1132,27 +1122,6 @@ export default function ProdutosPage() {
           </div>
         </div>
       )}
-
-      {/* Pedido do Wilson, 25/set/2026: "vamos trabalhar agora na página de
-          câmbio, primeiro de tudo deixar com o mesmo template visual que a
-          pagina de jr pass e seguro viagem, segundo lugar, importar dados
-          de preço e etc da calculadora reversa, terceiro lugar,
-          desenvolver um algoritmo que baseado na escolha da cidade da
-          pessoa, o sistema faz uma busca em tempo real em sites como
-          melhores câmbios, etc e adicionar uma margem de 20% sobre o
-          valor e já deixa o pedido pronto para checkout, quarto lugar,
-          deixar disponivel tanto compra quanto venda de iene, e deixar
-          pelo menos 3 moedas disponiveis para transação Real, Euro e
-          Dolar" — mesmo tratamento dado ao JR Pass e Seguro Viagem: saiu
-          do ServicoAvulsoModal pequeno e ganhou o próprio componente
-          grande (CambioModal), reaproveitando a mesma raspagem em tempo
-          real do melhorcambio.com já usada na Calculadora Reversa
-          (useCambioIene), com uma margem pública de 20% separada da
-          margem interna (ver SPREAD_CAMBIO_IENE_PUBLICO_COMPRA/VENDA em
-          app/lib/calculadoraCatalogoPublico.ts) e o mesmo padrão de
-          self-checkout do Seguro Viagem (lead no CRM, tag SELF-SERVICE,
-          sem gateway de pagamento no site). */}
-      {cambioModalOpen && <CambioModal onClose={() => setCambioModalOpen(false)} />}
 
       {ajisaiShoppingModalOpen && (
         <ServicoAvulsoModal
@@ -2071,431 +2040,6 @@ export function formatarDataBR(data: string): string {
 }
 
 
-
-// Ícones de moeda enviados pelo Wilson, 25/set/2026, junto do pedido do
-// Câmbio: ¥ (iene, ao lado do campo de quantidade) e R$/€/US$ (moeda de
-// pagamento escolhida pelo cliente — ver MOEDAS_TRANSACAO_CAMBIO em
-// app/lib/calculadoraCatalogoPublico.ts).
-const ICONE_MOEDA_IENE = "/images/icone-moeda-iene.png";
-
-// Pop-up dedicado do Câmbio — mesmo tratamento dado ao JR Pass e ao
-// Seguro Viagem em 25/set/2026: saiu do ServicoAvulsoModal pequeno,
-// ganhou o próprio componente no padrão de tamanho do modal "Hotéis"
-// (max-w-5xl). Pedido do Wilson, 25/set/2026 (mensagem completa
-// registrada acima, onde esse componente é usado): template visual igual
-// JR Pass/Seguro Viagem, cotação em tempo real por cidade (reaproveitando
-// useCambioIene, já usado na Calculadora Reversa), margem pública de 20%
-// separada da margem interna, compra e venda de ienes, e pelo menos 3
-// moedas de pagamento (Real, Euro, Dólar). Self-checkout no mesmo padrão
-// do Seguro Viagem (lead no CRM com tag SELF-SERVICE via
-// /api/cambio-selfservice — sem gateway de pagamento real no site).
-// Pedido do Wilson, 25/set/2026: "moeda de pagamento é só real" — não
-// recebe mais `cambio` (PTAX/USD) como prop porque não converte mais pra
-// dólar/euro; só usava isso pra mostrar o total em USD/EUR.
-function CambioModal({ onClose }: { onClose: () => void }) {
-  const [direcao, setDirecao] = useState<DirecaoCambioIene>("compra");
-  const [cidade, setCidade] = useState<CidadeCambioIeneSlug>("sao-paulo");
-  const [quantidadeIenes, setQuantidadeIenes] = useState(CAMBIO_IENES_MINIMO_PUBLICO);
-  const [nome, setNome] = useState("");
-  const [email, setEmail] = useState("");
-  const [whatsapp, setWhatsapp] = useState("");
-  const [observacoes, setObservacoes] = useState("");
-  const [formaPagamento, setFormaPagamento] = useState<FormaPagamentoEscolhida | null>(null);
-  const [status, setStatus] = useState<"form" | "enviando" | "enviado" | "erro">("form");
-  const [erro, setErro] = useState("");
-
-  // Cotação de rua (melhorcambio.com, papel-moeda) na cidade e direção
-  // escolhidas — mesma fonte/hook já usado internamente na Calculadora
-  // Reversa (app/calculadora_reversa/page.tsx), agora também com a
-  // direção "venda". A margem pública (20%) é aplicada aqui, em cima da
-  // cotação de rua — nunca mostrada ao cliente (mesma regra do JR Pass e
-  // Seguro Viagem: nunca revelar margem/fornecedor em texto público).
-  const cambioIene = useCambioIene(cidade, direcao);
-
-  const cotacaoRuaBRLporJPY = cambioIene?.cotacaoBRLPorJPY ?? null;
-  const spreadPublico = direcao === "compra" ? SPREAD_CAMBIO_IENE_PUBLICO_COMPRA : SPREAD_CAMBIO_IENE_PUBLICO_VENDA;
-  const cotacaoFinalBRLporJPY = cotacaoRuaBRLporJPY !== null ? cotacaoRuaBRLporJPY * spreadPublico : null;
-  const valorIenesBRL = cotacaoFinalBRLporJPY !== null ? quantidadeIenes * cotacaoFinalBRLporJPY : null;
-  // Taxa de serviço (retirada/entrega em espécie) — mesma referência já
-  // usada no card/produto de Câmbio (PRECO_CAMBIO_BRASIL, em
-  // CustomPackageCard.tsx), aplicada nas duas direções (a logística de
-  // entregar ou recolher o dinheiro em espécie existe nos dois sentidos).
-  // Taxa extra de entrega no Aeroporto de Guarulhos — pedido do Wilson,
-  // 25/set/2026: "custo de entrega para entrega no aeroporto de
-  // guarulhos de R$ 190.00 caso cliente opte por isso" — só entra quando
-  // a cidade escolhida é a opção de aeroporto.
-  const taxaEntregaAeroporto = cidade === "aeroporto-guarulhos" ? CUSTO_ENTREGA_AEROPORTO_CAMBIO : 0;
-  const totalBRL =
-    valorIenesBRL !== null ? valorIenesBRL + PRECO_CAMBIO_BRASIL + taxaEntregaAeroporto : null;
-
-  // Pedido do Wilson, 25/set/2026: "moeda de pagamento é só real" — o
-  // seletor de moeda (Real/Euro/Dólar) saiu; total sempre em BRL.
-  const totalLabel = totalBRL === null ? null : formatBRL(totalBRL);
-
-  const cidadeNome = CIDADES_CAMBIO_IENE.find((c) => c.slug === cidade)?.nome ?? cidade;
-  const direcaoLabel = direcao === "compra" ? "Compra de ienes" : "Venda de ienes";
-
-  const descricaoPagamentoEscolhido = descricaoFormaPagamento(formaPagamento, totalBRL, "");
-
-  const formValido =
-    nome.trim().length > 0 &&
-    /\S+@\S+\.\S+/.test(email) &&
-    whatsapp.trim().length >= 8 &&
-    quantidadeIenes >= CAMBIO_IENES_MINIMO_PUBLICO &&
-    totalBRL !== null;
-
-  // Lista do que falta pra liberar o botão — pedido do Wilson,
-  // 28/set/2026: "precisa exibir uma mensagem avisando o que falta pra
-  // poder seguir, mensagens de alerta em amarelo" (mesmo padrão do JR
-  // Pass, aplicado aqui também).
-  const pendenciasFinalizar: string[] = [];
-  if (totalBRL === null) pendenciasFinalizar.push("Aguarde a cotação de câmbio carregar.");
-  if (quantidadeIenes < CAMBIO_IENES_MINIMO_PUBLICO) {
-    pendenciasFinalizar.push(`A quantidade mínima é ¥${CAMBIO_IENES_MINIMO_PUBLICO.toLocaleString("pt-BR")}.`);
-  }
-  if (nome.trim().length === 0) pendenciasFinalizar.push("Preencha seu nome completo.");
-  if (!/\S+@\S+\.\S+/.test(email)) pendenciasFinalizar.push("Preencha um e-mail válido.");
-  if (whatsapp.trim().length < 8) pendenciasFinalizar.push("Preencha seu WhatsApp.");
-
-  async function enviar() {
-    if (!formValido || status === "enviando") return;
-    setStatus("enviando");
-    setErro("");
-    try {
-      const resposta = await fetch("/api/cambio-selfservice", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          direcao,
-          cidade,
-          moedaTransacao: "BRL",
-          quantidadeIenes,
-          totalBRL,
-          formaPagamento: descricaoPagamentoEscolhido || null,
-          nome,
-          email,
-          whatsapp,
-          observacoes,
-        }),
-      });
-      const dadosResposta = await resposta.json().catch(() => ({}));
-      if (!resposta.ok) {
-        setErro(dadosResposta.error || "Não foi possível registrar seu pedido agora. Tente de novo.");
-        setStatus("erro");
-        return;
-      }
-      setStatus("enviado");
-    } catch {
-      setErro("Não foi possível registrar seu pedido agora. Tente de novo.");
-      setStatus("erro");
-    }
-  }
-
-  const mensagemWhatsapp = `Olá! Acabei de solicitar ${
-    direcao === "compra" ? "a compra" : "a venda"
-  } de ¥${quantidadeIenes.toLocaleString("pt-BR")} pelo site da Ajisai — meu nome é ${nome}.`;
-
-  return (
-    <div
-      className="fixed inset-0 z-[90] flex items-end justify-center bg-black/85 p-0 backdrop-blur-sm md:items-center md:p-6"
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="cambio-modal-title"
-      onClick={onClose}
-    >
-      <div
-        className="relative flex max-h-[92vh] w-full max-w-5xl flex-col overflow-hidden rounded-t-3xl border border-black/10 bg-white shadow-2xl md:max-h-[88vh] md:rounded-3xl"
-        onClick={(event) => event.stopPropagation()}
-      >
-        <div className="flex h-14 shrink-0 items-center justify-between border-b border-black/10 bg-white/90 px-4 backdrop-blur-xl md:px-6">
-          <p
-            id="cambio-modal-title"
-            className={`${display.className} text-lg font-medium text-black md:text-xl`}
-          >
-            Câmbio de Ienes
-          </p>
-          <button
-            type="button"
-            onClick={onClose}
-            aria-label="Fechar Câmbio"
-            className="flex h-9 w-9 items-center justify-center rounded-full border border-black/15 text-2xl leading-none text-black/65 transition hover:border-black/40 hover:text-black"
-          >
-            ×
-          </button>
-        </div>
-
-        <div className="overflow-y-auto p-5 md:p-8">
-          {status === "enviado" ? (
-            <div className="py-6 text-center">
-              <p className="text-xs uppercase tracking-[0.3em] text-[#1c6ea8]">Pedido registrado</p>
-              <h3 className={`${display.className} mt-3 text-2xl font-medium text-black md:text-3xl`}>
-                Recebemos seu pedido de câmbio
-              </h3>
-              <p className="mx-auto mt-3 max-w-md text-sm leading-relaxed text-black/60">
-                Nossa equipe confirma a cotação final e combina{" "}
-                {direcao === "compra" ? "a entrega" : "a devolução"} dos ienes direto com você pelo
-                WhatsApp.
-              </p>
-              <a
-                href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(mensagemWhatsapp)}`}
-                target="_blank"
-                rel="noreferrer"
-                className="mt-6 inline-flex items-center justify-center rounded-full bg-[#2f80c9] px-6 py-3.5 text-xs font-medium uppercase tracking-[0.25em] text-white transition hover:bg-[#3b91dc]"
-              >
-                Continuar no WhatsApp
-              </a>
-            </div>
-          ) : (
-            <>
-              <p className="text-xs uppercase tracking-[0.3em] text-[#1c6ea8]">Câmbio no Brasil</p>
-              <h3
-                className={`${display.className} mt-2 max-w-2xl text-2xl font-medium text-black md:text-3xl`}
-              >
-                Compra e venda de ienes antes e depois da viagem
-              </h3>
-              <p className="mt-3 max-w-2xl text-sm leading-relaxed text-black/60">
-                Retire ienes em espécie antes de embarcar — ou devolva o que sobrou da viagem — sem
-                precisar trocar dinheiro no Japão. Cotação em tempo real por cidade, com o pedido já
-                pronto pra fechar pelo WhatsApp.
-              </p>
-
-              {/* Direção — subtítulo "O que você quer fazer" removido a
-                  pedido do Wilson, 25/set/2026 ("remover esse subtitulo,
-                  é irrelevante"): os dois cards abaixo já são
-                  autoexplicativos. */}
-              <div className="mt-8 border-t border-black/10 pt-6">
-                <div className="grid gap-3 sm:grid-cols-2">
-                  <button
-                    type="button"
-                    onClick={() => setDirecao("compra")}
-                    className={`rounded-2xl border p-4 text-left transition ${
-                      direcao === "compra"
-                        ? "border-[#2f80c9] bg-[#2f80c9]/5"
-                        : "border-black/10 bg-black/[0.02] hover:border-black/25"
-                    }`}
-                  >
-                    <p className="text-sm font-medium text-black">Comprar ienes</p>
-                    <p className="mt-1 text-[11px] leading-5 text-black/50">
-                      Retirar ienes em espécie antes de embarcar.
-                    </p>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setDirecao("venda")}
-                    className={`rounded-2xl border p-4 text-left transition ${
-                      direcao === "venda"
-                        ? "border-[#2f80c9] bg-[#2f80c9]/5"
-                        : "border-black/10 bg-black/[0.02] hover:border-black/25"
-                    }`}
-                  >
-                    <p className="text-sm font-medium text-black">Vender ienes</p>
-                    <p className="mt-1 text-[11px] leading-5 text-black/50">
-                      Devolver o que sobrou da viagem, trocando de volta por reais, euros ou dólares.
-                    </p>
-                  </button>
-                </div>
-              </div>
-
-              {/* Cidade */}
-              <div className="mt-8 border-t border-black/10 pt-6">
-                <p className="text-[10px] uppercase tracking-[0.2em] text-black/40">
-                  Cidade de retirada
-                </p>
-                <div className="mt-4 flex flex-wrap gap-2">
-                  {CIDADES_CAMBIO_IENE.map((c) => (
-                    <button
-                      key={c.slug}
-                      type="button"
-                      onClick={() => setCidade(c.slug)}
-                      className={`rounded-full border px-4 py-2 text-xs transition ${
-                        cidade === c.slug
-                          ? "border-[#2f80c9] bg-[#2f80c9]/10 text-[#1c6ea8]"
-                          : "border-black/15 text-black/60 hover:border-black/30"
-                      }`}
-                    >
-                      {c.nome}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Quantidade — seletor de moeda de pagamento (Real/Euro/
-                  Dólar) removido a pedido do Wilson, 25/set/2026: "moeda
-                  de pagamento é só real". */}
-              <div className="mt-8 border-t border-black/10 pt-6">
-                <p className="text-[10px] uppercase tracking-[0.2em] text-black/40">
-                  Quantidade de ienes
-                </p>
-                <div className="mt-4 flex max-w-xs items-center gap-2">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={ICONE_MOEDA_IENE} alt="" className="h-9 w-9 shrink-0 object-contain" />
-                  <input
-                    type="number"
-                    min={CAMBIO_IENES_MINIMO_PUBLICO}
-                    step={10000}
-                    value={quantidadeIenes}
-                    onChange={(e) => setQuantidadeIenes(Number(e.target.value) || 0)}
-                    onBlur={() => setQuantidadeIenes((v) => Math.max(CAMBIO_IENES_MINIMO_PUBLICO, v))}
-                    className="w-full rounded-lg border border-black/15 px-3 py-2.5 text-sm text-black focus:border-[#2f80c9] focus:outline-none"
-                  />
-                </div>
-                <p className="mt-2 text-[11px] leading-5 text-black/40">
-                  Mínimo de ¥{CAMBIO_IENES_MINIMO_PUBLICO.toLocaleString("pt-BR")}.
-                </p>
-              </div>
-
-              {/* Resumo de preço */}
-              <div className="mt-8 border-t border-black/10 pt-6">
-                <p className="text-[10px] uppercase tracking-[0.2em] text-black/40">
-                  Valor estimado — {direcaoLabel.toLowerCase()}
-                </p>
-                {totalLabel ? (
-                  <>
-                    <p className={`${display.className} mt-1 text-3xl font-medium text-black`}>
-                      {totalLabel}
-                    </p>
-                    <p className="mt-2 text-[11px] leading-5 text-black/40">
-                      ¥{quantidadeIenes.toLocaleString("pt-BR")} em {cidadeNome}, já com taxas
-                      incluídas
-                      {taxaEntregaAeroporto > 0 && ` (inclui taxa de entrega no aeroporto de ${formatBRL(taxaEntregaAeroporto)})`}
-                      .
-                    </p>
-                  </>
-                ) : (
-                  <p className="mt-1 text-sm text-black/50">Carregando cotação do dia…</p>
-                )}
-              </div>
-
-              {/* Dados de contato */}
-              <div className="mt-8 border-t border-black/10 pt-6">
-                <p className="text-[10px] uppercase tracking-[0.2em] text-black/40">Seus dados</p>
-                <div className="mt-4 grid gap-4 sm:grid-cols-3">
-                  <label className="flex flex-col gap-1.5">
-                    <span className="text-[10px] uppercase tracking-[0.15em] text-black/50">
-                      Nome completo
-                    </span>
-                    <input
-                      type="text"
-                      value={nome}
-                      onChange={(e) => setNome(e.target.value)}
-                      className="rounded-lg border border-black/15 px-3 py-2.5 text-sm text-black focus:border-[#2f80c9] focus:outline-none"
-                    />
-                  </label>
-                  <label className="flex flex-col gap-1.5">
-                    <span className="text-[10px] uppercase tracking-[0.15em] text-black/50">E-mail</span>
-                    <input
-                      type="email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      className="rounded-lg border border-black/15 px-3 py-2.5 text-sm text-black focus:border-[#2f80c9] focus:outline-none"
-                    />
-                  </label>
-                  <label className="flex flex-col gap-1.5">
-                    <span className="text-[10px] uppercase tracking-[0.15em] text-black/50">WhatsApp</span>
-                    <input
-                      type="tel"
-                      value={whatsapp}
-                      onChange={(e) => setWhatsapp(e.target.value)}
-                      placeholder="(11) 99999-9999"
-                      className="rounded-lg border border-black/15 px-3 py-2.5 text-sm text-black focus:border-[#2f80c9] focus:outline-none"
-                    />
-                  </label>
-                </div>
-                <label className="mt-4 flex flex-col gap-1.5">
-                  <span className="text-[10px] uppercase tracking-[0.15em] text-black/50">
-                    Observações (opcional)
-                  </span>
-                  <textarea
-                    value={observacoes}
-                    onChange={(e) => setObservacoes(e.target.value)}
-                    rows={2}
-                    placeholder="Data prevista de retirada, preferência de local, etc."
-                    className="rounded-lg border border-black/15 px-3 py-2.5 text-sm text-black focus:border-[#2f80c9] focus:outline-none"
-                  />
-                </label>
-              </div>
-
-              <FormasPagamento
-                totalBRL={totalBRL}
-                dataViagem=""
-                formaPagamento={formaPagamento}
-                onEscolher={setFormaPagamento}
-                somenteAVista
-                // Pedido do Wilson, 25/set/2026: "metodo de pagamento é só
-                // pix e ted" — sem cartão de crédito no Câmbio.
-                metodos={["pix", "ted"]}
-              />
-
-              <p className="mt-6 text-[11px] leading-5 text-black/35">
-                Fonte da cotação: melhorcambio.com (papel-moeda, {cidadeNome}). Cotação sujeita a
-                variação até a confirmação do pedido.
-              </p>
-
-              {erro && <p className="mt-4 text-sm text-red-600">{erro}</p>}
-            </>
-          )}
-        </div>
-
-        {status !== "enviado" && (
-          <div className="shrink-0 border-t border-black/10 bg-white px-5 py-4 shadow-[0_-4px_16px_rgba(0,0,0,0.06)] md:px-8">
-            <div className="mx-auto flex max-w-4xl flex-wrap items-center justify-between gap-x-6 gap-y-3">
-              <div>
-                {totalLabel ? (
-                  <>
-                    <p className="text-[10px] uppercase tracking-[0.15em] text-black/40">Sua escolha</p>
-                    <p className={`${display.className} text-xl font-medium text-[#2f80c9] sm:text-2xl`}>
-                      {totalLabel}
-                    </p>
-                    <p className="text-xs text-black/45">
-                      {direcaoLabel} · ¥{quantidadeIenes.toLocaleString("pt-BR")} · {cidadeNome}
-                    </p>
-                    {descricaoPagamentoEscolhido && (
-                      <p className="mt-0.5 text-[11px] text-black/40">{descricaoPagamentoEscolhido}</p>
-                    )}
-                  </>
-                ) : (
-                  <p className="text-xs text-black/45">
-                    Escolha a cidade e a quantidade de ienes para ver o valor.
-                  </p>
-                )}
-              </div>
-              <button
-                type="button"
-                onClick={enviar}
-                disabled={!formValido || status === "enviando"}
-                className={`inline-flex shrink-0 items-center justify-center rounded-full px-6 py-3.5 text-center text-xs font-medium uppercase tracking-[0.2em] text-white transition ${
-                  formValido && status !== "enviando"
-                    ? "bg-[#2f80c9] hover:bg-[#3b91dc]"
-                    : "cursor-not-allowed bg-black/20"
-                }`}
-              >
-                {status === "enviando"
-                  ? "Enviando…"
-                  : direcao === "compra"
-                    ? "Solicitar Compra de Ienes"
-                    : "Solicitar Venda de Ienes"}
-              </button>
-            </div>
-            {pendenciasFinalizar.length > 0 && status !== "enviando" && (
-              <div className="mt-3 rounded-lg border border-amber-300 bg-amber-50 px-3.5 py-2.5 text-[11px] leading-5 text-amber-800">
-                <p className="font-medium">Falta o seguinte pra finalizar:</p>
-                <ul className="mt-1 list-disc pl-4">
-                  {pendenciasFinalizar.map((item) => (
-                    <li key={item}>{item}</li>
-                  ))}
-                </ul>
-              </div>
-            )}
-            <p className="mt-2 text-[10px] leading-4 text-black/35">
-              Isso não confirma pagamento — sua equipe Ajisai entra em contato pelo WhatsApp pra
-              fechar {direcao === "compra" ? "a entrega" : "a devolução"} dos ienes.
-            </p>
-          </div>
-        )}
-      </div>
-    </div>
-  );
-}
 
 // Popup leve pra um serviço avulso simples (Ajisai Shopping) — mesmo
 // padrão visual do popup de Hotéis, sem iframe, já que esses serviços não

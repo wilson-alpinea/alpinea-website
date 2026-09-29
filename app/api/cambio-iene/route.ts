@@ -2,11 +2,9 @@ import { NextResponse } from "next/server";
 import {
   CidadeCambioIeneSlug,
   cidadeCambioIeneValida,
-  COTACAO_FALLBACK_BRL_POR_JPY_COMPRA,
-  COTACAO_FALLBACK_BRL_POR_JPY_VENDA,
   type DirecaoCambioIene,
-  extrairCotacaoPapelMoeda,
 } from "../../lib/cambioIene";
+import { buscarCotacaoIene } from "../../lib/cotacaoIeneServidor";
 
 export const runtime = "nodejs";
 
@@ -27,43 +25,11 @@ export async function GET(request: Request) {
   const direcaoParam = searchParams.get("direcao");
   const direcao: DirecaoCambioIene = direcaoParam === "venda" ? "venda" : "compra";
 
-  const url = `https://www.melhorcambio.com/cotacao/${direcao}/iene/${cidade}`;
-
-  try {
-    const resp = await fetch(url, {
-      headers: {
-        "User-Agent":
-          "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0 Safari/537.36",
-        Accept: "text/html",
-      },
-      next: { revalidate: 900 },
-    });
-
-    if (!resp.ok) throw new Error(`melhorcambio.com respondeu ${resp.status}`);
-
-    const html = await resp.text();
-    const cotacao = extrairCotacaoPapelMoeda(html);
-
-    if (cotacao === null) {
-      throw new Error("Não encontrou a cotação de papel-moeda no HTML da página");
-    }
-
-    return NextResponse.json({
-      cotacaoBRLPorJPY: cotacao,
-      cidade,
-      direcao,
-      fonte: `melhorcambio.com — papel moeda (${direcao})`,
-      fallback: false,
-    });
-  } catch (error) {
-    console.error("Erro ao consultar cotação do iene no melhorcambio.com:", error);
-
-    return NextResponse.json({
-      cotacaoBRLPorJPY: direcao === "venda" ? COTACAO_FALLBACK_BRL_POR_JPY_VENDA : COTACAO_FALLBACK_BRL_POR_JPY_COMPRA,
-      cidade,
-      direcao,
-      fonte: "estimativa — melhorcambio.com indisponível ou fora do padrão esperado no momento",
-      fallback: true,
-    });
-  }
+  // Busca movida pra app/lib/cotacaoIeneServidor.ts (29/set/2026) — a
+  // mesma função é usada por /api/cambio-selfservice pra recalcular o
+  // valor antes da cobrança Pix. De quebra corrige o "aeroporto-guarulhos",
+  // que ia direto pra uma página inexistente no melhorcambio.com e sempre
+  // caía no valor de fallback (agora usa a cotação de São Paulo, como o
+  // comentário em app/lib/cambioIene.ts já descrevia).
+  return NextResponse.json(await buscarCotacaoIene(cidade, direcao));
 }
