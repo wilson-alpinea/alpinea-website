@@ -51,67 +51,28 @@ const inter = Inter({ subsets: ["latin"], weight: ["500", "700"] });
 // "affinity e MTA até 64 anos, acima de 64 anos GTA tem melhor preço".
 const IDADE_RECOMENDACAO_GTA = 64;
 
-// Ícones PROVISÓRIOS do "Como funciona" (traço simples, mesma cor da
-// marca) — o Wilson vai mandar as artes definitivas, igual fez no JR Pass.
-function IconePasso({ tipo }: { tipo: "pedido" | "apolice" | "viagem" | "assistencia" }) {
-  const comum = {
-    fill: "none",
-    stroke: "#2f80c9",
-    strokeWidth: 1.6,
-    strokeLinecap: "round" as const,
-    strokeLinejoin: "round" as const,
-  };
-  return (
-    <svg viewBox="0 0 48 48" className="mt-2 h-20 w-20" aria-hidden="true">
-      <circle cx="24" cy="24" r="22" fill="#dcecf8" />
-      {tipo === "pedido" && (
-        <g {...comum}>
-          <rect x="15" y="12" width="18" height="24" rx="2" />
-          <path d="M19 19h10M19 24h10M19 29h6" />
-        </g>
-      )}
-      {tipo === "apolice" && (
-        <g {...comum}>
-          <rect x="12" y="16" width="24" height="17" rx="2" />
-          <path d="M12 18l12 8 12-8" />
-        </g>
-      )}
-      {tipo === "viagem" && (
-        <g {...comum}>
-          <path d="M24 12l9 4v7c0 6-4 10-9 12-5-2-9-6-9-12v-7z" />
-          <path d="M20 24l3 3 5-6" />
-        </g>
-      )}
-      {tipo === "assistencia" && (
-        <g {...comum}>
-          <path d="M15 27v-4a9 9 0 0118 0v4" />
-          <rect x="13" y="26" width="5" height="8" rx="2" />
-          <rect x="30" y="26" width="5" height="8" rx="2" />
-          <path d="M33 34c0 2-2 3-5 3h-2" />
-        </g>
-      )}
-    </svg>
-  );
-}
-
+// Ícones do "Como funciona" — enviados pelo Wilson em 29/set/2026
+// ("novos icones para os passo a passo de seguro viagem"), substituindo
+// os SVGs provisórios. Recortados com margem uniforme e salvos em 480px
+// (fundo transparente) em public/images/produtos/.
 const COMO_FUNCIONA = [
   {
-    icone: "pedido" as const,
+    icone: "/images/produtos/seguro-passo-1-pedido.png",
     titulo: "Faça seu pedido",
     texto: "Escolha a seguradora, informe quem viaja e finalize o pagamento aqui no site.",
   },
   {
-    icone: "apolice" as const,
+    icone: "/images/produtos/seguro-passo-2-apolice.png",
     titulo: "Receba a apólice",
     texto: "Emitimos a apólice com a seguradora e enviamos por e-mail e WhatsApp.",
   },
   {
-    icone: "viagem" as const,
+    icone: "/images/produtos/seguro-passo-3-viagem.png",
     titulo: "Viaje protegido",
     texto: "A cobertura vale a partir da data de início indicada na apólice.",
   },
   {
-    icone: "assistencia" as const,
+    icone: "/images/produtos/seguro-passo-4-assistencia.png",
     titulo: "Acione quando precisar",
     texto: "Durante a viagem, fale direto com a central de atendimento da seguradora.",
   },
@@ -403,27 +364,32 @@ export default function SeguroViagemPage() {
           </div>
         ) : (
           <>
-            {/* Topo — imagem PROVISÓRIA (ícone do seguro) até o Wilson
-                mandar a arte definitiva, como a foto do passe no JR Pass. */}
-            <div className="flex flex-col-reverse gap-6 sm:flex-row sm:items-start sm:justify-between sm:gap-8">
-              <div className="flex-1">
-                <p className="text-xs uppercase tracking-[0.3em] text-[#1c6ea8]">Seguro Viagem</p>
-                <h3 className={`${display.className} mt-2 max-w-2xl text-2xl font-medium text-black md:text-3xl`}>
-                  Cobertura médica e assistência para toda a viagem
-                </h3>
-                <p className="mt-3 max-w-2xl text-sm leading-relaxed text-black/75">
-                  Trabalhamos com três seguradoras parceiras — Affinity, GTA e MTA. Escolha a sua, informe
-                  quem viaja e as datas, e finalize a compra aqui mesmo: a apólice é emitida pela
-                  seguradora e enviada por e-mail e WhatsApp.
-                </p>
-              </div>
+            {/* Topo — foto enviada pelo Wilson em 29/set/2026 ("novo header
+                para seguro viagem"), no lugar do ícone provisório. Foto larga
+                (casal em Kyoto) vira banner em largura total do conteúdo; no
+                celular a proporção fica mais alta e o corte segue o casal
+                (object-position ~52% na horizontal), pra não sobrar só rua. */}
+            <div className="relative -mx-5 overflow-hidden sm:mx-0 sm:rounded-2xl">
               <Image
-                src="/images/icone-seguro-viagem-v2.png"
-                alt="Seguro Viagem"
-                width={1288}
-                height={1157}
-                className="mx-auto w-32 shrink-0 sm:mx-0 sm:w-44"
+                src="/images/produtos/seguro-viagem-header.jpg"
+                alt="Casal caminhando por uma rua tradicional de Kyoto"
+                width={1600}
+                height={893}
+                priority
+                sizes="(min-width: 1024px) 960px, 100vw"
+                className="aspect-[4/3] w-full object-cover object-[52%_40%] sm:aspect-[16/7]"
               />
+            </div>
+            <div className="mt-6">
+              <p className="text-xs uppercase tracking-[0.3em] text-[#1c6ea8]">Seguro Viagem</p>
+              <h3 className={`${display.className} mt-2 max-w-2xl text-2xl font-medium text-black md:text-3xl`}>
+                Cobertura médica e assistência para toda a viagem
+              </h3>
+              <p className="mt-3 max-w-2xl text-sm leading-relaxed text-black/75">
+                Trabalhamos com três seguradoras parceiras — Affinity, GTA e MTA. Escolha a sua, informe
+                quem viaja e as datas, e finalize a compra aqui mesmo: a apólice é emitida pela
+                seguradora e enviada por e-mail e WhatsApp.
+              </p>
             </div>
 
             <div className="mt-8 rounded-2xl bg-[#eef6fb] p-5 sm:p-6">
@@ -436,7 +402,8 @@ export default function SeguroViagemPage() {
                     <p className="text-xs font-semibold uppercase tracking-[0.15em] text-[#2f80c9]">
                       Passo {index + 1}
                     </p>
-                    <IconePasso tipo={passo.icone} />
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={passo.icone} alt="" className="mt-2 h-20 w-20 object-contain" />
                     <p className="mt-2 text-sm font-medium text-black">{passo.titulo}</p>
                     <p className="mt-1 text-xs leading-5 text-black/65">{passo.texto}</p>
                   </div>

@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 
 // Mesmo motivo do layout de /produtos/jrpass: page.tsx é "use client"
 // (estado do formulário/checkout) e por isso não pode exportar `metadata`.
-// Imagem de compartilhamento provisória (ícone do seguro) até o Wilson
-// enviar a arte definitiva do topo da página.
+// Imagem de compartilhamento = a mesma foto do topo da página (enviada
+// pelo Wilson em 29/set/2026), como no JR Pass.
 const DESCRICAO =
   "Seguro viagem para o Japão com Affinity, GTA ou MTA — cobertura médica e assistência 24h. Escolha a seguradora, veja o valor para o seu grupo e finalize a compra online.";
 
@@ -16,9 +16,9 @@ export const metadata: Metadata = {
     siteName: "Ajisai",
     images: [
       {
-        url: "/images/icone-seguro-viagem-v2.png",
-        width: 1288,
-        height: 1157,
+        url: "/images/produtos/seguro-viagem-header.jpg",
+        width: 1600,
+        height: 893,
         alt: "Seguro Viagem — Ajisai",
       },
     ],
@@ -29,7 +29,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Ajisai | Seguro Viagem",
     description: DESCRICAO,
-    images: ["/images/icone-seguro-viagem-v2.png"],
+    images: ["/images/produtos/seguro-viagem-header.jpg"],
   },
 };
 
