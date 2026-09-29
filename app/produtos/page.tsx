@@ -1490,7 +1490,7 @@ export function FormasPagamento({
             </span>
             <div className="flex flex-wrap items-center gap-2">
               <p className="text-sm font-medium text-black">Pix</p>
-              <span className="inline-flex items-center rounded-full bg-emerald-600/10 px-2 py-0.5 text-[9px] font-semibold uppercase tracking-[0.06em] text-emerald-700">
+              <span className="inline-flex items-center rounded-full bg-emerald-600/10 px-3.5 py-1.5 text-[18px] font-semibold uppercase tracking-[0.06em] text-emerald-700">
                 Menor preço
               </span>
             </div>

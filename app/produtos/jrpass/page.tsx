@@ -214,14 +214,9 @@ export default function JrPassPage() {
   // pessoas" (o JR Pass é vendido por pessoa — cada viajante precisa do
   // próprio passe). Mesmo padrão de stepper já usado em "Viajantes" no
   // Seguro Viagem.
-  const [numeroPessoas, setNumeroPessoas] = useState(1);
-  function ajustarNumeroPessoas(novo: number) {
-    const seguro = Math.max(1, Math.min(12, novo));
-    setNumeroPessoas(seguro);
-    // Nunca deixa o número de crianças (nem a lista de idades) passar do
-    // número total de pessoas.
-    setNumeroCriancas((atual) => Math.min(atual, seguro));
-    setIdadesCriancas((atual) => atual.slice(0, seguro));
+  const [numeroAdultos, setNumeroAdultos] = useState(1);
+  function ajustarNumeroAdultos(novo: number) {
+    setNumeroAdultos(Math.max(1, Math.min(10, novo)));
   }
 
   // Preço de criança — pedido do Wilson, 25/set/2026: "quando é criança o
@@ -245,7 +240,7 @@ export default function JrPassPage() {
   const [numeroCriancas, setNumeroCriancas] = useState(0);
   const [idadesCriancas, setIdadesCriancas] = useState<(number | "")[]>([]);
   function ajustarNumeroCriancas(novo: number) {
-    const seguro = Math.max(0, Math.min(numeroPessoas, novo));
+    const seguro = Math.max(0, Math.min(10, novo));
     setNumeroCriancas(seguro);
     setIdadesCriancas((atual) => {
       const proximo = atual.slice(0, seguro);
@@ -266,7 +261,11 @@ export default function JrPassPage() {
     (soma: number, idade) => soma + (typeof idade === "number" ? multiplicadorPorIdadeCrianca(idade) : 1),
     0,
   );
-  const multiplicadorPessoas = numeroPessoas - numeroCriancas + somaMultiplicadorCriancas;
+  // Total de pessoas é derivado (adultos + crianças) — deixou de ser um
+  // valor editável diretamente, exatamente pra acabar com a confusão de
+  // "número total" vs. "quantas dessas são crianças".
+  const numeroPessoas = numeroAdultos + numeroCriancas;
+  const multiplicadorPessoas = numeroAdultos + somaMultiplicadorCriancas;
 
   const TIPOS = [
     {
@@ -506,7 +505,7 @@ export default function JrPassPage() {
   return (
     <main
       className="min-h-screen bg-white pt-14 text-black"
-      style={status !== "enviado" ? { paddingBottom: alturaRodape + 24 } : undefined}
+      style={status !== "enviado" ? { paddingBottom: alturaRodape + 56 } : undefined}
     >
       {/* Barra de voltar — pedido do Wilson, 28/set/2026: "essa parte deve
           ser fixa, aonde o usuario for ele deve acompanhar" (era só
@@ -796,25 +795,25 @@ export default function JrPassPage() {
               <div>
                 <div className="mb-2 flex h-9 flex-col justify-end">
                   <span className="text-[10px] uppercase tracking-[0.15em] text-black">
-                    Total de pessoas
+                    Adultos
                   </span>
                 </div>
                 <div className="flex items-center gap-2">
                   <button
                     type="button"
-                    onClick={() => ajustarNumeroPessoas(numeroPessoas - 1)}
-                    aria-label="Diminuir número de pessoas"
+                    onClick={() => ajustarNumeroAdultos(numeroAdultos - 1)}
+                    aria-label="Diminuir número de adultos"
                     className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-black/15 text-black transition hover:border-black/30"
                   >
                     −
                   </button>
                   <span className="flex h-10 flex-1 items-center justify-center rounded-lg border border-black/15 bg-black/[0.02] text-sm text-black">
-                    {numeroPessoas} {numeroPessoas === 1 ? "pessoa" : "pessoas"}
+                    {numeroAdultos} {numeroAdultos === 1 ? "adulto" : "adultos"}
                   </span>
                   <button
                     type="button"
-                    onClick={() => ajustarNumeroPessoas(numeroPessoas + 1)}
-                    aria-label="Aumentar número de pessoas"
+                    onClick={() => ajustarNumeroAdultos(numeroAdultos + 1)}
+                    aria-label="Aumentar número de adultos"
                     className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-black/15 text-black transition hover:border-black/30"
                   >
                     +
@@ -857,9 +856,9 @@ export default function JrPassPage() {
                     type="button"
                     onClick={() => ajustarNumeroCriancas(numeroCriancas + 1)}
                     aria-label="Aumentar número de crianças"
-                    disabled={numeroCriancas >= numeroPessoas}
+                    disabled={numeroCriancas >= 10}
                     className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border text-black transition ${
-                      numeroCriancas >= numeroPessoas
+                      numeroCriancas >= 10
                         ? "cursor-not-allowed border-black/10 text-black/25"
                         : "border-black/15 hover:border-black/30"
                     }`}
@@ -1240,7 +1239,7 @@ export default function JrPassPage() {
                   Tudo certo — pode finalizar.
                 </p>
               )}
-              <p className="mt-5 max-w-[50ch] text-xs leading-5 text-[#A5B3BE]">
+              <p className="mt-5 text-xs leading-5 text-[#A5B3BE]">
                 Ao finalizar, você é levado direto pra página de pagamento segura da Stone (Pix ou
                 cartão). Após a confirmação, nossa equipe faz a checagem final da elegibilidade e
                 envia as instruções de retirada do passe físico no Japão pelo WhatsApp e por e-mail.
