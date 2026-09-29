@@ -27,6 +27,7 @@ import { formatBRL } from "../../hooks/useCambioUSD";
 import { useCambioIene, CIDADES_CAMBIO_IENE, type CidadeCambioIeneSlug, type DirecaoCambioIene } from "../../hooks/useCambioIene";
 import { CAMBIO_IENES_MINIMO_PUBLICO, calcularPrecoCambioIene } from "../../lib/precoCambioIene";
 import { display, WHATSAPP_NUMBER, IconCheck } from "../page";
+import { RodapeCheckout } from "../RodapeCheckout";
 
 // Inter só para valores em dinheiro — mesmo padrão do JR Pass.
 const inter = Inter({ subsets: ["latin"], weight: ["500", "700"] });
@@ -229,7 +230,6 @@ export default function CambioPage() {
   } de ¥${quantidadeIenes.toLocaleString("pt-BR")} pelo site da Ajisai${nome ? ` — meu nome é ${nome}` : ""}.`;
 
   const rodapeRef = useRef<HTMLDivElement | null>(null);
-  const [checklistAberto, setChecklistAberto] = useState(false);
   const [alturaRodape, setAlturaRodape] = useState(0);
   useEffect(() => {
     const elemento = rodapeRef.current;
@@ -299,28 +299,42 @@ export default function CambioPage() {
           </div>
         ) : (
           <>
-            {/* Topo — imagem PROVISÓRIA (ícone do câmbio) até o Wilson
-                mandar a arte definitiva. */}
-            <div className="flex flex-col-reverse gap-6 sm:flex-row sm:items-start sm:justify-between sm:gap-8">
-              <div className="flex-1">
-                <p className="text-xs uppercase tracking-[0.3em] text-[#1c6ea8]">Câmbio de ienes</p>
-                <h3 className={`${display.className} mt-2 max-w-2xl text-2xl font-medium text-black md:text-3xl`}>
-                  Ienes em espécie antes e depois da viagem
-                </h3>
-                <p className="mt-3 max-w-2xl text-sm leading-relaxed text-black/75">
-                  Retire ienes em espécie antes de embarcar — ou troque de volta o que sobrou da viagem —
-                  em São Paulo, Rio de Janeiro, Curitiba ou no Aeroporto de Guarulhos. Cotação do dia e
-                  pagamento via Pix, direto pelo site.
-                </p>
+            {/* Banner hero — foto enviada pelo Wilson em 29/set/2026 ("novo
+                hero de cambio, fazer mesma coisa que fizemos com o texto de
+                seguro viagem trazendo o texto principal pra dentro da
+                imagem"). Diferente do Seguro Viagem, aqui o casal já está do
+                lado direito da foto e a esquerda é só rua — então a foto
+                ocupa o banner inteiro e o degradê azul-marinho da marca
+                (#0A2540) escurece só a metade esquerda, onde fica o texto. No
+                celular: foto em cima (corte puxado pra direita, no casal e no
+                dinheiro), texto embaixo. */}
+            <section className="relative -mx-5 overflow-hidden bg-[#0A2540] sm:mx-0 sm:rounded-2xl">
+              <div className="relative h-64 sm:absolute sm:inset-0 sm:h-auto">
+                <Image
+                  src="/images/produtos/cambio-header.jpg"
+                  alt="Casal conferindo ienes e o celular numa cafeteria no Japão"
+                  fill
+                  priority
+                  sizes="(min-width: 640px) 960px, 100vw"
+                  className="object-cover object-[78%_40%] sm:object-[50%_45%]"
+                />
+                <div
+                  aria-hidden="true"
+                  className="absolute inset-0 bg-gradient-to-t from-[#0A2540] via-[#0A2540]/10 to-transparent sm:bg-gradient-to-r sm:from-[#0A2540] sm:via-[#0A2540]/85 sm:via-30% sm:to-[#0A2540]/0 sm:to-[58%]"
+                />
               </div>
-              <Image
-                src="/images/icone-cambio-dinheiro.png"
-                alt="Câmbio de ienes"
-                width={258}
-                height={320}
-                className="mx-auto w-24 shrink-0 sm:mx-0 sm:w-32"
-              />
-            </div>
+              <div className="relative -mt-12 px-5 pb-8 sm:mt-0 sm:flex sm:min-h-[340px] sm:max-w-[46%] sm:flex-col sm:justify-center sm:px-10 sm:py-12 md:min-h-[380px]">
+                <p className="text-xs uppercase tracking-[0.3em] text-white/75">Câmbio de ienes</p>
+                <h1 className={`${display.className} mt-3 text-3xl font-medium leading-tight text-white md:text-4xl`}>
+                  Ienes em espécie antes e depois da viagem
+                </h1>
+              </div>
+            </section>
+            <p className="mt-6 max-w-2xl text-sm leading-relaxed text-black/75">
+              Retire ienes em espécie antes de embarcar — ou troque de volta o que sobrou da viagem — em São
+              Paulo, Rio de Janeiro, Curitiba ou no Aeroporto de Guarulhos. Cotação do dia e pagamento via
+              Pix, direto pelo site.
+            </p>
 
             <div className="mt-8 rounded-2xl bg-[#eef6fb] p-5 sm:p-6">
               <p className="text-center text-xs font-medium uppercase tracking-[0.15em] text-[#1c6ea8]">
@@ -512,7 +526,7 @@ export default function CambioPage() {
 
             {/* 5 — Pagamento (só Pix — Wilson, 29/set/2026). Compra: cliente
                 paga pela Stone. Venda: fluxo manual, a Ajisai paga o cliente. */}
-            <div className="mt-8 border-t border-black/10 pt-6">
+            <div id="checkout-ultimo-passo" className="mt-8 border-t border-black/10 pt-6">
               <TituloPasso numero={5} titulo={ehCompra ? "Pagamento" : "Recebimento"} />
               <div className="mt-5 flex items-center justify-between gap-4 rounded-xl border border-[#2f80c9] bg-[#2f80c9]/5 p-4">
                 <div className="min-w-0">
@@ -538,117 +552,27 @@ export default function CambioPage() {
 
       {/* Rodapé fixo — mesmo componente visual do JR Pass/Seguro Viagem,
           com checklist recolhível no celular. */}
+      {/* Rodapé fixo enxuto (app/produtos/RodapeCheckout.tsx) — pedido do
+          Wilson, 29/set/2026: lista de pendências só aparece quando o
+          cliente está quase finalizando ou tenta finalizar com algo faltando. */}
       {status !== "enviado" && (
-        <div
-          ref={rodapeRef}
-          className="fixed inset-x-0 bottom-0 z-50 max-h-[75svh] overflow-y-auto border-t border-white/10 bg-[#0A263D] px-4 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-3 shadow-[0_-8px_24px_rgba(0,0,0,0.3)] md:max-h-[85vh] md:px-8 md:py-5"
-        >
-          <button
-            type="button"
-            onClick={() => setChecklistAberto((v) => !v)}
-            aria-expanded={checklistAberto}
-            className="flex w-full items-center justify-between gap-3 text-left md:hidden"
-          >
-            <span className="text-[13px] font-semibold text-[#E6D4A3]">
-              {pendenciasFinalizar.length > 0
-                ? `Falta${pendenciasFinalizar.length === 1 ? "" : "m"} ${pendenciasFinalizar.length} ${
-                    pendenciasFinalizar.length === 1 ? "item" : "itens"
-                  } para finalizar`
-                : "Tudo certo — pode finalizar"}
-            </span>
-            {pendenciasFinalizar.length > 0 && (
-              <span className="flex items-center gap-1 text-[11px] uppercase tracking-[0.12em] text-[#A5B3BE]">
-                {checklistAberto ? "Ocultar" : "Ver"}
-                <svg
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className={`h-3.5 w-3.5 transition-transform ${checklistAberto ? "" : "rotate-180"}`}
-                >
-                  <path d="M6 9l6 6 6-6" />
-                </svg>
-              </span>
-            )}
-          </button>
-
-          <div className="mx-auto grid max-w-[1150px] gap-3 md:grid-cols-[65fr_35fr] md:gap-6">
-            <div className={`${checklistAberto ? "block" : "hidden"} pt-2 md:block md:pt-0`}>
-              <p className="hidden text-[15px] font-semibold text-[#E6D4A3] md:block">Antes de finalizar</p>
-              {pendenciasFinalizar.length > 0 ? (
-                <ul className="space-y-2.5 md:mt-3 md:space-y-3.5">
-                  {pendenciasFinalizar.map((item) => (
-                    <li key={item} className="flex items-start gap-2.5 text-[13px] leading-[1.4] text-[#F1EEE7] md:text-sm">
-                      <IconCheck className="mt-0.5 h-4 w-4 shrink-0 text-[#BFA76A]" />
-                      {item}
-                    </li>
-                  ))}
-                </ul>
-              ) : (
-                <p className="mt-3 hidden items-center gap-2 text-sm text-[#F1EEE7] md:flex">
-                  <IconCheck className="h-4 w-4 shrink-0 text-[#BFA76A]" />
-                  Tudo certo — pode finalizar.
-                </p>
-              )}
-              <p className="mt-3 text-[11px] leading-5 text-[#A5B3BE] md:mt-5 md:text-xs">
-                {ehCompra
-                  ? "Ao finalizar, você é levado direto pra página de pagamento segura da Stone (Pix). Após a confirmação, nossa equipe combina a entrega dos ienes pelo WhatsApp."
-                  : "Ao enviar, o pedido chega na nossa equipe, que combina com você pelo WhatsApp a entrega dos ienes. O Pix pra você é feito depois da conferência."}
-              </p>
-            </div>
-
-            <div className="md:rounded-xl md:border md:border-[#8E794B]/30 md:bg-[#18343F] md:p-5">
-              <p className="hidden text-[10px] uppercase tracking-[0.15em] text-[#8498A8] md:block">
-                {ehCompra ? "Você paga" : "Você recebe"}
-              </p>
-              {preco ? (
-                <div className="flex items-baseline justify-between gap-3 md:block">
-                  <p
-                    className={`${inter.className} text-2xl font-bold tracking-[-0.02em] tabular-nums text-[#C2A66A] md:mt-1 md:text-3xl`}
-                  >
-                    {formatBRL(preco.totalBRL)}
-                  </p>
-                  <p className="text-right text-xs text-[#A5B3BE] md:mt-1 md:text-left md:text-sm">
-                    {direcaoLabel} · ¥{quantidadeIenes.toLocaleString("pt-BR")} · {cidadeNome}
-                  </p>
-                </div>
-              ) : (
-                <p className="mt-1 hidden text-sm text-[#B8C5CE] md:block">Carregando a cotação do dia…</p>
-              )}
-
-              <div className="my-4 hidden h-px bg-white/10 md:block" />
-
-              <button
-                type="button"
-                onClick={enviar}
-                disabled={!formValido || status === "enviando"}
-                className={`mt-3 flex h-12 w-full items-center justify-center rounded-full text-sm font-medium uppercase tracking-[0.06em] transition-colors duration-200 md:mt-0 md:h-14 ${
-                  formValido && status !== "enviando"
-                    ? "bg-[#E7DFD0] text-[#122D40] hover:bg-[#F0EADF]"
-                    : "cursor-not-allowed bg-[#2F4F69] text-[#9DB0BD]"
-                }`}
-              >
-                {status === "enviando" ? "Enviando…" : ehCompra ? "Pagar com Pix" : "Enviar pedido de venda"}
-              </button>
-
-              {ehCompra && (
-                <div className="mt-2 flex items-center justify-center gap-2 md:mt-4 md:flex-col md:gap-1">
-                  <span className="text-[11px] text-[#A9B0B2] md:text-xs">Pagamento seguro</span>
-                  <Image
-                    src="/images/produtos/stone-logo-white.png"
-                    alt="Stone"
-                    width={102}
-                    height={37}
-                    className="h-5 w-auto opacity-90 md:h-9"
-                  />
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
+        <RodapeCheckout
+          containerRef={rodapeRef}
+          pendencias={pendenciasFinalizar}
+          formValido={formValido}
+          enviando={status === "enviando"}
+          onFinalizar={enviar}
+          rotuloValor={ehCompra ? "Você paga" : "Você recebe"}
+          valor={preco ? formatBRL(preco.totalBRL) : null}
+          detalhe={`${direcaoLabel} · ¥${quantidadeIenes.toLocaleString("pt-BR")} · ${cidadeNome}`}
+          semValor="Carregando a cotação do dia…"
+          rotuloBotao={ehCompra ? "Pagar com Pix" : "Enviar pedido de venda"}
+          mostrarStone={ehCompra}
+          sentinelaId="checkout-ultimo-passo"
+          classeValor={inter.className}
+        />
       )}
+
     </main>
   );
 }

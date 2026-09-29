@@ -41,6 +41,7 @@ import {
   formatarDataBR,
   IconCheck,
 } from "../page";
+import { RodapeCheckout } from "../RodapeCheckout";
 import { SEGURADORAS_VIAGEM, PAISES_ASIA_ADICIONAIS, type SeguradoraKey } from "./seguradoras";
 
 // Fonte Inter só para valores em dinheiro — mesmo padrão do JR Pass
@@ -276,7 +277,7 @@ export default function SeguroViagemPage() {
       // checkout hospedado e o cliente vai direto pagar (mesmo fluxo do
       // JR Pass). Sem a integração, cai na tela "pedido registrado".
       if (dadosResposta?.checkoutUrl) {
-        window.location.href = dadosResposta.checkoutUrl;
+        window.location.assign(dadosResposta.checkoutUrl);
         return;
       }
       setStatus("enviado");
@@ -293,7 +294,6 @@ export default function SeguroViagemPage() {
   // Altura real do rodapé fixo — mesmo padrão do JR Pass, pro fim da
   // página não ficar escondido atrás dele.
   const rodapeRef = useRef<HTMLDivElement | null>(null);
-  const [checklistAberto, setChecklistAberto] = useState(false);
   const [alturaRodape, setAlturaRodape] = useState(0);
   useEffect(() => {
     const elemento = rodapeRef.current;
@@ -396,11 +396,6 @@ export default function SeguroViagemPage() {
                 </h1>
               </div>
             </section>
-            <p className="mt-6 max-w-2xl text-sm leading-relaxed text-black/75">
-              Trabalhamos com três seguradoras parceiras — Affinity, GTA e MTA. Escolha a sua, informe quem
-              viaja e as datas, e finalize a compra aqui mesmo: a apólice é emitida pela seguradora e enviada
-              por e-mail e WhatsApp.
-            </p>
 
             <div className="mt-8 rounded-2xl bg-[#eef6fb] p-5 sm:p-6">
               <p className="text-center text-xs font-medium uppercase tracking-[0.15em] text-[#1c6ea8]">
@@ -908,7 +903,7 @@ export default function SeguroViagemPage() {
                 atualização: setembro de 2026"). Ao mudar este texto de
                 forma relevante, atualizar TERMOS_VERSAO_SEGURO_VIAGEM em
                 app/api/seguro-viagem-selfservice/route.ts. */}
-            <div className="mt-8 border-t border-black/10 pt-6">
+            <div id="checkout-ultimo-passo" className="mt-8 border-t border-black/10 pt-6">
               <TituloPasso numero={8} titulo="Termos e condições" />
               <div
                 id="termos-seguro-viagem"
@@ -961,122 +956,26 @@ export default function SeguroViagemPage() {
       {/* Rodapé fixo — mesmo componente visual do JR Pass (checklist
           "Antes de finalizar" + resumo + botão Stone), com o checklist
           recolhível no celular. */}
+      {/* Rodapé fixo enxuto (app/produtos/RodapeCheckout.tsx) — pedido do
+          Wilson, 29/set/2026: lista de pendências só aparece quando o
+          cliente está quase finalizando ou tenta finalizar com algo faltando. */}
       {status !== "enviado" && (
-        <div
-          ref={rodapeRef}
-          className="fixed inset-x-0 bottom-0 z-50 max-h-[75svh] overflow-y-auto border-t border-white/10 bg-[#0A263D] px-4 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-3 shadow-[0_-8px_24px_rgba(0,0,0,0.3)] md:max-h-[85vh] md:px-8 md:py-5"
-        >
-          <button
-            type="button"
-            onClick={() => setChecklistAberto((v) => !v)}
-            aria-expanded={checklistAberto}
-            className="flex w-full items-center justify-between gap-3 text-left md:hidden"
-          >
-            <span className="text-[13px] font-semibold text-[#E6D4A3]">
-              {pendenciasFinalizar.length > 0
-                ? `Falta${pendenciasFinalizar.length === 1 ? "" : "m"} ${pendenciasFinalizar.length} ${
-                    pendenciasFinalizar.length === 1 ? "item" : "itens"
-                  } para finalizar`
-                : "Tudo certo — pode finalizar"}
-            </span>
-            {pendenciasFinalizar.length > 0 && (
-              <span className="flex items-center gap-1 text-[11px] uppercase tracking-[0.12em] text-[#A5B3BE]">
-                {checklistAberto ? "Ocultar" : "Ver"}
-                <svg
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className={`h-3.5 w-3.5 transition-transform ${checklistAberto ? "" : "rotate-180"}`}
-                >
-                  <path d="M6 9l6 6 6-6" />
-                </svg>
-              </span>
-            )}
-          </button>
-
-          <div className="mx-auto grid max-w-[1150px] gap-3 md:grid-cols-[65fr_35fr] md:gap-6">
-            <div className={`${checklistAberto ? "block" : "hidden"} pt-2 md:block md:pt-0`}>
-              <p className="hidden text-[15px] font-semibold text-[#E6D4A3] md:block">Antes de finalizar</p>
-              {pendenciasFinalizar.length > 0 ? (
-                <ul className="space-y-2.5 md:mt-3 md:space-y-3.5">
-                  {pendenciasFinalizar.map((item) => (
-                    <li key={item} className="flex items-start gap-2.5 text-[13px] leading-[1.4] text-[#F1EEE7] md:text-sm">
-                      <IconCheck className="mt-0.5 h-4 w-4 shrink-0 text-[#BFA76A]" />
-                      {item}
-                    </li>
-                  ))}
-                </ul>
-              ) : (
-                <p className="mt-3 hidden items-center gap-2 text-sm text-[#F1EEE7] md:flex">
-                  <IconCheck className="h-4 w-4 shrink-0 text-[#BFA76A]" />
-                  Tudo certo — pode finalizar.
-                </p>
-              )}
-              <p className="mt-3 text-[11px] leading-5 text-[#A5B3BE] md:mt-5 md:text-xs">
-                Ao finalizar, você é levado direto pra página de pagamento segura da Stone (Pix ou cartão).
-                Após a confirmação, nossa equipe confirma o plano com a seguradora, emite a apólice e envia
-                pelo WhatsApp e por e-mail.
-              </p>
-            </div>
-
-            <div className="md:rounded-xl md:border md:border-[#8E794B]/30 md:bg-[#18343F] md:p-5">
-              <p className="hidden text-[10px] uppercase tracking-[0.15em] text-[#8498A8] md:block">Sua escolha</p>
-              {valorTotalBRL !== null && valorTotalBRL > 0 ? (
-                <div className="flex items-baseline justify-between gap-3 md:block">
-                  <p
-                    className={`${inter.className} text-2xl font-bold tracking-[-0.02em] tabular-nums text-[#C2A66A] md:mt-1 md:text-3xl`}
-                  >
-                    {formatBRL(valorTotalBRL)}
-                  </p>
-                  <div className="text-right md:text-left">
-                    <p className="text-xs text-[#A5B3BE] md:mt-1 md:text-sm">
-                      {seguradoraEscolhida ? `${seguradoraEscolhida.nome} · ` : ""}
-                      {dias} {dias === 1 ? "dia" : "dias"} · {numViajantes}{" "}
-                      {numViajantes === 1 ? "viajante" : "viajantes"}
-                    </p>
-                    {descricaoPagamentoEscolhido && (
-                      <p className="mt-1 hidden text-[11px] text-[#8498A8] md:block">{descricaoPagamentoEscolhido}</p>
-                    )}
-                  </div>
-                </div>
-              ) : (
-                <p className="mt-1 hidden text-sm text-[#B8C5CE] md:block">
-                  Preencha a idade dos viajantes e as datas da viagem para ver o valor.
-                </p>
-              )}
-
-              <div className="my-4 hidden h-px bg-white/10 md:block" />
-
-              <button
-                type="button"
-                onClick={enviar}
-                disabled={!formValido || status === "enviando"}
-                className={`mt-3 flex h-12 w-full items-center justify-center rounded-full text-sm font-medium uppercase tracking-[0.06em] transition-colors duration-200 md:mt-0 md:h-14 ${
-                  formValido && status !== "enviando"
-                    ? "bg-[#E7DFD0] text-[#122D40] hover:bg-[#F0EADF]"
-                    : "cursor-not-allowed bg-[#2F4F69] text-[#9DB0BD]"
-                }`}
-              >
-                {status === "enviando" ? "Enviando…" : "Finalizar compra"}
-              </button>
-
-              <div className="mt-2 flex items-center justify-center gap-2 md:mt-4 md:flex-col md:gap-1">
-                <span className="text-[11px] text-[#A9B0B2] md:text-xs">Pagamento seguro</span>
-                <Image
-                  src="/images/produtos/stone-logo-white.png"
-                  alt="Stone"
-                  width={102}
-                  height={37}
-                  className="h-5 w-auto opacity-90 md:h-9"
-                />
-              </div>
-            </div>
-          </div>
-        </div>
+        <RodapeCheckout
+          containerRef={rodapeRef}
+          pendencias={pendenciasFinalizar}
+          formValido={formValido}
+          enviando={status === "enviando"}
+          onFinalizar={enviar}
+          rotuloValor="Total"
+          valor={valorTotalBRL !== null && valorTotalBRL > 0 ? formatBRL(valorTotalBRL) : null}
+          detalhe={`${seguradoraEscolhida ? `${seguradoraEscolhida.nome} · ` : ""}${dias} ${dias === 1 ? "dia" : "dias"} · ${numViajantes} ${numViajantes === 1 ? "viajante" : "viajantes"}`}
+          semValor="Preencha a idade dos viajantes e as datas da viagem para ver o valor."
+          rotuloBotao="Finalizar compra"
+          sentinelaId="checkout-ultimo-passo"
+          classeValor={inter.className}
+        />
       )}
+
     </main>
   );
 }
