@@ -715,27 +715,12 @@ export default function JrPassPage() {
               })}
             </div>
 
-            {/* "Sua escolha" — resumo horizontal e compacto, atualiza
-                sozinho conforme duração/classe mudam. Sem botão
-                "Continuar" — pedido do Wilson, 29/set/2026: fluxo
-                vertical contínuo até o único CTA no rodapé. */}
-            <div className="mt-5 flex items-center justify-between gap-4 rounded-xl border border-[#E4E1DC] bg-[#FBFAF7] px-4 py-3">
-              <div className="min-w-0">
-                <p className="text-[10px] uppercase tracking-[0.15em] text-[#77736D]">Sua escolha</p>
-                <p className="mt-0.5 truncate text-sm text-[#1C1C1A]">
-                  {selecaoCompleta
-                    ? `${tipoEscolhido!.classe} · ${diasSelecionados} dias`
-                    : "Selecione a duração e a classe."}
-                </p>
-              </div>
-              {precoEscolhidoBRL !== null && (
-                <p className={`${inter.className} shrink-0 text-lg font-bold tracking-[-0.02em] tabular-nums text-[#1C1C1A]`}>
-                  {formatBRL(precoEscolhidoBRL)}
-                </p>
-              )}
-            </div>
-
-            <p className="mt-3 text-[11px] leading-5 text-black/60">
+            {/* Preço já aparece nos cards de classe acima e no resumo do
+                rodapé fixo — pedido do Wilson, 29/set/2026: removida a
+                barra "Sua escolha" que duplicava classe/dias/preço. Fica
+                só o texto de transparência de preço e o câmbio do dia,
+                que não estão no rodapé. */}
+            <p className="mt-5 text-[11px] leading-5 text-black/60">
               Valor por pessoa, já com taxas incluídas, convertido pela cotação do dia.
             </p>
             <div className="mt-1.5 inline-flex rounded-lg bg-[#eef6fb] px-3 py-1.5">
