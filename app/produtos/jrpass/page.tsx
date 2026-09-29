@@ -30,8 +30,6 @@ import {
 import {
   display,
   WHATSAPP_NUMBER,
-  JR_PASS_OFICIAL_JPY,
-  formatJPY,
   FormasPagamento,
   descricaoFormaPagamento,
   hojeISO,
@@ -134,11 +132,11 @@ export default function JrPassPage() {
   // validador de foto script simples de checagem" + depois "foto do
   // passaporte ou foto da passagem, a o JR pass só pode ser emitido se
   // ele estiver no Japao em até 90 dias" (qualquer um dos dois documentos
-  // comprova a janela de 90 dias) + "colocar opção de anexar documentos
-  // depois também" (daí documentoAdiado, que libera o botão de finalizar
-  // sem bloquear o cliente). Upload + OCR best-effort em
-  // /api/jrpass-documento — ver lib/ocr/validarDocumentoJrPass.ts pro
-  // motivo de nunca bloquear o cliente com base no resultado do OCR.
+  // comprova a janela de 90 dias). Passo obrigatório desde 29/set/2026
+  // ("tornar passo 4 obrigatorio") — a opção de anexar depois foi
+  // removida. Upload + OCR best-effort em /api/jrpass-documento — ver
+  // lib/ocr/validarDocumentoJrPass.ts pro motivo de nunca bloquear o
+  // cliente com base no resultado do OCR.
   const [referenciaDocumento] = useState(() =>
     typeof crypto !== "undefined" && "randomUUID" in crypto
       ? crypto.randomUUID()
@@ -152,11 +150,9 @@ export default function JrPassPage() {
   const [documentoErro, setDocumentoErro] = useState("");
   const [documentoStoragePath, setDocumentoStoragePath] = useState<string | null>(null);
   const [documentoValidacaoMotivo, setDocumentoValidacaoMotivo] = useState("");
-  const [documentoAdiado, setDocumentoAdiado] = useState(false);
 
   async function lidarComArquivoDocumento(tipo: "passaporte" | "passagem", file: File) {
     setDocumentoTipo(tipo);
-    setDocumentoAdiado(false);
     setDocumentoNomeArquivo(file.name);
     setDocumentoStatus("enviando");
     setDocumentoErro("");
@@ -188,7 +184,7 @@ export default function JrPassPage() {
       setDocumentoStatus(dados.validacao?.ok ? "validado" : "incerto");
     } catch {
       setDocumentoStatus("erro");
-      setDocumentoErro("Não foi possível enviar o documento agora — tente de novo ou anexe depois.");
+      setDocumentoErro("Não foi possível enviar o documento agora — tente de novo.");
     }
   }
 
@@ -275,7 +271,7 @@ export default function JrPassPage() {
     },
     {
       key: "green" as const,
-      classe: "Green Car (luxo)",
+      classe: "Green Car (Luxo)",
       icone: "/images/ingressos/jr-green-car.png",
       precoUSD: JR_PASS_PRECO_USD_GREEN,
     },
@@ -383,16 +379,17 @@ export default function JrPassPage() {
   // Pedido do Wilson, 25/set/2026: "adicionar nome, e-mail e telefone
   // nessa página, registrar no CRM ao proceder para pagamento" — só
   // libera o botão "Finalizar Compra" com seleção completa, contato
-  // válido, termos aceitos, e alguma decisão sobre o documento (anexado
-  // OU explicitamente adiado — nunca trava no resultado do OCR, só exige
-  // que o cliente tenha feito uma escolha).
+  // válido, termos aceitos, e documento anexado — pedido do Wilson,
+  // 29/set/2026: "tornar passo 4 obrigatorio" (documento deixou de ter
+  // opção de "anexar depois"; nunca trava no resultado do OCR em si, só
+  // exige que algum arquivo tenha sido enviado).
   const formValido =
     selecaoCompleta &&
     nome.trim().length > 0 &&
     /\S+@\S+\.\S+/.test(email) &&
     whatsapp.trim().length >= 8 &&
     termosAceitos &&
-    (documentoAdiado || documentoStatus === "validado" || documentoStatus === "incerto");
+    (documentoStatus === "validado" || documentoStatus === "incerto");
 
   // Lista do que falta pra liberar o "Finalizar Compra" — pedido do
   // Wilson, 28/set/2026: "precisa exibir uma mensagem avisando o que
@@ -406,8 +403,8 @@ export default function JrPassPage() {
   if (nome.trim().length === 0) pendenciasFinalizar.push("Preencha seu nome completo.");
   if (!/\S+@\S+\.\S+/.test(email)) pendenciasFinalizar.push("Preencha um e-mail válido.");
   if (whatsapp.trim().length < 8) pendenciasFinalizar.push("Preencha seu WhatsApp.");
-  if (!(documentoAdiado || documentoStatus === "validado" || documentoStatus === "incerto")) {
-    pendenciasFinalizar.push('Anexe o documento (passaporte ou passagem) ou escolha "Anexar depois".');
+  if (!(documentoStatus === "validado" || documentoStatus === "incerto")) {
+    pendenciasFinalizar.push("Anexe o documento (foto do passaporte ou da passagem).");
   }
   if (!termosAceitos) {
     pendenciasFinalizar.push(
@@ -443,7 +440,6 @@ export default function JrPassPage() {
           documentoTipo,
           documentoStoragePath,
           documentoValidacaoMotivo,
-          documentoAdiado,
           termosAceitos,
         }),
       });
@@ -536,12 +532,6 @@ export default function JrPassPage() {
                 WhatsApp e por e-mail — junto com a explicação completa de como funciona a troca do
                 voucher pelo passe físico no Japão.
               </p>
-              {documentoAdiado && (
-                <p className="mx-auto mt-3 max-w-md text-xs leading-relaxed text-amber-700">
-                  Você optou por anexar o documento (passaporte ou passagem) depois — pode mandar
-                  direto pelo WhatsApp assim que tiver em mãos.
-                </p>
-              )}
               <a
                 href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(mensagemWhatsapp)}`}
                 target="_blank"
@@ -594,7 +584,7 @@ export default function JrPassPage() {
                     Passo {index + 1}
                   </p>
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={passo.icone} alt="" className="mt-2 h-14 w-14 object-contain" />
+                  <img src={passo.icone} alt="" className="mt-2 h-20 w-20 object-contain" />
                   <p className="mt-2 text-xs font-medium text-black">{passo.titulo}</p>
                   <p className="mt-1 text-[11px] leading-4 text-black/50">{passo.texto}</p>
                 </div>
@@ -620,7 +610,7 @@ export default function JrPassPage() {
                       : "border-black/10 bg-black/[0.02]"
                   }`}
                 >
-                  <div className="flex items-center gap-3">
+                  <div className="flex flex-col items-center gap-2 text-center">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img src={tipo.icone} alt="" className="h-10 w-10 shrink-0 object-contain" />
                     <p className={`${display.className} text-base font-medium text-black`}>
@@ -666,22 +656,15 @@ export default function JrPassPage() {
                       );
                     })}
                   </div>
-                  <p className="mt-3 border-t border-black/5 pt-3 text-[10px] leading-4 text-black/35">
-                    Tabela oficial JR (ienes, vigente a partir de 1/out/2026):{" "}
-                    {JR_PASS_DIAS_OPCOES.map((dias, index) => (
-                      <span key={dias}>
-                        {index > 0 && " · "}
-                        {dias}d {formatJPY(JR_PASS_OFICIAL_JPY[tipo.key][dias])}
-                      </span>
-                    ))}
-                  </p>
                 </div>
               ))}
             </div>
             <p className="mt-3 text-[11px] leading-5 text-black/40">
               Valor por pessoa, já com taxas incluídas, convertido pela cotação do dia.
             </p>
-            <CambioLabel cambio={cambio} className="mt-2 text-[11px] text-black/35" />
+            <div className="mt-2 inline-flex rounded-lg bg-[#eef6fb] px-3 py-1.5">
+              <CambioLabel cambio={cambio} className="text-[11px] text-[#1c6ea8]" />
+            </div>
           </div>
 
           {/* Datas da viagem — pedido do Wilson, 25/set/2026: "falta
@@ -739,135 +722,145 @@ export default function JrPassPage() {
               </span>
               <p className="text-[10px] uppercase tracking-[0.2em] text-black/40">Número de pessoas</p>
             </div>
-            <div className="mt-4 flex max-w-xs items-center gap-2">
-              <button
-                type="button"
-                onClick={() => ajustarNumeroPessoas(numeroPessoas - 1)}
-                aria-label="Diminuir número de pessoas"
-                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-black/15 text-black transition hover:border-black/30"
-              >
-                −
-              </button>
-              <span className="flex h-10 flex-1 items-center justify-center rounded-lg border border-black/15 bg-black/[0.02] text-sm text-black">
-                {numeroPessoas} {numeroPessoas === 1 ? "pessoa" : "pessoas"}
-              </span>
-              <button
-                type="button"
-                onClick={() => ajustarNumeroPessoas(numeroPessoas + 1)}
-                aria-label="Aumentar número de pessoas"
-                className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-black/15 text-black transition hover:border-black/30"
-              >
-                +
-              </button>
+            <div className="mt-4 grid gap-6 sm:max-w-xl sm:grid-cols-2">
+              <div>
+                <span className="mb-2 block text-[10px] uppercase tracking-[0.15em] text-black/50">
+                  Total de pessoas
+                </span>
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => ajustarNumeroPessoas(numeroPessoas - 1)}
+                    aria-label="Diminuir número de pessoas"
+                    className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-black/15 text-black transition hover:border-black/30"
+                  >
+                    −
+                  </button>
+                  <span className="flex h-10 flex-1 items-center justify-center rounded-lg border border-black/15 bg-black/[0.02] text-sm text-black">
+                    {numeroPessoas} {numeroPessoas === 1 ? "pessoa" : "pessoas"}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => ajustarNumeroPessoas(numeroPessoas + 1)}
+                    aria-label="Aumentar número de pessoas"
+                    className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-black/15 text-black transition hover:border-black/30"
+                  >
+                    +
+                  </button>
+                </div>
+              </div>
+
+              {/* Crianças com desconto — pedido do Wilson, 25/set/2026:
+                  "quando é criança o cliente paga metade do valor, criança
+                  entre 6 a 12 anos incompletos" + "tem que ter um campo com
+                  numero de crianças e idade da criança para ser
+                  selecionada" — stepper de quantas das pessoas acima são
+                  crianças, e um seletor de idade por criança (mesmo padrão
+                  da grade de idades do Seguro Viagem), pra confirmar se
+                  cada uma cai mesmo na faixa 6–11 que dá direito à
+                  meia-entrada. Lado a lado com o stepper de pessoas —
+                  pedido do Wilson, 29/set/2026: "campos de numero de
+                  adultos e crianças devem estar lado a lado e não um
+                  embaixo do outro". */}
+              <div>
+                <span className="mb-2 block text-[10px] uppercase tracking-[0.15em] text-black/50">
+                  Crianças (opcional) — 6 a 11 anos pagam metade
+                </span>
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => ajustarNumeroCriancas(numeroCriancas - 1)}
+                    aria-label="Diminuir número de crianças"
+                    className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-black/15 text-black transition hover:border-black/30"
+                  >
+                    −
+                  </button>
+                  <span className="flex h-10 flex-1 items-center justify-center rounded-lg border border-black/15 bg-black/[0.02] text-sm text-black">
+                    {numeroCriancas} {numeroCriancas === 1 ? "criança" : "crianças"}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => ajustarNumeroCriancas(numeroCriancas + 1)}
+                    aria-label="Aumentar número de crianças"
+                    disabled={numeroCriancas >= numeroPessoas}
+                    className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border text-black transition ${
+                      numeroCriancas >= numeroPessoas
+                        ? "cursor-not-allowed border-black/10 text-black/25"
+                        : "border-black/15 hover:border-black/30"
+                    }`}
+                  >
+                    +
+                  </button>
+                </div>
+              </div>
             </div>
             <p className="mt-2 text-[11px] leading-5 text-black/40">
               Cada viajante precisa do próprio passe — o preço no rodapé já é o total pras{" "}
               {numeroPessoas} {numeroPessoas === 1 ? "pessoa" : "pessoas"}.
             </p>
 
-            {/* Crianças com desconto — pedido do Wilson, 25/set/2026:
-                "quando é criança o cliente paga metade do valor, criança
-                entre 6 a 12 anos incompletos" + "tem que ter um campo com
-                numero de crianças e idade da criança para ser
-                selecionada" — stepper de quantas das pessoas acima são
-                crianças, e um seletor de idade por criança (mesmo padrão
-                da grade de idades do Seguro Viagem), pra confirmar se
-                cada uma cai mesmo na faixa 6–11 que dá direito à
-                meia-entrada. */}
-            <div className="mt-6">
-              <span className="mb-2 block text-[10px] uppercase tracking-[0.15em] text-black/50">
-                Crianças (opcional) — 6 a 11 anos pagam metade
-              </span>
-              <div className="flex max-w-xs items-center gap-2">
-                <button
-                  type="button"
-                  onClick={() => ajustarNumeroCriancas(numeroCriancas - 1)}
-                  aria-label="Diminuir número de crianças"
-                  className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-black/15 text-black transition hover:border-black/30"
-                >
-                  −
-                </button>
-                <span className="flex h-10 flex-1 items-center justify-center rounded-lg border border-black/15 bg-black/[0.02] text-sm text-black">
-                  {numeroCriancas} {numeroCriancas === 1 ? "criança" : "crianças"}
-                </span>
-                <button
-                  type="button"
-                  onClick={() => ajustarNumeroCriancas(numeroCriancas + 1)}
-                  aria-label="Aumentar número de crianças"
-                  disabled={numeroCriancas >= numeroPessoas}
-                  className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border text-black transition ${
-                    numeroCriancas >= numeroPessoas
-                      ? "cursor-not-allowed border-black/10 text-black/25"
-                      : "border-black/15 hover:border-black/30"
-                  }`}
-                >
-                  +
-                </button>
-              </div>
-
-              {numeroCriancas > 0 && (
-                <div className="mt-4 grid gap-3 sm:grid-cols-4">
-                  {idadesCriancas.map((idade, index) => {
-                    const multiplicador = typeof idade === "number" ? multiplicadorPorIdadeCrianca(idade) : null;
-                    const rotuloFaixa =
-                      multiplicador === 0
-                        ? "Grátis (menor de 6)"
-                        : multiplicador === 0.5
-                          ? "50% (6 a 11 anos)"
-                          : multiplicador === 1
-                            ? "Valor cheio (12+)"
-                            : null;
-                    return (
-                      <label key={index} className="flex flex-col gap-1.5">
-                        <span className="text-[10px] uppercase tracking-[0.15em] text-black/50">
-                          Idade — criança {index + 1}
+            {numeroCriancas > 0 && (
+              <div className="mt-4 grid gap-3 sm:grid-cols-4">
+                {idadesCriancas.map((idade, index) => {
+                  const multiplicador = typeof idade === "number" ? multiplicadorPorIdadeCrianca(idade) : null;
+                  const rotuloFaixa =
+                    multiplicador === 0
+                      ? "Grátis (menor de 6)"
+                      : multiplicador === 0.5
+                        ? "50% (6 a 11 anos)"
+                        : multiplicador === 1
+                          ? "Valor cheio (12+)"
+                          : null;
+                  return (
+                    <label key={index} className="flex flex-col gap-1.5">
+                      <span className="text-[10px] uppercase tracking-[0.15em] text-black/50">
+                        Idade — criança {index + 1}
+                      </span>
+                      <input
+                        type="number"
+                        min={0}
+                        max={17}
+                        value={idade}
+                        onChange={(e) => {
+                          const valor =
+                            e.target.value === "" ? "" : Math.max(0, Math.min(17, Number(e.target.value)));
+                          setIdadesCriancas((atual) => atual.map((v, i) => (i === index ? valor : v)));
+                        }}
+                        className="rounded-lg border border-black/15 px-3 py-2.5 text-sm text-black focus:border-[#2f80c9] focus:outline-none"
+                      />
+                      {rotuloFaixa && (
+                        <span
+                          className={`text-[10px] ${
+                            multiplicador === 0
+                              ? "text-emerald-700"
+                              : multiplicador === 0.5
+                                ? "text-[#1c6ea8]"
+                                : "text-black/40"
+                          }`}
+                        >
+                          {rotuloFaixa}
                         </span>
-                        <input
-                          type="number"
-                          min={0}
-                          max={17}
-                          value={idade}
-                          onChange={(e) => {
-                            const valor =
-                              e.target.value === "" ? "" : Math.max(0, Math.min(17, Number(e.target.value)));
-                            setIdadesCriancas((atual) => atual.map((v, i) => (i === index ? valor : v)));
-                          }}
-                          className="rounded-lg border border-black/15 px-3 py-2.5 text-sm text-black focus:border-[#2f80c9] focus:outline-none"
-                        />
-                        {rotuloFaixa && (
-                          <span
-                            className={`text-[10px] ${
-                              multiplicador === 0
-                                ? "text-emerald-700"
-                                : multiplicador === 0.5
-                                  ? "text-[#1c6ea8]"
-                                  : "text-black/40"
-                            }`}
-                          >
-                            {rotuloFaixa}
-                          </span>
-                        )}
-                      </label>
-                    );
-                  })}
-                </div>
-              )}
+                      )}
+                    </label>
+                  );
+                })}
+              </div>
+            )}
 
-              {/* Resumo das faixas — nota 3 da tabela do fornecedor
-                  (Century Travel, 25/set/2026): menor de 6 não paga, 6 a
-                  11 completa paga metade, 12+ conta como adulto. */}
-              {(criancasGratis > 0 || criancasComDesconto > 0 || criancasComoAdulto > 0) && (
-                <p className="mt-2 text-[11px] leading-5 text-black/40">
-                  {criancasGratis > 0 && `${criancasGratis} grátis (menor de 6 anos)`}
-                  {criancasGratis > 0 && (criancasComDesconto > 0 || criancasComoAdulto > 0) && " · "}
-                  {criancasComDesconto > 0 && `${criancasComDesconto} com 50% de desconto (6 a 11 anos)`}
-                  {criancasComDesconto > 0 && criancasComoAdulto > 0 && " · "}
-                  {criancasComoAdulto > 0 &&
-                    `${criancasComoAdulto} no valor cheio de adulto (12 anos ou mais)`}
-                  {" "}— já aplicado no total abaixo.
-                </p>
-              )}
-            </div>
+            {/* Resumo das faixas — nota 3 da tabela do fornecedor
+                (Century Travel, 25/set/2026): menor de 6 não paga, 6 a
+                11 completa paga metade, 12+ conta como adulto. */}
+            {(criancasGratis > 0 || criancasComDesconto > 0 || criancasComoAdulto > 0) && (
+              <p className="mt-2 text-[11px] leading-5 text-black/40">
+                {criancasGratis > 0 && `${criancasGratis} grátis (menor de 6 anos)`}
+                {criancasGratis > 0 && (criancasComDesconto > 0 || criancasComoAdulto > 0) && " · "}
+                {criancasComDesconto > 0 && `${criancasComDesconto} com 50% de desconto (6 a 11 anos)`}
+                {criancasComDesconto > 0 && criancasComoAdulto > 0 && " · "}
+                {criancasComoAdulto > 0 &&
+                  `${criancasComoAdulto} no valor cheio de adulto (12 anos ou mais)`}
+                {" "}— já aplicado no total abaixo.
+              </p>
+            )}
           </div>
 
           {/* Critérios de elegibilidade */}
@@ -879,7 +872,7 @@ export default function JrPassPage() {
               {ELEGIBILIDADE.map((item) => (
                 <div key={item.titulo} className="flex gap-3">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={item.icone} alt="" className="mt-0.5 h-12 w-12 shrink-0 object-contain" />
+                  <img src={item.icone} alt="" className="mt-0.5 h-16 w-16 shrink-0 object-contain" />
                   <div>
                     <p className="text-xs font-medium text-black">{item.titulo}</p>
                     <p className="mt-1 text-[11px] leading-5 text-black/50">{item.texto}</p>
@@ -896,7 +889,7 @@ export default function JrPassPage() {
               {REGRAS_DE_USO.map((item) => (
                 <div key={item.titulo} className="flex gap-3">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={item.icone} alt="" className="mt-0.5 h-12 w-12 shrink-0 object-contain" />
+                  <img src={item.icone} alt="" className="mt-0.5 h-16 w-16 shrink-0 object-contain" />
                   <div>
                     <p className="text-xs font-medium text-black">{item.titulo}</p>
                     <p className="mt-1 text-[11px] leading-5 text-black/50">{item.texto}</p>
@@ -926,7 +919,7 @@ export default function JrPassPage() {
             <p className="mt-2 max-w-2xl text-[11px] leading-5 text-black/50">
               O JR Pass só pode ser emitido pra quem já está no Japão (ou vai entrar) dentro da
               janela de 90 dias — o carimbo de entrada no passaporte ou a data do voo na passagem
-              confirmam isso. Pode anexar um dos dois agora, ou deixar pra depois.
+              confirmam isso. Anexe um dos dois agora para continuar.
             </p>
             <div className="mt-4 flex flex-wrap gap-2">
               {(["passaporte", "passagem"] as const).map((tipo) => (
@@ -945,9 +938,9 @@ export default function JrPassPage() {
                         : "/images/produtos/jrpass-doc-passagem.png"
                     }
                     alt=""
-                    width={20}
-                    height={20}
-                    className="h-5 w-5"
+                    width={28}
+                    height={28}
+                    className="h-7 w-7"
                   />
                   {tipo === "passaporte" ? "Foto do passaporte" : "Foto da passagem/itinerário"}
                   <input
@@ -963,29 +956,6 @@ export default function JrPassPage() {
                   />
                 </label>
               ))}
-              <button
-                type="button"
-                onClick={() => {
-                  setDocumentoAdiado(true);
-                  setDocumentoStatus("vazio");
-                  setDocumentoTipo(null);
-                  setDocumentoNomeArquivo("");
-                }}
-                className={`flex items-center gap-2 rounded-full border px-4 py-2 text-xs transition ${
-                  documentoAdiado
-                    ? "border-black/40 bg-black/5 font-medium text-black"
-                    : "border-black/15 text-black/50 hover:border-black/30"
-                }`}
-              >
-                <Image
-                  src="/images/produtos/jrpass-doc-anexar-depois.png"
-                  alt=""
-                  width={20}
-                  height={20}
-                  className="h-5 w-5"
-                />
-                Anexar depois
-              </button>
             </div>
 
             {documentoStatus === "enviando" && (
@@ -1004,11 +974,6 @@ export default function JrPassPage() {
             )}
             {documentoStatus === "erro" && (
               <p className="mt-3 text-[11px] text-red-600">{documentoErro}</p>
-            )}
-            {documentoAdiado && (
-              <p className="mt-3 text-[11px] text-black/45">
-                Sem problema — pode mandar o documento pelo WhatsApp assim que tiver em mãos.
-              </p>
             )}
             {/* Selo de conexão segura — pedido do Wilson, 25/set/2026
                 ("adicionar SSL"), no mesmo pedido que trouxe CPF/endereço
@@ -1101,7 +1066,7 @@ export default function JrPassPage() {
             </div>
             <div
               ref={termosBoxRef}
-              className="mt-4 max-h-56 overflow-y-auto rounded-xl border border-black/10 bg-black/[0.02] p-4 text-[11px] leading-5 text-black/60"
+              className="mt-4 max-h-96 overflow-y-auto rounded-xl border border-black/10 bg-black/[0.02] p-4 text-[11px] leading-5 text-black/60"
               onScroll={(e) => {
                 const el = e.currentTarget;
                 if (el.scrollTop + el.clientHeight >= el.scrollHeight - 4) {
@@ -1195,17 +1160,17 @@ export default function JrPassPage() {
         {status !== "enviado" && (
           <div
             ref={rodapeRef}
-            className="fixed inset-x-0 bottom-0 z-50 border-t border-black/10 bg-white px-5 py-4 shadow-[0_-4px_16px_rgba(0,0,0,0.06)] md:px-8"
+            className="fixed inset-x-0 bottom-0 z-50 border-t border-white/10 bg-[#0A2540] px-5 py-4 shadow-[0_-4px_16px_rgba(0,0,0,0.25)] md:px-8"
           >
             <div className="mx-auto flex max-w-4xl flex-wrap items-center justify-between gap-x-6 gap-y-3">
               <div>
                 {selecaoCompleta ? (
                   <>
-                    <p className="text-[10px] uppercase tracking-[0.15em] text-black/40">Sua escolha</p>
-                    <p className={`${display.className} text-xl font-medium text-[#2f80c9] sm:text-2xl`}>
+                    <p className="text-[10px] uppercase tracking-[0.15em] text-white/50">Sua escolha</p>
+                    <p className={`${display.className} text-xl font-medium text-[#5b9bd9] sm:text-2xl`}>
                       {precoTotalBRL !== null ? formatBRL(precoTotalBRL) : "—"}
                     </p>
-                    <p className="text-xs text-black/45">
+                    <p className="text-xs text-white/60">
                       {tipoEscolhido!.classe} · {diasSelecionados} dias · {numeroPessoas}{" "}
                       {numeroPessoas === 1 ? "pessoa" : "pessoas"}
                       {numeroCriancas > 0 &&
@@ -1218,30 +1183,46 @@ export default function JrPassPage() {
                       )}
                     </p>
                     {descricaoPagamentoEscolhido && (
-                      <p className="mt-0.5 text-[11px] text-black/40">{descricaoPagamentoEscolhido}</p>
+                      <p className="mt-0.5 text-[11px] text-white/50">{descricaoPagamentoEscolhido}</p>
                     )}
                   </>
                 ) : (
-                  <p className="text-xs text-black/45">
+                  <p className="text-xs text-white/60">
                     Selecione o tipo (Comum ou Green Car) e a duração do passe acima.
                   </p>
                 )}
               </div>
-              <button
-                type="button"
-                onClick={enviar}
-                disabled={!formValido || status === "enviando"}
-                className={`inline-flex shrink-0 items-center justify-center rounded-full px-6 py-3.5 text-center text-xs font-medium uppercase tracking-[0.2em] text-white transition ${
-                  formValido && status !== "enviando"
-                    ? "bg-[#2f80c9] hover:bg-[#3b91dc]"
-                    : "cursor-not-allowed bg-black/20"
-                }`}
-              >
-                {status === "enviando" ? "Enviando…" : "Finalizar Compra"}
-              </button>
+              <div className="flex shrink-0 items-center gap-3">
+                <div className="hidden flex-col items-center gap-1 sm:flex">
+                  <div className="rounded-md bg-white px-2.5 py-1">
+                    <Image
+                      src="/images/produtos/stone-logo.png"
+                      alt="Stone"
+                      width={90}
+                      height={32}
+                      className="h-4 w-auto"
+                    />
+                  </div>
+                  <p className="max-w-[6rem] text-center text-[8px] uppercase leading-tight tracking-[0.08em] text-white/40">
+                    Tecnologia de pagamento via Stone
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={enviar}
+                  disabled={!formValido || status === "enviando"}
+                  className={`inline-flex shrink-0 items-center justify-center rounded-full px-6 py-3.5 text-center text-xs font-medium uppercase tracking-[0.2em] text-white transition ${
+                    formValido && status !== "enviando"
+                      ? "bg-[#2f80c9] hover:bg-[#3b91dc]"
+                      : "cursor-not-allowed bg-white/10 text-white/30"
+                  }`}
+                >
+                  {status === "enviando" ? "Enviando…" : "Finalizar Compra"}
+                </button>
+              </div>
             </div>
             {pendenciasFinalizar.length > 0 && status !== "enviando" && (
-              <div className="mt-3 rounded-lg border border-amber-300 bg-amber-50 px-3.5 py-2.5 text-[11px] leading-5 text-amber-800">
+              <div className="mt-3 rounded-lg border border-amber-400/30 bg-amber-400/10 px-3.5 py-2.5 text-[11px] leading-5 text-amber-200">
                 <p className="font-medium">Falta o seguinte pra finalizar:</p>
                 <ul className="mt-1 list-disc pl-4">
                   {pendenciasFinalizar.map((item) => (
@@ -1250,7 +1231,7 @@ export default function JrPassPage() {
                 </ul>
               </div>
             )}
-            <p className="mt-2 text-[10px] leading-4 text-black/35">
+            <p className="mt-2 text-[10px] leading-4 text-white/35">
               Ao finalizar, você é levado direto pra página de pagamento segura da Stone (Pix ou
               cartão). Após a confirmação, nossa equipe faz a checagem final da elegibilidade e
               envia as instruções de retirada do passe físico no Japão pelo WhatsApp e por e-mail.
