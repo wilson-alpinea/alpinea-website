@@ -938,7 +938,7 @@ export default function JrPassPage() {
                     height={36}
                     className="h-9 w-9"
                   />
-                  {tipo === "passaporte" ? "Foto do passaporte" : "Foto da passagem/itinerário"}
+                  {tipo === "passaporte" ? "Foto do passaporte" : "Foto da passagem"}
                   <input
                     type="file"
                     accept="image/*,application/pdf"
