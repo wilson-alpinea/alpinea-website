@@ -38,66 +38,28 @@ const ICONE_MOEDA_IENE = "/images/icone-moeda-iene.png";
 // é o ponto mais chato do formulário). Todos acima do mínimo.
 const ATALHOS_IENES = [100000, 200000, 300000, 500000];
 
-// Ícones PROVISÓRIOS do "Como funciona" — o Wilson manda as artes depois,
-// como fez no JR Pass.
-function IconePasso({ tipo }: { tipo: "pedido" | "pix" | "confirmacao" | "retirada" }) {
-  const comum = {
-    fill: "none",
-    stroke: "#2f80c9",
-    strokeWidth: 1.6,
-    strokeLinecap: "round" as const,
-    strokeLinejoin: "round" as const,
-  };
-  return (
-    <svg viewBox="0 0 48 48" className="mt-2 h-20 w-20" aria-hidden="true">
-      <circle cx="24" cy="24" r="22" fill="#dcecf8" />
-      {tipo === "pedido" && (
-        <g {...comum}>
-          <rect x="15" y="12" width="18" height="24" rx="2" />
-          <path d="M19 19h10M19 24h10M19 29h6" />
-        </g>
-      )}
-      {tipo === "pix" && (
-        <g {...comum}>
-          <path d="M24 12l12 12-12 12-12-12z" />
-          <path d="M19 24h10" />
-        </g>
-      )}
-      {tipo === "confirmacao" && (
-        <g {...comum}>
-          <path d="M14 18h20v13H22l-6 5v-5h-2z" />
-          <path d="M20 24l3 3 5-5" />
-        </g>
-      )}
-      {tipo === "retirada" && (
-        <g {...comum}>
-          <rect x="12" y="17" width="24" height="14" rx="2" />
-          <circle cx="24" cy="24" r="3.5" />
-          <path d="M16 21v6M32 21v6" />
-        </g>
-      )}
-    </svg>
-  );
-}
-
+// Ícones do "Como funciona" — enviados pelo Wilson em 29/set/2026 ("novos
+// icones para cambio"), no lugar dos SVGs provisórios. Salvos em 480px com
+// a mesma margem dos ícones do JR Pass/Seguro Viagem (desenho ~60% da
+// caixa), pra ficarem do mesmo tamanho visual nas três páginas.
 const COMO_FUNCIONA = [
   {
-    icone: "pedido" as const,
+    icone: "/images/produtos/cambio-passo-1-pedido.png",
     titulo: "Faça seu pedido",
     texto: "Escolha compra ou venda, a cidade e a quantidade de ienes.",
   },
   {
-    icone: "pix" as const,
+    icone: "/images/produtos/cambio-passo-2-pix.png",
     titulo: "Pix",
     texto: "Na compra, você paga via Pix pela Stone. Na venda, a Ajisai te paga via Pix.",
   },
   {
-    icone: "confirmacao" as const,
+    icone: "/images/produtos/cambio-passo-3-confirmacao.png",
     titulo: "Confirmamos",
     texto: "Nossa equipe confirma o pedido e combina data e local pelo WhatsApp.",
   },
   {
-    icone: "retirada" as const,
+    icone: "/images/produtos/cambio-passo-4-retirada.png",
     titulo: "Retire ou entregue",
     texto: "Os ienes em espécie são entregues (ou recebidos) na cidade escolhida.",
   },
@@ -346,7 +308,8 @@ export default function CambioPage() {
                     <p className="text-xs font-semibold uppercase tracking-[0.15em] text-[#2f80c9]">
                       Passo {index + 1}
                     </p>
-                    <IconePasso tipo={passo.icone} />
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={passo.icone} alt="" className="mt-2 h-20 w-20 object-contain" />
                     <p className="mt-2 text-sm font-medium text-black">{passo.titulo}</p>
                     <p className="mt-1 text-xs leading-5 text-black/65">{passo.texto}</p>
                   </div>
