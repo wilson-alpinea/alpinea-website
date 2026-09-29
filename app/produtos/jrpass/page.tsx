@@ -198,6 +198,10 @@ export default function JrPassPage() {
   // scroll em todo documento".
   const [termosRolados, setTermosRolados] = useState(false);
   const termosBoxRef = useRef<HTMLDivElement | null>(null);
+  // Referência da seção "Dados da viagem" — o botão "Continuar" do
+  // redesenho de "Escolha seu JR Pass" (pedido do Wilson, 29/set/2026)
+  // rola até aqui suavemente assim que duração + classe estão escolhidas.
+  const dadosViagemRef = useRef<HTMLDivElement | null>(null);
   useEffect(() => {
     const el = termosBoxRef.current;
     if (el && el.scrollHeight <= el.clientHeight + 4) {
@@ -265,17 +269,30 @@ export default function JrPassPage() {
   const TIPOS = [
     {
       key: "comum" as const,
-      classe: "Comum (Ordinary)",
+      classe: "Segunda Classe",
+      subtitulo: "Classe padrão",
       icone: "/images/ingressos/shinkansen-ordinary.png",
       precoUSD: JR_PASS_PRECO_USD,
+      beneficios: [
+        "Confortável para viagens longas",
+        "Reserva de assento disponível",
+        "Ideal para a maioria dos viajantes",
+      ],
     },
     {
       key: "green" as const,
-      classe: "Green Car (Luxo)",
+      classe: "Primeira Classe (Green Car)",
+      subtitulo: "Mais espaço e conforto",
       icone: "/images/ingressos/jr-green-car.png",
       precoUSD: JR_PASS_PRECO_USD_GREEN,
+      beneficios: [
+        "Assentos mais espaçosos",
+        "Mais espaço entre passageiros",
+        "Ambiente mais tranquilo",
+      ],
     },
   ];
+  const TIPOS_POR_KEY = { comum: TIPOS[0], green: TIPOS[1] };
 
   // Ícones enviados pelo Wilson, 25/set/2026 ("segue icones para esses 4
   // cards"), um por critério de elegibilidade — substituem o ícone
@@ -595,74 +612,142 @@ export default function JrPassPage() {
             </div>
           </div>
 
-          {/* Tipos e preços */}
+          {/* Escolha seu JR Pass — redesenho pedido pelo Wilson,
+              29/set/2026: reduzir carga cognitiva de "6 combinações
+              simultâneas" (2 classes × 3 durações) pra uma decisão
+              sequencial — primeiro a duração (segmented control), depois
+              a classe (2 cards, só com o preço da duração já escolhida). */}
           <div className="mt-8 border-t border-black/10 pt-6">
             <div className="flex items-center gap-2">
               <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#2f80c9] text-[10px] font-semibold text-white">
                 1
               </span>
-              <p className="text-[10px] uppercase tracking-[0.2em] text-black">Tipos e preços</p>
+              <p className="text-[10px] uppercase tracking-[0.2em] text-black">Escolha seu JR Pass</p>
             </div>
-            <div className="mt-4 grid gap-4 sm:grid-cols-2">
-              {TIPOS.map((tipo) => (
-                <div
-                  key={tipo.key}
-                  className={`rounded-2xl border p-5 transition ${
-                    classeSelecionada === tipo.key
-                      ? "border-[#2f80c9] bg-[#2f80c9]/5"
-                      : "border-black/10 bg-black/[0.02]"
-                  }`}
-                >
-                  <div className="flex flex-col items-center gap-2 text-center">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={tipo.icone} alt="" className="h-10 w-10 shrink-0 object-contain" />
-                    <p className={`${display.className} text-base font-medium text-black`}>
-                      {tipo.classe}
-                    </p>
-                  </div>
-                  <div className="mt-4">
-                    {JR_PASS_DIAS_OPCOES.map((dias) => {
-                      const selecionado = classeSelecionada === tipo.key && diasSelecionados === dias;
-                      return (
-                        <button
-                          key={dias}
-                          type="button"
-                          onClick={() => {
-                            setClasseSelecionada(tipo.key);
-                            setDiasSelecionados(dias);
-                          }}
-                          className="flex w-full items-center justify-between border-t border-black/5 py-2.5 text-left first:border-t-0 first:pt-0"
-                        >
-                          <span className="flex items-center gap-2 text-xs text-black/70">
-                            <span
-                              className={`flex h-4 w-4 shrink-0 items-center justify-center rounded-full border ${
-                                selecionado ? "border-[#2f80c9] bg-[#2f80c9]" : "border-black/20"
-                              }`}
-                            >
-                              {selecionado && <IconCheck className="h-2.5 w-2.5 text-white" />}
-                            </span>
-                            {dias} dias
-                          </span>
-                          <span className="text-right">
-                            <span
-                              className={`block text-sm font-medium ${selecionado ? "text-[#2f80c9]" : "text-black"}`}
-                            >
-                              {formatUSD(tipo.precoUSD[dias])}
-                            </span>
-                            {cambio && (
-                              <span className="block text-[11px] text-black/60">
-                                {formatBRL(tipo.precoUSD[dias] * cambio.cotacao)}
-                              </span>
-                            )}
-                          </span>
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-              ))}
+            <p className="mt-1 text-sm text-[#1C1C1A]/70">
+              Selecione a duração e a classe da sua viagem.
+            </p>
+
+            {/* Passo 1 — duração */}
+            <p className="mt-5 text-[11px] font-medium uppercase tracking-[0.1em] text-[#77736D]">
+              Duração
+            </p>
+            <div className="mt-2 flex w-full max-w-sm rounded-xl border border-[#E4E1DC] bg-[#FBFAF7] p-1">
+              {JR_PASS_DIAS_OPCOES.map((dias) => {
+                const selecionado = diasSelecionados === dias;
+                return (
+                  <button
+                    key={dias}
+                    type="button"
+                    onClick={() => setDiasSelecionados(dias)}
+                    className={`flex-1 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors duration-150 ${
+                      selecionado ? "bg-[#252522] text-white" : "text-[#1C1C1A] hover:bg-black/5"
+                    }`}
+                  >
+                    {dias} dias
+                  </button>
+                );
+              })}
             </div>
-            <p className="mt-3 text-[11px] leading-5 text-black/60">
+
+            {/* Passo 2 — classe */}
+            <div className="mt-5 grid gap-4 sm:grid-cols-2">
+              {TIPOS.map((tipo) => {
+                const selecionado = classeSelecionada === tipo.key;
+                const precoUSDAtual = diasSelecionados ? tipo.precoUSD[diasSelecionados] : null;
+                const precoBRLAtual = precoUSDAtual !== null && cambio ? precoUSDAtual * cambio.cotacao : null;
+                const precoUSDComum = diasSelecionados ? TIPOS_POR_KEY.comum.precoUSD[diasSelecionados] : null;
+                const diferencaBRL =
+                  tipo.key === "green" && precoUSDAtual !== null && precoUSDComum !== null && cambio
+                    ? (precoUSDAtual - precoUSDComum) * cambio.cotacao
+                    : null;
+                return (
+                  <button
+                    key={tipo.key}
+                    type="button"
+                    onClick={() => setClasseSelecionada(tipo.key)}
+                    className={`relative flex flex-col rounded-2xl border p-5 text-left transition-colors duration-150 ${
+                      selecionado ? "border-[#252522] bg-[#FAF9F6]" : "border-[#E4E1DC] bg-white hover:border-black/25"
+                    }`}
+                  >
+                    {selecionado && (
+                      <span className="absolute right-4 top-4 flex items-center gap-1 text-[10px] font-medium text-[#252522]">
+                        <IconCheck className="h-3 w-3" />
+                        Selecionado
+                      </span>
+                    )}
+                    <div className="flex items-center gap-3">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={tipo.icone} alt="" className="h-10 w-10 shrink-0 object-contain" />
+                      <div>
+                        <p className={`${display.className} text-base font-medium text-[#1C1C1A]`}>
+                          {tipo.classe}
+                        </p>
+                        <p className="text-sm text-[#77736D]">{tipo.subtitulo}</p>
+                      </div>
+                    </div>
+
+                    {precoBRLAtual !== null ? (
+                      <div className="mt-4">
+                        <p className={`${display.className} text-2xl font-semibold text-[#1C1C1A]`}>
+                          {formatBRL(precoBRLAtual)}
+                        </p>
+                        <p className="text-xs text-[#77736D]">{formatUSD(precoUSDAtual!)}</p>
+                        {diferencaBRL !== null && diferencaBRL > 0 && (
+                          <p className="mt-1 text-sm font-medium text-[#A8997E]">
+                            Upgrade + {formatBRL(diferencaBRL)}
+                          </p>
+                        )}
+                      </div>
+                    ) : (
+                      <p className="mt-4 text-sm text-[#77736D]">Selecione a duração acima.</p>
+                    )}
+
+                    <ul className="mt-4 space-y-1.5 border-t border-[#E4E1DC] pt-4">
+                      {tipo.beneficios.map((beneficio) => (
+                        <li key={beneficio} className="flex items-start gap-2 text-sm text-[#1C1C1A]">
+                          <IconCheck className="mt-0.5 h-3 w-3 shrink-0 text-[#A8997E]" />
+                          {beneficio}
+                        </li>
+                      ))}
+                    </ul>
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Resumo compacto — atualiza sozinho conforme duração/classe
+                mudam. */}
+            <div className="mt-5 flex items-center justify-between gap-3 rounded-xl border border-[#E4E1DC] bg-[#FBFAF7] px-4 py-3">
+              <div>
+                <p className="text-[10px] uppercase tracking-[0.15em] text-[#77736D]">Sua escolha</p>
+                <p className="text-sm text-[#1C1C1A]">
+                  {selecaoCompleta
+                    ? `${diasSelecionados} dias · ${tipoEscolhido!.classe}`
+                    : "Selecione a duração e a classe."}
+                </p>
+              </div>
+              {precoEscolhidoBRL !== null && (
+                <p className={`${display.className} text-lg font-medium text-[#1C1C1A]`}>
+                  {formatBRL(precoEscolhidoBRL)}
+                </p>
+              )}
+            </div>
+
+            <button
+              type="button"
+              disabled={!selecaoCompleta}
+              onClick={() => dadosViagemRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })}
+              className={`mt-4 w-full rounded-full py-3 text-center text-xs font-medium uppercase tracking-[0.1em] transition-colors sm:w-auto sm:px-8 ${
+                selecaoCompleta
+                  ? "bg-[#252522] text-white hover:bg-black"
+                  : "cursor-not-allowed bg-black/10 text-black/30"
+              }`}
+            >
+              Continuar
+            </button>
+
+            <p className="mt-4 text-[11px] leading-5 text-black/60">
               Valor por pessoa, já com taxas incluídas, convertido pela cotação do dia.
             </p>
             <div className="mt-2 inline-flex rounded-lg bg-[#eef6fb] px-3 py-1.5">
@@ -674,7 +759,7 @@ export default function JrPassPage() {
               adicionar a data de inicio e encerramento da viagem". Mesmo
               padrão de campo de data do Seguro Viagem; entram na mensagem
               de WhatsApp pro time já saber o período. */}
-          <div className="mt-8 border-t border-black/10 pt-6">
+          <div ref={dadosViagemRef} className="mt-8 border-t border-black/10 pt-6">
             <div className="flex items-center gap-2">
               <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#2f80c9] text-[10px] font-semibold text-white">
                 2
@@ -1190,22 +1275,12 @@ export default function JrPassPage() {
                   </p>
                 )}
               </div>
-              <div className="flex shrink-0 items-center gap-3">
-                <div className="hidden items-center gap-2 sm:flex">
-                  <Image
-                    src="/images/produtos/stone-logo-white.png"
-                    alt="Stone"
-                    width={84}
-                    height={30}
-                    className="h-7 w-auto opacity-90"
-                  />
-                  <span className="text-xs text-[#A9B0B2]">Pagamento seguro</span>
-                </div>
+              <div className="flex shrink-0 flex-col items-end gap-2">
                 <button
                   type="button"
                   onClick={enviar}
                   disabled={!formValido || status === "enviando"}
-                  className={`inline-flex shrink-0 items-center justify-center rounded-full px-6 py-3.5 text-center text-xs font-medium uppercase tracking-[0.06em] transition-colors duration-200 ${
+                  className={`inline-flex shrink-0 items-center justify-center rounded-full px-8 py-4 text-center text-sm font-medium uppercase tracking-[0.06em] transition-colors duration-200 ${
                     formValido && status !== "enviando"
                       ? "bg-[#E7DFD0] text-[#122D40] hover:bg-[#F0EADF]"
                       : "cursor-not-allowed bg-[#2F4F69] text-[#9DB0BD]"
@@ -1213,6 +1288,16 @@ export default function JrPassPage() {
                 >
                   {status === "enviando" ? "Enviando…" : "Finalizar Compra"}
                 </button>
+                <div className="hidden flex-col items-center gap-1 sm:flex">
+                  <span className="text-xs text-[#A9B0B2]">Pagamento seguro</span>
+                  <Image
+                    src="/images/produtos/stone-logo-white.png"
+                    alt="Stone"
+                    width={108}
+                    height={39}
+                    className="h-9 w-auto opacity-90"
+                  />
+                </div>
               </div>
             </div>
             {pendenciasFinalizar.length > 0 && status !== "enviando" && (
