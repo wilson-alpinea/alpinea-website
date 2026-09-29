@@ -1,165 +1,348 @@
 "use client";
 
-// Transporte Privado (motorista particular) ganhou página própria — antes
-// era o TransporteModal dentro de /produtos. Pedido do Wilson, 29/set/2026:
-// "novo hero para motorista particular, não teremos pagamento automatico,
-// mas pode reformatar a pagina de maneira a seguir o template da pagina de
-// jr pass, cambio e seguro viagem". Mesma moldura das outras três páginas
-// (barra de voltar fixa, banner hero com o título dentro da foto, "Como
-// funciona", passos numerados, termos com rolagem obrigatória e o rodapé
-// enxuto compartilhado — RodapeCheckout), mas SEM pagamento automático:
-// o botão só registra o pedido no CRM (/api/transporte-privado-selfservice,
-// inalterada) e a equipe fecha logística e pagamento pelo WhatsApp. Toda a
-// lógica de preço/seleção (MotoristaPrivadoPicker, motoristaPrivadoRotas)
-// e o texto dos termos vieram do modal antigo sem mudança.
+// Transporte Privado — configurador em 4 etapas.
+//
+// Redesenho de UX pedido pelo Wilson em 29/set/2026 ("Melhore
+// profundamente a UX desta página de contratação de Transporte Privado,
+// sem descaracterizar o visual premium/silent luxury atual [...] a
+// experiência deve deixar de parecer 'um formulário longo com várias
+// opções' e passar a parecer 'um configurador premium de transporte
+// privado em quatro etapas'"). O que mudou em relação à versão anterior
+// (que ainda era o antigo TransporteModal esticado numa página):
+// - Hero mais baixo, frase objetiva e "Como funciona" compacto numa linha.
+// - Fluxo progressivo 1 Veículo → 2 Trajeto → 3 Dados → 4 Revisão, com
+//   stepper fixo no topo (etapa atual em azul) — só uma etapa aparece por
+//   vez, em vez de veículos + todas as rotas + formulário + termos juntos.
+// - Veículos com capacidade em destaque ("Até 10 passageiros") e uma
+//   diferenciação curta; selecionado com borda azul, fundo azul claro e
+//   check. Rotas separadas em abas (Aeroporto | Cidade | Passeios 10h) +
+//   filtro de região, cada rota como card selecionável com preço em
+//   destaque; várias rotas podem ser somadas ao mesmo pedido.
+// - Resumo do pedido sempre visível (painel lateral fixo no desktop,
+//   barra inferior compacta e expansível no celular), com o total
+//   "piscando" a cada mudança, e um CTA que muda conforme a etapa.
+// - Nada de lista "Faltam N itens": validação ao lado de cada campo e,
+//   no resumo, só uma frase do que falta.
+// - Incluído / Não incluído / Opcionais perto da escolha das rotas, com
+//   "Ver regras e adicionais" num modal; motorista bilíngue virou um
+//   opcional (checkbox), não um alerta amarelo.
+// - Termos: checkbox + "Ler Termos e Condições" em modal — acabou a caixa
+//   com rolagem obrigatória até o fim.
+// - Data do serviço, horário aproximado e número do voo em campos
+//   próprios; etapa final de revisão antes de enviar.
+// Sem pagamento automático (decisão do Wilson para este produto): o envio
+// registra o pedido no CRM (/api/transporte-privado-selfservice) e a
+// equipe fecha logística e pagamento pelo WhatsApp. Preços, veículos e
+// rotas continuam vindo de app/lib/motoristaPrivadoRotas.ts (mesma fonte
+// da Calculadora Reversa e do self-service).
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
+import { createPortal } from "react-dom";
 import Image from "next/image";
 import { Inter } from "next/font/google";
 import Link from "next/link";
 import { formatBRL, formatUSD, useCambioUSD } from "../../hooks/useCambioUSD";
-import { MotoristaPrivadoPicker } from "../../components/MotoristaPrivadoPicker";
 import { ROTEIRO_PRECO_BASE } from "../../components/CustomPackageCard";
 import {
+  VEICULOS_MOTORISTA,
+  ROTAS_MOTORISTA,
+  REGIOES_MOTORISTA,
   SELECAO_MOTORISTA_VAZIA,
   calcularTotalMotoristaUSD,
   contarItensMotorista,
+  encontrarRotaMotorista,
+  encontrarVeiculoMotorista,
   resumoSelecaoMotorista,
   POLITICA_CANCELAMENTO_MOTORISTA,
   ADICIONAL_MEET_GREET_USD,
   ADICIONAL_CADEIRINHA_USD,
+  type CategoriaRotaMotorista,
+  type RegiaoRotaMotorista,
   type SelecaoMotorista,
+  type VeiculoMotoristaId,
 } from "../../lib/motoristaPrivadoRotas";
-import { type FormaPagamentoEscolhida } from "../../lib/calculadoraCatalogoPublico";
-import { display, WHATSAPP_NUMBER, FormasPagamento, descricaoFormaPagamento } from "../page";
-import { RodapeCheckout } from "../RodapeCheckout";
+import { display, WHATSAPP_NUMBER, hojeISO } from "../page";
 
-const inter = Inter({ subsets: ["latin"], weight: ["500", "700"] });
+const inter = Inter({ subsets: ["latin"], weight: ["500", "600", "700"] });
 
-// Ícones PROVISÓRIOS do "Como funciona" (traço simples, cor da marca) — o
-// Wilson manda as artes definitivas depois, como fez nas outras páginas.
-function IconePasso({ tipo }: { tipo: "rota" | "pedido" | "whatsapp" | "motorista" }) {
-  const comum = {
-    fill: "none",
-    stroke: "#2f80c9",
-    strokeWidth: 1.6,
-    strokeLinecap: "round" as const,
-    strokeLinejoin: "round" as const,
-  };
+// Nome curto + diferenciação curta por veículo (só nesta página — os
+// nomes completos de motoristaPrivadoRotas.ts continuam valendo no
+// resumo do CRM e na Calculadora Reversa). Pedido do Wilson: "Alphard —
+// conforto premium · Hiace 10 — grupos pequenos · Hiace 14 — grupos
+// médios · Coaster 18/21/29 — grupos grandes".
+const VEICULO_CURTO: Record<VeiculoMotoristaId, { nome: string; perfil: string }> = {
+  alphard8: { nome: "Toyota Alphard", perfil: "Conforto premium" },
+  hiace10: { nome: "Toyota Hiace 10", perfil: "Grupos pequenos com bagagem" },
+  hiace14: { nome: "Toyota Hiace 14", perfil: "Grupos médios" },
+  coaster18: { nome: "Toyota Coaster 18", perfil: "Grupos grandes" },
+  coaster21: { nome: "Toyota Coaster 21", perfil: "Grupos grandes" },
+  coaster29: { nome: "Toyota Coaster 29", perfil: "Grupos grandes" },
+};
+
+const CATEGORIAS: { key: CategoriaRotaMotorista; nome: string }[] = [
+  { key: "transfer-aeroporto", nome: "Aeroporto" },
+  { key: "dentro-cidade", nome: "Cidade" },
+  { key: "tour-dia-inteiro", nome: "Passeios 10h" },
+];
+
+const REGIAO_CURTA: Record<RegiaoRotaMotorista, string> = {
+  kanto: "Tóquio",
+  kansai: "Osaka/Kyoto",
+  hiroshima: "Hiroshima",
+};
+
+const ETAPAS = ["Veículo", "Trajeto", "Dados", "Revisão"] as const;
+type Etapa = 1 | 2 | 3 | 4;
+
+const COMO_FUNCIONA = ["Escolha o veículo", "Escolha o trajeto", "Confirmamos", "Motorista te espera"];
+
+// Máscara de WhatsApp: formato brasileiro por padrão; se começar com "+",
+// aceita número internacional sem forçar o formato.
+function mascararWhatsapp(valor: string): string {
+  const t = valor.trimStart();
+  if (t.startsWith("+")) return "+" + t.slice(1).replace(/[^\d ]/g, "").slice(0, 20);
+  const d = valor.replace(/\D/g, "").slice(0, 11);
+  if (d.length === 0) return "";
+  if (d.length <= 2) return `(${d}`;
+  if (d.length <= 6) return `(${d.slice(0, 2)}) ${d.slice(2)}`;
+  if (d.length <= 10) return `(${d.slice(0, 2)}) ${d.slice(2, 6)}-${d.slice(6)}`;
+  return `(${d.slice(0, 2)}) ${d.slice(2, 7)}-${d.slice(7)}`;
+}
+
+function formatarDataExtensa(iso: string): string {
+  if (!iso) return "";
+  const data = new Date(`${iso}T00:00:00`);
+  if (Number.isNaN(data.getTime())) return iso;
+  return data.toLocaleDateString("pt-BR", { day: "2-digit", month: "short", year: "numeric" });
+}
+
+function IconeCheck({ className }: { className?: string }) {
   return (
-    <svg viewBox="0 0 48 48" className="mt-2 h-20 w-20" aria-hidden="true">
-      <circle cx="24" cy="24" r="22" fill="#dcecf8" />
-      {tipo === "rota" && (
-        <g {...comum}>
-          <circle cx="16" cy="16" r="3" />
-          <circle cx="32" cy="32" r="3" />
-          <path d="M18.5 17.5c6 1 1 7.5 6 9s5 1.5 5 3" />
-        </g>
-      )}
-      {tipo === "pedido" && (
-        <g {...comum}>
-          <rect x="15" y="12" width="18" height="24" rx="2" />
-          <path d="M19 19h10M19 24h10M19 29h6" />
-        </g>
-      )}
-      {tipo === "whatsapp" && (
-        <g {...comum}>
-          <path d="M14 18h20v13H22l-6 5v-5h-2z" />
-          <path d="M20 24l3 3 5-5" />
-        </g>
-      )}
-      {tipo === "motorista" && (
-        <g {...comum}>
-          <path d="M13 29v-6l3-6h16l3 6v6z" />
-          <circle cx="18" cy="30" r="2.5" />
-          <circle cx="30" cy="30" r="2.5" />
-          <path d="M16 23h16" />
-        </g>
-      )}
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" className={className} aria-hidden="true">
+      <path d="M5 12.5l4.5 4.5L19 7.5" />
     </svg>
   );
 }
 
-const COMO_FUNCIONA = [
-  { icone: "rota" as const, titulo: "Monte seu trajeto", texto: "Escolha o veículo e as rotas ou tours de que precisa." },
-  { icone: "pedido" as const, titulo: "Envie o pedido", texto: "Você vê o valor na hora e envia o pedido direto pelo site." },
-  { icone: "whatsapp" as const, titulo: "Confirmamos", texto: "Nossa equipe confirma horários, logística e pagamento pelo WhatsApp." },
-  { icone: "motorista" as const, titulo: "Motorista te espera", texto: "Veículo exclusivo do seu grupo, no local e horário combinados." },
-];
-
-function TituloPasso({ numero, titulo }: { numero: number; titulo: string }) {
-  return (
-    <div className="flex items-center gap-2">
-      <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#2f80c9] text-[10px] font-semibold text-white">
-        {numero}
-      </span>
-      <p className="text-[10px] uppercase tracking-[0.2em] text-black">{titulo}</p>
-    </div>
+// Modal simples via portal (evita o bug de `fixed` do Safari iOS dentro de
+// containers com transform/backdrop — ver learnings do projeto).
+function Modal({ aberto, titulo, onFechar, children }: { aberto: boolean; titulo: string; onFechar: () => void; children: ReactNode }) {
+  useEffect(() => {
+    if (!aberto) return;
+    const anterior = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const tecla = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onFechar();
+    };
+    window.addEventListener("keydown", tecla);
+    return () => {
+      document.body.style.overflow = anterior;
+      window.removeEventListener("keydown", tecla);
+    };
+  }, [aberto, onFechar]);
+  if (!aberto || typeof document === "undefined") return null;
+  return createPortal(
+    <div className="fixed inset-0 z-[100] flex items-end justify-center bg-black/60 md:items-center md:p-6" onClick={onFechar} role="dialog" aria-modal="true" aria-label={titulo}>
+      <div
+        className="flex max-h-[88svh] w-full max-w-2xl flex-col overflow-hidden rounded-t-2xl bg-white shadow-xl md:rounded-2xl"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="flex items-center justify-between border-b border-black/10 px-5 py-4">
+          <p className={`${display.className} text-lg font-medium text-black`}>{titulo}</p>
+          <button
+            type="button"
+            onClick={onFechar}
+            aria-label="Fechar"
+            className="flex h-11 w-11 items-center justify-center rounded-full text-2xl leading-none text-black/60 transition hover:bg-black/5 hover:text-black"
+          >
+            ×
+          </button>
+        </div>
+        <div className="overflow-y-auto px-5 py-4 text-sm leading-6 text-black/75">{children}</div>
+      </div>
+    </div>,
+    document.body,
   );
 }
 
-const classeInput =
-  "w-full min-w-0 rounded-lg border border-black/15 bg-white px-3 py-2.5 text-sm text-black focus:border-[#2f80c9] focus:outline-none";
+function Campo({
+  rotulo,
+  erro,
+  ajuda,
+  children,
+}: {
+  rotulo: string;
+  erro?: string | null;
+  ajuda?: string;
+  children: ReactNode;
+}) {
+  return (
+    <label className="flex min-w-0 flex-col gap-1.5">
+      <span className="text-[11px] font-medium uppercase tracking-[0.12em] text-black/70">{rotulo}</span>
+      {children}
+      {erro ? (
+        <span className="text-xs text-red-600">{erro}</span>
+      ) : ajuda ? (
+        <span className="text-xs text-black/50">{ajuda}</span>
+      ) : null}
+    </label>
+  );
+}
+
+function classeInput(temErro: boolean) {
+  return `h-12 w-full min-w-0 rounded-lg border bg-white px-3.5 text-sm text-black transition focus:outline-none focus:ring-2 focus:ring-[#2f80c9]/20 ${
+    temErro ? "border-red-400 focus:border-red-500" : "border-black/15 focus:border-[#2f80c9]"
+  }`;
+}
 
 export default function TransportePrivadoPage() {
   const cambio = useCambioUSD();
+  const cambioCotacao = cambio?.cotacao ?? 5.3;
+
+  const [etapa, setEtapa] = useState<Etapa>(1);
+  // Veículo só conta como "escolhido" depois do clique do cliente — o
+  // SELECAO_MOTORISTA_VAZIA já traz um veículo padrão (hiace10), mas aqui o
+  // passo 1 precisa de uma escolha explícita.
+  const [veiculoEscolhido, setVeiculoEscolhido] = useState(false);
   const [selecao, setSelecao] = useState<SelecaoMotorista>(SELECAO_MOTORISTA_VAZIA);
+  const [categoria, setCategoria] = useState<CategoriaRotaMotorista>("transfer-aeroporto");
+  const [regiao, setRegiao] = useState<RegiaoRotaMotorista | "todas">("todas");
+
+  const [opcionalMeetGreet, setOpcionalMeetGreet] = useState(false);
+  const [opcionalCadeirinha, setOpcionalCadeirinha] = useState(false);
+  const [opcionalBilingue, setOpcionalBilingue] = useState(false);
+
   const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
   const [whatsapp, setWhatsapp] = useState("");
+  const [dataServico, setDataServico] = useState("");
+  const [horario, setHorario] = useState("");
+  const [numeroVoo, setNumeroVoo] = useState("");
   const [observacoes, setObservacoes] = useState("");
-  const [formaPagamento, setFormaPagamento] = useState<FormaPagamentoEscolhida | null>(null);
+  const [tocados, setTocados] = useState<Record<string, boolean>>({});
+  const [tentouAvancarDados, setTentouAvancarDados] = useState(false);
+
+  const [termosAceitos, setTermosAceitos] = useState(false);
+  const [tentouEnviar, setTentouEnviar] = useState(false);
+  const [modalTermos, setModalTermos] = useState(false);
+  const [modalRegras, setModalRegras] = useState(false);
+  const [resumoAbertoMobile, setResumoAbertoMobile] = useState(false);
+
   const [status, setStatus] = useState<"form" | "enviando" | "enviado" | "erro">("form");
   const [erro, setErro] = useState("");
-  // Termos com rolagem obrigatória até o fim — mesmas regras do modal
-  // antigo (Wilson, 25/set e 28/set/2026).
-  const [termosAceitos, setTermosAceitos] = useState(false);
-  const [termosRolados, setTermosRolados] = useState(false);
-  const termosBoxRef = useRef<HTMLDivElement | null>(null);
-  useEffect(() => {
-    const el = termosBoxRef.current;
-    if (el && el.scrollHeight <= el.clientHeight + 4) setTermosRolados(true);
-  }, []);
 
-  const cambioCotacao = cambio?.cotacao ?? 5.3;
+  const stepperRef = useRef<HTMLDivElement | null>(null);
+
+  const veiculo = encontrarVeiculoMotorista(selecao.veiculo);
+  const veiculoCurto = VEICULO_CURTO[selecao.veiculo];
   const quantidadeItens = contarItensMotorista(selecao);
   const motoristaUSD = calcularTotalMotoristaUSD(selecao);
-  // "Transporte Privado" inclui o Roteiro Personalizado (mesma regra do
-  // modal antigo) — só entra com pelo menos 1 serviço selecionado.
+  // Roteiro Personalizado incluso (mesma regra de sempre do Transporte
+  // Privado) — só entra com pelo menos 1 serviço selecionado.
   const roteiroUSD = quantidadeItens > 0 ? ROTEIRO_PRECO_BASE / cambioCotacao : 0;
   const totalUSD = motoristaUSD + roteiroUSD;
   const totalBRL = totalUSD * cambioCotacao;
   const resumoSelecao = resumoSelecaoMotorista(selecao);
-  const descricaoPagamentoEscolhido = descricaoFormaPagamento(
-    formaPagamento,
-    quantidadeItens > 0 ? totalBRL : null,
-    "",
-  );
 
-  const formValido =
-    nome.trim().length > 0 &&
-    /\S+@\S+\.\S+/.test(email) &&
-    whatsapp.trim().length >= 8 &&
-    quantidadeItens > 0 &&
-    termosAceitos;
+  // ── Validação por campo (mostrada ao lado de cada campo) ──
+  const digitosWhatsapp = whatsapp.replace(/\D/g, "").length;
+  const errosDados: Record<string, string | null> = {
+    nome: nome.trim().length < 3 ? "Informe seu nome completo." : null,
+    email: /^\S+@\S+\.\S+$/.test(email.trim()) ? null : "Informe um e-mail válido.",
+    whatsapp: digitosWhatsapp >= 10 ? null : "Informe um WhatsApp com DDD.",
+    dataServico: !dataServico ? "Informe a data do serviço." : dataServico < hojeISO() ? "A data precisa ser hoje ou depois." : null,
+  };
+  const dadosValidos = Object.values(errosDados).every((e) => e === null);
+  const mostrarErro = (campo: string) => (tocados[campo] || tentouAvancarDados ? errosDados[campo] : null);
+  const tocar = (campo: string) => setTocados((t) => ({ ...t, [campo]: true }));
 
-  const pendenciasFinalizar: string[] = [];
-  if (quantidadeItens === 0) pendenciasFinalizar.push("Selecione ao menos uma rota ou tour.");
-  if (nome.trim().length === 0) pendenciasFinalizar.push("Preencha seu nome completo.");
-  if (!/\S+@\S+\.\S+/.test(email)) pendenciasFinalizar.push("Preencha um e-mail válido.");
-  if (whatsapp.trim().length < 8) pendenciasFinalizar.push("Preencha seu WhatsApp.");
-  if (!termosAceitos) {
-    pendenciasFinalizar.push(
-      termosRolados
-        ? "Marque o aceite dos termos e condições do transporte privado."
-        : "Leia os termos e condições do transporte privado até o fim pra poder aceitá-los.",
-    );
+  const etapa1Ok = veiculoEscolhido;
+  const etapa2Ok = quantidadeItens > 0;
+  const etapa3Ok = dadosValidos;
+  const podeEnviar = etapa1Ok && etapa2Ok && etapa3Ok && termosAceitos;
+
+  function irPara(nova: Etapa) {
+    setEtapa(nova);
+    setResumoAbertoMobile(false);
+    // Volta pro topo do configurador (logo abaixo do hero), pra etapa nova
+    // começar sempre no mesmo lugar.
+    const alvo = stepperRef.current;
+    if (alvo) {
+      const topo = alvo.getBoundingClientRect().top + window.scrollY - 56 + 24;
+      if (window.scrollY > topo) window.scrollTo({ top: topo, behavior: "smooth" });
+    }
   }
 
+  function escolherVeiculo(id: VeiculoMotoristaId) {
+    setSelecao((s) => ({ ...s, veiculo: id }));
+    setVeiculoEscolhido(true);
+  }
+
+  function quantidadeDe(rotaId: string): number {
+    return selecao.itens.find((i) => i.rotaId === rotaId)?.quantidade ?? 0;
+  }
+
+  function ajustarQuantidade(rotaId: string, nova: number) {
+    const q = Math.max(0, Math.min(20, nova));
+    setSelecao((s) => {
+      const existe = s.itens.some((i) => i.rotaId === rotaId);
+      if (q === 0) return { ...s, itens: s.itens.filter((i) => i.rotaId !== rotaId) };
+      if (!existe) return { ...s, itens: [...s.itens, { rotaId, quantidade: q }] };
+      return { ...s, itens: s.itens.map((i) => (i.rotaId === rotaId ? { ...i, quantidade: q } : i)) };
+    });
+  }
+
+  // CTA principal — muda de rótulo conforme a etapa (o que fazer no
+  // clique fica em acionarCta, fora do render).
+  const cta: { rotulo: string; ativo: boolean; falta: string | null } =
+    etapa === 1
+      ? etapa1Ok
+        ? { rotulo: "Continuar", ativo: true, falta: null }
+        : { rotulo: "Escolha um veículo", ativo: false, falta: "Escolha um veículo para continuar" }
+      : etapa === 2
+        ? etapa2Ok
+          ? { rotulo: "Continuar", ativo: true, falta: null }
+          : { rotulo: "Escolha uma rota", ativo: false, falta: "Escolha ao menos uma rota para continuar" }
+        : etapa === 3
+          ? { rotulo: "Continuar", ativo: etapa3Ok, falta: etapa3Ok ? null : "Complete seus dados para continuar" }
+          : {
+              rotulo: status === "enviando" ? "Enviando…" : "Solicitar transporte",
+              ativo: podeEnviar && status !== "enviando",
+              falta: termosAceitos ? null : "Aceite os Termos e Condições para solicitar",
+            };
+
+  function acionarCta() {
+    if (etapa === 1) {
+      if (etapa1Ok) irPara(2);
+      return;
+    }
+    if (etapa === 2) {
+      if (etapa2Ok) irPara(3);
+      return;
+    }
+    if (etapa === 3) {
+      if (etapa3Ok) irPara(4);
+      else setTentouAvancarDados(true);
+      return;
+    }
+    if (!termosAceitos) {
+      setTentouEnviar(true);
+      return;
+    }
+    void enviar();
+  }
+
+  const etapasFaltando = [etapa1Ok, etapa2Ok, etapa3Ok].filter((ok) => !ok).length;
+
   async function enviar() {
-    if (!formValido || status === "enviando") return;
+    if (!podeEnviar || status === "enviando") return;
     setStatus("enviando");
     setErro("");
+    const opcionais = [
+      opcionalMeetGreet ? "Meet & Greet (placa de recepção)" : null,
+      opcionalCadeirinha ? "Cadeirinha infantil" : null,
+      opcionalBilingue ? "Motorista bilíngue português/inglês" : null,
+    ].filter(Boolean) as string[];
     try {
       const resposta = await fetch("/api/transporte-privado-selfservice", {
         method: "POST",
@@ -172,10 +355,14 @@ export default function TransportePrivadoPage() {
           roteiroUSD,
           totalUSD,
           totalBRL,
-          formaPagamento: descricaoPagamentoEscolhido || null,
+          formaPagamento: null,
           nome,
           email,
           whatsapp,
+          dataServico,
+          horario,
+          numeroVoo,
+          opcionais,
           observacoes,
           termosAceitos,
         }),
@@ -187,6 +374,7 @@ export default function TransportePrivadoPage() {
         return;
       }
       setStatus("enviado");
+      window.scrollTo({ top: 0, behavior: "smooth" });
     } catch {
       setErro("Não foi possível registrar seu pedido agora. Tente de novo.");
       setStatus("erro");
@@ -197,41 +385,96 @@ export default function TransportePrivadoPage() {
     nome ? ` Meu nome é ${nome}.` : ""
   }`;
 
-  const rodapeRef = useRef<HTMLDivElement | null>(null);
-  const [alturaRodape, setAlturaRodape] = useState(0);
-  useEffect(() => {
-    const elemento = rodapeRef.current;
-    if (!elemento) {
-      setAlturaRodape(0);
-      return;
-    }
-    const observer = new ResizeObserver((entries) => {
-      setAlturaRodape(entries[0]?.contentRect.height ?? elemento.offsetHeight);
-    });
-    observer.observe(elemento);
-    return () => observer.disconnect();
-  }, [status]);
+  const rotasVisiveis = ROTAS_MOTORISTA.filter(
+    (r) => r.categoria === categoria && (regiao === "todas" || r.regiao === regiao),
+  );
+  const selecionadasPorCategoria = (cat: CategoriaRotaMotorista) =>
+    selecao.itens.filter((i) => encontrarRotaMotorista(i.rotaId)?.categoria === cat).length;
+
+  // Conteúdo do resumo — o mesmo no painel lateral (desktop) e na gaveta
+  // da barra inferior (celular).
+  const conteudoResumo = (
+    <div>
+      <p className={`${display.className} text-lg font-medium text-[#0A2540]`}>Seu transporte</p>
+      {veiculoEscolhido ? (
+        <p className="mt-2 text-sm text-black/80">
+          {veiculoCurto.nome} <span className="text-black/50">· até {veiculo.assentos} passageiros</span>
+        </p>
+      ) : (
+        <p className="mt-2 text-sm text-black/45">Nenhum veículo escolhido</p>
+      )}
+      <div className="mt-4 space-y-2.5 border-t border-black/10 pt-4">
+        {selecao.itens.length === 0 ? (
+          <p className="text-sm text-black/45">Nenhuma rota escolhida</p>
+        ) : (
+          <>
+            {selecao.itens.map((item) => {
+              const rota = encontrarRotaMotorista(item.rotaId);
+              if (!rota) return null;
+              const q = Math.max(1, item.quantidade);
+              return (
+                <div key={item.rotaId} className="flex items-start justify-between gap-3 text-sm">
+                  <span className="min-w-0 text-black/80">
+                    {q > 1 && <span className="text-black/50">{q}× </span>}
+                    {rota.nome}
+                  </span>
+                  <span className={`${inter.className} shrink-0 font-medium tabular-nums text-black`}>
+                    {formatUSD(rota.precoUSD[selecao.veiculo] * q)}
+                  </span>
+                </div>
+              );
+            })}
+            <div className="flex items-start justify-between gap-3 text-sm">
+              <span className="text-black/55">Roteiro Personalizado (incluso)</span>
+              <span className={`${inter.className} shrink-0 tabular-nums text-black/70`}>{formatUSD(roteiroUSD)}</span>
+            </div>
+          </>
+        )}
+      </div>
+      <div className="mt-4 border-t border-black/10 pt-4">
+        <p className="text-[11px] uppercase tracking-[0.14em] text-black/50">Total estimado</p>
+        {/* `key` no total: a cada mudança o elemento remonta e a animação
+            de destaque roda de novo — feedback imediato do preço. */}
+        <p
+          key={Math.round(totalUSD)}
+          className={`${inter.className} mt-0.5 rounded-md text-3xl font-bold tabular-nums tracking-[-0.02em] text-[#0A2540]`}
+          style={quantidadeItens > 0 ? { animation: "ajisai-destaque-preco 0.9s ease-out" } : undefined}
+        >
+          {quantidadeItens > 0 ? formatUSD(totalUSD) : "—"}
+        </p>
+        {quantidadeItens > 0 && (
+          <p className={`${inter.className} text-xs tabular-nums text-black/50`}>≈ {formatBRL(totalBRL)} na cotação do dia</p>
+        )}
+      </div>
+    </div>
+  );
+
+  const botaoCta = (classeExtra = "") => (
+    <button
+      type="button"
+      onClick={acionarCta}
+      aria-disabled={!cta.ativo}
+      className={`flex h-12 w-full items-center justify-center rounded-full text-sm font-semibold uppercase tracking-[0.08em] transition-colors ${
+        cta.ativo ? "bg-[#1f6fb8] text-white shadow-sm hover:bg-[#2f80c9]" : "cursor-default bg-[#dce6ef] text-[#5b7a95]"
+      } ${classeExtra}`}
+    >
+      {cta.rotulo}
+    </button>
+  );
+
+  const textoStatus =
+    cta.falta ?? (etapa < 4 && etapasFaltando > 0 ? (etapasFaltando === 1 ? "Falta 1 etapa" : `Faltam ${etapasFaltando} etapas`) : null);
 
   return (
-    <main
-      // Mesmos ajustes de mobile/iOS das outras páginas de produto.
-      className="min-h-screen overflow-x-clip bg-white pt-14 text-black [&_input:not([type=checkbox])]:text-base [&_textarea]:text-base md:[&_input:not([type=checkbox])]:text-sm md:[&_textarea]:text-sm"
-      style={status !== "enviado" ? { paddingBottom: alturaRodape + 56 } : undefined}
-    >
+    <main className="min-h-screen overflow-x-clip bg-white pb-40 pt-14 text-black lg:pb-16 [&_input:not([type=checkbox])]:text-base [&_textarea]:text-base md:[&_input:not([type=checkbox])]:text-sm md:[&_textarea]:text-sm">
+      <style>{`@keyframes ajisai-destaque-preco { 0% { background-color: rgba(47,128,201,0.16); } 100% { background-color: transparent; } }`}</style>
+
       <div className="fixed inset-x-0 top-0 z-50 flex h-14 shrink-0 items-center gap-3 bg-[#0A2540] px-4 md:px-8">
         <Link
           href="/produtos"
-          className="flex items-center gap-1.5 text-xs font-medium uppercase tracking-[0.15em] text-white/70 transition hover:text-white"
+          className="flex min-h-[44px] items-center gap-1.5 text-xs font-medium uppercase tracking-[0.15em] text-white/70 transition hover:text-white"
         >
-          <svg
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            className="h-4 w-4"
-          >
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4">
             <path d="M15 18l-6-6 6-6" />
           </svg>
           Voltar
@@ -243,42 +486,38 @@ export default function TransportePrivadoPage() {
         <img src="/images/AJISAI-LOGO.avif" alt="Ajisai" className="h-6 w-auto object-contain md:h-7" />
       </div>
 
-      <div className="mx-auto max-w-5xl p-5 md:p-8">
-        {status === "enviado" ? (
-          <div className="py-6 text-center">
-            <p className="text-xs uppercase tracking-[0.3em] text-[#1c6ea8]">Pedido registrado</p>
-            <h3 className={`${display.className} mt-3 text-2xl font-medium text-black md:text-3xl`}>
-              Recebemos seu pedido de transporte privado
-            </h3>
-            <p className="mx-auto mt-3 max-w-md text-sm leading-relaxed text-black/75">
-              Nossa equipe confirma a logística, os horários e a forma de pagamento direto com você pelo
-              WhatsApp.
-            </p>
-            <a
-              href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(mensagemWhatsapp)}`}
-              target="_blank"
-              rel="noreferrer"
-              className="mt-6 inline-flex items-center justify-center rounded-full bg-[#2f80c9] px-6 py-3.5 text-xs font-medium uppercase tracking-[0.25em] text-white transition hover:bg-[#3b91dc]"
-            >
-              Continuar no WhatsApp
-            </a>
-          </div>
-        ) : (
-          <>
-            {/* Banner hero — foto enviada pelo Wilson em 29/set/2026. Mesmo
-                esquema do Seguro Viagem/JR Pass: a família fica do lado
-                esquerdo da foto, então ela ocupa só os ~64% da direita do
-                banner (van e motorista à direita) e o título vai no
-                azul-marinho liso à esquerda. No celular: foto em cima,
-                texto embaixo. */}
+      {status === "enviado" ? (
+        <div className="mx-auto max-w-xl px-5 py-16 text-center">
+          <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-[#2f80c9]/10 text-[#2f80c9]">
+            <IconeCheck className="h-6 w-6" />
+          </span>
+          <h1 className={`${display.className} mt-5 text-2xl font-medium text-black md:text-3xl`}>Recebemos seu pedido</h1>
+          <p className="mx-auto mt-3 max-w-md text-sm leading-relaxed text-black/70">
+            Nossa equipe confirma horários, logística e forma de pagamento com você pelo WhatsApp — em geral no mesmo
+            dia útil.
+          </p>
+          <a
+            href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(mensagemWhatsapp)}`}
+            target="_blank"
+            rel="noreferrer"
+            className="mt-7 inline-flex h-12 items-center justify-center rounded-full bg-[#1f6fb8] px-7 text-sm font-semibold uppercase tracking-[0.08em] text-white transition hover:bg-[#2f80c9]"
+          >
+            Continuar no WhatsApp
+          </a>
+        </div>
+      ) : (
+        <>
+          <div className="mx-auto max-w-6xl px-5 pt-5 md:px-8 md:pt-8">
+            {/* Hero — mais baixo que antes (pedido do Wilson: "reduzir
+                levemente a altura do Hero"), mesma foto e headline. */}
             <section className="relative -mx-5 overflow-hidden bg-[#0A2540] sm:mx-0 sm:rounded-2xl">
-              <div className="relative h-64 sm:absolute sm:inset-y-0 sm:right-0 sm:h-auto sm:w-[64%]">
+              <div className="relative h-48 sm:absolute sm:inset-y-0 sm:right-0 sm:h-auto sm:w-[64%]">
                 <Image
                   src="/images/produtos/transporte-privado-header.jpg"
                   alt="Família sendo recebida pelo motorista particular ao lado da van, em frente a um templo no Japão"
                   fill
                   priority
-                  sizes="(min-width: 640px) 620px, 100vw"
+                  sizes="(min-width: 640px) 700px, 100vw"
                   className="object-cover object-[40%_45%]"
                 />
                 <div
@@ -286,132 +525,631 @@ export default function TransportePrivadoPage() {
                   className="absolute inset-0 bg-gradient-to-t from-[#0A2540] via-[#0A2540]/10 to-transparent sm:bg-gradient-to-r sm:from-[#0A2540] sm:via-[#0A2540]/0 sm:via-40% sm:to-transparent"
                 />
               </div>
-              <div className="relative -mt-12 px-5 pb-8 sm:mt-0 sm:flex sm:min-h-[340px] sm:max-w-[38%] sm:flex-col sm:justify-center sm:px-10 sm:py-12 md:min-h-[380px]">
+              <div className="relative -mt-10 px-5 pb-6 sm:mt-0 sm:flex sm:min-h-[260px] sm:max-w-[38%] sm:flex-col sm:justify-center sm:px-10 sm:py-10 md:min-h-[290px]">
                 <p className="text-xs uppercase tracking-[0.3em] text-white/75">Transporte Privado</p>
-                <h1 className={`${display.className} mt-3 text-3xl font-medium leading-tight text-white md:text-4xl`}>
+                <h1 className={`${display.className} mt-3 text-[28px] font-medium leading-tight text-white md:text-4xl`}>
                   Motorista particular, sem compartilhar veículo
                 </h1>
               </div>
             </section>
-            <p className="mt-6 max-w-2xl text-sm leading-relaxed text-black/75">
-              Escolha o veículo e as rotas ou tours que precisa e veja o investimento exato, direto da tabela
-              do nosso fornecedor no Japão — já com o Roteiro Personalizado incluso.
+            <p className="mt-5 text-sm leading-relaxed text-black/70 md:text-base">
+              Escolha seu veículo e trajeto para consultar o valor e solicitar o transporte.
             </p>
 
-            <div className="mt-8 rounded-2xl bg-[#eef6fb] p-5 sm:p-6">
-              <p className="text-center text-xs font-medium uppercase tracking-[0.15em] text-[#1c6ea8]">
-                Como funciona
-              </p>
-              <div className="mt-5 grid grid-cols-2 gap-6 sm:grid-cols-4 sm:gap-4">
-                {COMO_FUNCIONA.map((passo, index) => (
-                  <div key={passo.titulo} className="flex min-w-0 flex-col items-center text-center">
-                    <p className="text-xs font-semibold uppercase tracking-[0.15em] text-[#2f80c9]">
-                      Passo {index + 1}
-                    </p>
-                    <IconePasso tipo={passo.icone} />
-                    <p className="mt-2 text-sm font-medium text-black">{passo.titulo}</p>
-                    <p className="mt-1 text-xs leading-5 text-black/65">{passo.texto}</p>
+            {/* Como funciona — compacto, numa linha, sem competir com a
+                seleção (pedido do Wilson). */}
+            <ol className="mt-4 flex flex-wrap items-center gap-x-2 gap-y-1.5 text-xs text-black/55">
+              {COMO_FUNCIONA.map((passo, i) => (
+                <li key={passo} className="flex items-center gap-2">
+                  <span className="text-black/35">{i + 1}</span>
+                  <span>{passo}</span>
+                  {i < COMO_FUNCIONA.length - 1 && <span className="text-black/25" aria-hidden="true">→</span>}
+                </li>
+              ))}
+            </ol>
+          </div>
+
+          {/* Stepper — fixo logo abaixo da barra do topo enquanto rola. */}
+          {/* Âncora fora do elemento sticky — ao trocar de etapa, a página
+              rola até aqui (a posição do próprio stepper não serve, porque
+              quando ele está "grudado" no topo o getBoundingClientRect
+              devolve sempre a posição grudada). */}
+          <div ref={stepperRef} aria-hidden="true" />
+          <div className="sticky top-14 z-40 mt-6 border-y border-black/[0.07] bg-white/95 backdrop-blur-sm">
+            <nav aria-label="Etapas" className="mx-auto flex max-w-6xl items-center gap-1 overflow-x-auto px-5 py-3 md:gap-3 md:px-8">
+              {ETAPAS.map((nomeEtapa, i) => {
+                const numero = (i + 1) as Etapa;
+                const atual = etapa === numero;
+                const concluida = numero < etapa || (numero === 1 && etapa1Ok && etapa > 1) || (numero === 2 && etapa2Ok && etapa > 2) || (numero === 3 && etapa3Ok && etapa > 3);
+                // Pode voltar pra qualquer etapa anterior; pra frente, só
+                // se as anteriores estiverem completas.
+                const liberada =
+                  numero <= etapa ||
+                  (numero === 2 && etapa1Ok) ||
+                  (numero === 3 && etapa1Ok && etapa2Ok) ||
+                  (numero === 4 && etapa1Ok && etapa2Ok && etapa3Ok);
+                return (
+                  <div key={nomeEtapa} className="flex shrink-0 items-center gap-1 md:gap-3">
+                    <button
+                      type="button"
+                      onClick={() => liberada && irPara(numero)}
+                      disabled={!liberada}
+                      aria-current={atual ? "step" : undefined}
+                      className={`flex min-h-[44px] items-center gap-2 rounded-full px-2 text-sm transition md:px-3 ${
+                        atual ? "text-[#1f6fb8]" : concluida ? "text-black/75 hover:text-black" : "text-black/35"
+                      } ${liberada && !atual ? "cursor-pointer" : ""}`}
+                    >
+                      <span
+                        className={`flex h-7 w-7 items-center justify-center rounded-full text-xs font-semibold ${
+                          atual
+                            ? "bg-[#1f6fb8] text-white"
+                            : concluida
+                              ? "bg-[#2f80c9]/12 text-[#1f6fb8]"
+                              : "border border-black/15 text-black/40"
+                        }`}
+                      >
+                        {concluida && !atual ? <IconeCheck className="h-3.5 w-3.5" /> : numero}
+                      </span>
+                      <span className={`${atual ? "font-semibold" : "font-medium"} ${atual ? "" : "hidden sm:inline"}`}>{nomeEtapa}</span>
+                    </button>
+                    {i < ETAPAS.length - 1 && <span className="h-px w-4 bg-black/15 md:w-10" aria-hidden="true" />}
                   </div>
-                ))}
-              </div>
+                );
+              })}
+            </nav>
+          </div>
+
+          <div className="mx-auto grid max-w-6xl gap-10 px-5 pt-8 md:px-8 lg:grid-cols-[minmax(0,1fr)_340px]">
+            <div className="min-w-0">
+              {/* ── ETAPA 1 — VEÍCULO ── */}
+              {etapa === 1 && (
+                <section aria-labelledby="titulo-etapa-1">
+                  <h2 id="titulo-etapa-1" className={`${display.className} text-2xl font-medium text-[#0A2540]`}>
+                    Escolha o veículo
+                  </h2>
+                  <p className="mt-1.5 text-sm text-black/60">O valor de cada trajeto depende do veículo escolhido.</p>
+                  <div className="mt-6 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+                    {VEICULOS_MOTORISTA.map((v) => {
+                      const ativo = veiculoEscolhido && selecao.veiculo === v.id;
+                      const curto = VEICULO_CURTO[v.id];
+                      return (
+                        <button
+                          key={v.id}
+                          type="button"
+                          onClick={() => escolherVeiculo(v.id)}
+                          aria-pressed={ativo}
+                          className={`relative flex items-center gap-4 overflow-hidden rounded-xl border p-3 text-left transition sm:flex-col sm:items-stretch sm:gap-0 sm:p-0 ${
+                            ativo
+                              ? "border-[#2f80c9] bg-[#2f80c9]/[0.05] ring-1 ring-[#2f80c9]"
+                              : "border-black/10 bg-white hover:border-black/25"
+                          }`}
+                        >
+                          <span className="relative block h-20 w-28 shrink-0 sm:aspect-[3/2] sm:h-auto sm:w-full">
+                            <Image src={v.foto} alt="" fill sizes="(min-width: 640px) 260px, 112px" className="object-contain p-2 sm:p-4" />
+                          </span>
+                          <span className="block min-w-0 sm:border-t sm:border-black/[0.06] sm:p-4">
+                            <span className="block text-[15px] font-medium text-black">{curto.nome}</span>
+                            <span className="mt-0.5 block text-sm font-semibold text-[#0A2540]">Até {v.assentos} passageiros</span>
+                            <span className="mt-0.5 block text-xs text-black/55">{curto.perfil}</span>
+                          </span>
+                          {ativo && (
+                            <span className="absolute right-3 top-3 flex h-6 w-6 items-center justify-center rounded-full bg-[#2f80c9] text-white">
+                              <IconeCheck className="h-3.5 w-3.5" />
+                            </span>
+                          )}
+                        </button>
+                      );
+                    })}
+                  </div>
+                  {veiculoEscolhido && (
+                    <p className="mt-5 flex items-center gap-2 text-sm text-[#1f6fb8]">
+                      <IconeCheck className="h-4 w-4" />
+                      {veiculoCurto.nome} · Até {veiculo.assentos} passageiros selecionado
+                    </p>
+                  )}
+                </section>
+              )}
+
+              {/* ── ETAPA 2 — TRAJETO ── */}
+              {etapa === 2 && (
+                <section aria-labelledby="titulo-etapa-2">
+                  <h2 id="titulo-etapa-2" className={`${display.className} text-2xl font-medium text-[#0A2540]`}>
+                    Escolha uma ou mais rotas
+                  </h2>
+                  <p className="mt-1.5 text-sm text-black/60">
+                    Você pode adicionar transfers e passeios ao mesmo pedido. Preços para{" "}
+                    <button type="button" onClick={() => irPara(1)} className="font-medium text-[#1f6fb8] underline decoration-[#1f6fb8]/30 underline-offset-2">
+                      {veiculoCurto.nome}
+                    </button>
+                    .
+                  </p>
+
+                  {/* Categorias em abas — só uma categoria aparece por vez. */}
+                  <div role="tablist" aria-label="Tipo de serviço" className="mt-6 grid grid-cols-3 gap-1 rounded-xl border border-black/10 bg-black/[0.02] p-1">
+                    {CATEGORIAS.map((c) => {
+                      const ativa = categoria === c.key;
+                      const n = selecionadasPorCategoria(c.key);
+                      return (
+                        <button
+                          key={c.key}
+                          type="button"
+                          role="tab"
+                          aria-selected={ativa}
+                          onClick={() => setCategoria(c.key)}
+                          className={`flex min-h-[44px] items-center justify-center gap-1.5 rounded-lg px-2 text-sm transition ${
+                            ativa ? "bg-white font-semibold text-[#0A2540] shadow-sm" : "font-medium text-black/55 hover:text-black"
+                          }`}
+                        >
+                          {c.key === "tour-dia-inteiro" ? (
+                            <>
+                              <span className="sm:hidden">Passeios</span>
+                              <span className="hidden sm:inline">{c.nome}</span>
+                            </>
+                          ) : (
+                            c.nome
+                          )}
+                          {n > 0 && (
+                            <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-[#2f80c9] px-1.5 text-[11px] font-semibold text-white">
+                              {n}
+                            </span>
+                          )}
+                        </button>
+                      );
+                    })}
+                  </div>
+
+                  {/* Filtro de região — rola na horizontal no celular. */}
+                  <div className="-mx-5 mt-4 flex gap-2 overflow-x-auto px-5 pb-1 md:mx-0 md:px-0">
+                    {(["todas", ...REGIOES_MOTORISTA.map((r) => r.key)] as const).map((key) => {
+                      const ativa = regiao === key;
+                      return (
+                        <button
+                          key={key}
+                          type="button"
+                          onClick={() => setRegiao(key)}
+                          className={`min-h-[40px] shrink-0 rounded-full border px-4 text-sm transition ${
+                            ativa
+                              ? "border-[#0A2540] bg-[#0A2540] text-white"
+                              : "border-black/12 bg-white text-black/65 hover:border-black/30"
+                          }`}
+                        >
+                          {key === "todas" ? "Todas" : REGIAO_CURTA[key]}
+                        </button>
+                      );
+                    })}
+                  </div>
+
+                  <div className="mt-5 grid gap-3 sm:grid-cols-2">
+                    {rotasVisiveis.length === 0 && (
+                      <p className="text-sm text-black/50 sm:col-span-2">Nenhuma rota dessa categoria nessa região.</p>
+                    )}
+                    {rotasVisiveis.map((rota) => {
+                      const qtd = quantidadeDe(rota.id);
+                      const ativo = qtd > 0;
+                      const preco = rota.precoUSD[selecao.veiculo];
+                      return (
+                        <div
+                          key={rota.id}
+                          className={`flex flex-col rounded-xl border p-4 transition ${
+                            ativo ? "border-[#2f80c9] bg-[#2f80c9]/[0.05] ring-1 ring-[#2f80c9]" : "border-black/10 bg-white hover:border-black/25"
+                          }`}
+                        >
+                          <p className="text-[15px] font-medium leading-snug text-black">{rota.nome}</p>
+                          <p className="mt-1 text-xs text-black/55">
+                            {rota.minutosLivres != null ? `Tempo incluído: ${rota.minutosLivres} min` : "10 horas incluídas"}
+                            {regiao === "todas" && <span className="text-black/40"> · {REGIAO_CURTA[rota.regiao]}</span>}
+                          </p>
+                          <div className="mt-4 flex items-center justify-between gap-3">
+                            <p className={`${inter.className} text-xl font-bold tabular-nums text-[#0A2540]`}>{formatUSD(preco)}</p>
+                            {ativo ? (
+                              <div className="flex items-center gap-1.5">
+                                <button
+                                  type="button"
+                                  onClick={() => ajustarQuantidade(rota.id, qtd - 1)}
+                                  aria-label={qtd === 1 ? `Remover ${rota.nome}` : "Diminuir quantidade"}
+                                  className="flex h-11 w-11 items-center justify-center rounded-full border border-[#2f80c9]/40 bg-white text-lg text-[#1f6fb8] transition hover:bg-[#2f80c9]/10"
+                                >
+                                  −
+                                </button>
+                                <span className={`${inter.className} min-w-[2.5rem] text-center text-sm font-semibold text-[#0A2540]`}>
+                                  {qtd}
+                                </span>
+                                <button
+                                  type="button"
+                                  onClick={() => ajustarQuantidade(rota.id, qtd + 1)}
+                                  aria-label="Adicionar mais um (outro dia)"
+                                  className="flex h-11 w-11 items-center justify-center rounded-full border border-[#2f80c9]/40 bg-white text-lg text-[#1f6fb8] transition hover:bg-[#2f80c9]/10"
+                                >
+                                  +
+                                </button>
+                              </div>
+                            ) : (
+                              <button
+                                type="button"
+                                onClick={() => ajustarQuantidade(rota.id, 1)}
+                                className="h-11 rounded-full border border-[#2f80c9] px-5 text-sm font-semibold text-[#1f6fb8] transition hover:bg-[#2f80c9] hover:text-white"
+                              >
+                                Selecionar
+                              </button>
+                            )}
+                          </div>
+                          {ativo && (
+                            <p className="mt-2 text-xs font-medium text-[#1f6fb8]">
+                              ✓ Selecionado{qtd > 1 ? ` · ${qtd} vezes (dias diferentes)` : ""}
+                            </p>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+
+                  {/* Incluído / Não incluído / Opcionais — perto da decisão,
+                      no lugar do antigo bloco "IMPORTANTE". */}
+                  <div className="mt-8 grid gap-5 border-t border-black/10 pt-6 sm:grid-cols-2">
+                    <div>
+                      <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-black/70">Incluído</p>
+                      <p className="mt-1.5 text-sm text-black/65">Impostos, combustível, pedágios e estacionamento.</p>
+                    </div>
+                    <div>
+                      <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-black/70">Não incluído</p>
+                      <p className="mt-1.5 text-sm text-black/65">Deslocamentos intermunicipais fora das rotas contratadas.</p>
+                    </div>
+                  </div>
+
+                  <div className="mt-6">
+                    <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-black/70">Opcionais</p>
+                    <div className="mt-2 divide-y divide-black/[0.06]">
+                      {[
+                        {
+                          marcado: opcionalMeetGreet,
+                          alternar: () => setOpcionalMeetGreet((v) => !v),
+                          titulo: "Meet & Greet — recepção com placa de identificação",
+                          detalhe: `${formatUSD(ADICIONAL_MEET_GREET_USD)}, confirmado pela nossa equipe`,
+                        },
+                        {
+                          marcado: opcionalCadeirinha,
+                          alternar: () => setOpcionalCadeirinha((v) => !v),
+                          titulo: "Cadeirinha infantil",
+                          detalhe: `${formatUSD(ADICIONAL_CADEIRINHA_USD)} por cadeirinha, confirmado pela nossa equipe`,
+                        },
+                        {
+                          marcado: opcionalBilingue,
+                          alternar: () => setOpcionalBilingue((v) => !v),
+                          titulo: "Solicitar motorista bilíngue português/inglês",
+                          detalhe: "Sujeito à disponibilidade e valor adicional. Recomendamos solicitar com antecedência.",
+                          aviso: true,
+                        },
+                      ].map((op) => (
+                        <label key={op.titulo} className="flex min-h-[52px] cursor-pointer items-start gap-3 py-3">
+                          <input
+                            type="checkbox"
+                            checked={op.marcado}
+                            onChange={op.alternar}
+                            className="mt-0.5 h-5 w-5 shrink-0 rounded border-black/30 text-[#2f80c9] focus:ring-[#2f80c9]"
+                          />
+                          <span className="min-w-0">
+                            <span className="block text-sm text-black/85">{op.titulo}</span>
+                            <span className="mt-0.5 flex items-center gap-1.5 text-xs text-black/50">
+                              {op.aviso && <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-amber-500" aria-hidden="true" />}
+                              {op.detalhe}
+                            </span>
+                          </span>
+                        </label>
+                      ))}
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => setModalRegras(true)}
+                      className="mt-2 min-h-[44px] text-sm font-medium text-[#1f6fb8] underline decoration-[#1f6fb8]/30 underline-offset-2"
+                    >
+                      Ver regras e adicionais
+                    </button>
+                  </div>
+                </section>
+              )}
+
+              {/* ── ETAPA 3 — DADOS ── */}
+              {etapa === 3 && (
+                <section aria-labelledby="titulo-etapa-3">
+                  <h2 id="titulo-etapa-3" className={`${display.className} text-2xl font-medium text-[#0A2540]`}>
+                    Seus dados
+                  </h2>
+                  <p className="mt-1.5 text-sm text-black/60">Usamos esses dados só para confirmar o seu transporte.</p>
+                  <div className="mt-6 grid gap-5 sm:grid-cols-2">
+                    <div className="sm:col-span-2">
+                      <Campo rotulo="Nome completo" erro={mostrarErro("nome")}>
+                        <input
+                          type="text"
+                          autoComplete="name"
+                          value={nome}
+                          onChange={(e) => setNome(e.target.value)}
+                          onBlur={() => tocar("nome")}
+                          className={classeInput(!!mostrarErro("nome"))}
+                        />
+                      </Campo>
+                    </div>
+                    <Campo rotulo="E-mail" erro={mostrarErro("email")}>
+                      <input
+                        type="email"
+                        autoComplete="email"
+                        inputMode="email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        onBlur={() => tocar("email")}
+                        className={classeInput(!!mostrarErro("email"))}
+                      />
+                    </Campo>
+                    <Campo rotulo="WhatsApp" erro={mostrarErro("whatsapp")} ajuda="Com DDD. Para número de fora do Brasil, comece com +.">
+                      <input
+                        type="tel"
+                        autoComplete="tel"
+                        inputMode="tel"
+                        value={whatsapp}
+                        onChange={(e) => setWhatsapp(mascararWhatsapp(e.target.value))}
+                        onBlur={() => tocar("whatsapp")}
+                        placeholder="(11) 99999-9999"
+                        className={classeInput(!!mostrarErro("whatsapp"))}
+                      />
+                    </Campo>
+                    <Campo
+                      rotulo="Data do serviço"
+                      erro={mostrarErro("dataServico")}
+                      ajuda={quantidadeItens > 1 ? "Com mais de um serviço, informe a data do primeiro — as demais combinamos pelo WhatsApp." : undefined}
+                    >
+                      <input
+                        type="date"
+                        min={hojeISO()}
+                        value={dataServico}
+                        onChange={(e) => setDataServico(e.target.value)}
+                        onBlur={() => tocar("dataServico")}
+                        className={`${classeInput(!!mostrarErro("dataServico"))} block appearance-none text-left`}
+                      />
+                    </Campo>
+                    <Campo rotulo="Horário aproximado (opcional)">
+                      <input
+                        type="time"
+                        value={horario}
+                        onChange={(e) => setHorario(e.target.value)}
+                        className={`${classeInput(false)} block appearance-none text-left`}
+                      />
+                    </Campo>
+                    <Campo rotulo="Número do voo (opcional)">
+                      <input
+                        type="text"
+                        value={numeroVoo}
+                        onChange={(e) => setNumeroVoo(e.target.value.toUpperCase())}
+                        placeholder="ex.: JL 34"
+                        className={classeInput(false)}
+                      />
+                    </Campo>
+                    <div className="sm:col-span-2">
+                      <Campo rotulo="Observações (opcional)">
+                        <textarea
+                          value={observacoes}
+                          onChange={(e) => setObservacoes(e.target.value)}
+                          rows={3}
+                          placeholder="Datas da viagem, número do voo, quantidade de bagagem ou solicitações especiais."
+                          className="w-full min-w-0 rounded-lg border border-black/15 bg-white px-3.5 py-3 text-sm text-black focus:border-[#2f80c9] focus:outline-none focus:ring-2 focus:ring-[#2f80c9]/20"
+                        />
+                      </Campo>
+                    </div>
+                  </div>
+                </section>
+              )}
+
+              {/* ── ETAPA 4 — REVISÃO ── */}
+              {etapa === 4 && (
+                <section aria-labelledby="titulo-etapa-4">
+                  <h2 id="titulo-etapa-4" className={`${display.className} text-2xl font-medium text-[#0A2540]`}>
+                    Revise seu pedido
+                  </h2>
+                  <dl className="mt-6 divide-y divide-black/[0.07] border-y border-black/[0.07]">
+                    {[
+                      {
+                        rotulo: "Veículo",
+                        voltar: 1 as Etapa,
+                        conteudo: (
+                          <>
+                            {veiculoCurto.nome} <span className="text-black/50">· até {veiculo.assentos} passageiros</span>
+                          </>
+                        ),
+                      },
+                      {
+                        rotulo: "Serviços",
+                        voltar: 2 as Etapa,
+                        conteudo: (
+                          <div className="space-y-1">
+                            {selecao.itens.map((item) => {
+                              const rota = encontrarRotaMotorista(item.rotaId);
+                              if (!rota) return null;
+                              const q = Math.max(1, item.quantidade);
+                              return (
+                                <p key={item.rotaId}>
+                                  {q > 1 && <span className="text-black/50">{q}× </span>}
+                                  {rota.nome}
+                                </p>
+                              );
+                            })}
+                            {(opcionalMeetGreet || opcionalCadeirinha || opcionalBilingue) && (
+                              <p className="text-black/55">
+                                Opcionais:{" "}
+                                {[
+                                  opcionalMeetGreet && "Meet & Greet",
+                                  opcionalCadeirinha && "cadeirinha infantil",
+                                  opcionalBilingue && "motorista bilíngue",
+                                ]
+                                  .filter(Boolean)
+                                  .join(", ")}
+                              </p>
+                            )}
+                          </div>
+                        ),
+                      },
+                      {
+                        rotulo: "Data",
+                        voltar: 3 as Etapa,
+                        conteudo: (
+                          <>
+                            {formatarDataExtensa(dataServico)}
+                            {horario && <span className="text-black/50"> · por volta das {horario}</span>}
+                            {numeroVoo && <span className="text-black/50"> · voo {numeroVoo}</span>}
+                          </>
+                        ),
+                      },
+                      {
+                        rotulo: "Dados do passageiro",
+                        voltar: 3 as Etapa,
+                        conteudo: (
+                          <div className="space-y-0.5">
+                            <p>{nome}</p>
+                            <p className="text-black/60">{whatsapp}</p>
+                            <p className="text-black/60">{email}</p>
+                          </div>
+                        ),
+                      },
+                    ].map((linha) => (
+                      <div key={linha.rotulo} className="grid gap-1 py-4 sm:grid-cols-[170px_minmax(0,1fr)_auto] sm:gap-4">
+                        <dt className="text-[11px] font-semibold uppercase tracking-[0.14em] text-black/55 sm:pt-0.5">{linha.rotulo}</dt>
+                        <dd className="min-w-0 text-sm text-black/85">{linha.conteudo}</dd>
+                        <button
+                          type="button"
+                          onClick={() => irPara(linha.voltar)}
+                          className="justify-self-start text-sm font-medium text-[#1f6fb8] underline decoration-[#1f6fb8]/30 underline-offset-2 sm:justify-self-end"
+                        >
+                          Editar
+                        </button>
+                      </div>
+                    ))}
+                    <div className="grid gap-1 py-4 sm:grid-cols-[170px_minmax(0,1fr)] sm:gap-4">
+                      <dt className="text-[11px] font-semibold uppercase tracking-[0.14em] text-black/55 sm:pt-1.5">Total estimado</dt>
+                      <dd>
+                        <span className={`${inter.className} text-2xl font-bold tabular-nums text-[#0A2540]`}>{formatUSD(totalUSD)}</span>
+                        <span className={`${inter.className} ml-2 text-sm tabular-nums text-black/50`}>≈ {formatBRL(totalBRL)}</span>
+                      </dd>
+                    </div>
+                  </dl>
+
+                  <label className="mt-6 flex min-h-[44px] cursor-pointer items-start gap-3">
+                    <input
+                      type="checkbox"
+                      checked={termosAceitos}
+                      onChange={(e) => setTermosAceitos(e.target.checked)}
+                      className="mt-0.5 h-5 w-5 shrink-0 rounded border-black/30 text-[#2f80c9] focus:ring-[#2f80c9]"
+                    />
+                    <span className="text-sm text-black/85">
+                      Li e aceito os{" "}
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          setModalTermos(true);
+                        }}
+                        className="font-medium text-[#1f6fb8] underline decoration-[#1f6fb8]/30 underline-offset-2"
+                      >
+                        Termos e Condições
+                      </button>{" "}
+                      do transporte privado.
+                    </span>
+                  </label>
+                  {tentouEnviar && !termosAceitos && (
+                    <p className="ml-8 text-xs text-red-600">Aceite os Termos e Condições para solicitar o transporte.</p>
+                  )}
+                  <p className="mt-4 text-xs leading-5 text-black/50">
+                    Nenhum valor é cobrado agora. Nossa equipe confirma disponibilidade, horários e forma de pagamento com
+                    você pelo WhatsApp.
+                  </p>
+                  {erro && <p className="mt-4 text-sm text-red-600">{erro}</p>}
+                </section>
+              )}
+
+              {etapa > 1 && (
+                <button
+                  type="button"
+                  onClick={() => irPara((etapa - 1) as Etapa)}
+                  className="mt-8 flex min-h-[44px] items-center gap-1.5 text-sm font-medium text-black/60 transition hover:text-black"
+                >
+                  <span aria-hidden="true">←</span> Voltar para {ETAPAS[etapa - 2].toLowerCase()}
+                </button>
+              )}
             </div>
 
-            {/* 1 — Veículo e rotas */}
-            <div className="mt-8 border-t border-black/10 pt-6">
-              <TituloPasso numero={1} titulo="Veículo e rotas" />
-              <div className="mt-5">
-                <MotoristaPrivadoPicker selecao={selecao} onChange={setSelecao} cambioCotacao={cambioCotacao} />
+            {/* Resumo fixo — desktop. */}
+            <aside className="hidden lg:block" aria-label="Resumo do pedido">
+              <div className="sticky top-[8.5rem] rounded-2xl border border-black/10 bg-white p-6 shadow-[0_10px_30px_-18px_rgba(10,37,64,0.35)]">
+                {conteudoResumo}
+                <div className="mt-6">{botaoCta()}</div>
+                {textoStatus && <p className="mt-2.5 text-center text-xs text-black/55">{textoStatus}</p>}
               </div>
-            </div>
+            </aside>
+          </div>
 
-            {/* Importante — mesmos avisos do modal antigo. */}
-            <div className="mt-8 border-t border-black/10 pt-6">
-              <p className="text-[10px] uppercase tracking-[0.2em] text-black">Importante</p>
-                <div className="mt-4 space-y-3">
-                  <p className="text-xs leading-5 text-black/60">
-                    <span className="font-semibold text-black/80">Não incluso:</span> trânsito
-                    inter-municipal de longa distância entre regiões (ex.: Tóquio↔Kansai por estrada).
-                    Os valores acima já incluem imposto, estacionamento, pedágio (ETC) e combustível.
-                  </p>
-                  <p className="text-xs leading-5 text-black/60">
-                    <span className="font-semibold text-black/80">Adicionais opcionais</span> (sob
-                    consulta, cobrados à parte): recepção com placa de identificação (Meet &amp;
-                    Greet) — {formatUSD(ADICIONAL_MEET_GREET_USD)}; cadeirinha infantil —{" "}
-                    {formatUSD(ADICIONAL_CADEIRINHA_USD)}.
-                  </p>
-                  <p className="text-xs leading-5 text-black/60">
-                    <span className="font-semibold text-black/80">Cancelamento:</span>{" "}
-                    {POLITICA_CANCELAMENTO_MOTORISTA}
-                  </p>
-                </div>
-                <div className="mt-4 rounded-xl border border-amber-300 bg-amber-50/60 p-4">
-                  <p className="text-xs leading-5 text-amber-800">
-                    <span className="font-semibold text-amber-900">
-                      Motorista bilíngue (português/inglês):
-                    </span>{" "}
-                    disponível mediante consulta, com valor adicional — a disponibilidade desse
-                    perfil é bem menor que a de motoristas sem esse requisito. Recomendamos
-                    solicitar com grande antecedência, idealmente 70 dias antes da viagem.
-                  </p>
-                </div>
-              </div>
+          {/* Resumo compacto — celular/tablet: total sempre visível + CTA
+              quase na largura toda; toque no total abre o detalhe. */}
+          <div className="fixed inset-x-0 bottom-0 z-50 border-t border-black/10 bg-white px-4 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-2.5 shadow-[0_-8px_24px_rgba(10,37,64,0.08)] lg:hidden">
+            {resumoAbertoMobile && <div className="max-h-[50svh] overflow-y-auto border-b border-black/10 pb-4 pt-1">{conteudoResumo}</div>}
+            <button
+              type="button"
+              onClick={() => setResumoAbertoMobile((v) => !v)}
+              aria-expanded={resumoAbertoMobile}
+              className="flex min-h-[44px] w-full items-center justify-between gap-3 text-left"
+            >
+              <span className="min-w-0">
+                <span className="block text-[11px] uppercase tracking-[0.14em] text-black/50">
+                  {quantidadeItens > 0
+                    ? `${quantidadeItens} ${quantidadeItens === 1 ? "serviço" : "serviços"} · ${veiculoCurto.nome}`
+                    : veiculoEscolhido
+                      ? veiculoCurto.nome
+                      : "Total estimado"}
+                </span>
+                <span
+                  key={Math.round(totalUSD)}
+                  className={`${inter.className} block rounded text-xl font-bold tabular-nums text-[#0A2540]`}
+                  style={quantidadeItens > 0 ? { animation: "ajisai-destaque-preco 0.9s ease-out" } : undefined}
+                >
+                  {quantidadeItens > 0 ? formatUSD(totalUSD) : "—"}
+                </span>
+              </span>
+              <span className="flex shrink-0 items-center gap-1 text-xs font-medium text-[#1f6fb8]">
+                {resumoAbertoMobile ? "Fechar" : "Ver resumo"}
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className={`h-4 w-4 transition-transform ${resumoAbertoMobile ? "" : "rotate-180"}`}>
+                  <path d="M6 9l6 6 6-6" />
+                </svg>
+              </span>
+            </button>
+            <div className="mt-2">{botaoCta()}</div>
+            {textoStatus && <p className="mt-1.5 text-center text-[11px] text-black/55">{textoStatus}</p>}
+          </div>
+        </>
+      )}
 
-            {/* 2 — Seus dados */}
-            <div className="mt-8 border-t border-black/10 pt-6">
-              <TituloPasso numero={2} titulo="Seus dados" />
-              <div className="mt-5 grid gap-4 sm:grid-cols-3">
-                <label className="flex min-w-0 flex-col gap-1.5">
-                  <span className="text-[10px] uppercase tracking-[0.15em] text-black">Nome completo</span>
-                  <input type="text" value={nome} onChange={(e) => setNome(e.target.value)} className={classeInput} />
-                </label>
-                <label className="flex min-w-0 flex-col gap-1.5">
-                  <span className="text-[10px] uppercase tracking-[0.15em] text-black">E-mail</span>
-                  <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className={classeInput} />
-                </label>
-                <label className="flex min-w-0 flex-col gap-1.5">
-                  <span className="text-[10px] uppercase tracking-[0.15em] text-black">WhatsApp</span>
-                  <input
-                    type="tel"
-                    value={whatsapp}
-                    onChange={(e) => setWhatsapp(e.target.value)}
-                    placeholder="(11) 99999-9999"
-                    className={classeInput}
-                  />
-                </label>
-              </div>
-              <label className="mt-4 flex min-w-0 flex-col gap-1.5">
-                <span className="text-[10px] uppercase tracking-[0.15em] text-black">Observações (opcional)</span>
-                <textarea
-                  value={observacoes}
-                  onChange={(e) => setObservacoes(e.target.value)}
-                  rows={2}
-                  placeholder="Datas da viagem, horários de voo, preferência de veículo, etc."
-                  className={classeInput}
-                />
-              </label>
-            </div>
+      <Modal aberto={modalRegras} titulo="Regras e adicionais" onFechar={() => setModalRegras(false)}>
+        <p className="font-medium text-black">Incluído no valor</p>
+        <p className="mt-1">
+          Impostos, estacionamento, pedágios (ETC) e combustível. Cada rota tem um tempo incluído — normalmente 90 min
+          nos trechos de chegada, 30 min nos trechos de partida, ou as 10 horas inteiras nos passeios de dia inteiro.
+        </p>
+        <p className="mt-4 font-medium text-black">Hora extra</p>
+        <p className="mt-1">
+          Uso além do tempo incluído é cobrado à parte, em blocos de 30 minutos (sempre arredondado pra cima), com
+          tarifa por veículo e rota.
+        </p>
+        <p className="mt-4 font-medium text-black">Não incluído</p>
+        <p className="mt-1">
+          Trânsito intermunicipal de longa distância entre regiões (ex.: Tóquio↔Kansai por estrada).
+        </p>
+        <p className="mt-4 font-medium text-black">Adicionais</p>
+        <p className="mt-1">
+          Meet &amp; Greet (recepção com placa de identificação) — {formatUSD(ADICIONAL_MEET_GREET_USD)}. Cadeirinha
+          infantil — {formatUSD(ADICIONAL_CADEIRINHA_USD)}. Motorista bilíngue português/inglês — sob consulta, com valor
+          adicional e disponibilidade limitada; recomendamos solicitar com grande antecedência (idealmente 70 dias antes
+          da viagem). Sem essa solicitação, o motorista fala japonês.
+        </p>
+        <p className="mt-4 font-medium text-black">Cancelamento</p>
+        <p className="mt-1">{POLITICA_CANCELAMENTO_MOTORISTA}</p>
+      </Modal>
 
-            {/* 3 — Forma de pagamento preferida (sem cobrança automática: só
-                informa a equipe, que fecha o pagamento pelo WhatsApp). */}
-            <FormasPagamento
-              numeroPasso={3}
-              totalBRL={quantidadeItens > 0 ? totalBRL : null}
-              dataViagem=""
-              formaPagamento={formaPagamento}
-              onEscolher={setFormaPagamento}
-            />
-
-            {/* 4 — Termos e condições (texto do modal antigo, sem mudança). */}
-            <div id="checkout-ultimo-passo" className="mt-8 border-t border-black/10 pt-6">
-              <TituloPasso numero={4} titulo="Termos e condições" />
-              <div
-                ref={termosBoxRef}
-                className="mt-5 max-h-72 overflow-y-auto rounded-xl border border-black/10 bg-black/[0.02] p-4 text-[11px] leading-5 text-black/75"
-                onScroll={(e) => {
-                  const el = e.currentTarget;
-                  if (el.scrollTop + el.clientHeight >= el.scrollHeight - 4) setTermosRolados(true);
-                }}
-              >
+      <Modal aberto={modalTermos} titulo="Termos e Condições" onFechar={() => setModalTermos(false)}>
+        <div className="text-[13px] leading-6">
                   <p className="font-medium text-black/80">Fornecimento do serviço</p>
                   <p className="mt-1">
                     O motorista e o veículo são fornecidos por um parceiro especializado no Japão
@@ -423,7 +1161,7 @@ export default function TransportePrivadoPage() {
                     Os valores já incluem imposto, estacionamento, pedágio (ETC) e combustível. Cada
                     rota tem um tempo livre incluso (normalmente 90 min no trecho de chegada/pickup,
                     30 min no trecho de partida, ou as 10 horas inteiras nos tours de dia inteiro) —
-                    ver detalhe de cada rota na calculadora acima.
+                    ver detalhe de cada rota na etapa Trajeto.
                   </p>
                   <p className="mt-3 font-medium text-black/80">Hora extra</p>
                   <p className="mt-1">
@@ -460,46 +1198,18 @@ export default function TransportePrivadoPage() {
                     confirma pagamento — nossa equipe entra em contato pelo WhatsApp pra fechar a
                     logística antes de qualquer cobrança.
                   </p>
-              </div>
-              <label className="mt-3 flex items-start gap-3 text-sm leading-6 text-black/80">
-                <input
-                  type="checkbox"
-                  checked={termosAceitos}
-                  disabled={!termosRolados}
-                  onChange={(e) => setTermosAceitos(e.target.checked)}
-                  className="mt-0.5 h-5 w-5 shrink-0 rounded border-black/30 text-[#2f80c9] focus:ring-[#2f80c9] disabled:cursor-not-allowed disabled:opacity-40"
-                />
-                Li e aceito os termos e condições de contratação do motorista privado acima.
-              </label>
-              {!termosRolados && (
-                <p className="mt-1.5 pl-8 text-xs text-black/55">Role o texto acima até o fim para habilitar o aceite.</p>
-              )}
-            </div>
-
-            {erro && <p className="mt-4 text-sm text-red-600">{erro}</p>}
-          </>
-        )}
-      </div>
-
-      {/* Rodapé enxuto compartilhado — sem selo da Stone (não há pagamento
-          automático aqui; o botão só envia o pedido). */}
-      {status !== "enviado" && (
-        <RodapeCheckout
-          containerRef={rodapeRef}
-          pendencias={pendenciasFinalizar}
-          formValido={formValido}
-          enviando={status === "enviando"}
-          onFinalizar={enviar}
-          rotuloValor="Total estimado"
-          valor={quantidadeItens > 0 ? formatBRL(totalBRL) : null}
-          detalhe={quantidadeItens > 0 ? `${resumoSelecao} · ${formatUSD(totalUSD)}` : undefined}
-          semValor="Selecione ao menos uma rota ou tour para ver o valor."
-          rotuloBotao="Solicitar transporte"
-          mostrarStone={false}
-          sentinelaId="checkout-ultimo-passo"
-          classeValor={inter.className}
-        />
-      )}
+        </div>
+        <button
+          type="button"
+          onClick={() => {
+            setTermosAceitos(true);
+            setModalTermos(false);
+          }}
+          className="mt-6 flex h-12 w-full items-center justify-center rounded-full bg-[#1f6fb8] text-sm font-semibold uppercase tracking-[0.08em] text-white transition hover:bg-[#2f80c9]"
+        >
+          Li e aceito
+        </button>
+      </Modal>
     </main>
   );
 }

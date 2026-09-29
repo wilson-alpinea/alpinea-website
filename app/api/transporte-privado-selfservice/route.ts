@@ -103,6 +103,17 @@ export async function POST(req: Request) {
     // fica desabilitado no front sem o aceite (ver formValido em
     // TransporteModal); aqui só registra a confirmação pro CRM/auditoria.
     const termosAceitos = Boolean(body.termosAceitos);
+    // Campos próprios de data/horário/voo e opcionais — adicionados no
+    // redesenho da página em 4 etapas (Wilson, 29/set/2026: "pedir datas
+    // da viagem em campos próprios em vez de depender de observações" +
+    // opcionais Meet & Greet / cadeirinha / motorista bilíngue como
+    // checkbox). Todos opcionais aqui; só entram no resumo do lead.
+    const dataServico = String(body.dataServico || "").trim();
+    const horario = String(body.horario || "").trim();
+    const numeroVoo = String(body.numeroVoo || "").trim();
+    const opcionais: string[] = Array.isArray(body.opcionais)
+      ? body.opcionais.map((o: unknown) => String(o).trim()).filter(Boolean).slice(0, 5)
+      : [];
 
     const linhasResumo: [string, string][] = [
       ["Veículo", veiculo],
@@ -111,7 +122,11 @@ export async function POST(req: Request) {
       ["Roteiro Personalizado (US$)", `US$ ${roteiroUSD.toLocaleString("pt-BR")}`],
       ["Total (US$)", `US$ ${totalUSD.toLocaleString("pt-BR")}`],
       ["Valor total (referência BRL)", totalBRL ? `R$ ${totalBRL.toLocaleString("pt-BR")}` : "Não calculado"],
-      ["Forma de pagamento escolhida", formaPagamento || "Não escolhida ainda"],
+      ["Data do serviço", dataServico || "Não informada"],
+      ["Horário aproximado", horario || "Não informado"],
+      ["Número do voo", numeroVoo || "Não informado"],
+      ["Opcionais solicitados", opcionais.length ? opcionais.join(", ") : "Nenhum"],
+      ["Forma de pagamento escolhida", formaPagamento || "A combinar pelo WhatsApp"],
       ["Termos e condições aceitos", termosAceitos ? "Sim" : "Não confirmado"],
       ["Observações do cliente", observacoesCliente || "Nenhuma"],
     ];
@@ -148,6 +163,7 @@ export async function POST(req: Request) {
         produto_principal: "servico_individual",
         produto_secundario: ["transporte_privado"],
         valor_proposta: totalBRL,
+        data_viagem: dataServico || null,
         estagio: "novo_lead",
         observacoes: `[${TAG_SELF_SERVICE}]\n${resumoTexto}`,
       })
