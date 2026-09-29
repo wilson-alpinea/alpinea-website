@@ -639,7 +639,7 @@ export default function JrPassPage() {
             <p className="mt-5 text-[11px] font-medium uppercase tracking-[0.1em] text-[#77736D]">
               Duração
             </p>
-            <div className="mt-2 flex w-full max-w-sm rounded-xl border border-[#E4E1DC] bg-[#FBFAF7] p-1">
+            <div className="mt-2 flex w-full rounded-xl border border-[#E4E1DC] bg-[#FBFAF7] p-1 sm:max-w-[calc((100%-1rem)/2)]">
               {JR_PASS_DIAS_OPCOES.map((dias) => {
                 const selecionado = diasSelecionados === dias;
                 return (

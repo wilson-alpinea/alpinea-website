@@ -5327,7 +5327,7 @@ export default function CalculadoraReversaPage() {
                       <div>
                         <p className="text-sm font-semibold text-[#0A2540]">Cartão de crédito</p>
                         <p className="mt-0.5 text-[10px] text-black/60">
-                          maquininha {(TAXA_MAQUINA_CARTAO * 100).toFixed(2).replace(".", ",")}% +
+                          taxa de cartão {(TAXA_MAQUINA_CARTAO * 100).toFixed(2).replace(".", ",")}% +
                           juros de {(TAXA_JUROS_CARTAO_MES * 100).toFixed(2).replace(".", ",")}%
                           a.m. por parcela
                         </p>

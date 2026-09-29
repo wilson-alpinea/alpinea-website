@@ -1443,8 +1443,8 @@ export function FormasPagamento({
               <p className="text-sm font-medium text-black">Cartão de crédito</p>
               <p className="mt-0.5 text-[10px] text-black/50">
                 {somenteAVista
-                  ? `maquininha ${(TAXA_MAQUINA_CARTAO * 100).toFixed(2).replace(".", ",")}% — à vista`
-                  : `maquininha ${(TAXA_MAQUINA_CARTAO * 100).toFixed(2).replace(".", ",")}% + juros de ${(TAXA_JUROS_CARTAO_MES * 100).toFixed(2).replace(".", ",")}% a.m. por parcela`}
+                  ? `taxa de cartão ${(TAXA_MAQUINA_CARTAO * 100).toFixed(2).replace(".", ",")}% — à vista`
+                  : `taxa de cartão ${(TAXA_MAQUINA_CARTAO * 100).toFixed(2).replace(".", ",")}% + juros de ${(TAXA_JUROS_CARTAO_MES * 100).toFixed(2).replace(".", ",")}% a.m. por parcela`}
               </p>
             </div>
           </div>
