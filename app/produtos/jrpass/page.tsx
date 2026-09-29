@@ -127,6 +127,12 @@ export default function JrPassPage() {
   // para pagamento" — mesmo padrão de Câmbio/Seguro Viagem/Transporte
   // Privado (ver /api/jrpass-selfservice).
   const [nome, setNome] = useState("");
+  // Nome de quem está pagando, quando é diferente de quem viaja (ex.:
+  // alguém comprando o passe pra um familiar) — pedido do Wilson,
+  // 29/set/2026, como parte das evidências de checkout pra defesa de
+  // chargeback ("nome do passageiro + nome do comprador"). Opcional:
+  // quando vazio, o comprador e o passageiro são a mesma pessoa.
+  const [nomeComprador, setNomeComprador] = useState("");
   const [email, setEmail] = useState("");
   const [whatsapp, setWhatsapp] = useState("");
   const [observacoes, setObservacoes] = useState("");
@@ -451,6 +457,7 @@ export default function JrPassPage() {
           precoTotalUSD,
           formaPagamento: descricaoPagamentoEscolhido || null,
           nome,
+          nomeComprador,
           email,
           whatsapp,
           observacoes,
@@ -617,7 +624,7 @@ export default function JrPassPage() {
               simultâneas" (2 classes × 3 durações) pra uma decisão
               sequencial — primeiro a duração (segmented control), depois
               a classe (2 cards, só com o preço da duração já escolhida). */}
-          <div className="mx-auto mt-8 max-w-[820px] border-t border-black/10 pt-6">
+          <div className="mt-8 border-t border-black/10 pt-6">
             <div className="flex items-center gap-2">
               <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#2f80c9] text-[10px] font-semibold text-white">
                 1
@@ -740,7 +747,7 @@ export default function JrPassPage() {
               adicionar a data de inicio e encerramento da viagem". Mesmo
               padrão de campo de data do Seguro Viagem; entram na mensagem
               de WhatsApp pro time já saber o período. */}
-          <div className="mx-auto mt-8 max-w-[820px] border-t border-black/10 pt-6">
+          <div className="mt-8 border-t border-black/10 pt-6">
             <div className="flex items-center gap-2">
               <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#2f80c9] text-[10px] font-semibold text-white">
                 2
@@ -784,7 +791,7 @@ export default function JrPassPage() {
               rodapé é o valor por pessoa (grade acima) × esse número.
               Mesmo stepper do "Viajantes" do Seguro Viagem. Desconto de
               criança (6–11 anos, metade do preço) é o bloco logo abaixo. */}
-          <div className="mx-auto mt-8 max-w-[820px] border-t border-black/10 pt-6">
+          <div className="mt-8 border-t border-black/10 pt-6">
             <div className="flex items-center gap-2">
               <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#2f80c9] text-[10px] font-semibold text-white">
                 3
@@ -938,7 +945,7 @@ export default function JrPassPage() {
           </div>
 
           {/* Critérios de elegibilidade */}
-          <div className="mx-auto mt-8 max-w-[820px] border-t border-black/10 pt-6">
+          <div className="mt-8 border-t border-black/10 pt-6">
             <p className="text-[10px] uppercase tracking-[0.2em] text-black">
               Critérios de elegibilidade
             </p>
@@ -957,7 +964,7 @@ export default function JrPassPage() {
           </div>
 
           {/* Regras de uso */}
-          <div className="mx-auto mt-8 max-w-[820px] border-t border-black/10 pt-6">
+          <div className="mt-8 border-t border-black/10 pt-6">
             <p className="text-[10px] uppercase tracking-[0.2em] text-black">Regras de uso</p>
             <div className="mt-5 grid gap-4 sm:grid-cols-2">
               {REGRAS_DE_USO.map((item) => (
@@ -979,7 +986,7 @@ export default function JrPassPage() {
               passagem, a o JR pass só pode ser emitido se ele estiver no
               Japao em até 90 dias" + "colocar opção de anexar documentos
               depois também". */}
-          <div className="mx-auto mt-8 max-w-[820px] border-t border-black/10 pt-6">
+          <div className="mt-8 border-t border-black/10 pt-6">
             <div className="flex items-center gap-2">
               <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#2f80c9] text-[10px] font-semibold text-white">
                 4
@@ -1063,7 +1070,7 @@ export default function JrPassPage() {
           {/* Dados de contato — pedido do Wilson, 25/set/2026: "adicionar
               nome, e-mail e telefone nessa página, registrar no CRM ao
               proceder para pagamento". */}
-          <div className="mx-auto mt-8 max-w-[820px] border-t border-black/10 pt-6">
+          <div className="mt-8 border-t border-black/10 pt-6">
             <div className="flex items-center gap-2">
               <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#2f80c9] text-[10px] font-semibold text-white">
                 5
@@ -1073,7 +1080,7 @@ export default function JrPassPage() {
             <div className="mt-5 grid gap-4 sm:grid-cols-3">
               <label className="flex flex-col gap-1.5">
                 <span className="text-[10px] uppercase tracking-[0.15em] text-black">
-                  Nome completo
+                  Nome completo (do passageiro)
                 </span>
                 <input
                   type="text"
@@ -1104,6 +1111,18 @@ export default function JrPassPage() {
             </div>
             <label className="mt-4 flex flex-col gap-1.5">
               <span className="text-[10px] uppercase tracking-[0.15em] text-black">
+                Nome do comprador (opcional — só se for diferente do passageiro)
+              </span>
+              <input
+                type="text"
+                value={nomeComprador}
+                onChange={(e) => setNomeComprador(e.target.value)}
+                placeholder="Preencha só se quem está pagando não é quem viaja"
+                className="rounded-lg border border-black/15 px-3 py-2.5 text-sm text-black focus:border-[#2f80c9] focus:outline-none"
+              />
+            </label>
+            <label className="mt-4 flex flex-col gap-1.5">
+              <span className="text-[10px] uppercase tracking-[0.15em] text-black">
                 Observações (opcional)
               </span>
               <textarea
@@ -1115,7 +1134,7 @@ export default function JrPassPage() {
             </label>
           </div>
 
-          <div className="mx-auto max-w-[820px]">
+          <div>
             <FormasPagamento
               numeroPasso={6}
               totalBRL={precoTotalBRL}
@@ -1132,7 +1151,7 @@ export default function JrPassPage() {
               fontes já usadas em Regras de uso/Critérios de elegibilidade
               acima (sites oficiais JR) + tabela do fornecedor Century
               Travel (cancelamento, reembolso, validade do voucher). */}
-          <div className="mx-auto mt-8 max-w-[820px] border-t border-black/10 pt-6">
+          <div className="mt-8 border-t border-black/10 pt-6">
             <div className="flex items-center gap-2">
               <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#2f80c9] text-[10px] font-semibold text-white">
                 7
@@ -1697,7 +1716,7 @@ export default function JrPassPage() {
           </div>
 
           {erro && (
-            <p className="mx-auto mt-4 max-w-[820px] text-sm text-red-600">{erro}</p>
+            <p className="mt-4 text-sm text-red-600">{erro}</p>
           )}
             </>
           )}

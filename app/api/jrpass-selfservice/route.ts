@@ -104,6 +104,11 @@ export async function POST(req: Request) {
     const body = await req.json();
 
     const nome = String(body.nome || "").trim();
+    // Nome de quem está pagando, quando é diferente de quem viaja —
+    // pedido do Wilson, 29/set/2026, como evidência de checkout pra
+    // defesa de chargeback ("nome do passageiro + nome do comprador").
+    // Opcional: vazio quando comprador e passageiro são a mesma pessoa.
+    const nomeComprador = String(body.nomeComprador || "").trim();
     const email = String(body.email || "").trim();
     const whatsapp = String(body.whatsapp || "").trim();
 
@@ -175,6 +180,7 @@ export async function POST(req: Request) {
       ["Valor total (USD)", precoTotalUSD ? `US$ ${precoTotalUSD.toLocaleString("en-US")}` : "Não calculado"],
       ["Forma de pagamento escolhida", formaPagamento || "Não escolhida ainda"],
       ["Documento (passaporte/passagem)", documentoResumo],
+      ["Nome do comprador (se diferente do passageiro)", nomeComprador || "Mesmo que o passageiro"],
       ["Observações do cliente", observacoesCliente || "Nenhuma"],
     ];
 
@@ -212,6 +218,7 @@ export async function POST(req: Request) {
         valor_proposta: precoTotalBRL,
         estagio: "novo_lead",
         observacoes: `[${TAG_SELF_SERVICE}]\n${resumoTexto}`,
+        nome_comprador: nomeComprador || null,
         checkout_ip: checkoutIp,
         checkout_user_agent: checkoutUserAgent,
         termos_aceitos: true,
