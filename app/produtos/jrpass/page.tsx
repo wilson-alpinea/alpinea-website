@@ -49,8 +49,8 @@ const COMO_FUNCIONA = [
   },
   {
     icone: "/images/produtos/jrpass-passo-2-troca.png",
-    titulo: "Receba a Ordem de Troca",
-    texto: "Enviamos o voucher (Exchange Order) por e-mail e WhatsApp.",
+    titulo: "Receba o voucher",
+    texto: "Enviamos o voucher por e-mail e WhatsApp assim que confirmamos o pedido.",
   },
   {
     icone: "/images/produtos/jrpass-passo-3-ativacao.png",
@@ -526,7 +526,7 @@ export default function JrPassPage() {
               <h3 className={`${display.className} mt-3 text-2xl font-medium text-black md:text-3xl`}>
                 Recebemos seu pedido de JR Pass
               </h3>
-              <p className="mx-auto mt-3 max-w-md text-sm leading-relaxed text-black/60">
+              <p className="mx-auto mt-3 max-w-md text-sm leading-relaxed text-black/75">
                 Nossa equipe confere o documento enviado (ou aguarda o que você anexar depois),
                 confirma a elegibilidade e te manda o link de pagamento (Pix ou cartão) pelo
                 WhatsApp e por e-mail — junto com a explicação completa de como funciona a troca do
@@ -551,7 +551,7 @@ export default function JrPassPage() {
               >
                 Deslocamentos ilimitados de trem-bala em todo o Japão
               </h3>
-              <p className="mt-3 max-w-2xl text-sm leading-relaxed text-black/60">
+              <p className="mt-3 max-w-2xl text-sm leading-relaxed text-black/75">
                 Passe ferroviário oficial dos seis grupos JR, vendido em faixas fixas de 7, 14 ou 21
                 dias corridos — cobre a maior parte da rede Shinkansen, trens expressos, locais,
                 ônibus JR e o Tokyo Monorail.
@@ -580,13 +580,13 @@ export default function JrPassPage() {
             <div className="mt-5 grid grid-cols-2 gap-6 sm:grid-cols-4 sm:gap-4">
               {COMO_FUNCIONA.map((passo, index) => (
                 <div key={passo.titulo} className="flex flex-col items-center text-center">
-                  <p className="text-[10px] font-semibold uppercase tracking-[0.15em] text-[#2f80c9]">
+                  <p className="text-xs font-semibold uppercase tracking-[0.15em] text-[#2f80c9]">
                     Passo {index + 1}
                   </p>
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img src={passo.icone} alt="" className="mt-2 h-20 w-20 object-contain" />
-                  <p className="mt-2 text-xs font-medium text-black">{passo.titulo}</p>
-                  <p className="mt-1 text-[11px] leading-4 text-black/50">{passo.texto}</p>
+                  <p className="mt-2 text-sm font-medium text-black">{passo.titulo}</p>
+                  <p className="mt-1 text-xs leading-5 text-black/65">{passo.texto}</p>
                 </div>
               ))}
             </div>
@@ -598,7 +598,7 @@ export default function JrPassPage() {
               <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#2f80c9] text-[10px] font-semibold text-white">
                 1
               </span>
-              <p className="text-[10px] uppercase tracking-[0.2em] text-black/40">Tipos e preços</p>
+              <p className="text-[10px] uppercase tracking-[0.2em] text-black">Tipos e preços</p>
             </div>
             <div className="mt-4 grid gap-4 sm:grid-cols-2">
               {TIPOS.map((tipo) => (
@@ -630,7 +630,7 @@ export default function JrPassPage() {
                           }}
                           className="flex w-full items-center justify-between border-t border-black/5 py-2.5 text-left first:border-t-0 first:pt-0"
                         >
-                          <span className="flex items-center gap-2 text-xs text-black/55">
+                          <span className="flex items-center gap-2 text-xs text-black/70">
                             <span
                               className={`flex h-4 w-4 shrink-0 items-center justify-center rounded-full border ${
                                 selecionado ? "border-[#2f80c9] bg-[#2f80c9]" : "border-black/20"
@@ -647,7 +647,7 @@ export default function JrPassPage() {
                               {formatUSD(tipo.precoUSD[dias])}
                             </span>
                             {cambio && (
-                              <span className="block text-[11px] text-black/40">
+                              <span className="block text-[11px] text-black/60">
                                 {formatBRL(tipo.precoUSD[dias] * cambio.cotacao)}
                               </span>
                             )}
@@ -659,7 +659,7 @@ export default function JrPassPage() {
                 </div>
               ))}
             </div>
-            <p className="mt-3 text-[11px] leading-5 text-black/40">
+            <p className="mt-3 text-[11px] leading-5 text-black/60">
               Valor por pessoa, já com taxas incluídas, convertido pela cotação do dia.
             </p>
             <div className="mt-2 inline-flex rounded-lg bg-[#eef6fb] px-3 py-1.5">
@@ -676,11 +676,11 @@ export default function JrPassPage() {
               <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#2f80c9] text-[10px] font-semibold text-white">
                 2
               </span>
-              <p className="text-[10px] uppercase tracking-[0.2em] text-black/40">Dados da viagem</p>
+              <p className="text-[10px] uppercase tracking-[0.2em] text-black">Dados da viagem</p>
             </div>
             <div className="mt-4 grid gap-4 sm:max-w-md sm:grid-cols-2">
               <label className="flex flex-col gap-1.5">
-                <span className="text-[10px] uppercase tracking-[0.15em] text-black/50">
+                <span className="text-[10px] uppercase tracking-[0.15em] text-black">
                   Data de ida
                 </span>
                 <input
@@ -692,7 +692,7 @@ export default function JrPassPage() {
                 />
               </label>
               <label className="flex flex-col gap-1.5">
-                <span className="text-[10px] uppercase tracking-[0.15em] text-black/50">
+                <span className="text-[10px] uppercase tracking-[0.15em] text-black">
                   Data de encerramento
                 </span>
                 <input
@@ -700,9 +700,9 @@ export default function JrPassPage() {
                   disabled
                   readOnly
                   value={dataFimViagemCalculada ? formatarDataBR(dataFimViagemCalculada) : "—"}
-                  className="rounded-lg border border-black/10 bg-black/[0.03] px-3 py-2.5 text-sm text-black/50"
+                  className="rounded-lg border border-black/10 bg-black/[0.03] px-3 py-2.5 text-sm text-black/60"
                 />
-                <span className="text-[10px] leading-4 text-black/40">
+                <span className="text-[10px] leading-4 text-black/60">
                   Calculada automaticamente: início + duração do passe escolhida no passo 1.
                 </span>
               </label>
@@ -720,11 +720,11 @@ export default function JrPassPage() {
               <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#2f80c9] text-[10px] font-semibold text-white">
                 3
               </span>
-              <p className="text-[10px] uppercase tracking-[0.2em] text-black/40">Número de pessoas</p>
+              <p className="text-[10px] uppercase tracking-[0.2em] text-black">Número de pessoas</p>
             </div>
             <div className="mt-4 grid gap-6 sm:max-w-xl sm:grid-cols-2">
               <div>
-                <span className="mb-2 block text-[10px] uppercase tracking-[0.15em] text-black/50">
+                <span className="mb-2 block text-[10px] uppercase tracking-[0.15em] text-black">
                   Total de pessoas
                 </span>
                 <div className="flex items-center gap-2">
@@ -763,7 +763,7 @@ export default function JrPassPage() {
                   adultos e crianças devem estar lado a lado e não um
                   embaixo do outro". */}
               <div>
-                <span className="mb-2 block text-[10px] uppercase tracking-[0.15em] text-black/50">
+                <span className="mb-2 block text-[10px] uppercase tracking-[0.15em] text-black">
                   Crianças (opcional) — 6 a 11 anos pagam metade
                 </span>
                 <div className="flex items-center gap-2">
@@ -794,7 +794,7 @@ export default function JrPassPage() {
                 </div>
               </div>
             </div>
-            <p className="mt-2 text-[11px] leading-5 text-black/40">
+            <p className="mt-2 text-[11px] leading-5 text-black/60">
               Cada viajante precisa do próprio passe — o preço no rodapé já é o total pras{" "}
               {numeroPessoas} {numeroPessoas === 1 ? "pessoa" : "pessoas"}.
             </p>
@@ -813,7 +813,7 @@ export default function JrPassPage() {
                           : null;
                   return (
                     <label key={index} className="flex flex-col gap-1.5">
-                      <span className="text-[10px] uppercase tracking-[0.15em] text-black/50">
+                      <span className="text-[10px] uppercase tracking-[0.15em] text-black">
                         Idade — criança {index + 1}
                       </span>
                       <input
@@ -835,7 +835,7 @@ export default function JrPassPage() {
                               ? "text-emerald-700"
                               : multiplicador === 0.5
                                 ? "text-[#1c6ea8]"
-                                : "text-black/40"
+                                : "text-black/60"
                           }`}
                         >
                           {rotuloFaixa}
@@ -851,7 +851,7 @@ export default function JrPassPage() {
                 (Century Travel, 25/set/2026): menor de 6 não paga, 6 a
                 11 completa paga metade, 12+ conta como adulto. */}
             {(criancasGratis > 0 || criancasComDesconto > 0 || criancasComoAdulto > 0) && (
-              <p className="mt-2 text-[11px] leading-5 text-black/40">
+              <p className="mt-2 text-[11px] leading-5 text-black/60">
                 {criancasGratis > 0 && `${criancasGratis} grátis (menor de 6 anos)`}
                 {criancasGratis > 0 && (criancasComDesconto > 0 || criancasComoAdulto > 0) && " · "}
                 {criancasComDesconto > 0 && `${criancasComDesconto} com 50% de desconto (6 a 11 anos)`}
@@ -865,7 +865,7 @@ export default function JrPassPage() {
 
           {/* Critérios de elegibilidade */}
           <div className="mt-8 border-t border-black/10 pt-6">
-            <p className="text-[10px] uppercase tracking-[0.2em] text-black/40">
+            <p className="text-[10px] uppercase tracking-[0.2em] text-black">
               Critérios de elegibilidade
             </p>
             <div className="mt-4 grid gap-4 sm:grid-cols-2">
@@ -875,7 +875,7 @@ export default function JrPassPage() {
                   <img src={item.icone} alt="" className="mt-0.5 h-16 w-16 shrink-0 object-contain" />
                   <div>
                     <p className="text-xs font-medium text-black">{item.titulo}</p>
-                    <p className="mt-1 text-[11px] leading-5 text-black/50">{item.texto}</p>
+                    <p className="mt-1 text-[11px] leading-5 text-black/65">{item.texto}</p>
                   </div>
                 </div>
               ))}
@@ -884,7 +884,7 @@ export default function JrPassPage() {
 
           {/* Regras de uso */}
           <div className="mt-8 border-t border-black/10 pt-6">
-            <p className="text-[10px] uppercase tracking-[0.2em] text-black/40">Regras de uso</p>
+            <p className="text-[10px] uppercase tracking-[0.2em] text-black">Regras de uso</p>
             <div className="mt-4 grid gap-4 sm:grid-cols-2">
               {REGRAS_DE_USO.map((item) => (
                 <div key={item.titulo} className="flex gap-3">
@@ -892,12 +892,12 @@ export default function JrPassPage() {
                   <img src={item.icone} alt="" className="mt-0.5 h-16 w-16 shrink-0 object-contain" />
                   <div>
                     <p className="text-xs font-medium text-black">{item.titulo}</p>
-                    <p className="mt-1 text-[11px] leading-5 text-black/50">{item.texto}</p>
+                    <p className="mt-1 text-[11px] leading-5 text-black/65">{item.texto}</p>
                   </div>
                 </div>
               ))}
             </div>
-            <p className="mt-4 text-[11px] leading-5 text-black/35">
+            <p className="mt-4 text-[11px] leading-5 text-black/55">
               Fonte: sites oficiais do Japan Rail Pass (japanrailpass.net/en) — páginas de
               elegibilidade, condições de uso e tabela de preços.
             </p>
@@ -914,9 +914,9 @@ export default function JrPassPage() {
               <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#2f80c9] text-[10px] font-semibold text-white">
                 4
               </span>
-              <p className="text-[10px] uppercase tracking-[0.2em] text-black/40">Documento — passaporte ou passagem</p>
+              <p className="text-[10px] uppercase tracking-[0.2em] text-black">Documento — passaporte ou passagem</p>
             </div>
-            <p className="mt-2 max-w-2xl text-[11px] leading-5 text-black/50">
+            <p className="mt-2 max-w-2xl text-[11px] leading-5 text-black/65">
               O JR Pass só pode ser emitido pra quem já está no Japão (ou vai entrar) dentro da
               janela de 90 dias — o carimbo de entrada no passaporte ou a data do voo na passagem
               confirmam isso. Anexe um dos dois agora para continuar.
@@ -925,10 +925,10 @@ export default function JrPassPage() {
               {(["passaporte", "passagem"] as const).map((tipo) => (
                 <label
                   key={tipo}
-                  className={`flex cursor-pointer items-center gap-2 rounded-full border px-4 py-2 text-xs transition ${
+                  className={`flex cursor-pointer items-center gap-2.5 rounded-full border px-4 py-2.5 text-xs transition ${
                     documentoTipo === tipo
                       ? "border-[#2f80c9] bg-[#2f80c9]/10 font-medium text-[#1c6ea8]"
-                      : "border-black/15 text-black/60 hover:border-black/30"
+                      : "border-black/15 text-black/75 hover:border-black/30"
                   }`}
                 >
                   <Image
@@ -938,9 +938,9 @@ export default function JrPassPage() {
                         : "/images/produtos/jrpass-doc-passagem.png"
                     }
                     alt=""
-                    width={28}
-                    height={28}
-                    className="h-7 w-7"
+                    width={36}
+                    height={36}
+                    className="h-9 w-9"
                   />
                   {tipo === "passaporte" ? "Foto do passaporte" : "Foto da passagem/itinerário"}
                   <input
@@ -959,7 +959,7 @@ export default function JrPassPage() {
             </div>
 
             {documentoStatus === "enviando" && (
-              <p className="mt-3 text-[11px] text-black/45">Enviando {documentoNomeArquivo}…</p>
+              <p className="mt-3 text-[11px] text-black/65">Enviando {documentoNomeArquivo}…</p>
             )}
             {documentoStatus === "validado" && (
               <p className="mt-3 text-[11px] text-emerald-700">
@@ -981,7 +981,7 @@ export default function JrPassPage() {
                 (certificado provisionado automaticamente pelo Vercel no
                 domínio alpinea.io) — isso só deixa esse cuidado visível
                 pro cliente bem ao lado do upload de documento. */}
-            <p className="mt-3 text-[11px] leading-5 text-black/40">
+            <p className="mt-3 text-[11px] leading-5 text-black/60">
               🔒 Conexão segura (SSL) — seu documento trafega e fica armazenado criptografado.
             </p>
           </div>
@@ -994,11 +994,11 @@ export default function JrPassPage() {
               <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#2f80c9] text-[10px] font-semibold text-white">
                 5
               </span>
-              <p className="text-[10px] uppercase tracking-[0.2em] text-black/40">Seus dados</p>
+              <p className="text-[10px] uppercase tracking-[0.2em] text-black">Seus dados</p>
             </div>
             <div className="mt-4 grid gap-4 sm:grid-cols-3">
               <label className="flex flex-col gap-1.5">
-                <span className="text-[10px] uppercase tracking-[0.15em] text-black/50">
+                <span className="text-[10px] uppercase tracking-[0.15em] text-black">
                   Nome completo
                 </span>
                 <input
@@ -1009,7 +1009,7 @@ export default function JrPassPage() {
                 />
               </label>
               <label className="flex flex-col gap-1.5">
-                <span className="text-[10px] uppercase tracking-[0.15em] text-black/50">E-mail</span>
+                <span className="text-[10px] uppercase tracking-[0.15em] text-black">E-mail</span>
                 <input
                   type="email"
                   value={email}
@@ -1018,7 +1018,7 @@ export default function JrPassPage() {
                 />
               </label>
               <label className="flex flex-col gap-1.5">
-                <span className="text-[10px] uppercase tracking-[0.15em] text-black/50">WhatsApp</span>
+                <span className="text-[10px] uppercase tracking-[0.15em] text-black">WhatsApp</span>
                 <input
                   type="tel"
                   value={whatsapp}
@@ -1029,7 +1029,7 @@ export default function JrPassPage() {
               </label>
             </div>
             <label className="mt-4 flex flex-col gap-1.5">
-              <span className="text-[10px] uppercase tracking-[0.15em] text-black/50">
+              <span className="text-[10px] uppercase tracking-[0.15em] text-black">
                 Observações (opcional)
               </span>
               <textarea
@@ -1062,11 +1062,11 @@ export default function JrPassPage() {
               <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#2f80c9] text-[10px] font-semibold text-white">
                 7
               </span>
-              <p className="text-[10px] uppercase tracking-[0.2em] text-black/40">Termos e condições</p>
+              <p className="text-[10px] uppercase tracking-[0.2em] text-black">Termos e condições</p>
             </div>
             <div
               ref={termosBoxRef}
-              className="mt-4 max-h-96 overflow-y-auto rounded-xl border border-black/10 bg-black/[0.02] p-4 text-[11px] leading-5 text-black/60"
+              className="mt-4 max-h-96 overflow-y-auto rounded-xl border border-black/10 bg-black/[0.02] p-4 text-[11px] leading-5 text-black/75"
               onScroll={(e) => {
                 const el = e.currentTarget;
                 if (el.scrollTop + el.clientHeight >= el.scrollHeight - 4) {
@@ -1074,7 +1074,7 @@ export default function JrPassPage() {
                 }
               }}
             >
-              <p className="font-medium text-black/80">Emissão e elegibilidade</p>
+              <p className="font-medium text-black">Emissão e elegibilidade</p>
               <p className="mt-1">
                 O Japan Rail Pass é vendido como um voucher (Exchange Order), trocado pelo passe
                 físico só no Japão. Só pode ser emitido pra quem tem status de imigração
@@ -1084,14 +1084,14 @@ export default function JrPassPage() {
                 10 anos podem comprar sob condições específicas, só pela modalidade de compra fora
                 do Japão, antes da viagem.
               </p>
-              <p className="mt-3 font-medium text-black/80">Validade do voucher</p>
+              <p className="mt-3 font-medium text-black">Validade do voucher</p>
               <p className="mt-1">
                 O voucher tem validade de 3 meses a partir da emissão pra ser trocado pelo passe
                 físico. O passe em si é pessoal e intransferível, vinculado a um passaporte
                 específico — o nome informado precisa ser idêntico ao do passaporte que será usado
                 na troca.
               </p>
-              <p className="mt-3 font-medium text-black/80">Cancelamento e reembolso</p>
+              <p className="mt-3 font-medium text-black">Cancelamento e reembolso</p>
               <p className="mt-1">
                 Cancelamento só é aceito dentro do mês de emissão do voucher, mediante taxa de
                 serviço de US$ 10 por cupom. Reembolso (quando ainda cabível) tem taxa de 15% do
@@ -1099,14 +1099,14 @@ export default function JrPassPage() {
                 trocado pelo passe físico, ou em caso de perda ou roubo, não há reembolso nem
                 reposição.
               </p>
-              <p className="mt-3 font-medium text-black/80">Uso do passe</p>
+              <p className="mt-3 font-medium text-black">Uso do passe</p>
               <p className="mt-1">
                 Cobre Shinkansen, trens expressos, expressos limitados e locais da JR, ônibus JR e
                 o Tokyo Monorail — exceto os trens-bala Nozomi e Mizuho, que exigem bilhete
                 especial à parte. Reservas de assento são gratuitas (limite de 110 por passe), mas
                 recomendadas.
               </p>
-              <p className="mt-3 font-medium text-black/80">Pagamento e responsabilidade dos dados</p>
+              <p className="mt-3 font-medium text-black">Pagamento e responsabilidade dos dados</p>
               <p className="mt-1">
                 O valor final é convertido pela cotação de câmbio turismo de venda do dia da
                 compra. A Alpinea atua como intermediária entre o cliente e o fornecedor emissor —
@@ -1115,7 +1115,7 @@ export default function JrPassPage() {
                 no Japão.
               </p>
             </div>
-            <label className="mt-3 flex items-start gap-2.5 text-[11px] leading-5 text-black/60">
+            <label className="mt-3 flex items-start gap-2.5 text-[11px] leading-5 text-black/75">
               <input
                 type="checkbox"
                 checked={termosAceitos}
@@ -1127,7 +1127,7 @@ export default function JrPassPage() {
               Pass acima.
             </label>
             {!termosRolados && (
-              <p className="mt-1.5 pl-[26px] text-[10px] text-black/35">
+              <p className="mt-1.5 pl-[26px] text-[10px] text-black/55">
                 Role o texto acima até o fim para habilitar o aceite.
               </p>
             )}
