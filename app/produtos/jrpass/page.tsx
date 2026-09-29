@@ -517,6 +517,9 @@ export default function JrPassPage() {
         </Link>
         <span className="h-4 w-px bg-white/20" aria-hidden="true" />
         <p className={`${display.className} text-lg font-medium text-white md:text-xl`}>JR Pass</p>
+        <div className="flex-1" />
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src="/images/AJISAI-LOGO.avif" alt="Ajisai" className="h-6 w-auto object-contain md:h-7" />
       </div>
 
       <div className="mx-auto max-w-5xl p-5 md:p-8">
