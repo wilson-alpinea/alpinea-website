@@ -1160,17 +1160,17 @@ export default function JrPassPage() {
         {status !== "enviado" && (
           <div
             ref={rodapeRef}
-            className="fixed inset-x-0 bottom-0 z-50 border-t border-white/10 bg-[#0A2540] px-5 py-4 shadow-[0_-4px_16px_rgba(0,0,0,0.25)] md:px-8"
+            className="fixed inset-x-0 bottom-0 z-50 border-t border-white/10 bg-[#0A263D] px-5 py-4 shadow-[0_-4px_16px_rgba(0,0,0,0.25)] md:px-8"
           >
             <div className="mx-auto flex max-w-4xl flex-wrap items-center justify-between gap-x-6 gap-y-3">
               <div>
                 {selecaoCompleta ? (
                   <>
-                    <p className="text-[10px] uppercase tracking-[0.15em] text-white/50">Sua escolha</p>
-                    <p className={`${display.className} text-xl font-medium text-[#5b9bd9] sm:text-2xl`}>
+                    <p className="text-[10px] uppercase tracking-[0.15em] text-[#8498A8]">Sua escolha</p>
+                    <p className={`${display.className} text-xl font-medium text-[#C2A66A] sm:text-2xl`}>
                       {precoTotalBRL !== null ? formatBRL(precoTotalBRL) : "—"}
                     </p>
-                    <p className="text-xs text-white/60">
+                    <p className="text-xs text-[#A5B3BE]">
                       {tipoEscolhido!.classe} · {diasSelecionados} dias · {numeroPessoas}{" "}
                       {numeroPessoas === 1 ? "pessoa" : "pessoas"}
                       {numeroCriancas > 0 &&
@@ -1183,27 +1183,25 @@ export default function JrPassPage() {
                       )}
                     </p>
                     {descricaoPagamentoEscolhido && (
-                      <p className="mt-0.5 text-[11px] text-white/50">{descricaoPagamentoEscolhido}</p>
+                      <p className="mt-0.5 text-[11px] text-[#8498A8]">{descricaoPagamentoEscolhido}</p>
                     )}
                   </>
                 ) : (
-                  <p className="text-xs text-white/60">
+                  <p className="text-xs text-[#B8C5CE]">
                     Selecione o tipo (Comum ou Green Car) e a duração do passe acima.
                   </p>
                 )}
               </div>
               <div className="flex shrink-0 items-center gap-3">
                 <div className="hidden flex-col items-center gap-1 sm:flex">
-                  <div className="rounded-md bg-white px-2.5 py-1">
-                    <Image
-                      src="/images/produtos/stone-logo.png"
-                      alt="Stone"
-                      width={90}
-                      height={32}
-                      className="h-4 w-auto"
-                    />
-                  </div>
-                  <p className="max-w-[6rem] text-center text-[8px] uppercase leading-tight tracking-[0.08em] text-white/40">
+                  <Image
+                    src="/images/produtos/stone-logo-white.png"
+                    alt="Stone"
+                    width={90}
+                    height={32}
+                    className="h-4 w-auto"
+                  />
+                  <p className="max-w-[6rem] text-center text-[8px] uppercase leading-tight tracking-[0.08em] text-[#8498A8]">
                     Tecnologia de pagamento via Stone
                   </p>
                 </div>
@@ -1211,10 +1209,10 @@ export default function JrPassPage() {
                   type="button"
                   onClick={enviar}
                   disabled={!formValido || status === "enviando"}
-                  className={`inline-flex shrink-0 items-center justify-center rounded-full px-6 py-3.5 text-center text-xs font-medium uppercase tracking-[0.2em] text-white transition ${
+                  className={`inline-flex shrink-0 items-center justify-center rounded-full px-6 py-3.5 text-center text-xs font-medium uppercase tracking-[0.2em] transition-colors duration-200 ${
                     formValido && status !== "enviando"
-                      ? "bg-[#2f80c9] hover:bg-[#3b91dc]"
-                      : "cursor-not-allowed bg-white/10 text-white/30"
+                      ? "bg-[#E7DFD0] text-[#122D40] hover:bg-[#F0EADF]"
+                      : "cursor-not-allowed bg-[#29465E] text-[#748A9B]"
                   }`}
                 >
                   {status === "enviando" ? "Enviando…" : "Finalizar Compra"}
@@ -1222,16 +1220,18 @@ export default function JrPassPage() {
               </div>
             </div>
             {pendenciasFinalizar.length > 0 && status !== "enviando" && (
-              <div className="mt-3 rounded-lg border border-amber-400/30 bg-amber-400/10 px-3.5 py-2.5 text-[11px] leading-5 text-amber-200">
-                <p className="font-medium">Falta o seguinte pra finalizar:</p>
-                <ul className="mt-1 list-disc pl-4">
+              <div className="mt-3 rounded-[10px] border border-[#8E794B]/55 bg-[#18343F] px-4 py-3 text-[11px] leading-5">
+                <p className="font-semibold text-[#E6D4A3]">Antes de finalizar</p>
+                <ul className="mt-2 list-disc space-y-1.5 pl-4 marker:text-[#BFA76A]">
                   {pendenciasFinalizar.map((item) => (
-                    <li key={item}>{item}</li>
+                    <li key={item} className="text-[#F1EEE7]">
+                      {item}
+                    </li>
                   ))}
                 </ul>
               </div>
             )}
-            <p className="mt-2 text-[10px] leading-4 text-white/35">
+            <p className="mt-2 text-[10px] leading-4 text-[#A5B3BE]">
               Ao finalizar, você é levado direto pra página de pagamento segura da Stone (Pix ou
               cartão). Após a confirmação, nossa equipe faz a checagem final da elegibilidade e
               envia as instruções de retirada do passe físico no Japão pelo WhatsApp e por e-mail.
