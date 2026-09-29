@@ -1032,7 +1032,6 @@ export default function JrPassPage() {
                 value={observacoes}
                 onChange={(e) => setObservacoes(e.target.value)}
                 rows={2}
-                placeholder="Nome exatamente como está no passaporte, se diferente do nome acima, etc."
                 className="rounded-lg border border-black/15 px-3 py-2.5 text-sm text-black focus:border-[#2f80c9] focus:outline-none"
               />
             </label>

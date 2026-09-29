@@ -39,7 +39,7 @@ export async function GET() {
     return NextResponse.json({
       cotacao,
       data: hoje,
-      fonte: "Dólar Turismo — melhorcambio.com",
+      fonte: "Dólar Turismo",
       fallback: false,
     });
   } catch (error) {
@@ -48,7 +48,7 @@ export async function GET() {
     return NextResponse.json({
       cotacao: COTACAO_FALLBACK_DOLAR_TURISMO,
       data: null,
-      fonte: "estimativa — dólar turismo indisponível no momento",
+      fonte: "Dólar Turismo (estimativa)",
       fallback: true,
     });
   }
