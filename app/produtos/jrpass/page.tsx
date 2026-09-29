@@ -582,7 +582,7 @@ export default function JrPassPage() {
               alt="Exemplo do passe físico Japan Rail Pass"
               width={1536}
               height={1024}
-              className="mx-auto w-56 shrink-0 rounded-xl shadow-[0_12px_30px_rgba(0,0,0,0.18)] sm:mx-0 sm:w-72"
+              className="mx-auto w-56 shrink-0 rounded-xl sm:mx-0 sm:w-72"
             />
           </div>
 
