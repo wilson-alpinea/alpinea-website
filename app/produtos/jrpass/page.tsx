@@ -640,8 +640,11 @@ export default function JrPassPage() {
               Duração
             </p>
             <div className="mt-2 flex w-full rounded-xl border border-[#E4E1DC] bg-[#FBFAF7] p-1 sm:max-w-[calc((100%-1rem)/2)]">
-              {JR_PASS_DIAS_OPCOES.map((dias) => {
+              {JR_PASS_DIAS_OPCOES.map((dias, index) => {
                 const selecionado = diasSelecionados === dias;
+                const proximoSelecionado = diasSelecionados === JR_PASS_DIAS_OPCOES[index + 1];
+                const mostrarSeparador =
+                  index < JR_PASS_DIAS_OPCOES.length - 1 && !selecionado && !proximoSelecionado;
                 return (
                   <button
                     key={dias}
@@ -649,7 +652,7 @@ export default function JrPassPage() {
                     onClick={() => setDiasSelecionados(dias)}
                     className={`flex-1 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors duration-150 ${
                       selecionado ? "bg-[#252522] text-white" : "text-[#1C1C1A] hover:bg-black/5"
-                    }`}
+                    } ${mostrarSeparador ? "border-r border-[#E4E1DC]" : ""}`}
                   >
                     {dias} dias
                   </button>
