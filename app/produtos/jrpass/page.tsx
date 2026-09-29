@@ -204,10 +204,6 @@ export default function JrPassPage() {
   // scroll em todo documento".
   const [termosRolados, setTermosRolados] = useState(false);
   const termosBoxRef = useRef<HTMLDivElement | null>(null);
-  // Referência da seção "Dados da viagem" — o botão "Continuar" do
-  // redesenho de "Escolha seu JR Pass" (pedido do Wilson, 29/set/2026)
-  // rola até aqui suavemente assim que duração + classe estão escolhidas.
-  const dadosViagemRef = useRef<HTMLDivElement | null>(null);
   useEffect(() => {
     const el = termosBoxRef.current;
     if (el && el.scrollHeight <= el.clientHeight + 4) {
@@ -622,7 +618,7 @@ export default function JrPassPage() {
               simultâneas" (2 classes × 3 durações) pra uma decisão
               sequencial — primeiro a duração (segmented control), depois
               a classe (2 cards, só com o preço da duração já escolhida). */}
-          <div className="mt-8 border-t border-black/10 pt-6">
+          <div className="mx-auto mt-8 max-w-[820px] border-t border-black/10 pt-6">
             <div className="flex items-center gap-2">
               <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#2f80c9] text-[10px] font-semibold text-white">
                 1
@@ -713,41 +709,30 @@ export default function JrPassPage() {
               })}
             </div>
 
-            {/* Resumo compacto — atualiza sozinho conforme duração/classe
-                mudam. */}
-            <div className="mt-5 flex items-center justify-between gap-3 rounded-xl border border-[#E4E1DC] bg-[#FBFAF7] px-4 py-3">
-              <div>
+            {/* "Sua escolha" — resumo horizontal e compacto, atualiza
+                sozinho conforme duração/classe mudam. Sem botão
+                "Continuar" — pedido do Wilson, 29/set/2026: fluxo
+                vertical contínuo até o único CTA no rodapé. */}
+            <div className="mt-5 flex items-center justify-between gap-4 rounded-xl border border-[#E4E1DC] bg-[#FBFAF7] px-4 py-3">
+              <div className="min-w-0">
                 <p className="text-[10px] uppercase tracking-[0.15em] text-[#77736D]">Sua escolha</p>
-                <p className="text-sm text-[#1C1C1A]">
+                <p className="mt-0.5 truncate text-sm text-[#1C1C1A]">
                   {selecaoCompleta
-                    ? `${diasSelecionados} dias · ${tipoEscolhido!.classe}`
+                    ? `${tipoEscolhido!.classe} · ${diasSelecionados} dias`
                     : "Selecione a duração e a classe."}
                 </p>
               </div>
               {precoEscolhidoBRL !== null && (
-                <p className={`${inter.className} text-lg font-bold tracking-[-0.02em] tabular-nums text-[#1C1C1A]`}>
+                <p className={`${inter.className} shrink-0 text-lg font-bold tracking-[-0.02em] tabular-nums text-[#1C1C1A]`}>
                   {formatBRL(precoEscolhidoBRL)}
                 </p>
               )}
             </div>
 
-            <button
-              type="button"
-              disabled={!selecaoCompleta}
-              onClick={() => dadosViagemRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })}
-              className={`mt-4 w-full rounded-full py-3 text-center text-xs font-medium uppercase tracking-[0.1em] transition-colors sm:w-auto sm:px-8 ${
-                selecaoCompleta
-                  ? "bg-[#252522] text-white hover:bg-black"
-                  : "cursor-not-allowed bg-black/10 text-black/30"
-              }`}
-            >
-              Continuar
-            </button>
-
-            <p className="mt-4 text-[11px] leading-5 text-black/60">
+            <p className="mt-3 text-[11px] leading-5 text-black/60">
               Valor por pessoa, já com taxas incluídas, convertido pela cotação do dia.
             </p>
-            <div className="mt-2 inline-flex rounded-lg bg-[#eef6fb] px-3 py-1.5">
+            <div className="mt-1.5 inline-flex rounded-lg bg-[#eef6fb] px-3 py-1.5">
               <CambioLabel cambio={cambio} className="text-[11px] text-[#1c6ea8]" />
             </div>
           </div>
@@ -756,15 +741,15 @@ export default function JrPassPage() {
               adicionar a data de inicio e encerramento da viagem". Mesmo
               padrão de campo de data do Seguro Viagem; entram na mensagem
               de WhatsApp pro time já saber o período. */}
-          <div ref={dadosViagemRef} className="mt-8 border-t border-black/10 pt-6">
+          <div className="mx-auto mt-8 max-w-[820px] border-t border-black/10 pt-6">
             <div className="flex items-center gap-2">
               <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#2f80c9] text-[10px] font-semibold text-white">
                 2
               </span>
               <p className="text-[10px] uppercase tracking-[0.2em] text-black">Dados da viagem</p>
             </div>
-            <div className="mt-4 grid gap-4 sm:max-w-md sm:grid-cols-2">
-              <label className="flex flex-col gap-1.5">
+            <div className="mt-5 grid gap-6 sm:grid-cols-2">
+              <label className="flex flex-col gap-2">
                 <span className="text-[10px] uppercase tracking-[0.15em] text-black">
                   Data de ida
                 </span>
@@ -773,10 +758,10 @@ export default function JrPassPage() {
                   value={dataInicioViagem}
                   min={hojeISO()}
                   onChange={(e) => setDataInicioViagem(e.target.value)}
-                  className="rounded-lg border border-black/15 px-3 py-2.5 text-sm text-black focus:border-[#2f80c9] focus:outline-none"
+                  className="w-full rounded-lg border border-black/15 px-4 py-3 text-sm text-black focus:border-[#2f80c9] focus:outline-none"
                 />
               </label>
-              <label className="flex flex-col gap-1.5">
+              <label className="flex flex-col gap-2">
                 <span className="text-[10px] uppercase tracking-[0.15em] text-black">
                   Data de encerramento
                 </span>
@@ -785,7 +770,7 @@ export default function JrPassPage() {
                   disabled
                   readOnly
                   value={dataFimViagemCalculada ? formatarDataBR(dataFimViagemCalculada) : "—"}
-                  className="rounded-lg border border-black/10 bg-black/[0.03] px-3 py-2.5 text-sm text-black/60"
+                  className="w-full rounded-lg border border-black/10 bg-black/[0.03] px-4 py-3 text-sm text-black/60"
                 />
                 <span className="text-[10px] leading-4 text-black/60">
                   Calculada automaticamente: início + duração do passe escolhida no passo 1.
@@ -800,18 +785,20 @@ export default function JrPassPage() {
               rodapé é o valor por pessoa (grade acima) × esse número.
               Mesmo stepper do "Viajantes" do Seguro Viagem. Desconto de
               criança (6–11 anos, metade do preço) é o bloco logo abaixo. */}
-          <div className="mt-8 border-t border-black/10 pt-6">
+          <div className="mx-auto mt-8 max-w-[820px] border-t border-black/10 pt-6">
             <div className="flex items-center gap-2">
               <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#2f80c9] text-[10px] font-semibold text-white">
                 3
               </span>
               <p className="text-[10px] uppercase tracking-[0.2em] text-black">Número de pessoas</p>
             </div>
-            <div className="mt-4 grid gap-6 sm:max-w-xl sm:grid-cols-2">
+            <div className="mt-5 grid gap-6 sm:grid-cols-2">
               <div>
-                <span className="mb-2 flex min-h-[28px] items-end text-[10px] uppercase tracking-[0.15em] text-black">
-                  Total de pessoas
-                </span>
+                <div className="mb-2 flex h-9 flex-col justify-end">
+                  <span className="text-[10px] uppercase tracking-[0.15em] text-black">
+                    Total de pessoas
+                  </span>
+                </div>
                 <div className="flex items-center gap-2">
                   <button
                     type="button"
@@ -848,9 +835,12 @@ export default function JrPassPage() {
                   adultos e crianças devem estar lado a lado e não um
                   embaixo do outro". */}
               <div>
-                <span className="mb-2 flex min-h-[28px] items-end text-[10px] uppercase tracking-[0.15em] text-black">
-                  Crianças (opcional) — 6 a 11 anos pagam metade
-                </span>
+                <div className="mb-2 flex h-9 flex-col justify-end">
+                  <span className="text-[10px] uppercase tracking-[0.15em] text-black">Crianças</span>
+                  <span className="mt-0.5 text-[10px] normal-case tracking-normal text-black/50">
+                    6 a 11 anos · 50% do valor
+                  </span>
+                </div>
                 <div className="flex items-center gap-2">
                   <button
                     type="button"
@@ -949,11 +939,11 @@ export default function JrPassPage() {
           </div>
 
           {/* Critérios de elegibilidade */}
-          <div className="mt-8 border-t border-black/10 pt-6">
+          <div className="mx-auto mt-8 max-w-[820px] border-t border-black/10 pt-6">
             <p className="text-[10px] uppercase tracking-[0.2em] text-black">
               Critérios de elegibilidade
             </p>
-            <div className="mt-4 grid gap-4 sm:grid-cols-2">
+            <div className="mt-5 grid gap-4 sm:grid-cols-2">
               {ELEGIBILIDADE.map((item) => (
                 <div key={item.titulo} className="flex gap-3">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -968,9 +958,9 @@ export default function JrPassPage() {
           </div>
 
           {/* Regras de uso */}
-          <div className="mt-8 border-t border-black/10 pt-6">
+          <div className="mx-auto mt-8 max-w-[820px] border-t border-black/10 pt-6">
             <p className="text-[10px] uppercase tracking-[0.2em] text-black">Regras de uso</p>
-            <div className="mt-4 grid gap-4 sm:grid-cols-2">
+            <div className="mt-5 grid gap-4 sm:grid-cols-2">
               {REGRAS_DE_USO.map((item) => (
                 <div key={item.titulo} className="flex gap-3">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -990,19 +980,19 @@ export default function JrPassPage() {
               passagem, a o JR pass só pode ser emitido se ele estiver no
               Japao em até 90 dias" + "colocar opção de anexar documentos
               depois também". */}
-          <div className="mt-8 border-t border-black/10 pt-6">
+          <div className="mx-auto mt-8 max-w-[820px] border-t border-black/10 pt-6">
             <div className="flex items-center gap-2">
               <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#2f80c9] text-[10px] font-semibold text-white">
                 4
               </span>
               <p className="text-[10px] uppercase tracking-[0.2em] text-black">Documento — passaporte ou passagem</p>
             </div>
-            <p className="mt-2 max-w-2xl text-[11px] leading-5 text-black/65">
+            <p className="mt-2 text-[11px] leading-5 text-black/65">
               O JR Pass só pode ser emitido pra quem já está no Japão (ou vai entrar) dentro da
               janela de 90 dias — a data do voo na passagem confirma isso. Anexe a foto do
               passaporte ou da passagem agora para continuar.
             </p>
-            <div className="mt-4 flex flex-wrap gap-2">
+            <div className="mt-5 flex flex-wrap gap-2">
               {(["passaporte", "passagem"] as const).map((tipo) => (
                 <label
                   key={tipo}
@@ -1074,14 +1064,14 @@ export default function JrPassPage() {
           {/* Dados de contato — pedido do Wilson, 25/set/2026: "adicionar
               nome, e-mail e telefone nessa página, registrar no CRM ao
               proceder para pagamento". */}
-          <div className="mt-8 border-t border-black/10 pt-6">
+          <div className="mx-auto mt-8 max-w-[820px] border-t border-black/10 pt-6">
             <div className="flex items-center gap-2">
               <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#2f80c9] text-[10px] font-semibold text-white">
                 5
               </span>
               <p className="text-[10px] uppercase tracking-[0.2em] text-black">Seus dados</p>
             </div>
-            <div className="mt-4 grid gap-4 sm:grid-cols-3">
+            <div className="mt-5 grid gap-4 sm:grid-cols-3">
               <label className="flex flex-col gap-1.5">
                 <span className="text-[10px] uppercase tracking-[0.15em] text-black">
                   Nome completo
@@ -1126,13 +1116,15 @@ export default function JrPassPage() {
             </label>
           </div>
 
-          <FormasPagamento
-            numeroPasso={6}
-            totalBRL={precoTotalBRL}
-            dataViagem={dataInicioViagem}
-            formaPagamento={formaPagamento}
-            onEscolher={setFormaPagamento}
-          />
+          <div className="mx-auto max-w-[820px]">
+            <FormasPagamento
+              numeroPasso={6}
+              totalBRL={precoTotalBRL}
+              dataViagem={dataInicioViagem}
+              formaPagamento={formaPagamento}
+              onEscolher={setFormaPagamento}
+            />
+          </div>
 
           {/* Termos e condições — pedido do Wilson, 25/set/2026: "temos
               que adicionar um tick box no termos e condições para
@@ -1141,7 +1133,7 @@ export default function JrPassPage() {
               fontes já usadas em Regras de uso/Critérios de elegibilidade
               acima (sites oficiais JR) + tabela do fornecedor Century
               Travel (cancelamento, reembolso, validade do voucher). */}
-          <div className="mt-8 border-t border-black/10 pt-6">
+          <div className="mx-auto mt-8 max-w-[820px] border-t border-black/10 pt-6">
             <div className="flex items-center gap-2">
               <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#2f80c9] text-[10px] font-semibold text-white">
                 7
@@ -1150,7 +1142,7 @@ export default function JrPassPage() {
             </div>
             <div
               ref={termosBoxRef}
-              className="mt-4 max-h-96 overflow-y-auto rounded-xl border border-black/10 bg-black/[0.02] p-4 text-[11px] leading-5 text-black/75"
+              className="mt-5 max-h-96 overflow-y-auto rounded-xl border border-black/10 bg-black/[0.02] p-4 text-[11px] leading-5 text-black/75"
               onScroll={(e) => {
                 const el = e.currentTarget;
                 if (el.scrollTop + el.clientHeight >= el.scrollHeight - 4) {
@@ -1217,7 +1209,9 @@ export default function JrPassPage() {
             )}
           </div>
 
-          {erro && <p className="mt-4 text-sm text-red-600">{erro}</p>}
+          {erro && (
+            <p className="mx-auto mt-4 max-w-[820px] text-sm text-red-600">{erro}</p>
+          )}
             </>
           )}
       </div>
