@@ -1149,45 +1149,533 @@ export default function JrPassPage() {
                 }
               }}
             >
-              <p className="font-medium text-black">Emissão e elegibilidade</p>
+              <p className="font-medium text-black">Termos e condições de compra — Japan Rail Pass</p>
               <p className="mt-1">
-                O Japan Rail Pass é vendido como um voucher (Exchange Order), trocado pelo passe
-                físico só no Japão. Só pode ser emitido pra quem tem status de imigração
-                &quot;Temporary Visitor&quot; carimbado no passaporte — o portão eletrônico não
-                carimba, é preciso passar no balcão manual da imigração. Turistas estrangeiros têm
-                estadia autorizada de até 90 dias; japoneses residentes no exterior há pelo menos
-                10 anos podem comprar sob condições específicas, só pela modalidade de compra fora
-                do Japão, antes da viagem.
+                Ao concluir a compra do Japan Rail Pass por meio da Alpinea, o cliente declara ter
+                lido e compreendido as condições abaixo, que integram a contratação, sem prejuízo
+                dos direitos assegurados pela legislação brasileira aplicável, especialmente o
+                Código de Defesa do Consumidor.
               </p>
-              <p className="mt-3 font-medium text-black">Validade do voucher</p>
+
+              <p className="mt-3 font-medium text-black">1. Emissão e elegibilidade</p>
               <p className="mt-1">
-                O voucher tem validade de 3 meses a partir da emissão pra ser trocado pelo passe
-                físico. O passe em si é pessoal e intransferível, vinculado a um passaporte
-                específico — o nome informado precisa ser idêntico ao do passaporte que será usado
-                na troca.
+                O Japan Rail Pass é comercializado por meio de voucher ou documento de troca
+                (&quot;Exchange Order&quot;), que deverá ser apresentado no Japão para obtenção do
+                passe correspondente, conforme as regras vigentes estabelecidas pelo emissor e
+                pelas empresas integrantes do Japan Railways Group.
               </p>
-              <p className="mt-3 font-medium text-black">Cancelamento e reembolso</p>
               <p className="mt-1">
-                Cancelamento só é aceito dentro do mês de emissão do voucher, mediante taxa de
-                serviço de US$ 10 por cupom. Reembolso (quando ainda cabível) tem taxa de 15% do
-                valor do passe, com prazo máximo de 1 ano a partir da emissão. Se o voucher já foi
-                trocado pelo passe físico, ou em caso de perda ou roubo, não há reembolso nem
-                reposição.
+                A utilização do passe está sujeita ao cumprimento dos requisitos de elegibilidade
+                estabelecidos pelo Japan Railways Group e pelas autoridades japonesas.
               </p>
-              <p className="mt-3 font-medium text-black">Uso do passe</p>
               <p className="mt-1">
-                Cobre Shinkansen, trens expressos, expressos limitados e locais da JR, ônibus JR e
-                o Tokyo Monorail — exceto os trens-bala Nozomi e Mizuho, que exigem bilhete
-                especial à parte. Reservas de assento são gratuitas (limite de 110 por passe), mas
-                recomendadas.
+                É responsabilidade do viajante verificar se possui o status migratório exigido
+                para utilização do passe. Quando exigido o status &quot;Temporary Visitor&quot;, o
+                viajante deverá assegurar que sua entrada no Japão tenha sido registrada
+                adequadamente pelas autoridades de imigração.
               </p>
-              <p className="mt-3 font-medium text-black">Pagamento e responsabilidade dos dados</p>
               <p className="mt-1">
-                O valor final é convertido pela cotação de câmbio turismo de venda do dia da
-                compra. A Alpinea atua como intermediária entre o cliente e o fornecedor emissor —
-                a exatidão dos dados e documentos enviados (nome, passaporte, datas de viagem) é de
-                responsabilidade do cliente, já que divergências podem impedir a troca do voucher
-                no Japão.
+                Caso seja necessário registro ou carimbo físico no passaporte para comprovação da
+                elegibilidade, caberá ao viajante realizar o procedimento apropriado junto à
+                imigração japonesa.
+              </p>
+              <p className="mt-1">
+                Cidadãos japoneses residentes permanentemente fora do Japão somente poderão
+                adquirir ou utilizar o passe quando atenderem integralmente às condições
+                específicas estabelecidas pelo Japan Railways Group.
+              </p>
+              <p className="mt-1">
+                A Alpinea fornecerá, antes da conclusão da compra, as informações disponíveis
+                sobre os requisitos aplicáveis, não podendo garantir a elegibilidade quando ela
+                depender de condição migratória, documentação ou circunstância pessoal do
+                viajante.
+              </p>
+
+              <p className="mt-3 font-medium text-black">2. Dados fornecidos pelo cliente</p>
+              <p className="mt-1">
+                O cliente deverá conferir cuidadosamente, antes de concluir a compra:
+              </p>
+              <ul className="mt-1 list-disc space-y-1 pl-5">
+                <li>nome completo conforme consta no passaporte;</li>
+                <li>número do passaporte, quando solicitado;</li>
+                <li>nacionalidade;</li>
+                <li>datas da viagem;</li>
+                <li>tipo e classe do passe;</li>
+                <li>quantidade de passageiros; e</li>
+                <li>demais informações necessárias para emissão.</li>
+              </ul>
+              <p className="mt-1">
+                O nome utilizado na emissão deverá corresponder ao documento apresentado pelo
+                passageiro no momento da troca ou utilização do passe.
+              </p>
+              <p className="mt-1">
+                Antes da confirmação definitiva da contratação, a Alpinea disponibilizará ao
+                cliente oportunidade para revisão e correção dos dados fornecidos.
+              </p>
+              <p className="mt-1">
+                Após a emissão do voucher, alterações poderão estar sujeitas às regras, prazos,
+                custos e limitações do fornecedor emissor.
+              </p>
+              <p className="mt-1">
+                Caso uma informação incorreta tenha sido fornecida pelo cliente e seja necessária
+                nova emissão, cancelamento ou alteração, os respectivos custos poderão ser
+                cobrados do cliente, desde que previamente informados e desde que não decorram de
+                erro da Alpinea ou do fornecedor.
+              </p>
+              <p className="mt-1">
+                Essa disposição não limita os direitos do consumidor nos casos de erro, falha na
+                prestação do serviço ou informação incorreta imputável à Alpinea ou aos seus
+                fornecedores.
+              </p>
+
+              <p className="mt-3 font-medium text-black">3. Validade do voucher</p>
+              <p className="mt-1">
+                Salvo indicação diferente apresentada no momento da compra, o Exchange Order
+                deverá ser trocado pelo Japan Rail Pass dentro do prazo estabelecido pelo
+                fornecedor emissor, contado da respectiva data de emissão.
+              </p>
+              <p className="mt-1">O cliente deverá observar a data de validade indicada no documento recebido.</p>
+              <p className="mt-1">
+                O passe é pessoal e intransferível e poderá ser vinculado ao passageiro e ao
+                respectivo documento de viagem.
+              </p>
+              <p className="mt-1">
+                A ausência de utilização dentro do período de validade poderá inviabilizar sua
+                utilização ou reembolso, observadas as condições do fornecedor e os direitos
+                assegurados pela legislação brasileira.
+              </p>
+
+              <p className="mt-3 font-medium text-black">4. Preço, câmbio e pagamento</p>
+              <p className="mt-1">O preço total da contratação será informado ao cliente antes da conclusão da compra.</p>
+              <p className="mt-1">
+                Quando o produto ou serviço for originalmente precificado em moeda estrangeira, o
+                valor em reais poderá ser calculado conforme a cotação de venda aplicável
+                informada no momento da compra.
+              </p>
+              <p className="mt-1">
+                Uma vez concluída e autorizada a transação, oscilações cambiais posteriores não
+                alterarão o valor já contratado, salvo se houver uma nova operação solicitada pelo
+                cliente.
+              </p>
+              <p className="mt-1">
+                Eventuais impostos, tarifas, custos financeiros ou encargos adicionais serão
+                informados antes da conclusão da contratação sempre que forem cobrados pela
+                Alpinea.
+              </p>
+              <p className="mt-1">
+                No pagamento por cartão, eventual parcelamento, juros ou condições financeiras
+                serão apresentados antes da confirmação da compra.
+              </p>
+
+              <p className="mt-3 font-medium text-black">5. Autorização do pagamento e prevenção a fraudes</p>
+              <p className="mt-1">
+                Para proteção do cliente e da Alpinea, determinadas transações poderão passar por
+                procedimentos de autenticação e prevenção a fraudes realizados pela Alpinea, pelo
+                processador de pagamentos, pela instituição financeira ou pela administradora do
+                cartão.
+              </p>
+              <p className="mt-1">
+                Poderão ser solicitadas informações ou documentos adicionais estritamente
+                necessários para confirmação da identidade do comprador, da titularidade do meio
+                de pagamento ou da legitimidade da transação.
+              </p>
+              <p className="mt-1">
+                A análise poderá resultar na não aprovação da operação quando existirem indícios
+                razoáveis de fraude ou inconsistências relevantes, sem prejuízo dos direitos do
+                consumidor.
+              </p>
+              <p className="mt-1">
+                Quando o cartão ou outro meio de pagamento pertencer a terceiro, o comprador
+                declara possuir autorização legítima do respectivo titular para utilização daquele
+                meio de pagamento.
+              </p>
+              <p className="mt-1">
+                A aprovação inicial pela instituição financeira não impede verificações adicionais
+                destinadas à prevenção de fraude.
+              </p>
+
+              <p className="mt-3 font-medium text-black">6. Confirmação e emissão</p>
+              <p className="mt-1">
+                A simples solicitação de compra não representa necessariamente a emissão imediata
+                do Japan Rail Pass.
+              </p>
+              <p className="mt-1">A contratação será considerada confirmada após:</p>
+              <ol className="mt-1 list-decimal space-y-1 pl-5">
+                <li>aprovação do pagamento;</li>
+                <li>confirmação dos dados necessários à emissão; e</li>
+                <li>confirmação da emissão ou reserva pelo respectivo fornecedor, quando aplicável.</li>
+              </ol>
+              <p className="mt-1">Após a contratação, a Alpinea enviará confirmação ao cliente por meio eletrônico.</p>
+              <p className="mt-1">
+                O voucher ou documento equivalente será encaminhado pelo canal informado durante a
+                contratação, dentro do prazo apresentado ao consumidor.
+              </p>
+              <p className="mt-1">
+                Caso a emissão não possa ser concluída por indisponibilidade do fornecedor ou
+                circunstância não imputável ao cliente, este será informado e poderá optar pelas
+                alternativas legalmente aplicáveis, incluindo restituição dos valores pagos quando
+                cabível.
+              </p>
+
+              <p className="mt-3 font-medium text-black">7. Direito de arrependimento</p>
+              <p className="mt-1">
+                Nas contratações realizadas pela internet ou fora do estabelecimento comercial,
+                serão integralmente respeitados os direitos assegurados pelo artigo 49 do Código
+                de Defesa do Consumidor e demais normas aplicáveis.
+              </p>
+              <p className="mt-1">
+                Quando juridicamente aplicável, o consumidor poderá exercer o direito de
+                arrependimento no prazo legal de 7 (sete) dias, contado na forma prevista pela
+                legislação.
+              </p>
+              <p className="mt-1">
+                O exercício válido do direito de arrependimento dentro do prazo legal será
+                realizado sem cobrança das penalidades comerciais previstas para cancelamentos
+                voluntários posteriores.
+              </p>
+              <p className="mt-1">
+                A Alpinea disponibilizará canal eletrônico para solicitação de cancelamento e
+                enviará confirmação do recebimento da solicitação.
+              </p>
+              <p className="mt-1">
+                Quando cabível o estorno, a Alpinea solicitará imediatamente seu processamento
+                junto à instituição financeira, operadora ou processadora de pagamento
+                responsável, sendo o prazo de efetiva visualização do crédito ou estorno na fatura
+                também sujeito aos procedimentos da respectiva instituição.
+              </p>
+
+              <p className="mt-3 font-medium text-black">8. Cancelamento após o período legal de arrependimento</p>
+              <p className="mt-1">
+                Após o término de eventual prazo legal de arrependimento, os cancelamentos
+                voluntários solicitados pelo cliente estarão sujeitos às regras do fornecedor
+                emissor informadas no momento da contratação.
+              </p>
+              <p className="mt-1">Quando aplicáveis ao produto adquirido, poderão existir:</p>
+              <ul className="mt-1 list-disc space-y-1 pl-5">
+                <li>prazo máximo para solicitação de cancelamento;</li>
+                <li>taxa administrativa ou operacional;</li>
+                <li>percentual de retenção estabelecido pelo fornecedor;</li>
+                <li>restrições depois da troca do Exchange Order pelo passe; e</li>
+                <li>impossibilidade de restituição após utilização total ou parcial do produto.</li>
+              </ul>
+              <p className="mt-1">
+                Quando as condições comerciais aplicáveis ao produto adquirido previrem
+                cancelamento apenas dentro do mês de emissão, taxa administrativa de US$ 10 por
+                voucher e retenção de 15% do valor do passe, essas condições serão aplicadas
+                apenas fora das hipóteses em que a legislação brasileira assegurar ao consumidor
+                condição mais favorável.
+              </p>
+              <p className="mt-1">
+                O valor exato da eventual retenção ou taxa aplicável será informado ao cliente
+                antes da conclusão da compra ou da confirmação do cancelamento.
+              </p>
+              <p className="mt-1">
+                Nenhuma disposição desta seção limita os direitos do consumidor em caso de falha
+                na prestação do serviço, descumprimento da oferta ou outra hipótese protegida pela
+                legislação aplicável.
+              </p>
+
+              <p className="mt-3 font-medium text-black">9. Perda, roubo ou inutilização</p>
+              <p className="mt-1">
+                Depois de realizada a troca do voucher pelo passe ou iniciada sua utilização,
+                eventual perda, roubo ou extravio estará sujeito às regras estabelecidas pelo
+                Japan Railways Group.
+              </p>
+              <p className="mt-1">
+                Quando as regras do emissor não permitirem segunda via, reposição ou reembolso
+                nessas situações, a Alpinea não terá capacidade operacional para emitir
+                unilateralmente novo passe.
+              </p>
+              <p className="mt-1">
+                Essa limitação não se aplica quando a perda do direito de utilização decorrer de
+                falha atribuível à própria Alpinea ou a fornecedor pelo qual ela legalmente
+                responda.
+              </p>
+
+              <p className="mt-3 font-medium text-black">10. Utilização do Japan Rail Pass</p>
+              <p className="mt-1">
+                A cobertura do Japan Rail Pass será aquela oficialmente estabelecida pelo Japan
+                Railways Group para a modalidade adquirida.
+              </p>
+              <p className="mt-1">
+                O passe poderá abranger determinados serviços ferroviários, linhas JR, ônibus JR e
+                outros serviços incluídos pelo emissor.
+              </p>
+              <p className="mt-1">Serviços excluídos ou sujeitos a suplemento deverão ser contratados separadamente.</p>
+              <p className="mt-1">
+                A disponibilidade de assentos, horários e serviços de transporte depende da
+                operação das respectivas empresas ferroviárias e poderá sofrer alterações.
+              </p>
+              <p className="mt-1">
+                A possibilidade de realizar gratuitamente reservas de assento não constitui
+                garantia de disponibilidade em determinado trem, horário, rota ou classe.
+              </p>
+              <p className="mt-1">
+                Por esse motivo, especialmente em períodos de maior demanda, recomenda-se que o
+                passageiro faça suas reservas com antecedência.
+              </p>
+
+              <p className="mt-3 font-medium text-black">11. Alterações operacionais no Japão</p>
+              <p className="mt-1">
+                Horários, plataformas, itinerários, categorias de trem e disponibilidade de
+                assentos podem ser alterados pelos operadores ferroviários.
+              </p>
+              <p className="mt-1">
+                Também podem ocorrer interrupções ou alterações causadas por condições
+                meteorológicas, terremotos, tufões, acidentes, manutenção, determinações
+                governamentais ou outras circunstâncias operacionais.
+              </p>
+              <p className="mt-1">
+                Quando a execução do transporte for diretamente realizada por terceiro, eventual
+                compensação ou alternativa operacional observará as regras da empresa responsável
+                pelo serviço e a legislação aplicável.
+              </p>
+              <p className="mt-1">
+                A Alpinea prestará ao cliente as informações e o suporte que estejam dentro de sua
+                esfera de atuação, sem prejuízo das responsabilidades que legalmente lhe forem
+                atribuíveis.
+              </p>
+
+              <p className="mt-3 font-medium text-black">12. Contestação de pagamento e chargeback</p>
+              <p className="mt-1">
+                Caso o cliente identifique cobrança que não reconheça, valor incorreto,
+                duplicidade, não recebimento do produto ou qualquer outro problema relacionado à
+                contratação, recomenda-se o contato imediato com a Alpinea por meio dos canais de
+                atendimento disponibilizados, para que a situação possa ser investigada e
+                solucionada.
+              </p>
+              <p className="mt-1">
+                Essa recomendação não restringe o direito do cliente de procurar sua instituição
+                financeira, administradora do cartão, órgãos de defesa do consumidor ou o Poder
+                Judiciário.
+              </p>
+              <p className="mt-1">
+                A abertura de procedimento de chargeback ou contestação financeira não constitui,
+                por si só, pedido de cancelamento do produto ou serviço perante a Alpinea ou
+                perante o fornecedor emissor.
+              </p>
+
+              <p className="mt-3 font-medium text-black">12.1 Contestação de uma transação legítima</p>
+              <p className="mt-1">
+                Quando houver contestação de uma transação efetivamente autorizada pelo comprador
+                e regularmente cumprida pela Alpinea, a empresa poderá apresentar à instituição
+                financeira, adquirente, bandeira ou processadora de pagamentos os documentos
+                necessários à demonstração da legitimidade da operação.
+              </p>
+              <p className="mt-1">Essas informações poderão incluir, quando disponíveis e pertinentes:</p>
+              <ul className="mt-1 list-disc space-y-1 pl-5">
+                <li>confirmação da contratação;</li>
+                <li>identificação do comprador;</li>
+                <li>registro da autorização do pagamento;</li>
+                <li>registros de autenticação do pagamento;</li>
+                <li>aceite destes Termos e Condições;</li>
+                <li>data e horário da contratação;</li>
+                <li>endereço IP e registros técnicos relacionados à operação;</li>
+                <li>histórico de comunicações;</li>
+                <li>comprovantes de emissão;</li>
+                <li>comprovantes de envio ou disponibilização do voucher;</li>
+                <li>informações fornecidas pelo próprio cliente durante a contratação; e</li>
+                <li>registros de utilização, cancelamento ou troca do produto, quando disponíveis.</li>
+              </ul>
+              <p className="mt-1">
+                O tratamento e o compartilhamento dessas informações serão limitados ao necessário
+                para prevenção de fraudes, execução da contratação, exercício regular de direitos
+                e defesa de interesses legítimos, observada a legislação aplicável sobre proteção
+                de dados.
+              </p>
+
+              <p className="mt-3 font-medium text-black">12.2 Efeito do chargeback sobre obrigações legitimamente constituídas</p>
+              <p className="mt-1">
+                A realização de um chargeback não determina automaticamente a inexistência da
+                contratação ou da obrigação que lhe deu origem.
+              </p>
+              <p className="mt-1">
+                Caso a instituição financeira efetue provisoriamente ou definitivamente a reversão
+                de uma transação e posteriormente fique demonstrado que:
+              </p>
+              <ol className="mt-1 list-decimal space-y-1 pl-5">
+                <li>a compra foi regularmente autorizada;</li>
+                <li>o produto ou serviço contratado foi regularmente fornecido;</li>
+                <li>não havia hipótese legal ou contratual que justificasse o cancelamento; e</li>
+                <li>o consumidor permaneceu beneficiário do produto ou serviço contratado,</li>
+              </ol>
+              <p className="mt-1">
+                a Alpinea poderá buscar o recebimento do valor legitimamente devido pelos meios
+                permitidos pela legislação brasileira.
+              </p>
+              <p className="mt-1">
+                Qualquer cobrança será realizada de maneira proporcional, transparente e sem
+                constrangimento ao consumidor, observando-se integralmente o Código de Defesa do
+                Consumidor.
+              </p>
+              <p className="mt-1">
+                Nenhuma disposição desta cláusula impede ou dificulta a apresentação de
+                contestação legítima pelo consumidor nos casos de fraude, transação não
+                autorizada, duplicidade, descumprimento da oferta, não fornecimento do serviço ou
+                outra hipótese legalmente protegida.
+              </p>
+
+              <p className="mt-3 font-medium text-black">12.3 Fraude ou utilização não autorizada</p>
+              <p className="mt-1">
+                Caso o titular do meio de pagamento informe que a operação foi realizada sem sua
+                autorização, a Alpinea poderá suspender temporariamente emissões ainda não
+                concluídas enquanto investiga a operação.
+              </p>
+              <p className="mt-1">
+                Confirmada fraude ou utilização não autorizada, serão adotadas as providências
+                cabíveis junto ao processador de pagamento e demais instituições envolvidas.
+              </p>
+
+              <p className="mt-3 font-medium text-black">13. Cooperação em caso de divergência</p>
+              <p className="mt-1">
+                O cliente compromete-se a fornecer informações verdadeiras e, quando necessário,
+                cooperar razoavelmente com a investigação de divergências relacionadas à
+                contratação.
+              </p>
+              <p className="mt-1">
+                A Alpinea poderá solicitar documentos ou esclarecimentos estritamente relacionados
+                à compra, emissão, pagamento ou eventual contestação.
+              </p>
+              <p className="mt-1">
+                A ausência de envio desses documentos não implicará automaticamente perda de
+                direitos do consumidor, mas poderá limitar a possibilidade de confirmação de
+                determinadas informações ou conclusão de procedimentos dependentes desses dados.
+              </p>
+
+              <p className="mt-3 font-medium text-black">14. Papel da Alpinea e fornecedores terceiros</p>
+              <p className="mt-1">
+                A Alpinea poderá atuar na comercialização, intermediação e facilitação da emissão
+                de produtos fornecidos ou operacionalizados por terceiros.
+              </p>
+              <p className="mt-1">
+                A existência de fornecedor ou operador estrangeiro não exclui direitos assegurados
+                ao consumidor pela legislação brasileira quando esta for aplicável.
+              </p>
+              <p className="mt-1">
+                A Alpinea não poderá controlar atos exclusivamente atribuíveis às autoridades
+                migratórias japonesas, decisões governamentais ou alterações operacionais
+                realizadas diretamente pelas companhias ferroviárias.
+              </p>
+              <p className="mt-1">
+                Essa disposição não representa exclusão ou limitação de responsabilidade da
+                Alpinea em situações nas quais a legislação determine sua responsabilidade.
+              </p>
+
+              <p className="mt-3 font-medium text-black">15. Documentação migratória</p>
+              <p className="mt-1">A aquisição de um Japan Rail Pass não garante:</p>
+              <ul className="mt-1 list-disc space-y-1 pl-5">
+                <li>entrada no Japão;</li>
+                <li>concessão de visto;</li>
+                <li>concessão do status migratório necessário;</li>
+                <li>aceitação do passageiro pela imigração;</li>
+                <li>validade de passaporte ou documentação pessoal; ou</li>
+                <li>elegibilidade individual ao passe.</li>
+              </ul>
+              <p className="mt-1">
+                Cabe ao passageiro possuir documentação válida e cumprir os requisitos
+                estabelecidos pelas autoridades japonesas.
+              </p>
+              <p className="mt-1">
+                A Alpinea deverá fornecer informações corretas sobre requisitos de que tenha
+                conhecimento, mas não substitui autoridades migratórias, consulados ou órgãos
+                governamentais.
+              </p>
+
+              <p className="mt-3 font-medium text-black">16. Proteção de dados pessoais</p>
+              <p className="mt-1">
+                Os dados pessoais fornecidos durante a contratação poderão ser tratados pela
+                Alpinea para:
+              </p>
+              <ul className="mt-1 list-disc space-y-1 pl-5">
+                <li>processamento da compra;</li>
+                <li>emissão do produto;</li>
+                <li>atendimento ao cliente;</li>
+                <li>prevenção a fraudes;</li>
+                <li>processamento e defesa de contestações financeiras;</li>
+                <li>cumprimento de obrigações legais ou regulatórias;</li>
+                <li>exercício regular de direitos; e</li>
+                <li>demais finalidades necessárias à execução da contratação.</li>
+              </ul>
+              <p className="mt-1">
+                Quando necessário para emissão ou operação do produto, determinadas informações
+                poderão ser compartilhadas com fornecedores, operadores ferroviários,
+                processadores de pagamento, instituições financeiras ou prestadores de serviços
+                envolvidos na execução da contratação, inclusive quando localizados no exterior,
+                observada a legislação aplicável.
+              </p>
+              <p className="mt-1">
+                A Alpinea adotará medidas razoáveis de segurança destinadas à proteção das
+                informações sob sua responsabilidade.
+              </p>
+              <p className="mt-1">
+                O tratamento de dados pessoais observará a Política de Privacidade da Alpinea e a
+                legislação aplicável, incluindo a Lei Geral de Proteção de Dados Pessoais.
+              </p>
+
+              <p className="mt-3 font-medium text-black">17. Comunicações e comprovantes eletrônicos</p>
+              <p className="mt-1">
+                O cliente concorda que documentos relacionados à contratação poderão ser
+                disponibilizados por meio eletrônico, incluindo e-mail, área do cliente ou outro
+                canal indicado durante a compra.
+              </p>
+              <p className="mt-1">
+                Recomenda-se que o cliente mantenha seus dados de contato atualizados e conserve
+                os comprovantes e documentos recebidos.
+              </p>
+              <p className="mt-1">
+                Os registros eletrônicos da contratação poderão ser utilizados para comprovar
+                informações relativas à compra, sem prejuízo do direito do consumidor de contestar
+                sua autenticidade ou conteúdo.
+              </p>
+
+              <p className="mt-3 font-medium text-black">18. Atendimento e resolução de problemas</p>
+              <p className="mt-1">
+                Em caso de dúvida, erro de emissão, solicitação de alteração, cancelamento ou
+                problema relacionado ao produto, o cliente poderá entrar em contato pelos canais
+                oficiais de atendimento da Alpinea.
+              </p>
+              <p className="mt-1">
+                A Alpinea buscará solucionar as solicitações dentro dos prazos legalmente
+                aplicáveis e manterá registros das comunicações relacionadas à contratação.
+              </p>
+              <p className="mt-1">
+                O consumidor permanece livre para utilizar os mecanismos administrativos e
+                judiciais de proteção disponíveis no Brasil.
+              </p>
+
+              <p className="mt-3 font-medium text-black">19. Alterações destes termos</p>
+              <p className="mt-1">
+                As condições aplicáveis à compra serão aquelas disponibilizadas e aceitas no
+                momento da contratação.
+              </p>
+              <p className="mt-1">
+                Alterações posteriores destes Termos e Condições não poderão modificar
+                retroativamente condições essenciais de uma compra já concluída em prejuízo do
+                consumidor.
+              </p>
+              <p className="mt-1">
+                Alterações realizadas por fornecedores ou autoridades após a contratação serão
+                comunicadas quando relevantes e quando a Alpinea tiver conhecimento delas.
+              </p>
+
+              <p className="mt-3 font-medium text-black">20. Legislação aplicável</p>
+              <p className="mt-1">
+                A contratação observará a legislação brasileira aplicável às relações de consumo,
+                inclusive o Código de Defesa do Consumidor, sem prejuízo das normas estrangeiras
+                necessariamente relacionadas à utilização e operação do produto no Japão.
+              </p>
+              <p className="mt-1">
+                Nenhuma disposição destes Termos deverá ser interpretada como renúncia a direito
+                indisponível assegurado ao consumidor.
+              </p>
+              <p className="mt-1">
+                Caso alguma disposição seja considerada inválida ou inexequível, as demais
+                permanecerão válidas na medida permitida pela legislação.
+              </p>
+              <p className="mt-1">
+                Eventuais conflitos poderão ser solucionados pelos meios legalmente disponíveis ao
+                consumidor, inclusive perante o foro competente determinado pela legislação
+                aplicável.
               </p>
             </div>
             <label className="mt-3 flex items-start gap-3 text-sm leading-6 text-black/80">
