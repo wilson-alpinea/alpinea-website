@@ -292,7 +292,6 @@ export default function JrPassPage() {
       ],
     },
   ];
-  const TIPOS_POR_KEY = { comum: TIPOS[0], green: TIPOS[1] };
 
   // Ícones enviados pelo Wilson, 25/set/2026 ("segue icones para esses 4
   // cards"), um por critério de elegibilidade — substituem o ícone
@@ -483,30 +482,8 @@ export default function JrPassPage() {
     }
   }
 
-  // Altura real do rodapé fixo, medida ao vivo — corrige o bug (Wilson,
-  // 28/set/2026) de o rodapé tampar o fim da página quando a lista de
-  // pendências cresce e ele fica mais alto que um padding fixo chutado.
-  const rodapeRef = useRef<HTMLDivElement | null>(null);
-  const [alturaRodape, setAlturaRodape] = useState(0);
-
-  useEffect(() => {
-    const elemento = rodapeRef.current;
-    if (!elemento) {
-      setAlturaRodape(0);
-      return;
-    }
-    const observer = new ResizeObserver((entries) => {
-      setAlturaRodape(entries[0]?.contentRect.height ?? elemento.offsetHeight);
-    });
-    observer.observe(elemento);
-    return () => observer.disconnect();
-  }, [status]);
-
   return (
-    <main
-      className="min-h-screen bg-white pt-14 text-black"
-      style={status !== "enviado" ? { paddingBottom: alturaRodape + 24 } : undefined}
-    >
+    <main className="min-h-screen bg-white pt-14 pb-16 text-black">
       {/* Barra de voltar — pedido do Wilson, 28/set/2026: "essa parte deve
           ser fixa, aonde o usuario for ele deve acompanhar" (era só
           `sticky`, que só acompanha dentro do próprio container — virou
@@ -656,22 +633,17 @@ export default function JrPassPage() {
                 const selecionado = classeSelecionada === tipo.key;
                 const precoUSDAtual = diasSelecionados ? tipo.precoUSD[diasSelecionados] : null;
                 const precoBRLAtual = precoUSDAtual !== null && cambio ? precoUSDAtual * cambio.cotacao : null;
-                const precoUSDComum = diasSelecionados ? TIPOS_POR_KEY.comum.precoUSD[diasSelecionados] : null;
-                const diferencaBRL =
-                  tipo.key === "green" && precoUSDAtual !== null && precoUSDComum !== null && cambio
-                    ? (precoUSDAtual - precoUSDComum) * cambio.cotacao
-                    : null;
                 return (
                   <button
                     key={tipo.key}
                     type="button"
                     onClick={() => setClasseSelecionada(tipo.key)}
-                    className={`relative flex flex-col rounded-2xl border p-5 text-left transition-colors duration-150 ${
+                    className={`relative flex flex-col rounded-2xl border p-5 text-left shadow-[0_18px_45px_-14px_rgba(37,99,235,0.55)] transition-colors duration-150 hover:shadow-[0_22px_55px_-12px_rgba(37,99,235,0.65)] ${
                       selecionado ? "border-[#252522] bg-[#FAF9F6]" : "border-[#E4E1DC] bg-white hover:border-black/25"
                     }`}
                   >
                     {selecionado && (
-                      <span className="absolute right-4 top-4 flex items-center gap-1 text-[10px] font-medium text-[#252522]">
+                      <span className="absolute right-4 top-4 flex items-center gap-1 rounded-full bg-[#252522] px-2.5 py-1 text-[10px] font-medium text-white">
                         <IconCheck className="h-3 w-3" />
                         Selecionado
                       </span>
@@ -693,11 +665,6 @@ export default function JrPassPage() {
                           {formatBRL(precoBRLAtual)}
                         </p>
                         <p className="text-xs text-[#77736D]">{formatUSD(precoUSDAtual!)}</p>
-                        {diferencaBRL !== null && diferencaBRL > 0 && (
-                          <p className="mt-1 text-sm font-medium text-[#A8997E]">
-                            Upgrade + {formatBRL(diferencaBRL)}
-                          </p>
-                        )}
                       </div>
                     ) : (
                       <p className="mt-4 text-sm text-[#77736D]">Selecione a duração acima.</p>
@@ -1221,106 +1188,93 @@ export default function JrPassPage() {
           )}
       </div>
 
-        {/* Rodapé fixo com a escolha atual — pedido do Wilson, 25/set/2026:
-            "também precisa haver no rodapé da pagina o preço da minha
-            escolha e o que escolhi com o botão 'Finalizar Compra Via
-            Whatsapp'". Fica fora da área rolável (acima é overflow-y-auto),
-            sempre visível enquanto o cliente decide tipo e duração.
-            Redesenhado no mesmo dia, ainda 25/set/2026, a pedido do Wilson
-            ("modal que msotra peço não está bom, use o mesmo ou similar
-            que usamos na pagina de calculadora reversa no rodapé fixo") —
-            segue a mesma hierarquia visual da "barra fixa" da calculadora
-            reversa (label minúsculo, preço grande em destaque como âncora
-            visual, linha secundária discreta), adaptada pro tema claro
-            do /produtos em vez das cores escuras do original.
-
-            Botão trocado de link direto de WhatsApp pra "Finalizar
-            Compra" de verdade — pedido do Wilson, 25/set/2026: "aqui o
-            finalizar compra vai gerar uma nova tela" + "adicionar nome,
-            e-mail e telefone nessa página, registrar no CRM ao proceder
-            para pagamento". Some no rodapé quando status vira "enviado"
-            (a tela de confirmação já ocupa o corpo do modal). */}
-        {status !== "enviado" && (
-          <div
-            ref={rodapeRef}
-            className="fixed inset-x-0 bottom-0 z-50 border-t border-white/10 bg-[#0A263D] px-5 py-3 shadow-[0_-4px_16px_rgba(0,0,0,0.25)] md:px-8"
-          >
-            <div className="mx-auto flex max-w-4xl flex-wrap items-center justify-between gap-x-6 gap-y-3">
-              <div>
-                {selecaoCompleta ? (
-                  <>
-                    <p className="text-[10px] uppercase tracking-[0.15em] text-[#8498A8]">Sua escolha</p>
-                    <p className={`${display.className} text-xl font-medium text-[#C2A66A] sm:text-2xl`}>
-                      {precoTotalBRL !== null ? formatBRL(precoTotalBRL) : "—"}
-                    </p>
-                    <p className="text-xs text-[#A5B3BE]">
-                      {tipoEscolhido!.classe} · {diasSelecionados} dias · {numeroPessoas}{" "}
-                      {numeroPessoas === 1 ? "pessoa" : "pessoas"}
-                      {numeroCriancas > 0 &&
-                        ` (${numeroCriancas} ${numeroCriancas === 1 ? "criança" : "crianças"}${
-                          criancasComDesconto > 0 ? `, ${criancasComDesconto} c/ 50%` : ""
-                        })`}
-                      {precoTotalUSD !== null && ` · ${formatUSD(precoTotalUSD)}`}
-                      {numeroPessoas > 1 && numeroCriancas === 0 && precoEscolhidoBRL !== null && (
-                        <> · {formatBRL(precoEscolhidoBRL)}/pessoa</>
-                      )}
-                    </p>
-                    {descricaoPagamentoEscolhido && (
-                      <p className="mt-0.5 text-[11px] text-[#8498A8]">{descricaoPagamentoEscolhido}</p>
-                    )}
-                  </>
-                ) : (
-                  <p className="text-xs text-[#B8C5CE]">
-                    Selecione o tipo (Comum ou Green Car) e a duração do passe acima.
-                  </p>
-                )}
-              </div>
-              <div className="flex shrink-0 flex-col items-end gap-2">
-                <button
-                  type="button"
-                  onClick={enviar}
-                  disabled={!formValido || status === "enviando"}
-                  className={`inline-flex shrink-0 items-center justify-center rounded-full px-8 py-4 text-center text-sm font-medium uppercase tracking-[0.06em] transition-colors duration-200 ${
-                    formValido && status !== "enviando"
-                      ? "bg-[#E7DFD0] text-[#122D40] hover:bg-[#F0EADF]"
-                      : "cursor-not-allowed bg-[#2F4F69] text-[#9DB0BD]"
-                  }`}
-                >
-                  {status === "enviando" ? "Enviando…" : "Finalizar Compra"}
-                </button>
-                <div className="hidden flex-col items-center gap-1 sm:flex">
-                  <span className="text-xs text-[#A9B0B2]">Pagamento seguro</span>
-                  <Image
-                    src="/images/produtos/stone-logo-white.png"
-                    alt="Stone"
-                    width={108}
-                    height={39}
-                    className="h-9 w-auto opacity-90"
-                  />
-                </div>
-              </div>
-            </div>
-            {pendenciasFinalizar.length > 0 && status !== "enviando" && (
-              <div className="mt-4 w-full max-w-[800px] rounded-[10px] border border-[#8E794B]/55 bg-[#18343F] p-7">
-                <p className="text-[17px] font-semibold leading-snug text-[#E6D4A3]">
-                  Antes de finalizar
-                </p>
-                <ul className="mt-3 list-disc space-y-2.5 pl-5 marker:text-[#BFA76A]">
+      {status !== "enviado" && (
+        <div className="mx-auto mt-10 max-w-[1150px] px-5 md:px-8">
+          <div className="grid gap-6 rounded-2xl bg-[#0A263D] p-6 md:grid-cols-[65fr_35fr] md:p-8">
+            {/* Coluna esquerda — checklist "Antes de finalizar" */}
+            <div>
+              <p className="text-[15px] font-semibold text-[#E6D4A3]">Antes de finalizar</p>
+              {pendenciasFinalizar.length > 0 ? (
+                <ul className="mt-3 space-y-3.5">
                   {pendenciasFinalizar.map((item) => (
-                    <li key={item} className="text-[15px] leading-[1.65] text-[#F1EEE7]">
+                    <li key={item} className="flex items-start gap-2.5 text-sm leading-[1.4] text-[#F1EEE7]">
+                      <IconCheck className="mt-0.5 h-4 w-4 shrink-0 text-[#BFA76A]" />
                       {item}
                     </li>
                   ))}
                 </ul>
+              ) : (
+                <p className="mt-3 flex items-center gap-2 text-sm text-[#F1EEE7]">
+                  <IconCheck className="h-4 w-4 shrink-0 text-[#BFA76A]" />
+                  Tudo certo — pode finalizar.
+                </p>
+              )}
+              <p className="mt-5 max-w-[50ch] text-xs leading-5 text-[#A5B3BE]">
+                Ao finalizar, você é levado direto pra página de pagamento segura da Stone (Pix ou
+                cartão). Após a confirmação, nossa equipe faz a checagem final da elegibilidade e
+                envia as instruções de retirada do passe físico no Japão pelo WhatsApp e por e-mail.
+              </p>
+            </div>
+
+            {/* Coluna direita — resumo da compra + CTA */}
+            <div className="rounded-xl border border-[#8E794B]/30 bg-[#18343F] p-5">
+              <p className="text-[10px] uppercase tracking-[0.15em] text-[#8498A8]">Sua escolha</p>
+              {selecaoCompleta ? (
+                <>
+                  <p className={`${display.className} mt-1 text-3xl font-medium text-[#C2A66A]`}>
+                    {precoTotalBRL !== null ? formatBRL(precoTotalBRL) : "—"}
+                  </p>
+                  <p className="mt-1 text-sm text-[#A5B3BE]">
+                    {tipoEscolhido!.classe} · {diasSelecionados} dias · {numeroPessoas}{" "}
+                    {numeroPessoas === 1 ? "pessoa" : "pessoas"}
+                    {numeroCriancas > 0 &&
+                      ` (${numeroCriancas} ${numeroCriancas === 1 ? "criança" : "crianças"}${
+                        criancasComDesconto > 0 ? `, ${criancasComDesconto} c/ 50%` : ""
+                      })`}
+                  </p>
+                  {precoTotalUSD !== null && <p className="text-xs text-[#8498A8]">{formatUSD(precoTotalUSD)}</p>}
+                  {numeroPessoas > 1 && numeroCriancas === 0 && precoEscolhidoBRL !== null && (
+                    <p className="text-xs text-[#8498A8]">{formatBRL(precoEscolhidoBRL)}/pessoa</p>
+                  )}
+                  {descricaoPagamentoEscolhido && (
+                    <p className="mt-1 text-[11px] text-[#8498A8]">{descricaoPagamentoEscolhido}</p>
+                  )}
+                </>
+              ) : (
+                <p className="mt-1 text-sm text-[#B8C5CE]">
+                  Selecione o tipo (Comum ou Green Car) e a duração do passe acima.
+                </p>
+              )}
+
+              <div className="my-4 h-px bg-white/10" />
+
+              <button
+                type="button"
+                onClick={enviar}
+                disabled={!formValido || status === "enviando"}
+                className={`flex h-14 w-full items-center justify-center rounded-full text-sm font-medium uppercase tracking-[0.06em] transition-colors duration-200 ${
+                  formValido && status !== "enviando"
+                    ? "bg-[#E7DFD0] text-[#122D40] hover:bg-[#F0EADF]"
+                    : "cursor-not-allowed bg-[#2F4F69] text-[#9DB0BD]"
+                }`}
+              >
+                {status === "enviando" ? "Enviando…" : "Finalizar compra"}
+              </button>
+
+              <div className="mt-4 flex flex-col items-center gap-1">
+                <span className="text-xs text-[#A9B0B2]">Pagamento seguro</span>
+                <Image
+                  src="/images/produtos/stone-logo-white.png"
+                  alt="Stone"
+                  width={80}
+                  height={29}
+                  className="h-6 w-auto opacity-90"
+                />
               </div>
-            )}
-            <p className="mt-4 max-w-[800px] text-xs leading-5 text-[#A5B3BE]">
-              Ao finalizar, você é levado direto pra página de pagamento segura da Stone (Pix ou
-              cartão). Após a confirmação, nossa equipe faz a checagem final da elegibilidade e
-              envia as instruções de retirada do passe físico no Japão pelo WhatsApp e por e-mail.
-            </p>
+            </div>
           </div>
-        )}
+        </div>
+      )}
 
     </main>
   );
