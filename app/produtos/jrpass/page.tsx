@@ -724,7 +724,7 @@ export default function JrPassPage() {
             </div>
             <div className="mt-4 grid gap-6 sm:max-w-xl sm:grid-cols-2">
               <div>
-                <span className="mb-2 block text-[10px] uppercase tracking-[0.15em] text-black">
+                <span className="mb-2 flex min-h-[28px] items-end text-[10px] uppercase tracking-[0.15em] text-black">
                   Total de pessoas
                 </span>
                 <div className="flex items-center gap-2">
@@ -763,7 +763,7 @@ export default function JrPassPage() {
                   adultos e crianças devem estar lado a lado e não um
                   embaixo do outro". */}
               <div>
-                <span className="mb-2 block text-[10px] uppercase tracking-[0.15em] text-black">
+                <span className="mb-2 flex min-h-[28px] items-end text-[10px] uppercase tracking-[0.15em] text-black">
                   Crianças (opcional) — 6 a 11 anos pagam metade
                 </span>
                 <div className="flex items-center gap-2">
@@ -897,10 +897,6 @@ export default function JrPassPage() {
                 </div>
               ))}
             </div>
-            <p className="mt-4 text-[11px] leading-5 text-black/55">
-              Fonte: sites oficiais do Japan Rail Pass (japanrailpass.net/en) — páginas de
-              elegibilidade, condições de uso e tabela de preços.
-            </p>
           </div>
 
           {/* Documento — pedido do Wilson, 25/set/2026: "precisa capturar a
@@ -1160,7 +1156,7 @@ export default function JrPassPage() {
         {status !== "enviado" && (
           <div
             ref={rodapeRef}
-            className="fixed inset-x-0 bottom-0 z-50 border-t border-white/10 bg-[#0A263D] px-5 py-4 shadow-[0_-4px_16px_rgba(0,0,0,0.25)] md:px-8"
+            className="fixed inset-x-0 bottom-0 z-50 border-t border-white/10 bg-[#0A263D] px-5 py-3 shadow-[0_-4px_16px_rgba(0,0,0,0.25)] md:px-8"
           >
             <div className="mx-auto flex max-w-4xl flex-wrap items-center justify-between gap-x-6 gap-y-3">
               <div>
@@ -1193,26 +1189,24 @@ export default function JrPassPage() {
                 )}
               </div>
               <div className="flex shrink-0 items-center gap-3">
-                <div className="hidden flex-col items-center gap-1 sm:flex">
+                <div className="hidden items-center gap-2 sm:flex">
                   <Image
                     src="/images/produtos/stone-logo-white.png"
                     alt="Stone"
-                    width={90}
-                    height={32}
-                    className="h-4 w-auto"
+                    width={84}
+                    height={30}
+                    className="h-7 w-auto opacity-90"
                   />
-                  <p className="max-w-[6rem] text-center text-[8px] uppercase leading-tight tracking-[0.08em] text-[#8498A8]">
-                    Tecnologia de pagamento via Stone
-                  </p>
+                  <span className="text-xs text-[#A9B0B2]">Pagamento seguro</span>
                 </div>
                 <button
                   type="button"
                   onClick={enviar}
                   disabled={!formValido || status === "enviando"}
-                  className={`inline-flex shrink-0 items-center justify-center rounded-full px-6 py-3.5 text-center text-xs font-medium uppercase tracking-[0.2em] transition-colors duration-200 ${
+                  className={`inline-flex shrink-0 items-center justify-center rounded-full px-6 py-3.5 text-center text-xs font-medium uppercase tracking-[0.06em] transition-colors duration-200 ${
                     formValido && status !== "enviando"
                       ? "bg-[#E7DFD0] text-[#122D40] hover:bg-[#F0EADF]"
-                      : "cursor-not-allowed bg-[#29465E] text-[#748A9B]"
+                      : "cursor-not-allowed bg-[#2F4F69] text-[#9DB0BD]"
                   }`}
                 >
                   {status === "enviando" ? "Enviando…" : "Finalizar Compra"}
@@ -1220,18 +1214,20 @@ export default function JrPassPage() {
               </div>
             </div>
             {pendenciasFinalizar.length > 0 && status !== "enviando" && (
-              <div className="mt-3 rounded-[10px] border border-[#8E794B]/55 bg-[#18343F] px-4 py-3 text-[11px] leading-5">
-                <p className="font-semibold text-[#E6D4A3]">Antes de finalizar</p>
-                <ul className="mt-2 list-disc space-y-1.5 pl-4 marker:text-[#BFA76A]">
+              <div className="mt-4 w-full max-w-[800px] rounded-[10px] border border-[#8E794B]/55 bg-[#18343F] p-7">
+                <p className="text-[17px] font-semibold leading-snug text-[#E6D4A3]">
+                  Antes de finalizar
+                </p>
+                <ul className="mt-3 list-disc space-y-2.5 pl-5 marker:text-[#BFA76A]">
                   {pendenciasFinalizar.map((item) => (
-                    <li key={item} className="text-[#F1EEE7]">
+                    <li key={item} className="text-[15px] leading-[1.65] text-[#F1EEE7]">
                       {item}
                     </li>
                   ))}
                 </ul>
               </div>
             )}
-            <p className="mt-2 text-[10px] leading-4 text-[#A5B3BE]">
+            <p className="mt-4 max-w-[800px] text-xs leading-5 text-[#A5B3BE]">
               Ao finalizar, você é levado direto pra página de pagamento segura da Stone (Pix ou
               cartão). Após a confirmação, nossa equipe faz a checagem final da elegibilidade e
               envia as instruções de retirada do passe físico no Japão pelo WhatsApp e por e-mail.
