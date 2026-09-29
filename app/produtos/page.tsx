@@ -1488,7 +1488,12 @@ export function FormasPagamento({
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src="/images/icone-pix.png" alt="" className="h-7 w-7 object-contain" />
             </span>
-            <p className="text-sm font-medium text-black">Pix</p>
+            <div className="flex flex-wrap items-center gap-2">
+              <p className="text-sm font-medium text-black">Pix</p>
+              <span className="inline-flex items-center rounded-full bg-emerald-600/10 px-2 py-0.5 text-[9px] font-semibold uppercase tracking-[0.06em] text-emerald-700">
+                Menor preço
+              </span>
+            </div>
           </div>
 
           <label

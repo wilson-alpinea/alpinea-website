@@ -14,6 +14,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
+import { Inter } from "next/font/google";
 import Link from "next/link";
 import { formatBRL, formatUSD, type Cambio } from "../../hooks/useCambioUSD";
 import { useCambioDolarTurismo } from "../../hooks/useCambioDolarTurismo";
@@ -36,6 +37,11 @@ import {
   formatarDataBR,
   IconCheck,
 } from "../page";
+
+// Fonte Inter só para os valores em dinheiro (R$/US$) — pedido do
+// Wilson, 29/set/2026: "a fonte padrão de numeros deve ser INTER".
+// Títulos e nomes de classe continuam na serifada (Bodoni/`display`).
+const inter = Inter({ subsets: ["latin"], weight: ["500", "700"] });
 
 // Passos da compra — pedido do Wilson, 28/set/2026: "adicionar tambem os
 // passos para a compra (exemplo imagem 2)", com os 4 ícones que ele
@@ -482,8 +488,30 @@ export default function JrPassPage() {
     }
   }
 
+  // Altura real do rodapé fixo, medida ao vivo — o card cresce/encolhe
+  // conforme a lista de pendências, então o padding do <main> precisa
+  // acompanhar pra não tampar o fim da página.
+  const rodapeRef = useRef<HTMLDivElement | null>(null);
+  const [alturaRodape, setAlturaRodape] = useState(0);
+
+  useEffect(() => {
+    const elemento = rodapeRef.current;
+    if (!elemento) {
+      setAlturaRodape(0);
+      return;
+    }
+    const observer = new ResizeObserver((entries) => {
+      setAlturaRodape(entries[0]?.contentRect.height ?? elemento.offsetHeight);
+    });
+    observer.observe(elemento);
+    return () => observer.disconnect();
+  }, [status]);
+
   return (
-    <main className="min-h-screen bg-white pt-14 pb-16 text-black">
+    <main
+      className="min-h-screen bg-white pt-14 text-black"
+      style={status !== "enviado" ? { paddingBottom: alturaRodape + 24 } : undefined}
+    >
       {/* Barra de voltar — pedido do Wilson, 28/set/2026: "essa parte deve
           ser fixa, aonde o usuario for ele deve acompanhar" (era só
           `sticky`, que só acompanha dentro do próprio container — virou
@@ -661,10 +689,12 @@ export default function JrPassPage() {
 
                     {precoBRLAtual !== null ? (
                       <div className="mt-4">
-                        <p className={`${display.className} text-2xl font-semibold text-[#1C1C1A]`}>
+                        <p className={`${inter.className} text-2xl font-bold tracking-[-0.02em] tabular-nums text-[#1C1C1A]`}>
                           {formatBRL(precoBRLAtual)}
                         </p>
-                        <p className="text-xs text-[#77736D]">{formatUSD(precoUSDAtual!)}</p>
+                        <p className={`${inter.className} text-xs font-medium tabular-nums text-[#77736D]`}>
+                          {formatUSD(precoUSDAtual!)}
+                        </p>
                       </div>
                     ) : (
                       <p className="mt-4 text-sm text-[#77736D]">Selecione a duração acima.</p>
@@ -695,7 +725,7 @@ export default function JrPassPage() {
                 </p>
               </div>
               {precoEscolhidoBRL !== null && (
-                <p className={`${display.className} text-lg font-medium text-[#1C1C1A]`}>
+                <p className={`${inter.className} text-lg font-bold tracking-[-0.02em] tabular-nums text-[#1C1C1A]`}>
                   {formatBRL(precoEscolhidoBRL)}
                 </p>
               )}
@@ -969,8 +999,8 @@ export default function JrPassPage() {
             </div>
             <p className="mt-2 max-w-2xl text-[11px] leading-5 text-black/65">
               O JR Pass só pode ser emitido pra quem já está no Japão (ou vai entrar) dentro da
-              janela de 90 dias — o carimbo de entrada no passaporte ou a data do voo na passagem
-              confirmam isso. Anexe um dos dois agora para continuar.
+              janela de 90 dias — a data do voo na passagem confirma isso. Anexe a foto do
+              passaporte ou da passagem agora para continuar.
             </p>
             <div className="mt-4 flex flex-wrap gap-2">
               {(["passaporte", "passagem"] as const).map((tipo) => (
@@ -1032,9 +1062,13 @@ export default function JrPassPage() {
                 (certificado provisionado automaticamente pelo Vercel no
                 domínio alpinea.io) — isso só deixa esse cuidado visível
                 pro cliente bem ao lado do upload de documento. */}
-            <p className="mt-3 text-[11px] leading-5 text-black/60">
-              🔒 Conexão segura (SSL) — seu documento trafega e fica armazenado criptografado.
-            </p>
+            <div className="mt-3 flex items-center gap-2.5">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src="/images/icone-ssl-lock.png" alt="" className="h-6 w-6 shrink-0 object-contain" />
+              <p className="text-sm leading-5 text-black/70">
+                Conexão segura (SSL) — seu documento trafega e fica armazenado criptografado.
+              </p>
+            </div>
           </div>
 
           {/* Dados de contato — pedido do Wilson, 25/set/2026: "adicionar
@@ -1165,19 +1199,19 @@ export default function JrPassPage() {
                 no Japão.
               </p>
             </div>
-            <label className="mt-3 flex items-start gap-2.5 text-[11px] leading-5 text-black/75">
+            <label className="mt-3 flex items-start gap-3 text-sm leading-6 text-black/80">
               <input
                 type="checkbox"
                 checked={termosAceitos}
                 disabled={!termosRolados}
                 onChange={(e) => setTermosAceitos(e.target.checked)}
-                className="mt-0.5 h-4 w-4 shrink-0 rounded border-black/25 text-[#2f80c9] focus:ring-[#2f80c9] disabled:cursor-not-allowed disabled:opacity-40"
+                className="mt-0.5 h-5 w-5 shrink-0 rounded border-black/30 text-[#2f80c9] focus:ring-[#2f80c9] disabled:cursor-not-allowed disabled:opacity-40"
               />
               Li e aceito os termos e condições de emissão, cancelamento, reembolso e uso do JR
               Pass acima.
             </label>
             {!termosRolados && (
-              <p className="mt-1.5 pl-[26px] text-[10px] text-black/55">
+              <p className="mt-1.5 pl-8 text-xs text-black/55">
                 Role o texto acima até o fim para habilitar o aceite.
               </p>
             )}
@@ -1189,8 +1223,11 @@ export default function JrPassPage() {
       </div>
 
       {status !== "enviado" && (
-        <div className="mx-auto mt-10 max-w-[1150px] px-5 md:px-8">
-          <div className="grid gap-6 rounded-2xl bg-[#0A263D] p-6 md:grid-cols-[65fr_35fr] md:p-8">
+        <div
+          ref={rodapeRef}
+          className="fixed inset-x-0 bottom-0 z-50 max-h-[85vh] overflow-y-auto border-t border-white/10 bg-[#0A263D] px-5 py-5 shadow-[0_-8px_24px_rgba(0,0,0,0.3)] md:px-8"
+        >
+          <div className="mx-auto grid max-w-[1150px] gap-6 md:grid-cols-[65fr_35fr]">
             {/* Coluna esquerda — checklist "Antes de finalizar" */}
             <div>
               <p className="text-[15px] font-semibold text-[#E6D4A3]">Antes de finalizar</p>
@@ -1221,7 +1258,7 @@ export default function JrPassPage() {
               <p className="text-[10px] uppercase tracking-[0.15em] text-[#8498A8]">Sua escolha</p>
               {selecaoCompleta ? (
                 <>
-                  <p className={`${display.className} mt-1 text-3xl font-medium text-[#C2A66A]`}>
+                  <p className={`${inter.className} mt-1 text-3xl font-bold tracking-[-0.02em] tabular-nums text-[#C2A66A]`}>
                     {precoTotalBRL !== null ? formatBRL(precoTotalBRL) : "—"}
                   </p>
                   <p className="mt-1 text-sm text-[#A5B3BE]">
@@ -1232,9 +1269,15 @@ export default function JrPassPage() {
                         criancasComDesconto > 0 ? `, ${criancasComDesconto} c/ 50%` : ""
                       })`}
                   </p>
-                  {precoTotalUSD !== null && <p className="text-xs text-[#8498A8]">{formatUSD(precoTotalUSD)}</p>}
+                  {precoTotalUSD !== null && (
+                    <p className={`${inter.className} text-xs font-medium tabular-nums text-[#8498A8]`}>
+                      {formatUSD(precoTotalUSD)}
+                    </p>
+                  )}
                   {numeroPessoas > 1 && numeroCriancas === 0 && precoEscolhidoBRL !== null && (
-                    <p className="text-xs text-[#8498A8]">{formatBRL(precoEscolhidoBRL)}/pessoa</p>
+                    <p className={`${inter.className} text-xs font-medium tabular-nums text-[#8498A8]`}>
+                      {formatBRL(precoEscolhidoBRL)}/pessoa
+                    </p>
                   )}
                   {descricaoPagamentoEscolhido && (
                     <p className="mt-1 text-[11px] text-[#8498A8]">{descricaoPagamentoEscolhido}</p>
@@ -1266,9 +1309,9 @@ export default function JrPassPage() {
                 <Image
                   src="/images/produtos/stone-logo-white.png"
                   alt="Stone"
-                  width={80}
-                  height={29}
-                  className="h-6 w-auto opacity-90"
+                  width={102}
+                  height={37}
+                  className="h-9 w-auto opacity-90"
                 />
               </div>
             </div>
