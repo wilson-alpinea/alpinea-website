@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { createAdminClient } from "../../../lib/supabase/admin";
 import { TAG_SELF_SERVICE } from "../../../lib/crm/origem";
+import { criarCheckout, pagarmeConfigurado } from "../../../lib/pagarme/client";
+import { calcularValorSeguroViagemBRL, diasEntreDatas } from "../../lib/precoSeguroViagem";
 
 export const runtime = "nodejs";
 
@@ -14,6 +16,23 @@ export const runtime = "nodejs";
 // SELF-SERVICE, e o time fecha o pagamento de verdade pelo WhatsApp; não
 // existe gateway de pagamento no site) — não confirma reserva nem cobra
 // nada, só registra o lead com todos os dados já preenchidos.
+//
+// ATUALIZAÇÃO 29/set/2026 — Seguro Viagem ganhou página própria
+// (/produtos/seguro-viagem) com pagamento self-service de verdade pela
+// Stone/Pagar.me, igual ao JR Pass (pedido do Wilson: "aqui também será
+// inserido o processo de pagamento self-service da Stone"; decisão dele
+// no mesmo dia: o valor calculado é o preço final Ajisai, cobrado na
+// hora). O que mudou nesta rota:
+// - aceite dos termos passa a ser obrigatório, com as mesmas evidências
+//   de checkout do JR Pass (IP, user-agent, versão dos termos, nome do
+//   comprador — colunas da migração 013/014 em `clientes`);
+// - o VALOR É RECALCULADO AQUI no servidor (app/lib/precoSeguroViagem.ts)
+//   a partir de datas/idades/roteiro — o valor enviado pelo navegador é
+//   ignorado pra cobrança (só registrado se divergir, pra auditoria);
+// - com PAGARME_SECRET_KEY configurada, cria o link de pagamento e
+//   devolve `checkoutUrl`; sem ela, segue o fluxo antigo (lead + link
+//   manual por WhatsApp);
+// - envia e-mail de confirmação pro cliente, como no JR Pass.
 
 function escapeHtml(value: unknown) {
   return String(value ?? "")
@@ -24,22 +43,20 @@ function escapeHtml(value: unknown) {
     .replace(/'/g, "&#039;");
 }
 
-// Mesmo padrão best-effort de /api/viagem-personalizada-selfservice: se
-// RESEND_API_KEY não estiver configurada ou o envio falhar, só loga —
-// o lead já foi gravado no CRM antes dessa chamada.
-async function notificarPorEmail(params: {
-  nome: string;
-  email: string;
-  whatsapp: string;
-  resumoTexto: string;
-  resumoHtml: string;
-}) {
+// Envio best-effort via Resend (mesmo padrão do JR Pass) — nunca derruba
+// o pedido: o lead já foi gravado no CRM antes das chamadas.
+async function enviarEmail(params: {
+  to: string[];
+  replyTo?: string;
+  subject: string;
+  text: string;
+  html: string;
+}): Promise<{ ok: boolean; providerId: string | null }> {
   const apiKey = process.env.RESEND_API_KEY;
   if (!apiKey) {
-    console.error("RESEND_API_KEY não configurada — pulando notificação por e-mail.");
-    return;
+    console.error("RESEND_API_KEY não configurada — pulando envio de e-mail (seguro-viagem-selfservice).");
+    return { ok: false, providerId: null };
   }
-
   try {
     const resendResponse = await fetch("https://api.resend.com/emails", {
       method: "POST",
@@ -49,20 +66,42 @@ async function notificarPorEmail(params: {
       },
       body: JSON.stringify({
         from: "Alpinea <contato@alpinea.io>",
-        to: ["wilson@alpinea.io"],
-        reply_to: params.email || undefined,
-        subject: `[${TAG_SELF_SERVICE}] Novo pedido de Seguro Viagem — ${params.nome}`,
-        text: params.resumoTexto,
-        html: params.resumoHtml,
+        to: params.to,
+        reply_to: params.replyTo || undefined,
+        subject: params.subject,
+        text: params.text,
+        html: params.html,
       }),
     });
-
-    if (!resendResponse.ok) {
-      console.error("Erro Resend (seguro-viagem-selfservice):", await resendResponse.text());
+    const textoCru = await resendResponse.text().catch(() => "");
+    let dados: Record<string, unknown> = {};
+    try {
+      dados = textoCru ? (JSON.parse(textoCru) as Record<string, unknown>) : {};
+    } catch {
+      dados = {};
     }
+    if (!resendResponse.ok) {
+      console.error("Erro Resend (seguro-viagem-selfservice):", textoCru || "(corpo vazio)");
+      return { ok: false, providerId: null };
+    }
+    return { ok: true, providerId: typeof dados.id === "string" ? dados.id : null };
   } catch (err) {
-    console.error("Erro ao notificar por e-mail (seguro-viagem-selfservice):", err);
+    console.error("Erro ao enviar e-mail (seguro-viagem-selfservice):", err);
+    return { ok: false, providerId: null };
   }
+}
+
+// Versão do texto de Termos e Condições vigente (decidida pelo servidor,
+// nunca pelo cliente). Atualizar sempre que o texto da seção "Termos e
+// condições" em app/produtos/seguro-viagem/page.tsx mudar de forma
+// relevante. Versão atual: texto de 17 cláusulas enviado pelo Wilson em
+// 29/set/2026 ("última atualização: setembro de 2026").
+const TERMOS_VERSAO_SEGURO_VIAGEM = "seguro-viagem-termos-2026-09-29";
+
+function extrairIpDaRequisicao(req: Request): string | null {
+  const encaminhado = req.headers.get("x-forwarded-for");
+  if (encaminhado) return encaminhado.split(",")[0]!.trim();
+  return req.headers.get("x-real-ip");
 }
 
 const SEGURADORAS_VALIDAS = ["affinity", "gta", "mta"] as const;
@@ -72,12 +111,32 @@ export async function POST(req: Request) {
     const body = await req.json();
 
     const nome = String(body.nome || "").trim();
+    const nomeComprador = String(body.nomeComprador || "").trim();
     const email = String(body.email || "").trim();
     const whatsapp = String(body.whatsapp || "").trim();
 
     if (!nome || !email || !whatsapp) {
       return NextResponse.json(
         { error: "Nome, e-mail e WhatsApp são obrigatórios." },
+        { status: 400 },
+      );
+    }
+    if (!/\S+@\S+\.\S+/.test(email)) {
+      return NextResponse.json({ error: "E-mail inválido." }, { status: 400 });
+    }
+    if (!body.termosAceitos) {
+      return NextResponse.json(
+        { error: "É preciso aceitar os termos e condições do Seguro Viagem." },
+        { status: 400 },
+      );
+    }
+    // Residência fora do Brasil e do Japão não é elegível (regra do
+    // Wilson, 25/set/2026) — a página já bloqueia, isto é só a garantia
+    // do lado do servidor.
+    const moraEm = String(body.moraEm || "").trim();
+    if (moraEm && moraEm !== "brasil" && moraEm !== "japao") {
+      return NextResponse.json(
+        { error: "Esse seguro viagem só pode ser contratado por quem mora no Brasil ou no Japão." },
         { status: 400 },
       );
     }
@@ -119,7 +178,20 @@ export async function POST(req: Request) {
     const paises: string[] = Array.isArray(body.paises)
       ? body.paises.map((p: unknown) => String(p).trim()).filter(Boolean).slice(0, 15)
       : ["Japão"];
-    const valorReferenciaBRL = Number(body.valorReferenciaBRL) || null;
+    // Valor recalculado no servidor — é ESTE que vai pra cobrança. O
+    // valor que veio do navegador só é comparado, pra auditoria.
+    const diasCalculados = diasEntreDatas(dataInicio, dataFim);
+    const valorTotalBRL = calcularValorSeguroViagemBRL({
+      dias: diasCalculados,
+      idades,
+      multidestino: paises.length > 1,
+    });
+    const valorEnviadoPeloCliente = Number(body.valorTotalBRL ?? body.valorReferenciaBRL) || null;
+    if (valorTotalBRL !== null && valorEnviadoPeloCliente !== null && Math.abs(valorTotalBRL - valorEnviadoPeloCliente) > 1) {
+      console.error(
+        `Valor divergente no Seguro Viagem (cliente R$ ${valorEnviadoPeloCliente} × servidor R$ ${valorTotalBRL}) — usando o do servidor.`,
+      );
+    }
     const formaPagamento = String(body.formaPagamento || "").trim();
     const paisResidencia = String(body.paisResidencia || "").trim();
     // País de destino — pedido do Wilson, 25/set/2026: "aqui em seguro
@@ -164,7 +236,7 @@ export async function POST(req: Request) {
       ["Roteiro (países)", paises.length ? paises.join(", ") : "Japão"],
       ["Data de início da viagem", dataInicio || "Não informado"],
       ["Data de término da viagem", dataFim || "Não informado"],
-      ["Dias de cobertura", dias ? String(dias) : "Não informado"],
+      ["Dias de cobertura", diasCalculados ? String(diasCalculados) : dias ? String(dias) : "Não informado"],
       ["Número de viajantes", idades.length ? String(idades.length) : "Não informado"],
       ["Idades dos viajantes", idades.length ? idades.join(", ") : "Não informado"],
       [
@@ -178,13 +250,14 @@ export async function POST(req: Request) {
           : "A confirmar na próxima etapa",
       ],
       [
-        "Valor de referência Ajisai",
-        valorReferenciaBRL ? `R$ ${valorReferenciaBRL.toLocaleString("pt-BR")}` : "Não calculado",
+        "Valor total Ajisai (calculado no servidor)",
+        valorTotalBRL ? `R$ ${valorTotalBRL.toLocaleString("pt-BR")}` : "Não calculado — cotação manual",
       ],
       ["Forma de pagamento escolhida", formaPagamento || "Não escolhida ainda"],
       ["País de residência", paisResidencia || "Não informado"],
       ["País de destino", paisDestino || "Não informado"],
       ["Passagem aérea", passagemResumo],
+      ["Nome do comprador (se diferente do viajante)", nomeComprador || "Mesmo que o viajante principal"],
       ["Observações do cliente", observacoesCliente || "Nenhuma"],
     ];
 
@@ -219,10 +292,16 @@ export async function POST(req: Request) {
         origem: `${TAG_SELF_SERVICE} — Seguro Viagem (/produtos)`,
         produto_principal: "servico_individual",
         produto_secundario: ["seguro_viagem"],
-        valor_proposta: valorReferenciaBRL,
+        valor_proposta: valorTotalBRL,
         data_viagem: dataInicio || null,
         estagio: "novo_lead",
         observacoes: `[${TAG_SELF_SERVICE}]\n${resumoTexto}`,
+        nome_comprador: nomeComprador || null,
+        checkout_ip: extrairIpDaRequisicao(req),
+        checkout_user_agent: req.headers.get("user-agent"),
+        termos_aceitos: true,
+        termos_versao: TERMOS_VERSAO_SEGURO_VIAGEM,
+        termos_aceitos_em: new Date().toISOString(),
       })
       .select("id")
       .single();
@@ -245,9 +324,110 @@ export async function POST(req: Request) {
       console.error("Erro ao gravar interação (seguro-viagem-selfservice):", erroInteracao);
     }
 
-    await notificarPorEmail({ nome, email, whatsapp, resumoTexto, resumoHtml });
+    // Pagamento via Stone/Pagar.me (lib/pagarme/client.ts) — mesmo padrão
+    // do JR Pass: só com PAGARME_SECRET_KEY configurada e valor calculado;
+    // qualquer erro é só logado (o lead já está salvo) e o cliente cai no
+    // fluxo de link manual por WhatsApp/e-mail. O webhook
+    // (app/api/webhooks/pagarme) é genérico: confirma pela linha em
+    // `pagamentos`, então serve pro Seguro Viagem sem mudança.
+    let checkoutUrl: string | null = null;
+    const seguradoraNome = seguradoraLabel[seguradora as (typeof SEGURADORAS_VALIDAS)[number]];
+    if (pagarmeConfigurado() && valorTotalBRL && valorTotalBRL > 0) {
+      try {
+        const { data: pagamentoPendente, error: erroPagamento } = await supabase
+          .from("pagamentos")
+          .insert({
+            cliente_id: cliente.id,
+            tipo_pagamento: "cartao_credito",
+            valor: valorTotalBRL,
+            status: "pendente",
+            gateway: "pagarme",
+            observacoes: `Seguro Viagem — ${seguradoraNome}, ${diasCalculados} dias, ${idades.length} viajante(s)`,
+          })
+          .select("id")
+          .single();
 
-    return NextResponse.json({ success: true, clienteId: cliente.id }, { status: 200 });
+        if (erroPagamento || !pagamentoPendente) {
+          console.error("Erro ao criar linha de pagamento pendente (seguro-viagem-selfservice):", erroPagamento);
+        } else {
+          const checkout = await criarCheckout({
+            codigoInterno: pagamentoPendente.id,
+            itemNome: `Seguro Viagem — ${seguradoraNome}`,
+            itemDescricao: `${diasCalculados} dias (${dataInicio} a ${dataFim}), ${idades.length} viajante(s)`,
+            valorTotalBRL,
+            aceitarCartao: true,
+            aceitarPix: true,
+          });
+          await supabase
+            .from("pagamentos")
+            .update({ gateway_pedido_id: checkout.id, gateway_checkout_url: checkout.url })
+            .eq("id", pagamentoPendente.id);
+          checkoutUrl = checkout.url;
+        }
+      } catch (erroCheckout) {
+        console.error("Erro ao criar checkout Pagar.me (seguro-viagem-selfservice):", erroCheckout);
+      }
+    }
+
+    // E-mail pro time interno.
+    await enviarEmail({
+      to: ["wilson@alpinea.io"],
+      replyTo: email || undefined,
+      subject: `[${TAG_SELF_SERVICE}] Novo pedido de Seguro Viagem — ${nome}`,
+      text: resumoTexto,
+      html: resumoHtml,
+    });
+
+    // E-mail pro cliente com os próximos passos — "confirmação" de
+    // PEDIDO, não de pagamento (o pagamento é confirmado pelo webhook).
+    const passoPagamento = checkoutUrl
+      ? "Pagamento — você foi direcionado para a página segura da Stone (Pix ou cartão). Se não concluiu, é só nos chamar que reenviamos o link."
+      : "Pagamento — te enviamos o link de pagamento (Pix ou cartão de crédito) pelo WhatsApp e por e-mail.";
+    const passos = [
+      `Conferência — confirmamos com a ${seguradoraNome} o plano adequado ao seu roteiro, datas e idades.`,
+      passoPagamento,
+      "Emissão — depois do pagamento, a seguradora emite a apólice (ou certificado) e enviamos pra você por e-mail e WhatsApp. Confira os dados assim que receber.",
+      "Durante a viagem — em caso de necessidade, siga os canais de atendimento indicados na apólice e, sempre que possível, fale com a central da seguradora antes de fazer despesas por conta própria.",
+    ];
+    const textoCliente = [
+      `Olá, ${nome}!`,
+      "",
+      "Recebemos seu pedido de Seguro Viagem. Veja como funciona a partir daqui:",
+      "",
+      ...passos.map((passo, i) => `${i + 1}. ${passo}`),
+      "",
+      "Qualquer dúvida, é só responder este e-mail ou chamar no WhatsApp.",
+      "",
+      "Ajisai",
+    ].join("\n");
+    const htmlCliente = `
+      <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #111;">
+        <p>Olá, ${escapeHtml(nome)}!</p>
+        <p>Recebemos seu pedido de Seguro Viagem. Veja como funciona a partir daqui:</p>
+        <ol>${passos.map((passo) => `<li>${escapeHtml(passo)}</li>`).join("")}</ol>
+        <p>Qualquer dúvida, é só responder este e-mail ou chamar no WhatsApp.</p>
+        <p>Ajisai</p>
+      </div>
+    `.trim();
+
+    const resultadoEmailCliente = await enviarEmail({
+      to: [email],
+      subject: "Recebemos seu pedido de Seguro Viagem — próximos passos",
+      text: textoCliente,
+      html: htmlCliente,
+    });
+    const { error: erroAtualizarEmail } = await supabase
+      .from("clientes")
+      .update({
+        email_confirmacao_enviado: resultadoEmailCliente.ok,
+        email_confirmacao_provider_id: resultadoEmailCliente.providerId,
+      })
+      .eq("id", cliente.id);
+    if (erroAtualizarEmail) {
+      console.error("Erro ao registrar histórico do e-mail de confirmação (seguro-viagem-selfservice):", erroAtualizarEmail);
+    }
+
+    return NextResponse.json({ success: true, clienteId: cliente.id, checkoutUrl }, { status: 200 });
   } catch (error) {
     console.error("Erro no self-checkout de Seguro Viagem:", error);
     return NextResponse.json(

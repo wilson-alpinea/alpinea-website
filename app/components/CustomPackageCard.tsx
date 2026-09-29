@@ -1,5 +1,7 @@
 "use client";
 
+import { comMargemEImposto, IMPOSTO_SOBRE_LUCRO } from "../lib/margemPadrao";
+import { DIARIA_SEGURO_VIAGEM } from "../lib/precoSeguroViagem";
 import Image from "next/image";
 import { Bodoni_Moda } from "next/font/google";
 import { createPortal } from "react-dom";
@@ -363,12 +365,9 @@ type PrecoCtx = {
 // custo do fornecedor etc.) continuam sendo o CUSTO puro — a constante
 // final já sai com o multiplicador aplicado, pra manter a fonte de cada
 // número auditável sem misturar custo com markup.
-const IMPOSTO_SOBRE_LUCRO = 1.15;
-const MARGEM_SOBRE_IMPOSTO = 1.3;
-const MULTIPLICADOR_PRECO_FINAL = IMPOSTO_SOBRE_LUCRO * MARGEM_SOBRE_IMPOSTO; // 1,495
-export function comMargemEImposto(custo: number) {
-  return Math.round(custo * MULTIPLICADOR_PRECO_FINAL);
-}
+// Constantes e função movidas pra app/lib/margemPadrao.ts (29/set/2026)
+// pra poderem ser usadas no servidor — re-exportadas aqui sem mudança.
+export { comMargemEImposto };
 
 // Motorista Privado tem margem própria, menor que o padrão acima —
 // pedido do Wilson, 25/set/2026: "margem aqui deve ser de 40%". Mesmo
@@ -868,7 +867,9 @@ export const JR_PASS_PRECO_USD_GREEN: Record<(typeof JR_PASS_DIAS_OPCOES)[number
 // este valor como BRL puro; o SeguroViagemModal em app/produtos/page.tsx
 // tinha um bug multiplicando por cambio.cotacao como se fosse dólar,
 // inflando o preço em ~5x — corrigido no mesmo commit.
-export const DIARIA_SEGURO_VIAGEM = comMargemEImposto(29);
+// Definição movida pra app/lib/precoSeguroViagem.ts (29/set/2026) — o
+// servidor recalcula o valor do Seguro Viagem antes da cobrança na Stone.
+export { DIARIA_SEGURO_VIAGEM };
 // Motorista privado: custo de US$ 700/dia, cobre até 4 pessoas — mesma
 // lógica de grupo do guia, também nativo em dólar. Preço final já com
 // imposto+margem.

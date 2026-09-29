@@ -64,19 +64,9 @@ export const SERVICOS_PUBLICOS: { key: ServicoKey; nome: string; icone: string; 
 ];
 
 // Seguro viagem por faixa etária (mesma tabela da Calculadora Reversa).
-export const IDADE_LIMITE_SEGURO = 82;
-const FAIXAS_SEGURO_IDADE: { idadeMax: number; multiplicador: number }[] = [
-  { idadeMax: 60, multiplicador: 1 },
-  { idadeMax: 65, multiplicador: 2 },
-  { idadeMax: 70, multiplicador: 2.5 },
-  { idadeMax: 75, multiplicador: 3 },
-  { idadeMax: 80, multiplicador: 4 },
-  { idadeMax: IDADE_LIMITE_SEGURO, multiplicador: 5 },
-];
-export function multiplicadorSeguroPorIdade(idade: number): number | null {
-  if (idade > IDADE_LIMITE_SEGURO) return null;
-  return FAIXAS_SEGURO_IDADE.find((f) => idade <= f.idadeMax)?.multiplicador ?? null;
-}
+// Definição movida pra app/lib/precoSeguroViagem.ts (29/set/2026) —
+// re-exportada aqui sem mudança pra não quebrar quem já importa daqui.
+export { IDADE_LIMITE_SEGURO, multiplicadorSeguroPorIdade } from "./precoSeguroViagem";
 
 // ---- Fase 2: temporada, origem do voo e bagagem (mesmos dados da Calculadora Reversa) ----
 export type TemporadaKey = "sakura" | "primavera" | "julho" | "outono" | "inverno" | "baixa";
