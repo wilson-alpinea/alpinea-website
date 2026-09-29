@@ -5,17 +5,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { Bodoni_Moda } from "next/font/google";
 import { PriceCalculator } from "../components/PriceCalculator";
-import { MotoristaPrivadoPicker } from "../components/MotoristaPrivadoPicker";
-import {
-  SELECAO_MOTORISTA_VAZIA,
-  calcularTotalMotoristaUSD,
-  contarItensMotorista,
-  resumoSelecaoMotorista,
-  POLITICA_CANCELAMENTO_MOTORISTA,
-  ADICIONAL_MEET_GREET_USD,
-  ADICIONAL_CADEIRINHA_USD,
-  type SelecaoMotorista,
-} from "../lib/motoristaPrivadoRotas";
 import {
   useCambioUSD,
   brlParaUSDLabel,
@@ -28,7 +17,6 @@ import {
   HotelExemplosPropriedades,
   JR_PASS_DIAS_OPCOES,
   COMISSAO_AJISAI_SHOPPING_PCT,
-  ROTEIRO_PRECO_BASE,
 } from "../components/CustomPackageCard";
 import { HotelQuoteCalculator } from "../components/HotelQuoteCalculator";
 import { ContactCTA } from "../components/ContactCTA";
@@ -146,7 +134,6 @@ export default function ProdutosPage() {
   const [passagensModalOpen, setPassagensModalOpen] = useState(false);
   const [guiaModalOpen, setGuiaModalOpen] = useState(false);
   const [servicosModalOpen, setServicosModalOpen] = useState(false);
-  const [transporteModalOpen, setTransporteModalOpen] = useState(false);
   // Hoteis abre um popup avulso e leve com os exemplos de propriedade por
   // categoria — nao carrega a Viagem Personalizada (iframe) atras dele.
   const [hoteisModalOpen, setHoteisModalOpen] = useState(false);
@@ -185,7 +172,6 @@ export default function ProdutosPage() {
       !passagensModalOpen &&
       !guiaModalOpen &&
       !servicosModalOpen &&
-      !transporteModalOpen &&
       !hoteisModalOpen &&
       !ajisaiShoppingModalOpen
     )
@@ -201,7 +187,6 @@ export default function ProdutosPage() {
         setPassagensModalOpen(false);
         setGuiaModalOpen(false);
         setServicosModalOpen(false);
-        setTransporteModalOpen(false);
         setHoteisModalOpen(false);
         setAjisaiShoppingModalOpen(false);
       }
@@ -219,7 +204,6 @@ export default function ProdutosPage() {
     passagensModalOpen,
     guiaModalOpen,
     servicosModalOpen,
-    transporteModalOpen,
     ajisaiShoppingModalOpen,
     hoteisModalOpen,
   ]);
@@ -405,9 +389,11 @@ export default function ProdutosPage() {
                 cta="Conhecer o serviço"
                 className="lg:col-span-2"
               />
+              {/* Transporte Privado virou página própria — pedido do Wilson,
+                  29/set/2026 (mesmo template de JR Pass/Câmbio/Seguro
+                  Viagem, sem pagamento automático). */}
               <ProductSelectorCard
-                href="/viagem-personalizada"
-                onClick={() => setTransporteModalOpen(true)}
+                href="/produtos/transporte-privado"
                 icon="/images/produtos/transporte-privado.png"
                 iconWidth={1536}
                 iconHeight={1024}
@@ -1055,22 +1041,6 @@ export default function ProdutosPage() {
         </div>
       </section>
 
-      {/* Pedido do Wilson, 25/set/2026: "enriquecer nossa pagina de
-          motorista privado tanto na /produtos quanto calculadora reversa e
-          self-service [...] adicionar coaster na /produtos" e depois,
-          vendo o resultado ainda no template antigo (deploy não tinha
-          publicado o commit novo ainda), "usar template atual igual
-          cambio, jr pass, etc" — confirmado via AskUserQuestion: fluxo
-          completo de self-checkout (formulário + Formas de Pagamento +
-          lead no CRM), não só um botão de WhatsApp. Transporte Privado
-          saiu do componente próprio TransportePrivadoCalculator.tsx
-          (arquivo removido) e virou TransporteModal aqui dentro, no
-          mesmo padrão grande (max-w-5xl) do JrPassModal/CambioModal/
-          SeguroViagemModal logo abaixo. */}
-      {transporteModalOpen && (
-        <TransporteModal cambio={cambio} onClose={() => setTransporteModalOpen(false)} />
-      )}
-
       {hoteisModalOpen && (
         <div
           className="fixed inset-0 z-[90] flex items-end justify-center bg-black/85 p-0 backdrop-blur-sm md:items-center md:p-6"
@@ -1582,438 +1552,6 @@ export function descricaoFormaPagamento(
   return `Pix parcelado — entrada de ${formatBRL(op.entrada)} (30%) + ${op.parcelas}x de ${formatBRL(op.valorParcela)} (total ${formatBRL(op.valorTotal)})`;
 }
 
-// Pedido do Wilson, 25/set/2026 (com o PDF de preço de custo do
-// fornecedor DAIKICHI/HK TOURIST + foto do Coaster em anexo):
-// "enriquecer nossa pagina de motorista privado tanto na /produtos
-// quanto calculadora reversa e self-service, colocar mesma margem que já
-// usamos hoje, os preços na tabela anexa são preço de custo" +
-// "adicionar coaster na /produtos". Confirmado via AskUserQuestion:
-// trocar o antigo modelo de diária fixa por cidade pelo catálogo de
-// rotas exatas do fornecedor (Alphard, Hiace 10/14, Coaster 18/21/29 —
-// ver app/lib/motoristaPrivadoRotas.ts, componente compartilhado
-// MotoristaPrivadoPicker). Depois, vendo o resultado ainda no template
-// antigo (o deploy da Vercel não tinha publicado o commit novo ainda —
-// não era cache do navegador), Wilson pediu: "usar template atual igual
-// cambio, jr pass, etc" — confirmado via AskUserQuestion: fluxo completo
-// de self-checkout (formulário de contato + Formas de Pagamento + lead
-// no CRM com tag SELF-SERVICE), no mesmo padrão grande (max-w-5xl) do
-// CambioModal logo abaixo, em vez do antigo botão avulso de WhatsApp.
-function TransporteModal({ cambio, onClose }: { cambio: Cambio | null; onClose: () => void }) {
-  const [selecao, setSelecao] = useState<SelecaoMotorista>(SELECAO_MOTORISTA_VAZIA);
-  const [nome, setNome] = useState("");
-  const [email, setEmail] = useState("");
-  const [whatsapp, setWhatsapp] = useState("");
-  const [observacoes, setObservacoes] = useState("");
-  const [formaPagamento, setFormaPagamento] = useState<FormaPagamentoEscolhida | null>(null);
-  const [status, setStatus] = useState<"form" | "enviando" | "enviado" | "erro">("form");
-  const [erro, setErro] = useState("");
-  // Termos e condições de contratação do motorista privado — pedido do
-  // Wilson, 25/set/2026: "criar termos e condicoes para aceite de
-  // contratacao de motorista privado em transporte privado". Mesmo
-  // padrão de tickbox obrigatório já usado no JR Pass (termosAceitos).
-  const [termosAceitos, setTermosAceitos] = useState(false);
-  // Só libera o tickbox depois que o cliente rolar os termos até o fim —
-  // pedido do Wilson, 28/set/2026: "só pode clicar em li e aceito ao dar
-  // scroll em todo documento".
-  const [termosRolados, setTermosRolados] = useState(false);
-  const termosBoxRef = useRef<HTMLDivElement | null>(null);
-  useEffect(() => {
-    const el = termosBoxRef.current;
-    if (el && el.scrollHeight <= el.clientHeight + 4) {
-      setTermosRolados(true);
-    }
-  }, []);
-
-  const cambioCotacao = cambio?.cotacao ?? 5.3;
-  const quantidadeItens = contarItensMotorista(selecao);
-  const motoristaUSD = calcularTotalMotoristaUSD(selecao);
-  // "Transporte Privado" exige Roteiro Personalizado (ver requisito no
-  // card em /produtos) — mesma regra do modelo antigo, só que agora o
-  // roteiro nasce em reais (ROTEIRO_PRECO_BASE) e é somado convertido em
-  // dólar. Só entra quando há pelo menos 1 serviço selecionado.
-  const roteiroUSD = quantidadeItens > 0 ? ROTEIRO_PRECO_BASE / cambioCotacao : 0;
-  const totalUSD = motoristaUSD + roteiroUSD;
-  const totalBRL = totalUSD * cambioCotacao;
-  const totalUSDLabel = quantidadeItens > 0 ? formatUSD(totalUSD) : null;
-  const totalBRLLabel = quantidadeItens > 0 ? formatBRL(totalBRL) : null;
-  const resumoSelecao = resumoSelecaoMotorista(selecao);
-
-  const descricaoPagamentoEscolhido = descricaoFormaPagamento(
-    formaPagamento,
-    quantidadeItens > 0 ? totalBRL : null,
-    "",
-  );
-
-  const formValido =
-    nome.trim().length > 0 &&
-    /\S+@\S+\.\S+/.test(email) &&
-    whatsapp.trim().length >= 8 &&
-    quantidadeItens > 0 &&
-    termosAceitos;
-
-  // Lista do que falta pra liberar o botão — pedido do Wilson,
-  // 28/set/2026: "precisa exibir uma mensagem avisando o que falta pra
-  // poder seguir, mensagens de alerta em amarelo" (mesmo padrão do JR
-  // Pass, aplicado aqui também).
-  const pendenciasFinalizar: string[] = [];
-  if (quantidadeItens === 0) pendenciasFinalizar.push("Selecione ao menos uma rota ou tour.");
-  if (nome.trim().length === 0) pendenciasFinalizar.push("Preencha seu nome completo.");
-  if (!/\S+@\S+\.\S+/.test(email)) pendenciasFinalizar.push("Preencha um e-mail válido.");
-  if (whatsapp.trim().length < 8) pendenciasFinalizar.push("Preencha seu WhatsApp.");
-  if (!termosAceitos) {
-    pendenciasFinalizar.push(
-      termosRolados
-        ? "Marque o aceite dos termos e condições do transporte privado."
-        : "Role os termos e condições do transporte privado até o fim pra poder aceitá-los.",
-    );
-  }
-
-  async function enviar() {
-    if (!formValido || status === "enviando") return;
-    setStatus("enviando");
-    setErro("");
-    try {
-      const resposta = await fetch("/api/transporte-privado-selfservice", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          veiculo: selecao.veiculo,
-          itens: selecao.itens,
-          resumo: resumoSelecao,
-          motoristaUSD,
-          roteiroUSD,
-          totalUSD,
-          totalBRL,
-          formaPagamento: descricaoPagamentoEscolhido || null,
-          nome,
-          email,
-          whatsapp,
-          observacoes,
-          termosAceitos,
-        }),
-      });
-      const dadosResposta = await resposta.json().catch(() => ({}));
-      if (!resposta.ok) {
-        setErro(dadosResposta.error || "Não foi possível registrar seu pedido agora. Tente de novo.");
-        setStatus("erro");
-        return;
-      }
-      setStatus("enviado");
-    } catch {
-      setErro("Não foi possível registrar seu pedido agora. Tente de novo.");
-      setStatus("erro");
-    }
-  }
-
-  const mensagemWhatsapp = `Olá! Acabei de solicitar meu transporte privado pelo site da Ajisai — ${resumoSelecao}. Meu nome é ${nome}.`;
-
-  return (
-    <div
-      className="fixed inset-0 z-[90] flex items-end justify-center bg-black/85 p-0 backdrop-blur-sm md:items-center md:p-6"
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="transporte-modal-title"
-      onClick={onClose}
-    >
-      <div
-        className="relative flex max-h-[92vh] w-full max-w-5xl flex-col overflow-hidden rounded-t-3xl border border-black/10 bg-white shadow-2xl md:max-h-[88vh] md:rounded-3xl"
-        onClick={(event) => event.stopPropagation()}
-      >
-        <div className="flex h-14 shrink-0 items-center justify-between border-b border-black/10 bg-white/90 px-4 backdrop-blur-xl md:px-6">
-          <p
-            id="transporte-modal-title"
-            className={`${display.className} text-lg font-medium text-black md:text-xl`}
-          >
-            Transporte Privado
-          </p>
-          <button
-            type="button"
-            onClick={onClose}
-            aria-label="Fechar Transporte Privado"
-            className="flex h-9 w-9 items-center justify-center rounded-full border border-black/15 text-2xl leading-none text-black/65 transition hover:border-black/40 hover:text-black"
-          >
-            ×
-          </button>
-        </div>
-
-        <div className="overflow-y-auto p-5 md:p-8">
-          {status === "enviado" ? (
-            <div className="py-6 text-center">
-              <p className="text-xs uppercase tracking-[0.3em] text-[#1c6ea8]">Pedido registrado</p>
-              <h3 className={`${display.className} mt-3 text-2xl font-medium text-black md:text-3xl`}>
-                Recebemos seu pedido de transporte privado
-              </h3>
-              <p className="mx-auto mt-3 max-w-md text-sm leading-relaxed text-black/60">
-                Nossa equipe confirma a logística e fecha os detalhes do motorista direto com você
-                pelo WhatsApp.
-              </p>
-              <a
-                href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(mensagemWhatsapp)}`}
-                target="_blank"
-                rel="noreferrer"
-                className="mt-6 inline-flex items-center justify-center rounded-full bg-[#2f80c9] px-6 py-3.5 text-xs font-medium uppercase tracking-[0.25em] text-white transition hover:bg-[#3b91dc]"
-              >
-                Continuar no WhatsApp
-              </a>
-            </div>
-          ) : (
-            <>
-              <p className="text-xs uppercase tracking-[0.3em] text-[#1c6ea8]">Calculadora</p>
-              <h3
-                className={`${display.className} mt-2 max-w-2xl text-2xl font-medium text-black md:text-3xl`}
-              >
-                Motorista particular, sem compartilhar veículo
-              </h3>
-              <p className="mt-3 max-w-2xl text-sm leading-relaxed text-black/60">
-                Escolha o veículo e as rotas/tours que precisa e veja o investimento exato, direto
-                da tabela do nosso fornecedor no Japão — já com o Roteiro Personalizado incluso.
-              </p>
-
-              <div className="mt-8 border-t border-black/10 pt-6">
-                <MotoristaPrivadoPicker selecao={selecao} onChange={setSelecao} cambioCotacao={cambioCotacao} />
-              </div>
-
-              {/* Importante — mesmos avisos do modelo anterior (trânsito
-                  inter-municipal, adicionais opcionais, cancelamento),
-                  sourceados de app/lib/motoristaPrivadoRotas.ts. */}
-              <div className="mt-8 border-t border-black/10 pt-6">
-                <p className="text-[10px] uppercase tracking-[0.2em] text-black/40">Importante</p>
-                <div className="mt-4 space-y-3">
-                  <p className="text-xs leading-5 text-black/60">
-                    <span className="font-semibold text-black/80">Não incluso:</span> trânsito
-                    inter-municipal de longa distância entre regiões (ex.: Tóquio↔Kansai por estrada).
-                    Os valores acima já incluem imposto, estacionamento, pedágio (ETC) e combustível.
-                  </p>
-                  <p className="text-xs leading-5 text-black/60">
-                    <span className="font-semibold text-black/80">Adicionais opcionais</span> (sob
-                    consulta, cobrados à parte): recepção com placa de identificação (Meet &amp;
-                    Greet) — {formatUSD(ADICIONAL_MEET_GREET_USD)}; cadeirinha infantil —{" "}
-                    {formatUSD(ADICIONAL_CADEIRINHA_USD)}.
-                  </p>
-                  <p className="text-xs leading-5 text-black/60">
-                    <span className="font-semibold text-black/80">Cancelamento:</span>{" "}
-                    {POLITICA_CANCELAMENTO_MOTORISTA}
-                  </p>
-                </div>
-                <div className="mt-4 rounded-xl border border-amber-300 bg-amber-50/60 p-4">
-                  <p className="text-xs leading-5 text-amber-800">
-                    <span className="font-semibold text-amber-900">
-                      Motorista bilíngue (português/inglês):
-                    </span>{" "}
-                    disponível mediante consulta, com valor adicional — a disponibilidade desse
-                    perfil é bem menor que a de motoristas sem esse requisito. Recomendamos
-                    solicitar com grande antecedência, idealmente 70 dias antes da viagem.
-                  </p>
-                </div>
-              </div>
-
-              {/* Dados de contato */}
-              <div className="mt-8 border-t border-black/10 pt-6">
-                <p className="text-[10px] uppercase tracking-[0.2em] text-black/40">Seus dados</p>
-                <div className="mt-4 grid gap-4 sm:grid-cols-3">
-                  <label className="flex flex-col gap-1.5">
-                    <span className="text-[10px] uppercase tracking-[0.15em] text-black/50">
-                      Nome completo
-                    </span>
-                    <input
-                      type="text"
-                      value={nome}
-                      onChange={(e) => setNome(e.target.value)}
-                      className="rounded-lg border border-black/15 px-3 py-2.5 text-sm text-black focus:border-[#2f80c9] focus:outline-none"
-                    />
-                  </label>
-                  <label className="flex flex-col gap-1.5">
-                    <span className="text-[10px] uppercase tracking-[0.15em] text-black/50">E-mail</span>
-                    <input
-                      type="email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      className="rounded-lg border border-black/15 px-3 py-2.5 text-sm text-black focus:border-[#2f80c9] focus:outline-none"
-                    />
-                  </label>
-                  <label className="flex flex-col gap-1.5">
-                    <span className="text-[10px] uppercase tracking-[0.15em] text-black/50">WhatsApp</span>
-                    <input
-                      type="tel"
-                      value={whatsapp}
-                      onChange={(e) => setWhatsapp(e.target.value)}
-                      placeholder="(11) 99999-9999"
-                      className="rounded-lg border border-black/15 px-3 py-2.5 text-sm text-black focus:border-[#2f80c9] focus:outline-none"
-                    />
-                  </label>
-                </div>
-                <label className="mt-4 flex flex-col gap-1.5">
-                  <span className="text-[10px] uppercase tracking-[0.15em] text-black/50">
-                    Observações (opcional)
-                  </span>
-                  <textarea
-                    value={observacoes}
-                    onChange={(e) => setObservacoes(e.target.value)}
-                    rows={2}
-                    placeholder="Datas da viagem, horários de voo, preferência de veículo, etc."
-                    className="rounded-lg border border-black/15 px-3 py-2.5 text-sm text-black focus:border-[#2f80c9] focus:outline-none"
-                  />
-                </label>
-              </div>
-
-              <FormasPagamento
-                totalBRL={quantidadeItens > 0 ? totalBRL : null}
-                dataViagem=""
-                formaPagamento={formaPagamento}
-                onEscolher={setFormaPagamento}
-              />
-
-              {/* Termos e condições — pedido do Wilson, 25/set/2026: "criar
-                  termos e condicoes para aceite de contratacao de motorista
-                  privado em transporte privado". Mesmo padrão (caixa com
-                  scroll + tickbox obrigatório) já usado nos Termos do JR
-                  Pass acima. Conteúdo vem das próprias condições do
-                  fornecedor DAIKICHI/HK TOURIST já documentadas em
-                  app/lib/motoristaPrivadoRotas.ts (imposto/pedágio/combustível
-                  inclusos, hora extra por bloco de 30 min, cancelamento,
-                  adicionais opcionais, motorista bilíngue). */}
-              <div className="mt-8 border-t border-black/10 pt-6">
-                <p className="text-[10px] uppercase tracking-[0.2em] text-black/40">
-                  Termos e condições
-                </p>
-                <div
-                  ref={termosBoxRef}
-                  className="mt-4 max-h-56 overflow-y-auto rounded-xl border border-black/10 bg-black/[0.02] p-4 text-[11px] leading-5 text-black/60"
-                  onScroll={(e) => {
-                    const el = e.currentTarget;
-                    if (el.scrollTop + el.clientHeight >= el.scrollHeight - 4) {
-                      setTermosRolados(true);
-                    }
-                  }}
-                >
-                  <p className="font-medium text-black/80">Fornecimento do serviço</p>
-                  <p className="mt-1">
-                    O motorista e o veículo são fornecidos por um parceiro especializado no Japão
-                    — a Alpinea atua como intermediária entre o cliente e esse fornecedor. O veículo
-                    é exclusivo do grupo contratante, sem compartilhamento com outros passageiros.
-                  </p>
-                  <p className="mt-3 font-medium text-black/80">O que está incluído</p>
-                  <p className="mt-1">
-                    Os valores já incluem imposto, estacionamento, pedágio (ETC) e combustível. Cada
-                    rota tem um tempo livre incluso (normalmente 90 min no trecho de chegada/pickup,
-                    30 min no trecho de partida, ou as 10 horas inteiras nos tours de dia inteiro) —
-                    ver detalhe de cada rota na calculadora acima.
-                  </p>
-                  <p className="mt-3 font-medium text-black/80">Hora extra</p>
-                  <p className="mt-1">
-                    Tempo de uso além do período já incluso na rota escolhida é cobrado em blocos de
-                    30 minutos (sempre arredondado pra cima), com tarifa específica por veículo e
-                    rota, cobrado à parte.
-                  </p>
-                  <p className="mt-3 font-medium text-black/80">Adicionais opcionais</p>
-                  <p className="mt-1">
-                    Recepção com placa de identificação (Meet &amp; Greet) e cadeirinha infantil
-                    estão disponíveis mediante consulta, com valor adicional — não estão incluídos
-                    no preço-base da rota.
-                  </p>
-                  <p className="mt-3 font-medium text-black/80">Motorista bilíngue</p>
-                  <p className="mt-1">
-                    Motorista com português ou inglês está disponível mediante consulta e valor
-                    adicional — disponibilidade limitada, recomendamos solicitar com grande
-                    antecedência (idealmente 70 dias antes da viagem). Sem essa solicitação expressa,
-                    o motorista fornecido fala japonês.
-                  </p>
-                  <p className="mt-3 font-medium text-black/80">Não incluído</p>
-                  <p className="mt-1">
-                    Trânsito inter-municipal de longa distância entre regiões (ex.: Tóquio↔Kansai
-                    por estrada) não está coberto pelas rotas/tours listados acima.
-                  </p>
-                  <p className="mt-3 font-medium text-black/80">Cancelamento</p>
-                  <p className="mt-1">{POLITICA_CANCELAMENTO_MOTORISTA}</p>
-                  <p className="mt-3 font-medium text-black/80">Pagamento e responsabilidade dos dados</p>
-                  <p className="mt-1">
-                    O valor final em reais é convertido pela cotação de câmbio do dia da confirmação.
-                    A exatidão dos dados informados (nome, telefone/WhatsApp, horários de voo e locais
-                    de embarque) é de responsabilidade do cliente — divergências podem prejudicar o
-                    pickup e não são de responsabilidade da Alpinea nem do fornecedor. Isso não
-                    confirma pagamento — nossa equipe entra em contato pelo WhatsApp pra fechar a
-                    logística antes de qualquer cobrança.
-                  </p>
-                </div>
-                <label className="mt-3 flex items-start gap-2.5 text-[11px] leading-5 text-black/60">
-                  <input
-                    type="checkbox"
-                    checked={termosAceitos}
-                    disabled={!termosRolados}
-                    onChange={(e) => setTermosAceitos(e.target.checked)}
-                    className="mt-0.5 h-4 w-4 shrink-0 rounded border-black/25 text-[#2f80c9] focus:ring-[#2f80c9] disabled:cursor-not-allowed disabled:opacity-40"
-                  />
-                  Li e aceito os termos e condições de contratação do motorista privado acima.
-                </label>
-                {!termosRolados && (
-                  <p className="mt-1.5 pl-[26px] text-[10px] text-black/35">
-                    Role o texto acima até o fim para habilitar o aceite.
-                  </p>
-                )}
-              </div>
-
-              {erro && <p className="mt-4 text-sm text-red-600">{erro}</p>}
-            </>
-          )}
-        </div>
-
-        {status !== "enviado" && (
-          <div className="shrink-0 border-t border-black/10 bg-white px-5 py-4 shadow-[0_-4px_16px_rgba(0,0,0,0.06)] md:px-8">
-            <div className="mx-auto flex max-w-4xl flex-wrap items-center justify-between gap-x-6 gap-y-3">
-              <div>
-                {totalUSDLabel ? (
-                  <>
-                    <p className="text-[10px] uppercase tracking-[0.15em] text-black/40">Sua escolha</p>
-                    <p className={`${display.className} text-xl font-medium text-[#2f80c9] sm:text-2xl`}>
-                      {totalUSDLabel}
-                    </p>
-                    <p className="text-xs text-black/45">
-                      {resumoSelecao}
-                      {totalBRLLabel && ` · ${totalBRLLabel}`}
-                    </p>
-                    {descricaoPagamentoEscolhido && (
-                      <p className="mt-0.5 text-[11px] text-black/40">{descricaoPagamentoEscolhido}</p>
-                    )}
-                  </>
-                ) : (
-                  <p className="text-xs text-black/45">
-                    Selecione ao menos uma rota ou tour para calcular o investimento.
-                  </p>
-                )}
-              </div>
-              <button
-                type="button"
-                onClick={enviar}
-                disabled={!formValido || status === "enviando"}
-                className={`inline-flex shrink-0 items-center justify-center rounded-full px-6 py-3.5 text-center text-xs font-medium uppercase tracking-[0.2em] text-white transition ${
-                  formValido && status !== "enviando"
-                    ? "bg-[#2f80c9] hover:bg-[#3b91dc]"
-                    : "cursor-not-allowed bg-black/20"
-                }`}
-              >
-                {status === "enviando" ? "Enviando…" : "Solicitar Transporte Privado"}
-              </button>
-            </div>
-            {pendenciasFinalizar.length > 0 && status !== "enviando" && (
-              <div className="mt-3 rounded-lg border border-amber-300 bg-amber-50 px-3.5 py-2.5 text-[11px] leading-5 text-amber-800">
-                <p className="font-medium">Falta o seguinte pra finalizar:</p>
-                <ul className="mt-1 list-disc pl-4">
-                  {pendenciasFinalizar.map((item) => (
-                    <li key={item}>{item}</li>
-                  ))}
-                </ul>
-              </div>
-            )}
-            <p className="mt-2 text-[10px] leading-4 text-black/35">
-              Isso não confirma pagamento — sua equipe Ajisai entra em contato pelo WhatsApp pra
-              fechar a logística do seu transporte privado.
-            </p>
-          </div>
-        )}
-      </div>
-    </div>
-  );
-}
 
 
 
