@@ -516,7 +516,11 @@ export default function JrPassPage() {
 
   return (
     <main
-      className="min-h-screen bg-white pt-14 text-black"
+      // Mobile/iOS — pedido do Wilson, 29/set/2026 ("site fica saindo da
+      // tela"): (1) overflow-x-clip impede a página de "escorregar" pro
+      // lado; (2) campos com 16px no celular — abaixo disso o Safari iOS dá
+      // zoom automático ao tocar no campo e a página sai do enquadramento.
+      className="min-h-screen overflow-x-clip bg-white pt-14 text-black [&_input:not([type=checkbox])]:text-base [&_textarea]:text-base md:[&_input:not([type=checkbox])]:text-sm md:[&_textarea]:text-sm"
       style={status !== "enviado" ? { paddingBottom: alturaRodape + 56 } : undefined}
     >
       {/* Barra de voltar — pedido do Wilson, 28/set/2026: "essa parte deve
@@ -748,7 +752,7 @@ export default function JrPassPage() {
               <p className="text-[10px] uppercase tracking-[0.2em] text-black">Dados da viagem</p>
             </div>
             <div className="mt-5 grid gap-6 sm:grid-cols-2">
-              <label className="flex flex-col gap-2">
+              <label className="flex min-w-0 flex-col gap-2">
                 <span className="text-[10px] uppercase tracking-[0.15em] text-black">
                   Data de ida
                 </span>
@@ -757,10 +761,10 @@ export default function JrPassPage() {
                   value={dataInicioViagem}
                   min={hojeISO()}
                   onChange={(e) => setDataInicioViagem(e.target.value)}
-                  className="w-full rounded-lg border border-black/15 px-4 py-3 text-sm text-black focus:border-[#2f80c9] focus:outline-none"
+                  className="block min-h-[46px] w-full min-w-0 appearance-none bg-white text-left rounded-lg border border-black/15 px-4 py-3 text-sm text-black focus:border-[#2f80c9] focus:outline-none"
                 />
               </label>
-              <label className="flex flex-col gap-2">
+              <label className="flex min-w-0 flex-col gap-2">
                 <span className="text-[10px] uppercase tracking-[0.15em] text-black">
                   Data de encerramento
                 </span>
