@@ -617,8 +617,10 @@ export default function TransportePrivadoPage() {
               quando ele está "grudado" no topo o getBoundingClientRect
               devolve sempre a posição grudada). */}
           <div ref={stepperRef} aria-hidden="true" />
-          <div className="sticky top-14 z-40 mt-6 border-y border-black/[0.07] bg-white/95 backdrop-blur-sm">
-            <nav aria-label="Etapas" className="mx-auto flex max-w-6xl items-center gap-1 overflow-x-auto px-5 py-3 md:gap-3 md:px-8">
+          <div className="sticky top-14 z-40 mt-6 bg-[#1f6fb8] shadow-[0_4px_16px_rgba(10,37,64,0.12)]">
+            {/* w-fit + mx-auto: centralizado; max-w-full + overflow-x-auto:
+                se não couber no celular, rola na horizontal sem cortar. */}
+            <nav aria-label="Etapas" className="mx-auto flex w-fit max-w-full items-center gap-1 overflow-x-auto px-5 py-3 md:gap-3 md:px-8">
               {ETAPAS.map((nomeEtapa, i) => {
                 const numero = (i + 1) as Etapa;
                 const atual = etapa === numero;
@@ -638,23 +640,23 @@ export default function TransportePrivadoPage() {
                       disabled={!liberada}
                       aria-current={atual ? "step" : undefined}
                       className={`flex min-h-[44px] items-center gap-2 rounded-full px-2 text-sm transition md:px-3 ${
-                        atual ? "text-[#1f6fb8]" : concluida ? "text-black/75 hover:text-black" : "text-black/35"
+                        atual ? "text-white" : concluida ? "text-white/85 hover:text-white" : "text-white/50"
                       } ${liberada && !atual ? "cursor-pointer" : ""}`}
                     >
                       <span
                         className={`flex h-7 w-7 items-center justify-center rounded-full text-xs font-semibold ${
                           atual
-                            ? "bg-[#1f6fb8] text-white"
+                            ? "bg-white text-[#1f6fb8]"
                             : concluida
-                              ? "bg-[#2f80c9]/12 text-[#1f6fb8]"
-                              : "border border-black/15 text-black/40"
+                              ? "bg-white/20 text-white"
+                              : "border border-white/40 text-white/60"
                         }`}
                       >
                         {concluida && !atual ? <IconeCheck className="h-3.5 w-3.5" /> : numero}
                       </span>
                       <span className={`${atual ? "font-semibold" : "font-medium"} ${atual ? "" : "hidden sm:inline"}`}>{nomeEtapa}</span>
                     </button>
-                    {i < ETAPAS.length - 1 && <span className="h-px w-4 bg-black/15 md:w-10" aria-hidden="true" />}
+                    {i < ETAPAS.length - 1 && <span className="h-px w-4 bg-white/30 md:w-10" aria-hidden="true" />}
                   </div>
                 );
               })}
