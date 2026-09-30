@@ -233,20 +233,6 @@ function classeInput(temErro: boolean) {
   }`;
 }
 
-// Mesmo estilo de traço dos ícones de transfer/passeio: dois pinos ligados
-// por um trajeto tracejado.
-function IconeInterestadual({ className = "" }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 48 48" fill="none" stroke="#212830" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" className={className}>
-      <path d="M13 22c-4.2-5-6.5-8.4-6.5-11.2a6.5 6.5 0 0 1 13 0c0 2.8-2.3 6.2-6.5 11.2z" />
-      <circle cx="13" cy="10.8" r="2.2" />
-      <path d="M35 42c-4.2-5-6.5-8.4-6.5-11.2a6.5 6.5 0 0 1 13 0c0 2.8-2.3 6.2-6.5 11.2z" />
-      <circle cx="35" cy="30.8" r="2.2" />
-      <path d="M13 26v4a6 6 0 0 0 6 6h4" strokeDasharray="3 3.5" />
-    </svg>
-  );
-}
-
 function IconeSeta() {
   return (
     <svg
@@ -795,9 +781,9 @@ export default function TransportePrivadoPage() {
                     <div role="radiogroup" aria-label="Tipo de serviço" className="grid grid-cols-3 gap-1 rounded-xl bg-black/[0.04] p-1">
                       {(
                         [
-                          { key: "transfer", nome: "Transfer aeroporto", curto: "Transfer aeroporto", icone: "/images/icone-transfer-aeroporto.png" },
-                          { key: "interestadual", nome: "Transporte interestadual", curto: "Interestadual", icone: null },
-                          { key: "passeio", nome: "Passeio de 10h", curto: "Passeio 10h", icone: "/images/icone-passeio-10h.png" },
+                          { key: "transfer", nome: "Transfer aeroporto", curto: "Transfer aeroporto", icone: "/images/icone-transfer-aeroporto.png", largura: 36 },
+                          { key: "interestadual", nome: "Transporte interestadual", curto: "Interestadual", icone: "/images/icone-interestadual.png", largura: 36 },
+                          { key: "passeio", nome: "Passeio de 10h", curto: "Passeio 10h", icone: "/images/icone-passeio-10h.png", largura: 36 },
                         ] as const
                       ).map((t) => {
                         const ativo = tipoServico === t.key;
@@ -812,17 +798,13 @@ export default function TransportePrivadoPage() {
                               ativo ? "bg-white font-semibold text-[#0A2540] shadow-sm" : "font-medium text-black/55 hover:text-black"
                             }`}
                           >
-                            {t.icone ? (
-                              <Image
-                                src={t.icone}
-                                alt=""
-                                width={36}
-                                height={36}
-                                className={`h-9 w-9 shrink-0 transition-opacity ${ativo ? "opacity-100" : "opacity-45"}`}
-                              />
-                            ) : (
-                              <IconeInterestadual className={`h-9 w-9 shrink-0 transition-opacity ${ativo ? "opacity-100" : "opacity-45"}`} />
-                            )}
+                            <Image
+                              src={t.icone}
+                              alt=""
+                              width={t.largura}
+                              height={36}
+                              className={`h-9 w-auto shrink-0 transition-opacity ${ativo ? "opacity-100" : "opacity-45"}`}
+                            />
                             <span className="sm:hidden">{t.curto}</span>
                             <span className="hidden sm:inline">{t.nome}</span>
                           </button>
