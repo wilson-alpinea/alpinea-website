@@ -260,6 +260,7 @@ export default function TransportePrivadoPage() {
 
   const [opcionalMeetGreet, setOpcionalMeetGreet] = useState(false);
   const [opcionalCadeirinha, setOpcionalCadeirinha] = useState(false);
+  const [qtdCadeirinhas, setQtdCadeirinhas] = useState(1);
   const [opcionalBilingue, setOpcionalBilingue] = useState(false);
 
   const [nome, setNome] = useState("");
@@ -290,7 +291,12 @@ export default function TransportePrivadoPage() {
   // Roteiro Personalizado incluso (mesma regra de sempre do Transporte
   // Privado) — só entra com pelo menos 1 serviço selecionado.
   const roteiroUSD = quantidadeItens > 0 ? ROTEIRO_PRECO_BASE / cambioCotacao : 0;
-  const totalUSD = motoristaUSD + roteiroUSD;
+  // Opcionais com preço fixo entram no total (motorista bilíngue é sob
+  // consulta — não soma). Só contam com pelo menos 1 rota escolhida.
+  const meetGreetUSD = quantidadeItens > 0 && opcionalMeetGreet ? ADICIONAL_MEET_GREET_USD : 0;
+  const cadeirinhaUSD = quantidadeItens > 0 && opcionalCadeirinha ? ADICIONAL_CADEIRINHA_USD * qtdCadeirinhas : 0;
+  const adicionaisUSD = meetGreetUSD + cadeirinhaUSD;
+  const totalUSD = motoristaUSD + roteiroUSD + adicionaisUSD;
   const totalBRL = totalUSD * cambioCotacao;
   const resumoSelecao = resumoSelecaoMotorista(selecao);
 
@@ -390,8 +396,8 @@ export default function TransportePrivadoPage() {
     setErro("");
     const opcionais = [
       opcionalMeetGreet ? "Meet & Greet (placa de recepção)" : null,
-      opcionalCadeirinha ? "Cadeirinha infantil" : null,
-      opcionalBilingue ? "Motorista bilíngue português/inglês" : null,
+      opcionalCadeirinha ? `Cadeirinha infantil (${qtdCadeirinhas}×)` : null,
+      opcionalBilingue ? "Motorista bilíngue português/inglês (sob consulta)" : null,
     ].filter(Boolean) as string[];
     try {
       const resposta = await fetch("/api/transporte-privado-selfservice", {
@@ -403,6 +409,7 @@ export default function TransportePrivadoPage() {
           resumo: resumoSelecao,
           motoristaUSD,
           roteiroUSD,
+          adicionaisUSD,
           totalUSD,
           totalBRL,
           formaPagamento: null,
@@ -487,6 +494,27 @@ export default function TransportePrivadoPage() {
               <span className="text-black/55">Roteiro Personalizado (incluso)</span>
               <span className={`${inter.className} shrink-0 tabular-nums text-black/70`}>{formatUSD(roteiroUSD)}</span>
             </div>
+            {meetGreetUSD > 0 && (
+              <div className="flex items-start justify-between gap-3 text-sm">
+                <span className="text-black/80">Meet &amp; Greet</span>
+                <span className={`${inter.className} shrink-0 font-medium tabular-nums text-black`}>{formatUSD(meetGreetUSD)}</span>
+              </div>
+            )}
+            {cadeirinhaUSD > 0 && (
+              <div className="flex items-start justify-between gap-3 text-sm">
+                <span className="text-black/80">
+                  {qtdCadeirinhas > 1 && <span className="text-black/50">{qtdCadeirinhas}× </span>}
+                  Cadeirinha infantil
+                </span>
+                <span className={`${inter.className} shrink-0 font-medium tabular-nums text-black`}>{formatUSD(cadeirinhaUSD)}</span>
+              </div>
+            )}
+            {opcionalBilingue && (
+              <div className="flex items-start justify-between gap-3 text-sm">
+                <span className="text-black/80">Motorista bilíngue</span>
+                <span className="shrink-0 text-xs text-black/50">sob consulta</span>
+              </div>
+            )}
           </>
         )}
       </div>
@@ -934,6 +962,7 @@ export default function TransportePrivadoPage() {
                           alternar: () => setOpcionalCadeirinha((v) => !v),
                           titulo: "Cadeirinha infantil",
                           detalhe: `${formatUSD(ADICIONAL_CADEIRINHA_USD)} por cadeirinha, confirmado pela nossa equipe`,
+                          quantidade: true,
                         },
                         {
                           marcado: opcionalBilingue,
@@ -943,7 +972,8 @@ export default function TransportePrivadoPage() {
                           aviso: true,
                         },
                       ].map((op) => (
-                        <label key={op.titulo} className="flex min-h-[52px] cursor-pointer items-start gap-3 py-3">
+                        <div key={op.titulo} className="flex flex-wrap items-center justify-between gap-x-4">
+                        <label className="flex min-h-[52px] min-w-0 flex-1 cursor-pointer items-start gap-3 py-3">
                           <input
                             type="checkbox"
                             checked={op.marcado}
@@ -958,6 +988,29 @@ export default function TransportePrivadoPage() {
                             </span>
                           </span>
                         </label>
+                        {"quantidade" in op && op.marcado && (
+                          <div className="mb-3 ml-8 flex items-center gap-1 sm:mb-0 sm:ml-0">
+                            <button
+                              type="button"
+                              onClick={() => setQtdCadeirinhas((q) => Math.max(1, q - 1))}
+                              disabled={qtdCadeirinhas <= 1}
+                              aria-label="Menos uma cadeirinha"
+                              className="flex h-9 w-9 items-center justify-center rounded-full border border-black/15 text-base text-black/60 transition hover:border-black/30 disabled:opacity-40"
+                            >
+                              −
+                            </button>
+                            <span className={`${inter.className} w-6 text-center text-sm font-semibold tabular-nums text-[#0A2540]`}>{qtdCadeirinhas}</span>
+                            <button
+                              type="button"
+                              onClick={() => setQtdCadeirinhas((q) => Math.min(6, q + 1))}
+                              aria-label="Mais uma cadeirinha"
+                              className="flex h-9 w-9 items-center justify-center rounded-full border border-black/15 text-base text-black/60 transition hover:border-black/30"
+                            >
+                              +
+                            </button>
+                          </div>
+                        )}
+                        </div>
                       ))}
                     </div>
                     <button
@@ -1098,7 +1151,7 @@ export default function TransportePrivadoPage() {
                                 Opcionais:{" "}
                                 {[
                                   opcionalMeetGreet && "Meet & Greet",
-                                  opcionalCadeirinha && "cadeirinha infantil",
+                                  opcionalCadeirinha && (qtdCadeirinhas > 1 ? `${qtdCadeirinhas} cadeirinhas infantis` : "cadeirinha infantil"),
                                   opcionalBilingue && "motorista bilíngue",
                                 ]
                                   .filter(Boolean)

@@ -93,6 +93,7 @@ export async function POST(req: Request) {
 
     const motoristaUSD = Number(body.motoristaUSD) || 0;
     const roteiroUSD = Number(body.roteiroUSD) || 0;
+    const adicionaisUSD = Number(body.adicionaisUSD) || 0;
     const totalUSD = Number(body.totalUSD) || 0;
     const totalBRL = Number(body.totalBRL) || null;
     const formaPagamento = String(body.formaPagamento || "").trim();
@@ -120,6 +121,7 @@ export async function POST(req: Request) {
       ["Rotas/tours selecionados", resumo || "Não especificado"],
       ["Motorista privado (US$)", `US$ ${motoristaUSD.toLocaleString("pt-BR")}`],
       ["Roteiro Personalizado (US$)", `US$ ${roteiroUSD.toLocaleString("pt-BR")}`],
+      ["Opcionais (US$)", `US$ ${adicionaisUSD.toLocaleString("pt-BR")}`],
       ["Total (US$)", `US$ ${totalUSD.toLocaleString("pt-BR")}`],
       ["Valor total (referência BRL)", totalBRL ? `R$ ${totalBRL.toLocaleString("pt-BR")}` : "Não calculado"],
       ["Data do serviço", dataServico || "Não informada"],
