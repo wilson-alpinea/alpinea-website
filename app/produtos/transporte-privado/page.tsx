@@ -149,7 +149,6 @@ type Etapa = 1 | 2 | 3 | 4 | 5;
 
 const MAX_PASSAGEIROS = Math.max(...VEICULOS_MOTORISTA.map((v) => v.assentos));
 
-const COMO_FUNCIONA = ["Data e passageiros", "Veículo", "Trajeto", "Confirmamos", "Motorista te espera"];
 
 // Máscara de WhatsApp: formato brasileiro por padrão; se começar com "+",
 // aceita número internacional sem forçar o formato.
@@ -716,21 +715,6 @@ export default function TransportePrivadoPage() {
                 </h1>
               </div>
             </section>
-            <p className="mt-5 text-sm leading-relaxed text-black/70 md:text-base">
-              Informe a data e o número de passageiros, escolha o veículo e o trajeto para consultar o valor e solicitar o transporte.
-            </p>
-
-            {/* Como funciona — compacto, numa linha, sem competir com a
-                seleção (pedido do Wilson). */}
-            <ol className="mt-4 flex flex-wrap items-center gap-x-2 gap-y-1.5 text-xs text-black/55">
-              {COMO_FUNCIONA.map((passo, i) => (
-                <li key={passo} className="flex items-center gap-2">
-                  <span className="text-black/35">{i + 1}</span>
-                  <span>{passo}</span>
-                  {i < COMO_FUNCIONA.length - 1 && <span className="text-black/25" aria-hidden="true">→</span>}
-                </li>
-              ))}
-            </ol>
           </div>
 
           {/* Stepper — fixo logo abaixo da barra do topo enquanto rola. */}
@@ -791,19 +775,15 @@ export default function TransportePrivadoPage() {
                   </h2>
                   <p className="mt-1.5 text-sm text-black/60">Mostramos só os veículos que comportam o seu grupo.</p>
                   <div className="mt-6 rounded-2xl border border-black/10 bg-white p-4 shadow-[0_10px_30px_-22px_rgba(10,37,64,0.35)] sm:p-5">
-                    <div className="grid gap-4 md:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)_auto] md:items-end">
+                    <div className="grid gap-4 md:grid-cols-[minmax(0,1.7fr)_minmax(0,1fr)_auto] md:items-start">
                       <div className="min-w-0">
                         <span className="mb-1.5 block text-xs font-medium text-black/60">Data do serviço</span>
                         <div
-                          className={`grid grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)] overflow-hidden rounded-xl border bg-white ${
+                          className={`grid grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)] overflow-hidden rounded-xl border bg-white ${
                             mostrarErro("dataServico") ? "border-red-400" : "border-black/15"
                           } focus-within:border-[#2f80c9] focus-within:ring-1 focus-within:ring-[#2f80c9]`}
                         >
-                          <label className="flex h-12 min-w-0 items-center gap-2 px-3">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="h-5 w-5 shrink-0 text-black/55" aria-hidden="true">
-                              <rect x="3" y="5" width="18" height="16" rx="2" />
-                              <path d="M3 10h18M8 3v4M16 3v4" />
-                            </svg>
+                          <label className="flex h-12 min-w-0 items-center px-3.5">
                             <span className="sr-only">Data do serviço</span>
                             <input
                               type="date"
@@ -814,11 +794,7 @@ export default function TransportePrivadoPage() {
                               className="h-full w-full min-w-0 appearance-none bg-transparent text-base text-black focus:outline-none md:text-[15px]"
                             />
                           </label>
-                          <label className="flex h-12 min-w-0 items-center gap-2 border-l border-black/10 px-3">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="h-5 w-5 shrink-0 text-black/55" aria-hidden="true">
-                              <circle cx="12" cy="12" r="9" />
-                              <path d="M12 7v5l3 2" />
-                            </svg>
+                          <label className="flex h-12 min-w-0 items-center border-l border-black/10 px-3.5">
                             <span className="sr-only">Horário aproximado (opcional)</span>
                             <input
                               type="time"
@@ -831,7 +807,7 @@ export default function TransportePrivadoPage() {
                         {mostrarErro("dataServico") ? (
                           <p className="mt-1.5 text-xs text-red-600">{mostrarErro("dataServico")}</p>
                         ) : (
-                          <p className="mt-1.5 text-xs text-black/45">Horário opcional. Vários dias? Informe o primeiro — os demais combinamos pelo WhatsApp.</p>
+                          <p className="mt-1.5 text-xs text-black/45">Horário opcional. Vários dias? Informe o primeiro.</p>
                         )}
                       </div>
                       <div>
@@ -866,7 +842,9 @@ export default function TransportePrivadoPage() {
                           {passageiros >= MAX_PASSAGEIROS ? `Mais de ${MAX_PASSAGEIROS}? Fale com a nossa equipe.` : "Incluindo crianças."}
                         </p>
                       </div>
-                      <div className="md:pb-[22px]">
+                      <div>
+                        {/* Rótulo invisível: mantém o botão na mesma linha das caixas. */}
+                        <span aria-hidden="true" className="mb-1.5 hidden text-xs md:invisible md:block">&nbsp;</span>
                         <button
                           type="button"
                           onClick={acionarCta}
