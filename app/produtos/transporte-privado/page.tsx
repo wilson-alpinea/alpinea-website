@@ -112,6 +112,12 @@ const TRECHOS: { de: LocalId; para: LocalId; rotaId: string }[] = [
   { de: "kyoto", para: "osaka", rotaId: "dentro-kyoto-ou-kyoto-osaka" },
 ];
 const nomeLocal = (id: LocalId) => LOCAIS.find((l) => l.id === id)?.nome ?? id;
+const ehAeroporto = (id: LocalId) => LOCAIS.find((l) => l.id === id)?.aeroporto ?? false;
+// Transfer = sempre com um aeroporto numa das pontas. Cidade ↔ cidade é
+// outra categoria (Transporte interestadual) — pedido do Wilson, 30/set/2026.
+const TRECHOS_TRANSFER = TRECHOS.filter((t) => ehAeroporto(t.de) || ehAeroporto(t.para));
+const TRECHOS_INTERESTADUAL = TRECHOS.filter((t) => !ehAeroporto(t.de) && !ehAeroporto(t.para));
+type TipoServico = "transfer" | "interestadual" | "passeio";
 const TOURS = ROTAS_MOTORISTA.filter((r) => r.categoria === "tour-dia-inteiro");
 
 const CLASSE_SELECT =
@@ -227,6 +233,20 @@ function classeInput(temErro: boolean) {
   }`;
 }
 
+// Mesmo estilo de traço dos ícones de transfer/passeio: dois pinos ligados
+// por um trajeto tracejado.
+function IconeInterestadual({ className = "" }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 48 48" fill="none" stroke="#212830" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" className={className}>
+      <path d="M13 22c-4.2-5-6.5-8.4-6.5-11.2a6.5 6.5 0 0 1 13 0c0 2.8-2.3 6.2-6.5 11.2z" />
+      <circle cx="13" cy="10.8" r="2.2" />
+      <path d="M35 42c-4.2-5-6.5-8.4-6.5-11.2a6.5 6.5 0 0 1 13 0c0 2.8-2.3 6.2-6.5 11.2z" />
+      <circle cx="35" cy="30.8" r="2.2" />
+      <path d="M13 26v4a6 6 0 0 0 6 6h4" strokeDasharray="3 3.5" />
+    </svg>
+  );
+}
+
 function IconeSeta() {
   return (
     <svg
@@ -252,7 +272,7 @@ export default function TransportePrivadoPage() {
   // passo 1 precisa de uma escolha explícita.
   const [veiculoEscolhido, setVeiculoEscolhido] = useState(false);
   const [selecao, setSelecao] = useState<SelecaoMotorista>(SELECAO_MOTORISTA_VAZIA);
-  const [tipoServico, setTipoServico] = useState<"transfer" | "passeio">("transfer");
+  const [tipoServico, setTipoServico] = useState<TipoServico>("transfer");
   const [origem, setOrigem] = useState<LocalId | "">("");
   const [destino, setDestino] = useState<LocalId | "">("");
   const [tourId, setTourId] = useState("");
@@ -442,10 +462,19 @@ export default function TransportePrivadoPage() {
     nome ? ` Meu nome é ${nome}.` : ""
   }`;
 
-  const destinosPossiveis = origem ? TRECHOS.filter((t) => t.de === origem) : [];
+  const trechosAtivos = tipoServico === "interestadual" ? TRECHOS_INTERESTADUAL : TRECHOS_TRANSFER;
+  const origensPossiveis = LOCAIS.filter((l) => trechosAtivos.some((t) => t.de === l.id));
+  const destinosPossiveis = origem ? trechosAtivos.filter((t) => t.de === origem) : [];
+
+  function trocarTipoServico(tipo: TipoServico) {
+    setTipoServico(tipo);
+    setOrigem("");
+    setDestino("");
+    setTourId("");
+  }
   const rotaEscolhida =
-    tipoServico === "transfer"
-      ? encontrarRotaMotorista(TRECHOS.find((t) => t.de === origem && t.para === destino)?.rotaId ?? "")
+    tipoServico !== "passeio"
+      ? encontrarRotaMotorista(trechosAtivos.find((t) => t.de === origem && t.para === destino)?.rotaId ?? "")
       : encontrarRotaMotorista(tourId);
 
   function adicionarRotaEscolhida() {
@@ -763,11 +792,12 @@ export default function TransportePrivadoPage() {
 
                   <div className="mt-6 rounded-2xl border border-black/10 p-4 sm:p-5">
                     {/* Tipo: transfer (origem → destino) ou passeio de 10h */}
-                    <div role="radiogroup" aria-label="Tipo de serviço" className="grid grid-cols-2 gap-1 rounded-xl bg-black/[0.04] p-1">
+                    <div role="radiogroup" aria-label="Tipo de serviço" className="grid grid-cols-3 gap-1 rounded-xl bg-black/[0.04] p-1">
                       {(
                         [
-                          { key: "transfer", nome: "Transfer" },
-                          { key: "passeio", nome: "Passeio de 10h" },
+                          { key: "transfer", nome: "Transfer aeroporto", curto: "Transfer aeroporto", icone: "/images/icone-transfer-aeroporto.png" },
+                          { key: "interestadual", nome: "Transporte interestadual", curto: "Interestadual", icone: null },
+                          { key: "passeio", nome: "Passeio de 10h", curto: "Passeio 10h", icone: "/images/icone-passeio-10h.png" },
                         ] as const
                       ).map((t) => {
                         const ativo = tipoServico === t.key;
@@ -777,18 +807,30 @@ export default function TransportePrivadoPage() {
                             type="button"
                             role="radio"
                             aria-checked={ativo}
-                            onClick={() => setTipoServico(t.key)}
-                            className={`min-h-[44px] rounded-lg text-sm transition ${
+                            onClick={() => trocarTipoServico(t.key)}
+                            className={`flex min-h-[64px] flex-col items-center justify-center gap-1 rounded-lg px-1.5 py-2 text-center text-xs leading-tight transition sm:flex-row sm:gap-2.5 sm:px-2 sm:text-sm ${
                               ativo ? "bg-white font-semibold text-[#0A2540] shadow-sm" : "font-medium text-black/55 hover:text-black"
                             }`}
                           >
-                            {t.nome}
+                            {t.icone ? (
+                              <Image
+                                src={t.icone}
+                                alt=""
+                                width={36}
+                                height={36}
+                                className={`h-9 w-9 shrink-0 transition-opacity ${ativo ? "opacity-100" : "opacity-45"}`}
+                              />
+                            ) : (
+                              <IconeInterestadual className={`h-9 w-9 shrink-0 transition-opacity ${ativo ? "opacity-100" : "opacity-45"}`} />
+                            )}
+                            <span className="sm:hidden">{t.curto}</span>
+                            <span className="hidden sm:inline">{t.nome}</span>
                           </button>
                         );
                       })}
                     </div>
 
-                    {tipoServico === "transfer" ? (
+                    {tipoServico !== "passeio" ? (
                       <div className="mt-4 grid gap-3 sm:grid-cols-2">
                         <label className="block">
                           <span className="mb-1.5 block text-xs font-medium text-black/60">Saindo de</span>
@@ -799,19 +841,21 @@ export default function TransportePrivadoPage() {
                                 const nova = e.target.value as LocalId | "";
                                 setOrigem(nova);
                                 // Se só há um destino possível, já preenche.
-                                const opcoes = TRECHOS.filter((t) => t.de === nova);
+                                const opcoes = trechosAtivos.filter((t) => t.de === nova);
                                 setDestino(opcoes.length === 1 ? opcoes[0].para : "");
                               }}
                               className={CLASSE_SELECT}
                             >
                               <option value="">Escolha a origem</option>
-                              <optgroup label="Aeroportos">
-                                {LOCAIS.filter((l) => l.aeroporto).map((l) => (
-                                  <option key={l.id} value={l.id}>{l.nome}</option>
-                                ))}
-                              </optgroup>
+                              {origensPossiveis.some((l) => l.aeroporto) && (
+                                <optgroup label="Aeroportos">
+                                  {origensPossiveis.filter((l) => l.aeroporto).map((l) => (
+                                    <option key={l.id} value={l.id}>{l.nome}</option>
+                                  ))}
+                                </optgroup>
+                              )}
                               <optgroup label="Cidades">
-                                {LOCAIS.filter((l) => !l.aeroporto).map((l) => (
+                                {origensPossiveis.filter((l) => !l.aeroporto).map((l) => (
                                   <option key={l.id} value={l.id}>{l.nome}</option>
                                 ))}
                               </optgroup>
@@ -880,7 +924,7 @@ export default function TransportePrivadoPage() {
                         </>
                       ) : (
                         <p className="text-sm text-black/45">
-                          {tipoServico === "transfer" ? "Escolha origem e destino para ver o valor." : "Escolha um passeio para ver o valor."}
+                          {tipoServico !== "passeio" ? "Escolha origem e destino para ver o valor." : "Escolha um passeio para ver o valor."}
                         </p>
                       )}
                     </div>
@@ -955,12 +999,14 @@ export default function TransportePrivadoPage() {
                           marcado: opcionalMeetGreet,
                           alternar: () => setOpcionalMeetGreet((v) => !v),
                           titulo: "Meet & Greet — recepção com placa de identificação",
+                          icone: "/images/icone-meet-greet.png",
                           detalhe: `${formatUSD(ADICIONAL_MEET_GREET_USD)}, confirmado pela nossa equipe`,
                         },
                         {
                           marcado: opcionalCadeirinha,
                           alternar: () => setOpcionalCadeirinha((v) => !v),
                           titulo: "Cadeirinha infantil",
+                          icone: "/images/icone-cadeirinha.png",
                           detalhe: `${formatUSD(ADICIONAL_CADEIRINHA_USD)} por cadeirinha, confirmado pela nossa equipe`,
                           quantidade: true,
                         },
@@ -968,17 +1014,25 @@ export default function TransportePrivadoPage() {
                           marcado: opcionalBilingue,
                           alternar: () => setOpcionalBilingue((v) => !v),
                           titulo: "Solicitar motorista bilíngue português/inglês",
+                          icone: "/images/icone-motorista-bilingue.png",
                           detalhe: "Sujeito à disponibilidade e valor adicional. Recomendamos solicitar com antecedência.",
                           aviso: true,
                         },
                       ].map((op) => (
                         <div key={op.titulo} className="flex flex-wrap items-center justify-between gap-x-4">
-                        <label className="flex min-h-[52px] min-w-0 flex-1 cursor-pointer items-start gap-3 py-3">
+                        <label className="flex min-h-[64px] min-w-0 flex-1 cursor-pointer items-center gap-3 py-3">
                           <input
                             type="checkbox"
                             checked={op.marcado}
                             onChange={op.alternar}
-                            className="mt-0.5 h-5 w-5 shrink-0 rounded border-black/30 text-[#2f80c9] focus:ring-[#2f80c9]"
+                            className="h-5 w-5 shrink-0 rounded border-black/30 text-[#2f80c9] focus:ring-[#2f80c9]"
+                          />
+                          <Image
+                            src={op.icone}
+                            alt=""
+                            width={44}
+                            height={44}
+                            className={`h-11 w-11 shrink-0 transition-opacity ${op.marcado ? "opacity-100" : "opacity-70"}`}
                           />
                           <span className="min-w-0">
                             <span className="block text-sm text-black/85">{op.titulo}</span>
@@ -989,7 +1043,7 @@ export default function TransportePrivadoPage() {
                           </span>
                         </label>
                         {"quantidade" in op && op.marcado && (
-                          <div className="mb-3 ml-8 flex items-center gap-1 sm:mb-0 sm:ml-0">
+                          <div className="mb-3 ml-[88px] flex items-center gap-1 sm:mb-0 sm:ml-0">
                             <button
                               type="button"
                               onClick={() => setQtdCadeirinhas((q) => Math.max(1, q - 1))}
