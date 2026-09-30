@@ -56,7 +56,6 @@ import {
   POLITICA_CANCELAMENTO_MOTORISTA,
   ADICIONAL_MEET_GREET_USD,
   ADICIONAL_CADEIRINHA_USD,
-  type CategoriaRotaMotorista,
   type RegiaoRotaMotorista,
   type SelecaoMotorista,
   type VeiculoMotoristaId,
@@ -85,11 +84,38 @@ const PRECO_MINIMO_VEICULO = Object.fromEntries(
   VEICULOS_MOTORISTA.map((v) => [v.id, Math.min(...ROTAS_MOTORISTA.map((r) => r.precoUSD[v.id]))]),
 ) as Record<VeiculoMotoristaId, number>;
 
-const CATEGORIAS: { key: CategoriaRotaMotorista; nome: string }[] = [
-  { key: "transfer-aeroporto", nome: "Aeroporto" },
-  { key: "dentro-cidade", nome: "Cidade" },
-  { key: "tour-dia-inteiro", nome: "Passeios 10h" },
+// Passo 2 em formato "origem → destino": cada par aponta pra uma rota do
+// catálogo (motoristaPrivadoRotas.ts). Origem = destino significa
+// deslocamento dentro da cidade. Kyoto → Osaka usa a mesma rota de
+// "Dentro de Kyoto" (o fornecedor cota igual).
+type LocalId = "narita" | "haneda" | "kix" | "tokyo" | "osaka" | "kyoto";
+const LOCAIS: { id: LocalId; nome: string; aeroporto: boolean }[] = [
+  { id: "narita", nome: "Aeroporto de Narita", aeroporto: true },
+  { id: "haneda", nome: "Aeroporto de Haneda", aeroporto: true },
+  { id: "kix", nome: "Aeroporto de Kansai", aeroporto: true },
+  { id: "tokyo", nome: "Tóquio", aeroporto: false },
+  { id: "osaka", nome: "Osaka", aeroporto: false },
+  { id: "kyoto", nome: "Kyoto", aeroporto: false },
 ];
+const TRECHOS: { de: LocalId; para: LocalId; rotaId: string }[] = [
+  { de: "narita", para: "tokyo", rotaId: "narita-tokyo" },
+  { de: "haneda", para: "tokyo", rotaId: "haneda-tokyo" },
+  { de: "kix", para: "osaka", rotaId: "kansai-osaka" },
+  { de: "kix", para: "kyoto", rotaId: "kansai-kyoto" },
+  { de: "tokyo", para: "narita", rotaId: "tokyo-narita" },
+  { de: "tokyo", para: "haneda", rotaId: "tokyo-haneda" },
+  { de: "tokyo", para: "tokyo", rotaId: "dentro-tokyo" },
+  { de: "osaka", para: "kix", rotaId: "osaka-kansai" },
+  { de: "osaka", para: "osaka", rotaId: "dentro-osaka" },
+  { de: "kyoto", para: "kix", rotaId: "kyoto-kansai" },
+  { de: "kyoto", para: "kyoto", rotaId: "dentro-kyoto-ou-kyoto-osaka" },
+  { de: "kyoto", para: "osaka", rotaId: "dentro-kyoto-ou-kyoto-osaka" },
+];
+const nomeLocal = (id: LocalId) => LOCAIS.find((l) => l.id === id)?.nome ?? id;
+const TOURS = ROTAS_MOTORISTA.filter((r) => r.categoria === "tour-dia-inteiro");
+
+const CLASSE_SELECT =
+  "h-12 w-full appearance-none rounded-xl border border-black/15 bg-white pl-4 pr-10 text-base text-black transition focus:border-[#2f80c9] focus:outline-none focus:ring-1 focus:ring-[#2f80c9] disabled:cursor-not-allowed disabled:bg-black/[0.03] disabled:text-black/35 md:text-[15px]";
 
 const REGIAO_CURTA: Record<RegiaoRotaMotorista, string> = {
   kanto: "Tóquio",
@@ -201,6 +227,21 @@ function classeInput(temErro: boolean) {
   }`;
 }
 
+function IconeSeta() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      aria-hidden="true"
+      className="pointer-events-none absolute right-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-black/45"
+    >
+      <path d="M6 9l6 6 6-6" />
+    </svg>
+  );
+}
+
 export default function TransportePrivadoPage() {
   const cambio = useCambioUSD();
   const cambioCotacao = cambio?.cotacao ?? 5.3;
@@ -211,8 +252,11 @@ export default function TransportePrivadoPage() {
   // passo 1 precisa de uma escolha explícita.
   const [veiculoEscolhido, setVeiculoEscolhido] = useState(false);
   const [selecao, setSelecao] = useState<SelecaoMotorista>(SELECAO_MOTORISTA_VAZIA);
-  const [categoria, setCategoria] = useState<CategoriaRotaMotorista>("transfer-aeroporto");
-  const [regiao, setRegiao] = useState<RegiaoRotaMotorista | "todas">("todas");
+  const [tipoServico, setTipoServico] = useState<"transfer" | "passeio">("transfer");
+  const [origem, setOrigem] = useState<LocalId | "">("");
+  const [destino, setDestino] = useState<LocalId | "">("");
+  const [tourId, setTourId] = useState("");
+  const [ultimoAdicionado, setUltimoAdicionado] = useState<string | null>(null);
 
   const [opcionalMeetGreet, setOpcionalMeetGreet] = useState(false);
   const [opcionalCadeirinha, setOpcionalCadeirinha] = useState(false);
@@ -391,11 +435,20 @@ export default function TransportePrivadoPage() {
     nome ? ` Meu nome é ${nome}.` : ""
   }`;
 
-  const rotasVisiveis = ROTAS_MOTORISTA.filter(
-    (r) => r.categoria === categoria && (regiao === "todas" || r.regiao === regiao),
-  );
-  const selecionadasPorCategoria = (cat: CategoriaRotaMotorista) =>
-    selecao.itens.filter((i) => encontrarRotaMotorista(i.rotaId)?.categoria === cat).length;
+  const destinosPossiveis = origem ? TRECHOS.filter((t) => t.de === origem) : [];
+  const rotaEscolhida =
+    tipoServico === "transfer"
+      ? encontrarRotaMotorista(TRECHOS.find((t) => t.de === origem && t.para === destino)?.rotaId ?? "")
+      : encontrarRotaMotorista(tourId);
+
+  function adicionarRotaEscolhida() {
+    if (!rotaEscolhida) return;
+    ajustarQuantidade(rotaEscolhida.id, quantidadeDe(rotaEscolhida.id) + 1);
+    setUltimoAdicionado(rotaEscolhida.id);
+    setOrigem("");
+    setDestino("");
+    setTourId("");
+  }
 
   // Conteúdo do resumo — o mesmo no painel lateral (desktop) e na gaveta
   // da barra inferior (celular).
@@ -671,131 +724,185 @@ export default function TransportePrivadoPage() {
                     Escolha uma ou mais rotas
                   </h2>
                   <p className="mt-1.5 text-sm text-black/60">
-                    Você pode adicionar transfers e passeios ao mesmo pedido. Preços para{" "}
+                    Informe de onde sai e para onde vai. Preços para{" "}
                     <button type="button" onClick={() => irPara(1)} className="font-medium text-[#1f6fb8] underline decoration-[#1f6fb8]/30 underline-offset-2">
                       {veiculoCurto.nome}
                     </button>
                     .
                   </p>
 
-                  {/* Categorias em abas — só uma categoria aparece por vez. */}
-                  <div role="tablist" aria-label="Tipo de serviço" className="mt-6 grid grid-cols-3 gap-1 rounded-xl border border-black/10 bg-black/[0.02] p-1">
-                    {CATEGORIAS.map((c) => {
-                      const ativa = categoria === c.key;
-                      const n = selecionadasPorCategoria(c.key);
-                      return (
-                        <button
-                          key={c.key}
-                          type="button"
-                          role="tab"
-                          aria-selected={ativa}
-                          onClick={() => setCategoria(c.key)}
-                          className={`flex min-h-[44px] items-center justify-center gap-1.5 rounded-lg px-2 text-sm transition ${
-                            ativa ? "bg-white font-semibold text-[#0A2540] shadow-sm" : "font-medium text-black/55 hover:text-black"
-                          }`}
-                        >
-                          {c.key === "tour-dia-inteiro" ? (
-                            <>
-                              <span className="sm:hidden">Passeios</span>
-                              <span className="hidden sm:inline">{c.nome}</span>
-                            </>
-                          ) : (
-                            c.nome
-                          )}
-                          {n > 0 && (
-                            <span className="flex h-5 min-w-5 items-center justify-center rounded-full bg-[#2f80c9] px-1.5 text-[11px] font-semibold text-white">
-                              {n}
-                            </span>
-                          )}
-                        </button>
-                      );
-                    })}
-                  </div>
+                  <div className="mt-6 rounded-2xl border border-black/10 p-4 sm:p-5">
+                    {/* Tipo: transfer (origem → destino) ou passeio de 10h */}
+                    <div role="radiogroup" aria-label="Tipo de serviço" className="grid grid-cols-2 gap-1 rounded-xl bg-black/[0.04] p-1">
+                      {(
+                        [
+                          { key: "transfer", nome: "Transfer" },
+                          { key: "passeio", nome: "Passeio de 10h" },
+                        ] as const
+                      ).map((t) => {
+                        const ativo = tipoServico === t.key;
+                        return (
+                          <button
+                            key={t.key}
+                            type="button"
+                            role="radio"
+                            aria-checked={ativo}
+                            onClick={() => setTipoServico(t.key)}
+                            className={`min-h-[44px] rounded-lg text-sm transition ${
+                              ativo ? "bg-white font-semibold text-[#0A2540] shadow-sm" : "font-medium text-black/55 hover:text-black"
+                            }`}
+                          >
+                            {t.nome}
+                          </button>
+                        );
+                      })}
+                    </div>
 
-                  {/* Filtro de região — rola na horizontal no celular. */}
-                  <div className="-mx-5 mt-4 flex gap-2 overflow-x-auto px-5 pb-1 md:mx-0 md:px-0">
-                    {(["todas", ...REGIOES_MOTORISTA.map((r) => r.key)] as const).map((key) => {
-                      const ativa = regiao === key;
-                      return (
-                        <button
-                          key={key}
-                          type="button"
-                          onClick={() => setRegiao(key)}
-                          className={`min-h-[40px] shrink-0 rounded-full border px-4 text-sm transition ${
-                            ativa
-                              ? "border-[#0A2540] bg-[#0A2540] text-white"
-                              : "border-black/12 bg-white text-black/65 hover:border-black/30"
-                          }`}
-                        >
-                          {key === "todas" ? "Todas" : REGIAO_CURTA[key]}
-                        </button>
-                      );
-                    })}
-                  </div>
-
-                  <div className="mt-5 grid gap-3 sm:grid-cols-2">
-                    {rotasVisiveis.length === 0 && (
-                      <p className="text-sm text-black/50 sm:col-span-2">Nenhuma rota dessa categoria nessa região.</p>
+                    {tipoServico === "transfer" ? (
+                      <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                        <label className="block">
+                          <span className="mb-1.5 block text-xs font-medium text-black/60">Saindo de</span>
+                          <span className="relative block">
+                            <select
+                              value={origem}
+                              onChange={(e) => {
+                                const nova = e.target.value as LocalId | "";
+                                setOrigem(nova);
+                                // Se só há um destino possível, já preenche.
+                                const opcoes = TRECHOS.filter((t) => t.de === nova);
+                                setDestino(opcoes.length === 1 ? opcoes[0].para : "");
+                              }}
+                              className={CLASSE_SELECT}
+                            >
+                              <option value="">Escolha a origem</option>
+                              <optgroup label="Aeroportos">
+                                {LOCAIS.filter((l) => l.aeroporto).map((l) => (
+                                  <option key={l.id} value={l.id}>{l.nome}</option>
+                                ))}
+                              </optgroup>
+                              <optgroup label="Cidades">
+                                {LOCAIS.filter((l) => !l.aeroporto).map((l) => (
+                                  <option key={l.id} value={l.id}>{l.nome}</option>
+                                ))}
+                              </optgroup>
+                            </select>
+                            <IconeSeta />
+                          </span>
+                        </label>
+                        <label className="block">
+                          <span className="mb-1.5 block text-xs font-medium text-black/60">Indo para</span>
+                          <span className="relative block">
+                            <select
+                              value={destino}
+                              disabled={!origem}
+                              onChange={(e) => setDestino(e.target.value as LocalId | "")}
+                              className={CLASSE_SELECT}
+                            >
+                              <option value="">{origem ? "Escolha o destino" : "Escolha a origem primeiro"}</option>
+                              {destinosPossiveis.map((t) => (
+                                <option key={t.para} value={t.para}>
+                                  {t.para === t.de ? `${nomeLocal(t.para)} (dentro da cidade)` : nomeLocal(t.para)}
+                                </option>
+                              ))}
+                            </select>
+                            <IconeSeta />
+                          </span>
+                        </label>
+                      </div>
+                    ) : (
+                      <label className="mt-4 block">
+                        <span className="mb-1.5 block text-xs font-medium text-black/60">Qual passeio?</span>
+                        <span className="relative block">
+                          <select value={tourId} onChange={(e) => setTourId(e.target.value)} className={CLASSE_SELECT}>
+                            <option value="">Escolha o passeio</option>
+                            {REGIOES_MOTORISTA.map((r) => (
+                              <optgroup key={r.key} label={REGIAO_CURTA[r.key]}>
+                                {TOURS.filter((t) => t.regiao === r.key).map((t) => (
+                                  <option key={t.id} value={t.id}>{t.nome.replace(/ — 10 horas$/, "")}</option>
+                                ))}
+                              </optgroup>
+                            ))}
+                          </select>
+                          <IconeSeta />
+                        </span>
+                      </label>
                     )}
-                    {rotasVisiveis.map((rota) => {
-                      const qtd = quantidadeDe(rota.id);
-                      const ativo = qtd > 0;
-                      const preco = rota.precoUSD[selecao.veiculo];
-                      return (
-                        <div
-                          key={rota.id}
-                          className={`flex flex-col rounded-xl border p-4 transition ${
-                            ativo ? "border-[#2f80c9] bg-[#2f80c9]/[0.05] ring-1 ring-[#2f80c9]" : "border-black/10 bg-white hover:border-black/25"
-                          }`}
-                        >
-                          <p className="text-[15px] font-medium leading-snug text-black">{rota.nome}</p>
-                          <p className="mt-1 text-xs text-black/55">
-                            {rota.minutosLivres != null ? `Tempo incluído: ${rota.minutosLivres} min` : "10 horas incluídas"}
-                            {regiao === "todas" && <span className="text-black/40"> · {REGIAO_CURTA[rota.regiao]}</span>}
-                          </p>
-                          <div className="mt-4 flex items-center justify-between gap-3">
-                            <p className={`${inter.className} text-xl font-bold tabular-nums text-[#0A2540]`}>{formatUSD(preco)}</p>
-                            {ativo ? (
-                              <div className="flex items-center gap-1.5">
+
+                    {/* Resultado: preço do trecho + adicionar */}
+                    <div className="mt-4 flex min-h-[64px] items-center justify-between gap-4 border-t border-black/[0.08] pt-4">
+                      {rotaEscolhida ? (
+                        <>
+                          <div className="min-w-0">
+                            <p className={`${inter.className} text-2xl font-bold tabular-nums text-[#0A2540]`}>
+                              {formatUSD(rotaEscolhida.precoUSD[selecao.veiculo])}
+                            </p>
+                            <p className="text-xs text-black/55">
+                              {rotaEscolhida.minutosLivres != null ? `Até ${rotaEscolhida.minutosLivres} min incluídos` : "10 horas com motorista"}
+                            </p>
+                          </div>
+                          <button
+                            type="button"
+                            onClick={adicionarRotaEscolhida}
+                            className="h-11 shrink-0 rounded-full bg-[#1f6fb8] px-6 text-sm font-semibold text-white shadow-sm transition hover:bg-[#2f80c9]"
+                          >
+                            Adicionar
+                          </button>
+                        </>
+                      ) : (
+                        <p className="text-sm text-black/45">
+                          {tipoServico === "transfer" ? "Escolha origem e destino para ver o valor." : "Escolha um passeio para ver o valor."}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* O que já foi adicionado ao pedido */}
+                  {selecao.itens.length > 0 && (
+                    <div className="mt-6">
+                      <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-black/70">No seu pedido</p>
+                      <ul className="mt-2 divide-y divide-black/[0.06] rounded-xl border border-black/10">
+                        {selecao.itens.map((item) => {
+                          const rota = encontrarRotaMotorista(item.rotaId);
+                          if (!rota) return null;
+                          const q = Math.max(1, item.quantidade);
+                          return (
+                            <li
+                              key={item.rotaId}
+                              className={`flex items-center gap-3 px-4 py-3 ${ultimoAdicionado === item.rotaId ? "bg-[#2f80c9]/[0.05]" : ""}`}
+                            >
+                              <div className="min-w-0 flex-1">
+                                <p className="text-sm text-black/85">{rota.nome}</p>
+                                <p className={`${inter.className} text-xs tabular-nums text-black/50`}>
+                                  {q > 1 ? `${q} × ${formatUSD(rota.precoUSD[selecao.veiculo])} = ` : ""}
+                                  {formatUSD(rota.precoUSD[selecao.veiculo] * q)}
+                                </p>
+                              </div>
+                              <div className="flex shrink-0 items-center gap-1">
                                 <button
                                   type="button"
-                                  onClick={() => ajustarQuantidade(rota.id, qtd - 1)}
-                                  aria-label={qtd === 1 ? `Remover ${rota.nome}` : "Diminuir quantidade"}
-                                  className="flex h-11 w-11 items-center justify-center rounded-full border border-[#2f80c9]/40 bg-white text-lg text-[#1f6fb8] transition hover:bg-[#2f80c9]/10"
+                                  onClick={() => ajustarQuantidade(item.rotaId, q - 1)}
+                                  aria-label={q === 1 ? `Remover ${rota.nome}` : "Diminuir quantidade"}
+                                  className="flex h-9 w-9 items-center justify-center rounded-full border border-black/15 text-base text-black/60 transition hover:border-black/30"
                                 >
-                                  −
+                                  {q === 1 ? "×" : "−"}
                                 </button>
-                                <span className={`${inter.className} min-w-[2.5rem] text-center text-sm font-semibold text-[#0A2540]`}>
-                                  {qtd}
-                                </span>
+                                <span className={`${inter.className} w-6 text-center text-sm font-semibold tabular-nums text-[#0A2540]`}>{q}</span>
                                 <button
                                   type="button"
-                                  onClick={() => ajustarQuantidade(rota.id, qtd + 1)}
+                                  onClick={() => ajustarQuantidade(item.rotaId, q + 1)}
                                   aria-label="Adicionar mais um (outro dia)"
-                                  className="flex h-11 w-11 items-center justify-center rounded-full border border-[#2f80c9]/40 bg-white text-lg text-[#1f6fb8] transition hover:bg-[#2f80c9]/10"
+                                  className="flex h-9 w-9 items-center justify-center rounded-full border border-black/15 text-base text-black/60 transition hover:border-black/30"
                                 >
                                   +
                                 </button>
                               </div>
-                            ) : (
-                              <button
-                                type="button"
-                                onClick={() => ajustarQuantidade(rota.id, 1)}
-                                className="h-11 rounded-full border border-[#2f80c9] px-5 text-sm font-semibold text-[#1f6fb8] transition hover:bg-[#2f80c9] hover:text-white"
-                              >
-                                Selecionar
-                              </button>
-                            )}
-                          </div>
-                          {ativo && (
-                            <p className="mt-2 text-xs font-medium text-[#1f6fb8]">
-                              ✓ Selecionado{qtd > 1 ? ` · ${qtd} vezes (dias diferentes)` : ""}
-                            </p>
-                          )}
-                        </div>
-                      );
-                    })}
-                  </div>
+                            </li>
+                          );
+                        })}
+                      </ul>
+                      <p className="mt-2 text-xs text-black/45">Use + para repetir o mesmo trajeto em outro dia.</p>
+                    </div>
+                  )}
 
                   {/* Incluído / Não incluído / Opcionais — perto da decisão,
                       no lugar do antigo bloco "IMPORTANTE". */}
