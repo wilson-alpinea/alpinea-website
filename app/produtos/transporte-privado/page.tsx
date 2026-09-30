@@ -79,6 +79,12 @@ const VEICULO_CURTO: Record<VeiculoMotoristaId, { nome: string; perfil: string }
   coaster29: { nome: "Toyota Coaster 29", perfil: "Grupos grandes" },
 };
 
+// Menor preço de trajeto por veículo — mostrado como "a partir de" no
+// passo 1 e no resumo enquanto nenhuma rota foi escolhida.
+const PRECO_MINIMO_VEICULO = Object.fromEntries(
+  VEICULOS_MOTORISTA.map((v) => [v.id, Math.min(...ROTAS_MOTORISTA.map((r) => r.precoUSD[v.id]))]),
+) as Record<VeiculoMotoristaId, number>;
+
 const CATEGORIAS: { key: CategoriaRotaMotorista; nome: string }[] = [
   { key: "transfer-aeroporto", nome: "Aeroporto" },
   { key: "dentro-cidade", nome: "Cidade" },
@@ -440,8 +446,11 @@ export default function TransportePrivadoPage() {
           className={`${inter.className} mt-0.5 rounded-md text-3xl font-bold tabular-nums tracking-[-0.02em] text-[#0A2540]`}
           style={quantidadeItens > 0 ? { animation: "ajisai-destaque-preco 0.9s ease-out" } : undefined}
         >
-          {quantidadeItens > 0 ? formatUSD(totalUSD) : "—"}
+          {quantidadeItens > 0 ? formatUSD(totalUSD) : veiculoEscolhido ? formatUSD(PRECO_MINIMO_VEICULO[selecao.veiculo]) : "—"}
         </p>
+        {quantidadeItens === 0 && veiculoEscolhido && (
+          <p className="text-xs text-black/50">a partir de, por trajeto · valor final após escolher a rota</p>
+        )}
         {quantidadeItens > 0 && (
           <p className={`${inter.className} text-xs tabular-nums text-black/50`}>≈ {formatBRL(totalBRL)} na cotação do dia</p>
         )}
@@ -631,6 +640,11 @@ export default function TransportePrivadoPage() {
                             <span className="block text-[15px] font-medium text-black">{curto.nome}</span>
                             <span className="mt-0.5 block text-sm font-semibold text-[#0A2540]">Até {v.assentos} passageiros</span>
                             <span className="mt-0.5 block text-xs text-black/55">{curto.perfil}</span>
+                            <span className={`${inter.className} mt-2 block text-xs text-black/55`}>
+                              a partir de{" "}
+                              <span className="text-sm font-semibold tabular-nums text-[#0A2540]">{formatUSD(PRECO_MINIMO_VEICULO[v.id])}</span>
+                              <span className="text-black/45"> / trajeto</span>
+                            </span>
                           </span>
                           {ativo && (
                             <span className="absolute right-3 top-3 flex h-6 w-6 items-center justify-center rounded-full bg-[#2f80c9] text-white">
@@ -1098,7 +1112,7 @@ export default function TransportePrivadoPage() {
                   {quantidadeItens > 0
                     ? `${quantidadeItens} ${quantidadeItens === 1 ? "serviço" : "serviços"} · ${veiculoCurto.nome}`
                     : veiculoEscolhido
-                      ? veiculoCurto.nome
+                      ? `${veiculoCurto.nome} · a partir de`
                       : "Total estimado"}
                 </span>
                 <span
@@ -1106,7 +1120,7 @@ export default function TransportePrivadoPage() {
                   className={`${inter.className} block rounded text-xl font-bold tabular-nums text-[#0A2540]`}
                   style={quantidadeItens > 0 ? { animation: "ajisai-destaque-preco 0.9s ease-out" } : undefined}
                 >
-                  {quantidadeItens > 0 ? formatUSD(totalUSD) : "—"}
+                  {quantidadeItens > 0 ? formatUSD(totalUSD) : veiculoEscolhido ? formatUSD(PRECO_MINIMO_VEICULO[selecao.veiculo]) : "—"}
                 </span>
               </span>
               <span className="flex shrink-0 items-center gap-1 text-xs font-medium text-[#1f6fb8]">
