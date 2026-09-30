@@ -112,6 +112,8 @@ export async function POST(req: Request) {
     const dataServico = String(body.dataServico || "").trim();
     const horario = String(body.horario || "").trim();
     const numeroVoo = String(body.numeroVoo || "").trim();
+    // Nº de passageiros — 1ª etapa da página desde 30/set/2026 (Wilson).
+    const passageiros = Math.max(0, Math.min(99, Math.floor(Number(body.passageiros) || 0)));
     const opcionais: string[] = Array.isArray(body.opcionais)
       ? body.opcionais.map((o: unknown) => String(o).trim()).filter(Boolean).slice(0, 5)
       : [];
@@ -125,6 +127,7 @@ export async function POST(req: Request) {
       ["Total (US$)", `US$ ${totalUSD.toLocaleString("pt-BR")}`],
       ["Valor total (referência BRL)", totalBRL ? `R$ ${totalBRL.toLocaleString("pt-BR")}` : "Não calculado"],
       ["Data do serviço", dataServico || "Não informada"],
+      ["Passageiros", passageiros ? String(passageiros) : "Não informado"],
       ["Horário aproximado", horario || "Não informado"],
       ["Número do voo", numeroVoo || "Não informado"],
       ["Opcionais solicitados", opcionais.length ? opcionais.join(", ") : "Nenhum"],

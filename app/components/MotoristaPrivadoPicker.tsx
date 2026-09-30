@@ -128,8 +128,8 @@ export function MotoristaPrivadoPicker({
                   ativo ? "border-[#2f80c9]/60 bg-[#2f80c9]/10" : "border-black/10 bg-black/[0.02] hover:border-black/25"
                 }`}
               >
-                <div className="relative aspect-[3/2] w-full bg-white">
-                  <Image src={v.foto} alt={v.nome} fill sizes="200px" className="object-contain p-2" />
+                <div className="relative aspect-[3/2] w-full bg-[#0f1a24]">
+                  <Image src={v.foto} alt={v.nome} fill sizes="200px" className="object-cover" />
                   {/* Selo de capacidade sobre a foto — pedido do Wilson,
                       25/set/2026: "deixar mais visual o numero de lugares,
                       ideal que seja algo mais visual e impactante". Antes

@@ -1,6 +1,7 @@
 "use client";
 
-// Transporte Privado — configurador em 4 etapas.
+// Transporte Privado — configurador em 5 etapas (era 4 até 30/set/2026,
+// quando Data + Passageiros virou a 1ª etapa).
 //
 // Redesenho de UX pedido pelo Wilson em 29/set/2026 ("Melhore
 // profundamente a UX desta página de contratação de Transporte Privado,
@@ -56,6 +57,7 @@ import {
   POLITICA_CANCELAMENTO_MOTORISTA,
   ADICIONAL_MEET_GREET_USD,
   ADICIONAL_CADEIRINHA_USD,
+  type CategoriaRotaMotorista,
   type RegiaoRotaMotorista,
   type SelecaoMotorista,
   type VeiculoMotoristaId,
@@ -118,6 +120,16 @@ const ehAeroporto = (id: LocalId) => LOCAIS.find((l) => l.id === id)?.aeroporto 
 const TRECHOS_TRANSFER = TRECHOS.filter((t) => ehAeroporto(t.de) || ehAeroporto(t.para));
 const TRECHOS_INTERESTADUAL = TRECHOS.filter((t) => !ehAeroporto(t.de) && !ehAeroporto(t.para));
 type TipoServico = "transfer" | "interestadual" | "passeio";
+// Ícone pequeno de cada item no resumo (mesmas artes das abas e opcionais).
+const ICONE_CATEGORIA_ROTA: Record<CategoriaRotaMotorista, string> = {
+  "transfer-aeroporto": "/images/icone-transfer-aeroporto.png",
+  "dentro-cidade": "/images/icone-interestadual.png",
+  "tour-dia-inteiro": "/images/icone-passeio-10h.png",
+};
+function IconeResumo({ src }: { src?: string }) {
+  if (!src) return <span aria-hidden className="h-6 w-6 shrink-0" />;
+  return <Image src={src} alt="" width={24} height={24} className="h-6 w-6 shrink-0 object-contain" />;
+}
 const TOURS = ROTAS_MOTORISTA.filter((r) => r.categoria === "tour-dia-inteiro");
 
 const CLASSE_SELECT =
@@ -129,10 +141,15 @@ const REGIAO_CURTA: Record<RegiaoRotaMotorista, string> = {
   hiroshima: "Hiroshima",
 };
 
-const ETAPAS = ["Veículo", "Trajeto", "Dados", "Revisão"] as const;
-type Etapa = 1 | 2 | 3 | 4;
+// 5 etapas (Wilson, 30/set/2026): data e nº de passageiros vêm antes de
+// tudo — inspirado na primeira etapa da SIXT (quando + quantos numa
+// caixa só, com o botão de avançar ao lado). Veículo passou a ser a 2ª.
+const ETAPAS = ["Viagem", "Veículo", "Trajeto", "Dados", "Revisão"] as const;
+type Etapa = 1 | 2 | 3 | 4 | 5;
 
-const COMO_FUNCIONA = ["Escolha o veículo", "Escolha o trajeto", "Confirmamos", "Motorista te espera"];
+const MAX_PASSAGEIROS = Math.max(...VEICULOS_MOTORISTA.map((v) => v.assentos));
+
+const COMO_FUNCIONA = ["Data e passageiros", "Veículo", "Trajeto", "Confirmamos", "Motorista te espera"];
 
 // Máscara de WhatsApp: formato brasileiro por padrão; se começar com "+",
 // aceita número internacional sem forçar o formato.
@@ -278,6 +295,8 @@ export default function TransportePrivadoPage() {
   const [observacoes, setObservacoes] = useState("");
   const [tocados, setTocados] = useState<Record<string, boolean>>({});
   const [tentouAvancarDados, setTentouAvancarDados] = useState(false);
+  const [tentouAvancarViagem, setTentouAvancarViagem] = useState(false);
+  const [passageiros, setPassageiros] = useState(1);
 
   const [termosAceitos, setTermosAceitos] = useState(false);
   const [tentouEnviar, setTentouEnviar] = useState(false);
@@ -298,9 +317,10 @@ export default function TransportePrivadoPage() {
   // Privado) — só entra com pelo menos 1 serviço selecionado.
   const roteiroUSD = quantidadeItens > 0 ? ROTEIRO_PRECO_BASE / cambioCotacao : 0;
   // Opcionais com preço fixo entram no total (motorista bilíngue é sob
-  // consulta — não soma). Só contam com pelo menos 1 rota escolhida.
-  const meetGreetUSD = quantidadeItens > 0 && opcionalMeetGreet ? ADICIONAL_MEET_GREET_USD : 0;
-  const cadeirinhaUSD = quantidadeItens > 0 && opcionalCadeirinha ? ADICIONAL_CADEIRINHA_USD * qtdCadeirinhas : 0;
+  // consulta — não soma). Contam assim que marcados, mesmo antes de
+  // escolher a rota (o resumo mostra "a partir de" + opcionais).
+  const meetGreetUSD = opcionalMeetGreet ? ADICIONAL_MEET_GREET_USD : 0;
+  const cadeirinhaUSD = opcionalCadeirinha ? ADICIONAL_CADEIRINHA_USD * qtdCadeirinhas : 0;
   const adicionaisUSD = meetGreetUSD + cadeirinhaUSD;
   const totalUSD = motoristaUSD + roteiroUSD + adicionaisUSD;
   const totalBRL = totalUSD * cambioCotacao;
@@ -312,16 +332,27 @@ export default function TransportePrivadoPage() {
     nome: nome.trim().length < 3 ? "Informe seu nome completo." : null,
     email: /^\S+@\S+\.\S+$/.test(email.trim()) ? null : "Informe um e-mail válido.",
     whatsapp: digitosWhatsapp >= 10 ? null : "Informe um WhatsApp com DDD.",
-    dataServico: !dataServico ? "Informe a data do serviço." : dataServico < hojeISO() ? "A data precisa ser hoje ou depois." : null,
   };
+  const erroDataServico = !dataServico ? "Informe a data do serviço." : dataServico < hojeISO() ? "A data precisa ser hoje ou depois." : null;
   const dadosValidos = Object.values(errosDados).every((e) => e === null);
-  const mostrarErro = (campo: string) => (tocados[campo] || tentouAvancarDados ? errosDados[campo] : null);
+  const mostrarErro = (campo: string) =>
+    campo === "dataServico"
+      ? tocados[campo] || tentouAvancarViagem
+        ? erroDataServico
+        : null
+      : tocados[campo] || tentouAvancarDados
+        ? errosDados[campo]
+        : null;
   const tocar = (campo: string) => setTocados((t) => ({ ...t, [campo]: true }));
 
-  const etapa1Ok = veiculoEscolhido;
-  const etapa2Ok = quantidadeItens > 0;
-  const etapa3Ok = dadosValidos;
-  const podeEnviar = etapa1Ok && etapa2Ok && etapa3Ok && termosAceitos;
+  // Veículo só vale se comporta os passageiros informados na etapa 1.
+  const veiculoComporta = (assentos: number) => assentos >= passageiros;
+  const etapa1Ok = erroDataServico === null && passageiros >= 1;
+  const etapa2Ok = veiculoEscolhido && veiculoComporta(veiculo.assentos);
+  const etapa3Ok = quantidadeItens > 0;
+  const etapa4Ok = dadosValidos;
+  const etapasOk = [etapa1Ok, etapa2Ok, etapa3Ok, etapa4Ok];
+  const podeEnviar = etapa1Ok && etapa2Ok && etapa3Ok && etapa4Ok && termosAceitos;
 
   function irPara(nova: Etapa) {
     setEtapa(nova);
@@ -333,6 +364,14 @@ export default function TransportePrivadoPage() {
       const topo = alvo.getBoundingClientRect().top + window.scrollY - 56 + 24;
       if (window.scrollY > topo) window.scrollTo({ top: topo, behavior: "smooth" });
     }
+  }
+
+  function ajustarPassageiros(novo: number) {
+    const n = Math.max(1, Math.min(MAX_PASSAGEIROS, novo));
+    setPassageiros(n);
+    // Se o veículo já escolhido não comporta mais o grupo, desmarca — o
+    // cliente escolhe de novo na etapa 2.
+    if (veiculoEscolhido && veiculo.assentos < n) setVeiculoEscolhido(false);
   }
 
   function escolherVeiculo(id: VeiculoMotoristaId) {
@@ -359,23 +398,28 @@ export default function TransportePrivadoPage() {
   const cta: { rotulo: string; ativo: boolean; falta: string | null } =
     etapa === 1
       ? etapa1Ok
-        ? { rotulo: "Continuar", ativo: true, falta: null }
-        : { rotulo: "Escolha um veículo", ativo: false, falta: "Escolha um veículo para continuar" }
+        ? { rotulo: "Ver veículos", ativo: true, falta: null }
+        : { rotulo: "Ver veículos", ativo: true, falta: "Informe a data do serviço para continuar" }
       : etapa === 2
         ? etapa2Ok
           ? { rotulo: "Continuar", ativo: true, falta: null }
-          : { rotulo: "Escolha uma rota", ativo: false, falta: "Escolha ao menos uma rota para continuar" }
+          : { rotulo: "Escolha um veículo", ativo: false, falta: "Escolha um veículo para continuar" }
         : etapa === 3
-          ? { rotulo: "Continuar", ativo: etapa3Ok, falta: etapa3Ok ? null : "Complete seus dados para continuar" }
-          : {
-              rotulo: status === "enviando" ? "Enviando…" : "Solicitar transporte",
-              ativo: podeEnviar && status !== "enviando",
-              falta: termosAceitos ? null : "Aceite os Termos e Condições para solicitar",
-            };
+          ? etapa3Ok
+            ? { rotulo: "Continuar", ativo: true, falta: null }
+            : { rotulo: "Escolha uma rota", ativo: false, falta: "Escolha ao menos uma rota para continuar" }
+          : etapa === 4
+            ? { rotulo: "Continuar", ativo: etapa4Ok, falta: etapa4Ok ? null : "Complete seus dados para continuar" }
+            : {
+                rotulo: status === "enviando" ? "Enviando…" : "Solicitar transporte",
+                ativo: podeEnviar && status !== "enviando",
+                falta: termosAceitos ? null : "Aceite os Termos e Condições para solicitar",
+              };
 
   function acionarCta() {
     if (etapa === 1) {
       if (etapa1Ok) irPara(2);
+      else setTentouAvancarViagem(true);
       return;
     }
     if (etapa === 2) {
@@ -384,6 +428,10 @@ export default function TransportePrivadoPage() {
     }
     if (etapa === 3) {
       if (etapa3Ok) irPara(4);
+      return;
+    }
+    if (etapa === 4) {
+      if (etapa4Ok) irPara(5);
       else setTentouAvancarDados(true);
       return;
     }
@@ -394,7 +442,7 @@ export default function TransportePrivadoPage() {
     void enviar();
   }
 
-  const etapasFaltando = [etapa1Ok, etapa2Ok, etapa3Ok].filter((ok) => !ok).length;
+  const etapasFaltando = etapasOk.filter((ok) => !ok).length;
 
   async function enviar() {
     if (!podeEnviar || status === "enviando") return;
@@ -424,6 +472,7 @@ export default function TransportePrivadoPage() {
           whatsapp,
           dataServico,
           horario,
+          passageiros,
           numeroVoo,
           opcionais,
           observacoes,
@@ -472,17 +521,30 @@ export default function TransportePrivadoPage() {
     setTourId("");
   }
 
+  // Valor mostrado no resumo: total real com rota; sem rota, o preço
+  // "a partir de" do veículo somado aos opcionais já marcados.
+  const totalExibidoUSD: number | null =
+    quantidadeItens > 0 ? totalUSD : veiculoEscolhido ? PRECO_MINIMO_VEICULO[selecao.veiculo] + adicionaisUSD : null;
+  const animarTotal = totalExibidoUSD !== null;
+
   // Conteúdo do resumo — o mesmo no painel lateral (desktop) e na gaveta
   // da barra inferior (celular).
   const conteudoResumo = (
     <div>
       <p className={`${display.className} text-lg font-medium text-[#0A2540]`}>Seu transporte</p>
+      <p className="mt-2 text-sm text-black/80">
+        {dataServico && !erroDataServico ? formatarDataExtensa(dataServico) : <span className="text-black/45">Data a definir</span>}
+        <span className="text-black/50">
+          {" "}
+          · {passageiros} {passageiros === 1 ? "passageiro" : "passageiros"}
+        </span>
+      </p>
       {veiculoEscolhido ? (
-        <p className="mt-2 text-sm text-black/80">
+        <p className="mt-1 text-sm text-black/80">
           {veiculoCurto.nome} <span className="text-black/50">· até {veiculo.assentos} passageiros</span>
         </p>
       ) : (
-        <p className="mt-2 text-sm text-black/45">Nenhum veículo escolhido</p>
+        <p className="mt-1 text-sm text-black/45">Nenhum veículo escolhido</p>
       )}
       <div className="mt-4 space-y-2.5 border-t border-black/10 pt-4">
         {selecao.itens.length === 0 ? (
@@ -494,10 +556,13 @@ export default function TransportePrivadoPage() {
               if (!rota) return null;
               const q = Math.max(1, item.quantidade);
               return (
-                <div key={item.rotaId} className="flex items-start justify-between gap-3 text-sm">
-                  <span className="min-w-0 text-black/80">
-                    {q > 1 && <span className="text-black/50">{q}× </span>}
-                    {rota.nome}
+                <div key={item.rotaId} className="flex items-center justify-between gap-3 text-sm">
+                  <span className="flex min-w-0 items-center gap-2.5 text-black/80">
+                    <IconeResumo src={ICONE_CATEGORIA_ROTA[rota.categoria]} />
+                    <span className="min-w-0">
+                      {q > 1 && <span className="text-black/50">{q}× </span>}
+                      {rota.nome}
+                    </span>
                   </span>
                   <span className={`${inter.className} shrink-0 font-medium tabular-nums text-black`}>
                     {formatUSD(rota.precoUSD[selecao.veiculo] * q)}
@@ -505,32 +570,44 @@ export default function TransportePrivadoPage() {
                 </div>
               );
             })}
-            <div className="flex items-start justify-between gap-3 text-sm">
-              <span className="text-black/55">Roteiro Personalizado (incluso)</span>
+            <div className="flex items-center justify-between gap-3 text-sm">
+              <span className="flex min-w-0 items-center gap-2.5 text-black/55">
+                <IconeResumo src="/images/icone-servico-experiencia-sob-medida.png" />
+                Roteiro Personalizado (incluso)
+              </span>
               <span className={`${inter.className} shrink-0 tabular-nums text-black/70`}>{formatUSD(roteiroUSD)}</span>
             </div>
-            {meetGreetUSD > 0 && (
-              <div className="flex items-start justify-between gap-3 text-sm">
-                <span className="text-black/80">Meet &amp; Greet</span>
-                <span className={`${inter.className} shrink-0 font-medium tabular-nums text-black`}>{formatUSD(meetGreetUSD)}</span>
-              </div>
-            )}
-            {cadeirinhaUSD > 0 && (
-              <div className="flex items-start justify-between gap-3 text-sm">
-                <span className="text-black/80">
-                  {qtdCadeirinhas > 1 && <span className="text-black/50">{qtdCadeirinhas}× </span>}
-                  Cadeirinha infantil
-                </span>
-                <span className={`${inter.className} shrink-0 font-medium tabular-nums text-black`}>{formatUSD(cadeirinhaUSD)}</span>
-              </div>
-            )}
-            {opcionalBilingue && (
-              <div className="flex items-start justify-between gap-3 text-sm">
-                <span className="text-black/80">Motorista bilíngue</span>
-                <span className="shrink-0 text-xs text-black/50">sob consulta</span>
-              </div>
-            )}
           </>
+        )}
+        {meetGreetUSD > 0 && (
+          <div className="flex items-center justify-between gap-3 text-sm">
+            <span className="flex min-w-0 items-center gap-2.5 text-black/80">
+              <IconeResumo src="/images/icone-meet-greet.png" />
+              Meet &amp; Greet
+            </span>
+            <span className={`${inter.className} shrink-0 font-medium tabular-nums text-black`}>{formatUSD(meetGreetUSD)}</span>
+          </div>
+        )}
+        {cadeirinhaUSD > 0 && (
+          <div className="flex items-center justify-between gap-3 text-sm">
+            <span className="flex min-w-0 items-center gap-2.5 text-black/80">
+              <IconeResumo src="/images/icone-cadeirinha.png" />
+              <span>
+                {qtdCadeirinhas > 1 && <span className="text-black/50">{qtdCadeirinhas}× </span>}
+                Cadeirinha infantil
+              </span>
+            </span>
+            <span className={`${inter.className} shrink-0 font-medium tabular-nums text-black`}>{formatUSD(cadeirinhaUSD)}</span>
+          </div>
+        )}
+        {opcionalBilingue && (
+          <div className="flex items-center justify-between gap-3 text-sm">
+            <span className="flex min-w-0 items-center gap-2.5 text-black/80">
+              <IconeResumo src="/images/icone-motorista-bilingue.png" />
+              Motorista bilíngue
+            </span>
+            <span className="shrink-0 text-xs text-black/50">sob consulta</span>
+          </div>
         )}
       </div>
       <div className="mt-4 border-t border-black/10 pt-4">
@@ -538,14 +615,16 @@ export default function TransportePrivadoPage() {
         {/* `key` no total: a cada mudança o elemento remonta e a animação
             de destaque roda de novo — feedback imediato do preço. */}
         <p
-          key={Math.round(totalUSD)}
+          key={Math.round(totalExibidoUSD ?? 0)}
           className={`${inter.className} mt-0.5 rounded-md text-3xl font-bold tabular-nums tracking-[-0.02em] text-[#0A2540]`}
-          style={quantidadeItens > 0 ? { animation: "ajisai-destaque-preco 0.9s ease-out" } : undefined}
+          style={animarTotal ? { animation: "ajisai-destaque-preco 0.9s ease-out" } : undefined}
         >
-          {quantidadeItens > 0 ? formatUSD(totalUSD) : veiculoEscolhido ? formatUSD(PRECO_MINIMO_VEICULO[selecao.veiculo]) : "—"}
+          {totalExibidoUSD !== null ? formatUSD(totalExibidoUSD) : "—"}
         </p>
         {quantidadeItens === 0 && veiculoEscolhido && (
-          <p className="text-xs text-black/50">a partir de, por trajeto · valor final após escolher a rota</p>
+          <p className="text-xs text-black/50">
+            a partir de, por trajeto{adicionaisUSD > 0 ? " + opcionais" : ""} · valor final após escolher a rota
+          </p>
         )}
         {quantidadeItens > 0 && (
           <p className={`${inter.className} text-xs tabular-nums text-black/50`}>≈ {formatBRL(totalBRL)} na cotação do dia</p>
@@ -568,7 +647,7 @@ export default function TransportePrivadoPage() {
   );
 
   const textoStatus =
-    cta.falta ?? (etapa < 4 && etapasFaltando > 0 ? (etapasFaltando === 1 ? "Falta 1 etapa" : `Faltam ${etapasFaltando} etapas`) : null);
+    cta.falta ?? (etapa < 5 && etapasFaltando > 0 ? (etapasFaltando === 1 ? "Falta 1 etapa" : `Faltam ${etapasFaltando} etapas`) : null);
 
   return (
     <main className="min-h-screen overflow-x-clip bg-white pb-40 pt-14 text-black lg:pb-16 [&_input:not([type=checkbox])]:text-base [&_textarea]:text-base md:[&_input:not([type=checkbox])]:text-sm md:[&_textarea]:text-sm">
@@ -638,7 +717,7 @@ export default function TransportePrivadoPage() {
               </div>
             </section>
             <p className="mt-5 text-sm leading-relaxed text-black/70 md:text-base">
-              Escolha seu veículo e trajeto para consultar o valor e solicitar o transporte.
+              Informe a data e o número de passageiros, escolha o veículo e o trajeto para consultar o valor e solicitar o transporte.
             </p>
 
             {/* Como funciona — compacto, numa linha, sem competir com a
@@ -667,14 +746,10 @@ export default function TransportePrivadoPage() {
               {ETAPAS.map((nomeEtapa, i) => {
                 const numero = (i + 1) as Etapa;
                 const atual = etapa === numero;
-                const concluida = numero < etapa || (numero === 1 && etapa1Ok && etapa > 1) || (numero === 2 && etapa2Ok && etapa > 2) || (numero === 3 && etapa3Ok && etapa > 3);
+                const concluida = numero < etapa && etapasOk[numero - 1];
                 // Pode voltar pra qualquer etapa anterior; pra frente, só
                 // se as anteriores estiverem completas.
-                const liberada =
-                  numero <= etapa ||
-                  (numero === 2 && etapa1Ok) ||
-                  (numero === 3 && etapa1Ok && etapa2Ok) ||
-                  (numero === 4 && etapa1Ok && etapa2Ok && etapa3Ok);
+                const liberada = numero <= etapa || etapasOk.slice(0, numero - 1).every(Boolean);
                 return (
                   <div key={nomeEtapa} className="flex shrink-0 items-center gap-1 md:gap-3">
                     <button
@@ -708,15 +783,118 @@ export default function TransportePrivadoPage() {
 
           <div className="mx-auto grid max-w-6xl gap-10 px-5 pt-8 md:px-8 lg:grid-cols-[minmax(0,1fr)_340px]">
             <div className="min-w-0">
-              {/* ── ETAPA 1 — VEÍCULO ── */}
+              {/* ── ETAPA 1 — VIAGEM (data + passageiros, estilo SIXT) ── */}
               {etapa === 1 && (
                 <section aria-labelledby="titulo-etapa-1">
                   <h2 id="titulo-etapa-1" className={`${display.className} text-2xl font-medium text-[#0A2540]`}>
+                    Quando e quantas pessoas?
+                  </h2>
+                  <p className="mt-1.5 text-sm text-black/60">Mostramos só os veículos que comportam o seu grupo.</p>
+                  <div className="mt-6 rounded-2xl border border-black/10 bg-white p-4 shadow-[0_10px_30px_-22px_rgba(10,37,64,0.35)] sm:p-5">
+                    <div className="grid gap-4 md:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)_auto] md:items-end">
+                      <div className="min-w-0">
+                        <span className="mb-1.5 block text-xs font-medium text-black/60">Data do serviço</span>
+                        <div
+                          className={`grid grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)] overflow-hidden rounded-xl border bg-white ${
+                            mostrarErro("dataServico") ? "border-red-400" : "border-black/15"
+                          } focus-within:border-[#2f80c9] focus-within:ring-1 focus-within:ring-[#2f80c9]`}
+                        >
+                          <label className="flex h-12 min-w-0 items-center gap-2 px-3">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="h-5 w-5 shrink-0 text-black/55" aria-hidden="true">
+                              <rect x="3" y="5" width="18" height="16" rx="2" />
+                              <path d="M3 10h18M8 3v4M16 3v4" />
+                            </svg>
+                            <span className="sr-only">Data do serviço</span>
+                            <input
+                              type="date"
+                              min={hojeISO()}
+                              value={dataServico}
+                              onChange={(e) => setDataServico(e.target.value)}
+                              onBlur={() => tocar("dataServico")}
+                              className="h-full w-full min-w-0 appearance-none bg-transparent text-base text-black focus:outline-none md:text-[15px]"
+                            />
+                          </label>
+                          <label className="flex h-12 min-w-0 items-center gap-2 border-l border-black/10 px-3">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="h-5 w-5 shrink-0 text-black/55" aria-hidden="true">
+                              <circle cx="12" cy="12" r="9" />
+                              <path d="M12 7v5l3 2" />
+                            </svg>
+                            <span className="sr-only">Horário aproximado (opcional)</span>
+                            <input
+                              type="time"
+                              value={horario}
+                              onChange={(e) => setHorario(e.target.value)}
+                              className="h-full w-full min-w-0 appearance-none bg-transparent text-base text-black focus:outline-none md:text-[15px]"
+                            />
+                          </label>
+                        </div>
+                        {mostrarErro("dataServico") ? (
+                          <p className="mt-1.5 text-xs text-red-600">{mostrarErro("dataServico")}</p>
+                        ) : (
+                          <p className="mt-1.5 text-xs text-black/45">Horário opcional. Vários dias? Informe o primeiro — os demais combinamos pelo WhatsApp.</p>
+                        )}
+                      </div>
+                      <div>
+                        <span className="mb-1.5 block text-xs font-medium text-black/60">Passageiros</span>
+                        <div className="flex h-12 items-center justify-between gap-2 rounded-xl border border-black/15 bg-white px-2">
+                          <svg viewBox="0 0 24 24" fill="currentColor" className="ml-1 h-5 w-5 shrink-0 text-black/55" aria-hidden="true">
+                            <path d="M12 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm0 2c-4 0-8 2-8 5v1h16v-1c0-3-4-5-8-5Z" />
+                          </svg>
+                          <button
+                            type="button"
+                            onClick={() => ajustarPassageiros(passageiros - 1)}
+                            disabled={passageiros <= 1}
+                            aria-label="Menos um passageiro"
+                            className="ml-auto flex h-9 w-9 items-center justify-center rounded-full border border-black/15 text-lg text-black/70 transition hover:border-black/35 disabled:opacity-30"
+                          >
+                            −
+                          </button>
+                          <span className={`${inter.className} w-7 text-center text-base font-semibold tabular-nums text-[#0A2540]`} aria-live="polite">
+                            {passageiros}
+                          </span>
+                          <button
+                            type="button"
+                            onClick={() => ajustarPassageiros(passageiros + 1)}
+                            disabled={passageiros >= MAX_PASSAGEIROS}
+                            aria-label="Mais um passageiro"
+                            className="flex h-9 w-9 items-center justify-center rounded-full border border-black/15 text-lg text-black/70 transition hover:border-black/35 disabled:opacity-30"
+                          >
+                            +
+                          </button>
+                        </div>
+                        <p className="mt-1.5 text-xs text-black/45">
+                          {passageiros >= MAX_PASSAGEIROS ? `Mais de ${MAX_PASSAGEIROS}? Fale com a nossa equipe.` : "Incluindo crianças."}
+                        </p>
+                      </div>
+                      <div className="md:pb-[22px]">
+                        <button
+                          type="button"
+                          onClick={acionarCta}
+                          className="flex h-12 w-full items-center justify-center rounded-xl bg-[#1f6fb8] px-6 text-sm font-semibold text-white transition hover:bg-[#2f80c9] md:w-auto"
+                        >
+                          Ver veículos
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </section>
+              )}
+
+              {/* ── ETAPA 2 — VEÍCULO ── */}
+              {etapa === 2 && (
+                <section aria-labelledby="titulo-etapa-2">
+                  <h2 id="titulo-etapa-2" className={`${display.className} text-2xl font-medium text-[#0A2540]`}>
                     Escolha o veículo
                   </h2>
-                  <p className="mt-1.5 text-sm text-black/60">O valor de cada trajeto depende do veículo escolhido.</p>
+                  <p className="mt-1.5 text-sm text-black/60">
+                    Para{" "}
+                    <button type="button" onClick={() => irPara(1)} className="font-medium text-[#1f6fb8] underline decoration-[#1f6fb8]/30 underline-offset-2">
+                      {passageiros} {passageiros === 1 ? "passageiro" : "passageiros"}
+                    </button>
+                    . O valor de cada trajeto depende do veículo escolhido.
+                  </p>
                   <div className="mt-6 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
-                    {VEICULOS_MOTORISTA.map((v) => {
+                    {VEICULOS_MOTORISTA.filter((v) => veiculoComporta(v.assentos)).map((v) => {
                       const ativo = veiculoEscolhido && selecao.veiculo === v.id;
                       const curto = VEICULO_CURTO[v.id];
                       return (
@@ -731,8 +909,8 @@ export default function TransportePrivadoPage() {
                               : "border-black/10 bg-white hover:border-black/25"
                           }`}
                         >
-                          <span className="relative block h-20 w-28 shrink-0 sm:aspect-[3/2] sm:h-auto sm:w-full">
-                            <Image src={v.foto} alt="" fill sizes="(min-width: 640px) 260px, 112px" className="object-contain p-2 sm:p-4" />
+                          <span className="relative block h-20 w-28 shrink-0 overflow-hidden rounded-lg bg-[#0f1a24] sm:aspect-[3/2] sm:h-auto sm:w-full sm:rounded-none">
+                            <Image src={v.foto} alt="" fill sizes="(min-width: 640px) 260px, 112px" className="object-cover" />
                           </span>
                           <span className="block min-w-0 sm:border-t sm:border-black/[0.06] sm:p-4">
                             <span className="block text-[15px] font-medium text-black">{curto.nome}</span>
@@ -762,15 +940,15 @@ export default function TransportePrivadoPage() {
                 </section>
               )}
 
-              {/* ── ETAPA 2 — TRAJETO ── */}
-              {etapa === 2 && (
-                <section aria-labelledby="titulo-etapa-2">
-                  <h2 id="titulo-etapa-2" className={`${display.className} text-2xl font-medium text-[#0A2540]`}>
+              {/* ── ETAPA 3 — TRAJETO ── */}
+              {etapa === 3 && (
+                <section aria-labelledby="titulo-etapa-3">
+                  <h2 id="titulo-etapa-3" className={`${display.className} text-2xl font-medium text-[#0A2540]`}>
                     Escolha uma ou mais rotas
                   </h2>
                   <p className="mt-1.5 text-sm text-black/60">
                     Informe de onde sai e para onde vai. Preços para{" "}
-                    <button type="button" onClick={() => irPara(1)} className="font-medium text-[#1f6fb8] underline decoration-[#1f6fb8]/30 underline-offset-2">
+                    <button type="button" onClick={() => irPara(2)} className="font-medium text-[#1f6fb8] underline decoration-[#1f6fb8]/30 underline-offset-2">
                       {veiculoCurto.nome}
                     </button>
                     .
@@ -1060,10 +1238,10 @@ export default function TransportePrivadoPage() {
                 </section>
               )}
 
-              {/* ── ETAPA 3 — DADOS ── */}
-              {etapa === 3 && (
-                <section aria-labelledby="titulo-etapa-3">
-                  <h2 id="titulo-etapa-3" className={`${display.className} text-2xl font-medium text-[#0A2540]`}>
+              {/* ── ETAPA 4 — DADOS ── */}
+              {etapa === 4 && (
+                <section aria-labelledby="titulo-etapa-4">
+                  <h2 id="titulo-etapa-4" className={`${display.className} text-2xl font-medium text-[#0A2540]`}>
                     Seus dados
                   </h2>
                   <p className="mt-1.5 text-sm text-black/60">Usamos esses dados só para confirmar o seu transporte.</p>
@@ -1103,28 +1281,6 @@ export default function TransportePrivadoPage() {
                         className={classeInput(!!mostrarErro("whatsapp"))}
                       />
                     </Campo>
-                    <Campo
-                      rotulo="Data do serviço"
-                      erro={mostrarErro("dataServico")}
-                      ajuda={quantidadeItens > 1 ? "Com mais de um serviço, informe a data do primeiro — as demais combinamos pelo WhatsApp." : undefined}
-                    >
-                      <input
-                        type="date"
-                        min={hojeISO()}
-                        value={dataServico}
-                        onChange={(e) => setDataServico(e.target.value)}
-                        onBlur={() => tocar("dataServico")}
-                        className={`${classeInput(!!mostrarErro("dataServico"))} block appearance-none text-left`}
-                      />
-                    </Campo>
-                    <Campo rotulo="Horário aproximado (opcional)">
-                      <input
-                        type="time"
-                        value={horario}
-                        onChange={(e) => setHorario(e.target.value)}
-                        className={`${classeInput(false)} block appearance-none text-left`}
-                      />
-                    </Campo>
                     <Campo rotulo="Número do voo (opcional)">
                       <input
                         type="text"
@@ -1140,7 +1296,7 @@ export default function TransportePrivadoPage() {
                           value={observacoes}
                           onChange={(e) => setObservacoes(e.target.value)}
                           rows={3}
-                          placeholder="Datas da viagem, número do voo, quantidade de bagagem ou solicitações especiais."
+                          placeholder="Demais datas, quantidade de bagagem ou solicitações especiais."
                           className="w-full min-w-0 rounded-lg border border-black/15 bg-white px-3.5 py-3 text-sm text-black focus:border-[#2f80c9] focus:outline-none focus:ring-2 focus:ring-[#2f80c9]/20"
                         />
                       </Campo>
@@ -1149,17 +1305,31 @@ export default function TransportePrivadoPage() {
                 </section>
               )}
 
-              {/* ── ETAPA 4 — REVISÃO ── */}
-              {etapa === 4 && (
-                <section aria-labelledby="titulo-etapa-4">
-                  <h2 id="titulo-etapa-4" className={`${display.className} text-2xl font-medium text-[#0A2540]`}>
+              {/* ── ETAPA 5 — REVISÃO ── */}
+              {etapa === 5 && (
+                <section aria-labelledby="titulo-etapa-5">
+                  <h2 id="titulo-etapa-5" className={`${display.className} text-2xl font-medium text-[#0A2540]`}>
                     Revise seu pedido
                   </h2>
                   <dl className="mt-6 divide-y divide-black/[0.07] border-y border-black/[0.07]">
                     {[
                       {
-                        rotulo: "Veículo",
+                        rotulo: "Data e passageiros",
                         voltar: 1 as Etapa,
+                        conteudo: (
+                          <>
+                            {formatarDataExtensa(dataServico)}
+                            {horario && <span className="text-black/50"> · por volta das {horario}</span>}
+                            <span className="text-black/50">
+                              {" "}
+                              · {passageiros} {passageiros === 1 ? "passageiro" : "passageiros"}
+                            </span>
+                          </>
+                        ),
+                      },
+                      {
+                        rotulo: "Veículo",
+                        voltar: 2 as Etapa,
                         conteudo: (
                           <>
                             {veiculoCurto.nome} <span className="text-black/50">· até {veiculo.assentos} passageiros</span>
@@ -1168,7 +1338,7 @@ export default function TransportePrivadoPage() {
                       },
                       {
                         rotulo: "Serviços",
-                        voltar: 2 as Etapa,
+                        voltar: 3 as Etapa,
                         conteudo: (
                           <div className="space-y-1">
                             {selecao.itens.map((item) => {
@@ -1198,24 +1368,14 @@ export default function TransportePrivadoPage() {
                         ),
                       },
                       {
-                        rotulo: "Data",
-                        voltar: 3 as Etapa,
-                        conteudo: (
-                          <>
-                            {formatarDataExtensa(dataServico)}
-                            {horario && <span className="text-black/50"> · por volta das {horario}</span>}
-                            {numeroVoo && <span className="text-black/50"> · voo {numeroVoo}</span>}
-                          </>
-                        ),
-                      },
-                      {
                         rotulo: "Dados do passageiro",
-                        voltar: 3 as Etapa,
+                        voltar: 4 as Etapa,
                         conteudo: (
                           <div className="space-y-0.5">
                             <p>{nome}</p>
                             <p className="text-black/60">{whatsapp}</p>
                             <p className="text-black/60">{email}</p>
+                            {numeroVoo && <p className="text-black/60">Voo {numeroVoo}</p>}
                           </div>
                         ),
                       },
@@ -1314,11 +1474,11 @@ export default function TransportePrivadoPage() {
                       : "Total estimado"}
                 </span>
                 <span
-                  key={Math.round(totalUSD)}
+                  key={Math.round(totalExibidoUSD ?? 0)}
                   className={`${inter.className} block rounded text-xl font-bold tabular-nums text-[#0A2540]`}
-                  style={quantidadeItens > 0 ? { animation: "ajisai-destaque-preco 0.9s ease-out" } : undefined}
+                  style={animarTotal ? { animation: "ajisai-destaque-preco 0.9s ease-out" } : undefined}
                 >
-                  {quantidadeItens > 0 ? formatUSD(totalUSD) : veiculoEscolhido ? formatUSD(PRECO_MINIMO_VEICULO[selecao.veiculo]) : "—"}
+                  {totalExibidoUSD !== null ? formatUSD(totalExibidoUSD) : "—"}
                 </span>
               </span>
               <span className="flex shrink-0 items-center gap-1 text-xs font-medium text-[#1f6fb8]">

@@ -63,7 +63,7 @@ export const VEICULOS_MOTORISTA: VeiculoMotorista[] = [
     nome: "Toyota Alphard",
     assentos: 8,
     tipo: "van",
-    foto: "/images/carro-alphard.webp",
+    foto: "/images/carro-alphard-estudio.webp",
     tagline: "Minivan premium — bancos reclináveis, cabine mais silenciosa",
   },
   {
@@ -71,7 +71,7 @@ export const VEICULOS_MOTORISTA: VeiculoMotorista[] = [
     nome: "Toyota Hiace (10 lugares)",
     assentos: 10,
     tipo: "van",
-    foto: "/images/carro-hiace.webp",
+    foto: "/images/carro-hiace-estudio.webp",
     tagline: "Bagageiro amplo — ideal para grupos com mais bagagem",
   },
   {
@@ -79,7 +79,7 @@ export const VEICULOS_MOTORISTA: VeiculoMotorista[] = [
     nome: "Toyota Hiace (14 lugares)",
     assentos: 14,
     tipo: "van",
-    foto: "/images/carro-hiace.webp",
+    foto: "/images/carro-hiace-estudio.webp",
     tagline: "Configuração estendida da Hiace, para grupos de até 14 pessoas",
   },
   {
@@ -87,7 +87,7 @@ export const VEICULOS_MOTORISTA: VeiculoMotorista[] = [
     nome: "Toyota Coaster (18 lugares)",
     assentos: 18,
     tipo: "onibus",
-    foto: "/images/carro-coaster.png",
+    foto: "/images/carro-coaster-estudio.webp",
     tagline: "Micro-ônibus executivo — para grupos grandes ou famílias estendidas",
   },
   {
@@ -95,7 +95,7 @@ export const VEICULOS_MOTORISTA: VeiculoMotorista[] = [
     nome: "Toyota Coaster (21 lugares)",
     assentos: 21,
     tipo: "onibus",
-    foto: "/images/carro-coaster.png",
+    foto: "/images/carro-coaster-estudio.webp",
     tagline: "Mesma categoria Coaster, configuração de 21 lugares",
   },
   {
@@ -103,7 +103,7 @@ export const VEICULOS_MOTORISTA: VeiculoMotorista[] = [
     nome: "Toyota Coaster (29 lugares)",
     assentos: 29,
     tipo: "onibus",
-    foto: "/images/carro-coaster.png",
+    foto: "/images/carro-coaster-estudio.webp",
     tagline: "Maior configuração da Coaster, para grupos de até 29 pessoas",
   },
 ];
