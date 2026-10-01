@@ -33,6 +33,7 @@ async function notificarPorEmail(params: {
   whatsapp: string;
   resumoTexto: string;
   resumoHtml: string;
+  nomeProduto: string;
 }) {
   const apiKey = process.env.RESEND_API_KEY;
   if (!apiKey) {
@@ -51,7 +52,7 @@ async function notificarPorEmail(params: {
         from: "Alpinea <contato@alpinea.io>",
         to: ["wilson@alpinea.io"],
         reply_to: params.email || undefined,
-        subject: `[${TAG_SELF_SERVICE}] Novo pedido de Transporte Privado — ${params.nome}`,
+        subject: `[${TAG_SELF_SERVICE}] Novo pedido de ${params.nomeProduto} — ${params.nome}`,
         text: params.resumoTexto,
         html: params.resumoHtml,
       }),
@@ -110,8 +111,18 @@ export async function POST(req: Request) {
     // opcionais Meet & Greet / cadeirinha / motorista bilíngue como
     // checkbox). Todos opcionais aqui; só entram no resumo do lead.
     const dataServico = String(body.dataServico || "").trim();
-    const horario = String(body.horario || "").trim();
     const numeroVoo = String(body.numeroVoo || "").trim();
+    // Período no Japão e avisos da seleção (dias sem veículo, transfer
+    // sem o par) — serviços por dia desde 30/set/2026 (Wilson).
+    const dataChegada = String(body.dataChegada || "").trim();
+    const dataPartida = String(body.dataPartida || "").trim();
+    const avisos: string[] = Array.isArray(body.avisos)
+      ? body.avisos.map((a: unknown) => String(a).trim()).filter(Boolean).slice(0, 20)
+      : [];
+    // Mesmo endpoint para os dois produtos de transporte em /produtos —
+    // Transfer Aeroporto virou página própria em 30/set/2026 (Wilson).
+    const ehTransfer = body.produto === "transfer-aeroporto";
+    const nomeProduto = ehTransfer ? "Transfer Aeroporto" : "Transporte Privado";
     // Nº de passageiros — 1ª etapa da página desde 30/set/2026 (Wilson).
     const passageiros = Math.max(0, Math.min(99, Math.floor(Number(body.passageiros) || 0)));
     const opcionais: string[] = Array.isArray(body.opcionais)
@@ -119,17 +130,17 @@ export async function POST(req: Request) {
       : [];
 
     const linhasResumo: [string, string][] = [
-      ["Veículo", veiculo],
-      ["Rotas/tours selecionados", resumo || "Não especificado"],
+      ["Veículo(s)", veiculo],
+      ["Serviços (dia — rota (veículo))", resumo || "Não especificado"],
+      ["Avisos mostrados ao cliente", avisos.length ? avisos.join(" | ") : "Nenhum"],
       ["Motorista privado (US$)", `US$ ${motoristaUSD.toLocaleString("pt-BR")}`],
       ["Roteiro Personalizado (US$)", `US$ ${roteiroUSD.toLocaleString("pt-BR")}`],
       ["Opcionais (US$)", `US$ ${adicionaisUSD.toLocaleString("pt-BR")}`],
       ["Total (US$)", `US$ ${totalUSD.toLocaleString("pt-BR")}`],
       ["Valor total (referência BRL)", totalBRL ? `R$ ${totalBRL.toLocaleString("pt-BR")}` : "Não calculado"],
-      ["Data do serviço", dataServico || "Não informada"],
+      ["Período no Japão", dataChegada || dataPartida ? `${dataChegada || "—"} a ${dataPartida || "—"}` : dataServico || "Não informado"],
       ["Passageiros", passageiros ? String(passageiros) : "Não informado"],
-      ["Horário aproximado", horario || "Não informado"],
-      ["Número do voo", numeroVoo || "Não informado"],
+      ["Voo(s)", numeroVoo || "Não informado"],
       ["Opcionais solicitados", opcionais.length ? opcionais.join(", ") : "Nenhum"],
       ["Forma de pagamento escolhida", formaPagamento || "A combinar pelo WhatsApp"],
       ["Termos e condições aceitos", termosAceitos ? "Sim" : "Não confirmado"],
@@ -137,7 +148,7 @@ export async function POST(req: Request) {
     ];
 
     const resumoTexto = [
-      "Novo pedido — Transporte Privado (self-checkout)",
+      `Novo pedido — ${nomeProduto} (self-checkout)`,
       "",
       `Nome: ${nome}`,
       `E-mail: ${email}`,
@@ -148,7 +159,7 @@ export async function POST(req: Request) {
 
     const resumoHtml = `
       <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #111;">
-        <h2>Novo pedido — Transporte Privado (self-checkout)</h2>
+        <h2>Novo pedido — ${escapeHtml(nomeProduto)} (self-checkout)</h2>
         <p><strong>Nome:</strong> ${escapeHtml(nome)}</p>
         <p><strong>E-mail:</strong> ${escapeHtml(email)}</p>
         <p><strong>WhatsApp:</strong> ${escapeHtml(whatsapp)}</p>
@@ -164,11 +175,11 @@ export async function POST(req: Request) {
         nome,
         email: email || null,
         telefone: whatsapp || null,
-        origem: `${TAG_SELF_SERVICE} — Transporte Privado (/produtos)`,
+        origem: `${TAG_SELF_SERVICE} — ${nomeProduto} (/produtos)`,
         produto_principal: "servico_individual",
-        produto_secundario: ["transporte_privado"],
+        produto_secundario: [ehTransfer ? "transfer_aeroporto_hotel" : "transporte_privado"],
         valor_proposta: totalBRL,
-        data_viagem: dataServico || null,
+        data_viagem: dataChegada || dataServico || null,
         estagio: "novo_lead",
         observacoes: `[${TAG_SELF_SERVICE}]\n${resumoTexto}`,
       })
@@ -193,7 +204,7 @@ export async function POST(req: Request) {
       console.error("Erro ao gravar interação (transporte-privado-selfservice):", erroInteracao);
     }
 
-    await notificarPorEmail({ nome, email, whatsapp, resumoTexto, resumoHtml });
+    await notificarPorEmail({ nome, email, whatsapp, resumoTexto, resumoHtml, nomeProduto });
 
     return NextResponse.json({ success: true, clienteId: cliente.id }, { status: 200 });
   } catch (error) {

@@ -85,7 +85,7 @@ const PRODUTOS: Record<
     // Pacote Personalizado — ver DIARIA_GUIA_USD em CustomPackageCard.tsx).
     precoBRL: null,
     precoUSD: 350,
-    href: "/guia-turistico",
+    href: "/produtos/guia-turistico",
   },
 };
 
@@ -355,9 +355,12 @@ export default function ProdutosPage() {
             </h2>
 
             <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-6">
+              {/* Passagens Aéreas virou página própria no template do
+                  Transporte Privado — pedido do Wilson, 30/set/2026 (checkout
+                  manual, sem Stone). O popup com /passagens deixou de abrir
+                  daqui. */}
               <ProductSelectorCard
-                href="/passagens"
-                onClick={() => setPassagensModalOpen(true)}
+                href="/produtos/passagens-aereas"
                 icon="/images/produtos/passagem-aerea.png"
                 iconWidth={449}
                 iconHeight={284}
@@ -366,9 +369,11 @@ export default function ProdutosPage() {
                 cta="Ver passagens"
                 className="lg:col-span-2"
               />
+              {/* Hotéis virou página própria no template do Transporte
+                  Privado — pedido do Wilson, 30/set/2026 (checkout manual).
+                  O popup com o HotelQuoteCalculator deixou de abrir daqui. */}
               <ProductSelectorCard
-                href="/viagem-personalizada?abrir=hotel"
-                onClick={() => setHoteisModalOpen(true)}
+                href="/produtos/hoteis"
                 icon="/images/produtos/hoteis.png"
                 iconWidth={435}
                 iconHeight={366}
@@ -377,9 +382,10 @@ export default function ProdutosPage() {
                 cta="Ver hotéis"
                 className="lg:col-span-2"
               />
+              {/* Guia Turístico virou página própria no template do
+                  Transporte Privado — pedido do Wilson, 30/set/2026. */}
               <ProductSelectorCard
-                href="/guia-turistico"
-                onClick={() => setGuiaModalOpen(true)}
+                href="/produtos/guia-turistico"
                 icon="/images/produtos/guia-turistico.png"
                 iconWidth={359}
                 iconHeight={444}
@@ -398,14 +404,30 @@ export default function ProdutosPage() {
                 iconWidth={1536}
                 iconHeight={1024}
                 title="Transporte Privado"
-                description="Transfers e deslocamentos privativos com conforto e motorista particular."
+                description="Motorista particular à disposição para deslocamentos e passeios de dia inteiro."
                 requirement="Inclui Roteiro Personalizado"
                 cta="Calcular meu transporte"
                 className="lg:col-span-2"
               />
+              {/* Transfer Aeroporto separado do Transporte Privado — pedido
+                  do Wilson, 30/set/2026 ("motorista particular e transfer
+                  hotel-aeroporto/aeroporto-hotel tem que ser serviços
+                  diferentes"). Ícone provisório (arte de linha 160px) até
+                  existir uma ilustração no padrão dos outros cards. */}
               <ProductSelectorCard
-                href="/servicos-adicionais"
-                onClick={() => setServicosModalOpen(true)}
+                href="/produtos/transfer-aeroporto"
+                icon="/images/icone-transfer-aeroporto.png"
+                iconWidth={160}
+                iconHeight={160}
+                title="Transfer Aeroporto"
+                description="Do aeroporto ao hotel e do hotel ao aeroporto, com motorista esperando no desembarque."
+                cta="Calcular meu transfer"
+                className="lg:col-span-2"
+              />
+              {/* Serviços adicionais virou página própria no template do
+                  Transporte Privado — pedido do Wilson, 30/set/2026. */}
+              <ProductSelectorCard
+                href="/produtos/servicos-adicionais"
                 icon="/images/produtos/servicos-adicionais.png"
                 iconWidth={1254}
                 iconHeight={1254}

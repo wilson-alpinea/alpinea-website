@@ -1,7 +1,10 @@
 "use client";
 
 // Transporte Privado — configurador em 5 etapas (era 4 até 30/set/2026,
-// quando Data + Passageiros virou a 1ª etapa).
+// quando Período + Passageiros virou a 1ª etapa). Desde 30/set/2026 cada
+// serviço tem dia e veículo próprios, com avisos de dias sem veículo e de
+// transfer de aeroporto sem o par (ver ServicoPedido abaixo); os Termos
+// ficam numa caixa na própria etapa de revisão.
 //
 // Redesenho de UX pedido pelo Wilson em 29/set/2026 ("Melhore
 // profundamente a UX desta página de contratação de Transporte Privado,
@@ -37,10 +40,8 @@
 // rotas continuam vindo de app/lib/motoristaPrivadoRotas.ts (mesma fonte
 // da Calculadora Reversa e do self-service).
 
-import { useEffect, useRef, useState, type ReactNode } from "react";
-import { createPortal } from "react-dom";
+import { useRef, useState } from "react";
 import Image from "next/image";
-import { Inter } from "next/font/google";
 import Link from "next/link";
 import { formatBRL, formatUSD, useCambioUSD } from "../../hooks/useCambioUSD";
 import { ROTEIRO_PRECO_BASE } from "../../components/CustomPackageCard";
@@ -48,236 +49,89 @@ import {
   VEICULOS_MOTORISTA,
   ROTAS_MOTORISTA,
   REGIOES_MOTORISTA,
-  SELECAO_MOTORISTA_VAZIA,
-  calcularTotalMotoristaUSD,
-  contarItensMotorista,
   encontrarRotaMotorista,
   encontrarVeiculoMotorista,
-  resumoSelecaoMotorista,
   POLITICA_CANCELAMENTO_MOTORISTA,
   ADICIONAL_MEET_GREET_USD,
   ADICIONAL_CADEIRINHA_USD,
-  type CategoriaRotaMotorista,
   type RegiaoRotaMotorista,
-  type SelecaoMotorista,
   type VeiculoMotoristaId,
 } from "../../lib/motoristaPrivadoRotas";
 import { display, WHATSAPP_NUMBER, hojeISO } from "../page";
+import {
+  inter,
+  VEICULO_CURTO,
+  PRECO_MINIMO_VEICULO,
+  LOCAIS,
+  nomeLocal,
+  TRECHOS_INTERESTADUAL,
+  ICONE_CATEGORIA_ROTA,
+  IconeResumo,
+  CLASSE_SELECT,
+  MAX_PASSAGEIROS,
+  MAX_DIAS_VIAGEM,
+  diasEntre,
+  formatarDataCurta,
+  formatarDiaMes,
+  listarNatural,
+  mascararWhatsapp,
+  IconeCheck,
+  Modal,
+  Campo,
+  classeInput,
+  BlocoAvisos,
+  IconeSeta,
+  TextoTermosTransporte,
+  type LocalId,
+} from "../../components/transporte/compartilhado";
 
-const inter = Inter({ subsets: ["latin"], weight: ["500", "600", "700"] });
-
-// Nome curto + diferenciação curta por veículo (só nesta página — os
-// nomes completos de motoristaPrivadoRotas.ts continuam valendo no
-// resumo do CRM e na Calculadora Reversa). Pedido do Wilson: "Alphard —
-// conforto premium · Hiace 10 — grupos pequenos · Hiace 14 — grupos
-// médios · Coaster 18/21/29 — grupos grandes".
-const VEICULO_CURTO: Record<VeiculoMotoristaId, { nome: string; perfil: string }> = {
-  alphard8: { nome: "Toyota Alphard", perfil: "Conforto premium" },
-  hiace10: { nome: "Toyota Hiace 10", perfil: "Grupos pequenos com bagagem" },
-  hiace14: { nome: "Toyota Hiace 14", perfil: "Grupos médios" },
-  coaster18: { nome: "Toyota Coaster 18", perfil: "Grupos grandes" },
-  coaster21: { nome: "Toyota Coaster 21", perfil: "Grupos grandes" },
-  coaster29: { nome: "Toyota Coaster 29", perfil: "Grupos grandes" },
-};
-
-// Menor preço de trajeto por veículo — mostrado como "a partir de" no
-// passo 1 e no resumo enquanto nenhuma rota foi escolhida.
-const PRECO_MINIMO_VEICULO = Object.fromEntries(
-  VEICULOS_MOTORISTA.map((v) => [v.id, Math.min(...ROTAS_MOTORISTA.map((r) => r.precoUSD[v.id]))]),
-) as Record<VeiculoMotoristaId, number>;
-
-// Passo 2 em formato "origem → destino": cada par aponta pra uma rota do
-// catálogo (motoristaPrivadoRotas.ts). Origem = destino significa
-// deslocamento dentro da cidade. Kyoto → Osaka usa a mesma rota de
-// "Dentro de Kyoto" (o fornecedor cota igual).
-type LocalId = "narita" | "haneda" | "kix" | "tokyo" | "osaka" | "kyoto";
-const LOCAIS: { id: LocalId; nome: string; aeroporto: boolean }[] = [
-  { id: "narita", nome: "Aeroporto de Narita", aeroporto: true },
-  { id: "haneda", nome: "Aeroporto de Haneda", aeroporto: true },
-  { id: "kix", nome: "Aeroporto de Kansai", aeroporto: true },
-  { id: "tokyo", nome: "Tóquio", aeroporto: false },
-  { id: "osaka", nome: "Osaka", aeroporto: false },
-  { id: "kyoto", nome: "Kyoto", aeroporto: false },
-];
-const TRECHOS: { de: LocalId; para: LocalId; rotaId: string }[] = [
-  { de: "narita", para: "tokyo", rotaId: "narita-tokyo" },
-  { de: "haneda", para: "tokyo", rotaId: "haneda-tokyo" },
-  { de: "kix", para: "osaka", rotaId: "kansai-osaka" },
-  { de: "kix", para: "kyoto", rotaId: "kansai-kyoto" },
-  { de: "tokyo", para: "narita", rotaId: "tokyo-narita" },
-  { de: "tokyo", para: "haneda", rotaId: "tokyo-haneda" },
-  { de: "tokyo", para: "tokyo", rotaId: "dentro-tokyo" },
-  { de: "osaka", para: "kix", rotaId: "osaka-kansai" },
-  { de: "osaka", para: "osaka", rotaId: "dentro-osaka" },
-  { de: "kyoto", para: "kix", rotaId: "kyoto-kansai" },
-  { de: "kyoto", para: "kyoto", rotaId: "dentro-kyoto-ou-kyoto-osaka" },
-  { de: "kyoto", para: "osaka", rotaId: "dentro-kyoto-ou-kyoto-osaka" },
-];
-const nomeLocal = (id: LocalId) => LOCAIS.find((l) => l.id === id)?.nome ?? id;
-const ehAeroporto = (id: LocalId) => LOCAIS.find((l) => l.id === id)?.aeroporto ?? false;
-// Transfer = sempre com um aeroporto numa das pontas. Cidade ↔ cidade é
-// outra categoria (Transporte interestadual) — pedido do Wilson, 30/set/2026.
-const TRECHOS_TRANSFER = TRECHOS.filter((t) => ehAeroporto(t.de) || ehAeroporto(t.para));
-const TRECHOS_INTERESTADUAL = TRECHOS.filter((t) => !ehAeroporto(t.de) && !ehAeroporto(t.para));
-type TipoServico = "transfer" | "interestadual" | "passeio";
-// Ícone pequeno de cada item no resumo (mesmas artes das abas e opcionais).
-const ICONE_CATEGORIA_ROTA: Record<CategoriaRotaMotorista, string> = {
-  "transfer-aeroporto": "/images/icone-transfer-aeroporto.png",
-  "dentro-cidade": "/images/icone-interestadual.png",
-  "tour-dia-inteiro": "/images/icone-passeio-10h.png",
-};
-function IconeResumo({ src }: { src?: string }) {
-  if (!src) return <span aria-hidden className="h-6 w-6 shrink-0" />;
-  return <Image src={src} alt="" width={24} height={24} className="h-6 w-6 shrink-0 object-contain" />;
-}
+// Transfer de aeroporto saiu desta página e virou produto próprio
+// (/produtos/transfer-aeroporto) — pedido do Wilson, 30/set/2026. Aqui
+// ficou só o motorista à disposição: dentro/entre cidades e passeio 10h.
+type TipoServico = "interestadual" | "passeio";
 const TOURS = ROTAS_MOTORISTA.filter((r) => r.categoria === "tour-dia-inteiro");
-
-const CLASSE_SELECT =
-  "h-12 w-full appearance-none rounded-xl border border-black/15 bg-white pl-4 pr-10 text-base text-black transition focus:border-[#2f80c9] focus:outline-none focus:ring-1 focus:ring-[#2f80c9] disabled:cursor-not-allowed disabled:bg-black/[0.03] disabled:text-black/35 md:text-[15px]";
-
 const REGIAO_CURTA: Record<RegiaoRotaMotorista, string> = {
   kanto: "Tóquio",
   kansai: "Osaka/Kyoto",
   hiroshima: "Hiroshima",
 };
-
 // 5 etapas (Wilson, 30/set/2026): data e nº de passageiros vêm antes de
 // tudo — inspirado na primeira etapa da SIXT (quando + quantos numa
 // caixa só, com o botão de avançar ao lado). Veículo passou a ser a 2ª.
 const ETAPAS = ["Viagem", "Veículo", "Trajeto", "Dados", "Revisão"] as const;
 type Etapa = 1 | 2 | 3 | 4 | 5;
-
-const MAX_PASSAGEIROS = Math.max(...VEICULOS_MOTORISTA.map((v) => v.assentos));
-
-
-// Máscara de WhatsApp: formato brasileiro por padrão; se começar com "+",
-// aceita número internacional sem forçar o formato.
-function mascararWhatsapp(valor: string): string {
-  const t = valor.trimStart();
-  if (t.startsWith("+")) return "+" + t.slice(1).replace(/[^\d ]/g, "").slice(0, 20);
-  const d = valor.replace(/\D/g, "").slice(0, 11);
-  if (d.length === 0) return "";
-  if (d.length <= 2) return `(${d}`;
-  if (d.length <= 6) return `(${d.slice(0, 2)}) ${d.slice(2)}`;
-  if (d.length <= 10) return `(${d.slice(0, 2)}) ${d.slice(2, 6)}-${d.slice(6)}`;
-  return `(${d.slice(0, 2)}) ${d.slice(2, 7)}-${d.slice(7)}`;
-}
-
-function formatarDataExtensa(iso: string): string {
-  if (!iso) return "";
-  const data = new Date(`${iso}T00:00:00`);
-  if (Number.isNaN(data.getTime())) return iso;
-  return data.toLocaleDateString("pt-BR", { day: "2-digit", month: "short", year: "numeric" });
-}
-
-function IconeCheck({ className }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" className={className} aria-hidden="true">
-      <path d="M5 12.5l4.5 4.5L19 7.5" />
-    </svg>
-  );
-}
-
-// Modal simples via portal (evita o bug de `fixed` do Safari iOS dentro de
-// containers com transform/backdrop — ver learnings do projeto).
-function Modal({ aberto, titulo, onFechar, children }: { aberto: boolean; titulo: string; onFechar: () => void; children: ReactNode }) {
-  useEffect(() => {
-    if (!aberto) return;
-    const anterior = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    const tecla = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onFechar();
-    };
-    window.addEventListener("keydown", tecla);
-    return () => {
-      document.body.style.overflow = anterior;
-      window.removeEventListener("keydown", tecla);
-    };
-  }, [aberto, onFechar]);
-  if (!aberto || typeof document === "undefined") return null;
-  return createPortal(
-    <div className="fixed inset-0 z-[100] flex items-end justify-center bg-black/60 md:items-center md:p-6" onClick={onFechar} role="dialog" aria-modal="true" aria-label={titulo}>
-      <div
-        className="flex max-h-[88svh] w-full max-w-2xl flex-col overflow-hidden rounded-t-2xl bg-white shadow-xl md:rounded-2xl"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div className="flex items-center justify-between border-b border-black/10 px-5 py-4">
-          <p className={`${display.className} text-lg font-medium text-black`}>{titulo}</p>
-          <button
-            type="button"
-            onClick={onFechar}
-            aria-label="Fechar"
-            className="flex h-11 w-11 items-center justify-center rounded-full text-2xl leading-none text-black/60 transition hover:bg-black/5 hover:text-black"
-          >
-            ×
-          </button>
-        </div>
-        <div className="overflow-y-auto px-5 py-4 text-sm leading-6 text-black/75">{children}</div>
-      </div>
-    </div>,
-    document.body,
-  );
-}
-
-function Campo({
-  rotulo,
-  erro,
-  ajuda,
-  children,
-}: {
-  rotulo: string;
-  erro?: string | null;
-  ajuda?: string;
-  children: ReactNode;
-}) {
-  return (
-    <label className="flex min-w-0 flex-col gap-1.5">
-      <span className="text-[11px] font-medium uppercase tracking-[0.12em] text-black/70">{rotulo}</span>
-      {children}
-      {erro ? (
-        <span className="text-xs text-red-600">{erro}</span>
-      ) : ajuda ? (
-        <span className="text-xs text-black/50">{ajuda}</span>
-      ) : null}
-    </label>
-  );
-}
-
-function classeInput(temErro: boolean) {
-  return `h-12 w-full min-w-0 rounded-lg border bg-white px-3.5 text-sm text-black transition focus:outline-none focus:ring-2 focus:ring-[#2f80c9]/20 ${
-    temErro ? "border-red-400 focus:border-red-500" : "border-black/15 focus:border-[#2f80c9]"
-  }`;
-}
-
-function IconeSeta() {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      aria-hidden="true"
-      className="pointer-events-none absolute right-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-black/45"
-    >
-      <path d="M6 9l6 6 6-6" />
-    </svg>
-  );
-}
+// ── Serviços ligados a datas (Wilson, 30/set/2026) ──
+// A etapa 1 pede o período no Japão (chegada → partida). Cada serviço
+// adicionado tem data (dentro do período), horário opcional e veículo
+// próprio — o veículo da etapa 2 é só o padrão pré-selecionado. Com isso o
+// resumo aponta dias sem veículo e transfers de aeroporto sem o par
+// (chegada sem volta / volta sem chegada). Avisos só informam, não
+// bloqueiam (decisão do Wilson).
+type ServicoPedido = {
+  uid: string;
+  rotaId: string;
+  veiculo: VeiculoMotoristaId;
+  data: string;
+  horario: string;
+};
 
 export default function TransportePrivadoPage() {
   const cambio = useCambioUSD();
   const cambioCotacao = cambio?.cotacao ?? 5.3;
 
   const [etapa, setEtapa] = useState<Etapa>(1);
-  // Veículo só conta como "escolhido" depois do clique do cliente — o
-  // SELECAO_MOTORISTA_VAZIA já traz um veículo padrão (hiace10), mas aqui o
-  // passo 1 precisa de uma escolha explícita.
+  // Veículo padrão (etapa 2) só conta como "escolhido" depois do clique
+  // do cliente. Cada serviço pode trocar de veículo na etapa 3.
   const [veiculoEscolhido, setVeiculoEscolhido] = useState(false);
-  const [selecao, setSelecao] = useState<SelecaoMotorista>(SELECAO_MOTORISTA_VAZIA);
-  const [tipoServico, setTipoServico] = useState<TipoServico>("transfer");
+  const [veiculoPadrao, setVeiculoPadrao] = useState<VeiculoMotoristaId>("hiace10");
+  const [servicos, setServicos] = useState<ServicoPedido[]>([]);
+  const [tipoServico, setTipoServico] = useState<TipoServico>("interestadual");
   const [origem, setOrigem] = useState<LocalId | "">("");
   const [destino, setDestino] = useState<LocalId | "">("");
   const [tourId, setTourId] = useState("");
+  const [novaData, setNovaData] = useState("");
+  const [novoHorario, setNovoHorario] = useState("");
+  const [novoVeiculo, setNovoVeiculo] = useState<VeiculoMotoristaId | "">("");
   const [ultimoAdicionado, setUltimoAdicionado] = useState<string | null>(null);
 
   const [opcionalMeetGreet, setOpcionalMeetGreet] = useState(false);
@@ -288,8 +142,9 @@ export default function TransportePrivadoPage() {
   const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
   const [whatsapp, setWhatsapp] = useState("");
-  const [dataServico, setDataServico] = useState("");
-  const [horario, setHorario] = useState("");
+  // Período no Japão (etapa 1).
+  const [dataChegada, setDataChegada] = useState("");
+  const [dataPartida, setDataPartida] = useState("");
   const [numeroVoo, setNumeroVoo] = useState("");
   const [observacoes, setObservacoes] = useState("");
   const [tocados, setTocados] = useState<Record<string, boolean>>({});
@@ -299,7 +154,6 @@ export default function TransportePrivadoPage() {
 
   const [termosAceitos, setTermosAceitos] = useState(false);
   const [tentouEnviar, setTentouEnviar] = useState(false);
-  const [modalTermos, setModalTermos] = useState(false);
   const [modalRegras, setModalRegras] = useState(false);
   const [resumoAbertoMobile, setResumoAbertoMobile] = useState(false);
 
@@ -307,11 +161,65 @@ export default function TransportePrivadoPage() {
   const [erro, setErro] = useState("");
 
   const stepperRef = useRef<HTMLDivElement | null>(null);
+  const proximoUid = useRef(0);
 
-  const veiculo = encontrarVeiculoMotorista(selecao.veiculo);
-  const veiculoCurto = VEICULO_CURTO[selecao.veiculo];
-  const quantidadeItens = contarItensMotorista(selecao);
-  const motoristaUSD = calcularTotalMotoristaUSD(selecao);
+  const veiculo = encontrarVeiculoMotorista(veiculoPadrao);
+  const veiculoCurto = VEICULO_CURTO[veiculoPadrao];
+  const veiculoComporta = (assentos: number) => assentos >= passageiros;
+
+  // ── Período (etapa 1) ──
+  const erroDataChegada = !dataChegada
+    ? "Informe a data de chegada."
+    : dataChegada < hojeISO()
+      ? "A chegada precisa ser hoje ou depois."
+      : null;
+  const erroDataPartida = !dataPartida
+    ? "Informe a data de partida."
+    : dataChegada && dataPartida < dataChegada
+      ? "A partida precisa ser no dia da chegada ou depois."
+      : dataChegada && diasEntre(dataChegada, dataPartida).length > MAX_DIAS_VIAGEM
+        ? `Para viagens com mais de ${MAX_DIAS_VIAGEM} dias, fale com a nossa equipe.`
+        : null;
+  const periodoValido = erroDataChegada === null && erroDataPartida === null;
+  const diasViagem = periodoValido ? diasEntre(dataChegada, dataPartida) : [];
+
+  // ── Serviços ──
+  const servicosOrdenados = [...servicos].sort((a, b) =>
+    a.data === b.data ? (a.horario || "99").localeCompare(b.horario || "99") : a.data.localeCompare(b.data),
+  );
+  const quantidadeItens = servicos.length;
+  const precoServico = (s: ServicoPedido) => encontrarRotaMotorista(s.rotaId)?.precoUSD[s.veiculo] ?? 0;
+  const motoristaUSD = servicos.reduce((soma, s) => soma + precoServico(s), 0);
+  // Problemas que impedem avançar: veículo menor que o grupo ou data fora
+  // do período (pode acontecer se o cliente voltar e mudar a etapa 1).
+  const problemaServico = (s: ServicoPedido): string | null => {
+    if (!veiculoComporta(encontrarVeiculoMotorista(s.veiculo).assentos))
+      return `${VEICULO_CURTO[s.veiculo].nome} leva até ${encontrarVeiculoMotorista(s.veiculo).assentos} passageiros — troque o veículo.`;
+    if (diasViagem.length > 0 && !diasViagem.includes(s.data)) return "Data fora do período da viagem — escolha outra data.";
+    return null;
+  };
+  const servicosComProblema = servicos.filter((s) => problemaServico(s) !== null).length;
+
+  // Avisos (só informam — decisão do Wilson): dias sem veículo, transfer
+  // de chegada sem a volta ao aeroporto (e vice-versa), transfer fora do
+  // dia da chegada/partida e dois passeios de 10h no mesmo dia.
+  const avisos: string[] = [];
+  if (servicos.length > 0 && diasViagem.length > 0) {
+    const diasSemVeiculo = diasViagem.filter((d) => !servicos.some((s) => s.data === d));
+    if (diasSemVeiculo.length > 0) {
+      avisos.push(
+        `${diasSemVeiculo.length === 1 ? "1 dia" : `${diasSemVeiculo.length} dias`} sem veículo contratado: ${listarNatural(diasSemVeiculo.map(formatarDiaMes))}.`,
+      );
+    }
+    const toursPorDia = new Map<string, number>();
+    servicos
+      .filter((s) => encontrarRotaMotorista(s.rotaId)?.categoria === "tour-dia-inteiro")
+      .forEach((s) => toursPorDia.set(s.data, (toursPorDia.get(s.data) ?? 0) + 1));
+    toursPorDia.forEach((n, d) => {
+      if (n > 1) avisos.push(`${n} passeios de 10h no mesmo dia (${formatarDiaMes(d)}).`);
+    });
+  }
+
   // Roteiro Personalizado incluso (mesma regra de sempre do Transporte
   // Privado) — só entra com pelo menos 1 serviço selecionado.
   const roteiroUSD = quantidadeItens > 0 ? ROTEIRO_PRECO_BASE / cambioCotacao : 0;
@@ -323,7 +231,21 @@ export default function TransportePrivadoPage() {
   const adicionaisUSD = meetGreetUSD + cadeirinhaUSD;
   const totalUSD = motoristaUSD + roteiroUSD + adicionaisUSD;
   const totalBRL = totalUSD * cambioCotacao;
-  const resumoSelecao = resumoSelecaoMotorista(selecao);
+  // "23/out a 27/out · 5 dias"
+  const textoPeriodo = periodoValido
+    ? dataChegada === dataPartida
+      ? `${formatarDiaMes(dataChegada)} · 1 dia`
+      : `${formatarDiaMes(dataChegada)} a ${formatarDiaMes(dataPartida)} · ${diasViagem.length} dias`
+    : "";
+  const resumoSelecao =
+    servicosOrdenados.length === 0
+      ? "Nenhum serviço de motorista selecionado."
+      : servicosOrdenados
+          .map(
+            (s) =>
+              `${formatarDataCurta(s.data)}${s.horario ? ` ${s.horario}` : ""} — ${encontrarRotaMotorista(s.rotaId)?.nome ?? s.rotaId} (${encontrarVeiculoMotorista(s.veiculo).nome})`,
+          )
+          .join("; ");
 
   // ── Validação por campo (mostrada ao lado de cada campo) ──
   const digitosWhatsapp = whatsapp.replace(/\D/g, "").length;
@@ -332,23 +254,21 @@ export default function TransportePrivadoPage() {
     email: /^\S+@\S+\.\S+$/.test(email.trim()) ? null : "Informe um e-mail válido.",
     whatsapp: digitosWhatsapp >= 10 ? null : "Informe um WhatsApp com DDD.",
   };
-  const erroDataServico = !dataServico ? "Informe a data do serviço." : dataServico < hojeISO() ? "A data precisa ser hoje ou depois." : null;
+  const errosViagem: Record<string, string | null> = { dataChegada: erroDataChegada, dataPartida: erroDataPartida };
   const dadosValidos = Object.values(errosDados).every((e) => e === null);
   const mostrarErro = (campo: string) =>
-    campo === "dataServico"
+    campo in errosViagem
       ? tocados[campo] || tentouAvancarViagem
-        ? erroDataServico
+        ? errosViagem[campo]
         : null
       : tocados[campo] || tentouAvancarDados
         ? errosDados[campo]
         : null;
   const tocar = (campo: string) => setTocados((t) => ({ ...t, [campo]: true }));
 
-  // Veículo só vale se comporta os passageiros informados na etapa 1.
-  const veiculoComporta = (assentos: number) => assentos >= passageiros;
-  const etapa1Ok = erroDataServico === null && passageiros >= 1;
+  const etapa1Ok = periodoValido && passageiros >= 1;
   const etapa2Ok = veiculoEscolhido && veiculoComporta(veiculo.assentos);
-  const etapa3Ok = quantidadeItens > 0;
+  const etapa3Ok = quantidadeItens > 0 && servicosComProblema === 0;
   const etapa4Ok = dadosValidos;
   const etapasOk = [etapa1Ok, etapa2Ok, etapa3Ok, etapa4Ok];
   const podeEnviar = etapa1Ok && etapa2Ok && etapa3Ok && etapa4Ok && termosAceitos;
@@ -368,28 +288,23 @@ export default function TransportePrivadoPage() {
   function ajustarPassageiros(novo: number) {
     const n = Math.max(1, Math.min(MAX_PASSAGEIROS, novo));
     setPassageiros(n);
-    // Se o veículo já escolhido não comporta mais o grupo, desmarca — o
-    // cliente escolhe de novo na etapa 2.
+    // Se o veículo padrão não comporta mais o grupo, desmarca — o cliente
+    // escolhe de novo na etapa 2. Serviços já adicionados com veículo
+    // pequeno ficam marcados em vermelho na etapa 3.
     if (veiculoEscolhido && veiculo.assentos < n) setVeiculoEscolhido(false);
   }
 
   function escolherVeiculo(id: VeiculoMotoristaId) {
-    setSelecao((s) => ({ ...s, veiculo: id }));
+    setVeiculoPadrao(id);
     setVeiculoEscolhido(true);
   }
 
-  function quantidadeDe(rotaId: string): number {
-    return selecao.itens.find((i) => i.rotaId === rotaId)?.quantidade ?? 0;
+  function atualizarServico(uid: string, mudanca: Partial<ServicoPedido>) {
+    setServicos((lista) => lista.map((s) => (s.uid === uid ? { ...s, ...mudanca } : s)));
   }
 
-  function ajustarQuantidade(rotaId: string, nova: number) {
-    const q = Math.max(0, Math.min(20, nova));
-    setSelecao((s) => {
-      const existe = s.itens.some((i) => i.rotaId === rotaId);
-      if (q === 0) return { ...s, itens: s.itens.filter((i) => i.rotaId !== rotaId) };
-      if (!existe) return { ...s, itens: [...s.itens, { rotaId, quantidade: q }] };
-      return { ...s, itens: s.itens.map((i) => (i.rotaId === rotaId ? { ...i, quantidade: q } : i)) };
-    });
+  function removerServico(uid: string) {
+    setServicos((lista) => lista.filter((s) => s.uid !== uid));
   }
 
   // CTA principal — muda de rótulo conforme a etapa (o que fazer no
@@ -398,7 +313,7 @@ export default function TransportePrivadoPage() {
     etapa === 1
       ? etapa1Ok
         ? { rotulo: "Ver veículos", ativo: true, falta: null }
-        : { rotulo: "Ver veículos", ativo: true, falta: "Informe a data do serviço para continuar" }
+        : { rotulo: "Ver veículos", ativo: true, falta: "Informe chegada e partida para continuar" }
       : etapa === 2
         ? etapa2Ok
           ? { rotulo: "Continuar", ativo: true, falta: null }
@@ -406,7 +321,9 @@ export default function TransportePrivadoPage() {
         : etapa === 3
           ? etapa3Ok
             ? { rotulo: "Continuar", ativo: true, falta: null }
-            : { rotulo: "Escolha uma rota", ativo: false, falta: "Escolha ao menos uma rota para continuar" }
+            : quantidadeItens === 0
+              ? { rotulo: "Escolha uma rota", ativo: false, falta: "Adicione ao menos um serviço para continuar" }
+              : { rotulo: "Revise os serviços", ativo: false, falta: "Corrija os serviços marcados em vermelho" }
           : etapa === 4
             ? { rotulo: "Continuar", ativo: etapa4Ok, falta: etapa4Ok ? null : "Complete seus dados para continuar" }
             : {
@@ -452,13 +369,15 @@ export default function TransportePrivadoPage() {
       opcionalCadeirinha ? `Cadeirinha infantil (${qtdCadeirinhas}×)` : null,
       opcionalBilingue ? "Motorista bilíngue português/inglês (sob consulta)" : null,
     ].filter(Boolean) as string[];
+    const veiculosUsados = Array.from(new Set(servicosOrdenados.map((s) => encontrarVeiculoMotorista(s.veiculo).nome)));
     try {
       const resposta = await fetch("/api/transporte-privado-selfservice", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          veiculo: selecao.veiculo,
-          itens: selecao.itens,
+          produto: "transporte-privado",
+          veiculo: veiculosUsados.join(" + "),
+          itens: servicosOrdenados.map((s) => ({ rotaId: s.rotaId, veiculo: s.veiculo, data: s.data, horario: s.horario, quantidade: 1 })),
           resumo: resumoSelecao,
           motoristaUSD,
           roteiroUSD,
@@ -469,11 +388,15 @@ export default function TransportePrivadoPage() {
           nome,
           email,
           whatsapp,
-          dataServico,
-          horario,
+          // data_viagem do CRM = chegada ao Japão.
+          dataServico: dataChegada,
+          dataChegada,
+          dataPartida,
+          horario: "",
           passageiros,
           numeroVoo,
           opcionais,
+          avisos,
           observacoes,
           termosAceitos,
         }),
@@ -496,7 +419,7 @@ export default function TransportePrivadoPage() {
     nome ? ` Meu nome é ${nome}.` : ""
   }`;
 
-  const trechosAtivos = tipoServico === "interestadual" ? TRECHOS_INTERESTADUAL : TRECHOS_TRANSFER;
+  const trechosAtivos = TRECHOS_INTERESTADUAL;
   const origensPossiveis = LOCAIS.filter((l) => trechosAtivos.some((t) => t.de === l.id));
   const destinosPossiveis = origem ? trechosAtivos.filter((t) => t.de === origem) : [];
 
@@ -511,20 +434,35 @@ export default function TransportePrivadoPage() {
       ? encontrarRotaMotorista(trechosAtivos.find((t) => t.de === origem && t.para === destino)?.rotaId ?? "")
       : encontrarRotaMotorista(tourId);
 
+  // Data sugerida pro próximo serviço: o primeiro dia ainda sem veículo
+  // (ou a chegada).
+  const dataSugerida = diasViagem.find((d) => !servicos.some((s) => s.data === d)) ?? diasViagem[0] ?? "";
+  const dataNovoServico = novaData && diasViagem.includes(novaData) ? novaData : dataSugerida;
+  const veiculoNovoServico: VeiculoMotoristaId = novoVeiculo || veiculoPadrao;
+
   function adicionarRotaEscolhida() {
-    if (!rotaEscolhida) return;
-    ajustarQuantidade(rotaEscolhida.id, quantidadeDe(rotaEscolhida.id) + 1);
-    setUltimoAdicionado(rotaEscolhida.id);
+    if (!rotaEscolhida || !dataNovoServico) return;
+    proximoUid.current += 1;
+    const uid = `${rotaEscolhida.id}-${proximoUid.current}`;
+    setServicos((lista) => [
+      ...lista,
+      { uid, rotaId: rotaEscolhida.id, veiculo: veiculoNovoServico, data: dataNovoServico, horario: novoHorario },
+    ]);
+    setUltimoAdicionado(uid);
     setOrigem("");
     setDestino("");
     setTourId("");
+    setNovaData("");
+    setNovoHorario("");
+    setNovoVeiculo("");
   }
 
   // Valor mostrado no resumo: total real com rota; sem rota, o preço
   // "a partir de" do veículo somado aos opcionais já marcados.
   const totalExibidoUSD: number | null =
-    quantidadeItens > 0 ? totalUSD : veiculoEscolhido ? PRECO_MINIMO_VEICULO[selecao.veiculo] + adicionaisUSD : null;
+    quantidadeItens > 0 ? totalUSD : veiculoEscolhido ? PRECO_MINIMO_VEICULO[veiculoPadrao] + adicionaisUSD : null;
   const animarTotal = totalExibidoUSD !== null;
+
 
   // Conteúdo do resumo — o mesmo no painel lateral (desktop) e na gaveta
   // da barra inferior (celular).
@@ -532,40 +470,42 @@ export default function TransportePrivadoPage() {
     <div>
       <p className={`${display.className} text-lg font-medium text-[#0A2540]`}>Seu transporte</p>
       <p className="mt-2 text-sm text-black/80">
-        {dataServico && !erroDataServico ? formatarDataExtensa(dataServico) : <span className="text-black/45">Data a definir</span>}
+        {textoPeriodo || <span className="text-black/45">Período a definir</span>}
         <span className="text-black/50">
           {" "}
           · {passageiros} {passageiros === 1 ? "passageiro" : "passageiros"}
         </span>
       </p>
-      {veiculoEscolhido ? (
-        <p className="mt-1 text-sm text-black/80">
-          {veiculoCurto.nome} <span className="text-black/50">· até {veiculo.assentos} passageiros</span>
-        </p>
-      ) : (
-        <p className="mt-1 text-sm text-black/45">Nenhum veículo escolhido</p>
-      )}
-      <div className="mt-4 space-y-2.5 border-t border-black/10 pt-4">
-        {selecao.itens.length === 0 ? (
+      {servicos.length === 0 &&
+        (veiculoEscolhido ? (
+          <p className="mt-1 text-sm text-black/80">
+            {veiculoCurto.nome} <span className="text-black/50">· até {veiculo.assentos} passageiros</span>
+          </p>
+        ) : (
+          <p className="mt-1 text-sm text-black/45">Nenhum veículo escolhido</p>
+        ))}
+      <div className="mt-4 space-y-3 border-t border-black/10 pt-4">
+        {servicosOrdenados.length === 0 ? (
           <p className="text-sm text-black/45">Nenhuma rota escolhida</p>
         ) : (
           <>
-            {selecao.itens.map((item) => {
-              const rota = encontrarRotaMotorista(item.rotaId);
+            {servicosOrdenados.map((s) => {
+              const rota = encontrarRotaMotorista(s.rotaId);
               if (!rota) return null;
-              const q = Math.max(1, item.quantidade);
+              const problema = problemaServico(s);
               return (
-                <div key={item.rotaId} className="flex items-center justify-between gap-3 text-sm">
+                <div key={s.uid} className="flex items-center justify-between gap-3 text-sm">
                   <span className="flex min-w-0 items-center gap-2.5 text-black/80">
                     <IconeResumo src={ICONE_CATEGORIA_ROTA[rota.categoria]} />
                     <span className="min-w-0">
-                      {q > 1 && <span className="text-black/50">{q}× </span>}
-                      {rota.nome}
+                      <span className="block">{rota.nome}</span>
+                      <span className={`block text-xs ${problema ? "text-red-600" : "text-black/50"}`}>
+                        {formatarDataCurta(s.data)}
+                        {s.horario && ` · ${s.horario}`} · {VEICULO_CURTO[s.veiculo].nome}
+                      </span>
                     </span>
                   </span>
-                  <span className={`${inter.className} shrink-0 font-medium tabular-nums text-black`}>
-                    {formatUSD(rota.precoUSD[selecao.veiculo] * q)}
-                  </span>
+                  <span className={`${inter.className} shrink-0 font-medium tabular-nums text-black`}>{formatUSD(precoServico(s))}</span>
                 </div>
               );
             })}
@@ -609,6 +549,7 @@ export default function TransportePrivadoPage() {
           </div>
         )}
       </div>
+      {avisos.length > 0 && <BlocoAvisos avisos={avisos} className="mt-4" />}
       <div className="mt-4 border-t border-black/10 pt-4">
         <p className="text-[11px] uppercase tracking-[0.14em] text-black/50">Total estimado</p>
         {/* `key` no total: a cada mudança o elemento remonta e a animação
@@ -773,41 +714,57 @@ export default function TransportePrivadoPage() {
                   <h2 id="titulo-etapa-1" className={`${display.className} text-2xl font-medium text-[#0A2540]`}>
                     Quando e quantas pessoas?
                   </h2>
-                  <p className="mt-1.5 text-sm text-black/60">Mostramos só os veículos que comportam o seu grupo.</p>
+                  <p className="mt-1.5 text-sm text-black/60">Informe o período no Japão. Mostramos só os veículos que comportam o seu grupo.</p>
                   <div className="mt-6 rounded-2xl border border-black/10 bg-white p-4 shadow-[0_10px_30px_-22px_rgba(10,37,64,0.35)] sm:p-5">
                     <div className="grid gap-4 md:grid-cols-[minmax(0,1.7fr)_minmax(0,1fr)_auto] md:items-start">
                       <div className="min-w-0">
-                        <span className="mb-1.5 block text-xs font-medium text-black/60">Data do serviço</span>
+                        {/* Chegada | Partida numa caixa só (como retirada/devolução
+                            na SIXT); rótulos na mesma grade das duas metades. */}
+                        <div className="mb-1.5 grid grid-cols-2 text-xs font-medium text-black/60">
+                          <span>Chegada ao Japão</span>
+                          <span className="pl-3.5">Partida do Japão</span>
+                        </div>
                         <div
-                          className={`grid grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)] overflow-hidden rounded-xl border bg-white ${
-                            mostrarErro("dataServico") ? "border-red-400" : "border-black/15"
+                          className={`grid grid-cols-2 overflow-hidden rounded-xl border bg-white ${
+                            mostrarErro("dataChegada") || mostrarErro("dataPartida") ? "border-red-400" : "border-black/15"
                           } focus-within:border-[#2f80c9] focus-within:ring-1 focus-within:ring-[#2f80c9]`}
                         >
-                          <label className="flex h-12 min-w-0 items-center px-3.5">
-                            <span className="sr-only">Data do serviço</span>
+                          <label className="flex h-12 min-w-0 items-center px-3">
+                            <span className="sr-only">Chegada ao Japão</span>
                             <input
                               type="date"
                               min={hojeISO()}
-                              value={dataServico}
-                              onChange={(e) => setDataServico(e.target.value)}
-                              onBlur={() => tocar("dataServico")}
+                              value={dataChegada}
+                              onChange={(e) => {
+                                const v = e.target.value;
+                                setDataChegada(v);
+                                // Partida vazia ou antes da chegada: acompanha a chegada.
+                                if (v && (!dataPartida || dataPartida < v)) setDataPartida(v);
+                              }}
+                              onBlur={() => tocar("dataChegada")}
                               className="h-full w-full min-w-0 appearance-none bg-transparent text-base text-black focus:outline-none md:text-[15px]"
                             />
                           </label>
-                          <label className="flex h-12 min-w-0 items-center border-l border-black/10 px-3.5">
-                            <span className="sr-only">Horário aproximado (opcional)</span>
+                          <label className="flex h-12 min-w-0 items-center border-l border-black/10 px-3">
+                            <span className="sr-only">Partida do Japão</span>
                             <input
-                              type="time"
-                              value={horario}
-                              onChange={(e) => setHorario(e.target.value)}
+                              type="date"
+                              min={dataChegada || hojeISO()}
+                              value={dataPartida}
+                              onChange={(e) => setDataPartida(e.target.value)}
+                              onBlur={() => tocar("dataPartida")}
                               className="h-full w-full min-w-0 appearance-none bg-transparent text-base text-black focus:outline-none md:text-[15px]"
                             />
                           </label>
                         </div>
-                        {mostrarErro("dataServico") ? (
-                          <p className="mt-1.5 text-xs text-red-600">{mostrarErro("dataServico")}</p>
+                        {mostrarErro("dataChegada") || mostrarErro("dataPartida") ? (
+                          <p className="mt-1.5 text-xs text-red-600">{mostrarErro("dataChegada") || mostrarErro("dataPartida")}</p>
                         ) : (
-                          <p className="mt-1.5 text-xs text-black/45">Horário opcional. Vários dias? Informe o primeiro.</p>
+                          <p className="mt-1.5 text-xs text-black/45">
+                            {diasViagem.length > 0
+                              ? `${diasViagem.length} ${diasViagem.length === 1 ? "dia" : "dias"} no Japão.`
+                              : "Cada serviço terá sua data dentro desse período."}
+                          </p>
                         )}
                       </div>
                       <div>
@@ -869,11 +826,11 @@ export default function TransportePrivadoPage() {
                     <button type="button" onClick={() => irPara(1)} className="font-medium text-[#1f6fb8] underline decoration-[#1f6fb8]/30 underline-offset-2">
                       {passageiros} {passageiros === 1 ? "passageiro" : "passageiros"}
                     </button>
-                    . O valor de cada trajeto depende do veículo escolhido.
+                    . Este será o veículo padrão — na próxima etapa você pode trocar em cada serviço.
                   </p>
                   <div className="mt-6 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
                     {VEICULOS_MOTORISTA.filter((v) => veiculoComporta(v.assentos)).map((v) => {
-                      const ativo = veiculoEscolhido && selecao.veiculo === v.id;
+                      const ativo = veiculoEscolhido && veiculoPadrao === v.id;
                       const curto = VEICULO_CURTO[v.id];
                       return (
                         <button
@@ -889,6 +846,11 @@ export default function TransportePrivadoPage() {
                         >
                           <span className="relative block h-20 w-28 shrink-0 overflow-hidden rounded-lg bg-[#0f1a24] sm:aspect-[3/2] sm:h-auto sm:w-full sm:rounded-none">
                             <Image src={v.foto} alt="" fill sizes="(min-width: 640px) 260px, 112px" className="object-cover" />
+                            {v.id === "alphard8" && (
+                              <span className="absolute left-1.5 top-1.5 rounded-full bg-white px-2 py-0.5 text-[9px] font-semibold uppercase tracking-[0.12em] text-[#0A2540] shadow-sm sm:left-3 sm:top-3 sm:px-2.5 sm:py-1 sm:text-[10px]">
+                                Mais pedido
+                              </span>
+                            )}
                           </span>
                           <span className="block min-w-0 sm:border-t sm:border-black/[0.06] sm:p-4">
                             <span className="block text-[15px] font-medium text-black">{curto.nome}</span>
@@ -912,7 +874,7 @@ export default function TransportePrivadoPage() {
                   {veiculoEscolhido && (
                     <p className="mt-5 flex items-center gap-2 text-sm text-[#1f6fb8]">
                       <IconeCheck className="h-4 w-4" />
-                      {veiculoCurto.nome} · Até {veiculo.assentos} passageiros selecionado
+                      {veiculoCurto.nome} · Até {veiculo.assentos} passageiros selecionado como padrão
                     </p>
                   )}
                 </section>
@@ -922,22 +884,28 @@ export default function TransportePrivadoPage() {
               {etapa === 3 && (
                 <section aria-labelledby="titulo-etapa-3">
                   <h2 id="titulo-etapa-3" className={`${display.className} text-2xl font-medium text-[#0A2540]`}>
-                    Escolha uma ou mais rotas
+                    Monte seus serviços
                   </h2>
                   <p className="mt-1.5 text-sm text-black/60">
-                    Informe de onde sai e para onde vai. Preços para{" "}
-                    <button type="button" onClick={() => irPara(2)} className="font-medium text-[#1f6fb8] underline decoration-[#1f6fb8]/30 underline-offset-2">
-                      {veiculoCurto.nome}
+                    Para cada trajeto, escolha o dia e o veículo. Período:{" "}
+                    <button type="button" onClick={() => irPara(1)} className="font-medium text-[#1f6fb8] underline decoration-[#1f6fb8]/30 underline-offset-2">
+                      {textoPeriodo}
                     </button>
+                    .
+                  </p>
+                  <p className="mt-1 text-sm text-black/60">
+                    Transfer entre aeroporto e hotel é contratado à parte, em{" "}
+                    <Link href="/produtos/transfer-aeroporto" className="font-medium text-[#1f6fb8] underline decoration-[#1f6fb8]/30 underline-offset-2">
+                      Transfer Aeroporto
+                    </Link>
                     .
                   </p>
 
                   <div className="mt-6 rounded-2xl border border-black/10 p-4 sm:p-5">
-                    {/* Tipo: transfer (origem → destino) ou passeio de 10h */}
-                    <div role="radiogroup" aria-label="Tipo de serviço" className="grid grid-cols-3 gap-1 rounded-xl bg-black/[0.04] p-1">
+                    {/* Tipo: dentro/entre cidades (origem → destino) ou passeio de 10h */}
+                    <div role="radiogroup" aria-label="Tipo de serviço" className="grid grid-cols-2 gap-1 rounded-xl bg-black/[0.04] p-1">
                       {(
                         [
-                          { key: "transfer", nome: "Transfer aeroporto", curto: "Transfer aeroporto", icone: "/images/icone-transfer-aeroporto.png", largura: 36 },
                           { key: "interestadual", nome: "Transporte interestadual", curto: "Interestadual", icone: "/images/icone-interestadual.png", largura: 36 },
                           { key: "passeio", nome: "Passeio de 10h", curto: "Passeio 10h", icone: "/images/icone-passeio-10h.png", largura: 36 },
                         ] as const
@@ -1040,16 +1008,62 @@ export default function TransportePrivadoPage() {
                       </label>
                     )}
 
+                    {/* Dia, horário e veículo deste serviço */}
+                    <div className="mt-4 grid gap-3 sm:grid-cols-[minmax(0,1.2fr)_minmax(0,0.8fr)_minmax(0,1.3fr)]">
+                      <label className="block min-w-0">
+                        <span className="mb-1.5 block text-xs font-medium text-black/60">Dia</span>
+                        <span className="relative block">
+                          <select value={dataNovoServico} onChange={(e) => setNovaData(e.target.value)} className={CLASSE_SELECT}>
+                            {diasViagem.map((d) => (
+                              <option key={d} value={d}>
+                                {formatarDataCurta(d)}
+                                {d === dataChegada ? " · chegada" : d === dataPartida ? " · partida" : ""}
+                                {servicos.some((s) => s.data === d) ? " ✓" : ""}
+                              </option>
+                            ))}
+                          </select>
+                          <IconeSeta />
+                        </span>
+                      </label>
+                      <label className="block min-w-0">
+                        <span className="mb-1.5 block text-xs font-medium text-black/60">Horário (opcional)</span>
+                        <input
+                          type="time"
+                          value={novoHorario}
+                          onChange={(e) => setNovoHorario(e.target.value)}
+                          className="h-12 w-full min-w-0 appearance-none rounded-xl border border-black/15 bg-white px-3.5 text-base text-black transition focus:border-[#2f80c9] focus:outline-none focus:ring-1 focus:ring-[#2f80c9] md:text-[15px]"
+                        />
+                      </label>
+                      <label className="block min-w-0">
+                        <span className="mb-1.5 block text-xs font-medium text-black/60">Veículo</span>
+                        <span className="relative block">
+                          <select
+                            value={veiculoNovoServico}
+                            onChange={(e) => setNovoVeiculo(e.target.value as VeiculoMotoristaId)}
+                            className={CLASSE_SELECT}
+                          >
+                            {VEICULOS_MOTORISTA.filter((v) => veiculoComporta(v.assentos)).map((v) => (
+                              <option key={v.id} value={v.id}>
+                                {VEICULO_CURTO[v.id].nome} · até {v.assentos}
+                              </option>
+                            ))}
+                          </select>
+                          <IconeSeta />
+                        </span>
+                      </label>
+                    </div>
+
                     {/* Resultado: preço do trecho + adicionar */}
                     <div className="mt-4 flex min-h-[64px] items-center justify-between gap-4 border-t border-black/[0.08] pt-4">
                       {rotaEscolhida ? (
                         <>
                           <div className="min-w-0">
                             <p className={`${inter.className} text-2xl font-bold tabular-nums text-[#0A2540]`}>
-                              {formatUSD(rotaEscolhida.precoUSD[selecao.veiculo])}
+                              {formatUSD(rotaEscolhida.precoUSD[veiculoNovoServico])}
                             </p>
                             <p className="text-xs text-black/55">
-                              {rotaEscolhida.minutosLivres != null ? `Até ${rotaEscolhida.minutosLivres} min incluídos` : "10 horas com motorista"}
+                              {formatarDataCurta(dataNovoServico)} · {VEICULO_CURTO[veiculoNovoServico].nome} ·{" "}
+                              {rotaEscolhida.minutosLivres != null ? `até ${rotaEscolhida.minutosLivres} min incluídos` : "10 horas com motorista"}
                             </p>
                           </div>
                           <button
@@ -1068,51 +1082,78 @@ export default function TransportePrivadoPage() {
                     </div>
                   </div>
 
-                  {/* O que já foi adicionado ao pedido */}
-                  {selecao.itens.length > 0 && (
+                  {/* O que já foi adicionado ao pedido — por dia, com dia e
+                      veículo editáveis em cada linha. */}
+                  {servicosOrdenados.length > 0 && (
                     <div className="mt-6">
                       <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-black/70">No seu pedido</p>
                       <ul className="mt-2 divide-y divide-black/[0.06] rounded-xl border border-black/10">
-                        {selecao.itens.map((item) => {
-                          const rota = encontrarRotaMotorista(item.rotaId);
+                        {servicosOrdenados.map((s) => {
+                          const rota = encontrarRotaMotorista(s.rotaId);
                           if (!rota) return null;
-                          const q = Math.max(1, item.quantidade);
+                          const problema = problemaServico(s);
                           return (
                             <li
-                              key={item.rotaId}
-                              className={`flex items-center gap-3 px-4 py-3 ${ultimoAdicionado === item.rotaId ? "bg-[#2f80c9]/[0.05]" : ""}`}
+                              key={s.uid}
+                              className={`px-4 py-3 ${problema ? "bg-red-50/60" : ultimoAdicionado === s.uid ? "bg-[#2f80c9]/[0.05]" : ""}`}
                             >
-                              <div className="min-w-0 flex-1">
-                                <p className="text-sm text-black/85">{rota.nome}</p>
-                                <p className={`${inter.className} text-xs tabular-nums text-black/50`}>
-                                  {q > 1 ? `${q} × ${formatUSD(rota.precoUSD[selecao.veiculo])} = ` : ""}
-                                  {formatUSD(rota.precoUSD[selecao.veiculo] * q)}
-                                </p>
-                              </div>
-                              <div className="flex shrink-0 items-center gap-1">
-                                <button
-                                  type="button"
-                                  onClick={() => ajustarQuantidade(item.rotaId, q - 1)}
-                                  aria-label={q === 1 ? `Remover ${rota.nome}` : "Diminuir quantidade"}
-                                  className="flex h-9 w-9 items-center justify-center rounded-full border border-black/15 text-base text-black/60 transition hover:border-black/30"
-                                >
-                                  {q === 1 ? "×" : "−"}
-                                </button>
-                                <span className={`${inter.className} w-6 text-center text-sm font-semibold tabular-nums text-[#0A2540]`}>{q}</span>
-                                <button
-                                  type="button"
-                                  onClick={() => ajustarQuantidade(item.rotaId, q + 1)}
-                                  aria-label="Adicionar mais um (outro dia)"
-                                  className="flex h-9 w-9 items-center justify-center rounded-full border border-black/15 text-base text-black/60 transition hover:border-black/30"
-                                >
-                                  +
-                                </button>
+                              <div className="flex items-start gap-3">
+                                <IconeResumo src={ICONE_CATEGORIA_ROTA[rota.categoria]} />
+                                <div className="min-w-0 flex-1">
+                                  <p className="text-sm text-black/85">{rota.nome}</p>
+                                  <div className="mt-2 flex flex-wrap items-center gap-2">
+                                    <span className="relative block">
+                                      <select
+                                        aria-label={`Dia de ${rota.nome}`}
+                                        value={s.data}
+                                        onChange={(e) => atualizarServico(s.uid, { data: e.target.value })}
+                                        className="h-9 appearance-none rounded-lg border border-black/15 bg-white pl-3 pr-8 text-sm text-black focus:border-[#2f80c9] focus:outline-none"
+                                      >
+                                        {!diasViagem.includes(s.data) && <option value={s.data}>{formatarDataCurta(s.data)}</option>}
+                                        {diasViagem.map((d) => (
+                                          <option key={d} value={d}>
+                                            {formatarDataCurta(d)}
+                                          </option>
+                                        ))}
+                                      </select>
+                                      <IconeSeta />
+                                    </span>
+                                    <span className="relative block">
+                                      <select
+                                        aria-label={`Veículo de ${rota.nome}`}
+                                        value={s.veiculo}
+                                        onChange={(e) => atualizarServico(s.uid, { veiculo: e.target.value as VeiculoMotoristaId })}
+                                        className="h-9 appearance-none rounded-lg border border-black/15 bg-white pl-3 pr-8 text-sm text-black focus:border-[#2f80c9] focus:outline-none"
+                                      >
+                                        {VEICULOS_MOTORISTA.filter((v) => veiculoComporta(v.assentos) || v.id === s.veiculo).map((v) => (
+                                          <option key={v.id} value={v.id}>
+                                            {VEICULO_CURTO[v.id].nome}
+                                          </option>
+                                        ))}
+                                      </select>
+                                      <IconeSeta />
+                                    </span>
+                                    {s.horario && <span className="text-xs text-black/50">{s.horario}</span>}
+                                  </div>
+                                  {problema && <p className="mt-1.5 text-xs text-red-600">{problema}</p>}
+                                </div>
+                                <div className="flex shrink-0 items-center gap-2">
+                                  <span className={`${inter.className} text-sm font-semibold tabular-nums text-[#0A2540]`}>{formatUSD(precoServico(s))}</span>
+                                  <button
+                                    type="button"
+                                    onClick={() => removerServico(s.uid)}
+                                    aria-label={`Remover ${rota.nome}`}
+                                    className="flex h-9 w-9 items-center justify-center rounded-full border border-black/15 text-base text-black/60 transition hover:border-black/30"
+                                  >
+                                    ×
+                                  </button>
+                                </div>
                               </div>
                             </li>
                           );
                         })}
                       </ul>
-                      <p className="mt-2 text-xs text-black/45">Use + para repetir o mesmo trajeto em outro dia.</p>
+                      {avisos.length > 0 && <BlocoAvisos avisos={avisos} className="mt-3" />}
                     </div>
                   )}
 
@@ -1292,12 +1333,11 @@ export default function TransportePrivadoPage() {
                   <dl className="mt-6 divide-y divide-black/[0.07] border-y border-black/[0.07]">
                     {[
                       {
-                        rotulo: "Data e passageiros",
+                        rotulo: "Período e passageiros",
                         voltar: 1 as Etapa,
                         conteudo: (
                           <>
-                            {formatarDataExtensa(dataServico)}
-                            {horario && <span className="text-black/50"> · por volta das {horario}</span>}
+                            {textoPeriodo}
                             <span className="text-black/50">
                               {" "}
                               · {passageiros} {passageiros === 1 ? "passageiro" : "passageiros"}
@@ -1306,27 +1346,23 @@ export default function TransportePrivadoPage() {
                         ),
                       },
                       {
-                        rotulo: "Veículo",
-                        voltar: 2 as Etapa,
-                        conteudo: (
-                          <>
-                            {veiculoCurto.nome} <span className="text-black/50">· até {veiculo.assentos} passageiros</span>
-                          </>
-                        ),
-                      },
-                      {
                         rotulo: "Serviços",
                         voltar: 3 as Etapa,
                         conteudo: (
-                          <div className="space-y-1">
-                            {selecao.itens.map((item) => {
-                              const rota = encontrarRotaMotorista(item.rotaId);
+                          <div className="space-y-1.5">
+                            {servicosOrdenados.map((s) => {
+                              const rota = encontrarRotaMotorista(s.rotaId);
                               if (!rota) return null;
-                              const q = Math.max(1, item.quantidade);
                               return (
-                                <p key={item.rotaId}>
-                                  {q > 1 && <span className="text-black/50">{q}× </span>}
-                                  {rota.nome}
+                                <p key={s.uid} className="flex justify-between gap-3">
+                                  <span className="min-w-0">
+                                    <span className="text-black/55">
+                                      {formatarDataCurta(s.data)}
+                                      {s.horario && ` ${s.horario}`} ·{" "}
+                                    </span>
+                                    {rota.nome} <span className="text-black/55">· {VEICULO_CURTO[s.veiculo].nome}</span>
+                                  </span>
+                                  <span className={`${inter.className} shrink-0 tabular-nums text-black/70`}>{formatUSD(precoServico(s))}</span>
                                 </p>
                               );
                             })}
@@ -1364,7 +1400,7 @@ export default function TransportePrivadoPage() {
                         <button
                           type="button"
                           onClick={() => irPara(linha.voltar)}
-                          className="justify-self-start text-sm font-medium text-[#1f6fb8] underline decoration-[#1f6fb8]/30 underline-offset-2 sm:justify-self-end"
+                          className="self-start justify-self-start text-sm font-medium text-[#1f6fb8] underline decoration-[#1f6fb8]/30 underline-offset-2 sm:justify-self-end"
                         >
                           Editar
                         </button>
@@ -1378,28 +1414,28 @@ export default function TransportePrivadoPage() {
                       </dd>
                     </div>
                   </dl>
+                  {avisos.length > 0 && <BlocoAvisos avisos={avisos} className="mt-5" />}
 
-                  <label className="mt-6 flex min-h-[44px] cursor-pointer items-start gap-3">
+                  {/* Termos na própria página, numa caixa com rolagem (pedido
+                      do Wilson, 30/set/2026: "termos e condições devem estar
+                      numa caixa na pagina, nao para clicar e abrir"). */}
+                  <p className="mt-8 text-[11px] font-semibold uppercase tracking-[0.14em] text-black/70">Termos e Condições</p>
+                  <div
+                    tabIndex={0}
+                    aria-label="Termos e Condições do transporte privado"
+                    className="mt-2 max-h-64 overflow-y-auto rounded-xl border border-black/10 bg-black/[0.02] px-4 py-3 text-[13px] leading-6 text-black/70 focus:outline-none focus:ring-2 focus:ring-[#2f80c9]/30"
+                  >
+                    <TextoTermosTransporte />
+                  </div>
+
+                  <label className="mt-4 flex min-h-[44px] cursor-pointer items-start gap-3">
                     <input
                       type="checkbox"
                       checked={termosAceitos}
                       onChange={(e) => setTermosAceitos(e.target.checked)}
                       className="mt-0.5 h-5 w-5 shrink-0 rounded border-black/30 text-[#2f80c9] focus:ring-[#2f80c9]"
                     />
-                    <span className="text-sm text-black/85">
-                      Li e aceito os{" "}
-                      <button
-                        type="button"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          setModalTermos(true);
-                        }}
-                        className="font-medium text-[#1f6fb8] underline decoration-[#1f6fb8]/30 underline-offset-2"
-                      >
-                        Termos e Condições
-                      </button>{" "}
-                      do transporte privado.
-                    </span>
+                    <span className="text-sm text-black/85">Li e aceito os Termos e Condições do transporte privado.</span>
                   </label>
                   {tentouEnviar && !termosAceitos && (
                     <p className="ml-8 text-xs text-red-600">Aceite os Termos e Condições para solicitar o transporte.</p>
@@ -1446,7 +1482,7 @@ export default function TransportePrivadoPage() {
               <span className="min-w-0">
                 <span className="block text-[11px] uppercase tracking-[0.14em] text-black/50">
                   {quantidadeItens > 0
-                    ? `${quantidadeItens} ${quantidadeItens === 1 ? "serviço" : "serviços"} · ${veiculoCurto.nome}`
+                    ? `${quantidadeItens} ${quantidadeItens === 1 ? "serviço" : "serviços"}${periodoValido ? ` · ${formatarDiaMes(dataChegada)} a ${formatarDiaMes(dataPartida)}` : ""}`
                     : veiculoEscolhido
                       ? `${veiculoCurto.nome} · a partir de`
                       : "Total estimado"}
@@ -1498,68 +1534,6 @@ export default function TransportePrivadoPage() {
         <p className="mt-1">{POLITICA_CANCELAMENTO_MOTORISTA}</p>
       </Modal>
 
-      <Modal aberto={modalTermos} titulo="Termos e Condições" onFechar={() => setModalTermos(false)}>
-        <div className="text-[13px] leading-6">
-                  <p className="font-medium text-black/80">Fornecimento do serviço</p>
-                  <p className="mt-1">
-                    O motorista e o veículo são fornecidos por um parceiro especializado no Japão
-                    — a Alpinea atua como intermediária entre o cliente e esse fornecedor. O veículo
-                    é exclusivo do grupo contratante, sem compartilhamento com outros passageiros.
-                  </p>
-                  <p className="mt-3 font-medium text-black/80">O que está incluído</p>
-                  <p className="mt-1">
-                    Os valores já incluem imposto, estacionamento, pedágio (ETC) e combustível. Cada
-                    rota tem um tempo livre incluso (normalmente 90 min no trecho de chegada/pickup,
-                    30 min no trecho de partida, ou as 10 horas inteiras nos tours de dia inteiro) —
-                    ver detalhe de cada rota na etapa Trajeto.
-                  </p>
-                  <p className="mt-3 font-medium text-black/80">Hora extra</p>
-                  <p className="mt-1">
-                    Tempo de uso além do período já incluso na rota escolhida é cobrado em blocos de
-                    30 minutos (sempre arredondado pra cima), com tarifa específica por veículo e
-                    rota, cobrado à parte.
-                  </p>
-                  <p className="mt-3 font-medium text-black/80">Adicionais opcionais</p>
-                  <p className="mt-1">
-                    Recepção com placa de identificação (Meet &amp; Greet) e cadeirinha infantil
-                    estão disponíveis mediante consulta, com valor adicional — não estão incluídos
-                    no preço-base da rota.
-                  </p>
-                  <p className="mt-3 font-medium text-black/80">Motorista bilíngue</p>
-                  <p className="mt-1">
-                    Motorista com português ou inglês está disponível mediante consulta e valor
-                    adicional — disponibilidade limitada, recomendamos solicitar com grande
-                    antecedência (idealmente 70 dias antes da viagem). Sem essa solicitação expressa,
-                    o motorista fornecido fala japonês.
-                  </p>
-                  <p className="mt-3 font-medium text-black/80">Não incluído</p>
-                  <p className="mt-1">
-                    Trânsito inter-municipal de longa distância entre regiões (ex.: Tóquio↔Kansai
-                    por estrada) não está coberto pelas rotas/tours listados acima.
-                  </p>
-                  <p className="mt-3 font-medium text-black/80">Cancelamento</p>
-                  <p className="mt-1">{POLITICA_CANCELAMENTO_MOTORISTA}</p>
-                  <p className="mt-3 font-medium text-black/80">Pagamento e responsabilidade dos dados</p>
-                  <p className="mt-1">
-                    O valor final em reais é convertido pela cotação de câmbio do dia da confirmação.
-                    A exatidão dos dados informados (nome, telefone/WhatsApp, horários de voo e locais
-                    de embarque) é de responsabilidade do cliente — divergências podem prejudicar o
-                    pickup e não são de responsabilidade da Alpinea nem do fornecedor. Isso não
-                    confirma pagamento — nossa equipe entra em contato pelo WhatsApp pra fechar a
-                    logística antes de qualquer cobrança.
-                  </p>
-        </div>
-        <button
-          type="button"
-          onClick={() => {
-            setTermosAceitos(true);
-            setModalTermos(false);
-          }}
-          className="mt-6 flex h-12 w-full items-center justify-center rounded-full bg-[#1f6fb8] text-sm font-semibold uppercase tracking-[0.08em] text-white transition hover:bg-[#2f80c9]"
-        >
-          Li e aceito
-        </button>
-      </Modal>
     </main>
   );
 }
