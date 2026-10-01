@@ -280,7 +280,7 @@ export async function POST(req: Request) {
     }
 
     await enviarEmail({
-      to: ["wilson@alpinea.io"],
+      to: ["wilson@alpinea.io", "financeiro@ajisaiwork.com.br"],
       replyTo: email || undefined,
       subject: `[${TAG_SELF_SERVICE}] Novo pedido de Câmbio (${direcao}) — ${nome}`,
       text: resumoTexto,

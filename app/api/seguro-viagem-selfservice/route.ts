@@ -371,7 +371,7 @@ export async function POST(req: Request) {
 
     // E-mail pro time interno.
     await enviarEmail({
-      to: ["wilson@alpinea.io"],
+      to: ["wilson@alpinea.io", "financeiro@ajisaiwork.com.br"],
       replyTo: email || undefined,
       subject: `[${TAG_SELF_SERVICE}] Novo pedido de Seguro Viagem — ${nome}`,
       text: resumoTexto,

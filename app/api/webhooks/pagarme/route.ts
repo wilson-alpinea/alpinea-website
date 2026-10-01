@@ -123,7 +123,7 @@ async function enviarEmail(params: {
 async function alertarTimeSemCorrelacao(motivo: string, payload: unknown) {
   console.error("Webhook Pagar.me sem correlação:", motivo, JSON.stringify(payload));
   await enviarEmail({
-    to: ["wilson@alpinea.io"],
+    to: ["wilson@alpinea.io", "financeiro@ajisaiwork.com.br"],
     subject: "[Pagar.me] Webhook recebido sem conseguir identificar o pedido",
     text: `Motivo: ${motivo}\n\nPayload:\n${JSON.stringify(payload, null, 2)}\n\nConfira manualmente no painel da Pagar.me e no CRM.`,
     html: `<p><strong>Motivo:</strong> ${escapeHtml(motivo)}</p><pre>${escapeHtml(JSON.stringify(payload, null, 2))}</pre><p>Confira manualmente no painel da Pagar.me e no CRM.</p>`,
@@ -249,7 +249,7 @@ export async function POST(req: Request) {
   }
 
   await enviarEmail({
-    to: ["wilson@alpinea.io"],
+    to: ["wilson@alpinea.io", "financeiro@ajisaiwork.com.br"],
     subject: `[Pagar.me] Pagamento confirmado — ${cliente?.nome || pagamento.cliente_id}`,
     text: `Pagamento confirmado via Pagar.me.\n\nCliente: ${cliente?.nome || "—"}\nValor: R$ ${Number(pagamento.valor).toLocaleString("pt-BR")}\nForma: ${pagamento.tipo_pagamento || "—"}\nPedido Pagar.me: ${pedidoIdGateway}`,
     html: `<p><strong>Pagamento confirmado via Pagar.me.</strong></p><p>Cliente: ${escapeHtml(cliente?.nome || "—")}<br/>Valor: R$ ${escapeHtml(Number(pagamento.valor).toLocaleString("pt-BR"))}<br/>Forma: ${escapeHtml(pagamento.tipo_pagamento || "—")}<br/>Pedido Pagar.me: ${escapeHtml(pedidoIdGateway)}</p>`,

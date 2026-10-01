@@ -292,7 +292,7 @@ export async function POST(req: Request) {
 
     // E-mail pro time interno — mesmo padrão dos outros self-checkouts.
     await enviarEmail({
-      to: ["wilson@alpinea.io"],
+      to: ["wilson@alpinea.io", "financeiro@ajisaiwork.com.br"],
       replyTo: email || undefined,
       subject: `[${TAG_SELF_SERVICE}] Novo pedido de JR Pass — ${nome}`,
       text: resumoTexto,
