@@ -38,6 +38,7 @@ import {
   IconCheck,
 } from "../page";
 import { RodapeCheckout } from "../RodapeCheckout";
+import { ProdutoTestePagamento } from "../ProdutoTestePagamento";
 
 // Fonte Inter só para os valores em dinheiro (R$/US$) — pedido do
 // Wilson, 29/set/2026: "a fonte padrão de numeros deve ser INTER".
@@ -610,6 +611,8 @@ export default function JrPassPage() {
               </h1>
             </div>
           </section>
+          {/* Produto de teste de R$ 1 — só aparece com ?teste=1 (Wilson, 30/set/2026). */}
+          <ProdutoTestePagamento produto="jrpass" />
           <p className="mt-6 max-w-2xl text-sm leading-relaxed text-black/75">
             Passe ferroviário oficial dos seis grupos JR, vendido em faixas fixas de 7, 14 ou 21 dias
             corridos — cobre a maior parte da rede Shinkansen, trens expressos, locais, ônibus JR e o

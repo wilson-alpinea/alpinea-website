@@ -502,9 +502,10 @@ export default function ProdutosPage() {
                   durante a viagem no japao" — mesmo template dos cards
                   acima, comissão de 20% sobre o valor das compras (não uma
                   diária/valor fixo). */}
+              {/* Ajisai Shopping virou página própria no template do
+                  Transporte Privado — pedido do Wilson, 30/set/2026. */}
               <ProductSelectorCard
-                href="/servicos-adicionais"
-                onClick={() => setAjisaiShoppingModalOpen(true)}
+                href="/produtos/ajisai-shopping"
                 icon="/images/icone-servico-ajisai-shopping.png"
                 iconWidth={1254}
                 iconHeight={1254}

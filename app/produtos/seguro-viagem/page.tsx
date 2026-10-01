@@ -43,6 +43,7 @@ import {
 } from "../page";
 import { RodapeCheckout } from "../RodapeCheckout";
 import { SEGURADORAS_VIAGEM, PAISES_ASIA_ADICIONAIS, type SeguradoraKey } from "./seguradoras";
+import { ProdutoTestePagamento } from "../ProdutoTestePagamento";
 
 // Fonte Inter só para valores em dinheiro — mesmo padrão do JR Pass
 // (Wilson, 29/set/2026: "a fonte padrão de numeros deve ser INTER").
@@ -396,6 +397,8 @@ export default function SeguroViagemPage() {
                 </h1>
               </div>
             </section>
+            {/* Produto de teste de R$ 1 — só aparece com ?teste=1 (Wilson, 30/set/2026). */}
+            <ProdutoTestePagamento produto="seguro-viagem" />
 
             <div className="mt-8 rounded-2xl bg-[#eef6fb] p-5 sm:p-6">
               <p className="text-center text-xs font-medium uppercase tracking-[0.15em] text-[#1c6ea8]">

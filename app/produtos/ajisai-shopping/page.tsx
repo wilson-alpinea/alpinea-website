@@ -1,178 +1,77 @@
 "use client";
 
-// Serviços Adicionais — página de produto no mesmo template do Transporte
-// Privado, Hotéis, Guia etc. (pedido do Wilson, 30/set/2026: "transformar
-// pagina atual em template novo aonde você pode selecionar os serviços
-// extras"). Substitui a antiga /servicos-adicionais (cards soltos com
-// "Adicionar ao meu pacote"), que agora redireciona para cá. Checkout
-// manual: o envio registra o pedido no CRM
-// (/api/servicos-adicionais-selfservice) e a equipe confirma pelo WhatsApp.
+// Ajisai Shopping — página de produto no mesmo template do Transporte
+// Privado, Hotéis, Guia etc. (pedido do Wilson, 30/set/2026: "novo hero
+// para ajisai shopping"). Antes era só um popup em /produtos
+// (ServicoAvulsoModal). Checkout manual: o envio registra o pedido no CRM
+// (/api/ajisai-shopping-selfservice) e a equipe combina tudo pelo WhatsApp.
 //
-// 4 etapas: 1 Viagem (período + pessoas) → 2 Serviços (catálogo com
-// seleção e quantidades) → 3 Dados → 4 Revisão (termos numa caixa).
+// 5 etapas: 1 Viagem (período + pessoas) → 2 Compras (o que procura e
+// quanto pretende gastar) → 3 Dias (quando e em que cidade) → 4 Dados →
+// 5 Revisão (termos numa caixa na página).
 //
-// Catálogo e preços = os mesmos da seção de serviços adicionais da
-// Calculadora Reversa (constantes em CustomPackageCard.tsx), para o cliente
-// ver o mesmo valor que o vendedor. Transfer aeroporto, Câmbio, JR Pass e
-// Seguro Viagem têm página própria e aparecem só como atalho.
+// Preço: comissão de COMISSAO_AJISAI_SHOPPING_PCT (20%) sobre o valor das
+// compras feitas com o acompanhamento — sem diária. O total da página é
+// uma estimativa da comissão sobre o orçamento que o cliente informa.
 
 import { useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { formatBRL, formatUSD, useCambioUSD } from "../../hooks/useCambioUSD";
-import {
-  DIARIA_WIFI_USD_PAX,
-  PRECO_MALA_INTERMUNICIPAL_USD,
-  PRECO_RESTAURANTES_HIGHEND_USD,
-  RESTAURANTES_HIGHEND_QTD,
-  RESTAURANTES_HIGHEND_LIMITE_PESSOAS,
-  PRECO_TRANSFER_ONIBUS_USD_PAX,
-  PRECO_RESERVA_RESTAURANTE_USD,
-  PRECO_EXPERIENCIA_SOB_MEDIDA_USD,
-  DIARIA_CONCIERGE_USD,
-  COMISSAO_AJISAI_SHOPPING_PCT,
-} from "../../components/CustomPackageCard";
+import { COMISSAO_AJISAI_SHOPPING_PCT } from "../../components/CustomPackageCard";
 import { display, WHATSAPP_NUMBER, hojeISO } from "../page";
 import {
   inter,
   IconeResumo,
   diasEntre,
+  formatarDataCurta,
   formatarDiaMes,
+  listarNatural,
   mascararWhatsapp,
   IconeCheck,
   Campo,
   classeInput,
   BlocoAvisos,
+  IconeSeta,
 } from "../../components/transporte/compartilhado";
 
-const ETAPAS = ["Viagem", "Serviços", "Dados", "Revisão"] as const;
-type Etapa = 1 | 2 | 3 | 4;
+const ETAPAS = ["Viagem", "Compras", "Dias", "Dados", "Revisão"] as const;
+type Etapa = 1 | 2 | 3 | 4 | 5;
 
-const MAX_DIAS = 60;
+const MAX_DIAS = 45;
 const MAX_PESSOAS = 20;
+const COMISSAO_PCT = Math.round(COMISSAO_AJISAI_SHOPPING_PCT * 100);
 
-type Ctx = { pessoas: number; dias: number };
-type CampoQtd = { rotulo: string; padrao: (c: Ctx) => number; min: number; max: number };
-type Servico = {
-  key: string;
-  crm: string | null;
-  nome: string;
-  descricao: string;
-  icone: string;
-  campos: CampoQtd[];
-  /** Valor em US$ para as quantidades escolhidas; null = sob consulta. */
-  preco: (q: number[]) => number | null;
-  unidade: string;
-  nota?: string;
-};
-
-const SERVICOS: Servico[] = [
-  {
-    key: "esim",
-    crm: "esim",
-    nome: "eSIM",
-    descricao: "Internet 5G direto no celular, sem retirar nem devolver aparelho.",
-    icone: "/images/icone-esim.svg",
-    campos: [
-      { rotulo: "Pessoas", padrao: (c) => c.pessoas, min: 1, max: MAX_PESSOAS },
-      { rotulo: "Dias", padrao: (c) => c.dias, min: 1, max: MAX_DIAS },
-    ],
-    preco: ([p, d]) => DIARIA_WIFI_USD_PAX * p * d,
-    unidade: `${formatUSD(DIARIA_WIFI_USD_PAX)} por pessoa/dia`,
-  },
-  {
-    key: "malas",
-    crm: null,
-    nome: "Transporte de malas entre cidades",
-    descricao: "A mala sai do hotel de uma cidade e chega no hotel da próxima no dia seguinte — sem carregar no Shinkansen.",
-    icone: "/images/icone-servico-malas-intermunicipal.png",
-    campos: [
-      { rotulo: "Malas", padrao: (c) => c.pessoas, min: 1, max: 40 },
-      { rotulo: "Trechos", padrao: () => 1, min: 1, max: 10 },
-    ],
-    preco: ([m, t]) => PRECO_MALA_INTERMUNICIPAL_USD * m * t,
-    unidade: `${formatUSD(PRECO_MALA_INTERMUNICIPAL_USD)} por mala/trecho`,
-  },
-  {
-    key: "restaurantesHighEnd",
-    crm: "reserva_restaurantes",
-    nome: "Restaurantes High-End",
-    descricao: `Pacote de ${RESTAURANTES_HIGHEND_QTD} reservas em restaurantes Michelin, Tabelog Award ou equivalentes, para até ${RESTAURANTES_HIGHEND_LIMITE_PESSOAS} pessoas.`,
-    icone: "/images/icone-servico-restaurantes-highend.png",
-    campos: [],
-    preco: () => PRECO_RESTAURANTES_HIGHEND_USD,
-    unidade: `pacote de ${RESTAURANTES_HIGHEND_QTD} reservas`,
-    nota: "+ valor das refeições",
-  },
-  {
-    key: "reservaRestaurante",
-    crm: "reserva_restaurantes",
-    nome: "Reserva de restaurante",
-    descricao: "Nossa equipe consegue mesa em restaurantes concorridos fora do pacote High-End.",
-    icone: "/images/icone-servico-reserva-restaurante.png",
-    campos: [{ rotulo: "Reservas", padrao: () => 1, min: 1, max: 20 }],
-    preco: ([r]) => PRECO_RESERVA_RESTAURANTE_USD * r,
-    unidade: `${formatUSD(PRECO_RESERVA_RESTAURANTE_USD)} por reserva`,
-    nota: "+ valor das refeições",
-  },
-  {
-    key: "experiencia",
-    crm: null,
-    nome: "Experiência sob medida",
-    descricao: "Cerimônia do chá particular, acessos exclusivos e experiências fora do catálogo — pesquisamos, negociamos e agendamos.",
-    icone: "/images/icone-servico-experiencia-sob-medida.png",
-    campos: [{ rotulo: "Experiências", padrao: () => 1, min: 1, max: 10 }],
-    preco: ([e]) => PRECO_EXPERIENCIA_SOB_MEDIDA_USD * e,
-    unidade: `${formatUSD(PRECO_EXPERIENCIA_SOB_MEDIDA_USD)} por experiência`,
-    nota: "+ custo da experiência, cotado à parte",
-  },
-  {
-    key: "concierge",
-    crm: null,
-    nome: "Concierge dedicado",
-    descricao: "Suporte e tradução por WhatsApp e telefone durante a viagem, para o que surgir.",
-    icone: "/images/icone-servico-concierge.png",
-    campos: [{ rotulo: "Dias", padrao: (c) => c.dias, min: 1, max: MAX_DIAS }],
-    preco: ([d]) => DIARIA_CONCIERGE_USD * d,
-    unidade: `${formatUSD(DIARIA_CONCIERGE_USD)} por dia`,
-  },
-  {
-    key: "transferOnibus",
-    crm: null,
-    nome: "Limousine Bus (aeroporto ↔ Tóquio)",
-    descricao: "Ônibus executivo entre o aeroporto e o hotel em Tóquio, ida e volta, com reserva e orientação da nossa equipe.",
-    icone: "/images/icone-servico-transfer-onibus.png",
-    campos: [{ rotulo: "Pessoas", padrao: (c) => c.pessoas, min: 1, max: MAX_PESSOAS }],
-    preco: ([p]) => PRECO_TRANSFER_ONIBUS_USD_PAX * p,
-    unidade: `${formatUSD(PRECO_TRANSFER_ONIBUS_USD_PAX)} por pessoa`,
-  },
-  {
-    key: "ajisaiShopping",
-    crm: "ajisai_shopping",
-    nome: "Ajisai Shopping",
-    descricao: "Acompanhamento pessoal em compras — negociação, tradução e apoio logístico nas lojas.",
-    icone: "/images/icone-servico-ajisai-shopping.png",
-    campos: [],
-    preco: () => null,
-    unidade: `${Math.round(COMISSAO_AJISAI_SHOPPING_PCT * 100)}% sobre o valor das compras`,
-  },
+const CATEGORIAS = [
+  "Relógios",
+  "Câmeras e lentes",
+  "Bolsas e moda",
+  "Joias",
+  "Facas japonesas",
+  "Eletrônicos",
+  "Cosméticos",
+  "Arte, cerâmica e antiguidades",
+  "Itens vintage e colecionáveis",
+  "Outros",
 ];
 
-// Produtos com página própria — só atalhos aqui.
-const OUTROS_PRODUTOS = [
-  { nome: "Transfer Aeroporto", href: "/produtos/transfer-aeroporto" },
-  { nome: "Câmbio", href: "/produtos/cambio" },
-  { nome: "JR Pass", href: "/produtos/jrpass" },
-  { nome: "Seguro Viagem", href: "/produtos/seguro-viagem" },
-  { nome: "Ajisai Shopping (página completa)", href: "/produtos/ajisai-shopping" },
+// Faixas de orçamento (em reais) — o cliente pode digitar outro valor.
+const FAIXAS_ORCAMENTO = [10000, 30000, 60000, 100000];
+
+const CIDADES = ["Tóquio", "Kyoto", "Osaka", "Nara", "Hakone", "Kanazawa", "Fukuoka", "Sapporo", "Outra"];
+
+const DESTAQUES = [
+  "Lojas certas para o que você procura, com tradução e negociação",
+  "Apoio com tax free, envio e logística das compras",
+  "Sem diária: comissão só sobre o que você comprar",
 ];
 
-function Contador({ rotulo, ajuda, valor, min, max, onChange }: { rotulo: string; ajuda?: string; valor: number; min: number; max: number; onChange: (n: number) => void }) {
+function Contador({ rotulo, ajuda, valor, min, total, onChange }: { rotulo: string; ajuda: string; valor: number; min: number; total: number; onChange: (n: number) => void }) {
   return (
     <div className="flex items-center justify-between gap-3 py-2">
       <span className="min-w-0">
         <span className="block text-sm text-black/85">{rotulo}</span>
-        {ajuda && <span className="block text-xs text-black/45">{ajuda}</span>}
+        <span className="block text-xs text-black/45">{ajuda}</span>
       </span>
       <span className="flex shrink-0 items-center gap-1">
         <button
@@ -189,8 +88,8 @@ function Contador({ rotulo, ajuda, valor, min, max, onChange }: { rotulo: string
         </span>
         <button
           type="button"
-          onClick={() => onChange(Math.min(max, valor + 1))}
-          disabled={valor >= max}
+          onClick={() => onChange(valor + 1)}
+          disabled={total >= MAX_PESSOAS}
           aria-label={`Mais ${rotulo.toLowerCase()}`}
           className="flex h-9 w-9 items-center justify-center rounded-full border border-black/15 text-lg text-black/70 transition hover:border-black/35 disabled:opacity-30"
         >
@@ -201,45 +100,51 @@ function Contador({ rotulo, ajuda, valor, min, max, onChange }: { rotulo: string
   );
 }
 
-function TextoTermosServicos() {
+function TextoTermosShopping() {
   return (
     <>
-      <p className="font-medium text-black/80">Pedido e confirmação</p>
+      <p className="font-medium text-black/80">Serviço</p>
       <p className="mt-1">
-        Os valores desta página são de referência. Nossa equipe confirma disponibilidade, datas e detalhes de cada serviço pelo
-        WhatsApp, e os serviços só são contratados depois da sua aprovação e da confirmação do pagamento.
+        Uma pessoa da equipe Ajisai acompanha o grupo nas lojas combinadas, com tradução, negociação e apoio logístico. Os
+        dias, cidades e lojas são combinados com antecedência pelo WhatsApp.
       </p>
-      <p className="mt-3 font-medium text-black/80">Custos de terceiros</p>
+      <p className="mt-3 font-medium text-black/80">Comissão</p>
       <p className="mt-1">
-        Refeições em restaurantes, o custo das experiências sob medida e as compras feitas com o Ajisai Shopping são pagos à
-        parte. O valor desta página é o do serviço da Ajisai.
+        A Ajisai cobra {COMISSAO_PCT}% sobre o valor das compras feitas com o acompanhamento. O valor desta página é uma
+        estimativa sobre o orçamento informado; a comissão final é calculada sobre o que for efetivamente comprado.
       </p>
-      <p className="mt-3 font-medium text-black/80">Reservas</p>
+      <p className="mt-3 font-medium text-black/80">Compras</p>
       <p className="mt-1">
-        Restaurantes e experiências dependem da disponibilidade de cada estabelecimento. Quando uma reserva não é possível,
-        oferecemos alternativas equivalentes. Políticas de cancelamento e no-show de restaurantes e parceiros são repassadas
-        antes da confirmação.
+        As compras são pagas diretamente às lojas pelo cliente. Preço, disponibilidade, garantia, trocas e devoluções seguem
+        as regras de cada loja e do fabricante.
+      </p>
+      <p className="mt-3 font-medium text-black/80">Bagagem, tax free e alfândega</p>
+      <p className="mt-1">
+        Apoiamos com o processo de tax free e com envio ou despacho das compras, mas limites de bagagem, impostos de
+        importação e declarações à alfândega no retorno são responsabilidade do cliente.
       </p>
       <p className="mt-3 font-medium text-black/80">Pagamento</p>
       <p className="mt-1">
-        Nenhum valor é cobrado nesta página. Forma de pagamento e parcelamento são combinados com a nossa equipe pelo
-        WhatsApp; valores em dólar são convertidos pela cotação do dia da confirmação.
+        Nenhum valor é cobrado nesta página. Forma de pagamento da comissão é combinada com a nossa equipe pelo WhatsApp.
       </p>
     </>
   );
 }
 
-export default function ServicosAdicionaisPage() {
+export default function AjisaiShoppingPage() {
   const cambio = useCambioUSD();
   const cambioCotacao = cambio?.cotacao ?? 5.3;
 
   const [etapa, setEtapa] = useState<Etapa>(1);
   const [dataChegada, setDataChegada] = useState("");
   const [dataPartida, setDataPartida] = useState("");
-  const [pessoas, setPessoas] = useState(2);
+  const [adultos, setAdultos] = useState(2);
+  const [criancas, setCriancas] = useState(0);
 
-  // Serviço marcado → quantidades de cada campo.
-  const [selecionados, setSelecionados] = useState<Record<string, number[]>>({});
+  const [categorias, setCategorias] = useState<string[]>([]);
+  const [orcamentoBRL, setOrcamentoBRL] = useState<number | null>(null);
+  // Dias com acompanhamento → cidade de cada dia.
+  const [diasGuia, setDiasGuia] = useState<Record<string, string>>({});
 
   const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
@@ -257,6 +162,8 @@ export default function ServicosAdicionaisPage() {
 
   const stepperRef = useRef<HTMLDivElement | null>(null);
 
+  const pessoas = adultos + criancas;
+
   const erroDataChegada = !dataChegada ? "Informe a data de chegada." : dataChegada < hojeISO() ? "A chegada precisa ser hoje ou depois." : null;
   const erroDataPartida = !dataPartida
     ? "Informe a data de partida."
@@ -266,26 +173,22 @@ export default function ServicosAdicionaisPage() {
         ? `Para viagens com mais de ${MAX_DIAS} dias, fale com a nossa equipe.`
         : null;
   const periodoValido = erroDataChegada === null && erroDataPartida === null;
-  const dias = periodoValido ? diasEntre(dataChegada, dataPartida).length : 0;
-  const ctx: Ctx = { pessoas, dias: Math.max(1, dias) };
+  const diasViagem = periodoValido ? diasEntre(dataChegada, dataPartida) : [];
 
-  const escolhidos = SERVICOS.filter((s) => s.key in selecionados);
-  const precoDe = (s: Servico) => s.preco(selecionados[s.key] ?? s.campos.map((c) => c.padrao(ctx)));
-  const totalUSD = escolhidos.reduce((soma, s) => soma + (precoDe(s) ?? 0), 0);
-  const totalBRL = totalUSD * cambioCotacao;
+  const diasEscolhidos = diasViagem.filter((d) => d in diasGuia);
+  const diasForaDoPeriodo = Object.keys(diasGuia).filter((d) => !diasViagem.includes(d));
+  const comissaoBRL = orcamentoBRL ? orcamentoBRL * COMISSAO_AJISAI_SHOPPING_PCT : 0;
+  const totalBRL = comissaoBRL;
+  const totalUSD = totalBRL / cambioCotacao;
 
   const avisos: string[] = [];
-  if ("restaurantesHighEnd" in selecionados && pessoas > RESTAURANTES_HIGHEND_LIMITE_PESSOAS) {
-    avisos.push(`O pacote High-End é para até ${RESTAURANTES_HIGHEND_LIMITE_PESSOAS} pessoas — para ${pessoas}, confirmamos a disponibilidade com você.`);
+  if (diasEscolhidos.some((d) => d === dataChegada || d === dataPartida)) {
+    avisos.push("Compras no dia de chegada ou de partida — o tempo útil depende do horário do voo; combinamos pelo WhatsApp.");
   }
-  escolhidos.forEach((s) => {
-    const q = selecionados[s.key];
-    s.campos.forEach((c, i) => {
-      if (c.rotulo === "Dias" && dias > 0 && q[i] > dias) avisos.push(`${s.nome}: ${q[i]} dias, mas a viagem tem ${dias}.`);
-      if (c.rotulo === "Pessoas" && q[i] > pessoas) avisos.push(`${s.nome}: ${q[i]} pessoas, mas o grupo tem ${pessoas}.`);
-    });
-  });
-  if ("ajisaiShopping" in selecionados) avisos.push("Ajisai Shopping é cobrado como porcentagem das compras — não entra no total estimado.");
+  if (diasEscolhidos.some((d) => diasGuia[d] === "Outra")) avisos.push("Cidade “Outra” — informe qual nas observações.");
+  if (orcamentoBRL && orcamentoBRL >= 60000) {
+    avisos.push("Compras de valor alto: verifique os limites de bagagem e a declaração à alfândega no retorno ao Brasil.");
+  }
 
   const digitosWhatsapp = whatsapp.replace(/\D/g, "").length;
   const errosDados: Record<string, string | null> = {
@@ -305,22 +208,17 @@ export default function ServicosAdicionaisPage() {
         : null;
   const tocar = (campo: string) => setTocados((t) => ({ ...t, [campo]: true }));
 
-  const etapa1Ok = periodoValido && pessoas >= 1;
-  const etapa2Ok = escolhidos.length > 0;
-  const etapa3Ok = dadosValidos;
-  const etapasOk = [etapa1Ok, etapa2Ok, etapa3Ok];
-  const podeEnviar = etapa1Ok && etapa2Ok && etapa3Ok && termosAceitos;
+  const etapa1Ok = periodoValido && adultos >= 1;
+  const etapa2Ok = categorias.length > 0 && !!orcamentoBRL && orcamentoBRL > 0;
+  const etapa3Ok = diasEscolhidos.length > 0;
+  const etapa4Ok = dadosValidos;
+  const etapasOk = [etapa1Ok, etapa2Ok, etapa3Ok, etapa4Ok];
+  const podeEnviar = etapa1Ok && etapa2Ok && etapa3Ok && etapa4Ok && termosAceitos;
 
-  const textoPeriodo = periodoValido ? `${formatarDiaMes(dataChegada)} a ${formatarDiaMes(dataPartida)} · ${dias} ${dias === 1 ? "dia" : "dias"}` : "";
-  const textoPessoas = `${pessoas} ${pessoas === 1 ? "pessoa" : "pessoas"}`;
-  const detalheQtd = (s: Servico) =>
-    s.campos
-      .map((c, i) => {
-        const n = selecionados[s.key]?.[i] ?? c.padrao(ctx);
-        const rotulo = c.rotulo.toLowerCase();
-        return `${n} ${n === 1 ? rotulo.replace(/s$/, "") : rotulo}`;
-      })
-      .join(" · ");
+  const textoPeriodo = periodoValido
+    ? `${formatarDiaMes(dataChegada)} a ${formatarDiaMes(dataPartida)} · ${diasViagem.length} ${diasViagem.length === 1 ? "dia" : "dias"}`
+    : "";
+  const textoPessoas = `${adultos} ${adultos === 1 ? "adulto" : "adultos"}${criancas ? `, ${criancas} ${criancas === 1 ? "criança" : "crianças"}` : ""}`;
 
   function irPara(nova: Etapa) {
     setEtapa(nova);
@@ -332,36 +230,38 @@ export default function ServicosAdicionaisPage() {
     }
   }
 
-  function alternar(s: Servico) {
-    setSelecionados((atual) => {
+  // Liga/desliga um dia; a cidade sugerida é a do dia anterior escolhido.
+  function alternarDia(d: string) {
+    setDiasGuia((atual) => {
       const novo = { ...atual };
-      if (s.key in novo) delete novo[s.key];
-      else novo[s.key] = s.campos.map((c) => c.padrao(ctx));
+      if (d in novo) {
+        delete novo[d];
+        return novo;
+      }
+      const anterior = [...diasViagem].reverse().find((x) => x < d && x in novo);
+      novo[d] = anterior ? novo[anterior] : "Tóquio";
       return novo;
-    });
-  }
-  function ajustar(s: Servico, i: number, valor: number) {
-    setSelecionados((atual) => {
-      const q = [...(atual[s.key] ?? [])];
-      q[i] = valor;
-      return { ...atual, [s.key]: q };
     });
   }
 
   const cta: { rotulo: string; ativo: boolean; falta: string | null } =
     etapa === 1
-      ? { rotulo: "Ver serviços", ativo: true, falta: etapa1Ok ? null : "Informe chegada e partida para continuar" }
+      ? { rotulo: "Continuar", ativo: true, falta: etapa1Ok ? null : "Informe chegada e partida para continuar" }
       : etapa === 2
         ? etapa2Ok
           ? { rotulo: "Continuar", ativo: true, falta: null }
-          : { rotulo: "Escolha um serviço", ativo: false, falta: "Escolha ao menos um serviço para continuar" }
+          : { rotulo: "Conte o que procura", ativo: false, falta: "Escolha o que procura e o orçamento para continuar" }
         : etapa === 3
-          ? { rotulo: "Continuar", ativo: etapa3Ok, falta: etapa3Ok ? null : "Complete seus dados para continuar" }
-          : {
-              rotulo: status === "enviando" ? "Enviando…" : "Solicitar serviços",
-              ativo: podeEnviar && status !== "enviando",
-              falta: termosAceitos ? null : "Aceite os Termos e Condições para solicitar",
-            };
+          ? etapa3Ok
+            ? { rotulo: "Continuar", ativo: true, falta: null }
+            : { rotulo: "Escolha os dias", ativo: false, falta: "Escolha ao menos um dia de compras" }
+          : etapa === 4
+            ? { rotulo: "Continuar", ativo: etapa4Ok, falta: etapa4Ok ? null : "Complete seus dados para continuar" }
+            : {
+                rotulo: status === "enviando" ? "Enviando…" : "Solicitar Ajisai Shopping",
+                ativo: podeEnviar && status !== "enviando",
+                falta: termosAceitos ? null : "Aceite os Termos e Condições para solicitar",
+              };
 
   function acionarCta() {
     if (etapa === 1) {
@@ -375,6 +275,10 @@ export default function ServicosAdicionaisPage() {
     }
     if (etapa === 3) {
       if (etapa3Ok) irPara(4);
+      return;
+    }
+    if (etapa === 4) {
+      if (etapa4Ok) irPara(5);
       else setTentouAvancarDados(true);
       return;
     }
@@ -386,36 +290,29 @@ export default function ServicosAdicionaisPage() {
   }
 
   const etapasFaltando = etapasOk.filter((ok) => !ok).length;
-  const resumoServicos = escolhidos
-    .map((s) => {
-      const p = precoDe(s);
-      return `${s.nome}${s.campos.length ? ` (${detalheQtd(s)})` : ""} — ${p === null ? s.unidade : `US$ ${Math.round(p)}`}`;
-    })
-    .join("; ");
+  const resumoDias = diasEscolhidos.map((d) => `${formatarDataCurta(d)} — ${diasGuia[d]}`).join("; ");
 
   async function enviar() {
     if (!podeEnviar || status === "enviando") return;
     setStatus("enviando");
     setErro("");
     try {
-      const resposta = await fetch("/api/servicos-adicionais-selfservice", {
+      const resposta = await fetch("/api/ajisai-shopping-selfservice", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           dataChegada,
           dataPartida,
-          pessoas,
-          servicos: escolhidos.map((s) => ({
-            nome: s.nome,
-            crm: s.crm,
-            detalhe: detalheQtd(s),
-            valorUSD: precoDe(s) === null ? null : Math.round(precoDe(s) as number),
-            unidade: s.unidade,
-          })),
-          resumo: resumoServicos,
-          avisos,
+          adultos,
+          criancas,
+          categorias,
+          orcamentoBRL,
+          comissaoPct: COMISSAO_PCT,
+          dias: diasEscolhidos.map((d) => ({ data: d, cidade: diasGuia[d] })),
+          resumo: resumoDias,
           totalUSD: Math.round(totalUSD),
           totalBRL: Math.round(totalBRL),
+          avisos,
           nome,
           email,
           whatsapp,
@@ -437,44 +334,48 @@ export default function ServicosAdicionaisPage() {
     }
   }
 
-  const mensagemWhatsapp = `Olá! Acabei de pedir serviços adicionais pelo site da Ajisai — ${resumoServicos}.${nome ? ` Meu nome é ${nome}.` : ""}`;
-  const totalExibidoUSD: number | null = escolhidos.length > 0 ? totalUSD : null;
+  const mensagemWhatsapp = `Olá! Acabei de pedir o Ajisai Shopping pelo site da Ajisai — ${listarNatural(categorias)}; ${resumoDias}.${nome ? ` Meu nome é ${nome}.` : ""}`;
+
+  const totalExibidoUSD: number | null = orcamentoBRL ? totalUSD : null;
 
   const conteudoResumo = (
     <div>
-      <p className={`${display.className} text-lg font-medium text-[#0A2540]`}>Seus serviços</p>
+      <p className={`${display.className} text-lg font-medium text-[#0A2540]`}>Seu Ajisai Shopping</p>
       <p className="mt-2 text-sm text-black/80">
         {textoPeriodo || <span className="text-black/45">Período a definir</span>}
         <span className="text-black/50"> · {textoPessoas}</span>
       </p>
+      {categorias.length > 0 ? (
+        <p className="mt-1 text-sm text-black/80">{listarNatural(categorias)}</p>
+      ) : (
+        <p className="mt-1 text-sm text-black/45">Nada escolhido ainda</p>
+      )}
       <div className="mt-4 space-y-3 border-t border-black/10 pt-4">
-        {escolhidos.length === 0 ? (
-          <p className="text-sm text-black/45">Nenhum serviço escolhido</p>
+        {diasEscolhidos.length === 0 ? (
+          <p className="text-sm text-black/45">Nenhum dia escolhido</p>
         ) : (
-          escolhidos.map((s) => {
-            const p = precoDe(s);
-            return (
-              <div key={s.key} className="flex items-center justify-between gap-3 text-sm">
-                <span className="flex min-w-0 items-center gap-2.5 text-black/80">
-                  <IconeResumo src={s.icone} />
-                  <span className="min-w-0">
-                    <span className="block">{s.nome}</span>
-                    {s.campos.length > 0 && <span className="block text-xs text-black/50">{detalheQtd(s)}</span>}
-                  </span>
-                </span>
-                {p === null ? (
-                  <span className="shrink-0 text-xs text-black/50">sob consulta</span>
-                ) : (
-                  <span className={`${inter.className} shrink-0 font-medium tabular-nums text-black`}>{formatUSD(p)}</span>
-                )}
-              </div>
-            );
-          })
+          <div className="flex items-center gap-2.5 text-sm text-black/80">
+            <IconeResumo src="/images/icone-servico-ajisai-shopping.png" />
+            <span className="min-w-0">
+              <span className="block">
+                {diasEscolhidos.length} {diasEscolhidos.length === 1 ? "dia" : "dias"} de compras
+              </span>
+              <span className="block text-xs text-black/50">{diasEscolhidos.map((d) => `${formatarDiaMes(d)} ${diasGuia[d]}`).join(" · ")}</span>
+            </span>
+          </div>
         )}
+        {orcamentoBRL ? (
+          <div className="flex items-center justify-between gap-3 text-sm">
+            <span className="text-black/65">
+              {COMISSAO_PCT}% sobre {formatBRL(orcamentoBRL)}
+            </span>
+            <span className={`${inter.className} shrink-0 font-medium tabular-nums text-black`}>{formatBRL(comissaoBRL)}</span>
+          </div>
+        ) : null}
       </div>
       {avisos.length > 0 && <BlocoAvisos avisos={avisos} className="mt-4" />}
       <div className="mt-4 border-t border-black/10 pt-4">
-        <p className="text-[11px] uppercase tracking-[0.14em] text-black/50">Total estimado</p>
+        <p className="text-[11px] uppercase tracking-[0.14em] text-black/50">Comissão estimada</p>
         <p
           key={Math.round(totalExibidoUSD ?? 0)}
           className={`${inter.className} mt-0.5 rounded-md text-3xl font-bold tabular-nums tracking-[-0.02em] text-[#0A2540]`}
@@ -483,7 +384,9 @@ export default function ServicosAdicionaisPage() {
           {totalExibidoUSD !== null ? formatUSD(totalExibidoUSD) : "—"}
         </p>
         {totalExibidoUSD !== null && (
-          <p className={`${inter.className} text-xs tabular-nums text-black/50`}>≈ {formatBRL(totalBRL)} na cotação do dia</p>
+          <p className={`${inter.className} text-xs tabular-nums text-black/50`}>
+            ≈ {formatBRL(totalBRL)} · comissão estimada, o valor final segue o que for comprado
+          </p>
         )}
       </div>
     </div>
@@ -503,7 +406,7 @@ export default function ServicosAdicionaisPage() {
   );
 
   const textoStatus =
-    cta.falta ?? (etapa < 4 && etapasFaltando > 0 ? (etapasFaltando === 1 ? "Falta 1 etapa" : `Faltam ${etapasFaltando} etapas`) : null);
+    cta.falta ?? (etapa < 5 && etapasFaltando > 0 ? (etapasFaltando === 1 ? "Falta 1 etapa" : `Faltam ${etapasFaltando} etapas`) : null);
 
   const classeDataCaixa =
     "h-14 w-full min-w-0 appearance-none bg-transparent px-3 pt-4 text-base text-black focus:outline-none sm:h-12 sm:pt-0 md:text-[15px]";
@@ -524,7 +427,7 @@ export default function ServicosAdicionaisPage() {
           Voltar
         </Link>
         <span className="h-4 w-px bg-white/20" aria-hidden="true" />
-        <p className={`${display.className} truncate whitespace-nowrap text-base font-medium text-white sm:text-lg md:text-xl`}>Serviços Adicionais</p>
+        <p className={`${display.className} truncate whitespace-nowrap text-base font-medium text-white sm:text-lg md:text-xl`}>Ajisai Shopping</p>
         <div className="flex-1" />
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src="/images/AJISAI-LOGO.avif" alt="Ajisai" className="h-6 w-auto object-contain md:h-7" />
@@ -537,7 +440,7 @@ export default function ServicosAdicionaisPage() {
           </span>
           <h1 className={`${display.className} mt-5 text-2xl font-medium text-black md:text-3xl`}>Recebemos seu pedido</h1>
           <p className="mx-auto mt-3 max-w-md text-sm leading-relaxed text-black/70">
-            Nossa equipe confirma cada serviço com você pelo WhatsApp — em geral no mesmo dia útil.
+            Nossa equipe combina lojas, dias e horários com você pelo WhatsApp — em geral no mesmo dia útil.
           </p>
           <a
             href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(mensagemWhatsapp)}`}
@@ -554,12 +457,12 @@ export default function ServicosAdicionaisPage() {
             <section className="relative -mx-5 overflow-hidden bg-[#0A2540] sm:mx-0 sm:rounded-2xl">
               <div className="relative h-48 sm:absolute sm:inset-y-0 sm:right-0 sm:h-auto sm:w-[64%]">
                 <Image
-                  src="/images/produtos/servicos-adicionais-header.jpg"
-                  alt="Serviços da Ajisai no Japão: eSIM, transporte de malas, experiência de cerimônia do chá e motorista"
+                  src="/images/produtos/ajisai-shopping-header.jpg"
+                  alt="Família sendo atendida em uma loja de relógios e câmeras no Japão"
                   fill
                   priority
                   sizes="(min-width: 640px) 700px, 100vw"
-                  className="object-cover object-[40%_40%]"
+                  className="object-cover object-[50%_35%]"
                 />
                 <div
                   aria-hidden="true"
@@ -567,9 +470,9 @@ export default function ServicosAdicionaisPage() {
                 />
               </div>
               <div className="relative -mt-10 px-5 pb-6 sm:mt-0 sm:flex sm:min-h-[260px] sm:max-w-[38%] sm:flex-col sm:justify-center sm:px-10 sm:py-10 md:min-h-[290px]">
-                <p className="text-xs uppercase tracking-[0.3em] text-white/75">Serviços Adicionais</p>
+                <p className="text-xs uppercase tracking-[0.3em] text-white/75">Ajisai Shopping</p>
                 <h1 className={`${display.className} mt-3 text-[28px] font-medium leading-tight text-white md:text-4xl`}>
-                  Os detalhes que completam a viagem
+                  Compras no Japão com quem conhece cada loja
                 </h1>
               </div>
             </section>
@@ -618,7 +521,7 @@ export default function ServicosAdicionaisPage() {
                   <h2 id="titulo-etapa-1" className={`${display.className} text-2xl font-medium text-[#0A2540]`}>
                     Quando e quantas pessoas?
                   </h2>
-                  <p className="mt-1.5 text-sm text-black/60">Usamos o período e o grupo para já sugerir as quantidades de cada serviço.</p>
+                  <p className="mt-1.5 text-sm text-black/60">Informe o período no Japão. Depois você conta o que procura e em quais dias quer o acompanhamento.</p>
 
                   <div className="mt-6 rounded-2xl border border-black/10 bg-white p-4 shadow-[0_10px_30px_-22px_rgba(10,37,64,0.35)] sm:p-5">
                     <div className="mb-1.5 hidden grid-cols-2 text-xs font-medium text-black/60 sm:grid">
@@ -660,116 +563,177 @@ export default function ServicosAdicionaisPage() {
                     {mostrarErro("dataChegada") || mostrarErro("dataPartida") ? (
                       <p className="mt-1.5 text-xs text-red-600">{mostrarErro("dataChegada") || mostrarErro("dataPartida")}</p>
                     ) : (
-                      <p className="mt-1.5 text-xs text-black/45">{dias > 0 ? `${dias} ${dias === 1 ? "dia" : "dias"} no Japão.` : " "}</p>
+                      <p className="mt-1.5 text-xs text-black/45">
+                        {diasViagem.length > 0 ? `${diasViagem.length} ${diasViagem.length === 1 ? "dia" : "dias"} no Japão.` : "Os dias de compras ficam dentro desse período."}
+                      </p>
                     )}
 
                     <div className="mt-4 grid gap-4 border-t border-black/[0.08] pt-4 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end">
-                      <div className="sm:max-w-sm">
-                        <Contador rotulo="Pessoas" ajuda="Incluindo crianças" valor={pessoas} min={1} max={MAX_PESSOAS} onChange={setPessoas} />
+                      <div className="divide-y divide-black/[0.06] sm:max-w-sm">
+                        <Contador rotulo="Adultos" ajuda="12 anos ou mais" valor={adultos} min={1} total={pessoas} onChange={setAdultos} />
+                        <Contador rotulo="Crianças" ajuda="Até 11 anos" valor={criancas} min={0} total={pessoas} onChange={setCriancas} />
                       </div>
                       <button
                         type="button"
                         onClick={acionarCta}
                         className="flex h-12 w-full items-center justify-center rounded-xl bg-[#1f6fb8] px-8 text-sm font-semibold text-white transition hover:bg-[#2f80c9] sm:mb-2 sm:w-auto"
                       >
-                        Ver serviços
+                        Continuar
                       </button>
                     </div>
+                  </div>
+
+                  <ul className="mt-6 space-y-2">
+                    {DESTAQUES.map((d) => (
+                      <li key={d} className="flex items-start gap-2 text-sm text-black/65">
+                        <IconeCheck className="mt-0.5 h-4 w-4 shrink-0 text-[#2f80c9]" />
+                        {d}
+                      </li>
+                    ))}
+                  </ul>
+                </section>
+              )}
+
+              {/* ── ETAPA 2 — COMPRAS ── */}
+              {etapa === 2 && (
+                <section aria-labelledby="titulo-etapa-2">
+                  <h2 id="titulo-etapa-2" className={`${display.className} text-2xl font-medium text-[#0A2540]`}>
+                    O que você procura?
+                  </h2>
+                  <p className="mt-1.5 text-sm text-black/60">Marque quantos quiser — usamos isso para montar o roteiro de lojas.</p>
+                  <div className="mt-6 flex flex-wrap gap-2">
+                    {CATEGORIAS.map((c) => {
+                      const ativo = categorias.includes(c);
+                      return (
+                        <button
+                          key={c}
+                          type="button"
+                          aria-pressed={ativo}
+                          onClick={() => setCategorias((atual) => (ativo ? atual.filter((x) => x !== c) : [...atual, c]))}
+                          className={`flex min-h-[44px] items-center gap-2 rounded-full border px-4 text-sm transition ${
+                            ativo ? "border-[#2f80c9] bg-[#2f80c9]/[0.06] font-medium text-[#0A2540]" : "border-black/15 text-black/70 hover:border-black/35"
+                          }`}
+                        >
+                          {ativo && <IconeCheck className="h-3.5 w-3.5 text-[#2f80c9]" />}
+                          {c}
+                        </button>
+                      );
+                    })}
+                  </div>
+
+                  <div className="mt-8 border-t border-black/10 pt-6">
+                    <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-black/70">Quanto pretende gastar em compras?</p>
+                    <p className="mt-1 text-xs text-black/50">
+                      É só uma estimativa para calcular a comissão de {COMISSAO_PCT}% — o valor final segue o que for comprado.
+                    </p>
+                    <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4">
+                      {FAIXAS_ORCAMENTO.map((v) => {
+                        const ativo = orcamentoBRL === v;
+                        return (
+                          <button
+                            key={v}
+                            type="button"
+                            aria-pressed={ativo}
+                            onClick={() => setOrcamentoBRL(v)}
+                            className={`h-12 rounded-xl border text-sm tabular-nums transition ${
+                              ativo ? "border-[#2f80c9] bg-[#2f80c9]/[0.06] font-semibold text-[#0A2540] ring-1 ring-[#2f80c9]" : "border-black/15 text-black/75 hover:border-black/35"
+                            }`}
+                          >
+                            {formatBRL(v)}
+                          </button>
+                        );
+                      })}
+                    </div>
+                    <label className="mt-3 block max-w-xs">
+                      <span className="mb-1.5 block text-xs font-medium text-black/60">Ou digite o valor (R$)</span>
+                      <input
+                        type="text"
+                        inputMode="numeric"
+                        value={orcamentoBRL && !FAIXAS_ORCAMENTO.includes(orcamentoBRL) ? orcamentoBRL.toLocaleString("pt-BR") : ""}
+                        onChange={(e) => {
+                          const n = Number(e.target.value.replace(/\D/g, ""));
+                          setOrcamentoBRL(n > 0 ? Math.min(n, 99999999) : null);
+                        }}
+                        placeholder="ex.: 45.000"
+                        className={classeInput(false)}
+                      />
+                    </label>
+                    {orcamentoBRL ? (
+                      <p className="mt-3 text-sm text-black/75">
+                        Comissão estimada: <span className={`${inter.className} font-semibold tabular-nums text-[#0A2540]`}>{formatBRL(comissaoBRL)}</span>
+                        <span className="text-black/50"> ({formatUSD(totalUSD)})</span>
+                      </p>
+                    ) : null}
                   </div>
                 </section>
               )}
 
-              {/* ── ETAPA 2 — SERVIÇOS ── */}
-              {etapa === 2 && (
-                <section aria-labelledby="titulo-etapa-2">
-                  <h2 id="titulo-etapa-2" className={`${display.className} text-2xl font-medium text-[#0A2540]`}>
-                    Escolha os serviços
+              {/* ── ETAPA 3 — DIAS ── */}
+              {etapa === 3 && (
+                <section aria-labelledby="titulo-etapa-3">
+                  <h2 id="titulo-etapa-3" className={`${display.className} text-2xl font-medium text-[#0A2540]`}>
+                    Em quais dias?
                   </h2>
                   <p className="mt-1.5 text-sm text-black/60">
-                    Marque quantos quiser. As quantidades já vêm pelo período e pelo grupo:{" "}
+                    Marque os dias com acompanhamento e a cidade de cada um. Período:{" "}
                     <button type="button" onClick={() => irPara(1)} className="font-medium text-[#1f6fb8] underline decoration-[#1f6fb8]/30 underline-offset-2">
-                      {textoPeriodo} · {textoPessoas}
+                      {textoPeriodo}
                     </button>
                     .
                   </p>
 
-                  <ul className="mt-6 space-y-3">
-                    {SERVICOS.map((s) => {
-                      const ativo = s.key in selecionados;
-                      const p = precoDe(s);
+                  <ul className="mt-6 divide-y divide-black/[0.06] rounded-xl border border-black/10">
+                    {diasViagem.map((d) => {
+                      const ativo = d in diasGuia;
                       return (
-                        <li
-                          key={s.key}
-                          className={`rounded-xl border transition ${ativo ? "border-[#2f80c9] bg-[#2f80c9]/[0.04] ring-1 ring-[#2f80c9]" : "border-black/10 bg-white hover:border-black/25"}`}
-                        >
-                          <label className="flex cursor-pointer items-start gap-3 p-4">
+                        <li key={d} className={`flex items-center gap-3 px-4 py-2.5 ${ativo ? "bg-[#2f80c9]/[0.04]" : ""}`}>
+                          <label className="flex min-h-[44px] flex-1 cursor-pointer items-center gap-3">
                             <input
                               type="checkbox"
                               checked={ativo}
-                              onChange={() => alternar(s)}
-                              className="mt-3 h-5 w-5 shrink-0 rounded border-black/30 text-[#2f80c9] focus:ring-[#2f80c9]"
+                              onChange={() => alternarDia(d)}
+                              className="h-5 w-5 shrink-0 rounded border-black/30 text-[#2f80c9] focus:ring-[#2f80c9]"
                             />
-                            <span className="flex h-11 w-11 shrink-0 items-center justify-center">
-                              <Image src={s.icone} alt="" width={44} height={44} className="h-11 w-11 object-contain" />
-                            </span>
-                            <span className="min-w-0 flex-1">
-                              <span className="flex flex-wrap items-baseline justify-between gap-x-3">
-                                <span className="text-[15px] font-medium text-black">{s.nome}</span>
-                                <span className={`${inter.className} text-sm font-semibold tabular-nums text-[#0A2540]`}>
-                                  {ativo ? (p === null ? "sob consulta" : formatUSD(p)) : ""}
-                                </span>
-                              </span>
-                              <span className="mt-0.5 block text-xs leading-5 text-black/55">{s.descricao}</span>
-                              <span className="mt-1 block text-xs text-black/45">
-                                {s.unidade}
-                                {s.nota && ` · ${s.nota}`}
-                              </span>
+                            <span className="text-sm text-black/85">
+                              {formatarDataCurta(d)}
+                              {d === dataChegada && <span className="text-xs text-black/45"> · chegada</span>}
+                              {d === dataPartida && d !== dataChegada && <span className="text-xs text-black/45"> · partida</span>}
                             </span>
                           </label>
-                          {ativo && s.campos.length > 0 && (
-                            <div className="grid gap-x-6 border-t border-black/[0.06] px-4 pb-2 pt-1 sm:ml-[92px] sm:grid-cols-2 sm:border-t-0 sm:px-0 sm:pr-4">
-                              {s.campos.map((c, i) => (
-                                <Contador
-                                  key={c.rotulo}
-                                  rotulo={c.rotulo}
-                                  valor={selecionados[s.key][i]}
-                                  min={c.min}
-                                  max={c.max}
-                                  onChange={(n) => ajustar(s, i, n)}
-                                />
-                              ))}
-                            </div>
+                          {ativo && (
+                            <span className="relative block w-36 shrink-0">
+                              <select
+                                aria-label={`Cidade em ${formatarDataCurta(d)}`}
+                                value={diasGuia[d]}
+                                onChange={(e) => setDiasGuia((atual) => ({ ...atual, [d]: e.target.value }))}
+                                className="h-9 w-full appearance-none rounded-lg border border-black/15 bg-white pl-3 pr-8 text-sm text-black focus:border-[#2f80c9] focus:outline-none"
+                              >
+                                {CIDADES.map((c) => (
+                                  <option key={c} value={c}>{c}</option>
+                                ))}
+                              </select>
+                              <IconeSeta />
+                            </span>
                           )}
-                        </li>
+                                                </li>
                       );
                     })}
                   </ul>
-                  {avisos.length > 0 && <BlocoAvisos avisos={avisos} className="mt-4" />}
+                  {diasForaDoPeriodo.length > 0 && (
+                    <p className="mt-2 text-xs text-black/50">Dias fora do novo período foram desconsiderados.</p>
+                  )}
 
-                  <div className="mt-8 border-t border-black/10 pt-6">
-                    <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-black/70">Também com página própria</p>
-                    <div className="mt-3 flex flex-wrap gap-2">
-                      {OUTROS_PRODUTOS.map((o) => (
-                        <Link
-                          key={o.href}
-                          href={o.href}
-                          className="rounded-full border border-black/15 px-4 py-2 text-sm text-[#1f6fb8] transition hover:border-[#2f80c9]"
-                        >
-                          {o.nome} →
-                        </Link>
-                      ))}
-                    </div>
-                  </div>
+                  {avisos.length > 0 && <BlocoAvisos avisos={avisos} className="mt-4" />}
                 </section>
               )}
 
-              {/* ── ETAPA 3 — DADOS ── */}
-              {etapa === 3 && (
-                <section aria-labelledby="titulo-etapa-3">
-                  <h2 id="titulo-etapa-3" className={`${display.className} text-2xl font-medium text-[#0A2540]`}>
+              {/* ── ETAPA 4 — DADOS ── */}
+              {etapa === 4 && (
+                <section aria-labelledby="titulo-etapa-4">
+                  <h2 id="titulo-etapa-4" className={`${display.className} text-2xl font-medium text-[#0A2540]`}>
                     Seus dados
                   </h2>
-                  <p className="mt-1.5 text-sm text-black/60">Usamos esses dados para confirmar os serviços com você.</p>
+                  <p className="mt-1.5 text-sm text-black/60">Usamos esses dados para combinar as compras com você.</p>
                   <div className="mt-6 grid gap-5 sm:grid-cols-2">
                     <div className="sm:col-span-2">
                       <Campo rotulo="Nome completo" erro={mostrarErro("nome")}>
@@ -812,7 +776,7 @@ export default function ServicosAdicionaisPage() {
                           value={observacoes}
                           onChange={(e) => setObservacoes(e.target.value)}
                           rows={3}
-                          placeholder="Restaurantes ou experiências que você tem em mente, cidades e datas de cada serviço."
+                          placeholder="Marcas, modelos ou lojas que você já tem em mente."
                           className="w-full min-w-0 rounded-lg border border-black/15 bg-white px-3.5 py-3 text-sm text-black focus:border-[#2f80c9] focus:outline-none focus:ring-2 focus:ring-[#2f80c9]/20"
                         />
                       </Campo>
@@ -821,10 +785,10 @@ export default function ServicosAdicionaisPage() {
                 </section>
               )}
 
-              {/* ── ETAPA 4 — REVISÃO ── */}
-              {etapa === 4 && (
-                <section aria-labelledby="titulo-etapa-4">
-                  <h2 id="titulo-etapa-4" className={`${display.className} text-2xl font-medium text-[#0A2540]`}>
+              {/* ── ETAPA 5 — REVISÃO ── */}
+              {etapa === 5 && (
+                <section aria-labelledby="titulo-etapa-5">
+                  <h2 id="titulo-etapa-5" className={`${display.className} text-2xl font-medium text-[#0A2540]`}>
                     Revise seu pedido
                   </h2>
                   <dl className="mt-6 divide-y divide-black/[0.07] border-y border-black/[0.07]">
@@ -840,28 +804,32 @@ export default function ServicosAdicionaisPage() {
                         ),
                       },
                       {
-                        rotulo: "Serviços",
+                        rotulo: "Compras",
                         voltar: 2 as Etapa,
                         conteudo: (
-                          <div className="space-y-1.5">
-                            {escolhidos.map((s) => {
-                              const p = precoDe(s);
-                              return (
-                                <p key={s.key} className="flex justify-between gap-3">
-                                  <span className="min-w-0">
-                                    {s.nome}
-                                    {s.campos.length > 0 && <span className="text-black/55"> · {detalheQtd(s)}</span>}
-                                  </span>
-                                  <span className={`${inter.className} shrink-0 tabular-nums text-black/70`}>{p === null ? "sob consulta" : formatUSD(p)}</span>
-                                </p>
-                              );
-                            })}
+                          <>
+                            {listarNatural(categorias)}
+                            <span className="text-black/50"> · orçamento de {orcamentoBRL ? formatBRL(orcamentoBRL) : "—"}</span>
+                          </>
+                        ),
+                      },
+                      {
+                        rotulo: "Dias",
+                        voltar: 3 as Etapa,
+                        conteudo: (
+                          <div className="space-y-1">
+                            {diasEscolhidos.map((d) => (
+                              <p key={d}>
+                                <span className="text-black/55">{formatarDataCurta(d)} · </span>
+                                {diasGuia[d]}
+                              </p>
+                            ))}
                           </div>
                         ),
                       },
                       {
                         rotulo: "Seus dados",
-                        voltar: 3 as Etapa,
+                        voltar: 4 as Etapa,
                         conteudo: (
                           <div className="space-y-0.5">
                             <p>{nome}</p>
@@ -884,10 +852,11 @@ export default function ServicosAdicionaisPage() {
                       </div>
                     ))}
                     <div className="grid gap-1 py-4 sm:grid-cols-[170px_minmax(0,1fr)] sm:gap-4">
-                      <dt className="text-[11px] font-semibold uppercase tracking-[0.14em] text-black/55 sm:pt-1.5">Total estimado</dt>
+                      <dt className="text-[11px] font-semibold uppercase tracking-[0.14em] text-black/55 sm:pt-1.5">Comissão estimada</dt>
                       <dd>
                         <span className={`${inter.className} text-2xl font-bold tabular-nums text-[#0A2540]`}>{formatUSD(totalUSD)}</span>
                         <span className={`${inter.className} ml-2 text-sm tabular-nums text-black/50`}>≈ {formatBRL(totalBRL)}</span>
+                        <p className="mt-0.5 text-xs text-black/50">{COMISSAO_PCT}% sobre o orçamento informado. O valor final segue o que for comprado.</p>
                       </dd>
                     </div>
                   </dl>
@@ -896,10 +865,10 @@ export default function ServicosAdicionaisPage() {
                   <p className="mt-8 text-[11px] font-semibold uppercase tracking-[0.14em] text-black/70">Termos e Condições</p>
                   <div
                     tabIndex={0}
-                    aria-label="Termos e Condições dos serviços adicionais"
+                    aria-label="Termos e Condições do Ajisai Shopping"
                     className="mt-2 max-h-64 overflow-y-auto rounded-xl border border-black/10 bg-black/[0.02] px-4 py-3 text-[13px] leading-6 text-black/70 focus:outline-none focus:ring-2 focus:ring-[#2f80c9]/30"
                   >
-                    <TextoTermosServicos />
+                    <TextoTermosShopping />
                   </div>
 
                   <label className="mt-4 flex min-h-[44px] cursor-pointer items-start gap-3">
@@ -909,12 +878,11 @@ export default function ServicosAdicionaisPage() {
                       onChange={(e) => setTermosAceitos(e.target.checked)}
                       className="mt-0.5 h-5 w-5 shrink-0 rounded border-black/30 text-[#2f80c9] focus:ring-[#2f80c9]"
                     />
-                    <span className="text-sm text-black/85">Li e aceito os Termos e Condições dos serviços adicionais.</span>
+                    <span className="text-sm text-black/85">Li e aceito os Termos e Condições do Ajisai Shopping.</span>
                   </label>
-                  {tentouEnviar && !termosAceitos && <p className="ml-8 text-xs text-red-600">Aceite os Termos e Condições para solicitar os serviços.</p>}
+                  {tentouEnviar && !termosAceitos && <p className="ml-8 text-xs text-red-600">Aceite os Termos e Condições para solicitar o Ajisai Shopping.</p>}
                   <p className="mt-4 text-xs leading-5 text-black/50">
-                    Nenhum valor é cobrado agora. Nossa equipe confirma os serviços e combina a forma de pagamento com você pelo
-                    WhatsApp.
+                    Nenhum valor é cobrado agora. Nossa equipe combina lojas, dias e a forma de pagamento com você pelo WhatsApp.
                   </p>
                   {erro && <p className="mt-4 text-sm text-red-600">{erro}</p>}
                 </section>
@@ -950,7 +918,7 @@ export default function ServicosAdicionaisPage() {
             >
               <span className="min-w-0">
                 <span className="block text-[11px] uppercase tracking-[0.14em] text-black/50">
-                  {escolhidos.length > 0 ? `${escolhidos.length} ${escolhidos.length === 1 ? "serviço" : "serviços"}` : "Total estimado"}
+                  {diasEscolhidos.length > 0 ? `${diasEscolhidos.length} ${diasEscolhidos.length === 1 ? "dia" : "dias"} de compras` : "Comissão estimada"}
                   {periodoValido && ` · ${formatarDiaMes(dataChegada)} a ${formatarDiaMes(dataPartida)}`}
                 </span>
                 <span
