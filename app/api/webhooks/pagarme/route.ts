@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { timingSafeEqual } from "node:crypto";
 import { createAdminClient } from "../../../../lib/supabase/admin";
 import { buscarPedido } from "../../../../lib/pagarme/client";
+import { emailClienteHtml, emailClienteTexto, type EmailClienteParams } from "../../../../lib/email/templateCliente";
 
 export const runtime = "nodejs";
 
@@ -269,11 +270,32 @@ export async function POST(req: Request) {
   });
 
   if (cliente?.email) {
+    // E-mail do cliente no modelo único com linha do tempo + WhatsApp
+    // (lib/email/templateCliente.ts — Wilson, 01/out/2026).
+    const valorPago = `R$ ${Number(pagamento.valor).toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+    const emailCliente: EmailClienteParams = {
+      nome: cliente.nome,
+      titulo: "Pagamento confirmado",
+      intro: "Confirmamos o recebimento do seu pagamento. Nossa equipe já foi avisada e segue com os próximos passos do seu pedido.",
+      status: "Pagamento confirmado",
+      etapaAtual: 2,
+      etapas: [
+        { titulo: "Pedido recebido" },
+        { titulo: "Pagamento confirmado", texto: `${valorPago} via ${pagamento.tipo_pagamento === "pix" ? "Pix" : "Stone"}.` },
+        { titulo: "Preparação do seu pedido", texto: "Nossa equipe cuida da emissão e te avisa por aqui e pelo WhatsApp." },
+        { titulo: "Pronto para a viagem" },
+      ],
+      resumo: [
+        ["Valor pago", valorPago],
+        ["Pedido", pedidoIdGateway || String(pagamento.id)],
+      ],
+      mensagemWhatsapp: `Olá! Meu pagamento no site da Ajisai foi confirmado (${cliente.nome}) e preciso de ajuda.`,
+    };
     await enviarEmail({
       to: [cliente.email],
-      subject: "Pagamento confirmado — Alpinea",
-      text: `Olá, ${cliente.nome}!\n\nConfirmamos o recebimento do seu pagamento. Nossa equipe já foi avisada e segue com os próximos passos do seu pedido — qualquer novidade, avisamos por aqui ou pelo WhatsApp.\n\nAlpinea`,
-      html: `<div style="font-family: Arial, sans-serif; line-height: 1.6; color: #111;"><p>Olá, ${escapeHtml(cliente.nome)}!</p><p>Confirmamos o recebimento do seu pagamento. Nossa equipe já foi avisada e segue com os próximos passos do seu pedido — qualquer novidade, avisamos por aqui ou pelo WhatsApp.</p><p>Alpinea</p></div>`,
+      subject: "Pagamento confirmado — Ajisai",
+      text: emailClienteTexto(emailCliente),
+      html: emailClienteHtml(emailCliente),
     });
   }
 

@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { createAdminClient } from "../../../lib/supabase/admin";
 import { TAG_SELF_SERVICE } from "../../../lib/crm/origem";
 import { criarCheckout, pagarmeConfigurado } from "../../../lib/pagarme/client";
+import { emailClienteHtml, emailClienteTexto, type EmailClienteParams } from "../../../lib/email/templateCliente";
 import { calcularValorSeguroViagemBRL, diasEntreDatas } from "../../lib/precoSeguroViagem";
 
 export const runtime = "nodejs";
@@ -386,35 +387,37 @@ export async function POST(req: Request) {
 
     // E-mail pro cliente com os próximos passos — "confirmação" de
     // PEDIDO, não de pagamento (o pagamento é confirmado pelo webhook).
-    const passoPagamento = checkoutUrl
-      ? "Pagamento — você foi direcionado para a página segura da Stone (Pix ou cartão). Se não concluiu, é só nos chamar que reenviamos o link."
-      : "Pagamento — te enviamos o link de pagamento (Pix ou cartão de crédito) pelo WhatsApp e por e-mail.";
-    const passos = [
-      `Conferência — confirmamos com a ${seguradoraNome} o plano adequado ao seu roteiro, datas e idades.`,
-      passoPagamento,
-      "Emissão — depois do pagamento, a seguradora emite a apólice (ou certificado) e enviamos pra você por e-mail e WhatsApp. Confira os dados assim que receber.",
-      "Durante a viagem — em caso de necessidade, siga os canais de atendimento indicados na apólice e, sempre que possível, fale com a central da seguradora antes de fazer despesas por conta própria.",
-    ];
-    const textoCliente = [
-      `Olá, ${nome}!`,
-      "",
-      "Recebemos seu pedido de Seguro Viagem. Veja como funciona a partir daqui:",
-      "",
-      ...passos.map((passo, i) => `${i + 1}. ${passo}`),
-      "",
-      "Qualquer dúvida, é só responder este e-mail ou chamar no WhatsApp.",
-      "",
-      "Ajisai",
-    ].join("\n");
-    const htmlCliente = `
-      <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #111;">
-        <p>Olá, ${escapeHtml(nome)}!</p>
-        <p>Recebemos seu pedido de Seguro Viagem. Veja como funciona a partir daqui:</p>
-        <ol>${passos.map((passo) => `<li>${escapeHtml(passo)}</li>`).join("")}</ol>
-        <p>Qualquer dúvida, é só responder este e-mail ou chamar no WhatsApp.</p>
-        <p>Ajisai</p>
-      </div>
-    `.trim();
+    // E-mail do cliente no modelo único com linha do tempo + WhatsApp
+    // (lib/email/templateCliente.ts — Wilson, 01/out/2026).
+    const emailCliente: EmailClienteParams = {
+      nome,
+      titulo: "Recebemos seu pedido de Seguro Viagem",
+      intro: checkoutUrl
+        ? "Seu pedido está registrado. Assim que a Stone confirmar o pagamento, a seguradora emite a sua apólice."
+        : "Seu pedido está registrado e nossa equipe já está conferindo os dados com a seguradora.",
+      status: checkoutUrl ? "Aguardando confirmação do pagamento" : "Pedido em conferência",
+      etapaAtual: 1,
+      etapas: [
+        { titulo: "Pedido recebido", texto: `Plano ${seguradoraNome} para o seu roteiro.` },
+        {
+          titulo: "Pagamento",
+          texto: checkoutUrl
+            ? "Pix ou cartão pela página segura da Stone. A confirmação chega por e-mail."
+            : "Enviamos o link de pagamento (Pix ou cartão) pelo WhatsApp e por e-mail.",
+        },
+        { titulo: "Emissão da apólice", texto: "A seguradora emite a apólice e enviamos para você por e-mail e WhatsApp." },
+        { titulo: "Viagem protegida", texto: "Em caso de necessidade, fale com a central da seguradora antes de fazer despesas por conta própria." },
+      ],
+      resumo: [
+        ["Seguradora", seguradoraNome],
+        ["Período", `${dataInicio} a ${dataFim}${diasCalculados ? ` (${diasCalculados} dias)` : ""}`],
+        ["Viajantes", String(idades.length)],
+        ...(valorTotalBRL ? ([["Valor", `R$ ${valorTotalBRL.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`]] as [string, string][]) : []),
+      ],
+      mensagemWhatsapp: `Olá! Fiz um pedido de Seguro Viagem no site da Ajisai (${nome}) e preciso de ajuda.`,
+    };
+    const textoCliente = emailClienteTexto(emailCliente);
+    const htmlCliente = emailClienteHtml(emailCliente);
 
     const resultadoEmailCliente = await enviarEmail({
       to: [email],

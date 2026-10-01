@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { createAdminClient } from "../../../lib/supabase/admin";
 import { TAG_SELF_SERVICE } from "../../../lib/crm/origem";
 import { criarCheckout, pagarmeConfigurado } from "../../../lib/pagarme/client";
+import { emailClienteHtml, emailClienteTexto, type EmailClienteParams } from "../../../lib/email/templateCliente";
 
 export const runtime = "nodejs";
 
@@ -342,44 +343,44 @@ export async function POST(req: Request) {
     // — não existe cobrança automática ainda (ver comentário no topo do
     // arquivo); o e-mail deixa isso claro em vez de sugerir que já foi
     // cobrado.
-    const textoEmissao = [
-      `Olá, ${nome}!`,
-      "",
-      "Recebemos seu pedido de JR Pass e nossa equipe já está com ele em mãos. Veja como funciona a partir daqui:",
-      "",
-      "1. Conferência — vamos confirmar a elegibilidade (documento de passaporte/passagem, se já enviado) e os dados da viagem.",
-      "2. Pagamento — te enviamos o link de pagamento (Pix ou cartão de crédito) pelo WhatsApp e por e-mail. O pedido só é confirmado depois do pagamento.",
-      "3. Emissão do voucher — após o pagamento, emitimos o voucher (Exchange Order) do JR Pass. Ele tem validade de 3 meses a partir da emissão para ser trocado pelo passe físico.",
-      "4. Troca no Japão — a troca do voucher pelo passe físico é feita só no Japão, em balcões JR. É indispensável passar pela imigração no balcão manual (não no portão eletrônico) para obter o carimbo \"Temporary Visitor\" no passaporte — sem ele, não é possível trocar o voucher.",
-      "",
-      documentoAdiado
-        ? "Você optou por enviar o documento (passaporte ou passagem) depois — pode mandar direto pelo WhatsApp assim que tiver em mãos, pra gente adiantar a conferência."
-        : "Recebemos o documento que você anexou — nossa equipe confirma a conferência.",
-      "",
-      "Qualquer dúvida, é só responder este e-mail ou chamar no WhatsApp.",
-      "",
-      "Alpinea",
-    ].join("\n");
-
-    const htmlEmissao = `
-      <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #111;">
-        <p>Olá, ${escapeHtml(nome)}!</p>
-        <p>Recebemos seu pedido de JR Pass e nossa equipe já está com ele em mãos. Veja como funciona a partir daqui:</p>
-        <ol>
-          <li><strong>Conferência</strong> — vamos confirmar a elegibilidade (documento de passaporte/passagem, se já enviado) e os dados da viagem.</li>
-          <li><strong>Pagamento</strong> — te enviamos o link de pagamento (Pix ou cartão de crédito) pelo WhatsApp e por e-mail. O pedido só é confirmado depois do pagamento.</li>
-          <li><strong>Emissão do voucher</strong> — após o pagamento, emitimos o voucher (Exchange Order) do JR Pass. Ele tem validade de 3 meses a partir da emissão para ser trocado pelo passe físico.</li>
-          <li><strong>Troca no Japão</strong> — a troca do voucher pelo passe físico é feita só no Japão, em balcões JR. É indispensável passar pela imigração no balcão manual (não no portão eletrônico) para obter o carimbo "Temporary Visitor" no passaporte — sem ele, não é possível trocar o voucher.</li>
-        </ol>
-        <p>${
-          documentoAdiado
-            ? "Você optou por enviar o documento (passaporte ou passagem) depois — pode mandar direto pelo WhatsApp assim que tiver em mãos, pra gente adiantar a conferência."
-            : "Recebemos o documento que você anexou — nossa equipe confirma a conferência."
-        }</p>
-        <p>Qualquer dúvida, é só responder este e-mail ou chamar no WhatsApp.</p>
-        <p>Alpinea</p>
-      </div>
-    `.trim();
+    // E-mail do cliente no modelo único com linha do tempo + WhatsApp
+    // (lib/email/templateCliente.ts — Wilson, 01/out/2026).
+    const emailCliente: EmailClienteParams = {
+      nome,
+      titulo: "Recebemos seu pedido de JR Pass",
+      intro: checkoutUrl
+        ? "Seu pedido está registrado. Assim que a Stone confirmar o pagamento, seguimos com a emissão do voucher."
+        : "Seu pedido está registrado e nossa equipe já está com ele em mãos.",
+      status: checkoutUrl ? "Aguardando confirmação do pagamento" : "Pedido em conferência",
+      etapaAtual: checkoutUrl ? 2 : 1,
+      etapas: [
+        { titulo: "Pedido recebido", texto: "Seus dados e o documento chegaram para a nossa equipe." },
+        {
+          titulo: "Conferência",
+          texto: documentoAdiado
+            ? "Confirmamos a elegibilidade. Envie o documento (passaporte ou passagem) pelo WhatsApp para adiantar."
+            : "Confirmamos a elegibilidade com o documento que você anexou.",
+        },
+        {
+          titulo: "Pagamento",
+          texto: checkoutUrl
+            ? "Pix ou cartão pela página segura da Stone. A confirmação chega por e-mail."
+            : "Enviamos o link de pagamento (Pix ou cartão) pelo WhatsApp e por e-mail.",
+        },
+        { titulo: "Emissão e envio do voucher", texto: "Emitimos o voucher (Exchange Order) e enviamos para o seu endereço. Validade de 3 meses para a troca." },
+        { titulo: "Troca no Japão", texto: "Troque o voucher pelo passe físico em um balcão JR." },
+      ],
+      resumo: [
+        ["Passe", `${classe}${dias ? ` — ${dias} dias` : ""}`],
+        ...(precoTotalBRL ? ([["Valor", `R$ ${precoTotalBRL.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`]] as [string, string][]) : []),
+        ["Entrega do voucher", enderecoTexto],
+      ],
+      aviso:
+        "Na chegada ao Japão, passe pela imigração no balcão manual (não no portão eletrônico) para receber o carimbo \"Temporary Visitor\" no passaporte. Sem ele, não é possível trocar o voucher pelo passe.",
+      mensagemWhatsapp: `Olá! Fiz um pedido de JR Pass no site da Ajisai (${nome}) e preciso de ajuda.`,
+    };
+    const textoEmissao = emailClienteTexto(emailCliente);
+    const htmlEmissao = emailClienteHtml(emailCliente);
 
     if (email) {
       const resultadoEmailCliente = await enviarEmail({

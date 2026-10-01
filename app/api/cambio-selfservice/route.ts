@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { createAdminClient } from "../../../lib/supabase/admin";
 import { TAG_SELF_SERVICE } from "../../../lib/crm/origem";
 import { criarCheckout, pagarmeConfigurado } from "../../../lib/pagarme/client";
+import { emailClienteHtml, emailClienteTexto, type EmailClienteParams } from "../../../lib/email/templateCliente";
 import { cidadeCambioIeneValida, CIDADES_CAMBIO_IENE } from "../../lib/cambioIene";
 import { buscarCotacaoIene } from "../../lib/cotacaoIeneServidor";
 import { CAMBIO_IENES_MINIMO_PUBLICO, calcularPrecoCambioIene } from "../../lib/precoCambioIene";
@@ -294,38 +295,54 @@ export async function POST(req: Request) {
     });
 
     const valorFormatado = `R$ ${totalBRL.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
-    const passos =
+    // E-mail do cliente no modelo único com linha do tempo + WhatsApp
+    // (lib/email/templateCliente.ts — Wilson, 01/out/2026).
+    const ienesTexto = `¥${quantidadeIenes.toLocaleString("pt-BR")}`;
+    const emailCliente: EmailClienteParams =
       direcao === "compra"
-        ? [
-            checkoutUrl
-              ? `Pagamento — Pix de ${valorFormatado} pela página segura da Stone. Se não concluiu, é só nos chamar que reenviamos o link.`
-              : `Pagamento — te enviamos o Pix de ${valorFormatado} pelo WhatsApp e por e-mail.`,
-            `Entrega — depois do Pix confirmado, combinamos pelo WhatsApp a data e o local de entrega dos ienes em ${cidadeNome}.`,
-          ]
-        : [
-            `Conferência — combinamos pelo WhatsApp onde e quando você entrega os ¥${quantidadeIenes.toLocaleString("pt-BR")} em ${cidadeNome}.`,
-            `Pagamento — depois de conferir os ienes, fazemos o Pix pra você (valor estimado: ${valorFormatado}).`,
-          ];
-    const textoCliente = [
-      `Olá, ${nome}!`,
-      "",
-      "Recebemos seu pedido de câmbio. Veja como funciona a partir daqui:",
-      "",
-      ...passos.map((passo, i) => `${i + 1}. ${passo}`),
-      "",
-      "Qualquer dúvida, é só responder este e-mail ou chamar no WhatsApp.",
-      "",
-      "Ajisai",
-    ].join("\n");
-    const htmlCliente = `
-      <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #111;">
-        <p>Olá, ${escapeHtml(nome)}!</p>
-        <p>Recebemos seu pedido de câmbio. Veja como funciona a partir daqui:</p>
-        <ol>${passos.map((passo) => `<li>${escapeHtml(passo)}</li>`).join("")}</ol>
-        <p>Qualquer dúvida, é só responder este e-mail ou chamar no WhatsApp.</p>
-        <p>Ajisai</p>
-      </div>
-    `.trim();
+        ? {
+            nome,
+            titulo: "Recebemos seu pedido de câmbio",
+            intro: checkoutUrl
+              ? "Seu pedido está registrado. Assim que a Stone confirmar o Pix, combinamos a entrega dos ienes."
+              : "Seu pedido está registrado. Nossa equipe envia o Pix pelo WhatsApp e por e-mail.",
+            status: "Aguardando confirmação do pagamento",
+            etapaAtual: 1,
+            etapas: [
+              { titulo: "Pedido recebido", texto: `Compra de ${ienesTexto}.` },
+              {
+                titulo: "Pagamento via Pix",
+                texto: checkoutUrl ? `Pix de ${valorFormatado} pela página segura da Stone.` : `Enviamos o Pix de ${valorFormatado} pelo WhatsApp e por e-mail.`,
+              },
+              { titulo: "Entrega dos ienes", texto: `Combinamos pelo WhatsApp a data e o local de entrega em ${cidadeNome}.` },
+            ],
+            resumo: [
+              ["Ienes", ienesTexto],
+              ["Valor", valorFormatado],
+              ["Retirada", cidadeNome],
+            ],
+            mensagemWhatsapp: `Olá! Fiz um pedido de câmbio no site da Ajisai (${nome}) e preciso de ajuda.`,
+          }
+        : {
+            nome,
+            titulo: "Recebemos seu pedido de câmbio",
+            intro: "Seu pedido está registrado. Vamos combinar pelo WhatsApp onde e quando você entrega os ienes.",
+            status: "Aguardando a entrega dos ienes",
+            etapaAtual: 1,
+            etapas: [
+              { titulo: "Pedido recebido", texto: `Venda de ${ienesTexto}.` },
+              { titulo: "Entrega dos ienes", texto: `Combinamos pelo WhatsApp o local e o horário em ${cidadeNome}.` },
+              { titulo: "Pix para você", texto: `Depois de conferir os ienes, fazemos o Pix (valor estimado: ${valorFormatado}).` },
+            ],
+            resumo: [
+              ["Ienes", ienesTexto],
+              ["Valor estimado", valorFormatado],
+              ["Cidade", cidadeNome],
+            ],
+            mensagemWhatsapp: `Olá! Fiz um pedido de câmbio no site da Ajisai (${nome}) e preciso de ajuda.`,
+          };
+    const textoCliente = emailClienteTexto(emailCliente);
+    const htmlCliente = emailClienteHtml(emailCliente);
     const resultadoEmailCliente = await enviarEmail({
       to: [email],
       subject: "Recebemos seu pedido de câmbio — próximos passos",
