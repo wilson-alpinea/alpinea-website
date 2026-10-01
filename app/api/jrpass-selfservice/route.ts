@@ -121,6 +121,35 @@ export async function POST(req: Request) {
         { status: 400 },
       );
     }
+
+    // Endereço de entrega — obrigatório desde 01/out/2026 (Wilson: "O JR
+    // Pass é enviado a residência do cliente").
+    const end = (body.endereco ?? {}) as Record<string, unknown>;
+    const campoEnd = (k: string, max = 120) => String(end[k] ?? "").trim().slice(0, max);
+    const endereco = {
+      cep: campoEnd("cep", 9),
+      logradouro: campoEnd("logradouro"),
+      numero: campoEnd("numero", 20),
+      complemento: campoEnd("complemento", 80),
+      bairro: campoEnd("bairro", 80),
+      cidade: campoEnd("cidade", 80),
+      uf: campoEnd("uf", 2).toUpperCase(),
+    };
+    if (
+      endereco.cep.replace(/\D/g, "").length !== 8 ||
+      !endereco.logradouro ||
+      !endereco.numero ||
+      !endereco.complemento ||
+      !endereco.bairro ||
+      !endereco.cidade ||
+      endereco.uf.length !== 2
+    ) {
+      return NextResponse.json(
+        { error: "Endereço de entrega incompleto — o JR Pass é enviado à residência do cliente." },
+        { status: 400 },
+      );
+    }
+    const enderecoTexto = `${endereco.logradouro}, ${endereco.numero} — ${endereco.complemento} — ${endereco.bairro}, ${endereco.cidade}/${endereco.uf} — CEP ${endereco.cep}`;
     if (!/\S+@\S+\.\S+/.test(email)) {
       return NextResponse.json({ error: "E-mail inválido." }, { status: 400 });
     }
@@ -184,6 +213,7 @@ export async function POST(req: Request) {
       ["Forma de pagamento escolhida", formaPagamento || "Não escolhida ainda"],
       ["Documento (passaporte/passagem)", documentoResumo],
       ["Nome do comprador (se diferente do passageiro)", nomeComprador || "Mesmo que o passageiro"],
+      ["Endereço de entrega do JR Pass", enderecoTexto],
       ["Observações do cliente", observacoesCliente || "Nenhuma"],
     ];
 

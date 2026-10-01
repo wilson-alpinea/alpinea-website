@@ -60,7 +60,7 @@ const COMO_FUNCIONA = [
   {
     icone: "/images/produtos/jrpass-passo-2-troca.png",
     titulo: "Receba o voucher",
-    texto: "Enviamos o voucher por e-mail e WhatsApp assim que confirmamos o pedido.",
+    texto: "Enviamos o voucher para o seu endereço assim que confirmamos o pedido.",
   },
   {
     icone: "/images/produtos/jrpass-passo-3-ativacao.png",
@@ -139,6 +139,43 @@ export default function JrPassPage() {
   const [nomeComprador, setNomeComprador] = useState("");
   const [email, setEmail] = useState("");
   const [whatsapp, setWhatsapp] = useState("");
+  // Endereço de entrega — obrigatório (Wilson, 01/out/2026: "O JR Pass é
+  // enviado a residência do cliente").
+  const [endereco, setEndereco] = useState({ cep: "", logradouro: "", numero: "", complemento: "", bairro: "", cidade: "", uf: "" });
+  const [buscandoCep, setBuscandoCep] = useState(false);
+  const mudarEndereco = (campo: keyof typeof endereco, valor: string) => setEndereco((e) => ({ ...e, [campo]: valor }));
+  const enderecoCompleto =
+    endereco.cep.replace(/\D/g, "").length === 8 &&
+    !!endereco.logradouro.trim() &&
+    !!endereco.numero.trim() &&
+    !!endereco.complemento.trim() &&
+    !!endereco.bairro.trim() &&
+    !!endereco.cidade.trim() &&
+    endereco.uf.trim().length === 2;
+  // Preenche rua/bairro/cidade/UF pelo CEP (ViaCEP). Se falhar, o cliente
+  // digita manualmente.
+  async function buscarCep(cepDigitado: string) {
+    const digitos = cepDigitado.replace(/\D/g, "");
+    if (digitos.length !== 8) return;
+    setBuscandoCep(true);
+    try {
+      const r = await fetch(`https://viacep.com.br/ws/${digitos}/json/`);
+      const d = await r.json();
+      if (!d.erro) {
+        setEndereco((e) => ({
+          ...e,
+          logradouro: e.logradouro || d.logradouro || "",
+          bairro: e.bairro || d.bairro || "",
+          cidade: e.cidade || d.localidade || "",
+          uf: e.uf || d.uf || "",
+        }));
+      }
+    } catch {
+      /* preenchimento manual */
+    } finally {
+      setBuscandoCep(false);
+    }
+  }
   const [observacoes, setObservacoes] = useState("");
   const [status, setStatus] = useState<"form" | "enviando" | "enviado" | "erro">("form");
   // Link da Stone aberto em nova aba (Wilson, 01/out/2026).
@@ -417,6 +454,7 @@ export default function JrPassPage() {
     nome.trim().length > 0 &&
     /\S+@\S+\.\S+/.test(email) &&
     whatsapp.trim().length >= 8 &&
+    enderecoCompleto &&
     termosAceitos &&
     (documentoStatus === "validado" || documentoStatus === "incerto");
 
@@ -432,6 +470,9 @@ export default function JrPassPage() {
   if (nome.trim().length === 0) pendenciasFinalizar.push("Preencha seu nome completo.");
   if (!/\S+@\S+\.\S+/.test(email)) pendenciasFinalizar.push("Preencha um e-mail válido.");
   if (whatsapp.trim().length < 8) pendenciasFinalizar.push("Preencha seu WhatsApp.");
+  if (!enderecoCompleto) {
+    pendenciasFinalizar.push("Preencha o endereço de entrega completo, com complemento — o JR Pass é enviado à sua residência.");
+  }
   if (!(documentoStatus === "validado" || documentoStatus === "incerto")) {
     pendenciasFinalizar.push("Anexe o documento (foto do passaporte ou da passagem).");
   }
@@ -468,6 +509,7 @@ export default function JrPassPage() {
           nomeComprador,
           email,
           whatsapp,
+          endereco,
           observacoes,
           documentoTipo,
           documentoStoragePath,
@@ -1140,6 +1182,93 @@ export default function JrPassPage() {
                   className="rounded-lg border border-black/15 px-3 py-2.5 text-sm text-black focus:border-[#2f80c9] focus:outline-none"
                 />
               </label>
+            </div>
+            {/* Endereço de entrega — obrigatório (Wilson, 01/out/2026). */}
+            <div className="mt-6 rounded-xl border border-[#2f80c9]/25 bg-[#eef6fb] p-4 sm:p-5">
+              <p className="text-[10px] uppercase tracking-[0.2em] text-black">Endereço de entrega</p>
+              <p className="mt-1 text-sm text-black/75">
+                <strong className="font-semibold text-[#0A2540]">O JR Pass é enviado à residência do cliente.</strong> Informe o
+                endereço completo, com complemento, onde você vai receber o voucher.
+              </p>
+              <div className="mt-4 grid gap-4 sm:grid-cols-6">
+              <label className="flex flex-col gap-1.5 sm:col-span-2">
+                <span className="text-[10px] uppercase tracking-[0.15em] text-black">CEP</span>
+                <input
+                  type="text"
+                  value={endereco.cep}
+                  onChange={(e) => mudarEndereco("cep", e.target.value)}
+                  onBlur={(e) => buscarCep(e.target.value)}
+                  inputMode="numeric"
+                  maxLength={9}
+                  placeholder="00000-000"
+                  className="rounded-lg border border-black/15 px-3 py-2.5 text-sm text-black focus:border-[#2f80c9] focus:outline-none"
+                />
+              </label>
+              <label className="flex flex-col gap-1.5 sm:col-span-4">
+                <span className="text-[10px] uppercase tracking-[0.15em] text-black">Rua / avenida</span>
+                <input
+                  type="text"
+                  value={endereco.logradouro}
+                  onChange={(e) => mudarEndereco("logradouro", e.target.value)}
+                  
+                  className="rounded-lg border border-black/15 px-3 py-2.5 text-sm text-black focus:border-[#2f80c9] focus:outline-none"
+                />
+              </label>
+              <label className="flex flex-col gap-1.5 sm:col-span-2">
+                <span className="text-[10px] uppercase tracking-[0.15em] text-black">Número</span>
+                <input
+                  type="text"
+                  value={endereco.numero}
+                  onChange={(e) => mudarEndereco("numero", e.target.value)}
+                  
+                  className="rounded-lg border border-black/15 px-3 py-2.5 text-sm text-black focus:border-[#2f80c9] focus:outline-none"
+                />
+              </label>
+              <label className="flex flex-col gap-1.5 sm:col-span-4">
+                <span className="text-[10px] uppercase tracking-[0.15em] text-black">Complemento</span>
+                <input
+                  type="text"
+                  value={endereco.complemento}
+                  onChange={(e) => mudarEndereco("complemento", e.target.value)}
+                  placeholder="Apto, bloco, casa…"
+                  className="rounded-lg border border-black/15 px-3 py-2.5 text-sm text-black focus:border-[#2f80c9] focus:outline-none"
+                />
+              </label>
+              <label className="flex flex-col gap-1.5 sm:col-span-2">
+                <span className="text-[10px] uppercase tracking-[0.15em] text-black">Bairro</span>
+                <input
+                  type="text"
+                  value={endereco.bairro}
+                  onChange={(e) => mudarEndereco("bairro", e.target.value)}
+                  
+                  className="rounded-lg border border-black/15 px-3 py-2.5 text-sm text-black focus:border-[#2f80c9] focus:outline-none"
+                />
+              </label>
+              <label className="flex flex-col gap-1.5 sm:col-span-3">
+                <span className="text-[10px] uppercase tracking-[0.15em] text-black">Cidade</span>
+                <input
+                  type="text"
+                  value={endereco.cidade}
+                  onChange={(e) => mudarEndereco("cidade", e.target.value)}
+                  
+                  className="rounded-lg border border-black/15 px-3 py-2.5 text-sm text-black focus:border-[#2f80c9] focus:outline-none"
+                />
+              </label>
+              <label className="flex flex-col gap-1.5 sm:col-span-1">
+                <span className="text-[10px] uppercase tracking-[0.15em] text-black">UF</span>
+                <input
+                  type="text"
+                  value={endereco.uf}
+                  onChange={(e) => mudarEndereco("uf", e.target.value)}
+                  maxLength={2}
+                  placeholder="SP"
+                  className="rounded-lg border border-black/15 px-3 py-2.5 text-sm text-black focus:border-[#2f80c9] focus:outline-none"
+                />
+              </label>
+              </div>
+              <p className="mt-2 text-xs text-black/50">
+                {buscandoCep ? "Buscando endereço pelo CEP…" : "Todos os campos são obrigatórios. Sem complemento? Escreva “casa”."}
+              </p>
             </div>
             <label className="mt-4 flex flex-col gap-1.5">
               <span className="text-[10px] uppercase tracking-[0.15em] text-black">
