@@ -45,6 +45,7 @@ import { RodapeCheckout } from "../RodapeCheckout";
 import { SEGURADORAS_VIAGEM, PAISES_ASIA_ADICIONAIS, type SeguradoraKey } from "./seguradoras";
 import { ProdutoTestePagamento } from "../ProdutoTestePagamento";
 import { AvisoPagamentoConcluido } from "../AvisoPagamentoConcluido";
+import { abrirAbaPagamento, enviarParaPagamento, fecharAba, BlocoPagamentoNovaAba } from "../pagamentoNovaAba";
 
 // Fonte Inter só para valores em dinheiro — mesmo padrão do JR Pass
 // (Wilson, 29/set/2026: "a fonte padrão de numeros deve ser INTER").
@@ -129,6 +130,8 @@ export default function SeguroViagemPage() {
   const [paisDestino, setPaisDestino] = useState<"brasil" | "japao" | null>(null);
   const [observacoes, setObservacoes] = useState("");
   const [status, setStatus] = useState<"form" | "enviando" | "enviado" | "erro">("form");
+  // Link da Stone aberto em nova aba (Wilson, 01/out/2026).
+  const [linkPagamento, setLinkPagamento] = useState<string | null>(null);
   const [erro, setErro] = useState("");
 
   // Passagem aérea (opcional) — pedido do Wilson, 25/set/2026.
@@ -236,6 +239,8 @@ export default function SeguroViagemPage() {
   async function enviar() {
     if (!formValido || status === "enviando") return;
     setStatus("enviando");
+    // Abre a aba no clique (antes do fetch) para o navegador não bloquear.
+    const janelaPagamento = abrirAbaPagamento();
     setErro("");
     try {
       const resposta = await fetch("/api/seguro-viagem-selfservice", {
@@ -271,6 +276,7 @@ export default function SeguroViagemPage() {
       });
       const dadosResposta = await resposta.json().catch(() => ({}));
       if (!resposta.ok) {
+        fecharAba(janelaPagamento);
         setErro(dadosResposta.error || "Não foi possível registrar seu pedido agora. Tente de novo.");
         setStatus("erro");
         return;
@@ -279,11 +285,16 @@ export default function SeguroViagemPage() {
       // checkout hospedado e o cliente vai direto pagar (mesmo fluxo do
       // JR Pass). Sem a integração, cai na tela "pedido registrado".
       if (dadosResposta?.checkoutUrl) {
-        window.location.assign(dadosResposta.checkoutUrl);
+        if (enviarParaPagamento(janelaPagamento, dadosResposta.checkoutUrl)) {
+          setLinkPagamento(dadosResposta.checkoutUrl);
+          setStatus("enviado");
+        }
         return;
       }
+      fecharAba(janelaPagamento);
       setStatus("enviado");
     } catch {
+      fecharAba(janelaPagamento);
       setErro("Não foi possível registrar seu pedido agora. Tente de novo.");
       setStatus("erro");
     }
@@ -350,11 +361,15 @@ export default function SeguroViagemPage() {
             <h3 className={`${display.className} mt-3 text-2xl font-medium text-black md:text-3xl`}>
               Recebemos seu pedido de Seguro Viagem
             </h3>
-            <p className="mx-auto mt-3 max-w-md text-sm leading-relaxed text-black/75">
-              Nossa equipe confere os dados com a {seguradoraEscolhida?.nome ?? "seguradora escolhida"} e te
-              envia o link de pagamento (Pix ou cartão) pelo WhatsApp e por e-mail. Depois do pagamento,
-              emitimos a apólice e enviamos pra você.
-            </p>
+            {linkPagamento ? (
+              <BlocoPagamentoNovaAba url={linkPagamento} />
+            ) : (
+              <p className="mx-auto mt-3 max-w-md text-sm leading-relaxed text-black/75">
+                Nossa equipe confere os dados com a {seguradoraEscolhida?.nome ?? "seguradora escolhida"} e te
+                envia o link de pagamento (Pix ou cartão) pelo WhatsApp e por e-mail. Depois do pagamento,
+                emitimos a apólice e enviamos pra você.
+              </p>
+            )}
             <a
               href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(mensagemWhatsapp)}`}
               target="_blank"

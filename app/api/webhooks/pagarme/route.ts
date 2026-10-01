@@ -151,6 +151,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Não autorizado." }, { status: 401 });
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let body: any;
   try {
     body = await req.json();
@@ -161,11 +162,17 @@ export async function POST(req: Request) {
   // O formato exato varia entre versões da doc da Pagar.me — tenta os
   // caminhos mais prováveis pro tipo do evento e pro objeto do pedido.
   const tipoEvento = String(body?.type || body?.event || "").trim();
-  const dadosPedido = body?.data ?? body?.order ?? body;
+  // Eventos charge.* (ex.: charge.paid, comuns no Pix) trazem o pedido em
+  // data.order — aceitos também desde 01/out/2026 (Wilson: compra de teste
+  // paga sem nenhum e-mail; se o webhook estiver configurado só com
+  // eventos de cobrança, antes eles eram ignorados em silêncio).
+  const dadosPedido = tipoEvento.startsWith("charge.")
+    ? (body?.data?.order ?? body?.data ?? body)
+    : (body?.data ?? body?.order ?? body);
+  console.log("[webhook pagarme] evento", tipoEvento || "(sem tipo)", "pedido", dadosPedido?.id, "code", dadosPedido?.code);
 
-  if (!tipoEvento.startsWith("order.")) {
-    // Evento que não é sobre pedido (ex.: charge.*) — nada a fazer por
-    // enquanto, mas confirma o recebimento.
+  if (!tipoEvento.startsWith("order.") && !tipoEvento.startsWith("charge.")) {
+    console.log("[webhook pagarme] evento ignorado:", tipoEvento);
     return NextResponse.json({ received: true }, { status: 200 });
   }
 
@@ -198,6 +205,7 @@ export async function POST(req: Request) {
 
   // Idempotência — a Pagar.me pode reenviar o mesmo webhook (retry).
   if (pagamento.status === "pago") {
+    console.log("[webhook pagarme] pagamento já processado:", codigoInterno);
     return NextResponse.json({ received: true, jaProcessado: true }, { status: 200 });
   }
 
@@ -213,6 +221,7 @@ export async function POST(req: Request) {
   }
 
   const foiPago = statusConfirmado === "paid" || statusConfirmado === "paga";
+  console.log("[webhook pagarme] status reconfirmado na Pagar.me:", statusConfirmado, "pagamento", codigoInterno);
 
   if (!foiPago) {
     // Pedido existe mas ainda não está pago (ex.: pending, canceled,

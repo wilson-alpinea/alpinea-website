@@ -12,6 +12,7 @@
 // servidor (/api/pagamento-teste) — o navegador não escolhe o preço.
 
 import { useState, useSyncExternalStore } from "react";
+import { abrirAbaPagamento, enviarParaPagamento, fecharAba } from "./pagamentoNovaAba";
 
 type ProdutoTeste = "jrpass" | "seguro-viagem" | "cambio";
 
@@ -38,7 +39,8 @@ export function ProdutoTestePagamento({ produto }: { produto: ProdutoTeste }) {
   const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
   const [ciente, setCiente] = useState(false);
-  const [status, setStatus] = useState<"form" | "enviando" | "erro" | "sem-gateway">("form");
+  const [status, setStatus] = useState<"form" | "enviando" | "erro" | "sem-gateway" | "aberto">("form");
+  const [linkPagamento, setLinkPagamento] = useState<string | null>(null);
   const [erro, setErro] = useState("");
 
   if (!ativo) return null;
@@ -49,6 +51,7 @@ export function ProdutoTestePagamento({ produto }: { produto: ProdutoTeste }) {
     if (!valido || status === "enviando") return;
     setStatus("enviando");
     setErro("");
+    const janelaPagamento = abrirAbaPagamento();
     try {
       const resposta = await fetch("/api/pagamento-teste", {
         method: "POST",
@@ -57,16 +60,22 @@ export function ProdutoTestePagamento({ produto }: { produto: ProdutoTeste }) {
       });
       const dados = await resposta.json().catch(() => ({}));
       if (!resposta.ok) {
+        fecharAba(janelaPagamento);
         setErro(dados.error || "Não foi possível criar o pagamento de teste.");
         setStatus("erro");
         return;
       }
       if (dados.checkoutUrl) {
-        window.location.href = dados.checkoutUrl;
+        if (enviarParaPagamento(janelaPagamento, dados.checkoutUrl)) {
+          setLinkPagamento(dados.checkoutUrl);
+          setStatus("aberto");
+        }
         return;
       }
+      fecharAba(janelaPagamento);
       setStatus("sem-gateway");
     } catch {
+      fecharAba(janelaPagamento);
       setErro("Não foi possível criar o pagamento de teste.");
       setStatus("erro");
     }
@@ -126,6 +135,14 @@ export function ProdutoTestePagamento({ produto }: { produto: ProdutoTeste }) {
       >
         {status === "enviando" ? "Criando pagamento…" : "Pagar R$ 1,00 (teste)"}
       </button>
+      {status === "aberto" && linkPagamento && (
+        <p className="mt-2 text-sm text-amber-900">
+          O pagamento de teste abriu em uma nova aba.{" "}
+          <a href={linkPagamento} target="_blank" rel="noreferrer" className="font-medium underline">
+            Não abriu? Abrir o pagamento
+          </a>
+        </p>
+      )}
       {status === "erro" && <p className="mt-2 text-sm text-red-700">{erro}</p>}
       {status === "sem-gateway" && (
         <p className="mt-2 text-sm text-amber-900">

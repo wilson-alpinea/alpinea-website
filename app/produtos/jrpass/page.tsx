@@ -40,6 +40,7 @@ import {
 import { RodapeCheckout } from "../RodapeCheckout";
 import { ProdutoTestePagamento } from "../ProdutoTestePagamento";
 import { AvisoPagamentoConcluido } from "../AvisoPagamentoConcluido";
+import { abrirAbaPagamento, enviarParaPagamento, fecharAba, BlocoPagamentoNovaAba } from "../pagamentoNovaAba";
 
 // Fonte Inter só para os valores em dinheiro (R$/US$) — pedido do
 // Wilson, 29/set/2026: "a fonte padrão de numeros deve ser INTER".
@@ -140,6 +141,8 @@ export default function JrPassPage() {
   const [whatsapp, setWhatsapp] = useState("");
   const [observacoes, setObservacoes] = useState("");
   const [status, setStatus] = useState<"form" | "enviando" | "enviado" | "erro">("form");
+  // Link da Stone aberto em nova aba (Wilson, 01/out/2026).
+  const [linkPagamento, setLinkPagamento] = useState<string | null>(null);
   const [erro, setErro] = useState("");
 
   // Documento (passaporte OU passagem) — pedido do Wilson, 25/set/2026:
@@ -443,6 +446,8 @@ export default function JrPassPage() {
   async function enviar() {
     if (!formValido || status === "enviando") return;
     setStatus("enviando");
+    // Abre a aba no clique (antes do fetch) para o navegador não bloquear.
+    const janelaPagamento = abrirAbaPagamento();
     setErro("");
     try {
       const resposta = await fetch("/api/jrpass-selfservice", {
@@ -472,6 +477,7 @@ export default function JrPassPage() {
       });
       const dadosResposta = await resposta.json().catch(() => ({}));
       if (!resposta.ok) {
+        fecharAba(janelaPagamento);
         setErro(dadosResposta.error || "Não foi possível registrar seu pedido agora. Tente de novo.");
         setStatus("erro");
         return;
@@ -483,11 +489,16 @@ export default function JrPassPage() {
       // integração configurada, cai no fluxo antigo (tela "pedido
       // registrado" + link manual por WhatsApp/e-mail).
       if (dadosResposta?.checkoutUrl) {
-        window.location.assign(dadosResposta.checkoutUrl);
+        if (enviarParaPagamento(janelaPagamento, dadosResposta.checkoutUrl)) {
+          setLinkPagamento(dadosResposta.checkoutUrl);
+          setStatus("enviado");
+        }
         return;
       }
+      fecharAba(janelaPagamento);
       setStatus("enviado");
     } catch {
+      fecharAba(janelaPagamento);
       setErro("Não foi possível registrar seu pedido agora. Tente de novo.");
       setStatus("erro");
     }
@@ -564,12 +575,16 @@ export default function JrPassPage() {
               <h3 className={`${display.className} mt-3 text-2xl font-medium text-black md:text-3xl`}>
                 Recebemos seu pedido de JR Pass
               </h3>
-              <p className="mx-auto mt-3 max-w-md text-sm leading-relaxed text-black/75">
-                Nossa equipe confere o documento enviado (ou aguarda o que você anexar depois),
-                confirma a elegibilidade e te manda o link de pagamento (Pix ou cartão) pelo
-                WhatsApp e por e-mail — junto com a explicação completa de como funciona a troca do
-                voucher pelo passe físico no Japão.
-              </p>
+              {linkPagamento ? (
+                <BlocoPagamentoNovaAba url={linkPagamento} />
+              ) : (
+                <p className="mx-auto mt-3 max-w-md text-sm leading-relaxed text-black/75">
+                  Nossa equipe confere o documento enviado (ou aguarda o que você anexar depois),
+                  confirma a elegibilidade e te manda o link de pagamento (Pix ou cartão) pelo
+                  WhatsApp e por e-mail — junto com a explicação completa de como funciona a troca do
+                  voucher pelo passe físico no Japão.
+                </p>
+              )}
               <a
                 href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(mensagemWhatsapp)}`}
                 target="_blank"

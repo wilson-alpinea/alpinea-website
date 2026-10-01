@@ -30,6 +30,7 @@ import { display, WHATSAPP_NUMBER, IconCheck } from "../page";
 import { RodapeCheckout } from "../RodapeCheckout";
 import { ProdutoTestePagamento } from "../ProdutoTestePagamento";
 import { AvisoPagamentoConcluido } from "../AvisoPagamentoConcluido";
+import { abrirAbaPagamento, enviarParaPagamento, fecharAba, BlocoPagamentoNovaAba } from "../pagamentoNovaAba";
 
 // Inter só para valores em dinheiro — mesmo padrão do JR Pass.
 const inter = Inter({ subsets: ["latin"], weight: ["500", "700"] });
@@ -97,6 +98,8 @@ export default function CambioPage() {
   const [whatsapp, setWhatsapp] = useState("");
   const [observacoes, setObservacoes] = useState("");
   const [status, setStatus] = useState<"form" | "enviando" | "enviado" | "erro">("form");
+  // Link da Stone aberto em nova aba (Wilson, 01/out/2026).
+  const [linkPagamento, setLinkPagamento] = useState<string | null>(null);
   const [erro, setErro] = useState("");
 
   // Cotação de rua na cidade/direção escolhidas (mesmo hook de sempre). A
@@ -146,6 +149,8 @@ export default function CambioPage() {
   async function enviar() {
     if (!formValido || status === "enviando") return;
     setStatus("enviando");
+    // Abre a aba no clique (antes do fetch) para o navegador não bloquear.
+    const janelaPagamento = direcao === "compra" ? abrirAbaPagamento() : null;
     setErro("");
     try {
       const resposta = await fetch("/api/cambio-selfservice", {
@@ -172,6 +177,7 @@ export default function CambioPage() {
       });
       const dadosResposta = await resposta.json().catch(() => ({}));
       if (!resposta.ok) {
+        fecharAba(janelaPagamento);
         setErro(dadosResposta.error || "Não foi possível registrar seu pedido agora. Tente de novo.");
         setStatus("erro");
         return;
@@ -179,11 +185,16 @@ export default function CambioPage() {
       // Com a Stone/Pagar.me configurada, a API devolve o link do Pix e o
       // cliente vai direto pagar (mesmo fluxo do JR Pass/Seguro Viagem).
       if (dadosResposta?.checkoutUrl) {
-        window.location.assign(dadosResposta.checkoutUrl);
+        if (enviarParaPagamento(janelaPagamento, dadosResposta.checkoutUrl)) {
+          setLinkPagamento(dadosResposta.checkoutUrl);
+          setStatus("enviado");
+        }
         return;
       }
+      fecharAba(janelaPagamento);
       setStatus("enviado");
     } catch {
+      fecharAba(janelaPagamento);
       setErro("Não foi possível registrar seu pedido agora. Tente de novo.");
       setStatus("erro");
     }
@@ -247,11 +258,15 @@ export default function CambioPage() {
             <h3 className={`${display.className} mt-3 text-2xl font-medium text-black md:text-3xl`}>
               Recebemos seu pedido de câmbio
             </h3>
-            <p className="mx-auto mt-3 max-w-md text-sm leading-relaxed text-black/75">
-              {ehCompra
-                ? `Nossa equipe te envia o Pix pelo WhatsApp e por e-mail e combina a entrega dos ienes em ${cidadeNome}.`
-                : `Nossa equipe confirma o valor e combina com você, pelo WhatsApp, onde receber os ienes em ${cidadeNome}. O pagamento pra você é feito via Pix assim que recebermos os ienes.`}
-            </p>
+            {linkPagamento ? (
+              <BlocoPagamentoNovaAba url={linkPagamento} />
+            ) : (
+              <p className="mx-auto mt-3 max-w-md text-sm leading-relaxed text-black/75">
+                {ehCompra
+                  ? `Nossa equipe te envia o Pix pelo WhatsApp e por e-mail e combina a entrega dos ienes em ${cidadeNome}.`
+                  : `Nossa equipe confirma o valor e combina com você, pelo WhatsApp, onde receber os ienes em ${cidadeNome}. O pagamento pra você é feito via Pix assim que recebermos os ienes.`}
+              </p>
+            )}
             <a
               href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(mensagemWhatsapp)}`}
               target="_blank"
