@@ -56,6 +56,7 @@ async function enviarEmail(params: {
   html: string;
 }): Promise<{ ok: boolean; providerId: string | null }> {
   const apiKey = process.env.RESEND_API_KEY;
+  console.log("[email] (cambio-selfservice) RESEND_API_KEY configurada:", Boolean(apiKey));
   if (!apiKey) {
     console.error("RESEND_API_KEY não configurada — pulando envio de e-mail (cambio-selfservice).");
     return { ok: false, providerId: null };
@@ -74,6 +75,8 @@ async function enviarEmail(params: {
       }),
     });
     const textoCru = await resendResponse.text().catch(() => "");
+    // Log de diagnóstico (Wilson, 01/out/2026: e-mails não chegavam e não havia erro no log).
+    console.log("[email] Resend (cambio-selfservice) respondeu status", resendResponse.status);
     if (!resendResponse.ok) {
       console.error("Erro Resend (cambio-selfservice):", textoCru || "(corpo vazio)");
       return { ok: false, providerId: null };
@@ -267,6 +270,9 @@ export async function POST(req: Request) {
             valorTotalBRL: totalBRL,
             aceitarCartao: false,
             aceitarPix: true,
+            // Botão "voltar para a loja" da página da Stone volta para o site
+            // (Wilson, 01/out/2026).
+            urlSucesso: `${new URL(req.url).origin}/produtos/cambio?pagamento=concluido`,
           });
           await supabase
             .from("pagamentos")

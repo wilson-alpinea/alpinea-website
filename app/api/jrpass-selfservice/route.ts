@@ -45,6 +45,7 @@ async function enviarEmail(params: {
   html: string;
 }): Promise<{ ok: boolean; providerId: string | null }> {
   const apiKey = process.env.RESEND_API_KEY;
+  console.log("[email] (jrpass-selfservice) RESEND_API_KEY configurada:", Boolean(apiKey));
   if (!apiKey) {
     console.error("RESEND_API_KEY não configurada — pulando envio de e-mail (jrpass-selfservice).");
     return { ok: false, providerId: null };
@@ -73,6 +74,8 @@ async function enviarEmail(params: {
         return { dados: {} as Record<string, unknown> };
       }
     })();
+    // Log de diagnóstico (Wilson, 01/out/2026: e-mails não chegavam e não havia erro no log).
+    console.log("[email] Resend (jrpass-selfservice) respondeu status", resendResponse.status);
     if (!resendResponse.ok) {
       console.error("Erro Resend (jrpass-selfservice):", JSON.stringify(dados));
       return { ok: false, providerId: null };
@@ -276,6 +279,9 @@ export async function POST(req: Request) {
             valorTotalBRL: precoTotalBRL,
             aceitarCartao: true,
             aceitarPix: true,
+            // Botão "voltar para a loja" da página da Stone volta para o site
+            // (Wilson, 01/out/2026).
+            urlSucesso: `${new URL(req.url).origin}/produtos/jrpass?pagamento=concluido`,
           });
 
           await supabase

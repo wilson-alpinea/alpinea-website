@@ -89,6 +89,7 @@ export async function POST(req: Request) {
       valorTotalBRL: VALOR_TESTE_BRL,
       aceitarCartao: config.cartao,
       aceitarPix: config.pix,
+      urlSucesso: `${new URL(req.url).origin}/produtos/${produto}?teste=1&pagamento=concluido`,
     });
     await supabase
       .from("pagamentos")

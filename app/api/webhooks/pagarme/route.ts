@@ -93,6 +93,7 @@ async function enviarEmail(params: {
   html: string;
 }) {
   const apiKey = process.env.RESEND_API_KEY;
+  console.log("[email] (webhook-pagarme) RESEND_API_KEY configurada:", Boolean(apiKey));
   if (!apiKey) {
     console.error("RESEND_API_KEY não configurada — pulando envio de e-mail (webhook pagarme).");
     return;
@@ -112,6 +113,8 @@ async function enviarEmail(params: {
         html: params.html,
       }),
     });
+    // Log de diagnóstico (Wilson, 01/out/2026: e-mails não chegavam e não havia erro no log).
+    console.log("[email] Resend (webhook-pagarme) respondeu status", resendResponse.status);
     if (!resendResponse.ok) {
       console.error("Erro Resend (webhook pagarme):", await resendResponse.text());
     }
@@ -142,6 +145,7 @@ const ESTAGIOS_QUE_AVANCAM_COM_PAGAMENTO = new Set([
 ]);
 
 export async function POST(req: Request) {
+  console.log("[webhook pagarme] chamada recebida");
   if (!autenticacaoValida(req)) {
     console.error("Webhook Pagar.me rejeitado — usuário/senha (Basic Auth) inválidos ou ausentes.");
     return NextResponse.json({ error: "Não autorizado." }, { status: 401 });

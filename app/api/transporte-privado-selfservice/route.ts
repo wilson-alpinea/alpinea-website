@@ -36,6 +36,7 @@ async function notificarPorEmail(params: {
   nomeProduto: string;
 }) {
   const apiKey = process.env.RESEND_API_KEY;
+  console.log("[email] (transporte-privado-selfservice) RESEND_API_KEY configurada:", Boolean(apiKey));
   if (!apiKey) {
     console.error("RESEND_API_KEY não configurada — pulando notificação por e-mail.");
     return;
@@ -58,6 +59,8 @@ async function notificarPorEmail(params: {
       }),
     });
 
+    // Log de diagnóstico (Wilson, 01/out/2026: e-mails não chegavam e não havia erro no log).
+    console.log("[email] Resend (transporte-privado-selfservice) respondeu status", resendResponse.status);
     if (!resendResponse.ok) {
       console.error("Erro Resend (transporte-privado-selfservice):", await resendResponse.text());
     }

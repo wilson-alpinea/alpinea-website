@@ -29,6 +29,7 @@ import { CAMBIO_IENES_MINIMO_PUBLICO, calcularPrecoCambioIene } from "../../lib/
 import { display, WHATSAPP_NUMBER, IconCheck } from "../page";
 import { RodapeCheckout } from "../RodapeCheckout";
 import { ProdutoTestePagamento } from "../ProdutoTestePagamento";
+import { AvisoPagamentoConcluido } from "../AvisoPagamentoConcluido";
 
 // Inter só para valores em dinheiro — mesmo padrão do JR Pass.
 const inter = Inter({ subsets: ["latin"], weight: ["500", "700"] });
@@ -293,6 +294,8 @@ export default function CambioPage() {
                 </h1>
               </div>
             </section>
+            {/* Aviso de retorno da página de pagamento da Stone (Wilson, 01/out/2026). */}
+            <AvisoPagamentoConcluido />
             {/* Produto de teste de R$ 1 — só aparece com ?teste=1 (Wilson, 30/set/2026). */}
             <ProdutoTestePagamento produto="cambio" />
             <p className="mt-6 max-w-2xl text-sm leading-relaxed text-black/75">

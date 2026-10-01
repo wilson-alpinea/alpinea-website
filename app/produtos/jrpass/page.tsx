@@ -39,6 +39,7 @@ import {
 } from "../page";
 import { RodapeCheckout } from "../RodapeCheckout";
 import { ProdutoTestePagamento } from "../ProdutoTestePagamento";
+import { AvisoPagamentoConcluido } from "../AvisoPagamentoConcluido";
 
 // Fonte Inter só para os valores em dinheiro (R$/US$) — pedido do
 // Wilson, 29/set/2026: "a fonte padrão de numeros deve ser INTER".
@@ -611,6 +612,8 @@ export default function JrPassPage() {
               </h1>
             </div>
           </section>
+          {/* Aviso de retorno da página de pagamento da Stone (Wilson, 01/out/2026). */}
+          <AvisoPagamentoConcluido />
           {/* Produto de teste de R$ 1 — só aparece com ?teste=1 (Wilson, 30/set/2026). */}
           <ProdutoTestePagamento produto="jrpass" />
           <p className="mt-6 max-w-2xl text-sm leading-relaxed text-black/75">

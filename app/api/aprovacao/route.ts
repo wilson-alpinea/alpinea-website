@@ -14,6 +14,7 @@ function escapeHtml(value: unknown) {
 export async function POST(req: Request) {
   try {
     const apiKey = process.env.RESEND_API_KEY;
+  console.log("[email] (aprovacao) RESEND_API_KEY configurada:", Boolean(apiKey));
 
     if (!apiKey) {
       console.error("RESEND_API_KEY não configurada no Vercel.");
@@ -85,6 +86,8 @@ export async function POST(req: Request) {
       }),
     });
 
+    // Log de diagnóstico (Wilson, 01/out/2026: e-mails não chegavam e não havia erro no log).
+    console.log("[email] Resend (aprovacao) respondeu status", resendResponse.status);
     if (!resendResponse.ok) {
       const errorText = await resendResponse.text();
       console.error("Erro Resend:", errorText);

@@ -27,6 +27,7 @@ async function notificarPorEmail(params: {
   resumoHtml: string;
 }) {
   const apiKey = process.env.RESEND_API_KEY;
+  console.log("[email] (passagens-selfservice) RESEND_API_KEY configurada:", Boolean(apiKey));
   if (!apiKey) {
     console.error("RESEND_API_KEY não configurada — pulando notificação por e-mail.");
     return;
@@ -47,6 +48,8 @@ async function notificarPorEmail(params: {
         html: params.resumoHtml,
       }),
     });
+    // Log de diagnóstico (Wilson, 01/out/2026: e-mails não chegavam e não havia erro no log).
+    console.log("[email] Resend (passagens-selfservice) respondeu status", resendResponse.status);
     if (!resendResponse.ok) {
       console.error("Erro Resend (passagens-selfservice):", await resendResponse.text());
     }

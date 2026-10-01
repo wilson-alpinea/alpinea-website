@@ -44,6 +44,7 @@ import {
 import { RodapeCheckout } from "../RodapeCheckout";
 import { SEGURADORAS_VIAGEM, PAISES_ASIA_ADICIONAIS, type SeguradoraKey } from "./seguradoras";
 import { ProdutoTestePagamento } from "../ProdutoTestePagamento";
+import { AvisoPagamentoConcluido } from "../AvisoPagamentoConcluido";
 
 // Fonte Inter só para valores em dinheiro — mesmo padrão do JR Pass
 // (Wilson, 29/set/2026: "a fonte padrão de numeros deve ser INTER").
@@ -397,6 +398,8 @@ export default function SeguroViagemPage() {
                 </h1>
               </div>
             </section>
+            {/* Aviso de retorno da página de pagamento da Stone (Wilson, 01/out/2026). */}
+            <AvisoPagamentoConcluido />
             {/* Produto de teste de R$ 1 — só aparece com ?teste=1 (Wilson, 30/set/2026). */}
             <ProdutoTestePagamento produto="seguro-viagem" />
 

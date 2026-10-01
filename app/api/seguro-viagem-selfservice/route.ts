@@ -53,6 +53,7 @@ async function enviarEmail(params: {
   html: string;
 }): Promise<{ ok: boolean; providerId: string | null }> {
   const apiKey = process.env.RESEND_API_KEY;
+  console.log("[email] (seguro-viagem-selfservice) RESEND_API_KEY configurada:", Boolean(apiKey));
   if (!apiKey) {
     console.error("RESEND_API_KEY não configurada — pulando envio de e-mail (seguro-viagem-selfservice).");
     return { ok: false, providerId: null };
@@ -80,6 +81,8 @@ async function enviarEmail(params: {
     } catch {
       dados = {};
     }
+    // Log de diagnóstico (Wilson, 01/out/2026: e-mails não chegavam e não havia erro no log).
+    console.log("[email] Resend (seguro-viagem-selfservice) respondeu status", resendResponse.status);
     if (!resendResponse.ok) {
       console.error("Erro Resend (seguro-viagem-selfservice):", textoCru || "(corpo vazio)");
       return { ok: false, providerId: null };
@@ -357,6 +360,9 @@ export async function POST(req: Request) {
             valorTotalBRL,
             aceitarCartao: true,
             aceitarPix: true,
+            // Botão "voltar para a loja" da página da Stone volta para o site
+            // (Wilson, 01/out/2026).
+            urlSucesso: `${new URL(req.url).origin}/produtos/seguro-viagem?pagamento=concluido`,
           });
           await supabase
             .from("pagamentos")
