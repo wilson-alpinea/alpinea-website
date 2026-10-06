@@ -31,6 +31,38 @@ export const NIVEIS_JAPONES: { key: NivelJapones; label: string }[] = [
   { key: "fluente", label: "Fluente" },
 ];
 
+// Nível de japonês detalhado por certificação — pedido do Wilson,
+// 06/out/2026: "nivel de japonês deve incluir JLPT N1-N5 e BJT levels para
+// cada nivel e também colocar nivel fluente, deixar campo disponivel para
+// submeter certificado de aprovação". É o que o candidato escolhe no
+// formulário; cada opção aponta pra um dos 5 níveis de NivelJapones acima,
+// que continuam sendo a base da pontuação (mesma régua do parser de
+// vaga.idioma: N1 → fluente, N2 → avançado, N3 → intermediário, N4/N5 →
+// básico). A correspondência JLPT ↔ BJT é aproximada (as duas provas medem
+// coisas diferentes — o BJT é focado em japonês de negócios) e segue a
+// equivalência usual: J5 ≈ N5/N4, J4 ≈ N3, J3 ≈ N2, J2/J1 ≈ N1, J1+ acima
+// do N1.
+export type NivelJaponesDetalhado = "nenhum" | "n5" | "n4" | "n3" | "n2" | "n1" | "fluente";
+
+export const NIVEIS_JAPONES_DETALHADOS: {
+  key: NivelJaponesDetalhado;
+  label: string;
+  bjt: string | null;
+  nivel: NivelJapones;
+}[] = [
+  { key: "nenhum", label: "Não falo japonês", bjt: null, nivel: "nenhum" },
+  { key: "n5", label: "JLPT N5 — iniciante", bjt: "BJT J5", nivel: "basico" },
+  { key: "n4", label: "JLPT N4 — básico", bjt: "BJT J5", nivel: "basico" },
+  { key: "n3", label: "JLPT N3 — intermediário", bjt: "BJT J4", nivel: "intermediario" },
+  { key: "n2", label: "JLPT N2 — avançado", bjt: "BJT J3", nivel: "avancado" },
+  { key: "n1", label: "JLPT N1 — muito avançado", bjt: "BJT J2–J1", nivel: "fluente" },
+  { key: "fluente", label: "Fluente / nativo", bjt: "BJT J1+", nivel: "fluente" },
+];
+
+export function nivelDoDetalhado(detalhado: string): NivelJapones | "" {
+  return NIVEIS_JAPONES_DETALHADOS.find((n) => n.key === detalhado)?.nivel ?? "";
+}
+
 const ORDEM_NIVEL_JAPONES: Record<NivelJapones, number> = {
   nenhum: 0,
   basico: 1,
@@ -43,7 +75,31 @@ export type PerguntaTriagemKey =
   | "passaporte"
   | "disponibilidadeEmbarque"
   | "experienciaSetor"
+  | "reEntry"
   | "nivelJapones";
+
+// ── Critérios eliminatórios/qualificatórios — pedido do Wilson,
+// 06/out/2026: "experiência e re-entry eliminam/qualificam dependendo da
+// vaga, ao preencher a vaga vamos dizer qual peso/critério, por hora deixe
+// um critério unificado". Cada vaga pode ter `criteriosTriagem` próprio em
+// app/lib/vagasCatalogo.ts; sem isso vale CRITERIOS_TRIAGEM_PADRAO.
+// - "eliminatorio": resposta "Não" barra a etapa de foto, qualquer que
+//   seja a pontuação (o candidato vê o motivo no resultado).
+// - "qualificatorio": "Sim" soma os pontos do critério; "Não" só deixa de
+//   somar.
+export type ModoCriterioTriagem = "eliminatorio" | "qualificatorio";
+
+export type CriteriosTriagem = {
+  experiencia: ModoCriterioTriagem;
+  reEntry: ModoCriterioTriagem;
+};
+
+// Critério unificado de hoje: os dois só qualificam (ninguém é barrado
+// automaticamente por eles).
+export const CRITERIOS_TRIAGEM_PADRAO: CriteriosTriagem = {
+  experiencia: "qualificatorio",
+  reEntry: "qualificatorio",
+};
 
 // Ascendência japonesa e data desejada de embarque — pedido do Wilson,
 // 25/set/2026: "aqui ta faltando o pre-cadastro, anexar curriculo, nome
@@ -84,7 +140,11 @@ export type RespostasTriagem = {
   passaporte: "sim" | "nao" | "";
   disponibilidadeEmbarque: "sim" | "nao" | "";
   experienciaSetor: "sim" | "nao" | "";
+  // Re-Entry (permissão de reentrada) válido — Wilson, 06/out/2026.
+  reEntry?: "sim" | "nao" | "";
   nivelJapones: NivelJapones | "";
+  // Opção escolhida no formulário (JLPT/BJT) — nivelJapones é derivado dela.
+  nivelJaponesDetalhado?: NivelJaponesDetalhado | "";
   ascendencia: AscendenciaJaponesa | "";
   quandoEmbarcar: QuandoEmbarcar | "";
 };
@@ -106,6 +166,12 @@ export const PERGUNTAS_TRIAGEM: {
     key: "experienciaSetor",
     pergunta: "Você já tem experiência de trabalho na área da vaga (fábrica/produção)?",
     ajuda: "Não precisa ser no Japão — conta experiência no Brasil também.",
+  },
+  {
+    key: "reEntry",
+    pergunta: "Você possui Re-Entry válido?",
+    ajuda:
+      "Re-Entry (permissão de reentrada, 再入国許可) é a autorização que quem tem visto de residência no Japão recebe ao sair do país, para voltar com o mesmo visto sem precisar tirar um novo. Pode ser o especial (concedido no aeroporto, vale até 1 ano) ou o comum (solicitado na imigração, até 5 anos) — sempre limitado à validade do visto. Com Re-Entry válido, o embarque é bem mais rápido.",
   },
 ];
 
@@ -223,15 +289,17 @@ export function calcularPontuacaoCandidatura(params: {
   const textoNormalizado = normalizarTexto(curriculoTexto || "");
   const criterios: CriterioPontuacao[] = [];
 
-  // 1) Palavras-chave do setor no currículo — 35 pts
+  // 1) Palavras-chave do setor no currículo — 30 pts (eram 35 até
+  // 06/out/2026; 5 pts foram pro novo critério de Re-Entry, pra manter o
+  // total em 100)
   const palavras = PALAVRAS_CHAVE_SETOR[vaga.setor] || [];
   const encontradas = palavras.filter((p) => textoNormalizado.includes(p));
-  const pontosPalavras = Math.round(Math.min(1, encontradas.length / MATCHES_ALVO_PALAVRAS_CHAVE) * 35);
+  const pontosPalavras = Math.round(Math.min(1, encontradas.length / MATCHES_ALVO_PALAVRAS_CHAVE) * 30);
   criterios.push({
     chave: "palavrasChave",
     label: "Aderência do currículo ao setor da vaga",
     pontosObtidos: pontosPalavras,
-    pontosMaximos: 35,
+    pontosMaximos: 30,
     detalhe:
       encontradas.length > 0
         ? `Encontramos ${encontradas.length} termo(s) relacionados a este setor no seu currículo.`
@@ -316,6 +384,18 @@ export function calcularPontuacaoCandidatura(params: {
         : "Falta passaporte válido e/ou disponibilidade de embarque em até 6 meses.",
   });
 
+  // 5b) Re-Entry válido — 5 pts
+  const temReEntry = respostas.reEntry === "sim";
+  criterios.push({
+    chave: "reEntry",
+    label: "Re-Entry válido",
+    pontosObtidos: temReEntry ? 5 : 0,
+    pontosMaximos: 5,
+    detalhe: temReEntry
+      ? "Você informou ter Re-Entry válido — o embarque tende a ser mais rápido."
+      : "Você informou não ter Re-Entry válido.",
+  });
+
   // 6) Currículo completo e legível — 10 pts
   const pontosCompletude = textoNormalizado.length >= TAMANHO_MINIMO_CURRICULO ? 10 : 0;
   criterios.push({
@@ -331,9 +411,23 @@ export function calcularPontuacaoCandidatura(params: {
 
   const pontuacao = criterios.reduce((soma, c) => soma + c.pontosObtidos, 0);
 
+  // Eliminatórios da vaga (ou do critério padrão) — barram a etapa de foto
+  // mesmo com pontuação alta.
+  const regras = vaga.criteriosTriagem ?? CRITERIOS_TRIAGEM_PADRAO;
+  const eliminadoPor: string[] = [];
+  if (regras.experiencia === "eliminatorio" && respostas.experienciaSetor !== "sim") {
+    eliminadoPor.push("Esta vaga exige experiência prévia em fábrica/produção.");
+  }
+  if (regras.reEntry === "eliminatorio" && respostas.reEntry !== "sim") {
+    eliminadoPor.push("Esta vaga exige Re-Entry válido.");
+  }
+  for (const motivo of eliminadoPor) {
+    criterios.push({ chave: "eliminatorio", label: "Requisito obrigatório da vaga", pontosObtidos: 0, pontosMaximos: 0, detalhe: motivo });
+  }
+
   return {
     pontuacao,
     criterios,
-    aprovadoParaFoto: pontuacao >= NOTA_MINIMA_PROXIMA_ETAPA,
+    aprovadoParaFoto: pontuacao >= NOTA_MINIMA_PROXIMA_ETAPA && eliminadoPor.length === 0,
   };
 }

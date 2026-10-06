@@ -3,13 +3,14 @@
 import { VAGAS, type Vaga, type PublicoKey, type SetorKey, type StatusVaga } from "../lib/vagasCatalogo";
 import {
   PERGUNTAS_TRIAGEM,
-  NIVEIS_JAPONES,
+  NIVEIS_JAPONES_DETALHADOS,
+  nivelDoDetalhado,
   ASCENDENCIA_JAPONESA,
   QUANDO_EMBARCAR,
   NOTA_MINIMA_PROXIMA_ETAPA,
   type RespostasTriagem,
   type CriterioPontuacao,
-  type NivelJapones,
+  type NivelJaponesDetalhado,
   type AscendenciaJaponesa,
   type QuandoEmbarcar,
 } from "../lib/candidaturaScoring";
@@ -216,6 +217,203 @@ const CONDICOES_UT_SURIEMU = {
     "Passagem aérea financiada pela empresa, com desconto a partir do 2º pagamento (parcelas de até ¥50 mil por mês).",
 };
 
+// ── DESTAQUES — pedido do Wilson, 06/out/2026: carrossel com 4 banners
+// pra dar destaque a oportunidades em cidades mais afastadas, working
+// holiday "e coisas assim". O 1º é Echizen (banner enviado por ele, com o
+// texto já na arte); os outros 3 são placeholders até ele mandar as artes
+// e definir os temas — aparecem com o selo "Em breve" e sem link.
+type Destaque = {
+  id: string;
+  titulo: string;
+  imagem?: string;
+  // Texto curto exibido sobre o placeholder (sem imagem).
+  subtitulo?: string;
+  // Filtro aplicado ao clicar (leva pra lista de vagas); sem isso, o
+  // banner não é clicável.
+  filtroRegiao?: string;
+};
+
+const DESTAQUES: Destaque[] = [
+  {
+    id: "echizen",
+    titulo: "Já pensou em morar e trabalhar em Echizen?",
+    imagem: "/images/empregos-destaque-echizen.jpg",
+    // Ainda não há vaga em Fukui no catálogo (a Kousei Aluminum/Fukui
+    // ficou de fora por falta de ficha) — quando entrar, é só preencher
+    // filtroRegiao: "Fukui" que o banner passa a levar direto pras vagas.
+  },
+  {
+    id: "working-holiday",
+    titulo: "Working Holiday no Japão",
+    // Banner enviado pelo Wilson em 06/out/2026 (texto já na arte). Sem
+    // link por enquanto — ainda não há página/vagas de Working Holiday.
+    imagem: "/images/empregos-destaque-working-holiday.jpg",
+  },
+  { id: "placeholder-3", titulo: "Cidades do interior com moradia inclusa", subtitulo: "Destaque em preparação" },
+  { id: "placeholder-4", titulo: "Novo destaque", subtitulo: "Destaque em preparação" },
+];
+
+function CarrosselDestaques({ onAbrir }: { onAbrir: (d: Destaque) => void }) {
+  const [indice, setIndice] = useState(0);
+  const [pausado, setPausado] = useState(false);
+  const total = DESTAQUES.length;
+
+  // Avança sozinho a cada 6s; pausa com o mouse em cima ou ao tocar.
+  useEffect(() => {
+    if (pausado) return;
+    const t = setInterval(() => setIndice((i) => (i + 1) % total), 6000);
+    return () => clearInterval(t);
+  }, [pausado, total]);
+
+  const ir = (i: number) => setIndice(((i % total) + total) % total);
+
+  // Swipe no celular — sem biblioteca, só toque inicial/final.
+  const [toqueX, setToqueX] = useState<number | null>(null);
+
+  return (
+    <div
+      className="relative overflow-hidden rounded-2xl bg-[#0A2540]"
+      onMouseEnter={() => setPausado(true)}
+      onMouseLeave={() => setPausado(false)}
+      onTouchStart={(e) => {
+        setPausado(true);
+        setToqueX(e.touches[0]?.clientX ?? null);
+      }}
+      onTouchEnd={(e) => {
+        const fim = e.changedTouches[0]?.clientX ?? null;
+        if (toqueX !== null && fim !== null && Math.abs(fim - toqueX) > 40) ir(indice + (fim < toqueX ? 1 : -1));
+        setToqueX(null);
+      }}
+      aria-roledescription="carrossel"
+    >
+      {/* transform-gpu: evita o flash preto do Safari iOS em carrossel
+          (ver learnings do projeto). Trilho com translateX, sem scroll JS. */}
+      <div
+        className="flex transform-gpu transition-transform duration-700 ease-out"
+        style={{ transform: `translateX(-${indice * 100}%)` }}
+      >
+        {DESTAQUES.map((d, i) => {
+          const clicavel = Boolean(d.filtroRegiao);
+          const conteudo = d.imagem ? (
+            <div className="relative aspect-[16/10] w-full sm:aspect-[1918/820]">
+              <Image
+                src={d.imagem}
+                alt={d.titulo}
+                fill
+                sizes="(min-width: 1152px) 1152px, 100vw"
+                className="object-cover object-[30%_50%] sm:object-center"
+                priority={i === 0}
+              />
+            </div>
+          ) : (
+            <div className="relative flex aspect-[16/10] w-full flex-col justify-center bg-gradient-to-br from-[#0A2540] to-[#1c4a74] px-8 sm:aspect-[1918/820] sm:px-14">
+              <span className="w-fit rounded-full border border-white/25 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-white/70">
+                Em breve
+              </span>
+              <p className={`${display.className} mt-4 max-w-xl text-2xl font-medium leading-tight text-white md:text-4xl`}>
+                {d.titulo}
+              </p>
+              {d.subtitulo && <p className="mt-3 text-sm text-white/55">{d.subtitulo}</p>}
+            </div>
+          );
+          return (
+            <div
+              key={d.id}
+              className="w-full shrink-0"
+              aria-hidden={i !== indice}
+              role="group"
+              aria-label={`${i + 1} de ${total}: ${d.titulo}`}
+            >
+              {clicavel ? (
+                <button type="button" onClick={() => onAbrir(d)} tabIndex={i === indice ? 0 : -1} className="block w-full text-left">
+                  {conteudo}
+                </button>
+              ) : (
+                conteudo
+              )}
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Setas (desktop) */}
+      {(["anterior", "proximo"] as const).map((lado) => (
+        <button
+          key={lado}
+          type="button"
+          onClick={() => ir(indice + (lado === "proximo" ? 1 : -1))}
+          aria-label={lado === "proximo" ? "Próximo destaque" : "Destaque anterior"}
+          className={`absolute top-1/2 hidden h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/85 text-[#0A2540] shadow-sm backdrop-blur transition hover:bg-white sm:flex ${
+            lado === "proximo" ? "right-4" : "left-4"
+          }`}
+        >
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5">
+            <path d={lado === "proximo" ? "M9 6l6 6-6 6" : "M15 6l-6 6 6 6"} />
+          </svg>
+        </button>
+      ))}
+
+      {/* Bolinhas */}
+      <div className="absolute inset-x-0 bottom-3 flex justify-center gap-2">
+        {DESTAQUES.map((d, i) => (
+          <button
+            key={d.id}
+            type="button"
+            onClick={() => ir(i)}
+            aria-label={`Ir para o destaque ${i + 1}`}
+            aria-current={i === indice}
+            className="flex h-6 items-center"
+          >
+            <span className={`block h-1.5 rounded-full transition-all ${i === indice ? "w-6 bg-white" : "w-1.5 bg-white/50"}`} />
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// Seções obrigatórias de detalhe de toda vaga (ver InfoVaga em
+// app/lib/vagasCatalogo.ts) — pedido do Wilson, 06/out/2026. Quando o dado
+// ainda não chegou, mostra "A confirmar" em vez de esconder a seção, pra
+// deixar claro que é uma informação que existe e vai ser passada. Moradia
+// cai no texto padrão das fichas UT Suri-emu quando a vaga é dessa fonte.
+function InfoObrigatoriaVaga({ vaga }: { vaga: Vaga }) {
+  const pendente = <span className="text-black/40">A confirmar com a nossa equipe.</span>;
+  const moradia =
+    vaga.info.moradia ?? (vaga.fonteContrato === "ut-suriemu" ? CONDICOES_UT_SURIEMU.moradia : null);
+  const lista = (itens: string[]) =>
+    itens.length > 0 ? (
+      <ul className="space-y-1">
+        {itens.map((item) => (
+          <li key={item} className="flex gap-2">
+            <span className="mt-[9px] h-1 w-1 shrink-0 rounded-full bg-[#2f80c9]" aria-hidden="true" />
+            <span>{item}</span>
+          </li>
+        ))}
+      </ul>
+    ) : (
+      pendente
+    );
+  const secoes: { titulo: string; conteudo: React.ReactNode }[] = [
+    { titulo: "Moradia", conteudo: moradia ?? pendente },
+    { titulo: "Diferenciais da hospedagem", conteudo: lista(vaga.info.diferenciaisHospedagem) },
+    { titulo: "Benefícios", conteudo: lista(vaga.info.beneficios) },
+    { titulo: "Kit de boas-vindas", conteudo: vaga.info.kitBoasVindas ?? pendente },
+    { titulo: "Bônus", conteudo: vaga.info.bonus ?? pendente },
+    { titulo: `Sobre ${vaga.cidade}`, conteudo: vaga.info.sobreCidade ?? pendente },
+  ];
+  return (
+    <dl className="divide-y divide-black/[0.07]">
+      {secoes.map((s) => (
+        <div key={s.titulo} className="py-3 first:pt-0">
+          <dt className="text-[10px] font-semibold uppercase tracking-[0.14em] text-black/55">{s.titulo}</dt>
+          <dd className="mt-1 text-[13px] leading-6 text-black/70">{s.conteudo}</dd>
+        </div>
+      ))}
+    </dl>
+  );
+}
+
 // Corpo de detalhes de uma vaga — condução, moradia, seguro social, exame
 // médico e financiamento de passagem, quando a ficha original tem esse
 // bloco (CONDICOES_UT_SURIEMU). Pras demais vagas, mostra só o convite pro
@@ -231,11 +429,12 @@ function DetalhesVaga({ vaga }: { vaga: Vaga }) {
           {vaga.conducao}
         </p>
       )}
-      {(vaga.fonteContrato === "ut-suriemu" || vaga.observacoes) && (
+      {/* Moradia saiu daqui (06/out/2026) — agora é uma seção própria em
+          InfoObrigatoriaVaga. Fica só a observação livre da ficha. */}
+      {vaga.observacoes && (
         <p>
-          <span className="font-semibold text-black/75">Moradia: </span>
-          {vaga.fonteContrato === "ut-suriemu" ? CONDICOES_UT_SURIEMU.moradia : ""}
-          {vaga.observacoes && ` ${vaga.observacoes}`}
+          <span className="font-semibold text-black/75">Observações: </span>
+          {vaga.observacoes}
         </p>
       )}
       {vaga.fonteContrato === "ut-suriemu" && (
@@ -254,7 +453,7 @@ function DetalhesVaga({ vaga }: { vaga: Vaga }) {
           </p>
         </>
       )}
-      {!temDetalhe && <p>Moradia, documentos e demais condições dessa vaga — fale com a gente pelo WhatsApp.</p>}
+      {!temDetalhe && <p>Documentos e demais condições dessa vaga — fale com a gente pelo WhatsApp.</p>}
     </div>
   );
 }
@@ -631,8 +830,9 @@ export default function EmpregosPage() {
     }
   }
 
-  function irParaVagas(ajustes?: { publico?: PublicoKey | "todos"; setor?: SetorKey | "todos" }) {
+  function irParaVagas(ajustes?: { publico?: PublicoKey | "todos"; setor?: SetorKey | "todos"; regiao?: string }) {
     if (ajustes?.publico !== undefined) setPublicoFiltro(ajustes.publico);
+    if (ajustes?.regiao !== undefined) setRegioesFiltro(new Set([ajustes.regiao]));
     if (ajustes?.setor !== undefined) setSetorFiltro(ajustes.setor);
     document.getElementById("vagas")?.scrollIntoView({ behavior: "smooth", block: "start" });
   }
@@ -730,6 +930,19 @@ export default function EmpregosPage() {
               está no Brasil e quer vir para o Japão, ou para quem já está no Japão e quer mudar de
               emprego.
             </p>
+          </div>
+        </div>
+      </section>
+
+      {/* ── DESTAQUES (carrossel) — pedido do Wilson, 06/out/2026 ── */}
+      <section className="border-b border-black/10 bg-white px-6 pt-14 md:px-16 md:pt-20">
+        <div className="mx-auto max-w-6xl">
+          <p className="text-[10px] uppercase tracking-[0.2em] text-[#1c6ea8]">Destaques</p>
+          <h2 className={`${display.className} mt-3 text-2xl font-medium text-black md:text-3xl`}>
+            Oportunidades em destaque
+          </h2>
+          <div className="mt-8 pb-14 md:pb-20">
+            <CarrosselDestaques onAbrir={(d) => d.filtroRegiao && irParaVagas({ regiao: d.filtroRegiao })} />
           </div>
         </div>
       </section>
@@ -1087,6 +1300,11 @@ export default function EmpregosPage() {
             </div>
 
             <div className="mt-5 border-t border-black/10 pt-5">
+              <InfoObrigatoriaVaga vaga={vagaAberta} />
+            </div>
+
+            <div className="mt-2 border-t border-black/10 pt-5">
+              <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.14em] text-black/55">Outras condições</p>
               <DetalhesVaga vaga={vagaAberta} />
             </div>
 
@@ -1253,6 +1471,15 @@ export default function EmpregosPage() {
 // app/lib/fotoChecagem.ts, ambos determinísticos.
 type EtapaCandidatura = "formulario" | "resultado" | "foto" | "concluido";
 
+// Marcador de campo obrigatório — pedido do Wilson, 06/out/2026.
+function Obrigatorio() {
+  return (
+    <span className="text-red-500" aria-hidden="true">
+      *
+    </span>
+  );
+}
+
 function CandidaturaModal({ vaga, onFechar }: { vaga: Vaga; onFechar: () => void }) {
   const [etapa, setEtapa] = useState<EtapaCandidatura>("formulario");
   const [enviando, setEnviando] = useState(false);
@@ -1268,10 +1495,14 @@ function CandidaturaModal({ vaga, onFechar }: { vaga: Vaga; onFechar: () => void
     passaporte: "",
     disponibilidadeEmbarque: "",
     experienciaSetor: "",
+    reEntry: "",
     nivelJapones: "",
+    nivelJaponesDetalhado: "",
     ascendencia: "",
     quandoEmbarcar: "",
   });
+  // Certificado JLPT/BJT — opcional (Wilson, 06/out/2026).
+  const [certificado, setCertificado] = useState<File | null>(null);
 
   const [candidaturaId, setCandidaturaId] = useState<string | null>(null);
   const [pontuacao, setPontuacao] = useState(0);
@@ -1289,8 +1520,14 @@ function CandidaturaModal({ vaga, onFechar }: { vaga: Vaga; onFechar: () => void
   async function enviarFormulario(e: FormEvent) {
     e.preventDefault();
     if (enviando) return;
-    if (!nome || !sobrenome || !email || !telefone) {
-      setErro("Preencha nome, sobrenome, e-mail e telefone.");
+    if (!nome || !sobrenome || !email || !telefone || !idade) {
+      setErro("Preencha nome, sobrenome, e-mail, telefone e idade.");
+      return;
+    }
+    // Perguntas de triagem (sim/não) passaram a ser obrigatórias — algumas
+    // podem ser eliminatórias conforme a vaga (Wilson, 06/out/2026).
+    if (PERGUNTAS_TRIAGEM.some((p) => !respostas[p.key])) {
+      setErro("Responda todas as perguntas de Sim/Não.");
       return;
     }
     if (!curriculo) {
@@ -1309,6 +1546,7 @@ function CandidaturaModal({ vaga, onFechar }: { vaga: Vaga; onFechar: () => void
       if (idade) form.append("idade", idade);
       form.append("respostas", JSON.stringify(respostas));
       form.append("curriculo", curriculo);
+      if (certificado) form.append("certificadoJapones", certificado);
       const resposta = await fetch("/api/empregos-candidatura", { method: "POST", body: form });
       const dados = await resposta.json().catch(() => ({}));
       if (!resposta.ok) {
@@ -1389,7 +1627,9 @@ function CandidaturaModal({ vaga, onFechar }: { vaga: Vaga; onFechar: () => void
           <form onSubmit={enviarFormulario} className="mt-5 space-y-4">
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="text-[11px] font-medium text-black/50">Nome</label>
+                <label className="text-[11px] font-medium text-black/50">
+                  Nome <Obrigatorio />
+                </label>
                 <input
                   value={nome}
                   onChange={(e) => setNome(e.target.value)}
@@ -1398,7 +1638,9 @@ function CandidaturaModal({ vaga, onFechar }: { vaga: Vaga; onFechar: () => void
                 />
               </div>
               <div>
-                <label className="text-[11px] font-medium text-black/50">Sobrenome</label>
+                <label className="text-[11px] font-medium text-black/50">
+                  Sobrenome <Obrigatorio />
+                </label>
                 <input
                   value={sobrenome}
                   onChange={(e) => setSobrenome(e.target.value)}
@@ -1408,7 +1650,9 @@ function CandidaturaModal({ vaga, onFechar }: { vaga: Vaga; onFechar: () => void
               </div>
             </div>
             <div>
-              <label className="text-[11px] font-medium text-black/50">E-mail</label>
+              <label className="text-[11px] font-medium text-black/50">
+                  E-mail <Obrigatorio />
+                </label>
               <input
                 type="email"
                 value={email}
@@ -1419,7 +1663,9 @@ function CandidaturaModal({ vaga, onFechar }: { vaga: Vaga; onFechar: () => void
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="text-[11px] font-medium text-black/50">Telefone (WhatsApp)</label>
+                <label className="text-[11px] font-medium text-black/50">
+                  Telefone (WhatsApp) <Obrigatorio />
+                </label>
                 <input
                   value={telefone}
                   onChange={(e) => setTelefone(e.target.value)}
@@ -1428,48 +1674,61 @@ function CandidaturaModal({ vaga, onFechar }: { vaga: Vaga; onFechar: () => void
                 />
               </div>
               <div>
-                <label className="text-[11px] font-medium text-black/50">Idade</label>
+                <label className="text-[11px] font-medium text-black/50">
+                  Idade <Obrigatorio />
+                </label>
                 <input
                   type="number"
                   min={16}
                   max={75}
                   value={idade}
                   onChange={(e) => setIdade(e.target.value)}
+                  required
                   className="mt-1 w-full rounded-xl border border-black/10 px-3 py-2.5 text-sm text-black outline-none focus:border-[#2f80c9]"
                 />
               </div>
             </div>
 
-            <div>
-              <label className="text-[11px] font-medium text-black/50">Currículo (PDF ou DOCX)</label>
-              <input
-                type="file"
-                accept={EXTENSOES_CURRICULO_ACEITAS}
-                onChange={(e) => setCurriculo(e.target.files?.[0] ?? null)}
-                required
-                className="mt-1 w-full rounded-xl border border-dashed border-black/15 px-3 py-2.5 text-xs text-black/60 outline-none file:mr-3 file:rounded-full file:border-0 file:bg-black/[0.04] file:px-3 file:py-1.5 file:text-xs file:font-medium file:text-black/70"
-              />
-            </div>
-
             <div className="border-t border-black/10 pt-4">
-              <label className="text-[11px] font-medium text-black/50">Seu nível de japonês</label>
+              <label className="text-[11px] font-medium text-black/50">
+                Seu nível de japonês <Obrigatorio />
+              </label>
+              <p className="mt-0.5 text-[11px] leading-4 text-black/40">
+                Não precisa ter feito a prova — escolha o nível equivalente ao que você fala hoje.
+              </p>
               <select
-                value={respostas.nivelJapones}
-                onChange={(e) =>
-                  setRespostas((r) => ({ ...r, nivelJapones: e.target.value as NivelJapones | "" }))
-                }
+                value={respostas.nivelJaponesDetalhado ?? ""}
+                onChange={(e) => {
+                  const detalhado = e.target.value as NivelJaponesDetalhado | "";
+                  setRespostas((r) => ({ ...r, nivelJaponesDetalhado: detalhado, nivelJapones: nivelDoDetalhado(detalhado) }));
+                  if (detalhado === "nenhum") setCertificado(null);
+                }}
                 required
-                className="mt-1 w-full rounded-xl border border-black/10 px-3 py-2.5 text-sm text-black outline-none focus:border-[#2f80c9]"
+                className="mt-1.5 w-full rounded-xl border border-black/10 px-3 py-2.5 text-sm text-black outline-none focus:border-[#2f80c9]"
               >
                 <option value="" disabled>
                   Selecione
                 </option>
-                {NIVEIS_JAPONES.map((n) => (
+                {NIVEIS_JAPONES_DETALHADOS.map((n) => (
                   <option key={n.key} value={n.key}>
-                    {n.label}
+                    {n.bjt ? `${n.label}  ·  ${n.bjt}` : n.label}
                   </option>
                 ))}
               </select>
+              {respostas.nivelJaponesDetalhado && respostas.nivelJaponesDetalhado !== "nenhum" && (
+                <div className="mt-3">
+                  <label className="text-[11px] font-medium text-black/50">
+                    Certificado de aprovação JLPT ou BJT <span className="font-normal text-black/35">(opcional)</span>
+                  </label>
+                  <input
+                    type="file"
+                    accept=".pdf,.jpg,.jpeg,.png,.webp,.heic,application/pdf,image/*"
+                    onChange={(e) => setCertificado(e.target.files?.[0] ?? null)}
+                    className="mt-1 w-full rounded-xl border border-dashed border-black/15 px-3 py-2.5 text-xs text-black/60 outline-none file:mr-3 file:rounded-full file:border-0 file:bg-black/[0.04] file:px-3 file:py-1.5 file:text-xs file:font-medium file:text-black/70"
+                  />
+                  <p className="mt-1 text-[11px] text-black/40">PDF ou foto do certificado, até 8MB.</p>
+                </div>
+              )}
             </div>
 
             {/* Ascendência japonesa + data desejada de embarque — pedido
@@ -1521,7 +1780,9 @@ function CandidaturaModal({ vaga, onFechar }: { vaga: Vaga; onFechar: () => void
 
             {PERGUNTAS_TRIAGEM.map((p) => (
               <div key={p.key}>
-                <p className="text-xs font-medium text-black/70">{p.pergunta}</p>
+                <p className="text-xs font-medium text-black/70">
+                  {p.pergunta} <Obrigatorio />
+                </p>
                 {p.ajuda && <p className="mt-0.5 text-[11px] text-black/40">{p.ajuda}</p>}
                 <div className="mt-2 flex gap-2">
                   {(["sim", "nao"] as const).map((valor) => (
@@ -1541,6 +1802,25 @@ function CandidaturaModal({ vaga, onFechar }: { vaga: Vaga; onFechar: () => void
                 </div>
               </div>
             ))}
+
+            {/* Currículo movido pro final do formulário — pedido do Wilson,
+                06/out/2026 ("campo do curriculo para o final"). */}
+            <div className="border-t border-black/10 pt-4">
+              <label className="text-[11px] font-medium text-black/50">
+                Currículo (PDF ou DOCX) <Obrigatorio />
+              </label>
+              <input
+                type="file"
+                accept={EXTENSOES_CURRICULO_ACEITAS}
+                onChange={(e) => setCurriculo(e.target.files?.[0] ?? null)}
+                required
+                className="mt-1 w-full rounded-xl border border-dashed border-black/15 px-3 py-2.5 text-xs text-black/60 outline-none file:mr-3 file:rounded-full file:border-0 file:bg-black/[0.04] file:px-3 file:py-1.5 file:text-xs file:font-medium file:text-black/70"
+              />
+            </div>
+
+            <p className="text-[11px] text-black/40">
+              <Obrigatorio /> Campos obrigatórios
+            </p>
 
             {erro && <p className="text-xs text-red-500">{erro}</p>}
 

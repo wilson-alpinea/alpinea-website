@@ -32,7 +32,42 @@ export type Vaga = {
   conducao?: string;
   observacoes?: string;
   fonteContrato?: "ut-suriemu";
+  // Detalhes obrigatórios de toda vaga — pedido do Wilson, 06/out/2026:
+  // "cada vaga deve ter dados obrigatorios sobre: moradia, lista de
+  // beneficios, kit de boas vindas, bonus (bimestral/semestral), seção que
+  // fala sobre a cidade e principais diferenciais da hospedagem". O campo
+  // `info` é obrigatório no tipo (o TypeScript não deixa cadastrar vaga
+  // nova sem ele), mas cada item pode ficar `null`/vazio enquanto o dado
+  // real ainda não chegou — a página mostra "A confirmar com a nossa
+  // equipe" nesses casos, em vez de inventar informação.
+  info: InfoVaga;
+  // Peso de experiência e Re-Entry nesta vaga (eliminatório ou
+  // qualificatório) — opcional; sem isso vale CRITERIOS_TRIAGEM_PADRAO em
+  // app/lib/candidaturaScoring.ts. Wilson, 06/out/2026.
+  criteriosTriagem?: {
+    experiencia: "eliminatorio" | "qualificatorio";
+    reEntry: "eliminatorio" | "qualificatorio";
+  };
 };
+
+export type InfoVaga = {
+  /** Tipo de moradia, valor/desconto do aluguel, o que está incluso. */
+  moradia: string | null;
+  /** Lista de benefícios (transporte, refeitório, seguro, uniforme...). */
+  beneficios: string[];
+  /** O que vem no kit de boas-vindas (futon, utensílios, chip, etc.). */
+  kitBoasVindas: string | null;
+  /** Bônus — periodicidade (bimestral/semestral/anual) e valor/regra. */
+  bonus: string | null;
+  /** Texto curto sobre a cidade: clima, custo de vida, comunidade brasileira, acesso. */
+  sobreCidade: string | null;
+  /** Principais diferenciais da hospedagem (mobiliada, perto da fábrica, individual...). */
+  diferenciaisHospedagem: string[];
+};
+
+// Todas as 29 vagas abaixo começaram (06/out/2026) com `info` vazio — o
+// bloco está escrito em cada vaga, e não num valor compartilhado, pra
+// ficar explícito, vaga por vaga, o que falta preencher.
 
 export const VAGAS: Vaga[] = [
   // ── Avance RH/Corporation — comunicado + fichas individuais ──
@@ -50,6 +85,14 @@ export const VAGAS: Vaga[] = [
     status: "aberta",
     idioma: "Não mandatório",
     perfil: "Homens até 45 anos",
+    info: {
+      moradia: null,
+      beneficios: [],
+      kitBoasVindas: null,
+      bonus: null,
+      sobreCidade: null,
+      diferenciaisHospedagem: [],
+    },
   },
   {
     id: "aisin-shinwa-toyama",
@@ -66,6 +109,14 @@ export const VAGAS: Vaga[] = [
     logo: "/images/logo-cliente-aisin.png",
     idioma: "Básico (N4), preferência razoável (N3)",
     perfil: "Homens até 45 anos — precisa ter carro próprio e experiência em fábrica no Brasil ou no Japão",
+    info: {
+      moradia: null,
+      beneficios: [],
+      kitBoasVindas: null,
+      bonus: null,
+      sobreCidade: null,
+      diferenciaisHospedagem: [],
+    },
   },
   {
     id: "marugo-gomu-okayama",
@@ -81,6 +132,14 @@ export const VAGAS: Vaga[] = [
     status: "aberta",
     idioma: "Não mandatório",
     perfil: "Homens e mulheres até 50 anos",
+    info: {
+      moradia: null,
+      beneficios: [],
+      kitBoasVindas: null,
+      bonus: null,
+      sobreCidade: null,
+      diferenciaisHospedagem: [],
+    },
   },
   {
     id: "murata-izumo",
@@ -97,6 +156,14 @@ export const VAGAS: Vaga[] = [
     logo: "/images/logo-cliente-murata.png",
     idioma: "Não mandatório",
     perfil: "Homem, mulher ou casal até 50 anos",
+    info: {
+      moradia: null,
+      beneficios: [],
+      kitBoasVindas: null,
+      bonus: null,
+      sobreCidade: null,
+      diferenciaisHospedagem: [],
+    },
   },
   {
     id: "murata-oda",
@@ -113,6 +180,14 @@ export const VAGAS: Vaga[] = [
     logo: "/images/logo-cliente-murata.png",
     idioma: "Não mandatório",
     perfil: "Homem, mulher ou casal até 50 anos",
+    info: {
+      moradia: null,
+      beneficios: [],
+      kitBoasVindas: null,
+      bonus: null,
+      sobreCidade: null,
+      diferenciaisHospedagem: [],
+    },
   },
   {
     id: "daikin-kusatsu",
@@ -129,6 +204,14 @@ export const VAGAS: Vaga[] = [
     logo: "/images/logo-cliente-daikin.png",
     idioma: "Básico (N4)",
     perfil: "Homens e mulheres até 45 anos — previsão de vagas a partir de outubro/novembro",
+    info: {
+      moradia: null,
+      beneficios: [],
+      kitBoasVindas: null,
+      bonus: null,
+      sobreCidade: null,
+      diferenciaisHospedagem: [],
+    },
   },
   {
     id: "cs-nakatsugawa-gifu",
@@ -144,6 +227,14 @@ export const VAGAS: Vaga[] = [
     status: "consulta",
     idioma: "Preferencialmente com conhecimento de japonês",
     perfil: "Homens até 55 anos, não fumante",
+    info: {
+      moradia: null,
+      beneficios: [],
+      kitBoasVindas: null,
+      bonus: null,
+      sobreCidade: null,
+      diferenciaisHospedagem: [],
+    },
   },
   {
     id: "ntk-kani-gifu",
@@ -159,6 +250,14 @@ export const VAGAS: Vaga[] = [
     status: "consulta",
     idioma: "Zero ou razoável (N3), a depender do setor",
     perfil: "Homem, mulher ou casal até 45 anos",
+    info: {
+      moradia: null,
+      beneficios: [],
+      kitBoasVindas: null,
+      bonus: null,
+      sobreCidade: null,
+      diferenciaisHospedagem: [],
+    },
   },
   {
     id: "nitto-boseki-fukushima",
@@ -174,6 +273,14 @@ export const VAGAS: Vaga[] = [
     status: "consulta",
     idioma: "Básico (N4)",
     perfil: "Homens até 50 anos — previsão de vagas a partir de setembro",
+    info: {
+      moradia: null,
+      beneficios: [],
+      kitBoasVindas: null,
+      bonus: null,
+      sobreCidade: null,
+      diferenciaisHospedagem: [],
+    },
   },
   // ── UT Suri-emu — fichas de contrato por empresa ──
   {
@@ -191,6 +298,14 @@ export const VAGAS: Vaga[] = [
     logo: "/images/logo-cliente-subaru.png",
     conducao: "Bicicleta (alugada pela empresa) — condução própria (carro/moto) possível, consultar a unidade.",
     fonteContrato: "ut-suriemu",
+    info: {
+      moradia: null,
+      beneficios: [],
+      kitBoasVindas: null,
+      bonus: null,
+      sobreCidade: null,
+      diferenciaisHospedagem: [],
+    },
   },
   {
     id: "subaru-ota",
@@ -207,6 +322,14 @@ export const VAGAS: Vaga[] = [
     logo: "/images/logo-cliente-subaru.png",
     conducao: "Bicicleta (alugada pela empresa) — condução própria (carro/moto) possível, consultar a unidade.",
     fonteContrato: "ut-suriemu",
+    info: {
+      moradia: null,
+      beneficios: [],
+      kitBoasVindas: null,
+      bonus: null,
+      sobreCidade: null,
+      diferenciaisHospedagem: [],
+    },
   },
   {
     id: "mitsubishi-fuso-toyama",
@@ -222,6 +345,14 @@ export const VAGAS: Vaga[] = [
     status: "aberta",
     conducao: "Vans/ônibus (gratuito), bicicleta (alugada pela empresa) ou a pé — condução própria (carro/moto) possível, consultar a unidade.",
     fonteContrato: "ut-suriemu",
+    info: {
+      moradia: null,
+      beneficios: [],
+      kitBoasVindas: null,
+      bonus: null,
+      sobreCidade: null,
+      diferenciaisHospedagem: [],
+    },
   },
   {
     id: "yamase-miyagi",
@@ -235,6 +366,14 @@ export const VAGAS: Vaga[] = [
     contrato: "Contrato temporário (haken)",
     salario: "¥1.200/hora (até ¥1.250/hora após o 3º mês)",
     status: "aberta",
+    info: {
+      moradia: null,
+      beneficios: [],
+      kitBoasVindas: null,
+      bonus: null,
+      sobreCidade: null,
+      diferenciaisHospedagem: [],
+    },
   },
   {
     id: "fujifilm-miyagi",
@@ -249,6 +388,14 @@ export const VAGAS: Vaga[] = [
     salario: "¥1.200–1.250/hora",
     status: "aberta",
     logo: "/images/logo-cliente-fujifilm.png",
+    info: {
+      moradia: null,
+      beneficios: [],
+      kitBoasVindas: null,
+      bonus: null,
+      sobreCidade: null,
+      diferenciaisHospedagem: [],
+    },
   },
   {
     id: "yokohama-gomu-aichi",
@@ -266,6 +413,14 @@ export const VAGAS: Vaga[] = [
     conducao: "Vans/ônibus (gratuito), bicicleta (alugada pela empresa) ou a pé — condução própria (carro/moto) possível, consultar a unidade.",
     observacoes: "Uniforme cobrado à parte, ¥6.450.",
     fonteContrato: "ut-suriemu",
+    info: {
+      moradia: null,
+      beneficios: [],
+      kitBoasVindas: null,
+      bonus: null,
+      sobreCidade: null,
+      diferenciaisHospedagem: [],
+    },
   },
   {
     id: "sony-aichi",
@@ -280,6 +435,14 @@ export const VAGAS: Vaga[] = [
     salario: "¥1.100/hora",
     status: "aberta",
     logo: "/images/logo-cliente-sony.png",
+    info: {
+      moradia: null,
+      beneficios: [],
+      kitBoasVindas: null,
+      bonus: null,
+      sobreCidade: null,
+      diferenciaisHospedagem: [],
+    },
   },
   {
     id: "mitsubishi-denki-himeji",
@@ -294,6 +457,14 @@ export const VAGAS: Vaga[] = [
     salario: "¥1.300/hora (extra ¥1.625/hora; noturno +¥325/hora)",
     status: "aberta",
     logo: "/images/logo-cliente-mitsubishi-denki.png",
+    info: {
+      moradia: null,
+      beneficios: [],
+      kitBoasVindas: null,
+      bonus: null,
+      sobreCidade: null,
+      diferenciaisHospedagem: [],
+    },
   },
   {
     id: "daihatsu-nakatsu",
@@ -309,6 +480,14 @@ export const VAGAS: Vaga[] = [
     status: "aberta",
     idioma: "Básico",
     perfil: "18 a 39 anos (até 45 com experiência) — avaliação médica e física admissional",
+    info: {
+      moradia: null,
+      beneficios: [],
+      kitBoasVindas: null,
+      bonus: null,
+      sobreCidade: null,
+      diferenciaisHospedagem: [],
+    },
   },
   {
     id: "fruehauf-atsugi",
@@ -327,6 +506,14 @@ export const VAGAS: Vaga[] = [
     conducao: "Bicicleta (alugada pela empresa) ou a pé — condução própria (carro/moto) possível, consultar a unidade.",
     observacoes: "Estacionamento por conta do funcionário, ¥2.200/mês.",
     fonteContrato: "ut-suriemu",
+    info: {
+      moradia: null,
+      beneficios: [],
+      kitBoasVindas: null,
+      bonus: null,
+      sobreCidade: null,
+      diferenciaisHospedagem: [],
+    },
   },
   {
     id: "gs-yuasa-ritto",
@@ -340,6 +527,14 @@ export const VAGAS: Vaga[] = [
     contrato: "Contrato temporário (haken)",
     salario: "¥1.400/hora, com reajuste semestral por assiduidade até ¥1.500/hora",
     status: "aberta",
+    info: {
+      moradia: null,
+      beneficios: [],
+      kitBoasVindas: null,
+      bonus: null,
+      sobreCidade: null,
+      diferenciaisHospedagem: [],
+    },
   },
   // ── Fujiarte Co. Ltd. — fichas "Condições de Contrato" (Inoac e Futaba
   // Sangyou, propostas atualizadas de 1/abr/2026) ──
@@ -356,6 +551,14 @@ export const VAGAS: Vaga[] = [
     salario: "¥1.300/hora (após 3 meses, ¥1.400/hora) + moradia ¥55.000–60.000",
     status: "aberta",
     perfil: "Homens solteiros ou casais — para casal com filho menor de idade, a vaga é garantida só para o marido, sem suporte de passagem para a família",
+    info: {
+      moradia: null,
+      beneficios: [],
+      kitBoasVindas: null,
+      bonus: null,
+      sobreCidade: null,
+      diferenciaisHospedagem: [],
+    },
   },
   {
     id: "inoac-kira",
@@ -370,6 +573,14 @@ export const VAGAS: Vaga[] = [
     salario: "¥1.300/hora (após 3 meses, ¥1.400/hora) + moradia ¥45.000–65.000",
     status: "aberta",
     perfil: "Homens solteiros ou casais — para casal com filho menor de idade, a vaga é garantida só para o marido, sem suporte de passagem para a família",
+    info: {
+      moradia: null,
+      beneficios: [],
+      kitBoasVindas: null,
+      bonus: null,
+      sobreCidade: null,
+      diferenciaisHospedagem: [],
+    },
   },
   {
     id: "futaba-mutsumi",
@@ -384,6 +595,14 @@ export const VAGAS: Vaga[] = [
     salario: "¥1.550/hora (após 6 meses, ¥1.650/hora) + moradia ¥45.000–60.000",
     status: "aberta",
     perfil: "Homens solteiros ou casais com filhos — para casal com filho menor de idade, a vaga é garantida só para o marido, sem suporte de passagem para a família. Alocação entre Kota, Mutsumi e Okazaki definida só após a chegada ao Japão",
+    info: {
+      moradia: null,
+      beneficios: [],
+      kitBoasVindas: null,
+      bonus: null,
+      sobreCidade: null,
+      diferenciaisHospedagem: [],
+    },
   },
   {
     id: "futaba-kota",
@@ -398,6 +617,14 @@ export const VAGAS: Vaga[] = [
     salario: "¥1.550/hora (após 6 meses, ¥1.650/hora) + moradia ¥45.000–60.000",
     status: "aberta",
     perfil: "Homens solteiros ou casais com filhos — para casal com filho menor de idade, a vaga é garantida só para o marido, sem suporte de passagem para a família",
+    info: {
+      moradia: null,
+      beneficios: [],
+      kitBoasVindas: null,
+      bonus: null,
+      sobreCidade: null,
+      diferenciaisHospedagem: [],
+    },
   },
   {
     id: "fujifilm-kanagawa",
@@ -415,6 +642,14 @@ export const VAGAS: Vaga[] = [
     conducao: "Bicicleta (alugada pela empresa) ou a pé — condução própria de carro possível, consultar a unidade.",
     observacoes: "Apartamentos Leopalace geralmente já incluem TV, cortina, mesa, ar-condicionado, máquina de lavar, geladeira e micro-ondas.",
     fonteContrato: "ut-suriemu",
+    info: {
+      moradia: null,
+      beneficios: [],
+      kitBoasVindas: null,
+      bonus: null,
+      sobreCidade: null,
+      diferenciaisHospedagem: [],
+    },
   },
   {
     id: "hino-jidousha-ota",
@@ -431,6 +666,14 @@ export const VAGAS: Vaga[] = [
     conducao: "A pé — bicicleta própria possível, consultar a unidade.",
     observacoes: "Refeitório na unidade com geladeira e micro-ondas.",
     fonteContrato: "ut-suriemu",
+    info: {
+      moradia: null,
+      beneficios: [],
+      kitBoasVindas: null,
+      bonus: null,
+      sobreCidade: null,
+      diferenciaisHospedagem: [],
+    },
   },
   {
     id: "hino-jidousha-hamura",
@@ -447,6 +690,14 @@ export const VAGAS: Vaga[] = [
     conducao: "A pé — bicicleta própria possível, consultar a unidade.",
     observacoes: "Refeitório com sistema de recarga (depósito-caução de ¥1.000); cada refeição custa em torno de ¥500.",
     fonteContrato: "ut-suriemu",
+    info: {
+      moradia: null,
+      beneficios: [],
+      kitBoasVindas: null,
+      bonus: null,
+      sobreCidade: null,
+      diferenciaisHospedagem: [],
+    },
   },
   {
     id: "kitz-ina-nagano",
@@ -462,6 +713,14 @@ export const VAGAS: Vaga[] = [
     status: "aberta",
     conducao: "Vans/ônibus (gratuito), bicicleta (alugada pela empresa) ou a pé.",
     fonteContrato: "ut-suriemu",
+    info: {
+      moradia: null,
+      beneficios: [],
+      kitBoasVindas: null,
+      bonus: null,
+      sobreCidade: null,
+      diferenciaisHospedagem: [],
+    },
   },
   {
     id: "panasonic-gunma",
@@ -478,6 +737,14 @@ export const VAGAS: Vaga[] = [
     logo: "/images/logo-cliente-panasonic.png",
     conducao: "Bicicleta (alugada pela empresa) ou a pé — condução própria (carro/moto) possível, consultar a unidade.",
     fonteContrato: "ut-suriemu",
+    info: {
+      moradia: null,
+      beneficios: [],
+      kitBoasVindas: null,
+      bonus: null,
+      sobreCidade: null,
+      diferenciaisHospedagem: [],
+    },
   },
 ];
 

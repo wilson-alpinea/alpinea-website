@@ -8,6 +8,8 @@ import {
   calcularPontuacaoCandidatura,
   ASCENDENCIA_JAPONESA,
   QUANDO_EMBARCAR,
+  NIVEIS_JAPONES_DETALHADOS,
+  nivelDoDetalhado,
   type RespostasTriagem,
   type CriterioPontuacao,
 } from "../../lib/candidaturaScoring";
@@ -67,9 +69,12 @@ export async function POST(req: Request) {
     const idadeBruta = form.get("idade");
     const idade = idadeBruta ? Number(idadeBruta) : null;
 
-    if (!nome || !sobrenome || !email || !telefone) {
+    // Idade passou a ser obrigatória junto com os demais — pedido do
+    // Wilson, 06/out/2026 ("campos obrigatórios": nome, sobrenome, e-mail,
+    // telefone e idade).
+    if (!nome || !sobrenome || !email || !telefone || !idade || !Number.isFinite(idade) || idade < 16 || idade > 75) {
       return NextResponse.json(
-        { error: "Nome, sobrenome, e-mail e telefone são obrigatórios." },
+        { error: "Nome, sobrenome, e-mail, telefone e idade são obrigatórios." },
         { status: 400 },
       );
     }
@@ -104,7 +109,13 @@ export async function POST(req: Request) {
               : "",
           experienciaSetor:
             parsed.experienciaSetor === "sim" || parsed.experienciaSetor === "nao" ? parsed.experienciaSetor : "",
-          nivelJapones: parsed.nivelJapones || "",
+          reEntry: parsed.reEntry === "sim" || parsed.reEntry === "nao" ? parsed.reEntry : "",
+          // Prioriza a opção detalhada (JLPT/BJT); só cai no valor antigo
+          // se vier de uma versão anterior do formulário.
+          nivelJapones: nivelDoDetalhado(parsed.nivelJaponesDetalhado) || parsed.nivelJapones || "",
+          nivelJaponesDetalhado: NIVEIS_JAPONES_DETALHADOS.some((n) => n.key === parsed.nivelJaponesDetalhado)
+            ? parsed.nivelJaponesDetalhado
+            : "",
           ascendencia: ascendenciasValidas.includes(parsed.ascendencia) ? parsed.ascendencia : "",
           quandoEmbarcar: quandoEmbarcarValidos.includes(parsed.quandoEmbarcar) ? parsed.quandoEmbarcar : "",
         };
@@ -149,6 +160,32 @@ export async function POST(req: Request) {
       );
     }
 
+    // Certificado de japonês (JLPT/BJT) — opcional. Vai pro mesmo bucket
+    // privado do currículo, numa pasta própria; o caminho fica dentro de
+    // `respostas` (jsonb), sem precisar de coluna nova. Falha no upload do
+    // certificado não derruba a candidatura — só fica registrado no log.
+    let certificadoJapones: { path: string; nome: string } | null = null;
+    const arquivoCertificado = form.get("certificadoJapones");
+    if (arquivoCertificado instanceof File && arquivoCertificado.size > 0) {
+      const nomeCert = arquivoCertificado.name || "certificado";
+      const formatoOk =
+        /\.(pdf|jpe?g|png|webp|heic)$/i.test(nomeCert) || /^(application\/pdf|image\/)/.test(arquivoCertificado.type);
+      if (!formatoOk || arquivoCertificado.size > TAMANHO_MAXIMO_CURRICULO_BYTES) {
+        return NextResponse.json(
+          { error: "Certificado de japonês: envie um PDF ou imagem (JPG/PNG) de até 8MB." },
+          { status: 400 },
+        );
+      }
+      const caminhoCert = `certificados-japones/${randomUUID()}-${sanitizarNomeArquivo(nomeCert)}`;
+      const { error: erroCert } = await supabase.storage
+        .from("curriculos-candidatos")
+        .upload(caminhoCert, Buffer.from(await arquivoCertificado.arrayBuffer()), {
+          contentType: arquivoCertificado.type || "application/octet-stream",
+        });
+      if (erroCert) console.error("Erro ao subir certificado de japonês (empregos-candidatura):", erroCert);
+      else certificadoJapones = { path: caminhoCert, nome: nomeCert };
+    }
+
     const curriculoTexto = await extrairTextoCurriculo(buffer, nomeArquivoOriginal, arquivo.type || "");
 
     const resultado = calcularPontuacaoCandidatura({
@@ -170,7 +207,7 @@ export async function POST(req: Request) {
         email,
         telefone,
         idade: Number.isFinite(idade) && idade !== null && idade > 0 ? idade : null,
-        respostas,
+        respostas: { ...respostas, certificadoJapones },
         curriculo_path: caminhoStorage,
         curriculo_nome_arquivo: nomeArquivoOriginal,
         curriculo_texto: curriculoTexto.slice(0, 20000), // guarda o texto extraído pra auditoria, sem exagerar no tamanho da linha
@@ -201,6 +238,11 @@ export async function POST(req: Request) {
       `E-mail: ${email}`,
       `Telefone: ${telefone}`,
       idade ? `Idade: ${idade}` : "Idade: não informada",
+      `Nível de japonês: ${
+        NIVEIS_JAPONES_DETALHADOS.find((n) => n.key === respostas.nivelJaponesDetalhado)?.label || "Não informado"
+      }${certificadoJapones ? ` (certificado anexado: ${certificadoJapones.nome})` : ""}`,
+      `Experiência em fábrica/produção: ${respostas.experienciaSetor === "sim" ? "Sim" : respostas.experienciaSetor === "nao" ? "Não" : "Não respondeu"}`,
+      `Re-Entry válido: ${respostas.reEntry === "sim" ? "SIM — embarque mais rápido" : respostas.reEntry === "nao" ? "Não" : "Não respondeu"}`,
       `Ascendência japonesa: ${ascendenciaLabel || "Não informada"}`,
       `Quando gostaria de embarcar: ${quandoEmbarcarLabel || "Não informado"}`,
       `Pontuação: ${resultado.pontuacao}%${resultado.aprovadoParaFoto ? " (passou para a etapa de foto)" : ""}`,
