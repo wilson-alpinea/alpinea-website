@@ -37,6 +37,7 @@ import {
 } from "../lib/triagemPerfil";
 import { useEffect, useMemo, useState, type FormEvent } from "react";
 import Image from "next/image";
+import PrazosProcesso from "../components/empregos/PrazosProcesso";
 import Link from "next/link";
 import { Bodoni_Moda } from "next/font/google";
 
@@ -1705,6 +1706,7 @@ function CandidaturaModal({ vaga, onFechar }: { vaga: Vaga; onFechar: () => void
 
         {etapa === "formulario" && (
           <form onSubmit={enviarFormulario} className="mt-5 space-y-4">
+            <PrazosProcesso atual="etapa1" semEtapa3={!perguntaFinanciamento} />
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <label className="text-[11px] font-medium text-black/50">
@@ -2556,6 +2558,8 @@ function CandidaturaModal({ vaga, onFechar }: { vaga: Vaga; onFechar: () => void
                 </button>
               </div>
             )}
+
+            <PrazosProcesso atual={aprovadoParaFoto ? "etapa2" : "etapa1"} aberto={aprovadoParaFoto} semEtapa3={!perguntaFinanciamento} className="mt-5" />
           </div>
         )}
 

@@ -8,6 +8,7 @@ import { AEROPORTOS, type SelecaoProposta } from "@/app/lib/financiamentoEmprego
 import { urlEtapa, vagaPrecisaProposta } from "@/app/lib/etapasCandidatura";
 import type { FichaCadastral } from "@/app/lib/fichaCadastral";
 import PropostaForm from "./PropostaForm";
+import PrazosProcesso from "@/app/components/empregos/PrazosProcesso";
 
 // Etapa 3 — proposta de financiamento (Wilson, 06/out/2026).
 
@@ -62,6 +63,7 @@ export default async function PropostaPage({ params, searchParams }: { params: P
           {c.nome}, esta vaga não tem os custos de ida pagos pela empresa. Monte abaixo o que você precisa — os valores
           são por pessoa e entram no financiamento.
         </p>
+        <PrazosProcesso atual="etapa3" className="mt-6" />
         <PropostaForm
           candidaturaId={c.id}
           token={t}

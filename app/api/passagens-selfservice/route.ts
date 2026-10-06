@@ -88,6 +88,13 @@ export async function POST(req: Request) {
     const cabine = texto(body.cabine, 60);
     const companhia = texto(body.companhia, 60) || "Sem preferência";
     const datasFlexiveis = Boolean(body.datasFlexiveis);
+    // Sentido (Brasil→Japão ou Japão→Brasil) e trechos já montados pela
+    // página; "outra data sugerida" = aceita datas com promoção (06/out/2026).
+    const sentido = texto(body.sentido, 40) || "Brasil → Japão";
+    const trechoIda = texto(body.trechoIda, 300);
+    const trechoVolta = texto(body.trechoVolta, 300);
+    const aceitaDataSugerida =
+      body.aceitaDataSugerida === true ? "Sim — enviar opções com promoção" : body.aceitaDataSugerida === false ? "Não, só nas datas escolhidas" : "Não respondeu";
     const referenciaUSD = Number(body.referenciaPorPassageiroUSD) || 0;
     const totalUSD = Number(body.totalUSD) || 0;
     const totalBRL = Number(body.totalBRL) || null;
@@ -99,19 +106,22 @@ export async function POST(req: Request) {
       : [];
 
     const linhasResumo: [string, string][] = [
-      ["Tipo", modo],
-      ["Ida", `${origem} → ${destino} em ${dataIda}`],
-      ["Volta", modo === "Ida e volta" ? `${destinoVolta || destino} → ${origem} em ${dataVolta || "—"}` : "Não solicitada"],
+      ["Tipo", `${modo} · ${sentido}`],
+      ["Ida", `${trechoIda || `${origem} → ${destino}`} em ${dataIda}`],
+      ["Volta", modo === "Ida e volta" ? `${trechoVolta || `${destinoVolta || destino} → ${origem}`} em ${dataVolta || "—"}` : "Não solicitada"],
       ["Passageiros", `${adultos} adulto(s), ${criancas} criança(s), ${bebes} bebê(s)`],
       ["Cabine", cabine || "Não informada"],
       ["Companhia preferida", companhia],
       ["Datas flexíveis (±3 dias)", datasFlexiveis ? "Sim" : "Não"],
+      ["Aceita outra data sugerida (promoção)", aceitaDataSugerida],
       ["Referência por passageiro (US$)", `US$ ${referenciaUSD.toLocaleString("pt-BR")}`],
       ["Total estimado (US$)", `US$ ${totalUSD.toLocaleString("pt-BR")}`],
       ["Total estimado (referência BRL)", totalBRL ? `R$ ${totalBRL.toLocaleString("pt-BR")}` : "Não calculado"],
       ["Avisos mostrados ao cliente", avisos.length ? avisos.join(" | ") : "Nenhum"],
       ["Nomes dos passageiros", nomesPassageiros || "Não informados"],
+      ["Visto americano", texto(body.vistoEUA, 60) || "Não informado"],
       ["Forma de pagamento", "A combinar pelo WhatsApp (checkout manual)"],
+      ["Intenção de concluir a compra", texto(body.prazoCompra, 40) || "Não informado"],
       ["Termos e condições aceitos", termosAceitos ? "Sim" : "Não confirmado"],
       ["Observações do cliente", observacoesCliente || "Nenhuma"],
     ];

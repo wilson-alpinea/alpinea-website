@@ -51,6 +51,39 @@ const MODOS: { key: Modo; nome: string }[] = [
   { key: "so-ida", nome: "Só ida" },
 ];
 
+// Sentido da viagem — Wilson, 06/out/2026: "deixar disponível origem
+// Japão > Brasil". O estado continua o mesmo (origem = cidade no Brasil,
+// destino/destinoVolta = cidades no Japão); só muda a ordem dos campos e
+// dos trechos.
+type Sentido = "br-jp" | "jp-br";
+const SENTIDOS: { key: Sentido; nome: string }[] = [
+  { key: "br-jp", nome: "Brasil → Japão" },
+  { key: "jp-br", nome: "Japão → Brasil" },
+];
+
+// Destaques/promoções — banner na coluna da esquerda da etapa 1 (Wilson,
+// 06/out/2026). Clicar preenche o trecho da promoção no formulário. Para
+// trocar/adicionar promoções, só mexer nesta lista.
+const PROMOCOES: {
+  id: string;
+  imagem: string;
+  largura: number;
+  altura: number;
+  alt: string;
+  legenda: string;
+  aplicar: { sentido: Sentido; modo: Modo; origem: string; destino: string };
+}[] = [
+  {
+    id: "japao-sp-229mil",
+    imagem: "/images/passagens-promo-japao-sao-paulo-229mil.webp",
+    largura: 1600,
+    altura: 686,
+    alt: "Promoção: 229 mil ienes ida e volta saindo do Japão — Tokyo ↔ São Paulo e Osaka ↔ São Paulo, Emirates e Qatar",
+    legenda: "Saindo do Japão: Tóquio ou Osaka ↔ São Paulo, ida e volta a partir de ¥229 mil (Emirates e Qatar).",
+    aplicar: { sentido: "jp-br", modo: "ida-volta", origem: "GRU", destino: "TYO" },
+  },
+];
+
 const ORIGENS = [
   { id: "GRU", nome: "São Paulo (GRU)" },
   { id: "GIG", nome: "Rio de Janeiro (GIG)" },
@@ -61,14 +94,17 @@ const ORIGENS = [
   { id: "SSA", nome: "Salvador (SSA)" },
   { id: "REC", nome: "Recife (REC)" },
   { id: "FOR", nome: "Fortaleza (FOR)" },
+  { id: "BEL", nome: "Belém (BEL)" },
+  { id: "MAO", nome: "Manaus (MAO)" },
   { id: "OUTRA", nome: "Outra cidade" },
 ];
 const DESTINOS = [
   { id: "TYO", nome: "Tóquio (NRT/HND)" },
   { id: "KIX", nome: "Osaka (KIX)" },
   { id: "NGO", nome: "Nagoya (NGO)" },
-  { id: "FUK", nome: "Fukuoka (FUK)" },
-  { id: "CTS", nome: "Sapporo (CTS)" },
+  { id: "KMQ", nome: "Komatsu (KMQ)" },
+  { id: "IZO", nome: "Izumo (IZO)" },
+  { id: "HIJ", nome: "Hiroshima (HIJ)" },
 ];
 const nomeOrigem = (id: string) => ORIGENS.find((o) => o.id === id)?.nome ?? id;
 const nomeDestino = (id: string) => DESTINOS.find((d) => d.id === id)?.nome ?? id;
@@ -83,6 +119,19 @@ const CABINES: { key: Cabine; nome: string; perfil: string }[] = [
 
 // Companhias com que a Ajisai emite para o Japão (mesma lista de /passagens).
 const COMPANHIAS = ["Emirates", "Qatar Airways", "Air France", "KLM", "Lufthansa", "Swiss", "Ethiopian"];
+
+// Visto americano — Wilson, 06/out/2026 ("se tem visto americano ou
+// não"): define se dá para cotar conexões pelos EUA.
+type VistoEUA = "" | "todos" | "alguns" | "nao";
+const OPCOES_VISTO_EUA: { key: Exclude<VistoEUA, "">; nome: string }[] = [
+  { key: "todos", nome: "Sim, todos os passageiros" },
+  { key: "alguns", nome: "Só alguns passageiros" },
+  { key: "nao", nome: "Não" },
+];
+
+// "Quando tem intenção de concluir a compra?" — na revisão (Wilson,
+// 06/out/2026). Ajuda a equipe a priorizar as cotações.
+const PRAZOS_COMPRA = ["Dentro de 1 semana", "Dentro de 15 dias", "Dentro de 1 mês", "Dentro de 3 meses", "Não tenho urgência"];
 
 const MAX_POR_FAIXA = 9;
 
@@ -171,6 +220,7 @@ export default function PassagensAereasPage() {
 
   const [etapa, setEtapa] = useState<Etapa>(1);
   const [modo, setModo] = useState<Modo>("ida-volta");
+  const [sentido, setSentido] = useState<Sentido>("br-jp");
   const [origem, setOrigem] = useState("");
   const [origemOutra, setOrigemOutra] = useState("");
   const [destino, setDestino] = useState("");
@@ -184,17 +234,23 @@ export default function PassagensAereasPage() {
   const [cabine, setCabine] = useState<Cabine | "">("");
   const [companhia, setCompanhia] = useState("");
   const [datasFlexiveis, setDatasFlexiveis] = useState(false);
+  // "Tem disponibilidade para viajar em outra data sugerida por nós?" —
+  // com datas sugeridas a equipe consegue promoções/tarifas melhores
+  // (Wilson, 06/out/2026). null = não respondeu (opcional).
+  const [aceitaDataSugerida, setAceitaDataSugerida] = useState<boolean | null>(null);
 
   const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
   const [whatsapp, setWhatsapp] = useState("");
   const [nomesPassageiros, setNomesPassageiros] = useState("");
+  const [vistoEUA, setVistoEUA] = useState<VistoEUA>("");
   const [observacoes, setObservacoes] = useState("");
 
   const [tocados, setTocados] = useState<Record<string, boolean>>({});
   const [tentouAvancarViagem, setTentouAvancarViagem] = useState(false);
   const [tentouAvancarDados, setTentouAvancarDados] = useState(false);
   const [termosAceitos, setTermosAceitos] = useState(false);
+  const [prazoCompra, setPrazoCompra] = useState("");
   const [tentouEnviar, setTentouEnviar] = useState(false);
   const [resumoAbertoMobile, setResumoAbertoMobile] = useState(false);
   const [status, setStatus] = useState<"form" | "enviando" | "enviado" | "erro">("form");
@@ -209,8 +265,14 @@ export default function PassagensAereasPage() {
 
   // ── Validação ──
   const errosViagem: Record<string, string | null> = {
-    origem: !origem ? "Escolha a cidade de origem." : origem === "OUTRA" && origemOutra.trim().length < 2 ? "Informe a cidade de origem." : null,
-    destino: !destino ? "Escolha o destino no Japão." : null,
+    origem: !origem
+      ? sentido === "br-jp"
+        ? "Escolha a cidade de origem."
+        : "Escolha o destino no Brasil."
+      : origem === "OUTRA" && origemOutra.trim().length < 2
+        ? "Informe a cidade no Brasil."
+        : null,
+    destino: !destino ? (sentido === "br-jp" ? "Escolha o destino no Japão." : "Escolha a cidade de saída no Japão.") : null,
     dataIda: !dataIda ? "Informe a data de ida." : dataIda < hojeISO() ? "A ida precisa ser hoje ou depois." : null,
     dataVolta: !temVolta
       ? null
@@ -228,6 +290,7 @@ export default function PassagensAereasPage() {
     nome: nome.trim().length < 3 ? "Informe seu nome completo." : null,
     email: /^\S+@\S+\.\S+$/.test(email.trim()) ? null : "Informe um e-mail válido.",
     whatsapp: digitosWhatsapp >= 10 ? null : "Informe um WhatsApp com DDD.",
+    vistoEUA: vistoEUA ? null : "Informe se tem visto americano.",
   };
   const dadosValidos = Object.values(errosDados).every((e) => e === null);
   const mostrarErro = (campo: string) =>
@@ -257,17 +320,36 @@ export default function PassagensAereasPage() {
 
   // Avisos (só informam).
   const avisos: string[] = [];
-  if (viagemValida && !temVolta) avisos.push("Passagem só de ida — confirme com a nossa equipe as exigências de entrada no Japão sem bilhete de volta.");
-  if (viagemValida && temVolta && voltaDe !== destino) avisos.push(`Chegada em ${nomeDestino(destino)} e volta saindo de ${nomeDestino(voltaDe)} — o deslocamento entre as cidades no Japão não está incluído.`);
+  if (viagemValida && !temVolta && sentido === "br-jp")
+    avisos.push("Passagem só de ida — confirme com a nossa equipe as exigências de entrada no Japão sem bilhete de volta.");
+  if (viagemValida && temVolta && voltaDe !== destino)
+    avisos.push(
+      sentido === "br-jp"
+        ? `Chegada em ${nomeDestino(destino)} e volta saindo de ${nomeDestino(voltaDe)} — o deslocamento entre as cidades no Japão não está incluído.`
+        : `Saída de ${nomeDestino(destino)} e volta para ${nomeDestino(voltaDe)} — o deslocamento entre as cidades no Japão não está incluído.`,
+    );
   if (bebes > 0) avisos.push("Bebês (até 2 anos) viajam no colo, com tarifa própria da companhia — cotamos junto.");
 
   const etapa1Ok = viagemValida && adultos >= 1;
   const etapa2Ok = cabine !== "";
   const etapa3Ok = dadosValidos;
   const etapasOk = [etapa1Ok, etapa2Ok, etapa3Ok];
-  const podeEnviar = etapa1Ok && etapa2Ok && etapa3Ok && termosAceitos;
+  const podeEnviar = etapa1Ok && etapa2Ok && etapa3Ok && termosAceitos && prazoCompra !== "";
 
   const textoOrigem = origem === "OUTRA" ? origemOutra.trim() || "Outra cidade" : nomeOrigem(origem);
+  // Trechos já na ordem certa para o sentido escolhido.
+  const deIda = sentido === "br-jp" ? textoOrigem : nomeDestino(destino);
+  const paraIda = sentido === "br-jp" ? nomeDestino(destino) : textoOrigem;
+  const deVolta = sentido === "br-jp" ? nomeDestino(voltaDe) : textoOrigem;
+  const paraVolta = sentido === "br-jp" ? textoOrigem : nomeDestino(voltaDe);
+  const trechoIda = `${deIda} → ${paraIda}`;
+  const trechoVolta = `${deVolta} → ${paraVolta}`;
+  const textoFlexibilidade = [
+    datasFlexiveis ? "datas flexíveis (±3 dias)" : "",
+    aceitaDataSugerida === true ? "aceita outras datas sugeridas" : aceitaDataSugerida === false ? "só nas datas escolhidas" : "",
+  ]
+    .filter(Boolean)
+    .join(" · ");
   const textoPassageiros = [
     `${adultos} ${adultos === 1 ? "adulto" : "adultos"}`,
     criancas ? `${criancas} ${criancas === 1 ? "criança" : "crianças"}` : "",
@@ -298,7 +380,11 @@ export default function PassagensAereasPage() {
           : {
               rotulo: status === "enviando" ? "Enviando…" : "Solicitar cotação",
               ativo: podeEnviar && status !== "enviando",
-              falta: termosAceitos ? null : "Aceite os Termos e Condições para solicitar",
+              falta: !prazoCompra
+                ? "Diga quando pretende concluir a compra"
+                : termosAceitos
+                  ? null
+                  : "Aceite os Termos e Condições para solicitar",
             };
 
   function acionarCta() {
@@ -316,7 +402,7 @@ export default function PassagensAereasPage() {
       else setTentouAvancarDados(true);
       return;
     }
-    if (!termosAceitos) {
+    if (!termosAceitos || !prazoCompra) {
       setTentouEnviar(true);
       return;
     }
@@ -325,8 +411,8 @@ export default function PassagensAereasPage() {
 
   const etapasFaltando = etapasOk.filter((ok) => !ok).length;
 
-  const resumoVoo = `${MODOS.find((m) => m.key === modo)?.nome}: ${textoOrigem} → ${nomeDestino(destino)} em ${dataIda}${
-    temVolta ? `; volta ${nomeDestino(voltaDe)} → ${textoOrigem} em ${dataVolta}` : ""
+  const resumoVoo = `${MODOS.find((m) => m.key === modo)?.nome}: ${trechoIda} em ${dataIda}${temVolta ? `; volta ${trechoVolta} em ${dataVolta}` : ""}${
+    textoFlexibilidade ? ` (${textoFlexibilidade})` : ""
   }`;
 
   async function enviar() {
@@ -340,9 +426,13 @@ export default function PassagensAereasPage() {
         body: JSON.stringify({
           resumo: resumoVoo,
           modo,
-          origem: textoOrigem,
-          destino: nomeDestino(destino),
+          sentido: SENTIDOS.find((x) => x.key === sentido)?.nome,
+          origem: deIda,
+          destino: paraIda,
           destinoVolta: temVolta ? nomeDestino(voltaDe) : "",
+          trechoIda,
+          trechoVolta: temVolta ? trechoVolta : "",
+          aceitaDataSugerida,
           dataIda,
           dataVolta: temVolta ? dataVolta : "",
           adultos,
@@ -359,8 +449,10 @@ export default function PassagensAereasPage() {
           email,
           whatsapp,
           nomesPassageiros,
+          vistoEUA: OPCOES_VISTO_EUA.find((o) => o.key === vistoEUA)?.nome ?? "",
           observacoes,
           termosAceitos,
+          prazoCompra,
         }),
       });
       const dadosResposta = await resposta.json().catch(() => ({}));
@@ -404,7 +496,7 @@ export default function PassagensAereasPage() {
               <IconeResumo src="/images/icone-decolagem.png" />
               <span className="min-w-0">
                 <span className="block">
-                  {textoOrigem} → {nomeDestino(destino)}
+                  {trechoIda}
                 </span>
                 <span className="block text-xs text-black/50">Ida{dataIda && !errosViagem.dataIda && ` · ${formatarDataCurta(dataIda)}`}</span>
               </span>
@@ -414,7 +506,7 @@ export default function PassagensAereasPage() {
                 <IconeResumo src="/images/icone-pousando.png" />
                 <span className="min-w-0">
                   <span className="block">
-                    {nomeDestino(voltaDe)} → {textoOrigem}
+                    {trechoVolta}
                   </span>
                   <span className="block text-xs text-black/50">
                     Volta{dataVolta && !errosViagem.dataVolta && ` · ${formatarDataCurta(dataVolta)}`}
@@ -486,6 +578,38 @@ export default function PassagensAereasPage() {
   const rotuloMobile = "pointer-events-none absolute left-3 top-1.5 text-[10px] font-medium uppercase tracking-[0.1em] text-black/45 sm:hidden";
   const celula = "relative block min-w-0 border-t border-black/10 first:border-t-0 sm:border-l sm:border-t-0 sm:first:border-l-0";
   const erroTrecho = mostrarErro("origem") || mostrarErro("destino");
+  const rotulos =
+    sentido === "br-jp"
+      ? { primeiro: "Saindo de", segundo: "Destino no Japão", volta: "Volta saindo de", brasil: "Saindo de", japao: "Destino no Japão" }
+      : { primeiro: "Saindo do Japão", segundo: "Destino no Brasil", volta: "Volta para (Japão)", brasil: "Destino no Brasil", japao: "Saindo do Japão" };
+  const celulaBrasil = (
+    <label className={celula}>
+      <span className={rotuloMobile}>{rotulos.brasil}</span>
+      <select value={origem} onChange={(e) => setOrigem(e.target.value)} onBlur={() => tocar("origem")} className={classeSelectCaixa}>
+        <option value="">{rotulos.brasil}</option>
+        {ORIGENS.map((o) => (
+          <option key={o.id} value={o.id}>
+            {o.nome}
+          </option>
+        ))}
+      </select>
+      <IconeSeta />
+    </label>
+  );
+  const celulaJapao = (
+    <label className={celula}>
+      <span className={rotuloMobile}>{rotulos.japao}</span>
+      <select value={destino} onChange={(e) => setDestino(e.target.value)} onBlur={() => tocar("destino")} className={classeSelectCaixa}>
+        <option value="">{rotulos.japao}</option>
+        {DESTINOS.map((d) => (
+          <option key={d.id} value={d.id}>
+            {d.nome}
+          </option>
+        ))}
+      </select>
+      <IconeSeta />
+    </label>
+  );
   const erroDatas = mostrarErro("dataIda") || mostrarErro("dataVolta");
 
   return (
@@ -601,6 +725,23 @@ export default function PassagensAereasPage() {
                   <p className="mt-1.5 text-sm text-black/60">Buscamos as melhores conexões para as suas datas e enviamos a cotação pelo WhatsApp.</p>
 
                   <div className="mt-6 rounded-2xl border border-black/10 bg-white p-4 shadow-[0_10px_30px_-22px_rgba(10,37,64,0.35)] sm:p-5">
+                    <div className="flex flex-wrap gap-2">
+                    <div role="radiogroup" aria-label="Sentido da viagem" className="inline-flex gap-1 rounded-full bg-black/[0.04] p-1">
+                      {SENTIDOS.map((x) => (
+                        <button
+                          key={x.key}
+                          type="button"
+                          role="radio"
+                          aria-checked={sentido === x.key}
+                          onClick={() => setSentido(x.key)}
+                          className={`h-9 rounded-full px-4 text-sm transition ${
+                            sentido === x.key ? "bg-[#0A2540] font-semibold text-white" : "font-medium text-black/60 hover:text-black"
+                          }`}
+                        >
+                          {x.nome}
+                        </button>
+                      ))}
+                    </div>
                     <div role="radiogroup" aria-label="Tipo de passagem" className="inline-flex gap-1 rounded-full bg-black/[0.04] p-1">
                       {MODOS.map((m) => (
                         <button
@@ -617,6 +758,7 @@ export default function PassagensAereasPage() {
                         </button>
                       ))}
                     </div>
+                    </div>
 
                     {/* Trecho: origem | destino (| volta saindo de) */}
                     <div className="mt-5">
@@ -625,38 +767,29 @@ export default function PassagensAereasPage() {
                           temVolta ? "grid-cols-3" : "grid-cols-2"
                         }`}
                       >
-                        <span>Saindo de</span>
-                        <span className="pl-3">Destino no Japão</span>
-                        {temVolta && <span className="pl-3">Volta saindo de</span>}
+                        <span>{rotulos.primeiro}</span>
+                        <span className="pl-3">{rotulos.segundo}</span>
+                        {temVolta && <span className="pl-3">{rotulos.volta}</span>}
                       </div>
                       <div
                         className={`grid grid-cols-1 overflow-hidden rounded-xl border bg-white ${temVolta ? "sm:grid-cols-3" : "sm:grid-cols-2"} ${
                           erroTrecho ? "border-red-400" : "border-black/15"
                         } focus-within:border-[#2f80c9] focus-within:ring-1 focus-within:ring-[#2f80c9]`}
                       >
-                        <label className={celula}>
-                          <span className={rotuloMobile}>Saindo de</span>
-                          <select value={origem} onChange={(e) => setOrigem(e.target.value)} onBlur={() => tocar("origem")} className={classeSelectCaixa}>
-                            <option value="">Saindo de</option>
-                            {ORIGENS.map((o) => (
-                              <option key={o.id} value={o.id}>{o.nome}</option>
-                            ))}
-                          </select>
-                          <IconeSeta />
-                        </label>
-                        <label className={celula}>
-                          <span className={rotuloMobile}>Destino no Japão</span>
-                          <select value={destino} onChange={(e) => setDestino(e.target.value)} onBlur={() => tocar("destino")} className={classeSelectCaixa}>
-                            <option value="">Destino no Japão</option>
-                            {DESTINOS.map((d) => (
-                              <option key={d.id} value={d.id}>{d.nome}</option>
-                            ))}
-                          </select>
-                          <IconeSeta />
-                        </label>
+                        {sentido === "br-jp" ? (
+                          <>
+                            {celulaBrasil}
+                            {celulaJapao}
+                          </>
+                        ) : (
+                          <>
+                            {celulaJapao}
+                            {celulaBrasil}
+                          </>
+                        )}
                         {temVolta && (
                           <label className={celula}>
-                            <span className={rotuloMobile}>Volta saindo de</span>
+                            <span className={rotuloMobile}>{rotulos.volta}</span>
                             <select value={voltaDe} disabled={!destino} onChange={(e) => setDestinoVolta(e.target.value)} className={classeSelectCaixa}>
                               {!destino && <option value="">Escolha o destino</option>}
                               {DESTINOS.map((d) => (
@@ -674,7 +807,7 @@ export default function PassagensAereasPage() {
                           value={origemOutra}
                           onChange={(e) => setOrigemOutra(e.target.value)}
                           onBlur={() => tocar("origem")}
-                          placeholder="Qual cidade?"
+                          placeholder="Qual cidade no Brasil?"
                           className={`${classeInput(false)} mt-2`}
                         />
                       )}
@@ -723,6 +856,57 @@ export default function PassagensAereasPage() {
                       {erroDatas && <p className="mt-1.5 text-xs text-red-600">{erroDatas}</p>}
                     </div>
 
+                    {/* Flexibilidade — Wilson, 06/out/2026 */}
+                    <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                      <div className="rounded-xl border border-black/10 p-3.5">
+                        <p className="text-sm text-black/85">Tem flexibilidade de data?</p>
+                        <p className="text-xs text-black/50">Até 3 dias antes ou depois das datas escolhidas.</p>
+                        <div className="mt-2.5 flex gap-1.5">
+                          {[
+                            { v: true, l: "Sim, ±3 dias" },
+                            { v: false, l: "Não" },
+                          ].map((o) => (
+                            <button
+                              key={o.l}
+                              type="button"
+                              aria-pressed={datasFlexiveis === o.v}
+                              onClick={() => setDatasFlexiveis(o.v)}
+                              className={`h-9 rounded-full border px-3.5 text-xs transition ${
+                                datasFlexiveis === o.v ? "border-[#0A2540] bg-[#0A2540] font-semibold text-white" : "border-black/15 text-black/65 hover:border-black/35"
+                              }`}
+                            >
+                              {o.l}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                      <div className="rounded-xl border border-[#c9a03a]/40 bg-[#c9a03a]/[0.06] p-3.5">
+                        <p className="text-sm text-black/85">Pode viajar em outra data sugerida por nós?</p>
+                        <p className="text-xs leading-5 text-[#7a5c12]">
+                          Com datas sugeridas pela nossa equipe conseguimos <strong className="font-semibold">promoções e preços melhores</strong> do
+                          que nas datas fixas.
+                        </p>
+                        <div className="mt-2.5 flex flex-wrap gap-1.5">
+                          {[
+                            { v: true, l: "Sim, aceito sugestões" },
+                            { v: false, l: "Não, só nas minhas datas" },
+                          ].map((o) => (
+                            <button
+                              key={o.l}
+                              type="button"
+                              aria-pressed={aceitaDataSugerida === o.v}
+                              onClick={() => setAceitaDataSugerida(o.v)}
+                              className={`h-9 rounded-full border px-3.5 text-xs transition ${
+                                aceitaDataSugerida === o.v ? "border-[#0A2540] bg-[#0A2540] font-semibold text-white" : "border-black/15 bg-white text-black/65 hover:border-black/35"
+                              }`}
+                            >
+                              {o.l}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+
                     {/* Passageiros + avançar */}
                     <div className="mt-5 grid gap-4 border-t border-black/[0.08] pt-4 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end">
                       <div className="divide-y divide-black/[0.06] sm:max-w-sm">
@@ -740,6 +924,46 @@ export default function PassagensAereasPage() {
                       </button>
                     </div>
                   </div>
+
+                  {/* Destaques / promoções */}
+                  {PROMOCOES.length > 0 && (
+                    <div className="mt-8">
+                      <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-black/70">Destaques e promoções</p>
+                      <div className="mt-3 space-y-4">
+                        {PROMOCOES.map((p) => (
+                          <figure key={p.id}>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setSentido(p.aplicar.sentido);
+                                setModo(p.aplicar.modo);
+                                setOrigem(p.aplicar.origem);
+                                setDestino(p.aplicar.destino);
+                                setDestinoVolta("");
+                                const alvo = stepperRef.current;
+                                if (alvo) window.scrollTo({ top: alvo.getBoundingClientRect().top + window.scrollY - 56, behavior: "smooth" });
+                              }}
+                              className="group block w-full overflow-hidden rounded-2xl border border-black/10 shadow-[0_10px_30px_-22px_rgba(10,37,64,0.35)] transition hover:shadow-[0_14px_34px_-20px_rgba(10,37,64,0.45)] focus:outline-none focus-visible:ring-2 focus-visible:ring-[#2f80c9]"
+                              aria-label={`${p.alt} — preencher este trecho na cotação`}
+                            >
+                              <Image
+                                src={p.imagem}
+                                alt={p.alt}
+                                width={p.largura}
+                                height={p.altura}
+                                sizes="(min-width: 1024px) 640px, 100vw"
+                                className="h-auto w-full transition duration-500 group-hover:scale-[1.015]"
+                              />
+                            </button>
+                            <figcaption className="mt-2 flex flex-wrap items-center justify-between gap-2 text-xs text-black/55">
+                              <span>{p.legenda}</span>
+                              <span className="font-medium text-[#1f6fb8]">Clique no banner para cotar este trecho ↑</span>
+                            </figcaption>
+                          </figure>
+                        ))}
+                      </div>
+                    </div>
+                  )}
 
                   {/* Diferenciais — o conteúdo da antiga /passagens, compacto. */}
                   <div className="mt-8">
@@ -820,18 +1044,6 @@ export default function PassagensAereasPage() {
                         <IconeSeta />
                       </span>
                     </label>
-                    <label className="flex min-h-[44px] cursor-pointer items-start gap-3 sm:mt-6">
-                      <input
-                        type="checkbox"
-                        checked={datasFlexiveis}
-                        onChange={(e) => setDatasFlexiveis(e.target.checked)}
-                        className="mt-0.5 h-5 w-5 shrink-0 rounded border-black/30 text-[#2f80c9] focus:ring-[#2f80c9]"
-                      />
-                      <span className="text-sm text-black/85">
-                        Tenho flexibilidade de até 3 dias nas datas
-                        <span className="block text-xs text-black/50">Ajuda a encontrar tarifas e conexões melhores.</span>
-                      </span>
-                    </label>
                   </div>
                 </section>
               )}
@@ -880,6 +1092,35 @@ export default function PassagensAereasPage() {
                       />
                     </Campo>
                     <div className="sm:col-span-2">
+                      <span className="block text-[11px] font-medium uppercase tracking-[0.12em] text-black/70">Tem visto americano válido?</span>
+                      <div role="radiogroup" aria-label="Visto americano" className="mt-1.5 flex flex-wrap gap-1.5">
+                        {OPCOES_VISTO_EUA.map((o) => (
+                          <button
+                            key={o.key}
+                            type="button"
+                            role="radio"
+                            aria-checked={vistoEUA === o.key}
+                            onClick={() => {
+                              setVistoEUA(o.key);
+                              tocar("vistoEUA");
+                            }}
+                            className={`h-10 rounded-full border px-4 text-sm transition ${
+                              vistoEUA === o.key ? "border-[#0A2540] bg-[#0A2540] font-semibold text-white" : "border-black/15 text-black/70 hover:border-black/35"
+                            }`}
+                          >
+                            {o.nome}
+                          </button>
+                        ))}
+                      </div>
+                      {mostrarErro("vistoEUA") ? (
+                        <p className="mt-1.5 text-xs text-red-600">{mostrarErro("vistoEUA")}</p>
+                      ) : (
+                        <p className="mt-1.5 text-xs text-black/50">
+                          Com visto americano também podemos cotar conexões pelos Estados Unidos — mais opções de rota e tarifa.
+                        </p>
+                      )}
+                    </div>
+                    <div className="sm:col-span-2">
                       <Campo rotulo="Nomes dos passageiros (opcional)" ajuda="Como no passaporte. Pode enviar depois, antes da emissão.">
                         <textarea
                           value={nomesPassageiros}
@@ -919,15 +1160,16 @@ export default function PassagensAereasPage() {
                           <div className="space-y-1">
                             <p>
                               <span className="text-black/55">Ida · {formatarDataCurta(dataIda)} · </span>
-                              {textoOrigem} → {nomeDestino(destino)}
+                              {trechoIda}
                             </p>
                             {temVolta && (
                               <p>
                                 <span className="text-black/55">Volta · {formatarDataCurta(dataVolta)} · </span>
-                                {nomeDestino(voltaDe)} → {textoOrigem}
+                                {trechoVolta}
                               </p>
                             )}
                             <p className="text-black/55">{textoPassageiros}</p>
+                            {textoFlexibilidade && <p className="text-black/55">{textoFlexibilidade}</p>}
                           </div>
                         ),
                       },
@@ -941,7 +1183,7 @@ export default function PassagensAereasPage() {
                             </p>
                             <p className="text-black/55">
                               {companhia || "Sem preferência de companhia"}
-                              {datasFlexiveis && " · datas flexíveis (±3 dias)"}
+
                             </p>
                           </div>
                         ),
@@ -954,6 +1196,7 @@ export default function PassagensAereasPage() {
                             <p>{nome}</p>
                             <p className="text-black/60">{whatsapp}</p>
                             <p className="text-black/60">{email}</p>
+                            <p className="text-black/60">Visto americano: {OPCOES_VISTO_EUA.find((o) => o.key === vistoEUA)?.nome ?? "—"}</p>
                           </div>
                         ),
                       },
@@ -980,6 +1223,27 @@ export default function PassagensAereasPage() {
                     </div>
                   </dl>
                   {avisos.length > 0 && <BlocoAvisos avisos={avisos} className="mt-5" />}
+
+                  <p className="mt-8 text-[11px] font-semibold uppercase tracking-[0.14em] text-black/70">
+                    Quando pretende concluir a compra?
+                  </p>
+                  <div role="radiogroup" aria-label="Quando pretende concluir a compra" className="mt-2 flex flex-wrap gap-1.5">
+                    {PRAZOS_COMPRA.map((p) => (
+                      <button
+                        key={p}
+                        type="button"
+                        role="radio"
+                        aria-checked={prazoCompra === p}
+                        onClick={() => setPrazoCompra(p)}
+                        className={`h-10 rounded-full border px-4 text-sm transition ${
+                          prazoCompra === p ? "border-[#0A2540] bg-[#0A2540] font-semibold text-white" : "border-black/15 text-black/70 hover:border-black/35"
+                        }`}
+                      >
+                        {p}
+                      </button>
+                    ))}
+                  </div>
+                  {tentouEnviar && !prazoCompra && <p className="mt-1.5 text-xs text-red-600">Escolha uma opção para solicitar a cotação.</p>}
 
                   <p className="mt-8 text-[11px] font-semibold uppercase tracking-[0.14em] text-black/70">Termos e Condições</p>
                   <div

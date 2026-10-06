@@ -4,6 +4,7 @@ import { carregarCandidaturaPublica } from "../../../lib/empregos/candidaturaPub
 import { horariosDisponiveis } from "../../../lib/empregos/agendaServidor";
 import { proximaEtapa } from "../../lib/etapasCandidatura";
 import { formatarDataHoraBrasilia } from "../../lib/agendaEntrevista";
+import { AVISO_PRAZOS, PASSOS_PRAZO } from "../../lib/prazosCandidatura";
 
 export const runtime = "nodejs";
 
@@ -63,6 +64,10 @@ export async function POST(req: Request) {
         "",
         `Sua pré-entrevista para a vaga ${c.vaga_titulo} (${c.vaga_empresa}) está marcada para ${quando}, horário de Brasília.`,
         config.link_reuniao ? `Link da reunião: ${config.link_reuniao}` : "Enviaremos o link da reunião antes do horário.",
+        "",
+        "Próximos passos (prazos médios):",
+        ...PASSOS_PRAZO.slice(PASSOS_PRAZO.findIndex((p) => p.id === "empreiteira")).map((p) => `- ${p.titulo}: ${p.prazo}`),
+        AVISO_PRAZOS,
         "",
         "Se precisar remarcar, use o mesmo link da sua candidatura ou fale com a equipe Ajisai pelo WhatsApp +55 (11) 93030-0101.",
       ].join("\n"),
