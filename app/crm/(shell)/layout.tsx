@@ -39,7 +39,7 @@ export default async function CrmShellLayout({
 
   return (
     <div className="min-h-screen bg-[#FAF9F6] text-black">
-      <header className="sticky top-0 z-10 border-b border-white/10 bg-black backdrop-blur">
+      <header className="sticky top-0 z-50 border-b border-white/10 bg-black backdrop-blur">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4 md:px-10">
           <div className="flex items-center gap-8">
             <Link href="/crm" className="flex items-center gap-4">

@@ -115,6 +115,10 @@ export async function POST(req: Request) {
       ["Datas flexíveis (±3 dias)", datasFlexiveis ? "Sim" : "Não"],
       ["Aceita outra data sugerida (promoção)", aceitaDataSugerida],
       ["Referência por passageiro (US$)", `US$ ${referenciaUSD.toLocaleString("pt-BR")}`],
+      [
+        "Adicional trecho doméstico (US$/passageiro)",
+        `US$ ${(Number(body.adicionalDomesticoPorPassageiroUSD) || 0).toLocaleString("pt-BR")}${body.ufBrasil ? ` (${texto(body.ufBrasil, 2)})` : ""} — já incluso na referência`,
+      ],
       ["Total estimado (US$)", `US$ ${totalUSD.toLocaleString("pt-BR")}`],
       ["Total estimado (referência BRL)", totalBRL ? `R$ ${totalBRL.toLocaleString("pt-BR")}` : "Não calculado"],
       ["Avisos mostrados ao cliente", avisos.length ? avisos.join(" | ") : "Nenhum"],
@@ -122,7 +126,7 @@ export async function POST(req: Request) {
       ["Visto americano", texto(body.vistoEUA, 60) || "Não informado"],
       ["Forma de pagamento", "A combinar pelo WhatsApp (checkout manual)"],
       ["Intenção de concluir a compra", texto(body.prazoCompra, 40) || "Não informado"],
-      ["Termos e condições aceitos", termosAceitos ? "Sim" : "Não confirmado"],
+      ["Termos e condições aceitos", termosAceitos ? `Sim (${texto(body.termosVersao, 80) || "versão não informada"})` : "Não confirmado"],
       ["Observações do cliente", observacoesCliente || "Nenhuma"],
     ];
 

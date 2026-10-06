@@ -17,7 +17,7 @@
 // A tarifa real depende de datas e disponibilidade — por isso a página
 // fala sempre em "valor de referência" e o total é "estimado".
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { formatBRL, formatUSD, useCambioUSD } from "../../hooks/useCambioUSD";
@@ -28,6 +28,7 @@ import {
   PRECO_AEREO_FIRST_USD,
 } from "../../components/CustomPackageCard";
 import { DIFERENCIAIS_AEREO } from "../../lib/diferenciaisAereo";
+import { TERMOS_PDF_PASSAGENS, TERMOS_VERSAO_PASSAGENS, TextoTermosPassagens } from "./TermosPassagens";
 import { display, WHATSAPP_NUMBER, hojeISO } from "../page";
 import {
   inter,
@@ -84,20 +85,39 @@ const PROMOCOES: {
   },
 ];
 
-const ORIGENS = [
-  { id: "GRU", nome: "São Paulo (GRU)" },
-  { id: "GIG", nome: "Rio de Janeiro (GIG)" },
-  { id: "BSB", nome: "Brasília (BSB)" },
-  { id: "CNF", nome: "Belo Horizonte (CNF)" },
-  { id: "CWB", nome: "Curitiba (CWB)" },
-  { id: "POA", nome: "Porto Alegre (POA)" },
-  { id: "SSA", nome: "Salvador (SSA)" },
-  { id: "REC", nome: "Recife (REC)" },
-  { id: "FOR", nome: "Fortaleza (FOR)" },
-  { id: "BEL", nome: "Belém (BEL)" },
-  { id: "MAO", nome: "Manaus (MAO)" },
-  { id: "OUTRA", nome: "Outra cidade" },
+const ORIGENS: { id: string; nome: string; uf: string }[] = [
+  { id: "GRU", nome: "São Paulo (GRU)", uf: "SP" },
+  { id: "GIG", nome: "Rio de Janeiro (GIG)", uf: "RJ" },
+  { id: "BSB", nome: "Brasília (BSB)", uf: "DF" },
+  { id: "CNF", nome: "Belo Horizonte (CNF)", uf: "MG" },
+  { id: "CWB", nome: "Curitiba (CWB)", uf: "PR" },
+  { id: "POA", nome: "Porto Alegre (POA)", uf: "RS" },
+  { id: "SSA", nome: "Salvador (SSA)", uf: "BA" },
+  { id: "REC", nome: "Recife (REC)", uf: "PE" },
+  { id: "FOR", nome: "Fortaleza (FOR)", uf: "CE" },
+  { id: "BEL", nome: "Belém (BEL)", uf: "PA" },
+  { id: "MAO", nome: "Manaus (MAO)", uf: "AM" },
+  { id: "JPA", nome: "João Pessoa (JPA)", uf: "PB" },
+  { id: "CGR", nome: "Campo Grande (CGR)", uf: "MS" },
+  { id: "CGB", nome: "Cuiabá (CGB)", uf: "MT" },
+  { id: "VIX", nome: "Vitória (VIX)", uf: "ES" },
+  { id: "FLN", nome: "Florianópolis (FLN)", uf: "SC" },
+  { id: "NVT", nome: "Navegantes (NVT)", uf: "SC" },
+  { id: "OUTRA", nome: "Outra cidade", uf: "" },
 ];
+
+// Adicional do trecho doméstico no Brasil, por passageiro, em US$ —
+// Wilson, 06/out/2026: "se não for SP como origem, colocar +500 USD ida e
+// volta, 300 USD se for só ida, qualquer origem em SP [sem adicional], se
+// for norte ou nordeste 600 USD só ida, 1000 USD se for ida e volta".
+// Vale nos dois sentidos (a cidade no Brasil é origem ou destino).
+const UFS_BRASIL = "AC AL AP AM BA CE DF ES GO MA MT MS MG PA PB PR PE PI RJ RN RS RO RR SC SP SE TO".split(" ");
+const UFS_NORTE_NORDESTE = ["AC", "AM", "AP", "PA", "RO", "RR", "TO", "AL", "BA", "CE", "MA", "PB", "PE", "PI", "RN", "SE"];
+function adicionalDomesticoUSD(uf: string, idaEVolta: boolean): number {
+  if (!uf || uf === "SP") return 0;
+  if (UFS_NORTE_NORDESTE.includes(uf)) return idaEVolta ? 1000 : 600;
+  return idaEVolta ? 500 : 300;
+}
 const DESTINOS = [
   { id: "TYO", nome: "Tóquio (NRT/HND)" },
   { id: "KIX", nome: "Osaka (KIX)" },
@@ -181,36 +201,36 @@ function Contador({
   );
 }
 
-function TextoTermosPassagens() {
+// Ícones de linha da revisão (Wilson, 06/out/2026: "deixar mais
+// agradável, usar ícones").
+function Icone({ d, className = "" }: { d: string; className?: string }) {
   return (
-    <>
-      <p className="font-medium text-black/80">Cotação e emissão</p>
-      <p className="mt-1">
-        Os valores mostrados nesta página são de referência, por passageiro, e servem para planejamento. A tarifa final
-        depende das datas, da disponibilidade e das regras da companhia aérea no momento da emissão. Nossa equipe envia a
-        cotação pelo WhatsApp e a passagem só é emitida depois da sua aprovação e da confirmação do pagamento.
-      </p>
-      <p className="mt-3 font-medium text-black/80">Regras da tarifa</p>
-      <p className="mt-1">
-        Bagagem, marcação de assento, remarcação, cancelamento e reembolso seguem as regras da tarifa escolhida e da
-        companhia aérea. Informamos essas regras junto com a cotação, antes de qualquer cobrança.
-      </p>
-      <p className="mt-3 font-medium text-black/80">Dados dos passageiros</p>
-      <p className="mt-1">
-        Nomes, datas de nascimento e documentos precisam ser informados exatamente como no passaporte. Divergências podem
-        impedir o embarque e gerar custos de correção cobrados pela companhia aérea.
-      </p>
-      <p className="mt-3 font-medium text-black/80">Documentação</p>
-      <p className="mt-1">
-        Passaporte válido, vistos e demais exigências de entrada e de conexão são responsabilidade do passageiro. Nossa
-        equipe orienta sobre o Visit Japan Web e o protocolo pré-embarque.
-      </p>
-      <p className="mt-3 font-medium text-black/80">Pagamento</p>
-      <p className="mt-1">
-        Nenhum valor é cobrado nesta página. Forma de pagamento, parcelamento e câmbio são combinados com a nossa equipe
-        pelo WhatsApp; valores em dólar são convertidos pela cotação do dia da confirmação.
-      </p>
-    </>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden className={`h-[18px] w-[18px] shrink-0 ${className}`}>
+      <path d={d} />
+    </svg>
+  );
+}
+const ICONES = {
+  pessoas: "M16 19v-1.5a3.5 3.5 0 0 0-3.5-3.5h-5A3.5 3.5 0 0 0 4 17.5V19M10 10.5a3 3 0 1 0 0-6 3 3 0 0 0 0 6M20 19v-1.5a3.5 3.5 0 0 0-2.5-3.35M15.5 4.6a3 3 0 0 1 0 5.8",
+  calendario: "M7 3v3M17 3v3M4 8h16M5 5h14a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1zM8 12h2M14 12h2M8 16h2",
+  etiqueta: "M3 12V4a1 1 0 0 1 1-1h8l9 9-9 9-9-9zM7.5 7.5h.01",
+  assento: "M6 4v9a2 2 0 0 0 2 2h7l2 5M6 13h9M9 4h0M5 20h4",
+  aviao: "M10.5 12 3 9.5l1.5-1.5 8 1L17 4.5a1.8 1.8 0 0 1 2.5 2.5L15 11.5l1 8-1.5 1.5L12 13.5l-3 3V19l-1.5 1.5-1-3.5-3.5-1L4.5 14.5H7l3-3",
+  usuario: "M19 20v-1.5a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4V20M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8",
+  telefone: "M5 4h3l2 5-2.5 1.5a11 11 0 0 0 6 6L15 14l5 2v3a1 1 0 0 1-1 1A16 16 0 0 1 4 5a1 1 0 0 1 1-1",
+  email: "M4 6h16v12H4zM4 7l8 6 8-6",
+  passaporte: "M6 3h11a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1H6zM12 13a3 3 0 1 0 0-6 3 3 0 0 0 0 6M9 17h6",
+  documento: "M7 3h7l5 5v12a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1zM14 3v5h5M9 13h6M9 17h6",
+} as const;
+
+function LinhaIcone({ icone, img, children }: { icone?: keyof typeof ICONES; img?: string; children: React.ReactNode }) {
+  return (
+    <div className="flex items-start gap-3">
+      <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#1f6fb8]/[0.08] text-[#1f6fb8]">
+        {img ? <IconeResumo src={img} /> : icone ? <Icone d={ICONES[icone]} /> : null}
+      </span>
+      <div className="min-w-0 pt-1">{children}</div>
+    </div>
   );
 }
 
@@ -223,6 +243,7 @@ export default function PassagensAereasPage() {
   const [sentido, setSentido] = useState<Sentido>("br-jp");
   const [origem, setOrigem] = useState("");
   const [origemOutra, setOrigemOutra] = useState("");
+  const [ufOutra, setUfOutra] = useState("");
   const [destino, setDestino] = useState("");
   const [destinoVolta, setDestinoVolta] = useState("");
   const [dataIda, setDataIda] = useState("");
@@ -251,6 +272,14 @@ export default function PassagensAereasPage() {
   const [tentouAvancarDados, setTentouAvancarDados] = useState(false);
   const [termosAceitos, setTermosAceitos] = useState(false);
   const [prazoCompra, setPrazoCompra] = useState("");
+  // Termos com rolagem obrigatória até o fim antes do aceite — mesmo
+  // comportamento do Seguro Viagem (Wilson, 06/out/2026).
+  const [termosRolados, setTermosRolados] = useState(false);
+  const termosBoxRef = useRef<HTMLDivElement | null>(null);
+  useEffect(() => {
+    const el = termosBoxRef.current;
+    if (etapa === 4 && el && el.scrollHeight <= el.clientHeight + 4) setTermosRolados(true);
+  }, [etapa]);
   const [tentouEnviar, setTentouEnviar] = useState(false);
   const [resumoAbertoMobile, setResumoAbertoMobile] = useState(false);
   const [status, setStatus] = useState<"form" | "enviando" | "enviado" | "erro">("form");
@@ -271,7 +300,9 @@ export default function PassagensAereasPage() {
         : "Escolha o destino no Brasil."
       : origem === "OUTRA" && origemOutra.trim().length < 2
         ? "Informe a cidade no Brasil."
-        : null,
+        : origem === "OUTRA" && !ufOutra
+          ? "Informe o estado da cidade no Brasil."
+          : null,
     destino: !destino ? (sentido === "br-jp" ? "Escolha o destino no Japão." : "Escolha a cidade de saída no Japão.") : null,
     dataIda: !dataIda ? "Informe a data de ida." : dataIda < hojeISO() ? "A ida precisa ser hoje ou depois." : null,
     dataVolta: !temVolta
@@ -312,11 +343,14 @@ export default function PassagensAereasPage() {
         : c === "business"
           ? PRECO_AEREO_BUSINESS_USD
           : PRECO_AEREO_FIRST_USD;
-  const porPassageiroUSD = cabine ? referenciaUSD(cabine) : 0;
+  const ufBrasil = origem === "OUTRA" ? ufOutra : ORIGENS.find((o) => o.id === origem)?.uf ?? "";
+  const adicionalUSD = adicionalDomesticoUSD(ufBrasil, temVolta);
+  const precoCabineUSD = (c: Cabine) => referenciaUSD(c) + adicionalUSD;
+  const porPassageiroUSD = cabine ? precoCabineUSD(cabine) : 0;
   const totalUSD = porPassageiroUSD * passageirosPagantes;
   const totalBRL = totalUSD * cambioCotacao;
   const nomeCabine = CABINES.find((c) => c.key === cabine)?.nome ?? "";
-  const menorReferencia = referenciaUSD("economy") * passageirosPagantes;
+  const menorReferencia = precoCabineUSD("economy") * passageirosPagantes;
 
   // Avisos (só informam).
   const avisos: string[] = [];
@@ -382,7 +416,9 @@ export default function PassagensAereasPage() {
               ativo: podeEnviar && status !== "enviando",
               falta: !prazoCompra
                 ? "Diga quando pretende concluir a compra"
-                : termosAceitos
+                : !termosRolados
+                  ? "Leia os Termos e Condições até o fim"
+                  : termosAceitos
                   ? null
                   : "Aceite os Termos e Condições para solicitar",
             };
@@ -442,6 +478,8 @@ export default function PassagensAereasPage() {
           companhia: companhia || "Sem preferência",
           datasFlexiveis,
           referenciaPorPassageiroUSD: Math.round(porPassageiroUSD),
+          adicionalDomesticoPorPassageiroUSD: adicionalUSD,
+          ufBrasil,
           totalUSD: Math.round(totalUSD),
           totalBRL: Math.round(totalBRL),
           avisos,
@@ -452,6 +490,7 @@ export default function PassagensAereasPage() {
           vistoEUA: OPCOES_VISTO_EUA.find((o) => o.key === vistoEUA)?.nome ?? "",
           observacoes,
           termosAceitos,
+          termosVersao: TERMOS_VERSAO_PASSAGENS,
           prazoCompra,
         }),
       });
@@ -519,9 +558,19 @@ export default function PassagensAereasPage() {
         {cabine && (
           <div className="flex items-center justify-between gap-3 text-sm">
             <span className="text-black/65">
-              {passageirosPagantes} × {formatUSD(porPassageiroUSD)}
+              {passageirosPagantes} × {formatUSD(porPassageiroUSD - adicionalUSD)}
             </span>
-            <span className={`${inter.className} shrink-0 font-medium tabular-nums text-black`}>{formatUSD(totalUSD)}</span>
+            <span className={`${inter.className} shrink-0 font-medium tabular-nums text-black`}>
+              {formatUSD((porPassageiroUSD - adicionalUSD) * passageirosPagantes)}
+            </span>
+          </div>
+        )}
+        {cabine && adicionalUSD > 0 && (
+          <div className="flex items-center justify-between gap-3 text-sm">
+            <span className="text-black/65">
+              Trecho doméstico ({ufBrasil}) · {passageirosPagantes} × {formatUSD(adicionalUSD)}
+            </span>
+            <span className={`${inter.className} shrink-0 font-medium tabular-nums text-black`}>{formatUSD(adicionalUSD * passageirosPagantes)}</span>
           </div>
         )}
         {bebes > 0 && cabine && (
@@ -811,6 +860,28 @@ export default function PassagensAereasPage() {
                           className={`${classeInput(false)} mt-2`}
                         />
                       )}
+                      {origem === "OUTRA" && (
+                        <select
+                          value={ufOutra}
+                          onChange={(e) => setUfOutra(e.target.value)}
+                          onBlur={() => tocar("origem")}
+                          className={`${classeInput(false)} mt-2`}
+                          aria-label="Estado da cidade no Brasil"
+                        >
+                          <option value="">Estado (UF)</option>
+                          {UFS_BRASIL.map((uf) => (
+                            <option key={uf} value={uf}>
+                              {uf}
+                            </option>
+                          ))}
+                        </select>
+                      )}
+                      {origem && adicionalUSD > 0 && (
+                        <p className="mt-1.5 text-xs text-black/55">
+                          Saídas/chegadas fora de São Paulo incluem o trecho doméstico: +{formatUSD(adicionalUSD)} por passageiro
+                          {temVolta ? " (ida e volta)" : " (só ida)"}.
+                        </p>
+                      )}
                     </div>
 
                     {/* Datas */}
@@ -1014,9 +1085,12 @@ export default function PassagensAereasPage() {
                           <span className="block pr-8 text-[15px] font-medium text-black">{c.nome}</span>
                           <span className="mt-0.5 block text-xs text-black/55">{c.perfil}</span>
                           <span className={`${inter.className} mt-3 block text-sm font-semibold tabular-nums text-[#0A2540]`}>
-                            {formatUSD(referenciaUSD(c.key))}
+                            {formatUSD(precoCabineUSD(c.key))}
                             <span className="text-xs font-normal text-black/45"> por passageiro</span>
                           </span>
+                          {adicionalUSD > 0 && (
+                            <span className="mt-0.5 block text-[11px] text-black/45">inclui {formatUSD(adicionalUSD)} do trecho doméstico</span>
+                          )}
                           {ativo && (
                             <span className="absolute right-3 top-3 flex h-6 w-6 items-center justify-center rounded-full bg-[#2f80c9] text-white">
                               <IconeCheck className="h-3.5 w-3.5" />
@@ -1157,19 +1231,39 @@ export default function PassagensAereasPage() {
                         rotulo: "Voos",
                         voltar: 1 as Etapa,
                         conteudo: (
-                          <div className="space-y-1">
-                            <p>
-                              <span className="text-black/55">Ida · {formatarDataCurta(dataIda)} · </span>
-                              {trechoIda}
-                            </p>
+                          <div className="space-y-3">
+                            <LinhaIcone img="/images/icone-decolagem.png">
+                              <p className="font-medium text-black">{trechoIda}</p>
+                              <p className="text-xs text-black/55">Ida · {formatarDataCurta(dataIda)}</p>
+                            </LinhaIcone>
                             {temVolta && (
-                              <p>
-                                <span className="text-black/55">Volta · {formatarDataCurta(dataVolta)} · </span>
-                                {trechoVolta}
-                              </p>
+                              <LinhaIcone img="/images/icone-pousando.png">
+                                <p className="font-medium text-black">{trechoVolta}</p>
+                                <p className="text-xs text-black/55">Volta · {formatarDataCurta(dataVolta)}</p>
+                              </LinhaIcone>
                             )}
-                            <p className="text-black/55">{textoPassageiros}</p>
-                            {textoFlexibilidade && <p className="text-black/55">{textoFlexibilidade}</p>}
+                            <LinhaIcone icone="pessoas">
+                              <p>{textoPassageiros}</p>
+                            </LinhaIcone>
+                            {(datasFlexiveis || aceitaDataSugerida !== null) && (
+                              <div className="flex flex-wrap gap-1.5 pl-11">
+                                {datasFlexiveis && (
+                                  <span className="inline-flex items-center gap-1.5 rounded-full bg-[#1f6fb8]/[0.08] px-2.5 py-1 text-xs text-[#1f6fb8]">
+                                    <Icone d={ICONES.calendario} className="h-3.5 w-3.5" /> Datas flexíveis ±3 dias
+                                  </span>
+                                )}
+                                {aceitaDataSugerida === true && (
+                                  <span className="inline-flex items-center gap-1.5 rounded-full bg-[#c9a03a]/[0.12] px-2.5 py-1 text-xs text-[#7a5c12]">
+                                    <Icone d={ICONES.etiqueta} className="h-3.5 w-3.5" /> Aceita datas sugeridas (promoções)
+                                  </span>
+                                )}
+                                {aceitaDataSugerida === false && (
+                                  <span className="inline-flex items-center gap-1.5 rounded-full bg-black/[0.05] px-2.5 py-1 text-xs text-black/60">
+                                    <Icone d={ICONES.calendario} className="h-3.5 w-3.5" /> Só nas datas escolhidas
+                                  </span>
+                                )}
+                              </div>
+                            )}
                           </div>
                         ),
                       },
@@ -1177,14 +1271,17 @@ export default function PassagensAereasPage() {
                         rotulo: "Cabine",
                         voltar: 2 as Etapa,
                         conteudo: (
-                          <div className="space-y-1">
-                            <p>
-                              {nomeCabine} <span className="text-black/50">· {formatUSD(porPassageiroUSD)} por passageiro (referência)</span>
-                            </p>
-                            <p className="text-black/55">
-                              {companhia || "Sem preferência de companhia"}
-
-                            </p>
+                          <div className="space-y-3">
+                            <LinhaIcone icone="assento">
+                              <p className="font-medium text-black">{nomeCabine}</p>
+                              <p className="text-xs text-black/55">
+                                {formatUSD(porPassageiroUSD)} por passageiro (referência)
+                                {adicionalUSD > 0 && ` · inclui ${formatUSD(adicionalUSD)} do trecho doméstico`}
+                              </p>
+                            </LinhaIcone>
+                            <LinhaIcone icone="aviao">
+                              <p>{companhia || "Sem preferência de companhia"}</p>
+                            </LinhaIcone>
                           </div>
                         ),
                       },
@@ -1192,11 +1289,19 @@ export default function PassagensAereasPage() {
                         rotulo: "Seus dados",
                         voltar: 3 as Etapa,
                         conteudo: (
-                          <div className="space-y-0.5">
-                            <p>{nome}</p>
-                            <p className="text-black/60">{whatsapp}</p>
-                            <p className="text-black/60">{email}</p>
-                            <p className="text-black/60">Visto americano: {OPCOES_VISTO_EUA.find((o) => o.key === vistoEUA)?.nome ?? "—"}</p>
+                          <div className="space-y-3">
+                            <LinhaIcone icone="usuario">
+                              <p className="font-medium text-black">{nome}</p>
+                            </LinhaIcone>
+                            <LinhaIcone icone="telefone">
+                              <p>{whatsapp}</p>
+                            </LinhaIcone>
+                            <LinhaIcone icone="email">
+                              <p className="break-all">{email}</p>
+                            </LinhaIcone>
+                            <LinhaIcone icone="passaporte">
+                              <p>Visto americano: {OPCOES_VISTO_EUA.find((o) => o.key === vistoEUA)?.nome ?? "—"}</p>
+                            </LinhaIcone>
                           </div>
                         ),
                       },
@@ -1245,11 +1350,73 @@ export default function PassagensAereasPage() {
                   </div>
                   {tentouEnviar && !prazoCompra && <p className="mt-1.5 text-xs text-red-600">Escolha uma opção para solicitar a cotação.</p>}
 
+                  {/* Documentos — Wilson, 06/out/2026: Guia de Diferenciais e
+                      Termos (PDF) + política de cancelamento involuntário. */}
+                  <p className="mt-8 text-[11px] font-semibold uppercase tracking-[0.14em] text-black/70">Documentos da sua passagem</p>
+                  <div className="mt-3 grid gap-3 sm:grid-cols-2">
+                    {[
+                      {
+                        href: "/docs/ajisai-diferenciais-passagem-aerea-2026.pdf",
+                        capa: "/images/ajisai-diferenciais-passagem-capa.webp",
+                        titulo: "Nossos serviços e diferenciais",
+                        texto: "Concierge em Guarulhos, protocolo pré-embarque, central no WhatsApp e mais — Guia 2026.",
+                      },
+                      {
+                        href: TERMOS_PDF_PASSAGENS,
+                        capa: "/images/ajisai-termos-passagem-capa.webp",
+                        titulo: "Termos e Condições (PDF)",
+                        texto: "Versão completa para baixar e guardar — edição v1.00, fev/2026.",
+                      },
+                    ].map((d) => (
+                      <a
+                        key={d.href}
+                        href={d.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="group flex gap-3 rounded-xl border border-black/10 bg-white p-3 transition hover:border-[#1f6fb8]/40 hover:shadow-sm"
+                      >
+                        <Image src={d.capa} alt="" width={64} height={90} className="h-[90px] w-16 shrink-0 rounded-md border border-black/10 object-cover" />
+                        <span className="min-w-0">
+                          <span className="flex items-center gap-1.5 text-sm font-medium text-[#0A2540]">
+                            <Icone d={ICONES.documento} className="h-4 w-4 text-[#1f6fb8]" />
+                            {d.titulo}
+                          </span>
+                          <span className="mt-1 block text-xs leading-5 text-black/55">{d.texto}</span>
+                          <span className="mt-1.5 block text-xs font-medium text-[#1f6fb8] group-hover:underline">Abrir PDF ↗</span>
+                        </span>
+                      </a>
+                    ))}
+                  </div>
+
+                  <div className="mt-6 rounded-2xl border border-black/10 bg-[#fbf7fa] p-4">
+                    <p className="text-sm font-medium text-[#0A2540]">Se a companhia aérea cancelar o voo</p>
+                    <p className="mt-1 text-xs leading-5 text-black/60">
+                      Como a Ajisai atua em cancelamentos involuntários, inclusive no acordo com Emirates e Qatar Airways.
+                    </p>
+                    <div className="mt-3 grid grid-cols-2 gap-3">
+                      {[
+                        { src: "/images/passagens-cancelamento-emirates-qatar.webp", alt: "Cancelamentos são ruins, e nós sabemos disso — acordo Ajisai com Emirates e Qatar Airways para remanejamento em rota alternativa" },
+                        { src: "/images/passagens-cancelamento-o-que-e-feito.webp", alt: "Após o cancelamento pela companhia aérea, o que é feito — a Ajisai verifica o próximo voo disponível via Europa em companhias parceiras" },
+                      ].map((im) => (
+                        <a key={im.src} href={im.src} target="_blank" rel="noopener noreferrer" className="block overflow-hidden rounded-xl border border-black/10 transition hover:shadow-md">
+                          <Image src={im.src} alt={im.alt} width={470} height={670} className="h-auto w-full" />
+                        </a>
+                      ))}
+                    </div>
+                    <p className="mt-2 text-[11px] text-black/45">Toque na imagem para ampliar.</p>
+                  </div>
+
                   <p className="mt-8 text-[11px] font-semibold uppercase tracking-[0.14em] text-black/70">Termos e Condições</p>
                   <div
+                    id="termos-passagens"
+                    ref={termosBoxRef}
                     tabIndex={0}
                     aria-label="Termos e Condições das passagens aéreas"
-                    className="mt-2 max-h-64 overflow-y-auto rounded-xl border border-black/10 bg-black/[0.02] px-4 py-3 text-[13px] leading-6 text-black/70 focus:outline-none focus:ring-2 focus:ring-[#2f80c9]/30"
+                    onScroll={(e) => {
+                      const el = e.currentTarget;
+                      if (el.scrollTop + el.clientHeight >= el.scrollHeight - 4) setTermosRolados(true);
+                    }}
+                    className="mt-2 max-h-96 overflow-y-auto rounded-xl border border-black/10 bg-black/[0.02] px-4 py-3 text-[13px] leading-6 text-black/70 focus:outline-none focus:ring-2 focus:ring-[#2f80c9]/30"
                   >
                     <TextoTermosPassagens />
                   </div>
@@ -1258,14 +1425,26 @@ export default function PassagensAereasPage() {
                     <input
                       type="checkbox"
                       checked={termosAceitos}
+                      disabled={!termosRolados}
                       onChange={(e) => setTermosAceitos(e.target.checked)}
-                      className="mt-0.5 h-5 w-5 shrink-0 rounded border-black/30 text-[#2f80c9] focus:ring-[#2f80c9]"
+                      className="mt-0.5 h-5 w-5 shrink-0 rounded border-black/30 text-[#2f80c9] focus:ring-[#2f80c9] disabled:cursor-not-allowed disabled:opacity-40"
                     />
-                    <span className="text-sm text-black/85">Li e aceito os Termos e Condições das passagens aéreas.</span>
+                    <span className="text-sm text-black/85">
+                      Li e aceito os Termos e Condições da passagem aérea internacional e o Guia de Serviços e Diferenciais da Ajisai.
+                    </span>
                   </label>
-                  {tentouEnviar && !termosAceitos && (
+                  {!termosRolados && <p className="ml-8 text-xs text-black/55">Role o texto acima até o fim para habilitar o aceite.</p>}
+                  {tentouEnviar && termosRolados && !termosAceitos && (
                     <p className="ml-8 text-xs text-red-600">Aceite os Termos e Condições para solicitar a cotação.</p>
                   )}
+                  <p className="ml-8 mt-1.5 flex flex-wrap gap-x-4 gap-y-1 text-xs">
+                    <a href={TERMOS_PDF_PASSAGENS} target="_blank" rel="noopener noreferrer" className="font-medium text-[#1f6fb8] underline decoration-[#1f6fb8]/40 underline-offset-2">
+                      Termos em PDF ↗
+                    </a>
+                    <a href="/privacy" target="_blank" rel="noreferrer" className="font-medium text-[#1f6fb8] underline decoration-[#1f6fb8]/40 underline-offset-2">
+                      Política de Privacidade ↗
+                    </a>
+                  </p>
                   <p className="mt-4 text-xs leading-5 text-black/50">
                     Nenhum valor é cobrado agora. Nossa equipe envia a cotação e combina a forma de pagamento com você pelo
                     WhatsApp.
