@@ -3,7 +3,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
-import { atualizarCandidatura } from "@/app/crm/actions";
+import { atualizarCandidatura, liberarFichaCandidatura } from "@/app/crm/actions";
+import { fichaLiberada, linhasFicha, type FichaCadastral } from "@/app/lib/fichaCadastral";
 import {
   CLASSIFICACOES,
   STATUS_CANDIDATURA,
@@ -58,6 +59,10 @@ export default async function CandidatoPage({
   if (c.foto_path) arquivos.push({ label: "Foto", href: urlArquivoCandidato("fotos-candidatos", c.foto_path) });
 
   const salvar = atualizarCandidatura.bind(null, id);
+  const ficha = (c.ficha ?? null) as FichaCadastral | null;
+  const etapa2Aberta = fichaLiberada(c);
+  const linkFicha = c.ficha_token ? `https://www.alpinea.io/empregos/ficha/${c.id}?t=${c.ficha_token}` : null;
+  const alternarLiberacao = liberarFichaCandidatura.bind(null, id, !c.ficha_liberada);
 
   return (
     <div>
@@ -173,9 +178,52 @@ export default async function CandidatoPage({
               </dl>
             </section>
           ))}
+
+          {ficha && (
+            <h2 className={`${display.className} pt-4 text-2xl font-medium text-black`}>Etapa 2 — ficha cadastral</h2>
+          )}
+          {linhasFicha(ficha).map((g) => (
+            <section key={`ficha-${g.grupo}`} className="rounded-2xl border border-black/10 bg-white p-5">
+              <h2 className="text-sm font-medium text-black">{g.grupo}</h2>
+              <dl className="mt-3 divide-y divide-black/[0.06] text-sm">
+                {g.linhas.map(([k, v, atencao], i) => (
+                  <div key={`${k}-${i}`} className="grid grid-cols-[180px_1fr] gap-3 py-2">
+                    <dt className="text-black/45">{k}</dt>
+                    <dd className={atencao ? "font-medium text-amber-800" : "text-black/80"}>
+                      {atencao && "⚠ "}
+                      {v}
+                    </dd>
+                  </div>
+                ))}
+              </dl>
+            </section>
+          ))}
         </div>
 
         <aside className="space-y-6">
+          <section className="rounded-2xl border border-black/10 bg-white p-5">
+            <h2 className="text-sm font-medium text-black">Etapa 2 — ficha cadastral</h2>
+            <p className="mt-2 text-sm text-black/60">
+              {c.ficha_enviada_em
+                ? `Enviada em ${new Date(c.ficha_enviada_em).toLocaleString("pt-BR", { dateStyle: "short", timeStyle: "short" })}${c.foto_path ? " · com foto" : " · sem foto"}`
+                : etapa2Aberta
+                  ? "Liberada — aguardando o candidato."
+                  : "Bloqueada (score abaixo de 80 ou eliminado)."}
+            </p>
+            {linkFicha && etapa2Aberta && (
+              <div className="mt-3">
+                <p className="text-[11px] uppercase tracking-[0.12em] text-black/40">Link para enviar ao candidato</p>
+                <input readOnly value={linkFicha} className="mt-1 w-full rounded-lg border border-black/10 bg-black/[0.02] px-2 py-1.5 text-[11px] text-black/70" />
+              </div>
+            )}
+            {!c.ficha_enviada_em && (c.ficha_liberada || !etapa2Aberta) && (
+              <form action={alternarLiberacao} className="mt-3">
+                <button type="submit" className="w-full rounded-xl border border-[#1C3A5E] px-4 py-2 text-sm font-medium text-[#1C3A5E] hover:bg-[#1C3A5E]/5">
+                  {c.ficha_liberada ? "Cancelar liberação" : "Liberar etapa 2"}
+                </button>
+              </form>
+            )}
+          </section>
           <form action={salvar} className="space-y-4 rounded-2xl border border-black/10 bg-white p-5">
             <h2 className="text-sm font-medium text-black">Decisão da equipe</h2>
             <label className="block text-xs text-black/50">

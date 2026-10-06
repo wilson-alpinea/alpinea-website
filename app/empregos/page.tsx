@@ -1493,7 +1493,7 @@ export default function EmpregosPage() {
 // (só se >=80%) foto → concluído. Sem IA (decisão do Wilson): a
 // pontuação vem de app/lib/candidaturaScoring.ts e a checagem da foto de
 // app/lib/fotoChecagem.ts, ambos determinísticos.
-type EtapaCandidatura = "formulario" | "resultado" | "foto" | "concluido";
+type EtapaCandidatura = "formulario" | "resultado";
 
 // Botões de opção (Sim/Não e similares) — mesmo visual das perguntas de
 // triagem que já existiam.
@@ -1584,18 +1584,11 @@ function CandidaturaModal({ vaga, onFechar }: { vaga: Vaga; onFechar: () => void
     testeDaltonismo: exigeTesteDaltonismo && testeDaltonismoCompleto ? avaliarTesteDaltonismo(respostasDaltonismo) : null,
   };
 
-  const [candidaturaId, setCandidaturaId] = useState<string | null>(null);
   const [pontuacao, setPontuacao] = useState(0);
   const [criterios, setCriterios] = useState<CriterioPontuacao[]>([]);
   const [aprovadoParaFoto, setAprovadoParaFoto] = useState(false);
-
-  const [foto, setFoto] = useState<File | null>(null);
-  const [checklist, setChecklist] = useState({
-    fundoClaro: false,
-    semBoneOuChapeu: false,
-    semOculosEscuros: false,
-    rostoVisivelCentralizado: false,
-  });
+  // Etapa 2 (ficha cadastral + foto) virou página própria — Wilson, 06/out/2026.
+  const [fichaUrl, setFichaUrl] = useState<string | null>(null);
 
   async function enviarFormulario(e: FormEvent) {
     e.preventDefault();
@@ -1640,42 +1633,13 @@ function CandidaturaModal({ vaga, onFechar }: { vaga: Vaga; onFechar: () => void
         setEnviando(false);
         return;
       }
-      setCandidaturaId(dados.candidaturaId);
       setPontuacao(dados.pontuacao);
       setCriterios(dados.criterios || []);
       setAprovadoParaFoto(Boolean(dados.aprovadoParaFoto));
+      setFichaUrl(typeof dados.fichaUrl === "string" ? dados.fichaUrl : null);
       setEtapa("resultado");
     } catch {
       setErro("Não foi possível enviar sua candidatura agora. Tente novamente.");
-    } finally {
-      setEnviando(false);
-    }
-  }
-
-  async function enviarFoto(e: FormEvent) {
-    e.preventDefault();
-    if (enviando || !candidaturaId) return;
-    if (!foto) {
-      setErro("Envie sua foto.");
-      return;
-    }
-    setEnviando(true);
-    setErro("");
-    try {
-      const form = new FormData();
-      form.append("candidaturaId", candidaturaId);
-      form.append("foto", foto);
-      form.append("checklist", JSON.stringify(checklist));
-      const resposta = await fetch("/api/empregos-foto", { method: "POST", body: form });
-      const dados = await resposta.json().catch(() => ({}));
-      if (!resposta.ok) {
-        setErro(dados.error || "Não foi possível enviar sua foto agora. Tente novamente.");
-        setEnviando(false);
-        return;
-      }
-      setEtapa("concluido");
-    } catch {
-      setErro("Não foi possível enviar sua foto agora. Tente novamente.");
     } finally {
       setEnviando(false);
     }
@@ -2488,16 +2452,21 @@ function CandidaturaModal({ vaga, onFechar }: { vaga: Vaga; onFechar: () => void
             {aprovadoParaFoto ? (
               <div className="mt-6 rounded-2xl bg-[#2f80c9]/[0.06] p-4">
                 <p className="text-xs leading-5 text-black/70">
-                  Parabéns! Sua pontuação passou de {NOTA_MINIMA_PROXIMA_ETAPA}% — a próxima etapa é enviar uma foto
-                  para o processo seletivo.
+                  Parabéns! Sua pontuação passou de {NOTA_MINIMA_PROXIMA_ETAPA}%. A etapa 2 é a ficha cadastral
+                  completa (documentos, experiência, família e saúde) com o envio da sua foto — leva uns 15 minutos.
                 </p>
-                <button
-                  type="button"
-                  onClick={() => setEtapa("foto")}
-                  className="mt-4 flex w-full items-center justify-center rounded-full bg-[#2f80c9] px-6 py-3.5 text-xs font-semibold uppercase tracking-[0.18em] text-white transition hover:bg-[#3b91dc]"
-                >
-                  Continuar para envio de foto
-                </button>
+                {fichaUrl ? (
+                  <a
+                    href={fichaUrl}
+                    className="mt-4 flex w-full items-center justify-center rounded-full bg-[#2f80c9] px-6 py-3.5 text-xs font-semibold uppercase tracking-[0.18em] text-white transition hover:bg-[#3b91dc]"
+                  >
+                    Continuar para a etapa 2
+                  </a>
+                ) : (
+                  <p className="mt-3 text-xs leading-5 text-black/55">
+                    Nossa equipe vai te enviar o link da etapa 2 pelo e-mail ou telefone informados.
+                  </p>
+                )}
               </div>
             ) : (
               <div className="mt-6 rounded-2xl bg-black/[0.03] p-4">
@@ -2518,82 +2487,6 @@ function CandidaturaModal({ vaga, onFechar }: { vaga: Vaga; onFechar: () => void
           </div>
         )}
 
-        {etapa === "foto" && (
-          <form onSubmit={enviarFoto} className="mt-5 space-y-4">
-            <p className="text-xs leading-5 text-black/60">
-              Envie uma foto tipo 3x4 recente, com fundo claro/liso, boa iluminação e o rosto bem visível — sem boné,
-              chapéu ou óculos escuros.
-            </p>
-
-            <input
-              type="file"
-              accept="image/jpeg,image/png,image/webp"
-              onChange={(e) => setFoto(e.target.files?.[0] ?? null)}
-              required
-              className="w-full rounded-xl border border-dashed border-black/15 px-3 py-2.5 text-xs text-black/60 outline-none file:mr-3 file:rounded-full file:border-0 file:bg-black/[0.04] file:px-3 file:py-1.5 file:text-xs file:font-medium file:text-black/70"
-            />
-
-            <div className="space-y-2 border-t border-black/10 pt-4">
-              {[
-                { key: "fundoClaro" as const, label: "O fundo da foto é claro/liso" },
-                { key: "semBoneOuChapeu" as const, label: "Não estou usando boné ou chapéu" },
-                { key: "semOculosEscuros" as const, label: "Não estou usando óculos escuros" },
-                { key: "rostoVisivelCentralizado" as const, label: "Meu rosto está visível e centralizado" },
-              ].map((item) => (
-                <label key={item.key} className="flex items-center gap-2.5 text-xs text-black/70">
-                  <input
-                    type="checkbox"
-                    checked={checklist[item.key]}
-                    onChange={(e) => setChecklist((c) => ({ ...c, [item.key]: e.target.checked }))}
-                    required
-                    className="h-4 w-4 rounded border-black/20 text-[#2f80c9] focus:ring-[#2f80c9]"
-                  />
-                  {item.label}
-                </label>
-              ))}
-            </div>
-
-            {erro && <p className="text-xs text-red-500">{erro}</p>}
-
-            <button
-              type="submit"
-              disabled={enviando}
-              className="flex w-full items-center justify-center rounded-full bg-[#2f80c9] px-6 py-3.5 text-xs font-semibold uppercase tracking-[0.18em] text-white transition hover:bg-[#3b91dc] disabled:cursor-not-allowed disabled:opacity-60"
-            >
-              {enviando ? "Enviando…" : "Enviar foto"}
-            </button>
-          </form>
-        )}
-
-        {etapa === "concluido" && (
-          <div className="mt-6 flex flex-col items-center gap-3 py-4 text-center">
-            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#2f80c9]/10">
-              <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="#2f80c9"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="h-6 w-6"
-              >
-                <path d="M20 6L9 17l-5-5" />
-              </svg>
-            </div>
-            <h4 className={`${display.className} text-lg font-medium text-black`}>Candidatura enviada!</h4>
-            <p className="max-w-xs text-xs leading-5 text-black/50">
-              Recebemos sua candidatura e sua foto. Nossa equipe vai revisar tudo e entrar em contato pelo e-mail ou
-              telefone informados.
-            </p>
-            <button
-              type="button"
-              onClick={onFechar}
-              className="mt-2 rounded-full bg-black px-6 py-3 text-xs font-semibold uppercase tracking-[0.18em] text-white transition hover:bg-black/80"
-            >
-              Fechar
-            </button>
-          </div>
-        )}
       </div>
     </div>
   );

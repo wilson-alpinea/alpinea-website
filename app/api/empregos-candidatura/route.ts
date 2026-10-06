@@ -278,7 +278,9 @@ export async function POST(req: Request) {
         motivos_eliminacao: resultado.motivosEliminacao,
         pontos_revisar: resultado.pontosRevisar,
       })
-      .select("id")
+      // "*" em vez de "id, ficha_token" pra não quebrar a candidatura se a
+      // migração 016 (ficha_token) ainda não tiver rodado.
+      .select("*")
       .single();
 
     if (erroInsert || !candidatura) {
@@ -382,6 +384,11 @@ export async function POST(req: Request) {
 
     return NextResponse.json({
       candidaturaId: candidatura.id,
+      // Etapa 2 — ficha cadastral (só quando passou: score >= 80 e não eliminado).
+      fichaUrl:
+        resultado.aprovadoParaFoto && candidatura.ficha_token
+          ? `/empregos/ficha/${candidatura.id}?t=${candidatura.ficha_token}`
+          : null,
       pontuacao: resultado.pontuacao,
       criterios: resultado.criterios,
       aprovadoParaFoto: resultado.aprovadoParaFoto,

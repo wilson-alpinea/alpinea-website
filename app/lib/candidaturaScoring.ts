@@ -52,6 +52,9 @@ export const NIVEIS_JAPONES: { key: NivelJapones; label: string }[] = [
 // do N1.
 export type NivelJaponesDetalhado = "nenhum" | "n5" | "n4" | "n3" | "n2" | "n1" | "fluente";
 
+// Faixas oficiais do BJT (0–800 pts): J5 0–199 · J4 200–319 · J3 320–419 ·
+// J2 420–529 · J1 530–599 · J1+ 600–800 (Wilson, 06/out/2026: mostrar o
+// score de cada nível).
 export const NIVEIS_JAPONES_DETALHADOS: {
   key: NivelJaponesDetalhado;
   label: string;
@@ -59,12 +62,12 @@ export const NIVEIS_JAPONES_DETALHADOS: {
   nivel: NivelJapones;
 }[] = [
   { key: "nenhum", label: "Não falo japonês", bjt: null, nivel: "nenhum" },
-  { key: "n5", label: "JLPT N5 — iniciante", bjt: "BJT J5", nivel: "basico" },
-  { key: "n4", label: "JLPT N4 — básico", bjt: "BJT J5", nivel: "basico" },
-  { key: "n3", label: "JLPT N3 — intermediário", bjt: "BJT J4", nivel: "intermediario" },
-  { key: "n2", label: "JLPT N2 — avançado", bjt: "BJT J3", nivel: "avancado" },
-  { key: "n1", label: "JLPT N1 — muito avançado", bjt: "BJT J2–J1", nivel: "fluente" },
-  { key: "fluente", label: "Fluente / nativo", bjt: "BJT J1+", nivel: "fluente" },
+  { key: "n5", label: "JLPT N5 — iniciante", bjt: "BJT J5 (0–199 pts)", nivel: "basico" },
+  { key: "n4", label: "JLPT N4 — básico", bjt: "BJT J5 (0–199 pts)", nivel: "basico" },
+  { key: "n3", label: "JLPT N3 — intermediário", bjt: "BJT J4 (200–319 pts)", nivel: "intermediario" },
+  { key: "n2", label: "JLPT N2 — avançado", bjt: "BJT J3 (320–419 pts)", nivel: "avancado" },
+  { key: "n1", label: "JLPT N1 — muito avançado", bjt: "BJT J2–J1 (420–599 pts)", nivel: "fluente" },
+  { key: "fluente", label: "Fluente / nativo", bjt: "BJT J1+ (600–800 pts)", nivel: "fluente" },
 ];
 
 export function nivelDoDetalhado(detalhado: string): NivelJapones | "" {

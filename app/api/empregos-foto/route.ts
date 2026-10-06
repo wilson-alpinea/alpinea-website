@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { randomUUID } from "crypto";
 import { createAdminClient } from "../../../lib/supabase/admin";
 import { checarFotoAutomatica, type CriterioFoto } from "../../lib/fotoChecagem";
-import { NOTA_MINIMA_PROXIMA_ETAPA } from "../../lib/candidaturaScoring";
+import { fichaLiberada } from "../../lib/fichaCadastral";
 
 export const runtime = "nodejs";
 
@@ -55,7 +55,10 @@ export async function POST(req: Request) {
     const form = await req.formData();
 
     const candidaturaId = String(form.get("candidaturaId") || "").trim();
-    if (!candidaturaId) {
+    // A foto agora é enviada no fim da ficha cadastral (etapa 2), que só
+    // é acessível com o token do link — Wilson, 06/out/2026.
+    const token = String(form.get("token") || "").trim();
+    if (!candidaturaId || !token) {
       return NextResponse.json({ error: "Candidatura não identificada." }, { status: 400 });
     }
 
@@ -93,14 +96,14 @@ export async function POST(req: Request) {
     // cliente pra essa barreira.
     const { data: candidatura, error: erroBusca } = await supabase
       .from("candidaturas_vagas")
-      .select("id, pontuacao, vaga_titulo, nome, sobrenome, email")
+      .select("id, pontuacao, classificacao, ficha_token, ficha_liberada, vaga_titulo, nome, sobrenome, email")
       .eq("id", candidaturaId)
       .single();
 
-    if (erroBusca || !candidatura) {
+    if (erroBusca || !candidatura || candidatura.ficha_token !== token) {
       return NextResponse.json({ error: "Candidatura não encontrada." }, { status: 404 });
     }
-    if ((candidatura.pontuacao ?? 0) < NOTA_MINIMA_PROXIMA_ETAPA) {
+    if (!fichaLiberada(candidatura)) {
       return NextResponse.json(
         { error: "Esta candidatura ainda não atingiu a pontuação necessária para enviar foto." },
         { status: 403 },

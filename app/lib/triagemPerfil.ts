@@ -199,14 +199,12 @@ export const PLACAS_DALTONISMO: { id: string; imagem: string; resposta: string; 
   { id: "p8", imagem: "/images/empregos/daltonismo-placa-8.webp", resposta: "8" },
   { id: "p5", imagem: "/images/empregos/daltonismo-placa-5.webp", resposta: "5" },
   { id: "p6", imagem: "/images/empregos/daltonismo-placa-6.webp", resposta: "6" },
-  { id: "p2", imagem: "/images/empregos/daltonismo-placa-2.webp", resposta: "2" },
-  { id: "p4", imagem: "/images/empregos/daltonismo-placa-4.webp", resposta: "4" },
-  { id: "p9", imagem: "/images/empregos/daltonismo-placa-9.webp", resposta: "9" },
-  { id: "p3", imagem: "/images/empregos/daltonismo-placa-3.webp", resposta: "3" },
 ];
 
-// Aprovação: controle certo + no máximo 1 erro nas 7 placas de teste.
-export const ERROS_MAXIMOS_DALTONISMO = 1;
+// Só 4 placas (Wilson, 06/out/2026: "deixar só 4 bolinhas") — controle
+// + 3 de teste. Com só 3 placas, 1 erro já é 33% do teste, então a
+// aprovação passou a exigir controle certo + todas as 3 certas.
+export const ERROS_MAXIMOS_DALTONISMO = 0;
 
 export type ResultadoTesteDaltonismo = {
   respostas: Record<string, string>;

@@ -524,3 +524,19 @@ export async function atualizarCandidatura(candidaturaId: string, formData: Form
   revalidatePath(`/crm/empregos/${candidaturaId}`);
   redirect(`/crm/empregos/${candidaturaId}?salvo=1`);
 }
+
+// Libera a etapa 2 (ficha cadastral) para um candidato abaixo de 80 —
+// Wilson, 06/out/2026. O link continua exigindo o token da candidatura.
+export async function liberarFichaCandidatura(candidaturaId: string, liberar: boolean) {
+  const supabase = await createClient();
+  const { error } = await supabase
+    .from("candidaturas_vagas")
+    .update({ ficha_liberada: liberar, updated_at: new Date().toISOString() })
+    .eq("id", candidaturaId);
+  if (error) {
+    console.error("Erro ao liberar ficha:", error);
+    redirect(`/crm/empregos/${candidaturaId}?erro=${encodeURIComponent("Não foi possível alterar a liberação. A migração 016 já rodou?")}`);
+  }
+  revalidatePath(`/crm/empregos/${candidaturaId}`);
+  redirect(`/crm/empregos/${candidaturaId}?salvo=1`);
+}

@@ -33,6 +33,7 @@ type Linha = {
   pontos_revisar: string[] | null;
   status: string;
   etapa: string;
+  ficha_enviada_em?: string | null;
   created_at: string;
 };
 
@@ -63,9 +64,8 @@ export default async function EmpregosCrmPage({
 
   let query = supabase
     .from("candidaturas_vagas")
-    .select(
-      "id, nome, sobrenome, email, telefone, vaga_id, vaga_titulo, vaga_empresa, pontuacao, classificacao, motivos_eliminacao, pontos_revisar, status, etapa, created_at",
-    )
+    // "*" pra funcionar antes e depois da migração 016 (ficha_enviada_em).
+    .select("*")
     .eq("classificacao", tipo)
     .order("pontuacao", { ascending: false, nullsFirst: false })
     .order("created_at", { ascending: false })
@@ -194,7 +194,7 @@ export default async function EmpregosCrmPage({
                       </div>
                       <span className="tabular-nums text-black/75">{c.pontuacao ?? "—"}</span>
                     </div>
-                    {c.etapa === "concluida" && <p className="mt-1 text-[11px] text-black/45">Foto enviada</p>}
+                    {c.ficha_enviada_em && <p className="mt-1 text-[11px] text-black/45">Ficha enviada{c.etapa === "concluida" ? " · foto" : ""}</p>}
                   </td>
                   <td className="max-w-[260px] px-5 py-3.5">
                     {etiquetas.length === 0 ? (
