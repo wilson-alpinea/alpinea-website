@@ -273,6 +273,10 @@ export async function POST(req: Request) {
         criterios: resultado.criterios,
         etapa: "curriculo",
         status: "novo",
+        // Área de Empregos do CRM — migração 015.
+        classificacao: resultado.classificacao,
+        motivos_eliminacao: resultado.motivosEliminacao,
+        pontos_revisar: resultado.pontosRevisar,
       })
       .select("id")
       .single();
@@ -356,13 +360,21 @@ export async function POST(req: Request) {
       `Ascendência japonesa: ${ascendenciaLabel || "Não informada"}`,
       ...linhasPerfil(),
       `Quando gostaria de embarcar: ${quandoEmbarcarLabel || "Não informado"}`,
+      `Classificação: ${
+        resultado.eliminado
+          ? `ELIMINADO — ${resultado.motivosEliminacao.join(" / ")}`
+          : resultado.classificacao === "aprovado_alto"
+            ? "Aprovado — score 80+"
+            : "Aprovado — score abaixo de 80"
+      }`,
       `Pontuação: ${resultado.pontuacao}%${resultado.aprovadoParaFoto ? " (passou para a etapa de foto)" : ""}`,
+      resultado.pontosRevisar.length ? `Revisar: ${resultado.pontosRevisar.join(", ")}` : "",
       "",
       ...resultado.criterios.map((c: CriterioPontuacao) => `- ${c.label}: ${c.pontosObtidos}/${c.pontosMaximos} — ${c.detalhe}`),
     ].join("\n");
 
     await notificarPorEmail({
-      assunto: `[Candidatura] ${vaga.titulo} — ${nome} ${sobrenome} (${resultado.pontuacao}%)`,
+      assunto: `[Candidatura${resultado.eliminado ? " — ELIMINADO" : ""}] ${vaga.titulo} — ${nome} ${sobrenome} (${resultado.pontuacao}%)`,
       texto: resumoTexto,
       html: `<pre style="font-family: Arial, sans-serif; white-space: pre-wrap;">${resumoTexto}</pre>`,
       replyTo: email,

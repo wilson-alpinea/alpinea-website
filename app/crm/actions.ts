@@ -497,3 +497,30 @@ export async function deletePagamento(clienteId: string, pagamentoId: string, fo
 
   revalidatePath(`/crm/clientes/${clienteId}`);
 }
+
+// ── Área de Empregos (06/out/2026) — a equipe pode reclassificar o
+// candidato (ex.: tirar da lista de eliminados depois de conversar),
+// mudar o status da análise e anotar observações. ──
+export async function atualizarCandidatura(candidaturaId: string, formData: FormData) {
+  const { isClassificacao, isStatusCandidatura } = await import("@/lib/crm/empregos");
+  const supabase = await createClient();
+  const classificacao = String(formData.get("classificacao") ?? "");
+  const status = String(formData.get("status") ?? "");
+  const observacoes = String(formData.get("observacoes_equipe") ?? "").trim();
+
+  const update: Record<string, unknown> = {
+    observacoes_equipe: observacoes || null,
+    updated_at: new Date().toISOString(),
+  };
+  if (isClassificacao(classificacao)) update.classificacao = classificacao;
+  if (isStatusCandidatura(status)) update.status = status;
+
+  const { error } = await supabase.from("candidaturas_vagas").update(update).eq("id", candidaturaId);
+  if (error) {
+    console.error("Erro ao atualizar candidatura:", error);
+    redirect(`/crm/empregos/${candidaturaId}?erro=${encodeURIComponent("Não foi possível salvar.")}`);
+  }
+  revalidatePath("/crm/empregos");
+  revalidatePath(`/crm/empregos/${candidaturaId}`);
+  redirect(`/crm/empregos/${candidaturaId}?salvo=1`);
+}

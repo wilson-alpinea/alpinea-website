@@ -13,6 +13,8 @@ const NAV = [
   { href: "/crm/clientes", label: "Clientes" },
   { href: "/crm/fornecedores", label: "Fornecedores" },
   { href: "/crm/pipeline", label: "Pipeline" },
+  // Área de Empregos — candidaturas de /empregos (Wilson, 06/out/2026).
+  { href: "/crm/empregos", label: "Empregos" },
 ];
 
 export default async function CrmShellLayout({

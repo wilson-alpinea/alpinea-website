@@ -342,8 +342,34 @@ export type CriterioPontuacao = {
 export type ResultadoPontuacao = {
   pontuacao: number; // 0-100, soma dos critérios
   criterios: CriterioPontuacao[];
-  aprovadoParaFoto: boolean; // pontuacao >= 80
+  aprovadoParaFoto: boolean; // pontuacao >= 80 e não eliminado
+  // Área de Empregos do CRM (06/out/2026).
+  eliminado: boolean;
+  motivosEliminacao: string[];
+  classificacao: ClassificacaoCandidatura;
+  pontosRevisar: string[];
 };
+
+export type ClassificacaoCandidatura = "eliminado" | "aprovado_alto" | "aprovado_baixo";
+
+// Itens que a equipe deve olhar com atenção mesmo quando não eliminam
+// (modo "informativo") — vão pro CRM como etiquetas.
+export function pontosParaRevisar(perfil: PerfilCandidato | undefined): string[] {
+  if (!perfil) return [];
+  const p: string[] = [];
+  if (perfil.dividasBrasil === "sim") p.push("Dívidas no Brasil");
+  if (perfil.dividasJapao === "sim") p.push("Dívidas/impostos no Japão");
+  if (perfil.ajudaGovernoRetorno === "sim") p.push("Recebeu ajuda de retorno");
+  if (perfil.antecedentesCriminais === "sim") p.push("Antecedentes criminais");
+  if (perfil.tatuagemVisivel === "sim") p.push("Tatuagem visível");
+  if (perfil.emTratamento === "sim") p.push("Em tratamento médico");
+  if (perfil.condicoesVisuais.length > 0) p.push("Condição visual");
+  if (perfil.medicacaoControlada === "sim") p.push("Medicação controlada");
+  if (perfil.insulinaInjetavel === "sim") p.push("Insulina injetável");
+  if (perfil.daltonismo === "sim" || perfil.daltonismo === "naoSei") p.push("Daltonismo (declarado/incerto)");
+  if (perfil.testeDaltonismo && !perfil.testeDaltonismo.controleOk) p.push("Teste de daltonismo inválido");
+  return p;
+}
 
 export const NOTA_MINIMA_PROXIMA_ETAPA = 80;
 
@@ -546,9 +572,14 @@ export function calcularPontuacaoCandidatura(params: {
     criterios.push({ chave: "eliminatorio", label: "Requisito obrigatório da vaga", pontosObtidos: 0, pontosMaximos: 0, detalhe: motivo });
   }
 
+  const eliminado = eliminadoPor.length > 0;
   return {
     pontuacao,
     criterios,
-    aprovadoParaFoto: pontuacao >= NOTA_MINIMA_PROXIMA_ETAPA && eliminadoPor.length === 0,
+    aprovadoParaFoto: pontuacao >= NOTA_MINIMA_PROXIMA_ETAPA && !eliminado,
+    eliminado,
+    motivosEliminacao: eliminadoPor,
+    classificacao: eliminado ? "eliminado" : pontuacao >= NOTA_MINIMA_PROXIMA_ETAPA ? "aprovado_alto" : "aprovado_baixo",
+    pontosRevisar: pontosParaRevisar(perfil),
   };
 }
