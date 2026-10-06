@@ -12,7 +12,26 @@ import {
   nivelDoDetalhado,
   type RespostasTriagem,
   type CriterioPontuacao,
+  vagaExigeTesteDaltonismo,
+  criteriosDaVaga,
 } from "../../lib/candidaturaScoring";
+import {
+  parsePerfil,
+  pendenciasPerfil,
+  imc,
+  formatarCep,
+  ESCOLARIDADES,
+  OPCOES_FLEXIBILIDADE,
+  OPCOES_HORAS_EXTRAS,
+  OPCOES_DALTONISMO,
+  OPCOES_FINANCIAMENTO,
+  REGIOES_TATUAGEM,
+  TAMANHOS_TATUAGEM,
+  CONDICOES_VISUAIS,
+  OPCOES_FUMANTE,
+  CLASSES_MEDICAMENTO,
+  TIPOS_DIABETES,
+} from "../../lib/triagemPerfil";
 
 export const runtime = "nodejs";
 
@@ -118,10 +137,25 @@ export async function POST(req: Request) {
             : "",
           ascendencia: ascendenciasValidas.includes(parsed.ascendencia) ? parsed.ascendencia : "",
           quandoEmbarcar: quandoEmbarcarValidos.includes(parsed.quandoEmbarcar) ? parsed.quandoEmbarcar : "",
+          // Perguntas de perfil (06/out/2026) — normalizadas e com o teste
+          // de daltonismo recorrigido aqui no servidor.
+          perfil: parsePerfil(parsed.perfil),
         };
       } catch {
         // respostas malformadas — segue com valores vazios em vez de falhar a candidatura inteira
       }
+    }
+
+    // Perfil completo é obrigatório (mesma regra do formulário).
+    const faltaPerfil = pendenciasPerfil(respostas.perfil ?? parsePerfil(null), {
+      exigeTesteDaltonismo: vagaExigeTesteDaltonismo(vaga),
+      perguntaFinanciamento: vaga.custosCobertosPelaEmpresa !== true,
+    });
+    if (faltaPerfil.length > 0) {
+      return NextResponse.json(
+        { error: `Faltou responder: ${faltaPerfil.join(", ")}.` },
+        { status: 400 },
+      );
     }
 
     const arquivo = form.get("curriculo");
@@ -186,6 +220,30 @@ export async function POST(req: Request) {
       else certificadoJapones = { path: caminhoCert, nome: nomeCert };
     }
 
+    // Certidão de antecedentes criminais da Polícia Federal — anexo
+    // opcional (Wilson, 06/out/2026). Mesmo bucket privado, pasta própria.
+    let certidaoAntecedentes: { path: string; nome: string } | null = null;
+    const arquivoCertidao = form.get("certidaoAntecedentes");
+    if (arquivoCertidao instanceof File && arquivoCertidao.size > 0) {
+      const nomeCertidao = arquivoCertidao.name || "certidao";
+      const okFormato =
+        /\.(pdf|jpe?g|png|webp|heic)$/i.test(nomeCertidao) || /^(application\/pdf|image\/)/.test(arquivoCertidao.type);
+      if (!okFormato || arquivoCertidao.size > TAMANHO_MAXIMO_CURRICULO_BYTES) {
+        return NextResponse.json(
+          { error: "Certidão de antecedentes: envie um PDF ou imagem de até 8MB." },
+          { status: 400 },
+        );
+      }
+      const caminho = `certidoes-antecedentes/${randomUUID()}-${sanitizarNomeArquivo(nomeCertidao)}`;
+      const { error: erroCertidao } = await supabase.storage
+        .from("curriculos-candidatos")
+        .upload(caminho, Buffer.from(await arquivoCertidao.arrayBuffer()), {
+          contentType: arquivoCertidao.type || "application/octet-stream",
+        });
+      if (erroCertidao) console.error("Erro ao subir certidão de antecedentes (empregos-candidatura):", erroCertidao);
+      else certidaoAntecedentes = { path: caminho, nome: nomeCertidao };
+    }
+
     const curriculoTexto = await extrairTextoCurriculo(buffer, nomeArquivoOriginal, arquivo.type || "");
 
     const resultado = calcularPontuacaoCandidatura({
@@ -207,7 +265,7 @@ export async function POST(req: Request) {
         email,
         telefone,
         idade: Number.isFinite(idade) && idade !== null && idade > 0 ? idade : null,
-        respostas: { ...respostas, certificadoJapones },
+        respostas: { ...respostas, certificadoJapones, certidaoAntecedentes },
         curriculo_path: caminhoStorage,
         curriculo_nome_arquivo: nomeArquivoOriginal,
         curriculo_texto: curriculoTexto.slice(0, 20000), // guarda o texto extraído pra auditoria, sem exagerar no tamanho da linha
@@ -230,6 +288,58 @@ export async function POST(req: Request) {
     const ascendenciaLabel = ASCENDENCIA_JAPONESA.find((a) => a.key === respostas.ascendencia)?.label;
     const quandoEmbarcarLabel = QUANDO_EMBARCAR.find((q) => q.key === respostas.quandoEmbarcar)?.label;
 
+    // Bloco de perfil no e-mail da equipe — ⚠ marca respostas que pedem
+    // atenção (podem ser eliminatórias conforme a vaga).
+    function linhasPerfil(): string[] {
+      const p = respostas.perfil;
+      if (!p) return [];
+      const regras = criteriosDaVaga(vaga!);
+      const rot = <T extends { key: string; label: string }>(lista: T[], k: string) =>
+        lista.find((x) => x.key === k)?.label ?? "—";
+      const alerta = (cond: boolean) => (cond ? " ⚠" : "");
+      const t = p.testeDaltonismo;
+      return [
+        "",
+        "— Perfil —",
+        `CEP de residência: ${formatarCep(p.cepResidencia)}`,
+        `Peso/altura: ${p.pesoKg} kg / ${p.alturaCm} cm (IMC ${imc(p) ?? "—"})`,
+        `Escolaridade: ${rot(ESCOLARIDADES, p.escolaridade)}`,
+        `Daltonismo: ${rot(OPCOES_DALTONISMO, p.daltonismo)}${alerta(p.daltonismo === "sim" && regras.daltonismo === "eliminatorio")}`,
+        t
+          ? `Teste de daltonismo: ${t.acertos}/${t.total} acertos — ${t.aprovado ? "aprovado" : t.controleOk ? "REPROVADO" : "inválido (errou a placa de controle)"}${alerta(!t.aprovado)}`
+          : "Teste de daltonismo: não aplicado (vaga não é de eletrônicos)",
+        `Já esteve no Japão: ${p.jaEsteveJapao === "sim" ? `Sim, ${p.anosNoJapao} ano(s)` : "Não"}`,
+        `Filhos: ${p.temFilhos === "sim" ? `Sim — idades: ${p.idadesFilhos.join(", ")}` : "Não"}`,
+        `Horas extras: ${rot(OPCOES_HORAS_EXTRAS, p.horasExtras)}`,
+        `Aceita turno alternado: ${p.turnoAlternado === "sim" ? "Sim" : "Não"}${alerta(p.turnoAlternado !== "sim" && regras.turnoAlternado === "eliminatorio")}`,
+        `Província de preferência: ${p.provinciaPreferida || "Sem preferência"}`,
+        `Flexibilidade de região: ${rot(OPCOES_FLEXIBILIDADE, p.flexibilidadeRegiao)}`,
+        `Dívidas em aberto no Brasil: ${p.dividasBrasil === "sim" ? "SIM" : "Não"}${alerta(p.dividasBrasil === "sim")}`,
+        p.jaEsteveJapao === "sim"
+          ? `Dívidas/impostos em aberto no Japão: ${p.dividasJapao === "sim" ? "SIM" : "Não"}${alerta(p.dividasJapao === "sim")}`
+          : "",
+        p.jaEsteveJapao === "sim"
+          ? `Recebeu ajuda do governo para retornar ao Brasil: ${p.ajudaGovernoRetorno === "sim" ? "SIM" : "Não"}${alerta(p.ajudaGovernoRetorno === "sim")}`
+          : "",
+        vaga!.custosCobertosPelaEmpresa === true
+          ? ""
+          : `Financiamento de taxa/passagem/documentos: ${rot(OPCOES_FINANCIAMENTO, p.financiamentoCustos)}`,
+        `Antecedentes criminais: ${p.antecedentesCriminais === "sim" ? "SIM" : "Não"}${p.antecedentesCriminais === "sim" ? " — REVISAR" : ""}${certidaoAntecedentes ? ` (certidão PF anexada: ${certidaoAntecedentes.nome})` : " (sem certidão anexada)"}`,
+        `Tatuagem visível: ${
+          p.tatuagemVisivel === "sim"
+            ? `Sim — ${p.tatuagemRegioes.map((r) => rot(REGIOES_TATUAGEM, r)).join(", ")}; ${rot(TAMANHOS_TATUAGEM, p.tatuagemTamanho)}`
+            : "Não"
+        }`,
+        "",
+        "— Saúde (consentimento LGPD dado pelo candidato) —",
+        `Doença grave/tratamento: ${p.doencaGrave === "sim" ? `Sim${p.doencaGraveDescricao ? ` (${p.doencaGraveDescricao})` : ""}; em tratamento: ${p.emTratamento === "sim" ? "SIM — REVISAR" : "não"}` : "Não"}`,
+        `Condições visuais: ${p.semCondicaoVisual ? "Nenhuma" : `${p.condicoesVisuais.map((c) => rot(CONDICOES_VISUAIS, c)).join(", ")} — REVISAR`}`,
+        `Fumante: ${rot(OPCOES_FUMANTE, p.fumante)}`,
+        `Medicação controlada: ${p.medicacaoControlada === "sim" ? `Sim — ${p.medicacaoClasses.map((c) => rot(CLASSES_MEDICAMENTO, c)).join(", ")} — REVISAR (checar regras de entrada de medicamento no Japão)` : "Não"}`,
+        `Diabetes: ${p.diabetes === "sim" ? `Sim — ${rot(TIPOS_DIABETES, p.diabetesTipo)}; insulina injetável: ${p.insulinaInjetavel === "sim" ? "SIM — REVISAR (moradia/fábrica com estrutura de higiene para aplicação)" : "não"}` : "Não"}`,
+      ].filter((l, i) => i === 0 || l !== "");
+    }
+
     const resumoTexto = [
       "Nova candidatura — /empregos",
       "",
@@ -244,6 +354,7 @@ export async function POST(req: Request) {
       `Experiência em fábrica/produção: ${respostas.experienciaSetor === "sim" ? "Sim" : respostas.experienciaSetor === "nao" ? "Não" : "Não respondeu"}`,
       `Re-Entry válido: ${respostas.reEntry === "sim" ? "SIM — embarque mais rápido" : respostas.reEntry === "nao" ? "Não" : "Não respondeu"}`,
       `Ascendência japonesa: ${ascendenciaLabel || "Não informada"}`,
+      ...linhasPerfil(),
       `Quando gostaria de embarcar: ${quandoEmbarcarLabel || "Não informado"}`,
       `Pontuação: ${resultado.pontuacao}%${resultado.aprovadoParaFoto ? " (passou para a etapa de foto)" : ""}`,
       "",

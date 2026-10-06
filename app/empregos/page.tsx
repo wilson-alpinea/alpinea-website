@@ -15,6 +15,26 @@ import {
   type QuandoEmbarcar,
 } from "../lib/candidaturaScoring";
 import { EXTENSOES_CURRICULO_ACEITAS } from "../lib/curriculoConstantes";
+import { vagaExigeTesteDaltonismo, criteriosDaVaga } from "../lib/candidaturaScoring";
+import {
+  ESCOLARIDADES,
+  OPCOES_DALTONISMO,
+  OPCOES_FLEXIBILIDADE,
+  OPCOES_HORAS_EXTRAS,
+  PERFIL_VAZIO,
+  PLACAS_DALTONISMO,
+  PROVINCIAS_JAPAO,
+  OPCOES_FINANCIAMENTO,
+  REGIOES_TATUAGEM,
+  TAMANHOS_TATUAGEM,
+  CONDICOES_VISUAIS,
+  OPCOES_FUMANTE,
+  CLASSES_MEDICAMENTO,
+  TIPOS_DIABETES,
+  avaliarTesteDaltonismo,
+  pendenciasPerfil,
+  type PerfilCandidato,
+} from "../lib/triagemPerfil";
 import { useEffect, useMemo, useState, type FormEvent } from "react";
 import Image from "next/image";
 import Link from "next/link";
@@ -270,7 +290,10 @@ function CarrosselDestaques({ onAbrir }: { onAbrir: (d: Destaque) => void }) {
   // Swipe no celular — sem biblioteca, só toque inicial/final.
   const [toqueX, setToqueX] = useState<number | null>(null);
 
+  // Setas e bolinhas ficam ABAIXO do banner — antes ficavam por cima e
+  // tampavam o texto da arte (Wilson, 06/out/2026).
   return (
+    <div>
     <div
       className="relative overflow-hidden rounded-2xl bg-[#0A2540]"
       onMouseEnter={() => setPausado(true)}
@@ -336,25 +359,10 @@ function CarrosselDestaques({ onAbrir }: { onAbrir: (d: Destaque) => void }) {
         })}
       </div>
 
-      {/* Setas (desktop) */}
-      {(["anterior", "proximo"] as const).map((lado) => (
-        <button
-          key={lado}
-          type="button"
-          onClick={() => ir(indice + (lado === "proximo" ? 1 : -1))}
-          aria-label={lado === "proximo" ? "Próximo destaque" : "Destaque anterior"}
-          className={`absolute top-1/2 hidden h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/85 text-[#0A2540] shadow-sm backdrop-blur transition hover:bg-white sm:flex ${
-            lado === "proximo" ? "right-4" : "left-4"
-          }`}
-        >
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5">
-            <path d={lado === "proximo" ? "M9 6l6 6-6 6" : "M15 6l-6 6 6 6"} />
-          </svg>
-        </button>
-      ))}
+    </div>
 
-      {/* Bolinhas */}
-      <div className="absolute inset-x-0 bottom-3 flex justify-center gap-2">
+    <div className="mt-4 flex items-center justify-between gap-4">
+      <div className="flex gap-2">
         {DESTAQUES.map((d, i) => (
           <button
             key={d.id}
@@ -362,12 +370,28 @@ function CarrosselDestaques({ onAbrir }: { onAbrir: (d: Destaque) => void }) {
             onClick={() => ir(i)}
             aria-label={`Ir para o destaque ${i + 1}`}
             aria-current={i === indice}
-            className="flex h-6 items-center"
+            className="flex h-8 items-center"
           >
-            <span className={`block h-1.5 rounded-full transition-all ${i === indice ? "w-6 bg-white" : "w-1.5 bg-white/50"}`} />
+            <span className={`block h-1.5 rounded-full transition-all ${i === indice ? "w-6 bg-[#0A2540]" : "w-1.5 bg-black/20"}`} />
           </button>
         ))}
       </div>
+      <div className="flex gap-2">
+        {(["anterior", "proximo"] as const).map((lado) => (
+          <button
+            key={lado}
+            type="button"
+            onClick={() => ir(indice + (lado === "proximo" ? 1 : -1))}
+            aria-label={lado === "proximo" ? "Próximo destaque" : "Destaque anterior"}
+            className="flex h-11 w-11 items-center justify-center rounded-full border border-black/15 text-[#0A2540] transition hover:border-black/40"
+          >
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5">
+              <path d={lado === "proximo" ? "M9 6l6 6-6 6" : "M15 6l-6 6 6 6"} />
+            </svg>
+          </button>
+        ))}
+      </div>
+    </div>
     </div>
   );
 }
@@ -1471,6 +1495,40 @@ export default function EmpregosPage() {
 // app/lib/fotoChecagem.ts, ambos determinísticos.
 type EtapaCandidatura = "formulario" | "resultado" | "foto" | "concluido";
 
+// Botões de opção (Sim/Não e similares) — mesmo visual das perguntas de
+// triagem que já existiam.
+function OpcoesBotao<T extends string>({
+  valor,
+  opcoes,
+  onChange,
+}: {
+  valor: T | "";
+  opcoes: { key: T; label: string }[];
+  onChange: (v: T) => void;
+}) {
+  return (
+    <div className="mt-2 flex flex-wrap gap-2">
+      {opcoes.map((o) => (
+        <button
+          key={o.key}
+          type="button"
+          onClick={() => onChange(o.key)}
+          className={`rounded-full px-4 py-1.5 text-xs font-medium transition ${
+            valor === o.key ? "bg-[#2f80c9] text-white" : "bg-black/[0.04] text-black/60 hover:bg-black/[0.08]"
+          }`}
+        >
+          {o.label}
+        </button>
+      ))}
+    </div>
+  );
+}
+
+const SIM_NAO: { key: "sim" | "nao"; label: string }[] = [
+  { key: "sim", label: "Sim" },
+  { key: "nao", label: "Não" },
+];
+
 // Marcador de campo obrigatório — pedido do Wilson, 06/out/2026.
 function Obrigatorio() {
   return (
@@ -1503,6 +1561,28 @@ function CandidaturaModal({ vaga, onFechar }: { vaga: Vaga; onFechar: () => void
   });
   // Certificado JLPT/BJT — opcional (Wilson, 06/out/2026).
   const [certificado, setCertificado] = useState<File | null>(null);
+  // Perguntas de perfil (Wilson, 06/out/2026) — ver app/lib/triagemPerfil.ts.
+  const [perfil, setPerfil] = useState<PerfilCandidato>(PERFIL_VAZIO);
+  const setP = <K extends keyof PerfilCandidato>(k: K, v: PerfilCandidato[K]) => setPerfil((p) => ({ ...p, [k]: v }));
+  const exigeTesteDaltonismo = vagaExigeTesteDaltonismo(vaga);
+  const perguntaFinanciamento = vaga.custosCobertosPelaEmpresa !== true;
+  const [certidaoAntecedentes, setCertidaoAntecedentes] = useState<File | null>(null);
+  const alternarEmLista = <K extends "tatuagemRegioes" | "condicoesVisuais" | "medicacaoClasses">(
+    campo: K,
+    item: PerfilCandidato[K][number],
+  ) =>
+    setPerfil((p) => {
+      const atual = p[campo] as string[];
+      const novo = atual.includes(item) ? atual.filter((x) => x !== item) : [...atual, item];
+      return { ...p, [campo]: novo, ...(campo === "condicoesVisuais" ? { semCondicaoVisual: false } : {}) };
+    });
+  const turnoEliminatorio = criteriosDaVaga(vaga).turnoAlternado === "eliminatorio";
+  const [respostasDaltonismo, setRespostasDaltonismo] = useState<Record<string, string>>({});
+  const testeDaltonismoCompleto = PLACAS_DALTONISMO.every((pl) => (respostasDaltonismo[pl.id] ?? "") !== "");
+  const perfilParaEnvio: PerfilCandidato = {
+    ...perfil,
+    testeDaltonismo: exigeTesteDaltonismo && testeDaltonismoCompleto ? avaliarTesteDaltonismo(respostasDaltonismo) : null,
+  };
 
   const [candidaturaId, setCandidaturaId] = useState<string | null>(null);
   const [pontuacao, setPontuacao] = useState(0);
@@ -1530,6 +1610,11 @@ function CandidaturaModal({ vaga, onFechar }: { vaga: Vaga; onFechar: () => void
       setErro("Responda todas as perguntas de Sim/Não.");
       return;
     }
+    const faltaPerfil = pendenciasPerfil(perfilParaEnvio, { exigeTesteDaltonismo, perguntaFinanciamento });
+    if (faltaPerfil.length > 0) {
+      setErro(`Faltou responder: ${faltaPerfil.join(", ")}.`);
+      return;
+    }
     if (!curriculo) {
       setErro("Envie seu currículo (PDF ou DOCX).");
       return;
@@ -1544,9 +1629,10 @@ function CandidaturaModal({ vaga, onFechar }: { vaga: Vaga; onFechar: () => void
       form.append("email", email);
       form.append("telefone", telefone);
       if (idade) form.append("idade", idade);
-      form.append("respostas", JSON.stringify(respostas));
+      form.append("respostas", JSON.stringify({ ...respostas, perfil: perfilParaEnvio }));
       form.append("curriculo", curriculo);
       if (certificado) form.append("certificadoJapones", certificado);
+      if (certidaoAntecedentes && perfil.antecedentesCriminais) form.append("certidaoAntecedentes", certidaoAntecedentes);
       const resposta = await fetch("/api/empregos-candidatura", { method: "POST", body: form });
       const dados = await resposta.json().catch(() => ({}));
       if (!resposta.ok) {
@@ -1802,6 +1888,541 @@ function CandidaturaModal({ vaga, onFechar }: { vaga: Vaga; onFechar: () => void
                 </div>
               </div>
             ))}
+
+            {/* ── PERFIL — perguntas eliminatórias/qualificatórias, pedido do
+                Wilson, 06/out/2026. Cada vaga decide se a resposta elimina
+                ou só informa (criteriosDaVaga). ── */}
+            <div className="space-y-4 border-t border-black/10 pt-4">
+              <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-black/55">Seu perfil</p>
+
+              <div className="max-w-[260px]">
+                <label className="text-[11px] font-medium text-black/50">
+                  CEP de residência <Obrigatorio />
+                </label>
+                <input
+                  inputMode="numeric"
+                  autoComplete="postal-code"
+                  placeholder="00000-000"
+                  value={
+                    perfil.cepResidencia.length > 5
+                      ? `${perfil.cepResidencia.slice(0, 5)}-${perfil.cepResidencia.slice(5)}`
+                      : perfil.cepResidencia
+                  }
+                  onChange={(e) => setP("cepResidencia", e.target.value.replace(/\D/g, "").slice(0, 8))}
+                  className="mt-1 w-full rounded-xl border border-black/10 px-3 py-2.5 text-sm text-black outline-none focus:border-[#2f80c9]"
+                />
+                <p className="mt-1 text-[11px] text-black/40">Mora no Japão? Use o código postal 〒 (7 dígitos).</p>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="text-[11px] font-medium text-black/50">
+                    Peso (kg) <Obrigatorio />
+                  </label>
+                  <input
+                    type="number"
+                    inputMode="decimal"
+                    min={30}
+                    max={250}
+                    value={perfil.pesoKg ?? ""}
+                    onChange={(e) => setP("pesoKg", e.target.value === "" ? null : Number(e.target.value))}
+                    className="mt-1 w-full rounded-xl border border-black/10 px-3 py-2.5 text-sm text-black outline-none focus:border-[#2f80c9]"
+                  />
+                </div>
+                <div>
+                  <label className="text-[11px] font-medium text-black/50">
+                    Altura (cm) <Obrigatorio />
+                  </label>
+                  <input
+                    type="number"
+                    inputMode="numeric"
+                    min={120}
+                    max={230}
+                    placeholder="ex.: 172"
+                    value={perfil.alturaCm ?? ""}
+                    onChange={(e) => setP("alturaCm", e.target.value === "" ? null : Number(e.target.value))}
+                    className="mt-1 w-full rounded-xl border border-black/10 px-3 py-2.5 text-sm text-black outline-none focus:border-[#2f80c9]"
+                  />
+                </div>
+              </div>
+              <p className="-mt-2 text-[11px] leading-4 text-black/40">
+                Algumas fábricas têm exigências físicas para a função. Usamos esses dados só para checar os
+                requisitos da vaga.
+              </p>
+
+              <div>
+                <label className="text-[11px] font-medium text-black/50">
+                  Escolaridade <Obrigatorio />
+                </label>
+                <select
+                  value={perfil.escolaridade}
+                  onChange={(e) => setP("escolaridade", e.target.value as PerfilCandidato["escolaridade"])}
+                  className="mt-1 w-full rounded-xl border border-black/10 px-3 py-2.5 text-sm text-black outline-none focus:border-[#2f80c9]"
+                >
+                  <option value="" disabled>
+                    Selecione
+                  </option>
+                  {ESCOLARIDADES.map((e) => (
+                    <option key={e.key} value={e.key}>
+                      {e.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <p className="text-xs font-medium text-black/70">
+                  Você tem daltonismo? <Obrigatorio />
+                </p>
+                {exigeTesteDaltonismo && (
+                  <p className="mt-0.5 text-[11px] text-black/40">
+                    Vagas de componentes eletrônicos exigem boa distinção de cores — por isso pedimos o teste rápido abaixo.
+                  </p>
+                )}
+                <OpcoesBotao valor={perfil.daltonismo} opcoes={OPCOES_DALTONISMO} onChange={(v) => setP("daltonismo", v)} />
+              </div>
+
+              {exigeTesteDaltonismo && (
+                <div className="rounded-2xl border border-black/10 bg-black/[0.015] p-4">
+                  <p className="text-xs font-medium text-black/70">
+                    Teste rápido de visão de cores <Obrigatorio />
+                  </p>
+                  <p className="mt-0.5 text-[11px] leading-4 text-black/45">
+                    Digite o número que você vê em cada círculo. Se não enxergar nenhum, toque em &quot;Não vejo&quot;.
+                    Faça com o brilho da tela normal e sem filtro de luz azul/modo noturno.
+                  </p>
+                  <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4">
+                    {PLACAS_DALTONISMO.map((pl, i) => {
+                      const v = respostasDaltonismo[pl.id] ?? "";
+                      return (
+                        <div key={pl.id} className="flex flex-col items-center">
+                          {/* eslint-disable-next-line @next/next/no-img-element */}
+                          <img src={pl.imagem} alt={`Placa ${i + 1}`} className="aspect-square w-full max-w-[140px]" />
+                          <div className="mt-1.5 flex w-full max-w-[140px] gap-1">
+                            <input
+                              inputMode="numeric"
+                              maxLength={2}
+                              aria-label={`Número da placa ${i + 1}`}
+                              value={v === "-" ? "" : v}
+                              placeholder={v === "-" ? "Não vejo" : "nº"}
+                              onChange={(e) =>
+                                setRespostasDaltonismo((r) => ({ ...r, [pl.id]: e.target.value.replace(/\D/g, "") }))
+                              }
+                              className="w-full min-w-0 rounded-lg border border-black/10 px-2 py-1.5 text-center text-sm text-black outline-none focus:border-[#2f80c9]"
+                            />
+                            <button
+                              type="button"
+                              onClick={() => setRespostasDaltonismo((r) => ({ ...r, [pl.id]: "-" }))}
+                              className={`shrink-0 rounded-lg px-2 text-[10px] font-medium transition ${
+                                v === "-" ? "bg-[#2f80c9] text-white" : "bg-black/[0.04] text-black/55 hover:bg-black/[0.08]"
+                              }`}
+                            >
+                              Não vejo
+                            </button>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
+              <div>
+                <p className="text-xs font-medium text-black/70">
+                  Você já esteve no Japão? <Obrigatorio />
+                </p>
+                <OpcoesBotao
+                  valor={perfil.jaEsteveJapao}
+                  opcoes={SIM_NAO}
+                  onChange={(v) => setPerfil((p) => ({ ...p, jaEsteveJapao: v, ...(v === "nao" ? { anosNoJapao: null, dividasJapao: "", ajudaGovernoRetorno: "" } : {}) }))}
+                />
+                {perfil.jaEsteveJapao === "sim" && (
+                  <div className="mt-2 max-w-[220px]">
+                    <label className="text-[11px] font-medium text-black/50">
+                      Quanto tempo no total (anos)? <Obrigatorio />
+                    </label>
+                    <input
+                      type="number"
+                      inputMode="decimal"
+                      min={0}
+                      max={60}
+                      step={0.5}
+                      placeholder="ex.: 2,5"
+                      value={perfil.anosNoJapao ?? ""}
+                      onChange={(e) => setP("anosNoJapao", e.target.value === "" ? null : Number(e.target.value))}
+                      className="mt-1 w-full rounded-xl border border-black/10 px-3 py-2.5 text-sm text-black outline-none focus:border-[#2f80c9]"
+                    />
+                  </div>
+                )}
+              </div>
+
+              <div>
+                <p className="text-xs font-medium text-black/70">
+                  Você tem filhos? <Obrigatorio />
+                </p>
+                <OpcoesBotao
+                  valor={perfil.temFilhos}
+                  opcoes={SIM_NAO}
+                  onChange={(v) =>
+                    setPerfil((p) => ({ ...p, temFilhos: v, idadesFilhos: v === "sim" ? (p.idadesFilhos.length ? p.idadesFilhos : [NaN]) : [] }))
+                  }
+                />
+                {perfil.temFilhos === "sim" && (
+                  <div className="mt-2">
+                    <p className="text-[11px] font-medium text-black/50">
+                      Idade de cada filho <Obrigatorio />
+                    </p>
+                    <div className="mt-1 flex flex-wrap items-center gap-2">
+                      {perfil.idadesFilhos.map((idadeFilho, i) => (
+                        <input
+                          key={i}
+                          type="number"
+                          inputMode="numeric"
+                          min={0}
+                          max={40}
+                          aria-label={`Idade do filho ${i + 1}`}
+                          value={Number.isFinite(idadeFilho) ? idadeFilho : ""}
+                          onChange={(e) =>
+                            setPerfil((p) => ({
+                              ...p,
+                              idadesFilhos: p.idadesFilhos.map((x, j) => (j === i ? (e.target.value === "" ? NaN : Number(e.target.value)) : x)),
+                            }))
+                          }
+                          className="w-16 rounded-xl border border-black/10 px-2 py-2 text-center text-sm text-black outline-none focus:border-[#2f80c9]"
+                        />
+                      ))}
+                      {perfil.idadesFilhos.length < 10 && (
+                        <button
+                          type="button"
+                          onClick={() => setPerfil((p) => ({ ...p, idadesFilhos: [...p.idadesFilhos, NaN] }))}
+                          className="rounded-full bg-black/[0.04] px-3 py-1.5 text-xs font-medium text-black/60 hover:bg-black/[0.08]"
+                        >
+                          + filho
+                        </button>
+                      )}
+                      {perfil.idadesFilhos.length > 1 && (
+                        <button
+                          type="button"
+                          onClick={() => setPerfil((p) => ({ ...p, idadesFilhos: p.idadesFilhos.slice(0, -1) }))}
+                          className="rounded-full px-2 py-1.5 text-xs text-black/45 hover:text-black/70"
+                        >
+                          remover
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              <div>
+                <p className="text-xs font-medium text-black/70">
+                  Aceita fazer horas extras? <Obrigatorio />
+                </p>
+                <OpcoesBotao valor={perfil.horasExtras} opcoes={OPCOES_HORAS_EXTRAS} onChange={(v) => setP("horasExtras", v)} />
+              </div>
+
+              <div>
+                <p className="text-xs font-medium text-black/70">
+                  Aceita trabalhar em turno alternado? <Obrigatorio />
+                </p>
+                <p className="mt-0.5 text-[11px] leading-4 text-black/40">
+                  Revezamento entre turnos de dia e de noite — por exemplo, 4 dias no turno do dia, 4 no da noite, com 2
+                  dias de folga a cada 4. Os dias de folga e o turno podem mudar.
+                  {turnoEliminatorio && " Esta vaga trabalha em turno alternado."}
+                </p>
+                <OpcoesBotao valor={perfil.turnoAlternado} opcoes={SIM_NAO} onChange={(v) => setP("turnoAlternado", v)} />
+              </div>
+
+              <div>
+                <label className="text-[11px] font-medium text-black/50">Província de preferência</label>
+                <select
+                  value={perfil.provinciaPreferida}
+                  onChange={(e) => setP("provinciaPreferida", e.target.value)}
+                  className="mt-1 w-full rounded-xl border border-black/10 px-3 py-2.5 text-sm text-black outline-none focus:border-[#2f80c9]"
+                >
+                  <option value="">Sem preferência</option>
+                  {PROVINCIAS_JAPAO.map((pr) => (
+                    <option key={pr} value={pr}>
+                      {pr}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <p className="text-xs font-medium text-black/70">
+                  Se a vaga original não puder seguir, você tem flexibilidade de região? <Obrigatorio />
+                </p>
+                <div className="mt-2 space-y-1.5">
+                  {OPCOES_FLEXIBILIDADE.map((o) => (
+                    <label key={o.key} className="flex cursor-pointer items-center gap-2.5 text-xs text-black/70">
+                      <input
+                        type="radio"
+                        name="flexibilidadeRegiao"
+                        checked={perfil.flexibilidadeRegiao === o.key}
+                        onChange={() => setP("flexibilidadeRegiao", o.key)}
+                        className="h-4 w-4 text-[#2f80c9] focus:ring-[#2f80c9]"
+                      />
+                      {o.label}
+                    </label>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <p className="text-xs font-medium text-black/70">
+                  Você possui dívidas em aberto no Brasil? <Obrigatorio />
+                </p>
+                <OpcoesBotao valor={perfil.dividasBrasil} opcoes={SIM_NAO} onChange={(v) => setP("dividasBrasil", v)} />
+              </div>
+
+              {perfil.jaEsteveJapao === "sim" && (
+                <>
+                  <div>
+                    <p className="text-xs font-medium text-black/70">
+                      Você possui dívidas em aberto no Japão (impostos/tributos)? <Obrigatorio />
+                    </p>
+                    <OpcoesBotao valor={perfil.dividasJapao} opcoes={SIM_NAO} onChange={(v) => setP("dividasJapao", v)} />
+                  </div>
+                  <div>
+                    <p className="text-xs font-medium text-black/70">
+                      Você já recebeu ajuda do governo japonês para retornar ao Brasil? <Obrigatorio />
+                    </p>
+                    <p className="mt-0.5 text-[11px] leading-4 text-black/40">
+                      Por exemplo, o auxílio de passagem de retorno oferecido a descendentes em 2009–2010.
+                    </p>
+                    <OpcoesBotao valor={perfil.ajudaGovernoRetorno} opcoes={SIM_NAO} onChange={(v) => setP("ajudaGovernoRetorno", v)} />
+                  </div>
+                </>
+              )}
+
+              {perguntaFinanciamento && (
+                <div>
+                  <p className="text-xs font-medium text-black/70">
+                    Pretende financiar a taxa de contratação, a passagem aérea e a emissão de documentos? <Obrigatorio />
+                  </p>
+                  <p className="mt-0.5 text-[11px] leading-4 text-black/40">
+                    Nesta vaga esses custos não são cobertos pela empresa. O financiamento é descontado do salário
+                    em parcelas — confirmamos as condições com você.
+                  </p>
+                  <OpcoesBotao valor={perfil.financiamentoCustos} opcoes={OPCOES_FINANCIAMENTO} onChange={(v) => setP("financiamentoCustos", v)} />
+                </div>
+              )}
+
+              <div>
+                <p className="text-xs font-medium text-black/70">
+                  Você possui antecedentes criminais? <Obrigatorio />
+                </p>
+                <p className="mt-0.5 text-[11px] leading-4 text-black/40">
+                  O visto de trabalho japonês avalia esse ponto. Se tiver, anexe a Certidão de Antecedentes Criminais
+                  da Polícia Federal (emitida grátis em gov.br) — ajuda a acelerar a análise.
+                </p>
+                <OpcoesBotao valor={perfil.antecedentesCriminais} opcoes={SIM_NAO} onChange={(v) => setP("antecedentesCriminais", v)} />
+                {perfil.antecedentesCriminais && (
+                  <div className="mt-2">
+                    <label className="text-[11px] font-medium text-black/50">
+                      Certidão da Polícia Federal <span className="font-normal text-black/35">(opcional)</span>
+                    </label>
+                    <input
+                      type="file"
+                      accept=".pdf,.jpg,.jpeg,.png,.webp,.heic,application/pdf,image/*"
+                      onChange={(e) => setCertidaoAntecedentes(e.target.files?.[0] ?? null)}
+                      className="mt-1 w-full rounded-xl border border-dashed border-black/15 px-3 py-2.5 text-xs text-black/60 outline-none file:mr-3 file:rounded-full file:border-0 file:bg-black/[0.04] file:px-3 file:py-1.5 file:text-xs file:font-medium file:text-black/70"
+                    />
+                  </div>
+                )}
+              </div>
+
+              <div>
+                <p className="text-xs font-medium text-black/70">
+                  Você tem tatuagem que fique visível usando uniforme de manga curta? <Obrigatorio />
+                </p>
+                <p className="mt-0.5 text-[11px] leading-4 text-black/40">
+                  Não é critério de avaliação pessoal. No Japão, algumas empresas, alojamentos com banho coletivo,
+                  onsen e academias têm regras próprias para tatuagens — perguntamos só para indicar vagas e
+                  moradias compatíveis com você.
+                </p>
+                <OpcoesBotao
+                  valor={perfil.tatuagemVisivel}
+                  opcoes={SIM_NAO}
+                  onChange={(v) => setPerfil((p) => ({ ...p, tatuagemVisivel: v, ...(v === "nao" ? { tatuagemRegioes: [], tatuagemTamanho: "" } : {}) }))}
+                />
+                {perfil.tatuagemVisivel === "sim" && (
+                  <div className="mt-2 space-y-2">
+                    <p className="text-[11px] font-medium text-black/50">
+                      Em quais regiões? <Obrigatorio />
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      {REGIOES_TATUAGEM.map((r) => (
+                        <button
+                          key={r.key}
+                          type="button"
+                          aria-pressed={perfil.tatuagemRegioes.includes(r.key)}
+                          onClick={() => alternarEmLista("tatuagemRegioes", r.key)}
+                          className={`rounded-full px-3.5 py-1.5 text-xs font-medium transition ${
+                            perfil.tatuagemRegioes.includes(r.key) ? "bg-[#2f80c9] text-white" : "bg-black/[0.04] text-black/60 hover:bg-black/[0.08]"
+                          }`}
+                        >
+                          {r.label}
+                        </button>
+                      ))}
+                    </div>
+                    <p className="pt-1 text-[11px] font-medium text-black/50">
+                      Tamanho da maior <Obrigatorio />
+                    </p>
+                    <OpcoesBotao valor={perfil.tatuagemTamanho} opcoes={TAMANHOS_TATUAGEM} onChange={(v) => setP("tatuagemTamanho", v)} />
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* ── SAÚDE — perguntas 17–21 (Wilson, 06/out/2026). Consentimento
+                específico antes das perguntas (LGPD art. 11); nenhuma resposta
+                daqui elimina automaticamente por padrão — vão pra revisão da
+                equipe (ver CRITERIOS_TRIAGEM_PADRAO). ── */}
+            <div className="space-y-4 border-t border-black/10 pt-4">
+              <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-black/55">Saúde</p>
+              <p className="text-[11px] leading-4 text-black/45">
+                Essas informações servem para garantir sua segurança no Japão: indicar cidades com estrutura médica
+                compatível, moradia adequada e checar regras de entrada de medicamentos no país. Ficam restritas à
+                equipe de recrutamento da Ajisai e não são repassadas sem a sua autorização.
+              </p>
+              <label className="flex cursor-pointer items-start gap-2.5 rounded-xl border border-black/10 bg-black/[0.015] p-3 text-xs leading-5 text-black/70">
+                <input
+                  type="checkbox"
+                  checked={perfil.consentimentoSaude}
+                  onChange={(e) => setP("consentimentoSaude", e.target.checked)}
+                  className="mt-0.5 h-4 w-4 shrink-0 rounded border-black/30 text-[#2f80c9] focus:ring-[#2f80c9]"
+                />
+                <span>
+                  Autorizo a Ajisai a usar os dados de saúde abaixo exclusivamente para avaliar a compatibilidade da vaga,
+                  da cidade e da moradia comigo. <Obrigatorio />
+                </span>
+              </label>
+
+              <div>
+                <p className="text-xs font-medium text-black/70">
+                  Já teve alguma doença grave ou está em tratamento médico atualmente? <Obrigatorio />
+                </p>
+                <OpcoesBotao
+                  valor={perfil.doencaGrave}
+                  opcoes={SIM_NAO}
+                  onChange={(v) => setPerfil((p) => ({ ...p, doencaGrave: v, ...(v === "nao" ? { emTratamento: "", doencaGraveDescricao: "" } : {}) }))}
+                />
+                {perfil.doencaGrave === "sim" && (
+                  <div className="mt-2 space-y-2">
+                    <input
+                      value={perfil.doencaGraveDescricao}
+                      onChange={(e) => setP("doencaGraveDescricao", e.target.value)}
+                      placeholder="Qual? (opcional)"
+                      maxLength={500}
+                      className="w-full rounded-xl border border-black/10 px-3 py-2.5 text-sm text-black outline-none focus:border-[#2f80c9]"
+                    />
+                    <p className="text-[11px] font-medium text-black/50">
+                      Está em tratamento atualmente? <Obrigatorio />
+                    </p>
+                    <OpcoesBotao valor={perfil.emTratamento} opcoes={SIM_NAO} onChange={(v) => setP("emTratamento", v)} />
+                  </div>
+                )}
+              </div>
+
+              <div>
+                <p className="text-xs font-medium text-black/70">
+                  Você tem alguma destas condições visuais? <Obrigatorio />
+                </p>
+                <p className="mt-0.5 text-[11px] text-black/40">Miopia, astigmatismo e hipermetropia não entram aqui.</p>
+                <div className="mt-2 flex flex-wrap gap-2">
+                  <button
+                    type="button"
+                    aria-pressed={perfil.semCondicaoVisual}
+                    onClick={() => setPerfil((p) => ({ ...p, semCondicaoVisual: !p.semCondicaoVisual, condicoesVisuais: [] }))}
+                    className={`rounded-full px-3.5 py-1.5 text-xs font-medium transition ${
+                            perfil.semCondicaoVisual ? "bg-[#2f80c9] text-white" : "bg-black/[0.04] text-black/60 hover:bg-black/[0.08]"
+                          }`}
+                  >
+                    Nenhuma
+                  </button>
+                  {CONDICOES_VISUAIS.map((c) => (
+                    <button
+                      key={c.key}
+                      type="button"
+                      aria-pressed={perfil.condicoesVisuais.includes(c.key)}
+                      onClick={() => alternarEmLista("condicoesVisuais", c.key)}
+                      className={`rounded-full px-3.5 py-1.5 text-xs font-medium transition ${
+                            perfil.condicoesVisuais.includes(c.key) ? "bg-[#2f80c9] text-white" : "bg-black/[0.04] text-black/60 hover:bg-black/[0.08]"
+                          }`}
+                    >
+                      {c.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <p className="text-xs font-medium text-black/70">
+                  Você fuma? <Obrigatorio />
+                </p>
+                <OpcoesBotao valor={perfil.fumante} opcoes={OPCOES_FUMANTE} onChange={(v) => setP("fumante", v)} />
+              </div>
+
+              <div>
+                <p className="text-xs font-medium text-black/70">
+                  Toma atualmente algum medicamento controlado? <Obrigatorio />
+                </p>
+                <p className="mt-0.5 text-[11px] leading-4 text-black/40">
+                  Alguns remédios são proibidos ou exigem autorização prévia para entrar no Japão — perguntamos para
+                  orientar você antes do embarque.
+                </p>
+                <OpcoesBotao
+                  valor={perfil.medicacaoControlada}
+                  opcoes={SIM_NAO}
+                  onChange={(v) => setPerfil((p) => ({ ...p, medicacaoControlada: v, ...(v === "nao" ? { medicacaoClasses: [] } : {}) }))}
+                />
+                {perfil.medicacaoControlada === "sim" && (
+                  <div className="mt-2 flex flex-wrap gap-2">
+                    {CLASSES_MEDICAMENTO.map((c) => (
+                      <button
+                        key={c.key}
+                        type="button"
+                        aria-pressed={perfil.medicacaoClasses.includes(c.key)}
+                        onClick={() => alternarEmLista("medicacaoClasses", c.key)}
+                        className={`rounded-full px-3.5 py-1.5 text-xs font-medium transition ${
+                            perfil.medicacaoClasses.includes(c.key) ? "bg-[#2f80c9] text-white" : "bg-black/[0.04] text-black/60 hover:bg-black/[0.08]"
+                          }`}
+                      >
+                        {c.label}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              <div>
+                <p className="text-xs font-medium text-black/70">
+                  Você tem diabetes? <Obrigatorio />
+                </p>
+                <OpcoesBotao
+                  valor={perfil.diabetes}
+                  opcoes={SIM_NAO}
+                  onChange={(v) => setPerfil((p) => ({ ...p, diabetes: v, ...(v === "nao" ? { diabetesTipo: "", insulinaInjetavel: "" } : {}) }))}
+                />
+                {perfil.diabetes === "sim" && (
+                  <div className="mt-2 space-y-2">
+                    <p className="text-[11px] font-medium text-black/50">
+                      Qual tipo? <Obrigatorio />
+                    </p>
+                    <OpcoesBotao valor={perfil.diabetesTipo} opcoes={TIPOS_DIABETES} onChange={(v) => setP("diabetesTipo", v)} />
+                    <p className="pt-1 text-[11px] font-medium text-black/50">
+                      Usa insulina injetável? <Obrigatorio />
+                    </p>
+                    <p className="text-[11px] leading-4 text-black/40">
+                      Para garantir moradia e local de trabalho com estrutura de higiene adequada para a aplicação.
+                    </p>
+                    <OpcoesBotao valor={perfil.insulinaInjetavel} opcoes={SIM_NAO} onChange={(v) => setP("insulinaInjetavel", v)} />
+                  </div>
+                )}
+              </div>
+            </div>
 
             {/* Currículo movido pro final do formulário — pedido do Wilson,
                 06/out/2026 ("campo do curriculo para o final"). */}

@@ -18,6 +18,14 @@
 // rejeitadas automaticamente.
 
 import type { SetorKey, Vaga } from "./vagasCatalogo";
+import {
+  imc,
+  ordemEscolaridade,
+  vagaTemTurnoAlternado,
+  ESCOLARIDADES,
+  type Escolaridade,
+  type PerfilCandidato,
+} from "./triagemPerfil";
 
 // ── Perguntas de triagem — mesmas para todas as vagas (decisão do
 // Wilson, 25/set/2026: "Mesmas perguntas p/ todas as vagas"). ──
@@ -87,19 +95,77 @@ export type PerguntaTriagemKey =
 //   seja a pontuação (o candidato vê o motivo no resultado).
 // - "qualificatorio": "Sim" soma os pontos do critério; "Não" só deixa de
 //   somar.
-export type ModoCriterioTriagem = "eliminatorio" | "qualificatorio";
+// - "informativo": não pontua nem barra; vai destacado no e-mail da equipe.
+export type ModoCriterioTriagem = "eliminatorio" | "qualificatorio" | "informativo";
 
 export type CriteriosTriagem = {
   experiencia: ModoCriterioTriagem;
   reEntry: ModoCriterioTriagem;
+  // Perguntas de perfil (06/out/2026 — ver app/lib/triagemPerfil.ts).
+  turnoAlternado: ModoCriterioTriagem;
+  daltonismo: ModoCriterioTriagem;
+  dividasBrasil: ModoCriterioTriagem;
+  dividasJapao: ModoCriterioTriagem;
+  ajudaGovernoRetorno: ModoCriterioTriagem;
+  // Perguntas 15–21 (06/out/2026). Padrão "informativo": não eliminam
+  // sozinhas; saem como "REVISAR" no e-mail da equipe. Decisão de produto
+  // registrada: o Wilson pediu diabetes com insulina como eliminatória;
+  // ficou como revisão manual por padrão porque eliminação automática por
+  // condição de saúde é o ponto de maior risco legal (Lei 9.029/95 e LGPD
+  // art. 11) — pra tornar eliminatório numa vaga específica (com
+  // justificativa da fábrica), basta { diabetesInsulina: "eliminatorio" }
+  // em vaga.criteriosTriagem.
+  antecedentesCriminais: ModoCriterioTriagem;
+  tatuagem: ModoCriterioTriagem;
+  doencaGrave: ModoCriterioTriagem;
+  condicaoVisual: ModoCriterioTriagem;
+  fumante: ModoCriterioTriagem;
+  medicacaoControlada: ModoCriterioTriagem;
+  diabetesInsulina: ModoCriterioTriagem;
+  // Limites opcionais por vaga (sem valor = não eliminam).
+  escolaridadeMinima?: Escolaridade;
+  alturaMinimaCm?: number;
+  alturaMaximaCm?: number;
+  imcMaximo?: number;
 };
 
-// Critério unificado de hoje: os dois só qualificam (ninguém é barrado
-// automaticamente por eles).
+// Critério unificado de hoje. Experiência e Re-Entry só qualificam; turno
+// alternado e daltonismo dependem da vaga (ver criteriosDaVaga); o resto
+// é informativo.
 export const CRITERIOS_TRIAGEM_PADRAO: CriteriosTriagem = {
   experiencia: "qualificatorio",
   reEntry: "qualificatorio",
+  turnoAlternado: "informativo",
+  daltonismo: "informativo",
+  dividasBrasil: "informativo",
+  dividasJapao: "informativo",
+  ajudaGovernoRetorno: "informativo",
+  antecedentesCriminais: "informativo",
+  tatuagem: "informativo",
+  doencaGrave: "informativo",
+  condicaoVisual: "informativo",
+  fumante: "informativo",
+  medicacaoControlada: "informativo",
+  diabetesInsulina: "informativo",
 };
+
+// Regras efetivas de uma vaga: padrão + ajustes automáticos pelo próprio
+// dado da vaga + o que estiver em vaga.criteriosTriagem (que sempre vence).
+export function criteriosDaVaga(vaga: Vaga): CriteriosTriagem {
+  return {
+    ...CRITERIOS_TRIAGEM_PADRAO,
+    // Turno alternado é eliminatório quando o turno da vaga é alternado
+    // (pedido do Wilson: "pergunta eliminatória também").
+    turnoAlternado: vagaTemTurnoAlternado(vaga.turno) ? "eliminatorio" : "informativo",
+    // Daltonismo só importa em componentes eletrônicos.
+    daltonismo: vaga.setor === "eletronicos" ? "eliminatorio" : "informativo",
+    ...(vaga.criteriosTriagem ?? {}),
+  };
+}
+
+export function vagaExigeTesteDaltonismo(vaga: Vaga): boolean {
+  return vaga.setor === "eletronicos";
+}
 
 // Ascendência japonesa e data desejada de embarque — pedido do Wilson,
 // 25/set/2026: "aqui ta faltando o pre-cadastro, anexar curriculo, nome
@@ -142,6 +208,8 @@ export type RespostasTriagem = {
   experienciaSetor: "sim" | "nao" | "";
   // Re-Entry (permissão de reentrada) válido — Wilson, 06/out/2026.
   reEntry?: "sim" | "nao" | "";
+  // Perguntas de perfil — ver app/lib/triagemPerfil.ts.
+  perfil?: PerfilCandidato;
   nivelJapones: NivelJapones | "";
   // Opção escolhida no formulário (JLPT/BJT) — nivelJapones é derivado dela.
   nivelJaponesDetalhado?: NivelJaponesDetalhado | "";
@@ -413,8 +481,61 @@ export function calcularPontuacaoCandidatura(params: {
 
   // Eliminatórios da vaga (ou do critério padrão) — barram a etapa de foto
   // mesmo com pontuação alta.
-  const regras = vaga.criteriosTriagem ?? CRITERIOS_TRIAGEM_PADRAO;
+  const regras = criteriosDaVaga(vaga);
+  const perfil = respostas.perfil;
   const eliminadoPor: string[] = [];
+  if (perfil) {
+    if (regras.turnoAlternado === "eliminatorio" && perfil.turnoAlternado !== "sim") {
+      eliminadoPor.push("Esta vaga trabalha em turno alternado (dia/noite).");
+    }
+    if (regras.daltonismo === "eliminatorio") {
+      if (perfil.daltonismo === "sim") eliminadoPor.push("Esta vaga (componentes eletrônicos) não aceita daltonismo.");
+      else if (perfil.testeDaltonismo && !perfil.testeDaltonismo.aprovado) {
+        eliminadoPor.push(
+          perfil.testeDaltonismo.controleOk
+            ? "O teste rápido de visão de cores indicou possível daltonismo — exigido para componentes eletrônicos."
+            : "O teste de visão de cores não pôde ser validado (a placa de controle não foi reconhecida) — nossa equipe vai refazer o teste com você.",
+        );
+      }
+    }
+    if (regras.dividasBrasil === "eliminatorio" && perfil.dividasBrasil === "sim") {
+      eliminadoPor.push("Esta vaga não aceita candidatos com dívidas em aberto no Brasil.");
+    }
+    if (regras.dividasJapao === "eliminatorio" && perfil.dividasJapao === "sim") {
+      eliminadoPor.push("Esta vaga não aceita candidatos com dívidas/impostos em aberto no Japão.");
+    }
+    if (regras.ajudaGovernoRetorno === "eliminatorio" && perfil.ajudaGovernoRetorno === "sim") {
+      eliminadoPor.push("Esta vaga não aceita candidatos que receberam ajuda do governo para retornar ao Brasil.");
+    }
+    if (regras.escolaridadeMinima && ordemEscolaridade(perfil.escolaridade) < ordemEscolaridade(regras.escolaridadeMinima)) {
+      const rotulo = ESCOLARIDADES.find((e) => e.key === regras.escolaridadeMinima)?.label ?? "";
+      eliminadoPor.push(`Esta vaga exige escolaridade mínima: ${rotulo.toLowerCase()}.`);
+    }
+    if (perfil.alturaCm) {
+      if (regras.alturaMinimaCm && perfil.alturaCm < regras.alturaMinimaCm) {
+        eliminadoPor.push(`Esta vaga exige altura mínima de ${regras.alturaMinimaCm} cm.`);
+      }
+      if (regras.alturaMaximaCm && perfil.alturaCm > regras.alturaMaximaCm) {
+        eliminadoPor.push(`Esta vaga tem altura máxima de ${regras.alturaMaximaCm} cm.`);
+      }
+    }
+    const regrasSim: [keyof CriteriosTriagem, boolean, string][] = [
+      ["antecedentesCriminais", perfil.antecedentesCriminais === "sim", "Esta vaga não aceita candidatos com antecedentes criminais (exigência do visto/empresa)."],
+      ["tatuagem", perfil.tatuagemVisivel === "sim", "Esta vaga tem restrição a tatuagens visíveis com o uniforme."],
+      ["doencaGrave", perfil.emTratamento === "sim", "Esta vaga exige avaliação médica prévia para quem está em tratamento."],
+      ["condicaoVisual", perfil.condicoesVisuais.length > 0, "Esta vaga exige avaliação de visão compatível com a função."],
+      ["fumante", perfil.fumante === "ocasional" || perfil.fumante === "diario", "Esta vaga/alojamento não aceita fumantes."],
+      ["medicacaoControlada", perfil.medicacaoControlada === "sim", "Esta vaga exige avaliação prévia de medicação controlada."],
+      ["diabetesInsulina", perfil.insulinaInjetavel === "sim", "Esta vaga exige avaliação prévia para uso de insulina injetável."],
+    ];
+    for (const [chave, condicao, motivo] of regrasSim) {
+      if (regras[chave] === "eliminatorio" && condicao) eliminadoPor.push(motivo);
+    }
+    const imcCandidato = imc(perfil);
+    if (regras.imcMaximo && imcCandidato !== null && imcCandidato > regras.imcMaximo) {
+      eliminadoPor.push("Esta vaga tem limite de IMC (peso/altura) exigido pela fábrica.");
+    }
+  }
   if (regras.experiencia === "eliminatorio" && respostas.experienciaSetor !== "sim") {
     eliminadoPor.push("Esta vaga exige experiência prévia em fábrica/produção.");
   }

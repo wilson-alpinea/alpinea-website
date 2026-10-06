@@ -44,10 +44,13 @@ export type Vaga = {
   // Peso de experiência e Re-Entry nesta vaga (eliminatório ou
   // qualificatório) — opcional; sem isso vale CRITERIOS_TRIAGEM_PADRAO em
   // app/lib/candidaturaScoring.ts. Wilson, 06/out/2026.
-  criteriosTriagem?: {
-    experiencia: "eliminatorio" | "qualificatorio";
-    reEntry: "eliminatorio" | "qualificatorio";
-  };
+  // Qualquer campo de CriteriosTriagem (candidaturaScoring.ts) pode ser
+  // sobrescrito aqui — ex.: { reEntry: "eliminatorio", imcMaximo: 30 }.
+  // true quando a empresa paga taxa de contratação, passagem e
+  // documentação — aí a pergunta de financiamento não aparece. Sem dado =
+  // pergunta aparece (Wilson, 06/out/2026).
+  custosCobertosPelaEmpresa?: boolean;
+  criteriosTriagem?: Partial<import("./candidaturaScoring").CriteriosTriagem>;
 };
 
 export type InfoVaga = {
