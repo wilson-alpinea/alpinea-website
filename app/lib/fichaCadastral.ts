@@ -350,6 +350,7 @@ export const SECOES: Secao[] = [
           { id: "motivoSaida", label: "Motivo da saída", tipo: "texto", largura: "meia" },
         ],
       },
+      { id: "vezesJapao", label: "Quantas vezes já foi trabalhar no Japão?", tipo: "numero", largura: "meia", ajuda: "0 se nunca foi." },
       {
         id: "seguroDesempregoJapao",
         label: "Já recebeu seguro-desemprego no Japão?",
@@ -382,14 +383,17 @@ export const SECOES: Secao[] = [
       { id: "paiIdade", label: "Idade", tipo: "numero", largura: "terco" },
       { id: "paiOcupacao", label: "Ocupação", tipo: "texto", largura: "terco" },
       { id: "paiMora", label: "Onde mora (cidade/UF ou país)", tipo: "texto", largura: "terco" },
+      { id: "paiTelefone", label: "Telefone", tipo: "tel", largura: "terco" },
       { id: "maeNome", label: "Mãe — nome completo", tipo: "texto", largura: "meia" },
       { id: "maeIdade", label: "Idade", tipo: "numero", largura: "terco" },
       { id: "maeOcupacao", label: "Ocupação", tipo: "texto", largura: "terco" },
       { id: "maeMora", label: "Onde mora (cidade/UF ou país)", tipo: "texto", largura: "terco" },
+      { id: "maeTelefone", label: "Telefone", tipo: "tel", largura: "terco" },
       { id: "conjugeNome", label: "Cônjuge — nome completo", tipo: "texto", obrigatorio: true, se: { campo: "estadoCivil", valores: ["casado", "uniaoEstavel"] }, largura: "meia" },
       { id: "conjugeNascimento", label: "Data de nascimento", tipo: "data", se: { campo: "estadoCivil", valores: ["casado", "uniaoEstavel"] }, largura: "terco" },
       { id: "conjugeOcupacao", label: "Ocupação", tipo: "texto", se: { campo: "estadoCivil", valores: ["casado", "uniaoEstavel"] }, largura: "terco" },
       { id: "conjugeMora", label: "Onde mora", tipo: "texto", se: { campo: "estadoCivil", valores: ["casado", "uniaoEstavel"] }, largura: "terco" },
+      { id: "conjugeTelefone", label: "Telefone", tipo: "tel", se: { campo: "estadoCivil", valores: ["casado", "uniaoEstavel"] }, largura: "terco" },
       {
         id: "filhos",
         tipo: "lista",
@@ -521,6 +525,7 @@ export const SECOES: Secao[] = [
           { v: "ambidestro", l: "Ambidestro" },
         ],
       },
+      { id: "mesEmbarque", label: "Previsão de embarque (mês/ano)", tipo: "mes", obrigatorio: true, largura: "meia" },
       {
         id: "tempoJapao",
         label: "Quanto tempo pretende trabalhar no Japão?",
@@ -828,4 +833,27 @@ export function pontosRevisarFicha(f: FichaCadastral): string[] {
 export function fichaLiberada(c: { pontuacao: number | null; classificacao?: string | null; ficha_liberada?: boolean | null }) {
   if (c.ficha_liberada) return true;
   return (c.pontuacao ?? 0) >= NOTA_MINIMA_PROXIMA_ETAPA && c.classificacao !== "eliminado";
+}
+
+// ── Leitura formatada (usada pelos modelos das fichas das parceiras) ───
+const TODOS_CAMPOS: Record<string, Campo> = Object.fromEntries(
+  SECOES.flatMap((s) => s.itens.filter((i): i is Campo => !isLista(i))).map((c) => [c.id, c]),
+);
+const TODAS_LISTAS: Record<string, Lista> = Object.fromEntries(SECOES.flatMap((s) => s.itens.filter(isLista)).map((l) => [l.id, l]));
+
+/** Valor de um campo da ficha já com o rótulo da opção ("Casado(a)", "12/03/1990"…). Vazio = "". */
+export function valorFicha(f: FichaCadastral | null | undefined, id: string): string {
+  const c = TODOS_CAMPOS[id];
+  const v = f?.valores[id];
+  if (!c || v === undefined || vazio(v)) return "";
+  return rotulo(c, v);
+}
+
+/** Itens de uma lista (experiências, filhos…) com cada campo formatado. */
+export function itensListaFicha(f: FichaCadastral | null | undefined, id: string): Record<string, string>[] {
+  const l = TODAS_LISTAS[id];
+  if (!l || !f) return [];
+  return (f.listas[id] ?? []).map((it) =>
+    Object.fromEntries(l.campos.map((c) => [c.id, it[c.id] === undefined || vazio(it[c.id]) ? "" : rotulo(c, it[c.id])])),
+  );
 }

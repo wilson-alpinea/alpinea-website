@@ -1494,6 +1494,7 @@ export default function EmpregosPage() {
 // pontuação vem de app/lib/candidaturaScoring.ts e a checagem da foto de
 // app/lib/fotoChecagem.ts, ambos determinísticos.
 type EtapaCandidatura = "formulario" | "resultado";
+type SugestaoVaga = { vagaId: string; titulo: string; empresa: string; cidade: string; regiao: string; salario: string; pontuacao: number };
 
 // Botões de opção (Sim/Não e similares) — mesmo visual das perguntas de
 // triagem que já existiam.
@@ -1589,6 +1590,33 @@ function CandidaturaModal({ vaga, onFechar }: { vaga: Vaga; onFechar: () => void
   const [aprovadoParaFoto, setAprovadoParaFoto] = useState(false);
   // Etapa 2 (ficha cadastral + foto) virou página própria — Wilson, 06/out/2026.
   const [fichaUrl, setFichaUrl] = useState<string | null>(null);
+  // Parte 2 — sugestões de outras vagas quando não passa nesta (Wilson, 06/out/2026).
+  const [sugestoes, setSugestoes] = useState<SugestaoVaga[]>([]);
+  const [candidatura, setCandidatura] = useState<{ id: string; token: string } | null>(null);
+  const [candidatandoSugestao, setCandidatandoSugestao] = useState<string | null>(null);
+
+  async function candidatarSugestao(vagaId: string) {
+    if (!candidatura || candidatandoSugestao) return;
+    setCandidatandoSugestao(vagaId);
+    setErro("");
+    try {
+      const r = await fetch("/api/empregos-candidatura-sugerida", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ candidaturaId: candidatura.id, token: candidatura.token, vagaId }),
+      });
+      const d = await r.json().catch(() => ({}));
+      if (!r.ok || !d.fichaUrl) {
+        setErro(d.error || "Não foi possível registrar agora. Tente novamente.");
+        setCandidatandoSugestao(null);
+        return;
+      }
+      window.location.assign(d.fichaUrl);
+    } catch {
+      setErro("Não foi possível registrar agora. Tente novamente.");
+      setCandidatandoSugestao(null);
+    }
+  }
 
   async function enviarFormulario(e: FormEvent) {
     e.preventDefault();
@@ -1637,6 +1665,8 @@ function CandidaturaModal({ vaga, onFechar }: { vaga: Vaga; onFechar: () => void
       setCriterios(dados.criterios || []);
       setAprovadoParaFoto(Boolean(dados.aprovadoParaFoto));
       setFichaUrl(typeof dados.fichaUrl === "string" ? dados.fichaUrl : null);
+      setSugestoes(Array.isArray(dados.sugestoes) ? dados.sugestoes : []);
+      setCandidatura(dados.tokenCandidatura ? { id: dados.candidaturaId, token: dados.tokenCandidatura } : null);
       setEtapa("resultado");
     } catch {
       setErro("Não foi possível enviar sua candidatura agora. Tente novamente.");
@@ -2421,6 +2451,8 @@ function CandidaturaModal({ vaga, onFechar }: { vaga: Vaga; onFechar: () => void
 
         {etapa === "resultado" && (
           <div className="mt-5">
+            {aprovadoParaFoto && (
+            <>
             <div className="flex flex-col items-center gap-2 py-2">
               <div
                 className="relative flex h-28 w-28 items-center justify-center rounded-full"
@@ -2449,6 +2481,9 @@ function CandidaturaModal({ vaga, onFechar }: { vaga: Vaga; onFechar: () => void
               ))}
             </div>
 
+            </>
+            )}
+
             {aprovadoParaFoto ? (
               <div className="mt-6 rounded-2xl bg-[#2f80c9]/[0.06] p-4">
                 <p className="text-xs leading-5 text-black/70">
@@ -2469,12 +2504,49 @@ function CandidaturaModal({ vaga, onFechar }: { vaga: Vaga; onFechar: () => void
                 )}
               </div>
             ) : (
-              <div className="mt-6 rounded-2xl bg-black/[0.03] p-4">
-                <p className="text-xs leading-5 text-black/70">
-                  Sua candidatura foi registrada e vai passar por uma revisão manual da nossa equipe — pontuações
-                  abaixo de {NOTA_MINIMA_PROXIMA_ETAPA}% não são descartadas automaticamente. Entraremos em contato se
-                  houver uma oportunidade compatível.
-                </p>
+              <div>
+                <div className="rounded-2xl bg-black/[0.03] p-5 text-center">
+                  <p className={`${display.className} text-lg font-medium text-black`}>Obrigado, {nome}!</p>
+                  <p className="mt-2 text-xs leading-5 text-black/65">
+                    Recebemos sua candidatura e ela segue em análise pela nossa equipe. Entraremos em contato pelo
+                    e-mail ou telefone informados.
+                  </p>
+                </div>
+
+                {/* Vagas em que o mesmo perfil passaria — Wilson, 06/out/2026. */}
+                {sugestoes.length > 0 && (
+                  <div className="mt-5">
+                    <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[#2f80c9]">
+                      Vagas com mais a ver com o seu perfil
+                    </p>
+                    <p className="mt-1 text-[11px] leading-4 text-black/45">
+                      Com as mesmas respostas e currículo, você já passaria para a próxima etapa nestas vagas — sem
+                      precisar preencher tudo de novo.
+                    </p>
+                    <div className="mt-3 space-y-2.5">
+                      {sugestoes.map((sg) => (
+                        <div key={sg.vagaId} className="flex items-center justify-between gap-3 rounded-2xl border border-black/10 p-3.5">
+                          <div className="min-w-0">
+                            <p className="text-[10px] font-semibold uppercase tracking-[0.1em] text-black/45">{sg.empresa}</p>
+                            <p className="truncate text-sm font-medium text-black">{sg.titulo}</p>
+                            <p className="text-[11px] text-black/45">
+                              {sg.cidade} · compatibilidade {sg.pontuacao}%
+                            </p>
+                          </div>
+                          <button
+                            type="button"
+                            disabled={!!candidatandoSugestao}
+                            onClick={() => candidatarSugestao(sg.vagaId)}
+                            className="shrink-0 rounded-full bg-[#2f80c9] px-4 py-2 text-[11px] font-semibold uppercase tracking-[0.12em] text-white transition hover:bg-[#3b91dc] disabled:opacity-60"
+                          >
+                            {candidatandoSugestao === sg.vagaId ? "Enviando…" : "Quero esta"}
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                    {erro && <p className="mt-2 text-xs text-red-500">{erro}</p>}
+                  </div>
+                )}
                 <button
                   type="button"
                   onClick={onFechar}

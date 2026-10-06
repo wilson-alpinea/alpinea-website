@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { randomUUID } from "crypto";
 import { createAdminClient } from "../../../lib/supabase/admin";
-import { encontrarVaga } from "../../lib/vagasCatalogo";
+import { encontrarVaga, VAGAS } from "../../lib/vagasCatalogo";
 import { extrairTextoCurriculo } from "../../lib/curriculoExtracao";
 import { TIPOS_CURRICULO_ACEITOS } from "../../lib/curriculoConstantes";
 import {
@@ -382,8 +382,40 @@ export async function POST(req: Request) {
       replyTo: email,
     });
 
+    // Não passou nesta vaga? Sugere até 3 outras vagas em que o MESMO
+    // perfil + currículo passaria (score >= 80 e sem eliminatória) —
+    // Wilson, 06/out/2026.
+    const sugestoes = resultado.aprovadoParaFoto
+      ? []
+      : VAGAS.filter((v) => v.id !== vaga.id)
+          .map((v) => ({
+            v,
+            r: calcularPontuacaoCandidatura({
+              vaga: v,
+              curriculoTexto,
+              idade: Number.isFinite(idade) && idade !== null && idade > 0 ? idade : null,
+              respostas,
+            }),
+          }))
+          .filter(({ r }) => r.aprovadoParaFoto)
+          .sort((a, b) => b.r.pontuacao - a.r.pontuacao || (a.v.status === "aberta" ? -1 : 1))
+          .slice(0, 3)
+          .map(({ v, r }) => ({
+            vagaId: v.id,
+            titulo: v.titulo,
+            empresa: v.empresa,
+            cidade: v.cidade,
+            regiao: v.regiao,
+            salario: v.salario,
+            pontuacao: r.pontuacao,
+          }));
+
     return NextResponse.json({
       candidaturaId: candidatura.id,
+      // Segredo da candidatura (mesmo token da ficha) — permite candidatar
+      // a uma vaga sugerida sem reenviar o formulário.
+      tokenCandidatura: candidatura.ficha_token ?? null,
+      sugestoes,
       // Etapa 2 — ficha cadastral (só quando passou: score >= 80 e não eliminado).
       fichaUrl:
         resultado.aprovadoParaFoto && candidatura.ficha_token
