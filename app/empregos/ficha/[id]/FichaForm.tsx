@@ -235,7 +235,17 @@ function ListaCampos({
   );
 }
 
-export default function FichaForm({ candidaturaId, token, fichaJaEnviada }: { candidaturaId: string; token: string; fichaJaEnviada: boolean }) {
+export default function FichaForm({
+  candidaturaId,
+  token,
+  fichaJaEnviada,
+  proxima,
+}: {
+  candidaturaId: string;
+  token: string;
+  fichaJaEnviada: boolean;
+  proxima: { href: string; label: string };
+}) {
   const chave = `alpinea-ficha-${candidaturaId}`;
   const [ficha, setFicha] = useState<FichaCadastral>(() => lerRascunho(chave));
   const [passo, setPasso] = useState(fichaJaEnviada ? ETAPAS.length - 1 : 0);
@@ -336,9 +346,13 @@ export default function FichaForm({ candidaturaId, token, fichaJaEnviada }: { ca
     return (
       <div className="mt-8 rounded-3xl bg-white p-8 text-center shadow-sm">
         <p className="text-lg font-medium text-black">Ficha e foto recebidas!</p>
-        <p className="mt-2 text-sm leading-6 text-black/55">
-          Nossa equipe vai revisar tudo e entrar em contato pelo e-mail ou telefone informados.
-        </p>
+        <p className="mt-2 text-sm leading-6 text-black/55">Agora falta pouco para a sua pré-entrevista.</p>
+        <a
+          href={proxima.href}
+          className="mt-6 inline-block rounded-full bg-[#2f80c9] px-7 py-3.5 text-xs font-semibold uppercase tracking-[0.18em] text-white transition hover:bg-[#3b91dc]"
+        >
+          {proxima.label}
+        </a>
       </div>
     );
   }

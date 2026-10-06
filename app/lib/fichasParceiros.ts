@@ -86,10 +86,12 @@ const previsaoEmbarque = FX("Previsão de embarque", (x) => valorFicha(x.f, "mes
 const endereco = FX("Endereço", (x) => juntar(`${valorFicha(x.f, "logradouro")}, ${valorFicha(x.f, "numero")}`.replace(/^, |, $/, ""), valorFicha(x.f, "complemento")));
 const turnos = FX("Turnos", (x) =>
   juntar(
-    `Diurno: ${valorFicha(x.f, "turnoDiurno")}`,
-    `Noturno: ${valorFicha(x.f, "turnoNoturno")}`,
-    `Alt. semanal: ${valorFicha(x.f, "turnoAlternadoSemanal")}`,
-    `Alt. mensal: ${valorFicha(x.f, "turnoAlternadoMensal")}`,
+    ...[
+      ["Diurno", "turnoDiurno"],
+      ["Noturno", "turnoNoturno"],
+      ["Alt. semanal", "turnoAlternadoSemanal"],
+      ["Alt. mensal", "turnoAlternadoMensal"],
+    ].map(([rot, id]) => (valorFicha(x.f, id) ? `${rot}: ${valorFicha(x.f, id).toLowerCase()}` : "")),
   ),
 );
 const pessoa = (pre: string) => (x: ContextoFicha) =>
@@ -103,12 +105,12 @@ const familia: CampoParceiro[] = [
 ];
 const expJapao = FX("Experiência no Japão", (x) =>
   itensListaFicha(x.f, "experienciasJapao")
-    .map((e) => juntar(e.fabrica, e.empreiteira, e.funcao, juntar(e.provincia, e.cidade), `${e.inicio}～${e.saida || "atual"}`, e.salarioHora && `¥${e.salarioHora}/h`, e.contrato, e.shakaiHoken && `Shakai: ${e.shakaiHoken}`, e.motivoSaida && `saída: ${e.motivoSaida}`))
+    .map((e) => juntar(e.fabrica, e.empreiteira, e.funcao, juntar(e.provincia, e.cidade), `${e.inicio} a ${e.saida || "atual"}`, e.salarioHora && `¥${e.salarioHora}/h`, e.contrato, e.shakaiHoken && `Shakai: ${e.shakaiHoken}`, e.motivoSaida && `saída: ${e.motivoSaida}`))
     .join(" | "),
 );
 const expBrasil = FX("Experiência no Brasil", (x) =>
   itensListaFicha(x.f, "experienciasBrasil")
-    .map((e) => juntar(e.empresa, e.funcao, e.cidade, `${e.inicio}～${e.saida || "atual"}`, e.contrato, e.motivoSaida && `saída: ${e.motivoSaida}`))
+    .map((e) => juntar(e.empresa, e.funcao, e.cidade, `${e.inicio} a ${e.saida || "atual"}`, e.contrato, e.motivoSaida && `saída: ${e.motivoSaida}`))
     .join(" | "),
 );
 const japonesLeitura = FX("Japonês — leitura (hira/kata/kanji)", (x) => [valorFicha(x.f, "leHiragana"), valorFicha(x.f, "leKatakana"), valorFicha(x.f, "leKanji")].join(" / "));

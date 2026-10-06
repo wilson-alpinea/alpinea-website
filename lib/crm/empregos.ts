@@ -2,6 +2,8 @@
 // Pedido do Wilson, 06/out/2026 (ver supabase/migrations/015).
 
 import type { ClassificacaoCandidatura } from "@/app/lib/candidaturaScoring";
+import { fichaLiberada } from "@/app/lib/fichaCadastral";
+import { proximaEtapa } from "@/app/lib/etapasCandidatura";
 import {
   ESCOLARIDADES,
   OPCOES_DALTONISMO,
@@ -136,4 +138,45 @@ export function linhasTriagemBasica(respostas: Record<string, unknown>): [string
 export const BUCKETS_CANDIDATO = ["curriculos-candidatos", "fotos-candidatos"] as const;
 export function urlArquivoCandidato(bucket: (typeof BUCKETS_CANDIDATO)[number], path: string) {
   return `/crm/empregos/arquivo?bucket=${encodeURIComponent(bucket)}&path=${encodeURIComponent(path)}`;
+}
+
+// ── Funil de etapas da candidatura (Wilson, 06/out/2026: "no CRM devemos
+// ter a informação também sobre clientes que seguiram para as etapas 2, 3,
+// 4") ──────────────────────────────────────────────────────────────────
+export type ProgressoCandidatura = { etapa: 1 | 2 | 3 | 4 | 5; label: string; cor: string };
+
+export const ETAPAS_FUNIL: { etapa: ProgressoCandidatura["etapa"]; label: string }[] = [
+  { etapa: 1, label: "Etapa 1 — triagem" },
+  { etapa: 2, label: "Etapa 2 — ficha cadastral" },
+  { etapa: 3, label: "Etapa 3 — proposta" },
+  { etapa: 4, label: "Etapa 4 — agendamento" },
+  { etapa: 5, label: "Pré-entrevista agendada" },
+];
+
+export function progressoCandidatura(
+  c: {
+    vaga_id: string;
+    pontuacao: number | null;
+    classificacao?: string | null;
+    ficha_liberada?: boolean | null;
+    ficha_enviada_em?: string | null;
+    foto_path?: string | null;
+    proposta_status?: string | null;
+  },
+  entrevistaInicio?: string | null,
+): ProgressoCandidatura {
+  if (!fichaLiberada(c)) return { etapa: 1, label: "Etapa 1 — em análise", cor: "#8a8a8a" };
+  const proxima = proximaEtapa({ vaga_id: c.vaga_id, ficha_enviada_em: c.ficha_enviada_em, foto_path: c.foto_path, proposta_status: c.proposta_status });
+  if (proxima === "ficha") return { etapa: 2, label: c.ficha_enviada_em ? "Etapa 2 — falta a foto" : "Etapa 2 — aguardando ficha", cor: "#2f5aa8" };
+  if (proxima === "proposta")
+    return {
+      etapa: 3,
+      label: c.proposta_status === "falar_ajisai" ? "Etapa 3 — quer falar com a Ajisai" : "Etapa 3 — aguardando aceite",
+      cor: c.proposta_status === "falar_ajisai" ? "#b7791f" : "#6b46c1",
+    };
+  if (entrevistaInicio) {
+    const quando = new Date(entrevistaInicio).toLocaleString("pt-BR", { timeZone: "America/Sao_Paulo", day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" });
+    return { etapa: 5, label: `Pré-entrevista ${quando}`, cor: "#2f7a52" };
+  }
+  return { etapa: 4, label: "Etapa 4 — aguardando agendamento", cor: "#0f766e" };
 }

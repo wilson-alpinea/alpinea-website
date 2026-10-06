@@ -12,7 +12,11 @@ import {
   linhasPerfil,
   linhasTriagemBasica,
   urlArquivoCandidato,
+  progressoCandidatura,
 } from "@/lib/crm/empregos";
+import { MODELOS_APRESENTACAO } from "@/lib/empregos/apresentacaoPdf";
+import { formatarMoeda, type Proposta } from "@/app/lib/financiamentoEmpregos";
+import { vagaPrecisaProposta } from "@/app/lib/etapasCandidatura";
 import type { PerfilCandidato } from "@/app/lib/triagemPerfil";
 
 const display = Bodoni_Moda({ subsets: ["latin"], weight: ["400", "500", "600"] });
@@ -62,6 +66,35 @@ export default async function CandidatoPage({
   const ficha = (c.ficha ?? null) as FichaCadastral | null;
   const etapa2Aberta = fichaLiberada(c);
   const linkFicha = c.ficha_token ? `https://www.alpinea.io/empregos/ficha/${c.id}?t=${c.ficha_token}` : null;
+  const { data: entrevista } = await supabase
+    .from("entrevistas_agendadas")
+    .select("inicio, status")
+    .eq("candidatura_id", id)
+    .order("created_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  const progresso = progressoCandidatura(c, entrevista?.status === "agendada" ? entrevista.inicio : null);
+  const proposta = (c.proposta_financiamento ?? null) as Proposta | null;
+  const dataCurta = (iso?: string | null) =>
+    iso ? new Date(iso).toLocaleString("pt-BR", { timeZone: "America/Sao_Paulo", day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" }) : null;
+  const linhaTempo: { label: string; quando: string | null; ok: boolean }[] = [
+    { label: "Etapa 1 — candidatura e triagem", quando: dataCurta(c.created_at), ok: true },
+    { label: "Etapa 2 — ficha cadastral + foto", quando: dataCurta(c.ficha_enviada_em), ok: Boolean(c.ficha_enviada_em && c.foto_path) },
+    ...(vagaPrecisaProposta(c.vaga_id)
+      ? [
+          {
+            label: `Etapa 3 — proposta${c.proposta_status === "falar_ajisai" ? " (pediu para falar com a Ajisai)" : ""}`,
+            quando: dataCurta(c.proposta_respondida_em),
+            ok: c.proposta_status === "aceita",
+          },
+        ]
+      : []),
+    {
+      label: `Etapa 4 — pré-entrevista${entrevista && entrevista.status !== "agendada" ? ` (${entrevista.status})` : ""}`,
+      quando: dataCurta(entrevista?.inicio),
+      ok: Boolean(entrevista && entrevista.status !== "cancelada"),
+    },
+  ];
   const alternarLiberacao = liberarFichaCandidatura.bind(null, id, !c.ficha_liberada);
 
   return (
@@ -201,6 +234,79 @@ export default async function CandidatoPage({
         </div>
 
         <aside className="space-y-6">
+          <section className="rounded-2xl border border-black/10 bg-white p-5">
+            <h2 className="text-sm font-medium text-black">Andamento</h2>
+            <span className="mt-2 inline-block rounded-full px-2.5 py-0.5 text-xs" style={{ color: progresso.cor, background: `${progresso.cor}14` }}>
+              {progresso.label}
+            </span>
+            <ol className="mt-4 space-y-3">
+              {linhaTempo.map((e) => (
+                <li key={e.label} className="flex gap-2.5 text-xs">
+                  <span className={`mt-0.5 h-3 w-3 shrink-0 rounded-full ${e.ok ? "bg-emerald-600" : "border border-black/20"}`} />
+                  <span>
+                    <span className={e.ok ? "text-black/80" : "text-black/45"}>{e.label}</span>
+                    {e.quando && <span className="block text-black/40">{e.quando}</span>}
+                  </span>
+                </li>
+              ))}
+            </ol>
+            {entrevista?.status === "agendada" && (
+              <Link href="/crm/empregos/agenda" className="mt-4 block text-xs text-[#1C3A5E] underline">
+                Ver na agenda
+              </Link>
+            )}
+          </section>
+
+          <section className="rounded-2xl border border-black/10 bg-white p-5">
+            <h2 className="text-sm font-medium text-black">Documento de Apresentação para Empreiteira</h2>
+            <p className="mt-1 text-xs leading-5 text-black/45">
+              PDF com foto e dados do candidato. O modelo Alpinea não traz contato, CPF nem RG; os modelos das empreiteiras saem com a
+              ficha completa.
+            </p>
+            <form action={`/crm/empregos/${id}/apresentacao`} method="get" target="_blank" className="mt-3 space-y-2">
+              <select name="modelo" defaultValue="alpinea" className="w-full rounded-xl border border-black/10 bg-white px-3 py-2 text-sm text-black">
+                {MODELOS_APRESENTACAO.map((m) => (
+                  <option key={m.id} value={m.id}>
+                    {m.nome}
+                  </option>
+                ))}
+              </select>
+              <div className="flex gap-2">
+                <button type="submit" className="flex-1 rounded-xl bg-[#1C3A5E] px-3 py-2 text-sm font-medium text-white">
+                  Gerar PDF
+                </button>
+                <button type="submit" name="download" value="1" className="rounded-xl border border-[#1C3A5E] px-3 py-2 text-sm font-medium text-[#1C3A5E]">
+                  Baixar
+                </button>
+              </div>
+            </form>
+            {!c.ficha_enviada_em && <p className="mt-2 text-[11px] text-amber-700">Ficha da etapa 2 ainda não enviada — o PDF sai só com os dados da etapa 1.</p>}
+          </section>
+
+          {proposta && (
+            <section className="rounded-2xl border border-black/10 bg-white p-5">
+              <h2 className="text-sm font-medium text-black">
+                Etapa 3 — proposta {c.proposta_status === "aceita" ? "aceita" : "· quer falar com a Ajisai"}
+              </h2>
+              <p className="mt-1 text-xs text-black/45">
+                {proposta.selecao.proponentes} pessoa(s) · saída {proposta.selecao.aeroporto} · ¥1 = R$ {proposta.cotacaoBRLPorJPY.toFixed(4)}
+              </p>
+              <ul className="mt-3 space-y-1.5 text-xs">
+                {proposta.itens.map((i) => (
+                  <li key={i.id} className="flex justify-between gap-3">
+                    <span className="text-black/65">{i.label}</span>
+                    <span className="tabular-nums text-black/80">{formatarMoeda(i.totalJPY, "JPY")}</span>
+                  </li>
+                ))}
+              </ul>
+              <p className="mt-3 flex justify-between border-t border-black/[0.06] pt-2 text-sm font-medium">
+                <span>Total</span>
+                <span className="tabular-nums">
+                  {formatarMoeda(proposta.totalJPY, "JPY")} · {formatarMoeda(proposta.totalBRL, "BRL")}
+                </span>
+              </p>
+            </section>
+          )}
           <section className="rounded-2xl border border-black/10 bg-white p-5">
             <h2 className="text-sm font-medium text-black">Etapa 2 — ficha cadastral</h2>
             <p className="mt-2 text-sm text-black/60">
