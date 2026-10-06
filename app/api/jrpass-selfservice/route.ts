@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { createAdminClient } from "../../../lib/supabase/admin";
 import { TAG_SELF_SERVICE } from "../../../lib/crm/origem";
+import { CAMINHO_DOCUMENTO_JRPASS_REGEX, urlDocumentoJrPassCrm } from "../../../lib/supabase/documentosJrPass";
 import { criarCheckout, pagarmeConfigurado } from "../../../lib/pagarme/client";
 import { emailClienteHtml, emailClienteTexto, type EmailClienteParams } from "../../../lib/email/templateCliente";
 
@@ -277,6 +278,23 @@ export async function POST(req: Request) {
     });
     if (erroInteracao) {
       console.error("Erro ao gravar interação (jrpass-selfservice):", erroInteracao);
+    }
+
+    // Documento anexado vira um card em "Arquivos" na ficha do cliente —
+    // Wilson, 01/out/2026: "o passaporte anexado não aparece no CRM ao
+    // entrar na oportunidade". Antes o caminho só ia como texto nas
+    // observações. Nunca derruba o pedido se falhar.
+    if (!documentoAdiado && CAMINHO_DOCUMENTO_JRPASS_REGEX.test(documentoStoragePath)) {
+      const ehPassagem = documentoTipo === "passagem" || documentoStoragePath.includes("/passagem-");
+      const { error: erroArquivo } = await supabase.from("arquivos_cliente").insert({
+        cliente_id: cliente.id,
+        tipo: "outro",
+        label: ehPassagem ? "Passagem — JR Pass" : "Passaporte — JR Pass",
+        url: urlDocumentoJrPassCrm(documentoStoragePath),
+      });
+      if (erroArquivo) {
+        console.error("Erro ao registrar documento em arquivos_cliente (jrpass-selfservice):", erroArquivo);
+      }
     }
 
     // Pagamento de verdade via Pagar.me (ver lib/pagarme/client.ts) —

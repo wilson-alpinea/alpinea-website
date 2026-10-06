@@ -695,14 +695,8 @@ export default function EmpregosPage() {
           <Link href="/">
             <img src="/images/AJISAI-LOGO.avif" alt="Ajisai" className="h-10 w-auto object-contain invert md:h-11" />
           </Link>
-          <a
-            href={linkWhatsapp("Olá! Vim pela página de Empregos da Ajisai e queria saber mais.")}
-            target="_blank"
-            rel="noreferrer"
-            className="rounded-full bg-[#2f80c9] px-5 py-2.5 text-[11px] font-semibold uppercase tracking-[0.16em] text-white transition hover:bg-[#3b91dc]"
-          >
-            Falar no WhatsApp
-          </a>
+          {/* Botão "Falar no WhatsApp" removido do header — pedido do
+              Wilson, 06/out/2026. */}
         </div>
       </header>
 

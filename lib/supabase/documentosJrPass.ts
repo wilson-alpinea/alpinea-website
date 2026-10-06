@@ -60,4 +60,15 @@ export function extensaoPorContentType(contentType: string): string {
   }
 }
 
+// Formato exato do caminho gerado em /api/jrpass-documento
+// (`<referencia>/<tipo>-<timestamp>.<ext>`) — usado pra validar o caminho
+// antes de gravar no CRM e antes de gerar URL assinada.
+export const CAMINHO_DOCUMENTO_JRPASS_REGEX =
+  /^[a-zA-Z0-9-]{6,80}\/(passaporte|passagem)-\d+\.(jpg|png|heic|webp|pdf|bin)$/;
+
+// Link interno (protegido pelo login do CRM) que abre o documento.
+export function urlDocumentoJrPassCrm(caminho: string) {
+  return `/crm/documento-jrpass?path=${encodeURIComponent(caminho)}`;
+}
+
 export { TAMANHO_MAXIMO_BYTES, TIPOS_MIME_PERMITIDOS };

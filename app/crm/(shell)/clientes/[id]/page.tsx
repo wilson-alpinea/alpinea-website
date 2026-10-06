@@ -6,6 +6,7 @@ import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
 import { TIPOS_INTERACAO, TIPO_INTERACAO_LABEL, TIPO_INTERACAO_COR } from "@/lib/crm/interacoes";
 import { TIPOS_ARQUIVO, TIPO_ARQUIVO_LABEL, type TipoArquivo } from "@/lib/crm/arquivos";
+import { CAMINHO_DOCUMENTO_JRPASS_REGEX, urlDocumentoJrPassCrm } from "@/lib/supabase/documentosJrPass";
 import type { Estagio, EstagioEntrega } from "@/lib/crm/types";
 import { ESTAGIOS } from "@/lib/crm/estagios";
 import {
@@ -97,6 +98,28 @@ export default async function ClienteDetalhePage({
     .select("id, tipo, label, url, created_at")
     .eq("cliente_id", id)
     .order("created_at", { ascending: true });
+
+  // Leads de JR Pass anteriores a 01/out/2026 só têm o caminho do
+  // documento no texto das observações ("(arquivo: ...)") — mostra como
+  // card também, sem precisar de migração. Não duplica se já existe.
+  const documentosLegados = Array.from(
+    String(cliente.observacoes ?? "").matchAll(/\(arquivo: ([^)\s]+)\)/g),
+  )
+    .map((m) => m[1])
+    .filter((c) => CAMINHO_DOCUMENTO_JRPASS_REGEX.test(c))
+    .filter((c) => !(arquivos ?? []).some((a) => a.url === urlDocumentoJrPassCrm(c)))
+    .map((c) => ({
+      id: `legado-${c}`,
+      tipo: "outro",
+      label: c.includes("/passagem-") ? "Passagem — JR Pass" : "Passaporte — JR Pass",
+      url: urlDocumentoJrPassCrm(c),
+      created_at: "",
+      legado: true,
+    }));
+  const arquivosExibidos = [
+    ...documentosLegados,
+    ...(arquivos ?? []).map((a) => ({ ...a, legado: false })),
+  ];
 
   const { data: pagamentos } = await supabase
     .from("pagamentos")
@@ -290,14 +313,14 @@ export default async function ClienteDetalhePage({
       <div className="mt-6 rounded-2xl border border-black/5 bg-white shadow-[0_1px_2px_rgba(0,0,0,0.04),0_16px_32px_-20px_rgba(0,0,0,0.15)] p-6 md:p-8">
         <h2 className={`${display.className} mb-5 text-lg font-medium text-black`}>Arquivos</h2>
 
-        {!arquivos || arquivos.length === 0 ? (
+        {arquivosExibidos.length === 0 ? (
           <p className="text-sm text-black/40">Nenhum arquivo adicionado ainda.</p>
         ) : (
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {arquivos.map((a) => {
+            {arquivosExibidos.map((a) => {
               const Icon = ARQUIVO_ICONS[a.tipo as TipoArquivo] ?? ARQUIVO_ICONS.outro;
               const excluirArquivo = deleteArquivo.bind(null, id, a.id);
-              const externo = a.url.startsWith("http");
+              const externo = a.url.startsWith("http") || a.url.startsWith("/crm/documento-jrpass");
               return (
                 <div
                   key={a.id}
@@ -319,16 +342,18 @@ export default async function ClienteDetalhePage({
                       {a.label}
                     </a>
                   </div>
-                  <form action={excluirArquivo}>
-                    <button
-                      type="submit"
-                      title="Remover arquivo"
-                      aria-label="Remover arquivo"
-                      className="shrink-0 px-1 text-sm leading-none text-black/20 transition hover:text-red-600"
-                    >
-                      ×
-                    </button>
-                  </form>
+                  {!a.legado && (
+                    <form action={excluirArquivo}>
+                      <button
+                        type="submit"
+                        title="Remover arquivo"
+                        aria-label="Remover arquivo"
+                        className="shrink-0 px-1 text-sm leading-none text-black/20 transition hover:text-red-600"
+                      >
+                        ×
+                      </button>
+                    </form>
+                  )}
                 </div>
               );
             })}
