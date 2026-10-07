@@ -76,10 +76,11 @@ const PROMOCOES: {
 }[] = [
   {
     id: "japao-sp-229mil",
-    imagem: "/images/passagens-promo-japao-sao-paulo-229mil.webp",
-    largura: 1600,
-    altura: 686,
-    alt: "Promoção: 229 mil ienes ida e volta saindo do Japão — Tokyo ↔ São Paulo e Osaka ↔ São Paulo, Emirates e Qatar",
+    // Arte nova (Wilson, 06/out/2026: "ajustar banner por arte nova").
+    imagem: "/images/passagens-promo-japao-sao-paulo-229mil-v3.webp",
+    largura: 1024,
+    altura: 438,
+    alt: "Saindo do Japão, a partir de 229 mil ienes ida e volta — Tokyo ↔ São Paulo e Osaka ↔ São Paulo, Emirates e Qatar",
     legenda: "Saindo do Japão: Tóquio ou Osaka ↔ São Paulo, ida e volta a partir de ¥229 mil (Emirates e Qatar).",
     aplicar: { sentido: "jp-br", modo: "ida-volta", origem: "GRU", destino: "TYO" },
   },

@@ -40,6 +40,15 @@
 
 import { comMargemMotoristaPrivado } from "../components/CustomPackageCard";
 
+// Transfer aeroporto ↔ hotel: margem de 50% sobre o custo do fornecedor
+// (Wilson, 06/out/2026: "margem de 50% sob custo do fornecedor") — as rotas
+// de categoria "transfer-aeroporto" abaixo usam esta função; o motorista à
+// disposição (dentro da cidade / passeios) continua com 40%.
+const MULTIPLICADOR_TRANSFER_AEROPORTO = 1.5;
+function comMargemTransferAeroporto(custo: number) {
+  return Math.round(custo * MULTIPLICADOR_TRANSFER_AEROPORTO);
+}
+
 export type VeiculoMotoristaId =
   | "alphard8"
   | "hiace10"
@@ -150,20 +159,20 @@ export const ROTAS_MOTORISTA: RotaMotorista[] = [
     categoria: "transfer-aeroporto",
     minutosLivres: 90,
     precoUSD: {
-      alphard8: comMargemMotoristaPrivado(150), // ¥22.500
-      hiace10: comMargemMotoristaPrivado(180), // ¥27.000
-      hiace14: comMargemMotoristaPrivado(210), // ¥31.500
-      coaster18: comMargemMotoristaPrivado(480), // ¥72.000
-      coaster21: comMargemMotoristaPrivado(480), // ¥72.000
-      coaster29: comMargemMotoristaPrivado(480), // ¥72.000
+      alphard8: comMargemTransferAeroporto(150), // ¥22.500
+      hiace10: comMargemTransferAeroporto(180), // ¥27.000
+      hiace14: comMargemTransferAeroporto(210), // ¥31.500
+      coaster18: comMargemTransferAeroporto(480), // ¥72.000
+      coaster21: comMargemTransferAeroporto(480), // ¥72.000
+      coaster29: comMargemTransferAeroporto(480), // ¥72.000
     },
     overtimeUSDPor30Min: {
-      alphard8: comMargemMotoristaPrivado(17), // ¥2.500/30min
-      hiace10: comMargemMotoristaPrivado(17), // ¥2.500/30min
-      hiace14: comMargemMotoristaPrivado(20), // ¥3.000/30min
-      coaster18: comMargemMotoristaPrivado(33), // ¥5.000/30min
-      coaster21: comMargemMotoristaPrivado(33), // ¥5.000/30min
-      coaster29: comMargemMotoristaPrivado(33), // ¥5.000/30min
+      alphard8: comMargemTransferAeroporto(17), // ¥2.500/30min
+      hiace10: comMargemTransferAeroporto(17), // ¥2.500/30min
+      hiace14: comMargemTransferAeroporto(20), // ¥3.000/30min
+      coaster18: comMargemTransferAeroporto(33), // ¥5.000/30min
+      coaster21: comMargemTransferAeroporto(33), // ¥5.000/30min
+      coaster29: comMargemTransferAeroporto(33), // ¥5.000/30min
     },
   },
   {
@@ -173,20 +182,20 @@ export const ROTAS_MOTORISTA: RotaMotorista[] = [
     categoria: "transfer-aeroporto",
     minutosLivres: 30,
     precoUSD: {
-      alphard8: comMargemMotoristaPrivado(150), // ¥22.500
-      hiace10: comMargemMotoristaPrivado(180), // ¥27.000
-      hiace14: comMargemMotoristaPrivado(210), // ¥31.500
-      coaster18: comMargemMotoristaPrivado(480), // ¥72.000
-      coaster21: comMargemMotoristaPrivado(480), // ¥72.000
-      coaster29: comMargemMotoristaPrivado(480), // ¥72.000
+      alphard8: comMargemTransferAeroporto(150), // ¥22.500
+      hiace10: comMargemTransferAeroporto(180), // ¥27.000
+      hiace14: comMargemTransferAeroporto(210), // ¥31.500
+      coaster18: comMargemTransferAeroporto(480), // ¥72.000
+      coaster21: comMargemTransferAeroporto(480), // ¥72.000
+      coaster29: comMargemTransferAeroporto(480), // ¥72.000
     },
     overtimeUSDPor30Min: {
-      alphard8: comMargemMotoristaPrivado(17), // ¥2.500/30min
-      hiace10: comMargemMotoristaPrivado(17), // ¥2.500/30min
-      hiace14: comMargemMotoristaPrivado(20), // ¥3.000/30min
-      coaster18: comMargemMotoristaPrivado(33), // ¥5.000/30min
-      coaster21: comMargemMotoristaPrivado(33), // ¥5.000/30min
-      coaster29: comMargemMotoristaPrivado(33), // ¥5.000/30min
+      alphard8: comMargemTransferAeroporto(17), // ¥2.500/30min
+      hiace10: comMargemTransferAeroporto(17), // ¥2.500/30min
+      hiace14: comMargemTransferAeroporto(20), // ¥3.000/30min
+      coaster18: comMargemTransferAeroporto(33), // ¥5.000/30min
+      coaster21: comMargemTransferAeroporto(33), // ¥5.000/30min
+      coaster29: comMargemTransferAeroporto(33), // ¥5.000/30min
     },
   },
   {
@@ -196,20 +205,20 @@ export const ROTAS_MOTORISTA: RotaMotorista[] = [
     categoria: "transfer-aeroporto",
     minutosLivres: 90,
     precoUSD: {
-      alphard8: comMargemMotoristaPrivado(120), // ¥18.000
-      hiace10: comMargemMotoristaPrivado(147), // ¥22.000
-      hiace14: comMargemMotoristaPrivado(180), // ¥27.000
-      coaster18: comMargemMotoristaPrivado(420), // ¥63.000
-      coaster21: comMargemMotoristaPrivado(420), // ¥63.000
-      coaster29: comMargemMotoristaPrivado(450), // ¥67.500
+      alphard8: comMargemTransferAeroporto(120), // ¥18.000
+      hiace10: comMargemTransferAeroporto(147), // ¥22.000
+      hiace14: comMargemTransferAeroporto(180), // ¥27.000
+      coaster18: comMargemTransferAeroporto(420), // ¥63.000
+      coaster21: comMargemTransferAeroporto(420), // ¥63.000
+      coaster29: comMargemTransferAeroporto(450), // ¥67.500
     },
     overtimeUSDPor30Min: {
-      alphard8: comMargemMotoristaPrivado(17), // ¥2.500/30min
-      hiace10: comMargemMotoristaPrivado(17), // ¥2.500/30min
-      hiace14: comMargemMotoristaPrivado(17), // ¥2.500/30min
-      coaster18: comMargemMotoristaPrivado(33), // ¥5.000/30min
-      coaster21: comMargemMotoristaPrivado(33), // ¥5.000/30min
-      coaster29: comMargemMotoristaPrivado(33), // ¥5.000/30min
+      alphard8: comMargemTransferAeroporto(17), // ¥2.500/30min
+      hiace10: comMargemTransferAeroporto(17), // ¥2.500/30min
+      hiace14: comMargemTransferAeroporto(17), // ¥2.500/30min
+      coaster18: comMargemTransferAeroporto(33), // ¥5.000/30min
+      coaster21: comMargemTransferAeroporto(33), // ¥5.000/30min
+      coaster29: comMargemTransferAeroporto(33), // ¥5.000/30min
     },
   },
   {
@@ -219,25 +228,25 @@ export const ROTAS_MOTORISTA: RotaMotorista[] = [
     categoria: "transfer-aeroporto",
     minutosLivres: 30,
     precoUSD: {
-      alphard8: comMargemMotoristaPrivado(96), // ¥14.400
-      hiace10: comMargemMotoristaPrivado(113), // ¥17.000
-      hiace14: comMargemMotoristaPrivado(180), // ¥27.000
-      coaster18: comMargemMotoristaPrivado(420), // ¥63.000
-      coaster21: comMargemMotoristaPrivado(420), // ¥63.000
-      coaster29: comMargemMotoristaPrivado(450), // ¥67.500
+      alphard8: comMargemTransferAeroporto(96), // ¥14.400
+      hiace10: comMargemTransferAeroporto(113), // ¥17.000
+      hiace14: comMargemTransferAeroporto(180), // ¥27.000
+      coaster18: comMargemTransferAeroporto(420), // ¥63.000
+      coaster21: comMargemTransferAeroporto(420), // ¥63.000
+      coaster29: comMargemTransferAeroporto(450), // ¥67.500
     },
     overtimeUSDPor30Min: {
-      alphard8: comMargemMotoristaPrivado(17), // ¥2.500/30min
-      hiace10: comMargemMotoristaPrivado(17), // ¥2.500/30min
-      hiace14: comMargemMotoristaPrivado(20), // ¥3.000/30min
-      coaster18: comMargemMotoristaPrivado(33), // ¥5.000/30min
-      coaster21: comMargemMotoristaPrivado(33), // ¥5.000/30min
-      coaster29: comMargemMotoristaPrivado(33), // ¥5.000/30min
+      alphard8: comMargemTransferAeroporto(17), // ¥2.500/30min
+      hiace10: comMargemTransferAeroporto(17), // ¥2.500/30min
+      hiace14: comMargemTransferAeroporto(20), // ¥3.000/30min
+      coaster18: comMargemTransferAeroporto(33), // ¥5.000/30min
+      coaster21: comMargemTransferAeroporto(33), // ¥5.000/30min
+      coaster29: comMargemTransferAeroporto(33), // ¥5.000/30min
     },
   },
   {
     id: "dentro-tokyo",
-    nome: "Dentro de Tóquio (23 distritos)",
+    nome: "Dentro de Tóquio (23 bairros)",
     regiao: "kanto",
     categoria: "dentro-cidade",
     minutosLivres: 30,
@@ -334,20 +343,20 @@ export const ROTAS_MOTORISTA: RotaMotorista[] = [
     categoria: "transfer-aeroporto",
     minutosLivres: 90,
     precoUSD: {
-      alphard8: comMargemMotoristaPrivado(150), // ¥22.500
-      hiace10: comMargemMotoristaPrivado(180), // ¥27.000
-      hiace14: comMargemMotoristaPrivado(210), // ¥31.500
-      coaster18: comMargemMotoristaPrivado(480), // ¥72.000
-      coaster21: comMargemMotoristaPrivado(480), // ¥72.000
-      coaster29: comMargemMotoristaPrivado(480), // ¥72.000
+      alphard8: comMargemTransferAeroporto(150), // ¥22.500
+      hiace10: comMargemTransferAeroporto(180), // ¥27.000
+      hiace14: comMargemTransferAeroporto(210), // ¥31.500
+      coaster18: comMargemTransferAeroporto(480), // ¥72.000
+      coaster21: comMargemTransferAeroporto(480), // ¥72.000
+      coaster29: comMargemTransferAeroporto(480), // ¥72.000
     },
     overtimeUSDPor30Min: {
-      alphard8: comMargemMotoristaPrivado(17), // ¥2.500/30min
-      hiace10: comMargemMotoristaPrivado(17), // ¥2.500/30min
-      hiace14: comMargemMotoristaPrivado(17), // ¥2.500/30min
-      coaster18: comMargemMotoristaPrivado(33), // ¥5.000/30min
-      coaster21: comMargemMotoristaPrivado(33), // ¥5.000/30min
-      coaster29: comMargemMotoristaPrivado(33), // ¥5.000/30min
+      alphard8: comMargemTransferAeroporto(17), // ¥2.500/30min
+      hiace10: comMargemTransferAeroporto(17), // ¥2.500/30min
+      hiace14: comMargemTransferAeroporto(17), // ¥2.500/30min
+      coaster18: comMargemTransferAeroporto(33), // ¥5.000/30min
+      coaster21: comMargemTransferAeroporto(33), // ¥5.000/30min
+      coaster29: comMargemTransferAeroporto(33), // ¥5.000/30min
     },
   },
   {
@@ -357,25 +366,25 @@ export const ROTAS_MOTORISTA: RotaMotorista[] = [
     categoria: "transfer-aeroporto",
     minutosLivres: 30,
     precoUSD: {
-      alphard8: comMargemMotoristaPrivado(150), // ¥22.500
-      hiace10: comMargemMotoristaPrivado(180), // ¥27.000
-      hiace14: comMargemMotoristaPrivado(210), // ¥31.500
-      coaster18: comMargemMotoristaPrivado(480), // ¥72.000
-      coaster21: comMargemMotoristaPrivado(480), // ¥72.000
-      coaster29: comMargemMotoristaPrivado(480), // ¥72.000
+      alphard8: comMargemTransferAeroporto(150), // ¥22.500
+      hiace10: comMargemTransferAeroporto(180), // ¥27.000
+      hiace14: comMargemTransferAeroporto(210), // ¥31.500
+      coaster18: comMargemTransferAeroporto(480), // ¥72.000
+      coaster21: comMargemTransferAeroporto(480), // ¥72.000
+      coaster29: comMargemTransferAeroporto(480), // ¥72.000
     },
     overtimeUSDPor30Min: {
-      alphard8: comMargemMotoristaPrivado(17), // ¥2.500/30min
-      hiace10: comMargemMotoristaPrivado(17), // ¥2.500/30min
-      hiace14: comMargemMotoristaPrivado(20), // ¥3.000/30min
-      coaster18: comMargemMotoristaPrivado(33), // ¥5.000/30min
-      coaster21: comMargemMotoristaPrivado(33), // ¥5.000/30min
-      coaster29: comMargemMotoristaPrivado(33), // ¥5.000/30min
+      alphard8: comMargemTransferAeroporto(17), // ¥2.500/30min
+      hiace10: comMargemTransferAeroporto(17), // ¥2.500/30min
+      hiace14: comMargemTransferAeroporto(20), // ¥3.000/30min
+      coaster18: comMargemTransferAeroporto(33), // ¥5.000/30min
+      coaster21: comMargemTransferAeroporto(33), // ¥5.000/30min
+      coaster29: comMargemTransferAeroporto(33), // ¥5.000/30min
     },
   },
   {
     id: "dentro-osaka",
-    nome: "Dentro de Osaka (24 distritos)",
+    nome: "Dentro de Osaka (24 bairros)",
     regiao: "kansai",
     categoria: "dentro-cidade",
     minutosLivres: 30,
@@ -398,7 +407,7 @@ export const ROTAS_MOTORISTA: RotaMotorista[] = [
   },
   {
     id: "dentro-kyoto-ou-kyoto-osaka",
-    nome: "Dentro de Kyoto, ou Kyoto → Osaka (24 distritos)",
+    nome: "Dentro de Kyoto, ou Kyoto → Osaka (24 bairros)",
     regiao: "kansai",
     categoria: "dentro-cidade",
     minutosLivres: 30,
@@ -426,20 +435,20 @@ export const ROTAS_MOTORISTA: RotaMotorista[] = [
     categoria: "transfer-aeroporto",
     minutosLivres: 90,
     precoUSD: {
-      alphard8: comMargemMotoristaPrivado(180), // ¥27.000
-      hiace10: comMargemMotoristaPrivado(210), // ¥31.500
-      hiace14: comMargemMotoristaPrivado(240), // ¥36.000
-      coaster18: comMargemMotoristaPrivado(510), // ¥76.500
-      coaster21: comMargemMotoristaPrivado(510), // ¥76.500
-      coaster29: comMargemMotoristaPrivado(510), // ¥76.500
+      alphard8: comMargemTransferAeroporto(180), // ¥27.000
+      hiace10: comMargemTransferAeroporto(210), // ¥31.500
+      hiace14: comMargemTransferAeroporto(240), // ¥36.000
+      coaster18: comMargemTransferAeroporto(510), // ¥76.500
+      coaster21: comMargemTransferAeroporto(510), // ¥76.500
+      coaster29: comMargemTransferAeroporto(510), // ¥76.500
     },
     overtimeUSDPor30Min: {
-      alphard8: comMargemMotoristaPrivado(17), // ¥2.500/30min
-      hiace10: comMargemMotoristaPrivado(17), // ¥2.500/30min
-      hiace14: comMargemMotoristaPrivado(20), // ¥3.000/30min
-      coaster18: comMargemMotoristaPrivado(33), // ¥5.000/30min
-      coaster21: comMargemMotoristaPrivado(33), // ¥5.000/30min
-      coaster29: comMargemMotoristaPrivado(33), // ¥5.000/30min
+      alphard8: comMargemTransferAeroporto(17), // ¥2.500/30min
+      hiace10: comMargemTransferAeroporto(17), // ¥2.500/30min
+      hiace14: comMargemTransferAeroporto(20), // ¥3.000/30min
+      coaster18: comMargemTransferAeroporto(33), // ¥5.000/30min
+      coaster21: comMargemTransferAeroporto(33), // ¥5.000/30min
+      coaster29: comMargemTransferAeroporto(33), // ¥5.000/30min
     },
   },
   {
@@ -449,20 +458,20 @@ export const ROTAS_MOTORISTA: RotaMotorista[] = [
     categoria: "transfer-aeroporto",
     minutosLivres: 30,
     precoUSD: {
-      alphard8: comMargemMotoristaPrivado(180), // ¥27.000
-      hiace10: comMargemMotoristaPrivado(210), // ¥31.500
-      hiace14: comMargemMotoristaPrivado(240), // ¥36.000
-      coaster18: comMargemMotoristaPrivado(510), // ¥76.500
-      coaster21: comMargemMotoristaPrivado(510), // ¥76.500
-      coaster29: comMargemMotoristaPrivado(510), // ¥76.500
+      alphard8: comMargemTransferAeroporto(180), // ¥27.000
+      hiace10: comMargemTransferAeroporto(210), // ¥31.500
+      hiace14: comMargemTransferAeroporto(240), // ¥36.000
+      coaster18: comMargemTransferAeroporto(510), // ¥76.500
+      coaster21: comMargemTransferAeroporto(510), // ¥76.500
+      coaster29: comMargemTransferAeroporto(510), // ¥76.500
     },
     overtimeUSDPor30Min: {
-      alphard8: comMargemMotoristaPrivado(17), // ¥2.500/30min
-      hiace10: comMargemMotoristaPrivado(17), // ¥2.500/30min
-      hiace14: comMargemMotoristaPrivado(20), // ¥3.000/30min
-      coaster18: comMargemMotoristaPrivado(33), // ¥5.000/30min
-      coaster21: comMargemMotoristaPrivado(33), // ¥5.000/30min
-      coaster29: comMargemMotoristaPrivado(33), // ¥5.000/30min
+      alphard8: comMargemTransferAeroporto(17), // ¥2.500/30min
+      hiace10: comMargemTransferAeroporto(17), // ¥2.500/30min
+      hiace14: comMargemTransferAeroporto(20), // ¥3.000/30min
+      coaster18: comMargemTransferAeroporto(33), // ¥5.000/30min
+      coaster21: comMargemTransferAeroporto(33), // ¥5.000/30min
+      coaster29: comMargemTransferAeroporto(33), // ¥5.000/30min
     },
   },
   {

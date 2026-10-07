@@ -34,8 +34,59 @@ function modoTesteNoServidor() {
   return false;
 }
 
+/** true quando a página foi aberta com ?teste=1 (pedido de teste com o
+ * fluxo completo — JR Pass e Seguro Viagem fictícios, Wilson 06/out/2026). */
+export function useModoTeste(): boolean {
+  return useSyncExternalStore(assinarNada, lerModoTeste, modoTesteNoServidor);
+}
+
+/** Aviso + atalho do pedido FICTÍCIO com o fluxo completo (formulário real,
+ * CRM, e-mails, Stone) cobrando R$ 1,00. Só aparece com ?teste=1. */
+export function PainelPedidoTeste({
+  ativo,
+  marcado,
+  onMarcar,
+  onPreencher,
+  nomeProduto,
+}: {
+  ativo: boolean;
+  marcado: boolean;
+  onMarcar: (v: boolean) => void;
+  onPreencher: () => void;
+  nomeProduto: string;
+}) {
+  if (!ativo) return null;
+  return (
+    <section aria-label="Pedido fictício de teste" className="mt-4 rounded-2xl border-2 border-dashed border-amber-400 bg-amber-50 p-5 text-black sm:p-6">
+      <p className="inline-block rounded-full bg-amber-500 px-3 py-1 text-[11px] font-bold uppercase tracking-[0.14em] text-white">
+        {nomeProduto} fictício — teste do fluxo completo
+      </p>
+      <p className="mt-2 text-sm leading-relaxed text-amber-900">
+        Com a opção abaixo marcada, o formulário desta página vira um <strong>pedido de teste</strong>: passa por todas as
+        etapas reais (registro no CRM marcado como <strong>[TESTE]</strong>, e-mails para a equipe e para o cliente,
+        pagamento na Stone e webhook de confirmação), mas a cobrança é sempre de <strong>R$ 1,00</strong>, sem frete, e nada
+        é emitido. O valor é fixado no servidor.
+      </p>
+      <div className="mt-3 flex flex-wrap items-center gap-3">
+        <label className="flex cursor-pointer items-center gap-2.5">
+          <input type="checkbox" checked={marcado} onChange={(e) => onMarcar(e.target.checked)} className="h-5 w-5 rounded border-amber-400" />
+          <span className="text-sm font-medium text-amber-950">Enviar como pedido de teste (R$ 1,00)</span>
+        </label>
+        <button
+          type="button"
+          onClick={onPreencher}
+          className="h-10 rounded-full bg-amber-600 px-5 text-sm font-semibold text-white transition hover:bg-amber-700"
+        >
+          Preencher com dados fictícios
+        </button>
+      </div>
+      <p className="mt-2 text-xs text-amber-900">Troque o e-mail pelo seu para receber as mensagens do fluxo.</p>
+    </section>
+  );
+}
+
 export function ProdutoTestePagamento({ produto }: { produto: ProdutoTeste }) {
-  const ativo = useSyncExternalStore(assinarNada, lerModoTeste, modoTesteNoServidor);
+  const ativo = useModoTeste();
   const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
   const [ciente, setCiente] = useState(false);

@@ -5,7 +5,8 @@ import { criarCheckout, pagarmeConfigurado } from "../../../lib/pagarme/client";
 import { emailClienteHtml, emailClienteTexto, type EmailClienteParams } from "../../../lib/email/templateCliente";
 import { cidadeCambioIeneValida, CIDADES_CAMBIO_IENE } from "../../lib/cambioIene";
 import { buscarCotacaoIene } from "../../lib/cotacaoIeneServidor";
-import { CAMBIO_IENES_MINIMO_PUBLICO, calcularPrecoCambioIene } from "../../lib/precoCambioIene";
+import { calcularPrecoCambioIene, minimoIenesPorCidade, PRAZO_ENTREGA_CAMBIO_DIAS_UTEIS } from "../../lib/precoCambioIene";
+import { CAMINHO_DOCUMENTO_JRPASS_REGEX, urlDocumentoJrPassCrm } from "../../../lib/supabase/documentosJrPass";
 
 export const runtime = "nodejs";
 
@@ -103,14 +104,17 @@ function extrairIpDaRequisicao(req: Request): string | null {
 
 const DIRECOES_VALIDAS = ["compra", "venda"] as const;
 const MOEDAS_VALIDAS = ["BRL", "EUR", "USD"] as const;
-const QUANTIDADE_MINIMA_IENES = CAMBIO_IENES_MINIMO_PUBLICO;
+// Self-checkout (Pix pela Stone) DESLIGADO — Wilson, 06/out/2026: "remover
+// self-checkout por enquanto, só manual via WhatsApp". Para religar, true.
+const SELF_CHECKOUT_CAMBIO_ATIVO = false;
+// Versão dos termos (PLD, Banco Central, mesma titularidade) — 06/out/2026.
+const TERMOS_VERSAO_CAMBIO = "cambio-termos-2026-10-06";
 
 export async function POST(req: Request) {
   try {
     const body = await req.json();
 
     const nome = String(body.nome || "").trim();
-    const nomeComprador = String(body.nomeComprador || "").trim();
     const email = String(body.email || "").trim();
     const whatsapp = String(body.whatsapp || "").trim();
 
@@ -137,12 +141,54 @@ export async function POST(req: Request) {
     const moedaTransacao = (MOEDAS_VALIDAS as readonly string[]).includes(moedaBruta) ? moedaBruta : "BRL";
 
     const quantidadeIenes = Number(body.quantidadeIenes) || 0;
-    if (quantidadeIenes < QUANTIDADE_MINIMA_IENES) {
+    const quantidadeMinima = minimoIenesPorCidade(cidade);
+    if (quantidadeIenes < quantidadeMinima) {
       return NextResponse.json(
-        { error: `Quantidade mínima de ¥${QUANTIDADE_MINIMA_IENES.toLocaleString("pt-BR")}.` },
+        { error: `Quantidade mínima de ¥${quantidadeMinima.toLocaleString("pt-BR")}${cidade === "aeroporto-guarulhos" ? " no aeroporto" : ""}.` },
         { status: 400 },
       );
     }
+
+    // Mesma titularidade, CPF, termos (PLD/Banco Central), endereço completo
+    // e bilhete aéreo no aeroporto — Wilson, 06/out/2026.
+    const ehAeroporto = cidade === "aeroporto-guarulhos";
+    const cpf = String(body.cpf || "").replace(/\D/g, "");
+    const mesmaTitularidade = body.mesmaTitularidade === true;
+    const end = (body.endereco ?? {}) as Record<string, unknown>;
+    const campoEnd = (k: string, max = 120) => String(end[k] ?? "").trim().slice(0, max);
+    const endereco = {
+      cep: campoEnd("cep", 9),
+      logradouro: campoEnd("logradouro"),
+      numero: campoEnd("numero", 20),
+      complemento: campoEnd("complemento", 80),
+      bairro: campoEnd("bairro", 80),
+      cidade: campoEnd("cidade", 80),
+      uf: campoEnd("uf", 2).toUpperCase(),
+    };
+    const bilheteAereoPath = String(body.bilheteAereoPath || "").trim();
+    const faltando: string[] = [];
+    if (cpf.length !== 11) faltando.push("CPF");
+    if (!mesmaTitularidade) faltando.push("declaração de mesma titularidade");
+    if (!body.termosAceitos) faltando.push("aceite dos termos");
+    if (ehAeroporto) {
+      if (!CAMINHO_DOCUMENTO_JRPASS_REGEX.test(bilheteAereoPath)) faltando.push("foto do bilhete aéreo");
+    } else if (
+      endereco.cep.replace(/\D/g, "").length !== 8 ||
+      !endereco.logradouro ||
+      !endereco.numero ||
+      !endereco.complemento ||
+      !endereco.bairro ||
+      !endereco.cidade ||
+      endereco.uf.length !== 2
+    ) {
+      faltando.push("endereço completo com complemento");
+    }
+    if (faltando.length > 0) {
+      return NextResponse.json({ error: `Faltam dados obrigatórios: ${faltando.join(", ")}.` }, { status: 400 });
+    }
+    const enderecoTexto = ehAeroporto
+      ? "Aeroporto de Guarulhos (bilhete aéreo anexado)"
+      : `${endereco.logradouro}, ${endereco.numero} — ${endereco.complemento} — ${endereco.bairro}, ${endereco.cidade}/${endereco.uf} — CEP ${endereco.cep}`;
 
     // Valor recalculado no servidor — é ESTE que vale (cobrança na compra,
     // referência pro pagamento manual na venda). O do navegador só é
@@ -161,7 +207,6 @@ export async function POST(req: Request) {
         `Valor divergente no Câmbio (cliente R$ ${totalEnviadoPeloCliente} × servidor R$ ${totalBRL}) — usando o do servidor.`,
       );
     }
-    const formaPagamento = String(body.formaPagamento || "").trim();
     const observacoesCliente = String(body.observacoes || "").trim();
 
     const direcaoLabel =
@@ -180,8 +225,11 @@ export async function POST(req: Request) {
         "Cotação usada",
         `R$ ${preco.cotacaoFinalBRLporJPY.toFixed(4)} por iene${cotacao.fallback ? " (ESTIMATIVA — fonte indisponível, confirmar antes)" : ""}`,
       ],
-      ["Nome de quem paga (se diferente)", nomeComprador || "Mesmo que o cliente"],
-      ["Forma de pagamento escolhida", formaPagamento || "Não escolhida ainda"],
+      ["CPF (titular)", cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4")],
+      ["Titularidade", "Cliente declarou que quem paga é o mesmo que recebe (mesmo CPF)"],
+      [direcao === "compra" ? "Endereço de entrega" : "Endereço de coleta", enderecoTexto],
+      ["Prazo de entrega", `${PRAZO_ENTREGA_CAMBIO_DIAS_UTEIS} dias úteis após a confirmação do pagamento`],
+      ["Pagamento", direcao === "compra" ? "Pix manual — enviar dados pelo WhatsApp (self-checkout desligado)" : "Ajisai paga o cliente via Pix após conferir os ienes"],
       ["Observações do cliente", observacoesCliente || "Nenhuma"],
     ];
 
@@ -219,9 +267,11 @@ export async function POST(req: Request) {
         valor_proposta: totalBRL,
         estagio: "novo_lead",
         observacoes: `[${TAG_SELF_SERVICE}]\n${resumoTexto}`,
-        nome_comprador: nomeComprador || null,
         checkout_ip: extrairIpDaRequisicao(req),
         checkout_user_agent: req.headers.get("user-agent"),
+        termos_aceitos: true,
+        termos_versao: TERMOS_VERSAO_CAMBIO,
+        termos_aceitos_em: new Date().toISOString(),
       })
       .select("id")
       .single();
@@ -244,10 +294,21 @@ export async function POST(req: Request) {
       console.error("Erro ao gravar interação (cambio-selfservice):", erroInteracao);
     }
 
+    // Bilhete aéreo (entrega no aeroporto) vira card em "Arquivos" no CRM.
+    if (ehAeroporto && CAMINHO_DOCUMENTO_JRPASS_REGEX.test(bilheteAereoPath)) {
+      const { error: erroArquivo } = await supabase.from("arquivos_cliente").insert({
+        cliente_id: cliente.id,
+        tipo: "outro",
+        label: "Bilhete aéreo — Câmbio no aeroporto",
+        url: urlDocumentoJrPassCrm(bilheteAereoPath),
+      });
+      if (erroArquivo) console.error("Erro ao registrar bilhete aéreo (cambio-selfservice):", erroArquivo);
+    }
+
     // Pix pela Stone — só na COMPRA, com cotação real (nunca cobra em cima
     // de estimativa) e integração configurada. Venda é sempre manual.
     let checkoutUrl: string | null = null;
-    if (direcao === "compra" && !cotacao.fallback && pagarmeConfigurado() && totalBRL > 0) {
+    if (SELF_CHECKOUT_CAMBIO_ATIVO && direcao === "compra" && !cotacao.fallback && pagarmeConfigurado() && totalBRL > 0) {
       try {
         const { data: pagamentoPendente, error: erroPagamento } = await supabase
           .from("pagamentos")
@@ -305,21 +366,26 @@ export async function POST(req: Request) {
             titulo: "Recebemos seu pedido de câmbio",
             intro: checkoutUrl
               ? "Seu pedido está registrado. Assim que a Stone confirmar o Pix, combinamos a entrega dos ienes."
-              : "Seu pedido está registrado. Nossa equipe envia o Pix pelo WhatsApp e por e-mail.",
+              : "Seu pedido está registrado. Nossa equipe envia os dados do Pix pelo WhatsApp.",
             status: "Aguardando confirmação do pagamento",
             etapaAtual: 1,
             etapas: [
               { titulo: "Pedido recebido", texto: `Compra de ${ienesTexto}.` },
               {
                 titulo: "Pagamento via Pix",
-                texto: checkoutUrl ? `Pix de ${valorFormatado} pela página segura da Stone.` : `Enviamos o Pix de ${valorFormatado} pelo WhatsApp e por e-mail.`,
+                texto: checkoutUrl
+                  ? `Pix de ${valorFormatado} pela página segura da Stone.`
+                  : `Enviamos os dados do Pix de ${valorFormatado} pelo WhatsApp. O Pix precisa sair de conta no seu nome (mesmo CPF do pedido).`,
               },
-              { titulo: "Entrega dos ienes", texto: `Combinamos pelo WhatsApp a data e o local de entrega em ${cidadeNome}.` },
+              {
+                titulo: "Entrega dos ienes",
+                texto: `Em até ${PRAZO_ENTREGA_CAMBIO_DIAS_UTEIS} dias úteis após a confirmação do pagamento, no endereço informado. Nem todas as cédulas são novas.`,
+              },
             ],
             resumo: [
               ["Ienes", ienesTexto],
               ["Valor", valorFormatado],
-              ["Retirada", cidadeNome],
+              ["Entrega", enderecoTexto],
             ],
             mensagemWhatsapp: `Olá! Fiz um pedido de câmbio no site da Ajisai (${nome}) e preciso de ajuda.`,
           }
@@ -337,7 +403,7 @@ export async function POST(req: Request) {
             resumo: [
               ["Ienes", ienesTexto],
               ["Valor estimado", valorFormatado],
-              ["Cidade", cidadeNome],
+              ["Coleta", enderecoTexto],
             ],
             mensagemWhatsapp: `Olá! Fiz um pedido de câmbio no site da Ajisai (${nome}) e preciso de ajuda.`,
           };

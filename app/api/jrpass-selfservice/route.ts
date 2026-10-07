@@ -4,6 +4,7 @@ import { TAG_SELF_SERVICE } from "../../../lib/crm/origem";
 import { CAMINHO_DOCUMENTO_JRPASS_REGEX, urlDocumentoJrPassCrm } from "../../../lib/supabase/documentosJrPass";
 import { criarCheckout, pagarmeConfigurado } from "../../../lib/pagarme/client";
 import { emailClienteHtml, emailClienteTexto, type EmailClienteParams } from "../../../lib/email/templateCliente";
+import { faixaFreteSedex, PRAZO_POSTAGEM_DIAS_UTEIS } from "../../lib/freteSedex";
 
 export const runtime = "nodejs";
 
@@ -96,7 +97,12 @@ async function enviarEmail(params: {
 // app/produtos/jrpass/page.tsx (seção "Termos e condições") mudar de
 // forma relevante. Versão atual: texto jurídico completo de 20
 // cláusulas + subcláusulas de chargeback, adotado em 29/set/2026.
-const TERMOS_VERSAO_JRPASS = "jrpass-termos-2026-09-29";
+// 06/out/2026: cartão emitido no Brasil, frete SEDEX, emissão a partir de
+// 30 dias antes do embarque, SLA de postagem e ativação livre.
+const TERMOS_VERSAO_JRPASS = "jrpass-termos-2026-10-06";
+// Pedido FICTÍCIO de teste (página aberta com ?teste=1) — Wilson,
+// 06/out/2026. Fluxo completo, mas o valor é sempre este, fixo aqui.
+const VALOR_PEDIDO_TESTE_BRL = 1;
 
 function extrairIpDaRequisicao(req: Request): string | null {
   const encaminhado = req.headers.get("x-forwarded-for");
@@ -108,7 +114,9 @@ export async function POST(req: Request) {
   try {
     const body = await req.json();
 
-    const nome = String(body.nome || "").trim();
+    const modoTeste = body.modoTeste === true;
+    const nomeInformado = String(body.nome || "").trim();
+    const nome = modoTeste && nomeInformado ? `[TESTE] ${nomeInformado}` : nomeInformado;
     // Nome de quem está pagando, quando é diferente de quem viaja —
     // pedido do Wilson, 29/set/2026, como evidência de checkout pra
     // defesa de chargeback ("nome do passageiro + nome do comprador").
@@ -171,9 +179,22 @@ export async function POST(req: Request) {
       : [];
     const dataInicioViagem = String(body.dataInicioViagem || "").trim();
     const dataFimViagem = String(body.dataFimViagem || "").trim();
-    const precoTotalBRL = Number(body.precoTotalBRL) || null;
+    const precoPassesBRL = Number(body.precoTotalBRL) || null;
     const precoTotalUSD = Number(body.precoTotalUSD) || null;
-    const formaPagamento = String(body.formaPagamento || "").trim();
+    const dataAtivacao = String(body.dataAtivacao || "").trim();
+    // Frete recalculado aqui pelo CEP/UF (nunca confia no valor do navegador).
+    const faixaFrete = faixaFreteSedex(endereco.cep, endereco.uf);
+    const freteBRL = modoTeste ? 0 : (faixaFrete?.valorBRL ?? 0);
+    const precoTotalBRL = modoTeste
+      ? VALOR_PEDIDO_TESTE_BRL
+      : precoPassesBRL
+        ? Math.round((precoPassesBRL + freteBRL) * 100) / 100
+        : null;
+    const declaraBrasileiro = body.declaraBrasileiro === true;
+    if (!declaraBrasileiro) {
+      return NextResponse.json({ error: "Confirme que o passaporte é brasileiro." }, { status: 400 });
+    }
+    const documentoNacionalidade = String(body.documentoNacionalidade || "").trim();
     const observacoesCliente = String(body.observacoes || "").trim();
 
     const documentoTipo = String(body.documentoTipo || "").trim();
@@ -210,10 +231,20 @@ export async function POST(req: Request) {
         "Viagem",
         dataInicioViagem && dataFimViagem ? `${dataInicioViagem} a ${dataFimViagem}` : "Não informada",
       ],
-      ["Valor total (referência)", precoTotalBRL ? `R$ ${precoTotalBRL.toLocaleString("pt-BR")}` : "Não calculado"],
-      ["Valor total (USD)", precoTotalUSD ? `US$ ${precoTotalUSD.toLocaleString("en-US")}` : "Não calculado"],
-      ["Forma de pagamento escolhida", formaPagamento || "Não escolhida ainda"],
-      ["Documento (passaporte/passagem)", documentoResumo],
+      ["Ativação prevista", dataAtivacao || "Cliente decide no Japão"],
+      ...(modoTeste ? ([["PEDIDO DE TESTE", `Fluxo fictício — cobrança fixa de R$ ${VALOR_PEDIDO_TESTE_BRL},00. NÃO EMITIR.`]] as [string, string][]) : []),
+      ["Passes (referência)", precoPassesBRL ? `R$ ${precoPassesBRL.toLocaleString("pt-BR")}` : "Não calculado"],
+      [
+        "Frete SEDEX",
+        faixaFrete ? `R$ ${freteBRL.toLocaleString("pt-BR")} (${faixaFrete.nome}, ${faixaFrete.prazoMinDiasUteis}–${faixaFrete.prazoMaxDiasUteis} dias úteis após a postagem)` : "Não calculado (UF/CEP)",
+      ],
+      ["Valor total cobrado", precoTotalBRL ? `R$ ${precoTotalBRL.toLocaleString("pt-BR")}` : "Não calculado"],
+      ["Valor dos passes (USD)", precoTotalUSD ? `US$ ${precoTotalUSD.toLocaleString("en-US")}` : "Não calculado"],
+      ["Documento (passaporte)", documentoResumo],
+      [
+        "Nacionalidade",
+        `Declarada brasileira${documentoNacionalidade === "BRA" ? " — OCR confirmou BRA" : documentoNacionalidade === "outra" ? " — ⚠️ OCR leu OUTRA nacionalidade, conferir" : " — OCR não leu"}`,
+      ],
       ["Nome do comprador (se diferente do passageiro)", nomeComprador || "Mesmo que o passageiro"],
       ["Endereço de entrega do JR Pass", enderecoTexto],
       ["Observações do cliente", observacoesCliente || "Nenhuma"],
@@ -247,7 +278,7 @@ export async function POST(req: Request) {
         nome,
         email: email || null,
         telefone: whatsapp || null,
-        origem: `${TAG_SELF_SERVICE} — JR Pass (/produtos)`,
+        origem: modoTeste ? "TESTE — JR Pass fictício (/produtos)" : `${TAG_SELF_SERVICE} — JR Pass (/produtos)`,
         produto_principal: "servico_individual",
         produto_secundario: ["jr_pass"],
         valor_proposta: precoTotalBRL,
@@ -323,14 +354,16 @@ export async function POST(req: Request) {
         } else {
           const checkout = await criarCheckout({
             codigoInterno: pagamentoPendente.id,
-            itemNome: `JR Pass — ${classe}`,
-            itemDescricao: `${dias ? `${dias} dias` : "duração a confirmar"}, ${numeroPessoas} pessoa(s)`,
+            itemNome: modoTeste ? `TESTE — JR Pass fictício (R$ ${VALOR_PEDIDO_TESTE_BRL},00)` : `JR Pass — ${classe}`,
+            itemDescricao: modoTeste
+              ? "Pedido de teste do fluxo completo. Não gera emissão."
+              : `${dias ? `${dias} dias` : "duração a confirmar"}, ${numeroPessoas} pessoa(s) + frete SEDEX`,
             valorTotalBRL: precoTotalBRL,
             aceitarCartao: true,
             aceitarPix: true,
             // Botão "voltar para a loja" da página da Stone volta para o site
             // (Wilson, 01/out/2026).
-            urlSucesso: `${new URL(req.url).origin}/produtos/jrpass?pagamento=concluido`,
+            urlSucesso: `${new URL(req.url).origin}/produtos/jrpass?${modoTeste ? "teste=1&" : ""}pagamento=concluido`,
           });
 
           await supabase
@@ -385,12 +418,21 @@ export async function POST(req: Request) {
             ? "Pix ou cartão pela página segura da Stone. A confirmação chega por e-mail."
             : "Enviamos o link de pagamento (Pix ou cartão) pelo WhatsApp e por e-mail.",
         },
-        { titulo: "Emissão e envio do voucher", texto: "Emitimos o voucher (Exchange Order) e enviamos para o seu endereço. Validade de 3 meses para a troca." },
-        { titulo: "Troca no Japão", texto: "Troque o voucher pelo passe físico em um balcão JR." },
+        {
+          titulo: "Emissão e postagem do voucher",
+          texto: `Emitimos o voucher (a partir de 30 dias antes do embarque) e postamos por SEDEX em até ${PRAZO_POSTAGEM_DIAS_UTEIS} dias úteis após a confirmação do pagamento. O código de rastreio chega pelo WhatsApp.`,
+        },
+        {
+          titulo: "Entrega",
+          texto: faixaFrete
+            ? `Prazo estimado do SEDEX para ${faixaFrete.nome}: ${faixaFrete.prazoMinDiasUteis} a ${faixaFrete.prazoMaxDiasUteis} dias úteis após a postagem (depende dos Correios). Avisamos quando sair para entrega.`
+            : "O prazo depende dos Correios para a sua região. Avisamos quando sair para entrega.",
+        },
+        { titulo: "Troca e ativação no Japão", texto: "Troque o voucher pelo passe físico num balcão JR e ative no dia que quiser — os dias contam a partir da ativação." },
       ],
       resumo: [
         ["Passe", `${classe}${dias ? ` — ${dias} dias` : ""}`],
-        ...(precoTotalBRL ? ([["Valor", `R$ ${precoTotalBRL.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`]] as [string, string][]) : []),
+        ...(precoTotalBRL ? ([["Valor (com frete)", `R$ ${precoTotalBRL.toLocaleString("pt-BR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`]] as [string, string][]) : []),
         ["Entrega do voucher", enderecoTexto],
       ],
       aviso:

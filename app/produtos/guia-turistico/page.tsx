@@ -42,6 +42,7 @@ import {
   BlocoAvisos,
   IconeSeta,
 } from "../../components/transporte/compartilhado";
+import { EscopoServico, type VideoExplicativo } from "../../components/EscopoServico";
 
 const ETAPAS = ["Viagem", "Guia", "Dias", "Dados", "Revisão"] as const;
 type Etapa = 1 | 2 | 3 | 4 | 5;
@@ -67,11 +68,38 @@ const GUIAS: { key: TipoGuia; nome: string; perfil: string; diariaUSD: number }[
 
 const CIDADES = ["Tóquio", "Kyoto", "Osaka", "Nara", "Hakone", "Nikko", "Kamakura", "Hiroshima", "Kanazawa", "Outra"];
 
-const DESTAQUES = [
-  "Dedicado só ao seu grupo, do início ao fim do dia",
-  "Conhece trajetos, horários e como evitar filas nos pontos do seu roteiro",
-  "Contratado por dia — você escolhe só os dias que precisa",
+// Escopo do guia — Wilson, 06/out/2026: "deixar claro o que está sendo
+// contratado e escopo de funções / guia não é motorista particular, guia não
+// carrega malas, guia fala português não necessariamente é brasileiro, não
+// está esperando você no aeroporto, não é responsável pela sua alimentação,
+// não precisa pagar alimentação do guia, não precisa pagar transporte".
+const INCLUIDO_GUIA = [
+  "Guia dedicado só ao seu grupo, nos dias contratados (horário combinado na confirmação)",
+  "Condução a pé e em transporte público pelos pontos do seu roteiro",
+  "Explicações sobre história, cultura e costumes dos lugares visitados",
+  "Ajuda com idioma: tradução em lojas, restaurantes, templos e bilheterias",
+  "Orientação de trajetos, horários e como evitar filas",
+  "Alimentação e transporte do próprio guia durante o passeio — você não paga nada a mais por isso",
 ];
+const NAO_INCLUIDO_GUIA = [
+  "O guia não é motorista particular — não dirige nem leva carro (veja Transporte Privado)",
+  "O guia não carrega malas nem bagagem",
+  "O guia não espera você no aeroporto (para isso, veja Transfer Aeroporto)",
+  "O guia não é responsável pela sua alimentação: refeições do grupo são pagas à parte",
+  "Ingressos, passagens de trem/metrô/táxi do grupo e compras não estão incluídos",
+  "Guia que fala português não é necessariamente brasileiro (o guia brasileiro é uma opção específica)",
+  "Não é babá nem acompanhante de crianças sem os pais",
+];
+const DIFERENCIAIS_GUIA = [
+  "Guias selecionados pela Ajisai, com anos de experiência no Japão",
+  "Trabalha em cima do seu Roteiro Personalizado, não de um tour genérico",
+  "Contratado por dia — você escolhe só os dias que precisa",
+  "Opção de guia brasileiro, nativo em português",
+];
+// Vídeo explicativo (Wilson, 06/out/2026). Aguardando o material: quando o
+// vídeo existir, preencher, ex.: { tipo: "mp4", src: "/videos/guia-turistico.mp4" }
+// ou { tipo: "youtube", id: "XXXXXXXXXXX" }. null = bloco de vídeo oculto.
+const VIDEO_GUIA: VideoExplicativo | null = null;
 
 function Contador({ rotulo, ajuda, valor, min, total, onChange }: { rotulo: string; ajuda: string; valor: number; min: number; total: number; onChange: (n: number) => void }) {
   return (
@@ -115,10 +143,16 @@ function TextoTermosGuia() {
         O guia acompanha o grupo nos dias contratados, seguindo o roteiro combinado com a nossa equipe. Cada guia atende até{" "}
         {GUIA_TAMANHO_GRUPO} pessoas; grupos maiores recebem guias adicionais, cobrados proporcionalmente.
       </p>
+      <p className="mt-3 font-medium text-black/80">Escopo do guia</p>
+      <p className="mt-1">
+        O guia conduz o grupo a pé e em transporte público, explica os locais e ajuda com o idioma. O guia não é motorista
+        particular, não carrega malas, não recepciona no aeroporto e não é responsável pela alimentação do grupo. Guia que
+        fala português não é necessariamente brasileiro — o guia brasileiro é uma opção específica.
+      </p>
       <p className="mt-3 font-medium text-black/80">O que não está incluído</p>
       <p className="mt-1">
-        Ingressos, refeições, transporte (trem, táxi ou motorista) e demais despesas do grupo e do guia durante o passeio são
-        pagos à parte, salvo combinação diferente na confirmação.
+        Ingressos, refeições e transporte (trem, metrô, táxi ou motorista) do grupo são pagos à parte. A alimentação e o
+        transporte do próprio guia durante o passeio já estão incluídos — o cliente não paga nada a mais por eles.
       </p>
       <p className="mt-3 font-medium text-black/80">Roteiro Personalizado</p>
       <p className="mt-1">
@@ -153,6 +187,8 @@ export default function GuiaTuristicoPage() {
   const [dataPartida, setDataPartida] = useState("");
   const [adultos, setAdultos] = useState(2);
   const [criancas, setCriancas] = useState(0);
+  // Ciência do escopo (o que está e o que não está incluído) — obrigatória.
+  const [escopoCiente, setEscopoCiente] = useState(false);
 
   const [tipoGuia, setTipoGuia] = useState<TipoGuia | "">("");
   // Dias com guia → cidade de cada dia.
@@ -223,7 +259,7 @@ export default function GuiaTuristicoPage() {
         : null;
   const tocar = (campo: string) => setTocados((t) => ({ ...t, [campo]: true }));
 
-  const etapa1Ok = periodoValido && adultos >= 1;
+  const etapa1Ok = periodoValido && adultos >= 1 && escopoCiente;
   const etapa2Ok = tipoGuia !== "";
   const etapa3Ok = diasEscolhidos.length > 0;
   const etapa4Ok = dadosValidos;
@@ -261,7 +297,15 @@ export default function GuiaTuristicoPage() {
 
   const cta: { rotulo: string; ativo: boolean; falta: string | null } =
     etapa === 1
-      ? { rotulo: "Ver guias", ativo: true, falta: etapa1Ok ? null : "Informe chegada e partida para continuar" }
+      ? {
+          rotulo: "Ver guias",
+          ativo: true,
+          falta: etapa1Ok
+            ? null
+            : periodoValido && !escopoCiente
+              ? "Confirme que leu o que está e o que não está incluído"
+              : "Informe chegada e partida para continuar",
+        }
       : etapa === 2
         ? etapa2Ok
           ? { rotulo: "Continuar", ativo: true, falta: null }
@@ -611,14 +655,26 @@ export default function GuiaTuristicoPage() {
                     </div>
                   </div>
 
-                  <ul className="mt-6 space-y-2">
-                    {DESTAQUES.map((d) => (
-                      <li key={d} className="flex items-start gap-2 text-sm text-black/65">
-                        <IconeCheck className="mt-0.5 h-4 w-4 shrink-0 text-[#2f80c9]" />
-                        {d}
-                      </li>
-                    ))}
-                  </ul>
+                  <EscopoServico
+                    titulo="O que você está contratando"
+                    incluido={INCLUIDO_GUIA}
+                    naoIncluido={NAO_INCLUIDO_GUIA}
+                    diferenciais={DIFERENCIAIS_GUIA}
+                    video={VIDEO_GUIA}
+                    tituloVideo="Como funciona o guia turístico da Ajisai"
+                  />
+                  <label className="mt-4 flex min-h-[44px] cursor-pointer items-start gap-3">
+                    <input
+                      type="checkbox"
+                      checked={escopoCiente}
+                      onChange={(e) => setEscopoCiente(e.target.checked)}
+                      className="mt-0.5 h-5 w-5 shrink-0 rounded border-black/30 text-[#2f80c9] focus:ring-[#2f80c9]"
+                    />
+                    <span className="text-sm text-black/85">Li e entendi o que está e o que não está incluído no serviço de guia.</span>
+                  </label>
+                  {tentouAvancarViagem && periodoValido && !escopoCiente && (
+                    <p className="ml-8 text-xs text-red-600">Confirme para continuar.</p>
+                  )}
                 </section>
               )}
 

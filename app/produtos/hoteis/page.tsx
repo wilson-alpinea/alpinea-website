@@ -55,6 +55,8 @@ import {
   BlocoAvisos,
   IconeSeta,
 } from "../../components/transporte/compartilhado";
+import { AvisoPagamentoConcluido } from "../AvisoPagamentoConcluido";
+import { abrirAbaPagamento, enviarParaPagamento, fecharAba, BlocoPagamentoNovaAba } from "../pagamentoNovaAba";
 
 type Categoria = (typeof CATEGORIAS_HOTEL)[number];
 type TipoQuarto = (typeof TIPOS_QUARTO)[number];
@@ -75,6 +77,35 @@ const PERFIL_CATEGORIA: Record<Categoria, string> = {
   Elite: "Ultra-luxo: Aman, Peninsula, ryokans históricos",
 };
 
+// Preferência de camas (Wilson, 06/out/2026: "preferências da cama,
+// solteiro, duplo, casal, etc / 1 ou 2 camas / quartos separados"). Cada
+// configuração aponta para o tipo de quarto usado no preço.
+const CONFIG_CAMAS: { id: string; rotulo: string; tipo: TipoQuarto }[] = [
+  { id: "casal", rotulo: "1 cama de casal (até 2 pessoas)", tipo: "Duplo (casal)" },
+  { id: "twin", rotulo: "2 camas de solteiro (até 2 pessoas)", tipo: "Duplo (compartilhado)" },
+  { id: "solteiro", rotulo: "1 cama de solteiro (1 pessoa)", tipo: "Individual" },
+  { id: "casal-solteiro", rotulo: "1 casal + 1 solteiro (até 3 pessoas)", tipo: "Triplo" },
+  { id: "tres-solteiro", rotulo: "3 camas de solteiro (até 3 pessoas)", tipo: "Triplo" },
+];
+const configCamas = (id: string) => CONFIG_CAMAS.find((c) => c.id === id) ?? CONFIG_CAMAS[0];
+const PREFERENCIAS_QUARTOS: { id: string; rotulo: string }[] = [
+  { id: "indiferente", rotulo: "Sem preferência" },
+  { id: "proximos", rotulo: "Quartos próximos (mesmo andar)" },
+  { id: "conectados", rotulo: "Quartos conectados (porta interna)" },
+  { id: "separados", rotulo: "Quartos separados (andares/alas diferentes)" },
+];
+const rotuloPreferencia = (id: string) => PREFERENCIAS_QUARTOS.find((p) => p.id === id)?.rotulo ?? "";
+
+// Comodidades por categoria (mesma base de INFO_CATEGORIA_HOTEL) — Wilson,
+// 06/out/2026: "quais amenidades estão disponíveis".
+const AMENIDADES_ROTULO: { chave: "restaurante" | "academia" | "piscina" | "sauna"; rotulo: string }[] = [
+  { chave: "restaurante", rotulo: "Restaurante" },
+  { chave: "academia", rotulo: "Academia" },
+  { chave: "piscina", rotulo: "Piscina" },
+  { chave: "sauna", rotulo: "Spa / sauna" },
+];
+const AMENIDADES_TODAS = ["Wi-Fi gratuito", "Ar-condicionado", "Amenities de banheiro", "Recepção 24h"];
+
 type Estadia = {
   uid: string;
   cidade: Cidade;
@@ -82,6 +113,8 @@ type Estadia = {
   checkout: string;
   categoria: Categoria;
   tipoQuarto: TipoQuarto;
+  camas: string;
+  preferenciaQuartos: string;
   quartos: number;
   cafe: boolean;
 };
@@ -119,10 +152,18 @@ function TextoTermosHoteis() {
         Nomes e número de hóspedes precisam corresponder aos documentos apresentados no check-in. Horários de check-in e
         check-out seguem as regras de cada hotel; entrada antecipada e saída tardia são sob consulta.
       </p>
+      <p className="mt-3 font-medium text-black/80">Hóspedes e crianças</p>
+      <p className="mt-1">
+        Crianças a partir de 3 anos contam como hóspede (ocupam lugar no quarto e entram no cálculo). Bebês de até 2 anos não
+        contam como hóspede; berço depende da disponibilidade de cada hotel. Preferências de cama e de localização dos
+        quartos são solicitadas ao hotel e não podem ser garantidas.
+      </p>
       <p className="mt-3 font-medium text-black/80">Pagamento</p>
       <p className="mt-1">
-        Nenhum valor é cobrado nesta página. Forma de pagamento e parcelamento são combinados com a nossa equipe pelo
-        WhatsApp; valores em dólar são convertidos pela cotação do dia da confirmação.
+        Você pode pagar online agora (Pix ou cartão, na página segura da Stone) ou combinar a forma de pagamento com a nossa
+        equipe pelo WhatsApp. No pagamento online, o valor estimado é cobrado e qualquer diferença em relação ao hotel
+        confirmado (para mais ou para menos) é ajustada antes da reserva — se não houver opção que você aprove, o valor é
+        devolvido integralmente. Valores em dólar são convertidos pela cotação do dia.
       </p>
     </>
   );
@@ -169,7 +210,22 @@ export default function HoteisPage() {
   const [dataChegada, setDataChegada] = useState("");
   const [dataPartida, setDataPartida] = useState("");
   const [adultos, setAdultos] = useState(2);
+  // Crianças de 3 a 11 anos contam como hóspede; bebês (0–2) não — Wilson,
+  // 06/out/2026: "a partir de 3 anos é hóspede full, menos de 3 anos é bebê
+  // e não é considerado hóspede".
   const [criancas, setCriancas] = useState(0);
+  const [idadesCriancas, setIdadesCriancas] = useState<(number | "")[]>([]);
+  const [bebes, setBebes] = useState(0);
+  const [pagarOnline, setPagarOnline] = useState<boolean | null>(null);
+  const [linkPagamento, setLinkPagamento] = useState<string | null>(null);
+  function ajustarCriancas(n: number) {
+    setCriancas(n);
+    setIdadesCriancas((atual) => {
+      const prox = atual.slice(0, n);
+      while (prox.length < n) prox.push("");
+      return prox;
+    });
+  }
 
   const [categoriaEscolhida, setCategoriaEscolhida] = useState(false);
   const [categoriaPadrao, setCategoriaPadrao] = useState<Categoria>("4 estrelas");
@@ -179,7 +235,9 @@ export default function HoteisPage() {
   const [novoCheckin, setNovoCheckin] = useState("");
   const [novoCheckout, setNovoCheckout] = useState("");
   const [novaCategoria, setNovaCategoria] = useState<Categoria | "">("");
-  const [novoTipo, setNovoTipo] = useState<TipoQuarto>("Duplo (casal)");
+  const [novasCamas, setNovasCamas] = useState("casal");
+  const [novaPreferencia, setNovaPreferencia] = useState("indiferente");
+  const novoTipo: TipoQuarto = configCamas(novasCamas).tipo;
   const [novosQuartos, setNovosQuartos] = useState<number | null>(null);
   const [novoCafe, setNovoCafe] = useState(true);
   const [ultimoAdicionado, setUltimoAdicionado] = useState<string | null>(null);
@@ -275,17 +333,20 @@ export default function HoteisPage() {
         : null;
   const tocar = (campo: string) => setTocados((t) => ({ ...t, [campo]: true }));
 
-  const etapa1Ok = periodoValido && adultos >= 1;
+  const idadesOk = idadesCriancas.every((i) => typeof i === "number");
+  const etapa1Ok = periodoValido && adultos >= 1 && idadesOk;
   const etapa2Ok = categoriaEscolhida;
   const etapa3Ok = quantidadeEstadias > 0 && estadiasComProblema === 0;
   const etapa4Ok = dadosValidos;
   const etapasOk = [etapa1Ok, etapa2Ok, etapa3Ok, etapa4Ok];
-  const podeEnviar = etapa1Ok && etapa2Ok && etapa3Ok && etapa4Ok && termosAceitos;
+  const podeEnviar = etapa1Ok && etapa2Ok && etapa3Ok && etapa4Ok && termosAceitos && pagarOnline !== null;
 
   const textoPeriodo = periodoValido
     ? `${formatarDiaMes(dataChegada)} a ${formatarDiaMes(dataPartida)} · ${totalNoitesViagem} ${totalNoitesViagem === 1 ? "noite" : "noites"}`
     : "";
-  const textoHospedes = `${adultos} ${adultos === 1 ? "adulto" : "adultos"}${criancas ? `, ${criancas} ${criancas === 1 ? "criança" : "crianças"}` : ""}`;
+  const textoHospedes = `${adultos} ${adultos === 1 ? "adulto" : "adultos"}${criancas ? `, ${criancas} ${criancas === 1 ? "criança" : "crianças"}` : ""}${
+    bebes ? `, ${bebes} ${bebes === 1 ? "bebê" : "bebês"}` : ""
+  }`;
 
   function irPara(nova: Etapa) {
     setEtapa(nova);
@@ -319,7 +380,18 @@ export default function HoteisPage() {
   const noitesNovas = noitesEntre(checkinNovo, checkoutNovo);
   const previaNova: Estadia | null =
     novaCidade && noitesNovas > 0
-      ? { uid: "previa", cidade: novaCidade, checkin: checkinNovo, checkout: checkoutNovo, categoria: categoriaNova, tipoQuarto: novoTipo, quartos: quartosNovos, cafe: novoCafe }
+      ? {
+          uid: "previa",
+          cidade: novaCidade,
+          checkin: checkinNovo,
+          checkout: checkoutNovo,
+          categoria: categoriaNova,
+          tipoQuarto: novoTipo,
+          camas: novasCamas,
+          preferenciaQuartos: quartosNovos > 1 ? novaPreferencia : "indiferente",
+          quartos: quartosNovos,
+          cafe: novoCafe,
+        }
       : null;
 
   function adicionarEstadia() {
@@ -337,7 +409,11 @@ export default function HoteisPage() {
 
   const cta: { rotulo: string; ativo: boolean; falta: string | null } =
     etapa === 1
-      ? { rotulo: "Ver categorias", ativo: true, falta: etapa1Ok ? null : "Informe chegada e partida para continuar" }
+      ? {
+          rotulo: "Ver categorias",
+          ativo: true,
+          falta: etapa1Ok ? null : periodoValido && !idadesOk ? "Informe a idade de cada criança" : "Informe chegada e partida para continuar",
+        }
       : etapa === 2
         ? etapa2Ok
           ? { rotulo: "Continuar", ativo: true, falta: null }
@@ -351,9 +427,9 @@ export default function HoteisPage() {
           : etapa === 4
             ? { rotulo: "Continuar", ativo: etapa4Ok, falta: etapa4Ok ? null : "Complete seus dados para continuar" }
             : {
-                rotulo: status === "enviando" ? "Enviando…" : "Solicitar hotéis",
+                rotulo: status === "enviando" ? "Enviando…" : pagarOnline ? "Solicitar e pagar online" : "Solicitar hotéis",
                 ativo: podeEnviar && status !== "enviando",
-                falta: termosAceitos ? null : "Aceite os Termos e Condições para solicitar",
+                falta: pagarOnline === null ? "Escolha como prefere pagar" : termosAceitos ? null : "Aceite os Termos e Condições para solicitar",
               };
 
   function acionarCta() {
@@ -375,7 +451,7 @@ export default function HoteisPage() {
       else setTentouAvancarDados(true);
       return;
     }
-    if (!termosAceitos) {
+    if (!termosAceitos || pagarOnline === null) {
       setTentouEnviar(true);
       return;
     }
@@ -387,7 +463,7 @@ export default function HoteisPage() {
   const resumoEstadias = estadiasOrdenadas
     .map(
       (e) =>
-        `${nomeCidade(e.cidade)} ${formatarDiaMes(e.checkin)}–${formatarDiaMes(e.checkout)} (${noitesDe(e)} noites) — ${e.categoria}, ${e.quartos}× ${e.tipoQuarto}${e.cafe ? ", com café da manhã" : ""}`,
+        `${nomeCidade(e.cidade)} ${formatarDiaMes(e.checkin)}–${formatarDiaMes(e.checkout)} (${noitesDe(e)} noites) — ${e.categoria}, ${e.quartos}× ${configCamas(e.camas).rotulo}${e.quartos > 1 && e.preferenciaQuartos !== "indiferente" ? `, ${rotuloPreferencia(e.preferenciaQuartos).toLowerCase()}` : ""}${e.cafe ? ", com café da manhã" : ""}`,
     )
     .join("; ");
 
@@ -395,6 +471,7 @@ export default function HoteisPage() {
     if (!podeEnviar || status === "enviando") return;
     setStatus("enviando");
     setErro("");
+    const janelaPagamento = pagarOnline ? abrirAbaPagamento() : null;
     try {
       const resposta = await fetch("/api/hoteis-selfservice", {
         method: "POST",
@@ -404,6 +481,9 @@ export default function HoteisPage() {
           dataPartida,
           adultos,
           criancas,
+          idadesCriancas,
+          bebes,
+          pagarOnline,
           estadias: estadiasOrdenadas.map((e) => ({
             cidade: nomeCidade(e.cidade),
             checkin: e.checkin,
@@ -411,6 +491,8 @@ export default function HoteisPage() {
             noites: noitesDe(e),
             categoria: e.categoria,
             tipoQuarto: e.tipoQuarto,
+            camas: configCamas(e.camas).rotulo,
+            preferenciaQuartos: e.quartos > 1 ? rotuloPreferencia(e.preferenciaQuartos) : "",
             quartos: e.quartos,
             cafe: e.cafe,
             valorBRL: Math.round(precoEstadiaBRL(e)),
@@ -428,13 +510,24 @@ export default function HoteisPage() {
       });
       const dadosResposta = await resposta.json().catch(() => ({}));
       if (!resposta.ok) {
+        fecharAba(janelaPagamento);
         setErro(dadosResposta.error || "Não foi possível registrar seu pedido agora. Tente de novo.");
         setStatus("erro");
         return;
       }
+      if (dadosResposta?.checkoutUrl) {
+        if (enviarParaPagamento(janelaPagamento, dadosResposta.checkoutUrl)) {
+          setLinkPagamento(dadosResposta.checkoutUrl);
+          setStatus("enviado");
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        }
+        return;
+      }
+      fecharAba(janelaPagamento);
       setStatus("enviado");
       window.scrollTo({ top: 0, behavior: "smooth" });
     } catch {
+      fecharAba(janelaPagamento);
       setErro("Não foi possível registrar seu pedido agora. Tente de novo.");
       setStatus("erro");
     }
@@ -559,6 +652,7 @@ export default function HoteisPage() {
             <IconeCheck className="h-6 w-6" />
           </span>
           <h1 className={`${display.className} mt-5 text-2xl font-medium text-black md:text-3xl`}>Recebemos seu pedido</h1>
+          {linkPagamento && <BlocoPagamentoNovaAba url={linkPagamento} />}
           <p className="mx-auto mt-3 max-w-md text-sm leading-relaxed text-black/70">
             Nossa equipe envia as opções de hotel pelo WhatsApp — em geral no mesmo dia útil. A reserva só é feita depois da
             sua aprovação.
@@ -599,6 +693,9 @@ export default function HoteisPage() {
             </section>
           </div>
 
+          <div className="mx-auto max-w-6xl px-5 md:px-8">
+            <AvisoPagamentoConcluido />
+          </div>
           <div ref={stepperRef} aria-hidden="true" />
           <div className="sticky top-14 z-40 mt-6 bg-[#1f6fb8] shadow-[0_4px_16px_rgba(10,37,64,0.12)]">
             <nav aria-label="Etapas" className="mx-auto flex w-fit max-w-full items-center gap-1 overflow-x-auto px-5 py-3 md:gap-3 md:px-8">
@@ -692,7 +789,34 @@ export default function HoteisPage() {
                     <div className="mt-4 grid gap-4 border-t border-black/[0.08] pt-4 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end">
                       <div className="divide-y divide-black/[0.06] sm:max-w-sm">
                         <ContadorHospedes rotulo="Adultos" ajuda="12 anos ou mais" valor={adultos} min={1} total={hospedes} onChange={setAdultos} />
-                        <ContadorHospedes rotulo="Crianças" ajuda="Até 11 anos" valor={criancas} min={0} total={hospedes} onChange={setCriancas} />
+                        <ContadorHospedes rotulo="Crianças" ajuda="3 a 11 anos · contam como hóspede" valor={criancas} min={0} total={hospedes} onChange={ajustarCriancas} />
+                        <ContadorHospedes rotulo="Bebês" ajuda="0 a 2 anos · não contam como hóspede" valor={bebes} min={0} total={0} onChange={(n) => setBebes(Math.min(6, n))} />
+                        {criancas > 0 && (
+                          <div className="grid grid-cols-2 gap-2 py-3 sm:grid-cols-3">
+                            {idadesCriancas.map((idade, i) => (
+                              <label key={i} className="block">
+                                <span className="mb-1 block text-xs text-black/60">Idade da criança {i + 1}</span>
+                                <span className="relative block">
+                                  <select
+                                    value={idade}
+                                    onChange={(e) =>
+                                      setIdadesCriancas((atual) => atual.map((v, j) => (j === i ? (e.target.value === "" ? "" : Number(e.target.value)) : v)))
+                                    }
+                                    className={classeSelectPequeno}
+                                  >
+                                    <option value="">Idade</option>
+                                    {[3, 4, 5, 6, 7, 8, 9, 10, 11].map((n) => (
+                                      <option key={n} value={n}>
+                                        {n} anos
+                                      </option>
+                                    ))}
+                                  </select>
+                                  <IconeSeta />
+                                </span>
+                              </label>
+                            ))}
+                          </div>
+                        )}
                       </div>
                       <button
                         type="button"
@@ -741,10 +865,26 @@ export default function HoteisPage() {
                         >
                           <span className="block pr-8 text-[15px] font-medium text-black">{c}</span>
                           <span className="mt-0.5 block text-xs text-black/55">{PERFIL_CATEGORIA[c]}</span>
-                          <span className="mt-2 block text-xs text-black/55">
-                            Quartos de {info.m2Medio}
-                            {comodidades.length > 0 && ` · ${listarNatural(comodidades)}`}
+                          <span className="mt-2 block text-xs text-black/55">Quartos de {info.m2Medio}</span>
+                          <span className="mt-2 grid grid-cols-2 gap-x-3 gap-y-1">
+                            {AMENIDADES_ROTULO.map((a) => {
+                              const tem = info.amenidades[a.chave];
+                              return (
+                                <span key={a.chave} className={`flex items-center gap-1.5 text-xs ${tem ? "text-black/75" : "text-black/35 line-through"}`}>
+                                  {tem ? <IconeCheck className="h-3.5 w-3.5 text-[#2f80c9]" /> : <span aria-hidden className="w-3.5 text-center">–</span>}
+                                  {a.rotulo}
+                                  <span className="sr-only">{tem ? "disponível" : "não disponível"}</span>
+                                </span>
+                              );
+                            })}
+                            {AMENIDADES_TODAS.map((a) => (
+                              <span key={a} className="flex items-center gap-1.5 text-xs text-black/75">
+                                <IconeCheck className="h-3.5 w-3.5 text-[#2f80c9]" />
+                                {a}
+                              </span>
+                            ))}
                           </span>
+                          <span className="sr-only">{comodidades.join(", ")}</span>
                           <span className={`${inter.className} mt-3 block text-sm font-semibold tabular-nums text-[#0A2540]`}>
                             a partir de {formatUSD(diariaMin / cambioCotacao)}
                             <span className="text-xs font-normal text-black/45"> / noite</span>
@@ -829,18 +969,18 @@ export default function HoteisPage() {
                         </span>
                       </label>
                       <label className="block min-w-0">
-                        <span className="mb-1.5 block text-xs font-medium text-black/60">Tipo de quarto</span>
+                        <span className="mb-1.5 block text-xs font-medium text-black/60">Camas por quarto</span>
                         <span className="relative block">
                           <select
-                            value={novoTipo}
+                            value={novasCamas}
                             onChange={(e) => {
-                              setNovoTipo(e.target.value as TipoQuarto);
+                              setNovasCamas(e.target.value);
                               setNovosQuartos(null);
                             }}
                             className={CLASSE_SELECT}
                           >
-                            {TIPOS_QUARTO.map((t) => (
-                              <option key={t} value={t}>{t}</option>
+                            {CONFIG_CAMAS.map((c) => (
+                              <option key={c.id} value={c.id}>{c.rotulo}</option>
                             ))}
                           </select>
                           <IconeSeta />
@@ -871,6 +1011,21 @@ export default function HoteisPage() {
                         </div>
                       </div>
                     </div>
+
+                    {quartosNovos > 1 && (
+                      <label className="mt-3 block max-w-md">
+                        <span className="mb-1.5 block text-xs font-medium text-black/60">Localização dos {quartosNovos} quartos</span>
+                        <span className="relative block">
+                          <select value={novaPreferencia} onChange={(e) => setNovaPreferencia(e.target.value)} className={CLASSE_SELECT}>
+                            {PREFERENCIAS_QUARTOS.map((p) => (
+                              <option key={p.id} value={p.id}>{p.rotulo}</option>
+                            ))}
+                          </select>
+                          <IconeSeta />
+                        </span>
+                        <span className="mt-1 block text-xs text-black/45">Pedido ao hotel, sujeito à disponibilidade.</span>
+                      </label>
+                    )}
 
                     <label className="mt-4 flex min-h-[44px] cursor-pointer items-center gap-3">
                       <input
@@ -997,7 +1152,7 @@ export default function HoteisPage() {
                                     </span>
                                   </div>
                                   <p className="mt-1.5 text-xs text-black/50">
-                                    {e.quartos}× {e.tipoQuarto.toLowerCase()}
+                                    {e.quartos}× {configCamas(e.camas).rotulo.replace(/ \(.*\)$/, "")}
                                     {e.cafe ? " · com café da manhã" : " · sem café da manhã"}
                                   </p>
                                   {problema && <p className="mt-1 text-xs text-red-600">{problema}</p>}
@@ -1062,7 +1217,7 @@ export default function HoteisPage() {
                           value={observacoes}
                           onChange={(e) => setObservacoes(e.target.value)}
                           rows={3}
-                          placeholder="Hotel que você já tem em mente, idade das crianças, quartos conectados, ocasião especial."
+                          placeholder="Hotel que você já tem em mente, berço para bebê, ocasião especial."
                           className="w-full min-w-0 rounded-lg border border-black/15 bg-white px-3.5 py-3 text-sm text-black focus:border-[#2f80c9] focus:outline-none focus:ring-2 focus:ring-[#2f80c9]/20"
                         />
                       </Campo>
@@ -1103,7 +1258,7 @@ export default function HoteisPage() {
                                   {nomeCidade(e.cidade)} · {e.categoria}
                                   <span className="text-black/55">
                                     {" "}
-                                    · {e.quartos}× {e.tipoQuarto.toLowerCase()}
+                                    · {e.quartos}× {configCamas(e.camas).rotulo.replace(/ \(.*\)$/, "")}
                                     {e.cafe && " · café"}
                                   </span>
                                 </span>
@@ -1148,6 +1303,37 @@ export default function HoteisPage() {
                   </dl>
                   {avisos.length > 0 && <BlocoAvisos avisos={avisos} className="mt-5" />}
 
+                  {/* Pagamento online opcional (Wilson, 06/out/2026). */}
+                  <p className="mt-8 text-[11px] font-semibold uppercase tracking-[0.14em] text-black/70">Como prefere pagar?</p>
+                  <div className="mt-2 grid gap-3 sm:grid-cols-2">
+                    {[
+                      {
+                        valor: true,
+                        titulo: "Pagar online agora",
+                        texto: "Pix ou cartão (até 12x) na página segura da Stone. Diferenças para o hotel confirmado são ajustadas antes da reserva.",
+                      },
+                      {
+                        valor: false,
+                        titulo: "Combinar pelo WhatsApp",
+                        texto: "Recebo as opções de hotel e combino a forma de pagamento com a equipe.",
+                      },
+                    ].map((op) => (
+                      <button
+                        key={String(op.valor)}
+                        type="button"
+                        onClick={() => setPagarOnline(op.valor)}
+                        aria-pressed={pagarOnline === op.valor}
+                        className={`rounded-xl border p-4 text-left transition ${
+                          pagarOnline === op.valor ? "border-[#2f80c9] bg-[#2f80c9]/[0.05] ring-1 ring-[#2f80c9]" : "border-black/10 hover:border-black/25"
+                        }`}
+                      >
+                        <span className="block text-sm font-medium text-black">{op.titulo}</span>
+                        <span className="mt-1 block text-xs leading-5 text-black/60">{op.texto}</span>
+                      </button>
+                    ))}
+                  </div>
+                  {tentouEnviar && pagarOnline === null && <p className="mt-1.5 text-xs text-red-600">Escolha como prefere pagar.</p>}
+
                   <p className="mt-8 text-[11px] font-semibold uppercase tracking-[0.14em] text-black/70">Termos e Condições</p>
                   <div
                     tabIndex={0}
@@ -1168,8 +1354,9 @@ export default function HoteisPage() {
                   </label>
                   {tentouEnviar && !termosAceitos && <p className="ml-8 text-xs text-red-600">Aceite os Termos e Condições para solicitar os hotéis.</p>}
                   <p className="mt-4 text-xs leading-5 text-black/50">
-                    Nenhum valor é cobrado agora. Nossa equipe envia as opções de hotel e combina a forma de pagamento com você pelo
-                    WhatsApp.
+                    {pagarOnline
+                      ? "Ao solicitar, a página de pagamento da Stone abre em uma nova aba. Nossa equipe envia as opções de hotel pelo WhatsApp."
+                      : "Nenhum valor é cobrado agora. Nossa equipe envia as opções de hotel e combina a forma de pagamento com você pelo WhatsApp."}
                   </p>
                   {erro && <p className="mt-4 text-sm text-red-600">{erro}</p>}
                 </section>

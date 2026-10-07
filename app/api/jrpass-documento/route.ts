@@ -23,6 +23,9 @@ export const runtime = "nodejs";
 // documento antes de preencher nome/e-mail) — /api/jrpass-selfservice
 // recebe esse mesmo caminho de Storage e grava no lead, pra equipe achar
 // o arquivo depois.
+// Desde 06/out/2026 o checkout só aceita passaporte (Wilson: "Foto da
+// passagem (remover), foto do passaporte (mandatório)"); "passagem" fica
+// aceito aqui só por compatibilidade com abas abertas antes do deploy.
 const TIPOS_VALIDOS = ["passaporte", "passagem"] as const;
 
 export async function POST(req: Request) {

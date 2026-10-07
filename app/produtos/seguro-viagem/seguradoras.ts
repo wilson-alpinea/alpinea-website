@@ -96,9 +96,27 @@
 // nome nem logo de nenhuma outra empresa (só o placeholder genérico
 // "(SEGURADORA) SEGUROS S/A" — problema de template, não material de
 // concorrente).
-export const SEGURADORAS_VIAGEM = [
+// Apólice contratada + valores de cobertura — substituem os "tipos de
+// plano" (Wilson, 06/out/2026: "remover tipos de planos das seguradoras,
+// adicionar informações das apólices contratadas e valor da cobertura").
+// Wilson vai enviar os dados oficiais de cada apólice: `valor: null` =
+// ainda não informado (a página mostra "consta na apólice"). Preencher aqui.
+export type CoberturaApolice = { item: string; valor: string | null };
+export type ApoliceSeguradora = { plano: string | null; coberturas: CoberturaApolice[] };
+
+export const SEGURADORAS_VIAGEM: {
+  key: "affinity" | "gta" | "mta";
+  nome: string;
+  logo: string;
+  descricao: string;
+  observacao: string | null;
+  apolice: ApoliceSeguradora;
+  termosUrl: string | null;
+  termosLabel: string | null;
+  termosNota: string;
+}[] = [
   {
-    key: "affinity" as const,
+    key: "affinity",
     nome: "Affinity",
     // Logo enviado pelo Wilson, 25/set/2026.
     logo: "/images/Affinity-Logo.png",
@@ -113,21 +131,24 @@ export const SEGURADORAS_VIAGEM = [
     // só os tipos que não são restritos a outra região (a Affinity não
     // tem uma faixa "Ásia" própria — cobertura pra Japão entra no
     // "Internacional/Nacional").
-    tiposPlano: [
-      "Internacional/Nacional",
-      "Anual (multiviagem)",
-      "Estudante",
-      "Esportes",
-      "Cruzeiros",
-      "Corporativo",
-    ],
+    apolice: {
+      plano: "Affinity 40 Essential",
+      coberturas: [
+        { item: "Despesas médicas e hospitalares", valor: "US$ 40.000" },
+        { item: "Despesas odontológicas", valor: null },
+        { item: "Traslado médico e repatriação sanitária", valor: null },
+        { item: "Repatriação funerária", valor: null },
+        { item: "Bagagem extraviada", valor: "US$ 500" },
+        { item: "Cancelamento de viagem", valor: null },
+      ],
+    },
     termosUrl: "https://affinityseguroviagem.com.br/condicoes-gerais/afinity.pdf",
     termosLabel: "Condições gerais (PDF)",
     termosNota:
       "PDF oficial da Affinity. Repare que ele não nomeia a seguradora reguladora (usa um texto genérico no lugar) — confirmamos qual seguradora responde pela apólice antes de fechar.",
   },
   {
-    key: "gta" as const,
+    key: "gta",
     nome: "GTA",
     // Logo enviado pelo Wilson, 25/set/2026 (mandou depois dos outros
     // dois, no mesmo dia).
@@ -143,25 +164,41 @@ export const SEGURADORAS_VIAGEM = [
     // cobrem Japão/Ásia. A GTA não vende uma faixa "Ásia" específica —
     // pra esses destinos o cliente cai no Mundial por eliminação, então
     // é a única faixa de destino que faz sentido mostrar aqui.
-    tiposPlano: [
-      "Por destino: Mundial (cobre Japão e Ásia)",
-      "Por perfil: Lazer, Estudante, Cruzeiro, Multiviagem, Esporte profissional",
-      "Por idade: até 64 / 65–85 / 86–89 anos",
-    ],
+    apolice: {
+      plano: "GTA Mundial",
+      coberturas: [
+        { item: "Despesas médicas e hospitalares", valor: null },
+        { item: "Despesas odontológicas", valor: null },
+        { item: "Traslado médico e repatriação sanitária", valor: null },
+        { item: "Repatriação funerária", valor: null },
+        { item: "Bagagem extraviada", valor: null },
+        { item: "Cancelamento de viagem", valor: null },
+      ],
+    },
     termosUrl: null,
     termosLabel: null,
     termosNota:
       "Condições gerais completas — fornecidas junto com a apólice no fechamento. O documento oficial da GTA vem assinado por uma seguradora parceira (histórico: IZA, Chubb, Sancor, Sompo), por isso não linkamos aqui um PDF assinado por outra marca.",
   },
   {
-    key: "mta" as const,
+    key: "mta",
     nome: "MTA",
     // Logo enviado pelo Wilson, 25/set/2026.
     logo: "/images/MTA-Logo.png",
     descricao:
       "My Travel Assist — planos internacionais de US$ 15 mil a US$ 150 mil em cobertura médica (MTA 15/30/40/60/150), com mais de 30 coberturas e assistências.",
     observacao: null,
-    tiposPlano: ["MTA 15", "MTA 30", "MTA 40", "MTA 60", "MTA 150"],
+    apolice: {
+      plano: null,
+      coberturas: [
+        { item: "Despesas médicas e hospitalares", valor: null },
+        { item: "Despesas odontológicas", valor: null },
+        { item: "Traslado médico e repatriação sanitária", valor: null },
+        { item: "Repatriação funerária", valor: null },
+        { item: "Bagagem extraviada", valor: null },
+        { item: "Cancelamento de viagem", valor: null },
+      ],
+    },
     termosUrl: null,
     termosLabel: null,
     termosNota:

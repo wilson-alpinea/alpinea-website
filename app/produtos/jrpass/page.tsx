@@ -24,21 +24,16 @@ import {
   JR_PASS_PRECO_USD_GREEN,
   JR_PASS_DIAS_OPCOES,
 } from "../../components/CustomPackageCard";
-import {
-  SPREAD_DOLAR_TURISMO_PUBLICO,
-  type FormaPagamentoEscolhida,
-} from "../../lib/calculadoraCatalogoPublico";
+import { faixaFreteSedex, somarDiasUteis, PRAZO_POSTAGEM_DIAS_UTEIS } from "../../lib/freteSedex";
 import {
   display,
   WHATSAPP_NUMBER,
-  FormasPagamento,
-  descricaoFormaPagamento,
   hojeISO,
   formatarDataBR,
   IconCheck,
 } from "../page";
 import { RodapeCheckout } from "../RodapeCheckout";
-import { ProdutoTestePagamento } from "../ProdutoTestePagamento";
+import { ProdutoTestePagamento, PainelPedidoTeste, useModoTeste } from "../ProdutoTestePagamento";
 import { AvisoPagamentoConcluido } from "../AvisoPagamentoConcluido";
 import { abrirAbaPagamento, enviarParaPagamento, fecharAba, BlocoPagamentoNovaAba } from "../pagamentoNovaAba";
 
@@ -60,12 +55,12 @@ const COMO_FUNCIONA = [
   {
     icone: "/images/produtos/jrpass-passo-2-troca.png",
     titulo: "Receba o voucher",
-    texto: "Enviamos o voucher para o seu endereço assim que confirmamos o pedido.",
+    texto: "Postamos o voucher por SEDEX em até 3 dias úteis após a confirmação do pagamento.",
   },
   {
     icone: "/images/produtos/jrpass-passo-3-ativacao.png",
     titulo: "Ative no Japão",
-    texto: "Troque o voucher pelo passe físico em um balcão JR na chegada.",
+    texto: "Troque o voucher pelo passe físico num balcão JR e ative no dia que quiser — não precisa ser o dia da chegada.",
   },
   {
     icone: "/images/produtos/jrpass-passo-4-viagens.png",
@@ -84,9 +79,13 @@ export default function JrPassPage() {
   // mesmo padrão CambioLabel/Cambio de sempre, só que alimentado por
   // essa fonte em vez do PTAX.
   const cambioDolarTurismo = useCambioDolarTurismo();
+  // Wilson, 06/out/2026 (AskUserQuestion): "30% + spread bancário" — a
+  // margem é só os 30% sobre a tabela (SPREAD_JR_PASS) e a conversão usa o
+  // dólar turismo, que já embute o spread bancário. O spread próprio de 20%
+  // (SPREAD_DOLAR_TURISMO_PUBLICO) deixou de ser aplicado aqui.
   const cambio: Cambio | null = cambioDolarTurismo
     ? {
-        cotacao: cambioDolarTurismo.cotacao * SPREAD_DOLAR_TURISMO_PUBLICO,
+        cotacao: cambioDolarTurismo.cotacao,
         data: cambioDolarTurismo.data,
         fonte: "Dólar Turismo",
         fallback: cambioDolarTurismo.fallback,
@@ -104,27 +103,34 @@ export default function JrPassPage() {
   const [diasSelecionados, setDiasSelecionados] = useState<(typeof JR_PASS_DIAS_OPCOES)[number] | null>(
     null,
   );
-  // Datas da viagem + forma de pagamento — pedido do Wilson, 25/set/2026:
-  // "falta adicionar a data de inicio e encerramento da viagem" e
-  // "adicionar formas de pagamento igual temos na pagina de calculadora
-  // reversa". Só entram na mensagem de WhatsApp (o JR Pass não tem
-  // checkout com lead no CRM, diferente do Seguro Viagem).
-  const [dataInicioViagem, setDataInicioViagem] = useState("");
-  const [formaPagamento, setFormaPagamento] = useState<FormaPagamentoEscolhida | null>(null);
+  // Datas da viagem — Wilson, 06/out/2026: "deixar claro que a data de
+  // ativação não precisa ser igual à data de chegada, você só começa a
+  // contagem a partir da ativação no Japão, único requisito é que os 7, 14
+  // ou 21 caibam dentro da duração total da viagem" + "JR Pass só é
+  // emitido em até 30 dias de antecedência antes da data de embarque".
+  // Embarque = saída do Brasil; retorno = saída do Japão. A ativação é
+  // opcional (o cliente pode decidir no Japão) — se informada, precisa
+  // caber na viagem.
+  const [dataEmbarque, setDataEmbarque] = useState("");
+  const [dataRetorno, setDataRetorno] = useState("");
+  const [dataAtivacao, setDataAtivacao] = useState("");
 
-  // Data de encerramento — nunca é escolha livre: o JR Pass cobre
-  // sempre N dias corridos (7/14/21) a partir da data de ativação, então
-  // o fim é matematicamente início + (N-1) dias.
-  const dataFimViagemCalculada = (() => {
-    if (!dataInicioViagem || !diasSelecionados) return "";
-    const inicio = new Date(`${dataInicioViagem}T00:00:00`);
-    if (Number.isNaN(inicio.getTime())) return "";
-    inicio.setDate(inicio.getDate() + (diasSelecionados - 1));
-    const ano = inicio.getFullYear();
-    const mes = String(inicio.getMonth() + 1).padStart(2, "0");
-    const dia = String(inicio.getDate()).padStart(2, "0");
-    return `${ano}-${mes}-${dia}`;
-  })();
+  const somarDias = (iso: string, dias: number) => {
+    const d = new Date(`${iso}T00:00:00`);
+    if (Number.isNaN(d.getTime())) return "";
+    d.setDate(d.getDate() + dias);
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+  };
+  const diasEntreDatas = (a: string, b: string) =>
+    Math.round((new Date(`${b}T00:00:00`).getTime() - new Date(`${a}T00:00:00`).getTime()) / 86400000);
+  // Duração total da viagem em dias corridos (embarque e retorno inclusos).
+  const duracaoViagemDias = dataEmbarque && dataRetorno && dataRetorno >= dataEmbarque ? diasEntreDatas(dataEmbarque, dataRetorno) + 1 : 0;
+  // Último dia de uso, se a ativação foi informada.
+  const dataFimPasse = dataAtivacao && diasSelecionados ? somarDias(dataAtivacao, diasSelecionados - 1) : "";
+  // A emissão só acontece a partir de 30 dias antes do embarque.
+  const DIAS_ANTECEDENCIA_EMISSAO = 30;
+  const dataInicioEmissao = dataEmbarque ? somarDias(dataEmbarque, -DIAS_ANTECEDENCIA_EMISSAO) : "";
+  const emissaoAgendada = !!dataInicioEmissao && dataInicioEmissao > hojeISO();
 
   // Dados de contato + CRM — pedido do Wilson, 25/set/2026: "adicionar
   // nome, e-mail e telefone nessa página, registrar no CRM ao proceder
@@ -177,6 +183,11 @@ export default function JrPassPage() {
     }
   }
   const [observacoes, setObservacoes] = useState("");
+  // JR Pass fictício de teste (?teste=1) — Wilson, 06/out/2026: "criar um
+  // jr pass fictício de teste para podermos testar". O servidor fixa R$ 1.
+  const modoTeste = useModoTeste();
+  const [marcarTeste, setMarcarTeste] = useState(true);
+  const pedidoTeste = modoTeste && marcarTeste;
   const [status, setStatus] = useState<"form" | "enviando" | "enviado" | "erro">("form");
   // Link da Stone aberto em nova aba (Wilson, 01/out/2026).
   const [linkPagamento, setLinkPagamento] = useState<string | null>(null);
@@ -197,7 +208,13 @@ export default function JrPassPage() {
       ? crypto.randomUUID()
       : `${Date.now()}-${Math.random().toString(36).slice(2)}`,
   );
-  const [documentoTipo, setDocumentoTipo] = useState<"passaporte" | "passagem" | null>(null);
+  // Só passaporte desde 06/out/2026 (Wilson: "Foto da passagem (remover),
+  // foto do passaporte (mandatório)") + nacionalidade brasileira
+  // obrigatória, conferida pelo OCR (MRZ "BRA") — o OCR só alerta, quem
+  // decide é a revisão manual da equipe.
+  const [documentoTipo, setDocumentoTipo] = useState<"passaporte" | null>(null);
+  const [declaraBrasileiro, setDeclaraBrasileiro] = useState(false);
+  const [documentoNacionalidade, setDocumentoNacionalidade] = useState<"BRA" | "outra" | null>(null);
   const [documentoNomeArquivo, setDocumentoNomeArquivo] = useState("");
   const [documentoStatus, setDocumentoStatus] = useState<
     "vazio" | "enviando" | "validado" | "incerto" | "erro"
@@ -206,11 +223,12 @@ export default function JrPassPage() {
   const [documentoStoragePath, setDocumentoStoragePath] = useState<string | null>(null);
   const [documentoValidacaoMotivo, setDocumentoValidacaoMotivo] = useState("");
 
-  async function lidarComArquivoDocumento(tipo: "passaporte" | "passagem", file: File) {
+  async function lidarComArquivoDocumento(tipo: "passaporte", file: File) {
     setDocumentoTipo(tipo);
     setDocumentoNomeArquivo(file.name);
     setDocumentoStatus("enviando");
     setDocumentoErro("");
+    setDocumentoNacionalidade(null);
     try {
       const base64 = await new Promise<string>((resolve, reject) => {
         const reader = new FileReader();
@@ -236,6 +254,9 @@ export default function JrPassPage() {
       }
       setDocumentoStoragePath(dados.path || null);
       setDocumentoValidacaoMotivo(dados.validacao?.motivo || "");
+      setDocumentoNacionalidade(
+        dados.validacao?.nacionalidade === "BRA" ? "BRA" : dados.validacao?.nacionalidade ? "outra" : null,
+      );
       setDocumentoStatus(dados.validacao?.ok ? "validado" : "incerto");
     } catch {
       setDocumentoStatus("erro");
@@ -319,8 +340,9 @@ export default function JrPassPage() {
   const TIPOS = [
     {
       key: "comum" as const,
-      classe: "Segunda Classe",
-      subtitulo: "Classe padrão",
+      // "Mudar de Segunda Classe para Classe Padrão" (Wilson, 06/out/2026).
+      classe: "Classe Padrão",
+      subtitulo: "Ordinary — vagões comuns",
       icone: "/images/ingressos/shinkansen-ordinary.png",
       precoUSD: JR_PASS_PRECO_USD,
       beneficios: [
@@ -419,11 +441,14 @@ export default function JrPassPage() {
   const precoTotalUSD = precoEscolhidoUSD !== null ? precoEscolhidoUSD * multiplicadorPessoas : null;
   const precoTotalBRL = precoEscolhidoBRL !== null ? precoEscolhidoBRL * multiplicadorPessoas : null;
   const selecaoCompleta = !!tipoEscolhido && !!diasSelecionados;
-  const descricaoPagamentoEscolhido = descricaoFormaPagamento(
-    formaPagamento,
-    precoTotalBRL,
-    dataInicioViagem,
-  );
+  // Frete SEDEX do voucher (app/lib/freteSedex.ts) — um envelope por
+  // pedido, somado ao total cobrado.
+  const faixaFrete = faixaFreteSedex(endereco.cep, endereco.uf);
+  const freteBRL = faixaFrete?.valorBRL ?? null;
+  const totalComFreteBRL = precoTotalBRL !== null ? precoTotalBRL + (freteBRL ?? 0) : null;
+  // Embarque mínimo: postagem (3 dias úteis) + prazo máximo do SEDEX pra
+  // região (sem CEP, conta só a postagem + 1 dia).
+  const dataMinimaEmbarque = somarDiasUteis(hojeISO(), PRAZO_POSTAGEM_DIAS_UTEIS + (faixaFrete?.prazoMaxDiasUteis ?? 1));
   const detalheCriancasTexto =
     numeroCriancas > 0
       ? ` (sendo ${numeroCriancas} ${numeroCriancas === 1 ? "criança" : "crianças"}${
@@ -431,16 +456,32 @@ export default function JrPassPage() {
         })`
       : "";
   const mensagemWhatsapp = selecaoCompleta
-    ? `Olá! Quero finalizar a compra do JR Pass${nome ? ` — meu nome é ${nome}` : ""} — ${tipoEscolhido!.classe}, ${diasSelecionados} dias, ${numeroPessoas} ${
+    ? `Olá! Fiz o pedido do JR Pass${nome ? ` — meu nome é ${nome}` : ""} — ${tipoEscolhido!.classe}, ${diasSelecionados} dias, ${numeroPessoas} ${
         numeroPessoas === 1 ? "pessoa" : "pessoas"
       }${detalheCriancasTexto}${
-        precoTotalBRL !== null ? ` (total ${formatBRL(precoTotalBRL)})` : ""
+        totalComFreteBRL !== null ? ` (total ${formatBRL(totalComFreteBRL)} com frete)` : ""
       }.${
-        dataInicioViagem && dataFimViagemCalculada
-          ? ` Viagem de ${formatarDataBR(dataInicioViagem)} a ${formatarDataBR(dataFimViagemCalculada)}.`
+        dataEmbarque && dataRetorno
+          ? ` Viagem de ${formatarDataBR(dataEmbarque)} a ${formatarDataBR(dataRetorno)}.`
           : ""
-      }${descricaoPagamentoEscolhido ? ` Forma de pagamento: ${descricaoPagamentoEscolhido}.` : ""}`
+      }`
     : "";
+
+  // Validações das datas da viagem.
+  const errosDatas: string[] = [];
+  if (!dataEmbarque) errosDatas.push("Informe a data de embarque (saída do Brasil).");
+  else if (dataEmbarque < dataMinimaEmbarque)
+    errosDatas.push(
+      `Embarque muito próximo: o voucher é postado em até ${PRAZO_POSTAGEM_DIAS_UTEIS} dias úteis e ainda depende do prazo do SEDEX. Fale com a gente pelo WhatsApp antes de comprar.`,
+    );
+  if (!dataRetorno) errosDatas.push("Informe a data de retorno (saída do Japão).");
+  else if (dataEmbarque && dataRetorno < dataEmbarque) errosDatas.push("O retorno precisa ser depois do embarque.");
+  if (diasSelecionados && duracaoViagemDias > 0 && duracaoViagemDias < diasSelecionados)
+    errosDatas.push(`O passe de ${diasSelecionados} dias não cabe na sua viagem de ${duracaoViagemDias} dias — escolha uma duração menor.`);
+  if (dataAtivacao && dataEmbarque && dataAtivacao < dataEmbarque) errosDatas.push("A ativação precisa ser depois do embarque.");
+  if (dataAtivacao && dataRetorno && dataFimPasse && dataFimPasse > dataRetorno)
+    errosDatas.push(`Ativando em ${formatarDataBR(dataAtivacao)}, o passe vai até ${formatarDataBR(dataFimPasse)} — depois do seu retorno. Ative antes ou escolha menos dias.`);
+  const datasValidas = errosDatas.length === 0;
 
   // Pedido do Wilson, 25/set/2026: "adicionar nome, e-mail e telefone
   // nessa página, registrar no CRM ao proceder para pagamento" — só
@@ -455,6 +496,8 @@ export default function JrPassPage() {
     /\S+@\S+\.\S+/.test(email) &&
     whatsapp.trim().length >= 8 &&
     enderecoCompleto &&
+    datasValidas &&
+    declaraBrasileiro &&
     termosAceitos &&
     (documentoStatus === "validado" || documentoStatus === "incerto");
 
@@ -465,16 +508,18 @@ export default function JrPassPage() {
   // aviso "Selecione o tipo..." que já aparece no lugar do preço).
   const pendenciasFinalizar: string[] = [];
   if (!selecaoCompleta) {
-    pendenciasFinalizar.push("Selecione o tipo (Comum ou Green Car) e a duração do passe.");
+    pendenciasFinalizar.push("Selecione a duração e a classe (Classe Padrão ou Green Car) do passe.");
   }
+  if (selecaoCompleta) pendenciasFinalizar.push(...errosDatas);
   if (nome.trim().length === 0) pendenciasFinalizar.push("Preencha seu nome completo.");
   if (!/\S+@\S+\.\S+/.test(email)) pendenciasFinalizar.push("Preencha um e-mail válido.");
   if (whatsapp.trim().length < 8) pendenciasFinalizar.push("Preencha seu WhatsApp.");
   if (!enderecoCompleto) {
     pendenciasFinalizar.push("Preencha o endereço de entrega completo, com complemento — o JR Pass é enviado à sua residência.");
   }
+  if (!declaraBrasileiro) pendenciasFinalizar.push("Confirme que o passaporte é brasileiro.");
   if (!(documentoStatus === "validado" || documentoStatus === "incerto")) {
-    pendenciasFinalizar.push("Anexe o documento (foto do passaporte ou da passagem).");
+    pendenciasFinalizar.push("Anexe a foto do passaporte.");
   }
   if (!termosAceitos) {
     pendenciasFinalizar.push(
@@ -500,11 +545,12 @@ export default function JrPassPage() {
           numeroPessoas,
           numeroCriancas,
           idadesCriancas: idadesCriancasPreenchidas,
-          dataInicioViagem,
-          dataFimViagem: dataFimViagemCalculada,
+          dataInicioViagem: dataEmbarque,
+          dataFimViagem: dataRetorno,
+          dataAtivacao: dataAtivacao || null,
           precoTotalBRL,
           precoTotalUSD,
-          formaPagamento: descricaoPagamentoEscolhido || null,
+          freteBRL,
           nome,
           nomeComprador,
           email,
@@ -514,7 +560,10 @@ export default function JrPassPage() {
           documentoTipo,
           documentoStoragePath,
           documentoValidacaoMotivo,
+          documentoNacionalidade,
+          declaraBrasileiro,
           termosAceitos,
+          modoTeste: pedidoTeste,
         }),
       });
       const dadosResposta = await resposta.json().catch(() => ({}));
@@ -621,10 +670,15 @@ export default function JrPassPage() {
                 <BlocoPagamentoNovaAba url={linkPagamento} />
               ) : (
                 <p className="mx-auto mt-3 max-w-md text-sm leading-relaxed text-black/75">
-                  Nossa equipe confere o documento enviado (ou aguarda o que você anexar depois),
-                  confirma a elegibilidade e te manda o link de pagamento (Pix ou cartão) pelo
-                  WhatsApp e por e-mail — junto com a explicação completa de como funciona a troca do
-                  voucher pelo passe físico no Japão.
+                  Nossa equipe confere o passaporte, confirma a elegibilidade e te manda o link de
+                  pagamento (Pix ou cartão emitido no Brasil) pelo WhatsApp e por e-mail.
+                </p>
+              )}
+              {linkPagamento && (
+                <p className="mx-auto mt-3 max-w-md text-sm leading-relaxed text-black/75">
+                  Depois do pagamento, postamos o voucher por SEDEX em até {PRAZO_POSTAGEM_DIAS_UTEIS} dias úteis
+                  {emissaoAgendada && dataInicioEmissao ? ` (a emissão é liberada em ${formatarDataBR(dataInicioEmissao)})` : ""}.
+                  Cada etapa do envio é avisada pelo WhatsApp.
                 </p>
               )}
               <a
@@ -673,6 +727,30 @@ export default function JrPassPage() {
           <AvisoPagamentoConcluido />
           {/* Produto de teste de R$ 1 — só aparece com ?teste=1 (Wilson, 30/set/2026). */}
           <ProdutoTestePagamento produto="jrpass" />
+          <PainelPedidoTeste
+            ativo={modoTeste}
+            marcado={marcarTeste}
+            onMarcar={setMarcarTeste}
+            nomeProduto="JR Pass"
+            onPreencher={() => {
+              const daqui = (dias: number) => {
+                const d = new Date();
+                d.setDate(d.getDate() + dias);
+                return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+              };
+              setClasseSelecionada("comum");
+              setDiasSelecionados(7);
+              setDataEmbarque(daqui(20));
+              setDataRetorno(daqui(34));
+              setDataAtivacao(daqui(23));
+              setNome("Passageiro Teste Fictício");
+              setEmail("wilson@alpinea.io");
+              setWhatsapp("(11) 99999-9999");
+              setEndereco({ cep: "01310-100", logradouro: "Avenida Paulista", numero: "1000", complemento: "Conj. 1 (teste)", bairro: "Bela Vista", cidade: "São Paulo", uf: "SP" });
+              setDeclaraBrasileiro(true);
+              setObservacoes("PEDIDO DE TESTE — não emitir.");
+            }}
+          />
           <p className="mt-6 max-w-2xl text-sm leading-relaxed text-black/75">
             Passe ferroviário oficial dos seis grupos JR, vendido em faixas fixas de 7, 14 ou 21 dias
             corridos — cobre a maior parte da rede Shinkansen, trens expressos, locais, ônibus JR e o
@@ -817,10 +895,9 @@ export default function JrPassPage() {
             </div>
           </div>
 
-          {/* Datas da viagem — pedido do Wilson, 25/set/2026: "falta
-              adicionar a data de inicio e encerramento da viagem". Mesmo
-              padrão de campo de data do Seguro Viagem; entram na mensagem
-              de WhatsApp pro time já saber o período. */}
+          {/* Datas da viagem — Wilson, 06/out/2026: ativação não precisa ser
+              no dia da chegada; os N dias só precisam caber na viagem; emissão
+              só a partir de 30 dias antes do embarque. */}
           <div className="mt-8 border-t border-black/10 pt-6">
             <div className="flex items-center gap-2">
               <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#2f80c9] text-[10px] font-semibold text-white">
@@ -828,35 +905,74 @@ export default function JrPassPage() {
               </span>
               <p className="text-[10px] uppercase tracking-[0.2em] text-black">Dados da viagem</p>
             </div>
-            <div className="mt-5 grid gap-6 sm:grid-cols-2">
+            <div className="mt-5 grid gap-6 sm:grid-cols-3">
               <label className="flex min-w-0 flex-col gap-2">
-                <span className="text-[10px] uppercase tracking-[0.15em] text-black">
-                  Data de ida
-                </span>
+                <span className="text-[10px] uppercase tracking-[0.15em] text-black">Embarque (saída do Brasil)</span>
                 <input
                   type="date"
-                  value={dataInicioViagem}
+                  value={dataEmbarque}
                   min={hojeISO()}
-                  onChange={(e) => setDataInicioViagem(e.target.value)}
+                  onChange={(e) => {
+                    setDataEmbarque(e.target.value);
+                    if (dataRetorno && e.target.value && dataRetorno < e.target.value) setDataRetorno("");
+                  }}
                   className="block min-h-[46px] w-full min-w-0 appearance-none bg-white text-left rounded-lg border border-black/15 px-4 py-3 text-sm text-black focus:border-[#2f80c9] focus:outline-none"
                 />
               </label>
               <label className="flex min-w-0 flex-col gap-2">
-                <span className="text-[10px] uppercase tracking-[0.15em] text-black">
-                  Data de encerramento
-                </span>
+                <span className="text-[10px] uppercase tracking-[0.15em] text-black">Retorno (saída do Japão)</span>
                 <input
-                  type="text"
-                  disabled
-                  readOnly
-                  value={dataFimViagemCalculada ? formatarDataBR(dataFimViagemCalculada) : "—"}
-                  className="w-full rounded-lg border border-black/10 bg-black/[0.03] px-4 py-3 text-sm text-black/60"
+                  type="date"
+                  value={dataRetorno}
+                  min={dataEmbarque || hojeISO()}
+                  onChange={(e) => setDataRetorno(e.target.value)}
+                  className="block min-h-[46px] w-full min-w-0 appearance-none bg-white text-left rounded-lg border border-black/15 px-4 py-3 text-sm text-black focus:border-[#2f80c9] focus:outline-none"
+                />
+              </label>
+              <label className="flex min-w-0 flex-col gap-2">
+                <span className="text-[10px] uppercase tracking-[0.15em] text-black">Ativação prevista (opcional)</span>
+                <input
+                  type="date"
+                  value={dataAtivacao}
+                  min={dataEmbarque || hojeISO()}
+                  max={dataRetorno || undefined}
+                  onChange={(e) => setDataAtivacao(e.target.value)}
+                  className="block min-h-[46px] w-full min-w-0 appearance-none bg-white text-left rounded-lg border border-black/15 px-4 py-3 text-sm text-black focus:border-[#2f80c9] focus:outline-none"
                 />
                 <span className="text-[10px] leading-4 text-black/60">
-                  Calculada automaticamente: início + duração do passe escolhida no passo 1.
+                  {dataFimPasse
+                    ? `Passe válido de ${formatarDataBR(dataAtivacao)} a ${formatarDataBR(dataFimPasse)}.`
+                    : "Pode deixar em branco e decidir no Japão."}
                 </span>
               </label>
             </div>
+
+            <div className="mt-5 rounded-xl border border-[#2f80c9]/25 bg-[#eef6fb] p-4 text-sm leading-6 text-black/75">
+              <p className="font-semibold text-[#0A2540]">A ativação não precisa ser no dia da chegada</p>
+              <p className="mt-1">
+                A contagem dos {diasSelecionados ?? "7, 14 ou 21"} dias só começa quando você ativa o passe num balcão JR no
+                Japão. Você pode, por exemplo, passar os primeiros dias em Tóquio sem o passe e ativá-lo só no dia da
+                primeira viagem de Shinkansen. O único requisito é que os {diasSelecionados ?? "7, 14 ou 21"} dias caibam
+                dentro da sua viagem
+                {duracaoViagemDias > 0 ? ` (${duracaoViagemDias} dias, do embarque ao retorno)` : ""}.
+              </p>
+              <p className="mt-2">
+                <strong className="font-semibold text-[#0A2540]">Emissão:</strong> o JR Pass só é emitido a partir de 30 dias
+                antes da data de embarque.
+                {emissaoAgendada && dataInicioEmissao
+                  ? ` Seu pedido fica registrado agora e o voucher é emitido a partir de ${formatarDataBR(dataInicioEmissao)}.`
+                  : ""}
+              </p>
+            </div>
+            {selecaoCompleta && errosDatas.length > 0 && (dataEmbarque || dataRetorno) && (
+              <ul className="mt-3 space-y-1 text-xs text-red-600">
+                {errosDatas
+                  .filter((e) => !e.startsWith("Informe"))
+                  .map((e) => (
+                    <li key={e}>{e}</li>
+                  ))}
+              </ul>
+            )}
           </div>
 
           {/* Número de pessoas — pedido do Wilson, 25/set/2026: "falta
@@ -1054,46 +1170,52 @@ export default function JrPassPage() {
             </div>
           </div>
 
-          {/* Documento — pedido do Wilson, 25/set/2026: "precisa capturar a
-              foto do passaporte do cliente, criar um validador de foto
-              script simples de checagem" + "foto do passaporte ou foto da
-              passagem, a o JR pass só pode ser emitido se ele estiver no
-              Japao em até 90 dias" + "colocar opção de anexar documentos
-              depois também". */}
+          {/* Documento — desde 06/out/2026 só passaporte (obrigatório) +
+              nacionalidade brasileira obrigatória, com leitura automática
+              (OCR) que confere se o passaporte é brasileiro e instruções de
+              como fotografar. */}
           <div className="mt-8 border-t border-black/10 pt-6">
             <div className="flex items-center gap-2">
               <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#2f80c9] text-[10px] font-semibold text-white">
                 4
               </span>
-              <p className="text-[10px] uppercase tracking-[0.2em] text-black">Documento — passaporte ou passagem</p>
+              <p className="text-[10px] uppercase tracking-[0.2em] text-black">Passaporte (obrigatório)</p>
             </div>
             <p className="mt-2 text-[11px] leading-5 text-black/65">
-              O JR Pass só pode ser emitido pra quem já está no Japão (ou vai entrar) dentro da
-              janela de 90 dias — a data do voo na passagem confirma isso. Anexe a foto do
-              passaporte ou da passagem agora para continuar.
+              O voucher é emitido em nome do passageiro exatamente como está no passaporte. Anexe uma foto da página de
+              dados do passaporte para continuar.
             </p>
-            <div className="mt-5 flex flex-wrap gap-2">
-              {(["passaporte", "passagem"] as const).map((tipo) => (
+
+            <label className="mt-4 flex cursor-pointer items-start gap-3 rounded-xl border border-black/10 p-3.5">
+              <input
+                type="checkbox"
+                checked={declaraBrasileiro}
+                onChange={(e) => setDeclaraBrasileiro(e.target.checked)}
+                className="mt-0.5 h-5 w-5 shrink-0 rounded border-black/30 text-[#2f80c9] focus:ring-[#2f80c9]"
+              />
+              <span className="text-sm text-black/85">
+                <strong className="font-semibold">Nacionalidade: brasileira (obrigatório).</strong> Declaro que o
+                passaporte anexado é um passaporte brasileiro.
+              </span>
+            </label>
+
+            <div className="mt-4 grid gap-5 sm:grid-cols-[minmax(0,1fr)_240px]">
+              <div>
+                <p className="text-xs font-medium text-black">Como tirar a foto</p>
+                <ul className="mt-1.5 list-disc space-y-1 pl-5 text-[11px] leading-5 text-black/70">
+                  <li>Fotografe a página com a sua foto, aberta e inteira, incluindo as 2 linhas de código no rodapé (com os sinais “&lt;&lt;&lt;”).</li>
+                  <li>Em superfície plana, com boa luz, sem reflexo, sem dedos ou capa cobrindo os dados.</li>
+                  <li>Foto nítida e reta (JPG, PNG, HEIC ou PDF, até 10 MB). Não envie só a capa.</li>
+                </ul>
                 <label
-                  key={tipo}
-                  className={`flex cursor-pointer items-center gap-2.5 rounded-full border px-4 py-2.5 text-xs transition ${
-                    documentoTipo === tipo
+                  className={`mt-4 inline-flex cursor-pointer items-center gap-2.5 rounded-full border px-4 py-2.5 text-xs transition ${
+                    documentoTipo === "passaporte"
                       ? "border-[#2f80c9] bg-[#2f80c9]/10 font-medium text-[#1c6ea8]"
                       : "border-black/15 text-black/75 hover:border-black/30"
                   }`}
                 >
-                  <Image
-                    src={
-                      tipo === "passaporte"
-                        ? "/images/produtos/jrpass-doc-passaporte.png"
-                        : "/images/produtos/jrpass-doc-passagem.png"
-                    }
-                    alt=""
-                    width={36}
-                    height={36}
-                    className="h-9 w-9"
-                  />
-                  {tipo === "passaporte" ? "Foto do passaporte" : "Foto da passagem"}
+                  <Image src="/images/produtos/jrpass-doc-passaporte.png" alt="" width={36} height={36} className="h-9 w-9" />
+                  {documentoTipo === "passaporte" ? "Trocar foto do passaporte" : "Anexar foto do passaporte"}
                   <input
                     type="file"
                     accept="image/*,application/pdf"
@@ -1101,37 +1223,49 @@ export default function JrPassPage() {
                     className="hidden"
                     onChange={(e) => {
                       const arquivo = e.target.files?.[0];
-                      if (arquivo) void lidarComArquivoDocumento(tipo, arquivo);
+                      if (arquivo) void lidarComArquivoDocumento("passaporte", arquivo);
                       e.target.value = "";
                     }}
                   />
                 </label>
-              ))}
+              </div>
+              <figure>
+                <Image
+                  src="/images/produtos/jrpass-exemplo-foto-passaporte.webp"
+                  alt="Exemplo: capa do passaporte brasileiro e página de dados com a foto e as linhas de código no rodapé"
+                  width={600}
+                  height={428}
+                  className="h-auto w-full rounded-lg border border-black/10"
+                />
+                <figcaption className="mt-1 text-[10px] leading-4 text-black/55">
+                  Exemplo: envie a página da direita (dados + foto), não a capa.
+                </figcaption>
+              </figure>
             </div>
 
             {documentoStatus === "enviando" && (
-              <p className="mt-3 text-[11px] text-black/65">Enviando {documentoNomeArquivo}…</p>
+              <p className="mt-3 text-[11px] text-black/65">Enviando e conferindo {documentoNomeArquivo}…</p>
             )}
             {documentoStatus === "validado" && (
               <p className="mt-3 text-[11px] text-emerald-700">
-                Documento recebido — {documentoValidacaoMotivo || "conferência automática ok."}
+                Passaporte recebido — {documentoValidacaoMotivo || "conferência automática ok."}
               </p>
             )}
             {documentoStatus === "incerto" && (
               <p className="mt-3 text-[11px] text-amber-700">
-                Documento recebido — {documentoValidacaoMotivo || "não conseguimos confirmar automaticamente."}{" "}
-                Nossa equipe revisa manualmente antes da emissão.
+                Passaporte recebido — {documentoValidacaoMotivo || "não conseguimos ler automaticamente."} Se puder, envie
+                uma foto mais nítida seguindo as instruções acima. Nossa equipe revisa manualmente antes da emissão.
               </p>
             )}
-            {documentoStatus === "erro" && (
-              <p className="mt-3 text-[11px] text-red-600">{documentoErro}</p>
+            {documentoNacionalidade === "outra" && (
+              <div className="mt-3 rounded-lg border border-red-300 bg-red-50 px-3.5 py-2.5 text-xs leading-5 text-red-800" role="alert">
+                <strong>Atenção:</strong> a leitura automática indica que este passaporte <strong>não é brasileiro</strong>. A
+                compra por aqui é exclusiva para passaporte brasileiro — confira se anexou o documento certo ou fale com a
+                gente pelo WhatsApp antes de pagar.
+              </div>
             )}
-            {/* Selo de conexão segura — pedido do Wilson, 25/set/2026
-                ("adicionar SSL"), no mesmo pedido que trouxe CPF/endereço
-                pro Seguro Viagem. O site já roda inteiro em HTTPS/SSL
-                (certificado provisionado automaticamente pelo Vercel no
-                domínio alpinea.io) — isso só deixa esse cuidado visível
-                pro cliente bem ao lado do upload de documento. */}
+            {documentoStatus === "erro" && <p className="mt-3 text-[11px] text-red-600">{documentoErro}</p>}
+            {/* Selo de conexão segura (Wilson, 25/set/2026: "adicionar SSL"). */}
             <div className="mt-3 flex items-center gap-2.5">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src="/images/icone-ssl-lock.png" alt="" className="h-6 w-6 shrink-0 object-contain" />
@@ -1269,6 +1403,32 @@ export default function JrPassPage() {
               <p className="mt-2 text-xs text-black/50">
                 {buscandoCep ? "Buscando endereço pelo CEP…" : "Todos os campos são obrigatórios. Sem complemento? Escreva “casa”."}
               </p>
+              {/* Frete e SLA de entrega (Wilson, 06/out/2026). */}
+              <div className="mt-4 border-t border-[#2f80c9]/20 pt-4 text-sm leading-6 text-black/75">
+                <p className="flex flex-wrap items-baseline justify-between gap-2">
+                  <span className="font-semibold text-[#0A2540]">Frete SEDEX</span>
+                  <span className={`${inter.className} font-semibold tabular-nums text-[#0A2540]`}>
+                    {freteBRL !== null ? formatBRL(freteBRL) : "informe CEP e UF"}
+                  </span>
+                </p>
+                <ul className="mt-1.5 list-disc space-y-1 pl-5 text-xs leading-5 text-black/70">
+                  <li>
+                    <strong>Postagem:</strong> em até {PRAZO_POSTAGEM_DIAS_UTEIS} dias úteis após a confirmação do pagamento
+                    {emissaoAgendada && dataInicioEmissao ? ` (ou a partir de ${formatarDataBR(dataInicioEmissao)}, quando a emissão é liberada)` : ""}.
+                  </li>
+                  <li>
+                    <strong>Entrega:</strong>{" "}
+                    {faixaFrete
+                      ? `prazo estimado do SEDEX para ${faixaFrete.nome}: ${faixaFrete.prazoMinDiasUteis === faixaFrete.prazoMaxDiasUteis ? `${faixaFrete.prazoMaxDiasUteis} dia útil` : `${faixaFrete.prazoMinDiasUteis} a ${faixaFrete.prazoMaxDiasUteis} dias úteis`} após a postagem`
+                      : "o prazo do SEDEX depende da região"}
+                    {" "}— varia conforme a disponibilidade dos Correios.
+                  </li>
+                  <li>
+                    <strong>Acompanhamento:</strong> avisamos cada etapa pelo WhatsApp — voucher emitido, enviado via SEDEX
+                    (com código de rastreio) e saiu para entrega.
+                  </li>
+                </ul>
+              </div>
             </div>
             <label className="mt-4 flex flex-col gap-1.5">
               <span className="text-[10px] uppercase tracking-[0.15em] text-black">
@@ -1295,14 +1455,16 @@ export default function JrPassPage() {
             </label>
           </div>
 
-          <div>
-            <FormasPagamento
-              numeroPasso={6}
-              totalBRL={precoTotalBRL}
-              dataViagem={dataInicioViagem}
-              formaPagamento={formaPagamento}
-              onEscolher={setFormaPagamento}
-            />
+          {/* Forma de pagamento — o antigo passo 6 (simulação de formas de
+              pagamento) saiu em 06/out/2026 (Wilson: "remover o item 6,
+              renumerar"): o pagamento é feito na página segura da Stone.
+              Aviso de que o cartão precisa ser emitido no Brasil. */}
+          <div className="mt-8 rounded-xl border border-amber-300/70 bg-amber-50 px-4 py-3.5 text-sm leading-6 text-amber-950">
+            <p className="font-semibold">Pagamento: Pix ou cartão de crédito emitido no Brasil</p>
+            <p className="mt-0.5 text-[13px] text-amber-900">
+              O pagamento é feito na página segura da Stone, logo após finalizar. Só aceitamos cartão de crédito emitido no
+              Brasil — cartões emitidos no exterior são recusados. Parcelamento em até 12x (com juros a partir de 2x).
+            </p>
           </div>
 
           {/* Termos e condições — pedido do Wilson, 25/set/2026: "temos
@@ -1315,7 +1477,7 @@ export default function JrPassPage() {
           <div id="checkout-ultimo-passo" className="mt-8 border-t border-black/10 pt-6">
             <div className="flex items-center gap-2">
               <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-[#2f80c9] text-[10px] font-semibold text-white">
-                7
+                6
               </span>
               <p className="text-[10px] uppercase tracking-[0.2em] text-black">Termos e condições</p>
             </div>
@@ -1446,6 +1608,14 @@ export default function JrPassPage() {
                 No pagamento por cartão, eventual parcelamento, juros ou condições financeiras
                 serão apresentados antes da confirmação da compra.
               </p>
+              <p className="mt-1">
+                Somente são aceitos cartões de crédito emitidos no Brasil. Cartões emitidos no
+                exterior serão recusados pelo processador de pagamento.
+              </p>
+              <p className="mt-1">
+                O valor do frete SEDEX para envio do voucher é informado e somado ao total antes
+                da conclusão da compra.
+              </p>
 
               <p className="mt-3 font-medium text-black">5. Autorização do pagamento e prevenção a fraudes</p>
               <p className="mt-1">
@@ -1487,8 +1657,21 @@ export default function JrPassPage() {
               </ol>
               <p className="mt-1">Após a contratação, a Alpinea enviará confirmação ao cliente por meio eletrônico.</p>
               <p className="mt-1">
-                O voucher ou documento equivalente será encaminhado pelo canal informado durante a
-                contratação, dentro do prazo apresentado ao consumidor.
+                O Japan Rail Pass somente é emitido a partir de 30 (trinta) dias antes da data de
+                embarque informada. Pedidos feitos com maior antecedência ficam registrados e são
+                emitidos quando a emissão for liberada.
+              </p>
+              <p className="mt-1">
+                O voucher é postado via SEDEX no endereço informado em até 3 (três) dias úteis após
+                a confirmação do pagamento (ou após a liberação da emissão, quando posterior). O
+                prazo de entrega após a postagem depende da disponibilidade e do prazo dos
+                Correios para a região de destino. As atualizações de envio (emissão, postagem com
+                código de rastreio e saída para entrega) são enviadas por WhatsApp.
+              </p>
+              <p className="mt-1">
+                A data de ativação do passe no Japão é escolhida pelo passageiro e não precisa
+                coincidir com a data de chegada; o período contratado (7, 14 ou 21 dias corridos)
+                conta a partir da ativação e deve caber dentro da viagem.
               </p>
               <p className="mt-1">
                 Caso a emissão não possa ser concluída por indisponibilidade do fornecedor ou
@@ -1893,11 +2076,13 @@ export default function JrPassPage() {
           formValido={formValido}
           enviando={status === "enviando"}
           onFinalizar={enviar}
-          rotuloValor="Total"
-          valor={selecaoCompleta && precoTotalBRL !== null ? formatBRL(precoTotalBRL) : null}
+          rotuloValor={freteBRL !== null ? "Total com frete" : "Total (+ frete)"}
+          valor={selecaoCompleta && totalComFreteBRL !== null ? formatBRL(totalComFreteBRL) : null}
           detalhe={
             selecaoCompleta
-              ? `${tipoEscolhido!.classe} · ${diasSelecionados} dias · ${numeroPessoas} ${numeroPessoas === 1 ? "pessoa" : "pessoas"}`
+              ? `${tipoEscolhido!.classe} · ${diasSelecionados} dias · ${numeroPessoas} ${numeroPessoas === 1 ? "pessoa" : "pessoas"}${
+                  freteBRL !== null ? ` · frete ${formatBRL(freteBRL)}` : ""
+                }${pedidoTeste ? " · TESTE: cobra R$ 1,00" : ""}`
               : undefined
           }
           semValor="Escolha a duração e a classe do passe para ver o valor."

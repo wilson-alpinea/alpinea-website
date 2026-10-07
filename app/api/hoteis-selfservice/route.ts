@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { criarCheckoutParaCliente } from "../../../lib/pagarme/checkoutPedido";
 import { createAdminClient } from "../../../lib/supabase/admin";
 import { TAG_SELF_SERVICE } from "../../../lib/crm/origem";
 
@@ -74,14 +75,21 @@ export async function POST(req: Request) {
     const dataPartida = texto(body.dataPartida, 20);
     const adultos = inteiro(body.adultos);
     const criancas = inteiro(body.criancas);
-    type EstadiaBody = { cidade?: unknown; checkin?: unknown; checkout?: unknown; noites?: unknown; categoria?: unknown; tipoQuarto?: unknown; quartos?: unknown; cafe?: unknown; valorBRL?: unknown };
+    const bebes = inteiro(body.bebes);
+    const idadesCriancas: number[] = Array.isArray(body.idadesCriancas)
+      ? body.idadesCriancas.map((v: unknown) => inteiro(v)).slice(0, 20)
+      : [];
+    // Pagamento online opcional (Wilson, 06/out/2026: "self-checkout opcional
+    // de pagamento online caso o cliente queira, mesmo que usamos em JR Pass").
+    const pagarOnline = body.pagarOnline === true;
+    type EstadiaBody = { cidade?: unknown; checkin?: unknown; checkout?: unknown; noites?: unknown; categoria?: unknown; tipoQuarto?: unknown; camas?: unknown; preferenciaQuartos?: unknown; quartos?: unknown; cafe?: unknown; valorBRL?: unknown };
     const estadias: EstadiaBody[] = Array.isArray(body.estadias) ? body.estadias.slice(0, 20) : [];
     if (estadias.length === 0) {
       return NextResponse.json({ error: "Adicione ao menos uma estadia." }, { status: 400 });
     }
     const linhasEstadias = estadias.map(
       (e) =>
-        `${texto(e.cidade, 60)} ${texto(e.checkin, 20)} a ${texto(e.checkout, 20)} (${inteiro(e.noites)} noites) — ${texto(e.categoria, 30)}, ${inteiro(e.quartos)}× ${texto(e.tipoQuarto, 40)}${e.cafe ? ", com café da manhã" : ""} — R$ ${(Number(e.valorBRL) || 0).toLocaleString("pt-BR")}`,
+        `${texto(e.cidade, 60)} ${texto(e.checkin, 20)} a ${texto(e.checkout, 20)} (${inteiro(e.noites)} noites) — ${texto(e.categoria, 30)}, ${inteiro(e.quartos)}× ${texto(e.tipoQuarto, 40)} (camas: ${texto(e.camas, 60) || "—"}${texto(e.preferenciaQuartos, 60) ? `; quartos: ${texto(e.preferenciaQuartos, 60)}` : ""})${e.cafe ? ", com café da manhã" : ""} — R$ ${(Number(e.valorBRL) || 0).toLocaleString("pt-BR")}`,
     );
     const totalUSD = Number(body.totalUSD) || 0;
     const totalBRL = Number(body.totalBRL) || null;
@@ -93,12 +101,15 @@ export async function POST(req: Request) {
 
     const linhasResumo: [string, string][] = [
       ["Período no Japão", `${dataChegada || "—"} a ${dataPartida || "—"}`],
-      ["Hóspedes", `${adultos} adulto(s), ${criancas} criança(s)`],
+      [
+        "Hóspedes",
+        `${adultos} adulto(s), ${criancas} criança(s) de 3 a 11 anos${idadesCriancas.length ? ` (idades: ${idadesCriancas.join(", ")})` : ""}${bebes ? `, ${bebes} bebê(s) até 2 anos (não contam como hóspede)` : ""}`,
+      ],
       ["Estadias", linhasEstadias.join(" | ")],
       ["Total estimado (US$)", `US$ ${totalUSD.toLocaleString("pt-BR")}`],
       ["Total estimado (BRL)", totalBRL ? `R$ ${totalBRL.toLocaleString("pt-BR")}` : "Não calculado"],
       ["Avisos mostrados ao cliente", avisos.length ? avisos.join(" | ") : "Nenhum"],
-      ["Forma de pagamento", "A combinar pelo WhatsApp (checkout manual)"],
+      ["Forma de pagamento", pagarOnline ? "Cliente escolheu PAGAR ONLINE (Stone — Pix ou cartão)" : "A combinar pelo WhatsApp (checkout manual)"],
       ["Termos e condições aceitos", termosAceitos ? "Sim" : "Não confirmado"],
       ["Observações do cliente", observacoesCliente || "Nenhuma"],
     ];
@@ -159,9 +170,23 @@ export async function POST(req: Request) {
       console.error("Erro ao gravar interação (hoteis-selfservice):", erroInteracao);
     }
 
+    let checkoutUrl: string | null = null;
+    if (pagarOnline && totalBRL && totalBRL > 0) {
+      checkoutUrl = await criarCheckoutParaCliente({
+        supabase,
+        clienteId: cliente.id,
+        valorBRL: totalBRL,
+        itemNome: "Hotéis no Japão — Ajisai",
+        itemDescricao: `${estadias.length} estadia(s), ${dataChegada} a ${dataPartida}`,
+        observacoes: `Hotéis — ${linhasEstadias.length} estadia(s)`,
+        urlSucesso: `${new URL(req.url).origin}/produtos/hoteis?pagamento=concluido`,
+        rotuloLog: "hoteis-selfservice",
+      });
+    }
+
     await notificarPorEmail({ nome, email, resumoTexto, resumoHtml });
 
-    return NextResponse.json({ success: true, clienteId: cliente.id }, { status: 200 });
+    return NextResponse.json({ success: true, clienteId: cliente.id, checkoutUrl }, { status: 200 });
   } catch (error) {
     console.error("Erro no pedido de Hotéis:", error);
     return NextResponse.json(

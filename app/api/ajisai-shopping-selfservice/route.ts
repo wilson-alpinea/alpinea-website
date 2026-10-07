@@ -57,7 +57,6 @@ async function notificarPorEmail(params: {
 }
 
 const texto = (v: unknown, max = 500) => String(v ?? "").trim().slice(0, max);
-const inteiro = (v: unknown) => Math.max(0, Math.min(99, Math.floor(Number(v) || 0)));
 
 export async function POST(req: Request) {
   try {
@@ -72,12 +71,12 @@ export async function POST(req: Request) {
 
     const dataChegada = texto(body.dataChegada, 20);
     const dataPartida = texto(body.dataPartida, 20);
-    const adultos = inteiro(body.adultos);
-    const criancas = inteiro(body.criancas);
+    const itensInteresse: string[] = Array.isArray(body.itensInteresse)
+      ? body.itensInteresse.map((i: unknown) => String(i ?? "").trim().slice(0, 200)).filter(Boolean).slice(0, 30)
+      : [];
     const categorias: string[] = Array.isArray(body.categorias)
       ? body.categorias.map((c: unknown) => texto(c, 60)).filter(Boolean).slice(0, 15)
       : [];
-    const orcamentoBRL = Number(body.orcamentoBRL) || 0;
     const comissaoPct = Number(body.comissaoPct) || 20;
     const dias: { data?: unknown; cidade?: unknown }[] = Array.isArray(body.dias) ? body.dias.slice(0, 60) : [];
     if (dias.length === 0) {
@@ -93,11 +92,10 @@ export async function POST(req: Request) {
 
     const linhasResumo: [string, string][] = [
       ["Período no Japão", `${dataChegada || "—"} a ${dataPartida || "—"}`],
-      ["Pessoas", `${adultos} adulto(s), ${criancas} criança(s)`],
+      ["Itens de interesse (catálogo)", itensInteresse.length ? itensInteresse.join(" | ") : "Nenhum"],
       ["O que procura", categorias.length ? categorias.join(", ") : "Não informado"],
-      ["Orçamento de compras (R$)", orcamentoBRL ? `R$ ${orcamentoBRL.toLocaleString("pt-BR")}` : "Não informado"],
       ["Dias de compras", dias.map((d) => `${texto(d.data, 20)} (${texto(d.cidade, 40)})`).join(", ")],
-      ["Comissão estimada", `${comissaoPct}% — R$ ${(totalBRL ?? 0).toLocaleString("pt-BR")} (US$ ${totalUSD.toLocaleString("pt-BR")})`],
+      ["Referência dos itens de interesse", `R$ ${(totalBRL ?? 0).toLocaleString("pt-BR")} (US$ ${totalUSD.toLocaleString("pt-BR")}) — comissão de ${comissaoPct}% sobre o que for comprado`],
       ["Avisos mostrados ao cliente", avisos.length ? avisos.join(" | ") : "Nenhum"],
       ["Forma de pagamento", "A combinar pelo WhatsApp (checkout manual)"],
       ["Termos e condições aceitos", termosAceitos ? "Sim" : "Não confirmado"],

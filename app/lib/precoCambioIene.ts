@@ -27,6 +27,15 @@ export const SPREAD_CAMBIO_IENE_PUBLICO_VENDA = 0.8;
 // Piso mínimo (Wilson, 08/set/2026) — mesmo da Calculadora Reversa.
 export const CAMBIO_IENES_MINIMO = 100000;
 export const CAMBIO_IENES_MINIMO_PUBLICO = CAMBIO_IENES_MINIMO;
+// Entrega/retirada no aeroporto: mínimo maior (Wilson, 06/out/2026: "valor
+// mínimo de aeroporto sobe para 300,000 ienes").
+export const CAMBIO_IENES_MINIMO_AEROPORTO = 300000;
+export function minimoIenesPorCidade(cidade: string): number {
+  return cidade === "aeroporto-guarulhos" ? CAMBIO_IENES_MINIMO_AEROPORTO : CAMBIO_IENES_MINIMO_PUBLICO;
+}
+// Prazo de entrega dos ienes (Wilson, 06/out/2026): 3 dias úteis após a
+// confirmação do pagamento.
+export const PRAZO_ENTREGA_CAMBIO_DIAS_UTEIS = 3;
 
 export type PrecoCambioIene = {
   cotacaoFinalBRLporJPY: number;

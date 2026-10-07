@@ -1,4 +1,12 @@
 import { NextResponse } from "next/server";
+import { createHash } from "node:crypto";
+import { criarCheckoutParaCliente } from "../../../lib/pagarme/checkoutPedido";
+import {
+  CONTRATO_TRANSPORTE_VERSAO,
+  textoContratoTransporte,
+  type DadosContratoTransporte,
+  type ServicoContrato,
+} from "../../lib/contratoTransportePrivado";
 import { createAdminClient } from "../../../lib/supabase/admin";
 import { TAG_SELF_SERVICE } from "../../../lib/crm/origem";
 
@@ -69,6 +77,35 @@ async function notificarPorEmail(params: {
   }
 }
 
+async function enviarCopiaContrato(params: {
+  nome: string;
+  email: string;
+  contratoTexto: string;
+  contratoHash: string;
+  momentoAssinatura: string;
+  ipAssinatura: string;
+}) {
+  const apiKey = process.env.RESEND_API_KEY;
+  if (!apiKey || !params.email) return;
+  const rodape = `\n\nAssinado eletronicamente por ${params.nome} em ${params.momentoAssinatura} (IP ${params.ipAssinatura}).\nCódigo de integridade (SHA-256): ${params.contratoHash}`;
+  try {
+    const r = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
+      body: JSON.stringify({
+        from: "Alpinea <contato@alpinea.io>",
+        to: [params.email],
+        subject: "Seu contrato de Transporte Privado — cópia assinada",
+        text: `Olá, ${params.nome}!\n\nSegue a cópia do contrato que você assinou eletronicamente no site da Ajisai.\n\n${params.contratoTexto}${rodape}`,
+        html: `<div style="font-family: Arial, sans-serif; line-height: 1.6; color: #111;"><p>Olá, ${escapeHtml(params.nome)}!</p><p>Segue a cópia do contrato que você assinou eletronicamente no site da Ajisai.</p><pre style="white-space: pre-wrap; font-family: Arial, sans-serif;">${escapeHtml(params.contratoTexto + rodape)}</pre></div>`,
+      }),
+    });
+    if (!r.ok) console.error("Erro Resend (cópia do contrato):", await r.text());
+  } catch (err) {
+    console.error("Erro ao enviar cópia do contrato:", err);
+  }
+}
+
 export async function POST(req: Request) {
   try {
     const body = await req.json();
@@ -131,6 +168,61 @@ export async function POST(req: Request) {
     const opcionais: string[] = Array.isArray(body.opcionais)
       ? body.opcionais.map((o: unknown) => String(o).trim()).filter(Boolean).slice(0, 5)
       : [];
+    const objetivo = String(body.objetivo || "").trim().slice(0, 60);
+    const malas = Math.max(0, Math.min(99, Math.floor(Number(body.malas) || 0)));
+    const enderecosItens = itens
+      .map((it: Record<string, unknown>, i: number) =>
+        it?.enderecoPartida ? `${i + 1}) A: ${String(it.enderecoPartida).slice(0, 200)} → B: ${String(it.enderecoDestino || "").slice(0, 200)}` : "",
+      )
+      .filter(Boolean);
+
+    // Contrato + assinatura eletrônica + pagamento online — só Transporte
+    // Privado (Wilson, 06/out/2026). O texto é regerado AQUI a partir dos
+    // dados recebidos (o mesmo gerador da página) e é esse texto que recebe
+    // o hash e fica registrado.
+    let contratoTexto = "";
+    let contratoHash = "";
+    const assinaturaNome = String(body.assinaturaNome || "").trim().slice(0, 200);
+    const cpf = String(body.cpf || "").replace(/\D/g, "");
+    if (!ehTransfer) {
+      const normalizar = (t: string) => t.trim().toLowerCase().replace(/\s+/g, " ");
+      if (body.contratoAssinado !== true || normalizar(assinaturaNome) !== normalizar(nome) || cpf.length !== 11) {
+        return NextResponse.json(
+          { error: "Assine o contrato digitando seu nome completo e informe o CPF." },
+          { status: 400 },
+        );
+      }
+      const c = (body.contrato ?? {}) as Record<string, unknown>;
+      const txt = (v: unknown, max = 300) => String(v ?? "").trim().slice(0, max);
+      const servicosContrato: ServicoContrato[] = (Array.isArray(c.servicos) ? c.servicos : []).slice(0, 60).map((sv: Record<string, unknown>) => ({
+        data: txt(sv.data, 20),
+        horario: txt(sv.horario, 10),
+        rota: txt(sv.rota, 120),
+        veiculo: txt(sv.veiculo, 80),
+        enderecoPartida: txt(sv.enderecoPartida),
+        enderecoDestino: txt(sv.enderecoDestino),
+        duracaoEstimada: txt(sv.duracaoEstimada, 120),
+        valorUSD: Number(sv.valorUSD) || 0,
+      }));
+      const dados: DadosContratoTransporte = {
+        nome,
+        cpf: txt(c.cpf, 20),
+        email,
+        whatsapp,
+        passageiros,
+        dataChegada,
+        dataPartida,
+        servicos: servicosContrato,
+        opcionais: (Array.isArray(c.opcionais) ? c.opcionais : []).map((o: unknown) => txt(o, 120)).slice(0, 5),
+        totalUSD: Number(c.totalUSD) || totalUSD,
+        totalBRL: Number(c.totalBRL) || totalBRL || 0,
+        politicaCancelamento: txt(c.politicaCancelamento, 600),
+      };
+      contratoTexto = textoContratoTransporte(dados);
+      contratoHash = createHash("sha256").update(contratoTexto, "utf8").digest("hex");
+    }
+    const ipAssinatura = (req.headers.get("x-forwarded-for") || "").split(",")[0]!.trim() || req.headers.get("x-real-ip") || "desconhecido";
+    const momentoAssinatura = new Date().toISOString();
 
     const linhasResumo: [string, string][] = [
       ["Veículo(s)", veiculo],
@@ -143,9 +235,21 @@ export async function POST(req: Request) {
       ["Valor total (referência BRL)", totalBRL ? `R$ ${totalBRL.toLocaleString("pt-BR")}` : "Não calculado"],
       ["Período no Japão", dataChegada || dataPartida ? `${dataChegada || "—"} a ${dataPartida || "—"}` : dataServico || "Não informado"],
       ["Passageiros", passageiros ? String(passageiros) : "Não informado"],
+      ...(!ehTransfer
+        ? ([
+            ["Objetivo do serviço", objetivo || "Não informado"],
+            ["Malas grandes", String(malas)],
+            ["Endereços (A → B)", enderecosItens.length ? enderecosItens.join(" | ") : "Não informados"],
+            ["CPF", cpf],
+            [
+              "Contrato",
+              `Assinado eletronicamente por "${assinaturaNome}" em ${momentoAssinatura} (IP ${ipAssinatura}) — versão ${CONTRATO_TRANSPORTE_VERSAO}, SHA-256 ${contratoHash}`,
+            ],
+          ] as [string, string][])
+        : []),
       ["Voo(s)", numeroVoo || "Não informado"],
       ["Opcionais solicitados", opcionais.length ? opcionais.join(", ") : "Nenhum"],
-      ["Forma de pagamento escolhida", formaPagamento || "A combinar pelo WhatsApp"],
+      ["Forma de pagamento escolhida", !ehTransfer ? "Online (Stone) — Pix ou cartão" : formaPagamento || "A combinar pelo WhatsApp"],
       ["Termos e condições aceitos", termosAceitos ? "Sim" : "Não confirmado"],
       ["Observações do cliente", observacoesCliente || "Nenhuma"],
     ];
@@ -185,6 +289,15 @@ export async function POST(req: Request) {
         data_viagem: dataChegada || dataServico || null,
         estagio: "novo_lead",
         observacoes: `[${TAG_SELF_SERVICE}]\n${resumoTexto}`,
+        ...(!ehTransfer
+          ? {
+              checkout_ip: ipAssinatura,
+              checkout_user_agent: req.headers.get("user-agent"),
+              termos_aceitos: termosAceitos,
+              termos_versao: CONTRATO_TRANSPORTE_VERSAO,
+              termos_aceitos_em: momentoAssinatura,
+            }
+          : {}),
       })
       .select("id")
       .single();
@@ -207,9 +320,36 @@ export async function POST(req: Request) {
       console.error("Erro ao gravar interação (transporte-privado-selfservice):", erroInteracao);
     }
 
+    let checkoutUrl: string | null = null;
+    if (!ehTransfer) {
+      // Texto integral do contrato assinado fica no histórico do cliente.
+      const { error: erroContrato } = await supabase.from("interacoes").insert({
+        cliente_id: cliente.id,
+        tipo: "simulacao",
+        conteudo: `[CONTRATO ASSINADO] ${CONTRATO_TRANSPORTE_VERSAO}\nAssinatura: "${assinaturaNome}" · ${momentoAssinatura} · IP ${ipAssinatura}\nSHA-256: ${contratoHash}\n\n${contratoTexto}`,
+      });
+      if (erroContrato) console.error("Erro ao gravar contrato (transporte-privado-selfservice):", erroContrato);
+
+      if (body.pagarOnline === true && totalBRL && totalBRL > 0) {
+        checkoutUrl = await criarCheckoutParaCliente({
+          supabase,
+          clienteId: cliente.id,
+          valorBRL: totalBRL,
+          itemNome: "Transporte Privado no Japão — Ajisai",
+          itemDescricao: `${itens.length} serviço(s), ${dataChegada} a ${dataPartida}`,
+          observacoes: `Transporte Privado — ${itens.length} serviço(s)`,
+          urlSucesso: `${new URL(req.url).origin}/produtos/transporte-privado?pagamento=concluido`,
+          rotuloLog: "transporte-privado-selfservice",
+        });
+      }
+
+      // Cópia do contrato para o cliente.
+      await enviarCopiaContrato({ nome, email, contratoTexto, contratoHash, momentoAssinatura, ipAssinatura });
+    }
+
     await notificarPorEmail({ nome, email, whatsapp, resumoTexto, resumoHtml, nomeProduto });
 
-    return NextResponse.json({ success: true, clienteId: cliente.id }, { status: 200 });
+    return NextResponse.json({ success: true, clienteId: cliente.id, checkoutUrl }, { status: 200 });
   } catch (error) {
     console.error("Erro no self-checkout de Transporte Privado:", error);
     return NextResponse.json(

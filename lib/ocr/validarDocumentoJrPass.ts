@@ -18,7 +18,23 @@ export type ResultadoValidacaoDocumento = {
   ok: boolean;
   confianca: ConfiancaValidacao;
   motivo: string;
+  // Nacionalidade lida do passaporte (código ICAO de 3 letras, ex.: "BRA")
+  // — Wilson, 06/out/2026: "colocar OCR para ler documento para ver se é
+  // BRASILEIRO ou não, deixar alerta". null = não deu pra ler.
+  nacionalidade?: string | null;
 };
+
+// Lê a nacionalidade pela MRZ (linha 1 "P<BRA…", linha 2 posições 11–13)
+// ou, na falta dela, pelo texto "BRASILEIRO(A)" da página de dados.
+export function extrairNacionalidade(textoNormalizado: string): string | null {
+  const semEspacos = textoNormalizado.replace(/ /g, "");
+  const linha1 = semEspacos.match(/P[<K]([A-Z]{3})[A-Z]+<</);
+  if (linha1 && /^[A-Z]{3}$/.test(linha1[1])) return linha1[1];
+  const linha2 = semEspacos.match(/[A-Z0-9<]{9}[0-9<]([A-Z]{3})[0-9]{6}[0-9<][MF<]/);
+  if (linha2) return linha2[1];
+  if (/BRASILEIR[OA]|REPUBLICA FEDERATIVA DO BRASIL/.test(textoNormalizado)) return "BRA";
+  return null;
+}
 
 const TIMEOUT_OCR_MS = 15000;
 
@@ -101,19 +117,29 @@ export async function validarDocumentoJrPass(
     if (tipoEsperado === "passaporte") {
       const bateuPalavra = PALAVRAS_PASSAPORTE.some((p) => texto.includes(p));
       const bateuMrz = pareceMrz(texto);
+      const nacionalidade = extrairNacionalidade(texto);
+      const textoNacionalidade =
+        nacionalidade === "BRA"
+          ? " Passaporte brasileiro identificado."
+          : nacionalidade
+            ? ` Nacionalidade lida: ${nacionalidade} (não brasileiro).`
+            : " Não conseguimos ler a nacionalidade.";
       if (bateuMrz || bateuPalavra) {
         return {
           ok: true,
           confianca: bateuMrz ? "alta" : "baixa",
-          motivo: bateuMrz
-            ? "Zona de leitura de máquina (MRZ) do passaporte reconhecida."
-            : "Termos característicos de passaporte encontrados no texto.",
+          motivo:
+            (bateuMrz
+              ? "Zona de leitura de máquina (MRZ) do passaporte reconhecida."
+              : "Termos característicos de passaporte encontrados no texto.") + textoNacionalidade,
+          nacionalidade,
         };
       }
       return {
         ok: false,
         confianca: "baixa",
         motivo: "Não encontramos termos ou MRZ de passaporte na imagem — nossa equipe vai revisar manualmente.",
+        nacionalidade,
       };
     }
 

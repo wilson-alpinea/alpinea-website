@@ -100,7 +100,12 @@ async function enviarEmail(params: {
 // condições" em app/produtos/seguro-viagem/page.tsx mudar de forma
 // relevante. Versão atual: texto de 17 cláusulas enviado pelo Wilson em
 // 29/set/2026 ("última atualização: setembro de 2026").
-const TERMOS_VERSAO_SEGURO_VIAGEM = "seguro-viagem-termos-2026-09-29";
+// 06/out/2026: pagamento só online, SLA de emissão de 3 dias úteis,
+// contratação só estando na origem, doença preexistente, CPF/endereço únicos.
+const TERMOS_VERSAO_SEGURO_VIAGEM = "seguro-viagem-termos-2026-10-06";
+// Seguro FICTÍCIO de teste (?teste=1) — Wilson, 06/out/2026: "criar produto
+// de teste para validação e fluxo de emails e registro no CRM".
+const VALOR_PEDIDO_TESTE_BRL = 1;
 
 function extrairIpDaRequisicao(req: Request): string | null {
   const encaminhado = req.headers.get("x-forwarded-for");
@@ -114,7 +119,9 @@ export async function POST(req: Request) {
   try {
     const body = await req.json();
 
-    const nome = String(body.nome || "").trim();
+    const modoTeste = body.modoTeste === true;
+    const nomeInformado = String(body.nome || "").trim();
+    const nome = modoTeste && nomeInformado ? `[TESTE] ${nomeInformado}` : nomeInformado;
     const nomeComprador = String(body.nomeComprador || "").trim();
     const email = String(body.email || "").trim();
     const whatsapp = String(body.whatsapp || "").trim();
@@ -162,18 +169,25 @@ export async function POST(req: Request) {
     const idades: number[] = Array.isArray(body.idades)
       ? body.idades.map(Number).filter((n: number) => Number.isFinite(n) && n >= 0 && n <= 120).slice(0, 12)
       : [];
-    // CPF e endereço de cada viajante — pedido do Wilson, 25/set/2026:
-    // "precisa ter cpf e endereco de cada um dos passageiros, pra ser
-    // preenchido na proxima etapa". Opcionais: o cliente pode deixar em
-    // branco e confirmar com a equipe depois, antes da emissão da
-    // apólice — por isso só entram no resumo, sem coluna própria em
-    // `clientes`.
-    const cpfs: string[] = Array.isArray(body.cpfs)
-      ? body.cpfs.map((c: unknown) => String(c).trim()).slice(0, 12)
-      : [];
-    const enderecos: string[] = Array.isArray(body.enderecos)
-      ? body.enderecos.map((e: unknown) => String(e).trim()).slice(0, 12)
-      : [];
+    // CPF só do titular + endereço único (Wilson, 06/out/2026), saúde,
+    // contato de emergência e confirmação de que está na origem.
+    const cpfTitular = String(body.cpfTitular || "").trim().slice(0, 20);
+    const enderecoComum = String(body.enderecoComum || "").trim().slice(0, 300);
+    const condicaoSaude = body.condicaoSaude === "sim" ? "sim" : body.condicaoSaude === "nao" ? "nao" : "";
+    const detalheSaude = String(body.detalheSaude || "").trim().slice(0, 600);
+    const emergenciaNome = String(body.emergenciaNome || "").trim().slice(0, 120);
+    const emergenciaTelefone = String(body.emergenciaTelefone || "").trim().slice(0, 30);
+    const estouNaOrigem = body.estouNaOrigem === true;
+    const cpfDigitos = cpfTitular.replace(/\D/g, "");
+    const faltando: string[] = [];
+    if (!estouNaOrigem) faltando.push("confirmação de que você está no país de origem");
+    if (moraEm !== "japao" && cpfDigitos.length !== 11) faltando.push("CPF do titular");
+    if (enderecoComum.length < 10) faltando.push("endereço completo");
+    if (!condicaoSaude) faltando.push("resposta sobre condição de saúde");
+    if (!emergenciaNome || emergenciaTelefone.replace(/\D/g, "").length < 8) faltando.push("contato de emergência");
+    if (faltando.length > 0) {
+      return NextResponse.json({ error: `Faltam dados obrigatórios: ${faltando.join(", ")}.` }, { status: 400 });
+    }
     // Roteiro (Japão + outros países da Ásia, opcional) — pedido do Wilson,
     // 25/set/2026: "escolher pais, japão é o obrigatorio, mas cliente pode
     // colocar outros paises da Asia na lista". Só entra no resumo do lead
@@ -185,18 +199,18 @@ export async function POST(req: Request) {
     // Valor recalculado no servidor — é ESTE que vai pra cobrança. O
     // valor que veio do navegador só é comparado, pra auditoria.
     const diasCalculados = diasEntreDatas(dataInicio, dataFim);
-    const valorTotalBRL = calcularValorSeguroViagemBRL({
+    const valorCalculadoBRL = calcularValorSeguroViagemBRL({
       dias: diasCalculados,
       idades,
       multidestino: paises.length > 1,
     });
+    const valorTotalBRL = modoTeste ? VALOR_PEDIDO_TESTE_BRL : valorCalculadoBRL;
     const valorEnviadoPeloCliente = Number(body.valorTotalBRL ?? body.valorReferenciaBRL) || null;
-    if (valorTotalBRL !== null && valorEnviadoPeloCliente !== null && Math.abs(valorTotalBRL - valorEnviadoPeloCliente) > 1) {
+    if (!modoTeste && valorTotalBRL !== null && valorEnviadoPeloCliente !== null && Math.abs(valorTotalBRL - valorEnviadoPeloCliente) > 1) {
       console.error(
         `Valor divergente no Seguro Viagem (cliente R$ ${valorEnviadoPeloCliente} × servidor R$ ${valorTotalBRL}) — usando o do servidor.`,
       );
     }
-    const formaPagamento = String(body.formaPagamento || "").trim();
     const paisResidencia = String(body.paisResidencia || "").trim();
     // País de destino — pedido do Wilson, 25/set/2026: "aqui em seguro
     // viagem definir o pais de residencia e o pais de destino (brasil ou
@@ -226,7 +240,7 @@ export async function POST(req: Request) {
             dataIdaVoo || dataVoltaVoo ? ` (ida ${dataIdaVoo || "?"} / volta ${dataVoltaVoo || "?"})` : ""
           }`
         : passagemComprada === "nao"
-          ? `Ainda não comprou${emitirPassagemAjisai ? " — quer que a Ajisai emita" : ""}`
+          ? `Ainda não comprou${emitirPassagemAjisai ? " — quer COTAÇÃO de passagem aérea pela Ajisai" : ""}`
           : "Não informado";
 
     const seguradoraLabel: Record<(typeof SEGURADORAS_VALIDAS)[number], string> = {
@@ -243,21 +257,21 @@ export async function POST(req: Request) {
       ["Dias de cobertura", diasCalculados ? String(diasCalculados) : dias ? String(dias) : "Não informado"],
       ["Número de viajantes", idades.length ? String(idades.length) : "Não informado"],
       ["Idades dos viajantes", idades.length ? idades.join(", ") : "Não informado"],
+      ...(modoTeste ? ([["PEDIDO DE TESTE", `Seguro fictício — cobrança fixa de R$ ${VALOR_PEDIDO_TESTE_BRL},00. NÃO EMITIR APÓLICE.`]] as [string, string][]) : []),
+      ["CPF do titular da apólice", cpfTitular || "Não informado (residente no Japão)"],
+      ["Endereço (todos os viajantes)", enderecoComum],
       [
-        "CPF dos viajantes",
-        cpfs.some(Boolean) ? cpfs.map((c, i) => `${i + 1}: ${c || "não informado"}`).join(" | ") : "A confirmar na próxima etapa",
+        "Doença crônica / condição em tratamento",
+        condicaoSaude === "sim" ? `SIM — ${detalheSaude || "sem detalhe"} (conferir cobertura com a seguradora)` : "Não",
       ],
+      ["Contato de emergência", `${emergenciaNome} — ${emergenciaTelefone}`],
+      ["Está fisicamente na origem agora", estouNaOrigem ? "Sim (declarado)" : "Não"],
       [
-        "Endereço dos viajantes",
-        enderecos.some(Boolean)
-          ? enderecos.map((e, i) => `${i + 1}: ${e || "não informado"}`).join(" | ")
-          : "A confirmar na próxima etapa",
-      ],
-      [
-        "Valor total Ajisai (calculado no servidor)",
+        "Valor cobrado",
         valorTotalBRL ? `R$ ${valorTotalBRL.toLocaleString("pt-BR")}` : "Não calculado — cotação manual",
       ],
-      ["Forma de pagamento escolhida", formaPagamento || "Não escolhida ainda"],
+      ["Pagamento", "Online (Stone) — Pix ou cartão"],
+      ["SLA de emissão", "Até 3 dias úteis após a confirmação do pagamento"],
       ["País de residência", paisResidencia || "Não informado"],
       ["País de destino", paisDestino || "Não informado"],
       ["Passagem aérea", passagemResumo],
@@ -293,7 +307,7 @@ export async function POST(req: Request) {
         nome,
         email: email || null,
         telefone: whatsapp || null,
-        origem: `${TAG_SELF_SERVICE} — Seguro Viagem (/produtos)`,
+        origem: modoTeste ? "TESTE — Seguro Viagem fictício (/produtos)" : `${TAG_SELF_SERVICE} — Seguro Viagem (/produtos)`,
         produto_principal: "servico_individual",
         produto_secundario: ["seguro_viagem"],
         valor_proposta: valorTotalBRL,
@@ -356,14 +370,16 @@ export async function POST(req: Request) {
         } else {
           const checkout = await criarCheckout({
             codigoInterno: pagamentoPendente.id,
-            itemNome: `Seguro Viagem — ${seguradoraNome}`,
-            itemDescricao: `${diasCalculados} dias (${dataInicio} a ${dataFim}), ${idades.length} viajante(s)`,
+            itemNome: modoTeste ? `TESTE — Seguro Viagem fictício (R$ ${VALOR_PEDIDO_TESTE_BRL},00)` : `Seguro Viagem — ${seguradoraNome}`,
+            itemDescricao: modoTeste
+              ? "Pedido de teste do fluxo completo. Não gera apólice."
+              : `${diasCalculados} dias (${dataInicio} a ${dataFim}), ${idades.length} viajante(s)`,
             valorTotalBRL,
             aceitarCartao: true,
             aceitarPix: true,
             // Botão "voltar para a loja" da página da Stone volta para o site
             // (Wilson, 01/out/2026).
-            urlSucesso: `${new URL(req.url).origin}/produtos/seguro-viagem?pagamento=concluido`,
+            urlSucesso: `${new URL(req.url).origin}/produtos/seguro-viagem?${modoTeste ? "teste=1&" : ""}pagamento=concluido`,
           });
           await supabase
             .from("pagamentos")
@@ -405,7 +421,7 @@ export async function POST(req: Request) {
             ? "Pix ou cartão pela página segura da Stone. A confirmação chega por e-mail."
             : "Enviamos o link de pagamento (Pix ou cartão) pelo WhatsApp e por e-mail.",
         },
-        { titulo: "Emissão da apólice", texto: "A seguradora emite a apólice e enviamos para você por e-mail e WhatsApp." },
+        { titulo: "Emissão da apólice", texto: "Emitimos a apólice em até 3 dias úteis após a confirmação do pagamento e enviamos por e-mail e WhatsApp." },
         { titulo: "Viagem protegida", texto: "Em caso de necessidade, fale com a central da seguradora antes de fazer despesas por conta própria." },
       ],
       resumo: [

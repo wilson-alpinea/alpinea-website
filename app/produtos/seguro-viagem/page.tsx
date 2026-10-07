@@ -25,7 +25,6 @@ import Image from "next/image";
 import { Inter } from "next/font/google";
 import Link from "next/link";
 import { formatBRL } from "../../hooks/useCambioUSD";
-import { type FormaPagamentoEscolhida } from "../../lib/calculadoraCatalogoPublico";
 import {
   IDADE_LIMITE_SEGURO,
   MULTIPLICADOR_ROTEIRO_MULTIDESTINO,
@@ -35,15 +34,13 @@ import {
 import {
   display,
   WHATSAPP_NUMBER,
-  FormasPagamento,
-  descricaoFormaPagamento,
   hojeISO,
   formatarDataBR,
   IconCheck,
 } from "../page";
 import { RodapeCheckout } from "../RodapeCheckout";
 import { SEGURADORAS_VIAGEM, PAISES_ASIA_ADICIONAIS, type SeguradoraKey } from "./seguradoras";
-import { ProdutoTestePagamento } from "../ProdutoTestePagamento";
+import { ProdutoTestePagamento, PainelPedidoTeste, useModoTeste } from "../ProdutoTestePagamento";
 import { AvisoPagamentoConcluido } from "../AvisoPagamentoConcluido";
 import { abrirAbaPagamento, enviarParaPagamento, fecharAba, BlocoPagamentoNovaAba } from "../pagamentoNovaAba";
 
@@ -68,7 +65,7 @@ const COMO_FUNCIONA = [
   {
     icone: "/images/produtos/seguro-passo-2-apolice.png",
     titulo: "Receba a apólice",
-    texto: "Emitimos a apólice com a seguradora e enviamos por e-mail e WhatsApp.",
+    texto: "Emitimos a apólice em até 3 dias úteis após a confirmação do pagamento e enviamos por e-mail e WhatsApp.",
   },
   {
     icone: "/images/produtos/seguro-passo-3-viagem.png",
@@ -109,15 +106,25 @@ export default function SeguroViagemPage() {
   const [seguradoraSelecionada, setSeguradora] = useState<SeguradoraKey | null>(null);
   const [numViajantes, setNumViajantes] = useState(1);
   const [idades, setIdades] = useState<(number | "")[]>([""]);
-  // CPF e endereço de cada viajante — pedido do Wilson, 25/set/2026:
-  // "precisa ter cpf e endereco de cada um dos passageiros, pra ser
-  // preenchido na proxima etapa". Continua opcional aqui.
-  const [cpfs, setCpfs] = useState<string[]>([""]);
-  const [enderecos, setEnderecos] = useState<string[]>([""]);
+  // CPF só do titular da apólice e um endereço único para todos os
+  // viajantes — Wilson, 06/out/2026: "endereço é comum para 1 endereço só
+  // para todos os passageiros, cpf também somente o dono da apólice, não
+  // precisa colocar por pessoa".
+  const [cpfTitular, setCpfTitular] = useState("");
+  const [enderecoComum, setEnderecoComum] = useState("");
+  // Saúde, contato de emergência e localização atual (Wilson, 06/out/2026).
+  const [condicaoSaude, setCondicaoSaude] = useState<"sim" | "nao" | null>(null);
+  const [detalheSaude, setDetalheSaude] = useState("");
+  const [emergenciaNome, setEmergenciaNome] = useState("");
+  const [emergenciaTelefone, setEmergenciaTelefone] = useState("");
+  const [estouNaOrigem, setEstouNaOrigem] = useState(false);
   const [dataInicio, setDataInicio] = useState("");
   const [dataFim, setDataFim] = useState("");
   const [paisesAdicionais, setPaisesAdicionais] = useState<string[]>([]);
-  const [formaPagamento, setFormaPagamento] = useState<FormaPagamentoEscolhida | null>(null);
+  // Seguro fictício de teste (?teste=1) — fluxo completo cobrando R$ 1.
+  const modoTeste = useModoTeste();
+  const [marcarTeste, setMarcarTeste] = useState(true);
+  const pedidoTeste = modoTeste && marcarTeste;
   const [nome, setNome] = useState("");
   // Nome de quem paga, quando diferente do viajante principal — mesma
   // evidência de chargeback adotada no JR Pass (Wilson, 29/set/2026).
@@ -166,8 +173,6 @@ export default function SeguroViagemPage() {
       return proximo;
     };
     setIdades((atual) => ajustar<number | "">(atual, ""));
-    setCpfs((atual) => ajustar(atual, ""));
-    setEnderecos((atual) => ajustar(atual, ""));
   }
 
   const idadesNumericas = idades.filter((i): i is number => typeof i === "number");
@@ -178,6 +183,10 @@ export default function SeguroViagemPage() {
   const dias = diasEntreDatas(dataInicio, dataFim);
   const roteiroSoDestino = paisesAdicionais.length === 0;
   const nomePaisDestino = paisDestino === "brasil" ? "Brasil" : "Japão";
+  const nomeOrigem = moraEm === "japao" ? "Japão" : "Brasil";
+  const cpfDigitos = cpfTitular.replace(/\D/g, "");
+  const cpfValido = moraEm === "japao" ? cpfDigitos.length === 0 || cpfDigitos.length === 11 : cpfDigitos.length === 11;
+  const telEmergenciaDigitos = emergenciaTelefone.replace(/\D/g, "").length;
 
   // Se a seguradora escolhida deixar de estar disponível (ex.: alguém
   // informou idade 65+ ou residência no Japão depois), a escolha deixa de
@@ -189,7 +198,6 @@ export default function SeguroViagemPage() {
   const valorTotalBRL = todasIdadesPreenchidas
     ? calcularValorSeguroViagemBRL({ dias, idades: idadesNumericas, multidestino: !roteiroSoDestino })
     : null;
-  const descricaoPagamentoEscolhido = descricaoFormaPagamento(formaPagamento, valorTotalBRL, dataInicio);
   const seguradoraEscolhida = SEGURADORAS_VIAGEM.find((s) => s.key === seguradora) ?? null;
 
   const formValido =
@@ -204,6 +212,13 @@ export default function SeguroViagemPage() {
     idadesForaLimite === 0 &&
     valorTotalBRL !== null &&
     valorTotalBRL > 0 &&
+    cpfValido &&
+    enderecoComum.trim().length >= 10 &&
+    condicaoSaude !== null &&
+    (condicaoSaude === "nao" || detalheSaude.trim().length > 2) &&
+    emergenciaNome.trim().split(/\s+/).length >= 2 &&
+    telEmergenciaDigitos >= 8 &&
+    estouNaOrigem &&
     termosAceitos;
 
   // Checklist do rodapé — mesma ordem em que os passos aparecem na página.
@@ -219,6 +234,10 @@ export default function SeguroViagemPage() {
     pendenciasFinalizar.push("Sua residência não é elegível pra esse seguro — veja o aviso no passo 2.");
   }
   if (!paisDestino) pendenciasFinalizar.push("Escolha o país de destino.");
+  if ((moraEm === "brasil" || moraEm === "japao") && !estouNaOrigem)
+    pendenciasFinalizar.push(`Confirme que você está no ${nomeOrigem} neste momento.`);
+  if (condicaoSaude === null) pendenciasFinalizar.push("Responda à pergunta sobre doença crônica ou condição de saúde.");
+  else if (condicaoSaude === "sim" && detalheSaude.trim().length <= 2) pendenciasFinalizar.push("Descreva a condição de saúde.");
   if (!dataInicio) pendenciasFinalizar.push("Preencha a data de início da viagem.");
   if (!dataFim) pendenciasFinalizar.push("Preencha a data de término da viagem.");
   if (dataInicio && dataFim && dias <= 0) {
@@ -228,6 +247,10 @@ export default function SeguroViagemPage() {
   if (nome.trim().length === 0) pendenciasFinalizar.push("Preencha seu nome completo.");
   if (!/\S+@\S+\.\S+/.test(email)) pendenciasFinalizar.push("Preencha um e-mail válido.");
   if (whatsapp.trim().length < 8) pendenciasFinalizar.push("Preencha seu WhatsApp.");
+  if (!cpfValido) pendenciasFinalizar.push("Preencha o CPF do titular da apólice (11 dígitos).");
+  if (enderecoComum.trim().length < 10) pendenciasFinalizar.push("Preencha o endereço completo (com CEP).");
+  if (emergenciaNome.trim().split(/\s+/).length < 2 || telEmergenciaDigitos < 8)
+    pendenciasFinalizar.push("Preencha o contato de emergência (nome completo e telefone).");
   if (!termosAceitos) {
     pendenciasFinalizar.push(
       termosRolados
@@ -252,12 +275,16 @@ export default function SeguroViagemPage() {
           dataFim,
           dias,
           idades: idadesNumericas,
-          cpfs: cpfs.map((c) => c.trim()),
-          enderecos: enderecos.map((e) => e.trim()),
+          cpfTitular: cpfTitular.trim(),
+          enderecoComum: enderecoComum.trim(),
+          condicaoSaude,
+          detalheSaude: condicaoSaude === "sim" ? detalheSaude.trim() : "",
+          emergenciaNome: emergenciaNome.trim(),
+          emergenciaTelefone: emergenciaTelefone.trim(),
+          estouNaOrigem,
           paises: [nomePaisDestino, ...paisesAdicionais],
           paisDestino: nomePaisDestino,
           valorTotalBRL,
-          formaPagamento: descricaoPagamentoEscolhido || null,
           nome,
           nomeComprador,
           email,
@@ -272,6 +299,7 @@ export default function SeguroViagemPage() {
           dataVoltaVoo: passagemComprada === "sim" ? dataVoltaVoo : "",
           emitirPassagemAjisai: passagemComprada === "nao" ? emitirPassagemAjisai : false,
           termosAceitos,
+          modoTeste: pedidoTeste,
         }),
       });
       const dadosResposta = await resposta.json().catch(() => ({}));
@@ -366,8 +394,8 @@ export default function SeguroViagemPage() {
             ) : (
               <p className="mx-auto mt-3 max-w-md text-sm leading-relaxed text-black/75">
                 Nossa equipe confere os dados com a {seguradoraEscolhida?.nome ?? "seguradora escolhida"} e te
-                envia o link de pagamento (Pix ou cartão) pelo WhatsApp e por e-mail. Depois do pagamento,
-                emitimos a apólice e enviamos pra você.
+                envia o link de pagamento (Pix ou cartão) pelo WhatsApp e por e-mail. A apólice é emitida em
+                até 3 dias úteis após a confirmação do pagamento.
               </p>
             )}
             <a
@@ -417,6 +445,37 @@ export default function SeguroViagemPage() {
             <AvisoPagamentoConcluido />
             {/* Produto de teste de R$ 1 — só aparece com ?teste=1 (Wilson, 30/set/2026). */}
             <ProdutoTestePagamento produto="seguro-viagem" />
+            <PainelPedidoTeste
+              ativo={modoTeste}
+              marcado={marcarTeste}
+              onMarcar={setMarcarTeste}
+              nomeProduto="Seguro Viagem"
+              onPreencher={() => {
+                const daqui = (dias: number) => {
+                  const d = new Date();
+                  d.setDate(d.getDate() + dias);
+                  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+                };
+                setNumViajantes(1);
+                setIdades([35]);
+                setMoraEm("brasil");
+                setPaisDestino("japao");
+                setEstouNaOrigem(true);
+                setDataInicio(daqui(30));
+                setDataFim(daqui(44));
+                setSeguradora("affinity");
+                setPassagemComprada("nao");
+                setNome("Viajante Teste Fictício");
+                setEmail("wilson@alpinea.io");
+                setWhatsapp("(11) 99999-9999");
+                setCpfTitular("529.982.247-25");
+                setEnderecoComum("Av. Paulista, 1000, conj. 1 (teste), Bela Vista, São Paulo/SP, CEP 01310-100");
+                setCondicaoSaude("nao");
+                setEmergenciaNome("Contato Teste Fictício");
+                setEmergenciaTelefone("(11) 98888-7777");
+                setObservacoes("PEDIDO DE TESTE — não emitir apólice.");
+              }}
+            />
 
             <div className="mt-8 rounded-2xl bg-[#eef6fb] p-5 sm:p-6">
               <p className="text-center text-xs font-medium uppercase tracking-[0.15em] text-[#1c6ea8]">
@@ -471,7 +530,7 @@ export default function SeguroViagemPage() {
                 {idades.map((idade, index) => (
                   <div key={index} className="rounded-xl border border-black/10 bg-black/[0.015] p-4">
                     <p className="text-[10px] uppercase tracking-[0.15em] text-black/60">Viajante {index + 1}</p>
-                    <div className="mt-2 grid gap-3 sm:grid-cols-[120px_1fr_2fr]">
+                    <div className="mt-2 max-w-[140px]">
                       <label className="flex min-w-0 flex-col gap-1.5">
                         <span className="text-[10px] uppercase tracking-[0.15em] text-black">Idade</span>
                         <input
@@ -488,44 +547,12 @@ export default function SeguroViagemPage() {
                           className={classeInput}
                         />
                       </label>
-                      <label className="flex min-w-0 flex-col gap-1.5">
-                        <span className="text-[10px] uppercase tracking-[0.15em] text-black">
-                          CPF (opcional agora)
-                        </span>
-                        <input
-                          type="text"
-                          inputMode="numeric"
-                          value={cpfs[index] ?? ""}
-                          onChange={(e) => {
-                            const valor = e.target.value;
-                            setCpfs((atual) => atual.map((v, i) => (i === index ? valor : v)));
-                          }}
-                          placeholder="000.000.000-00"
-                          className={classeInput}
-                        />
-                      </label>
-                      <label className="flex min-w-0 flex-col gap-1.5">
-                        <span className="text-[10px] uppercase tracking-[0.15em] text-black">
-                          Endereço (opcional agora)
-                        </span>
-                        <input
-                          type="text"
-                          value={enderecos[index] ?? ""}
-                          onChange={(e) => {
-                            const valor = e.target.value;
-                            setEnderecos((atual) => atual.map((v, i) => (i === index ? valor : v)));
-                          }}
-                          placeholder="Rua, número, cidade, CEP"
-                          className={classeInput}
-                        />
-                      </label>
                     </div>
                   </div>
                 ))}
               </div>
               <p className="mt-2 text-[11px] leading-5 text-black/60">
-                CPF e endereço são necessários pra emitir a apólice — pode preencher agora ou confirmar
-                com a nossa equipe antes da emissão.
+                CPF e endereço são pedidos uma vez só, do titular da apólice, no passo “Seus dados”.
               </p>
               <div className="mt-3 flex items-center gap-2.5">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -558,13 +585,14 @@ export default function SeguroViagemPage() {
               <TituloPasso numero={2} titulo="Residência e destino" />
               <div className="mt-5 grid gap-6 sm:grid-cols-2">
                 <div className="flex min-w-0 flex-col gap-2">
-                  <span className="text-[10px] uppercase tracking-[0.15em] text-black">Onde você mora</span>
+                  <span className="text-[10px] uppercase tracking-[0.15em] text-black">Onde você mora (origem)</span>
                   <div className="flex flex-wrap gap-2">
                     <button
                       type="button"
                       onClick={() => {
                         setMoraEm("brasil");
-                        setPaisDestino((atual) => atual ?? "japao");
+                        setPaisDestino("japao");
+                        setEstouNaOrigem(false);
                       }}
                       className={`rounded-lg border px-4 py-2.5 text-sm transition ${classeOpcao(moraEm === "brasil")}`}
                     >
@@ -573,8 +601,12 @@ export default function SeguroViagemPage() {
                     <button
                       type="button"
                       onClick={() => {
+                        // Origem Japão: o único destino possível é o Brasil e os
+                        // outros países somem (Wilson, 06/out/2026).
                         setMoraEm("japao");
-                        setPaisDestino((atual) => atual ?? "brasil");
+                        setPaisDestino("brasil");
+                        setPaisesAdicionais([]);
+                        setEstouNaOrigem(false);
                       }}
                       className={`rounded-lg border px-4 py-2.5 text-sm transition ${classeOpcao(moraEm === "japao")}`}
                     >
@@ -591,24 +623,36 @@ export default function SeguroViagemPage() {
                 </div>
                 <div className="flex min-w-0 flex-col gap-2">
                   <span className="text-[10px] uppercase tracking-[0.15em] text-black">País de destino</span>
-                  <div className="flex flex-wrap gap-2">
-                    <button
-                      type="button"
-                      onClick={() => setPaisDestino("japao")}
-                      className={`rounded-lg border px-4 py-2.5 text-sm transition ${classeOpcao(paisDestino === "japao")}`}
-                    >
-                      Japão
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setPaisDestino("brasil")}
-                      className={`rounded-lg border px-4 py-2.5 text-sm transition ${classeOpcao(paisDestino === "brasil")}`}
-                    >
-                      Brasil
-                    </button>
-                  </div>
+                  {moraEm === "brasil" || moraEm === "japao" ? (
+                    <div className="flex flex-wrap gap-2">
+                      <span className={`rounded-lg border px-4 py-2.5 text-sm ${classeOpcao(true)}`}>{nomePaisDestino}</span>
+                    </div>
+                  ) : (
+                    <p className="text-sm text-black/50">Escolha a origem primeiro.</p>
+                  )}
+                  {moraEm === "japao" && (
+                    <p className="text-[11px] leading-5 text-black/60">Saindo do Japão, o destino coberto é o Brasil.</p>
+                  )}
                 </div>
               </div>
+
+              {(moraEm === "brasil" || moraEm === "japao") && (
+                <label className="mt-5 flex cursor-pointer items-start gap-3 rounded-xl border border-black/10 p-3.5">
+                  <input
+                    type="checkbox"
+                    checked={estouNaOrigem}
+                    onChange={(e) => setEstouNaOrigem(e.target.checked)}
+                    className="mt-0.5 h-5 w-5 shrink-0 rounded border-black/30 text-[#2f80c9] focus:ring-[#2f80c9]"
+                  />
+                  <span className="text-sm text-black/85">
+                    <strong className="font-semibold">Estou no {nomeOrigem} neste momento.</strong>{" "}
+                    <span className="text-black/65">
+                      O seguro viagem só pode ser contratado enquanto você está fisicamente no país de origem (
+                      {nomeOrigem}), antes do embarque.
+                    </span>
+                  </span>
+                </label>
+              )}
 
               {residenciaBloqueada && (
                 <p className="mt-4 rounded-lg border border-amber-300 bg-amber-50 px-4 py-3 text-[11px] leading-5 text-amber-800">
@@ -619,7 +663,9 @@ export default function SeguroViagemPage() {
               )}
 
               {/* Roteiro — destino obrigatório + outros países da Ásia
-                  opcionais (+12% de cobertura multidestino). */}
+                  opcionais (+12% de cobertura multidestino). Some quando a
+                  origem é o Japão (destino único: Brasil). */}
+              {moraEm === "brasil" && (
               <div className="mt-6">
                 <span className="mb-2 block text-[10px] uppercase tracking-[0.15em] text-black">
                   Outros países no roteiro (opcional)
@@ -654,6 +700,7 @@ export default function SeguroViagemPage() {
                       )}%, já incluído no valor).`}
                 </p>
               </div>
+              )}
             </div>
 
             {/* 3 — Datas da viagem */}
@@ -745,17 +792,19 @@ export default function SeguroViagemPage() {
                       {s.observacao && <p className="mt-2 text-[11px] leading-5 text-black/60">{s.observacao}</p>}
 
                       <div className="mt-4 border-t border-[#E4E1DC] pt-4">
-                        <p className="text-[10px] uppercase tracking-[0.15em] text-[#77736D]">Tipos de plano</p>
-                        <ul className="mt-2 flex flex-wrap gap-1.5">
-                          {s.tiposPlano.map((tipo) => (
-                            <li
-                              key={tipo}
-                              className="rounded-full border border-black/10 bg-black/[0.03] px-2.5 py-1 text-[11px] leading-tight text-black/70"
-                            >
-                              {tipo}
-                            </li>
+                        <p className="text-[10px] uppercase tracking-[0.15em] text-[#77736D]">
+                          Apólice{s.apolice.plano ? ` · ${s.apolice.plano}` : ""}
+                        </p>
+                        <dl className="mt-2 space-y-1">
+                          {s.apolice.coberturas.map((c) => (
+                            <div key={c.item} className="flex items-baseline justify-between gap-3 text-[11px] leading-5">
+                              <dt className="min-w-0 text-black/65">{c.item}</dt>
+                              <dd className={`shrink-0 text-right ${c.valor ? `${inter.className} font-semibold tabular-nums text-black` : "text-black/40"}`}>
+                                {c.valor ?? "consta na apólice"}
+                              </dd>
+                            </div>
                           ))}
-                        </ul>
+                        </dl>
                         {s.termosUrl && (
                           <a
                             href={s.termosUrl}
@@ -784,8 +833,8 @@ export default function SeguroViagemPage() {
                 </p>
               )}
               <p className="mt-3 text-[11px] leading-5 text-black/60">
-                Valor total para o grupo, já com taxas incluídas. O plano exato de cada seguradora para o
-                seu perfil é confirmado pela nossa equipe antes da emissão da apólice.
+                Valor total para o grupo, já com taxas incluídas. A apólice com todas as coberturas e
+                valores é enviada junto com a emissão.
               </p>
             </div>
 
@@ -856,7 +905,7 @@ export default function SeguroViagemPage() {
                     onChange={(e) => setEmitirPassagemAjisai(e.target.checked)}
                     className="mt-0.5 h-5 w-5 shrink-0 rounded border-black/30 text-[#2f80c9] focus:ring-[#2f80c9]"
                   />
-                  Quero que a Ajisai emita minha passagem aérea
+                  Quero que a Ajisai faça uma cotação de passagem aérea para mim
                 </label>
               )}
             </div>
@@ -886,6 +935,36 @@ export default function SeguroViagemPage() {
                   />
                 </label>
               </div>
+              <div className="mt-4 grid gap-4 sm:grid-cols-[220px_minmax(0,1fr)]">
+                <label className="flex min-w-0 flex-col gap-1.5">
+                  <span className="text-[10px] uppercase tracking-[0.15em] text-black">
+                    CPF do titular da apólice{moraEm === "japao" ? " (se tiver)" : ""}
+                  </span>
+                  <input
+                    type="text"
+                    inputMode="numeric"
+                    value={cpfTitular}
+                    onChange={(e) => setCpfTitular(e.target.value)}
+                    placeholder="000.000.000-00"
+                    className={classeInput}
+                  />
+                </label>
+                <label className="flex min-w-0 flex-col gap-1.5">
+                  <span className="text-[10px] uppercase tracking-[0.15em] text-black">
+                    Endereço completo (um só, vale para todos os viajantes)
+                  </span>
+                  <input
+                    type="text"
+                    value={enderecoComum}
+                    onChange={(e) => setEnderecoComum(e.target.value)}
+                    placeholder={moraEm === "japao" ? "Endereço no Japão, com código postal (〒)" : "Rua, número, complemento, bairro, cidade/UF, CEP"}
+                    className={classeInput}
+                  />
+                </label>
+              </div>
+              <p className="mt-1.5 text-[11px] leading-5 text-black/55">
+                Só o titular (quem contrata a apólice) informa CPF. Os demais viajantes entram na mesma apólice.
+              </p>
               <label className="mt-4 flex min-w-0 flex-col gap-1.5">
                 <span className="text-[10px] uppercase tracking-[0.15em] text-black">
                   Nome do comprador (opcional — só se for diferente do viajante)
@@ -904,20 +983,83 @@ export default function SeguroViagemPage() {
                   value={observacoes}
                   onChange={(e) => setObservacoes(e.target.value)}
                   rows={2}
-                  placeholder="Condição de saúde pré-existente, prática de esportes na viagem, etc."
+                  placeholder="Prática de esportes na viagem, dúvidas, etc."
                   className={classeInput}
                 />
               </label>
             </div>
 
-            {/* 7 — Formas de pagamento */}
-            <FormasPagamento
-              numeroPasso={7}
-              totalBRL={valorTotalBRL}
-              dataViagem={dataInicio}
-              formaPagamento={formaPagamento}
-              onEscolher={setFormaPagamento}
-            />
+            {/* 7 — Saúde e contato de emergência (Wilson, 06/out/2026). As
+                formas de pagamento saíram: o pagamento é só automático, na
+                página segura da Stone. */}
+            <div className="mt-8 border-t border-black/10 pt-6">
+              <TituloPasso numero={7} titulo="Saúde e contato de emergência" />
+              <p className="mt-4 text-sm text-black/85">
+                Algum viajante possui doença crônica ou condição de saúde que exige tratamento médico (uso contínuo de
+                medicamento, acompanhamento, tratamento em andamento etc.)?
+              </p>
+              <div className="mt-3 flex flex-wrap gap-2">
+                <button
+                  type="button"
+                  onClick={() => setCondicaoSaude("nao")}
+                  className={`rounded-full border px-4 py-2.5 text-sm transition ${classeOpcao(condicaoSaude === "nao")}`}
+                >
+                  Não
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setCondicaoSaude("sim")}
+                  className={`rounded-full border px-4 py-2.5 text-sm transition ${classeOpcao(condicaoSaude === "sim", true)}`}
+                >
+                  Sim
+                </button>
+              </div>
+              {condicaoSaude === "sim" && (
+                <>
+                  <label className="mt-3 flex min-w-0 flex-col gap-1.5">
+                    <span className="text-[10px] uppercase tracking-[0.15em] text-black">Qual condição e qual viajante?</span>
+                    <textarea
+                      value={detalheSaude}
+                      onChange={(e) => setDetalheSaude(e.target.value)}
+                      rows={2}
+                      className={classeInput}
+                    />
+                  </label>
+                  <p className="mt-2 rounded-lg border border-amber-300 bg-amber-50 px-4 py-3 text-[11px] leading-5 text-amber-800">
+                    Doenças preexistentes e crônicas costumam ter cobertura limitada (em geral só o atendimento
+                    emergencial do primeiro episódio) ou nenhuma, conforme a apólice. Nossa equipe confere com a
+                    seguradora antes da emissão e te avisa se houver restrição.
+                  </p>
+                </>
+              )}
+
+              <p className="mt-6 text-[10px] uppercase tracking-[0.15em] text-black">Contato de emergência (obrigatório)</p>
+              <p className="mt-1 text-[11px] leading-5 text-black/60">Alguém que não esteja viajando com você.</p>
+              <div className="mt-3 grid gap-4 sm:grid-cols-2">
+                <label className="flex min-w-0 flex-col gap-1.5">
+                  <span className="text-[10px] uppercase tracking-[0.15em] text-black">Nome completo</span>
+                  <input type="text" value={emergenciaNome} onChange={(e) => setEmergenciaNome(e.target.value)} className={classeInput} />
+                </label>
+                <label className="flex min-w-0 flex-col gap-1.5">
+                  <span className="text-[10px] uppercase tracking-[0.15em] text-black">Telefone</span>
+                  <input
+                    type="tel"
+                    value={emergenciaTelefone}
+                    onChange={(e) => setEmergenciaTelefone(e.target.value)}
+                    placeholder="(11) 99999-9999"
+                    className={classeInput}
+                  />
+                </label>
+              </div>
+
+              <div className="mt-6 rounded-xl border border-[#2f80c9]/25 bg-[#eef6fb] px-4 py-3.5 text-sm leading-6 text-black/75">
+                <p className="font-semibold text-[#0A2540]">Pagamento e emissão</p>
+                <p className="mt-0.5 text-[13px]">
+                  O pagamento é feito na página segura da Stone (Pix ou cartão), logo após finalizar. A apólice é
+                  emitida em até 3 dias úteis após a confirmação do pagamento e enviada por e-mail e WhatsApp.
+                </p>
+              </div>
+            </div>
 
             {/* 8 — Termos e condições — texto enviado pelo Wilson,
                 29/set/2026 ("Termos e Condições — Seguro Viagem, última
@@ -989,7 +1131,7 @@ export default function SeguroViagemPage() {
           onFinalizar={enviar}
           rotuloValor="Total"
           valor={valorTotalBRL !== null && valorTotalBRL > 0 ? formatBRL(valorTotalBRL) : null}
-          detalhe={`${seguradoraEscolhida ? `${seguradoraEscolhida.nome} · ` : ""}${dias} ${dias === 1 ? "dia" : "dias"} · ${numViajantes} ${numViajantes === 1 ? "viajante" : "viajantes"}`}
+          detalhe={`${seguradoraEscolhida ? `${seguradoraEscolhida.nome} · ` : ""}${dias} ${dias === 1 ? "dia" : "dias"} · ${numViajantes} ${numViajantes === 1 ? "viajante" : "viajantes"}${pedidoTeste ? " · TESTE: cobra R$ 1,00" : ""}`}
           semValor="Preencha a idade dos viajantes e as datas da viagem para ver o valor."
           rotuloBotao="Finalizar compra"
           sentinelaId="checkout-ultimo-passo"
@@ -1065,14 +1207,24 @@ function TermosSeguroViagem() {
       <ul className="mt-1 list-disc space-y-1 pl-5">
         <li>nome completo;</li>
         <li>data de nascimento ou idade;</li>
-        <li>CPF, quando necessário;</li>
-        <li>endereço;</li>
+        <li>CPF do titular da apólice;</li>
+        <li>endereço (único para todos os viajantes da mesma apólice);</li>
+        <li>existência de doença crônica ou condição de saúde em tratamento;</li>
+        <li>contato de emergência;</li>
         <li>destino da viagem;</li>
         <li>datas de início e término da viagem;</li>
         <li>telefone e e-mail;</li>
         <li>demais informações solicitadas pela seguradora.</li>
       </ul>
       <P>O nome dos segurados deverá corresponder aos documentos utilizados durante a viagem.</P>
+      <P>
+        O seguro viagem somente pode ser contratado enquanto o cliente estiver fisicamente no país de origem da
+        viagem (Brasil ou Japão), antes do embarque. Viagens com origem no Japão têm o Brasil como destino.
+      </P>
+      <P>
+        Doenças preexistentes, crônicas ou em tratamento podem ter cobertura limitada ou excluída, conforme as
+        Condições Gerais da apólice. A omissão dessa informação pode afetar a análise de eventual sinistro.
+      </P>
       <P>
         Informações incorretas, incompletas ou omitidas poderão impedir a emissão do seguro ou afetar a
         análise de eventual sinistro, de acordo com as regras da seguradora e a legislação aplicável.
@@ -1120,14 +1272,15 @@ function TermosSeguroViagem() {
       <P>Valores exibidos previamente nesta página poderão ser utilizados exclusivamente como referência.</P>
       <P>O preço final será informado antes da confirmação da contratação.</P>
       <P>
-        Quando esta página funcionar apenas como uma solicitação de proposta, o envio do formulário não
-        representa cobrança, pagamento ou contratação automática do seguro.
+        O pagamento é realizado exclusivamente de forma online, na página segura do processador de pagamentos
+        (Stone), por Pix ou cartão de crédito.
       </P>
 
       <T>7. Emissão</T>
       <P>
-        Após a confirmação dos dados necessários e, quando aplicável, do pagamento, a solicitação será
-        encaminhada para emissão.
+        Após a confirmação dos dados necessários e do pagamento, a solicitação será encaminhada para emissão. A
+        apólice é emitida em até 3 (três) dias úteis contados da confirmação do pagamento e enviada por e-mail e
+        WhatsApp.
       </P>
       <P>
         A cobertura somente deverá ser considerada ativa de acordo com a data de vigência indicada no

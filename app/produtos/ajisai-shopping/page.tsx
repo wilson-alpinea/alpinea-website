@@ -6,13 +6,14 @@
 // (ServicoAvulsoModal). Checkout manual: o envio registra o pedido no CRM
 // (/api/ajisai-shopping-selfservice) e a equipe combina tudo pelo WhatsApp.
 //
-// 5 etapas: 1 Viagem (período + pessoas) → 2 Compras (o que procura e
+// 5 etapas: 1 Viagem (período) → 2 Compras (o que procura e
 // quanto pretende gastar) → 3 Dias (quando e em que cidade) → 4 Dados →
 // 5 Revisão (termos numa caixa na página).
 //
 // Preço: comissão de COMISSAO_AJISAI_SHOPPING_PCT (20%) sobre o valor das
-// compras feitas com o acompanhamento — sem diária. O total da página é
-// uma estimativa da comissão sobre o orçamento que o cliente informa.
+// compras feitas com o acompanhamento — sem diária. Desde 06/out/2026 a
+// página não estima comissão sobre orçamento; o total mostrado é só a
+// referência dos itens de interesse escolhidos nos catálogos.
 
 import { useRef, useState } from "react";
 import Image from "next/image";
@@ -20,6 +21,8 @@ import Link from "next/link";
 import { formatBRL, formatUSD, useCambioUSD } from "../../hooks/useCambioUSD";
 import { COMISSAO_AJISAI_SHOPPING_PCT } from "../../components/CustomPackageCard";
 import { display, WHATSAPP_NUMBER, hojeISO } from "../page";
+import { CATALOGOS_AJISAI_SHOPPING, chaveItemCatalogo } from "../../lib/catalogoAjisaiShopping";
+import { JPY_POR_USD_REFERENCIA } from "../../lib/servicosAdicionaisCatalogo";
 import {
   inter,
   IconeResumo,
@@ -39,7 +42,6 @@ const ETAPAS = ["Viagem", "Compras", "Dias", "Dados", "Revisão"] as const;
 type Etapa = 1 | 2 | 3 | 4 | 5;
 
 const MAX_DIAS = 45;
-const MAX_PESSOAS = 20;
 const COMISSAO_PCT = Math.round(COMISSAO_AJISAI_SHOPPING_PCT * 100);
 
 const CATEGORIAS = [
@@ -55,50 +57,16 @@ const CATEGORIAS = [
   "Outros",
 ];
 
-// Faixas de orçamento (em reais) — o cliente pode digitar outro valor.
-const FAIXAS_ORCAMENTO = [10000, 30000, 60000, 100000];
-
-const CIDADES = ["Tóquio", "Kyoto", "Osaka", "Nara", "Hakone", "Kanazawa", "Fukuoka", "Sapporo", "Outra"];
+// Wilson, 06/out/2026: "simplificar pra Tokyo, Osaka, Kyoto e Kobe" e
+// "20% sobre R$ 60.000, remover isso" (saiu a faixa de orçamento e a
+// estimativa de comissão) + "não tem número de pessoas, é só o produto".
+const CIDADES = ["Tóquio", "Osaka", "Kyoto", "Kobe"];
 
 const DESTAQUES = [
   "Lojas certas para o que você procura, com tradução e negociação",
   "Apoio com tax free, envio e logística das compras",
   "Sem diária: comissão só sobre o que você comprar",
 ];
-
-function Contador({ rotulo, ajuda, valor, min, total, onChange }: { rotulo: string; ajuda: string; valor: number; min: number; total: number; onChange: (n: number) => void }) {
-  return (
-    <div className="flex items-center justify-between gap-3 py-2">
-      <span className="min-w-0">
-        <span className="block text-sm text-black/85">{rotulo}</span>
-        <span className="block text-xs text-black/45">{ajuda}</span>
-      </span>
-      <span className="flex shrink-0 items-center gap-1">
-        <button
-          type="button"
-          onClick={() => onChange(Math.max(min, valor - 1))}
-          disabled={valor <= min}
-          aria-label={`Menos ${rotulo.toLowerCase()}`}
-          className="flex h-9 w-9 items-center justify-center rounded-full border border-black/15 text-lg text-black/70 transition hover:border-black/35 disabled:opacity-30"
-        >
-          −
-        </button>
-        <span className={`${inter.className} w-7 text-center text-base font-semibold tabular-nums text-[#0A2540]`} aria-live="polite">
-          {valor}
-        </span>
-        <button
-          type="button"
-          onClick={() => onChange(valor + 1)}
-          disabled={total >= MAX_PESSOAS}
-          aria-label={`Mais ${rotulo.toLowerCase()}`}
-          className="flex h-9 w-9 items-center justify-center rounded-full border border-black/15 text-lg text-black/70 transition hover:border-black/35 disabled:opacity-30"
-        >
-          +
-        </button>
-      </span>
-    </div>
-  );
-}
 
 function TextoTermosShopping() {
   return (
@@ -110,8 +78,13 @@ function TextoTermosShopping() {
       </p>
       <p className="mt-3 font-medium text-black/80">Comissão</p>
       <p className="mt-1">
-        A Ajisai cobra {COMISSAO_PCT}% sobre o valor das compras feitas com o acompanhamento. O valor desta página é uma
-        estimativa sobre o orçamento informado; a comissão final é calculada sobre o que for efetivamente comprado.
+        A Ajisai cobra {COMISSAO_PCT}% sobre o valor das compras feitas com o acompanhamento, calculada sobre o que for
+        efetivamente comprado.
+      </p>
+      <p className="mt-3 font-medium text-black/80">Catálogos</p>
+      <p className="mt-1">
+        Os itens e preços dos catálogos são referências públicas das lojas parceiras, em ienes e tax-free (sem o imposto de
+        consumo de 10%), e mudam diariamente. Disponibilidade e preço são confirmados na loja no dia da compra.
       </p>
       <p className="mt-3 font-medium text-black/80">Compras</p>
       <p className="mt-1">
@@ -138,11 +111,11 @@ export default function AjisaiShoppingPage() {
   const [etapa, setEtapa] = useState<Etapa>(1);
   const [dataChegada, setDataChegada] = useState("");
   const [dataPartida, setDataPartida] = useState("");
-  const [adultos, setAdultos] = useState(2);
-  const [criancas, setCriancas] = useState(0);
+  // Itens de interesse escolhidos nos catálogos.
+  const [itensInteresse, setItensInteresse] = useState<string[]>([]);
+  const [catalogoAberto, setCatalogoAberto] = useState<string | null>(CATALOGOS_AJISAI_SHOPPING[0]?.categoria ?? null);
 
   const [categorias, setCategorias] = useState<string[]>([]);
-  const [orcamentoBRL, setOrcamentoBRL] = useState<number | null>(null);
   // Dias com acompanhamento → cidade de cada dia.
   const [diasGuia, setDiasGuia] = useState<Record<string, string>>({});
 
@@ -162,7 +135,6 @@ export default function AjisaiShoppingPage() {
 
   const stepperRef = useRef<HTMLDivElement | null>(null);
 
-  const pessoas = adultos + criancas;
 
   const erroDataChegada = !dataChegada ? "Informe a data de chegada." : dataChegada < hojeISO() ? "A chegada precisa ser hoje ou depois." : null;
   const erroDataPartida = !dataPartida
@@ -177,17 +149,19 @@ export default function AjisaiShoppingPage() {
 
   const diasEscolhidos = diasViagem.filter((d) => d in diasGuia);
   const diasForaDoPeriodo = Object.keys(diasGuia).filter((d) => !diasViagem.includes(d));
-  const comissaoBRL = orcamentoBRL ? orcamentoBRL * COMISSAO_AJISAI_SHOPPING_PCT : 0;
-  const totalBRL = comissaoBRL;
-  const totalUSD = totalBRL / cambioCotacao;
+  // Referência dos itens de interesse (pagos direto à loja) — ienes → US$ → R$.
+  const itensCatalogoEscolhidos = CATALOGOS_AJISAI_SHOPPING.flatMap((c) => c.itens).filter((i) => itensInteresse.includes(chaveItemCatalogo(i)));
+  const referenciaJPY = itensCatalogoEscolhidos.reduce((s, i) => s + i.precoJPY, 0);
+  const totalUSD = referenciaJPY / JPY_POR_USD_REFERENCIA;
+  const totalBRL = totalUSD * cambioCotacao;
 
   const avisos: string[] = [];
   if (diasEscolhidos.some((d) => d === dataChegada || d === dataPartida)) {
     avisos.push("Compras no dia de chegada ou de partida — o tempo útil depende do horário do voo; combinamos pelo WhatsApp.");
   }
   if (diasEscolhidos.some((d) => diasGuia[d] === "Outra")) avisos.push("Cidade “Outra” — informe qual nas observações.");
-  if (orcamentoBRL && orcamentoBRL >= 60000) {
-    avisos.push("Compras de valor alto: verifique os limites de bagagem e a declaração à alfândega no retorno ao Brasil.");
+  if (itensCatalogoEscolhidos.length > 0) {
+    avisos.push("Compras de valor alto: verifique a cota de isenção e a declaração à alfândega no retorno ao Brasil.");
   }
 
   const digitosWhatsapp = whatsapp.replace(/\D/g, "").length;
@@ -208,8 +182,8 @@ export default function AjisaiShoppingPage() {
         : null;
   const tocar = (campo: string) => setTocados((t) => ({ ...t, [campo]: true }));
 
-  const etapa1Ok = periodoValido && adultos >= 1;
-  const etapa2Ok = categorias.length > 0 && !!orcamentoBRL && orcamentoBRL > 0;
+  const etapa1Ok = periodoValido;
+  const etapa2Ok = categorias.length > 0 || itensInteresse.length > 0;
   const etapa3Ok = diasEscolhidos.length > 0;
   const etapa4Ok = dadosValidos;
   const etapasOk = [etapa1Ok, etapa2Ok, etapa3Ok, etapa4Ok];
@@ -218,7 +192,7 @@ export default function AjisaiShoppingPage() {
   const textoPeriodo = periodoValido
     ? `${formatarDiaMes(dataChegada)} a ${formatarDiaMes(dataPartida)} · ${diasViagem.length} ${diasViagem.length === 1 ? "dia" : "dias"}`
     : "";
-  const textoPessoas = `${adultos} ${adultos === 1 ? "adulto" : "adultos"}${criancas ? `, ${criancas} ${criancas === 1 ? "criança" : "crianças"}` : ""}`;
+  const textoItens = itensInteresse.length ? `${itensInteresse.length} ${itensInteresse.length === 1 ? "item de interesse" : "itens de interesse"}` : "";
 
   function irPara(nova: Etapa) {
     setEtapa(nova);
@@ -250,7 +224,7 @@ export default function AjisaiShoppingPage() {
       : etapa === 2
         ? etapa2Ok
           ? { rotulo: "Continuar", ativo: true, falta: null }
-          : { rotulo: "Conte o que procura", ativo: false, falta: "Escolha o que procura e o orçamento para continuar" }
+          : { rotulo: "Conte o que procura", ativo: false, falta: "Escolha uma categoria ou um item do catálogo para continuar" }
         : etapa === 3
           ? etapa3Ok
             ? { rotulo: "Continuar", ativo: true, falta: null }
@@ -303,10 +277,8 @@ export default function AjisaiShoppingPage() {
         body: JSON.stringify({
           dataChegada,
           dataPartida,
-          adultos,
-          criancas,
+          itensInteresse: itensCatalogoEscolhidos.map((i) => `${chaveItemCatalogo(i)} — ¥${i.precoJPY.toLocaleString("pt-BR")} (tax-free)`),
           categorias,
-          orcamentoBRL,
           comissaoPct: COMISSAO_PCT,
           dias: diasEscolhidos.map((d) => ({ data: d, cidade: diasGuia[d] })),
           resumo: resumoDias,
@@ -336,14 +308,14 @@ export default function AjisaiShoppingPage() {
 
   const mensagemWhatsapp = `Olá! Acabei de pedir o Ajisai Shopping pelo site da Ajisai — ${listarNatural(categorias)}; ${resumoDias}.${nome ? ` Meu nome é ${nome}.` : ""}`;
 
-  const totalExibidoUSD: number | null = orcamentoBRL ? totalUSD : null;
+  const totalExibidoUSD: number | null = referenciaJPY > 0 ? totalUSD : null;
 
   const conteudoResumo = (
     <div>
       <p className={`${display.className} text-lg font-medium text-[#0A2540]`}>Seu Ajisai Shopping</p>
       <p className="mt-2 text-sm text-black/80">
         {textoPeriodo || <span className="text-black/45">Período a definir</span>}
-        <span className="text-black/50"> · {textoPessoas}</span>
+        {textoItens && <span className="text-black/50"> · {textoItens}</span>}
       </p>
       {categorias.length > 0 ? (
         <p className="mt-1 text-sm text-black/80">{listarNatural(categorias)}</p>
@@ -364,18 +336,18 @@ export default function AjisaiShoppingPage() {
             </span>
           </div>
         )}
-        {orcamentoBRL ? (
-          <div className="flex items-center justify-between gap-3 text-sm">
-            <span className="text-black/65">
-              {COMISSAO_PCT}% sobre {formatBRL(orcamentoBRL)}
+        {itensCatalogoEscolhidos.map((i) => (
+          <div key={chaveItemCatalogo(i)} className="flex items-center justify-between gap-3 text-sm">
+            <span className="min-w-0 text-black/70">
+              {i.marca} {i.modelo} <span className="text-black/45">{i.referencia}</span>
             </span>
-            <span className={`${inter.className} shrink-0 font-medium tabular-nums text-black`}>{formatBRL(comissaoBRL)}</span>
+            <span className={`${inter.className} shrink-0 tabular-nums text-black/70`}>¥{i.precoJPY.toLocaleString("pt-BR")}</span>
           </div>
-        ) : null}
+        ))}
       </div>
       {avisos.length > 0 && <BlocoAvisos avisos={avisos} className="mt-4" />}
       <div className="mt-4 border-t border-black/10 pt-4">
-        <p className="text-[11px] uppercase tracking-[0.14em] text-black/50">Comissão estimada</p>
+        <p className="text-[11px] uppercase tracking-[0.14em] text-black/50">Referência dos itens</p>
         <p
           key={Math.round(totalExibidoUSD ?? 0)}
           className={`${inter.className} mt-0.5 rounded-md text-3xl font-bold tabular-nums tracking-[-0.02em] text-[#0A2540]`}
@@ -385,7 +357,7 @@ export default function AjisaiShoppingPage() {
         </p>
         {totalExibidoUSD !== null && (
           <p className={`${inter.className} text-xs tabular-nums text-black/50`}>
-            ≈ {formatBRL(totalBRL)} · comissão estimada, o valor final segue o que for comprado
+            ≈ {formatBRL(totalBRL)} · tax-free, pago direto à loja · comissão de {COMISSAO_PCT}% sobre o que for comprado
           </p>
         )}
       </div>
@@ -519,7 +491,7 @@ export default function AjisaiShoppingPage() {
               {etapa === 1 && (
                 <section aria-labelledby="titulo-etapa-1">
                   <h2 id="titulo-etapa-1" className={`${display.className} text-2xl font-medium text-[#0A2540]`}>
-                    Quando e quantas pessoas?
+                    Quando você estará no Japão?
                   </h2>
                   <p className="mt-1.5 text-sm text-black/60">Informe o período no Japão. Depois você conta o que procura e em quais dias quer o acompanhamento.</p>
 
@@ -568,11 +540,7 @@ export default function AjisaiShoppingPage() {
                       </p>
                     )}
 
-                    <div className="mt-4 grid gap-4 border-t border-black/[0.08] pt-4 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end">
-                      <div className="divide-y divide-black/[0.06] sm:max-w-sm">
-                        <Contador rotulo="Adultos" ajuda="12 anos ou mais" valor={adultos} min={1} total={pessoas} onChange={setAdultos} />
-                        <Contador rotulo="Crianças" ajuda="Até 11 anos" valor={criancas} min={0} total={pessoas} onChange={setCriancas} />
-                      </div>
+                    <div className="mt-4 flex justify-end border-t border-black/[0.08] pt-4">
                       <button
                         type="button"
                         onClick={acionarCta}
@@ -621,49 +589,74 @@ export default function AjisaiShoppingPage() {
                     })}
                   </div>
 
+                  {/* Catálogos integrados (Wilson, 06/out/2026) — top 10 por categoria. */}
                   <div className="mt-8 border-t border-black/10 pt-6">
-                    <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-black/70">Quanto pretende gastar em compras?</p>
+                    <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-black/70">Catálogos — os mais vendidos</p>
                     <p className="mt-1 text-xs text-black/50">
-                      É só uma estimativa para calcular a comissão de {COMISSAO_PCT}% — o valor final segue o que for comprado.
+                      Marque os itens que te interessam e nós conferimos estoque e preço antes do dia das compras. Preços de
+                      referência em ienes, tax-free.
                     </p>
-                    <div className="mt-3 grid grid-cols-2 gap-2 sm:grid-cols-4">
-                      {FAIXAS_ORCAMENTO.map((v) => {
-                        const ativo = orcamentoBRL === v;
+                    <div className="mt-3 space-y-3">
+                      {CATALOGOS_AJISAI_SHOPPING.filter((c) => c.itens.length > 0).map((c) => {
+                        const aberto = catalogoAberto === c.categoria;
                         return (
-                          <button
-                            key={v}
-                            type="button"
-                            aria-pressed={ativo}
-                            onClick={() => setOrcamentoBRL(v)}
-                            className={`h-12 rounded-xl border text-sm tabular-nums transition ${
-                              ativo ? "border-[#2f80c9] bg-[#2f80c9]/[0.06] font-semibold text-[#0A2540] ring-1 ring-[#2f80c9]" : "border-black/15 text-black/75 hover:border-black/35"
-                            }`}
-                          >
-                            {formatBRL(v)}
-                          </button>
+                          <div key={c.categoria} className="rounded-xl border border-black/10">
+                            <button
+                              type="button"
+                              onClick={() => setCatalogoAberto(aberto ? null : c.categoria)}
+                              aria-expanded={aberto}
+                              className="flex w-full items-center justify-between gap-3 px-4 py-3 text-left"
+                            >
+                              <span className="min-w-0">
+                                <span className="block text-sm font-medium text-black">{c.categoria} · Top {c.itens.length}</span>
+                                <span className="block text-xs text-black/50">{c.loja}</span>
+                              </span>
+                              <span className="text-xs font-medium text-[#1f6fb8]">{aberto ? "Fechar" : "Ver"}</span>
+                            </button>
+                            {aberto && (
+                              <div className="border-t border-black/[0.06] px-4 pb-3">
+                                <ol className="divide-y divide-black/[0.05]">
+                                  {c.itens.map((item, idx) => {
+                                    const chave = chaveItemCatalogo(item);
+                                    const marcado = itensInteresse.includes(chave);
+                                    return (
+                                      <li key={chave}>
+                                        <label className="flex min-h-[48px] cursor-pointer items-center gap-3 py-1.5">
+                                          <input
+                                            type="checkbox"
+                                            checked={marcado}
+                                            onChange={() =>
+                                              setItensInteresse((atual) => (marcado ? atual.filter((x) => x !== chave) : [...atual, chave]))
+                                            }
+                                            className="h-4 w-4 shrink-0 rounded border-black/30 text-[#2f80c9] focus:ring-[#2f80c9]"
+                                          />
+                                          <span className={`${inter.className} w-5 shrink-0 text-xs font-semibold tabular-nums text-black/40`}>{idx + 1}</span>
+                                          <span className="min-w-0 flex-1">
+                                            <span className="block text-sm text-black/85">
+                                              {item.marca} {item.modelo} <span className="text-black/50">Ref. {item.referencia}</span>
+                                            </span>
+                                            <span className="block text-xs text-black/50">{item.detalhe}</span>
+                                          </span>
+                                          <span className={`${inter.className} shrink-0 text-right text-sm font-semibold tabular-nums text-[#0A2540]`}>
+                                            ¥{item.precoJPY.toLocaleString("pt-BR")}
+                                            <span className="block text-[10px] font-normal text-black/45">
+                                              ≈ {formatBRL((item.precoJPY / JPY_POR_USD_REFERENCIA) * cambioCotacao)}
+                                            </span>
+                                          </span>
+                                        </label>
+                                      </li>
+                                    );
+                                  })}
+                                </ol>
+                                <p className="mt-2 text-[11px] leading-4 text-black/45">
+                                  {c.observacao} Fonte: catálogo da loja, atualizado em {c.atualizadoEm}.
+                                </p>
+                              </div>
+                            )}
+                          </div>
                         );
                       })}
                     </div>
-                    <label className="mt-3 block max-w-xs">
-                      <span className="mb-1.5 block text-xs font-medium text-black/60">Ou digite o valor (R$)</span>
-                      <input
-                        type="text"
-                        inputMode="numeric"
-                        value={orcamentoBRL && !FAIXAS_ORCAMENTO.includes(orcamentoBRL) ? orcamentoBRL.toLocaleString("pt-BR") : ""}
-                        onChange={(e) => {
-                          const n = Number(e.target.value.replace(/\D/g, ""));
-                          setOrcamentoBRL(n > 0 ? Math.min(n, 99999999) : null);
-                        }}
-                        placeholder="ex.: 45.000"
-                        className={classeInput(false)}
-                      />
-                    </label>
-                    {orcamentoBRL ? (
-                      <p className="mt-3 text-sm text-black/75">
-                        Comissão estimada: <span className={`${inter.className} font-semibold tabular-nums text-[#0A2540]`}>{formatBRL(comissaoBRL)}</span>
-                        <span className="text-black/50"> ({formatUSD(totalUSD)})</span>
-                      </p>
-                    ) : null}
                   </div>
                 </section>
               )}
@@ -794,12 +787,12 @@ export default function AjisaiShoppingPage() {
                   <dl className="mt-6 divide-y divide-black/[0.07] border-y border-black/[0.07]">
                     {[
                       {
-                        rotulo: "Período e pessoas",
+                        rotulo: "Período",
                         voltar: 1 as Etapa,
                         conteudo: (
                           <>
                             {textoPeriodo}
-                            <span className="text-black/50"> · {textoPessoas}</span>
+
                           </>
                         ),
                       },
@@ -809,7 +802,11 @@ export default function AjisaiShoppingPage() {
                         conteudo: (
                           <>
                             {listarNatural(categorias)}
-                            <span className="text-black/50"> · orçamento de {orcamentoBRL ? formatBRL(orcamentoBRL) : "—"}</span>
+                            {itensCatalogoEscolhidos.length > 0 && (
+                              <span className="block text-black/55">
+                                Interesse: {itensCatalogoEscolhidos.map((i) => `${i.marca} ${i.modelo} ${i.referencia}`).join(", ")}
+                              </span>
+                            )}
                           </>
                         ),
                       },
@@ -852,11 +849,13 @@ export default function AjisaiShoppingPage() {
                       </div>
                     ))}
                     <div className="grid gap-1 py-4 sm:grid-cols-[170px_minmax(0,1fr)] sm:gap-4">
-                      <dt className="text-[11px] font-semibold uppercase tracking-[0.14em] text-black/55 sm:pt-1.5">Comissão estimada</dt>
+                      <dt className="text-[11px] font-semibold uppercase tracking-[0.14em] text-black/55 sm:pt-1.5">Referência dos itens</dt>
                       <dd>
                         <span className={`${inter.className} text-2xl font-bold tabular-nums text-[#0A2540]`}>{formatUSD(totalUSD)}</span>
                         <span className={`${inter.className} ml-2 text-sm tabular-nums text-black/50`}>≈ {formatBRL(totalBRL)}</span>
-                        <p className="mt-0.5 text-xs text-black/50">{COMISSAO_PCT}% sobre o orçamento informado. O valor final segue o que for comprado.</p>
+                        <p className="mt-0.5 text-xs text-black/50">
+                          Itens de interesse, preço tax-free pago direto à loja. Comissão de {COMISSAO_PCT}% sobre o que for efetivamente comprado.
+                        </p>
                       </dd>
                     </div>
                   </dl>
@@ -918,7 +917,7 @@ export default function AjisaiShoppingPage() {
             >
               <span className="min-w-0">
                 <span className="block text-[11px] uppercase tracking-[0.14em] text-black/50">
-                  {diasEscolhidos.length > 0 ? `${diasEscolhidos.length} ${diasEscolhidos.length === 1 ? "dia" : "dias"} de compras` : "Comissão estimada"}
+                  {diasEscolhidos.length > 0 ? `${diasEscolhidos.length} ${diasEscolhidos.length === 1 ? "dia" : "dias"} de compras` : "Referência dos itens"}
                   {periodoValido && ` · ${formatarDiaMes(dataChegada)} a ${formatarDiaMes(dataPartida)}`}
                 </span>
                 <span

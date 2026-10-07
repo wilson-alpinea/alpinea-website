@@ -25,12 +25,17 @@ import { Inter } from "next/font/google";
 import Link from "next/link";
 import { formatBRL } from "../../hooks/useCambioUSD";
 import { useCambioIene, CIDADES_CAMBIO_IENE, type CidadeCambioIeneSlug, type DirecaoCambioIene } from "../../hooks/useCambioIene";
-import { CAMBIO_IENES_MINIMO_PUBLICO, calcularPrecoCambioIene } from "../../lib/precoCambioIene";
+import {
+  CAMBIO_IENES_MINIMO_PUBLICO,
+  CAMBIO_IENES_MINIMO_AEROPORTO,
+  PRAZO_ENTREGA_CAMBIO_DIAS_UTEIS,
+  calcularPrecoCambioIene,
+  minimoIenesPorCidade,
+} from "../../lib/precoCambioIene";
 import { display, WHATSAPP_NUMBER, IconCheck } from "../page";
 import { RodapeCheckout } from "../RodapeCheckout";
-import { ProdutoTestePagamento } from "../ProdutoTestePagamento";
 import { AvisoPagamentoConcluido } from "../AvisoPagamentoConcluido";
-import { abrirAbaPagamento, enviarParaPagamento, fecharAba, BlocoPagamentoNovaAba } from "../pagamentoNovaAba";
+import { BlocoPagamentoNovaAba } from "../pagamentoNovaAba";
 
 // Inter só para valores em dinheiro — mesmo padrão do JR Pass.
 const inter = Inter({ subsets: ["latin"], weight: ["500", "700"] });
@@ -54,17 +59,17 @@ const COMO_FUNCIONA = [
   {
     icone: "/images/produtos/cambio-passo-2-pix.png",
     titulo: "Pix",
-    texto: "Na compra, você paga via Pix pela Stone. Na venda, a Ajisai te paga via Pix.",
+    texto: "Enviamos os dados do Pix pelo WhatsApp. Quem paga é quem recebe (mesmo CPF).",
   },
   {
     icone: "/images/produtos/cambio-passo-3-confirmacao.png",
     titulo: "Confirmamos",
-    texto: "Nossa equipe confirma o pedido e combina data e local pelo WhatsApp.",
+    texto: "Confirmamos o pagamento e agendamos a entrega pelo WhatsApp.",
   },
   {
     icone: "/images/produtos/cambio-passo-4-retirada.png",
-    titulo: "Retire ou entregue",
-    texto: "Os ienes em espécie são entregues (ou recebidos) na cidade escolhida.",
+    titulo: "Entrega em 3 dias úteis",
+    texto: "Os ienes em espécie são entregues no endereço informado em até 3 dias úteis.",
   },
 ];
 
@@ -93,7 +98,71 @@ export default function CambioPage() {
   const [cidade, setCidade] = useState<CidadeCambioIeneSlug>("sao-paulo");
   const [quantidadeIenes, setQuantidadeIenes] = useState(CAMBIO_IENES_MINIMO_PUBLICO);
   const [nome, setNome] = useState("");
-  const [nomeComprador, setNomeComprador] = useState("");
+  // Mesma titularidade, CPF, endereço completo, bilhete aéreo no aeroporto e
+  // termos com PLD/Banco Central — Wilson, 06/out/2026.
+  const [cpf, setCpf] = useState("");
+  const [mesmaTitularidade, setMesmaTitularidade] = useState(false);
+  const [endereco, setEndereco] = useState({ cep: "", logradouro: "", numero: "", complemento: "", bairro: "", cidade: "", uf: "" });
+  const [buscandoCep, setBuscandoCep] = useState(false);
+  const mudarEndereco = (campo: keyof typeof endereco, valor: string) => setEndereco((e) => ({ ...e, [campo]: valor }));
+  async function buscarCep(cepDigitado: string) {
+    const digitos = cepDigitado.replace(/\D/g, "");
+    if (digitos.length !== 8) return;
+    setBuscandoCep(true);
+    try {
+      const r = await fetch(`https://viacep.com.br/ws/${digitos}/json/`);
+      const d = await r.json();
+      if (!d.erro) {
+        setEndereco((e) => ({
+          ...e,
+          logradouro: e.logradouro || d.logradouro || "",
+          bairro: e.bairro || d.bairro || "",
+          cidade: e.cidade || d.localidade || "",
+          uf: e.uf || d.uf || "",
+        }));
+      }
+    } catch {
+      /* preenchimento manual */
+    } finally {
+      setBuscandoCep(false);
+    }
+  }
+  const [referenciaBilhete] = useState(() =>
+    typeof crypto !== "undefined" && "randomUUID" in crypto ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(36).slice(2)}`,
+  );
+  const [bilhetePath, setBilhetePath] = useState<string | null>(null);
+  const [bilheteStatus, setBilheteStatus] = useState<"vazio" | "enviando" | "ok" | "erro">("vazio");
+  const [bilheteErro, setBilheteErro] = useState("");
+  async function enviarBilhete(file: File) {
+    setBilheteStatus("enviando");
+    setBilheteErro("");
+    try {
+      const base64 = await new Promise<string>((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(String(reader.result));
+        reader.onerror = () => reject(new Error("Erro ao ler arquivo"));
+        reader.readAsDataURL(file);
+      });
+      // Mesmo armazenamento privado dos documentos do JR Pass.
+      const resposta = await fetch("/api/jrpass-documento", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ referencia: referenciaBilhete, tipo: "passagem", arquivoBase64: base64, contentType: file.type }),
+      });
+      const dados = await resposta.json().catch(() => ({}));
+      if (!resposta.ok || !dados.path) {
+        setBilheteStatus("erro");
+        setBilheteErro(dados.error || "Não foi possível enviar o bilhete agora.");
+        return;
+      }
+      setBilhetePath(dados.path);
+      setBilheteStatus("ok");
+    } catch {
+      setBilheteStatus("erro");
+      setBilheteErro("Não foi possível enviar o bilhete agora — tente de novo.");
+    }
+  }
+  const [termosAceitos, setTermosAceitos] = useState(false);
   const [email, setEmail] = useState("");
   const [whatsapp, setWhatsapp] = useState("");
   const [observacoes, setObservacoes] = useState("");
@@ -122,35 +191,51 @@ export default function CambioPage() {
   const cidadeNome = CIDADES_CAMBIO_IENE.find((c) => c.slug === cidade)?.nome ?? cidade;
   const direcaoLabel = direcao === "compra" ? "Compra de ienes" : "Venda de ienes";
   const ehCompra = direcao === "compra";
+  const ehAeroporto = cidade === "aeroporto-guarulhos";
+  const quantidadeMinima = minimoIenesPorCidade(cidade);
+  const cpfValido = cpf.replace(/\D/g, "").length === 11;
+  const enderecoCompleto =
+    endereco.cep.replace(/\D/g, "").length === 8 &&
+    !!endereco.logradouro.trim() &&
+    !!endereco.numero.trim() &&
+    !!endereco.complemento.trim() &&
+    !!endereco.bairro.trim() &&
+    !!endereco.cidade.trim() &&
+    endereco.uf.trim().length === 2;
+  const localOk = ehAeroporto ? bilheteStatus === "ok" && !!bilhetePath : enderecoCompleto;
 
   const formValido =
     !!cambioIene &&
-    // Na compra a cotação vira cobrança na hora — não pode ser estimativa.
-    // Na venda (manual) a equipe confirma o valor antes de pagar o cliente.
-    (!ehCompra || !cotacaoIndisponivel) &&
-    quantidadeIenes >= CAMBIO_IENES_MINIMO_PUBLICO &&
+    // Pagamento manual (WhatsApp) — a equipe confirma a cotação antes do Pix.
+    quantidadeIenes >= quantidadeMinima &&
     totalBRL !== null &&
     nome.trim().length > 0 &&
     /\S+@\S+\.\S+/.test(email) &&
-    whatsapp.trim().length >= 8;
+    whatsapp.trim().length >= 8 &&
+    cpfValido &&
+    mesmaTitularidade &&
+    localOk &&
+    termosAceitos;
 
   const pendenciasFinalizar: string[] = [];
   if (!cambioIene) pendenciasFinalizar.push("Aguarde a cotação do dia carregar.");
-  else if (cotacaoIndisponivel && ehCompra) {
-    pendenciasFinalizar.push("Cotação do dia indisponível no momento — tente de novo em alguns minutos.");
-  }
-  if (quantidadeIenes < CAMBIO_IENES_MINIMO_PUBLICO) {
-    pendenciasFinalizar.push(`A quantidade mínima é ¥${CAMBIO_IENES_MINIMO_PUBLICO.toLocaleString("pt-BR")}.`);
+  if (quantidadeIenes < quantidadeMinima) {
+    pendenciasFinalizar.push(
+      `A quantidade mínima${ehAeroporto ? " no aeroporto" : ""} é ¥${quantidadeMinima.toLocaleString("pt-BR")}.`,
+    );
   }
   if (nome.trim().length === 0) pendenciasFinalizar.push("Preencha seu nome completo.");
   if (!/\S+@\S+\.\S+/.test(email)) pendenciasFinalizar.push("Preencha um e-mail válido.");
   if (whatsapp.trim().length < 8) pendenciasFinalizar.push("Preencha seu WhatsApp.");
+  if (!cpfValido) pendenciasFinalizar.push("Preencha seu CPF.");
+  if (!mesmaTitularidade) pendenciasFinalizar.push("Confirme que quem paga é o mesmo que recebe.");
+  if (ehAeroporto && bilheteStatus !== "ok") pendenciasFinalizar.push("Anexe a foto do bilhete aéreo (obrigatório no aeroporto).");
+  if (!ehAeroporto && !enderecoCompleto) pendenciasFinalizar.push("Preencha o endereço completo, com complemento.");
+  if (!termosAceitos) pendenciasFinalizar.push("Aceite os termos e condições do câmbio.");
 
   async function enviar() {
     if (!formValido || status === "enviando") return;
     setStatus("enviando");
-    // Abre a aba no clique (antes do fetch) para o navegador não bloquear.
-    const janelaPagamento = direcao === "compra" ? abrirAbaPagamento() : null;
     setErro("");
     try {
       const resposta = await fetch("/api/cambio-selfservice", {
@@ -162,14 +247,12 @@ export default function CambioPage() {
           moedaTransacao: "BRL",
           quantidadeIenes,
           totalBRL,
-          formaPagamento:
-            totalBRL === null
-              ? null
-              : ehCompra
-                ? `Pix à vista de ${formatBRL(totalBRL)} (cliente paga pela Stone)`
-                : `Ajisai paga ${formatBRL(totalBRL)} ao cliente via Pix (fluxo manual)`,
           nome,
-          nomeComprador,
+          cpf,
+          mesmaTitularidade,
+          endereco: ehAeroporto ? null : endereco,
+          bilheteAereoPath: ehAeroporto ? bilhetePath : null,
+          termosAceitos,
           email,
           whatsapp,
           observacoes,
@@ -177,24 +260,15 @@ export default function CambioPage() {
       });
       const dadosResposta = await resposta.json().catch(() => ({}));
       if (!resposta.ok) {
-        fecharAba(janelaPagamento);
         setErro(dadosResposta.error || "Não foi possível registrar seu pedido agora. Tente de novo.");
         setStatus("erro");
         return;
       }
-      // Com a Stone/Pagar.me configurada, a API devolve o link do Pix e o
-      // cliente vai direto pagar (mesmo fluxo do JR Pass/Seguro Viagem).
-      if (dadosResposta?.checkoutUrl) {
-        if (enviarParaPagamento(janelaPagamento, dadosResposta.checkoutUrl)) {
-          setLinkPagamento(dadosResposta.checkoutUrl);
-          setStatus("enviado");
-        }
-        return;
-      }
-      fecharAba(janelaPagamento);
+      // Self-checkout desligado (Wilson, 06/out/2026): sem link da Stone,
+      // o Pix é enviado pela equipe no WhatsApp.
+      if (dadosResposta?.checkoutUrl) setLinkPagamento(dadosResposta.checkoutUrl);
       setStatus("enviado");
     } catch {
-      fecharAba(janelaPagamento);
       setErro("Não foi possível registrar seu pedido agora. Tente de novo.");
       setStatus("erro");
     }
@@ -263,7 +337,7 @@ export default function CambioPage() {
             ) : (
               <p className="mx-auto mt-3 max-w-md text-sm leading-relaxed text-black/75">
                 {ehCompra
-                  ? `Nossa equipe te envia o Pix pelo WhatsApp e por e-mail e combina a entrega dos ienes em ${cidadeNome}.`
+                  ? `Nossa equipe te envia os dados do Pix pelo WhatsApp. Lembre: o Pix precisa sair de uma conta no seu nome (mesmo CPF do pedido). Os ienes são entregues em até ${PRAZO_ENTREGA_CAMBIO_DIAS_UTEIS} dias úteis após a confirmação do pagamento.`
                   : `Nossa equipe confirma o valor e combina com você, pelo WhatsApp, onde receber os ienes em ${cidadeNome}. O pagamento pra você é feito via Pix assim que recebermos os ienes.`}
               </p>
             )}
@@ -311,13 +385,26 @@ export default function CambioPage() {
             </section>
             {/* Aviso de retorno da página de pagamento da Stone (Wilson, 01/out/2026). */}
             <AvisoPagamentoConcluido />
-            {/* Produto de teste de R$ 1 — só aparece com ?teste=1 (Wilson, 30/set/2026). */}
-            <ProdutoTestePagamento produto="cambio" />
             <p className="mt-6 max-w-2xl text-sm leading-relaxed text-black/75">
-              Retire ienes em espécie antes de embarcar — ou troque de volta o que sobrou da viagem — em São
-              Paulo, Rio de Janeiro, Curitiba ou no Aeroporto de Guarulhos. Cotação do dia e pagamento via
-              Pix, direto pelo site.
+              Receba ienes em espécie antes de embarcar — ou troque de volta o que sobrou da viagem — em São
+              Paulo, Rio de Janeiro, Curitiba ou no Aeroporto de Guarulhos. Cotação do dia, pagamento via Pix
+              combinado pelo WhatsApp e entrega em até {PRAZO_ENTREGA_CAMBIO_DIAS_UTEIS} dias úteis.
             </p>
+            {/* Atividade regulada — logo do Banco Central (Wilson, 06/out/2026). */}
+            <div className="mt-5 flex max-w-2xl items-center gap-4 rounded-xl border border-black/10 bg-white px-4 py-3">
+              <Image
+                src="/images/produtos/banco-central-do-brasil-logo.webp"
+                alt="Banco Central do Brasil"
+                width={600}
+                height={356}
+                className="h-12 w-auto shrink-0"
+              />
+              <p className="text-[12px] leading-5 text-black/70">
+                <strong className="font-semibold text-black">Atividade regulada.</strong> Operação de câmbio realizada
+                conforme a regulamentação do Banco Central do Brasil e as regras de prevenção à lavagem de dinheiro
+                (Lei 9.613/1998). Exigimos identificação (CPF) e que quem paga seja o mesmo que recebe.
+              </p>
+            </div>
 
             <div className="mt-8 rounded-2xl bg-[#eef6fb] p-5 sm:p-6">
               <p className="text-center text-xs font-medium uppercase tracking-[0.15em] text-[#1c6ea8]">
@@ -380,17 +467,24 @@ export default function CambioPage() {
                   <button
                     key={c.slug}
                     type="button"
-                    onClick={() => setCidade(c.slug)}
+                    onClick={() => {
+                      setCidade(c.slug);
+                      setQuantidadeIenes((v) => Math.max(minimoIenesPorCidade(c.slug), v));
+                    }}
                     className={`rounded-full border px-4 py-2.5 text-sm transition ${classeOpcao(cidade === c.slug)}`}
                   >
                     {c.nome}
                   </button>
                 ))}
               </div>
-              {preco && preco.taxaAeroportoBRL > 0 && (
-                <p className="mt-2 text-[11px] leading-5 text-black/60">
-                  No aeroporto há uma taxa de {formatBRL(preco.taxaAeroportoBRL)}, já{" "}
-                  {ehCompra ? "incluída no total" : "descontada do valor"}.
+              {ehAeroporto && (
+                <p className="mt-2 rounded-lg border border-amber-300 bg-amber-50 px-3.5 py-2.5 text-[11px] leading-5 text-amber-900">
+                  No aeroporto: mínimo de ¥{CAMBIO_IENES_MINIMO_AEROPORTO.toLocaleString("pt-BR")}, foto do bilhete aéreo
+                  obrigatória (passo 5)
+                  {preco && preco.taxaAeroportoBRL > 0
+                    ? ` e taxa de ${formatBRL(preco.taxaAeroportoBRL)}, já ${ehCompra ? "incluída no total" : "descontada do valor"}`
+                    : ""}
+                  .
                 </p>
               )}
             </div>
@@ -404,16 +498,16 @@ export default function CambioPage() {
                 <input
                   type="number"
                   inputMode="numeric"
-                  min={CAMBIO_IENES_MINIMO_PUBLICO}
+                  min={quantidadeMinima}
                   step={10000}
                   value={quantidadeIenes}
                   onChange={(e) => setQuantidadeIenes(Number(e.target.value) || 0)}
-                  onBlur={() => setQuantidadeIenes((v) => Math.max(CAMBIO_IENES_MINIMO_PUBLICO, v))}
+                  onBlur={() => setQuantidadeIenes((v) => Math.max(quantidadeMinima, v))}
                   className={classeInput}
                 />
               </div>
               <div className="mt-3 flex flex-wrap gap-2">
-                {ATALHOS_IENES.map((valor) => (
+                {ATALHOS_IENES.filter((v) => v >= quantidadeMinima).map((valor) => (
                   <button
                     key={valor}
                     type="button"
@@ -425,7 +519,8 @@ export default function CambioPage() {
                 ))}
               </div>
               <p className="mt-2 text-[11px] leading-5 text-black/60">
-                Mínimo de ¥{CAMBIO_IENES_MINIMO_PUBLICO.toLocaleString("pt-BR")}.
+                Mínimo de ¥{quantidadeMinima.toLocaleString("pt-BR")}
+                {ehAeroporto ? ` no aeroporto (¥${CAMBIO_IENES_MINIMO_PUBLICO.toLocaleString("pt-BR")} nas demais cidades)` : ""}.
               </p>
 
               <div className="mt-5 rounded-xl bg-[#eef6fb] px-4 py-3">
@@ -456,7 +551,7 @@ export default function CambioPage() {
               </div>
               <p className="mt-2 text-[11px] leading-5 text-black/60">
                 {ehCompra
-                  ? "A cotação vale no momento do pedido e fica travada quando você paga o Pix."
+                  ? "Cotação de referência do momento — nossa equipe confirma o valor final ao enviar os dados do Pix pelo WhatsApp."
                   : "Valor confirmado pela nossa equipe na conferência dos ienes, antes do Pix."}
               </p>
             </div>
@@ -484,17 +579,31 @@ export default function CambioPage() {
                   />
                 </label>
               </div>
-              <label className="mt-4 flex min-w-0 flex-col gap-1.5">
-                <span className="text-[10px] uppercase tracking-[0.15em] text-black">
-                  Nome de quem paga (opcional — só se for outra pessoa)
-                </span>
+              <label className="mt-4 flex max-w-xs min-w-0 flex-col gap-1.5">
+                <span className="text-[10px] uppercase tracking-[0.15em] text-black">CPF</span>
                 <input
                   type="text"
-                  value={nomeComprador}
-                  onChange={(e) => setNomeComprador(e.target.value)}
-                  placeholder="Preencha só se o Pix sair da conta de outra pessoa"
+                  inputMode="numeric"
+                  value={cpf}
+                  onChange={(e) => setCpf(e.target.value)}
+                  placeholder="000.000.000-00"
                   className={classeInput}
                 />
+              </label>
+              <label className="mt-4 flex cursor-pointer items-start gap-3 rounded-xl border border-black/10 p-3.5">
+                <input
+                  type="checkbox"
+                  checked={mesmaTitularidade}
+                  onChange={(e) => setMesmaTitularidade(e.target.checked)}
+                  className="mt-0.5 h-5 w-5 shrink-0 rounded border-black/30 text-[#2f80c9] focus:ring-[#2f80c9]"
+                />
+                <span className="text-sm text-black/85">
+                  <strong className="font-semibold">Mesma titularidade.</strong>{" "}
+                  {ehCompra
+                    ? "Declaro que o Pix será feito de uma conta no meu nome e CPF, e que sou eu quem recebe os ienes."
+                    : "Declaro que sou eu quem entrega os ienes e que o Pix será feito para uma conta no meu nome e CPF."}{" "}
+                  <span className="text-black/60">Pagamentos de contas de terceiros são devolvidos.</span>
+                </span>
               </label>
               <label className="mt-4 flex min-w-0 flex-col gap-1.5">
                 <span className="text-[10px] uppercase tracking-[0.15em] text-black">Observações (opcional)</span>
@@ -508,17 +617,110 @@ export default function CambioPage() {
               </label>
             </div>
 
-            {/* 5 — Pagamento (só Pix — Wilson, 29/set/2026). Compra: cliente
-                paga pela Stone. Venda: fluxo manual, a Ajisai paga o cliente. */}
-            <div id="checkout-ultimo-passo" className="mt-8 border-t border-black/10 pt-6">
-              <TituloPasso numero={5} titulo={ehCompra ? "Pagamento" : "Recebimento"} />
+            {/* 5 — Local de entrega (Wilson, 06/out/2026): endereço completo com
+                complemento; no aeroporto, foto do bilhete aéreo obrigatória. */}
+            <div className="mt-8 border-t border-black/10 pt-6">
+              <TituloPasso
+                numero={5}
+                titulo={ehAeroporto ? "Bilhete aéreo (obrigatório no aeroporto)" : ehCompra ? "Endereço de entrega" : "Endereço de coleta dos ienes"}
+              />
+              {ehAeroporto ? (
+                <>
+                  <p className="mt-2 text-[11px] leading-5 text-black/65">
+                    Para entregar no Aeroporto de Guarulhos precisamos do seu bilhete aéreo (nome do passageiro, voo e
+                    data). Anexe uma foto ou PDF.
+                  </p>
+                  <label className="mt-4 inline-flex cursor-pointer items-center gap-2.5 rounded-full border border-black/15 px-4 py-2.5 text-xs text-black/75 transition hover:border-black/30">
+                    {bilheteStatus === "ok" ? "Trocar bilhete aéreo" : "Anexar bilhete aéreo"}
+                    <input
+                      type="file"
+                      accept="image/*,application/pdf"
+                      className="hidden"
+                      onChange={(e) => {
+                        const arquivo = e.target.files?.[0];
+                        if (arquivo) void enviarBilhete(arquivo);
+                        e.target.value = "";
+                      }}
+                    />
+                  </label>
+                  {bilheteStatus === "enviando" && <p className="mt-2 text-[11px] text-black/60">Enviando…</p>}
+                  {bilheteStatus === "ok" && <p className="mt-2 text-[11px] text-emerald-700">Bilhete aéreo recebido.</p>}
+                  {bilheteStatus === "erro" && <p className="mt-2 text-[11px] text-red-600">{bilheteErro}</p>}
+                </>
+              ) : (
+                <div className="mt-4 grid gap-4 sm:grid-cols-6">
+                  <label className="flex flex-col gap-1.5 sm:col-span-2">
+                    <span className="text-[10px] uppercase tracking-[0.15em] text-black">CEP</span>
+                    <input
+                      type="text"
+                      value={endereco.cep}
+                      onChange={(e) => mudarEndereco("cep", e.target.value)}
+                      onBlur={(e) => buscarCep(e.target.value)}
+                      inputMode="numeric"
+                      maxLength={9}
+                      placeholder="00000-000"
+                      className={classeInput}
+                    />
+                  </label>
+                  <label className="flex flex-col gap-1.5 sm:col-span-4">
+                    <span className="text-[10px] uppercase tracking-[0.15em] text-black">Rua / avenida</span>
+                    <input type="text" value={endereco.logradouro} onChange={(e) => mudarEndereco("logradouro", e.target.value)} className={classeInput} />
+                  </label>
+                  <label className="flex flex-col gap-1.5 sm:col-span-2">
+                    <span className="text-[10px] uppercase tracking-[0.15em] text-black">Número</span>
+                    <input type="text" value={endereco.numero} onChange={(e) => mudarEndereco("numero", e.target.value)} className={classeInput} />
+                  </label>
+                  <label className="flex flex-col gap-1.5 sm:col-span-4">
+                    <span className="text-[10px] uppercase tracking-[0.15em] text-black">Complemento</span>
+                    <input
+                      type="text"
+                      value={endereco.complemento}
+                      onChange={(e) => mudarEndereco("complemento", e.target.value)}
+                      placeholder="Apto, bloco, casa…"
+                      className={classeInput}
+                    />
+                  </label>
+                  <label className="flex flex-col gap-1.5 sm:col-span-2">
+                    <span className="text-[10px] uppercase tracking-[0.15em] text-black">Bairro</span>
+                    <input type="text" value={endereco.bairro} onChange={(e) => mudarEndereco("bairro", e.target.value)} className={classeInput} />
+                  </label>
+                  <label className="flex flex-col gap-1.5 sm:col-span-3">
+                    <span className="text-[10px] uppercase tracking-[0.15em] text-black">Cidade</span>
+                    <input type="text" value={endereco.cidade} onChange={(e) => mudarEndereco("cidade", e.target.value)} className={classeInput} />
+                  </label>
+                  <label className="flex flex-col gap-1.5 sm:col-span-1">
+                    <span className="text-[10px] uppercase tracking-[0.15em] text-black">UF</span>
+                    <input
+                      type="text"
+                      value={endereco.uf}
+                      onChange={(e) => mudarEndereco("uf", e.target.value)}
+                      maxLength={2}
+                      placeholder="SP"
+                      className={classeInput}
+                    />
+                  </label>
+                  <p className="text-xs text-black/50 sm:col-span-6">
+                    {buscandoCep ? "Buscando endereço pelo CEP…" : "Todos os campos são obrigatórios. Sem complemento? Escreva “casa”."}
+                  </p>
+                </div>
+              )}
+              <p className="mt-3 text-[11px] leading-5 text-black/60">
+                Prazo de entrega: até {PRAZO_ENTREGA_CAMBIO_DIAS_UTEIS} dias úteis após a confirmação do pagamento — data e
+                horário combinados pelo WhatsApp.
+              </p>
+            </div>
+
+            {/* 6 — Pagamento: manual pelo WhatsApp (Wilson, 06/out/2026: "remover
+                self-checkout por enquanto, só manual via WhatsApp"). */}
+            <div className="mt-8 border-t border-black/10 pt-6">
+              <TituloPasso numero={6} titulo={ehCompra ? "Pagamento" : "Recebimento"} />
               <div className="mt-5 flex items-center justify-between gap-4 rounded-xl border border-[#2f80c9] bg-[#2f80c9]/5 p-4">
                 <div className="min-w-0">
-                  <p className="text-sm font-medium text-black">{ehCompra ? "Pix à vista" : "Pix pra você"}</p>
+                  <p className="text-sm font-medium text-black">{ehCompra ? "Pix, combinado pelo WhatsApp" : "Pix pra você"}</p>
                   <p className="mt-0.5 text-[11px] leading-5 text-black/60">
                     {ehCompra
-                      ? "Única forma de pagamento do câmbio. O QR Code aparece na página segura da Stone."
-                      : "Depois de receber e conferir os ienes, a Ajisai faz o Pix pra você. A chave Pix é combinada pelo WhatsApp."}
+                      ? "Depois do pedido, nossa equipe confirma a cotação e envia os dados do Pix pelo WhatsApp. O Pix precisa sair de uma conta no seu nome."
+                      : "Depois de receber e conferir os ienes, a Ajisai faz o Pix para uma conta no seu nome. A chave Pix é combinada pelo WhatsApp."}
                   </p>
                 </div>
                 {totalBRL !== null && (
@@ -527,6 +729,25 @@ export default function CambioPage() {
                   </p>
                 )}
               </div>
+            </div>
+
+            {/* 7 — Termos e condições (Wilson, 06/out/2026): PLD, Banco Central,
+                mesma titularidade, cédulas nem todas novas, prazo de entrega. */}
+            <div id="checkout-ultimo-passo" className="mt-8 border-t border-black/10 pt-6">
+              <TituloPasso numero={7} titulo="Termos e condições" />
+              <div className="mt-5 max-h-72 overflow-y-auto rounded-xl border border-black/10 bg-black/[0.02] p-4 text-[11px] leading-5 text-black/75">
+                <TermosCambio />
+              </div>
+              <label className="mt-3 flex items-start gap-3 text-sm leading-6 text-black/80">
+                <input
+                  type="checkbox"
+                  checked={termosAceitos}
+                  onChange={(e) => setTermosAceitos(e.target.checked)}
+                  className="mt-0.5 h-5 w-5 shrink-0 rounded border-black/30 text-[#2f80c9] focus:ring-[#2f80c9]"
+                />
+                Li e aceito os termos e condições do câmbio, incluindo as regras de prevenção à lavagem de dinheiro e de
+                mesma titularidade.
+              </label>
             </div>
 
             {erro && <p className="mt-4 text-sm text-red-600">{erro}</p>}
@@ -550,13 +771,71 @@ export default function CambioPage() {
           valor={preco ? formatBRL(preco.totalBRL) : null}
           detalhe={`${direcaoLabel} · ¥${quantidadeIenes.toLocaleString("pt-BR")} · ${cidadeNome}`}
           semValor="Carregando a cotação do dia…"
-          rotuloBotao={ehCompra ? "Pagar com Pix" : "Enviar pedido de venda"}
-          mostrarStone={ehCompra}
+          rotuloBotao={ehCompra ? "Enviar pedido de compra" : "Enviar pedido de venda"}
+          mostrarStone={false}
           sentinelaId="checkout-ultimo-passo"
           classeValor={inter.className}
         />
       )}
 
     </main>
+  );
+}
+
+// Termos do câmbio (Wilson, 06/out/2026: "adicionar termos e condições,
+// prevenção a lavagem de dinheiro, transação regulamentada pelo banco
+// central, nem todas as cédulas são novas").
+function TermosCambio() {
+  return (
+    <>
+      <p className="font-medium text-black">Termos e condições — Câmbio de ienes</p>
+      <p className="mt-3 font-medium text-black">1. Operação regulada</p>
+      <p className="mt-1">
+        A compra e a venda de moeda estrangeira em espécie são atividades reguladas pelo Banco Central do Brasil, e esta
+        operação segue a regulamentação cambial vigente.
+      </p>
+      <p className="mt-3 font-medium text-black">2. Identificação e mesma titularidade</p>
+      <p className="mt-1">
+        O cliente deve informar nome completo e CPF. Quem paga é obrigatoriamente quem recebe: o Pix deve sair de conta
+        de titularidade do próprio cliente (mesmo CPF do pedido) e, na venda, o Pix é feito apenas para conta de
+        titularidade do cliente. Pagamentos de terceiros são recusados e devolvidos à conta de origem.
+      </p>
+      <p className="mt-3 font-medium text-black">3. Prevenção à lavagem de dinheiro</p>
+      <p className="mt-1">
+        Em cumprimento à Lei 9.613/1998 e às normas do Banco Central, podemos solicitar documentos adicionais
+        (documento com foto, comprovante de residência, comprovante de viagem ou de origem dos recursos), recusar
+        operações com indícios de irregularidade e comunicar operações suspeitas às autoridades competentes (COAF), sem
+        aviso prévio ao cliente. Os dados da operação são guardados pelo prazo legal.
+      </p>
+      <p className="mt-3 font-medium text-black">4. Cotação e pagamento</p>
+      <p className="mt-1">
+        O valor exibido é uma referência da cotação do momento do pedido. A cotação final é confirmada pela nossa equipe
+        ao enviar os dados do Pix pelo WhatsApp e fica travada quando o pagamento é confirmado. Na venda, o valor é
+        confirmado após a conferência dos ienes.
+      </p>
+      <p className="mt-3 font-medium text-black">5. Entrega e prazo</p>
+      <p className="mt-1">
+        A entrega é feita em até {PRAZO_ENTREGA_CAMBIO_DIAS_UTEIS} (três) dias úteis após a confirmação do pagamento, no
+        endereço completo informado, em data e horário combinados pelo WhatsApp. A entrega é feita somente ao titular,
+        mediante documento com foto. Para entrega no Aeroporto de Guarulhos, é obrigatório o envio do bilhete aéreo e o
+        valor mínimo é de ¥{CAMBIO_IENES_MINIMO_AEROPORTO.toLocaleString("pt-BR")}.
+      </p>
+      <p className="mt-3 font-medium text-black">6. Cédulas</p>
+      <p className="mt-1">
+        As cédulas entregues são autênticas e em bom estado de conservação, mas nem todas são novas. A composição das
+        notas (valores de face) depende da disponibilidade.
+      </p>
+      <p className="mt-3 font-medium text-black">7. Cancelamento</p>
+      <p className="mt-1">
+        Pedidos ainda não pagos podem ser cancelados sem custo. Após a confirmação do pagamento, o cancelamento pode
+        estar sujeito à variação cambial do período e a custos operacionais, informados antes de qualquer cobrança,
+        respeitados os direitos previstos no Código de Defesa do Consumidor.
+      </p>
+      <p className="mt-3 font-medium text-black">8. Dados pessoais</p>
+      <p className="mt-1">
+        Os dados informados são tratados para executar a operação, cumprir obrigações legais e regulatórias e prevenir
+        fraudes, conforme a Lei Geral de Proteção de Dados e a nossa Política de Privacidade.
+      </p>
+    </>
   );
 }

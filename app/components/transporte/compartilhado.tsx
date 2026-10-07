@@ -267,7 +267,7 @@ export function IconeSeta() {
 // Termos e Condições — numa caixa na etapa de revisão das duas páginas
 // (Wilson, 30/set/2026: "termos e condições devem estar numa caixa na
 // pagina, nao para clicar e abrir").
-export function TextoTermosTransporte() {
+export function TextoTermosTransporte({ pagamentoOnline = false }: { pagamentoOnline?: boolean } = {}) {
   return (
     <>
     <p className="font-medium text-black/80">Fornecimento do serviço</p>
@@ -314,9 +314,10 @@ export function TextoTermosTransporte() {
       O valor final em reais é convertido pela cotação de câmbio do dia da confirmação.
       A exatidão dos dados informados (nome, telefone/WhatsApp, horários de voo e locais
       de embarque) é de responsabilidade do cliente — divergências podem prejudicar o
-      pickup e não são de responsabilidade da Alpinea nem do fornecedor. Isso não
-      confirma pagamento — nossa equipe entra em contato pelo WhatsApp pra fechar a
-      logística antes de qualquer cobrança.
+      pickup e não são de responsabilidade da Alpinea nem do fornecedor.
+      {pagamentoOnline
+        ? " O pagamento é feito online (Pix ou cartão emitido no Brasil) na página segura da Stone, e o serviço é confirmado após o pagamento e a disponibilidade do fornecedor; sem disponibilidade, o valor é devolvido integralmente. O contrato assinado eletronicamente integra estes termos."
+        : " Isso não confirma pagamento — nossa equipe entra em contato pelo WhatsApp pra fechar a logística antes de qualquer cobrança."}
     </p>
     </>
   );

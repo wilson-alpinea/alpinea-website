@@ -121,6 +121,10 @@ export default function TransferAeroportoPage() {
   const [vooPartida, setVooPartida] = useState("");
   const [horarioDecolagem, setHorarioDecolagem] = useState("");
   const [hotel, setHotel] = useState("");
+  // Bairro e CEP (código postal japonês, 〒000-0000) do hotel — obrigatórios
+  // (Wilson, 06/out/2026: "hotel precisa do bairro, CEP").
+  const [hotelBairro, setHotelBairro] = useState("");
+  const [hotelCep, setHotelCep] = useState("");
   const [observacoes, setObservacoes] = useState("");
 
   const [tocados, setTocados] = useState<Record<string, boolean>>({});
@@ -175,6 +179,9 @@ export default function TransferAeroportoPage() {
     nome: nome.trim().length < 3 ? "Informe seu nome completo." : null,
     email: /^\S+@\S+\.\S+$/.test(email.trim()) ? null : "Informe um e-mail válido.",
     whatsapp: digitosWhatsapp >= 10 ? null : "Informe um WhatsApp com DDD.",
+    hotel: hotel.trim().length < 3 ? "Informe o nome do hotel." : null,
+    hotelBairro: hotelBairro.trim().length < 2 ? "Informe o bairro do hotel." : null,
+    hotelCep: hotelCep.replace(/\D/g, "").length === 7 ? null : "Informe o CEP japonês do hotel (7 dígitos, ex.: 160-0023).",
   };
   const dadosValidos = Object.values(errosDados).every((e) => e === null);
   const mostrarErro = (campo: string) =>
@@ -348,7 +355,7 @@ export default function TransferAeroportoPage() {
           numeroVoo: voos,
           opcionais,
           avisos,
-          observacoes: [hotel ? `Hotel: ${hotel}` : "", observacoes].filter(Boolean).join("\n"),
+          observacoes: [`Hotel: ${hotel} — bairro ${hotelBairro} — 〒${hotelCep}`, observacoes].filter(Boolean).join("\n"),
           termosAceitos,
         }),
       });
@@ -1048,16 +1055,40 @@ export default function TransferAeroportoPage() {
                       </>
                     )}
                     <div className="sm:col-span-2">
-                      <Campo rotulo="Hotel (opcional)">
+                      <Campo rotulo="Hotel" erro={mostrarErro("hotel")}>
                         <input
                           type="text"
                           value={hotel}
                           onChange={(e) => setHotel(e.target.value)}
+                          onBlur={() => tocar("hotel")}
                           placeholder="Nome do hotel"
-                          className={classeInput(false)}
+                          className={classeInput(!!mostrarErro("hotel"))}
                         />
                       </Campo>
                     </div>
+                    <Campo rotulo="Bairro do hotel" erro={mostrarErro("hotelBairro")} ajuda="Ex.: Shinjuku, Ginza, Gion.">
+                      <input
+                        type="text"
+                        value={hotelBairro}
+                        onChange={(e) => setHotelBairro(e.target.value)}
+                        onBlur={() => tocar("hotelBairro")}
+                        className={classeInput(!!mostrarErro("hotelBairro"))}
+                      />
+                    </Campo>
+                    <Campo rotulo="CEP do hotel (〒)" erro={mostrarErro("hotelCep")} ajuda="Código postal japonês, 7 dígitos.">
+                      <input
+                        type="text"
+                        inputMode="numeric"
+                        value={hotelCep}
+                        onChange={(e) => {
+                          const d = e.target.value.replace(/\D/g, "").slice(0, 7);
+                          setHotelCep(d.length > 3 ? `${d.slice(0, 3)}-${d.slice(3)}` : d);
+                        }}
+                        onBlur={() => tocar("hotelCep")}
+                        placeholder="160-0023"
+                        className={classeInput(!!mostrarErro("hotelCep"))}
+                      />
+                    </Campo>
                     <div className="sm:col-span-2">
                       <Campo rotulo="Observações (opcional)">
                         <textarea
@@ -1146,7 +1177,11 @@ export default function TransferAeroportoPage() {
                                 {horarioDecolagem && ` · decolagem ${horarioDecolagem}`}
                               </p>
                             )}
-                            {hotel && <p className="text-black/60">Hotel: {hotel}</p>}
+                            {hotel && (
+                              <p className="text-black/60">
+                                Hotel: {hotel} · {hotelBairro} · 〒{hotelCep}
+                              </p>
+                            )}
                           </div>
                         ),
                       },

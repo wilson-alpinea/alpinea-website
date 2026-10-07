@@ -1,6 +1,13 @@
 import { NextResponse } from "next/server";
 import { createAdminClient } from "../../../lib/supabase/admin";
 import { TAG_SELF_SERVICE } from "../../../lib/crm/origem";
+import { criarCheckoutParaCliente } from "../../../lib/pagarme/checkoutPedido";
+import {
+  precoLimousineUSD,
+  SENTIDOS_LIMOUSINE,
+  type AeroportoLimousine,
+  type SentidoLimousine,
+} from "../../lib/servicosAdicionaisCatalogo";
 
 export const runtime = "nodejs";
 
@@ -92,6 +99,32 @@ export async function POST(req: Request) {
     const totalBRL = Number(body.totalBRL) || null;
     const observacoesCliente = texto(body.observacoes, 2000);
     const termosAceitos = Boolean(body.termosAceitos);
+    // Detalhes por serviço (reestruturação de 06/out/2026).
+    const rest = (body.restaurantes ?? null) as Record<string, unknown> | null;
+    const restaurantesTexto = rest
+      ? `${(Array.isArray(rest.nomes) ? rest.nomes : []).map((n: unknown) => texto(n, 100)).join(", ")}${
+          texto(rest.restricoes, 300) ? ` — restrições: ${texto(rest.restricoes, 300)}` : ""
+        } — refeições estimadas US$ ${Number(rest.refeicoesEstimadasUSD) || 0} (NÃO inclusas) — ciente: ${rest.cienteRefeicoes ? "sim" : "não"}`
+      : "";
+    const es = (body.esim ?? null) as Record<string, unknown> | null;
+    const esimTexto = es ? `${texto(es.plano, 120)} × ${inteiro(es.quantidade)}` : "";
+    // Limousine Bus: valor RECALCULADO aqui (margem de 50%) e pago online.
+    const lb = (body.limousine ?? null) as Record<string, unknown> | null;
+    let limousineUSD = 0;
+    let limousineBRL = 0;
+    let limousineTexto = "";
+    if (lb) {
+      const aeroporto: AeroportoLimousine = lb.aeroporto === "haneda" ? "haneda" : "narita";
+      const sentido: SentidoLimousine = SENTIDOS_LIMOUSINE.some((x) => x.id === lb.sentido) ? (lb.sentido as SentidoLimousine) : "ida-volta";
+      const adultos = inteiro(lb.adultos);
+      const criancas = inteiro(lb.criancas);
+      limousineUSD = precoLimousineUSD({ aeroporto, sentido, adultos, criancas });
+      const cotacao = Math.min(10, Math.max(3, Number(lb.cotacao) || 5.3));
+      limousineBRL = Math.round(limousineUSD * cotacao * 100) / 100;
+      limousineTexto = `${aeroporto === "narita" ? "Narita" : "Haneda"} — ${SENTIDOS_LIMOUSINE.find((x) => x.id === sentido)?.nome} — ${adultos} adulto(s), ${criancas} criança(s) — ponto: ${texto(lb.ponto, 120)}${
+        texto(lb.hotel, 200) ? ` — hotel: ${texto(lb.hotel, 200)}` : ""
+      } — US$ ${limousineUSD} (R$ ${limousineBRL.toLocaleString("pt-BR")}) PAGO ONLINE`;
+    }
     const avisos: string[] = Array.isArray(body.avisos)
       ? body.avisos.map((a: unknown) => texto(a, 300)).filter(Boolean).slice(0, 20)
       : [];
@@ -100,10 +133,16 @@ export async function POST(req: Request) {
       ["Período no Japão", `${dataChegada || "—"} a ${dataPartida || "—"}`],
       ["Pessoas", String(pessoas)],
       ["Serviços", linhasServicos.join(" | ")],
+      ...(restaurantesTexto ? ([["Restaurantes escolhidos", restaurantesTexto]] as [string, string][]) : []),
+      ...(esimTexto ? ([["eSIM", esimTexto]] as [string, string][]) : []),
+      ...(limousineTexto ? ([["Limousine Bus", limousineTexto]] as [string, string][]) : []),
       ["Total estimado (US$)", `US$ ${totalUSD.toLocaleString("pt-BR")}`],
       ["Total estimado (BRL)", totalBRL ? `R$ ${totalBRL.toLocaleString("pt-BR")}` : "Não calculado"],
       ["Avisos mostrados ao cliente", avisos.length ? avisos.join(" | ") : "Nenhum"],
-      ["Forma de pagamento", "A combinar pelo WhatsApp (checkout manual)"],
+      [
+        "Forma de pagamento",
+        limousineTexto ? "Limousine Bus: online (Stone). Demais serviços: a combinar pelo WhatsApp" : "A combinar pelo WhatsApp (checkout manual)",
+      ],
       ["Termos e condições aceitos", termosAceitos ? "Sim" : "Não confirmado"],
       ["Observações do cliente", observacoesCliente || "Nenhuma"],
     ];
@@ -164,9 +203,23 @@ export async function POST(req: Request) {
       console.error("Erro ao gravar interação (servicos-adicionais-selfservice):", erroInteracao);
     }
 
+    let checkoutUrl: string | null = null;
+    if (limousineBRL > 0) {
+      checkoutUrl = await criarCheckoutParaCliente({
+        supabase,
+        clienteId: cliente.id,
+        valorBRL: limousineBRL,
+        itemNome: "Limousine Bus — Ajisai",
+        itemDescricao: limousineTexto.slice(0, 250),
+        observacoes: `Limousine Bus — US$ ${limousineUSD}`,
+        urlSucesso: `${new URL(req.url).origin}/produtos/servicos-adicionais?pagamento=concluido`,
+        rotuloLog: "servicos-adicionais-selfservice",
+      });
+    }
+
     await notificarPorEmail({ nome, email, resumoTexto, resumoHtml });
 
-    return NextResponse.json({ success: true, clienteId: cliente.id }, { status: 200 });
+    return NextResponse.json({ success: true, clienteId: cliente.id, checkoutUrl }, { status: 200 });
   } catch (error) {
     console.error("Erro no pedido de Serviços Adicionais:", error);
     return NextResponse.json(

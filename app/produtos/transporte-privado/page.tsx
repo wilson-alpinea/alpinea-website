@@ -84,11 +84,76 @@ import {
   TextoTermosTransporte,
   type LocalId,
 } from "../../components/transporte/compartilhado";
+import { EscopoServico } from "../../components/EscopoServico";
+import { AvisoPagamentoConcluido } from "../AvisoPagamentoConcluido";
+import { abrirAbaPagamento, enviarParaPagamento, fecharAba, BlocoPagamentoNovaAba } from "../pagamentoNovaAba";
+import { gerarContratoTransporte, type DadosContratoTransporte } from "../../lib/contratoTransportePrivado";
 
 // Transfer de aeroporto saiu desta página e virou produto próprio
 // (/produtos/transfer-aeroporto) — pedido do Wilson, 30/set/2026. Aqui
 // ficou só o motorista à disposição: dentro/entre cidades e passeio 10h.
-type TipoServico = "interestadual" | "passeio";
+// "Dentro da cidade" virou aba própria (Wilson, 06/out/2026: "no transporte
+// interestadual, no campo indo para, só pode aparecer outra cidade, não a
+// mesma de origem").
+type TipoServico = "cidade" | "interestadual" | "passeio";
+
+// Tempo estimado de trajeto por rota (referência de trânsito normal) —
+// Wilson, 06/out/2026: "adicionar tempo estimado de trajeto + deslocamento
+// até o carro". Estimativas, não garantia.
+const DURACAO_ROTA: Record<string, string> = {
+  "dentro-tokyo": "20 a 60 min",
+  "dentro-osaka": "20 a 50 min",
+  "dentro-kyoto-ou-kyoto-osaka": "20 a 50 min dentro de Kyoto · 60 a 80 min até Osaka",
+};
+const DESLOCAMENTO_ATE_CARRO = "+ 5 a 15 min a pé até o ponto de embarque permitido para o veículo";
+const duracaoRota = (rotaId: string, categoria?: string) =>
+  categoria === "tour-dia-inteiro" ? "10 horas à disposição" : (DURACAO_ROTA[rotaId] ?? "a confirmar");
+
+// Objetivo do serviço (Wilson, 06/out/2026: "qual objetivo do serviço,
+// reunião de negócios, família etc.") — usado na sugestão de veículo.
+const OBJETIVOS = [
+  { id: "negocios", nome: "Reunião de negócios" },
+  { id: "familia", nome: "Viagem em família" },
+  { id: "casal", nome: "Casal / lua de mel" },
+  { id: "amigos", nome: "Grupo de amigos" },
+  { id: "compras", nome: "Compras" },
+  { id: "passeio", nome: "Passeio turístico" },
+] as const;
+type ObjetivoId = (typeof OBJETIVOS)[number]["id"];
+
+// Sugestão de veículo pelos dados da etapa 1 (Wilson, 06/out/2026: "na
+// página de veículos gerar uma sugestão baseada nos inputs do cliente").
+// Regra: o Alphard é a opção premium mas tem porta-malas pequeno (cabe bem
+// até ~5 pessoas com 1 mala grande cada); acima disso, a van/ônibus que
+// comporta passageiros + malas com folga.
+function sugerirVeiculo(passageiros: number, malas: number, objetivo: ObjetivoId | ""): { id: VeiculoMotoristaId; motivo: string } {
+  const premium = objetivo === "negocios" || objetivo === "casal";
+  if (passageiros <= 5 && malas <= 5 && (premium || malas <= passageiros))
+    return { id: "alphard8", motivo: premium ? "Mais conforto e silêncio para o seu objetivo" : "Conforto premium para o tamanho do grupo" };
+  const lugares = passageiros + Math.ceil(Math.max(0, malas - passageiros) / 2);
+  if (lugares <= 9) return { id: "hiace10", motivo: "Espaço para o grupo e para as malas" };
+  if (lugares <= 13) return { id: "hiace14", motivo: "Grupo médio com bagagem" };
+  if (lugares <= 17) return { id: "coaster18", motivo: "Grupo grande com bagagem" };
+  if (lugares <= 20) return { id: "coaster21", motivo: "Grupo grande com bagagem" };
+  return { id: "coaster29", motivo: "Maior capacidade disponível" };
+}
+
+// Escopo (Wilson, 06/out/2026: "igual guia turístico, tem que deixar claro
+// o que faz parte e o que não faz parte da contratação, duração de
+// deslocamento").
+const INCLUIDO_TRANSPORTE = [
+  "Motorista profissional e veículo exclusivo do seu grupo",
+  "Combustível, pedágios, estacionamento e impostos",
+  "Tempo incluído por trecho (30 a 90 min) ou 10 horas no passeio de dia inteiro",
+  "Embarque e desembarque nos endereços informados",
+];
+const NAO_INCLUIDO_TRANSPORTE = [
+  "Transfer aeroporto ↔ hotel (contratado em Transfer Aeroporto)",
+  "Tempo além do incluído: hora extra cobrada em blocos de 30 min",
+  "Paradas e trechos fora dos trajetos contratados",
+  "O motorista não é guia turístico e fala japonês (bilíngue sob consulta)",
+  "Ingressos, refeições e despesas do grupo",
+];
 const TOURS = ROTAS_MOTORISTA.filter((r) => r.categoria === "tour-dia-inteiro");
 const REGIAO_CURTA: Record<RegiaoRotaMotorista, string> = {
   kanto: "Tóquio",
@@ -113,6 +178,8 @@ type ServicoPedido = {
   veiculo: VeiculoMotoristaId;
   data: string;
   horario: string;
+  enderecoPartida: string;
+  enderecoDestino: string;
 };
 
 export default function TransportePrivadoPage() {
@@ -125,7 +192,17 @@ export default function TransportePrivadoPage() {
   const [veiculoEscolhido, setVeiculoEscolhido] = useState(false);
   const [veiculoPadrao, setVeiculoPadrao] = useState<VeiculoMotoristaId>("hiace10");
   const [servicos, setServicos] = useState<ServicoPedido[]>([]);
-  const [tipoServico, setTipoServico] = useState<TipoServico>("interestadual");
+  const [tipoServico, setTipoServico] = useState<TipoServico>("cidade");
+  const [novoEnderecoA, setNovoEnderecoA] = useState("");
+  const [novoEnderecoB, setNovoEnderecoB] = useState("");
+  const [objetivo, setObjetivo] = useState<ObjetivoId | "">("");
+  const [malas, setMalas] = useState(1);
+  const [escopoCiente, setEscopoCiente] = useState(false);
+  // Contrato + assinatura eletrônica + pagamento online (Wilson, 06/out/2026).
+  const [cpf, setCpf] = useState("");
+  const [assinaturaNome, setAssinaturaNome] = useState("");
+  const [contratoAssinado, setContratoAssinado] = useState(false);
+  const [linkPagamento, setLinkPagamento] = useState<string | null>(null);
   const [origem, setOrigem] = useState<LocalId | "">("");
   const [destino, setDestino] = useState<LocalId | "">("");
   const [tourId, setTourId] = useState("");
@@ -243,7 +320,7 @@ export default function TransportePrivadoPage() {
       : servicosOrdenados
           .map(
             (s) =>
-              `${formatarDataCurta(s.data)}${s.horario ? ` ${s.horario}` : ""} — ${encontrarRotaMotorista(s.rotaId)?.nome ?? s.rotaId} (${encontrarVeiculoMotorista(s.veiculo).nome})`,
+              `${formatarDataCurta(s.data)}${s.horario ? ` ${s.horario}` : ""} — ${encontrarRotaMotorista(s.rotaId)?.nome ?? s.rotaId} (${encontrarVeiculoMotorista(s.veiculo).nome}) — de ${s.enderecoPartida} para ${s.enderecoDestino}`,
           )
           .join("; ");
 
@@ -266,12 +343,16 @@ export default function TransportePrivadoPage() {
         : null;
   const tocar = (campo: string) => setTocados((t) => ({ ...t, [campo]: true }));
 
-  const etapa1Ok = periodoValido && passageiros >= 1;
+  const etapa1Ok = periodoValido && passageiros >= 1 && objetivo !== "" && escopoCiente;
+  const sugestao = sugerirVeiculo(passageiros, malas, objetivo);
+  const cpfValido = cpf.replace(/\D/g, "").length === 11;
+  const normalizar = (t: string) => t.trim().toLowerCase().replace(/\s+/g, " ");
+  const assinaturaValida = nome.trim().length >= 3 && normalizar(assinaturaNome) === normalizar(nome);
   const etapa2Ok = veiculoEscolhido && veiculoComporta(veiculo.assentos);
   const etapa3Ok = quantidadeItens > 0 && servicosComProblema === 0;
-  const etapa4Ok = dadosValidos;
+  const etapa4Ok = dadosValidos && cpfValido;
   const etapasOk = [etapa1Ok, etapa2Ok, etapa3Ok, etapa4Ok];
-  const podeEnviar = etapa1Ok && etapa2Ok && etapa3Ok && etapa4Ok && termosAceitos;
+  const podeEnviar = etapa1Ok && etapa2Ok && etapa3Ok && etapa4Ok && termosAceitos && contratoAssinado && assinaturaValida;
 
   function irPara(nova: Etapa) {
     setEtapa(nova);
@@ -313,7 +394,15 @@ export default function TransportePrivadoPage() {
     etapa === 1
       ? etapa1Ok
         ? { rotulo: "Ver veículos", ativo: true, falta: null }
-        : { rotulo: "Ver veículos", ativo: true, falta: "Informe chegada e partida para continuar" }
+        : {
+            rotulo: "Ver veículos",
+            ativo: true,
+            falta: !periodoValido
+              ? "Informe chegada e partida para continuar"
+              : objetivo === ""
+                ? "Informe o objetivo do serviço"
+                : "Confirme que leu o que está e o que não está incluído",
+          }
       : etapa === 2
         ? etapa2Ok
           ? { rotulo: "Continuar", ativo: true, falta: null }
@@ -325,11 +414,15 @@ export default function TransportePrivadoPage() {
               ? { rotulo: "Escolha uma rota", ativo: false, falta: "Adicione ao menos um serviço para continuar" }
               : { rotulo: "Revise os serviços", ativo: false, falta: "Corrija os serviços marcados em vermelho" }
           : etapa === 4
-            ? { rotulo: "Continuar", ativo: etapa4Ok, falta: etapa4Ok ? null : "Complete seus dados para continuar" }
+            ? { rotulo: "Continuar", ativo: etapa4Ok, falta: etapa4Ok ? null : "Complete seus dados (com CPF) para continuar" }
             : {
-                rotulo: status === "enviando" ? "Enviando…" : "Solicitar transporte",
+                rotulo: status === "enviando" ? "Enviando…" : "Assinar e pagar",
                 ativo: podeEnviar && status !== "enviando",
-                falta: termosAceitos ? null : "Aceite os Termos e Condições para solicitar",
+                falta: !termosAceitos
+                  ? "Aceite os Termos e Condições"
+                  : !contratoAssinado || !assinaturaValida
+                    ? "Assine o contrato digitando seu nome completo"
+                    : null,
               };
 
   function acionarCta() {
@@ -351,7 +444,7 @@ export default function TransportePrivadoPage() {
       else setTentouAvancarDados(true);
       return;
     }
-    if (!termosAceitos) {
+    if (!termosAceitos || !contratoAssinado || !assinaturaValida) {
       setTentouEnviar(true);
       return;
     }
@@ -360,15 +453,44 @@ export default function TransportePrivadoPage() {
 
   const etapasFaltando = etapasOk.filter((ok) => !ok).length;
 
+  const opcionaisSelecionados = [
+    opcionalMeetGreet ? "Meet & Greet (placa de recepção)" : null,
+    opcionalCadeirinha ? `Cadeirinha infantil (${qtdCadeirinhas}×)` : null,
+    opcionalBilingue ? "Motorista bilíngue português/inglês (sob consulta)" : null,
+  ].filter(Boolean) as string[];
+  const dadosContrato: DadosContratoTransporte = {
+    nome: nome.trim(),
+    cpf: cpf.trim(),
+    email: email.trim(),
+    whatsapp: whatsapp.trim(),
+    passageiros,
+    dataChegada,
+    dataPartida,
+    servicos: servicosOrdenados.map((s) => {
+      const rota = encontrarRotaMotorista(s.rotaId);
+      return {
+        data: s.data,
+        horario: s.horario,
+        rota: rota?.nome ?? s.rotaId,
+        veiculo: encontrarVeiculoMotorista(s.veiculo).nome,
+        enderecoPartida: s.enderecoPartida,
+        enderecoDestino: s.enderecoDestino,
+        duracaoEstimada: duracaoRota(s.rotaId, rota?.categoria),
+        valorUSD: precoServico(s),
+      };
+    }),
+    opcionais: opcionaisSelecionados,
+    totalUSD: Math.round(totalUSD),
+    totalBRL: Math.round(totalBRL * 100) / 100,
+    politicaCancelamento: POLITICA_CANCELAMENTO_MOTORISTA,
+  };
+
   async function enviar() {
     if (!podeEnviar || status === "enviando") return;
     setStatus("enviando");
     setErro("");
-    const opcionais = [
-      opcionalMeetGreet ? "Meet & Greet (placa de recepção)" : null,
-      opcionalCadeirinha ? `Cadeirinha infantil (${qtdCadeirinhas}×)` : null,
-      opcionalBilingue ? "Motorista bilíngue português/inglês (sob consulta)" : null,
-    ].filter(Boolean) as string[];
+    const janelaPagamento = abrirAbaPagamento();
+    const opcionais = opcionaisSelecionados;
     const veiculosUsados = Array.from(new Set(servicosOrdenados.map((s) => encontrarVeiculoMotorista(s.veiculo).nome)));
     try {
       const resposta = await fetch("/api/transporte-privado-selfservice", {
@@ -377,7 +499,22 @@ export default function TransportePrivadoPage() {
         body: JSON.stringify({
           produto: "transporte-privado",
           veiculo: veiculosUsados.join(" + "),
-          itens: servicosOrdenados.map((s) => ({ rotaId: s.rotaId, veiculo: s.veiculo, data: s.data, horario: s.horario, quantidade: 1 })),
+          itens: servicosOrdenados.map((s) => ({
+            rotaId: s.rotaId,
+            veiculo: s.veiculo,
+            data: s.data,
+            horario: s.horario,
+            enderecoPartida: s.enderecoPartida,
+            enderecoDestino: s.enderecoDestino,
+            quantidade: 1,
+          })),
+          objetivo: OBJETIVOS.find((o) => o.id === objetivo)?.nome ?? "",
+          malas,
+          cpf,
+          contrato: dadosContrato,
+          assinaturaNome,
+          contratoAssinado,
+          pagarOnline: true,
           resumo: resumoSelecao,
           motoristaUSD,
           roteiroUSD,
@@ -403,13 +540,24 @@ export default function TransportePrivadoPage() {
       });
       const dadosResposta = await resposta.json().catch(() => ({}));
       if (!resposta.ok) {
+        fecharAba(janelaPagamento);
         setErro(dadosResposta.error || "Não foi possível registrar seu pedido agora. Tente de novo.");
         setStatus("erro");
         return;
       }
+      if (dadosResposta?.checkoutUrl) {
+        if (enviarParaPagamento(janelaPagamento, dadosResposta.checkoutUrl)) {
+          setLinkPagamento(dadosResposta.checkoutUrl);
+          setStatus("enviado");
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        }
+        return;
+      }
+      fecharAba(janelaPagamento);
       setStatus("enviado");
       window.scrollTo({ top: 0, behavior: "smooth" });
     } catch {
+      fecharAba(janelaPagamento);
       setErro("Não foi possível registrar seu pedido agora. Tente de novo.");
       setStatus("erro");
     }
@@ -419,7 +567,8 @@ export default function TransportePrivadoPage() {
     nome ? ` Meu nome é ${nome}.` : ""
   }`;
 
-  const trechosAtivos = TRECHOS_INTERESTADUAL;
+  // Interestadual: só cidades diferentes da origem. Dentro da cidade: aba própria.
+  const trechosAtivos = TRECHOS_INTERESTADUAL.filter((t) => (tipoServico === "cidade" ? t.de === t.para : t.de !== t.para));
   const origensPossiveis = LOCAIS.filter((l) => trechosAtivos.some((t) => t.de === l.id));
   const destinosPossiveis = origem ? trechosAtivos.filter((t) => t.de === origem) : [];
 
@@ -440,14 +589,25 @@ export default function TransportePrivadoPage() {
   const dataNovoServico = novaData && diasViagem.includes(novaData) ? novaData : dataSugerida;
   const veiculoNovoServico: VeiculoMotoristaId = novoVeiculo || veiculoPadrao;
 
+  const enderecosNovosOk = novoEnderecoA.trim().length >= 8 && (tipoServico === "passeio" || novoEnderecoB.trim().length >= 8);
   function adicionarRotaEscolhida() {
-    if (!rotaEscolhida || !dataNovoServico) return;
+    if (!rotaEscolhida || !dataNovoServico || !enderecosNovosOk) return;
     proximoUid.current += 1;
     const uid = `${rotaEscolhida.id}-${proximoUid.current}`;
     setServicos((lista) => [
       ...lista,
-      { uid, rotaId: rotaEscolhida.id, veiculo: veiculoNovoServico, data: dataNovoServico, horario: novoHorario },
+      {
+        uid,
+        rotaId: rotaEscolhida.id,
+        veiculo: veiculoNovoServico,
+        data: dataNovoServico,
+        horario: novoHorario,
+        enderecoPartida: novoEnderecoA.trim(),
+        enderecoDestino: tipoServico === "passeio" ? novoEnderecoB.trim() || novoEnderecoA.trim() : novoEnderecoB.trim(),
+      },
     ]);
+    setNovoEnderecoA("");
+    setNovoEnderecoB("");
     setUltimoAdicionado(uid);
     setOrigem("");
     setDestino("");
@@ -616,9 +776,10 @@ export default function TransportePrivadoPage() {
             <IconeCheck className="h-6 w-6" />
           </span>
           <h1 className={`${display.className} mt-5 text-2xl font-medium text-black md:text-3xl`}>Recebemos seu pedido</h1>
+          {linkPagamento && <BlocoPagamentoNovaAba url={linkPagamento} />}
           <p className="mx-auto mt-3 max-w-md text-sm leading-relaxed text-black/70">
-            Nossa equipe confirma horários, logística e forma de pagamento com você pelo WhatsApp — em geral no mesmo
-            dia útil.
+            Enviamos a cópia do contrato assinado para o seu e-mail. Depois da confirmação do pagamento, nossa equipe
+            confirma motorista, ponto de encontro e horários pelo WhatsApp.
           </p>
           <a
             href={`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(mensagemWhatsapp)}`}
@@ -663,6 +824,9 @@ export default function TransportePrivadoPage() {
               rola até aqui (a posição do próprio stepper não serve, porque
               quando ele está "grudado" no topo o getBoundingClientRect
               devolve sempre a posição grudada). */}
+          <div className="mx-auto max-w-6xl px-5 md:px-8">
+            <AvisoPagamentoConcluido />
+          </div>
           <div ref={stepperRef} aria-hidden="true" />
           <div className="sticky top-14 z-40 mt-6 bg-[#1f6fb8] shadow-[0_4px_16px_rgba(10,37,64,0.12)]">
             {/* w-fit + mx-auto: centralizado; max-w-full + overflow-x-auto:
@@ -811,7 +975,76 @@ export default function TransportePrivadoPage() {
                         </button>
                       </div>
                     </div>
+
+                    {/* Objetivo e bagagem — base da sugestão de veículo (Wilson, 06/out/2026). */}
+                    <div className="mt-4 grid gap-4 border-t border-black/[0.08] pt-4 sm:grid-cols-2">
+                      <label className="block min-w-0">
+                        <span className="mb-1.5 block text-xs font-medium text-black/60">Objetivo do serviço</span>
+                        <span className="relative block">
+                          <select value={objetivo} onChange={(e) => setObjetivo(e.target.value as ObjetivoId | "")} className={CLASSE_SELECT}>
+                            <option value="">Escolha o objetivo</option>
+                            {OBJETIVOS.map((o) => (
+                              <option key={o.id} value={o.id}>{o.nome}</option>
+                            ))}
+                          </select>
+                          <IconeSeta />
+                        </span>
+                        {tentouAvancarViagem && objetivo === "" && <span className="mt-1 block text-xs text-red-600">Informe o objetivo.</span>}
+                      </label>
+                      <div>
+                        <span className="mb-1.5 block text-xs font-medium text-black/60">Malas grandes (despachadas)</span>
+                        <div className="flex h-12 items-center justify-between gap-2 rounded-xl border border-black/15 bg-white px-2">
+                          <button
+                            type="button"
+                            onClick={() => setMalas((m) => Math.max(0, m - 1))}
+                            disabled={malas <= 0}
+                            aria-label="Menos uma mala"
+                            className="flex h-9 w-9 items-center justify-center rounded-full border border-black/15 text-lg text-black/70 transition hover:border-black/35 disabled:opacity-30"
+                          >
+                            −
+                          </button>
+                          <span className={`${inter.className} w-7 text-center text-base font-semibold tabular-nums text-[#0A2540]`}>{malas}</span>
+                          <button
+                            type="button"
+                            onClick={() => setMalas((m) => Math.min(40, m + 1))}
+                            aria-label="Mais uma mala"
+                            className="flex h-9 w-9 items-center justify-center rounded-full border border-black/15 text-lg text-black/70 transition hover:border-black/35"
+                          >
+                            +
+                          </button>
+                        </div>
+                        <p className="mt-1.5 text-xs text-black/45">Usamos para sugerir o veículo certo.</p>
+                      </div>
+                    </div>
                   </div>
+
+                  {/* Aviso: aeroporto ↔ hotel é outro produto (Wilson, 06/out/2026). */}
+                  <div className="mt-5 flex items-start gap-3 rounded-xl border border-amber-300/70 bg-amber-50 px-4 py-3 text-sm text-amber-950" role="note">
+                    <span aria-hidden="true" className="mt-1.5 h-2 w-2 shrink-0 rounded-full bg-amber-500" />
+                    <p>
+                      <strong className="font-semibold">Vai do aeroporto para o hotel (ou do hotel para o aeroporto)?</strong> Esse trajeto é
+                      contratado na página de Transfer Aeroporto.{" "}
+                      <Link href="/produtos/transfer-aeroporto" className="font-semibold text-[#1f6fb8] underline underline-offset-2">
+                        Clique aqui
+                      </Link>
+                      .
+                    </p>
+                  </div>
+
+                  <EscopoServico titulo="O que você está contratando" incluido={INCLUIDO_TRANSPORTE} naoIncluido={NAO_INCLUIDO_TRANSPORTE} />
+                  <p className="mt-2 text-xs leading-5 text-black/55">
+                    Duração: cada trajeto mostra o tempo estimado de deslocamento (trânsito normal) {DESLOCAMENTO_ATE_CARRO}.
+                  </p>
+                  <label className="mt-4 flex min-h-[44px] cursor-pointer items-start gap-3">
+                    <input
+                      type="checkbox"
+                      checked={escopoCiente}
+                      onChange={(e) => setEscopoCiente(e.target.checked)}
+                      className="mt-0.5 h-5 w-5 shrink-0 rounded border-black/30 text-[#2f80c9] focus:ring-[#2f80c9]"
+                    />
+                    <span className="text-sm text-black/85">Li e entendi o que está e o que não está incluído no transporte privado.</span>
+                  </label>
+                  {tentouAvancarViagem && periodoValido && !escopoCiente && <p className="ml-8 text-xs text-red-600">Confirme para continuar.</p>}
                 </section>
               )}
 
@@ -828,6 +1061,20 @@ export default function TransportePrivadoPage() {
                     </button>
                     . Este será o veículo padrão — na próxima etapa você pode trocar em cada serviço.
                   </p>
+                  {veiculoComporta(encontrarVeiculoMotorista(sugestao.id).assentos) && (
+                    <div className="mt-4 flex flex-wrap items-center gap-3 rounded-xl border border-[#2f80c9]/30 bg-[#eef6fb] px-4 py-3 text-sm">
+                      <span className="rounded-full bg-[#1f6fb8] px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-white">Sugestão para você</span>
+                      <span className="text-black/80">
+                        <strong className="font-semibold text-[#0A2540]">{VEICULO_CURTO[sugestao.id].nome}</strong> — {sugestao.motivo} ({passageiros}{" "}
+                        {passageiros === 1 ? "passageiro" : "passageiros"}, {malas} {malas === 1 ? "mala" : "malas"}).
+                      </span>
+                      {!(veiculoEscolhido && veiculoPadrao === sugestao.id) && (
+                        <button type="button" onClick={() => escolherVeiculo(sugestao.id)} className="text-sm font-semibold text-[#1f6fb8] underline underline-offset-2">
+                          Escolher este
+                        </button>
+                      )}
+                    </div>
+                  )}
                   <div className="mt-6 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
                     {VEICULOS_MOTORISTA.filter((v) => veiculoComporta(v.assentos)).map((v) => {
                       const ativo = veiculoEscolhido && veiculoPadrao === v.id;
@@ -846,9 +1093,15 @@ export default function TransportePrivadoPage() {
                         >
                           <span className="relative block h-20 w-28 shrink-0 overflow-hidden rounded-lg bg-[#0f1a24] sm:aspect-[3/2] sm:h-auto sm:w-full sm:rounded-none">
                             <Image src={v.foto} alt="" fill sizes="(min-width: 640px) 260px, 112px" className="object-cover" />
+                            {/* "MAIS PEDIDO - ETIQUETA LARANJA" (Wilson, 06/out/2026). */}
                             {v.id === "alphard8" && (
-                              <span className="absolute left-1.5 top-1.5 rounded-full bg-white px-2 py-0.5 text-[9px] font-semibold uppercase tracking-[0.12em] text-[#0A2540] shadow-sm sm:left-3 sm:top-3 sm:px-2.5 sm:py-1 sm:text-[10px]">
+                              <span className="absolute left-1.5 top-1.5 rounded-full bg-orange-500 px-2 py-0.5 text-[9px] font-semibold uppercase tracking-[0.12em] text-white shadow-sm sm:left-3 sm:top-3 sm:px-2.5 sm:py-1 sm:text-[10px]">
                                 Mais pedido
+                              </span>
+                            )}
+                            {v.id === sugestao.id && (
+                              <span className="absolute bottom-1.5 left-1.5 rounded-full bg-[#1f6fb8] px-2 py-0.5 text-[9px] font-semibold uppercase tracking-[0.12em] text-white shadow-sm sm:bottom-3 sm:left-3 sm:px-2.5 sm:py-1 sm:text-[10px]">
+                                Sugerido
                               </span>
                             )}
                           </span>
@@ -903,10 +1156,11 @@ export default function TransportePrivadoPage() {
 
                   <div className="mt-6 rounded-2xl border border-black/10 p-4 sm:p-5">
                     {/* Tipo: dentro/entre cidades (origem → destino) ou passeio de 10h */}
-                    <div role="radiogroup" aria-label="Tipo de serviço" className="grid grid-cols-2 gap-1 rounded-xl bg-black/[0.04] p-1">
+                    <div role="radiogroup" aria-label="Tipo de serviço" className="grid grid-cols-3 gap-1 rounded-xl bg-black/[0.04] p-1">
                       {(
                         [
-                          { key: "interestadual", nome: "Transporte interestadual", curto: "Interestadual", icone: "/images/icone-interestadual.png", largura: 36 },
+                          { key: "cidade", nome: "Dentro da cidade", curto: "Na cidade", icone: "/images/icone-interestadual.png", largura: 36 },
+                          { key: "interestadual", nome: "Entre cidades", curto: "Entre cidades", icone: "/images/icone-interestadual.png", largura: 36 },
                           { key: "passeio", nome: "Passeio de 10h", curto: "Passeio 10h", icone: "/images/icone-passeio-10h.png", largura: 36 },
                         ] as const
                       ).map((t) => {
@@ -936,7 +1190,30 @@ export default function TransportePrivadoPage() {
                       })}
                     </div>
 
-                    {tipoServico !== "passeio" ? (
+                    {tipoServico === "cidade" ? (
+                      <label className="mt-4 block">
+                        <span className="mb-1.5 block text-xs font-medium text-black/60">Cidade</span>
+                        <span className="relative block">
+                          <select
+                            value={origem}
+                            onChange={(e) => {
+                              const nova = e.target.value as LocalId | "";
+                              setOrigem(nova);
+                              setDestino(nova);
+                            }}
+                            className={CLASSE_SELECT}
+                          >
+                            <option value="">Escolha a cidade</option>
+                            {origensPossiveis.map((l) => (
+                              <option key={l.id} value={l.id}>
+                                {encontrarRotaMotorista(trechosAtivos.find((t) => t.de === l.id)?.rotaId ?? "")?.nome.replace(/, ou Kyoto → Osaka/, "") ?? l.nome}
+                              </option>
+                            ))}
+                          </select>
+                          <IconeSeta />
+                        </span>
+                      </label>
+                    ) : tipoServico === "interestadual" ? (
                       <div className="mt-4 grid gap-3 sm:grid-cols-2">
                         <label className="block">
                           <span className="mb-1.5 block text-xs font-medium text-black/60">Saindo de</span>
@@ -981,7 +1258,7 @@ export default function TransportePrivadoPage() {
                               <option value="">{origem ? "Escolha o destino" : "Escolha a origem primeiro"}</option>
                               {destinosPossiveis.map((t) => (
                                 <option key={t.para} value={t.para}>
-                                  {t.para === t.de ? `${nomeLocal(t.para)} (dentro da cidade)` : nomeLocal(t.para)}
+                                  {nomeLocal(t.para)}
                                 </option>
                               ))}
                             </select>
@@ -1053,6 +1330,34 @@ export default function TransportePrivadoPage() {
                       </label>
                     </div>
 
+                    {/* Endereços completos dos pontos A e B (Wilson, 06/out/2026). */}
+                    <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                      <label className="block min-w-0">
+                        <span className="mb-1.5 block text-xs font-medium text-black/60">
+                          {tipoServico === "passeio" ? "Endereço de embarque (ponto A)" : "Endereço completo de partida (ponto A)"}
+                        </span>
+                        <input
+                          type="text"
+                          value={novoEnderecoA}
+                          onChange={(e) => setNovoEnderecoA(e.target.value)}
+                          placeholder="Ex.: Park Hyatt Tokyo, 3-7-1-2 Nishishinjuku, Shinjuku"
+                          className="h-12 w-full min-w-0 rounded-xl border border-black/15 bg-white px-3.5 text-base text-black focus:border-[#2f80c9] focus:outline-none md:text-[15px]"
+                        />
+                      </label>
+                      <label className="block min-w-0">
+                        <span className="mb-1.5 block text-xs font-medium text-black/60">
+                          {tipoServico === "passeio" ? "Endereço de retorno (opcional — se diferente)" : "Endereço completo de destino (ponto B)"}
+                        </span>
+                        <input
+                          type="text"
+                          value={novoEnderecoB}
+                          onChange={(e) => setNovoEnderecoB(e.target.value)}
+                          placeholder="Nome do local + endereço"
+                          className="h-12 w-full min-w-0 rounded-xl border border-black/15 bg-white px-3.5 text-base text-black focus:border-[#2f80c9] focus:outline-none md:text-[15px]"
+                        />
+                      </label>
+                    </div>
+
                     {/* Resultado: preço do trecho + adicionar */}
                     <div className="mt-4 flex min-h-[64px] items-center justify-between gap-4 border-t border-black/[0.08] pt-4">
                       {rotaEscolhida ? (
@@ -1065,18 +1370,24 @@ export default function TransportePrivadoPage() {
                               {formatarDataCurta(dataNovoServico)} · {VEICULO_CURTO[veiculoNovoServico].nome} ·{" "}
                               {rotaEscolhida.minutosLivres != null ? `até ${rotaEscolhida.minutosLivres} min incluídos` : "10 horas com motorista"}
                             </p>
+                            <p className="mt-0.5 text-xs text-black/55">
+                              Trajeto estimado: {duracaoRota(rotaEscolhida.id, rotaEscolhida.categoria)}
+                              {rotaEscolhida.categoria !== "tour-dia-inteiro" ? ` ${DESLOCAMENTO_ATE_CARRO}` : ""}
+                            </p>
+                            {!enderecosNovosOk && <p className="mt-0.5 text-xs text-amber-700">Informe o endereço completo{tipoServico === "passeio" ? " de embarque" : " de partida e de destino"} para adicionar.</p>}
                           </div>
                           <button
                             type="button"
                             onClick={adicionarRotaEscolhida}
-                            className="h-11 shrink-0 rounded-full bg-[#1f6fb8] px-6 text-sm font-semibold text-white shadow-sm transition hover:bg-[#2f80c9]"
+                            disabled={!enderecosNovosOk}
+                            className="h-11 shrink-0 rounded-full bg-[#1f6fb8] px-6 text-sm font-semibold text-white shadow-sm transition hover:bg-[#2f80c9] disabled:cursor-not-allowed disabled:opacity-40"
                           >
                             Adicionar
                           </button>
                         </>
                       ) : (
                         <p className="text-sm text-black/45">
-                          {tipoServico !== "passeio" ? "Escolha origem e destino para ver o valor." : "Escolha um passeio para ver o valor."}
+                          {tipoServico === "cidade" ? "Escolha a cidade para ver o valor." : tipoServico === "interestadual" ? "Escolha origem e destino para ver o valor." : "Escolha um passeio para ver o valor."}
                         </p>
                       )}
                     </div>
@@ -1101,6 +1412,10 @@ export default function TransportePrivadoPage() {
                                 <IconeResumo src={ICONE_CATEGORIA_ROTA[rota.categoria]} />
                                 <div className="min-w-0 flex-1">
                                   <p className="text-sm text-black/85">{rota.nome}</p>
+                                  <p className="mt-0.5 text-xs text-black/55">
+                                    A: {s.enderecoPartida} → B: {s.enderecoDestino}
+                                  </p>
+                                  <p className="text-xs text-black/45">Trajeto estimado: {duracaoRota(s.rotaId, rota.categoria)}</p>
                                   <div className="mt-2 flex flex-wrap items-center gap-2">
                                     <span className="relative block">
                                       <select
@@ -1162,11 +1477,11 @@ export default function TransportePrivadoPage() {
                   <div className="mt-8 grid gap-5 border-t border-black/10 pt-6 sm:grid-cols-2">
                     <div>
                       <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-black/70">Incluído</p>
-                      <p className="mt-1.5 text-sm text-black/65">Impostos, combustível, pedágios e estacionamento.</p>
+                      <p className="mt-1.5 text-sm text-black/65">{INCLUIDO_TRANSPORTE.join(" · ")}.</p>
                     </div>
                     <div>
                       <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-black/70">Não incluído</p>
-                      <p className="mt-1.5 text-sm text-black/65">Deslocamentos intermunicipais fora das rotas contratadas.</p>
+                      <p className="mt-1.5 text-sm text-black/65">{NAO_INCLUIDO_TRANSPORTE.join(" · ")}.</p>
                     </div>
                   </div>
 
@@ -1300,6 +1615,17 @@ export default function TransportePrivadoPage() {
                         className={classeInput(!!mostrarErro("whatsapp"))}
                       />
                     </Campo>
+                    <Campo rotulo="CPF (para o contrato)" erro={(tocados.cpf || tentouAvancarDados) && !cpfValido ? "Informe um CPF com 11 dígitos." : null}>
+                      <input
+                        type="text"
+                        inputMode="numeric"
+                        value={cpf}
+                        onChange={(e) => setCpf(e.target.value)}
+                        onBlur={() => tocar("cpf")}
+                        placeholder="000.000.000-00"
+                        className={classeInput((tocados.cpf || tentouAvancarDados) && !cpfValido)}
+                      />
+                    </Campo>
                     <Campo rotulo="Número do voo (opcional)">
                       <input
                         type="text"
@@ -1425,7 +1751,7 @@ export default function TransportePrivadoPage() {
                     aria-label="Termos e Condições do transporte privado"
                     className="mt-2 max-h-64 overflow-y-auto rounded-xl border border-black/10 bg-black/[0.02] px-4 py-3 text-[13px] leading-6 text-black/70 focus:outline-none focus:ring-2 focus:ring-[#2f80c9]/30"
                   >
-                    <TextoTermosTransporte />
+                    <TextoTermosTransporte pagamentoOnline />
                   </div>
 
                   <label className="mt-4 flex min-h-[44px] cursor-pointer items-start gap-3">
@@ -1440,10 +1766,59 @@ export default function TransportePrivadoPage() {
                   {tentouEnviar && !termosAceitos && (
                     <p className="ml-8 text-xs text-red-600">Aceite os Termos e Condições para solicitar o transporte.</p>
                   )}
-                  <p className="mt-4 text-xs leading-5 text-black/50">
-                    Nenhum valor é cobrado agora. Nossa equipe confirma disponibilidade, horários e forma de pagamento com
-                    você pelo WhatsApp.
-                  </p>
+
+                  {/* Contrato gerado automaticamente + assinatura eletrônica (Wilson, 06/out/2026). */}
+                  <p className="mt-8 text-[11px] font-semibold uppercase tracking-[0.14em] text-black/70">Contrato de prestação de serviço</p>
+                  <div
+                    tabIndex={0}
+                    aria-label="Contrato de transporte privado"
+                    className="mt-2 max-h-80 overflow-y-auto rounded-xl border border-black/10 bg-white px-4 py-3 text-[12.5px] leading-6 text-black/75 focus:outline-none focus:ring-2 focus:ring-[#2f80c9]/30"
+                  >
+                    <p className="font-semibold text-black">CONTRATO DE PRESTAÇÃO DE SERVIÇO DE TRANSPORTE PRIVADO NO JAPÃO</p>
+                    {gerarContratoTransporte(dadosContrato).map((cl) => (
+                      <div key={cl.titulo}>
+                        <p className="mt-3 font-medium text-black/85">{cl.titulo}</p>
+                        {cl.paragrafos.map((par, i) => (
+                          <p key={i} className="mt-1">
+                            {par}
+                          </p>
+                        ))}
+                      </div>
+                    ))}
+                  </div>
+                  <div className="mt-4 rounded-xl border border-black/10 p-4">
+                    <Campo
+                      rotulo="Assinatura eletrônica — digite seu nome completo"
+                      erro={tentouEnviar && !assinaturaValida ? `Digite exatamente o nome informado nos seus dados (${nome || "nome completo"}).` : null}
+                      ajuda="Deve ser igual ao nome informado nos seus dados."
+                    >
+                      <input
+                        type="text"
+                        value={assinaturaNome}
+                        onChange={(e) => setAssinaturaNome(e.target.value)}
+                        autoComplete="off"
+                        className={`${classeInput(tentouEnviar && !assinaturaValida)} font-serif italic`}
+                      />
+                    </Campo>
+                    <label className="mt-3 flex min-h-[44px] cursor-pointer items-start gap-3">
+                      <input
+                        type="checkbox"
+                        checked={contratoAssinado}
+                        onChange={(e) => setContratoAssinado(e.target.checked)}
+                        className="mt-0.5 h-5 w-5 shrink-0 rounded border-black/30 text-[#2f80c9] focus:ring-[#2f80c9]"
+                      />
+                      <span className="text-sm text-black/85">
+                        Li o contrato acima e o assino eletronicamente. Entendo que ficam registrados data, hora, IP e um código de
+                        integridade do texto, e que recebo uma cópia por e-mail.
+                      </span>
+                    </label>
+                  </div>
+
+                  <div className="mt-4 rounded-xl border border-amber-300/70 bg-amber-50 px-4 py-3 text-xs leading-5 text-amber-950">
+                    <strong>Pagamento online:</strong> ao assinar, a página segura da Stone abre em uma nova aba (Pix ou cartão de
+                    crédito emitido no Brasil, até 12x). O serviço é confirmado após o pagamento e a disponibilidade do fornecedor —
+                    sem disponibilidade, devolvemos o valor integral.
+                  </div>
                   {erro && <p className="mt-4 text-sm text-red-600">{erro}</p>}
                 </section>
               )}
