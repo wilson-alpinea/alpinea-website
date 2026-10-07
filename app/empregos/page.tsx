@@ -255,6 +255,9 @@ type Destaque = {
   // Texto escrito pelo site por cima da foto (com escurecimento à
   // esquerda) — para artes enviadas sem texto (Wilson, 07/out/2026).
   sobreposto?: { kicker: string; titulo: string; subtitulo?: string };
+  // Página própria aberta pelo banner (landing de recrutamento) — tem
+  // prioridade sobre filtroRegiao.
+  href?: string;
 };
 
 const DESTAQUES: Destaque[] = [
@@ -266,9 +269,8 @@ const DESTAQUES: Destaque[] = [
     titulo: "Trabalhe e More em Echizen",
     imagem: "/images/empregos-destaque-echizen-murata.webp",
     sobreposto: { kicker: "Fukui · Japão", titulo: "Trabalhe e More em Echizen", subtitulo: "Montanhas, rio e cerejeiras ao lado da fábrica." },
-    // Ainda não há vaga em Fukui no catálogo (a Kousei Aluminum/Fukui
-    // ficou de fora por falta de ficha) — quando entrar, é só preencher
-    // filtroRegiao: "Fukui" que o banner passa a levar direto pras vagas.
+    // Abre a landing de recrutamento Fukui Murata (Wilson, 07/out/2026).
+    href: "/empregos/echizen",
   },
   {
     id: "working-holiday",
@@ -283,7 +285,7 @@ const DESTAQUES: Destaque[] = [
     id: "izumo",
     titulo: "Trabalhe e More em Izumo",
     imagem: "/images/empregos-destaque-izumo-murata.webp",
-    filtroRegiao: "Shimane",
+    href: "/empregos/izumo",
     sobreposto: { kicker: "Shimane · Japão", titulo: "Trabalhe e More em Izumo", subtitulo: "A cidade do Grande Santuário de Izumo." },
   },
   { id: "placeholder-4", titulo: "Novo destaque", subtitulo: "Destaque em preparação" },
@@ -332,7 +334,7 @@ function CarrosselDestaques({ onAbrir }: { onAbrir: (d: Destaque) => void }) {
         style={{ transform: `translateX(-${indice * 100}%)` }}
       >
         {DESTAQUES.map((d, i) => {
-          const clicavel = Boolean(d.filtroRegiao);
+          const clicavel = Boolean(d.href || d.filtroRegiao);
           const conteudo = d.imagem ? (
             <div className="relative aspect-[16/10] w-full sm:aspect-[1918/820]">
               <Image
@@ -356,9 +358,9 @@ function CarrosselDestaques({ onAbrir }: { onAbrir: (d: Destaque) => void }) {
                       {d.sobreposto.titulo}
                     </p>
                     {d.sobreposto.subtitulo && <p className="mt-2 hidden text-sm text-white/80 sm:block md:text-base">{d.sobreposto.subtitulo}</p>}
-                    {d.filtroRegiao && (
+                    {(d.href || d.filtroRegiao) && (
                       <span className="mt-4 inline-flex w-fit items-center gap-1.5 rounded-full bg-white px-4 py-2 text-xs font-semibold uppercase tracking-[0.12em] text-[#0A2540]">
-                        Ver vagas →
+                        {d.href ? "Conhecer a vaga →" : "Ver vagas →"}
                       </span>
                     )}
                   </div>
@@ -384,7 +386,11 @@ function CarrosselDestaques({ onAbrir }: { onAbrir: (d: Destaque) => void }) {
               role="group"
               aria-label={`${i + 1} de ${total}: ${d.titulo}`}
             >
-              {clicavel ? (
+              {d.href ? (
+                <Link href={d.href} tabIndex={i === indice ? 0 : -1} className="block w-full">
+                  {conteudo}
+                </Link>
+              ) : clicavel ? (
                 <button type="button" onClick={() => onAbrir(d)} tabIndex={i === indice ? 0 : -1} className="block w-full text-left">
                   {conteudo}
                 </button>
