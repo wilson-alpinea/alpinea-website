@@ -5,8 +5,8 @@
 // custe 1 real, para teste deixe claro que esse produto é somente para
 // testes e não tem nenhuma relação com os serviços a venda no site".
 //
-// Só aparece quando a página é aberta com ?teste=1 no endereço (decisão do
-// Wilson via AskUserQuestion) — o visitante comum nunca vê. Usado em
+// Antes só aparecia com ?teste=1 no endereço; desde 07/out/2026 aparece
+// sempre (Wilson: "tem que ter um serviço por 1 real sem url especial") — o visitante comum nunca vê. Usado em
 // /produtos/jrpass, /produtos/seguro-viagem e /produtos/cambio, as páginas
 // que cobram de verdade pela Stone/Pagar.me. O valor (R$ 1,00) é fixo no
 // servidor (/api/pagamento-teste) — o navegador não escolhe o preço.
@@ -34,14 +34,19 @@ function modoTesteNoServidor() {
   return false;
 }
 
-/** true quando a página foi aberta com ?teste=1 (pedido de teste com o
- * fluxo completo — JR Pass e Seguro Viagem fictícios, Wilson 06/out/2026). */
+/** Teste de R$ 1 sempre disponível (pedido de teste com o fluxo completo —
+ * JR Pass e Seguro Viagem fictícios, Wilson 06–07/out/2026). */
+// Wilson, 07/out/2026: "teste não funciona, já tentamos anteriormente, tem
+// que ter um serviço por 1 real sem url especial" — o teste deixou de
+// depender de ?teste=1: fica sempre disponível na página. (A leitura do
+// ?teste=1 continua só para manter o retorno da Stone compatível.)
 export function useModoTeste(): boolean {
-  return useSyncExternalStore(assinarNada, lerModoTeste, modoTesteNoServidor);
+  useSyncExternalStore(assinarNada, lerModoTeste, modoTesteNoServidor);
+  return true;
 }
 
 /** Aviso + atalho do pedido FICTÍCIO com o fluxo completo (formulário real,
- * CRM, e-mails, Stone) cobrando R$ 1,00. Só aparece com ?teste=1. */
+ * CRM, e-mails, Stone) cobrando R$ 1,00. Sempre visível; desmarcado por padrão. */
 export function PainelPedidoTeste({
   ativo,
   marcado,
@@ -74,7 +79,10 @@ export function PainelPedidoTeste({
         </label>
         <button
           type="button"
-          onClick={onPreencher}
+          onClick={() => {
+            onMarcar(true);
+            onPreencher();
+          }}
           className="h-10 rounded-full bg-amber-600 px-5 text-sm font-semibold text-white transition hover:bg-amber-700"
         >
           Preencher com dados fictícios

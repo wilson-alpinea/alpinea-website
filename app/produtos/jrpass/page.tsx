@@ -186,7 +186,7 @@ export default function JrPassPage() {
   // JR Pass fictício de teste (?teste=1) — Wilson, 06/out/2026: "criar um
   // jr pass fictício de teste para podermos testar". O servidor fixa R$ 1.
   const modoTeste = useModoTeste();
-  const [marcarTeste, setMarcarTeste] = useState(true);
+  const [marcarTeste, setMarcarTeste] = useState(false);
   const pedidoTeste = modoTeste && marcarTeste;
   const [status, setStatus] = useState<"form" | "enviando" | "enviado" | "erro">("form");
   // Link da Stone aberto em nova aba (Wilson, 01/out/2026).

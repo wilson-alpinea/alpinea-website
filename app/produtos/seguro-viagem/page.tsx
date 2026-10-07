@@ -123,7 +123,7 @@ export default function SeguroViagemPage() {
   const [paisesAdicionais, setPaisesAdicionais] = useState<string[]>([]);
   // Seguro fictício de teste (?teste=1) — fluxo completo cobrando R$ 1.
   const modoTeste = useModoTeste();
-  const [marcarTeste, setMarcarTeste] = useState(true);
+  const [marcarTeste, setMarcarTeste] = useState(false);
   const pedidoTeste = modoTeste && marcarTeste;
   const [nome, setNome] = useState("");
   // Nome de quem paga, quando diferente do viajante principal — mesma
