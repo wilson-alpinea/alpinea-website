@@ -252,13 +252,20 @@ type Destaque = {
   // Filtro aplicado ao clicar (leva pra lista de vagas); sem isso, o
   // banner não é clicável.
   filtroRegiao?: string;
+  // Texto escrito pelo site por cima da foto (com escurecimento à
+  // esquerda) — para artes enviadas sem texto (Wilson, 07/out/2026).
+  sobreposto?: { kicker: string; titulo: string; subtitulo?: string };
 };
 
 const DESTAQUES: Destaque[] = [
   {
+    // Banner novo, sem texto na arte (Wilson, 07/out/2026: "novo banner
+    // para Trabalhe e More em Echizen [...] adicione o texto por cima da
+    // imagem e faça aquele escurecimento").
     id: "echizen",
-    titulo: "Já pensou em morar e trabalhar em Echizen?",
-    imagem: "/images/empregos-destaque-echizen.jpg",
+    titulo: "Trabalhe e More em Echizen",
+    imagem: "/images/empregos-destaque-echizen-murata.webp",
+    sobreposto: { kicker: "Fukui · Japão", titulo: "Trabalhe e More em Echizen", subtitulo: "Montanhas, rio e cerejeiras ao lado da fábrica." },
     // Ainda não há vaga em Fukui no catálogo (a Kousei Aluminum/Fukui
     // ficou de fora por falta de ficha) — quando entrar, é só preencher
     // filtroRegiao: "Fukui" que o banner passa a levar direto pras vagas.
@@ -270,7 +277,15 @@ const DESTAQUES: Destaque[] = [
     // link por enquanto — ainda não há página/vagas de Working Holiday.
     imagem: "/images/empregos-destaque-working-holiday.jpg",
   },
-  { id: "placeholder-3", titulo: "Cidades do interior com moradia inclusa", subtitulo: "Destaque em preparação" },
+  {
+    // Wilson, 07/out/2026: "e no segundo, Trabalhe e More em Izumo". Leva
+    // para as vagas de Shimane (Murata Izumo).
+    id: "izumo",
+    titulo: "Trabalhe e More em Izumo",
+    imagem: "/images/empregos-destaque-izumo-murata.webp",
+    filtroRegiao: "Shimane",
+    sobreposto: { kicker: "Shimane · Japão", titulo: "Trabalhe e More em Izumo", subtitulo: "A cidade do Grande Santuário de Izumo." },
+  },
   { id: "placeholder-4", titulo: "Novo destaque", subtitulo: "Destaque em preparação" },
 ];
 
@@ -328,6 +343,27 @@ function CarrosselDestaques({ onAbrir }: { onAbrir: (d: Destaque) => void }) {
                 className="object-cover object-[30%_50%] sm:object-center"
                 priority={i === 0}
               />
+              {d.sobreposto && (
+                <>
+                  {/* Escurecimento: forte à esquerda (texto), some antes das pessoas. */}
+                  <div
+                    aria-hidden="true"
+                    className="absolute inset-0 bg-gradient-to-t from-[#0A2540]/90 via-[#0A2540]/35 to-transparent sm:bg-gradient-to-r sm:from-[#0A2540]/85 sm:via-[#0A2540]/45 sm:via-35% sm:to-transparent sm:to-60%"
+                  />
+                  <div className="absolute inset-x-0 bottom-0 px-6 pb-6 sm:inset-y-0 sm:right-auto sm:flex sm:max-w-[52%] sm:flex-col sm:justify-center sm:px-12 sm:pb-0 md:px-14">
+                    <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-white/80">{d.sobreposto.kicker}</p>
+                    <p className={`${display.className} mt-2 text-[28px] font-medium leading-[1.08] text-white drop-shadow-[0_2px_12px_rgba(0,0,0,0.35)] sm:text-4xl md:text-5xl`}>
+                      {d.sobreposto.titulo}
+                    </p>
+                    {d.sobreposto.subtitulo && <p className="mt-2 hidden text-sm text-white/80 sm:block md:text-base">{d.sobreposto.subtitulo}</p>}
+                    {d.filtroRegiao && (
+                      <span className="mt-4 inline-flex w-fit items-center gap-1.5 rounded-full bg-white px-4 py-2 text-xs font-semibold uppercase tracking-[0.12em] text-[#0A2540]">
+                        Ver vagas →
+                      </span>
+                    )}
+                  </div>
+                </>
+              )}
             </div>
           ) : (
             <div className="relative flex aspect-[16/10] w-full flex-col justify-center bg-gradient-to-br from-[#0A2540] to-[#1c4a74] px-8 sm:aspect-[1918/820] sm:px-14">
