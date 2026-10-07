@@ -1,40 +1,26 @@
-// Conteúdo das landing pages de recrutamento Murata — Wilson, 07/out/2026:
-// "agora vamos criar o site que irá abrir ao clicar nesses dois banners,
-// teremos 1 pra Echizen e outro para Izumo" (briefings completos enviados
-// por ele na mesma mensagem). Renderizadas por
-// app/components/empregos/LandingMurata.tsx em /empregos/izumo e
-// /empregos/echizen.
+// Conteúdo das landing pages de recrutamento Murata (/empregos/izumo e
+// /empregos/echizen), renderizadas por app/components/empregos/LandingMurata.tsx.
 //
-// COMPLIANCE (regra do Wilson, vale para qualquer edição deste arquivo):
+// 07/out/2026 — v2, pedido do Wilson: "reformule a pagina, está fora dos
+// nossos padrões (ex.: /produtos/passagens-aereas), falta o logo da empresa
+// e tem erros graves como dizer Jutsai, comunicação sobre a Fujiarte etc.
+// Simplifique a página e use as imagens" (fotos de Izumo enviadas por ele).
+//
+// COMPLIANCE (vale para qualquer edição deste arquivo):
+// - A marca é AJISAI. Não citar "Jutsai" nem a Fujiarte na página.
 // - Nunca mencionar bônus trimestral, bônus/prêmio de produtividade,
 //   prêmio de assiduidade ou valores não fornecidos.
 // - Nunca afirmar moradia gratuita, emprego/visto/embarque/aprovação
 //   garantidos.
-// - Custo zero sempre "para candidatos elegíveis"; nunca linguagem de
-//   empréstimo/financiamento nem "devolver depois".
-// - O Auxílio Embarque é da Jutsai — nunca atribuir à Murata/Fujiarte.
-
-export type IconeLanding =
-  | "aviao"
-  | "documento"
-  | "assessoria"
-  | "mala"
-  | "relogio"
-  | "fabrica"
-  | "casa"
-  | "chip"
-  | "natureza"
-  | "mar"
-  | "montanha"
-  | "santuario"
-  | "onsen"
-  | "comercio"
-  | "saude"
-  | "transporte"
-  | "cidade"
-  | "kit";
+// - Custo zero sempre "para candidatos elegíveis" e "sujeito à análise e
+//   disponibilidade"; nunca linguagem de empréstimo/financiamento nem
+//   "devolver depois".
+// - Auxílio Embarque é uma campanha da Ajisai — nunca chamar de salário nem
+//   de bônus da Murata. Não sugerir relação societária entre as empresas.
 
 export type CampoFormulario = "estadoSeparado" | "ondeEsta";
+
+type Imagem = { src: string; alt: string };
 
 export type ConfigLanding = {
   slug: "izumo" | "echizen";
@@ -44,74 +30,43 @@ export type ConfigLanding = {
   provincia: string;
   fabrica: string;
   meta: { titulo: string; descricao: string };
-  hero: {
-    eyebrow: string;
-    titulo: string;
-    subtitulo: string;
-    ctaPrimario: string;
-    ctaSecundario: string;
-    ctaSecundarioAlvo: string;
-    imagem: string;
-    imagemAlt: string;
-    // Posição do recorte no celular (a foto é larga).
-    posicaoMobile: string;
-  };
-  destaques: { kicker: string; titulo: string; texto?: string; cards: { icone: IconeLanding; titulo: string; texto: string }[] };
+  hero: { kicker: string; titulo: string; subtitulo: string; imagem: Imagem };
+  // Fatos-chave: aparecem no cartão "Resumo da vaga" (lateral no desktop).
+  resumo: { rotulo: string; valor: string; detalhe?: string }[];
   vaga: {
     titulo: string;
-    texto?: string;
-    imagem: string;
-    imagemAlt: string;
+    texto: string;
+    imagem: Imagem;
+    imagemDetalhe?: Imagem;
     itens: { rotulo: string; valor: string }[];
-    usos: string[];
   };
   salario: {
-    titulo: string;
     valor: string;
     legenda: string;
     progressao?: { faixa: string; valor: string }[];
-    notaProgressao?: string;
-    adicionais: { rotulo: string; valor?: string }[];
-    textoAdicionais: string;
+    adicionais: string;
   };
-  turnos: {
-    titulo: string;
-    texto: string;
-    escala: ("trabalho" | "folga")[];
-    alternado: boolean;
-    unidades?: { nome: string; horarios: { rotulo: string; horario: string }[] }[];
-    nota: string;
-  };
-  custoZero: { titulo: string; condicoes: string[]; cta?: string };
-  reentry: { titulo: string; texto: string };
-  moradia: {
-    titulo: string;
-    texto: string;
-    tipos: string[];
-    valores: { rotulo: string; valor: string }[];
-    notas: string[];
-  };
-  kit?: { titulo: string; texto: string; itens: string[] };
+  turnos: { texto: string; unidades?: { nome: string; diurno: string; noturno: string }[]; imagem?: Imagem };
+  custoZero: { titulo: string; texto: string; itens: string[]; imagem?: Imagem };
+  reentry: string;
+  moradia: { texto: string; valores: { rotulo: string; valor: string }[]; notas: string[]; imagem?: Imagem };
   cidadeSecao: {
-    id: string;
-    kicker: string;
     titulo: string;
-    texto: string[];
-    imagem: string;
-    imagemAlt: string;
-    blocos: { icone: IconeLanding; titulo: string; texto: string }[];
+    texto: string;
+    imagem: Imagem;
+    destaques: { titulo: string; texto: string }[];
+    // Bloco extra com foto (ex.: transporte até a fábrica em Echizen).
+    extra?: { imagem: Imagem; titulo: string; texto: string };
   };
-  apoio?: { titulo: string; cards: { icone: IconeLanding; titulo: string; texto: string }[] };
-  processo: { titulo: string; passos: { titulo: string; texto?: string }[]; cta: string };
-  murata?: { titulo: string; texto: string };
+  processo: string[];
   faq: { pergunta: string; resposta: string }[];
-  final: { titulo: string; texto: string; cta: string; rodape: string };
-  formulario: { titulo: string; texto: string; botao: string; campos: CampoFormulario[] };
+  formulario: { botao: string; campos: CampoFormulario[] };
 };
 
-const ESCALA_4X2: ("trabalho" | "folga")[] = ["trabalho", "trabalho", "trabalho", "trabalho", "folga", "folga"];
-
 export const AUXILIO_EMBARQUE_BRL = "R$ 1.000";
+export const CONDICAO_CUSTO_ZERO = "Para candidatos elegíveis, sujeito à análise e disponibilidade.";
+
+const IMG_EMBARQUE: Imagem = { src: "/images/empregos/izumo-embarque.webp", alt: "Casal com malas caminhando no saguão de um aeroporto no Japão" };
 
 export const LANDING_IZUMO: ConfigLanding = {
   slug: "izumo",
@@ -121,147 +76,96 @@ export const LANDING_IZUMO: ConfigLanding = {
   provincia: "Shimane",
   fabrica: "Izumo Murata Manufacturing",
   meta: {
-    titulo: "Trabalhe e More em Izumo — Murata | Recrutamento Jutsai",
+    titulo: "Trabalhe e More em Izumo — Murata | Ajisai Empregos",
     descricao:
-      "Vaga na Izumo Murata Manufacturing, em Shimane, com custo inicial zero de embarque para candidatos elegíveis: passagem, documentação e suporte incluídos.",
+      "Vaga na Izumo Murata Manufacturing, em Shimane, com custo inicial zero de embarque para candidatos elegíveis: passagem, documentação e preparação para o embarque.",
   },
   hero: {
-    eyebrow: "Izumo · Shimane · Japão",
-    titulo: "Seu próximo capítulo pode começar no Japão.",
-    subtitulo:
-      "Trabalhe na Murata em Izumo com passagem aérea, documentação e suporte de embarque incluídos para candidatos elegíveis.",
-    ctaPrimario: "Quero saber se sou elegível",
-    ctaSecundario: "Conhecer a vaga",
-    ctaSecundarioAlvo: "vaga",
-    imagem: "/images/empregos/lp-izumo-hero.webp",
-    imagemAlt: "Izumo, com o Grande Santuário e a fábrica da Murata entre montanhas, e operadores na linha de produção",
-    posicaoMobile: "object-[22%_50%]",
+    kicker: "Izumo · Shimane",
+    titulo: "Trabalhe e more em Izumo",
+    subtitulo: "Operador na Murata, com turno fixo e custo inicial zero de embarque para candidatos elegíveis.",
+    imagem: { src: "/images/empregos/izumo-fabrica.webp", alt: "Fábrica entre campos de arroz e montanhas em Izumo, Shimane" },
   },
-  destaques: {
-    kicker: "Por que esta vaga é especial",
-    titulo: "Uma das nossas principais oportunidades no Japão.",
-    texto: "Izumo reúne o que mais pesa na decisão de quem vai começar no Japão: embarque sem custo inicial para candidatos elegíveis, turno fixo e uma operação de grande porte.",
-    cards: [
-      { icone: "aviao", titulo: "Custo inicial zero", texto: "Passagem aérea, assessoria e preparação documental incluídas para candidatos elegíveis." },
-      { icone: "relogio", titulo: "Turno fixo", texto: "Um dos grandes diferenciais de Izumo: a possibilidade de trabalhar em turno fixo, com uma rotina mais previsível." },
-      { icone: "fabrica", titulo: "Empresa japonesa de grande porte", texto: "Trabalho na operação da Murata, referência global em componentes eletrônicos." },
-      { icone: "casa", titulo: "Moradia organizada", texto: "A Fujiarte organiza apartamentos para solteiros, casais ou famílias, conforme disponibilidade." },
-    ],
-  },
+  resumo: [
+    { rotulo: "Salário inicial", valor: "¥1.500/h", detalhe: "+ adicionais legais" },
+    { rotulo: "Turno", valor: "Fixo, escala 4×2", detalhe: "sem alternar dia e noite" },
+    { rotulo: "Custo inicial", valor: "R$ 0", detalhe: "para candidatos elegíveis" },
+    { rotulo: "Moradia", valor: "Organizada", detalhe: "aluguel a partir de ¥45.000" },
+  ],
   vaga: {
-    titulo: "Trabalhe na fabricação de componentes que estão em milhões de produtos.",
-    imagem: "/images/empregos/lp-izumo-fabrica.webp",
-    imagemAlt: "Operadores com uniforme da Murata na linha de produção",
+    titulo: "Operador de máquinas e inspeção",
+    texto:
+      "Produção de componentes eletrônicos — principalmente capacitores cerâmicos, usados em smartphones, automóveis, eletrodomésticos e equipamentos diversos.",
+    imagem: { src: "/images/empregos/izumo-operador.webp", alt: "Operador trabalhando em máquina de produção de componentes eletrônicos" },
+    imagemDetalhe: { src: "/images/empregos/izumo-componentes.webp", alt: "Capacitores cerâmicos multicamada em close" },
     itens: [
+      { rotulo: "Empresa", valor: "Izumo Murata Manufacturing" },
+      { rotulo: "Local", valor: "Izumo, Shimane" },
       { rotulo: "Função", valor: "Operador de máquinas / inspeção" },
-      { rotulo: "Setor", valor: "Fabricação de componentes eletrônicos" },
-      { rotulo: "Produto", valor: "Principalmente capacitores cerâmicos" },
-      { rotulo: "Local", valor: "Izumo Murata Manufacturing — Izumo, Shimane" },
-      { rotulo: "Contratação", valor: "Fujiarte, com alocação na operação da Murata" },
+      { rotulo: "Produto", valor: "Capacitores cerâmicos" },
     ],
-    usos: ["Smartphones", "Automóveis", "Eletrodomésticos", "Equipamentos diversos"],
   },
   salario: {
-    titulo: "Salário inicial",
     valor: "¥1.500/h",
-    legenda: "salário inicial",
-    adicionais: [{ rotulo: "Hora extra" }, { rotulo: "Trabalho noturno" }, { rotulo: "Dias de descanso legal" }],
-    textoAdicionais: "Além do valor por hora, existem os adicionais previstos na lei japonesa, aplicados conforme a jornada.",
+    legenda: "Salário inicial",
+    adicionais: "Mais os adicionais previstos na lei japonesa (hora extra, trabalho noturno e dias de descanso legal), conforme a jornada.",
   },
   turnos: {
-    titulo: "Uma rotina mais previsível.",
-    texto: "Em Izumo existem opções de turno fixo — sem alternar entre dia e noite. A escala de referência é de 4 dias de trabalho para 2 de folga.",
-    escala: ESCALA_4X2,
-    alternado: false,
-    nota: "Horários e turno definidos na alocação, conforme a vaga.",
+    texto: "Em Izumo há opções de turno fixo, sem alternar entre dia e noite: 4 dias de trabalho para 2 de folga. Horário definido na alocação.",
   },
   custoZero: {
-    titulo: "Seu projeto de trabalhar no Japão não precisa começar com uma grande despesa.",
-    condicoes: ["O processo está sujeito à análise de elegibilidade, aprovação da vaga e disponibilidade."],
+    titulo: "Custo inicial zero",
+    texto: "Seu projeto no Japão não precisa começar com uma grande despesa.",
+    itens: ["Passagem aérea", "Assessoria", "Documentação", "Preparação para o embarque"],
+    imagem: IMG_EMBARQUE,
   },
-  reentry: {
-    titulo: "Já tem reentry? Seu embarque pode acontecer ainda mais rápido.",
-    texto: "Candidatos elegíveis que já possuem reentry válido e estão prontos para embarcar podem receber o Auxílio Embarque Jutsai — uma campanha exclusiva da Jutsai.",
-  },
+  reentry:
+    "Já tem reentry válido e pode embarcar logo? Candidatos elegíveis podem receber o Auxílio Embarque Ajisai, conforme as condições da campanha vigente.",
   moradia: {
-    titulo: "Chegue ao Japão sabendo onde vai morar.",
-    texto: "A Fujiarte organiza a moradia em Izumo. O tipo de imóvel depende da composição familiar e da disponibilidade.",
-    tipos: ["1K", "1DK", "2DK", "2LDK", "3DK"],
+    texto: "Apartamentos para solteiros, casais ou famílias (1K a 3DK), conforme composição familiar e disponibilidade.",
     valores: [
       { rotulo: "1K / 1DK sem internet", valor: "¥45.000 – ¥55.000" },
       { rotulo: "1K / 1DK com internet", valor: "¥60.000 – ¥65.000" },
       { rotulo: "2DK ou maior", valor: "¥55.000 – ¥75.000" },
     ],
     notas: [
-      "Valores aproximados de aluguel mensal, de responsabilidade do trabalhador.",
-      "Água, luz e gás são cobrados separadamente.",
-      "Alguns imóveis já têm equipamentos domésticos; em outros, os equipamentos podem ser disponibilizados ou alugados conforme a modalidade do apartamento.",
+      "Aluguel mensal aproximado, pago pelo trabalhador. Água, luz e gás à parte.",
+      "Alguns imóveis já têm equipamentos domésticos; em outros, podem ser disponibilizados ou alugados.",
     ],
+    imagem: { src: "/images/empregos/izumo-moradia.webp", alt: "Apartamento 1K mobiliado no Japão, com cozinha compacta e quarto" },
   },
   cidadeSecao: {
-    id: "izumo",
-    kicker: "Viver em Izumo",
-    titulo: "Conheça Izumo.",
-    texto: [
-      "Izumo está em Shimane, região conhecida pela natureza, pela história e pela forte ligação com a mitologia japonesa.",
-      "A cidade tem supermercados, shopping centers, hospitais, restaurantes e toda a estrutura para a vida cotidiana.",
-    ],
-    imagem: "/images/empregos/lp-izumo-cidade.webp",
-    imagemAlt: "Vista de Izumo com o Grande Santuário de Izumo, campos de arroz e montanhas",
-    blocos: [
-      { icone: "santuario", titulo: "Izumo Taisha", texto: "Um dos santuários mais antigos e importantes do Japão." },
-      { icone: "montanha", titulo: "Natureza", texto: "Montanhas, campos de arroz e quatro estações." },
-      { icone: "mar", titulo: "Mar", texto: "Litoral do Mar do Japão a poucos minutos." },
-      { icone: "cidade", titulo: "Cidade", texto: "Centro urbano com serviços e transporte regional." },
-      { icone: "comercio", titulo: "Comércio", texto: "Supermercados, shoppings e restaurantes." },
-      { icone: "onsen", titulo: "Onsen", texto: "Águas termais para os dias de folga." },
+    titulo: "Viver em Izumo",
+    texto:
+      "Izumo fica em Shimane, região de natureza, história e forte ligação com a mitologia japonesa — com supermercados, shoppings, hospitais e restaurantes para o dia a dia.",
+    imagem: { src: "/images/empregos/izumo-cidade.webp", alt: "Rua residencial tranquila em Izumo, com casas e montanhas ao fundo" },
+    destaques: [
+      { titulo: "Izumo Taisha", texto: "Um dos santuários mais antigos do Japão" },
+      { titulo: "Natureza", texto: "Montanhas, mar e quatro estações" },
+      { titulo: "Onsen", texto: "Águas termais para os dias de folga" },
     ],
   },
-  processo: {
-    titulo: "Sua chegada, passo a passo.",
-    passos: [
-      { titulo: "Pré-análise", texto: "Verificamos elegibilidade e documentação." },
-      { titulo: "Processo seletivo", texto: "Seu perfil é apresentado para a oportunidade adequada." },
-      { titulo: "Documentação e preparação", texto: "A equipe acompanha as etapas necessárias." },
-      { titulo: "Embarque para o Japão", texto: "Após aprovação e liberação do processo." },
-    ],
-    cta: "Quero iniciar minha pré-análise",
-  },
+  processo: ["Pré-análise", "Processo seletivo", "Documentação e preparação", "Embarque para o Japão"],
   faq: [
     {
       pergunta: "Preciso pagar a passagem aérea?",
-      resposta: "Para candidatos elegíveis dentro desta campanha, a passagem faz parte da estrutura de embarque organizada sem cobrança inicial ao candidato.",
+      resposta: "Para candidatos elegíveis dentro desta campanha, a passagem faz parte da estrutura de embarque, sem cobrança inicial ao candidato.",
     },
     {
       pergunta: "O apartamento é gratuito?",
-      resposta: "Não. A moradia é organizada pela estrutura da operação, mas aluguel e despesas de consumo são de responsabilidade do trabalhador.",
+      resposta: "Não. A moradia é organizada, mas o aluguel e as despesas de consumo são de responsabilidade do trabalhador.",
     },
     {
       pergunta: "Posso ir com meu cônjuge?",
-      resposta: "Existem modalidades de apartamento para solteiros e famílias, mas a viabilidade deve ser analisada individualmente.",
+      resposta: "Existem apartamentos para solteiros e famílias, mas a viabilidade é analisada individualmente.",
     },
     { pergunta: "Preciso falar japonês?", resposta: "Os requisitos linguísticos serão avaliados de acordo com o perfil e a vaga." },
     {
-      pergunta: "Quem me contrata?",
-      resposta: "A contratação e a gestão do trabalhador no Japão são realizadas pela Fujiarte, com alocação na operação da Murata.",
-    },
-    {
       pergunta: "Tenho reentry. Tenho alguma vantagem?",
-      resposta: `Candidatos com documentação pronta podem ter um processo de embarque mais rápido e, quando elegíveis à campanha vigente, podem receber o Auxílio Embarque Jutsai de ${AUXILIO_EMBARQUE_BRL}.`,
+      resposta: `Com a documentação pronta, o embarque pode ser mais rápido e, quando elegível à campanha vigente, você pode receber o Auxílio Embarque Ajisai de ${AUXILIO_EMBARQUE_BRL}.`,
     },
   ],
-  final: {
-    titulo: "O Japão pode estar mais perto do que você imagina.",
-    texto: "Faça uma pré-análise gratuita e descubra se você pode participar da campanha.",
-    cta: "Verificar minha elegibilidade",
-    rodape: "Sem compromisso.",
-  },
-  formulario: {
-    titulo: "Pré-candidatura",
-    texto: "Leva menos de 1 minuto. Nossa equipe responde pelo WhatsApp.",
-    botao: "Enviar pré-candidatura",
-    campos: [],
-  },
+  formulario: { botao: "Enviar pré-candidatura", campos: [] },
 };
 
 export const LANDING_ECHIZEN: ConfigLanding = {
@@ -272,193 +176,107 @@ export const LANDING_ECHIZEN: ConfigLanding = {
   provincia: "Fukui",
   fabrica: "Fukui Murata Manufacturing",
   meta: {
-    titulo: "Trabalhe e More em Echizen — Murata | Recrutamento Jutsai",
+    titulo: "Trabalhe e More em Echizen — Murata | Ajisai Empregos",
     descricao:
-      "Vaga na Fukui Murata Manufacturing, em Echizen, com custo inicial zero de embarque para candidatos elegíveis: passagem, documentação e suporte incluídos.",
+      "Vaga na Fukui Murata Manufacturing, em Echizen, com custo inicial zero de embarque para candidatos elegíveis: passagem, documentação e preparação para o embarque.",
   },
   hero: {
-    eyebrow: "Trabalhe e more no Japão",
-    titulo: "Já pensou em morar e trabalhar em Echizen?",
-    subtitulo:
-      "Faça parte da operação da Murata em Fukui e embarque com passagem aérea, documentação e suporte incluídos para candidatos elegíveis.",
-    ctaPrimario: "Quero saber se posso participar",
-    ctaSecundario: "Conhecer Echizen",
-    ctaSecundarioAlvo: "echizen",
-    imagem: "/images/empregos/lp-echizen-hero.webp",
-    imagemAlt: "Echizen com rio, cerejeiras e montanhas ao lado da fábrica da Murata, e operadores na linha de produção",
-    posicaoMobile: "object-[24%_50%]",
+    kicker: "Echizen · Fukui",
+    titulo: "Trabalhe e more em Echizen",
+    subtitulo: "Operador na Murata, com salário que cresce com o tempo de casa e custo inicial zero de embarque para candidatos elegíveis.",
+    imagem: { src: "/images/empregos/echizen-fabrica.webp", alt: "Fábrica entre campos de arroz e montanhas com neblina em Echizen, Fukui" },
   },
-  destaques: {
-    kicker: "Uma nova rotina no Japão",
-    titulo: "Trabalho, moradia e estrutura para começar uma nova etapa.",
-    texto: "Trabalhe em uma grande indústria japonesa e construa uma nova rotina em uma das regiões mais tranquilas do Japão.",
-    cards: [
-      { icone: "aviao", titulo: "Passagem aérea incluída", texto: "Para candidatos elegíveis." },
-      { icone: "documento", titulo: "Assessoria documental", texto: "Acompanhamento durante toda a preparação." },
-      { icone: "casa", titulo: "Moradia organizada", texto: "Opções para solteiros, casais e famílias." },
-      { icone: "fabrica", titulo: "Grande indústria japonesa", texto: "Fabricação de componentes eletrônicos." },
-    ],
-  },
+  resumo: [
+    { rotulo: "Salário inicial", valor: "¥1.500/h", detalhe: "chega a ¥1.650/h" },
+    { rotulo: "Turno", valor: "Alternado, 4×2", detalhe: "diurno e noturno" },
+    { rotulo: "Custo inicial", valor: "R$ 0", detalhe: "para candidatos elegíveis" },
+    { rotulo: "Moradia", valor: "Organizada", detalhe: "aluguel a partir de ¥40.000" },
+  ],
   vaga: {
-    titulo: "A oportunidade: Fukui Murata Manufacturing.",
-    texto: "Produção de componentes eletrônicos usados em produtos do mundo inteiro.",
-    imagem: "/images/empregos/lp-echizen-fabrica.webp",
-    imagemAlt: "Operadores com uniforme da Murata na linha de produção",
+    titulo: "Operador de máquinas e inspeção",
+    texto: "Produção de componentes eletrônicos usados em smartphones, automóveis, aparelhos eletrônicos e equipamentos tecnológicos.",
+    imagem: { src: "/images/empregos/echizen-operador.webp", alt: "Operadora inspecionando placas eletrônicas em estação com microscópio" },
+    imagemDetalhe: { src: "/images/empregos/izumo-componentes.webp", alt: "Capacitores cerâmicos multicamada em close" },
     itens: [
       { rotulo: "Empresa", valor: "Fukui Murata Manufacturing" },
-      { rotulo: "Local", valor: "Echizen-shi, Fukui-ken" },
-      { rotulo: "Funções", valor: "Operador de máquinas · Inspeção" },
-      { rotulo: "Atividade", valor: "Produção de componentes eletrônicos" },
-      { rotulo: "Contratação", valor: "Fujiarte, com alocação na operação da Murata" },
+      { rotulo: "Local", valor: "Echizen, Fukui" },
+      { rotulo: "Função", valor: "Operador de máquinas / inspeção" },
+      { rotulo: "Produto", valor: "Componentes eletrônicos" },
     ],
-    usos: ["Smartphones", "Automóveis", "Aparelhos eletrônicos", "Equipamentos tecnológicos"],
   },
   salario: {
-    titulo: "Salário com progressão por tempo de empresa.",
     valor: "¥1.500/h",
-    legenda: "salário inicial de referência no turno alternado",
+    legenda: "Salário inicial de referência",
     progressao: [
-      { faixa: "0–12 meses", valor: "¥1.500/h" },
-      { faixa: "13–24 meses", valor: "¥1.550/h" },
-      { faixa: "25–36 meses", valor: "¥1.600/h" },
-      { faixa: "37+ meses", valor: "¥1.650/h" },
+      { faixa: "0–12 meses", valor: "¥1.500" },
+      { faixa: "13–24 meses", valor: "¥1.550" },
+      { faixa: "25–36 meses", valor: "¥1.600" },
+      { faixa: "37+ meses", valor: "¥1.650" },
     ],
-    notaProgressao: "Valores de referência conforme as condições fornecidas pela operação e sujeitos à confirmação no momento da contratação.",
-    adicionais: [
-      { rotulo: "Hora extra", valor: "+25%" },
-      { rotulo: "Horário noturno", valor: "+25%" },
-      { rotulo: "Domingos / descanso legal", valor: "+35%" },
-    ],
-    textoAdicionais: "Adicionais legais aplicados sobre o valor por hora, conforme a jornada.",
+    adicionais: "Adicionais legais: hora extra +25%, horário noturno +25%, domingos e descanso legal +35%. Valores sujeitos à confirmação na contratação.",
   },
   turnos: {
-    titulo: "Turnos alternados em escala 4×2.",
-    texto: "O regime padrão alterna períodos diurnos e noturnos: 4 dias de trabalho, 2 dias de folga.",
-    escala: ESCALA_4X2,
-    alternado: true,
+    texto: "Escala 4×2 (4 dias de trabalho, 2 de folga), alternando períodos diurnos e noturnos. Horários e unidade confirmados durante o processo.",
     unidades: [
-      {
-        nome: "Unidade Okamoto",
-        horarios: [
-          { rotulo: "Diurno", horario: "8:50 – 19:00" },
-          { rotulo: "Noturno", horario: "20:50 – 7:00" },
-        ],
-      },
-      {
-        nome: "Unidade Miyazaki",
-        horarios: [
-          { rotulo: "Diurno", horario: "8:30 – 18:40" },
-          { rotulo: "Noturno", horario: "20:30 – 6:40" },
-        ],
-      },
+      { nome: "Unidade Okamoto", diurno: "8:50 – 19:00", noturno: "20:50 – 7:00" },
+      { nome: "Unidade Miyazaki", diurno: "8:30 – 18:40", noturno: "20:30 – 6:40" },
     ],
-    nota: "Os horários e a alocação final serão confirmados durante o processo.",
+    imagem: { src: "/images/empregos/echizen-turnos.webp", alt: "A mesma fábrica de dia e à noite, representando os turnos diurno e noturno" },
   },
   custoZero: {
-    titulo: "Comece seu projeto Japão sem uma grande despesa inicial.",
-    condicoes: ["Elegibilidade", "Aprovação no processo", "Documentação", "Disponibilidade da vaga"],
-    cta: "Fazer pré-análise",
+    titulo: "Custo inicial zero",
+    texto: "Comece seu projeto no Japão sem uma grande despesa inicial.",
+    itens: ["Passagem aérea", "Assessoria", "Documentação", "Preparação para o embarque"],
+    imagem: IMG_EMBARQUE,
   },
-  reentry: {
-    titulo: "Tem reentry e pode embarcar rápido?",
-    texto: "Candidatos elegíveis que já possuem reentry válido podem se enquadrar na campanha de auxílio embarque da Jutsai.",
-  },
+  reentry:
+    "Já tem reentry válido e pode embarcar logo? Candidatos elegíveis podem receber o Auxílio Embarque Ajisai, conforme as condições da campanha vigente.",
   moradia: {
-    titulo: "Uma estrutura preparada para quem está começando a vida no Japão.",
-    texto: "A maioria das moradias fica em Echizen e Sabae. O tipo de imóvel depende do perfil familiar e da disponibilidade.",
-    tipos: ["1K", "1DK", "2DK", "2LDK", "3DK"],
+    texto:
+      "A maioria das moradias fica em Echizen e Sabae, de 1K a 3DK, conforme perfil familiar e disponibilidade. Na chegada, um kit de boas-vindas com utensílios, higiene, cozinha e futon.",
     valores: [
       { rotulo: "1K / 1DK", valor: "¥40.000 – ¥65.000" },
       { rotulo: "2DK ou maior", valor: "¥50.000 – ¥80.000" },
       { rotulo: "Leopalace", valor: "≈ ¥50.000 – ¥55.000" },
     ],
-    notas: ["Valores aproximados de aluguel mensal, de responsabilidade do trabalhador.", "Água, luz e gás são pagos separadamente."],
-  },
-  kit: {
-    titulo: "Kit de boas-vindas disponibilizado pela operação.",
-    texto: "Para facilitar os primeiros dias, itens básicos de chegada podem incluir:",
-    itens: ["Utensílios", "Produtos de higiene", "Itens para cozinha", "Futon", "Itens domésticos"],
+    notas: ["Aluguel mensal aproximado, pago pelo trabalhador. Água, luz e gás à parte."],
+    imagem: { src: "/images/empregos/echizen-moradia.webp", alt: "Apartamento 1DK mobiliado no Japão, com cozinha, geladeira, máquina de lavar e sala" },
   },
   cidadeSecao: {
-    id: "echizen",
-    kicker: "Por que Echizen?",
-    titulo: "Uma vida mais tranquila, sem abrir mão da infraestrutura japonesa.",
-    texto: [
-      "Echizen fica em Fukui, entre o litoral do Mar do Japão e as montanhas — com pesca, ski no inverno, comércio, supermercados e hospitais por perto.",
+    titulo: "Por que Echizen",
+    texto:
+      "Uma vida mais tranquila em Fukui, entre o Mar do Japão e as montanhas, com supermercados, hospitais e boa conexão regional.",
+    imagem: { src: "/images/empregos/echizen-cidade.webp", alt: "Rua residencial tranquila em Echizen, com casas e montanhas ao fundo" },
+    destaques: [
+      { titulo: "Natureza", texto: "Litoral, montanhas e quatro estações" },
+      { titulo: "Tranquilidade", texto: "Menos congestionada que os grandes centros" },
+      { titulo: "Estrutura", texto: "Comércio e saúde perto das moradias" },
     ],
-    imagem: "/images/empregos/lp-echizen-cidade.webp",
-    imagemAlt: "Echizen com rio, ponte, cerejeiras floridas e montanhas nevadas ao fundo",
-    blocos: [
-      { icone: "natureza", titulo: "Natureza", texto: "Fukui tem litoral, montanhas e quatro estações bem definidas." },
-      { icone: "casa", titulo: "Qualidade de vida", texto: "Uma região menos congestionada e mais tranquila que os grandes centros." },
-      { icone: "transporte", titulo: "Acesso", texto: "Boa conexão regional com outras áreas do Japão." },
-    ],
+    extra: {
+      imagem: { src: "/images/empregos/echizen-transporte.webp", alt: "Trabalhadores embarcando em micro-ônibus em frente ao prédio de apartamentos" },
+      titulo: "Transporte até a fábrica",
+      texto: "Dependendo da unidade e da moradia, há deslocamento organizado. Na unidade Miyazaki há transporte entre apartamento e fábrica.",
+    },
   },
-  apoio: {
-    titulo: "Apoio ao trabalhador.",
-    cards: [
-      {
-        icone: "transporte",
-        titulo: "Transporte",
-        texto: "Dependendo da unidade e da moradia, há opções de deslocamento organizadas. Na unidade Miyazaki há transporte entre apartamento e fábrica.",
-      },
-      { icone: "comercio", titulo: "Comércio", texto: "Supermercados, restaurantes e serviços próximos às áreas residenciais." },
-      { icone: "saude", titulo: "Saúde", texto: "Hospitais na região e orientação da equipe em situações que exijam suporte." },
-      { icone: "casa", titulo: "Moradia", texto: "Opções conforme o perfil familiar e a disponibilidade." },
-    ],
-  },
-  processo: {
-    titulo: "Do Brasil à fábrica, em seis etapas.",
-    passos: [
-      { titulo: "Pré-análise do perfil" },
-      { titulo: "Entrevista e análise da vaga" },
-      { titulo: "Documentação" },
-      { titulo: "Preparação do embarque" },
-      { titulo: "Viagem ao Japão" },
-      { titulo: "Integração e início do trabalho" },
-    ],
-    cta: "Fazer pré-análise",
-  },
-  murata: {
-    titulo: "Tecnologia japonesa presente no mundo inteiro.",
-    texto: "A Murata fabrica componentes eletrônicos usados em uma grande variedade de produtos tecnológicos e automotivos — de smartphones a carros.",
-  },
+  processo: ["Pré-análise do perfil", "Entrevista e análise da vaga", "Documentação", "Preparação e viagem", "Integração e início"],
   faq: [
     {
-      pergunta: "O embarque realmente pode ter custo inicial zero?",
-      resposta: "Para candidatos elegíveis dentro da campanha, passagem aérea e suporte de preparação fazem parte da estrutura de embarque sem cobrança inicial.",
+      pergunta: "O embarque pode mesmo ter custo inicial zero?",
+      resposta: "Para candidatos elegíveis dentro da campanha, passagem aérea e preparação fazem parte da estrutura de embarque, sem cobrança inicial.",
     },
     {
       pergunta: "Preciso pagar aluguel?",
-      resposta: "Sim. A moradia é organizada, mas aluguel e despesas como água, energia e gás são responsabilidade do trabalhador.",
-    },
-    {
-      pergunta: "Como funcionam os turnos?",
-      resposta: "A operação de Fukui utiliza principalmente escala 4×2 com alternância de turnos diurnos e noturnos.",
+      resposta: "Sim. A moradia é organizada, mas aluguel e despesas como água, energia e gás são de responsabilidade do trabalhador.",
     },
     {
       pergunta: "Posso ir com minha família?",
-      resposta: "Existem opções de apartamento para diferentes composições familiares, mas disponibilidade e elegibilidade precisam ser avaliadas individualmente.",
+      resposta: "Existem apartamentos para diferentes composições familiares; disponibilidade e elegibilidade são avaliadas individualmente.",
     },
-    {
-      pergunta: "Quem será meu empregador?",
-      resposta: "A contratação é realizada pela Fujiarte no Japão e o trabalhador é alocado na operação da Murata.",
-    },
+    { pergunta: "Preciso falar japonês?", resposta: "Os requisitos linguísticos serão avaliados de acordo com o perfil e a vaga." },
     {
       pergunta: "Já tenho reentry. O que muda?",
-      resposta: `Candidatos com documentação pronta podem ter um processo mais rápido e podem se enquadrar no Auxílio Embarque Jutsai de ${AUXILIO_EMBARQUE_BRL}, conforme as condições da campanha.`,
+      resposta: `Com a documentação pronta, o processo pode ser mais rápido e você pode se enquadrar no Auxílio Embarque Ajisai de ${AUXILIO_EMBARQUE_BRL}, conforme as condições da campanha.`,
     },
   ],
-  final: {
-    titulo: "Descubra se esta oportunidade combina com o seu perfil.",
-    texto: "Faça uma pré-análise gratuita. Sujeito à análise e disponibilidade.",
-    cta: "Verificar minha elegibilidade",
-    rodape: "Sem compromisso.",
-  },
-  formulario: {
-    titulo: "Descubra se esta oportunidade combina com o seu perfil.",
-    texto: "Duas etapas rápidas. Nossa equipe responde pelo WhatsApp.",
-    botao: "Verificar minha elegibilidade",
-    campos: ["estadoSeparado", "ondeEsta"],
-  },
+  formulario: { botao: "Verificar minha elegibilidade", campos: ["estadoSeparado", "ondeEsta"] },
 };

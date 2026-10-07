@@ -272,13 +272,7 @@ const DESTAQUES: Destaque[] = [
     // Abre a landing de recrutamento Fukui Murata (Wilson, 07/out/2026).
     href: "/empregos/echizen",
   },
-  {
-    id: "working-holiday",
-    titulo: "Working Holiday no Japão",
-    // Banner enviado pelo Wilson em 06/out/2026 (texto já na arte). Sem
-    // link por enquanto — ainda não há página/vagas de Working Holiday.
-    imagem: "/images/empregos-destaque-working-holiday.jpg",
-  },
+
   {
     // Wilson, 07/out/2026: "e no segundo, Trabalhe e More em Izumo". Leva
     // para as vagas de Shimane (Murata Izumo).
@@ -350,7 +344,7 @@ function CarrosselDestaques({ onAbrir }: { onAbrir: (d: Destaque) => void }) {
                   {/* Escurecimento: forte à esquerda (texto), some antes das pessoas. */}
                   <div
                     aria-hidden="true"
-                    className="absolute inset-0 bg-gradient-to-t from-[#0A2540]/90 via-[#0A2540]/35 to-transparent sm:bg-gradient-to-r sm:from-[#0A2540]/85 sm:via-[#0A2540]/45 sm:via-35% sm:to-transparent sm:to-60%"
+                    className="absolute inset-0 bg-gradient-to-t from-[#061a2e]/95 via-[#061a2e]/60 to-transparent sm:bg-gradient-to-r sm:from-[#061a2e]/95 sm:via-[#061a2e]/75 sm:via-40% sm:to-transparent sm:to-[62%]"
                   />
                   <div className="absolute inset-x-0 bottom-0 px-6 pb-6 sm:inset-y-0 sm:right-auto sm:flex sm:max-w-[52%] sm:flex-col sm:justify-center sm:px-12 sm:pb-0 md:px-14">
                     <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-white/80">{d.sobreposto.kicker}</p>
