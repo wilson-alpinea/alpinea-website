@@ -9,35 +9,51 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { formatarDataPostagem, type Vaga } from "../../../lib/vagasCatalogo";
 import { CandidaturaModal, display } from "../../EmpregosCliente";
+import EsquemaTurno, { separarSalario } from "../../../components/empregos/EsquemaTurno";
 
+// Resumo da vaga no topo do checkout — reorganizado em 08/out/2026 (Wilson:
+// "parece tudo jogado, explicação de turno é difícil de entender"):
+// cabeçalho com local e contrato, salário em destaque à esquerda e o
+// esquema visual do turno à direita (EsquemaTurno).
 function Resumo({ vaga }: { vaga: Vaga }) {
-  const linhas: { rotulo: string; valor: string }[] = [
-    { rotulo: "Local", valor: `${vaga.cidade}, ${vaga.regiao}` },
-    { rotulo: "Salário", valor: vaga.salario },
-    { rotulo: "Turno", valor: vaga.turno },
-    { rotulo: "Contrato", valor: vaga.contrato },
-  ];
+  const sal = separarSalario(vaga.salario);
   return (
-    <div className="rounded-2xl border border-black/10 bg-[#f7f9fc] p-5">
-      <div className="flex items-start justify-between gap-3">
+    <div className="rounded-2xl border border-black/10 bg-[#f7f9fc]">
+      <div className="flex items-start justify-between gap-4 p-5 md:px-7 md:pt-6">
         <div className="min-w-0">
           <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[#1f6fb8]">{vaga.empresa}</p>
-          <p className={`${display.className} mt-1 text-lg font-medium leading-snug text-[#0A2540]`}>{vaga.titulo}</p>
+          <p className={`${display.className} mt-1 text-xl font-medium leading-snug text-[#0A2540]`}>{vaga.titulo}</p>
+          <div className="mt-2.5 flex flex-wrap items-center gap-x-4 gap-y-1.5 text-xs text-black/60">
+            <span className="flex items-center gap-1.5">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-3.5 w-3.5" aria-hidden="true">
+                <path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z" />
+                <circle cx="12" cy="9.5" r="2.5" />
+              </svg>
+              {vaga.cidade}, {vaga.regiao}
+            </span>
+            <span className="rounded-full bg-white px-2.5 py-0.5 ring-1 ring-black/10">{vaga.contrato}</span>
+          </div>
         </div>
         {vaga.logo && (
           // eslint-disable-next-line @next/next/no-img-element
-          <img src={vaga.logo} alt={vaga.empresa} className="h-6 max-w-[90px] shrink-0 object-contain" />
+          <img src={vaga.logo} alt={vaga.empresa} className="h-7 max-w-[100px] shrink-0 object-contain" />
         )}
       </div>
-      <dl className="mt-4 grid gap-x-6 gap-y-2.5 border-t border-black/10 pt-4 text-sm sm:grid-cols-2 md:grid-cols-4">
-        {linhas.map((l) => (
-          <div key={l.rotulo}>
-            <dt className="text-[10px] font-semibold uppercase tracking-[0.14em] text-black/45">{l.rotulo}</dt>
-            <dd className={`mt-0.5 ${l.rotulo === "Salário" ? "font-semibold text-[#0A2540]" : "text-black/75"}`}>{l.valor}</dd>
-          </div>
-        ))}
-      </dl>
-      <div className="mt-4 flex flex-wrap items-center justify-between gap-x-4 gap-y-2 border-t border-black/10 pt-3">
+
+      <div className="grid gap-px border-y border-black/10 bg-black/10 md:grid-cols-[minmax(0,0.8fr)_minmax(0,1.2fr)]">
+        <div className="bg-white p-5 md:px-7">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-black/45">Salário-base</p>
+          <p className="mt-1 text-3xl font-semibold tabular-nums tracking-[-0.01em] text-[#0A2540]">{sal.principal}</p>
+          {sal.detalhe && <p className="mt-2 text-xs leading-5 text-black/60">{sal.detalhe}</p>}
+          <p className="mt-3 text-[11px] leading-5 text-black/40">Valor por hora, antes de horas extras e adicional noturno.</p>
+        </div>
+        <div className="bg-white p-5 md:px-7">
+          <p className="mb-3 text-[10px] font-semibold uppercase tracking-[0.14em] text-black/45">Como funciona o turno</p>
+          <EsquemaTurno turno={vaga.turno} />
+        </div>
+      </div>
+
+      <div className="flex flex-wrap items-center justify-between gap-x-4 gap-y-2 px-5 py-3 md:px-7">
         <p className="text-[11px] text-black/45">
           Vaga <span className="font-mono font-semibold text-black/60">{vaga.codigo}</span> · Publicada em {formatarDataPostagem(vaga.publicadaEm)}
         </p>
@@ -79,7 +95,7 @@ export default function CheckoutCandidatura({ vaga, ativa }: { vaga: Vaga; ativa
         <img src="/images/AJISAI-LOGO.avif" alt="Ajisai" className="h-6 w-auto object-contain md:h-7" />
       </div>
 
-      <div className="mx-auto max-w-3xl px-4 pt-6 md:px-8 md:pt-10">
+      <div className="mx-auto max-w-5xl px-4 pt-6 md:px-8 md:pt-10">
         <h1 className={`${display.className} text-2xl font-medium text-[#0A2540] md:text-3xl`}>Candidatura</h1>
         <p className="mt-1 text-sm text-black/55">Preencha seus dados, responda a triagem e envie o currículo. Leva poucos minutos.</p>
 
