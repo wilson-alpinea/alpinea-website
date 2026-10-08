@@ -234,7 +234,8 @@ function Distribuicao({ vaga, base, setorMediana }: { vaga: Vaga; base: number; 
 // Wilson, 08/out/2026: "ao clicar nas vagas do mesmo setor, deve abrir um
 // novo painel ao lado do painel análise da vaga com cor de fundo diferente
 // comparando as vagas similares". No desktop (lg+) o bloco se alarga e o
-// painel fica à direita; no celular ele entra logo abaixo da análise.
+// painel fica à direita, com a mesma largura e altura da análise ("ambos
+// devem ter o mesmo tamanho"); no celular ele entra logo abaixo.
 // Só dados do catálogo — campo vazio aparece como "A confirmar".
 const A_CONFIRMAR = "A confirmar";
 
@@ -291,7 +292,7 @@ function PainelComparacao({
   return (
     <aside
       aria-labelledby="t-comparacao"
-      className="rounded-2xl p-5 text-white md:p-6 lg:sticky lg:top-20 lg:w-[400px] lg:shrink-0 xl:w-[430px]"
+      className="flex min-w-0 flex-col rounded-2xl p-5 text-white md:p-7 lg:flex-1"
       style={{ background: NAVY }}
     >
       <div className="flex items-start justify-between gap-3">
@@ -379,9 +380,10 @@ function PainelComparacao({
         ))}
       </dl>
 
+      <div className="h-4 shrink-0" aria-hidden="true" />
       <Link
         href={`/empregos/vagas/${selecionada.id}`}
-        className="mt-4 flex h-11 items-center justify-center gap-2 rounded-xl bg-white text-sm font-semibold text-[#0A2540] transition hover:bg-white/90"
+        className="mt-auto flex h-11 items-center justify-center gap-2 rounded-xl bg-white text-sm font-semibold text-[#0A2540] transition hover:bg-white/90"
       >
         Ver vaga {selecionada.codigo}
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4" aria-hidden="true">
@@ -421,7 +423,7 @@ export default function AnaliseVaga({ vaga }: { vaga: Vaga }) {
 
   return (
     <div className={vagaComparada ? "relative lg:left-1/2 lg:w-[min(1200px,calc(100vw-4rem))] lg:-translate-x-1/2" : undefined}>
-    <div className="flex flex-col gap-4 lg:flex-row lg:items-start">
+    <div className="flex flex-col gap-4 lg:flex-row lg:items-stretch">
     <section aria-labelledby="t-analise" className="min-w-0 flex-1 rounded-2xl border border-black/10 bg-[#f7f9fc] p-5 md:p-7">
       <div className="flex flex-wrap items-end justify-between gap-2">
         <div className="flex items-center gap-3.5">

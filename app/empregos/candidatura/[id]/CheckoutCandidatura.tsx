@@ -1,8 +1,9 @@
 "use client";
 
-// Layout de checkout: barra fixa enxuta (sem menu do site), formulário à
-// esquerda e resumo da vaga à direita (fixo no desktop; no celular, um
-// resumo compacto no topo).
+// Layout de checkout: barra fixa enxuta (sem menu do site), resumo da vaga
+// no topo e formulário abaixo, em coluna única. Wilson, 08/out/2026: "na
+// candidatura o painel lateral deve sair da lateral" — o resumo deixou de
+// ser coluna à direita no desktop e vale o mesmo layout do celular.
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -28,7 +29,7 @@ function Resumo({ vaga }: { vaga: Vaga }) {
           <img src={vaga.logo} alt={vaga.empresa} className="h-6 max-w-[90px] shrink-0 object-contain" />
         )}
       </div>
-      <dl className="mt-4 space-y-2.5 border-t border-black/10 pt-4 text-sm">
+      <dl className="mt-4 grid gap-x-6 gap-y-2.5 border-t border-black/10 pt-4 text-sm sm:grid-cols-2 md:grid-cols-4">
         {linhas.map((l) => (
           <div key={l.rotulo}>
             <dt className="text-[10px] font-semibold uppercase tracking-[0.14em] text-black/45">{l.rotulo}</dt>
@@ -36,12 +37,14 @@ function Resumo({ vaga }: { vaga: Vaga }) {
           </div>
         ))}
       </dl>
-      <p className="mt-4 border-t border-black/10 pt-3 text-[11px] text-black/45">
-        Vaga <span className="font-mono font-semibold text-black/60">{vaga.codigo}</span> · Publicada em {formatarDataPostagem(vaga.publicadaEm)}
-      </p>
-      <Link href={`/empregos/vagas/${vaga.id}`} className="mt-3 inline-block text-xs font-medium text-[#1f6fb8] underline decoration-[#1f6fb8]/30 underline-offset-2">
-        Ver detalhes da vaga
-      </Link>
+      <div className="mt-4 flex flex-wrap items-center justify-between gap-x-4 gap-y-2 border-t border-black/10 pt-3">
+        <p className="text-[11px] text-black/45">
+          Vaga <span className="font-mono font-semibold text-black/60">{vaga.codigo}</span> · Publicada em {formatarDataPostagem(vaga.publicadaEm)}
+        </p>
+        <Link href={`/empregos/vagas/${vaga.id}`} className="text-xs font-medium text-[#1f6fb8] underline decoration-[#1f6fb8]/30 underline-offset-2">
+          Ver detalhes da vaga
+        </Link>
+      </div>
     </div>
   );
 }
@@ -76,7 +79,7 @@ export default function CheckoutCandidatura({ vaga, ativa }: { vaga: Vaga; ativa
         <img src="/images/AJISAI-LOGO.avif" alt="Ajisai" className="h-6 w-auto object-contain md:h-7" />
       </div>
 
-      <div className="mx-auto max-w-5xl px-4 pt-6 md:px-8 md:pt-10">
+      <div className="mx-auto max-w-3xl px-4 pt-6 md:px-8 md:pt-10">
         <h1 className={`${display.className} text-2xl font-medium text-[#0A2540] md:text-3xl`}>Candidatura</h1>
         <p className="mt-1 text-sm text-black/55">Preencha seus dados, responda a triagem e envie o currículo. Leva poucos minutos.</p>
 
@@ -92,14 +95,9 @@ export default function CheckoutCandidatura({ vaga, ativa }: { vaga: Vaga; ativa
             </p>
           </div>
         ) : (
-          <div className="mt-6 grid gap-6 lg:grid-cols-[minmax(0,1fr)_320px] lg:items-start">
-            <div className="lg:hidden">
-              <Resumo vaga={vaga} />
-            </div>
+          <div className="mt-6 grid gap-6">
+            <Resumo vaga={vaga} />
             <CandidaturaModal vaga={vaga} onFechar={voltar} pagina />
-            <aside className="hidden lg:sticky lg:top-20 lg:block">
-              <Resumo vaga={vaga} />
-            </aside>
           </div>
         )}
 

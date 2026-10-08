@@ -1,0 +1,1 @@
+{"extends": "./tsconfig.json","compilerOptions":{"incremental":false},"include":["next-env.d.ts","app/components/empregos/AnaliseVaga.tsx","app/empregos/candidatura/[id]/CheckoutCandidatura.tsx"]}
