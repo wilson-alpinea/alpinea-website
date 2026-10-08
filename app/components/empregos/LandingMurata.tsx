@@ -75,8 +75,8 @@ function Plantas({ plantas }: { plantas: Planta[] }) {
     <div className="mt-8">
       <div className="flex items-end justify-between gap-4">
         <div>
-          <p className="text-[11px] font-semibold uppercase tracking-[0.3em] text-[#0A2540]/60">Plantas</p>
-          <p className={`${display.className} mt-1 text-xl font-medium text-[#0A2540]`}>Escolha a tipologia</p>
+          <p className="text-[11px] font-semibold uppercase tracking-[0.3em] text-[#0A2540]/60">Tipos de acomodação disponíveis</p>
+          <p className={`${display.className} mt-1 text-xl font-medium text-[#0A2540]`}>Escolha sua planta</p>
         </div>
         <p className={`${inter.className} hidden text-xs tabular-nums text-black/45 sm:block`}>
           {String(i + 1).padStart(2, "0")} / {String(total).padStart(2, "0")}
