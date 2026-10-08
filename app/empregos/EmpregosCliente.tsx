@@ -45,6 +45,7 @@ import {
   type PerfilCandidato,
 } from "../lib/triagemPerfil";
 import { useEffect, useMemo, useState, type FormEvent } from "react";
+import { useRouter } from "next/navigation";
 import Image from "next/image";
 import PrazosProcesso from "../components/empregos/PrazosProcesso";
 import Link from "next/link";
@@ -447,7 +448,12 @@ function CarrosselDestaques({ onAbrir }: { onAbrir: (d: Destaque) => void }) {
           </button>
         ))}
       </div>
-      <div className="flex gap-2">
+      <div className="flex items-center gap-2">
+        {/* Contador "1 de 3" — Wilson, 08/out/2026: "assim a pessoa sabe
+            quantos tem" (os pontinhos sozinhos não deixavam claro). */}
+        <p className="mr-2 text-sm tabular-nums text-black/55" aria-live="polite">
+          <span className="font-semibold text-[#0A2540]">{indice + 1}</span> de {total}
+        </p>
         {(["anterior", "proximo"] as const).map((lado) => (
           <button
             key={lado}
@@ -850,6 +856,7 @@ function Marquee({ itens, estatico }: { itens: ItemMarquee[]; estatico?: boolean
 }
 
 export default function EmpregosCliente({ inativas }: { inativas: string[] }) {
+  const router = useRouter();
   // Vagas desligadas no CRM somem do catálogo (e das regiões do filtro).
   const vagasNoSite = useMemo(() => {
     const fora = new Set(inativas);
@@ -863,8 +870,6 @@ export default function EmpregosCliente({ inativas }: { inativas: string[] }) {
   const [setorFiltro, setSetorFiltro] = useState<SetorKey | "todos">("todos");
   const [regioesFiltro, setRegioesFiltro] = useState<Set<string>>(new Set());
   const [selecionadas, setSelecionadas] = useState<Set<string>>(new Set());
-  const [vagaAbertaId, setVagaAbertaId] = useState<string | null>(null);
-  const [candidaturaVagaId, setCandidaturaVagaId] = useState<string | null>(null);
   // Filtro aplicado por um card do carrossel com grupo de vagas.
   const [destaqueFiltro, setDestaqueFiltro] = useState<{ titulo: string; ids: string[] } | null>(null);
   const [scrolled, setScrolled] = useState(false);
@@ -880,30 +885,6 @@ export default function EmpregosCliente({ inativas }: { inativas: string[] }) {
     window.addEventListener("scroll", aoRolar, { passive: true });
     return () => window.removeEventListener("scroll", aoRolar);
   }, []);
-
-  // Pop-up de detalhes da vaga — pedido do Wilson, 19/set/2026 ("o detalhes
-  // devem abrir como pop up"), substituindo o expandir/colapsar inline no
-  // card. Trava o scroll do fundo enquanto o modal está aberto.
-  useEffect(() => {
-    if (!vagaAbertaId) return;
-    const original = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    return () => {
-      document.body.style.overflow = original;
-    };
-  }, [vagaAbertaId]);
-
-  // Modal de candidatura — pedido do Wilson, 25/set/2026 ("ao clicar em
-  // aplicar a vaga, deve abrir uma pagina para enviar as informações...").
-  // Mesmo travamento de scroll do pop-up de detalhes acima.
-  useEffect(() => {
-    if (!candidaturaVagaId) return;
-    const original = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    return () => {
-      document.body.style.overflow = original;
-    };
-  }, [candidaturaVagaId]);
 
   // Cadastro de e-mail no mailing de novas vagas — pedido do Wilson,
   // 19/set/2026 ("Deseja ser notificado quando abrir novas vagas?" +
@@ -959,12 +940,6 @@ export default function EmpregosCliente({ inativas }: { inativas: string[] }) {
       return novo;
     });
   }
-
-  const vagaAberta = useMemo(() => VAGAS.find((v) => v.id === vagaAbertaId) ?? null, [vagaAbertaId]);
-  const vagaEmCandidatura = useMemo(
-    () => VAGAS.find((v) => v.id === candidaturaVagaId) ?? null,
-    [candidaturaVagaId],
-  );
 
   const vagasFiltradas = useMemo(() => {
     return vagasNoSite.filter((vaga) => {
@@ -1268,15 +1243,17 @@ export default function EmpregosCliente({ inativas }: { inativas: string[] }) {
                       19/set/2026, "todos os cards de vagas devem ter o mesmo
                       tamanho": os campos que variam de tamanho (título,
                       salário, turno, perfil) ficam com line-clamp e o texto
-                      completo continua disponível no pop-up de detalhes. */}
+                      completo continua disponível na página da vaga (desde
+                      08/out/2026 o clique abre /empregos/vagas/[id], não
+                      mais o pop-up). */}
                   <div
                     role="button"
                     tabIndex={0}
-                    onClick={() => setVagaAbertaId(vaga.id)}
+                    onClick={() => router.push(`/empregos/vagas/${vaga.id}`)}
                     onKeyDown={(e) => {
                       if (e.key === "Enter" || e.key === " ") {
                         e.preventDefault();
-                        setVagaAbertaId(vaga.id);
+                        router.push(`/empregos/vagas/${vaga.id}`);
                       }
                     }}
                     className="flex h-full cursor-pointer flex-col text-left"
@@ -1331,8 +1308,12 @@ export default function EmpregosCliente({ inativas }: { inativas: string[] }) {
                       {vaga.perfil && <p className="line-clamp-2">Perfil: {vaga.perfil}</p>}
                       {vaga.idioma && <p className="line-clamp-1">Japonês: {vaga.idioma}</p>}
                     </div>
-                    <span className="mt-3 inline-flex w-fit shrink-0 items-center gap-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-[#2f80c9]">
-                      Ver mais detalhes
+                    <Link
+                      href={`/empregos/vagas/${vaga.id}`}
+                      onClick={(e) => e.stopPropagation()}
+                      className="mt-3 inline-flex w-fit shrink-0 items-center gap-1 text-[11px] font-semibold uppercase tracking-[0.14em] text-[#2f80c9]"
+                    >
+                      Ver vaga
                       <svg
                         viewBox="0 0 24 24"
                         fill="none"
@@ -1344,7 +1325,7 @@ export default function EmpregosCliente({ inativas }: { inativas: string[] }) {
                       >
                         <path d="M9 6l6 6-6 6" />
                       </svg>
-                    </span>
+                    </Link>
                   </div>
 
                   {/* Ícone do setor no canto inferior direito do card —
@@ -1367,101 +1348,10 @@ export default function EmpregosCliente({ inativas }: { inativas: string[] }) {
         </div>
       </section>
 
-      {/* ── POP-UP DE DETALHES DA VAGA — pedido do Wilson, 19/set/2026
-          ("o detalhes devem abrir como pop up e bota INICIAR
-          CANDIDATURA"). Substitui o expandir/colapsar inline no card. */}
-      {vagaAberta && (
-        <div
-          className="fixed inset-0 z-[60] flex items-end justify-center bg-black/50 p-0 backdrop-blur-sm sm:items-center sm:p-6"
-          onClick={() => setVagaAbertaId(null)}
-        >
-          <div
-            role="dialog"
-            aria-modal="true"
-            onClick={(e) => e.stopPropagation()}
-            className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-t-3xl bg-white p-6 shadow-2xl sm:rounded-3xl sm:p-8"
-          >
-            <div className="flex items-start justify-between gap-3">
-              <div className="flex flex-wrap items-center gap-1.5">
-                <span className="rounded-full bg-black/[0.04] px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.1em] text-black/50">
-                  {SETOR_NOME[vagaAberta.setor]}
-                </span>
-                {vagaAberta.status === "consulta" && (
-                  <span className="rounded-full border border-amber-300 bg-amber-50 px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.1em] text-amber-700">
-                    {STATUS_LABEL.consulta}
-                  </span>
-                )}
-              </div>
-              <button
-                type="button"
-                onClick={() => setVagaAbertaId(null)}
-                aria-label="Fechar"
-                className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-black/40 transition hover:bg-black/5 hover:text-black/70"
-              >
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className="h-5 w-5">
-                  <path d="M6 6l12 12M18 6L6 18" />
-                </svg>
-              </button>
-            </div>
-
-            {vagaAberta.logo && (
-              <img src={vagaAberta.logo} alt={vagaAberta.empresa} className="mt-4 h-7 max-w-[120px] object-contain" />
-            )}
-            <p className="mt-3 text-[10px] font-semibold uppercase tracking-[0.12em] text-[#2f80c9]">{vagaAberta.empresa}</p>
-            <h3 className={`${display.className} mt-1 text-xl font-medium text-black`}>{vagaAberta.titulo}</h3>
-            <p className="mt-1 text-xs text-black/50">
-              {vagaAberta.cidade}, {vagaAberta.regiao} — Japão
-            </p>
-            <p className="mt-2 text-base font-semibold text-black/80">{vagaAberta.salario}</p>
-            <div className="mt-2 space-y-1 text-xs leading-5 text-black/50">
-              <p>{vagaAberta.turno}</p>
-              <p>{vagaAberta.contrato}</p>
-              {vagaAberta.perfil && <p>Perfil: {vagaAberta.perfil}</p>}
-              {vagaAberta.idioma && <p>Japonês: {vagaAberta.idioma}</p>}
-            </div>
-
-            {/* Análise da vaga — pedido do Wilson, 19/set/2026: comparar
-                salário e benefícios com o resto do catálogo. Some sozinha
-                quando a amostra é pequena demais ou a diferença é
-                irrelevante (ver AnaliseVaga). */}
-            <div className="mt-5">
-              <AnaliseVaga vaga={vagaAberta} />
-            </div>
-
-            <div className="mt-5 border-t border-black/10 pt-5">
-              <InfoObrigatoriaVaga vaga={vagaAberta} />
-            </div>
-
-            <div className="mt-2 border-t border-black/10 pt-5">
-              <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.14em] text-black/55">Outras condições</p>
-              <DetalhesVaga vaga={vagaAberta} />
-            </div>
-
-            <Link
-              href={`/empregos/vagas/${vagaAberta.id}`}
-              className="mt-6 inline-flex text-xs font-semibold uppercase tracking-[0.14em] text-[#2f80c9] underline decoration-[#2f80c9]/30 underline-offset-4"
-            >
-              Abrir página da vaga
-            </Link>
-
-            <button
-              type="button"
-              onClick={() => {
-                const idVaga = vagaAberta.id;
-                setVagaAbertaId(null);
-                setCandidaturaVagaId(idVaga);
-              }}
-              className="mt-4 flex w-full items-center justify-center rounded-full bg-[#2f80c9] px-6 py-3.5 text-xs font-semibold uppercase tracking-[0.18em] text-white transition hover:bg-[#3b91dc]"
-            >
-              Iniciar candidatura
-            </button>
-          </div>
-        </div>
-      )}
-
-      {vagaEmCandidatura && (
-        <CandidaturaModal vaga={vagaEmCandidatura} onFechar={() => setCandidaturaVagaId(null)} />
-      )}
+      {/* Pop-up de detalhes e modal de candidatura saíram daqui em
+          08/out/2026 — Wilson: "porque as vagas abrem pop-up? pedi pra
+          transformar todas em página própria". O card leva para
+          /empregos/vagas/[id], que tem os detalhes e a candidatura. */}
 
       {/* ── BARRA FIXA: carrinho de vagas ── */}
       {selecionadas.size > 0 && (
