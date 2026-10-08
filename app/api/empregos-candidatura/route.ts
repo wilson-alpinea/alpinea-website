@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { randomUUID } from "crypto";
 import { createAdminClient } from "../../../lib/supabase/admin";
 import { encontrarVaga, VAGAS } from "../../lib/vagasCatalogo";
+import { idsVagasInativas } from "../../../lib/empregos/vagasAtivas";
 import { extrairTextoCurriculo } from "../../lib/curriculoExtracao";
 import { TIPOS_CURRICULO_ACEITOS } from "../../lib/curriculoConstantes";
 import {
@@ -104,6 +105,11 @@ export async function POST(req: Request) {
     const vaga = encontrarVaga(vagaId);
     if (!vaga) {
       return NextResponse.json({ error: "Vaga não encontrada." }, { status: 400 });
+    }
+    // Vaga desligada no CRM (/crm/empregos/vagas) não recebe candidatura.
+    const vagasInativas = await idsVagasInativas();
+    if (vagasInativas.has(vaga.id)) {
+      return NextResponse.json({ error: "Esta vaga não está recebendo candidaturas no momento." }, { status: 400 });
     }
 
     let respostas: RespostasTriagem = {
@@ -387,7 +393,7 @@ export async function POST(req: Request) {
     // Wilson, 06/out/2026.
     const sugestoes = resultado.aprovadoParaFoto
       ? []
-      : VAGAS.filter((v) => v.id !== vaga.id)
+      : VAGAS.filter((v) => v.id !== vaga.id && !vagasInativas.has(v.id))
           .map((v) => ({
             v,
             r: calcularPontuacaoCandidatura({

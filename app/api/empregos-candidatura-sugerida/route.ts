@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { createAdminClient } from "../../../lib/supabase/admin";
 import { encontrarVaga } from "../../lib/vagasCatalogo";
+import { vagaEstaAtiva } from "../../../lib/empregos/vagasAtivas";
 import { calcularPontuacaoCandidatura, type RespostasTriagem } from "../../lib/candidaturaScoring";
 
 export const runtime = "nodejs";
@@ -19,6 +20,9 @@ export async function POST(req: Request) {
     const vaga = encontrarVaga(String(corpo?.vagaId ?? ""));
     if (!candidaturaId || !token || !vaga) {
       return NextResponse.json({ error: "Dados inválidos." }, { status: 400 });
+    }
+    if (!(await vagaEstaAtiva(vaga.id))) {
+      return NextResponse.json({ error: "Esta vaga não está recebendo candidaturas no momento." }, { status: 400 });
     }
 
     const supabase = createAdminClient();

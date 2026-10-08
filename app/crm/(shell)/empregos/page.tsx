@@ -112,9 +112,14 @@ export default async function EmpregosCrmPage({
       </p>
       <div className="flex flex-wrap items-end justify-between gap-3">
         <h1 className={`${display.className} text-3xl font-medium text-black md:text-4xl`}>Empregos</h1>
-        <Link href="/crm/empregos/agenda" className="rounded-xl border border-[#1C3A5E] px-4 py-2 text-sm font-medium text-[#1C3A5E] hover:bg-[#1C3A5E]/5">
-          Agenda de pré-entrevistas
-        </Link>
+        <div className="flex flex-wrap gap-2">
+          <Link href="/crm/empregos/vagas" className="rounded-xl border border-[#1C3A5E] px-4 py-2 text-sm font-medium text-[#1C3A5E] hover:bg-[#1C3A5E]/5">
+            Vagas no site
+          </Link>
+          <Link href="/crm/empregos/agenda" className="rounded-xl border border-[#1C3A5E] px-4 py-2 text-sm font-medium text-[#1C3A5E] hover:bg-[#1C3A5E]/5">
+            Agenda de pré-entrevistas
+          </Link>
+        </div>
       </div>
 
       {error && (

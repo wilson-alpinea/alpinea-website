@@ -68,7 +68,7 @@ export type InfoVaga = {
   diferenciaisHospedagem: string[];
 };
 
-// Todas as 29 vagas abaixo começaram (06/out/2026) com `info` vazio — o
+// Todas as vagas abaixo começaram (06/out/2026) com `info` vazio — o
 // bloco está escrito em cada vaga, e não num valor compartilhado, pra
 // ficar explícito, vaga por vaga, o que falta preencher.
 
@@ -152,20 +152,39 @@ export const VAGAS: Vaga[] = [
     regiao: "Shimane",
     cidade: "Izumo",
     publico: ["brasil"],
-    turno: "Turno fixo, diurno ou noturno, 4x2",
+    turno: "Turno fixo, diurno ou noturno, 4x2 (cerca de 18 dias trabalhados por mês)",
     contrato: "Contrato temporário (haken)",
-    salario: "¥1.340–1.390/hora (até ¥1.560/hora conforme desempenho)",
+    salario: "¥1.500/hora (até ¥1.650/hora conforme o tempo de casa)",
     status: "aberta",
     logo: "/images/logo-cliente-murata.png",
     idioma: "Não mandatório",
     perfil: "Homem, mulher ou casal até 50 anos",
+    // Dados da ficha oficial "CSR - IZUMO (2026.07.10更新)" (07/out/2026).
+    // Bônus fica null: a ficha só cita campanha de admissão sem valor, e a
+    // regra de compliance é não mencionar bônus sem valor fornecido.
     info: {
-      moradia: null,
-      beneficios: [],
-      kitBoasVindas: null,
+      moradia:
+        "Apartamentos de 1K a 3DK na cidade de Izumo, conforme composição familiar e disponibilidade. Aluguel aproximado: 1K/1DK sem internet ¥45.000–55.000, com internet ¥60.000–65.000; 2DK ou maior ¥55.000–75.000. Pago pelo trabalhador; água, luz e gás à parte.",
+      beneficios: [
+        "Seguro saúde, previdência (kōsei nenkin) e seguro-desemprego",
+        "Refeitório na fábrica, refeição em torno de ¥300 (com pratos brasileiros no cardápio)",
+        "Ônibus fretado do apartamento até a fábrica",
+        "Intérprete para acompanhamento ao hospital, mediante solicitação prévia",
+        "Mesmo salário para homens e mulheres",
+        "Festival de verão e churrasco anual na empresa",
+      ],
+      kitBoasVindas:
+        "Kit gratuito na chegada: jogo de futon, frigideira, pratos, talheres, copo, detergente e esponja, lenço e papel higiênico, shampoo, condicionador, sabonete líquido, despertador e adaptador de tomada. Quem sair antes de 6 meses devolve o valor do futon (¥7.500).",
       bonus: null,
-      sobreCidade: null,
-      diferenciaisHospedagem: [],
+      sobreCidade:
+        "Izumo fica em Shimane, entre o Mar do Japão e o lago Shinji, e é a cidade do Grande Santuário de Izumo (Izumo Taisha). Tem shoppings (Aeon Mall, Yume Town, com cinema), supermercados, hospital geral e restaurante brasileiro. Praias no verão, estação de esqui a cerca de 1h30 de carro no inverno e onsen. Osaka fica a cerca de 4h30 de trem ou 1 hora de avião.",
+      diferenciaisHospedagem: [
+        "Ar-condicionado em todos os imóveis",
+        "Leopalace com TV, geladeira e máquina de lavar incluídas no aluguel",
+        "Nos demais imóveis, geladeira e máquina de lavar já instaladas (¥1.550/mês cada, podem ser devolvidas)",
+        "Cerca de 20 minutos a pé ou 30 minutos de ônibus até a fábrica",
+        "Supermercados e comércio perto dos apartamentos",
+      ],
     },
   },
   {
@@ -190,6 +209,50 @@ export const VAGAS: Vaga[] = [
       bonus: null,
       sobreCidade: null,
       diferenciaisHospedagem: [],
+    },
+  },
+  // Vaga da landing /empregos/echizen — já anunciada no site, mas não
+  // estava no catálogo. Incluída em 07/out/2026 (Wilson: "o candidato tem
+  // que se candidatar pelas vagas que já estão no site, não existe caminho
+  // especial"), com os dados da própria landing (app/lib/landingsMurata.ts).
+  {
+    id: "murata-echizen",
+    empresa: "Murata",
+    titulo: "Operador de máquinas e inspeção — componentes eletrônicos",
+    setor: "eletronicos",
+    regiao: "Fukui",
+    cidade: "Echizen",
+    publico: ["brasil"],
+    turno: "Turno alternado (diurno/noturno), 4x2 — Okamoto 8:50–19:00 / 20:50–7:00; Miyazaki 8:30–18:40 / 20:30–6:40",
+    contrato: "A confirmar com a nossa equipe",
+    salario: "¥1.500/hora em turno alternado (até ¥1.650/hora conforme o tempo de casa); ¥1.300–1.450/hora em diurno fixo",
+    status: "aberta",
+    logo: "/images/logo-cliente-murata.png",
+    // Dados da ficha oficial "CSR - FUKUI (2026.07.03更新)" (07/out/2026).
+    info: {
+      moradia:
+        "Apartamentos de 1K a 3DK em Echizen e Sabae, conforme composição familiar e disponibilidade. Aluguel aproximado: 1K/1DK ¥40.000–65.000; 2DK ou maior ¥50.000–80.000; Leopalace ¥50.000–55.000. Pago pelo trabalhador; água, luz e gás à parte.",
+      beneficios: [
+        "Seguro saúde, previdência (kōsei nenkin) e seguro-desemprego",
+        "Refeitório na fábrica (diurno), refeição em torno de ¥300, pago pelo app PayPay",
+        "Transporte do apartamento até a unidade Miyazaki (20 a 45 minutos)",
+        "Acompanhamento ao hospital, mediante consulta ao escritório",
+        "Hora extra não é obrigatória",
+        "Mesmo salário para homens e mulheres",
+        "Churrasco anual de confraternização",
+      ],
+      kitBoasVindas:
+        "Kit gratuito na chegada: colchonete e coberta (futon), pratos, talheres, copo, panela, tábua de corte, detergente e esponja, sabão em pó, shampoo e condicionador, lenço e papel higiênico, sacos de lixo, máscaras e pincel atômico.",
+      bonus: null,
+      sobreCidade:
+        "Echizen fica em Fukui, conhecida pela longevidade e pelas quatro estações bem marcadas: praia e pesca no litoral de Echizen no verão, esqui em Katsuyama no inverno e o Museu dos Dinossauros. Sem aeroporto nem shinkansen na província, mas o aeroporto de Komatsu fica a cerca de 45 minutos de trem e a estação Maibara (Tokaido Shinkansen) a cerca de 55 minutos.",
+      diferenciaisHospedagem: [
+        "Ar-condicionado em todos os imóveis",
+        "Leopalace com TV, geladeira, máquina de lavar e micro-ondas incluídos no aluguel",
+        "Nos demais imóveis, geladeira e máquina de lavar para alugar (¥1.550/mês cada)",
+        "Supermercados, restaurantes e hospital a pé dos apartamentos",
+        "Cerca de 20 a 25 minutos a pé da estação de Takefu",
+      ],
     },
   },
   {

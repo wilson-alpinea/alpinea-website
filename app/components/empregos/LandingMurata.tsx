@@ -9,8 +9,15 @@
 // botões azuis, cartão de resumo fixo na lateral (desktop) e barra de
 // ação fixa no rodapé (celular). Conteúdo/compliance em
 // app/lib/landingsMurata.ts.
+//
+// 07/out/2026 (mais tarde) — Wilson: "remover [o formulário de pré-análise],
+// o candidato tem que se candidatar pelas vagas que já estão no site, não
+// existe caminho especial; listar nos hot sites as vagas". O formulário
+// curto saiu; no lugar, a lista das vagas do catálogo (só as ativas no
+// CRM), com a mesma candidatura de /empregos (CandidaturaModal) e link para
+// a página própria de cada vaga.
 
-import { useEffect, useRef, useState, type FormEvent, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { createPortal } from "react-dom";
@@ -19,6 +26,8 @@ import { inter, IconeCheck } from "../transporte/compartilhado";
 import { COTACAO_FALLBACK_BRL_POR_JPY_COMPRA, COTACAO_FALLBACK_BRL_POR_JPY_VENDA } from "../../lib/cambioIene";
 import { formatBRL, formatJPY } from "../../lib/currency";
 import { AUXILIO_EMBARQUE_BRL, CONDICAO_CUSTO_ZERO, type ConfigLanding, type Planta } from "../../lib/landingsMurata";
+import type { Vaga } from "../../lib/vagasCatalogo";
+import { CandidaturaModal } from "../../empregos/EmpregosCliente";
 
 const linkWhatsapp = (msg: string) => `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
 
@@ -34,8 +43,71 @@ function TituloSecao({ id, children }: { id?: string; children: ReactNode }) {
   );
 }
 
-function irParaFormulario() {
-  document.getElementById("pre-analise")?.scrollIntoView({ behavior: "smooth", block: "start" });
+function irParaVagas() {
+  document.getElementById("vagas")?.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+// ── Vagas do catálogo nesta landing ──
+function ListaVagas({ vagas, vagaPrincipalId, cidade, onCandidatar }: { vagas: Vaga[]; vagaPrincipalId: string; cidade: string; onCandidatar: (v: Vaga) => void }) {
+  if (vagas.length === 0) {
+    return (
+      <div className="rounded-2xl border border-black/10 p-6 text-sm leading-6 text-black/70 md:p-8">
+        <p className="font-medium text-black">No momento não há vagas abertas em {cidade}.</p>
+        <p className="mt-1">
+          Veja as outras vagas no{" "}
+          <Link href="/empregos#vagas" className="font-semibold text-[#1f6fb8] underline underline-offset-2">
+            catálogo da Ajisai
+          </Link>
+          .
+        </p>
+      </div>
+    );
+  }
+  return (
+    <ul className="grid gap-4 md:grid-cols-2">
+      {vagas.map((v) => (
+        <li key={v.id} className={`flex flex-col rounded-2xl border p-5 md:p-6 ${v.id === vagaPrincipalId ? "border-[#1f6fb8] ring-1 ring-[#1f6fb8]" : "border-black/10"}`}>
+          <div className="flex items-start justify-between gap-3">
+            <div>
+              <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[#1f6fb8]">{v.empresa}</p>
+              <p className="mt-0.5 text-xs text-black/55">
+                {v.cidade}, {v.regiao}
+              </p>
+            </div>
+            {v.logo && (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={v.logo} alt={v.empresa} className="h-6 max-w-[96px] shrink-0 object-contain" />
+            )}
+          </div>
+          <p className={`${display.className} mt-3 text-lg font-medium leading-snug text-[#0A2540]`}>{v.titulo}</p>
+          <dl className="mt-3 space-y-1.5 text-sm">
+            <div>
+              <dt className="sr-only">Salário</dt>
+              <dd className={`${inter.className} font-semibold text-black`}>{v.salario}</dd>
+            </div>
+            <div>
+              <dt className="sr-only">Turno</dt>
+              <dd className="text-black/65">{v.turno}</dd>
+            </div>
+            {v.perfil && (
+              <div>
+                <dt className="sr-only">Perfil</dt>
+                <dd className="text-black/65">Perfil: {v.perfil}</dd>
+              </div>
+            )}
+          </dl>
+          <div className="mt-5 flex flex-wrap items-center gap-x-5 gap-y-3 pt-1 md:mt-auto md:pt-5">
+            <button type="button" onClick={() => onCandidatar(v)} className={`${classeBotao} w-full sm:w-auto`}>
+              Candidatar-se
+            </button>
+            <Link href={`/empregos/vagas/${v.id}`} className="text-sm font-medium text-[#1f6fb8] underline decoration-[#1f6fb8]/30 underline-offset-2">
+              Detalhes da vaga
+            </Link>
+          </div>
+        </li>
+      ))}
+    </ul>
+  );
 }
 
 // ── Plantas — galeria no estilo de imobiliária de alto padrão (Wilson,
@@ -195,7 +267,7 @@ function Plantas({ plantas }: { plantas: Planta[] }) {
 // dinheiro um trabalhador consegue gerar em reais e em ienes [...] deduzir
 // gastos com moradia ou algo que seja obrigatório"). Premissas abaixo são
 // ESTIMATIVAS de referência — ficam todas explícitas na tela. ──
-const SIM_DIAS_MES = 20; // escala 4×2 ≈ 20 dias trabalhados por mês
+const SIM_DIAS_MES_PADRAO = 20; // escala 4×2 ≈ 20 dias trabalhados por mês (config.simulacao.diasMes sobrescreve)
 const SIM_HORAS_NORMAIS_DIA = 8;
 const SIM_HORAS_NOTURNAS_POR_TURNO = 6; // 22h–5h, descontado o intervalo
 const SIM_ADICIONAL_EXTRA = 0.25; // mínimo legal no Japão (e valor informado em Echizen)
@@ -252,6 +324,7 @@ function Segmentos<T extends string | number>({ valor, opcoes, onChange, nome }:
 
 function SimuladorGanhos({ config }: { config: ConfigLanding }) {
   const sim = config.simulacao;
+  const SIM_DIAS_MES = sim.diasMes ?? SIM_DIAS_MES_PADRAO;
   const [iHora, setIHora] = useState(0);
   const [noturno, setNoturno] = useState(false);
   const [extras, setExtras] = useState(20);
@@ -401,268 +474,25 @@ function SimuladorGanhos({ config }: { config: ConfigLanding }) {
   );
 }
 
-// ── Formulário de pré-candidatura (2 etapas) ──
-function Opcoes({ valor, opcoes, onChange, nome }: { valor: string; opcoes: { v: string; r: string }[]; onChange: (v: string) => void; nome: string }) {
-  return (
-    <div role="radiogroup" aria-label={nome} className="mt-2 flex flex-wrap gap-2">
-      {opcoes.map((o) => (
-        <button
-          key={o.v}
-          type="button"
-          role="radio"
-          aria-checked={valor === o.v}
-          onClick={() => onChange(o.v)}
-          className={`min-h-[44px] rounded-full border px-4 text-sm transition ${
-            valor === o.v ? "border-[#0A2540] bg-[#0A2540] font-semibold text-white" : "border-black/15 bg-white text-black/70 hover:border-black/35"
-          }`}
-        >
-          {o.r}
-        </button>
-      ))}
-    </div>
-  );
-}
-
-const SIM_NAO = [
-  { v: "sim", r: "Sim" },
-  { v: "nao", r: "Não" },
-];
-
-function Formulario({ config, reentrySinal }: { config: ConfigLanding; reentrySinal: number }) {
-  const estadoSeparado = config.formulario.campos.includes("estadoSeparado");
-  const perguntaOndeEsta = config.formulario.campos.includes("ondeEsta");
-  const [etapa, setEtapa] = useState<1 | 2>(1);
-  const [nome, setNome] = useState("");
-  const [whatsapp, setWhatsapp] = useState("");
-  const [idade, setIdade] = useState("");
-  const [cidade, setCidade] = useState("");
-  const [estado, setEstado] = useState("");
-  const [jaMorou, setJaMorou] = useState("");
-  const [reentry, setReentry] = useState("");
-  const [ondeEsta, setOndeEsta] = useState("");
-  const [composicao, setComposicao] = useState("");
-  const [embarque, setEmbarque] = useState("");
-  const [tentou, setTentou] = useState(false);
-  const [status, setStatus] = useState<"form" | "enviando" | "enviado" | "erro">("form");
-  const [erro, setErro] = useState("");
-
-  // "Tenho reentry" na página pré-marca a resposta (ajuste de estado no
-  // render, sem useEffect).
-  const [sinalVisto, setSinalVisto] = useState(reentrySinal);
-  if (reentrySinal !== sinalVisto) {
-    setSinalVisto(reentrySinal);
-    setReentry("reentry");
-  }
-
-  const idadeNum = Number(idade);
-  const etapa1Ok =
-    nome.trim().split(/\s+/).length >= 2 &&
-    whatsapp.replace(/\D/g, "").length >= 10 &&
-    idadeNum >= 18 &&
-    idadeNum <= 80 &&
-    cidade.trim().length >= 2 &&
-    (!estadoSeparado || estado.trim().length >= 2);
-  const etapa2Ok = jaMorou !== "" && reentry !== "" && composicao !== "" && embarque !== "" && (!perguntaOndeEsta || ondeEsta !== "");
-
-  const opcoesReentry = estadoSeparado
-    ? [
-        { v: "reentry", r: "Tenho reentry válido" },
-        { v: "visto", r: "Tenho visto" },
-        { v: "nao", r: "Não tenho" },
-      ]
-    : [
-        { v: "reentry", r: "Sim" },
-        { v: "nao", r: "Não" },
-      ];
-
-  async function enviar(e: FormEvent) {
-    e.preventDefault();
-    if (!etapa2Ok) {
-      setTentou(true);
-      return;
-    }
-    setStatus("enviando");
-    setErro("");
-    try {
-      const r = await fetch("/api/empregos-pre-candidatura", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ landing: config.slug, nome, whatsapp, idade: idadeNum, cidade, estado, jaMorouJapao: jaMorou, reentry, ondeEsta, composicao, embarque }),
-      });
-      const d = await r.json().catch(() => ({}));
-      if (!r.ok) {
-        setErro(d.error || "Não foi possível enviar agora. Tente de novo ou fale pelo WhatsApp.");
-        setStatus("erro");
-        return;
-      }
-      setStatus("enviado");
-    } catch {
-      setErro("Não foi possível enviar agora. Tente de novo ou fale pelo WhatsApp.");
-      setStatus("erro");
-    }
-  }
-
-  const classeInput =
-    "mt-1.5 h-12 w-full rounded-xl border border-black/15 bg-white px-4 text-base text-black placeholder:text-black/35 focus:border-[#1f6fb8] focus:outline-none focus:ring-2 focus:ring-[#1f6fb8]/15 md:text-sm";
-  const rotulo = "block text-[11px] font-medium uppercase tracking-[0.12em] text-black/70";
-
-  if (status === "enviado") {
-    return (
-      <div className="rounded-2xl border border-black/10 p-6 text-center md:p-10">
-        <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-[#2f80c9]/10 text-[#2f80c9]">
-          <IconeCheck className="h-6 w-6" />
-        </span>
-        <p className={`${display.className} mt-5 text-2xl font-medium text-black`}>Recebemos sua pré-candidatura</p>
-        <p className="mx-auto mt-3 max-w-md text-sm leading-relaxed text-black/70">
-          Nossa equipe vai analisar seu perfil e falar com você pelo WhatsApp informado. A participação está sujeita à análise de
-          elegibilidade e à disponibilidade da vaga.
-        </p>
-        <a
-          href={linkWhatsapp(`Olá! Enviei minha pré-candidatura para a vaga da Murata em ${config.cidade} (${nome}).`)}
-          target="_blank"
-          rel="noreferrer"
-          className="mt-7 inline-flex h-12 items-center justify-center rounded-full bg-[#1f6fb8] px-7 text-sm font-semibold uppercase tracking-[0.08em] text-white transition hover:bg-[#2f80c9]"
-        >
-          Continuar no WhatsApp
-        </a>
-      </div>
-    );
-  }
-
-  return (
-    <form onSubmit={enviar} noValidate className="rounded-2xl border border-black/10 p-5 md:p-8">
-      <div className="flex items-center justify-between">
-        <p className={kicker}>Pré-análise gratuita</p>
-        <p className="text-xs text-black/50">Etapa {etapa} de 2</p>
-      </div>
-      <div className="mt-3 h-1 w-full rounded-full bg-black/[0.06]">
-        <div className="h-1 rounded-full bg-[#1f6fb8] transition-all" style={{ width: etapa === 1 ? "50%" : "100%" }} />
-      </div>
-
-      {etapa === 1 ? (
-        <div className="mt-6 grid gap-4">
-          <label className="block">
-            <span className={rotulo}>Nome completo</span>
-            <input className={classeInput} value={nome} onChange={(e) => setNome(e.target.value)} autoComplete="name" placeholder="Nome e sobrenome" />
-          </label>
-          <div className="grid gap-4 sm:grid-cols-[minmax(0,1fr)_120px]">
-            <label className="block">
-              <span className={rotulo}>WhatsApp</span>
-              <input className={classeInput} value={whatsapp} onChange={(e) => setWhatsapp(e.target.value)} type="tel" inputMode="tel" autoComplete="tel" placeholder="(11) 99999-9999" />
-            </label>
-            <label className="block">
-              <span className={rotulo}>Idade</span>
-              <input className={classeInput} value={idade} onChange={(e) => setIdade(e.target.value.replace(/\D/g, "").slice(0, 2))} inputMode="numeric" placeholder="30" />
-            </label>
-          </div>
-          <div className={`grid gap-4 ${estadoSeparado ? "sm:grid-cols-[minmax(0,1fr)_120px]" : ""}`}>
-            <label className="block">
-              <span className={rotulo}>{estadoSeparado ? "Cidade" : "Cidade / Estado"}</span>
-              <input className={classeInput} value={cidade} onChange={(e) => setCidade(e.target.value)} placeholder={estadoSeparado ? "Sua cidade" : "Ex.: Londrina / PR"} />
-            </label>
-            {estadoSeparado && (
-              <label className="block">
-                <span className={rotulo}>Estado</span>
-                <input className={classeInput} value={estado} onChange={(e) => setEstado(e.target.value)} placeholder="PR" maxLength={30} />
-              </label>
-            )}
-          </div>
-          {tentou && !etapa1Ok && <p className="text-sm text-[#b42318]">Preencha nome e sobrenome, WhatsApp com DDD, idade e cidade.</p>}
-          <button
-            type="button"
-            onClick={() => {
-              if (etapa1Ok) {
-                setTentou(false);
-                setEtapa(2);
-              } else setTentou(true);
-            }}
-            className={`${classeBotao} mt-1`}
-          >
-            Continuar
-          </button>
-        </div>
-      ) : (
-        <div className="mt-6 grid gap-5">
-          <div>
-            <span className={rotulo}>{estadoSeparado ? "Já trabalhou no Japão?" : "Já morou no Japão?"}</span>
-            <Opcoes nome="Já morou no Japão" valor={jaMorou} opcoes={SIM_NAO} onChange={setJaMorou} />
-          </div>
-          <div>
-            <span className={rotulo}>{estadoSeparado ? "Possui visto ou reentry?" : "Possui reentry válido?"}</span>
-            <Opcoes nome="Reentry" valor={reentry} opcoes={opcoesReentry} onChange={setReentry} />
-          </div>
-          {perguntaOndeEsta && (
-            <div>
-              <span className={rotulo}>Onde você está agora?</span>
-              <Opcoes
-                nome="Onde está"
-                valor={ondeEsta}
-                opcoes={[
-                  { v: "brasil", r: "No Brasil" },
-                  { v: "japao", r: "No Japão" },
-                ]}
-                onChange={setOndeEsta}
-              />
-            </div>
-          )}
-          <div>
-            <span className={rotulo}>Vai sozinho ou acompanhado?</span>
-            <Opcoes
-              nome="Composição"
-              valor={composicao}
-              opcoes={[
-                { v: "sozinho", r: "Sozinho(a)" },
-                { v: "casal", r: "Com cônjuge" },
-                { v: "familia", r: "Com família" },
-              ]}
-              onChange={setComposicao}
-            />
-          </div>
-          <div>
-            <span className={rotulo}>Quando poderia embarcar?</span>
-            <Opcoes
-              nome="Embarque"
-              valor={embarque}
-              opcoes={[
-                { v: "imediato", r: "Imediatamente" },
-                { v: "30-dias", r: "Até 30 dias" },
-                { v: "1-3-meses", r: "1 a 3 meses" },
-                { v: "mais-3-meses", r: "Mais de 3 meses" },
-              ]}
-              onChange={setEmbarque}
-            />
-          </div>
-          {tentou && !etapa2Ok && <p className="text-sm text-[#b42318]">Responda todas as perguntas para enviar.</p>}
-          {erro && <p className="text-sm text-[#b42318]">{erro}</p>}
-          <button type="submit" disabled={status === "enviando"} className={classeBotao}>
-            {status === "enviando" ? "Enviando…" : config.formulario.botao}
-          </button>
-          <button type="button" onClick={() => setEtapa(1)} className="text-sm font-medium text-[#1f6fb8] underline decoration-[#1f6fb8]/30 underline-offset-2">
-            Voltar
-          </button>
-        </div>
-      )}
-      <p className="mt-5 text-[11px] leading-5 text-black/45">
-        Sem compromisso. Seus dados são usados só para esta análise, conforme a{" "}
-        <Link href="/privacy" className="underline underline-offset-2">
-          Política de Privacidade
-        </Link>
-        .
-      </p>
-    </form>
-  );
-}
-
 // ── Página ──
-export default function LandingMurata({ config: s }: { config: ConfigLanding }) {
-  const [reentrySinal, setReentrySinal] = useState(0);
-  const [formVisivel, setFormVisivel] = useState(false);
-  const formRef = useRef<HTMLElement | null>(null);
+export default function LandingMurata({ config: s, vagas }: { config: ConfigLanding; vagas: Vaga[] }) {
+  const [candidatura, setCandidatura] = useState<Vaga | null>(null);
+  const [vagasVisivel, setVagasVisivel] = useState(false);
+  const vagasRef = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
-    const el = formRef.current;
+    if (!candidatura) return;
+    const original = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = original;
+    };
+  }, [candidatura]);
+
+  useEffect(() => {
+    const el = vagasRef.current;
     if (!el || typeof IntersectionObserver === "undefined") return;
-    const obs = new IntersectionObserver((entries) => setFormVisivel(entries.some((e) => e.isIntersecting)), { threshold: 0.05 });
+    const obs = new IntersectionObserver((entries) => setVagasVisivel(entries.some((e) => e.isIntersecting)), { threshold: 0.05 });
     obs.observe(el);
     return () => obs.disconnect();
   }, []);
@@ -742,8 +572,8 @@ export default function LandingMurata({ config: s }: { config: ConfigLanding }) 
                 >
                   Falar no WhatsApp
                 </a>
-                <button type="button" onClick={irParaFormulario} className={`${classeBotao} w-auto`}>
-                  Verificar elegibilidade
+                <button type="button" onClick={irParaVagas} className={`${classeBotao} w-auto`}>
+                  Ver vagas
                 </button>
               </div>
             </div>
@@ -857,13 +687,10 @@ export default function LandingMurata({ config: s }: { config: ConfigLanding }) 
                   <p className="text-sm leading-6 text-white/80">{s.reentry}</p>
                   <button
                     type="button"
-                    onClick={() => {
-                      setReentrySinal((n) => n + 1);
-                      irParaFormulario();
-                    }}
+                    onClick={irParaVagas}
                     className="mt-2 text-sm font-semibold text-[#9cc8ef] underline decoration-[#9cc8ef]/40 underline-offset-2"
                   >
-                    Tenho reentry →
+                    Ver vagas →
                   </button>
                 </div>
               </div>
@@ -964,11 +791,21 @@ export default function LandingMurata({ config: s }: { config: ConfigLanding }) 
             </div>
           </section>
 
-          {/* Formulário */}
-          <section id="pre-analise" ref={formRef} aria-labelledby="t-form" className="scroll-mt-20">
-            <TituloSecao id="t-form">Verifique sua elegibilidade</TituloSecao>
-            <p className="mb-5 mt-2 text-sm text-black/65">Leva cerca de 1 minuto. Nossa equipe responde pelo WhatsApp.</p>
-            <Formulario config={s} reentrySinal={reentrySinal} />
+          {/* Vagas (no lugar do antigo formulário de pré-análise) */}
+          <section id="vagas" ref={vagasRef} aria-labelledby="t-vagas" className="scroll-mt-20">
+            <p className={kicker}>Candidatura</p>
+            <div className="mt-2">
+              <TituloSecao id="t-vagas">Vagas abertas</TituloSecao>
+            </div>
+            <p className="mb-5 mt-2 text-sm text-black/65">
+              Escolha a vaga e envie sua candidatura. Nossa equipe analisa o perfil e responde pelo WhatsApp.
+            </p>
+            <ListaVagas vagas={vagas} vagaPrincipalId={s.vagaId} cidade={s.cidade} onCandidatar={setCandidatura} />
+            <p className="mt-4 text-sm">
+              <Link href="/empregos#vagas" className="font-medium text-[#1f6fb8] underline decoration-[#1f6fb8]/30 underline-offset-2">
+                Ver todas as vagas da Ajisai
+              </Link>
+            </p>
           </section>
         </div>
 
@@ -977,15 +814,15 @@ export default function LandingMurata({ config: s }: { config: ConfigLanding }) 
       {/* Barra fixa no celular */}
       <div
         className={`fixed inset-x-0 bottom-0 z-40 border-t border-black/10 bg-white/95 px-4 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-3 backdrop-blur transition-transform ${
-          formVisivel ? "translate-y-full" : "translate-y-0"
+          vagasVisivel ? "translate-y-full" : "translate-y-0"
         }`}
       >
         <div className="mx-auto flex max-w-6xl items-center gap-2 md:justify-end md:px-4">
           <p className={`${display.className} mr-auto hidden text-base text-[#0A2540] md:block`}>
             {s.hero.titulo} <span className="ml-2 text-sm text-black/50">{s.resumo[0]?.valor}</span>
           </p>
-          <button type="button" onClick={irParaFormulario} className={`${classeBotao} flex-1 md:w-auto md:flex-none`}>
-            Verificar elegibilidade
+          <button type="button" onClick={irParaVagas} className={`${classeBotao} flex-1 md:w-auto md:flex-none`}>
+            Ver vagas
           </button>
           <a
             href={linkWhatsapp(msgWhats)}
@@ -1000,6 +837,8 @@ export default function LandingMurata({ config: s }: { config: ConfigLanding }) 
           </a>
         </div>
       </div>
+
+      {candidatura && <CandidaturaModal vaga={candidatura} onFechar={() => setCandidatura(null)} />}
     </main>
   );
 }

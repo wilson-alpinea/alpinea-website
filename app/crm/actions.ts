@@ -640,3 +640,33 @@ export async function atualizarStatusEntrevista(id: string, formData: FormData) 
   revalidatePath("/crm/empregos");
   voltarAgenda();
 }
+
+// ── Vagas no site — /crm/empregos/vagas (Wilson, 07/out/2026: "link
+// interno onde conseguimos rapidamente ativar e desativar as vagas vendo
+// elas no formato de lista tick box"). Grava em public.vagas_status
+// (migração 018) e revalida as páginas públicas de /empregos. Devolve erro
+// em vez de redirecionar porque a lista salva cada checkbox na hora. ──
+export async function definirVagasAtivas(vagaIds: string[], ativa: boolean): Promise<{ ok: true } | { ok: false; erro: string }> {
+  const { VAGAS } = await import("@/app/lib/vagasCatalogo");
+  const validos = new Set(VAGAS.map((v) => v.id));
+  const ids = vagaIds.filter((id) => validos.has(id));
+  if (ids.length === 0) return { ok: false, erro: "Nenhuma vaga válida." };
+
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { ok: false, erro: "Sessão expirada — entre de novo no CRM." };
+
+  const agora = new Date().toISOString();
+  const { error } = await supabase
+    .from("vagas_status")
+    .upsert(ids.map((vaga_id) => ({ vaga_id, ativa, updated_at: agora, updated_by: user.id })), { onConflict: "vaga_id" });
+  if (error) {
+    console.error("Erro ao salvar vagas_status:", error);
+    return { ok: false, erro: "Não foi possível salvar. A migração 018 já rodou no Supabase?" };
+  }
+  revalidatePath("/empregos", "layout");
+  revalidatePath("/crm/empregos/vagas");
+  return { ok: true };
+}

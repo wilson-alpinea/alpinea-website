@@ -6,6 +6,10 @@
 // e tem erros graves como dizer Jutsai, comunicação sobre a Fujiarte etc.
 // Simplifique a página e use as imagens" (fotos de Izumo enviadas por ele).
 //
+// 07/out/2026 — salário, progressão, adicionais, dias por mês e
+// eletrodomésticos conferidos com as fichas oficiais enviadas pelo Wilson:
+// "CSR - IZUMO (2026.07.10更新)" e "CSR - FUKUI (2026.07.03更新)".
+//
 // COMPLIANCE (vale para qualquer edição deste arquivo):
 // - A marca é AJISAI. Não citar "Jutsai" nem a Fujiarte na página.
 // - Nunca mencionar bônus trimestral, bônus/prêmio de produtividade,
@@ -17,8 +21,6 @@
 //   "devolver depois".
 // - Auxílio Embarque é uma campanha da Ajisai — nunca chamar de salário nem
 //   de bônus da Murata. Não sugerir relação societária entre as empresas.
-
-export type CampoFormulario = "estadoSeparado" | "ondeEsta";
 
 type Imagem = { src: string; alt: string };
 
@@ -80,13 +82,15 @@ export type ConfigLanding = {
   simulacao: {
     valoresHora: { rotulo: string; valor: number }[];
     turno: "fixo" | "alternado";
+    // Dias trabalhados por mês na escala 4×2 (ficha CSR: Izumo ≈ 18,
+    // Fukui ≈ 20). Sem valor = 20.
+    diasMes?: number;
     // aluguel = ponto médio da faixa informada; contas = estimativa de
     // água/luz/gás (não informado pela operação — referência de mercado).
     moradias: { rotulo: string; aluguel: number; contas: number }[];
   };
   processo: string[];
   faq: { pergunta: string; resposta: string }[];
-  formulario: { botao: string; campos: CampoFormulario[] };
 };
 
 export const AUXILIO_EMBARQUE_BRL = "R$ 1.000";
@@ -113,7 +117,7 @@ export const LANDING_IZUMO: ConfigLanding = {
     imagem: { src: "/images/empregos/izumo-fabrica.webp", alt: "Fábrica entre campos de arroz e montanhas em Izumo, Shimane" },
   },
   resumo: [
-    { rotulo: "Salário inicial", valor: "¥1.500/h", detalhe: "+ adicionais legais" },
+    { rotulo: "Salário inicial", valor: "¥1.500/h", detalhe: "chega a ¥1.650/h" },
     { rotulo: "Turno", valor: "Fixo, escala 4×2", detalhe: "sem alternar dia e noite" },
     { rotulo: "Custo inicial", valor: "R$ 0", detalhe: "para candidatos elegíveis" },
     { rotulo: "Moradia", valor: "Organizada", detalhe: "aluguel a partir de ¥45.000" },
@@ -134,10 +138,17 @@ export const LANDING_IZUMO: ConfigLanding = {
   salario: {
     valor: "¥1.500/h",
     legenda: "Salário inicial",
-    adicionais: "Mais os adicionais previstos na lei japonesa (hora extra, trabalho noturno e dias de descanso legal), conforme a jornada.",
+    progressao: [
+      { faixa: "0–12 meses", valor: "¥1.500" },
+      { faixa: "13–24 meses", valor: "¥1.550" },
+      { faixa: "25–36 meses", valor: "¥1.600" },
+      { faixa: "37+ meses", valor: "¥1.650" },
+    ],
+    adicionais: "Adicionais legais: hora extra +25%, horário noturno (22h–5h) +25%, domingos +35%. Mesmo valor para homens e mulheres. Pagamento todo dia 15, referente ao mês anterior.",
   },
   turnos: {
-    texto: "Em Izumo há opções de turno fixo, sem alternar entre dia e noite: 4 dias de trabalho para 2 de folga. Horário definido na alocação.",
+    texto:
+      "Em Izumo há dois turnos fixos (diurno ou noturno), sem alternar entre dia e noite: 4 dias de trabalho para 2 de folga, cerca de 18 dias trabalhados por mês. Horário definido na alocação.",
   },
   custoZero: {
     titulo: "Custo inicial zero",
@@ -156,7 +167,8 @@ export const LANDING_IZUMO: ConfigLanding = {
     ],
     notas: [
       "Aluguel mensal aproximado, pago pelo trabalhador. Água, luz e gás à parte.",
-      "Alguns imóveis já têm equipamentos domésticos; em outros, podem ser disponibilizados ou alugados.",
+      "Todos os imóveis têm ar-condicionado. No Leopalace, TV, geladeira e máquina de lavar já estão incluídas no aluguel. Nos demais, geladeira e máquina de lavar já vêm no apartamento por ¥1.550/mês cada (TV opcional, ¥2.350/mês) e podem ser devolvidas se não forem necessárias.",
+      "Do apartamento até a fábrica: cerca de 20 minutos a pé ou 30 minutos no ônibus fretado.",
     ],
     imagem: { src: "/images/empregos/izumo-moradia.webp", alt: "Apartamento 1K mobiliado no Japão, com cozinha compacta e quarto" },
     // Plantas enviadas pelo Wilson em 07/out/2026 ("as 5 plantas de Izumo,
@@ -218,15 +230,21 @@ export const LANDING_IZUMO: ConfigLanding = {
     ],
   },
   simulacao: {
-    valoresHora: [{ rotulo: "Salário inicial", valor: 1500 }],
+    valoresHora: [
+      { rotulo: "0–12 meses", valor: 1500 },
+      { rotulo: "13–24 meses", valor: 1550 },
+      { rotulo: "25–36 meses", valor: 1600 },
+      { rotulo: "37+ meses", valor: 1650 },
+    ],
     turno: "fixo",
+    diasMes: 18,
     moradias: [
       { rotulo: "1K / 1DK sem internet", aluguel: 50000, contas: 12000 },
       { rotulo: "1K / 1DK com internet", aluguel: 62500, contas: 12000 },
       { rotulo: "2DK ou maior", aluguel: 65000, contas: 18000 },
     ],
   },
-  processo: ["Pré-análise", "Processo seletivo", "Documentação e preparação", "Embarque para o Japão"],
+  processo: ["Candidatura pela vaga", "Processo seletivo", "Documentação e preparação", "Embarque para o Japão"],
   faq: [
     {
       pergunta: "Preciso pagar a passagem aérea?",
@@ -246,7 +264,6 @@ export const LANDING_IZUMO: ConfigLanding = {
       resposta: `Com a documentação pronta, o embarque pode ser mais rápido e, quando elegível à campanha vigente, você pode receber o Auxílio Embarque Ajisai de ${AUXILIO_EMBARQUE_BRL}.`,
     },
   ],
-  formulario: { botao: "Enviar pré-candidatura", campos: [] },
 };
 
 export const LANDING_ECHIZEN: ConfigLanding = {
@@ -320,7 +337,10 @@ export const LANDING_ECHIZEN: ConfigLanding = {
       { rotulo: "2DK ou maior", valor: "¥50.000 – ¥80.000" },
       { rotulo: "Leopalace", valor: "≈ ¥50.000 – ¥55.000" },
     ],
-    notas: ["Aluguel mensal aproximado, pago pelo trabalhador. Água, luz e gás à parte."],
+    notas: [
+      "Aluguel mensal aproximado, pago pelo trabalhador. Água, luz e gás à parte.",
+      "Todos os imóveis têm ar-condicionado. No Leopalace, TV, geladeira, máquina de lavar e micro-ondas já estão incluídos no aluguel. Nos demais, geladeira e máquina de lavar podem ser alugadas por ¥1.550/mês cada.",
+    ],
     imagem: { src: "/images/empregos/echizen-moradia.webp", alt: "Apartamento 1DK mobiliado no Japão, com cozinha, geladeira, máquina de lavar e sala" },
     // Plantas enviadas pelo Wilson em 07/out/2026 (mesmo tratamento de Izumo).
     plantas: [
@@ -390,13 +410,14 @@ export const LANDING_ECHIZEN: ConfigLanding = {
       { rotulo: "37+ meses", valor: 1650 },
     ],
     turno: "alternado",
+    diasMes: 20,
     moradias: [
       { rotulo: "1K / 1DK", aluguel: 52500, contas: 12000 },
       { rotulo: "2DK ou maior", aluguel: 65000, contas: 18000 },
       { rotulo: "Leopalace", aluguel: 52500, contas: 12000 },
     ],
   },
-  processo: ["Pré-análise do perfil", "Entrevista e análise da vaga", "Documentação", "Preparação e viagem", "Integração e início"],
+  processo: ["Candidatura pela vaga", "Entrevista e análise da vaga", "Documentação", "Preparação e viagem", "Integração e início"],
   faq: [
     {
       pergunta: "O embarque pode mesmo ter custo inicial zero?",
@@ -416,5 +437,11 @@ export const LANDING_ECHIZEN: ConfigLanding = {
       resposta: `Com a documentação pronta, o processo pode ser mais rápido e você pode se enquadrar no Auxílio Embarque Ajisai de ${AUXILIO_EMBARQUE_BRL}, conforme as condições da campanha.`,
     },
   ],
-  formulario: { botao: "Verificar minha elegibilidade", campos: ["estadoSeparado", "ondeEsta"] },
 };
+
+// Hot site de cada vaga do catálogo (a página própria da vaga linka para
+// cá, e o hot site lista a vaga — Wilson, 07/out/2026).
+export const LANDINGS_MURATA: ConfigLanding[] = [LANDING_IZUMO, LANDING_ECHIZEN];
+export const HOTSITE_POR_VAGA: Record<string, string> = Object.fromEntries(
+  LANDINGS_MURATA.map((l) => [l.vagaId, `/empregos/${l.slug}`]),
+);
