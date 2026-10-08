@@ -267,6 +267,9 @@ type Destaque = {
   // Página própria aberta pelo banner (landing de recrutamento) — tem
   // prioridade sobre filtroRegiao.
   href?: string;
+  // Grupo de vagas do catálogo: o clique filtra a lista só nessas vagas
+  // (Wilson, 08/out/2026: "um card único para essas 4 vagas").
+  vagaIds?: string[];
 };
 
 const DESTAQUES: Destaque[] = [
@@ -291,7 +294,24 @@ const DESTAQUES: Destaque[] = [
     href: "/empregos/izumo",
     sobreposto: { kicker: "Shimane · Japão", titulo: "Trabalhe e More em Izumo", subtitulo: "A cidade do Grande Santuário de Izumo." },
   },
-  { id: "placeholder-4", titulo: "Novo destaque", subtitulo: "Destaque em preparação" },
+  {
+    // Wilson, 08/out/2026: "criar um novo card no carrossel de empregos
+    // para essas 4 vagas num card único, vou enviar a arte em seguida".
+    // Entrou no lugar do placeholder "Novo destaque". Enquanto a arte não
+    // chega, aparece em fundo azul com o texto abaixo; quando chegar, é só
+    // preencher `imagem` (o texto sobreposto já está pronto).
+    id: "montadoras",
+    titulo: "Vagas em montadoras",
+    // Arte enviada pelo Wilson em 08/out/2026 (sem texto na imagem).
+    imagem: "/images/empregos-destaque-montadoras.webp",
+    subtitulo: "Subaru (Oizumi e Ota), Daihatsu (Nakatsu) e Yokohama Gomu (Shinshiro) — de ¥1.430 a ¥1.900 por hora.",
+    sobreposto: {
+      kicker: "Gunma · Oita · Aichi",
+      titulo: "Vagas em montadoras",
+      subtitulo: "Subaru, Daihatsu e Yokohama Gomu — de ¥1.430 a ¥1.900 por hora.",
+    },
+    vagaIds: ["subaru-oizumi", "subaru-ota", "daihatsu-nakatsu", "yokohama-gomu-aichi"],
+  },
 ];
 
 function CarrosselDestaques({ onAbrir }: { onAbrir: (d: Destaque) => void }) {
@@ -337,7 +357,7 @@ function CarrosselDestaques({ onAbrir }: { onAbrir: (d: Destaque) => void }) {
         style={{ transform: `translateX(-${indice * 100}%)` }}
       >
         {DESTAQUES.map((d, i) => {
-          const clicavel = Boolean(d.href || d.filtroRegiao);
+          const clicavel = Boolean(d.href || d.filtroRegiao || d.vagaIds?.length);
           const conteudo = d.imagem ? (
             <div className="relative aspect-[16/10] w-full sm:aspect-[1918/820]">
               <Image
@@ -361,7 +381,7 @@ function CarrosselDestaques({ onAbrir }: { onAbrir: (d: Destaque) => void }) {
                       {d.sobreposto.titulo}
                     </p>
                     {d.sobreposto.subtitulo && <p className="mt-2 hidden text-sm text-white/80 sm:block md:text-base">{d.sobreposto.subtitulo}</p>}
-                    {(d.href || d.filtroRegiao) && (
+                    {clicavel && (
                       <span className="mt-4 inline-flex w-fit items-center gap-1.5 rounded-full bg-white px-4 py-2 text-xs font-semibold uppercase tracking-[0.12em] text-[#0A2540]">
                         {d.href ? "Conhecer a vaga →" : "Ver vagas →"}
                       </span>
@@ -373,12 +393,17 @@ function CarrosselDestaques({ onAbrir }: { onAbrir: (d: Destaque) => void }) {
           ) : (
             <div className="relative flex aspect-[16/10] w-full flex-col justify-center bg-gradient-to-br from-[#0A2540] to-[#1c4a74] px-8 sm:aspect-[1918/820] sm:px-14">
               <span className="w-fit rounded-full border border-white/25 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-white/70">
-                Em breve
+                {clicavel ? d.sobreposto?.kicker ?? "Destaque" : "Em breve"}
               </span>
               <p className={`${display.className} mt-4 max-w-xl text-2xl font-medium leading-tight text-white md:text-4xl`}>
                 {d.titulo}
               </p>
-              {d.subtitulo && <p className="mt-3 text-sm text-white/55">{d.subtitulo}</p>}
+              {d.subtitulo && <p className="mt-3 max-w-xl text-sm text-white/70">{d.subtitulo}</p>}
+              {clicavel && (
+                <span className="mt-5 inline-flex w-fit items-center gap-1.5 rounded-full bg-white px-4 py-2 text-xs font-semibold uppercase tracking-[0.12em] text-[#0A2540]">
+                  {d.href ? "Conhecer a vaga →" : "Ver vagas →"}
+                </span>
+              )}
             </div>
           );
           return (
@@ -840,6 +865,8 @@ export default function EmpregosCliente({ inativas }: { inativas: string[] }) {
   const [selecionadas, setSelecionadas] = useState<Set<string>>(new Set());
   const [vagaAbertaId, setVagaAbertaId] = useState<string | null>(null);
   const [candidaturaVagaId, setCandidaturaVagaId] = useState<string | null>(null);
+  // Filtro aplicado por um card do carrossel com grupo de vagas.
+  const [destaqueFiltro, setDestaqueFiltro] = useState<{ titulo: string; ids: string[] } | null>(null);
   const [scrolled, setScrolled] = useState(false);
   const [emailMailing, setEmailMailing] = useState("");
   const [statusMailing, setStatusMailing] = useState<"idle" | "enviando" | "sucesso" | "erro">("idle");
@@ -941,12 +968,13 @@ export default function EmpregosCliente({ inativas }: { inativas: string[] }) {
 
   const vagasFiltradas = useMemo(() => {
     return vagasNoSite.filter((vaga) => {
+      if (destaqueFiltro && !destaqueFiltro.ids.includes(vaga.id)) return false;
       if (publicoFiltro !== "todos" && !vaga.publico.includes(publicoFiltro)) return false;
       if (setorFiltro !== "todos" && vaga.setor !== setorFiltro) return false;
       if (regioesFiltro.size > 0 && !regioesFiltro.has(vaga.regiao)) return false;
       return true;
     });
-  }, [vagasNoSite, publicoFiltro, setorFiltro, regioesFiltro]);
+  }, [vagasNoSite, destaqueFiltro, publicoFiltro, setorFiltro, regioesFiltro]);
 
   const vagasSelecionadas = VAGAS.filter((v) => selecionadas.has(v.id));
 
@@ -1020,7 +1048,15 @@ export default function EmpregosCliente({ inativas }: { inativas: string[] }) {
             Oportunidades em destaque
           </h2>
           <div className="mt-8 pb-14 md:pb-20">
-            <CarrosselDestaques onAbrir={(d) => d.filtroRegiao && irParaVagas({ regiao: d.filtroRegiao })} />
+            <CarrosselDestaques
+              onAbrir={(d) => {
+                if (d.vagaIds?.length) {
+                  setDestaqueFiltro({ titulo: d.titulo, ids: d.vagaIds });
+                  irParaVagas({ publico: "todos", setor: "todos" });
+                  setRegioesFiltro(new Set());
+                } else if (d.filtroRegiao) irParaVagas({ regiao: d.filtroRegiao });
+              }}
+            />
           </div>
         </div>
       </section>
@@ -1196,6 +1232,21 @@ export default function EmpregosCliente({ inativas }: { inativas: string[] }) {
               )}
             </div>
           </div>
+
+          {destaqueFiltro && (
+            <div className="mt-5 flex flex-wrap items-center gap-3 rounded-xl border border-[#2f80c9]/30 bg-[#2f80c9]/5 px-4 py-3 text-sm">
+              <span className="text-black/70">
+                Mostrando: <span className="font-semibold text-[#0A2540]">{destaqueFiltro.titulo}</span>
+              </span>
+              <button
+                type="button"
+                onClick={() => setDestaqueFiltro(null)}
+                className="text-xs font-medium text-[#2f80c9] underline decoration-[#2f80c9]/30 underline-offset-2"
+              >
+                Ver todas as vagas
+              </button>
+            </div>
+          )}
 
           {/* Grade de vagas */}
           <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
