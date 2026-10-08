@@ -22,6 +22,15 @@ export type CampoFormulario = "estadoSeparado" | "ondeEsta";
 
 type Imagem = { src: string; alt: string };
 
+export type Planta = {
+  tipo: string;
+  titulo: string;
+  ambientes: string;
+  indicado: string;
+  aluguel: string;
+  imagem: Imagem;
+};
+
 export type ConfigLanding = {
   slug: "izumo" | "echizen";
   vagaId: string;
@@ -49,7 +58,14 @@ export type ConfigLanding = {
   turnos: { texto: string; unidades?: { nome: string; diurno: string; noturno: string }[]; imagem?: Imagem };
   custoZero: { titulo: string; texto: string; itens: string[]; imagem?: Imagem };
   reentry: string;
-  moradia: { texto: string; valores: { rotulo: string; valor: string }[]; notas: string[]; imagem?: Imagem };
+  moradia: {
+    texto: string;
+    valores: { rotulo: string; valor: string }[];
+    notas: string[];
+    imagem?: Imagem;
+    // Plantas conceituais (galeria estilo imobiliária de alto padrão).
+    plantas?: Planta[];
+  };
   cidadeSecao: {
     titulo: string;
     texto: string;
@@ -57,6 +73,16 @@ export type ConfigLanding = {
     destaques: { titulo: string; texto: string }[];
     // Bloco extra com foto (ex.: transporte até a fábrica em Echizen).
     extra?: { imagem: Imagem; titulo: string; texto: string };
+  };
+  // Simulador de ganhos líquidos (Wilson, 07/out/2026: "fazer uma
+  // estimativa de quanto dinheiro um trabalhador consegue gerar em reais e
+  // em ienes, deduzir gastos com moradia ou algo que seja obrigatório").
+  simulacao: {
+    valoresHora: { rotulo: string; valor: number }[];
+    turno: "fixo" | "alternado";
+    // aluguel = ponto médio da faixa informada; contas = estimativa de
+    // água/luz/gás (não informado pela operação — referência de mercado).
+    moradias: { rotulo: string; aluguel: number; contas: number }[];
   };
   processo: string[];
   faq: { pergunta: string; resposta: string }[];
@@ -133,6 +159,52 @@ export const LANDING_IZUMO: ConfigLanding = {
       "Alguns imóveis já têm equipamentos domésticos; em outros, podem ser disponibilizados ou alugados.",
     ],
     imagem: { src: "/images/empregos/izumo-moradia.webp", alt: "Apartamento 1K mobiliado no Japão, com cozinha compacta e quarto" },
+    // Plantas enviadas pelo Wilson em 07/out/2026 ("as 5 plantas de Izumo,
+    // deixe parecido com imobiliária de alto padrão como Cyrela").
+    // Aluguel = faixas de referência acima; "indicado" conforme a
+    // composição familiar, sempre sujeito à disponibilidade.
+    plantas: [
+      {
+        tipo: "1K",
+        titulo: "1 quarto + cozinha compacta",
+        ambientes: "Quarto, cozinha no corredor, banho, WC e varanda",
+        indicado: "Solteiros",
+        aluguel: "¥45.000 – ¥65.000",
+        imagem: { src: "/images/empregos/izumo-planta-1k.webp", alt: "Planta conceitual de apartamento 1K em Izumo" },
+      },
+      {
+        tipo: "1DK",
+        titulo: "1 quarto + cozinha separada",
+        ambientes: "Quarto, cozinha com mesa, banho, WC, armário e varanda",
+        indicado: "Solteiros ou casais",
+        aluguel: "¥45.000 – ¥65.000",
+        imagem: { src: "/images/empregos/izumo-planta-1dk.webp", alt: "Planta conceitual de apartamento 1DK em Izumo" },
+      },
+      {
+        tipo: "2DK",
+        titulo: "2 quartos + cozinha separada",
+        ambientes: "2 quartos, cozinha com mesa, banho, WC e varanda",
+        indicado: "Casais ou famílias pequenas",
+        aluguel: "¥55.000 – ¥75.000",
+        imagem: { src: "/images/empregos/izumo-planta-2dk.webp", alt: "Planta conceitual de apartamento 2DK em Izumo" },
+      },
+      {
+        tipo: "2LDK",
+        titulo: "2 quartos + sala + cozinha",
+        ambientes: "2 quartos, sala integrada à cozinha, banho, WC e varanda",
+        indicado: "Famílias",
+        aluguel: "¥55.000 – ¥75.000",
+        imagem: { src: "/images/empregos/izumo-planta-2ldk.webp", alt: "Planta conceitual de apartamento 2LDK em Izumo" },
+      },
+      {
+        tipo: "3DK",
+        titulo: "3 quartos + cozinha separada",
+        ambientes: "3 quartos, cozinha com mesa, banho, WC e varanda",
+        indicado: "Famílias maiores",
+        aluguel: "¥55.000 – ¥75.000",
+        imagem: { src: "/images/empregos/izumo-planta-3dk.webp", alt: "Planta conceitual de apartamento 3DK em Izumo" },
+      },
+    ],
   },
   cidadeSecao: {
     titulo: "Viver em Izumo",
@@ -143,6 +215,15 @@ export const LANDING_IZUMO: ConfigLanding = {
       { titulo: "Izumo Taisha", texto: "Um dos santuários mais antigos do Japão" },
       { titulo: "Natureza", texto: "Montanhas, mar e quatro estações" },
       { titulo: "Onsen", texto: "Águas termais para os dias de folga" },
+    ],
+  },
+  simulacao: {
+    valoresHora: [{ rotulo: "Salário inicial", valor: 1500 }],
+    turno: "fixo",
+    moradias: [
+      { rotulo: "1K / 1DK sem internet", aluguel: 50000, contas: 12000 },
+      { rotulo: "1K / 1DK com internet", aluguel: 62500, contas: 12000 },
+      { rotulo: "2DK ou maior", aluguel: 65000, contas: 18000 },
     ],
   },
   processo: ["Pré-análise", "Processo seletivo", "Documentação e preparação", "Embarque para o Japão"],
@@ -241,6 +322,49 @@ export const LANDING_ECHIZEN: ConfigLanding = {
     ],
     notas: ["Aluguel mensal aproximado, pago pelo trabalhador. Água, luz e gás à parte."],
     imagem: { src: "/images/empregos/echizen-moradia.webp", alt: "Apartamento 1DK mobiliado no Japão, com cozinha, geladeira, máquina de lavar e sala" },
+    // Plantas enviadas pelo Wilson em 07/out/2026 (mesmo tratamento de Izumo).
+    plantas: [
+      {
+        tipo: "1K",
+        titulo: "1 quarto + cozinha compacta",
+        ambientes: "Quarto, cozinha no corredor, banho, WC, armário e varanda",
+        indicado: "Solteiros",
+        aluguel: "¥40.000 – ¥65.000",
+        imagem: { src: "/images/empregos/echizen-planta-1k.webp", alt: "Planta conceitual de apartamento 1K em Echizen" },
+      },
+      {
+        tipo: "1DK",
+        titulo: "1 quarto + cozinha separada",
+        ambientes: "Quarto, cozinha com mesa, banho, WC, armário e varanda",
+        indicado: "Solteiros ou casais",
+        aluguel: "¥40.000 – ¥65.000",
+        imagem: { src: "/images/empregos/echizen-planta-1dk.webp", alt: "Planta conceitual de apartamento 1DK em Echizen" },
+      },
+      {
+        tipo: "2DK",
+        titulo: "2 quartos + cozinha separada",
+        ambientes: "2 quartos, cozinha com mesa, banho, WC e varanda",
+        indicado: "Casais ou famílias pequenas",
+        aluguel: "¥50.000 – ¥80.000",
+        imagem: { src: "/images/empregos/echizen-planta-2dk.webp", alt: "Planta conceitual de apartamento 2DK em Echizen" },
+      },
+      {
+        tipo: "2LDK",
+        titulo: "2 quartos + sala + cozinha",
+        ambientes: "2 quartos, sala integrada à cozinha, banho, WC e varanda",
+        indicado: "Famílias",
+        aluguel: "¥50.000 – ¥80.000",
+        imagem: { src: "/images/empregos/echizen-planta-2ldk.webp", alt: "Planta conceitual de apartamento 2LDK em Echizen" },
+      },
+      {
+        tipo: "3DK",
+        titulo: "3 quartos + cozinha separada",
+        ambientes: "3 quartos, cozinha com mesa, banho, WC e varanda",
+        indicado: "Famílias maiores",
+        aluguel: "¥50.000 – ¥80.000",
+        imagem: { src: "/images/empregos/echizen-planta-3dk.webp", alt: "Planta conceitual de apartamento 3DK em Echizen" },
+      },
+    ],
   },
   cidadeSecao: {
     titulo: "Por que Echizen",
@@ -257,6 +381,20 @@ export const LANDING_ECHIZEN: ConfigLanding = {
       titulo: "Transporte até a fábrica",
       texto: "Dependendo da unidade e da moradia, há deslocamento organizado. Na unidade Miyazaki há transporte entre apartamento e fábrica.",
     },
+  },
+  simulacao: {
+    valoresHora: [
+      { rotulo: "0–12 meses", valor: 1500 },
+      { rotulo: "13–24 meses", valor: 1550 },
+      { rotulo: "25–36 meses", valor: 1600 },
+      { rotulo: "37+ meses", valor: 1650 },
+    ],
+    turno: "alternado",
+    moradias: [
+      { rotulo: "1K / 1DK", aluguel: 52500, contas: 12000 },
+      { rotulo: "2DK ou maior", aluguel: 65000, contas: 18000 },
+      { rotulo: "Leopalace", aluguel: 52500, contas: 12000 },
+    ],
   },
   processo: ["Pré-análise do perfil", "Entrevista e análise da vaga", "Documentação", "Preparação e viagem", "Integração e início"],
   faq: [

@@ -13,9 +13,12 @@
 import { useEffect, useRef, useState, type FormEvent, type ReactNode } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { createPortal } from "react-dom";
 import { display, WHATSAPP_NUMBER } from "../../produtos/page";
 import { inter, IconeCheck } from "../transporte/compartilhado";
-import { AUXILIO_EMBARQUE_BRL, CONDICAO_CUSTO_ZERO, type ConfigLanding } from "../../lib/landingsMurata";
+import { COTACAO_FALLBACK_BRL_POR_JPY_COMPRA, COTACAO_FALLBACK_BRL_POR_JPY_VENDA } from "../../lib/cambioIene";
+import { formatBRL, formatJPY } from "../../lib/currency";
+import { AUXILIO_EMBARQUE_BRL, CONDICAO_CUSTO_ZERO, type ConfigLanding, type Planta } from "../../lib/landingsMurata";
 
 const linkWhatsapp = (msg: string) => `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
 
@@ -33,6 +36,363 @@ function TituloSecao({ id, children }: { id?: string; children: ReactNode }) {
 
 function irParaFormulario() {
   document.getElementById("pre-analise")?.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+// ── Plantas — galeria no estilo de imobiliária de alto padrão (Wilson,
+// 07/out/2026: "parecido com imobiliária de alto padrão como Cyrela").
+// Abas por tipologia, planta grande sobre fundo claro, ficha técnica ao
+// lado e "ampliar" em tela cheia (createPortal — learnings Safari iOS). ──
+function Plantas({ plantas }: { plantas: Planta[] }) {
+  const [i, setI] = useState(0);
+  const [aberta, setAberta] = useState(false);
+  const p = plantas[i];
+  const total = plantas.length;
+  const mudar = (d: number) => setI((n) => (n + d + total) % total);
+
+  useEffect(() => {
+    if (!aberta) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setAberta(false);
+      if (e.key === "ArrowRight") setI((n) => (n + 1) % total);
+      if (e.key === "ArrowLeft") setI((n) => (n - 1 + total) % total);
+    };
+    const overflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    window.addEventListener("keydown", onKey);
+    return () => {
+      document.body.style.overflow = overflow;
+      window.removeEventListener("keydown", onKey);
+    };
+  }, [aberta, total]);
+
+  const seta = (dir: "esq" | "dir") => (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5" aria-hidden="true">
+      <path d={dir === "esq" ? "M15 18l-6-6 6-6" : "M9 6l6 6-6 6"} />
+    </svg>
+  );
+
+  return (
+    <div className="mt-8">
+      <div className="flex items-end justify-between gap-4">
+        <div>
+          <p className="text-[11px] font-semibold uppercase tracking-[0.3em] text-[#0A2540]/60">Plantas</p>
+          <p className={`${display.className} mt-1 text-xl font-medium text-[#0A2540]`}>Escolha a tipologia</p>
+        </div>
+        <p className={`${inter.className} hidden text-xs tabular-nums text-black/45 sm:block`}>
+          {String(i + 1).padStart(2, "0")} / {String(total).padStart(2, "0")}
+        </p>
+      </div>
+
+      <div role="tablist" aria-label="Tipologias" className="-mx-5 mt-4 flex gap-2 overflow-x-auto px-5 pb-1 sm:mx-0 sm:px-0">
+        {plantas.map((pl, n) => (
+          <button
+            key={pl.tipo}
+            type="button"
+            role="tab"
+            aria-selected={n === i}
+            onClick={() => setI(n)}
+            className={`min-h-[44px] shrink-0 rounded-full border px-5 text-[13px] tracking-[0.14em] transition ${
+              n === i ? "border-[#0A2540] bg-[#0A2540] font-semibold text-white" : "border-black/15 text-black/60 hover:border-black/40 hover:text-black"
+            }`}
+          >
+            {pl.tipo}
+          </button>
+        ))}
+      </div>
+
+      <div className="mt-4 grid overflow-hidden rounded-2xl border border-black/10 bg-white md:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)]">
+        <button
+          type="button"
+          onClick={() => setAberta(true)}
+          className="group relative aspect-[4/5] bg-[#f6f5f2]"
+          aria-label={`Ampliar planta ${p.tipo}`}
+        >
+          <Image key={p.imagem.src} src={p.imagem.src} alt={p.imagem.alt} fill sizes="(min-width: 1024px) 420px, 100vw" className="object-contain p-3 transition duration-500 group-hover:scale-[1.02]" />
+          <span className="absolute right-3 top-3 flex h-9 w-9 items-center justify-center rounded-full bg-white/90 text-[#0A2540] shadow-sm ring-1 ring-black/5">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" className="h-4 w-4" aria-hidden="true">
+              <path d="M14 4h6v6M10 20H4v-6M20 4l-7 7M4 20l7-7" />
+            </svg>
+          </span>
+        </button>
+        <div className="flex flex-col p-6 md:p-8">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.3em] text-black/45">Tipologia</p>
+          <p className={`${display.className} mt-1 text-5xl font-medium leading-none text-[#0A2540]`}>{p.tipo}</p>
+          <p className="mt-3 text-[15px] text-black/75">{p.titulo}</p>
+          <dl className="mt-6 divide-y divide-black/10 border-y border-black/10 text-sm">
+            <div className="py-3">
+              <dt className="text-[11px] font-semibold uppercase tracking-[0.14em] text-black/50">Ambientes</dt>
+              <dd className="mt-1 text-black/80">{p.ambientes}</dd>
+            </div>
+            <div className="py-3">
+              <dt className="text-[11px] font-semibold uppercase tracking-[0.14em] text-black/50">Indicado para</dt>
+              <dd className="mt-1 text-black/80">{p.indicado}</dd>
+            </div>
+            <div className="py-3">
+              <dt className="text-[11px] font-semibold uppercase tracking-[0.14em] text-black/50">Aluguel de referência</dt>
+              <dd className={`${inter.className} mt-1 font-semibold tabular-nums text-[#0A2540]`}>
+                {p.aluguel}
+                <span className="font-normal text-black/45"> /mês</span>
+              </dd>
+            </div>
+          </dl>
+          <div className="mt-auto flex items-center justify-between gap-3 pt-6">
+            <button type="button" onClick={() => setAberta(true)} className="text-sm font-medium text-[#1f6fb8] underline decoration-[#1f6fb8]/30 underline-offset-2">
+              Ampliar planta
+            </button>
+            <div className="flex gap-2">
+              <button type="button" onClick={() => mudar(-1)} aria-label="Planta anterior" className="flex h-10 w-10 items-center justify-center rounded-full border border-black/15 text-[#0A2540] hover:border-black/40">
+                {seta("esq")}
+              </button>
+              <button type="button" onClick={() => mudar(1)} aria-label="Próxima planta" className="flex h-10 w-10 items-center justify-center rounded-full border border-black/15 text-[#0A2540] hover:border-black/40">
+                {seta("dir")}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <p className="mt-3 text-[11px] leading-5 text-black/50">
+        Plantas conceituais, apenas como referência. Imóvel, metragem e disposição variam conforme a disponibilidade no momento da alocação.
+      </p>
+
+      {aberta &&
+        createPortal(
+          <div role="dialog" aria-modal="true" aria-label={`Planta ${p.tipo}`} className="fixed inset-0 z-[100] flex flex-col bg-[#0A2540]/95 backdrop-blur-sm" onClick={() => setAberta(false)}>
+            <div className="flex h-14 shrink-0 items-center justify-between px-4 text-white md:px-8">
+              <p className={`${display.className} text-lg`}>
+                Planta {p.tipo} <span className="ml-2 text-sm text-white/60">{p.titulo}</span>
+              </p>
+              <button type="button" onClick={() => setAberta(false)} aria-label="Fechar" className="flex h-11 w-11 items-center justify-center rounded-full text-white/80 hover:bg-white/10 hover:text-white">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" className="h-5 w-5" aria-hidden="true">
+                  <path d="M6 6l12 12M18 6L6 18" />
+                </svg>
+              </button>
+            </div>
+            <div className="relative min-h-0 flex-1 px-4 pb-4 md:px-20 md:pb-8" onClick={(e) => e.stopPropagation()}>
+              <div className="relative h-full w-full overflow-hidden rounded-xl bg-white">
+                <Image key={p.imagem.src} src={p.imagem.src} alt={p.imagem.alt} fill sizes="100vw" className="object-contain p-2" />
+              </div>
+              <button type="button" onClick={() => mudar(-1)} aria-label="Planta anterior" className="absolute left-6 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-[#0A2540] shadow md:left-5">
+                {seta("esq")}
+              </button>
+              <button type="button" onClick={() => mudar(1)} aria-label="Próxima planta" className="absolute right-6 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full bg-white/90 text-[#0A2540] shadow md:right-5">
+                {seta("dir")}
+              </button>
+            </div>
+          </div>,
+          document.body,
+        )}
+    </div>
+  );
+}
+
+// ── Simulador de ganhos (Wilson, 07/out/2026: "estimativa de quanto
+// dinheiro um trabalhador consegue gerar em reais e em ienes [...] deduzir
+// gastos com moradia ou algo que seja obrigatório"). Premissas abaixo são
+// ESTIMATIVAS de referência — ficam todas explícitas na tela. ──
+const SIM_DIAS_MES = 20; // escala 4×2 ≈ 20 dias trabalhados por mês
+const SIM_HORAS_NORMAIS_DIA = 8;
+const SIM_HORAS_NOTURNAS_POR_TURNO = 6; // 22h–5h, descontado o intervalo
+const SIM_ADICIONAL_EXTRA = 0.25; // mínimo legal no Japão (e valor informado em Echizen)
+const SIM_ADICIONAL_NOTURNO = 0.25;
+const SIM_SEGURO_SOCIAL = 0.15; // saúde + previdência (kōsei nenkin) + seguro-desemprego ≈ 15%
+const SIM_IR = 0.03; // imposto de renda retido na fonte, aprox.
+const SIM_RESIDENCIAL = 0.06; // jūminzei, a partir do 2º ano (sobre a renda do ano anterior), aprox.
+
+function useCotacaoIeneReferencia() {
+  const [cot, setCot] = useState<{ valor: number; fallback: boolean }>({
+    valor: (COTACAO_FALLBACK_BRL_POR_JPY_COMPRA + COTACAO_FALLBACK_BRL_POR_JPY_VENDA) / 2,
+    fallback: true,
+  });
+  useEffect(() => {
+    let vivo = true;
+    Promise.all(
+      (["compra", "venda"] as const).map((d) =>
+        fetch(`/api/cambio-iene?direcao=${d}`)
+          .then((r) => r.json())
+          .catch(() => null),
+      ),
+    ).then(([c, v]) => {
+      const a = Number(c?.cotacaoBRLPorJPY);
+      const b = Number(v?.cotacaoBRLPorJPY);
+      if (vivo && a > 0 && b > 0) setCot({ valor: (a + b) / 2, fallback: Boolean(c?.fallback || v?.fallback) });
+    });
+    return () => {
+      vivo = false;
+    };
+  }, []);
+  return cot;
+}
+
+function Segmentos<T extends string | number>({ valor, opcoes, onChange, nome }: { valor: T; opcoes: { v: T; r: string }[]; onChange: (v: T) => void; nome: string }) {
+  return (
+    <div role="radiogroup" aria-label={nome} className="mt-2 flex flex-wrap gap-2">
+      {opcoes.map((o) => (
+        <button
+          key={String(o.v)}
+          type="button"
+          role="radio"
+          aria-checked={valor === o.v}
+          onClick={() => onChange(o.v)}
+          className={`min-h-[40px] rounded-full border px-4 text-[13px] transition ${
+            valor === o.v ? "border-[#0A2540] bg-[#0A2540] font-semibold text-white" : "border-black/15 text-black/65 hover:border-black/35"
+          }`}
+        >
+          {o.r}
+        </button>
+      ))}
+    </div>
+  );
+}
+
+function SimuladorGanhos({ config }: { config: ConfigLanding }) {
+  const sim = config.simulacao;
+  const [iHora, setIHora] = useState(0);
+  const [noturno, setNoturno] = useState(false);
+  const [extras, setExtras] = useState(20);
+  const [iMoradia, setIMoradia] = useState(0);
+  const [segundoAno, setSegundoAno] = useState(false);
+  const cot = useCotacaoIeneReferencia();
+
+  const hora = sim.valoresHora[iHora].valor;
+  const horasNoturnas =
+    sim.turno === "alternado" ? (SIM_DIAS_MES / 2) * SIM_HORAS_NOTURNAS_POR_TURNO : noturno ? SIM_DIAS_MES * SIM_HORAS_NOTURNAS_POR_TURNO : 0;
+  const base = hora * SIM_HORAS_NORMAIS_DIA * SIM_DIAS_MES;
+  const vExtras = hora * (1 + SIM_ADICIONAL_EXTRA) * extras;
+  const vNoturno = hora * SIM_ADICIONAL_NOTURNO * horasNoturnas;
+  const bruto = base + vExtras + vNoturno;
+  const social = bruto * SIM_SEGURO_SOCIAL;
+  const ir = (bruto - social) * SIM_IR;
+  const residencial = segundoAno ? (bruto - social) * SIM_RESIDENCIAL : 0;
+  const moradia = sim.moradias[iMoradia];
+  const liquido = bruto - social - ir - residencial - moradia.aluguel - moradia.contas;
+  const brl = (jpy: number) => formatBRL(jpy * cot.valor);
+
+  const linhas: { rotulo: string; valor: number; detalhe?: string }[] = [
+    { rotulo: "Seguro social e previdência", valor: social, detalhe: "≈ 15%" },
+    { rotulo: "Imposto de renda", valor: ir, detalhe: "≈ 3%" },
+    ...(segundoAno ? [{ rotulo: "Imposto residencial", valor: residencial, detalhe: "a partir do 2º ano" }] : []),
+    { rotulo: "Aluguel", valor: moradia.aluguel, detalhe: moradia.rotulo },
+    { rotulo: "Água, luz e gás", valor: moradia.contas, detalhe: "estimativa" },
+  ];
+
+  const rotulo = "block text-[11px] font-medium uppercase tracking-[0.12em] text-black/70";
+
+  return (
+    <section aria-labelledby="t-simulacao">
+      <p className={kicker}>Simulação</p>
+      <div className="mt-2">
+        <TituloSecao id="t-simulacao">Quanto pode sobrar por mês</TituloSecao>
+      </div>
+      <p className="mt-3 max-w-3xl text-[15px] leading-7 text-black/70">
+        Ajuste as opções e veja uma estimativa do valor que sobra depois dos descontos obrigatórios, do aluguel e das contas da casa.
+      </p>
+
+      <div className="mt-6 grid gap-5 md:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)]">
+        <div className="space-y-5 rounded-2xl border border-black/10 p-5">
+          {sim.valoresHora.length > 1 && (
+            <div>
+              <span className={rotulo}>Tempo de empresa</span>
+              <Segmentos nome="Tempo de empresa" valor={iHora} onChange={setIHora} opcoes={sim.valoresHora.map((h, n) => ({ v: n, r: h.rotulo }))} />
+            </div>
+          )}
+          {sim.turno === "fixo" ? (
+            <div>
+              <span className={rotulo}>Turno fixo</span>
+              <Segmentos
+                nome="Turno"
+                valor={noturno ? "n" : "d"}
+                onChange={(v) => setNoturno(v === "n")}
+                opcoes={[
+                  { v: "d", r: "Diurno" },
+                  { v: "n", r: "Noturno (+25%)" },
+                ]}
+              />
+            </div>
+          ) : (
+            <div>
+              <span className={rotulo}>Turno</span>
+              <p className="mt-2 text-sm text-black/65">Alternado: metade dos dias no período noturno, com adicional de 25% nas horas entre 22h e 5h.</p>
+            </div>
+          )}
+          <label className="block">
+            <span className="flex items-baseline justify-between">
+              <span className={rotulo}>Horas extras no mês</span>
+              <span className={`${inter.className} text-sm font-semibold tabular-nums text-[#0A2540]`}>{extras}h</span>
+            </span>
+            <input
+              type="range"
+              min={0}
+              max={45}
+              step={5}
+              value={extras}
+              onChange={(e) => setExtras(Number(e.target.value))}
+              className="mt-3 w-full accent-[#1f6fb8]"
+              aria-label="Horas extras no mês"
+            />
+            <span className="mt-1 flex justify-between text-[11px] text-black/45">
+              <span>0h</span>
+              <span>45h</span>
+            </span>
+          </label>
+          <div>
+            <span className={rotulo}>Moradia</span>
+            <Segmentos nome="Moradia" valor={iMoradia} onChange={setIMoradia} opcoes={sim.moradias.map((m, n) => ({ v: n, r: m.rotulo }))} />
+          </div>
+          <div>
+            <span className={rotulo}>Período</span>
+            <Segmentos
+              nome="Período"
+              valor={segundoAno ? "2" : "1"}
+              onChange={(v) => setSegundoAno(v === "2")}
+              opcoes={[
+                { v: "1", r: "1º ano" },
+                { v: "2", r: "A partir do 2º ano" },
+              ]}
+            />
+          </div>
+        </div>
+
+        <div className="rounded-2xl bg-[#0A2540] p-5 text-white md:p-6">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-white/60">Disponível estimado por mês</p>
+          <p className={`${inter.className} mt-2 text-4xl font-semibold tabular-nums tracking-[-0.02em]`}>{brl(liquido)}</p>
+          <p className={`${inter.className} mt-1 text-lg tabular-nums text-white/75`}>{formatJPY(liquido)}</p>
+
+          <dl className="mt-6 space-y-2 border-t border-white/15 pt-4 text-sm">
+            <div className="flex items-baseline justify-between gap-3">
+              <dt className="text-white/80">Salário bruto</dt>
+              <dd className={`${inter.className} tabular-nums`}>{formatJPY(bruto)}</dd>
+            </div>
+            {linhas.map((l) => (
+              <div key={l.rotulo} className="flex items-baseline justify-between gap-3">
+                <dt className="text-white/65">
+                  − {l.rotulo}
+                  {l.detalhe && <span className="ml-1 text-[11px] text-white/40">({l.detalhe})</span>}
+                </dt>
+                <dd className={`${inter.className} shrink-0 tabular-nums text-white/80`}>{formatJPY(l.valor)}</dd>
+              </div>
+            ))}
+            <div className="flex items-baseline justify-between gap-3 border-t border-white/15 pt-2 font-semibold">
+              <dt>Disponível</dt>
+              <dd className={`${inter.className} tabular-nums`}>{formatJPY(liquido)}</dd>
+            </div>
+          </dl>
+          <p className="mt-4 rounded-xl bg-white/[0.07] px-4 py-3 text-sm text-white/80">
+            Em 12 meses: <span className={`${inter.className} font-semibold text-white`}>{brl(liquido * 12)}</span>
+            <span className="text-white/50"> · {formatJPY(liquido * 12)}</span>
+          </p>
+          <p className="mt-3 text-[11px] leading-5 text-white/45">
+            Cotação de referência: R$ {cot.valor.toFixed(4).replace(".", ",")} por iene{cot.fallback ? " (estimada)" : ""}. Alimentação, transporte e gastos pessoais não estão incluídos.
+          </p>
+        </div>
+      </div>
+
+      <p className="mt-3 text-[11px] leading-5 text-black/50">
+        Simulação ilustrativa, não é promessa de renda. Premissas: escala 4×2 com cerca de {SIM_DIAS_MES} dias e {SIM_HORAS_NORMAIS_DIA} horas normais por dia;
+        hora extra e horário noturno com adicional de 25%; descontos de seguro social, previdência e impostos estimados por percentuais médios; aluguel pelo valor médio
+        da faixa e contas de consumo estimadas. Os valores reais dependem da jornada, da alocação, do imóvel e da legislação vigente.
+      </p>
+    </section>
+  );
 }
 
 // ── Formulário de pré-candidatura (2 etapas) ──
@@ -304,7 +664,7 @@ export default function LandingMurata({ config: s }: { config: ConfigLanding }) 
   const msgWhats = `Olá! Vi a vaga da Murata em ${s.cidade} no site da Ajisai e quero saber mais.`;
 
   return (
-    <main className="min-h-screen overflow-x-clip bg-white pb-28 pt-14 text-black lg:pb-16">
+    <main className="min-h-screen overflow-x-clip bg-white pb-28 pt-14 text-black">
       {/* Barra fixa — padrão das páginas de produto */}
       <div className="fixed inset-x-0 top-0 z-50 flex h-14 items-center gap-3 bg-[#0A2540] px-4 md:px-8">
         <Link href="/empregos" className="flex min-h-[44px] items-center gap-1.5 text-xs font-medium uppercase tracking-[0.15em] text-white/70 transition hover:text-white">
@@ -343,17 +703,44 @@ export default function LandingMurata({ config: s }: { config: ConfigLanding }) 
         </section>
       </div>
 
-      <div className="mx-auto grid max-w-6xl gap-10 px-5 pt-10 md:px-8 lg:grid-cols-[minmax(0,1fr)_340px]">
+      {/* Wilson, 07/out/2026: "integrar menu que está na direita dentro do
+          corpo do site, perdemos muito espaço com ele no canto direito" —
+          sem coluna lateral; o resumo virou uma faixa no topo do conteúdo. */}
+      <div className="mx-auto max-w-6xl px-5 pt-8 md:px-8">
         <div className="min-w-0 space-y-14">
-          {/* Resumo — no celular aparece aqui; no desktop vai para a lateral */}
-          <section className="grid grid-cols-2 gap-3 lg:hidden" aria-label="Resumo da vaga">
-            {s.resumo.map((r) => (
-              <div key={r.rotulo} className="rounded-xl border border-black/10 p-4">
-                <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-black/55">{r.rotulo}</p>
-                <p className={`${inter.className} mt-1 text-lg font-semibold text-[#0A2540]`}>{r.valor}</p>
-                {r.detalhe && <p className="text-xs text-black/55">{r.detalhe}</p>}
+          {/* Resumo da vaga */}
+          <section aria-label="Resumo da vaga" className="rounded-2xl border border-black/10 p-4 shadow-[0_8px_30px_rgba(10,37,64,0.06)] md:p-6">
+            <div className="flex flex-wrap items-baseline justify-between gap-2">
+              <p className={`${display.className} text-lg font-medium text-[#0A2540]`}>Resumo da vaga</p>
+              <p className="text-xs text-black/55">{s.fabrica}</p>
+            </div>
+            <dl className="mt-4 grid grid-cols-2 gap-3 lg:grid-cols-4">
+              {s.resumo.map((r) => (
+                <div key={r.rotulo} className="rounded-xl bg-[#f4f7fb] p-4">
+                  <dt className="text-[10px] font-semibold uppercase tracking-[0.14em] text-black/55">{r.rotulo}</dt>
+                  <dd>
+                    <span className={`${inter.className} mt-1 block text-lg font-semibold text-[#0A2540]`}>{r.valor}</span>
+                    {r.detalhe && <span className="block text-xs text-black/55">{r.detalhe}</span>}
+                  </dd>
+                </div>
+              ))}
+            </dl>
+            <div className="mt-4 hidden items-center justify-between gap-4 md:flex">
+              <p className="text-[11px] leading-5 text-black/50">{CONDICAO_CUSTO_ZERO}</p>
+              <div className="flex shrink-0 gap-2">
+                <a
+                  href={linkWhatsapp(msgWhats)}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="flex h-12 items-center justify-center rounded-xl border border-black/15 px-6 text-sm font-semibold text-[#0A2540] transition hover:border-black/35"
+                >
+                  Falar no WhatsApp
+                </a>
+                <button type="button" onClick={irParaFormulario} className={`${classeBotao} w-auto`}>
+                  Verificar elegibilidade
+                </button>
               </div>
-            ))}
+            </div>
           </section>
 
           {/* A vaga */}
@@ -362,7 +749,7 @@ export default function LandingMurata({ config: s }: { config: ConfigLanding }) 
             <div className="mt-2">
               <TituloSecao id="t-vaga">{s.vaga.titulo}</TituloSecao>
             </div>
-            <p className="mt-3 text-[15px] leading-7 text-black/70">{s.vaga.texto}</p>
+            <p className="mt-3 max-w-3xl text-[15px] leading-7 text-black/70">{s.vaga.texto}</p>
             <div className="mt-6 grid gap-3 sm:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
               <div className="relative aspect-[16/10] overflow-hidden rounded-2xl">
                 <Image src={s.vaga.imagem.src} alt={s.vaga.imagem.alt} fill sizes="(min-width: 1024px) 520px, 100vw" className="object-cover" />
@@ -430,6 +817,8 @@ export default function LandingMurata({ config: s }: { config: ConfigLanding }) 
             )}
           </section>
 
+          <SimuladorGanhos config={s} />
+
           {/* Custo inicial zero + reentry */}
           <section aria-labelledby="t-custo" className="overflow-hidden rounded-2xl bg-[#0A2540] text-white">
             {s.custoZero.imagem && (
@@ -481,13 +870,14 @@ export default function LandingMurata({ config: s }: { config: ConfigLanding }) 
             <div className="mt-2">
               <TituloSecao id="t-moradia">Chegue sabendo onde vai morar</TituloSecao>
             </div>
-            <p className="mt-3 text-[15px] leading-7 text-black/70">{s.moradia.texto}</p>
+            <p className="mt-3 max-w-3xl text-[15px] leading-7 text-black/70">{s.moradia.texto}</p>
             {s.moradia.imagem && (
               <div className="relative mt-6 aspect-[16/9] overflow-hidden rounded-2xl">
                 <Image src={s.moradia.imagem.src} alt={s.moradia.imagem.alt} fill sizes="(min-width: 1024px) 760px, 100vw" className="object-cover" />
                 <span className="absolute bottom-3 left-3 rounded-full bg-black/45 px-2.5 py-1 text-[10px] uppercase tracking-[0.12em] text-white/85">Imagem ilustrativa</span>
               </div>
             )}
+            {s.moradia.plantas && s.moradia.plantas.length > 0 && <Plantas plantas={s.moradia.plantas} />}
             <div className="mt-6 divide-y divide-black/10 border-y border-black/10">
               {s.moradia.valores.map((v) => (
                 <div key={v.rotulo} className="flex items-baseline justify-between gap-4 py-3 text-sm">
@@ -512,7 +902,7 @@ export default function LandingMurata({ config: s }: { config: ConfigLanding }) 
             <div className="relative mt-5 aspect-[16/9] overflow-hidden rounded-2xl">
               <Image src={s.cidadeSecao.imagem.src} alt={s.cidadeSecao.imagem.alt} fill sizes="(min-width: 1024px) 760px, 100vw" className="object-cover" />
             </div>
-            <p className="mt-5 text-[15px] leading-7 text-black/70">{s.cidadeSecao.texto}</p>
+            <p className="mt-5 max-w-3xl text-[15px] leading-7 text-black/70">{s.cidadeSecao.texto}</p>
             <ul className="mt-5 grid gap-3 sm:grid-cols-3">
               {s.cidadeSecao.destaques.map((d) => (
                 <li key={d.titulo} className="rounded-xl border border-black/10 p-4">
@@ -576,46 +966,19 @@ export default function LandingMurata({ config: s }: { config: ConfigLanding }) 
           </section>
         </div>
 
-        {/* Resumo lateral (desktop) */}
-        <aside className="hidden lg:block">
-          <div className="sticky top-20 rounded-2xl border border-black/10 p-6 shadow-[0_8px_30px_rgba(10,37,64,0.06)]">
-            <p className={`${display.className} text-lg font-medium text-[#0A2540]`}>Resumo da vaga</p>
-            <p className="mt-1 text-xs text-black/55">{s.fabrica}</p>
-            <dl className="mt-4 divide-y divide-black/10 border-y border-black/10">
-              {s.resumo.map((r) => (
-                <div key={r.rotulo} className="flex items-baseline justify-between gap-3 py-3">
-                  <dt className="text-sm text-black/65">{r.rotulo}</dt>
-                  <dd className="text-right">
-                    <span className={`${inter.className} block text-sm font-semibold text-black`}>{r.valor}</span>
-                    {r.detalhe && <span className="block text-[11px] text-black/50">{r.detalhe}</span>}
-                  </dd>
-                </div>
-              ))}
-            </dl>
-            <button type="button" onClick={irParaFormulario} className={`${classeBotao} mt-5`}>
-              Verificar elegibilidade
-            </button>
-            <a
-              href={linkWhatsapp(msgWhats)}
-              target="_blank"
-              rel="noreferrer"
-              className="mt-2 flex h-12 w-full items-center justify-center rounded-xl border border-black/15 text-sm font-semibold text-[#0A2540] transition hover:border-black/35"
-            >
-              Falar no WhatsApp
-            </a>
-            <p className="mt-3 text-[11px] leading-5 text-black/50">{CONDICAO_CUSTO_ZERO}</p>
-          </div>
-        </aside>
       </div>
 
       {/* Barra fixa no celular */}
       <div
-        className={`fixed inset-x-0 bottom-0 z-40 border-t border-black/10 bg-white/95 px-4 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-3 backdrop-blur transition-transform lg:hidden ${
+        className={`fixed inset-x-0 bottom-0 z-40 border-t border-black/10 bg-white/95 px-4 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-3 backdrop-blur transition-transform ${
           formVisivel ? "translate-y-full" : "translate-y-0"
         }`}
       >
-        <div className="flex gap-2">
-          <button type="button" onClick={irParaFormulario} className={`${classeBotao} flex-1`}>
+        <div className="mx-auto flex max-w-6xl items-center gap-2 md:justify-end md:px-4">
+          <p className={`${display.className} mr-auto hidden text-base text-[#0A2540] md:block`}>
+            {s.hero.titulo} <span className="ml-2 text-sm text-black/50">{s.resumo[0]?.valor}</span>
+          </p>
+          <button type="button" onClick={irParaFormulario} className={`${classeBotao} flex-1 md:w-auto md:flex-none`}>
             Verificar elegibilidade
           </button>
           <a
