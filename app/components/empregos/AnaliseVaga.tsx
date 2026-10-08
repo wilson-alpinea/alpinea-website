@@ -14,8 +14,8 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { display } from "../../produtos/page";
 import { inter } from "../transporte/compartilhado";
-import type { SetorKey, Vaga } from "../../lib/vagasCatalogo";
-import { HORAS_MES_REFERENCIA, MEDIA_NOTA_FICHA, PONTOS_SALARIO, analisarVaga, itensFicha, type PontoSalario } from "../../lib/analiseVagas";
+import { VAGAS, type SetorKey, type Vaga } from "../../lib/vagasCatalogo";
+import { HORAS_MES_REFERENCIA, MEDIA_NOTA_FICHA, PONTOS_SALARIO, analisarVaga, itensFicha, notaFicha, salarioBaseHora, type PontoSalario } from "../../lib/analiseVagas";
 import { COTACAO_FALLBACK_BRL_POR_JPY_COMPRA, COTACAO_FALLBACK_BRL_POR_JPY_VENDA } from "../../lib/cambioIene";
 import { formatBRL, formatJPY } from "../../lib/currency";
 
@@ -230,17 +230,199 @@ function Distribuicao({ vaga, base, setorMediana }: { vaga: Vaga; base: number; 
   );
 }
 
+// ── Painel de comparação com vagas similares ──
+// Wilson, 08/out/2026: "ao clicar nas vagas do mesmo setor, deve abrir um
+// novo painel ao lado do painel análise da vaga com cor de fundo diferente
+// comparando as vagas similares". No desktop (lg+) o bloco se alarga e o
+// painel fica à direita; no celular ele entra logo abaixo da análise.
+// Só dados do catálogo — campo vazio aparece como "A confirmar".
+const A_CONFIRMAR = "A confirmar";
+
+type LinhaComparacao = { rotulo: string; esta: string; outra: string; destaque?: "esta" | "outra" | null; numerica?: boolean };
+
+function linhasComparacao(esta: Vaga, outra: Vaga): LinhaComparacao[] {
+  const bEsta = salarioBaseHora(esta.salario);
+  const bOutra = salarioBaseHora(outra.salario);
+  const maior = (a: number | null, b: number | null) => (a === null || b === null || a === b ? null : a > b ? "esta" : "outra");
+  const nEsta = notaFicha(esta);
+  const nOutra = notaFicha(outra);
+  const total = itensFicha(esta).length;
+  return [
+    { rotulo: "Local", esta: `${esta.cidade}, ${esta.regiao}`, outra: `${outra.cidade}, ${outra.regiao}` },
+    { rotulo: "Salário-base", esta: bEsta !== null ? `${yen(bEsta)}/h` : "—", outra: bOutra !== null ? `${yen(bOutra)}/h` : "—", destaque: maior(bEsta, bOutra), numerica: true },
+    {
+      rotulo: "Bruto mensal de referência",
+      esta: bEsta !== null ? formatJPY(bEsta * HORAS_MES_REFERENCIA) : "—",
+      outra: bOutra !== null ? formatJPY(bOutra * HORAS_MES_REFERENCIA) : "—",
+      destaque: maior(bEsta, bOutra),
+      numerica: true,
+    },
+    { rotulo: "Turno e escala", esta: esta.turno, outra: outra.turno },
+    { rotulo: "Contrato", esta: esta.contrato, outra: outra.contrato },
+    { rotulo: "Moradia", esta: esta.info.moradia ?? A_CONFIRMAR, outra: outra.info.moradia ?? A_CONFIRMAR },
+    { rotulo: "Bônus", esta: esta.info.bonus ?? A_CONFIRMAR, outra: outra.info.bonus ?? A_CONFIRMAR },
+    {
+      rotulo: "Benefícios listados",
+      esta: esta.info.beneficios.length ? String(esta.info.beneficios.length) : A_CONFIRMAR,
+      outra: outra.info.beneficios.length ? String(outra.info.beneficios.length) : A_CONFIRMAR,
+      destaque: maior(esta.info.beneficios.length || null, outra.info.beneficios.length || null),
+      numerica: true,
+    },
+    { rotulo: "Japonês", esta: esta.idioma ?? A_CONFIRMAR, outra: outra.idioma ?? A_CONFIRMAR },
+    { rotulo: "O que a ficha informa", esta: `${nEsta}/${total}`, outra: `${nOutra}/${total}`, destaque: maior(nEsta, nOutra), numerica: true },
+    { rotulo: "Status", esta: esta.status === "aberta" ? "Aberta" : "Sob consulta", outra: outra.status === "aberta" ? "Aberta" : "Sob consulta" },
+  ];
+}
+
+function PainelComparacao({
+  vaga,
+  similares,
+  selecionada,
+  onSelecionar,
+  onFechar,
+}: {
+  vaga: Vaga;
+  similares: (PontoSalario & { dif: number })[];
+  selecionada: Vaga;
+  onSelecionar: (id: string) => void;
+  onFechar: () => void;
+}) {
+  const linhas = linhasComparacao(vaga, selecionada);
+  return (
+    <aside
+      aria-labelledby="t-comparacao"
+      className="rounded-2xl p-5 text-white md:p-6 lg:sticky lg:top-20 lg:w-[400px] lg:shrink-0 xl:w-[430px]"
+      style={{ background: NAVY }}
+    >
+      <div className="flex items-start justify-between gap-3">
+        <div>
+          <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[#8cc1f0]">Comparação</p>
+          <h3 id="t-comparacao" className={`${display.className} mt-1 text-xl font-medium`}>
+            Vagas similares
+          </h3>
+        </div>
+        <button
+          type="button"
+          onClick={onFechar}
+          aria-label="Fechar comparação"
+          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg text-white/70 ring-1 ring-white/15 transition hover:bg-white/10 hover:text-white"
+        >
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" className="h-4 w-4" aria-hidden="true">
+            <path d="M6 6l12 12M18 6L6 18" />
+          </svg>
+        </button>
+      </div>
+
+      {/* troca entre as similares */}
+      <div role="tablist" aria-label="Vaga comparada" className="mt-4 flex flex-wrap gap-1.5">
+        {similares.map((s) => {
+          const ativa = s.id === selecionada.id;
+          return (
+            <button
+              key={s.id}
+              type="button"
+              role="tab"
+              aria-selected={ativa}
+              onClick={() => onSelecionar(s.id)}
+              className={`rounded-full px-3 py-1 text-xs font-medium transition ${ativa ? "bg-white text-[#0A2540]" : "text-white/75 ring-1 ring-white/20 hover:bg-white/10"}`}
+            >
+              {s.empresa} · {s.cidade}
+            </button>
+          );
+        })}
+      </div>
+
+      {/* cabeçalho das colunas */}
+      <div className="mt-5 grid grid-cols-2 gap-3 border-b border-white/15 pb-3">
+        <div className="min-w-0">
+          <p className="flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#8cc1f0]">
+            <span className="h-2 w-2 rounded-full" style={{ background: "#4c9be0" }} /> Esta vaga
+          </p>
+          <p className="mt-1 truncate text-sm font-semibold">{vaga.empresa}</p>
+          <p className="text-[11px] text-white/55">{vaga.codigo}</p>
+        </div>
+        <div className="min-w-0">
+          <p className="flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-[0.14em] text-white/55">
+            <span className="h-2 w-2 rounded-full bg-[#8a94a3]" /> Similar
+          </p>
+          <p className="mt-1 truncate text-sm font-semibold">{selecionada.empresa}</p>
+          <p className="text-[11px] text-white/55">{selecionada.codigo}</p>
+        </div>
+      </div>
+
+      <dl className="divide-y divide-white/10">
+        {linhas.map((l) => (
+          <div key={l.rotulo} className="py-3">
+            <dt className="text-[10px] font-semibold uppercase tracking-[0.12em] text-white/50">{l.rotulo}</dt>
+            <dd className="mt-1 grid grid-cols-2 gap-3">
+              {(["esta", "outra"] as const).map((lado) => {
+                const texto = lado === "esta" ? l.esta : l.outra;
+                const vence = l.destaque === lado;
+                const vazio = texto === A_CONFIRMAR || texto === "—";
+                return (
+                  <span
+                    key={lado}
+                    className={`${l.numerica ? `${inter.className} tabular-nums text-sm` : "text-xs leading-5"} line-clamp-3 ${vazio ? "italic text-white/40" : vence ? "font-semibold text-white" : "text-white/80"}`}
+                    title={texto}
+                  >
+                    {texto}
+                    {vence && (
+                      <svg viewBox="0 0 24 24" fill="none" stroke="#8cc1f0" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="ml-1 inline h-3 w-3 align-[-1px]" aria-label="maior">
+                        <path d="M12 19V5M5 12l7-7 7 7" />
+                      </svg>
+                    )}
+                  </span>
+                );
+              })}
+            </dd>
+          </div>
+        ))}
+      </dl>
+
+      <Link
+        href={`/empregos/vagas/${selecionada.id}`}
+        className="mt-4 flex h-11 items-center justify-center gap-2 rounded-xl bg-white text-sm font-semibold text-[#0A2540] transition hover:bg-white/90"
+      >
+        Ver vaga {selecionada.codigo}
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4" aria-hidden="true">
+          <path d="M9 6l6 6-6 6" />
+        </svg>
+      </Link>
+      <p className="mt-3 text-[11px] leading-5 text-white/45">Salários sem horas extras, adicional noturno ou bônus. Seta indica o maior valor entre as duas.</p>
+    </aside>
+  );
+}
+
 // ── Componente ──
 export default function AnaliseVaga({ vaga }: { vaga: Vaga }) {
   const a = useMemo(() => analisarVaga(vaga), [vaga]);
   const cotacao = useCotacao();
   const itens = itensFicha(vaga);
   const [verTabela, setVerTabela] = useState(false);
+  // Guarda de qual vaga a comparação foi aberta: ao navegar para outra
+  // página de vaga, a seleção antiga simplesmente deixa de valer.
+  const [selecao, setSelecao] = useState<{ origem: string; id: string } | null>(null);
+  const comparada = selecao && selecao.origem === vaga.id ? selecao.id : null;
+  const setComparada = (v: string | null | ((atual: string | null) => string | null)) => {
+    const id = typeof v === "function" ? v(comparada) : v;
+    setSelecao(id ? { origem: vaga.id, id } : null);
+  };
+  const vagaComparada = comparada ? (VAGAS.find((v) => v.id === comparada) ?? null) : null;
+  const painelRef = useRef<HTMLDivElement | null>(null);
+
+  // No celular o painel abre abaixo da análise — rola até ele.
+  useEffect(() => {
+    if (!vagaComparada || typeof window === "undefined") return;
+    if (window.matchMedia("(min-width: 1024px)").matches) return;
+    painelRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, [vagaComparada]);
 
   const posicaoPct = a.base !== null && a.catalogoQtd > 1 ? Math.round((a.acimaDe / (a.catalogoQtd - 1)) * 100) : null;
 
   return (
-    <section aria-labelledby="t-analise" className="rounded-2xl border border-black/10 bg-[#f7f9fc] p-5 md:p-7">
+    <div className={vagaComparada ? "relative lg:left-1/2 lg:w-[min(1200px,calc(100vw-4rem))] lg:-translate-x-1/2" : undefined}>
+    <div className="flex flex-col gap-4 lg:flex-row lg:items-start">
+    <section aria-labelledby="t-analise" className="min-w-0 flex-1 rounded-2xl border border-black/10 bg-[#f7f9fc] p-5 md:p-7">
       <div className="flex flex-wrap items-end justify-between gap-2">
         <div className="flex items-center gap-3.5">
           <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-white ring-1 ring-black/10" style={{ color: NAVY }}>
@@ -388,7 +570,12 @@ export default function AnaliseVaga({ vaga }: { vaga: Vaga }) {
             <ul className="mt-3 divide-y divide-black/[0.07]">
               {a.similares.map((s) => (
                 <li key={s.id}>
-                  <Link href={`/empregos/vagas/${s.id}`} className="flex items-center justify-between gap-3 py-2.5 hover:opacity-80">
+                  <button
+                    type="button"
+                    onClick={() => setComparada((atual) => (atual === s.id ? null : s.id))}
+                    aria-pressed={comparada === s.id}
+                    className={`-mx-2 flex w-[calc(100%+1rem)] items-center justify-between gap-3 rounded-lg px-2 py-2.5 text-left transition ${comparada === s.id ? "bg-[#0A2540]/[0.06] ring-1 ring-[#1f6fb8]/40" : "hover:bg-black/[0.03]"}`}
+                  >
                     <span className="min-w-0">
                       <span className="block truncate text-sm text-black">{s.empresa}</span>
                       <span className="block text-[11px] text-black/50">
@@ -403,13 +590,30 @@ export default function AnaliseVaga({ vaga }: { vaga: Vaga }) {
                         {s.dif === 0 ? "mesmo valor" : `${s.dif > 0 ? "+" : "−"}${yen(Math.abs(s.dif))}/h`}
                       </span>
                     </span>
-                  </Link>
+                  </button>
                 </li>
               ))}
             </ul>
           )}
+          {a.similares.length > 0 && (
+            <p className="mt-2 text-[11px] text-black/45">{vagaComparada ? "Clique de novo para fechar a comparação." : "Clique numa vaga para comparar lado a lado."}</p>
+          )}
         </div>
       </div>
     </section>
+
+    {vagaComparada && (
+      <div ref={painelRef} className="scroll-mt-20 lg:contents">
+        <PainelComparacao
+          vaga={vaga}
+          similares={a.similares}
+          selecionada={vagaComparada}
+          onSelecionar={setComparada}
+          onFechar={() => setComparada(null)}
+        />
+      </div>
+    )}
+    </div>
+    </div>
   );
 }
