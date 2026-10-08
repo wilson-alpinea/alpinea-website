@@ -83,19 +83,25 @@ function Plantas({ plantas }: { plantas: Planta[] }) {
         </p>
       </div>
 
-      <div role="tablist" aria-label="Tipologias" className="-mx-5 mt-4 flex gap-2 overflow-x-auto px-5 pb-1 sm:mx-0 sm:px-0">
+      {/* Miniaturas das plantas no lugar dos botões de texto (Wilson,
+          07/out/2026: "quero miniaturas das imagens em vez de botão 1K, 2DK"). */}
+      <div role="tablist" aria-label="Tipologias" className="-mx-5 mt-4 flex gap-3 overflow-x-auto px-5 pb-2 sm:mx-0 sm:grid sm:grid-cols-5 sm:overflow-visible sm:px-0">
         {plantas.map((pl, n) => (
           <button
             key={pl.tipo}
             type="button"
             role="tab"
             aria-selected={n === i}
+            aria-label={`Planta ${pl.tipo} — ${pl.titulo}`}
             onClick={() => setI(n)}
-            className={`min-h-[44px] shrink-0 rounded-full border px-5 text-[13px] tracking-[0.14em] transition ${
-              n === i ? "border-[#0A2540] bg-[#0A2540] font-semibold text-white" : "border-black/15 text-black/60 hover:border-black/40 hover:text-black"
+            className={`group w-24 shrink-0 overflow-hidden rounded-xl border bg-white text-left transition sm:w-auto ${
+              n === i ? "border-[#0A2540] ring-2 ring-[#0A2540]" : "border-black/10 opacity-75 hover:border-black/30 hover:opacity-100"
             }`}
           >
-            {pl.tipo}
+            <span className="relative block aspect-square bg-[#f6f5f2]">
+              <Image src={pl.imagem.src} alt="" fill sizes="(min-width: 640px) 180px, 96px" className="object-cover object-[50%_55%] transition duration-300 group-hover:scale-105" />
+            </span>
+            <span className={`block px-2.5 py-2 text-center text-[12px] tracking-[0.12em] ${n === i ? "font-semibold text-[#0A2540]" : "text-black/65"}`}>{pl.tipo}</span>
           </button>
         ))}
       </div>
