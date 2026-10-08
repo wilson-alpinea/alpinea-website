@@ -25,6 +25,7 @@ import {
 } from "../lib/candidaturaScoring";
 import { EXTENSOES_CURRICULO_ACEITAS } from "../lib/curriculoConstantes";
 import { vagaExigeTesteDaltonismo, criteriosDaVaga } from "../lib/candidaturaScoring";
+import { vagaExigeTestesAptidao } from "../lib/testesAptidao";
 import {
   ESCOLARIDADES,
   OPCOES_DALTONISMO,
@@ -2387,16 +2388,24 @@ export function CandidaturaModal({ vaga, onFechar, pagina = false }: { vaga: Vag
 
             {aprovadoParaFoto ? (
               <div className="mt-6 rounded-2xl bg-[#2f80c9]/[0.06] p-4">
-                <p className="text-xs leading-5 text-black/70">
-                  Parabéns! Sua pontuação passou de {NOTA_MINIMA_PROXIMA_ETAPA}%. A etapa 2 é a ficha cadastral
-                  completa (documentos, experiência, família e saúde) com o envio da sua foto — leva uns 15 minutos.
-                </p>
+                {vagaExigeTestesAptidao(vaga.id) ? (
+                  <p className="text-xs leading-5 text-black/70">
+                    Parabéns! Sua pontuação passou de {NOTA_MINIMA_PROXIMA_ETAPA}%. Esta vaga pede antes os testes de
+                    aptidão exigidos pela empresa (visão, matemática, atenção e japonês) — leva uns 15 minutos. Depois
+                    vem a ficha cadastral com a sua foto.
+                  </p>
+                ) : (
+                  <p className="text-xs leading-5 text-black/70">
+                    Parabéns! Sua pontuação passou de {NOTA_MINIMA_PROXIMA_ETAPA}%. A etapa 2 é a ficha cadastral
+                    completa (documentos, experiência, família e saúde) com o envio da sua foto — leva uns 15 minutos.
+                  </p>
+                )}
                 {fichaUrl ? (
                   <a
                     href={fichaUrl}
                     className="mt-4 flex w-full items-center justify-center rounded-full bg-[#2f80c9] px-6 py-3.5 text-xs font-semibold uppercase tracking-[0.18em] text-white transition hover:bg-[#3b91dc]"
                   >
-                    Continuar para a etapa 2
+                    {vagaExigeTestesAptidao(vaga.id) ? "Fazer os testes de aptidão" : "Continuar para a etapa 2"}
                   </a>
                 ) : (
                   <p className="mt-3 text-xs leading-5 text-black/55">

@@ -6,6 +6,7 @@ import { fichaLiberada } from "@/app/lib/fichaCadastral";
 import FichaForm from "./FichaFormCliente";
 import PrazosProcesso from "@/app/components/empregos/PrazosProcesso";
 import { urlEtapa, vagaPrecisaProposta } from "@/app/lib/etapasCandidatura";
+import { testesAptidaoPendentes, urlTestes } from "@/app/lib/testesAptidao";
 
 // Etapa 2 da candidatura de /empregos — ficha cadastral unificada
 // (Wilson, 06/out/2026). Acesso só pelo link com token gerado na etapa 1.
@@ -55,7 +56,8 @@ export default async function FichaPage({
   const supabase = createAdminClient();
   const { data: c } = await supabase
     .from("candidaturas_vagas")
-    .select("id, nome, vaga_id, vaga_titulo, vaga_empresa, pontuacao, classificacao, ficha_token, ficha_liberada, ficha_enviada_em, foto_path")
+    // "*" pra não quebrar se a migração 019 (testes_aptidao) ainda não rodou.
+    .select("*")
     .eq("id", id)
     .maybeSingle();
 
@@ -64,6 +66,19 @@ export default async function FichaPage({
   }
   if (!fichaLiberada(c)) {
     return <Aviso titulo="Etapa ainda não liberada" texto="Sua candidatura está em análise. Nossa equipe entra em contato se houver uma vaga compatível." />;
+  }
+  // Vagas com testes de aptidão: a ficha só abre depois dos testes
+  // aprovados (ou liberada à mão pela equipe no CRM).
+  if (testesAptidaoPendentes(c)) {
+    return c.testes_aptidao_aprovado === false ? (
+      <Aviso titulo="Candidatura em análise" texto="Recebemos seus testes de aptidão. Nossa equipe vai analisar e entra em contato pelo e-mail ou telefone informados." />
+    ) : (
+      <Aviso
+        titulo="Faltam os testes de aptidão"
+        texto="Esta vaga pede os testes de aptidão da empresa antes da ficha cadastral."
+        acao={{ href: urlTestes(c.id, t), label: "Fazer os testes" }}
+      />
+    );
   }
   const proxima = vagaPrecisaProposta(c.vaga_id)
     ? { href: urlEtapa("proposta", c.id, t), label: "Ir para a etapa 3 — proposta" }

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { createAdminClient } from "../../../lib/supabase/admin";
 import { encontrarVaga } from "../../lib/vagasCatalogo";
+import { urlAposMatch } from "../../lib/testesAptidao";
 import { vagaEstaAtiva } from "../../../lib/empregos/vagasAtivas";
 import { calcularPontuacaoCandidatura, type RespostasTriagem } from "../../lib/candidaturaScoring";
 
@@ -46,7 +47,7 @@ export async function POST(req: Request) {
       return NextResponse.json({
         candidaturaId: existente.id,
         pontuacao: existente.pontuacao,
-        fichaUrl: `/empregos/ficha/${existente.id}?t=${existente.ficha_token}`,
+        fichaUrl: urlAposMatch(vaga.id, existente.id, existente.ficha_token),
       });
     }
 
@@ -117,7 +118,7 @@ export async function POST(req: Request) {
     return NextResponse.json({
       candidaturaId: nova.id,
       pontuacao: resultado.pontuacao,
-      fichaUrl: `/empregos/ficha/${nova.id}?t=${nova.ficha_token}`,
+      fichaUrl: urlAposMatch(vaga.id, nova.id, nova.ficha_token),
     });
   } catch (err) {
     console.error("Erro na candidatura sugerida:", err);

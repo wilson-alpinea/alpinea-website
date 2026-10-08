@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { createAdminClient } from "../../../lib/supabase/admin";
 import { fichaLiberada, linhasFicha, parseFicha, pendenciasFicha, pontosRevisarFicha } from "../../lib/fichaCadastral";
+import { testesAptidaoPendentes } from "../../lib/testesAptidao";
 
 export const runtime = "nodejs";
 
@@ -48,7 +49,8 @@ export async function POST(req: Request) {
     const supabase = createAdminClient();
     const { data: c, error: erroBusca } = await supabase
       .from("candidaturas_vagas")
-      .select("id, nome, sobrenome, email, vaga_titulo, vaga_empresa, pontuacao, classificacao, ficha_token, ficha_liberada, pontos_revisar")
+      // "*" pra não quebrar se a migração 019 (testes_aptidao) ainda não rodou.
+      .select("*")
       .eq("id", candidaturaId)
       .maybeSingle();
     if (erroBusca || !c || c.ficha_token !== token) {
@@ -56,6 +58,9 @@ export async function POST(req: Request) {
     }
     if (!fichaLiberada(c)) {
       return NextResponse.json({ error: "Esta candidatura ainda não foi liberada para a etapa 2." }, { status: 403 });
+    }
+    if (testesAptidaoPendentes(c)) {
+      return NextResponse.json({ error: "Esta vaga pede os testes de aptidão antes da ficha cadastral." }, { status: 403 });
     }
 
     const ficha = parseFicha(corpo?.ficha);

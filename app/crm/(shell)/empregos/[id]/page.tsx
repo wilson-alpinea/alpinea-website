@@ -18,6 +18,7 @@ import { MODELOS_APRESENTACAO } from "@/lib/empregos/apresentacaoPdf";
 import { formatarMoeda, type Proposta } from "@/app/lib/financiamentoEmpregos";
 import { vagaPrecisaProposta } from "@/app/lib/etapasCandidatura";
 import type { PerfilCandidato } from "@/app/lib/triagemPerfil";
+import { INFO_TESTES, ORDEM_TESTES, lerEstadoTestes, testesAptidaoPendentes, urlAposMatch, vagaExigeTestesAptidao } from "@/app/lib/testesAptidao";
 
 const display = Bodoni_Moda({ subsets: ["latin"], weight: ["400", "500", "600"] });
 
@@ -64,8 +65,10 @@ export default async function CandidatoPage({
 
   const salvar = atualizarCandidatura.bind(null, id);
   const ficha = (c.ficha ?? null) as FichaCadastral | null;
-  const etapa2Aberta = fichaLiberada(c);
-  const linkFicha = c.ficha_token ? `https://www.alpinea.io/empregos/ficha/${c.id}?t=${c.ficha_token}` : null;
+  // Vagas com testes de aptidão: a ficha só abre com os testes aprovados
+  // (ou liberada à mão aqui).
+  const etapa2Aberta = fichaLiberada(c) && !testesAptidaoPendentes(c);
+  const linkFicha = c.ficha_token ? `https://www.alpinea.io${urlAposMatch(c.vaga_id, c.id, c.ficha_token)}` : null;
   const { data: entrevista } = await supabase
     .from("entrevistas_agendadas")
     .select("inicio, status")
@@ -79,6 +82,15 @@ export default async function CandidatoPage({
     iso ? new Date(iso).toLocaleString("pt-BR", { timeZone: "America/Sao_Paulo", day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" }) : null;
   const linhaTempo: { label: string; quando: string | null; ok: boolean }[] = [
     { label: "Etapa 1 — candidatura e triagem", quando: dataCurta(c.created_at), ok: true },
+    ...(vagaExigeTestesAptidao(c.vaga_id)
+      ? [
+          {
+            label: `Testes de aptidão${c.testes_aptidao_aprovado === false ? " (reprovado)" : ""}`,
+            quando: dataCurta(lerEstadoTestes(c.testes_aptidao).concluidoEm),
+            ok: c.testes_aptidao_aprovado === true,
+          },
+        ]
+      : []),
     { label: "Etapa 2 — ficha cadastral + foto", quando: dataCurta(c.ficha_enviada_em), ok: Boolean(c.ficha_enviada_em && c.foto_path) },
     ...(vagaPrecisaProposta(c.vaga_id)
       ? [
@@ -180,6 +192,52 @@ export default async function CandidatoPage({
                   </div>
                 ))}
               </div>
+            </section>
+          )}
+
+          {vagaExigeTestesAptidao(c.vaga_id) && (
+            <section className="rounded-2xl border border-black/10 bg-white p-5">
+              <div className="flex items-baseline justify-between gap-3">
+                <h2 className="text-sm font-medium text-black">Testes de aptidão</h2>
+                <span
+                  className={`rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${
+                    c.testes_aptidao_aprovado === true
+                      ? "bg-emerald-50 text-emerald-700"
+                      : c.testes_aptidao_aprovado === false
+                        ? "bg-red-50 text-red-700"
+                        : "bg-black/[0.05] text-black/55"
+                  }`}
+                >
+                  {c.testes_aptidao_aprovado === true ? "Aprovado" : c.testes_aptidao_aprovado === false ? "Reprovado" : "Em andamento / não feito"}
+                </span>
+              </div>
+              <dl className="mt-3 divide-y divide-black/[0.06] text-sm">
+                {ORDEM_TESTES.map((k) => {
+                  const r = lerEstadoTestes(c.testes_aptidao).resultados[k];
+                  return (
+                    <div key={k} className="grid grid-cols-[180px_1fr] gap-3 py-2">
+                      <dt className="text-black/45">
+                        {INFO_TESTES[k].titulo}
+                        {!INFO_TESTES[k].eliminatorio && <span className="block text-[11px]">não elimina</span>}
+                      </dt>
+                      <dd className={r ? (r.aprovado ? "text-black/80" : INFO_TESTES[k].eliminatorio ? "text-red-700" : "text-black/80") : "text-black/35"}>
+                        {r ? `${r.aprovado ? "✓" : INFO_TESTES[k].eliminatorio ? "✗" : "•"} ${r.resumo}` : "Não feito"}
+                        {r && k === "nihongo" && (
+                          <span className="mt-1 block text-xs text-black/55">
+                            {Object.entries(r.respostas as Record<string, string>)
+                              .filter(([, v]) => v)
+                              .map(([q, v]) => `${q}: ${v}`)
+                              .join(" · ")}
+                          </span>
+                        )}
+                      </dd>
+                    </div>
+                  );
+                })}
+              </dl>
+              {c.testes_aptidao_aprovado === false && !c.ficha_liberada && (
+                <p className="mt-2 text-[11px] text-amber-700">Ficha bloqueada pelos testes — use “Liberar etapa 2” para seguir mesmo assim.</p>
+              )}
             </section>
           )}
 
@@ -314,9 +372,13 @@ export default async function CandidatoPage({
                 ? `Enviada em ${new Date(c.ficha_enviada_em).toLocaleString("pt-BR", { dateStyle: "short", timeStyle: "short" })}${c.foto_path ? " · com foto" : " · sem foto"}`
                 : etapa2Aberta
                   ? "Liberada — aguardando o candidato."
-                  : "Bloqueada (score abaixo de 80 ou eliminado)."}
+                  : testesAptidaoPendentes(c) && fichaLiberada(c)
+                    ? c.testes_aptidao_aprovado === false
+                      ? "Bloqueada — reprovado nos testes de aptidão."
+                      : "Aguardando os testes de aptidão."
+                    : "Bloqueada (score abaixo de 80 ou eliminado)."}
             </p>
-            {linkFicha && etapa2Aberta && (
+            {linkFicha && (etapa2Aberta || (fichaLiberada(c) && c.testes_aptidao_aprovado == null)) && (
               <div className="mt-3">
                 <p className="text-[11px] uppercase tracking-[0.12em] text-black/40">Link para enviar ao candidato</p>
                 <input readOnly value={linkFicha} className="mt-1 w-full rounded-lg border border-black/10 bg-black/[0.02] px-2 py-1.5 text-[11px] text-black/70" />

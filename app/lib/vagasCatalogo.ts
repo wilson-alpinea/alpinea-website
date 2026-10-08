@@ -59,6 +59,10 @@ export type Vaga = {
   // documentação — aí a pergunta de financiamento não aparece. Sem dado =
   // pergunta aparece (Wilson, 06/out/2026).
   custosCobertosPelaEmpresa?: boolean;
+  // true quando a vaga exige os testes de aptidão em papel da empreiteira,
+  // feitos online numa etapa própria entre o match e a ficha
+  // (app/lib/testesAptidao.ts). Wilson, 08/out/2026.
+  testesAptidao?: boolean;
   criteriosTriagem?: Partial<import("./candidaturaScoring").CriteriosTriagem>;
 };
 
@@ -728,6 +732,7 @@ export const VAGAS: Vaga[] = [
     contrato: "Contrato temporário (haken)",
     salario: "¥1.300/hora (após 3 meses, ¥1.400/hora) + moradia ¥55.000–60.000",
     status: "aberta",
+    testesAptidao: true,
     perfil: "Homens solteiros ou casais — para casal com filho menor de idade, a vaga é garantida só para o marido, sem suporte de passagem para a família",
     info: {
       moradia: null,
@@ -752,6 +757,7 @@ export const VAGAS: Vaga[] = [
     contrato: "Contrato temporário (haken)",
     salario: "¥1.300/hora (após 3 meses, ¥1.400/hora) + moradia ¥45.000–65.000",
     status: "aberta",
+    testesAptidao: true,
     perfil: "Homens solteiros ou casais — para casal com filho menor de idade, a vaga é garantida só para o marido, sem suporte de passagem para a família",
     info: {
       moradia: null,
@@ -776,6 +782,7 @@ export const VAGAS: Vaga[] = [
     contrato: "Contrato temporário (haken)",
     salario: "¥1.550/hora (após 6 meses, ¥1.650/hora) + moradia ¥45.000–60.000",
     status: "aberta",
+    testesAptidao: true,
     perfil: "Homens solteiros ou casais com filhos — para casal com filho menor de idade, a vaga é garantida só para o marido, sem suporte de passagem para a família. Alocação entre Kota, Mutsumi e Okazaki definida só após a chegada ao Japão",
     info: {
       moradia: null,
@@ -800,6 +807,7 @@ export const VAGAS: Vaga[] = [
     contrato: "Contrato temporário (haken)",
     salario: "¥1.550/hora (após 6 meses, ¥1.650/hora) + moradia ¥45.000–60.000",
     status: "aberta",
+    testesAptidao: true,
     perfil: "Homens solteiros ou casais com filhos — para casal com filho menor de idade, a vaga é garantida só para o marido, sem suporte de passagem para a família",
     info: {
       moradia: null,

@@ -3,6 +3,7 @@ import { randomUUID } from "crypto";
 import { createAdminClient } from "../../../lib/supabase/admin";
 import { checarFotoAutomatica, type CriterioFoto } from "../../lib/fotoChecagem";
 import { fichaLiberada } from "../../lib/fichaCadastral";
+import { testesAptidaoPendentes } from "../../lib/testesAptidao";
 
 export const runtime = "nodejs";
 
@@ -96,14 +97,15 @@ export async function POST(req: Request) {
     // cliente pra essa barreira.
     const { data: candidatura, error: erroBusca } = await supabase
       .from("candidaturas_vagas")
-      .select("id, pontuacao, classificacao, ficha_token, ficha_liberada, vaga_titulo, nome, sobrenome, email")
+      // "*" pra não quebrar se a migração 019 (testes_aptidao) ainda não rodou.
+      .select("*")
       .eq("id", candidaturaId)
       .single();
 
     if (erroBusca || !candidatura || candidatura.ficha_token !== token) {
       return NextResponse.json({ error: "Candidatura não encontrada." }, { status: 404 });
     }
-    if (!fichaLiberada(candidatura)) {
+    if (!fichaLiberada(candidatura) || testesAptidaoPendentes(candidatura)) {
       return NextResponse.json(
         { error: "Esta candidatura ainda não atingiu a pontuação necessária para enviar foto." },
         { status: 403 },

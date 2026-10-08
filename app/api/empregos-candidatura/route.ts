@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { randomUUID } from "crypto";
 import { createAdminClient } from "../../../lib/supabase/admin";
 import { encontrarVaga, VAGAS } from "../../lib/vagasCatalogo";
+import { urlAposMatch } from "../../lib/testesAptidao";
 import { idsVagasInativas } from "../../../lib/empregos/vagasAtivas";
 import { extrairTextoCurriculo } from "../../lib/curriculoExtracao";
 import { TIPOS_CURRICULO_ACEITOS } from "../../lib/curriculoConstantes";
@@ -422,10 +423,11 @@ export async function POST(req: Request) {
       // a uma vaga sugerida sem reenviar o formulário.
       tokenCandidatura: candidatura.ficha_token ?? null,
       sugestoes,
-      // Etapa 2 — ficha cadastral (só quando passou: score >= 80 e não eliminado).
+      // Etapa 2 — ficha cadastral (só quando passou: score >= 80 e não
+      // eliminado). Vagas com testes de aptidão passam antes pelos testes.
       fichaUrl:
         resultado.aprovadoParaFoto && candidatura.ficha_token
-          ? `/empregos/ficha/${candidatura.id}?t=${candidatura.ficha_token}`
+          ? urlAposMatch(vagaId, candidatura.id, candidatura.ficha_token)
           : null,
       pontuacao: resultado.pontuacao,
       criterios: resultado.criterios,
