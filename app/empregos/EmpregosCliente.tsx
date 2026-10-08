@@ -9,7 +9,7 @@
 // existe caminho especial" + "todas as vagas no site agora devem ter site
 // próprio".
 
-import { VAGAS, type Vaga, type PublicoKey, type SetorKey, type StatusVaga } from "../lib/vagasCatalogo";
+import { VAGAS, formatarDataPostagem, type Vaga, type PublicoKey, type SetorKey, type StatusVaga } from "../lib/vagasCatalogo";
 import {
   PERGUNTAS_TRIAGEM,
   NIVEIS_JAPONES_DETALHADOS,
@@ -560,128 +560,10 @@ export function DetalhesVaga({ vaga }: { vaga: Vaga }) {
 }
 
 
-// ── Análise da vaga (pop-up) — pedido do Wilson, 19/set/2026: comparar
-// salário e benefícios documentados de cada vaga contra o resto do
-// catálogo. Tudo calculado a partir do próprio array VAGAS (nunca número
-// inventado) — se um dia o texto de salário mudar de formato, o pior caso
-// é a vaga simplesmente não entrar na comparação (retorna null), nunca um
-// número errado.
-
-// Extrai o valor-base em ¥/hora do texto livre de `salario`, ignorando
-// bônus/extra/noturno/reajustes futuros (que sempre aparecem entre
-// parênteses, ou depois de "até" fora de parênteses — ex.: "¥1.400/hora,
-// com reajuste semestral... até ¥1.500/hora"). Quando há dois valores-base
-// (ex.: salário diferente por gênero na ficha da Kitz), usa a média dos
-// dois como valor representativo da vaga.
-function salarioBaseHora(salario: string): number | null {
-  const semParenteses = salario.replace(/\([^)]*\)/g, "");
-  const regex = /¥([\d.]+)(?:[–-]¥?([\d.]+))?\s*\/\s*hora/gi;
-  const valores: number[] = [];
-  let m: RegExpExecArray | null;
-  while ((m = regex.exec(semParenteses))) {
-    const antes = semParenteses.slice(Math.max(0, m.index - 15), m.index).toLowerCase();
-    if (antes.includes("até") || antes.includes("ate ")) continue;
-    const a = parseFloat(m[1].replace(/\./g, ""));
-    const b = m[2] ? parseFloat(m[2].replace(/\./g, "")) : null;
-    valores.push(b !== null ? (a + b) / 2 : a);
-  }
-  if (valores.length === 0) return null;
-  return valores.reduce((soma, v) => soma + v, 0) / valores.length;
-}
-
-// Quantos "blocos" de benefício a ficha documenta (0 a 5): condução ao
-// trabalho, moradia, e — só nas fichas UT Suri-emu, que sempre trazem o
-// mesmo bloco fixo (CONDICOES_UT_SURIEMU) — seguro social, exame médico e
-// passagem aérea juntos.
-function contarBeneficiosDocumentados(vaga: Vaga): number {
-  let n = 0;
-  if (vaga.conducao) n += 1;
-  if (vaga.fonteContrato === "ut-suriemu" || vaga.observacoes) n += 1;
-  if (vaga.fonteContrato === "ut-suriemu") n += 3;
-  return n;
-}
-
-const SALARIO_POR_SETOR: Partial<Record<SetorKey, { media: number; contagem: number }>> = (() => {
-  const somas: Partial<Record<SetorKey, { soma: number; contagem: number }>> = {};
-  for (const vaga of VAGAS) {
-    const base = salarioBaseHora(vaga.salario);
-    if (base === null) continue;
-    const atual = somas[vaga.setor] ?? { soma: 0, contagem: 0 };
-    atual.soma += base;
-    atual.contagem += 1;
-    somas[vaga.setor] = atual;
-  }
-  const resultado: Partial<Record<SetorKey, { media: number; contagem: number }>> = {};
-  (Object.keys(somas) as SetorKey[]).forEach((setor) => {
-    const { soma, contagem } = somas[setor]!;
-    resultado[setor] = { media: soma / contagem, contagem };
-  });
-  return resultado;
-})();
-
-const BENEFICIOS_MEDIA_CATALOGO = VAGAS.reduce((soma, v) => soma + contarBeneficiosDocumentados(v), 0) / VAGAS.length;
-
-function SetaComparativa({ positivo }: { positivo: boolean }) {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2.5"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className={`mt-0.5 h-3.5 w-3.5 shrink-0 ${positivo ? "text-emerald-600" : "text-amber-600"}`}
-    >
-      {positivo ? <path d="M12 19V5M5 12l7-7 7 7" /> : <path d="M12 5v14M5 12l7 7 7-7" />}
-    </svg>
-  );
-}
-
-// Só mostra uma comparação salarial quando há pelo menos 3 outras vagas do
-// mesmo setor com salário legível, pra não tirar conclusão de amostra
-// pequena — e só quando a diferença é grande o bastante (5%+) pra valer a
-// pena mostrar.
-export function AnaliseVaga({ vaga }: { vaga: Vaga }) {
-  const baseVaga = salarioBaseHora(vaga.salario);
-  const statSetor = SALARIO_POR_SETOR[vaga.setor];
-  const podeCompararSalario = baseVaga !== null && !!statSetor && statSetor.contagem >= 3;
-  const diffPercentual = podeCompararSalario ? Math.round(((baseVaga! - statSetor!.media) / statSetor!.media) * 100) : null;
-  const mostraSalario = diffPercentual !== null && Math.abs(diffPercentual) >= 5;
-
-  const beneficios = contarBeneficiosDocumentados(vaga);
-  const diffBeneficios = beneficios - BENEFICIOS_MEDIA_CATALOGO;
-  const mostraBeneficios = Math.abs(diffBeneficios) >= 1;
-
-  if (!mostraSalario && !mostraBeneficios) return null;
-
-  return (
-    <div className="rounded-xl border border-[#2f80c9]/15 bg-[#2f80c9]/[0.04] p-4">
-      <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-[#2f80c9]">Análise da vaga</p>
-      <div className="mt-2.5 space-y-2">
-        {mostraSalario && (
-          <div className="flex items-start gap-2">
-            <SetaComparativa positivo={diffPercentual! > 0} />
-            <p className="text-xs leading-5 text-black/65">
-              Salário {diffPercentual! > 0 ? `${diffPercentual}% acima` : `${Math.abs(diffPercentual!)}% abaixo`} da
-              média de vagas de {SETOR_NOME[vaga.setor]} no catálogo (¥{Math.round(statSetor!.media).toLocaleString("pt-BR")}
-              /hora em média, {statSetor!.contagem} vagas comparadas).
-            </p>
-          </div>
-        )}
-        {mostraBeneficios && (
-          <div className="flex items-start gap-2">
-            <SetaComparativa positivo={diffBeneficios > 0} />
-            <p className="text-xs leading-5 text-black/65">
-              {diffBeneficios > 0
-                ? "Documenta mais detalhes de moradia, condução e benefícios do que a média das vagas do catálogo."
-                : "Documenta menos detalhes de moradia, condução e benefícios do que a média das vagas do catálogo — pergunte pelo WhatsApp."}
-            </p>
-          </div>
-        )}
-      </div>
-    </div>
-  );
-}
+// Análise da vaga: saiu daqui em 08/out/2026 e virou um componente próprio,
+// mais completo — app/components/empregos/AnaliseVaga.tsx (cálculos em
+// app/lib/analiseVagas.ts). Reexportado abaixo pra manter o import antigo.
+export { default as AnaliseVaga } from "../components/empregos/AnaliseVaga";
 
 // Regiões do filtro — derivadas das próprias vagas cadastradas, em vez de
 // uma lista mantida à parte, pra crescer automaticamente conforme o
@@ -1301,6 +1183,9 @@ export default function EmpregosCliente({ inativas }: { inativas: string[] }) {
                     <p className="mt-1 text-xs text-black/50">
                       {vaga.cidade}, {vaga.regiao} — Japão
                     </p>
+                    <p className="mt-0.5 text-[11px] text-black/40">
+                      <span className="font-mono">{vaga.codigo}</span> · Publicada em {formatarDataPostagem(vaga.publicadaEm)}
+                    </p>
                     <p className="mt-2 line-clamp-2 text-sm font-semibold text-black/80">{vaga.salario}</p>
                     <div className="mt-2 flex-1 space-y-1 overflow-hidden text-[11px] leading-4 text-black/45">
                       <p className="line-clamp-1">{vaga.turno}</p>
@@ -1541,8 +1426,17 @@ function Obrigatorio() {
   );
 }
 
-export function CandidaturaModal({ vaga, onFechar }: { vaga: Vaga; onFechar: () => void }) {
+// `pagina`: renderiza como página de "checkout" (/empregos/candidatura/[id])
+// em vez de pop-up — Wilson, 08/out/2026: "páginas de candidatura devem ir
+// para um site separado como se fosse uma página de checkout comum a todas
+// as vagas". Mesmo formulário, mesma API.
+export function CandidaturaModal({ vaga, onFechar, pagina = false }: { vaga: Vaga; onFechar: () => void; pagina?: boolean }) {
   const [etapa, setEtapa] = useState<EtapaCandidatura>("formulario");
+  // Na página de checkout, o resultado aparece no topo (no pop-up o
+  // próprio painel rola).
+  useEffect(() => {
+    if (pagina && etapa === "resultado") window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [pagina, etapa]);
   const [enviando, setEnviando] = useState(false);
   const [erro, setErro] = useState("");
 
@@ -1679,16 +1573,20 @@ export function CandidaturaModal({ vaga, onFechar }: { vaga: Vaga; onFechar: () 
 
   return (
     <div
-      className="fixed inset-0 z-[70] flex items-end justify-center bg-black/50 p-0 backdrop-blur-sm sm:items-center sm:p-6"
-      onClick={onFechar}
+      className={pagina ? "" : "fixed inset-0 z-[70] flex items-end justify-center bg-black/50 p-0 backdrop-blur-sm sm:items-center sm:p-6"}
+      onClick={pagina ? undefined : onFechar}
     >
       <div
-        role="dialog"
-        aria-modal="true"
+        role={pagina ? undefined : "dialog"}
+        aria-modal={pagina ? undefined : true}
         onClick={(e) => e.stopPropagation()}
-        className="max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-t-3xl bg-white p-6 shadow-2xl sm:rounded-3xl sm:p-8"
+        className={
+          pagina
+            ? "w-full rounded-2xl border border-black/10 bg-white p-5 sm:p-8"
+            : "max-h-[90vh] w-full max-w-lg overflow-y-auto rounded-t-3xl bg-white p-6 shadow-2xl sm:rounded-3xl sm:p-8"
+        }
       >
-        <div className="flex items-start justify-between gap-3">
+        <div className={`flex items-start justify-between gap-3 ${pagina ? "hidden" : ""}`}>
           <div>
             <p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-[#2f80c9]">{vaga.empresa}</p>
             <h3 className={`${display.className} mt-1 text-xl font-medium text-black`}>{vaga.titulo}</h3>
@@ -1706,7 +1604,7 @@ export function CandidaturaModal({ vaga, onFechar }: { vaga: Vaga; onFechar: () 
         </div>
 
         {etapa === "formulario" && (
-          <form onSubmit={enviarFormulario} className="mt-5 space-y-4">
+          <form onSubmit={enviarFormulario} className={`${pagina ? "" : "mt-5"} space-y-4`}>
             <PrazosProcesso atual="etapa1" semEtapa3={!perguntaFinanciamento} />
             <div className="grid grid-cols-2 gap-3">
               <div>
@@ -2555,7 +2453,7 @@ export function CandidaturaModal({ vaga, onFechar }: { vaga: Vaga; onFechar: () 
                   onClick={onFechar}
                   className="mt-4 flex w-full items-center justify-center rounded-full bg-black px-6 py-3.5 text-xs font-semibold uppercase tracking-[0.18em] text-white transition hover:bg-black/80"
                 >
-                  Fechar
+                  {pagina ? "Voltar para a vaga" : "Fechar"}
                 </button>
               </div>
             )}

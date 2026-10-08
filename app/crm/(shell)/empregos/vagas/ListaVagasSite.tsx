@@ -6,6 +6,8 @@ import { definirVagasAtivas } from "../../../actions";
 
 type Linha = {
   id: string;
+  codigo: string;
+  publicadaEm: string;
   empresa: string;
   titulo: string;
   local: string;
@@ -25,7 +27,7 @@ export default function ListaVagasSite({ linhas }: { linhas: Linha[] }) {
   const visiveis = useMemo(() => {
     const b = busca.trim().toLowerCase();
     if (!b) return linhas;
-    return linhas.filter((l) => `${l.empresa} ${l.titulo} ${l.local} ${l.id}`.toLowerCase().includes(b));
+    return linhas.filter((l) => `${l.codigo} ${l.empresa} ${l.titulo} ${l.local} ${l.id} ${l.publicadaEm}`.toLowerCase().includes(b));
   }, [linhas, busca]);
 
   function aplicar(ids: string[], ativa: boolean) {
@@ -63,7 +65,7 @@ export default function ListaVagasSite({ linhas }: { linhas: Linha[] }) {
         <input
           value={busca}
           onChange={(e) => setBusca(e.target.value)}
-          placeholder="Buscar empresa, cidade ou função"
+          placeholder="Buscar ID, empresa, cidade ou função"
           className="h-10 w-full max-w-xs rounded-xl border border-black/15 bg-white px-3 text-sm focus:border-[#1C3A5E] focus:outline-none"
         />
         <p className="text-sm text-black/55">
@@ -102,12 +104,14 @@ export default function ListaVagasSite({ linhas }: { linhas: Linha[] }) {
                 onChange={(e) => aplicar([l.id], e.target.checked)}
                 className="h-5 w-5 shrink-0 accent-[#1C3A5E]"
               />
+              <span className="hidden w-[84px] shrink-0 font-mono text-xs font-semibold text-[#1C3A5E] sm:block">{l.codigo}</span>
               <label htmlFor={`vaga-${l.id}`} className="min-w-0 flex-1 cursor-pointer">
                 <span className={`block truncate text-sm font-medium ${marcada ? "text-black" : "text-black/45"}`}>
                   {l.empresa} — {l.titulo}
                 </span>
                 <span className="block text-xs text-black/45">
-                  {l.local}
+                  <span className="font-mono sm:hidden">{l.codigo} · </span>
+                  Publicada em {l.publicadaEm} · {l.local}
                   {l.status === "consulta" && " · sob consulta"}
                   {l.candidaturas > 0 && ` · ${l.candidaturas} ${l.candidaturas === 1 ? "candidatura" : "candidaturas"}`}
                   {salvando.has(l.id) && " · salvando…"}

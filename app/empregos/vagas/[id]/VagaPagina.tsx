@@ -4,12 +4,10 @@
 // landings de recrutamento (barra azul-marinho fixa, títulos em Bodoni,
 // botões azuis) e os mesmos blocos de detalhe do pop-up de /empregos.
 
-import { useEffect, useState } from "react";
 import Link from "next/link";
-import type { Vaga } from "../../../lib/vagasCatalogo";
+import { formatarDataPostagem, type Vaga } from "../../../lib/vagasCatalogo";
 import {
   AnaliseVaga,
-  CandidaturaModal,
   DetalhesVaga,
   InfoObrigatoriaVaga,
   SETOR_NOME,
@@ -23,16 +21,8 @@ const classeBotao =
 const kicker = "text-[11px] font-semibold uppercase tracking-[0.14em] text-black/70";
 
 export default function VagaPagina({ vaga, ativa, hotsite }: { vaga: Vaga; ativa: boolean; hotsite: string | null }) {
-  const [candidatando, setCandidatando] = useState(false);
-
-  useEffect(() => {
-    if (!candidatando) return;
-    const original = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    return () => {
-      document.body.style.overflow = original;
-    };
-  }, [candidatando]);
+  // Candidatura em página própria ("checkout") — Wilson, 08/out/2026.
+  const checkout = `/empregos/candidatura/${vaga.id}`;
 
   const msgWhats = `Olá! Vi a vaga ${vaga.titulo} — ${vaga.empresa}, ${vaga.cidade}/${vaga.regiao} no site da Ajisai e quero saber mais.`;
 
@@ -103,6 +93,10 @@ export default function VagaPagina({ vaga, ativa, hotsite }: { vaga: Vaga; ativa
           <p className="mt-2 text-sm text-black/55">
             {vaga.cidade}, {vaga.regiao} — Japão
           </p>
+          <p className="mt-1 text-xs text-black/45">
+            Vaga <span className="font-mono font-semibold text-black/60">{vaga.codigo}</span> · Publicada em{" "}
+            <time dateTime={vaga.publicadaEm}>{formatarDataPostagem(vaga.publicadaEm)}</time>
+          </p>
 
           <dl className="mt-6 divide-y divide-black/10 border-y border-black/10">
             {resumo.map((r) => (
@@ -115,9 +109,9 @@ export default function VagaPagina({ vaga, ativa, hotsite }: { vaga: Vaga; ativa
 
           {ativa && (
             <div className="mt-6 hidden gap-2 md:flex">
-              <button type="button" onClick={() => setCandidatando(true)} className={classeBotao}>
+              <Link href={checkout} className={classeBotao}>
                 Iniciar candidatura
-              </button>
+              </Link>
               <a
                 href={linkWhatsapp(msgWhats)}
                 target="_blank"
@@ -145,9 +139,9 @@ export default function VagaPagina({ vaga, ativa, hotsite }: { vaga: Vaga; ativa
           </Link>
         )}
 
-        <section aria-label="Análise da vaga" className="mt-10">
+        <div className="mt-10">
           <AnaliseVaga vaga={vaga} />
-        </section>
+        </div>
 
         <section aria-labelledby="t-detalhes" className="mt-10">
           <p className={kicker}>Detalhes</p>
@@ -174,9 +168,9 @@ export default function VagaPagina({ vaga, ativa, hotsite }: { vaga: Vaga; ativa
             <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-black/65">
               A candidatura leva poucos minutos: seus dados, algumas perguntas de triagem e o currículo.
             </p>
-            <button type="button" onClick={() => setCandidatando(true)} className={`${classeBotao} mx-auto mt-5 w-full sm:w-auto`}>
+            <Link href={checkout} className={`${classeBotao} mx-auto mt-5 w-full sm:w-fit`}>
               Iniciar candidatura
-            </button>
+            </Link>
           </section>
         )}
       </div>
@@ -184,9 +178,9 @@ export default function VagaPagina({ vaga, ativa, hotsite }: { vaga: Vaga; ativa
       {ativa && (
         <div className="fixed inset-x-0 bottom-0 z-40 border-t border-black/10 bg-white/95 px-4 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-3 backdrop-blur md:hidden">
           <div className="flex items-center gap-2">
-            <button type="button" onClick={() => setCandidatando(true)} className={`${classeBotao} flex-1`}>
+            <Link href={checkout} className={`${classeBotao} flex-1`}>
               Iniciar candidatura
-            </button>
+            </Link>
             <a
               href={linkWhatsapp(msgWhats)}
               target="_blank"
@@ -202,7 +196,6 @@ export default function VagaPagina({ vaga, ativa, hotsite }: { vaga: Vaga; ativa
         </div>
       )}
 
-      {candidatando && <CandidaturaModal vaga={vaga} onFechar={() => setCandidatando(false)} />}
     </main>
   );
 }

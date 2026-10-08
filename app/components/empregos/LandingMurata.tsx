@@ -27,7 +27,6 @@ import { COTACAO_FALLBACK_BRL_POR_JPY_COMPRA, COTACAO_FALLBACK_BRL_POR_JPY_VENDA
 import { formatBRL, formatJPY } from "../../lib/currency";
 import { AUXILIO_EMBARQUE_BRL, CONDICAO_CUSTO_ZERO, type ConfigLanding, type Planta } from "../../lib/landingsMurata";
 import type { Vaga } from "../../lib/vagasCatalogo";
-import { CandidaturaModal } from "../../empregos/EmpregosCliente";
 
 const linkWhatsapp = (msg: string) => `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
 
@@ -48,7 +47,7 @@ function irParaVagas() {
 }
 
 // ── Vagas do catálogo nesta landing ──
-function ListaVagas({ vagas, vagaPrincipalId, cidade, onCandidatar }: { vagas: Vaga[]; vagaPrincipalId: string; cidade: string; onCandidatar: (v: Vaga) => void }) {
+function ListaVagas({ vagas, vagaPrincipalId, cidade }: { vagas: Vaga[]; vagaPrincipalId: string; cidade: string }) {
   if (vagas.length === 0) {
     return (
       <div className="rounded-2xl border border-black/10 p-6 text-sm leading-6 text-black/70 md:p-8">
@@ -97,9 +96,9 @@ function ListaVagas({ vagas, vagaPrincipalId, cidade, onCandidatar }: { vagas: V
             )}
           </dl>
           <div className="mt-5 flex flex-wrap items-center gap-x-5 gap-y-3 pt-1 md:mt-auto md:pt-5">
-            <button type="button" onClick={() => onCandidatar(v)} className={`${classeBotao} w-full sm:w-auto`}>
+            <Link href={`/empregos/candidatura/${v.id}`} className={`${classeBotao} w-full sm:w-auto`}>
               Candidatar-se
-            </button>
+            </Link>
             <Link href={`/empregos/vagas/${v.id}`} className="text-sm font-medium text-[#1f6fb8] underline decoration-[#1f6fb8]/30 underline-offset-2">
               Detalhes da vaga
             </Link>
@@ -476,18 +475,8 @@ function SimuladorGanhos({ config }: { config: ConfigLanding }) {
 
 // ── Página ──
 export default function LandingMurata({ config: s, vagas }: { config: ConfigLanding; vagas: Vaga[] }) {
-  const [candidatura, setCandidatura] = useState<Vaga | null>(null);
   const [vagasVisivel, setVagasVisivel] = useState(false);
   const vagasRef = useRef<HTMLElement | null>(null);
-
-  useEffect(() => {
-    if (!candidatura) return;
-    const original = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    return () => {
-      document.body.style.overflow = original;
-    };
-  }, [candidatura]);
 
   useEffect(() => {
     const el = vagasRef.current;
@@ -800,7 +789,7 @@ export default function LandingMurata({ config: s, vagas }: { config: ConfigLand
             <p className="mb-5 mt-2 text-sm text-black/65">
               Escolha a vaga e envie sua candidatura. Nossa equipe analisa o perfil e responde pelo WhatsApp.
             </p>
-            <ListaVagas vagas={vagas} vagaPrincipalId={s.vagaId} cidade={s.cidade} onCandidatar={setCandidatura} />
+            <ListaVagas vagas={vagas} vagaPrincipalId={s.vagaId} cidade={s.cidade} />
             <p className="mt-4 text-sm">
               <Link href="/empregos#vagas" className="font-medium text-[#1f6fb8] underline decoration-[#1f6fb8]/30 underline-offset-2">
                 Ver todas as vagas da Ajisai
@@ -837,8 +826,6 @@ export default function LandingMurata({ config: s, vagas }: { config: ConfigLand
           </a>
         </div>
       </div>
-
-      {candidatura && <CandidaturaModal vaga={candidatura} onFechar={() => setCandidatura(null)} />}
     </main>
   );
 }

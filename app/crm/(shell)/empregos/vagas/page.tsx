@@ -2,7 +2,7 @@ import { Bodoni_Moda } from "next/font/google";
 import Link from "next/link";
 import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
-import { VAGAS } from "@/app/lib/vagasCatalogo";
+import { VAGAS, formatarDataPostagem } from "@/app/lib/vagasCatalogo";
 import ListaVagasSite from "./ListaVagasSite";
 
 // Liga/desliga as vagas do catálogo no site — Wilson, 07/out/2026. Vaga
@@ -30,8 +30,12 @@ export default async function VagasSitePage() {
   const totalDe = new Map<string, number>();
   for (const c of candidaturas ?? []) totalDe.set(c.vaga_id, (totalDe.get(c.vaga_id) ?? 0) + 1);
 
-  const linhas = VAGAS.map((v) => ({
+  // Mais recentes primeiro.
+  const ordenadas = [...VAGAS].sort((a, b) => b.publicadaEm.localeCompare(a.publicadaEm) || b.codigo.localeCompare(a.codigo));
+  const linhas = ordenadas.map((v) => ({
     id: v.id,
+    codigo: v.codigo,
+    publicadaEm: formatarDataPostagem(v.publicadaEm),
     empresa: v.empresa,
     titulo: v.titulo,
     local: `${v.cidade}, ${v.regiao}`,

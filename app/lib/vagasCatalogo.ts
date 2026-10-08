@@ -15,7 +15,16 @@ export type SetorKey = "automotivo" | "eletronicos" | "alimenticio" | "materiais
 export type StatusVaga = "aberta" | "consulta";
 
 export type Vaga = {
+  /** Slug da URL (/empregos/vagas/[id]) e chave no banco — nunca mude. */
   id: string;
+  // ID e data de postagem — Wilson, 08/out/2026: "preciso que cada vaga
+  // tenha um ID e data de postagem". Obrigatórios: vaga nova não compila
+  // sem eles.
+  /** Código público sequencial, "AJ-0001"… — use o próximo número livre (ver PROXIMO_CODIGO_VAGA). */
+  codigo: string;
+  /** Data em que a vaga entrou no site, AAAA-MM-DD. As 29 primeiras vieram
+   * do histórico do git (catálogo publicado em 19/set/2026). */
+  publicadaEm: string;
   empresa: string;
   titulo: string;
   setor: SetorKey;
@@ -76,6 +85,8 @@ export const VAGAS: Vaga[] = [
   // ── Avance RH/Corporation — comunicado + fichas individuais ──
   {
     id: "fuji-seat-higashiomi",
+    codigo: "AJ-0001",
+    publicadaEm: "2026-09-19",
     empresa: "Fuji Seat",
     titulo: "Montagem e inspeção de bancos de carro",
     setor: "automotivo",
@@ -99,6 +110,8 @@ export const VAGAS: Vaga[] = [
   },
   {
     id: "aisin-shinwa-toyama",
+    codigo: "AJ-0002",
+    publicadaEm: "2026-09-19",
     empresa: "Aisin Shinwa",
     titulo: "Processamento e inspeção de autopeças",
     setor: "automotivo",
@@ -123,6 +136,8 @@ export const VAGAS: Vaga[] = [
   },
   {
     id: "marugo-gomu-okayama",
+    codigo: "AJ-0003",
+    publicadaEm: "2026-09-19",
     empresa: "Marugo Gomu",
     titulo: "Vulcanização, acabamento e inspeção de mangueiras automotivas",
     setor: "automotivo",
@@ -146,6 +161,8 @@ export const VAGAS: Vaga[] = [
   },
   {
     id: "murata-izumo",
+    codigo: "AJ-0004",
+    publicadaEm: "2026-09-19",
     empresa: "Murata",
     titulo: "Produção de componentes eletrônicos (condensador cerâmico)",
     setor: "eletronicos",
@@ -189,6 +206,8 @@ export const VAGAS: Vaga[] = [
   },
   {
     id: "murata-oda",
+    codigo: "AJ-0005",
+    publicadaEm: "2026-09-19",
     empresa: "Murata",
     titulo: "Produção de componentes eletrônicos (condensador cerâmico)",
     setor: "eletronicos",
@@ -217,6 +236,8 @@ export const VAGAS: Vaga[] = [
   // especial"), com os dados da própria landing (app/lib/landingsMurata.ts).
   {
     id: "murata-echizen",
+    codigo: "AJ-0030",
+    publicadaEm: "2026-10-08",
     empresa: "Murata",
     titulo: "Operador de máquinas e inspeção — componentes eletrônicos",
     setor: "eletronicos",
@@ -257,6 +278,8 @@ export const VAGAS: Vaga[] = [
   },
   {
     id: "daikin-kusatsu",
+    codigo: "AJ-0006",
+    publicadaEm: "2026-09-19",
     empresa: "Daikin",
     titulo: "Produção, montagem e inspeção de ar-condicionado",
     setor: "eletronicos",
@@ -281,6 +304,8 @@ export const VAGAS: Vaga[] = [
   },
   {
     id: "cs-nakatsugawa-gifu",
+    codigo: "AJ-0007",
+    publicadaEm: "2026-09-19",
     empresa: "CS Nakatsugawa",
     titulo: "Produção e inspeção de sensores automotivos",
     setor: "automotivo",
@@ -304,6 +329,8 @@ export const VAGAS: Vaga[] = [
   },
   {
     id: "ntk-kani-gifu",
+    codigo: "AJ-0008",
+    publicadaEm: "2026-09-19",
     empresa: "NTK Kani",
     titulo: "Operação de máquina e inspeção de velas automotivas",
     setor: "automotivo",
@@ -327,6 +354,8 @@ export const VAGAS: Vaga[] = [
   },
   {
     id: "nitto-boseki-fukushima",
+    codigo: "AJ-0009",
+    publicadaEm: "2026-09-19",
     empresa: "Nitto Boseki",
     titulo: "Produção de peças de fibra de vidro",
     setor: "materiais",
@@ -351,6 +380,8 @@ export const VAGAS: Vaga[] = [
   // ── UT Suri-emu — fichas de contrato por empresa ──
   {
     id: "subaru-oizumi",
+    codigo: "AJ-0010",
+    publicadaEm: "2026-09-19",
     empresa: "Subaru",
     titulo: "Produção de transmissões automotivas",
     setor: "automotivo",
@@ -389,6 +420,8 @@ export const VAGAS: Vaga[] = [
   },
   {
     id: "subaru-ota",
+    codigo: "AJ-0011",
+    publicadaEm: "2026-09-19",
     empresa: "Subaru",
     titulo: "Montagem final de veículos (setor de acabamento)",
     setor: "automotivo",
@@ -428,6 +461,8 @@ export const VAGAS: Vaga[] = [
   },
   {
     id: "mitsubishi-fuso-toyama",
+    codigo: "AJ-0012",
+    publicadaEm: "2026-09-19",
     empresa: "Mitsubishi Fuso",
     titulo: "Produção de ônibus — inspeção, soldagem, pintura e montagem",
     setor: "automotivo",
@@ -451,6 +486,8 @@ export const VAGAS: Vaga[] = [
   },
   {
     id: "yamase-miyagi",
+    codigo: "AJ-0013",
+    publicadaEm: "2026-09-19",
     empresa: "Yamase Electronics",
     titulo: "Montagem e inspeção de peças eletrônicas automotivas",
     setor: "automotivo",
@@ -472,6 +509,8 @@ export const VAGAS: Vaga[] = [
   },
   {
     id: "fujifilm-miyagi",
+    codigo: "AJ-0014",
+    publicadaEm: "2026-09-19",
     empresa: "Fuji Film",
     titulo: "Montagem e inspeção de lentes de câmeras digitais",
     setor: "eletronicos",
@@ -494,6 +533,8 @@ export const VAGAS: Vaga[] = [
   },
   {
     id: "yokohama-gomu-aichi",
+    codigo: "AJ-0015",
+    publicadaEm: "2026-09-19",
     empresa: "Yokohama Gomu",
     titulo: "Montagem de borracha, regulagem de aro, inspeção final e abastecimento de linha",
     setor: "automotivo",
@@ -531,6 +572,8 @@ export const VAGAS: Vaga[] = [
   },
   {
     id: "sony-aichi",
+    codigo: "AJ-0016",
+    publicadaEm: "2026-09-19",
     empresa: "Sony",
     titulo: "Montagem e inspeção de filmadoras e lentes digitais",
     setor: "eletronicos",
@@ -553,6 +596,8 @@ export const VAGAS: Vaga[] = [
   },
   {
     id: "mitsubishi-denki-himeji",
+    codigo: "AJ-0017",
+    publicadaEm: "2026-09-19",
     empresa: "Mitsubishi Denki",
     titulo: "Produção de alternadores automotivos",
     setor: "automotivo",
@@ -575,6 +620,8 @@ export const VAGAS: Vaga[] = [
   },
   {
     id: "daihatsu-nakatsu",
+    codigo: "AJ-0018",
+    publicadaEm: "2026-09-19",
     empresa: "Daihatsu",
     titulo: "Montagem de automóveis, inspeção, linha de produção e abastecimento de peças",
     setor: "automotivo",
@@ -616,6 +663,8 @@ export const VAGAS: Vaga[] = [
   },
   {
     id: "fruehauf-atsugi",
+    codigo: "AJ-0019",
+    publicadaEm: "2026-09-19",
     empresa: "Fruehauf",
     titulo: "Montagem e pintura de carrocerias de caminhão",
     setor: "automotivo",
@@ -642,6 +691,8 @@ export const VAGAS: Vaga[] = [
   },
   {
     id: "gs-yuasa-ritto",
+    codigo: "AJ-0020",
+    publicadaEm: "2026-09-19",
     empresa: "GS Yuasa",
     titulo: "Produção de baterias para veículos elétricos e híbridos",
     setor: "automotivo",
@@ -665,6 +716,8 @@ export const VAGAS: Vaga[] = [
   // Sangyou, propostas atualizadas de 1/abr/2026) ──
   {
     id: "inoac-sakurai",
+    codigo: "AJ-0021",
+    publicadaEm: "2026-09-19",
     empresa: "Inoac Corporation",
     titulo: "Produção de peças de aerofólio automotivo",
     setor: "automotivo",
@@ -687,6 +740,8 @@ export const VAGAS: Vaga[] = [
   },
   {
     id: "inoac-kira",
+    codigo: "AJ-0022",
+    publicadaEm: "2026-09-19",
     empresa: "Inoac Corporation",
     titulo: "Fabricação de encosto de cabeça e apoio de copos automotivo",
     setor: "automotivo",
@@ -709,6 +764,8 @@ export const VAGAS: Vaga[] = [
   },
   {
     id: "futaba-mutsumi",
+    codigo: "AJ-0023",
+    publicadaEm: "2026-09-19",
     empresa: "Futaba Sangyou",
     titulo: "Fabricação de peças de chassi automotivo",
     setor: "automotivo",
@@ -731,6 +788,8 @@ export const VAGAS: Vaga[] = [
   },
   {
     id: "futaba-kota",
+    codigo: "AJ-0024",
+    publicadaEm: "2026-09-19",
     empresa: "Futaba Sangyou",
     titulo: "Fabricação de escapamento automotivo",
     setor: "automotivo",
@@ -753,6 +812,8 @@ export const VAGAS: Vaga[] = [
   },
   {
     id: "fujifilm-kanagawa",
+    codigo: "AJ-0025",
+    publicadaEm: "2026-09-19",
     empresa: "Fuji Film",
     titulo: "Embalamento de filmes instantâneos para câmeras fotográficas",
     setor: "eletronicos",
@@ -778,6 +839,8 @@ export const VAGAS: Vaga[] = [
   },
   {
     id: "hino-jidousha-ota",
+    codigo: "AJ-0026",
+    publicadaEm: "2026-09-19",
     empresa: "Hino Jidosha",
     titulo: "Montagem e usinagem de peças de motor de caminhão",
     setor: "automotivo",
@@ -802,6 +865,8 @@ export const VAGAS: Vaga[] = [
   },
   {
     id: "hino-jidousha-hamura",
+    codigo: "AJ-0027",
+    publicadaEm: "2026-09-19",
     empresa: "Hino Jidosha",
     titulo: "Montagem, abastecimento e inspeção de veículos",
     setor: "automotivo",
@@ -826,6 +891,8 @@ export const VAGAS: Vaga[] = [
   },
   {
     id: "kitz-ina-nagano",
+    codigo: "AJ-0028",
+    publicadaEm: "2026-09-19",
     empresa: "Kitz",
     titulo: "Produção de válvulas de água — montagem, usinagem e inspeção",
     setor: "materiais",
@@ -849,6 +916,8 @@ export const VAGAS: Vaga[] = [
   },
   {
     id: "panasonic-gunma",
+    codigo: "AJ-0029",
+    publicadaEm: "2026-09-19",
     empresa: "Panasonic",
     titulo: "Produção de eletrodomésticos — tratamento térmico, máquina e montagem",
     setor: "eletronicos",
@@ -875,4 +944,21 @@ export const VAGAS: Vaga[] = [
 
 export function encontrarVaga(id: string): Vaga | null {
   return VAGAS.find((v) => v.id === id) ?? null;
+}
+
+// Próximo código livre para a próxima vaga cadastrada (atualize ao usar).
+export const PROXIMO_CODIGO_VAGA = "AJ-0031";
+
+export function formatarDataPostagem(iso: string): string {
+  const [a, m, d] = iso.split("-");
+  return `${d}/${m}/${a}`;
+}
+
+// Trava contra código repetido (só avisa em desenvolvimento).
+if (process.env.NODE_ENV !== "production") {
+  const vistos = new Set<string>();
+  for (const v of VAGAS) {
+    if (vistos.has(v.codigo)) console.error(`vagasCatalogo: código ${v.codigo} repetido (${v.id}).`);
+    vistos.add(v.codigo);
+  }
 }
