@@ -306,7 +306,7 @@ export type CriterioPontuacao = {
 export type ResultadoPontuacao = {
   pontuacao: number; // 0-100, soma dos critérios
   criterios: CriterioPontuacao[];
-  aprovadoParaFoto: boolean; // pontuacao >= 80 e não eliminado
+  aprovadoParaFoto: boolean; // não eliminado (a nota não bloqueia mais — 15/out/2026)
   // Área de Empregos do CRM (06/out/2026).
   eliminado: boolean;
   motivosEliminacao: string[];
@@ -526,7 +526,9 @@ export function calcularPontuacaoCandidatura(params: {
   return {
     pontuacao,
     criterios,
-    aprovadoParaFoto: pontuacao >= NOTA_MINIMA_PROXIMA_ETAPA && !eliminado,
+    // Wilson, 15/out/2026: quem não foi eliminado segue para a etapa 2,
+    // mesmo com nota abaixo de 80 — a nota só classifica (alto/baixo) no CRM.
+    aprovadoParaFoto: !eliminado,
     eliminado,
     motivosEliminacao: eliminadoPor,
     classificacao: eliminado ? "eliminado" : pontuacao >= NOTA_MINIMA_PROXIMA_ETAPA ? "aprovado_alto" : "aprovado_baixo",

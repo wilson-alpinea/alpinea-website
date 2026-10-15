@@ -376,7 +376,7 @@ export default async function CandidatoPage({
                     ? c.testes_aptidao_aprovado === false
                       ? "Bloqueada — reprovado nos testes de aptidão."
                       : "Aguardando os testes de aptidão."
-                    : "Bloqueada (score abaixo de 80 ou eliminado)."}
+                    : "Bloqueada — candidato eliminado (pode liberar abaixo)."}
             </p>
             {linkFicha && (etapa2Aberta || (fichaLiberada(c) && c.testes_aptidao_aprovado == null)) && (
               <div className="mt-3">

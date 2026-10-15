@@ -19,7 +19,6 @@
 // e a ficha no CRM (linhasFicha). Pra mudar uma pergunta, mude só aqui.
 
 import { PROVINCIAS_JAPAO } from "./triagemPerfil";
-import { NOTA_MINIMA_PROXIMA_ETAPA } from "./candidaturaScoring";
 
 export type ValorCampo = string | string[];
 export type FichaValores = Record<string, ValorCampo>;
@@ -832,7 +831,9 @@ export function pontosRevisarFicha(f: FichaCadastral): string[] {
 // manualmente pela equipe no CRM.
 export function fichaLiberada(c: { pontuacao: number | null; classificacao?: string | null; ficha_liberada?: boolean | null }) {
   if (c.ficha_liberada) return true;
-  return (c.pontuacao ?? 0) >= NOTA_MINIMA_PROXIMA_ETAPA && c.classificacao !== "eliminado";
+  // Etapa 2 aberta para todo candidato não eliminado, qualquer nota
+  // (Wilson, 15/out/2026). Eliminado só passa se a equipe liberar no CRM.
+  return c.classificacao !== "eliminado";
 }
 
 // ── Leitura formatada (usada pelos modelos das fichas das parceiras) ───
