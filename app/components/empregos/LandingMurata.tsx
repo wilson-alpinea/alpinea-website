@@ -146,7 +146,7 @@ function Plantas({ plantas }: { plantas: Planta[] }) {
       <div className="flex items-end justify-between gap-4">
         <div>
           <p className="text-[11px] font-semibold uppercase tracking-[0.3em] text-[#0A2540]/60">Tipos de acomodação disponíveis</p>
-          <p className={`${display.className} mt-1 text-xl font-medium text-[#0A2540]`}>Escolha sua planta</p>
+          <p className={`${display.className} mt-1 text-xl font-medium text-[#0A2540]`}>Entenda melhor os tipos de plantas de acomodação</p>
         </div>
         <p className={`${inter.className} hidden text-xs tabular-nums text-black/45 sm:block`}>
           {String(i + 1).padStart(2, "0")} / {String(total).padStart(2, "0")}
@@ -358,10 +358,10 @@ function SimuladorGanhos({ config }: { config: ConfigLanding }) {
     <section aria-labelledby="t-simulacao">
       <p className={kicker}>Simulação</p>
       <div className="mt-2">
-        <TituloSecao id="t-simulacao">Quanto pode sobrar por mês</TituloSecao>
+        <TituloSecao id="t-simulacao">Quanto pode ficar disponível por mês</TituloSecao>
       </div>
       <p className="mt-3 max-w-3xl text-[15px] leading-7 text-black/70">
-        Ajuste as opções e veja uma estimativa do valor que sobra depois dos descontos obrigatórios, do aluguel e das contas da casa.
+        Ajuste as opções e veja uma estimativa do valor que fica disponível depois dos descontos obrigatórios, do aluguel e das contas da casa — antes dos gastos com alimentação e despesas pessoais.
       </p>
 
       <div className="mt-6 grid gap-5 md:grid-cols-[minmax(0,1fr)_minmax(0,1.05fr)]">
@@ -476,28 +476,30 @@ function SimuladorGanhos({ config }: { config: ConfigLanding }) {
 // Wilson, 15/out/2026: "criar um conjunto de ícones na direita com as
 // seções para acesso rápido como MORADIA". Ele já tinha pedido para não
 // perder espaço com coluna lateral (07/out), então é um trilho fino e
-// flutuante, só com ícones — o nome aparece ao passar o mouse — e só em
-// telas largas (xl+), onde fica na margem sem cobrir o conteúdo. Destaca a
-// seção que está na tela.
-const SECOES_RAPIDAS: { id: string; rotulo: string; icone: ReactNode }[] = [
+// flutuante, só com ícones — o nome aparece ao passar o mouse. Aparece a
+// partir de tablet (md+): encostado na borda direita até 1280px e solto na
+// margem acima disso (15/out: "aonde estão os ícones?" — antes só xl+).
+// Destaca a seção que está na tela.
+// `destaque`: ação principal (candidatar-se) — cor própria, sempre visível
+// (Wilson, 15/out/2026: "colocar no menu lateral uma cor diferente para
+// candidatar-se").
+const SECOES_RAPIDAS: { id: string; rotulo: string; icone: ReactNode; destaque?: boolean }[] = [
   { id: "t-vaga", rotulo: "A vaga", icone: <><rect x="3" y="7" width="18" height="13" rx="2" /><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" /></> },
   { id: "t-salario", rotulo: "Salário", icone: <><path d="M7 4l5 7 5-7M12 11v9M8 13h8M8 16.5h8" /></> },
-  { id: "t-simulacao", rotulo: "Quanto sobra", icone: <><rect x="5" y="3" width="14" height="18" rx="2" /><path d="M8 7h8M8 11h2M12 11h2M16 11h0M8 15h2M12 15h2M8 18h8" /></> },
+  { id: "t-simulacao", rotulo: "Simulação mensal", icone: <><rect x="5" y="3" width="14" height="18" rx="2" /><path d="M8 7h8M8 11h2M12 11h2M16 11h0M8 15h2M12 15h2M8 18h8" /></> },
   { id: "t-custo", rotulo: "Custo inicial zero", icone: <><path d="M2 16l20-8-6 12-3-5z" /><path d="M13 15l9-7" /></> },
   { id: "t-moradia", rotulo: "Moradia", icone: <><path d="M3 11l9-7 9 7" /><path d="M5 10v10h14V10" /><path d="M10 20v-6h4v6" /></> },
   { id: "t-cidade", rotulo: "Cidade e transporte", icone: <><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z" /><circle cx="12" cy="9.5" r="2.5" /></> },
   { id: "t-processo", rotulo: "Do Brasil à fábrica", icone: <><path d="M2 16l20-6-20-6 4 6z" /><path d="M6 10h8" /></> },
   { id: "t-faq", rotulo: "Perguntas frequentes", icone: <><circle cx="12" cy="12" r="9" /><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.3-1 .8-1 1.5V14M12 17.5h0" /></> },
-  { id: "t-vagas", rotulo: "Vagas abertas", icone: <><path d="M9 11l3 3 8-8" /><path d="M20 12v7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h9" /></> },
+  { id: "t-vagas", rotulo: "Candidatar-se", destaque: true, icone: <><path d="M9 11l3 3 8-8" /><path d="M20 12v7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h9" /></> },
 ];
 
 function NavRapida() {
-  const [itens, setItens] = useState(SECOES_RAPIDAS);
   const [ativa, setAtiva] = useState<string | null>(null);
   useEffect(() => {
-    // Só as seções que existem nesta página.
+    // Todas as seções do trilho existem nas duas landings (Izumo/Echizen).
     const presentes = SECOES_RAPIDAS.filter((x) => document.getElementById(x.id));
-    setItens(presentes);
     if (typeof IntersectionObserver === "undefined") return;
     const alvo = (id: string) => document.getElementById(id)?.closest("section") ?? document.getElementById(id);
     const visiveis = new Map<string, number>();
@@ -530,24 +532,29 @@ function NavRapida() {
   };
 
   return (
-    <nav aria-label="Acesso rápido às seções" className="fixed right-4 top-1/2 z-40 hidden -translate-y-1/2 xl:block">
-      <ul className="flex flex-col gap-1 rounded-2xl border border-black/10 bg-white/90 p-1.5 shadow-[0_8px_30px_rgba(10,37,64,0.10)] backdrop-blur">
-        {itens.map((x) => {
+    <nav aria-label="Acesso rápido às seções" className="fixed right-0 top-1/2 z-40 hidden -translate-y-1/2 md:block xl:right-4">
+      <ul className="flex flex-col gap-0.5 rounded-l-2xl border border-r-0 border-black/10 bg-white/95 p-1 shadow-[0_8px_30px_rgba(10,37,64,0.12)] backdrop-blur xl:gap-1 xl:rounded-2xl xl:border-r xl:p-1.5">
+        {SECOES_RAPIDAS.map((x) => {
           const on = ativa === x.id;
+          const cor = x.destaque
+            ? `bg-[#1f6fb8] text-white hover:bg-[#2f80c9] ${on ? "ring-2 ring-[#1f6fb8]/30 ring-offset-1" : ""}`
+            : on
+              ? "bg-[#0A2540] text-white"
+              : "text-[#0A2540]/70 hover:bg-[#0A2540]/[0.06] hover:text-[#0A2540]";
           return (
-            <li key={x.id} className="group relative">
+            <li key={x.id} className={`group relative ${x.destaque ? "mt-1 border-t border-black/10 pt-1.5" : ""}`}>
               <button
                 type="button"
                 onClick={() => ir(x.id)}
                 aria-label={x.rotulo}
                 aria-current={on ? "true" : undefined}
-                className={`flex h-10 w-10 items-center justify-center rounded-xl transition ${on ? "bg-[#1f6fb8] text-white" : "text-[#0A2540]/70 hover:bg-[#0A2540]/[0.06] hover:text-[#0A2540]"}`}
+                className={`flex h-9 w-9 items-center justify-center rounded-xl transition xl:h-10 xl:w-10 ${cor}`}
               >
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5" aria-hidden="true">
                   {x.icone}
                 </svg>
               </button>
-              <span className="pointer-events-none absolute right-full top-1/2 mr-2 -translate-y-1/2 whitespace-nowrap rounded-md bg-[#0A2540] px-2.5 py-1 text-xs font-medium text-white opacity-0 transition group-hover:opacity-100">
+              <span className={`pointer-events-none absolute right-full top-1/2 mr-2 -translate-y-1/2 whitespace-nowrap rounded-md px-2.5 py-1 ${x.destaque ? "bg-[#1f6fb8]" : "bg-[#0A2540]"} text-xs font-medium text-white opacity-0 transition group-hover:opacity-100`}>
                 {x.rotulo}
               </span>
             </li>
@@ -723,14 +730,17 @@ export default function LandingMurata({ config: s, vagas }: { config: ConfigLand
           <SimuladorGanhos config={s} />
 
           {/* Custo inicial zero + reentry */}
-          <section aria-labelledby="t-custo" className="overflow-hidden rounded-2xl bg-[#0A2540] text-white">
+          {/* Wilson, 15/out/2026: "no desktop a imagem é muito grande" — no
+              desktop (lg+) a foto vira coluna à esquerda e o texto ocupa a
+              direita; no celular continua foto em cima, texto embaixo. */}
+          <section aria-labelledby="t-custo" className="overflow-hidden rounded-2xl bg-[#0A2540] text-white lg:grid lg:grid-cols-[minmax(0,5fr)_minmax(0,6fr)]">
             {s.custoZero.imagem && (
-              <div className="relative aspect-[16/7]">
-                <Image src={s.custoZero.imagem.src} alt={s.custoZero.imagem.alt} fill sizes="(min-width: 1024px) 760px, 100vw" className="object-cover object-[60%_50%]" />
-                <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-t from-[#0A2540] to-transparent" />
+              <div className="relative aspect-[16/7] lg:aspect-auto lg:min-h-[420px]">
+                <Image src={s.custoZero.imagem.src} alt={s.custoZero.imagem.alt} fill sizes="(min-width: 1024px) 500px, 100vw" className="object-cover object-[60%_50%]" />
+                <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-t from-[#0A2540] to-transparent lg:bg-gradient-to-l lg:from-[#0A2540] lg:via-[#0A2540]/10 lg:via-25%" />
               </div>
             )}
-            <div className="px-5 pb-6 pt-2 md:px-8 md:pb-8">
+            <div className="px-5 pb-6 pt-2 md:px-8 md:pb-8 lg:flex lg:flex-col lg:justify-center lg:py-10 lg:pl-6 lg:pr-10">
               <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-white/60">Campanha</p>
               <h2 id="t-custo" className={`${display.className} mt-2 text-2xl font-medium md:text-[28px]`}>
                 {s.custoZero.titulo}

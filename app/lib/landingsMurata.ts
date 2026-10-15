@@ -113,14 +113,16 @@ export const LANDING_IZUMO: ConfigLanding = {
   hero: {
     kicker: "Izumo · Shimane",
     titulo: "Trabalhe e more em Izumo",
-    subtitulo: "Operador na Murata, com turno fixo e custo inicial zero de embarque para candidatos elegíveis.",
+    subtitulo: "Operador na Murata, nas fábricas de Izumo e Oda, com custo inicial zero de embarque para candidatos elegíveis.",
     imagem: { src: "/images/empregos/izumo-fabrica.webp", alt: "Fábrica entre campos de arroz e montanhas em Izumo, Shimane" },
   },
   resumo: [
     { rotulo: "Salário inicial", valor: "¥1.500/h", detalhe: "chega a ¥1.650/h" },
-    { rotulo: "Turno", valor: "Fixo, escala 4×2", detalhe: "sem alternar dia e noite" },
+    // Wilson, 15/out/2026: a página também traz a fábrica de Oda, onde o
+    // turno é alternado — mostrar as duas cidades.
+    { rotulo: "Turno", valor: "Escala 4×2", detalhe: "Izumo: fixo · Oda: alternado (dia e noite)" },
     { rotulo: "Custo inicial", valor: "R$ 0", detalhe: "para candidatos elegíveis" },
-    { rotulo: "Moradia", valor: "Organizada", detalhe: "aluguel a partir de ¥45.000" },
+    { rotulo: "Moradia", valor: "Pronta para morar", detalhe: "só aluguel + água, luz e internet, sem taxas extras · transporte até a fábrica" },
   ],
   vaga: {
     titulo: "Operador de máquinas e inspeção",
@@ -148,7 +150,7 @@ export const LANDING_IZUMO: ConfigLanding = {
   },
   turnos: {
     texto:
-      "Em Izumo há dois turnos fixos (diurno ou noturno), sem alternar entre dia e noite: 4 dias de trabalho para 2 de folga, cerca de 18 dias trabalhados por mês. Horário definido na alocação.",
+      "Em Izumo há dois turnos fixos (diurno ou noturno), sem alternar entre dia e noite: 4 dias de trabalho para 2 de folga, cerca de 18 dias trabalhados por mês. Em Oda, a escala também é 4×2, mas o turno é alternado entre dia e noite. Horário definido na alocação.",
   },
   custoZero: {
     titulo: "Custo inicial zero",
@@ -159,14 +161,16 @@ export const LANDING_IZUMO: ConfigLanding = {
   reentry:
     "Já tem reentry válido e pode embarcar logo? Candidatos elegíveis podem receber o Auxílio Embarque Ajisai, conforme as condições da campanha vigente.",
   moradia: {
-    texto: "Apartamentos para solteiros, casais ou famílias (1K a 3DK), conforme composição familiar e disponibilidade.",
+    // Mesmo texto de moradia enviado pelo Wilson para Echizen (15/out/2026).
+    texto:
+      "A empreiteira já tem apartamentos prontos para morar, para solteiros, casais ou famílias (1K a 3DK), conforme composição familiar e disponibilidade. Você paga só o aluguel e as contas de água, luz e internet — sem nenhuma taxa adicional. Todas as moradias ficam dentro do raio do transporte fornecido pela empresa, que busca e leva o funcionário até a fábrica.",
     valores: [
       { rotulo: "1K / 1DK sem internet", valor: "¥45.000 – ¥55.000" },
       { rotulo: "1K / 1DK com internet", valor: "¥60.000 – ¥65.000" },
       { rotulo: "2DK ou maior", valor: "¥55.000 – ¥75.000" },
     ],
     notas: [
-      "Aluguel mensal aproximado, pago pelo trabalhador. Água, luz e gás à parte.",
+      "Valores de aluguel mensal aproximados. O trabalhador paga o aluguel e as contas de água, luz e internet — sem nenhuma taxa adicional.",
       "No Leopalace, TV, geladeira e máquina de lavar já estão incluídas no aluguel. Nos demais, geladeira e máquina de lavar já vêm no apartamento por ¥1.550/mês cada (TV opcional, ¥2.350/mês) e podem ser devolvidas se não forem necessárias.",
       "Do apartamento até a fábrica: cerca de 20 minutos a pé ou 30 minutos no ônibus fretado.",
       "Os valores de aluguel e de eletrodomésticos podem ser alterados pela empreiteira. Os números aqui são baseados no histórico recente.",
@@ -253,7 +257,7 @@ export const LANDING_IZUMO: ConfigLanding = {
     },
     {
       pergunta: "O apartamento é gratuito?",
-      resposta: "Não. A moradia é organizada, mas o aluguel e as despesas de consumo são de responsabilidade do trabalhador.",
+      resposta: "Não. Os apartamentos já estão prontos, e o trabalhador paga o aluguel e as contas de água, luz e internet — sem taxas adicionais além disso.",
     },
     {
       pergunta: "Posso ir com meu cônjuge?",
@@ -289,7 +293,7 @@ export const LANDING_ECHIZEN: ConfigLanding = {
     { rotulo: "Salário inicial", valor: "¥1.500/h", detalhe: "chega a ¥1.650/h" },
     { rotulo: "Turno", valor: "Alternado, 4×2", detalhe: "diurno e noturno" },
     { rotulo: "Custo inicial", valor: "R$ 0", detalhe: "para candidatos elegíveis" },
-    { rotulo: "Moradia", valor: "Organizada", detalhe: "aluguel a partir de ¥40.000" },
+    { rotulo: "Moradia", valor: "Pronta para morar", detalhe: "só aluguel + água, luz e internet, sem taxas extras · transporte até a fábrica" },
   ],
   vaga: {
     titulo: "Operador de máquinas e inspeção",
@@ -342,7 +346,7 @@ export const LANDING_ECHIZEN: ConfigLanding = {
       { rotulo: "Leopalace", valor: "≈ ¥50.000 – ¥55.000" },
     ],
     notas: [
-      "Aluguel mensal aproximado, pago pelo trabalhador, sem taxas adicionais. Água, luz e internet à parte.",
+      "Valores de aluguel mensal aproximados. O trabalhador paga o aluguel e as contas de água, luz e internet — sem nenhuma taxa adicional.",
       "No Leopalace, TV, geladeira, máquina de lavar e micro-ondas já estão incluídos no aluguel. Nos demais, geladeira e máquina de lavar podem ser alugadas por ¥1.550/mês cada.",
       "Os valores de aluguel e de eletrodomésticos podem ser alterados pela empreiteira. Os números aqui são baseados no histórico recente.",
     ],

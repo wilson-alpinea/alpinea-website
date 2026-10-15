@@ -179,13 +179,13 @@ export const VAGAS: Vaga[] = [
     status: "aberta",
     logo: "/images/logo-cliente-murata.png",
     idioma: "Não mandatório",
-    perfil: "Homem, mulher ou casal até 50 anos",
+    perfil: "Homem, mulher ou casal até 59 anos", // limite confirmado pelo Wilson em 15/out/2026
     // Dados da ficha oficial "CSR - IZUMO (2026.07.10更新)" (07/out/2026).
     // Bônus fica null: a ficha só cita campanha de admissão sem valor, e a
     // regra de compliance é não mencionar bônus sem valor fornecido.
     info: {
       moradia:
-        "Apartamentos de 1K a 3DK na cidade de Izumo, conforme composição familiar e disponibilidade. Aluguel aproximado: 1K/1DK sem internet ¥45.000–55.000, com internet ¥60.000–65.000; 2DK ou maior ¥55.000–75.000. Pago pelo trabalhador; água, luz e gás à parte. Valores de aluguel e de eletrodomésticos podem ser alterados pela empreiteira; baseados no histórico recente.",
+        "Apartamentos de 1K a 3DK na cidade de Izumo, conforme composição familiar e disponibilidade. Aluguel aproximado: 1K/1DK sem internet ¥45.000–55.000, com internet ¥60.000–65.000; 2DK ou maior ¥55.000–75.000. Apartamentos prontos para morar; o trabalhador paga só o aluguel e as contas de água, luz e internet, sem taxas adicionais. Todas as moradias ficam no raio do transporte da empresa até a fábrica. Valores de aluguel e de eletrodomésticos podem ser alterados pela empreiteira; baseados no histórico recente.",
       beneficios: [
         "Seguro saúde, previdência (kōsei nenkin) e seguro-desemprego",
         "Refeitório na fábrica, refeição em torno de ¥300 (com pratos brasileiros no cardápio)",
@@ -217,13 +217,14 @@ export const VAGAS: Vaga[] = [
     regiao: "Shimane",
     cidade: "Oda",
     publico: ["brasil"],
-    turno: "Turno fixo, diurno ou noturno, 4x2",
+    // Wilson, 15/out/2026: em Oda o turno é alternado, não fixo.
+    turno: "Turno alternado (diurno/noturno), 4x2",
     contrato: "Contrato temporário (haken)",
     salario: "¥1.340/hora (até ¥1.560/hora conforme desempenho)",
     status: "aberta",
     logo: "/images/logo-cliente-murata.png",
     idioma: "Não mandatório",
-    perfil: "Homem, mulher ou casal até 50 anos",
+    perfil: "Homem, mulher ou casal até 59 anos", // limite confirmado pelo Wilson em 15/out/2026
     info: {
       moradia: null,
       beneficios: [],
@@ -251,6 +252,7 @@ export const VAGAS: Vaga[] = [
     contrato: "A confirmar com a nossa equipe",
     salario: "¥1.500/hora em turno alternado (até ¥1.650/hora conforme o tempo de casa); ¥1.300–1.450/hora em diurno fixo",
     status: "aberta",
+    perfil: "Até 59 anos", // limite confirmado pelo Wilson em 15/out/2026
     logo: "/images/logo-cliente-murata.png",
     // Dados da ficha oficial "CSR - FUKUI (2026.07.03更新)" (07/out/2026).
     info: {

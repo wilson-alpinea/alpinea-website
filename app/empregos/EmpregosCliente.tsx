@@ -272,7 +272,16 @@ type Destaque = {
   // Grupo de vagas do catálogo: o clique filtra a lista só nessas vagas
   // (Wilson, 08/out/2026: "um card único para essas 4 vagas").
   vagaIds?: string[];
+  // Selos curtos com os pontos fortes da vaga, sobre a foto (desktop) ou
+  // numa faixa logo abaixo dela (celular).
+  selos?: string[];
 };
+
+// Wilson, 15/out/2026: "adicionar informações estratégicas nos banners de
+// Izumo e Echizen". Custo zero sempre com a ressalva de elegibilidade
+// (regra de compliance das landings — app/lib/landingsMurata.ts).
+const SELOS_MURATA = ["Custo zero com documentação inclusa*", "Não precisa falar japonês", "Não precisa de experiência prévia", "Vagas até 59 anos"];
+const NOTA_SELOS = "* Para candidatos elegíveis, sujeito à análise e disponibilidade.";
 
 const DESTAQUES: Destaque[] = [
   {
@@ -285,6 +294,8 @@ const DESTAQUES: Destaque[] = [
     sobreposto: { kicker: "Fukui · Japão", titulo: "Trabalhe e More em Echizen", subtitulo: "Montanhas, rio e cerejeiras ao lado da fábrica." },
     // Abre a landing de recrutamento Fukui Murata (Wilson, 07/out/2026).
     href: "/empregos/echizen",
+    // Informações estratégicas no banner (Wilson, 15/out/2026).
+    selos: SELOS_MURATA,
   },
 
   {
@@ -295,6 +306,8 @@ const DESTAQUES: Destaque[] = [
     imagem: "/images/empregos-destaque-izumo-murata.webp",
     href: "/empregos/izumo",
     sobreposto: { kicker: "Shimane · Japão", titulo: "Trabalhe e More em Izumo", subtitulo: "A cidade do Grande Santuário de Izumo." },
+    // Informações estratégicas no banner (Wilson, 15/out/2026).
+    selos: SELOS_MURATA,
   },
   {
     // Wilson, 08/out/2026: "criar um novo card no carrossel de empregos
@@ -361,6 +374,7 @@ function CarrosselDestaques({ onAbrir }: { onAbrir: (d: Destaque) => void }) {
         {DESTAQUES.map((d, i) => {
           const clicavel = Boolean(d.href || d.filtroRegiao || d.vagaIds?.length);
           const conteudo = d.imagem ? (
+            <div>
             <div className="relative aspect-[16/10] w-full sm:aspect-[1918/820]">
               <Image
                 src={d.imagem}
@@ -383,14 +397,44 @@ function CarrosselDestaques({ onAbrir }: { onAbrir: (d: Destaque) => void }) {
                       {d.sobreposto.titulo}
                     </p>
                     {d.sobreposto.subtitulo && <p className="mt-2 hidden text-sm text-white/80 sm:block md:text-base">{d.sobreposto.subtitulo}</p>}
+                    {d.selos && (
+                      <ul className="mt-4 hidden max-w-md grid-cols-2 gap-x-4 gap-y-2 sm:grid">
+                        {d.selos.map((x) => (
+                          <li key={x} className="flex items-start gap-1.5 text-[13px] font-medium leading-tight text-white md:text-sm">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="#7fb6e6" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="mt-px h-4 w-4 shrink-0" aria-hidden="true">
+                              <path d="M5 12l5 5L20 7" />
+                            </svg>
+                            {x}
+                          </li>
+                        ))}
+                      </ul>
+                    )}
                     {clicavel && (
                       <span className="mt-4 inline-flex w-fit items-center gap-1.5 rounded-full bg-white px-4 py-2 text-xs font-semibold uppercase tracking-[0.12em] text-[#0A2540]">
                         {d.href ? "Conhecer a vaga →" : "Ver vagas →"}
                       </span>
                     )}
+                    {d.selos && <p className="mt-3 hidden text-[10px] text-white/55 sm:block">{NOTA_SELOS}</p>}
                   </div>
                 </>
               )}
+            </div>
+            {/* Celular: os selos não cabem sobre a foto — vão numa faixa logo abaixo. */}
+            {d.selos && (
+              <div className="bg-[#061a2e] px-6 pb-5 pt-1 sm:hidden">
+                <ul className="grid grid-cols-2 gap-x-3 gap-y-2">
+                  {d.selos.map((x) => (
+                    <li key={x} className="flex items-start gap-1.5 text-xs font-medium leading-tight text-white">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="#7fb6e6" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="h-3.5 w-3.5 shrink-0" aria-hidden="true">
+                        <path d="M5 12l5 5L20 7" />
+                      </svg>
+                      {x}
+                    </li>
+                  ))}
+                </ul>
+                <p className="mt-2.5 text-[10px] text-white/50">{NOTA_SELOS}</p>
+              </div>
+            )}
             </div>
           ) : (
             <div className="relative flex aspect-[16/10] w-full flex-col justify-center bg-gradient-to-br from-[#0A2540] to-[#1c4a74] px-8 sm:aspect-[1918/820] sm:px-14">
