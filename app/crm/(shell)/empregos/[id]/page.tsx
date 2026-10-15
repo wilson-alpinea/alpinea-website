@@ -5,6 +5,7 @@ import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { atualizarCandidatura, liberarFichaCandidatura, reclassificarCandidatura, registrarAndamentoCandidatura } from "@/app/crm/actions";
+import { MODELOS_ORIGINAIS } from "@/lib/empregos/valoresModelos";
 import { ETAPAS_MANUAIS, dataHoraSP, lerAndamentoManual, type EtapaManualId } from "@/lib/crm/andamentoManual";
 import { fichaLiberada, linhasFicha, type FichaCadastral } from "@/app/lib/fichaCadastral";
 import {
@@ -18,7 +19,6 @@ import {
   TIPOS_DOCUMENTO_CANDIDATO,
   progressoCandidatura,
 } from "@/lib/crm/empregos";
-import { MODELOS_APRESENTACAO } from "@/lib/empregos/apresentacaoPdf";
 import { formatarMoeda, type Proposta } from "@/app/lib/financiamentoEmpregos";
 import { vagaPrecisaProposta } from "@/app/lib/etapasCandidatura";
 import type { PerfilCandidato } from "@/app/lib/triagemPerfil";
@@ -382,7 +382,7 @@ export default async function CandidatoPage({
             {/* Avançar etapa manualmente + comentário (Wilson, 15/out/2026). */}
             <form action={registrarAndamento} className="mt-4 space-y-2 border-t border-black/10 pt-4">
               <label className="text-[11px] uppercase tracking-[0.12em] text-black/40" htmlFor="etapa-manual">
-                Avançar candidato
+                Avançar candidato para a próxima etapa
               </label>
               <select id="etapa-manual" name="etapa" defaultValue="" className="w-full rounded-lg border border-black/10 bg-white px-3 py-2 text-sm text-black outline-none focus:border-[#1C3A5E]">
                 <option value="">Só comentar (sem avançar)</option>
@@ -424,17 +424,12 @@ export default async function CandidatoPage({
           <section className="rounded-2xl border border-black/10 bg-white p-5">
             <h2 className="text-sm font-medium text-black">Documento de Apresentação para Empreiteira</h2>
             <p className="mt-1 text-xs leading-5 text-black/45">
-              PDF com foto e dados do candidato. O modelo Ajisai não traz contato, CPF nem RG; os modelos das empreiteiras saem com a
-              ficha completa.
+              PDF resumido no padrão Ajisai, com foto — sem contato, CPF nem RG. As fichas das empreiteiras ficam na seção abaixo,
+              no arquivo original.
             </p>
             <form action={`/crm/empregos/${id}/apresentacao`} method="get" target="_blank" className="mt-3 space-y-2">
-              <select name="modelo" defaultValue="alpinea" className="w-full rounded-xl border border-black/10 bg-white px-3 py-2 text-sm text-black">
-                {MODELOS_APRESENTACAO.map((m) => (
-                  <option key={m.id} value={m.id}>
-                    {m.nome}
-                  </option>
-                ))}
-              </select>
+              {/* Modelos das empreiteiras saem no arquivo original (seção abaixo). */}
+              <input type="hidden" name="modelo" value="alpinea" />
               <div className="flex gap-2">
                 <button type="submit" className="flex-1 rounded-xl bg-[#1C3A5E] px-3 py-2 text-sm font-medium text-white">
                   Gerar PDF
@@ -445,6 +440,29 @@ export default async function CandidatoPage({
               </div>
             </form>
             {!c.ficha_enviada_em && <p className="mt-2 text-[11px] text-amber-700">Ficha da etapa 2 ainda não enviada — o PDF sai só com os dados da etapa 1.</p>}
+          </section>
+
+          {/* Ficha ORIGINAL de cada empreiteira (o Word/Excel que ela manda)
+              preenchida com os dados do candidato — Wilson, 15/out/2026. */}
+          <section className="rounded-2xl border border-black/10 bg-white p-5">
+            <h2 className="text-sm font-medium text-black">Fichas das empreiteiras (arquivo original)</h2>
+            <p className="mt-1 text-xs leading-5 text-black/45">
+              Preenche o próprio Word/Excel da empreiteira com os dados do candidato. Confira e complete os campos da agência antes de enviar.
+            </p>
+            <form action={`/crm/empregos/${id}/ficha-original`} method="get" className="mt-3 space-y-2">
+              <select name="modelo" defaultValue="fujiarte" className="w-full rounded-xl border border-black/10 bg-white px-3 py-2 text-sm text-black">
+                {MODELOS_ORIGINAIS.map((m) => (
+                  <option key={m.id} value={m.id}>
+                    {m.nome} ({m.arquivo.endsWith(".docx") ? "Word" : "Excel"})
+                  </option>
+                ))}
+                <option value="todos">Todas as 4 fichas (.zip)</option>
+              </select>
+              <button type="submit" className="w-full rounded-xl bg-[#1C3A5E] px-3 py-2 text-sm font-medium text-white">
+                Preencher e baixar
+              </button>
+            </form>
+            {!c.ficha_enviada_em && <p className="mt-2 text-[11px] text-amber-700">Ficha da etapa 2 ainda não enviada — a maior parte dos campos vai sair em branco.</p>}
           </section>
 
           {proposta && (
@@ -542,7 +560,7 @@ export default async function CandidatoPage({
           <form action={salvar} className="space-y-4 rounded-2xl border border-black/10 bg-white p-5">
             <h2 className="text-sm font-medium text-black">Decisão da equipe</h2>
             <label className="block text-xs text-black/50">
-              Status
+              Status da análise (coluna “Status” da lista)
               <select name="status" defaultValue={c.status} className="mt-1 w-full rounded-xl border border-black/10 bg-white px-3 py-2 text-sm text-black">
                 {STATUS_CANDIDATURA.map((x) => (
                   <option key={x.valor} value={x.valor}>
@@ -550,6 +568,9 @@ export default async function CandidatoPage({
                   </option>
                 ))}
               </select>
+              <span className="mt-1 block text-[11px] leading-4 text-black/40">
+                Não muda a etapa. Para mandar o candidato à próxima etapa, use “Avançar candidato” no quadro Andamento.
+              </span>
             </label>
             <label className="block text-xs text-black/50">
               Observações internas

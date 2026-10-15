@@ -175,8 +175,8 @@ export function ApresentacaoPdf({ candidatura: c, fotoDataUri, modelo }: DadosAp
       <Page size="A4" style={s.page}>
         <View style={s.topo}>
           <View>
-            <Text style={s.marca}>ALPINEA</Text>
-            <Text style={s.sub}>Grupo Ajisai · Recrutamento Brasil–Japão</Text>
+            <Text style={s.marca}>AJISAI</Text>
+            <Text style={s.sub}>Recrutamento Brasil–Japão</Text>
           </View>
           <View style={{ alignItems: "flex-end" }}>
             <Text style={{ fontSize: 9, fontFamily: "Helvetica-Bold" }}>{parceiro ? parceiro.nome : "Documento de Apresentação de Candidato"}</Text>
