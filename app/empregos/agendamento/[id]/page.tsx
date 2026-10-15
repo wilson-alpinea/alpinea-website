@@ -56,7 +56,7 @@ export default async function AgendamentoPage({ params, searchParams }: { params
   return (
     <main className="min-h-screen bg-[#f7f7f5] px-4 py-10 sm:py-16">
       <div className="mx-auto max-w-3xl">
-        <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[#2f80c9]">Etapa 4 · {c.vaga_empresa}</p>
+        <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-[#2f80c9]">Etapa {vagaPrecisaProposta(c.vaga_id) ? 4 : 3} · {c.vaga_empresa}</p>
         <h1 className={`${display.className} mt-2 text-3xl font-medium text-black sm:text-4xl`}>Agende sua pré-entrevista</h1>
         <p className="mt-3 text-sm leading-6 text-black/55">
           {c.nome}, escolha o melhor dia e horário (horário de Brasília). A conversa dura cerca de {config.duracao_min} minutos e
