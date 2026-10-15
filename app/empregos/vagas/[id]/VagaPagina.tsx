@@ -158,7 +158,7 @@ export default function VagaPagina({ vaga, ativa, hotsite }: { vaga: Vaga; ativa
           <section className="mt-12 rounded-2xl border border-black/10 p-6 text-center md:p-8">
             <p className={`${display.className} text-2xl font-medium text-[#0A2540]`}>Quer esta vaga?</p>
             <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-black/65">
-              A candidatura leva poucos minutos: seus dados, algumas perguntas de triagem e o currículo.
+              A candidatura leva poucos minutos: seus dados e algumas perguntas de triagem.
             </p>
             <Link href={checkout} className={`${classeBotao} mx-auto mt-5 w-full sm:w-fit`}>
               Iniciar candidatura

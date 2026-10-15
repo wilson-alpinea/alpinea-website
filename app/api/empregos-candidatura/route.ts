@@ -4,8 +4,6 @@ import { createAdminClient } from "../../../lib/supabase/admin";
 import { encontrarVaga, VAGAS } from "../../lib/vagasCatalogo";
 import { urlAposMatch } from "../../lib/testesAptidao";
 import { idsVagasInativas } from "../../../lib/empregos/vagasAtivas";
-import { extrairTextoCurriculo } from "../../lib/curriculoExtracao";
-import { TIPOS_CURRICULO_ACEITOS } from "../../lib/curriculoConstantes";
 import {
   calcularPontuacaoCandidatura,
   ASCENDENCIA_JAPONESA,
@@ -27,12 +25,11 @@ import {
   OPCOES_HORAS_EXTRAS,
   OPCOES_DALTONISMO,
   OPCOES_FINANCIAMENTO,
-  REGIOES_TATUAGEM,
-  TAMANHOS_TATUAGEM,
   CONDICOES_VISUAIS,
   OPCOES_FUMANTE,
   CLASSES_MEDICAMENTO,
   TIPOS_DIABETES,
+  descreverTatuagem,
 } from "../../lib/triagemPerfil";
 
 export const runtime = "nodejs";
@@ -93,6 +90,11 @@ export async function POST(req: Request) {
     // Idade passou a ser obrigatória junto com os demais — pedido do
     // Wilson, 06/out/2026 ("campos obrigatórios": nome, sobrenome, e-mail,
     // telefone e idade).
+    // O formulário manda o país junto (+55 Brasil / +81 Japão) — obrigatório
+    // desde 15/out/2026.
+    if (telefone && !/^\+(55|81)\s*[\d(]/.test(telefone)) {
+      return NextResponse.json({ error: "Informe se o seu telefone é do Brasil ou do Japão." }, { status: 400 });
+    }
     if (!nome || !sobrenome || !email || !telefone || !idade || !Number.isFinite(idade) || idade < 16 || idade > 75) {
       return NextResponse.json(
         { error: "Nome, sobrenome, e-mail, telefone e idade são obrigatórios." },
@@ -165,41 +167,13 @@ export async function POST(req: Request) {
       );
     }
 
-    const arquivo = form.get("curriculo");
-    if (!(arquivo instanceof File) || arquivo.size === 0) {
-      return NextResponse.json({ error: "Envie seu currículo (PDF ou DOCX)." }, { status: 400 });
-    }
-    if (arquivo.size > TAMANHO_MAXIMO_CURRICULO_BYTES) {
-      return NextResponse.json(
-        { error: "O currículo enviado é muito grande — envie um arquivo de até 8MB." },
-        { status: 400 },
-      );
-    }
-    const nomeArquivoOriginal = arquivo.name || "curriculo";
-    const extensaoAceita = /\.(pdf|docx)$/i.test(nomeArquivoOriginal);
-    if (!TIPOS_CURRICULO_ACEITOS.includes(arquivo.type) && !extensaoAceita) {
-      return NextResponse.json(
-        { error: "Formato de currículo não suportado — envie um PDF ou DOCX." },
-        { status: 400 },
-      );
-    }
-
-    const arrayBuffer = await arquivo.arrayBuffer();
-    const buffer = Buffer.from(arrayBuffer);
-
+    // Currículo removido do formulário (Wilson, 15/out/2026). Os pontos que
+    // vinham dele foram redistribuídos nas perguntas (candidaturaScoring.ts).
+    // Se algum cliente antigo ainda mandar o arquivo, ele é ignorado.
     const supabase = createAdminClient();
-
-    const caminhoStorage = `${randomUUID()}-${sanitizarNomeArquivo(nomeArquivoOriginal)}`;
-    const { error: erroUpload } = await supabase.storage
-      .from("curriculos-candidatos")
-      .upload(caminhoStorage, buffer, { contentType: arquivo.type || "application/octet-stream" });
-    if (erroUpload) {
-      console.error("Erro ao subir currículo (empregos-candidatura):", erroUpload);
-      return NextResponse.json(
-        { error: "Não foi possível enviar seu currículo agora. Tente novamente." },
-        { status: 500 },
-      );
-    }
+    const caminhoStorage: string | null = null;
+    const nomeArquivoOriginal: string | null = null;
+    const curriculoTexto = "";
 
     // Certificado de japonês (JLPT/BJT) — opcional. Vai pro mesmo bucket
     // privado do currículo, numa pasta própria; o caminho fica dentro de
@@ -251,7 +225,6 @@ export async function POST(req: Request) {
       else certidaoAntecedentes = { path: caminho, nome: nomeCertidao };
     }
 
-    const curriculoTexto = await extrairTextoCurriculo(buffer, nomeArquivoOriginal, arquivo.type || "");
 
     const resultado = calcularPontuacaoCandidatura({
       vaga,
@@ -260,9 +233,7 @@ export async function POST(req: Request) {
       respostas,
     });
 
-    const { data: candidatura, error: erroInsert } = await supabase
-      .from("candidaturas_vagas")
-      .insert({
+    const dadosCandidatura: Record<string, unknown> = {
         vaga_id: vaga.id,
         vaga_titulo: vaga.titulo,
         vaga_empresa: vaga.empresa,
@@ -275,7 +246,7 @@ export async function POST(req: Request) {
         respostas: { ...respostas, certificadoJapones, certidaoAntecedentes },
         curriculo_path: caminhoStorage,
         curriculo_nome_arquivo: nomeArquivoOriginal,
-        curriculo_texto: curriculoTexto.slice(0, 20000), // guarda o texto extraído pra auditoria, sem exagerar no tamanho da linha
+        curriculo_texto: null,
         pontuacao: resultado.pontuacao,
         criterios: resultado.criterios,
         etapa: "curriculo",
@@ -284,11 +255,29 @@ export async function POST(req: Request) {
         classificacao: resultado.classificacao,
         motivos_eliminacao: resultado.motivosEliminacao,
         pontos_revisar: resultado.pontosRevisar,
-      })
-      // "*" em vez de "id, ficha_token" pra não quebrar a candidatura se a
-      // migração 016 (ficha_token) ainda não tiver rodado.
-      .select("*")
-      .single();
+      };
+
+    // Se o banco estiver sem alguma coluna (migração ainda não rodada no
+    // Supabase — erro PGRST204, 15/out/2026), grava sem ela em vez de perder
+    // a candidatura, e registra no log qual coluna falta.
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any -- linha do banco sem tipo gerado
+    let candidatura: Record<string, any> | null = null;
+    let erroInsert: { code?: string; message?: string } | null = null;
+    for (let tentativa = 0; tentativa < 6; tentativa++) {
+      const r = await supabase
+        .from("candidaturas_vagas")
+        .insert(dadosCandidatura)
+        // "*" em vez de "id, ficha_token" pra não quebrar a candidatura se a
+        // migração 016 (ficha_token) ainda não tiver rodado.
+        .select("*")
+        .single();
+      candidatura = r.data;
+      erroInsert = r.error;
+      const faltando = r.error?.code === "PGRST204" ? /'([^']+)' column/.exec(r.error.message ?? "")?.[1] : undefined;
+      if (!faltando || !(faltando in dadosCandidatura)) break;
+      console.error(`Coluna "${faltando}" não existe em candidaturas_vagas — rode as migrações pendentes do Supabase. Gravando sem ela.`);
+      delete dadosCandidatura[faltando];
+    }
 
     if (erroInsert || !candidatura) {
       console.error("Erro ao gravar candidatura (empregos-candidatura):", erroInsert);
@@ -340,11 +329,7 @@ export async function POST(req: Request) {
           ? ""
           : `Financiamento de taxa/passagem/documentos: ${rot(OPCOES_FINANCIAMENTO, p.financiamentoCustos)}`,
         `Antecedentes criminais: ${p.antecedentesCriminais === "sim" ? "SIM" : "Não"}${p.antecedentesCriminais === "sim" ? " — REVISAR" : ""}${certidaoAntecedentes ? ` (certidão PF anexada: ${certidaoAntecedentes.nome})` : " (sem certidão anexada)"}`,
-        `Tatuagem visível: ${
-          p.tatuagemVisivel === "sim"
-            ? `Sim — ${p.tatuagemRegioes.map((r) => rot(REGIOES_TATUAGEM, r)).join(", ")}; ${rot(TAMANHOS_TATUAGEM, p.tatuagemTamanho)}`
-            : "Não"
-        }`,
+        `Tatuagem: ${descreverTatuagem(p) || "Não"}${p.tatuagemVisivel === "sim" ? " — VISÍVEL com uniforme" : ""}`,
         "",
         "— Saúde (consentimento LGPD dado pelo candidato) —",
         `Doença grave/tratamento: ${p.doencaGrave === "sim" ? `Sim${p.doencaGraveDescricao ? ` (${p.doencaGraveDescricao})` : ""}; em tratamento: ${p.emTratamento === "sim" ? "SIM — REVISAR" : "não"}` : "Não"}`,

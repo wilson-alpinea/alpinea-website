@@ -18,10 +18,10 @@ import {
   ESCOLARIDADES,
   OPCOES_DALTONISMO,
   OPCOES_FUMANTE,
-  REGIOES_TATUAGEM,
   TIPOS_DIABETES,
   formatarCep,
   type PerfilCandidato,
+  descreverTatuagem,
 } from "./triagemPerfil";
 
 export type ContextoFicha = {
@@ -63,9 +63,7 @@ const peso = E("Peso (kg)", (x) => (x.p?.pesoKg ? String(x.p.pesoKg) : ""));
 const horasExtras = E("Pode fazer horas extras", (x) => (x.p?.horasExtras === "indiferente" ? "Indiferente" : sn(x.p?.horasExtras)));
 const dividasBR = E("Dívida no Brasil", (x) => sn(x.p?.dividasBrasil));
 const dividasJP = E("Pendência no Japão (impostos etc.)", (x) => sn(x.p?.dividasJapao));
-const tatuagem = E("Tatuagem", (x) =>
-  x.p?.tatuagemVisivel === "sim" ? `Sim — ${x.p.tatuagemRegioes.map((r) => rot(REGIOES_TATUAGEM, r)).join(", ")}` : sn(x.p?.tatuagemVisivel),
-);
+const tatuagem = E("Tatuagem", (x) => descreverTatuagem(x.p) || sn(x.p?.tatuagemVisivel));
 const daltonismo = E("Daltonismo", (x) => {
   const t = x.p?.testeDaltonismo;
   return juntar(rot(OPCOES_DALTONISMO, x.p?.daltonismo), t ? `teste ${t.acertos}/${t.total}${t.controleOk ? "" : " (errou controle)"}` : "");

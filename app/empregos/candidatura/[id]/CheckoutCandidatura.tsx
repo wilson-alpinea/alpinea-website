@@ -127,7 +127,7 @@ export default function CheckoutCandidatura({ vaga, ativa }: { vaga: Vaga; ativa
 
       <div className="mx-auto max-w-5xl px-4 pt-6 md:px-8 md:pt-10">
         <h1 className={`${display.className} text-2xl font-medium text-[#0A2540] md:text-3xl`}>Candidatura</h1>
-        <p className="mt-1 text-sm text-black/55">Preencha seus dados, responda a triagem e envie o currículo. Leva poucos minutos.</p>
+        <p className="mt-1 text-sm text-black/55">Preencha seus dados e responda a triagem. Leva poucos minutos.</p>
 
         {!ativa ? (
           <div className="mt-6 rounded-2xl border border-amber-300 bg-amber-50 p-5 text-sm leading-6 text-amber-900">

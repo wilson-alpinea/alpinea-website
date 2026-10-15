@@ -95,7 +95,7 @@ const TURNO: Opcao[] = [
 const UFS = "AC AL AP AM BA CE DF ES GO MA MT MS MG PA PB PR PE PI RJ RN RS RO RR SC SP SE TO"
   .split(" ")
   .map((uf) => ({ v: uf, l: uf }));
-const PROVINCIAS: Opcao[] = PROVINCIAS_JAPAO.map((p) => ({ v: p, l: p }));
+const PROVINCIAS: Opcao[] = [...PROVINCIAS_JAPAO].sort((a, b) => a.localeCompare(b, "pt-BR")).map((p) => ({ v: p, l: p })); // ordem alfabética
 
 // Pergunta de saúde Sim/Não + detalhe obrigatório quando "Sim".
 function saude(id: string, label: string, detalhe = "Qual / onde e quando?"): Campo[] {

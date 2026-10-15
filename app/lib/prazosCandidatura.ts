@@ -23,7 +23,7 @@ export type PassoPrazo = {
 };
 
 export const PASSOS_PRAZO: PassoPrazo[] = [
-  { id: "etapa1", titulo: "Etapa 1 — Candidatura e análise do currículo", curto: "Candidatura", sla: "Resultado na hora", prazo: "Resultado na hora" },
+  { id: "etapa1", titulo: "Etapa 1 — Candidatura e análise do perfil", curto: "Candidatura", sla: "Resultado na hora", prazo: "Resultado na hora" },
   { id: "etapa2", titulo: "Etapa 2 — Ficha cadastral e foto", curto: "Ficha e foto", sla: "No seu ritmo", prazo: "No seu ritmo" },
   {
     id: "etapa3",

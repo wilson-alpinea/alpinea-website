@@ -87,7 +87,17 @@ export const OPCOES_FINANCIAMENTO: { key: Exclude<Financiamento, "">; label: str
   { key: "nao", label: "Não, pago à vista" },
 ];
 
-export type RegiaoTatuagem = "rosto" | "pescoco" | "maos" | "antebracos" | "bracos" | "pernas" | "outra";
+// Tatuagem em 4 perguntas (Wilson, 15/out/2026): tem? → tipo (visível /
+// escondida sob a roupa / as duas) → regiões → tamanho. `tatuagemVisivel`
+// continua existindo, DERIVADO do tipo, porque as regras das vagas avaliam
+// só tatuagem visível com o uniforme.
+export type TipoTatuagem = "visivel" | "escondida" | "ambas" | "";
+export const TIPOS_TATUAGEM: { key: Exclude<TipoTatuagem, "">; label: string }[] = [
+  { key: "visivel", label: "Visíveis" },
+  { key: "escondida", label: "Não visíveis (ficam escondidas sob a roupa)" },
+  { key: "ambas", label: "Tenho visíveis e não visíveis" },
+];
+export type RegiaoTatuagem = "rosto" | "pescoco" | "maos" | "antebracos" | "bracos" | "pernas" | "tronco" | "outra";
 export const REGIOES_TATUAGEM: { key: RegiaoTatuagem; label: string }[] = [
   { key: "rosto", label: "Rosto" },
   { key: "pescoco", label: "Pescoço" },
@@ -95,7 +105,8 @@ export const REGIOES_TATUAGEM: { key: RegiaoTatuagem; label: string }[] = [
   { key: "antebracos", label: "Antebraços" },
   { key: "bracos", label: "Braços" },
   { key: "pernas", label: "Pernas" },
-  { key: "outra", label: "Outra região visível" },
+  { key: "tronco", label: "Costas, peito ou barriga" },
+  { key: "outra", label: "Outra região" },
 ];
 export type TamanhoTatuagem = "pequena" | "media" | "grande" | "";
 export const TAMANHOS_TATUAGEM: { key: Exclude<TamanhoTatuagem, "">; label: string }[] = [
@@ -253,7 +264,9 @@ export type PerfilCandidato = {
   financiamentoCustos: Financiamento;
   // 15) Antecedentes criminais (certidão da PF é anexo opcional, enviado à parte).
   antecedentesCriminais: SimNao;
-  // 16) Tatuagem visível com uniforme.
+  // 16) Tatuagem: tem? qual tipo? (tatuagemVisivel é derivado do tipo).
+  tatuagem: SimNao;
+  tatuagemTipo: TipoTatuagem;
   tatuagemVisivel: SimNao;
   tatuagemRegioes: RegiaoTatuagem[];
   tatuagemTamanho: TamanhoTatuagem;
@@ -297,6 +310,8 @@ export const PERFIL_VAZIO: PerfilCandidato = {
   ajudaGovernoRetorno: "",
   financiamentoCustos: "",
   antecedentesCriminais: "",
+  tatuagem: "",
+  tatuagemTipo: "",
   tatuagemVisivel: "",
   tatuagemRegioes: [],
   tatuagemTamanho: "",
@@ -361,8 +376,9 @@ export function pendenciasPerfil(
   if (p.jaEsteveJapao === "sim" && !p.ajudaGovernoRetorno) falta.push("ajuda do governo para retorno");
   if (opts.perguntaFinanciamento && !p.financiamentoCustos) falta.push("financiamento dos custos");
   if (!p.antecedentesCriminais) falta.push("antecedentes criminais");
-  if (!p.tatuagemVisivel) falta.push("tatuagem visível");
-  if (p.tatuagemVisivel === "sim" && (p.tatuagemRegioes.length === 0 || !p.tatuagemTamanho)) {
+  if (!p.tatuagem) falta.push("tatuagem");
+  if (p.tatuagem === "sim" && !p.tatuagemTipo) falta.push("tipo de tatuagem");
+  if (p.tatuagem === "sim" && (p.tatuagemRegioes.length === 0 || !p.tatuagemTamanho)) {
     falta.push("região e tamanho da tatuagem");
   }
   if (!p.consentimentoSaude) falta.push("autorização de uso dos dados de saúde");
@@ -419,10 +435,18 @@ export function parsePerfil(bruto: unknown): PerfilCandidato {
     ajudaGovernoRetorno: jaEsteve === "sim" ? simNao(o.ajudaGovernoRetorno) : "",
     financiamentoCustos: de(o.financiamentoCustos, ["sim", "parcial", "nao"] as const),
     antecedentesCriminais: simNao(o.antecedentesCriminais),
-    tatuagemVisivel: simNao(o.tatuagemVisivel),
-    tatuagemRegioes:
-      o.tatuagemVisivel === "sim" ? lista(o.tatuagemRegioes, REGIOES_TATUAGEM.map((r) => r.key)) : [],
-    tatuagemTamanho: o.tatuagemVisivel === "sim" ? de(o.tatuagemTamanho, ["pequena", "media", "grande"] as const) : "",
+    // Formato novo (tem + tipo) ou antigo (só tatuagemVisivel).
+    ...(() => {
+      const tem: SimNao = simNao(o.tatuagem) || (o.tatuagemVisivel === "sim" ? "sim" : simNao(o.tatuagemVisivel));
+      const tipo: TipoTatuagem = tem === "sim" ? (de(o.tatuagemTipo, ["visivel", "escondida", "ambas"] as const) || (o.tatuagemVisivel === "sim" ? "visivel" : "")) : "";
+      return {
+        tatuagem: tem,
+        tatuagemTipo: tipo,
+        tatuagemVisivel: tatuagemVisivelDerivada(tem, tipo),
+        tatuagemRegioes: tem === "sim" ? lista(o.tatuagemRegioes, REGIOES_TATUAGEM.map((r) => r.key)) : [],
+        tatuagemTamanho: tem === "sim" ? de(o.tatuagemTamanho, ["pequena", "media", "grande"] as const) : "",
+      };
+    })(),
     consentimentoSaude: o.consentimentoSaude === true,
     doencaGrave: simNao(o.doencaGrave),
     doencaGraveDescricao: o.doencaGrave === "sim" ? String(o.doencaGraveDescricao ?? "").slice(0, 500) : "",
@@ -437,4 +461,26 @@ export function parsePerfil(bruto: unknown): PerfilCandidato {
     diabetesTipo: o.diabetes === "sim" ? de(o.diabetesTipo, ["tipo1", "tipo2", "gestacional", "outro"] as const) : "",
     insulinaInjetavel: o.diabetes === "sim" ? simNao(o.insulinaInjetavel) : "",
   };
+}
+
+
+/** Visível com o uniforme? Derivado de "tem tatuagem" + tipo. */
+export function tatuagemVisivelDerivada(tem: SimNao, tipo: TipoTatuagem): SimNao {
+  if (tem === "nao") return "nao";
+  if (tem !== "sim") return "";
+  if (tipo === "visivel" || tipo === "ambas") return "sim";
+  if (tipo === "escondida") return "nao";
+  return "";
+}
+
+/** Texto curto para CRM, e-mail e fichas das parceiras. */
+export function descreverTatuagem(p: Partial<PerfilCandidato> | null | undefined): string {
+  if (!p) return "";
+  const tem = p.tatuagem || (p.tatuagemVisivel === "sim" ? "sim" : p.tatuagemVisivel);
+  if (tem === "nao") return "Não";
+  if (tem !== "sim") return "";
+  const tipo = TIPOS_TATUAGEM.find((t) => t.key === p.tatuagemTipo)?.label ?? (p.tatuagemVisivel === "sim" ? "Visíveis" : "");
+  const regioes = (p.tatuagemRegioes ?? []).map((r) => REGIOES_TATUAGEM.find((x) => x.key === r)?.label ?? r).join(", ");
+  const tamanho = TAMANHOS_TATUAGEM.find((t) => t.key === p.tatuagemTamanho)?.label ?? "";
+  return ["Sim", tipo, regioes, tamanho].filter(Boolean).join(" — ");
 }

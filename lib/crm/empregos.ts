@@ -11,14 +11,13 @@ import {
   OPCOES_FLEXIBILIDADE,
   OPCOES_FUMANTE,
   OPCOES_HORAS_EXTRAS,
-  REGIOES_TATUAGEM,
-  TAMANHOS_TATUAGEM,
   CONDICOES_VISUAIS,
   CLASSES_MEDICAMENTO,
   TIPOS_DIABETES,
   formatarCep,
   imc,
   type PerfilCandidato,
+  descreverTatuagem,
 } from "@/app/lib/triagemPerfil";
 import { NIVEIS_JAPONES_DETALHADOS, ASCENDENCIA_JAPONESA, QUANDO_EMBARCAR } from "@/app/lib/candidaturaScoring";
 
@@ -79,7 +78,7 @@ export function linhasPerfil(perfil: PerfilCandidato | null | undefined): { grup
         ["Escolaridade", rot(ESCOLARIDADES, p.escolaridade), false],
         ["Já esteve no Japão", p.jaEsteveJapao === "sim" ? `Sim — ${p.anosNoJapao ?? "?"} ano(s)` : sn(p.jaEsteveJapao), false],
         ["Filhos", p.temFilhos === "sim" ? `Sim — idades: ${p.idadesFilhos.join(", ")}` : sn(p.temFilhos), false],
-        ["Tatuagem visível", p.tatuagemVisivel === "sim" ? `Sim — ${p.tatuagemRegioes.map((r) => rot(REGIOES_TATUAGEM, r)).join(", ")}; ${rot(TAMANHOS_TATUAGEM, p.tatuagemTamanho)}` : sn(p.tatuagemVisivel), p.tatuagemVisivel === "sim"],
+        ["Tatuagem", descreverTatuagem(p) || sn(p.tatuagemVisivel), p.tatuagemVisivel === "sim"],
         ["Antecedentes criminais", sn(p.antecedentesCriminais), p.antecedentesCriminais === "sim"],
       ],
     },

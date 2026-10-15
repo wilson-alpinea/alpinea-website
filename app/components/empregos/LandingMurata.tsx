@@ -484,15 +484,20 @@ function SimuladorGanhos({ config }: { config: ConfigLanding }) {
                 <dd className={`${inter.className} shrink-0 tabular-nums text-white/80`}>{formatJPY(l.valor)}</dd>
               </div>
             ))}
-            <div className="flex items-baseline justify-between gap-3 border-t border-white/15 pt-2 font-semibold">
-              <dt>Disponível</dt>
-              <dd className={`${inter.className} tabular-nums`}>{formatJPY(liquido)}</dd>
+            {/* Valores finais em destaque (Wilson, 15/out/2026: "deixar bem
+                maior a fonte com os valores finais, precisa chamar atenção"). */}
+            <div className="flex items-baseline justify-between gap-3 border-t border-white/15 pt-3">
+              <dt className="text-base font-semibold">Disponível por mês</dt>
+              <dd className={`${inter.className} text-2xl font-semibold tabular-nums md:text-3xl`}>{formatJPY(liquido)}</dd>
             </div>
           </dl>
-          <p className="mt-4 rounded-xl bg-white/[0.07] px-4 py-3 text-sm text-white/80">
-            Em 12 meses: <span className={`${inter.className} font-semibold text-white`}>{brl(liquido * 12)}</span>
-            <span className="text-white/50"> · {formatJPY(liquido * 12)}</span>
-          </p>
+          <div className="mt-4 rounded-xl bg-white/[0.09] px-4 py-4 ring-1 ring-white/15">
+            <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-white/60">Em 12 meses</p>
+            <p className="mt-1 flex flex-wrap items-baseline gap-x-3 gap-y-1">
+              <span className={`${inter.className} text-3xl font-semibold tabular-nums tracking-[-0.02em] text-white md:text-4xl`}>{brl(liquido * 12)}</span>
+              <span className={`${inter.className} text-lg tabular-nums text-white/60`}>{formatJPY(liquido * 12)}</span>
+            </p>
+          </div>
           <p className="mt-3 text-[11px] leading-5 text-white/45">
             Cotação de referência: R$ {cot.valor.toFixed(4).replace(".", ",")} por iene{cot.fallback ? " (estimada)" : ""}. Alimentação, transporte e gastos pessoais não estão incluídos.
           </p>

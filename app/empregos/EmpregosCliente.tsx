@@ -23,7 +23,6 @@ import {
   type AscendenciaJaponesa,
   type QuandoEmbarcar,
 } from "../lib/candidaturaScoring";
-import { EXTENSOES_CURRICULO_ACEITAS } from "../lib/curriculoConstantes";
 import { vagaExigeTesteDaltonismo, criteriosDaVaga } from "../lib/candidaturaScoring";
 import { vagaExigeTestesAptidao } from "../lib/testesAptidao";
 import {
@@ -37,6 +36,8 @@ import {
   OPCOES_FINANCIAMENTO,
   REGIOES_TATUAGEM,
   TAMANHOS_TATUAGEM,
+  TIPOS_TATUAGEM,
+  tatuagemVisivelDerivada,
   CONDICOES_VISUAIS,
   OPCOES_FUMANTE,
   CLASSES_MEDICAMENTO,
@@ -1469,6 +1470,28 @@ const SIM_NAO: { key: "sim" | "nao"; label: string }[] = [
   { key: "nao", label: "Não" },
 ];
 
+// Máscara do telefone conforme o país (Wilson, 15/out/2026: "criar
+// pré-formatação do número com separadores"). Brasil: (11) 93030-0101 ou
+// (11) 3030-0101. Japão: celular 090-1234-5678; fixo 03-1234-5678 /
+// 0XX-XXX-XXXX. Só reorganiza os dígitos — não valida operadora.
+function formatarTelefone(valor: string, pais: "br" | "jp" | ""): string {
+  const d = valor.replace(/\D/g, "").slice(0, 11);
+  if (pais === "br") {
+    if (d.length <= 2) return d.length ? `(${d}` : "";
+    const ddd = d.slice(0, 2);
+    const resto = d.slice(2);
+    if (resto.length <= 4) return `(${ddd}) ${resto}`;
+    const corte = d.length === 11 ? 5 : 4;
+    return `(${ddd}) ${resto.slice(0, corte)}-${resto.slice(corte)}`;
+  }
+  if (pais === "jp") {
+    if (/^0[5789]0/.test(d)) return [d.slice(0, 3), d.slice(3, 7), d.slice(7)].filter(Boolean).join("-");
+    if (/^0[36]/.test(d)) return [d.slice(0, 2), d.slice(2, 6), d.slice(6)].filter(Boolean).join("-");
+    return [d.slice(0, 3), d.slice(3, 6), d.slice(6)].filter(Boolean).join("-");
+  }
+  return d;
+}
+
 // Marcador de campo obrigatório — pedido do Wilson, 06/out/2026.
 function Obrigatorio() {
   return (
@@ -1496,8 +1519,10 @@ export function CandidaturaModal({ vaga, onFechar, pagina = false }: { vaga: Vag
   const [sobrenome, setSobrenome] = useState("");
   const [email, setEmail] = useState("");
   const [telefone, setTelefone] = useState("");
+  // País do telefone — obrigatório (Wilson, 15/out/2026). Vai junto no
+  // número enviado (+55 / +81) para a equipe chamar no WhatsApp certo.
+  const [paisTelefone, setPaisTelefone] = useState<"br" | "jp" | "">("");
   const [idade, setIdade] = useState("");
-  const [curriculo, setCurriculo] = useState<File | null>(null);
   const [respostas, setRespostas] = useState<RespostasTriagem>({
     passaporte: "",
     disponibilidadeEmbarque: "",
@@ -1515,7 +1540,8 @@ export function CandidaturaModal({ vaga, onFechar, pagina = false }: { vaga: Vag
   const setP = <K extends keyof PerfilCandidato>(k: K, v: PerfilCandidato[K]) => setPerfil((p) => ({ ...p, [k]: v }));
   const exigeTesteDaltonismo = vagaExigeTesteDaltonismo(vaga);
   const perguntaFinanciamento = vaga.custosCobertosPelaEmpresa !== true;
-  const [certidaoAntecedentes, setCertidaoAntecedentes] = useState<File | null>(null);
+  // Anexo da certidão da Polícia Federal removido do formulário (Wilson,
+  // 15/out/2026). A API ainda aceita o campo se vier, mas o site não manda.
   const alternarEmLista = <K extends "tatuagemRegioes" | "condicoesVisuais" | "medicacaoClasses">(
     campo: K,
     item: PerfilCandidato[K][number],
@@ -1573,6 +1599,14 @@ export function CandidaturaModal({ vaga, onFechar, pagina = false }: { vaga: Vag
       setErro("Preencha nome, sobrenome, e-mail, telefone e idade.");
       return;
     }
+    if (!paisTelefone) {
+      setErro("Informe se o seu telefone é do Brasil ou do Japão.");
+      return;
+    }
+    if (telefone.replace(/\D/g, "").length < 10) {
+      setErro("Confira o telefone: faltam dígitos (com DDD no Brasil, com o 0 inicial no Japão).");
+      return;
+    }
     // Perguntas de triagem (sim/não) passaram a ser obrigatórias — algumas
     // podem ser eliminatórias conforme a vaga (Wilson, 06/out/2026).
     if (PERGUNTAS_TRIAGEM.some((p) => !respostas[p.key])) {
@@ -1584,10 +1618,6 @@ export function CandidaturaModal({ vaga, onFechar, pagina = false }: { vaga: Vag
       setErro(`Faltou responder: ${faltaPerfil.join(", ")}.`);
       return;
     }
-    if (!curriculo) {
-      setErro("Envie seu currículo (PDF ou DOCX).");
-      return;
-    }
     setEnviando(true);
     setErro("");
     try {
@@ -1596,12 +1626,10 @@ export function CandidaturaModal({ vaga, onFechar, pagina = false }: { vaga: Vag
       form.append("nome", nome);
       form.append("sobrenome", sobrenome);
       form.append("email", email);
-      form.append("telefone", telefone);
+      form.append("telefone", `${paisTelefone === "jp" ? "+81" : "+55"} ${telefone.trim()}`);
       if (idade) form.append("idade", idade);
       form.append("respostas", JSON.stringify({ ...respostas, perfil: perfilParaEnvio }));
-      form.append("curriculo", curriculo);
       if (certificado) form.append("certificadoJapones", certificado);
-      if (certidaoAntecedentes && perfil.antecedentesCriminais) form.append("certidaoAntecedentes", certidaoAntecedentes);
       const resposta = await fetch("/api/empregos-candidatura", { method: "POST", body: form });
       const dados = await resposta.json().catch(() => ({}));
       if (!resposta.ok) {
@@ -1699,11 +1727,35 @@ export function CandidaturaModal({ vaga, onFechar, pagina = false }: { vaga: Vag
                 <label className="text-[11px] font-medium text-black/50">
                   Telefone (WhatsApp) <Obrigatorio />
                 </label>
+                <div className="mt-1 flex gap-1.5" role="radiogroup" aria-label="País do telefone">
+                  {([
+                    ["br", "Brasil +55"],
+                    ["jp", "Japão +81"],
+                  ] as const).map(([k, rot]) => (
+                    <button
+                      key={k}
+                      type="button"
+                      role="radio"
+                      aria-checked={paisTelefone === k}
+                      onClick={() => {
+                        setPaisTelefone(k);
+                        setTelefone((t) => formatarTelefone(t, k));
+                      }}
+                      className={`flex-1 rounded-lg px-2 py-1.5 text-[11px] font-medium transition ${
+                        paisTelefone === k ? "bg-[#2f80c9] text-white" : "bg-black/[0.04] text-black/60 hover:bg-black/[0.08]"
+                      }`}
+                    >
+                      {rot}
+                    </button>
+                  ))}
+                </div>
                 <input
                   value={telefone}
-                  onChange={(e) => setTelefone(e.target.value)}
+                  onChange={(e) => setTelefone(formatarTelefone(e.target.value, paisTelefone))}
                   required
-                  className="mt-1 w-full rounded-xl border border-black/10 px-3 py-2.5 text-sm text-black outline-none focus:border-[#2f80c9]"
+                  inputMode="tel"
+                  placeholder={paisTelefone === "jp" ? "090-1234-5678" : paisTelefone === "br" ? "(11) 91234-5678" : "Escolha o país acima"}
+                  className="mt-1.5 w-full rounded-xl border border-black/10 px-3 py-2.5 text-sm text-black outline-none focus:border-[#2f80c9]"
                 />
               </div>
               <div>
@@ -2088,7 +2140,8 @@ export function CandidaturaModal({ vaga, onFechar, pagina = false }: { vaga: Vag
                   className="mt-1 w-full rounded-xl border border-black/10 px-3 py-2.5 text-sm text-black outline-none focus:border-[#2f80c9]"
                 >
                   <option value="">Sem preferência</option>
-                  {PROVINCIAS_JAPAO.map((pr) => (
+                  {/* Ordem alfabética (Wilson, 15/out/2026). */}
+                  {[...PROVINCIAS_JAPAO].sort((x, y) => x.localeCompare(y, "pt-BR")).map((pr) => (
                     <option key={pr} value={pr}>
                       {pr}
                     </option>
@@ -2161,28 +2214,14 @@ export function CandidaturaModal({ vaga, onFechar, pagina = false }: { vaga: Vag
                   Você possui antecedentes criminais? <Obrigatorio />
                 </p>
                 <p className="mt-0.5 text-[11px] leading-4 text-black/40">
-                  O visto de trabalho japonês avalia esse ponto. Se tiver, anexe a Certidão de Antecedentes Criminais
-                  da Polícia Federal (emitida grátis em gov.br) — ajuda a acelerar a análise.
+                  O visto de trabalho japonês avalia esse ponto.
                 </p>
                 <OpcoesBotao valor={perfil.antecedentesCriminais} opcoes={SIM_NAO} onChange={(v) => setP("antecedentesCriminais", v)} />
-                {perfil.antecedentesCriminais && (
-                  <div className="mt-2">
-                    <label className="text-[11px] font-medium text-black/50">
-                      Certidão da Polícia Federal <span className="font-normal text-black/35">(opcional)</span>
-                    </label>
-                    <input
-                      type="file"
-                      accept=".pdf,.jpg,.jpeg,.png,.webp,.heic,application/pdf,image/*"
-                      onChange={(e) => setCertidaoAntecedentes(e.target.files?.[0] ?? null)}
-                      className="mt-1 w-full rounded-xl border border-dashed border-black/15 px-3 py-2.5 text-xs text-black/60 outline-none file:mr-3 file:rounded-full file:border-0 file:bg-black/[0.04] file:px-3 file:py-1.5 file:text-xs file:font-medium file:text-black/70"
-                    />
-                  </div>
-                )}
               </div>
 
               <div>
                 <p className="text-xs font-medium text-black/70">
-                  Você tem tatuagem que fique visível usando uniforme de manga curta? <Obrigatorio />
+                  Você tem tatuagem? <Obrigatorio />
                 </p>
                 <p className="mt-0.5 text-[11px] leading-4 text-black/40">
                   Não é critério de avaliação pessoal. No Japão, algumas empresas, alojamentos com banho coletivo,
@@ -2190,11 +2229,32 @@ export function CandidaturaModal({ vaga, onFechar, pagina = false }: { vaga: Vag
                   moradias compatíveis com você.
                 </p>
                 <OpcoesBotao
-                  valor={perfil.tatuagemVisivel}
+                  valor={perfil.tatuagem}
                   opcoes={SIM_NAO}
-                  onChange={(v) => setPerfil((p) => ({ ...p, tatuagemVisivel: v, ...(v === "nao" ? { tatuagemRegioes: [], tatuagemTamanho: "" } : {}) }))}
+                  onChange={(v) =>
+                    setPerfil((p) => ({
+                      ...p,
+                      tatuagem: v,
+                      ...(v === "nao"
+                        ? { tatuagemTipo: "", tatuagemVisivel: "nao", tatuagemRegioes: [], tatuagemTamanho: "" }
+                        : { tatuagemVisivel: tatuagemVisivelDerivada("sim", p.tatuagemTipo) }),
+                    }))
+                  }
                 />
-                {perfil.tatuagemVisivel === "sim" && (
+                {perfil.tatuagem === "sim" && (
+                  <div className="mt-2">
+                    <p className="text-[11px] font-medium text-black/50">
+                      Qual tipo? <Obrigatorio />
+                    </p>
+                    <OpcoesBotao
+                      valor={perfil.tatuagemTipo}
+                      opcoes={TIPOS_TATUAGEM}
+                      onChange={(v) => setPerfil((p) => ({ ...p, tatuagemTipo: v, tatuagemVisivel: tatuagemVisivelDerivada("sim", v) }))}
+                    />
+                    <p className="mt-1 text-[10px] leading-4 text-black/40">Visível = aparece usando uniforme de manga curta.</p>
+                  </div>
+                )}
+                {perfil.tatuagem === "sim" && (
                   <div className="mt-2 space-y-2">
                     <p className="text-[11px] font-medium text-black/50">
                       Em quais regiões? <Obrigatorio />
@@ -2371,21 +2431,7 @@ export function CandidaturaModal({ vaga, onFechar, pagina = false }: { vaga: Vag
               </div>
             </div>
 
-            {/* Currículo movido pro final do formulário — pedido do Wilson,
-                06/out/2026 ("campo do curriculo para o final"). */}
-            <div className="border-t border-black/10 pt-4">
-              <label className="text-[11px] font-medium text-black/50">
-                Currículo (PDF ou DOCX) <Obrigatorio />
-              </label>
-              <input
-                type="file"
-                accept={EXTENSOES_CURRICULO_ACEITAS}
-                onChange={(e) => setCurriculo(e.target.files?.[0] ?? null)}
-                required
-                className="mt-1 w-full rounded-xl border border-dashed border-black/15 px-3 py-2.5 text-xs text-black/60 outline-none file:mr-3 file:rounded-full file:border-0 file:bg-black/[0.04] file:px-3 file:py-1.5 file:text-xs file:font-medium file:text-black/70"
-              />
-            </div>
-
+            {/* Campo de currículo removido — Wilson, 15/out/2026. */}
             <p className="text-[11px] text-black/40">
               <Obrigatorio /> Campos obrigatórios
             </p>
@@ -2481,7 +2527,7 @@ export function CandidaturaModal({ vaga, onFechar, pagina = false }: { vaga: Vag
                       Vagas com mais a ver com o seu perfil
                     </p>
                     <p className="mt-1 text-[11px] leading-4 text-black/45">
-                      Com as mesmas respostas e currículo, você já passaria para a próxima etapa nestas vagas — sem
+                      Com as mesmas respostas, você já passaria para a próxima etapa nestas vagas — sem
                       precisar preencher tudo de novo.
                     </p>
                     <div className="mt-3 space-y-2.5">
