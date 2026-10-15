@@ -17,6 +17,18 @@
 // zera, o que ainda deixa a candidatura registrada pra revisão manual
 // (não trava o envio).
 
+// O Postgres não aceita o caractere nulo (\u0000) nem "metade" de um par
+// de surrogates em colunas text/jsonb — e o pdf-parse às vezes devolve os
+// dois em PDFs gerados por certos editores. Um único caractere desses fazia
+// o INSERT da candidatura falhar inteiro (15/out/2026: "todas as vagas
+// estão com erro"). Remove só esses caracteres; o resto do texto fica.
+export function limparTextoParaBanco(texto: string): string {
+  return texto
+    .replace(/\u0000/g, "")
+    .replace(/[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?<![\uD800-\uDBFF])[\uDC00-\uDFFF]/g, "")
+    .replace(/[\u0001-\u0008\u000B\u000C\u000E-\u001F]/g, " ");
+}
+
 export async function extrairTextoCurriculo(buffer: Buffer, nomeArquivo: string, mimeType: string): Promise<string> {
   const nome = nomeArquivo.toLowerCase();
   const ehPdf = mimeType === "application/pdf" || nome.endsWith(".pdf");
@@ -28,12 +40,12 @@ export async function extrairTextoCurriculo(buffer: Buffer, nomeArquivo: string,
     if (ehPdf) {
       const pdfParse = (await import("pdf-parse")).default;
       const dados = await pdfParse(buffer);
-      return (dados.text || "").trim();
+      return limparTextoParaBanco(dados.text || "").trim();
     }
     if (ehDocx) {
       const mammoth = await import("mammoth");
       const resultado = await mammoth.extractRawText({ buffer });
-      return (resultado.value || "").trim();
+      return limparTextoParaBanco(resultado.value || "").trim();
     }
   } catch (error) {
     console.error("Erro ao extrair texto do currículo:", error);

@@ -292,8 +292,10 @@ export async function POST(req: Request) {
 
     if (erroInsert || !candidatura) {
       console.error("Erro ao gravar candidatura (empregos-candidatura):", erroInsert);
+      // Código do Postgres/PostgREST no fim da mensagem (ex.: 22P05, PGRST204)
+      // pra dar pra diagnosticar pelo print, sem expor detalhes do banco.
       return NextResponse.json(
-        { error: "Não foi possível registrar sua candidatura agora. Tente novamente." },
+        { error: `Não foi possível registrar sua candidatura agora. Tente novamente.${erroInsert?.code ? ` (código ${erroInsert.code})` : ""}` },
         { status: 500 },
       );
     }
