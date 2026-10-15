@@ -80,6 +80,7 @@ export function linhasPerfil(perfil: PerfilCandidato | null | undefined): { grup
         ["Filhos", p.temFilhos === "sim" ? `Sim — idades: ${p.idadesFilhos.join(", ")}` : sn(p.temFilhos), false],
         ["Tatuagem", descreverTatuagem(p) || sn(p.tatuagemVisivel), p.tatuagemVisivel === "sim"],
         ["Antecedentes criminais", sn(p.antecedentesCriminais), p.antecedentesCriminais === "sim"],
+        ["Animal de estimação", p.animalEstimacao === "sim" ? `Sim${p.animalDetalhe ? ` — ${p.animalDetalhe}` : ""}` : sn(p.animalEstimacao), p.animalEstimacao === "sim"],
       ],
     },
     {

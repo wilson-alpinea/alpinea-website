@@ -318,7 +318,7 @@ export const MODELOS_PARCEIROS: ModeloParceiro[] = [
           dividasBR,
           dividasJP,
           FX("10. Dependentes", (x) => juntar(valorFicha(x.f, "levarFamilia"), valorFicha(x.f, "levarFamiliaQuem"), valorFicha(x.f, "levarFamiliaQuando"))),
-          FX("11. Pet", (x) => juntar(valorFicha(x.f, "pet"), valorFicha(x.f, "petDetalhe"))),
+          FX("11. Pet", (x) => (x.p?.animalEstimacao ? juntar(sn(x.p.animalEstimacao), x.p.animalDetalhe ?? "") : juntar(valorFicha(x.f, "pet"), valorFicha(x.f, "petDetalhe")))),
           previsaoEmbarque,
           F("13. Tempo no Japão", "tempoJapao"),
           detido,

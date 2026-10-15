@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { EMAIL_EQUIPE_EMPREGOS } from "@/lib/empregos/emailEquipe";
 import { createAdminClient } from "../../../lib/supabase/admin";
 import { carregarCandidaturaPublica } from "../../../lib/empregos/candidaturaPublica";
 import { buscarCotacaoIene } from "../../lib/cotacaoIeneServidor";
@@ -76,8 +77,8 @@ export async function POST(req: Request) {
         method: "POST",
         headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
         body: JSON.stringify({
-          from: "Alpinea <contato@alpinea.io>",
-          to: ["wilson@alpinea.io"],
+          from: "Ajisai Empregos <contato@alpinea.io>",
+          to: [EMAIL_EQUIPE_EMPREGOS],
           reply_to: c.email,
           subject: `[Candidatura · Etapa 3] ${acao === "aceita" ? "Proposta aceita" : "Quer falar com a Ajisai"} — ${c.nome} ${c.sobrenome}`,
           text: texto,

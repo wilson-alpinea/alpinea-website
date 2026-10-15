@@ -16,7 +16,7 @@ import { vagaPrecisaProposta } from "@/app/lib/etapasCandidatura";
 const display = Bodoni_Moda({ subsets: ["latin"], weight: ["400", "500", "600"] });
 
 export const metadata: Metadata = {
-  title: "Pré-entrevista — Alpinea Empregos",
+  title: "Pré-entrevista — Ajisai Empregos",
   robots: { index: false, follow: false, nocache: true, googleBot: { index: false, follow: false } },
 };
 

@@ -6,6 +6,7 @@ import {
   ORIENTACOES_FAMILIA,
   SECOES,
   campoVisivel,
+  cpfValido,
   formatarCpf,
   isLista,
   pendenciasFicha,
@@ -147,8 +148,20 @@ function CampoInput({ c, valor, onChange }: { c: Campo; valor: ValorCampo | unde
         value={texto}
         onChange={(e) => onChange(c.tipo === "cpf" ? formatarCpf(e.target.value) : e.target.value)}
         placeholder={c.placeholder ?? (c.tipo === "cpf" ? "000.000.000-00" : undefined)}
-        className={inputCls}
+        aria-invalid={c.tipo === "cpf" && texto.replace(/\D/g, "").length === 11 && !cpfValido(texto) ? true : undefined}
+        className={`${inputCls} ${c.tipo === "cpf" && texto.replace(/\D/g, "").length === 11 && !cpfValido(texto) ? "border-red-400 focus:border-red-500" : ""}`}
       />
+      {/* Verificação do CPF na hora (dígitos verificadores) — Wilson,
+          15/out/2026. O servidor confere de novo ao salvar a ficha. */}
+      {c.tipo === "cpf" && texto.replace(/\D/g, "").length === 11 && (
+        cpfValido(texto) ? (
+          <span className="mt-1 block text-[11px] font-medium text-emerald-700">✓ CPF válido</span>
+        ) : (
+          <span className="mt-1 block text-[11px] font-medium text-red-600" role="alert">
+            CPF inválido — confira os números digitados.
+          </span>
+        )
+      )}
       {ajuda}
     </label>
   );

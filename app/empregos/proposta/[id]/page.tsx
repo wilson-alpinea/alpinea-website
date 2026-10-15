@@ -15,7 +15,7 @@ import PrazosProcesso from "@/app/components/empregos/PrazosProcesso";
 const display = Bodoni_Moda({ subsets: ["latin"], weight: ["400", "500", "600"] });
 
 export const metadata: Metadata = {
-  title: "Proposta de financiamento — Alpinea Empregos",
+  title: "Proposta de financiamento — Ajisai Empregos",
   robots: { index: false, follow: false, nocache: true, googleBot: { index: false, follow: false } },
 };
 

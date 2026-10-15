@@ -119,6 +119,7 @@ export type CriteriosTriagem = {
   // justificativa da fábrica), basta { diabetesInsulina: "eliminatorio" }
   // em vaga.criteriosTriagem.
   antecedentesCriminais: ModoCriterioTriagem;
+  animalEstimacao: ModoCriterioTriagem;
   tatuagem: ModoCriterioTriagem;
   doencaGrave: ModoCriterioTriagem;
   condicaoVisual: ModoCriterioTriagem;
@@ -144,6 +145,7 @@ export const CRITERIOS_TRIAGEM_PADRAO: CriteriosTriagem = {
   dividasJapao: "informativo",
   ajudaGovernoRetorno: "informativo",
   antecedentesCriminais: "informativo",
+  animalEstimacao: "informativo",
   tatuagem: "informativo",
   doencaGrave: "informativo",
   condicaoVisual: "informativo",
@@ -162,6 +164,8 @@ export function criteriosDaVaga(vaga: Vaga): CriteriosTriagem {
     turnoAlternado: vagaTemTurnoAlternado(vaga.turno) ? "eliminatorio" : "informativo",
     // Daltonismo só importa em componentes eletrônicos.
     daltonismo: vaga.setor === "eletronicos" ? "eliminatorio" : "informativo",
+    // Murata não aceita animal de estimação (Wilson, 15/out/2026).
+    animalEstimacao: vaga.empresa === "Murata" ? "eliminatorio" : "informativo",
     ...(vaga.criteriosTriagem ?? {}),
   };
 }
@@ -325,6 +329,7 @@ export function pontosParaRevisar(perfil: PerfilCandidato | undefined): string[]
   if (perfil.dividasJapao === "sim") p.push("Dívidas/impostos no Japão");
   if (perfil.ajudaGovernoRetorno === "sim") p.push("Recebeu ajuda de retorno");
   if (perfil.antecedentesCriminais === "sim") p.push("Antecedentes criminais");
+  if (perfil.animalEstimacao === "sim") p.push("Pretende levar animal de estimação");
   if (perfil.tatuagemVisivel === "sim") p.push("Tatuagem visível");
   if (perfil.emTratamento === "sim") p.push("Em tratamento médico");
   if (perfil.condicoesVisuais.length > 0) p.push("Condição visual");
@@ -497,6 +502,7 @@ export function calcularPontuacaoCandidatura(params: {
     }
     const regrasSim: [keyof CriteriosTriagem, boolean, string][] = [
       ["antecedentesCriminais", perfil.antecedentesCriminais === "sim", "Esta vaga não aceita candidatos com antecedentes criminais (exigência do visto/empresa)."],
+      ["animalEstimacao", perfil.animalEstimacao === "sim", "Esta vaga não permite levar animal de estimação."],
       ["tatuagem", perfil.tatuagemVisivel === "sim", "Esta vaga tem restrição a tatuagens visíveis com o uniforme."],
       ["doencaGrave", perfil.emTratamento === "sim", "Esta vaga exige avaliação médica prévia para quem está em tratamento."],
       ["condicaoVisual", perfil.condicoesVisuais.length > 0, "Esta vaga exige avaliação de visão compatível com a função."],

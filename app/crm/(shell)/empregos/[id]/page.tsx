@@ -318,7 +318,7 @@ export default async function CandidatoPage({
           <section className="rounded-2xl border border-black/10 bg-white p-5">
             <h2 className="text-sm font-medium text-black">Documento de Apresentação para Empreiteira</h2>
             <p className="mt-1 text-xs leading-5 text-black/45">
-              PDF com foto e dados do candidato. O modelo Alpinea não traz contato, CPF nem RG; os modelos das empreiteiras saem com a
+              PDF com foto e dados do candidato. O modelo Ajisai não traz contato, CPF nem RG; os modelos das empreiteiras saem com a
               ficha completa.
             </p>
             <form action={`/crm/empregos/${id}/apresentacao`} method="get" target="_blank" className="mt-3 space-y-2">

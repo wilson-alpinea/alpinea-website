@@ -2213,6 +2213,30 @@ export function CandidaturaModal({ vaga, onFechar, pagina = false }: { vaga: Vag
                 <OpcoesBotao valor={perfil.antecedentesCriminais} opcoes={SIM_NAO} onChange={(v) => setP("antecedentesCriminais", v)} />
               </div>
 
+              {/* Animal de estimação — veio da ficha para cá porque é
+                  eliminatório nas vagas da Murata (Wilson, 15/out/2026). */}
+              <div>
+                <p className="text-xs font-medium text-black/70">
+                  Pretende levar animal de estimação para o Japão? <Obrigatorio />
+                </p>
+                <p className="mt-0.5 text-[11px] leading-4 text-black/40">
+                  A maioria das moradias das empresas parceiras não aceita animais.
+                </p>
+                <OpcoesBotao
+                  valor={perfil.animalEstimacao}
+                  opcoes={SIM_NAO}
+                  onChange={(v) => setPerfil((p) => ({ ...p, animalEstimacao: v, ...(v === "nao" ? { animalDetalhe: "" } : {}) }))}
+                />
+                {perfil.animalEstimacao === "sim" && (
+                  <input
+                    value={perfil.animalDetalhe}
+                    onChange={(e) => setP("animalDetalhe", e.target.value.slice(0, 120))}
+                    placeholder="Qual animal? (ex.: 1 gato)"
+                    className="mt-2 w-full rounded-xl border border-black/10 px-3 py-2.5 text-sm text-black outline-none focus:border-[#2f80c9]"
+                  />
+                )}
+              </div>
+
               <div>
                 <p className="text-xs font-medium text-black/70">
                   Você tem tatuagem? <Obrigatorio />

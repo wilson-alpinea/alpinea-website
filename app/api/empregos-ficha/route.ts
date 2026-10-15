@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
+import { EMAIL_EQUIPE_EMPREGOS } from "@/lib/empregos/emailEquipe";
 import { createAdminClient } from "../../../lib/supabase/admin";
-import { fichaLiberada, linhasFicha, parseFicha, pendenciasFicha, pontosRevisarFicha } from "../../lib/fichaCadastral";
+import { FALTA_CPF_INVALIDO, fichaLiberada, linhasFicha, parseFicha, pendenciasFicha, pontosRevisarFicha } from "../../lib/fichaCadastral";
 import { testesAptidaoPendentes } from "../../lib/testesAptidao";
 
 export const runtime = "nodejs";
@@ -21,8 +22,8 @@ async function notificarPorEmail(params: { assunto: string; texto: string; reply
       method: "POST",
       headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
       body: JSON.stringify({
-        from: "Alpinea <contato@alpinea.io>",
-        to: ["wilson@alpinea.io"],
+        from: "Ajisai Empregos <contato@alpinea.io>",
+        to: [EMAIL_EQUIPE_EMPREGOS],
         reply_to: params.replyTo || undefined,
         subject: params.assunto,
         text: params.texto,
@@ -65,6 +66,10 @@ export async function POST(req: Request) {
 
     const ficha = parseFicha(corpo?.ficha);
     const faltas = pendenciasFicha(ficha);
+    // CPF conferido no servidor pelos dígitos verificadores — mensagem própria.
+    if (faltas.includes(FALTA_CPF_INVALIDO)) {
+      return NextResponse.json({ error: "CPF inválido — confira os números digitados.", faltas }, { status: 400 });
+    }
     if (faltas.length > 0) {
       return NextResponse.json({ error: `Faltou preencher: ${faltas.slice(0, 6).join(", ")}${faltas.length > 6 ? "…" : ""}.`, faltas }, { status: 400 });
     }

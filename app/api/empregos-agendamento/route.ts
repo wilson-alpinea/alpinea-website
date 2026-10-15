@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { EMAIL_EQUIPE_EMPREGOS } from "@/lib/empregos/emailEquipe";
 import { createAdminClient } from "../../../lib/supabase/admin";
 import { carregarCandidaturaPublica } from "../../../lib/empregos/candidaturaPublica";
 import { horariosDisponiveis } from "../../../lib/empregos/agendaServidor";
@@ -18,7 +19,7 @@ async function enviarEmail(para: string, assunto: string, texto: string, replyTo
   await fetch("https://api.resend.com/emails", {
     method: "POST",
     headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
-    body: JSON.stringify({ from: "Alpinea <contato@alpinea.io>", to: [para], reply_to: replyTo, subject: assunto, text: texto }),
+    body: JSON.stringify({ from: "Ajisai Empregos <contato@alpinea.io>", to: [para], reply_to: replyTo, subject: assunto, text: texto }),
   }).catch((e) => console.error("Erro Resend (agendamento):", e));
 }
 
@@ -51,14 +52,14 @@ export async function POST(req: Request) {
 
     const quando = formatarDataHoraBrasilia(escolhido.inicio);
     await enviarEmail(
-      "wilson@alpinea.io",
+      EMAIL_EQUIPE_EMPREGOS,
       `[Candidatura · Etapa 4] Pré-entrevista agendada — ${c.nome} ${c.sobrenome} — ${quando}`,
       [`Candidato: ${c.nome} ${c.sobrenome} — ${c.email} — ${c.telefone}`, `Vaga: ${c.vaga_titulo} — ${c.vaga_empresa}`, `Quando: ${quando} (Brasília)`].join("\n"),
       c.email,
     );
     await enviarEmail(
       c.email,
-      "Sua pré-entrevista está agendada — Alpinea Empregos",
+      "Sua pré-entrevista está agendada — Ajisai Empregos",
       [
         `Olá, ${c.nome}!`,
         "",

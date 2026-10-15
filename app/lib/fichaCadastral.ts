@@ -357,7 +357,7 @@ export const SECOES: Secao[] = [
         obrigatorio: true,
         opcoes: [...SN, { v: "naoSeAplica", l: "Nunca trabalhei no Japão" }],
       },
-      { id: "exEmpreiteira", label: "Já trabalhou para alguma empreiteira parceira da Alpinea?", tipo: "radio", opcoes: SN, obrigatorio: true, largura: "meia" },
+      { id: "exEmpreiteira", label: "Já trabalhou para alguma empreiteira parceira da Ajisai?", tipo: "radio", opcoes: SN, obrigatorio: true, largura: "meia" },
       { id: "exEmpreiteiraQual", label: "Qual empreiteira e fábrica?", tipo: "texto", obrigatorio: true, se: { campo: "exEmpreiteira", valores: ["sim"] }, largura: "meia" },
       {
         id: "aceitaMesmoSetor",
@@ -460,8 +460,7 @@ export const SECOES: Secao[] = [
         obrigatorio: true,
         se: { campo: "levarFamilia", valores: ["juntos", "depois"] },
       },
-      { id: "pet", label: "Pretende levar animal de estimação?", tipo: "radio", opcoes: SN, obrigatorio: true, largura: "meia", atencao: ["sim"] },
-      { id: "petDetalhe", label: "Qual animal?", tipo: "texto", se: { campo: "pet", valores: ["sim"] }, largura: "meia" },
+      // "Pretende levar animal de estimação?" foi para a etapa 1 (perfil) em 15/out/2026.
       { id: "emergBrNome", label: "Contato de emergência no Brasil — nome", tipo: "texto", obrigatorio: true, largura: "meia" },
       { id: "emergBrParentesco", label: "Parentesco", tipo: "texto", obrigatorio: true, largura: "terco" },
       { id: "emergBrTelefone", label: "Telefone", tipo: "tel", obrigatorio: true, largura: "terco" },
@@ -652,7 +651,7 @@ export const SECOES: Secao[] = [
       { id: "declaracao", label: "Declaro que as informações desta ficha são verdadeiras.", tipo: "aceite", obrigatorio: true },
       {
         id: "autorizacaoContato",
-        label: "Autorizo a Alpinea e as empresas parceiras a entrar em contato pelos dados informados sobre o processo seletivo.",
+        label: "Autorizo a Ajisai e as empresas parceiras a entrar em contato pelos dados informados sobre o processo seletivo.",
         tipo: "aceite",
         obrigatorio: true,
       },
@@ -677,6 +676,12 @@ export function apenasDigitos(s: string) {
   return s.replace(/\D/g, "");
 }
 
+/** Texto da pendência quando o CPF não passa nos dígitos verificadores. */
+export const FALTA_CPF_INVALIDO = "CPF inválido (confira os números)";
+
+/** Valida o CPF pelos dois dígitos verificadores (módulo 11) e recusa
+ * sequências repetidas (111.111.111-11 etc.). Usado no formulário e no
+ * servidor (pendenciasFicha, chamada pela API da ficha). */
 export function cpfValido(cpf: string): boolean {
   const d = apenasDigitos(cpf);
   if (d.length !== 11 || /^(\d)\1+$/.test(d)) return false;
@@ -767,7 +772,7 @@ export function pendenciasFicha(f: FichaCadastral, secaoId?: string): string[] {
         const mae = item.se && item.label.length < 30 ? s.itens.find((i) => i.id === item.se!.campo) : undefined;
         faltas.push(mae ? `${mae.label.replace(/\?$/, "")} — ${item.label}` : item.label);
       }
-      else if (item.tipo === "cpf" && !cpfValido(String(f.valores[item.id]))) faltas.push("CPF válido");
+      else if (item.tipo === "cpf" && !cpfValido(String(f.valores[item.id]))) faltas.push(FALTA_CPF_INVALIDO);
     }
   }
   return faltas;

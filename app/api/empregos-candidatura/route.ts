@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { EMAIL_EQUIPE_EMPREGOS } from "@/lib/empregos/emailEquipe";
 import { randomUUID } from "crypto";
 import { createAdminClient } from "../../../lib/supabase/admin";
 import { encontrarVaga, VAGAS } from "../../lib/vagasCatalogo";
@@ -61,8 +62,8 @@ async function notificarPorEmail(params: { assunto: string; texto: string; html:
       method: "POST",
       headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
       body: JSON.stringify({
-        from: "Alpinea <contato@alpinea.io>",
-        to: ["wilson@alpinea.io"],
+        from: "Ajisai Empregos <contato@alpinea.io>",
+        to: [EMAIL_EQUIPE_EMPREGOS],
         reply_to: params.replyTo || undefined,
         subject: params.assunto,
         text: params.texto,
@@ -329,6 +330,7 @@ export async function POST(req: Request) {
           ? ""
           : `Financiamento de taxa/passagem/documentos: ${rot(OPCOES_FINANCIAMENTO, p.financiamentoCustos)}`,
         `Antecedentes criminais: ${p.antecedentesCriminais === "sim" ? "SIM" : "Não"}${p.antecedentesCriminais === "sim" ? " — REVISAR" : ""}${certidaoAntecedentes ? ` (certidão PF anexada: ${certidaoAntecedentes.nome})` : " (sem certidão anexada)"}`,
+        `Animal de estimação: ${p.animalEstimacao === "sim" ? `SIM${p.animalDetalhe ? ` (${p.animalDetalhe})` : ""}` : "Não"}`,
         `Tatuagem: ${descreverTatuagem(p) || "Não"}${p.tatuagemVisivel === "sim" ? " — VISÍVEL com uniforme" : ""}`,
         "",
         "— Saúde (consentimento LGPD dado pelo candidato) —",

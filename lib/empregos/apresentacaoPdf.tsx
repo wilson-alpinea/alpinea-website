@@ -12,7 +12,7 @@ import { OPCOES_FLEXIBILIDADE, type PerfilCandidato } from "@/app/lib/triagemPer
 //     empreiteira (campos "interno" ficam em branco para a agência).
 
 export const MODELOS_APRESENTACAO = [
-  { id: "alpinea", nome: "Apresentação Alpinea (resumo, sem dados de contato)" },
+  { id: "alpinea", nome: "Apresentação Ajisai (resumo, sem dados de contato)" },
   ...MODELOS_PARCEIROS.map((m) => ({ id: m.id, nome: `Ficha ${m.nome}` })),
 ];
 
@@ -171,7 +171,7 @@ export function ApresentacaoPdf({ candidatura: c, fotoDataUri, modelo }: DadosAp
   const v = (id: string) => valorFicha(c.ficha, id);
 
   return (
-    <Document title={`Apresentação — ${c.nome} ${c.sobrenome}`} author="Alpinea">
+    <Document title={`Apresentação — ${c.nome} ${c.sobrenome}`} author="Ajisai">
       <Page size="A4" style={s.page}>
         <View style={s.topo}>
           <View>
@@ -227,7 +227,7 @@ export function ApresentacaoPdf({ candidatura: c, fotoDataUri, modelo }: DadosAp
         {!parceiro && (
           <View style={s.secao} wrap={false}>
             <Text style={s.secaoTitulo}>Contato</Text>
-            <Text>O contato com o candidato é feito exclusivamente pela Alpinea / Ajisai: +55 (11) 93030-0101 · contato@alpinea.io</Text>
+            <Text>O contato com o candidato é feito exclusivamente pela Ajisai: +55 (11) 93030-0101 · contato@alpinea.io</Text>
           </View>
         )}
 

@@ -14,7 +14,7 @@ import { testesAptidaoPendentes, urlTestes } from "@/app/lib/testesAptidao";
 const display = Bodoni_Moda({ subsets: ["latin"], weight: ["400", "500", "600"] });
 
 export const metadata: Metadata = {
-  title: "Ficha cadastral — Alpinea Empregos",
+  title: "Ficha cadastral — Ajisai Empregos",
   robots: { index: false, follow: false, nocache: true, googleBot: { index: false, follow: false } },
 };
 

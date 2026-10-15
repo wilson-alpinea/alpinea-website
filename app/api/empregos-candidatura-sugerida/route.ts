@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { EMAIL_EQUIPE_EMPREGOS } from "@/lib/empregos/emailEquipe";
 import { createAdminClient } from "../../../lib/supabase/admin";
 import { encontrarVaga } from "../../lib/vagasCatalogo";
 import { urlAposMatch } from "../../lib/testesAptidao";
@@ -105,8 +106,8 @@ export async function POST(req: Request) {
         method: "POST",
         headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
         body: JSON.stringify({
-          from: "Alpinea <contato@alpinea.io>",
-          to: ["wilson@alpinea.io"],
+          from: "Ajisai Empregos <contato@alpinea.io>",
+          to: [EMAIL_EQUIPE_EMPREGOS],
           reply_to: original.email,
           subject: `[Candidatura sugerida] ${vaga.titulo} — ${original.nome} ${original.sobrenome} (${resultado.pontuacao}%)`,
           text: texto,

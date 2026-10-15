@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { EMAIL_EQUIPE_EMPREGOS } from "@/lib/empregos/emailEquipe";
 import { createAdminClient } from "../../../lib/supabase/admin";
 import { fichaLiberada } from "../../lib/fichaCadastral";
 import {
@@ -33,8 +34,8 @@ async function notificarPorEmail(assunto: string, texto: string, replyTo?: strin
       method: "POST",
       headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
       body: JSON.stringify({
-        from: "Alpinea <contato@alpinea.io>",
-        to: ["wilson@alpinea.io"],
+        from: "Ajisai Empregos <contato@alpinea.io>",
+        to: [EMAIL_EQUIPE_EMPREGOS],
         reply_to: replyTo || undefined,
         subject: assunto,
         text: texto,
