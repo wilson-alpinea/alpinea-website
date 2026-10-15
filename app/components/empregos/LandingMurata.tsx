@@ -460,11 +460,12 @@ function SimuladorGanhos({ config }: { config: ConfigLanding }) {
           {/* Marca d'água: logo Ajisai (branco) repetido e inclinado, bem
               sutil — dificulta copiar a simulação como se fosse de outra
               empresa (Wilson, 15/out/2026: "para evitar plágio"). */}
-          <div
-            aria-hidden="true"
-            className="pointer-events-none absolute -inset-1/2 -z-10 rotate-[-18deg] opacity-[0.06]"
-            style={{ backgroundImage: "url(/images/AJISAI-LOGO.avif)", backgroundRepeat: "space", backgroundSize: "96px auto", backgroundPosition: "center" }}
-          />
+          <div aria-hidden="true" className="pointer-events-none absolute -inset-1/2 -z-10 flex rotate-[-18deg] flex-wrap content-center justify-center gap-x-14 gap-y-10 opacity-[0.07]">
+            {Array.from({ length: 48 }, (_, i) => (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img key={i} src="/images/AJISAI-LOGO.avif" alt="" className={`h-5 w-auto select-none ${i % 2 ? "translate-x-10" : ""}`} draggable={false} />
+            ))}
+          </div>
           <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-white/60">Disponível estimado por mês</p>
           <p className={`${inter.className} mt-2 text-4xl font-semibold tabular-nums tracking-[-0.02em]`}>{brl(liquido)}</p>
           <p className={`${inter.className} mt-1 text-lg tabular-nums text-white/75`}>{formatJPY(liquido)}</p>
@@ -522,7 +523,7 @@ const SECOES_RAPIDAS: { id: string; rotulo: string; icone: ReactNode; destaque?:
   { id: "t-vaga", rotulo: "A vaga", icone: <><rect x="3" y="7" width="18" height="13" rx="2" /><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" /></> },
   { id: "t-salario", rotulo: "Salário", icone: <><path d="M7 4l5 7 5-7M12 11v9M8 13h8M8 16.5h8" /></> },
   { id: "t-simulacao", rotulo: "Simulação mensal", icone: <svg x="0" y="0" width="24" height="24" viewBox="18 22 66 62" strokeWidth={4.5}>{COFRINHO_PATHS}</svg> },
-  { id: "t-custo", rotulo: "Custo inicial zero", icone: <><path d="M2 16l20-8-6 12-3-5z" /><path d="M13 15l9-7" /></> },
+  { id: "t-custo", rotulo: "Custo Zero", icone: <><path d="M2 16l20-8-6 12-3-5z" /><path d="M13 15l9-7" /></> },
   { id: "t-moradia", rotulo: "Moradia", icone: <><path d="M3 11l9-7 9 7" /><path d="M5 10v10h14V10" /><path d="M10 20v-6h4v6" /></> },
   { id: "t-cidade", rotulo: "Cidade e transporte", icone: <><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z" /><circle cx="12" cy="9.5" r="2.5" /></> },
   { id: "t-processo", rotulo: "Do Brasil à fábrica", icone: <><path d="M2 16l20-6-20-6 4 6z" /><path d="M6 10h8" /></> },
@@ -801,8 +802,7 @@ export default function LandingMurata({ config: s, vagas }: { config: ConfigLand
               </div>
             )}
             <div className="px-5 pb-6 pt-2 md:px-8 md:pb-8 lg:flex lg:flex-col lg:justify-center lg:py-10 lg:pl-6 lg:pr-10">
-              <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-white/60">Campanha</p>
-              <h2 id="t-custo" className={`${display.className} mt-2 text-2xl font-medium md:text-[28px]`}>
+              <h2 id="t-custo" className={`${display.className} text-2xl font-medium md:text-[28px]`}>
                 {s.custoZero.titulo}
               </h2>
               <p className="mt-2 text-sm leading-6 text-white/75">{s.custoZero.texto}</p>

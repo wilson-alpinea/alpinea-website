@@ -169,7 +169,7 @@ export const LANDING_IZUMO: ConfigLanding = {
       "Em Izumo há dois turnos fixos (diurno ou noturno), sem alternar entre dia e noite: 4 dias de trabalho para 2 de folga, cerca de 18 dias trabalhados por mês. Em Oda, a escala também é 4×2, mas o turno é alternado entre dia e noite. Horário definido na alocação.",
   },
   custoZero: {
-    titulo: "Custo inicial zero",
+    titulo: "Custo Zero",
     texto: "Seu projeto no Japão não precisa começar com uma grande despesa.",
     itens: ["Passagem aérea", "Assessoria", "Documentação", "Preparação para o embarque"],
     imagem: IMG_EMBARQUE,
@@ -353,7 +353,7 @@ export const LANDING_ECHIZEN: ConfigLanding = {
     imagem: { src: "/images/empregos/echizen-turnos.webp", alt: "A mesma fábrica de dia e à noite, representando os turnos diurno e noturno" },
   },
   custoZero: {
-    titulo: "Custo inicial zero",
+    titulo: "Custo Zero",
     texto: "Comece seu projeto no Japão sem uma grande despesa inicial.",
     itens: ["Passagem aérea", "Assessoria", "Documentação", "Preparação para o embarque"],
     imagem: IMG_EMBARQUE,
