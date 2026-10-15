@@ -46,7 +46,6 @@ export async function POST(req: Request) {
     if (existente) {
       return NextResponse.json({
         candidaturaId: existente.id,
-        pontuacao: existente.pontuacao,
         fichaUrl: urlAposMatch(vaga.id, existente.id, existente.ficha_token),
       });
     }
@@ -117,7 +116,6 @@ export async function POST(req: Request) {
 
     return NextResponse.json({
       candidaturaId: nova.id,
-      pontuacao: resultado.pontuacao,
       fichaUrl: urlAposMatch(vaga.id, nova.id, nova.ficha_token),
     });
   } catch (err) {

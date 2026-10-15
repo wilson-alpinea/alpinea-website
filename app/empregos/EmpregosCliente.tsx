@@ -16,9 +16,7 @@ import {
   nivelDoDetalhado,
   ASCENDENCIA_JAPONESA,
   QUANDO_EMBARCAR,
-  NOTA_MINIMA_PROXIMA_ETAPA,
   type RespostasTriagem,
-  type CriterioPontuacao,
   type NivelJaponesDetalhado,
   type AscendenciaJaponesa,
   type QuandoEmbarcar,
@@ -1434,7 +1432,7 @@ export default function EmpregosCliente({ inativas }: { inativas: string[] }) {
 // pontuação vem de app/lib/candidaturaScoring.ts e a checagem da foto de
 // app/lib/fotoChecagem.ts, ambos determinísticos.
 type EtapaCandidatura = "formulario" | "resultado";
-type SugestaoVaga = { vagaId: string; titulo: string; empresa: string; cidade: string; regiao: string; salario: string; pontuacao: number };
+type SugestaoVaga = { vagaId: string; titulo: string; empresa: string; cidade: string; regiao: string; salario: string };
 
 // Botões de opção (Sim/Não e similares) — mesmo visual das perguntas de
 // triagem que já existiam.
@@ -1559,8 +1557,6 @@ export function CandidaturaModal({ vaga, onFechar, pagina = false }: { vaga: Vag
     testeDaltonismo: exigeTesteDaltonismo && testeDaltonismoCompleto ? avaliarTesteDaltonismo(respostasDaltonismo) : null,
   };
 
-  const [pontuacao, setPontuacao] = useState(0);
-  const [criterios, setCriterios] = useState<CriterioPontuacao[]>([]);
   const [aprovadoParaFoto, setAprovadoParaFoto] = useState(false);
   // Etapa 2 (ficha cadastral + foto) virou página própria — Wilson, 06/out/2026.
   const [fichaUrl, setFichaUrl] = useState<string | null>(null);
@@ -1637,8 +1633,6 @@ export function CandidaturaModal({ vaga, onFechar, pagina = false }: { vaga: Vag
         setEnviando(false);
         return;
       }
-      setPontuacao(dados.pontuacao);
-      setCriterios(dados.criterios || []);
       setAprovadoParaFoto(Boolean(dados.aprovadoParaFoto));
       setFichaUrl(typeof dados.fichaUrl === "string" ? dados.fichaUrl : null);
       setSugestoes(Array.isArray(dados.sugestoes) ? dados.sugestoes : []);
@@ -2450,50 +2444,20 @@ export function CandidaturaModal({ vaga, onFechar, pagina = false }: { vaga: Vag
 
         {etapa === "resultado" && (
           <div className="mt-5">
-            {aprovadoParaFoto && (
-            <>
-            <div className="flex flex-col items-center gap-2 py-2">
-              <div
-                className="relative flex h-28 w-28 items-center justify-center rounded-full"
-                style={{
-                  background: `conic-gradient(#2f80c9 ${pontuacao * 3.6}deg, rgba(0,0,0,0.06) 0deg)`,
-                }}
-              >
-                <div className="flex h-[88px] w-[88px] items-center justify-center rounded-full bg-white">
-                  <span className={`${display.className} text-2xl font-medium text-black`}>{pontuacao}%</span>
-                </div>
-              </div>
-              <p className="text-center text-xs text-black/50">Compatibilidade com esta vaga</p>
-            </div>
-
-            <div className="mt-4 space-y-2.5 border-t border-black/10 pt-4">
-              {criterios.map((c) => (
-                <div key={c.chave} className="flex items-start justify-between gap-3">
-                  <div>
-                    <p className="text-xs font-medium text-black/70">{c.label}</p>
-                    <p className="mt-0.5 text-[11px] leading-4 text-black/40">{c.detalhe}</p>
-                  </div>
-                  <span className="shrink-0 text-xs font-semibold text-black/60">
-                    {c.pontosObtidos}/{c.pontosMaximos}
-                  </span>
-                </div>
-              ))}
-            </div>
-
-            </>
-            )}
+            {/* Pontuação e compatibilidade não aparecem para o candidato
+                (Wilson, 15/out/2026) — ficam só no CRM e no e-mail da equipe. */}
 
             {aprovadoParaFoto ? (
               <div className="mt-6 rounded-2xl bg-[#2f80c9]/[0.06] p-4">
                 {vagaExigeTestesAptidao(vaga.id) ? (
                   <p className="text-xs leading-5 text-black/70">
-                    Parabéns! Sua pontuação passou de {NOTA_MINIMA_PROXIMA_ETAPA}%. Esta vaga pede antes os testes de
+                    Parabéns! Seu perfil foi pré-aprovado para esta vaga. Ela pede antes os testes de
                     aptidão exigidos pela empresa (visão, matemática, atenção e japonês) — leva uns 15 minutos. Depois
                     vem a ficha cadastral com a sua foto.
                   </p>
                 ) : (
                   <p className="text-xs leading-5 text-black/70">
-                    Parabéns! Sua pontuação passou de {NOTA_MINIMA_PROXIMA_ETAPA}%. A etapa 2 é a ficha cadastral
+                    Parabéns! Seu perfil foi pré-aprovado para esta vaga. A etapa 2 é a ficha cadastral
                     completa (documentos, experiência, família e saúde) com o envio da sua foto — leva uns 15 minutos.
                   </p>
                 )}
@@ -2537,7 +2501,7 @@ export function CandidaturaModal({ vaga, onFechar, pagina = false }: { vaga: Vag
                             <p className="text-[10px] font-semibold uppercase tracking-[0.1em] text-black/45">{sg.empresa}</p>
                             <p className="truncate text-sm font-medium text-black">{sg.titulo}</p>
                             <p className="text-[11px] text-black/45">
-                              {sg.cidade} · compatibilidade {sg.pontuacao}%
+                              {sg.cidade}
                             </p>
                           </div>
                           <button

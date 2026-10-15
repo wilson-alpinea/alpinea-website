@@ -394,14 +394,13 @@ export async function POST(req: Request) {
           .filter(({ r }) => r.aprovadoParaFoto)
           .sort((a, b) => b.r.pontuacao - a.r.pontuacao || (a.v.status === "aberta" ? -1 : 1))
           .slice(0, 3)
-          .map(({ v, r }) => ({
+          .map(({ v }) => ({
             vagaId: v.id,
             titulo: v.titulo,
             empresa: v.empresa,
             cidade: v.cidade,
             regiao: v.regiao,
             salario: v.salario,
-            pontuacao: r.pontuacao,
           }));
 
     return NextResponse.json({
@@ -416,8 +415,8 @@ export async function POST(req: Request) {
         resultado.aprovadoParaFoto && candidatura.ficha_token
           ? urlAposMatch(vagaId, candidatura.id, candidatura.ficha_token)
           : null,
-      pontuacao: resultado.pontuacao,
-      criterios: resultado.criterios,
+      // Pontuação e critérios não vão para o navegador do candidato
+      // (Wilson, 15/out/2026) — ficam só no banco/CRM e no e-mail da equipe.
       aprovadoParaFoto: resultado.aprovadoParaFoto,
     });
   } catch (error) {

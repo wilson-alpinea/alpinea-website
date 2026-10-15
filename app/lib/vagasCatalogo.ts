@@ -180,6 +180,9 @@ export const VAGAS: Vaga[] = [
     contrato: "Contrato temporário (haken)",
     salario: "¥1.500/hora (até ¥1.650/hora conforme o tempo de casa)",
     status: "aberta",
+    // Murata é custo zero para o candidato — sem pergunta de financiamento
+    // nem etapa de proposta (Wilson, 15/out/2026).
+    custosCobertosPelaEmpresa: true,
     logo: "/images/logo-cliente-murata.png",
     idioma: "Não mandatório",
     perfil: "Homem, mulher ou casal até 59 anos", // limite confirmado pelo Wilson em 15/out/2026
@@ -225,6 +228,9 @@ export const VAGAS: Vaga[] = [
     contrato: "Contrato temporário (haken)",
     salario: "¥1.340/hora (até ¥1.560/hora conforme desempenho)",
     status: "aberta",
+    // Murata é custo zero para o candidato — sem pergunta de financiamento
+    // nem etapa de proposta (Wilson, 15/out/2026).
+    custosCobertosPelaEmpresa: true,
     logo: "/images/logo-cliente-murata.png",
     idioma: "Não mandatório",
     perfil: "Homem, mulher ou casal até 59 anos", // limite confirmado pelo Wilson em 15/out/2026
@@ -255,6 +261,9 @@ export const VAGAS: Vaga[] = [
     contrato: "A confirmar com a nossa equipe",
     salario: "¥1.500/hora em turno alternado (até ¥1.650/hora conforme o tempo de casa); ¥1.300–1.450/hora em diurno fixo",
     status: "aberta",
+    // Murata é custo zero para o candidato — sem pergunta de financiamento
+    // nem etapa de proposta (Wilson, 15/out/2026).
+    custosCobertosPelaEmpresa: true,
     perfil: "Até 59 anos", // limite confirmado pelo Wilson em 15/out/2026
     logo: "/images/logo-cliente-murata.png",
     // Dados da ficha oficial "CSR - FUKUI (2026.07.03更新)" (07/out/2026).

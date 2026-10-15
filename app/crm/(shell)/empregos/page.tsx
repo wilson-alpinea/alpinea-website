@@ -229,9 +229,11 @@ export default async function EmpregosCrmPage({
               const corTipo = CLASSIFICACOES.find((x) => x.valor === c.classificacao)?.cor ?? tipoAtual.cor;
               const etiquetas = elim ? c.motivos_eliminacao ?? [] : c.pontos_revisar ?? [];
               return (
-                <tr key={c.id} className="align-top transition hover:bg-black/[0.015]">
+                // Linha inteira clicável — abre a ficha completa do candidato
+                // (pontuação por critério e todas as respostas). Wilson, 15/out/2026.
+                <tr key={c.id} className="relative cursor-pointer align-top transition hover:bg-[#1C3A5E]/[0.04]">
                   <td className="px-5 py-3.5">
-                    <Link href={`/crm/empregos/${c.id}`} className="font-medium text-black hover:underline">
+                    <Link href={`/crm/empregos/${c.id}`} className="font-medium text-black after:absolute after:inset-0 after:content-[''] hover:underline">
                       {c.nome} {c.sobrenome}
                     </Link>
                     <p className="text-xs text-black/45">{c.telefone}</p>

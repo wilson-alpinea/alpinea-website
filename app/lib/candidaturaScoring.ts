@@ -348,104 +348,110 @@ export function calcularPontuacaoCandidatura(params: {
   const { vaga, idade, respostas } = params;
   const criterios: CriterioPontuacao[] = [];
 
-  // Currículo removido do formulário (Wilson, 15/out/2026: "remover campo
-  // currículo e redistribuir nas outras perguntas"). Os 40 pts que vinham
-  // do currículo (30 de palavras-chave + 10 de legibilidade) foram
-  // redistribuídos — pesos novos: japonês 25, faixa etária 20, passaporte
-  // 15 + embarque em até 6 meses 20 (disponibilidade 35), experiência 10 e
-  // Re-Entry 10. Experiência e Re-Entry ficam como bônus: quem não tem
-  // nenhum dos dois, mas cumpre o resto, chega a 80% — coerente com "não
-  // precisa de experiência prévia" nas vagas.
+  // Currículo removido do formulário em 15/out/2026 (sem pontos de currículo).
+  // Pesos — revisão do Wilson em 15/out/2026: japonês 15, faixa etária 20,
+  // experiência 10, Re-Entry 20, filhos 15 e tatuagem 20 (= 100).
+  // Disponibilidade (passaporte/embarque) deixou de pontuar.
+  const perfil0 = respostas.perfil;
 
-  // 1) Nível de japonês vs exigido pela vaga — 25 pts
+  // 1) Nível de japonês vs exigido pela vaga — 15 pts
   const nivelExigido = nivelExigidoDoTexto(vaga.idioma);
-  let pontosJapones = 25;
+  let pontosJapones = 15;
   let detalheJapones = "Esta vaga não exige um nível específico de japonês.";
   if (nivelExigido !== null) {
     const nivelCandidato = respostas.nivelJapones || "nenhum";
     const diferenca = ORDEM_NIVEL_JAPONES[nivelCandidato] - ORDEM_NIVEL_JAPONES[nivelExigido];
     if (diferenca >= 0) {
-      pontosJapones = 25;
-      detalheJapones = "Seu nível de japonês atende ao exigido pela vaga.";
+      pontosJapones = 15;
+      detalheJapones = "Nível de japonês atende ao exigido pela vaga.";
     } else if (diferenca === -1) {
-      pontosJapones = 12;
-      detalheJapones = "Seu nível de japonês está um pouco abaixo do exigido pela vaga.";
+      pontosJapones = 7;
+      detalheJapones = "Nível de japonês um pouco abaixo do exigido pela vaga.";
     } else {
       pontosJapones = 0;
-      detalheJapones = "Seu nível de japonês está abaixo do exigido pela vaga.";
+      detalheJapones = "Nível de japonês abaixo do exigido pela vaga.";
     }
   }
-  criterios.push({
-    chave: "japones",
-    label: "Nível de japonês",
-    pontosObtidos: pontosJapones,
-    pontosMaximos: 25,
-    detalhe: detalheJapones,
-  });
+  criterios.push({ chave: "japones", label: "Nível de japonês", pontosObtidos: pontosJapones, pontosMaximos: 15, detalhe: detalheJapones });
 
-  // 2) Faixa etária vs perfil da vaga — 20 pts
-  const faixa = faixaEtariaDoTexto(vaga.perfil);
+  // 2) Faixa etária — 20 pts. Vagas da Murata (18 a 59 anos): quanto mais
+  // jovem, mais pontos — 18 anos = 20, caindo em linha reta até 2 aos 59;
+  // acima de 59 = 0. Demais vagas: dentro da faixa do perfil = 20.
   let pontosIdade = 20;
   let detalheIdade = "Esta vaga não especifica uma faixa etária.";
-  if (faixa !== null && idade !== null) {
-    if (idade >= faixa.min && idade <= faixa.max) {
-      pontosIdade = 20;
-      detalheIdade = "Sua idade está dentro da faixa indicada para esta vaga.";
-    } else {
+  if (vaga.empresa === "Murata") {
+    if (idade === null) {
+      pontosIdade = 10;
+      detalheIdade = "Idade não informada.";
+    } else if (idade > 59) {
       pontosIdade = 0;
-      detalheIdade = "Sua idade está fora da faixa indicada para esta vaga.";
+      detalheIdade = "Acima do limite de 59 anos desta vaga.";
+    } else {
+      const t = Math.min(1, Math.max(0, (59 - idade) / (59 - 18)));
+      pontosIdade = Math.round(2 + 18 * t);
+      detalheIdade = `Escala por idade (18 anos = 20 pts, 59 anos = 2 pts): ${idade} anos.`;
     }
-  } else if (faixa !== null && idade === null) {
-    pontosIdade = 10; // sem dado suficiente pra confirmar — não penaliza integralmente
-    detalheIdade = "Não foi possível confirmar sua idade contra a faixa desta vaga.";
+  } else {
+    const faixa = faixaEtariaDoTexto(vaga.perfil);
+    if (faixa !== null && idade !== null) {
+      const dentro = idade >= faixa.min && idade <= faixa.max;
+      pontosIdade = dentro ? 20 : 0;
+      detalheIdade = dentro ? "Idade dentro da faixa indicada para a vaga." : "Idade fora da faixa indicada para a vaga.";
+    } else if (faixa !== null) {
+      pontosIdade = 10;
+      detalheIdade = "Não foi possível confirmar a idade contra a faixa da vaga.";
+    }
   }
-  criterios.push({
-    chave: "idade",
-    label: "Faixa etária",
-    pontosObtidos: pontosIdade,
-    pontosMaximos: 20,
-    detalhe: detalheIdade,
-  });
+  criterios.push({ chave: "idade", label: "Faixa etária", pontosObtidos: pontosIdade, pontosMaximos: 20, detalhe: detalheIdade });
 
-  // 3) Experiência prévia na função/setor (autorrelato) — 10 pts (bônus)
+  // 3) Experiência prévia na função/setor (autorrelato) — 10 pts
   const pontosExperiencia = respostas.experienciaSetor === "sim" ? 10 : 0;
   criterios.push({
     chave: "experiencia",
     label: "Experiência prévia na função",
     pontosObtidos: pontosExperiencia,
     pontosMaximos: 10,
-    detalhe:
-      respostas.experienciaSetor === "sim"
-        ? "Você informou ter experiência prévia na área da vaga."
-        : "Você informou não ter experiência prévia na área da vaga.",
+    detalhe: respostas.experienciaSetor === "sim" ? "Informou experiência prévia na área." : "Informou não ter experiência prévia na área.",
   });
 
-  // 4) Disponibilidade (passaporte 15 + embarque em até 6 meses 20) — 35 pts
-  const temPassaporte = respostas.passaporte === "sim";
-  const temDisponibilidade = respostas.disponibilidadeEmbarque === "sim";
-  const pontosDisponibilidade = (temPassaporte ? 15 : 0) + (temDisponibilidade ? 20 : 0);
-  criterios.push({
-    chave: "disponibilidade",
-    label: "Disponibilidade para embarque",
-    pontosObtidos: pontosDisponibilidade,
-    pontosMaximos: 35,
-    detalhe:
-      pontosDisponibilidade === 35
-        ? "Você tem passaporte válido e disponibilidade para embarcar em até 6 meses."
-        : "Falta passaporte válido e/ou disponibilidade de embarque em até 6 meses.",
-  });
-
-  // 5) Re-Entry válido — 10 pts (bônus)
+  // 4) Re-Entry válido — 20 pts
   const temReEntry = respostas.reEntry === "sim";
   criterios.push({
     chave: "reEntry",
     label: "Re-Entry válido",
-    pontosObtidos: temReEntry ? 10 : 0,
-    pontosMaximos: 10,
-    detalhe: temReEntry
-      ? "Você informou ter Re-Entry válido — o embarque tende a ser mais rápido."
-      : "Você informou não ter Re-Entry válido.",
+    pontosObtidos: temReEntry ? 20 : 0,
+    pontosMaximos: 20,
+    detalhe: temReEntry ? "Tem Re-Entry válido — embarque mais rápido." : "Sem Re-Entry válido.",
   });
+
+  // 5) Filhos — 15 pts: sem filhos 15; 1 filho 10; 2 filhos 5; 3+ 0.
+  const nFilhos = perfil0?.temFilhos === "sim" ? Math.max(1, perfil0.idadesFilhos.length) : 0;
+  const pontosFilhos = !perfil0 || !perfil0.temFilhos ? 8 : nFilhos === 0 ? 15 : nFilhos === 1 ? 10 : nFilhos === 2 ? 5 : 0;
+  criterios.push({
+    chave: "filhos",
+    label: "Filhos",
+    pontosObtidos: pontosFilhos,
+    pontosMaximos: 15,
+    detalhe: !perfil0 || !perfil0.temFilhos ? "Não informado." : nFilhos === 0 ? "Sem filhos." : `${nFilhos} filho(s).`,
+  });
+
+  // 6) Tatuagem — 20 pts: nenhuma 20; só escondidas sob a roupa 16;
+  // visível: pequena 12, média 6, grande 2; visível no rosto, mãos ou
+  // pescoço = 0 (qualquer tamanho).
+  let pontosTatuagem = 10;
+  let detalheTatuagem = "Não informado.";
+  if (perfil0?.tatuagem === "nao" || (!perfil0?.tatuagem && perfil0?.tatuagemVisivel === "nao")) {
+    pontosTatuagem = 20;
+    detalheTatuagem = "Sem tatuagem.";
+  } else if (perfil0?.tatuagemVisivel === "nao" && perfil0?.tatuagem === "sim") {
+    pontosTatuagem = 16;
+    detalheTatuagem = "Só tatuagens escondidas sob a roupa.";
+  } else if (perfil0?.tatuagemVisivel === "sim") {
+    const regiaoCritica = perfil0.tatuagemRegioes.some((r) => r === "rosto" || r === "maos" || r === "pescoco");
+    pontosTatuagem = regiaoCritica ? 0 : perfil0.tatuagemTamanho === "pequena" ? 12 : perfil0.tatuagemTamanho === "media" ? 6 : 2;
+    detalheTatuagem = regiaoCritica ? "Tatuagem visível no rosto, mãos ou pescoço." : `Tatuagem visível (${perfil0.tatuagemTamanho || "tamanho não informado"}).`;
+  }
+  criterios.push({ chave: "tatuagem", label: "Tatuagem", pontosObtidos: pontosTatuagem, pontosMaximos: 20, detalhe: detalheTatuagem });
 
   const pontuacao = criterios.reduce((soma, c) => soma + c.pontosObtidos, 0);
 
