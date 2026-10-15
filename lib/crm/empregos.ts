@@ -2,6 +2,7 @@
 // Pedido do Wilson, 06/out/2026 (ver supabase/migrations/015).
 
 import type { ClassificacaoCandidatura } from "@/app/lib/candidaturaScoring";
+import { ETAPAS_MANUAIS, lerAndamentoManual } from "./andamentoManual";
 import { fichaLiberada } from "@/app/lib/fichaCadastral";
 import { proximaEtapa } from "@/app/lib/etapasCandidatura";
 import {
@@ -139,6 +140,34 @@ export const BUCKETS_CANDIDATO = ["curriculos-candidatos", "fotos-candidatos"] a
 /** Pasta dos anexos manuais da equipe (bucket curriculos-candidatos). Nome:
  * <candidaturaId>__<timestamp>__<arquivo>. */
 export const PASTA_ANEXOS_EQUIPE = "anexos-equipe";
+
+/** Tipos de documento anexados pela equipe no perfil do candidato — só no
+ * CRM (Wilson, 15/out/2026). A chave vai no nome do arquivo no storage:
+ * <candidaturaId>__<timestamp>__<tipo>__<arquivo>. */
+export const TIPOS_DOCUMENTO_CANDIDATO = [
+  { key: "foto-frente", label: "Foto de frente" },
+  { key: "foto-lado", label: "Foto de lado" },
+  { key: "koseki-tohon", label: "Koseki Tohon" },
+  { key: "coe", label: "Certificado de Elegibilidade" },
+  { key: "zairyu-card", label: "Zairyu Card" },
+  { key: "re-entry", label: "Re-entry" },
+  { key: "tatuagem-rosto", label: "Tatuagem — rosto" },
+  { key: "tatuagem-pescoco", label: "Tatuagem — pescoço" },
+  { key: "tatuagem-mao", label: "Tatuagem — mão" },
+  { key: "tatuagem-outra", label: "Outra tatuagem visível" },
+  { key: "aprovacao-empreiteira", label: "E-mail de aprovação da empreiteira" },
+  { key: "passaporte", label: "Passaporte" },
+  { key: "rg", label: "RG" },
+  { key: "visto", label: "Visto" },
+  { key: "e-ticket", label: "E-ticket / reserva aérea" },
+  { key: "seguro-viagem", label: "Seguro viagem" },
+  { key: "pedido-financiamento", label: "Pedido de financiamento" },
+  { key: "teste-fujiarte", label: "Teste da Fujiarte" },
+  { key: "autopercepcao-suriemu", label: "Teste de autopercepção (Suri-Emu)" },
+  { key: "termos-suriemu", label: "Declaração de termos (Suri-Emu)" },
+  { key: "outros", label: "Outros" },
+] as const;
+export type TipoDocumentoCandidato = (typeof TIPOS_DOCUMENTO_CANDIDATO)[number]["key"];
 export function urlArquivoCandidato(bucket: (typeof BUCKETS_CANDIDATO)[number], path: string) {
   return `/crm/empregos/arquivo?bucket=${encodeURIComponent(bucket)}&path=${encodeURIComponent(path)}`;
 }
@@ -165,11 +194,21 @@ export function progressoCandidatura(
     ficha_enviada_em?: string | null;
     foto_path?: string | null;
     proposta_status?: string | null;
+    andamento_manual?: unknown;
   },
   entrevistaInicio?: string | null,
 ): ProgressoCandidatura {
-  if (!fichaLiberada(c)) return { etapa: 1, label: "Etapa 1 — em análise", cor: "#8a8a8a" };
-  const proxima = proximaEtapa({ vaga_id: c.vaga_id, ficha_enviada_em: c.ficha_enviada_em, foto_path: c.foto_path, proposta_status: c.proposta_status });
+  // Etapas marcadas à mão no CRM (migração 020) — a mais avançada vence.
+  const manual = lerAndamentoManual(c.andamento_manual).etapas;
+  const posterior = (["inicio", "embarque", "documentacao", "entrevistaFinal", "empreiteira", "preEntrevista"] as const).find((k) => manual[k]);
+  if (posterior) return { etapa: 5, label: ETAPAS_MANUAIS.find((e) => e.id === posterior)!.label, cor: "#2f7a52" };
+  if (!fichaLiberada(c) && !manual.ficha) return { etapa: 1, label: "Etapa 1 — em análise", cor: "#8a8a8a" };
+  const proxima = proximaEtapa({
+    vaga_id: c.vaga_id,
+    ficha_enviada_em: c.ficha_enviada_em ?? manual.ficha?.em ?? null,
+    foto_path: c.foto_path ?? (manual.ficha ? "manual" : null),
+    proposta_status: manual.proposta ? "aceita" : c.proposta_status,
+  });
   if (proxima === "ficha") return { etapa: 2, label: c.ficha_enviada_em ? "Etapa 2 — falta a foto" : "Etapa 2 — aguardando ficha", cor: "#2f5aa8" };
   if (proxima === "proposta")
     return {

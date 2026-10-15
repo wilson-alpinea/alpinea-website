@@ -11,7 +11,7 @@
 export type EtapaPrazo = "etapa1" | "etapa2" | "etapa3" | "etapa4" | "agendado";
 
 export type PassoPrazo = {
-  id: EtapaPrazo | "empreiteira" | "entrevistaFinal" | "certificado" | "visto" | "embarque";
+  id: EtapaPrazo | "empreiteira" | "entrevistaFinal" | "documentacao" | "embarque" | "inicio";
   titulo: string;
   /** Nome curto para a linha do tempo horizontal (08/out/2026). */
   curto: string;
@@ -20,6 +20,8 @@ export type PassoPrazo = {
   prazo: string;
   detalhe?: string;
   opcional?: boolean;
+  /** Só aparece para quem NÃO tem Re-Entry válido. */
+  soSemReEntry?: boolean;
 };
 
 export const PASSOS_PRAZO: PassoPrazo[] = [
@@ -38,7 +40,7 @@ export const PASSOS_PRAZO: PassoPrazo[] = [
   {
     id: "empreiteira",
     titulo: "Apresentação e análise pela empreiteira",
-    curto: "Análise da empresa",
+    curto: "Análise da empreiteira",
     sla: "Até 3 semanas",
     prazo: "Até ~3 semanas após a pré-entrevista",
     detalhe: "Apresentamos seu perfil à empreiteira, que analisa e agenda a entrevista final diretamente com você.",
@@ -52,24 +54,39 @@ export const PASSOS_PRAZO: PassoPrazo[] = [
     detalhe: "A empreiteira dá o parecer final sobre a contratação.",
   },
   {
-    id: "certificado",
-    titulo: "Certificado de Elegibilidade",
-    curto: "Certificado (COE)",
+    // Certificado (COE) + visto viram uma etapa só — Wilson, 15/out/2026:
+    // "~3 meses, chamada Documentação; só aparece para quem não tem
+    // Re-Entry" (quem tem Re-Entry válido já tem a documentação).
+    id: "documentacao",
+    titulo: "Documentação — Certificado de Elegibilidade (COE) e visto",
+    curto: "Documentação",
     sla: "~3 meses",
     prazo: "~3 meses",
-    detalhe: "Emitido pela ISA (Imigração do Japão). É obrigatório para pedir o visto.",
-  },
-  {
-    id: "visto",
-    titulo: "Visto",
-    curto: "Visto",
-    sla: "~4 meses",
-    prazo: "~4 meses após a documentação completa",
-    detalhe:
-      "Só damos entrada no consulado/embaixada do Japão depois de emitido o Certificado de Elegibilidade. O consulado exige pelo menos 3 meses.",
+    detalhe: "Cuidamos do Certificado de Elegibilidade e do visto. Só para quem ainda não tem Re-Entry válido.",
+    soSemReEntry: true,
   },
   { id: "embarque", titulo: "Embarque para o Japão", curto: "Embarque", sla: "Data com a empresa", prazo: "Data combinada com a empresa" },
+  {
+    // Etapa final — Wilson, 15/out/2026.
+    id: "inicio",
+    titulo: "Início das atividades e acompanhamento final",
+    curto: "Início das atividades",
+    sla: "Acompanhamento",
+    prazo: "Logo após a chegada ao Japão",
+    detalhe: "Acompanhamos sua chegada, a moradia e os primeiros dias de trabalho na fábrica.",
+  },
 ];
 
 export const AVISO_PRAZOS =
-  "Prazos médios — podem variar conforme a empresa e os órgãos japoneses. Se você já tem visto válido para trabalhar no Japão, as etapas de certificado e visto não se aplicam.";
+  "Prazos médios — podem variar conforme a empreiteira e os órgãos japoneses. Quem já tem Re-Entry válido pula a etapa de documentação.";
+
+/** Passos visíveis para o candidato: sem financiamento quando a vaga não
+ *  pede e sem documentação quando ele já tem Re-Entry válido. */
+/** Candidatura respondeu que tem Re-Entry válido (etapa 1). */
+export function candidatoTemReEntry(c: { respostas?: unknown } | null | undefined) {
+  return ((c?.respostas ?? {}) as { reEntry?: string }).reEntry === "sim";
+}
+
+export function passosVisiveis(opts: { semEtapa3?: boolean; temReEntry?: boolean } = {}) {
+  return PASSOS_PRAZO.filter((p) => !(opts.semEtapa3 && p.id === "etapa3") && !(opts.temReEntry && p.soSemReEntry));
+}

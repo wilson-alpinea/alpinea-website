@@ -1,4 +1,4 @@
-import { AVISO_PRAZOS, PASSOS_PRAZO, type EtapaPrazo } from "@/app/lib/prazosCandidatura";
+import { AVISO_PRAZOS, passosVisiveis, type EtapaPrazo } from "@/app/lib/prazosCandidatura";
 
 // Linha do tempo do processo seletivo — Wilson, 08/out/2026: "transformar
 // em menu horizontal, mais simples, deixar claro SLA e tempo entre cada
@@ -10,14 +10,17 @@ import { AVISO_PRAZOS, PASSOS_PRAZO, type EtapaPrazo } from "@/app/lib/prazosCan
 export default function PrazosProcesso({
   atual,
   semEtapa3 = false,
+  temReEntry = false,
   className = "",
 }: {
   atual: EtapaPrazo;
   aberto?: boolean;
   semEtapa3?: boolean;
+  /** Candidato com Re-Entry válido não vê a etapa de documentação. */
+  temReEntry?: boolean;
   className?: string;
 }) {
-  const passos = PASSOS_PRAZO.filter((p) => !(semEtapa3 && p.id === "etapa3"));
+  const passos = passosVisiveis({ semEtapa3, temReEntry });
   const idxAtual = atual === "agendado" ? passos.findIndex((p) => p.id === "etapa4") + 1 : passos.findIndex((p) => p.id === atual);
 
   return (
@@ -64,7 +67,7 @@ export default function PrazosProcesso({
       </div>
       <p className="border-t border-black/[0.06] px-4 py-2.5 text-[11px] leading-4 text-black/40">
         {!semEtapa3 && "* Financiamento só quando a empresa não custeia visto, certificado e passagem. "}
-        {AVISO_PRAZOS}
+        {temReEntry ? "Prazos médios — podem variar conforme a empreiteira." : AVISO_PRAZOS}
       </p>
     </section>
   );

@@ -3,9 +3,10 @@ import { EMAIL_EQUIPE_EMPREGOS } from "@/lib/empregos/emailEquipe";
 import { createAdminClient } from "../../../lib/supabase/admin";
 import { carregarCandidaturaPublica } from "../../../lib/empregos/candidaturaPublica";
 import { horariosDisponiveis } from "../../../lib/empregos/agendaServidor";
-import { proximaEtapa } from "../../lib/etapasCandidatura";
+import { proximaEtapa, vagaPrecisaProposta } from "../../lib/etapasCandidatura";
 import { formatarDataHoraBrasilia } from "../../lib/agendaEntrevista";
-import { AVISO_PRAZOS, PASSOS_PRAZO } from "../../lib/prazosCandidatura";
+import { AVISO_PRAZOS, candidatoTemReEntry, passosVisiveis } from "../../lib/prazosCandidatura";
+import { emailClienteHtml, emailClienteTexto, type EmailClienteParams } from "../../../lib/email/templateCliente";
 
 export const runtime = "nodejs";
 
@@ -13,13 +14,13 @@ export const runtime = "nodejs";
 // 06/out/2026). O horário é reconferido contra a agenda do CRM aqui no
 // servidor; escolher de novo remarca (o agendamento anterior é cancelado).
 
-async function enviarEmail(para: string, assunto: string, texto: string, replyTo?: string) {
+async function enviarEmail(para: string, assunto: string, texto: string, replyTo?: string, html?: string) {
   const apiKey = process.env.RESEND_API_KEY;
   if (!apiKey) return;
   await fetch("https://api.resend.com/emails", {
     method: "POST",
     headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
-    body: JSON.stringify({ from: "Ajisai Empregos <contato@alpinea.io>", to: [para], reply_to: replyTo, subject: assunto, text: texto }),
+    body: JSON.stringify({ from: "Ajisai Empregos <contato@alpinea.io>", to: [para], reply_to: replyTo, subject: assunto, text: texto, ...(html ? { html } : {}) }),
   }).catch((e) => console.error("Erro Resend (agendamento):", e));
 }
 
@@ -57,21 +58,34 @@ export async function POST(req: Request) {
       [`Candidato: ${c.nome} ${c.sobrenome} — ${c.email} — ${c.telefone}`, `Vaga: ${c.vaga_titulo} — ${c.vaga_empresa}`, `Quando: ${quando} (Brasília)`].join("\n"),
       c.email,
     );
+    // E-mail ao candidato no mesmo modelo visual dos e-mails do JR Pass
+    // (linha do tempo + WhatsApp) — Wilson, 15/out/2026.
+    const temReEntry = candidatoTemReEntry(c);
+    const passos = passosVisiveis({ semEtapa3: !vagaPrecisaProposta(c.vaga_id), temReEntry });
+    const emailCandidato: EmailClienteParams = {
+      nome: c.nome,
+      marca: "Empregos no Japão",
+      rotuloAndamento: "Andamento da sua candidatura",
+      titulo: "Sua pré-entrevista está agendada",
+      intro: `Sua pré-entrevista para a vaga ${c.vaga_titulo} (${c.vaga_empresa}) está marcada. A conversa é online, com a equipe Ajisai.`,
+      status: "Pré-entrevista agendada",
+      etapaAtual: passos.findIndex((p) => p.id === "etapa4"),
+      etapas: passos.map((p) => ({ titulo: p.curto, texto: [p.prazo, p.detalhe].filter(Boolean).join(" — ") })),
+      resumo: [
+        ["Quando", `${quando} (horário de Brasília)`],
+        ["Vaga", `${c.vaga_titulo} — ${c.vaga_empresa}`],
+        ["Reunião", config.link_reuniao || "Enviaremos o link antes do horário"],
+      ],
+      aviso: temReEntry ? "Prazos médios — podem variar conforme a empreiteira." : AVISO_PRAZOS,
+      extras: ["Se precisar remarcar, use o mesmo link da sua candidatura ou fale com a equipe Ajisai pelo WhatsApp."],
+      mensagemWhatsapp: `Olá! Sou ${c.nome} ${c.sobrenome} e agendei a pré-entrevista para a vaga ${c.vaga_titulo}.`,
+    };
     await enviarEmail(
       c.email,
       "Sua pré-entrevista está agendada — Ajisai Empregos",
-      [
-        `Olá, ${c.nome}!`,
-        "",
-        `Sua pré-entrevista para a vaga ${c.vaga_titulo} (${c.vaga_empresa}) está marcada para ${quando}, horário de Brasília.`,
-        config.link_reuniao ? `Link da reunião: ${config.link_reuniao}` : "Enviaremos o link da reunião antes do horário.",
-        "",
-        "Próximos passos (prazos médios):",
-        ...PASSOS_PRAZO.slice(PASSOS_PRAZO.findIndex((p) => p.id === "empreiteira")).map((p) => `- ${p.titulo}: ${p.prazo}`),
-        AVISO_PRAZOS,
-        "",
-        "Se precisar remarcar, use o mesmo link da sua candidatura ou fale com a equipe Ajisai pelo WhatsApp +55 (11) 93030-0101.",
-      ].join("\n"),
+      emailClienteTexto(emailCandidato),
+      undefined,
+      emailClienteHtml(emailCandidato),
     );
 
     return NextResponse.json({ sucesso: true, inicio: escolhido.inicio, linkReuniao: config.link_reuniao });

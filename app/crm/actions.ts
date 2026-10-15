@@ -10,6 +10,7 @@ import { isProdutoPrincipal, isProdutoSecundario } from "@/lib/crm/produtos";
 import { isTipoArquivo, TIPO_ARQUIVO_LABEL } from "@/lib/crm/arquivos";
 import { isCategoriaFornecedor } from "@/lib/crm/fornecedores";
 import { isTipoPagamento, isStatusPagamento } from "@/lib/crm/pagamentos";
+import { lerAndamentoManual, isEtapaManual } from "@/lib/crm/andamentoManual";
 
 export async function logout() {
   const supabase = await createClient();
@@ -512,7 +513,9 @@ export async function atualizarCandidatura(candidaturaId: string, formData: Form
     observacoes_equipe: observacoes || null,
     updated_at: new Date().toISOString(),
   };
-  if (isClassificacao(classificacao)) update.classificacao = classificacao;
+  // A classificação agora só muda por reclassificarCandidatura (com registro
+  // de quem/quando/motivo). Mantido por compatibilidade com formulários antigos.
+  if (isClassificacao(classificacao) && formData.get("permitir_classificacao") === "1") update.classificacao = classificacao;
   if (isStatusCandidatura(status)) update.status = status;
 
   const { error } = await supabase.from("candidaturas_vagas").update(update).eq("id", candidaturaId);
@@ -669,4 +672,90 @@ export async function definirVagasAtivas(vagaIds: string[], ativa: boolean): Pro
   revalidatePath("/empregos", "layout");
   revalidatePath("/crm/empregos/vagas");
   return { ok: true };
+}
+
+// ── Andamento manual da candidatura (Wilson, 15/out/2026) ─────────────
+// Avançar etapa e/ou comentar — grava em candidaturas_vagas.andamento_manual
+// (migração 020) com data e e-mail de quem fez.
+export async function registrarAndamentoCandidatura(candidaturaId: string, formData: FormData) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  const por = user?.email ?? "equipe";
+  const etapa = String(formData.get("etapa") ?? "");
+  const texto = String(formData.get("comentario") ?? "").trim().slice(0, 2000);
+  const voltar = (erro?: string) => redirect(`/crm/empregos/${candidaturaId}${erro ? `?erro=${encodeURIComponent(erro)}` : "?salvo=1"}`);
+  if (!etapa && !texto) voltar("Escolha uma etapa ou escreva um comentário.");
+
+  const { data: c, error: erroBusca } = await supabase.from("candidaturas_vagas").select("andamento_manual").eq("id", candidaturaId).maybeSingle();
+  if (erroBusca || !c) {
+    console.error("Erro ao ler andamento:", erroBusca);
+    voltar("Não foi possível salvar. A migração 020 (andamento_manual) já rodou no Supabase?");
+  }
+  const andamento = lerAndamentoManual(c?.andamento_manual);
+  const agora = new Date().toISOString();
+  if (etapa) {
+    if (!isEtapaManual(etapa)) voltar("Etapa inválida.");
+    else andamento.etapas[etapa] = { em: agora, por, ...(texto ? { comentario: texto } : {}) };
+  }
+  if (texto) andamento.comentarios.push({ em: agora, por, texto, ...(etapa && isEtapaManual(etapa) ? { etapa } : {}) });
+
+  const { error } = await supabase
+    .from("candidaturas_vagas")
+    .update({ andamento_manual: andamento, updated_at: agora })
+    .eq("id", candidaturaId);
+  if (error) {
+    console.error("Erro ao salvar andamento:", error);
+    voltar("Não foi possível salvar. A migração 020 (andamento_manual) já rodou no Supabase?");
+  }
+  revalidatePath(`/crm/empregos/${candidaturaId}`);
+  revalidatePath("/crm/empregos");
+  voltar();
+}
+
+// Reclassificação manual aprovado ⇄ eliminado (Wilson, 15/out/2026: "deixar
+// claro que foi feito manualmente e email de quem fez a alteração, data e
+// hora"). Registra em andamento_manual.reclassificacoes.
+export async function reclassificarCandidatura(candidaturaId: string, formData: FormData) {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  const por = user?.email ?? "equipe";
+  const para = String(formData.get("para") ?? "");
+  const motivo = String(formData.get("motivo") ?? "").trim().slice(0, 1000);
+  const voltar = (erro?: string) => redirect(`/crm/empregos/${candidaturaId}${erro ? `?erro=${encodeURIComponent(erro)}` : "?salvo=1"}`);
+  if (para !== "aprovado" && para !== "eliminado") voltar("Escolha aprovado ou eliminado.");
+  if (!motivo) voltar("Escreva o motivo da reclassificação.");
+
+  const { data: c, error: erroBusca } = await supabase
+    .from("candidaturas_vagas")
+    .select("classificacao, pontuacao, andamento_manual")
+    .eq("id", candidaturaId)
+    .maybeSingle();
+  if (erroBusca || !c) {
+    console.error("Erro ao ler candidatura:", erroBusca);
+    voltar("Não foi possível salvar. A migração 020 (andamento_manual) já rodou no Supabase?");
+  }
+  const novaClassificacao = para === "eliminado" ? "eliminado" : (c?.pontuacao ?? 0) >= 80 ? "aprovado_alto" : "aprovado_baixo";
+  if (c?.classificacao === novaClassificacao) voltar("O candidato já está nessa classificação.");
+
+  const andamento = lerAndamentoManual(c?.andamento_manual);
+  const agora = new Date().toISOString();
+  const rotulo = para === "eliminado" ? "Eliminado" : "Aprovado";
+  andamento.reclassificacoes.push({ em: agora, por, de: String(c?.classificacao ?? ""), para: novaClassificacao, motivo });
+  andamento.comentarios.push({ em: agora, por, texto: `Reclassificado manualmente para ${rotulo}. Motivo: ${motivo}` });
+
+  const { error } = await supabase
+    .from("candidaturas_vagas")
+    .update({ classificacao: novaClassificacao, andamento_manual: andamento, updated_at: agora })
+    .eq("id", candidaturaId);
+  if (error) {
+    console.error("Erro ao reclassificar:", error);
+    voltar("Não foi possível salvar. A migração 020 (andamento_manual) já rodou no Supabase?");
+  }
+  revalidatePath(`/crm/empregos/${candidaturaId}`);
+  revalidatePath("/crm/empregos");
+  voltar();
 }

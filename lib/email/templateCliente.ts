@@ -34,6 +34,10 @@ export type EmailClienteParams = {
   extras?: string[];
   /** Mensagem pré-preenchida do botão de WhatsApp. */
   mensagemWhatsapp?: string;
+  /** Linha abaixo de AJISAI no topo (padrão: "Viagens ao Japão"). */
+  marca?: string;
+  /** Título da linha do tempo (padrão: "Andamento do seu pedido"). */
+  rotuloAndamento?: string;
 };
 
 function esc(v: unknown) {
@@ -107,7 +111,7 @@ export function emailClienteHtml(p: EmailClienteParams): string {
   <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:600px;background:#ffffff;border-radius:16px;overflow:hidden;">
     <tr><td style="background:${AZUL_MARINHO};padding:22px 28px;">
       <div style="font-family:Georgia,'Times New Roman',serif;font-size:24px;letter-spacing:0.08em;color:#ffffff;">AJISAI</div>
-      <div style="margin-top:2px;font-family:Arial,sans-serif;font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:#9fc3e6;">Viagens ao Japão</div>
+      <div style="margin-top:2px;font-family:Arial,sans-serif;font-size:11px;letter-spacing:0.2em;text-transform:uppercase;color:#9fc3e6;">${esc(p.marca ?? "Viagens ao Japão")}</div>
     </td></tr>
     <tr><td style="padding:28px 28px 8px 28px;">
       <div style="display:inline-block;padding:6px 12px;border-radius:999px;background:#e0efff;font-family:Arial,sans-serif;font-size:12px;font-weight:bold;color:${AZUL};">&#9679;&nbsp; ${esc(p.status)}</div>
@@ -115,7 +119,7 @@ export function emailClienteHtml(p: EmailClienteParams): string {
       <p style="margin:0 0 6px 0;font-family:Arial,sans-serif;font-size:14px;line-height:1.6;color:#334155;">Olá, ${esc(p.nome)}!</p>
       <p style="margin:0 0 24px 0;font-family:Arial,sans-serif;font-size:14px;line-height:1.6;color:#334155;">${esc(p.intro)}</p>
       ${resumo}
-      <div style="margin:0 0 14px 0;font-family:Arial,sans-serif;font-size:11px;font-weight:bold;letter-spacing:0.14em;text-transform:uppercase;color:#64748b;">Andamento do seu pedido</div>
+      <div style="margin:0 0 14px 0;font-family:Arial,sans-serif;font-size:11px;font-weight:bold;letter-spacing:0.14em;text-transform:uppercase;color:#64748b;">${esc(p.rotuloAndamento ?? "Andamento do seu pedido")}</div>
       <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:0 0 24px 0;">${linhaDoTempo(p.etapas, p.etapaAtual)}</table>
       ${aviso}
       ${extras}
@@ -146,7 +150,7 @@ export function emailClienteTexto(p: EmailClienteParams): string {
     p.intro,
     "",
     ...(p.resumo?.length ? [...p.resumo.map(([r, v]) => `${r}: ${v}`), ""] : []),
-    "Andamento do seu pedido:",
+    `${p.rotuloAndamento ?? "Andamento do seu pedido"}:`,
     ...p.etapas.map((e, i) => {
       const marca = i < p.etapaAtual ? "[✓]" : i === p.etapaAtual ? "[>> VOCÊ ESTÁ AQUI]" : "[ ]";
       return `${marca} ${i + 1}. ${e.titulo}${e.texto ? ` — ${e.texto}` : ""}`;

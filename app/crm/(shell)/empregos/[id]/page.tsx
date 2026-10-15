@@ -4,7 +4,8 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { atualizarCandidatura, liberarFichaCandidatura } from "@/app/crm/actions";
+import { atualizarCandidatura, liberarFichaCandidatura, reclassificarCandidatura, registrarAndamentoCandidatura } from "@/app/crm/actions";
+import { ETAPAS_MANUAIS, dataHoraSP, lerAndamentoManual, type EtapaManualId } from "@/lib/crm/andamentoManual";
 import { fichaLiberada, linhasFicha, type FichaCadastral } from "@/app/lib/fichaCadastral";
 import {
   CLASSIFICACOES,
@@ -14,6 +15,7 @@ import {
   linhasTriagemBasica,
   urlArquivoCandidato,
   PASTA_ANEXOS_EQUIPE,
+  TIPOS_DOCUMENTO_CANDIDATO,
   progressoCandidatura,
 } from "@/lib/crm/empregos";
 import { MODELOS_APRESENTACAO } from "@/lib/empregos/apresentacaoPdf";
@@ -69,10 +71,17 @@ export default async function CandidatoPage({
   const { data: anexosEquipe } = await createAdminClient()
     .storage.from("curriculos-candidatos")
     .list(PASTA_ANEXOS_EQUIPE, { search: `${id}__`, limit: 100, sortBy: { column: "created_at", order: "asc" } });
+  // Documentos anexados pela equipe, agrupados pelo tipo escolhido no menu.
+  const documentos: { tipo: string; nome: string; href: string }[] = [];
   for (const a of anexosEquipe ?? []) {
     if (!a.name.startsWith(`${id}__`)) continue;
-    const nome = a.name.split("__").slice(2).join("__") || a.name;
-    arquivos.push({ label: `${nome} · anexado pela equipe`, href: urlArquivoCandidato("curriculos-candidatos", `${PASTA_ANEXOS_EQUIPE}/${a.name}`) });
+    const partes = a.name.split("__");
+    const temTipo = partes.length >= 4 && TIPOS_DOCUMENTO_CANDIDATO.some((t) => t.key === partes[2]);
+    documentos.push({
+      tipo: temTipo ? partes[2] : "outros",
+      nome: (temTipo ? partes.slice(3) : partes.slice(2)).join("__") || a.name,
+      href: urlArquivoCandidato("curriculos-candidatos", `${PASTA_ANEXOS_EQUIPE}/${a.name}`),
+    });
   }
 
   const salvar = atualizarCandidatura.bind(null, id);
@@ -92,7 +101,7 @@ export default async function CandidatoPage({
   const proposta = (c.proposta_financiamento ?? null) as Proposta | null;
   const dataCurta = (iso?: string | null) =>
     iso ? new Date(iso).toLocaleString("pt-BR", { timeZone: "America/Sao_Paulo", day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" }) : null;
-  const linhaTempo: { label: string; quando: string | null; ok: boolean }[] = [
+  const linhaTempoAuto: { label: string; quando: string | null; ok: boolean; id?: EtapaManualId }[] = [
     { label: "Etapa 1 — candidatura e triagem", quando: dataCurta(c.created_at), ok: true },
     ...(vagaExigeTestesAptidao(c.vaga_id)
       ? [
@@ -103,10 +112,11 @@ export default async function CandidatoPage({
           },
         ]
       : []),
-    { label: "Etapa 2 — ficha cadastral + foto", quando: dataCurta(c.ficha_enviada_em), ok: Boolean(c.ficha_enviada_em && c.foto_path) },
+    { id: "ficha", label: "Etapa 2 — ficha cadastral + foto", quando: dataCurta(c.ficha_enviada_em), ok: Boolean(c.ficha_enviada_em && c.foto_path) },
     ...(vagaPrecisaProposta(c.vaga_id)
       ? [
           {
+            id: "proposta" as const,
             label: `Etapa 3 — proposta${c.proposta_status === "falar_ajisai" ? " (pediu para falar com a Ajisai)" : ""}`,
             quando: dataCurta(c.proposta_respondida_em),
             ok: c.proposta_status === "aceita",
@@ -114,11 +124,29 @@ export default async function CandidatoPage({
         ]
       : []),
     {
+      id: "preEntrevista",
       label: `Etapa 4 — pré-entrevista${entrevista && entrevista.status !== "agendada" ? ` (${entrevista.status})` : ""}`,
       quando: dataCurta(entrevista?.inicio),
       ok: Boolean(entrevista && entrevista.status !== "cancelada"),
     },
   ];
+  // Andamento manual (Wilson, 15/out/2026): o operador marca etapas — as
+  // automáticas acima e as posteriores (empreiteira, COE, visto, embarque).
+  const andamento = lerAndamentoManual(c.andamento_manual);
+  // Documentação (COE + visto) só para quem não tem Re-Entry válido.
+  const etapasPosteriores: EtapaManualId[] = ["empreiteira", "entrevistaFinal", ...(respostas.reEntry === "sim" ? [] : (["documentacao"] as const)), "embarque", "inicio"];
+  const linhaTempo = [
+    ...linhaTempoAuto,
+    ...etapasPosteriores.map((eid) => ({ id: eid, label: ETAPAS_MANUAIS.find((e) => e.id === eid)!.label, quando: null as string | null, ok: false })),
+  ].map((e) => {
+    const manual = e.id ? andamento.etapas[e.id] : undefined;
+    return manual && !e.ok ? { ...e, ok: true, quando: dataCurta(manual.em), manual } : { ...e, manual: undefined };
+  });
+  const etapasPendentes = linhaTempo.filter((e) => e.id && !e.ok);
+  const registrarAndamento = registrarAndamentoCandidatura.bind(null, id);
+  const reclassificar = reclassificarCandidatura.bind(null, id);
+  const reclassificacao = andamento.reclassificacoes.at(-1);
+  const eliminadoAgora = classificacao === "eliminado";
   const alternarLiberacao = liberarFichaCandidatura.bind(null, id, !c.ficha_liberada);
 
   return (
@@ -132,6 +160,11 @@ export default async function CandidatoPage({
           <span className="inline-block rounded-full px-3 py-1 text-xs font-medium" style={{ background: tipo.fundo, color: tipo.cor }}>
             {tipo.label}
           </span>
+          {reclassificacao && (
+            <span className="ml-2 inline-block rounded-full border border-[#b7791f]/40 bg-[#b7791f]/10 px-3 py-1 text-xs font-medium text-[#8a5a12]">
+              Reclassificado manualmente por {reclassificacao.por} em {dataHoraSP(reclassificacao.em)}
+            </span>
+          )}
           <h1 className={`${display.className} mt-3 text-3xl font-medium text-black md:text-4xl`}>
             {c.nome} {c.sobrenome}
           </h1>
@@ -335,6 +368,7 @@ export default async function CandidatoPage({
                   <span>
                     <span className={e.ok ? "text-black/80" : "text-black/45"}>{e.label}</span>
                     {e.quando && <span className="block text-black/40">{e.quando}</span>}
+                    {e.manual && <span className="block text-[11px] text-black/40">marcado por {e.manual.por}</span>}
                   </span>
                 </li>
               ))}
@@ -343,6 +377,47 @@ export default async function CandidatoPage({
               <Link href="/crm/empregos/agenda" className="mt-4 block text-xs text-[#1C3A5E] underline">
                 Ver na agenda
               </Link>
+            )}
+
+            {/* Avançar etapa manualmente + comentário (Wilson, 15/out/2026). */}
+            <form action={registrarAndamento} className="mt-4 space-y-2 border-t border-black/10 pt-4">
+              <label className="text-[11px] uppercase tracking-[0.12em] text-black/40" htmlFor="etapa-manual">
+                Avançar candidato
+              </label>
+              <select id="etapa-manual" name="etapa" defaultValue="" className="w-full rounded-lg border border-black/10 bg-white px-3 py-2 text-sm text-black outline-none focus:border-[#1C3A5E]">
+                <option value="">Só comentar (sem avançar)</option>
+                {etapasPendentes.map((e) => (
+                  <option key={e.id} value={e.id}>
+                    Marcar: {e.label}
+                  </option>
+                ))}
+              </select>
+              <textarea
+                name="comentario"
+                rows={3}
+                placeholder="Comentário (opcional ao avançar)"
+                className="w-full rounded-lg border border-black/10 px-3 py-2 text-sm text-black outline-none focus:border-[#1C3A5E]"
+              />
+              <button type="submit" className="w-full rounded-xl bg-[#1C3A5E] px-4 py-2 text-sm font-medium text-white hover:bg-[#1C3A5E]/90">
+                Salvar
+              </button>
+            </form>
+
+            {andamento.comentarios.length > 0 && (
+              <div className="mt-4 border-t border-black/10 pt-4">
+                <p className="text-[11px] uppercase tracking-[0.12em] text-black/40">Comentários</p>
+                <ul className="mt-2 space-y-3">
+                  {[...andamento.comentarios].reverse().map((cm, i) => (
+                    <li key={`${cm.em}-${i}`} className="text-xs">
+                      <p className="whitespace-pre-wrap text-black/75">{cm.texto}</p>
+                      <p className="mt-0.5 text-[11px] text-black/40">
+                        {dataCurta(cm.em)} · {cm.por}
+                        {cm.etapa ? ` · ${ETAPAS_MANUAIS.find((x) => x.id === cm.etapa)?.label ?? ""}` : ""}
+                      </p>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             )}
           </section>
 
@@ -423,18 +498,49 @@ export default async function CandidatoPage({
               </form>
             )}
           </section>
+          {/* Reclassificação manual aprovado ⇄ eliminado, sempre registrada
+              com e-mail do operador, data/hora e motivo (Wilson, 15/out/2026). */}
+          <section className="rounded-2xl border border-black/10 bg-white p-5">
+            <h2 className="text-sm font-medium text-black">Reclassificar candidato</h2>
+            <p className="mt-1 text-xs text-black/50">
+              Classificação atual: <strong style={{ color: tipo.cor }}>{tipo.label}</strong>
+              {reclassificacao ? " (manual)" : " (automática pelo questionário)"}
+            </p>
+            {andamento.reclassificacoes.length > 0 && (
+              <ul className="mt-3 space-y-2 border-l-2 border-[#b7791f]/40 pl-3 text-xs">
+                {[...andamento.reclassificacoes].reverse().map((r, i) => (
+                  <li key={i}>
+                    <p className="font-medium text-black/80">
+                      {r.para === "eliminado" ? "Eliminado" : "Aprovado"} manualmente
+                    </p>
+                    <p className="text-black/50">
+                      {r.por} · {dataHoraSP(r.em)}
+                    </p>
+                    <p className="text-black/60">Motivo: {r.motivo}</p>
+                  </li>
+                ))}
+              </ul>
+            )}
+            <form action={reclassificar} className="mt-3 space-y-2">
+              <input type="hidden" name="para" value={eliminadoAgora ? "aprovado" : "eliminado"} />
+              <textarea
+                name="motivo"
+                required
+                rows={2}
+                placeholder="Motivo (obrigatório)"
+                className="w-full rounded-xl border border-black/10 px-3 py-2 text-sm text-black outline-none focus:border-[#1C3A5E]"
+              />
+              <button
+                type="submit"
+                className={`w-full rounded-xl px-4 py-2 text-sm font-medium text-white ${eliminadoAgora ? "bg-[#2f7a52]" : "bg-[#b23b3b]"}`}
+              >
+                {eliminadoAgora ? "Reclassificar como aprovado" : "Reclassificar como eliminado"}
+              </button>
+              <p className="text-[11px] text-black/40">Fica registrado como alteração manual, com seu e-mail, data e hora.</p>
+            </form>
+          </section>
           <form action={salvar} className="space-y-4 rounded-2xl border border-black/10 bg-white p-5">
             <h2 className="text-sm font-medium text-black">Decisão da equipe</h2>
-            <label className="block text-xs text-black/50">
-              Tipo de candidato
-              <select name="classificacao" defaultValue={classificacao} className="mt-1 w-full rounded-xl border border-black/10 bg-white px-3 py-2 text-sm text-black">
-                {CLASSIFICACOES.map((x) => (
-                  <option key={x.valor} value={x.valor}>
-                    {x.label}
-                  </option>
-                ))}
-              </select>
-            </label>
             <label className="block text-xs text-black/50">
               Status
               <select name="status" defaultValue={c.status} className="mt-1 w-full rounded-xl border border-black/10 bg-white px-3 py-2 text-sm text-black">
@@ -474,16 +580,54 @@ export default async function CandidatoPage({
                 ))}
               </ul>
             )}
-            {/* Anexo manual pelo operador do CRM (Wilson, 15/out/2026). */}
+          </section>
+
+          {/* Documentos do candidato — lista só do CRM, com o que já foi
+              anexado pela equipe e o que falta (Wilson, 15/out/2026). */}
+          <section className="rounded-2xl border border-black/10 bg-white p-5">
+            <h2 className="text-sm font-medium text-black">Documentos</h2>
+            <ul className="mt-3 divide-y divide-black/[0.06] text-sm">
+              {TIPOS_DOCUMENTO_CANDIDATO.filter((t) => t.key !== "outros" || documentos.some((d) => d.tipo === "outros")).map((t) => {
+                const docs = documentos.filter((d) => d.tipo === t.key);
+                return (
+                  <li key={t.key} className="flex items-start gap-2 py-2">
+                    <span className={`mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full text-[10px] ${docs.length ? "bg-emerald-600 text-white" : "border border-black/20"}`}>
+                      {docs.length ? "✓" : ""}
+                    </span>
+                    <div className="min-w-0">
+                      <p className={docs.length ? "text-black/80" : "text-black/45"}>{t.label}</p>
+                      {docs.map((d) => (
+                        <a key={d.href} href={d.href} target="_blank" rel="noopener noreferrer" className="block truncate text-xs text-[#1C3A5E] underline underline-offset-2">
+                          {d.nome}
+                        </a>
+                      ))}
+                    </div>
+                  </li>
+                );
+              })}
+            </ul>
+
             <form action="/crm/empregos/anexo" method="post" encType="multipart/form-data" className="mt-4 border-t border-black/10 pt-4">
               <input type="hidden" name="candidaturaId" value={id} />
-              <label className="text-[11px] uppercase tracking-[0.12em] text-black/40">Anexar arquivo</label>
+              <label className="text-[11px] uppercase tracking-[0.12em] text-black/40" htmlFor="tipo-doc">
+                Tipo de documento
+              </label>
+              <select id="tipo-doc" name="tipo" required defaultValue="" className="mt-1 w-full rounded-lg border border-black/10 bg-white px-3 py-2 text-sm text-black outline-none focus:border-[#1C3A5E]">
+                <option value="" disabled>
+                  Selecione…
+                </option>
+                {TIPOS_DOCUMENTO_CANDIDATO.map((t) => (
+                  <option key={t.key} value={t.key}>
+                    {t.label}
+                  </option>
+                ))}
+              </select>
               <input
                 type="file"
                 name="arquivo"
                 multiple
                 required
-                className="mt-1 w-full text-xs text-black/60 file:mr-3 file:rounded-lg file:border-0 file:bg-black/[0.05] file:px-3 file:py-1.5 file:text-xs file:font-medium file:text-black/70"
+                className="mt-2 w-full text-xs text-black/60 file:mr-3 file:rounded-lg file:border-0 file:bg-black/[0.05] file:px-3 file:py-1.5 file:text-xs file:font-medium file:text-black/70"
               />
               <p className="mt-1 text-[11px] text-black/40">PDF, imagem ou documento — até 4 MB cada. Fica privado, só para a equipe.</p>
               <button type="submit" className="mt-3 w-full rounded-xl border border-[#1C3A5E] px-4 py-2 text-sm font-medium text-[#1C3A5E] hover:bg-[#1C3A5E]/5">

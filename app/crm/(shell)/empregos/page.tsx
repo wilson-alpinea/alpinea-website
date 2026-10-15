@@ -1,3 +1,4 @@
+import { dataHoraSP, ultimaReclassificacao } from "@/lib/crm/andamentoManual";
 import { Bodoni_Moda } from "next/font/google";
 import Link from "next/link";
 import type { Metadata } from "next";
@@ -38,6 +39,7 @@ type Linha = {
   ficha_liberada?: boolean | null;
   foto_path?: string | null;
   proposta_status?: string | null;
+  andamento_manual?: unknown;
   created_at: string;
 };
 
@@ -95,7 +97,8 @@ export default async function EmpregosCrmPage({
   // necessárias.
   let consultaContagem = supabase
     .from("candidaturas_vagas")
-    .select("id, classificacao, vaga_id, vaga_titulo, vaga_empresa, pontuacao, ficha_liberada, ficha_enviada_em, foto_path, proposta_status");
+    // "*" pra não quebrar antes/depois das migrações (andamento_manual — 020).
+    .select("*");
   if (intervalo.desde) consultaContagem = consultaContagem.gte("created_at", intervalo.desde);
   if (intervalo.ate) consultaContagem = consultaContagem.lt("created_at", intervalo.ate);
   const { data: todas, error: erroContagem } = await consultaContagem;
@@ -283,6 +286,14 @@ export default async function EmpregosCrmPage({
                       {c.nome} {c.sobrenome}
                     </Link>
                     <p className="text-xs text-black/45">{c.telefone}</p>
+                    {(() => {
+                      const r = ultimaReclassificacao(c.andamento_manual);
+                      return r ? (
+                        <p className="mt-1 inline-block rounded-full bg-[#b7791f]/10 px-2 py-0.5 text-[10px] font-medium text-[#8a5a12]" title={`Motivo: ${r.motivo}`}>
+                          {r.para === "eliminado" ? "Eliminado" : "Aprovado"} manualmente · {r.por} · {dataHoraSP(r.em)}
+                        </p>
+                      ) : null;
+                    })()}
                   </td>
                   <td className="px-5 py-3.5">
                     <p className="text-black/80">{c.vaga_empresa}</p>

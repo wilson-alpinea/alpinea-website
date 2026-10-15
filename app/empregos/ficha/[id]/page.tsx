@@ -5,6 +5,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { fichaLiberada } from "@/app/lib/fichaCadastral";
 import FichaForm from "./FichaFormCliente";
 import PrazosProcesso from "@/app/components/empregos/PrazosProcesso";
+import { candidatoTemReEntry } from "@/app/lib/prazosCandidatura";
 import { urlEtapa, vagaPrecisaProposta } from "@/app/lib/etapasCandidatura";
 import { testesAptidaoPendentes, urlTestes } from "@/app/lib/testesAptidao";
 
@@ -99,7 +100,7 @@ export default async function FichaPage({
           Complete a ficha abaixo — é a mesma que as empresas parceiras no Japão pedem. Seu progresso fica salvo neste
           navegador, então dá pra parar e continuar depois pelo mesmo link.
         </p>
-        <PrazosProcesso atual="etapa2" semEtapa3={!vagaPrecisaProposta(c.vaga_id)} className="mt-6" />
+        <PrazosProcesso atual="etapa2" semEtapa3={!vagaPrecisaProposta(c.vaga_id)} temReEntry={candidatoTemReEntry(c)} className="mt-6" />
         <FichaForm candidaturaId={c.id} token={t} fichaJaEnviada={Boolean(c.ficha_enviada_em)} proxima={proxima} />
       </div>
     </main>

@@ -1,7 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { PASTA_ANEXOS_EQUIPE } from "@/lib/crm/empregos";
+import { PASTA_ANEXOS_EQUIPE, TIPOS_DOCUMENTO_CANDIDATO } from "@/lib/crm/empregos";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -37,13 +37,16 @@ export async function POST(request: NextRequest) {
     NextResponse.redirect(new URL(`/crm/empregos/${id}${erro ? `?erro=${encodeURIComponent(erro)}` : "?salvo=1"}`, request.url), 303);
   if (!/^[0-9a-f-]{36}$/i.test(id)) return NextResponse.json({ error: "Candidatura inválida." }, { status: 400 });
 
+  // Tipo do documento escolhido no menu (obrigatório) — Wilson, 15/out/2026.
+  const tipo = String(form.get("tipo") ?? "");
+  if (!TIPOS_DOCUMENTO_CANDIDATO.some((t) => t.key === tipo)) return voltar("Escolha o tipo de documento.");
   const arquivos = form.getAll("arquivo").filter((a): a is File => a instanceof File && a.size > 0);
   if (arquivos.length === 0) return voltar("Escolha um arquivo para anexar.");
   if (arquivos.some((a) => a.size > LIMITE)) return voltar("Cada arquivo pode ter até 4 MB.");
 
   const admin = createAdminClient();
   for (const a of arquivos) {
-    const caminho = `${PASTA_ANEXOS_EQUIPE}/${id}__${Date.now()}__${nomeSeguro(a.name)}`;
+    const caminho = `${PASTA_ANEXOS_EQUIPE}/${id}__${Date.now()}__${tipo}__${nomeSeguro(a.name)}`;
     const { error } = await admin.storage
       .from("curriculos-candidatos")
       .upload(caminho, Buffer.from(await a.arrayBuffer()), { contentType: a.type || "application/octet-stream" });

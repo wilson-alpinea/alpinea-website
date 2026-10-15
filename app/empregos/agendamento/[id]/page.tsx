@@ -9,6 +9,7 @@ import { proximaEtapa, urlEtapa } from "@/app/lib/etapasCandidatura";
 import { WHATSAPP_AJISAI_NUMERO } from "@/lib/email/templateCliente";
 import AgendamentoForm from "./AgendamentoForm";
 import PrazosProcesso from "@/app/components/empregos/PrazosProcesso";
+import { candidatoTemReEntry } from "@/app/lib/prazosCandidatura";
 import { vagaPrecisaProposta } from "@/app/lib/etapasCandidatura";
 
 // Etapa 4 — agendamento da pré-entrevista (Wilson, 06/out/2026).
@@ -74,6 +75,7 @@ export default async function AgendamentoPage({ params, searchParams }: { params
           atual={atual ? "agendado" : "etapa4"}
           aberto
           semEtapa3={!vagaPrecisaProposta(c.vaga_id)}
+          temReEntry={candidatoTemReEntry(c)}
           className="mt-6"
         />
       </div>

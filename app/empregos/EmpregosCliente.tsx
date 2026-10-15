@@ -1679,7 +1679,7 @@ export function CandidaturaModal({ vaga, onFechar, pagina = false }: { vaga: Vag
 
         {etapa === "formulario" && (
           <form onSubmit={enviarFormulario} className={`${pagina ? "" : "mt-5"} space-y-4`}>
-            <PrazosProcesso atual="etapa1" semEtapa3={!perguntaFinanciamento} />
+            <PrazosProcesso atual="etapa1" semEtapa3={!perguntaFinanciamento} temReEntry={respostas.reEntry === "sim"} />
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <label className="text-[11px] font-medium text-black/50">
@@ -2552,7 +2552,7 @@ export function CandidaturaModal({ vaga, onFechar, pagina = false }: { vaga: Vag
               </div>
             )}
 
-            <PrazosProcesso atual={aprovadoParaFoto ? "etapa2" : "etapa1"} aberto={aprovadoParaFoto} semEtapa3={!perguntaFinanciamento} className="mt-5" />
+            <PrazosProcesso atual={aprovadoParaFoto ? "etapa2" : "etapa1"} aberto={aprovadoParaFoto} semEtapa3={!perguntaFinanciamento} temReEntry={respostas.reEntry === "sim"} className="mt-5" />
           </div>
         )}
 
