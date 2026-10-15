@@ -65,6 +65,7 @@ export async function POST(req: Request) {
     const emailCandidato: EmailClienteParams = {
       nome: c.nome,
       marca: "Empregos no Japão",
+      ocultarSite: true,
       rotuloAndamento: "Andamento da sua candidatura",
       titulo: "Sua pré-entrevista está agendada",
       intro: `Sua pré-entrevista para a vaga ${c.vaga_titulo} (${c.vaga_empresa}) está marcada. A conversa é online, com a equipe Ajisai.`,

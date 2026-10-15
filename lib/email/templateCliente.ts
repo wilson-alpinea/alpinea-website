@@ -38,6 +38,8 @@ export type EmailClienteParams = {
   marca?: string;
   /** Título da linha do tempo (padrão: "Andamento do seu pedido"). */
   rotuloAndamento?: string;
+  /** Esconde o link alpinea.io do rodapé (e-mails de empregos são só Ajisai). */
+  ocultarSite?: boolean;
 };
 
 function esc(v: unknown) {
@@ -132,7 +134,7 @@ export function emailClienteHtml(p: EmailClienteParams): string {
       </td></tr></table>
     </td></tr>
     <tr><td style="padding:18px 28px;background:#f8fafc;border-top:1px solid #e2e8f0;font-family:Arial,sans-serif;font-size:11px;line-height:1.6;color:#94a3b8;">
-      Equipe Ajisai · <a href="https://www.alpinea.io" style="color:#94a3b8;">alpinea.io</a> · WhatsApp ${WHATSAPP_AJISAI_EXIBICAO}<br>
+      Equipe Ajisai${p.ocultarSite ? "" : ` · <a href="https://www.alpinea.io" style="color:#94a3b8;">alpinea.io</a>`} · WhatsApp ${WHATSAPP_AJISAI_EXIBICAO}<br>
       AJISAIWORK JAPAN AGENCIA DE VIAGENS LTDA — CNPJ 43.544.605/0001-56
     </td></tr>
   </table>
