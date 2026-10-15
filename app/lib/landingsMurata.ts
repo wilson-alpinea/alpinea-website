@@ -57,7 +57,13 @@ export type ConfigLanding = {
     progressao?: { faixa: string; valor: string }[];
     adicionais: string;
   };
-  turnos: { texto: string; unidades?: { nome: string; diurno: string; noturno: string }[]; imagem?: Imagem };
+  turnos: {
+    texto: string;
+    unidades?: { nome: string; diurno: string; noturno: string }[];
+    imagem?: Imagem;
+    // Como se divide o turno (Wilson, 15/out/2026).
+    jornada?: { resumo: string; itens: { valor: string; rotulo: string }[] };
+  };
   custoZero: { titulo: string; texto: string; itens: string[]; imagem?: Imagem };
   reentry: string;
   moradia: {
@@ -101,7 +107,7 @@ const IMG_EMBARQUE: Imagem = { src: "/images/empregos/izumo-embarque.webp", alt:
 export const LANDING_IZUMO: ConfigLanding = {
   slug: "izumo",
   vagaId: "murata-izumo",
-  vagaTitulo: "Operador de máquinas / inspeção — Izumo Murata Manufacturing",
+  vagaTitulo: "Operador de máquinas, inspeção de peças ou abastecimento de linha — Izumo Murata Manufacturing",
   cidade: "Izumo",
   provincia: "Shimane",
   fabrica: "Izumo Murata Manufacturing",
@@ -125,15 +131,15 @@ export const LANDING_IZUMO: ConfigLanding = {
     { rotulo: "Moradia", valor: "Pronta para morar", detalhe: "só aluguel + água, luz e internet, sem taxas extras · transporte até a fábrica" },
   ],
   vaga: {
-    titulo: "Operador de máquinas e inspeção",
+    titulo: "Operador de máquinas, inspeção de peças ou abastecimento de linha",
     texto:
       "Produção de componentes eletrônicos — principalmente capacitores cerâmicos, usados em smartphones, automóveis, eletrodomésticos e equipamentos diversos.",
     imagem: { src: "/images/empregos/izumo-operador.webp", alt: "Operador trabalhando em máquina de produção de componentes eletrônicos" },
-    imagemDetalhe: { src: "/images/empregos/izumo-componentes.webp", alt: "Capacitores cerâmicos multicamada em close" },
+    // Foto de detalhe dos capacitores removida a pedido do Wilson (15/out/2026).
     itens: [
       { rotulo: "Empresa", valor: "Izumo Murata Manufacturing" },
       { rotulo: "Local", valor: "Izumo, Shimane" },
-      { rotulo: "Função", valor: "Operador de máquinas / inspeção" },
+      { rotulo: "Função", valor: "Operador de máquinas, inspeção de peças ou abastecimento de linha" },
       { rotulo: "Produto", valor: "Capacitores cerâmicos" },
     ],
   },
@@ -274,20 +280,22 @@ export const LANDING_IZUMO: ConfigLanding = {
 export const LANDING_ECHIZEN: ConfigLanding = {
   slug: "echizen",
   vagaId: "murata-echizen",
-  vagaTitulo: "Operador de máquinas / inspeção — Fukui Murata Manufacturing",
-  cidade: "Echizen",
+  vagaTitulo: "Operador de máquinas, inspeção de peças ou abastecimento de linha — Fukui Murata Manufacturing",
+  // Wilson, 15/out/2026: "trocar Echizen por Fukui em todas as
+  // comunicações". A URL (/empregos/echizen) e os nomes de imagem continuam.
+  cidade: "Fukui",
   provincia: "Fukui",
   fabrica: "Fukui Murata Manufacturing",
   meta: {
-    titulo: "Trabalhe e More em Echizen — Murata | Ajisai Empregos",
+    titulo: "Trabalhe e More em Fukui — Murata | Ajisai Empregos",
     descricao:
-      "Vaga na Fukui Murata Manufacturing, em Echizen, com custo inicial zero de embarque para candidatos elegíveis: passagem, documentação e preparação para o embarque.",
+      "Vaga na Fukui Murata Manufacturing, em Fukui, com custo inicial zero de embarque para candidatos elegíveis: passagem, documentação e preparação para o embarque.",
   },
   hero: {
-    kicker: "Echizen · Fukui",
-    titulo: "Trabalhe e more em Echizen",
+    kicker: "Fukui · Japão",
+    titulo: "Trabalhe e more em Fukui",
     subtitulo: "Operador na Murata, com salário que cresce com o tempo de casa e custo inicial zero de embarque para candidatos elegíveis.",
-    imagem: { src: "/images/empregos/echizen-fabrica.webp", alt: "Fábrica entre campos de arroz e montanhas com neblina em Echizen, Fukui" },
+    imagem: { src: "/images/empregos/echizen-fabrica.webp", alt: "Fábrica entre campos de arroz e montanhas com neblina em Fukui" },
   },
   resumo: [
     { rotulo: "Salário inicial", valor: "¥1.500/h", detalhe: "chega a ¥1.650/h" },
@@ -296,14 +304,14 @@ export const LANDING_ECHIZEN: ConfigLanding = {
     { rotulo: "Moradia", valor: "Pronta para morar", detalhe: "só aluguel + água, luz e internet, sem taxas extras · transporte até a fábrica" },
   ],
   vaga: {
-    titulo: "Operador de máquinas e inspeção",
+    titulo: "Operador de máquinas, inspeção de peças ou abastecimento de linha",
     texto: "Produção de componentes eletrônicos usados em smartphones, automóveis, aparelhos eletrônicos e equipamentos tecnológicos.",
     imagem: { src: "/images/empregos/echizen-operador.webp", alt: "Operadora inspecionando placas eletrônicas em estação com microscópio" },
-    imagemDetalhe: { src: "/images/empregos/izumo-componentes.webp", alt: "Capacitores cerâmicos multicamada em close" },
+    // Foto de detalhe dos capacitores removida a pedido do Wilson (15/out/2026).
     itens: [
       { rotulo: "Empresa", valor: "Fukui Murata Manufacturing" },
-      { rotulo: "Local", valor: "Echizen, Fukui" },
-      { rotulo: "Função", valor: "Operador de máquinas / inspeção" },
+      { rotulo: "Local", valor: "Fukui" },
+      { rotulo: "Função", valor: "Operador de máquinas, inspeção de peças ou abastecimento de linha" },
       { rotulo: "Produto", valor: "Componentes eletrônicos" },
     ],
   },
@@ -320,6 +328,14 @@ export const LANDING_ECHIZEN: ConfigLanding = {
   },
   turnos: {
     texto: "Escala 4×2 (4 dias de trabalho, 2 de folga), alternando períodos diurnos e noturnos. Horários e unidade confirmados durante o processo.",
+    jornada: {
+      resumo: "Turnos de duração aproximada de 12 horas, com pausas programadas para refeição e descanso.",
+      itens: [
+        { valor: "8 h", rotulo: "de trabalho" },
+        { valor: "2", rotulo: "pausas programadas" },
+        { valor: "1", rotulo: "pausa para refeição" },
+      ],
+    },
     unidades: [
       { nome: "Unidade Okamoto", diurno: "8:50 – 19:00", noturno: "20:50 – 7:00" },
       { nome: "Unidade Miyazaki", diurno: "8:30 – 18:40", noturno: "20:30 – 6:40" },
@@ -339,7 +355,7 @@ export const LANDING_ECHIZEN: ConfigLanding = {
       // Wilson, 15/out/2026: a empreiteira tem apartamentos prontos; o
       // funcionário paga só aluguel + água, luz e internet, sem taxas
       // adicionais; todas as moradias ficam no raio do transporte da empresa.
-      "A empreiteira já tem apartamentos prontos para morar, em Echizen e Sabae, de 1K a 3DK, conforme perfil familiar e disponibilidade. Você paga só o aluguel e as contas de água, luz e internet — sem nenhuma taxa adicional. Todas as moradias ficam dentro do raio do transporte fornecido pela empresa, que busca e leva o funcionário até a fábrica. Na chegada, um kit de boas-vindas com utensílios, higiene, cozinha e futon.",
+      "A empreiteira já tem apartamentos prontos para morar, na região da fábrica em Fukui, de 1K a 3DK, conforme perfil familiar e disponibilidade. Você paga só o aluguel e as contas de água, luz e internet — sem nenhuma taxa adicional. Todas as moradias ficam dentro do raio do transporte fornecido pela empresa, que busca e leva o funcionário até a fábrica. Na chegada, um kit de boas-vindas com utensílios, higiene, cozinha e futon.",
     valores: [
       { rotulo: "1K / 1DK", valor: "¥40.000 – ¥65.000" },
       { rotulo: "2DK ou maior", valor: "¥50.000 – ¥80.000" },
@@ -359,7 +375,7 @@ export const LANDING_ECHIZEN: ConfigLanding = {
         ambientes: "Quarto, cozinha no corredor, banho, WC, armário e varanda",
         indicado: "Solteiros",
         aluguel: "¥40.000 – ¥65.000",
-        imagem: { src: "/images/empregos/echizen-planta-1k.webp", alt: "Planta conceitual de apartamento 1K em Echizen" },
+        imagem: { src: "/images/empregos/echizen-planta-1k.webp", alt: "Planta conceitual de apartamento 1K em Fukui" },
       },
       {
         tipo: "1DK",
@@ -367,7 +383,7 @@ export const LANDING_ECHIZEN: ConfigLanding = {
         ambientes: "Quarto, cozinha com mesa, banho, WC, armário e varanda",
         indicado: "Solteiros ou casais",
         aluguel: "¥40.000 – ¥65.000",
-        imagem: { src: "/images/empregos/echizen-planta-1dk.webp", alt: "Planta conceitual de apartamento 1DK em Echizen" },
+        imagem: { src: "/images/empregos/echizen-planta-1dk.webp", alt: "Planta conceitual de apartamento 1DK em Fukui" },
       },
       {
         tipo: "2DK",
@@ -375,7 +391,7 @@ export const LANDING_ECHIZEN: ConfigLanding = {
         ambientes: "2 quartos, cozinha com mesa, banho, WC e varanda",
         indicado: "Casais ou famílias pequenas",
         aluguel: "¥50.000 – ¥80.000",
-        imagem: { src: "/images/empregos/echizen-planta-2dk.webp", alt: "Planta conceitual de apartamento 2DK em Echizen" },
+        imagem: { src: "/images/empregos/echizen-planta-2dk.webp", alt: "Planta conceitual de apartamento 2DK em Fukui" },
       },
       {
         tipo: "2LDK",
@@ -383,7 +399,7 @@ export const LANDING_ECHIZEN: ConfigLanding = {
         ambientes: "2 quartos, sala integrada à cozinha, banho, WC e varanda",
         indicado: "Famílias",
         aluguel: "¥50.000 – ¥80.000",
-        imagem: { src: "/images/empregos/echizen-planta-2ldk.webp", alt: "Planta conceitual de apartamento 2LDK em Echizen" },
+        imagem: { src: "/images/empregos/echizen-planta-2ldk.webp", alt: "Planta conceitual de apartamento 2LDK em Fukui" },
       },
       {
         tipo: "3DK",
@@ -391,15 +407,15 @@ export const LANDING_ECHIZEN: ConfigLanding = {
         ambientes: "3 quartos, cozinha com mesa, banho, WC e varanda",
         indicado: "Famílias maiores",
         aluguel: "¥50.000 – ¥80.000",
-        imagem: { src: "/images/empregos/echizen-planta-3dk.webp", alt: "Planta conceitual de apartamento 3DK em Echizen" },
+        imagem: { src: "/images/empregos/echizen-planta-3dk.webp", alt: "Planta conceitual de apartamento 3DK em Fukui" },
       },
     ],
   },
   cidadeSecao: {
-    titulo: "Por que Echizen",
+    titulo: "Por que Fukui",
     texto:
       "Uma vida mais tranquila em Fukui, entre o Mar do Japão e as montanhas, com supermercados, hospitais e boa conexão regional.",
-    imagem: { src: "/images/empregos/echizen-cidade.webp", alt: "Rua residencial tranquila em Echizen, com casas e montanhas ao fundo" },
+    imagem: { src: "/images/empregos/echizen-cidade.webp", alt: "Rua residencial tranquila em Fukui, com casas e montanhas ao fundo" },
     destaques: [
       { titulo: "Natureza", texto: "Litoral, montanhas e quatro estações" },
       { titulo: "Tranquilidade", texto: "Menos congestionada que os grandes centros" },

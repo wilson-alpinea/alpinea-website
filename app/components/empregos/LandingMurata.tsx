@@ -26,7 +26,7 @@ import { inter, IconeCheck } from "../transporte/compartilhado";
 import { COTACAO_FALLBACK_BRL_POR_JPY_COMPRA, COTACAO_FALLBACK_BRL_POR_JPY_VENDA } from "../../lib/cambioIene";
 import { formatBRL, formatJPY } from "../../lib/currency";
 import { AUXILIO_EMBARQUE_BRL, CONDICAO_CUSTO_ZERO, type ConfigLanding, type Planta } from "../../lib/landingsMurata";
-import type { Vaga } from "../../lib/vagasCatalogo";
+import { localVaga, type Vaga } from "../../lib/vagasCatalogo";
 
 
 const classeBotao =
@@ -69,7 +69,7 @@ function ListaVagas({ vagas, vagaPrincipalId, cidade }: { vagas: Vaga[]; vagaPri
             <div>
               <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-[#1f6fb8]">{v.empresa}</p>
               <p className="mt-0.5 text-xs text-black/55">
-                {v.cidade}, {v.regiao}
+                {localVaga(v)}
               </p>
             </div>
             {v.logo && (
@@ -320,6 +320,26 @@ function Segmentos<T extends string | number>({ valor, opcoes, onChange, nome }:
   );
 }
 
+// Ícone de cofrinho — redesenhado em SVG a partir da arte enviada pelo
+// Wilson em 15/out/2026 (traço na cor do texto, nítido em qualquer tamanho).
+const COFRINHO_PATHS = (
+  <>
+    <path d="M42.8 40.4 C48 38.6 55 38.2 62 38.8 C70 39.6 74 47 73.6 56 C73.2 62 70.8 65.8 68.2 68.8 L67.4 77.4 Q67.2 78.8 65.8 78.8 H62.4 Q61.4 78.8 61.2 77.8 L59.6 72.4 H45.2 L43.8 77.6 Q43.4 78.8 42.2 78.8 H38.6 Q37.4 78.8 37.2 77.6 L35.6 71.2 C32 69.2 29.6 66.6 28.4 63.6 H25.4 Q21.6 63.6 21.6 59.8 V55 Q21.6 51.2 25.4 51.2 H28.4 C29.8 48 31.6 45.6 33.6 43.8 L31.4 34.6 Q31.2 33.2 32.8 33.4 C36.8 33.8 40.6 36.6 42.8 40.4 Z" />
+    <circle cx="54.5" cy="30.2" r="6" />
+    <path d="M48 43 H60.8" />
+    <path d="M73.6 55.4 C76 56.4 79.6 55 79.6 51.8 C79.6 49.6 77 49 76.6 51.2" />
+    <circle cx="36.8" cy="51.2" r="1.5" fill="currentColor" stroke="none" />
+  </>
+);
+
+function IconeCofrinho({ className, espessura = 2 }: { className?: string; espessura?: number }) {
+  return (
+    <svg viewBox="18 22 66 62" fill="none" stroke="currentColor" strokeWidth={espessura} strokeLinecap="round" strokeLinejoin="round" className={className} aria-hidden="true">
+      {COFRINHO_PATHS}
+    </svg>
+  );
+}
+
 function SimuladorGanhos({ config }: { config: ConfigLanding }) {
   const sim = config.simulacao;
   const SIM_DIAS_MES = sim.diasMes ?? SIM_DIAS_MES_PADRAO;
@@ -356,9 +376,16 @@ function SimuladorGanhos({ config }: { config: ConfigLanding }) {
 
   return (
     <section aria-labelledby="t-simulacao">
-      <p className={kicker}>Simulação</p>
-      <div className="mt-2">
-        <TituloSecao id="t-simulacao">Quanto pode ficar disponível por mês</TituloSecao>
+      <div className="flex items-center gap-4">
+        <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-[#1f6fb8]/[0.08] text-[#0A2540] ring-1 ring-[#1f6fb8]/15">
+          <IconeCofrinho className="h-9 w-9" />
+        </span>
+        <div>
+          <p className={kicker}>Simulação</p>
+          <div className="mt-1">
+            <TituloSecao id="t-simulacao">Quanto pode ficar disponível por mês</TituloSecao>
+          </div>
+        </div>
       </div>
       <p className="mt-3 max-w-3xl text-[15px] leading-7 text-black/70">
         Ajuste as opções e veja uma estimativa do valor que fica disponível depois dos descontos obrigatórios, do aluguel e das contas da casa — antes dos gastos com alimentação e despesas pessoais.
@@ -486,7 +513,7 @@ function SimuladorGanhos({ config }: { config: ConfigLanding }) {
 const SECOES_RAPIDAS: { id: string; rotulo: string; icone: ReactNode; destaque?: boolean }[] = [
   { id: "t-vaga", rotulo: "A vaga", icone: <><rect x="3" y="7" width="18" height="13" rx="2" /><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" /></> },
   { id: "t-salario", rotulo: "Salário", icone: <><path d="M7 4l5 7 5-7M12 11v9M8 13h8M8 16.5h8" /></> },
-  { id: "t-simulacao", rotulo: "Simulação mensal", icone: <><rect x="5" y="3" width="14" height="18" rx="2" /><path d="M8 7h8M8 11h2M12 11h2M16 11h0M8 15h2M12 15h2M8 18h8" /></> },
+  { id: "t-simulacao", rotulo: "Simulação mensal", icone: <svg x="0" y="0" width="24" height="24" viewBox="18 22 66 62" strokeWidth={4.5}>{COFRINHO_PATHS}</svg> },
   { id: "t-custo", rotulo: "Custo inicial zero", icone: <><path d="M2 16l20-8-6 12-3-5z" /><path d="M13 15l9-7" /></> },
   { id: "t-moradia", rotulo: "Moradia", icone: <><path d="M3 11l9-7 9 7" /><path d="M5 10v10h14V10" /><path d="M10 20v-6h4v6" /></> },
   { id: "t-cidade", rotulo: "Cidade e transporte", icone: <><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z" /><circle cx="12" cy="9.5" r="2.5" /></> },
@@ -660,8 +687,8 @@ export default function LandingMurata({ config: s, vagas }: { config: ConfigLand
               <TituloSecao id="t-vaga">{s.vaga.titulo}</TituloSecao>
             </div>
             <p className="mt-3 max-w-3xl text-[15px] leading-7 text-black/70">{s.vaga.texto}</p>
-            <div className="mt-6 grid gap-3 sm:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
-              <div className="relative aspect-[16/10] overflow-hidden rounded-2xl">
+            <div className={`mt-6 grid gap-3 ${s.vaga.imagemDetalhe ? "sm:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]" : ""}`}>
+              <div className={`relative overflow-hidden rounded-2xl ${s.vaga.imagemDetalhe ? "aspect-[16/10]" : "aspect-[16/10] sm:aspect-[21/9]"}`}>
                 <Image src={s.vaga.imagem.src} alt={s.vaga.imagem.alt} fill sizes="(min-width: 1024px) 520px, 100vw" className="object-cover" />
               </div>
               {s.vaga.imagemDetalhe && (
@@ -703,6 +730,19 @@ export default function LandingMurata({ config: s, vagas }: { config: ConfigLand
             )}
             <p className="mt-4 text-sm leading-6 text-black/70">{s.salario.adicionais}</p>
             <p className="mt-4 text-sm leading-6 text-black/70">{s.turnos.texto}</p>
+            {s.turnos.jornada && (
+              <div className="mt-4 rounded-xl border border-black/10 bg-[#f7f9fc] p-4">
+                <p className="text-sm text-black/75">{s.turnos.jornada.resumo}</p>
+                <div className="mt-3 grid grid-cols-3 gap-2">
+                  {s.turnos.jornada.itens.map((j) => (
+                    <div key={j.rotulo} className="rounded-lg bg-white px-3 py-2.5 text-center ring-1 ring-black/[0.06]">
+                      <p className={`${inter.className} text-xl font-semibold text-[#0A2540]`}>{j.valor}</p>
+                      <p className="text-[11px] leading-4 text-black/55">{j.rotulo}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
             {s.turnos.imagem && (
               <div className="relative mt-5 aspect-[16/8] overflow-hidden rounded-2xl">
                 <Image src={s.turnos.imagem.src} alt={s.turnos.imagem.alt} fill sizes="(min-width: 1024px) 760px, 100vw" className="object-cover" />

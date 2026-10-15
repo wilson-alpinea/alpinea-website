@@ -7,7 +7,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { formatarDataPostagem, type Vaga } from "../../../lib/vagasCatalogo";
+import { formatarDataPostagem, localVaga, type Vaga } from "../../../lib/vagasCatalogo";
 import { useState } from "react";
 import { CandidaturaModal, DetalhesVaga, InfoObrigatoriaVaga, display } from "../../EmpregosCliente";
 import EsquemaTurno, { separarSalario } from "../../../components/empregos/EsquemaTurno";
@@ -33,7 +33,7 @@ function Resumo({ vaga }: { vaga: Vaga }) {
                 <path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z" />
                 <circle cx="12" cy="9.5" r="2.5" />
               </svg>
-              {vaga.cidade}, {vaga.regiao}
+              {localVaga(vaga)}
             </span>
             <span className="rounded-full bg-white px-2.5 py-0.5 ring-1 ring-black/10">{vaga.contrato}</span>
           </div>

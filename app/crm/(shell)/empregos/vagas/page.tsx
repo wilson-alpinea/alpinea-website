@@ -2,7 +2,7 @@ import { Bodoni_Moda } from "next/font/google";
 import Link from "next/link";
 import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
-import { VAGAS, formatarDataPostagem } from "@/app/lib/vagasCatalogo";
+import { VAGAS, formatarDataPostagem, localVaga } from "@/app/lib/vagasCatalogo";
 import ListaVagasSite from "./ListaVagasSite";
 
 // Liga/desliga as vagas do catálogo no site — Wilson, 07/out/2026. Vaga
@@ -38,7 +38,7 @@ export default async function VagasSitePage() {
     publicadaEm: formatarDataPostagem(v.publicadaEm),
     empresa: v.empresa,
     titulo: v.titulo,
-    local: `${v.cidade}, ${v.regiao}`,
+    local: localVaga(v),
     status: v.status,
     ativa: statusDe.get(v.id)?.ativa ?? true,
     alteradaEm: statusDe.get(v.id)?.em ?? null,

@@ -9,7 +9,7 @@
 // existe caminho especial" + "todas as vagas no site agora devem ter site
 // próprio".
 
-import { VAGAS, formatarDataPostagem, type Vaga, type PublicoKey, type SetorKey, type StatusVaga } from "../lib/vagasCatalogo";
+import { VAGAS, formatarDataPostagem, localVaga, type Vaga, type PublicoKey, type SetorKey, type StatusVaga } from "../lib/vagasCatalogo";
 import {
   PERGUNTAS_TRIAGEM,
   NIVEIS_JAPONES_DETALHADOS,
@@ -289,9 +289,9 @@ const DESTAQUES: Destaque[] = [
     // para Trabalhe e More em Echizen [...] adicione o texto por cima da
     // imagem e faça aquele escurecimento").
     id: "echizen",
-    titulo: "Trabalhe e More em Echizen",
+    titulo: "Trabalhe e More em Fukui",
     imagem: "/images/empregos-destaque-echizen-murata.webp",
-    sobreposto: { kicker: "Fukui · Japão", titulo: "Trabalhe e More em Echizen", subtitulo: "Montanhas, rio e cerejeiras ao lado da fábrica." },
+    sobreposto: { kicker: "Fukui · Japão", titulo: "Trabalhe e More em Fukui" },
     // Abre a landing de recrutamento Fukui Murata (Wilson, 07/out/2026).
     href: "/empregos/echizen",
     // Informações estratégicas no banner (Wilson, 15/out/2026).
@@ -305,7 +305,7 @@ const DESTAQUES: Destaque[] = [
     titulo: "Trabalhe e More em Izumo",
     imagem: "/images/empregos-destaque-izumo-murata.webp",
     href: "/empregos/izumo",
-    sobreposto: { kicker: "Shimane · Japão", titulo: "Trabalhe e More em Izumo", subtitulo: "A cidade do Grande Santuário de Izumo." },
+    sobreposto: { kicker: "Shimane · Japão", titulo: "Trabalhe e More em Izumo" },
     // Informações estratégicas no banner (Wilson, 15/out/2026).
     selos: SELOS_MURATA,
   },
@@ -884,7 +884,7 @@ export default function EmpregosCliente({ inativas }: { inativas: string[] }) {
     const linhas = [
       "Olá! Tenho interesse nas vagas abaixo (catálogo Ajisai Empregos):",
       "",
-      ...vagasSelecionadas.map((v) => `• ${v.titulo} — ${v.empresa}, ${v.cidade}/${v.regiao} (${SETOR_NOME[v.setor]})`),
+      ...vagasSelecionadas.map((v) => `• ${v.titulo} — ${v.empresa}, ${localVaga(v)} (${SETOR_NOME[v.setor]})`),
       "",
       "Podem me passar os próximos passos?",
     ];
@@ -1226,7 +1226,7 @@ export default function EmpregosCliente({ inativas }: { inativas: string[] }) {
                     </p>
                     <h3 className="mt-1 line-clamp-2 text-sm font-semibold text-black">{vaga.titulo}</h3>
                     <p className="mt-1 text-xs text-black/50">
-                      {vaga.cidade}, {vaga.regiao} — Japão
+                      {localVaga(vaga)} — Japão
                     </p>
                     <p className="mt-0.5 text-[11px] text-black/40">
                       <span className="font-mono">{vaga.codigo}</span> · Publicada em {formatarDataPostagem(vaga.publicadaEm)}

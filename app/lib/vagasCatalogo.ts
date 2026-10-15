@@ -85,6 +85,9 @@ export type InfoVaga = {
 // bloco está escrito em cada vaga, e não num valor compartilhado, pra
 // ficar explícito, vaga por vaga, o que falta preencher.
 
+/** "Cidade, Província" — sem repetir quando são iguais (ex.: "Fukui"). */
+export const localVaga = (v: { cidade: string; regiao: string }) => (v.cidade === v.regiao ? v.cidade : `${v.cidade}, ${v.regiao}`);
+
 export const VAGAS: Vaga[] = [
   // ── Avance RH/Corporation — comunicado + fichas individuais ──
   {
@@ -243,12 +246,12 @@ export const VAGAS: Vaga[] = [
     codigo: "AJ-0030",
     publicadaEm: "2026-10-08",
     empresa: "Murata",
-    titulo: "Operador de máquinas e inspeção — componentes eletrônicos",
+    titulo: "Operador de máquinas, inspeção de peças ou abastecimento de linha — componentes eletrônicos",
     setor: "eletronicos",
     regiao: "Fukui",
-    cidade: "Echizen",
+    cidade: "Fukui", // antes "Echizen" — Wilson, 15/out/2026: usar Fukui em todas as comunicações
     publico: ["brasil"],
-    turno: "Turno alternado (diurno/noturno), 4x2 — Okamoto 8:50–19:00 / 20:50–7:00; Miyazaki 8:30–18:40 / 20:30–6:40",
+    turno: "Turno alternado (diurno/noturno), 4x2 — Okamoto 8:50–19:00 / 20:50–7:00; Miyazaki 8:30–18:40 / 20:30–6:40. Turnos de cerca de 12 horas: 8 horas de trabalho, 2 pausas programadas e 1 pausa para refeição.",
     contrato: "A confirmar com a nossa equipe",
     salario: "¥1.500/hora em turno alternado (até ¥1.650/hora conforme o tempo de casa); ¥1.300–1.450/hora em diurno fixo",
     status: "aberta",
@@ -257,7 +260,7 @@ export const VAGAS: Vaga[] = [
     // Dados da ficha oficial "CSR - FUKUI (2026.07.03更新)" (07/out/2026).
     info: {
       moradia:
-        "Apartamentos de 1K a 3DK em Echizen e Sabae, conforme composição familiar e disponibilidade. Aluguel aproximado: 1K/1DK ¥40.000–65.000; 2DK ou maior ¥50.000–80.000; Leopalace ¥50.000–55.000. Apartamentos prontos para morar; o trabalhador paga só o aluguel e as contas de água, luz e internet, sem taxas adicionais. Todas as moradias ficam no raio do transporte da empresa até a fábrica. Valores de aluguel e de eletrodomésticos podem ser alterados pela empreiteira; baseados no histórico recente.",
+        "Apartamentos de 1K a 3DK na região da fábrica, em Fukui, conforme composição familiar e disponibilidade. Aluguel aproximado: 1K/1DK ¥40.000–65.000; 2DK ou maior ¥50.000–80.000; Leopalace ¥50.000–55.000. Apartamentos prontos para morar; o trabalhador paga só o aluguel e as contas de água, luz e internet, sem taxas adicionais. Todas as moradias ficam no raio do transporte da empresa até a fábrica. Valores de aluguel e de eletrodomésticos podem ser alterados pela empreiteira; baseados no histórico recente.",
       beneficios: [
         "Seguro saúde, previdência (kōsei nenkin) e seguro-desemprego",
         "Refeitório na fábrica (diurno), refeição em torno de ¥300, pago pelo app PayPay",
@@ -271,7 +274,7 @@ export const VAGAS: Vaga[] = [
         "Kit gratuito na chegada: colchonete e coberta (futon), pratos, talheres, copo, panela, tábua de corte, detergente e esponja, sabão em pó, shampoo e condicionador, lenço e papel higiênico, sacos de lixo, máscaras e pincel atômico.",
       bonus: null,
       sobreCidade:
-        "Echizen fica em Fukui, conhecida pela longevidade e pelas quatro estações bem marcadas: praia e pesca no litoral de Echizen no verão, esqui em Katsuyama no inverno e o Museu dos Dinossauros. Sem aeroporto nem shinkansen na província, mas o aeroporto de Komatsu fica a cerca de 45 minutos de trem e a estação Maibara (Tokaido Shinkansen) a cerca de 55 minutos.",
+        "Fukui é conhecida pela longevidade e pelas quatro estações bem marcadas: praia e pesca no litoral no verão, esqui em Katsuyama no inverno e o Museu dos Dinossauros. Sem aeroporto nem shinkansen na província, mas o aeroporto de Komatsu fica a cerca de 45 minutos de trem e a estação Maibara (Tokaido Shinkansen) a cerca de 55 minutos.",
       diferenciaisHospedagem: [
         "Leopalace com TV, geladeira, máquina de lavar e micro-ondas incluídos no aluguel",
         "Nos demais imóveis, geladeira e máquina de lavar para alugar (¥1.550/mês cada)",

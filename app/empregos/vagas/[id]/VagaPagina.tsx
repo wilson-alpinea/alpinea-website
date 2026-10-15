@@ -5,7 +5,7 @@
 // botões azuis) e os mesmos blocos de detalhe do pop-up de /empregos.
 
 import Link from "next/link";
-import { formatarDataPostagem, type Vaga } from "../../../lib/vagasCatalogo";
+import { formatarDataPostagem, localVaga, type Vaga } from "../../../lib/vagasCatalogo";
 import {
   AnaliseVaga,
   DetalhesVaga,
@@ -91,7 +91,7 @@ export default function VagaPagina({ vaga, ativa, hotsite }: { vaga: Vaga; ativa
             {vaga.titulo}
           </h1>
           <p className="mt-2 text-sm text-black/55">
-            {vaga.cidade}, {vaga.regiao} — Japão
+            {localVaga(vaga)} — Japão
           </p>
           <p className="mt-1 text-xs text-black/45">
             Vaga <span className="font-mono font-semibold text-black/60">{vaga.codigo}</span> · Publicada em{" "}

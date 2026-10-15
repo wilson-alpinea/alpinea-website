@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { VAGAS, encontrarVaga } from "../../../lib/vagasCatalogo";
+import { VAGAS, encontrarVaga, localVaga } from "../../../lib/vagasCatalogo";
 import { HOTSITE_POR_VAGA } from "../../../lib/landingsMurata";
 import { vagaEstaAtiva } from "@/lib/empregos/vagasAtivas";
 import VagaPagina from "./VagaPagina";
@@ -24,7 +24,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
   const vaga = encontrarVaga(id);
   if (!vaga) return {};
   const titulo = `${vaga.titulo} — ${vaga.empresa}, ${vaga.cidade} | Ajisai Empregos`;
-  const descricao = `Vaga em ${vaga.cidade}, ${vaga.regiao} (Japão): ${vaga.salario}. ${vaga.turno}. Candidate-se pelo site da Ajisai.`;
+  const descricao = `Vaga em ${localVaga(vaga)} (Japão): ${vaga.salario}. ${vaga.turno}. Candidate-se pelo site da Ajisai.`;
   return { title: titulo, description: descricao, openGraph: { title: titulo, description: descricao } };
 }
 

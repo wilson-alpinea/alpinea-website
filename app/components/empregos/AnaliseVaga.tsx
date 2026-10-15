@@ -14,7 +14,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { display } from "../../produtos/page";
 import { inter } from "../transporte/compartilhado";
-import { VAGAS, type SetorKey, type Vaga } from "../../lib/vagasCatalogo";
+import { VAGAS, localVaga, type SetorKey, type Vaga } from "../../lib/vagasCatalogo";
 import { HORAS_MES_REFERENCIA, MEDIA_NOTA_FICHA, PONTOS_SALARIO, analisarVaga, itensFicha, notaFicha, salarioBaseHora, type PontoSalario } from "../../lib/analiseVagas";
 import { COTACAO_FALLBACK_BRL_POR_JPY_COMPRA, COTACAO_FALLBACK_BRL_POR_JPY_VENDA } from "../../lib/cambioIene";
 import { formatBRL, formatJPY } from "../../lib/currency";
@@ -210,7 +210,7 @@ function linhasComparacao(esta: Vaga, outra: Vaga): LinhaComparacao[] {
   const nOutra = notaFicha(outra);
   const total = itensFicha(esta).length;
   return [
-    { rotulo: "Local", esta: `${esta.cidade}, ${esta.regiao}`, outra: `${outra.cidade}, ${outra.regiao}` },
+    { rotulo: "Local", esta: localVaga(esta), outra: localVaga(outra) },
     { rotulo: "Salário-base", esta: bEsta !== null ? `${yen(bEsta)}/h` : "—", outra: bOutra !== null ? `${yen(bOutra)}/h` : "—", destaque: maior(bEsta, bOutra), numerica: true },
     {
       rotulo: "Bruto mensal de referência",
@@ -553,7 +553,7 @@ export default function AnaliseVaga({ vaga }: { vaga: Vaga }) {
                     <span className="min-w-0 flex-1">
                       <span className="block truncate text-sm text-black">{s.empresa}</span>
                       <span className="block text-[11px] text-black/50">
-                        {s.cidade}, {s.regiao} · {s.codigo}
+                        {localVaga(s)} · {s.codigo}
                       </span>
                     </span>
                     <span className="shrink-0 text-right">

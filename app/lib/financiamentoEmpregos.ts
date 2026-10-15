@@ -195,7 +195,7 @@ export function mensagemWhatsappProposta(p: {
     : "";
   return [
     `[EMPREGOS · PROPOSTA ETAPA 3 · #${p.candidaturaId.slice(0, 8)}]`,
-    `Olá, equipe Ajisai! Sou ${p.nome}, candidato(a) à vaga ${p.vagaTitulo} (${p.vagaEmpresa}) pelo Alpinea Empregos.`,
+    `Olá, equipe Ajisai! Sou ${p.nome}, candidato(a) à vaga ${p.vagaTitulo} (${p.vagaEmpresa}) pelo site da Ajisai.`,
     `Recebi a proposta de financiamento${total} e gostaria de conversar antes de aceitar.`,
   ].join("\n");
 }
