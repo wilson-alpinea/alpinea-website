@@ -136,6 +136,9 @@ export function linhasTriagemBasica(respostas: Record<string, unknown>): [string
 // Links de arquivo na ficha — passam pela rota /crm/empregos/arquivo, que
 // confere a sessão e gera URL assinada (buckets privados).
 export const BUCKETS_CANDIDATO = ["curriculos-candidatos", "fotos-candidatos"] as const;
+/** Pasta dos anexos manuais da equipe (bucket curriculos-candidatos). Nome:
+ * <candidaturaId>__<timestamp>__<arquivo>. */
+export const PASTA_ANEXOS_EQUIPE = "anexos-equipe";
 export function urlArquivoCandidato(bucket: (typeof BUCKETS_CANDIDATO)[number], path: string) {
   return `/crm/empregos/arquivo?bucket=${encodeURIComponent(bucket)}&path=${encodeURIComponent(path)}`;
 }

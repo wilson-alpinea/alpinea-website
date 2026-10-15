@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { atualizarCandidatura, liberarFichaCandidatura } from "@/app/crm/actions";
 import { fichaLiberada, linhasFicha, type FichaCadastral } from "@/app/lib/fichaCadastral";
 import {
@@ -12,6 +13,7 @@ import {
   linhasPerfil,
   linhasTriagemBasica,
   urlArquivoCandidato,
+  PASTA_ANEXOS_EQUIPE,
   progressoCandidatura,
 } from "@/lib/crm/empregos";
 import { MODELOS_APRESENTACAO } from "@/lib/empregos/apresentacaoPdf";
@@ -62,6 +64,16 @@ export default async function CandidatoPage({
   if (certificado?.path) arquivos.push({ label: "Certificado de japonês", href: urlArquivoCandidato("curriculos-candidatos", certificado.path) });
   if (certidao?.path) arquivos.push({ label: "Certidão de antecedentes (PF)", href: urlArquivoCandidato("curriculos-candidatos", certidao.path) });
   if (c.foto_path) arquivos.push({ label: "Foto", href: urlArquivoCandidato("fotos-candidatos", c.foto_path) });
+  // Anexos manuais da equipe (Wilson, 15/out/2026) — listados pelo prefixo
+  // do id da candidatura na pasta anexos-equipe/.
+  const { data: anexosEquipe } = await createAdminClient()
+    .storage.from("curriculos-candidatos")
+    .list(PASTA_ANEXOS_EQUIPE, { search: `${id}__`, limit: 100, sortBy: { column: "created_at", order: "asc" } });
+  for (const a of anexosEquipe ?? []) {
+    if (!a.name.startsWith(`${id}__`)) continue;
+    const nome = a.name.split("__").slice(2).join("__") || a.name;
+    arquivos.push({ label: `${nome} · anexado pela equipe`, href: urlArquivoCandidato("curriculos-candidatos", `${PASTA_ANEXOS_EQUIPE}/${a.name}`) });
+  }
 
   const salvar = atualizarCandidatura.bind(null, id);
   const ficha = (c.ficha ?? null) as FichaCadastral | null;
@@ -134,12 +146,31 @@ export default async function CandidatoPage({
             Recebida em {new Date(c.created_at).toLocaleString("pt-BR", { dateStyle: "medium", timeStyle: "short" })}
           </p>
         </div>
-        <div className="rounded-2xl border border-black/10 bg-white px-6 py-4 text-center">
-          <p className="text-[11px] uppercase tracking-[0.15em] text-black/40">Score</p>
-          <p className={`${display.className} text-5xl font-medium`} style={{ color: tipo.cor }}>
-            {c.pontuacao ?? "—"}
-          </p>
-          <p className="text-[11px] text-black/40">de 100</p>
+        <div className="flex items-stretch gap-3">
+          {/* Foto enviada pelo candidato, ao lado do score (Wilson, 15/out/2026). */}
+          {c.foto_path ? (
+            <a
+              href={urlArquivoCandidato("fotos-candidatos", c.foto_path)}
+              target="_blank"
+              rel="noreferrer"
+              title="Abrir a foto em tamanho real"
+              className="block w-[104px] shrink-0 overflow-hidden rounded-2xl border border-black/10 bg-white"
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={urlArquivoCandidato("fotos-candidatos", c.foto_path)} alt={`Foto de ${c.nome}`} className="h-full w-full object-cover" />
+            </a>
+          ) : (
+            <div className="flex w-[104px] shrink-0 items-center justify-center rounded-2xl border border-dashed border-black/15 bg-white px-2 text-center text-[11px] leading-4 text-black/40">
+              Foto ainda não enviada
+            </div>
+          )}
+          <div className="rounded-2xl border border-black/10 bg-white px-6 py-4 text-center">
+            <p className="text-[11px] uppercase tracking-[0.15em] text-black/40">Score</p>
+            <p className={`${display.className} text-5xl font-medium`} style={{ color: tipo.cor }}>
+              {c.pontuacao ?? "—"}
+            </p>
+            <p className="text-[11px] text-black/40">de 100</p>
+          </div>
         </div>
       </div>
 
@@ -443,6 +474,22 @@ export default async function CandidatoPage({
                 ))}
               </ul>
             )}
+            {/* Anexo manual pelo operador do CRM (Wilson, 15/out/2026). */}
+            <form action="/crm/empregos/anexo" method="post" encType="multipart/form-data" className="mt-4 border-t border-black/10 pt-4">
+              <input type="hidden" name="candidaturaId" value={id} />
+              <label className="text-[11px] uppercase tracking-[0.12em] text-black/40">Anexar arquivo</label>
+              <input
+                type="file"
+                name="arquivo"
+                multiple
+                required
+                className="mt-1 w-full text-xs text-black/60 file:mr-3 file:rounded-lg file:border-0 file:bg-black/[0.05] file:px-3 file:py-1.5 file:text-xs file:font-medium file:text-black/70"
+              />
+              <p className="mt-1 text-[11px] text-black/40">PDF, imagem ou documento — até 4 MB cada. Fica privado, só para a equipe.</p>
+              <button type="submit" className="mt-3 w-full rounded-xl border border-[#1C3A5E] px-4 py-2 text-sm font-medium text-[#1C3A5E] hover:bg-[#1C3A5E]/5">
+                Anexar
+              </button>
+            </form>
           </section>
         </aside>
       </div>

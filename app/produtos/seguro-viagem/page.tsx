@@ -22,7 +22,11 @@
 
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { Inter } from "next/font/google";
+// Inter vem de um único lugar (components/transporte/compartilhado) —
+// declarações repetidas de next/font/google com os mesmos parâmetros em
+// várias páginas quebravam o build do Turbopack ("next/font/google queries
+// have exactly one entry", 15/out/2026).
+import { inter } from "../../components/transporte/compartilhado";
 import Link from "next/link";
 import { formatBRL } from "../../hooks/useCambioUSD";
 import {
@@ -46,7 +50,6 @@ import { abrirAbaPagamento, enviarParaPagamento, fecharAba, BlocoPagamentoNovaAb
 
 // Fonte Inter só para valores em dinheiro — mesmo padrão do JR Pass
 // (Wilson, 29/set/2026: "a fonte padrão de numeros deve ser INTER").
-const inter = Inter({ subsets: ["latin"], weight: ["500", "700"] });
 
 // Recomendação de seguradora por idade — pedido do Wilson, 25/set/2026:
 // "affinity e MTA até 64 anos, acima de 64 anos GTA tem melhor preço".

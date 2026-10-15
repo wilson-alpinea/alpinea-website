@@ -14,7 +14,11 @@
 
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { Inter } from "next/font/google";
+// Inter vem de um único lugar (components/transporte/compartilhado) —
+// declarações repetidas de next/font/google com os mesmos parâmetros em
+// várias páginas quebravam o build do Turbopack ("next/font/google queries
+// have exactly one entry", 15/out/2026).
+import { inter } from "../../components/transporte/compartilhado";
 import Link from "next/link";
 import { formatBRL, formatUSD, type Cambio } from "../../hooks/useCambioUSD";
 import { useCambioDolarTurismo } from "../../hooks/useCambioDolarTurismo";
@@ -40,7 +44,6 @@ import { abrirAbaPagamento, enviarParaPagamento, fecharAba, BlocoPagamentoNovaAb
 // Fonte Inter só para os valores em dinheiro (R$/US$) — pedido do
 // Wilson, 29/set/2026: "a fonte padrão de numeros deve ser INTER".
 // Títulos e nomes de classe continuam na serifada (Bodoni/`display`).
-const inter = Inter({ subsets: ["latin"], weight: ["500", "700"] });
 
 // Passos da compra — pedido do Wilson, 28/set/2026: "adicionar tambem os
 // passos para a compra (exemplo imagem 2)", com os 4 ícones que ele

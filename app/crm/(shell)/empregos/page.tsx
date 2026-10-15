@@ -3,6 +3,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
 import { CLASSIFICACOES, ETAPAS_FUNIL, STATUS_CANDIDATURA, isClassificacao, progressoCandidatura } from "@/lib/crm/empregos";
+import FiltroPeriodo from "./FiltroPeriodo";
 
 // Área de Empregos do CRM — pedido do Wilson, 06/out/2026: "ao preencher o
 // screening isso alimente o CRM e crie 3 tipos de candidato: eliminados,
@@ -40,10 +41,41 @@ type Linha = {
   created_at: string;
 };
 
+// Intervalo [desde, ate) em ISO a partir do período escolhido, no fuso de
+// São Paulo (UTC-3, sem horário de verão). Semana começa na segunda.
+function intervaloPeriodo(periodo: string, de: string, ate: string): { desde: string | null; ate: string | null } {
+  const OFFSET = 3 * 3600 * 1000;
+  const agoraSP = new Date(Date.now() - OFFSET);
+  const inicioDiaSP = (d: Date) => Date.UTC(d.getUTCFullYear(), d.getUTCMonth(), d.getUTCDate()) + OFFSET;
+  const hoje = inicioDiaSP(agoraSP);
+  const DIA = 86400000;
+  const iso = (ms: number) => new Date(ms).toISOString();
+  const dataValida = (s: string) => /^\d{4}-\d{2}-\d{2}$/.test(s);
+  switch (periodo) {
+    case "semana": {
+      const dow = (agoraSP.getUTCDay() + 6) % 7; // 0 = segunda
+      return { desde: iso(hoje - dow * DIA), ate: null };
+    }
+    case "mes":
+      return { desde: iso(Date.UTC(agoraSP.getUTCFullYear(), agoraSP.getUTCMonth(), 1) + OFFSET), ate: null };
+    case "30d":
+      return { desde: iso(hoje - 29 * DIA), ate: null };
+    case "7d":
+      return { desde: iso(hoje - 6 * DIA), ate: null };
+    case "personalizado":
+      return {
+        desde: dataValida(de) ? iso(Date.parse(`${de}T00:00:00Z`) + OFFSET) : null,
+        ate: dataValida(ate) ? iso(Date.parse(`${ate}T00:00:00Z`) + OFFSET + DIA) : null,
+      };
+    default:
+      return { desde: null, ate: null };
+  }
+}
+
 export default async function EmpregosCrmPage({
   searchParams,
 }: {
-  searchParams: Promise<{ tipo?: string; q?: string; vaga?: string; etapa?: string }>;
+  searchParams: Promise<{ tipo?: string; q?: string; vaga?: string; etapa?: string; periodo?: string; de?: string; ate?: string }>;
 }) {
   const params = await searchParams;
   const tipo = params.tipo && isClassificacao(params.tipo) ? params.tipo : "aprovado_alto";
@@ -51,14 +83,22 @@ export default async function EmpregosCrmPage({
   const vagaFiltro = params.vaga ?? "";
   // Filtro por etapa do funil (2–5) — quando presente, vale para todos os tipos.
   const etapaFiltro = [2, 3, 4, 5].includes(Number(params.etapa)) ? Number(params.etapa) : null;
+  // Período (Wilson, 15/out/2026) — vale para os cards e para a lista.
+  const periodo = ["inicio", "semana", "mes", "30d", "7d", "personalizado"].includes(params.periodo ?? "") ? params.periodo! : "inicio";
+  const periodoDe = params.de ?? "";
+  const periodoAte = params.ate ?? "";
+  const intervalo = intervaloPeriodo(periodo, periodoDe, periodoAte);
 
   const supabase = await createClient();
 
   // Contagem por tipo (para as abas) — uma consulta leve só das colunas
   // necessárias.
-  const { data: todas, error: erroContagem } = await supabase
+  let consultaContagem = supabase
     .from("candidaturas_vagas")
     .select("id, classificacao, vaga_id, vaga_titulo, vaga_empresa, pontuacao, ficha_liberada, ficha_enviada_em, foto_path, proposta_status");
+  if (intervalo.desde) consultaContagem = consultaContagem.gte("created_at", intervalo.desde);
+  if (intervalo.ate) consultaContagem = consultaContagem.lt("created_at", intervalo.ate);
+  const { data: todas, error: erroContagem } = await consultaContagem;
   if (erroContagem) console.error("Erro ao contar candidaturas:", erroContagem);
   // Pré-entrevistas agendadas (etapa 4 concluída).
   const { data: entrevistas } = await supabase.from("entrevistas_agendadas").select("candidatura_id, inicio").eq("status", "agendada");
@@ -87,6 +127,8 @@ export default async function EmpregosCrmPage({
     query = query.or(`nome.ilike.%${b}%,sobrenome.ilike.%${b}%,email.ilike.%${b}%,telefone.ilike.%${b}%`);
   }
   if (vagaFiltro) query = query.eq("vaga_id", vagaFiltro);
+  if (intervalo.desde) query = query.gte("created_at", intervalo.desde);
+  if (intervalo.ate) query = query.lt("created_at", intervalo.ate);
   if (!etapaFiltro) query = query.eq("classificacao", tipo);
 
   const { data, error } = await query;
@@ -102,6 +144,9 @@ export default async function EmpregosCrmPage({
     u.set("tipo", t);
     if (busca) u.set("q", busca);
     if (vagaFiltro) u.set("vaga", vagaFiltro);
+    if (periodo !== "inicio") u.set("periodo", periodo);
+    if (periodo === "personalizado" && periodoDe) u.set("de", periodoDe);
+    if (periodo === "personalizado" && periodoAte) u.set("ate", periodoAte);
     return `/crm/empregos?${u.toString()}`;
   };
 
@@ -157,7 +202,7 @@ export default async function EmpregosCrmPage({
           return (
             <Link
               key={e.etapa}
-              href={ativo ? qs(tipo) : `/crm/empregos?etapa=${e.etapa}`}
+              href={ativo ? qs(tipo) : `${qs(tipo)}&etapa=${e.etapa}`}
               className={`rounded-xl border px-4 py-3 transition ${ativo ? "border-[#1C3A5E] bg-white" : "border-black/10 bg-white/60 hover:bg-white"}`}
             >
               <p className="text-[11px] text-black/50">{e.label}</p>
@@ -198,6 +243,7 @@ export default async function EmpregosCrmPage({
               </option>
             ))}
         </select>
+        <FiltroPeriodo periodo={periodo} de={periodoDe} ate={periodoAte} />
         <button type="submit" className="rounded-xl bg-[#1C3A5E] px-5 py-2.5 text-sm font-medium text-white">
           Filtrar
         </button>
