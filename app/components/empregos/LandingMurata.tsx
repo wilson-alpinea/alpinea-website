@@ -456,7 +456,15 @@ function SimuladorGanhos({ config }: { config: ConfigLanding }) {
           </div>
         </div>
 
-        <div className="rounded-2xl bg-[#0A2540] p-5 text-white md:p-6">
+        <div className="relative isolate overflow-hidden rounded-2xl bg-[#0A2540] p-5 text-white md:p-6">
+          {/* Marca d'água: logo Ajisai (branco) repetido e inclinado, bem
+              sutil — dificulta copiar a simulação como se fosse de outra
+              empresa (Wilson, 15/out/2026: "para evitar plágio"). */}
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute -inset-1/2 -z-10 rotate-[-18deg] opacity-[0.06]"
+            style={{ backgroundImage: "url(/images/AJISAI-LOGO.avif)", backgroundRepeat: "space", backgroundSize: "96px auto", backgroundPosition: "center" }}
+          />
           <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-white/60">Disponível estimado por mês</p>
           <p className={`${inter.className} mt-2 text-4xl font-semibold tabular-nums tracking-[-0.02em]`}>{brl(liquido)}</p>
           <p className={`${inter.className} mt-1 text-lg tabular-nums text-white/75`}>{formatJPY(liquido)}</p>
@@ -666,6 +674,18 @@ export default function LandingMurata({ config: s, vagas }: { config: ConfigLand
                   <dd>
                     <span className={`${inter.className} mt-1 block text-lg font-semibold text-[#0A2540]`}>{r.valor}</span>
                     {r.detalhe && <span className="block text-xs text-black/55">{r.detalhe}</span>}
+                    {r.porCidade && (
+                      <span className="mt-1.5 flex flex-col gap-1">
+                        {r.porCidade.map((c) => (
+                          <span key={c.cidade} className="flex items-center gap-2 text-xs text-black/70">
+                            <span className="w-12 shrink-0 rounded-md bg-[#0A2540] px-1.5 py-0.5 text-center text-[10px] font-semibold uppercase tracking-[0.08em] text-white">
+                              {c.cidade}
+                            </span>
+                            {c.texto}
+                          </span>
+                        ))}
+                      </span>
+                    )}
                   </dd>
                 </div>
               ))}
@@ -776,8 +796,8 @@ export default function LandingMurata({ config: s, vagas }: { config: ConfigLand
           <section aria-labelledby="t-custo" className="overflow-hidden rounded-2xl bg-[#0A2540] text-white lg:grid lg:grid-cols-[minmax(0,5fr)_minmax(0,6fr)]">
             {s.custoZero.imagem && (
               <div className="relative aspect-[16/7] lg:aspect-auto lg:min-h-[420px]">
-                <Image src={s.custoZero.imagem.src} alt={s.custoZero.imagem.alt} fill sizes="(min-width: 1024px) 500px, 100vw" className="object-cover object-[60%_50%]" />
-                <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-t from-[#0A2540] to-transparent lg:bg-gradient-to-l lg:from-[#0A2540] lg:via-[#0A2540]/10 lg:via-25%" />
+                <Image src={s.custoZero.imagem.src} alt={s.custoZero.imagem.alt} fill sizes="(min-width: 1024px) 500px, 100vw" className="object-cover object-[60%_50%] lg:object-[80%_50%]" />
+                <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-t from-[#0A2540] to-transparent lg:bg-gradient-to-l lg:from-[#0A2540] lg:via-transparent lg:via-[10%]" />
               </div>
             )}
             <div className="px-5 pb-6 pt-2 md:px-8 md:pb-8 lg:flex lg:flex-col lg:justify-center lg:py-10 lg:pl-6 lg:pr-10">

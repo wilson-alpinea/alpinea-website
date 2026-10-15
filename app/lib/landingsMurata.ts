@@ -43,7 +43,10 @@ export type ConfigLanding = {
   meta: { titulo: string; descricao: string };
   hero: { kicker: string; titulo: string; subtitulo: string; imagem: Imagem };
   // Fatos-chave: aparecem no cartão "Resumo da vaga" (lateral no desktop).
-  resumo: { rotulo: string; valor: string; detalhe?: string }[];
+  // `porCidade`: quando o dado muda por cidade/fábrica — vira uma etiqueta
+  // por cidade no card (Wilson, 15/out/2026: "deixar mais claro que tem
+  // duas cidades, criar labels diferentes").
+  resumo: { rotulo: string; valor: string; detalhe?: string; porCidade?: { cidade: string; texto: string }[] }[];
   vaga: {
     titulo: string;
     texto: string;
@@ -126,9 +129,16 @@ export const LANDING_IZUMO: ConfigLanding = {
     { rotulo: "Salário inicial", valor: "¥1.500/h", detalhe: "chega a ¥1.650/h" },
     // Wilson, 15/out/2026: a página também traz a fábrica de Oda, onde o
     // turno é alternado — mostrar as duas cidades.
-    { rotulo: "Turno", valor: "Escala 4×2", detalhe: "Izumo: fixo · Oda: alternado (dia e noite)" },
+    {
+      rotulo: "Turno",
+      valor: "Escala 4×2",
+      porCidade: [
+        { cidade: "Izumo", texto: "Fixo" },
+        { cidade: "Oda", texto: "Alternado (dia e noite)" },
+      ],
+    },
     { rotulo: "Custo inicial", valor: "R$ 0", detalhe: "para candidatos elegíveis" },
-    { rotulo: "Moradia", valor: "Pronta para morar", detalhe: "só aluguel + água, luz e internet, sem taxas extras · transporte até a fábrica" },
+    { rotulo: "Moradia", valor: "Pronta para morar", detalhe: "Aluguel, água, luz e internet pagos pelo funcionário" },
   ],
   vaga: {
     titulo: "Operador de máquinas, inspeção de peças ou abastecimento de linha",
@@ -301,7 +311,7 @@ export const LANDING_ECHIZEN: ConfigLanding = {
     { rotulo: "Salário inicial", valor: "¥1.500/h", detalhe: "chega a ¥1.650/h" },
     { rotulo: "Turno", valor: "Alternado, 4×2", detalhe: "diurno e noturno" },
     { rotulo: "Custo inicial", valor: "R$ 0", detalhe: "para candidatos elegíveis" },
-    { rotulo: "Moradia", valor: "Pronta para morar", detalhe: "só aluguel + água, luz e internet, sem taxas extras · transporte até a fábrica" },
+    { rotulo: "Moradia", valor: "Pronta para morar", detalhe: "Aluguel, água, luz e internet pagos pelo funcionário" },
   ],
   vaga: {
     titulo: "Operador de máquinas, inspeção de peças ou abastecimento de linha",

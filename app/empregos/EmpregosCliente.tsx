@@ -280,7 +280,14 @@ type Destaque = {
 // Wilson, 15/out/2026: "adicionar informações estratégicas nos banners de
 // Izumo e Echizen". Custo zero sempre com a ressalva de elegibilidade
 // (regra de compliance das landings — app/lib/landingsMurata.ts).
-const SELOS_MURATA = ["Custo zero com documentação inclusa*", "Não precisa falar japonês", "Não precisa de experiência prévia", "Vagas até 59 anos"];
+const SELOS_MURATA = [
+  "Custo zero com documentação inclusa*",
+  "Não precisa falar japonês",
+  "Não precisa de experiência prévia",
+  "Vagas até 59 anos",
+  // Wilson, 15/out/2026.
+  "Embarque imediato para quem já tem a documentação",
+];
 const NOTA_SELOS = "* Para candidatos elegíveis, sujeito à análise e disponibilidade.";
 
 const DESTAQUES: Destaque[] = [
