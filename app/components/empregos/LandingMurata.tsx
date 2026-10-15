@@ -472,6 +472,92 @@ function SimuladorGanhos({ config }: { config: ConfigLanding }) {
   );
 }
 
+// ── Acesso rápido às seções (trilho de ícones à direita) ──
+// Wilson, 15/out/2026: "criar um conjunto de ícones na direita com as
+// seções para acesso rápido como MORADIA". Ele já tinha pedido para não
+// perder espaço com coluna lateral (07/out), então é um trilho fino e
+// flutuante, só com ícones — o nome aparece ao passar o mouse — e só em
+// telas largas (xl+), onde fica na margem sem cobrir o conteúdo. Destaca a
+// seção que está na tela.
+const SECOES_RAPIDAS: { id: string; rotulo: string; icone: ReactNode }[] = [
+  { id: "t-vaga", rotulo: "A vaga", icone: <><rect x="3" y="7" width="18" height="13" rx="2" /><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" /></> },
+  { id: "t-salario", rotulo: "Salário", icone: <><path d="M7 4l5 7 5-7M12 11v9M8 13h8M8 16.5h8" /></> },
+  { id: "t-simulacao", rotulo: "Quanto sobra", icone: <><rect x="5" y="3" width="14" height="18" rx="2" /><path d="M8 7h8M8 11h2M12 11h2M16 11h0M8 15h2M12 15h2M8 18h8" /></> },
+  { id: "t-custo", rotulo: "Custo inicial zero", icone: <><path d="M2 16l20-8-6 12-3-5z" /><path d="M13 15l9-7" /></> },
+  { id: "t-moradia", rotulo: "Moradia", icone: <><path d="M3 11l9-7 9 7" /><path d="M5 10v10h14V10" /><path d="M10 20v-6h4v6" /></> },
+  { id: "t-cidade", rotulo: "Cidade e transporte", icone: <><path d="M12 21s-7-6.2-7-11.5A7 7 0 0 1 19 9.5C19 14.8 12 21 12 21z" /><circle cx="12" cy="9.5" r="2.5" /></> },
+  { id: "t-processo", rotulo: "Do Brasil à fábrica", icone: <><path d="M2 16l20-6-20-6 4 6z" /><path d="M6 10h8" /></> },
+  { id: "t-faq", rotulo: "Perguntas frequentes", icone: <><circle cx="12" cy="12" r="9" /><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.3-1 .8-1 1.5V14M12 17.5h0" /></> },
+  { id: "t-vagas", rotulo: "Vagas abertas", icone: <><path d="M9 11l3 3 8-8" /><path d="M20 12v7a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h9" /></> },
+];
+
+function NavRapida() {
+  const [itens, setItens] = useState(SECOES_RAPIDAS);
+  const [ativa, setAtiva] = useState<string | null>(null);
+  useEffect(() => {
+    // Só as seções que existem nesta página.
+    const presentes = SECOES_RAPIDAS.filter((x) => document.getElementById(x.id));
+    setItens(presentes);
+    if (typeof IntersectionObserver === "undefined") return;
+    const alvo = (id: string) => document.getElementById(id)?.closest("section") ?? document.getElementById(id);
+    const visiveis = new Map<string, number>();
+    const obs = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          const id = (e.target as HTMLElement).dataset.navRapida!;
+          if (e.isIntersecting) visiveis.set(id, e.intersectionRatio);
+          else visiveis.delete(id);
+        }
+        const primeira = presentes.find((x) => visiveis.has(x.id));
+        setAtiva(primeira ? primeira.id : null);
+      },
+      { rootMargin: "-30% 0px -55% 0px", threshold: [0, 0.01] },
+    );
+    for (const x of presentes) {
+      const el = alvo(x.id);
+      if (el) {
+        (el as HTMLElement).dataset.navRapida = x.id;
+        obs.observe(el);
+      }
+    }
+    return () => obs.disconnect();
+  }, []);
+
+  const ir = (id: string) => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - 80, behavior: "smooth" });
+  };
+
+  return (
+    <nav aria-label="Acesso rápido às seções" className="fixed right-4 top-1/2 z-40 hidden -translate-y-1/2 xl:block">
+      <ul className="flex flex-col gap-1 rounded-2xl border border-black/10 bg-white/90 p-1.5 shadow-[0_8px_30px_rgba(10,37,64,0.10)] backdrop-blur">
+        {itens.map((x) => {
+          const on = ativa === x.id;
+          return (
+            <li key={x.id} className="group relative">
+              <button
+                type="button"
+                onClick={() => ir(x.id)}
+                aria-label={x.rotulo}
+                aria-current={on ? "true" : undefined}
+                className={`flex h-10 w-10 items-center justify-center rounded-xl transition ${on ? "bg-[#1f6fb8] text-white" : "text-[#0A2540]/70 hover:bg-[#0A2540]/[0.06] hover:text-[#0A2540]"}`}
+              >
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5" aria-hidden="true">
+                  {x.icone}
+                </svg>
+              </button>
+              <span className="pointer-events-none absolute right-full top-1/2 mr-2 -translate-y-1/2 whitespace-nowrap rounded-md bg-[#0A2540] px-2.5 py-1 text-xs font-medium text-white opacity-0 transition group-hover:opacity-100">
+                {x.rotulo}
+              </span>
+            </li>
+          );
+        })}
+      </ul>
+    </nav>
+  );
+}
+
 // ── Página ──
 export default function LandingMurata({ config: s, vagas }: { config: ConfigLanding; vagas: Vaga[] }) {
   const [vagasVisivel, setVagasVisivel] = useState(false);
@@ -488,6 +574,8 @@ export default function LandingMurata({ config: s, vagas }: { config: ConfigLand
 
   return (
     <main className="min-h-screen overflow-x-clip bg-white pb-28 pt-14 text-black">
+      <NavRapida />
+
       {/* Barra fixa — padrão das páginas de produto */}
       <div className="fixed inset-x-0 top-0 z-50 flex h-14 items-center gap-3 bg-[#0A2540] px-4 md:px-8">
         <Link href="/empregos" className="flex min-h-[44px] items-center gap-1.5 text-xs font-medium uppercase tracking-[0.15em] text-white/70 transition hover:text-white">

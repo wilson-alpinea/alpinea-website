@@ -185,7 +185,7 @@ export const VAGAS: Vaga[] = [
     // regra de compliance é não mencionar bônus sem valor fornecido.
     info: {
       moradia:
-        "Apartamentos de 1K a 3DK na cidade de Izumo, conforme composição familiar e disponibilidade. Aluguel aproximado: 1K/1DK sem internet ¥45.000–55.000, com internet ¥60.000–65.000; 2DK ou maior ¥55.000–75.000. Pago pelo trabalhador; água, luz e gás à parte.",
+        "Apartamentos de 1K a 3DK na cidade de Izumo, conforme composição familiar e disponibilidade. Aluguel aproximado: 1K/1DK sem internet ¥45.000–55.000, com internet ¥60.000–65.000; 2DK ou maior ¥55.000–75.000. Pago pelo trabalhador; água, luz e gás à parte. Valores de aluguel e de eletrodomésticos podem ser alterados pela empreiteira; baseados no histórico recente.",
       beneficios: [
         "Seguro saúde, previdência (kōsei nenkin) e seguro-desemprego",
         "Refeitório na fábrica, refeição em torno de ¥300 (com pratos brasileiros no cardápio)",
@@ -200,7 +200,6 @@ export const VAGAS: Vaga[] = [
       sobreCidade:
         "Izumo fica em Shimane, entre o Mar do Japão e o lago Shinji, e é a cidade do Grande Santuário de Izumo (Izumo Taisha). Tem shoppings (Aeon Mall, Yume Town, com cinema), supermercados, hospital geral e restaurante brasileiro. Praias no verão, estação de esqui a cerca de 1h30 de carro no inverno e onsen. Osaka fica a cerca de 4h30 de trem ou 1 hora de avião.",
       diferenciaisHospedagem: [
-        "Ar-condicionado em todos os imóveis",
         "Leopalace com TV, geladeira e máquina de lavar incluídas no aluguel",
         "Nos demais imóveis, geladeira e máquina de lavar já instaladas (¥1.550/mês cada, podem ser devolvidas)",
         "Cerca de 20 minutos a pé ou 30 minutos de ônibus até a fábrica",
@@ -256,11 +255,11 @@ export const VAGAS: Vaga[] = [
     // Dados da ficha oficial "CSR - FUKUI (2026.07.03更新)" (07/out/2026).
     info: {
       moradia:
-        "Apartamentos de 1K a 3DK em Echizen e Sabae, conforme composição familiar e disponibilidade. Aluguel aproximado: 1K/1DK ¥40.000–65.000; 2DK ou maior ¥50.000–80.000; Leopalace ¥50.000–55.000. Pago pelo trabalhador; água, luz e gás à parte.",
+        "Apartamentos de 1K a 3DK em Echizen e Sabae, conforme composição familiar e disponibilidade. Aluguel aproximado: 1K/1DK ¥40.000–65.000; 2DK ou maior ¥50.000–80.000; Leopalace ¥50.000–55.000. Apartamentos prontos para morar; o trabalhador paga só o aluguel e as contas de água, luz e internet, sem taxas adicionais. Todas as moradias ficam no raio do transporte da empresa até a fábrica. Valores de aluguel e de eletrodomésticos podem ser alterados pela empreiteira; baseados no histórico recente.",
       beneficios: [
         "Seguro saúde, previdência (kōsei nenkin) e seguro-desemprego",
         "Refeitório na fábrica (diurno), refeição em torno de ¥300, pago pelo app PayPay",
-        "Transporte do apartamento até a unidade Miyazaki (20 a 45 minutos)",
+        "Transporte da empresa entre o apartamento e a fábrica — todas as moradias ficam no raio atendido (20 a 45 minutos)",
         "Acompanhamento ao hospital, mediante consulta ao escritório",
         "Hora extra não é obrigatória",
         "Mesmo salário para homens e mulheres",
@@ -272,7 +271,6 @@ export const VAGAS: Vaga[] = [
       sobreCidade:
         "Echizen fica em Fukui, conhecida pela longevidade e pelas quatro estações bem marcadas: praia e pesca no litoral de Echizen no verão, esqui em Katsuyama no inverno e o Museu dos Dinossauros. Sem aeroporto nem shinkansen na província, mas o aeroporto de Komatsu fica a cerca de 45 minutos de trem e a estação Maibara (Tokaido Shinkansen) a cerca de 55 minutos.",
       diferenciaisHospedagem: [
-        "Ar-condicionado em todos os imóveis",
         "Leopalace com TV, geladeira, máquina de lavar e micro-ondas incluídos no aluguel",
         "Nos demais imóveis, geladeira e máquina de lavar para alugar (¥1.550/mês cada)",
         "Supermercados, restaurantes e hospital a pé dos apartamentos",

@@ -167,8 +167,9 @@ export const LANDING_IZUMO: ConfigLanding = {
     ],
     notas: [
       "Aluguel mensal aproximado, pago pelo trabalhador. Água, luz e gás à parte.",
-      "Todos os imóveis têm ar-condicionado. No Leopalace, TV, geladeira e máquina de lavar já estão incluídas no aluguel. Nos demais, geladeira e máquina de lavar já vêm no apartamento por ¥1.550/mês cada (TV opcional, ¥2.350/mês) e podem ser devolvidas se não forem necessárias.",
+      "No Leopalace, TV, geladeira e máquina de lavar já estão incluídas no aluguel. Nos demais, geladeira e máquina de lavar já vêm no apartamento por ¥1.550/mês cada (TV opcional, ¥2.350/mês) e podem ser devolvidas se não forem necessárias.",
       "Do apartamento até a fábrica: cerca de 20 minutos a pé ou 30 minutos no ônibus fretado.",
+      "Os valores de aluguel e de eletrodomésticos podem ser alterados pela empreiteira. Os números aqui são baseados no histórico recente.",
     ],
     imagem: { src: "/images/empregos/izumo-moradia.webp", alt: "Apartamento 1K mobiliado no Japão, com cozinha compacta e quarto" },
     // Plantas enviadas pelo Wilson em 07/out/2026 ("as 5 plantas de Izumo,
@@ -331,15 +332,19 @@ export const LANDING_ECHIZEN: ConfigLanding = {
     "Já tem reentry válido e pode embarcar logo? Candidatos elegíveis podem receber o Auxílio Embarque Ajisai, conforme as condições da campanha vigente.",
   moradia: {
     texto:
-      "A maioria das moradias fica em Echizen e Sabae, de 1K a 3DK, conforme perfil familiar e disponibilidade. Na chegada, um kit de boas-vindas com utensílios, higiene, cozinha e futon.",
+      // Wilson, 15/out/2026: a empreiteira tem apartamentos prontos; o
+      // funcionário paga só aluguel + água, luz e internet, sem taxas
+      // adicionais; todas as moradias ficam no raio do transporte da empresa.
+      "A empreiteira já tem apartamentos prontos para morar, em Echizen e Sabae, de 1K a 3DK, conforme perfil familiar e disponibilidade. Você paga só o aluguel e as contas de água, luz e internet — sem nenhuma taxa adicional. Todas as moradias ficam dentro do raio do transporte fornecido pela empresa, que busca e leva o funcionário até a fábrica. Na chegada, um kit de boas-vindas com utensílios, higiene, cozinha e futon.",
     valores: [
       { rotulo: "1K / 1DK", valor: "¥40.000 – ¥65.000" },
       { rotulo: "2DK ou maior", valor: "¥50.000 – ¥80.000" },
       { rotulo: "Leopalace", valor: "≈ ¥50.000 – ¥55.000" },
     ],
     notas: [
-      "Aluguel mensal aproximado, pago pelo trabalhador. Água, luz e gás à parte.",
-      "Todos os imóveis têm ar-condicionado. No Leopalace, TV, geladeira, máquina de lavar e micro-ondas já estão incluídos no aluguel. Nos demais, geladeira e máquina de lavar podem ser alugadas por ¥1.550/mês cada.",
+      "Aluguel mensal aproximado, pago pelo trabalhador, sem taxas adicionais. Água, luz e internet à parte.",
+      "No Leopalace, TV, geladeira, máquina de lavar e micro-ondas já estão incluídos no aluguel. Nos demais, geladeira e máquina de lavar podem ser alugadas por ¥1.550/mês cada.",
+      "Os valores de aluguel e de eletrodomésticos podem ser alterados pela empreiteira. Os números aqui são baseados no histórico recente.",
     ],
     imagem: { src: "/images/empregos/echizen-moradia.webp", alt: "Apartamento 1DK mobiliado no Japão, com cozinha, geladeira, máquina de lavar e sala" },
     // Plantas enviadas pelo Wilson em 07/out/2026 (mesmo tratamento de Izumo).
@@ -399,7 +404,7 @@ export const LANDING_ECHIZEN: ConfigLanding = {
     extra: {
       imagem: { src: "/images/empregos/echizen-transporte.webp", alt: "Trabalhadores embarcando em micro-ônibus em frente ao prédio de apartamentos" },
       titulo: "Transporte até a fábrica",
-      texto: "Dependendo da unidade e da moradia, há deslocamento organizado. Na unidade Miyazaki há transporte entre apartamento e fábrica.",
+      texto: "Todas as moradias ficam dentro do raio do transporte fornecido pela empresa, que busca o funcionário em casa e leva até a fábrica.",
     },
   },
   simulacao: {
@@ -425,7 +430,7 @@ export const LANDING_ECHIZEN: ConfigLanding = {
     },
     {
       pergunta: "Preciso pagar aluguel?",
-      resposta: "Sim. A moradia é organizada, mas aluguel e despesas como água, energia e gás são de responsabilidade do trabalhador.",
+      resposta: "Sim. Os apartamentos já estão prontos, e o trabalhador paga o aluguel e as contas de água, luz e internet — sem taxas adicionais além disso.",
     },
     {
       pergunta: "Posso ir com minha família?",
