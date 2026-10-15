@@ -13,7 +13,6 @@ import {
   SETOR_NOME,
   STATUS_LABEL,
   display,
-  linkWhatsapp,
 } from "../../EmpregosCliente";
 
 const classeBotao =
@@ -24,7 +23,8 @@ export default function VagaPagina({ vaga, ativa, hotsite }: { vaga: Vaga; ativa
   // Candidatura em página própria ("checkout") — Wilson, 08/out/2026.
   const checkout = `/empregos/candidatura/${vaga.id}`;
 
-  const msgWhats = `Olá! Vi a vaga ${vaga.titulo} — ${vaga.empresa}, ${vaga.cidade}/${vaga.regiao} no site da Ajisai e quero saber mais.`;
+  // Sem WhatsApp na página da vaga — o único caminho é a candidatura
+  // (Wilson, 08/out/2026: "não tem falar no whatsapp, só se candidatar").
 
   const resumo: { rotulo: string; valor: string }[] = [
     { rotulo: "Salário", valor: vaga.salario },
@@ -48,7 +48,7 @@ export default function VagaPagina({ vaga, ativa, hotsite }: { vaga: Vaga; ativa
           {vaga.empresa} · {vaga.cidade}
         </p>
         <div className="flex-1" />
-        <Link href="/" aria-label="Ajisai — página inicial" className="shrink-0">
+        <Link href="/empregos" aria-label="Ajisai Empregos — página inicial" className="shrink-0">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/images/AJISAI-LOGO.avif" alt="Ajisai" className="h-6 w-auto object-contain md:h-7" />
         </Link>
@@ -112,14 +112,6 @@ export default function VagaPagina({ vaga, ativa, hotsite }: { vaga: Vaga; ativa
               <Link href={checkout} className={classeBotao}>
                 Iniciar candidatura
               </Link>
-              <a
-                href={linkWhatsapp(msgWhats)}
-                target="_blank"
-                rel="noreferrer"
-                className="flex h-12 items-center justify-center rounded-xl border border-black/15 px-6 text-sm font-semibold text-[#0A2540] transition hover:border-black/35"
-              >
-                Falar no WhatsApp
-              </a>
             </div>
           )}
         </section>
@@ -181,17 +173,6 @@ export default function VagaPagina({ vaga, ativa, hotsite }: { vaga: Vaga; ativa
             <Link href={checkout} className={`${classeBotao} flex-1`}>
               Iniciar candidatura
             </Link>
-            <a
-              href={linkWhatsapp(msgWhats)}
-              target="_blank"
-              rel="noreferrer"
-              aria-label="Falar no WhatsApp"
-              className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-black/15 text-[#0A2540]"
-            >
-              <svg viewBox="0 0 24 24" fill="currentColor" className="h-6 w-6" aria-hidden="true">
-                <path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2c-1.5 0-3-.4-4.3-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8s-.4-.1-.6.1-.7.8-.8 1-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.3-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.4.1-.7.3-.2.3-.9.9-.9 2.2s.9 2.5 1 2.7c.1.2 1.8 2.8 4.4 3.9 1.6.7 2.3.8 3.1.6.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.1-1.2l-.6-.3z" />
-              </svg>
-            </a>
           </div>
         </div>
       )}

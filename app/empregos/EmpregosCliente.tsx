@@ -856,7 +856,7 @@ export default function EmpregosCliente({ inativas }: { inativas: string[] }) {
         }`}
       >
         <div className="mx-auto flex max-w-7xl items-center justify-between px-8 py-5 md:px-16">
-          <Link href="/">
+          <Link href="/empregos" aria-label="Ajisai Empregos — página inicial">
             <img src="/images/AJISAI-LOGO.avif" alt="Ajisai" className="h-10 w-auto object-contain invert md:h-11" />
           </Link>
           {/* Botão "Falar no WhatsApp" removido do header — pedido do

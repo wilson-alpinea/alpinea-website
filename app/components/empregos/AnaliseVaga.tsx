@@ -4,8 +4,8 @@
 // parte de analytics, está básico demais"). Mostrada na página própria de
 // cada vaga. Cálculos em app/lib/analiseVagas.ts; tudo vem do catálogo.
 //
-// Blocos: (1) três números-chave, (2) distribuição de salários do catálogo
-// com esta vaga destacada, (3) transparência da ficha (o que ela informa),
+// Blocos: (1) três números-chave, (2) posição do salário em 4 faixas do
+// catálogo (régua simples — antes era um gráfico de pontos), (3) transparência da ficha (o que ela informa),
 // (4) vagas do mesmo setor com salário parecido.
 // Cores: uma só cor de destaque (azul da marca) para "esta vaga"; o resto
 // do catálogo em cinza — não há séries categóricas a distinguir.
@@ -52,19 +52,6 @@ function useCotacao() {
   return valor;
 }
 
-function useLargura<T extends HTMLElement>() {
-  const ref = useRef<T | null>(null);
-  const [w, setW] = useState(640);
-  useEffect(() => {
-    const el = ref.current;
-    if (!el || typeof ResizeObserver === "undefined") return;
-    const ro = new ResizeObserver(([e]) => setW(Math.max(280, Math.round(e.contentRect.width))));
-    ro.observe(el);
-    return () => ro.disconnect();
-  }, []);
-  return [ref, w] as const;
-}
-
 // Ícone da análise — lupa com gráfico de barras e "+", redesenhado em SVG a
 // partir da arte enviada pelo Wilson em 08/out/2026 (traço na cor do texto,
 // nítido em qualquer tamanho).
@@ -103,130 +90,104 @@ function Tile({ rotulo, valor, detalhe, sinal }: { rotulo: string; valor: string
   );
 }
 
-// ── Distribuição de salários (dot plot) ──
-function Distribuicao({ vaga, base, setorMediana }: { vaga: Vaga; base: number; setorMediana: number | null }) {
-  const [ref, largura] = useLargura<HTMLDivElement>();
-  const [foco, setFoco] = useState<PontoSalario | null>(null);
-  const margem = { esq: 16, dir: 16 };
-  const raio = 5;
-  const passoY = 12;
+// ── Posição do salário (régua por faixas) ──
+// Wilson, 08/out/2026: "não preciso saber quantas vagas existem, preciso
+// saber aonde essa vaga se posiciona com relação a salário frente as
+// outras, tem que ser algo fácil de ler". Substitui o gráfico de pontos:
+// o catálogo vira 4 faixas iguais (quartis do salário-base) e um marcador
+// mostra onde esta vaga cai, com uma frase comparando ao salário típico
+// (mediana do catálogo).
+const FAIXAS = ["Mais baixos", "Médios-baixos", "Médios-altos", "Mais altos"];
+const FAIXA_FRASE = ["entre os salários mais baixos", "um pouco abaixo da média", "acima da média", "entre os salários mais altos"];
+const CORES_FAIXA = ["#dbe7f3", "#b7cfe8", "#7fa9d6", "#1f6fb8"];
 
-  const { min, max, ticks } = useMemo(() => {
-    const vals = PONTOS_SALARIO.map((p) => p.base);
-    const lo = Math.floor(Math.min(...vals) / 100) * 100;
-    const hi = Math.ceil(Math.max(...vals) / 100) * 100;
-    const passo = hi - lo > 800 ? 200 : 100;
-    const t: number[] = [];
-    for (let v = lo; v <= hi; v += passo) t.push(v);
-    return { min: lo, max: hi, ticks: t };
-  }, []);
+function quantil(ordenados: number[], q: number) {
+  const pos = (ordenados.length - 1) * q;
+  const i = Math.floor(pos);
+  return ordenados[i] + (ordenados[Math.min(i + 1, ordenados.length - 1)] - ordenados[i]) * (pos - i);
+}
 
-  const x = (v: number) => margem.esq + ((v - min) / (max - min || 1)) * (largura - margem.esq - margem.dir);
+function posicaoSalario(base: number) {
+  const vals = PONTOS_SALARIO.map((p) => p.base).sort((x, y) => x - y);
+  const cortes = [0, 0.25, 0.5, 0.75, 1].map((q) => quantil(vals, q));
+  let faixa = 3;
+  for (let i = 0; i < 4; i++)
+    if (base < cortes[i + 1]) {
+      faixa = i;
+      break;
+    }
+  const dentro = cortes[faixa + 1] > cortes[faixa] ? (base - cortes[faixa]) / (cortes[faixa + 1] - cortes[faixa]) : 0.5;
+  return { cortes, faixa, pct: ((faixa + Math.min(1, Math.max(0, dentro))) / 4) * 100, tipico: cortes[2] };
+}
 
-  // Empilha pontos com o mesmo valor (beeswarm simples, por faixas de ¥25).
-  const pontos = useMemo(() => {
-    const pilhas = new Map<number, number>();
-    return [...PONTOS_SALARIO]
-      .sort((a, b) => (a.id === vaga.id ? 1 : b.id === vaga.id ? -1 : a.base - b.base))
-      .map((p) => {
-        const chave = Math.round(p.base / 25);
-        const n = pilhas.get(chave) ?? 0;
-        pilhas.set(chave, n + 1);
-        return { ...p, nivel: n };
-      });
-  }, [vaga.id]);
-  const niveis = Math.max(1, ...pontos.map((p) => p.nivel + 1));
-  const topo = 30;
-  const baseY = topo + niveis * passoY + 6;
-  const altura = baseY + 26;
-
+function PosicaoSalario({ base }: { base: number }) {
+  const { cortes, faixa, pct, tipico } = posicaoSalario(base);
+  const dif = Math.round(base - tipico);
   return (
-    <div ref={ref} className="relative">
-      <svg width={largura} height={altura} role="img" aria-label={`Distribuição do salário-base das ${PONTOS_SALARIO.length} vagas do catálogo; esta vaga paga ${yen(base)} por hora.`}>
-        {/* grade e eixo */}
-        {ticks.map((t) => (
-          <g key={t}>
-            <line x1={x(t)} x2={x(t)} y1={topo - 6} y2={baseY} stroke="#000" strokeOpacity={0.06} />
-            <text x={x(t)} y={baseY + 16} textAnchor="middle" fontSize={11} fill="rgba(0,0,0,0.45)" className="tabular-nums">
-              {yen(t)}
-            </text>
-          </g>
-        ))}
-        <line x1={margem.esq} x2={largura - margem.dir} y1={baseY} y2={baseY} stroke="#000" strokeOpacity={0.15} />
+    <div>
+      <p className="text-lg leading-snug" style={{ color: NAVY }}>
+        <span className="font-semibold">{yen(base)}/h</span> está <span className="font-semibold">{dif === 0 ? "na média" : FAIXA_FRASE[faixa]}</span> do catálogo.
+      </p>
+      <p className="mt-1 text-xs text-black/55">
+        {dif === 0
+          ? `Igual ao salário típico das vagas (${yen(tipico)}/h).`
+          : `${yen(Math.abs(dif))}/h ${dif > 0 ? "acima" : "abaixo"} do salário típico das vagas (${yen(tipico)}/h).`}
+      </p>
 
-        {/* mediana do setor */}
-        {setorMediana !== null && (
-          <g>
-            <line x1={x(setorMediana)} x2={x(setorMediana)} y1={topo - 10} y2={baseY} stroke={NAVY} strokeOpacity={0.45} strokeDasharray="3 3" />
-            <text
-              x={x(setorMediana)}
-              y={topo - 14}
-              textAnchor={x(setorMediana) > largura - 110 ? "end" : x(setorMediana) < 110 ? "start" : "middle"}
-              fontSize={10.5}
-              fill="rgba(0,0,0,0.55)"
-            >
-              Mediana do setor {yen(setorMediana)}
-            </text>
-          </g>
-        )}
-
-        {/* pontos */}
-        {pontos.map((p) => {
-          const esta = p.id === vaga.id;
-          const mesmoSetor = p.setor === vaga.setor;
-          const cx = x(p.base);
-          const cy = baseY - 8 - p.nivel * passoY;
-          return (
-            <g key={p.id} onMouseEnter={() => setFoco(p)} onMouseLeave={() => setFoco(null)} onFocus={() => setFoco(p)} onBlur={() => setFoco(null)} tabIndex={0} aria-label={`${p.empresa}, ${p.cidade}: ${yen(p.base)} por hora`}>
-              <circle cx={cx} cy={cy} r={11} fill="transparent" />
-              <circle
-                cx={cx}
-                cy={cy}
-                r={esta ? raio + 2 : raio}
-                fill={esta ? AZUL : mesmoSetor ? "#8a94a3" : "#d3d8df"}
-                stroke="#fff"
-                strokeWidth={2}
-              />
-            </g>
-          );
-        })}
-      </svg>
-
-      {/* rótulo fixo de "esta vaga" */}
-      <div
-        className="pointer-events-none absolute -translate-x-1/2 whitespace-nowrap rounded-md px-2 py-0.5 text-[11px] font-semibold text-white"
-        style={{ left: Math.min(Math.max(x(base), 60), largura - 60), top: 0, background: AZUL }}
-      >
-        Esta vaga · {yen(base)}/h
-      </div>
-
-      {/* tooltip */}
-      {foco && foco.id !== vaga.id && (
-        <div
-          className="pointer-events-none absolute z-10 -translate-x-1/2 -translate-y-full whitespace-nowrap rounded-lg bg-[#0A2540] px-3 py-2 text-xs text-white shadow-lg"
-          style={{ left: Math.min(Math.max(x(foco.base), 90), largura - 90), top: baseY - 18 - (pontos.find((p) => p.id === foco.id)?.nivel ?? 0) * passoY }}
-        >
-          <p className="font-semibold">
-            {foco.empresa} · {foco.cidade}
-          </p>
-          <p className="text-white/75">
-            {yen(foco.base)}/h · {SETOR[foco.setor]} · {foco.codigo}
-          </p>
+      <div className="relative mt-10">
+        {/* marcador */}
+        <div className="absolute -top-8 flex -translate-x-1/2 flex-col items-center" style={{ left: `${Math.min(97, Math.max(3, pct))}%` }}>
+          <span className="whitespace-nowrap rounded-md px-2 py-0.5 text-[11px] font-semibold text-white" style={{ background: NAVY }}>
+            Esta vaga
+          </span>
+          <span className="h-0 w-0 border-x-[5px] border-t-[6px] border-x-transparent" style={{ borderTopColor: NAVY }} />
         </div>
-      )}
-
-      <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-[11px] text-black/55">
-        <span className="flex items-center gap-1.5">
-          <span className="h-2.5 w-2.5 rounded-full" style={{ background: AZUL }} /> Esta vaga
-        </span>
-        <span className="flex items-center gap-1.5">
-          <span className="h-2.5 w-2.5 rounded-full bg-[#8a94a3]" /> Mesmo setor
-        </span>
-        <span className="flex items-center gap-1.5">
-          <span className="h-2.5 w-2.5 rounded-full bg-[#d3d8df]" /> Outros setores
-        </span>
+        {/* faixas */}
+        <div className="flex h-3 gap-0.5 overflow-hidden rounded-full">
+          {CORES_FAIXA.map((c, i) => (
+            <span key={i} className="flex-1" style={{ background: c, opacity: i === faixa ? 1 : 0.55 }} />
+          ))}
+        </div>
+        <div className="mt-2 grid grid-cols-4 gap-0.5 text-center">
+          {FAIXAS.map((f, i) => (
+            <div key={f}>
+              <p className={`text-[11px] ${i === faixa ? "font-semibold text-[#0A2540]" : "text-black/50"}`}>{f}</p>
+              <p className="text-[10px] tabular-nums text-black/40">
+                {yen(Math.round(cortes[i] / 10) * 10)}–{yen(Math.round(cortes[i + 1] / 10) * 10)}
+              </p>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
+  );
+}
+
+// ── Logo da empresa ──
+// Wilson, 08/out/2026: "é importante trazer os logotipos das marcas ao lado
+// do nome das marcas". Os logos são escuros, então ficam sempre numa caixa
+// branca (legíveis também no painel azul-marinho). Sem logo cadastrado,
+// mostra as iniciais para manter o alinhamento.
+const LOGO_POR_VAGA = new Map(VAGAS.map((v) => [v.id, v.logo]));
+
+function LogoEmpresa({ vagaId, empresa, tamanho = "md" }: { vagaId: string; empresa: string; tamanho?: "sm" | "md" }) {
+  const logo = LOGO_POR_VAGA.get(vagaId);
+  const caixa = tamanho === "sm" ? "h-5 w-9 rounded p-0.5" : "h-9 w-14 rounded-lg p-1.5";
+  return (
+    <span className={`flex shrink-0 items-center justify-center bg-white ring-1 ring-black/10 ${caixa}`}>
+      {logo ? (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img src={logo} alt={empresa} className="max-h-full max-w-full object-contain" />
+      ) : (
+        <span className={`font-semibold uppercase text-[#0A2540]/60 ${tamanho === "sm" ? "text-[8px]" : "text-[11px]"}`} aria-label={empresa}>
+          {empresa
+            .split(/\s+/)
+            .slice(0, 2)
+            .map((p) => p[0])
+            .join("")}
+        </span>
+      )}
+    </span>
   );
 }
 
@@ -325,8 +286,9 @@ function PainelComparacao({
               role="tab"
               aria-selected={ativa}
               onClick={() => onSelecionar(s.id)}
-              className={`rounded-full px-3 py-1 text-xs font-medium transition ${ativa ? "bg-white text-[#0A2540]" : "text-white/75 ring-1 ring-white/20 hover:bg-white/10"}`}
+              className={`flex items-center gap-1.5 rounded-full py-1 pl-1 pr-3 text-xs font-medium transition ${ativa ? "bg-white text-[#0A2540]" : "text-white/75 ring-1 ring-white/20 hover:bg-white/10"}`}
             >
+              <LogoEmpresa vagaId={s.id} empresa={s.empresa} tamanho="sm" />
               {s.empresa} · {s.cidade}
             </button>
           );
@@ -339,15 +301,25 @@ function PainelComparacao({
           <p className="flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-[0.14em] text-[#8cc1f0]">
             <span className="h-2 w-2 rounded-full" style={{ background: "#4c9be0" }} /> Esta vaga
           </p>
-          <p className="mt-1 truncate text-sm font-semibold">{vaga.empresa}</p>
-          <p className="text-[11px] text-white/55">{vaga.codigo}</p>
+          <div className="mt-2 flex items-center gap-2.5">
+            <LogoEmpresa vagaId={vaga.id} empresa={vaga.empresa} />
+            <div className="min-w-0">
+              <p className="truncate text-sm font-semibold">{vaga.empresa}</p>
+              <p className="text-[11px] text-white/55">{vaga.codigo}</p>
+            </div>
+          </div>
         </div>
         <div className="min-w-0">
           <p className="flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-[0.14em] text-white/55">
             <span className="h-2 w-2 rounded-full bg-[#8a94a3]" /> Similar
           </p>
-          <p className="mt-1 truncate text-sm font-semibold">{selecionada.empresa}</p>
-          <p className="text-[11px] text-white/55">{selecionada.codigo}</p>
+          <div className="mt-2 flex items-center gap-2.5">
+            <LogoEmpresa vagaId={selecionada.id} empresa={selecionada.empresa} />
+            <div className="min-w-0">
+              <p className="truncate text-sm font-semibold">{selecionada.empresa}</p>
+              <p className="text-[11px] text-white/55">{selecionada.codigo}</p>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -419,7 +391,6 @@ export default function AnaliseVaga({ vaga }: { vaga: Vaga }) {
     painelRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
   }, [vagaComparada]);
 
-  const posicaoPct = a.base !== null && a.catalogoQtd > 1 ? Math.round((a.acimaDe / (a.catalogoQtd - 1)) * 100) : null;
 
   return (
     <div className={vagaComparada ? "relative lg:left-1/2 lg:w-[min(1200px,calc(100vw-4rem))] lg:-translate-x-1/2" : undefined}>
@@ -439,7 +410,7 @@ export default function AnaliseVaga({ vaga }: { vaga: Vaga }) {
             </h2>
           </div>
         </div>
-        <p className="text-xs text-black/50">Comparada com {a.catalogoQtd} vagas do catálogo Ajisai</p>
+        <p className="text-xs text-black/50">Comparada com as vagas do catálogo Ajisai</p>
       </div>
 
       {/* 1. Números-chave */}
@@ -466,9 +437,9 @@ export default function AnaliseVaga({ vaga }: { vaga: Vaga }) {
           }
         />
         <Tile
-          rotulo="Posição no catálogo"
-          valor={posicaoPct !== null ? `${posicaoPct}%` : "—"}
-          detalhe={posicaoPct !== null ? `Paga mais que ${a.acimaDe} de ${a.catalogoQtd - 1} outras vagas do catálogo.` : undefined}
+          rotulo="Posição salarial"
+          valor={a.base !== null ? FAIXAS[posicaoSalario(a.base).faixa] : "—"}
+          detalhe={a.base !== null ? `Faixa ${posicaoSalario(a.base).faixa + 1} de 4 do catálogo, da menor para a maior.` : undefined}
         />
       </div>
 
@@ -477,7 +448,7 @@ export default function AnaliseVaga({ vaga }: { vaga: Vaga }) {
         <div className="mt-5 rounded-xl border border-black/10 bg-white p-4 md:p-5">
           <div className="flex flex-wrap items-baseline justify-between gap-2">
             <p className="text-sm font-medium" style={{ color: NAVY }}>
-              Salário-base por hora no catálogo
+              Onde o salário desta vaga se posiciona
             </p>
             <button
               type="button"
@@ -516,11 +487,11 @@ export default function AnaliseVaga({ vaga }: { vaga: Vaga }) {
             </div>
           ) : (
             <div className="mt-3">
-              <Distribuicao vaga={vaga} base={a.base} setorMediana={a.setorMediana} />
+              <PosicaoSalario base={a.base} />
             </div>
           )}
           <p className="mt-3 text-[11px] leading-5 text-black/45">
-            Valor-base de cada vaga, sem horas extras, adicional noturno ou bônus. Faixas salariais entram pelo ponto médio.
+            Salário-base por hora, sem horas extras, adicional noturno ou bônus. Cada faixa reúne um quarto das vagas do catálogo.
           </p>
         </div>
       )}
@@ -578,7 +549,8 @@ export default function AnaliseVaga({ vaga }: { vaga: Vaga }) {
                     aria-pressed={comparada === s.id}
                     className={`-mx-2 flex w-[calc(100%+1rem)] items-center justify-between gap-3 rounded-lg px-2 py-2.5 text-left transition ${comparada === s.id ? "bg-[#0A2540]/[0.06] ring-1 ring-[#1f6fb8]/40" : "hover:bg-black/[0.03]"}`}
                   >
-                    <span className="min-w-0">
+                    <LogoEmpresa vagaId={s.id} empresa={s.empresa} />
+                    <span className="min-w-0 flex-1">
                       <span className="block truncate text-sm text-black">{s.empresa}</span>
                       <span className="block text-[11px] text-black/50">
                         {s.cidade}, {s.regiao} · {s.codigo}

@@ -21,14 +21,13 @@ import { useEffect, useRef, useState, type ReactNode } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { createPortal } from "react-dom";
-import { display, WHATSAPP_NUMBER } from "../../produtos/page";
+import { display } from "../../produtos/page";
 import { inter, IconeCheck } from "../transporte/compartilhado";
 import { COTACAO_FALLBACK_BRL_POR_JPY_COMPRA, COTACAO_FALLBACK_BRL_POR_JPY_VENDA } from "../../lib/cambioIene";
 import { formatBRL, formatJPY } from "../../lib/currency";
 import { AUXILIO_EMBARQUE_BRL, CONDICAO_CUSTO_ZERO, type ConfigLanding, type Planta } from "../../lib/landingsMurata";
 import type { Vaga } from "../../lib/vagasCatalogo";
 
-const linkWhatsapp = (msg: string) => `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
 
 const classeBotao =
   "flex h-12 w-full items-center justify-center rounded-xl bg-[#1f6fb8] px-8 text-sm font-semibold text-white transition hover:bg-[#2f80c9] disabled:opacity-60";
@@ -486,7 +485,6 @@ export default function LandingMurata({ config: s, vagas }: { config: ConfigLand
     return () => obs.disconnect();
   }, []);
 
-  const msgWhats = `Olá! Vi a vaga da Murata em ${s.cidade} no site da Ajisai e quero saber mais.`;
 
   return (
     <main className="min-h-screen overflow-x-clip bg-white pb-28 pt-14 text-black">
@@ -501,7 +499,7 @@ export default function LandingMurata({ config: s, vagas }: { config: ConfigLand
         <span className="h-4 w-px bg-white/20" aria-hidden="true" />
         <p className={`${display.className} truncate whitespace-nowrap text-base font-medium text-white sm:text-lg md:text-xl`}>Vaga em {s.cidade}</p>
         <div className="flex-1" />
-        <Link href="/" aria-label="Ajisai — página inicial">
+        <Link href="/empregos" aria-label="Ajisai Empregos — página inicial">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img src="/images/AJISAI-LOGO.avif" alt="Ajisai" className="h-6 w-auto object-contain md:h-7" />
         </Link>
@@ -553,14 +551,6 @@ export default function LandingMurata({ config: s, vagas }: { config: ConfigLand
             <div className="mt-4 hidden items-center justify-between gap-4 md:flex">
               <p className="text-[11px] leading-5 text-black/50">{CONDICAO_CUSTO_ZERO}</p>
               <div className="flex shrink-0 gap-2">
-                <a
-                  href={linkWhatsapp(msgWhats)}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="flex h-12 items-center justify-center rounded-xl border border-black/15 px-6 text-sm font-semibold text-[#0A2540] transition hover:border-black/35"
-                >
-                  Falar no WhatsApp
-                </a>
                 <button type="button" onClick={irParaVagas} className={`${classeBotao} w-auto`}>
                   Ver vagas
                 </button>
@@ -813,17 +803,6 @@ export default function LandingMurata({ config: s, vagas }: { config: ConfigLand
           <button type="button" onClick={irParaVagas} className={`${classeBotao} flex-1 md:w-auto md:flex-none`}>
             Ver vagas
           </button>
-          <a
-            href={linkWhatsapp(msgWhats)}
-            target="_blank"
-            rel="noreferrer"
-            aria-label="Falar no WhatsApp"
-            className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-black/15 text-[#0A2540]"
-          >
-            <svg viewBox="0 0 24 24" fill="currentColor" className="h-6 w-6" aria-hidden="true">
-              <path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18.2c-1.5 0-3-.4-4.3-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8s-.4-.1-.6.1-.7.8-.8 1-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.3-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.4.1-.7.3-.2.3-.9.9-.9 2.2s.9 2.5 1 2.7c.1.2 1.8 2.8 4.4 3.9 1.6.7 2.3.8 3.1.6.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.1-1.2l-.6-.3z" />
-            </svg>
-          </a>
         </div>
       </div>
     </main>
