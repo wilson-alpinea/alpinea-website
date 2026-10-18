@@ -9,7 +9,7 @@
 // existe caminho especial" + "todas as vagas no site agora devem ter site
 // próprio".
 
-import { VAGAS, formatarDataPostagem, localVaga, type Vaga, type PublicoKey, type SetorKey, type StatusVaga } from "../lib/vagasCatalogo";
+import { VAGAS, VAGAS_CAMPANHA_CUSTO_ZERO, AUXILIO_EMBARQUE_PANASONIC_UNNAN, formatarDataPostagem, localVaga, type Vaga, type PublicoKey, type SetorKey, type StatusVaga } from "../lib/vagasCatalogo";
 import {
   PERGUNTAS_TRIAGEM,
   NIVEIS_JAPONES_DETALHADOS,
@@ -274,6 +274,8 @@ type Destaque = {
   // Selos curtos com os pontos fortes da vaga, sobre a foto (desktop) ou
   // numa faixa logo abaixo dela (celular).
   selos?: string[];
+  // Ressalva dos selos; sem isso vale NOTA_SELOS.
+  notaSelos?: string;
 };
 
 // Wilson, 15/out/2026: "adicionar informações estratégicas nos banners de
@@ -288,8 +290,55 @@ const SELOS_MURATA = [
   "Embarque imediato para quem já tem a documentação",
 ];
 const NOTA_SELOS = "* Para candidatos elegíveis, sujeito à análise e disponibilidade.";
+const NOTA_CAMPANHA_CUSTO_ZERO = "* Para quem desembarcar no Japão de 15/10/2026 a 28/02/2027 e ficar no mínimo 6 meses na fábrica.";
 
 const DESTAQUES: Destaque[] = [
+  {
+    // Novo destaque principal — Wilson, 18/out/2026: "adicionar vagas da
+    // aquaplus como destaque, será o novo destaque principal, os destaques
+    // que já estão no carrossel permanecem". Campanha custo zero do
+    // regulamento (desembarque 15/10/2026 a 28/02/2027). Sem nome da
+    // empreiteira no site (só a marca Ajisai). Ainda sem arte: usa o fundo
+    // azul com o texto; quando a imagem chegar, é só preencher `imagem`.
+    id: "custo-zero",
+    titulo: "Custo zero: passagem, visto e seguro pagos",
+    subtitulo: "5 vagas em fábricas de Shimane, Fukui e Shiga — de ¥1.400 a ¥1.450 por hora.",
+    sobreposto: {
+      kicker: "Shimane · Fukui · Shiga",
+      titulo: "Custo zero: passagem, visto e seguro pagos",
+      subtitulo: "5 vagas em fábricas — de ¥1.400 a ¥1.450 por hora.",
+    },
+    vagaIds: VAGAS_CAMPANHA_CUSTO_ZERO,
+    selos: [
+      "Passagem, visto e seguro-viagem pagos pela empresa*",
+      "Embarque até 28/02/2027",
+      "De ¥1.400 a ¥1.450 por hora",
+      "Vale de até ¥30.000 no começo",
+    ],
+    notaSelos: NOTA_CAMPANHA_CUSTO_ZERO,
+  },
+  {
+    // Wilson, 18/out/2026: "a vaga da Panasonic com auxílio embarque de
+    // R$ 1.000,00 também, adicionar e mover a vaga da panasonic para o
+    // carrossel num novo card". Saiu do card "Custo zero" e abre direto a
+    // página da vaga. Ainda sem arte (fundo azul com o texto).
+    id: "panasonic-unnan",
+    titulo: "Panasonic em Unnan, Shimane",
+    subtitulo: `Conversores para painéis solares — ¥1.500 por hora, custo zero e auxílio embarque de ${AUXILIO_EMBARQUE_PANASONIC_UNNAN}.`,
+    sobreposto: {
+      kicker: "Shimane · Japão",
+      titulo: "Panasonic em Unnan, Shimane",
+      subtitulo: `¥1.500 por hora, custo zero e auxílio embarque de ${AUXILIO_EMBARQUE_PANASONIC_UNNAN}.`,
+    },
+    href: "/empregos/vagas/panasonic-unnan",
+    selos: [
+      `Auxílio embarque de ${AUXILIO_EMBARQUE_PANASONIC_UNNAN}`,
+      "Passagem, visto e seguro-viagem pagos pela empresa*",
+      "¥1.500 por hora",
+      "Turno fixo noturno, 5x2",
+    ],
+    notaSelos: NOTA_CAMPANHA_CUSTO_ZERO,
+  },
   {
     // Banner novo, sem texto na arte (Wilson, 07/out/2026: "novo banner
     // para Trabalhe e More em Echizen [...] adicione o texto por cima da
@@ -420,7 +469,7 @@ function CarrosselDestaques({ onAbrir }: { onAbrir: (d: Destaque) => void }) {
                         {d.href ? "Conhecer a vaga →" : "Ver vagas →"}
                       </span>
                     )}
-                    {d.selos && <p className="mt-3 hidden text-[10px] text-white/55 sm:block">{NOTA_SELOS}</p>}
+                    {d.selos && <p className="mt-3 hidden text-[10px] text-white/55 sm:block">{d.notaSelos ?? NOTA_SELOS}</p>}
                   </div>
                 </>
               )}
@@ -438,12 +487,13 @@ function CarrosselDestaques({ onAbrir }: { onAbrir: (d: Destaque) => void }) {
                     </li>
                   ))}
                 </ul>
-                <p className="mt-2.5 text-[10px] text-white/50">{NOTA_SELOS}</p>
+                <p className="mt-2.5 text-[10px] text-white/50">{d.notaSelos ?? NOTA_SELOS}</p>
               </div>
             )}
             </div>
           ) : (
-            <div className="relative flex aspect-[16/10] w-full flex-col justify-center bg-gradient-to-br from-[#0A2540] to-[#1c4a74] px-8 sm:aspect-[1918/820] sm:px-14">
+            <div>
+            <div className="relative flex aspect-[16/10] w-full flex-col justify-center bg-gradient-to-br from-[#0A2540] to-[#1c4a74] px-8 py-8 sm:aspect-[1918/820] sm:px-14 sm:py-0">
               <span className="w-fit rounded-full border border-white/25 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-white/70">
                 {clicavel ? d.sobreposto?.kicker ?? "Destaque" : "Em breve"}
               </span>
@@ -451,11 +501,41 @@ function CarrosselDestaques({ onAbrir }: { onAbrir: (d: Destaque) => void }) {
                 {d.titulo}
               </p>
               {d.subtitulo && <p className="mt-3 max-w-xl text-sm text-white/70">{d.subtitulo}</p>}
+              {d.selos && (
+                <ul className="mt-4 hidden max-w-xl grid-cols-2 gap-x-4 gap-y-2 sm:grid">
+                  {d.selos.map((x) => (
+                    <li key={x} className="flex items-start gap-1.5 text-[13px] font-medium leading-tight text-white md:text-sm">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="#7fb6e6" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="mt-px h-4 w-4 shrink-0" aria-hidden="true">
+                        <path d="M5 12l5 5L20 7" />
+                      </svg>
+                      {x}
+                    </li>
+                  ))}
+                </ul>
+              )}
               {clicavel && (
                 <span className="mt-5 inline-flex w-fit items-center gap-1.5 rounded-full bg-white px-4 py-2 text-xs font-semibold uppercase tracking-[0.12em] text-[#0A2540]">
                   {d.href ? "Conhecer a vaga →" : "Ver vagas →"}
                 </span>
               )}
+              {d.selos && <p className="mt-3 hidden text-[10px] text-white/55 sm:block">{d.notaSelos ?? NOTA_SELOS}</p>}
+            </div>
+            {/* Celular: selos numa faixa abaixo, como nos banners com foto. */}
+            {d.selos && (
+              <div className="bg-[#1c4a74] px-6 pb-5 pt-1 sm:hidden">
+                <ul className="grid grid-cols-2 gap-x-3 gap-y-2">
+                  {d.selos.map((x) => (
+                    <li key={x} className="flex items-start gap-1.5 text-xs font-medium leading-tight text-white">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="#7fb6e6" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="h-3.5 w-3.5 shrink-0" aria-hidden="true">
+                        <path d="M5 12l5 5L20 7" />
+                      </svg>
+                      {x}
+                    </li>
+                  ))}
+                </ul>
+                <p className="mt-2.5 text-[10px] text-white/50">{d.notaSelos ?? NOTA_SELOS}</p>
+              </div>
+            )}
             </div>
           );
           return (

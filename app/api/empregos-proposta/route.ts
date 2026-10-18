@@ -3,7 +3,8 @@ import { EMAIL_EQUIPE_EMPREGOS } from "@/lib/empregos/emailEquipe";
 import { createAdminClient } from "../../../lib/supabase/admin";
 import { carregarCandidaturaPublica } from "../../../lib/empregos/candidaturaPublica";
 import { buscarCotacaoIene } from "../../lib/cotacaoIeneServidor";
-import { calcularProposta, formatarMoeda, parseSelecao, TERMOS_PROPOSTA } from "../../lib/financiamentoEmpregos";
+import { calcularProposta, dataHojeSaoPaulo, formatarMoeda, parseSelecao, termoFinanciamento, TERMOS_PROPOSTA } from "../../lib/financiamentoEmpregos";
+import type { FichaCadastral } from "../../lib/fichaCadastral";
 import { urlEtapa, vagaPrecisaProposta } from "../../lib/etapasCandidatura";
 
 export const runtime = "nodejs";
@@ -40,6 +41,18 @@ export async function POST(req: Request) {
     const cotacao = await buscarCotacaoIene("sao-paulo", "compra");
     const proposta = calcularProposta(selecao, cotacao.cotacaoBRLPorJPY);
     const agora = new Date().toISOString();
+    // Termo de Dívida montado aqui com os valores do servidor (nunca os do
+    // navegador) — é o texto que fica gravado como aceito.
+    const ficha = (c.ficha ?? null) as FichaCadastral | null;
+    const passaporte = typeof ficha?.valores.passaporteNumero === "string" ? ficha.valores.passaporteNumero.trim() : "";
+    const termo = termoFinanciamento({
+      nomeCompleto: `${c.nome} ${c.sobrenome}`.trim(),
+      passaporte,
+      totalJPY: proposta.totalJPY,
+      totalBRL: proposta.totalBRL,
+      cotacaoBRLPorJPY: cotacao.cotacaoBRLPorJPY,
+      data: dataHojeSaoPaulo(),
+    });
 
     const supabase = createAdminClient();
     const { error } = await supabase
@@ -50,6 +63,8 @@ export async function POST(req: Request) {
           fonteCotacao: cotacao.fonte,
           aceiteTermos: acao === "aceita",
           termos: acao === "aceita" ? TERMOS_PROPOSTA : undefined,
+          termoDivida: acao === "aceita" ? { ...termo, aceitoEm: agora } : undefined,
+          ip: req.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? null,
           userAgent: req.headers.get("user-agent")?.slice(0, 300) ?? null,
         },
         proposta_status: acao,
@@ -72,6 +87,9 @@ export async function POST(req: Request) {
         `Proponentes: ${selecao.proponentes} · Aeroporto: ${selecao.aeroporto}`,
         ...proposta.itens.map((i) => `- ${i.label}: ${formatarMoeda(i.totalJPY, "JPY")} / ${formatarMoeda(i.totalBRL, "BRL")}`),
         `Total: ${formatarMoeda(proposta.totalJPY, "JPY")} / ${formatarMoeda(proposta.totalBRL, "BRL")} (1 ¥ = R$ ${cotacao.cotacaoBRLPorJPY.toFixed(4)})`,
+        ...(acao === "aceita"
+          ? ["", `Termo de Dívida aceito — passaporte: ${passaporte || "não informado"}`, ...termo.parcelas.map((p) => `Parcela ${p.numero}: ${formatarMoeda(p.valorJPY, "JPY")} — ${p.quando.toLowerCase()}`)]
+          : []),
       ].join("\n");
       await fetch("https://api.resend.com/emails", {
         method: "POST",

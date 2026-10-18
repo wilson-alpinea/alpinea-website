@@ -88,7 +88,238 @@ export type InfoVaga = {
 /** "Cidade, Província" — sem repetir quando são iguais (ex.: "Fukui"). */
 export const localVaga = (v: { cidade: string; regiao: string }) => (v.cidade === v.regiao ? v.cidade : `${v.cidade}, ${v.regiao}`);
 
+// Texto comum das vagas da campanha custo zero (regulamento 15/10/2026 a
+// 28/02/2027) — o que vale para o candidato; regras de agência ficam de fora.
+const OBS_CAMPANHA_CUSTO_ZERO =
+  "Campanha custo zero: a empresa paga a passagem aérea, o seguro-viagem e o visto de quem desembarcar no Japão entre 15/10/2026 e 28/02/2027. É preciso ficar no mínimo 6 meses na fábrica — quem sair antes tem desconto de ¥250.000, referente a essas despesas. Fora do período da campanha, passagem e visto (¥250.000) são financiados e descontados em 5 parcelas. Casais com filhos: pode haver um período de adaptação (konarashi) para um dos responsáveis; as despesas desse período são pagas no Brasil e devolvidas na folha de pagamento depois do início do trabalho.";
+
+/** Auxílio embarque da vaga Panasonic Unnan (Wilson, 18/out/2026). */
+export const AUXILIO_EMBARQUE_PANASONIC_UNNAN = "R$ 1.000,00";
+
+/** Vagas do destaque "Custo zero" (carrossel de /empregos). */
+// Panasonic Unnan saiu deste grupo e ganhou card próprio (Wilson, 18/out/2026).
+export const VAGAS_CAMPANHA_CUSTO_ZERO = ["niticon-ohno", "zest-higashiomi", "sun-denshi-masuda", "sun-denshi-izumo", "hichifuku-konan"];
+
 export const VAGAS: Vaga[] = [
+  // ── Campanha custo zero — fichas "Proposta de trabalho" + regulamento
+  // da campanha (15/10/2026 a 28/02/2027), Wilson, 18/out/2026: "será o
+  // novo destaque principal". Ordem = destaque. Valores de shoukai/bônus
+  // do regulamento são da agência — NUNCA vão para o site.
+  {
+    id: "niticon-ohno",
+    codigo: "AJ-0031",
+    publicadaEm: "2026-10-18",
+    empresa: "Niticon",
+    titulo: "Montagem e inspeção de capacitores eletrônicos",
+    setor: "eletronicos",
+    regiao: "Fukui",
+    cidade: "Ohno",
+    publico: ["brasil"],
+    turno: "Turno alternado semanalmente — diurno 8:30–17:45 / noturno 20:30–5:40, 4x2. Hora extra conforme a necessidade da empresa, de 20 a 30 horas por mês.",
+    contrato: "A confirmar com a nossa equipe",
+    salario: "¥1.450/hora (aumento conforme o desempenho)",
+    status: "aberta",
+    // Campanha custo zero (passagem, seguro-viagem e visto pagos) para
+    // desembarque de 15/10/2026 a 28/02/2027 — sem etapa de proposta.
+    custosCobertosPelaEmpresa: true,
+    conducao: "Perto da fábrica: a pé ou de bicicleta própria registrada (bōhan tōroku e seguro). Na área central da cidade: auxílio-combustível da empresa para quem usa transporte próprio.",
+    observacoes: OBS_CAMPANHA_CUSTO_ZERO,
+    info: {
+      moradia: "Apartamento da empresa: 1 quarto de ¥36.000 a ¥45.000/mês. Não é obrigatório morar no apartamento oferecido — dá para alugar um imóvel por conta própria. Água, gás e luz por conta do trabalhador. Eletrodomésticos e mobília são alugados (exemplo: geladeira ¥400/mês, máquina de lavar ¥400/mês, fogão a gás ¥200/mês, luminária ¥40/mês); casal ou apartamento compartilhado divide o aluguel dos eletrodomésticos. Conjunto de futon opcional: ¥7.700.",
+      beneficios: [
+        "Seguro saúde, previdência e seguro-desemprego desde a admissão",
+        "Vale de até ¥30.000, que pode ser pedido após 2 semanas de trabalho",
+        "Refeitório nos dois turnos e loja 24 horas; marmita pode ser trazida de casa ou comprada no konbini (micro-ondas à disposição)",
+        "Fechamento do ponto no dia 20 e pagamento no dia 10 do mês seguinte, em conta",
+      ],
+      kitBoasVindas: null,
+      bonus: null,
+      sobreCidade: null,
+      diferenciaisHospedagem: [
+        "Não é obrigatório morar no apartamento da empresa",
+      ],
+    },
+  },
+  {
+    id: "zest-higashiomi",
+    codigo: "AJ-0033",
+    publicadaEm: "2026-10-18",
+    empresa: "Zest",
+    titulo: "Produção de tecidos de fibra de vidro em rolos",
+    setor: "materiais",
+    regiao: "Shiga",
+    cidade: "Higashiomi",
+    publico: ["brasil"],
+    turno: "3 turnos, alternados a cada dois dias — 6:55–15:10, 14:55–22:40 e 22:25–7:10 — 6x2. Hora extra de 2 a 3 horas.",
+    contrato: "A confirmar com a nossa equipe",
+    salario: "¥1.400/hora",
+    status: "aberta",
+    // Campanha custo zero (passagem, seguro-viagem e visto pagos) para
+    // desembarque de 15/10/2026 a 28/02/2027 — sem etapa de proposta.
+    custosCobertosPelaEmpresa: true,
+    conducao: "Perto da fábrica: a pé ou de bicicleta própria registrada (bōhan tōroku e seguro). Na área central da cidade: auxílio-combustível de ¥5.000 a ¥10.000 para quem usa transporte próprio.",
+    observacoes: OBS_CAMPANHA_CUSTO_ZERO,
+    info: {
+      moradia: "Apartamento da empresa: 1 quarto de ¥45.000 a ¥50.000/mês. Não é obrigatório morar no apartamento oferecido — dá para alugar um imóvel por conta própria. Água, gás e luz por conta do trabalhador. Eletrodomésticos e mobília são alugados (exemplo: geladeira ¥400/mês, máquina de lavar ¥400/mês, fogão a gás ¥200/mês, luminária ¥40/mês); casal ou apartamento compartilhado divide o aluguel dos eletrodomésticos. Conjunto de futon opcional: ¥7.700.",
+      beneficios: [
+        "Seguro saúde, previdência e seguro-desemprego desde a admissão",
+        "Vale de até ¥30.000 por mês",
+        "Refeitório em todos os turnos e loja 24 horas; marmita pode ser trazida de casa ou comprada no konbini (micro-ondas à disposição)",
+        "Fechamento do ponto no dia 20 e pagamento no dia 10 do mês seguinte, em conta",
+      ],
+      kitBoasVindas: null,
+      bonus: "Prêmio de admissão de ¥20.000, conforme as regras da empresa.",
+      sobreCidade: null,
+      diferenciaisHospedagem: [
+        "Não é obrigatório morar no apartamento da empresa",
+      ],
+    },
+  },
+  {
+    id: "sun-denshi-masuda",
+    codigo: "AJ-0034",
+    publicadaEm: "2026-10-18",
+    empresa: "Sun-Denshi",
+    titulo: "Produção de componentes eletrônicos para geradores fotovoltaicos",
+    setor: "eletronicos",
+    regiao: "Shimane",
+    cidade: "Masuda",
+    publico: ["brasil"],
+    turno: "Nos 3 primeiros meses (experiência), só diurno em horário comercial, 8 horas. Depois, turnos de 12 horas — 8:30–20:30 (diurno) / 20:30–8:30 (noturno) — no sistema 3x3 (3 dias de trabalho, 3 de folga). Hora extra de 45 a 60 horas por mês.",
+    contrato: "A confirmar com a nossa equipe",
+    salario: "¥1.450/hora (aumento conforme o desempenho)",
+    status: "aberta",
+    // Campanha custo zero (passagem, seguro-viagem e visto pagos) para
+    // desembarque de 15/10/2026 a 28/02/2027 — sem etapa de proposta.
+    custosCobertosPelaEmpresa: true,
+    conducao: "Perto da fábrica: a pé ou de bicicleta própria registrada (bōhan tōroku e seguro). Na área central da cidade: não há transporte gratuito; pode ir de carro (ajuda de combustível calculada por rota), de bicicleta ou a pé.",
+    observacoes: OBS_CAMPANHA_CUSTO_ZERO,
+    info: {
+      moradia: "Apartamento da empresa: 1 quarto de ¥50.000 a ¥75.000/mês. Não é obrigatório morar no apartamento oferecido — dá para alugar um imóvel por conta própria. Água, gás e luz por conta do trabalhador. Eletrodomésticos e mobília são alugados (exemplo: geladeira ¥400/mês, máquina de lavar ¥400/mês, fogão a gás ¥200/mês, luminária ¥40/mês); casal ou apartamento compartilhado divide o aluguel dos eletrodomésticos. Conjunto de futon opcional: ¥7.700.",
+      beneficios: [
+        "Seguro saúde, previdência e seguro-desemprego desde a admissão",
+        "Vale de até ¥30.000, que pode ser pedido após 2 semanas de trabalho",
+        "Refeitório nos dois turnos; marmita pode ser trazida de casa ou comprada no konbini (micro-ondas à disposição)",
+        "Primeiro uniforme gratuito (cobrado se sair antes de 3 meses)",
+        "Fechamento do ponto no dia 20 e pagamento no dia 10 do mês seguinte, em conta",
+      ],
+      kitBoasVindas: null,
+      bonus: null,
+      sobreCidade: null,
+      diferenciaisHospedagem: [
+        "Não é obrigatório morar no apartamento da empresa",
+      ],
+    },
+  },
+  {
+    id: "sun-denshi-izumo",
+    codigo: "AJ-0035",
+    publicadaEm: "2026-10-18",
+    empresa: "Sun-Denshi",
+    titulo: "Produção de componentes eletrônicos para geradores fotovoltaicos",
+    setor: "eletronicos",
+    regiao: "Shimane",
+    cidade: "Izumo",
+    publico: ["brasil"],
+    turno: "Nos 3 primeiros meses (experiência), só diurno em horário comercial, 8 horas. Depois, diurno 8:30–17:30 / noturno 20:30–5:30, 5x2. Hora extra de 1 a 3 horas.",
+    contrato: "A confirmar com a nossa equipe",
+    salario: "¥1.450/hora (aumento conforme o desempenho)",
+    status: "aberta",
+    // Campanha custo zero (passagem, seguro-viagem e visto pagos) para
+    // desembarque de 15/10/2026 a 28/02/2027 — sem etapa de proposta.
+    custosCobertosPelaEmpresa: true,
+    conducao: "Perto da fábrica: a pé ou de bicicleta própria registrada (bōhan tōroku e seguro). Na área central da cidade: transporte gratuito; também pode ir de carro (ajuda de combustível calculada por rota).",
+    observacoes: OBS_CAMPANHA_CUSTO_ZERO,
+    info: {
+      moradia: "Apartamento da empresa: 1 quarto de ¥50.000 a ¥75.000/mês. Não é obrigatório morar no apartamento oferecido — dá para alugar um imóvel por conta própria. Água, gás e luz por conta do trabalhador. Eletrodomésticos e mobília são alugados (exemplo: geladeira ¥400/mês, máquina de lavar ¥400/mês, fogão a gás ¥200/mês, luminária ¥40/mês); casal ou apartamento compartilhado divide o aluguel dos eletrodomésticos. Conjunto de futon opcional: ¥7.700.",
+      beneficios: [
+        "Seguro saúde, previdência e seguro-desemprego desde a admissão",
+        "Vale de até ¥30.000, que pode ser pedido após 2 semanas de trabalho",
+        "Refeitório nos dois turnos; marmita pode ser trazida de casa ou comprada no konbini (micro-ondas à disposição)",
+        "Primeiro uniforme gratuito (cobrado se sair antes de 3 meses)",
+        "Fechamento do ponto no dia 20 e pagamento no dia 10 do mês seguinte, em conta",
+      ],
+      kitBoasVindas: null,
+      bonus: null,
+      sobreCidade: null,
+      diferenciaisHospedagem: [
+        "Não é obrigatório morar no apartamento da empresa",
+      ],
+    },
+  },
+  {
+    id: "hichifuku-konan",
+    codigo: "AJ-0036",
+    publicadaEm: "2026-10-18",
+    empresa: "Hichifuku",
+    titulo: "Produção de treliças e andaimes para construção civil — abastecimento de robô de solda",
+    setor: "materiais",
+    regiao: "Shiga",
+    cidade: "Konan",
+    publico: ["brasil"],
+    turno: "Turno alternado semanalmente — diurno 8:00–17:00 / noturno 20:00–5:00, 5x2 (folga sábado e domingo). Hora extra conforme a necessidade da empresa, de 45 a 60 horas por mês.",
+    contrato: "A confirmar com a nossa equipe",
+    salario: "¥1.450/hora",
+    status: "aberta",
+    // Campanha custo zero (passagem, seguro-viagem e visto pagos) para
+    // desembarque de 15/10/2026 a 28/02/2027 — sem etapa de proposta.
+    custosCobertosPelaEmpresa: true,
+    conducao: "Perto da fábrica: a pé ou de bicicleta própria registrada (bōhan tōroku e seguro). Na área central da cidade: auxílio-combustível da empresa para quem usa transporte próprio.",
+    observacoes: OBS_CAMPANHA_CUSTO_ZERO,
+    info: {
+      moradia: "Apartamento da empresa: 1 quarto de ¥40.000 a ¥55.000/mês. Não é obrigatório morar no apartamento oferecido — dá para alugar um imóvel por conta própria. Água, gás e luz por conta do trabalhador. Eletrodomésticos e mobília são alugados (exemplo: geladeira ¥400/mês, máquina de lavar ¥400/mês, fogão a gás ¥200/mês, luminária ¥40/mês); casal ou apartamento compartilhado divide o aluguel dos eletrodomésticos. Conjunto de futon opcional: ¥7.700.",
+      beneficios: [
+        "Seguro saúde, previdência e seguro-desemprego desde a admissão",
+        "Vale de até ¥30.000, que pode ser pedido após 2 semanas de trabalho",
+        "Loja 24 horas dentro do refeitório; marmita pode ser trazida de casa ou comprada no konbini (micro-ondas à disposição)",
+        "Fechamento do ponto no último dia do mês e pagamento no dia 15 do mês seguinte, em conta",
+      ],
+      kitBoasVindas: null,
+      bonus: null,
+      sobreCidade: null,
+      diferenciaisHospedagem: [
+        "Não é obrigatório morar no apartamento da empresa",
+      ],
+    },
+  },
+  {
+    id: "panasonic-unnan",
+    codigo: "AJ-0032",
+    publicadaEm: "2026-10-18",
+    empresa: "Panasonic",
+    titulo: "Fabricação de conversores elétricos para painéis solares",
+    setor: "eletronicos",
+    regiao: "Shimane",
+    cidade: "Unnan",
+    publico: ["brasil"],
+    turno: "Turno fixo noturno, 17:20–2:00, 5x2 (folga sexta e sábado ou sábado e domingo). Hora extra conforme a necessidade da empresa, de 45 a 60 horas por mês.",
+    contrato: "A confirmar com a nossa equipe",
+    salario: "¥1.500/hora (progressão conforme o desempenho e a avaliação da liderança)",
+    status: "aberta",
+    // Campanha custo zero (passagem, seguro-viagem e visto pagos) para
+    // desembarque de 15/10/2026 a 28/02/2027 — sem etapa de proposta.
+    custosCobertosPelaEmpresa: true,
+    logo: "/images/logo-cliente-panasonic.png",
+    conducao: "Perto da fábrica: a pé ou de bicicleta própria registrada (bōhan tōroku e seguro). Na área central da cidade: auxílio-combustível da empresa para quem usa transporte próprio.",
+    // Auxílio embarque de R$ 1.000 — Wilson, 18/out/2026.
+    observacoes: `Auxílio embarque de ${AUXILIO_EMBARQUE_PANASONIC_UNNAN}. ${OBS_CAMPANHA_CUSTO_ZERO}`,
+    info: {
+      moradia: "Apartamento da empresa: 1 quarto de ¥50.000 a ¥70.000/mês. Não é obrigatório morar no apartamento oferecido — dá para alugar um imóvel por conta própria. Água, gás e luz por conta do trabalhador. Eletrodomésticos e mobília são alugados (exemplo: geladeira ¥400/mês, máquina de lavar ¥400/mês, fogão a gás ¥200/mês, luminária ¥40/mês); casal ou apartamento compartilhado divide o aluguel dos eletrodomésticos. Conjunto de futon opcional: ¥7.700.",
+      beneficios: [
+        "Auxílio embarque de R$ 1.000,00",
+        "Seguro saúde, previdência e seguro-desemprego desde a admissão",
+        "Vale de até ¥30.000, que pode ser pedido após 2 semanas de trabalho",
+        "Loja 24 horas dentro do refeitório; marmita pode ser trazida de casa ou comprada no konbini (micro-ondas à disposição)",
+        "Fechamento do ponto no dia 15 e pagamento no último dia do mês, em conta",
+      ],
+      kitBoasVindas: null,
+      bonus: null,
+      sobreCidade: null,
+      diferenciaisHospedagem: [
+        "Não é obrigatório morar no apartamento da empresa",
+      ],
+    },
+  },
   // ── Avance RH/Corporation — comunicado + fichas individuais ──
   {
     id: "fuji-seat-higashiomi",
@@ -967,7 +1198,7 @@ export function encontrarVaga(id: string): Vaga | null {
 }
 
 // Próximo código livre para a próxima vaga cadastrada (atualize ao usar).
-export const PROXIMO_CODIGO_VAGA = "AJ-0031";
+export const PROXIMO_CODIGO_VAGA = "AJ-0037";
 
 export function formatarDataPostagem(iso: string): string {
   const [a, m, d] = iso.split("-");

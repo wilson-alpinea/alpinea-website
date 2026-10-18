@@ -3,6 +3,9 @@
 import { useState } from "react";
 import {
   AEROPORTOS,
+  CONTA_JP_BANK_AJISAI,
+  CREDOR_FINANCIAMENTO,
+  PASSOS_TRANSFERENCIA_JP_BANK,
   MAX_PROPONENTES,
   NOTA_PASSAGEM,
   NOTA_VISTO,
@@ -13,6 +16,8 @@ import {
   calcularProposta,
   formatarMoeda,
   mensagemWhatsappProposta,
+  termoFinanciamento,
+  type TermoFinanciamento,
   type ItemProposta,
   type Moeda,
   type SelecaoProposta,
@@ -92,6 +97,112 @@ function Card({
   );
 }
 
+// Linha do tempo das parcelas + Termo de Dívida + guia JP Bank
+// (Wilson, 18/out/2026). Só existe nesta página, que só abre para vagas
+// sem custo zero (vagaPrecisaProposta).
+function TermoDivida({ termo }: { termo: TermoFinanciamento }) {
+  const [verGuia, setVerGuia] = useState(false);
+  const ienes = (v: number) => formatarMoeda(v, "JPY");
+  const dataBR = termo.dados.data.split("-").reverse().join("/");
+  return (
+    <>
+      <section className="rounded-3xl bg-white p-5 shadow-sm sm:p-6">
+        <h2 className="text-sm font-medium text-black">Como você paga o financiamento</h2>
+        <p className="mt-1 text-xs leading-5 text-black/50">
+          Em 2 parcelas, depois de chegar ao Japão. O pagamento é feito diretamente à AjisaiWork e não é descontado em folha de pagamento.
+        </p>
+        <ol className="mt-5">
+          {termo.parcelas.map((p) => (
+            <li key={p.numero} className="relative flex gap-4 pb-6">
+              <span aria-hidden className="absolute left-[15px] top-8 h-[calc(100%-2rem)] w-px bg-[#2f80c9]/25" />
+              <span className="relative flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#2f80c9] text-xs font-semibold text-white">
+                {p.numero}
+              </span>
+              <div className="flex flex-1 flex-wrap items-baseline justify-between gap-x-4 gap-y-0.5 pt-1">
+                <div>
+                  <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-black/40">Parcela {p.numero}</p>
+                  <p className="text-sm text-black/70">{p.quando}</p>
+                </div>
+                <p className="text-lg font-semibold tabular-nums text-black">{ienes(p.valorJPY)}</p>
+              </div>
+            </li>
+          ))}
+          <li className="flex items-center justify-between gap-4 rounded-2xl bg-[#0f2236] px-4 py-3 text-white">
+            <span className="text-[10px] font-semibold uppercase tracking-[0.14em] text-white/60">Total</span>
+            <span className="text-lg font-semibold tabular-nums">{ienes(termo.dados.totalJPY)}</span>
+          </li>
+        </ol>
+      </section>
+
+      <section className="rounded-3xl bg-white p-5 shadow-sm sm:p-6">
+        <h2 className="text-sm font-medium text-black">Termo de Dívida</h2>
+        <p className="mt-1 text-xs text-black/50">Leia com atenção. Os valores acompanham o que você escolheu acima.</p>
+        <div className="mt-4 max-h-[26rem] overflow-y-auto rounded-2xl border border-black/10 bg-[#fbfbfa] p-4 sm:p-5">
+          <p className="text-center text-xs font-semibold uppercase tracking-[0.2em] text-black">{termo.titulo}</p>
+          <p lang="ja" className="mt-4 text-[11px] leading-5 text-black/55">
+            {termo.textoJapones}
+          </p>
+          <div className="mt-4 space-y-3 text-xs leading-5 text-black/70">
+            {termo.clausulas.map((c, i) => (
+              <p key={i}>{c}</p>
+            ))}
+          </div>
+          <dl className="mt-5 grid gap-x-6 gap-y-2 border-t border-black/[0.08] pt-4 text-xs sm:grid-cols-2">
+            <div>
+              <dt className="text-[10px] uppercase tracking-[0.12em] text-black/40">Credor</dt>
+              <dd className="text-black/75">
+                {CREDOR_FINANCIAMENTO.razaoSocial} — CNPJ {CREDOR_FINANCIAMENTO.cnpj}
+              </dd>
+            </div>
+            <div>
+              <dt className="text-[10px] uppercase tracking-[0.12em] text-black/40">Data</dt>
+              <dd className="tabular-nums text-black/75">{dataBR}</dd>
+            </div>
+            <div>
+              <dt className="text-[10px] uppercase tracking-[0.12em] text-black/40">Nome completo do candidato</dt>
+              <dd className="text-black/75">{termo.dados.nomeCompleto}</dd>
+            </div>
+            <div>
+              <dt className="text-[10px] uppercase tracking-[0.12em] text-black/40">Nº do passaporte</dt>
+              <dd className="text-black/75">{termo.dados.passaporte || "Não informado na ficha"}</dd>
+            </div>
+          </dl>
+        </div>
+      </section>
+
+      <section className="rounded-3xl bg-white p-5 shadow-sm sm:p-6">
+        <button type="button" onClick={() => setVerGuia((v) => !v)} aria-expanded={verGuia} className="flex w-full items-center justify-between gap-3 text-left">
+          <span className="text-sm font-medium text-black">Como pagar as parcelas pelo JP Bank (ゆうちょ銀行)</span>
+          <span className="text-xs font-medium text-[#2f80c9]">{verGuia ? "Ocultar" : "Ver passo a passo"}</span>
+        </button>
+        {verGuia && (
+          <div className="mt-4">
+            <div className="grid gap-2 rounded-2xl bg-[#2f80c9]/[0.06] p-4 text-xs sm:grid-cols-3">
+              <div>
+                <p className="text-[10px] uppercase tracking-[0.12em] text-black/40">Code number</p>
+                <p className="font-semibold tabular-nums text-black">{CONTA_JP_BANK_AJISAI.codeNumber}</p>
+              </div>
+              <div>
+                <p className="text-[10px] uppercase tracking-[0.12em] text-black/40">Account number</p>
+                <p className="font-semibold tabular-nums text-black">{CONTA_JP_BANK_AJISAI.accountNumber}</p>
+              </div>
+              <div>
+                <p className="text-[10px] uppercase tracking-[0.12em] text-black/40">Titular</p>
+                <p lang="ja" className="font-semibold text-black">{CONTA_JP_BANK_AJISAI.titularKatakana}</p>
+              </div>
+            </div>
+            <ol className="mt-4 list-decimal space-y-2 pl-5 text-xs leading-5 text-black/65">
+              {PASSOS_TRANSFERENCIA_JP_BANK.map((passo) => (
+                <li key={passo}>{passo}</li>
+              ))}
+            </ol>
+          </div>
+        )}
+      </section>
+    </>
+  );
+}
+
 export default function PropostaForm(props: {
   candidaturaId: string;
   token: string;
@@ -102,6 +213,8 @@ export default function PropostaForm(props: {
   fonteCotacao: string;
   cidadeCandidato: string;
   inicial: SelecaoProposta;
+  passaporte: string;
+  dataTermo: string;
   jaAceita: boolean;
   agendamentoUrl: string;
 }) {
@@ -113,6 +226,14 @@ export default function PropostaForm(props: {
   const [erro, setErro] = useState("");
 
   const proposta = calcularProposta(sel, props.cotacao);
+  const termo = termoFinanciamento({
+    nomeCompleto: props.nome,
+    passaporte: props.passaporte,
+    totalJPY: proposta.totalJPY,
+    totalBRL: proposta.totalBRL,
+    cotacaoBRLPorJPY: props.cotacao,
+    data: props.dataTermo,
+  });
   const set = <K extends keyof SelecaoProposta>(k: K, v: SelecaoProposta[K]) => setSel((s) => ({ ...s, [k]: v }));
   const moeda = (id: string) => moedas[id] ?? "BRL";
   const valorEm = (i: Pick<ItemProposta, "totalBRL" | "totalJPY">, m: Moeda) => formatarMoeda(m === "BRL" ? i.totalBRL : i.totalJPY, m);
@@ -272,6 +393,8 @@ export default function PropostaForm(props: {
         </p>
       </section>
 
+      <TermoDivida termo={termo} />
+
       <section className="rounded-3xl bg-white p-5 shadow-sm sm:p-6">
         <button type="button" onClick={() => setVerTermos((v) => !v)} className="text-xs font-medium text-[#2f80c9] underline underline-offset-2">
           {verTermos ? "Ocultar" : "Ler"} os termos e condições da proposta
@@ -285,7 +408,7 @@ export default function PropostaForm(props: {
         )}
         <label className="mt-4 flex items-start gap-2.5 text-sm text-black/75">
           <input type="checkbox" checked={aceite} onChange={(e) => setAceite(e.target.checked)} className="mt-0.5 h-4 w-4" style={{ accentColor: "#2f80c9" }} />
-          Li e aceito os termos e condições desta proposta.
+          Li e aceito os termos e condições desta proposta e o Termo de Dívida acima.
         </label>
         {erro && <p className="mt-3 text-xs text-red-600">{erro}</p>}
         <button

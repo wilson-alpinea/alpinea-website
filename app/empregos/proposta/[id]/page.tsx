@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 import { Bodoni_Moda } from "next/font/google";
 import { carregarCandidaturaPublica } from "@/lib/empregos/candidaturaPublica";
 import { buscarCotacaoIene } from "@/app/lib/cotacaoIeneServidor";
-import { AEROPORTOS, type SelecaoProposta } from "@/app/lib/financiamentoEmpregos";
+import { AEROPORTOS, dataHojeSaoPaulo, type SelecaoProposta } from "@/app/lib/financiamentoEmpregos";
 import { urlEtapa, vagaPrecisaProposta } from "@/app/lib/etapasCandidatura";
 import type { FichaCadastral } from "@/app/lib/fichaCadastral";
 import PropostaForm from "./PropostaForm";
@@ -44,6 +44,7 @@ export default async function PropostaPage({ params, searchParams }: { params: P
   const ficha = (c.ficha ?? null) as FichaCadastral | null;
   const uf = typeof ficha?.valores.uf === "string" ? ficha.valores.uf : "";
   const cidade = typeof ficha?.valores.cidade === "string" ? ficha.valores.cidade : "";
+  const passaporte = typeof ficha?.valores.passaporteNumero === "string" ? ficha.valores.passaporteNumero.trim() : "";
   const anterior = c.proposta_financiamento?.selecao as SelecaoProposta | undefined;
   const inicial: SelecaoProposta = anterior ?? {
     proponentes: 1,
@@ -75,6 +76,8 @@ export default async function PropostaPage({ params, searchParams }: { params: P
           fonteCotacao={cotacao.fonte}
           cidadeCandidato={[cidade, uf].filter(Boolean).join(" / ")}
           inicial={inicial}
+          passaporte={passaporte}
+          dataTermo={dataHojeSaoPaulo()}
           jaAceita={c.proposta_status === "aceita"}
           agendamentoUrl={urlEtapa("agendamento", c.id, t)}
         />
