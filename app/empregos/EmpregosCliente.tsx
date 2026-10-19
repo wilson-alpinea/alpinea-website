@@ -9,7 +9,7 @@
 // existe caminho especial" + "todas as vagas no site agora devem ter site
 // próprio".
 
-import { VAGAS, VAGAS_CAMPANHA_CUSTO_ZERO, AUXILIO_EMBARQUE_PANASONIC_UNNAN, formatarDataPostagem, localVaga, type Vaga, type PublicoKey, type SetorKey, type StatusVaga } from "../lib/vagasCatalogo";
+import { VAGAS, AUXILIO_EMBARQUE_PANASONIC_UNNAN, formatarDataPostagem, localVaga, type Vaga, type PublicoKey, type SetorKey, type StatusVaga } from "../lib/vagasCatalogo";
 import {
   PERGUNTAS_TRIAGEM,
   NIVEIS_JAPONES_DETALHADOS,
@@ -320,7 +320,8 @@ const DESTAQUES: Destaque[] = [
       titulo: "Custo zero: passagem, visto e seguro pagos",
       subtitulo: "5 vagas em fábricas — de ¥1.400 a ¥1.450 por hora.",
     },
-    vagaIds: VAGAS_CAMPANHA_CUSTO_ZERO,
+    // Abre o hot site da campanha (Wilson, 18/out/2026: "é pra criar").
+    href: "/empregos/custo-zero",
     selos: [
       "Passagem, visto e seguro-viagem pagos pela empresa*",
       "Embarque até 28/02/2027",
@@ -467,12 +468,12 @@ function CarrosselDestaques({ onAbrir }: { onAbrir: (d: Destaque) => void }) {
                   />
                   <div className={`absolute inset-x-0 bottom-0 px-6 pb-6 sm:inset-y-0 sm:right-auto sm:flex sm:flex-col sm:justify-center sm:px-12 sm:pb-0 md:px-14 ${d.textoEstreito ? "sm:max-w-[46%]" : "sm:max-w-[52%]"}`}>
                     <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-white/80">{d.sobreposto.kicker}</p>
-                    <p className={`${display.className} mt-2 text-[28px] font-medium leading-[1.08] text-white drop-shadow-[0_2px_12px_rgba(0,0,0,0.35)] sm:text-4xl md:text-5xl`}>
+                    <p className={`${display.className} mt-2 text-[28px] font-medium leading-[1.08] text-white drop-shadow-[0_2px_12px_rgba(0,0,0,0.35)] sm:text-3xl xl:text-5xl`}>
                       {d.sobreposto.titulo}
                     </p>
                     {d.sobreposto.subtitulo && <p className="mt-2 hidden text-sm text-white/80 sm:block md:text-base">{d.sobreposto.subtitulo}</p>}
                     {d.selos && (
-                      <ul className="mt-4 hidden max-w-md grid-cols-2 gap-x-4 gap-y-2 sm:grid">
+                      <ul className="mt-4 hidden max-w-md grid-cols-2 gap-x-4 gap-y-2 xl:grid">
                         {d.selos.map((x) => (
                           <li key={x} className="flex items-start gap-1.5 text-[13px] font-medium leading-tight text-white md:text-sm">
                             <svg viewBox="0 0 24 24" fill="none" stroke="#7fb6e6" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="mt-px h-4 w-4 shrink-0" aria-hidden="true">
@@ -488,15 +489,15 @@ function CarrosselDestaques({ onAbrir }: { onAbrir: (d: Destaque) => void }) {
                         {d.href ? "Conhecer a vaga →" : "Ver vagas →"}
                       </span>
                     )}
-                    {d.selos && <p className="mt-3 hidden text-[10px] text-white/55 sm:block">{d.notaSelos ?? NOTA_SELOS}</p>}
+                    {d.selos && <p className="mt-3 hidden text-[10px] text-white/55 xl:block">{d.notaSelos ?? NOTA_SELOS}</p>}
                   </div>
                 </>
               )}
             </div>
-            {/* Celular: os selos não cabem sobre a foto — vão numa faixa logo abaixo. */}
+            {/* Abaixo de xl (1280px) os selos não cabem sobre a foto sem cortar título e botão — vão numa faixa logo abaixo (Wilson, 18/out/2026: banner cortado em ~1000px). */}
             {d.selos && (
-              <div className="bg-[#061a2e] px-6 pb-5 pt-1 sm:hidden">
-                <ul className="grid grid-cols-2 gap-x-3 gap-y-2">
+              <div className="bg-[#061a2e] px-6 pb-5 pt-1 sm:px-12 sm:pb-6 sm:pt-4 md:px-14 xl:hidden">
+                <ul className="grid grid-cols-2 gap-x-3 gap-y-2 sm:grid-cols-4 sm:gap-x-5">
                   {d.selos.map((x) => (
                     <li key={x} className="flex items-start gap-1.5 text-xs font-medium leading-tight text-white">
                       <svg viewBox="0 0 24 24" fill="none" stroke="#7fb6e6" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="h-3.5 w-3.5 shrink-0" aria-hidden="true">
@@ -521,7 +522,7 @@ function CarrosselDestaques({ onAbrir }: { onAbrir: (d: Destaque) => void }) {
               </p>
               {d.subtitulo && <p className="mt-3 max-w-xl text-sm text-white/70">{d.subtitulo}</p>}
               {d.selos && (
-                <ul className="mt-4 hidden max-w-xl grid-cols-2 gap-x-4 gap-y-2 sm:grid">
+                <ul className="mt-4 hidden max-w-xl grid-cols-2 gap-x-4 gap-y-2 xl:grid">
                   {d.selos.map((x) => (
                     <li key={x} className="flex items-start gap-1.5 text-[13px] font-medium leading-tight text-white md:text-sm">
                       <svg viewBox="0 0 24 24" fill="none" stroke="#7fb6e6" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="mt-px h-4 w-4 shrink-0" aria-hidden="true">
@@ -537,12 +538,12 @@ function CarrosselDestaques({ onAbrir }: { onAbrir: (d: Destaque) => void }) {
                   {d.href ? "Conhecer a vaga →" : "Ver vagas →"}
                 </span>
               )}
-              {d.selos && <p className="mt-3 hidden text-[10px] text-white/55 sm:block">{d.notaSelos ?? NOTA_SELOS}</p>}
+              {d.selos && <p className="mt-3 hidden text-[10px] text-white/55 xl:block">{d.notaSelos ?? NOTA_SELOS}</p>}
             </div>
-            {/* Celular: selos numa faixa abaixo, como nos banners com foto. */}
+            {/* Abaixo de xl: selos numa faixa abaixo, como nos banners com foto. */}
             {d.selos && (
-              <div className="bg-[#1c4a74] px-6 pb-5 pt-1 sm:hidden">
-                <ul className="grid grid-cols-2 gap-x-3 gap-y-2">
+              <div className="bg-[#1c4a74] px-6 pb-5 pt-1 sm:px-12 sm:pb-6 sm:pt-4 md:px-14 xl:hidden">
+                <ul className="grid grid-cols-2 gap-x-3 gap-y-2 sm:grid-cols-4 sm:gap-x-5">
                   {d.selos.map((x) => (
                     <li key={x} className="flex items-start gap-1.5 text-xs font-medium leading-tight text-white">
                       <svg viewBox="0 0 24 24" fill="none" stroke="#7fb6e6" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="h-3.5 w-3.5 shrink-0" aria-hidden="true">
