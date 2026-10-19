@@ -311,25 +311,7 @@ const BENEFICIOS_MURATA: [string, string, string] = ["Custo zero com documentaç
 
 const DESTAQUES: Destaque[] = [
   {
-    // Campanha custo zero (5 vagas — 5 oportunidades do catálogo, não
-    // número de postos). Abre o hot site /empregos/custo-zero.
-    id: "custo-zero",
-    aba: "Passagem paga",
-    imagem: "/images/empregos-destaque-custo-zero.webp",
-    alt: "Operadora de uniforme e luvas montando placas eletrônicas numa fábrica",
-    posicaoMobile: "object-[70%_45%]",
-    posicaoDesktop: "lg:object-[50%_10%]",
-    estreito: true,
-    local: "Shimane · Fukui · Shiga",
-    titulo: "Passagem, visto e seguro pagos",
-    descricao: "Conheça 5 oportunidades de trabalho em fábricas no Japão.",
-    remuneracao: { valor: "¥1.400–¥1.450/hora" },
-    cta: { rotulo: "Ver as 5 vagas", href: "/empregos/custo-zero" },
-    beneficios: ["Passagem paga*", "Visto e seguro-viagem pagos*", "Desembarque até 28/02/2027*"],
-    condicoes: [NOTA_CAMPANHA_CUSTO_ZERO],
-  },
-  {
-    // Panasonic Unnan — card próprio (auxílio embarque).
+    // Panasonic Unnan — card próprio (auxílio embarque). 1º do carrossel (Wilson, 19/out/2026).
     id: "panasonic-unnan",
     aba: "Panasonic",
     // v2 (18/out/2026): logo ~10% menor, com mais margem no topo e à direita.
@@ -354,6 +336,24 @@ const DESTAQUES: Destaque[] = [
     // Passagem saiu do rodapé (já está no destaque); 3º item do cadastro da vaga.
     beneficios: ["Turno fixo noturno", "Escala 5×2", "Seguro saúde, previdência e seguro-desemprego"],
     condicoes: [NOTA_PASSAGEM_PANASONIC, NOTA_AUXILIO_PANASONIC],
+  },
+  {
+    // Campanha custo zero (5 vagas — 5 oportunidades do catálogo, não
+    // número de postos). Abre o hot site /empregos/custo-zero.
+    id: "custo-zero",
+    aba: "Passagem paga",
+    imagem: "/images/empregos-destaque-custo-zero.webp",
+    alt: "Operadora de uniforme e luvas montando placas eletrônicas numa fábrica",
+    posicaoMobile: "object-[70%_45%]",
+    posicaoDesktop: "lg:object-[50%_10%]",
+    estreito: true,
+    local: "Shimane · Fukui · Shiga",
+    titulo: "Passagem, visto e seguro pagos",
+    descricao: "Conheça 5 oportunidades de trabalho em fábricas no Japão.",
+    remuneracao: { valor: "¥1.400–¥1.450/hora" },
+    cta: { rotulo: "Ver as 5 vagas", href: "/empregos/custo-zero" },
+    beneficios: ["Passagem paga*", "Visto e seguro-viagem pagos*", "Desembarque até 28/02/2027*"],
+    condicoes: [NOTA_CAMPANHA_CUSTO_ZERO],
   },
   {
     // Landing Fukui Murata. Salário confirmado na vaga murata-echizen.
