@@ -276,6 +276,12 @@ type Destaque = {
   selos?: string[];
   // Ressalva dos selos; sem isso vale NOTA_SELOS.
   notaSelos?: string;
+  // Enquadramento da foto (classes object-position) quando o padrão
+  // object-[30%_50%] (celular) corta o assunto/logo da arte.
+  posicaoImagem?: string;
+  // Arte com a pessoa mais à esquerda: escurecimento e texto mais curtos
+  // para não cobrir o rosto (desktop).
+  textoEstreito?: boolean;
 };
 
 // Wilson, 15/out/2026: "adicionar informações estratégicas nos banners de
@@ -298,10 +304,16 @@ const DESTAQUES: Destaque[] = [
     // aquaplus como destaque, será o novo destaque principal, os destaques
     // que já estão no carrossel permanecem". Campanha custo zero do
     // regulamento (desembarque 15/10/2026 a 28/02/2027). Sem nome da
-    // empreiteira no site (só a marca Ajisai). Ainda sem arte: usa o fundo
-    // azul com o texto; quando a imagem chegar, é só preencher `imagem`.
+    // empreiteira no site (só a marca Ajisai).
     id: "custo-zero",
     titulo: "Custo zero: passagem, visto e seguro pagos",
+    // Arte enviada pelo Wilson em 18/out/2026 (operadora em linha de
+    // eletrônicos, sem texto na imagem).
+    imagem: "/images/empregos-destaque-custo-zero.webp",
+    // Pessoa à direita (≈53–82% da largura): no celular, enquadra mais à
+    // direita; no desktop, texto e escurecimento mais curtos.
+    posicaoImagem: "object-[70%_50%] sm:object-center",
+    textoEstreito: true,
     subtitulo: "5 vagas em fábricas de Shimane, Fukui e Shiga — de ¥1.400 a ¥1.450 por hora.",
     sobreposto: {
       kicker: "Shimane · Fukui · Shiga",
@@ -323,12 +335,19 @@ const DESTAQUES: Destaque[] = [
     // carrossel num novo card". Saiu do card "Custo zero" e abre direto a
     // página da vaga. Ainda sem arte (fundo azul com o texto).
     id: "panasonic-unnan",
-    titulo: "Panasonic em Unnan, Shimane",
-    subtitulo: `Conversores para painéis solares — ¥1.500 por hora, custo zero e auxílio embarque de ${AUXILIO_EMBARQUE_PANASONIC_UNNAN}.`,
+    titulo: "R$ 1.000 para embarcar + passagem paga",
+    // Arte enviada pelo Wilson em 18/out/2026 (rio Hii com cerejeiras, logo
+    // Panasonic já na imagem — por isso o nome não se repete no texto).
+    imagem: "/images/empregos-destaque-panasonic-unnan.webp",
+    // Celular: ancorado à direita para mostrar a pessoa e o logo (o padrão
+    // cortava o logo).
+    posicaoImagem: "object-right sm:object-center",
+    textoEstreito: true,
+    subtitulo: "Conversores para painéis solares em Unnan, Shimane — ¥1.500 por hora.",
     sobreposto: {
-      kicker: "Shimane · Japão",
-      titulo: "Panasonic em Unnan, Shimane",
-      subtitulo: `¥1.500 por hora, custo zero e auxílio embarque de ${AUXILIO_EMBARQUE_PANASONIC_UNNAN}.`,
+      kicker: "Unnan · Shimane",
+      titulo: "R$ 1.000 para embarcar + passagem paga",
+      subtitulo: "Fábrica de conversores para painéis solares — ¥1.500 por hora.",
     },
     href: "/empregos/vagas/panasonic-unnan",
     selos: [
@@ -436,7 +455,7 @@ function CarrosselDestaques({ onAbrir }: { onAbrir: (d: Destaque) => void }) {
                 alt={d.titulo}
                 fill
                 sizes="(min-width: 1152px) 1152px, 100vw"
-                className="object-cover object-[30%_50%] sm:object-center"
+                className={`object-cover ${d.posicaoImagem ?? "object-[30%_50%] sm:object-center"}`}
                 priority={i === 0}
               />
               {d.sobreposto && (
@@ -444,9 +463,9 @@ function CarrosselDestaques({ onAbrir }: { onAbrir: (d: Destaque) => void }) {
                   {/* Escurecimento: forte à esquerda (texto), some antes das pessoas. */}
                   <div
                     aria-hidden="true"
-                    className="absolute inset-0 bg-gradient-to-t from-[#061a2e]/95 via-[#061a2e]/60 to-transparent sm:bg-gradient-to-r sm:from-[#061a2e]/95 sm:via-[#061a2e]/75 sm:via-40% sm:to-transparent sm:to-[62%]"
+                    className={`absolute inset-0 bg-gradient-to-t from-[#061a2e]/95 via-[#061a2e]/60 to-transparent sm:bg-gradient-to-r sm:from-[#061a2e]/95 sm:via-[#061a2e]/75 sm:to-transparent ${d.textoEstreito ? "sm:via-30% sm:to-[50%]" : "sm:via-40% sm:to-[62%]"}`}
                   />
-                  <div className="absolute inset-x-0 bottom-0 px-6 pb-6 sm:inset-y-0 sm:right-auto sm:flex sm:max-w-[52%] sm:flex-col sm:justify-center sm:px-12 sm:pb-0 md:px-14">
+                  <div className={`absolute inset-x-0 bottom-0 px-6 pb-6 sm:inset-y-0 sm:right-auto sm:flex sm:flex-col sm:justify-center sm:px-12 sm:pb-0 md:px-14 ${d.textoEstreito ? "sm:max-w-[46%]" : "sm:max-w-[52%]"}`}>
                     <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-white/80">{d.sobreposto.kicker}</p>
                     <p className={`${display.className} mt-2 text-[28px] font-medium leading-[1.08] text-white drop-shadow-[0_2px_12px_rgba(0,0,0,0.35)] sm:text-4xl md:text-5xl`}>
                       {d.sobreposto.titulo}
