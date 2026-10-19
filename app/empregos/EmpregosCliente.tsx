@@ -274,8 +274,14 @@ type Destaque = {
   /** Pessoa mais perto do centro: bloco de texto e degradê mais curtos. */
   estreito?: boolean;
   local: string;
-  titulo: string;
-  descricao: string;
+  /** Título; com 2 itens, vira 2 linhas fixas só no desktop (no celular quebra natural). */
+  titulo: string | [string, string];
+  /** Linha curta de destaque logo abaixo do título (ex.: passagem paga). */
+  destaque?: string;
+  /** Descrição; com 2 itens, 2 linhas fixas só no desktop. */
+  descricao: string | [string, string];
+  /** Largura do bloco de texto no desktop (classes literais lg:/xl:). */
+  larguraTexto?: string;
   remuneracao?: { valor: string; detalhe?: string };
   // Destino do botão: página própria (href) ou filtro da lista (vagaIds).
   cta: { rotulo: string; href?: string; vagaIds?: string[] };
@@ -286,9 +292,17 @@ type Destaque = {
 };
 
 // Ressalvas — os asteriscos dos benefícios apontam para estas frases.
-const NOTA_ELEGIVEIS = "*Para candidatos elegíveis, sujeito à análise e disponibilidade.";
+const NOTA_ELEGIVEIS = "* Para candidatos elegíveis, sujeito à análise e disponibilidade.";
 const NOTA_CAMPANHA_CUSTO_ZERO =
-  "*Para quem desembarcar no Japão de 15/10/2026 a 28/02/2027 e permanecer no mínimo 6 meses na fábrica.";
+  "* Para quem desembarcar no Japão de 15/10/2026 a 28/02/2027 e permanecer no mínimo 6 meses na fábrica.";
+// Panasonic: deixa claro a que benefício cada condição se aplica.
+const NOTA_PASSAGEM_PANASONIC =
+  "* Passagem, visto e seguro-viagem: para quem desembarcar no Japão de 15/10/2026 a 28/02/2027 e permanecer no mínimo 6 meses na fábrica.";
+// Mesma redação do Auxílio Embarque Ajisai nas landings Murata
+// (landingsMurata.ts). Condições específicas do auxílio da Panasonic ainda
+// não foram passadas — trocar aqui quando o Wilson confirmar.
+const NOTA_AUXILIO_PANASONIC =
+  "** Auxílio-embarque: para candidatos elegíveis, conforme as condições da campanha vigente — confirme com a nossa equipe.";
 
 // Murata (Fukui e Izumo): benefícios aprovados pelo Wilson em 15/out/2026.
 // "Embarque imediato para quem já tem a documentação" saiu do banner e
@@ -317,20 +331,27 @@ const DESTAQUES: Destaque[] = [
     // Panasonic Unnan — card próprio (auxílio embarque).
     id: "panasonic-unnan",
     aba: "Panasonic",
-    imagem: "/images/empregos-destaque-panasonic-unnan.webp",
+    // v2 (18/out/2026): logo ~10% menor, com mais margem no topo e à direita.
+    imagem: "/images/empregos-destaque-panasonic-unnan-v2.webp",
     alt: "Mulher sorrindo à beira de um rio com cerejeiras floridas, com o logo da Panasonic",
     // Ancorado à direita (celular e desktop) para nunca cortar o logo.
     posicaoMobile: "object-right",
     posicaoDesktop: "lg:object-right",
     estreito: true,
     local: "Unnan · Shimane",
-    // "Receba" — antes "R$ 1.000 para embarcar", que podia parecer valor a pagar.
-    titulo: `Receba R$ 1.000 de auxílio-embarque`,
-    descricao: "Fabricação de conversores para painéis solares.",
+    // "Receba" — antes "R$ 1.000 para embarcar", que podia parecer valor a
+    // pagar. Wilson, 18/out/2026: 2 linhas, sem quebrar "auxílio-embarque".
+    titulo: ["Receba R$ 1.000**", "para seu embarque"],
+    // A passagem paga sobe para o corpo principal (Wilson, 18/out/2026).
+    destaque: "Passagem, visto e seguro-viagem pagos*",
+    descricao: ["Produção de conversores", "para painéis solares."],
+    // Texto mais estreito para não encostar na pessoa.
+    larguraTexto: "lg:max-w-[44%]",
     remuneracao: { valor: "¥1.500/hora" },
     cta: { rotulo: "Conhecer a vaga", href: "/empregos/vagas/panasonic-unnan" },
-    beneficios: ["Passagem, visto e seguro-viagem pagos*", "Turno fixo noturno", "Escala 5×2"],
-    condicoes: [NOTA_CAMPANHA_CUSTO_ZERO],
+    // Passagem saiu do rodapé (já está no destaque); 3º item do cadastro da vaga.
+    beneficios: ["Turno fixo noturno", "Escala 5×2", "Seguro saúde, previdência e seguro-desemprego"],
+    condicoes: [NOTA_PASSAGEM_PANASONIC, NOTA_AUXILIO_PANASONIC],
   },
   {
     // Landing Fukui Murata. Salário confirmado na vaga murata-echizen.
@@ -388,6 +409,33 @@ const DESTAQUES: Destaque[] = [
   },
 ];
 
+// Texto em 2 linhas fixas só no desktop; no celular, quebra natural.
+// Asteriscos no fim de um trecho do título viram sobrescrito discreto.
+function ComNota({ t }: { t: string }) {
+  const m = t.match(/^(.*?)(\*+)$/);
+  if (!m) return <>{t}</>;
+  return (
+    <>
+      {m[1]}
+      <span className="ml-0.5 align-super text-[0.5em] font-normal">{m[2]}</span>
+    </>
+  );
+}
+
+function Linhas({ texto }: { texto: string | [string, string] }) {
+  if (typeof texto === "string") return <ComNota t={texto} />;
+  return (
+    <>
+      <span className="lg:block">
+        <ComNota t={texto[0]} />
+      </span>{" "}
+      <span className="lg:block">
+        <ComNota t={texto[1]} />
+      </span>
+    </>
+  );
+}
+
 function IconeCheckDestaque() {
   return (
     <svg viewBox="0 0 24 24" fill="none" stroke="#7fb6e6" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="mt-[3px] h-4 w-4 shrink-0" aria-hidden="true">
@@ -434,12 +482,20 @@ function SlideDestaque({ d, ativo, onAbrir }: { d: Destaque; ativo: boolean; onA
             }`}
           />
         </div>
-        <div className={`relative px-6 pb-6 pt-2 sm:px-10 lg:px-12 lg:py-12 ${d.estreito ? "lg:max-w-[48%]" : "lg:max-w-[52%]"}`}>
+        <div className={`relative px-6 pb-6 pt-2 sm:px-10 lg:px-12 lg:py-12 ${d.larguraTexto ?? (d.estreito ? "lg:max-w-[48%]" : "lg:max-w-[52%]")}`}>
           <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-white/75">{d.local}</p>
-          <h3 className={`${display.className} mt-3 text-[28px] font-medium leading-[1.12] text-white sm:text-[32px] lg:text-[40px] xl:text-[44px]`}>
-            {d.titulo}
+          <h3 className={`${display.className} mt-3 text-[28px] font-medium leading-[1.12] text-white sm:text-[32px] lg:text-[36px] xl:text-[44px]`}>
+            <Linhas texto={d.titulo} />
           </h3>
-          <p className="mt-3 text-base leading-relaxed text-white/80 lg:text-lg">{d.descricao}</p>
+          {d.destaque && (
+            <p className="mt-3 flex items-start gap-2 text-[17px] font-semibold leading-snug text-[#cfe3f6] lg:text-lg">
+              <IconeCheckDestaque />
+              {d.destaque}
+            </p>
+          )}
+          <p className={`mt-3 leading-relaxed text-white/80 ${d.destaque ? "text-[15px] lg:text-base" : "text-base lg:text-lg"}`}>
+            <Linhas texto={d.descricao} />
+          </p>
           {d.remuneracao && (
             <p className="mt-5">
               <span className="block text-2xl font-semibold tabular-nums text-white lg:text-[28px]">{d.remuneracao.valor}</span>
@@ -462,7 +518,7 @@ function SlideDestaque({ d, ativo, onAbrir }: { d: Destaque; ativo: boolean; onA
         {d.condicoes.length > 0 && (
           <div className="mt-4 space-y-1 border-t border-white/10 pt-3">
             {d.condicoes.map((c) => (
-              <p key={c} className="text-[12.5px] leading-5 text-white/70">
+              <p key={c} className="text-[13.5px] leading-5 text-white/75">
                 {c}
               </p>
             ))}
@@ -1079,7 +1135,7 @@ export default function EmpregosCliente({ inativas }: { inativas: string[] }) {
             <CarrosselDestaques
               onAbrir={(d) => {
                 if (d.cta.vagaIds?.length) {
-                  setDestaqueFiltro({ titulo: d.titulo, ids: d.cta.vagaIds });
+                  setDestaqueFiltro({ titulo: typeof d.titulo === "string" ? d.titulo : d.titulo.join(" "), ids: d.cta.vagaIds });
                   irParaVagas({ publico: "todos", setor: "todos" });
                   setRegioesFiltro(new Set());
                 }
