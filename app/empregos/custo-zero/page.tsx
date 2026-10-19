@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { metaEmpregos } from "@/lib/empregos/metaCompartilhamento";
 import LandingCustoZero from "../../components/empregos/LandingCustoZero";
 import { VAGAS_CAMPANHA_CUSTO_ZERO } from "../../lib/vagasCatalogo";
 import { vagasAtivas } from "@/lib/empregos/vagasAtivas";
@@ -12,11 +13,8 @@ const titulo = "Custo zero: trabalhe no Japão com passagem, visto e seguro pago
 const descricao =
   "5 vagas em fábricas de Shimane, Fukui e Shiga, de ¥1.400 a ¥1.450 por hora, com passagem aérea, visto e seguro-viagem pagos pela empresa para desembarque até 28/02/2027.";
 
-export const metadata: Metadata = {
-  title: titulo,
-  description: descricao,
-  openGraph: { title: titulo, description: descricao, images: ["/images/empregos-destaque-custo-zero.webp"] },
-};
+// Prévia no WhatsApp com o logo Ajisai (Wilson, 19/out/2026).
+export const metadata: Metadata = metaEmpregos({ titulo, descricao, url: "https://www.alpinea.io/empregos/custo-zero" });
 
 export const revalidate = 60;
 

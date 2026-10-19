@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { metaEmpregos } from "@/lib/empregos/metaCompartilhamento";
 import { notFound } from "next/navigation";
 import { VAGAS, encontrarVaga, localVaga } from "../../../lib/vagasCatalogo";
 import { HOTSITE_POR_VAGA } from "../../../lib/landingsMurata";
@@ -25,7 +26,7 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
   if (!vaga) return {};
   const titulo = `${vaga.titulo} — ${vaga.empresa}, ${vaga.cidade} | Ajisai Empregos`;
   const descricao = `Vaga em ${localVaga(vaga)} (Japão): ${vaga.salario}. ${vaga.turno}. Candidate-se pelo site da Ajisai.`;
-  return { title: titulo, description: descricao, openGraph: { title: titulo, description: descricao } };
+  return metaEmpregos({ titulo, descricao, url: `https://www.alpinea.io/empregos/vagas/${id}` });
 }
 
 export default async function Page({ params }: { params: Promise<{ id: string }> }) {
