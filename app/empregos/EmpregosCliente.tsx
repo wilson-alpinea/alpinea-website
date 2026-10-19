@@ -318,6 +318,7 @@ const DESTAQUES: Destaque[] = [
     imagem: "/images/empregos-destaque-custo-zero.webp",
     alt: "Operadora de uniforme e luvas montando placas eletrônicas numa fábrica",
     posicaoMobile: "object-[70%_45%]",
+    posicaoDesktop: "lg:object-[50%_10%]",
     estreito: true,
     local: "Shimane · Fukui · Shiga",
     titulo: "Passagem, visto e seguro pagos",
@@ -336,7 +337,8 @@ const DESTAQUES: Destaque[] = [
     alt: "Mulher sorrindo à beira de um rio com cerejeiras floridas, com o logo da Panasonic",
     // Ancorado à direita (celular e desktop) para nunca cortar o logo.
     posicaoMobile: "object-right",
-    posicaoDesktop: "lg:object-right",
+    // Desktop mais horizontal (19/out/2026): ancorado no topo para manter o logo e o rosto.
+    posicaoDesktop: "lg:object-[100%_0%]",
     estreito: true,
     local: "Unnan · Shimane",
     // "Receba" — antes "R$ 1.000 para embarcar", que podia parecer valor a
@@ -360,6 +362,7 @@ const DESTAQUES: Destaque[] = [
     imagem: "/images/empregos-destaque-echizen-murata.webp",
     alt: "Operadores de uniforme numa fábrica de componentes eletrônicos, com a cidade de Fukui ao fundo",
     posicaoMobile: "object-[72%_40%]",
+    posicaoDesktop: "lg:object-[50%_20%]",
     local: "Fukui · Japão",
     titulo: "Trabalhe no Japão sem falar japonês",
     descricao: "Oportunidades em Fukui, sem exigência de experiência prévia.",
@@ -375,7 +378,7 @@ const DESTAQUES: Destaque[] = [
     imagem: "/images/empregos-destaque-izumo-murata.webp",
     alt: "Operadores de uniforme numa fábrica de componentes eletrônicos, com Izumo ao fundo",
     posicaoMobile: "object-[72%_35%]",
-    posicaoDesktop: "lg:object-[50%_30%]",
+    posicaoDesktop: "lg:object-[50%_35%]",
     local: "Shimane · Japão",
     titulo: "Trabalhe e More em Izumo",
     descricao: "Produção de componentes eletrônicos (condensador cerâmico).",
@@ -391,7 +394,7 @@ const DESTAQUES: Destaque[] = [
     imagem: "/images/empregos-destaque-montadoras.webp",
     alt: "Operador fazendo manutenção num carro na linha de montagem",
     posicaoMobile: "object-[62%_50%]",
-    posicaoDesktop: "lg:object-[50%_35%]",
+    posicaoDesktop: "lg:object-[50%_28%]",
     local: "Gunma · Oita · Aichi",
     titulo: "Vagas em montadoras",
     descricao: "Subaru, Daihatsu e Yokohama Gomu — 4 vagas em linhas de produção.",
@@ -448,6 +451,9 @@ const classeBotaoDestaque =
   "inline-flex min-h-[44px] w-fit items-center gap-2 rounded-full bg-white px-6 text-[15px] font-semibold text-[#0A2540] transition-colors hover:bg-[#e8f1fa] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7fb6e6] focus-visible:ring-offset-2 focus-visible:ring-offset-[#061a2e]";
 
 function SlideDestaque({ d, ativo, onAbrir }: { d: Destaque; ativo: boolean; onAbrir: (d: Destaque) => void }) {
+  const router = useRouter();
+  // Clicar em qualquer parte da foto faz o mesmo que o botão (Wilson, 19/out/2026).
+  const abrir = () => (d.cta.href ? router.push(d.cta.href) : onAbrir(d));
   const botao = d.cta.href ? (
     <Link href={d.cta.href} className={classeBotaoDestaque}>
       {d.cta.rotulo} <span aria-hidden="true">→</span>
@@ -461,8 +467,10 @@ function SlideDestaque({ d, ativo, onAbrir }: { d: Destaque; ativo: boolean; onA
     <div className="flex h-full flex-col">
       {/* Área principal: no celular/tablet, foto em cima e texto embaixo;
           no desktop (lg+), texto à esquerda sobre o degradê. */}
-      <div className="relative flex flex-1 flex-col lg:min-h-[440px] lg:justify-center">
-        <div className="relative aspect-[16/10] w-full md:aspect-[2/1] lg:absolute lg:inset-0 lg:aspect-auto">
+      {/* Desktop: área da foto com ~364 px (mínimo, nunca altura fixa — se o texto
+          precisar, cresce). Wilson, 19/out/2026: carrossel mais horizontal. */}
+      <div className="relative flex flex-1 flex-col lg:min-h-[364px] lg:justify-center">
+        <div onClick={abrir} className="relative aspect-[16/10] w-full cursor-pointer md:aspect-[2/1] lg:absolute lg:inset-0 lg:aspect-auto">
           {d.imagem && (
             <Image
               src={d.imagem}
@@ -482,9 +490,9 @@ function SlideDestaque({ d, ativo, onAbrir }: { d: Destaque; ativo: boolean; onA
             }`}
           />
         </div>
-        <div className={`relative px-6 pb-6 pt-2 sm:px-10 lg:px-12 lg:py-12 ${d.larguraTexto ?? (d.estreito ? "lg:max-w-[48%]" : "lg:max-w-[52%]")}`}>
+        <div className={`relative px-6 pb-6 pt-2 sm:px-10 lg:px-12 lg:py-7 ${d.larguraTexto ?? (d.estreito ? "lg:max-w-[48%]" : "lg:max-w-[52%]")}`}>
           <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-white/75">{d.local}</p>
-          <h3 className={`${display.className} mt-3 text-[28px] font-medium leading-[1.12] text-white sm:text-[32px] lg:text-[36px] xl:text-[44px]`}>
+          <h3 className={`${display.className} mt-3 text-[28px] font-medium leading-[1.12] text-white sm:text-[32px] lg:mt-2.5 lg:text-[34px] xl:text-[36px]`}>
             <Linhas texto={d.titulo} />
           </h3>
           {d.destaque && (
@@ -493,21 +501,21 @@ function SlideDestaque({ d, ativo, onAbrir }: { d: Destaque; ativo: boolean; onA
               {d.destaque}
             </p>
           )}
-          <p className={`mt-3 leading-relaxed text-white/80 ${d.destaque ? "text-[15px] lg:text-base" : "text-base lg:text-lg"}`}>
+          <p className={`mt-3 leading-relaxed text-white/80 lg:leading-snug ${d.destaque ? "text-[15px] lg:text-base" : "text-base lg:text-[17px]"}`}>
             <Linhas texto={d.descricao} />
           </p>
           {d.remuneracao && (
-            <p className="mt-5">
-              <span className="block text-2xl font-semibold tabular-nums text-white lg:text-[28px]">{d.remuneracao.valor}</span>
+            <p className="mt-5 lg:mt-4">
+              <span className="block text-2xl font-semibold tabular-nums text-white lg:text-[26px]">{d.remuneracao.valor}</span>
               {d.remuneracao.detalhe && <span className="mt-1 block text-sm text-white/70">{d.remuneracao.detalhe}</span>}
             </p>
           )}
-          <div className="mt-6">{botao}</div>
+          <div className="mt-6 lg:mt-5">{botao}</div>
         </div>
       </div>
       {/* Faixa inferior única: 3 benefícios + condições em bloco separado. */}
-      <div className="border-t border-white/10 bg-[#061a2e] px-6 py-5 sm:px-10 lg:px-12 lg:py-6">
-        <ul className="grid gap-3 lg:grid-cols-3 lg:gap-6">
+      <div className="border-t border-white/10 bg-[#061a2e] px-6 py-5 sm:px-10 lg:px-12 lg:py-4">
+        <ul className="grid gap-3 lg:grid-cols-3 lg:gap-x-6 lg:gap-y-2">
           {d.beneficios.map((b) => (
             <li key={b} className="flex items-start gap-2.5 text-[15px] leading-snug text-white">
               <IconeCheckDestaque />
@@ -516,7 +524,7 @@ function SlideDestaque({ d, ativo, onAbrir }: { d: Destaque; ativo: boolean; onA
           ))}
         </ul>
         {d.condicoes.length > 0 && (
-          <div className="mt-4 space-y-1 border-t border-white/10 pt-3">
+          <div className="mt-4 space-y-1 border-t border-white/10 pt-3 lg:mt-3 lg:space-y-0.5 lg:pt-2.5">
             {d.condicoes.map((c) => (
               <p key={c} className="text-[13.5px] leading-5 text-white/75">
                 {c}
@@ -530,7 +538,7 @@ function SlideDestaque({ d, ativo, onAbrir }: { d: Destaque; ativo: boolean; onA
   );
 }
 
-function CarrosselDestaques({ onAbrir }: { onAbrir: (d: Destaque) => void }) {
+function CarrosselDestaques({ destaques: DESTAQUES, onAbrir }: { destaques: Destaque[]; onAbrir: (d: Destaque) => void }) {
   const [indice, setIndice] = useState(0);
   // Pausa automática (mouse em cima, foco dentro, toque) e pausa do usuário
   // (botão) são separadas: a do usuário só sai pelo botão.
@@ -975,6 +983,28 @@ export default function EmpregosCliente({ inativas }: { inativas: string[] }) {
     () => Array.from(new Set(vagasNoSite.map((v) => v.regiao))).sort((a, b) => a.localeCompare(b, "pt-BR")),
     [vagasNoSite],
   );
+  // Card do carrossel que filtra um grupo de vagas mostra só as que estão
+  // ligadas no CRM (contagem e botão ajustados); sem nenhuma ativa, o card
+  // sai do carrossel — Wilson, 19/out/2026 ("vagas desse banner não aparecem").
+  const destaquesAtivos = useMemo(() => {
+    const fora = new Set(inativas);
+    return DESTAQUES.flatMap((d): Destaque[] => {
+      const ids = d.cta.vagaIds;
+      if (!ids) return [d];
+      const ativos = ids.filter((id) => !fora.has(id));
+      if (!ativos.length) return [];
+      if (ativos.length === ids.length) return [d];
+      const n = ativos.length;
+      const trocar = (t: string) => t.replace(new RegExp(`\\b${ids.length} vagas\\b`), n === 1 ? "1 vaga" : `${n} vagas`);
+      return [
+        {
+          ...d,
+          descricao: typeof d.descricao === "string" ? trocar(d.descricao) : [trocar(d.descricao[0]), trocar(d.descricao[1])],
+          cta: { ...d.cta, vagaIds: ativos, rotulo: n === 1 ? "Ver a vaga" : `Ver as ${n} vagas` },
+        },
+      ];
+    });
+  }, [inativas]);
   const [publicoFiltro, setPublicoFiltro] = useState<PublicoKey | "todos">("todos");
   const [setorFiltro, setSetorFiltro] = useState<SetorKey | "todos">("todos");
   const [regioesFiltro, setRegioesFiltro] = useState<Set<string>>(new Set());
@@ -1133,6 +1163,7 @@ export default function EmpregosCliente({ inativas }: { inativas: string[] }) {
           </h2>
           <div className="mt-8 pb-14 md:pb-20">
             <CarrosselDestaques
+              destaques={destaquesAtivos}
               onAbrir={(d) => {
                 if (d.cta.vagaIds?.length) {
                   setDestaqueFiltro({ titulo: typeof d.titulo === "string" ? d.titulo : d.titulo.join(" "), ids: d.cta.vagaIds });
