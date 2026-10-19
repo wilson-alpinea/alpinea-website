@@ -411,6 +411,10 @@ export const VAGAS: Vaga[] = [
     contrato: "Contrato temporário (haken)",
     salario: "¥1.500/hora (até ¥1.650/hora conforme o tempo de casa)",
     status: "aberta",
+    // Wilson, 15/out/2026 (era selo do banner; saiu do carrossel v2 em
+    // 18/out e ficou aqui, com a ressalva de elegibilidade).
+    observacoes:
+      "Embarque imediato para quem já tem a documentação — para candidatos elegíveis, sujeito à análise e disponibilidade.",
     // Murata é custo zero para o candidato — sem pergunta de financiamento
     // nem etapa de proposta (Wilson, 15/out/2026).
     custosCobertosPelaEmpresa: true,
@@ -492,6 +496,10 @@ export const VAGAS: Vaga[] = [
     contrato: "A confirmar com a nossa equipe",
     salario: "¥1.500/hora em turno alternado (até ¥1.650/hora conforme o tempo de casa); ¥1.300–1.450/hora em diurno fixo",
     status: "aberta",
+    // Wilson, 15/out/2026 (era selo do banner; saiu do carrossel v2 em
+    // 18/out e ficou aqui, com a ressalva de elegibilidade).
+    observacoes:
+      "Embarque imediato para quem já tem a documentação — para candidatos elegíveis, sujeito à análise e disponibilidade.",
     // Murata é custo zero para o candidato — sem pergunta de financiamento
     // nem etapa de proposta (Wilson, 15/out/2026).
     custosCobertosPelaEmpresa: true,

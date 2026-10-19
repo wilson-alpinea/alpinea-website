@@ -9,7 +9,7 @@
 // existe caminho especial" + "todas as vagas no site agora devem ter site
 // próprio".
 
-import { VAGAS, AUXILIO_EMBARQUE_PANASONIC_UNNAN, formatarDataPostagem, localVaga, type Vaga, type PublicoKey, type SetorKey, type StatusVaga } from "../lib/vagasCatalogo";
+import { VAGAS, formatarDataPostagem, localVaga, type Vaga, type PublicoKey, type SetorKey, type StatusVaga } from "../lib/vagasCatalogo";
 import {
   PERGUNTAS_TRIAGEM,
   NIVEIS_JAPONES_DETALHADOS,
@@ -44,7 +44,7 @@ import {
   pendenciasPerfil,
   type PerfilCandidato,
 } from "../lib/triagemPerfil";
-import { useEffect, useMemo, useState, type FormEvent } from "react";
+import { useEffect, useMemo, useRef, useState, useSyncExternalStore, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import PrazosProcesso from "../components/empregos/PrazosProcesso";
@@ -248,378 +248,398 @@ const CONDICOES_UT_SURIEMU = {
     "Passagem aérea financiada pela empresa, com desconto a partir do 2º pagamento (parcelas de até ¥50 mil por mês).",
 };
 
-// ── DESTAQUES — pedido do Wilson, 06/out/2026: carrossel com 4 banners
-// pra dar destaque a oportunidades em cidades mais afastadas, working
-// holiday "e coisas assim". O 1º é Echizen (banner enviado por ele, com o
-// texto já na arte); os outros 3 são placeholders até ele mandar as artes
-// e definir os temas — aparecem com o selo "Em breve" e sem link.
+// ── DESTAQUES — carrossel "Oportunidades em destaque".
+// Histórico: 06/out/2026 (4 banners, Wilson), 07/out (Fukui e Izumo com
+// texto do site sobre a foto), 08/out (montadoras), 15/out (informações
+// estratégicas nos banners Murata), 18/out (campanha custo zero e
+// Panasonic Unnan).
+//
+// v2 — 18/out/2026, briefing do Wilson: mesma hierarquia em todos os
+// slides (localização → título com o benefício → descrição → remuneração
+// → botão → faixa inferior com 3 benefícios → condições legíveis), abas
+// com nome no lugar das bolinhas, botão de pausa, composição própria no
+// celular (foto em cima, texto em área azul-marinho embaixo) e nada de
+// valor ou benefício que não esteja no cadastro. Textos, valores e botões
+// são do site — nunca na imagem.
 type Destaque = {
   id: string;
-  titulo: string;
+  /** Nome curto da aba (navegação). */
+  aba: string;
   imagem?: string;
-  // Texto curto exibido sobre o placeholder (sem imagem).
-  subtitulo?: string;
-  // Filtro aplicado ao clicar (leva pra lista de vagas); sem isso, o
-  // banner não é clicável.
-  filtroRegiao?: string;
-  // Texto escrito pelo site por cima da foto (com escurecimento à
-  // esquerda) — para artes enviadas sem texto (Wilson, 07/out/2026).
-  sobreposto?: { kicker: string; titulo: string; subtitulo?: string };
-  // Página própria aberta pelo banner (landing de recrutamento) — tem
-  // prioridade sobre filtroRegiao.
-  href?: string;
-  // Grupo de vagas do catálogo: o clique filtra a lista só nessas vagas
-  // (Wilson, 08/out/2026: "um card único para essas 4 vagas").
-  vagaIds?: string[];
-  // Selos curtos com os pontos fortes da vaga, sobre a foto (desktop) ou
-  // numa faixa logo abaixo dela (celular).
-  selos?: string[];
-  // Ressalva dos selos; sem isso vale NOTA_SELOS.
-  notaSelos?: string;
-  // Enquadramento da foto (classes object-position) quando o padrão
-  // object-[30%_50%] (celular) corta o assunto/logo da arte.
-  posicaoImagem?: string;
-  // Arte com a pessoa mais à esquerda: escurecimento e texto mais curtos
-  // para não cobrir o rosto (desktop).
-  textoEstreito?: boolean;
+  alt: string;
+  /** object-position da foto no celular (área separada, 16:10). */
+  posicaoMobile: string;
+  /** object-position da foto no desktop, já com prefixo lg: (classe literal p/ o Tailwind). */
+  posicaoDesktop?: string;
+  /** Pessoa mais perto do centro: bloco de texto e degradê mais curtos. */
+  estreito?: boolean;
+  local: string;
+  titulo: string;
+  descricao: string;
+  remuneracao?: { valor: string; detalhe?: string };
+  // Destino do botão: página própria (href) ou filtro da lista (vagaIds).
+  cta: { rotulo: string; href?: string; vagaIds?: string[] };
+  /** Exatamente 3 benefícios complementares (faixa inferior). */
+  beneficios: [string, string, string];
+  /** Condições da oferta — sempre visíveis, nunca em tooltip. */
+  condicoes: string[];
 };
 
-// Wilson, 15/out/2026: "adicionar informações estratégicas nos banners de
-// Izumo e Echizen". Custo zero sempre com a ressalva de elegibilidade
-// (regra de compliance das landings — app/lib/landingsMurata.ts).
-const SELOS_MURATA = [
-  "Custo zero com documentação inclusa*",
-  "Não precisa falar japonês",
-  "Não precisa de experiência prévia",
-  "Vagas até 59 anos",
-  // Wilson, 15/out/2026.
-  "Embarque imediato para quem já tem a documentação",
-];
-const NOTA_SELOS = "* Para candidatos elegíveis, sujeito à análise e disponibilidade.";
-const NOTA_CAMPANHA_CUSTO_ZERO = "* Para quem desembarcar no Japão de 15/10/2026 a 28/02/2027 e ficar no mínimo 6 meses na fábrica.";
+// Ressalvas — os asteriscos dos benefícios apontam para estas frases.
+const NOTA_ELEGIVEIS = "*Para candidatos elegíveis, sujeito à análise e disponibilidade.";
+const NOTA_CAMPANHA_CUSTO_ZERO =
+  "*Para quem desembarcar no Japão de 15/10/2026 a 28/02/2027 e permanecer no mínimo 6 meses na fábrica.";
+
+// Murata (Fukui e Izumo): benefícios aprovados pelo Wilson em 15/out/2026.
+// "Embarque imediato para quem já tem a documentação" saiu do banner e
+// ficou nos detalhes das vagas (observações em vagasCatalogo.ts).
+const BENEFICIOS_MURATA: [string, string, string] = ["Custo zero com documentação inclusa*", "Sem experiência prévia", "Vagas até 59 anos"];
 
 const DESTAQUES: Destaque[] = [
   {
-    // Novo destaque principal — Wilson, 18/out/2026: "adicionar vagas da
-    // aquaplus como destaque, será o novo destaque principal, os destaques
-    // que já estão no carrossel permanecem". Campanha custo zero do
-    // regulamento (desembarque 15/10/2026 a 28/02/2027). Sem nome da
-    // empreiteira no site (só a marca Ajisai).
+    // Campanha custo zero (5 vagas — 5 oportunidades do catálogo, não
+    // número de postos). Abre o hot site /empregos/custo-zero.
     id: "custo-zero",
-    titulo: "Custo zero: passagem, visto e seguro pagos",
-    // Arte enviada pelo Wilson em 18/out/2026 (operadora em linha de
-    // eletrônicos, sem texto na imagem).
+    aba: "Passagem paga",
     imagem: "/images/empregos-destaque-custo-zero.webp",
-    // Pessoa à direita (≈53–82% da largura): no celular, enquadra mais à
-    // direita; no desktop, texto e escurecimento mais curtos.
-    posicaoImagem: "object-[70%_50%] sm:object-center",
-    textoEstreito: true,
-    subtitulo: "5 vagas em fábricas de Shimane, Fukui e Shiga — de ¥1.400 a ¥1.450 por hora.",
-    sobreposto: {
-      kicker: "Shimane · Fukui · Shiga",
-      titulo: "Custo zero: passagem, visto e seguro pagos",
-      subtitulo: "5 vagas em fábricas — de ¥1.400 a ¥1.450 por hora.",
-    },
-    // Abre o hot site da campanha (Wilson, 18/out/2026: "é pra criar").
-    href: "/empregos/custo-zero",
-    selos: [
-      "Passagem, visto e seguro-viagem pagos pela empresa*",
-      "Embarque até 28/02/2027",
-      "De ¥1.400 a ¥1.450 por hora",
-      "Vale de até ¥30.000 no começo",
-    ],
-    notaSelos: NOTA_CAMPANHA_CUSTO_ZERO,
+    alt: "Operadora de uniforme e luvas montando placas eletrônicas numa fábrica",
+    posicaoMobile: "object-[70%_45%]",
+    estreito: true,
+    local: "Shimane · Fukui · Shiga",
+    titulo: "Passagem, visto e seguro pagos",
+    descricao: "Conheça 5 oportunidades de trabalho em fábricas no Japão.",
+    remuneracao: { valor: "¥1.400–¥1.450/hora" },
+    cta: { rotulo: "Ver as 5 vagas", href: "/empregos/custo-zero" },
+    beneficios: ["Passagem paga*", "Visto e seguro-viagem pagos*", "Desembarque até 28/02/2027*"],
+    condicoes: [NOTA_CAMPANHA_CUSTO_ZERO],
   },
   {
-    // Wilson, 18/out/2026: "a vaga da Panasonic com auxílio embarque de
-    // R$ 1.000,00 também, adicionar e mover a vaga da panasonic para o
-    // carrossel num novo card". Saiu do card "Custo zero" e abre direto a
-    // página da vaga. Ainda sem arte (fundo azul com o texto).
+    // Panasonic Unnan — card próprio (auxílio embarque).
     id: "panasonic-unnan",
-    titulo: "R$ 1.000 para embarcar + passagem paga",
-    // Arte enviada pelo Wilson em 18/out/2026 (rio Hii com cerejeiras, logo
-    // Panasonic já na imagem — por isso o nome não se repete no texto).
+    aba: "Panasonic",
     imagem: "/images/empregos-destaque-panasonic-unnan.webp",
-    // Celular: ancorado à direita para mostrar a pessoa e o logo (o padrão
-    // cortava o logo).
-    posicaoImagem: "object-right sm:object-center",
-    textoEstreito: true,
-    subtitulo: "Conversores para painéis solares em Unnan, Shimane — ¥1.500 por hora.",
-    sobreposto: {
-      kicker: "Unnan · Shimane",
-      titulo: "R$ 1.000 para embarcar + passagem paga",
-      subtitulo: "Fábrica de conversores para painéis solares — ¥1.500 por hora.",
-    },
-    href: "/empregos/vagas/panasonic-unnan",
-    selos: [
-      `Auxílio embarque de ${AUXILIO_EMBARQUE_PANASONIC_UNNAN}`,
-      "Passagem, visto e seguro-viagem pagos pela empresa*",
-      "¥1.500 por hora",
-      "Turno fixo noturno, 5x2",
-    ],
-    notaSelos: NOTA_CAMPANHA_CUSTO_ZERO,
+    alt: "Mulher sorrindo à beira de um rio com cerejeiras floridas, com o logo da Panasonic",
+    // Ancorado à direita (celular e desktop) para nunca cortar o logo.
+    posicaoMobile: "object-right",
+    posicaoDesktop: "lg:object-right",
+    estreito: true,
+    local: "Unnan · Shimane",
+    // "Receba" — antes "R$ 1.000 para embarcar", que podia parecer valor a pagar.
+    titulo: `Receba R$ 1.000 de auxílio-embarque`,
+    descricao: "Fabricação de conversores para painéis solares.",
+    remuneracao: { valor: "¥1.500/hora" },
+    cta: { rotulo: "Conhecer a vaga", href: "/empregos/vagas/panasonic-unnan" },
+    beneficios: ["Passagem, visto e seguro-viagem pagos*", "Turno fixo noturno", "Escala 5×2"],
+    condicoes: [NOTA_CAMPANHA_CUSTO_ZERO],
   },
   {
-    // Banner novo, sem texto na arte (Wilson, 07/out/2026: "novo banner
-    // para Trabalhe e More em Echizen [...] adicione o texto por cima da
-    // imagem e faça aquele escurecimento").
+    // Landing Fukui Murata. Salário confirmado na vaga murata-echizen.
     id: "echizen",
-    titulo: "Trabalhe e More em Fukui",
+    aba: "Fukui",
     imagem: "/images/empregos-destaque-echizen-murata.webp",
-    sobreposto: { kicker: "Fukui · Japão", titulo: "Trabalhe e More em Fukui" },
-    // Abre a landing de recrutamento Fukui Murata (Wilson, 07/out/2026).
-    href: "/empregos/echizen",
-    // Informações estratégicas no banner (Wilson, 15/out/2026).
-    selos: SELOS_MURATA,
+    alt: "Operadores de uniforme numa fábrica de componentes eletrônicos, com a cidade de Fukui ao fundo",
+    posicaoMobile: "object-[72%_40%]",
+    local: "Fukui · Japão",
+    titulo: "Trabalhe no Japão sem falar japonês",
+    descricao: "Oportunidades em Fukui, sem exigência de experiência prévia.",
+    remuneracao: { valor: "¥1.500/hora", detalhe: "em turno alternado; ¥1.300–1.450/hora em diurno fixo" },
+    cta: { rotulo: "Conhecer a vaga", href: "/empregos/echizen" },
+    beneficios: BENEFICIOS_MURATA,
+    condicoes: [NOTA_ELEGIVEIS],
   },
-
   {
-    // Wilson, 07/out/2026: "e no segundo, Trabalhe e More em Izumo". Leva
-    // para as vagas de Shimane (Murata Izumo).
+    // Landing Izumo Murata — só dados já cadastrados (vaga murata-izumo).
     id: "izumo",
-    titulo: "Trabalhe e More em Izumo",
+    aba: "Izumo",
     imagem: "/images/empregos-destaque-izumo-murata.webp",
-    href: "/empregos/izumo",
-    sobreposto: { kicker: "Shimane · Japão", titulo: "Trabalhe e More em Izumo" },
-    // Informações estratégicas no banner (Wilson, 15/out/2026).
-    selos: SELOS_MURATA,
+    alt: "Operadores de uniforme numa fábrica de componentes eletrônicos, com Izumo ao fundo",
+    posicaoMobile: "object-[72%_35%]",
+    posicaoDesktop: "lg:object-[50%_30%]",
+    local: "Shimane · Japão",
+    titulo: "Trabalhe e More em Izumo",
+    descricao: "Produção de componentes eletrônicos (condensador cerâmico).",
+    remuneracao: { valor: "¥1.500/hora", detalhe: "até ¥1.650/hora conforme o tempo de casa" },
+    cta: { rotulo: "Conhecer a vaga", href: "/empregos/izumo" },
+    beneficios: BENEFICIOS_MURATA,
+    condicoes: [NOTA_ELEGIVEIS],
   },
   {
-    // Wilson, 08/out/2026: "criar um novo card no carrossel de empregos
-    // para essas 4 vagas num card único, vou enviar a arte em seguida".
-    // Entrou no lugar do placeholder "Novo destaque". Enquanto a arte não
-    // chega, aparece em fundo azul com o texto abaixo; quando chegar, é só
-    // preencher `imagem` (o texto sobreposto já está pronto).
+    // 4 vagas UT Suri-emu — filtra a lista. Benefícios comuns às 4 fichas.
     id: "montadoras",
-    titulo: "Vagas em montadoras",
-    // Arte enviada pelo Wilson em 08/out/2026 (sem texto na imagem).
+    aba: "Montadoras",
     imagem: "/images/empregos-destaque-montadoras.webp",
-    subtitulo: "Subaru (Oizumi e Ota), Daihatsu (Nakatsu) e Yokohama Gomu (Shinshiro) — de ¥1.430 a ¥1.900 por hora.",
-    sobreposto: {
-      kicker: "Gunma · Oita · Aichi",
-      titulo: "Vagas em montadoras",
-      subtitulo: "Subaru, Daihatsu e Yokohama Gomu — de ¥1.430 a ¥1.900 por hora.",
-    },
-    vagaIds: ["subaru-oizumi", "subaru-ota", "daihatsu-nakatsu", "yokohama-gomu-aichi"],
+    alt: "Operador fazendo manutenção num carro na linha de montagem",
+    posicaoMobile: "object-[62%_50%]",
+    posicaoDesktop: "lg:object-[50%_35%]",
+    local: "Gunma · Oita · Aichi",
+    titulo: "Vagas em montadoras",
+    descricao: "Subaru, Daihatsu e Yokohama Gomu — 4 vagas em linhas de produção.",
+    remuneracao: { valor: "¥1.430–¥1.900/hora" },
+    cta: { rotulo: "Ver as 4 vagas", vagaIds: ["subaru-oizumi", "subaru-ota", "daihatsu-nakatsu", "yokohama-gomu-aichi"] },
+    beneficios: [
+      "Exame médico admissional e anual gratuitos",
+      "Bicicleta alugada pela empresa ou transporte fretado",
+      "Seguro saúde, aposentadoria e seguro-desemprego",
+    ],
+    condicoes: [
+      CONDICOES_UT_SURIEMU.financiamentoPassagem,
+      "Requisitos e condições variam por vaga — confira os detalhes de cada uma.",
+    ],
   },
 ];
 
+function IconeCheckDestaque() {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="#7fb6e6" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="mt-[3px] h-4 w-4 shrink-0" aria-hidden="true">
+      <path d="M5 12l5 5L20 7" />
+    </svg>
+  );
+}
+
+const classeBotaoDestaque =
+  "inline-flex min-h-[44px] w-fit items-center gap-2 rounded-full bg-white px-6 text-[15px] font-semibold text-[#0A2540] transition-colors hover:bg-[#e8f1fa] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#7fb6e6] focus-visible:ring-offset-2 focus-visible:ring-offset-[#061a2e]";
+
+function SlideDestaque({ d, ativo, onAbrir }: { d: Destaque; ativo: boolean; onAbrir: (d: Destaque) => void }) {
+  const botao = d.cta.href ? (
+    <Link href={d.cta.href} className={classeBotaoDestaque}>
+      {d.cta.rotulo} <span aria-hidden="true">→</span>
+    </Link>
+  ) : (
+    <button type="button" onClick={() => onAbrir(d)} className={classeBotaoDestaque}>
+      {d.cta.rotulo} <span aria-hidden="true">→</span>
+    </button>
+  );
+  return (
+    <div className="flex h-full flex-col">
+      {/* Área principal: no celular/tablet, foto em cima e texto embaixo;
+          no desktop (lg+), texto à esquerda sobre o degradê. */}
+      <div className="relative flex flex-1 flex-col lg:min-h-[440px] lg:justify-center">
+        <div className="relative aspect-[16/10] w-full md:aspect-[2/1] lg:absolute lg:inset-0 lg:aspect-auto">
+          {d.imagem && (
+            <Image
+              src={d.imagem}
+              alt={d.alt}
+              fill
+              sizes="(min-width: 1152px) 1152px, 100vw"
+              className={`object-cover ${d.posicaoMobile} ${d.posicaoDesktop ?? "lg:object-center"}`}
+              priority={d.id === DESTAQUES[0]?.id}
+            />
+          )}
+          {/* Celular: só uma transição curta para o azul do texto. Desktop:
+              degradê à esquerda que some antes do rosto. */}
+          <div
+            aria-hidden="true"
+            className={`absolute inset-0 bg-gradient-to-t from-[#061a2e] via-transparent via-25% to-transparent lg:bg-gradient-to-r lg:from-[#061a2e] lg:from-10% lg:via-[#061a2e]/80 lg:to-transparent ${
+              d.estreito ? "lg:via-30% lg:to-[52%]" : "lg:via-35% lg:to-[60%]"
+            }`}
+          />
+        </div>
+        <div className={`relative px-6 pb-6 pt-2 sm:px-10 lg:px-12 lg:py-12 ${d.estreito ? "lg:max-w-[48%]" : "lg:max-w-[52%]"}`}>
+          <p className="text-[11px] font-semibold uppercase tracking-[0.22em] text-white/75">{d.local}</p>
+          <h3 className={`${display.className} mt-3 text-[28px] font-medium leading-[1.12] text-white sm:text-[32px] lg:text-[40px] xl:text-[44px]`}>
+            {d.titulo}
+          </h3>
+          <p className="mt-3 text-base leading-relaxed text-white/80 lg:text-lg">{d.descricao}</p>
+          {d.remuneracao && (
+            <p className="mt-5">
+              <span className="block text-2xl font-semibold tabular-nums text-white lg:text-[28px]">{d.remuneracao.valor}</span>
+              {d.remuneracao.detalhe && <span className="mt-1 block text-sm text-white/70">{d.remuneracao.detalhe}</span>}
+            </p>
+          )}
+          <div className="mt-6">{botao}</div>
+        </div>
+      </div>
+      {/* Faixa inferior única: 3 benefícios + condições em bloco separado. */}
+      <div className="border-t border-white/10 bg-[#061a2e] px-6 py-5 sm:px-10 lg:px-12 lg:py-6">
+        <ul className="grid gap-3 lg:grid-cols-3 lg:gap-6">
+          {d.beneficios.map((b) => (
+            <li key={b} className="flex items-start gap-2.5 text-[15px] leading-snug text-white">
+              <IconeCheckDestaque />
+              {b}
+            </li>
+          ))}
+        </ul>
+        {d.condicoes.length > 0 && (
+          <div className="mt-4 space-y-1 border-t border-white/10 pt-3">
+            {d.condicoes.map((c) => (
+              <p key={c} className="text-[12.5px] leading-5 text-white/70">
+                {c}
+              </p>
+            ))}
+          </div>
+        )}
+      </div>
+      {!ativo && <span className="sr-only">(slide oculto)</span>}
+    </div>
+  );
+}
+
 function CarrosselDestaques({ onAbrir }: { onAbrir: (d: Destaque) => void }) {
   const [indice, setIndice] = useState(0);
-  const [pausado, setPausado] = useState(false);
+  // Pausa automática (mouse em cima, foco dentro, toque) e pausa do usuário
+  // (botão) são separadas: a do usuário só sai pelo botão.
+  const [pausaInteracao, setPausaInteracao] = useState(false);
+  // null = o usuário ainda não mexeu: vale a preferência do sistema.
+  const [escolhaUsuario, setEscolhaUsuario] = useState<boolean | null>(null);
+  // Quem pediu menos movimento no sistema começa com a rotação parada.
+  const reduzMovimento = useSyncExternalStore(
+    (avisar) => {
+      const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+      mq.addEventListener("change", avisar);
+      return () => mq.removeEventListener("change", avisar);
+    },
+    () => window.matchMedia("(prefers-reduced-motion: reduce)").matches,
+    () => false,
+  );
+  const pausaUsuario = escolhaUsuario ?? reduzMovimento;
   const total = DESTAQUES.length;
+  const abasRef = useRef<HTMLDivElement | null>(null);
 
-  // Avança sozinho a cada 6s; pausa com o mouse em cima ou ao tocar.
+  // Rotação automática a cada 6s (já existia), parada em qualquer pausa.
   useEffect(() => {
-    if (pausado) return;
+    if (pausaInteracao || pausaUsuario) return;
     const t = setInterval(() => setIndice((i) => (i + 1) % total), 6000);
     return () => clearInterval(t);
-  }, [pausado, total]);
+  }, [pausaInteracao, pausaUsuario, total]);
+
+  // Mantém a aba ativa visível na faixa de abas (rolagem só da faixa, nunca da página).
+  useEffect(() => {
+    const lista = abasRef.current;
+    const aba = lista?.querySelector<HTMLElement>(`[data-aba="${indice}"]`);
+    if (!lista || !aba) return;
+    const esquerda = aba.offsetLeft - lista.offsetLeft;
+    if (esquerda < lista.scrollLeft || esquerda + aba.offsetWidth > lista.scrollLeft + lista.clientWidth) {
+      lista.scrollTo({ left: Math.max(0, esquerda - 16), behavior: "smooth" });
+    }
+  }, [indice]);
 
   const ir = (i: number) => setIndice(((i % total) + total) % total);
+
+  function teclaAbas(e: React.KeyboardEvent<HTMLDivElement>) {
+    let alvo: number | null = null;
+    if (e.key === "ArrowRight") alvo = (indice + 1) % total;
+    else if (e.key === "ArrowLeft") alvo = (indice - 1 + total) % total;
+    else if (e.key === "Home") alvo = 0;
+    else if (e.key === "End") alvo = total - 1;
+    if (alvo === null) return;
+    e.preventDefault();
+    ir(alvo);
+    abasRef.current?.querySelector<HTMLElement>(`[data-aba="${alvo}"]`)?.focus();
+  }
 
   // Swipe no celular — sem biblioteca, só toque inicial/final.
   const [toqueX, setToqueX] = useState<number | null>(null);
 
-  // Setas e bolinhas ficam ABAIXO do banner — antes ficavam por cima e
-  // tampavam o texto da arte (Wilson, 06/out/2026).
+  const classeControle =
+    "flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-black/15 text-[#0A2540] transition hover:border-black/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1c6ea8] focus-visible:ring-offset-2";
+
   return (
-    <div>
     <div
-      className="relative overflow-hidden rounded-2xl bg-[#0A2540]"
-      onMouseEnter={() => setPausado(true)}
-      onMouseLeave={() => setPausado(false)}
-      onTouchStart={(e) => {
-        setPausado(true);
-        setToqueX(e.touches[0]?.clientX ?? null);
-      }}
-      onTouchEnd={(e) => {
-        const fim = e.changedTouches[0]?.clientX ?? null;
-        if (toqueX !== null && fim !== null && Math.abs(fim - toqueX) > 40) ir(indice + (fim < toqueX ? 1 : -1));
-        setToqueX(null);
-      }}
+      role="region"
       aria-roledescription="carrossel"
+      aria-label="Oportunidades em destaque"
+      onMouseEnter={() => setPausaInteracao(true)}
+      onMouseLeave={() => setPausaInteracao(false)}
+      onFocusCapture={() => setPausaInteracao(true)}
+      onBlurCapture={(e) => {
+        if (!e.currentTarget.contains(e.relatedTarget as Node | null)) setPausaInteracao(false);
+      }}
     >
-      {/* transform-gpu: evita o flash preto do Safari iOS em carrossel
-          (ver learnings do projeto). Trilho com translateX, sem scroll JS. */}
       <div
-        className="flex transform-gpu transition-transform duration-700 ease-out"
-        style={{ transform: `translateX(-${indice * 100}%)` }}
+        className="relative overflow-hidden rounded-2xl bg-[#061a2e]"
+        onTouchStart={(e) => {
+          setPausaInteracao(true);
+          setToqueX(e.touches[0]?.clientX ?? null);
+        }}
+        onTouchEnd={(e) => {
+          const fim = e.changedTouches[0]?.clientX ?? null;
+          if (toqueX !== null && fim !== null && Math.abs(fim - toqueX) > 40) ir(indice + (fim < toqueX ? 1 : -1));
+          setToqueX(null);
+        }}
       >
-        {DESTAQUES.map((d, i) => {
-          const clicavel = Boolean(d.href || d.filtroRegiao || d.vagaIds?.length);
-          const conteudo = d.imagem ? (
-            <div>
-            <div className="relative aspect-[16/10] w-full sm:aspect-[1918/820]">
-              <Image
-                src={d.imagem}
-                alt={d.titulo}
-                fill
-                sizes="(min-width: 1152px) 1152px, 100vw"
-                className={`object-cover ${d.posicaoImagem ?? "object-[30%_50%] sm:object-center"}`}
-                priority={i === 0}
-              />
-              {d.sobreposto && (
-                <>
-                  {/* Escurecimento: forte à esquerda (texto), some antes das pessoas. */}
-                  <div
-                    aria-hidden="true"
-                    className={`absolute inset-0 bg-gradient-to-t from-[#061a2e]/95 via-[#061a2e]/60 to-transparent sm:bg-gradient-to-r sm:from-[#061a2e]/95 sm:via-[#061a2e]/75 sm:to-transparent ${d.textoEstreito ? "sm:via-30% sm:to-[50%]" : "sm:via-40% sm:to-[62%]"}`}
-                  />
-                  <div className={`absolute inset-x-0 bottom-0 px-6 pb-6 sm:inset-y-0 sm:right-auto sm:flex sm:flex-col sm:justify-center sm:px-12 sm:pb-0 md:px-14 ${d.textoEstreito ? "sm:max-w-[46%]" : "sm:max-w-[52%]"}`}>
-                    <p className="text-[11px] font-semibold uppercase tracking-[0.28em] text-white/80">{d.sobreposto.kicker}</p>
-                    <p className={`${display.className} mt-2 text-[28px] font-medium leading-[1.08] text-white drop-shadow-[0_2px_12px_rgba(0,0,0,0.35)] sm:text-3xl xl:text-5xl`}>
-                      {d.sobreposto.titulo}
-                    </p>
-                    {d.sobreposto.subtitulo && <p className="mt-2 hidden text-sm text-white/80 sm:block md:text-base">{d.sobreposto.subtitulo}</p>}
-                    {d.selos && (
-                      <ul className="mt-4 hidden max-w-md grid-cols-2 gap-x-4 gap-y-2 xl:grid">
-                        {d.selos.map((x) => (
-                          <li key={x} className="flex items-start gap-1.5 text-[13px] font-medium leading-tight text-white md:text-sm">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="#7fb6e6" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="mt-px h-4 w-4 shrink-0" aria-hidden="true">
-                              <path d="M5 12l5 5L20 7" />
-                            </svg>
-                            {x}
-                          </li>
-                        ))}
-                      </ul>
-                    )}
-                    {clicavel && (
-                      <span className="mt-4 inline-flex w-fit items-center gap-1.5 rounded-full bg-white px-4 py-2 text-xs font-semibold uppercase tracking-[0.12em] text-[#0A2540]">
-                        {d.href ? "Conhecer a vaga →" : "Ver vagas →"}
-                      </span>
-                    )}
-                    {d.selos && <p className="mt-3 hidden text-[10px] text-white/55 xl:block">{d.notaSelos ?? NOTA_SELOS}</p>}
-                  </div>
-                </>
-              )}
-            </div>
-            {/* Abaixo de xl (1280px) os selos não cabem sobre a foto sem cortar título e botão — vão numa faixa logo abaixo (Wilson, 18/out/2026: banner cortado em ~1000px). */}
-            {d.selos && (
-              <div className="bg-[#061a2e] px-6 pb-5 pt-1 sm:px-12 sm:pb-6 sm:pt-4 md:px-14 xl:hidden">
-                <ul className="grid grid-cols-2 gap-x-3 gap-y-2 sm:grid-cols-4 sm:gap-x-5">
-                  {d.selos.map((x) => (
-                    <li key={x} className="flex items-start gap-1.5 text-xs font-medium leading-tight text-white">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="#7fb6e6" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="h-3.5 w-3.5 shrink-0" aria-hidden="true">
-                        <path d="M5 12l5 5L20 7" />
-                      </svg>
-                      {x}
-                    </li>
-                  ))}
-                </ul>
-                <p className="mt-2.5 text-[10px] text-white/50">{d.notaSelos ?? NOTA_SELOS}</p>
-              </div>
-            )}
-            </div>
-          ) : (
-            <div>
-            <div className="relative flex aspect-[16/10] w-full flex-col justify-center bg-gradient-to-br from-[#0A2540] to-[#1c4a74] px-8 py-8 sm:aspect-[1918/820] sm:px-14 sm:py-0">
-              <span className="w-fit rounded-full border border-white/25 px-3 py-1 text-[10px] font-semibold uppercase tracking-[0.16em] text-white/70">
-                {clicavel ? d.sobreposto?.kicker ?? "Destaque" : "Em breve"}
-              </span>
-              <p className={`${display.className} mt-4 max-w-xl text-2xl font-medium leading-tight text-white md:text-4xl`}>
-                {d.titulo}
-              </p>
-              {d.subtitulo && <p className="mt-3 max-w-xl text-sm text-white/70">{d.subtitulo}</p>}
-              {d.selos && (
-                <ul className="mt-4 hidden max-w-xl grid-cols-2 gap-x-4 gap-y-2 xl:grid">
-                  {d.selos.map((x) => (
-                    <li key={x} className="flex items-start gap-1.5 text-[13px] font-medium leading-tight text-white md:text-sm">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="#7fb6e6" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="mt-px h-4 w-4 shrink-0" aria-hidden="true">
-                        <path d="M5 12l5 5L20 7" />
-                      </svg>
-                      {x}
-                    </li>
-                  ))}
-                </ul>
-              )}
-              {clicavel && (
-                <span className="mt-5 inline-flex w-fit items-center gap-1.5 rounded-full bg-white px-4 py-2 text-xs font-semibold uppercase tracking-[0.12em] text-[#0A2540]">
-                  {d.href ? "Conhecer a vaga →" : "Ver vagas →"}
-                </span>
-              )}
-              {d.selos && <p className="mt-3 hidden text-[10px] text-white/55 xl:block">{d.notaSelos ?? NOTA_SELOS}</p>}
-            </div>
-            {/* Abaixo de xl: selos numa faixa abaixo, como nos banners com foto. */}
-            {d.selos && (
-              <div className="bg-[#1c4a74] px-6 pb-5 pt-1 sm:px-12 sm:pb-6 sm:pt-4 md:px-14 xl:hidden">
-                <ul className="grid grid-cols-2 gap-x-3 gap-y-2 sm:grid-cols-4 sm:gap-x-5">
-                  {d.selos.map((x) => (
-                    <li key={x} className="flex items-start gap-1.5 text-xs font-medium leading-tight text-white">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="#7fb6e6" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="h-3.5 w-3.5 shrink-0" aria-hidden="true">
-                        <path d="M5 12l5 5L20 7" />
-                      </svg>
-                      {x}
-                    </li>
-                  ))}
-                </ul>
-                <p className="mt-2.5 text-[10px] text-white/50">{d.notaSelos ?? NOTA_SELOS}</p>
-              </div>
-            )}
-            </div>
-          );
-          return (
+        {/* transform-gpu: evita o flash preto do Safari iOS em carrossel
+            (ver learnings do projeto). Trilho com translateX, sem scroll JS.
+            Os slides esticam até o mais alto: altura igual entre slides,
+            definida pelo conteúdo (sem altura fixa que corte texto). */}
+        <div
+          className="flex transform-gpu transition-transform duration-700 ease-out motion-reduce:transition-none"
+          style={{ transform: `translateX(-${indice * 100}%)` }}
+        >
+          {DESTAQUES.map((d, i) => (
             <div
               key={d.id}
-              className="w-full shrink-0"
+              id={`destaque-painel-${d.id}`}
+              role="tabpanel"
+              aria-roledescription="slide"
+              aria-labelledby={`destaque-aba-${d.id}`}
               aria-hidden={i !== indice}
-              role="group"
-              aria-label={`${i + 1} de ${total}: ${d.titulo}`}
+              inert={i !== indice}
+              className="w-full shrink-0"
             >
-              {d.href ? (
-                <Link href={d.href} tabIndex={i === indice ? 0 : -1} className="block w-full">
-                  {conteudo}
-                </Link>
-              ) : clicavel ? (
-                <button type="button" onClick={() => onAbrir(d)} tabIndex={i === indice ? 0 : -1} className="block w-full text-left">
-                  {conteudo}
-                </button>
-              ) : (
-                conteudo
-              )}
+              <SlideDestaque d={d} ativo={i === indice} onAbrir={onAbrir} />
             </div>
-          );
-        })}
+          ))}
+        </div>
       </div>
 
-    </div>
-
-    <div className="mt-4 flex items-center justify-between gap-4">
-      <div className="flex gap-2">
-        {DESTAQUES.map((d, i) => (
+      {/* Navegação: abas com nome (rolagem horizontal própria no celular),
+          posição, pausa e setas. */}
+      <div className="mt-4 flex flex-col gap-3 md:flex-row md:items-center md:justify-between md:gap-6">
+        <div
+          ref={abasRef}
+          role="tablist"
+          aria-label="Escolher destaque"
+          onKeyDown={teclaAbas}
+          className="-mx-1 flex min-w-0 gap-2 overflow-x-auto px-1 py-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        >
+          {DESTAQUES.map((d, i) => (
+            <button
+              key={d.id}
+              id={`destaque-aba-${d.id}`}
+              data-aba={i}
+              type="button"
+              role="tab"
+              aria-selected={i === indice}
+              aria-controls={`destaque-painel-${d.id}`}
+              tabIndex={i === indice ? 0 : -1}
+              onClick={() => ir(i)}
+              className={`min-h-[44px] shrink-0 whitespace-nowrap rounded-full px-4 text-sm font-medium transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#1c6ea8] focus-visible:ring-offset-2 ${
+                i === indice ? "bg-[#0A2540] text-white" : "border border-black/15 text-[#0A2540]/75 hover:border-black/40 hover:text-[#0A2540]"
+              }`}
+            >
+              {d.aba}
+            </button>
+          ))}
+        </div>
+        <div className="flex shrink-0 items-center justify-end gap-2">
+          <p className="mr-2 text-sm tabular-nums text-black/55" aria-live="polite">
+            <span className="font-semibold text-[#0A2540]">{indice + 1}</span> de {total}
+          </p>
           <button
-            key={d.id}
             type="button"
-            onClick={() => ir(i)}
-            aria-label={`Ir para o destaque ${i + 1}`}
-            aria-current={i === indice}
-            className="flex h-8 items-center"
+            onClick={() => setEscolhaUsuario(!pausaUsuario)}
+            aria-label={pausaUsuario ? "Retomar rotação automática dos destaques" : "Pausar rotação automática dos destaques"}
+            className={classeControle}
           >
-            <span className={`block h-1.5 rounded-full transition-all ${i === indice ? "w-6 bg-[#0A2540]" : "w-1.5 bg-black/20"}`} />
-          </button>
-        ))}
-      </div>
-      <div className="flex items-center gap-2">
-        {/* Contador "1 de 3" — Wilson, 08/out/2026: "assim a pessoa sabe
-            quantos tem" (os pontinhos sozinhos não deixavam claro). */}
-        <p className="mr-2 text-sm tabular-nums text-black/55" aria-live="polite">
-          <span className="font-semibold text-[#0A2540]">{indice + 1}</span> de {total}
-        </p>
-        {(["anterior", "proximo"] as const).map((lado) => (
-          <button
-            key={lado}
-            type="button"
-            onClick={() => ir(indice + (lado === "proximo" ? 1 : -1))}
-            aria-label={lado === "proximo" ? "Próximo destaque" : "Destaque anterior"}
-            className="flex h-11 w-11 items-center justify-center rounded-full border border-black/15 text-[#0A2540] transition hover:border-black/40"
-          >
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5">
-              <path d={lado === "proximo" ? "M9 6l6 6-6 6" : "M15 6l-6 6 6 6"} />
+            <svg viewBox="0 0 24 24" fill="currentColor" className="h-4 w-4" aria-hidden="true">
+              {pausaUsuario ? <path d="M8 5.5v13l10.5-6.5L8 5.5z" /> : <path d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z" />}
             </svg>
           </button>
-        ))}
+          {(["anterior", "proximo"] as const).map((lado) => (
+            <button
+              key={lado}
+              type="button"
+              onClick={() => ir(indice + (lado === "proximo" ? 1 : -1))}
+              aria-label={lado === "proximo" ? "Próximo destaque" : "Destaque anterior"}
+              className={classeControle}
+            >
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5" aria-hidden="true">
+                <path d={lado === "proximo" ? "M9 6l6 6-6 6" : "M15 6l-6 6 6 6"} />
+              </svg>
+            </button>
+          ))}
+        </div>
       </div>
-    </div>
     </div>
   );
 }
@@ -1058,11 +1078,11 @@ export default function EmpregosCliente({ inativas }: { inativas: string[] }) {
           <div className="mt-8 pb-14 md:pb-20">
             <CarrosselDestaques
               onAbrir={(d) => {
-                if (d.vagaIds?.length) {
-                  setDestaqueFiltro({ titulo: d.titulo, ids: d.vagaIds });
+                if (d.cta.vagaIds?.length) {
+                  setDestaqueFiltro({ titulo: d.titulo, ids: d.cta.vagaIds });
                   irParaVagas({ publico: "todos", setor: "todos" });
                   setRegioesFiltro(new Set());
-                } else if (d.filtroRegiao) irParaVagas({ regiao: d.filtroRegiao });
+                }
               }}
             />
           </div>
