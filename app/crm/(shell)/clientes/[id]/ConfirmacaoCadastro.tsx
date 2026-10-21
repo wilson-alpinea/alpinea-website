@@ -33,7 +33,7 @@ export function ConfirmacaoCadastro({ nome, clienteId }: { nome: string; cliente
   return (
     <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/40 px-4" role="dialog" aria-modal="true" aria-labelledby="titulo-confirmacao">
       <div className="w-full max-w-sm rounded-2xl bg-white p-6 text-center shadow-2xl">
-        <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-emerald-100 text-2xl text-emerald-700" aria-hidden="true">
+        <span className="mx-auto block text-3xl leading-none text-emerald-700" aria-hidden="true">
           ✓
         </span>
         <h2 id="titulo-confirmacao" className="mt-4 text-lg font-medium text-black">

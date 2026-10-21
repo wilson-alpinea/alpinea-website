@@ -292,11 +292,8 @@ export default async function ClienteDetalhePage({
                   const Icon = INTERACAO_ICONS[i.tipo];
                   return (
                     <li key={i.id} className="flex gap-3">
-                      <span
-                        className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full"
-                        style={{ background: `${cor}1a`, color: cor }}
-                      >
-                        {Icon && <Icon className="h-3.5 w-3.5" />}
+                      <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center text-black/70">
+                        {Icon && <Icon className="h-4 w-4" />}
                       </span>
                       <div className="min-w-0 flex-1 border-l border-black/10 pl-4">
                         <div className="flex items-center justify-between gap-3">
@@ -368,8 +365,8 @@ export default async function ClienteDetalhePage({
                   key={a.id}
                   className="flex items-start gap-3 rounded-xl border border-black/5 bg-[#FAF9F6] p-4 transition hover:border-black/10"
                 >
-                  <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#1C3A5E]/10 text-[#1C3A5E]">
-                    <Icon className="h-4 w-4" />
+                  <span className="flex h-9 w-9 shrink-0 items-center justify-center text-black">
+                    <Icon className="h-5 w-5" />
                   </span>
                   <div className="min-w-0 flex-1">
                     <p className="text-[10px] uppercase tracking-[0.15em] text-black/35">

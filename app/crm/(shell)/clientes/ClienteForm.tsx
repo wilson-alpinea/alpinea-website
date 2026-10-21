@@ -37,34 +37,20 @@ function ProdutoCard({
   // Pedido do Wilson, 18/set/2026: ícones agora são os mesmos arquivos
   // (PNG) usados em /produtos e /calculadora_reversa — ver ProdutoIcons.tsx.
   //
-  // Pedido do Wilson, 18/set/2026 ("os icones estao da mesma cor do
-  // fundo, sem contraste"): checado pixel a pixel — os ícones de
-  // /produtos são BRANCOS puros (desenhados pra ficar sobre o fundo
-  // escuro do site) e ficavam invisíveis sobre qualquer chip claro. A
-  // correção não é opacidade, é o chip certo pra cada ícone: ícone branco
-  // ("claro") ganha chip azul-marinho sólido — exatamente como aparece no
-  // site —, ícone com tinta própria ("escuro") ganha chip claro. Ver
-  // PRODUTO_ICON_VARIANTE em ProdutoIcons.tsx.
+  // Padrão de /produtos (Wilson, 21/out/2026): card branco, ícone preto,
+  // sem círculo em volta. Ícones brancos do site são invertidos; os que
+  // já são escuros ficam como estão (o eSIM, colorido, vai para preto).
   const icone = PRODUTO_ICONS[value];
   const variante = PRODUTO_ICON_VARIANTE[value] ?? "escuro";
-  const chipClaro =
-    "bg-[#1C3A5E] shadow-[0_2px_8px_-3px_rgba(28,58,94,0.6)] peer-checked:bg-[#12283f]";
-  const chipEscuro =
-    "border border-black/8 bg-[#FAF9F6] peer-checked:border-[#1C3A5E]/25 peer-checked:bg-white";
+  const filtro = variante === "claro" ? "invert" : value === "esim" ? "brightness-0" : "";
   return (
     <label
       title={detalhe}
-      className="group flex cursor-pointer flex-col items-center gap-2.5 rounded-xl border border-black/8 bg-white p-3.5 text-center shadow-[0_1px_2px_rgba(0,0,0,0.03)] transition has-[:checked]:border-[#1C3A5E] has-[:checked]:bg-[#1C3A5E]/[0.05] has-[:checked]:shadow-[0_4px_14px_-6px_rgba(28,58,94,0.35)] hover:border-black/20 hover:shadow-[0_4px_14px_-8px_rgba(0,0,0,0.15)]"
+      className="group flex cursor-pointer flex-col items-center gap-2.5 rounded-xl border border-black/10 bg-white p-3.5 text-center transition hover:border-black/30 has-[:checked]:border-black has-[:checked]:ring-1 has-[:checked]:ring-black"
     >
       <input type={type} name={name} value={value} defaultChecked={defaultChecked} className="peer sr-only" />
-      {icone && (
-        <span
-          className={`flex h-12 w-12 shrink-0 items-center justify-center rounded-full transition ${variante === "claro" ? chipClaro : chipEscuro}`}
-        >
-          <img src={icone} alt="" className="h-7 w-7 object-contain" />
-        </span>
-      )}
-      <span className="text-xs font-medium leading-tight text-black/70 transition peer-checked:font-semibold peer-checked:text-[#1C3A5E]">
+      {icone && <img src={icone} alt="" className={`h-10 w-10 object-contain ${filtro}`} />}
+      <span className="text-xs font-medium leading-tight text-black/70 transition peer-checked:font-semibold peer-checked:text-black">
         {label}
       </span>
     </label>
