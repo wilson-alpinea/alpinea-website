@@ -3,8 +3,9 @@
 // Serviços Adicionais — página de produto no mesmo template do Transporte
 // Privado, Hotéis, Guia etc. (Wilson, 30/set/2026). Checkout manual (o
 // pedido vai para o CRM via /api/servicos-adicionais-selfservice e a equipe
-// confirma pelo WhatsApp), EXCETO o Limousine Bus, que tem pagamento online
-// (self-checkout Stone) desde 06/out/2026.
+// confirma pelo WhatsApp).
+// 21/out/2026 (Wilson): Limousine Bus removido desta página — fica só na
+// Calculadora Reversa.
 //
 // Reestruturação de 06/out/2026 (Wilson):
 // - "mover etapa 2 para página 1, ele escolhe antes o serviço adicional e
@@ -32,15 +33,6 @@ import {
   RESTAURANTES_ROL,
   estimativaRestauranteUSD,
   TERMOS_RESTAURANTES,
-  SENTIDOS_LIMOUSINE,
-  PONTOS_LIMOUSINE_TOQUIO,
-  EMBARQUE_AEROPORTO_LIMOUSINE,
-  HORARIOS_LIMOUSINE,
-  DURACAO_LIMOUSINE,
-  TARIFA_LIMOUSINE_JPY,
-  precoLimousineUSD,
-  type AeroportoLimousine,
-  type SentidoLimousine,
 } from "../../lib/servicosAdicionaisCatalogo";
 import { display, WHATSAPP_NUMBER, hojeISO } from "../page";
 import {
@@ -53,11 +45,9 @@ import {
   Campo,
   classeInput,
   BlocoAvisos,
-  IconeSeta,
-  CLASSE_SELECT,
 } from "../../components/transporte/compartilhado";
 import { AvisoPagamentoConcluido } from "../AvisoPagamentoConcluido";
-import { abrirAbaPagamento, enviarParaPagamento, fecharAba, BlocoPagamentoNovaAba } from "../pagamentoNovaAba";
+import { enviarParaPagamento, fecharAba, BlocoPagamentoNovaAba } from "../pagamentoNovaAba";
 
 const ETAPAS = ["Serviços", "Viagem", "Dados", "Revisão"] as const;
 type Etapa = 1 | 2 | 3 | 4;
@@ -131,18 +121,10 @@ function TextoTermosServicos() {
       <ListaTermos itens={TERMOS_RESTAURANTES} />
       <p className="mt-3 font-medium text-black/80">eSIM</p>
       <ListaTermos itens={TERMOS_ESIM} />
-      <p className="mt-3 font-medium text-black/80">Limousine Bus</p>
-      <p className="mt-1">
-        O Limousine Bus é um ônibus regular (compartilhado) operado pela Airport Limousine Bus. O valor é pago online nesta
-        página, na página segura da Stone (Pix ou cartão emitido no Brasil). Enviamos o voucher/reserva por e-mail e WhatsApp.
-        {" "}{HORARIOS_LIMOUSINE} Cada passageiro tem direito a até 2 malas despachadas. Atrasos de voo e trânsito podem exigir
-        troca de horário no balcão do aeroporto. Cancelamento gratuito até 48h antes do horário reservado; depois disso, o
-        valor não é reembolsável.
-      </p>
       <p className="mt-3 font-medium text-black/80">Pagamento</p>
       <p className="mt-1">
-        O Limousine Bus é pago online ao finalizar. Os demais serviços (reserva de restaurantes e eSIM) têm a forma de
-        pagamento combinada com a nossa equipe pelo WhatsApp; valores em dólar são convertidos pela cotação do dia.
+        A forma de pagamento da reserva de restaurantes e do eSIM é combinada com a nossa equipe pelo WhatsApp; valores
+        em dólar são convertidos pela cotação do dia.
       </p>
     </>
   );
@@ -168,14 +150,6 @@ export default function ServicosAdicionaisPage() {
   const [planoEsim, setPlanoEsim] = useState(PLANOS_ESIM[1].id);
   const [qtdEsim, setQtdEsim] = useState(2);
   const [esimAberto, setEsimAberto] = useState<string | null>(null);
-  // ── Limousine Bus ──
-  const [comLimousine, setComLimousine] = useState(false);
-  const [aeroportoLimo, setAeroportoLimo] = useState<AeroportoLimousine>("narita");
-  const [sentidoLimo, setSentidoLimo] = useState<SentidoLimousine>("ida-volta");
-  const [adultosLimo, setAdultosLimo] = useState(2);
-  const [criancasLimo, setCriancasLimo] = useState(0);
-  const [pontoLimo, setPontoLimo] = useState<string>(PONTOS_LIMOUSINE_TOQUIO[0]);
-  const [hotelLimo, setHotelLimo] = useState("");
 
   const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
@@ -214,10 +188,8 @@ export default function ServicosAdicionaisPage() {
     : 0;
   const plano = PLANOS_ESIM.find((p) => p.id === planoEsim) ?? PLANOS_ESIM[0];
   const esimUSD = comEsim ? precoEsimUSD(plano) * qtdEsim : 0;
-  const limousineUSD = comLimousine ? precoLimousineUSD({ aeroporto: aeroportoLimo, sentido: sentidoLimo, adultos: adultosLimo, criancas: criancasLimo }) : 0;
-  const totalUSD = restaurantesUSD + esimUSD + limousineUSD;
+  const totalUSD = restaurantesUSD + esimUSD;
   const totalBRL = totalUSD * cambioCotacao;
-  const limousineBRL = limousineUSD * cambioCotacao;
 
   type ItemResumo = { key: string; nome: string; detalhe: string; valorUSD: number; icone: string };
   const escolhidos: ItemResumo[] = [
@@ -235,23 +207,11 @@ export default function ServicosAdicionaisPage() {
     ...(comEsim
       ? [{ key: "esim", nome: `eSIM — ${plano.dias} dias`, detalhe: `${qtdEsim} ${qtdEsim === 1 ? "eSIM" : "eSIMs"} · dados ilimitados`, valorUSD: esimUSD, icone: "/images/icone-esim.svg" }]
       : []),
-    ...(comLimousine
-      ? [
-          {
-            key: "limousine",
-            nome: `Limousine Bus — ${aeroportoLimo === "narita" ? "Narita" : "Haneda"}`,
-            detalhe: `${SENTIDOS_LIMOUSINE.find((x) => x.id === sentidoLimo)?.nome} · ${adultosLimo + criancasLimo} ${adultosLimo + criancasLimo === 1 ? "pessoa" : "pessoas"} · pago online`,
-            valorUSD: limousineUSD,
-            icone: "/images/icone-servico-transfer-onibus.png",
-          },
-        ]
-      : []),
   ];
 
   const avisos: string[] = [];
   if (comEsim && dias > 0 && dias > plano.dias) avisos.push(`eSIM de ${plano.dias} dias, mas a viagem tem ${dias} — considere um plano maior.`);
   if (comEsim && qtdEsim > pessoas) avisos.push(`${qtdEsim} eSIMs para um grupo de ${pessoas} pessoas.`);
-  if (comLimousine && adultosLimo + criancasLimo > pessoas) avisos.push(`Limousine Bus para ${adultosLimo + criancasLimo} pessoas, mas o grupo tem ${pessoas}.`);
   if (comRestaurantes && refeicoesEstimadasUSD > 0)
     avisos.push(`Refeições estimadas em ${formatUSD(refeicoesEstimadasUSD)} para ${pessoas} pessoas — pagas direto aos restaurantes, fora do total.`);
 
@@ -276,8 +236,6 @@ export default function ServicosAdicionaisPage() {
   const problemasServicos: string[] = [];
   if (comRestaurantes && qtdReservas === 0) problemasServicos.push("Escolha ao menos um restaurante.");
   if (comRestaurantes && !cienteRefeicoes) problemasServicos.push("Confirme que o valor das refeições não está incluso.");
-  if (comLimousine && adultosLimo + criancasLimo === 0) problemasServicos.push("Informe os passageiros do Limousine Bus.");
-  if (comLimousine && pontoLimo.startsWith("Outro") && hotelLimo.trim().length < 3) problemasServicos.push("Informe o hotel/ponto do Limousine Bus.");
 
   const etapa1Ok = escolhidos.length > 0 && problemasServicos.length === 0;
   const etapa2Ok = periodoValido && pessoas >= 1;
@@ -312,7 +270,7 @@ export default function ServicosAdicionaisPage() {
         : etapa === 3
           ? { rotulo: "Continuar", ativo: etapa3Ok, falta: etapa3Ok ? null : "Complete seus dados para continuar" }
           : {
-              rotulo: status === "enviando" ? "Enviando…" : comLimousine ? "Solicitar e pagar Limousine" : "Solicitar serviços",
+              rotulo: status === "enviando" ? "Enviando…" : "Solicitar serviços",
               ativo: podeEnviar && status !== "enviando",
               falta: termosAceitos ? null : "Aceite os Termos e Condições para solicitar",
             };
@@ -351,7 +309,7 @@ export default function ServicosAdicionaisPage() {
     if (!podeEnviar || status === "enviando") return;
     setStatus("enviando");
     setErro("");
-    const janelaPagamento = comLimousine ? abrirAbaPagamento() : null;
+    const janelaPagamento: Window | null = null;
     try {
       const resposta = await fetch("/api/servicos-adicionais-selfservice", {
         method: "POST",
@@ -371,17 +329,6 @@ export default function ServicosAdicionaisPage() {
             ? { nomes: nomesRestaurantes, restricoes: restricoesAlimentares, refeicoesEstimadasUSD, cienteRefeicoes }
             : null,
           esim: comEsim ? { plano: plano.nome, quantidade: qtdEsim } : null,
-          limousine: comLimousine
-            ? {
-                aeroporto: aeroportoLimo,
-                sentido: sentidoLimo,
-                adultos: adultosLimo,
-                criancas: criancasLimo,
-                ponto: pontoLimo,
-                hotel: hotelLimo,
-                cotacao: cambioCotacao,
-              }
-            : null,
           resumo: resumoServicos,
           avisos,
           totalUSD: Math.round(totalUSD),
@@ -458,7 +405,7 @@ export default function ServicosAdicionaisPage() {
         </p>
         {totalExibidoUSD !== null && (
           <p className={`${inter.className} text-xs tabular-nums text-black/50`}>
-            ≈ {formatBRL(totalBRL)} na cotação do dia{comLimousine ? ` · Limousine pago online: ${formatBRL(limousineBRL)}` : ""}
+            ≈ {formatBRL(totalBRL)} na cotação do dia
           </p>
         )}
       </div>
@@ -759,102 +706,6 @@ export default function ServicosAdicionaisPage() {
                       )}
                     </li>
 
-                    {/* Limousine Bus — pagamento online */}
-                    <li className={`rounded-2xl border transition ${comLimousine ? "border-[#2f80c9] bg-[#2f80c9]/[0.03] ring-1 ring-[#2f80c9]" : "border-black/10 bg-white hover:border-black/25"}`}>
-                      <label className="flex cursor-pointer items-start gap-3 p-4 sm:p-5">
-                        <input
-                          type="checkbox"
-                          checked={comLimousine}
-                          onChange={(e) => setComLimousine(e.target.checked)}
-                          className="mt-3 h-5 w-5 shrink-0 rounded border-black/30 text-[#2f80c9] focus:ring-[#2f80c9]"
-                        />
-                        <span className="flex h-11 w-11 shrink-0 items-center justify-center">
-                          <Image src="/images/icone-servico-transfer-onibus.png" alt="" width={44} height={44} className="h-11 w-11 object-contain" />
-                        </span>
-                        <span className="min-w-0 flex-1">
-                          <span className="flex flex-wrap items-center gap-2">
-                            <span className="text-[15px] font-medium text-black">Limousine Bus (aeroporto ↔ Tóquio)</span>
-                            <span className="rounded-full bg-emerald-600/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-[0.12em] text-emerald-800">Pagamento online</span>
-                          </span>
-                          <span className="mt-0.5 block text-xs leading-5 text-black/60">
-                            Ônibus executivo regular entre Narita/Haneda e os principais hotéis e estações de Tóquio. Compramos e enviamos o voucher.
-                          </span>
-                        </span>
-                      </label>
-                      {comLimousine && (
-                        <div className="border-t border-black/[0.06] px-4 pb-4 pt-3 sm:px-5">
-                          <div className="grid gap-3 sm:grid-cols-2">
-                            <label className="block">
-                              <span className="mb-1.5 block text-xs font-medium text-black/60">Aeroporto</span>
-                              <span className="relative block">
-                                <select value={aeroportoLimo} onChange={(e) => setAeroportoLimo(e.target.value as AeroportoLimousine)} className={CLASSE_SELECT}>
-                                  <option value="narita">Narita (NRT) — ¥{TARIFA_LIMOUSINE_JPY.narita.toLocaleString("pt-BR")} tarifa oficial</option>
-                                  <option value="haneda">Haneda (HND) — até ¥{TARIFA_LIMOUSINE_JPY.haneda.toLocaleString("pt-BR")} tarifa oficial</option>
-                                </select>
-                                <IconeSeta />
-                              </span>
-                            </label>
-                            <label className="block">
-                              <span className="mb-1.5 block text-xs font-medium text-black/60">Trecho</span>
-                              <span className="relative block">
-                                <select value={sentidoLimo} onChange={(e) => setSentidoLimo(e.target.value as SentidoLimousine)} className={CLASSE_SELECT}>
-                                  {SENTIDOS_LIMOUSINE.map((x) => (
-                                    <option key={x.id} value={x.id}>{x.nome}</option>
-                                  ))}
-                                </select>
-                                <IconeSeta />
-                              </span>
-                            </label>
-                            <label className="block sm:col-span-2">
-                              <span className="mb-1.5 block text-xs font-medium text-black/60">Ponto em Tóquio (saída/chegada)</span>
-                              <span className="relative block">
-                                <select value={pontoLimo} onChange={(e) => setPontoLimo(e.target.value)} className={CLASSE_SELECT}>
-                                  {PONTOS_LIMOUSINE_TOQUIO.map((p) => (
-                                    <option key={p} value={p}>{p}</option>
-                                  ))}
-                                </select>
-                                <IconeSeta />
-                              </span>
-                            </label>
-                            <label className="block sm:col-span-2">
-                              <span className="mb-1.5 block text-xs font-medium text-black/60">
-                                Hotel{pontoLimo.startsWith("Outro") ? "/ponto (obrigatório)" : " (opcional)"}
-                              </span>
-                              <input
-                                type="text"
-                                value={hotelLimo}
-                                onChange={(e) => setHotelLimo(e.target.value)}
-                                placeholder="Nome e endereço do hotel"
-                                className={classeInput(false)}
-                              />
-                            </label>
-                          </div>
-                          <div className="mt-2 grid gap-x-6 sm:grid-cols-2">
-                            <Contador rotulo="Adultos" ajuda="12 anos ou mais" valor={adultosLimo} min={0} max={MAX_PESSOAS} onChange={setAdultosLimo} />
-                            <Contador rotulo="Crianças" ajuda="6 a 11 anos · meia tarifa" valor={criancasLimo} min={0} max={MAX_PESSOAS} onChange={setCriancasLimo} />
-                          </div>
-                          <div className="mt-3 space-y-1.5 rounded-lg bg-black/[0.03] px-3 py-2.5 text-xs leading-5 text-black/70">
-                            <p>
-                              <strong className="font-semibold">Embarque no aeroporto:</strong> {EMBARQUE_AEROPORTO_LIMOUSINE[aeroportoLimo]}
-                            </p>
-                            <p>
-                              <strong className="font-semibold">Em Tóquio:</strong> {pontoLimo}
-                              {hotelLimo ? ` — ${hotelLimo}` : ""}. O ponto exato da sua linha vem no voucher.
-                            </p>
-                            <p>
-                              <strong className="font-semibold">Horários:</strong> {HORARIOS_LIMOUSINE}
-                            </p>
-                            <p>
-                              <strong className="font-semibold">Duração:</strong> {DURACAO_LIMOUSINE[aeroportoLimo]} conforme o trânsito. Até 2 malas por pessoa.
-                              Menores de 6 anos no colo não pagam.
-                            </p>
-                          </div>
-                          <p className={`${inter.className} mt-3 text-sm font-semibold tabular-nums text-[#0A2540]`}>
-                            {formatUSD(limousineUSD)} <span className="text-xs font-normal text-black/50">≈ {formatBRL(limousineBRL)} · pago online ao finalizar</span>
-                          </p>
-                        </div>
-                      )}
-                    </li>
                   </ul>
                   {tentouAvancarServicos && !etapa1Ok && (
                     <p className="mt-3 text-sm text-red-600">{escolhidos.length === 0 ? "Escolha ao menos um serviço." : problemasServicos[0]}</p>
@@ -1096,11 +947,7 @@ export default function ServicosAdicionaisPage() {
                   </label>
                   {tentouEnviar && !termosAceitos && <p className="ml-8 text-xs text-red-600">Aceite os Termos e Condições para solicitar os serviços.</p>}
                   <p className="mt-4 text-xs leading-5 text-black/50">
-                    {comLimousine
-                      ? `O Limousine Bus (${formatBRL(limousineBRL)}) é pago online na página segura da Stone, que abre em uma nova aba. ${
-                          escolhidos.length > 1 ? "Os demais serviços são confirmados e cobrados pelo WhatsApp." : ""
-                        }`
-                      : "Nenhum valor é cobrado agora. Nossa equipe confirma os serviços e combina a forma de pagamento com você pelo WhatsApp."}
+                    {"Nenhum valor é cobrado agora. Nossa equipe confirma os serviços e combina a forma de pagamento com você pelo WhatsApp."}
                   </p>
                   {erro && <p className="mt-4 text-sm text-red-600">{erro}</p>}
                 </section>

@@ -103,9 +103,6 @@ async function enviarEmail(params: {
 // 06/out/2026: pagamento só online, SLA de emissão de 3 dias úteis,
 // contratação só estando na origem, doença preexistente, CPF/endereço únicos.
 const TERMOS_VERSAO_SEGURO_VIAGEM = "seguro-viagem-termos-2026-10-06";
-// Seguro FICTÍCIO de teste (?teste=1) — Wilson, 06/out/2026: "criar produto
-// de teste para validação e fluxo de emails e registro no CRM".
-const VALOR_PEDIDO_TESTE_BRL = 1;
 
 function extrairIpDaRequisicao(req: Request): string | null {
   const encaminhado = req.headers.get("x-forwarded-for");
@@ -119,9 +116,7 @@ export async function POST(req: Request) {
   try {
     const body = await req.json();
 
-    const modoTeste = body.modoTeste === true;
-    const nomeInformado = String(body.nome || "").trim();
-    const nome = modoTeste && nomeInformado ? `[TESTE] ${nomeInformado}` : nomeInformado;
+    const nome = String(body.nome || "").trim();
     const nomeComprador = String(body.nomeComprador || "").trim();
     const email = String(body.email || "").trim();
     const whatsapp = String(body.whatsapp || "").trim();
@@ -204,9 +199,9 @@ export async function POST(req: Request) {
       idades,
       multidestino: paises.length > 1,
     });
-    const valorTotalBRL = modoTeste ? VALOR_PEDIDO_TESTE_BRL : valorCalculadoBRL;
+    const valorTotalBRL = valorCalculadoBRL;
     const valorEnviadoPeloCliente = Number(body.valorTotalBRL ?? body.valorReferenciaBRL) || null;
-    if (!modoTeste && valorTotalBRL !== null && valorEnviadoPeloCliente !== null && Math.abs(valorTotalBRL - valorEnviadoPeloCliente) > 1) {
+    if (valorTotalBRL !== null && valorEnviadoPeloCliente !== null && Math.abs(valorTotalBRL - valorEnviadoPeloCliente) > 1) {
       console.error(
         `Valor divergente no Seguro Viagem (cliente R$ ${valorEnviadoPeloCliente} × servidor R$ ${valorTotalBRL}) — usando o do servidor.`,
       );
@@ -257,7 +252,6 @@ export async function POST(req: Request) {
       ["Dias de cobertura", diasCalculados ? String(diasCalculados) : dias ? String(dias) : "Não informado"],
       ["Número de viajantes", idades.length ? String(idades.length) : "Não informado"],
       ["Idades dos viajantes", idades.length ? idades.join(", ") : "Não informado"],
-      ...(modoTeste ? ([["PEDIDO DE TESTE", `Seguro fictício — cobrança fixa de R$ ${VALOR_PEDIDO_TESTE_BRL},00. NÃO EMITIR APÓLICE.`]] as [string, string][]) : []),
       ["CPF do titular da apólice", cpfTitular || "Não informado (residente no Japão)"],
       ["Endereço (todos os viajantes)", enderecoComum],
       [
@@ -307,7 +301,7 @@ export async function POST(req: Request) {
         nome,
         email: email || null,
         telefone: whatsapp || null,
-        origem: modoTeste ? "TESTE — Seguro Viagem fictício (/produtos)" : `${TAG_SELF_SERVICE} — Seguro Viagem (/produtos)`,
+        origem: `${TAG_SELF_SERVICE} — Seguro Viagem (/produtos)`,
         produto_principal: "servico_individual",
         produto_secundario: ["seguro_viagem"],
         valor_proposta: valorTotalBRL,
@@ -370,16 +364,14 @@ export async function POST(req: Request) {
         } else {
           const checkout = await criarCheckout({
             codigoInterno: pagamentoPendente.id,
-            itemNome: modoTeste ? `TESTE — Seguro Viagem fictício (R$ ${VALOR_PEDIDO_TESTE_BRL},00)` : `Seguro Viagem — ${seguradoraNome}`,
-            itemDescricao: modoTeste
-              ? "Pedido de teste do fluxo completo. Não gera apólice."
-              : `${diasCalculados} dias (${dataInicio} a ${dataFim}), ${idades.length} viajante(s)`,
+            itemNome: `Seguro Viagem — ${seguradoraNome}`,
+            itemDescricao: `${diasCalculados} dias (${dataInicio} a ${dataFim}), ${idades.length} viajante(s)`,
             valorTotalBRL,
             aceitarCartao: true,
             aceitarPix: true,
             // Botão "voltar para a loja" da página da Stone volta para o site
             // (Wilson, 01/out/2026).
-            urlSucesso: `${new URL(req.url).origin}/produtos/seguro-viagem?${modoTeste ? "teste=1&" : ""}pagamento=concluido`,
+            urlSucesso: `${new URL(req.url).origin}/produtos/seguro-viagem?pagamento=concluido`,
           });
           await supabase
             .from("pagamentos")

@@ -100,9 +100,6 @@ async function enviarEmail(params: {
 // 06/out/2026: cartão emitido no Brasil, frete SEDEX, emissão a partir de
 // 30 dias antes do embarque, SLA de postagem e ativação livre.
 const TERMOS_VERSAO_JRPASS = "jrpass-termos-2026-10-06";
-// Pedido FICTÍCIO de teste (página aberta com ?teste=1) — Wilson,
-// 06/out/2026. Fluxo completo, mas o valor é sempre este, fixo aqui.
-const VALOR_PEDIDO_TESTE_BRL = 1;
 
 function extrairIpDaRequisicao(req: Request): string | null {
   const encaminhado = req.headers.get("x-forwarded-for");
@@ -114,9 +111,7 @@ export async function POST(req: Request) {
   try {
     const body = await req.json();
 
-    const modoTeste = body.modoTeste === true;
-    const nomeInformado = String(body.nome || "").trim();
-    const nome = modoTeste && nomeInformado ? `[TESTE] ${nomeInformado}` : nomeInformado;
+    const nome = String(body.nome || "").trim();
     // Nome de quem está pagando, quando é diferente de quem viaja —
     // pedido do Wilson, 29/set/2026, como evidência de checkout pra
     // defesa de chargeback ("nome do passageiro + nome do comprador").
@@ -184,12 +179,10 @@ export async function POST(req: Request) {
     const dataAtivacao = String(body.dataAtivacao || "").trim();
     // Frete recalculado aqui pelo CEP/UF (nunca confia no valor do navegador).
     const faixaFrete = faixaFreteSedex(endereco.cep, endereco.uf);
-    const freteBRL = modoTeste ? 0 : (faixaFrete?.valorBRL ?? 0);
-    const precoTotalBRL = modoTeste
-      ? VALOR_PEDIDO_TESTE_BRL
-      : precoPassesBRL
-        ? Math.round((precoPassesBRL + freteBRL) * 100) / 100
-        : null;
+    const freteBRL = faixaFrete?.valorBRL ?? 0;
+    const precoTotalBRL = precoPassesBRL
+      ? Math.round((precoPassesBRL + freteBRL) * 100) / 100
+      : null;
     const declaraBrasileiro = body.declaraBrasileiro === true;
     if (!declaraBrasileiro) {
       return NextResponse.json({ error: "Confirme que o passaporte é brasileiro." }, { status: 400 });
@@ -232,7 +225,6 @@ export async function POST(req: Request) {
         dataInicioViagem && dataFimViagem ? `${dataInicioViagem} a ${dataFimViagem}` : "Não informada",
       ],
       ["Ativação prevista", dataAtivacao || "Cliente decide no Japão"],
-      ...(modoTeste ? ([["PEDIDO DE TESTE", `Fluxo fictício — cobrança fixa de R$ ${VALOR_PEDIDO_TESTE_BRL},00. NÃO EMITIR.`]] as [string, string][]) : []),
       ["Passes (referência)", precoPassesBRL ? `R$ ${precoPassesBRL.toLocaleString("pt-BR")}` : "Não calculado"],
       [
         "Frete SEDEX",
@@ -278,7 +270,7 @@ export async function POST(req: Request) {
         nome,
         email: email || null,
         telefone: whatsapp || null,
-        origem: modoTeste ? "TESTE — JR Pass fictício (/produtos)" : `${TAG_SELF_SERVICE} — JR Pass (/produtos)`,
+        origem: `${TAG_SELF_SERVICE} — JR Pass (/produtos)`,
         produto_principal: "servico_individual",
         produto_secundario: ["jr_pass"],
         valor_proposta: precoTotalBRL,
@@ -354,16 +346,14 @@ export async function POST(req: Request) {
         } else {
           const checkout = await criarCheckout({
             codigoInterno: pagamentoPendente.id,
-            itemNome: modoTeste ? `TESTE — JR Pass fictício (R$ ${VALOR_PEDIDO_TESTE_BRL},00)` : `JR Pass — ${classe}`,
-            itemDescricao: modoTeste
-              ? "Pedido de teste do fluxo completo. Não gera emissão."
-              : `${dias ? `${dias} dias` : "duração a confirmar"}, ${numeroPessoas} pessoa(s) + frete SEDEX`,
+            itemNome: `JR Pass — ${classe}`,
+            itemDescricao: `${dias ? `${dias} dias` : "duração a confirmar"}, ${numeroPessoas} pessoa(s) + frete SEDEX`,
             valorTotalBRL: precoTotalBRL,
             aceitarCartao: true,
             aceitarPix: true,
             // Botão "voltar para a loja" da página da Stone volta para o site
             // (Wilson, 01/out/2026).
-            urlSucesso: `${new URL(req.url).origin}/produtos/jrpass?${modoTeste ? "teste=1&" : ""}pagamento=concluido`,
+            urlSucesso: `${new URL(req.url).origin}/produtos/jrpass?pagamento=concluido`,
           });
 
           await supabase

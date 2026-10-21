@@ -25,17 +25,31 @@ function formatBRL(valor: number | null) {
   return valor.toLocaleString("pt-BR", { style: "currency", currency: "BRL", maximumFractionDigits: 0 });
 }
 
-export default async function PipelinePage() {
+// Pedidos de teste (nome "[TESTE] …" ou origem "TESTE …") ficam fora do
+// pipeline — Wilson, 21/out/2026. Aparecem só com ?testes=1.
+function ehTeste(c: { nome: string | null; origem: string | null }) {
+  return /^\s*\[TESTE\]/i.test(c.nome ?? "") || /^\s*TESTE\b/i.test(c.origem ?? "");
+}
+
+export default async function PipelinePage({
+  searchParams,
+}: {
+  searchParams: Promise<{ testes?: string }>;
+}) {
+  const { testes } = await searchParams;
+  const mostrarTestes = testes === "1";
   const supabase = await createClient();
 
   const { data: clientes, error } = await supabase
     .from("clientes")
-    .select("id, nome, estagio, valor_proposta, produto_principal")
+    .select("id, nome, origem, estagio, valor_proposta, produto_principal")
     .order("created_at", { ascending: false });
 
   if (error) console.error("Erro ao carregar pipeline:", error);
 
-  const lista = clientes ?? [];
+  const todos = clientes ?? [];
+  const qtdTestes = todos.filter(ehTeste).length;
+  const lista = mostrarTestes ? todos : todos.filter((c) => !ehTeste(c));
 
   return (
     <div>
@@ -43,6 +57,16 @@ export default async function PipelinePage() {
       <h1 className={`${display.className} text-3xl font-medium text-black md:text-4xl`}>
         Pipeline
       </h1>
+      {qtdTestes > 0 && (
+        <p className="mt-2 text-xs text-black/45">
+          {mostrarTestes
+            ? `Mostrando ${qtdTestes} ${qtdTestes === 1 ? "pedido de teste" : "pedidos de teste"}. `
+            : `${qtdTestes} ${qtdTestes === 1 ? "pedido de teste oculto" : "pedidos de teste ocultos"}. `}
+          <Link href={mostrarTestes ? "/crm/pipeline" : "/crm/pipeline?testes=1"} className="underline hover:text-black">
+            {mostrarTestes ? "Ocultar testes" : "Mostrar testes"}
+          </Link>
+        </p>
+      )}
 
       <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
         {ESTAGIOS.map((estagio) => {

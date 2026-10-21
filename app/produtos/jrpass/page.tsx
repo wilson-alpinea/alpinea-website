@@ -37,7 +37,6 @@ import {
   IconCheck,
 } from "../page";
 import { RodapeCheckout } from "../RodapeCheckout";
-import { ProdutoTestePagamento, PainelPedidoTeste, useModoTeste } from "../ProdutoTestePagamento";
 import { AvisoPagamentoConcluido } from "../AvisoPagamentoConcluido";
 import { abrirAbaPagamento, enviarParaPagamento, fecharAba, BlocoPagamentoNovaAba } from "../pagamentoNovaAba";
 
@@ -186,11 +185,6 @@ export default function JrPassPage() {
     }
   }
   const [observacoes, setObservacoes] = useState("");
-  // JR Pass fictício de teste (?teste=1) — Wilson, 06/out/2026: "criar um
-  // jr pass fictício de teste para podermos testar". O servidor fixa R$ 1.
-  const modoTeste = useModoTeste();
-  const [marcarTeste, setMarcarTeste] = useState(false);
-  const pedidoTeste = modoTeste && marcarTeste;
   const [status, setStatus] = useState<"form" | "enviando" | "enviado" | "erro">("form");
   // Link da Stone aberto em nova aba (Wilson, 01/out/2026).
   const [linkPagamento, setLinkPagamento] = useState<string | null>(null);
@@ -566,7 +560,6 @@ export default function JrPassPage() {
           documentoNacionalidade,
           declaraBrasileiro,
           termosAceitos,
-          modoTeste: pedidoTeste,
         }),
       });
       const dadosResposta = await resposta.json().catch(() => ({}));
@@ -728,32 +721,6 @@ export default function JrPassPage() {
           </section>
           {/* Aviso de retorno da página de pagamento da Stone (Wilson, 01/out/2026). */}
           <AvisoPagamentoConcluido />
-          {/* Produto de teste de R$ 1 — só aparece com ?teste=1 (Wilson, 30/set/2026). */}
-          <ProdutoTestePagamento produto="jrpass" />
-          <PainelPedidoTeste
-            ativo={modoTeste}
-            marcado={marcarTeste}
-            onMarcar={setMarcarTeste}
-            nomeProduto="JR Pass"
-            onPreencher={() => {
-              const daqui = (dias: number) => {
-                const d = new Date();
-                d.setDate(d.getDate() + dias);
-                return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
-              };
-              setClasseSelecionada("comum");
-              setDiasSelecionados(7);
-              setDataEmbarque(daqui(20));
-              setDataRetorno(daqui(34));
-              setDataAtivacao(daqui(23));
-              setNome("Passageiro Teste Fictício");
-              setEmail("wilson@alpinea.io");
-              setWhatsapp("(11) 99999-9999");
-              setEndereco({ cep: "01310-100", logradouro: "Avenida Paulista", numero: "1000", complemento: "Conj. 1 (teste)", bairro: "Bela Vista", cidade: "São Paulo", uf: "SP" });
-              setDeclaraBrasileiro(true);
-              setObservacoes("PEDIDO DE TESTE — não emitir.");
-            }}
-          />
           <p className="mt-6 max-w-2xl text-sm leading-relaxed text-black/75">
             Passe ferroviário oficial dos seis grupos JR, vendido em faixas fixas de 7, 14 ou 21 dias
             corridos — cobre a maior parte da rede Shinkansen, trens expressos, locais, ônibus JR e o
@@ -2085,7 +2052,7 @@ export default function JrPassPage() {
             selecaoCompleta
               ? `${tipoEscolhido!.classe} · ${diasSelecionados} dias · ${numeroPessoas} ${numeroPessoas === 1 ? "pessoa" : "pessoas"}${
                   freteBRL !== null ? ` · frete ${formatBRL(freteBRL)}` : ""
-                }${pedidoTeste ? " · TESTE: cobra R$ 1,00" : ""}`
+                }`
               : undefined
           }
           semValor="Escolha a duração e a classe do passe para ver o valor."

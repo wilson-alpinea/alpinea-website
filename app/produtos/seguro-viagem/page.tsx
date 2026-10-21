@@ -44,7 +44,6 @@ import {
 } from "../page";
 import { RodapeCheckout } from "../RodapeCheckout";
 import { SEGURADORAS_VIAGEM, PAISES_ASIA_ADICIONAIS, type SeguradoraKey } from "./seguradoras";
-import { ProdutoTestePagamento, PainelPedidoTeste, useModoTeste } from "../ProdutoTestePagamento";
 import { AvisoPagamentoConcluido } from "../AvisoPagamentoConcluido";
 import { abrirAbaPagamento, enviarParaPagamento, fecharAba, BlocoPagamentoNovaAba } from "../pagamentoNovaAba";
 
@@ -124,10 +123,6 @@ export default function SeguroViagemPage() {
   const [dataInicio, setDataInicio] = useState("");
   const [dataFim, setDataFim] = useState("");
   const [paisesAdicionais, setPaisesAdicionais] = useState<string[]>([]);
-  // Seguro fictício de teste (?teste=1) — fluxo completo cobrando R$ 1.
-  const modoTeste = useModoTeste();
-  const [marcarTeste, setMarcarTeste] = useState(false);
-  const pedidoTeste = modoTeste && marcarTeste;
   const [nome, setNome] = useState("");
   // Nome de quem paga, quando diferente do viajante principal — mesma
   // evidência de chargeback adotada no JR Pass (Wilson, 29/set/2026).
@@ -302,7 +297,6 @@ export default function SeguroViagemPage() {
           dataVoltaVoo: passagemComprada === "sim" ? dataVoltaVoo : "",
           emitirPassagemAjisai: passagemComprada === "nao" ? emitirPassagemAjisai : false,
           termosAceitos,
-          modoTeste: pedidoTeste,
         }),
       });
       const dadosResposta = await resposta.json().catch(() => ({}));
@@ -446,39 +440,6 @@ export default function SeguroViagemPage() {
             </section>
             {/* Aviso de retorno da página de pagamento da Stone (Wilson, 01/out/2026). */}
             <AvisoPagamentoConcluido />
-            {/* Produto de teste de R$ 1 — só aparece com ?teste=1 (Wilson, 30/set/2026). */}
-            <ProdutoTestePagamento produto="seguro-viagem" />
-            <PainelPedidoTeste
-              ativo={modoTeste}
-              marcado={marcarTeste}
-              onMarcar={setMarcarTeste}
-              nomeProduto="Seguro Viagem"
-              onPreencher={() => {
-                const daqui = (dias: number) => {
-                  const d = new Date();
-                  d.setDate(d.getDate() + dias);
-                  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
-                };
-                setNumViajantes(1);
-                setIdades([35]);
-                setMoraEm("brasil");
-                setPaisDestino("japao");
-                setEstouNaOrigem(true);
-                setDataInicio(daqui(30));
-                setDataFim(daqui(44));
-                setSeguradora("affinity");
-                setPassagemComprada("nao");
-                setNome("Viajante Teste Fictício");
-                setEmail("wilson@alpinea.io");
-                setWhatsapp("(11) 99999-9999");
-                setCpfTitular("529.982.247-25");
-                setEnderecoComum("Av. Paulista, 1000, conj. 1 (teste), Bela Vista, São Paulo/SP, CEP 01310-100");
-                setCondicaoSaude("nao");
-                setEmergenciaNome("Contato Teste Fictício");
-                setEmergenciaTelefone("(11) 98888-7777");
-                setObservacoes("PEDIDO DE TESTE — não emitir apólice.");
-              }}
-            />
 
             <div className="mt-8 rounded-2xl bg-[#eef6fb] p-5 sm:p-6">
               <p className="text-center text-xs font-medium uppercase tracking-[0.15em] text-[#1c6ea8]">
@@ -1134,7 +1095,7 @@ export default function SeguroViagemPage() {
           onFinalizar={enviar}
           rotuloValor="Total"
           valor={valorTotalBRL !== null && valorTotalBRL > 0 ? formatBRL(valorTotalBRL) : null}
-          detalhe={`${seguradoraEscolhida ? `${seguradoraEscolhida.nome} · ` : ""}${dias} ${dias === 1 ? "dia" : "dias"} · ${numViajantes} ${numViajantes === 1 ? "viajante" : "viajantes"}${pedidoTeste ? " · TESTE: cobra R$ 1,00" : ""}`}
+          detalhe={`${seguradoraEscolhida ? `${seguradoraEscolhida.nome} · ` : ""}${dias} ${dias === 1 ? "dia" : "dias"} · ${numViajantes} ${numViajantes === 1 ? "viajante" : "viajantes"}`}
           semValor="Preencha a idade dos viajantes e as datas da viagem para ver o valor."
           rotuloBotao="Finalizar compra"
           sentinelaId="checkout-ultimo-passo"
