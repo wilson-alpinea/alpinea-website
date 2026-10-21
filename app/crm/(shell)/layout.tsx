@@ -2,6 +2,7 @@ import { Bodoni_Moda } from "next/font/google";
 import Link from "next/link";
 import { headers } from "next/headers";
 import { exigirAdmin } from "@/lib/crm/acesso";
+import { urlUnidade } from "@/lib/crm/unidades";
 import { logout } from "../actions";
 
 const display = Bodoni_Moda({
@@ -40,7 +41,7 @@ export default async function CrmShellLayout({
   return (
     <div className="min-h-screen bg-[#FAF9F6] text-black">
       <header className="sticky top-0 z-50 border-b border-white/10 bg-black backdrop-blur">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4 md:px-10">
+        <div className="mx-auto flex max-w-6xl items-center justify-between gap-6 px-6 py-4 md:px-10">
           <div className="flex items-center gap-8">
             <Link href={unidade === "empregos" ? "/crm/empregos" : "/crm"} className="flex items-center gap-4">
               {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -70,8 +71,15 @@ export default async function CrmShellLayout({
             </nav>
           </div>
 
-          <div className="flex items-center gap-4">
-            <span className="hidden text-xs uppercase tracking-[0.2em] text-white/35 sm:inline">
+          <div className="flex shrink-0 items-center gap-4">
+            {/* Trocar para o outro CRM (Wilson, 21/out/2026). */}
+            <a
+              href={urlUnidade(unidade === "empregos" ? "agencia" : "empregos")}
+              className="hidden whitespace-nowrap text-xs text-white/45 underline-offset-4 transition hover:text-white hover:underline lg:inline"
+            >
+              CRM {unidade === "empregos" ? "Agência" : "Empregos"} →
+            </a>
+            <span className="hidden text-xs uppercase tracking-[0.2em] text-white/35 xl:inline">
               {nomeExibicao}
             </span>
             <form action={logout}>

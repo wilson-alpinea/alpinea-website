@@ -131,6 +131,12 @@ export async function proxy(request: NextRequest) {
 
   if (!rotaPermitida(papel, pathname)) return redirecionar(inicioDoPapel(papel, unidadeHost));
 
+  // alpinea.io/crm (domínio principal): admin escolhe entre o CRM da
+  // agência e o de empregos (Wilson, 21/out/2026).
+  if (!unidadeHost && papel === "admin" && (pathname === "/crm" || pathname === "/crm/") && !searchParams.has("ficar")) {
+    return redirecionar("/crm/unidades");
+  }
+
   // Cada domínio só mostra a própria unidade; rota da outra unidade vai
   // para o domínio certo.
   const unidadeRota = unidadeDaRota(pathname);

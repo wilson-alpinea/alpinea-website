@@ -27,7 +27,7 @@ export function unidadeDoHost(host: string | null | undefined): UnidadeCrm | nul
 }
 
 // Rotas compartilhadas (servem às duas unidades).
-const ROTAS_COMPARTILHADAS = ["/crm/login", "/crm/acessos", "/crm/sem-acesso"];
+const ROTAS_COMPARTILHADAS = ["/crm/login", "/crm/acessos", "/crm/sem-acesso", "/crm/unidades"];
 
 export function unidadeDaRota(pathname: string): UnidadeCrm | "compartilhada" {
   if (ROTAS_COMPARTILHADAS.some((r) => pathname === r || pathname.startsWith(`${r}/`))) return "compartilhada";
@@ -45,7 +45,8 @@ export const INICIO_UNIDADE: Record<UnidadeCrm, string> = {
 export function inicioDoPapel(papel: PapelCrm | null, unidade: UnidadeCrm | null): string {
   if (papel === "parceiro_agencia") return "/crm/parceiro";
   if (papel === "empreiteira") return "/crm/empreiteira";
-  if (papel === "admin") return INICIO_UNIDADE[unidade ?? "agencia"];
+  // Admin no domínio principal (alpinea.io/crm) escolhe qual CRM abrir.
+  if (papel === "admin") return unidade ? INICIO_UNIDADE[unidade] : "/crm/unidades";
   return "/crm/sem-acesso";
 }
 
@@ -57,6 +58,11 @@ export function rotaPermitida(papel: PapelCrm | null, pathname: string): boolean
   if (papel === "parceiro_agencia") return dentro("/crm/parceiro");
   if (papel === "empreiteira") return dentro("/crm/empreiteira");
   return false;
+}
+
+/** Endereço completo do início de cada CRM no domínio próprio. */
+export function urlUnidade(unidade: UnidadeCrm): string {
+  return `https://${unidade === "empregos" ? HOST_EMPREGOS : HOST_AGENCIA}${INICIO_UNIDADE[unidade]}`;
 }
 
 // Cookie do link de indicação (?parceiro=<slug>).
