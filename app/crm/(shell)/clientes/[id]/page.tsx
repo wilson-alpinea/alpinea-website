@@ -200,10 +200,20 @@ export default async function ClienteDetalhePage({
           )}
         </div>
         <form action={alternarArquivo}>
+          {/* Mais visível (Wilson, 21/out/2026: "muito difícil de ver"). */}
           <button
             type="submit"
-            className="rounded-full border border-black/15 px-4 py-1.5 text-xs uppercase tracking-[0.15em] text-black/60 transition hover:border-black/40 hover:text-black"
+            className={`inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-medium transition ${
+              arquivado
+                ? "border-black bg-black text-white hover:bg-black/80"
+                : "border-black bg-white text-black hover:bg-black hover:text-white"
+            }`}
           >
+            <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <rect x="3" y="4" width="18" height="4" rx="1" />
+              <path d="M5 8v11a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8" />
+              <path d="M10 12h4" />
+            </svg>
             {arquivado ? "Desarquivar lead" : "Arquivar lead inativo"}
           </button>
         </form>
