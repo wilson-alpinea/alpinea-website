@@ -34,6 +34,15 @@ export type Cliente = {
   estagio_entrega: EstagioEntrega;
   responsavel_id: string | null;
   observacoes: string | null;
+  // Lead gerado por parceiro da agência (migração 021).
+  parceiro_id?: string | null;
+  // Origem estruturada (migração 022) — ver lib/crm/canal.ts.
+  canal?: string | null;
+  canal_detalhe?: string | null;
+  utm?: Record<string, string> | null;
+  // Lead arquivado por inatividade (só admin; migração 021).
+  arquivado_em?: string | null;
+  arquivado_por?: string | null;
   created_at: string;
   updated_at: string;
 };

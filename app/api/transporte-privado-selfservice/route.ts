@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { atribuicaoDaRequisicao } from "../../../lib/crm/atribuicao";
 import { createHash } from "node:crypto";
 import { criarCheckoutParaCliente } from "../../../lib/pagarme/checkoutPedido";
 import {
@@ -276,9 +277,12 @@ export async function POST(req: Request) {
 
     const supabase = createAdminClient();
 
+    // Parceiro (link de indicação) e canal de origem — Wilson, 21/out/2026.
+    const atribuicao = await atribuicaoDaRequisicao(req, supabase);
     const { data: cliente, error: erroCliente } = await supabase
       .from("clientes")
       .insert({
+        ...atribuicao,
         nome,
         email: email || null,
         telefone: whatsapp || null,

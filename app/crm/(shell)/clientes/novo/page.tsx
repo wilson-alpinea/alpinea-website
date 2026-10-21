@@ -2,6 +2,8 @@ import { Bodoni_Moda } from "next/font/google";
 import type { Metadata } from "next";
 import { createCliente } from "../../../actions";
 import { ClienteForm } from "../ClienteForm";
+import { createClient } from "@/lib/supabase/server";
+import { exigirAdmin } from "@/lib/crm/acesso";
 
 const display = Bodoni_Moda({
   subsets: ["latin"],
@@ -19,6 +21,14 @@ export default async function NovoClientePage({
   searchParams: Promise<{ erro?: string }>;
 }) {
   const params = await searchParams;
+  const acesso = await exigirAdmin();
+  const supabase = await createClient();
+  const { data: parceiros } = await supabase
+    .from("parceiros")
+    .select("id, nome, ativo")
+    .eq("tipo", "agencia")
+    .eq("ativo", true)
+    .order("nome");
 
   return (
     <div className="mx-auto max-w-2xl">
@@ -34,7 +44,7 @@ export default async function NovoClientePage({
       )}
 
       <div className="mt-8 rounded-2xl border border-black/5 bg-white shadow-[0_1px_2px_rgba(0,0,0,0.04),0_16px_32px_-20px_rgba(0,0,0,0.15)] p-6 md:p-8">
-        <ClienteForm action={createCliente} submitLabel="Cadastrar cliente" />
+        <ClienteForm action={createCliente} submitLabel="Cadastrar cliente" parceiros={parceiros ?? []} consultorEmailPadrao={acesso.email} />
       </div>
     </div>
   );

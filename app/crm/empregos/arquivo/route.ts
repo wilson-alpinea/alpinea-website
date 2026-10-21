@@ -1,5 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { obterAcesso } from "@/lib/crm/acesso";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { BUCKETS_CANDIDATO } from "@/lib/crm/empregos";
 
@@ -12,6 +13,10 @@ export const dynamic = "force-dynamic";
 const CAMINHO_SEGURO = /^[A-Za-z0-9._-]+(\/[A-Za-z0-9._-]+)?$/;
 
 export async function GET(request: NextRequest) {
+  // Só a equipe (admin) — parceiros/empreiteiras usam o portal próprio.
+  if ((await obterAcesso())?.papel !== "admin") {
+    return NextResponse.json({ error: "Acesso negado." }, { status: 403 });
+  }
   const supabase = await createClient();
   const {
     data: { user },

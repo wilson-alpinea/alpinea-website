@@ -1,11 +1,84 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { createServerClient } from "@supabase/ssr";
+import {
+  COOKIE_INDICACAO,
+  HOST_AGENCIA,
+  HOST_EMPREGOS,
+  SLUG_PARCEIRO,
+  inicioDoPapel,
+  isPapelCrm,
+  rotaPermitida,
+  unidadeDaRota,
+  unidadeDoHost,
+  type PapelCrm,
+} from "./lib/crm/unidades";
+import { COOKIE_UTM, PARAMS_CAMPANHA, type DadosCampanha } from "./lib/crm/canal";
 
-// Protege todas as rotas /crm/* — exige sessão Supabase válida.
 // (No Next.js 16, "middleware.ts" foi renomeado para "proxy.ts".)
+//
+// 1. Site público: guarda o link de indicação de parceiro (?parceiro=slug)
+//    num cookie de 30 dias — os formulários self-service usam para marcar
+//    o lead com o parceiro (Wilson, 21/out/2026).
+// 2. Domínios dos CRMs: crm.alpinea.io = agência, empregos.alpinea.io =
+//    empregos. Cada domínio só abre as telas da sua unidade.
+// 3. /crm/*: exige sessão e respeita o papel — parceiro da agência só abre
+//    /crm/parceiro, empreiteira só /crm/empreiteira, admin abre tudo.
 export async function proxy(request: NextRequest) {
-  let response = NextResponse.next({ request });
+  const { pathname, searchParams } = request.nextUrl;
+  const host = request.headers.get("host");
+  const unidadeHost = unidadeDoHost(host);
+  const ehCrm = pathname === "/crm" || pathname.startsWith("/crm/");
 
+  if (!ehCrm) {
+    // Domínio de CRM fora de /crm → início da unidade.
+    if (unidadeHost) {
+      const url = request.nextUrl.clone();
+      url.pathname = unidadeHost === "empregos" ? "/crm/empregos" : "/crm";
+      url.search = "";
+      return NextResponse.redirect(url);
+    }
+    const slug = (searchParams.get("parceiro") || "").trim().toLowerCase();
+    const response = NextResponse.next();
+    const cookieSeguro = request.nextUrl.protocol === "https:";
+
+    // Origem do lead (Wilson, 21/out/2026): guarda utm_*/gclid/fbclid da
+    // última campanha, ou o site de onde a pessoa veio na primeira visita.
+    const campanha: DadosCampanha = {};
+    for (const k of PARAMS_CAMPANHA) {
+      const v = searchParams.get(k);
+      if (v) campanha[k] = v.slice(0, 200);
+    }
+    let refererHost = "";
+    try {
+      const ref = request.headers.get("referer");
+      if (ref) refererHost = new URL(ref).hostname.toLowerCase();
+    } catch {}
+    const refererExterno = refererHost && refererHost !== (host || "").split(":")[0].toLowerCase() && !refererHost.endsWith("alpinea.io") ? refererHost : "";
+    const temCampanha = Object.keys(campanha).length > 0;
+    if (temCampanha || (refererExterno && !request.cookies.get(COOKIE_UTM))) {
+      const dados: DadosCampanha = { ...campanha, landing: pathname.slice(0, 200), em: new Date().toISOString() };
+      if (refererExterno) dados.referer = refererExterno;
+      response.cookies.set(COOKIE_UTM, encodeURIComponent(JSON.stringify(dados)), {
+        path: "/",
+        maxAge: 60 * 60 * 24 * 90,
+        sameSite: "lax",
+        secure: cookieSeguro,
+        httpOnly: true,
+      });
+    }
+    if (slug && SLUG_PARCEIRO.test(slug)) {
+      response.cookies.set(COOKIE_INDICACAO, slug, {
+        path: "/",
+        maxAge: 60 * 60 * 24 * 30,
+        sameSite: "lax",
+        secure: cookieSeguro,
+        httpOnly: true,
+      });
+    }
+    return response;
+  }
+
+  const cookiesParaGravar: { name: string; value: string; options: Record<string, unknown> }[] = [];
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!,
@@ -15,40 +88,63 @@ export async function proxy(request: NextRequest) {
           return request.cookies.getAll();
         },
         setAll(cookiesToSet) {
-          cookiesToSet.forEach(({ name, value }) =>
-            request.cookies.set(name, value),
-          );
-          response = NextResponse.next({ request });
-          cookiesToSet.forEach(({ name, value, options }) =>
-            response.cookies.set(name, value, options),
-          );
+          cookiesToSet.forEach(({ name, value, options }) => {
+            request.cookies.set(name, value);
+            cookiesParaGravar.push({ name, value, options: options as Record<string, unknown> });
+          });
         },
       },
     },
   );
 
+  const comCookies = (response: NextResponse) => {
+    cookiesParaGravar.forEach(({ name, value, options }) => response.cookies.set(name, value, options));
+    return response;
+  };
+  const redirecionar = (pathnameDestino: string, hostDestino?: string) => {
+    const url = request.nextUrl.clone();
+    url.pathname = pathnameDestino;
+    if (hostDestino) {
+      url.host = hostDestino;
+      url.port = "";
+      url.protocol = "https:";
+    } else {
+      url.search = "";
+    }
+    return comCookies(NextResponse.redirect(url));
+  };
+
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const { pathname } = request.nextUrl;
   const isLoginRoute = pathname === "/crm/login";
-
-  if (!user && !isLoginRoute) {
-    const url = request.nextUrl.clone();
-    url.pathname = "/crm/login";
-    return NextResponse.redirect(url);
+  if (!user) {
+    return isLoginRoute ? comCookies(NextResponse.next({ request })) : redirecionar("/crm/login");
   }
 
-  if (user && isLoginRoute) {
-    const url = request.nextUrl.clone();
-    url.pathname = "/crm";
-    return NextResponse.redirect(url);
+  // Papel do usuário (perfis.papel — migração 021). Sem papel = sem acesso.
+  const { data: perfil } = await supabase.from("perfis").select("papel").eq("id", user.id).maybeSingle();
+  const papel: PapelCrm | null = isPapelCrm(perfil?.papel) ? perfil!.papel : null;
+
+  if (isLoginRoute) return redirecionar(inicioDoPapel(papel, unidadeHost));
+
+  if (!rotaPermitida(papel, pathname)) return redirecionar(inicioDoPapel(papel, unidadeHost));
+
+  // Cada domínio só mostra a própria unidade; rota da outra unidade vai
+  // para o domínio certo.
+  const unidadeRota = unidadeDaRota(pathname);
+  if (unidadeHost && unidadeRota !== "compartilhada" && unidadeRota !== unidadeHost) {
+    return redirecionar(pathname, unidadeRota === "empregos" ? HOST_EMPREGOS : HOST_AGENCIA);
   }
 
-  return response;
+  // Unidade atual vai num header para o layout montar o menu certo.
+  const headers = new Headers(request.headers);
+  headers.set("x-crm-unidade", unidadeRota === "compartilhada" ? (unidadeHost ?? "agencia") : unidadeRota);
+  return comCookies(NextResponse.next({ request: { headers } }));
 }
 
 export const config = {
-  matcher: ["/crm/:path*"],
+  // Tudo, menos arquivos estáticos, _next e APIs.
+  matcher: ["/((?!_next/|api/|.*\\.[A-Za-z0-9]+$).*)"],
 };

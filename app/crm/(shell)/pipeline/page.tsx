@@ -7,6 +7,9 @@ import { PRODUTO_PRINCIPAL_LABEL, type ProdutoPrincipal } from "@/lib/crm/produt
 import type { Estagio } from "@/lib/crm/types";
 import { moveEstagio } from "../../actions";
 import { EstagioSelect } from "./EstagioSelect";
+import { EstatisticasPipeline, PERIODOS_ESTATISTICA } from "./EstatisticasPipeline";
+import { calcularEstatisticas, type LeadEstatistica, type MudancaEstagio } from "@/lib/crm/estatisticasPipeline";
+import { rotuloOrigem } from "@/lib/crm/canal";
 
 const display = Bodoni_Moda({
   subsets: ["latin"],
@@ -31,18 +34,60 @@ function ehTeste(c: { nome: string | null; origem: string | null }) {
   return /^\s*\[TESTE\]/i.test(c.nome ?? "") || /^\s*TESTE\b/i.test(c.origem ?? "");
 }
 
+function inicioDoPeriodo(periodo: string): string | null {
+  return periodo === "todos" ? null : new Date(Date.now() - Number(periodo) * 86_400_000).toISOString();
+}
+
 export default async function PipelinePage({
   searchParams,
 }: {
-  searchParams: Promise<{ testes?: string }>;
+  searchParams: Promise<{ testes?: string; periodo?: string }>;
 }) {
-  const { testes } = await searchParams;
+  const { testes, periodo: periodoParam } = await searchParams;
   const mostrarTestes = testes === "1";
+  const periodo = PERIODOS_ESTATISTICA.some((p) => p.valor === periodoParam) ? periodoParam! : "90";
   const supabase = await createClient();
+
+  // ── Estatísticas: todos os leads do período, INCLUSIVE arquivados ──
+  const desde = inicioDoPeriodo(periodo);
+  const leadsEst: (LeadEstatistica & { nome: string | null; origem: string | null })[] = [];
+  for (let de = 0; ; de += 1000) {
+    let q = supabase
+      .from("clientes")
+      .select("id, nome, origem, created_at, estagio, canal, arquivado_em, valor_proposta")
+      .order("created_at", { ascending: true })
+      .range(de, de + 999);
+    if (desde) q = q.gte("created_at", desde);
+    const { data, error: erroEst } = await q;
+    if (erroEst) {
+      console.error("Erro ao carregar estatísticas do pipeline:", erroEst);
+      break;
+    }
+    leadsEst.push(...((data ?? []) as typeof leadsEst));
+    if (!data || data.length < 1000) break;
+  }
+  const leadsValidos = leadsEst.filter((c) => !ehTeste(c));
+  const idsValidos = new Set(leadsValidos.map((c) => c.id));
+  const mudancas: MudancaEstagio[] = [];
+  for (let de = 0; ; de += 1000) {
+    let q = supabase
+      .from("interacoes")
+      .select("cliente_id, estagio_destino, data_evento, created_at")
+      .eq("tipo", "mudanca_estagio")
+      .order("created_at", { ascending: true })
+      .range(de, de + 999);
+    if (desde) q = q.gte("created_at", desde);
+    const { data } = await q;
+    mudancas.push(...((data ?? []) as MudancaEstagio[]).filter((m) => idsValidos.has(m.cliente_id)));
+    if (!data || data.length < 1000) break;
+  }
+  const estatisticas = calcularEstatisticas(leadsValidos, mudancas);
 
   const { data: clientes, error } = await supabase
     .from("clientes")
-    .select("id, nome, origem, estagio, valor_proposta, produto_principal")
+    .select("id, nome, origem, estagio, valor_proposta, produto_principal, canal, canal_detalhe")
+    // Leads arquivados (inativos) não entram no funil — Wilson, 21/out/2026.
+    .is("arquivado_em", null)
     .order("created_at", { ascending: false });
 
   if (error) console.error("Erro ao carregar pipeline:", error);
@@ -62,11 +107,13 @@ export default async function PipelinePage({
           {mostrarTestes
             ? `Mostrando ${qtdTestes} ${qtdTestes === 1 ? "pedido de teste" : "pedidos de teste"}. `
             : `${qtdTestes} ${qtdTestes === 1 ? "pedido de teste oculto" : "pedidos de teste ocultos"}. `}
-          <Link href={mostrarTestes ? "/crm/pipeline" : "/crm/pipeline?testes=1"} className="underline hover:text-black">
+          <Link href={mostrarTestes ? `/crm/pipeline?periodo=${periodo}` : `/crm/pipeline?periodo=${periodo}&testes=1`} className="underline hover:text-black">
             {mostrarTestes ? "Ocultar testes" : "Mostrar testes"}
           </Link>
         </p>
       )}
+
+      <EstatisticasPipeline est={estatisticas} periodo={periodo} sufixoUrl={mostrarTestes ? "&testes=1" : ""} />
 
       <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
         {ESTAGIOS.map((estagio) => {
@@ -105,6 +152,7 @@ export default async function PipelinePage({
                           </p>
                         )}
                         {valor && <p className="mt-1.5 text-xs text-black/55">{valor}</p>}
+                        <p className="mt-1 line-clamp-2 text-[11px] text-black/40">{rotuloOrigem(c.canal, c.canal_detalhe)}</p>
                       </Link>
                       <EstagioSelect
                         action={moveEstagio.bind(null, c.id)}

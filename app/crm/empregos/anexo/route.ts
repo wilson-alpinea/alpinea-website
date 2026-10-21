@@ -1,5 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { createClient } from "@/lib/supabase/server";
+import { obterAcesso } from "@/lib/crm/acesso";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { PASTA_ANEXOS_EQUIPE, TIPOS_DOCUMENTO_CANDIDATO } from "@/lib/crm/empregos";
 
@@ -25,6 +26,10 @@ function nomeSeguro(nome: string) {
 }
 
 export async function POST(request: NextRequest) {
+  // Só a equipe (admin) — parceiros/empreiteiras usam o portal próprio.
+  if ((await obterAcesso())?.papel !== "admin") {
+    return NextResponse.json({ error: "Acesso negado." }, { status: 403 });
+  }
   const supabase = await createClient();
   const {
     data: { user },

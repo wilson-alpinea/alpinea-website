@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { atribuicaoDaRequisicao } from "../../../lib/crm/atribuicao";
 import { createAdminClient } from "../../../lib/supabase/admin";
 import { TAG_SELF_SERVICE } from "../../../lib/crm/origem";
 
@@ -152,9 +153,12 @@ export async function POST(req: Request) {
 
     const supabase = createAdminClient();
 
+    // Parceiro (link de indicação) e canal de origem — Wilson, 21/out/2026.
+    const atribuicao = await atribuicaoDaRequisicao(req, supabase);
     const { data: cliente, error: erroCliente } = await supabase
       .from("clientes")
       .insert({
+        ...atribuicao,
         nome,
         email: email || null,
         telefone: whatsapp || null,

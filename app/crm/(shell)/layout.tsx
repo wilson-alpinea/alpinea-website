@@ -1,6 +1,7 @@
 import { Bodoni_Moda } from "next/font/google";
 import Link from "next/link";
-import { createClient } from "@/lib/supabase/server";
+import { headers } from "next/headers";
+import { exigirAdmin } from "@/lib/crm/acesso";
 import { logout } from "../actions";
 
 const display = Bodoni_Moda({
@@ -8,13 +9,20 @@ const display = Bodoni_Moda({
   weight: ["400", "500", "600"],
 });
 
-const NAV = [
+// Dois CRMs (Wilson, 21/out/2026): agência de viagens e empregos, cada um
+// com o próprio menu. A unidade vem do proxy.ts (header x-crm-unidade).
+const NAV_AGENCIA = [
   { href: "/crm", label: "Dashboard" },
   { href: "/crm/clientes", label: "Clientes" },
   { href: "/crm/fornecedores", label: "Fornecedores" },
   { href: "/crm/pipeline", label: "Pipeline" },
-  // Área de Empregos — candidaturas de /empregos (Wilson, 06/out/2026).
-  { href: "/crm/empregos", label: "Empregos" },
+  { href: "/crm/acessos", label: "Acessos" },
+];
+const NAV_EMPREGOS = [
+  { href: "/crm/empregos", label: "Candidatos" },
+  { href: "/crm/empregos/agenda", label: "Agenda" },
+  { href: "/crm/empregos/vagas", label: "Vagas" },
+  { href: "/crm/acessos", label: "Acessos" },
 ];
 
 export default async function CrmShellLayout({
@@ -22,27 +30,19 @@ export default async function CrmShellLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  let nomeExibicao = user?.email ?? "";
-  if (user?.id) {
-    const { data: perfil } = await supabase
-      .from("perfis")
-      .select("nome")
-      .eq("id", user.id)
-      .maybeSingle();
-    if (perfil?.nome) nomeExibicao = perfil.nome;
-  }
+  // Só a equipe (admin) entra nas telas do CRM; parceiros têm portal próprio.
+  const acesso = await exigirAdmin();
+  const nomeExibicao = acesso.nome;
+  const unidade = (await headers()).get("x-crm-unidade") === "empregos" ? "empregos" : "agencia";
+  const NAV = unidade === "empregos" ? NAV_EMPREGOS : NAV_AGENCIA;
+  const rotuloUnidade = unidade === "empregos" ? "Empregos" : "Agência";
 
   return (
     <div className="min-h-screen bg-[#FAF9F6] text-black">
       <header className="sticky top-0 z-50 border-b border-white/10 bg-black backdrop-blur">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4 md:px-10">
           <div className="flex items-center gap-8">
-            <Link href="/crm" className="flex items-center gap-4">
+            <Link href={unidade === "empregos" ? "/crm/empregos" : "/crm"} className="flex items-center gap-4">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src="/images/ajisai-group-white-crop.png"
@@ -54,6 +54,7 @@ export default async function CrmShellLayout({
                 className={`${display.className} hidden text-4xl leading-none tracking-[0.03em] text-white sm:inline sm:text-5xl`}
               >
                 CRM
+                <span className="ml-3 align-middle font-sans text-[11px] uppercase tracking-[0.25em] text-white/45">{rotuloUnidade}</span>
               </span>
             </Link>
             <nav className="hidden items-center gap-6 text-sm text-white/50 md:flex">

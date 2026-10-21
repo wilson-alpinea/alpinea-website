@@ -20,11 +20,13 @@ export const dynamic = "force-dynamic";
 export default async function ClientesPage({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string; estagio?: string }>;
+  searchParams: Promise<{ q?: string; estagio?: string; arquivados?: string }>;
 }) {
   const params = await searchParams;
   const busca = (params.q ?? "").trim();
   const estagioFiltro = params.estagio ?? "";
+  // Leads arquivados ficam fora da lista; ?arquivados=1 mostra só eles.
+  const verArquivados = params.arquivados === "1";
 
   const supabase = await createClient();
 
@@ -32,6 +34,8 @@ export default async function ClientesPage({
     .from("clientes")
     .select("id, nome, email, telefone, estagio, valor_proposta, produto_principal, origem, created_at")
     .order("created_at", { ascending: false });
+
+  query = verArquivados ? query.not("arquivado_em", "is", null) : query.is("arquivado_em", null);
 
   if (busca) {
     query = query.or(`nome.ilike.%${busca}%,email.ilike.%${busca}%,telefone.ilike.%${busca}%,origem.ilike.%${busca}%`);
@@ -53,8 +57,14 @@ export default async function ClientesPage({
             {lista.length} {lista.length === 1 ? "cliente" : "clientes"}
           </p>
           <h1 className={`${display.className} text-3xl font-medium text-black md:text-4xl`}>
-            Clientes
+            {verArquivados ? "Leads arquivados" : "Clientes"}
           </h1>
+          <Link
+            href={verArquivados ? "/crm/clientes" : "/crm/clientes?arquivados=1"}
+            className="mt-1 inline-block text-xs text-black/45 underline hover:text-black"
+          >
+            {verArquivados ? "← Voltar para os ativos" : "Ver leads arquivados"}
+          </Link>
         </div>
         <Link
           href="/crm/clientes/novo"
@@ -72,6 +82,7 @@ export default async function ClientesPage({
           placeholder="Buscar por nome, e-mail ou telefone…"
           className="min-w-[240px] flex-1 rounded-xl border border-black/10 bg-white px-4 py-2.5 text-sm text-black placeholder-black/30 outline-none transition focus:border-[#1C3A5E] focus:ring-2 focus:ring-[#1C3A5E]/10"
         />
+        {verArquivados && <input type="hidden" name="arquivados" value="1" />}
         <select
           name="estagio"
           defaultValue={estagioFiltro}

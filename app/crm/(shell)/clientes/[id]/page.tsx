@@ -9,6 +9,7 @@ import { TIPOS_ARQUIVO, TIPO_ARQUIVO_LABEL, type TipoArquivo } from "@/lib/crm/a
 import { CAMINHO_DOCUMENTO_JRPASS_REGEX, urlDocumentoJrPassCrm } from "@/lib/supabase/documentosJrPass";
 import type { Estagio, EstagioEntrega } from "@/lib/crm/types";
 import { ESTAGIOS } from "@/lib/crm/estagios";
+import { rotuloOrigem } from "@/lib/crm/canal";
 import {
   updateCliente,
   addInteracao,
@@ -17,6 +18,7 @@ import {
   deleteInteracao,
   addArquivo,
   deleteArquivo,
+  arquivarCliente,
 } from "../../../actions";
 import { ClienteForm } from "../ClienteForm";
 import { EstagioSelect } from "../../pipeline/EstagioSelect";
@@ -127,6 +129,16 @@ export default async function ClienteDetalhePage({
     .eq("cliente_id", id)
     .order("numero_parcela", { ascending: true });
 
+  // Parceiros da agência para atribuição manual do lead (migração 021).
+  const { data: parceirosAgencia } = await supabase
+    .from("parceiros")
+    .select("id, nome, ativo")
+    .eq("tipo", "agencia")
+    .order("nome");
+  const parceiroDoLead = (parceirosAgencia ?? []).find((p) => p.id === cliente.parceiro_id);
+  const arquivado = Boolean(cliente.arquivado_em);
+  const alternarArquivo = arquivarCliente.bind(null, id, !arquivado);
+
   const updateClienteComId = updateCliente.bind(null, id);
   const addInteracaoComId = addInteracao.bind(null, id);
   const moveEstagioComId = moveEstagio.bind(null, id);
@@ -167,7 +179,30 @@ export default async function ClienteDetalhePage({
               {TAG_SELF_SERVICE}
             </span>
           )}
+          <p className="mt-1 text-xs text-black/50">
+            Origem: {rotuloOrigem(cliente.canal, cliente.canal_detalhe)}
+            {cliente.utm?.utm_campaign ? ` · campanha ${cliente.utm.utm_campaign}` : ""}
+            {cliente.utm?.landing ? ` · entrou por ${cliente.utm.landing}` : ""}
+          </p>
+          {parceiroDoLead && (
+            <span className="ml-2 mt-1 inline-block rounded-full bg-amber-100 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-amber-800">
+              Parceiro: {parceiroDoLead.nome}
+            </span>
+          )}
+          {arquivado && (
+            <span className="ml-2 mt-1 inline-block rounded-full bg-black/10 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-black/60">
+              Arquivado em {new Date(cliente.arquivado_em!).toLocaleDateString("pt-BR", { timeZone: "America/Sao_Paulo" })}
+            </span>
+          )}
         </div>
+        <form action={alternarArquivo}>
+          <button
+            type="submit"
+            className="rounded-full border border-black/15 px-4 py-1.5 text-xs uppercase tracking-[0.15em] text-black/60 transition hover:border-black/40 hover:text-black"
+          >
+            {arquivado ? "Desarquivar lead" : "Arquivar lead inativo"}
+          </button>
+        </form>
         <div className="w-48">
           <EstagioSelect
             action={moveEstagioComId}
@@ -200,6 +235,7 @@ export default async function ClienteDetalhePage({
             action={updateClienteComId}
             cliente={cliente}
             submitLabel="Salvar alterações"
+            parceiros={parceirosAgencia ?? []}
           />
         </div>
 

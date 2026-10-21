@@ -3,6 +3,7 @@ import { createElement, type ReactElement } from "react";
 import { renderToBuffer, type DocumentProps } from "@react-pdf/renderer";
 import sharp from "sharp";
 import { createClient } from "@/lib/supabase/server";
+import { obterAcesso } from "@/lib/crm/acesso";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { ApresentacaoPdf, MODELOS_APRESENTACAO } from "@/lib/empregos/apresentacaoPdf";
 
@@ -13,6 +14,10 @@ export const dynamic = "force-dynamic";
 // 06/out/2026). Só equipe logada no CRM. ?modelo=alpinea|avcorp|… e
 // ?download=1 para baixar em vez de abrir no navegador.
 export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  // Só a equipe (admin) — parceiros/empreiteiras usam o portal próprio.
+  if ((await obterAcesso())?.papel !== "admin") {
+    return NextResponse.json({ error: "Acesso negado." }, { status: 403 });
+  }
   const supabase = await createClient();
   const {
     data: { user },

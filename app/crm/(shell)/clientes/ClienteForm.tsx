@@ -1,6 +1,7 @@
 import { PRODUTOS_PRINCIPAIS, PRODUTOS_SECUNDARIOS } from "@/lib/crm/produtos";
 import type { Cliente } from "@/lib/crm/types";
 import { PRODUTO_ICONS, PRODUTO_ICON_VARIANTE } from "./ProdutoIcons";
+import { CANAIS } from "@/lib/crm/canal";
 
 const ORIGENS = [
   "Instagram",
@@ -73,10 +74,17 @@ export function ClienteForm({
   action,
   cliente,
   submitLabel,
+  parceiros = [],
+  consultorEmailPadrao,
 }: {
   action: (formData: FormData) => void;
   cliente?: Cliente;
   submitLabel: string;
+  // Empresas parceiras da agência (migração 021) — atribuição manual do lead.
+  parceiros?: { id: string; nome: string; ativo: boolean }[];
+  // Lead cadastrado à mão no CRM: origem padrão "Consultor" com o e-mail
+  // de quem está cadastrando (Wilson, 21/out/2026).
+  consultorEmailPadrao?: string;
 }) {
   const secundariosAtuais = new Set(cliente?.produto_secundario ?? []);
 
@@ -131,6 +139,42 @@ export function ClienteForm({
               <option key={o} value={o} />
             ))}
           </datalist>
+        </div>
+
+        <div>
+          <label className={labelClass}>Canal de origem</label>
+          <select name="canal" defaultValue={cliente?.canal ?? (cliente ? "" : "consultor")} className={inputClass}>
+            {cliente && !cliente.canal && <option value="">Não identificado</option>}
+            {CANAIS.map((c) => (
+              <option key={c.valor} value={c.valor}>
+                {c.label}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div>
+          <label className={labelClass}>Detalhe da origem</label>
+          <input
+            type="text"
+            name="canal_detalhe"
+            defaultValue={cliente ? (cliente.canal_detalhe ?? "") : (consultorEmailPadrao ?? "")}
+            className={inputClass}
+            placeholder="E-mail do consultor, campanha, quem indicou…"
+          />
+        </div>
+
+        <div>
+          <label className={labelClass}>Parceiro que indicou</label>
+          <select name="parceiro_id" defaultValue={cliente?.parceiro_id ?? ""} className={inputClass}>
+            <option value="">Nenhum (lead direto)</option>
+            {parceiros.map((p) => (
+              <option key={p.id} value={p.id}>
+                {p.nome}
+                {p.ativo ? "" : " (inativo)"}
+              </option>
+            ))}
+          </select>
         </div>
 
         <div>

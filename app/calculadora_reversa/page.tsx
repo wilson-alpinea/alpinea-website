@@ -1632,6 +1632,9 @@ export default function CalculadoraReversaPage() {
   const [telefoneCliente, setTelefoneCliente] = useState("");
   const [emailCliente, setEmailCliente] = useState("");
   const [consultorResponsavel, setConsultorResponsavel] = useState("");
+  // E-mail do consultor — só vai para o CRM (origem do lead), não entra no
+  // PDF/Word (Wilson, 21/out/2026).
+  const [consultorEmail, setConsultorEmail] = useState("");
   const [validadeProposta, setValidadeProposta] = useState("");
   const [observacoesInternas, setObservacoesInternas] = useState("");
   const [margemNota, setMargemNota] = useState("");
@@ -3032,6 +3035,7 @@ export default function CalculadoraReversaPage() {
           telefone: telefoneCliente.trim(),
           email: emailCliente.trim(),
           consultor: consultorResponsavel.trim(),
+          consultorEmail: consultorEmail.trim(),
           valorProposta: totalSelecionado,
           dataViagem: dataViagemEstimada || null,
           produtoSecundario: produtoSecundarioDoCrm(),
@@ -5539,6 +5543,18 @@ export default function CalculadoraReversaPage() {
                       value={consultorResponsavel}
                       onChange={(e) => setConsultorResponsavel(e.target.value)}
                       placeholder="ex.: Wilson"
+                      className="h-10 w-full rounded-lg border border-black/15 bg-white px-3 text-sm outline-none focus:border-black/30"
+                    />
+                  </label>
+                  <label className="flex flex-col">
+                    <span className="mb-1 text-[10px] uppercase tracking-wide text-black/60">
+                      E-mail do consultor (só CRM)
+                    </span>
+                    <input
+                      type="email"
+                      value={consultorEmail}
+                      onChange={(e) => setConsultorEmail(e.target.value)}
+                      placeholder="consultor@alpinea.io"
                       className="h-10 w-full rounded-lg border border-black/15 bg-white px-3 text-sm outline-none focus:border-black/30"
                     />
                   </label>

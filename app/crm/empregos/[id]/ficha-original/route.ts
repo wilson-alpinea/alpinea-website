@@ -2,6 +2,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import JSZip from "jszip";
 import sharp from "sharp";
 import { createClient } from "@/lib/supabase/server";
+import { obterAcesso } from "@/lib/crm/acesso";
 import { createAdminClient } from "@/lib/supabase/admin";
 import type { ContextoFicha } from "@/app/lib/fichasParceiros";
 import type { PerfilCandidato } from "@/app/lib/triagemPerfil";
@@ -16,6 +17,10 @@ export const dynamic = "force-dynamic";
 // lista-verificacao|fujiarte|suriemu ou ?modelo=todos (zip com as 4).
 // Só equipe logada no CRM.
 export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+  // Só a equipe (admin) — parceiros/empreiteiras usam o portal próprio.
+  if ((await obterAcesso())?.papel !== "admin") {
+    return NextResponse.json({ error: "Acesso negado." }, { status: 403 });
+  }
   const supabase = await createClient();
   const {
     data: { user },

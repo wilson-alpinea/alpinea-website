@@ -53,6 +53,8 @@ export async function POST(req: Request) {
     }
 
     const consultor = String(body.consultor || "").trim();
+    const consultorEmailBruto = String(body.consultorEmail || "").trim().toLowerCase();
+    const consultorEmail = /^\S+@\S+\.\S+$/.test(consultorEmailBruto) ? consultorEmailBruto.slice(0, 200) : "";
     const telefone = String(body.telefone || "").trim();
     const email = String(body.email || "").trim();
     if (!telefone && !email) {
@@ -80,6 +82,9 @@ export async function POST(req: Request) {
         origem: consultor
           ? `Calculadora Reversa (interno) — consultor: ${consultor}`
           : "Calculadora Reversa (interno)",
+        // Origem estruturada (migração 022): consultor + e-mail dele.
+        canal: "consultor",
+        canal_detalhe: consultorEmail || consultor || null,
         produto_principal: "roteiro_personalizado",
         produto_secundario: produtoSecundario,
         valor_proposta: valorProposta,

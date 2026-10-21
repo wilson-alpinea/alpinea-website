@@ -31,7 +31,11 @@ const sections = [
   ["foro", "18", "Lei aplicável e foro"],
 ];
 
-const content = [
+// Parágrafo comum, subtítulo ou lista com marcadores — usados na seção de
+// cancelamentos (Wilson, 21/out/2026).
+type Bloco = string | { subtitulo: string } | { lista: string[] };
+
+const content: { id: string; number: string; title: string; paragraphs: Bloco[] }[] = [
   {
     id: "sobre",
     number: "01",
@@ -171,11 +175,37 @@ const content = [
     number: "14",
     title: "Cancelamentos e reembolsos",
     paragraphs: [
-      "Os serviços da Alpinea possuem natureza consultiva, intelectual, personalizada e operacional. Em razão do investimento de tempo e recursos dedicados desde o início da execução, aplicam-se as seguintes condições de reembolso dos honorários da Alpinea:",
-      "Cancelamento antes do início da execução (conforme definido na Seção 02): reembolso integral dos valores pagos à Alpinea, deduzidas eventuais taxas bancárias ou de processamento de pagamento.",
-      "Cancelamento após o início da execução e antes da entrega do roteiro ou material principal: reembolso de 50% dos valores pagos à Alpinea.",
-      "Cancelamento após a entrega do roteiro ou material principal: os valores pagos à Alpinea são não reembolsáveis, em razão da execução integral do serviço contratado.",
-      "Cancelamento durante a viagem (planos com concierge ativo): não há reembolso dos honorários da Alpinea pelo período não utilizado.",
+      "Os serviços da Alpinea possuem natureza consultiva, intelectual, personalizada e operacional. Em razão do investimento de tempo e recursos dedicados desde o início da execução, aplicam-se as seguintes condições de reembolso, conforme o serviço contratado:",
+      { subtitulo: "Motorista privado" },
+      "Em caso de cancelamento solicitado pelo cliente, o reembolso será calculado sobre o valor pago referente ao serviço de motorista privado, considerando a antecedência da solicitação em relação à data de início da viagem:",
+      {
+        lista: [
+          "Mais de 60 dias de antecedência: reembolso de 80%.",
+          "De 31 a 60 dias de antecedência: reembolso de 50%.",
+          "30 dias ou menos de antecedência: não haverá reembolso.",
+        ],
+      },
+      { subtitulo: "Roteiro personalizado" },
+      "Em caso de cancelamento solicitado pelo cliente, o reembolso do adiantamento será determinado conforme a etapa de planejamento em andamento na data da solicitação:",
+      {
+        lista: [
+          "Antes do início do briefing: reembolso de 90% do adiantamento, com retenção de 10% a título de taxa administrativa.",
+          "Após a entrega do rascunho e antes do início da produção do roteiro final: reembolso de 50% do adiantamento.",
+          "A partir do início da produção do roteiro final: não haverá reembolso do adiantamento.",
+        ],
+      },
+      "Para o roteiro personalizado, considera-se iniciada a execução o momento a partir da aprovação do rascunho do roteiro, prevalecendo esta definição sobre a da Seção 02.",
+      { subtitulo: "Demais serviços" },
+      "Para os demais serviços da Alpinea, aplicam-se as seguintes condições de reembolso dos honorários:",
+      {
+        lista: [
+          "Cancelamento antes do início da execução (conforme definido na Seção 02): reembolso integral dos valores pagos à Alpinea, deduzidas eventuais taxas bancárias ou de processamento de pagamento.",
+          "Cancelamento após o início da execução e antes da entrega do roteiro ou material principal: reembolso de 50% dos valores pagos à Alpinea.",
+          "Cancelamento após a entrega do roteiro ou material principal: os valores pagos à Alpinea são não reembolsáveis, em razão da execução integral do serviço contratado.",
+          "Cancelamento durante a viagem (planos com concierge ativo): não há reembolso dos honorários da Alpinea pelo período não utilizado.",
+        ],
+      },
+      { subtitulo: "Disposições gerais" },
       "Os valores eventualmente antecipados pelo cliente para pagamento de fornecedores terceiros (hotéis, restaurantes, experiências, etc.) estão sujeitos exclusivamente às políticas de cancelamento de cada fornecedor, sobre as quais a Alpinea não tem ingerência. A Alpinea envidará seus melhores esforços para obter reembolso junto aos fornecedores, sem garantia de resultado.",
       "Nenhuma das condições acima afasta os direitos do consumidor previstos no Código de Defesa do Consumidor (Lei nº 8.078/1990), em especial o direito de arrependimento previsto no art. 49, quando aplicável.",
     ],
@@ -275,7 +305,7 @@ export default function LegalPage() {
           </h1>
           <div className="mt-12 border-l border-white/20 pl-6">
             <p className="text-sm text-white/45">
-              Última atualização: Junho de 2026
+              Última atualização: Outubro de 2026
             </p>
           </div>
         </div>
@@ -311,9 +341,21 @@ export default function LegalPage() {
                   {section.title}
                 </h2>
                 <div className="mt-8 space-y-6 text-lg leading-9 text-white/75">
-                  {section.paragraphs.map((paragraph, index) => (
-                    <p key={index}>{paragraph}</p>
-                  ))}
+                  {section.paragraphs.map((bloco, index) =>
+                    typeof bloco === "string" ? (
+                      <p key={index}>{bloco}</p>
+                    ) : "subtitulo" in bloco ? (
+                      <h3 key={index} className="pt-4 text-sm font-medium uppercase tracking-[0.2em] text-white">
+                        {bloco.subtitulo}
+                      </h3>
+                    ) : (
+                      <ul key={index} className="list-disc space-y-2 pl-6 marker:text-white/40">
+                        {bloco.lista.map((item) => (
+                          <li key={item}>{item}</li>
+                        ))}
+                      </ul>
+                    ),
+                  )}
                 </div>
               </section>
             ))}

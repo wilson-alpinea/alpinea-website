@@ -3,6 +3,8 @@
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
+import { garantirAdmin } from "@/lib/crm/acesso";
+import { isCanal } from "@/lib/crm/canal";
 import { isEstagio, ESTAGIO_LABEL } from "@/lib/crm/estagios";
 import { isEstagioEntrega, ESTAGIO_ENTREGA_LABEL } from "@/lib/crm/estagiosEntrega";
 import type { Estagio, EstagioEntrega } from "@/lib/crm/types";
@@ -28,6 +30,21 @@ function numeroOuNull(valor: FormDataEntryValue | null) {
 function textoOuNull(valor: FormDataEntryValue | null) {
   const texto = String(valor ?? "").trim();
   return texto || null;
+}
+
+const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+function uuidOuNull(valor: FormDataEntryValue | null) {
+  const texto = String(valor ?? "").trim();
+  return UUID.test(texto) ? texto : null;
+}
+
+// Origem estruturada do lead (migração 022). Parceiro escolhido força o
+// canal "parceiro".
+function canalDoFormulario(formData: FormData): { canal?: string | null; canal_detalhe?: string | null } {
+  if (!formData.has("canal")) return {};
+  const canalBruto = String(formData.get("canal") || "");
+  const canal = uuidOuNull(formData.get("parceiro_id")) ? "parceiro" : isCanal(canalBruto) ? canalBruto : null;
+  return { canal, canal_detalhe: textoOuNull(formData.get("canal_detalhe"))?.slice(0, 200) ?? null };
 }
 
 function produtoPrincipalOuNull(valor: FormDataEntryValue | null) {
@@ -101,6 +118,7 @@ async function registrarMudancaEstagioEntrega(
 }
 
 export async function createCliente(formData: FormData) {
+  await garantirAdmin();
   const nome = String(formData.get("nome") || "").trim();
   if (!nome) {
     redirect("/crm/clientes/novo?erro=1");
@@ -125,6 +143,8 @@ export async function createCliente(formData: FormData) {
       estagio: "novo_lead",
       responsavel_id: user?.id ?? null,
       observacoes: textoOuNull(formData.get("observacoes")),
+      parceiro_id: uuidOuNull(formData.get("parceiro_id")),
+      ...canalDoFormulario(formData),
     })
     .select("id")
     .single();
@@ -140,6 +160,7 @@ export async function createCliente(formData: FormData) {
 }
 
 export async function updateCliente(clienteId: string, formData: FormData) {
+  await garantirAdmin();
   const nome = String(formData.get("nome") || "").trim();
 
   // O estágio (venda) e a etapa de entrega NÃO são mais alterados por este
@@ -161,6 +182,8 @@ export async function updateCliente(clienteId: string, formData: FormData) {
       produto_secundario: produtosSecundarios(formData),
       data_viagem: textoOuNull(formData.get("data_viagem")),
       observacoes: textoOuNull(formData.get("observacoes")),
+      ...(formData.has("parceiro_id") ? { parceiro_id: uuidOuNull(formData.get("parceiro_id")) } : {}),
+      ...canalDoFormulario(formData),
     })
     .eq("id", clienteId);
 
@@ -177,6 +200,7 @@ export async function updateCliente(clienteId: string, formData: FormData) {
 }
 
 export async function moveEstagio(clienteId: string, formData: FormData) {
+  await garantirAdmin();
   const novoEstagio = String(formData.get("estagio") || "");
   // Data obrigatória — pedido do Wilson, 19/set/2026. O <input required>
   // no EstagioSelect já bloqueia o envio sem data pelo HTML5, mas a action
@@ -210,6 +234,7 @@ export async function moveEstagio(clienteId: string, formData: FormData) {
 // Wilson, 19/set/2026: "um novo fluxograma de entrega abaixo do de
 // vendas") — mesma exigência de data obrigatória.
 export async function moveEstagioEntrega(clienteId: string, formData: FormData) {
+  await garantirAdmin();
   const novoEstagio = String(formData.get("estagio") || "");
   const dataEvento = textoOuNull(formData.get("data"));
   if (!isEstagioEntrega(novoEstagio) || !dataEvento) return;
@@ -237,6 +262,7 @@ export async function moveEstagioEntrega(clienteId: string, formData: FormData) 
 }
 
 export async function addInteracao(clienteId: string, formData: FormData) {
+  await garantirAdmin();
   const conteudo = String(formData.get("conteudo") || "").trim();
   if (!conteudo) {
     redirect(`/crm/clientes/${clienteId}?erro=2`);
@@ -266,6 +292,7 @@ export async function addInteracao(clienteId: string, formData: FormData) {
 }
 
 export async function deleteInteracao(clienteId: string, interacaoId: string, formData: FormData) {
+  await garantirAdmin();
   void formData;
   const supabase = await createClient();
   const { error } = await supabase.from("interacoes").delete().eq("id", interacaoId);
@@ -287,6 +314,7 @@ function normalizarUrl(valor: string) {
 }
 
 export async function addArquivo(clienteId: string, formData: FormData) {
+  await garantirAdmin();
   const labelBruto = String(formData.get("label") || "").trim();
   const urlBruta = String(formData.get("url") || "").trim();
   const tipoBruto = String(formData.get("tipo") || "roteiro_draft");
@@ -321,6 +349,7 @@ export async function addArquivo(clienteId: string, formData: FormData) {
 }
 
 export async function deleteArquivo(clienteId: string, arquivoId: string, formData: FormData) {
+  await garantirAdmin();
   void formData;
   const supabase = await createClient();
   const { error } = await supabase.from("arquivos_cliente").delete().eq("id", arquivoId);
@@ -333,6 +362,7 @@ export async function deleteArquivo(clienteId: string, arquivoId: string, formDa
 }
 
 export async function deleteClientes(ids: string[]) {
+  await garantirAdmin();
   if (!ids || ids.length === 0) return;
   const supabase = await createClient();
   const { error } = await supabase.from("clientes").delete().in("id", ids);
@@ -356,6 +386,7 @@ function categoriaFornecedorOuNull(valor: FormDataEntryValue | null) {
 }
 
 export async function createFornecedor(formData: FormData) {
+  await garantirAdmin();
   const nome = String(formData.get("nome") || "").trim();
   if (!nome) {
     redirect("/crm/fornecedores/novo?erro=1");
@@ -386,6 +417,7 @@ export async function createFornecedor(formData: FormData) {
 }
 
 export async function updateFornecedor(fornecedorId: string, formData: FormData) {
+  await garantirAdmin();
   const nome = String(formData.get("nome") || "").trim();
 
   const supabase = await createClient();
@@ -413,6 +445,7 @@ export async function updateFornecedor(fornecedorId: string, formData: FormData)
 }
 
 export async function deleteFornecedores(ids: string[]) {
+  await garantirAdmin();
   if (!ids || ids.length === 0) return;
   const supabase = await createClient();
   const { error } = await supabase.from("fornecedores").delete().in("id", ids);
@@ -429,6 +462,7 @@ export async function deleteFornecedores(ids: string[]) {
 // ---------------------------------------------------------------
 
 export async function addPagamento(clienteId: string, formData: FormData) {
+  await garantirAdmin();
   const valorBruto = numeroOuNull(formData.get("valor"));
   if (!valorBruto) {
     redirect(`/crm/clientes/${clienteId}?erro=4`);
@@ -469,6 +503,7 @@ export async function alternarStatusPagamento(
   pagamentoId: string,
   novoStatus: string,
 ) {
+  await garantirAdmin();
   if (!isStatusPagamento(novoStatus)) return;
 
   const supabase = await createClient();
@@ -488,6 +523,7 @@ export async function alternarStatusPagamento(
 }
 
 export async function deletePagamento(clienteId: string, pagamentoId: string, formData: FormData) {
+  await garantirAdmin();
   void formData;
   const supabase = await createClient();
   const { error } = await supabase.from("pagamentos").delete().eq("id", pagamentoId);
@@ -503,6 +539,7 @@ export async function deletePagamento(clienteId: string, pagamentoId: string, fo
 // candidato (ex.: tirar da lista de eliminados depois de conversar),
 // mudar o status da análise e anotar observações. ──
 export async function atualizarCandidatura(candidaturaId: string, formData: FormData) {
+  await garantirAdmin();
   const { isClassificacao, isStatusCandidatura } = await import("@/lib/crm/empregos");
   const supabase = await createClient();
   const classificacao = String(formData.get("classificacao") ?? "");
@@ -531,6 +568,7 @@ export async function atualizarCandidatura(candidaturaId: string, formData: Form
 // Libera a etapa 2 (ficha cadastral) para um candidato abaixo de 80 —
 // Wilson, 06/out/2026. O link continua exigindo o token da candidatura.
 export async function liberarFichaCandidatura(candidaturaId: string, liberar: boolean) {
+  await garantirAdmin();
   const supabase = await createClient();
   const { error } = await supabase
     .from("candidaturas_vagas")
@@ -553,6 +591,7 @@ const voltarAgenda = (erro?: string) =>
   redirect(`/crm/empregos/agenda${erro ? `?erro=${encodeURIComponent(erro)}` : "?salvo=1"}`);
 
 export async function salvarConfigAgenda(formData: FormData) {
+  await garantirAdmin();
   const supabase = await createClient();
   const num = (k: string, min: number, max: number, padrao: number) => {
     const n = Math.round(Number(formData.get(k)));
@@ -578,6 +617,7 @@ export async function salvarConfigAgenda(formData: FormData) {
 }
 
 export async function adicionarJanelaAgenda(formData: FormData) {
+  await garantirAdmin();
   const supabase = await createClient();
   const dias = formData.getAll("dia_semana").map(Number).filter((d) => Number.isInteger(d) && d >= 0 && d <= 6);
   const inicio = String(formData.get("inicio") ?? "");
@@ -593,6 +633,7 @@ export async function adicionarJanelaAgenda(formData: FormData) {
 }
 
 export async function removerJanelaAgenda(id: string) {
+  await garantirAdmin();
   const supabase = await createClient();
   await supabase.from("entrevista_janelas").delete().eq("id", id);
   revalidatePath("/crm/empregos/agenda");
@@ -600,6 +641,7 @@ export async function removerJanelaAgenda(id: string) {
 }
 
 export async function adicionarBloqueioAgenda(formData: FormData) {
+  await garantirAdmin();
   const supabase = await createClient();
   const dataIni = String(formData.get("data") ?? "");
   const dataFim = String(formData.get("data_fim") ?? "") || dataIni;
@@ -624,6 +666,7 @@ export async function adicionarBloqueioAgenda(formData: FormData) {
 }
 
 export async function removerBloqueioAgenda(id: string) {
+  await garantirAdmin();
   const supabase = await createClient();
   await supabase.from("entrevista_bloqueios").delete().eq("id", id);
   revalidatePath("/crm/empregos/agenda");
@@ -631,6 +674,7 @@ export async function removerBloqueioAgenda(id: string) {
 }
 
 export async function atualizarStatusEntrevista(id: string, formData: FormData) {
+  await garantirAdmin();
   const status = String(formData.get("status") ?? "");
   if (!["agendada", "cancelada", "realizada", "faltou"].includes(status)) voltarAgenda("Status inválido.");
   const supabase = await createClient();
@@ -650,6 +694,7 @@ export async function atualizarStatusEntrevista(id: string, formData: FormData) 
 // (migração 018) e revalida as páginas públicas de /empregos. Devolve erro
 // em vez de redirecionar porque a lista salva cada checkbox na hora. ──
 export async function definirVagasAtivas(vagaIds: string[], ativa: boolean): Promise<{ ok: true } | { ok: false; erro: string }> {
+  await garantirAdmin();
   const { VAGAS } = await import("@/app/lib/vagasCatalogo");
   const validos = new Set(VAGAS.map((v) => v.id));
   const ids = vagaIds.filter((id) => validos.has(id));
@@ -678,6 +723,7 @@ export async function definirVagasAtivas(vagaIds: string[], ativa: boolean): Pro
 // Avançar etapa e/ou comentar — grava em candidaturas_vagas.andamento_manual
 // (migração 020) com data e e-mail de quem fez.
 export async function registrarAndamentoCandidatura(candidaturaId: string, formData: FormData) {
+  await garantirAdmin();
   const supabase = await createClient();
   const {
     data: { user },
@@ -718,6 +764,7 @@ export async function registrarAndamentoCandidatura(candidaturaId: string, formD
 // claro que foi feito manualmente e email de quem fez a alteração, data e
 // hora"). Registra em andamento_manual.reclassificacoes.
 export async function reclassificarCandidatura(candidaturaId: string, formData: FormData) {
+  await garantirAdmin();
   const supabase = await createClient();
   const {
     data: { user },
@@ -758,4 +805,44 @@ export async function reclassificarCandidatura(candidaturaId: string, formData: 
   revalidatePath(`/crm/empregos/${candidaturaId}`);
   revalidatePath("/crm/empregos");
   voltar();
+}
+
+// ── Arquivar lead inativo (Wilson, 21/out/2026: "aos admin deixar acesso
+// para arquivar leads inativos"). Não apaga nada: só tira o lead do
+// pipeline e da lista de clientes (dá para ver e desarquivar depois). ──
+export async function arquivarCliente(clienteId: string, arquivar: boolean) {
+  const acesso = await garantirAdmin();
+  const supabase = await createClient();
+  const { error } = await supabase
+    .from("clientes")
+    .update(arquivar ? { arquivado_em: new Date().toISOString(), arquivado_por: acesso.userId } : { arquivado_em: null, arquivado_por: null })
+    .eq("id", clienteId);
+  if (error) {
+    console.error("Erro ao arquivar cliente:", error);
+    redirect(`/crm/clientes/${clienteId}?erro=1`);
+  }
+  await supabase.from("interacoes").insert({
+    cliente_id: clienteId,
+    autor_id: acesso.userId,
+    tipo: "nota",
+    conteudo: arquivar ? "Lead arquivado (inativo)." : "Lead desarquivado.",
+  });
+  revalidatePath(`/crm/clientes/${clienteId}`);
+  revalidatePath("/crm/clientes");
+  revalidatePath("/crm/pipeline");
+  revalidatePath("/crm");
+  redirect(`/crm/clientes/${clienteId}`);
+}
+
+// ── Data prevista de embarque do candidato (migração 021) — aparece no
+// portal da empreiteira. ──
+export async function salvarEmbarqueCandidatura(candidaturaId: string, formData: FormData) {
+  await garantirAdmin();
+  const data = String(formData.get("data_embarque_prevista") || "").trim();
+  const valor = /^\d{4}-\d{2}-\d{2}$/.test(data) ? data : null;
+  const supabase = await createClient();
+  const { error } = await supabase.from("candidaturas_vagas").update({ data_embarque_prevista: valor }).eq("id", candidaturaId);
+  if (error) console.error("Erro ao salvar data de embarque:", error);
+  revalidatePath(`/crm/empregos/${candidaturaId}`);
+  revalidatePath("/crm/empreiteira");
 }
