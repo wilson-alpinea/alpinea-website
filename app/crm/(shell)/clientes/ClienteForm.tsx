@@ -2,6 +2,7 @@ import { PRODUTOS_PRINCIPAIS, PRODUTOS_SECUNDARIOS } from "@/lib/crm/produtos";
 import type { Cliente } from "@/lib/crm/types";
 import { PRODUTO_ICONS, PRODUTO_ICON_VARIANTE } from "./ProdutoIcons";
 import { CANAIS } from "@/lib/crm/canal";
+import { BotaoSalvar } from "./BotaoSalvar";
 
 const ORIGENS = [
   "Instagram",
@@ -250,12 +251,10 @@ export function ClienteForm({
         </div>
       </div>
 
-      <button
-        type="submit"
+      <BotaoSalvar
+        rotulo={submitLabel}
         className="w-full rounded-xl bg-[#1C3A5E] px-4 py-3 text-sm font-medium text-white shadow-sm shadow-[#1C3A5E]/25 transition hover:bg-[#254a73] hover:shadow-md hover:shadow-[#1C3A5E]/30 sm:w-auto sm:px-8"
-      >
-        {submitLabel}
-      </button>
+      />
     </form>
   );
 }

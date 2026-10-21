@@ -131,6 +131,11 @@ export async function proxy(request: NextRequest) {
 
   if (!rotaPermitida(papel, pathname)) return redirecionar(inicioDoPapel(papel, unidadeHost));
 
+  // Em cada domínio de CRM, /crm abre o início daquela unidade.
+  if (unidadeHost && papel === "admin" && (pathname === "/crm" || pathname === "/crm/") && unidadeHost !== "agencia") {
+    return redirecionar(inicioDoPapel(papel, unidadeHost));
+  }
+
   // alpinea.io/crm (domínio principal): admin escolhe entre o CRM da
   // agência e o de empregos (Wilson, 21/out/2026).
   if (!unidadeHost && papel === "admin" && (pathname === "/crm" || pathname === "/crm/") && !searchParams.has("ficar")) {
@@ -141,6 +146,11 @@ export async function proxy(request: NextRequest) {
   // para o domínio certo.
   const unidadeRota = unidadeDaRota(pathname);
   if (unidadeHost && unidadeRota !== "compartilhada" && unidadeRota !== unidadeHost) {
+    // Navegação interna do Next (RSC/server action) não segue redirect para
+    // outro domínio — a página quebra ("This page couldn't load"). Nesses
+    // casos fica no início da própria unidade.
+    const navegacaoInterna = request.headers.has("rsc") || request.headers.has("next-action") || request.headers.has("next-router-prefetch");
+    if (navegacaoInterna) return redirecionar(inicioDoPapel(papel, unidadeHost));
     return redirecionar(pathname, unidadeRota === "empregos" ? HOST_EMPREGOS : HOST_AGENCIA);
   }
 

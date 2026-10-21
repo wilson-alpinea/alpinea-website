@@ -1,7 +1,10 @@
 "use server";
 
 import { redirect } from "next/navigation";
+import { headers } from "next/headers";
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
+import { inicioDoPapel, isPapelCrm, unidadeDoHost } from "@/lib/crm/unidades";
 
 export async function login(formData: FormData) {
   const email = String(formData.get("email") || "").trim();
@@ -12,11 +15,15 @@ export async function login(formData: FormData) {
   }
 
   const supabase = await createClient();
-  const { error } = await supabase.auth.signInWithPassword({ email, password });
+  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
 
-  if (error) {
+  if (error || !data.user) {
     redirect("/crm/login?erro=1");
   }
 
-  redirect("/crm");
+  // Vai direto para o início certo do papel e do domínio (crm./empregos.)
+  // — evita redirect para outro domínio no meio da navegação.
+  const { data: perfil } = await createAdminClient().from("perfis").select("papel").eq("id", data.user.id).maybeSingle();
+  const papel = isPapelCrm(perfil?.papel) ? perfil!.papel : null;
+  redirect(inicioDoPapel(papel, unidadeDoHost((await headers()).get("host"))));
 }

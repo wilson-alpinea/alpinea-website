@@ -42,7 +42,7 @@ export default async function CrmShellLayout({
     <div className="min-h-screen bg-[#FAF9F6] text-black">
       <header className="sticky top-0 z-50 border-b border-white/10 bg-black backdrop-blur">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-6 px-6 py-4 md:px-10">
-          <div className="flex items-center gap-8">
+          <div className="flex min-w-0 items-center gap-6 lg:gap-8">
             <Link href={unidade === "empregos" ? "/crm/empregos" : "/crm"} className="flex items-center gap-4">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
@@ -51,14 +51,13 @@ export default async function CrmShellLayout({
                 className="h-12 w-auto sm:h-16"
               />
               <span className="hidden h-9 w-px bg-white/15 sm:block" />
-              <span
-                className={`${display.className} hidden text-4xl leading-none tracking-[0.03em] text-white sm:inline sm:text-5xl`}
-              >
-                CRM
-                <span className="ml-3 align-middle font-sans text-[11px] uppercase tracking-[0.25em] text-white/45">{rotuloUnidade}</span>
+              {/* Unidade embaixo de "CRM" para não invadir o menu (Wilson, 21/out/2026). */}
+              <span className="hidden flex-col leading-none sm:flex">
+                <span className={`${display.className} text-4xl tracking-[0.03em] text-white sm:text-5xl`}>CRM</span>
+                <span className="mt-1 text-[10px] uppercase tracking-[0.3em] text-white/45">{rotuloUnidade}</span>
               </span>
             </Link>
-            <nav className="hidden items-center gap-6 text-sm text-white/50 md:flex">
+            <nav className="hidden items-center gap-5 whitespace-nowrap text-sm text-white/50 md:flex lg:gap-6">
               {NAV.map((item) => (
                 <Link
                   key={item.href}

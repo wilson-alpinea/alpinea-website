@@ -156,7 +156,9 @@ export async function createCliente(formData: FormData) {
 
   revalidatePath("/crm/clientes");
   revalidatePath("/crm");
-  redirect(`/crm/clientes/${data.id}`);
+  revalidatePath("/crm/pipeline");
+  // ?criado=1 abre a tela de confirmação na ficha (Wilson, 21/out/2026).
+  redirect(`/crm/clientes/${data.id}?criado=1`);
 }
 
 export async function updateCliente(clienteId: string, formData: FormData) {
@@ -352,6 +354,12 @@ export async function deleteArquivo(clienteId: string, arquivoId: string, formDa
   await garantirAdmin();
   void formData;
   const supabase = await createClient();
+  // Arquivo enviado para o storage: apaga também o arquivo (Wilson, 21/out/2026).
+  const { data: registro } = await supabase.from("arquivos_cliente").select("url").eq("id", arquivoId).eq("cliente_id", clienteId).maybeSingle();
+  if (registro?.url?.startsWith("storage:")) {
+    const { createAdminClient } = await import("@/lib/supabase/admin");
+    await createAdminClient().storage.from("arquivos-clientes").remove([registro.url.slice("storage:".length)]);
+  }
   const { error } = await supabase.from("arquivos_cliente").delete().eq("id", arquivoId);
 
   if (error) {

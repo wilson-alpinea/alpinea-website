@@ -27,6 +27,9 @@ import { INTERACAO_ICONS } from "../InteracaoIcons";
 import { FunnelStepper } from "../FunnelStepper";
 import { EntregaStepper } from "../EntregaStepper";
 import { FinanceiroSection } from "./FinanceiroSection";
+import { ConfirmacaoCadastro } from "./ConfirmacaoCadastro";
+import { UploadArquivoCliente } from "./UploadArquivoCliente";
+import { ehArquivoStorage } from "@/lib/crm/arquivosStorage";
 import { addPagamento, deletePagamento } from "../../../actions";
 import type { Pagamento } from "@/lib/crm/types";
 
@@ -47,7 +50,7 @@ export default async function ClienteDetalhePage({
   searchParams,
 }: {
   params: Promise<{ id: string }>;
-  searchParams: Promise<{ erro?: string }>;
+  searchParams: Promise<{ erro?: string; criado?: string }>;
 }) {
   const { id } = await params;
   const sp = await searchParams;
@@ -149,6 +152,7 @@ export default async function ClienteDetalhePage({
 
   return (
     <div>
+      {sp.criado === "1" && <ConfirmacaoCadastro nome={cliente.nome} clienteId={id} />}
       <Link href="/crm/clientes" className="text-xs uppercase tracking-[0.2em] text-black/40 transition hover:text-[#1C3A5E]">
         ← Clientes
       </Link>
@@ -356,7 +360,9 @@ export default async function ClienteDetalhePage({
             {arquivosExibidos.map((a) => {
               const Icon = ARQUIVO_ICONS[a.tipo as TipoArquivo] ?? ARQUIVO_ICONS.outro;
               const excluirArquivo = deleteArquivo.bind(null, id, a.id);
-              const externo = a.url.startsWith("http") || a.url.startsWith("/crm/documento-jrpass");
+              const doStorage = ehArquivoStorage(a.url);
+              const href = doStorage ? `/crm/arquivo-cliente?id=${a.id}` : a.url;
+              const externo = doStorage || a.url.startsWith("http") || a.url.startsWith("/crm/documento-jrpass");
               return (
                 <div
                   key={a.id}
@@ -370,7 +376,7 @@ export default async function ClienteDetalhePage({
                       {TIPO_ARQUIVO_LABEL[a.tipo as TipoArquivo] ?? "Arquivo"}
                     </p>
                     <a
-                      href={a.url}
+                      href={href}
                       target={externo ? "_blank" : undefined}
                       rel={externo ? "noopener noreferrer" : undefined}
                       className="mt-0.5 block truncate text-sm font-medium text-black hover:underline"
@@ -396,7 +402,10 @@ export default async function ClienteDetalhePage({
           </div>
         )}
 
-        <form action={addArquivoComId} className="mt-5 grid gap-3 sm:grid-cols-[1fr_1fr_1fr_auto]">
+        <UploadArquivoCliente clienteId={id} tipos={TIPOS_ARQUIVO} />
+
+        <p className="mt-6 text-[11px] uppercase tracking-[0.15em] text-black/35">Ou adicionar um link</p>
+        <form action={addArquivoComId} className="mt-2 grid gap-3 sm:grid-cols-[1fr_1fr_1fr_auto]">
           <select
             name="tipo"
             defaultValue="roteiro_draft"
