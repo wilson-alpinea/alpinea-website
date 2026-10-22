@@ -1,4 +1,6 @@
 import type { Cliente, Estagio } from "@/lib/crm/types";
+import { ESTAGIOS } from "@/lib/crm/estagios";
+import { EstagioSelect } from "../pipeline/EstagioSelect";
 
 const NAVY = "#1C3A5E";
 const VERDE = "rgba(58,140,90,1)";
@@ -44,9 +46,11 @@ function IconeX() {
 export function FunnelStepper({
   cliente,
   datasPorEstagio,
+  action,
 }: {
   cliente: Cliente;
   datasPorEstagio: Partial<Record<Estagio, string>>;
+  action: (formData: FormData) => void;
 }) {
   const atual = cliente.estagio;
 
@@ -79,6 +83,23 @@ export function FunnelStepper({
 
   return (
     <div className="overflow-x-auto rounded-2xl border border-black/5 bg-white shadow-[0_1px_2px_rgba(0,0,0,0.04),0_16px_32px_-20px_rgba(0,0,0,0.15)] px-6 py-8 sm:px-10">
+      {/* Wilson, 22/out/2026 ("não consigo alterar o status da negociação"):
+          o seletor do funil ficava solto ao lado do nome do cliente, longe
+          do fluxograma. Agora fica no cabeçalho do card, igual ao card de
+          Entrega da viagem. */}
+      <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
+        <p className="text-[11px] font-medium uppercase tracking-[0.2em] text-black/35">
+          Status da negociação
+        </p>
+        <div className="w-56">
+          <EstagioSelect
+            action={action}
+            estagios={ESTAGIOS}
+            estagioAtual={atual}
+            className="w-full cursor-pointer rounded-full border border-black/10 bg-white px-4 py-1.5 text-xs uppercase tracking-[0.15em] text-black/70 outline-none transition focus:border-[#1C3A5E] focus:ring-2 focus:ring-[#1C3A5E]/10"
+          />
+        </div>
+      </div>
       <div className="relative flex min-w-[640px] justify-between sm:min-w-0">
         {/* Trilho contínuo atrás dos círculos — vai do centro do primeiro
             ao centro do último, com a parte já percorrida preenchida. */}

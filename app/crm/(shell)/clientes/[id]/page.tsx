@@ -8,7 +8,6 @@ import { TIPOS_INTERACAO, TIPO_INTERACAO_LABEL, TIPO_INTERACAO_COR } from "@/lib
 import { TIPOS_ARQUIVO, TIPO_ARQUIVO_LABEL, type TipoArquivo } from "@/lib/crm/arquivos";
 import { CAMINHO_DOCUMENTO_JRPASS_REGEX, urlDocumentoJrPassCrm } from "@/lib/supabase/documentosJrPass";
 import type { Estagio, EstagioEntrega } from "@/lib/crm/types";
-import { ESTAGIOS } from "@/lib/crm/estagios";
 import { rotuloOrigem } from "@/lib/crm/canal";
 import {
   updateCliente,
@@ -21,7 +20,6 @@ import {
   arquivarCliente,
 } from "../../../actions";
 import { ClienteForm } from "../ClienteForm";
-import { EstagioSelect } from "../../pipeline/EstagioSelect";
 import { ARQUIVO_ICONS } from "../ArquivoIcons";
 import { INTERACAO_ICONS } from "../InteracaoIcons";
 import { FunnelStepper } from "../FunnelStepper";
@@ -158,7 +156,7 @@ export default async function ClienteDetalhePage({
       </Link>
 
       <div className="mt-4">
-        <FunnelStepper cliente={cliente} datasPorEstagio={datasPorEstagio} />
+        <FunnelStepper cliente={cliente} datasPorEstagio={datasPorEstagio} action={moveEstagioComId} />
       </div>
 
       {/* Fluxograma de ENTREGA do serviço — pedido do Wilson, 19/set/2026
@@ -217,14 +215,6 @@ export default async function ClienteDetalhePage({
             {arquivado ? "Desarquivar lead" : "Arquivar lead inativo"}
           </button>
         </form>
-        <div className="w-48">
-          <EstagioSelect
-            action={moveEstagioComId}
-            estagios={ESTAGIOS}
-            estagioAtual={cliente.estagio}
-            className="w-full cursor-pointer rounded-full border border-black/10 bg-white px-4 py-1.5 text-xs uppercase tracking-[0.15em] text-black/70 outline-none transition focus:border-[#1C3A5E] focus:ring-2 focus:ring-[#1C3A5E]/10"
-          />
-        </div>
       </div>
 
       {sp.erro === "1" && (
@@ -363,7 +353,9 @@ export default async function ClienteDetalhePage({
         {arquivosExibidos.length === 0 ? (
           <p className="text-sm text-black/40">Nenhum arquivo adicionado ainda.</p>
         ) : (
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          // Wilson, 22/out/2026: arquivos em formato de lista, com o nome
+          // completo (antes eram cards em grade com o nome truncado).
+          <ul className="divide-y divide-black/5 overflow-hidden rounded-xl border border-black/5">
             {arquivosExibidos.map((a) => {
               const Icon = ARQUIVO_ICONS[a.tipo as TipoArquivo] ?? ARQUIVO_ICONS.outro;
               const excluirArquivo = deleteArquivo.bind(null, id, a.id);
@@ -371,26 +363,24 @@ export default async function ClienteDetalhePage({
               const href = doStorage ? `/crm/arquivo-cliente?id=${a.id}` : a.url;
               const externo = doStorage || a.url.startsWith("http") || a.url.startsWith("/crm/documento-jrpass");
               return (
-                <div
+                <li
                   key={a.id}
-                  className="flex items-start gap-3 rounded-xl border border-black/5 bg-[#FAF9F6] p-4 transition hover:border-black/10"
+                  className="flex items-center gap-3 bg-white px-4 py-3 transition hover:bg-[#FAF9F6]"
                 >
-                  <span className="flex h-9 w-9 shrink-0 items-center justify-center text-black">
+                  <span className="flex h-5 w-5 shrink-0 items-center justify-center text-black">
                     <Icon className="h-5 w-5" />
                   </span>
-                  <div className="min-w-0 flex-1">
-                    <p className="text-[10px] uppercase tracking-[0.15em] text-black/35">
-                      {TIPO_ARQUIVO_LABEL[a.tipo as TipoArquivo] ?? "Arquivo"}
-                    </p>
-                    <a
-                      href={href}
-                      target={externo ? "_blank" : undefined}
-                      rel={externo ? "noopener noreferrer" : undefined}
-                      className="mt-0.5 block truncate text-sm font-medium text-black hover:underline"
-                    >
-                      {a.label}
-                    </a>
-                  </div>
+                  <a
+                    href={href}
+                    target={externo ? "_blank" : undefined}
+                    rel={externo ? "noopener noreferrer" : undefined}
+                    className="min-w-0 flex-1 break-words text-sm font-medium text-black hover:underline"
+                  >
+                    {a.label}
+                  </a>
+                  <span className="hidden shrink-0 text-[10px] uppercase tracking-[0.15em] text-black/35 sm:inline">
+                    {TIPO_ARQUIVO_LABEL[a.tipo as TipoArquivo] ?? "Arquivo"}
+                  </span>
                   {!a.legado && (
                     <form action={excluirArquivo}>
                       <button
@@ -403,10 +393,10 @@ export default async function ClienteDetalhePage({
                       </button>
                     </form>
                   )}
-                </div>
+                </li>
               );
             })}
-          </div>
+          </ul>
         )}
 
         <UploadArquivoCliente clienteId={id} tipos={TIPOS_ARQUIVO} />

@@ -19,12 +19,14 @@ const UNIDADES = [
     titulo: "Agência de viagens",
     descricao: "Clientes, pipeline de vendas, fornecedores e leads de parceiros.",
     aqui: "/crm?ficar=1",
+    icone: "/images/icone-crm-agencia.png",
   },
   {
     unidade: "empregos" as const,
     titulo: "Empregos",
     descricao: "Candidatos, agenda de entrevistas, vagas e empreiteiras.",
     aqui: "/crm/empregos",
+    icone: "/images/icone-crm-empregos.png",
   },
 ];
 
@@ -41,6 +43,9 @@ export default async function EscolherCrmPage() {
             const url = urlUnidade(u.unidade);
             return (
               <div key={u.unidade} className="flex flex-col rounded-2xl border border-black/5 bg-white p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04),0_16px_32px_-20px_rgba(0,0,0,0.15)]">
+                {/* Ícone preto em fundo branco, sem círculo/selo (regra de ícones do CRM). */}
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={u.icone} alt="" aria-hidden="true" className="mb-4 h-14 w-14" />
                 <p className="text-[10px] uppercase tracking-[0.25em] text-[#1C3A5E]/70">CRM</p>
                 <h2 className={`${displayPortal.className} mt-1 text-2xl font-medium`}>{u.titulo}</h2>
                 <p className="mt-2 flex-1 text-sm text-black/55">{u.descricao}</p>
@@ -48,7 +53,7 @@ export default async function EscolherCrmPage() {
                   href={url}
                   className="mt-5 inline-flex items-center justify-center rounded-full bg-[#1C3A5E] px-5 py-2.5 text-sm font-medium text-white transition hover:bg-[#254a73]"
                 >
-                  Entrar →
+                  Entrar
                 </a>
                 <p className="mt-2 text-center text-[11px] text-black/40">
                   {url.replace("https://", "")} ·{" "}
