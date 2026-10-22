@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useId, useRef, type ReactNode } from "react";
+import { useEffect, useId, useRef, useSyncExternalStore, type ReactNode } from "react";
 import { createPortal } from "react-dom";
 
 // Peças visuais compartilhadas pelo Financeiro (Wilson, 22/out/2026).
@@ -20,6 +20,8 @@ export function novaChave(): string {
   return `${Date.now()}-${Math.random().toString(36).slice(2)}`;
 }
 
+const semAssinatura = () => () => {};
+
 /** Painel lateral (desktop) / folha inferior (celular), em portal no <body>. */
 export function Painel({
   titulo,
@@ -38,6 +40,9 @@ export function Painel({
 }) {
   const tituloId = useId();
   const caixa = useRef<HTMLDivElement>(null);
+  // No servidor não há document: o painel só aparece depois de hidratar
+  // (ex.: aberto direto pela URL ?receber=).
+  const noNavegador = useSyncExternalStore(semAssinatura, () => true, () => false);
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") onFechar();
@@ -51,8 +56,9 @@ export function Painel({
       document.removeEventListener("keydown", onKey);
       document.body.style.overflow = anterior;
     };
-  }, [onFechar]);
+  }, [onFechar, noNavegador]);
 
+  if (!noNavegador) return null;
   return createPortal(
     <div className="crm-ui fixed inset-0 z-[70] flex items-end justify-end sm:items-stretch" role="dialog" aria-modal="true" aria-labelledby={tituloId}>
       <button type="button" aria-label="Fechar" onClick={onFechar} className="crm-livre absolute inset-0 bg-black/30" />

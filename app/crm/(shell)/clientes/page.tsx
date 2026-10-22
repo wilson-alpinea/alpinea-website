@@ -2,7 +2,7 @@ import { Suspense } from "react";
 import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
 import { execucaoIniciada } from "@/lib/crm/processo";
-import type { Estagio, EstagioEntrega } from "@/lib/crm/types";
+import type { EstagioEntrega } from "@/lib/crm/types";
 import { ListaClientes, type ClienteLista } from "./ListaClientes";
 
 export const metadata: Metadata = {
@@ -50,7 +50,7 @@ export default async function ClientesPage() {
   }
 
   const lista: ClienteLista[] = (clientes ?? []).map((c) => {
-    const iniciada = execucaoIniciada(c.estagio_entrega as EstagioEntrega, comExecucao.has(c.id), c.estagio as Estagio);
+    const iniciada = execucaoIniciada(c.estagio_entrega as EstagioEntrega, comExecucao.has(c.id));
     return {
       id: c.id,
       nome: c.nome,

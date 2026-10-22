@@ -1,52 +1,39 @@
 "use client";
 
-import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from "recharts";
+import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 
-export function NovosClientesChart({ dados }: { dados: { data: string; total: number }[] }) {
+// Novos clientes por dia (Visão geral, 22/out/2026): colunas simples,
+// contagens inteiras, eixo numérico e tooltip.
+const fmtDia = (iso: string) => `${iso.slice(8, 10)}/${iso.slice(5, 7)}`;
+
+export function NovosClientesChart({ dados }: { dados: { dia: string; total: number }[] }) {
+  const maximo = Math.max(1, ...dados.map((d) => d.total));
   return (
-    <ResponsiveContainer width="100%" height={220}>
-      <AreaChart data={dados} margin={{ top: 8, right: 8, left: -20, bottom: 0 }}>
-        <defs>
-          <linearGradient id="novosClientesGradiente" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stopColor="#2f5aa8" stopOpacity={0.3} />
-            <stop offset="100%" stopColor="#2f5aa8" stopOpacity={0} />
-          </linearGradient>
-        </defs>
-        <CartesianGrid stroke="rgba(0,0,0,0.06)" vertical={false} />
+    <ResponsiveContainer width="100%" height={180}>
+      <BarChart data={dados} margin={{ top: 8, right: 4, left: -18, bottom: 0 }}>
+        <CartesianGrid stroke="#EEF0F2" vertical={false} />
         <XAxis
-          dataKey="data"
-          tick={{ fill: "rgba(0,0,0,0.4)", fontSize: 11 }}
-          axisLine={{ stroke: "rgba(0,0,0,0.1)" }}
+          dataKey="dia"
+          tickFormatter={fmtDia}
+          tick={{ fill: "#626B75", fontSize: 12 }}
+          axisLine={{ stroke: "#D5DAE0" }}
           tickLine={false}
           interval="preserveStartEnd"
+          minTickGap={18}
         />
-        <YAxis
-          allowDecimals={false}
-          tick={{ fill: "rgba(0,0,0,0.4)", fontSize: 11 }}
-          axisLine={false}
-          tickLine={false}
-          width={28}
-        />
+        <YAxis allowDecimals={false} domain={[0, maximo]} tick={{ fill: "#626B75", fontSize: 12 }} axisLine={false} tickLine={false} width={34} />
         <Tooltip
-          cursor={{ stroke: "rgba(0,0,0,0.15)" }}
-          contentStyle={{
-            background: "#fff",
-            border: "1px solid rgba(0,0,0,0.12)",
-            borderRadius: 12,
-            fontSize: 12,
-            color: "#000",
-            boxShadow: "0 12px 30px -12px rgba(0,0,0,0.25)",
+          cursor={{ fill: "rgba(36,71,107,0.06)" }}
+          labelFormatter={(v) => {
+            const s = String(v);
+            return `${s.slice(8, 10)}/${s.slice(5, 7)}/${s.slice(0, 4)}`;
           }}
-          labelStyle={{ color: "rgba(0,0,0,0.5)" }}
+          formatter={(v) => [`${v} ${Number(v) === 1 ? "cliente" : "clientes"}`, "Novos"]}
+          contentStyle={{ background: "#fff", border: "1px solid #E6E9ED", borderRadius: 10, fontSize: 13, color: "#20252B" }}
+          labelStyle={{ color: "#626B75" }}
         />
-        <Area
-          type="monotone"
-          dataKey="total"
-          stroke="#2f5aa8"
-          strokeWidth={2}
-          fill="url(#novosClientesGradiente)"
-        />
-      </AreaChart>
+        <Bar dataKey="total" fill="#24476B" radius={[3, 3, 0, 0]} maxBarSize={22} isAnimationActive={false} />
+      </BarChart>
     </ResponsiveContainer>
   );
 }

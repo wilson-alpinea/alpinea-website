@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import {
   formatarBRL,
   formatarData,
@@ -46,6 +46,7 @@ export function FinanceiroSection({
   eventos,
   servicos,
   bloqueado,
+  abrirRecebimento = null,
 }: {
   clienteId: string;
   hoje: string;
@@ -56,11 +57,17 @@ export function FinanceiroSection({
   eventos: EventoFinanceiro[];
   servicos: OpcaoServico[];
   bloqueado: boolean;
+  // Vindo da Visão geral / Recebimentos (?receber=<parcela>): abre o
+  // formulário de recebimento dessa parcela.
+  abrirRecebimento?: string | null;
 }) {
   const [filtro, setFiltro] = useState<Filtro>("todas");
-  const [painel, setPainel] = useState<PainelAberto>(null);
+  const [painel, setPainel] = useState<PainelAberto>(() => {
+    const alvo = !bloqueado && abrirRecebimento ? parcelas.find((p) => p.id === abrirRecebimento && p.saldoC > 0 && p.situacao !== "cancelada") : null;
+    return alvo ? { tipo: "receber", parcela: alvo } : null;
+  });
   const [menu, setMenu] = useState<string | null>(null);
-  const fechar = () => setPainel(null);
+  const fechar = useCallback(() => setPainel(null), []);
   const servicoLabel = (v: string | null) => (v ? servicos.find((s) => s.valor === v)?.label ?? v : null);
   // Os painéis recebem a parcela "viva" (recalculada a cada atualização).
   const viva = (p: ParcelaCalculada) => parcelas.find((x) => x.id === p.id) ?? p;
@@ -91,7 +98,7 @@ export function FinanceiroSection({
   );
 
   return (
-    <section className="rounded-2xl border border-black/[0.06] bg-white p-5 shadow-[0_1px_2px_rgba(0,0,0,0.04),0_16px_32px_-20px_rgba(0,0,0,0.15)] md:p-8">
+    <section id="financeiro" className="scroll-mt-28 rounded-2xl border border-black/[0.06] bg-white p-5 shadow-[0_1px_2px_rgba(0,0,0,0.04),0_16px_32px_-20px_rgba(0,0,0,0.15)] md:p-8">
       <div className="mb-5 flex flex-wrap items-center justify-between gap-3">
         <h2 className="text-[#20252B]">Financeiro</h2>
         <div className="flex flex-wrap gap-x-4 gap-y-1 text-sm">

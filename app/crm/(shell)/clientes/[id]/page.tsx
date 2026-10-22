@@ -52,7 +52,7 @@ export default async function ClienteDetalhePage({
   searchParams,
 }: {
   params: Promise<{ id: string }>;
-  searchParams: Promise<{ erro?: string; criado?: string }>;
+  searchParams: Promise<{ erro?: string; criado?: string; receber?: string }>;
 }) {
   const { id } = await params;
   const sp = await searchParams;
@@ -160,11 +160,7 @@ export default async function ClienteDetalhePage({
     cliente.estagio as Estagio,
     mudancasComercial.map((i) => String(i.estagio_destino)),
   );
-  const iniciouExecucao = execucaoIniciada(
-    cliente.estagio_entrega as EstagioEntrega,
-    mudancasExecucao.length > 0,
-    cliente.estagio as Estagio,
-  );
+  const iniciouExecucao = execucaoIniciada(cliente.estagio_entrega as EstagioEntrega, mudancasExecucao.length > 0);
   const resumoExe = resumoExecucao(cliente.estagio_entrega as EstagioEntrega, iniciouExecucao);
 
   // Data de entrada na etapa atual: só do histórico. Exceção: "Novo lead"
@@ -448,7 +444,7 @@ export default async function ClienteDetalhePage({
       </div>
 
       <div className="mt-6">
-        <FinanceiroSection clienteId={id} {...financeiro} />
+        <FinanceiroSection clienteId={id} {...financeiro} abrirRecebimento={sp.receber ?? null} />
       </div>
 
       <div className="mt-6 rounded-2xl border border-black/5 bg-white shadow-[0_1px_2px_rgba(0,0,0,0.04),0_16px_32px_-20px_rgba(0,0,0,0.15)] p-6 md:p-8">

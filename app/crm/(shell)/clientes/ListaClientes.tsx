@@ -12,7 +12,7 @@ import {
   type ProdutoPrincipal,
 } from "@/lib/crm/produtos";
 import { CANAIS, rotuloOrigem } from "@/lib/crm/canal";
-import { ehSelfService } from "@/lib/crm/origem";
+import { ehRegistroTeste, ehSelfService } from "@/lib/crm/origem";
 import type { Estagio } from "@/lib/crm/types";
 import { deleteClientes } from "../../actions";
 
@@ -68,8 +68,13 @@ function lerColunas() {
   }
 }
 
+// Grupos usados pelos atalhos da Visão geral.
+const ETAPAS_ABERTAS = ["novo_lead", "qualificacao", "proposta_enviada", "negociacao"];
+const EXECUCAO_PREPARACAO = ["roteiro_elaboracao", "roteiro_entregue", "reservas_confirmadas"];
+
 const EXECUCAO_OPCOES = [
   { valor: "aguardando", label: "Aguardando início" },
+  { valor: "preparacao", label: "Em preparação (antes da viagem)" },
   ...ESTAGIOS_ENTREGA.map((e) => ({ valor: e.valor, label: e.label.charAt(0) + e.label.slice(1).toLowerCase() })),
 ];
 const EXECUCAO_LABEL = Object.fromEntries(EXECUCAO_OPCOES.map((e) => [e.valor, e.label])) as Record<string, string>;
@@ -86,7 +91,7 @@ const BRL = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL",
 const fmtValor = (v: number | null) => (v === null ? null : BRL.format(v).replace(/ /g, " "));
 const fmtData = (iso: string | null) =>
   iso ? new Date(iso).toLocaleDateString("pt-BR", { timeZone: "America/Sao_Paulo", day: "2-digit", month: "2-digit", year: "numeric" }) : null;
-const ehTeste = (c: ClienteLista) => /^TESTE\s*—/i.test(c.origem ?? "");
+const ehTeste = (c: ClienteLista) => ehRegistroTeste(c.origem);
 const semAcento = (s: string) => s.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
 
 const CAMPO =
@@ -199,8 +204,8 @@ export function ListaClientes({ clientes }: { clientes: ClienteLista[] }) {
           (digitos.length >= 3 && (c.telefone ?? "").replace(/\D/g, "").includes(digitos));
         if (!ok) return false;
       }
-      if (etapa && c.estagio !== etapa) return false;
-      if (exec && c.execucao !== exec) return false;
+      if (etapa && (etapa === "abertas" ? !ETAPAS_ABERTAS.includes(c.estagio) : c.estagio !== etapa)) return false;
+      if (exec && (exec === "preparacao" ? !EXECUCAO_PREPARACAO.includes(c.execucao) : c.execucao !== exec)) return false;
       if (produto && c.produtoPrincipal !== produto && !c.produtosSecundarios.includes(produto)) return false;
       if (resp && c.responsavelId !== resp) return false;
       if (origem) {
@@ -228,7 +233,7 @@ export function ListaClientes({ clientes }: { clientes: ClienteLista[] }) {
 
   const chips: { rotulo: string; limpar: Record<string, null> }[] = [];
   if (q) chips.push({ rotulo: `Busca: “${q}”`, limpar: { q: null } });
-  if (etapa) chips.push({ rotulo: `Etapa: ${ESTAGIO_LABEL[etapa as Estagio] ?? etapa}`, limpar: { etapa: null } });
+  if (etapa) chips.push({ rotulo: `Etapa: ${etapa === "abertas" ? "Negociações abertas" : ESTAGIO_LABEL[etapa as Estagio] ?? etapa}`, limpar: { etapa: null } });
   if (exec) chips.push({ rotulo: `Execução: ${EXECUCAO_LABEL[exec] ?? exec}`, limpar: { exec: null } });
   if (produto)
     chips.push({
@@ -382,6 +387,7 @@ export function ListaClientes({ clientes }: { clientes: ClienteLista[] }) {
           </label>
           <select id="filtro-etapa" value={etapa} onChange={(e) => atualizar({ etapa: e.target.value || null })} className={`${CAMPO} min-w-[180px]`}>
             <option value="">Etapa comercial: todas</option>
+            <option value="abertas">Negociações abertas (até Em negociação)</option>
             {ESTAGIOS.map((e) => (
               <option key={e.valor} value={e.valor}>
                 {e.label}

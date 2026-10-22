@@ -89,19 +89,13 @@ export function resumoComercial(estagio: Estagio, estagiosAlcancados: string[]):
 }
 
 // A coluna estagio_entrega nasce com default "roteiro_elaboracao" para todo
-// cliente, então o valor sozinho não prova que a execução começou. Consideramos
-// iniciada quando: a etapa já avançou, existe alguma mudança de etapa de
-// execução registrada, ou a venda foi fechada (ganho).
-export function execucaoIniciada(
-  estagioEntrega: EstagioEntrega,
-  temHistoricoExecucao: boolean,
-  estagioComercial: Estagio,
-): boolean {
-  return (
-    estagioEntrega !== "roteiro_elaboracao" ||
-    temHistoricoExecucao ||
-    estagioComercial === "fechado_ganho"
-  );
+// cliente, então o valor sozinho não prova que a execução começou.
+// Consideramos iniciada só quando há registro: a etapa já avançou ou existe
+// alguma mudança de etapa de execução gravada. (Até 22/out/2026 um negócio
+// ganho contava como iniciado automaticamente; agora fica "Aguardando
+// início" até a equipe registrar o começo — Visão geral separa os dois.)
+export function execucaoIniciada(estagioEntrega: EstagioEntrega, temHistoricoExecucao: boolean): boolean {
+  return estagioEntrega !== "roteiro_elaboracao" || temHistoricoExecucao;
 }
 
 export function resumoExecucao(estagioEntrega: EstagioEntrega, iniciada: boolean): ResumoProcesso {
