@@ -1,4 +1,3 @@
-import { Bodoni_Moda } from "next/font/google";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
@@ -23,8 +22,6 @@ import {
 import { formatarMoeda, type Proposta } from "@/app/lib/financiamentoEmpregos";
 import type { PerfilCandidato } from "@/app/lib/triagemPerfil";
 import { INFO_TESTES, ORDEM_TESTES, lerEstadoTestes, testesAptidaoPendentes, urlAposMatch, vagaExigeTestesAptidao } from "@/app/lib/testesAptidao";
-
-const display = Bodoni_Moda({ subsets: ["latin"], weight: ["400", "500", "600"] });
 
 export const metadata: Metadata = {
   title: "Candidato — CRM Alpinea",
@@ -115,31 +112,31 @@ export default async function CandidatoPage({
 
   return (
     <div>
-      <Link href={`/crm/empregos?tipo=${classificacao}`} className="text-xs uppercase tracking-[0.2em] text-black/40 hover:text-black">
+      <Link href={`/crm/empregos?tipo=${classificacao}`} className="text-[13px] text-[#626B75] hover:text-[#20252B]">
         ← Empregos
       </Link>
 
       <div className="mt-4 flex flex-wrap items-start justify-between gap-6">
         <div>
-          <span className="inline-block rounded-full px-3 py-1 text-xs font-medium" style={{ background: tipo.fundo, color: tipo.cor }}>
+          <span className="inline-block rounded-full px-3 py-1 text-[13px] font-medium" style={{ background: tipo.fundo, color: tipo.cor }}>
             {tipo.label}
           </span>
           {reclassificacao && (
-            <span className="ml-2 inline-block rounded-full border border-[#b7791f]/40 bg-[#b7791f]/10 px-3 py-1 text-xs font-medium text-[#8a5a12]">
+            <span className="ml-2 inline-block rounded-full border border-[#b7791f]/40 bg-[#b7791f]/10 px-3 py-1 text-[13px] font-medium text-[#8a5a12]">
               Reclassificado manualmente por {reclassificacao.por} em {dataHoraSP(reclassificacao.em)}
             </span>
           )}
-          <h1 className={`${display.className} mt-3 text-3xl font-medium text-black md:text-4xl`}>
+          <h1 className={`mt-3 text-3xl font-medium text-[#20252B] md:text-4xl`}>
             {c.nome} {c.sobrenome}
           </h1>
-          <p className="mt-2 text-sm text-black/55">
+          <p className="mt-2 text-sm text-[#626B75]">
             {c.vaga_empresa} — {c.vaga_titulo}
           </p>
-          <p className="mt-1 text-sm text-black/55">
+          <p className="mt-1 text-sm text-[#626B75]">
             {c.email} · {c.telefone}
             {c.idade ? ` · ${c.idade} anos` : ""}
           </p>
-          <p className="mt-1 text-xs text-black/40">
+          <p className="mt-1 text-[13px] text-[#626B75]">
             Recebida em {new Date(c.created_at).toLocaleString("pt-BR", { dateStyle: "medium", timeStyle: "short" })}
           </p>
         </div>
@@ -157,16 +154,16 @@ export default async function CandidatoPage({
               <img src={urlArquivoCandidato("fotos-candidatos", c.foto_path)} alt={`Foto de ${c.nome}`} className="h-full w-full object-cover" />
             </a>
           ) : (
-            <div className="flex w-[104px] shrink-0 items-center justify-center rounded-2xl border border-dashed border-black/15 bg-white px-2 text-center text-[11px] leading-4 text-black/40">
+            <div className="flex w-[104px] shrink-0 items-center justify-center rounded-2xl border border-dashed border-black/15 bg-white px-2 text-center text-[13px] leading-4 text-[#626B75]">
               Foto ainda não enviada
             </div>
           )}
           <div className="rounded-2xl border border-black/10 bg-white px-6 py-4 text-center">
-            <p className="text-[11px] uppercase tracking-[0.15em] text-black/40">Score</p>
-            <p className={`${display.className} text-5xl font-medium`} style={{ color: tipo.cor }}>
+            <p className="text-[13px] text-[#626B75]">Score</p>
+            <p className={`text-5xl font-medium`} style={{ color: tipo.cor }}>
               {c.pontuacao ?? "—"}
             </p>
-            <p className="text-[11px] text-black/40">de 100</p>
+            <p className="text-[13px] text-[#626B75]">de 100</p>
           </div>
         </div>
       </div>
@@ -181,7 +178,7 @@ export default async function CandidatoPage({
               <h2 className="text-sm font-medium" style={{ color: CLASSIFICACOES[2].cor }}>
                 Motivos da eliminação
               </h2>
-              <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-black/75">
+              <ul className="mt-2 list-disc space-y-1 pl-5 text-sm text-[#20252B]">
                 {motivos.map((m) => (
                   <li key={m}>{m}</li>
                 ))}
@@ -193,7 +190,7 @@ export default async function CandidatoPage({
               <h2 className="text-sm font-medium text-amber-800">Pontos para revisar</h2>
               <div className="mt-2 flex flex-wrap gap-1.5">
                 {revisar.map((r) => (
-                  <span key={r} className="rounded-full bg-white px-2.5 py-1 text-xs text-amber-800">
+                  <span key={r} className="rounded-full bg-white px-2.5 py-1 text-[13px] text-amber-800">
                     {r}
                   </span>
                 ))}
@@ -203,20 +200,20 @@ export default async function CandidatoPage({
 
           {criterios.length > 0 && (
             <section className="rounded-2xl border border-black/10 bg-white p-5">
-              <h2 className="text-sm font-medium text-black">Composição do score</h2>
+              <h2 className="text-sm font-medium text-[#20252B]">Composição do score</h2>
               <div className="mt-3 space-y-3">
                 {criterios.map((cr) => (
                   <div key={cr.label}>
                     <div className="flex justify-between text-sm">
-                      <span className="text-black/75">{cr.label}</span>
-                      <span className="tabular-nums text-black/55">
+                      <span className="text-[#20252B]">{cr.label}</span>
+                      <span className="tabular-nums text-[#626B75]">
                         {cr.pontosObtidos}/{cr.pontosMaximos}
                       </span>
                     </div>
                     <div className="mt-1 h-1.5 overflow-hidden rounded-full bg-black/[0.07]">
                       <div className="h-full rounded-full bg-[#1C3A5E]" style={{ width: `${cr.pontosMaximos ? (cr.pontosObtidos / cr.pontosMaximos) * 100 : 0}%` }} />
                     </div>
-                    <p className="mt-1 text-xs text-black/45">{cr.detalhe}</p>
+                    <p className="mt-1 text-[13px] text-[#626B75]">{cr.detalhe}</p>
                   </div>
                 ))}
               </div>
@@ -226,14 +223,14 @@ export default async function CandidatoPage({
           {vagaExigeTestesAptidao(c.vaga_id) && (
             <section className="rounded-2xl border border-black/10 bg-white p-5">
               <div className="flex items-baseline justify-between gap-3">
-                <h2 className="text-sm font-medium text-black">Testes de aptidão</h2>
+                <h2 className="text-sm font-medium text-[#20252B]">Testes de aptidão</h2>
                 <span
-                  className={`rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${
+                  className={`rounded-full px-2.5 py-0.5 text-[13px] font-semibold ${
                     c.testes_aptidao_aprovado === true
                       ? "bg-emerald-50 text-emerald-700"
                       : c.testes_aptidao_aprovado === false
                         ? "bg-red-50 text-red-700"
-                        : "bg-black/[0.05] text-black/55"
+                        : "bg-black/[0.05] text-[#626B75]"
                   }`}
                 >
                   {c.testes_aptidao_aprovado === true ? "Aprovado" : c.testes_aptidao_aprovado === false ? "Reprovado" : "Em andamento / não feito"}
@@ -244,14 +241,14 @@ export default async function CandidatoPage({
                   const r = lerEstadoTestes(c.testes_aptidao).resultados[k];
                   return (
                     <div key={k} className="grid grid-cols-[180px_1fr] gap-3 py-2">
-                      <dt className="text-black/45">
+                      <dt className="text-[#626B75]">
                         {INFO_TESTES[k].titulo}
-                        {!INFO_TESTES[k].eliminatorio && <span className="block text-[11px]">não elimina</span>}
+                        {!INFO_TESTES[k].eliminatorio && <span className="block text-[13px]">não elimina</span>}
                       </dt>
-                      <dd className={r ? (r.aprovado ? "text-black/80" : INFO_TESTES[k].eliminatorio ? "text-red-700" : "text-black/80") : "text-black/35"}>
+                      <dd className={r ? (r.aprovado ? "text-[#20252B]" : INFO_TESTES[k].eliminatorio ? "text-red-700" : "text-[#20252B]") : "text-[#626B75]"}>
                         {r ? `${r.aprovado ? "✓" : INFO_TESTES[k].eliminatorio ? "✗" : "•"} ${r.resumo}` : "Não feito"}
                         {r && k === "nihongo" && (
-                          <span className="mt-1 block text-xs text-black/55">
+                          <span className="mt-1 block text-[13px] text-[#626B75]">
                             {Object.entries(r.respostas as Record<string, string>)
                               .filter(([, v]) => v)
                               .map(([q, v]) => `${q}: ${v}`)
@@ -264,18 +261,18 @@ export default async function CandidatoPage({
                 })}
               </dl>
               {c.testes_aptidao_aprovado === false && !c.ficha_liberada && (
-                <p className="mt-2 text-[11px] text-amber-700">Ficha bloqueada pelos testes — use “Liberar etapa 2” para seguir mesmo assim.</p>
+                <p className="mt-2 text-[13px] text-amber-700">Ficha bloqueada pelos testes — use “Liberar etapa 2” para seguir mesmo assim.</p>
               )}
             </section>
           )}
 
           <section className="rounded-2xl border border-black/10 bg-white p-5">
-            <h2 className="text-sm font-medium text-black">Triagem</h2>
+            <h2 className="text-sm font-medium text-[#20252B]">Triagem</h2>
             <dl className="mt-3 divide-y divide-black/[0.06] text-sm">
               {linhasTriagemBasica(respostas).map(([k, v]) => (
                 <div key={k} className="grid grid-cols-[180px_1fr] gap-3 py-2">
-                  <dt className="text-black/45">{k}</dt>
-                  <dd className="text-black/80">{v}</dd>
+                  <dt className="text-[#626B75]">{k}</dt>
+                  <dd className="text-[#20252B]">{v}</dd>
                 </div>
               ))}
             </dl>
@@ -283,12 +280,12 @@ export default async function CandidatoPage({
 
           {linhasPerfil(perfil).map((g) => (
             <section key={g.grupo} className="rounded-2xl border border-black/10 bg-white p-5">
-              <h2 className="text-sm font-medium text-black">{g.grupo}</h2>
+              <h2 className="text-sm font-medium text-[#20252B]">{g.grupo}</h2>
               <dl className="mt-3 divide-y divide-black/[0.06] text-sm">
                 {g.linhas.map(([k, v, atencao]) => (
                   <div key={k} className="grid grid-cols-[180px_1fr] gap-3 py-2">
-                    <dt className="text-black/45">{k}</dt>
-                    <dd className={atencao ? "font-medium text-amber-800" : "text-black/80"}>
+                    <dt className="text-[#626B75]">{k}</dt>
+                    <dd className={atencao ? "font-medium text-amber-800" : "text-[#20252B]"}>
                       {atencao && "⚠ "}
                       {v}
                     </dd>
@@ -299,16 +296,16 @@ export default async function CandidatoPage({
           ))}
 
           {ficha && (
-            <h2 className={`${display.className} pt-4 text-2xl font-medium text-black`}>Etapa 2 — ficha cadastral</h2>
+            <h2 className={`pt-4 text-2xl font-medium text-[#20252B]`}>Etapa 2 — ficha cadastral</h2>
           )}
           {linhasFicha(ficha).map((g) => (
             <section key={`ficha-${g.grupo}`} className="rounded-2xl border border-black/10 bg-white p-5">
-              <h2 className="text-sm font-medium text-black">{g.grupo}</h2>
+              <h2 className="text-sm font-medium text-[#20252B]">{g.grupo}</h2>
               <dl className="mt-3 divide-y divide-black/[0.06] text-sm">
                 {g.linhas.map(([k, v, atencao], i) => (
                   <div key={`${k}-${i}`} className="grid grid-cols-[180px_1fr] gap-3 py-2">
-                    <dt className="text-black/45">{k}</dt>
-                    <dd className={atencao ? "font-medium text-amber-800" : "text-black/80"}>
+                    <dt className="text-[#626B75]">{k}</dt>
+                    <dd className={atencao ? "font-medium text-amber-800" : "text-[#20252B]"}>
                       {atencao && "⚠ "}
                       {v}
                     </dd>
@@ -321,24 +318,24 @@ export default async function CandidatoPage({
 
         <aside className="space-y-6">
           <section className="rounded-2xl border border-black/10 bg-white p-5">
-            <h2 className="text-sm font-medium text-black">Andamento</h2>
-            <span className="mt-2 inline-block rounded-full px-2.5 py-0.5 text-xs" style={{ color: progresso.cor, background: `${progresso.cor}14` }}>
+            <h2 className="text-sm font-medium text-[#20252B]">Andamento</h2>
+            <span className="mt-2 inline-block rounded-full px-2.5 py-0.5 text-[13px]" style={{ color: progresso.cor, background: `${progresso.cor}14` }}>
               {progresso.label}
             </span>
             <ol className="mt-4 space-y-3">
               {linhaTempo.map((e) => (
-                <li key={e.label} className="flex gap-2.5 text-xs">
+                <li key={e.label} className="flex gap-2.5 text-[13px]">
                   <span className={`mt-0.5 h-3 w-3 shrink-0 rounded-full ${e.ok ? "bg-emerald-600" : "border border-black/20"}`} />
                   <span>
-                    <span className={e.ok ? "text-black/80" : "text-black/45"}>{e.label}</span>
-                    {e.quando && <span className="block text-black/40">{e.quando}</span>}
-                    {e.manual && <span className="block text-[11px] text-black/40">marcado por {e.manual.por}</span>}
+                    <span className={e.ok ? "text-[#20252B]" : "text-[#626B75]"}>{e.label}</span>
+                    {e.quando && <span className="block text-[#626B75]">{e.quando}</span>}
+                    {e.manual && <span className="block text-[13px] text-[#626B75]">marcado por {e.manual.por}</span>}
                   </span>
                 </li>
               ))}
             </ol>
             {entrevista?.status === "agendada" && (
-              <Link href="/crm/empregos/agenda" className="mt-4 block text-xs text-[#1C3A5E] underline">
+              <Link href="/crm/empregos/agenda" className="mt-4 block text-[13px] text-[#1C3A5E] underline">
                 Ver na agenda
               </Link>
             )}
@@ -346,7 +343,7 @@ export default async function CandidatoPage({
             {/* Data prevista de embarque — aparece no portal da empreiteira (Wilson, 21/out/2026). */}
             <form action={salvarEmbarque} className="mt-4 flex flex-wrap items-end gap-2 border-t border-black/10 pt-4">
               <label className="min-w-0 flex-1">
-                <span className="text-[11px] uppercase tracking-[0.12em] text-black/40">Data prevista de embarque</span>
+                <span className="text-[13px] text-[#626B75]">Data prevista de embarque</span>
                 <input
                   type="date"
                   name="data_embarque_prevista"
@@ -354,17 +351,17 @@ export default async function CandidatoPage({
                   className="mt-1 block w-full rounded-lg border border-black/15 px-2.5 py-1.5 text-sm"
                 />
               </label>
-              <button type="submit" className="rounded-lg border border-black/15 px-3 py-1.5 text-xs text-black/70 hover:border-black/40">
+              <button type="submit" className="rounded-lg border border-black/15 px-3 py-1.5 text-[13px] text-[#20252B] hover:border-black/40">
                 Salvar
               </button>
             </form>
 
             {/* Avançar etapa manualmente + comentário (Wilson, 15/out/2026). */}
             <form action={registrarAndamento} className="mt-4 space-y-2 border-t border-black/10 pt-4">
-              <label className="text-[11px] uppercase tracking-[0.12em] text-black/40" htmlFor="etapa-manual">
+              <label className="text-[13px] text-[#626B75]" htmlFor="etapa-manual">
                 Avançar candidato para a próxima etapa
               </label>
-              <select id="etapa-manual" name="etapa" defaultValue="" className="w-full rounded-lg border border-black/10 bg-white px-3 py-2 text-sm text-black outline-none focus:border-[#1C3A5E]">
+              <select id="etapa-manual" name="etapa" defaultValue="" className="w-full rounded-lg border border-black/10 bg-white px-3 py-2 text-sm text-[#20252B] outline-none focus:border-[#1C3A5E]">
                 <option value="">Só comentar (sem avançar)</option>
                 {etapasPendentes.map((e) => (
                   <option key={e.id} value={e.id}>
@@ -376,7 +373,7 @@ export default async function CandidatoPage({
                 name="comentario"
                 rows={3}
                 placeholder="Comentário (opcional ao avançar)"
-                className="w-full rounded-lg border border-black/10 px-3 py-2 text-sm text-black outline-none focus:border-[#1C3A5E]"
+                className="w-full rounded-lg border border-black/10 px-3 py-2 text-sm text-[#20252B] outline-none focus:border-[#1C3A5E]"
               />
               <button type="submit" className="w-full rounded-xl bg-[#1C3A5E] px-4 py-2 text-sm font-medium text-white hover:bg-[#1C3A5E]/90">
                 Salvar
@@ -385,12 +382,12 @@ export default async function CandidatoPage({
 
             {andamento.comentarios.length > 0 && (
               <div className="mt-4 border-t border-black/10 pt-4">
-                <p className="text-[11px] uppercase tracking-[0.12em] text-black/40">Comentários</p>
+                <p className="text-[13px] text-[#626B75]">Comentários</p>
                 <ul className="mt-2 space-y-3">
                   {[...andamento.comentarios].reverse().map((cm, i) => (
-                    <li key={`${cm.em}-${i}`} className="text-xs">
-                      <p className="whitespace-pre-wrap text-black/75">{cm.texto}</p>
-                      <p className="mt-0.5 text-[11px] text-black/40">
+                    <li key={`${cm.em}-${i}`} className="text-[13px]">
+                      <p className="whitespace-pre-wrap text-[#20252B]">{cm.texto}</p>
+                      <p className="mt-0.5 text-[13px] text-[#626B75]">
                         {dataCurta(cm.em)} · {cm.por}
                         {cm.etapa ? ` · ${ETAPAS_MANUAIS.find((x) => x.id === cm.etapa)?.label ?? ""}` : ""}
                       </p>
@@ -402,8 +399,8 @@ export default async function CandidatoPage({
           </section>
 
           <section className="rounded-2xl border border-black/10 bg-white p-5">
-            <h2 className="text-sm font-medium text-black">Documento de Apresentação para Empreiteira</h2>
-            <p className="mt-1 text-xs leading-5 text-black/45">
+            <h2 className="text-sm font-medium text-[#20252B]">Documento de Apresentação para Empreiteira</h2>
+            <p className="mt-1 text-[13px] leading-5 text-[#626B75]">
               PDF resumido no padrão Ajisai, com foto — sem contato, CPF nem RG. As fichas das empreiteiras ficam na seção abaixo,
               no arquivo original.
             </p>
@@ -419,18 +416,18 @@ export default async function CandidatoPage({
                 </button>
               </div>
             </form>
-            {!c.ficha_enviada_em && <p className="mt-2 text-[11px] text-amber-700">Ficha da etapa 2 ainda não enviada — o PDF sai só com os dados da etapa 1.</p>}
+            {!c.ficha_enviada_em && <p className="mt-2 text-[13px] text-amber-700">Ficha da etapa 2 ainda não enviada — o PDF sai só com os dados da etapa 1.</p>}
           </section>
 
           {/* Ficha ORIGINAL de cada empreiteira (o Word/Excel que ela manda)
               preenchida com os dados do candidato — Wilson, 15/out/2026. */}
           <section className="rounded-2xl border border-black/10 bg-white p-5">
-            <h2 className="text-sm font-medium text-black">Fichas das empreiteiras (arquivo original)</h2>
-            <p className="mt-1 text-xs leading-5 text-black/45">
+            <h2 className="text-sm font-medium text-[#20252B]">Fichas das empreiteiras (arquivo original)</h2>
+            <p className="mt-1 text-[13px] leading-5 text-[#626B75]">
               Preenche o próprio Word/Excel da empreiteira com os dados do candidato. Confira e complete os campos da agência antes de enviar.
             </p>
             <form action={`/crm/empregos/${id}/ficha-original`} method="get" className="mt-3 space-y-2">
-              <select name="modelo" defaultValue="fujiarte" className="w-full rounded-xl border border-black/10 bg-white px-3 py-2 text-sm text-black">
+              <select name="modelo" defaultValue="fujiarte" className="w-full rounded-xl border border-black/10 bg-white px-3 py-2 text-sm text-[#20252B]">
                 {MODELOS_ORIGINAIS.map((m) => (
                   <option key={m.id} value={m.id}>
                     {m.nome} ({m.arquivo.endsWith(".docx") ? "Word" : "Excel"})
@@ -442,22 +439,22 @@ export default async function CandidatoPage({
                 Preencher e baixar
               </button>
             </form>
-            {!c.ficha_enviada_em && <p className="mt-2 text-[11px] text-amber-700">Ficha da etapa 2 ainda não enviada — a maior parte dos campos vai sair em branco.</p>}
+            {!c.ficha_enviada_em && <p className="mt-2 text-[13px] text-amber-700">Ficha da etapa 2 ainda não enviada — a maior parte dos campos vai sair em branco.</p>}
           </section>
 
           {proposta && (
             <section className="rounded-2xl border border-black/10 bg-white p-5">
-              <h2 className="text-sm font-medium text-black">
+              <h2 className="text-sm font-medium text-[#20252B]">
                 Etapa 3 — proposta {c.proposta_status === "aceita" ? "aceita" : "· quer falar com a Ajisai"}
               </h2>
-              <p className="mt-1 text-xs text-black/45">
+              <p className="mt-1 text-[13px] text-[#626B75]">
                 {proposta.selecao.proponentes} pessoa(s) · saída {proposta.selecao.aeroporto} · ¥1 = R$ {proposta.cotacaoBRLPorJPY.toFixed(4)}
               </p>
-              <ul className="mt-3 space-y-1.5 text-xs">
+              <ul className="mt-3 space-y-1.5 text-[13px]">
                 {proposta.itens.map((i) => (
                   <li key={i.id} className="flex justify-between gap-3">
-                    <span className="text-black/65">{i.label}</span>
-                    <span className="tabular-nums text-black/80">{formatarMoeda(i.totalJPY, "JPY")}</span>
+                    <span className="text-[#20252B]">{i.label}</span>
+                    <span className="tabular-nums text-[#20252B]">{formatarMoeda(i.totalJPY, "JPY")}</span>
                   </li>
                 ))}
               </ul>
@@ -470,8 +467,8 @@ export default async function CandidatoPage({
             </section>
           )}
           <section className="rounded-2xl border border-black/10 bg-white p-5">
-            <h2 className="text-sm font-medium text-black">Etapa 2 — ficha cadastral</h2>
-            <p className="mt-2 text-sm text-black/60">
+            <h2 className="text-sm font-medium text-[#20252B]">Etapa 2 — ficha cadastral</h2>
+            <p className="mt-2 text-sm text-[#626B75]">
               {c.ficha_enviada_em
                 ? `Enviada em ${new Date(c.ficha_enviada_em).toLocaleString("pt-BR", { dateStyle: "short", timeStyle: "short" })}${c.foto_path ? " · com foto" : " · sem foto"}`
                 : etapa2Aberta
@@ -484,8 +481,8 @@ export default async function CandidatoPage({
             </p>
             {linkFicha && (etapa2Aberta || (fichaLiberada(c) && c.testes_aptidao_aprovado == null)) && (
               <div className="mt-3">
-                <p className="text-[11px] uppercase tracking-[0.12em] text-black/40">Link para enviar ao candidato</p>
-                <input readOnly value={linkFicha} className="mt-1 w-full rounded-lg border border-black/10 bg-black/[0.02] px-2 py-1.5 text-[11px] text-black/70" />
+                <p className="text-[13px] text-[#626B75]">Link para enviar ao candidato</p>
+                <input readOnly value={linkFicha} className="mt-1 w-full rounded-lg border border-black/10 bg-black/[0.02] px-2 py-1.5 text-[13px] text-[#20252B]" />
               </div>
             )}
             {!c.ficha_enviada_em && (c.ficha_liberada || !etapa2Aberta) && (
@@ -499,22 +496,22 @@ export default async function CandidatoPage({
           {/* Reclassificação manual aprovado ⇄ eliminado, sempre registrada
               com e-mail do operador, data/hora e motivo (Wilson, 15/out/2026). */}
           <section className="rounded-2xl border border-black/10 bg-white p-5">
-            <h2 className="text-sm font-medium text-black">Reclassificar candidato</h2>
-            <p className="mt-1 text-xs text-black/50">
+            <h2 className="text-sm font-medium text-[#20252B]">Reclassificar candidato</h2>
+            <p className="mt-1 text-[13px] text-[#626B75]">
               Classificação atual: <strong style={{ color: tipo.cor }}>{tipo.label}</strong>
               {reclassificacao ? " (manual)" : " (automática pelo questionário)"}
             </p>
             {andamento.reclassificacoes.length > 0 && (
-              <ul className="mt-3 space-y-2 border-l-2 border-[#b7791f]/40 pl-3 text-xs">
+              <ul className="mt-3 space-y-2 border-l-2 border-[#b7791f]/40 pl-3 text-[13px]">
                 {[...andamento.reclassificacoes].reverse().map((r, i) => (
                   <li key={i}>
-                    <p className="font-medium text-black/80">
+                    <p className="font-medium text-[#20252B]">
                       {r.para === "eliminado" ? "Eliminado" : "Aprovado"} manualmente
                     </p>
-                    <p className="text-black/50">
+                    <p className="text-[#626B75]">
                       {r.por} · {dataHoraSP(r.em)}
                     </p>
-                    <p className="text-black/60">Motivo: {r.motivo}</p>
+                    <p className="text-[#626B75]">Motivo: {r.motivo}</p>
                   </li>
                 ))}
               </ul>
@@ -526,7 +523,7 @@ export default async function CandidatoPage({
                 required
                 rows={2}
                 placeholder="Motivo (obrigatório)"
-                className="w-full rounded-xl border border-black/10 px-3 py-2 text-sm text-black outline-none focus:border-[#1C3A5E]"
+                className="w-full rounded-xl border border-black/10 px-3 py-2 text-sm text-[#20252B] outline-none focus:border-[#1C3A5E]"
               />
               <button
                 type="submit"
@@ -534,31 +531,31 @@ export default async function CandidatoPage({
               >
                 {eliminadoAgora ? "Reclassificar como aprovado" : "Reclassificar como eliminado"}
               </button>
-              <p className="text-[11px] text-black/40">Fica registrado como alteração manual, com seu e-mail, data e hora.</p>
+              <p className="text-[13px] text-[#626B75]">Fica registrado como alteração manual, com seu e-mail, data e hora.</p>
             </form>
           </section>
           <form action={salvar} className="space-y-4 rounded-2xl border border-black/10 bg-white p-5">
-            <h2 className="text-sm font-medium text-black">Decisão da equipe</h2>
-            <label className="block text-xs text-black/50">
+            <h2 className="text-sm font-medium text-[#20252B]">Decisão da equipe</h2>
+            <label className="block text-[13px] text-[#626B75]">
               Status da análise (coluna “Status” da lista)
-              <select name="status" defaultValue={c.status} className="mt-1 w-full rounded-xl border border-black/10 bg-white px-3 py-2 text-sm text-black">
+              <select name="status" defaultValue={c.status} className="mt-1 w-full rounded-xl border border-black/10 bg-white px-3 py-2 text-sm text-[#20252B]">
                 {STATUS_CANDIDATURA.map((x) => (
                   <option key={x.valor} value={x.valor}>
                     {x.label}
                   </option>
                 ))}
               </select>
-              <span className="mt-1 block text-[11px] leading-4 text-black/40">
+              <span className="mt-1 block text-[13px] leading-4 text-[#626B75]">
                 Não muda a etapa. Para mandar o candidato à próxima etapa, use “Avançar candidato” no quadro Andamento.
               </span>
             </label>
-            <label className="block text-xs text-black/50">
+            <label className="block text-[13px] text-[#626B75]">
               Observações internas
               <textarea
                 name="observacoes_equipe"
                 rows={5}
                 defaultValue={c.observacoes_equipe ?? ""}
-                className="mt-1 w-full rounded-xl border border-black/10 px-3 py-2 text-sm text-black outline-none focus:border-[#1C3A5E]"
+                className="mt-1 w-full rounded-xl border border-black/10 px-3 py-2 text-sm text-[#20252B] outline-none focus:border-[#1C3A5E]"
               />
             </label>
             <button type="submit" className="w-full rounded-xl bg-[#1C3A5E] px-4 py-2.5 text-sm font-medium text-white">
@@ -567,9 +564,9 @@ export default async function CandidatoPage({
           </form>
 
           <section className="rounded-2xl border border-black/10 bg-white p-5">
-            <h2 className="text-sm font-medium text-black">Arquivos</h2>
+            <h2 className="text-sm font-medium text-[#20252B]">Arquivos</h2>
             {arquivos.length === 0 ? (
-              <p className="mt-2 text-sm text-black/40">Nenhum arquivo enviado.</p>
+              <p className="mt-2 text-sm text-[#626B75]">Nenhum arquivo enviado.</p>
             ) : (
               <ul className="mt-2 space-y-2 text-sm">
                 {arquivos.map((a) => (
@@ -586,19 +583,19 @@ export default async function CandidatoPage({
           {/* Documentos do candidato — lista só do CRM, com o que já foi
               anexado pela equipe e o que falta (Wilson, 15/out/2026). */}
           <section className="rounded-2xl border border-black/10 bg-white p-5">
-            <h2 className="text-sm font-medium text-black">Documentos</h2>
+            <h2 className="text-sm font-medium text-[#20252B]">Documentos</h2>
             <ul className="mt-3 divide-y divide-black/[0.06] text-sm">
               {TIPOS_DOCUMENTO_CANDIDATO.filter((t) => t.key !== "outros" || documentos.some((d) => d.tipo === "outros")).map((t) => {
                 const docs = documentos.filter((d) => d.tipo === t.key);
                 return (
                   <li key={t.key} className="flex items-start gap-2 py-2">
-                    <span className={`mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full text-[10px] ${docs.length ? "bg-emerald-600 text-white" : "border border-black/20"}`}>
+                    <span className={`mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full text-[13px] ${docs.length ? "bg-emerald-600 text-white" : "border border-black/20"}`}>
                       {docs.length ? "✓" : ""}
                     </span>
                     <div className="min-w-0">
-                      <p className={docs.length ? "text-black/80" : "text-black/45"}>{t.label}</p>
+                      <p className={docs.length ? "text-[#20252B]" : "text-[#626B75]"}>{t.label}</p>
                       {docs.map((d) => (
-                        <a key={d.href} href={d.href} target="_blank" rel="noopener noreferrer" className="block truncate text-xs text-[#1C3A5E] underline underline-offset-2">
+                        <a key={d.href} href={d.href} target="_blank" rel="noopener noreferrer" className="block truncate text-[13px] text-[#1C3A5E] underline underline-offset-2">
                           {d.nome}
                         </a>
                       ))}
@@ -610,10 +607,10 @@ export default async function CandidatoPage({
 
             <form action="/crm/empregos/anexo" method="post" encType="multipart/form-data" className="mt-4 border-t border-black/10 pt-4">
               <input type="hidden" name="candidaturaId" value={id} />
-              <label className="text-[11px] uppercase tracking-[0.12em] text-black/40" htmlFor="tipo-doc">
+              <label className="text-[13px] text-[#626B75]" htmlFor="tipo-doc">
                 Tipo de documento
               </label>
-              <select id="tipo-doc" name="tipo" required defaultValue="" className="mt-1 w-full rounded-lg border border-black/10 bg-white px-3 py-2 text-sm text-black outline-none focus:border-[#1C3A5E]">
+              <select id="tipo-doc" name="tipo" required defaultValue="" className="mt-1 w-full rounded-lg border border-black/10 bg-white px-3 py-2 text-sm text-[#20252B] outline-none focus:border-[#1C3A5E]">
                 <option value="" disabled>
                   Selecione…
                 </option>
@@ -628,9 +625,9 @@ export default async function CandidatoPage({
                 name="arquivo"
                 multiple
                 required
-                className="mt-2 w-full text-xs text-black/60 file:mr-3 file:rounded-lg file:border-0 file:bg-black/[0.05] file:px-3 file:py-1.5 file:text-xs file:font-medium file:text-black/70"
+                className="mt-2 w-full text-[13px] text-[#626B75] file:mr-3 file:rounded-lg file:border-0 file:bg-black/[0.05] file:px-3 file:py-1.5 file:text-[13px] file:font-medium file:text-[#20252B]"
               />
-              <p className="mt-1 text-[11px] text-black/40">PDF, imagem ou documento — até 4 MB cada. Fica privado, só para a equipe.</p>
+              <p className="mt-1 text-[13px] text-[#626B75]">PDF, imagem ou documento — até 4 MB cada. Fica privado, só para a equipe.</p>
               <button type="submit" className="mt-3 w-full rounded-xl border border-[#1C3A5E] px-4 py-2 text-sm font-medium text-[#1C3A5E] hover:bg-[#1C3A5E]/5">
                 Anexar
               </button>

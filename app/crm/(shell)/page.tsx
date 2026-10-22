@@ -1,4 +1,3 @@
-import { Bodoni_Moda } from "next/font/google";
 import Link from "next/link";
 import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
@@ -7,11 +6,6 @@ import type { Estagio } from "@/lib/crm/types";
 import { NovosClientesChart } from "./components/NovosClientesChart";
 import { FunilChart } from "./components/FunilChart";
 import { PeriodoSelector } from "./components/PeriodoSelector";
-
-const display = Bodoni_Moda({
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
-});
 
 export const metadata: Metadata = {
   title: "Dashboard — CRM Alpinea",
@@ -27,9 +21,9 @@ function formatBRL(valor: number) {
 function KpiCard({ label, valor, sublabel }: { label: string; valor: string; sublabel?: string }) {
   return (
     <div className="rounded-2xl border border-black/5 bg-white shadow-[0_1px_2px_rgba(0,0,0,0.04),0_16px_32px_-20px_rgba(0,0,0,0.15)] p-6">
-      <p className="text-xs uppercase tracking-[0.2em] text-black/40">{label}</p>
-      <p className={`${display.className} mt-3 text-3xl font-medium text-black`}>{valor}</p>
-      {sublabel && <p className="mt-1 text-xs text-black/40">{sublabel}</p>}
+      <p className="text-[13px] text-[#626B75]">{label}</p>
+      <p className={`mt-3 text-3xl font-medium text-[#20252B]`}>{valor}</p>
+      {sublabel && <p className="mt-1 text-[13px] text-[#626B75]">{sublabel}</p>}
     </div>
   );
 }
@@ -128,8 +122,8 @@ export default async function CrmDashboardPage({
     <div>
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <p className="mb-2 text-xs uppercase tracking-[0.3em] text-black/40">Visão geral</p>
-          <h1 className={`${display.className} text-3xl font-medium text-black md:text-4xl`}>
+          <p className="mb-2 text-[13px] text-[#626B75]">Visão geral</p>
+          <h1 className={`text-3xl font-medium text-[#20252B] md:text-4xl`}>
             Dashboard
           </h1>
         </div>
@@ -160,10 +154,10 @@ export default async function CrmDashboardPage({
         <div className="rounded-2xl border border-black/5 bg-white shadow-[0_1px_2px_rgba(0,0,0,0.04),0_16px_32px_-20px_rgba(0,0,0,0.15)] p-6 lg:col-span-3">
           <div className="flex flex-wrap items-start justify-between gap-3">
             <div>
-              <h2 className={`${display.className} text-lg font-medium text-black`}>
+              <h2 className={`text-lg font-medium text-[#20252B]`}>
                 Novos clientes por dia
               </h2>
-              <p className="mt-1 text-xs text-black/40">{rangeLabel}</p>
+              <p className="mt-1 text-[13px] text-[#626B75]">{rangeLabel}</p>
             </div>
             <PeriodoSelector periodoAtivo={periodoAtivo} de={params.de} ate={params.ate} />
           </div>
@@ -173,10 +167,10 @@ export default async function CrmDashboardPage({
         </div>
 
         <div className="rounded-2xl border border-black/5 bg-white shadow-[0_1px_2px_rgba(0,0,0,0.04),0_16px_32px_-20px_rgba(0,0,0,0.15)] p-6 lg:col-span-2">
-          <h2 className={`${display.className} text-lg font-medium text-black`}>
+          <h2 className={`text-lg font-medium text-[#20252B]`}>
             Funil comercial
           </h2>
-          <p className="mt-1 text-xs text-black/40">Clientes por estágio</p>
+          <p className="mt-1 text-[13px] text-[#626B75]">Clientes por estágio</p>
           <div className="mt-4">
             <FunilChart dados={funil} />
           </div>
@@ -184,9 +178,9 @@ export default async function CrmDashboardPage({
       </div>
 
       {lista.length === 0 && (
-        <p className="mt-10 text-sm text-black/40">
+        <p className="mt-10 text-sm text-[#626B75]">
           Nenhum cliente cadastrado ainda. Comece criando o primeiro em{" "}
-          <Link href="/crm/clientes/novo" className="text-black underline underline-offset-4">
+          <Link href="/crm/clientes/novo" className="text-[#20252B] underline underline-offset-4">
             + Novo cliente
           </Link>
           .

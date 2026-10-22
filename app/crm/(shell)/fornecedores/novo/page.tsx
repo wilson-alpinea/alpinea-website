@@ -1,12 +1,6 @@
-import { Bodoni_Moda } from "next/font/google";
 import type { Metadata } from "next";
 import { createFornecedor } from "../../../actions";
 import { FornecedorForm } from "../FornecedorForm";
-
-const display = Bodoni_Moda({
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
-});
 
 export const metadata: Metadata = {
   title: "Novo fornecedor — CRM Alpinea",
@@ -22,8 +16,8 @@ export default async function NovoFornecedorPage({
 
   return (
     <div className="mx-auto max-w-2xl">
-      <p className="mb-2 text-xs uppercase tracking-[0.3em] text-black/40">Novo cadastro</p>
-      <h1 className={`${display.className} text-3xl font-medium text-black md:text-4xl`}>
+      <p className="mb-2 text-[13px] text-[#626B75]">Novo cadastro</p>
+      <h1 className={`text-3xl font-medium text-[#20252B] md:text-4xl`}>
         Novo fornecedor
       </h1>
 

@@ -1,4 +1,3 @@
-import { Bodoni_Moda } from "next/font/google";
 import Link from "next/link";
 import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
@@ -8,8 +7,6 @@ import ListaVagasSite from "./ListaVagasSite";
 // Liga/desliga as vagas do catálogo no site — Wilson, 07/out/2026. Vaga
 // desligada some de /empregos, do hot site, das sugestões e deixa de
 // aceitar candidatura; a página própria dela mostra "encerrada".
-
-const display = Bodoni_Moda({ subsets: ["latin"], weight: ["400", "500", "600"] });
 
 export const metadata: Metadata = {
   title: "Vagas no site — CRM Alpinea",
@@ -47,11 +44,11 @@ export default async function VagasSitePage() {
 
   return (
     <div>
-      <Link href="/crm/empregos" className="text-xs uppercase tracking-[0.2em] text-black/40 hover:text-black/70">
+      <Link href="/crm/empregos" className="text-[13px] text-[#626B75] hover:text-[#20252B]">
         ← Empregos
       </Link>
-      <h1 className={`${display.className} mt-2 text-3xl font-medium text-black md:text-4xl`}>Vagas no site</h1>
-      <p className="mt-2 max-w-2xl text-sm text-black/55">
+      <h1 className={`mt-2 text-3xl font-medium text-[#20252B] md:text-4xl`}>Vagas no site</h1>
+      <p className="mt-2 max-w-2xl text-sm text-[#626B75]">
         Marque as vagas que devem aparecer em /empregos e nos hot sites. Cada clique salva na hora. Vaga nova cadastrada no
         catálogo entra ativa.
       </p>

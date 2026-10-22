@@ -1,4 +1,3 @@
-import { Bodoni_Moda } from "next/font/google";
 import Link from "next/link";
 import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
@@ -10,11 +9,6 @@ import { EstagioSelect } from "./EstagioSelect";
 import { EstatisticasPipeline, PERIODOS_ESTATISTICA } from "./EstatisticasPipeline";
 import { calcularEstatisticas, type LeadEstatistica, type MudancaEstagio } from "@/lib/crm/estatisticasPipeline";
 import { rotuloOrigem } from "@/lib/crm/canal";
-
-const display = Bodoni_Moda({
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
-});
 
 export const metadata: Metadata = {
   title: "Pipeline — CRM Alpinea",
@@ -128,16 +122,16 @@ export default async function PipelinePage({
 
   return (
     <div>
-      <p className="mb-2 text-xs uppercase tracking-[0.3em] text-black/40">Funil comercial</p>
-      <h1 className={`${display.className} text-3xl font-medium text-black md:text-4xl`}>
+      <p className="mb-2 text-[13px] text-[#626B75]">Funil comercial</p>
+      <h1 className={`text-3xl font-medium text-[#20252B] md:text-4xl`}>
         Pipeline
       </h1>
       {qtdTestes > 0 && (
-        <p className="mt-2 text-xs text-black/45">
+        <p className="mt-2 text-[13px] text-[#626B75]">
           {mostrarTestes
             ? `Mostrando ${qtdTestes} ${qtdTestes === 1 ? "pedido de teste" : "pedidos de teste"}. `
             : `${qtdTestes} ${qtdTestes === 1 ? "pedido de teste oculto" : "pedidos de teste ocultos"}. `}
-          <Link href={mostrarTestes ? `/crm/pipeline?periodo=${periodo}` : `/crm/pipeline?periodo=${periodo}&testes=1`} className="underline hover:text-black">
+          <Link href={mostrarTestes ? `/crm/pipeline?periodo=${periodo}` : `/crm/pipeline?periodo=${periodo}&testes=1`} className="underline hover:text-[#20252B]">
             {mostrarTestes ? "Ocultar testes" : "Mostrar testes"}
           </Link>
         </p>
@@ -163,24 +157,24 @@ export default async function PipelinePage({
               >
                 <span className="flex items-center gap-1.5">
                   <span className="h-1.5 w-1.5 shrink-0 rounded-full" style={{ background: ESTAGIO_COR[e.valor as Estagio] }} />
-                  <span className="truncate text-[10px] font-medium uppercase tracking-[0.08em] text-black/60">{e.label}</span>
+                  <span className="truncate text-[13px] font-medium text-[#626B75]">{e.label}</span>
                 </span>
                 <span className="mt-1 flex items-baseline justify-between gap-2">
-                  <span className="text-xl font-medium tabular-nums text-black">{doEstagio.length}</span>
-                  <span className="truncate text-xs tabular-nums text-black/45">{formatBRL(soma) ?? "—"}</span>
+                  <span className="text-xl font-medium tabular-nums text-[#20252B]">{doEstagio.length}</span>
+                  <span className="truncate text-[13px] tabular-nums text-[#626B75]">{formatBRL(soma) ?? "—"}</span>
                 </span>
               </Link>
             );
           })}
         </div>
 
-        <div className="mt-4 flex flex-wrap items-center justify-between gap-2 text-xs text-black/50">
+        <div className="mt-4 flex flex-wrap items-center justify-between gap-2 text-[13px] text-[#626B75]">
           <span>
             {etapaFiltro ? `Mostrando só ${ESTAGIOS.find((e) => e.valor === etapaFiltro)?.label}` : "Todas as etapas"} · {listaVisivel.length}{" "}
             {listaVisivel.length === 1 ? "lead" : "leads"}
           </span>
           {etapaFiltro && (
-            <Link href={linkPipeline(null)} className="underline hover:text-black">
+            <Link href={linkPipeline(null)} className="underline hover:text-[#20252B]">
               Ver todas as etapas
             </Link>
           )}
@@ -195,16 +189,16 @@ export default async function PipelinePage({
                 <div className="flex items-center justify-between gap-2 border-b border-black/5 bg-[#FAF9F6] px-4 py-2.5">
                   <span className="flex items-center gap-2">
                     <span className="h-2 w-2 rounded-full" style={{ background: ESTAGIO_COR[e.valor as Estagio] }} />
-                    <span className="text-xs font-medium uppercase tracking-[0.1em] text-black/70">{e.label}</span>
-                    <span className="text-xs text-black/35">{doEstagio.length}</span>
+                    <span className="text-[13px] font-medium text-[#20252B]">{e.label}</span>
+                    <span className="text-[13px] text-[#626B75]">{doEstagio.length}</span>
                   </span>
-                  <span className="text-xs tabular-nums text-black/45">
+                  <span className="text-[13px] tabular-nums text-[#626B75]">
                     {formatBRL(doEstagio.reduce((t, c) => t + (c.valor_proposta ?? 0), 0)) ?? ""}
                   </span>
                 </div>
                 <div className="overflow-x-auto">
                   <table className="w-full min-w-[760px] text-left text-sm">
-                    <thead className="text-[11px] uppercase tracking-[0.08em] text-black/40">
+                    <thead className="text-[13px] text-[#626B75]">
                       <tr>
                         <th className="px-4 py-2 font-medium">Cliente</th>
                         <th className="px-4 py-2 font-medium">Produto</th>
@@ -220,26 +214,26 @@ export default async function PipelinePage({
                         return (
                           <tr key={c.id} className="border-t border-black/5 align-top hover:bg-black/[0.015]">
                             <td className="px-4 py-2.5">
-                              <Link href={`/crm/clientes/${c.id}`} className="font-medium text-black hover:underline">
+                              <Link href={`/crm/clientes/${c.id}`} className="font-medium text-[#20252B] hover:underline">
                                 {c.nome}
                               </Link>
-                              <span className="block text-[11px] text-black/40">entrou em {dataCurta(c.created_at)}</span>
+                              <span className="block text-[13px] text-[#626B75]">entrou em {dataCurta(c.created_at)}</span>
                             </td>
-                            <td className="px-4 py-2.5 text-black/60">
+                            <td className="px-4 py-2.5 text-[#626B75]">
                               {c.produto_principal ? PRODUTO_PRINCIPAL_LABEL[c.produto_principal as ProdutoPrincipal] ?? c.produto_principal : "—"}
                             </td>
-                            <td className="max-w-[200px] px-4 py-2.5 text-xs text-black/55">{rotuloOrigem(c.canal, c.canal_detalhe)}</td>
-                            <td className="whitespace-nowrap px-4 py-2.5 text-right tabular-nums text-black/80">{formatBRL(c.valor_proposta) ?? "—"}</td>
+                            <td className="max-w-[200px] px-4 py-2.5 text-[13px] text-[#626B75]">{rotuloOrigem(c.canal, c.canal_detalhe)}</td>
+                            <td className="whitespace-nowrap px-4 py-2.5 text-right tabular-nums text-[#20252B]">{formatBRL(c.valor_proposta) ?? "—"}</td>
                             <td className="whitespace-nowrap px-4 py-2.5">
                               <span
-                                className={`rounded-full px-2 py-0.5 text-xs tabular-nums ${
+                                className={`rounded-full px-2 py-0.5 text-[13px] tabular-nums ${
                                   e.valor === "fechado_ganho" || e.valor === "fechado_perdido"
-                                    ? "text-black/40"
+                                    ? "text-[#626B75]"
                                     : dias > 14
                                       ? "bg-red-50 text-red-700"
                                       : dias > 7
                                         ? "bg-amber-50 text-amber-800"
-                                        : "text-black/55"
+                                        : "text-[#626B75]"
                                 }`}
                               >
                                 {dias} {dias === 1 ? "dia" : "dias"}
@@ -258,10 +252,10 @@ export default async function PipelinePage({
             );
           })}
           {listaVisivel.length === 0 && (
-            <p className="rounded-2xl border border-black/5 bg-white p-8 text-center text-sm text-black/40">Nenhum lead nesta etapa.</p>
+            <p className="rounded-2xl border border-black/5 bg-white p-8 text-center text-sm text-[#626B75]">Nenhum lead nesta etapa.</p>
           )}
         </div>
-        <p className="mt-3 text-[11px] text-black/40">
+        <p className="mt-3 text-[13px] text-[#626B75]">
           &quot;Na etapa&quot; conta os dias desde a última mudança de etapa: amarelo a partir de 8 dias, vermelho a partir de 15.
         </p>
       </section>

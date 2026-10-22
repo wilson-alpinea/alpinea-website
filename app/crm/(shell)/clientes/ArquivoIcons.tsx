@@ -10,5 +10,6 @@ export const ARQUIVO_ICONS: Record<TipoArquivo, (props: { className?: string }) 
   roteiro_final: IconMap,
   proposta: IconDocument,
   contrato: IconCheck,
+  comprovante: IconDocument,
   outro: IconDocument,
 };

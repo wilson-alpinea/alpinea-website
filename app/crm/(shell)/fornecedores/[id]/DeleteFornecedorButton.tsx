@@ -23,7 +23,7 @@ export function DeleteFornecedorButton({ id }: { id: string }) {
       type="button"
       onClick={excluir}
       disabled={pending}
-      className="rounded-full border border-red-200 px-4 py-1.5 text-xs uppercase tracking-[0.15em] text-red-600 transition hover:border-red-300 hover:bg-red-50 disabled:opacity-50"
+      className="rounded-full border border-red-200 px-4 py-1.5 text-[13px] text-red-600 transition hover:border-red-300 hover:bg-red-50 disabled:opacity-50"
     >
       {pending ? "Excluindo…" : "Excluir"}
     </button>

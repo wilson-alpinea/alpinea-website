@@ -1,13 +1,7 @@
 import { Suspense } from "react";
-import { Bodoni_Moda } from "next/font/google";
 import type { Metadata } from "next";
 import { login } from "./actions";
 import { LoginForm } from "./LoginForm";
-
-const display = Bodoni_Moda({
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
-});
 
 export const metadata: Metadata = {
   title: "Entrar — CRM Alpinea",
@@ -17,7 +11,7 @@ export const metadata: Metadata = {
 export default function CrmLoginPage() {
   return (
     <Suspense fallback={<main className="min-h-screen bg-[#FAF9F6]" />}>
-      <LoginForm action={login} displayClassName={display.className} />
+      <LoginForm action={login} />
     </Suspense>
   );
 }

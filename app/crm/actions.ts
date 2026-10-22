@@ -11,7 +11,6 @@ import type { Estagio, EstagioEntrega } from "@/lib/crm/types";
 import { isProdutoPrincipal, isProdutoSecundario } from "@/lib/crm/produtos";
 import { isTipoArquivo, TIPO_ARQUIVO_LABEL } from "@/lib/crm/arquivos";
 import { isCategoriaFornecedor } from "@/lib/crm/fornecedores";
-import { isTipoPagamento, isStatusPagamento } from "@/lib/crm/pagamentos";
 import { lerAndamentoManual, isEtapaManual } from "@/lib/crm/andamentoManual";
 
 export async function logout() {
@@ -298,6 +297,24 @@ export async function addInteracao(clienteId: string, formData: FormData) {
     data: { user },
   } = await supabase.auth.getUser();
 
+  // Segunda trava contra duplicidade (Wilson, 22/out/2026): se a mesma
+  // interação (mesmo cliente, autor, tipo e texto) foi registrada nos
+  // últimos 30 s, não grava de novo — cobre clique duplo, reenvio do
+  // formulário e duas abas abertas.
+  const limite = new Date(Date.now() - 30_000).toISOString();
+  let duplicada = supabase
+    .from("interacoes")
+    .select("id", { count: "exact", head: true })
+    .eq("cliente_id", clienteId)
+    .eq("tipo", tipo)
+    .eq("conteudo", conteudo)
+    .gte("created_at", limite);
+  duplicada = user?.id ? duplicada.eq("autor_id", user.id) : duplicada.is("autor_id", null);
+  const { count: jaExiste } = await duplicada;
+  if ((jaExiste ?? 0) > 0) {
+    redirect(`/crm/clientes/${clienteId}`);
+  }
+
   const { error } = await supabase.from("interacoes").insert({
     cliente_id: clienteId,
     autor_id: user?.id ?? null,
@@ -490,79 +507,10 @@ export async function deleteFornecedores(ids: string[]) {
 // Financeiro (pagamentos/parcelas por cliente)
 // ---------------------------------------------------------------
 
-export async function addPagamento(clienteId: string, formData: FormData) {
-  await garantirAdmin();
-  const valorBruto = numeroOuNull(formData.get("valor"));
-  if (!valorBruto) {
-    redirect(`/crm/clientes/${clienteId}?erro=4`);
-  }
-
-  const tipoBruto = String(formData.get("tipo_pagamento") || "");
-  const statusBruto = String(formData.get("status") || "pendente");
-  const numeroParcela = Number(formData.get("numero_parcela")) || 1;
-  const totalParcelas = Number(formData.get("total_parcelas")) || 1;
-
-  const supabase = await createClient();
-  const { error } = await supabase.from("pagamentos").insert({
-    cliente_id: clienteId,
-    tipo_pagamento: isTipoPagamento(tipoBruto) ? tipoBruto : null,
-    numero_parcela: numeroParcela,
-    total_parcelas: totalParcelas,
-    valor: valorBruto,
-    status: isStatusPagamento(statusBruto) ? statusBruto : "pendente",
-    data_vencimento: textoOuNull(formData.get("data_vencimento")),
-    data_pagamento:
-      statusBruto === "pago" ? textoOuNull(formData.get("data_pagamento")) : null,
-    observacoes: textoOuNull(formData.get("observacoes")),
-  });
-
-  if (error) {
-    console.error("Erro ao registrar pagamento:", error);
-    redirect(`/crm/clientes/${clienteId}?erro=4`);
-  }
-
-  revalidatePath(`/crm/clientes/${clienteId}`);
-  redirect(`/crm/clientes/${clienteId}`);
-}
-
-// Alterna rapidamente entre pago/pendente direto na lista, sem precisar
-// abrir um formulário — marca a data de pagamento como hoje ao confirmar.
-export async function alternarStatusPagamento(
-  clienteId: string,
-  pagamentoId: string,
-  novoStatus: string,
-) {
-  await garantirAdmin();
-  if (!isStatusPagamento(novoStatus)) return;
-
-  const supabase = await createClient();
-  const { error } = await supabase
-    .from("pagamentos")
-    .update({
-      status: novoStatus,
-      data_pagamento: novoStatus === "pago" ? new Date().toISOString().slice(0, 10) : null,
-    })
-    .eq("id", pagamentoId);
-
-  if (error) {
-    console.error("Erro ao atualizar status do pagamento:", error);
-  }
-
-  revalidatePath(`/crm/clientes/${clienteId}`);
-}
-
-export async function deletePagamento(clienteId: string, pagamentoId: string, formData: FormData) {
-  await garantirAdmin();
-  void formData;
-  const supabase = await createClient();
-  const { error } = await supabase.from("pagamentos").delete().eq("id", pagamentoId);
-
-  if (error) {
-    console.error("Erro ao excluir pagamento:", error);
-  }
-
-  revalidatePath(`/crm/clientes/${clienteId}`);
-}
+// Parcelas, recebimentos, estornos e reembolsos ficam em
+// app/crm/financeiroActions.ts (novo Financeiro, 22/out/2026). As ações
+// antigas (addPagamento / alternarStatusPagamento / deletePagamento) foram
+// removidas: marcar "pago" por seletor não é mais permitido.
 
 // ── Área de Empregos (06/out/2026) — a equipe pode reclassificar o
 // candidato (ex.: tirar da lista de eliminados depois de conversar),

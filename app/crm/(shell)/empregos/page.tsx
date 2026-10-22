@@ -1,5 +1,4 @@
 import { dataHoraSP, ultimaReclassificacao } from "@/lib/crm/andamentoManual";
-import { Bodoni_Moda } from "next/font/google";
 import Link from "next/link";
 import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
@@ -10,8 +9,6 @@ import FiltroPeriodo from "./FiltroPeriodo";
 // screening isso alimente o CRM e crie 3 tipos de candidato: eliminados,
 // aprovados com score acima de 80 e abaixo". Cada candidatura de /empregos
 // cai aqui já classificada (ver app/api/empregos-candidatura).
-
-const display = Bodoni_Moda({ subsets: ["latin"], weight: ["400", "500", "600"] });
 
 export const metadata: Metadata = {
   title: "Empregos — CRM Alpinea",
@@ -155,11 +152,11 @@ export default async function EmpregosCrmPage({
 
   return (
     <div>
-      <p className="mb-2 text-xs uppercase tracking-[0.3em] text-black/40">
+      <p className="mb-2 text-[13px] text-[#626B75]">
         {(todas ?? []).length} {(todas ?? []).length === 1 ? "candidatura" : "candidaturas"}
       </p>
       <div className="flex flex-wrap items-end justify-between gap-3">
-        <h1 className={`${display.className} text-3xl font-medium text-black md:text-4xl`}>Empregos</h1>
+        <h1 className={`text-3xl font-medium text-[#20252B] md:text-4xl`}>Empregos</h1>
         <div className="flex flex-wrap gap-2">
           <Link href="/crm/empregos/vagas" className="rounded-xl border border-[#1C3A5E] px-4 py-2 text-sm font-medium text-[#1C3A5E] hover:bg-[#1C3A5E]/5">
             Vagas no site
@@ -188,11 +185,11 @@ export default async function EmpregosCrmPage({
               className={`rounded-2xl border p-5 transition ${ativo ? "bg-white shadow-sm" : "border-black/10 bg-white/60 hover:bg-white"}`}
               style={ativo ? { borderColor: c.cor } : undefined}
             >
-              <p className="text-xs font-medium uppercase tracking-[0.12em]" style={{ color: c.cor }}>
+              <p className="text-[13px] font-medium" style={{ color: c.cor }}>
                 {c.label}
               </p>
-              <p className={`${display.className} mt-2 text-4xl font-medium text-black`}>{contagem[c.valor] ?? 0}</p>
-              <p className="mt-1 text-xs leading-5 text-black/45">{c.descricao}</p>
+              <p className={`mt-2 text-4xl font-medium text-[#20252B]`}>{contagem[c.valor] ?? 0}</p>
+              <p className="mt-1 text-[13px] leading-5 text-[#626B75]">{c.descricao}</p>
             </Link>
           );
         })}
@@ -208,14 +205,14 @@ export default async function EmpregosCrmPage({
               href={ativo ? qs(tipo) : `${qs(tipo)}&etapa=${e.etapa}`}
               className={`rounded-xl border px-4 py-3 transition ${ativo ? "border-[#1C3A5E] bg-white" : "border-black/10 bg-white/60 hover:bg-white"}`}
             >
-              <p className="text-[11px] text-black/50">{e.label}</p>
-              <p className="mt-1 text-xl font-medium tabular-nums text-black">{funil[e.etapa] ?? 0}</p>
+              <p className="text-[13px] text-[#626B75]">{e.label}</p>
+              <p className="mt-1 text-xl font-medium tabular-nums text-[#20252B]">{funil[e.etapa] ?? 0}</p>
             </Link>
           );
         })}
       </div>
       {etapaFiltro && (
-        <p className="mt-3 text-xs text-black/50">
+        <p className="mt-3 text-[13px] text-[#626B75]">
           Mostrando só: {ETAPAS_FUNIL.find((e) => e.etapa === etapaFiltro)?.label} (todos os tipos).{" "}
           <Link href={qs(tipo)} className="underline">
             Limpar
@@ -230,12 +227,12 @@ export default async function EmpregosCrmPage({
           name="q"
           defaultValue={busca}
           placeholder="Buscar por nome, e-mail ou telefone…"
-          className="min-w-[240px] flex-1 rounded-xl border border-black/10 bg-white px-4 py-2.5 text-sm text-black placeholder-black/30 outline-none focus:border-[#1C3A5E] focus:ring-2 focus:ring-[#1C3A5E]/10"
+          className="min-w-[240px] flex-1 rounded-xl border border-black/10 bg-white px-4 py-2.5 text-sm text-[#20252B] placeholder-black/30 outline-none focus:border-[#1C3A5E] focus:ring-2 focus:ring-[#1C3A5E]/10"
         />
         <select
           name="vaga"
           defaultValue={vagaFiltro}
-          className="max-w-full rounded-xl border border-black/10 bg-white px-4 py-2.5 text-sm text-black outline-none focus:border-[#1C3A5E]"
+          className="max-w-full rounded-xl border border-black/10 bg-white px-4 py-2.5 text-sm text-[#20252B] outline-none focus:border-[#1C3A5E]"
         >
           <option value="">Todas as vagas</option>
           {Array.from(vagas.entries())
@@ -254,7 +251,7 @@ export default async function EmpregosCrmPage({
 
       <div className="mt-6 overflow-x-auto rounded-2xl border border-black/10 bg-white">
         <table className="w-full min-w-[760px] text-left text-sm">
-          <thead className="border-b border-black/10 text-[11px] uppercase tracking-[0.12em] text-black/40">
+          <thead className="border-b border-black/10 text-[13px] text-[#626B75]">
             <tr>
               <th className="px-5 py-3 font-medium">Candidato</th>
               <th className="px-5 py-3 font-medium">Vaga</th>
@@ -268,7 +265,7 @@ export default async function EmpregosCrmPage({
           <tbody className="divide-y divide-black/[0.06]">
             {lista.length === 0 && (
               <tr>
-                <td colSpan={7} className="px-5 py-10 text-center text-sm text-black/40">
+                <td colSpan={7} className="px-5 py-10 text-center text-sm text-[#626B75]">
                   Nenhum candidato em “{tipoAtual.label}” com esses filtros.
                 </td>
               </tr>
@@ -282,57 +279,57 @@ export default async function EmpregosCrmPage({
                 // (pontuação por critério e todas as respostas). Wilson, 15/out/2026.
                 <tr key={c.id} className="relative cursor-pointer align-top transition hover:bg-[#1C3A5E]/[0.04]">
                   <td className="px-5 py-3.5">
-                    <Link href={`/crm/empregos/${c.id}`} className="font-medium text-black after:absolute after:inset-0 after:content-[''] hover:underline">
+                    <Link href={`/crm/empregos/${c.id}`} className="font-medium text-[#20252B] after:absolute after:inset-0 after:content-[''] hover:underline">
                       {c.nome} {c.sobrenome}
                     </Link>
-                    <p className="text-xs text-black/45">{c.telefone}</p>
+                    <p className="text-[13px] text-[#626B75]">{c.telefone}</p>
                     {(() => {
                       const r = ultimaReclassificacao(c.andamento_manual);
                       return r ? (
-                        <p className="mt-1 inline-block rounded-full bg-[#b7791f]/10 px-2 py-0.5 text-[10px] font-medium text-[#8a5a12]" title={`Motivo: ${r.motivo}`}>
+                        <p className="mt-1 inline-block rounded-full bg-[#b7791f]/10 px-2 py-0.5 text-[13px] font-medium text-[#8a5a12]" title={`Motivo: ${r.motivo}`}>
                           {r.para === "eliminado" ? "Eliminado" : "Aprovado"} manualmente · {r.por} · {dataHoraSP(r.em)}
                         </p>
                       ) : null;
                     })()}
                   </td>
                   <td className="px-5 py-3.5">
-                    <p className="text-black/80">{c.vaga_empresa}</p>
-                    <p className="text-xs text-black/45">{c.vaga_titulo}</p>
+                    <p className="text-[#20252B]">{c.vaga_empresa}</p>
+                    <p className="text-[13px] text-[#626B75]">{c.vaga_titulo}</p>
                   </td>
                   <td className="px-5 py-3.5">
                     <div className="flex items-center gap-2">
                       <div className="h-1.5 w-16 overflow-hidden rounded-full bg-black/[0.07]">
                         <div className="h-full rounded-full" style={{ width: `${c.pontuacao ?? 0}%`, background: corTipo }} />
                       </div>
-                      <span className="tabular-nums text-black/75">{c.pontuacao ?? "—"}</span>
+                      <span className="tabular-nums text-[#20252B]">{c.pontuacao ?? "—"}</span>
                     </div>
-                    {c.ficha_enviada_em && <p className="mt-1 text-[11px] text-black/45">Ficha enviada{c.etapa === "concluida" ? " · foto" : ""}</p>}
+                    {c.ficha_enviada_em && <p className="mt-1 text-[13px] text-[#626B75]">Ficha enviada{c.etapa === "concluida" ? " · foto" : ""}</p>}
                   </td>
                   <td className="max-w-[260px] px-5 py-3.5">
                     {etiquetas.length === 0 ? (
-                      <span className="text-xs text-black/30">—</span>
+                      <span className="text-[13px] text-[#626B75]">—</span>
                     ) : (
                       <div className="flex flex-wrap gap-1">
                         {etiquetas.slice(0, 3).map((e) => (
                           <span
                             key={e}
-                            className="rounded-full px-2 py-0.5 text-[11px]"
+                            className="rounded-full px-2 py-0.5 text-[13px]"
                             style={{ background: elim ? CLASSIFICACOES[2].fundo : "rgba(201,160,58,0.12)", color: elim ? CLASSIFICACOES[2].cor : "#8a6a1c" }}
                           >
                             {e.length > 60 ? `${e.slice(0, 57)}…` : e}
                           </span>
                         ))}
-                        {etiquetas.length > 3 && <span className="text-[11px] text-black/40">+{etiquetas.length - 3}</span>}
+                        {etiquetas.length > 3 && <span className="text-[13px] text-[#626B75]">+{etiquetas.length - 3}</span>}
                       </div>
                     )}
                   </td>
                   <td className="px-5 py-3.5">
-                    <span className="whitespace-nowrap rounded-full px-2 py-0.5 text-[11px]" style={{ color: c.progresso.cor, background: `${c.progresso.cor}14` }}>
+                    <span className="whitespace-nowrap rounded-full px-2 py-0.5 text-[13px]" style={{ color: c.progresso.cor, background: `${c.progresso.cor}14` }}>
                       {c.progresso.label}
                     </span>
                   </td>
-                  <td className="px-5 py-3.5 text-xs text-black/60">{statusLabel(c.status)}</td>
-                  <td className="px-5 py-3.5 text-xs text-black/45">
+                  <td className="px-5 py-3.5 text-[13px] text-[#626B75]">{statusLabel(c.status)}</td>
+                  <td className="px-5 py-3.5 text-[13px] text-[#626B75]">
                     {new Date(c.created_at).toLocaleDateString("pt-BR", { day: "2-digit", month: "short" })}
                   </td>
                 </tr>

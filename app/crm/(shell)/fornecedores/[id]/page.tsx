@@ -1,4 +1,3 @@
-import { Bodoni_Moda } from "next/font/google";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
@@ -6,11 +5,6 @@ import { createClient } from "@/lib/supabase/server";
 import { updateFornecedor } from "../../../actions";
 import { FornecedorForm } from "../FornecedorForm";
 import { DeleteFornecedorButton } from "./DeleteFornecedorButton";
-
-const display = Bodoni_Moda({
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
-});
 
 export const metadata: Metadata = {
   title: "Fornecedor — CRM Alpinea",
@@ -46,13 +40,13 @@ export default async function FornecedorDetalhePage({
     <div className="mx-auto max-w-2xl">
       <Link
         href="/crm/fornecedores"
-        className="text-xs uppercase tracking-[0.2em] text-black/40 transition hover:text-[#1C3A5E]"
+        className="text-[13px] text-[#626B75] transition hover:text-[#1C3A5E]"
       >
         ← Fornecedores
       </Link>
 
       <div className="mt-4 flex flex-wrap items-center justify-between gap-4">
-        <h1 className={`${display.className} text-3xl font-medium text-black md:text-4xl`}>
+        <h1 className={`text-3xl font-medium text-[#20252B] md:text-4xl`}>
           {fornecedor.nome}
         </h1>
         <DeleteFornecedorButton id={id} />

@@ -57,7 +57,7 @@ export function UploadArquivoCliente({ clienteId, tipos }: { clienteId: string; 
   }
 
   const campo =
-    "rounded-xl border border-black/10 bg-white px-3 py-2 text-sm text-black outline-none transition focus:border-[#1C3A5E] focus:ring-2 focus:ring-[#1C3A5E]/10";
+    "rounded-xl border border-black/10 bg-white px-3 py-2 text-sm text-[#20252B] outline-none transition focus:border-[#1C3A5E] focus:ring-2 focus:ring-[#1C3A5E]/10";
 
   return (
     <div className="mt-5">
@@ -93,7 +93,7 @@ export function UploadArquivoCliente({ clienteId, tipos }: { clienteId: string; 
         } ${enviando ? "pointer-events-none opacity-60" : ""}`}
       >
         <span className="text-sm font-medium text-[#1C3A5E]">{enviando ? "Enviando…" : "Escolher arquivos ou arrastar aqui"}</span>
-        <span className="mt-1 text-xs text-black/45">PDF, Word, Excel, imagens… até {LIMITE_ARQUIVO_CLIENTE_MB} MB cada</span>
+        <span className="mt-1 text-[13px] text-[#626B75]">PDF, Word, Excel, imagens… até {LIMITE_ARQUIVO_CLIENTE_MB} MB cada</span>
         <input
           ref={inputRef}
           type="file"
@@ -104,11 +104,11 @@ export function UploadArquivoCliente({ clienteId, tipos }: { clienteId: string; 
         />
       </label>
       {status && (
-        <p className="mt-2 text-xs text-black/55" aria-live="polite">
+        <p className="mt-2 text-[13px] text-[#626B75]" aria-live="polite">
           {status}
         </p>
       )}
-      {erro && <p className="mt-1 text-xs text-red-600">{erro}</p>}
+      {erro && <p className="mt-1 text-[13px] text-red-600">{erro}</p>}
     </div>
   );
 }

@@ -1,14 +1,8 @@
-import { Bodoni_Moda } from "next/font/google";
 import Link from "next/link";
 import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
 import { CATEGORIAS_FORNECEDOR } from "@/lib/crm/fornecedores";
 import { FornecedoresTable } from "./FornecedoresTable";
-
-const display = Bodoni_Moda({
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
-});
 
 export const metadata: Metadata = {
   title: "Fornecedores — CRM Alpinea",
@@ -49,10 +43,10 @@ export default async function FornecedoresPage({
     <div>
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <p className="mb-2 text-xs uppercase tracking-[0.3em] text-black/40">
+          <p className="mb-2 text-[13px] text-[#626B75]">
             {lista.length} {lista.length === 1 ? "fornecedor" : "fornecedores"}
           </p>
-          <h1 className={`${display.className} text-3xl font-medium text-black md:text-4xl`}>
+          <h1 className={`text-3xl font-medium text-[#20252B] md:text-4xl`}>
             Fornecedores
           </h1>
         </div>
@@ -70,12 +64,12 @@ export default async function FornecedoresPage({
           name="q"
           defaultValue={busca}
           placeholder="Buscar por nome, e-mail ou telefone…"
-          className="min-w-[240px] flex-1 rounded-xl border border-black/10 bg-white px-4 py-2.5 text-sm text-black placeholder-black/30 outline-none transition focus:border-[#1C3A5E] focus:ring-2 focus:ring-[#1C3A5E]/10"
+          className="min-w-[240px] flex-1 rounded-xl border border-black/10 bg-white px-4 py-2.5 text-sm text-[#20252B] placeholder-black/30 outline-none transition focus:border-[#1C3A5E] focus:ring-2 focus:ring-[#1C3A5E]/10"
         />
         <select
           name="categoria"
           defaultValue={categoriaFiltro}
-          className="rounded-xl border border-black/10 bg-white px-4 py-2.5 text-sm text-black outline-none transition focus:border-[#1C3A5E] focus:ring-2 focus:ring-[#1C3A5E]/10"
+          className="rounded-xl border border-black/10 bg-white px-4 py-2.5 text-sm text-[#20252B] outline-none transition focus:border-[#1C3A5E] focus:ring-2 focus:ring-[#1C3A5E]/10"
         >
           <option value="">Todas as categorias</option>
           {CATEGORIAS_FORNECEDOR.map((c) => (
@@ -86,14 +80,14 @@ export default async function FornecedoresPage({
         </select>
         <button
           type="submit"
-          className="rounded-xl border border-black/10 bg-white px-5 py-2.5 text-sm text-black/70 transition hover:border-[#1C3A5E]/40 hover:text-[#1C3A5E]"
+          className="rounded-xl border border-black/10 bg-white px-5 py-2.5 text-sm text-[#20252B] transition hover:border-[#1C3A5E]/40 hover:text-[#1C3A5E]"
         >
           Filtrar
         </button>
         {(busca || categoriaFiltro) && (
           <Link
             href="/crm/fornecedores"
-            className="rounded-xl px-5 py-2.5 text-sm text-black/40 transition hover:text-black"
+            className="rounded-xl px-5 py-2.5 text-sm text-[#626B75] transition hover:text-[#20252B]"
           >
             Limpar
           </Link>
@@ -103,7 +97,7 @@ export default async function FornecedoresPage({
       <div className="mt-8">
         {lista.length === 0 ? (
           <div className="overflow-hidden rounded-2xl border border-black/5 bg-white shadow-[0_1px_2px_rgba(0,0,0,0.04),0_16px_32px_-20px_rgba(0,0,0,0.15)]">
-            <p className="p-8 text-center text-sm text-black/40">
+            <p className="p-8 text-center text-sm text-[#626B75]">
               Nenhum fornecedor encontrado.
             </p>
           </div>

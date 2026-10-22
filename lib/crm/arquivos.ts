@@ -1,4 +1,4 @@
-export type TipoArquivo = "roteiro_draft" | "roteiro_final" | "proposta" | "contrato" | "outro";
+export type TipoArquivo = "roteiro_draft" | "roteiro_final" | "proposta" | "contrato" | "comprovante" | "outro";
 
 // Pedido do Wilson, 18/set/2026: "preciso de um campo para adicionar o link
 // do roteiro" — ao testar, o link que ele tinha era da entrega final do
@@ -15,6 +15,8 @@ export const TIPOS_ARQUIVO: { valor: TipoArquivo; label: string }[] = [
   { valor: "roteiro_final", label: "Roteiro Personalizado (Final)" },
   { valor: "proposta", label: "Proposta" },
   { valor: "contrato", label: "Contrato" },
+  // Comprovantes de recebimento (Financeiro, 22/out/2026 — migração 023).
+  { valor: "comprovante", label: "Comprovante" },
   { valor: "outro", label: "Outro" },
 ];
 

@@ -1,5 +1,4 @@
 import { ehSelfService, TAG_SELF_SERVICE } from "@/lib/crm/origem";
-import { Bodoni_Moda } from "next/font/google";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
@@ -21,6 +20,7 @@ import {
   arquivarCliente,
 } from "../../../actions";
 import { ClienteForm } from "../ClienteForm";
+import { BotaoSalvar } from "../BotaoSalvar";
 import { ARQUIVO_ICONS } from "../ArquivoIcons";
 import { INTERACAO_ICONS } from "../InteracaoIcons";
 import { ProcessoCard } from "./ProcessoCard";
@@ -34,17 +34,11 @@ import {
   resumoExecucao,
   type EventoHistorico,
 } from "@/lib/crm/processo";
-import { FinanceiroSection } from "./FinanceiroSection";
+import { FinanceiroSection } from "./financeiro/FinanceiroSection";
+import { carregarFinanceiro } from "./financeiro/carregar";
 import { ConfirmacaoCadastro } from "./ConfirmacaoCadastro";
 import { UploadArquivoCliente } from "./UploadArquivoCliente";
 import { ehArquivoStorage } from "@/lib/crm/arquivosStorage";
-import { addPagamento, deletePagamento } from "../../../actions";
-import type { Pagamento } from "@/lib/crm/types";
-
-const display = Bodoni_Moda({
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
-});
 
 export const metadata: Metadata = {
   title: "Cliente — CRM Alpinea",
@@ -134,11 +128,8 @@ export default async function ClienteDetalhePage({
     ...(arquivos ?? []).map((a) => ({ ...a, legado: false })),
   ];
 
-  const { data: pagamentos } = await supabase
-    .from("pagamentos")
-    .select("*")
-    .eq("cliente_id", id)
-    .order("numero_parcela", { ascending: true });
+  // Financeiro (Wilson, 22/out/2026): parcelas, recebimentos e histórico.
+  const financeiro = await carregarFinanceiro(supabase, cliente);
 
   // Parceiros da agência para atribuição manual do lead (migração 021).
   const { data: parceirosAgencia } = await supabase
@@ -229,47 +220,45 @@ export default async function ClienteDetalhePage({
   const moveEstagioComId = moveEstagio.bind(null, id);
   const moveEstagioEntregaComId = moveEstagioEntrega.bind(null, id);
   const addArquivoComId = addArquivo.bind(null, id);
-  const addPagamentoComId = addPagamento.bind(null, id);
-  const deletePagamentoComId = deletePagamento.bind(null, id);
 
   return (
     <div>
       {sp.criado === "1" && <ConfirmacaoCadastro nome={cliente.nome} clienteId={id} />}
-      <Link href="/crm/clientes" className="text-xs uppercase tracking-[0.2em] text-black/40 transition hover:text-[#1C3A5E]">
+      <Link href="/crm/clientes" className="text-[13px] text-[#626B75] transition hover:text-[#1C3A5E]">
         ← Clientes
       </Link>
 
 
       <div className="mt-4 flex flex-wrap items-start justify-between gap-4">
         <div>
-          <p className="mb-1 text-[10px] uppercase tracking-[0.25em] text-[#1C3A5E]/70">Cliente</p>
-          <h1 className={`${display.className} text-3xl font-medium text-black md:text-4xl`}>
+          <p className="mb-1 text-[13px] text-[#1C3A5E]/70">Cliente</p>
+          <h1 className={`text-3xl font-medium text-[#20252B] md:text-4xl`}>
             {cliente.nome}
           </h1>
           {ehSelfService(cliente.origem) && (
-            <span className="mt-1 inline-block rounded-full bg-sky-100 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-sky-700">
+            <span className="mt-1 inline-block rounded-full bg-sky-100 px-2.5 py-0.5 text-[13px] font-semibold text-sky-700">
               {TAG_SELF_SERVICE}
             </span>
           )}
           {(cliente.email || cliente.telefone || dataViagem) && (
-            <p className="mt-2 text-sm text-black/60">
+            <p className="mt-2 text-sm text-[#626B75]">
               {[cliente.email, cliente.telefone, dataViagem ? `Viagem em ${dataViagem}` : null]
                 .filter(Boolean)
                 .join(" · ")}
             </p>
           )}
-          <p className="mt-1 text-xs text-black/50">
+          <p className="mt-1 text-[13px] text-[#626B75]">
             Origem: {rotuloOrigem(cliente.canal, cliente.canal_detalhe)}
             {cliente.utm?.utm_campaign ? ` · campanha ${cliente.utm.utm_campaign}` : ""}
             {cliente.utm?.landing ? ` · entrou por ${cliente.utm.landing}` : ""}
           </p>
           {parceiroDoLead && (
-            <span className="ml-2 mt-1 inline-block rounded-full bg-amber-100 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-amber-800">
+            <span className="ml-2 mt-1 inline-block rounded-full bg-amber-100 px-2.5 py-0.5 text-[13px] font-semibold text-amber-800">
               Parceiro: {parceiroDoLead.nome}
             </span>
           )}
           {arquivado && (
-            <span className="ml-2 mt-1 inline-block rounded-full bg-black/10 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-black/60">
+            <span className="ml-2 mt-1 inline-block rounded-full bg-black/10 px-2.5 py-0.5 text-[13px] font-semibold text-[#626B75]">
               Arquivado em {new Date(cliente.arquivado_em!).toLocaleDateString("pt-BR", { timeZone: "America/Sao_Paulo" })}
             </span>
           )}
@@ -281,7 +270,7 @@ export default async function ClienteDetalhePage({
             className={`inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-medium transition ${
               arquivado
                 ? "border-black bg-black text-white hover:bg-black/80"
-                : "border-black bg-white text-black hover:bg-black hover:text-white"
+                : "border-black bg-white text-[#20252B] hover:bg-black hover:text-white"
             }`}
           >
             <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth={1.8} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
@@ -346,7 +335,7 @@ export default async function ClienteDetalhePage({
         {/* Paleta por grupo (Wilson, 22/out/2026): fundo suave + linha de
             3 px no topo na cor de destaque do grupo. */}
         <div className="rounded-2xl border border-black/[0.06] border-t-[3px] border-t-[#786343] bg-[#FAF7F1] shadow-[0_1px_2px_rgba(0,0,0,0.04),0_16px_32px_-20px_rgba(0,0,0,0.15)] p-6 md:p-8 lg:col-span-3">
-          <h2 className={`${display.className} mb-6 text-lg font-medium text-[#786343]`}>
+          <h2 className={`mb-6 text-lg font-medium text-[#786343]`}>
             Dados do cliente
           </h2>
           <ClienteForm
@@ -359,7 +348,7 @@ export default async function ClienteDetalhePage({
 
         <div className="space-y-6 lg:col-span-2">
           <div className="rounded-2xl border border-black/[0.06] border-t-[3px] border-t-[#665582] bg-[#F5F3FA] shadow-[0_1px_2px_rgba(0,0,0,0.04),0_16px_32px_-20px_rgba(0,0,0,0.15)] p-6">
-            <h2 className={`${display.className} mb-4 text-lg font-medium text-[#665582]`}>
+            <h2 className={`mb-4 text-lg font-medium text-[#665582]`}>
               Nova interação
             </h2>
             <form action={addInteracaoComId} className="space-y-4">
@@ -381,17 +370,18 @@ export default async function ClienteDetalhePage({
                 placeholder="O que foi conversado, enviado ou combinado…"
                 className="w-full rounded-xl border border-[#D5DAE0] bg-white px-4 py-2.5 text-sm text-[#20252B] placeholder-[#9AA2AB] outline-none transition focus:border-[#24476B] focus:ring-2 focus:ring-[#24476B]/25"
               />
-              <button
-                type="submit"
+              {/* Trava contra cliques repetidos (Wilson, 22/out/2026): o botão
+                  fica desabilitado enquanto o envio está em andamento. */}
+              <BotaoSalvar
+                rotulo="Registrar"
+                rotuloPendente="Registrando…"
                 className="w-full rounded-xl bg-[#24476B] px-4 py-2.5 text-sm font-medium text-white shadow-sm shadow-[#24476B]/25 outline-none transition hover:bg-[#2C5480] hover:shadow-md hover:shadow-[#24476B]/30 focus-visible:ring-2 focus-visible:ring-[#24476B]/40 focus-visible:ring-offset-2"
-              >
-                Registrar
-              </button>
+              />
             </form>
           </div>
 
           <div className="rounded-2xl border border-black/[0.06] border-t-[3px] border-t-[#59636F] bg-[#F5F6F7] shadow-[0_1px_2px_rgba(0,0,0,0.04),0_16px_32px_-20px_rgba(0,0,0,0.15)] p-6">
-            <h2 className={`${display.className} mb-4 text-lg font-medium text-[#59636F]`}>
+            <h2 className={`mb-4 text-lg font-medium text-[#59636F]`}>
               Histórico
             </h2>
 
@@ -406,19 +396,19 @@ export default async function ClienteDetalhePage({
                   const Icon = INTERACAO_ICONS[i.tipo];
                   return (
                     <li key={i.id} className="flex gap-3">
-                      <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center text-black/70">
+                      <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center text-[#20252B]">
                         {Icon && <Icon className="h-4 w-4" />}
                       </span>
                       <div className="min-w-0 flex-1 border-l border-black/10 pl-4">
                         <div className="flex items-center justify-between gap-3">
                           <span
-                            className="text-xs font-medium uppercase tracking-[0.15em]"
+                            className="text-[13px] font-medium"
                             style={{ color: cor }}
                           >
                             {TIPO_INTERACAO_LABEL[i.tipo] ?? i.tipo}
                           </span>
                           <div className="flex items-center gap-2">
-                            <span className="text-xs text-[#626B75]">
+                            <span className="text-[13px] text-[#626B75]">
                               {new Date(i.created_at).toLocaleDateString("pt-BR", {
                                 day: "2-digit",
                                 month: "2-digit",
@@ -438,10 +428,10 @@ export default async function ClienteDetalhePage({
                             </form>
                           </div>
                         </div>
-                        <p className="mt-1.5 text-sm leading-relaxed text-[#20252B] whitespace-pre-wrap">
+                        <p className="mt-1.5 text-sm leading-normal text-[#20252B] whitespace-pre-wrap">
                           {i.conteudo}
                         </p>
-                        {autor?.email && <p className="mt-1 text-xs text-[#626B75]">— {autor.email}</p>}
+                        {autor?.email && <p className="mt-1 text-[13px] text-[#626B75]">— {autor.email}</p>}
                       </div>
                     </li>
                   );
@@ -453,19 +443,14 @@ export default async function ClienteDetalhePage({
       </div>
 
       <div className="mt-6">
-        <FinanceiroSection
-          clienteId={id}
-          pagamentos={(pagamentos ?? []) as Pagamento[]}
-          addAction={addPagamentoComId}
-          deleteAction={deletePagamentoComId}
-        />
+        <FinanceiroSection clienteId={id} {...financeiro} />
       </div>
 
       <div className="mt-6 rounded-2xl border border-black/5 bg-white shadow-[0_1px_2px_rgba(0,0,0,0.04),0_16px_32px_-20px_rgba(0,0,0,0.15)] p-6 md:p-8">
-        <h2 className={`${display.className} mb-5 text-lg font-medium text-black`}>Arquivos</h2>
+        <h2 className={`mb-5 text-lg font-medium text-[#20252B]`}>Arquivos</h2>
 
         {arquivosExibidos.length === 0 ? (
-          <p className="text-sm text-black/40">Nenhum arquivo adicionado ainda.</p>
+          <p className="text-sm text-[#626B75]">Nenhum arquivo adicionado ainda.</p>
         ) : (
           // Wilson, 22/out/2026: arquivos em formato de lista, com o nome
           // completo (antes eram cards em grade com o nome truncado).
@@ -481,18 +466,18 @@ export default async function ClienteDetalhePage({
                   key={a.id}
                   className="flex items-center gap-3 bg-white px-4 py-3 transition hover:bg-[#FAF9F6]"
                 >
-                  <span className="flex h-5 w-5 shrink-0 items-center justify-center text-black">
+                  <span className="flex h-5 w-5 shrink-0 items-center justify-center text-[#20252B]">
                     <Icon className="h-5 w-5" />
                   </span>
                   <a
                     href={href}
                     target={externo ? "_blank" : undefined}
                     rel={externo ? "noopener noreferrer" : undefined}
-                    className="min-w-0 flex-1 break-words text-sm font-medium text-black hover:underline"
+                    className="min-w-0 flex-1 break-words text-sm font-medium text-[#20252B] hover:underline"
                   >
                     {a.label}
                   </a>
-                  <span className="hidden shrink-0 text-[10px] uppercase tracking-[0.15em] text-black/35 sm:inline">
+                  <span className="hidden shrink-0 text-[13px] text-[#626B75] sm:inline">
                     {TIPO_ARQUIVO_LABEL[a.tipo as TipoArquivo] ?? "Arquivo"}
                   </span>
                   {!a.legado && (
@@ -515,12 +500,12 @@ export default async function ClienteDetalhePage({
 
         <UploadArquivoCliente clienteId={id} tipos={TIPOS_ARQUIVO} />
 
-        <p className="mt-6 text-[11px] uppercase tracking-[0.15em] text-black/35">Ou adicionar um link</p>
+        <p className="mt-6 text-[13px] text-[#626B75]">Ou adicionar um link</p>
         <form action={addArquivoComId} className="mt-2 grid gap-3 sm:grid-cols-[1fr_1fr_1fr_auto]">
           <select
             name="tipo"
             defaultValue="roteiro_draft"
-            className="rounded-xl border border-black/10 bg-white px-3 py-2 text-sm text-black outline-none transition focus:border-[#1C3A5E] focus:ring-2 focus:ring-[#1C3A5E]/10"
+            className="rounded-xl border border-black/10 bg-white px-3 py-2 text-sm text-[#20252B] outline-none transition focus:border-[#1C3A5E] focus:ring-2 focus:ring-[#1C3A5E]/10"
           >
             {TIPOS_ARQUIVO.map((t) => (
               <option key={t.valor} value={t.valor}>
@@ -537,14 +522,14 @@ export default async function ClienteDetalhePage({
             type="text"
             name="label"
             placeholder="Rótulo (opcional) — só p/ diferenciar do mesmo tipo"
-            className="rounded-xl border border-black/10 bg-white px-3 py-2 text-sm text-black placeholder-black/30 outline-none transition focus:border-[#1C3A5E] focus:ring-2 focus:ring-[#1C3A5E]/10"
+            className="rounded-xl border border-black/10 bg-white px-3 py-2 text-sm text-[#20252B] placeholder-black/30 outline-none transition focus:border-[#1C3A5E] focus:ring-2 focus:ring-[#1C3A5E]/10"
           />
           <input
             type="text"
             name="url"
             required
             placeholder="Link — ex.: lpfyslh1 ou https://…"
-            className="rounded-xl border border-black/10 bg-white px-3 py-2 text-sm text-black placeholder-black/30 outline-none transition focus:border-[#1C3A5E] focus:ring-2 focus:ring-[#1C3A5E]/10"
+            className="rounded-xl border border-black/10 bg-white px-3 py-2 text-sm text-[#20252B] placeholder-black/30 outline-none transition focus:border-[#1C3A5E] focus:ring-2 focus:ring-[#1C3A5E]/10"
           />
           <button
             type="submit"

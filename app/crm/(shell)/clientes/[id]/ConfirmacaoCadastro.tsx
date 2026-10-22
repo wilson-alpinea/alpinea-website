@@ -36,13 +36,13 @@ export function ConfirmacaoCadastro({ nome, clienteId }: { nome: string; cliente
         <span className="mx-auto block text-3xl leading-none text-emerald-700" aria-hidden="true">
           ✓
         </span>
-        <h2 id="titulo-confirmacao" className="mt-4 text-lg font-medium text-black">
+        <h2 id="titulo-confirmacao" className="mt-4 text-lg font-medium text-[#20252B]">
           Cliente cadastrado
         </h2>
-        <p className="mt-1 text-sm text-black/60">
-          <strong className="font-medium text-black/80">{nome}</strong> foi registrado no CRM como Novo Lead.
+        <p className="mt-1 text-sm text-[#626B75]">
+          <strong className="font-medium text-[#20252B]">{nome}</strong> foi registrado no CRM como Novo Lead.
         </p>
-        <p className="mt-3 text-xs text-black/45" aria-live="polite">
+        <p className="mt-3 text-[13px] text-[#626B75]" aria-live="polite">
           Você será redirecionado de volta ao CRM em {restante} {restante === 1 ? "segundo" : "segundos"}…
         </p>
         <div className="mt-5 flex flex-col gap-2 sm:flex-row sm:justify-center">
@@ -53,7 +53,7 @@ export function ConfirmacaoCadastro({ nome, clienteId }: { nome: string; cliente
           >
             Ver ficha agora
           </button>
-          <Link href="/crm/clientes" className="rounded-full border border-black/15 px-5 py-2 text-sm text-black/70 transition hover:border-black/40">
+          <Link href="/crm/clientes" className="rounded-full border border-black/15 px-5 py-2 text-sm text-[#20252B] transition hover:border-black/40">
             Ir para clientes
           </Link>
         </div>

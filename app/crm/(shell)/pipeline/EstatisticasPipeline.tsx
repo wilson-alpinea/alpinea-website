@@ -18,9 +18,9 @@ export const PERIODOS_ESTATISTICA = [
 function Indicador({ rotulo, valor, detalhe }: { rotulo: string; valor: string; detalhe?: string }) {
   return (
     <div className="rounded-xl border border-black/5 bg-white p-4">
-      <p className="text-[10px] uppercase tracking-[0.14em] text-black/45">{rotulo}</p>
-      <p className="mt-1 text-2xl font-medium tabular-nums text-black">{valor}</p>
-      {detalhe && <p className="mt-0.5 text-xs text-black/45">{detalhe}</p>}
+      <p className="text-[13px] text-[#626B75]">{rotulo}</p>
+      <p className="mt-1 text-2xl font-medium tabular-nums text-[#20252B]">{valor}</p>
+      {detalhe && <p className="mt-0.5 text-[13px] text-[#626B75]">{detalhe}</p>}
     </div>
   );
 }
@@ -31,15 +31,15 @@ export function EstatisticasPipeline({ est, periodo, sufixoUrl }: { est: Estatis
     <section className="mt-8 rounded-2xl border border-black/5 bg-[#F3F1EC] p-4 sm:p-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h2 className="text-sm font-medium text-black">Conversão do funil</h2>
-          <p className="text-xs text-black/50">Leads criados no período, incluindo arquivados. Pedidos de teste ficam de fora.</p>
+          <h2 className="text-sm font-medium text-[#20252B]">Conversão do funil</h2>
+          <p className="text-[13px] text-[#626B75]">Leads criados no período, incluindo arquivados. Pedidos de teste ficam de fora.</p>
         </div>
         <div className="flex flex-wrap gap-1.5">
           {PERIODOS_ESTATISTICA.map((p) => (
             <Link
               key={p.valor}
               href={`/crm/pipeline?periodo=${p.valor}${sufixoUrl}`}
-              className={`rounded-full px-3 py-1 text-xs transition ${periodo === p.valor ? "bg-black text-white" : "border border-black/10 bg-white text-black/60 hover:text-black"}`}
+              className={`rounded-full px-3 py-1 text-[13px] transition ${periodo === p.valor ? "bg-black text-white" : "border border-black/10 bg-white text-[#626B75] hover:text-[#20252B]"}`}
             >
               {p.label}
             </Link>
@@ -57,10 +57,10 @@ export function EstatisticasPipeline({ est, periodo, sufixoUrl }: { est: Estatis
 
       <div className="mt-6 grid gap-6 lg:grid-cols-2">
         <div>
-          <h3 className="text-xs font-medium uppercase tracking-[0.12em] text-black/60">Onde estão desistindo</h3>
+          <h3 className="text-[13px] font-medium text-[#626B75]">Onde estão desistindo</h3>
           <div className="mt-2 overflow-x-auto rounded-xl border border-black/5 bg-white">
-            <table className="w-full min-w-[420px] text-left text-xs">
-              <thead className="text-black/45">
+            <table className="w-full min-w-[420px] text-left text-[13px]">
+              <thead className="text-[#626B75]">
                 <tr>
                   <th className="px-3 py-2 font-medium">Etapa</th>
                   <th className="px-3 py-2 font-medium">Chegaram</th>
@@ -72,18 +72,18 @@ export function EstatisticasPipeline({ est, periodo, sufixoUrl }: { est: Estatis
               <tbody>
                 {est.etapas.map((e) => (
                   <tr key={e.estagio} className="border-t border-black/5">
-                    <td className="px-3 py-2 text-black/80">
+                    <td className="px-3 py-2 text-[#20252B]">
                       {e.label}
                       <span className="mt-1 block h-1 rounded-full bg-black/5">
                         <span className="block h-1 rounded-full bg-[#1C3A5E]" style={{ width: `${(e.alcancaram / maxAlcance) * 100}%` }} />
                       </span>
                     </td>
                     <td className="px-3 py-2 tabular-nums">
-                      {e.alcancaram} <span className="text-black/40">({pct(est.total ? e.alcancaram / est.total : null)})</span>
+                      {e.alcancaram} <span className="text-[#626B75]">({pct(est.total ? e.alcancaram / est.total : null)})</span>
                     </td>
                     <td className="px-3 py-2 tabular-nums text-red-700/80">{e.estagio === "fechado_ganho" ? "—" : e.perdidos}</td>
-                    <td className="px-3 py-2 tabular-nums text-black/60">{e.estagio === "fechado_ganho" ? "—" : e.arquivados}</td>
-                    <td className="px-3 py-2 tabular-nums text-black/60">{e.estagio === "novo_lead" ? "—" : dias(e.diasMedioAteChegar)}</td>
+                    <td className="px-3 py-2 tabular-nums text-[#626B75]">{e.estagio === "fechado_ganho" ? "—" : e.arquivados}</td>
+                    <td className="px-3 py-2 tabular-nums text-[#626B75]">{e.estagio === "novo_lead" ? "—" : dias(e.diasMedioAteChegar)}</td>
                   </tr>
                 ))}
               </tbody>
@@ -92,33 +92,33 @@ export function EstatisticasPipeline({ est, periodo, sufixoUrl }: { est: Estatis
         </div>
 
         <div>
-          <h3 className="text-xs font-medium uppercase tracking-[0.12em] text-black/60">Por origem</h3>
+          <h3 className="text-[13px] font-medium text-[#626B75]">Por origem</h3>
           <div className="mt-2 overflow-x-auto rounded-xl border border-black/5 bg-white">
-            <table className="w-full min-w-[420px] text-left text-xs">
-              <thead className="text-black/45">
+            <table className="w-full min-w-[420px] text-left text-[13px]">
+              <thead className="text-[#626B75]">
                 <tr>
                   <th className="px-3 py-2 font-medium">Origem</th>
                   <th className="px-3 py-2 font-medium">Leads</th>
                   <th className="px-3 py-2 font-medium">Ganhos</th>
                   <th className="px-3 py-2 font-medium">Conversão</th>
                   <th className="px-3 py-2 font-medium">Tempo até fechar</th>
-                  <th className="px-3 py-2 font-medium">Valor ganho</th>
+                  <th className="px-3 py-2 text-right font-medium">Valor ganho</th>
                 </tr>
               </thead>
               <tbody>
                 {est.canais.length === 0 && (
                   <tr>
-                    <td colSpan={6} className="px-3 py-4 text-center text-black/40">Nenhum lead no período.</td>
+                    <td colSpan={6} className="px-3 py-4 text-center text-[#626B75]">Nenhum lead no período.</td>
                   </tr>
                 )}
                 {est.canais.map((c) => (
                   <tr key={c.canal} className="border-t border-black/5">
-                    <td className="px-3 py-2 text-black/80">{c.label}</td>
+                    <td className="px-3 py-2 text-[#20252B]">{c.label}</td>
                     <td className="px-3 py-2 tabular-nums">{c.leads}</td>
                     <td className="px-3 py-2 tabular-nums">{c.ganhos}</td>
                     <td className="px-3 py-2 tabular-nums">{pct(c.conversao)}</td>
-                    <td className="px-3 py-2 tabular-nums text-black/60">{dias(c.diasMedioAteFechar)}</td>
-                    <td className="px-3 py-2 tabular-nums text-black/60">{brl(c.valorGanho)}</td>
+                    <td className="px-3 py-2 tabular-nums text-[#626B75]">{dias(c.diasMedioAteFechar)}</td>
+                    <td className="whitespace-nowrap px-3 py-2 text-right tabular-nums text-[#20252B]">{brl(c.valorGanho)}</td>
                   </tr>
                 ))}
               </tbody>

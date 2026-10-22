@@ -16,7 +16,7 @@ export const OPCOES_PERIODO = [
 
 export default function FiltroPeriodo({ periodo, de, ate }: { periodo: string; de: string; ate: string }) {
   const [valor, setValor] = useState(periodo);
-  const campo = "rounded-xl border border-black/10 bg-white px-3 py-2.5 text-sm text-black outline-none focus:border-[#1C3A5E]";
+  const campo = "rounded-xl border border-black/10 bg-white px-3 py-2.5 text-sm text-[#20252B] outline-none focus:border-[#1C3A5E]";
   return (
     <div className="flex flex-wrap items-center gap-2">
       <select name="periodo" value={valor} onChange={(e) => setValor(e.target.value)} className={campo} aria-label="Período">
@@ -29,7 +29,7 @@ export default function FiltroPeriodo({ periodo, de, ate }: { periodo: string; d
       {valor === "personalizado" && (
         <>
           <input type="date" name="de" defaultValue={de} className={campo} aria-label="De" />
-          <span className="text-xs text-black/40">até</span>
+          <span className="text-[13px] text-[#626B75]">até</span>
           <input type="date" name="ate" defaultValue={ate} className={campo} aria-label="Até" />
         </>
       )}

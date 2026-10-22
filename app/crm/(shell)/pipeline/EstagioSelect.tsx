@@ -33,7 +33,7 @@ export function EstagioSelect({
 
   const selectClass =
     className ??
-    "w-full rounded-lg border border-[#D5DAE0] bg-white px-2.5 py-1.5 text-xs text-[#20252B] outline-none transition focus:border-[#24476B] focus:ring-2 focus:ring-[#24476B]/25";
+    "w-full rounded-lg border border-[#D5DAE0] bg-white px-2.5 py-1.5 text-[13px] text-[#20252B] outline-none transition focus:border-[#24476B] focus:ring-2 focus:ring-[#24476B]/25";
 
   return (
     <form action={action} className="space-y-2">
@@ -62,11 +62,11 @@ export function EstagioSelect({
             name="data"
             required
             defaultValue={new Date().toISOString().slice(0, 10)}
-            className="min-w-0 flex-1 rounded-md border border-black/10 bg-white px-2 py-1 text-xs text-black outline-none transition focus:border-[#1C3A5E] focus:ring-2 focus:ring-[#1C3A5E]/10"
+            className="min-w-0 flex-1 rounded-md border border-black/10 bg-white px-2 py-1 text-[13px] text-[#20252B] outline-none transition focus:border-[#1C3A5E] focus:ring-2 focus:ring-[#1C3A5E]/10"
           />
           <button
             type="submit"
-            className="shrink-0 rounded-md bg-[#1C3A5E] px-2.5 py-1 text-xs font-medium text-white transition hover:bg-[#254a73]"
+            className="shrink-0 rounded-md bg-[#1C3A5E] px-2.5 py-1 text-[13px] font-medium text-white transition hover:bg-[#254a73]"
           >
             Confirmar
           </button>
@@ -75,7 +75,7 @@ export function EstagioSelect({
             onClick={() => setSelecionado(estagioAtual)}
             title="Cancelar"
             aria-label="Cancelar"
-            className="shrink-0 px-1 text-sm leading-none text-black/30 transition hover:text-black/60"
+            className="shrink-0 px-1 text-sm leading-none text-[#626B75] transition hover:text-[#626B75]"
           >
             ×
           </button>

@@ -27,6 +27,8 @@ export type Cliente = {
   telefone: string | null;
   origem: string | null;
   valor_proposta: number | null;
+  // Valor aprovado da contratação (migração 023) — base do Financeiro.
+  valor_contratado?: number | null;
   produto_principal: string | null;
   produto_secundario: string[];
   data_viagem: string | null;

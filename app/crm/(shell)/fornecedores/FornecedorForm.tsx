@@ -2,8 +2,8 @@ import { CATEGORIAS_FORNECEDOR } from "@/lib/crm/fornecedores";
 import type { Fornecedor } from "@/lib/crm/types";
 
 const inputClass =
-  "w-full rounded-xl border border-black/10 bg-white px-4 py-2.5 text-sm text-black placeholder-black/30 outline-none transition focus:border-[#1C3A5E] focus:ring-2 focus:ring-[#1C3A5E]/10";
-const labelClass = "mb-1.5 block text-xs uppercase tracking-[0.15em] text-black/40";
+  "w-full rounded-xl border border-black/10 bg-white px-4 py-2.5 text-sm text-[#20252B] placeholder-black/30 outline-none transition focus:border-[#1C3A5E] focus:ring-2 focus:ring-[#1C3A5E]/10";
+const labelClass = "mb-1.5 block text-[13px] text-[#626B75]";
 
 export function FornecedorForm({
   action,

@@ -1,4 +1,3 @@
-import { Bodoni_Moda } from "next/font/google";
 import Link from "next/link";
 import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
@@ -15,8 +14,6 @@ import { CONFIG_PADRAO, DIAS_SEMANA, gerarHorarios, hojeBrasilia, type Bloqueio,
 // Agenda da pré-entrevista (etapa 4) — página interna do CRM onde a equipe
 // define quando atende e bloqueia horários (Wilson, 06/out/2026).
 
-const display = Bodoni_Moda({ subsets: ["latin"], weight: ["400", "500", "600"] });
-
 export const metadata: Metadata = {
   title: "Agenda de pré-entrevistas — CRM Alpinea",
   robots: { index: false, follow: false, nocache: true, googleBot: { index: false, follow: false } },
@@ -24,7 +21,7 @@ export const metadata: Metadata = {
 
 export const dynamic = "force-dynamic";
 
-const input = "rounded-xl border border-black/10 bg-white px-3 py-2 text-sm text-black outline-none focus:border-[#1C3A5E]";
+const input = "rounded-xl border border-black/10 bg-white px-3 py-2 text-sm text-[#20252B] outline-none focus:border-[#1C3A5E]";
 const botao = "rounded-xl bg-[#1C3A5E] px-4 py-2 text-sm font-medium text-white";
 const hm = (t: string | null) => (t ? t.slice(0, 5) : "");
 
@@ -53,11 +50,11 @@ export default async function AgendaPage({ searchParams }: { searchParams: Promi
 
   return (
     <div>
-      <Link href="/crm/empregos" className="text-xs uppercase tracking-[0.2em] text-black/40 hover:text-black">
+      <Link href="/crm/empregos" className="text-[13px] text-[#626B75] hover:text-[#20252B]">
         ← Empregos
       </Link>
-      <h1 className={`${display.className} mt-3 text-3xl font-medium text-black md:text-4xl`}>Agenda de pré-entrevistas</h1>
-      <p className="mt-2 max-w-2xl text-sm text-black/55">
+      <h1 className={`mt-3 text-3xl font-medium text-[#20252B] md:text-4xl`}>Agenda de pré-entrevistas</h1>
+      <p className="mt-2 max-w-2xl text-sm text-[#626B75]">
         Defina quando a equipe atende e bloqueie datas ou horários. O candidato só vê os horários livres que sobram — tudo em
         horário de Brasília.
       </p>
@@ -71,16 +68,16 @@ export default async function AgendaPage({ searchParams }: { searchParams: Promi
 
       <div className="mt-8 grid gap-6 lg:grid-cols-2">
         <section className="rounded-2xl border border-black/10 bg-white p-5">
-          <h2 className="text-sm font-medium text-black">Horários de atendimento (toda semana)</h2>
+          <h2 className="text-sm font-medium text-[#20252B]">Horários de atendimento (toda semana)</h2>
           <ul className="mt-3 divide-y divide-black/[0.06] text-sm">
-            {(janelas ?? []).length === 0 && <li className="py-2 text-black/40">Nenhum horário cadastrado — o candidato não verá opções.</li>}
+            {(janelas ?? []).length === 0 && <li className="py-2 text-[#626B75]">Nenhum horário cadastrado — o candidato não verá opções.</li>}
             {(janelas ?? []).map((j) => (
               <li key={j.id} className="flex items-center justify-between py-2">
                 <span>
                   <strong className="font-medium">{DIAS_SEMANA[j.dia_semana]}</strong> · {hm(j.inicio)}–{hm(j.fim)}
                 </span>
                 <form action={removerJanelaAgenda.bind(null, j.id)}>
-                  <button className="text-xs text-red-500 hover:underline">Remover</button>
+                  <button className="text-[13px] text-red-500 hover:underline">Remover</button>
                 </form>
               </li>
             ))}
@@ -88,7 +85,7 @@ export default async function AgendaPage({ searchParams }: { searchParams: Promi
           <form action={adicionarJanelaAgenda} className="mt-4 space-y-3 border-t border-black/[0.06] pt-4">
             <div className="flex flex-wrap gap-2">
               {DIAS_SEMANA.map((d, i) => (
-                <label key={d} className="flex items-center gap-1.5 rounded-full border border-black/10 px-3 py-1 text-xs">
+                <label key={d} className="flex items-center gap-1.5 rounded-full border border-black/10 px-3 py-1 text-[13px]">
                   <input type="checkbox" name="dia_semana" value={i} defaultChecked={i >= 1 && i <= 5} />
                   {d.slice(0, 3)}
                 </label>
@@ -96,7 +93,7 @@ export default async function AgendaPage({ searchParams }: { searchParams: Promi
             </div>
             <div className="flex flex-wrap items-center gap-2 text-sm">
               <input type="time" name="inicio" defaultValue="09:00" className={input} required />
-              <span className="text-black/40">até</span>
+              <span className="text-[#626B75]">até</span>
               <input type="time" name="fim" defaultValue="12:00" className={input} required />
               <button className={botao}>Adicionar</button>
             </div>
@@ -104,17 +101,17 @@ export default async function AgendaPage({ searchParams }: { searchParams: Promi
         </section>
 
         <section className="rounded-2xl border border-black/10 bg-white p-5">
-          <h2 className="text-sm font-medium text-black">Restrições (datas/horários bloqueados)</h2>
+          <h2 className="text-sm font-medium text-[#20252B]">Restrições (datas/horários bloqueados)</h2>
           <ul className="mt-3 divide-y divide-black/[0.06] text-sm">
-            {(bloqueios ?? []).length === 0 && <li className="py-2 text-black/40">Nenhuma restrição futura.</li>}
+            {(bloqueios ?? []).length === 0 && <li className="py-2 text-[#626B75]">Nenhuma restrição futura.</li>}
             {(bloqueios ?? []).map((b) => (
               <li key={b.id} className="flex items-center justify-between gap-3 py-2">
                 <span>
                   <strong className="font-medium">{b.data.split("-").reverse().join("/")}</strong> · {b.inicio ? `${hm(b.inicio)}–${hm(b.fim)}` : "dia inteiro"}
-                  {b.motivo && <span className="text-black/45"> · {b.motivo}</span>}
+                  {b.motivo && <span className="text-[#626B75]"> · {b.motivo}</span>}
                 </span>
                 <form action={removerBloqueioAgenda.bind(null, b.id)}>
-                  <button className="text-xs text-red-500 hover:underline">Remover</button>
+                  <button className="text-[13px] text-red-500 hover:underline">Remover</button>
                 </form>
               </li>
             ))}
@@ -122,26 +119,26 @@ export default async function AgendaPage({ searchParams }: { searchParams: Promi
           <form action={adicionarBloqueioAgenda} className="mt-4 space-y-3 border-t border-black/[0.06] pt-4 text-sm">
             <div className="flex flex-wrap items-center gap-2">
               <input type="date" name="data" min={hoje} className={input} required />
-              <span className="text-black/40">até</span>
+              <span className="text-[#626B75]">até</span>
               <input type="date" name="data_fim" min={hoje} className={input} />
-              <label className="flex items-center gap-1.5 text-xs text-black/60">
+              <label className="flex items-center gap-1.5 text-[13px] text-[#626B75]">
                 <input type="checkbox" name="dia_inteiro" defaultChecked /> dia inteiro
               </label>
             </div>
             <div className="flex flex-wrap items-center gap-2">
               <input type="time" name="inicio" className={input} />
-              <span className="text-black/40">até</span>
+              <span className="text-[#626B75]">até</span>
               <input type="time" name="fim" className={input} />
               <input type="text" name="motivo" placeholder="Motivo (opcional)" className={`${input} min-w-[160px] flex-1`} />
               <button className={botao}>Bloquear</button>
             </div>
-            <p className="text-[11px] text-black/40">Para bloquear só um trecho, desmarque &quot;dia inteiro&quot; e informe o horário.</p>
+            <p className="text-[13px] text-[#626B75]">Para bloquear só um trecho, desmarque &quot;dia inteiro&quot; e informe o horário.</p>
           </form>
         </section>
 
         <section className="rounded-2xl border border-black/10 bg-white p-5">
-          <h2 className="text-sm font-medium text-black">Regras</h2>
-          <form action={salvarConfigAgenda} className="mt-3 grid grid-cols-2 gap-3 text-xs text-black/55">
+          <h2 className="text-sm font-medium text-[#20252B]">Regras</h2>
+          <form action={salvarConfigAgenda} className="mt-3 grid grid-cols-2 gap-3 text-[13px] text-[#626B75]">
             <label>
               Duração (min)
               <input type="number" name="duracao_min" defaultValue={config.duracao_min} min={10} max={180} className={`${input} mt-1 w-full`} />
@@ -173,15 +170,15 @@ export default async function AgendaPage({ searchParams }: { searchParams: Promi
         </section>
 
         <section className="rounded-2xl border border-black/10 bg-white p-5">
-          <h2 className="text-sm font-medium text-black">O que o candidato vê agora ({livres.length} horários livres)</h2>
-          <div className="mt-3 max-h-72 space-y-2 overflow-y-auto text-xs">
-            {Object.keys(livresPorDia).length === 0 && <p className="text-black/40">Nenhum horário livre.</p>}
+          <h2 className="text-sm font-medium text-[#20252B]">O que o candidato vê agora ({livres.length} horários livres)</h2>
+          <div className="mt-3 max-h-72 space-y-2 overflow-y-auto text-[13px]">
+            {Object.keys(livresPorDia).length === 0 && <p className="text-[#626B75]">Nenhum horário livre.</p>}
             {Object.entries(livresPorDia).map(([data, horas]) => (
               <div key={data}>
-                <p className="font-medium text-black/70">
+                <p className="font-medium text-[#20252B]">
                   {new Date(`${data}T12:00:00Z`).toLocaleDateString("pt-BR", { weekday: "short", day: "2-digit", month: "2-digit", timeZone: "UTC" })}
                 </p>
-                <p className="mt-0.5 text-black/50">{horas.join(" · ")}</p>
+                <p className="mt-0.5 text-[#626B75]">{horas.join(" · ")}</p>
               </div>
             ))}
           </div>
@@ -189,10 +186,10 @@ export default async function AgendaPage({ searchParams }: { searchParams: Promi
       </div>
 
       <section className="mt-6 rounded-2xl border border-black/10 bg-white p-5">
-        <h2 className="text-sm font-medium text-black">Pré-entrevistas</h2>
+        <h2 className="text-sm font-medium text-[#20252B]">Pré-entrevistas</h2>
         <div className="mt-3 overflow-x-auto">
           <table className="w-full min-w-[640px] text-left text-sm">
-            <thead className="text-[11px] uppercase tracking-[0.12em] text-black/40">
+            <thead className="text-[13px] text-[#626B75]">
               <tr>
                 <th className="py-2 font-medium">Quando (Brasília)</th>
                 <th className="py-2 font-medium">Candidato</th>
@@ -203,7 +200,7 @@ export default async function AgendaPage({ searchParams }: { searchParams: Promi
             <tbody className="divide-y divide-black/[0.06]">
               {(entrevistas ?? []).length === 0 && (
                 <tr>
-                  <td colSpan={4} className="py-6 text-center text-black/40">
+                  <td colSpan={4} className="py-6 text-center text-[#626B75]">
                     Nenhuma pré-entrevista.
                   </td>
                 </tr>
@@ -221,18 +218,18 @@ export default async function AgendaPage({ searchParams }: { searchParams: Promi
                       <Link href={`/crm/empregos/${e.candidatura_id}`} className="font-medium hover:underline">
                         {c ? `${c.nome} ${c.sobrenome}` : "—"}
                       </Link>
-                      <p className="text-xs text-black/45">{c?.telefone}</p>
+                      <p className="text-[13px] text-[#626B75]">{c?.telefone}</p>
                     </td>
-                    <td className="py-2.5 text-xs text-black/60">{c ? `${c.vaga_empresa} — ${c.vaga_titulo}` : ""}</td>
+                    <td className="py-2.5 text-[13px] text-[#626B75]">{c ? `${c.vaga_empresa} — ${c.vaga_titulo}` : ""}</td>
                     <td className="py-2.5">
                       <form action={atualizarStatusEntrevista.bind(null, e.id)} className="flex items-center gap-2">
-                        <select name="status" defaultValue={e.status} className={`${input} py-1 text-xs`}>
+                        <select name="status" defaultValue={e.status} className={`${input} py-1 text-[13px]`}>
                           <option value="agendada">Agendada</option>
                           <option value="realizada">Realizada</option>
                           <option value="faltou">Faltou</option>
                           <option value="cancelada">Cancelada</option>
                         </select>
-                        <button className="text-xs text-[#1C3A5E] underline">Salvar</button>
+                        <button className="text-[13px] text-[#1C3A5E] underline">Salvar</button>
                       </form>
                     </td>
                   </tr>

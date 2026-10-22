@@ -1,0 +1,111 @@
+/*
+ * Tipografia do CRM Alpinea (Wilson, 22/out/2026).
+ * Tokens e regras centralizados aqui; o container .crm-ui vem de
+ * app/crm/layout.tsx. Regras fora de @layer de propósito: no Tailwind v4 os
+ * utilitários ficam em camadas, então estas regras valem sobre text-xs etc.
+ * em títulos, campos, labels e botões — é o que garante a hierarquia.
+ */
+
+.crm-ui {
+  --crm-fonte: var(--font-crm), "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --crm-texto: #20252b;
+  --crm-texto-secundario: #626b75;
+
+  font-family: var(--crm-fonte);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
+  letter-spacing: normal;
+  color: var(--crm-texto);
+  /* Valores, datas, horários e contadores alinham em colunas. */
+  font-variant-numeric: tabular-nums;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* Campos e botões não herdam fonte por padrão no navegador. */
+.crm-ui :is(input, select, textarea, button, optgroup, option) {
+  font-family: inherit;
+  letter-spacing: normal;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Conteúdo dos campos: 16 px (também evita o zoom automático no iOS). */
+.crm-ui
+  :is(
+    input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):not([type="file"]):not([type="color"]),
+    select,
+    textarea
+  ) {
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.4;
+  color: var(--crm-texto);
+}
+.crm-ui :is(input, textarea)::placeholder {
+  color: #8a929b;
+  opacity: 1;
+}
+
+/* Navegação e botões: 14 px / 500. .crm-livre para botões de ícone. */
+.crm-ui button:not(.crm-livre) {
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+/* Labels dos campos: 13 px / 500, sempre visíveis acima do campo. */
+.crm-ui label {
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+/* Títulos */
+.crm-ui :is(h1, h2, h3, h4) {
+  font-family: inherit;
+  letter-spacing: normal;
+  line-height: 1.4;
+}
+.crm-ui h1 {
+  font-size: 28px;
+  font-weight: 600;
+}
+.crm-ui h2 {
+  font-size: 18px;
+  font-weight: 600;
+}
+.crm-ui :is(h3, h4) {
+  font-size: 16px;
+  font-weight: 600;
+}
+@media (max-width: 639px) {
+  .crm-ui h1 {
+    font-size: 24px;
+  }
+}
+
+/* Tokens de uso pontual */
+.crm-ui .crm-etapa {
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 1.4;
+}
+.crm-ui .crm-indicador {
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.4;
+  font-variant-numeric: tabular-nums;
+}
+.crm-ui .crm-secundario {
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--crm-texto-secundario);
+}
+
+/* Nada abaixo de 400 */
+.crm-ui :is(.font-thin, .font-extralight, .font-light) {
+  font-weight: 400;
+}

@@ -51,14 +51,14 @@ export function FornecedoresTable({ fornecedores }: { fornecedores: LinhaFornece
     <div>
       {selecionados.size > 0 && (
         <div className="mb-3 flex items-center justify-between rounded-xl border border-black/5 bg-white px-4 py-2.5 shadow-[0_4px_14px_-8px_rgba(0,0,0,0.15)]">
-          <span className="text-xs text-black/60">
+          <span className="text-[13px] text-[#626B75]">
             {selecionados.size} {selecionados.size === 1 ? "selecionado" : "selecionados"}
           </span>
           <button
             type="button"
             onClick={excluirSelecionados}
             disabled={pending}
-            className="rounded-lg border border-red-200 px-3 py-1.5 text-xs font-medium text-red-600 transition hover:border-red-300 hover:bg-red-50 disabled:opacity-50"
+            className="rounded-lg border border-red-200 px-3 py-1.5 text-[13px] font-medium text-red-600 transition hover:border-red-300 hover:bg-red-50 disabled:opacity-50"
           >
             {pending ? "Excluindo…" : "Excluir selecionados"}
           </button>
@@ -68,7 +68,7 @@ export function FornecedoresTable({ fornecedores }: { fornecedores: LinhaFornece
       <div className="overflow-hidden rounded-2xl border border-black/5 bg-white shadow-[0_1px_2px_rgba(0,0,0,0.04),0_16px_32px_-20px_rgba(0,0,0,0.15)]">
         <table className="w-full text-left text-sm">
           <thead>
-            <tr className="border-b border-black/8 bg-[#FAF9F6] text-xs uppercase tracking-[0.15em] text-black/40">
+            <tr className="border-b border-black/8 bg-[#FAF9F6] text-[13px] text-[#626B75]">
               <th className="w-10 px-5 py-3">
                 <input
                   type="checkbox"
@@ -100,20 +100,20 @@ export function FornecedoresTable({ fornecedores }: { fornecedores: LinhaFornece
                   />
                 </td>
                 <td className="px-5 py-4">
-                  <Link href={`/crm/fornecedores/${f.id}`} className="text-black hover:underline">
+                  <Link href={`/crm/fornecedores/${f.id}`} className="text-[#20252B] hover:underline">
                     {f.nome}
                   </Link>
-                  <p className="mt-0.5 text-xs text-black/40">{f.email || f.telefone || "—"}</p>
+                  <p className="mt-0.5 text-[13px] text-[#626B75]">{f.email || f.telefone || "—"}</p>
                 </td>
-                <td className="hidden px-5 py-4 text-black/60 sm:table-cell">
+                <td className="hidden px-5 py-4 text-[#626B75] sm:table-cell">
                   {f.categoria
                     ? CATEGORIA_FORNECEDOR_LABEL[f.categoria as CategoriaFornecedor]
                     : "—"}
                 </td>
-                <td className="hidden px-5 py-4 text-black/60 md:table-cell">
+                <td className="hidden px-5 py-4 text-[#626B75] md:table-cell">
                   {f.cidade || "—"}
                 </td>
-                <td className="px-5 py-4 text-black/40">
+                <td className="px-5 py-4 text-[#626B75]">
                   {new Date(f.created_at).toLocaleDateString("pt-BR")}
                 </td>
               </tr>

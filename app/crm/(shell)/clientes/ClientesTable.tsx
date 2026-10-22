@@ -61,14 +61,14 @@ export function ClientesTable({ clientes }: { clientes: LinhaCliente[] }) {
     <div>
       {selecionados.size > 0 && (
         <div className="mb-3 flex items-center justify-between rounded-xl border border-black/5 bg-white px-4 py-2.5 shadow-[0_4px_14px_-8px_rgba(0,0,0,0.15)]">
-          <span className="text-xs text-black/60">
+          <span className="text-[13px] text-[#626B75]">
             {selecionados.size} {selecionados.size === 1 ? "selecionado" : "selecionados"}
           </span>
           <button
             type="button"
             onClick={excluirSelecionados}
             disabled={pending}
-            className="rounded-lg border border-red-200 px-3 py-1.5 text-xs font-medium text-red-600 transition hover:border-red-300 hover:bg-red-50 disabled:opacity-50"
+            className="rounded-lg border border-red-200 px-3 py-1.5 text-[13px] font-medium text-red-600 transition hover:border-red-300 hover:bg-red-50 disabled:opacity-50"
           >
             {pending ? "Excluindo…" : "Excluir selecionados"}
           </button>
@@ -78,7 +78,7 @@ export function ClientesTable({ clientes }: { clientes: LinhaCliente[] }) {
       <div className="overflow-hidden rounded-2xl border border-black/5 bg-white shadow-[0_1px_2px_rgba(0,0,0,0.04),0_16px_32px_-20px_rgba(0,0,0,0.15)]">
         <table className="w-full text-left text-sm">
           <thead>
-            <tr className="border-b border-black/8 bg-[#FAF9F6] text-xs uppercase tracking-[0.15em] text-black/40">
+            <tr className="border-b border-black/8 bg-[#FAF9F6] text-[13px] text-[#626B75]">
               <th className="w-10 px-5 py-3">
                 <input
                   type="checkbox"
@@ -91,7 +91,7 @@ export function ClientesTable({ clientes }: { clientes: LinhaCliente[] }) {
               <th className="px-5 py-3 font-medium">Nome</th>
               <th className="hidden px-5 py-3 font-medium md:table-cell">Produto principal</th>
               <th className="hidden px-5 py-3 font-medium sm:table-cell">Estágio</th>
-              <th className="hidden px-5 py-3 font-medium lg:table-cell">Valor da proposta</th>
+              <th className="hidden px-5 py-3 text-right font-medium lg:table-cell">Valor da proposta</th>
               <th className="px-5 py-3 font-medium">Cadastro</th>
             </tr>
           </thead>
@@ -111,23 +111,23 @@ export function ClientesTable({ clientes }: { clientes: LinhaCliente[] }) {
                   />
                 </td>
                 <td className="px-5 py-4">
-                  <Link href={`/crm/clientes/${c.id}`} className="text-black hover:underline">
+                  <Link href={`/crm/clientes/${c.id}`} className="text-[#20252B] hover:underline">
                     {c.nome}
                   </Link>
                   {ehSelfService(c.origem) && (
-                    <span className="ml-2 inline-block rounded-full bg-sky-100 px-2 py-0.5 align-middle text-[9px] font-semibold uppercase tracking-wide text-sky-700">
+                    <span className="ml-2 inline-block rounded-full bg-sky-100 px-2 py-0.5 align-middle text-[13px] font-semibold text-sky-700">
                       {TAG_SELF_SERVICE}
                     </span>
                   )}
-                  <p className="mt-0.5 text-xs text-black/40">{c.email || c.telefone || "—"}</p>
+                  <p className="mt-0.5 text-[13px] text-[#626B75]">{c.email || c.telefone || "—"}</p>
                 </td>
-                <td className="hidden px-5 py-4 text-black/60 md:table-cell">
+                <td className="hidden px-5 py-4 text-[#626B75] md:table-cell">
                   {c.produto_principal
                     ? PRODUTO_PRINCIPAL_LABEL[c.produto_principal as ProdutoPrincipal]
                     : "—"}
                 </td>
                 <td className="hidden px-5 py-4 sm:table-cell">
-                  <span className="inline-flex items-center gap-2 rounded-full border border-black/8 bg-[#FAF9F6] px-3 py-1 text-xs text-black/70">
+                  <span className="inline-flex items-center gap-2 rounded-full border border-black/8 bg-[#FAF9F6] px-3 py-1 text-[13px] text-[#20252B]">
                     <span
                       className="h-1.5 w-1.5 rounded-full"
                       style={{ background: ESTAGIO_COR[c.estagio as Estagio] }}
@@ -135,10 +135,10 @@ export function ClientesTable({ clientes }: { clientes: LinhaCliente[] }) {
                     {ESTAGIO_LABEL[c.estagio as Estagio]}
                   </span>
                 </td>
-                <td className="hidden px-5 py-4 text-black/60 lg:table-cell">
+                <td className="hidden whitespace-nowrap px-5 py-4 text-right text-[#20252B] lg:table-cell">
                   {formatBRL(c.valor_proposta)}
                 </td>
-                <td className="px-5 py-4 text-black/40">
+                <td className="px-5 py-4 text-[#626B75]">
                   {new Date(c.created_at).toLocaleDateString("pt-BR")}
                 </td>
               </tr>

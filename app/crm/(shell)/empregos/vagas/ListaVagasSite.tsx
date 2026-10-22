@@ -68,21 +68,21 @@ export default function ListaVagasSite({ linhas }: { linhas: Linha[] }) {
           placeholder="Buscar ID, empresa, cidade ou função"
           className="h-10 w-full max-w-xs rounded-xl border border-black/15 bg-white px-3 text-sm focus:border-[#1C3A5E] focus:outline-none"
         />
-        <p className="text-sm text-black/55">
-          <span className="font-semibold text-black">{ativas.size}</span> de {linhas.length} ativas no site
+        <p className="text-sm text-[#626B75]">
+          <span className="font-semibold text-[#20252B]">{ativas.size}</span> de {linhas.length} ativas no site
         </p>
         <div className="flex gap-2 sm:ml-auto">
           <button
             type="button"
             onClick={() => aplicar(idsVisiveis.filter((id) => !ativas.has(id)), true)}
-            className="rounded-xl border border-black/15 px-3 py-2 text-xs font-medium text-black/70 hover:border-black/40"
+            className="rounded-xl border border-black/15 px-3 py-2 text-[13px] font-medium text-[#20252B] hover:border-black/40"
           >
             Ativar {busca ? "filtradas" : "todas"}
           </button>
           <button
             type="button"
             onClick={() => aplicar(idsVisiveis.filter((id) => ativas.has(id)), false)}
-            className="rounded-xl border border-black/15 px-3 py-2 text-xs font-medium text-black/70 hover:border-black/40"
+            className="rounded-xl border border-black/15 px-3 py-2 text-[13px] font-medium text-[#20252B] hover:border-black/40"
           >
             Desativar {busca ? "filtradas" : "todas"}
           </button>
@@ -104,12 +104,12 @@ export default function ListaVagasSite({ linhas }: { linhas: Linha[] }) {
                 onChange={(e) => aplicar([l.id], e.target.checked)}
                 className="h-5 w-5 shrink-0 accent-[#1C3A5E]"
               />
-              <span className="hidden w-[84px] shrink-0 font-mono text-xs font-semibold text-[#1C3A5E] sm:block">{l.codigo}</span>
+              <span className="hidden w-[84px] shrink-0 font-mono text-[13px] font-semibold text-[#1C3A5E] sm:block">{l.codigo}</span>
               <label htmlFor={`vaga-${l.id}`} className="min-w-0 flex-1 cursor-pointer">
-                <span className={`block truncate text-sm font-medium ${marcada ? "text-black" : "text-black/45"}`}>
+                <span className={`block truncate text-sm font-medium ${marcada ? "text-[#20252B]" : "text-[#626B75]"}`}>
                   {l.empresa} — {l.titulo}
                 </span>
-                <span className="block text-xs text-black/45">
+                <span className="block text-[13px] text-[#626B75]">
                   <span className="font-mono sm:hidden">{l.codigo} · </span>
                   Publicada em {l.publicadaEm} · {l.local}
                   {l.status === "consulta" && " · sob consulta"}
@@ -118,8 +118,8 @@ export default function ListaVagasSite({ linhas }: { linhas: Linha[] }) {
                 </span>
               </label>
               <span
-                className={`hidden shrink-0 rounded-full px-2.5 py-1 text-[10px] font-semibold uppercase tracking-[0.1em] sm:inline ${
-                  marcada ? "bg-emerald-50 text-emerald-700" : "bg-black/[0.05] text-black/45"
+                className={`hidden shrink-0 rounded-full px-2.5 py-1 text-[13px] font-semibold sm:inline ${
+                  marcada ? "bg-emerald-50 text-emerald-700" : "bg-black/[0.05] text-[#626B75]"
                 }`}
               >
                 {marcada ? "No site" : "Oculta"}
@@ -127,14 +127,14 @@ export default function ListaVagasSite({ linhas }: { linhas: Linha[] }) {
               <Link
                 href={`/empregos/vagas/${l.id}`}
                 target="_blank"
-                className="shrink-0 text-xs font-medium text-[#1C3A5E] underline decoration-[#1C3A5E]/30 underline-offset-2"
+                className="shrink-0 text-[13px] font-medium text-[#1C3A5E] underline decoration-[#1C3A5E]/30 underline-offset-2"
               >
                 Ver página
               </Link>
             </li>
           );
         })}
-        {visiveis.length === 0 && <li className="px-4 py-6 text-sm text-black/45">Nenhuma vaga com essa busca.</li>}
+        {visiveis.length === 0 && <li className="px-4 py-6 text-sm text-[#626B75]">Nenhuma vaga com essa busca.</li>}
       </ul>
     </div>
   );

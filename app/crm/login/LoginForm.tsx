@@ -4,16 +4,14 @@ import { useSearchParams } from "next/navigation";
 
 export function LoginForm({
   action,
-  displayClassName,
 }: {
   action: (formData: FormData) => void;
-  displayClassName: string;
 }) {
   const searchParams = useSearchParams();
   const showError = searchParams.get("erro") === "1";
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-[#FAF9F6] px-6 text-black">
+    <main className="flex min-h-screen items-center justify-center bg-[#FAF9F6] px-6 text-[#20252B]">
       <form
         action={action}
         className="w-full max-w-sm space-y-5 rounded-2xl border border-black/5 bg-white p-8 shadow-[0_1px_2px_rgba(0,0,0,0.04),0_30px_70px_-30px_rgba(0,0,0,0.25)]"
@@ -26,7 +24,7 @@ export function LoginForm({
             className="mx-auto h-12 w-auto"
           />
           <p
-            className={`${displayClassName} mt-4 text-xs uppercase tracking-[0.35em] text-black/40`}
+            className="mt-4 text-[13px] text-[#626B75]"
           >
             CRM · Acesso restrito
           </p>
@@ -38,7 +36,7 @@ export function LoginForm({
           placeholder="E-mail"
           required
           autoFocus
-          className="w-full rounded-xl border border-black/10 bg-white px-4 py-3 text-sm text-black placeholder-black/30 outline-none transition focus:border-[#1C3A5E] focus:ring-2 focus:ring-[#1C3A5E]/10"
+          className="w-full rounded-xl border border-black/10 bg-white px-4 py-3 text-sm text-[#20252B] placeholder-black/30 outline-none transition focus:border-[#1C3A5E] focus:ring-2 focus:ring-[#1C3A5E]/10"
         />
 
         <input
@@ -46,11 +44,11 @@ export function LoginForm({
           name="password"
           placeholder="Senha"
           required
-          className="w-full rounded-xl border border-black/10 bg-white px-4 py-3 text-sm text-black placeholder-black/30 outline-none transition focus:border-[#1C3A5E] focus:ring-2 focus:ring-[#1C3A5E]/10"
+          className="w-full rounded-xl border border-black/10 bg-white px-4 py-3 text-sm text-[#20252B] placeholder-black/30 outline-none transition focus:border-[#1C3A5E] focus:ring-2 focus:ring-[#1C3A5E]/10"
         />
 
         {showError && (
-          <p className="text-xs text-red-600">E-mail ou senha incorretos. Tente novamente.</p>
+          <p className="text-[13px] text-red-600">E-mail ou senha incorretos. Tente novamente.</p>
         )}
 
         <button

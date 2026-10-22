@@ -17,7 +17,7 @@ const ORIGENS = [
 
 const inputClass =
   "w-full rounded-xl border border-[#D5DAE0] bg-white px-4 py-2.5 text-sm text-[#20252B] placeholder-[#9AA2AB] outline-none transition focus:border-[#24476B] focus:ring-2 focus:ring-[#24476B]/25";
-const labelClass = "mb-1.5 block text-xs uppercase tracking-[0.15em] text-[#626B75]";
+const labelClass = "mb-1.5 block text-[13px] text-[#626B75]";
 
 function ProdutoCard({
   type,
@@ -49,7 +49,7 @@ function ProdutoCard({
       // Cores por grupo (Wilson, 22/out/2026): não selecionado = branco com
       // borda #D5DAE0; selecionado = azul suave #EAF1F8, borda de 2 px
       // #24476B (1 px de borda + 1 px de ring, sem pular o layout) e check.
-      className="group relative flex cursor-pointer flex-col items-center gap-2.5 rounded-xl border border-[#D5DAE0] bg-white p-3.5 text-center transition hover:border-[#24476B]/50 has-[:checked]:border-[#24476B] has-[:checked]:bg-[#EAF1F8] has-[:checked]:ring-1 has-[:checked]:ring-[#24476B] has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-[#24476B]/40"
+      className="group relative flex h-full min-h-[112px] cursor-pointer flex-col items-center justify-center gap-2.5 rounded-xl border border-[#D5DAE0] bg-white p-3.5 text-center transition hover:border-[#24476B]/50 has-[:checked]:border-[#24476B] has-[:checked]:bg-[#EAF1F8] has-[:checked]:ring-1 has-[:checked]:ring-[#24476B] has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-[#24476B]/40"
     >
       <input type={type} name={name} value={value} defaultChecked={defaultChecked} className="peer sr-only" />
       <span
@@ -61,7 +61,7 @@ function ProdutoCard({
         </svg>
       </span>
       {icone && <img src={icone} alt="" className={`h-10 w-10 object-contain ${filtro}`} />}
-      <span className="text-xs font-medium leading-tight text-[#626B75] transition peer-checked:font-semibold peer-checked:text-[#24476B]">
+      <span className="text-[13px] font-medium leading-tight text-[#626B75] transition peer-checked:font-semibold peer-checked:text-[#24476B]">
         {label}
       </span>
     </label>
@@ -205,7 +205,7 @@ export function ClienteForm({
 
         <div className="sm:col-span-2">
           <label className={labelClass}>Produto principal</label>
-          <div className="grid grid-cols-3 gap-2.5 sm:grid-cols-5">
+          <div className="grid grid-cols-3 gap-2.5 sm:grid-cols-4">
             {PRODUTOS_PRINCIPAIS.map((p) => (
               <ProdutoCard
                 key={p.valor}

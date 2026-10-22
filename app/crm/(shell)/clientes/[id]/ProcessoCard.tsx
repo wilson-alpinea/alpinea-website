@@ -121,11 +121,11 @@ export function ProcessoCard({
       className="flex flex-col rounded-2xl border border-t-[3px] border-black/[0.06] p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04),0_16px_32px_-20px_rgba(0,0,0,0.15)]"
       style={{ backgroundColor: tema.fundo, borderTopColor: tema.destaque }}
     >
-      <div className="flex items-baseline justify-between gap-3">
-        <h2 className="text-[11px] font-semibold uppercase tracking-[0.2em]" style={{ color: tema.destaque }}>
+      <div className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1">
+        <h2 className="font-semibold" style={{ color: tema.destaque }}>
           {titulo}
         </h2>
-        <p className={`text-[10px] font-medium uppercase tracking-[0.2em] ${corIndicador}`}>{indicador}</p>
+        <p className={`crm-indicador shrink-0 ${corIndicador}`}>{indicador}</p>
       </div>
 
       {/* Barra de 5 segmentos — tooltip no hover e no foco pelo teclado. */}
@@ -153,7 +153,7 @@ export function ProcessoCard({
                 />
                 <span
                   role="tooltip"
-                  className={`pointer-events-none absolute bottom-full z-10 mb-1.5 whitespace-nowrap rounded-md px-2 py-1 text-[11px] text-white opacity-0 shadow-sm transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100 ${alinhamento}`}
+                  className={`pointer-events-none absolute bottom-full z-10 mb-1.5 whitespace-nowrap rounded-md px-2 py-1 text-[13px] text-white opacity-0 shadow-sm transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100 ${alinhamento}`}
                   style={{ backgroundColor: GRAFITE }}
                 >
                   {nome} · {situacaoSegmento(i)}
@@ -164,9 +164,9 @@ export function ProcessoCard({
         })}
       </div>
 
-      <p className="mt-4 text-lg font-medium leading-snug text-[#20252B]">{resumo.etapaAtual}</p>
+      <p className="crm-etapa mt-4 text-[#20252B]">{resumo.etapaAtual}</p>
       {dataFormatada && situacao !== "aguardando" && (
-        <p className="mt-0.5 text-xs text-[#626B75]">
+        <p className="mt-0.5 text-[13px] text-[#626B75]">
           {situacao === "concluido" ? "Concluído em" : situacao === "perdido" ? "Encerrado em" : "Desde"} {dataFormatada}
         </p>
       )}
@@ -175,10 +175,10 @@ export function ProcessoCard({
           Próxima etapa: <span className="text-[#20252B]">{resumo.proximaEtapa}</span>
         </p>
       )}
-      {aviso && <p className="mt-2 text-xs text-[#626B75]">{aviso}</p>}
+      {aviso && <p className="mt-2 text-[13px] text-[#626B75]">{aviso}</p>}
 
       {extras.length > 0 && (
-        <dl className="mt-3 space-y-1 border-t border-black/[0.06] pt-3 text-xs">
+        <dl className="mt-3 space-y-1 border-t border-black/[0.06] pt-3 text-[13px]">
           {extras.map((e) => (
             <div key={e.rotulo} className="flex gap-2">
               <dt className="text-[#626B75]">{e.rotulo}:</dt>
@@ -195,7 +195,7 @@ export function ProcessoCard({
             onClick={() => setAlterandoEm(alterando ? null : estagioAtualSelect)}
             aria-expanded={alterando}
             aria-controls={painelId}
-            className="rounded-full border border-[var(--destaque)] bg-white px-4 py-1.5 text-xs font-medium text-[var(--destaque)] outline-none transition hover:bg-[var(--destaque)] hover:text-white focus-visible:ring-2 focus-visible:ring-[var(--destaque)]/40 focus-visible:ring-offset-2"
+            className="rounded-full border border-[var(--destaque)] bg-white px-4 py-1.5 text-[13px] font-medium text-[var(--destaque)] outline-none transition hover:bg-[var(--destaque)] hover:text-white focus-visible:ring-2 focus-visible:ring-[var(--destaque)]/40 focus-visible:ring-offset-2"
             style={{ ["--destaque" as string]: tema.destaque }}
           >
             Alterar etapa
@@ -203,14 +203,14 @@ export function ProcessoCard({
           <button
             type="button"
             onClick={() => setHistoricoAberto(true)}
-            className="rounded-full px-3 py-1.5 text-xs font-medium text-[#626B75] outline-none transition hover:bg-black/5 hover:text-[#20252B] focus-visible:ring-2 focus-visible:ring-[#626B75]/40"
+            className="rounded-full px-3 py-1.5 text-[13px] font-medium text-[#626B75] outline-none transition hover:bg-black/5 hover:text-[#20252B] focus-visible:ring-2 focus-visible:ring-[#626B75]/40"
           >
             Ver histórico
           </button>
         </div>
         {alterando && (
           <div id={painelId} className="mt-3 rounded-xl border border-[#D5DAE0] bg-white p-3">
-            <p className="mb-2 text-[11px] text-[#626B75]">Escolha a etapa e a data em que o cliente entrou nela.</p>
+            <p className="mb-2 text-[13px] text-[#626B75]">Escolha a etapa e a data em que o cliente entrou nela.</p>
             <EstagioSelect
               action={action}
               estagios={opcoes}
@@ -260,38 +260,38 @@ function PainelHistorico({
       <aside className="relative flex h-full w-full max-w-md flex-col bg-white shadow-2xl">
         <header className="flex items-center justify-between border-b border-black/5 px-6 py-5">
           <div>
-            <p className="text-[10px] uppercase tracking-[0.25em] text-black/40">Histórico</p>
-            <h2 className="mt-0.5 text-lg font-medium text-black">{titulo}</h2>
+            <p className="text-[13px] text-[#626B75]">Histórico</p>
+            <h2 className="mt-0.5 text-lg font-medium text-[#20252B]">{titulo}</h2>
           </div>
           <button
             type="button"
             onClick={onFechar}
             autoFocus
             aria-label="Fechar"
-            className="rounded-full px-2 py-1 text-xl leading-none text-black/40 transition hover:bg-black/5 hover:text-black"
+            className="crm-livre rounded-full px-2 py-1 text-xl leading-none text-[#626B75] transition hover:bg-black/5 hover:text-[#20252B]"
           >
             ×
           </button>
         </header>
         <div className="flex-1 overflow-y-auto px-6 py-5">
           {eventos.length === 0 ? (
-            <p className="text-sm text-black/45">Nenhuma mudança de etapa registrada ainda.</p>
+            <p className="text-sm text-[#626B75]">Nenhuma mudança de etapa registrada ainda.</p>
           ) : (
             <ol className="space-y-5">
               {eventos.map((e) => (
                 <li key={e.id} className="border-l-2 border-[#1C3A5E]/15 pl-4">
-                  <p className="text-xs text-black/45">
+                  <p className="text-[13px] text-[#626B75]">
                     {formatarDataCurta(e.data) ?? "Sem data"}
-                    {!e.dataInformada && <span className="text-black/30"> · data do registro</span>}
+                    {!e.dataInformada && <span className="text-[#626B75]"> · data do registro</span>}
                   </p>
-                  <p className="mt-0.5 text-sm font-medium text-black">{e.titulo}</p>
-                  {e.conteudo && <p className="mt-1 text-sm leading-relaxed text-black/60">{e.conteudo}</p>}
-                  {e.autor && <p className="mt-1 text-xs text-black/35">— {e.autor}</p>}
+                  <p className="mt-0.5 text-sm font-medium text-[#20252B]">{e.titulo}</p>
+                  {e.conteudo && <p className="mt-1 text-sm leading-normal text-[#626B75]">{e.conteudo}</p>}
+                  {e.autor && <p className="mt-1 text-[13px] text-[#626B75]">— {e.autor}</p>}
                 </li>
               ))}
             </ol>
           )}
-          <p className="mt-6 text-[11px] leading-relaxed text-black/35">
+          <p className="mt-6 text-[13px] leading-normal text-[#626B75]">
             Mostra só as mudanças registradas no sistema. Etapas sem registro não têm data.
           </p>
         </div>

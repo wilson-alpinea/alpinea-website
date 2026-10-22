@@ -4,7 +4,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { ESTAGIOS, ESTAGIO_COR } from "@/lib/crm/estagios";
 import { PRODUTO_PRINCIPAL_LABEL, type ProdutoPrincipal } from "@/lib/crm/produtos";
 import type { Estagio } from "@/lib/crm/types";
-import { PortalShell, displayPortal } from "../PortalShell";
+import { PortalShell } from "../PortalShell";
 
 // Portal do parceiro da agência (Wilson, 21/out/2026): vê SOMENTE os leads
 // gerados por ele, sem editar. Leitura com service role, filtrando pelo
@@ -49,8 +49,8 @@ export default async function PortalParceiroPage() {
 
   return (
     <PortalShell titulo="Parceiros" empresa={acesso.parceiro.nome} usuario={acesso.email}>
-      <p className="mb-2 text-xs uppercase tracking-[0.3em] text-black/40">Leads indicados por você</p>
-      <h1 className={`${displayPortal.className} text-3xl font-medium md:text-4xl`}>Meus leads</h1>
+      <p className="mb-2 text-[13px] text-[#626B75]">Leads indicados por você</p>
+      <h1 className={`text-3xl font-medium md:text-4xl`}>Meus leads</h1>
 
       <div className="mt-6 grid grid-cols-2 gap-3 lg:grid-cols-4">
         {[
@@ -60,16 +60,16 @@ export default async function PortalParceiroPage() {
           ["Conversão", leads.length ? `${Math.round((ganhos / leads.length) * 100)}%` : "—"],
         ].map(([r, v]) => (
           <div key={r} className="rounded-xl border border-black/5 bg-white p-4">
-            <p className="text-[10px] uppercase tracking-[0.14em] text-black/45">{r}</p>
+            <p className="text-[13px] text-[#626B75]">{r}</p>
             <p className="mt-1 text-2xl font-medium tabular-nums">{v}</p>
           </div>
         ))}
       </div>
 
       <div className="mt-4 rounded-xl border border-black/5 bg-white p-4 text-sm">
-        <p className="text-[10px] uppercase tracking-[0.14em] text-black/45">Seu link de indicação</p>
+        <p className="text-[13px] text-[#626B75]">Seu link de indicação</p>
         <code className="mt-1 block break-all text-[13px] text-[#1C3A5E]">{link}</code>
-        <p className="mt-1 text-xs text-black/45">
+        <p className="mt-1 text-[13px] text-[#626B75]">
           Todo pedido feito no site em até 30 dias depois de abrir o seu link aparece aqui. O parâmetro funciona em qualquer página, ex.:
           alpinea.io/produtos/jrpass?parceiro={acesso.parceiro.slug}
         </p>
@@ -83,20 +83,20 @@ export default async function PortalParceiroPage() {
               <div className="flex items-center justify-between border-b border-black/10 px-3 py-3">
                 <span className="flex items-center gap-1.5">
                   <span className="h-1.5 w-1.5 rounded-full" style={{ background: ESTAGIO_COR[e.valor] }} />
-                  <span className="text-[10px] font-medium uppercase tracking-[0.08em] text-black/70">{e.label}</span>
+                  <span className="text-[13px] font-medium text-[#20252B]">{e.label}</span>
                 </span>
-                <span className="text-xs text-black/30">{doEstagio.length}</span>
+                <span className="text-[13px] text-[#626B75]">{doEstagio.length}</span>
               </div>
               <div className="space-y-2 p-2.5">
-                {doEstagio.length === 0 && <p className="py-3 text-center text-xs text-black/20">Vazio</p>}
+                {doEstagio.length === 0 && <p className="py-3 text-center text-[13px] text-black/20">Vazio</p>}
                 {doEstagio.map((l) => (
                   <div key={l.id} className="rounded-xl border border-black/10 p-3">
                     <p className="text-sm font-medium">{l.nome}</p>
                     {l.produto_principal && (
-                      <p className="text-xs text-black/45">{PRODUTO_PRINCIPAL_LABEL[l.produto_principal as ProdutoPrincipal] ?? l.produto_principal}</p>
+                      <p className="text-[13px] text-[#626B75]">{PRODUTO_PRINCIPAL_LABEL[l.produto_principal as ProdutoPrincipal] ?? l.produto_principal}</p>
                     )}
-                    <p className="mt-1 text-xs text-black/55">{brl(l.valor_proposta)}</p>
-                    <p className="text-[11px] text-black/35">Entrou em {data(l.created_at)}</p>
+                    <p className="mt-1 text-[13px] text-[#626B75]">{brl(l.valor_proposta)}</p>
+                    <p className="text-[13px] text-[#626B75]">Entrou em {data(l.created_at)}</p>
                   </div>
                 ))}
               </div>
@@ -106,7 +106,7 @@ export default async function PortalParceiroPage() {
       </div>
 
       {leads.some((l) => l.arquivado_em) && (
-        <p className="mt-6 text-xs text-black/45">
+        <p className="mt-6 text-[13px] text-[#626B75]">
           {leads.filter((l) => l.arquivado_em).length} lead(s) arquivado(s) por inatividade não aparecem no quadro, mas contam nos números acima.
         </p>
       )}

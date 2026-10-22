@@ -13,7 +13,7 @@ import {
 export type ParceiroOpcao = { id: string; nome: string; tipo: "agencia" | "empreiteira"; ativo: boolean };
 
 const campo = "mt-1 block w-full rounded-lg border border-black/15 bg-white px-3 py-2 text-sm outline-none focus:border-[#1C3A5E]";
-const rotulo = "text-[11px] uppercase tracking-[0.12em] text-black/50";
+const rotulo = "text-[13px] text-[#626B75]";
 const botao = "rounded-lg bg-[#1C3A5E] px-4 py-2 text-sm font-medium text-white transition hover:bg-[#254a73] disabled:opacity-50";
 
 function Retorno({ estado }: { estado: ResultadoAcesso | null }) {
@@ -22,7 +22,7 @@ function Retorno({ estado }: { estado: ResultadoAcesso | null }) {
     <div className={`mt-3 rounded-lg px-3 py-2 text-sm ${estado.ok ? "bg-emerald-50 text-emerald-900" : "bg-red-50 text-red-700"}`}>
       <p>{estado.mensagem}</p>
       {estado.senha && (
-        <p className="mt-1 break-all font-mono text-xs">
+        <p className="mt-1 break-all font-mono text-[13px]">
           {estado.email ? `E-mail: ${estado.email} · ` : ""}Senha: <strong>{estado.senha}</strong>
         </p>
       )}
@@ -131,10 +131,10 @@ export function EditarUsuario({
   const [estado, acao, pendente] = useActionState(alterarAcessoUsuario, null);
   const [estadoSenha, acaoSenha, pendenteSenha] = useActionState(redefinirSenhaUsuario, null);
   const [aberto, setAberto] = useState(false);
-  if (ehVoce) return <span className="text-xs text-black/40">Você</span>;
+  if (ehVoce) return <span className="text-[13px] text-[#626B75]">Você</span>;
   return (
     <div>
-      <button type="button" onClick={() => setAberto((a) => !a)} className="text-xs text-[#1C3A5E] underline">
+      <button type="button" onClick={() => setAberto((a) => !a)} className="text-[13px] text-[#1C3A5E] underline">
         {aberto ? "Fechar" : "Alterar"}
       </button>
       {aberto && (
@@ -149,7 +149,7 @@ export function EditarUsuario({
           <Retorno estado={estado} />
           <form action={acaoSenha} className="mt-3 border-t border-black/10 pt-3">
             <input type="hidden" name="user_id" value={userId} />
-            <button type="submit" disabled={pendenteSenha} className="text-xs text-black/60 underline">
+            <button type="submit" disabled={pendenteSenha} className="text-[13px] text-[#626B75] underline">
               {pendenteSenha ? "Gerando…" : "Gerar nova senha"}
             </button>
           </form>
@@ -182,7 +182,7 @@ export function VagaEmpreiteiraSelect({ vagaId, atual, empreiteiras }: { vagaId:
             }
           });
         }}
-        className="w-full min-w-0 rounded-lg border border-black/15 bg-white px-2 py-1.5 text-xs"
+        className="w-full min-w-0 rounded-lg border border-black/15 bg-white px-2 py-1.5 text-[13px]"
       >
         <option value="">— sem empreiteira —</option>
         {empreiteiras.map((p) => (
@@ -191,7 +191,7 @@ export function VagaEmpreiteiraSelect({ vagaId, atual, empreiteiras }: { vagaId:
           </option>
         ))}
       </select>
-      {erro && <span className="text-xs text-red-600">erro</span>}
+      {erro && <span className="text-[13px] text-red-600">erro</span>}
     </span>
   );
 }

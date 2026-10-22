@@ -14,7 +14,7 @@ export default async function SemAcessoPage() {
     <PortalShell titulo="CRM" empresa="Alpinea" usuario={acesso?.email ?? ""}>
       <div className="mx-auto max-w-md rounded-2xl border border-black/5 bg-white p-6 text-center">
         <h1 className="text-lg font-medium">Seu acesso ainda não foi liberado</h1>
-        <p className="mt-2 text-sm text-black/60">
+        <p className="mt-2 text-sm text-[#626B75]">
           Peça para a equipe da Alpinea liberar o seu usuário. Se a sua empresa foi desativada, fale com o seu contato na Alpinea.
         </p>
       </div>

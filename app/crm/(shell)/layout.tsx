@@ -1,14 +1,8 @@
-import { Bodoni_Moda } from "next/font/google";
 import Link from "next/link";
 import { headers } from "next/headers";
 import { exigirAdmin } from "@/lib/crm/acesso";
 import { urlUnidade } from "@/lib/crm/unidades";
 import { logout } from "../actions";
-
-const display = Bodoni_Moda({
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
-});
 
 // Dois CRMs (Wilson, 21/out/2026): agência de viagens e empregos, cada um
 // com o próprio menu. A unidade vem do proxy.ts (header x-crm-unidade).
@@ -39,7 +33,7 @@ export default async function CrmShellLayout({
   const rotuloUnidade = unidade === "empregos" ? "Empregos" : "Agência";
 
   return (
-    <div className="min-h-screen bg-[#FAF9F6] text-black">
+    <div className="min-h-screen bg-[#FAF9F6] text-[#20252B]">
       <header className="sticky top-0 z-50 border-b border-white/10 bg-black backdrop-blur">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-6 px-6 py-4 md:px-10">
           <div className="flex min-w-0 items-center gap-6 lg:gap-8">
@@ -53,11 +47,11 @@ export default async function CrmShellLayout({
               <span className="hidden h-9 w-px bg-white/15 sm:block" />
               {/* Unidade embaixo de "CRM" para não invadir o menu (Wilson, 21/out/2026). */}
               <span className="hidden flex-col leading-none sm:flex">
-                <span className={`${display.className} text-4xl tracking-[0.03em] text-white sm:text-5xl`}>CRM</span>
-                <span className="mt-1 text-[10px] uppercase tracking-[0.3em] text-white/45">{rotuloUnidade}</span>
+                <span className="text-[28px] font-semibold leading-[1.1] text-white sm:text-[32px]">CRM</span>
+                <span className="mt-1 text-[13px] text-white/45">{rotuloUnidade}</span>
               </span>
             </Link>
-            <nav className="hidden items-center gap-5 whitespace-nowrap text-sm text-white/50 md:flex lg:gap-6">
+            <nav className="hidden items-center gap-5 whitespace-nowrap text-sm font-medium text-white/65 md:flex lg:gap-6">
               {NAV.map((item) => (
                 <Link
                   key={item.href}
@@ -74,17 +68,17 @@ export default async function CrmShellLayout({
             {/* Trocar para o outro CRM (Wilson, 21/out/2026). */}
             <a
               href={urlUnidade(unidade === "empregos" ? "agencia" : "empregos")}
-              className="hidden whitespace-nowrap text-xs text-white/45 underline-offset-4 transition hover:text-white hover:underline lg:inline"
+              className="hidden whitespace-nowrap text-[13px] text-white/45 underline-offset-4 transition hover:text-white hover:underline lg:inline"
             >
               CRM {unidade === "empregos" ? "Agência" : "Empregos"} →
             </a>
-            <span className="hidden text-xs uppercase tracking-[0.2em] text-white/35 xl:inline">
+            <span className="hidden text-[13px] text-white/35 xl:inline">
               {nomeExibicao}
             </span>
             <form action={logout}>
               <button
                 type="submit"
-                className="rounded-full border border-white/15 px-4 py-1.5 text-xs uppercase tracking-[0.15em] text-white/50 transition hover:border-white/40 hover:text-white"
+                className="rounded-full border border-white/15 px-4 py-1.5 text-[13px] text-white/50 transition hover:border-white/40 hover:text-white"
               >
                 Sair
               </button>
@@ -92,7 +86,7 @@ export default async function CrmShellLayout({
           </div>
         </div>
 
-        <nav className="flex items-center gap-5 overflow-x-auto border-t border-white/10 px-6 py-2.5 text-sm text-white/50 md:hidden">
+        <nav className="flex items-center gap-5 overflow-x-auto border-t border-white/10 px-6 py-2.5 text-sm font-medium text-white/65 md:hidden">
           {NAV.map((item) => (
             <Link key={item.href} href={item.href} className="whitespace-nowrap transition hover:text-white">
               {item.label}
