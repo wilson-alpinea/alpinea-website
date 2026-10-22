@@ -10,9 +10,27 @@ import { formatarDataCurta, type EventoHistorico, type ResumoProcesso } from "@/
 // A barra é só leitura: clicar abre o histórico; o status só muda por
 // "Alterar etapa".
 
-const AZUL_ESCURO = "#1C3A5E";
-const AZUL_MEDIO = "#4A78B0";
-const CINZA = "rgba(0,0,0,0.09)";
+// Paleta por grupo (Wilson, 22/out/2026). As cores do grupo são fixas;
+// verde/vermelho só aparecem como cor de STATUS (concluído/perdido).
+const TEMAS = {
+  comercial: {
+    fundo: "#F2F6FC",
+    destaque: "#24476B",
+    concluida: "#24476B",
+    atual: "#527EAD",
+    futura: "#DDE3EA",
+  },
+  execucao: {
+    fundo: "#F0F7F5",
+    destaque: "#28665D",
+    concluida: "#28665D",
+    atual: "#4F8D81",
+    futura: "#DDE5E2",
+  },
+} as const;
+export type TemaProcesso = keyof typeof TEMAS;
+
+const GRAFITE = "#20252B";
 const VERDE = "rgba(58,140,90,0.7)";
 const VERMELHO = "rgba(190,70,70,0.6)";
 const CINZA_ALCANCADO = "rgba(0,0,0,0.28)";
@@ -21,6 +39,7 @@ type Extra = { rotulo: string; valor: string };
 
 export function ProcessoCard({
   titulo,
+  tema: nomeTema,
   etapas,
   resumo,
   dataEntrada,
@@ -33,6 +52,7 @@ export function ProcessoCard({
   placeholderSelect,
 }: {
   titulo: string;
+  tema: TemaProcesso;
   etapas: readonly string[];
   resumo: ResumoProcesso;
   dataEntrada: string | null;
@@ -52,19 +72,20 @@ export function ProcessoCard({
   const fecharHistorico = useCallback(() => setHistoricoAberto(false), []);
   const painelId = useId();
 
+  const tema = TEMAS[nomeTema];
   const { situacao, indiceAtual, indiceAlcancado } = resumo;
   const dataFormatada = formatarDataCurta(dataEntrada);
 
   function corSegmento(i: number) {
     if (situacao === "concluido") return VERDE;
-    if (situacao === "aguardando") return CINZA;
+    if (situacao === "aguardando") return tema.futura;
     if (situacao === "perdido") {
       if (i === 4) return VERMELHO;
-      return i <= indiceAlcancado ? CINZA_ALCANCADO : CINZA;
+      return i <= indiceAlcancado ? CINZA_ALCANCADO : tema.futura;
     }
-    if (i < indiceAtual) return AZUL_ESCURO;
-    if (i === indiceAtual) return AZUL_MEDIO;
-    return CINZA;
+    if (i < indiceAtual) return tema.concluida;
+    if (i === indiceAtual) return tema.atual;
+    return tema.futura;
   }
 
   function situacaoSegmento(i: number) {
@@ -93,12 +114,17 @@ export function ProcessoCard({
       ? "text-[rgba(58,140,90,1)]"
       : situacao === "perdido"
         ? "text-[rgba(190,70,70,0.9)]"
-        : "text-black/40";
+        : "text-[#626B75]";
 
   return (
-    <section className="flex flex-col rounded-2xl border border-black/5 bg-white p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04),0_16px_32px_-20px_rgba(0,0,0,0.15)]">
+    <section
+      className="flex flex-col rounded-2xl border border-t-[3px] border-black/[0.06] p-6 shadow-[0_1px_2px_rgba(0,0,0,0.04),0_16px_32px_-20px_rgba(0,0,0,0.15)]"
+      style={{ backgroundColor: tema.fundo, borderTopColor: tema.destaque }}
+    >
       <div className="flex items-baseline justify-between gap-3">
-        <h2 className="text-[11px] font-medium uppercase tracking-[0.2em] text-[#1C3A5E]">{titulo}</h2>
+        <h2 className="text-[11px] font-semibold uppercase tracking-[0.2em]" style={{ color: tema.destaque }}>
+          {titulo}
+        </h2>
         <p className={`text-[10px] font-medium uppercase tracking-[0.2em] ${corIndicador}`}>{indicador}</p>
       </div>
 
@@ -114,15 +140,21 @@ export function ProcessoCard({
                 type="button"
                 onClick={() => setHistoricoAberto(true)}
                 aria-label={`${nome}: ${situacaoSegmento(i)}. Abrir histórico`}
-                className="group relative flex h-4 w-full items-center rounded outline-none focus-visible:ring-2 focus-visible:ring-[#4A78B0]/40"
+                className="group relative flex h-4 w-full items-center rounded outline-none focus-visible:ring-2 focus-visible:ring-[var(--destaque)]/40"
+                style={{ ["--destaque" as string]: tema.destaque }}
               >
+                {/* Etapa atual: um pouco mais alta e com contorno discreto. */}
                 <span
-                  className={`block w-full rounded-full transition-colors ${atual ? "h-2 shadow-[0_0_0_3px_rgba(74,120,176,0.18)]" : "h-1.5"}`}
-                  style={{ backgroundColor: corSegmento(i) }}
+                  className={`block w-full rounded-full transition-colors ${atual ? "h-2" : "h-1.5"}`}
+                  style={{
+                    backgroundColor: corSegmento(i),
+                    boxShadow: atual ? `0 0 0 1px #fff, 0 0 0 2.5px ${tema.atual}` : undefined,
+                  }}
                 />
                 <span
                   role="tooltip"
-                  className={`pointer-events-none absolute bottom-full z-10 mb-1.5 whitespace-nowrap rounded-md bg-[#1C3A5E] px-2 py-1 text-[11px] text-white opacity-0 shadow-sm transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100 ${alinhamento}`}
+                  className={`pointer-events-none absolute bottom-full z-10 mb-1.5 whitespace-nowrap rounded-md px-2 py-1 text-[11px] text-white opacity-0 shadow-sm transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100 ${alinhamento}`}
+                  style={{ backgroundColor: GRAFITE }}
                 >
                   {nome} · {situacaoSegmento(i)}
                 </span>
@@ -132,25 +164,25 @@ export function ProcessoCard({
         })}
       </div>
 
-      <p className="mt-4 text-lg font-medium leading-snug text-black">{resumo.etapaAtual}</p>
+      <p className="mt-4 text-lg font-medium leading-snug text-[#20252B]">{resumo.etapaAtual}</p>
       {dataFormatada && situacao !== "aguardando" && (
-        <p className="mt-0.5 text-xs text-black/45">
+        <p className="mt-0.5 text-xs text-[#626B75]">
           {situacao === "concluido" ? "Concluído em" : situacao === "perdido" ? "Encerrado em" : "Desde"} {dataFormatada}
         </p>
       )}
       {resumo.proximaEtapa && (
-        <p className="mt-2 text-sm text-black/60">
-          Próxima etapa: <span className="text-black/80">{resumo.proximaEtapa}</span>
+        <p className="mt-2 text-sm text-[#626B75]">
+          Próxima etapa: <span className="text-[#20252B]">{resumo.proximaEtapa}</span>
         </p>
       )}
-      {aviso && <p className="mt-2 text-xs text-black/45">{aviso}</p>}
+      {aviso && <p className="mt-2 text-xs text-[#626B75]">{aviso}</p>}
 
       {extras.length > 0 && (
-        <dl className="mt-3 space-y-1 border-t border-black/5 pt-3 text-xs">
+        <dl className="mt-3 space-y-1 border-t border-black/[0.06] pt-3 text-xs">
           {extras.map((e) => (
             <div key={e.rotulo} className="flex gap-2">
-              <dt className="text-black/40">{e.rotulo}:</dt>
-              <dd className="text-black/75">{e.valor}</dd>
+              <dt className="text-[#626B75]">{e.rotulo}:</dt>
+              <dd className="text-[#20252B]">{e.valor}</dd>
             </div>
           ))}
         </dl>
@@ -163,21 +195,22 @@ export function ProcessoCard({
             onClick={() => setAlterandoEm(alterando ? null : estagioAtualSelect)}
             aria-expanded={alterando}
             aria-controls={painelId}
-            className="rounded-full border border-[#1C3A5E] px-4 py-1.5 text-xs font-medium text-[#1C3A5E] transition hover:bg-[#1C3A5E] hover:text-white"
+            className="rounded-full border border-[var(--destaque)] bg-white px-4 py-1.5 text-xs font-medium text-[var(--destaque)] outline-none transition hover:bg-[var(--destaque)] hover:text-white focus-visible:ring-2 focus-visible:ring-[var(--destaque)]/40 focus-visible:ring-offset-2"
+            style={{ ["--destaque" as string]: tema.destaque }}
           >
             Alterar etapa
           </button>
           <button
             type="button"
             onClick={() => setHistoricoAberto(true)}
-            className="rounded-full px-3 py-1.5 text-xs font-medium text-black/55 transition hover:bg-black/5 hover:text-black"
+            className="rounded-full px-3 py-1.5 text-xs font-medium text-[#626B75] outline-none transition hover:bg-black/5 hover:text-[#20252B] focus-visible:ring-2 focus-visible:ring-[#626B75]/40"
           >
             Ver histórico
           </button>
         </div>
         {alterando && (
-          <div id={painelId} className="mt-3 rounded-xl border border-black/5 bg-[#FAF9F6] p-3">
-            <p className="mb-2 text-[11px] text-black/45">Escolha a etapa e a data em que o cliente entrou nela.</p>
+          <div id={painelId} className="mt-3 rounded-xl border border-[#D5DAE0] bg-white p-3">
+            <p className="mb-2 text-[11px] text-[#626B75]">Escolha a etapa e a data em que o cliente entrou nela.</p>
             <EstagioSelect
               action={action}
               estagios={opcoes}

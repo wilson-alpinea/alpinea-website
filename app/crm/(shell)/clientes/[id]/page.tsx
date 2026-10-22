@@ -298,6 +298,7 @@ export default async function ClienteDetalhePage({
       <div className="mt-6 grid items-stretch gap-4 md:grid-cols-2">
         <ProcessoCard
           titulo="Comercial"
+          tema="comercial"
           etapas={ETAPAS_COMERCIAL}
           resumo={resumoCom}
           dataEntrada={dataEntradaComercial}
@@ -310,6 +311,7 @@ export default async function ClienteDetalhePage({
         />
         <ProcessoCard
           titulo="Execução da viagem"
+          tema="execucao"
           etapas={ETAPAS_EXECUCAO}
           resumo={resumoExe}
           dataEntrada={dataEntradaExecucao}
@@ -341,8 +343,10 @@ export default async function ClienteDetalhePage({
       )}
 
       <div className="mt-8 grid gap-6 lg:grid-cols-5">
-        <div className="rounded-2xl border border-black/5 bg-white shadow-[0_1px_2px_rgba(0,0,0,0.04),0_16px_32px_-20px_rgba(0,0,0,0.15)] p-6 md:p-8 lg:col-span-3">
-          <h2 className={`${display.className} mb-6 text-lg font-medium text-black`}>
+        {/* Paleta por grupo (Wilson, 22/out/2026): fundo suave + linha de
+            3 px no topo na cor de destaque do grupo. */}
+        <div className="rounded-2xl border border-black/[0.06] border-t-[3px] border-t-[#786343] bg-[#FAF7F1] shadow-[0_1px_2px_rgba(0,0,0,0.04),0_16px_32px_-20px_rgba(0,0,0,0.15)] p-6 md:p-8 lg:col-span-3">
+          <h2 className={`${display.className} mb-6 text-lg font-medium text-[#786343]`}>
             Dados do cliente
           </h2>
           <ClienteForm
@@ -354,15 +358,15 @@ export default async function ClienteDetalhePage({
         </div>
 
         <div className="space-y-6 lg:col-span-2">
-          <div className="rounded-2xl border border-black/5 bg-white shadow-[0_1px_2px_rgba(0,0,0,0.04),0_16px_32px_-20px_rgba(0,0,0,0.15)] p-6">
-            <h2 className={`${display.className} mb-4 text-lg font-medium text-black`}>
+          <div className="rounded-2xl border border-black/[0.06] border-t-[3px] border-t-[#665582] bg-[#F5F3FA] shadow-[0_1px_2px_rgba(0,0,0,0.04),0_16px_32px_-20px_rgba(0,0,0,0.15)] p-6">
+            <h2 className={`${display.className} mb-4 text-lg font-medium text-[#665582]`}>
               Nova interação
             </h2>
             <form action={addInteracaoComId} className="space-y-4">
               <select
                 name="tipo"
                 defaultValue="nota"
-                className="w-full rounded-xl border border-black/10 bg-white px-4 py-2.5 text-sm text-black outline-none transition focus:border-[#1C3A5E] focus:ring-2 focus:ring-[#1C3A5E]/10"
+                className="w-full rounded-xl border border-[#D5DAE0] bg-white px-4 py-2.5 text-sm text-[#20252B] outline-none transition focus:border-[#24476B] focus:ring-2 focus:ring-[#24476B]/25"
               >
                 {TIPOS_INTERACAO.map((t) => (
                   <option key={t.valor} value={t.valor}>
@@ -375,24 +379,24 @@ export default async function ClienteDetalhePage({
                 required
                 rows={3}
                 placeholder="O que foi conversado, enviado ou combinado…"
-                className="w-full rounded-xl border border-black/10 bg-white px-4 py-2.5 text-sm text-black placeholder-black/30 outline-none transition focus:border-[#1C3A5E] focus:ring-2 focus:ring-[#1C3A5E]/10"
+                className="w-full rounded-xl border border-[#D5DAE0] bg-white px-4 py-2.5 text-sm text-[#20252B] placeholder-[#9AA2AB] outline-none transition focus:border-[#24476B] focus:ring-2 focus:ring-[#24476B]/25"
               />
               <button
                 type="submit"
-                className="w-full rounded-xl bg-[#1C3A5E] px-4 py-2.5 text-sm font-medium text-white shadow-sm shadow-[#1C3A5E]/25 transition hover:bg-[#254a73] hover:shadow-md hover:shadow-[#1C3A5E]/30"
+                className="w-full rounded-xl bg-[#24476B] px-4 py-2.5 text-sm font-medium text-white shadow-sm shadow-[#24476B]/25 outline-none transition hover:bg-[#2C5480] hover:shadow-md hover:shadow-[#24476B]/30 focus-visible:ring-2 focus-visible:ring-[#24476B]/40 focus-visible:ring-offset-2"
               >
                 Registrar
               </button>
             </form>
           </div>
 
-          <div className="rounded-2xl border border-black/5 bg-white shadow-[0_1px_2px_rgba(0,0,0,0.04),0_16px_32px_-20px_rgba(0,0,0,0.15)] p-6">
-            <h2 className={`${display.className} mb-4 text-lg font-medium text-black`}>
+          <div className="rounded-2xl border border-black/[0.06] border-t-[3px] border-t-[#59636F] bg-[#F5F6F7] shadow-[0_1px_2px_rgba(0,0,0,0.04),0_16px_32px_-20px_rgba(0,0,0,0.15)] p-6">
+            <h2 className={`${display.className} mb-4 text-lg font-medium text-[#59636F]`}>
               Histórico
             </h2>
 
             {!interacoes || interacoes.length === 0 ? (
-              <p className="text-sm text-black/40">Nenhuma interação registrada ainda.</p>
+              <p className="text-sm text-[#626B75]">Nenhuma interação registrada ainda.</p>
             ) : (
               <ul className="space-y-5">
                 {interacoes.map((i) => {
@@ -414,7 +418,7 @@ export default async function ClienteDetalhePage({
                             {TIPO_INTERACAO_LABEL[i.tipo] ?? i.tipo}
                           </span>
                           <div className="flex items-center gap-2">
-                            <span className="text-xs text-black/30">
+                            <span className="text-xs text-[#626B75]">
                               {new Date(i.created_at).toLocaleDateString("pt-BR", {
                                 day: "2-digit",
                                 month: "2-digit",
@@ -434,10 +438,10 @@ export default async function ClienteDetalhePage({
                             </form>
                           </div>
                         </div>
-                        <p className="mt-1.5 text-sm leading-relaxed text-black/80 whitespace-pre-wrap">
+                        <p className="mt-1.5 text-sm leading-relaxed text-[#20252B] whitespace-pre-wrap">
                           {i.conteudo}
                         </p>
-                        {autor?.email && <p className="mt-1 text-xs text-black/30">— {autor.email}</p>}
+                        {autor?.email && <p className="mt-1 text-xs text-[#626B75]">— {autor.email}</p>}
                       </div>
                     </li>
                   );

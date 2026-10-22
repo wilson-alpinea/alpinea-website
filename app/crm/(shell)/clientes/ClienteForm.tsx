@@ -16,8 +16,8 @@ const ORIGENS = [
 ];
 
 const inputClass =
-  "w-full rounded-xl border border-black/10 bg-white px-4 py-2.5 text-sm text-black placeholder-black/30 outline-none transition focus:border-[#1C3A5E] focus:ring-2 focus:ring-[#1C3A5E]/10";
-const labelClass = "mb-1.5 block text-xs uppercase tracking-[0.15em] text-black/40";
+  "w-full rounded-xl border border-[#D5DAE0] bg-white px-4 py-2.5 text-sm text-[#20252B] placeholder-[#9AA2AB] outline-none transition focus:border-[#24476B] focus:ring-2 focus:ring-[#24476B]/25";
+const labelClass = "mb-1.5 block text-xs uppercase tracking-[0.15em] text-[#626B75]";
 
 function ProdutoCard({
   type,
@@ -46,11 +46,22 @@ function ProdutoCard({
   return (
     <label
       title={detalhe}
-      className="group flex cursor-pointer flex-col items-center gap-2.5 rounded-xl border border-black/10 bg-white p-3.5 text-center transition hover:border-black/30 has-[:checked]:border-black has-[:checked]:ring-1 has-[:checked]:ring-black"
+      // Cores por grupo (Wilson, 22/out/2026): não selecionado = branco com
+      // borda #D5DAE0; selecionado = azul suave #EAF1F8, borda de 2 px
+      // #24476B (1 px de borda + 1 px de ring, sem pular o layout) e check.
+      className="group relative flex cursor-pointer flex-col items-center gap-2.5 rounded-xl border border-[#D5DAE0] bg-white p-3.5 text-center transition hover:border-[#24476B]/50 has-[:checked]:border-[#24476B] has-[:checked]:bg-[#EAF1F8] has-[:checked]:ring-1 has-[:checked]:ring-[#24476B] has-[:focus-visible]:ring-2 has-[:focus-visible]:ring-[#24476B]/40"
     >
       <input type={type} name={name} value={value} defaultChecked={defaultChecked} className="peer sr-only" />
+      <span
+        aria-hidden="true"
+        className="absolute right-1.5 top-1.5 hidden h-4 w-4 items-center justify-center rounded-full bg-[#24476B] peer-checked:flex"
+      >
+        <svg viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" className="h-2.5 w-2.5">
+          <path d="M5 12.5 10 17.5 19 7" />
+        </svg>
+      </span>
       {icone && <img src={icone} alt="" className={`h-10 w-10 object-contain ${filtro}`} />}
-      <span className="text-xs font-medium leading-tight text-black/70 transition peer-checked:font-semibold peer-checked:text-black">
+      <span className="text-xs font-medium leading-tight text-[#626B75] transition peer-checked:font-semibold peer-checked:text-[#24476B]">
         {label}
       </span>
     </label>

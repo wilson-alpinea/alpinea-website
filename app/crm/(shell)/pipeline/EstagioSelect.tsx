@@ -33,7 +33,7 @@ export function EstagioSelect({
 
   const selectClass =
     className ??
-    "w-full rounded-lg border border-black/10 bg-white px-2.5 py-1.5 text-xs text-black/70 outline-none transition focus:border-[#1C3A5E] focus:ring-2 focus:ring-[#1C3A5E]/10";
+    "w-full rounded-lg border border-[#D5DAE0] bg-white px-2.5 py-1.5 text-xs text-[#20252B] outline-none transition focus:border-[#24476B] focus:ring-2 focus:ring-[#24476B]/25";
 
   return (
     <form action={action} className="space-y-2">
