@@ -8,6 +8,7 @@ import { TIPOS_INTERACAO, TIPO_INTERACAO_LABEL, TIPO_INTERACAO_COR } from "@/lib
 import { TIPOS_ARQUIVO, TIPO_ARQUIVO_LABEL, type TipoArquivo } from "@/lib/crm/arquivos";
 import { CAMINHO_DOCUMENTO_JRPASS_REGEX, urlDocumentoJrPassCrm } from "@/lib/supabase/documentosJrPass";
 import type { Estagio, EstagioEntrega } from "@/lib/crm/types";
+import { ESTAGIOS } from "@/lib/crm/estagios";
 import { rotuloOrigem } from "@/lib/crm/canal";
 import {
   updateCliente,
@@ -22,8 +23,17 @@ import {
 import { ClienteForm } from "../ClienteForm";
 import { ARQUIVO_ICONS } from "../ArquivoIcons";
 import { INTERACAO_ICONS } from "../InteracaoIcons";
-import { FunnelStepper } from "../FunnelStepper";
-import { EntregaStepper } from "../EntregaStepper";
+import { ProcessoCard } from "./ProcessoCard";
+import { ESTAGIOS_ENTREGA } from "@/lib/crm/estagiosEntrega";
+import {
+  ETAPAS_COMERCIAL,
+  ETAPAS_EXECUCAO,
+  execucaoIniciada,
+  formatarDataCurta,
+  resumoComercial,
+  resumoExecucao,
+  type EventoHistorico,
+} from "@/lib/crm/processo";
 import { FinanceiroSection } from "./FinanceiroSection";
 import { ConfirmacaoCadastro } from "./ConfirmacaoCadastro";
 import { UploadArquivoCliente } from "./UploadArquivoCliente";
@@ -140,6 +150,80 @@ export default async function ClienteDetalhePage({
   const arquivado = Boolean(cliente.arquivado_em);
   const alternarArquivo = arquivarCliente.bind(null, id, !arquivado);
 
+  // ── Cards "Comercial" e "Execução da viagem" (Wilson, 22/out/2026) ──
+  // Tudo vem do status gravado e do histórico de interações; nada é
+  // preenchido com dado fictício.
+  type LinhaInteracao = NonNullable<typeof interacoes>[number];
+  const autorDe = (i: LinhaInteracao) => {
+    const p = Array.isArray(i.perfis) ? i.perfis[0] : i.perfis;
+    return (p?.nome || p?.email || null) as string | null;
+  };
+  const mudancasComercial = (interacoes ?? []).filter((i) => i.tipo === "mudanca_estagio" && i.estagio_destino);
+  const mudancasExecucao = (interacoes ?? []).filter(
+    (i) => i.tipo === "mudanca_estagio_entrega" && i.estagio_entrega_destino,
+  );
+  const rotuloComercial = (v: string) => ESTAGIOS.find((e) => e.valor === v)?.label ?? v;
+  const rotuloExecucao = (v: string) => ESTAGIOS_ENTREGA.find((e) => e.valor === v)?.label ?? v;
+
+  const resumoCom = resumoComercial(
+    cliente.estagio as Estagio,
+    mudancasComercial.map((i) => String(i.estagio_destino)),
+  );
+  const iniciouExecucao = execucaoIniciada(
+    cliente.estagio_entrega as EstagioEntrega,
+    mudancasExecucao.length > 0,
+    cliente.estagio as Estagio,
+  );
+  const resumoExe = resumoExecucao(cliente.estagio_entrega as EstagioEntrega, iniciouExecucao);
+
+  // Data de entrada na etapa atual: só do histórico. Exceção: "Novo lead"
+  // usa a data de cadastro do cliente, que é quando ele de fato entrou.
+  const dataEntradaComercial =
+    datasPorEstagio[cliente.estagio as Estagio] ??
+    (cliente.estagio === "novo_lead" ? cliente.created_at : null);
+  const dataEntradaExecucao = iniciouExecucao
+    ? (datasPorEstagioEntrega[cliente.estagio_entrega as EstagioEntrega] ?? null)
+    : null;
+
+  const historicoComercial: EventoHistorico[] = [
+    ...mudancasComercial.map((i) => ({
+      id: i.id,
+      data: i.data_evento ?? i.created_at,
+      dataInformada: Boolean(i.data_evento),
+      titulo: `→ ${rotuloComercial(String(i.estagio_destino))}`,
+      conteudo: i.conteudo,
+      autor: autorDe(i),
+    })),
+    {
+      id: "cadastro",
+      data: cliente.created_at,
+      dataInformada: true,
+      titulo: "Lead cadastrado",
+      conteudo: null,
+      autor: null,
+    },
+  ];
+  const historicoExecucao: EventoHistorico[] = mudancasExecucao.map((i) => ({
+    id: i.id,
+    data: i.data_evento ?? i.created_at,
+    dataInformada: Boolean(i.data_evento),
+    titulo: `→ ${rotuloExecucao(String(i.estagio_entrega_destino))}`,
+    conteudo: i.conteudo,
+    autor: autorDe(i),
+  }));
+
+  // Responsável: só aparece se estiver cadastrado no cliente.
+  let responsavel: string | null = null;
+  if (cliente.responsavel_id) {
+    const { data: perfilResp } = await supabase
+      .from("perfis")
+      .select("nome, email")
+      .eq("id", cliente.responsavel_id)
+      .maybeSingle();
+    responsavel = perfilResp?.nome || perfilResp?.email || null;
+  }
+  const dataViagem = formatarDataCurta(cliente.data_viagem);
+
   const updateClienteComId = updateCliente.bind(null, id);
   const addInteracaoComId = addInteracao.bind(null, id);
   const moveEstagioComId = moveEstagio.bind(null, id);
@@ -155,22 +239,8 @@ export default async function ClienteDetalhePage({
         ← Clientes
       </Link>
 
-      <div className="mt-4">
-        <FunnelStepper cliente={cliente} datasPorEstagio={datasPorEstagio} action={moveEstagioComId} />
-      </div>
 
-      {/* Fluxograma de ENTREGA do serviço — pedido do Wilson, 19/set/2026
-          ("um novo fluxograma de entrega abaixo do de vendas"): processo
-          paralelo ao funil de vendas acima, sem bifurcação ganho/perdido. */}
-      <div className="mt-4">
-        <EntregaStepper
-          cliente={cliente}
-          datasPorEstagioEntrega={datasPorEstagioEntrega}
-          action={moveEstagioEntregaComId}
-        />
-      </div>
-
-      <div className="mt-6 flex flex-wrap items-center justify-between gap-4">
+      <div className="mt-4 flex flex-wrap items-start justify-between gap-4">
         <div>
           <p className="mb-1 text-[10px] uppercase tracking-[0.25em] text-[#1C3A5E]/70">Cliente</p>
           <h1 className={`${display.className} text-3xl font-medium text-black md:text-4xl`}>
@@ -180,6 +250,13 @@ export default async function ClienteDetalhePage({
             <span className="mt-1 inline-block rounded-full bg-sky-100 px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-sky-700">
               {TAG_SELF_SERVICE}
             </span>
+          )}
+          {(cliente.email || cliente.telefone || dataViagem) && (
+            <p className="mt-2 text-sm text-black/60">
+              {[cliente.email, cliente.telefone, dataViagem ? `Viagem em ${dataViagem}` : null]
+                .filter(Boolean)
+                .join(" · ")}
+            </p>
           )}
           <p className="mt-1 text-xs text-black/50">
             Origem: {rotuloOrigem(cliente.canal, cliente.canal_detalhe)}
@@ -215,6 +292,39 @@ export default async function ClienteDetalhePage({
             {arquivado ? "Desarquivar lead" : "Arquivar lead inativo"}
           </button>
         </form>
+      </div>
+
+      {/* Dois processos independentes, lado a lado (empilhados no celular). */}
+      <div className="mt-6 grid items-stretch gap-4 md:grid-cols-2">
+        <ProcessoCard
+          titulo="Comercial"
+          etapas={ETAPAS_COMERCIAL}
+          resumo={resumoCom}
+          dataEntrada={dataEntradaComercial}
+          extras={responsavel ? [{ rotulo: "Responsável", valor: responsavel }] : []}
+          aviso={arquivado ? "Lead arquivado por inatividade." : null}
+          historico={historicoComercial}
+          action={moveEstagioComId}
+          opcoes={ESTAGIOS}
+          estagioAtualSelect={cliente.estagio}
+        />
+        <ProcessoCard
+          titulo="Execução da viagem"
+          etapas={ETAPAS_EXECUCAO}
+          resumo={resumoExe}
+          dataEntrada={dataEntradaExecucao}
+          extras={dataViagem ? [{ rotulo: "Data da viagem", valor: dataViagem }] : []}
+          aviso={
+            !iniciouExecucao && cliente.estagio === "fechado_perdido"
+              ? "Negócio perdido no comercial."
+              : null
+          }
+          historico={historicoExecucao}
+          action={moveEstagioEntregaComId}
+          opcoes={ESTAGIOS_ENTREGA}
+          estagioAtualSelect={iniciouExecucao ? cliente.estagio_entrega : ""}
+          placeholderSelect="Iniciar em…"
+        />
       </div>
 
       {sp.erro === "1" && (

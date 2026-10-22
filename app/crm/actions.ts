@@ -105,7 +105,28 @@ async function registrarMudancaEstagioEntrega(
     .eq("id", clienteId)
     .maybeSingle();
 
-  if (!atual || atual.estagio_entrega === novoEstagio) return;
+  if (!atual) return;
+
+  // A coluna nasce com "roteiro_elaboracao" por padrão. Se a execução nunca
+  // teve registro e a equipe escolhe essa mesma etapa, isso é o INÍCIO da
+  // execução (card "Execução da viagem", 22/out/2026) — registra com data.
+  if (atual.estagio_entrega === novoEstagio) {
+    const { count } = await supabase
+      .from("interacoes")
+      .select("id", { count: "exact", head: true })
+      .eq("cliente_id", clienteId)
+      .eq("tipo", "mudanca_estagio_entrega");
+    if ((count ?? 0) > 0) return;
+    await supabase.from("interacoes").insert({
+      cliente_id: clienteId,
+      autor_id: autorId,
+      tipo: "mudanca_estagio_entrega",
+      estagio_entrega_destino: novoEstagio,
+      data_evento: dataEvento,
+      conteudo: `Execução da viagem iniciada em "${ESTAGIO_ENTREGA_LABEL[novoEstagio]}".`,
+    });
+    return;
+  }
 
   await supabase.from("interacoes").insert({
     cliente_id: clienteId,

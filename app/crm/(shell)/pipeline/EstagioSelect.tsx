@@ -18,14 +18,18 @@ export function EstagioSelect({
   estagios,
   estagioAtual,
   className,
+  placeholder,
 }: {
   action: (formData: FormData) => void;
   estagios: OpcaoEstagio[];
   estagioAtual: string;
   className?: string;
+  // Quando estagioAtual é "" (processo ainda não iniciado), mostra esta
+  // opção vazia no topo — assim até a 1ª etapa conta como mudança.
+  placeholder?: string;
 }) {
   const [selecionado, setSelecionado] = useState(estagioAtual);
-  const mudou = selecionado !== estagioAtual;
+  const mudou = selecionado !== estagioAtual && selecionado !== "";
 
   const selectClass =
     className ??
@@ -39,6 +43,11 @@ export function EstagioSelect({
         onChange={(e) => setSelecionado(e.target.value)}
         className={selectClass}
       >
+        {estagioAtual === "" && (
+          <option value="" disabled>
+            {placeholder ?? "Selecione"}
+          </option>
+        )}
         {estagios.map((e) => (
           <option key={e.valor} value={e.valor}>
             {e.label}
