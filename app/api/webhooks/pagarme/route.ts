@@ -213,9 +213,11 @@ export async function POST(req: Request) {
   // Nunca confia só no corpo do webhook — reconfirma direto na API da
   // Pagar.me com a nossa chave secreta antes de marcar como pago.
   let statusConfirmado: string;
+  let dadosConfirmados: unknown = null;
   try {
     const resultado = await buscarPedido(pedidoIdGateway || codigoInterno);
     statusConfirmado = resultado.status;
+    dadosConfirmados = resultado.raw;
   } catch (err) {
     console.error("Erro ao reconfirmar pedido na Pagar.me (webhook):", err);
     return NextResponse.json({ error: "Não foi possível reconfirmar o pedido." }, { status: 502 });
@@ -234,7 +236,8 @@ export async function POST(req: Request) {
     return NextResponse.json({ received: true, status: statusConfirmado }, { status: 200 });
   }
 
-  const hoje = new Date().toISOString().slice(0, 10);
+  // Data no fuso do CRM (antes era UTC — virava o dia seguinte à noite).
+  const hoje = new Intl.DateTimeFormat("en-CA", { timeZone: "America/Sao_Paulo", year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date());
 
   await supabase
     .from("pagamentos")
@@ -245,6 +248,27 @@ export async function POST(req: Request) {
       gateway_pedido_id: pedidoIdGateway || null,
     })
     .eq("id", codigoInterno);
+
+  // Novo Financeiro (migração 023): o dinheiro que entrou vira um
+  // recebimento. A forma vem do próprio pedido na Pagar.me; o índice único
+  // por gateway_pedido_id impede duplicar em reenvios do webhook.
+  {
+    const formaGateway = formaDoPedidoPagarme(dadosConfirmados) ?? pagamento.tipo_pagamento ?? null;
+    const { error: erroRecebimento } = await supabase.from("recebimentos").insert({
+      cliente_id: pagamento.cliente_id,
+      pagamento_id: pagamento.id,
+      tipo: "recebimento",
+      valor: pagamento.valor,
+      data: hoje,
+      forma_pagamento: formaGateway,
+      origem: "gateway",
+      gateway_pedido_id: pedidoIdGateway || `interno-${pagamento.id}`,
+      observacoes: "Confirmado automaticamente pela Pagar.me.",
+    });
+    if (erroRecebimento && erroRecebimento.code !== "23505") {
+      console.error("[webhook pagarme] não gravou o recebimento (rodou a migração 023?):", erroRecebimento);
+    }
+  }
 
   await supabase.from("interacoes").insert({
     cliente_id: pagamento.cliente_id,
@@ -300,4 +324,13 @@ export async function POST(req: Request) {
   }
 
   return NextResponse.json({ received: true, status: statusConfirmado }, { status: 200 });
+}
+
+// Forma de pagamento do pedido confirmado na Pagar.me → valores do CRM.
+function formaDoPedidoPagarme(raw: unknown): string | null {
+  const cobrancas = (raw as { charges?: { payment_method?: string; status?: string }[] } | null)?.charges ?? [];
+  const paga = cobrancas.find((c) => c?.status === "paid") ?? cobrancas[0];
+  const metodo = String(paga?.payment_method ?? "");
+  const mapa: Record<string, string> = { pix: "pix", credit_card: "cartao_credito", debit_card: "cartao_debito", boleto: "boleto" };
+  return mapa[metodo] ?? null;
 }

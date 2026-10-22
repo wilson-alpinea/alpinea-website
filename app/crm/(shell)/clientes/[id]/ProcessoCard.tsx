@@ -255,7 +255,7 @@ function PainelHistorico({
   // Portal no <body>: evita os bugs de position:fixed dentro de containers
   // com transform/backdrop-filter (Safari/iOS).
   return createPortal(
-    <div className="fixed inset-0 z-50 flex justify-end" role="dialog" aria-modal="true" aria-label={`Histórico — ${titulo}`}>
+    <div className="crm-ui fixed inset-0 z-50 flex justify-end" role="dialog" aria-modal="true" aria-label={`Histórico — ${titulo}`}>
       <button type="button" aria-label="Fechar histórico" onClick={onFechar} className="absolute inset-0 bg-black/25" />
       <aside className="relative flex h-full w-full max-w-md flex-col bg-white shadow-2xl">
         <header className="flex items-center justify-between border-b border-black/5 px-6 py-5">

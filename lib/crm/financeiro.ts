@@ -80,7 +80,8 @@ export function lerValorBRL(texto: string): number | null {
   if (!limpo) return null;
   let normal = limpo;
   if (limpo.includes(",")) normal = limpo.replace(/\./g, "").replace(",", ".");
-  else if ((limpo.match(/\./g) ?? []).length > 1) normal = limpo.replace(/\./g, "");
+  // Sem vírgula: "1.234.567" ou "1.160" (ponto de milhar) → inteiro.
+  else if ((limpo.match(/\./g) ?? []).length > 1 || /^\d{1,3}\.\d{3}$/.test(limpo)) normal = limpo.replace(/\./g, "");
   if (!/^-?\d+(\.\d{0,2})?$/.test(normal)) return null;
   return Math.round(Number(normal) * 100);
 }
