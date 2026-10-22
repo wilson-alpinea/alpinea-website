@@ -60,4 +60,5 @@ export const INTERACAO_ICONS: Record<string, (props: { className?: string }) => 
   reuniao: IconCalendar,
   proposta: IconSend,
   mudanca_estagio: IconArrowRight,
+  mudanca_estagio_entrega: IconArrowRight,
 };

@@ -1,9 +1,8 @@
 import { ehSelfService, TAG_SELF_SERVICE } from "@/lib/crm/origem";
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
-import { TIPOS_INTERACAO, TIPO_INTERACAO_LABEL, TIPO_INTERACAO_COR } from "@/lib/crm/interacoes";
+import { TIPOS_INTERACAO, TIPO_INTERACAO_LABEL, TIPO_INTERACAO_COR, DESTAQUE_INTERACAO } from "@/lib/crm/interacoes";
 import { TIPOS_ARQUIVO, TIPO_ARQUIVO_LABEL, type TipoArquivo } from "@/lib/crm/arquivos";
 import { CAMINHO_DOCUMENTO_JRPASS_REGEX, urlDocumentoJrPassCrm } from "@/lib/supabase/documentosJrPass";
 import type { Estagio, EstagioEntrega } from "@/lib/crm/types";
@@ -20,6 +19,7 @@ import {
   arquivarCliente,
 } from "../../../actions";
 import { ClienteForm } from "../ClienteForm";
+import { VoltarClientes } from "../VoltarClientes";
 import { BotaoSalvar } from "../BotaoSalvar";
 import { ARQUIVO_ICONS } from "../ArquivoIcons";
 import { INTERACAO_ICONS } from "../InteracaoIcons";
@@ -224,9 +224,7 @@ export default async function ClienteDetalhePage({
   return (
     <div>
       {sp.criado === "1" && <ConfirmacaoCadastro nome={cliente.nome} clienteId={id} />}
-      <Link href="/crm/clientes" className="text-[13px] text-[#626B75] transition hover:text-[#1C3A5E]">
-        ← Clientes
-      </Link>
+      <VoltarClientes className="text-[13px] text-[#626B75] transition hover:text-[#1C3A5E]" />
 
 
       <div className="mt-4 flex flex-wrap items-start justify-between gap-4">
@@ -394,15 +392,22 @@ export default async function ClienteDetalhePage({
                   const excluirInteracao = deleteInteracao.bind(null, id, i.id);
                   const cor = TIPO_INTERACAO_COR[i.tipo] ?? "#57534E";
                   const Icon = INTERACAO_ICONS[i.tipo];
+                  const destaque = DESTAQUE_INTERACAO[i.tipo];
                   return (
                     <li key={i.id} className="flex gap-3">
-                      <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center text-[#20252B]">
+                      <span
+                        className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center text-[#20252B]"
+                        style={destaque ? { color: destaque.borda } : undefined}
+                      >
                         {Icon && <Icon className="h-4 w-4" />}
                       </span>
-                      <div className="min-w-0 flex-1 border-l border-black/10 pl-4">
+                      <div
+                        className={`min-w-0 flex-1 ${destaque ? "rounded-r-lg border-l-[3px] py-2.5 pl-4 pr-3" : "border-l border-black/10 pl-4"}`}
+                        style={destaque ? { backgroundColor: destaque.fundo, borderLeftColor: destaque.borda } : undefined}
+                      >
                         <div className="flex items-center justify-between gap-3">
                           <span
-                            className="text-[13px] font-medium"
+                            className={`text-[13px] ${destaque ? "font-semibold" : "font-medium"}`}
                             style={{ color: cor }}
                           >
                             {TIPO_INTERACAO_LABEL[i.tipo] ?? i.tipo}

@@ -1,8 +1,9 @@
-import Link from "next/link";
+import { Suspense } from "react";
 import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
-import { ESTAGIOS } from "@/lib/crm/estagios";
-import { ClientesTable } from "./ClientesTable";
+import { execucaoIniciada } from "@/lib/crm/processo";
+import type { Estagio, EstagioEntrega } from "@/lib/crm/types";
+import { ListaClientes, type ClienteLista } from "./ListaClientes";
 
 export const metadata: Metadata = {
   title: "Clientes — CRM Alpinea",
@@ -11,111 +12,69 @@ export const metadata: Metadata = {
 
 export const dynamic = "force-dynamic";
 
-export default async function ClientesPage({
-  searchParams,
-}: {
-  searchParams: Promise<{ q?: string; estagio?: string; arquivados?: string }>;
-}) {
-  const params = await searchParams;
-  const busca = (params.q ?? "").trim();
-  const estagioFiltro = params.estagio ?? "";
-  // Leads arquivados ficam fora da lista; ?arquivados=1 mostra só eles.
-  const verArquivados = params.arquivados === "1";
-
+// Lista de clientes (Wilson, 22/out/2026). O servidor entrega todos os
+// clientes que o usuário pode ver (RLS: só admin) já com a última
+// interação real e a situação da execução; busca, filtros, ordenação e
+// paginação acontecem na tela e ficam na URL (voltar da ficha preserva).
+export default async function ClientesPage() {
   const supabase = await createClient();
 
-  let query = supabase
+  const { data: clientes, error } = await supabase
     .from("clientes")
-    .select("id, nome, email, telefone, estagio, valor_proposta, produto_principal, origem, created_at")
+    .select(
+      "id, nome, email, telefone, estagio, estagio_entrega, valor_proposta, produto_principal, produto_secundario, origem, canal, canal_detalhe, responsavel_id, arquivado_em, created_at",
+    )
     .order("created_at", { ascending: false });
-
-  query = verArquivados ? query.not("arquivado_em", "is", null) : query.is("arquivado_em", null);
-
-  if (busca) {
-    query = query.or(`nome.ilike.%${busca}%,email.ilike.%${busca}%,telefone.ilike.%${busca}%,origem.ilike.%${busca}%`);
-  }
-  if (estagioFiltro) {
-    query = query.eq("estagio", estagioFiltro);
-  }
-
-  const { data: clientes, error } = await query;
   if (error) console.error("Erro ao carregar clientes:", error);
 
-  const lista = clientes ?? [];
+  // Última interação real por cliente (sem cair para a data de cadastro) e
+  // se a execução da viagem já teve registro.
+  const { data: interacoes, error: erroInteracoes } = await supabase
+    .from("interacoes")
+    .select("cliente_id, tipo, created_at")
+    .order("created_at", { ascending: false })
+    .limit(20000);
+  if (erroInteracoes) console.error("Erro ao carregar interações:", erroInteracoes);
+  const ultima = new Map<string, string>();
+  const comExecucao = new Set<string>();
+  for (const i of interacoes ?? []) {
+    if (!ultima.has(i.cliente_id)) ultima.set(i.cliente_id, i.created_at);
+    if (i.tipo === "mudanca_estagio_entrega") comExecucao.add(i.cliente_id);
+  }
+
+  const idsResp = [...new Set((clientes ?? []).map((c) => c.responsavel_id).filter(Boolean))] as string[];
+  const nomes = new Map<string, string>();
+  if (idsResp.length) {
+    const { data: perfis } = await supabase.from("perfis").select("id, nome, email").in("id", idsResp);
+    for (const p of perfis ?? []) nomes.set(p.id, p.nome || p.email);
+  }
+
+  const lista: ClienteLista[] = (clientes ?? []).map((c) => {
+    const iniciada = execucaoIniciada(c.estagio_entrega as EstagioEntrega, comExecucao.has(c.id), c.estagio as Estagio);
+    return {
+      id: c.id,
+      nome: c.nome,
+      email: c.email,
+      telefone: c.telefone,
+      estagio: c.estagio,
+      execucao: iniciada ? c.estagio_entrega : "aguardando",
+      valor: c.valor_proposta === null || c.valor_proposta === undefined ? null : Number(c.valor_proposta),
+      produtoPrincipal: c.produto_principal,
+      produtosSecundarios: c.produto_secundario ?? [],
+      origem: c.origem,
+      canal: c.canal ?? null,
+      canalDetalhe: c.canal_detalhe ?? null,
+      responsavelId: c.responsavel_id,
+      responsavel: c.responsavel_id ? nomes.get(c.responsavel_id) ?? null : null,
+      arquivado: !!c.arquivado_em,
+      ultimaInteracao: ultima.get(c.id) ?? null,
+      criadoEm: c.created_at,
+    };
+  });
 
   return (
-    <div>
-      <div className="flex flex-wrap items-end justify-between gap-4">
-        <div>
-          <p className="mb-2 text-[13px] text-[#626B75]">
-            {lista.length} {lista.length === 1 ? "cliente" : "clientes"}
-          </p>
-          <h1 className={`text-3xl font-medium text-[#20252B] md:text-4xl`}>
-            {verArquivados ? "Leads arquivados" : "Clientes"}
-          </h1>
-          <Link
-            href={verArquivados ? "/crm/clientes" : "/crm/clientes?arquivados=1"}
-            className="mt-1 inline-block text-[13px] text-[#626B75] underline hover:text-[#20252B]"
-          >
-            {verArquivados ? "← Voltar para os ativos" : "Ver leads arquivados"}
-          </Link>
-        </div>
-        <Link
-          href="/crm/clientes/novo"
-          className="rounded-full bg-[#1C3A5E] px-5 py-2.5 text-sm font-medium text-white shadow-sm shadow-[#1C3A5E]/25 transition hover:bg-[#254a73] hover:shadow-md hover:shadow-[#1C3A5E]/30"
-        >
-          + Novo cliente
-        </Link>
-      </div>
-
-      <form className="mt-8 flex flex-wrap gap-3" method="get">
-        <input
-          type="text"
-          name="q"
-          defaultValue={busca}
-          placeholder="Buscar por nome, e-mail ou telefone…"
-          className="min-w-[240px] flex-1 rounded-xl border border-black/10 bg-white px-4 py-2.5 text-sm text-[#20252B] placeholder-black/30 outline-none transition focus:border-[#1C3A5E] focus:ring-2 focus:ring-[#1C3A5E]/10"
-        />
-        {verArquivados && <input type="hidden" name="arquivados" value="1" />}
-        <select
-          name="estagio"
-          defaultValue={estagioFiltro}
-          className="rounded-xl border border-black/10 bg-white px-4 py-2.5 text-sm text-[#20252B] outline-none transition focus:border-[#1C3A5E] focus:ring-2 focus:ring-[#1C3A5E]/10"
-        >
-          <option value="">Todos os estágios</option>
-          {ESTAGIOS.map((e) => (
-            <option key={e.valor} value={e.valor}>
-              {e.label}
-            </option>
-          ))}
-        </select>
-        <button
-          type="submit"
-          className="rounded-xl border border-black/10 bg-white px-5 py-2.5 text-sm text-[#20252B] transition hover:border-[#1C3A5E]/40 hover:text-[#1C3A5E]"
-        >
-          Filtrar
-        </button>
-        {(busca || estagioFiltro) && (
-          <Link
-            href="/crm/clientes"
-            className="rounded-xl px-5 py-2.5 text-sm text-[#626B75] transition hover:text-[#20252B]"
-          >
-            Limpar
-          </Link>
-        )}
-      </form>
-
-      <div className="mt-8">
-        {lista.length === 0 ? (
-          <div className="overflow-hidden rounded-2xl border border-black/5 bg-white shadow-[0_1px_2px_rgba(0,0,0,0.04),0_16px_32px_-20px_rgba(0,0,0,0.15)]">
-            <p className="p-8 text-center text-sm text-[#626B75]">
-              Nenhum cliente encontrado.
-            </p>
-          </div>
-        ) : (
-          <ClientesTable clientes={lista} />
-        )}
-      </div>
-    </div>
+    <Suspense fallback={null}>
+      <ListaClientes clientes={lista} />
+    </Suspense>
   );
 }

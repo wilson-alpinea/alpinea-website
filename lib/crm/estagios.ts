@@ -30,3 +30,14 @@ export const ESTAGIO_COR: Record<Estagio, string> = {
 export function isEstagio(valor: string): valor is Estagio {
   return ESTAGIOS.some((e) => e.valor === valor);
 }
+
+// Badges de etapa na lista de clientes (Wilson, 22/out/2026): fundo suave +
+// texto, mesma família de cores dos cards da ficha.
+export const ESTAGIO_BADGE: Record<Estagio, { fundo: string; texto: string }> = {
+  novo_lead: { fundo: "#F1F3F5", texto: "#59636F" },
+  qualificacao: { fundo: "#EAF1F8", texto: "#24476B" },
+  proposta_enviada: { fundo: "#F0EBF7", texto: "#665582" },
+  negociacao: { fundo: "#FFF4DE", texto: "#946200" },
+  fechado_ganho: { fundo: "#E8F4EE", texto: "#28665D" },
+  fechado_perdido: { fundo: "#FDEDEC", texto: "#B42318" },
+};

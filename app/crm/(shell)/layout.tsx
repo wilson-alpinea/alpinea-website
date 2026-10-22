@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { NavCrm } from "./NavCrm";
 import { headers } from "next/headers";
 import { exigirAdmin } from "@/lib/crm/acesso";
 import { urlUnidade } from "@/lib/crm/unidades";
@@ -51,16 +52,8 @@ export default async function CrmShellLayout({
                 <span className="mt-1 text-[13px] text-white/45">{rotuloUnidade}</span>
               </span>
             </Link>
-            <nav className="hidden items-center gap-5 whitespace-nowrap text-sm font-medium text-white/65 md:flex lg:gap-6">
-              {NAV.map((item) => (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className="transition hover:text-white"
-                >
-                  {item.label}
-                </Link>
-              ))}
+            <nav aria-label="Navegação do CRM" className="hidden items-center gap-5 whitespace-nowrap text-sm font-medium md:flex lg:gap-6">
+              <NavCrm itens={NAV} variante="desktop" />
             </nav>
           </div>
 
@@ -86,12 +79,8 @@ export default async function CrmShellLayout({
           </div>
         </div>
 
-        <nav className="flex items-center gap-5 overflow-x-auto border-t border-white/10 px-6 py-2.5 text-sm font-medium text-white/65 md:hidden">
-          {NAV.map((item) => (
-            <Link key={item.href} href={item.href} className="whitespace-nowrap transition hover:text-white">
-              {item.label}
-            </Link>
-          ))}
+        <nav aria-label="Navegação do CRM" className="flex items-center gap-5 overflow-x-auto border-t border-white/10 px-6 py-2.5 text-sm font-medium md:hidden">
+          <NavCrm itens={NAV} variante="mobile" />
         </nav>
       </header>
 
