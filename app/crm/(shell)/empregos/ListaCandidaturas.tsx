@@ -1,9 +1,11 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
+import { useEffect, useMemo, useRef, useState, useSyncExternalStore, useTransition } from "react";
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { STATUS_CANDIDATURA } from "@/lib/crm/empregos";
+import { excluirCandidaturas } from "../../candidaturasActions";
+import { BOTAO_PERIGO, BOTAO_SECUNDARIO, Painel, Spinner } from "../clientes/[id]/financeiro/ui";
 import { AREA_EMPREGOS, EXPLICACAO_SCORE, TRIAGEM_EMPREGOS } from "@/lib/crm/temaEmpregos";
 
 // Candidatos (redesenho 23/out/2026). Triagem e andamento são dimensões
@@ -223,6 +225,38 @@ export function ListaCandidaturas({ candidaturas, erro }: { candidaturas: Candid
   const paginaAtual = Math.min(pagina, paginas);
   const inicio = (paginaAtual - 1) * por;
   const visiveis = filtrados.slice(inicio, inicio + por);
+
+  // Seleção múltipla (Wilson, 23/out/2026). Só conta o que está no filtro
+  // atual — uma candidatura escondida pelo filtro nunca entra numa ação.
+  const [selecao, setSelecao] = useState<Set<string>>(new Set());
+  const [confirmarExclusao, setConfirmarExclusao] = useState(false);
+  const [avisoLote, setAvisoLote] = useState<{ ok: boolean; texto: string } | null>(null);
+  const selecionadas = filtrados.filter((c) => selecao.has(c.id));
+  const idsPagina = visiveis.map((c) => c.id);
+  const paginaToda = idsPagina.length > 0 && idsPagina.every((id) => selecao.has(id));
+  const paginaParcial = !paginaToda && idsPagina.some((id) => selecao.has(id));
+  const refCabecalho = useRef<HTMLInputElement>(null);
+  useEffect(() => {
+    if (refCabecalho.current) refCabecalho.current.indeterminate = paginaParcial;
+  }, [paginaParcial]);
+  function marcar(id: string) {
+    setSelecao((a) => {
+      const n = new Set(a);
+      if (n.has(id)) n.delete(id);
+      else n.add(id);
+      return n;
+    });
+  }
+  function marcarPagina() {
+    setSelecao((a) => {
+      const n = new Set(a);
+      for (const id of idsPagina) {
+        if (paginaToda) n.delete(id);
+        else n.add(id);
+      }
+      return n;
+    });
+  }
   const pessoas = new Set(candidaturas.map((c) => (c.email || c.telefone || c.nome).toLowerCase())).size;
 
   const chips: { rotulo: string; limpar: Record<string, null> }[] = [];
@@ -452,9 +486,37 @@ export function ListaCandidaturas({ candidaturas, erro }: { candidaturas: Candid
             )}
           </section>
 
-          <p className="text-sm font-medium text-[#202B28]" aria-live="polite">
-            {total} {total === 1 ? "candidatura encontrada" : "candidaturas encontradas"}
-          </p>
+          <div className="flex min-h-[44px] flex-wrap items-center justify-between gap-3">
+            <p className="text-sm font-medium text-[#202B28]" aria-live="polite">
+              {total} {total === 1 ? "candidatura encontrada" : "candidaturas encontradas"}
+            </p>
+            {selecionadas.length > 0 && (
+              <div role="toolbar" aria-label="Ações para as candidaturas selecionadas" className="flex flex-wrap items-center gap-2 rounded-xl border border-[#27675B]/25 bg-[#EEF6F3] py-1.5 pl-3.5 pr-1.5">
+                <span className="text-sm font-semibold text-[#1F5248]">
+                  {selecionadas.length} {selecionadas.length === 1 ? "selecionada" : "selecionadas"}
+                </span>
+                {selecionadas.length < total && (
+                  <button type="button" onClick={() => setSelecao(new Set(filtrados.map((c) => c.id)))} className="rounded-lg px-2 py-1 text-[13px] font-medium text-[#27675B] hover:underline">
+                    Selecionar todas as {total}
+                  </button>
+                )}
+                <button type="button" onClick={() => setSelecao(new Set())} className="rounded-lg px-2.5 py-1.5 text-sm font-medium text-[#626E69] hover:bg-white hover:text-[#202B28]">
+                  Limpar seleção
+                </button>
+                <button type="button" onClick={() => setConfirmarExclusao(true)} className="rounded-lg border border-[#B42318]/30 bg-white px-3 py-1.5 text-sm font-medium text-[#B42318] hover:border-[#B42318] hover:bg-[#FDECEA]">
+                  Excluir
+                </button>
+              </div>
+            )}
+          </div>
+          {avisoLote && (
+            <p role="status" className={`flex items-start justify-between gap-3 rounded-xl border px-4 py-2.5 text-sm ${avisoLote.ok ? "border-[#27675B]/20 bg-[#EEF6F3] text-[#1F5248]" : "border-[#B42318]/20 bg-[#FDECEA] text-[#B42318]"}`}>
+              {avisoLote.texto}
+              <button type="button" aria-label="Fechar aviso" onClick={() => setAvisoLote(null)} className="crm-livre text-lg leading-none">
+                ×
+              </button>
+            </p>
+          )}
 
           {total === 0 ? (
             <div className={`${CARD} px-6 py-10 text-center`}>
@@ -468,8 +530,9 @@ export function ListaCandidaturas({ candidaturas, erro }: { candidaturas: Candid
               <div className={`${CARD} hidden overflow-clip lg:block`}>
                 <table className="w-full table-fixed text-left text-sm">
                   <colgroup>
-                    <col className="w-[19%]" />
-                    <col className="w-[15%]" />
+                    <col className="w-[48px]" />
+                    <col className="w-[18%]" />
+                    <col className="w-[14%]" />
                     <col className="w-[18%]" />
                     <col className="w-[17%]" />
                     <col className="w-[11%]" />
@@ -479,7 +542,10 @@ export function ListaCandidaturas({ candidaturas, erro }: { candidaturas: Candid
                   </colgroup>
                   <thead className="text-[13px] text-[#626E69]">
                     <tr>
-                      <Th className="rounded-tl-2xl">
+                      <Th className="rounded-tl-2xl pr-0">
+                        <input ref={refCabecalho} type="checkbox" checked={paginaToda} onChange={marcarPagina} aria-label="Selecionar as candidaturas desta página" className="h-4 w-4 accent-[#27675B]" />
+                      </Th>
+                      <Th>
                         <Ordem rotulo="Candidato" ativo={ordem === "nome"} dir={dir} onClick={() => ordenar("nome")} />
                       </Th>
                       <Th>Vaga</Th>
@@ -499,7 +565,10 @@ export function ListaCandidaturas({ candidaturas, erro }: { candidaturas: Candid
                   </thead>
                   <tbody className="divide-y divide-[#EEF2F0]">
                     {visiveis.map((c) => (
-                      <tr key={c.id} className="align-top transition hover:bg-[#F6FAF8]">
+                      <tr key={c.id} className={`align-top transition hover:bg-[#F6FAF8] ${selecao.has(c.id) ? "bg-[#EEF6F3]/60" : ""}`}>
+                        <td className="py-3.5 pl-4 pr-0">
+                          <input type="checkbox" checked={selecao.has(c.id)} onChange={() => marcar(c.id)} aria-label={`Selecionar candidatura de ${c.nome || "sem nome"}`} className="mt-0.5 h-4 w-4 accent-[#27675B]" />
+                        </td>
                         <td className="px-4 py-3.5">
                           <Link href={`/crm/empregos/${c.id}`} className="font-semibold text-[#202B28] hover:text-[#27675B] hover:underline">
                             {c.nome || "Sem nome"}
@@ -537,11 +606,18 @@ export function ListaCandidaturas({ candidaturas, erro }: { candidaturas: Candid
               </div>
 
               <ul className="space-y-3 lg:hidden">
+                <li className="flex items-center gap-2.5 px-1 text-[13px] text-[#626E69]">
+                  <input id="sel-pagina-cand" type="checkbox" checked={paginaToda} onChange={marcarPagina} className="h-4 w-4 accent-[#27675B]" />
+                  <label htmlFor="sel-pagina-cand">Selecionar esta página</label>
+                </li>
                 {visiveis.map((c) => (
-                  <li key={c.id} className={`${CARD} p-4`}>
-                    <Link href={`/crm/empregos/${c.id}`} className="font-semibold text-[#202B28]">
-                      {c.nome || "Sem nome"}
-                    </Link>
+                  <li key={c.id} className={`${CARD} p-4 ${selecao.has(c.id) ? "ring-2 ring-[#27675B]/40" : ""}`}>
+                    <div className="flex items-start gap-3">
+                      <input type="checkbox" checked={selecao.has(c.id)} onChange={() => marcar(c.id)} aria-label={`Selecionar candidatura de ${c.nome || "sem nome"}`} className="mt-1 h-4 w-4 shrink-0 accent-[#27675B]" />
+                      <Link href={`/crm/empregos/${c.id}`} className="font-semibold text-[#202B28]">
+                        {c.nome || "Sem nome"}
+                      </Link>
+                    </div>
                     <p className="text-[13px] text-[#626E69]">
                       {c.vagaEmpresa} — {c.vagaTitulo}
                     </p>
@@ -591,7 +667,87 @@ export function ListaCandidaturas({ candidaturas, erro }: { candidaturas: Candid
           )}
         </>
       )}
+      {confirmarExclusao && selecionadas.length > 0 && (
+        <PainelExclusao
+          selecionadas={selecionadas}
+          onFechar={() => setConfirmarExclusao(false)}
+          onConcluido={(texto, ok) => {
+            if (ok) setSelecao(new Set());
+            setAvisoLote({ ok, texto });
+            router.refresh();
+          }}
+        />
+      )}
     </div>
+  );
+}
+
+function PainelExclusao({ selecionadas, onFechar, onConcluido }: { selecionadas: CandidaturaLista[]; onFechar: () => void; onConcluido: (texto: string, ok: boolean) => void }) {
+  const [erro, setErro] = useState<string | null>(null);
+  const [pendente, iniciar] = useTransition();
+  const n = selecionadas.length;
+  const rotulo = `${n} ${n === 1 ? "candidatura" : "candidaturas"}`;
+  return (
+    <Painel
+      titulo="Excluir candidaturas"
+      subtitulo={`${rotulo} ${n === 1 ? "selecionada" : "selecionadas"}`}
+      onFechar={onFechar}
+      largura="max-w-md"
+      rodape={
+        <>
+          <button type="button" className={BOTAO_SECUNDARIO} onClick={onFechar} disabled={pendente}>
+            Cancelar
+          </button>
+          <button
+            type="button"
+            className={BOTAO_PERIGO}
+            disabled={pendente}
+            onClick={() =>
+              iniciar(async () => {
+                let r: Awaited<ReturnType<typeof excluirCandidaturas>>;
+                try {
+                  r = await excluirCandidaturas(selecionadas.map((c) => c.id));
+                } catch {
+                  r = { ok: false, erro: "Sem conexão com o servidor. Nada foi excluído." };
+                }
+                if (!r.ok) {
+                  setErro(r.erro);
+                  return;
+                }
+                const partes = [`${r.excluidas} ${r.excluidas === 1 ? "candidatura excluída" : "candidaturas excluídas"}.`];
+                if (r.naoEncontradas) partes.push(`${r.naoEncontradas} já não ${r.naoEncontradas === 1 ? "existia" : "existiam"}.`);
+                if (r.arquivosPendentes) partes.push(`${r.arquivosPendentes} ${r.arquivosPendentes === 1 ? "arquivo (currículo/foto) não pôde ser apagado" : "arquivos (currículo/foto) não puderam ser apagados"} do armazenamento.`);
+                onConcluido(partes.join(" "), true);
+                onFechar();
+              })
+            }
+          >
+            {pendente && <Spinner />}
+            Excluir {rotulo}
+          </button>
+        </>
+      }
+    >
+      <div className="space-y-4 text-sm text-[#202B28]">
+        <p className="rounded-xl border border-[#B42318]/20 bg-[#FDECEA] px-3.5 py-2.5 text-[#B42318]">
+          A exclusão é <strong>definitiva</strong>: apaga a candidatura, a ficha, o histórico, as pré-entrevistas ligadas e os arquivos (currículo e foto). Não dá para desfazer.
+        </p>
+        <p>Serão excluídas exatamente {rotulo}:</p>
+        <ul className="max-h-64 space-y-1.5 overflow-y-auto rounded-xl border border-[#DEE6E2] p-3">
+          {selecionadas.map((c) => (
+            <li key={c.id} className="flex justify-between gap-3">
+              <span className="min-w-0 truncate font-medium">{c.nome || "Sem nome"}</span>
+              <span className="shrink-0 text-[13px] text-[#626E69]">{c.vagaEmpresa}</span>
+            </li>
+          ))}
+        </ul>
+        {erro && (
+          <p role="alert" className="rounded-lg bg-[#FDECEA] px-3 py-2 text-[13px] text-[#B42318]">
+            {erro}
+          </p>
+        )}
+      </div>
+    </Painel>
   );
 }
 
