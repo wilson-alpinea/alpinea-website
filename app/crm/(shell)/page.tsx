@@ -19,6 +19,10 @@ import {
   type DadosPainel,
 } from "@/lib/crm/painel";
 import { NovosClientesChart } from "./components/NovosClientesChart";
+import { Notificacoes } from "./components/Notificacoes";
+import { cookies } from "next/headers";
+import { obterAcesso } from "@/lib/crm/acesso";
+import { COOKIE_NOTIFICACOES, carregarNotificacoes } from "@/lib/crm/notificacoes";
 import { PeriodoSelector } from "./components/PeriodoSelector";
 import {
   Badge,
@@ -77,6 +81,9 @@ export default async function VisaoGeralPage({ searchParams }: { searchParams: P
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
+          <Suspense fallback={<Notificacoes lista={[]} naoLidas={0} />}>
+            <SinoNotificacoes />
+          </Suspense>
           <Link href="/crm/clientes" className="rounded-xl border border-[#D5DAE0] bg-white px-4 py-2.5 text-sm font-medium text-[#20252B] transition hover:border-[#24476B]/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#24476B]/30">
             Ver clientes
           </Link>
@@ -128,6 +135,15 @@ export default async function VisaoGeralPage({ searchParams }: { searchParams: P
 
     </div>
   );
+}
+
+// ── Notificações ─────────────────────────────────────────────────
+async function SinoNotificacoes() {
+  const [supabase, acesso, jar] = await Promise.all([createClient(), obterAcesso(), cookies()]);
+  const lidas = jar.get(COOKIE_NOTIFICACOES)?.value ?? null;
+  const r = await carregarNotificacoes(supabase, acesso?.userId ?? null, lidas && !Number.isNaN(Date.parse(lidas)) ? lidas : null);
+  if ("erro" in r) return <Notificacoes lista={[]} naoLidas={0} erro />;
+  return <Notificacoes lista={r.lista} naoLidas={r.naoLidas} />;
 }
 
 // ── 2. Indicadores ───────────────────────────────────────────────
